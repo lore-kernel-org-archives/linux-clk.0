@@ -1,134 +1,89 @@
-Return-Path: <rppt@linux.vnet.ibm.com>
-Date: Mon, 24 Sep 2018 13:32:05 +0300
-From: Mike Rapoport <rppt@linux.vnet.ibm.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Arend van Spriel <aspriel@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Robin Murphy <robin.murphy@arm.com>, Joe Perches <joe@perches.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>, Al Viro <viro@zeniv.linux.org.uk>,
-        Jonathan Corbet <corbet@lwn.net>, Roman Gushchin <guro@fb.com>,
-        Huang Ying <ying.huang@intel.com>, Kees Cook <keescook@chromium.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH v3 3/4] devres: provide devm_kstrdup_const()
-References: <20180924101150.23349-1-brgl@bgdev.pl>
- <20180924101150.23349-4-brgl@bgdev.pl>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:10973 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727473AbeIODNe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Sep 2018 23:13:34 -0400
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: <linux-clk@vger.kernel.org>
+CC: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: [RFC 05/14] memory: tegra: mc: Introduce helpers
+Date: Sat, 15 Sep 2018 00:48:06 +0300
+Message-ID: <1536961695-27809-6-git-send-email-pdeschrijver@nvidia.com>
+In-Reply-To: <1536961695-27809-1-git-send-email-pdeschrijver@nvidia.com>
+References: <1536961695-27809-1-git-send-email-pdeschrijver@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180924101150.23349-4-brgl@bgdev.pl>
-Message-Id: <20180924103204.GC6264@rapoport-lnx>
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Sep 24, 2018 at 12:11:49PM +0200, Bartosz Golaszewski wrote:
-> Provide a resource managed version of kstrdup_const(). This variant
-> internally calls devm_kstrdup() on pointers that are outside of
-> .rodata section and returns the string as is otherwise.
-> 
-> Also provide a corresponding version of devm_kfree().
-> 
-> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
-> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Introduce a few helper functions to lookup a timing for a given rate and
+modify MC register field. These will be useful when adding support for
+updating the latency allowance (LA) registers when scaling the EMC clock.
 
-Acked-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+---
+ drivers/memory/tegra/mc.c | 30 +++++++++++++++++++++++-------
+ 1 file changed, 23 insertions(+), 7 deletions(-)
 
-> ---
->  drivers/base/devres.c  | 38 ++++++++++++++++++++++++++++++++++++++
->  include/linux/device.h |  3 +++
->  2 files changed, 41 insertions(+)
-> 
-> diff --git a/drivers/base/devres.c b/drivers/base/devres.c
-> index 438c91a43508..48185d57bc5b 100644
-> --- a/drivers/base/devres.c
-> +++ b/drivers/base/devres.c
-> @@ -11,6 +11,8 @@
->  #include <linux/slab.h>
->  #include <linux/percpu.h>
-> 
-> +#include <asm/sections.h>
-> +
->  #include "base.h"
-> 
->  struct devres_node {
-> @@ -822,6 +824,28 @@ char *devm_kstrdup(struct device *dev, const char *s, gfp_t gfp)
->  }
->  EXPORT_SYMBOL_GPL(devm_kstrdup);
-> 
-> +/**
-> + * devm_kstrdup_const - resource managed conditional string duplication
-> + * @dev: device for which to duplicate the string
-> + * @s: the string to duplicate
-> + * @gfp: the GFP mask used in the kmalloc() call when allocating memory
-> + *
-> + * Strings allocated by devm_kstrdup_const will be automatically freed when
-> + * the associated device is detached.
-> + *
-> + * RETURNS:
-> + * Source string if it is in .rodata section otherwise it falls back to
-> + * devm_kstrdup.
-> + */
-> +const char *devm_kstrdup_const(struct device *dev, const char *s, gfp_t gfp)
-> +{
-> +	if (is_kernel_rodata((unsigned long)s))
-> +		return s;
-> +
-> +	return devm_kstrdup(dev, s, gfp);
-> +}
-> +EXPORT_SYMBOL(devm_kstrdup_const);
-> +
->  /**
->   * devm_kvasprintf - Allocate resource managed space and format a string
->   *		     into that.
-> @@ -895,6 +919,20 @@ void devm_kfree(struct device *dev, const void *p)
->  }
->  EXPORT_SYMBOL_GPL(devm_kfree);
-> 
-> +/**
-> + * devm_kfree_const - Resource managed conditional kfree
-> + * @dev: device this memory belongs to
-> + * @p: memory to free
-> + *
-> + * Function calls devm_kfree only if @p is not in .rodata section.
-> + */
-> +void devm_kfree_const(struct device *dev, const void *p)
-> +{
-> +	if (!is_kernel_rodata((unsigned long)p))
-> +		devm_kfree(dev, p);
-> +}
-> +EXPORT_SYMBOL(devm_kfree_const);
-> +
->  /**
->   * devm_kmemdup - Resource-managed kmemdup
->   * @dev: Device this memory belongs to
-> diff --git a/include/linux/device.h b/include/linux/device.h
-> index 33f7cb271fbb..79ccc6eb0975 100644
-> --- a/include/linux/device.h
-> +++ b/include/linux/device.h
-> @@ -693,7 +693,10 @@ static inline void *devm_kcalloc(struct device *dev,
->  	return devm_kmalloc_array(dev, n, size, flags | __GFP_ZERO);
->  }
->  extern void devm_kfree(struct device *dev, const void *p);
-> +extern void devm_kfree_const(struct device *dev, const void *p);
->  extern char *devm_kstrdup(struct device *dev, const char *s, gfp_t gfp) __malloc;
-> +extern const char *devm_kstrdup_const(struct device *dev,
-> +				      const char *s, gfp_t gfp);
->  extern void *devm_kmemdup(struct device *dev, const void *src, size_t len,
->  			  gfp_t gfp);
-> 
-> -- 
-> 2.18.0
-> 
-
+diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
+index a4803ac..af4bf29 100644
+--- a/drivers/memory/tegra/mc.c
++++ b/drivers/memory/tegra/mc.c
+@@ -73,6 +73,17 @@
+ };
+ MODULE_DEVICE_TABLE(of, tegra_mc_of_match);
+ 
++static void mc_modifyl(struct tegra_mc *mc, u32 reg, u32 value, u8 shift,
++		       u8 mask)
++{
++	u32 val;
++
++	val = readl(mc->regs + reg);
++	val &= ~(mask << shift);
++	val |= (value & mask) << shift;
++	writel(val, mc->regs + reg);
++}
++
+ static int tegra_mc_setup_latency_allowance(struct tegra_mc *mc)
+ {
+ 	unsigned long long tick;
+@@ -91,18 +102,14 @@ static int tegra_mc_setup_latency_allowance(struct tegra_mc *mc)
+ 	/* write latency allowance defaults */
+ 	for (i = 0; i < mc->soc->num_clients; i++) {
+ 		const struct tegra_mc_la *la = &mc->soc->clients[i].la;
+-		u32 value;
+-
+-		value = readl(mc->regs + la->reg);
+-		value &= ~(la->mask << la->shift);
+-		value |= (la->def & la->mask) << la->shift;
+-		writel(value, mc->regs + la->reg);
++		mc_modifyl(mc, la->reg, la->def, la->shift, la->mask);
+ 	}
+ 
+ 	return 0;
+ }
+ 
+-void tegra_mc_write_emem_configuration(struct tegra_mc *mc, unsigned long rate)
++static struct tegra_mc_timing *find_mc_timing(struct tegra_mc *mc,
++					      unsigned long rate)
+ {
+ 	unsigned int i;
+ 	struct tegra_mc_timing *timing = NULL;
+@@ -114,6 +121,15 @@ void tegra_mc_write_emem_configuration(struct tegra_mc *mc, unsigned long rate)
+ 		}
+ 	}
+ 
++	return timing;
++}
++
++void tegra_mc_write_emem_configuration(struct tegra_mc *mc, unsigned long rate)
++{
++	unsigned int i;
++	struct tegra_mc_timing *timing = NULL;
++
++	timing = find_mc_timing(mc, rate);
+ 	if (!timing) {
+ 		dev_err(mc->dev, "no memory timing registered for rate %lu\n",
+ 			rate);
 -- 
-Sincerely yours,
-Mike.
+1.9.1
