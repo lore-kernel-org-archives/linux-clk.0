@@ -1,157 +1,98 @@
-Return-Path: <vabhav.sharma@nxp.com>
-From: Vabhav Sharma <vabhav.sharma@nxp.com>
-To: sudeep.holla@arm.com,
-	oss@buserror.net,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	rjw@rjwysocki.net,
-	viresh.kumar@linaro.org,
-	linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-kernel-owner@vger.kernel.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	gregkh@linuxfoundation.org,
-	arnd@arndb.de,
-	kstewart@linuxfoundation.org,
-	yamada.masahiro@socionext.com
-Cc: linux@armlinux.org.uk,
-	V.Sethi@nxp.com,
-	udit.kumar@nxp.com,
-	Vabhav Sharma <vabhav.sharma@nxp.com>,
-	Priyanka Jain <priyanka.jain@nxp.com>,
-	Sriram Dash <sriram.dash@nxp.com>
-Subject: [PATCH v3 6/6] arm64: dts: add LX2160ARDB board support
-Date: Mon, 24 Sep 2018 05:39:01 +0530
-Message-Id: <1537747741-6245-7-git-send-email-vabhav.sharma@nxp.com>
-In-Reply-To: <1537747741-6245-1-git-send-email-vabhav.sharma@nxp.com>
-References: <1537747741-6245-1-git-send-email-vabhav.sharma@nxp.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:10971 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726942AbeIODNe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Sep 2018 23:13:34 -0400
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: <linux-clk@vger.kernel.org>
+CC: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: [RFC 04/14] clk: tegra: emc: prepare for Tegra210 parent table
+Date: Sat, 15 Sep 2018 00:48:05 +0300
+Message-ID: <1536961695-27809-5-git-send-email-pdeschrijver@nvidia.com>
+In-Reply-To: <1536961695-27809-1-git-send-email-pdeschrijver@nvidia.com>
+References: <1536961695-27809-1-git-send-email-pdeschrijver@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Return-Path: vabhav.sharma@nxp.com
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-LX2160A reference design board (RDB) is a high-performance
-computing, evaluation, and development platform with LX2160A
-SoC.
+The set of possible emc parents is different in Tegra124 compared to
+Tegra210. Hence make this list a Tegra124 specific table and adjust the
+users to allow for other tables.
 
-Signed-off-by: Priyanka Jain <priyanka.jain@nxp.com>
-Signed-off-by: Sriram Dash <sriram.dash@nxp.com>
-Signed-off-by: Vabhav Sharma <vabhav.sharma@nxp.com>
+Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 ---
- arch/arm64/boot/dts/freescale/Makefile            |  1 +
- arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts | 88 +++++++++++++++++++++++
- 2 files changed, 89 insertions(+)
- create mode 100644 arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
+ drivers/clk/tegra/clk-emc.c | 23 +++++++++++++++--------
+ 1 file changed, 15 insertions(+), 8 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-index 86e18ad..445b72b 100644
---- a/arch/arm64/boot/dts/freescale/Makefile
-+++ b/arch/arm64/boot/dts/freescale/Makefile
-@@ -13,3 +13,4 @@ dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2080a-rdb.dtb
- dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2080a-simu.dtb
- dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2088a-qds.dtb
- dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2088a-rdb.dtb
-+dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-lx2160a-rdb.dtb
-diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts b/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
-new file mode 100644
-index 0000000..1bbe663
---- /dev/null
-+++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
-@@ -0,0 +1,88 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+//
-+// Device Tree file for LX2160ARDB
-+//
-+// Copyright 2018 NXP
-+
-+/dts-v1/;
-+
-+#include "fsl-lx2160a.dtsi"
-+
-+/ {
-+	model = "NXP Layerscape LX2160ARDB";
-+	compatible = "fsl,lx2160a-rdb", "fsl,lx2160a";
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+};
-+
-+&uart0 {
-+	status = "okay";
-+};
-+
-+&uart1 {
-+	status = "okay";
-+};
-+
-+&i2c0 {
-+	status = "okay";
-+	i2c-mux@77 {
-+		compatible = "nxp,pca9547";
-+		reg = <0x77>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		i2c@2 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0x2>;
-+
-+			power-monitor@40 {
-+				compatible = "ti,ina220";
-+				reg = <0x40>;
-+				shunt-resistor = <1000>;
-+			};
-+		};
-+
-+		i2c@3 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0x3>;
-+
-+			temperature-sensor@4c {
-+				compatible = "nxp,sa56004";
-+				reg = <0x4c>;
-+			};
-+
-+			temperature-sensor@4d {
-+				compatible = "nxp,sa56004";
-+				reg = <0x4d>;
-+			};
-+		};
-+	};
-+};
-+
-+&i2c4 {
-+	status = "okay";
-+
-+	rtc@51 {
-+		compatible = "nxp,pcf2129";
-+		reg = <0x51>;
-+		// IRQ10_B
-+		interrupts = <0 150 0x4>;
-+		};
-+
-+};
-+
-+&usb0 {
-+	status = "okay";
-+};
-+
-+&usb1 {
-+	status = "okay";
-+};
-+
-+&crypto {
-+	status = "okay";
-+};
+diff --git a/drivers/clk/tegra/clk-emc.c b/drivers/clk/tegra/clk-emc.c
+index e836a9b..84fa806 100644
+--- a/drivers/clk/tegra/clk-emc.c
++++ b/drivers/clk/tegra/clk-emc.c
+@@ -44,7 +44,7 @@
+ #define CLK_SOURCE_EMC_EMC_2X_CLK_SRC(x) (((x) & CLK_SOURCE_EMC_EMC_2X_CLK_SRC_MASK) << \
+ 					  CLK_SOURCE_EMC_EMC_2X_CLK_SRC_SHIFT)
+ 
+-static const char * const emc_parent_clk_names[] = {
++static const char * const tegra124_emc_parent_clk_names[] = {
+ 	"pll_m", "pll_c", "pll_p", "clk_m", "pll_m_ud",
+ 	"pll_c2", "pll_c3", "pll_c_ud"
+ };
+@@ -376,7 +376,9 @@ static int emc_set_rate(struct clk_hw *hw, unsigned long rate,
+ 
+ static int load_one_timing_from_dt(struct tegra_clk_emc *tegra,
+ 				   struct emc_timing *timing,
+-				   struct device_node *node)
++				   struct device_node *node,
++				   const * char const *parent_names,
++				   int num_parents)
+ {
+ 	int err, i;
+ 	u32 tmp;
+@@ -404,9 +406,9 @@ static int load_one_timing_from_dt(struct tegra_clk_emc *tegra,
+ 	}
+ 
+ 	timing->parent_index = 0xff;
+-	for (i = 0; i < ARRAY_SIZE(emc_parent_clk_names); i++) {
+-		if (!strcmp(emc_parent_clk_names[i],
+-			    __clk_get_name(timing->parent))) {
++	for (i = 0; i < num_parents; i++) {
++		if (!strcmp(parent_names([i],
++			__clk_get_name(timing->parent)))) {
+ 			timing->parent_index = i;
+ 			break;
+ 		}
+@@ -436,7 +438,9 @@ static int cmp_timings(const void *_a, const void *_b)
+ 
+ static int load_timings_from_dt(struct tegra_clk_emc *tegra,
+ 				struct device_node *node,
+-				u32 ram_code)
++				u32 ram_code,
++				const * char const *parent_names,
++				int num_parents)
+ {
+ 	struct device_node *child;
+ 	int child_count = of_get_child_count(node);
+@@ -452,7 +456,8 @@ static int load_timings_from_dt(struct tegra_clk_emc *tegra,
+ 	for_each_child_of_node(node, child) {
+ 		struct emc_timing *timing = tegra->timings + (i++);
+ 
+-		err = load_one_timing_from_dt(tegra, timing, child);
++		err = load_one_timing_from_dt(tegra, timing, child,
++					      parent_names, num_parents);
+ 		if (err) {
+ 			of_node_put(child);
+ 			return err;
+@@ -503,7 +508,9 @@ struct clk *tegra_clk_register_emc(void __iomem *base, struct device_node *np,
+ 		 * Store timings for all ram codes as we cannot read the
+ 		 * fuses until the apbmisc driver is loaded.
+ 		 */
+-		err = load_timings_from_dt(tegra, node, node_ram_code);
++		err = load_timings_from_dt(tegra, node, node_ram_code,
++					   tegra124_emc_parents,
++					   ARRAY_SIZE(tegra124_emc_parents));
+ 		of_node_put(node);
+ 		if (err)
+ 			return ERR_PTR(err);
 -- 
-2.7.4
+1.9.1
