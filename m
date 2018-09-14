@@ -1,82 +1,67 @@
-Return-Path: <wens213@gmail.com>
-Return-Path: <wens213@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:12068 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727716AbeIODXf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Sep 2018 23:23:35 -0400
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: <linux-clk@vger.kernel.org>
+CC: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: [RFC 07/14] memory: tegra: scaled LA register for Tegra210
+Date: Sat, 15 Sep 2018 00:48:08 +0300
+Message-ID: <1536961695-27809-8-git-send-email-pdeschrijver@nvidia.com>
+In-Reply-To: <1536961695-27809-1-git-send-email-pdeschrijver@nvidia.com>
+References: <1536961695-27809-1-git-send-email-pdeschrijver@nvidia.com>
 MIME-Version: 1.0
-References: <20180927114850.24565-1-jagan@amarulasolutions.com> <20180927114850.24565-5-jagan@amarulasolutions.com>
-In-Reply-To: <20180927114850.24565-5-jagan@amarulasolutions.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Thu, 27 Sep 2018 20:42:53 +0800
-Message-ID: <CAGb2v66No3-AODYCCGifBrm9uvPjaNdR2W5MDQdazRAPomT9CQ@mail.gmail.com>
-Subject: Re: [PATCH 04/12] drm/sun4i: sun6i_mipi_dsi: Enable missing DSI bus clock
-To: Jagan Teki <jagan@amarulasolutions.com>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Icenowy Zheng <icenowy@aosc.io>,
-	Jernej Skrabec <jernej.skrabec@siol.net>, Vasily Khoruzhick <anarsoul@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
-	David Airlie <airlied@linux.ie>, dri-devel <dri-devel@lists.freedesktop.org>,
-	Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+---
+ drivers/memory/tegra/tegra210.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-On Thu, Sep 27, 2018 at 7:49 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
->
-> DSI bus_clk is already available in sun6i_dsi but missed to
-> get the clk and process for enable/disable.
->
-> This patch add support for it.
->
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> ---
->  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
->
-> diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> index 8e9c76febca2..156b371243c6 100644
-> --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> @@ -1004,6 +1004,12 @@ static int sun6i_dsi_probe(struct platform_device *pdev)
->                 return PTR_ERR(dsi->reset);
->         }
->
-> +       dsi->bus_clk = devm_clk_get(dev, "bus");
-> +       if (IS_ERR(dsi->bus_clk)) {
-> +               dev_err(dev, "Couldn't get the DSI bus clock\n");
-> +               return PTR_ERR(dsi->bus_clk);
-> +       }
-> +
-
-The DSI driver uses devm_regmap_init_mmio_clk, which enables the
-clock behind the scenes when regmap access needs it enabled.
-
-Did you have any issues without this patch?
-
-ChenYu
-
->         if (dsi->variant->has_mod_clk) {
->                 dsi->mod_clk = devm_clk_get(dev, "mod");
->                 if (IS_ERR(dsi->mod_clk)) {
-> @@ -1012,6 +1018,7 @@ static int sun6i_dsi_probe(struct platform_device *pdev)
->                 }
->         }
->
-> +       clk_prepare_enable(dsi->bus_clk);
->         /*
->          * In order to operate properly, that clock seems to be always
->          * set to 297MHz.
-> @@ -1065,6 +1072,7 @@ static int sun6i_dsi_remove(struct platform_device *pdev)
->         sun6i_dphy_remove(dsi);
->         if (dsi->variant->has_mod_clk)
->                 clk_rate_exclusive_put(dsi->mod_clk);
-> +       clk_disable_unprepare(dsi->bus_clk);
->
->         return 0;
->  }
-> --
-> 2.18.0.321.gffc6fa0e3
->
+diff --git a/drivers/memory/tegra/tegra210.c b/drivers/memory/tegra/tegra210.c
+index aa9dcf0..b4dd533 100644
+--- a/drivers/memory/tegra/tegra210.c
++++ b/drivers/memory/tegra/tegra210.c
+@@ -53,6 +53,13 @@
+ #define MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_6			0xbe8
+ #define MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_7			0xbec
+ 
++#define MC_SCALED_LATENCY_ALLOWANCE_DISPLAY0AB			0x694
++#define MC_SCALED_LATENCY_ALLOWANCE_DISPLAY0B			0x698
++#define MC_SCALED_LATENCY_ALLOWANCE_DISPLAY0C			0x6a0
++#define MC_SCALED_LATENCY_ALLOWANCE_DISPLAY0BB			0x69c
++#define MC_SCALED_LATENCY_ALLOWANCE_DISPLAY0CB			0x6a4
++#define MC_SCALED_LATENCY_ALLOWANCE_DISPLAY0A			0x690
++
+ static const unsigned long tegra210_mc_emem_regs[] = {
+ 	 MC_EMEM_ADR_CFG,
+ 	 MC_EMEM_ARB_CFG,
+@@ -93,6 +100,15 @@
+ 	 MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_7,
+ };
+ 
++static const unsigned long tegra210_scaled_la_regs[] = {
++	 MC_SCALED_LATENCY_ALLOWANCE_DISPLAY0AB,
++	 MC_SCALED_LATENCY_ALLOWANCE_DISPLAY0B,
++	 MC_SCALED_LATENCY_ALLOWANCE_DISPLAY0C,
++	 MC_SCALED_LATENCY_ALLOWANCE_DISPLAY0BB,
++	 MC_SCALED_LATENCY_ALLOWANCE_DISPLAY0CB,
++	 MC_SCALED_LATENCY_ALLOWANCE_DISPLAY0A,
++};
++
+ static const struct tegra_mc_client tegra210_mc_clients[] = {
+ 	{
+ 		.id = 0x00,
+@@ -1157,4 +1173,7 @@
+ 	.smmu = &tegra210_smmu_soc,
+ 	.emem_regs = tegra210_mc_emem_regs,
+ 	.num_emem_regs = ARRAY_SIZE(tegra210_mc_emem_regs),
++	.scaled_la_regs = tegra210_scaled_la_regs,
++	.num_scaled_la_regs = ARRAY_SIZE(tegra210_scaled_la_regs),
++	.has_scaled_la = true,
+ };
+-- 
+1.9.1
