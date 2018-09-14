@@ -1,281 +1,65 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Maxime Ripard <maxime.ripard@bootlin.com>, Mark Rutland <mark.rutland@arm.com>, Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, David Airlie <airlied@linux.ie>, Archit Taneja <architt@codeaurora.org>, Andrzej Hajda <a.hajda@samsung.com>, devicetree <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, linux-sunxi <linux-sunxi@googlegroups.com>, Icenowy Zheng <icenowy@aosc.io>
-Subject: Re: [PATCH 08/27] clk: sunxi-ng: Add support for H6 DE3 clocks
-Date: Wed, 12 Sep 2018 16:55:07 +0200
-Message-ID: <1702684.jtWEXlagAO@jernej-laptop>
-In-Reply-To: <CAGb2v66kojjjM4f_tO9NwzkCzD3LMM2eiq+PJ6Bk=1Rra=UnYg@mail.gmail.com>
-References: <20180902072643.4917-1-jernej.skrabec@siol.net> <1677668.BePkXd9qNa@jernej-laptop> <CAGb2v66kojjjM4f_tO9NwzkCzD3LMM2eiq+PJ6Bk=1Rra=UnYg@mail.gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:34839 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727194AbeINNog (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Sep 2018 09:44:36 -0400
+Date: Fri, 14 Sep 2018 11:30:58 +0300
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To: lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        lgirdwood@gmail.com, broonie@kernel.org, sboyd@kernel.org,
+        mazziesaccount@gmail.com, matti.vaittinen@fi.rohmeurope.com,
+        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH v3 3/7] mfd: dt bindings: add BD71847 device-tree binding
+ documentation
+Message-ID: <8d07060eab11d1163f0908cf0acdcece25896add.1536912922.git.matti.vaittinen@fi.rohmeurope.com>
+References: <cover.1536912922.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <cover.1536912922.git.matti.vaittinen@fi.rohmeurope.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Dne sreda, 12. september 2018 ob 14:20:08 CEST je Chen-Yu Tsai napisal(a):
-> On Wed, Sep 5, 2018 at 1:46 AM Jernej =C5=A0krabec <jernej.skrabec@siol.n=
-et>=20
-wrote:
-> > Dne torek, 04. september 2018 ob 11:04:21 CEST je Chen-Yu Tsai napisal(=
-a):
-> > > On Sun, Sep 2, 2018 at 3:27 PM Jernej Skrabec <jernej.skrabec@siol.ne=
-t>
-> >=20
-> > wrote:
-> > > > Support for mixer0, mixer1, writeback and rotation units is added.
-> > > >=20
-> > > > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> > > > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> > > > ---
-> > > >=20
-> > > >  drivers/clk/sunxi-ng/ccu-sun8i-de2.c | 65
-> > > >  ++++++++++++++++++++++++++++
-> > > >  drivers/clk/sunxi-ng/ccu-sun8i-de2.h |  1 +
-> > > >  2 files changed, 66 insertions(+)
-> > > >=20
-> > > > diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-> > > > b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c index
-> > > > bae5ee67a797..4535c1c27d27
-> > > > 100644
-> > > > --- a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-> > > > +++ b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-> > > > @@ -31,6 +31,8 @@ static SUNXI_CCU_GATE(bus_mixer1_clk, "bus-mixer1=
-",
-> > > > "bus-de",>
-> > > >=20
-> > > >                       0x04, BIT(1), 0);
-> > > > =20
-> > > >  static SUNXI_CCU_GATE(bus_wb_clk,      "bus-wb",       "bus-de",
-> > > > =20
-> > > >                       0x04, BIT(2), 0);
-> > > >=20
-> > > > +static SUNXI_CCU_GATE(bus_rot_clk,     "bus-rot",      "bus-de",
-> > > > +                     0x04, BIT(3), 0);
-> > > >=20
-> > > >  static SUNXI_CCU_GATE(mixer0_clk,      "mixer0",       "mixer0-div=
-",
-> > > > =20
-> > > >                       0x00, BIT(0), CLK_SET_RATE_PARENT);
-> > > >=20
-> > > > @@ -38,6 +40,8 @@ static SUNXI_CCU_GATE(mixer1_clk,     "mixer1",
-> > > > "mixer1-div",>
-> > > >=20
-> > > >                       0x00, BIT(1), CLK_SET_RATE_PARENT);
-> > > > =20
-> > > >  static SUNXI_CCU_GATE(wb_clk,          "wb",           "wb-div",
-> > > > =20
-> > > >                       0x00, BIT(2), CLK_SET_RATE_PARENT);
-> > > >=20
-> > > > +static SUNXI_CCU_GATE(rot_clk,         "rot",          "rot-div",
-> > > > +                     0x00, BIT(3), CLK_SET_RATE_PARENT);
-> > > >=20
-> > > >  static SUNXI_CCU_M(mixer0_div_clk, "mixer0-div", "de", 0x0c, 0, 4,
-> > > > =20
-> > > >                    CLK_SET_RATE_PARENT);
-> > > >=20
-> > > > @@ -45,6 +49,8 @@ static SUNXI_CCU_M(mixer1_div_clk, "mixer1-div",
-> > > > "de",
-> > > > 0x0c, 4, 4,>
-> > > >=20
-> > > >                    CLK_SET_RATE_PARENT);
-> > > > =20
-> > > >  static SUNXI_CCU_M(wb_div_clk, "wb-div", "de", 0x0c, 8, 4,
-> > > > =20
-> > > >                    CLK_SET_RATE_PARENT);
-> > > >=20
-> > > > +static SUNXI_CCU_M(rot_div_clk, "rot-div", "de", 0x0c, 0x0c, 4,
-> > > > +                  CLK_SET_RATE_PARENT);
-> > > >=20
-> > > >  static SUNXI_CCU_M(mixer0_div_a83_clk, "mixer0-div", "pll-de", 0x0=
-c,
-> > > >  0,
-> > > >  4,
-> > > > =20
-> > > >                    CLK_SET_RATE_PARENT);
-> > > >=20
-> > > > @@ -53,6 +59,24 @@ static SUNXI_CCU_M(mixer1_div_a83_clk,
-> > > > "mixer1-div",
-> > > > "pll-de", 0x0c, 4, 4,>
-> > > >=20
-> > > >  static SUNXI_CCU_M(wb_div_a83_clk, "wb-div", "pll-de", 0x0c, 8, 4,
-> > > > =20
-> > > >                    CLK_SET_RATE_PARENT);
-> > > >=20
-> > > > +static struct ccu_common *sun50i_h6_de3_clks[] =3D {
-> > > > +       &mixer0_clk.common,
-> > > > +       &mixer1_clk.common,
-> > > > +       &wb_clk.common,
-> > > > +
-> > > > +       &bus_mixer0_clk.common,
-> > > > +       &bus_mixer1_clk.common,
-> > > > +       &bus_wb_clk.common,
-> > > > +
-> > > > +       &mixer0_div_clk.common,
-> > > > +       &mixer1_div_clk.common,
-> > > > +       &wb_div_clk.common,
-> > > > +
-> > > > +       &bus_rot_clk.common,
-> > > > +       &rot_clk.common,
-> > > > +       &rot_div_clk.common,
-> > > > +};
-> > > > +
-> > > >=20
-> > > >  static struct ccu_common *sun8i_a83t_de2_clks[] =3D {
-> > > > =20
-> > > >         &mixer0_clk.common,
-> > > >         &mixer1_clk.common,
-> > > >=20
-> > > > @@ -92,6 +116,26 @@ static struct ccu_common *sun8i_v3s_de2_clks[] =
-=3D {
-> > > >=20
-> > > >         &wb_div_clk.common,
-> > > > =20
-> > > >  };
-> > > >=20
-> > > > +static struct clk_hw_onecell_data sun50i_h6_de3_hw_clks =3D {
-> > > > +       .hws    =3D {
-> > > > +               [CLK_MIXER0]            =3D &mixer0_clk.common.hw,
-> > > > +               [CLK_MIXER1]            =3D &mixer1_clk.common.hw,
-> > > > +               [CLK_WB]                =3D &wb_clk.common.hw,
-> > > > +               [CLK_ROT]               =3D &rot_clk.common.hw,
-> > > > +
-> > > > +               [CLK_BUS_MIXER0]        =3D &bus_mixer0_clk.common.=
-hw,
-> > > > +               [CLK_BUS_MIXER1]        =3D &bus_mixer1_clk.common.=
-hw,
-> > > > +               [CLK_BUS_WB]            =3D &bus_wb_clk.common.hw,
-> > > > +               [CLK_BUS_ROT]           =3D &bus_rot_clk.common.hw,
-> > > > +
-> > > > +               [CLK_MIXER0_DIV]        =3D &mixer0_div_clk.common.=
-hw,
-> > > > +               [CLK_MIXER1_DIV]        =3D &mixer1_div_clk.common.=
-hw,
-> > > > +               [CLK_WB_DIV]            =3D &wb_div_clk.common.hw,
-> > > > +               [CLK_ROT_DIV]           =3D &rot_div_clk.common.hw,
-> > > > +       },
-> > > > +       .num    =3D 12,
-> > >=20
-> > > It's best not to openly code these. It is error prone, like having
-> > > an index beyond .num, which then never gets registered.
-> > >=20
-> > > Instead, please update CLK_NUMBERS and use that instead.
-> > > sunxi_ccu_probe()
-> > > can handle holes in .hws.
-> >=20
-> > I'm not sure this will work. All newly introduced indices are at the en=
-d,
-> > so other arrays will still have same length (hole at the end). You will
-> > just claim that arrays are larger than they really are, which means bad
-> > things.
-> >=20
-> > But I take any other suggestion. I really can't think of better solutio=
-n.
->=20
-> Then maybe have macros for both cases instead?
-> CLK_NUMBER_WITH_ROT / CLK_NUMBER_WITHOUT_ROT?
+Add ROHM BD71847 Power Management IC MFD binding information to
+device-tree binding documents.
 
-That sounds reasonable. Do you want separate patch which renames original=20
-macro CLK_NUMBER to CLK_NUMBER_WITHOUT_ROT?
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+---
+ .../devicetree/bindings/mfd/rohm,bd71837-pmic.txt       | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
 
-Best regards,
-Jernej
-
->=20
-> ChenYu
->=20
-> > Best regards,
-> > Jernej
-> >=20
-> > > On the other hand, it can't handle holes in the ccu_reset_map. Hope we
-> > > never have to deal with such an instance.
-> > >=20
-> > > ChenYu
-> > >=20
-> > > > +};
-> > > > +
-> > > >=20
-> > > >  static struct clk_hw_onecell_data sun8i_a83t_de2_hw_clks =3D {
-> > > > =20
-> > > >         .hws    =3D {
-> > > >        =20
-> > > >                 [CLK_MIXER0]            =3D &mixer0_clk.common.hw,
-> > > >=20
-> > > > @@ -156,6 +200,13 @@ static struct ccu_reset_map
-> > > > sun50i_a64_de2_resets[] =3D
-> > > > {>
-> > > >=20
-> > > >         [RST_WB]        =3D { 0x08, BIT(2) },
-> > > > =20
-> > > >  };
-> > > >=20
-> > > > +static struct ccu_reset_map sun50i_h6_de3_resets[] =3D {
-> > > > +       [RST_MIXER0]    =3D { 0x08, BIT(0) },
-> > > > +       [RST_MIXER1]    =3D { 0x08, BIT(1) },
-> > > > +       [RST_WB]        =3D { 0x08, BIT(2) },
-> > > > +       [RST_ROT]       =3D { 0x08, BIT(3) },
-> > > > +};
-> > > > +
-> > > >=20
-> > > >  static const struct sunxi_ccu_desc sun8i_a83t_de2_clk_desc =3D {
-> > > > =20
-> > > >         .ccu_clks       =3D sun8i_a83t_de2_clks,
-> > > >         .num_ccu_clks   =3D ARRAY_SIZE(sun8i_a83t_de2_clks),
-> > > >=20
-> > > > @@ -186,6 +237,16 @@ static const struct sunxi_ccu_desc
-> > > > sun50i_a64_de2_clk_desc =3D {>
-> > > >=20
-> > > >         .num_resets     =3D ARRAY_SIZE(sun50i_a64_de2_resets),
-> > > > =20
-> > > >  };
-> > > >=20
-> > > > +static const struct sunxi_ccu_desc sun50i_h6_de3_clk_desc =3D {
-> > > > +       .ccu_clks       =3D sun50i_h6_de3_clks,
-> > > > +       .num_ccu_clks   =3D ARRAY_SIZE(sun50i_h6_de3_clks),
-> > > > +
-> > > > +       .hw_clks        =3D &sun50i_h6_de3_hw_clks,
-> > > > +
-> > > > +       .resets         =3D sun50i_h6_de3_resets,
-> > > > +       .num_resets     =3D ARRAY_SIZE(sun50i_h6_de3_resets),
-> > > > +};
-> > > > +
-> > > >=20
-> > > >  static const struct sunxi_ccu_desc sun8i_v3s_de2_clk_desc =3D {
-> > > > =20
-> > > >         .ccu_clks       =3D sun8i_v3s_de2_clks,
-> > > >         .num_ccu_clks   =3D ARRAY_SIZE(sun8i_v3s_de2_clks),
-> > > >=20
-> > > > @@ -296,6 +357,10 @@ static const struct of_device_id
-> > > > sunxi_de2_clk_ids[]
-> > > > =3D {>
-> > > >=20
-> > > >                 .compatible =3D "allwinner,sun50i-h5-de2-clk",
-> > > >                 .data =3D &sun50i_a64_de2_clk_desc,
-> > > >        =20
-> > > >         },
-> > > >=20
-> > > > +       {
-> > > > +               .compatible =3D "allwinner,sun50i-h6-de3-clk",
-> > > > +               .data =3D &sun50i_h6_de3_clk_desc,
-> > > > +       },
-> > > >=20
-> > > >         { }
-> > > > =20
-> > > >  };
-> > > >=20
-> > > > diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-de2.h
-> > > > b/drivers/clk/sunxi-ng/ccu-sun8i-de2.h index
-> > > > 530c006e0ae9..27bd88539f42
-> > > > 100644
-> > > > --- a/drivers/clk/sunxi-ng/ccu-sun8i-de2.h
-> > > > +++ b/drivers/clk/sunxi-ng/ccu-sun8i-de2.h
-> > > > @@ -22,6 +22,7 @@
-> > > >=20
-> > > >  #define CLK_MIXER0_DIV 3
-> > > >  #define CLK_MIXER1_DIV 4
-> > > >  #define CLK_WB_DIV     5
-> > > >=20
-> > > > +#define CLK_ROT_DIV    11
-> > > >=20
-> > > >  #define CLK_NUMBER     (CLK_WB + 1)
-> > > >=20
-> > > > --
-> > > > 2.18.0
+diff --git a/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt b/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
+index 3ca56fdb5ffe..a4b056761eaa 100644
+--- a/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
++++ b/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
+@@ -1,16 +1,17 @@
+-* ROHM BD71837 Power Management Integrated Circuit bindings
++* ROHM BD71837 and BD71847 Power Management Integrated Circuit bindings
+ 
+-BD71837MWV is a programmable Power Management IC for powering single-core,
+-dual-core, and quad-core SoCs such as NXP-i.MX 8M. It is optimized for
+-low BOM cost and compact solution footprint. It integrates 8 Buck
+-egulators and 7 LDOs to provide all the power rails required by the SoC and
+-the commonly used peripherals.
++BD71837MWV and BD71847MWV are programmable Power Management ICs for powering
++single-core, dual-core, and quad-core SoCs such as NXP-i.MX 8M. They are
++optimized for low BOM cost and compact solution footprint. BD71837MWV
++integrates 8 Buck regulators and 7 LDOs. BD71847MWV contains 6 Buck regulators
++and 6 LDOs.
+ 
+-Datasheet for PMIC is available at:
++Datasheet for BD71837 is available at:
+ https://www.rohm.com/datasheet/BD71837MWV/bd71837mwv-e
+ 
+ Required properties:
+- - compatible		: Should be "rohm,bd71837".
++ - compatible		: Should be "rohm,bd71837" for bd71837
++				    "rohm,bd71847" for bd71847.
+  - reg			: I2C slave address.
+  - interrupt-parent	: Phandle to the parent interrupt controller.
+  - interrupts		: The interrupt line the device is connected to.
+-- 
+2.14.3
