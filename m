@@ -1,353 +1,480 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Jagan Teki <jagan@amarulasolutions.com>
-To: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Cc: Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v5 2/2] arm64: dts: allwinner: a64: Enable HDMI output on A64 boards w/ HDMI
-Date: Tue, 25 Sep 2018 14:19:40 +0530
-Message-Id: <20180925084940.27903-2-jagan@amarulasolutions.com>
-In-Reply-To: <20180925084940.27903-1-jagan@amarulasolutions.com>
-References: <20180925084940.27903-1-jagan@amarulasolutions.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:12326 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727065AbeIODnn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Sep 2018 23:43:43 -0400
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: <linux-clk@vger.kernel.org>
+CC: Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: [RFC 14/14] dt-bindings: tegra: Add Tegra210 EMC binding
+Date: Sat, 15 Sep 2018 00:48:15 +0300
+Message-ID: <1536961695-27809-15-git-send-email-pdeschrijver@nvidia.com>
+In-Reply-To: <1536961695-27809-1-git-send-email-pdeschrijver@nvidia.com>
+References: <1536961695-27809-1-git-send-email-pdeschrijver@nvidia.com>
 MIME-Version: 1.0
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Enable all necessary device tree nodes and add connector node to device
-trees for all supported A64 boards with HDMI.
-
-Jagan, tested on BPI-M64, OPI-Win, A64-Olinuxino, NPI-A64
-Vasily, tested on pine64-lts
-
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-[Icenowy: squash all board patches altogether and change supply name]
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-Tested-by: Jagan Teki <jagan@amarulasolutions.com>
-Tested-by: Vasily Khoruzhick <anarsoul@gmail.com>
+Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 ---
-Changes in v5:
-- Collect tested-by credits from Jagan, Vasily
-Changes in v4:
-- Rebase some device trees.
-Changes in v3,1:
-- Squash all enablement patches altogether.
-- Change supply name to match DT binding & driver change.
-Changes for v3:
-- Enable all pipeline components
-Changes for v2:
-- none
+ .../memory-controllers/nvidia,tegra210-emc.txt     | 448 +++++++++++++++++++++
+ 1 file changed, 448 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt
 
- .../dts/allwinner/sun50i-a64-bananapi-m64.dts | 26 +++++++++++++++++++
- .../dts/allwinner/sun50i-a64-nanopi-a64.dts   | 26 +++++++++++++++++++
- .../dts/allwinner/sun50i-a64-olinuxino.dts    | 26 +++++++++++++++++++
- .../dts/allwinner/sun50i-a64-orangepi-win.dts | 26 +++++++++++++++++++
- .../boot/dts/allwinner/sun50i-a64-pine64.dts  | 26 +++++++++++++++++++
- .../allwinner/sun50i-a64-sopine-baseboard.dts | 26 +++++++++++++++++++
- 6 files changed, 156 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
-index 846c350decb4..ef1c90401bb2 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
-@@ -60,6 +60,17 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	hdmi-connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
+diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt
+new file mode 100644
+index 0000000..1c52f47
+--- /dev/null
++++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt
+@@ -0,0 +1,448 @@
++NVIDIA Tegra210 SoC EMC (external memory controller)
++====================================================
 +
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
++Required properties :
++- compatible : Should be "nvidia,tegra21-emc", "nvidia,tegra124-emc".
++- reg : physical base address and length of the controller's registers.
++- nvidia,memory-controller : phandle of the MC driver.
++- clocks : phandles of the possible source clocks
++- clock-names : names of the possible source clocks
 +
- 	leds {
- 		compatible = "gpio-leds";
- 
-@@ -86,6 +97,10 @@
- 	};
- };
- 
-+&de {
-+	status = "okay";
-+};
++The node should contain a "emc-table" subnode for each supported RAM type
++(see field RAM_CODE in register PMC_STRAPPING_OPT_A), with its unit address
++being its RAM_CODE.
 +
- &ehci0 {
- 	status = "okay";
- };
-@@ -103,6 +118,17 @@
- 	status = "okay";
- };
- 
-+&hdmi {
-+	hvcc-supply = <&reg_dldo1>;
-+	status = "okay";
-+};
++Required properties for "emc-table" nodes :
++- nvidia,ram-code : Should contain the value of RAM_CODE this timing set is
++used for.
 +
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
++Each "emc-table" node should contain a "emc-table" subnode for every supported
++EMC clock rate. The "emc-table" subnodes should have the clock rate in kHz as
++their unit address.
 +
- &i2c1 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&i2c1_pins>;
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
-index a0ac1390270e..31884dbc8838 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
-@@ -59,6 +59,17 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	hdmi-connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
++Required properties for "emc-table" nodes :
++- compatible  "nvidia,tegra21-emc-table", "nvidia,tegra210-emc-table"
++- nvidia,revision : revision of the parameter set used for this node. All
++                    nodes in the same "emc-table" should have the same revision
++- clock-frequency : frequency in kHz
++- nvidia,emc-min-mv : minimum voltage for this OPP
++- nvidia,gk20a-min-mv : minimum GPU voltage for this OPP
++- nvidia,source : clock source to be used for this OPP
++- nvidia,src-sel-reg : value of EMC CAR register to be used for this OPP
++- nvidia,needs-training : 1 if the OPP needs training at boot, 0 otherwise
++- nvidia,trained : 1 if initial training has been done by firmware, 0 otherwise
++- nvidia,periodic_training : 1 if the OPP needs periodic training, 0 otherwise
++- nvidia,trained_dram_clktree_c0d0u0 : training data word
++- nvidia,trained_dram_clktree_c0d0u1 : training data word
++- nvidia,trained_dram_clktree_c0d1u0 : training data word
++- nvidia,trained_dram_clktree_c0d1u1 : training data word
++- nvidia,trained_dram_clktree_c1d0u0 : training data word
++- nvidia,trained_dram_clktree_c1d0u1 : training data word
++- nvidia,trained_dram_clktree_c1d1u0 : training data word
++- nvidia,trained_dram_clktree_c1d1u1 : training data word
++- nvidia,run_clocks : training data
++- nvidia,tree_margin : training data
++- nvidia,burst-regs-num : number of values in nvidia,emc-registers
++- nvidia,burst-regs-per-ch-num : number of values in nvidia,emc-burst-regs-per-ch
++- nvidia,trim-regs-num : number of values in nvidia,emc-trim-regs
++- nvidia,trim-regs-per-ch-num : number of values in nvidia,emc-trim-regs-per-ch
++- nvidia,burst-mc-regs-num : number of values in nvidia,emc-burst-mc-regs
++- nvidia,la-scale-regs-num : number of values in nvidia,emc-la-scale-regs
++- nvidia,vref-regs-num : number of values in nvidia,emc-vref-regs
++- nvidia,dram-timing-regs: number of values in nvidia,emc-dram-timing-regs
++- nvidia,min-mrs-wait : value of the EMC_MRW register
++- nvidia,emc-mrw : value of the EMC_MRW register
++- nvidia,emc-mrw2 : value of the EMC_MRW2 register
++- nvidia,emc-mrw3 : used to determine the value of EMC_MRW3
++- nvidia,emc-mrw4 : value of EMC_MRW4
++- nvidia,ptfv : control data for periodic training
++- nvidia,emc-registers : values for the following registers (See TRM 18.11.2 for register descriptions)
++	 EMC_RC
++	 EMC_RFC
++	 EMC_RFCPB
++	 EMC_REFCTRL2
++	 EMC_RFC_SLR
++	 EMC_RAS
++	 EMC_RP
++	 EMC_R2W
++	 EMC_W2R
++	 EMC_R2P
++	 EMC_W2P
++	 EMC_R2R
++	 EMC_TPPD
++	 EMC_CCDMW
++	 EMC_RD_RCD
++	 EMC_WR_RCD
++	 EMC_RRD
++	 EMC_REXT
++	 EMC_WEXT
++	 EMC_WDV_CHK
++	 EMC_WDV
++	 EMC_WSV
++	 EMC_WEV
++	 EMC_WDV_MASK
++	 EMC_WS_DURATION
++	 EMC_WE_DURATION
++	 EMC_QUSE
++	 EMC_QUSE_WIDTH
++	 EMC_IBDLY
++	 EMC_OBDLY
++	 EMC_EINPUT
++	 EMC_MRW6
++	 EMC_EINPUT_DURATION
++	 EMC_PUTERM_EXTRA
++	 EMC_PUTERM_WIDTH
++	 EMC_QRST
++	 EMC_QSAFE
++	 EMC_RDV
++	 EMC_RDV_MASK
++	 EMC_RDV_EARLY
++	 EMC_RDV_EARLY_MASK
++	 EMC_REFRESH
++	 EMC_BURST_REFRESH_NUM
++	 EMC_PRE_REFRESH_REQ_CNT
++	 EMC_PDEX2WR
++	 EMC_PDEX2RD
++	 EMC_PCHG2PDEN
++	 EMC_ACT2PDEN
++	 EMC_AR2PDEN
++	 EMC_RW2PDEN
++	 EMC_CKE2PDEN
++	 EMC_PDEX2CKE
++	 EMC_PDEX2MRR
++	 EMC_TXSR
++	 EMC_TXSRDLL
++	 EMC_TCKE
++	 EMC_TCKESR
++	 EMC_TPD
++	 EMC_TFAW
++	 EMC_TRPAB
++	 EMC_TCLKSTABLE
++	 EMC_TCLKSTOP
++	 EMC_MRW7
++	 EMC_TREFBW
++	 EMC_ODT_WRITE
++	 EMC_FBIO_CFG5
++	 EMC_FBIO_CFG7
++	 EMC_CFG_DIG_DLL
++	 EMC_CFG_DIG_DLL_PERIOD
++	 EMC_PMACRO_IB_RXRT
++	 EMC_CFG_PIPE_1
++	 EMC_CFG_PIPE_2
++	 EMC_PMACRO_QUSE_DDLL_RANK0_4
++	 EMC_PMACRO_QUSE_DDLL_RANK0_5
++	 EMC_PMACRO_QUSE_DDLL_RANK1_4
++	 EMC_PMACRO_QUSE_DDLL_RANK1_5
++	 EMC_MRW8
++	 EMC_PMACRO_OB_DDLL_LONG_DQ_RANK1_4
++	 EMC_PMACRO_OB_DDLL_LONG_DQ_RANK1_5
++	 EMC_PMACRO_OB_DDLL_LONG_DQS_RANK0_0
++	 EMC_PMACRO_OB_DDLL_LONG_DQS_RANK0_1
++	 EMC_PMACRO_OB_DDLL_LONG_DQS_RANK0_2
++	 EMC_PMACRO_OB_DDLL_LONG_DQS_RANK0_3
++	 EMC_PMACRO_OB_DDLL_LONG_DQS_RANK0_4
++	 EMC_PMACRO_OB_DDLL_LONG_DQS_RANK0_5
++	 EMC_PMACRO_OB_DDLL_LONG_DQS_RANK1_0
++	 EMC_PMACRO_OB_DDLL_LONG_DQS_RANK1_1
++	 EMC_PMACRO_OB_DDLL_LONG_DQS_RANK1_2
++	 EMC_PMACRO_OB_DDLL_LONG_DQS_RANK1_3
++	 EMC_PMACRO_OB_DDLL_LONG_DQS_RANK1_4
++	 EMC_PMACRO_OB_DDLL_LONG_DQS_RANK1_5
++	 EMC_PMACRO_DDLL_LONG_CMD_0
++	 EMC_PMACRO_DDLL_LONG_CMD_1
++	 EMC_PMACRO_DDLL_LONG_CMD_2
++	 EMC_PMACRO_DDLL_LONG_CMD_3
++	 EMC_PMACRO_DDLL_LONG_CMD_4
++	 EMC_PMACRO_DDLL_SHORT_CMD_0
++	 EMC_PMACRO_DDLL_SHORT_CMD_1
++	 EMC_PMACRO_DDLL_SHORT_CMD_2
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE0_3
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE1_3
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE2_3
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE3_3
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE4_3
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE5_3
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE6_3
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE7_3
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD0_3
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD1_3
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD2_3
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD3_3
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE0_3
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE1_3
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE2_3
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE3_3
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE4_3
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE5_3
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE6_3
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE7_3
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD0_0
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD0_1
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD0_2
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD0_3
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD1_0
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD1_1
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD1_2
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD1_3
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD2_0
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD2_1
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD2_2
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD2_3
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD3_0
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD3_1
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD3_2
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_CMD3_3
++	 EMC_TXDSRVTTGEN
++	 EMC_FDPD_CTRL_DQ
++	 EMC_FDPD_CTRL_CMD
++	 EMC_FBIO_SPARE
++	 EMC_ZCAL_INTERVAL
++	 EMC_ZCAL_WAIT_CNT
++	 EMC_MRS_WAIT_CNT
++	 EMC_MRS_WAIT_CNT2
++	 EMC_AUTO_CAL_CHANNEL
++	 EMC_DLL_CFG_0
++	 EMC_DLL_CFG_1
++	 EMC_PMACRO_AUTOCAL_CFG_COMMON
++	 EMC_PMACRO_ZCTRL
++	 EMC_CFG
++	 EMC_CFG_PIPE
++	 EMC_DYN_SELF_REF_CONTROL
++	 EMC_QPOP
++	 EMC_DQS_BRLSHFT_0
++	 EMC_DQS_BRLSHFT_1
++	 EMC_CMD_BRLSHFT_2
++	 EMC_CMD_BRLSHFT_3
++	 EMC_PMACRO_PAD_CFG_CTRL
++	 EMC_PMACRO_DATA_PAD_RX_CTRL
++	 EMC_PMACRO_CMD_PAD_RX_CTRL
++	 EMC_PMACRO_DATA_RX_TERM_MODE
++	 EMC_PMACRO_CMD_RX_TERM_MODE
++	 EMC_PMACRO_CMD_PAD_TX_CTRL
++	 EMC_PMACRO_DATA_PAD_TX_CTRL
++	 EMC_PMACRO_COMMON_PAD_TX_CTRL
++	 EMC_PMACRO_VTTGEN_CTRL_0
++	 EMC_PMACRO_VTTGEN_CTRL_1
++	 EMC_PMACRO_VTTGEN_CTRL_2
++	 EMC_PMACRO_BRICK_CTRL_RFU1
++	 EMC_PMACRO_CMD_BRICK_CTRL_FDPD
++	 EMC_PMACRO_BRICK_CTRL_RFU2
++	 EMC_PMACRO_DATA_BRICK_CTRL_FDPD
++	 EMC_PMACRO_BG_BIAS_CTRL_0
++	 EMC_CFG_3
++	 EMC_PMACRO_TX_PWRD_0
++	 EMC_PMACRO_TX_PWRD_1
++	 EMC_PMACRO_TX_PWRD_2
++	 EMC_PMACRO_TX_PWRD_3
++	 EMC_PMACRO_TX_PWRD_4
++	 EMC_PMACRO_TX_PWRD_5
++	 EMC_CONFIG_SAMPLE_DELAY
++	 EMC_PMACRO_TX_SEL_CLK_SRC_0
++	 EMC_PMACRO_TX_SEL_CLK_SRC_1
++	 EMC_PMACRO_TX_SEL_CLK_SRC_2
++	 EMC_PMACRO_TX_SEL_CLK_SRC_3
++	 EMC_PMACRO_TX_SEL_CLK_SRC_4
++	 EMC_PMACRO_TX_SEL_CLK_SRC_5
++	 EMC_PMACRO_DDLL_BYPASS
++	 EMC_PMACRO_DDLL_PWRD_0
++	 EMC_PMACRO_DDLL_PWRD_1
++	 EMC_PMACRO_DDLL_PWRD_2
++	 EMC_PMACRO_CMD_CTRL_0
++	 EMC_PMACRO_CMD_CTRL_1
++	 EMC_PMACRO_CMD_CTRL_2
++	 EMC_TR_TIMING_0
++	 EMC_TR_DVFS
++	 EMC_TR_CTRL_1
++	 EMC_TR_RDV
++	 EMC_TR_QPOP
++	 EMC_TR_RDV_MASK
++	 EMC_MRW14
++	 EMC_TR_QSAFE
++	 EMC_TR_QRST
++	 EMC_TRAINING_CTRL
++	 EMC_TRAINING_SETTLE
++	 EMC_TRAINING_VREF_SETTLE
++	 EMC_TRAINING_CA_FINE_CTRL
++	 EMC_TRAINING_CA_CTRL_MISC
++	 EMC_TRAINING_CA_CTRL_MISC1
++	 EMC_TRAINING_CA_VREF_CTRL
++	 EMC_TRAINING_QUSE_CORS_CTRL
++	 EMC_TRAINING_QUSE_FINE_CTRL
++	 EMC_TRAINING_QUSE_CTRL_MISC
++	 EMC_TRAINING_QUSE_VREF_CTRL
++	 EMC_TRAINING_READ_FINE_CTRL
++	 EMC_TRAINING_READ_CTRL_MISC
++	 EMC_TRAINING_READ_VREF_CTRL
++	 EMC_TRAINING_WRITE_FINE_CTRL
++	 EMC_TRAINING_WRITE_CTRL_MISC
++	 EMC_TRAINING_WRITE_VREF_CTRL
++	 EMC_TRAINING_MPC
++	 EMC_MRW15
++- nvidia,emc-burst-regs-per-ch : values for the following registers (See TRM 18.11.2 for register descriptions)
++	 the array containts 2 values for each register, one per channel.
++	 EMC_MRW10
++	 EMC_MRW11
++	 EMC_MRW12
++	 EMC_MRW13
++- nvidia,emc-trim-regs : values for the following registers (See TRM 18.11.2 for register descriptions)
++	 EMC_PMACRO_IB_DDLL_LONG_DQS_RANK0_0
++	 EMC_PMACRO_IB_DDLL_LONG_DQS_RANK0_1
++	 EMC_PMACRO_IB_DDLL_LONG_DQS_RANK0_2
++	 EMC_PMACRO_IB_DDLL_LONG_DQS_RANK0_3
++	 EMC_PMACRO_IB_DDLL_LONG_DQS_RANK1_0
++	 EMC_PMACRO_IB_DDLL_LONG_DQS_RANK1_1
++	 EMC_PMACRO_IB_DDLL_LONG_DQS_RANK1_2
++	 EMC_PMACRO_IB_DDLL_LONG_DQS_RANK1_3
++	 EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE0_0
++	 EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE0_1
++	 EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE0_2
++	 EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE1_0
++	 EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE1_1
++	 EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE1_2
++	 EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE2_0
++	 EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE2_1
++	 EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE2_2
++	 EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE3_0
++	 EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE3_1
++	 EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE3_2
++	 EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE4_0
++	 EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE4_1
++	 EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE4_2
++	 EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE5_0
++	 EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE5_1
++	 EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE5_2
++	 EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE6_0
++	 EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE6_1
++	 EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE6_2
++	 EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE7_0
++	 EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE7_1
++	 EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK0_BYTE7_2
++	 EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE0_0
++	 EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE0_1
++	 EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE0_2
++	 EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE1_0
++	 EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE1_1
++	 EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE1_2
++	 EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE2_0
++	 EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE2_1
++	 EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE2_2
++	 EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE3_0
++	 EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE3_1
++	 EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE3_2
++	 EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE4_0
++	 EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE4_1
++	 EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE4_2
++	 EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE5_0
++	 EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE5_1
++	 EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE5_2
++	 EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE6_0
++	 EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE6_1
++	 EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE6_2
++	 EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE7_0
++	 EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE7_1
++	 EMC_PMACRO_IB_DDLL_SHORT_DQ_RANK1_BYTE7_2
++	 EMC_PMACRO_IB_VREF_DQS_0
++	 EMC_PMACRO_IB_VREF_DQS_1
++	 EMC_PMACRO_IB_VREF_DQ_0
++	 EMC_PMACRO_IB_VREF_DQ_1
++	 EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_0
++	 EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_1
++	 EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_2
++	 EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_3
++	 EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_4
++	 EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_5
++	 EMC_PMACRO_OB_DDLL_LONG_DQ_RANK1_0
++	 EMC_PMACRO_OB_DDLL_LONG_DQ_RANK1_1
++	 EMC_PMACRO_OB_DDLL_LONG_DQ_RANK1_2
++	 EMC_PMACRO_OB_DDLL_LONG_DQ_RANK1_3
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE0_0
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE0_1
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE0_2
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE1_0
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE1_1
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE1_2
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE2_0
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE2_1
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE2_2
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE3_0
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE3_1
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE3_2
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE4_0
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE4_1
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE4_2
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE5_0
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE5_1
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE5_2
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE6_0
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE6_1
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE6_2
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE7_0
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE7_1
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_BYTE7_2
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD0_0
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD0_1
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD0_2
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD1_0
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD1_1
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD1_2
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD2_0
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD2_1
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD2_2
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD3_0
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD3_1
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK0_CMD3_2
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE0_0
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE0_1
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE0_2
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE1_0
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE1_1
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE1_2
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE2_0
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE2_1
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE2_2
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE3_0
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE3_1
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE3_2
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE4_0
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE4_1
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE4_2
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE5_0
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE5_1
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE5_2
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE6_0
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE6_1
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE6_2
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE7_0
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE7_1
++	 EMC_PMACRO_OB_DDLL_SHORT_DQ_RANK1_BYTE7_2
++	 EMC_PMACRO_QUSE_DDLL_RANK0_0
++	 EMC_PMACRO_QUSE_DDLL_RANK0_1
++	 EMC_PMACRO_QUSE_DDLL_RANK0_2
++	 EMC_PMACRO_QUSE_DDLL_RANK0_3
++	 EMC_PMACRO_QUSE_DDLL_RANK1_0
++	 EMC_PMACRO_QUSE_DDLL_RANK1_1
++	 EMC_PMACRO_QUSE_DDLL_RANK1_2
++	 EMC_PMACRO_QUSE_DDLL_RANK1_3
++- nvidia,emc-trim-regs-per-ch : values for the following registers (See TRM 18.11.2 for register descriptions)
++	 EMC_CMD_BRLSHFT_0
++	 EMC_CMD_BRLSHFT_1
++	 EMC_DATA_BRLSHFT_0 (channel 0)
++	 EMC_DATA_BRLSHFT_0 (channel 1)
++	 EMC_DATA_BRLSHFT_1 (channel 0)
++	 EMC_DATA_BRLSHFT_1 (channel 1)
++	 EMC_QUSE_BRLSHFT_0
++	 EMC_QUSE_BRLSHFT_1
++	 EMC_QUSE_BRLSHFT_2
++	 EMC_QUSE_BRLSHFT_3
++- nvidia,emc-vref-regs : values for the following registers (See TRM 18.11.2 for register descriptions)
++	 the array containts 2 values for each register, one per channel.
++	 EMC_TRAINING_OPT_DQS_IB_VREF_RANK0
++	 EMC_TRAINING_OPT_DQS_IB_VREF_RANK1
++- nvidia,emc-dram-timing-regs : DRAM timing values. These are not written to
++				registers but used during the sequence.
++	 T_RP : row pre-charge delay
++	 T_FC_LPDDR4 : frequency change time
++	 T_RFC : refresh cycle time
++	 T_PDEX : power down exit delay
++	 RL : mode register read latency
 +
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+
- 	leds {
- 		compatible = "gpio-leds";
- 
-@@ -76,6 +87,10 @@
- 	};
- };
- 
-+&de {
-+	status = "okay";
-+};
-+
- &ehci0 {
- 	status = "okay";
- };
-@@ -93,6 +108,17 @@
- 	status = "okay";
- };
- 
-+&hdmi {
-+	hvcc-supply = <&reg_dldo1>;
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
- /* i2c1 connected with gpio headers like pine64, bananapi */
- &i2c1 {
- 	pinctrl-names = "default";
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
-index 657f58def54c..6ef3dd4c2389 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
-@@ -59,6 +59,17 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	hdmi-connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+
- 	reg_usb1_vbus: usb1-vbus {
- 		compatible = "regulator-fixed";
- 		regulator-name = "usb1-vbus";
-@@ -76,6 +87,10 @@
- 	};
- };
- 
-+&de {
-+	status = "okay";
-+};
-+
- &ehci0 {
- 	status = "okay";
- };
-@@ -93,6 +108,17 @@
- 	status = "okay";
- };
- 
-+&hdmi {
-+	hvcc-supply = <&reg_dldo1>;
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
- &mdio {
- 	ext_rgmii_phy: ethernet-phy@1 {
- 		compatible = "ethernet-phy-ieee802.3-c22";
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
-index dc9a8d77f693..b0c64f75792c 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-orangepi-win.dts
-@@ -64,6 +64,17 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	hdmi-connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+
- 	leds {
- 		compatible = "gpio-leds";
- 
-@@ -101,6 +112,10 @@
- 	};
- };
- 
-+&de {
-+	status = "okay";
-+};
-+
- &ehci0 {
- 	status = "okay";
- };
-@@ -118,6 +133,17 @@
- 	status = "okay";
- };
- 
-+&hdmi {
-+	hvcc-supply = <&reg_dldo1>;
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
- &mdio {
- 	ext_rgmii_phy: ethernet-phy@1 {
- 		compatible = "ethernet-phy-ieee802.3-c22";
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
-index d3d5282b0ba8..c077b6c1f458 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pine64.dts
-@@ -62,6 +62,21 @@
- 	chosen {
- 		stdout-path = "serial0:115200n8";
- 	};
-+
-+	hdmi-connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+};
-+
-+&de {
-+	status = "okay";
- };
- 
- &ehci0 {
-@@ -82,6 +97,17 @@
- 
- };
- 
-+&hdmi {
-+	hvcc-supply = <&reg_dldo1>;
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
- &i2c1 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&i2c1_pins>;
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
-index beaa092976d7..53fcc9098df3 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-sopine-baseboard.dts
-@@ -61,6 +61,17 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	hdmi-connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+
- 	reg_vcc1v8: vcc1v8 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "vcc1v8";
-@@ -69,6 +80,10 @@
- 	};
- };
- 
-+&de {
-+	status = "okay";
-+};
-+
- &ehci0 {
- 	status = "okay";
- };
-@@ -86,6 +101,17 @@
- 	status = "okay";
- };
- 
-+&hdmi {
-+	hvcc-supply = <&reg_dldo1>;
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
- &mdio {
- 	ext_rgmii_phy: ethernet-phy@1 {
- 		compatible = "ethernet-phy-ieee802.3-c22";
 -- 
-2.18.0.321.gffc6fa0e3
+1.9.1
