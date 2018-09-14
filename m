@@ -1,52 +1,65 @@
-Return-Path: <anson.huang@nxp.com>
-From: Anson Huang <Anson.Huang@nxp.com>
-To: robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	fabio.estevam@nxp.com,
-	linux@armlinux.org.uk,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	ping.bai@nxp.com,
-	Aisheng.dong@nxp.com,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Cc: Linux-imx@nxp.com
-Subject: [PATCH V2 2/4] clk: imx6ul: add i.mx6ulz support
-Date: Wed, 19 Sep 2018 14:04:46 +0800
-Message-Id: <1537337088-28819-3-git-send-email-Anson.Huang@nxp.com>
-In-Reply-To: <1537337088-28819-1-git-send-email-Anson.Huang@nxp.com>
-References: <1537337088-28819-1-git-send-email-Anson.Huang@nxp.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:34052 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726883AbeINNrm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Sep 2018 09:47:42 -0400
+Date: Fri, 14 Sep 2018 11:34:02 +0300
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To: lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        lgirdwood@gmail.com, broonie@kernel.org, sboyd@kernel.org,
+        mazziesaccount@gmail.com, matti.vaittinen@fi.rohmeurope.com,
+        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH v3 7/7] regulator: bd718xx: rename bd71837 to 718xx
+Message-ID: <6b3e7b3aeef67d85083f49894e0b0fe482fc08c4.1536912922.git.matti.vaittinen@fi.rohmeurope.com>
+References: <cover.1536912922.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: Anson.Huang@nxp.com
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <cover.1536912922.git.matti.vaittinen@fi.rohmeurope.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-i.MX6ULZ has same CCM IP as i.MX6ULL, and it reuses
-i.MX6UL clock driver, this patch adds support for it.
+rename bd71837-regulator.c to bd718x7-regulator.c to reflect the
+fact that also BD71847 is now supported by the driver.
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 ---
- drivers/clk/imx/clk-imx6ul.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/regulator/Kconfig                                      | 2 +-
+ drivers/regulator/Makefile                                     | 2 +-
+ drivers/regulator/{bd71837-regulator.c => bd718x7-regulator.c} | 0
+ 3 files changed, 2 insertions(+), 2 deletions(-)
+ rename drivers/regulator/{bd71837-regulator.c => bd718x7-regulator.c} (100%)
 
-diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
-index 361b43f..42b857e 100644
---- a/drivers/clk/imx/clk-imx6ul.c
-+++ b/drivers/clk/imx/clk-imx6ul.c
-@@ -116,7 +116,8 @@ static inline int clk_on_imx6ul(void)
+diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
+index 329cdd33ed62..6e96ef1bd74a 100644
+--- a/drivers/regulator/Kconfig
++++ b/drivers/regulator/Kconfig
+@@ -189,7 +189,7 @@ config REGULATOR_BD718XX
+ 	  and LDO regulators.
  
- static inline int clk_on_imx6ull(void)
- {
--	return of_machine_is_compatible("fsl,imx6ull");
-+	return of_machine_is_compatible("fsl,imx6ull") ||
-+		of_machine_is_compatible("fsl,imx6ulz");
- }
+ 	  This driver can also be built as a module. If so, the module
+-	  will be called bd71837-regulator.
++	  will be called bd718x7-regulator.
  
- static void __init imx6ul_clocks_init(struct device_node *ccm_node)
+ config REGULATOR_BD9571MWV
+ 	tristate "ROHM BD9571MWV Regulators"
+diff --git a/drivers/regulator/Makefile b/drivers/regulator/Makefile
+index 801d9a34a203..eac4d794f3b8 100644
+--- a/drivers/regulator/Makefile
++++ b/drivers/regulator/Makefile
+@@ -27,7 +27,7 @@ obj-$(CONFIG_REGULATOR_AS3711) += as3711-regulator.o
+ obj-$(CONFIG_REGULATOR_AS3722) += as3722-regulator.o
+ obj-$(CONFIG_REGULATOR_AXP20X) += axp20x-regulator.o
+ obj-$(CONFIG_REGULATOR_BCM590XX) += bcm590xx-regulator.o
+-obj-$(CONFIG_REGULATOR_BD718XX) += bd71837-regulator.o
++obj-$(CONFIG_REGULATOR_BD718XX) += bd718x7-regulator.o
+ obj-$(CONFIG_REGULATOR_BD9571MWV) += bd9571mwv-regulator.o
+ obj-$(CONFIG_REGULATOR_DA903X)	+= da903x.o
+ obj-$(CONFIG_REGULATOR_DA9052)	+= da9052-regulator.o
+diff --git a/drivers/regulator/bd71837-regulator.c b/drivers/regulator/bd718x7-regulator.c
+similarity index 100%
+rename from drivers/regulator/bd71837-regulator.c
+rename to drivers/regulator/bd718x7-regulator.c
 -- 
-2.7.4
+2.14.3
