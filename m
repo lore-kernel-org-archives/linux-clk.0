@@ -1,102 +1,76 @@
-Return-Path: <phil.edworthy@renesas.com>
-From: Phil Edworthy <phil.edworthy@renesas.com>
-To: Stephen Boyd <sboyd@kernel.org>, Andy Shevchenko
-	<andriy.shevchenko@linux.intel.com>, Michael Turquette
-	<mturquette@baylibre.com>, Russell King <linux@armlinux.org.uk>
-CC: Geert Uytterhoeven <geert@linux-m68k.org>, Simon Horman
-	<horms@verge.net.au>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH v5 1/2] clk: Add of_clk_get_by_name_optional() function
-Date: Mon, 3 Sep 2018 09:32:54 +0000
-Message-ID: 
- <TY1PR01MB1769CBB6FC715E94B10815BFF50C0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-References: <1535724443-21150-1-git-send-email-phil.edworthy@renesas.com>
- <1535724443-21150-2-git-send-email-phil.edworthy@renesas.com>
- <153576994987.19113.11376893046599589648@swboyd.mtv.corp.google.com>
-In-Reply-To: 
- <153576994987.19113.11376893046599589648@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
+Message-ID: <4fa10f679ad4b1b619daa521a8641c145cf8537e.camel@buserror.net>
+From: Scott Wood <oss@buserror.net>
+To: Vabhav Sharma <vabhav.sharma@nxp.com>, sudeep.holla@arm.com,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ robh+dt@kernel.org,  mark.rutland@arm.com, linuxppc-dev@lists.ozlabs.org,
+ linux-arm-kernel@lists.infradead.org, mturquette@baylibre.com,
+ sboyd@kernel.org,  rjw@rjwysocki.net, viresh.kumar@linaro.org,
+ linux-clk@vger.kernel.org,  linux-pm@vger.kernel.org,
+ linux-kernel-owner@vger.kernel.org,  catalin.marinas@arm.com,
+ will.deacon@arm.com, gregkh@linuxfoundation.org,  arnd@arndb.de,
+ kstewart@linuxfoundation.org, yamada.masahiro@socionext.com
+Date: Sat, 15 Sep 2018 14:24:21 -0500
+In-Reply-To: <1536871075-3732-4-git-send-email-vabhav.sharma@nxp.com>
+References: <1536871075-3732-1-git-send-email-vabhav.sharma@nxp.com>
+ <1536871075-3732-4-git-send-email-vabhav.sharma@nxp.com>
+Mime-Version: 1.0
+Subject: Re: [PATCH v2 3/5] drivers: clk-qoriq: Add clockgen support for
+ lx2160a
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Cc: Tang Yuantian <andy.tang@nxp.com>, udit.kumar@nxp.com,
+ Yogesh Gaur <yogeshnarayan.gaur@nxp.com>, linux@armlinux.org.uk,
+ V.Sethi@nxp.com
+Content-Type: text/plain; charset="us-ascii"
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgU3RlcGhlbiwNCg0KT24gMDEgU2VwdGVtYmVyIDIwMTggMDM6NDYsIFN0ZXBoZW4gQm95ZCB3
-cm90ZToNCj4gUXVvdGluZyBQaGlsIEVkd29ydGh5ICgyMDE4LTA4LTMxIDA3OjA3OjIyKQ0KPiA+
-IGRpZmYgLS1naXQgYS9kcml2ZXJzL2Nsay9jbGtkZXYuYyBiL2RyaXZlcnMvY2xrL2Nsa2Rldi5j
-IGluZGV4DQo+ID4gOWFiM2RiOC4uNGFkYjk5ZSAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL2Ns
-ay9jbGtkZXYuYw0KPiA+ICsrKyBiL2RyaXZlcnMvY2xrL2Nsa2Rldi5jDQo+ID4gQEAgLTU0LDMw
-ICs1NCwyOSBAQCBFWFBPUlRfU1lNQk9MKG9mX2Nsa19nZXQpOw0KPiA+DQo+ID4gIHN0YXRpYyBz
-dHJ1Y3QgY2xrICpfX29mX2Nsa19nZXRfYnlfbmFtZShzdHJ1Y3QgZGV2aWNlX25vZGUgKm5wLA0K
-PiA+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBjb25zdCBjaGFyICpk
-ZXZfaWQsDQo+ID4gLSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGNvbnN0
-IGNoYXIgKm5hbWUpDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-IGNvbnN0IGNoYXIgKm5hbWUsDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgIGJvb2wgb3B0aW9uYWwpDQo+ID4gIHsNCj4gPiAgICAgICAgIHN0cnVjdCBjbGsgKmNs
-ayA9IEVSUl9QVFIoLUVOT0VOVCk7DQo+ID4gKyAgICAgICBzdHJ1Y3QgZGV2aWNlX25vZGUgKmNo
-aWxkID0gbnA7DQo+ID4gKyAgICAgICBpbnQgaW5kZXggPSAwOw0KPiA+DQo+ID4gICAgICAgICAv
-KiBXYWxrIHVwIHRoZSB0cmVlIG9mIGRldmljZXMgbG9va2luZyBmb3IgYSBjbG9jayB0aGF0IG1h
-dGNoZXMgKi8NCj4gPiAgICAgICAgIHdoaWxlIChucCkgew0KPiA+IC0gICAgICAgICAgICAgICBp
-bnQgaW5kZXggPSAwOw0KPiA+DQo+ID4gICAgICAgICAgICAgICAgIC8qDQo+ID4gICAgICAgICAg
-ICAgICAgICAqIEZvciBuYW1lZCBjbG9ja3MsIGZpcnN0IGxvb2sgdXAgdGhlIG5hbWUgaW4gdGhl
-DQo+ID4gICAgICAgICAgICAgICAgICAqICJjbG9jay1uYW1lcyIgcHJvcGVydHkuICBJZiBpdCBj
-YW5ub3QgYmUgZm91bmQsIHRoZW4NCj4gPiAtICAgICAgICAgICAgICAgICogaW5kZXggd2lsbCBi
-ZSBhbiBlcnJvciBjb2RlLCBhbmQgb2ZfY2xrX2dldCgpIHdpbGwgZmFpbC4NCj4gPiArICAgICAg
-ICAgICAgICAgICogaW5kZXggd2lsbCBiZSBhbiBlcnJvciBjb2RlLg0KPiA+ICAgICAgICAgICAg
-ICAgICAgKi8NCj4gPiAgICAgICAgICAgICAgICAgaWYgKG5hbWUpDQo+ID4gICAgICAgICAgICAg
-ICAgICAgICAgICAgaW5kZXggPSBvZl9wcm9wZXJ0eV9tYXRjaF9zdHJpbmcobnAsICJjbG9jay1u
-YW1lcyIsIG5hbWUpOw0KPiA+IC0gICAgICAgICAgICAgICBjbGsgPSBfX29mX2Nsa19nZXQobnAs
-IGluZGV4LCBkZXZfaWQsIG5hbWUpOw0KPiA+IC0gICAgICAgICAgICAgICBpZiAoIUlTX0VSUihj
-bGspKSB7DQo+ID4gLSAgICAgICAgICAgICAgICAgICAgICAgYnJlYWs7DQo+ID4gLSAgICAgICAg
-ICAgICAgIH0gZWxzZSBpZiAobmFtZSAmJiBpbmRleCA+PSAwKSB7DQo+ID4gLSAgICAgICAgICAg
-ICAgICAgICAgICAgaWYgKFBUUl9FUlIoY2xrKSAhPSAtRVBST0JFX0RFRkVSKQ0KPiA+IC0gICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgcHJfZXJyKCJFUlJPUjogY291bGQgbm90IGdldCBj
-bG9jayAlcE9GOiVzKCVpKVxuIiwNCj4gPiAtICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgbnAsIG5hbWUgPyBuYW1lIDogIiIsIGluZGV4KTsNCj4gPiArICAgICAgICAgICAg
-ICAgaWYgKGluZGV4ID49IDApDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgY2xrID0gX19v
-Zl9jbGtfZ2V0KG5wLCBpbmRleCwgZGV2X2lkLCBuYW1lKTsNCj4gPiArICAgICAgICAgICAgICAg
-aWYgKCFJU19FUlIoY2xrKSkNCj4gDQo+IFdhcyB0aGlzIGNoYW5nZSBuZWNlc3Nhcnk/IEl0IGxv
-b2tzIGxpa2Ugd2UgY2FuIGxlYXZlIGl0IGFsbCBhbG9uZSBhbmQga2VlcA0KPiBwYXNzaW5nIGEg
-bmVnYXRpdmUgbnVtYmVyIHRvIF9fb2ZfY2xrX2dldCgpIGFuZCBoYXZlIHRoYXQgcmV0dXJuIGFu
-IGVycm9yDQo+IHBvaW50ZXIgd2hpY2ggd2UgdGhlbiByZXR1cm4gaW1tZWRpYXRlbHkgYXMgYW4g
-ZXJyb3IuIEJ1dCwgaWYgdGhlIGNsb2NrIGlzDQo+IG9wdGlvbmFsIGFuZCB3ZSd2ZSBwYXNzZWQg
-YSBuYW1lIGhlcmUsIHNob3VsZG4ndCB3ZSB0cmVhdCBhbiBlcnJvciBmcm9tDQo+IG9mX3Byb3Bl
-cnR5X21hdGNoX3N0cmluZygpIGFzIHN1Y2Nlc3MgdG9vPyBUaGlzIGlzIGFsbCBsb29raW5nIHBy
-ZXR0eSBmcmFnaWxlIHNvDQo+IG1heWJlIGl0IGNhbiBiZSBiZXR0ZXIgY29tbWVudGVkIGFuZCBh
-bHNvIG1vcmUgZXhwbGljaXQgaW5zdGVhZCBvZiByZWx5aW5nDQo+IG9uIHRoZSByZWFkZXIgdG8g
-anVtcCB0aHJvdWdoIGFsbCB0aGUgZnVuY3Rpb24gY2FsbHMgdG8gZmlndXJlIG91dCB3aGF0IHRo
-ZQ0KPiByZXR1cm4gdmFsdWUgaXMgaW4gc29tZSBjYXNlcy4NCklmIHdlIGNhbGwgX19vZl9jbGtf
-Z2V0LCB3aXRoIGluZGV4IDwgMCwgd2Ugd2lsbCBub3QgYmUgYWJsZSB0byBkaWZmZXJlbnRpYXRl
-DQpiZXR3ZWVuIGNsb2NrIHByb3ZpZGVyIG5vdCBwcmVzZW50IGFuZCBvdGhlciBlcnJvcnMgd2l0
-aCB0aGUgcGFzc2VkIGRhdGEsDQphcyBpdCB3aWxsIGp1c3QgcmV0dXJuIC1FSU5WQUwuDQoNCm9m
-X3Byb3BlcnR5X21hdGNoX3N0cmluZygpIHdpbGwgcmV0dXJuIC1FSU5WQUwgaWYgdGhlICJjbG9j
-ay1uYW1lcyIgcHJvcGVydHkNCmlzIG1pc3NpbmcsIG9yIC1FTk9EQVRBIGlmIHRoZSBzcGVjaWZp
-ZWQgY2xvY2sgbmFtZSBpbiB0aGUgImNsb2NrLW5hbWVzIg0KcHJvcGVydHkgaXMgbWlzc2luZy4g
-VGhhdCBpcyB3aHkgSSBoYXZlIGNoYW5nZWQgdGhlIGNvZGUgdG8gY29uZGl0aW9uYWxseQ0KY2Fs
-bCBfX29mX2Nsa19nZXQsIHNvIHRoZSBjb2RlIHdpbGwgY29ycmVjdGx5IHRyZWF0IG9wdGlvbmFs
-IGNsb2NrcyB0aGF0IGFyZSBub3QNCnByZXNlbnQuDQoNCg0KPiA+ICAgICAgICAgICAgICAgICAg
-ICAgICAgIHJldHVybiBjbGs7DQo+ID4gLSAgICAgICAgICAgICAgIH0NCj4gPiArICAgICAgICAg
-ICAgICAgaWYgKG5hbWUgJiYgaW5kZXggPj0gMCkNCj4gPiArICAgICAgICAgICAgICAgICAgICAg
-ICBicmVhazsNCj4gDQo+IEFuZCB0aGlzIGNhdXNlcyB1cyB0byBkdXBsaWNhdGUgbG9naWMgZG93
-biBiZWxvdyBiZWNhdXNlIHdlIGhhdmUgdG8gY2hlY2sgaXQNCj4gYWdhaW4gaWYgaXQncyBub3Qg
-b3B0aW9uYWwgb3Igc29tZSBvdGhlciBlcnJvciBjb25kaXRpb24/DQpZZXMsIHRoZSBlcnJvciBo
-YW5kbGluZyBpcyBtZXNzeSwgdGhvdWdoIEkgaGF2ZSB0cmllZCB0byBtYWtlIHRoaXMgc2ltcGxl
-Lg0KSSdsbCBoYXZlIGEgdGhpbmsgYWJvdXQgc29tZSBvdGhlciB3YXkgdG8gbWFrZSB0aGlzIGNs
-ZWFuZXIuDQoNCg0KPiA+DQo+ID4gICAgICAgICAgICAgICAgIC8qDQo+ID4gICAgICAgICAgICAg
-ICAgICAqIE5vIG1hdGNoaW5nIGNsb2NrIGZvdW5kIG9uIHRoaXMgbm9kZS4gIElmIHRoZQ0KPiA+
-IHBhcmVudCBub2RlIEBAIC04OSw2ICs4OCwxNiBAQCBzdGF0aWMgc3RydWN0IGNsaw0KPiAqX19v
-Zl9jbGtfZ2V0X2J5X25hbWUoc3RydWN0IGRldmljZV9ub2RlICpucCwNCj4gPiAgICAgICAgICAg
-ICAgICAgICAgICAgICBicmVhazsNCj4gPiAgICAgICAgIH0NCj4gPg0KPiA+ICsgICAgICAgLyog
-VGhlIGNsb2NrIGlzIG5vdCB2YWxpZCwgYnV0IGl0IGNvdWxkIGJlIG9wdGlvbmFsIG9yIGRlZmVy
-cmVkICovDQo+ID4gKyAgICAgICBpZiAob3B0aW9uYWwgJiYgUFRSX0VSUihjbGspID09IC1FTk9F
-TlQpIHsNCj4gPiArICAgICAgICAgICAgICAgY2xrID0gTlVMTDsNCj4gPiArICAgICAgICAgICAg
-ICAgcHJfaW5mbygibm8gb3B0aW9uYWwgY2xvY2sgJXBPRjolc1xuIiwgY2hpbGQsDQo+ID4gKyAg
-ICAgICAgICAgICAgICAgICAgICAgbmFtZSA/IG5hbWUgOiAiIik7DQo+IA0KPiBJcyB0aGlzIGlu
-dGVudGlvbmFsbHkgcHJfaW5mbz8NClllcywgaXQncyBub3QgYW4gZXJyb3IgaWYgYW4gb3B0aW9u
-YWwgY2xvY2sgaXNu4oCZdCB0aGVyZS4NCldvdWxkIHByX2RlYnVnIGJlIG1vcmUgYXBwcm9wcmlh
-dGU/DQoNCg0KPiA+ICsgICAgICAgfSBlbHNlIGlmIChuYW1lICYmIGluZGV4ID49IDAgJiYgUFRS
-X0VSUihjbGspICE9IC1FUFJPQkVfREVGRVIpIHsNCj4gPiArICAgICAgICAgICAgICAgcHJfZXJy
-KCJFUlJPUjogY291bGQgbm90IGdldCBjbG9jayAlcE9GOiVzKCVpKVxuIiwNCj4gPiArICAgICAg
-ICAgICAgICAgICAgICAgICBjaGlsZCwgbmFtZSwgaW5kZXgpOw0KPiA+ICsgICAgICAgfQ0KPiA+
-ICsNCj4gPiAgICAgICAgIHJldHVybiBjbGs7DQo+ID4gIH0NCj4gPg0KDQpUaGFua3MNClBoaWwN
-Cg==
+On Fri, 2018-09-14 at 02:07 +0530, Vabhav Sharma wrote:
+> From: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
+> 
+> Add clockgen support for lx2160a.
+> Added entry for compat 'fsl,lx2160a-clockgen'.
+> 
+> Signed-off-by: Tang Yuantian <andy.tang@nxp.com>
+> Signed-off-by: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
+> Signed-off-by: Vabhav Sharma <vabhav.sharma@nxp.com>
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
+> ---
+>  drivers/clk/clk-qoriq.c         | 14 +++++++++++++-
+>  drivers/cpufreq/qoriq-cpufreq.c |  1 +
+>  2 files changed, 14 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
+> index 3a1812f..e9ae70b 100644
+> --- a/drivers/clk/clk-qoriq.c
+> +++ b/drivers/clk/clk-qoriq.c
+> @@ -79,7 +79,7 @@ struct clockgen_chipinfo {
+>  	const struct clockgen_muxinfo *cmux_groups[2];
+>  	const struct clockgen_muxinfo *hwaccel[NUM_HWACCEL];
+>  	void (*init_periph)(struct clockgen *cg);
+> -	int cmux_to_group[NUM_CMUX]; /* -1 terminates if fewer than
+> NUM_CMUX */
+> +	int cmux_to_group[NUM_CMUX+1]; /* -1 terminate if fewer to
+> NUM_CMUX+1 */
+
+You need to add the -1 terminator to p4080, and remove the "if fewer" comment
+since the whole point of this is that every array gets -1 terminated.
+
+Why did you change "terminates" to "terminate" and "than" to "to"?
+
+This +1 change should be a separate patch from lx2160a support.
+
+-Scott
+
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
