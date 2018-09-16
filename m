@@ -1,80 +1,91 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: robh+dt@kernel.org,
-	maxime.ripard@bootlin.com,
-	wens@csie.org
-Cc: mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	airlied@linux.ie,
-	architt@codeaurora.org,
-	a.hajda@samsung.com,
-	jernej.skrabec@siol.net,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-sunxi@googlegroups.com,
-	Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH 18/27] dt-bindings: display: sunxi: add DT binding for Allwinner H6 DW HDMI
-Date: Sun,  2 Sep 2018 09:26:34 +0200
-Message-Id: <20180902072643.4917-19-jernej.skrabec@siol.net>
-In-Reply-To: <20180902072643.4917-1-jernej.skrabec@siol.net>
-References: <20180902072643.4917-1-jernej.skrabec@siol.net>
+Return-Path: <aisheng.dong@nxp.com>
+From: "A.s. Dong" <aisheng.dong@nxp.com>
+To: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "sboyd@kernel.org"
+	<sboyd@kernel.org>, "mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"shawnguo@kernel.org" <shawnguo@kernel.org>, "thor.thayer@linux.intel.com"
+	<thor.thayer@linux.intel.com>, dl-linux-imx <linux-imx@nxp.com>,
+	"hdegoede@redhat.com" <hdegoede@redhat.com>
+Subject: RE: [PATCH V6 0/4] clk: new APIs to handle all available clocks
+Date: Sun, 16 Sep 2018 13:24:57 +0000
+Message-ID: 
+ <AM0PR04MB4211A3900BC5A2DF857F7451801F0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+References: <1535690756-22234-1-git-send-email-aisheng.dong@nxp.com>
+ <AM0PR04MB4211EF6D783562BA8C8D690380010@AM0PR04MB4211.eurprd04.prod.outlook.com>
+In-Reply-To: 
+ <AM0PR04MB4211EF6D783562BA8C8D690380010@AM0PR04MB4211.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Icenowy Zheng <icenowy@aosc.io>
+Ping again
 
-The Allwinner H6 SoC uses a v2.12a DesignWare HDMI controller, with
-dedicated CEC and HDCP clocks added; the PHY connected is a standard
-DesignWare HDMI PHY.
-
-Add binding for it.
-
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-[added HDCP clock and reset]
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> -----Original Message-----
+> From: A.s. Dong
+> Sent: Thursday, September 6, 2018 11:23 AM
+> To: linux-clk@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
+> sboyd@kernel.org; mturquette@baylibre.com; shawnguo@kernel.org;
+> thor.thayer@linux.intel.com; dl-linux-imx <linux-imx@nxp.com>;
+> hdegoede@redhat.com
+> Subject: RE: [PATCH V6 0/4] clk: new APIs to handle all available clocks
+>=20
+> Gently ping...
+>=20
+> > -----Original Message-----
+> > From: A.s. Dong
+> > Sent: Friday, August 31, 2018 12:46 PM
+> > To: linux-clk@vger.kernel.org
+> > Cc: linux-kernel@vger.kernel.org;
+> > linux-arm-kernel@lists.infradead.org;
+> > sboyd@kernel.org; mturquette@baylibre.com; shawnguo@kernel.org;
+> > thor.thayer@linux.intel.com; dl-linux-imx <linux-imx@nxp.com>;
+> > hdegoede@redhat.com; A.s. Dong <aisheng.dong@nxp.com>
+> > Subject: [PATCH V6 0/4] clk: new APIs to handle all available clocks
+> >
+> > This patch series is a continue of discussion from here,
+> > https://patchwork.kernel.org/patch/9986293/
+> > that some users may want to handle all available clocks from device
+> > tree without need to know the detailed clock information likes clock
+> > numbers and names. This is useful in writing some generic drivers to ha=
+ndle
+> clock part.
+> >
+> > Note:
+> > This patch series is tested on MX6Q SDB cpufreq driver with a minor
+> > change to switch to use clk_bulk_get_all.
+> > But patch 4 only test compiling. Hopefully someone could help test the
+> > function.
+> >
+> > v3->v4:
+> >  * improve 'devres->clks =3D *clks' according to Stephen's suggestion
+> > v2->v3:
+> >  * address all comments from Stephen
+> >  * fix build warnings on other architectures.
+> > v1->v2:
+> >  * add clk_bulk_{get|put}_all() which only supports DT platform
+> > currently
+> >  * remove _all variants and the wrapper struct clk_bulk
+> >  * make of_clk_bulk_get and of_clk_bulk_get_all private until someone
+> >    proves they need it because they don't have a struct device pointer.
+> >
+> > Dong Aisheng (4):
+> >   clk: bulk: add of_clk_bulk_get()
+> >   clk: add new APIs to operate on all available clocks
+> >   clk: add managed version of clk_bulk_get_all
+> >   video: simplefb: switch to use clk_bulk API to simplify clock
+> >     operations
+> >
+> >  drivers/clk/clk-bulk.c         | 80
+> > ++++++++++++++++++++++++++++++++++++++++++
+> >  drivers/clk/clk-devres.c       | 24 +++++++++++++
+> >  drivers/video/fbdev/simplefb.c | 72 ++++++++++------------------------=
 ---
- .../devicetree/bindings/display/sunxi/sun4i-drm.txt   | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-index dec2f8a6da9c..278410e43940 100644
---- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-+++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-@@ -78,6 +78,7 @@ Required properties:
- 
-   - compatible: value must be one of:
-     * "allwinner,sun8i-a83t-dw-hdmi"
-+    * "allwinner,sun50i-h6-dw-hdmi"
-   - reg: base address and size of memory-mapped region
-   - reg-io-width: See dw_hdmi.txt. Shall be 1.
-   - interrupts: HDMI interrupt number
-@@ -85,9 +86,14 @@ Required properties:
-     * iahb: the HDMI bus clock
-     * isfr: the HDMI register clock
-     * tmds: TMDS clock
-+    * cec: HDMI CEC clock (H6 only)
-+    * hdcp: HDCP clock (H6 only)
-+    * hdcp-bus: HDCP bus clock (H6 only)
-   - clock-names: the clock names mentioned above
--  - resets: phandle to the reset controller
--  - reset-names: must be "ctrl"
-+  - resets:
-+    * ctrl: HDMI controller reset
-+    * hdcp: HDCP reset (H6 only)
-+  - reset-names: reset names mentioned above
-   - phys: phandle to the DWC HDMI PHY
-   - phy-names: must be "phy"
- 
-@@ -104,6 +110,7 @@ Required properties:
-     * allwinner,sun8i-a83t-hdmi-phy
-     * allwinner,sun8i-h3-hdmi-phy
-     * allwinner,sun50i-a64-hdmi-phy
-+    * allwinner,sun50i-h6-hdmi-phy
-   - reg: base address and size of memory-mapped region
-   - clocks: phandles to the clocks feeding the HDMI PHY
-     * bus: the HDMI PHY interface clock
--- 
-2.18.0
+> >  include/linux/clk.h            | 65
+> > +++++++++++++++++++++++++++++++++-
+> >  4 files changed, 186 insertions(+), 55 deletions(-)
+> >
+> > --
+> > 2.7.4
