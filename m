@@ -1,103 +1,136 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v4 02/11] clk: sunxi-ng: a64: Add max. rate constraint to video PLLs
-Date: Tue,  4 Sep 2018 12:40:44 +0800
-Message-Id: <20180904044053.15425-3-icenowy@aosc.io>
-In-Reply-To: <20180904044053.15425-1-icenowy@aosc.io>
-References: <20180904044053.15425-1-icenowy@aosc.io>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+From: Rob Herring <robh@kernel.org>
+To: Taniya Das <tdas@codeaurora.org>
+Cc: Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: clock: Introduce QCOM LPASS clock
+ bindings
+Message-ID: <20180917031811.GA11141@bogus>
+References: <1536685206-12239-1-git-send-email-tdas@codeaurora.org>
+ <1536685206-12239-2-git-send-email-tdas@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <1536685206-12239-2-git-send-email-tdas@codeaurora.org>
+Date: Sun, 16 Sep 2018 22:18:14 -0500
 List-ID: <linux-clk.vger.kernel.org>
 
-Video PLLs on A64 can be set to higher rate that it is actually
-supported by HW.
+On Tue, Sep 11, 2018 at 10:30:05PM +0530, Taniya Das wrote:
+> Add device tree bindings for Low Power Audio subsystem clock controller for
+> Qualcomm Technology Inc's SDM845 SoCs.
+> 
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> ---
+>  .../devicetree/bindings/clock/qcom,gcc.txt         |  2 ++
+>  .../devicetree/bindings/clock/qcom,lpasscc.txt     | 31 ++++++++++++++++++++++
+>  include/dt-bindings/clock/qcom,gcc-sdm845.h        |  2 ++
+>  include/dt-bindings/clock/qcom,lpass-sdm845.h      | 16 +++++++++++
+>  4 files changed, 51 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,lpasscc.txt
+>  create mode 100644 include/dt-bindings/clock/qcom,lpass-sdm845.h
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc.txt b/Documentation/devicetree/bindings/clock/qcom,gcc.txt
+> index 664ea1f..b3ff6e8 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,gcc.txt
+> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc.txt
+> @@ -32,6 +32,8 @@ be part of GCC and hence the TSENS properties can also be
+>  part of the GCC/clock-controller node.
+>  For more details on the TSENS properties please refer
+>  Documentation/devicetree/bindings/thermal/qcom-tsens.txt
+> +- qcom,lpass-protected : Indicate that the LPASS clock branches within GCC are
+> +			 unusable due to firmware access control restrictions.
+>  
+>  Example:
+>  	clock-controller@900000 {
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,lpasscc.txt b/Documentation/devicetree/bindings/clock/qcom,lpasscc.txt
+> new file mode 100644
+> index 0000000..d312957
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/qcom,lpasscc.txt
+> @@ -0,0 +1,31 @@
+> +Qualcomm LPASS Clock Controller Binding
+> +-----------------------------------------------
+> +
+> +Required properties :
+> +- compatible		: shall contain "qcom,sdm845-lpasscc"
+> +- #clock-cells		: from common clock binding, shall contain 1.
+> +- reg			: shall contain base register address and size,
+> +			  in the order
+> +			Index-0 maps to LPASS_CC register region
+> +			Index-1 maps to LPASS_QDSP6SS register region
+> +
+> +Optional properties :
+> +- reg-names	: register names of LPASS domain
+> +		 "lpass_cc", "lpass_qdsp6ss".
 
-Limit maximum rate to 1008 MHz. This is the maximum allowed rate by BSP
-clock driver. Interestengly, user manual specifies maximum frequency to
-be 600 MHz. Historically, this data was wrong in some user manuals for
-other SoCs, so more faith is put in BSP clock driver.
+"cc" and "qdsp6ss" is sufficient.
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
-New patch in v4.
+> +
+> +Example:
+> +
+> +The below node has to be defined in the cases where the LPASS peripheral loader
+> +would bring the subsystem out of reset.
+> +
+> +	lpasscc: clock-controller {
 
- drivers/clk/sunxi-ng/ccu-sun50i-a64.c | 50 ++++++++++++++-------------
- 1 file changed, 26 insertions(+), 24 deletions(-)
+Needs a unit-address.
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-index d0e30192f0cf..5f80eb018014 100644
---- a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-@@ -64,18 +64,19 @@ static SUNXI_CCU_NM_WITH_GATE_LOCK(pll_audio_base_clk, "pll-audio-base",
- 				   BIT(28),	/* lock */
- 				   CLK_SET_RATE_UNGATE);
- 
--static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN(pll_video0_clk, "pll-video0",
--					    "osc24M", 0x010,
--					    192000000,	/* Minimum rate */
--					    8, 7,		/* N */
--					    0, 4,		/* M */
--					    BIT(24),	/* frac enable */
--					    BIT(25),	/* frac select */
--					    270000000,	/* frac rate 0 */
--					    297000000,	/* frac rate 1 */
--					    BIT(31),	/* gate */
--					    BIT(28),	/* lock */
--					    CLK_SET_RATE_UNGATE);
-+static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN_MAX(pll_video0_clk, "pll-video0",
-+						"osc24M", 0x010,
-+						192000000,	/* Minimum rate */
-+						1008000000,	/* Maximum rate */
-+						8, 7,		/* N */
-+						0, 4,		/* M */
-+						BIT(24),	/* frac enable */
-+						BIT(25),	/* frac select */
-+						270000000,	/* frac rate 0 */
-+						297000000,	/* frac rate 1 */
-+						BIT(31),	/* gate */
-+						BIT(28),	/* lock */
-+						CLK_SET_RATE_UNGATE);
- 
- static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_ve_clk, "pll-ve",
- 					"osc24M", 0x018,
-@@ -126,18 +127,19 @@ static struct ccu_nk pll_periph1_clk = {
- 	},
- };
- 
--static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN(pll_video1_clk, "pll-video1",
--					    "osc24M", 0x030,
--					    192000000,	/* Minimum rate */
--					    8, 7,		/* N */
--					    0, 4,		/* M */
--					    BIT(24),	/* frac enable */
--					    BIT(25),	/* frac select */
--					    270000000,	/* frac rate 0 */
--					    297000000,	/* frac rate 1 */
--					    BIT(31),	/* gate */
--					    BIT(28),	/* lock */
--					    CLK_SET_RATE_UNGATE);
-+static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN_MAX(pll_video1_clk, "pll-video1",
-+						"osc24M", 0x030,
-+						192000000,	/* Minimum rate */
-+						1008000000,	/* Maximum rate */
-+						8, 7,		/* N */
-+						0, 4,		/* M */
-+						BIT(24),	/* frac enable */
-+						BIT(25),	/* frac select */
-+						270000000,	/* frac rate 0 */
-+						297000000,	/* frac rate 1 */
-+						BIT(31),	/* gate */
-+						BIT(28),	/* lock */
-+						CLK_SET_RATE_UNGATE);
- 
- static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_gpu_clk, "pll-gpu",
- 					"osc24M", 0x038,
--- 
-2.18.0
+> +		compatible = "qcom,sdm845-lpasscc";
+> +		reg = <0x17014000 0x1f004>, <0x17300000 0x200>;
+> +		reg-names = "lpass_cc", "lpass_qdsp6ss";
+> +		#clock-cells = <1>;
+> +	};
+> +
+> +	gcc: clock-controller@100000 {
+
+This needs a reg property. 
+
+> +		compatible = "qcom,gcc-sdm845";
+> +		qcom,lpass-protected;
+> +	};
+
+> diff --git a/include/dt-bindings/clock/qcom,gcc-sdm845.h b/include/dt-bindings/clock/qcom,gcc-sdm845.h
+> index b8eae5a..968fa65 100644
+> --- a/include/dt-bindings/clock/qcom,gcc-sdm845.h
+> +++ b/include/dt-bindings/clock/qcom,gcc-sdm845.h
+> @@ -197,6 +197,8 @@
+>  #define GCC_QSPI_CORE_CLK_SRC					187
+>  #define GCC_QSPI_CORE_CLK					188
+>  #define GCC_QSPI_CNOC_PERIPH_AHB_CLK				189
+> +#define GCC_LPASS_Q6_AXI_CLK					190
+> +#define GCC_LPASS_SWAY_CLK					191
+>  
+>  /* GCC Resets */
+>  #define GCC_MMSS_BCR						0
+> diff --git a/include/dt-bindings/clock/qcom,lpass-sdm845.h b/include/dt-bindings/clock/qcom,lpass-sdm845.h
+> new file mode 100644
+> index 0000000..015968e
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/qcom,lpass-sdm845.h
+> @@ -0,0 +1,16 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
+> + */
+> +
+> +#ifndef _DT_BINDINGS_CLK_SDM_LPASS_SDM845_H
+> +#define _DT_BINDINGS_CLK_SDM_LPASS_SDM845_H
+> +
+> +#define LPASS_AUDIO_WRAPPER_AON_CLK			0
+> +#define LPASS_Q6SS_AHBM_AON_CLK				1
+> +#define LPASS_Q6SS_AHBS_AON_CLK				2
+> +#define LPASS_QDSP6SS_XO_CLK				3
+> +#define LPASS_QDSP6SS_SLEEP_CLK				4
+> +#define LPASS_QDSP6SS_CORE_CLK				5
+> +
+> +#endif
+> -- 
+> Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+> of the Code Aurora Forum, hosted by the  Linux Foundation.
+> 
