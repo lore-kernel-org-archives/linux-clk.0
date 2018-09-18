@@ -1,124 +1,44 @@
-Return-Path: <wens213@gmail.com>
-Return-Path: <wens213@gmail.com>
-MIME-Version: 1.0
-References: <20180902072643.4917-1-jernej.skrabec@siol.net>
-In-Reply-To: <20180902072643.4917-1-jernej.skrabec@siol.net>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Sun, 2 Sep 2018 17:31:50 +0800
-Message-ID: <CAGb2v66coQW2vNgEkcLeN0VuV4r18baqYVrgqspLA5FvRfgcEg@mail.gmail.com>
-Subject: Re: [PATCH 00/27] Allwinner H6 DE3 and HDMI support
-To: Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: Rob Herring <robh+dt@kernel.org>, Maxime Ripard <maxime.ripard@bootlin.com>,
-	Mark Rutland <mark.rutland@arm.com>, Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, David Airlie <airlied@linux.ie>,
-	Archit Taneja <architt@codeaurora.org>, Andrzej Hajda <a.hajda@samsung.com>,
-	devicetree <devicetree@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	dri-devel <dri-devel@lists.freedesktop.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from shards.monkeyblade.net ([23.128.96.9]:53888 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725807AbeIRHS5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Sep 2018 03:18:57 -0400
+Date: Mon, 17 Sep 2018 18:48:50 -0700 (PDT)
+Message-Id: <20180917.184850.781321135177511686.davem@davemloft.net>
+To: hdegoede@redhat.com
+Cc: hkallweit1@gmail.com, mturquette@baylibre.com, sboyd@kernel.org,
+        andriy.shevchenko@linux.intel.com,
+        pierre-louis.bossart@linux.intel.com,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        js@sig21.net, carlo@endlessm.com, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 0/3] r8169 (x86) clk fixes to fix S0ix not being
+ reached
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <20180912093456.23400-1-hdegoede@redhat.com>
+References: <20180912093456.23400-1-hdegoede@redhat.com>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, Sep 2, 2018 at 3:27 PM Jernej Skrabec <jernej.skrabec@siol.net> wrote:
->
-> This series adds support for Display Engine 3.0 and HDMI 2.0a, which
-> can be found on H6 SoC.
->
-> Display Engine 3.0 in comparison to 2.0 mostly adds features needed for
-> displaying and processing 10-bit and AFBC formats, which are not yet
-> supported by this series.
->
-> This series is based on linux-next at next-20180828, which has working
-> R40 display pipeline support. I'll rebase series on later linux-next, if
-> needed, once R40 display pipeline support is reintroduced.
->
-> I suggest all patches go through allwinner tree, except DRM patches,
-> which should go through drm-misc tree.
->
-> Last detail, PineH64 model A schematic has DDC_EN signal, which enables
-> DDC voltage level shifter. TL Lim, PINE64 founder, said that this
-> signal is not actually present on PineH64 model A board. It is, however
-> present on PineH64 model B engineering samples, but it will be removed
-> in production version. Because of that, I didn't include any code for
-> it.
->
-> Please take a look.
->
-> Best regards,
-> Jernej
->
-> Icenowy Zheng (7):
->   dt-bindings: sunxi-sram: add binding for Allwinner H6 SRAM C
->   arm64: allwinner: h6: add system controller device tree node
+From: Hans de Goede <hdegoede@redhat.com>
+Date: Wed, 12 Sep 2018 11:34:53 +0200
 
-Prefix should be "arm64: dts: allwinner: h6: ".
+> This series adds code to the r8169 ethernet driver to get and enable an
+> external clock if present, avoiding the need for a hack in the
+> clk-pmc-atom driver where that clock was left on continuesly causing x86
+> some devices to not reach deep power saving states (S0ix) when suspended
+> causing to them to quickly drain their battery while suspended.
+> 
+> The 3 commits in this series need to be merged in order to avoid
+> regressions while bisecting. The clk-pmc-atom driver does not see much
+> changes (it was last touched over a year ago). So the clk maintainers
+> have agreed with merging all 3 patches through the net tree.
+> All 3 patches have Stephen Boyd's Acked-by for this purpose.
+> 
+> This v2 of the series only had some minor tweaks done to the commit
+> messages and is ready for merging through the net tree now.
 
->   dt-bindings: bus: add H6 DE3 bus binding
->   dt-bindings: display: sunxi: add DT binding for Allwinner H6 DW HDMI
->   drm: sun4i: add quirks for TCON TOP
->   dt-bindings: display: sun4i-drm: document H6 TCON TOP
->   drm: sun4i: add support for H6 TCON TOP
->
-> Jernej Skrabec (20):
->   clk: sunxi-ng: Adjust MP clock parent rate when allowed
->   clk: sunxi-ng: Use u64 for calculation of NM rate
->   clk: sunxi-ng: h6: Set video PLLs limits
->   dt-bindings: clock: sun8i-de2: Add H6 DE3 clock description
->   clk: sunxi-ng: Add support for H6 DE3 clocks
->   dt-bindings: display: sun4i-drm: Add H6 display engine compatibles
->   drm/sun4i: Add compatible for H6 display engine
->   drm/sun4i: Rework DE2 register defines
->   drm/sun4i: Add basic support for DE3
->   drm/sun4i: Add support for H6 DE3 mixer 0
->   drm/bridge/synopsys: dw-hdmi: Enable workaround for v2.12a
->   drm/sun4i: Not all DW HDMI controllers has scrambled addresses
->   drm/sun4i: dw-hdmi: Make mode_valid function configurable
->   drm/sun4i: dw-hdmi: Add quirk for setting TMDS clock
->   drm/sun4i: Add support for H6 DW HDMI controller
->   drm/sun4i: Add support for Synopsys HDMI PHY
->   drm/sun4i: Add support for H6 HDMI PHY
->   drm/sun4i: Initialize registers in tcon-top driver
->   arm64: dts: sun50i: h6: Add HDMI pipeline
->   arm64: dts: sun50i: h6: Enable HDMI output on Pine H64 board
+Thanks for all of that useful information.
 
-Same here.
-
-ChenYu
-
->
->  .../bindings/bus/sun50i-de2-bus.txt           |   9 +-
->  .../devicetree/bindings/clock/sun8i-de2.txt   |   5 +-
->  .../bindings/display/sunxi/sun4i-drm.txt      |  30 ++-
->  .../devicetree/bindings/sram/sunxi-sram.txt   |   4 +
->  .../boot/dts/allwinner/sun50i-h6-pine-h64.dts |  25 ++
->  arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi  | 224 ++++++++++++++++++
->  drivers/clk/sunxi-ng/ccu-sun50i-h6.c          |   4 +
->  drivers/clk/sunxi-ng/ccu-sun8i-de2.c          |  65 +++++
->  drivers/clk/sunxi-ng/ccu-sun8i-de2.h          |   1 +
->  drivers/clk/sunxi-ng/ccu_mp.c                 |  64 ++++-
->  drivers/clk/sunxi-ng/ccu_nm.c                 |  18 +-
->  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c     |   1 +
->  drivers/gpu/drm/sun4i/sun4i_drv.c             |   1 +
->  drivers/gpu/drm/sun4i/sun8i_csc.c             |  96 +++++++-
->  drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c         |  45 +++-
->  drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h         |  14 +-
->  drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c        | 178 +++++++++++++-
->  drivers/gpu/drm/sun4i/sun8i_mixer.c           |  44 +++-
->  drivers/gpu/drm/sun4i/sun8i_mixer.h           |  61 +++--
->  drivers/gpu/drm/sun4i/sun8i_tcon_top.c        |  58 ++++-
->  drivers/gpu/drm/sun4i/sun8i_ui_layer.c        |  47 ++--
->  drivers/gpu/drm/sun4i/sun8i_ui_layer.h        |  37 +--
->  drivers/gpu/drm/sun4i/sun8i_ui_scaler.c       |  45 ++--
->  drivers/gpu/drm/sun4i/sun8i_ui_scaler.h       |  28 +--
->  drivers/gpu/drm/sun4i/sun8i_vi_layer.c        |  55 +++--
->  drivers/gpu/drm/sun4i/sun8i_vi_layer.h        |  25 +-
->  drivers/gpu/drm/sun4i/sun8i_vi_scaler.c       |  85 +++++--
->  drivers/gpu/drm/sun4i/sun8i_vi_scaler.h       |  68 ++++--
->  include/dt-bindings/clock/sun8i-de2.h         |   3 +
->  include/dt-bindings/reset/sun8i-de2.h         |   1 +
->  30 files changed, 1127 insertions(+), 214 deletions(-)
->
-> --
-> 2.18.0
->
+Series applied, thanks.
