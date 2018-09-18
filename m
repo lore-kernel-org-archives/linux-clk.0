@@ -1,164 +1,72 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: "A.s. Dong" <aisheng.dong@nxp.com>
-To: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"sboyd@kernel.org" <sboyd@kernel.org>, "shawnguo@kernel.org"
-	<shawnguo@kernel.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "mturquette@baylibre.com"
-	<mturquette@baylibre.com>, Anson Huang <anson.huang@nxp.com>, Jacky Bai
-	<ping.bai@nxp.com>, dl-linux-imx <linux-imx@nxp.com>
-Subject: RE: [PATCH V4 0/9] clk: add imx7ulp clk support
-Date: Thu, 6 Sep 2018 03:25:06 +0000
-Message-ID: 
- <AM0PR04MB421176CFEF18F815CE0EC1A980010@AM0PR04MB4211.eurprd04.prod.outlook.com>
-References: <1531921023-18497-1-git-send-email-aisheng.dong@nxp.com>
- <AM0PR04MB421169829CFE1A6A32DCC209802B0@AM0PR04MB4211.eurprd04.prod.outlook.com>
- <AM0PR04MB421153E1441FBE356E1B859E800B0@AM0PR04MB4211.eurprd04.prod.outlook.com>
-In-Reply-To: 
- <AM0PR04MB421153E1441FBE356E1B859E800B0@AM0PR04MB4211.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <khilman@baylibre.com>
+Return-Path: <khilman@baylibre.com>
+From: Kevin Hilman <khilman@baylibre.com>
+To: grahamr@codeaurora.org
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,  Peter De Schrijver <pdeschrijver@nvidia.com>,  Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>,  Viresh Kumar <viresh.kumar@linaro.org>,  linux-clk <linux-clk@vger.kernel.org>,  Linux PM <linux-pm@vger.kernel.org>,  Doug Anderson <dianders@chromium.org>,  Taniya Das <tdas@codeaurora.org>,  Rajendra Nayak <rnayak@codeaurora.org>,  Amit Nischal <anischal@codeaurora.org>,  Vincent Guittot <vincent.guittot@linaro.org>,  Amit Kucheria <amit.kucheria@linaro.org>,  linux-clk-owner@vger.kernel.org
+Subject: Re: [RFD] Voltage dependencies for clocks (DVFS)
+References: <9439bd29e3ccd5424a8e9b464c8c7bd9@codeaurora.org>
+	<20180704065522.p4qpfnpayeobaok3@vireshk-i7>
+	<CAPDyKFo-Z=H2mJXm7mN0Mt=iRzOaEuJSXc2gdE4i5NEfZ_OM6A@mail.gmail.com>
+	<153210674909.48062.14786835684020975508@swboyd.mtv.corp.google.com>
+	<20180723082641.GJ1636@tbergstrom-lnx.Nvidia.com>
+	<153247347784.48062.15923823598346148594@swboyd.mtv.corp.google.com>
+	<20180725054400.96956.13278@harbor.lan>
+	<20180725112702.GN1636@tbergstrom-lnx.Nvidia.com>
+	<CAPDyKFqHNOc-KHcA-LGpyScZ54rsa-FWgJihStgW6sPmXgw07A@mail.gmail.com>
+	<83d6a10252e7238f326e378957f2ff70@codeaurora.org>
+Date: Tue, 18 Sep 2018 10:25:03 -0700
+In-Reply-To: <83d6a10252e7238f326e378957f2ff70@codeaurora.org>
+	(grahamr@codeaurora.org's message of "Tue, 31 Jul 2018 13:02:45
+	-0700")
+Message-ID: <7htvmmsopc.fsf@baylibre.com>
 MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Stephen,
+[ sorry, a little late to the party ]
 
-Would you shine some lights on how to proceed?
+[...]
 
-Regards
-Dong Aisheng
+> Would there be some way to prevent consumers from directly calling
+> clk_set_rate or clk_enable and force them to go via another framework
+> for these calls?  It would at least prevent people from using the
+> "wrong" interface and bypassing voltage requirements.  That of course
+> means having to mirror any of the clk APIs that update clock state
+> into genpd/opp, which Stephen finds distasteful (and I agree).
 
-> -----Original Message-----
-> From: A.s. Dong
-> Sent: Monday, August 27, 2018 11:46 AM
-> To: linux-clk@vger.kernel.org; sboyd@kernel.org; shawnguo@kernel.org
-> Cc: linux-kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
-> mturquette@baylibre.com; Anson Huang <anson.huang@nxp.com>; Jacky Bai
-> <ping.bai@nxp.com>; dl-linux-imx <linux-imx@nxp.com>
-> Subject: RE: [PATCH V4 0/9] clk: add imx7ulp clk support
->=20
-> Kindly ping again...  This is really pending too long...
->=20
-> Stephen & Shawn,
-> Any suggestion on how to proceed this patch set?
->=20
-> Regards
-> Dong Aisheng
->=20
-> > -----Original Message-----
-> > From: A.s. Dong
-> > Sent: Thursday, July 26, 2018 9:51 AM
-> > To: linux-clk@vger.kernel.org; sboyd@kernel.org
-> > Cc: linux-kernel@vger.kernel.org;
-> > linux-arm-kernel@lists.infradead.org;
-> > mturquette@baylibre.com; shawnguo@kernel.org; Anson Huang
-> > <anson.huang@nxp.com>; Jacky Bai <ping.bai@nxp.com>; dl-linux-imx
-> > <linux-imx@nxp.com>
-> > Subject: RE: [PATCH V4 0/9] clk: add imx7ulp clk support
-> >
-> > Hi Stephen,
-> >
-> > Do you have a chance to look at it?
-> > This patch series has been pending for quite a long time without much
-> > comments.
-> >
-> > Regards
-> > Dong Aisheng
-> >
-> > > -----Original Message-----
-> > > From: A.s. Dong
-> > > Sent: Wednesday, July 18, 2018 9:37 PM
-> > > To: linux-clk@vger.kernel.org
-> > > Cc: linux-kernel@vger.kernel.org;
-> > > linux-arm-kernel@lists.infradead.org;
-> > > sboyd@kernel.org; mturquette@baylibre.com; shawnguo@kernel.org;
-> > Anson
-> > > Huang <anson.huang@nxp.com>; Jacky Bai <ping.bai@nxp.com>; dl-
-> > > linux-imx <linux-imx@nxp.com>; A.s. Dong <aisheng.dong@nxp.com>
-> > > Subject: [PATCH V4 0/9] clk: add imx7ulp clk support
-> > >
-> > > This is a rebased version of below patch series against latest clk tr=
-ee.
-> > > [PATCH RESEND V3 0/9] clk: add imx7ulp clk support
-> > > https://lkml.org/lkml/2018/3/16/310
-> > >
-> > > This patch series intends to add imx7ulp clk support.
-> > >
-> > > i.MX7ULP Clock functions are under joint control of the System Clock
-> > > Generation (SCG) modules, Peripheral Clock Control (PCC) modules,
-> > > and Core Mode Controller (CMC)1 blocks
-> > >
-> > > The clocking scheme provides clear separation between M4 domain and
-> > > A7 domain. Except for a few clock sources shared between two
-> > > domains, such as the System Oscillator clock, the Slow IRC (SIRC),
-> > > and and the Fast IRC clock (FIRCLK), clock sources and clock
-> > > management are separated and contained within each domain.
-> > >
-> > > M4 clock management consists of SCG0, PCC0, PCC1, and CMC0 modules.
-> > > A7 clock management consists of SCG1, PCC2, PCC3, and CMC1 modules.
-> > >
-> > > Note: this series only adds A7 clock domain support as M4 clock
-> > > domain will be handled by M4 seperately.
-> > >
-> > > Change Log:
-> > > v3->v4:
-> > >  * rebased to latest kernel
-> > >  * make scg and pcc separate nodes according to Rob's suggestion
-> > >
-> > > v2->v3:
-> > >  * Patch 1 changed on: 1) split normal and gate ops 2) fix the possib=
-le racy
-> > >    Others no changes.
-> > >
-> > > v1->v2:
-> > >  * add enable/disable for the type of CLK_DIVIDER_ZERO_GATE dividers
-> > >  * use clk_hw apis to register clocks
-> > >  * use of_clk_add_hw_provider
-> > >  * split the clocks register process into two parts: early part for p=
-ossible
-> > >    timers clocks registered by CLK_OF_DECLARE_DRIVER and the later
-> > > part
-> > for
-> > >    the left normal peripheral clocks registered by a platform driver.
-> > >
-> > > Dong Aisheng (9):
-> > >   clk: clk-divider: add CLK_DIVIDER_ZERO_GATE clk support
-> > >   clk: fractional-divider: add CLK_FRAC_DIVIDER_ZERO_BASED flag
-> support
-> > >   clk: imx: add pllv4 support
-> > >   clk: imx: add pfdv2 support
-> > >   clk: imx: add composite clk support
-> > >   dt-bindings: clock: add imx7ulp clock binding doc
-> > >   clk: imx: make mux parent strings const
-> > >   clk: imx: implement new clk_hw based APIs
-> > >   clk: imx: add imx7ulp clk driver
-> > >
-> > >  .../devicetree/bindings/clock/imx7ulp-clock.txt    |  87 +++++++++
-> > >  drivers/clk/clk-divider.c                          | 152
-> > +++++++++++++++
-> > >  drivers/clk/clk-fractional-divider.c               |  10 +
-> > >  drivers/clk/imx/Makefile                           |   6 +-
-> > >  drivers/clk/imx/clk-busy.c                         |   2 +-
-> > >  drivers/clk/imx/clk-composite.c                    |  85 +++++++++
-> > >  drivers/clk/imx/clk-fixup-mux.c                    |   2 +-
-> > >  drivers/clk/imx/clk-imx7ulp.c                      | 209
-> > +++++++++++++++++++++
-> > >  drivers/clk/imx/clk-pfdv2.c                        | 201
-> > ++++++++++++++++++++
-> > >  drivers/clk/imx/clk-pllv4.c                        | 182
-> > ++++++++++++++++++
-> > >  drivers/clk/imx/clk.c                              |  22 +++
-> > >  drivers/clk/imx/clk.h                              |  92 ++++++++-
-> > >  include/dt-bindings/clock/imx7ulp-clock.h          | 109
-> +++++++++++
-> > >  include/linux/clk-provider.h                       |  17 ++
-> > >  14 files changed, 1166 insertions(+), 10 deletions(-)  create mode
-> > > 100644 Documentation/devicetree/bindings/clock/imx7ulp-clock.txt
-> > >  create mode 100644 drivers/clk/imx/clk-composite.c  create mode
-> > > 100644 drivers/clk/imx/clk-imx7ulp.c  create mode 100644
-> > > drivers/clk/imx/clk- pfdv2.c  create mode 100644
-> > > drivers/clk/imx/clk-pllv4.c  create mode 100644
-> > > include/dt-bindings/clock/imx7ulp-clock.h
-> > >
-> > > --
-> > > 2.7.4
+Chiming in late to this thread with a a bit of historical perspecitve
+(and over simplification): doing exactly this was part of the goal of of
+genpd in the first place.
+
+Before genpd, it used to be the case where lots of drivers only used the
+clk API for idle power management (clock gating).  Essentially a bunch
+of clk_enable/disable calls based on activity.  This didn't scale well
+for lots of reasons, but a primary one was that the same IP could be
+integrated differnetly on differnent SoCs, thus have different clocks
+for gating (or no clock gating.)
+
+With genpd, we could remove all of the clock-specific stuff from
+consumers and replace with a more generic pm_runtime calls, putting the
+intelligence, such as SoC integration knowledge and some goverors around
+whether or not to *actually* gate clocks, into the genpd
+callbacks/governors, which, being pluggable, could be highly SoC
+specific.
+
+IMO, at a high level, in this thread, we're having exactly the same
+conversation again, with the difference being we're talking about
+active/performace states and not idle states.
+
+While active states are definitely more complex, and have more
+dependencies, I don't see why the general approach on of the solution
+should not be the same as it was for idle management.
+
+Basically, I'm agreeing with the general direction this thread seems to
+be going that using the new active/performance features of genpd, and
+having genpd callbacks/goverors that Know All The Things seems like the
+obvious direction to go.
+
+However, the hard part remains, and that is defining the right consumer
+layer to give all the hints/requests so that the super-smart genpd
+governors can do the right thing.
+
+Kevin
