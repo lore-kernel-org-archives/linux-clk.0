@@ -1,49 +1,64 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: robh+dt@kernel.org,
-	maxime.ripard@bootlin.com,
-	wens@csie.org
-Cc: mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	airlied@linux.ie,
-	architt@codeaurora.org,
-	a.hajda@samsung.com,
-	jernej.skrabec@siol.net,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH 14/27] drm/bridge/synopsys: dw-hdmi: Enable workaround for v2.12a
-Date: Sun,  2 Sep 2018 09:26:30 +0200
-Message-Id: <20180902072643.4917-15-jernej.skrabec@siol.net>
-In-Reply-To: <20180902072643.4917-1-jernej.skrabec@siol.net>
-References: <20180902072643.4917-1-jernej.skrabec@siol.net>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from relmlor3.renesas.com ([210.160.252.173]:4452 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730198AbeIRWEl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Sep 2018 18:04:41 -0400
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Arnd Bergmann <arnd.bergmann@linaro.org>,
+        Mark Brown <broonie@linaro.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Subject: RE: [PATCH 1/2] clocksource/drivers/ostm: Delay driver registration
+Date: Tue, 18 Sep 2018 16:31:10 +0000
+Message-ID: <TY1PR01MB156214499E27FA05B215C7128A1D0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+References: <20180829132954.64862-1-chris.brandt@renesas.com>
+ <1ff04fa1-ee3b-6095-bcd8-f16dbb99b57a@linaro.org>
+ <TY1PR01MB156202DC354E70F1C8C5B18A8A090@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <c16b82c0-e675-8f86-19e6-75cb5995813b@linaro.org>
+ <CAMuHMdX9nXYan-m14k6h7OU1UCGW_irDLvMMi==dnM0cdUR_nA@mail.gmail.com>
+ <c4bd550f-5319-9d92-a30a-1d12fc9bbcab@linaro.org>
+ <CAMuHMdUs-YNQk1wmbqQvz_n9xq04=gkyL1uBJdg9ExA9Lmg5uw@mail.gmail.com>
+ <a160b76b-8dca-81e8-e958-d8b92bdc8928@linaro.org>
+ <CAMuHMdV3Ai+CLHBJ_GH9d=JN0cmiaQT3eSfNGRgiiMffgK7stg@mail.gmail.com>
+ <ba334f02-ac37-0908-ec0c-da8a6459fab4@linaro.org>
+ <TYXPR01MB1568B71126AB4A2BDB78BF1F8A000@TYXPR01MB1568.jpnprd01.prod.outlook.com>
+ <CAL_JsqJ84FW8a8eaHPsJAM9R3tYVzOJxp7=Fq+xWzBPVV03fhg@mail.gmail.com>
+ <TY1PR01MB15621F2C9CC30B20BF5E09A18A050@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <CAL_JsqJorfOhuwiRk9vbfZ_6B8s-EM7k+RTJmC4La76NzY5tuw@mail.gmail.com>
+ <TY1PR01MB15629984AA415D4F876B86038A040@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <e4b750b4-2e99-ac24-d7aa-db05a6872a8b@linaro.org>
+ <CAMuHMdWOc=p-y4cB=8Y5+HRxRdVqXxE7TaSXkcOO9AMaB+1Mqg@mail.gmail.com>
+ <TY1PR01MB15627A875767E1428E6C7DCE8A1A0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <CAMuHMdXy=NXgqc0p5x+dp6u45LkYENNA6mjECwnOYOURE_+yCg@mail.gmail.com>
+ <TY1PR01MB1562DB2A1F955F52807F8AC88A1E0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <CAMuHMdWOR91HWNGnQAfkjesg_89=AuxUy0RnE3R7=3=KZ_0Kyg@mail.gmail.com>
+ <TY1PR01MB15621E4C1E84A6E3BC4B94CF8A1D0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <CAMuHMdV1LvTrf3jw+JMkAC=skxB48--AYm_eJtZJqt9374Sd3w@mail.gmail.com>
+ <TY1PR01MB15625BAD12E2CB56AB47ACE88A1D0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <CAMuHMdVfa1yz=N=KCwXO=4TGGB113mTYqtB=0iYiaQVoTC260Q@mail.gmail.com>
+ <TY1PR01MB1562ED7502A2D183B5A981588A1D0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <CAMuHMdWMtLSzP7nC+C=ND1O4BQY6DFzTFspchjwtsTGTqTURog@mail.gmail.com>
+In-Reply-To: <CAMuHMdWMtLSzP7nC+C=ND1O4BQY6DFzTFspchjwtsTGTqTURog@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-It turns out that even new DW HDMI controllers exhibits same mangenta
-line issues as older versions.
-
-Enable workaround for v2.12a.
-
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-index 5971976284bf..df1c7a2d6961 100644
---- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-@@ -1664,6 +1664,7 @@ static void dw_hdmi_clear_overflow(struct dw_hdmi *hdmi)
- 	case 0x131a:
- 	case 0x132a:
- 	case 0x201a:
-+	case 0x212a:
- 		count = 1;
- 		break;
- 	default:
--- 
-2.18.0
+SGkgR2VlcnQsDQoNCk9uIFR1ZXNkYXksIFNlcHRlbWJlciAxOCwgMjAxOCAxLCBHZWVydCBVeXR0
+ZXJob2V2ZW4gd3JvdGU6DQo+ID4gU28gSSBzZWUgd2hhdCB0aGUgbWVkaWF0ZWsgaXMgZG9pbmcs
+IGJ1dCBJIGNhbid0IHNlZW0gdG8gcmVwcm9kdWNlIGl0Lg0KPiBJDQo+ID4gbXVzdCBiZSBtaXNz
+aW5nIHNvbWV0aGluZy4NCj4gDQo+IEl0J3MgdXNpbmcgQ0xLX09GX0RFQ0xBUkVfRFJJVkVSKCks
+IHdoaWNoIGNsZWFycyBPRl9QT1BVTEFURUQ6DQoNCll1cCwgdGhhdCdzIHdoYXQgSSB3YXMgbWlz
+c2luZy4NCldvcmtzIG5vdy4NClRoYW5rcyENCg0KU28gYXQgdGhpcyBwb2ludCwgSSBndWVzcyBJ
+J2xsIG1vdmUgYXdheSBmcm9tIHBhdGNoaW5nIHRoZSB0aW1lciBkcml2ZXIgDQphbmQgZ28gYmFj
+ayB0byBmb2N1c2luZyBvbiB0aGUgY2xvY2sgZHJpdmVyLg0KDQoNCkNocmlzDQoNCg==
