@@ -1,140 +1,331 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from lucky1.263xmail.com ([211.157.147.131]:48108 "EHLO
-        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727636AbeICOV6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Sep 2018 10:21:58 -0400
-From: Tony Xie <tony.xie@rock-chips.com>
-To: heiko@sntech.de
-Cc: broonie@kernel.org, lee.jones@linaro.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
-        xsf@rock-chips.com, zhangqing@rock-chips.com,
-        huangtao@rock-chips.com, tony.xie@rock-chips.com
-Subject: [PATCH v4 5/5] clk: RK808: add RK809 and RK817 support.
-Date: Mon,  3 Sep 2018 18:04:00 +0800
-Message-Id: <1535969040-19528-1-git-send-email-tony.xie@rock-chips.com>
-In-Reply-To: <1535968829-19418-1-git-send-email-tony.xie@rock-chips.com>
-References: <1535968829-19418-1-git-send-email-tony.xie@rock-chips.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <tdas@codeaurora.org>
+From: Taniya Das <tdas@codeaurora.org>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	robh@kernel.org,
+	Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH v5 2/2] clk: qcom: Add lpass clock controller driver for SDM845
+Date: Tue, 18 Sep 2018 15:55:38 +0530
+Message-Id: <1537266338-18661-3-git-send-email-tdas@codeaurora.org>
+In-Reply-To: <1537266338-18661-1-git-send-email-tdas@codeaurora.org>
+References: <1537266338-18661-1-git-send-email-tdas@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-RK809 and RK817 are power management IC chips for multimedia products.
-most of their functions and registers are same, including the clkout
-funciton.
+Add support for the lpass clock controller found on SDM845 based devices.
+This would allow lpass peripheral loader drivers to control the clocks to
+bring the subsystem out of reset.
+LPASS clocks present on the global clock controller would be registered
+with the clock framework based on the device tree flag.
 
-Signed-off-by: Tony Xie <tony.xie@rock-chips.com>
+Signed-off-by: Taniya Das <tdas@codeaurora.org>
 ---
- drivers/clk/Kconfig     |  9 ++++---
- drivers/clk/clk-rk808.c | 64 ++++++++++++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 67 insertions(+), 6 deletions(-)
+ drivers/clk/qcom/Kconfig          |   9 ++
+ drivers/clk/qcom/Makefile         |   1 +
+ drivers/clk/qcom/gcc-sdm845.c     |  35 +++++++
+ drivers/clk/qcom/lpasscc-sdm845.c | 195 ++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 240 insertions(+)
+ create mode 100644 drivers/clk/qcom/lpasscc-sdm845.c
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 721572a..92cf5ad 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -46,13 +46,12 @@ config COMMON_CLK_MAX77686
- 	  clock.
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index 5b181b1..747ffb4 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -272,6 +272,15 @@ config SDM_DISPCC_845
+ 	  Say Y if you want to support display devices and functionality such as
+ 	  splash screen.
  
- config COMMON_CLK_RK808
--	tristate "Clock driver for RK805/RK808/RK818"
-+	tristate "Clock driver for RK805/RK808/RK809/RK817/RK818"
- 	depends on MFD_RK808
- 	---help---
--	  This driver supports RK805, RK808 and RK818 crystal oscillator clock. These
--	  multi-function devices have two fixed-rate oscillators,
--	  clocked at 32KHz each. Clkout1 is always on, Clkout2 can off
--	  by control register.
-+	  This driver supports RK805, RK809 and RK817, RK808 and RK818 crystal oscillator clock.
-+	  These multi-function devices have two fixed-rate oscillators, clocked at 32KHz each.
-+	  Clkout1 is always on, Clkout2 can off by control register.
++config SDM_LPASSCC_845
++	tristate "SDM845 Low Power Audio Subsystem (LPAAS) Clock Controller"
++	depends on COMMON_CLK_QCOM
++	select SDM_GCC_845
++	help
++	  Support for the LPASS clock controller on SDM845 devices.
++	  Say Y if you want to use the LPASS branch clocks of the LPASS clock
++	  controller to reset the LPASS subsystem.
++
+ config SPMI_PMIC_CLKDIV
+ 	tristate "SPMI PMIC clkdiv Support"
+ 	depends on (COMMON_CLK_QCOM && SPMI) || COMPILE_TEST
+diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+index 935f142..53a5283 100644
+--- a/drivers/clk/qcom/Makefile
++++ b/drivers/clk/qcom/Makefile
+@@ -42,5 +42,6 @@ obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
+ obj-$(CONFIG_SDM_CAMCC_845) += camcc-sdm845.o
+ obj-$(CONFIG_SDM_DISPCC_845) += dispcc-sdm845.o
+ obj-$(CONFIG_SDM_GCC_845) += gcc-sdm845.o
++obj-$(CONFIG_SDM_LPASSCC_845) += lpasscc-sdm845.o
+ obj-$(CONFIG_SDM_VIDEOCC_845) += videocc-sdm845.o
+ obj-$(CONFIG_SPMI_PMIC_CLKDIV) += clk-spmi-pmic-div.o
+diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
+index 08d593e..fa8c37c 100644
+--- a/drivers/clk/qcom/gcc-sdm845.c
++++ b/drivers/clk/qcom/gcc-sdm845.c
+@@ -3169,6 +3169,32 @@ enum {
+ 	},
+ };
  
- config COMMON_CLK_HI655X
- 	tristate "Clock driver for Hi655x" if EXPERT
-diff --git a/drivers/clk/clk-rk808.c b/drivers/clk/clk-rk808.c
-index 6461f28..7f9a56b 100644
---- a/drivers/clk/clk-rk808.c
-+++ b/drivers/clk/clk-rk808.c
-@@ -96,6 +96,68 @@ static int rk808_clkout2_is_prepared(struct clk_hw *hw)
- 	return idx ? &rk808_clkout->clkout2_hw : &rk808_clkout->clkout1_hw;
- }
- 
-+static int rk817_clkout2_enable(struct clk_hw *hw, bool enable)
-+{
-+	struct rk808_clkout *rk808_clkout = container_of(hw,
-+							 struct rk808_clkout,
-+							 clkout2_hw);
-+	struct rk808 *rk808 = rk808_clkout->rk808;
-+
-+	return regmap_update_bits(rk808->regmap, RK817_SYS_CFG(1),
-+				  RK817_CLK32KOUT2_EN,
-+				  enable ? RK817_CLK32KOUT2_EN : 0);
-+}
-+
-+static int rk817_clkout2_prepare(struct clk_hw *hw)
-+{
-+	return rk817_clkout2_enable(hw, true);
-+}
-+
-+static void rk817_clkout2_unprepare(struct clk_hw *hw)
-+{
-+	rk817_clkout2_enable(hw, false);
-+}
-+
-+static int rk817_clkout2_is_prepared(struct clk_hw *hw)
-+{
-+	struct rk808_clkout *rk808_clkout = container_of(hw,
-+							 struct rk808_clkout,
-+							 clkout2_hw);
-+	struct rk808 *rk808 = rk808_clkout->rk808;
-+	unsigned int val;
-+
-+	int ret = regmap_read(rk808->regmap, RK817_SYS_CFG(1), &val);
-+
-+	if (ret < 0)
-+		return 0;
-+
-+	return (val & RK817_CLK32KOUT2_EN) ? 1 : 0;
-+}
-+
-+static const struct clk_ops rk817_clkout2_ops = {
-+	.prepare = rk817_clkout2_prepare,
-+	.unprepare = rk817_clkout2_unprepare,
-+	.is_prepared = rk817_clkout2_is_prepared,
-+	.recalc_rate = rk808_clkout_recalc_rate,
++static struct clk_branch gcc_lpass_q6_axi_clk = {
++	.halt_reg = 0x47000,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x47000,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "gcc_lpass_q6_axi_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
 +};
 +
-+static const struct clk_ops *rkpmic_get_ops(long variant)
-+{
-+	switch (variant) {
-+	case RK809_ID:
-+	case RK817_ID:
-+		return &rk817_clkout2_ops;
-+	/*
-+	 * For the default case, it match the following PMIC type.
-+	 * RK805_ID
-+	 * RK808_ID
-+	 * RK818_ID
-+	 */
-+	default:
-+		return &rk808_clkout2_ops;
-+	}
-+}
++static struct clk_branch gcc_lpass_sway_clk = {
++	.halt_reg = 0x47008,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x47008,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "gcc_lpass_sway_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
 +
- static int rk808_clkout_probe(struct platform_device *pdev)
- {
- 	struct rk808 *rk808 = dev_get_drvdata(pdev->dev.parent);
-@@ -127,7 +189,7 @@ static int rk808_clkout_probe(struct platform_device *pdev)
+ static struct gdsc pcie_0_gdsc = {
+ 	.gdscr = 0x6b004,
+ 	.pd = {
+@@ -3469,6 +3495,8 @@ enum {
+ 	[GCC_QSPI_CORE_CLK_SRC] = &gcc_qspi_core_clk_src.clkr,
+ 	[GCC_QSPI_CORE_CLK] = &gcc_qspi_core_clk.clkr,
+ 	[GCC_QSPI_CNOC_PERIPH_AHB_CLK] = &gcc_qspi_cnoc_periph_ahb_clk.clkr,
++	[GCC_LPASS_Q6_AXI_CLK] = NULL,
++	[GCC_LPASS_SWAY_CLK] = NULL,
+ };
+ 
+ static const struct qcom_reset_map gcc_sdm845_resets[] = {
+@@ -3583,6 +3611,13 @@ static int gcc_sdm845_probe(struct platform_device *pdev)
+ 	if (ret)
  		return ret;
  
- 	init.name = "rk808-clkout2";
--	init.ops = &rk808_clkout2_ops;
-+	init.ops = rkpmic_get_ops(rk808->variant);
- 	rk808_clkout->clkout2_hw.init = &init;
++	if (of_property_read_bool(pdev->dev.of_node, "qcom,lpass-protected")) {
++		gcc_sdm845_clocks[GCC_LPASS_Q6_AXI_CLK] =
++			&gcc_lpass_q6_axi_clk.clkr;
++		gcc_sdm845_clocks[GCC_LPASS_SWAY_CLK] =
++			&gcc_lpass_sway_clk.clkr;
++	}
++
+ 	return qcom_cc_really_probe(pdev, &gcc_sdm845_desc, regmap);
+ }
  
- 	/* optional override of the clockname */
+diff --git a/drivers/clk/qcom/lpasscc-sdm845.c b/drivers/clk/qcom/lpasscc-sdm845.c
+new file mode 100644
+index 0000000..72c3cce
+--- /dev/null
++++ b/drivers/clk/qcom/lpasscc-sdm845.c
+@@ -0,0 +1,195 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
++ */
++
++#include <linux/bitops.h>
++#include <linux/err.h>
++#include <linux/platform_device.h>
++#include <linux/module.h>
++#include <linux/of_address.h>
++#include <linux/regmap.h>
++
++#include <dt-bindings/clock/qcom,lpass-sdm845.h>
++
++#include "clk-regmap.h"
++#include "clk-branch.h"
++#include "common.h"
++
++static struct clk_branch lpass_audio_wrapper_aon_clk = {
++	.halt_reg = 0x098,
++	.halt_check = BRANCH_VOTED,
++	.clkr = {
++		.enable_reg = 0x098,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "lpass_audio_wrapper_aon_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch lpass_q6ss_ahbm_aon_clk = {
++	.halt_reg = 0x12000,
++	.halt_check = BRANCH_VOTED,
++	.clkr = {
++		.enable_reg = 0x12000,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "lpass_q6ss_ahbm_aon_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch lpass_q6ss_ahbs_aon_clk = {
++	.halt_reg = 0x1f000,
++	.halt_check = BRANCH_VOTED,
++	.clkr = {
++		.enable_reg = 0x1f000,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "lpass_q6ss_ahbs_aon_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++/* CLK_OFF would not toggle until LPASS is not out of reset */
++static struct clk_branch lpass_qdsp6ss_core_clk = {
++	.halt_reg = 0x20,
++	.halt_check = BRANCH_HALT_SKIP,
++	.clkr = {
++		.enable_reg = 0x20,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "lpass_qdsp6ss_core_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++/* CLK_OFF would not toggle until LPASS is not out of reset */
++static struct clk_branch lpass_qdsp6ss_xo_clk = {
++	.halt_reg = 0x38,
++	.halt_check = BRANCH_HALT_SKIP,
++	.clkr = {
++		.enable_reg = 0x38,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "lpass_qdsp6ss_xo_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++/* CLK_OFF would not toggle until LPASS is not out of reset */
++static struct clk_branch lpass_qdsp6ss_sleep_clk = {
++	.halt_reg = 0x3c,
++	.halt_check = BRANCH_HALT_SKIP,
++	.clkr = {
++		.enable_reg = 0x3c,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "lpass_qdsp6ss_sleep_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct regmap_config lpass_regmap_config = {
++	.reg_bits	= 32,
++	.reg_stride	= 4,
++	.val_bits	= 32,
++	.fast_io	= true,
++};
++
++static struct clk_regmap *lpass_cc_sdm845_clocks[] = {
++	[LPASS_AUDIO_WRAPPER_AON_CLK] = &lpass_audio_wrapper_aon_clk.clkr,
++	[LPASS_Q6SS_AHBM_AON_CLK] = &lpass_q6ss_ahbm_aon_clk.clkr,
++	[LPASS_Q6SS_AHBS_AON_CLK] = &lpass_q6ss_ahbs_aon_clk.clkr,
++};
++
++static const struct qcom_cc_desc lpass_cc_sdm845_desc = {
++	.config = &lpass_regmap_config,
++	.clks = lpass_cc_sdm845_clocks,
++	.num_clks = ARRAY_SIZE(lpass_cc_sdm845_clocks),
++};
++
++static struct clk_regmap *lpass_qdsp6ss_sdm845_clocks[] = {
++	[LPASS_QDSP6SS_XO_CLK] = &lpass_qdsp6ss_xo_clk.clkr,
++	[LPASS_QDSP6SS_SLEEP_CLK] = &lpass_qdsp6ss_sleep_clk.clkr,
++	[LPASS_QDSP6SS_CORE_CLK] = &lpass_qdsp6ss_core_clk.clkr,
++};
++
++static const struct qcom_cc_desc lpass_qdsp6ss_sdm845_desc = {
++	.config = &lpass_regmap_config,
++	.clks = lpass_qdsp6ss_sdm845_clocks,
++	.num_clks = ARRAY_SIZE(lpass_qdsp6ss_sdm845_clocks),
++};
++
++static int lpass_clocks_sdm845_probe(struct platform_device *pdev, int index,
++				     const struct qcom_cc_desc *desc)
++{
++	struct regmap *regmap;
++	struct resource *res;
++	void __iomem *base;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, index);
++	base = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(base))
++		return PTR_ERR(base);
++
++	regmap = devm_regmap_init_mmio(&pdev->dev, base, desc->config);
++	if (IS_ERR(regmap))
++		return PTR_ERR(regmap);
++
++	return qcom_cc_really_probe(pdev, desc, regmap);
++}
++
++/* LPASS CC clock controller */
++static const struct of_device_id lpass_cc_sdm845_match_table[] = {
++	{ .compatible = "qcom,sdm845-lpasscc" },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, lpass_cc_sdm845_match_table);
++
++static int lpass_cc_sdm845_probe(struct platform_device *pdev)
++{
++	const struct qcom_cc_desc *desc;
++	int ret;
++
++	lpass_regmap_config.name = "cc";
++	desc = &lpass_cc_sdm845_desc;
++
++	ret = lpass_clocks_sdm845_probe(pdev, 0, desc);
++	if (ret)
++		return ret;
++
++	lpass_regmap_config.name = "qdsp6ss";
++	desc = &lpass_qdsp6ss_sdm845_desc;
++
++	return lpass_clocks_sdm845_probe(pdev, 1, desc);
++}
++
++static struct platform_driver lpass_cc_sdm845_driver = {
++	.probe		= lpass_cc_sdm845_probe,
++	.driver		= {
++		.name	= "sdm845-lpasscc",
++		.of_match_table = lpass_cc_sdm845_match_table,
++	},
++};
++
++static int __init lpass_cc_sdm845_init(void)
++{
++	return platform_driver_register(&lpass_cc_sdm845_driver);
++}
++subsys_initcall(lpass_cc_sdm845_init);
++
++static void __exit lpass_cc_sdm845_exit(void)
++{
++	platform_driver_unregister(&lpass_cc_sdm845_driver);
++}
++module_exit(lpass_cc_sdm845_exit);
++
++MODULE_LICENSE("GPL v2");
 -- 
-1.9.1
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
