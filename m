@@ -1,67 +1,67 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:44890 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726093AbeIDJEh (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 4 Sep 2018 05:04:37 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v4 00/11] arm64: allwinner: Add A64 DE2 HDMI support
-Date: Tue,  4 Sep 2018 12:40:42 +0800
-Message-Id: <20180904044053.15425-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <anson.huang@nxp.com>
+From: Anson Huang <Anson.Huang@nxp.com>
+To: robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	fabio.estevam@nxp.com,
+	linux@armlinux.org.uk,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	ping.bai@nxp.com,
+	Aisheng.dong@nxp.com,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Cc: Linux-imx@nxp.com
+Subject: [PATCH 0/4] Add i.MX6ULZ SoC support
+Date: Tue, 18 Sep 2018 14:19:04 +0800
+Message-Id: <1537251548-27845-1-git-send-email-Anson.Huang@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-Path: Anson.Huang@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Allwinner A64 has display engine pipeline like other Allwinner SOC's A83T/H3/H5.
+This patch set adds i.MX6ULZ SoC support, i.MX6ULZ is a new SoC of
+i.MX6 family, compared to i.MX6ULL, it removes below modules:
 
-A64 behaviour similar to Allwinner A83T where
-Mixer0 => TCON0 => LVDS/RGB/MIPI-DSI
-Mixer1 => TCON1 => HDMI
-as per Display System Block Diagram from the A64 user manual.
+    - UART5/UART6/UART7/UART8;
+    - PWM5/PWM6/PWM7/PWM8;
+    - eCSPI3/eCSPI4;
+    - CAN1/CAN2;
+    - FEC1/FEC2;
+    - I2C3/I2C4;
+    - EPIT2;
+    - LCDIF;
+    - GPT2;
+    - TSC;
 
-This patchset adds support for the two display pipelines, and enables
-the HDMI output on several boards. The first pipeline is not enabled in
-this patchset yet, although it's added.
+And i.MX6ULZ has same soc_id as i.MX6ULL, but SRC_SBMR2 bit[6] is
+to differentiate i.MX6ULZ from i.MX6ULL, 1'b1 means i.MX6ULZ and
+1'b0 means i.MX6ULL. i.MX6ULZ reuse most of i.MX6UL/i.MX6ULL code,
+just add the new CPU type and remove those non-exist modules from dtb.
 
-Icenowy Zheng (2):
-  clk: sunxi-ng: a64: Add max. rate constraint to video PLLs
-  dt-bindings: sun4i-drm: add HDMI VCC supply property for sun8i-dw-hdmi
+Anson Huang (4):
+  ARM: dts: imx: add i.mx6ulz and i.mx6ulz 14x14 evk support
+  ARM: imx: add i.mx6ulz msl support
+  clk: imx6ul: add i.mx6ulz support
+  dt-bindings: arm: add compatible for i.MX6ULZ 14x14 EVK board
 
-Jagan Teki (8):
-  clk: sunxi-ng: a64: Add minimal rate for video PLLs
-  dt-bindings: display: Add compatible for A64 DE2 display pipeline
-  drm/sun4i: Add support for A64 mixers
-  drm/sun4i: Add support for A64 display engine
-  dt-bindings: display: Add compatible for A64 HDMI
-  dt-bindings: clock: sun50i-a64-ccu: Add PLL_VIDEO0 macro
-  arm64: dts: allwinner: a64: Add display pipeline
-  arm64: dts: allwinner: a64: Enable HDMI output on A64 boards w/ HDMI
-
-Jernej Skrabec (1):
-  drm/sun4i: Add support for HDMI voltage regulator
-
- .../bindings/display/sunxi/sun4i-drm.txt      |   9 +
- .../dts/allwinner/sun50i-a64-bananapi-m64.dts |  34 ++++
- .../dts/allwinner/sun50i-a64-nanopi-a64.dts   |  34 ++++
- .../dts/allwinner/sun50i-a64-olinuxino.dts    |  34 ++++
- .../dts/allwinner/sun50i-a64-orangepi-win.dts |  34 ++++
- .../boot/dts/allwinner/sun50i-a64-pine64.dts  |  34 ++++
- .../allwinner/sun50i-a64-sopine-baseboard.dts |  34 ++++
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 170 ++++++++++++++++++
- drivers/clk/sunxi-ng/ccu-sun50i-a64.c         |  48 ++---
- drivers/clk/sunxi-ng/ccu-sun50i-a64.h         |   4 +-
- drivers/gpu/drm/sun4i/sun4i_drv.c             |   1 +
- drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c         |  17 +-
- drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h         |   2 +
- drivers/gpu/drm/sun4i/sun8i_mixer.c           |  24 +++
- include/dt-bindings/clock/sun50i-a64-ccu.h    |   1 +
- 15 files changed, 456 insertions(+), 24 deletions(-)
+ Documentation/devicetree/bindings/arm/fsl.txt |  4 +++
+ arch/arm/boot/dts/Makefile                    |  3 ++-
+ arch/arm/boot/dts/imx6ulz-14x14-evk.dts       | 20 ++++++++++++++
+ arch/arm/boot/dts/imx6ulz.dtsi                | 38 +++++++++++++++++++++++++++
+ arch/arm/mach-imx/anatop.c                    | 20 ++++++++++++++
+ arch/arm/mach-imx/cpu.c                       |  3 +++
+ arch/arm/mach-imx/mach-imx6ul.c               |  1 +
+ arch/arm/mach-imx/mxc.h                       |  7 +++++
+ arch/arm/mach-imx/pm-imx6.c                   |  4 +--
+ drivers/clk/imx/clk-imx6ul.c                  |  3 ++-
+ 10 files changed, 99 insertions(+), 4 deletions(-)
+ create mode 100644 arch/arm/boot/dts/imx6ulz-14x14-evk.dts
+ create mode 100644 arch/arm/boot/dts/imx6ulz.dtsi
 
 -- 
-2.18.0
+2.7.4
