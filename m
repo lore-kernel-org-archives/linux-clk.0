@@ -1,94 +1,93 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: linux-sunxi@googlegroups.com, wens@csie.org
-Cc: Rob Herring <robh+dt@kernel.org>, Maxime Ripard <maxime.ripard@bootlin.com>, Mark Rutland <mark.rutland@arm.com>, Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, David Airlie <airlied@linux.ie>, Archit Taneja <architt@codeaurora.org>, Andrzej Hajda <a.hajda@samsung.com>, devicetree <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>
-Subject: Re: [linux-sunxi] Re: [PATCH 13/27] drm/sun4i: Add support for H6 DE3 mixer 0
-Date: Sun, 23 Sep 2018 21:40:02 +0200
-Message-ID: <6201242.bzTTWRITmP@jernej-laptop>
-In-Reply-To: <CAGb2v65LzGgXORTx7PR+udZsrgGgmnXeaOW-jb=KMjHjTg7bRg@mail.gmail.com>
-References: <20180902072643.4917-1-jernej.skrabec@siol.net> <CAGb2v66kp4B5VZfmTc8L6qt=OPHjbYBtXRbC=L6jGTzvEKvb=w@mail.gmail.com> <CAGb2v65LzGgXORTx7PR+udZsrgGgmnXeaOW-jb=KMjHjTg7bRg@mail.gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:41421 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728575AbeIRSat (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Sep 2018 14:30:49 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+References: <20180829132954.64862-1-chris.brandt@renesas.com>
+ <1ff04fa1-ee3b-6095-bcd8-f16dbb99b57a@linaro.org> <TY1PR01MB156202DC354E70F1C8C5B18A8A090@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <c16b82c0-e675-8f86-19e6-75cb5995813b@linaro.org> <CAMuHMdX9nXYan-m14k6h7OU1UCGW_irDLvMMi==dnM0cdUR_nA@mail.gmail.com>
+ <c4bd550f-5319-9d92-a30a-1d12fc9bbcab@linaro.org> <CAMuHMdUs-YNQk1wmbqQvz_n9xq04=gkyL1uBJdg9ExA9Lmg5uw@mail.gmail.com>
+ <a160b76b-8dca-81e8-e958-d8b92bdc8928@linaro.org> <CAMuHMdV3Ai+CLHBJ_GH9d=JN0cmiaQT3eSfNGRgiiMffgK7stg@mail.gmail.com>
+ <ba334f02-ac37-0908-ec0c-da8a6459fab4@linaro.org> <TYXPR01MB1568B71126AB4A2BDB78BF1F8A000@TYXPR01MB1568.jpnprd01.prod.outlook.com>
+ <CAL_JsqJ84FW8a8eaHPsJAM9R3tYVzOJxp7=Fq+xWzBPVV03fhg@mail.gmail.com>
+ <TY1PR01MB15621F2C9CC30B20BF5E09A18A050@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <CAL_JsqJorfOhuwiRk9vbfZ_6B8s-EM7k+RTJmC4La76NzY5tuw@mail.gmail.com>
+ <TY1PR01MB15629984AA415D4F876B86038A040@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <e4b750b4-2e99-ac24-d7aa-db05a6872a8b@linaro.org> <CAMuHMdWOc=p-y4cB=8Y5+HRxRdVqXxE7TaSXkcOO9AMaB+1Mqg@mail.gmail.com>
+ <TY1PR01MB15627A875767E1428E6C7DCE8A1A0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <CAMuHMdXy=NXgqc0p5x+dp6u45LkYENNA6mjECwnOYOURE_+yCg@mail.gmail.com>
+ <TY1PR01MB1562DB2A1F955F52807F8AC88A1E0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <CAMuHMdWOR91HWNGnQAfkjesg_89=AuxUy0RnE3R7=3=KZ_0Kyg@mail.gmail.com> <TY1PR01MB15621E4C1E84A6E3BC4B94CF8A1D0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+In-Reply-To: <TY1PR01MB15621E4C1E84A6E3BC4B94CF8A1D0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 18 Sep 2018 14:58:02 +0200
+Message-ID: <CAMuHMdV1LvTrf3jw+JMkAC=skxB48--AYm_eJtZJqt9374Sd3w@mail.gmail.com>
+Subject: Re: [PATCH 1/2] clocksource/drivers/ostm: Delay driver registration
+To: Chris Brandt <Chris.Brandt@renesas.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Arnd Bergmann <arnd.bergmann@linaro.org>,
+        Mark Brown <broonie@linaro.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Dne sobota, 22. september 2018 ob 15:47:03 CEST je Chen-Yu Tsai napisal(a):
-> On Sat, Sep 22, 2018 at 9:23 PM Chen-Yu Tsai <wens@csie.org> wrote:
-> > On Sun, Sep 2, 2018 at 3:27 PM Jernej Skrabec <jernej.skrabec@siol.net> 
-wrote:
-> > > Mixer 0 has 1 VI and 3 UI planes, scaler on all planes and can output
-> > > 4K image @60Hz. It also support 10 bit colors.
-> > 
-> > AFAICT 10 bit color support is not implemented? Please mention this.
+Hi Chris,
 
-ok.
+On Tue, Sep 18, 2018 at 1:55 PM Chris Brandt <Chris.Brandt@renesas.com> wrote:
+> On Tuesday, September 18, 2018, linux-renesas-soc-owner@vger.kernel.org wrote:
+> > > I've coded this up and it works fine.
+> >
+> > While I don't doubt this works fine, your DT is no longer describing
+> > hardware, but also software policy.
+> >
+> > I think the proper solution, maximizing code reuse, is to:
+> >   - Split off early clocks from cpg_mssr_info.core_clks[] and .mod_clk[]
+> > into
+> >     cpg_mssr_info.early_core_clks[] and .early_mod_clks[],
+>
+> This is where I got into trouble.
+> I originally just tried to register all the core clocks in the early
+> init. But then I had issues when the platform probe came in later and
+> wanted to do the same thing.
+>
+> For example, the clock tree for OSTM is:
+>   EXTAL -> PLL -> P1C -> OSTM
+>
+> Of course there are other non-early module that use the P1C clock.
+>
+> Do you think it would be OK if I just registers all the core clock in
+> early init, then just pass back the clk pointers to cpg_mssr_probe later
+> (to let the platform driver manage them)?
 
-> > 
-> > > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> > > ---
-> > > 
-> > >  drivers/gpu/drm/sun4i/sun8i_mixer.c | 13 +++++++++++++
-> > >  1 file changed, 13 insertions(+)
-> > > 
-> > > diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c
-> > > b/drivers/gpu/drm/sun4i/sun8i_mixer.c index a9218abf0935..54eca2dd4b33
-> > > 100644
-> > > --- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
-> > > +++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
-> > > @@ -540,6 +540,15 @@ static int sun8i_mixer_remove(struct
-> > > platform_device *pdev)> > 
-> > >         return 0;
-> > >  
-> > >  }
-> > > 
-> > > +static const struct sun8i_mixer_cfg sun50i_h6_mixer0_cfg = {
-> > 
-> > Please sort the per-compatible structures according to "version sort"
-> > rules.> 
-> > > +       .ccsc           = 0,
-> > > +       .is_de3         = true,
-> > > +       .mod_rate       = 600000000,
-> > > +       .scaler_mask    = 0xf,
-> > > +       .ui_num         = 3,
-> > > +       .vi_num         = 1,
-> > > +};
-> > > +
-> > > 
-> > >  static const struct sun8i_mixer_cfg sun8i_a83t_mixer0_cfg = {
-> > >  
-> > >         .ccsc           = 0,
-> > >         .scaler_mask    = 0xf,
-> > > 
-> > > @@ -587,6 +596,10 @@ static const struct sun8i_mixer_cfg
-> > > sun8i_v3s_mixer_cfg = {> > 
-> > >  };
-> > >  
-> > >  static const struct of_device_id sun8i_mixer_of_table[] = {
-> > > 
-> > > +       {
-> > > +               .compatible = "allwinner,sun50i-h6-de3-mixer-0",
-> > > +               .data = &sun50i_h6_mixer0_cfg,
-> > > +       },
-> > 
-> > Same here.
-> > 
-> > ChenYu
-> 
-> BTW, DE 3.0 includes a register in DE TOP called "DE IP configure register",
-> which gives the number of IP blocks per class, per mixer. If we retrieve
-> the configuration from this register, then we shouldn't need to
-> differentiate between mixer-0 and mixer-1 with compatible strings.
-> 
-> What do you think?
+Just move EXTAL, PLL, and P1C from cpg_mssr_info.core_clks[] to
+.early_core_clks[], and move OSTM[01] from .mod_clks[] to
+.early_mod_clks[]?
 
-IIRC, not all setting were correct when read from registers, but I would need 
-to check again. I'm also not sure if register holds all possible settings, so 
-it is safer to have separate list. We would also have to devise mechanism to 
-get this data from DE2/3 CCU driver (it occupies the same memory space).
+Then the early init from CLK_OF_DECLARE() will just register the
+early clocks, and cpg_mssr_probe() can take care of the remaining parts?
 
-Perhaps the strongest argument is that some SoCs with DE3 have HW bug in 
-mixer1 block, including that in H6. In order to work, mod clock has to be 
-enabled for mixer0 and mixer1 at the same time. I would associate that quirk 
-with mixer1 compatible.
+Does that make sense?
 
-Best regards,
-Jernej
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
