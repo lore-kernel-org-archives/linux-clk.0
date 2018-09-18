@@ -1,57 +1,126 @@
-Return-Path: <moritz.fischer@ettus.com>
-MIME-Version: 1.0
-In-Reply-To: <CAOesGMi7Q9L4oZkUubKtV-m8XD67MQ05ZFhPA_0Hwky_qVUxfg@mail.gmail.com>
-References: <1533318808-10781-1-git-send-email-jollys@xilinx.com>
- <1533318808-10781-4-git-send-email-jollys@xilinx.com> <CAOesGMi7Q9L4oZkUubKtV-m8XD67MQ05ZFhPA_0Hwky_qVUxfg@mail.gmail.com>
-From: Moritz Fischer <moritz.fischer@ettus.com>
-Date: Sun, 9 Sep 2018 12:20:09 -0700
-Message-ID: <CAAtXAHfwpKagBUQSFLJ1bBsxvbvyg=+nCuQv11eD+nhuxD=1_A@mail.gmail.com>
-Subject: Re: [PATCH v11 03/11] firmware: xilinx: Add zynqmp IOCTL API for
- device control
-To: Olof Johansson <olof@lixom.net>
-Cc: Jolly Shah <jolly.shah@xilinx.com>,
-	"ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>, Ingo Molnar <mingo@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, matt@codeblueprint.co.uk,
-	Sudeep Holla <sudeep.holla@arm.com>, hkallweit1@gmail.com,
-	Kees Cook <keescook@chromium.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Michal Simek <michal.simek@xilinx.com>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, linux-clk <linux-clk@vger.kernel.org>, rajanv@xilinx.com,
-	Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, DTML <devicetree@vger.kernel.org>,
-	Jolly Shah <jollys@xilinx.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <tdas@codeaurora.org>
+From: Taniya Das <tdas@codeaurora.org>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	robh@kernel.org,
+	Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH v5 1/2] dt-bindings: clock: Introduce QCOM LPASS clock bindings
+Date: Tue, 18 Sep 2018 15:55:37 +0530
+Message-Id: <1537266338-18661-2-git-send-email-tdas@codeaurora.org>
+In-Reply-To: <1537266338-18661-1-git-send-email-tdas@codeaurora.org>
+References: <1537266338-18661-1-git-send-email-tdas@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Olof,
+Add device tree bindings for Low Power Audio subsystem clock controller for
+Qualcomm Technology Inc's SDM845 SoCs.
 
-On Sat, Sep 8, 2018 at 6:18 PM, Olof Johansson <olof@lixom.net> wrote:
-> Hi,
->
-> On Fri, Aug 3, 2018 at 10:53 AM, Jolly Shah <jolly.shah@xilinx.com> wrote:
->> From: Rajan Vaja <rajanv@xilinx.com>
->>
->> Add ZynqMP firmware IOCTL API to control and configure
->> devices like PLLs, SD, Gem, etc.
->>
->> Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
->> Signed-off-by: Jolly Shah <jollys@xilinx.com>
->
-> This patch worries me somewhat. It's a transparent pass-through ioctl
-> driver. Is there a spec available for what the implemented IOCTLs are?
->
-> Should some of them be proper drivers instead of an opaque
-> pass-through like this? Could some of them have stability impact on
-> the platform such that there are security concerns and the list of
-> arguments should somehow be sanitized?
+Signed-off-by: Taniya Das <tdas@codeaurora.org>
+---
+ .../devicetree/bindings/clock/qcom,gcc.txt         |  2 ++
+ .../devicetree/bindings/clock/qcom,lpasscc.txt     | 35 ++++++++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-sdm845.h        |  2 ++
+ include/dt-bindings/clock/qcom,lpass-sdm845.h      | 16 ++++++++++
+ 4 files changed, 55 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,lpasscc.txt
+ create mode 100644 include/dt-bindings/clock/qcom,lpass-sdm845.h
 
-I tend to agree with this, good catch.
-
-> What's the intended usecase anyway? Just a debug tool during
-> development, or something that you expect heavy use of by some
-> userspace middleware?
-
-I suspect it is another attempt to make userspace clocks/plls work? Scary.
-
-Cheers,
-Moritz
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc.txt b/Documentation/devicetree/bindings/clock/qcom,gcc.txt
+index 664ea1f..b3ff6e8 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gcc.txt
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc.txt
+@@ -32,6 +32,8 @@ be part of GCC and hence the TSENS properties can also be
+ part of the GCC/clock-controller node.
+ For more details on the TSENS properties please refer
+ Documentation/devicetree/bindings/thermal/qcom-tsens.txt
++- qcom,lpass-protected : Indicate that the LPASS clock branches within GCC are
++			 unusable due to firmware access control restrictions.
+ 
+ Example:
+ 	clock-controller@900000 {
+diff --git a/Documentation/devicetree/bindings/clock/qcom,lpasscc.txt b/Documentation/devicetree/bindings/clock/qcom,lpasscc.txt
+new file mode 100644
+index 0000000..6a718c8
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,lpasscc.txt
+@@ -0,0 +1,35 @@
++Qualcomm LPASS Clock Controller Binding
++-----------------------------------------------
++
++Required properties :
++- compatible		: shall contain "qcom,sdm845-lpasscc"
++- #clock-cells		: from common clock binding, shall contain 1.
++- reg			: shall contain base register address and size,
++			  in the order
++			Index-0 maps to LPASS_CC register region
++			Index-1 maps to LPASS_QDSP6SS register region
++
++Optional properties :
++- reg-names	: register names of LPASS domain
++		 "cc", "qdsp6ss".
++
++Example:
++
++The below node has to be defined in the cases where the LPASS peripheral loader
++would bring the subsystem out of reset.
++
++	lpasscc: clock-controller@17014000 {
++		compatible = "qcom,sdm845-lpasscc";
++		reg = <0x17014000 0x1f004>, <0x17300000 0x200>;
++		reg-names = "cc", "qdsp6ss";
++		#clock-cells = <1>;
++	};
++
++	gcc: clock-controller@100000 {
++		reg = <0x100000 0x4000>;
++		compatible = "qcom,gcc-sdm845";
++		qcom,lpass-protected;
++		#clock-cells = <1>;
++		#reset-cells = <1>;
++		#power-domain-cells = <1>;
++	};
+diff --git a/include/dt-bindings/clock/qcom,gcc-sdm845.h b/include/dt-bindings/clock/qcom,gcc-sdm845.h
+index b8eae5a..968fa65 100644
+--- a/include/dt-bindings/clock/qcom,gcc-sdm845.h
++++ b/include/dt-bindings/clock/qcom,gcc-sdm845.h
+@@ -197,6 +197,8 @@
+ #define GCC_QSPI_CORE_CLK_SRC					187
+ #define GCC_QSPI_CORE_CLK					188
+ #define GCC_QSPI_CNOC_PERIPH_AHB_CLK				189
++#define GCC_LPASS_Q6_AXI_CLK					190
++#define GCC_LPASS_SWAY_CLK					191
+ 
+ /* GCC Resets */
+ #define GCC_MMSS_BCR						0
+diff --git a/include/dt-bindings/clock/qcom,lpass-sdm845.h b/include/dt-bindings/clock/qcom,lpass-sdm845.h
+new file mode 100644
+index 0000000..015968e
+--- /dev/null
++++ b/include/dt-bindings/clock/qcom,lpass-sdm845.h
+@@ -0,0 +1,16 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
++ */
++
++#ifndef _DT_BINDINGS_CLK_SDM_LPASS_SDM845_H
++#define _DT_BINDINGS_CLK_SDM_LPASS_SDM845_H
++
++#define LPASS_AUDIO_WRAPPER_AON_CLK			0
++#define LPASS_Q6SS_AHBM_AON_CLK				1
++#define LPASS_Q6SS_AHBS_AON_CLK				2
++#define LPASS_QDSP6SS_XO_CLK				3
++#define LPASS_QDSP6SS_SLEEP_CLK				4
++#define LPASS_QDSP6SS_CORE_CLK				5
++
++#endif
+-- 
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
