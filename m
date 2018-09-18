@@ -1,104 +1,115 @@
-Return-Path: <maxime.ripard@bootlin.com>
-Date: Fri, 7 Sep 2018 15:31:26 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@siol.net>
-Cc: linux-sunxi@googlegroups.com, Jagan Teki <jagan@amarulasolutions.com>,
-	Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [linux-sunxi] Re: [PATCH v4 1/4] clk: sunxi-ng: Enable DE2_CCU
- for SUN8I and SUN50I
-Message-ID: <20180907133125.ghks5cgk5u6vrhd6@flea>
-References: <20180904163609.10171-1-jagan@amarulasolutions.com>
- <20180905070335.dclhpxjld4vdkdu4@flea>
- <2955967.qdhifWMYUT@jernej-laptop>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:42737 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729905AbeIRVuX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Sep 2018 17:50:23 -0400
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="4nzkw2nv5o3dfnhg"
-In-Reply-To: <2955967.qdhifWMYUT@jernej-laptop>
+References: <20180829132954.64862-1-chris.brandt@renesas.com>
+ <1ff04fa1-ee3b-6095-bcd8-f16dbb99b57a@linaro.org> <TY1PR01MB156202DC354E70F1C8C5B18A8A090@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <c16b82c0-e675-8f86-19e6-75cb5995813b@linaro.org> <CAMuHMdX9nXYan-m14k6h7OU1UCGW_irDLvMMi==dnM0cdUR_nA@mail.gmail.com>
+ <c4bd550f-5319-9d92-a30a-1d12fc9bbcab@linaro.org> <CAMuHMdUs-YNQk1wmbqQvz_n9xq04=gkyL1uBJdg9ExA9Lmg5uw@mail.gmail.com>
+ <a160b76b-8dca-81e8-e958-d8b92bdc8928@linaro.org> <CAMuHMdV3Ai+CLHBJ_GH9d=JN0cmiaQT3eSfNGRgiiMffgK7stg@mail.gmail.com>
+ <ba334f02-ac37-0908-ec0c-da8a6459fab4@linaro.org> <TYXPR01MB1568B71126AB4A2BDB78BF1F8A000@TYXPR01MB1568.jpnprd01.prod.outlook.com>
+ <CAL_JsqJ84FW8a8eaHPsJAM9R3tYVzOJxp7=Fq+xWzBPVV03fhg@mail.gmail.com>
+ <TY1PR01MB15621F2C9CC30B20BF5E09A18A050@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <CAL_JsqJorfOhuwiRk9vbfZ_6B8s-EM7k+RTJmC4La76NzY5tuw@mail.gmail.com>
+ <TY1PR01MB15629984AA415D4F876B86038A040@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <e4b750b4-2e99-ac24-d7aa-db05a6872a8b@linaro.org> <CAMuHMdWOc=p-y4cB=8Y5+HRxRdVqXxE7TaSXkcOO9AMaB+1Mqg@mail.gmail.com>
+ <TY1PR01MB15627A875767E1428E6C7DCE8A1A0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <CAMuHMdXy=NXgqc0p5x+dp6u45LkYENNA6mjECwnOYOURE_+yCg@mail.gmail.com>
+ <TY1PR01MB1562DB2A1F955F52807F8AC88A1E0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <CAMuHMdWOR91HWNGnQAfkjesg_89=AuxUy0RnE3R7=3=KZ_0Kyg@mail.gmail.com>
+ <TY1PR01MB15621E4C1E84A6E3BC4B94CF8A1D0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <CAMuHMdV1LvTrf3jw+JMkAC=skxB48--AYm_eJtZJqt9374Sd3w@mail.gmail.com>
+ <TY1PR01MB15625BAD12E2CB56AB47ACE88A1D0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <CAMuHMdVfa1yz=N=KCwXO=4TGGB113mTYqtB=0iYiaQVoTC260Q@mail.gmail.com> <TY1PR01MB1562ED7502A2D183B5A981588A1D0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+In-Reply-To: <TY1PR01MB1562ED7502A2D183B5A981588A1D0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 18 Sep 2018 18:16:53 +0200
+Message-ID: <CAMuHMdWMtLSzP7nC+C=ND1O4BQY6DFzTFspchjwtsTGTqTURog@mail.gmail.com>
+Subject: Re: [PATCH 1/2] clocksource/drivers/ostm: Delay driver registration
+To: Chris Brandt <Chris.Brandt@renesas.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Arnd Bergmann <arnd.bergmann@linaro.org>,
+        Mark Brown <broonie@linaro.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+Hi Chris,
 
---4nzkw2nv5o3dfnhg
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, Sep 18, 2018 at 5:52 PM Chris Brandt <Chris.Brandt@renesas.com> wrote:
+> On Tuesday, September 18, 2018 1, Geert Uytterhoeven wrote:
+> > > What do you see the .dtsi and .dts looking like?
+> >
+> > The part using CLK_OF_DECLARE() is not a platform driver. It does not
+> > operate on a device (struct platform_device), but on a device node
+> > (struct
+> > device_node). Hence it would match against the same DT node, but map it
+> > using of_iomap().  So you just need the existing "renesas,r7s9210-cpg-
+> > mssr"
+> > node.
+>
+> So...I tried that...and it doesn't work.
+>
+> Basically, this:
+> CLK_OF_DECLARE(cpg_mstp_early_clks, "renesas,r7s9210-cpg-mssr",
+>                rza2_cpg_mssr_early_init);
+>
+> But, what happens is that rza2_cpg_mssr_early_init gets called because
+> it find a match against "renesas,r7s9210-cpg-mssr". But later after
+> cpg_mssr_init gets call, cpg_mssr_probe never gets called. I assume that is
+> because device "renesas,r7s9210-cpg-mssr" has already been matched to a
+> driver.
+>
+> > Please have a look at e.g. "mediatek,mt2712-topckgen".
+>
+> One thing I don't understand is that in the early init, it registers a
+> of_clk_add_provider. But then later in the probe, it register
+> of_clk_add_provider again (on the same DT node). I guess you can do that????
 
-On Thu, Sep 06, 2018 at 07:10:06AM +0200, Jernej =C5=A0krabec wrote:
-> Dne sreda, 05. september 2018 ob 09:03:35 CEST je Maxime Ripard napisal(a=
-):
-> > On Tue, Sep 04, 2018 at 10:06:06PM +0530, Jagan Teki wrote:
-> > > Allwinner SoC like SUN8I and SUN50I has DE2 CCU so enable them
-> > > as default.
-> > >=20
-> > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> > > ---
-> > > Changes for v4, v3:
-> > > - none
-> > > Changes for v2:
-> > > - Enable for MACH_SUN8I
-> > >=20
-> > >  drivers/clk/sunxi-ng/Kconfig | 2 ++
-> > >  1 file changed, 2 insertions(+)
-> > >=20
-> > > diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kcon=
-fig
-> > > index 826674d090fd..e20182aa9748 100644
-> > > --- a/drivers/clk/sunxi-ng/Kconfig
-> > > +++ b/drivers/clk/sunxi-ng/Kconfig
-> > > @@ -63,6 +63,8 @@ config SUN8I_V3S_CCU
-> > >=20
-> > >  config SUN8I_DE2_CCU
-> > > =20
-> > >  	bool "Support for the Allwinner SoCs DE2 CCU"
-> > >=20
-> > > +	default MACH_SUN8I || (ARM64 && ARCH_SUNXI)
-> > > +	depends on DRM_SUN4I && (MACH_SUN8I || (ARM64 && ARCH_SUNXI))
-> >=20
-> > I don't see why there's a dependency on the DRM driver. I'm pretty
-> > sure this would even break simplefb.
->=20
-> I think best approach would be that SUN8I_MIXER selects (or depends on?) =
-this=20
-> symbol, since it can't work if there is no DE2 CCU clock present.
+Yeah, I noticed that, too.
+It just adds the same xlate method and data pointer to the list.
+So it's harmless, but unneeded.
 
-This is a runtime dependency, not a build time one. We're not doing it
-for any other similar driver, so there's no reason to do it in this
-particular case.
+> So I see what the mediatek is doing, but I can't seem to reproduce it. I
+> must be missing something.
 
-Maxime
+It's using CLK_OF_DECLARE_DRIVER(), which clears OF_POPULATED:
 
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+    /*
+     * Use this macro when you have a driver that requires two initialization
+     * routines, one at of_clk_init(), and one at platform device probe
+     */
+    #define CLK_OF_DECLARE_DRIVER(name, compat, fn) \
+            static void __init name##_of_clk_init_driver(struct
+device_node *np) \
+            {                                                               \
+                    of_node_clear_flag(np, OF_POPULATED);                   \
+                    fn(np);                                                 \
+            }                                                               \
+            OF_DECLARE_1(clk, name, compat, name##_of_clk_init_driver)
 
---4nzkw2nv5o3dfnhg
-Content-Type: application/pgp-signature; name="signature.asc"
+Sorry for failing to tell you. I did know about that flag, but only remembered
+due to your problem report.
 
------BEGIN PGP SIGNATURE-----
+Gr{oetje,eeting}s,
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluSfa0ACgkQ0rTAlCFN
-r3SkZBAAmUPFSM0fZN7/iHasr4dZei6lHt0x+qegvqVbl8dm9QCIEeBHIqgheV/k
-7uiiY67CaeHNXOUDVGnlxa/G2FxDSAN0SoDWqd/ERJjux6hD8G+RtYhpn+cpreph
-yIGDBLjsbZdDdx4J+BRD7gAXFDW+gm922MRzPPN8yRY/qlD8XxsBznHC9v5KzJsJ
-Uqhy5MWFDtMrt06F94OFnMmcmQvR6UA0wNkDcjEMhMEKsV2NRbOOYsdvIzfSaCYL
-wBeYpuuvK6pG5B83n6NRBm4x17Ky17VqR7s1qhe+rWqfX/qdySDY9HYXwp00Qcjv
-Ew2IBnYtkawtQC/dX85gnWJLRpWerD4tu0lpcn5Z8oI3ZvLBH0wC/pTjY4RAk5jD
-oyHQIAdSjcOHciN+BDqp2TYS2q5auKUMIGTCYYh3LwLvw/NSw3Y7fXfydnPob57E
-GtZinGViN0ANegiR451TkS6Dzj7zc9h241NgRmGvYlG2U/JBgPrH4iph1dvVsfEG
-H98ziz13+pdvjdAsnZ/6FBiTqnTl/6z5Lb36eYpQPG9riiklFA6F/ESgi/RbEdoB
-YW0a1qQrk0qnRBlc9kZwAz380e7JNZGN2NnFdbGFnFdE9wI+29p+IJH1Nb6RzNcI
-656FO7rLhkstUmdJmyYiRVclPJBL+0Dd+upCsjI5W+YMgOdoUKU=
-=Nbx1
------END PGP SIGNATURE-----
+                        Geert
 
---4nzkw2nv5o3dfnhg--
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
