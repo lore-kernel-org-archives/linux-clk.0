@@ -1,89 +1,52 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:44963 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726093AbeIDJFT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 4 Sep 2018 05:05:19 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v4 04/11] drm/sun4i: Add support for A64 mixers
-Date: Tue,  4 Sep 2018 12:40:46 +0800
-Message-Id: <20180904044053.15425-5-icenowy@aosc.io>
-In-Reply-To: <20180904044053.15425-1-icenowy@aosc.io>
-References: <20180904044053.15425-1-icenowy@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <anson.huang@nxp.com>
+From: Anson Huang <Anson.Huang@nxp.com>
+To: robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	fabio.estevam@nxp.com,
+	linux@armlinux.org.uk,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	ping.bai@nxp.com,
+	Aisheng.dong@nxp.com,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Cc: Linux-imx@nxp.com
+Subject: [PATCH 4/4] dt-bindings: arm: add compatible for i.MX6ULZ 14x14 EVK board
+Date: Tue, 18 Sep 2018 14:19:08 +0800
+Message-Id: <1537251548-27845-5-git-send-email-Anson.Huang@nxp.com>
+In-Reply-To: <1537251548-27845-1-git-send-email-Anson.Huang@nxp.com>
+References: <1537251548-27845-1-git-send-email-Anson.Huang@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: Anson.Huang@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Jagan Teki <jagan@amarulasolutions.com>
+This patch adds compatible for i.MX6ULZ 14x14 EVK board.
 
-Mixers in Allwinner have similar capabilities as others SoCs with DE2.
-
-Add support for them.
-
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-[Icenowy: Add mixer1]
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-Reviewed-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
-Changes for v4:
-- none
-Changes for v3.1:
-- Add mixer0
-Changes for v3:
-- none 
-Changes for v2:
-- New patch
+ Documentation/devicetree/bindings/arm/fsl.txt | 4 ++++
+ 1 file changed, 4 insertions(+)
 
- drivers/gpu/drm/sun4i/sun8i_mixer.c | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
-
-diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c b/drivers/gpu/drm/sun4i/sun8i_mixer.c
-index cb65b0ed53fd..091f6cf40353 100644
---- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
-@@ -553,6 +553,22 @@ static const struct sun8i_mixer_cfg sun8i_v3s_mixer_cfg = {
- 	.mod_rate = 150000000,
- };
+diff --git a/Documentation/devicetree/bindings/arm/fsl.txt b/Documentation/devicetree/bindings/arm/fsl.txt
+index 968f238..9a0ffce 100644
+--- a/Documentation/devicetree/bindings/arm/fsl.txt
++++ b/Documentation/devicetree/bindings/arm/fsl.txt
+@@ -85,6 +85,10 @@ i.MX6 UltraLiteLite 14x14 EVK Board
+ Required root node properties:
+     - compatible = "fsl,imx6ull-14x14-evk", "fsl,imx6ull";
  
-+static const struct sun8i_mixer_cfg sun50i_a64_mixer0_cfg = {
-+	.ccsc		= 0,
-+	.mod_rate	= 297000000,
-+	.scaler_mask	= 0xf,
-+	.ui_num		= 3,
-+	.vi_num		= 1,
-+};
++i.MX6 ULZ 14x14 EVK Board
++Required root node properties:
++    - compatible = "fsl,imx6ulz-14x14-evk", "fsl,imx6ulz";
 +
-+static const struct sun8i_mixer_cfg sun50i_a64_mixer1_cfg = {
-+	.ccsc		= 1,
-+	.mod_rate	= 297000000,
-+	.scaler_mask	= 0x3,
-+	.ui_num		= 1,
-+	.vi_num		= 1,
-+};
-+
- static const struct of_device_id sun8i_mixer_of_table[] = {
- 	{
- 		.compatible = "allwinner,sun8i-a83t-de2-mixer-0",
-@@ -570,6 +586,14 @@ static const struct of_device_id sun8i_mixer_of_table[] = {
- 		.compatible = "allwinner,sun8i-v3s-de2-mixer",
- 		.data = &sun8i_v3s_mixer_cfg,
- 	},
-+	{
-+		.compatible = "allwinner,sun50i-a64-de2-mixer-0",
-+		.data = &sun50i_a64_mixer0_cfg,
-+	},
-+	{
-+		.compatible = "allwinner,sun50i-a64-de2-mixer-1",
-+		.data = &sun50i_a64_mixer1_cfg,
-+	},
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, sun8i_mixer_of_table);
+ i.MX6 SoloX SDB Board
+ Required root node properties:
+     - compatible = "fsl,imx6sx-sdb", "fsl,imx6sx";
 -- 
-2.18.0
+2.7.4
