@@ -1,61 +1,39 @@
-Return-Path: <maxime.ripard@bootlin.com>
-Date: Thu, 27 Sep 2018 17:21:26 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Jagan Teki <jagan@amarulasolutions.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-	Jernej Skrabec <jernej.skrabec@siol.net>,
-	Vasily Khoruzhick <anarsoul@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 06/12] drm/sun4i: sun6i_mipi_dsi: Fix VBP size calculation
-Message-ID: <20180927152126.vovnvwmqdfpuxgdm@flea>
-References: <20180927114850.24565-1-jagan@amarulasolutions.com>
- <20180927114850.24565-7-jagan@amarulasolutions.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180927114850.24565-7-jagan@amarulasolutions.com>
+References: <1536748914-27416-1-git-send-email-fabrizio.castro@bp.renesas.com> <1536748914-27416-4-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1536748914-27416-4-git-send-email-fabrizio.castro@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 18 Sep 2018 09:59:42 +0200
+Message-ID: <CAMuHMdW40QN82__KwC9i-asn9MtwmU0+6MHsUPv40Mxr3RAxVQ@mail.gmail.com>
+Subject: Re: [PATCH 3/3] dt-bindings: clock: renesas: cpg-mssr: Document r8a774c0
+To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Simon Horman <horms@verge.net.au>,
+	Geert Uytterhoeven <geert+renesas@glider.be>, Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das@bp.renesas.com>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Sep 27, 2018 at 05:18:44PM +0530, Jagan Teki wrote:
-> According to horizontal and vertical timings are defined
-> per the diagram from include/drm/drm_modes.h
-> 
-> Back porch = [hv]total - [hv]sync_end
+On Wed, Sep 12, 2018 at 12:42 PM Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+> This patch documents RZ/G2E (a.k.a. R8A774C0) bindings for the
+> Clock Pulse Generator driver.
 >
-> So, update SUN6I_DSI_BASIC_SIZE0_VBP calculation as
-> mode->vtotal - mode->vsync_end
-> 
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> ---
->  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> index 1c7e42015645..599284971ab6 100644
-> --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> @@ -526,8 +526,8 @@ static void sun6i_dsi_setup_timings(struct sun6i_dsi *dsi,
->  	regmap_write(dsi->regs, SUN6I_DSI_BASIC_SIZE0_REG,
->  		     SUN6I_DSI_BASIC_SIZE0_VSA(mode->vsync_end -
->  					       mode->vsync_start) |
-> -		     SUN6I_DSI_BASIC_SIZE0_VBP(mode->vsync_start -
-> -					       mode->vdisplay));
-> +		     SUN6I_DSI_BASIC_SIZE0_VBP(mode->vtotal -
-> +					       mode->vsync_end));
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
 
-Is it purely theoretical, or did you find some source that back that?
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in clk-renesas-for-v4.20.
 
-Maxime
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
