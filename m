@@ -1,59 +1,71 @@
-Return-Path: <thierry.reding@gmail.com>
-Return-Path: <thierry.reding@gmail.com>
-Date: Mon, 24 Sep 2018 13:40:03 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: ryang <decatf@gmail.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: tegra: Fix an infinite loop when clock rate is zero
-Message-ID: <20180924114003.GS21032@ulmo>
-References: <20180921220037.16862-1-decatf@gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="jo46wx5DSA4a/gWG"
-In-Reply-To: <20180921220037.16862-1-decatf@gmail.com>
+Return-Path: <tdas@codeaurora.org>
+From: Taniya Das <tdas@codeaurora.org>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Rajendra Nayak <rnayak@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	robh@kernel.org,
+	Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH v5 0/2] Add support for LPASS clock controller for SDM845
+Date: Tue, 18 Sep 2018 15:55:36 +0530
+Message-Id: <1537266338-18661-1-git-send-email-tdas@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
+ [v5]
+  * Address the comments in device tree binding to update the reg-names,
+    update the unit address in lpass clock node example and also
+    add reg property for the gcc clock node.
+  * Update the lpass driver to take care of the reg-names.
 
---jo46wx5DSA4a/gWG
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+ [v4]
+  * Update the description in GCC Documentation binding for
+  'qcom,lpass-protected'.
+  * Remove 'qcom,lpass-protected' from LPASS Documentation binding.
+  * Update KConfig to use Low Power Audio Subsystem.
+  * Add module_exit() and also update return value for
+    devm_ioremap_resource failure.
 
-On Fri, Sep 21, 2018 at 06:00:37PM -0400, ryang wrote:
-> Calling clk_set_rate or clk_round_rate will lock up the kernel when the
-> rate is zero. This avoids the infinite loop and uses a slightly more
-> optimized p divider calculation.
->=20
-> Signed-off-by: ryang <decatf@gmail.com>
-> ---
->  drivers/clk/tegra/clk-pll.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
+ [v3]
+  * Add a device tree property to identify lpass protected GCC clocks.
+  * Update the GCC driver code to register the lpass clocks when the flag is
+   defined.
+  * Add comment for clocks using the BRANCH_HALT_SKIP flag.
+  * Use platform APIs instead of of_address_to_resource.
+  * Replace devm_ioremap with devm_ioremap_resource.
+  * Use fixed index for 'lpass_cc' & 'lpass_qdsp6ss' in probe.
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+ [v2]
+  * Make gcc_lpass_sway_clk static.
+  * Remove using child nodes and use reg-names to differentiate various
+    domains of LPASS CC.
 
---jo46wx5DSA4a/gWG
-Content-Type: application/pgp-signature; name="signature.asc"
+Add support for the lpass clock controller found on SDM845 based devices.
+This would allow lpass peripheral loader drivers to control the clocks to
+bring the subsystem out of reset.
 
------BEGIN PGP SIGNATURE-----
+Taniya Das (2):
+  dt-bindings: clock: Introduce QCOM LPASS clock bindings
+  clk: qcom: Add lpass clock controller driver for SDM845
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAluozRMACgkQ3SOs138+
-s6FyUQ/+OUhFV4i9eXn8U9G/iqxDUf2Ipyhw3J5GM2xJ/e0BiinsHS5swaf5CBPI
-s9k9ytlegplNxKOd0ZaARdw88f1k/d2nMYYDtSstaZWU6H0GFFCpJL8tnX49Og9w
-mJYjw21oHmikNGjTwqbvmwv2DFcSPL+w4dx+t4ataXrZCsDElA2YT4N6RqSeMJ4f
-uHPQHrCnC622rKRCWsS2iZbgHLIiWygrdn3kh97GtNmhQyYWfuUV7YToCPt4aQmx
-yg9r7XS9FqrtVCp9LmuPgfIzQ+gBNB8gRrcmmnhn+L36GRSjbPtD2qfkcjTavM/g
-LKNl0UB4gcO6AOe5RtVpFoix8wa4/KvM/lt5LyeDsQFizV3z8P0Cv6zEsGwITPJI
-lRUoHZlHAz8h30OnR+cGnNKuFe+zoPYxAOHyB+nT0o7VcYSeXTLC4yhP/COZmkUc
-SxBpxp5P0AfkUxT6RBFxeedAPft9BsnCrgJD4zMHaDYnVPxoBZlrTW7dxhoEoyQ5
-8R/186CDt6vnUlHcrhjSl6ZElmbvYPF4YsZzzm6y1ePowwU1TpfUxC0iUTPNECtF
-/GzHykooirqJ7Szlb2XrGU9yz6Plep5utMaLRneMsaJ79AfsO/kV8Yhxi8+/uHkY
-+stR+cJjSuW5wIP2Yco9eAaAcuoyFUr7Ccijih5iiAPzZdIM/uk=
-=k52X
------END PGP SIGNATURE-----
+ .../devicetree/bindings/clock/qcom,gcc.txt         |   2 +
+ .../devicetree/bindings/clock/qcom,lpasscc.txt     |  35 ++++
+ drivers/clk/qcom/Kconfig                           |   9 +
+ drivers/clk/qcom/Makefile                          |   1 +
+ drivers/clk/qcom/gcc-sdm845.c                      |  35 ++++
+ drivers/clk/qcom/lpasscc-sdm845.c                  | 195 +++++++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-sdm845.h        |   2 +
+ include/dt-bindings/clock/qcom,lpass-sdm845.h      |  16 ++
+ 8 files changed, 295 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,lpasscc.txt
+ create mode 100644 drivers/clk/qcom/lpasscc-sdm845.c
+ create mode 100644 include/dt-bindings/clock/qcom,lpass-sdm845.h
 
---jo46wx5DSA4a/gWG--
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
