@@ -1,103 +1,78 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.bootlin.com ([62.4.15.54]:36344 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726369AbeIEMUp (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 5 Sep 2018 08:20:45 -0400
-Date: Wed, 5 Sep 2018 09:51:36 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Jagan Teki <jagan@amarulasolutions.com>
-Cc: Icenowy Zheng <icenowy@aosc.io>, Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [linux-sunxi] [PATCH v4 11/11] arm64: dts: allwinner: a64:
- Enable HDMI output on A64 boards w/ HDMI
-Message-ID: <20180905075136.chumwosx76o2n66l@flea>
-References: <20180904044053.15425-1-icenowy@aosc.io>
- <20180904044053.15425-12-icenowy@aosc.io>
- <CAMty3ZCvpUf0nJ3WuPccP8BizBP=Uc8ChzB8SeN8fkX2iS1E_Q@mail.gmail.com>
+Received: from relmlor3.renesas.com ([210.160.252.173]:17845 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728912AbeIRVZM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Sep 2018 17:25:12 -0400
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Arnd Bergmann <arnd.bergmann@linaro.org>,
+        Mark Brown <broonie@linaro.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Subject: RE: [PATCH 1/2] clocksource/drivers/ostm: Delay driver registration
+Date: Tue, 18 Sep 2018 15:51:52 +0000
+Message-ID: <TY1PR01MB1562ED7502A2D183B5A981588A1D0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+References: <20180829132954.64862-1-chris.brandt@renesas.com>
+ <1ff04fa1-ee3b-6095-bcd8-f16dbb99b57a@linaro.org>
+ <TY1PR01MB156202DC354E70F1C8C5B18A8A090@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <c16b82c0-e675-8f86-19e6-75cb5995813b@linaro.org>
+ <CAMuHMdX9nXYan-m14k6h7OU1UCGW_irDLvMMi==dnM0cdUR_nA@mail.gmail.com>
+ <c4bd550f-5319-9d92-a30a-1d12fc9bbcab@linaro.org>
+ <CAMuHMdUs-YNQk1wmbqQvz_n9xq04=gkyL1uBJdg9ExA9Lmg5uw@mail.gmail.com>
+ <a160b76b-8dca-81e8-e958-d8b92bdc8928@linaro.org>
+ <CAMuHMdV3Ai+CLHBJ_GH9d=JN0cmiaQT3eSfNGRgiiMffgK7stg@mail.gmail.com>
+ <ba334f02-ac37-0908-ec0c-da8a6459fab4@linaro.org>
+ <TYXPR01MB1568B71126AB4A2BDB78BF1F8A000@TYXPR01MB1568.jpnprd01.prod.outlook.com>
+ <CAL_JsqJ84FW8a8eaHPsJAM9R3tYVzOJxp7=Fq+xWzBPVV03fhg@mail.gmail.com>
+ <TY1PR01MB15621F2C9CC30B20BF5E09A18A050@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <CAL_JsqJorfOhuwiRk9vbfZ_6B8s-EM7k+RTJmC4La76NzY5tuw@mail.gmail.com>
+ <TY1PR01MB15629984AA415D4F876B86038A040@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <e4b750b4-2e99-ac24-d7aa-db05a6872a8b@linaro.org>
+ <CAMuHMdWOc=p-y4cB=8Y5+HRxRdVqXxE7TaSXkcOO9AMaB+1Mqg@mail.gmail.com>
+ <TY1PR01MB15627A875767E1428E6C7DCE8A1A0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <CAMuHMdXy=NXgqc0p5x+dp6u45LkYENNA6mjECwnOYOURE_+yCg@mail.gmail.com>
+ <TY1PR01MB1562DB2A1F955F52807F8AC88A1E0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <CAMuHMdWOR91HWNGnQAfkjesg_89=AuxUy0RnE3R7=3=KZ_0Kyg@mail.gmail.com>
+ <TY1PR01MB15621E4C1E84A6E3BC4B94CF8A1D0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <CAMuHMdV1LvTrf3jw+JMkAC=skxB48--AYm_eJtZJqt9374Sd3w@mail.gmail.com>
+ <TY1PR01MB15625BAD12E2CB56AB47ACE88A1D0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <CAMuHMdVfa1yz=N=KCwXO=4TGGB113mTYqtB=0iYiaQVoTC260Q@mail.gmail.com>
+In-Reply-To: <CAMuHMdVfa1yz=N=KCwXO=4TGGB113mTYqtB=0iYiaQVoTC260Q@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="gtusaa4loc5rodye"
-In-Reply-To: <CAMty3ZCvpUf0nJ3WuPccP8BizBP=Uc8ChzB8SeN8fkX2iS1E_Q@mail.gmail.com>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-
---gtusaa4loc5rodye
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Sep 05, 2018 at 12:56:03PM +0530, Jagan Teki wrote:
-> On Tue, Sep 4, 2018 at 10:10 AM, Icenowy Zheng <icenowy@aosc.io> wrote:
-> > From: Jagan Teki <jagan@amarulasolutions.com>
-> >
-> > Enable all necessary device tree nodes and add connector node to device
-> > trees for all supported A64 boards with HDMI.
-> >
-> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> > [Icenowy: squash all board patches altogether and change supply name]
-> > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> > ---
-> > Changes in v4:
-> > - Rebase some device trees.
-> > Changes in v3,1:
-> > - Squash all enablement patches altogether.
-> > - Change supply name to match DT binding & driver change.
-> > Changes for v3:
-> > - Enable all pipeline components
-> > Changes for v2:
-> > - none
-> >
-> >  .../dts/allwinner/sun50i-a64-bananapi-m64.dts | 34 +++++++++++++++++++
-> >  .../dts/allwinner/sun50i-a64-nanopi-a64.dts   | 34 +++++++++++++++++++
-> >  .../dts/allwinner/sun50i-a64-olinuxino.dts    | 34 +++++++++++++++++++
-> >  .../dts/allwinner/sun50i-a64-orangepi-win.dts | 34 +++++++++++++++++++
-> >  .../boot/dts/allwinner/sun50i-a64-pine64.dts  | 34 +++++++++++++++++++
-> >  .../allwinner/sun50i-a64-sopine-baseboard.dts | 34 +++++++++++++++++++
-> >  6 files changed, 204 insertions(+)
->=20
-> Tested-by: Jagan Teki <jagan@amarulasolutions.com> # BPI-M64, OPI-Win,
-> A64-Olinuxino, NPI-A64
->=20
-> Pine64 boards look unable by saying
-> [drm] Cannot find any crtc or sizes
->=20
-> May be someone can confirm, it.
-
-Then we should drop the pine64 additions until someone figures it out,
-as it has been already discussed.
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---gtusaa4loc5rodye
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluPiwcACgkQ0rTAlCFN
-r3SElg//XDj99sAXXwkPKmW6hF9CnEGV/SAmzw8P/sbjvHMQmXH1sDS4KC8F3BAk
-AQvA8rQI/Scm4lS9A+6obtT+a4XXWb2icKYeee73wb68goVhPS3lbftl0EzW3IrB
-sCgDhiDKlNmacwMG5qM663UgfsnusbfqEae+KTHdpyskHgz5RUPve/SmzsAPtFhV
-aK42v/glNWGogb+U39CI9B1Ox9UYiwm1JKOWkCfDHV/uRwpRtan7XmmSKJLZadOq
-MJXinDRuO6w4UO6eCkvL6m9Nf8npKF5lrjGOMBInISysAfDD/Tgb8gquvr2dq2G/
-iDjXzVH+brqrjl8CNSUpwNleAmQ/pP4NN9zyQfP+g7d7EioIEGa2GRttxTYhoUuO
-lkDI77d/zidEjW7Sr4OCRqNSfWdb3RNvHBrtevqaSLbUGwiwcudPLUkVTQnarsQr
-q4Hr92d+gaZu/jyH4vw4C9U3LNv5QdUw7ITtaUjkiUD83f23LpsFwQvDhsgJh0j9
-vDCISwBDG8rb22PajSCgqUl7EtXon5O5PuwAiwDw/mmU2ZCREapcfbZw4rRRMLBN
-K4612S/5sxzw1DA8BZL+rG/LdaJIMwhvIdq8P3Xi0YakGvG68+fpK7Jj0cTGMxQD
-MaWCa/lW1SHaCBH6wgqt89v9p0h6zlGT08P5PIzZMcfXGRezVqk=
-=uU07
------END PGP SIGNATURE-----
-
---gtusaa4loc5rodye--
+SGkgR2VlcnQsDQoNCk9uIFR1ZXNkYXksIFNlcHRlbWJlciAxOCwgMjAxOCAxLCBHZWVydCBVeXR0
+ZXJob2V2ZW4gd3JvdGU6DQo+ID4gV2hhdCBkbyB5b3Ugc2VlIHRoZSAuZHRzaSBhbmQgLmR0cyBs
+b29raW5nIGxpa2U/DQo+IA0KPiBUaGUgcGFydCB1c2luZyBDTEtfT0ZfREVDTEFSRSgpIGlzIG5v
+dCBhIHBsYXRmb3JtIGRyaXZlci4gSXQgZG9lcyBub3QNCj4gb3BlcmF0ZSBvbiBhIGRldmljZSAo
+c3RydWN0IHBsYXRmb3JtX2RldmljZSksIGJ1dCBvbiBhIGRldmljZSBub2RlDQo+IChzdHJ1Y3QN
+Cj4gZGV2aWNlX25vZGUpLiBIZW5jZSBpdCB3b3VsZCBtYXRjaCBhZ2FpbnN0IHRoZSBzYW1lIERU
+IG5vZGUsIGJ1dCBtYXAgaXQNCj4gdXNpbmcgb2ZfaW9tYXAoKS4gIFNvIHlvdSBqdXN0IG5lZWQg
+dGhlIGV4aXN0aW5nICJyZW5lc2FzLHI3czkyMTAtY3BnLQ0KPiBtc3NyIg0KPiBub2RlLg0KDQpT
+by4uLkkgdHJpZWQgdGhhdC4uLmFuZCBpdCBkb2Vzbid0IHdvcmsuDQoNCkJhc2ljYWxseSwgdGhp
+czoNCkNMS19PRl9ERUNMQVJFKGNwZ19tc3RwX2Vhcmx5X2Nsa3MsICJyZW5lc2FzLHI3czkyMTAt
+Y3BnLW1zc3IiLA0KICAgICAgICAgICAgICAgcnphMl9jcGdfbXNzcl9lYXJseV9pbml0KTsNCg0K
+QnV0LCB3aGF0IGhhcHBlbnMgaXMgdGhhdCByemEyX2NwZ19tc3NyX2Vhcmx5X2luaXQgZ2V0cyBj
+YWxsZWQgYmVjYXVzZSANCml0IGZpbmQgYSBtYXRjaCBhZ2FpbnN0ICJyZW5lc2FzLHI3czkyMTAt
+Y3BnLW1zc3IiLiBCdXQgbGF0ZXIgYWZ0ZXIgDQpjcGdfbXNzcl9pbml0IGdldHMgY2FsbCwgY3Bn
+X21zc3JfcHJvYmUgbmV2ZXIgZ2V0cyBjYWxsZWQuIEkgYXNzdW1lIHRoYXQgaXMgDQpiZWNhdXNl
+IGRldmljZSAicmVuZXNhcyxyN3M5MjEwLWNwZy1tc3NyIiBoYXMgYWxyZWFkeSBiZWVuIG1hdGNo
+ZWQgdG8gYSANCmRyaXZlci4NCg0KDQo+IFBsZWFzZSBoYXZlIGEgbG9vayBhdCBlLmcuICJtZWRp
+YXRlayxtdDI3MTItdG9wY2tnZW4iLg0KDQpPbmUgdGhpbmcgSSBkb24ndCB1bmRlcnN0YW5kIGlz
+IHRoYXQgaW4gdGhlIGVhcmx5IGluaXQsIGl0IHJlZ2lzdGVycyBhIA0Kb2ZfY2xrX2FkZF9wcm92
+aWRlci4gQnV0IHRoZW4gbGF0ZXIgaW4gdGhlIHByb2JlLCBpdCByZWdpc3RlciANCm9mX2Nsa19h
+ZGRfcHJvdmlkZXIgYWdhaW4gKG9uIHRoZSBzYW1lIERUIG5vZGUpLiBJIGd1ZXNzIHlvdSBjYW4g
+ZG8gdGhhdD8/Pz8NCg0KDQpTbyBJIHNlZSB3aGF0IHRoZSBtZWRpYXRlayBpcyBkb2luZywgYnV0
+IEkgY2FuJ3Qgc2VlbSB0byByZXByb2R1Y2UgaXQuIEkNCm11c3QgYmUgbWlzc2luZyBzb21ldGhp
+bmcuDQoNCkNocmlzDQoNCg==
