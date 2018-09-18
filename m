@@ -1,104 +1,155 @@
-Return-Path: <maxime.ripard@bootlin.com>
-Date: Wed, 5 Sep 2018 16:48:52 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Jagan Teki <jagan@amarulasolutions.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-	Jernej Skrabec <jernej.skrabec@siol.net>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>,
-	dri-devel <dri-devel@lists.freedesktop.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	devicetree <devicetree@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [PATCH v4 3/4] drm/sun4i: Enable DE2 Mixer for SUN8I and SUN50I
-Message-ID: <20180905144852.db2galdquxx22kjh@flea>
-References: <20180904163609.10171-1-jagan@amarulasolutions.com>
- <20180904163609.10171-3-jagan@amarulasolutions.com>
- <20180905070748.g43lfdqdhmoci6pk@flea>
- <CAMty3ZBYjq8VBnwSqKhJgag1ARRvnPTVSpYT7SWu=A6pMwKEiA@mail.gmail.com>
+Return-Path: <tdas@codeaurora.org>
+Subject: Re: [PATCH 1/2] dt-bindings: clock: Introduce QCOM LPASS clock
+ bindings
+To: Rob Herring <robh@kernel.org>
+Cc: Stephen Boyd <sboyd@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+ Rajendra Nayak <rnayak@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+ linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <1536685206-12239-1-git-send-email-tdas@codeaurora.org>
+ <1536685206-12239-2-git-send-email-tdas@codeaurora.org>
+ <20180917031811.GA11141@bogus>
+From: Taniya Das <tdas@codeaurora.org>
+Message-ID: <e04d9bcf-0559-922c-8d9a-8dacfcd4e814@codeaurora.org>
+Date: Tue, 18 Sep 2018 15:55:33 +0530
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="en7fpj6tbqjjbcyr"
-In-Reply-To: <CAMty3ZBYjq8VBnwSqKhJgag1ARRvnPTVSpYT7SWu=A6pMwKEiA@mail.gmail.com>
+In-Reply-To: <20180917031811.GA11141@bogus>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
+Hello Rob,
 
---en7fpj6tbqjjbcyr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks for the review comments.
 
-On Wed, Sep 05, 2018 at 01:51:25PM +0530, Jagan Teki wrote:
-> On Wed, Sep 5, 2018 at 12:37 PM, Maxime Ripard
-> <maxime.ripard@bootlin.com> wrote:
-> > On Tue, Sep 04, 2018 at 10:06:08PM +0530, Jagan Teki wrote:
-> >> Allwinner SoC like SUN8I and SUN50I are now using DE2 Mixer
-> >> so enable them as default.
-> >>
-> >> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> >> ---
-> >> Changes for v4, v3:
-> >> - none
-> >> Changes for v2:
-> >> - Enable for SUN8I
-> >>
-> >>  drivers/gpu/drm/sun4i/Kconfig | 2 +-
-> >>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >>
-> >> diff --git a/drivers/gpu/drm/sun4i/Kconfig b/drivers/gpu/drm/sun4i/Kco=
-nfig
-> >> index c2c042287c19..cfa8b96273fb 100644
-> >> --- a/drivers/gpu/drm/sun4i/Kconfig
-> >> +++ b/drivers/gpu/drm/sun4i/Kconfig
-> >> @@ -61,7 +61,7 @@ config DRM_SUN8I_DW_HDMI
-> >>
-> >>  config DRM_SUN8I_MIXER
-> >>       tristate "Support for Allwinner Display Engine 2.0 Mixer"
-> >> -     default MACH_SUN8I
-> >> +     default MACH_SUN8I || (ARM64 && ARCH_SUNXI)
-> >
-> > I'm not really sure we should put it as a default. We should just
-> > enable it in the defconfig.
->=20
-> What would be the difference in both cases it would be build as module
-> since DRM_SUN4I=3Dm for ARM64
+On 9/17/2018 8:48 AM, Rob Herring wrote:
+> On Tue, Sep 11, 2018 at 10:30:05PM +0530, Taniya Das wrote:
+>> Add device tree bindings for Low Power Audio subsystem clock controller for
+>> Qualcomm Technology Inc's SDM845 SoCs.
+>>
+>> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+>> ---
+>>   .../devicetree/bindings/clock/qcom,gcc.txt         |  2 ++
+>>   .../devicetree/bindings/clock/qcom,lpasscc.txt     | 31 ++++++++++++++++++++++
+>>   include/dt-bindings/clock/qcom,gcc-sdm845.h        |  2 ++
+>>   include/dt-bindings/clock/qcom,lpass-sdm845.h      | 16 +++++++++++
+>>   4 files changed, 51 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/clock/qcom,lpasscc.txt
+>>   create mode 100644 include/dt-bindings/clock/qcom,lpass-sdm845.h
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc.txt b/Documentation/devicetree/bindings/clock/qcom,gcc.txt
+>> index 664ea1f..b3ff6e8 100644
+>> --- a/Documentation/devicetree/bindings/clock/qcom,gcc.txt
+>> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc.txt
+>> @@ -32,6 +32,8 @@ be part of GCC and hence the TSENS properties can also be
+>>   part of the GCC/clock-controller node.
+>>   For more details on the TSENS properties please refer
+>>   Documentation/devicetree/bindings/thermal/qcom-tsens.txt
+>> +- qcom,lpass-protected : Indicate that the LPASS clock branches within GCC are
+>> +			 unusable due to firmware access control restrictions.
+>>   
+>>   Example:
+>>   	clock-controller@900000 {
+>> diff --git a/Documentation/devicetree/bindings/clock/qcom,lpasscc.txt b/Documentation/devicetree/bindings/clock/qcom,lpasscc.txt
+>> new file mode 100644
+>> index 0000000..d312957
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/qcom,lpasscc.txt
+>> @@ -0,0 +1,31 @@
+>> +Qualcomm LPASS Clock Controller Binding
+>> +-----------------------------------------------
+>> +
+>> +Required properties :
+>> +- compatible		: shall contain "qcom,sdm845-lpasscc"
+>> +- #clock-cells		: from common clock binding, shall contain 1.
+>> +- reg			: shall contain base register address and size,
+>> +			  in the order
+>> +			Index-0 maps to LPASS_CC register region
+>> +			Index-1 maps to LPASS_QDSP6SS register region
+>> +
+>> +Optional properties :
+>> +- reg-names	: register names of LPASS domain
+>> +		 "lpass_cc", "lpass_qdsp6ss".
+> 
+> "cc" and "qdsp6ss" is sufficient.
+> 
 
-We wouldn't force it down the throat to every user by default, even
-though they have no interest in that driver being compiled into their
-kernel.
+Sure will update in the next patch series.
 
-Maxime
+>> +
+>> +Example:
+>> +
+>> +The below node has to be defined in the cases where the LPASS peripheral loader
+>> +would bring the subsystem out of reset.
+>> +
+>> +	lpasscc: clock-controller {
+> 
+> Needs a unit-address.
+> 
 
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Yes, my mistake. Missed adding it.
 
---en7fpj6tbqjjbcyr
-Content-Type: application/pgp-signature; name="signature.asc"
+>> +		compatible = "qcom,sdm845-lpasscc";
+>> +		reg = <0x17014000 0x1f004>, <0x17300000 0x200>;
+>> +		reg-names = "lpass_cc", "lpass_qdsp6ss";
+>> +		#clock-cells = <1>;
+>> +	};
+>> +
+>> +	gcc: clock-controller@100000 {
+> 
+> This needs a reg property.
+> 
 
------BEGIN PGP SIGNATURE-----
+Sure, will update the same.
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluP7NMACgkQ0rTAlCFN
-r3SA3w//UvUCidVC1bCGgZ1mFpBQJ6Jyw4gvoHRH/oJzrN/PwzJQlMleDRrlIhc3
-JkWwmGyZKZGLISF3Xa/Z1pgQoFrl2HV9jiTUNVKkQ9kxwIebLAM5th72Ksurl1U/
-Y1HuDO9Qk1RGmFogRiJpdmw99Z3pModUUWOM+OxUADd8JP8bTnA4yrvcebAcXV+p
-+/x29nNZUmCjrN1YdZSXLDtg3TdxhIA3QFDBETlJuZioM3HIzZ6p6DeSzzBC91IN
-IBGF3TMXU+cVa3JM2PbGYOO0c/W2P1oB6s+PFTw74crfxSqAI28mc+j/gjGm18OS
-fMmk6ENVSt6SB8mp1quKh+peoVZ0hQ/vBmcIwKaTFUTeVE741wBGzpp2rb/gCThx
-N3aXFLiAVpdCnjZNE+ATWAnTFnmlfl4K4Oo2XYeIdaAcyatxQGSgdOypz72C4A+q
-2Sg7rpYKB7h8IOYlkGkrroU/S4641P8swC3+9yxNxY8KK8G1Zed4X3V/+I+JmCG5
-BHmxSaq74KjzBs9BRrwQsy/GBE3FnhpBF/GeSPQVUnRuf1MJzyvDRgpIrMi0L442
-rI6imPJHKlDHvYE3EInLXIsSmFC82YNj0ULlGQLP8hsdgVNQ/umGs5ZAHhPm8f3A
-ZE5ET7x0rpVJlkzioNl8ZaWmM8EXt38/H/xTTMn20XmLdbpvqAQ=
-=Ma1n
------END PGP SIGNATURE-----
+>> +		compatible = "qcom,gcc-sdm845";
+>> +		qcom,lpass-protected;
+>> +	};
+> 
+>> diff --git a/include/dt-bindings/clock/qcom,gcc-sdm845.h b/include/dt-bindings/clock/qcom,gcc-sdm845.h
+>> index b8eae5a..968fa65 100644
+>> --- a/include/dt-bindings/clock/qcom,gcc-sdm845.h
+>> +++ b/include/dt-bindings/clock/qcom,gcc-sdm845.h
+>> @@ -197,6 +197,8 @@
+>>   #define GCC_QSPI_CORE_CLK_SRC					187
+>>   #define GCC_QSPI_CORE_CLK					188
+>>   #define GCC_QSPI_CNOC_PERIPH_AHB_CLK				189
+>> +#define GCC_LPASS_Q6_AXI_CLK					190
+>> +#define GCC_LPASS_SWAY_CLK					191
+>>   
+>>   /* GCC Resets */
+>>   #define GCC_MMSS_BCR						0
+>> diff --git a/include/dt-bindings/clock/qcom,lpass-sdm845.h b/include/dt-bindings/clock/qcom,lpass-sdm845.h
+>> new file mode 100644
+>> index 0000000..015968e
+>> --- /dev/null
+>> +++ b/include/dt-bindings/clock/qcom,lpass-sdm845.h
+>> @@ -0,0 +1,16 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +/*
+>> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
+>> + */
+>> +
+>> +#ifndef _DT_BINDINGS_CLK_SDM_LPASS_SDM845_H
+>> +#define _DT_BINDINGS_CLK_SDM_LPASS_SDM845_H
+>> +
+>> +#define LPASS_AUDIO_WRAPPER_AON_CLK			0
+>> +#define LPASS_Q6SS_AHBM_AON_CLK				1
+>> +#define LPASS_Q6SS_AHBS_AON_CLK				2
+>> +#define LPASS_QDSP6SS_XO_CLK				3
+>> +#define LPASS_QDSP6SS_SLEEP_CLK				4
+>> +#define LPASS_QDSP6SS_CORE_CLK				5
+>> +
+>> +#endif
+>> -- 
+>> Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+>> of the Code Aurora Forum, hosted by the  Linux Foundation.
+>>
+> 
 
---en7fpj6tbqjjbcyr--
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
+
+--
