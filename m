@@ -1,77 +1,118 @@
-Return-Path: <wens213@gmail.com>
-Return-Path: <wens213@gmail.com>
-MIME-Version: 1.0
-References: <20180902072643.4917-1-jernej.skrabec@siol.net> <20180902072643.4917-14-jernej.skrabec@siol.net>
-In-Reply-To: <20180902072643.4917-14-jernej.skrabec@siol.net>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Sat, 22 Sep 2018 21:23:55 +0800
-Message-ID: <CAGb2v66kp4B5VZfmTc8L6qt=OPHjbYBtXRbC=L6jGTzvEKvb=w@mail.gmail.com>
-Subject: Re: [PATCH 13/27] drm/sun4i: Add support for H6 DE3 mixer 0
-To: Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: Rob Herring <robh+dt@kernel.org>, Maxime Ripard <maxime.ripard@bootlin.com>,
-	Mark Rutland <mark.rutland@arm.com>, Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, David Airlie <airlied@linux.ie>,
-	Archit Taneja <architt@codeaurora.org>, Andrzej Hajda <a.hajda@samsung.com>,
-	devicetree <devicetree@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	dri-devel <dri-devel@lists.freedesktop.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <andy.tang@nxp.com>
+From: andy.tang@nxp.com
+To: mturquette@baylibre.com,
+	oss@buserror.net
+Cc: sboyd@kernel.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Yuantian Tang <andy.tang@nxp.com>
+Subject: [PATCH 2/3] powerpc: t102x: upgrade the legacy clock node
+Date: Wed, 19 Sep 2018 15:39:05 +0800
+Message-Id: <20180919073906.34187-2-andy.tang@nxp.com>
+In-Reply-To: <20180919073906.34187-1-andy.tang@nxp.com>
+References: <20180919073906.34187-1-andy.tang@nxp.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sun, Sep 2, 2018 at 3:27 PM Jernej Skrabec <jernej.skrabec@siol.net> wrote:
->
-> Mixer 0 has 1 VI and 3 UI planes, scaler on all planes and can output
-> 4K image @60Hz. It also support 10 bit colors.
+From: Yuantian Tang <andy.tang@nxp.com>
 
-AFAICT 10 bit color support is not implemented? Please mention this.
+There are issues in current lagacy clock node.
+The compatible string is not correct and the clocks property
+refers to the wrong node too.
+Instead of fixing them, upgrade it to use new clock binding
+which has been already ready to use.
 
->
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> ---
->  drivers/gpu/drm/sun4i/sun8i_mixer.c | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
->
-> diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c b/drivers/gpu/drm/sun4i/sun8i_mixer.c
-> index a9218abf0935..54eca2dd4b33 100644
-> --- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
-> +++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
-> @@ -540,6 +540,15 @@ static int sun8i_mixer_remove(struct platform_device *pdev)
->         return 0;
->  }
->
-> +static const struct sun8i_mixer_cfg sun50i_h6_mixer0_cfg = {
+Signed-off-by: Tang Yuantian <andy.tang@nxp.com>
+---
+ arch/powerpc/boot/dts/fsl/qoriq-clockgen.dtsi |   23 +++++++++++++++++++++++
+ arch/powerpc/boot/dts/fsl/t1023si-post.dtsi   |   20 ++------------------
+ arch/powerpc/boot/dts/fsl/t102xsi-pre.dtsi    |    4 ++--
+ 3 files changed, 27 insertions(+), 20 deletions(-)
+ create mode 100644 arch/powerpc/boot/dts/fsl/qoriq-clockgen.dtsi
 
-Please sort the per-compatible structures according to "version sort" rules.
-
-> +       .ccsc           = 0,
-> +       .is_de3         = true,
-> +       .mod_rate       = 600000000,
-> +       .scaler_mask    = 0xf,
-> +       .ui_num         = 3,
-> +       .vi_num         = 1,
-> +};
-> +
->  static const struct sun8i_mixer_cfg sun8i_a83t_mixer0_cfg = {
->         .ccsc           = 0,
->         .scaler_mask    = 0xf,
-> @@ -587,6 +596,10 @@ static const struct sun8i_mixer_cfg sun8i_v3s_mixer_cfg = {
->  };
->
->  static const struct of_device_id sun8i_mixer_of_table[] = {
-> +       {
-> +               .compatible = "allwinner,sun50i-h6-de3-mixer-0",
-> +               .data = &sun50i_h6_mixer0_cfg,
-> +       },
-
-Same here.
-
-ChenYu
-
->         {
->                 .compatible = "allwinner,sun8i-a83t-de2-mixer-0",
->                 .data = &sun8i_a83t_mixer0_cfg,
-> --
-> 2.18.0
->
+diff --git a/arch/powerpc/boot/dts/fsl/qoriq-clockgen.dtsi b/arch/powerpc/boot/dts/fsl/qoriq-clockgen.dtsi
+new file mode 100644
+index 0000000..49c6f86
+--- /dev/null
++++ b/arch/powerpc/boot/dts/fsl/qoriq-clockgen.dtsi
+@@ -0,0 +1,23 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * Device Tree Include file for NXP PowerPC family SoC.
++ *
++ * Copyright 2017 NXP
++ *
++ * Tang Yuantian <andy.tang@nxp.com>
++ *
++ */
++
++sysclk: sysclk {
++	compatible = "fixed-clock";
++	#clock-cells = <0>;
++	clock-frequency = <100000000>;
++	clock-output-names = "sysclk";
++};
++
++clockgen: global-utilities@e1000 {
++	compatible = "fsl,qoriq-clockgen";
++	reg = <0xe1000 0x1000>;
++	#clock-cells = <2>;
++	clocks = <&sysclk>;
++};
+diff --git a/arch/powerpc/boot/dts/fsl/t1023si-post.dtsi b/arch/powerpc/boot/dts/fsl/t1023si-post.dtsi
+index 4908af5..c77d3e9 100644
+--- a/arch/powerpc/boot/dts/fsl/t1023si-post.dtsi
++++ b/arch/powerpc/boot/dts/fsl/t1023si-post.dtsi
+@@ -342,25 +342,9 @@
+ 		fsl,liodn-bits = <12>;
+ 	};
+ 
+-/include/ "qoriq-clockgen2.dtsi"
++/include/ "qoriq-clockgen.dtsi"
+ 	global-utilities@e1000 {
+-		compatible = "fsl,t1023-clockgen", "fsl,qoriq-clockgen-2.0";
+-		mux0: mux0@0 {
+-			#clock-cells = <0>;
+-			reg = <0x0 4>;
+-			compatible = "fsl,core-mux-clock";
+-			clocks = <&pll0 0>, <&pll0 1>;
+-			clock-names = "pll0_0", "pll0_1";
+-			clock-output-names = "cmux0";
+-		};
+-		mux1: mux1@20 {
+-			#clock-cells = <0>;
+-			reg = <0x20 4>;
+-			compatible = "fsl,core-mux-clock";
+-			clocks = <&pll0 0>, <&pll0 1>;
+-			clock-names = "pll0_0", "pll0_1";
+-			clock-output-names = "cmux1";
+-		};
++		compatible = "fsl,t1023-clockgen";
+ 	};
+ 
+ 	rcpm: global-utilities@e2000 {
+diff --git a/arch/powerpc/boot/dts/fsl/t102xsi-pre.dtsi b/arch/powerpc/boot/dts/fsl/t102xsi-pre.dtsi
+index 9d08a36..d87ea13 100644
+--- a/arch/powerpc/boot/dts/fsl/t102xsi-pre.dtsi
++++ b/arch/powerpc/boot/dts/fsl/t102xsi-pre.dtsi
+@@ -74,7 +74,7 @@
+ 		cpu0: PowerPC,e5500@0 {
+ 			device_type = "cpu";
+ 			reg = <0>;
+-			clocks = <&mux0>;
++			clocks = <&clockgen 1 0>;
+ 			next-level-cache = <&L2_1>;
+ 			#cooling-cells = <2>;
+ 			L2_1: l2-cache {
+@@ -84,7 +84,7 @@
+ 		cpu1: PowerPC,e5500@1 {
+ 			device_type = "cpu";
+ 			reg = <1>;
+-			clocks = <&mux1>;
++			clocks = <&clockgen 1 1>;
+ 			next-level-cache = <&L2_2>;
+ 			#cooling-cells = <2>;
+ 			L2_2: l2-cache {
+-- 
+1.7.1
