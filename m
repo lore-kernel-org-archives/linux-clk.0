@@ -1,62 +1,43 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: robh+dt@kernel.org,
-	maxime.ripard@bootlin.com,
-	wens@csie.org
-Cc: mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	airlied@linux.ie,
-	architt@codeaurora.org,
-	a.hajda@samsung.com,
-	jernej.skrabec@siol.net,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH 06/27] clk: sunxi-ng: h6: Set video PLLs limits
-Date: Sun,  2 Sep 2018 09:26:22 +0200
-Message-Id: <20180902072643.4917-7-jernej.skrabec@siol.net>
-In-Reply-To: <20180902072643.4917-1-jernej.skrabec@siol.net>
-References: <20180902072643.4917-1-jernej.skrabec@siol.net>
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+Return-Path: <sergei.shtylyov@cogentembedded.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH] clk: renesas: r8a77970: add TPU clock
+To: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
+ linux-clk@vger.kernel.org
+References: <5b7895ac-11c1-ac2d-837b-56726bc6226a@cogentembedded.com>
+Message-ID: <53539d21-bb00-eb11-bfde-206f3b7e3fe0@cogentembedded.com>
+Date: Wed, 19 Sep 2018 21:10:40 +0300
+MIME-Version: 1.0
+In-Reply-To: <5b7895ac-11c1-ac2d-837b-56726bc6226a@cogentembedded.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-Video PLL factors can be set in a way that final PLL rate is outside
-stable range. H6 user manual specifically says that N factor should not
-be below 12. While it doesn't says anything about maximum stable rate, it
-is clear that PLL doesn't work at 6.096 GHz (254 * 24 MHz).
+The TPU0 clock wasn't present in the original R8A77970 patch by Daisuke
+Matsushita, it was added in a later BSP version...
 
-Set minimum allowed PLL video rate to 288 MHz (12 * 24 MHz) and maximum
-to 2.4 GHz, which is maximum in BSP driver.
+Based on the original (and large) patch by Vladimir Barinov.
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+
 ---
- drivers/clk/sunxi-ng/ccu-sun50i-h6.c | 4 ++++
- 1 file changed, 4 insertions(+)
+This patch is against the 'clk-renesas' branch of Geert's 'renesas-drivers.git'
+repo...
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
-index 2193e1495086..f44d314b2285 100644
---- a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
-@@ -120,6 +120,8 @@ static struct ccu_nm pll_video0_clk = {
- 	.n		= _SUNXI_CCU_MULT_MIN(8, 8, 12),
- 	.m		= _SUNXI_CCU_DIV(1, 1), /* input divider */
- 	.fixed_post_div	= 4,
-+	.min_rate	= 288000000,
-+	.max_rate	= 2400000000,
- 	.common		= {
- 		.reg		= 0x040,
- 		.features	= CCU_FEATURE_FIXED_POSTDIV,
-@@ -136,6 +138,8 @@ static struct ccu_nm pll_video1_clk = {
- 	.n		= _SUNXI_CCU_MULT_MIN(8, 8, 12),
- 	.m		= _SUNXI_CCU_DIV(1, 1), /* input divider */
- 	.fixed_post_div	= 4,
-+	.min_rate	= 288000000,
-+	.max_rate	= 2400000000,
- 	.common		= {
- 		.reg		= 0x048,
- 		.features	= CCU_FEATURE_FIXED_POSTDIV,
--- 
-2.18.0
+ drivers/clk/renesas/r8a77970-cpg-mssr.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+Index: renesas-drivers/drivers/clk/renesas/r8a77970-cpg-mssr.c
+===================================================================
+--- renesas-drivers.orig/drivers/clk/renesas/r8a77970-cpg-mssr.c
++++ renesas-drivers/drivers/clk/renesas/r8a77970-cpg-mssr.c
+@@ -127,6 +127,7 @@ static const struct mssr_mod_clk r8a7797
+ 	DEF_MOD("cmt2",			 301,	R8A77970_CLK_R),
+ 	DEF_MOD("cmt1",			 302,	R8A77970_CLK_R),
+ 	DEF_MOD("cmt0",			 303,	R8A77970_CLK_R),
++	DEF_MOD("tpu0",			 304,	R8A77970_CLK_S2D4),
+ 	DEF_MOD("sd-if",		 314,	R8A77970_CLK_SD0),
+ 	DEF_MOD("rwdt",			 402,	R8A77970_CLK_R),
+ 	DEF_MOD("intc-ex",		 407,	R8A77970_CLK_CP),
