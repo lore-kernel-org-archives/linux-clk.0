@@ -1,79 +1,67 @@
-Return-Path: <martin.blumenstingl@googlemail.com>
-Return-Path: <martin.blumenstingl@googlemail.com>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To: narmstrong@baylibre.com,
-	jbrunet@baylibre.com,
-	linux-amlogic@lists.infradead.org,
-	sboyd@kernel.org
-Cc: mturquette@baylibre.com,
-	carlo@caione.org,
-	khilman@baylibre.com,
-	linux-clk@vger.kernel.org,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH v2 2/2] clk: meson: meson8b: use the regmap in the internal reset controller
-Date: Sat,  1 Sep 2018 18:21:46 +0200
-Message-Id: <20180901162146.5656-3-martin.blumenstingl@googlemail.com>
-In-Reply-To: <20180901162146.5656-1-martin.blumenstingl@googlemail.com>
-References: <20180901162146.5656-1-martin.blumenstingl@googlemail.com>
+Return-Path: <anson.huang@nxp.com>
+From: Anson Huang <Anson.Huang@nxp.com>
+To: robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	fabio.estevam@nxp.com,
+	linux@armlinux.org.uk,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	ping.bai@nxp.com,
+	Aisheng.dong@nxp.com,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Cc: Linux-imx@nxp.com
+Subject: [PATCH V2 0/4] Add i.MX6ULZ SoC support
+Date: Wed, 19 Sep 2018 14:04:44 +0800
+Message-Id: <1537337088-28819-1-git-send-email-Anson.Huang@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-Path: Anson.Huang@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-For now the reset controller was using raw register access because the
-early init did not initialize the regmap. However, now that clocks are
-initialized early we can simply use the regmap also for the reset
-controller.
-No functional changes.
+This patch set adds i.MX6ULZ SoC support, i.MX6ULZ is a new SoC of
+i.MX6 family, compared to i.MX6ULL, it removes below modules:
 
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
----
- drivers/clk/meson/meson8b.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+    - UART5/UART6/UART7/UART8;
+    - PWM5/PWM6/PWM7/PWM8;
+    - eCSPI3/eCSPI4;
+    - CAN1/CAN2;
+    - FEC1/FEC2;
+    - I2C3/I2C4;
+    - EPIT2;
+    - LCDIF;
+    - GPT2;
+    - TSC;
 
-diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-index abdcfe54f6a0..ed1de34fee0e 100644
---- a/drivers/clk/meson/meson8b.c
-+++ b/drivers/clk/meson/meson8b.c
-@@ -23,7 +23,7 @@ static DEFINE_SPINLOCK(meson_clk_lock);
- 
- struct meson8b_clk_reset {
- 	struct reset_controller_dev reset;
--	void __iomem *base;
-+	struct regmap *regmap;
- };
- 
- static const struct pll_params_table sys_pll_params_table[] = {
-@@ -1076,7 +1076,6 @@ static int meson8b_clk_reset_update(struct reset_controller_dev *rcdev,
- 		container_of(rcdev, struct meson8b_clk_reset, reset);
- 	unsigned long flags;
- 	const struct meson8b_clk_reset_line *reset;
--	u32 val;
- 
- 	if (id >= ARRAY_SIZE(meson8b_clk_reset_bits))
- 		return -EINVAL;
-@@ -1085,12 +1084,12 @@ static int meson8b_clk_reset_update(struct reset_controller_dev *rcdev,
- 
- 	spin_lock_irqsave(&meson_clk_lock, flags);
- 
--	val = readl(meson8b_clk_reset->base + reset->reg);
- 	if (assert)
--		val |= BIT(reset->bit_idx);
-+		regmap_update_bits(meson8b_clk_reset->regmap, reset->reg,
-+				   BIT(reset->bit_idx), BIT(reset->bit_idx));
- 	else
--		val &= ~BIT(reset->bit_idx);
--	writel(val, meson8b_clk_reset->base + reset->reg);
-+		regmap_update_bits(meson8b_clk_reset->regmap, reset->reg,
-+				   BIT(reset->bit_idx), 0);
- 
- 	spin_unlock_irqrestore(&meson_clk_lock, flags);
- 
-@@ -1143,7 +1142,7 @@ static void __init meson8b_clkc_init(struct device_node *np)
- 		return;
- 
- 	/* Reset Controller */
--	rstc->base = clk_base;
-+	rstc->regmap = map;
- 	rstc->reset.ops = &meson8b_clk_reset_ops;
- 	rstc->reset.nr_resets = ARRAY_SIZE(meson8b_clk_reset_bits);
- 	rstc->reset.of_node = np;
+And i.MX6ULZ has same soc_id as i.MX6ULL, but SRC_SBMR2 bit[6] is
+to differentiate i.MX6ULZ from i.MX6ULL, 1'b1 means i.MX6ULZ and
+1'b0 means i.MX6ULL. i.MX6ULZ reuse most of i.MX6UL/i.MX6ULL code,
+just add the new CPU type and remove those non-exist modules from dtb.
+
+Anson Huang (4):
+  ARM: imx: add i.mx6ulz msl support
+  clk: imx6ul: add i.mx6ulz support
+  dt-bindings: arm: add compatible for i.MX6ULZ 14x14 EVK board
+  ARM: dts: imx: add i.mx6ulz and i.mx6ulz 14x14 evk support
+
+ Documentation/devicetree/bindings/arm/fsl.txt |  4 +++
+ arch/arm/boot/dts/Makefile                    |  3 ++-
+ arch/arm/boot/dts/imx6ulz-14x14-evk.dts       | 20 ++++++++++++++
+ arch/arm/boot/dts/imx6ulz.dtsi                | 38 +++++++++++++++++++++++++++
+ arch/arm/mach-imx/anatop.c                    | 20 ++++++++++++++
+ arch/arm/mach-imx/cpu.c                       |  3 +++
+ arch/arm/mach-imx/mach-imx6ul.c               |  1 +
+ arch/arm/mach-imx/mxc.h                       |  7 +++++
+ arch/arm/mach-imx/pm-imx6.c                   |  4 +--
+ drivers/clk/imx/clk-imx6ul.c                  |  3 ++-
+ 10 files changed, 99 insertions(+), 4 deletions(-)
+ create mode 100644 arch/arm/boot/dts/imx6ulz-14x14-evk.dts
+ create mode 100644 arch/arm/boot/dts/imx6ulz.dtsi
+
 -- 
-2.18.0
+2.7.4
