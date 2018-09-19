@@ -1,128 +1,63 @@
-Return-Path: <eajames@linux.vnet.ibm.com>
-Subject: Re: [PATCH 0/4] media: platform: Add Aspeed Video Engine driver
-To: Hans Verkuil <hverkuil@xs4all.nl>, linux-kernel@vger.kernel.org
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org,
-        linux-aspeed@lists.ozlabs.org, andrew@aj.id.au,
-        openbmc@lists.ozlabs.org, sboyd@kernel.org, mturquette@baylibre.com,
-        robh+dt@kernel.org, mchehab@kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
-References: <1535576973-8067-1-git-send-email-eajames@linux.vnet.ibm.com>
- <364c2565-fdb0-dd31-5852-6358066810a5@xs4all.nl>
-From: Eddie James <eajames@linux.vnet.ibm.com>
-Date: Thu, 13 Sep 2018 14:11:49 -0500
+Return-Path: <anson.huang@nxp.com>
+From: Anson Huang <anson.huang@nxp.com>
+To: Stefan Wahren <stefan.wahren@i2se.com>, "robh+dt@kernel.org"
+	<robh+dt@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"shawnguo@kernel.org" <shawnguo@kernel.org>, "s.hauer@pengutronix.de"
+	<s.hauer@pengutronix.de>, "kernel@pengutronix.de" <kernel@pengutronix.de>,
+	Fabio Estevam <fabio.estevam@nxp.com>, "linux@armlinux.org.uk"
+	<linux@armlinux.org.uk>, "mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"sboyd@kernel.org" <sboyd@kernel.org>, Jacky Bai <ping.bai@nxp.com>, "A.s.
+ Dong" <aisheng.dong@nxp.com>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>
+CC: dl-linux-imx <linux-imx@nxp.com>
+Subject: RE: [PATCH 0/4] Add i.MX6ULZ SoC support
+Date: Wed, 19 Sep 2018 06:10:16 +0000
+Message-ID: 
+ <DB3PR0402MB39162EA4FD240720276A4482F51C0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+References: <1537251548-27845-1-git-send-email-Anson.Huang@nxp.com>
+ <e82e2894-2a0d-0084-913c-b7c6d966fc13@i2se.com>
+In-Reply-To: <e82e2894-2a0d-0084-913c-b7c6d966fc13@i2se.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <364c2565-fdb0-dd31-5852-6358066810a5@xs4all.nl>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Message-Id: <64db5bad-d774-f5a5-3003-b361941355a2@linux.vnet.ibm.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-
-
-On 09/03/2018 06:57 AM, Hans Verkuil wrote:
-> Hi Eddie,
->
-> Thank you for your work on this. Interesting to see support for this SoC :-)
->
-> On 08/29/2018 11:09 PM, Eddie James wrote:
->> The Video Engine (VE) embedded in the Aspeed AST2400 and AST2500 SOCs
->> can capture and compress video data from digital or analog sources. With
->> the Aspeed chip acting as a service processor, the Video Engine can
->> capture the host processor graphics output.
->>
->> This series adds a V4L2 driver for the VE, providing a read() interface
->> only. The driver triggers the hardware to capture the host graphics output
->> and compress it to JPEG format.
->>
->> Testing on an AST2500 determined that the videobuf/streaming/mmap interface
->> was significantly slower than the simple read() interface, so I have not
->> included the streaming part.
-> Do you know why? It should be equal or faster, not slower.
-
-Yes, it seems to be an issue with the timing of the video engine 
-interrupts compared with how a normal v4l2 application queues buffers. 
-With the simple read() application, the driver can swap between DMA 
-buffers freely and get a frame ahead. With the streaming buffers, I 
-found the driver ran through the queue quite quickly, but then, once 
-userspace queues again, we had to wait for the next frame, as I couldn't 
-get a frame ahead since no buffers were available during that time 
-period. This could possibly be solved with more buffers but this gets to 
-require a lot of memory, since each buffer is allocated for the full 
-frame size even though we only fill a fraction of it with JPEG data...
-
->
-> I reviewed about half of the driver, but then I stopped since there were too
-> many things missing.
->
-> First of all, you need to test your driver with v4l2-compliance (available here:
-> https://git.linuxtv.org/v4l-utils.git/). Always compile from the git repo since
-> the versions from distros tend to be too old.
->
-> Just run 'v4l2-compliance -d /dev/videoX' and fix all issues. Then run
-> 'v4l2-compliance -s -d /dev/videoX' to test streaming.
->
-> This utility checks if the driver follows the V4L2 API correctly, implements
-> all ioctls that it should and fills in all the fields that it should.
->
-> Please add the output of 'v4l2-compliance -s' to future versions of this patch
-> series: I don't accept V4L2 drivers without a clean report of this utility.
-
-Sure thing. Thanks for the guidance.
-
->
-> If you have any questions, then mail me or (usually quicker) ask on the #v4l
-> freenode irc channel (I'm in the CET timezone).
->
-> One thing that needs more explanation: from what I could tell from the driver
-> the VIDIOC_G_FMT ioctl returns the detected format instead of the current
-> format. This is wrong. Instead you should implement the VIDIOC_*_DV_TIMINGS
-> ioctls and the V4L2_EVENT_SOURCE_CHANGE event.
->
-> The normal sequence is that userspace queries the current timings with
-> VIDIOC_QUERY_DV_TIMINGS, if it finds valid timings, then it sets these
-> timings with _S_DV_TIMINGS. Now it can call G/S_FMT. If the timings
-> change, then the driver should detect that and send a V4L2_EVENT_SOURCE_CHANGE
-> event.
-
-OK I see. I ended up simplifying this part anyway since it's not 
-possible to change the video size from the driver. I don't think there 
-is a need for VIDIOC_QUERY_DV_TIMINGS now, but feel free to review.
-
-Thanks again,
-Eddie
-
->
-> When the application receives this event it can take action, such as
-> increasing the size of the buffer for the jpeg data that it reads into.
->
-> The reason for this sequence of events is that you can't just change the
-> format/resolution mid-stream without giving userspace the chance to
-> reconfigure.
->
-> Regards,
->
-> 	Hans
->
->> It's also possible to use an automatic mode for the VE such that
->> re-triggering the HW every frame isn't necessary. However this wasn't
->> reliable on the AST2400, and probably used more CPU anyway due to excessive
->> interrupts. It was approximately 15% faster.
->>
->> The series also adds the necessary parent clock definitions to the Aspeed
->> clock driver, with both a mux and clock divider.
->>
->> Eddie James (4):
->>    clock: aspeed: Add VIDEO reset index definition
->>    clock: aspeed: Setup video engine clocking
->>    dt-bindings: media: Add Aspeed Video Engine binding documentation
->>    media: platform: Add Aspeed Video Engine driver
->>
->>   .../devicetree/bindings/media/aspeed-video.txt     |   23 +
->>   drivers/clk/clk-aspeed.c                           |   41 +-
->>   drivers/media/platform/Kconfig                     |    8 +
->>   drivers/media/platform/Makefile                    |    1 +
->>   drivers/media/platform/aspeed-video.c              | 1307 ++++++++++++++++++++
->>   include/dt-bindings/clock/aspeed-clock.h           |    1 +
->>   6 files changed, 1379 insertions(+), 2 deletions(-)
->>   create mode 100644 Documentation/devicetree/bindings/media/aspeed-video.txt
->>   create mode 100644 drivers/media/platform/aspeed-video.c
->>
+SGksIFN0ZWZhbg0KDQpBbnNvbiBIdWFuZw0KQmVzdCBSZWdhcmRzIQ0KDQoNCj4gLS0tLS1Pcmln
+aW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogU3RlZmFuIFdhaHJlbiA8c3RlZmFuLndhaHJlbkBp
+MnNlLmNvbT4NCj4gU2VudDogVHVlc2RheSwgU2VwdGVtYmVyIDE4LCAyMDE4IDM6MzggUE0NCj4g
+VG86IEFuc29uIEh1YW5nIDxhbnNvbi5odWFuZ0BueHAuY29tPjsgcm9iaCtkdEBrZXJuZWwub3Jn
+Ow0KPiBtYXJrLnJ1dGxhbmRAYXJtLmNvbTsgc2hhd25ndW9Aa2VybmVsLm9yZzsgcy5oYXVlckBw
+ZW5ndXRyb25peC5kZTsNCj4ga2VybmVsQHBlbmd1dHJvbml4LmRlOyBGYWJpbyBFc3RldmFtIDxm
+YWJpby5lc3RldmFtQG54cC5jb20+Ow0KPiBsaW51eEBhcm1saW51eC5vcmcudWs7IG10dXJxdWV0
+dGVAYmF5bGlicmUuY29tOyBzYm95ZEBrZXJuZWwub3JnOyBKYWNreQ0KPiBCYWkgPHBpbmcuYmFp
+QG54cC5jb20+OyBBLnMuIERvbmcgPGFpc2hlbmcuZG9uZ0BueHAuY29tPjsNCj4gZGV2aWNldHJl
+ZUB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7DQo+IGxpbnV4
+LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZzsgbGludXgtY2xrQHZnZXIua2VybmVsLm9y
+Zw0KPiBDYzogZGwtbGludXgtaW14IDxsaW51eC1pbXhAbnhwLmNvbT4NCj4gU3ViamVjdDogUmU6
+IFtQQVRDSCAwLzRdIEFkZCBpLk1YNlVMWiBTb0Mgc3VwcG9ydA0KPiANCj4gSGkgQW5zb24sDQo+
+IA0KPiBBbSAxOC4wOS4yMDE4IHVtIDA4OjE5IHNjaHJpZWIgQW5zb24gSHVhbmc6DQo+ID4gVGhp
+cyBwYXRjaCBzZXQgYWRkcyBpLk1YNlVMWiBTb0Mgc3VwcG9ydCwgaS5NWDZVTFogaXMgYSBuZXcg
+U29DIG9mDQo+ID4gaS5NWDYgZmFtaWx5LCBjb21wYXJlZCB0byBpLk1YNlVMTCwgaXQgcmVtb3Zl
+cyBiZWxvdyBtb2R1bGVzOg0KPiA+DQo+ID4gICAgIC0gVUFSVDUvVUFSVDYvVUFSVDcvVUFSVDg7
+DQo+ID4gICAgIC0gUFdNNS9QV002L1BXTTcvUFdNODsNCj4gPiAgICAgLSBlQ1NQSTMvZUNTUEk0
+Ow0KPiA+ICAgICAtIENBTjEvQ0FOMjsNCj4gPiAgICAgLSBGRUMxL0ZFQzI7DQo+ID4gICAgIC0g
+STJDMy9JMkM0Ow0KPiA+ICAgICAtIEVQSVQyOw0KPiA+ICAgICAtIExDRElGOw0KPiA+ICAgICAt
+IEdQVDI7DQo+ID4gICAgIC0gVFNDOw0KPiA+DQo+ID4gQW5kIGkuTVg2VUxaIGhhcyBzYW1lIHNv
+Y19pZCBhcyBpLk1YNlVMTCwgYnV0IFNSQ19TQk1SMiBiaXRbNl0gaXMgdG8NCj4gPiBkaWZmZXJl
+bnRpYXRlIGkuTVg2VUxaIGZyb20gaS5NWDZVTEwsIDEnYjEgbWVhbnMgaS5NWDZVTFogYW5kDQo+
+ID4gMSdiMCBtZWFucyBpLk1YNlVMTC4gaS5NWDZVTFogcmV1c2UgbW9zdCBvZiBpLk1YNlVML2ku
+TVg2VUxMIGNvZGUsDQo+ID4ganVzdCBhZGQgdGhlIG5ldyBDUFUgdHlwZSBhbmQgcmVtb3ZlIHRo
+b3NlIG5vbi1leGlzdCBtb2R1bGVzIGZyb20gZHRiLg0KPiA+DQo+ID4gQW5zb24gSHVhbmcgKDQp
+Og0KPiA+ICAgQVJNOiBkdHM6IGlteDogYWRkIGkubXg2dWx6IGFuZCBpLm14NnVseiAxNHgxNCBl
+dmsgc3VwcG9ydA0KPiA+ICAgQVJNOiBpbXg6IGFkZCBpLm14NnVseiBtc2wgc3VwcG9ydA0KPiA+
+ICAgY2xrOiBpbXg2dWw6IGFkZCBpLm14NnVseiBzdXBwb3J0DQo+ID4gICBkdC1iaW5kaW5nczog
+YXJtOiBhZGQgY29tcGF0aWJsZSBmb3IgaS5NWDZVTFogMTR4MTQgRVZLIGJvYXJkDQo+ID4NCj4g
+Pg0KPiANCj4gaSByZWNvbW1lbmQgdGhlIGZvbGxvd2luZyBwYXRjaCBvcmRlcjoNCj4gQVJNOiBp
+bXg6IGFkZCBpLm14NnVseiBtc2wgc3VwcG9ydA0KPiBjbGs6IGlteDZ1bDogYWRkIGkubXg2dWx6
+IHN1cHBvcnQNCj4gZHQtYmluZGluZ3M6IGFybTogYWRkIGNvbXBhdGlibGUgZm9yIGkuTVg2VUxa
+IDE0eDE0IEVWSyBib2FyZA0KPiBBUk06IGR0czogaW14OiBhZGQgaS5teDZ1bHogYW5kIGkubXg2
+dWx6IDE0eDE0IGV2ayBzdXBwb3J0DQo+IA0KPiBTdGVmYW4NCiANClRoYW5rcywgSSByZXNlbmQg
+dGhlIFYyIHBhdGNoIHNldCB3aXRoIHRoZSBwYXRjaCBvcmRlciB5b3UgcmVjb21tZW5kZWQuDQoN
+CkFuc29uLg0KDQo=
