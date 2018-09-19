@@ -1,129 +1,55 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:46004 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729209AbeIYUqB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 25 Sep 2018 16:46:01 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:43764 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726972AbeISMJR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Sep 2018 08:09:17 -0400
+Date: Wed, 19 Sep 2018 09:32:47 +0300
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To: kbuild test robot <lkp@intel.com>
+Cc: kbuild-all@01.org, lee.jones@linaro.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, lgirdwood@gmail.com, broonie@kernel.org,
+        sboyd@kernel.org, mazziesaccount@gmail.com,
+        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 7/7] regulator: bd718xx: rename bd71837 to 718xx
+Message-ID: <20180919063247.GC2295@localhost.localdomain>
+References: <6b3e7b3aeef67d85083f49894e0b0fe482fc08c4.1536912922.git.matti.vaittinen@fi.rohmeurope.com>
+ <201809181853.7HyPgIo6%fengguang.wu@intel.com>
 MIME-Version: 1.0
-References: <1536955389-30442-1-git-send-email-pdeschrijver@nvidia.com>
- <1536955389-30442-15-git-send-email-pdeschrijver@nvidia.com>
- <5baa1ae9.1c69fb81.1ab9.1805@mx.google.com> <20180925121107.GJ7636@tbergstrom-lnx.Nvidia.com>
-In-Reply-To: <20180925121107.GJ7636@tbergstrom-lnx.Nvidia.com>
-From: Rob Herring <robh@kernel.org>
-Date: Tue, 25 Sep 2018 09:37:59 -0500
-Message-ID: <CAL_JsqLY93P52idTiD2b_WwgTc2+s9A24+TdUEQsUeaUDwGK7A@mail.gmail.com>
-Subject: Re: [RFC 14/14] dt-bindings: tegra: Add Tegra210 EMC binding
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: vkuruturi@nvidia.com, linux-tegra@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jon Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
-        daniel@octaforge.org, Andre Heider <a.heider@gmail.com>,
-        swtcr0@gmail.com, linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <201809181853.7HyPgIo6%fengguang.wu@intel.com>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Sep 25, 2018 at 7:11 AM Peter De Schrijver
-<pdeschrijver@nvidia.com> wrote:
->
-> On Mon, Sep 24, 2018 at 02:04:24PM -0700, Rob Herring wrote:
-> > On Fri, Sep 14, 2018 at 11:03:09PM +0300, Peter De Schrijver wrote:
-> > > Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> >
-> > Needs a commit msg.
-> >
-> > > ---
-> > >  .../memory-controllers/nvidia,tegra210-emc.txt     | 448 +++++++++++++++++++++
-> > >  1 file changed, 448 insertions(+)
-> > >  create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt
-> > > new file mode 100644
-> > > index 0000000..1c52f47
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt
-> > > @@ -0,0 +1,448 @@
-> > > +NVIDIA Tegra210 SoC EMC (external memory controller)
-> > > +====================================================
-> > > +
-> > > +Required properties :
-> > > +- compatible : Should be "nvidia,tegra21-emc", "nvidia,tegra124-emc".
-> > > +- reg : physical base address and length of the controller's registers.
-> > > +- nvidia,memory-controller : phandle of the MC driver.
-> >
-> > Huh? What is this block then?
-> >
->
-> This is the EMC. The EMC handles the interface with the external DRAM chips.
-> The MC aggregates and schedules requests to the EMC. It also handles address
-> translation. See figure 33 of the TRM.
+Hello All,
 
-Sorry, but I hardly have time to go read TRM's for every binding.
+On Tue, Sep 18, 2018 at 06:13:48PM +0800, kbuild test robot wrote:
+> Thank you for the patch! Yet something to improve:
+> 
+> [auto build test ERROR on regulator/for-next]
+> [also build test ERROR on next-20180913]
+> [cannot apply to v4.19-rc4]
+> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+> 
+> url:    https://github.com/0day-ci/linux/commits/Matti-Vaittinen/regulator-mfd-dt_bindings-bd718x7-Support-ROHM-bd71847/20180914-210454
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+> config: x86_64-randconfig-s4-09181517 (attached as .config)
+> compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
+> reproduce:
+>         # save the attached .config to linux build tree
+>         make ARCH=x86_64 
+> 
+> All error/warnings (new ones prefixed by >>):
+> 
+> >> drivers/regulator/bd718x7-regulator.c:364:16: error: implicit declaration of function 'of_match_ptr'; did you mean 'hash_ptr'? [-Werror=implicit-function-declaration]
+>        .of_match = of_match_ptr("BUCK1"),
+>                    ^~~~~~~~~~~~
+>                    hash_ptr
 
-Just explain what the MC is here and remove 'driver'.
+This error is not introduced in this patch series. The already in-tree
+implementation of bd71837 driver has this bug already. I'll send a
+trivial patch to Mark for adding the missing include.
 
-> > > +- clocks : phandles of the possible source clocks
-> > > +- clock-names : names of the possible source clocks
-> > > +
-> > > +The node should contain a "emc-table" subnode for each supported RAM type
-> > > +(see field RAM_CODE in register PMC_STRAPPING_OPT_A), with its unit address
-> > > +being its RAM_CODE.
-> >
-> > Unit address is based on reg property.
-> >
-> > > +
-> > > +Required properties for "emc-table" nodes :
-> > > +- nvidia,ram-code : Should contain the value of RAM_CODE this timing set is
-> > > +used for.
-> > > +
-> > > +Each "emc-table" node should contain a "emc-table" subnode for every supported
-> > > +EMC clock rate. The "emc-table" subnodes should have the clock rate in kHz as
-> > > +their unit address.
-> > > +
-> > > +Required properties for "emc-table" nodes :
-> >
-> > Which emc-table nodes, the child or grand-child nodes?
-> >
->
-> The child "emc-table" node.
->
-> > > +- compatible  "nvidia,tegra21-emc-table", "nvidia,tegra210-emc-table"
-> >
-> > > +- nvidia,revision : revision of the parameter set used for this node. All
-> > > +                    nodes in the same "emc-table" should have the same revision
-> > > +- clock-frequency : frequency in kHz
-> > > +- nvidia,emc-min-mv : minimum voltage for this OPP
-> > > +- nvidia,gk20a-min-mv : minimum GPU voltage for this OPP
-> > > +- nvidia,source : clock source to be used for this OPP
-> >
-> > Is this memory timings/settings or OPPs? We have a binding for OPPs
-> > already.
-> >
->
-> This is memory timings.
->
-> > > +- nvidia,src-sel-reg : value of EMC CAR register to be used for this OPP
-> > > +- nvidia,needs-training : 1 if the OPP needs training at boot, 0 otherwise
-> > > +- nvidia,trained : 1 if initial training has been done by firmware, 0 otherwise
-> > > +- nvidia,periodic_training : 1 if the OPP needs periodic training, 0 otherwise
-> > > +- nvidia,trained_dram_clktree_c0d0u0 : training data word
-> > > +- nvidia,trained_dram_clktree_c0d0u1 : training data word
-> >
-> > [...]
-> >
-> > This is a huge list of properties. For all the things that are memory
-> > timings, is there really value to defining a property for each setting?
-> > Perhaps you should just define your own format and either make it a
-> > separate firmware file or include that file in the dtb.
->
-> If it's a binary structure, how would this be passed given the bootloader has
-> to fill in the training information?
-
-Perhaps training data makes sense to keep as DT properties, but it is
-not all training data, right? Things like a list of register
-initialization values do not sound like training data.
-
-I assume the the training data is read back from the h/w, can't the
-kernel just do that itself? Or the data is lost after init is
-complete?
-
-Rob
+Br,
+	Matti Vaittinen
