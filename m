@@ -1,223 +1,141 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: linux-clk@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	sboyd@kernel.org,
-	mturquette@baylibre.com,
+Return-Path: <anson.huang@nxp.com>
+From: Anson Huang <Anson.Huang@nxp.com>
+To: robh+dt@kernel.org,
+	mark.rutland@arm.com,
 	shawnguo@kernel.org,
-	fabio.estevam@nxp.com,
-	linux-imx@nxp.com,
+	s.hauer@pengutronix.de,
 	kernel@pengutronix.de,
-	Dong Aisheng <aisheng.dong@nxp.com>
-Subject: [PATCH V2 07/11] clk: imx: scu: add scu clock mux
-Date: Wed, 26 Sep 2018 00:43:53 +0800
-Message-Id: <1537893837-31172-8-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1537893837-31172-1-git-send-email-aisheng.dong@nxp.com>
-References: <1537893837-31172-1-git-send-email-aisheng.dong@nxp.com>
+	fabio.estevam@nxp.com,
+	linux@armlinux.org.uk,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	ping.bai@nxp.com,
+	Aisheng.dong@nxp.com,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Cc: Linux-imx@nxp.com
+Subject: [PATCH V2 4/4] ARM: dts: imx: add i.mx6ulz and i.mx6ulz 14x14 evk support
+Date: Wed, 19 Sep 2018 14:04:48 +0800
+Message-Id: <1537337088-28819-5-git-send-email-Anson.Huang@nxp.com>
+In-Reply-To: <1537337088-28819-1-git-send-email-Anson.Huang@nxp.com>
+References: <1537337088-28819-1-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Return-Path: aisheng.dong@nxp.com
+Return-Path: Anson.Huang@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Add scu based clock mux.
+i.MX6ULZ is new SoC of i.MX6 family, compared to i.MX6ULL,
+it removes below modules:
 
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Sascha Hauer <kernel@pengutronix.de>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
----
-ChangeLog:
-v1->v2:
- * move SCU clock API implementation into driver
----
- drivers/clk/imx/scu/Makefile      |   3 +-
- drivers/clk/imx/scu/clk-mux-scu.c | 142 ++++++++++++++++++++++++++++++++++++++
- drivers/clk/imx/scu/clk-scu.h     |  13 ++++
- 3 files changed, 157 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/imx/scu/clk-mux-scu.c
+- UART5/UART6/UART7/UART8;
+- PWM5/PWM6/PWM7/PWM8;
+- eCSPI3/eCSPI4;
+- CAN1/CAN2;
+- FEC1/FEC2;
+- I2C3/I2C4;
+- EPIT2;
+- LCDIF;
+- GPT2;
+- ADC1;
+- TSC;
 
-diff --git a/drivers/clk/imx/scu/Makefile b/drivers/clk/imx/scu/Makefile
-index 25d3511..aee56bf 100644
---- a/drivers/clk/imx/scu/Makefile
-+++ b/drivers/clk/imx/scu/Makefile
-@@ -5,4 +5,5 @@ obj-$(CONFIG_MXC_CLK_SCU) += \
- 	clk-divider-scu.o \
- 	clk-divider-gpr-scu.o \
- 	clk-gate-scu.o \
--	clk-gate-gpr-scu.o
-+	clk-gate-gpr-scu.o \
-+	clk-mux-scu.o
-diff --git a/drivers/clk/imx/scu/clk-mux-scu.c b/drivers/clk/imx/scu/clk-mux-scu.c
+This patch adds support for i.MX6ULZ and i.MX6ULZ 14x14 EVK
+board.
+
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+ arch/arm/boot/dts/Makefile              |  3 ++-
+ arch/arm/boot/dts/imx6ulz-14x14-evk.dts | 20 +++++++++++++++++
+ arch/arm/boot/dts/imx6ulz.dtsi          | 38 +++++++++++++++++++++++++++++++++
+ 3 files changed, 60 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm/boot/dts/imx6ulz-14x14-evk.dts
+ create mode 100644 arch/arm/boot/dts/imx6ulz.dtsi
+
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index b3ec70d..d7268ae 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -560,7 +560,8 @@ dtb-$(CONFIG_SOC_IMX6UL) += \
+ 	imx6ul-tx6ul-mainboard.dtb \
+ 	imx6ull-14x14-evk.dtb \
+ 	imx6ull-colibri-eval-v3.dtb \
+-	imx6ull-colibri-wifi-eval-v3.dtb
++	imx6ull-colibri-wifi-eval-v3.dtb \
++	imx6ulz-14x14-evk.dtb
+ dtb-$(CONFIG_SOC_IMX7D) += \
+ 	imx7d-cl-som-imx7.dtb \
+ 	imx7d-colibri-emmc-eval-v3.dtb \
+diff --git a/arch/arm/boot/dts/imx6ulz-14x14-evk.dts b/arch/arm/boot/dts/imx6ulz-14x14-evk.dts
 new file mode 100644
-index 0000000..bd6f51b
+index 0000000..e2d67a3
 --- /dev/null
-+++ b/drivers/clk/imx/scu/clk-mux-scu.c
-@@ -0,0 +1,142 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Copyright (C) 2016 Freescale Semiconductor, Inc.
-+ * Copyright 2017~2018 NXP
-+ *	Dong Aisheng <aisheng.dong@nxp.com>
-+ */
++++ b/arch/arm/boot/dts/imx6ulz-14x14-evk.dts
+@@ -0,0 +1,20 @@
++// SPDX-License-Identifier: (GPL-2.0 OR MIT)
++//
++// Copyright 2018 NXP.
 +
-+#include <linux/clk-provider.h>
-+#include <linux/err.h>
-+#include <linux/io.h>
-+#include <linux/slab.h>
-+#include <soc/imx/scu/sci.h>
++/dts-v1/;
 +
-+#include "clk-scu.h"
++#include "imx6ulz.dtsi"
++#include "imx6ul-14x14-evk.dtsi"
 +
-+struct clk_mux_scu {
-+	struct clk_hw	hw;
-+	sc_rsrc_t	rsrc_id;
-+	uint8_t	clk_type;
++/delete-node/ &fec1;
++/delete-node/ &fec2;
++/delete-node/ &lcdif;
++/delete-node/ &tsc;
++
++/ {
++	model = "Freescale i.MX6 ULZ 14x14 EVK Board";
++	compatible = "fsl,imx6ulz-14x14-evk", "fsl,imx6ulz";
++
++	/delete-node/ panel;
++};
+diff --git a/arch/arm/boot/dts/imx6ulz.dtsi b/arch/arm/boot/dts/imx6ulz.dtsi
+new file mode 100644
+index 0000000..ae6d7e5
+--- /dev/null
++++ b/arch/arm/boot/dts/imx6ulz.dtsi
+@@ -0,0 +1,38 @@
++// SPDX-License-Identifier: (GPL-2.0 OR MIT)
++//
++// Copyright 2018 NXP.
++
++#include "imx6ull.dtsi"
++
++/ {
++	aliases {
++		/delete-property/ ethernet0;
++		/delete-property/ ethernet1;
++		/delete-property/ i2c2;
++		/delete-property/ i2c3;
++		/delete-property/ serial4;
++		/delete-property/ serial5;
++		/delete-property/ serial6;
++		/delete-property/ serial7;
++		/delete-property/ spi2;
++		/delete-property/ spi3;
++	};
 +};
 +
-+#define to_clk_mux_scu(_hw) container_of(_hw, struct clk_mux_scu, hw)
-+
-+
-+/* SCU Clock Protocol definitions */
-+struct imx_sc_msg_req_set_clock_parent {
-+	struct sc_rpc_msg hdr;
-+	u16 resource;
-+	u8 clk;
-+	u8 parent;
-+} __packed;
-+
-+struct imx_sc_msg_req_get_clock_parent {
-+	struct sc_rpc_msg hdr;
-+	u16 resource;
-+	u8 clk;
-+} __packed;
-+
-+struct imx_sc_msg_resp_get_clock_parent {
-+	struct sc_rpc_msg hdr;
-+	u8 parent;
-+} __packed;
-+
-+static u8 clk_mux_scu_get_parent(struct clk_hw *hw)
-+{
-+	struct clk_mux_scu *mux = to_clk_mux_scu(hw);
-+	struct imx_sc_msg_req_get_clock_parent msg;
-+	struct imx_sc_msg_resp_get_clock_parent *resp;
-+	struct sc_rpc_msg *hdr = &msg.hdr;
-+	sc_err_t sci_err;
-+	int ret;
-+
-+	hdr->ver = SC_RPC_VERSION;
-+	hdr->svc = (uint8_t)SC_RPC_SVC_PM;
-+	hdr->func = (uint8_t)PM_FUNC_GET_CLOCK_PARENT;
-+	hdr->size = 2;
-+
-+	msg.resource = mux->rsrc_id;
-+	msg.clk = mux->clk_type;
-+
-+	ret = imx_scu_call_rpc(ccm_ipc_handle, &msg, true);
-+	if (ret)
-+		return ret;
-+
-+	resp = (struct imx_sc_msg_resp_get_clock_parent *)&msg;
-+	sci_err = (sc_err_t)resp->hdr.func;
-+	if (sci_err) {
-+		pr_err("%s: failed to get clock parent %d\n",
-+			clk_hw_get_name(hw), sci_err);
-+		return -EINVAL;
-+	}
-+
-+	return resp->parent;
-+}
-+
-+static int clk_mux_scu_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct clk_mux_scu *mux = to_clk_mux_scu(hw);
-+	struct imx_sc_msg_req_set_clock_parent msg;
-+	struct sc_rpc_msg *hdr = &msg.hdr;
-+	sc_err_t sci_err;
-+	int ret;
-+
-+	hdr->ver = SC_RPC_VERSION;
-+	hdr->svc = (uint8_t)SC_RPC_SVC_PM;
-+	hdr->func = (uint8_t)PM_FUNC_SET_CLOCK_PARENT;
-+	hdr->size = 2;
-+
-+	msg.resource = mux->rsrc_id;
-+	msg.clk = mux->clk_type;
-+	msg.parent = index;
-+
-+	ret = imx_scu_call_rpc(ccm_ipc_handle, &msg, true);
-+	if (ret)
-+		return ret;
-+
-+	sci_err = (sc_err_t)hdr->func;
-+	if (sci_err) {
-+		pr_err("%s: failed to set clock parent %d : ret %d\n",
-+			clk_hw_get_name(hw), index, sci_err);
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct clk_ops clk_mux_scu_ops = {
-+	.get_parent = clk_mux_scu_get_parent,
-+	.set_parent = clk_mux_scu_set_parent,
-+};
-+
-+struct clk_hw *clk_register_mux_scu(const char *name, const char * const *parents,
-+				    int num_parents, unsigned long flags,
-+				    sc_rsrc_t rsrc_id, uint8_t clk_type)
-+{
-+	struct clk_init_data init;
-+	struct clk_mux_scu *mux;
-+	struct clk_hw *hw;
-+	int ret;
-+
-+	mux = kzalloc(sizeof(*mux), GFP_KERNEL);
-+	if (!mux)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init.name = name;
-+	init.ops = &clk_mux_scu_ops;
-+	init.parent_names = parents;
-+	init.num_parents = num_parents;
-+
-+	mux->hw.init = &init;
-+	mux->rsrc_id = rsrc_id;
-+	mux->clk_type = clk_type;
-+
-+	hw = &mux->hw;
-+	ret = clk_hw_register(NULL, hw);
-+	if (ret) {
-+		kfree(mux);
-+		hw = ERR_PTR(ret);
-+	}
-+
-+	return hw;
-+}
-diff --git a/drivers/clk/imx/scu/clk-scu.h b/drivers/clk/imx/scu/clk-scu.h
-index 13af045..43009c4 100644
---- a/drivers/clk/imx/scu/clk-scu.h
-+++ b/drivers/clk/imx/scu/clk-scu.h
-@@ -68,4 +68,17 @@ static inline struct clk_hw *imx_clk_gate_gpr_scu(const char *name, const char *
- 	return clk_register_gate_gpr_scu(name, parent, rsrc_id, gpr_id, invert_flag);
- }
- 
-+struct clk_hw *clk_register_mux_scu(const char *name, const char * const *parents,
-+			int num_parents, unsigned long flags,
-+			sc_rsrc_t rsrc_id, uint8_t clk_type);
-+
-+static inline struct clk_hw *imx_clk_mux_scu(const char *name,
-+			const char * const *parents, int num_parents,
-+			sc_rsrc_t rsrc_id, uint8_t clk_type)
-+{
-+	return clk_register_mux_scu(name, parents, num_parents,
-+			CLK_SET_RATE_NO_REPARENT, rsrc_id,
-+			clk_type);
-+}
-+
- #endif
++/delete-node/ &adc1;
++/delete-node/ &can1;
++/delete-node/ &can2;
++/delete-node/ &ecspi3;
++/delete-node/ &ecspi4;
++/delete-node/ &epit2;
++/delete-node/ &gpt2;
++/delete-node/ &i2c3;
++/delete-node/ &i2c4;
++/delete-node/ &pwm5;
++/delete-node/ &pwm6;
++/delete-node/ &pwm7;
++/delete-node/ &pwm8;
++/delete-node/ &uart5;
++/delete-node/ &uart6;
++/delete-node/ &uart7;
++/delete-node/ &uart8;
 -- 
 2.7.4
