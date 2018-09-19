@@ -1,56 +1,42 @@
-Return-Path: <wens@wens.csie.org>
-From: Chen-Yu Tsai <wens@csie.org>
-To: Maxime Ripard <maxime.ripard@bootlin.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Chen-Yu Tsai <wens@csie.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-sunxi@googlegroups.com,
-	stable@vger.kernel.org
-Subject: [PATCH] clk: sunxi-ng: sun4i: Set VCO and PLL bias current to lowest setting
-Date: Thu,  6 Sep 2018 21:25:37 +0800
-Message-Id: <20180906132537.20772-1-wens@csie.org>
-MIME-Version: 1.0
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from albert.telenet-ops.be ([195.130.137.90]:43960 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731421AbeISU3C (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Sep 2018 16:29:02 -0400
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clk: renesas: r8a77990: Fix incorrect PLL0 divider in comment
+Date: Wed, 19 Sep 2018 16:50:42 +0200
+Message-Id: <20180919145042.8429-1-geert+renesas@glider.be>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-The default mid-level PLL bias current setting interferes with sigma
-delta modulation. This manifests as decreased audio quality at lower
-sampling rates, which sounds like radio broadcast quality, and
-distortion noises at sampling rates at 48 kHz or above.
+PLL0 runs at 4.8 GHz, i.e. EXTAL x 100.
 
-Changing the bias current settings to the lowest gets rid of the
-noise.
-
-Fixes: de3448519194 ("clk: sunxi-ng: sun4i: Use sigma-delta modulation
-		      for audio PLL")
-Cc: <stable@vger.kernel.org> # 4.15.x
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/clk/sunxi-ng/ccu-sun4i-a10.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+To be queued in clk-renesas-for-v4.20.
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun4i-a10.c b/drivers/clk/sunxi-ng/ccu-sun4i-a10.c
-index ffa5dac221e4..129ebd2588fd 100644
---- a/drivers/clk/sunxi-ng/ccu-sun4i-a10.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun4i-a10.c
-@@ -1434,8 +1434,16 @@ static void __init sun4i_ccu_init(struct device_node *node,
- 		return;
- 	}
- 
--	/* Force the PLL-Audio-1x divider to 1 */
- 	val = readl(reg + SUN4I_PLL_AUDIO_REG);
-+
-+	/*
-+	 * Force VCO and PLL bias current to lowest setting. Higher
-+	 * settings interfere with sigma-delta modulation and result
-+	 * in audible noise and distortions when using SPDIF or I2S.
-+	 */
-+	val &= ~GENMASK(25, 16);
-+
-+	/* Force the PLL-Audio-1x divider to 1 */
- 	val &= ~GENMASK(29, 26);
- 	writel(val | (1 << 26), reg + SUN4I_PLL_AUDIO_REG);
+ drivers/clk/renesas/r8a77990-cpg-mssr.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/renesas/r8a77990-cpg-mssr.c b/drivers/clk/renesas/r8a77990-cpg-mssr.c
+index 7e000d0705891a3f..9eb80180eea0b1a6 100644
+--- a/drivers/clk/renesas/r8a77990-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a77990-cpg-mssr.c
+@@ -250,8 +250,8 @@ static const unsigned int r8a77990_crit_mod_clks[] __initconst = {
+ /*
+  * MD19		EXTAL (MHz)	PLL0		PLL1		PLL3
+  *--------------------------------------------------------------------
+- * 0		48 x 1		x100/4		x100/3		x100/3
+- * 1		48 x 1		x100/4		x100/3		 x58/3
++ * 0		48 x 1		x100/1		x100/3		x100/3
++ * 1		48 x 1		x100/1		x100/3		 x58/3
+  */
+ #define CPG_PLL_CONFIG_INDEX(md)	(((md) & BIT(19)) >> 19)
  
 -- 
-2.19.0.rc1
+2.17.1
