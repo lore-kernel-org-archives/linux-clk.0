@@ -1,82 +1,100 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:51708 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725858AbeIXL7M (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Sep 2018 07:59:12 -0400
-Received: by mail-wm1-f67.google.com with SMTP id y25-v6so907389wmi.1
-        for <linux-clk@vger.kernel.org>; Sun, 23 Sep 2018 22:58:45 -0700 (PDT)
-Subject: Re: [PATCH v7 05/24] clocksource: Add a new timer-ingenic driver
-To: Paul Cercueil <paul@crapouillou.net>
-Cc: Mathieu Malaterre <malat@debian.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Rob Herring <robh+dt@kernel.org>, linux-doc@vger.kernel.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        linux-watchdog@vger.kernel.org, od@zcrc.me,
-        linux-mips@linux-mips.org, Paul Burton <paul.burton@mips.com>,
-        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-pwm@vger.kernel.org
-References: <5ba87b02.1c69fb81.1da88.1457SMTPIN_ADDED_MISSING@mx.google.com>
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <e5104bd9-1564-266d-4f27-affa8a9e825d@linaro.org>
-Date: Mon, 24 Sep 2018 07:58:42 +0200
+Return-Path: <thor.thayer@linux.intel.com>
+Reply-To: thor.thayer@linux.intel.com
+Subject: Re: [PATCH V6 0/4] clk: new APIs to handle all available clocks
+To: "A.s. Dong" <aisheng.dong@nxp.com>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>, "sboyd@kernel.org"
+ <sboyd@kernel.org>, "mturquette@baylibre.com" <mturquette@baylibre.com>,
+ "shawnguo@kernel.org" <shawnguo@kernel.org>, dl-linux-imx
+ <linux-imx@nxp.com>, "hdegoede@redhat.com" <hdegoede@redhat.com>
+References: <1535690756-22234-1-git-send-email-aisheng.dong@nxp.com>
+ <AM0PR04MB4211EF6D783562BA8C8D690380010@AM0PR04MB4211.eurprd04.prod.outlook.com>
+ <AM0PR04MB4211A3900BC5A2DF857F7451801F0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+From: Thor Thayer <thor.thayer@linux.intel.com>
+Message-ID: <7e612f6f-e9d2-2f6f-1903-3a6bcf1b65ba@linux.intel.com>
+Date: Wed, 19 Sep 2018 09:47:22 -0500
 MIME-Version: 1.0
-In-Reply-To: <5ba87b02.1c69fb81.1da88.1457SMTPIN_ADDED_MISSING@mx.google.com>
-Content-Type: text/plain; charset=utf-8
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <AM0PR04MB4211A3900BC5A2DF857F7451801F0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On 24/09/2018 07:49, Paul Cercueil wrote:
+Hi,
+
+On 09/16/2018 08:24 AM, A.s. Dong wrote:
+> Ping again
 > 
-> Le 24 sept. 2018 07:35, Daniel Lezcano <daniel.lezcano@linaro.org> a
-> écrit :
->> 
->> On 24/09/2018 07:24, Paul Cercueil wrote:
->>> Hi Daniel,
->>> 
->>> Le 24 sept. 2018 05:12, Daniel Lezcano
->>> <daniel.lezcano@linaro.org> a écrit :
->>>> 
->>>> On 21/08/2018 19:16, Paul Cercueil wrote:
->>>>> This driver handles the TCU (Timer Counter Unit) present on
->>>>> the Ingenic JZ47xx SoCs, and provides the kernel with a
->>>>> system timer, and optionally with a clocksource and a
->>>>> sched_clock.
->>>>> 
->>>>> It also provides clocks and interrupt handling to client
->>>>> drivers.
->>>> 
->>>> Can you provide a much more complete description of the timer
->>>> in order to make my life easier for the review of this patch?
->>> 
->>> See patch [03/24], it adds a doc file that describes the
->>> hardware.
->> 
->> Thanks, I went through but it is incomplete to understand what the
->> timer do. I will reverse-engineer the code but it would help if you
->> can give the gross approach. Why multiple channels ? mutexes and
->> completion ?
+>> -----Original Message-----
+>> From: A.s. Dong
+>> Sent: Thursday, September 6, 2018 11:23 AM
+>> To: linux-clk@vger.kernel.org
+>> Cc: linux-kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
+>> sboyd@kernel.org; mturquette@baylibre.com; shawnguo@kernel.org;
+>> thor.thayer@linux.intel.com; dl-linux-imx <linux-imx@nxp.com>;
+>> hdegoede@redhat.com
+>> Subject: RE: [PATCH V6 0/4] clk: new APIs to handle all available clocks
+>>
+>> Gently ping...
+>>
+>>> -----Original Message-----
+>>> From: A.s. Dong
+>>> Sent: Friday, August 31, 2018 12:46 PM
+>>> To: linux-clk@vger.kernel.org
+>>> Cc: linux-kernel@vger.kernel.org;
+>>> linux-arm-kernel@lists.infradead.org;
+>>> sboyd@kernel.org; mturquette@baylibre.com; shawnguo@kernel.org;
+>>> thor.thayer@linux.intel.com; dl-linux-imx <linux-imx@nxp.com>;
+>>> hdegoede@redhat.com; A.s. Dong <aisheng.dong@nxp.com>
+>>> Subject: [PATCH V6 0/4] clk: new APIs to handle all available clocks
+>>>
+>>> This patch series is a continue of discussion from here,
+>>> https://patchwork.kernel.org/patch/9986293/
+>>> that some users may want to handle all available clocks from device
+>>> tree without need to know the detailed clock information likes clock
+>>> numbers and names. This is useful in writing some generic drivers to handle
+>> clock part.
+>>>
+>>> Note:
+>>> This patch series is tested on MX6Q SDB cpufreq driver with a minor
+>>> change to switch to use clk_bulk_get_all.
+>>> But patch 4 only test compiling. Hopefully someone could help test the
+>>> function.
+>>>
+>>> v3->v4:
+>>>   * improve 'devres->clks = *clks' according to Stephen's suggestion
+>>> v2->v3:
+>>>   * address all comments from Stephen
+>>>   * fix build warnings on other architectures.
+>>> v1->v2:
+>>>   * add clk_bulk_{get|put}_all() which only supports DT platform
+>>> currently
+>>>   * remove _all variants and the wrapper struct clk_bulk
+>>>   * make of_clk_bulk_get and of_clk_bulk_get_all private until someone
+>>>     proves they need it because they don't have a struct device pointer.
+>>>
+>>> Dong Aisheng (4):
+>>>    clk: bulk: add of_clk_bulk_get()
+>>>    clk: add new APIs to operate on all available clocks
+>>>    clk: add managed version of clk_bulk_get_all
+>>>    video: simplefb: switch to use clk_bulk API to simplify clock
+>>>      operations
+>>>
+>>>   drivers/clk/clk-bulk.c         | 80
+>>> ++++++++++++++++++++++++++++++++++++++++++
+>>>   drivers/clk/clk-devres.c       | 24 +++++++++++++
+>>>   drivers/video/fbdev/simplefb.c | 72 ++++++++++---------------------------
+>>>   include/linux/clk.h            | 65
+>>> +++++++++++++++++++++++++++++++++-
+>>>   4 files changed, 186 insertions(+), 55 deletions(-)
+>>>
+>>> --
+>>> 2.7.4
 > 
-> Much of the complexity is because of the multi-purpose nature of the
-> TCU channels. Each one can be used as timer/clocksource, or PWM.
-> 
-> The driver starts by using channels 0 and 1 as system timer and
-> clocksource, respectively, the other ones being unused for now. Then,
-> *if* the PWM driver requests one of the channels in use by the
-> timer/clocksource driver, say channel 0, the timer/clocksource driver
-> will dynamically reassign the system timer to a free channel, from
-> channel 0 to e.g. channel 2. Only in that case the completion/mutex
-> are actually used.
+Just checking on the status of this patch. The clock routines (patches 
+1-3) are useful for one of my drivers but if they aren't accepted or 
+will take a long time to be accepted, I'll need to refactor my driver.
 
-Why do you need to do this? Can't be the channels dedicated and reserved
-for clocksource and clockevent?
+Thanks,
 
-
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Thor
