@@ -1,122 +1,160 @@
-Return-Path: <tdas@codeaurora.org>
-From: Taniya Das <tdas@codeaurora.org>
-To: Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+Return-Path: <anson.huang@nxp.com>
+From: Anson Huang <Anson.Huang@nxp.com>
+To: robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	fabio.estevam@nxp.com,
+	linux@armlinux.org.uk,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	ping.bai@nxp.com,
+	Aisheng.dong@nxp.com,
 	devicetree@vger.kernel.org,
-	robh@kernel.org,
-	Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH 1/2] dt-bindings: clock: Introduce QCOM LPASS clock bindings
-Date: Tue, 11 Sep 2018 22:30:05 +0530
-Message-Id: <1536685206-12239-2-git-send-email-tdas@codeaurora.org>
-In-Reply-To: <1536685206-12239-1-git-send-email-tdas@codeaurora.org>
-References: <1536685206-12239-1-git-send-email-tdas@codeaurora.org>
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Cc: Linux-imx@nxp.com
+Subject: [PATCH V2 1/4] ARM: imx: add i.mx6ulz msl support
+Date: Wed, 19 Sep 2018 14:04:45 +0800
+Message-Id: <1537337088-28819-2-git-send-email-Anson.Huang@nxp.com>
+In-Reply-To: <1537337088-28819-1-git-send-email-Anson.Huang@nxp.com>
+References: <1537337088-28819-1-git-send-email-Anson.Huang@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-Path: Anson.Huang@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Add device tree bindings for Low Power Audio subsystem clock controller for
-Qualcomm Technology Inc's SDM845 SoCs.
+The i.MX 6ULZ processor is a high-performance, ultra
+cost-efficient consumer Linux processor featuring an
+advanced implementation of a single Arm® Cortex®-A7 core,
+which operates at speeds up to 900 MHz.
 
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
+This patch adds basic MSL support for i.MX6ULZ, the
+i.MX6ULZ has same soc_id as i.MX6ULL, and SRC_SBMR2 bit[6]
+is to differentiate i.MX6ULZ from i.MX6ULL, 1'b1 means
+i.MX6ULZ and 1'b0 means i.MX6ULL.
+
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
- .../devicetree/bindings/clock/qcom,gcc.txt         |  2 ++
- .../devicetree/bindings/clock/qcom,lpasscc.txt     | 31 ++++++++++++++++++++++
- include/dt-bindings/clock/qcom,gcc-sdm845.h        |  2 ++
- include/dt-bindings/clock/qcom,lpass-sdm845.h      | 16 +++++++++++
- 4 files changed, 51 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,lpasscc.txt
- create mode 100644 include/dt-bindings/clock/qcom,lpass-sdm845.h
+ arch/arm/mach-imx/anatop.c      | 20 ++++++++++++++++++++
+ arch/arm/mach-imx/cpu.c         |  3 +++
+ arch/arm/mach-imx/mach-imx6ul.c |  1 +
+ arch/arm/mach-imx/mxc.h         |  7 +++++++
+ arch/arm/mach-imx/pm-imx6.c     |  4 ++--
+ 5 files changed, 33 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc.txt b/Documentation/devicetree/bindings/clock/qcom,gcc.txt
-index 664ea1f..b3ff6e8 100644
---- a/Documentation/devicetree/bindings/clock/qcom,gcc.txt
-+++ b/Documentation/devicetree/bindings/clock/qcom,gcc.txt
-@@ -32,6 +32,8 @@ be part of GCC and hence the TSENS properties can also be
- part of the GCC/clock-controller node.
- For more details on the TSENS properties please refer
- Documentation/devicetree/bindings/thermal/qcom-tsens.txt
-+- qcom,lpass-protected : Indicate that the LPASS clock branches within GCC are
-+			 unusable due to firmware access control restrictions.
+diff --git a/arch/arm/mach-imx/anatop.c b/arch/arm/mach-imx/anatop.c
+index 61f3d94..45d618a 100644
+--- a/arch/arm/mach-imx/anatop.c
++++ b/arch/arm/mach-imx/anatop.c
+@@ -31,6 +31,8 @@
+ #define ANADIG_DIGPROG_IMX6SL	0x280
+ #define ANADIG_DIGPROG_IMX7D	0x800
  
- Example:
- 	clock-controller@900000 {
-diff --git a/Documentation/devicetree/bindings/clock/qcom,lpasscc.txt b/Documentation/devicetree/bindings/clock/qcom,lpasscc.txt
-new file mode 100644
-index 0000000..d312957
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,lpasscc.txt
-@@ -0,0 +1,31 @@
-+Qualcomm LPASS Clock Controller Binding
-+-----------------------------------------------
++#define SRC_SBMR2		0x1c
 +
-+Required properties :
-+- compatible		: shall contain "qcom,sdm845-lpasscc"
-+- #clock-cells		: from common clock binding, shall contain 1.
-+- reg			: shall contain base register address and size,
-+			  in the order
-+			Index-0 maps to LPASS_CC register region
-+			Index-1 maps to LPASS_QDSP6SS register region
+ #define BM_ANADIG_REG_2P5_ENABLE_WEAK_LINREG	0x40000
+ #define BM_ANADIG_REG_2P5_ENABLE_PULLDOWN	0x8
+ #define BM_ANADIG_REG_CORE_FET_ODRIVE		0x20000000
+@@ -148,6 +150,24 @@ void __init imx_init_revision_from_anatop(void)
+ 		major_part = (digprog >> 8) & 0xf;
+ 		minor_part = digprog & 0xf;
+ 		revision = ((major_part + 1) << 4) | minor_part;
 +
-+Optional properties :
-+- reg-names	: register names of LPASS domain
-+		 "lpass_cc", "lpass_qdsp6ss".
++		if ((digprog >> 16) == MXC_CPU_IMX6ULL) {
++			void __iomem *src_base;
++			u32 sbmr2;
 +
-+Example:
++			np = of_find_compatible_node(NULL, NULL,
++						     "fsl,imx6ul-src");
++			src_base = of_iomap(np, 0);
++			WARN_ON(!src_base);
++			sbmr2 = readl_relaxed(src_base + SRC_SBMR2);
++			iounmap(src_base);
 +
-+The below node has to be defined in the cases where the LPASS peripheral loader
-+would bring the subsystem out of reset.
-+
-+	lpasscc: clock-controller {
-+		compatible = "qcom,sdm845-lpasscc";
-+		reg = <0x17014000 0x1f004>, <0x17300000 0x200>;
-+		reg-names = "lpass_cc", "lpass_qdsp6ss";
-+		#clock-cells = <1>;
-+	};
-+
-+	gcc: clock-controller@100000 {
-+		compatible = "qcom,gcc-sdm845";
-+		qcom,lpass-protected;
-+	};
-diff --git a/include/dt-bindings/clock/qcom,gcc-sdm845.h b/include/dt-bindings/clock/qcom,gcc-sdm845.h
-index b8eae5a..968fa65 100644
---- a/include/dt-bindings/clock/qcom,gcc-sdm845.h
-+++ b/include/dt-bindings/clock/qcom,gcc-sdm845.h
-@@ -197,6 +197,8 @@
- #define GCC_QSPI_CORE_CLK_SRC					187
- #define GCC_QSPI_CORE_CLK					188
- #define GCC_QSPI_CNOC_PERIPH_AHB_CLK				189
-+#define GCC_LPASS_Q6_AXI_CLK					190
-+#define GCC_LPASS_SWAY_CLK					191
++			/* src_sbmr2 bit 6 is to identify if it is i.MX6ULZ */
++			if (sbmr2 & (1 << 6)) {
++				digprog &= ~(0xff << 16);
++				digprog |= (MXC_CPU_IMX6ULZ << 16);
++			}
++		}
+ 	}
  
- /* GCC Resets */
- #define GCC_MMSS_BCR						0
-diff --git a/include/dt-bindings/clock/qcom,lpass-sdm845.h b/include/dt-bindings/clock/qcom,lpass-sdm845.h
-new file mode 100644
-index 0000000..015968e
---- /dev/null
-+++ b/include/dt-bindings/clock/qcom,lpass-sdm845.h
-@@ -0,0 +1,16 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+ */
+ 	mxc_set_cpu_type(digprog >> 16 & 0xff);
+diff --git a/arch/arm/mach-imx/cpu.c b/arch/arm/mach-imx/cpu.c
+index c6b1bf9..c73593e 100644
+--- a/arch/arm/mach-imx/cpu.c
++++ b/arch/arm/mach-imx/cpu.c
+@@ -136,6 +136,9 @@ struct device * __init imx_soc_device_init(void)
+ 	case MXC_CPU_IMX6ULL:
+ 		soc_id = "i.MX6ULL";
+ 		break;
++	case MXC_CPU_IMX6ULZ:
++		soc_id = "i.MX6ULZ";
++		break;
+ 	case MXC_CPU_IMX6SLL:
+ 		soc_id = "i.MX6SLL";
+ 		break;
+diff --git a/arch/arm/mach-imx/mach-imx6ul.c b/arch/arm/mach-imx/mach-imx6ul.c
+index 6cb8a22..4ffe3c8 100644
+--- a/arch/arm/mach-imx/mach-imx6ul.c
++++ b/arch/arm/mach-imx/mach-imx6ul.c
+@@ -90,6 +90,7 @@ static void __init imx6ul_init_late(void)
+ static const char * const imx6ul_dt_compat[] __initconst = {
+ 	"fsl,imx6ul",
+ 	"fsl,imx6ull",
++	"fsl,imx6ulz",
+ 	NULL,
+ };
+ 
+diff --git a/arch/arm/mach-imx/mxc.h b/arch/arm/mach-imx/mxc.h
+index 026e2ca..b130a53 100644
+--- a/arch/arm/mach-imx/mxc.h
++++ b/arch/arm/mach-imx/mxc.h
+@@ -40,6 +40,8 @@
+ #define MXC_CPU_IMX6Q		0x63
+ #define MXC_CPU_IMX6UL		0x64
+ #define MXC_CPU_IMX6ULL		0x65
++/* virtual cpu id for i.mx6ulz */
++#define MXC_CPU_IMX6ULZ		0x6b
+ #define MXC_CPU_IMX6SLL		0x67
+ #define MXC_CPU_IMX7D		0x72
+ 
+@@ -80,6 +82,11 @@ static inline bool cpu_is_imx6ull(void)
+ 	return __mxc_cpu_type == MXC_CPU_IMX6ULL;
+ }
+ 
++static inline bool cpu_is_imx6ulz(void)
++{
++	return __mxc_cpu_type == MXC_CPU_IMX6ULZ;
++}
 +
-+#ifndef _DT_BINDINGS_CLK_SDM_LPASS_SDM845_H
-+#define _DT_BINDINGS_CLK_SDM_LPASS_SDM845_H
-+
-+#define LPASS_AUDIO_WRAPPER_AON_CLK			0
-+#define LPASS_Q6SS_AHBM_AON_CLK				1
-+#define LPASS_Q6SS_AHBS_AON_CLK				2
-+#define LPASS_QDSP6SS_XO_CLK				3
-+#define LPASS_QDSP6SS_SLEEP_CLK				4
-+#define LPASS_QDSP6SS_CORE_CLK				5
-+
-+#endif
+ static inline bool cpu_is_imx6sll(void)
+ {
+ 	return __mxc_cpu_type == MXC_CPU_IMX6SLL;
+diff --git a/arch/arm/mach-imx/pm-imx6.c b/arch/arm/mach-imx/pm-imx6.c
+index 529f4b5..87f45b9 100644
+--- a/arch/arm/mach-imx/pm-imx6.c
++++ b/arch/arm/mach-imx/pm-imx6.c
+@@ -313,7 +313,7 @@ int imx6_set_lpm(enum mxc_cpu_pwr_mode mode)
+ 		if (cpu_is_imx6sl())
+ 			val |= BM_CLPCR_BYPASS_PMIC_READY;
+ 		if (cpu_is_imx6sl() || cpu_is_imx6sx() || cpu_is_imx6ul() ||
+-		    cpu_is_imx6ull() || cpu_is_imx6sll())
++		    cpu_is_imx6ull() || cpu_is_imx6sll() || cpu_is_imx6ulz())
+ 			val |= BM_CLPCR_BYP_MMDC_CH0_LPM_HS;
+ 		else
+ 			val |= BM_CLPCR_BYP_MMDC_CH1_LPM_HS;
+@@ -331,7 +331,7 @@ int imx6_set_lpm(enum mxc_cpu_pwr_mode mode)
+ 		if (cpu_is_imx6sl() || cpu_is_imx6sx())
+ 			val |= BM_CLPCR_BYPASS_PMIC_READY;
+ 		if (cpu_is_imx6sl() || cpu_is_imx6sx() || cpu_is_imx6ul() ||
+-		    cpu_is_imx6ull() || cpu_is_imx6sll())
++		    cpu_is_imx6ull() || cpu_is_imx6sll() || cpu_is_imx6ulz())
+ 			val |= BM_CLPCR_BYP_MMDC_CH0_LPM_HS;
+ 		else
+ 			val |= BM_CLPCR_BYP_MMDC_CH1_LPM_HS;
 -- 
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
+2.7.4
