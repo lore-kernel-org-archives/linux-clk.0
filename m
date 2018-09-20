@@ -1,63 +1,43 @@
-Return-Path: <anson.huang@nxp.com>
-From: Anson Huang <anson.huang@nxp.com>
-To: Stefan Wahren <stefan.wahren@i2se.com>, "robh+dt@kernel.org"
-	<robh+dt@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"shawnguo@kernel.org" <shawnguo@kernel.org>, "s.hauer@pengutronix.de"
-	<s.hauer@pengutronix.de>, "kernel@pengutronix.de" <kernel@pengutronix.de>,
-	Fabio Estevam <fabio.estevam@nxp.com>, "linux@armlinux.org.uk"
-	<linux@armlinux.org.uk>, "mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"sboyd@kernel.org" <sboyd@kernel.org>, Jacky Bai <ping.bai@nxp.com>, "A.s.
- Dong" <aisheng.dong@nxp.com>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>
-CC: dl-linux-imx <linux-imx@nxp.com>
-Subject: RE: [PATCH 0/4] Add i.MX6ULZ SoC support
-Date: Wed, 19 Sep 2018 06:10:16 +0000
-Message-ID: 
- <DB3PR0402MB39162EA4FD240720276A4482F51C0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
-References: <1537251548-27845-1-git-send-email-Anson.Huang@nxp.com>
- <e82e2894-2a0d-0084-913c-b7c6d966fc13@i2se.com>
-In-Reply-To: <e82e2894-2a0d-0084-913c-b7c6d966fc13@i2se.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailgw01.mediatek.com ([210.61.82.183]:7295 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727633AbeITPkm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Sep 2018 11:40:42 -0400
+From: Weiyi Lu <weiyi.lu@mediatek.com>
+To: Matthias Brugger <matthias.bgg@gmail.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh@kernel.org>
+CC: James Liao <jamesjj.liao@mediatek.com>,
+        Fan Chen <fan.chen@mediatek.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <srv_heupstream@mediatek.com>, Weiyi Lu <weiyi.lu@mediatek.com>
+Subject: [PATCH v1 0/3] update Mediatek MT2712 clock
+Date: Thu, 20 Sep 2018 17:57:24 +0800
+Message-ID: <20180920095727.11868-2-weiyi.lu@mediatek.com>
+In-Reply-To: <20180920095727.11868-1-weiyi.lu@mediatek.com>
+References: <20180920095727.11868-1-weiyi.lu@mediatek.com>
 MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-SGksIFN0ZWZhbg0KDQpBbnNvbiBIdWFuZw0KQmVzdCBSZWdhcmRzIQ0KDQoNCj4gLS0tLS1Pcmln
-aW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogU3RlZmFuIFdhaHJlbiA8c3RlZmFuLndhaHJlbkBp
-MnNlLmNvbT4NCj4gU2VudDogVHVlc2RheSwgU2VwdGVtYmVyIDE4LCAyMDE4IDM6MzggUE0NCj4g
-VG86IEFuc29uIEh1YW5nIDxhbnNvbi5odWFuZ0BueHAuY29tPjsgcm9iaCtkdEBrZXJuZWwub3Jn
-Ow0KPiBtYXJrLnJ1dGxhbmRAYXJtLmNvbTsgc2hhd25ndW9Aa2VybmVsLm9yZzsgcy5oYXVlckBw
-ZW5ndXRyb25peC5kZTsNCj4ga2VybmVsQHBlbmd1dHJvbml4LmRlOyBGYWJpbyBFc3RldmFtIDxm
-YWJpby5lc3RldmFtQG54cC5jb20+Ow0KPiBsaW51eEBhcm1saW51eC5vcmcudWs7IG10dXJxdWV0
-dGVAYmF5bGlicmUuY29tOyBzYm95ZEBrZXJuZWwub3JnOyBKYWNreQ0KPiBCYWkgPHBpbmcuYmFp
-QG54cC5jb20+OyBBLnMuIERvbmcgPGFpc2hlbmcuZG9uZ0BueHAuY29tPjsNCj4gZGV2aWNldHJl
-ZUB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7DQo+IGxpbnV4
-LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZzsgbGludXgtY2xrQHZnZXIua2VybmVsLm9y
-Zw0KPiBDYzogZGwtbGludXgtaW14IDxsaW51eC1pbXhAbnhwLmNvbT4NCj4gU3ViamVjdDogUmU6
-IFtQQVRDSCAwLzRdIEFkZCBpLk1YNlVMWiBTb0Mgc3VwcG9ydA0KPiANCj4gSGkgQW5zb24sDQo+
-IA0KPiBBbSAxOC4wOS4yMDE4IHVtIDA4OjE5IHNjaHJpZWIgQW5zb24gSHVhbmc6DQo+ID4gVGhp
-cyBwYXRjaCBzZXQgYWRkcyBpLk1YNlVMWiBTb0Mgc3VwcG9ydCwgaS5NWDZVTFogaXMgYSBuZXcg
-U29DIG9mDQo+ID4gaS5NWDYgZmFtaWx5LCBjb21wYXJlZCB0byBpLk1YNlVMTCwgaXQgcmVtb3Zl
-cyBiZWxvdyBtb2R1bGVzOg0KPiA+DQo+ID4gICAgIC0gVUFSVDUvVUFSVDYvVUFSVDcvVUFSVDg7
-DQo+ID4gICAgIC0gUFdNNS9QV002L1BXTTcvUFdNODsNCj4gPiAgICAgLSBlQ1NQSTMvZUNTUEk0
-Ow0KPiA+ICAgICAtIENBTjEvQ0FOMjsNCj4gPiAgICAgLSBGRUMxL0ZFQzI7DQo+ID4gICAgIC0g
-STJDMy9JMkM0Ow0KPiA+ICAgICAtIEVQSVQyOw0KPiA+ICAgICAtIExDRElGOw0KPiA+ICAgICAt
-IEdQVDI7DQo+ID4gICAgIC0gVFNDOw0KPiA+DQo+ID4gQW5kIGkuTVg2VUxaIGhhcyBzYW1lIHNv
-Y19pZCBhcyBpLk1YNlVMTCwgYnV0IFNSQ19TQk1SMiBiaXRbNl0gaXMgdG8NCj4gPiBkaWZmZXJl
-bnRpYXRlIGkuTVg2VUxaIGZyb20gaS5NWDZVTEwsIDEnYjEgbWVhbnMgaS5NWDZVTFogYW5kDQo+
-ID4gMSdiMCBtZWFucyBpLk1YNlVMTC4gaS5NWDZVTFogcmV1c2UgbW9zdCBvZiBpLk1YNlVML2ku
-TVg2VUxMIGNvZGUsDQo+ID4ganVzdCBhZGQgdGhlIG5ldyBDUFUgdHlwZSBhbmQgcmVtb3ZlIHRo
-b3NlIG5vbi1leGlzdCBtb2R1bGVzIGZyb20gZHRiLg0KPiA+DQo+ID4gQW5zb24gSHVhbmcgKDQp
-Og0KPiA+ICAgQVJNOiBkdHM6IGlteDogYWRkIGkubXg2dWx6IGFuZCBpLm14NnVseiAxNHgxNCBl
-dmsgc3VwcG9ydA0KPiA+ICAgQVJNOiBpbXg6IGFkZCBpLm14NnVseiBtc2wgc3VwcG9ydA0KPiA+
-ICAgY2xrOiBpbXg2dWw6IGFkZCBpLm14NnVseiBzdXBwb3J0DQo+ID4gICBkdC1iaW5kaW5nczog
-YXJtOiBhZGQgY29tcGF0aWJsZSBmb3IgaS5NWDZVTFogMTR4MTQgRVZLIGJvYXJkDQo+ID4NCj4g
-Pg0KPiANCj4gaSByZWNvbW1lbmQgdGhlIGZvbGxvd2luZyBwYXRjaCBvcmRlcjoNCj4gQVJNOiBp
-bXg6IGFkZCBpLm14NnVseiBtc2wgc3VwcG9ydA0KPiBjbGs6IGlteDZ1bDogYWRkIGkubXg2dWx6
-IHN1cHBvcnQNCj4gZHQtYmluZGluZ3M6IGFybTogYWRkIGNvbXBhdGlibGUgZm9yIGkuTVg2VUxa
-IDE0eDE0IEVWSyBib2FyZA0KPiBBUk06IGR0czogaW14OiBhZGQgaS5teDZ1bHogYW5kIGkubXg2
-dWx6IDE0eDE0IGV2ayBzdXBwb3J0DQo+IA0KPiBTdGVmYW4NCiANClRoYW5rcywgSSByZXNlbmQg
-dGhlIFYyIHBhdGNoIHNldCB3aXRoIHRoZSBwYXRjaCBvcmRlciB5b3UgcmVjb21tZW5kZWQuDQoN
-CkFuc29uLg0KDQo=
+This series is based on v4.19-rc1.
+Basically, it's for the 3rd ECO design change of MT2712.
+And also add support for switching pll reference source
+for some MT2712 projects.
+
+*** BLURB HERE ***
+
+Weiyi Lu (3):
+  dt-bindings: clock: add clock for MT2712
+  clk: mediatek: update clock driver of MT2712
+  clk: mediatek: mt2712: add pll reference support
+
+ drivers/clk/mediatek/clk-mt2712.c      | 95 ++++++++++++++++++++++++++--------
+ include/dt-bindings/clock/mt2712-clk.h |  3 +-
+ 2 files changed, 76 insertions(+), 22 deletions(-)
+
+-- 
+2.12.5.2.gbdf23ab
