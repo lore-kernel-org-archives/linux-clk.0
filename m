@@ -1,331 +1,102 @@
-Return-Path: <abel.vesa@nxp.com>
-From: Abel Vesa <abel.vesa@nxp.com>
-To: Lucas Stach <l.stach@pengutronix.de>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Dong Aisheng <aisheng.dong@nxp.com>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Anson Huang <anson.huang@nxp.com>,
-	Andrey Smirnov <andrew.smirnov@gmail.com>,
-	Rob Herring <robh@kernel.org>
-Cc: linux-imx@nxp.com,
-	Abel Vesa <abelvesa@linux.com>,
-	Abel Vesa <abel.vesa@nxp.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-kernel@vger.kernel.org (open list),
-	linux-arm-kernel@lists.infradead.org (moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE),
-	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK)
-Subject: [PATCH v8 3/5] clk: imx: add SCCG PLL type
-Date: Fri, 21 Sep 2018 15:11:32 +0300
-Message-Id: <1537531894-18499-4-git-send-email-abel.vesa@nxp.com>
-In-Reply-To: <1537531894-18499-1-git-send-email-abel.vesa@nxp.com>
-References: <1537531894-18499-1-git-send-email-abel.vesa@nxp.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-io1-f68.google.com ([209.85.166.68]:36289 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726984AbeITXOU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Sep 2018 19:14:20 -0400
+Received: by mail-io1-f68.google.com with SMTP id q5-v6so8461925iop.3
+        for <linux-clk@vger.kernel.org>; Thu, 20 Sep 2018 10:29:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: abel.vesa@nxp.com
+In-Reply-To: <20180920134228eucas1p2f69cf23d93d34884c6703a8a2c4d4cd1~WH33wZYnv3005330053eucas1p2q@eucas1p2.samsung.com>
+References: <CGME20180919121357eucas1p19717351c40697483d3bf467c55e46f51@eucas1p1.samsung.com>
+ <20180919121342.18288-1-m.szyprowski@samsung.com> <CAPDyKFpcs8VgPcBF4fta=tLPUatxbhvSN3TLrxm1qqDN=OS29Q@mail.gmail.com>
+ <20180920134228eucas1p2f69cf23d93d34884c6703a8a2c4d4cd1~WH33wZYnv3005330053eucas1p2q@eucas1p2.samsung.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 20 Sep 2018 19:29:46 +0200
+Message-ID: <CAPDyKFok_Fc=9EDOvKByyuOYhHbejXKRT9+a+nRDEJ_YAjP2Aw@mail.gmail.com>
+Subject: Re: [RFC/PATCH] clk: samsung: exynos5433: Fix NOIRQ suspend/resume support
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-clk <linux-clk@vger.kernel.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Lucas Stach <l.stach@pengutronix.de>
+[...]
 
-The SCCG is a new PLL type introduced on i.MX8. Add support for this.
-The driver currently misses the PLL lock check, as the preliminary
-documentation mentions lock configurations, but is quiet about where
-to find the actual lock status signal.
+>>>
+>>> The unconditional calls to pm_runtime_enable and pm_runtime_enable
+>>> in device_suspend_late and device_resume_early core functions were a bit
+>>> surprising for me, because they make NOIRQ phase a special case from
+>>> the perspective of runtime PM handling. Using LATE system sleep phase
+>>> to call pm_runtime_enable/disable looks like a workaround for me, but right
+>>> now I have no other idea how to ensure proper behavior of the Exynos5433
+>>> CMU driver.
+>>>
+>>> The most strange thing is that I didn't observe this initially after
+>>> switching to NOIRQ phase. The CMU device (FSYS_CMU) which is not under
+>>> any power domain behaved correctly and was properly available for DWMMC
+>>> device, which needs to enable clocks in its noirq_resume callback.
+>>>
+>>> However, in case of AUD_CMU and its clients (for example serial_3 device,
+>>> which is a part of audio-subsytem), the pm_runtime_get_sync() called from
+>>> clk_prepare() failed, because AUD_CMU device had still disabled runtime PM
+>>> support. The only difference between FSYS_CMU and AUD_CMU, is the fact
+>>> that AUD_CMU is under AUD power domain, while FSYS_CMU device has no power
+>>> domain assigned (for completely other reasons FSYS power domains is not yet
+>>> instantiated in exynos5433.dtsi).
+>>>
+>>> Ulf/Rafael: could You comment a bit on this issue? How it should be solved
+>>> properly?
+>> In general, this sounds like the classical problem of
+>> suspending/resuming devices in a correct order. The long term solution
+>> is to use device links to address this problem.
+>
+> Device links won't help in this case. This is not a problem of correct
+> order of suspending/resuming devices. exynos5433 cmu device is already
+> suspended after its client's and resumed before them. The problem here
+> is using runtime PM in exynos5433 CMU driver during NOIRQ suspend/resume
+> stage.
+>
 
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
----
- drivers/clk/imx/Makefile       |   3 +-
- drivers/clk/imx/clk-sccg-pll.c | 237 +++++++++++++++++++++++++++++++++++++++++
- drivers/clk/imx/clk.h          |   9 ++
- 3 files changed, 248 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/imx/clk-sccg-pll.c
+I see.
 
-diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
-index 4893c1f..b87513c 100644
---- a/drivers/clk/imx/Makefile
-+++ b/drivers/clk/imx/Makefile
-@@ -12,7 +12,8 @@ obj-y += \
- 	clk-pllv1.o \
- 	clk-pllv2.o \
- 	clk-pllv3.o \
--	clk-pfd.o
-+	clk-pfd.o \
-+	clk-sccg-pll.o
- 
- obj-$(CONFIG_SOC_IMX1)   += clk-imx1.o
- obj-$(CONFIG_SOC_IMX21)  += clk-imx21.o
-diff --git a/drivers/clk/imx/clk-sccg-pll.c b/drivers/clk/imx/clk-sccg-pll.c
-new file mode 100644
-index 0000000..a9837fa
---- /dev/null
-+++ b/drivers/clk/imx/clk-sccg-pll.c
-@@ -0,0 +1,237 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+/*
-+ * Copyright 2018 NXP.
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/err.h>
-+#include <linux/io.h>
-+#include <linux/iopoll.h>
-+#include <linux/slab.h>
-+#include <linux/delay.h>
-+#include <linux/bitfield.h>
-+
-+#include "clk.h"
-+
-+/* PLL CFGs */
-+#define PLL_CFG0		0x0
-+#define PLL_CFG1		0x4
-+#define PLL_CFG2		0x8
-+
-+#define PLL_DIVF1_MASK		GENMASK(18, 13)
-+#define PLL_DIVF2_MASK		GENMASK(12, 7)
-+#define PLL_DIVR1_MASK		GENMASK(27, 25)
-+#define PLL_DIVR2_MASK		GENMASK(24, 19)
-+#define PLL_REF_MASK		GENMASK(2, 0)
-+
-+#define PLL_LOCK_MASK		BIT(31)
-+#define PLL_PD_MASK		BIT(7)
-+
-+#define OSC_25M			25000000
-+#define OSC_27M			27000000
-+
-+#define PLL_SCCG_LOCK_TIMEOUT	70
-+
-+struct clk_sccg_pll {
-+	struct clk_hw	hw;
-+	void __iomem	*base;
-+};
-+
-+#define to_clk_sccg_pll(_hw) container_of(_hw, struct clk_sccg_pll, hw)
-+
-+static int clk_pll_wait_lock(struct clk_sccg_pll *pll)
-+{
-+	u32 val;
-+
-+	return readl_poll_timeout(pll->base, val, val & PLL_LOCK_MASK, 0,
-+					PLL_SCCG_LOCK_TIMEOUT);
-+}
-+
-+static int clk_pll1_is_prepared(struct clk_hw *hw)
-+{
-+	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
-+	u32 val;
-+
-+	val = readl_relaxed(pll->base + PLL_CFG0);
-+	return (val & PLL_PD_MASK) ? 0 : 1;
-+}
-+
-+static unsigned long clk_pll1_recalc_rate(struct clk_hw *hw,
-+					 unsigned long parent_rate)
-+{
-+	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
-+	u32 val, divf;
-+
-+	val = readl_relaxed(pll->base + PLL_CFG2);
-+	divf = FIELD_GET(PLL_DIVF1_MASK, val);
-+
-+	return parent_rate * 2 * (divf + 1);
-+}
-+
-+static long clk_pll1_round_rate(struct clk_hw *hw, unsigned long rate,
-+			       unsigned long *prate)
-+{
-+	unsigned long parent_rate = *prate;
-+	u32 div;
-+
-+	div = rate / (parent_rate * 2);
-+
-+	return parent_rate * div * 2;
-+}
-+
-+static int clk_pll1_set_rate(struct clk_hw *hw, unsigned long rate,
-+			    unsigned long parent_rate)
-+{
-+	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
-+	u32 val;
-+	u32 divf;
-+
-+	divf = rate / (parent_rate * 2);
-+
-+	val = readl_relaxed(pll->base + PLL_CFG2);
-+	val &= ~PLL_DIVF1_MASK;
-+	val |= FIELD_PREP(PLL_DIVF1_MASK, divf - 1);
-+	writel_relaxed(val, pll->base + PLL_CFG2);
-+
-+	return clk_pll_wait_lock(pll);
-+}
-+
-+static int clk_pll1_prepare(struct clk_hw *hw)
-+{
-+	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
-+	u32 val;
-+
-+	val = readl_relaxed(pll->base + PLL_CFG0);
-+	val &= ~PLL_PD_MASK;
-+	writel_relaxed(val, pll->base + PLL_CFG0);
-+
-+	return clk_pll_wait_lock(pll);
-+}
-+
-+static void clk_pll1_unprepare(struct clk_hw *hw)
-+{
-+	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
-+	u32 val;
-+
-+	val = readl_relaxed(pll->base + PLL_CFG0);
-+	val |= PLL_PD_MASK;
-+	writel_relaxed(val, pll->base + PLL_CFG0);
-+
-+}
-+
-+static unsigned long clk_pll2_recalc_rate(struct clk_hw *hw,
-+					 unsigned long parent_rate)
-+{
-+	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
-+	u32 val, ref, divr1, divf1, divr2, divf2;
-+	u64 temp64;
-+
-+	val = readl_relaxed(pll->base + PLL_CFG0);
-+	switch (FIELD_GET(PLL_REF_MASK, val)) {
-+	case 0:
-+		ref = OSC_25M;
-+		break;
-+	case 1:
-+		ref = OSC_27M;
-+		break;
-+	default:
-+		ref = OSC_25M;
-+		break;
-+	}
-+
-+	val = readl_relaxed(pll->base + PLL_CFG2);
-+	divr1 = FIELD_GET(PLL_DIVR1_MASK, val);
-+	divr2 = FIELD_GET(PLL_DIVR2_MASK, val);
-+	divf1 = FIELD_GET(PLL_DIVF1_MASK, val);
-+	divf2 = FIELD_GET(PLL_DIVF2_MASK, val);
-+
-+	temp64 = ref * 2;
-+	temp64 *= (divf1 + 1) * (divf2 + 1);
-+
-+	do_div(temp64, (divr1 + 1) * (divr2 + 1));
-+
-+	return (unsigned long)temp64;
-+}
-+
-+static long clk_pll2_round_rate(struct clk_hw *hw, unsigned long rate,
-+			       unsigned long *prate)
-+{
-+	u32 div;
-+	unsigned long parent_rate = *prate;
-+
-+	div = rate / (parent_rate);
-+
-+	return parent_rate * div;
-+}
-+
-+static int clk_pll2_set_rate(struct clk_hw *hw, unsigned long rate,
-+			    unsigned long parent_rate)
-+{
-+	u32 val;
-+	u32 divf;
-+	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
-+
-+	divf = rate / (parent_rate);
-+
-+	val = readl_relaxed(pll->base + PLL_CFG2);
-+	val &= ~PLL_DIVF2_MASK;
-+	val |= FIELD_PREP(PLL_DIVF2_MASK, divf - 1);
-+	writel_relaxed(val, pll->base + PLL_CFG2);
-+
-+	return clk_pll_wait_lock(pll);
-+}
-+
-+static const struct clk_ops clk_sccg_pll1_ops = {
-+	.is_prepared	= clk_pll1_is_prepared,
-+	.recalc_rate	= clk_pll1_recalc_rate,
-+	.round_rate	= clk_pll1_round_rate,
-+	.set_rate	= clk_pll1_set_rate,
-+};
-+
-+static const struct clk_ops clk_sccg_pll2_ops = {
-+	.prepare	= clk_pll1_prepare,
-+	.unprepare	= clk_pll1_unprepare,
-+	.recalc_rate	= clk_pll2_recalc_rate,
-+	.round_rate	= clk_pll2_round_rate,
-+	.set_rate	= clk_pll2_set_rate,
-+};
-+
-+struct clk *imx_clk_sccg_pll(const char *name,
-+				const char *parent_name,
-+				void __iomem *base,
-+				enum imx_sccg_pll_type pll_type)
-+{
-+	struct clk_sccg_pll *pll;
-+	struct clk *clk;
-+	struct clk_init_data init;
-+
-+	pll = kzalloc(sizeof(*pll), GFP_KERNEL);
-+	if (!pll)
-+		return ERR_PTR(-ENOMEM);
-+
-+	pll->base = base;
-+	init.name = name;
-+	switch (pll_type) {
-+	case SCCG_PLL1:
-+		init.ops = &clk_sccg_pll1_ops;
-+		break;
-+	case SCCG_PLL2:
-+		init.ops = &clk_sccg_pll2_ops;
-+		break;
-+	default:
-+		kfree(pll);
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	init.flags = 0;
-+	init.parent_names = &parent_name;
-+	init.num_parents = 1;
-+
-+	pll->hw.init = &init;
-+
-+	clk = clk_register(NULL, &pll->hw);
-+	if (IS_ERR(clk))
-+		kfree(pll);
-+
-+	return clk;
-+}
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index 13daf1c..12b3fd6 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -21,6 +21,11 @@ enum imx_pllv1_type {
- 	IMX_PLLV1_IMX35,
- };
- 
-+enum imx_sccg_pll_type {
-+	SCCG_PLL1,
-+	SCCG_PLL2,
-+};
-+
- struct clk *imx_clk_pllv1(enum imx_pllv1_type type, const char *name,
- 		const char *parent, void __iomem *base);
- 
-@@ -30,6 +35,10 @@ struct clk *imx_clk_pllv2(const char *name, const char *parent,
- struct clk *imx_clk_frac_pll(const char *name, const char *parent_name,
- 			     void __iomem *base);
- 
-+struct clk *imx_clk_sccg_pll(const char *name, const char *parent_name,
-+			     void __iomem *base,
-+			     enum imx_sccg_pll_type pll_type);
-+
- enum imx_pllv3_type {
- 	IMX_PLLV3_GENERIC,
- 	IMX_PLLV3_SYS,
--- 
-2.7.4
+However, I am guessing that one of the reason to why the client's are
+also using the noirq phase is because of getting a the correct order.
+The point is, the different level of PM callbacks (prepare, suspend,
+suspend_late, suspend_noirq etc) aren't really the right solution to
+get a correct order, even if that is what works for most cases.
+
+In principle, if all devices dependencies were hooked up correctly
+with device links, we would in principle only need one level of
+suspend/resume callbacks.
+
+>> However, as a simple fix, I would try to add a ->prepare() callback
+>> and call pm_runtime_get_sync() from it and then in a new corresponding
+>> ->complete() callback, call pm_runtime_put().
+>>
+>> This means that the device will stay runtime resumed until the
+>> suspend_noirq phase. It would also means the pm_runtime_force_resume()
+>> will resume the device at resume_noirq phase. Would that work?
+>
+> Yes, this will work, but it will unnecessarily wake all instances of
+> exynos5433 cmu and their power domains during the system suspend/resume
+> cycle, what I would like to avoid.
+
+I guess what you are saying is that it's not at every suspend sequence
+that the client's needs to runtime resume the exynos5433 cmu device -
+and in those cases when not  needed, runtime resuming it becomes a
+waste in regards to both time and energy. Right?
+
+Anyway, I fully agree that this isn't very nice, but unfortunate
+that's the best I can think of as a simple solution.
+
+[...]
+
+Kind regards
+Uffe
