@@ -1,361 +1,133 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:38722 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731416AbeITUIY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Sep 2018 16:08:24 -0400
 MIME-Version: 1.0
-References: <9439bd29e3ccd5424a8e9b464c8c7bd9@codeaurora.org>
- <20180723082641.GJ1636@tbergstrom-lnx.Nvidia.com> <153247347784.48062.15923823598346148594@swboyd.mtv.corp.google.com>
- <20180725054400.96956.13278@harbor.lan> <20180725112702.GN1636@tbergstrom-lnx.Nvidia.com>
- <CAPDyKFqHNOc-KHcA-LGpyScZ54rsa-FWgJihStgW6sPmXgw07A@mail.gmail.com>
- <83d6a10252e7238f326e378957f2ff70@codeaurora.org> <CAPDyKFrthH5djDN=Ves0VK4GpSVWQrerqc-JC6EAkJz4U_nGQw@mail.gmail.com>
- <20180918230023.67076.42969@harbor.lan> <CAMuHMdWdPHOhZFCnswaYoUgbDSaEAOzgN02S3vbww4QKkX69Aw@mail.gmail.com>
- <20180919180726.67076.48303@harbor.lan>
-In-Reply-To: <20180919180726.67076.48303@harbor.lan>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 25 Sep 2018 15:11:21 +0200
-Message-ID: <CAMuHMdU7J0dbK6cPrCoBtJQHARd9K2=x=LM-_11XEBO0my9mQA@mail.gmail.com>
-Subject: Re: [RFD] Voltage dependencies for clocks (DVFS)
-To: Michael Turquette <mturquette@baylibre.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, grahamr@codeaurora.org,
-	Peter De Schrijver <pdeschrijver@nvidia.com>, Stephen Boyd <sboyd@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Linux PM list <linux-pm@vger.kernel.org>, Doug Anderson <dianders@chromium.org>, tdas@codeaurora.org,
-	Rajendra Nayak <rnayak@codeaurora.org>, anischal@codeaurora.org,
-	Vincent Guittot <vincent.guittot@linaro.org>, amit.kucheria@linaro.org,
-	linux-clk-owner@vger.kernel.org
+References: <CGME20180919121357eucas1p19717351c40697483d3bf467c55e46f51@eucas1p1.samsung.com>
+ <20180919121342.18288-1-m.szyprowski@samsung.com> <CAPDyKFpcs8VgPcBF4fta=tLPUatxbhvSN3TLrxm1qqDN=OS29Q@mail.gmail.com>
+ <20180920134228eucas1p2f69cf23d93d34884c6703a8a2c4d4cd1~WH33wZYnv3005330053eucas1p2q@eucas1p2.samsung.com>
+In-Reply-To: <20180920134228eucas1p2f69cf23d93d34884c6703a8a2c4d4cd1~WH33wZYnv3005330053eucas1p2q@eucas1p2.samsung.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 20 Sep 2018 16:24:28 +0200
+Message-ID: <CAJZ5v0jDUaO-zUGUy3eQ7KSHuenWtemU1Uvr0E0Q=p3pKsTGDg@mail.gmail.com>
+Subject: Re: [RFC/PATCH] clk: samsung: exynos5433: Fix NOIRQ suspend/resume support
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Samsung SoC <linux-samsung-soc@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>, snawrocki@kernel.org,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Mike,
-
-On Wed, Sep 19, 2018 at 8:16 PM Michael Turquette
-<mturquette@baylibre.com> wrote:
-> Quoting Geert Uytterhoeven (2018-09-19 00:05:59)
-> > On Wed, Sep 19, 2018 at 1:01 AM Michael Turquette
-> > <mturquette@baylibre.com> wrote:
-> > > Quoting Ulf Hansson (2018-08-23 06:20:11)
-> > > > Anyway, in regards to control the performance state for these clock
-> > > > controller devices, to me it seems like there are no other way, but
-> > > > explicitly allow clock drivers to call an "OPP API" to request a
-> > > > performance state. Simply, because it's the clock driver that needs
-> > > > the performance state for its device. Whether the "OPP API" is the
-> > > > new, dev_pm_genpd_set_performance_state() or something not even
-> > > > invented yet, is another question.
-> > >
-> > > I completely agree, with the exception that I don't think it will be an
-> > > "OPP API" but instead I hope it will be some runtime pm performance api.
-> > >
-> > > > My conclusion so far is, that we seems to fall back to a potential
-> > > > locking problem. In regards to that, I am wondering whether that is
-> > > > actually more of hypothetical problem than a real problem for your
-> > > > case.
-> > >
-> > > For reference, this is why we allow reentrancy into the clock framework.
-> > > It is common that consumer A calls clk_set_rate to set clock X to a
-> > > rate, but in order for clock X to acheive that rate the clock provider
-> > > might need to call clk_set_rate on another clock. We support reentrancy
-> > > for this type of case.
-> > >
-> > > The problem described by Graham seems analogous. There are times when a
-> > > performance provider itself will need to adjust it's own performance (as
-> > > consumed by some other parent provider). I'm under the impression that
-> > > runtime pm allows reentrancy and genpd allows for nested genpds, so
-> > > hopefully this should Just Work.
-> >
-> > BTW, from time to time, lockdep spews out warnings about genpd/clock
-> > interaction. I believe they are false positives.
+On Thu, Sep 20, 2018 at 3:42 PM Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
 >
-> I'm happy to take a look at a spew if you can capture it and tell me how
-> to reproduce.
+> Hi Ulf,
+>
+> On 2018-09-19 23:18, Ulf Hansson wrote:
+> > On 19 September 2018 at 14:13, Marek Szyprowski
+> > <m.szyprowski@samsung.com> wrote:
+> >> My recent commit af68ec14f112 'clk: samsung: Use NOIRQ stage for Exynos5433
+> >> clocks suspend/resume' moved Exynos5433 CMU suspend/resume callbacks
+> >> to NOIRQ stage. It turned out that in some cases this is not enough to
+> >> ensure that clocks provided by the given CMU will be available for other
+> >> drivers during their NOIRQ system suspend/resume phase. Device core calls
+> >> pm_runtime_disable and pm_runtime_enable unconditionally on every device
+> >> during LATE system suspend/resume phase. This means that during
+> >> noirq_resume, CMU device cannot be runtime resumed, because its
+> >> power.disable_depth is higher than zero (runtime PM for it will be enabled
+> >> later in device_resume_early function).
+> >>
+> >> To let other devices properly use clocks and keep runtime PM enabled also
+> >> during NOIRQ system sleep phase, add calls to pm_runtime_enable/disable
+> >> to balance the actions done by device core. The CMU device will be
+> >> suspended in its noirq_suspend callback and finally resumed in noirq_resume.
+> >
+> >> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> >> ---
+> >> Hi!
+> >>
+> >> The unconditional calls to pm_runtime_enable and pm_runtime_enable
+> >> in device_suspend_late and device_resume_early core functions were a bit
+> >> surprising for me, because they make NOIRQ phase a special case from
+> >> the perspective of runtime PM handling. Using LATE system sleep phase
+> >> to call pm_runtime_enable/disable looks like a workaround for me, but right
+> >> now I have no other idea how to ensure proper behavior of the Exynos5433
+> >> CMU driver.
+> >>
+> >> The most strange thing is that I didn't observe this initially after
+> >> switching to NOIRQ phase. The CMU device (FSYS_CMU) which is not under
+> >> any power domain behaved correctly and was properly available for DWMMC
+> >> device, which needs to enable clocks in its noirq_resume callback.
+> >>
+> >> However, in case of AUD_CMU and its clients (for example serial_3 device,
+> >> which is a part of audio-subsytem), the pm_runtime_get_sync() called from
+> >> clk_prepare() failed, because AUD_CMU device had still disabled runtime PM
+> >> support. The only difference between FSYS_CMU and AUD_CMU, is the fact
+> >> that AUD_CMU is under AUD power domain, while FSYS_CMU device has no power
+> >> domain assigned (for completely other reasons FSYS power domains is not yet
+> >> instantiated in exynos5433.dtsi).
+> >>
+> >> Ulf/Rafael: could You comment a bit on this issue? How it should be solved
+> >> properly?
+> > In general, this sounds like the classical problem of
+> > suspending/resuming devices in a correct order. The long term solution
+> > is to use device links to address this problem.
+>
+> Device links won't help in this case. This is not a problem of correct
+> order of suspending/resuming devices. exynos5433 cmu device is already
+> suspended after its client's and resumed before them. The problem here
+> is using runtime PM in exynos5433 CMU driver during NOIRQ suspend/resume
+> stage.
 
-Unfortunately I cannot trigger it at will.
-Just saw it again (on Renesas Salvator-XS with R-Car H3 ES2.0), so here's
-the spew:
+Simply put, if a driver uses PM-runtime in its noirq system-wide
+callbacks, this is a bug in the driver.
 
-    genpd_add_device: Add e6601000.crypto to always-on
+> > However, as a simple fix, I would try to add a ->prepare() callback
+> > and call pm_runtime_get_sync() from it and then in a new corresponding
+> > ->complete() callback, call pm_runtime_put().
+> >
+> > This means that the device will stay runtime resumed until the
+> > suspend_noirq phase. It would also means the pm_runtime_force_resume()
+> > will resume the device at resume_noirq phase. Would that work?
+>
+> Yes, this will work, but it will unnecessarily wake all instances of
+> exynos5433 cmu and their power domains during the system suspend/resume
+> cycle, what I would like to avoid.
+>
+> Are there any reasons for disabling runtime PM unconditionally for every
+> device in the system during LATE system sleep stage?
 
-    ======================================================
-    WARNING: possible circular locking dependency detected
-    4.19.0-rc5-arm64-renesas-03635-gf5e6b692aefccbe2 #55 Not tainted
-    ------------------------------------------------------
-    swapper/0/1 is trying to acquire lock:
-    (____ptrval____) (prepare_lock){+.+.}, at: clk_prepare_lock+0x48/0xa8
+Yes, there are.
 
-    but task is already holding lock:
-    (____ptrval____) (of_clk_mutex){+.+.}, at:
-__of_clk_get_from_provider.part.23+0x3c/0x120
+It generally is not safe to do that, because the state of the device
+after/during late suspend generally may be different than expected by
+its PM-runtime callbacks and that doesn't apply just to the device
+itself, but also to its parent and possible suppliers and all of their
+ancestors and suppliers.  The resume of a device generally triggers a
+resume of all devices it depends on and that may not be expected by
+their drivers and the bus types/PM domains they depend on and/or work
+with.
 
-    which lock already depends on the new lock.
+Your particular case appears to be simple enough, but there are more
+complicated ones.
 
+Also, it generally is not a good idea to rely on PM-runtime for
+system-wide PM, because PM-runtime may be effectively disabled by user
+space via sysfs for any device.  IOW, pm_runtime_suspend() or
+pm_runtime_put_sync() or equivalent doesn't guarantee that the device
+will actually be suspended and system-wide PM is expected to work
+regardless.
 
-    the existing dependency chain (in reverse order) is:
+So, please abandon the
+runtime-resume-during-noirq-phase-of-system-wide-suspend idea and find
+a different way to organize your code.
 
-    -> #5 (of_clk_mutex){+.+.}:
-   __mutex_lock+0x70/0x7f8
-   mutex_lock_nested+0x1c/0x28
-   __of_clk_get_from_provider.part.23+0x3c/0x120
-   of_clk_get_from_provider+0x20/0x30
-   cpg_mssr_attach_dev+0xb0/0x1c0
-   genpd_add_device.constprop.12+0x94/0x270
-   __genpd_dev_pm_attach+0xb4/0x220
-   genpd_dev_pm_attach+0x64/0x70
-   dev_pm_domain_attach+0x1c/0x30
-   platform_drv_probe+0x38/0xa0
-   really_probe+0x1c4/0x298
-   driver_probe_device+0x58/0x100
-   __driver_attach+0xdc/0xe0
-   bus_for_each_dev+0x74/0xc8
-   driver_attach+0x20/0x28
-   bus_add_driver+0x1a4/0x210
-   driver_register+0x60/0x110
-   __platform_driver_register+0x40/0x48
-   sh_mobile_i2c_adap_init+0x18/0x20
-   do_one_initcall+0x180/0x36c
-   kernel_init_freeable+0x470/0x518
-   kernel_init+0x10/0x108
-   ret_from_fork+0x10/0x1c
-
-    -> #4 (&genpd->mlock){+.+.}:
-   __mutex_lock+0x70/0x7f8
-   mutex_lock_nested+0x1c/0x28
-   genpd_lock_mtx+0x14/0x20
-   genpd_runtime_resume+0xbc/0x240
-   __rpm_callback+0xdc/0x228
-   rpm_callback+0x20/0x80
-   rpm_resume+0x4e0/0x7b0
-   __pm_runtime_resume+0x50/0x78
-   usb_dmac_alloc_chan_resources+0x88/0xa0
-   dma_chan_get+0x28/0x80
-   find_candidate+0x108/0x1a8
-   __dma_request_channel+0x68/0xc8
-   usb_dmac_of_xlate+0x60/0x88
-   of_dma_request_slave_channel+0x174/0x280
-   dma_request_chan+0x38/0x1d8
-   usbhsf_dma_init.isra.8+0x64/0x128
-   usbhs_fifo_probe+0x70/0x148
-   usbhs_probe+0x2e4/0x670
-   platform_drv_probe+0x50/0xa0
-   really_probe+0x1c4/0x298
-   driver_probe_device+0x58/0x100
-   __driver_attach+0xdc/0xe0
-   bus_for_each_dev+0x74/0xc8
-   driver_attach+0x20/0x28
-   bus_add_driver+0x1a4/0x210
-   driver_register+0x60/0x110
-   __platform_driver_register+0x40/0x48
-   renesas_usbhs_driver_init+0x18/0x20
-   do_one_initcall+0x180/0x36c
-   kernel_init_freeable+0x470/0x518
-   kernel_init+0x10/0x108
-   ret_from_fork+0x10/0x1c
-
-    -> #3 (dma_list_mutex){+.+.}:
-   __mutex_lock+0x70/0x7f8
-   mutex_lock_nested+0x1c/0x28
-   __dma_request_channel+0x38/0xc8
-   usb_dmac_of_xlate+0x60/0x88
-   of_dma_request_slave_channel+0x174/0x280
-   dma_request_chan+0x38/0x1d8
-   usbhsf_dma_init.isra.8+0x64/0x128
-   usbhs_fifo_probe+0x70/0x148
-   usbhs_probe+0x2e4/0x670
-   platform_drv_probe+0x50/0xa0
-   really_probe+0x1c4/0x298
-   driver_probe_device+0x58/0x100
-   __driver_attach+0xdc/0xe0
-   bus_for_each_dev+0x74/0xc8
-   driver_attach+0x20/0x28
-   bus_add_driver+0x1a4/0x210
-   driver_register+0x60/0x110
-   __platform_driver_register+0x40/0x48
-   renesas_usbhs_driver_init+0x18/0x20
-   do_one_initcall+0x180/0x36c
-   kernel_init_freeable+0x470/0x518
-   kernel_init+0x10/0x108
-   ret_from_fork+0x10/0x1c
-
-    -> #2 (of_dma_lock){+.+.}:
-   __mutex_lock+0x70/0x7f8
-   mutex_lock_nested+0x1c/0x28
-   of_dma_request_slave_channel+0x130/0x280
-   dma_request_chan+0x38/0x1d8
-   rcar_i2c_master_xfer+0x154/0x480
-   __i2c_transfer+0x148/0x8e0
-   i2c_smbus_xfer_emulated+0x158/0x5b0
-   __i2c_smbus_xfer+0x17c/0x7f8
-   i2c_smbus_xfer+0x64/0x98
-   i2c_smbus_read_byte_data+0x40/0x70
-   cs2000_bset.isra.1+0x2c/0x68
-   __cs2000_set_rate.constprop.7+0x80/0x148
-   cs2000_probe+0xd4/0x260
-   i2c_device_probe+0x290/0x2b0
-   really_probe+0x1c4/0x298
-   driver_probe_device+0x58/0x100
-   __device_attach_driver+0x90/0xd0
-   bus_for_each_drv+0x64/0xc8
-   __device_attach+0xd8/0x130
-   device_initial_probe+0x10/0x18
-   bus_probe_device+0x98/0xa0
-   device_add+0x3f8/0x620
-   device_register+0x1c/0x28
-   i2c_new_device+0x12c/0x310
-   of_i2c_register_device+0x74/0x98
-   of_i2c_register_devices+0xa4/0x150
-   i2c_register_adapter+0x160/0x418
-   __i2c_add_numbered_adapter+0x60/0x98
-   i2c_add_adapter+0xa4/0xd0
-   i2c_add_numbered_adapter+0x24/0x30
-   rcar_i2c_probe+0x33c/0x450
-   platform_drv_probe+0x50/0xa0
-   really_probe+0x1c4/0x298
-   driver_probe_device+0x58/0x100
-   __driver_attach+0xdc/0xe0
-   bus_for_each_dev+0x74/0xc8
-   driver_attach+0x20/0x28
-   bus_add_driver+0x1a4/0x210
-   driver_register+0x60/0x110
-   __platform_driver_register+0x40/0x48
-   rcar_i2c_driver_init+0x18/0x20
-   do_one_initcall+0x180/0x36c
-   kernel_init_freeable+0x470/0x518
-   kernel_init+0x10/0x108
-   ret_from_fork+0x10/0x1c
-
-    -> #1 (i2c_register_adapter){+.+.}:
-   rt_mutex_lock_nested+0x2c/0x48
-   i2c_adapter_lock_bus+0x20/0x30
-   i2c_smbus_xfer+0x44/0x98
-   i2c_smbus_read_byte_data+0x40/0x70
-   cs2000_recalc_rate+0x38/0x90
-   clk_register+0x3b8/0x6e8
-   clk_hw_register+0xc/0x20
-   cs2000_probe+0x134/0x260
-   i2c_device_probe+0x290/0x2b0
-   really_probe+0x1c4/0x298
-   driver_probe_device+0x58/0x100
-   __device_attach_driver+0x90/0xd0
-   bus_for_each_drv+0x64/0xc8
-   __device_attach+0xd8/0x130
-   device_initial_probe+0x10/0x18
-   bus_probe_device+0x98/0xa0
-   device_add+0x3f8/0x620
-   device_register+0x1c/0x28
-   i2c_new_device+0x12c/0x310
-   of_i2c_register_device+0x74/0x98
-   of_i2c_register_devices+0xa4/0x150
-   i2c_register_adapter+0x160/0x418
-   __i2c_add_numbered_adapter+0x60/0x98
-   i2c_add_adapter+0xa4/0xd0
-   i2c_add_numbered_adapter+0x24/0x30
-   rcar_i2c_probe+0x33c/0x450
-   platform_drv_probe+0x50/0xa0
-   really_probe+0x1c4/0x298
-   driver_probe_device+0x58/0x100
-   __driver_attach+0xdc/0xe0
-   bus_for_each_dev+0x74/0xc8
-   driver_attach+0x20/0x28
-   bus_add_driver+0x1a4/0x210
-   driver_register+0x60/0x110
-   __platform_driver_register+0x40/0x48
-   rcar_i2c_driver_init+0x18/0x20
-   do_one_initcall+0x180/0x36c
-   kernel_init_freeable+0x470/0x518
-   kernel_init+0x10/0x108
-   ret_from_fork+0x10/0x1c
-
-    -> #0 (prepare_lock){+.+.}:
-   lock_acquire+0xc0/0x228
-   __mutex_lock+0x70/0x7f8
-   mutex_lock_nested+0x1c/0x28
-   clk_prepare_lock+0x48/0xa8
-   __clk_create_clk.part.21+0x68/0xa0
-   __of_clk_get_from_provider.part.23+0xd0/0x120
-   __of_clk_get_from_provider+0x10/0x20
-   __of_clk_get+0x88/0xa0
-   __of_clk_get_by_name+0xa4/0x130
-   clk_get+0x30/0x70
-   devm_clk_get+0x4c/0xa8
-   ccree_probe+0xa4/0x5f8
-   platform_drv_probe+0x50/0xa0
-   really_probe+0x1c4/0x298
-   driver_probe_device+0x58/0x100
-   __driver_attach+0xdc/0xe0
-   bus_for_each_dev+0x74/0xc8
-   driver_attach+0x20/0x28
-   bus_add_driver+0x1a4/0x210
-   driver_register+0x60/0x110
-   __platform_driver_register+0x40/0x48
-   ccree_init+0x24/0x2c
-   do_one_initcall+0x180/0x36c
-   kernel_init_freeable+0x470/0x518
-   kernel_init+0x10/0x108
-   ret_from_fork+0x10/0x1c
-
-    other info that might help us debug this:
-
-    Chain exists of:
-      prepare_lock --> &genpd->mlock --> of_clk_mutex
-
-     Possible unsafe locking scenario:
-
-   CPU0                    CPU1
-   ----                    ----
-      lock(of_clk_mutex);
-   lock(&genpd->mlock);
-   lock(of_clk_mutex);
-      lock(prepare_lock);
-
-     *** DEADLOCK ***
-
-    2 locks held by swapper/0/1:
-     #0: (____ptrval____) (&dev->mutex){....}, at: __driver_attach+0x5c/0xe0
-     #1: (____ptrval____) (of_clk_mutex){+.+.}, at:
-__of_clk_get_from_provider.part.23+0x3c/0x120
-
-    stack backtrace:
-    CPU: 0 PID: 1 Comm: swapper/0 Not tainted
-4.19.0-rc5-arm64-renesas-03635-gf5e6b692aefccbe2 #55
-    Hardware name: Renesas Salvator-X 2nd version board based on
-r8a7795 ES2.0+ (DT)
-    Call trace:
-     dump_backtrace+0x0/0x1c8
-     show_stack+0x14/0x20
-     dump_stack+0xbc/0xf4
-     print_circular_bug.isra.19+0x1d4/0x2e8
-     __lock_acquire+0x1804/0x1868
-     lock_acquire+0xc0/0x228
-     __mutex_lock+0x70/0x7f8
-     mutex_lock_nested+0x1c/0x28
-     clk_prepare_lock+0x48/0xa8
-     __clk_create_clk.part.21+0x68/0xa0
-     __of_clk_get_from_provider.part.23+0xd0/0x120
-     __of_clk_get_from_provider+0x10/0x20
-     __of_clk_get+0x88/0xa0
-     __of_clk_get_by_name+0xa4/0x130
-     clk_get+0x30/0x70
-     devm_clk_get+0x4c/0xa8
-     ccree_probe+0xa4/0x5f8
-     platform_drv_probe+0x50/0xa0
-     really_probe+0x1c4/0x298
-     driver_probe_device+0x58/0x100
-     __driver_attach+0xdc/0xe0
-     bus_for_each_dev+0x74/0xc8
-     driver_attach+0x20/0x28
-     bus_add_driver+0x1a4/0x210
-     driver_register+0x60/0x110
-     __platform_driver_register+0x40/0x48
-     ccree_init+0x24/0x2c
-     do_one_initcall+0x180/0x36c
-     kernel_init_freeable+0x470/0x518
-     kernel_init+0x10/0x108
-     ret_from_fork+0x10/0x1c
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks,
+Rafael
