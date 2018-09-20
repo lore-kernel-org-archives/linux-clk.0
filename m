@@ -1,308 +1,117 @@
-Return-Path: <ctatlor97@gmail.com>
-Return-Path: <ctatlor97@gmail.com>
-Date: Thu, 20 Sep 2018 15:27:21 +0100
-In-Reply-To: <d6d3a76c-43eb-4a37-55eb-a407b5267aa4@codeaurora.org>
-References: <1534248753-2440-1-git-send-email-sricharan@codeaurora.org> <2ae96741-94c0-ba4c-fc19-05d33179683c@codeaurora.org> <d682580d-5070-0271-197f-29d988172937@codeaurora.org> <D8FC68C0-2572-4A86-81D9-D0099D314A45@gmail.com> <F5A89365-C613-4FE2-AD32-DC0AC6DF380B@gmail.com> <d6d3a76c-43eb-4a37-55eb-a407b5267aa4@codeaurora.org>
+Return-Path: <bjorn.andersson@linaro.org>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Thu, 20 Sep 2018 09:39:28 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+	Arend van Spriel <aspriel@gmail.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Vivek Gautam <vivek.gautam@codeaurora.org>,
+	Robin Murphy <robin.murphy@arm.com>, Joe Perches <joe@perches.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Mike Rapoport <rppt@linux.vnet.ibm.com>,
+	Michal Hocko <mhocko@suse.com>, Al Viro <viro@zeniv.linux.org.uk>,
+	Jonathan Corbet <corbet@lwn.net>, Roman Gushchin <guro@fb.com>,
+	Huang Ying <ying.huang@intel.com>,
+	Kees Cook <keescook@chromium.org>, Arnd Bergmann <arnd@arndb.de>,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH v2 4/4] clk: pmc-atom: use devm_kstrdup_const()
+Message-ID: <20180920163928.GI1367@tuxbook-pro>
+References: <20180828093332.20674-1-brgl@bgdev.pl>
+ <20180828093332.20674-5-brgl@bgdev.pl>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Subject: Re: [PATCH V12 00/14] Krait clocks + Krait CPUfreq
-To: Sricharan R <sricharan@codeaurora.org>,mark.rutland@arm.com,robh@kernel.org,sudeep.holla@arm.com,linux@arm.linux.org.uk,rjw@rjwysocki.net,viresh.kumar@linaro.org,mturquette@baylibre.com,linux-pm@vger.kernel.org,sboyd@codeaurora.org,linux@armlinux.org.uk,thierry.escande@linaro.org,linux-kernel@vger.kernel.org,david.brown@linaro.org,devicetree@vger.kernel.org,linux-arm-msm@vger.kernel.org,andy.gross@linaro.org,linux-soc@vger.kernel.org,linux-clk@vger.kernel.org,linux-arm-kernel@lists.infradead.org,niklas.cassel@linaro.org
-From: Craig <ctatlor97@gmail.com>
-Message-ID: <132152AA-E8D1-49AF-87C7-3A9ECA0766FA@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180828093332.20674-5-brgl@bgdev.pl>
 List-ID: <linux-clk.vger.kernel.org>
 
+On Tue 28 Aug 02:33 PDT 2018, Bartosz Golaszewski wrote:
 
+> Use devm_kstrdup_const() in the pmc-atom driver. This mostly serves as
+> an example of how to use this new routine to shrink driver code.
+> 
+> While we're at it: replace a call to kcalloc() with devm_kcalloc().
+> 
+> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
 
-On 20 September 2018 14:01:57 BST, Sricharan R <sricharan@codeaurora=2Eorg=
-> wrote:
->
->
->On 9/20/2018 1:54 AM, Craig wrote:
->> Yup, this patch seems to have fixed the higher frequencies from the
->quick test I did=2E
->>=20
->  Thanks !!=2E Can i take that as Craig Tatlor <ctatlor97@gmail=2Ecom> ?
-Sure, no problem
->
->Regards,
-> Sricharan
->
->       tested-by:=20
->> On 7 September 2018 15:28:53 BST, Craig Tatlor <ctatlor97@gmail=2Ecom>
->wrote:
->>>
->>>
->>> On 7 September 2018 10:57:34 BST, Sricharan R
->>> <sricharan@codeaurora=2Eorg> wrote:
->>>> Hi Craig,
->>>>
->>>>
->>>>>> [v12]
->>>>>>   * Added my signed-off that was missing in some patches=2E
->>>>>>   * Added Bjorn's acked that i missed earlier=2E
->>>>>>
->>>>>
->>>>>   Can you give this a try on your 8974 device and check if the
->>>>>   pvs version reporting, scaling for higher frequencies are fine ?
->>>>>   Sorry, i could not get hold of a 8974 device=2E So in-case if you
->>>> still
->>>>>   have the issues with higher frequencies, can you give a quick
->>> debug
->>>>>   and report=2E That would be of great help=2E
->>>>>
->>>>   Ping on this =2E=2E
->>>
->>> Hi, didn't see your last message,
->>>
->>> Will have a try on mine in the weekend and report back=2E
->>>>
->>>> Regards,
->>>> Sricharan
->>>>
->>>>> Regards,
->>>>>  Sricharan
->>>>>
->>>>>
->>>>>> [v11]
->>>>>>   * Dropped patch 13 and 14 from v10 and
->>>>>>     merged the qcom-cpufreq-krait driver to the existing
->>>> qcom-cpufreq-kryo=2Ec
->>>>>>   * Rebased on top of clk-next
->>>>>>   * Fixed a bug while populating the pvs version for krait=2E
->>>>>>
->>>>>> [v10]
->>>>>>   * Addressed Stephen's comments to add clocks bindings
->properties
->>>>>>     to the newly introduced nodes=2E
->>>>>>   * Added a change to include opp-supported-hw to qcom-cpufreq=2Ec
->>>>>>   * Rebased on top of clk-next
->>>>>>   * Although there were minor changes to bindings and the driver
->>>>>>     retained the acked-by tags from Rob and Viresh respectively=2E=
-=20
->=20
->>>
->>>>>>
->>>>>> [v9]
->>>>>>   * Fixed a rebase issue in Makefile and added Tag from Robh=2E
->>>>>>
->>>>>> [v8]
->>>>>>   * Fixed a bug in path#14 pointed out by Viresh and also added
->>>> tags=2E
->>>>>>     No change in any other patch=2E
->>>>>>
->>>>>> [v7]
->>>>>>   * Fixed comments from Viresh for cleaning up the error handling
->>>>>>     in qcom-cpufreq=2Ec=2E Also changed the init function to latein=
-it
->>>>>>     call=2E This is required because nvmem which gets initialised
->>> with
->>>>>>     module_init needs to go first=2E
->>>>>>   * Fixed Rob's comments for bindings documentation
->>>>>>   * Fixed kbuild build issue in clk-lpc32xx=2Ec
->>>>>>   * Rebased on top of clk-next
->>>>>>
->>>>>> [v6]
->>>>>>   * Adrressed comments from Viresh for patch #14 in v5 [5]
->>>>>>   * Introduced a new binding operating-points-v2-krait-cpu
->>>>>>     as per discussion with Rob
->>>>>>   * Added Review tags
->>>>>>
->>>>>> [v5]
->>>>>>   * Addressed comments from Rob for bindings
->>>>>>   * Addressed comments from Viresh to use
->dev_pm_opp_set_prop_name,
->>>> accordingly
->>>>>>     dropped patch #12 and corrected patch #11 from previous patch
->>>> set in [4]
->>>>>>   * Converted to use #spdx tags for newly introduced files
->>>>>>
->>>>>> Mostly a resend of the v3 posted by Stephen quite some time back
->>> [1]
->>>>>> except for few changes=2E
->>>>>>   Based on reading some feedback from list,
->>>>>>   * Dropped the patch "clk: Add safe switch hook" from v3 [2]=2E
->>>>>>     Now this is taken care by patch#10 in this series only for
->>>> Krait=2E
->>>>>>   * Dropped the path "clk: Avoid sending high rates to downstream
->>>>>> 		      clocks during set_rate" from v3 [3]=2E
->>>>>>   * Rebased on top of clk-next=2E
->>>>>>   * Dropped the DT update from the series=2E Will send separately
->>>>>>   * Now with cpufreq-dt+opp supporting voltage scaling,
->registering
->>>> the
->>>>>>     krait cpu supplies in DT should be sufficient=2E But one issue
->>> is,
->>>>>>     the qcom-cpufreq drivers reads the efuse and based on that
->>>> registers
->>>>>>     the opp data and then registers the cpufreq-dt device=2E So
->when
->>>>>>     cpufreq-dt driver probes and registers the regulator to the
->OPP
->>>> framework,
->>>>>>     it expects that the opp data for the device should not be
->>>> registered before
->>>>>>     the regulator=2E Will send a RFC patch removing that check, to
->>>> find out the
->>>>>>     right way of doing it=2E
->>>>>>
->>>>>> These patches provide cpufreq scaling on devices with Krait CPUs=2E
->>>>>> In Krait CPU designs there's one PLL and two muxes per CPU,
->>> allowing
->>>>>> us to switch CPU frequencies independently=2E
->>>>>>
->>>>>> 				 secondary
->>>>>> 	 +-----+                    +
->>>>>> 	 | QSB |-------+------------|\
->>>>>> 	 +-----+       |            | |-+
->>>>>> 		       |    +-------|/  |
->>>>>> 		       |    |       +   |
->>>>>> 	 +-----+       |    |           |
->>>>>> 	 | PLL |----+-------+           |   primary
->>>>>> 	 +-----+    |  |                |     +
->>>>>> 		    |  |                +-----|\       +------+
->>>>>> 	 +-------+  |  |                      | \      |      |
->>>>>> 	 | HFPLL |----------+-----------------|  |-----| CPU0 |
->>>>>> 	 +-------+  |  |    |                 |  |     |      |
->>>>>> 		    |  |    | +-----+         | /      +------+
->>>>>> 		    |  |    +-| / 2 |---------|/
->>>>>> 		    |  |      +-----+         +
->>>>>> 		    |  |         secondary
->>>>>> 		    |  |            +
->>>>>> 		    |  +------------|\
->>>>>> 		    |               | |-+
->>>>>> 		    +---------------|/  |   primary
->>>>>> 				    +   |     +
->>>>>> 					+-----|\       +------+
->>>>>> 	 +-------+                            | \      |      |
->>>>>> 	 | HFPLL |----------------------------|  |-----| CPU1 |
->>>>>> 	 +-------+          |                 |  |     |      |
->>>>>> 			    | +-----+         | /      +------+
->>>>>> 			    +-| / 2 |---------|/
->>>>>> 			      +-----+         +
->>>>>>
->>>>>> To support this in the common clock framework we model the muxes,
->>>>>> dividers, and PLLs as different clocks=2E CPUfreq only interacts
->>>>>> with the primary mux (farthest right in the diagram)=2E When
->CPUfreq
->>>>>> sets a rate, the mux code finds the best parent that can provide
->>> the
->>>> rate=2E
->>>>>> Due to the design, QSB and the top PLL are always a fixed rate
->and
->>>> thus
->>>>>> only support one frequency each=2E These sources provide the lowest
->>>>>> frequencies for the CPUs=2E The HFPLLs are where we can make the
->CPU
->>>> go
->>>>>> faster (GHz range)=2E Sometimes we need to run the HFPLL twice as
->>>>>> fast and divide it by two to get a particular frequency=2E
->>>>>>
->>>>>> When switching rates we can't leave the CPU clocked by the HFPLL
->>>> because
->>>>>> we need to turn off the output of the PLL when changing its
->>>> frequency=2E
->>>>>> This means we have to switch over to the secondary mux and use
->one
->>>> of the
->>>>>> fixed sources=2E This is why we need something like the safe parent
->>>> patch=2E
->>>>>>
->>>>>> [1]
->>>>
->http://lists=2Einfradead=2Eorg/pipermail/linux-arm-kernel/2015-March/3326=
-07=2Ehtml
->>>>>> [2]
->>>>
->http://lists=2Einfradead=2Eorg/pipermail/linux-arm-kernel/2015-March/3326=
-15=2Ehtml
->>>>>> [3]
->>>>
->http://lists=2Einfradead=2Eorg/pipermail/linux-arm-kernel/2015-March/3326=
-08=2Ehtml
->>>>>> [4] https://lwn=2Enet/Articles/740994/=20
->>>>>> [5] https://lkml=2Eorg/lkml/2017/12/19/537
->>>>>>
->>>>>>
->>>>>> Sricharan R (3):
->>>>>>   clk: qcom: Add safe switch hook for krait mux clocks
->>>>>>   cpufreq: qcom: Re-organise kryo cpufreq to use it for other
->nvmem
->>>>>>     based qcom socs
->>>>>>   cpufreq: qcom: Add support for krait based socs
->>>>>>
->>>>>> Stephen Boyd (11):
->>>>>>   ARM: Add Krait L2 register accessor functions
->>>>>>   clk: qcom: Add support for High-Frequency PLLs (HFPLLs)
->>>>>>   clk: qcom: Add HFPLL driver
->>>>>>   dt-bindings: clock: Document qcom,hfpll
->>>>>>   clk: qcom: Add MSM8960/APQ8064's HFPLLs
->>>>>>   clk: qcom: Add IPQ806X's HFPLLs
->>>>>>   clk: qcom: Add support for Krait clocks
->>>>>>   clk: qcom: Add KPSS ACC/GCC driver
->>>>>>   dt-bindings: arm: Document qcom,kpss-gcc
->>>>>>   clk: qcom: Add Krait clock controller driver
->>>>>>   dt-bindings: clock: Document qcom,krait-cc
->>>>>>
->>>>>>  =2E=2E=2E/devicetree/bindings/arm/msm/qcom,kpss-acc=2Etxt  |  19 +
->>>>>>  =2E=2E=2E/devicetree/bindings/arm/msm/qcom,kpss-gcc=2Etxt  |  44 +=
-++
->>>>>>  =2E=2E=2E/devicetree/bindings/clock/qcom,hfpll=2Etxt       |  60 +=
-+++
->>>>>>  =2E=2E=2E/devicetree/bindings/clock/qcom,krait-cc=2Etxt    |  34 +=
-+
->>>>>>  =2E=2E=2E/{kryo-cpufreq=2Etxt =3D> qcom-nvmem-cpufreq=2Etxt}   |  =
- 7 +-
->>>>>>  arch/arm/common/Kconfig                            |   3 +
->>>>>>  arch/arm/common/Makefile                           |   1 +
->>>>>>  arch/arm/common/krait-l2-accessors=2Ec               |  48 +++
->>>>>>  arch/arm/include/asm/krait-l2-accessors=2Eh          |   9 +
->>>>>>  drivers/clk/qcom/Kconfig                           |  28 ++
->>>>>>  drivers/clk/qcom/Makefile                          |   5 +
->>>>>>  drivers/clk/qcom/clk-hfpll=2Ec                       | 244
->>>> +++++++++++++
->>>>>>  drivers/clk/qcom/clk-hfpll=2Eh                       |  44 +++
->>>>>>  drivers/clk/qcom/clk-krait=2Ec                       | 126 +++++++
->>>>>>  drivers/clk/qcom/clk-krait=2Eh                       |  40 +++
->>>>>>  drivers/clk/qcom/gcc-ipq806x=2Ec                     |  82 +++++
->>>>>>  drivers/clk/qcom/gcc-msm8960=2Ec                     | 172
->+++++++++
->>>>>>  drivers/clk/qcom/hfpll=2Ec                           |  96 +++++
->>>>>>  drivers/clk/qcom/kpss-xcc=2Ec                        |  87 +++++
->>>>>>  drivers/clk/qcom/krait-cc=2Ec                        | 397
->>>> +++++++++++++++++++++
->>>>>>  drivers/cpufreq/Kconfig=2Earm                        |   6 +-
->>>>>>  drivers/cpufreq/Makefile                           |   2 +-
->>>>>>  drivers/cpufreq/cpufreq-dt-platdev=2Ec               |   5 +
->>>>>>  drivers/cpufreq/qcom-cpufreq-kryo=2Ec                | 232
->>>> ------------
->>>>>>  drivers/cpufreq/qcom-cpufreq-nvmem=2Ec               | 387
->>>> ++++++++++++++++++++
->>>>>>  include/dt-bindings/clock/qcom,gcc-msm8960=2Eh       |   2 +
->>>>>>  26 files changed, 1941 insertions(+), 239 deletions(-)
->>>>>>  create mode 100644
->>>> Documentation/devicetree/bindings/arm/msm/qcom,kpss-gcc=2Etxt
->>>>>>  create mode 100644
->>>> Documentation/devicetree/bindings/clock/qcom,hfpll=2Etxt
->>>>>>  create mode 100644
->>>> Documentation/devicetree/bindings/clock/qcom,krait-cc=2Etxt
->>>>>>  rename Documentation/devicetree/bindings/opp/{kryo-cpufreq=2Etxt
->=3D>
->>>> qcom-nvmem-cpufreq=2Etxt} (98%)
->>>>>>  create mode 100644 arch/arm/common/krait-l2-accessors=2Ec
->>>>>>  create mode 100644 arch/arm/include/asm/krait-l2-accessors=2Eh
->>>>>>  create mode 100644 drivers/clk/qcom/clk-hfpll=2Ec
->>>>>>  create mode 100644 drivers/clk/qcom/clk-hfpll=2Eh
->>>>>>  create mode 100644 drivers/clk/qcom/clk-krait=2Ec
->>>>>>  create mode 100644 drivers/clk/qcom/clk-krait=2Eh
->>>>>>  create mode 100644 drivers/clk/qcom/hfpll=2Ec
->>>>>>  create mode 100644 drivers/clk/qcom/kpss-xcc=2Ec
->>>>>>  create mode 100644 drivers/clk/qcom/krait-cc=2Ec
->>>>>>  delete mode 100644 drivers/cpufreq/qcom-cpufreq-kryo=2Ec
->>>>>>  create mode 100644 drivers/cpufreq/qcom-cpufreq-nvmem=2Ec
->>>>>>
->>>>>
->>=20
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
---=20
-Please, Don't Panic
+Regards,
+Bjorn
+
+> ---
+>  drivers/clk/x86/clk-pmc-atom.c | 19 ++++---------------
+>  1 file changed, 4 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/clk/x86/clk-pmc-atom.c b/drivers/clk/x86/clk-pmc-atom.c
+> index 08ef69945ffb..daa2192e6568 100644
+> --- a/drivers/clk/x86/clk-pmc-atom.c
+> +++ b/drivers/clk/x86/clk-pmc-atom.c
+> @@ -253,14 +253,6 @@ static void plt_clk_unregister_fixed_rate_loop(struct clk_plt_data *data,
+>  		plt_clk_unregister_fixed_rate(data->parents[i]);
+>  }
+>  
+> -static void plt_clk_free_parent_names_loop(const char **parent_names,
+> -					   unsigned int i)
+> -{
+> -	while (i--)
+> -		kfree_const(parent_names[i]);
+> -	kfree(parent_names);
+> -}
+> -
+>  static void plt_clk_unregister_loop(struct clk_plt_data *data,
+>  				    unsigned int i)
+>  {
+> @@ -286,8 +278,8 @@ static const char **plt_clk_register_parents(struct platform_device *pdev,
+>  	if (!data->parents)
+>  		return ERR_PTR(-ENOMEM);
+>  
+> -	parent_names = kcalloc(nparents, sizeof(*parent_names),
+> -			       GFP_KERNEL);
+> +	parent_names = devm_kcalloc(&pdev->dev, nparents,
+> +				    sizeof(*parent_names), GFP_KERNEL);
+>  	if (!parent_names)
+>  		return ERR_PTR(-ENOMEM);
+>  
+> @@ -300,7 +292,8 @@ static const char **plt_clk_register_parents(struct platform_device *pdev,
+>  			err = PTR_ERR(data->parents[i]);
+>  			goto err_unreg;
+>  		}
+> -		parent_names[i] = kstrdup_const(clks[i].name, GFP_KERNEL);
+> +		parent_names[i] = devm_kstrdup_const(&pdev->dev,
+> +						     clks[i].name, GFP_KERNEL);
+>  	}
+>  
+>  	data->nparents = nparents;
+> @@ -308,7 +301,6 @@ static const char **plt_clk_register_parents(struct platform_device *pdev,
+>  
+>  err_unreg:
+>  	plt_clk_unregister_fixed_rate_loop(data, i);
+> -	plt_clk_free_parent_names_loop(parent_names, i);
+>  	return ERR_PTR(err);
+>  }
+>  
+> @@ -351,15 +343,12 @@ static int plt_clk_probe(struct platform_device *pdev)
+>  		goto err_unreg_clk_plt;
+>  	}
+>  
+> -	plt_clk_free_parent_names_loop(parent_names, data->nparents);
+> -
+>  	platform_set_drvdata(pdev, data);
+>  	return 0;
+>  
+>  err_unreg_clk_plt:
+>  	plt_clk_unregister_loop(data, i);
+>  	plt_clk_unregister_parents(data);
+> -	plt_clk_free_parent_names_loop(parent_names, data->nparents);
+>  	return err;
+>  }
+>  
+> -- 
+> 2.18.0
+> 
