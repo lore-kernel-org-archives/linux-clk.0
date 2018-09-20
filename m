@@ -1,51 +1,98 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <bjorn.andersson@linaro.org>
+Return-Path: <bjorn.andersson@linaro.org>
+Date: Thu, 20 Sep 2018 09:38:45 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+	Arend van Spriel <aspriel@gmail.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Vivek Gautam <vivek.gautam@codeaurora.org>,
+	Robin Murphy <robin.murphy@arm.com>, Joe Perches <joe@perches.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Mike Rapoport <rppt@linux.vnet.ibm.com>,
+	Michal Hocko <mhocko@suse.com>, Al Viro <viro@zeniv.linux.org.uk>,
+	Jonathan Corbet <corbet@lwn.net>, Roman Gushchin <guro@fb.com>,
+	Huang Ying <ying.huang@intel.com>,
+	Kees Cook <keescook@chromium.org>, Arnd Bergmann <arnd@arndb.de>,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH v2 2/4] mm: move is_kernel_rodata() to
+ asm-generic/sections.h
+Message-ID: <20180920163845.GG1367@tuxbook-pro>
+References: <20180828093332.20674-1-brgl@bgdev.pl>
+ <20180828093332.20674-3-brgl@bgdev.pl>
 MIME-Version: 1.0
-References: <1535714796-2211-1-git-send-email-phil.edworthy@renesas.com>
-In-Reply-To: <1535714796-2211-1-git-send-email-phil.edworthy@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 10 Sep 2018 15:11:15 +0200
-Message-ID: <CAMuHMdWCjHEZsHHq4+tEK2o-Qj3OuGpFZBFiRxHgjRqMJT0PPw@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: r9a06g032: Fix UART34567 clock rate
-To: Phil Edworthy <phil.edworthy@renesas.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180828093332.20674-3-brgl@bgdev.pl>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Phil,
+On Tue 28 Aug 02:33 PDT 2018, Bartosz Golaszewski wrote:
 
-On Fri, Aug 31, 2018 at 1:26 PM Phil Edworthy <phil.edworthy@renesas.com> wrote:
-> The clock for UARTs 0 through 2 is UART012, the clock for UARTs 3 through
-> 7 is UART34567.
-> For UART012, we stop the clock driver from changing the clock rate. This
-> is because the Synopsys UART driver simply sets the reference clock to 16x
-> the baud rate, but doesn't check if the actual rate is within the required
-> tolerance. The RZ/N1 clock divider can't provide this (we have to rely on
-> the UART's internal divider to set the correct clock rate), so you end up
-> with a clock rate that is way off what you wanted.
->
-> In addition, since the clock is shared between multiple UARTs, you don't
-> want the driver trying to change the clock rate as it may affect the other
-> UARTs (which may not have been configured yet, so you don't know what baud
-> rate they will use). Normally, the clock rate is set early on before Linux
-> to some very high rate that supports all of the clock rates you want.
->
-> This change stops the UART34567 clock rate from changing for the same
-> reasons.
->
-> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+> Export this routine so that we can use it later in devm_kstrdup_const()
+> and devm_kfree_const().
+> 
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in clk-renesas-for-v4.20.
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-Gr{oetje,eeting}s,
+Regards,
+Bjorn
 
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+> ---
+>  include/asm-generic/sections.h | 14 ++++++++++++++
+>  mm/util.c                      |  7 -------
+>  2 files changed, 14 insertions(+), 7 deletions(-)
+> 
+> diff --git a/include/asm-generic/sections.h b/include/asm-generic/sections.h
+> index 849cd8eb5ca0..d79abca81a52 100644
+> --- a/include/asm-generic/sections.h
+> +++ b/include/asm-generic/sections.h
+> @@ -141,4 +141,18 @@ static inline bool init_section_intersects(void *virt, size_t size)
+>  	return memory_intersects(__init_begin, __init_end, virt, size);
+>  }
+>  
+> +/**
+> + * is_kernel_rodata - checks if the pointer address is located in the
+> + *                    .rodata section
+> + *
+> + * @addr: address to check
+> + *
+> + * Returns: true if the address is located in .rodata, false otherwise.
+> + */
+> +static inline bool is_kernel_rodata(unsigned long addr)
+> +{
+> +	return addr >= (unsigned long)__start_rodata &&
+> +	       addr < (unsigned long)__end_rodata;
+> +}
+> +
+>  #endif /* _ASM_GENERIC_SECTIONS_H_ */
+> diff --git a/mm/util.c b/mm/util.c
+> index d2890a407332..41e9892a50ce 100644
+> --- a/mm/util.c
+> +++ b/mm/util.c
+> @@ -15,17 +15,10 @@
+>  #include <linux/vmalloc.h>
+>  #include <linux/userfaultfd_k.h>
+>  
+> -#include <asm/sections.h>
+>  #include <linux/uaccess.h>
+>  
+>  #include "internal.h"
+>  
+> -static inline int is_kernel_rodata(unsigned long addr)
+> -{
+> -	return addr >= (unsigned long)__start_rodata &&
+> -		addr < (unsigned long)__end_rodata;
+> -}
+> -
+>  /**
+>   * kfree_const - conditionally free memory
+>   * @x: pointer to the memory
+> -- 
+> 2.18.0
+> 
