@@ -1,70 +1,95 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: robh+dt@kernel.org,
-	maxime.ripard@bootlin.com,
-	wens@csie.org
-Cc: mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	airlied@linux.ie,
-	architt@codeaurora.org,
-	a.hajda@samsung.com,
-	jernej.skrabec@siol.net,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH 09/27] dt-bindings: display: sun4i-drm: Add H6 display engine compatibles
-Date: Sun,  2 Sep 2018 09:26:25 +0200
-Message-Id: <20180902072643.4917-10-jernej.skrabec@siol.net>
-In-Reply-To: <20180902072643.4917-1-jernej.skrabec@siol.net>
-References: <20180902072643.4917-1-jernej.skrabec@siol.net>
+Return-Path: <aisheng.dong@nxp.com>
+From: "A.s. Dong" <aisheng.dong@nxp.com>
+To: "thor.thayer@linux.intel.com" <thor.thayer@linux.intel.com>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, "sboyd@kernel.org"
+	<sboyd@kernel.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "mturquette@baylibre.com"
+	<mturquette@baylibre.com>, "shawnguo@kernel.org" <shawnguo@kernel.org>,
+	dl-linux-imx <linux-imx@nxp.com>, "hdegoede@redhat.com" <hdegoede@redhat.com>
+Subject: RE: [PATCH V6 0/4] clk: new APIs to handle all available clocks
+Date: Thu, 20 Sep 2018 02:14:21 +0000
+Message-ID: 
+ <AM0PR04MB4211B170CAC1B3F9E7356AF980130@AM0PR04MB4211.eurprd04.prod.outlook.com>
+References: <1535690756-22234-1-git-send-email-aisheng.dong@nxp.com>
+ <AM0PR04MB4211EF6D783562BA8C8D690380010@AM0PR04MB4211.eurprd04.prod.outlook.com>
+ <AM0PR04MB4211A3900BC5A2DF857F7451801F0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+ <7e612f6f-e9d2-2f6f-1903-3a6bcf1b65ba@linux.intel.com>
+In-Reply-To: <7e612f6f-e9d2-2f6f-1903-3a6bcf1b65ba@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-This commit adds compatibles used in H6 display pipeline, namely for
-display engine, mixer and TV TCON.
-
-H6 display engine is somewhat similar to R40, just less TCONs and
-mixer support more features.
-
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- .../devicetree/bindings/display/sunxi/sun4i-drm.txt          | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-index f8773ecb7525..dec2f8a6da9c 100644
---- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-+++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-@@ -151,6 +151,7 @@ Required properties:
-    * allwinner,sun8i-v3s-tcon
-    * allwinner,sun9i-a80-tcon-lcd
-    * allwinner,sun9i-a80-tcon-tv
-+   * allwinner,sun50i-h6-tcon-tv, allwinner,sun8i-r40-tcon-tv
-  - reg: base address and size of memory-mapped region
-  - interrupts: interrupt associated to this IP
-  - clocks: phandles to the clocks feeding the TCON.
-@@ -370,6 +371,7 @@ Required properties:
-     * allwinner,sun8i-a83t-de2-mixer-1
-     * allwinner,sun8i-h3-de2-mixer-0
-     * allwinner,sun8i-v3s-de2-mixer
-+    * allwinner,sun50i-h6-de3-mixer-0
-   - reg: base address and size of the memory-mapped region.
-   - clocks: phandles to the clocks feeding the mixer
-     * bus: the mixer interface clock
-@@ -403,9 +405,10 @@ Required properties:
-     * allwinner,sun8i-r40-display-engine
-     * allwinner,sun8i-v3s-display-engine
-     * allwinner,sun9i-a80-display-engine
-+    * allwinner,sun50i-h6-display-engine
- 
-   - allwinner,pipelines: list of phandle to the display engine
--    frontends (DE 1.0) or mixers (DE 2.0) available.
-+    frontends (DE 1.0) or mixers (DE 2.0/3.0) available.
- 
- Example:
- 
--- 
-2.18.0
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBUaG9yIFRoYXllciBbbWFpbHRv
+OnRob3IudGhheWVyQGxpbnV4LmludGVsLmNvbV0NCj4gU2VudDogV2VkbmVzZGF5LCBTZXB0ZW1i
+ZXIgMTksIDIwMTggMTA6NDcgUE0NCj4gVG86IEEucy4gRG9uZyA8YWlzaGVuZy5kb25nQG54cC5j
+b20+OyBsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnDQo+IENjOiBsaW51eC1rZXJuZWxAdmdlci5r
+ZXJuZWwub3JnOyBsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmc7DQo+IHNib3lk
+QGtlcm5lbC5vcmc7IG10dXJxdWV0dGVAYmF5bGlicmUuY29tOyBzaGF3bmd1b0BrZXJuZWwub3Jn
+Ow0KPiBkbC1saW51eC1pbXggPGxpbnV4LWlteEBueHAuY29tPjsgaGRlZ29lZGVAcmVkaGF0LmNv
+bQ0KPiBTdWJqZWN0OiBSZTogW1BBVENIIFY2IDAvNF0gY2xrOiBuZXcgQVBJcyB0byBoYW5kbGUg
+YWxsIGF2YWlsYWJsZSBjbG9ja3MNCj4gDQo+IEhpLA0KPiANCj4gT24gMDkvMTYvMjAxOCAwODoy
+NCBBTSwgQS5zLiBEb25nIHdyb3RlOg0KPiA+IFBpbmcgYWdhaW4NCj4gPg0KPiA+PiAtLS0tLU9y
+aWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiA+PiBGcm9tOiBBLnMuIERvbmcNCj4gPj4gU2VudDogVGh1
+cnNkYXksIFNlcHRlbWJlciA2LCAyMDE4IDExOjIzIEFNDQo+ID4+IFRvOiBsaW51eC1jbGtAdmdl
+ci5rZXJuZWwub3JnDQo+ID4+IENjOiBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOw0KPiA+
+PiBsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmc7DQo+ID4+IHNib3lkQGtlcm5l
+bC5vcmc7IG10dXJxdWV0dGVAYmF5bGlicmUuY29tOyBzaGF3bmd1b0BrZXJuZWwub3JnOw0KPiA+
+PiB0aG9yLnRoYXllckBsaW51eC5pbnRlbC5jb207IGRsLWxpbnV4LWlteCA8bGludXgtaW14QG54
+cC5jb20+Ow0KPiA+PiBoZGVnb2VkZUByZWRoYXQuY29tDQo+ID4+IFN1YmplY3Q6IFJFOiBbUEFU
+Q0ggVjYgMC80XSBjbGs6IG5ldyBBUElzIHRvIGhhbmRsZSBhbGwgYXZhaWxhYmxlDQo+ID4+IGNs
+b2Nrcw0KPiA+Pg0KPiA+PiBHZW50bHkgcGluZy4uLg0KPiA+Pg0KPiA+Pj4gLS0tLS1PcmlnaW5h
+bCBNZXNzYWdlLS0tLS0NCj4gPj4+IEZyb206IEEucy4gRG9uZw0KPiA+Pj4gU2VudDogRnJpZGF5
+LCBBdWd1c3QgMzEsIDIwMTggMTI6NDYgUE0NCj4gPj4+IFRvOiBsaW51eC1jbGtAdmdlci5rZXJu
+ZWwub3JnDQo+ID4+PiBDYzogbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsNCj4gPj4+IGxp
+bnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZzsNCj4gPj4+IHNib3lkQGtlcm5lbC5v
+cmc7IG10dXJxdWV0dGVAYmF5bGlicmUuY29tOyBzaGF3bmd1b0BrZXJuZWwub3JnOw0KPiA+Pj4g
+dGhvci50aGF5ZXJAbGludXguaW50ZWwuY29tOyBkbC1saW51eC1pbXggPGxpbnV4LWlteEBueHAu
+Y29tPjsNCj4gPj4+IGhkZWdvZWRlQHJlZGhhdC5jb207IEEucy4gRG9uZyA8YWlzaGVuZy5kb25n
+QG54cC5jb20+DQo+ID4+PiBTdWJqZWN0OiBbUEFUQ0ggVjYgMC80XSBjbGs6IG5ldyBBUElzIHRv
+IGhhbmRsZSBhbGwgYXZhaWxhYmxlIGNsb2Nrcw0KPiA+Pj4NCj4gPj4+IFRoaXMgcGF0Y2ggc2Vy
+aWVzIGlzIGEgY29udGludWUgb2YgZGlzY3Vzc2lvbiBmcm9tIGhlcmUsDQo+ID4+PiBodHRwczov
+L2VtZWEwMS5zYWZlbGlua3MucHJvdGVjdGlvbi5vdXRsb29rLmNvbS8/dXJsPWh0dHBzJTNBJTJG
+JTJGcA0KPiA+Pj4NCj4gYXRjaHdvcmsua2VybmVsLm9yZyUyRnBhdGNoJTJGOTk4NjI5MyUyRiZh
+bXA7ZGF0YT0wMiU3QzAxJTdDYWlzaGUNCj4gbmcuDQo+ID4+Pg0KPiBkb25nJTQwbnhwLmNvbSU3
+Q2I3OWYwYWE4Yzc0YzRmOTM1YWRiMDhkNjFlM2U3OTQ0JTdDNjg2ZWExZDNiYw0KPiAyYjRjNmYN
+Cj4gPj4+DQo+IGE5MmNkOTljNWMzMDE2MzUlN0MwJTdDMCU3QzYzNjcyOTY1MTAxNDU0OTYzMyZh
+bXA7c2RhdGE9emgwUlANCj4gVnQ0cHF5TQ0KPiA+Pj4gODRTVUZScERjYklINTgzSk5PTmxCaFRR
+ZUxZd0RGbyUzRCZhbXA7cmVzZXJ2ZWQ9MA0KPiA+Pj4gdGhhdCBzb21lIHVzZXJzIG1heSB3YW50
+IHRvIGhhbmRsZSBhbGwgYXZhaWxhYmxlIGNsb2NrcyBmcm9tIGRldmljZQ0KPiA+Pj4gdHJlZSB3
+aXRob3V0IG5lZWQgdG8ga25vdyB0aGUgZGV0YWlsZWQgY2xvY2sgaW5mb3JtYXRpb24gbGlrZXMg
+Y2xvY2sNCj4gPj4+IG51bWJlcnMgYW5kIG5hbWVzLiBUaGlzIGlzIHVzZWZ1bCBpbiB3cml0aW5n
+IHNvbWUgZ2VuZXJpYyBkcml2ZXJzIHRvDQo+ID4+PiBoYW5kbGUNCj4gPj4gY2xvY2sgcGFydC4N
+Cj4gPj4+DQo+ID4+PiBOb3RlOg0KPiA+Pj4gVGhpcyBwYXRjaCBzZXJpZXMgaXMgdGVzdGVkIG9u
+IE1YNlEgU0RCIGNwdWZyZXEgZHJpdmVyIHdpdGggYSBtaW5vcg0KPiA+Pj4gY2hhbmdlIHRvIHN3
+aXRjaCB0byB1c2UgY2xrX2J1bGtfZ2V0X2FsbC4NCj4gPj4+IEJ1dCBwYXRjaCA0IG9ubHkgdGVz
+dCBjb21waWxpbmcuIEhvcGVmdWxseSBzb21lb25lIGNvdWxkIGhlbHAgdGVzdA0KPiA+Pj4gdGhl
+IGZ1bmN0aW9uLg0KPiA+Pj4NCj4gPj4+IHYzLT52NDoNCj4gPj4+ICAgKiBpbXByb3ZlICdkZXZy
+ZXMtPmNsa3MgPSAqY2xrcycgYWNjb3JkaW5nIHRvIFN0ZXBoZW4ncyBzdWdnZXN0aW9uDQo+ID4+
+PiB2Mi0+djM6DQo+ID4+PiAgICogYWRkcmVzcyBhbGwgY29tbWVudHMgZnJvbSBTdGVwaGVuDQo+
+ID4+PiAgICogZml4IGJ1aWxkIHdhcm5pbmdzIG9uIG90aGVyIGFyY2hpdGVjdHVyZXMuDQo+ID4+
+PiB2MS0+djI6DQo+ID4+PiAgICogYWRkIGNsa19idWxrX3tnZXR8cHV0fV9hbGwoKSB3aGljaCBv
+bmx5IHN1cHBvcnRzIERUIHBsYXRmb3JtDQo+ID4+PiBjdXJyZW50bHkNCj4gPj4+ICAgKiByZW1v
+dmUgX2FsbCB2YXJpYW50cyBhbmQgdGhlIHdyYXBwZXIgc3RydWN0IGNsa19idWxrDQo+ID4+PiAg
+ICogbWFrZSBvZl9jbGtfYnVsa19nZXQgYW5kIG9mX2Nsa19idWxrX2dldF9hbGwgcHJpdmF0ZSB1
+bnRpbCBzb21lb25lDQo+ID4+PiAgICAgcHJvdmVzIHRoZXkgbmVlZCBpdCBiZWNhdXNlIHRoZXkg
+ZG9uJ3QgaGF2ZSBhIHN0cnVjdCBkZXZpY2UgcG9pbnRlci4NCj4gPj4+DQo+ID4+PiBEb25nIEFp
+c2hlbmcgKDQpOg0KPiA+Pj4gICAgY2xrOiBidWxrOiBhZGQgb2ZfY2xrX2J1bGtfZ2V0KCkNCj4g
+Pj4+ICAgIGNsazogYWRkIG5ldyBBUElzIHRvIG9wZXJhdGUgb24gYWxsIGF2YWlsYWJsZSBjbG9j
+a3MNCj4gPj4+ICAgIGNsazogYWRkIG1hbmFnZWQgdmVyc2lvbiBvZiBjbGtfYnVsa19nZXRfYWxs
+DQo+ID4+PiAgICB2aWRlbzogc2ltcGxlZmI6IHN3aXRjaCB0byB1c2UgY2xrX2J1bGsgQVBJIHRv
+IHNpbXBsaWZ5IGNsb2NrDQo+ID4+PiAgICAgIG9wZXJhdGlvbnMNCj4gPj4+DQo+ID4+PiAgIGRy
+aXZlcnMvY2xrL2Nsay1idWxrLmMgICAgICAgICB8IDgwDQo+ID4+PiArKysrKysrKysrKysrKysr
+KysrKysrKysrKysrKysrKysrKysrKysrKysNCj4gPj4+ICAgZHJpdmVycy9jbGsvY2xrLWRldnJl
+cy5jICAgICAgIHwgMjQgKysrKysrKysrKysrKw0KPiA+Pj4gICBkcml2ZXJzL3ZpZGVvL2ZiZGV2
+L3NpbXBsZWZiLmMgfCA3MiArKysrKysrKysrLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQo+
+ID4+PiAgIGluY2x1ZGUvbGludXgvY2xrLmggICAgICAgICAgICB8IDY1DQo+ID4+PiArKysrKysr
+KysrKysrKysrKysrKysrKysrKysrKysrKystDQo+ID4+PiAgIDQgZmlsZXMgY2hhbmdlZCwgMTg2
+IGluc2VydGlvbnMoKyksIDU1IGRlbGV0aW9ucygtKQ0KPiA+Pj4NCj4gPj4+IC0tDQo+ID4+PiAy
+LjcuNA0KPiA+DQo+IEp1c3QgY2hlY2tpbmcgb24gdGhlIHN0YXR1cyBvZiB0aGlzIHBhdGNoLiBU
+aGUgY2xvY2sgcm91dGluZXMgKHBhdGNoZXMNCj4gMS0zKSBhcmUgdXNlZnVsIGZvciBvbmUgb2Yg
+bXkgZHJpdmVycyBidXQgaWYgdGhleSBhcmVuJ3QgYWNjZXB0ZWQgb3Igd2lsbCB0YWtlIGENCj4g
+bG9uZyB0aW1lIHRvIGJlIGFjY2VwdGVkLCBJJ2xsIG5lZWQgdG8gcmVmYWN0b3IgbXkgZHJpdmVy
+Lg0KPiANCg0KVGhhbmtzIGZvciB0aGlzIGluZm9ybWF0aW9uLg0KDQpTdGVwaGVuLA0KV291bGQg
+eW91IGhlbHAgdG8gcHJvY2VlZCB0aGlzPw0KDQpSZWdhcmRzDQpEb25nIEFpc2hlbmcNCg==
