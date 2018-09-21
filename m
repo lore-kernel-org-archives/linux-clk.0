@@ -1,57 +1,58 @@
 Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:54732 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727229AbeIXRCk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Sep 2018 13:02:40 -0400
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH] clk: samsung: exynos5420: Define CLK_SECKEY gate clock only
- or Exynos5420
-Date: Mon, 24 Sep 2018 13:00:56 +0200
-Message-id: <20180924110056.21033-1-m.szyprowski@samsung.com>
-References: <CGME20180924110106eucas1p2465d1fdd263f7921ae6e9c65d32155f6@eucas1p2.samsung.com>
+Received: from mail-io1-f65.google.com ([209.85.166.65]:37502 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732114AbeIUXwq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Sep 2018 19:52:46 -0400
+Received: by mail-io1-f65.google.com with SMTP id v14-v6so13087199iob.4
+        for <linux-clk@vger.kernel.org>; Fri, 21 Sep 2018 11:02:45 -0700 (PDT)
+Date: Fri, 21 Sep 2018 11:02:41 -0700
+From: Lee Jones <lee.jones@linaro.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        robh+dt@kernel.org, mark.rutland@arm.com, lgirdwood@gmail.com,
+        sboyd@kernel.org, mazziesaccount@gmail.com,
+        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 1/7] regulator/mfd: Support ROHM BD71847 power
+ management IC
+Message-ID: <20180921180241.GA4358@dell>
+References: <cover.1536912922.git.matti.vaittinen@fi.rohmeurope.com>
+ <3996792a07fea45d94d4d712ed05527199cc4ac0.1536912922.git.matti.vaittinen@fi.rohmeurope.com>
+ <20180921172959.GG20825@sirena.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180921172959.GG20825@sirena.org.uk>
 Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Joonyoung Shim <jy0922.shim@samsung.com>
+On Fri, 21 Sep 2018, Mark Brown wrote:
 
-The bit of GATE_BUS_PERIS1 for CLK_SECKEY is just reserved on
-exynos5422/5800, not exynos5420. Define gate clk for exynos5420 to
-handle the bit only on exynos5420.
+> On Fri, Sep 14, 2018 at 11:27:46AM +0300, Matti Vaittinen wrote:
+> > BD71847 is reduced version of BD71837. DVS bucks 3 and 4 are
+> > removed as is LDO7. Voltage ranges of some regulators are
+> > expanded.
+> > 
+> > Add initial support for BD71847 with BD71837 driver.
+> > 
+> > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> > ---
+> >  drivers/mfd/rohm-bd718x7.c            |   70 +--
+> >  drivers/regulator/bd71837-regulator.c | 1055 +++++++++++++++++++++++----------
+> >  include/linux/mfd/rohm-bd718x7.h      |  271 ++++-----
+> >  3 files changed, 879 insertions(+), 517 deletions(-)
+> 
+> This looks OK to me - Lee, the patch is almost entirely a regulator one,
+> are you OK with me applying it?
 
-Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
-[m.szyprow: rewrote commit subject]
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/clk/samsung/clk-exynos5420.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+The diff in rohm-bd718x7.h does not look significant.
 
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index 76e7686c6162..a2d6e7f4bcd3 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -568,6 +568,7 @@ static const struct samsung_div_clock exynos5420_div_clks[] __initconst = {
- };
- 
- static const struct samsung_gate_clock exynos5420_gate_clks[] __initconst = {
-+	GATE(CLK_SECKEY, "seckey", "aclk66_psgen", GATE_BUS_PERIS1, 1, 0, 0),
- 	GATE(CLK_MAU_EPLL, "mau_epll", "mout_mau_epll_clk",
- 			SRC_MASK_TOP7, 20, CLK_SET_RATE_PARENT, 0),
- };
-@@ -1097,8 +1098,6 @@ static const struct samsung_gate_clock exynos5x_gate_clks[] __initconst = {
- 	GATE(CLK_TMU, "tmu", "aclk66_psgen", GATE_IP_PERIS, 21, 0, 0),
- 	GATE(CLK_TMU_GPU, "tmu_gpu", "aclk66_psgen", GATE_IP_PERIS, 22, 0, 0),
- 
--	GATE(CLK_SECKEY, "seckey", "aclk66_psgen", GATE_BUS_PERIS1, 1, 0, 0),
--
- 	/* GEN Block */
- 	GATE(CLK_ROTATOR, "rotator", "mout_user_aclk266", GATE_IP_GEN, 1, 0, 0),
- 	GATE(CLK_JPEG, "jpeg", "aclk300_jpeg", GATE_IP_GEN, 2, 0, 0),
+You can apply it so long as you provide me with a PR in order to avoid
+any potential merge conflicts.  Especially as Linus is out for this
+release.
+
 -- 
-2.17.1
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
