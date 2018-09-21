@@ -1,82 +1,229 @@
-Return-Path: <wens213@gmail.com>
-Return-Path: <wens213@gmail.com>
-MIME-Version: 1.0
-References: <20180902072643.4917-1-jernej.skrabec@siol.net>
- <20180902072643.4917-14-jernej.skrabec@siol.net> <CAGb2v66kp4B5VZfmTc8L6qt=OPHjbYBtXRbC=L6jGTzvEKvb=w@mail.gmail.com>
-In-Reply-To: <CAGb2v66kp4B5VZfmTc8L6qt=OPHjbYBtXRbC=L6jGTzvEKvb=w@mail.gmail.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Sat, 22 Sep 2018 21:47:03 +0800
-Message-ID: <CAGb2v65LzGgXORTx7PR+udZsrgGgmnXeaOW-jb=KMjHjTg7bRg@mail.gmail.com>
-Subject: Re: [PATCH 13/27] drm/sun4i: Add support for H6 DE3 mixer 0
-To: Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: Rob Herring <robh+dt@kernel.org>, Maxime Ripard <maxime.ripard@bootlin.com>,
-	Mark Rutland <mark.rutland@arm.com>, Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, David Airlie <airlied@linux.ie>,
-	Archit Taneja <architt@codeaurora.org>, Andrzej Hajda <a.hajda@samsung.com>,
-	devicetree <devicetree@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	dri-devel <dri-devel@lists.freedesktop.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <chris.brandt@renesas.com>
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Simon Horman <horms+renesas@verge.net.au>,
+	Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH 1/2] clk: renesas: cpg-mssr: Add early clock support
+Date: Fri, 21 Sep 2018 10:20:53 -0500
+Message-Id: <20180921152054.117774-2-chris.brandt@renesas.com>
+In-Reply-To: <20180921152054.117774-1-chris.brandt@renesas.com>
+References: <20180921152054.117774-1-chris.brandt@renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Sat, Sep 22, 2018 at 9:23 PM Chen-Yu Tsai <wens@csie.org> wrote:
->
-> On Sun, Sep 2, 2018 at 3:27 PM Jernej Skrabec <jernej.skrabec@siol.net> wrote:
-> >
-> > Mixer 0 has 1 VI and 3 UI planes, scaler on all planes and can output
-> > 4K image @60Hz. It also support 10 bit colors.
->
-> AFAICT 10 bit color support is not implemented? Please mention this.
->
-> >
-> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> > ---
-> >  drivers/gpu/drm/sun4i/sun8i_mixer.c | 13 +++++++++++++
-> >  1 file changed, 13 insertions(+)
-> >
-> > diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c b/drivers/gpu/drm/sun4i/sun8i_mixer.c
-> > index a9218abf0935..54eca2dd4b33 100644
-> > --- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
-> > +++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
-> > @@ -540,6 +540,15 @@ static int sun8i_mixer_remove(struct platform_device *pdev)
-> >         return 0;
-> >  }
-> >
-> > +static const struct sun8i_mixer_cfg sun50i_h6_mixer0_cfg = {
->
-> Please sort the per-compatible structures according to "version sort" rules.
->
-> > +       .ccsc           = 0,
-> > +       .is_de3         = true,
-> > +       .mod_rate       = 600000000,
-> > +       .scaler_mask    = 0xf,
-> > +       .ui_num         = 3,
-> > +       .vi_num         = 1,
-> > +};
-> > +
-> >  static const struct sun8i_mixer_cfg sun8i_a83t_mixer0_cfg = {
-> >         .ccsc           = 0,
-> >         .scaler_mask    = 0xf,
-> > @@ -587,6 +596,10 @@ static const struct sun8i_mixer_cfg sun8i_v3s_mixer_cfg = {
-> >  };
-> >
-> >  static const struct of_device_id sun8i_mixer_of_table[] = {
-> > +       {
-> > +               .compatible = "allwinner,sun50i-h6-de3-mixer-0",
-> > +               .data = &sun50i_h6_mixer0_cfg,
-> > +       },
->
-> Same here.
->
-> ChenYu
+Add support for SoCs that need to register core and module clocks early in
+order to use OF drivers that exclusively use macros such as
+TIMER_OF_DECLARE.
 
-BTW, DE 3.0 includes a register in DE TOP called "DE IP configure register",
-which gives the number of IP blocks per class, per mixer. If we retrieve the
-configuration from this register, then we shouldn't need to differentiate
-between mixer-0 and mixer-1 with compatible strings.
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+---
+ drivers/clk/renesas/renesas-cpg-mssr.c | 106 ++++++++++++++++++++++++++-------
+ drivers/clk/renesas/renesas-cpg-mssr.h |   6 ++
+ 2 files changed, 91 insertions(+), 21 deletions(-)
 
-What do you think?
-
-ChenYu
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
+index 3df764d3ab20..b4be3cc18505 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.c
++++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+@@ -127,6 +127,7 @@ struct cpg_mssr_priv {
+ 	struct device *dev;
+ 	void __iomem *base;
+ 	spinlock_t rmw_lock;
++	struct device_node *np;
+ 
+ 	struct clk **clks;
+ 	unsigned int num_core_clks;
+@@ -141,6 +142,7 @@ struct cpg_mssr_priv {
+ 	} smstpcr_saved[ARRAY_SIZE(smstpcr)];
+ };
+ 
++struct cpg_mssr_priv *early_priv;
+ 
+ /**
+  * struct mstp_clock - MSTP gating clock
+@@ -316,7 +318,7 @@ static void __init cpg_mssr_register_core_clk(const struct cpg_core_clk *core,
+ 
+ 	switch (core->type) {
+ 	case CLK_TYPE_IN:
+-		clk = of_clk_get_by_name(priv->dev->of_node, core->name);
++		clk = of_clk_get_by_name(priv->np, core->name);
+ 		break;
+ 
+ 	case CLK_TYPE_FF:
+@@ -877,42 +879,49 @@ static const struct dev_pm_ops cpg_mssr_pm = {
+ #define DEV_PM_OPS	NULL
+ #endif /* CONFIG_PM_SLEEP && CONFIG_ARM_PSCI_FW */
+ 
+-static int __init cpg_mssr_probe(struct platform_device *pdev)
++static int cpg_mssr_common_init(struct device *dev, struct device_node *np,
++				const struct cpg_mssr_info *info)
+ {
+-	struct device *dev = &pdev->dev;
+-	struct device_node *np = dev->of_node;
+-	const struct cpg_mssr_info *info;
+ 	struct cpg_mssr_priv *priv;
+ 	unsigned int nclks, i;
+-	struct resource *res;
+-	struct clk **clks;
++	struct clk **clks = NULL;
+ 	int error;
++	bool early_init = dev ? false : true;
+ 
+-	info = of_device_get_match_data(dev);
+ 	if (info->init) {
+ 		error = info->init(dev);
+ 		if (error)
+ 			return error;
+ 	}
+ 
+-	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
++	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
+ 	if (!priv)
+ 		return -ENOMEM;
+ 
++	/* np is saved because dev->of_node doesn't exists during early init */
++	priv->np = np;
++
+ 	priv->dev = dev;
+ 	spin_lock_init(&priv->rmw_lock);
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	priv->base = devm_ioremap_resource(dev, res);
+-	if (IS_ERR(priv->base))
+-		return PTR_ERR(priv->base);
++	priv->base = of_iomap(np, 0);
++	if (IS_ERR(priv->base)) {
++		error = PTR_ERR(priv->base);
++		goto out_err;
++	}
+ 
+ 	nclks = info->num_total_core_clks + info->num_hw_mod_clks;
+-	clks = devm_kmalloc_array(dev, nclks, sizeof(*clks), GFP_KERNEL);
+-	if (!clks)
+-		return -ENOMEM;
++	clks = kmalloc_array(nclks, sizeof(*clks), GFP_KERNEL);
++	if (!clks) {
++		error = -ENOMEM;
++		goto out_err;
++	}
++
++	if (early_init)
++		early_priv = priv;
++	else
++		dev_set_drvdata(dev, priv);
+ 
+-	dev_set_drvdata(dev, priv);
+ 	priv->clks = clks;
+ 	priv->num_core_clks = info->num_total_core_clks;
+ 	priv->num_mod_clks = info->num_hw_mod_clks;
+@@ -923,16 +932,71 @@ static int __init cpg_mssr_probe(struct platform_device *pdev)
+ 	for (i = 0; i < nclks; i++)
+ 		clks[i] = ERR_PTR(-ENOENT);
+ 
++	error = of_clk_add_provider(np, cpg_mssr_clk_src_twocell_get, priv);
++	if (error)
++		goto out_err;
++
++	return 0;
++
++out_err:
++	kfree(clks);
++	if (priv->base)
++		iounmap(priv->base);
++	kfree(priv);
++
++	return error;
++}
++
++void __init cpg_mssr_early_init(struct device_node *np,
++				const struct cpg_mssr_info *info)
++{
++	int error;
++	int i;
++
++	error = cpg_mssr_common_init(NULL, np, info);
++	if (error)
++		return;
++
++	for (i = 0; i < info->num_early_core_clks; i++)
++		cpg_mssr_register_core_clk(&info->early_core_clks[i], info,
++					   early_priv);
++
++	for (i = 0; i < info->num_early_mod_clks; i++)
++		cpg_mssr_register_mod_clk(&info->early_mod_clks[i], info,
++					  early_priv);
++
++}
++
++static int __init cpg_mssr_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct device_node *np = dev->of_node;
++	const struct cpg_mssr_info *info;
++	struct cpg_mssr_priv *priv;
++	unsigned int i;
++	int error;
++
++	info = of_device_get_match_data(dev);
++
++	if (early_priv) {
++		priv = early_priv;
++		priv->dev = &pdev->dev;
++	} else {
++		error = cpg_mssr_common_init(dev, dev->of_node, info);
++	}
++
++	if (error)
++		return error;
++
++	if (!early_priv)
++		dev_set_drvdata(dev, priv);
++
+ 	for (i = 0; i < info->num_core_clks; i++)
+ 		cpg_mssr_register_core_clk(&info->core_clks[i], info, priv);
+ 
+ 	for (i = 0; i < info->num_mod_clks; i++)
+ 		cpg_mssr_register_mod_clk(&info->mod_clks[i], info, priv);
+ 
+-	error = of_clk_add_provider(np, cpg_mssr_clk_src_twocell_get, priv);
+-	if (error)
+-		return error;
+-
+ 	error = devm_add_action_or_reset(dev,
+ 					 cpg_mssr_del_clk_provider,
+ 					 np);
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.h b/drivers/clk/renesas/renesas-cpg-mssr.h
+index ae0ab0f164f3..cfce0627b5b8 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.h
++++ b/drivers/clk/renesas/renesas-cpg-mssr.h
+@@ -119,12 +119,16 @@ struct cpg_mssr_info {
+ 	unsigned int num_core_clks;
+ 	unsigned int last_dt_core_clk;
+ 	unsigned int num_total_core_clks;
++	const struct cpg_core_clk *early_core_clks;
++	unsigned int num_early_core_clks;
+ 	bool stbyctrl;
+ 
+ 	/* Module Clocks */
+ 	const struct mssr_mod_clk *mod_clks;
+ 	unsigned int num_mod_clks;
+ 	unsigned int num_hw_mod_clks;
++	const struct mssr_mod_clk *early_mod_clks;
++	unsigned int num_early_mod_clks;
+ 
+ 	/* Critical Module Clocks that should not be disabled */
+ 	const unsigned int *crit_mod_clks;
+@@ -160,6 +164,8 @@ extern const struct cpg_mssr_info r8a77980_cpg_mssr_info;
+ extern const struct cpg_mssr_info r8a77990_cpg_mssr_info;
+ extern const struct cpg_mssr_info r8a77995_cpg_mssr_info;
+ 
++void __init cpg_mssr_early_init(struct device_node *np,
++				const struct cpg_mssr_info *info);
+ 
+     /*
+      * Helpers for fixing up clock tables depending on SoC revision
+-- 
+2.16.1
