@@ -1,118 +1,331 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:39494 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725982AbeIXQd2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Sep 2018 12:33:28 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w8OATCIf009639
-        for <linux-clk@vger.kernel.org>; Mon, 24 Sep 2018 06:32:03 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2mpwfrt2pg-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-clk@vger.kernel.org>; Mon, 24 Sep 2018 06:32:02 -0400
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-clk@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
-        Mon, 24 Sep 2018 11:32:00 +0100
-Date: Mon, 24 Sep 2018 13:31:45 +0300
-From: Mike Rapoport <rppt@linux.vnet.ibm.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Arend van Spriel <aspriel@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joe Perches <joe@perches.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jonathan Corbet <corbet@lwn.net>, Roman Gushchin <guro@fb.com>,
-        Huang Ying <ying.huang@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH v3 2/4] mm: move is_kernel_rodata() to
- asm-generic/sections.h
-References: <20180924101150.23349-1-brgl@bgdev.pl>
- <20180924101150.23349-3-brgl@bgdev.pl>
+Return-Path: <abel.vesa@nxp.com>
+From: Abel Vesa <abel.vesa@nxp.com>
+To: Lucas Stach <l.stach@pengutronix.de>,
+	Sascha Hauer <kernel@pengutronix.de>,
+	Dong Aisheng <aisheng.dong@nxp.com>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	Anson Huang <anson.huang@nxp.com>,
+	Andrey Smirnov <andrew.smirnov@gmail.com>,
+	Rob Herring <robh@kernel.org>
+Cc: linux-imx@nxp.com,
+	Abel Vesa <abelvesa@linux.com>,
+	Abel Vesa <abel.vesa@nxp.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-kernel@vger.kernel.org (open list),
+	linux-arm-kernel@lists.infradead.org (moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE),
+	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK)
+Subject: [PATCH v8 3/5] clk: imx: add SCCG PLL type
+Date: Fri, 21 Sep 2018 15:11:32 +0300
+Message-Id: <1537531894-18499-4-git-send-email-abel.vesa@nxp.com>
+In-Reply-To: <1537531894-18499-1-git-send-email-abel.vesa@nxp.com>
+References: <1537531894-18499-1-git-send-email-abel.vesa@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180924101150.23349-3-brgl@bgdev.pl>
-Message-Id: <20180924103144.GB6264@rapoport-lnx>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain
+Return-Path: abel.vesa@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Sep 24, 2018 at 12:11:48PM +0200, Bartosz Golaszewski wrote:
-> Export this routine so that we can use it later in devm_kstrdup_const()
-> and devm_kfree_const().
-> 
-> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
-> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+From: Lucas Stach <l.stach@pengutronix.de>
 
-Acked-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+The SCCG is a new PLL type introduced on i.MX8. Add support for this.
+The driver currently misses the PLL lock check, as the preliminary
+documentation mentions lock configurations, but is quiet about where
+to find the actual lock status signal.
 
-> ---
->  include/asm-generic/sections.h | 14 ++++++++++++++
->  mm/util.c                      |  7 -------
->  2 files changed, 14 insertions(+), 7 deletions(-)
-> 
-> diff --git a/include/asm-generic/sections.h b/include/asm-generic/sections.h
-> index 849cd8eb5ca0..d79abca81a52 100644
-> --- a/include/asm-generic/sections.h
-> +++ b/include/asm-generic/sections.h
-> @@ -141,4 +141,18 @@ static inline bool init_section_intersects(void *virt, size_t size)
->  	return memory_intersects(__init_begin, __init_end, virt, size);
->  }
-> 
-> +/**
-> + * is_kernel_rodata - checks if the pointer address is located in the
-> + *                    .rodata section
-> + *
-> + * @addr: address to check
-> + *
-> + * Returns: true if the address is located in .rodata, false otherwise.
-> + */
-> +static inline bool is_kernel_rodata(unsigned long addr)
-> +{
-> +	return addr >= (unsigned long)__start_rodata &&
-> +	       addr < (unsigned long)__end_rodata;
-> +}
-> +
->  #endif /* _ASM_GENERIC_SECTIONS_H_ */
-> diff --git a/mm/util.c b/mm/util.c
-> index 9e3ebd2ef65f..470f5cd80b64 100644
-> --- a/mm/util.c
-> +++ b/mm/util.c
-> @@ -15,17 +15,10 @@
->  #include <linux/vmalloc.h>
->  #include <linux/userfaultfd_k.h>
-> 
-> -#include <asm/sections.h>
->  #include <linux/uaccess.h>
-> 
->  #include "internal.h"
-> 
-> -static inline int is_kernel_rodata(unsigned long addr)
-> -{
-> -	return addr >= (unsigned long)__start_rodata &&
-> -		addr < (unsigned long)__end_rodata;
-> -}
-> -
->  /**
->   * kfree_const - conditionally free memory
->   * @x: pointer to the memory
-> -- 
-> 2.18.0
-> 
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+---
+ drivers/clk/imx/Makefile       |   3 +-
+ drivers/clk/imx/clk-sccg-pll.c | 237 +++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/imx/clk.h          |   9 ++
+ 3 files changed, 248 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/imx/clk-sccg-pll.c
 
+diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
+index 4893c1f..b87513c 100644
+--- a/drivers/clk/imx/Makefile
++++ b/drivers/clk/imx/Makefile
+@@ -12,7 +12,8 @@ obj-y += \
+ 	clk-pllv1.o \
+ 	clk-pllv2.o \
+ 	clk-pllv3.o \
+-	clk-pfd.o
++	clk-pfd.o \
++	clk-sccg-pll.o
+ 
+ obj-$(CONFIG_SOC_IMX1)   += clk-imx1.o
+ obj-$(CONFIG_SOC_IMX21)  += clk-imx21.o
+diff --git a/drivers/clk/imx/clk-sccg-pll.c b/drivers/clk/imx/clk-sccg-pll.c
+new file mode 100644
+index 0000000..a9837fa
+--- /dev/null
++++ b/drivers/clk/imx/clk-sccg-pll.c
+@@ -0,0 +1,237 @@
++// SPDX-License-Identifier: (GPL-2.0 OR MIT)
++/*
++ * Copyright 2018 NXP.
++ */
++
++#include <linux/clk.h>
++#include <linux/err.h>
++#include <linux/io.h>
++#include <linux/iopoll.h>
++#include <linux/slab.h>
++#include <linux/delay.h>
++#include <linux/bitfield.h>
++
++#include "clk.h"
++
++/* PLL CFGs */
++#define PLL_CFG0		0x0
++#define PLL_CFG1		0x4
++#define PLL_CFG2		0x8
++
++#define PLL_DIVF1_MASK		GENMASK(18, 13)
++#define PLL_DIVF2_MASK		GENMASK(12, 7)
++#define PLL_DIVR1_MASK		GENMASK(27, 25)
++#define PLL_DIVR2_MASK		GENMASK(24, 19)
++#define PLL_REF_MASK		GENMASK(2, 0)
++
++#define PLL_LOCK_MASK		BIT(31)
++#define PLL_PD_MASK		BIT(7)
++
++#define OSC_25M			25000000
++#define OSC_27M			27000000
++
++#define PLL_SCCG_LOCK_TIMEOUT	70
++
++struct clk_sccg_pll {
++	struct clk_hw	hw;
++	void __iomem	*base;
++};
++
++#define to_clk_sccg_pll(_hw) container_of(_hw, struct clk_sccg_pll, hw)
++
++static int clk_pll_wait_lock(struct clk_sccg_pll *pll)
++{
++	u32 val;
++
++	return readl_poll_timeout(pll->base, val, val & PLL_LOCK_MASK, 0,
++					PLL_SCCG_LOCK_TIMEOUT);
++}
++
++static int clk_pll1_is_prepared(struct clk_hw *hw)
++{
++	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
++	u32 val;
++
++	val = readl_relaxed(pll->base + PLL_CFG0);
++	return (val & PLL_PD_MASK) ? 0 : 1;
++}
++
++static unsigned long clk_pll1_recalc_rate(struct clk_hw *hw,
++					 unsigned long parent_rate)
++{
++	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
++	u32 val, divf;
++
++	val = readl_relaxed(pll->base + PLL_CFG2);
++	divf = FIELD_GET(PLL_DIVF1_MASK, val);
++
++	return parent_rate * 2 * (divf + 1);
++}
++
++static long clk_pll1_round_rate(struct clk_hw *hw, unsigned long rate,
++			       unsigned long *prate)
++{
++	unsigned long parent_rate = *prate;
++	u32 div;
++
++	div = rate / (parent_rate * 2);
++
++	return parent_rate * div * 2;
++}
++
++static int clk_pll1_set_rate(struct clk_hw *hw, unsigned long rate,
++			    unsigned long parent_rate)
++{
++	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
++	u32 val;
++	u32 divf;
++
++	divf = rate / (parent_rate * 2);
++
++	val = readl_relaxed(pll->base + PLL_CFG2);
++	val &= ~PLL_DIVF1_MASK;
++	val |= FIELD_PREP(PLL_DIVF1_MASK, divf - 1);
++	writel_relaxed(val, pll->base + PLL_CFG2);
++
++	return clk_pll_wait_lock(pll);
++}
++
++static int clk_pll1_prepare(struct clk_hw *hw)
++{
++	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
++	u32 val;
++
++	val = readl_relaxed(pll->base + PLL_CFG0);
++	val &= ~PLL_PD_MASK;
++	writel_relaxed(val, pll->base + PLL_CFG0);
++
++	return clk_pll_wait_lock(pll);
++}
++
++static void clk_pll1_unprepare(struct clk_hw *hw)
++{
++	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
++	u32 val;
++
++	val = readl_relaxed(pll->base + PLL_CFG0);
++	val |= PLL_PD_MASK;
++	writel_relaxed(val, pll->base + PLL_CFG0);
++
++}
++
++static unsigned long clk_pll2_recalc_rate(struct clk_hw *hw,
++					 unsigned long parent_rate)
++{
++	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
++	u32 val, ref, divr1, divf1, divr2, divf2;
++	u64 temp64;
++
++	val = readl_relaxed(pll->base + PLL_CFG0);
++	switch (FIELD_GET(PLL_REF_MASK, val)) {
++	case 0:
++		ref = OSC_25M;
++		break;
++	case 1:
++		ref = OSC_27M;
++		break;
++	default:
++		ref = OSC_25M;
++		break;
++	}
++
++	val = readl_relaxed(pll->base + PLL_CFG2);
++	divr1 = FIELD_GET(PLL_DIVR1_MASK, val);
++	divr2 = FIELD_GET(PLL_DIVR2_MASK, val);
++	divf1 = FIELD_GET(PLL_DIVF1_MASK, val);
++	divf2 = FIELD_GET(PLL_DIVF2_MASK, val);
++
++	temp64 = ref * 2;
++	temp64 *= (divf1 + 1) * (divf2 + 1);
++
++	do_div(temp64, (divr1 + 1) * (divr2 + 1));
++
++	return (unsigned long)temp64;
++}
++
++static long clk_pll2_round_rate(struct clk_hw *hw, unsigned long rate,
++			       unsigned long *prate)
++{
++	u32 div;
++	unsigned long parent_rate = *prate;
++
++	div = rate / (parent_rate);
++
++	return parent_rate * div;
++}
++
++static int clk_pll2_set_rate(struct clk_hw *hw, unsigned long rate,
++			    unsigned long parent_rate)
++{
++	u32 val;
++	u32 divf;
++	struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
++
++	divf = rate / (parent_rate);
++
++	val = readl_relaxed(pll->base + PLL_CFG2);
++	val &= ~PLL_DIVF2_MASK;
++	val |= FIELD_PREP(PLL_DIVF2_MASK, divf - 1);
++	writel_relaxed(val, pll->base + PLL_CFG2);
++
++	return clk_pll_wait_lock(pll);
++}
++
++static const struct clk_ops clk_sccg_pll1_ops = {
++	.is_prepared	= clk_pll1_is_prepared,
++	.recalc_rate	= clk_pll1_recalc_rate,
++	.round_rate	= clk_pll1_round_rate,
++	.set_rate	= clk_pll1_set_rate,
++};
++
++static const struct clk_ops clk_sccg_pll2_ops = {
++	.prepare	= clk_pll1_prepare,
++	.unprepare	= clk_pll1_unprepare,
++	.recalc_rate	= clk_pll2_recalc_rate,
++	.round_rate	= clk_pll2_round_rate,
++	.set_rate	= clk_pll2_set_rate,
++};
++
++struct clk *imx_clk_sccg_pll(const char *name,
++				const char *parent_name,
++				void __iomem *base,
++				enum imx_sccg_pll_type pll_type)
++{
++	struct clk_sccg_pll *pll;
++	struct clk *clk;
++	struct clk_init_data init;
++
++	pll = kzalloc(sizeof(*pll), GFP_KERNEL);
++	if (!pll)
++		return ERR_PTR(-ENOMEM);
++
++	pll->base = base;
++	init.name = name;
++	switch (pll_type) {
++	case SCCG_PLL1:
++		init.ops = &clk_sccg_pll1_ops;
++		break;
++	case SCCG_PLL2:
++		init.ops = &clk_sccg_pll2_ops;
++		break;
++	default:
++		kfree(pll);
++		return ERR_PTR(-EINVAL);
++	}
++
++	init.flags = 0;
++	init.parent_names = &parent_name;
++	init.num_parents = 1;
++
++	pll->hw.init = &init;
++
++	clk = clk_register(NULL, &pll->hw);
++	if (IS_ERR(clk))
++		kfree(pll);
++
++	return clk;
++}
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index 13daf1c..12b3fd6 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -21,6 +21,11 @@ enum imx_pllv1_type {
+ 	IMX_PLLV1_IMX35,
+ };
+ 
++enum imx_sccg_pll_type {
++	SCCG_PLL1,
++	SCCG_PLL2,
++};
++
+ struct clk *imx_clk_pllv1(enum imx_pllv1_type type, const char *name,
+ 		const char *parent, void __iomem *base);
+ 
+@@ -30,6 +35,10 @@ struct clk *imx_clk_pllv2(const char *name, const char *parent,
+ struct clk *imx_clk_frac_pll(const char *name, const char *parent_name,
+ 			     void __iomem *base);
+ 
++struct clk *imx_clk_sccg_pll(const char *name, const char *parent_name,
++			     void __iomem *base,
++			     enum imx_sccg_pll_type pll_type);
++
+ enum imx_pllv3_type {
+ 	IMX_PLLV3_GENERIC,
+ 	IMX_PLLV3_SYS,
 -- 
-Sincerely yours,
-Mike.
+2.7.4
