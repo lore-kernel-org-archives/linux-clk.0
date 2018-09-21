@@ -1,160 +1,251 @@
-Return-Path: <anson.huang@nxp.com>
-From: Anson Huang <Anson.Huang@nxp.com>
-To: robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	fabio.estevam@nxp.com,
-	linux@armlinux.org.uk,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	ping.bai@nxp.com,
-	Aisheng.dong@nxp.com,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Cc: Linux-imx@nxp.com
-Subject: [PATCH V2 1/4] ARM: imx: add i.mx6ulz msl support
-Date: Wed, 19 Sep 2018 14:04:45 +0800
-Message-Id: <1537337088-28819-2-git-send-email-Anson.Huang@nxp.com>
-In-Reply-To: <1537337088-28819-1-git-send-email-Anson.Huang@nxp.com>
-References: <1537337088-28819-1-git-send-email-Anson.Huang@nxp.com>
+Return-Path: <andrew.smirnov@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-Path: Anson.Huang@nxp.com
+References: <1537438000-20313-1-git-send-email-abel.vesa@nxp.com> <1537438000-20313-5-git-send-email-abel.vesa@nxp.com>
+In-Reply-To: <1537438000-20313-5-git-send-email-abel.vesa@nxp.com>
+From: Andrey Smirnov <andrew.smirnov@gmail.com>
+Date: Thu, 20 Sep 2018 17:01:56 -0700
+Message-ID: <CAHQ1cqEZ4_xR+Xhbt6Deiqn9dFPx7hfVKfsMXjfGTe6QisVG_A@mail.gmail.com>
+Subject: Re: [PATCH v7 4/5] clk: imx: add imx composite clock
+To: Abel Vesa <abel.vesa@nxp.com>
+Cc: Lucas Stach <l.stach@pengutronix.de>, Sascha Hauer <kernel@pengutronix.de>,
+	Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <fabio.estevam@nxp.com>,
+	Anson Huang <anson.huang@nxp.com>, Rob Herring <robh@kernel.org>, linux-imx@nxp.com,
+	abelvesa@linux.com, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>, Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-The i.MX 6ULZ processor is a high-performance, ultra
-cost-efficient consumer Linux processor featuring an
-advanced implementation of a single Arm® Cortex®-A7 core,
-which operates at speeds up to 900 MHz.
+On Thu, Sep 20, 2018 at 3:07 AM Abel Vesa <abel.vesa@nxp.com> wrote:
+>
+> Since a lot of clocks on imx8 are formed by a mux, gate, predivider and
+> divider, the idea here is to combine all of those into one composite clock,
+> but we need to deal with both predivider and divider at the same time and
+> therefore we add the imx_clk_composite_divider_ops and register the composite
+> clock with those.
+>
+> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+> Suggested-by: Sascha Hauer <s.hauer@pengutronix.de>
+> ---
+>  drivers/clk/imx/Makefile        |   1 +
+>  drivers/clk/imx/clk-composite.c | 155 ++++++++++++++++++++++++++++++++++++++++
+>  drivers/clk/imx/clk.h           |  11 +++
+>  3 files changed, 167 insertions(+)
+>  create mode 100644 drivers/clk/imx/clk-composite.c
+>
+> diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
+> index b87513c..4fabb0a 100644
+> --- a/drivers/clk/imx/Makefile
+> +++ b/drivers/clk/imx/Makefile
+> @@ -3,6 +3,7 @@
+>  obj-y += \
+>         clk.o \
+>         clk-busy.o \
+> +       clk-composite.o \
+>         clk-cpu.o \
+>         clk-fixup-div.o \
+>         clk-fixup-mux.o \
+> diff --git a/drivers/clk/imx/clk-composite.c b/drivers/clk/imx/clk-composite.c
+> new file mode 100644
+> index 0000000..40c2aa8
+> --- /dev/null
+> +++ b/drivers/clk/imx/clk-composite.c
+> @@ -0,0 +1,155 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright 2018 NXP
+> + */
+> +
+> +#include <linux/errno.h>
+> +#include <linux/slab.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/clk.h>
+> +
+> +#include "clk.h"
+> +
+> +#define PCG_PREDIV_SHIFT       16
+> +#define PCG_PREDIV_WIDTH       3
+> +
+> +#define PCG_DIV_SHIFT          0
+> +#define PCG_DIV_WIDTH          6
+> +
+> +#define PCG_PCS_SHIFT          24
+> +#define PCG_PCS_MASK           0x7
+> +
+> +#define PCG_CGC_SHIFT          28
+> +
+> +static unsigned long imx_clk_composite_divider_recalc_rate(struct clk_hw *hw,
+> +                                               unsigned long parent_rate)
+> +{
+> +       struct clk_divider *divider = to_clk_divider(hw);
+> +       unsigned long prediv_rate;
+> +       unsigned int prediv_value;
+> +       unsigned int div_value;
+> +
+> +       prediv_value = clk_readl(divider->reg) >> divider->shift;
+> +       prediv_value &= clk_div_mask(divider->width);
+> +
+> +       prediv_rate = divider_recalc_rate(hw, parent_rate, prediv_value,
+> +                                               NULL, divider->flags,
+> +                                               divider->width);
+> +
+> +       div_value = clk_readl(divider->reg) >> PCG_DIV_SHIFT;
+> +       div_value &= clk_div_mask(PCG_DIV_WIDTH);
+> +
+> +       return divider_recalc_rate(hw, prediv_rate, div_value, NULL,
+> +                                  divider->flags, PCG_DIV_WIDTH);
+> +}
+> +
+> +static long imx_clk_composite_divider_round_rate(struct clk_hw *hw,
+> +                                               unsigned long rate,
+> +                                               unsigned long *prate)
+> +{
+> +       struct clk_divider *divider = to_clk_divider(hw);
+> +       unsigned long prediv_rate;
+> +
+> +       prediv_rate = divider_round_rate(hw, rate, prate, divider->table,
+> +                                 divider->width, divider->flags);
+> +       return divider_round_rate(hw, rate, &prediv_rate, divider->table,
+> +                                 PCG_DIV_WIDTH, divider->flags);
+> +}
+> +
+> +static int imx_clk_composite_divider_set_rate(struct clk_hw *hw,
+> +                                       unsigned long rate,
+> +                                       unsigned long parent_rate)
+> +{
+> +       struct clk_divider *divider = to_clk_divider(hw);
+> +       unsigned long prediv_rate;
+> +       unsigned long flags = 0;
+> +       int prediv_value;
+> +       int div_value;
+> +       u32 val;
+> +
+> +       prediv_value = divider_get_val(rate, parent_rate, NULL,
+> +                               PCG_PREDIV_WIDTH, CLK_DIVIDER_ROUND_CLOSEST);
+> +       if (prediv_value < 0)
+> +               return prediv_value;
+> +
+> +       prediv_rate = DIV_ROUND_UP_ULL((u64)parent_rate, prediv_value + 1);
+> +
+> +       div_value = divider_get_val(rate, prediv_rate, NULL,
+> +                               PCG_DIV_WIDTH, CLK_DIVIDER_ROUND_CLOSEST);
+> +       if (div_value < 0)
+> +               return div_value;
+> +
+> +       spin_lock_irqsave(divider->lock, flags);
+> +
+> +       val = clk_readl(divider->reg);
+> +       val &= ~((clk_div_mask(divider->width) << divider->shift) |
+> +                       (clk_div_mask(PCG_DIV_WIDTH) << PCG_DIV_SHIFT));
+> +
+> +       val |= (u32)prediv_value << divider->shift;
+> +       val |= (u32)div_value << PCG_DIV_SHIFT;
+> +       clk_writel(val, divider->reg);
+> +
+> +       spin_unlock_irqrestore(divider->lock, flags);
+> +
+> +       return 0;
+> +}
+> +
+> +static const struct clk_ops imx_clk_composite_divider_ops = {
+> +       .recalc_rate = imx_clk_composite_divider_recalc_rate,
+> +       .round_rate = imx_clk_composite_divider_round_rate,
+> +       .set_rate = imx_clk_composite_divider_set_rate,
+> +};
+> +
+> +struct clk *imx_clk_composite_flags(const char *name,
+> +                                       const char **parent_names,
+> +                                       int num_parents, void __iomem *reg,
+> +                                       unsigned long flags)
+> +{
+> +       struct clk_hw *mux_hw = NULL, *div_hw = NULL, *gate_hw = NULL;
+> +       struct clk_divider *div = NULL;
+> +       struct clk_gate *gate = NULL;
+> +       struct clk_mux *mux = NULL;
+> +       struct clk *clk;
+> +
+> +       mux = kzalloc(sizeof(*mux), GFP_KERNEL);
+> +       if (!mux)
+> +               return ERR_PTR(-ENOMEM);
+> +       mux_hw = &mux->hw;
+> +       mux->reg = reg;
+> +       mux->shift = PCG_PCS_SHIFT;
+> +       mux->mask = PCG_PCS_MASK;
+> +
+> +       div = kzalloc(sizeof(*div), GFP_KERNEL);
+> +       if (!div) {
+> +               kfree(mux);
+> +               return ERR_PTR(-ENOMEM);
+> +       }
+> +       div_hw = &div->hw;
+> +       div->reg = reg;
+> +       div->shift = PCG_PREDIV_SHIFT;
+> +       div->width = PCG_PREDIV_WIDTH;
+> +       div->lock = &imx_ccm_lock;
+> +       div->flags = CLK_DIVIDER_ROUND_CLOSEST;
+> +
+> +       gate = kzalloc(sizeof(*gate), GFP_KERNEL);
+> +       if (!gate) {
+> +               kfree(mux);
+> +               kfree(div);
+> +               return ERR_PTR(-ENOMEM);
+> +       }
+> +       gate_hw = &gate->hw;
+> +       gate->reg = reg;
+> +       gate->bit_idx = PCG_CGC_SHIFT;
+> +
+> +       clk = clk_register_composite(NULL, name, parent_names, num_parents,
+> +                                       mux_hw, &clk_mux_ops, div_hw,
+> +                                       &imx_clk_composite_divider_ops, gate_hw,
+> +                                       &clk_gate_ops, flags);
+> +       if (IS_ERR(clk)) {
+> +               kfree(mux);
+> +               kfree(div);
+> +               kfree(gate);
 
-This patch adds basic MSL support for i.MX6ULZ, the
-i.MX6ULZ has same soc_id as i.MX6ULL, and SRC_SBMR2 bit[6]
-is to differentiate i.MX6ULZ from i.MX6ULL, 1'b1 means
-i.MX6ULZ and 1'b0 means i.MX6ULL.
+Minor suggestion: using goto to free resource in this case might be
+more straightforward and require less repeatition.
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- arch/arm/mach-imx/anatop.c      | 20 ++++++++++++++++++++
- arch/arm/mach-imx/cpu.c         |  3 +++
- arch/arm/mach-imx/mach-imx6ul.c |  1 +
- arch/arm/mach-imx/mxc.h         |  7 +++++++
- arch/arm/mach-imx/pm-imx6.c     |  4 ++--
- 5 files changed, 33 insertions(+), 2 deletions(-)
+> +       }
+> +
+> +       return clk;
+> +}
+> diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+> index 12b3fd6..74d8d46 100644
+> --- a/drivers/clk/imx/clk.h
+> +++ b/drivers/clk/imx/clk.h
+> @@ -232,4 +232,15 @@ struct clk *imx_clk_cpu(const char *name, const char *parent_name,
+>                 struct clk *div, struct clk *mux, struct clk *pll,
+>                 struct clk *step);
+>
+> +struct clk *imx_clk_composite_flags(const char *name, const char **parent_names,
+> +               int num_parents, void __iomem *reg, unsigned long flags);
+> +
+> +#define imx_clk_composite(name, parent_names, reg) \
+> +       imx_clk_composite_flags(name, parent_names, ARRAY_SIZE(parent_names), reg, \
+> +                                       CLK_SET_RATE_NO_REPARENT | CLK_OPS_PARENT_ENABLE)
+> +
+> +#define imx_clk_composite_critical(name, parent_names, reg) \
+> +       imx_clk_composite_flags(name, parent_names, ARRAY_SIZE(parent_names), reg, \
+> +                               CLK_IS_CRITICAL | CLK_SET_RATE_NO_REPARENT | CLK_OPS_PARENT_ENABLE)
 
-diff --git a/arch/arm/mach-imx/anatop.c b/arch/arm/mach-imx/anatop.c
-index 61f3d94..45d618a 100644
---- a/arch/arm/mach-imx/anatop.c
-+++ b/arch/arm/mach-imx/anatop.c
-@@ -31,6 +31,8 @@
- #define ANADIG_DIGPROG_IMX6SL	0x280
- #define ANADIG_DIGPROG_IMX7D	0x800
- 
-+#define SRC_SBMR2		0x1c
-+
- #define BM_ANADIG_REG_2P5_ENABLE_WEAK_LINREG	0x40000
- #define BM_ANADIG_REG_2P5_ENABLE_PULLDOWN	0x8
- #define BM_ANADIG_REG_CORE_FET_ODRIVE		0x20000000
-@@ -148,6 +150,24 @@ void __init imx_init_revision_from_anatop(void)
- 		major_part = (digprog >> 8) & 0xf;
- 		minor_part = digprog & 0xf;
- 		revision = ((major_part + 1) << 4) | minor_part;
-+
-+		if ((digprog >> 16) == MXC_CPU_IMX6ULL) {
-+			void __iomem *src_base;
-+			u32 sbmr2;
-+
-+			np = of_find_compatible_node(NULL, NULL,
-+						     "fsl,imx6ul-src");
-+			src_base = of_iomap(np, 0);
-+			WARN_ON(!src_base);
-+			sbmr2 = readl_relaxed(src_base + SRC_SBMR2);
-+			iounmap(src_base);
-+
-+			/* src_sbmr2 bit 6 is to identify if it is i.MX6ULZ */
-+			if (sbmr2 & (1 << 6)) {
-+				digprog &= ~(0xff << 16);
-+				digprog |= (MXC_CPU_IMX6ULZ << 16);
-+			}
-+		}
- 	}
- 
- 	mxc_set_cpu_type(digprog >> 16 & 0xff);
-diff --git a/arch/arm/mach-imx/cpu.c b/arch/arm/mach-imx/cpu.c
-index c6b1bf9..c73593e 100644
---- a/arch/arm/mach-imx/cpu.c
-+++ b/arch/arm/mach-imx/cpu.c
-@@ -136,6 +136,9 @@ struct device * __init imx_soc_device_init(void)
- 	case MXC_CPU_IMX6ULL:
- 		soc_id = "i.MX6ULL";
- 		break;
-+	case MXC_CPU_IMX6ULZ:
-+		soc_id = "i.MX6ULZ";
-+		break;
- 	case MXC_CPU_IMX6SLL:
- 		soc_id = "i.MX6SLL";
- 		break;
-diff --git a/arch/arm/mach-imx/mach-imx6ul.c b/arch/arm/mach-imx/mach-imx6ul.c
-index 6cb8a22..4ffe3c8 100644
---- a/arch/arm/mach-imx/mach-imx6ul.c
-+++ b/arch/arm/mach-imx/mach-imx6ul.c
-@@ -90,6 +90,7 @@ static void __init imx6ul_init_late(void)
- static const char * const imx6ul_dt_compat[] __initconst = {
- 	"fsl,imx6ul",
- 	"fsl,imx6ull",
-+	"fsl,imx6ulz",
- 	NULL,
- };
- 
-diff --git a/arch/arm/mach-imx/mxc.h b/arch/arm/mach-imx/mxc.h
-index 026e2ca..b130a53 100644
---- a/arch/arm/mach-imx/mxc.h
-+++ b/arch/arm/mach-imx/mxc.h
-@@ -40,6 +40,8 @@
- #define MXC_CPU_IMX6Q		0x63
- #define MXC_CPU_IMX6UL		0x64
- #define MXC_CPU_IMX6ULL		0x65
-+/* virtual cpu id for i.mx6ulz */
-+#define MXC_CPU_IMX6ULZ		0x6b
- #define MXC_CPU_IMX6SLL		0x67
- #define MXC_CPU_IMX7D		0x72
- 
-@@ -80,6 +82,11 @@ static inline bool cpu_is_imx6ull(void)
- 	return __mxc_cpu_type == MXC_CPU_IMX6ULL;
- }
- 
-+static inline bool cpu_is_imx6ulz(void)
-+{
-+	return __mxc_cpu_type == MXC_CPU_IMX6ULZ;
-+}
-+
- static inline bool cpu_is_imx6sll(void)
- {
- 	return __mxc_cpu_type == MXC_CPU_IMX6SLL;
-diff --git a/arch/arm/mach-imx/pm-imx6.c b/arch/arm/mach-imx/pm-imx6.c
-index 529f4b5..87f45b9 100644
---- a/arch/arm/mach-imx/pm-imx6.c
-+++ b/arch/arm/mach-imx/pm-imx6.c
-@@ -313,7 +313,7 @@ int imx6_set_lpm(enum mxc_cpu_pwr_mode mode)
- 		if (cpu_is_imx6sl())
- 			val |= BM_CLPCR_BYPASS_PMIC_READY;
- 		if (cpu_is_imx6sl() || cpu_is_imx6sx() || cpu_is_imx6ul() ||
--		    cpu_is_imx6ull() || cpu_is_imx6sll())
-+		    cpu_is_imx6ull() || cpu_is_imx6sll() || cpu_is_imx6ulz())
- 			val |= BM_CLPCR_BYP_MMDC_CH0_LPM_HS;
- 		else
- 			val |= BM_CLPCR_BYP_MMDC_CH1_LPM_HS;
-@@ -331,7 +331,7 @@ int imx6_set_lpm(enum mxc_cpu_pwr_mode mode)
- 		if (cpu_is_imx6sl() || cpu_is_imx6sx())
- 			val |= BM_CLPCR_BYPASS_PMIC_READY;
- 		if (cpu_is_imx6sl() || cpu_is_imx6sx() || cpu_is_imx6ul() ||
--		    cpu_is_imx6ull() || cpu_is_imx6sll())
-+		    cpu_is_imx6ull() || cpu_is_imx6sll() || cpu_is_imx6ulz())
- 			val |= BM_CLPCR_BYP_MMDC_CH0_LPM_HS;
- 		else
- 			val |= BM_CLPCR_BYP_MMDC_CH1_LPM_HS;
--- 
-2.7.4
+Another minor suggestion is to define a intermediary macro and define
+both imx_clk_composite_critical() and imx_clk_composite() in terms of
+it. Say:
+
+#define __imx_clk_composite(name, parent_names, reg, flags) \
+    imx_clk_composite_flags(name, parent_names, ARRAY_SIZE(parent_names), reg, \
+                                             flags |
+CLK_SET_RATE_NO_REPARENT | CLK_OPS_PARENT_ENABLE)
+
+#define imx_clk_composite(name, parent_names, reg)
+__imx_clk_composite_flags(name, parent_names, reg, 0)
+#define imx_clk_composite_critical(name, parent_names, reg)
+__imx_clk_composite_flags(name, parent_names, reg, CLK_IS_CRITICAL)
+
+this way it might be a bit easier to spot that the only difference
+between the two is CLK_IS_CRITICAL.
+
+Thanks,
+Andrey Smirnov
