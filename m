@@ -1,54 +1,49 @@
-Return-Path: <jagan@amarulasolutions.com>
-Return-Path: <jagan@amarulasolutions.com>
-From: Jagan Teki <jagan@amarulasolutions.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Icenowy Zheng <icenowy@aosc.io>,
-	Jernej Skrabec <jernej.skrabec@siol.net>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Cc: Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v4 2/4] arm64: defconfig: Enable CONFIG_DRM_SUN4I
-Date: Tue,  4 Sep 2018 22:06:07 +0530
-Message-Id: <20180904163609.10171-2-jagan@amarulasolutions.com>
-In-Reply-To: <20180904163609.10171-1-jagan@amarulasolutions.com>
-References: <20180904163609.10171-1-jagan@amarulasolutions.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Date: Fri, 21 Sep 2018 11:52:58 -0700
+From: Lee Jones <lee.jones@linaro.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        robh+dt@kernel.org, mark.rutland@arm.com, lgirdwood@gmail.com,
+        sboyd@kernel.org, mazziesaccount@gmail.com,
+        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 1/7] regulator/mfd: Support ROHM BD71847 power
+ management IC
+Message-ID: <20180921185258.GC4358@dell>
+References: <cover.1536912922.git.matti.vaittinen@fi.rohmeurope.com>
+ <3996792a07fea45d94d4d712ed05527199cc4ac0.1536912922.git.matti.vaittinen@fi.rohmeurope.com>
+ <20180921172959.GG20825@sirena.org.uk>
+ <20180921180241.GA4358@dell>
+ <20180921181217.GI20825@sirena.org.uk>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180921181217.GI20825@sirena.org.uk>
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Enable DRM Support for Allwinner Display Engine, built as a module.
+On Fri, 21 Sep 2018, Mark Brown wrote:
 
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
----
-Changes for v4, v3, v2:
-- none
+> On Fri, Sep 21, 2018 at 11:02:41AM -0700, Lee Jones wrote:
+> > On Fri, 21 Sep 2018, Mark Brown wrote:
+> 
+> > > This looks OK to me - Lee, the patch is almost entirely a regulator one,
+> > > are you OK with me applying it?
+> 
+> > The diff in rohm-bd718x7.h does not look significant.
+> 
+> > You can apply it so long as you provide me with a PR in order to avoid
+> > any potential merge conflicts.  Especially as Linus is out for this
+> > release.
+> 
+> Great, thanks.  There's also the MFD DT bindings and another patch later
+> on with Acked-for-MFD tags on them, should I convert the tags to acks,
+> apply those as well and include them in the pull request?
 
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Please.
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index f67e8d5e93ad..4919e4577548 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -433,6 +433,7 @@ CONFIG_DRM_EXYNOS_DSI=y
- CONFIG_DRM_EXYNOS_HDMI=y
- CONFIG_DRM_EXYNOS_MIC=y
- CONFIG_DRM_ROCKCHIP=m
-+CONFIG_DRM_SUN4I=m
- CONFIG_ROCKCHIP_ANALOGIX_DP=y
- CONFIG_ROCKCHIP_CDN_DP=y
- CONFIG_ROCKCHIP_DW_HDMI=y
 -- 
-2.18.0.321.gffc6fa0e3
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
