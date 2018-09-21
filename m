@@ -1,74 +1,65 @@
-Return-Path: <ore@pengutronix.de>
-Date: Fri, 7 Sep 2018 09:35:59 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Mark Brown <broonie@kernel.org>
-Cc: Shawn Guo <shawnguo@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	devicetree@vger.kernel.org, yibin.gong@nxp.com,
-	Michael Turquette <mturquette@baylibre.com>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>, linux-imx@nxp.com,
-	kernel@pengutronix.de, "A.s. Dong" <aisheng.dong@nxp.com>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Leonard Crestez <leonard.crestez@nxp.com>,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v9 3/6] kernel/reboot.c: export pm_power_off_prepare
-Message-ID: <20180907073559.ejffdfjy7zpqetzq@pengutronix.de>
-References: <20180802103425.3053-1-o.rempel@pengutronix.de>
- <20180802103425.3053-4-o.rempel@pengutronix.de>
- <20180802104443.GH9117@sirena.org.uk>
- <94d48ecb-7302-c7ed-e815-730be0426a04@pengutronix.de>
- <20180802113552.GJ9117@sirena.org.uk>
- <20180827014815.GD29208@dragon>
- <20180906101516.GA5360@sirena.org.uk>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44198 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390076AbeIVAC3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Sep 2018 20:02:29 -0400
+Date: Fri, 21 Sep 2018 11:12:17 -0700
+From: Mark Brown <broonie@kernel.org>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        robh+dt@kernel.org, mark.rutland@arm.com, lgirdwood@gmail.com,
+        sboyd@kernel.org, mazziesaccount@gmail.com,
+        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 1/7] regulator/mfd: Support ROHM BD71847 power
+ management IC
+Message-ID: <20180921181217.GI20825@sirena.org.uk>
+References: <cover.1536912922.git.matti.vaittinen@fi.rohmeurope.com>
+ <3996792a07fea45d94d4d712ed05527199cc4ac0.1536912922.git.matti.vaittinen@fi.rohmeurope.com>
+ <20180921172959.GG20825@sirena.org.uk>
+ <20180921180241.GA4358@dell>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="hv37p32vqzzbscv3"
-In-Reply-To: <20180906101516.GA5360@sirena.org.uk>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="byLs0wutDcxFdwtm"
+In-Reply-To: <20180921180241.GA4358@dell>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
 
---hv37p32vqzzbscv3
+--byLs0wutDcxFdwtm
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi Mark,
+On Fri, Sep 21, 2018 at 11:02:41AM -0700, Lee Jones wrote:
+> On Fri, 21 Sep 2018, Mark Brown wrote:
 
-On Thu, Sep 06, 2018 at 11:15:17AM +0100, Mark Brown wrote:
-> On Mon, Aug 27, 2018 at 09:48:16AM +0800, Shawn Guo wrote:
->=20
-> > Can you ACK on those two regulator patches, so that I can queue this
-> > series up on IMX tree?
->=20
-> I was expecting to get a pull request with the precursor patches in it -
-> the regulator driver seems to get a moderate amount of development so
-> there's a reasonable risk of conflicts.
+> > This looks OK to me - Lee, the patch is almost entirely a regulator one,
+> > are you OK with me applying it?
 
-Are there any thing I can or should do?
+> The diff in rohm-bd718x7.h does not look significant.
 
---=20
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+> You can apply it so long as you provide me with a PR in order to avoid
+> any potential merge conflicts.  Especially as Linus is out for this
+> release.
 
---hv37p32vqzzbscv3
+Great, thanks.  There's also the MFD DT bindings and another patch later
+on with Acked-for-MFD tags on them, should I convert the tags to acks,
+apply those as well and include them in the pull request?
+
+--byLs0wutDcxFdwtm
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCAAdFiEEpENFL0P3hvQ7p0DDdQOiSHVI77QFAluSKlwACgkQdQOiSHVI
-77SbiAf/Vo61tQX0DvUQYecE1iy7j6lBfvQsrNZrltl+fBM5WCwbqszQiK9ADiyg
-1/dLFR3VlCJXlgNTF1wcz1NymDAyStRkDR1670WY6x/qJeBwzNx7OHQuGQJtmj4G
-m8+GmT/AApfITmEr4sShF8TmkMu1wtXw4QFVj0hwBjAbAztWMqAlTt9TWOkoykoL
-4n2HuWWh7LUdq8A9ggGavw4YBSTA/fVHgpQdzAhK+mCDA7UGOyEf9r2AiG1eXa/q
-u+GXp9OQ5UNjbG5PW9v3NNZqsti/YJoN2bmqfmRHCgDARwNiusxa/IA3+CbAucop
-mJhmzM0+g7O9CKbs9Wqeag+7fTmhjw==
-=ncWt
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlulNH4ACgkQJNaLcl1U
+h9DfCwf/QRitJXFwyEvF50vNqxKDcwssX4NjRuVep4MnngUEVqS0EglOeKChgTVe
+wMCqzduSR6k4t91hxuSSgm/p7PuXDFEDnr2fnhHGWyY1Jsw2AAPDpja67xPguNAx
+6DeBbNlkbKTM8qVoEHYLjm57eZKO9VwH2Y3RJt8xRh3occL+XYVuZRb6U2XpErfr
+P/iH1uHitrBdZMBx5datBKNlTe7Gi1ETpLq1viJ0b2hT+7XgOZy9MZikIzSU9Zgo
++s2sFVJZIurlgyZjD5PpciXsvMZPxWIDBVrnDZ0HVYqQhtot1Dts3XVlHZ3ZhMgz
+/VXk2Emz8TkLq3RMLSqlEtOXsHwHsg==
+=uNGQ
 -----END PGP SIGNATURE-----
 
---hv37p32vqzzbscv3--
+--byLs0wutDcxFdwtm--
