@@ -1,64 +1,90 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: robh+dt@kernel.org,
-	maxime.ripard@bootlin.com,
-	wens@csie.org
-Cc: mark.rutland@arm.com,
-	mturquette@baylibre.com,
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: mturquette@baylibre.com,
 	sboyd@kernel.org,
-	airlied@linux.ie,
-	architt@codeaurora.org,
-	a.hajda@samsung.com,
-	jernej.skrabec@siol.net,
+	robh+dt@kernel.org,
+	xuwei5@hisilicon.com
+Cc: linux-arm-kernel@lists.infradead.org,
 	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
+	amit.kucheria@linaro.org,
 	linux-clk@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-sunxi@googlegroups.com,
-	Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH 03/27] dt-bindings: bus: add H6 DE3 bus binding
-Date: Sun,  2 Sep 2018 09:26:19 +0200
-Message-Id: <20180902072643.4917-4-jernej.skrabec@siol.net>
-In-Reply-To: <20180902072643.4917-1-jernej.skrabec@siol.net>
-References: <20180902072643.4917-1-jernej.skrabec@siol.net>
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH 2/4] arm64: dts: hisilicon: Add clock nodes for Hi3670 SoC
+Date: Thu, 20 Sep 2018 23:01:01 -0700
+Message-Id: <20180921060103.21370-3-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20180921060103.21370-1-manivannan.sadhasivam@linaro.org>
+References: <20180921060103.21370-1-manivannan.sadhasivam@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Icenowy Zheng <icenowy@aosc.io>
+Add clock nodes for HiSilicon Hi3670 SoC.
 
-The Allwinner H6 DE3 bus is similar to the A64 DE2 one.
-
-Add its compatible string with the A64 string as fallback to the
-binding.
-
-Some description of the binding is modified to make it more generic.
-
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
- Documentation/devicetree/bindings/bus/sun50i-de2-bus.txt | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ arch/arm64/boot/dts/hisilicon/hi3670.dtsi | 43 +++++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/bus/sun50i-de2-bus.txt b/Documentation/devicetree/bindings/bus/sun50i-de2-bus.txt
-index 87dfb33fb3be..ac1445b95f41 100644
---- a/Documentation/devicetree/bindings/bus/sun50i-de2-bus.txt
-+++ b/Documentation/devicetree/bindings/bus/sun50i-de2-bus.txt
-@@ -1,11 +1,14 @@
--Device tree bindings for Allwinner A64 DE2 bus
-+Device tree bindings for Allwinner DE2/3 bus
+diff --git a/arch/arm64/boot/dts/hisilicon/hi3670.dtsi b/arch/arm64/boot/dts/hisilicon/hi3670.dtsi
+index c90e6f6a34ec..8a0ee4b08886 100644
+--- a/arch/arm64/boot/dts/hisilicon/hi3670.dtsi
++++ b/arch/arm64/boot/dts/hisilicon/hi3670.dtsi
+@@ -7,6 +7,7 @@
+  */
  
- The Allwinner A64 DE2 is on a special bus, which needs a SRAM region (SRAM C)
--to be claimed for enabling the access.
-+to be claimed for enabling the access. The DE3 on Allwinner H6 is at the same
-+situation, and the binding also applies.
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/clock/hi3670-clock.h>
  
- Required properties:
+ / {
+ 	compatible = "hisilicon,hi3670";
+@@ -144,6 +145,48 @@
+ 		#size-cells = <2>;
+ 		ranges;
  
-- - compatible:		Should contain "allwinner,sun50i-a64-de2"
-+ - compatible:		Should be one of:
-+				- "allwinner,sun50i-a64-de2"
-+				- "allwinner,sun50i-a6-de3", "allwinner,sun50i-a64-de2"
-  - reg:			A resource specifier for the register space
-  - #address-cells:	Must be set to 1
-  - #size-cells:		Must be set to 1
++		crg_ctrl: crg_ctrl@fff35000 {
++			compatible = "hisilicon,hi3670-crgctrl", "syscon";
++			reg = <0x0 0xfff35000 0x0 0x1000>;
++			#clock-cells = <1>;
++		};
++
++		pctrl: pctrl@e8a09000 {
++			compatible = "hisilicon,hi3670-pctrl", "syscon";
++			reg = <0x0 0xe8a09000 0x0 0x1000>;
++			#clock-cells = <1>;
++		};
++
++		pmuctrl: crg_ctrl@fff34000 {
++			compatible = "hisilicon,hi3670-pmuctrl", "syscon";
++			reg = <0x0 0xfff34000 0x0 0x1000>;
++			#clock-cells = <1>;
++		};
++
++		sctrl: sctrl@fff0a000 {
++			compatible = "hisilicon,hi3670-sctrl", "syscon";
++			reg = <0x0 0xfff0a000 0x0 0x1000>;
++			#clock-cells = <1>;
++		};
++
++		iomcu: iomcu@ffd7e000 {
++			compatible = "hisilicon,hi3670-iomcu", "syscon";
++			reg = <0x0 0xffd7e000 0x0 0x1000>;
++			#clock-cells = <1>;
++		};
++
++		media1_crg: media1_crgctrl@e87ff000 {
++			compatible = "hisilicon,hi3670-media1-crg", "syscon";
++			reg = <0x0 0xe87ff000 0x0 0x1000>;
++			#clock-cells = <1>;
++		};
++
++		media2_crg: media2_crgctrl@e8900000 {
++			compatible = "hisilicon,hi3670-media2-crg","syscon";
++			reg = <0x0 0xe8900000 0x0 0x1000>;
++			#clock-cells = <1>;
++		};
++
+ 		uart6_clk: clk_19_2M {
+ 			compatible = "fixed-clock";
+ 			#clock-cells = <0>;
 -- 
-2.18.0
+2.17.1
