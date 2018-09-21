@@ -1,114 +1,46 @@
-Return-Path: <JOLLYS@xilinx.com>
-Return-Path: jolly.shah@xilinx.com
-From: Jolly Shah <jolly.shah@xilinx.com>
-To: <olof@lixom.net>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-	<michal.simek@xilinx.com>, <arm@kernel.org>, <linux-clk@vger.kernel.org>
-CC: <rajanv@xilinx.com>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, Rajan Vaja <rajan.vaja@xilinx.com>, Jolly
- Shah <jollys@xilinx.com>
-Subject: [PATCH v3 2/4] firmware: xilinx: Add zynqmp IOCTL API for device control
-Date: Wed, 26 Sep 2018 11:12:59 -0700
-Message-ID: <1537985581-32164-3-git-send-email-jollys@xilinx.com>
-In-Reply-To: <1537985581-32164-1-git-send-email-jollys@xilinx.com>
-References: <1537985581-32164-1-git-send-email-jollys@xilinx.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+Return-Path: <manivannan.sadhasivam@linaro.org>
+Return-Path: <manivannan.sadhasivam@linaro.org>
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh+dt@kernel.org,
+	xuwei5@hisilicon.com
+Cc: linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	amit.kucheria@linaro.org,
+	linux-clk@vger.kernel.org,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH 0/4] Add clock support for Hi3670 SoC
+Date: Thu, 20 Sep 2018 23:00:59 -0700
+Message-Id: <20180921060103.21370-1-manivannan.sadhasivam@linaro.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Rajan Vaja <rajan.vaja@xilinx.com>
+This patchset adds clock support for Hi3670 SoC from HiSilicon utilizing
+the HiSi common clock code. While adding clock support, let's remove the
+fixed clock for UART and source SoC clock on HiKey970 board.
 
-Add ZynqMP firmware IOCTL API to control and configure
-devices like PLLs, SD, Gem, etc.
+This patchset has been verified on HiKey970 board.
 
-Signed-off-by: Rajan Vaja <rajan.vaja@xilinx.com>
-Signed-off-by: Jolly Shah <jollys@xilinx.com>
----
- drivers/firmware/xilinx/zynqmp.c     | 43 ++++++++++++++++++++++++++++++++++++
- include/linux/firmware/xlnx-zynqmp.h |  4 +++-
- 2 files changed, 46 insertions(+), 1 deletion(-)
+Thanks,
+Mani
 
-diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
-index 84b3fd2..671a37a 100644
---- a/drivers/firmware/xilinx/zynqmp.c
-+++ b/drivers/firmware/xilinx/zynqmp.c
-@@ -428,6 +428,48 @@ static int zynqmp_pm_clock_getparent(u32 clock_id, u32 *parent_id)
- 	return ret;
- }
- 
-+/**
-+ * zynqmp_is_valid_ioctl() - Check whether IOCTL ID is valid or not
-+ * @ioctl_id:	IOCTL ID
-+ *
-+ * Return: 0 if IOCTL is valid, else -EINVAL
-+ */
-+static inline int zynqmp_is_valid_ioctl(u32 ioctl_id)
-+{
-+	if (ioctl_id == IOCTL_SET_PLL_FRAC_MODE ||
-+	    ioctl_id == IOCTL_GET_PLL_FRAC_MODE ||
-+	    ioctl_id == IOCTL_SET_PLL_FRAC_DATA ||
-+	    ioctl_id == IOCTL_GET_PLL_FRAC_DATA)
-+		return 0;
-+
-+	return -EINVAL;
-+}
-+
-+/**
-+ * zynqmp_pm_ioctl() - PM IOCTL API for device control and configs
-+ * @node_id:	Node ID of the device
-+ * @ioctl_id:	ID of the requested IOCTL
-+ * @arg1:	Argument 1 to requested IOCTL call
-+ * @arg2:	Argument 2 to requested IOCTL call
-+ * @out:	Returned output value
-+ *
-+ * This function calls IOCTL to firmware for device control and configuration.
-+ *
-+ * Return: Returns status, either success or error+reason
-+ */
-+static int zynqmp_pm_ioctl(u32 node_id, u32 ioctl_id, u32 arg1, u32 arg2,
-+			   u32 *out)
-+{
-+	int ret;
-+
-+	ret = zynqmp_is_valid_ioctl(ioctl_id);
-+	if (ret)
-+		return ret;
-+
-+	return zynqmp_pm_invoke_fn(PM_IOCTL, node_id, ioctl_id,
-+				   arg1, arg2, out);
-+}
-+
- static const struct zynqmp_eemi_ops eemi_ops = {
- 	.get_api_version = zynqmp_pm_get_api_version,
- 	.query_data = zynqmp_pm_query_data,
-@@ -440,6 +482,7 @@ static const struct zynqmp_eemi_ops eemi_ops = {
- 	.clock_getrate = zynqmp_pm_clock_getrate,
- 	.clock_setparent = zynqmp_pm_clock_setparent,
- 	.clock_getparent = zynqmp_pm_clock_getparent,
-+	.ioctl = zynqmp_pm_ioctl,
- };
- 
- /**
-diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
-index 015e130..7a9db08 100644
---- a/include/linux/firmware/xlnx-zynqmp.h
-+++ b/include/linux/firmware/xlnx-zynqmp.h
-@@ -34,7 +34,8 @@
- 
- enum pm_api_id {
- 	PM_GET_API_VERSION = 1,
--	PM_QUERY_DATA = 35,
-+	PM_IOCTL = 34,
-+	PM_QUERY_DATA,
- 	PM_CLOCK_ENABLE,
- 	PM_CLOCK_DISABLE,
- 	PM_CLOCK_GETSTATE,
-@@ -99,6 +100,7 @@ struct zynqmp_eemi_ops {
- 	int (*clock_getrate)(u32 clock_id, u64 *rate);
- 	int (*clock_setparent)(u32 clock_id, u32 parent_id);
- 	int (*clock_getparent)(u32 clock_id, u32 *parent_id);
-+	int (*ioctl)(u32 node_id, u32 ioctl_id, u32 arg1, u32 arg2, u32 *out);
- };
- 
- #if IS_REACHABLE(CONFIG_ARCH_ZYNQMP)
+Manivannan Sadhasivam (4):
+  dt-bindings: clk: hisilicon: Add bindings for Hi3670 clk
+  arm64: dts: hisilicon: Add clock nodes for Hi3670 SoC
+  arm64: dts: hisilicon: Source SoC clock for UART6
+  clk: hisilicon: Add clock driver for Hi3670 SoC
+
+ .../bindings/clock/hi3670-clock.txt           |   43 +
+ arch/arm64/boot/dts/hisilicon/hi3670.dtsi     |   48 +-
+ drivers/clk/hisilicon/Kconfig                 |    7 +
+ drivers/clk/hisilicon/Makefile                |    1 +
+ drivers/clk/hisilicon/clk-hi3670.c            | 1016 +++++++++++++++++
+ include/dt-bindings/clock/hi3670-clock.h      |  348 ++++++
+ 6 files changed, 1458 insertions(+), 5 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/hi3670-clock.txt
+ create mode 100644 drivers/clk/hisilicon/clk-hi3670.c
+ create mode 100644 include/dt-bindings/clock/hi3670-clock.h
+
 -- 
-2.7.4
+2.17.1
