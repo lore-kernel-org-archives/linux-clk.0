@@ -1,82 +1,43 @@
-Return-Path: <jagan@amarulasolutions.com>
+Return-Path: <nm@ti.com>
+Date: Fri, 21 Sep 2018 14:53:40 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Santosh Shilimkar <santosh.shilimkar@oracle.com>
+CC: Santosh Shilimkar <ssantosh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <t-kristo@ti.com>, <tony@atomide.com>, <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH] clk: keystone: Enable TISCI clocks if K3_ARCH
+Message-ID: <20180921195340.jo3m5bisgntk6wsh@kahuna>
+References: <20180828005056.27326-1-nm@ti.com>
+ <d2027284-5265-388e-f793-cd048ac8a587@oracle.com>
 MIME-Version: 1.0
-References: <20180927114850.24565-1-jagan@amarulasolutions.com>
- <20180927114850.24565-8-jagan@amarulasolutions.com> <20180927165853.dpluekbqzat663q7@flea>
-In-Reply-To: <20180927165853.dpluekbqzat663q7@flea>
-From: Jagan Teki <jagan@amarulasolutions.com>
-Date: Thu, 27 Sep 2018 23:15:50 +0530
-Message-ID: <CAMty3ZDUxqokipNqnn6c618pebdVBWc8Pfzaz+4+SYqR42Yerg@mail.gmail.com>
-Subject: Re: [PATCH 07/12] drm/sun4i: sun6i_mipi_dsi: Fix TCON DRQ set bits
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-	Jernej Skrabec <jernej.skrabec@siol.net>, Vasily Khoruzhick <anarsoul@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
-	David Airlie <airlied@linux.ie>, dri-devel <dri-devel@lists.freedesktop.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <d2027284-5265-388e-f793-cd048ac8a587@oracle.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Sep 27, 2018 at 10:28 PM Maxime Ripard
-<maxime.ripard@bootlin.com> wrote:
->
-> On Thu, Sep 27, 2018 at 05:18:45PM +0530, Jagan Teki wrote:
-> > TCON DRQ set bits for non-burst DSI mode can computed via
-> > horizontal front porch instead of front porch + sync timings.
-> >
-> > Since there no documentation for TCON_DRQ_REG(0x7c) register
-> > this change is taken as reference from BPI-M64-bsp.
->
-> Detailing more what the issue is would be great.
->
-> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+On 00:55-20180828, Santosh Shilimkar wrote:
+> On 8/27/2018 5:50 PM, Nishanth Menon wrote:
+> > K3_ARCH uses TISCI for clocks as well. Enable the same
+> > for the driver support.
+> > 
+> > Signed-off-by: Nishanth Menon <nm@ti.com>
 > > ---
-> >  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> > index 599284971ab6..9918fdb990ff 100644
-> > --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> > +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> > @@ -367,9 +367,9 @@ static void sun6i_dsi_setup_burst(struct sun6i_dsi *dsi,
-> >       struct mipi_dsi_device *device = dsi->device;
-> >       u32 val = 0;
->
-> The computation here is in the A64 driver:
->
-> if ((panel->lcd_ht - panel->lcd_x - panel->lcd_hbp) < 21) {
->         dsi_dev[sel]->dsi_tcon_drq.bits.drq_mode = 0;
-> } else {
->         dsi_dev[sel]->dsi_tcon_drq.bits.drq_set =
->                 (panel->lcd_ht-panel->lcd_x-panel->lcd_hbp-20) *
->                 dsi_pixel_bits[panel->lcd_dsi_format]/(8*4);
-> }
->
-> It is testing that the sync + front porch is smaller than 21, and
-> otherwise sets the drq.
->
-> > -     if ((mode->hsync_end - mode->hdisplay) > 20) {
->
-> My code here is testing that the difference between hsync_end and
-> hdisplay is superior to 20, and sets the DRQ if true. The condition is
-> reversed, but otherwise, that difference is the front porch plus the
-> sync length.
+> > 
+> > Ref: https://patchwork.kernel.org/patch/10447677/
+> > 
+> > Since ARCH_K3 only got integrated in v4.19-rc1, rebased to v4.19-rc1 tag..
+> > 
+> >   drivers/clk/Makefile         | 1 +
+> >   drivers/clk/keystone/Kconfig | 2 +-
+> >   2 files changed, 2 insertions(+), 1 deletion(-)
+> > 
+> Acked-by: Santosh Shilimkar <ssantosh@kernel.org>
 
-True, I understand this, but does drq setting here is specific to SoC?
-I thought of finding DRQ in A31 BSP but I couldn't find the code. do
-you have bsp somewhere in github?
+Since it is almost a month.. Gentle poke? I am not sure when clk
+gets picked up.. but checked clk-next (7be9338d38a6 Merge branch
+'clk-mvebu-periph-pm' into clk-next) and linux-next ( next-20180921 )
+and did'nt see the patch..
 
->
-> > +     if ((mode->hsync_start - mode->hdisplay) > 20) {
->
-> However, you are testing for just the front porch, unlike what your
-> commit log is saying, and unlike what allwinner's code is saying. So
-> this deserves some explanation.
-
-but A64 is doing this, do you think it's completely A64 specific or
-testing panel with front porch drq?
+-- 
+Regards,
+Nishanth Menon
