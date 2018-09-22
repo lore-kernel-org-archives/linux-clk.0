@@ -1,63 +1,33 @@
-Return-Path: <decatf@gmail.com>
-Return-Path: <decatf@gmail.com>
-Date: Mon, 24 Sep 2018 15:18:04 -0400
-From: r yang <decatf@gmail.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: tegra: Return the exact clock rate from
- clk_round_rate
-Message-ID: <20180924191804.GA20060@r>
-References: <20180921220149.17136-1-decatf@gmail.com>
- <20180924080803.GF7636@tbergstrom-lnx.Nvidia.com>
+Return-Path: <wens213@gmail.com>
+Return-Path: <wens213@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180924080803.GF7636@tbergstrom-lnx.Nvidia.com>
+References: <20180902072643.4917-1-jernej.skrabec@siol.net> <20180902072643.4917-18-jernej.skrabec@siol.net>
+In-Reply-To: <20180902072643.4917-18-jernej.skrabec@siol.net>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Sat, 22 Sep 2018 21:30:52 +0800
+Message-ID: <CAGb2v66oMoXxYCrnZpWMk_wtZMfqGonWM+fdc1BG-3NghcE7bQ@mail.gmail.com>
+Subject: Re: [PATCH 17/27] drm/sun4i: dw-hdmi: Add quirk for setting TMDS clock
+To: Jernej Skrabec <jernej.skrabec@siol.net>
+Cc: Rob Herring <robh+dt@kernel.org>, Maxime Ripard <maxime.ripard@bootlin.com>,
+	Mark Rutland <mark.rutland@arm.com>, Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, David Airlie <airlied@linux.ie>,
+	Archit Taneja <architt@codeaurora.org>, Andrzej Hajda <a.hajda@samsung.com>,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Sep 24, 2018 at 11:08:03AM +0300, Peter De Schrijver wrote:
-> On Fri, Sep 21, 2018 at 06:01:49PM -0400, ryang wrote:
-> > The current behavior is that clk_round_rate would return the same clock
-> > rate passed to it for valid PLL configurations. This change will return
-> > the exact rate the PLL will provide in accordance with clk API.
-> > 
-> > Signed-off-by: ryang <decatf@gmail.com>
-> > ---
-> >  drivers/clk/tegra/clk-pll.c | 7 ++++++-
-> >  1 file changed, 6 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-> > index 17a058c3bbc1..36014a6ec42e 100644
-> > --- a/drivers/clk/tegra/clk-pll.c
-> > +++ b/drivers/clk/tegra/clk-pll.c
-> > @@ -595,7 +595,12 @@ static int _calc_rate(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
-> >  		return -EINVAL;
-> >  	}
-> >  
-> > -	cfg->output_rate >>= p_div;
-> > +	if (cfg->m == 0) {
-> > +		cfg->output_rate = 0;
-> 
-> I think a WARN_ON() is appropriate here. the input divider should never be 0.
-> 
-> Peter.
-> 
+On Sun, Sep 2, 2018 at 3:27 PM Jernej Skrabec <jernej.skrabec@siol.net> wrote:
+>
+> It turns out that H6 HDMI BSP kernel driver doesn't change TMDS rate at
+> all. At this point it is not clear whether it is just not necessary or
+> it would cause some kind of issues.
+>
+> Add a quirk for it.
+>
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 
-Should it return -EINVAL (or some error) too? _calc_rate is also in the
-clk_set_rate code path. I think we want to avoid programming the
-register to 0 input divider all together?
-
-> > +	} else {
-> > +		cfg->output_rate = cfg->n * DIV_ROUND_UP(parent_rate, cfg->m);
-> > +		cfg->output_rate >>= p_div;
-> > +	}
-> >  
-> >  	if (pll->params->pdiv_tohw) {
-> >  		ret = _p_div_to_hw(hw, 1 << p_div);
-> > -- 
-> > 2.17.1
-> > 
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
