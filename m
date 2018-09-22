@@ -6,56 +6,56 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89248ECE561
-	for <linux-clk@archiver.kernel.org>; Sat, 22 Sep 2018 13:29:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4C14ECE561
+	for <linux-clk@archiver.kernel.org>; Sat, 22 Sep 2018 13:31:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DA6F21569
-	for <linux-clk@archiver.kernel.org>; Sat, 22 Sep 2018 13:29:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DA6F21569
+	by mail.kernel.org (Postfix) with ESMTP id 99D9D208A3
+	for <linux-clk@archiver.kernel.org>; Sat, 22 Sep 2018 13:31:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99D9D208A3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727013AbeIVTW6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 22 Sep 2018 15:22:58 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:35770 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726022AbeIVTW5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 22 Sep 2018 15:22:57 -0400
-Received: by mail-ed1-f67.google.com with SMTP id y21-v6so575728edr.2;
-        Sat, 22 Sep 2018 06:29:20 -0700 (PDT)
+        id S1730207AbeIVTYp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 22 Sep 2018 15:24:45 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:43430 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730601AbeIVTYo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 22 Sep 2018 15:24:44 -0400
+Received: by mail-ed1-f65.google.com with SMTP id u23so3710246edx.10;
+        Sat, 22 Sep 2018 06:31:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Id5sXHC0cO2g3GP3u48g2CReDonkqHxwDmEANExerWU=;
-        b=Dj/m5kCycaiaNcqcDtN65QQxB4sTll11F+1s6fpNGmGuOZ3j1JwcnKZmem55GIFJ/E
-         BwOJpMYJ1DezQFvgFEIsu/YX+rxqcAv4ULRbBoA+MMYF8guUhIJ9C2gKACHuLvAY72G+
-         RLiaBdkD359yq15WzLvUxEa4fQl/9UdYJZj/vdKT8sAcLam3hLwz+KeN6SVGRC9MB8+U
-         iFhtoOAYW6OINwxz0TYlfX8tKU9krMQ6CS8uFKxhTGj9vZymAVQqtcpA6+aLlNsmncNA
-         v74hYrkh20p1Zx7DVzSCz2JS1KYParzFZ4nZ2rn2zEP1fmge/5yqvotWScTNaAWFQ1KE
-         FetQ==
-X-Gm-Message-State: ABuFfoi67U99cXRhJD7vUZnROU/VvXBy1NFxfruXBeVpAAXi67gBpurn
-        oivYKualdgPJaF1GzTcdymJjPM9YQvU=
-X-Google-Smtp-Source: ANB0VdZRtl2JF9kLJKq4F4C5QzzJz5UrSURb0Dl/mMhceiiiiD4EuAEqyCjYwNU/V/ngfK01fSAvog==
-X-Received: by 2002:a50:9e85:: with SMTP id a5-v6mr3997255edf.92.1537622959755;
-        Sat, 22 Sep 2018 06:29:19 -0700 (PDT)
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com. [209.85.128.45])
-        by smtp.gmail.com with ESMTPSA id v14-v6sm3624698edm.97.2018.09.22.06.29.18
+        bh=4BB406f9JhaPe1aezH8Gxqw5po2q2F0evO2F3OvZpWc=;
+        b=CQhe0ODLZXxb7vspPBiQCw2U0lODSXgQlutf26KHx0RxzXboXcTTgTRf9dS5s6kf2A
+         MgtqrnZ0RRQnIdssAK96TJZ5+oEN7OxvOlnHMFXj9iIQdFzWkaqkVNdgWItvY4LuGa5k
+         FaU68yfJrO2NVk8byKBHrese0payyXkHBevHj8/cPGGBCYouxI0fzsS9OF13RD3yC6fj
+         ngIPAGY7jUxZQhTc7qwu5Zi39ml9kmDd9XFTml+ygoHbKITCGFIKn2Hu/RvyHD1NLcxE
+         EBkCYHEGvmb0bygAeT4KML9Yf0rk1fJ7l0kGtt/GuuWGm++Wve5+WEfT9T3dQI3J8lDA
+         opiw==
+X-Gm-Message-State: APzg51APLr+NzIB2SSd7cLNOEacsOuCzRF13ApLZPkhXAp52OrVxbTNT
+        XhXwRBrN4Ig2Kx03PX5yRYmNN+dGf4w=
+X-Google-Smtp-Source: ACcGV63IL84i32XJjGg0flfUVrEuXXBJlHKy1ii0FkVAqJA/NO0n5dvNAlsTnS5VmBTZAqm9ORWKjg==
+X-Received: by 2002:aa7:d1d1:: with SMTP id g17-v6mr3917170edp.163.1537623066607;
+        Sat, 22 Sep 2018 06:31:06 -0700 (PDT)
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com. [209.85.221.51])
+        by smtp.gmail.com with ESMTPSA id w41-v6sm3444304edd.92.2018.09.22.06.31.05
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 22 Sep 2018 06:29:19 -0700 (PDT)
-Received: by mail-wm1-f45.google.com with SMTP id l7-v6so774694wme.2;
-        Sat, 22 Sep 2018 06:29:18 -0700 (PDT)
-X-Received: by 2002:a1c:e289:: with SMTP id z131-v6mr1648614wmg.32.1537622958125;
- Sat, 22 Sep 2018 06:29:18 -0700 (PDT)
+        Sat, 22 Sep 2018 06:31:05 -0700 (PDT)
+Received: by mail-wr1-f51.google.com with SMTP id v16-v6so15384146wro.11;
+        Sat, 22 Sep 2018 06:31:05 -0700 (PDT)
+X-Received: by 2002:adf:9522:: with SMTP id 31-v6mr1992358wrs.91.1537623064923;
+ Sat, 22 Sep 2018 06:31:04 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180902072643.4917-1-jernej.skrabec@siol.net> <20180902072643.4917-17-jernej.skrabec@siol.net>
-In-Reply-To: <20180902072643.4917-17-jernej.skrabec@siol.net>
+References: <20180902072643.4917-1-jernej.skrabec@siol.net> <20180902072643.4917-18-jernej.skrabec@siol.net>
+In-Reply-To: <20180902072643.4917-18-jernej.skrabec@siol.net>
 From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Sat, 22 Sep 2018 21:29:06 +0800
-X-Gmail-Original-Message-ID: <CAGb2v64J7N+z1v2mXvB2hZuDEMZ2Zty-AG3L12r37NZvkk_n5g@mail.gmail.com>
+Date:   Sat, 22 Sep 2018 21:30:52 +0800
+X-Gmail-Original-Message-ID: <CAGb2v66oMoXxYCrnZpWMk_wtZMfqGonWM+fdc1BG-3NghcE7bQ@mail.gmail.com>
 Message-ID:
- <CAGb2v64J7N+z1v2mXvB2hZuDEMZ2Zty-AG3L12r37NZvkk_n5g@mail.gmail.com>
-Subject: Re: [PATCH 16/27] drm/sun4i: dw-hdmi: Make mode_valid function configurable
+ <CAGb2v66oMoXxYCrnZpWMk_wtZMfqGonWM+fdc1BG-3NghcE7bQ@mail.gmail.com>
+Subject: Re: [PATCH 17/27] drm/sun4i: dw-hdmi: Add quirk for setting TMDS clock
 To:     Jernej Skrabec <jernej.skrabec@siol.net>
 Cc:     Rob Herring <robh+dt@kernel.org>,
         Maxime Ripard <maxime.ripard@bootlin.com>,
@@ -76,14 +76,15 @@ Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
-Message-ID: <20180922132906.ep7hJcVsdABWnI5dENEj-axFM9Po3d1rjrCExOk3XM8@z>
+Message-ID: <20180922133052.S5JqYQrFupeXRjsVFD1f9LDyFgkITYEoZd26w15QgOM@z>
 
 On Sun, Sep 2, 2018 at 3:27 PM Jernej Skrabec <jernej.skrabec@siol.net> wrote:
 >
-> Since it is not possible to access sun8i-dw-hdmi driver private data
-> inside mode_valid function, make it configurable. That way different
-> versions of HDMI controllers can set different function, depending on
-> it's limitations.
+> It turns out that H6 HDMI BSP kernel driver doesn't change TMDS rate at
+> all. At this point it is not clear whether it is just not necessary or
+> it would cause some kind of issues.
+>
+> Add a quirk for it.
 >
 > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 
