@@ -1,155 +1,61 @@
-Return-Path: <wens213@gmail.com>
-Return-Path: <wens213@gmail.com>
+Return-Path: <gregory.clement@bootlin.com>
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@bootlin.com>,
+	Antoine Tenart <antoine.tenart@bootlin.com>,
+	=?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@bootlin.com>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>
+Subject: [PATCH 0/6] Add CPU clock support for Armada 7K/8K
+Date: Sat, 22 Sep 2018 20:17:03 +0200
+Message-Id: <20180922181709.13007-1-gregory.clement@bootlin.com>
 MIME-Version: 1.0
-References: <20180902072643.4917-1-jernej.skrabec@siol.net> <20180902072643.4917-12-jernej.skrabec@siol.net>
-In-Reply-To: <20180902072643.4917-12-jernej.skrabec@siol.net>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Sat, 22 Sep 2018 20:32:30 +0800
-Message-ID: <CAGb2v67jweJ5OdSzKhj302OLbz7DacKmSGMKS536uquzKGZtAQ@mail.gmail.com>
-Subject: Re: [linux-sunxi] [PATCH 11/27] drm/sun4i: Rework DE2 register defines
-To: Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: Rob Herring <robh+dt@kernel.org>, Maxime Ripard <maxime.ripard@bootlin.com>,
-	Mark Rutland <mark.rutland@arm.com>, Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, David Airlie <airlied@linux.ie>,
-	Archit Taneja <architt@codeaurora.org>, Andrzej Hajda <a.hajda@samsung.com>,
-	devicetree <devicetree@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	dri-devel <dri-devel@lists.freedesktop.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>, Icenowy Zheng <icenowy@aosc.io>
-Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+Hello,
 
-On Sun, Sep 2, 2018 at 3:27 PM Jernej Skrabec <jernej.skrabec@siol.net> wrote:
->
-> Most, if not all, registers found in DE2 still exists in DE3. However,
-> units are on different base addresses.
->
-> To prepare for addition of DE3 support, registers macros are reworked so
-> they take base address as parameter.
->
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> [rebased]
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+This series allows to mange the cpu clock for Armada 7K/8K. For these
+SoCs, the CPUs share the same clock by cluster, so actually the clock
+management is done at cluster level.
 
-This patch mostly checks out. But see below.
+As for the other Armada 7K/8K clocks it is possible to have multiple
+AP so here again we need to have unique name: the purpose of the second
+patch is to share a common code which will be used in 3 drivers.
 
+The last 2 patch enable the driver at dt and platform level and will
+be applied through the mvebu subsystem.
 
-> diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.h b/drivers/gpu/drm/sun4i/sun8i_mixer.h
-> index 406c42e752d7..020b0a097c84 100644
-> --- a/drivers/gpu/drm/sun4i/sun8i_mixer.h
-> +++ b/drivers/gpu/drm/sun4i/sun8i_mixer.h
-> @@ -29,20 +29,24 @@
->
->  #define SUN8I_MIXER_GLOBAL_DBUFF_ENABLE                BIT(0)
->
-> -#define SUN8I_MIXER_BLEND_PIPE_CTL             0x1000
-> -#define SUN8I_MIXER_BLEND_ATTR_FCOLOR(x)       (0x1004 + 0x10 * (x) + 0x0)
-> -#define SUN8I_MIXER_BLEND_ATTR_INSIZE(x)       (0x1004 + 0x10 * (x) + 0x4)
-> -#define SUN8I_MIXER_BLEND_ATTR_COORD(x)                (0x1004 + 0x10 * (x) + 0x8)
-> -#define SUN8I_MIXER_BLEND_ROUTE                        0x1080
-> -#define SUN8I_MIXER_BLEND_PREMULTIPLY          0x1084
-> -#define SUN8I_MIXER_BLEND_BKCOLOR              0x1088
-> -#define SUN8I_MIXER_BLEND_OUTSIZE              0x108c
-> -#define SUN8I_MIXER_BLEND_MODE(x)              (0x1090 + 0x04 * (x))
-> -#define SUN8I_MIXER_BLEND_CK_CTL               0x10b0
-> -#define SUN8I_MIXER_BLEND_CK_CFG               0x10b4
-> -#define SUN8I_MIXER_BLEND_CK_MAX(x)            (0x10c0 + 0x04 * (x))
-> -#define SUN8I_MIXER_BLEND_CK_MIN(x)            (0x10e0 + 0x04 * (x))
-> -#define SUN8I_MIXER_BLEND_OUTCTL               0x10fc
-> +#define DE2_BLD_BASE                           0x1000
-> +#define DE2_CH_BASE                            0x2000
-> +#define DE2_CH_SIZE                            0x1000
-> +
-> +#define SUN8I_MIXER_BLEND_PIPE_CTL(base)       ((base) + 0)
-> +#define SUN8I_MIXER_BLEND_ATTR_FCOLOR(base, x) ((base) + 0x4 + 0x10 * (x))
-> +#define SUN8I_MIXER_BLEND_ATTR_INSIZE(base, x) ((base) + 0x8 + 0x10 * (x))
-> +#define SUN8I_MIXER_BLEND_ATTR_COORD(base, x)  ((base) + 0xC + 0x10 * (x))
+Gregory
 
-Nit: Use lowercase for '0xC' to be consistent.
+Gregory CLEMENT (6): dt-bindings: ap806: add the cluster clock node in
+  the syscon file clk: mvebu: add helper file for Armada AP and CP
+  clocks clk: mvebu: add CPU clock driver for Armada 7K/8K clk: mvebu:
+  ap806: Fix clock name for the cluster arm64: marvell: enable the
+  Armada 7K/8K CPU clk driver arm64: dts: marvell: Add cpu clock node
+  on Armada 7K/8K
 
-> +#define SUN8I_MIXER_BLEND_ROUTE(base)          ((base) + 0x80)
-> +#define SUN8I_MIXER_BLEND_PREMULTIPLY(base)    ((base) + 0x84)
-> +#define SUN8I_MIXER_BLEND_BKCOLOR(base)                ((base) + 0x88)
-> +#define SUN8I_MIXER_BLEND_OUTSIZE(base)                ((base) + 0x8c)
-> +#define SUN8I_MIXER_BLEND_MODE(base, x)                ((base) + 0x90 + 0x04 * (x))
-> +#define SUN8I_MIXER_BLEND_CK_CTL(base)         ((base) + 0xb0)
-> +#define SUN8I_MIXER_BLEND_CK_CFG(base)         ((base) + 0xb4)
-> +#define SUN8I_MIXER_BLEND_CK_MAX(base, x)      ((base) + 0xc0 + 0x04 * (x))
-> +#define SUN8I_MIXER_BLEND_CK_MIN(base, x)      ((base) + 0xe0 + 0x04 * (x))
-> +#define SUN8I_MIXER_BLEND_OUTCTL(base)         ((base) + 0xfc)
->
->  #define SUN8I_MIXER_BLEND_PIPE_CTL_EN_MSK      GENMASK(12, 8)
->  #define SUN8I_MIXER_BLEND_PIPE_CTL_EN(pipe)    BIT(8 + pipe)
+ .../arm/marvell/ap806-system-controller.txt   |  22 ++
+ arch/arm64/Kconfig.platforms                  |   1 +
+ .../boot/dts/marvell/armada-ap806-quad.dtsi   |   4 +
+ arch/arm64/boot/dts/marvell/armada-ap806.dtsi |   6 +
+ drivers/clk/mvebu/Kconfig                     |   8 +
+ drivers/clk/mvebu/Makefile                    |   2 +
+ drivers/clk/mvebu/ap-cpu-clk.c                | 265 ++++++++++++++++++
+ drivers/clk/mvebu/ap806-system-controller.c   |  24 +-
+ drivers/clk/mvebu/armada_ap_cp_helper.c       |  28 ++
+ drivers/clk/mvebu/armada_ap_cp_helper.h       |  11 +
+ drivers/clk/mvebu/cp110-system-controller.c   |  32 +--
+ 11 files changed, 361 insertions(+), 42 deletions(-)
+ create mode 100644 drivers/clk/mvebu/ap-cpu-clk.c
+ create mode 100644 drivers/clk/mvebu/armada_ap_cp_helper.c
+ create mode 100644 drivers/clk/mvebu/armada_ap_cp_helper.h
 
-[...]
-
-> diff --git a/drivers/gpu/drm/sun4i/sun8i_ui_scaler.c b/drivers/gpu/drm/sun4i/sun8i_ui_scaler.c
-> index 6bb2aa164c8e..c68eab8a748f 100644
-> --- a/drivers/gpu/drm/sun4i/sun8i_ui_scaler.c
-> +++ b/drivers/gpu/drm/sun4i/sun8i_ui_scaler.c
-> @@ -10,6 +10,7 @@
->   */
->
->  #include "sun8i_ui_scaler.h"
-> +#include "sun8i_vi_scaler.h"
->
->  static const u32 lan2coefftab16[240] = {
->         0x00004000, 0x00033ffe, 0x00063efc, 0x000a3bfb,
-> @@ -88,6 +89,14 @@ static const u32 lan2coefftab16[240] = {
->         0x0b1c1603, 0x0d1c1502, 0x0e1d1401, 0x0f1d1301,
->  };
->
-> +static inline u32 sun8i_ui_scaler_base(struct sun8i_mixer *mixer, int channel)
-
-I recently saw a review comment stating one should not inline functions
-unless they are defined in header files. Otherwise the decision should
-be left up to the compiler.
-
-> +{
-> +       int vi_num = mixer->cfg->vi_num;
-> +
-> +       return DE2_VI_SCALER_BASE + DE2_VI_SCALER_SIZE * vi_num +
-> +              DE2_UI_SCALER_SIZE * (channel - vi_num);
-> +}
-> +
->  static int sun8i_ui_scaler_coef_index(unsigned int step)
->  {
->         unsigned int scale, int_part, float_part;
-
-[...]
-
-> diff --git a/drivers/gpu/drm/sun4i/sun8i_vi_scaler.c b/drivers/gpu/drm/sun4i/sun8i_vi_scaler.c
-> index d3f1acb234b7..8697afc36023 100644
-> --- a/drivers/gpu/drm/sun4i/sun8i_vi_scaler.c
-> +++ b/drivers/gpu/drm/sun4i/sun8i_vi_scaler.c
-> @@ -833,6 +833,11 @@ static const u32 bicubic4coefftab32[480] = {
->         0x1012110d, 0x1012110d, 0x1013110c, 0x1013110c,
->  };
->
-> +static inline u32 sun8i_vi_scaler_base(struct sun8i_mixer *mixer, int channel)
-> +{
-> +       return DE2_VI_SCALER_BASE + DE2_VI_SCALER_SIZE * channel;
-> +}
-> +
-
-This one as well.
-
->  static int sun8i_vi_scaler_coef_index(unsigned int step)
->  {
->         unsigned int scale, int_part, float_part;
-> @@ -857,7 +862,7 @@ static int sun8i_vi_scaler_coef_index(unsigned int step)
->         }
->  }
->
-> -static void sun8i_vi_scaler_set_coeff(struct regmap *map, int layer,
-> +static void sun8i_vi_scaler_set_coeff(struct regmap *map, u32 base,
->                                       u32 hstep, u32 vstep,
->                                       const struct drm_format_info *format)
-
-This is the only instance where a function's "layer" parameter was changed
-to "base". It would be nice if it were consistent.
-
-ChenYu
+-- 
+2.19.0
