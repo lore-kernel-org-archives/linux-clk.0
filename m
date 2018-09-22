@@ -1,129 +1,155 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: robh+dt@kernel.org,
-	maxime.ripard@bootlin.com,
-	wens@csie.org
-Cc: mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	airlied@linux.ie,
-	architt@codeaurora.org,
-	a.hajda@samsung.com,
-	jernej.skrabec@siol.net,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-sunxi@googlegroups.com,
-	Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH 23/27] drm: sun4i: add quirks for TCON TOP
-Date: Sun,  2 Sep 2018 09:26:39 +0200
-Message-Id: <20180902072643.4917-24-jernej.skrabec@siol.net>
-In-Reply-To: <20180902072643.4917-1-jernej.skrabec@siol.net>
-References: <20180902072643.4917-1-jernej.skrabec@siol.net>
+Return-Path: <wens213@gmail.com>
+Return-Path: <wens213@gmail.com>
+MIME-Version: 1.0
+References: <20180902072643.4917-1-jernej.skrabec@siol.net> <20180902072643.4917-12-jernej.skrabec@siol.net>
+In-Reply-To: <20180902072643.4917-12-jernej.skrabec@siol.net>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Sat, 22 Sep 2018 20:32:30 +0800
+Message-ID: <CAGb2v67jweJ5OdSzKhj302OLbz7DacKmSGMKS536uquzKGZtAQ@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH 11/27] drm/sun4i: Rework DE2 register defines
+To: Jernej Skrabec <jernej.skrabec@siol.net>
+Cc: Rob Herring <robh+dt@kernel.org>, Maxime Ripard <maxime.ripard@bootlin.com>,
+	Mark Rutland <mark.rutland@arm.com>, Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, David Airlie <airlied@linux.ie>,
+	Archit Taneja <architt@codeaurora.org>, Andrzej Hajda <a.hajda@samsung.com>,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>, Icenowy Zheng <icenowy@aosc.io>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Icenowy Zheng <icenowy@aosc.io>
+Hi,
 
-Some SoCs, such as H6, doesn't have a full-featured TCON TOP.
+On Sun, Sep 2, 2018 at 3:27 PM Jernej Skrabec <jernej.skrabec@siol.net> wrote:
+>
+> Most, if not all, registers found in DE2 still exists in DE3. However,
+> units are on different base addresses.
+>
+> To prepare for addition of DE3 support, registers macros are reworked so
+> they take base address as parameter.
+>
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> [rebased]
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 
-Add quirks support for TCON TOP.
+This patch mostly checks out. But see below.
 
-Currently the presence of TCON_TV1 and DSI is controlled via the quirks
-structure.
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
- drivers/gpu/drm/sun4i/sun8i_tcon_top.c | 43 ++++++++++++++++++++------
- 1 file changed, 34 insertions(+), 9 deletions(-)
+> diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.h b/drivers/gpu/drm/sun4i/sun8i_mixer.h
+> index 406c42e752d7..020b0a097c84 100644
+> --- a/drivers/gpu/drm/sun4i/sun8i_mixer.h
+> +++ b/drivers/gpu/drm/sun4i/sun8i_mixer.h
+> @@ -29,20 +29,24 @@
+>
+>  #define SUN8I_MIXER_GLOBAL_DBUFF_ENABLE                BIT(0)
+>
+> -#define SUN8I_MIXER_BLEND_PIPE_CTL             0x1000
+> -#define SUN8I_MIXER_BLEND_ATTR_FCOLOR(x)       (0x1004 + 0x10 * (x) + 0x0)
+> -#define SUN8I_MIXER_BLEND_ATTR_INSIZE(x)       (0x1004 + 0x10 * (x) + 0x4)
+> -#define SUN8I_MIXER_BLEND_ATTR_COORD(x)                (0x1004 + 0x10 * (x) + 0x8)
+> -#define SUN8I_MIXER_BLEND_ROUTE                        0x1080
+> -#define SUN8I_MIXER_BLEND_PREMULTIPLY          0x1084
+> -#define SUN8I_MIXER_BLEND_BKCOLOR              0x1088
+> -#define SUN8I_MIXER_BLEND_OUTSIZE              0x108c
+> -#define SUN8I_MIXER_BLEND_MODE(x)              (0x1090 + 0x04 * (x))
+> -#define SUN8I_MIXER_BLEND_CK_CTL               0x10b0
+> -#define SUN8I_MIXER_BLEND_CK_CFG               0x10b4
+> -#define SUN8I_MIXER_BLEND_CK_MAX(x)            (0x10c0 + 0x04 * (x))
+> -#define SUN8I_MIXER_BLEND_CK_MIN(x)            (0x10e0 + 0x04 * (x))
+> -#define SUN8I_MIXER_BLEND_OUTCTL               0x10fc
+> +#define DE2_BLD_BASE                           0x1000
+> +#define DE2_CH_BASE                            0x2000
+> +#define DE2_CH_SIZE                            0x1000
+> +
+> +#define SUN8I_MIXER_BLEND_PIPE_CTL(base)       ((base) + 0)
+> +#define SUN8I_MIXER_BLEND_ATTR_FCOLOR(base, x) ((base) + 0x4 + 0x10 * (x))
+> +#define SUN8I_MIXER_BLEND_ATTR_INSIZE(base, x) ((base) + 0x8 + 0x10 * (x))
+> +#define SUN8I_MIXER_BLEND_ATTR_COORD(base, x)  ((base) + 0xC + 0x10 * (x))
 
-diff --git a/drivers/gpu/drm/sun4i/sun8i_tcon_top.c b/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
-index 37158548b447..ed13233cad88 100644
---- a/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
-@@ -9,11 +9,17 @@
- #include <linux/component.h>
- #include <linux/device.h>
- #include <linux/module.h>
-+#include <linux/of_device.h>
- #include <linux/of_graph.h>
- #include <linux/platform_device.h>
- 
- #include "sun8i_tcon_top.h"
- 
-+struct sun8i_tcon_top_quirks {
-+	bool has_tcon_tv1;
-+	bool has_dsi;
-+};
-+
- static bool sun8i_tcon_top_node_is_tcon_top(struct device_node *node)
- {
- 	return !!of_match_node(sun8i_tcon_top_of_table, node);
-@@ -121,10 +127,13 @@ static int sun8i_tcon_top_bind(struct device *dev, struct device *master,
- 	struct platform_device *pdev = to_platform_device(dev);
- 	struct clk_hw_onecell_data *clk_data;
- 	struct sun8i_tcon_top *tcon_top;
-+	const struct sun8i_tcon_top_quirks *quirks;
- 	struct resource *res;
- 	void __iomem *regs;
- 	int ret, i;
- 
-+	quirks = of_device_get_match_data(&pdev->dev);
-+
- 	tcon_top = devm_kzalloc(dev, sizeof(*tcon_top), GFP_KERNEL);
- 	if (!tcon_top)
- 		return -ENOMEM;
-@@ -187,15 +196,23 @@ static int sun8i_tcon_top_bind(struct device *dev, struct device *master,
- 					     &tcon_top->reg_lock,
- 					     TCON_TOP_TCON_TV0_GATE, 0);
- 
--	clk_data->hws[CLK_TCON_TOP_TV1] =
--		sun8i_tcon_top_register_gate(dev, "tcon-tv1", regs,
--					     &tcon_top->reg_lock,
--					     TCON_TOP_TCON_TV1_GATE, 1);
-+	if (quirks->has_tcon_tv1) {
-+		clk_data->hws[CLK_TCON_TOP_TV1] =
-+			sun8i_tcon_top_register_gate(dev, "tcon-tv1", regs,
-+						     &tcon_top->reg_lock,
-+						     TCON_TOP_TCON_TV1_GATE, 1);
-+	} else {
-+		clk_data->hws[CLK_TCON_TOP_TV1] = NULL;
-+	}
- 
--	clk_data->hws[CLK_TCON_TOP_DSI] =
--		sun8i_tcon_top_register_gate(dev, "dsi", regs,
--					     &tcon_top->reg_lock,
--					     TCON_TOP_TCON_DSI_GATE, 2);
-+	if (quirks->has_dsi) {
-+		clk_data->hws[CLK_TCON_TOP_DSI] =
-+			sun8i_tcon_top_register_gate(dev, "dsi", regs,
-+						     &tcon_top->reg_lock,
-+						     TCON_TOP_TCON_DSI_GATE, 2);
-+	} else {
-+		clk_data->hws[CLK_TCON_TOP_DSI] = NULL;
-+	}
- 
- 	for (i = 0; i < CLK_NUM; i++)
- 		if (IS_ERR(clk_data->hws[i])) {
-@@ -257,9 +274,17 @@ static int sun8i_tcon_top_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+const struct sun8i_tcon_top_quirks sun8i_r40_tcon_top_quirks = {
-+	.has_tcon_tv1	= true,
-+	.has_dsi	= true,
-+};
-+
- /* sun4i_drv uses this list to check if a device node is a TCON TOP */
- const struct of_device_id sun8i_tcon_top_of_table[] = {
--	{ .compatible = "allwinner,sun8i-r40-tcon-top" },
-+	{
-+		.compatible = "allwinner,sun8i-r40-tcon-top",
-+		.data = &sun8i_r40_tcon_top_quirks
-+	},
- 	{ /* sentinel */ }
- };
- MODULE_DEVICE_TABLE(of, sun8i_tcon_top_of_table);
--- 
-2.18.0
+Nit: Use lowercase for '0xC' to be consistent.
+
+> +#define SUN8I_MIXER_BLEND_ROUTE(base)          ((base) + 0x80)
+> +#define SUN8I_MIXER_BLEND_PREMULTIPLY(base)    ((base) + 0x84)
+> +#define SUN8I_MIXER_BLEND_BKCOLOR(base)                ((base) + 0x88)
+> +#define SUN8I_MIXER_BLEND_OUTSIZE(base)                ((base) + 0x8c)
+> +#define SUN8I_MIXER_BLEND_MODE(base, x)                ((base) + 0x90 + 0x04 * (x))
+> +#define SUN8I_MIXER_BLEND_CK_CTL(base)         ((base) + 0xb0)
+> +#define SUN8I_MIXER_BLEND_CK_CFG(base)         ((base) + 0xb4)
+> +#define SUN8I_MIXER_BLEND_CK_MAX(base, x)      ((base) + 0xc0 + 0x04 * (x))
+> +#define SUN8I_MIXER_BLEND_CK_MIN(base, x)      ((base) + 0xe0 + 0x04 * (x))
+> +#define SUN8I_MIXER_BLEND_OUTCTL(base)         ((base) + 0xfc)
+>
+>  #define SUN8I_MIXER_BLEND_PIPE_CTL_EN_MSK      GENMASK(12, 8)
+>  #define SUN8I_MIXER_BLEND_PIPE_CTL_EN(pipe)    BIT(8 + pipe)
+
+[...]
+
+> diff --git a/drivers/gpu/drm/sun4i/sun8i_ui_scaler.c b/drivers/gpu/drm/sun4i/sun8i_ui_scaler.c
+> index 6bb2aa164c8e..c68eab8a748f 100644
+> --- a/drivers/gpu/drm/sun4i/sun8i_ui_scaler.c
+> +++ b/drivers/gpu/drm/sun4i/sun8i_ui_scaler.c
+> @@ -10,6 +10,7 @@
+>   */
+>
+>  #include "sun8i_ui_scaler.h"
+> +#include "sun8i_vi_scaler.h"
+>
+>  static const u32 lan2coefftab16[240] = {
+>         0x00004000, 0x00033ffe, 0x00063efc, 0x000a3bfb,
+> @@ -88,6 +89,14 @@ static const u32 lan2coefftab16[240] = {
+>         0x0b1c1603, 0x0d1c1502, 0x0e1d1401, 0x0f1d1301,
+>  };
+>
+> +static inline u32 sun8i_ui_scaler_base(struct sun8i_mixer *mixer, int channel)
+
+I recently saw a review comment stating one should not inline functions
+unless they are defined in header files. Otherwise the decision should
+be left up to the compiler.
+
+> +{
+> +       int vi_num = mixer->cfg->vi_num;
+> +
+> +       return DE2_VI_SCALER_BASE + DE2_VI_SCALER_SIZE * vi_num +
+> +              DE2_UI_SCALER_SIZE * (channel - vi_num);
+> +}
+> +
+>  static int sun8i_ui_scaler_coef_index(unsigned int step)
+>  {
+>         unsigned int scale, int_part, float_part;
+
+[...]
+
+> diff --git a/drivers/gpu/drm/sun4i/sun8i_vi_scaler.c b/drivers/gpu/drm/sun4i/sun8i_vi_scaler.c
+> index d3f1acb234b7..8697afc36023 100644
+> --- a/drivers/gpu/drm/sun4i/sun8i_vi_scaler.c
+> +++ b/drivers/gpu/drm/sun4i/sun8i_vi_scaler.c
+> @@ -833,6 +833,11 @@ static const u32 bicubic4coefftab32[480] = {
+>         0x1012110d, 0x1012110d, 0x1013110c, 0x1013110c,
+>  };
+>
+> +static inline u32 sun8i_vi_scaler_base(struct sun8i_mixer *mixer, int channel)
+> +{
+> +       return DE2_VI_SCALER_BASE + DE2_VI_SCALER_SIZE * channel;
+> +}
+> +
+
+This one as well.
+
+>  static int sun8i_vi_scaler_coef_index(unsigned int step)
+>  {
+>         unsigned int scale, int_part, float_part;
+> @@ -857,7 +862,7 @@ static int sun8i_vi_scaler_coef_index(unsigned int step)
+>         }
+>  }
+>
+> -static void sun8i_vi_scaler_set_coeff(struct regmap *map, int layer,
+> +static void sun8i_vi_scaler_set_coeff(struct regmap *map, u32 base,
+>                                       u32 hstep, u32 vstep,
+>                                       const struct drm_format_info *format)
+
+This is the only instance where a function's "layer" parameter was changed
+to "base". It would be nice if it were consistent.
+
+ChenYu
