@@ -1,150 +1,314 @@
-Return-Path: <andrew.smirnov@gmail.com>
+Return-Path: <gregory.clement@bootlin.com>
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@bootlin.com>,
+	Antoine Tenart <antoine.tenart@bootlin.com>,
+	=?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@bootlin.com>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>
+Subject: [PATCH 2/6] clk: mvebu: add helper file for Armada AP and CP clocks
+Date: Sat, 22 Sep 2018 20:17:05 +0200
+Message-Id: <20180922181709.13007-3-gregory.clement@bootlin.com>
+In-Reply-To: <20180922181709.13007-1-gregory.clement@bootlin.com>
+References: <20180922181709.13007-1-gregory.clement@bootlin.com>
 MIME-Version: 1.0
-References: <1534945703-4730-1-git-send-email-abel.vesa@nxp.com>
- <1534945703-4730-4-git-send-email-abel.vesa@nxp.com> <20180824074011.lufm653imkf6fyd3@pengutronix.de>
- <20180828105821.gbd7tba7uvmeeqcx@fsr-ub1664-175> <CAHQ1cqEsHoF0ZFY5+CpQFJ+b3sKd3yJPvmRZMAbaa9+Xzhe3=g@mail.gmail.com>
- <20180904131341.ef7tvt6hvtkkpdhw@fsr-ub1664-175>
-In-Reply-To: <20180904131341.ef7tvt6hvtkkpdhw@fsr-ub1664-175>
-From: Andrey Smirnov <andrew.smirnov@gmail.com>
-Date: Tue, 4 Sep 2018 12:30:44 -0700
-Message-ID: <CAHQ1cqFPUm5xnWGto5wRz2dMzxdWe4tAJwe0SxySmfnnkf9_Bg@mail.gmail.com>
-Subject: Re: [PATCH v6 3/5] clk: imx: add SCCG PLL type
-To: Abel Vesa <abel.vesa@nxp.com>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>, Lucas Stach <l.stach@pengutronix.de>,
-	Sascha Hauer <kernel@pengutronix.de>, Dong Aisheng <aisheng.dong@nxp.com>,
-	Fabio Estevam <fabio.estevam@nxp.com>, Anson Huang <anson.huang@nxp.com>,
-	Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh@kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, sboyd@kernel.org,
-	Michael Turquette <mturquette@baylibre.com>, linux-kernel <linux-kernel@vger.kernel.org>,
-	abelvesa@linux.com, linux-imx@nxp.com, Shawn Guo <shawnguo@kernel.org>,
-	linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Sep 4, 2018 at 6:13 AM Abel Vesa <abel.vesa@nxp.com> wrote:
->
-> On Tue, Aug 28, 2018 at 12:11:13PM -0700, Andrey Smirnov wrote:
-> > On Tue, Aug 28, 2018 at 3:58 AM Abel Vesa <abel.vesa@nxp.com> wrote:
-> > >
-> > > On Fri, Aug 24, 2018 at 09:40:11AM +0200, Sascha Hauer wrote:
-> > > > +Cc Andrey Smirnov who made me aware of this issue.
-> > > >
-> > > > On Wed, Aug 22, 2018 at 04:48:21PM +0300, Abel Vesa wrote:
-> > > > > From: Lucas Stach <l.stach@pengutronix.de>
-> > > > >
-> > > > > The SCCG is a new PLL type introduced on i.MX8. Add support for this.
-> > > > > The driver currently misses the PLL lock check, as the preliminary
-> > > > > documentation mentions lock configurations, but is quiet about where
-> > > > > to find the actual lock status signal.
-> > > > >
-> > > > > Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-> > > > > Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-> > > > > ---
-> > > > > +static int clk_pll1_set_rate(struct clk_hw *hw, unsigned long rate,
-> > > > > +                       unsigned long parent_rate)
-> > > > > +{
-> > > > > +   struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
-> > > > > +   u32 val;
-> > > > > +   u32 divf;
-> > > > > +
-> > > > > +   divf = rate / (parent_rate * 2);
-> > > > > +
-> > > > > +   val = readl_relaxed(pll->base + PLL_CFG2);
-> > > > > +   val &= ~(PLL_DIVF_MASK << PLL_DIVF1_SHIFT);
-> > > > > +   val |= (divf - 1) << PLL_DIVF1_SHIFT;
-> > > > > +   writel_relaxed(val, pll->base + PLL_CFG2);
-> > > > > +
-> > > > > +   /* FIXME: PLL lock check */
-> > > >
-> > > > Shouldn't be too hard to add, no?
-> > >
-> > > Added to the next version which I intend to send today.
-> > >
-> > > >
-> > > > > +
-> > > > > +   return 0;
-> > > > > +}
-> > > > > +
-> > > > > +static int clk_pll1_prepare(struct clk_hw *hw)
-> > > > > +{
-> > > > > +   struct clk_sccg_pll *pll = to_clk_sccg_pll(hw);
-> > > > > +   u32 val;
-> > > > > +
-> > > > > +   val = readl_relaxed(pll->base);
-> > > > > +   val &= ~(1 << PLL_PD);
-> > > > > +   writel_relaxed(val, pll->base);
-> > > >
-> > > > pll->base + PLL_CFG0 please.
-> > >
-> > > Same as above.
-> > >
-> > > >
-> > > > > +static const struct clk_ops clk_sccg_pll1_ops = {
-> > > > > +   .is_prepared    = clk_pll1_is_prepared,
-> > > > > +   .recalc_rate    = clk_pll1_recalc_rate,
-> > > > > +   .round_rate     = clk_pll1_round_rate,
-> > > > > +   .set_rate       = clk_pll1_set_rate,
-> > > > > +};
-> > > > > +
-> > > > > +static const struct clk_ops clk_sccg_pll2_ops = {
-> > > > > +   .prepare        = clk_pll1_prepare,
-> > > > > +   .unprepare      = clk_pll1_unprepare,
-> > > > > +   .recalc_rate    = clk_pll2_recalc_rate,
-> > > > > +   .round_rate     = clk_pll2_round_rate,
-> > > > > +   .set_rate       = clk_pll2_set_rate,
-> > > > > +};
-> > > >
-> > > > So these are two PLLs that share the same enable register. Doing the
-> > > > prepare/unprepare for only one PLL can lead to all kinds of trouble.
-> > > > Finding a good abstraction the properly handles this case with the
-> > > > clock framework is probably also not easy.
-> > > >
-> > > > I could imagine we'll need to track the enable state on both PLLs and
-> > > > only if both are disabled we disable it in hardware.
-> > > >
-> > > > With the current code we disable the PLLs when all consumers are
-> > > > reparented to pll1, which probably has bad effects.
-> > > >
-> > >
-> > > So it took me a while to understand exactly why this needs to stay like it is.
-> > >
-> >
-> > IMHO this means that, if nothing else, all of the below should be
-> > documented in code as a comment, otherwise simpletons like me are
-> > going to continue stumbling over it and wondering what's going on.
->
-> Will try to add proper comment to explain what's happening.
->
-> >
-> > > The PLL1 is never used by any device, instead it is used as a source for PLL2.
-> > >
-> > > But because the interlink between the two of them is too complicated,
-> > > the PLLs 1 and 2 need to be separate clocks.
-> > >
-> >
-> > Can you go a little bit more into detail as for why PLL1 needs to be
-> > exposed in the first place and can't just be dealt with behind the
-> > scenes as a part of PLL2 abstraction? Are there use-cases where the
-> > rates of the two are going to be adjusted individually in Linux?
-> >
->
-> Here is the SCCG PLL Block Diagram:
->
-> https://www.nxp.com/docs/en/reference-manual/IMX8MDQLQRM.pdf#page=834
->
-> Now lets take the System PLL 2 for example. If you follow the hierarchy,
-> when you reach the sys2_pll1_out you can see that one of its selectors is
-> actually sys1_pll1_ref_sel. Same thing applies to sys3_pll2_out with
-> sys2_pll1_ref_sel. This means there is an input reference clock interlinking
-> between different System PLLs.
->
+Clock drivers for Armada AP and Armada CP use the same function to
+generate unique clock name. A third drivers is coming with the same
+need, so it's time to move this function in a common file.
 
-Hmm, I am not sure I see how this would prevent you from treating a
-PLL pair as a black box, but OTOH, doing that probably wouldn't result
-cleaner or simpler code. IMHO, it's unfortunate that PD bit is shared
-between the two clocks, but if PLL1 could only be ever connected to
-corresponding PLL2, then my concerns were probably misguided and
-current implementation is good enough.
+Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+---
+ drivers/clk/mvebu/Kconfig                   |  5 ++++
+ drivers/clk/mvebu/Makefile                  |  1 +
+ drivers/clk/mvebu/ap806-system-controller.c | 24 ++++------------
+ drivers/clk/mvebu/armada_ap_cp_helper.c     | 28 ++++++++++++++++++
+ drivers/clk/mvebu/armada_ap_cp_helper.h     | 11 +++++++
+ drivers/clk/mvebu/cp110-system-controller.c | 32 ++++++---------------
+ 6 files changed, 59 insertions(+), 42 deletions(-)
+ create mode 100644 drivers/clk/mvebu/armada_ap_cp_helper.c
+ create mode 100644 drivers/clk/mvebu/armada_ap_cp_helper.h
 
-Thanks,
-Andrey Smirnov
+diff --git a/drivers/clk/mvebu/Kconfig b/drivers/clk/mvebu/Kconfig
+index fddc8ac5faff..5492fae3f0ab 100644
+--- a/drivers/clk/mvebu/Kconfig
++++ b/drivers/clk/mvebu/Kconfig
+@@ -7,6 +7,9 @@ config MVEBU_CLK_CPU
+ config MVEBU_CLK_COREDIV
+ 	bool
+ 
++config ARMADA_AP_CP_HELPER
++	bool
++
+ config ARMADA_370_CLK
+ 	bool
+ 	select MVEBU_CLK_COMMON
+@@ -34,9 +37,11 @@ config ARMADA_XP_CLK
+ 
+ config ARMADA_AP806_SYSCON
+ 	bool
++	select ARMADA_AP_CP_HELPER
+ 
+ config ARMADA_CP110_SYSCON
+ 	bool
++	select ARMADA_AP_CP_HELPER
+ 
+ config DOVE_CLK
+ 	bool
+diff --git a/drivers/clk/mvebu/Makefile b/drivers/clk/mvebu/Makefile
+index 93ac3685271f..6638ad962ec1 100644
+--- a/drivers/clk/mvebu/Makefile
++++ b/drivers/clk/mvebu/Makefile
+@@ -2,6 +2,7 @@
+ obj-$(CONFIG_MVEBU_CLK_COMMON)	+= common.o
+ obj-$(CONFIG_MVEBU_CLK_CPU) 	+= clk-cpu.o
+ obj-$(CONFIG_MVEBU_CLK_COREDIV)	+= clk-corediv.o
++obj-$(CONFIG_ARMADA_AP_CP_HELPER) += armada_ap_cp_helper.o
+ 
+ obj-$(CONFIG_ARMADA_370_CLK)	+= armada-370.o
+ obj-$(CONFIG_ARMADA_375_CLK)	+= armada-375.o
+diff --git a/drivers/clk/mvebu/ap806-system-controller.c b/drivers/clk/mvebu/ap806-system-controller.c
+index ea54a874bbda..0a58824ff053 100644
+--- a/drivers/clk/mvebu/ap806-system-controller.c
++++ b/drivers/clk/mvebu/ap806-system-controller.c
+@@ -10,11 +10,11 @@
+ 
+ #define pr_fmt(fmt) "ap806-system-controller: " fmt
+ 
++#include "armada_ap_cp_helper.h"
+ #include <linux/clk-provider.h>
+ #include <linux/mfd/syscon.h>
+ #include <linux/init.h>
+ #include <linux/of.h>
+-#include <linux/of_address.h>
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
+ 
+@@ -30,18 +30,6 @@ static struct clk_onecell_data ap806_clk_data = {
+ 	.clk_num = AP806_CLK_NUM,
+ };
+ 
+-static char *ap806_unique_name(struct device *dev, struct device_node *np,
+-			       char *name)
+-{
+-	const __be32 *reg;
+-	u64 addr;
+-
+-	reg = of_get_property(np, "reg", NULL);
+-	addr = of_translate_address(np, reg);
+-	return devm_kasprintf(dev, GFP_KERNEL, "%llx-%s",
+-			(unsigned long long)addr, name);
+-}
+-
+ static int ap806_syscon_common_probe(struct platform_device *pdev,
+ 				     struct device_node *syscon_node)
+ {
+@@ -109,7 +97,7 @@ static int ap806_syscon_common_probe(struct platform_device *pdev,
+ 	cpuclk_freq *= 1000 * 1000;
+ 
+ 	/* CPU clocks depend on the Sample At Reset configuration */
+-	name = ap806_unique_name(dev, syscon_node, "cpu-cluster-0");
++	name = ap_cp_unique_name(dev, syscon_node, "cpu-cluster-0");
+ 	ap806_clks[0] = clk_register_fixed_rate(dev, name, NULL,
+ 						0, cpuclk_freq);
+ 	if (IS_ERR(ap806_clks[0])) {
+@@ -117,7 +105,7 @@ static int ap806_syscon_common_probe(struct platform_device *pdev,
+ 		goto fail0;
+ 	}
+ 
+-	name = ap806_unique_name(dev, syscon_node, "cpu-cluster-1");
++	name = ap_cp_unique_name(dev, syscon_node, "cpu-cluster-1");
+ 	ap806_clks[1] = clk_register_fixed_rate(dev, name, NULL, 0,
+ 						cpuclk_freq);
+ 	if (IS_ERR(ap806_clks[1])) {
+@@ -126,7 +114,7 @@ static int ap806_syscon_common_probe(struct platform_device *pdev,
+ 	}
+ 
+ 	/* Fixed clock is always 1200 Mhz */
+-	fixedclk_name = ap806_unique_name(dev, syscon_node, "fixed");
++	fixedclk_name = ap_cp_unique_name(dev, syscon_node, "fixed");
+ 	ap806_clks[2] = clk_register_fixed_rate(dev, fixedclk_name, NULL,
+ 						0, 1200 * 1000 * 1000);
+ 	if (IS_ERR(ap806_clks[2])) {
+@@ -135,7 +123,7 @@ static int ap806_syscon_common_probe(struct platform_device *pdev,
+ 	}
+ 
+ 	/* MSS Clock is fixed clock divided by 6 */
+-	name = ap806_unique_name(dev, syscon_node, "mss");
++	name = ap_cp_unique_name(dev, syscon_node, "mss");
+ 	ap806_clks[3] = clk_register_fixed_factor(NULL, name, fixedclk_name,
+ 						  0, 1, 6);
+ 	if (IS_ERR(ap806_clks[3])) {
+@@ -144,7 +132,7 @@ static int ap806_syscon_common_probe(struct platform_device *pdev,
+ 	}
+ 
+ 	/* SDIO(/eMMC) Clock is fixed clock divided by 3 */
+-	name = ap806_unique_name(dev, syscon_node, "sdio");
++	name = ap_cp_unique_name(dev, syscon_node, "sdio");
+ 	ap806_clks[4] = clk_register_fixed_factor(NULL, name,
+ 						  fixedclk_name,
+ 						  0, 1, 3);
+diff --git a/drivers/clk/mvebu/armada_ap_cp_helper.c b/drivers/clk/mvebu/armada_ap_cp_helper.c
+new file mode 100644
+index 000000000000..5f2457719b10
+--- /dev/null
++++ b/drivers/clk/mvebu/armada_ap_cp_helper.c
+@@ -0,0 +1,28 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Marvell Armada AP and CP110 helper
++ *
++ * Copyright (C) 2018 Marvell
++ *
++ * Gregory Clement <gregory.clement@bootlin.com>
++ *
++ */
++
++#include "armada_ap_cp_helper.h"
++#include <linux/device.h>
++
++char *ap_cp_unique_name(struct device *dev, struct device_node *np,
++			const char *name)
++{
++	const __be32 *reg;
++	u64 addr;
++
++	/* Do not create a name if there is no clock */
++	if (!name)
++		return NULL;
++
++	reg = of_get_property(np, "reg", NULL);
++	addr = of_translate_address(np, reg);
++	return devm_kasprintf(dev, GFP_KERNEL, "%llx-%s",
++			      (unsigned long long)addr, name);
++}
+diff --git a/drivers/clk/mvebu/armada_ap_cp_helper.h b/drivers/clk/mvebu/armada_ap_cp_helper.h
+new file mode 100644
+index 000000000000..23aa29f3fcf7
+--- /dev/null
++++ b/drivers/clk/mvebu/armada_ap_cp_helper.h
+@@ -0,0 +1,11 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
++
++#ifndef __ARMADA_AP_CP_HELPER_H
++#define __ARMADA_AP_CP_HELPER_H
++
++#include <linux/of.h>
++#include <linux/of_address.h>
++
++char *ap_cp_unique_name(struct device *dev, struct device_node *np,
++			const char *name);
++#endif
+diff --git a/drivers/clk/mvebu/cp110-system-controller.c b/drivers/clk/mvebu/cp110-system-controller.c
+index 9781b1bf5998..e5f6c4b114b0 100644
+--- a/drivers/clk/mvebu/cp110-system-controller.c
++++ b/drivers/clk/mvebu/cp110-system-controller.c
+@@ -26,11 +26,11 @@
+ 
+ #define pr_fmt(fmt) "cp110-system-controller: " fmt
+ 
++#include "armada_ap_cp_helper.h"
+ #include <linux/clk-provider.h>
+ #include <linux/mfd/syscon.h>
+ #include <linux/init.h>
+ #include <linux/of.h>
+-#include <linux/of_address.h>
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
+ #include <linux/slab.h>
+@@ -212,22 +212,6 @@ static struct clk_hw *cp110_of_clk_get(struct of_phandle_args *clkspec,
+ 	return ERR_PTR(-EINVAL);
+ }
+ 
+-static char *cp110_unique_name(struct device *dev, struct device_node *np,
+-			       const char *name)
+-{
+-	const __be32 *reg;
+-	u64 addr;
+-
+-	/* Do not create a name if there is no clock */
+-	if (!name)
+-		return NULL;
+-
+-	reg = of_get_property(np, "reg", NULL);
+-	addr = of_translate_address(np, reg);
+-	return devm_kasprintf(dev, GFP_KERNEL, "%llx-%s",
+-			      (unsigned long long)addr, name);
+-}
+-
+ static int cp110_syscon_common_probe(struct platform_device *pdev,
+ 				     struct device_node *syscon_node)
+ {
+@@ -261,7 +245,7 @@ static int cp110_syscon_common_probe(struct platform_device *pdev,
+ 	cp110_clk_data->num = CP110_CLK_NUM;
+ 
+ 	/* Register the PLL0 which is the root of the hw tree */
+-	pll0_name = cp110_unique_name(dev, syscon_node, "pll0");
++	pll0_name = ap_cp_unique_name(dev, syscon_node, "pll0");
+ 	hw = clk_hw_register_fixed_rate(NULL, pll0_name, NULL, 0,
+ 					1000 * 1000 * 1000);
+ 	if (IS_ERR(hw)) {
+@@ -272,7 +256,7 @@ static int cp110_syscon_common_probe(struct platform_device *pdev,
+ 	cp110_clks[CP110_CORE_PLL0] = hw;
+ 
+ 	/* PPv2 is PLL0/3 */
+-	ppv2_name = cp110_unique_name(dev, syscon_node, "ppv2-core");
++	ppv2_name = ap_cp_unique_name(dev, syscon_node, "ppv2-core");
+ 	hw = clk_hw_register_fixed_factor(NULL, ppv2_name, pll0_name, 0, 1, 3);
+ 	if (IS_ERR(hw)) {
+ 		ret = PTR_ERR(hw);
+@@ -282,7 +266,7 @@ static int cp110_syscon_common_probe(struct platform_device *pdev,
+ 	cp110_clks[CP110_CORE_PPV2] = hw;
+ 
+ 	/* X2CORE clock is PLL0/2 */
+-	x2core_name = cp110_unique_name(dev, syscon_node, "x2core");
++	x2core_name = ap_cp_unique_name(dev, syscon_node, "x2core");
+ 	hw = clk_hw_register_fixed_factor(NULL, x2core_name, pll0_name,
+ 					  0, 1, 2);
+ 	if (IS_ERR(hw)) {
+@@ -293,7 +277,7 @@ static int cp110_syscon_common_probe(struct platform_device *pdev,
+ 	cp110_clks[CP110_CORE_X2CORE] = hw;
+ 
+ 	/* Core clock is X2CORE/2 */
+-	core_name = cp110_unique_name(dev, syscon_node, "core");
++	core_name = ap_cp_unique_name(dev, syscon_node, "core");
+ 	hw = clk_hw_register_fixed_factor(NULL, core_name, x2core_name,
+ 					  0, 1, 2);
+ 	if (IS_ERR(hw)) {
+@@ -303,7 +287,7 @@ static int cp110_syscon_common_probe(struct platform_device *pdev,
+ 
+ 	cp110_clks[CP110_CORE_CORE] = hw;
+ 	/* NAND can be either PLL0/2.5 or core clock */
+-	nand_name = cp110_unique_name(dev, syscon_node, "nand-core");
++	nand_name = ap_cp_unique_name(dev, syscon_node, "nand-core");
+ 	if (nand_clk_ctrl & NF_CLOCK_SEL_400_MASK)
+ 		hw = clk_hw_register_fixed_factor(NULL, nand_name,
+ 						   pll0_name, 0, 2, 5);
+@@ -318,7 +302,7 @@ static int cp110_syscon_common_probe(struct platform_device *pdev,
+ 	cp110_clks[CP110_CORE_NAND] = hw;
+ 
+ 	/* SDIO clock is PLL0/2.5 */
+-	sdio_name = cp110_unique_name(dev, syscon_node, "sdio-core");
++	sdio_name = ap_cp_unique_name(dev, syscon_node, "sdio-core");
+ 	hw = clk_hw_register_fixed_factor(NULL, sdio_name,
+ 					  pll0_name, 0, 2, 5);
+ 	if (IS_ERR(hw)) {
+@@ -330,7 +314,7 @@ static int cp110_syscon_common_probe(struct platform_device *pdev,
+ 
+ 	/* create the unique name for all the gate clocks */
+ 	for (i = 0; i < ARRAY_SIZE(gate_base_names); i++)
+-		gate_name[i] =	cp110_unique_name(dev, syscon_node,
++		gate_name[i] =	ap_cp_unique_name(dev, syscon_node,
+ 						  gate_base_names[i]);
+ 
+ 	for (i = 0; i < ARRAY_SIZE(gate_base_names); i++) {
+-- 
+2.19.0
