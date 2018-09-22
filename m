@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D609C433F4
-	for <linux-clk@archiver.kernel.org>; Sat, 22 Sep 2018 18:17:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CE97C433F4
+	for <linux-clk@archiver.kernel.org>; Sat, 22 Sep 2018 18:17:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C803A2150F
-	for <linux-clk@archiver.kernel.org>; Sat, 22 Sep 2018 18:17:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C803A2150F
+	by mail.kernel.org (Postfix) with ESMTP id 058622150F
+	for <linux-clk@archiver.kernel.org>; Sat, 22 Sep 2018 18:17:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 058622150F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728346AbeIWAMI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 22 Sep 2018 20:12:08 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:35180 "EHLO mail.bootlin.com"
+        id S1726464AbeIWAL7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 22 Sep 2018 20:11:59 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:35170 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727299AbeIWAMH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 22 Sep 2018 20:12:07 -0400
+        id S1727946AbeIWAL7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 22 Sep 2018 20:11:59 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id B8631207D4; Sat, 22 Sep 2018 20:17:37 +0200 (CEST)
+        id 3A034207AB; Sat, 22 Sep 2018 20:17:29 +0200 (CEST)
 Received: from localhost (87-231-134-186.rev.numericable.fr [87.231.134.186])
-        by mail.bootlin.com (Postfix) with ESMTPSA id C5453208B0;
-        Sat, 22 Sep 2018 20:17:19 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 00F64207D4;
+        Sat, 22 Sep 2018 20:17:18 +0200 (CEST)
 From:   Gregory CLEMENT <gregory.clement@bootlin.com>
 To:     Stephen Boyd <sboyd@codeaurora.org>,
         Mike Turquette <mturquette@baylibre.com>,
@@ -39,9 +39,9 @@ Cc:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Antoine Tenart <antoine.tenart@bootlin.com>,
         =?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@bootlin.com>,
         Maxime Chevallier <maxime.chevallier@bootlin.com>
-Subject: [PATCH 6/6] arm64: dts: marvell: Add cpu clock node on Armada 7K/8K
-Date:   Sat, 22 Sep 2018 20:17:09 +0200
-Message-Id: <20180922181709.13007-7-gregory.clement@bootlin.com>
+Subject: [PATCH 4/6] clk: mvebu: ap806: Fix clock name for the cluster
+Date:   Sat, 22 Sep 2018 20:17:07 +0200
+Message-Id: <20180922181709.13007-5-gregory.clement@bootlin.com>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20180922181709.13007-1-gregory.clement@bootlin.com>
 References: <20180922181709.13007-1-gregory.clement@bootlin.com>
@@ -51,69 +51,39 @@ Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
-Message-ID: <20180922181709.G7t403uW1s1nkKKId6M8zm8PNXwkgEVTD2mcPXUnvpw@z>
+Message-ID: <20180922181707.6EDpIfQPGKsF_D-NZZ8tWtbK4LdQ9M1dJNb8Rfniw-4@z>
 
-Add cpu clock node on AP
+Actually, the clocks exposed for the cluster are not the CPU clocks, but
+the PLL clock used as entry clock for the CPU clocks. The CPU clock will
+be managed by a driver submitting in the following patches.
 
 Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
 ---
- arch/arm64/boot/dts/marvell/armada-ap806-quad.dtsi | 4 ++++
- arch/arm64/boot/dts/marvell/armada-ap806.dtsi      | 6 ++++++
- 2 files changed, 10 insertions(+)
+ drivers/clk/mvebu/ap806-system-controller.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/marvell/armada-ap806-quad.dtsi b/arch/arm64/boot/dts/marvell/armada-ap806-quad.dtsi
-index 64632c873888..f2fd777d1944 100644
---- a/arch/arm64/boot/dts/marvell/armada-ap806-quad.dtsi
-+++ b/arch/arm64/boot/dts/marvell/armada-ap806-quad.dtsi
-@@ -21,6 +21,7 @@
- 			reg = <0x000>;
- 			enable-method = "psci";
- 			cpu-idle-states = <&CPU_SLEEP_0>;
-+			clocks = <&cpu_clk 0>;
- 		};
- 		cpu1: cpu@1 {
- 			device_type = "cpu";
-@@ -28,6 +29,7 @@
- 			reg = <0x001>;
- 			enable-method = "psci";
- 			cpu-idle-states = <&CPU_SLEEP_0>;
-+			clocks = <&cpu_clk 0>;
- 		};
- 		cpu2: cpu@100 {
- 			device_type = "cpu";
-@@ -35,6 +37,7 @@
- 			reg = <0x100>;
- 			enable-method = "psci";
- 			cpu-idle-states = <&CPU_SLEEP_0>;
-+			clocks = <&cpu_clk 1>;
- 		};
- 		cpu3: cpu@101 {
- 			device_type = "cpu";
-@@ -42,6 +45,7 @@
- 			reg = <0x101>;
- 			enable-method = "psci";
- 			cpu-idle-states = <&CPU_SLEEP_0>;
-+			clocks = <&cpu_clk 1>;
- 		};
- 	};
- };
-diff --git a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
-index 4a65e4e830aa..27c840e91abe 100644
---- a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
-+++ b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
-@@ -280,6 +280,12 @@
- 				#address-cells = <1>;
- 				#size-cells = <1>;
+diff --git a/drivers/clk/mvebu/ap806-system-controller.c b/drivers/clk/mvebu/ap806-system-controller.c
+index 0a58824ff053..73ba8fd7860f 100644
+--- a/drivers/clk/mvebu/ap806-system-controller.c
++++ b/drivers/clk/mvebu/ap806-system-controller.c
+@@ -97,7 +97,7 @@ static int ap806_syscon_common_probe(struct platform_device *pdev,
+ 	cpuclk_freq *= 1000 * 1000;
  
-+				cpu_clk: clock-cpu {
-+					compatible = "marvell,ap806-cpu-clock";
-+					clocks = <&ap_clk 0>, <&ap_clk 1>;
-+					#clock-cells = <1>;
-+				};
-+
- 				ap_thermal: thermal-sensor@80 {
- 					compatible = "marvell,armada-ap806-thermal";
- 					reg = <0x80 0x10>;
+ 	/* CPU clocks depend on the Sample At Reset configuration */
+-	name = ap_cp_unique_name(dev, syscon_node, "cpu-cluster-0");
++	name = ap_cp_unique_name(dev, syscon_node, "pll-cluster-0");
+ 	ap806_clks[0] = clk_register_fixed_rate(dev, name, NULL,
+ 						0, cpuclk_freq);
+ 	if (IS_ERR(ap806_clks[0])) {
+@@ -105,7 +105,7 @@ static int ap806_syscon_common_probe(struct platform_device *pdev,
+ 		goto fail0;
+ 	}
+ 
+-	name = ap_cp_unique_name(dev, syscon_node, "cpu-cluster-1");
++	name = ap_cp_unique_name(dev, syscon_node, "pll-cluster-1");
+ 	ap806_clks[1] = clk_register_fixed_rate(dev, name, NULL, 0,
+ 						cpuclk_freq);
+ 	if (IS_ERR(ap806_clks[1])) {
 -- 
 2.19.0
 
