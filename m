@@ -1,65 +1,63 @@
-Return-Path: <martin.blumenstingl@googlemail.com>
-Return-Path: <martin.blumenstingl@googlemail.com>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To: narmstrong@baylibre.com,
-	jbrunet@baylibre.com,
-	linux-amlogic@lists.infradead.org,
-	sboyd@kernel.org
-Cc: mturquette@baylibre.com,
-	carlo@caione.org,
-	khilman@baylibre.com,
+Return-Path: <gregory.clement@bootlin.com>
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+	Mike Turquette <mturquette@baylibre.com>,
 	linux-clk@vger.kernel.org,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH v2 0/2] meson8b: register the clock controller early
-Date: Sat,  1 Sep 2018 18:21:44 +0200
-Message-Id: <20180901162146.5656-1-martin.blumenstingl@googlemail.com>
+	linux-kernel@vger.kernel.org
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Jason Cooper <jason@lakedaemon.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory CLEMENT <gregory.clement@bootlin.com>,
+	Antoine Tenart <antoine.tenart@bootlin.com>,
+	=?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@bootlin.com>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>
+Subject: [PATCH 1/6] dt-bindings: ap806: add the cluster clock node in the syscon file
+Date: Sat, 22 Sep 2018 20:17:04 +0200
+Message-Id: <20180922181709.13007-2-gregory.clement@bootlin.com>
+In-Reply-To: <20180922181709.13007-1-gregory.clement@bootlin.com>
+References: <20180922181709.13007-1-gregory.clement@bootlin.com>
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Some parts of the SoC are initialized early in the boot process, such
-as the SRAM and the TWD timer. This means that the corresponding
-drivers need to access the clock controller early as well.
+Document the device tree binding for the cluster clock controllers found
+in the Armada 7K/8K SoCs.
 
-Before this series the clock controller was registered as platform
-driver, which is too late for the TWD timer (just as an example).
-The reset controller (built into the clock controller driver) was
-already registered early, basically for the same reason (the reset
-lines are used to start the secondary CPUs, which is done very early
-in the boot process).
+Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+---
+ .../arm/marvell/ap806-system-controller.txt   | 22 +++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-Register the clock controller early enough so we're able to use the
-TWD timer (as we need to pass a clock which is provided by this
-clock controller) in a second step.
-
-NOTE: Neil suggested in v1 to switch to one of core_initcall,
-postcore_initcall, subsys_initcall but I couldn't find any driver
-that I could use as "reference" which registers it's clock controller
-before the device model (platform_device) is ready. this is why I'm
-still using CLK_OF_DECLARE - but I'm open to suggestions.
-
-The second patch simplifies the reset controller (built into the clock
-controller driver) because the regmap is already available early and
-thus can be used by the reset controller driver as well.
-
-
-Changes since v1 at [0]:
-- switch from CLK_OF_DECLARE_DRIVER to CLK_OF_DECLARE because with
-  this series there is only one initialization function for the clock
-  controller driver (unlike before: where the reset controller was
-  registered early and the clock controller was registered as platform
-  device)
-- rebased on top of clk-meson, commit:
-  684b97b13b175a ("clk: meson-axg: pcie: drop the mpll3 clock parent")
-
-
-[0] https://patchwork.kernel.org/cover/10538971/
-
-
-Martin Blumenstingl (2):
-  clk: meson: meson8b: register the clock controller early
-  clk: meson: meson8b: use the regmap in the internal reset controller
-
- drivers/clk/meson/meson8b.c | 110 +++++++++++++-----------------------
- 1 file changed, 40 insertions(+), 70 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt b/Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt
+index 3fd21bb7cb37..8f281816a6b8 100644
+--- a/Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt
++++ b/Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt
+@@ -136,3 +136,25 @@ ap_syscon1: system-controller@6f8000 {
+ 		#thermal-sensor-cells = <1>;
+ 	};
+ };
++
++Cluster clocks:
++---------------
++
++Device Tree Clock bindings for cluster clock of AP806 Marvell. Each
++cluster contain up to 2 CPUs running at the same frequency.
++
++Required properties:
++- compatible: must be  "marvell,ap806-cpu-clock";
++- #clock-cells : should be set to 1.
++- clocks : shall be the input parents clock phandle for the clock.
++
++ap_syscon1: system-controller@6f8000 {
++	compatible = "syscon", "simple-mfd";
++	reg = <0x6f8000 0x1000>;
++
++	cpu_clk: clock-cpu {
++		compatible = "marvell,ap806-cpu-clock";
++		clocks = <&ap_clk 0>, <&ap_clk 1>;
++		#clock-cells = <1>;
++	};
++};
 -- 
-2.18.0
+2.19.0
