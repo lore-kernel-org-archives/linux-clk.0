@@ -1,84 +1,82 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Thu, 20 Sep 2018 09:38:02 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-	Arend van Spriel <aspriel@gmail.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Vivek Gautam <vivek.gautam@codeaurora.org>,
-	Robin Murphy <robin.murphy@arm.com>, Joe Perches <joe@perches.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Mike Rapoport <rppt@linux.vnet.ibm.com>,
-	Michal Hocko <mhocko@suse.com>, Al Viro <viro@zeniv.linux.org.uk>,
-	Jonathan Corbet <corbet@lwn.net>, Roman Gushchin <guro@fb.com>,
-	Huang Ying <ying.huang@intel.com>,
-	Kees Cook <keescook@chromium.org>, Arnd Bergmann <arnd@arndb.de>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH v2 1/4] devres: constify p in devm_kfree()
-Message-ID: <20180920163802.GF1367@tuxbook-pro>
-References: <20180828093332.20674-1-brgl@bgdev.pl>
- <20180828093332.20674-2-brgl@bgdev.pl>
+Return-Path: <wens213@gmail.com>
+Return-Path: <wens213@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180828093332.20674-2-brgl@bgdev.pl>
+References: <20180902072643.4917-1-jernej.skrabec@siol.net>
+ <20180902072643.4917-14-jernej.skrabec@siol.net> <CAGb2v66kp4B5VZfmTc8L6qt=OPHjbYBtXRbC=L6jGTzvEKvb=w@mail.gmail.com>
+In-Reply-To: <CAGb2v66kp4B5VZfmTc8L6qt=OPHjbYBtXRbC=L6jGTzvEKvb=w@mail.gmail.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Sat, 22 Sep 2018 21:47:03 +0800
+Message-ID: <CAGb2v65LzGgXORTx7PR+udZsrgGgmnXeaOW-jb=KMjHjTg7bRg@mail.gmail.com>
+Subject: Re: [PATCH 13/27] drm/sun4i: Add support for H6 DE3 mixer 0
+To: Jernej Skrabec <jernej.skrabec@siol.net>
+Cc: Rob Herring <robh+dt@kernel.org>, Maxime Ripard <maxime.ripard@bootlin.com>,
+	Mark Rutland <mark.rutland@arm.com>, Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, David Airlie <airlied@linux.ie>,
+	Archit Taneja <architt@codeaurora.org>, Andrzej Hajda <a.hajda@samsung.com>,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue 28 Aug 02:33 PDT 2018, Bartosz Golaszewski wrote:
+On Sat, Sep 22, 2018 at 9:23 PM Chen-Yu Tsai <wens@csie.org> wrote:
+>
+> On Sun, Sep 2, 2018 at 3:27 PM Jernej Skrabec <jernej.skrabec@siol.net> wrote:
+> >
+> > Mixer 0 has 1 VI and 3 UI planes, scaler on all planes and can output
+> > 4K image @60Hz. It also support 10 bit colors.
+>
+> AFAICT 10 bit color support is not implemented? Please mention this.
+>
+> >
+> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> > ---
+> >  drivers/gpu/drm/sun4i/sun8i_mixer.c | 13 +++++++++++++
+> >  1 file changed, 13 insertions(+)
+> >
+> > diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c b/drivers/gpu/drm/sun4i/sun8i_mixer.c
+> > index a9218abf0935..54eca2dd4b33 100644
+> > --- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
+> > +++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
+> > @@ -540,6 +540,15 @@ static int sun8i_mixer_remove(struct platform_device *pdev)
+> >         return 0;
+> >  }
+> >
+> > +static const struct sun8i_mixer_cfg sun50i_h6_mixer0_cfg = {
+>
+> Please sort the per-compatible structures according to "version sort" rules.
+>
+> > +       .ccsc           = 0,
+> > +       .is_de3         = true,
+> > +       .mod_rate       = 600000000,
+> > +       .scaler_mask    = 0xf,
+> > +       .ui_num         = 3,
+> > +       .vi_num         = 1,
+> > +};
+> > +
+> >  static const struct sun8i_mixer_cfg sun8i_a83t_mixer0_cfg = {
+> >         .ccsc           = 0,
+> >         .scaler_mask    = 0xf,
+> > @@ -587,6 +596,10 @@ static const struct sun8i_mixer_cfg sun8i_v3s_mixer_cfg = {
+> >  };
+> >
+> >  static const struct of_device_id sun8i_mixer_of_table[] = {
+> > +       {
+> > +               .compatible = "allwinner,sun50i-h6-de3-mixer-0",
+> > +               .data = &sun50i_h6_mixer0_cfg,
+> > +       },
+>
+> Same here.
+>
+> ChenYu
 
-> Make devm_kfree() signature uniform with that of kfree(). To avoid
-> compiler warnings: cast p to (void *) when calling devres_destroy().
-> 
+BTW, DE 3.0 includes a register in DE TOP called "DE IP configure register",
+which gives the number of IP blocks per class, per mixer. If we retrieve the
+configuration from this register, then we shouldn't need to differentiate
+between mixer-0 and mixer-1 with compatible strings.
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+What do you think?
 
-Regards,
-Bjorn
-
-> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
-> ---
->  drivers/base/devres.c  | 5 +++--
->  include/linux/device.h | 2 +-
->  2 files changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/base/devres.c b/drivers/base/devres.c
-> index f98a097e73f2..438c91a43508 100644
-> --- a/drivers/base/devres.c
-> +++ b/drivers/base/devres.c
-> @@ -885,11 +885,12 @@ EXPORT_SYMBOL_GPL(devm_kasprintf);
->   *
->   * Free memory allocated with devm_kmalloc().
->   */
-> -void devm_kfree(struct device *dev, void *p)
-> +void devm_kfree(struct device *dev, const void *p)
->  {
->  	int rc;
->  
-> -	rc = devres_destroy(dev, devm_kmalloc_release, devm_kmalloc_match, p);
-> +	rc = devres_destroy(dev, devm_kmalloc_release,
-> +			    devm_kmalloc_match, (void *)p);
->  	WARN_ON(rc);
->  }
->  EXPORT_SYMBOL_GPL(devm_kfree);
-> diff --git a/include/linux/device.h b/include/linux/device.h
-> index 8f882549edee..33f7cb271fbb 100644
-> --- a/include/linux/device.h
-> +++ b/include/linux/device.h
-> @@ -692,7 +692,7 @@ static inline void *devm_kcalloc(struct device *dev,
->  {
->  	return devm_kmalloc_array(dev, n, size, flags | __GFP_ZERO);
->  }
-> -extern void devm_kfree(struct device *dev, void *p);
-> +extern void devm_kfree(struct device *dev, const void *p);
->  extern char *devm_kstrdup(struct device *dev, const char *s, gfp_t gfp) __malloc;
->  extern void *devm_kmemdup(struct device *dev, const void *src, size_t len,
->  			  gfp_t gfp);
-> -- 
-> 2.18.0
-> 
+ChenYu
