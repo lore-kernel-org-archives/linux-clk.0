@@ -1,110 +1,94 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:54122 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732496AbeITT0F (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Sep 2018 15:26:05 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20180920134230euoutp022c31b2a7fa1649e0ae78a0e686c62d83~WH35MSV0V3163131631euoutp02d
-        for <linux-clk@vger.kernel.org>; Thu, 20 Sep 2018 13:42:30 +0000 (GMT)
-Subject: Re: [RFC/PATCH] clk: samsung: exynos5433: Fix NOIRQ suspend/resume
- support
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-clk <linux-clk@vger.kernel.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Date: Thu, 20 Sep 2018 15:42:27 +0200
+Return-Path: <jernej.skrabec@siol.net>
+From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To: linux-sunxi@googlegroups.com, wens@csie.org
+Cc: Rob Herring <robh+dt@kernel.org>, Maxime Ripard <maxime.ripard@bootlin.com>, Mark Rutland <mark.rutland@arm.com>, Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, David Airlie <airlied@linux.ie>, Archit Taneja <architt@codeaurora.org>, Andrzej Hajda <a.hajda@samsung.com>, devicetree <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>
+Subject: Re: [linux-sunxi] Re: [PATCH 13/27] drm/sun4i: Add support for H6 DE3 mixer 0
+Date: Sun, 23 Sep 2018 21:40:02 +0200
+Message-ID: <6201242.bzTTWRITmP@jernej-laptop>
+In-Reply-To: <CAGb2v65LzGgXORTx7PR+udZsrgGgmnXeaOW-jb=KMjHjTg7bRg@mail.gmail.com>
+References: <20180902072643.4917-1-jernej.skrabec@siol.net> <CAGb2v66kp4B5VZfmTc8L6qt=OPHjbYBtXRbC=L6jGTzvEKvb=w@mail.gmail.com> <CAGb2v65LzGgXORTx7PR+udZsrgGgmnXeaOW-jb=KMjHjTg7bRg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAPDyKFpcs8VgPcBF4fta=tLPUatxbhvSN3TLrxm1qqDN=OS29Q@mail.gmail.com>
-Message-Id: <20180920134228eucas1p2f69cf23d93d34884c6703a8a2c4d4cd1~WH33wZYnv3005330053eucas1p2q@eucas1p2.samsung.com>
-Content-Type: text/plain; charset="utf-8"
-References: <CGME20180919121357eucas1p19717351c40697483d3bf467c55e46f51@eucas1p1.samsung.com>
-        <20180919121342.18288-1-m.szyprowski@samsung.com>
-        <CAPDyKFpcs8VgPcBF4fta=tLPUatxbhvSN3TLrxm1qqDN=OS29Q@mail.gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Ulf,
+Dne sobota, 22. september 2018 ob 15:47:03 CEST je Chen-Yu Tsai napisal(a):
+> On Sat, Sep 22, 2018 at 9:23 PM Chen-Yu Tsai <wens@csie.org> wrote:
+> > On Sun, Sep 2, 2018 at 3:27 PM Jernej Skrabec <jernej.skrabec@siol.net> 
+wrote:
+> > > Mixer 0 has 1 VI and 3 UI planes, scaler on all planes and can output
+> > > 4K image @60Hz. It also support 10 bit colors.
+> > 
+> > AFAICT 10 bit color support is not implemented? Please mention this.
 
-On 2018-09-19 23:18, Ulf Hansson wrote:
-> On 19 September 2018 at 14:13, Marek Szyprowski
-> <m.szyprowski@samsung.com> wrote:
->> My recent commit af68ec14f112 'clk: samsung: Use NOIRQ stage for Exynos5433
->> clocks suspend/resume' moved Exynos5433 CMU suspend/resume callbacks
->> to NOIRQ stage. It turned out that in some cases this is not enough to
->> ensure that clocks provided by the given CMU will be available for other
->> drivers during their NOIRQ system suspend/resume phase. Device core calls
->> pm_runtime_disable and pm_runtime_enable unconditionally on every device
->> during LATE system suspend/resume phase. This means that during
->> noirq_resume, CMU device cannot be runtime resumed, because its
->> power.disable_depth is higher than zero (runtime PM for it will be enabled
->> later in device_resume_early function).
->>
->> To let other devices properly use clocks and keep runtime PM enabled also
->> during NOIRQ system sleep phase, add calls to pm_runtime_enable/disable
->> to balance the actions done by device core. The CMU device will be
->> suspended in its noirq_suspend callback and finally resumed in noirq_resume.
->
->> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> ---
->> Hi!
->>
->> The unconditional calls to pm_runtime_enable and pm_runtime_enable
->> in device_suspend_late and device_resume_early core functions were a bit
->> surprising for me, because they make NOIRQ phase a special case from
->> the perspective of runtime PM handling. Using LATE system sleep phase
->> to call pm_runtime_enable/disable looks like a workaround for me, but right
->> now I have no other idea how to ensure proper behavior of the Exynos5433
->> CMU driver.
->>
->> The most strange thing is that I didn't observe this initially after
->> switching to NOIRQ phase. The CMU device (FSYS_CMU) which is not under
->> any power domain behaved correctly and was properly available for DWMMC
->> device, which needs to enable clocks in its noirq_resume callback.
->>
->> However, in case of AUD_CMU and its clients (for example serial_3 device,
->> which is a part of audio-subsytem), the pm_runtime_get_sync() called from
->> clk_prepare() failed, because AUD_CMU device had still disabled runtime PM
->> support. The only difference between FSYS_CMU and AUD_CMU, is the fact
->> that AUD_CMU is under AUD power domain, while FSYS_CMU device has no power
->> domain assigned (for completely other reasons FSYS power domains is not yet
->> instantiated in exynos5433.dtsi).
->>
->> Ulf/Rafael: could You comment a bit on this issue? How it should be solved
->> properly?
-> In general, this sounds like the classical problem of
-> suspending/resuming devices in a correct order. The long term solution
-> is to use device links to address this problem.
+ok.
 
-Device links won't help in this case. This is not a problem of correct
-order of suspending/resuming devices. exynos5433 cmu device is already
-suspended after its client's and resumed before them. The problem here
-is using runtime PM in exynos5433 CMU driver during NOIRQ suspend/resume
-stage.
+> > 
+> > > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> > > ---
+> > > 
+> > >  drivers/gpu/drm/sun4i/sun8i_mixer.c | 13 +++++++++++++
+> > >  1 file changed, 13 insertions(+)
+> > > 
+> > > diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c
+> > > b/drivers/gpu/drm/sun4i/sun8i_mixer.c index a9218abf0935..54eca2dd4b33
+> > > 100644
+> > > --- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
+> > > +++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
+> > > @@ -540,6 +540,15 @@ static int sun8i_mixer_remove(struct
+> > > platform_device *pdev)> > 
+> > >         return 0;
+> > >  
+> > >  }
+> > > 
+> > > +static const struct sun8i_mixer_cfg sun50i_h6_mixer0_cfg = {
+> > 
+> > Please sort the per-compatible structures according to "version sort"
+> > rules.> 
+> > > +       .ccsc           = 0,
+> > > +       .is_de3         = true,
+> > > +       .mod_rate       = 600000000,
+> > > +       .scaler_mask    = 0xf,
+> > > +       .ui_num         = 3,
+> > > +       .vi_num         = 1,
+> > > +};
+> > > +
+> > > 
+> > >  static const struct sun8i_mixer_cfg sun8i_a83t_mixer0_cfg = {
+> > >  
+> > >         .ccsc           = 0,
+> > >         .scaler_mask    = 0xf,
+> > > 
+> > > @@ -587,6 +596,10 @@ static const struct sun8i_mixer_cfg
+> > > sun8i_v3s_mixer_cfg = {> > 
+> > >  };
+> > >  
+> > >  static const struct of_device_id sun8i_mixer_of_table[] = {
+> > > 
+> > > +       {
+> > > +               .compatible = "allwinner,sun50i-h6-de3-mixer-0",
+> > > +               .data = &sun50i_h6_mixer0_cfg,
+> > > +       },
+> > 
+> > Same here.
+> > 
+> > ChenYu
+> 
+> BTW, DE 3.0 includes a register in DE TOP called "DE IP configure register",
+> which gives the number of IP blocks per class, per mixer. If we retrieve
+> the configuration from this register, then we shouldn't need to
+> differentiate between mixer-0 and mixer-1 with compatible strings.
+> 
+> What do you think?
 
-> However, as a simple fix, I would try to add a ->prepare() callback
-> and call pm_runtime_get_sync() from it and then in a new corresponding
-> ->complete() callback, call pm_runtime_put().
->
-> This means that the device will stay runtime resumed until the
-> suspend_noirq phase. It would also means the pm_runtime_force_resume()
-> will resume the device at resume_noirq phase. Would that work?
+IIRC, not all setting were correct when read from registers, but I would need 
+to check again. I'm also not sure if register holds all possible settings, so 
+it is safer to have separate list. We would also have to devise mechanism to 
+get this data from DE2/3 CCU driver (it occupies the same memory space).
 
-Yes, this will work, but it will unnecessarily wake all instances of
-exynos5433 cmu and their power domains during the system suspend/resume
-cycle, what I would like to avoid.
+Perhaps the strongest argument is that some SoCs with DE3 have HW bug in 
+mixer1 block, including that in H6. In order to work, mod clock has to be 
+enabled for mixer0 and mixer1 at the same time. I would associate that quirk 
+with mixer1 compatible.
 
-Are there any reasons for disabling runtime PM unconditionally for every
-device in the system during LATE system sleep stage?
-
- > ...
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Best regards,
+Jernej
