@@ -1,48 +1,59 @@
 Return-Path: <olof@lixom.net>
 MIME-Version: 1.0
-In-Reply-To: <1533318808-10781-4-git-send-email-jollys@xilinx.com>
-References: <1533318808-10781-1-git-send-email-jollys@xilinx.com> <1533318808-10781-4-git-send-email-jollys@xilinx.com>
+In-Reply-To: <CY1PR02MB2138254CC5B1C2B2D41AB725B8040@CY1PR02MB2138.namprd02.prod.outlook.com>
+References: <1533318808-10781-1-git-send-email-jollys@xilinx.com>
+ <1533318808-10781-4-git-send-email-jollys@xilinx.com> <CAOesGMi7Q9L4oZkUubKtV-m8XD67MQ05ZFhPA_0Hwky_qVUxfg@mail.gmail.com>
+ <CY1PR02MB2138BF2252E1CE2C1747A78AB8050@CY1PR02MB2138.namprd02.prod.outlook.com>
+ <CAOesGMhViv_D6GKYf3x02LGqthwEsfkUFWBdG7pCQqD2MGsEew@mail.gmail.com> <CY1PR02MB2138254CC5B1C2B2D41AB725B8040@CY1PR02MB2138.namprd02.prod.outlook.com>
 From: Olof Johansson <olof@lixom.net>
-Date: Sat, 8 Sep 2018 18:18:53 -0700
-Message-ID: <CAOesGMi7Q9L4oZkUubKtV-m8XD67MQ05ZFhPA_0Hwky_qVUxfg@mail.gmail.com>
+Date: Sun, 23 Sep 2018 14:10:59 +0100
+Message-ID: <CAOesGMgqjGEXzRPXFxUcSyTof_wgjErPhZ7wokdGEDY9SnCvdw@mail.gmail.com>
 Subject: Re: [PATCH v11 03/11] firmware: xilinx: Add zynqmp IOCTL API for
  device control
-To: Jolly Shah <jolly.shah@xilinx.com>
-Cc: "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>, Ingo Molnar <mingo@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, matt@codeblueprint.co.uk,
-	Sudeep Holla <sudeep.holla@arm.com>, hkallweit1@gmail.com,
+To: Jolly Shah <JOLLYS@xilinx.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+	"ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>, Ingo Molnar <mingo@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"matt@codeblueprint.co.uk" <matt@codeblueprint.co.uk>, "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
 	Kees Cook <keescook@chromium.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
 	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Michal Simek <michal.simek@xilinx.com>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, linux-clk <linux-clk@vger.kernel.org>, rajanv@xilinx.com,
+	Michal Simek <michals@xilinx.com>, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, linux-clk <linux-clk@vger.kernel.org>,
+	Rajan Vaja <RAJANV@xilinx.com>,
 	Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, DTML <devicetree@vger.kernel.org>,
-	Jolly Shah <jollys@xilinx.com>
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, DTML <devicetree@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
 Hi,
 
-On Fri, Aug 3, 2018 at 10:53 AM, Jolly Shah <jolly.shah@xilinx.com> wrote:
-> From: Rajan Vaja <rajanv@xilinx.com>
+Apologies for the slow responses here, I meant to follow up on this sooner.
+
+On Tue, Sep 11, 2018 at 8:20 PM, Jolly Shah <JOLLYS@xilinx.com> wrote:
+> Hi Sudeep and Olof,
 >
-> Add ZynqMP firmware IOCTL API to control and configure
-> devices like PLLs, SD, Gem, etc.
+> Clock driver from same patch set uses ioctl API along with other clock ee=
+mi APIs. As clock patches' final review is pending by Stephen, Michal only =
+created pull request for rest of the patches and that doesn't require ioctl=
+ api. I will remove it and submit new patch set.
 >
-> Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
-> Signed-off-by: Jolly Shah <jollys@xilinx.com>
+> For future patches which requires ioctl api, would like to understand you=
+r suggestion so I can make required changes. For zynqmp, EEMI interface all=
+ows clock, reset, power etc management through firmware but apart from thos=
+e there are some operations which needs secure access through firmware. Exa=
+mples are accessing some storage registers for inter agent communication, c=
+onfiguring another agent(RPU) mode, setting PLL parameters, boot device con=
+figuration etc. Those operations are covered as ioctls as they are very pla=
+tform specific. Do you suggest to handle them with individual EEMI APIs ins=
+tead of ioctl API?
 
-This patch worries me somewhat. It's a transparent pass-through ioctl
-driver. Is there a spec available for what the implemented IOCTLs are?
+I'm personally less worried about whether the calls are through an
+ioctl API or an EEMI one, but if it is through ioctl, I'd prefer if it
+wasn't wide-open pass-through. I.e. that the ioctls you actually use
+are documented, and only those who are whitelisted are passed through
+(and not in general exported to userspace).
 
-Should some of them be proper drivers instead of an opaque
-pass-through like this? Could some of them have stability impact on
-the platform such that there are security concerns and the list of
-arguments should somehow be sanitized?
-
-What's the intended usecase anyway? Just a debug tool during
-development, or something that you expect heavy use of by some
-userspace middleware?
+Does that make sense?
 
 
 -Olof
