@@ -2,113 +2,313 @@ Return-Path: <SRS0=Dsg5=MG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38127C433F4
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 08:08:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E81BC433F4
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 09:05:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7CBF20C0A
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 08:08:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="M1e/HulU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7CBF20C0A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by mail.kernel.org (Postfix) with ESMTP id 5862D208E3
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 09:05:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5862D208E3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725992AbeIXOJB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Sep 2018 10:09:01 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:4287 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725956AbeIXOJB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Sep 2018 10:09:01 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5ba89b520000>; Mon, 24 Sep 2018 01:07:46 -0700
-Received: from HQMAIL101.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Mon, 24 Sep 2018 01:08:09 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Mon, 24 Sep 2018 01:08:09 -0700
-Received: from tbergstrom-lnx.Nvidia.com (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 24 Sep
- 2018 08:08:09 +0000
-Received: by tbergstrom-lnx.Nvidia.com (Postfix, from userid 1002)
-        id 8EBFEF8076D; Mon, 24 Sep 2018 11:08:03 +0300 (EEST)
-Date:   Mon, 24 Sep 2018 11:08:03 +0300
-From:   Peter De Schrijver <pdeschrijver@nvidia.com>
-To:     ryang <decatf@gmail.com>
-CC:     Prashant Gaikwad <pgaikwad@nvidia.com>,
+        id S1728090AbeIXPG5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Sep 2018 11:06:57 -0400
+Received: from mail-vk1-f193.google.com ([209.85.221.193]:33349 "EHLO
+        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727524AbeIXPG5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Sep 2018 11:06:57 -0400
+Received: by mail-vk1-f193.google.com with SMTP id m125-v6so3861327vka.0;
+        Mon, 24 Sep 2018 02:05:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kgSy8ZpibUAv+dyhbz/Bv2aiSSgMDHk+561w2Z0yzdQ=;
+        b=ZuCAwMEwShq+wEqCr15AC0VCXq8I/65Z0xoKwbWYzK9hDg9RTr+BqG3Y+q8dnUbAD1
+         mnIIul5xyK9uQYrH+ecWgmm9A8TkN8vATOPlM12jpuheGyQYPKygPoXGZRGq6CX8rEYn
+         vr2nej3klwpwI7d/TfXtt4olc9KIrr64t8QtLXDjU4CgoulFgu/eLDyrJm2VHlthc6dW
+         JIvRlBBO92+6qQQvIr7FoMsWzIN8ixNREmnLfkri+ZLrFFnfGDww0Fywv2RBg/Ren3ec
+         DBw/2cy4lKsRHlZ/ypsqr9HdNUwqp5UWWcNN94AcIO6OvcX/EyEVYk3zTqqRMIdkp3nr
+         dukQ==
+X-Gm-Message-State: ABuFfogYWzAg/JU9K1nQJDWinX5YVGo4EncTn4s43cjKQ/29cl+qSK4H
+        vHvv5CWA7mDCriezPLmEJXv3eULI9YwMJJAb9Zc=
+X-Google-Smtp-Source: ACcGV62itOZq8fvm063m7ddHVswMBlUY+EcMib3O2AECswb8g2kQBJNHcVUdck5KoJVfBQ6feVxrUFWbpILi8wTYO3A=
+X-Received: by 2002:a1f:2ad6:: with SMTP id q205-v6mr2257558vkq.83.1537779952846;
+ Mon, 24 Sep 2018 02:05:52 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180921152054.117774-1-chris.brandt@renesas.com> <20180921152054.117774-2-chris.brandt@renesas.com>
+In-Reply-To: <20180921152054.117774-2-chris.brandt@renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 24 Sep 2018 11:05:40 +0200
+Message-ID:
+ <CAMuHMdUWFp9nBR8EQtADHePPqGQZ-3bHrANQULz-QnXJLQy2fA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] clk: renesas: cpg-mssr: Add early clock support
+To:     Chris Brandt <chris.brandt@renesas.com>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] clk: tegra: Return the exact clock rate from
- clk_round_rate
-Message-ID: <20180924080803.GF7636@tbergstrom-lnx.Nvidia.com>
-References: <20180921220149.17136-1-decatf@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20180921220149.17136-1-decatf@gmail.com>
-X-NVConfidentiality: public
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL101.nvidia.com (172.20.187.10)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1537776466; bh=Zsg2wOD81o6UeTs6JodahP3dvNM/mHBaVxxM8dSftac=;
-        h=X-PGP-Universal:Date:From:To:CC:Subject:Message-ID:References:
-         MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
-         X-NVConfidentiality:User-Agent:X-Originating-IP:X-ClientProxiedBy;
-        b=M1e/HulU8zD52wBzJ0hImlRCFBWVKno1erNAOwHo1bF0IGqJuEih3EMuSjPBkj/EY
-         qc2gL54oEwGHyyH2G8S1uQzPHc1jEpkhX/SvtJcrNoziKyI3duh0O68HH/PTntCC7A
-         HhFWEAuF/F8XMuVPzUotLUFmqQBCgYsUABHlnowGoRbyJvkYwLy/c7eFlLe2N37FJH
-         esRgDxLhw/k/5qwgKi+YppaPlRizL/qkiuhfXhlQ8KxKSk/SVl4v6Fl5u0Ls079B+7
-         ky6eQo+Pc551mW0UaX/GyQMEx3REVpJJ9RIIDRkXa52omiDeukj+bkWEMCttSIPQrS
-         gOVpxP+WtQ4ew==
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms+renesas@verge.net.au>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
-Message-ID: <20180924080803.6I1va79AFXw75tMZgQ04Ma-p94aaoFRdhk884YlO5Nc@z>
+Message-ID: <20180924090540.NNK0QDFo8jqad4Sn-u4PDY0JmhWKC4Ga9OM_OxyY0h8@z>
 
-On Fri, Sep 21, 2018 at 06:01:49PM -0400, ryang wrote:
-> The current behavior is that clk_round_rate would return the same clock
-> rate passed to it for valid PLL configurations. This change will return
-> the exact rate the PLL will provide in accordance with clk API.
-> 
-> Signed-off-by: ryang <decatf@gmail.com>
-> ---
->  drivers/clk/tegra/clk-pll.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-> index 17a058c3bbc1..36014a6ec42e 100644
-> --- a/drivers/clk/tegra/clk-pll.c
-> +++ b/drivers/clk/tegra/clk-pll.c
-> @@ -595,7 +595,12 @@ static int _calc_rate(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
->  		return -EINVAL;
->  	}
->  
-> -	cfg->output_rate >>= p_div;
-> +	if (cfg->m == 0) {
-> +		cfg->output_rate = 0;
+Hi Chris,
 
-I think a WARN_ON() is appropriate here. the input divider should never be 0.
+On Fri, Sep 21, 2018 at 5:21 PM Chris Brandt <chris.brandt@renesas.com> wrote:
+> Add support for SoCs that need to register core and module clocks early in
+> order to use OF drivers that exclusively use macros such as
+> TIMER_OF_DECLARE.
+>
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
 
-Peter.
+Thanks for your patch!
 
-> +	} else {
-> +		cfg->output_rate = cfg->n * DIV_ROUND_UP(parent_rate, cfg->m);
-> +		cfg->output_rate >>= p_div;
-> +	}
->  
->  	if (pll->params->pdiv_tohw) {
->  		ret = _p_div_to_hw(hw, 1 << p_div);
-> -- 
-> 2.17.1
-> 
+> --- a/drivers/clk/renesas/renesas-cpg-mssr.c
+> +++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+> @@ -127,6 +127,7 @@ struct cpg_mssr_priv {
+>         struct device *dev;
+>         void __iomem *base;
+>         spinlock_t rmw_lock;
+> +       struct device_node *np;
+>
+>         struct clk **clks;
+>         unsigned int num_core_clks;
+> @@ -141,6 +142,7 @@ struct cpg_mssr_priv {
+>         } smstpcr_saved[ARRAY_SIZE(smstpcr)];
+>  };
+>
+> +struct cpg_mssr_priv *early_priv;
+
+static
+
+Just call the pointer cpg_mssr_priv, as you're gonna need it in both cases
+(see below)?
+
+>
+>  /**
+>   * struct mstp_clock - MSTP gating clock
+> @@ -316,7 +318,7 @@ static void __init cpg_mssr_register_core_clk(const struct cpg_core_clk *core,
+>
+>         switch (core->type) {
+>         case CLK_TYPE_IN:
+> -               clk = of_clk_get_by_name(priv->dev->of_node, core->name);
+> +               clk = of_clk_get_by_name(priv->np, core->name);
+>                 break;
+>
+>         case CLK_TYPE_FF:
+> @@ -877,42 +879,49 @@ static const struct dev_pm_ops cpg_mssr_pm = {
+>  #define DEV_PM_OPS     NULL
+>  #endif /* CONFIG_PM_SLEEP && CONFIG_ARM_PSCI_FW */
+>
+> -static int __init cpg_mssr_probe(struct platform_device *pdev)
+> +static int cpg_mssr_common_init(struct device *dev, struct device_node *np,
+
+__init
+
+> +                               const struct cpg_mssr_info *info)
+>  {
+> -       struct device *dev = &pdev->dev;
+> -       struct device_node *np = dev->of_node;
+> -       const struct cpg_mssr_info *info;
+>         struct cpg_mssr_priv *priv;
+>         unsigned int nclks, i;
+> -       struct resource *res;
+> -       struct clk **clks;
+> +       struct clk **clks = NULL;
+>         int error;
+> +       bool early_init = dev ? false : true;
+
+I think this flag can be removed (see below).
+
+>
+> -       info = of_device_get_match_data(dev);
+>         if (info->init) {
+>                 error = info->init(dev);
+>                 if (error)
+>                         return error;
+>         }
+>
+> -       priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> +       priv = kzalloc(sizeof(*priv), GFP_KERNEL);
+>         if (!priv)
+>                 return -ENOMEM;
+>
+> +       /* np is saved because dev->of_node doesn't exists during early init */
+
+I don't think this comment is needed...
+
+> +       priv->np = np;
+> +
+
+... nor this blank line.
+
+>         priv->dev = dev;
+>         spin_lock_init(&priv->rmw_lock);
+>
+> -       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -       priv->base = devm_ioremap_resource(dev, res);
+> -       if (IS_ERR(priv->base))
+> -               return PTR_ERR(priv->base);
+> +       priv->base = of_iomap(np, 0);
+> +       if (IS_ERR(priv->base)) {
+
+of_iomap() returns NULL on failure, not an error code.
+
+> +               error = PTR_ERR(priv->base);
+
+error = -ENOMEM;
+
+> +               goto out_err;
+> +       }
+>
+>         nclks = info->num_total_core_clks + info->num_hw_mod_clks;
+> -       clks = devm_kmalloc_array(dev, nclks, sizeof(*clks), GFP_KERNEL);
+> -       if (!clks)
+> -               return -ENOMEM;
+> +       clks = kmalloc_array(nclks, sizeof(*clks), GFP_KERNEL);
+> +       if (!clks) {
+> +               error = -ENOMEM;
+> +               goto out_err;
+> +       }
+> +
+> +       if (early_init)
+> +               early_priv = priv;
+
+cpg_mssr_probe() needs access to the pointer, too, so you should always
+save it.
+
+> +       else
+> +               dev_set_drvdata(dev, priv);
+
+dev_set_drvdata() should be called on SoCs with early clocks, too, so that
+should be done in cpg_mssr_probe() instead.
+
+>
+> -       dev_set_drvdata(dev, priv);
+>         priv->clks = clks;
+>         priv->num_core_clks = info->num_total_core_clks;
+>         priv->num_mod_clks = info->num_hw_mod_clks;
+> @@ -923,16 +932,71 @@ static int __init cpg_mssr_probe(struct platform_device *pdev)
+>         for (i = 0; i < nclks; i++)
+>                 clks[i] = ERR_PTR(-ENOENT);
+>
+> +       error = of_clk_add_provider(np, cpg_mssr_clk_src_twocell_get, priv);
+> +       if (error)
+> +               goto out_err;
+> +
+> +       return 0;
+> +
+> +out_err:
+> +       kfree(clks);
+> +       if (priv->base)
+> +               iounmap(priv->base);
+> +       kfree(priv);
+> +
+> +       return error;
+> +}
+> +
+> +void __init cpg_mssr_early_init(struct device_node *np,
+> +                               const struct cpg_mssr_info *info)
+> +{
+> +       int error;
+> +       int i;
+> +
+> +       error = cpg_mssr_common_init(NULL, np, info);
+> +       if (error)
+> +               return;
+> +
+> +       for (i = 0; i < info->num_early_core_clks; i++)
+> +               cpg_mssr_register_core_clk(&info->early_core_clks[i], info,
+> +                                          early_priv);
+> +
+> +       for (i = 0; i < info->num_early_mod_clks; i++)
+> +               cpg_mssr_register_mod_clk(&info->early_mod_clks[i], info,
+> +                                         early_priv);
+> +
+> +}
+> +
+> +static int __init cpg_mssr_probe(struct platform_device *pdev)
+> +{
+> +       struct device *dev = &pdev->dev;
+> +       struct device_node *np = dev->of_node;
+> +       const struct cpg_mssr_info *info;
+> +       struct cpg_mssr_priv *priv;
+> +       unsigned int i;
+> +       int error;
+> +
+> +       info = of_device_get_match_data(dev);
+> +
+> +       if (early_priv) {
+> +               priv = early_priv;
+> +               priv->dev = &pdev->dev;
+> +       } else {
+> +               error = cpg_mssr_common_init(dev, dev->of_node, info);
+
+Oops, priv is not set => BOOM.
+I guess you have no other hardware using the renesas-cpg-mssr driver?
+You can probably still test this case on RZ/A2 without patch 2 (or with the
+OF_CLK_DECLARE_DRIVER() line commented out), and with the OSTM timer hack
+you posted before.
+
+> +       }
+> +
+> +       if (error)
+> +               return error;
+> +
+> +       if (!early_priv)
+> +               dev_set_drvdata(dev, priv);
+
+This should be done regardless.
+
+For now it's fine to not move the call to cpg_mssr_add_clk_domain() from
+cpg_mssr_probe() to cpg_mssr_common_init().  If/when the timer subsystem
+receives some early platform_device support, this may have to be revisited.
+
+> --- a/drivers/clk/renesas/renesas-cpg-mssr.h
+> +++ b/drivers/clk/renesas/renesas-cpg-mssr.h
+> @@ -119,12 +119,16 @@ struct cpg_mssr_info {
+>         unsigned int num_core_clks;
+>         unsigned int last_dt_core_clk;
+>         unsigned int num_total_core_clks;
+> +       const struct cpg_core_clk *early_core_clks;
+> +       unsigned int num_early_core_clks;
+
+I'd put the early clocks first.
+Or perhaps a separate /* Early Clocks */ block for both early core and
+early module clocks at the top of struct cpg_mssr_info, so it's very clear
+what applies to early clocks?
+
+>         bool stbyctrl;
+>
+>         /* Module Clocks */
+>         const struct mssr_mod_clk *mod_clks;
+>         unsigned int num_mod_clks;
+>         unsigned int num_hw_mod_clks;
+> +       const struct mssr_mod_clk *early_mod_clks;
+> +       unsigned int num_early_mod_clks;
+
+Likewise.
+
+>
+>         /* Critical Module Clocks that should not be disabled */
+>         const unsigned int *crit_mod_clks;
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
