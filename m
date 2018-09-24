@@ -1,66 +1,62 @@
-Return-Path: <maxime.ripard@bootlin.com>
-Date: Wed, 5 Sep 2018 09:04:51 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Jagan Teki <jagan@amarulasolutions.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-	Jernej Skrabec <jernej.skrabec@siol.net>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
+Return-Path: <thierry.reding@gmail.com>
+Return-Path: <thierry.reding@gmail.com>
+Date: Mon, 24 Sep 2018 13:40:37 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: ryang <decatf@gmail.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v4 2/4] arm64: defconfig: Enable CONFIG_DRM_SUN4I
-Message-ID: <20180905070450.b5vgp7j65rxwipno@flea>
-References: <20180904163609.10171-1-jagan@amarulasolutions.com>
- <20180904163609.10171-2-jagan@amarulasolutions.com>
+	Stephen Boyd <sboyd@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: tegra: Return the exact clock rate from
+ clk_round_rate
+Message-ID: <20180924114037.GT21032@ulmo>
+References: <20180921220149.17136-1-decatf@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="hqpjwkk3omedglce"
-In-Reply-To: <20180904163609.10171-2-jagan@amarulasolutions.com>
+	protocol="application/pgp-signature"; boundary="bn6XL8m8Y51x7rzV"
+In-Reply-To: <20180921220149.17136-1-decatf@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
 
---hqpjwkk3omedglce
+--bn6XL8m8Y51x7rzV
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 04, 2018 at 10:06:07PM +0530, Jagan Teki wrote:
-> Enable DRM Support for Allwinner Display Engine, built as a module.
+On Fri, Sep 21, 2018 at 06:01:49PM -0400, ryang wrote:
+> The current behavior is that clk_round_rate would return the same clock
+> rate passed to it for valid PLL configurations. This change will return
+> the exact rate the PLL will provide in accordance with clk API.
 >=20
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> Signed-off-by: ryang <decatf@gmail.com>
+> ---
+>  drivers/clk/tegra/clk-pll.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
 
-Applied, thanks!
-Maxime
+With Peter's comment addressed:
 
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Acked-by: Thierry Reding <treding@nvidia.com>
 
---hqpjwkk3omedglce
+--bn6XL8m8Y51x7rzV
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluPgBIACgkQ0rTAlCFN
-r3Rq2A/+ImLadBwx7TydpMue7SKkyPHCj139z7GMa7vUG7MdKdXwtAasZ1UC1YUJ
-0GZ5wy4aoZzyCU9UkAOkhvlYlqafJf012lRjWE6ur8ngQXMKx4ab3Y58FsidDFLw
-Kium5oBMCY5PVn7ICNg7uz+Dci4jFm8tWJKATWfSQFG4j8/R4fdz9tRh+B5la6jf
-pCy4wjnQMvQFpCH5qibod3imfCXsobuLAoy3frkEPc8drK9xtyArpwgbnxt19v/N
-7RytTTMFVjtXM53Mt/2QK7goYkQ53cKKzA76QP1bnVelCgRicfIRHxpLc/F39woj
-afR1tzblrZkintiN2aeNxC2xEbvMQkXfYapwdO0yWyQekEz8+uXnTMJZxPdk++DY
-mRIv6KRUoUAUjkKfkOwRgPiJQPzNeU5cDZ7SI4hQOiA/rxJBRdMglOdeW7HmGHiW
-Yp9+Rv1vIFNiPTuOSRU5+ArU5qBXnlwVyqSY04+dgpiRfq/IMkGxr/GwDBpAPGPZ
-7+P8TU9PoO8sYocWCc+meSYsqYNQVB4gM1McTJtq3/Yu8Seuk59wgE0E24x0456b
-GU6oWVRqk9eDkR5dMI7RZB8BWaGsFWZAKMr1OhRazw9x9NdTInVIX4SzMa0y3KXT
-3945mcrI0xGblygMojeDo60REp/kcqxGzacScBzJhNVBbqMBXbc=
-=pBnJ
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAluozTUACgkQ3SOs138+
+s6FelhAAvGzqVXT5LttZWdkwXLxdR4HGb90RkeYQLaA8/CAl+SaBOCatNzcT3Lir
+pdceI62Jl9PjVK5WiPCXcm3BuIWCNmXBDuiaHZ9qi4Zv7USl7Jc2/7Pq/Mtr/CJW
+plmhdu65Elad217ExedOptrsO8rRTEuh+mJKY4kBmN7MxovhPSt8jQCXZeMhMa1U
+2FJKM66nZIxR0Eq40BH16WOovqXkbT2+mQZNiZyssyCh5VrqKhru5Qw4tG6p6sUi
+VCiFt9RbT/OCXFlBatu8i19J+EPvT3mgyjXjpz1O40kWO0oQFAL7QUmLUQhqoybS
+XQ5lq7+UiOeLRq90+FldMZsAAylMwzg6dxFLDd+zGjcYJYMIYWBvUPUZxcG708mz
+/RefvWtwk1r4GokkfwZfZqDzd/71Cxs3WJp/hMcbxzIYDw+9nK54YgNxvVU2CDdK
+QONWALQwQBUutxH0R1lTH10u8yBUg1OAMyq9K8f/XQx2Z9Elcz69Dwml5s9Ot/wI
+K1Cu2r3cn6kZD3rKiphNQxEdPX3jER8OoB8FnCj1D7/YOmdyOlxX/GI0YS4oS8UB
+xhlxJhK6Q6dbGpiYyJk6o2KJ+r/BmHhUy6fgCHPg2pJ/nXYmwXy/Dd0UVmuGCrLo
+8ZXxbSkAN8RbjTNOd7X+zeXINLP/osPv8+ev5teCgUZNslFh4cM=
+=xTtX
 -----END PGP SIGNATURE-----
 
---hqpjwkk3omedglce--
+--bn6XL8m8Y51x7rzV--
