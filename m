@@ -1,62 +1,62 @@
-Return-Path: <jagan@amarulasolutions.com>
-MIME-Version: 1.0
-References: <20180927114850.24565-1-jagan@amarulasolutions.com>
- <20180927114850.24565-5-jagan@amarulasolutions.com> <CAGb2v66No3-AODYCCGifBrm9uvPjaNdR2W5MDQdazRAPomT9CQ@mail.gmail.com>
-In-Reply-To: <CAGb2v66No3-AODYCCGifBrm9uvPjaNdR2W5MDQdazRAPomT9CQ@mail.gmail.com>
-From: Jagan Teki <jagan@amarulasolutions.com>
-Date: Thu, 27 Sep 2018 19:14:23 +0530
-Message-ID: <CAMty3ZBUQKVLJsmkU=hjaO_O5bhetDfAh9-7iLkUqOznVc0KyA@mail.gmail.com>
-Subject: Re: [PATCH 04/12] drm/sun4i: sun6i_mipi_dsi: Enable missing DSI bus clock
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Icenowy Zheng <icenowy@aosc.io>,
-	Jernej Skrabec <jernej.skrabec@siol.net>, Vasily Khoruzhick <anarsoul@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
-	David Airlie <airlied@linux.ie>, dri-devel <dri-devel@lists.freedesktop.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <chris.brandt@renesas.com>
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Simon Horman <horms+renesas@verge.net.au>,
+	Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH v2 0/3] clk: renesas: r7s9210: Add support for early clocks
+Date: Mon, 24 Sep 2018 11:49:34 -0500
+Message-Id: <20180924164937.36536-1-chris.brandt@renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Sep 27, 2018 at 6:13 PM Chen-Yu Tsai <wens@csie.org> wrote:
->
-> Hi,
->
-> On Thu, Sep 27, 2018 at 7:49 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
-> >
-> > DSI bus_clk is already available in sun6i_dsi but missed to
-> > get the clk and process for enable/disable.
-> >
-> > This patch add support for it.
-> >
-> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> > ---
-> >  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 8 ++++++++
-> >  1 file changed, 8 insertions(+)
-> >
-> > diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> > index 8e9c76febca2..156b371243c6 100644
-> > --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> > +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> > @@ -1004,6 +1004,12 @@ static int sun6i_dsi_probe(struct platform_device *pdev)
-> >                 return PTR_ERR(dsi->reset);
-> >         }
-> >
-> > +       dsi->bus_clk = devm_clk_get(dev, "bus");
-> > +       if (IS_ERR(dsi->bus_clk)) {
-> > +               dev_err(dev, "Couldn't get the DSI bus clock\n");
-> > +               return PTR_ERR(dsi->bus_clk);
-> > +       }
-> > +
->
-> The DSI driver uses devm_regmap_init_mmio_clk, which enables the
-> clock behind the scenes when regmap access needs it enabled.
->
-> Did you have any issues without this patch?
+The OSTM timer driver for RZ/A2 uses TIMER_OF_DECLARE which requires the
+ostm module clocks to be registers early in boot.
 
-I'm unable to read register values via devmem, I see all 0's for all
-dsi reg space.
+This series add early clock support to cpg-mssr
+
+Here are some notes I took:
+
+ * Switched to using
+     of_iomap(cpg_np, 0)
+   instead of
+     platform_get_resource(pdev, IORESOURCE_MEM, 0)
+
+*  All devm_xxx calls were replaced with the traditinal functions because
+   'dev' is not available for early probe
+
+*  some functions are still using dev_dbg and dev_err for messages, but
+   in early init, dev is set to NULL so it doesn't crash, the messages
+   just look like this:
+      (NULL device *): Core clock extal at 24000000 Hz
+      (NULL device *): clock (1, 35) is ostm1 at 66000000 Hz
+
+*  np was added to priv
+   np is saved because dev->of_node doesn't exist during early init and we
+   need to avoid using 'dev' for any function that will run during early
+   init
+
+*  all .init functions (r8xxxx_cpg_mssr_init) for the SoCs do not use dev,
+   except for r8a7791_cpg_mssr_init for the lines:
+       struct device_node *np = dev->of_node;
+       of_device_is_compatible(np, "renesas,r8a7793-cpg-mssr")
+    But, so if early clock support was every needed for r8a7791 or r8a7793,
+    that line will need to be changed.
+
+* In r7s9210-cpg-mssr.c, I moved updating the clock ratio table to a
+  separate function (r7s9210_update_table) because it looks cleaner.
+
+Chris Brandt (3):
+  clk: renesas: cpg-mssr: Add early clock support
+  clk: renesas: r7s9210: Convert some clocks to early
+  clk: renesas: r7s9210: Move table update to separate function
+
+ drivers/clk/renesas/r7s9210-cpg-mssr.c | 126 ++++++++++++++++++++-------------
+ drivers/clk/renesas/renesas-cpg-mssr.c |  95 +++++++++++++++++++------
+ drivers/clk/renesas/renesas-cpg-mssr.h |  13 ++++
+ 3 files changed, 163 insertions(+), 71 deletions(-)
+
+-- 
+2.16.1
