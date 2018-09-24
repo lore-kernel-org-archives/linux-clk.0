@@ -1,40 +1,79 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <andriy.shevchenko@linux.intel.com>
+Date: Mon, 24 Sep 2018 15:11:38 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+	Arend van Spriel <aspriel@gmail.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Vivek Gautam <vivek.gautam@codeaurora.org>,
+	Robin Murphy <robin.murphy@arm.com>, Joe Perches <joe@perches.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Mike Rapoport <rppt@linux.vnet.ibm.com>,
+	Michal Hocko <mhocko@suse.com>, Al Viro <viro@zeniv.linux.org.uk>,
+	Jonathan Corbet <corbet@lwn.net>, Roman Gushchin <guro@fb.com>,
+	Huang Ying <ying.huang@intel.com>,
+	Kees Cook <keescook@chromium.org>,
+	Bjorn Andersson <bjorn.andersson@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-mm@kvack.org
+Subject: Re: [PATCH v3 4/4] clk: pmc-atom: use devm_kstrdup_const()
+Message-ID: <20180924121138.GN15943@smile.fi.intel.com>
+References: <20180924101150.23349-1-brgl@bgdev.pl>
+ <20180924101150.23349-5-brgl@bgdev.pl>
+ <20180924112303.GM15943@smile.fi.intel.com>
+ <CAMRc=McegRtV88BfYja5wdKZuNDEMG3dqWjG7xHoyo6EHhyEqg@mail.gmail.com>
 MIME-Version: 1.0
-References: <1536748914-27416-1-git-send-email-fabrizio.castro@bp.renesas.com> <1536748914-27416-3-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1536748914-27416-3-git-send-email-fabrizio.castro@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 18 Sep 2018 13:02:30 +0200
-Message-ID: <CAMuHMdXuZkFNPYG4S2Z1HhHxMPZWfz_sME8j7OToFbUyRiJA1Q@mail.gmail.com>
-Subject: Re: [PATCH 2/3] clk: renesas: cpg-mssr: Add r8a774c0 support
-To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>, Simon Horman <horms@verge.net.au>,
-	Chris Paterson <Chris.Paterson2@renesas.com>, Biju Das <biju.das@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+In-Reply-To: <CAMRc=McegRtV88BfYja5wdKZuNDEMG3dqWjG7xHoyo6EHhyEqg@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Sep 12, 2018 at 12:42 PM Fabrizio Castro
-<fabrizio.castro@bp.renesas.com> wrote:
-> Add RZ/G2E (R8A774C0) Clock Pulse Generator / Module Standby and
-> Software Reset support.
->
-> Based on Table 8.2g of "RZ/G Series, 2nd Generation User's Manual:
-> Hardware (Rev. 0.61, June 12, 2018)".
->
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Reviewed-by: Biju Das <biju.das@bp.renesas.com>
+On Mon, Sep 24, 2018 at 01:44:19PM +0200, Bartosz Golaszewski wrote:
+> pon., 24 wrz 2018 o 13:23 Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> napisał(a):
+> >
+> > On Mon, Sep 24, 2018 at 12:11:50PM +0200, Bartosz Golaszewski wrote:
+> > > Use devm_kstrdup_const() in the pmc-atom driver. This mostly serves as
+> > > an example of how to use this new routine to shrink driver code.
+> > >
+> > > While we're at it: replace a call to kcalloc() with devm_kcalloc().
+> >
+> > > @@ -352,8 +344,6 @@ static int plt_clk_probe(struct platform_device *pdev)
+> > >               goto err_drop_mclk;
+> > >       }
+> > >
+> > > -     plt_clk_free_parent_names_loop(parent_names, data->nparents);
+> > > -
+> > >       platform_set_drvdata(pdev, data);
+> > >       return 0;
+> >
+> > I don't think this is a good example.
+> >
+> > You changed a behaviour here in the way that you keep all chunks of memory
+> > (even small enough for pointers) during entire life time of the driver, which
+> > pretty likely would be forever till next boot.
+> >
+> > In the original case the memory was freed immediately in probe either it fails
+> > or returns with success.
+> >
+> > NAK, sorry.
+> >
+> >
+> 
+> I see.
+> 
+> I'd like to still merge patches 1-3 and then I'd come up with better
+> examples for the next release cycle once these are in?
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in clk-renesas-for-v4.20.
+I'm fine with first three, though I can't come up with better example for you
+now. My previous comment solely to clk-pmc-atom code.
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+With Best Regards,
+Andy Shevchenko
