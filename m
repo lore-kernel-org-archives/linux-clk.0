@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F55AC433F4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 933F7ECE561
 	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 10:12:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17EAA20833
+	by mail.kernel.org (Postfix) with ESMTP id 4F66C20883
 	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 10:12:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="Uy6pZDm6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17EAA20833
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="JJRM0KSL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F66C20883
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728344AbeIXQN1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S1728549AbeIXQN1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Mon, 24 Sep 2018 12:13:27 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:35339 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727988AbeIXQNZ (ORCPT
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:53397 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728344AbeIXQNZ (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Sep 2018 12:13:25 -0400
-Received: by mail-wm1-f66.google.com with SMTP id o18-v6so9438695wmc.0
-        for <linux-clk@vger.kernel.org>; Mon, 24 Sep 2018 03:12:04 -0700 (PDT)
+Received: by mail-wm1-f68.google.com with SMTP id b19-v6so9053907wme.3
+        for <linux-clk@vger.kernel.org>; Mon, 24 Sep 2018 03:12:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=38j/leseIFaYyx4yzFjMEUsIrw9mip1Szaiqm4tzm/A=;
-        b=Uy6pZDm6z/fl0jre25cfBjomNanGjgb8D5SlflebK4Dq53aCng4x8B/xsSiEuoljv3
-         101hdyhZJRdiq1/LK2s2DYanexvieCFQqeRwuu5m3dGgKgsSIvaLaJ9FbXuS23DChcPW
-         aDm6egXgtPBVwFwDkSDQTGokT7Umb7qL+Wkt2AWw+Vx87mWsKncg/A43TTnFs7BlHu2H
-         f+AFCKKUZJ/eD5mpxpoIAwgmjfB6WAcqUVHtGVgTlElhqcRjB8HsJ5Y/78uN2J9xQgvL
-         LHgVUwyoSq6yH00fcHDUwjZDzxbVDgVYVhRvJSbr2ctIuIsTIdtQpNX8YuDqVb+KWpUP
-         LVHg==
+        bh=Ig9mBor6Vwwn4DYl4UdniUpV/rwBF8VdzUTE/e7dEs4=;
+        b=JJRM0KSL00sDd4gsBejDecMytRBu57SOdnHmLSJdvSWRrtQmxoD7GlHievO5p22+XF
+         DIwqPilexuKrnMQxg+x7VKNHaqvrxGOciQVt78pq+IiP/07OKF5DIyOMPySo0wVIbCBk
+         GfuMANULQwzE7RboMFugcqwVjxXaP/J1Fb4sosS8406LgoX7Q7qNxyFCG6bsunDtTDL3
+         A1TQsZDYpdt0MvfqEavVlMJW4IsQUCvKcdc4lP6i3R+I3WHjN+c7mKVjxSkPlNPYEahT
+         l4IpY393sTVPuYFHvrHY1fAchqjisT8k0qOuQSNAUkVSQgKfk07YMMMaUkaB3MZ4mTx0
+         pORw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=38j/leseIFaYyx4yzFjMEUsIrw9mip1Szaiqm4tzm/A=;
-        b=iS14Sh7HKJhlZxoRLDEdoVi1R3MvvjXuzPgBYiv7N5sCfzxH0IWzK2XHeYZ96Aud+U
-         HZxIOWPvT6vVqldSKP3ShYuMSwsxaBLYWGoq3xb7gf5VgL9Go3jO9IQHDsw9zoLzwdms
-         lbUDawsJVwXKv4OxgRl8mPIhBnZjZhkIK451WiHrPQiKzpST3SmEwQD0tNCWHHOSB5OQ
-         ur1Z9v/tvON4JI8htFLwxOPu003gEl17yYliJMzfPxX7PjrFKm1QdNK+HLGLEGSm/asv
-         rgOdgDk3RRXNIycZ3ykUV1sqLje5Xr+EMuroS4HromJkTyjdUHeI6Jpbnr5NdPTQ3udj
-         2YQQ==
-X-Gm-Message-State: ABuFfogwYr0xn28lzRB3ADK8XQn7YUZaRoJvp6S5boW4VFrtw+Qen64G
-        rObrFDMkMOv7clOBCCKAUE6uVA==
-X-Google-Smtp-Source: ACcGV605psT+bg6McVRzros1Jf9FORPXMAjXqmI/96ORXIfiqHRHrFOhI/+9JRilgZIocmyDiIQAdQ==
-X-Received: by 2002:a1c:4182:: with SMTP id o124-v6mr6764650wma.101.1537783923860;
-        Mon, 24 Sep 2018 03:12:03 -0700 (PDT)
+        bh=Ig9mBor6Vwwn4DYl4UdniUpV/rwBF8VdzUTE/e7dEs4=;
+        b=UT8evzWrK7F/SjmKc/4CUAClKeSh37nKlCqJPvenScn/bEpnHIex8GH9NDg3bteYGI
+         5VHKqSodRA/l+TKWs3e9E2gdWpVfOKJXcY17TkITq90EaZoBGzZw//P56RyFWTccSF0x
+         tJUKPGTF4ZCJ8o2zErdXQz/pjufV5G5R3kfEkxkEdDGtjcI9dzi9NBFRxxmKjNtLl9TB
+         DzF5fzkOtOQctYPl5v+fH3Z/1x6MEiv4SubE6EoUU2uFuuS2v7fY4b1dUOGNHF4lKPGx
+         ZCEpPVzrrJaFBq+M2KO2nwZBpfBNFSXA98BvBl6JtSnz10XushL1B3XQNBofWs6PPfk8
+         SMYQ==
+X-Gm-Message-State: ABuFfog/QxFfsF0sAGnCBdqhiZOlcwj9D1CPr98H2OeABorznKzcJJKQ
+        dTrhJxgjiZmUIngjYTWegzwPlw==
+X-Google-Smtp-Source: ACcGV63UZdxzfT1JG65wI1i05x8zgahoA5qW9lU5GZg5qEmKLT2APagXP/h1Z6esoAJFAh0uHQFlYA==
+X-Received: by 2002:a1c:b20b:: with SMTP id b11-v6mr613454wmf.64.1537783925302;
+        Mon, 24 Sep 2018 03:12:05 -0700 (PDT)
 Received: from brgl-bgdev.baylibre.local (AStLambert-681-1-2-33.w90-86.abo.wanadoo.fr. [90.86.1.33])
-        by smtp.gmail.com with ESMTPSA id o12-v6sm3291728wrj.58.2018.09.24.03.12.02
+        by smtp.gmail.com with ESMTPSA id o12-v6sm3291728wrj.58.2018.09.24.03.12.03
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 24 Sep 2018 03:12:03 -0700 (PDT)
+        Mon, 24 Sep 2018 03:12:04 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -80,9 +80,9 @@ To:     Michael Turquette <mturquette@baylibre.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org, Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v3 1/4] devres: constify p in devm_kfree()
-Date:   Mon, 24 Sep 2018 12:11:47 +0200
-Message-Id: <20180924101150.23349-2-brgl@bgdev.pl>
+Subject: [PATCH v3 2/4] mm: move is_kernel_rodata() to asm-generic/sections.h
+Date:   Mon, 24 Sep 2018 12:11:48 +0200
+Message-Id: <20180924101150.23349-3-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180924101150.23349-1-brgl@bgdev.pl>
 References: <20180924101150.23349-1-brgl@bgdev.pl>
@@ -90,50 +90,63 @@ Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
-Message-ID: <20180924101147.hDLEf2pmoZag_8jLPFNtYVYkXwBPHcYJzPcHJi3nX8A@z>
+Message-ID: <20180924101148.JrcCjT5rRdzhu50Cs8LQ12Pbs9yqWxlqaQfOfXmarNY@z>
 
-Make devm_kfree() signature uniform with that of kfree(). To avoid
-compiler warnings: cast p to (void *) when calling devres_destroy().
+Export this routine so that we can use it later in devm_kstrdup_const()
+and devm_kfree_const().
 
 Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
 Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- drivers/base/devres.c  | 5 +++--
- include/linux/device.h | 2 +-
- 2 files changed, 4 insertions(+), 3 deletions(-)
+ include/asm-generic/sections.h | 14 ++++++++++++++
+ mm/util.c                      |  7 -------
+ 2 files changed, 14 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/base/devres.c b/drivers/base/devres.c
-index f98a097e73f2..438c91a43508 100644
---- a/drivers/base/devres.c
-+++ b/drivers/base/devres.c
-@@ -885,11 +885,12 @@ EXPORT_SYMBOL_GPL(devm_kasprintf);
-  *
-  * Free memory allocated with devm_kmalloc().
-  */
--void devm_kfree(struct device *dev, void *p)
-+void devm_kfree(struct device *dev, const void *p)
- {
- 	int rc;
+diff --git a/include/asm-generic/sections.h b/include/asm-generic/sections.h
+index 849cd8eb5ca0..d79abca81a52 100644
+--- a/include/asm-generic/sections.h
++++ b/include/asm-generic/sections.h
+@@ -141,4 +141,18 @@ static inline bool init_section_intersects(void *virt, size_t size)
+ 	return memory_intersects(__init_begin, __init_end, virt, size);
+ }
  
--	rc = devres_destroy(dev, devm_kmalloc_release, devm_kmalloc_match, p);
-+	rc = devres_destroy(dev, devm_kmalloc_release,
-+			    devm_kmalloc_match, (void *)p);
- 	WARN_ON(rc);
- }
- EXPORT_SYMBOL_GPL(devm_kfree);
-diff --git a/include/linux/device.h b/include/linux/device.h
-index 8f882549edee..33f7cb271fbb 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -692,7 +692,7 @@ static inline void *devm_kcalloc(struct device *dev,
- {
- 	return devm_kmalloc_array(dev, n, size, flags | __GFP_ZERO);
- }
--extern void devm_kfree(struct device *dev, void *p);
-+extern void devm_kfree(struct device *dev, const void *p);
- extern char *devm_kstrdup(struct device *dev, const char *s, gfp_t gfp) __malloc;
- extern void *devm_kmemdup(struct device *dev, const void *src, size_t len,
- 			  gfp_t gfp);
++/**
++ * is_kernel_rodata - checks if the pointer address is located in the
++ *                    .rodata section
++ *
++ * @addr: address to check
++ *
++ * Returns: true if the address is located in .rodata, false otherwise.
++ */
++static inline bool is_kernel_rodata(unsigned long addr)
++{
++	return addr >= (unsigned long)__start_rodata &&
++	       addr < (unsigned long)__end_rodata;
++}
++
+ #endif /* _ASM_GENERIC_SECTIONS_H_ */
+diff --git a/mm/util.c b/mm/util.c
+index 9e3ebd2ef65f..470f5cd80b64 100644
+--- a/mm/util.c
++++ b/mm/util.c
+@@ -15,17 +15,10 @@
+ #include <linux/vmalloc.h>
+ #include <linux/userfaultfd_k.h>
+ 
+-#include <asm/sections.h>
+ #include <linux/uaccess.h>
+ 
+ #include "internal.h"
+ 
+-static inline int is_kernel_rodata(unsigned long addr)
+-{
+-	return addr >= (unsigned long)__start_rodata &&
+-		addr < (unsigned long)__end_rodata;
+-}
+-
+ /**
+  * kfree_const - conditionally free memory
+  * @x: pointer to the memory
 -- 
 2.18.0
 
