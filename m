@@ -1,89 +1,56 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: robh+dt@kernel.org,
-	maxime.ripard@bootlin.com,
-	wens@csie.org
-Cc: mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	airlied@linux.ie,
-	architt@codeaurora.org,
-	a.hajda@samsung.com,
-	jernej.skrabec@siol.net,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-sunxi@googlegroups.com
-Subject: [PATCH 15/27] drm/sun4i: Not all DW HDMI controllers has scrambled addresses
-Date: Sun,  2 Sep 2018 09:26:31 +0200
-Message-Id: <20180902072643.4917-16-jernej.skrabec@siol.net>
-In-Reply-To: <20180902072643.4917-1-jernej.skrabec@siol.net>
-References: <20180902072643.4917-1-jernej.skrabec@siol.net>
+Return-Path: <pdeschrijver@nvidia.com>
+Date: Mon, 24 Sep 2018 11:06:31 +0300
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: ryang <decatf@gmail.com>
+CC: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Thierry Reding
+	<thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] clk: tegra: Fix an infinite loop when clock rate is zero
+Message-ID: <20180924080631.GE7636@tbergstrom-lnx.Nvidia.com>
+References: <20180921220037.16862-1-decatf@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20180921220037.16862-1-decatf@gmail.com>
+Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Currently supported Allwinner SoCs with DW HDMI controller have
-scrambled addresses and read lock. However, that is not true in general.
-For example, A80 and H6 have normal addresses and normal read access.
+On Fri, Sep 21, 2018 at 06:00:37PM -0400, ryang wrote:
+> Calling clk_set_rate or clk_round_rate will lock up the kernel when the
+> rate is zero. This avoids the infinite loop and uses a slightly more
+> optimized p divider calculation.
+> 
 
-Move code for unscrambling addresses and unlocking read access to it's
-own function and call it from init function.
+Acked-By: Peter De Schrijver <pdeschrijver@nvidia.com>
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c | 23 +++++++++++++++--------
- 1 file changed, 15 insertions(+), 8 deletions(-)
+At some point we should also limit pdiv to its maximum possible value, but
+that's not so obvious as we need to take into account PLLs where pdiv is
+non-linear.
 
-diff --git a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-index 82502b351aec..ad4ba1cc83b4 100644
---- a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-@@ -279,8 +279,21 @@ static const struct dw_hdmi_phy_ops sun8i_hdmi_phy_ops = {
- 	.setup_hpd = &dw_hdmi_phy_setup_hpd,
- };
- 
-+static void sun8i_hdmi_phy_unlock(struct sun8i_hdmi_phy *phy)
-+{
-+	/* enable read access to HDMI controller */
-+	regmap_write(phy->regs, SUN8I_HDMI_PHY_READ_EN_REG,
-+		     SUN8I_HDMI_PHY_READ_EN_MAGIC);
-+
-+	/* unscramble register offsets */
-+	regmap_write(phy->regs, SUN8I_HDMI_PHY_UNSCRAMBLE_REG,
-+		     SUN8I_HDMI_PHY_UNSCRAMBLE_MAGIC);
-+}
-+
- static void sun8i_hdmi_phy_init_a83t(struct sun8i_hdmi_phy *phy)
- {
-+	sun8i_hdmi_phy_unlock(phy);
-+
- 	regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_DBG_CTRL_REG,
- 			   SUN8I_HDMI_PHY_DBG_CTRL_PX_LOCK,
- 			   SUN8I_HDMI_PHY_DBG_CTRL_PX_LOCK);
-@@ -298,6 +311,8 @@ static void sun8i_hdmi_phy_init_h3(struct sun8i_hdmi_phy *phy)
- {
- 	unsigned int val;
- 
-+	sun8i_hdmi_phy_unlock(phy);
-+
- 	regmap_write(phy->regs, SUN8I_HDMI_PHY_ANA_CFG1_REG, 0);
- 	regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_ANA_CFG1_REG,
- 			   SUN8I_HDMI_PHY_ANA_CFG1_ENBI,
-@@ -372,14 +387,6 @@ static void sun8i_hdmi_phy_init_h3(struct sun8i_hdmi_phy *phy)
- 
- void sun8i_hdmi_phy_init(struct sun8i_hdmi_phy *phy)
- {
--	/* enable read access to HDMI controller */
--	regmap_write(phy->regs, SUN8I_HDMI_PHY_READ_EN_REG,
--		     SUN8I_HDMI_PHY_READ_EN_MAGIC);
--
--	/* unscramble register offsets */
--	regmap_write(phy->regs, SUN8I_HDMI_PHY_UNSCRAMBLE_REG,
--		     SUN8I_HDMI_PHY_UNSCRAMBLE_MAGIC);
--
- 	phy->variant->phy_init(phy);
- }
- 
--- 
-2.18.0
+Peter.
+
+> Signed-off-by: ryang <decatf@gmail.com>
+> ---
+>  drivers/clk/tegra/clk-pll.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+> index 830d1c87fa7c..17a058c3bbc1 100644
+> --- a/drivers/clk/tegra/clk-pll.c
+> +++ b/drivers/clk/tegra/clk-pll.c
+> @@ -582,9 +582,8 @@ static int _calc_rate(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
+>  	}
+>  
+>  	/* Raise VCO to guarantee 0.5% accuracy */
+> -	for (cfg->output_rate = rate; cfg->output_rate < 200 * cfreq;
+> -	     cfg->output_rate <<= 1)
+> -		p_div++;
+> +	p_div = rate ? fls((200 * cfreq) / rate) : 0;
+> +	cfg->output_rate = rate << p_div;
+>  
+>  	cfg->m = parent_rate / cfreq;
+>  	cfg->n = cfg->output_rate / cfreq;
+> -- 
+> 2.17.1
+> 
