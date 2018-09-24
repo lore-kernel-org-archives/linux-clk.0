@@ -6,63 +6,61 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BA93ECE560
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 01:59:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9DC3ECE560
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 02:01:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0212F2145D
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 01:59:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0212F2145D
+	by mail.kernel.org (Postfix) with ESMTP id 83F822145D
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 02:01:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83F822145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727205AbeIXH7Z convert rfc822-to-8bit (ORCPT
+        id S1727335AbeIXIBZ convert rfc822-to-8bit (ORCPT
         <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Sep 2018 03:59:25 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:33773 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727052AbeIXH7Z (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Sep 2018 03:59:25 -0400
-Received: by mail-ed1-f68.google.com with SMTP id g26-v6so1820909edp.0;
-        Sun, 23 Sep 2018 18:59:36 -0700 (PDT)
+        Mon, 24 Sep 2018 04:01:25 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:39278 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727052AbeIXIBZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Sep 2018 04:01:25 -0400
+Received: by mail-ed1-f65.google.com with SMTP id h4-v6so14958841edi.6;
+        Sun, 23 Sep 2018 19:01:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=wS4COzUK7bO0xJuD+Xb71DeJgxBC/MK+ia2FMMP0DUU=;
-        b=dYI7iT8VLKNd6BGzYfpiOasIhu69sX9gw9/m03vwJxXsx1q0kqEABdayP7IBsxA/F/
-         mTFyRpoFeGWysbL5Ze6wXisRLh+bTYvCjBJZaHBNm+2WmMzSMS9AgmAWaAzD70zh/qD3
-         fHYn8zfAxgAd+qFk9VRyBmqZLYxbYqc2sagm9Ksn1WNRZDxpTmaNIYxvJ8fCWOdSawnn
-         W16/BODXG7oOLdCONZmQmYtkhpiOG25+Zrl3jatMZzwU+Pl9YDpOSt0laQjgYQUQ5OMk
-         lsw4a8GKH8+Ql0Ub3DSMrNq0aN8l3+LA8JE0CBeSZX46Qj5tTRoyBXMe7/qWICvkJnes
-         6SoA==
-X-Gm-Message-State: ABuFfoiJAtDymTXlpmGSM3HkbBMSnRSa40AXcmMiUXUOPZoUbvA28PiZ
-        eFwJfgIguXdrDR8uYLRT60tq6aGwIzo=
-X-Google-Smtp-Source: ANB0VdbjTLXtZZr6VvDrlDpESJPHLHZVeWmg5I7ZjfVtoJYwbJQ9njTD5Tj3YueixZt1ZnUB+YAxgQ==
-X-Received: by 2002:a50:9e85:: with SMTP id a5-v6mr13830676edf.92.1537754375169;
-        Sun, 23 Sep 2018 18:59:35 -0700 (PDT)
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com. [209.85.221.41])
-        by smtp.gmail.com with ESMTPSA id d12-v6sm5892599ede.78.2018.09.23.18.59.34
+        bh=oye42SGX0DDLauHH/OzMUQhs01EJCbAKLltDCA1uXFw=;
+        b=M2JcvcH3cpoqX2Iqb9BRndM85TPWxJ82Lz1eU80WH9atoRtDiokOF6/zxh2SoBf8a3
+         TMcL26BDjw47cWvgXKvrhfQH8HRT3lstz0KhVD4GoniZY8XbOj+6kSdUYwyGTMr6zcmy
+         YJVkg58cidJyRHHb46glbDIR0xDSx1xAp1SQRQ79iCoBXJ3zfmdNQEVR5WNowOxQLWD0
+         yqBZvX+VEB5vrB5XBlZeAYEhJtybJTmid3DpN8m6z/lcLD9QgK8nHO32fXZGvklXQrZo
+         cdRS4a8UwXuInaTPflYIAY5FsiVxWmHN2qj7q851kL5Xa1fuiD1sPdaWC3rUb4hKPKU3
+         EIXQ==
+X-Gm-Message-State: ABuFfoh+X9PYwZAABVsTCLvX8Y5U2VnKyJVd8F9jKytoY/bG/ErQF++F
+        OWtxyKnKGBUHgoDou42v5RsRIprzJ6U=
+X-Google-Smtp-Source: ACcGV61ZyKHSP5fOrnfEMGDEU0YVBjFCyoZtY2SXeYWjW4krUjUE2s/hS9205fn7tP/kol5rXd1jpw==
+X-Received: by 2002:a05:6402:6d8:: with SMTP id n24mr633980edy.99.1537754494929;
+        Sun, 23 Sep 2018 19:01:34 -0700 (PDT)
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com. [209.85.128.49])
+        by smtp.gmail.com with ESMTPSA id h24-v6sm5531638edb.43.2018.09.23.19.01.33
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 23 Sep 2018 18:59:34 -0700 (PDT)
-Received: by mail-wr1-f41.google.com with SMTP id t15so10122194wrx.1;
-        Sun, 23 Sep 2018 18:59:34 -0700 (PDT)
-X-Received: by 2002:adf:e484:: with SMTP id i4-v6mr6939043wrm.145.1537754374017;
- Sun, 23 Sep 2018 18:59:34 -0700 (PDT)
+        Sun, 23 Sep 2018 19:01:33 -0700 (PDT)
+Received: by mail-wm1-f49.google.com with SMTP id n11-v6so8389106wmc.2;
+        Sun, 23 Sep 2018 19:01:33 -0700 (PDT)
+X-Received: by 2002:a7b:c18a:: with SMTP id y10-v6mr5786732wmi.87.1537754492998;
+ Sun, 23 Sep 2018 19:01:32 -0700 (PDT)
 MIME-Version: 1.0
 References: <20180902072643.4917-1-jernej.skrabec@siol.net>
- <CAGb2v66kp4B5VZfmTc8L6qt=OPHjbYBtXRbC=L6jGTzvEKvb=w@mail.gmail.com>
- <CAGb2v65LzGgXORTx7PR+udZsrgGgmnXeaOW-jb=KMjHjTg7bRg@mail.gmail.com> <6201242.bzTTWRITmP@jernej-laptop>
-In-Reply-To: <6201242.bzTTWRITmP@jernej-laptop>
+ <20180902072643.4917-12-jernej.skrabec@siol.net> <CAGb2v67jweJ5OdSzKhj302OLbz7DacKmSGMKS536uquzKGZtAQ@mail.gmail.com>
+ <2037444.yZ41eTID0S@jernej-laptop>
+In-Reply-To: <2037444.yZ41eTID0S@jernej-laptop>
 From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Mon, 24 Sep 2018 09:59:22 +0800
-X-Gmail-Original-Message-ID: <CAGb2v64m-mNOe+GFUZ6msisdkADRKK3m7zpwPqQ-=auV5sxXNw@mail.gmail.com>
+Date:   Mon, 24 Sep 2018 10:01:21 +0800
+X-Gmail-Original-Message-ID: <CAGb2v67cW=6q04oO4RiUqEHvhzK9W0Bg_49arO73GugVd5NUbA@mail.gmail.com>
 Message-ID:
- <CAGb2v64m-mNOe+GFUZ6msisdkADRKK3m7zpwPqQ-=auV5sxXNw@mail.gmail.com>
-Subject: Re: [linux-sunxi] Re: [PATCH 13/27] drm/sun4i: Add support for H6 DE3
- mixer 0
+ <CAGb2v67cW=6q04oO4RiUqEHvhzK9W0Bg_49arO73GugVd5NUbA@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH 11/27] drm/sun4i: Rework DE2 register defines
 To:     Jernej Skrabec <jernej.skrabec@siol.net>
-Cc:     linux-sunxi <linux-sunxi@googlegroups.com>,
-        Rob Herring <robh+dt@kernel.org>,
+Cc:     Rob Herring <robh+dt@kernel.org>,
         Maxime Ripard <maxime.ripard@bootlin.com>,
         Mark Rutland <mark.rutland@arm.com>,
         Mike Turquette <mturquette@baylibre.com>,
@@ -74,97 +72,183 @@ Cc:     linux-sunxi <linux-sunxi@googlegroups.com>,
         linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
         linux-kernel <linux-kernel@vger.kernel.org>,
         linux-clk <linux-clk@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        Icenowy Zheng <icenowy@aosc.io>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8BIT
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
-Message-ID: <20180924015922.Wr6y3Iq9X6PFPOl-BXM4DZwr4AhhRKkdAiYEs8XtCDY@z>
+Message-ID: <20180924020121.Pv9G-5N22zBDENTQcRlkxhKaNr5knjCvfpes7559mVQ@z>
 
-On Mon, Sep 24, 2018 at 3:40 AM Jernej Škrabec <jernej.skrabec@siol.net> wrote:
+On Mon, Sep 24, 2018 at 4:02 AM Jernej Škrabec <jernej.skrabec@siol.net> wrote:
 >
-> Dne sobota, 22. september 2018 ob 15:47:03 CEST je Chen-Yu Tsai napisal(a):
-> > On Sat, Sep 22, 2018 at 9:23 PM Chen-Yu Tsai <wens@csie.org> wrote:
-> > > On Sun, Sep 2, 2018 at 3:27 PM Jernej Skrabec <jernej.skrabec@siol.net>
+> Dne sobota, 22. september 2018 ob 14:32:30 CEST je Chen-Yu Tsai napisal(a):
+> > Hi,
+> >
+> > On Sun, Sep 2, 2018 at 3:27 PM Jernej Skrabec <jernej.skrabec@siol.net>
 > wrote:
-> > > > Mixer 0 has 1 VI and 3 UI planes, scaler on all planes and can output
-> > > > 4K image @60Hz. It also support 10 bit colors.
+> > > Most, if not all, registers found in DE2 still exists in DE3. However,
+> > > units are on different base addresses.
 > > >
-> > > AFAICT 10 bit color support is not implemented? Please mention this.
->
-> ok.
->
+> > > To prepare for addition of DE3 support, registers macros are reworked so
+> > > they take base address as parameter.
 > > >
-> > > > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> > > > ---
-> > > >
-> > > >  drivers/gpu/drm/sun4i/sun8i_mixer.c | 13 +++++++++++++
-> > > >  1 file changed, 13 insertions(+)
-> > > >
-> > > > diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c
-> > > > b/drivers/gpu/drm/sun4i/sun8i_mixer.c index a9218abf0935..54eca2dd4b33
-> > > > 100644
-> > > > --- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
-> > > > +++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
-> > > > @@ -540,6 +540,15 @@ static int sun8i_mixer_remove(struct
-> > > > platform_device *pdev)> >
-> > > >         return 0;
-> > > >
-> > > >  }
-> > > >
-> > > > +static const struct sun8i_mixer_cfg sun50i_h6_mixer0_cfg = {
-> > >
-> > > Please sort the per-compatible structures according to "version sort"
-> > > rules.>
-> > > > +       .ccsc           = 0,
-> > > > +       .is_de3         = true,
-> > > > +       .mod_rate       = 600000000,
-> > > > +       .scaler_mask    = 0xf,
-> > > > +       .ui_num         = 3,
-> > > > +       .vi_num         = 1,
-> > > > +};
-> > > > +
-> > > >
-> > > >  static const struct sun8i_mixer_cfg sun8i_a83t_mixer0_cfg = {
-> > > >
-> > > >         .ccsc           = 0,
-> > > >         .scaler_mask    = 0xf,
-> > > >
-> > > > @@ -587,6 +596,10 @@ static const struct sun8i_mixer_cfg
-> > > > sun8i_v3s_mixer_cfg = {> >
-> > > >  };
-> > > >
-> > > >  static const struct of_device_id sun8i_mixer_of_table[] = {
-> > > >
-> > > > +       {
-> > > > +               .compatible = "allwinner,sun50i-h6-de3-mixer-0",
-> > > > +               .data = &sun50i_h6_mixer0_cfg,
-> > > > +       },
-> > >
-> > > Same here.
-> > >
-> > > ChenYu
+> > > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> > > [rebased]
+> > > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 > >
-> > BTW, DE 3.0 includes a register in DE TOP called "DE IP configure register",
-> > which gives the number of IP blocks per class, per mixer. If we retrieve
-> > the configuration from this register, then we shouldn't need to
-> > differentiate between mixer-0 and mixer-1 with compatible strings.
+> > This patch mostly checks out. But see below.
 > >
-> > What do you think?
+> > > diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.h
+> > > b/drivers/gpu/drm/sun4i/sun8i_mixer.h index 406c42e752d7..020b0a097c84
+> > > 100644
+> > > --- a/drivers/gpu/drm/sun4i/sun8i_mixer.h
+> > > +++ b/drivers/gpu/drm/sun4i/sun8i_mixer.h
+> > > @@ -29,20 +29,24 @@
+> > >
+> > >  #define SUN8I_MIXER_GLOBAL_DBUFF_ENABLE                BIT(0)
+> > >
+> > > -#define SUN8I_MIXER_BLEND_PIPE_CTL             0x1000
+> > > -#define SUN8I_MIXER_BLEND_ATTR_FCOLOR(x)       (0x1004 + 0x10 * (x) +
+> > > 0x0)
+> > > -#define SUN8I_MIXER_BLEND_ATTR_INSIZE(x)       (0x1004 + 0x10 * (x) +
+> > > 0x4)
+> > > -#define SUN8I_MIXER_BLEND_ATTR_COORD(x)                (0x1004 + 0x10 *
+> > > (x) + 0x8) -#define SUN8I_MIXER_BLEND_ROUTE                        0x1080
+> > > -#define SUN8I_MIXER_BLEND_PREMULTIPLY          0x1084
+> > > -#define SUN8I_MIXER_BLEND_BKCOLOR              0x1088
+> > > -#define SUN8I_MIXER_BLEND_OUTSIZE              0x108c
+> > > -#define SUN8I_MIXER_BLEND_MODE(x)              (0x1090 + 0x04 * (x))
+> > > -#define SUN8I_MIXER_BLEND_CK_CTL               0x10b0
+> > > -#define SUN8I_MIXER_BLEND_CK_CFG               0x10b4
+> > > -#define SUN8I_MIXER_BLEND_CK_MAX(x)            (0x10c0 + 0x04 * (x))
+> > > -#define SUN8I_MIXER_BLEND_CK_MIN(x)            (0x10e0 + 0x04 * (x))
+> > > -#define SUN8I_MIXER_BLEND_OUTCTL               0x10fc
+> > > +#define DE2_BLD_BASE                           0x1000
+> > > +#define DE2_CH_BASE                            0x2000
+> > > +#define DE2_CH_SIZE                            0x1000
+> > > +
+> > > +#define SUN8I_MIXER_BLEND_PIPE_CTL(base)       ((base) + 0)
+> > > +#define SUN8I_MIXER_BLEND_ATTR_FCOLOR(base, x) ((base) + 0x4 + 0x10 *
+> > > (x))
+> > > +#define SUN8I_MIXER_BLEND_ATTR_INSIZE(base, x) ((base) + 0x8 + 0x10 *
+> > > (x))
+> > > +#define SUN8I_MIXER_BLEND_ATTR_COORD(base, x)  ((base) + 0xC + 0x10 *
+> > > (x))
+> >
+> > Nit: Use lowercase for '0xC' to be consistent.
+> >
+> > > +#define SUN8I_MIXER_BLEND_ROUTE(base)          ((base) + 0x80)
+> > > +#define SUN8I_MIXER_BLEND_PREMULTIPLY(base)    ((base) + 0x84)
+> > > +#define SUN8I_MIXER_BLEND_BKCOLOR(base)                ((base) + 0x88)
+> > > +#define SUN8I_MIXER_BLEND_OUTSIZE(base)                ((base) + 0x8c)
+> > > +#define SUN8I_MIXER_BLEND_MODE(base, x)                ((base) + 0x90 +
+> > > 0x04 * (x)) +#define SUN8I_MIXER_BLEND_CK_CTL(base)         ((base) +
+> > > 0xb0)
+> > > +#define SUN8I_MIXER_BLEND_CK_CFG(base)         ((base) + 0xb4)
+> > > +#define SUN8I_MIXER_BLEND_CK_MAX(base, x)      ((base) + 0xc0 + 0x04 *
+> > > (x)) +#define SUN8I_MIXER_BLEND_CK_MIN(base, x)      ((base) + 0xe0 +
+> > > 0x04 * (x)) +#define SUN8I_MIXER_BLEND_OUTCTL(base)         ((base) +
+> > > 0xfc)
+> > >
+> > >  #define SUN8I_MIXER_BLEND_PIPE_CTL_EN_MSK      GENMASK(12, 8)
+> > >  #define SUN8I_MIXER_BLEND_PIPE_CTL_EN(pipe)    BIT(8 + pipe)
+> >
+> > [...]
+> >
+> > > diff --git a/drivers/gpu/drm/sun4i/sun8i_ui_scaler.c
+> > > b/drivers/gpu/drm/sun4i/sun8i_ui_scaler.c index
+> > > 6bb2aa164c8e..c68eab8a748f 100644
+> > > --- a/drivers/gpu/drm/sun4i/sun8i_ui_scaler.c
+> > > +++ b/drivers/gpu/drm/sun4i/sun8i_ui_scaler.c
+> > > @@ -10,6 +10,7 @@
+> > >
+> > >   */
+> > >
+> > >  #include "sun8i_ui_scaler.h"
+> > >
+> > > +#include "sun8i_vi_scaler.h"
+> > >
+> > >  static const u32 lan2coefftab16[240] = {
+> > >
+> > >         0x00004000, 0x00033ffe, 0x00063efc, 0x000a3bfb,
+> > >
+> > > @@ -88,6 +89,14 @@ static const u32 lan2coefftab16[240] = {
+> > >
+> > >         0x0b1c1603, 0x0d1c1502, 0x0e1d1401, 0x0f1d1301,
+> > >
+> > >  };
+> > >
+> > > +static inline u32 sun8i_ui_scaler_base(struct sun8i_mixer *mixer, int
+> > > channel)
+> > I recently saw a review comment stating one should not inline functions
+> > unless they are defined in header files. Otherwise the decision should
+> > be left up to the compiler.
+> >
+> > > +{
+> > > +       int vi_num = mixer->cfg->vi_num;
+> > > +
+> > > +       return DE2_VI_SCALER_BASE + DE2_VI_SCALER_SIZE * vi_num +
+> > > +              DE2_UI_SCALER_SIZE * (channel - vi_num);
+> > > +}
+> > > +
+> > >
+> > >  static int sun8i_ui_scaler_coef_index(unsigned int step)
+> > >  {
+> > >
+> > >         unsigned int scale, int_part, float_part;
+> >
+> > [...]
+> >
+> > > diff --git a/drivers/gpu/drm/sun4i/sun8i_vi_scaler.c
+> > > b/drivers/gpu/drm/sun4i/sun8i_vi_scaler.c index
+> > > d3f1acb234b7..8697afc36023 100644
+> > > --- a/drivers/gpu/drm/sun4i/sun8i_vi_scaler.c
+> > > +++ b/drivers/gpu/drm/sun4i/sun8i_vi_scaler.c
+> > > @@ -833,6 +833,11 @@ static const u32 bicubic4coefftab32[480] = {
+> > >
+> > >         0x1012110d, 0x1012110d, 0x1013110c, 0x1013110c,
+> > >
+> > >  };
+> > >
+> > > +static inline u32 sun8i_vi_scaler_base(struct sun8i_mixer *mixer, int
+> > > channel) +{
+> > > +       return DE2_VI_SCALER_BASE + DE2_VI_SCALER_SIZE * channel;
+> > > +}
+> > > +
+> >
+> > This one as well.
+> >
+> > >  static int sun8i_vi_scaler_coef_index(unsigned int step)
+> > >  {
+> > >
+> > >         unsigned int scale, int_part, float_part;
+> > >
+> > > @@ -857,7 +862,7 @@ static int sun8i_vi_scaler_coef_index(unsigned int
+> > > step)>
+> > >         }
+> > >
+> > >  }
+> > >
+> > > -static void sun8i_vi_scaler_set_coeff(struct regmap *map, int layer,
+> > > +static void sun8i_vi_scaler_set_coeff(struct regmap *map, u32 base,
+> > >
+> > >                                       u32 hstep, u32 vstep,
+> > >                                       const struct drm_format_info
+> > >                                       *format)
+> >
+> > This is the only instance where a function's "layer" parameter was changed
+> > to "base". It would be nice if it were consistent.
 >
-> IIRC, not all setting were correct when read from registers, but I would need
-> to check again. I'm also not sure if register holds all possible settings, so
-> it is safer to have separate list. We would also have to devise mechanism to
-> get this data from DE2/3 CCU driver (it occupies the same memory space).
->
-> Perhaps the strongest argument is that some SoCs with DE3 have HW bug in
-> mixer1 block, including that in H6. In order to work, mod clock has to be
-> enabled for mixer0 and mixer1 at the same time. I would associate that quirk
-> with mixer1 compatible.
+> Why not? Caller already have base address calculated, so it poses no overhead.
+> Additionally, sun8i_vi_scaler_set_coeff() doesn't have struct sun8i_mixer
+> *mixer parameter, which would allow calculating base address based on layer
+> id. So, you can chose between existing variant or adding additional parameter
+> for no real reason.
 
-OK. That makes sense. So apart from the mentioning 10 bit support status
-in the commit log,
+Thanks for the explanation. Yeah, then the current patch makes sense.
 
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+ChenYu
