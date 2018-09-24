@@ -6,47 +6,47 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E81BC433F4
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 09:05:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AC99C433F4
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 09:09:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5862D208E3
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 09:05:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5862D208E3
+	by mail.kernel.org (Postfix) with ESMTP id DD98D208E3
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 09:09:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD98D208E3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728090AbeIXPG5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Sep 2018 11:06:57 -0400
-Received: from mail-vk1-f193.google.com ([209.85.221.193]:33349 "EHLO
-        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727524AbeIXPG5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Sep 2018 11:06:57 -0400
-Received: by mail-vk1-f193.google.com with SMTP id m125-v6so3861327vka.0;
-        Mon, 24 Sep 2018 02:05:53 -0700 (PDT)
+        id S1728090AbeIXPLC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Sep 2018 11:11:02 -0400
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:34088 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728126AbeIXPLB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Sep 2018 11:11:01 -0400
+Received: by mail-vs1-f65.google.com with SMTP id m10-v6so7864652vsk.1;
+        Mon, 24 Sep 2018 02:09:57 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=kgSy8ZpibUAv+dyhbz/Bv2aiSSgMDHk+561w2Z0yzdQ=;
-        b=ZuCAwMEwShq+wEqCr15AC0VCXq8I/65Z0xoKwbWYzK9hDg9RTr+BqG3Y+q8dnUbAD1
-         mnIIul5xyK9uQYrH+ecWgmm9A8TkN8vATOPlM12jpuheGyQYPKygPoXGZRGq6CX8rEYn
-         vr2nej3klwpwI7d/TfXtt4olc9KIrr64t8QtLXDjU4CgoulFgu/eLDyrJm2VHlthc6dW
-         JIvRlBBO92+6qQQvIr7FoMsWzIN8ixNREmnLfkri+ZLrFFnfGDww0Fywv2RBg/Ren3ec
-         DBw/2cy4lKsRHlZ/ypsqr9HdNUwqp5UWWcNN94AcIO6OvcX/EyEVYk3zTqqRMIdkp3nr
-         dukQ==
-X-Gm-Message-State: ABuFfogYWzAg/JU9K1nQJDWinX5YVGo4EncTn4s43cjKQ/29cl+qSK4H
-        vHvv5CWA7mDCriezPLmEJXv3eULI9YwMJJAb9Zc=
-X-Google-Smtp-Source: ACcGV62itOZq8fvm063m7ddHVswMBlUY+EcMib3O2AECswb8g2kQBJNHcVUdck5KoJVfBQ6feVxrUFWbpILi8wTYO3A=
-X-Received: by 2002:a1f:2ad6:: with SMTP id q205-v6mr2257558vkq.83.1537779952846;
- Mon, 24 Sep 2018 02:05:52 -0700 (PDT)
+        bh=aBEd/n/mpLQO32B+rUWmDxH5K2cg1yhH8bYyJMhR1Ak=;
+        b=iA0nxChg4xMCtH8g5R/IIQ9FH5GvmuIuMtYYGIG2bp9DSzGvu1xdvQ+o/ZS2u0QeUE
+         tGg6jBi65UpCNlwS3Oez/pVf+nwnpE3YojvxRjr7jqvAj9GnBeUI0VTgsa8zXu2KwKoL
+         AF6o2ZmWNsSHTJNdGM/3r/XSSkY9DxCaWwTa2osmODFLV/Ezs2K6yMdIS8eSl4wXKYdv
+         6iZnFOfkgKsmgiwPLtiO6q1u8S7sNVHGZzZwgj3nHnBQjBiyAytUBuRTQNOvjvxIL/0P
+         thcYLVOLc4NE730sGRdGg6ScyWE7AT9ho8TsBAR6a8h1iOS+WqgIxgeQEmYKhJAh/TIU
+         Mqxg==
+X-Gm-Message-State: APzg51CLNyRoK+wjNhJH68QYcA9xt+V7oOrSjfxZlTmLS0500T2C8NU8
+        3sY9ixr7X5/HvGcK+INzbG8BePd58qmlj/1d2F0=
+X-Google-Smtp-Source: ANB0VdaiIES6TDqaYgKhoqRSlfXyMXt5UiA8aQo8ng7zlKC28wVJR/iDyOiFvoLJbOdf/q4vj6KcaNGK4oFYd3sZk4s=
+X-Received: by 2002:a67:7893:: with SMTP id t141-v6mr1852973vsc.11.1537780196811;
+ Mon, 24 Sep 2018 02:09:56 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180921152054.117774-1-chris.brandt@renesas.com> <20180921152054.117774-2-chris.brandt@renesas.com>
-In-Reply-To: <20180921152054.117774-2-chris.brandt@renesas.com>
+References: <20180921152054.117774-1-chris.brandt@renesas.com> <20180921152054.117774-3-chris.brandt@renesas.com>
+In-Reply-To: <20180921152054.117774-3-chris.brandt@renesas.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 24 Sep 2018 11:05:40 +0200
+Date:   Mon, 24 Sep 2018 11:09:45 +0200
 Message-ID:
- <CAMuHMdUWFp9nBR8EQtADHePPqGQZ-3bHrANQULz-QnXJLQy2fA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] clk: renesas: cpg-mssr: Add early clock support
+ <CAMuHMdUbMJwgQ5-UQuHAMszHnQf+4m0sSws4pW-vA8di+L2RQQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] clk: renesas: r7s9210: Convert some clocks to early
 To:     Chris Brandt <chris.brandt@renesas.com>
 Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -59,248 +59,122 @@ Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
-Message-ID: <20180924090540.NNK0QDFo8jqad4Sn-u4PDY0JmhWKC4Ga9OM_OxyY0h8@z>
+Message-ID: <20180924090945.3J25qqCz7ySADRrVtn1AhJlRmmtv35Gno-bqOt_H72o@z>
 
 Hi Chris,
 
 On Fri, Sep 21, 2018 at 5:21 PM Chris Brandt <chris.brandt@renesas.com> wrote:
-> Add support for SoCs that need to register core and module clocks early in
-> order to use OF drivers that exclusively use macros such as
-> TIMER_OF_DECLARE.
+> The OSTM timer driver for RZ/A2 uses TIMER_OF_DECLARE which requires the
+> ostm module clocks to be registers early in boot.
 >
 > Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
 
 Thanks for your patch!
 
-> --- a/drivers/clk/renesas/renesas-cpg-mssr.c
-> +++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-> @@ -127,6 +127,7 @@ struct cpg_mssr_priv {
->         struct device *dev;
->         void __iomem *base;
->         spinlock_t rmw_lock;
-> +       struct device_node *np;
+> --- a/drivers/clk/renesas/r7s9210-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r7s9210-cpg-mssr.c
+> @@ -55,25 +55,25 @@ enum clk_ids {
+
+I'd put the early core clocks here ...
+
+>  static struct cpg_core_clk r7s9210_core_clks[] = {
+>         /* External Clock Inputs */
+> -       DEF_INPUT("extal",     CLK_EXTAL),
+> +       /*        ".extal"  exists as early clock */
 >
->         struct clk **clks;
->         unsigned int num_core_clks;
-> @@ -141,6 +142,7 @@ struct cpg_mssr_priv {
->         } smstpcr_saved[ARRAY_SIZE(smstpcr)];
+>         /* Internal Core Clocks */
+> -       DEF_BASE(".main",       CLK_MAIN, CLK_TYPE_RZA_MAIN, CLK_EXTAL),
+> -       DEF_BASE(".pll",       CLK_PLL, CLK_TYPE_RZA_PLL, CLK_MAIN),
+> +       /*        ".main"   exists as early clock */
+> +       /*        ".pll"    exists as early clock */
+
+... so comments like the above are not needed.
+
+>
+>         /* Core Clock Outputs */
+>         DEF_FIXED("i",      R7S9210_CLK_I,     CLK_PLL,          2, 1),
+>         DEF_FIXED("g",      R7S9210_CLK_G,     CLK_PLL,          4, 1),
+>         DEF_FIXED("b",      R7S9210_CLK_B,     CLK_PLL,          8, 1),
+>         DEF_FIXED("p1",     R7S9210_CLK_P1,    CLK_PLL,         16, 1),
+> -       DEF_FIXED("p1c",    R7S9210_CLK_P1C,   CLK_PLL,         16, 1),
+> +       /*        "p1c"     exists as early clock */
+>         DEF_FIXED("p0",     R7S9210_CLK_P0,    CLK_PLL,         32, 1),
 >  };
 >
-> +struct cpg_mssr_priv *early_priv;
 
-static
+Same for early module clocks...
 
-Just call the pointer cpg_mssr_priv, as you're gonna need it in both cases
-(see below)?
+>  static const struct mssr_mod_clk r7s9210_mod_clks[] __initconst = {
+> -       DEF_MOD_STB("ostm2",     34,    R7S9210_CLK_P1C),
+> -       DEF_MOD_STB("ostm1",     35,    R7S9210_CLK_P1C),
+> -       DEF_MOD_STB("ostm0",     36,    R7S9210_CLK_P1C),
+> +       /*          "ostm2"      36     exists as early clock */
+> +       /*          "ostm1"      35     exists as early clock */
+> +       /*          "ostm0"      34     exists as early clock */
 
->
->  /**
->   * struct mstp_clock - MSTP gating clock
-> @@ -316,7 +318,7 @@ static void __init cpg_mssr_register_core_clk(const struct cpg_core_clk *core,
->
->         switch (core->type) {
->         case CLK_TYPE_IN:
-> -               clk = of_clk_get_by_name(priv->dev->of_node, core->name);
-> +               clk = of_clk_get_by_name(priv->np, core->name);
->                 break;
->
->         case CLK_TYPE_FF:
-> @@ -877,42 +879,49 @@ static const struct dev_pm_ops cpg_mssr_pm = {
->  #define DEV_PM_OPS     NULL
->  #endif /* CONFIG_PM_SLEEP && CONFIG_ARM_PSCI_FW */
->
-> -static int __init cpg_mssr_probe(struct platform_device *pdev)
-> +static int cpg_mssr_common_init(struct device *dev, struct device_node *np,
-
-__init
-
-> +                               const struct cpg_mssr_info *info)
->  {
-> -       struct device *dev = &pdev->dev;
-> -       struct device_node *np = dev->of_node;
-> -       const struct cpg_mssr_info *info;
->         struct cpg_mssr_priv *priv;
->         unsigned int nclks, i;
-> -       struct resource *res;
-> -       struct clk **clks;
-> +       struct clk **clks = NULL;
->         int error;
-> +       bool early_init = dev ? false : true;
-
-I think this flag can be removed (see below).
+... and these comments.
 
 >
-> -       info = of_device_get_match_data(dev);
->         if (info->init) {
->                 error = info->init(dev);
->                 if (error)
->                         return error;
+>         DEF_MOD_STB("scif4",     43,    R7S9210_CLK_P1C),
+>         DEF_MOD_STB("scif3",     44,    R7S9210_CLK_P1C),
+
+> +/* The clock dividers in the table vary based on DT and register settings */
+> +static void r7s9210_update_clk_table(struct clk *extal_clk, void __iomem *base)
+> +{
+
+[...]
+
+> +}
+> +
+>  struct clk * __init rza2_cpg_clk_register(struct device *dev,
+>         const struct cpg_core_clk *core, const struct cpg_mssr_info *info,
+>         struct clk **clks, void __iomem *base,
+> @@ -99,9 +164,6 @@ struct clk * __init rza2_cpg_clk_register(struct device *dev,
+>         struct clk *parent;
+>         unsigned int mult = 1;
+>         unsigned int div = 1;
+> -       u16 frqcr;
+> -       u8 index;
+> -       int i;
+>
+>         parent = clks[core->parent];
+>         if (IS_ERR(parent))
+> @@ -123,47 +185,8 @@ struct clk * __init rza2_cpg_clk_register(struct device *dev,
 >         }
 >
-> -       priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> +       priv = kzalloc(sizeof(*priv), GFP_KERNEL);
->         if (!priv)
->                 return -ENOMEM;
+>         /* Adjust the dividers based on the current FRQCR setting */
+> -       if (core->id == CLK_MAIN) {
+
+[...]
+
+> -       }
+> +       if (core->id == CLK_MAIN)
+> +               r7s9210_update_clk_table(parent, base);
+
+While factoring out this block into its own function is a good idea, it's not
+related to this patch, is it? So I think it should be done in a separate patch.
+
+> @@ -181,9 +204,25 @@ const struct cpg_mssr_info r7s9210_cpg_mssr_info __initconst = {
+>         .num_mod_clks = ARRAY_SIZE(r7s9210_mod_clks),
+>         .num_hw_mod_clks = 11 * 32, /* includes STBCR0 which doesn't exist */
 >
-> +       /* np is saved because dev->of_node doesn't exists during early init */
-
-I don't think this comment is needed...
-
-> +       priv->np = np;
+> +       /* Early Core Clocks */
+> +       .early_core_clks = r7s9210_early_core_clks,
+> +       .num_early_core_clks = ARRAY_SIZE(r7s9210_early_core_clks),
 > +
+> +       /* Early Module Clocks */
+> +       .early_mod_clks = r7s9210_early_mod_clks,
+> +       .num_early_mod_clks = ARRAY_SIZE(r7s9210_early_mod_clks),
 
-... nor this blank line.
+All early clocks at the top?
 
->         priv->dev = dev;
->         spin_lock_init(&priv->rmw_lock);
+> +
+>         /* Callbacks */
+>         .cpg_clk_register = rza2_cpg_clk_register,
 >
-> -       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -       priv->base = devm_ioremap_resource(dev, res);
-> -       if (IS_ERR(priv->base))
-> -               return PTR_ERR(priv->base);
-> +       priv->base = of_iomap(np, 0);
-> +       if (IS_ERR(priv->base)) {
-
-of_iomap() returns NULL on failure, not an error code.
-
-> +               error = PTR_ERR(priv->base);
-
-error = -ENOMEM;
-
-> +               goto out_err;
-> +       }
->
->         nclks = info->num_total_core_clks + info->num_hw_mod_clks;
-> -       clks = devm_kmalloc_array(dev, nclks, sizeof(*clks), GFP_KERNEL);
-> -       if (!clks)
-> -               return -ENOMEM;
-> +       clks = kmalloc_array(nclks, sizeof(*clks), GFP_KERNEL);
-> +       if (!clks) {
-> +               error = -ENOMEM;
-> +               goto out_err;
-> +       }
-> +
-> +       if (early_init)
-> +               early_priv = priv;
-
-cpg_mssr_probe() needs access to the pointer, too, so you should always
-save it.
-
-> +       else
-> +               dev_set_drvdata(dev, priv);
-
-dev_set_drvdata() should be called on SoCs with early clocks, too, so that
-should be done in cpg_mssr_probe() instead.
-
->
-> -       dev_set_drvdata(dev, priv);
->         priv->clks = clks;
->         priv->num_core_clks = info->num_total_core_clks;
->         priv->num_mod_clks = info->num_hw_mod_clks;
-> @@ -923,16 +932,71 @@ static int __init cpg_mssr_probe(struct platform_device *pdev)
->         for (i = 0; i < nclks; i++)
->                 clks[i] = ERR_PTR(-ENOENT);
->
-> +       error = of_clk_add_provider(np, cpg_mssr_clk_src_twocell_get, priv);
-> +       if (error)
-> +               goto out_err;
-> +
-> +       return 0;
-> +
-> +out_err:
-> +       kfree(clks);
-> +       if (priv->base)
-> +               iounmap(priv->base);
-> +       kfree(priv);
-> +
-> +       return error;
-> +}
-> +
-> +void __init cpg_mssr_early_init(struct device_node *np,
-> +                               const struct cpg_mssr_info *info)
-> +{
-> +       int error;
-> +       int i;
-> +
-> +       error = cpg_mssr_common_init(NULL, np, info);
-> +       if (error)
-> +               return;
-> +
-> +       for (i = 0; i < info->num_early_core_clks; i++)
-> +               cpg_mssr_register_core_clk(&info->early_core_clks[i], info,
-> +                                          early_priv);
-> +
-> +       for (i = 0; i < info->num_early_mod_clks; i++)
-> +               cpg_mssr_register_mod_clk(&info->early_mod_clks[i], info,
-> +                                         early_priv);
-> +
-> +}
-> +
-> +static int __init cpg_mssr_probe(struct platform_device *pdev)
-> +{
-> +       struct device *dev = &pdev->dev;
-> +       struct device_node *np = dev->of_node;
-> +       const struct cpg_mssr_info *info;
-> +       struct cpg_mssr_priv *priv;
-> +       unsigned int i;
-> +       int error;
-> +
-> +       info = of_device_get_match_data(dev);
-> +
-> +       if (early_priv) {
-> +               priv = early_priv;
-> +               priv->dev = &pdev->dev;
-> +       } else {
-> +               error = cpg_mssr_common_init(dev, dev->of_node, info);
-
-Oops, priv is not set => BOOM.
-I guess you have no other hardware using the renesas-cpg-mssr driver?
-You can probably still test this case on RZ/A2 without patch 2 (or with the
-OF_CLK_DECLARE_DRIVER() line commented out), and with the OSTM timer hack
-you posted before.
-
-> +       }
-> +
-> +       if (error)
-> +               return error;
-> +
-> +       if (!early_priv)
-> +               dev_set_drvdata(dev, priv);
-
-This should be done regardless.
-
-For now it's fine to not move the call to cpg_mssr_add_clk_domain() from
-cpg_mssr_probe() to cpg_mssr_common_init().  If/when the timer subsystem
-receives some early platform_device support, this may have to be revisited.
-
-> --- a/drivers/clk/renesas/renesas-cpg-mssr.h
-> +++ b/drivers/clk/renesas/renesas-cpg-mssr.h
-> @@ -119,12 +119,16 @@ struct cpg_mssr_info {
->         unsigned int num_core_clks;
->         unsigned int last_dt_core_clk;
->         unsigned int num_total_core_clks;
-> +       const struct cpg_core_clk *early_core_clks;
-> +       unsigned int num_early_core_clks;
-
-I'd put the early clocks first.
-Or perhaps a separate /* Early Clocks */ block for both early core and
-early module clocks at the top of struct cpg_mssr_info, so it's very clear
-what applies to early clocks?
-
->         bool stbyctrl;
->
->         /* Module Clocks */
->         const struct mssr_mod_clk *mod_clks;
->         unsigned int num_mod_clks;
->         unsigned int num_hw_mod_clks;
-> +       const struct mssr_mod_clk *early_mod_clks;
-> +       unsigned int num_early_mod_clks;
-
-Likewise.
-
->
->         /* Critical Module Clocks that should not be disabled */
->         const unsigned int *crit_mod_clks;
+>         /* RZ/A2 has Standby Control Registers */
+>         .stbyctrl = true,
+>  };
 
 Gr{oetje,eeting}s,
 
