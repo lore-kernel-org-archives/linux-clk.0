@@ -2,182 +2,99 @@ Return-Path: <SRS0=Dsg5=MG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7DEEECE560
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 16:50:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A2E7C433F4
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 16:51:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B82E206B7
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 16:50:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B82E206B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
+	by mail.kernel.org (Postfix) with ESMTP id 3FDDD2145D
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 16:51:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i+KpTY9f"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FDDD2145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732257AbeIXWxU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Sep 2018 18:53:20 -0400
-Received: from relmlor3.renesas.com ([210.160.252.173]:46921 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728006AbeIXWxU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Sep 2018 18:53:20 -0400
-Received: from unknown (HELO relmlir2.idc.renesas.com) ([10.200.68.152])
-  by relmlie2.idc.renesas.com with ESMTP; 25 Sep 2018 01:50:14 +0900
-Received: from relmlii2.idc.renesas.com (relmlii2.idc.renesas.com [10.200.68.66])
-        by relmlir2.idc.renesas.com (Postfix) with ESMTP id 64306422DA;
-        Tue, 25 Sep 2018 01:50:14 +0900 (JST)
-X-IronPort-AV: E=Sophos;i="5.54,298,1534777200"; 
-   d="scan'208";a="293339470"
-Received: from unknown (HELO rtamta01.rta.renesas.com) ([143.103.48.75])
-  by relmlii2.idc.renesas.com with ESMTP; 25 Sep 2018 01:50:13 +0900
-Received: from ubuntu.localdomain (unknown [143.103.58.87])
-        by rtamta01.rta.renesas.com (Postfix) with ESMTP id 03B7C225;
-        Mon, 24 Sep 2018 16:50:08 +0000 (UTC)
-From:   Chris Brandt <chris.brandt@renesas.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        id S1731832AbeIXWyj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Sep 2018 18:54:39 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:35166 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731122AbeIXWyj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Sep 2018 18:54:39 -0400
+Received: by mail-pf1-f195.google.com with SMTP id p12-v6so9273975pfh.2;
+        Mon, 24 Sep 2018 09:51:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=PEweLLnlA1dPmePDMhQbZaWeZDtIlVBMBm24pUR08YE=;
+        b=i+KpTY9fXhBYEMrz+eRTbaMmwRm9hrW5sQu0y86MTnTDFl96jclXJald9zDHvZ3VFq
+         +Ulj3VP935RlhYnkCJ5Mx6T8VeA5RyYwz9h3qF0eVO3JJh6sgnR3YrzIUCb3MCLkDio1
+         XqiAaJXb/q0CxQ3aXvhF1Rsw6xwQ6oG9iWnDAe2ivORTbhSLKLz9shYr9MyXIcnJnvFI
+         yox59UhaM5x//Tx2//IgJ7e0uFnmEajJGbaRxwqTI1GFEePFGYS/0cC89hXm6PPjTAEK
+         dK5gFEweu/h/IkC9T9bG6ZBnD9N6Fd+q6+461ZvGWDUSK8KF/0mEDEfIrulyCPHLJgwZ
+         Xr/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=PEweLLnlA1dPmePDMhQbZaWeZDtIlVBMBm24pUR08YE=;
+        b=pxQVCaNc37HTLtRjr98mwcZx9LfXlGqTLRE7pBHmlLUTzMEw6QBmKOtT9vcYB3AuF5
+         hy0rlFrFs8tJHjIdtxgDCQT+gHj/5fpFLQ2ZYflBw82PfPKQp8/aKYdpWs0nQ7bAiqBi
+         5Nxzs7AxiBQUckaiOMlRY95LslovbNZNsojY/LMz1+EYpn2dxZTjFViC4Vaz853BSAnI
+         dayYG7Ogag2uJh2RhDZ66qzNpbqANpEZTcswx+x+dJlk7RQsyMlRfx1vKpIPK4cDSCuH
+         SdRE7oSAgUz5Tw0tvbW04HtvbRNTIcH8fY9ee9PxOcsg6w1GeBsXCaiaNmwB+kk8JUGT
+         NDAA==
+X-Gm-Message-State: ABuFfojhnxrmPMgCNjRYxkyCRM3w+PobeU8WkRqh0FsKqzdeiwr8MCFR
+        uip2zyUdnIS8ctnkQioe/Jeu4yRE
+X-Google-Smtp-Source: ANB0VdYglb1LqsVV2e+rkeAq4a5RqtkGz8G8KsJfts67qmrhuOipqmd6onFNpFNwej+9FvlDFoQX/w==
+X-Received: by 2002:a62:1016:: with SMTP id y22-v6mr11187924pfi.109.1537807895761;
+        Mon, 24 Sep 2018 09:51:35 -0700 (PDT)
+Received: from [192.168.2.145] ([109.252.91.213])
+        by smtp.googlemail.com with ESMTPSA id g5-v6sm53761277pfc.77.2018.09.24.09.51.29
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 24 Sep 2018 09:51:34 -0700 (PDT)
+Subject: Re: [PATCH] clk: tegra: Return the exact clock rate from
+ clk_round_rate
+To:     ryang <decatf@gmail.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc:     Prashant Gaikwad <pgaikwad@nvidia.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v2 3/3] clk: renesas: r7s9210: Move table update to separate function
-Date:   Mon, 24 Sep 2018 11:49:37 -0500
-Message-Id: <20180924164937.36536-4-chris.brandt@renesas.com>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20180924164937.36536-1-chris.brandt@renesas.com>
-References: <20180924164937.36536-1-chris.brandt@renesas.com>
+        Stephen Boyd <sboyd@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180921220149.17136-1-decatf@gmail.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <f669ff16-cb4a-614f-de3c-2585d91f2b57@gmail.com>
+Date:   Mon, 24 Sep 2018 19:51:26 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
+MIME-Version: 1.0
+In-Reply-To: <20180921220149.17136-1-decatf@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
-Message-ID: <20180924164937.8Zlrl2i7ii1IWZTvRY-wYjGfINam_CvTOlGU_g2qVnc@z>
+Message-ID: <20180924165126.pNOmdTWUDTTdaearHciIlefIcYheyPsMufBydBl8mQs@z>
 
-Same functionality, just easier to read.
+On 9/22/18 1:01 AM, ryang wrote:
+> The current behavior is that clk_round_rate would return the same clock
+> rate passed to it for valid PLL configurations. This change will return
+> the exact rate the PLL will provide in accordance with clk API.
+> 
+> Signed-off-by: ryang <decatf@gmail.com>
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
- drivers/clk/renesas/r7s9210-cpg-mssr.c | 94 ++++++++++++++++++----------------
- 1 file changed, 49 insertions(+), 45 deletions(-)
+A minor comment.. [0] require a real name, it's not even obvious whether
+you're "Ryan G" or "R Yang".
 
-diff --git a/drivers/clk/renesas/r7s9210-cpg-mssr.c b/drivers/clk/renesas/r7s9210-cpg-mssr.c
-index 7ab9030ef8b9..f9c22b61883b 100644
---- a/drivers/clk/renesas/r7s9210-cpg-mssr.c
-+++ b/drivers/clk/renesas/r7s9210-cpg-mssr.c
-@@ -97,6 +97,53 @@ static const struct mssr_mod_clk r7s9210_mod_clks[] __initconst = {
- 
- };
- 
-+/* The clock dividers in the table vary based on DT and register settings */
-+static void r7s9210_update_clk_table(struct clk *extal_clk, void __iomem *base)
-+{
-+	int i;
-+	u16 frqcr;
-+	u8 index;
-+
-+	/* If EXTAL is above 12MHz, then we know it is Mode 1 */
-+	if (clk_get_rate(extal_clk) > 12000000)
-+		cpg_mode = 1;
-+
-+	frqcr = clk_readl(base + CPG_FRQCR) & 0xFFF;
-+	if (frqcr == 0x012)
-+		index = 0;
-+	else if (frqcr == 0x112)
-+		index = 1;
-+	else if (frqcr == 0x212)
-+		index = 2;
-+	else if (frqcr == 0x322)
-+		index = 3;
-+	else if (frqcr == 0x333)
-+		index = 4;
-+	else
-+		BUG_ON(1);	/* Illegal FRQCR value */
-+
-+	for (i = 0; i < ARRAY_SIZE(r7s9210_core_clks); i++) {
-+		switch (r7s9210_core_clks[i].id) {
-+		case R7S9210_CLK_I:
-+			r7s9210_core_clks[i].div = ratio_tab[index].i;
-+			break;
-+		case R7S9210_CLK_G:
-+			r7s9210_core_clks[i].div = ratio_tab[index].g;
-+			break;
-+		case R7S9210_CLK_B:
-+			r7s9210_core_clks[i].div = ratio_tab[index].b;
-+			break;
-+		case R7S9210_CLK_P1:
-+		case R7S9210_CLK_P1C:
-+			r7s9210_core_clks[i].div = ratio_tab[index].p1;
-+			break;
-+		case R7S9210_CLK_P0:
-+			r7s9210_core_clks[i].div = 32;
-+			break;
-+		}
-+	}
-+}
-+
- struct clk * __init rza2_cpg_clk_register(struct device *dev,
- 	const struct cpg_core_clk *core, const struct cpg_mssr_info *info,
- 	struct clk **clks, void __iomem *base,
-@@ -105,9 +152,6 @@ struct clk * __init rza2_cpg_clk_register(struct device *dev,
- 	struct clk *parent;
- 	unsigned int mult = 1;
- 	unsigned int div = 1;
--	u16 frqcr;
--	u8 index;
--	int i;
- 
- 	parent = clks[core->parent];
- 	if (IS_ERR(parent))
-@@ -128,48 +172,8 @@ struct clk * __init rza2_cpg_clk_register(struct device *dev,
- 		return ERR_PTR(-EINVAL);
- 	}
- 
--	/* Adjust the dividers based on the current FRQCR setting */
--	if (core->id == CLK_MAIN) {
--
--		/* If EXTAL is above 12MHz, then we know it is Mode 1 */
--		if (clk_get_rate(parent) > 12000000)
--			cpg_mode = 1;
--
--		frqcr = clk_readl(base + CPG_FRQCR) & 0xFFF;
--		if (frqcr == 0x012)
--			index = 0;
--		else if (frqcr == 0x112)
--			index = 1;
--		else if (frqcr == 0x212)
--			index = 2;
--		else if (frqcr == 0x322)
--			index = 3;
--		else if (frqcr == 0x333)
--			index = 4;
--		else
--			BUG_ON(1);	/* Illegal FRQCR value */
--
--		for (i = 0; i < ARRAY_SIZE(r7s9210_core_clks); i++) {
--			switch (r7s9210_core_clks[i].id) {
--			case R7S9210_CLK_I:
--				r7s9210_core_clks[i].div = ratio_tab[index].i;
--				break;
--			case R7S9210_CLK_G:
--				r7s9210_core_clks[i].div = ratio_tab[index].g;
--				break;
--			case R7S9210_CLK_B:
--				r7s9210_core_clks[i].div = ratio_tab[index].b;
--				break;
--			case R7S9210_CLK_P1:
--			case R7S9210_CLK_P1C:
--				r7s9210_core_clks[i].div = ratio_tab[index].p1;
--				break;
--			case R7S9210_CLK_P0:
--				r7s9210_core_clks[i].div = 32;
--				break;
--			}
--		}
--	}
-+	if (core->id == CLK_MAIN)
-+		r7s9210_update_clk_table(parent, base);
- 
- 	return clk_register_fixed_factor(NULL, core->name,
- 					 __clk_get_name(parent), 0, mult, div);
--- 
-2.16.1
-
+[0]
+https://www.kernel.org/doc/html/latest/process/submitting-patches.html#developer-s-certificate-of-origin-1-1
