@@ -1,52 +1,157 @@
-Return-Path: <linux-kernel-owner@vger.kernel.org>
-Subject: Re: [PATCH v7 05/24] clocksource: Add a new timer-ingenic driver
-To: Paul Cercueil <paul@crapouillou.net>
-Cc: Mathieu Malaterre <malat@debian.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Rob Herring <robh+dt@kernel.org>, linux-doc@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        od@zcrc.me, linux-mips@linux-mips.org,
-        Paul Burton <paul.burton@mips.com>,
-        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-pwm@vger.kernel.org
-References: <5ba8750a.1c69fb81.501e8.d0f0SMTPIN_ADDED_MISSING@mx.google.com>
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <58645f14-aec2-4f66-3a39-34beeabdb035@linaro.org>
-Date: Mon, 24 Sep 2018 07:35:05 +0200
+Return-Path: <vabhav.sharma@nxp.com>
+From: Vabhav Sharma <vabhav.sharma@nxp.com>
+To: sudeep.holla@arm.com,
+	oss@buserror.net,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-arm-kernel@lists.infradead.org,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	rjw@rjwysocki.net,
+	viresh.kumar@linaro.org,
+	linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-kernel-owner@vger.kernel.org,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	gregkh@linuxfoundation.org,
+	arnd@arndb.de,
+	kstewart@linuxfoundation.org,
+	yamada.masahiro@socionext.com
+Cc: linux@armlinux.org.uk,
+	V.Sethi@nxp.com,
+	udit.kumar@nxp.com,
+	Vabhav Sharma <vabhav.sharma@nxp.com>,
+	Priyanka Jain <priyanka.jain@nxp.com>,
+	Sriram Dash <sriram.dash@nxp.com>
+Subject: [PATCH v3 6/6] arm64: dts: add LX2160ARDB board support
+Date: Mon, 24 Sep 2018 05:39:01 +0530
+Message-Id: <1537747741-6245-7-git-send-email-vabhav.sharma@nxp.com>
+In-Reply-To: <1537747741-6245-1-git-send-email-vabhav.sharma@nxp.com>
+References: <1537747741-6245-1-git-send-email-vabhav.sharma@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <5ba8750a.1c69fb81.501e8.d0f0SMTPIN_ADDED_MISSING@mx.google.com>
-Content-Type: text/plain; charset=utf-8
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain
+Return-Path: vabhav.sharma@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 24/09/2018 07:24, Paul Cercueil wrote:
-> Hi Daniel,
-> 
-> Le 24 sept. 2018 05:12, Daniel Lezcano <daniel.lezcano@linaro.org> a écrit :
->>
->> On 21/08/2018 19:16, Paul Cercueil wrote: 
->>> This driver handles the TCU (Timer Counter Unit) present on the Ingenic 
->>> JZ47xx SoCs, and provides the kernel with a system timer, and optionally 
->>> with a clocksource and a sched_clock. 
->>>
->>> It also provides clocks and interrupt handling to client drivers. 
->>
->> Can you provide a much more complete description of the timer in order 
->> to make my life easier for the review of this patch? 
-> 
-> See patch [03/24], it adds a doc file that describes the hardware.
+LX2160A reference design board (RDB) is a high-performance
+computing, evaluation, and development platform with LX2160A
+SoC.
 
-Thanks, I went through but it is incomplete to understand what the timer
-do. I will reverse-engineer the code but it would help if you can give
-the gross approach. Why multiple channels ? mutexes and completion ?
+Signed-off-by: Priyanka Jain <priyanka.jain@nxp.com>
+Signed-off-by: Sriram Dash <sriram.dash@nxp.com>
+Signed-off-by: Vabhav Sharma <vabhav.sharma@nxp.com>
+---
+ arch/arm64/boot/dts/freescale/Makefile            |  1 +
+ arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts | 88 +++++++++++++++++++++++
+ 2 files changed, 89 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
 
-
+diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
+index 86e18ad..445b72b 100644
+--- a/arch/arm64/boot/dts/freescale/Makefile
++++ b/arch/arm64/boot/dts/freescale/Makefile
+@@ -13,3 +13,4 @@ dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2080a-rdb.dtb
+ dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2080a-simu.dtb
+ dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2088a-qds.dtb
+ dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2088a-rdb.dtb
++dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-lx2160a-rdb.dtb
+diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts b/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
+new file mode 100644
+index 0000000..1bbe663
+--- /dev/null
++++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
+@@ -0,0 +1,88 @@
++// SPDX-License-Identifier: (GPL-2.0 OR MIT)
++//
++// Device Tree file for LX2160ARDB
++//
++// Copyright 2018 NXP
++
++/dts-v1/;
++
++#include "fsl-lx2160a.dtsi"
++
++/ {
++	model = "NXP Layerscape LX2160ARDB";
++	compatible = "fsl,lx2160a-rdb", "fsl,lx2160a";
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
++};
++
++&uart0 {
++	status = "okay";
++};
++
++&uart1 {
++	status = "okay";
++};
++
++&i2c0 {
++	status = "okay";
++	i2c-mux@77 {
++		compatible = "nxp,pca9547";
++		reg = <0x77>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		i2c@2 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0x2>;
++
++			power-monitor@40 {
++				compatible = "ti,ina220";
++				reg = <0x40>;
++				shunt-resistor = <1000>;
++			};
++		};
++
++		i2c@3 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0x3>;
++
++			temperature-sensor@4c {
++				compatible = "nxp,sa56004";
++				reg = <0x4c>;
++			};
++
++			temperature-sensor@4d {
++				compatible = "nxp,sa56004";
++				reg = <0x4d>;
++			};
++		};
++	};
++};
++
++&i2c4 {
++	status = "okay";
++
++	rtc@51 {
++		compatible = "nxp,pcf2129";
++		reg = <0x51>;
++		// IRQ10_B
++		interrupts = <0 150 0x4>;
++		};
++
++};
++
++&usb0 {
++	status = "okay";
++};
++
++&usb1 {
++	status = "okay";
++};
++
++&crypto {
++	status = "okay";
++};
 -- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+2.7.4
