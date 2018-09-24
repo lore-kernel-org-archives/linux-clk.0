@@ -2,65 +2,40 @@ Return-Path: <SRS0=Dsg5=MG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD5DCC433F4
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 11:20:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2CDCECE561
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 11:23:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C9882145D
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 11:20:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="tGVFIhYz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C9882145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+	by mail.kernel.org (Postfix) with ESMTP id 55BE520877
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 11:23:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55BE520877
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728432AbeIXRW1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Sep 2018 13:22:27 -0400
-Received: from mail-it1-f194.google.com ([209.85.166.194]:51373 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727995AbeIXRW1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Sep 2018 13:22:27 -0400
-Received: by mail-it1-f194.google.com with SMTP id e14-v6so9993832itf.1
-        for <linux-clk@vger.kernel.org>; Mon, 24 Sep 2018 04:20:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=jG7pn5RDX2M9asE3ullvRPSRzQJM15FiaiJdXE3ztk4=;
-        b=tGVFIhYzwgBEny9ihcvrsx/JTFT3mmuqY74wbbYs7UBm4UuF7mtYJ+iAOiZza1UPRq
-         8ryfyGrjPHQoiPCFYGaarh87DjMvzwGGvXO3oX0ymb4z0zfOv0uJsQUq7GrWU7qI4oJB
-         EYWIu4zBZB5Wnco46hpACUTDOZl7t4ytYtiR6ifLsCKrYPu8N+FQOjQqFIoDP56K3bnE
-         X/5VlzxnaKT22GVC+pCtgXu6boAXnk5/JYxWBo/34o/ZIv0EOX/ndu9y4ibrBU25X7M/
-         hi6E9DTXSCkHBSWD4HrlFYGd31CBEf+Lrw2GB5fxSYr0OLRy8JThWWIJ+UfUPWAC+TT6
-         KP7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=jG7pn5RDX2M9asE3ullvRPSRzQJM15FiaiJdXE3ztk4=;
-        b=n6Uklz31R2SalHEhUxP3M6eaGV9imtdep2xPf2Ug1oZbRYHtffUpWaQv/Fh0kQgeQr
-         Ar7hX7Jca6Id35GWW1+dxnKbK+NheMxsbrYSdzPCQ1zGvTgwazmB2SALw0gK54dyCDBN
-         sZEPfnN5uzhejsjPuP4hWb8lUhqtoddtXTQKVnkfBikNfFkNtFe1HCyac3B2X+kPPtEB
-         pIWFWogZSyae8iJaA1HJMMYXqU3IH0sKnEmflDg2exiQklnxcfBZA2PTEJ//hn8drv7N
-         HwZakj20yX6KRbOjJkgG/2DB9bRnuOm/p0pg/zLx5c8R9wf8WFCv0mmLo6PZOxKtd1/C
-         5CQA==
-X-Gm-Message-State: ABuFfohjaOpJLjZb25a8MYX3xvvKGQ72Sz+JwPLFJ1j+obpHF/YjIycw
-        Z9RbfrhW2sdmw6v2RmHl0j0sPzKeNFX5AwbpPeGc7w==
-X-Google-Smtp-Source: ACcGV6063JWFX4lEfjS+xc76MrLTmQOZXsFs4aDhVXzGjatUpJawZm+mVo+7KcvibaMBp/lbwbBMHyQPlP57f5CC0So=
-X-Received: by 2002:a24:a20f:: with SMTP id j15-v6mr2057130itf.125.1537788051308;
- Mon, 24 Sep 2018 04:20:51 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180924101150.23349-1-brgl@bgdev.pl> <20180924111601.GL15943@smile.fi.intel.com>
-In-Reply-To: <20180924111601.GL15943@smile.fi.intel.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Mon, 24 Sep 2018 13:20:40 +0200
-Message-ID:
- <CAMRc=MdKAoWscwJR4=3DLMGA-DTHU1wJg0SSSgo=7KbgPa_9DA@mail.gmail.com>
-Subject: Re: [PATCH v3 0/4] devres: provide and use devm_kstrdup_const()
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+        id S1726241AbeIXRYr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Sep 2018 13:24:47 -0400
+Received: from mga02.intel.com ([134.134.136.20]:62721 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726074AbeIXRYr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 24 Sep 2018 13:24:47 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Sep 2018 04:23:12 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,297,1534834800"; 
+   d="scan'208";a="75728290"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
+  by orsmga008.jf.intel.com with ESMTP; 24 Sep 2018 04:23:05 -0700
+Received: from andy by smile with local (Exim 4.91)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1g4OxD-0002Gt-6F; Mon, 24 Sep 2018 14:23:03 +0300
+Date:   Mon, 24 Sep 2018 14:23:03 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -80,66 +55,52 @@ Cc:     Michael Turquette <mturquette@baylibre.com>,
         Huang Ying <ying.huang@intel.com>,
         Kees Cook <keescook@chromium.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Arnd Bergmann <arnd@arndb.de>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v3 4/4] clk: pmc-atom: use devm_kstrdup_const()
+Message-ID: <20180924112303.GM15943@smile.fi.intel.com>
+References: <20180924101150.23349-1-brgl@bgdev.pl>
+ <20180924101150.23349-5-brgl@bgdev.pl>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180924101150.23349-5-brgl@bgdev.pl>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
-Message-ID: <20180924112040.cD1YJa22epfSBBm_euTFCEJhD3VNiCuo2ucVFR0hThs@z>
+Message-ID: <20180924112303.rKNDZKTBKEaiYN0EcVuLai2Ma2VaPx8ENudOnE6NjZg@z>
 
-pon., 24 wrz 2018 o 13:16 Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> napisa=C5=82(a):
->
-> On Mon, Sep 24, 2018 at 12:11:46PM +0200, Bartosz Golaszewski wrote:
-> > This series implements devm_kstrdup_const() together with some
-> > prerequisite changes and uses it in pmc-atom driver.
-> >
->
-> Through which tree you are assuming this would be directed?
->
+On Mon, Sep 24, 2018 at 12:11:50PM +0200, Bartosz Golaszewski wrote:
+> Use devm_kstrdup_const() in the pmc-atom driver. This mostly serves as
+> an example of how to use this new routine to shrink driver code.
+> 
+> While we're at it: replace a call to kcalloc() with devm_kcalloc().
 
-I think that patches 1-3 would be best picked up by Andrew Morton.
-Patch 4 looks like it should go through the clock tree unless Stephen
-is fine with Acking it and it going through the mm tree together with
-others.
+> @@ -352,8 +344,6 @@ static int plt_clk_probe(struct platform_device *pdev)
+>  		goto err_drop_mclk;
+>  	}
+>  
+> -	plt_clk_free_parent_names_loop(parent_names, data->nparents);
+> -
+>  	platform_set_drvdata(pdev, data);
+>  	return 0;
 
-Bart
+I don't think this is a good example.
 
-> > v1 -> v2:
-> > - fixed the changelog in the patch implementing devm_kstrdup_const()
-> > - fixed the kernel doc
-> > - moved is_kernel_rodata() to asm-generic/sections.h
-> > - fixed constness
-> >
-> > v2 -> v3:
-> > - rebased on top of 4.19-rc5 as there were some conflicts in the
-> >   pmc-atom driver
-> > - collected Reviewed-by tags
-> >
-> > Bartosz Golaszewski (4):
-> >   devres: constify p in devm_kfree()
-> >   mm: move is_kernel_rodata() to asm-generic/sections.h
-> >   devres: provide devm_kstrdup_const()
-> >   clk: pmc-atom: use devm_kstrdup_const()
-> >
-> >  drivers/base/devres.c          | 43 ++++++++++++++++++++++++++++++++--
-> >  drivers/clk/x86/clk-pmc-atom.c | 19 ++++-----------
-> >  include/asm-generic/sections.h | 14 +++++++++++
-> >  include/linux/device.h         |  5 +++-
-> >  mm/util.c                      |  7 ------
-> >  5 files changed, 63 insertions(+), 25 deletions(-)
-> >
-> > --
-> > 2.18.0
-> >
->
-> --
-> With Best Regards,
-> Andy Shevchenko
->
->
+You changed a behaviour here in the way that you keep all chunks of memory
+(even small enough for pointers) during entire life time of the driver, which
+pretty likely would be forever till next boot.
+
+In the original case the memory was freed immediately in probe either it fails
+or returns with success.
+
+NAK, sorry.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
