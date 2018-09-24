@@ -2,135 +2,122 @@ Return-Path: <SRS0=Dsg5=MG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84B41C433F4
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 11:44:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA01CECE561
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 11:45:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F83121486
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 11:44:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 82D802086E
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 11:45:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="d+YBLdu+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F83121486
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QUq1kYdI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82D802086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729085AbeIXRqM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Sep 2018 13:46:12 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:35087 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728530AbeIXRqL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Sep 2018 13:46:11 -0400
-Received: by mail-it1-f196.google.com with SMTP id 139-v6so10033440itf.0
-        for <linux-clk@vger.kernel.org>; Mon, 24 Sep 2018 04:44:31 -0700 (PDT)
+        id S1729312AbeIXRls (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Sep 2018 13:41:48 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:52840 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728954AbeIXRlr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Sep 2018 13:41:47 -0400
+Received: by mail-wm1-f66.google.com with SMTP id l7-v6so4525989wme.2;
+        Mon, 24 Sep 2018 04:40:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=I+neKOGaIfxkYLq7/KSb4qMUPj20qwsj/r39saWB6Z0=;
-        b=d+YBLdu+otmsClkcGAkVQ373X4hsv1d7iH/yPqg3qy8+Hsx+Lz7XcirFMQfiqZITwN
-         iLRkUM+EpWCrPiycJhAPs1kSXjQRu9ctiibeRD7QbLc7MFj+R9Zz9ziQxZpiSODcy/Q7
-         0n4ryC6qXYbA8BPI3kO9X6trp/1mcj68BiGx+1ZygcEcRWFb8Vq4W3b7LRZevfFuIneO
-         LyeCp3P/+/r6hNx5TWpQVxlkL1XLU0rU/qJjTfwPmTzKPs/BZhXhJt8NGdorHlzsMYO2
-         wyg2hILCB+qWHMKNAz68xGqje7Msx/pXKXkb73bjQTUpFsWn2NUOJ7/JKmGNIhfVPjrn
-         d90A==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=dXPoNWE41vbbecThWtq7t0Lqw/jBW9psmqd/6w8F288=;
+        b=QUq1kYdIRXZ3nFdsBDx6rGlgt6k8tB/z3Hnr3kuTyDx0FYM4Uhod/QDoOXgvhzkNQE
+         bCCMK1SRZKR4Hohm0wmGDuP28kQU/McYRZ52plrK8q1Npy2kb6CXnL5zE8NHH3FXtGUB
+         j+MmISvdyue3XTWOMxkxbutYdb6T7AY5JJwzm4I0zkMeC/7JWHei0rT5ilBQq5mWi8Kc
+         Ydf9RIw7IILvIHptlE5jJuOD5e9QSLkLRyYENzKufcHkxXpZ6hFVUdgRI0OGRcNnuWhw
+         8jIkItEq/5YUqbqN113U0MitD3pjG0AP0T3dh+itjDwb4DTTAwYRq/fXYZrwPLCoSNI1
+         nfeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=I+neKOGaIfxkYLq7/KSb4qMUPj20qwsj/r39saWB6Z0=;
-        b=TVMBCUqWXK15EOZkaE6comcFvzqtkvry2Ov+1nAii8GmCpE4qXdCDIKRRPSjKXp/yi
-         uwuEJ/PzuaBJY1QLHizGT/Q46Qw95rsVXKXIPlNZF2mkhI3E5fUY7igKFYUZT5sZPPI4
-         VufiBwupUApjOD/+X3RI6CRqs8uD4+XdsTBs43Z0faY73F2rRWH3bfxFacZ9d3UI0HG7
-         pvbcgI9gQKw3IaHJPljuudaRgwWYMOUiLACsz3F8cOTdaHLfplaeHoblyK6ElMu4WEWB
-         YAM7VwjoY+1xAVdUi0rEAqN4w8kllIRXfuufqv6RS5UMt5ws/S3e9jDhQTxUTQJ2o2xj
-         dbgA==
-X-Gm-Message-State: ABuFfohw1TqCRiE3TU0E32NXN11CrW1ygmkrV3bGj0XITQ1oFMFw93ts
-        L39d0wTt6CIYBMv3yW+pNv1QJz/TjwV+k4on42ljBA==
-X-Google-Smtp-Source: ACcGV61zi4ItSsWn4lkh7i+858CSyStGIW6aMzEWXbsgnDdjHC+HGJ57EwyWzdpNSfZQiWMg0OC0hEA7CM7+Ne6daqg=
-X-Received: by 2002:a24:a20f:: with SMTP id j15-v6mr2121558itf.125.1537789470555;
- Mon, 24 Sep 2018 04:44:30 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180924101150.23349-1-brgl@bgdev.pl> <20180924101150.23349-5-brgl@bgdev.pl>
- <20180924112303.GM15943@smile.fi.intel.com>
-In-Reply-To: <20180924112303.GM15943@smile.fi.intel.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Mon, 24 Sep 2018 13:44:19 +0200
-Message-ID:
- <CAMRc=McegRtV88BfYja5wdKZuNDEMG3dqWjG7xHoyo6EHhyEqg@mail.gmail.com>
-Subject: Re: [PATCH v3 4/4] clk: pmc-atom: use devm_kstrdup_const()
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=dXPoNWE41vbbecThWtq7t0Lqw/jBW9psmqd/6w8F288=;
+        b=EkNIbfUKU2brpQJncMVFVIdvYfS3RSdVDrY5GNLuBNbK5s81Od8e/aJFqNcvkkRrng
+         l/kYiD4Pnpj4EMDrHsLTCC7RjaDrbTwCIgt3Nykg/4kYRb4opbANPyvMou6XN7NsfRaG
+         6FHmBJo4yiD8+4+Bim+fXH4kZeC8Ud2gaYHRc2Ts7/t2pUgVMn2pdFolSSSMvXpr1a6B
+         xHd3eI/pBMw08LrLRpvZS+pMWK0QZyamLQgGWfroocKrnYqwZyhac7SE5H97czrdpQ1O
+         bJquSTCRKGQBrnLs7BsSEHfs0KwjBbK8jBMf8uUuNn7ewCcWe2c3gJK8TU67xepS/aPz
+         tnTw==
+X-Gm-Message-State: APzg51AtHLifCtBF7EIDaVMFVTK8f9S9cHhC6b08sRayiDde53oKvTym
+        27cj2Hb//FVtVxfTxqbxYU8=
+X-Google-Smtp-Source: ACcGV62/vft9iU3c2FLyo8cTwXtFYK5yByTWeJapQciiIuHVjT5Fv+AQhK2xiLF0i2YNFX1wDevdTA==
+X-Received: by 2002:a1c:1188:: with SMTP id 130-v6mr6693532wmr.138.1537789205360;
+        Mon, 24 Sep 2018 04:40:05 -0700 (PDT)
+Received: from localhost (pD9E515A3.dip0.t-ipconnect.de. [217.229.21.163])
+        by smtp.gmail.com with ESMTPSA id x14-v6sm1333815wmc.36.2018.09.24.04.40.04
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 24 Sep 2018 04:40:04 -0700 (PDT)
+Date:   Mon, 24 Sep 2018 13:40:03 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     ryang <decatf@gmail.com>
+Cc:     Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Arend van Spriel <aspriel@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joe Perches <joe@perches.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jonathan Corbet <corbet@lwn.net>, Roman Gushchin <guro@fb.com>,
-        Huang Ying <ying.huang@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: tegra: Fix an infinite loop when clock rate is zero
+Message-ID: <20180924114003.GS21032@ulmo>
+References: <20180921220037.16862-1-decatf@gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="jo46wx5DSA4a/gWG"
+Content-Disposition: inline
+In-Reply-To: <20180921220037.16862-1-decatf@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
-Message-ID: <20180924114419.JYFpZT0LRtwhgX1cIop2LpPWEdEd4hOnduHtiulGADE@z>
+Message-ID: <20180924114003.RQaWYG7zjiV_5s5Slb0o5AhvWMtKJOvqriMIjlp9Cos@z>
 
-pon., 24 wrz 2018 o 13:23 Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> napisa=C5=82(a):
->
-> On Mon, Sep 24, 2018 at 12:11:50PM +0200, Bartosz Golaszewski wrote:
-> > Use devm_kstrdup_const() in the pmc-atom driver. This mostly serves as
-> > an example of how to use this new routine to shrink driver code.
-> >
-> > While we're at it: replace a call to kcalloc() with devm_kcalloc().
->
-> > @@ -352,8 +344,6 @@ static int plt_clk_probe(struct platform_device *pd=
-ev)
-> >               goto err_drop_mclk;
-> >       }
-> >
-> > -     plt_clk_free_parent_names_loop(parent_names, data->nparents);
-> > -
-> >       platform_set_drvdata(pdev, data);
-> >       return 0;
->
-> I don't think this is a good example.
->
-> You changed a behaviour here in the way that you keep all chunks of memor=
-y
-> (even small enough for pointers) during entire life time of the driver, w=
-hich
-> pretty likely would be forever till next boot.
->
-> In the original case the memory was freed immediately in probe either it =
-fails
-> or returns with success.
->
-> NAK, sorry.
->
->
 
-I see.
+--jo46wx5DSA4a/gWG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I'd like to still merge patches 1-3 and then I'd come up with better
-examples for the next release cycle once these are in?
+On Fri, Sep 21, 2018 at 06:00:37PM -0400, ryang wrote:
+> Calling clk_set_rate or clk_round_rate will lock up the kernel when the
+> rate is zero. This avoids the infinite loop and uses a slightly more
+> optimized p divider calculation.
+>=20
+> Signed-off-by: ryang <decatf@gmail.com>
+> ---
+>  drivers/clk/tegra/clk-pll.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
 
-Bart
+Acked-by: Thierry Reding <treding@nvidia.com>
+
+--jo46wx5DSA4a/gWG
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAluozRMACgkQ3SOs138+
+s6FyUQ/+OUhFV4i9eXn8U9G/iqxDUf2Ipyhw3J5GM2xJ/e0BiinsHS5swaf5CBPI
+s9k9ytlegplNxKOd0ZaARdw88f1k/d2nMYYDtSstaZWU6H0GFFCpJL8tnX49Og9w
+mJYjw21oHmikNGjTwqbvmwv2DFcSPL+w4dx+t4ataXrZCsDElA2YT4N6RqSeMJ4f
+uHPQHrCnC622rKRCWsS2iZbgHLIiWygrdn3kh97GtNmhQyYWfuUV7YToCPt4aQmx
+yg9r7XS9FqrtVCp9LmuPgfIzQ+gBNB8gRrcmmnhn+L36GRSjbPtD2qfkcjTavM/g
+LKNl0UB4gcO6AOe5RtVpFoix8wa4/KvM/lt5LyeDsQFizV3z8P0Cv6zEsGwITPJI
+lRUoHZlHAz8h30OnR+cGnNKuFe+zoPYxAOHyB+nT0o7VcYSeXTLC4yhP/COZmkUc
+SxBpxp5P0AfkUxT6RBFxeedAPft9BsnCrgJD4zMHaDYnVPxoBZlrTW7dxhoEoyQ5
+8R/186CDt6vnUlHcrhjSl6ZElmbvYPF4YsZzzm6y1ePowwU1TpfUxC0iUTPNECtF
+/GzHykooirqJ7Szlb2XrGU9yz6Plep5utMaLRneMsaJ79AfsO/kV8Yhxi8+/uHkY
++stR+cJjSuW5wIP2Yco9eAaAcuoyFUr7Ccijih5iiAPzZdIM/uk=
+=k52X
+-----END PGP SIGNATURE-----
+
+--jo46wx5DSA4a/gWG--
