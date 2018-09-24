@@ -1,56 +1,78 @@
-Return-Path: <pdeschrijver@nvidia.com>
-Date: Mon, 24 Sep 2018 11:06:31 +0300
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: ryang <decatf@gmail.com>
-CC: Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Thierry Reding
-	<thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
-	<linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] clk: tegra: Fix an infinite loop when clock rate is zero
-Message-ID: <20180924080631.GE7636@tbergstrom-lnx.Nvidia.com>
-References: <20180921220037.16862-1-decatf@gmail.com>
+Return-Path: <JOLLYS@xilinx.com>
+From: Jolly Shah <JOLLYS@xilinx.com>
+To: Olof Johansson <olof@lixom.net>
+CC: Sudeep Holla <sudeep.holla@arm.com>, "ard.biesheuvel@linaro.org"
+	<ard.biesheuvel@linaro.org>, Ingo Molnar <mingo@kernel.org>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, "matt@codeblueprint.co.uk"
+	<matt@codeblueprint.co.uk>, "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+	Kees Cook <keescook@chromium.org>, Dmitry Torokhov
+	<dmitry.torokhov@gmail.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@codeaurora.org>, Michal Simek <michals@xilinx.com>, Rob
+ Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-clk
+	<linux-clk@vger.kernel.org>, Rajan Vaja <RAJANV@xilinx.com>, Linux ARM
+ Mailing List <linux-arm-kernel@lists.infradead.org>, Linux Kernel Mailing
+ List <linux-kernel@vger.kernel.org>, DTML <devicetree@vger.kernel.org>
+Subject: RE: [PATCH v11 03/11] firmware: xilinx: Add zynqmp IOCTL API for
+ device control
+Date: Mon, 24 Sep 2018 18:26:23 +0000
+Message-ID: 
+ <CY1PR02MB213831731FA01F46D2713875B8170@CY1PR02MB2138.namprd02.prod.outlook.com>
+References: <1533318808-10781-1-git-send-email-jollys@xilinx.com>
+ <1533318808-10781-4-git-send-email-jollys@xilinx.com>
+ <CAOesGMi7Q9L4oZkUubKtV-m8XD67MQ05ZFhPA_0Hwky_qVUxfg@mail.gmail.com>
+ <CY1PR02MB2138BF2252E1CE2C1747A78AB8050@CY1PR02MB2138.namprd02.prod.outlook.com>
+ <CAOesGMhViv_D6GKYf3x02LGqthwEsfkUFWBdG7pCQqD2MGsEew@mail.gmail.com>
+ <CY1PR02MB2138254CC5B1C2B2D41AB725B8040@CY1PR02MB2138.namprd02.prod.outlook.com>
+ <CAOesGMgqjGEXzRPXFxUcSyTof_wgjErPhZ7wokdGEDY9SnCvdw@mail.gmail.com>
+In-Reply-To: 
+ <CAOesGMgqjGEXzRPXFxUcSyTof_wgjErPhZ7wokdGEDY9SnCvdw@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <20180921220037.16862-1-decatf@gmail.com>
-Return-Path: pdeschrijver@nvidia.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, Sep 21, 2018 at 06:00:37PM -0400, ryang wrote:
-> Calling clk_set_rate or clk_round_rate will lock up the kernel when the
-> rate is zero. This avoids the infinite loop and uses a slightly more
-> optimized p divider calculation.
-> 
-
-Acked-By: Peter De Schrijver <pdeschrijver@nvidia.com>
-
-At some point we should also limit pdiv to its maximum possible value, but
-that's not so obvious as we need to take into account PLLs where pdiv is
-non-linear.
-
-Peter.
-
-> Signed-off-by: ryang <decatf@gmail.com>
-> ---
->  drivers/clk/tegra/clk-pll.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-> index 830d1c87fa7c..17a058c3bbc1 100644
-> --- a/drivers/clk/tegra/clk-pll.c
-> +++ b/drivers/clk/tegra/clk-pll.c
-> @@ -582,9 +582,8 @@ static int _calc_rate(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
->  	}
->  
->  	/* Raise VCO to guarantee 0.5% accuracy */
-> -	for (cfg->output_rate = rate; cfg->output_rate < 200 * cfreq;
-> -	     cfg->output_rate <<= 1)
-> -		p_div++;
-> +	p_div = rate ? fls((200 * cfreq) / rate) : 0;
-> +	cfg->output_rate = rate << p_div;
->  
->  	cfg->m = parent_rate / cfreq;
->  	cfg->n = cfg->output_rate / cfreq;
-> -- 
-> 2.17.1
-> 
+SGkgT2xvZiwNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBPbG9mIEpv
+aGFuc3NvbiBbbWFpbHRvOm9sb2ZAbGl4b20ubmV0XQ0KPiBTZW50OiBTdW5kYXksIFNlcHRlbWJl
+ciAyMywgMjAxOCA2OjExIEFNDQo+IFRvOiBKb2xseSBTaGFoIDxKT0xMWVNAeGlsaW54LmNvbT4N
+Cj4gQ2M6IFN1ZGVlcCBIb2xsYSA8c3VkZWVwLmhvbGxhQGFybS5jb20+OyBhcmQuYmllc2hldXZl
+bEBsaW5hcm8ub3JnOyBJbmdvDQo+IE1vbG5hciA8bWluZ29Aa2VybmVsLm9yZz47IEdyZWcgS3Jv
+YWgtSGFydG1hbg0KPiA8Z3JlZ2toQGxpbnV4Zm91bmRhdGlvbi5vcmc+OyBtYXR0QGNvZGVibHVl
+cHJpbnQuY28udWs7DQo+IGhrYWxsd2VpdDFAZ21haWwuY29tOyBLZWVzIENvb2sgPGtlZXNjb29r
+QGNocm9taXVtLm9yZz47IERtaXRyeQ0KPiBUb3Jva2hvdiA8ZG1pdHJ5LnRvcm9raG92QGdtYWls
+LmNvbT47IE1pY2hhZWwgVHVycXVldHRlDQo+IDxtdHVycXVldHRlQGJheWxpYnJlLmNvbT47IFN0
+ZXBoZW4gQm95ZCA8c2JveWRAY29kZWF1cm9yYS5vcmc+OyBNaWNoYWwNCj4gU2ltZWsgPG1pY2hh
+bHNAeGlsaW54LmNvbT47IFJvYiBIZXJyaW5nIDxyb2JoK2R0QGtlcm5lbC5vcmc+OyBNYXJrIFJ1
+dGxhbmQNCj4gPG1hcmsucnV0bGFuZEBhcm0uY29tPjsgbGludXgtY2xrIDxsaW51eC1jbGtAdmdl
+ci5rZXJuZWwub3JnPjsgUmFqYW4gVmFqYQ0KPiA8UkFKQU5WQHhpbGlueC5jb20+OyBMaW51eCBB
+Uk0gTWFpbGluZyBMaXN0IDxsaW51eC1hcm0tDQo+IGtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3Jn
+PjsgTGludXggS2VybmVsIE1haWxpbmcgTGlzdCA8bGludXgtDQo+IGtlcm5lbEB2Z2VyLmtlcm5l
+bC5vcmc+OyBEVE1MIDxkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZz4NCj4gU3ViamVjdDogUmU6
+IFtQQVRDSCB2MTEgMDMvMTFdIGZpcm13YXJlOiB4aWxpbng6IEFkZCB6eW5xbXAgSU9DVEwgQVBJ
+IGZvcg0KPiBkZXZpY2UgY29udHJvbA0KPiANCj4gSGksDQo+IA0KPiBBcG9sb2dpZXMgZm9yIHRo
+ZSBzbG93IHJlc3BvbnNlcyBoZXJlLCBJIG1lYW50IHRvIGZvbGxvdyB1cCBvbiB0aGlzIHNvb25l
+ci4NCj4gDQo+IE9uIFR1ZSwgU2VwIDExLCAyMDE4IGF0IDg6MjAgUE0sIEpvbGx5IFNoYWggPEpP
+TExZU0B4aWxpbnguY29tPiB3cm90ZToNCj4gPiBIaSBTdWRlZXAgYW5kIE9sb2YsDQo+ID4NCj4g
+PiBDbG9jayBkcml2ZXIgZnJvbSBzYW1lIHBhdGNoIHNldCB1c2VzIGlvY3RsIEFQSSBhbG9uZyB3
+aXRoIG90aGVyIGNsb2NrIGVlbWkNCj4gQVBJcy4gQXMgY2xvY2sgcGF0Y2hlcycgZmluYWwgcmV2
+aWV3IGlzIHBlbmRpbmcgYnkgU3RlcGhlbiwgTWljaGFsIG9ubHkgY3JlYXRlZA0KPiBwdWxsIHJl
+cXVlc3QgZm9yIHJlc3Qgb2YgdGhlIHBhdGNoZXMgYW5kIHRoYXQgZG9lc24ndCByZXF1aXJlIGlv
+Y3RsIGFwaS4gSSB3aWxsDQo+IHJlbW92ZSBpdCBhbmQgc3VibWl0IG5ldyBwYXRjaCBzZXQuDQo+
+ID4NCj4gPiBGb3IgZnV0dXJlIHBhdGNoZXMgd2hpY2ggcmVxdWlyZXMgaW9jdGwgYXBpLCB3b3Vs
+ZCBsaWtlIHRvIHVuZGVyc3RhbmQgeW91cg0KPiBzdWdnZXN0aW9uIHNvIEkgY2FuIG1ha2UgcmVx
+dWlyZWQgY2hhbmdlcy4gRm9yIHp5bnFtcCwgRUVNSSBpbnRlcmZhY2UgYWxsb3dzDQo+IGNsb2Nr
+LCByZXNldCwgcG93ZXIgZXRjIG1hbmFnZW1lbnQgdGhyb3VnaCBmaXJtd2FyZSBidXQgYXBhcnQg
+ZnJvbSB0aG9zZQ0KPiB0aGVyZSBhcmUgc29tZSBvcGVyYXRpb25zIHdoaWNoIG5lZWRzIHNlY3Vy
+ZSBhY2Nlc3MgdGhyb3VnaCBmaXJtd2FyZS4NCj4gRXhhbXBsZXMgYXJlIGFjY2Vzc2luZyBzb21l
+IHN0b3JhZ2UgcmVnaXN0ZXJzIGZvciBpbnRlciBhZ2VudCBjb21tdW5pY2F0aW9uLA0KPiBjb25m
+aWd1cmluZyBhbm90aGVyIGFnZW50KFJQVSkgbW9kZSwgc2V0dGluZyBQTEwgcGFyYW1ldGVycywg
+Ym9vdCBkZXZpY2UNCj4gY29uZmlndXJhdGlvbiBldGMuIFRob3NlIG9wZXJhdGlvbnMgYXJlIGNv
+dmVyZWQgYXMgaW9jdGxzIGFzIHRoZXkgYXJlIHZlcnkNCj4gcGxhdGZvcm0gc3BlY2lmaWMuIERv
+IHlvdSBzdWdnZXN0IHRvIGhhbmRsZSB0aGVtIHdpdGggaW5kaXZpZHVhbCBFRU1JIEFQSXMNCj4g
+aW5zdGVhZCBvZiBpb2N0bCBBUEk/DQo+IA0KPiBJJ20gcGVyc29uYWxseSBsZXNzIHdvcnJpZWQg
+YWJvdXQgd2hldGhlciB0aGUgY2FsbHMgYXJlIHRocm91Z2ggYW4gaW9jdGwgQVBJIG9yIGFuDQo+
+IEVFTUkgb25lLCBidXQgaWYgaXQgaXMgdGhyb3VnaCBpb2N0bCwgSSdkIHByZWZlciBpZiBpdCB3
+YXNuJ3Qgd2lkZS1vcGVuIHBhc3MtdGhyb3VnaC4NCj4gSS5lLiB0aGF0IHRoZSBpb2N0bHMgeW91
+IGFjdHVhbGx5IHVzZSBhcmUgZG9jdW1lbnRlZCwgYW5kIG9ubHkgdGhvc2Ugd2hvIGFyZQ0KPiB3
+aGl0ZWxpc3RlZCBhcmUgcGFzc2VkIHRocm91Z2ggKGFuZCBub3QgaW4gZ2VuZXJhbCBleHBvcnRl
+ZCB0byB1c2Vyc3BhY2UpLg0KPiANCj4gRG9lcyB0aGF0IG1ha2Ugc2Vuc2U/DQo+IA0KDQpTb3Vu
+ZHMgcGVyZmVjdC4gSSB3aWxsIG1ha2UgcmVxdWlyZWQgY2hhbmdlcyBpbiBuZXh0IGluY3JlbWVu
+dGFsIHBhdGNoc2V0Lg0KDQpUaGFua3MsDQpKb2xseSBTaGFoDQoNCg0KPiANCj4gLU9sb2YNCg==
