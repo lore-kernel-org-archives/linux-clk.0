@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3259C433F4
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 10:12:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F55AC433F4
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 10:12:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 731FE20833
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 10:12:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 17EAA20833
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 10:12:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="BDV7axJa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 731FE20833
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="Uy6pZDm6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17EAA20833
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728529AbeIXQNa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Sep 2018 12:13:30 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:44321 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728389AbeIXQN3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Sep 2018 12:13:29 -0400
-Received: by mail-wr1-f68.google.com with SMTP id v16-v6so19052199wro.11
-        for <linux-clk@vger.kernel.org>; Mon, 24 Sep 2018 03:12:09 -0700 (PDT)
+        id S1728344AbeIXQN1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Sep 2018 12:13:27 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:35339 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727988AbeIXQNZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Sep 2018 12:13:25 -0400
+Received: by mail-wm1-f66.google.com with SMTP id o18-v6so9438695wmc.0
+        for <linux-clk@vger.kernel.org>; Mon, 24 Sep 2018 03:12:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=jLISmJc2dPUxbBj3RDyXz5hdQLm9DxNuC15aZU3ms6g=;
-        b=BDV7axJatr4Cp/LBdA1G+Vka0/jKPXb00CWdvOX431pLfQhTXSlFx6jbCOJK3Ajxor
-         Wl9GQa5xgfkoKGBjNNdbYM3/72d+n77JH9SdjDJkKEPrG+f7+SOp8Zr/0Ki/H9YFJ3eT
-         EoPuOWVQbC044VSDjJDLe9cOXRc5aAoF0MkrNyYqVkOTT/JKGmOdqZ9ZdlB6OK4YUknR
-         okBgcDquosDFY3+hUcLNBsDEK5HH9XJdgjApl2acAeurJHFFd7zl2Z1xzn9YBaaYWHj7
-         CTPBqInRbHes4J3J2Kd0+c5iyc0t+tnQ1/UHcyKScX2Lo+6njEHfYSxi7cUg2Ol/xTzk
-         pKOw==
+        bh=38j/leseIFaYyx4yzFjMEUsIrw9mip1Szaiqm4tzm/A=;
+        b=Uy6pZDm6z/fl0jre25cfBjomNanGjgb8D5SlflebK4Dq53aCng4x8B/xsSiEuoljv3
+         101hdyhZJRdiq1/LK2s2DYanexvieCFQqeRwuu5m3dGgKgsSIvaLaJ9FbXuS23DChcPW
+         aDm6egXgtPBVwFwDkSDQTGokT7Umb7qL+Wkt2AWw+Vx87mWsKncg/A43TTnFs7BlHu2H
+         f+AFCKKUZJ/eD5mpxpoIAwgmjfB6WAcqUVHtGVgTlElhqcRjB8HsJ5Y/78uN2J9xQgvL
+         LHgVUwyoSq6yH00fcHDUwjZDzxbVDgVYVhRvJSbr2ctIuIsTIdtQpNX8YuDqVb+KWpUP
+         LVHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=jLISmJc2dPUxbBj3RDyXz5hdQLm9DxNuC15aZU3ms6g=;
-        b=lDgaZ7Ze0fM7aHHbh0pP/4XAONPsC63cu/7NiXQ4wO6Hsstmziv2HkPqE8rbbS/drH
-         8IDLgkHDlqnVXrBHzWqm0xJbQmCqEqIr2kkZnYqHfMM+D1Avr8iwJqlayX5TMXY6MCCu
-         xd0ojo3w9ayGwCkR/6qtla1QQALj3LphVbGLK0cLBYKZ3U4QOflWU16X05tEHLIiTBOW
-         WmJG7vFj5O1n1435e5BzF0Bmzb6bGYvwRcC1EJK88F5UV8r3+oqx4zA+xYElZVcuG6eP
-         MH7C8lHblQdW6jx3+1gBXJwlCFu3Xdq+6KLG64jd2U5VGKrBPcw81pBDc1O+dLXF2oSJ
-         0eBA==
-X-Gm-Message-State: ABuFfohohVsJa9bSw11e8AqMDHoWiUFlC9Nev1kA71pZdQljpm79FCAr
-        2wA6cee/YFdnvLGI3WD2pW5ysA==
-X-Google-Smtp-Source: ACcGV62gtGp+dWxaEzs3KziqR8iPoDl9Yh84dvTqcMksDb6+DjHYohhyApW0IsrPrgXPyHrMJnIwOw==
-X-Received: by 2002:a5d:5009:: with SMTP id e9-v6mr8199080wrt.18.1537783928856;
-        Mon, 24 Sep 2018 03:12:08 -0700 (PDT)
+        bh=38j/leseIFaYyx4yzFjMEUsIrw9mip1Szaiqm4tzm/A=;
+        b=iS14Sh7HKJhlZxoRLDEdoVi1R3MvvjXuzPgBYiv7N5sCfzxH0IWzK2XHeYZ96Aud+U
+         HZxIOWPvT6vVqldSKP3ShYuMSwsxaBLYWGoq3xb7gf5VgL9Go3jO9IQHDsw9zoLzwdms
+         lbUDawsJVwXKv4OxgRl8mPIhBnZjZhkIK451WiHrPQiKzpST3SmEwQD0tNCWHHOSB5OQ
+         ur1Z9v/tvON4JI8htFLwxOPu003gEl17yYliJMzfPxX7PjrFKm1QdNK+HLGLEGSm/asv
+         rgOdgDk3RRXNIycZ3ykUV1sqLje5Xr+EMuroS4HromJkTyjdUHeI6Jpbnr5NdPTQ3udj
+         2YQQ==
+X-Gm-Message-State: ABuFfogwYr0xn28lzRB3ADK8XQn7YUZaRoJvp6S5boW4VFrtw+Qen64G
+        rObrFDMkMOv7clOBCCKAUE6uVA==
+X-Google-Smtp-Source: ACcGV605psT+bg6McVRzros1Jf9FORPXMAjXqmI/96ORXIfiqHRHrFOhI/+9JRilgZIocmyDiIQAdQ==
+X-Received: by 2002:a1c:4182:: with SMTP id o124-v6mr6764650wma.101.1537783923860;
+        Mon, 24 Sep 2018 03:12:03 -0700 (PDT)
 Received: from brgl-bgdev.baylibre.local (AStLambert-681-1-2-33.w90-86.abo.wanadoo.fr. [90.86.1.33])
-        by smtp.gmail.com with ESMTPSA id o12-v6sm3291728wrj.58.2018.09.24.03.12.07
+        by smtp.gmail.com with ESMTPSA id o12-v6sm3291728wrj.58.2018.09.24.03.12.02
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 24 Sep 2018 03:12:08 -0700 (PDT)
+        Mon, 24 Sep 2018 03:12:03 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -80,9 +80,9 @@ To:     Michael Turquette <mturquette@baylibre.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org, Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v3 4/4] clk: pmc-atom: use devm_kstrdup_const()
-Date:   Mon, 24 Sep 2018 12:11:50 +0200
-Message-Id: <20180924101150.23349-5-brgl@bgdev.pl>
+Subject: [PATCH v3 1/4] devres: constify p in devm_kfree()
+Date:   Mon, 24 Sep 2018 12:11:47 +0200
+Message-Id: <20180924101150.23349-2-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180924101150.23349-1-brgl@bgdev.pl>
 References: <20180924101150.23349-1-brgl@bgdev.pl>
@@ -90,85 +90,50 @@ Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
-Message-ID: <20180924101150.PPuUexoT2jwO4jQi_we9wdHpOJOVW34D-WUanb38qOc@z>
+Message-ID: <20180924101147.hDLEf2pmoZag_8jLPFNtYVYkXwBPHcYJzPcHJi3nX8A@z>
 
-Use devm_kstrdup_const() in the pmc-atom driver. This mostly serves as
-an example of how to use this new routine to shrink driver code.
-
-While we're at it: replace a call to kcalloc() with devm_kcalloc().
+Make devm_kfree() signature uniform with that of kfree(). To avoid
+compiler warnings: cast p to (void *) when calling devres_destroy().
 
 Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
 Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- drivers/clk/x86/clk-pmc-atom.c | 19 ++++---------------
- 1 file changed, 4 insertions(+), 15 deletions(-)
+ drivers/base/devres.c  | 5 +++--
+ include/linux/device.h | 2 +-
+ 2 files changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/x86/clk-pmc-atom.c b/drivers/clk/x86/clk-pmc-atom.c
-index d977193842df..239197799ea3 100644
---- a/drivers/clk/x86/clk-pmc-atom.c
-+++ b/drivers/clk/x86/clk-pmc-atom.c
-@@ -247,14 +247,6 @@ static void plt_clk_unregister_fixed_rate_loop(struct clk_plt_data *data,
- 		plt_clk_unregister_fixed_rate(data->parents[i]);
- }
- 
--static void plt_clk_free_parent_names_loop(const char **parent_names,
--					   unsigned int i)
--{
--	while (i--)
--		kfree_const(parent_names[i]);
--	kfree(parent_names);
--}
--
- static void plt_clk_unregister_loop(struct clk_plt_data *data,
- 				    unsigned int i)
+diff --git a/drivers/base/devres.c b/drivers/base/devres.c
+index f98a097e73f2..438c91a43508 100644
+--- a/drivers/base/devres.c
++++ b/drivers/base/devres.c
+@@ -885,11 +885,12 @@ EXPORT_SYMBOL_GPL(devm_kasprintf);
+  *
+  * Free memory allocated with devm_kmalloc().
+  */
+-void devm_kfree(struct device *dev, void *p)
++void devm_kfree(struct device *dev, const void *p)
  {
-@@ -280,8 +272,8 @@ static const char **plt_clk_register_parents(struct platform_device *pdev,
- 	if (!data->parents)
- 		return ERR_PTR(-ENOMEM);
+ 	int rc;
  
--	parent_names = kcalloc(nparents, sizeof(*parent_names),
--			       GFP_KERNEL);
-+	parent_names = devm_kcalloc(&pdev->dev, nparents,
-+				    sizeof(*parent_names), GFP_KERNEL);
- 	if (!parent_names)
- 		return ERR_PTR(-ENOMEM);
- 
-@@ -294,7 +286,8 @@ static const char **plt_clk_register_parents(struct platform_device *pdev,
- 			err = PTR_ERR(data->parents[i]);
- 			goto err_unreg;
- 		}
--		parent_names[i] = kstrdup_const(clks[i].name, GFP_KERNEL);
-+		parent_names[i] = devm_kstrdup_const(&pdev->dev,
-+						     clks[i].name, GFP_KERNEL);
- 	}
- 
- 	data->nparents = nparents;
-@@ -302,7 +295,6 @@ static const char **plt_clk_register_parents(struct platform_device *pdev,
- 
- err_unreg:
- 	plt_clk_unregister_fixed_rate_loop(data, i);
--	plt_clk_free_parent_names_loop(parent_names, i);
- 	return ERR_PTR(err);
+-	rc = devres_destroy(dev, devm_kmalloc_release, devm_kmalloc_match, p);
++	rc = devres_destroy(dev, devm_kmalloc_release,
++			    devm_kmalloc_match, (void *)p);
+ 	WARN_ON(rc);
  }
- 
-@@ -352,8 +344,6 @@ static int plt_clk_probe(struct platform_device *pdev)
- 		goto err_drop_mclk;
- 	}
- 
--	plt_clk_free_parent_names_loop(parent_names, data->nparents);
--
- 	platform_set_drvdata(pdev, data);
- 	return 0;
- 
-@@ -362,7 +352,6 @@ static int plt_clk_probe(struct platform_device *pdev)
- err_unreg_clk_plt:
- 	plt_clk_unregister_loop(data, i);
- 	plt_clk_unregister_parents(data);
--	plt_clk_free_parent_names_loop(parent_names, data->nparents);
- 	return err;
+ EXPORT_SYMBOL_GPL(devm_kfree);
+diff --git a/include/linux/device.h b/include/linux/device.h
+index 8f882549edee..33f7cb271fbb 100644
+--- a/include/linux/device.h
++++ b/include/linux/device.h
+@@ -692,7 +692,7 @@ static inline void *devm_kcalloc(struct device *dev,
+ {
+ 	return devm_kmalloc_array(dev, n, size, flags | __GFP_ZERO);
  }
- 
+-extern void devm_kfree(struct device *dev, void *p);
++extern void devm_kfree(struct device *dev, const void *p);
+ extern char *devm_kstrdup(struct device *dev, const char *s, gfp_t gfp) __malloc;
+ extern void *devm_kmemdup(struct device *dev, const void *src, size_t len,
+ 			  gfp_t gfp);
 -- 
 2.18.0
 
