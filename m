@@ -2,58 +2,60 @@ Return-Path: <SRS0=Dsg5=MG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A598C433F4
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 10:12:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BD19ECE561
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 10:12:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2564720883
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 10:12:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D078420883
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 10:12:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="bquvQUQK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2564720883
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="U9CNVgpk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D078420883
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728078AbeIXQNX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Sep 2018 12:13:23 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:40359 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727469AbeIXQNX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Sep 2018 12:13:23 -0400
-Received: by mail-wm1-f65.google.com with SMTP id o2-v6so2822436wmh.5
-        for <linux-clk@vger.kernel.org>; Mon, 24 Sep 2018 03:12:03 -0700 (PDT)
+        id S1728626AbeIXQN2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Sep 2018 12:13:28 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:39526 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728529AbeIXQN2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Sep 2018 12:13:28 -0400
+Received: by mail-wm1-f67.google.com with SMTP id q8-v6so9403502wmq.4
+        for <linux-clk@vger.kernel.org>; Mon, 24 Sep 2018 03:12:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=imbjK81jVRpEHkR4I0gKczalGuY2afrY9ylxpTqoEdU=;
-        b=bquvQUQKF23S/krIlBtPBfSlm4C5X4X74objq3j8i5yfNZUeE2CQv0sE2IIBIrY6TC
-         b6Bp4MyssApejL0e+XFuVMLyYzz+AIBbk949QfIW95JixLqhLtDjFKgfIDQXlf4IFVwB
-         fmVQKRTClquTOg8ms5HaP43OSDhFifMG328kfAB5/PjZGTNCiQn3+F/vWiJkqIBVUSuY
-         Uc6B/fSpWiCZ8hq50FzshYxVA3Ddia3H98ZoCIASubyP8x/3yL8LTy8ckzgqEiTytm73
-         DudsnN6Pd4ESStRlgCftCpORiXzQz50OpdkJFDReH9B4Kd6Ckl0x3m6lC31BZhcCE0jX
-         OAVA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=XAjBhV4AEAXhQXiXfZCfBofMzbagPKbxDfjukdf0psM=;
+        b=U9CNVgpkzrL4OvueGLRFk8ZILjjyyFHgpudl/5z72bjMk/62AELNp9gA6tX9L7TCcz
+         CRPFzqc/lGBawA+rhlkaGrI8zfUnnxosaYgtsRIzHLK8pRlRhPeUnxrZy8dyTTeRjiWv
+         oog6+Oslhp3r2TLolLk3wAYISd2W7vVOQBA2XGS5LmOw0cnvvXTKe7H22dkjWquxI86e
+         4jZyrCn5dXpxT33ysfflcye7D5rP14tNbrqRBhTU7+bUeMsrFPYo7RpYHaLIvZibYx9b
+         6bLh9F4/F3pNAz5uS+3jYGsIqF71x5BPAhtLK4XvqYYUrP3eERMiZOLaDeVZf2VeFnzA
+         SWoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=imbjK81jVRpEHkR4I0gKczalGuY2afrY9ylxpTqoEdU=;
-        b=CZrnC76J6blaTzX7dOwNm406xI4U3EB9mEupCarkhSQAaw1rQB6VmrNo3KHYlFeR6s
-         /eIXkX7XGNXAeKzg/aN4nDS+9tMSqjYO9ysX0TwbacbOpui3+ykhxesNL02tIA9s1YTf
-         BbfW4Lfu7BZhFY4jaa6CZMrAN/sJokYMOiTzBL+C8FXpVxVzxp8d3DGNpofXT2yP0J1f
-         AwmhSjjWWVlNutBQkau/Oa8pX525GkFmdVyPKWRbj+i8PKHsFsBg/w6UtMFS+sIiyCm3
-         wpn2qaDTFcwF/QLMl9IDbniCx+pyzlv9cr9b37ZsiETcLIUrYc1a38VFJhN5LPjYL38o
-         FL9A==
-X-Gm-Message-State: APzg51Dvtn0Kq8rkemM4rcvmeldURzPfVZNEkXqNliVuFfKGAR2smzD9
-        KG3YiEBVS6hj3tvPwDlE3cn6jQ==
-X-Google-Smtp-Source: ACcGV60uNz03eCyjgHIy1QlDYkKGTtTRXyIFjDSlgMLWjEnd2XOXq7chhBkDMGylsoO8SrtVQFzpIQ==
-X-Received: by 2002:a1c:d141:: with SMTP id i62-v6mr6188892wmg.113.1537783922357;
-        Mon, 24 Sep 2018 03:12:02 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=XAjBhV4AEAXhQXiXfZCfBofMzbagPKbxDfjukdf0psM=;
+        b=MvHnGwFFSw00FY9Tw6xJpgZBqicjJfvPDuMEjJ/Vr+xzRAtlee/uwSiw9Z2oG4DI6U
+         6nt4+MSdD4k3jCtoiY+EZnEJScBJFt/501ryf3P9PtZo9D8aMuLrR4Fa3s2kkJTV4XZ2
+         hTN36X09rEMISDSHpGcT8cshdZ+wpfHuYL/H/WofickwO+8mk8SBQE1HMCEd7hwejEzX
+         FNDKpfEsvusRQdRl8Fc8ZR+UB3TXKcnwY8EernH6fwA4nRaqfETzYoOm3WRjNKD9fleP
+         /qsDgF8x2iNBVx3o4YmL4OQ5w20FB73d0wasV0P4CLEX+RosZx8RIFrfFF51yPQXzuBE
+         T1iw==
+X-Gm-Message-State: APzg51ADTToET0k22SLAOARLFrO0gUoZ22I+h2ZKzuDmmG1bVFhWUVrb
+        mk2uD2IS68bzyxCiOZPS0q8T1A==
+X-Google-Smtp-Source: ACcGV62+Sgy75fLne3seCROrjfDu6thd6VNFdZQleEdJLCr1Uj8yOtYHIB12h5OQlRf3mCk0DL/+bQ==
+X-Received: by 2002:a1c:b5d3:: with SMTP id e202-v6mr6487055wmf.23.1537783927188;
+        Mon, 24 Sep 2018 03:12:07 -0700 (PDT)
 Received: from brgl-bgdev.baylibre.local (AStLambert-681-1-2-33.w90-86.abo.wanadoo.fr. [90.86.1.33])
-        by smtp.gmail.com with ESMTPSA id o12-v6sm3291728wrj.58.2018.09.24.03.12.00
+        by smtp.gmail.com with ESMTPSA id o12-v6sm3291728wrj.58.2018.09.24.03.12.05
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 24 Sep 2018 03:12:01 -0700 (PDT)
+        Mon, 24 Sep 2018 03:12:06 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -78,43 +80,109 @@ To:     Michael Turquette <mturquette@baylibre.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org, Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v3 0/4] devres: provide and use devm_kstrdup_const()
-Date:   Mon, 24 Sep 2018 12:11:46 +0200
-Message-Id: <20180924101150.23349-1-brgl@bgdev.pl>
+Subject: [PATCH v3 3/4] devres: provide devm_kstrdup_const()
+Date:   Mon, 24 Sep 2018 12:11:49 +0200
+Message-Id: <20180924101150.23349-4-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180924101150.23349-1-brgl@bgdev.pl>
+References: <20180924101150.23349-1-brgl@bgdev.pl>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
-Message-ID: <20180924101146.TfH_f_1UGfCexi5hc3M34QWGE-grWV-DlK-SVQmUaqA@z>
+Message-ID: <20180924101149.xc3j-PGQXq-WHiVh8sBLX3X38acH2V_qwuV2VL0r9d0@z>
 
-This series implements devm_kstrdup_const() together with some
-prerequisite changes and uses it in pmc-atom driver.
+Provide a resource managed version of kstrdup_const(). This variant
+internally calls devm_kstrdup() on pointers that are outside of
+.rodata section and returns the string as is otherwise.
 
-v1 -> v2:
-- fixed the changelog in the patch implementing devm_kstrdup_const()
-- fixed the kernel doc
-- moved is_kernel_rodata() to asm-generic/sections.h
-- fixed constness
+Also provide a corresponding version of devm_kfree().
 
-v2 -> v3:
-- rebased on top of 4.19-rc5 as there were some conflicts in the
-  pmc-atom driver
-- collected Reviewed-by tags
+Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ drivers/base/devres.c  | 38 ++++++++++++++++++++++++++++++++++++++
+ include/linux/device.h |  3 +++
+ 2 files changed, 41 insertions(+)
 
-Bartosz Golaszewski (4):
-  devres: constify p in devm_kfree()
-  mm: move is_kernel_rodata() to asm-generic/sections.h
-  devres: provide devm_kstrdup_const()
-  clk: pmc-atom: use devm_kstrdup_const()
-
- drivers/base/devres.c          | 43 ++++++++++++++++++++++++++++++++--
- drivers/clk/x86/clk-pmc-atom.c | 19 ++++-----------
- include/asm-generic/sections.h | 14 +++++++++++
- include/linux/device.h         |  5 +++-
- mm/util.c                      |  7 ------
- 5 files changed, 63 insertions(+), 25 deletions(-)
-
+diff --git a/drivers/base/devres.c b/drivers/base/devres.c
+index 438c91a43508..48185d57bc5b 100644
+--- a/drivers/base/devres.c
++++ b/drivers/base/devres.c
+@@ -11,6 +11,8 @@
+ #include <linux/slab.h>
+ #include <linux/percpu.h>
+ 
++#include <asm/sections.h>
++
+ #include "base.h"
+ 
+ struct devres_node {
+@@ -822,6 +824,28 @@ char *devm_kstrdup(struct device *dev, const char *s, gfp_t gfp)
+ }
+ EXPORT_SYMBOL_GPL(devm_kstrdup);
+ 
++/**
++ * devm_kstrdup_const - resource managed conditional string duplication
++ * @dev: device for which to duplicate the string
++ * @s: the string to duplicate
++ * @gfp: the GFP mask used in the kmalloc() call when allocating memory
++ *
++ * Strings allocated by devm_kstrdup_const will be automatically freed when
++ * the associated device is detached.
++ *
++ * RETURNS:
++ * Source string if it is in .rodata section otherwise it falls back to
++ * devm_kstrdup.
++ */
++const char *devm_kstrdup_const(struct device *dev, const char *s, gfp_t gfp)
++{
++	if (is_kernel_rodata((unsigned long)s))
++		return s;
++
++	return devm_kstrdup(dev, s, gfp);
++}
++EXPORT_SYMBOL(devm_kstrdup_const);
++
+ /**
+  * devm_kvasprintf - Allocate resource managed space and format a string
+  *		     into that.
+@@ -895,6 +919,20 @@ void devm_kfree(struct device *dev, const void *p)
+ }
+ EXPORT_SYMBOL_GPL(devm_kfree);
+ 
++/**
++ * devm_kfree_const - Resource managed conditional kfree
++ * @dev: device this memory belongs to
++ * @p: memory to free
++ *
++ * Function calls devm_kfree only if @p is not in .rodata section.
++ */
++void devm_kfree_const(struct device *dev, const void *p)
++{
++	if (!is_kernel_rodata((unsigned long)p))
++		devm_kfree(dev, p);
++}
++EXPORT_SYMBOL(devm_kfree_const);
++
+ /**
+  * devm_kmemdup - Resource-managed kmemdup
+  * @dev: Device this memory belongs to
+diff --git a/include/linux/device.h b/include/linux/device.h
+index 33f7cb271fbb..79ccc6eb0975 100644
+--- a/include/linux/device.h
++++ b/include/linux/device.h
+@@ -693,7 +693,10 @@ static inline void *devm_kcalloc(struct device *dev,
+ 	return devm_kmalloc_array(dev, n, size, flags | __GFP_ZERO);
+ }
+ extern void devm_kfree(struct device *dev, const void *p);
++extern void devm_kfree_const(struct device *dev, const void *p);
+ extern char *devm_kstrdup(struct device *dev, const char *s, gfp_t gfp) __malloc;
++extern const char *devm_kstrdup_const(struct device *dev,
++				      const char *s, gfp_t gfp);
+ extern void *devm_kmemdup(struct device *dev, const void *src, size_t len,
+ 			  gfp_t gfp);
+ 
 -- 
 2.18.0
 
