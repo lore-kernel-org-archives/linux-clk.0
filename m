@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BD19ECE561
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 10:12:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3259C433F4
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 10:12:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D078420883
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 10:12:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 731FE20833
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 10:12:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="U9CNVgpk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D078420883
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="BDV7axJa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 731FE20833
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728626AbeIXQN2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Sep 2018 12:13:28 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:39526 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728529AbeIXQN2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Sep 2018 12:13:28 -0400
-Received: by mail-wm1-f67.google.com with SMTP id q8-v6so9403502wmq.4
-        for <linux-clk@vger.kernel.org>; Mon, 24 Sep 2018 03:12:08 -0700 (PDT)
+        id S1728529AbeIXQNa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Sep 2018 12:13:30 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:44321 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728389AbeIXQN3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Sep 2018 12:13:29 -0400
+Received: by mail-wr1-f68.google.com with SMTP id v16-v6so19052199wro.11
+        for <linux-clk@vger.kernel.org>; Mon, 24 Sep 2018 03:12:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=XAjBhV4AEAXhQXiXfZCfBofMzbagPKbxDfjukdf0psM=;
-        b=U9CNVgpkzrL4OvueGLRFk8ZILjjyyFHgpudl/5z72bjMk/62AELNp9gA6tX9L7TCcz
-         CRPFzqc/lGBawA+rhlkaGrI8zfUnnxosaYgtsRIzHLK8pRlRhPeUnxrZy8dyTTeRjiWv
-         oog6+Oslhp3r2TLolLk3wAYISd2W7vVOQBA2XGS5LmOw0cnvvXTKe7H22dkjWquxI86e
-         4jZyrCn5dXpxT33ysfflcye7D5rP14tNbrqRBhTU7+bUeMsrFPYo7RpYHaLIvZibYx9b
-         6bLh9F4/F3pNAz5uS+3jYGsIqF71x5BPAhtLK4XvqYYUrP3eERMiZOLaDeVZf2VeFnzA
-         SWoA==
+        bh=jLISmJc2dPUxbBj3RDyXz5hdQLm9DxNuC15aZU3ms6g=;
+        b=BDV7axJatr4Cp/LBdA1G+Vka0/jKPXb00CWdvOX431pLfQhTXSlFx6jbCOJK3Ajxor
+         Wl9GQa5xgfkoKGBjNNdbYM3/72d+n77JH9SdjDJkKEPrG+f7+SOp8Zr/0Ki/H9YFJ3eT
+         EoPuOWVQbC044VSDjJDLe9cOXRc5aAoF0MkrNyYqVkOTT/JKGmOdqZ9ZdlB6OK4YUknR
+         okBgcDquosDFY3+hUcLNBsDEK5HH9XJdgjApl2acAeurJHFFd7zl2Z1xzn9YBaaYWHj7
+         CTPBqInRbHes4J3J2Kd0+c5iyc0t+tnQ1/UHcyKScX2Lo+6njEHfYSxi7cUg2Ol/xTzk
+         pKOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=XAjBhV4AEAXhQXiXfZCfBofMzbagPKbxDfjukdf0psM=;
-        b=MvHnGwFFSw00FY9Tw6xJpgZBqicjJfvPDuMEjJ/Vr+xzRAtlee/uwSiw9Z2oG4DI6U
-         6nt4+MSdD4k3jCtoiY+EZnEJScBJFt/501ryf3P9PtZo9D8aMuLrR4Fa3s2kkJTV4XZ2
-         hTN36X09rEMISDSHpGcT8cshdZ+wpfHuYL/H/WofickwO+8mk8SBQE1HMCEd7hwejEzX
-         FNDKpfEsvusRQdRl8Fc8ZR+UB3TXKcnwY8EernH6fwA4nRaqfETzYoOm3WRjNKD9fleP
-         /qsDgF8x2iNBVx3o4YmL4OQ5w20FB73d0wasV0P4CLEX+RosZx8RIFrfFF51yPQXzuBE
-         T1iw==
-X-Gm-Message-State: APzg51ADTToET0k22SLAOARLFrO0gUoZ22I+h2ZKzuDmmG1bVFhWUVrb
-        mk2uD2IS68bzyxCiOZPS0q8T1A==
-X-Google-Smtp-Source: ACcGV62+Sgy75fLne3seCROrjfDu6thd6VNFdZQleEdJLCr1Uj8yOtYHIB12h5OQlRf3mCk0DL/+bQ==
-X-Received: by 2002:a1c:b5d3:: with SMTP id e202-v6mr6487055wmf.23.1537783927188;
-        Mon, 24 Sep 2018 03:12:07 -0700 (PDT)
+        bh=jLISmJc2dPUxbBj3RDyXz5hdQLm9DxNuC15aZU3ms6g=;
+        b=lDgaZ7Ze0fM7aHHbh0pP/4XAONPsC63cu/7NiXQ4wO6Hsstmziv2HkPqE8rbbS/drH
+         8IDLgkHDlqnVXrBHzWqm0xJbQmCqEqIr2kkZnYqHfMM+D1Avr8iwJqlayX5TMXY6MCCu
+         xd0ojo3w9ayGwCkR/6qtla1QQALj3LphVbGLK0cLBYKZ3U4QOflWU16X05tEHLIiTBOW
+         WmJG7vFj5O1n1435e5BzF0Bmzb6bGYvwRcC1EJK88F5UV8r3+oqx4zA+xYElZVcuG6eP
+         MH7C8lHblQdW6jx3+1gBXJwlCFu3Xdq+6KLG64jd2U5VGKrBPcw81pBDc1O+dLXF2oSJ
+         0eBA==
+X-Gm-Message-State: ABuFfohohVsJa9bSw11e8AqMDHoWiUFlC9Nev1kA71pZdQljpm79FCAr
+        2wA6cee/YFdnvLGI3WD2pW5ysA==
+X-Google-Smtp-Source: ACcGV62gtGp+dWxaEzs3KziqR8iPoDl9Yh84dvTqcMksDb6+DjHYohhyApW0IsrPrgXPyHrMJnIwOw==
+X-Received: by 2002:a5d:5009:: with SMTP id e9-v6mr8199080wrt.18.1537783928856;
+        Mon, 24 Sep 2018 03:12:08 -0700 (PDT)
 Received: from brgl-bgdev.baylibre.local (AStLambert-681-1-2-33.w90-86.abo.wanadoo.fr. [90.86.1.33])
-        by smtp.gmail.com with ESMTPSA id o12-v6sm3291728wrj.58.2018.09.24.03.12.05
+        by smtp.gmail.com with ESMTPSA id o12-v6sm3291728wrj.58.2018.09.24.03.12.07
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 24 Sep 2018 03:12:06 -0700 (PDT)
+        Mon, 24 Sep 2018 03:12:08 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -80,9 +80,9 @@ To:     Michael Turquette <mturquette@baylibre.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org, Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v3 3/4] devres: provide devm_kstrdup_const()
-Date:   Mon, 24 Sep 2018 12:11:49 +0200
-Message-Id: <20180924101150.23349-4-brgl@bgdev.pl>
+Subject: [PATCH v3 4/4] clk: pmc-atom: use devm_kstrdup_const()
+Date:   Mon, 24 Sep 2018 12:11:50 +0200
+Message-Id: <20180924101150.23349-5-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180924101150.23349-1-brgl@bgdev.pl>
 References: <20180924101150.23349-1-brgl@bgdev.pl>
@@ -90,98 +90,84 @@ Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
-Message-ID: <20180924101149.xc3j-PGQXq-WHiVh8sBLX3X38acH2V_qwuV2VL0r9d0@z>
+Message-ID: <20180924101150.PPuUexoT2jwO4jQi_we9wdHpOJOVW34D-WUanb38qOc@z>
 
-Provide a resource managed version of kstrdup_const(). This variant
-internally calls devm_kstrdup() on pointers that are outside of
-.rodata section and returns the string as is otherwise.
+Use devm_kstrdup_const() in the pmc-atom driver. This mostly serves as
+an example of how to use this new routine to shrink driver code.
 
-Also provide a corresponding version of devm_kfree().
+While we're at it: replace a call to kcalloc() with devm_kcalloc().
 
 Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
 Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- drivers/base/devres.c  | 38 ++++++++++++++++++++++++++++++++++++++
- include/linux/device.h |  3 +++
- 2 files changed, 41 insertions(+)
+ drivers/clk/x86/clk-pmc-atom.c | 19 ++++---------------
+ 1 file changed, 4 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/base/devres.c b/drivers/base/devres.c
-index 438c91a43508..48185d57bc5b 100644
---- a/drivers/base/devres.c
-+++ b/drivers/base/devres.c
-@@ -11,6 +11,8 @@
- #include <linux/slab.h>
- #include <linux/percpu.h>
- 
-+#include <asm/sections.h>
-+
- #include "base.h"
- 
- struct devres_node {
-@@ -822,6 +824,28 @@ char *devm_kstrdup(struct device *dev, const char *s, gfp_t gfp)
+diff --git a/drivers/clk/x86/clk-pmc-atom.c b/drivers/clk/x86/clk-pmc-atom.c
+index d977193842df..239197799ea3 100644
+--- a/drivers/clk/x86/clk-pmc-atom.c
++++ b/drivers/clk/x86/clk-pmc-atom.c
+@@ -247,14 +247,6 @@ static void plt_clk_unregister_fixed_rate_loop(struct clk_plt_data *data,
+ 		plt_clk_unregister_fixed_rate(data->parents[i]);
  }
- EXPORT_SYMBOL_GPL(devm_kstrdup);
  
-+/**
-+ * devm_kstrdup_const - resource managed conditional string duplication
-+ * @dev: device for which to duplicate the string
-+ * @s: the string to duplicate
-+ * @gfp: the GFP mask used in the kmalloc() call when allocating memory
-+ *
-+ * Strings allocated by devm_kstrdup_const will be automatically freed when
-+ * the associated device is detached.
-+ *
-+ * RETURNS:
-+ * Source string if it is in .rodata section otherwise it falls back to
-+ * devm_kstrdup.
-+ */
-+const char *devm_kstrdup_const(struct device *dev, const char *s, gfp_t gfp)
-+{
-+	if (is_kernel_rodata((unsigned long)s))
-+		return s;
-+
-+	return devm_kstrdup(dev, s, gfp);
-+}
-+EXPORT_SYMBOL(devm_kstrdup_const);
-+
- /**
-  * devm_kvasprintf - Allocate resource managed space and format a string
-  *		     into that.
-@@ -895,6 +919,20 @@ void devm_kfree(struct device *dev, const void *p)
- }
- EXPORT_SYMBOL_GPL(devm_kfree);
+-static void plt_clk_free_parent_names_loop(const char **parent_names,
+-					   unsigned int i)
+-{
+-	while (i--)
+-		kfree_const(parent_names[i]);
+-	kfree(parent_names);
+-}
+-
+ static void plt_clk_unregister_loop(struct clk_plt_data *data,
+ 				    unsigned int i)
+ {
+@@ -280,8 +272,8 @@ static const char **plt_clk_register_parents(struct platform_device *pdev,
+ 	if (!data->parents)
+ 		return ERR_PTR(-ENOMEM);
  
-+/**
-+ * devm_kfree_const - Resource managed conditional kfree
-+ * @dev: device this memory belongs to
-+ * @p: memory to free
-+ *
-+ * Function calls devm_kfree only if @p is not in .rodata section.
-+ */
-+void devm_kfree_const(struct device *dev, const void *p)
-+{
-+	if (!is_kernel_rodata((unsigned long)p))
-+		devm_kfree(dev, p);
-+}
-+EXPORT_SYMBOL(devm_kfree_const);
-+
- /**
-  * devm_kmemdup - Resource-managed kmemdup
-  * @dev: Device this memory belongs to
-diff --git a/include/linux/device.h b/include/linux/device.h
-index 33f7cb271fbb..79ccc6eb0975 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -693,7 +693,10 @@ static inline void *devm_kcalloc(struct device *dev,
- 	return devm_kmalloc_array(dev, n, size, flags | __GFP_ZERO);
+-	parent_names = kcalloc(nparents, sizeof(*parent_names),
+-			       GFP_KERNEL);
++	parent_names = devm_kcalloc(&pdev->dev, nparents,
++				    sizeof(*parent_names), GFP_KERNEL);
+ 	if (!parent_names)
+ 		return ERR_PTR(-ENOMEM);
+ 
+@@ -294,7 +286,8 @@ static const char **plt_clk_register_parents(struct platform_device *pdev,
+ 			err = PTR_ERR(data->parents[i]);
+ 			goto err_unreg;
+ 		}
+-		parent_names[i] = kstrdup_const(clks[i].name, GFP_KERNEL);
++		parent_names[i] = devm_kstrdup_const(&pdev->dev,
++						     clks[i].name, GFP_KERNEL);
+ 	}
+ 
+ 	data->nparents = nparents;
+@@ -302,7 +295,6 @@ static const char **plt_clk_register_parents(struct platform_device *pdev,
+ 
+ err_unreg:
+ 	plt_clk_unregister_fixed_rate_loop(data, i);
+-	plt_clk_free_parent_names_loop(parent_names, i);
+ 	return ERR_PTR(err);
  }
- extern void devm_kfree(struct device *dev, const void *p);
-+extern void devm_kfree_const(struct device *dev, const void *p);
- extern char *devm_kstrdup(struct device *dev, const char *s, gfp_t gfp) __malloc;
-+extern const char *devm_kstrdup_const(struct device *dev,
-+				      const char *s, gfp_t gfp);
- extern void *devm_kmemdup(struct device *dev, const void *src, size_t len,
- 			  gfp_t gfp);
+ 
+@@ -352,8 +344,6 @@ static int plt_clk_probe(struct platform_device *pdev)
+ 		goto err_drop_mclk;
+ 	}
+ 
+-	plt_clk_free_parent_names_loop(parent_names, data->nparents);
+-
+ 	platform_set_drvdata(pdev, data);
+ 	return 0;
+ 
+@@ -362,7 +352,6 @@ static int plt_clk_probe(struct platform_device *pdev)
+ err_unreg_clk_plt:
+ 	plt_clk_unregister_loop(data, i);
+ 	plt_clk_unregister_parents(data);
+-	plt_clk_free_parent_names_loop(parent_names, data->nparents);
+ 	return err;
+ }
  
 -- 
 2.18.0
