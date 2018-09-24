@@ -1,61 +1,57 @@
-Return-Path: <gregory.clement@bootlin.com>
-From: Gregory CLEMENT <gregory.clement@bootlin.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory CLEMENT <gregory.clement@bootlin.com>,
-	Antoine Tenart <antoine.tenart@bootlin.com>,
-	=?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@bootlin.com>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>
-Subject: [PATCH 0/6] Add CPU clock support for Armada 7K/8K
-Date: Sat, 22 Sep 2018 20:17:03 +0200
-Message-Id: <20180922181709.13007-1-gregory.clement@bootlin.com>
-MIME-Version: 1.0
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:54732 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727229AbeIXRCk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Sep 2018 13:02:40 -0400
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH] clk: samsung: exynos5420: Define CLK_SECKEY gate clock only
+ or Exynos5420
+Date: Mon, 24 Sep 2018 13:00:56 +0200
+Message-id: <20180924110056.21033-1-m.szyprowski@samsung.com>
+References: <CGME20180924110106eucas1p2465d1fdd263f7921ae6e9c65d32155f6@eucas1p2.samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
+From: Joonyoung Shim <jy0922.shim@samsung.com>
 
-This series allows to mange the cpu clock for Armada 7K/8K. For these
-SoCs, the CPUs share the same clock by cluster, so actually the clock
-management is done at cluster level.
+The bit of GATE_BUS_PERIS1 for CLK_SECKEY is just reserved on
+exynos5422/5800, not exynos5420. Define gate clk for exynos5420 to
+handle the bit only on exynos5420.
 
-As for the other Armada 7K/8K clocks it is possible to have multiple
-AP so here again we need to have unique name: the purpose of the second
-patch is to share a common code which will be used in 3 drivers.
+Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
+[m.szyprow: rewrote commit subject]
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos5420.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-The last 2 patch enable the driver at dt and platform level and will
-be applied through the mvebu subsystem.
-
-Gregory
-
-Gregory CLEMENT (6): dt-bindings: ap806: add the cluster clock node in
-  the syscon file clk: mvebu: add helper file for Armada AP and CP
-  clocks clk: mvebu: add CPU clock driver for Armada 7K/8K clk: mvebu:
-  ap806: Fix clock name for the cluster arm64: marvell: enable the
-  Armada 7K/8K CPU clk driver arm64: dts: marvell: Add cpu clock node
-  on Armada 7K/8K
-
- .../arm/marvell/ap806-system-controller.txt   |  22 ++
- arch/arm64/Kconfig.platforms                  |   1 +
- .../boot/dts/marvell/armada-ap806-quad.dtsi   |   4 +
- arch/arm64/boot/dts/marvell/armada-ap806.dtsi |   6 +
- drivers/clk/mvebu/Kconfig                     |   8 +
- drivers/clk/mvebu/Makefile                    |   2 +
- drivers/clk/mvebu/ap-cpu-clk.c                | 265 ++++++++++++++++++
- drivers/clk/mvebu/ap806-system-controller.c   |  24 +-
- drivers/clk/mvebu/armada_ap_cp_helper.c       |  28 ++
- drivers/clk/mvebu/armada_ap_cp_helper.h       |  11 +
- drivers/clk/mvebu/cp110-system-controller.c   |  32 +--
- 11 files changed, 361 insertions(+), 42 deletions(-)
- create mode 100644 drivers/clk/mvebu/ap-cpu-clk.c
- create mode 100644 drivers/clk/mvebu/armada_ap_cp_helper.c
- create mode 100644 drivers/clk/mvebu/armada_ap_cp_helper.h
-
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index 76e7686c6162..a2d6e7f4bcd3 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -568,6 +568,7 @@ static const struct samsung_div_clock exynos5420_div_clks[] __initconst = {
+ };
+ 
+ static const struct samsung_gate_clock exynos5420_gate_clks[] __initconst = {
++	GATE(CLK_SECKEY, "seckey", "aclk66_psgen", GATE_BUS_PERIS1, 1, 0, 0),
+ 	GATE(CLK_MAU_EPLL, "mau_epll", "mout_mau_epll_clk",
+ 			SRC_MASK_TOP7, 20, CLK_SET_RATE_PARENT, 0),
+ };
+@@ -1097,8 +1098,6 @@ static const struct samsung_gate_clock exynos5x_gate_clks[] __initconst = {
+ 	GATE(CLK_TMU, "tmu", "aclk66_psgen", GATE_IP_PERIS, 21, 0, 0),
+ 	GATE(CLK_TMU_GPU, "tmu_gpu", "aclk66_psgen", GATE_IP_PERIS, 22, 0, 0),
+ 
+-	GATE(CLK_SECKEY, "seckey", "aclk66_psgen", GATE_BUS_PERIS1, 1, 0, 0),
+-
+ 	/* GEN Block */
+ 	GATE(CLK_ROTATOR, "rotator", "mout_user_aclk266", GATE_IP_GEN, 1, 0, 0),
+ 	GATE(CLK_JPEG, "jpeg", "aclk300_jpeg", GATE_IP_GEN, 2, 0, 0),
 -- 
-2.19.0
+2.17.1
