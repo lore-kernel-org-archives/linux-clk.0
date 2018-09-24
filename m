@@ -1,67 +1,63 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:12068 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727716AbeIODXf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Sep 2018 23:23:35 -0400
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-To: <linux-clk@vger.kernel.org>
-CC: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: [RFC 07/14] memory: tegra: scaled LA register for Tegra210
-Date: Sat, 15 Sep 2018 00:48:08 +0300
-Message-ID: <1536961695-27809-8-git-send-email-pdeschrijver@nvidia.com>
-In-Reply-To: <1536961695-27809-1-git-send-email-pdeschrijver@nvidia.com>
-References: <1536961695-27809-1-git-send-email-pdeschrijver@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <brgl@bgdev.pl>
+Return-Path: <brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+	Arend van Spriel <aspriel@gmail.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Vivek Gautam <vivek.gautam@codeaurora.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Joe Perches <joe@perches.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Mike Rapoport <rppt@linux.vnet.ibm.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Roman Gushchin <guro@fb.com>,
+	Huang Ying <ying.huang@intel.com>,
+	Kees Cook <keescook@chromium.org>,
+	Bjorn Andersson <bjorn.andersson@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v3 0/4] devres: provide and use devm_kstrdup_const()
+Date: Mon, 24 Sep 2018 12:11:46 +0200
+Message-Id: <20180924101150.23349-1-brgl@bgdev.pl>
 List-ID: <linux-clk.vger.kernel.org>
 
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
----
- drivers/memory/tegra/tegra210.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+This series implements devm_kstrdup_const() together with some
+prerequisite changes and uses it in pmc-atom driver.
 
-diff --git a/drivers/memory/tegra/tegra210.c b/drivers/memory/tegra/tegra210.c
-index aa9dcf0..b4dd533 100644
---- a/drivers/memory/tegra/tegra210.c
-+++ b/drivers/memory/tegra/tegra210.c
-@@ -53,6 +53,13 @@
- #define MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_6			0xbe8
- #define MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_7			0xbec
- 
-+#define MC_SCALED_LATENCY_ALLOWANCE_DISPLAY0AB			0x694
-+#define MC_SCALED_LATENCY_ALLOWANCE_DISPLAY0B			0x698
-+#define MC_SCALED_LATENCY_ALLOWANCE_DISPLAY0C			0x6a0
-+#define MC_SCALED_LATENCY_ALLOWANCE_DISPLAY0BB			0x69c
-+#define MC_SCALED_LATENCY_ALLOWANCE_DISPLAY0CB			0x6a4
-+#define MC_SCALED_LATENCY_ALLOWANCE_DISPLAY0A			0x690
-+
- static const unsigned long tegra210_mc_emem_regs[] = {
- 	 MC_EMEM_ADR_CFG,
- 	 MC_EMEM_ARB_CFG,
-@@ -93,6 +100,15 @@
- 	 MC_EMEM_ARB_DHYST_TIMEOUT_UTIL_7,
- };
- 
-+static const unsigned long tegra210_scaled_la_regs[] = {
-+	 MC_SCALED_LATENCY_ALLOWANCE_DISPLAY0AB,
-+	 MC_SCALED_LATENCY_ALLOWANCE_DISPLAY0B,
-+	 MC_SCALED_LATENCY_ALLOWANCE_DISPLAY0C,
-+	 MC_SCALED_LATENCY_ALLOWANCE_DISPLAY0BB,
-+	 MC_SCALED_LATENCY_ALLOWANCE_DISPLAY0CB,
-+	 MC_SCALED_LATENCY_ALLOWANCE_DISPLAY0A,
-+};
-+
- static const struct tegra_mc_client tegra210_mc_clients[] = {
- 	{
- 		.id = 0x00,
-@@ -1157,4 +1173,7 @@
- 	.smmu = &tegra210_smmu_soc,
- 	.emem_regs = tegra210_mc_emem_regs,
- 	.num_emem_regs = ARRAY_SIZE(tegra210_mc_emem_regs),
-+	.scaled_la_regs = tegra210_scaled_la_regs,
-+	.num_scaled_la_regs = ARRAY_SIZE(tegra210_scaled_la_regs),
-+	.has_scaled_la = true,
- };
+v1 -> v2:
+- fixed the changelog in the patch implementing devm_kstrdup_const()
+- fixed the kernel doc
+- moved is_kernel_rodata() to asm-generic/sections.h
+- fixed constness
+
+v2 -> v3:
+- rebased on top of 4.19-rc5 as there were some conflicts in the
+  pmc-atom driver
+- collected Reviewed-by tags
+
+Bartosz Golaszewski (4):
+  devres: constify p in devm_kfree()
+  mm: move is_kernel_rodata() to asm-generic/sections.h
+  devres: provide devm_kstrdup_const()
+  clk: pmc-atom: use devm_kstrdup_const()
+
+ drivers/base/devres.c          | 43 ++++++++++++++++++++++++++++++++--
+ drivers/clk/x86/clk-pmc-atom.c | 19 ++++-----------
+ include/asm-generic/sections.h | 14 +++++++++++
+ include/linux/device.h         |  5 +++-
+ mm/util.c                      |  7 ------
+ 5 files changed, 63 insertions(+), 25 deletions(-)
+
 -- 
-1.9.1
+2.18.0
