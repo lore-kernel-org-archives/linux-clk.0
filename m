@@ -1,117 +1,31 @@
-Return-Path: <bjorn.andersson@linaro.org>
-Return-Path: <bjorn.andersson@linaro.org>
-Date: Thu, 20 Sep 2018 09:39:28 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-	Arend van Spriel <aspriel@gmail.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Vivek Gautam <vivek.gautam@codeaurora.org>,
-	Robin Murphy <robin.murphy@arm.com>, Joe Perches <joe@perches.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Mike Rapoport <rppt@linux.vnet.ibm.com>,
-	Michal Hocko <mhocko@suse.com>, Al Viro <viro@zeniv.linux.org.uk>,
-	Jonathan Corbet <corbet@lwn.net>, Roman Gushchin <guro@fb.com>,
-	Huang Ying <ying.huang@intel.com>,
-	Kees Cook <keescook@chromium.org>, Arnd Bergmann <arnd@arndb.de>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH v2 4/4] clk: pmc-atom: use devm_kstrdup_const()
-Message-ID: <20180920163928.GI1367@tuxbook-pro>
-References: <20180828093332.20674-1-brgl@bgdev.pl>
- <20180828093332.20674-5-brgl@bgdev.pl>
+Return-Path: <digetx@gmail.com>
+Return-Path: <digetx@gmail.com>
+Subject: Re: [PATCH] clk: tegra: Return the exact clock rate from
+ clk_round_rate
+To: ryang <decatf@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Prashant Gaikwad <pgaikwad@nvidia.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180921220149.17136-1-decatf@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <f669ff16-cb4a-614f-de3c-2585d91f2b57@gmail.com>
+Date: Mon, 24 Sep 2018 19:51:26 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180828093332.20674-5-brgl@bgdev.pl>
+In-Reply-To: <20180921220149.17136-1-decatf@gmail.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue 28 Aug 02:33 PDT 2018, Bartosz Golaszewski wrote:
-
-> Use devm_kstrdup_const() in the pmc-atom driver. This mostly serves as
-> an example of how to use this new routine to shrink driver code.
+On 9/22/18 1:01 AM, ryang wrote:
+> The current behavior is that clk_round_rate would return the same clock
+> rate passed to it for valid PLL configurations. This change will return
+> the exact rate the PLL will provide in accordance with clk API.
 > 
-> While we're at it: replace a call to kcalloc() with devm_kcalloc().
-> 
-> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+> Signed-off-by: ryang <decatf@gmail.com>
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+A minor comment.. [0] require a real name, it's not even obvious whether
+you're "Ryan G" or "R Yang".
 
-Regards,
-Bjorn
-
-> ---
->  drivers/clk/x86/clk-pmc-atom.c | 19 ++++---------------
->  1 file changed, 4 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/clk/x86/clk-pmc-atom.c b/drivers/clk/x86/clk-pmc-atom.c
-> index 08ef69945ffb..daa2192e6568 100644
-> --- a/drivers/clk/x86/clk-pmc-atom.c
-> +++ b/drivers/clk/x86/clk-pmc-atom.c
-> @@ -253,14 +253,6 @@ static void plt_clk_unregister_fixed_rate_loop(struct clk_plt_data *data,
->  		plt_clk_unregister_fixed_rate(data->parents[i]);
->  }
->  
-> -static void plt_clk_free_parent_names_loop(const char **parent_names,
-> -					   unsigned int i)
-> -{
-> -	while (i--)
-> -		kfree_const(parent_names[i]);
-> -	kfree(parent_names);
-> -}
-> -
->  static void plt_clk_unregister_loop(struct clk_plt_data *data,
->  				    unsigned int i)
->  {
-> @@ -286,8 +278,8 @@ static const char **plt_clk_register_parents(struct platform_device *pdev,
->  	if (!data->parents)
->  		return ERR_PTR(-ENOMEM);
->  
-> -	parent_names = kcalloc(nparents, sizeof(*parent_names),
-> -			       GFP_KERNEL);
-> +	parent_names = devm_kcalloc(&pdev->dev, nparents,
-> +				    sizeof(*parent_names), GFP_KERNEL);
->  	if (!parent_names)
->  		return ERR_PTR(-ENOMEM);
->  
-> @@ -300,7 +292,8 @@ static const char **plt_clk_register_parents(struct platform_device *pdev,
->  			err = PTR_ERR(data->parents[i]);
->  			goto err_unreg;
->  		}
-> -		parent_names[i] = kstrdup_const(clks[i].name, GFP_KERNEL);
-> +		parent_names[i] = devm_kstrdup_const(&pdev->dev,
-> +						     clks[i].name, GFP_KERNEL);
->  	}
->  
->  	data->nparents = nparents;
-> @@ -308,7 +301,6 @@ static const char **plt_clk_register_parents(struct platform_device *pdev,
->  
->  err_unreg:
->  	plt_clk_unregister_fixed_rate_loop(data, i);
-> -	plt_clk_free_parent_names_loop(parent_names, i);
->  	return ERR_PTR(err);
->  }
->  
-> @@ -351,15 +343,12 @@ static int plt_clk_probe(struct platform_device *pdev)
->  		goto err_unreg_clk_plt;
->  	}
->  
-> -	plt_clk_free_parent_names_loop(parent_names, data->nparents);
-> -
->  	platform_set_drvdata(pdev, data);
->  	return 0;
->  
->  err_unreg_clk_plt:
->  	plt_clk_unregister_loop(data, i);
->  	plt_clk_unregister_parents(data);
-> -	plt_clk_free_parent_names_loop(parent_names, data->nparents);
->  	return err;
->  }
->  
-> -- 
-> 2.18.0
-> 
+[0]
+https://www.kernel.org/doc/html/latest/process/submitting-patches.html#developer-s-certificate-of-origin-1-1
