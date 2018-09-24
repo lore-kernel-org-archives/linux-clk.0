@@ -1,78 +1,44 @@
-Return-Path: <jagan@amarulasolutions.com>
-MIME-Version: 1.0
-References: <20180927114850.24565-1-jagan@amarulasolutions.com>
- <20180927114850.24565-9-jagan@amarulasolutions.com> <20180927171451.7iqt2nt2log5qojf@flea>
-In-Reply-To: <20180927171451.7iqt2nt2log5qojf@flea>
-From: Jagan Teki <jagan@amarulasolutions.com>
-Date: Thu, 27 Sep 2018 23:03:19 +0530
-Message-ID: <CAMty3ZDxpLwVDsgVMjX+6+uz89sQ1aZaXHHZ+-5aogrA4MHmqw@mail.gmail.com>
-Subject: Re: [PATCH 08/12] drm/sun4i: sun6i_mipi_dsi: Refactor vertical video
- start delay
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-	Jernej Skrabec <jernej.skrabec@siol.net>, Vasily Khoruzhick <anarsoul@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
-	David Airlie <airlied@linux.ie>, dri-devel <dri-devel@lists.freedesktop.org>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:39493 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727229AbeIXRDA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Sep 2018 13:03:00 -0400
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH] clk: samsung: exynos5420: Enable PERIS clocks for suspend
+Date: Mon, 24 Sep 2018 13:01:20 +0200
+Message-id: <20180924110120.21319-1-m.szyprowski@samsung.com>
+References: <CGME20180924110126eucas1p221aba92e694fcdf2f0f288f20a0b07a2@eucas1p2.samsung.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Sep 27, 2018 at 10:44 PM Maxime Ripard
-<maxime.ripard@bootlin.com> wrote:
->
-> On Thu, Sep 27, 2018 at 05:18:46PM +0530, Jagan Teki wrote:
-> > Accordingly to BPI-M64-bsp DE DSI code Video start delay
-> > can be computed by subtracting total vertical timing with
-> > front porch timing and with adding 1 delay line for TCON.
->
-> This is what the current code is doing as well.
+Ensure that clocks for core SoC modules (including TZPC0..9 modules)
+are enabled for suspend/resume cycle. This fixes suspend/resume
+support on Exynos5422-based Odroid XU3/XU4 boards.
 
-The current code
-return mode->vtotal - (mode->vsync_end - mode->vdisplay) + 1;
+Suggested-by: Joonyoung Shim <jy0922.shim@samsung.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos5420.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-(mode->vsync_end - mode->vdisplay) = front porch + sync
-
-but I'm updating here only front porch.
-
->
-> > This patch simply add the start_delay logic from BPI-M64-bsp,
-> > w/o this new computation, the DSI on A64 encounter vblank time out.
-> >
-> > [CRTC:36:crtc-0] vblank wait timed out
-> >
-> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> > ---
-> >  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 12 +++++++++++-
-> >  1 file changed, 11 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> > index 9918fdb990ff..217db74c6dc3 100644
-> > --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> > +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> > @@ -358,7 +358,17 @@ static void sun6i_dsi_inst_init(struct sun6i_dsi *dsi,
-> >  static u16 sun6i_dsi_get_video_start_delay(struct sun6i_dsi *dsi,
-> >                                          struct drm_display_mode *mode)
-> >  {
-> > -     return mode->vtotal - (mode->vsync_end - mode->vdisplay) + 1;
-> > +     u32 vfp = mode->vsync_start - mode->vdisplay;
-
-let me explain this.
-
-Actual code from Allwinner
-u32 vfp = panel->lcd_vt - panel->lcd_y - panel->lcd_vbp;
-
-So,
-
-=> (panel->lcd_vt - panel->lcd_y) - (panel->lcd_vbp)
-=> (front porch + sync + back porch) - (back porch + sync)
-=> front porch + sync + back porch - back porch - sync
-=> front porch
-=> mode->vsync_start - mode->vdisplay
-
-Hope it clear.
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index a2d6e7f4bcd3..34cce3c5898f 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -276,6 +276,7 @@ static const struct samsung_clk_reg_dump exynos5420_set_clksrc[] = {
+ 	{ .offset = GATE_BUS_TOP,		.value = 0xffffffff, },
+ 	{ .offset = GATE_BUS_DISP1,		.value = 0xffffffff, },
+ 	{ .offset = GATE_IP_PERIC,		.value = 0xffffffff, },
++	{ .offset = GATE_IP_PERIS,		.value = 0xffffffff, },
+ };
+ 
+ /* list of all parent clocks */
+-- 
+2.17.1
