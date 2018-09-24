@@ -3,35 +3,35 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64C0EECE560
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 16:50:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7DEEECE560
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 16:50:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 260F1206B7
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 16:50:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 260F1206B7
+	by mail.kernel.org (Postfix) with ESMTP id 9B82E206B7
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 16:50:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B82E206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730507AbeIXWxT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Sep 2018 18:53:19 -0400
+        id S1732257AbeIXWxU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Sep 2018 18:53:20 -0400
 Received: from relmlor3.renesas.com ([210.160.252.173]:46921 "EHLO
         relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728006AbeIXWxT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Sep 2018 18:53:19 -0400
-Received: from unknown (HELO relmlir1.idc.renesas.com) ([10.200.68.151])
+        by vger.kernel.org with ESMTP id S1728006AbeIXWxU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Sep 2018 18:53:20 -0400
+Received: from unknown (HELO relmlir2.idc.renesas.com) ([10.200.68.152])
   by relmlie2.idc.renesas.com with ESMTP; 25 Sep 2018 01:50:14 +0900
-Received: from relmlii1.idc.renesas.com (relmlii1.idc.renesas.com [10.200.68.65])
-        by relmlir1.idc.renesas.com (Postfix) with ESMTP id 64A9644848;
+Received: from relmlii2.idc.renesas.com (relmlii2.idc.renesas.com [10.200.68.66])
+        by relmlir2.idc.renesas.com (Postfix) with ESMTP id 64306422DA;
         Tue, 25 Sep 2018 01:50:14 +0900 (JST)
 X-IronPort-AV: E=Sophos;i="5.54,298,1534777200"; 
-   d="scan'208";a="291770688"
+   d="scan'208";a="293339470"
 Received: from unknown (HELO rtamta01.rta.renesas.com) ([143.103.48.75])
-  by relmlii1.idc.renesas.com with ESMTP; 25 Sep 2018 01:50:13 +0900
+  by relmlii2.idc.renesas.com with ESMTP; 25 Sep 2018 01:50:13 +0900
 Received: from ubuntu.localdomain (unknown [143.103.58.87])
-        by rtamta01.rta.renesas.com (Postfix) with ESMTP id 367EB224;
+        by rtamta01.rta.renesas.com (Postfix) with ESMTP id 03B7C225;
         Mon, 24 Sep 2018 16:50:08 +0000 (UTC)
 From:   Chris Brandt <chris.brandt@renesas.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -40,9 +40,9 @@ To:     Geert Uytterhoeven <geert+renesas@glider.be>,
 Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Simon Horman <horms+renesas@verge.net.au>,
         Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v2 2/3] clk: renesas: r7s9210: Convert some clocks to early
-Date:   Mon, 24 Sep 2018 11:49:36 -0500
-Message-Id: <20180924164937.36536-3-chris.brandt@renesas.com>
+Subject: [PATCH v2 3/3] clk: renesas: r7s9210: Move table update to separate function
+Date:   Mon, 24 Sep 2018 11:49:37 -0500
+Message-Id: <20180924164937.36536-4-chris.brandt@renesas.com>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20180924164937.36536-1-chris.brandt@renesas.com>
 References: <20180924164937.36536-1-chris.brandt@renesas.com>
@@ -50,92 +50,134 @@ Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
-Message-ID: <20180924164936.dDhReDFo-w1eanty5vXX1GrSfbgPmYCNcC8pXVgy4j0@z>
+Message-ID: <20180924164937.8Zlrl2i7ii1IWZTvRY-wYjGfINam_CvTOlGU_g2qVnc@z>
 
-The OSTM timer driver for RZ/A2 uses TIMER_OF_DECLARE which requires the
-ostm module clocks to be registers early in boot.
+Same functionality, just easier to read.
 
 Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
 ---
-v2:
- * List early clocks first
- * Remove unnecessary comments
- * Removed new function r7s9210_update_clk_table (to be included in a
-   separate patch)
----
- drivers/clk/renesas/r7s9210-cpg-mssr.c | 32 ++++++++++++++++++++++++++------
- 1 file changed, 26 insertions(+), 6 deletions(-)
+ drivers/clk/renesas/r7s9210-cpg-mssr.c | 94 ++++++++++++++++++----------------
+ 1 file changed, 49 insertions(+), 45 deletions(-)
 
 diff --git a/drivers/clk/renesas/r7s9210-cpg-mssr.c b/drivers/clk/renesas/r7s9210-cpg-mssr.c
-index bd1dd4ff2051..7ab9030ef8b9 100644
+index 7ab9030ef8b9..f9c22b61883b 100644
 --- a/drivers/clk/renesas/r7s9210-cpg-mssr.c
 +++ b/drivers/clk/renesas/r7s9210-cpg-mssr.c
-@@ -53,7 +53,7 @@ enum clk_ids {
- 	MOD_CLK_BASE
+@@ -97,6 +97,53 @@ static const struct mssr_mod_clk r7s9210_mod_clks[] __initconst = {
+ 
  };
  
--static struct cpg_core_clk r7s9210_core_clks[] = {
-+static struct cpg_core_clk r7s9210_early_core_clks[] = {
- 	/* External Clock Inputs */
- 	DEF_INPUT("extal",     CLK_EXTAL),
- 
-@@ -61,20 +61,26 @@ static struct cpg_core_clk r7s9210_core_clks[] = {
- 	DEF_BASE(".main",       CLK_MAIN, CLK_TYPE_RZA_MAIN, CLK_EXTAL),
- 	DEF_BASE(".pll",       CLK_PLL, CLK_TYPE_RZA_PLL, CLK_MAIN),
- 
-+	/* Core Clock Outputs */
-+	DEF_FIXED("p1c",    R7S9210_CLK_P1C,   CLK_PLL,         16, 1),
-+};
-+
-+static const struct mssr_mod_clk r7s9210_early_mod_clks[] __initconst = {
-+	DEF_MOD_STB("ostm2",	 34,	R7S9210_CLK_P1C),
-+	DEF_MOD_STB("ostm1",	 35,	R7S9210_CLK_P1C),
-+	DEF_MOD_STB("ostm0",	 36,	R7S9210_CLK_P1C),
-+};
-+
-+static struct cpg_core_clk r7s9210_core_clks[] = {
- 	/* Core Clock Outputs */
- 	DEF_FIXED("i",      R7S9210_CLK_I,     CLK_PLL,          2, 1),
- 	DEF_FIXED("g",      R7S9210_CLK_G,     CLK_PLL,          4, 1),
- 	DEF_FIXED("b",      R7S9210_CLK_B,     CLK_PLL,          8, 1),
- 	DEF_FIXED("p1",     R7S9210_CLK_P1,    CLK_PLL,         16, 1),
--	DEF_FIXED("p1c",    R7S9210_CLK_P1C,   CLK_PLL,         16, 1),
- 	DEF_FIXED("p0",     R7S9210_CLK_P0,    CLK_PLL,         32, 1),
- };
- 
- static const struct mssr_mod_clk r7s9210_mod_clks[] __initconst = {
--	DEF_MOD_STB("ostm2",	 34,	R7S9210_CLK_P1C),
--	DEF_MOD_STB("ostm1",	 35,	R7S9210_CLK_P1C),
--	DEF_MOD_STB("ostm0",	 36,	R7S9210_CLK_P1C),
--
- 	DEF_MOD_STB("scif4",	 43,	R7S9210_CLK_P1C),
- 	DEF_MOD_STB("scif3",	 44,	R7S9210_CLK_P1C),
- 	DEF_MOD_STB("scif2",	 45,	R7S9210_CLK_P1C),
-@@ -170,6 +176,12 @@ struct clk * __init rza2_cpg_clk_register(struct device *dev,
- }
- 
- const struct cpg_mssr_info r7s9210_cpg_mssr_info __initconst = {
-+	/* Early Clocks */
-+	.early_core_clks = r7s9210_early_core_clks,
-+	.num_early_core_clks = ARRAY_SIZE(r7s9210_early_core_clks),
-+	.early_mod_clks = r7s9210_early_mod_clks,
-+	.num_early_mod_clks = ARRAY_SIZE(r7s9210_early_mod_clks),
-+
- 	/* Core Clocks */
- 	.core_clks = r7s9210_core_clks,
- 	.num_core_clks = ARRAY_SIZE(r7s9210_core_clks),
-@@ -187,3 +199,11 @@ const struct cpg_mssr_info r7s9210_cpg_mssr_info __initconst = {
- 	/* RZ/A2 has Standby Control Registers */
- 	.stbyctrl = true,
- };
-+
-+static void __init r7s9210_cpg_mssr_early_init(struct device_node *np)
++/* The clock dividers in the table vary based on DT and register settings */
++static void r7s9210_update_clk_table(struct clk *extal_clk, void __iomem *base)
 +{
-+	cpg_mssr_early_init(np, &r7s9210_cpg_mssr_info);
++	int i;
++	u16 frqcr;
++	u8 index;
++
++	/* If EXTAL is above 12MHz, then we know it is Mode 1 */
++	if (clk_get_rate(extal_clk) > 12000000)
++		cpg_mode = 1;
++
++	frqcr = clk_readl(base + CPG_FRQCR) & 0xFFF;
++	if (frqcr == 0x012)
++		index = 0;
++	else if (frqcr == 0x112)
++		index = 1;
++	else if (frqcr == 0x212)
++		index = 2;
++	else if (frqcr == 0x322)
++		index = 3;
++	else if (frqcr == 0x333)
++		index = 4;
++	else
++		BUG_ON(1);	/* Illegal FRQCR value */
++
++	for (i = 0; i < ARRAY_SIZE(r7s9210_core_clks); i++) {
++		switch (r7s9210_core_clks[i].id) {
++		case R7S9210_CLK_I:
++			r7s9210_core_clks[i].div = ratio_tab[index].i;
++			break;
++		case R7S9210_CLK_G:
++			r7s9210_core_clks[i].div = ratio_tab[index].g;
++			break;
++		case R7S9210_CLK_B:
++			r7s9210_core_clks[i].div = ratio_tab[index].b;
++			break;
++		case R7S9210_CLK_P1:
++		case R7S9210_CLK_P1C:
++			r7s9210_core_clks[i].div = ratio_tab[index].p1;
++			break;
++		case R7S9210_CLK_P0:
++			r7s9210_core_clks[i].div = 32;
++			break;
++		}
++	}
 +}
 +
-+CLK_OF_DECLARE_DRIVER(cpg_mstp_clks, "renesas,r7s9210-cpg-mssr",
-+		      r7s9210_cpg_mssr_early_init);
+ struct clk * __init rza2_cpg_clk_register(struct device *dev,
+ 	const struct cpg_core_clk *core, const struct cpg_mssr_info *info,
+ 	struct clk **clks, void __iomem *base,
+@@ -105,9 +152,6 @@ struct clk * __init rza2_cpg_clk_register(struct device *dev,
+ 	struct clk *parent;
+ 	unsigned int mult = 1;
+ 	unsigned int div = 1;
+-	u16 frqcr;
+-	u8 index;
+-	int i;
+ 
+ 	parent = clks[core->parent];
+ 	if (IS_ERR(parent))
+@@ -128,48 +172,8 @@ struct clk * __init rza2_cpg_clk_register(struct device *dev,
+ 		return ERR_PTR(-EINVAL);
+ 	}
+ 
+-	/* Adjust the dividers based on the current FRQCR setting */
+-	if (core->id == CLK_MAIN) {
+-
+-		/* If EXTAL is above 12MHz, then we know it is Mode 1 */
+-		if (clk_get_rate(parent) > 12000000)
+-			cpg_mode = 1;
+-
+-		frqcr = clk_readl(base + CPG_FRQCR) & 0xFFF;
+-		if (frqcr == 0x012)
+-			index = 0;
+-		else if (frqcr == 0x112)
+-			index = 1;
+-		else if (frqcr == 0x212)
+-			index = 2;
+-		else if (frqcr == 0x322)
+-			index = 3;
+-		else if (frqcr == 0x333)
+-			index = 4;
+-		else
+-			BUG_ON(1);	/* Illegal FRQCR value */
+-
+-		for (i = 0; i < ARRAY_SIZE(r7s9210_core_clks); i++) {
+-			switch (r7s9210_core_clks[i].id) {
+-			case R7S9210_CLK_I:
+-				r7s9210_core_clks[i].div = ratio_tab[index].i;
+-				break;
+-			case R7S9210_CLK_G:
+-				r7s9210_core_clks[i].div = ratio_tab[index].g;
+-				break;
+-			case R7S9210_CLK_B:
+-				r7s9210_core_clks[i].div = ratio_tab[index].b;
+-				break;
+-			case R7S9210_CLK_P1:
+-			case R7S9210_CLK_P1C:
+-				r7s9210_core_clks[i].div = ratio_tab[index].p1;
+-				break;
+-			case R7S9210_CLK_P0:
+-				r7s9210_core_clks[i].div = 32;
+-				break;
+-			}
+-		}
+-	}
++	if (core->id == CLK_MAIN)
++		r7s9210_update_clk_table(parent, base);
+ 
+ 	return clk_register_fixed_factor(NULL, core->name,
+ 					 __clk_get_name(parent), 0, mult, div);
 -- 
 2.16.1
 
