@@ -1,106 +1,216 @@
-Return-Path: <anson.huang@nxp.com>
-From: Anson Huang <anson.huang@nxp.com>
-To: Stephen Boyd <sboyd@kernel.org>, "kernel@pengutronix.de"
-	<kernel@pengutronix.de>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "mturquette@baylibre.com"
-	<mturquette@baylibre.com>, "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-	"shawnguo@kernel.org" <shawnguo@kernel.org>, Fabio Estevam
-	<fabio.estevam@nxp.com>, Jerome Forissier <jerome.forissier@linaro.org>, Peng
- Fan <peng.fan@nxp.com>, Rob Herring <robh@kernel.org>
-CC: dl-linux-imx <linux-imx@nxp.com>
-Subject: RE: [PATCH 2/2] clk: imx: imx7d: remove clks_init_on array
-Date: Mon, 10 Sep 2018 09:18:35 +0000
-Message-ID: 
- <DB3PR0402MB391656D3F0C5E7AC1975064CF5050@DB3PR0402MB3916.eurprd04.prod.outlook.com>
-References: <1533703167-26583-1-git-send-email-Anson.Huang@nxp.com>
- <1533703167-26583-2-git-send-email-Anson.Huang@nxp.com>
- <AM0PR04MB4481FC2BAD71B75D7BE84C0788260@AM0PR04MB4481.eurprd04.prod.outlook.com>
- <DB3PR0402MB3916F8BC381BBA01DB21D1C0F5260@DB3PR0402MB3916.eurprd04.prod.outlook.com>
- <AM0PR04MB44813C7A3E0AF4F3BCFFCF0088390@AM0PR04MB4481.eurprd04.prod.outlook.com>
- <153567894721.93865.4092113232222931488@swboyd.mtv.corp.google.com>
- <a6489bda-703f-207c-0b24-60f4044fe89f@linaro.org>
- <153573827629.93865.6200966443862432044@swboyd.mtv.corp.google.com>
- <AM6PR0402MB391120110A289BA5FB6B9F0DF50C0@AM6PR0402MB3911.eurprd04.prod.outlook.com>
-In-Reply-To: 
- <AM6PR0402MB391120110A289BA5FB6B9F0DF50C0@AM6PR0402MB3911.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <wens213@gmail.com>
+Return-Path: <wens213@gmail.com>
 MIME-Version: 1.0
+References: <20180902072643.4917-1-jernej.skrabec@siol.net>
+ <20180902072643.4917-12-jernej.skrabec@siol.net> <CAGb2v67jweJ5OdSzKhj302OLbz7DacKmSGMKS536uquzKGZtAQ@mail.gmail.com>
+ <2037444.yZ41eTID0S@jernej-laptop>
+In-Reply-To: <2037444.yZ41eTID0S@jernej-laptop>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Mon, 24 Sep 2018 10:01:21 +0800
+Message-ID: <CAGb2v67cW=6q04oO4RiUqEHvhzK9W0Bg_49arO73GugVd5NUbA@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH 11/27] drm/sun4i: Rework DE2 register defines
+To: Jernej Skrabec <jernej.skrabec@siol.net>
+Cc: Rob Herring <robh+dt@kernel.org>, Maxime Ripard <maxime.ripard@bootlin.com>,
+	Mark Rutland <mark.rutland@arm.com>, Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, David Airlie <airlied@linux.ie>,
+	Archit Taneja <architt@codeaurora.org>, Andrzej Hajda <a.hajda@samsung.com>,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	dri-devel <dri-devel@lists.freedesktop.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>, Icenowy Zheng <icenowy@aosc.io>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-R2VudGxlIFBpbmcuLi4NCg0KQW5zb24gSHVhbmcNCkJlc3QgUmVnYXJkcyENCg0KDQo+IC0tLS0t
-T3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IEFuc29uIEh1YW5nDQo+IFNlbnQ6IE1vbmRh
-eSwgU2VwdGVtYmVyIDMsIDIwMTggMzoyMSBQTQ0KPiBUbzogU3RlcGhlbiBCb3lkIDxzYm95ZEBr
-ZXJuZWwub3JnPjsga2VybmVsQHBlbmd1dHJvbml4LmRlOw0KPiBsaW51eC1hcm0ta2VybmVsQGxp
-c3RzLmluZnJhZGVhZC5vcmc7IGxpbnV4LWNsa0B2Z2VyLmtlcm5lbC5vcmc7DQo+IGxpbnV4LWtl
-cm5lbEB2Z2VyLmtlcm5lbC5vcmc7IG10dXJxdWV0dGVAYmF5bGlicmUuY29tOw0KPiBzLmhhdWVy
-QHBlbmd1dHJvbml4LmRlOyBzaGF3bmd1b0BrZXJuZWwub3JnOyBGYWJpbyBFc3RldmFtDQo+IDxm
-YWJpby5lc3RldmFtQG54cC5jb20+OyBKZXJvbWUgRm9yaXNzaWVyIDxqZXJvbWUuZm9yaXNzaWVy
-QGxpbmFyby5vcmc+Ow0KPiBQZW5nIEZhbiA8cGVuZy5mYW5AbnhwLmNvbT47IFJvYiBIZXJyaW5n
-IDxyb2JoQGtlcm5lbC5vcmc+DQo+IENjOiBkbC1saW51eC1pbXggPGxpbnV4LWlteEBueHAuY29t
-Pg0KPiBTdWJqZWN0OiBSRTogW1BBVENIIDIvMl0gY2xrOiBpbXg6IGlteDdkOiByZW1vdmUgY2xr
-c19pbml0X29uIGFycmF5DQo+IA0KPiANCj4gDQo+IEFuc29uIEh1YW5nDQo+IEJlc3QgUmVnYXJk
-cyENCj4gDQo+IA0KPiA+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+ID4gRnJvbTogU3Rl
-cGhlbiBCb3lkIDxzYm95ZEBrZXJuZWwub3JnPg0KPiA+IFNlbnQ6IFNhdHVyZGF5LCBTZXB0ZW1i
-ZXIgMSwgMjAxOCAxOjU4IEFNDQo+ID4gVG86IGtlcm5lbEBwZW5ndXRyb25peC5kZTsgbGludXgt
-YXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnOw0KPiA+IGxpbnV4LWNsa0B2Z2VyLmtlcm5l
-bC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7DQo+ID4gbXR1cnF1ZXR0ZUBiYXls
-aWJyZS5jb207IHMuaGF1ZXJAcGVuZ3V0cm9uaXguZGU7DQo+IHNoYXduZ3VvQGtlcm5lbC5vcmc7
-DQo+ID4gQW5zb24gSHVhbmcgPGFuc29uLmh1YW5nQG54cC5jb20+OyBGYWJpbyBFc3RldmFtDQo+
-ID4gPGZhYmlvLmVzdGV2YW1AbnhwLmNvbT47IEplcm9tZSBGb3Jpc3NpZXINCj4gPiA8amVyb21l
-LmZvcmlzc2llckBsaW5hcm8ub3JnPjsgUGVuZyBGYW4gPHBlbmcuZmFuQG54cC5jb20+OyBSb2IN
-Cj4gPiBIZXJyaW5nIDxyb2JoQGtlcm5lbC5vcmc+DQo+ID4gQ2M6IGRsLWxpbnV4LWlteCA8bGlu
-dXgtaW14QG54cC5jb20+DQo+ID4gU3ViamVjdDogUmU6IFtQQVRDSCAyLzJdIGNsazogaW14OiBp
-bXg3ZDogcmVtb3ZlIGNsa3NfaW5pdF9vbiBhcnJheQ0KPiA+DQo+ID4gUXVvdGluZyBKZXJvbWUg
-Rm9yaXNzaWVyICgyMDE4LTA4LTMxIDAxOjAxOjQ0KQ0KPiA+ID4NCj4gPiA+DQo+ID4gPiBPbiAw
-OC8zMS8yMDE4IDAzOjI5IEFNLCBTdGVwaGVuIEJveWQgd3JvdGU6DQo+ID4gPiA+IFF1b3Rpbmcg
-UGVuZyBGYW4gKDIwMTgtMDgtMTIgMTg6MTU6NDEpDQo+ID4gPiA+PiBIaSBBbnNvbiwNCj4gPiA+
-ID4+DQo+ID4gPiA+Pj4+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiA+ID4gPj4+Pj4g
-RnJvbTogQW5zb24gSHVhbmcNCj4gPiA+ID4+Pj4+IFNlbnQ6IDIwMTjlubQ45pyIOOaXpSAxMjoz
-OQ0KPiA+ID4gPj4+Pj4gVG86IHNoYXduZ3VvQGtlcm5lbC5vcmc7IHMuaGF1ZXJAcGVuZ3V0cm9u
-aXguZGU7DQo+ID4gPiA+Pj4+PiBrZXJuZWxAcGVuZ3V0cm9uaXguZGU7IEZhYmlvIEVzdGV2YW0g
-PGZhYmlvLmVzdGV2YW1AbnhwLmNvbT47DQo+ID4gPiA+Pj4+PiBtdHVycXVldHRlQGJheWxpYnJl
-LmNvbTsgc2JveWRAa2VybmVsLm9yZzsNCj4gPiA+ID4+Pj4+IGxpbnV4LWFybS1rZXJuZWxAbGlz
-dHMuaW5mcmFkZWFkLm9yZzsNCj4gPiA+ID4+Pj4+IGxpbnV4LWNsa0B2Z2VyLmtlcm5lbC5vcmc7
-IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcNCj4gPiA+ID4+Pj4+IENjOiBkbC1saW51eC1p
-bXggPGxpbnV4LWlteEBueHAuY29tPg0KPiA+ID4gPj4+Pj4gU3ViamVjdDogW1BBVENIIDIvMl0g
-Y2xrOiBpbXg6IGlteDdkOiByZW1vdmUgY2xrc19pbml0X29uDQo+ID4gPiA+Pj4+PiBhcnJheQ0K
-PiA+ID4gPj4+Pj4NCj4gPiA+ID4+Pj4+IENsb2NrIGZyYW1ld29yayB3aWxsIGVuYWJsZSB0aG9z
-ZSBjbG9ja3MgcmVnaXN0ZXJlZCB3aXRoDQo+ID4gPiA+Pj4+PiBDTEtfSVNfQ1JJVElDQUwgZmxh
-Zywgc28gbm8gbmVlZCB0byBoYXZlIGNsa3NfaW5pdF9vbiBhcnJheQ0KPiA+ID4gPj4+Pj4gZHVy
-aW5nIGNsb2NrDQo+ID4gPiA+Pj4+IGluaXRpYWxpemF0aW9uIG5vdy4NCj4gPiA+ID4+Pj4NCj4g
-PiA+ID4+Pj4gV2lsbCBpdCBiZSBtb3JlIGZsZXhpYmxlIHRvIHBhcnNlIGR0cyBzYXlpbmcgImNy
-aXRpY2FsLWNsb2NrcyA9IDx4eHg+Ig0KPiA+ID4gPj4+PiBvciAiaW5pdC1vbi1hcnJhcnk9PHh4
-eD4iDQo+ID4gPiA+Pj4+IGFuZCBlbmFibGUgdGhvc2UgY2xvY2tzPw0KPiA+ID4gPj4+DQo+ID4g
-PiA+Pj4gUGFyc2luZyB0aGUgY2xvY2tzIGFycmF5cyBmcm9tIGR0YiBpcyBhbm90aGVyIHdheSBv
-ZiBlbmFibGluZw0KPiA+ID4gPj4+IGNyaXRpY2FsIGNsb2NrcywgYnV0IGZvciBjdXJyZW50IGku
-TVg2LzcgcGxhdGZvcm1zLCB3ZSBpbXBsZW1lbnQNCj4gPiA+ID4+PiBpdCBpbiBzYW1lIHdheSBh
-cyBtb3N0IG9mIG90aGVyIFNvQ3MsIGN1cnJlbnRseSBJIGRpZCBOT1Qgc2VlDQo+ID4gPiA+Pj4g
-YW55IG5lY2Vzc2l0eSBvZiBwdXR0aW5nIHRoZW0gaW4gZHRiLCBqdXN0IGFkZGluZyBmbGFnIGR1
-cmluZw0KPiA+ID4gPj4+IGNsb2NrIHJlZ2lzdGVyaW5nIGlzIG1vcmUgc2ltcGxlLCBpZiB0aGVy
-ZSBpcyBhbnkgc3BlY2lhbA0KPiA+ID4gPj4+IHJlcXVpcmVtZW50IGZvciBkaWZmZXJlbnQgY2xv
-Y2tzIHNldCB0byBiZSBlbmFibGVkLCB0aGVuIHdlIGNhbg0KPiA+ID4gPj4+IGFkZCBzdXBwb3J0
-IHRvIGVuYWJsZQ0KPiA+IHRoZSBtZXRob2Qgb2YgcGFyc2luZyBjcml0aWNhbC1jbG9ja3MgZnJv
-bSBkdGIuIEp1c3QgbXkgdHdvIGNlbnRzLg0KPiA+ID4gPj4NCj4gPiA+ID4+IFRoaW5raW5nIGFi
-b3V0IE9QLVRFRSB3YW50IHRvIHVzZSBvbmUgZGV2aWNlLCBidXQgaXQncyBjbG9ja3MgYXJlDQo+
-ID4gPiA+PiByZWdpc3RlcmVkIGJ5IExpbnV4LCBiZWNhdXNlIHRoZXJlIGlzIG5vIG1vZHVsZSBp
-biBMaW51eCBzaWRlIHVzZQ0KPiA+ID4gPj4gaXQsIGl0IHdpbGwgc2h1dGRvd24gdGhlIGNsb2Nr
-LCB3aGljaCBjYXVzZSBPUC1URUUgY291bGQgbm90DQo+ID4gPiA+PiBhY2Nlc3MgdGhlDQo+ID4g
-ZGV2aWNlLg0KPiA+ID4gPj4NCj4gPiA+ID4+IFRoZW4gcGVvcGxlIGhhdmUgdG8gbW9kaWZ5IGNs
-ayBjb2RlIHRvIGFkZCBDTEtfSVNfQ1JJVElDQUwgZmxhZw0KPiA+ID4gPj4gdG8gbWFrZSBzdXJl
-IHRoZSBjbG9ja3MgYXJlIG5vdCBzaHV0ZG93biBieSBMaW51eC4NCj4gPiA+ID4+DQo+ID4gPiA+
-PiBIb3dldmVyIGFkZGluZyBhIG5ldyBwcm9wZXJ0eSBpbiBjbGsgbm9kZSBhbmQgbGV0IGRyaXZl
-ciBjb2RlDQo+ID4gPiA+PiBwYXJzZSB0aGUgZHRzLCB0aGVyZSBpcyBubyBuZWVkIHRvIG1vZGlm
-eSBjbGsgZHJpdmVyIGNvZGUgd2hlbg0KPiA+ID4gPj4gT1AtVEVFIG5lZWRzDQo+ID4gYW5vdGhl
-ciBkZXZpY2UgY2xvY2suDQo+ID4gPiA+Pg0KPiA+ID4gPg0KPiA+ID4gPiBJZiBPUC1URUUgbmVl
-ZHMgbGludXggdG8ga2VlcCB0aGluZ3Mgb24gdGhlbiB3aHkgY2FuJ3QgdGhlIE9QLVRFRQ0KPiA+
-ID4gPiBkcml2ZXIgaW4gTGludXggcHJvYmUsIGFjcXVpcmUgY2xvY2tzLCBhbmQga2VlcCB0aGUg
-Y2xrcyBlbmFibGVkIGZvcmV2ZXI/DQo+ID4gPg0KPiA+ID4gU291bmRzIHJlYXNvbmFibGUsIGJ1
-dCBob3cgY291bGQgdGhpcyBiZSBkb25lIHdpdGhvdXQgaW50cm9kdWNpbmcNCj4gPiA+IHBsYXRm
-b3JtLXNwZWNpZmljIHN0dWZmIGluIHRoZSBPUC1URUUgZHJpdmVyPw0KPiA+ID4NCj4gPg0KPiA+
-IFdoeSBpcyB0aGF0IGEgZ29hbD8NCj4gDQo+IEkgZG8gTk9UIHRoaW5rIHdlIHNob3VsZCBjb25z
-aWRlciBzdWNoIGNhc2UgaW4gdGhpcyBwYXRjaCBzZXJpZXMsIHdoYXRldmVyDQo+IE9QLVRFRSBu
-ZWVkcyBmb3IgaXRzIG93biBmZWF0dXJlLCBpdCBzaG91bGQgZG8gbmVjZXNzYXJ5IG9wZXJhdGlv
-bnMgZWl0aGVyIGluIGl0cw0KPiBkcml2ZXIgb3Igc29tZXdoZXJlIGVsc2UgYnkgYWRkaW5nIG5l
-dyBwYXRjaC4NCj4gDQo+IEFuc29uLg0KDQo=
+On Mon, Sep 24, 2018 at 4:02 AM Jernej =C5=A0krabec <jernej.skrabec@siol.ne=
+t> wrote:
+>
+> Dne sobota, 22. september 2018 ob 14:32:30 CEST je Chen-Yu Tsai napisal(a=
+):
+> > Hi,
+> >
+> > On Sun, Sep 2, 2018 at 3:27 PM Jernej Skrabec <jernej.skrabec@siol.net>
+> wrote:
+> > > Most, if not all, registers found in DE2 still exists in DE3. However=
+,
+> > > units are on different base addresses.
+> > >
+> > > To prepare for addition of DE3 support, registers macros are reworked=
+ so
+> > > they take base address as parameter.
+> > >
+> > > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> > > [rebased]
+> > > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> >
+> > This patch mostly checks out. But see below.
+> >
+> > > diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.h
+> > > b/drivers/gpu/drm/sun4i/sun8i_mixer.h index 406c42e752d7..020b0a097c8=
+4
+> > > 100644
+> > > --- a/drivers/gpu/drm/sun4i/sun8i_mixer.h
+> > > +++ b/drivers/gpu/drm/sun4i/sun8i_mixer.h
+> > > @@ -29,20 +29,24 @@
+> > >
+> > >  #define SUN8I_MIXER_GLOBAL_DBUFF_ENABLE                BIT(0)
+> > >
+> > > -#define SUN8I_MIXER_BLEND_PIPE_CTL             0x1000
+> > > -#define SUN8I_MIXER_BLEND_ATTR_FCOLOR(x)       (0x1004 + 0x10 * (x) =
++
+> > > 0x0)
+> > > -#define SUN8I_MIXER_BLEND_ATTR_INSIZE(x)       (0x1004 + 0x10 * (x) =
++
+> > > 0x4)
+> > > -#define SUN8I_MIXER_BLEND_ATTR_COORD(x)                (0x1004 + 0x1=
+0 *
+> > > (x) + 0x8) -#define SUN8I_MIXER_BLEND_ROUTE                        0x=
+1080
+> > > -#define SUN8I_MIXER_BLEND_PREMULTIPLY          0x1084
+> > > -#define SUN8I_MIXER_BLEND_BKCOLOR              0x1088
+> > > -#define SUN8I_MIXER_BLEND_OUTSIZE              0x108c
+> > > -#define SUN8I_MIXER_BLEND_MODE(x)              (0x1090 + 0x04 * (x))
+> > > -#define SUN8I_MIXER_BLEND_CK_CTL               0x10b0
+> > > -#define SUN8I_MIXER_BLEND_CK_CFG               0x10b4
+> > > -#define SUN8I_MIXER_BLEND_CK_MAX(x)            (0x10c0 + 0x04 * (x))
+> > > -#define SUN8I_MIXER_BLEND_CK_MIN(x)            (0x10e0 + 0x04 * (x))
+> > > -#define SUN8I_MIXER_BLEND_OUTCTL               0x10fc
+> > > +#define DE2_BLD_BASE                           0x1000
+> > > +#define DE2_CH_BASE                            0x2000
+> > > +#define DE2_CH_SIZE                            0x1000
+> > > +
+> > > +#define SUN8I_MIXER_BLEND_PIPE_CTL(base)       ((base) + 0)
+> > > +#define SUN8I_MIXER_BLEND_ATTR_FCOLOR(base, x) ((base) + 0x4 + 0x10 =
+*
+> > > (x))
+> > > +#define SUN8I_MIXER_BLEND_ATTR_INSIZE(base, x) ((base) + 0x8 + 0x10 =
+*
+> > > (x))
+> > > +#define SUN8I_MIXER_BLEND_ATTR_COORD(base, x)  ((base) + 0xC + 0x10 =
+*
+> > > (x))
+> >
+> > Nit: Use lowercase for '0xC' to be consistent.
+> >
+> > > +#define SUN8I_MIXER_BLEND_ROUTE(base)          ((base) + 0x80)
+> > > +#define SUN8I_MIXER_BLEND_PREMULTIPLY(base)    ((base) + 0x84)
+> > > +#define SUN8I_MIXER_BLEND_BKCOLOR(base)                ((base) + 0x8=
+8)
+> > > +#define SUN8I_MIXER_BLEND_OUTSIZE(base)                ((base) + 0x8=
+c)
+> > > +#define SUN8I_MIXER_BLEND_MODE(base, x)                ((base) + 0x9=
+0 +
+> > > 0x04 * (x)) +#define SUN8I_MIXER_BLEND_CK_CTL(base)         ((base) +
+> > > 0xb0)
+> > > +#define SUN8I_MIXER_BLEND_CK_CFG(base)         ((base) + 0xb4)
+> > > +#define SUN8I_MIXER_BLEND_CK_MAX(base, x)      ((base) + 0xc0 + 0x04=
+ *
+> > > (x)) +#define SUN8I_MIXER_BLEND_CK_MIN(base, x)      ((base) + 0xe0 +
+> > > 0x04 * (x)) +#define SUN8I_MIXER_BLEND_OUTCTL(base)         ((base) +
+> > > 0xfc)
+> > >
+> > >  #define SUN8I_MIXER_BLEND_PIPE_CTL_EN_MSK      GENMASK(12, 8)
+> > >  #define SUN8I_MIXER_BLEND_PIPE_CTL_EN(pipe)    BIT(8 + pipe)
+> >
+> > [...]
+> >
+> > > diff --git a/drivers/gpu/drm/sun4i/sun8i_ui_scaler.c
+> > > b/drivers/gpu/drm/sun4i/sun8i_ui_scaler.c index
+> > > 6bb2aa164c8e..c68eab8a748f 100644
+> > > --- a/drivers/gpu/drm/sun4i/sun8i_ui_scaler.c
+> > > +++ b/drivers/gpu/drm/sun4i/sun8i_ui_scaler.c
+> > > @@ -10,6 +10,7 @@
+> > >
+> > >   */
+> > >
+> > >  #include "sun8i_ui_scaler.h"
+> > >
+> > > +#include "sun8i_vi_scaler.h"
+> > >
+> > >  static const u32 lan2coefftab16[240] =3D {
+> > >
+> > >         0x00004000, 0x00033ffe, 0x00063efc, 0x000a3bfb,
+> > >
+> > > @@ -88,6 +89,14 @@ static const u32 lan2coefftab16[240] =3D {
+> > >
+> > >         0x0b1c1603, 0x0d1c1502, 0x0e1d1401, 0x0f1d1301,
+> > >
+> > >  };
+> > >
+> > > +static inline u32 sun8i_ui_scaler_base(struct sun8i_mixer *mixer, in=
+t
+> > > channel)
+> > I recently saw a review comment stating one should not inline functions
+> > unless they are defined in header files. Otherwise the decision should
+> > be left up to the compiler.
+> >
+> > > +{
+> > > +       int vi_num =3D mixer->cfg->vi_num;
+> > > +
+> > > +       return DE2_VI_SCALER_BASE + DE2_VI_SCALER_SIZE * vi_num +
+> > > +              DE2_UI_SCALER_SIZE * (channel - vi_num);
+> > > +}
+> > > +
+> > >
+> > >  static int sun8i_ui_scaler_coef_index(unsigned int step)
+> > >  {
+> > >
+> > >         unsigned int scale, int_part, float_part;
+> >
+> > [...]
+> >
+> > > diff --git a/drivers/gpu/drm/sun4i/sun8i_vi_scaler.c
+> > > b/drivers/gpu/drm/sun4i/sun8i_vi_scaler.c index
+> > > d3f1acb234b7..8697afc36023 100644
+> > > --- a/drivers/gpu/drm/sun4i/sun8i_vi_scaler.c
+> > > +++ b/drivers/gpu/drm/sun4i/sun8i_vi_scaler.c
+> > > @@ -833,6 +833,11 @@ static const u32 bicubic4coefftab32[480] =3D {
+> > >
+> > >         0x1012110d, 0x1012110d, 0x1013110c, 0x1013110c,
+> > >
+> > >  };
+> > >
+> > > +static inline u32 sun8i_vi_scaler_base(struct sun8i_mixer *mixer, in=
+t
+> > > channel) +{
+> > > +       return DE2_VI_SCALER_BASE + DE2_VI_SCALER_SIZE * channel;
+> > > +}
+> > > +
+> >
+> > This one as well.
+> >
+> > >  static int sun8i_vi_scaler_coef_index(unsigned int step)
+> > >  {
+> > >
+> > >         unsigned int scale, int_part, float_part;
+> > >
+> > > @@ -857,7 +862,7 @@ static int sun8i_vi_scaler_coef_index(unsigned in=
+t
+> > > step)>
+> > >         }
+> > >
+> > >  }
+> > >
+> > > -static void sun8i_vi_scaler_set_coeff(struct regmap *map, int layer,
+> > > +static void sun8i_vi_scaler_set_coeff(struct regmap *map, u32 base,
+> > >
+> > >                                       u32 hstep, u32 vstep,
+> > >                                       const struct drm_format_info
+> > >                                       *format)
+> >
+> > This is the only instance where a function's "layer" parameter was chan=
+ged
+> > to "base". It would be nice if it were consistent.
+>
+> Why not? Caller already have base address calculated, so it poses no over=
+head.
+> Additionally, sun8i_vi_scaler_set_coeff() doesn't have struct sun8i_mixer
+> *mixer parameter, which would allow calculating base address based on lay=
+er
+> id. So, you can chose between existing variant or adding additional param=
+eter
+> for no real reason.
+
+Thanks for the explanation. Yeah, then the current patch makes sense.
+
+ChenYu
