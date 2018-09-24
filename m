@@ -1,65 +1,97 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:34168 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728065AbeIQWCk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 17 Sep 2018 18:02:40 -0400
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <vabhav.sharma@nxp.com>
+From: Vabhav Sharma <vabhav.sharma@nxp.com>
+To: sudeep.holla@arm.com,
+	oss@buserror.net,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-arm-kernel@lists.infradead.org,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	rjw@rjwysocki.net,
+	viresh.kumar@linaro.org,
+	linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-kernel-owner@vger.kernel.org,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	gregkh@linuxfoundation.org,
+	arnd@arndb.de,
+	kstewart@linuxfoundation.org,
+	yamada.masahiro@socionext.com
+Cc: linux@armlinux.org.uk,
+	V.Sethi@nxp.com,
+	udit.kumar@nxp.com,
+	Yogesh Gaur <yogeshnarayan.gaur@nxp.com>,
+	Tang Yuantian <andy.tang@nxp.com>,
+	Vabhav Sharma <vabhav.sharma@nxp.com>
+Subject: [PATCH v3 4/6] drivers: clk-qoriq: Add clockgen support for lx2160a
+Date: Mon, 24 Sep 2018 05:38:59 +0530
+Message-Id: <1537747741-6245-5-git-send-email-vabhav.sharma@nxp.com>
+In-Reply-To: <1537747741-6245-1-git-send-email-vabhav.sharma@nxp.com>
+References: <1537747741-6245-1-git-send-email-vabhav.sharma@nxp.com>
 MIME-Version: 1.0
-From: Stephen Boyd <sboyd@kernel.org>
-To: "Spruyt, Randy" <Randy.Spruyt@christiedigital.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-References: <BC3A5CD34524E4468CEC38A99142631601AD938581@cktexmb01.cds.int>
-In-Reply-To: <BC3A5CD34524E4468CEC38A99142631601AD938581@cktexmb01.cds.int>
-Message-ID: <153720207238.119890.3699299252732950681@swboyd.mtv.corp.google.com>
-Subject: Re: getting a PHC reference in a kernel module?
-Date: Mon, 17 Sep 2018 09:34:32 -0700
-Sender: linux-clk-owner@vger.kernel.org
+Content-Type: text/plain
+Return-Path: vabhav.sharma@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Quoting Spruyt, Randy (2018-09-06 07:00:07)
-> I'm new to kernel driver development, so I hope you bear with me on the q=
-uestion. =
+From: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
 
-> =
+Add clockgen support for lx2160a.
+Added entry for compat 'fsl,lx2160a-clockgen'.
 
-> I'd like to timestamp an IRQ event in a kernel moudle using a PTP synchro=
-nized clock (e.g. the PHC from eth0 =3D /dev/ptp0). E.g. a GPIO pin goes hi=
-gh, I'd like to keep track of when this happened. Low latency is important.=
- One option is to use getnstimeofday() and have phc2sys synchronize /dev/pt=
-p0 with the system=C2=A0 clock. =
+Signed-off-by: Tang Yuantian <andy.tang@nxp.com>
+Signed-off-by: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
+Signed-off-by: Vabhav Sharma <vabhav.sharma@nxp.com>
+Acked-by: Stephen Boyd <sboyd@kernel.org>
+---
+ drivers/clk/clk-qoriq.c         | 12 ++++++++++++
+ drivers/cpufreq/qoriq-cpufreq.c |  1 +
+ 2 files changed, 13 insertions(+)
 
-> =
-
-> This seems to work but I feel like there is a more direct way to just que=
-ry the PHC clock e.g. using struct ptp_clock* and gettime64(). The question=
- is how to get this pointer, find_driver()? Or something else?
-> =
-
-> If this is the wrong way to go about this, by all means, I'm open to sugg=
-estions.
-> =
-
-
-linux-clk is for discussion about clk hardware that is used for power
-management and frequency scaling, not timekeeping hardware used for
-things like PTP. Please move your discussion to the linux-kernel mailing
-list and Cc the Timekeeping maintainers:
-
-TIMEKEEPING, CLOCKSOURCE CORE, NTP, ALARMTIMER
-M:      John Stultz <john.stultz@linaro.org>
-M:      Thomas Gleixner <tglx@linutronix.de>
-R:      Stephen Boyd <sboyd@codeaurora.org>
-L:      linux-kernel@vger.kernel.org
-T:      git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timer=
-s/core
-S:      Supported
-F:      include/linux/clocksource.h
-F:      include/linux/time.h
-F:      include/linux/timex.h
-F:      include/uapi/linux/time.h
-F:      include/uapi/linux/timex.h
-F:      kernel/time/clocksource.c
-F:      kernel/time/time*.c
-F:      kernel/time/alarmtimer.c
-F:      kernel/time/ntp.c
-F:      tools/testing/selftests/timers/
+diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
+index e152bfb..99675de 100644
+--- a/drivers/clk/clk-qoriq.c
++++ b/drivers/clk/clk-qoriq.c
+@@ -570,6 +570,17 @@ static const struct clockgen_chipinfo chipinfo[] = {
+ 		.flags = CG_VER3 | CG_LITTLE_ENDIAN,
+ 	},
+ 	{
++		.compat = "fsl,lx2160a-clockgen",
++		.cmux_groups = {
++			&clockgen2_cmux_cga12, &clockgen2_cmux_cgb
++		},
++		.cmux_to_group = {
++			0, 0, 0, 0, 1, 1, 1, 1, -1
++		},
++		.pll_mask = 0x37,
++		.flags = CG_VER3 | CG_LITTLE_ENDIAN,
++	},
++	{
+ 		.compat = "fsl,p2041-clockgen",
+ 		.guts_compat = "fsl,qoriq-device-config-1.0",
+ 		.init_periph = p2041_init_periph,
+@@ -1424,6 +1435,7 @@ CLK_OF_DECLARE(qoriq_clockgen_ls1043a, "fsl,ls1043a-clockgen", clockgen_init);
+ CLK_OF_DECLARE(qoriq_clockgen_ls1046a, "fsl,ls1046a-clockgen", clockgen_init);
+ CLK_OF_DECLARE(qoriq_clockgen_ls1088a, "fsl,ls1088a-clockgen", clockgen_init);
+ CLK_OF_DECLARE(qoriq_clockgen_ls2080a, "fsl,ls2080a-clockgen", clockgen_init);
++CLK_OF_DECLARE(qoriq_clockgen_lx2160a, "fsl,lx2160a-clockgen", clockgen_init);
+ 
+ /* Legacy nodes */
+ CLK_OF_DECLARE(qoriq_sysclk_1, "fsl,qoriq-sysclk-1.0", sysclk_init);
+diff --git a/drivers/cpufreq/qoriq-cpufreq.c b/drivers/cpufreq/qoriq-cpufreq.c
+index 3d773f6..83921b7 100644
+--- a/drivers/cpufreq/qoriq-cpufreq.c
++++ b/drivers/cpufreq/qoriq-cpufreq.c
+@@ -295,6 +295,7 @@ static const struct of_device_id node_matches[] __initconst = {
+ 	{ .compatible = "fsl,ls1046a-clockgen", },
+ 	{ .compatible = "fsl,ls1088a-clockgen", },
+ 	{ .compatible = "fsl,ls2080a-clockgen", },
++	{ .compatible = "fsl,lx2160a-clockgen", },
+ 	{ .compatible = "fsl,p4080-clockgen", },
+ 	{ .compatible = "fsl,qoriq-clockgen-1.0", },
+ 	{ .compatible = "fsl,qoriq-clockgen-2.0", },
+-- 
+2.7.4
