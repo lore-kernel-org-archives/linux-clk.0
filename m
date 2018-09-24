@@ -1,45 +1,134 @@
-Return-Path: <decatf@gmail.com>
-Return-Path: <decatf@gmail.com>
-From: ryang <decatf@gmail.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	ryang <decatf@gmail.com>
-Subject: [PATCH] clk: tegra: Fix an infinite loop when clock rate is zero
-Date: Fri, 21 Sep 2018 18:00:37 -0400
-Message-Id: <20180921220037.16862-1-decatf@gmail.com>
+Return-Path: <rppt@linux.vnet.ibm.com>
+Date: Mon, 24 Sep 2018 13:32:05 +0300
+From: Mike Rapoport <rppt@linux.vnet.ibm.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Arend van Spriel <aspriel@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Robin Murphy <robin.murphy@arm.com>, Joe Perches <joe@perches.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>, Al Viro <viro@zeniv.linux.org.uk>,
+        Jonathan Corbet <corbet@lwn.net>, Roman Gushchin <guro@fb.com>,
+        Huang Ying <ying.huang@intel.com>, Kees Cook <keescook@chromium.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH v3 3/4] devres: provide devm_kstrdup_const()
+References: <20180924101150.23349-1-brgl@bgdev.pl>
+ <20180924101150.23349-4-brgl@bgdev.pl>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180924101150.23349-4-brgl@bgdev.pl>
+Message-Id: <20180924103204.GC6264@rapoport-lnx>
 List-ID: <linux-clk.vger.kernel.org>
 
-Calling clk_set_rate or clk_round_rate will lock up the kernel when the
-rate is zero. This avoids the infinite loop and uses a slightly more
-optimized p divider calculation.
+On Mon, Sep 24, 2018 at 12:11:49PM +0200, Bartosz Golaszewski wrote:
+> Provide a resource managed version of kstrdup_const(). This variant
+> internally calls devm_kstrdup() on pointers that are outside of
+> .rodata section and returns the string as is otherwise.
+> 
+> Also provide a corresponding version of devm_kfree().
+> 
+> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-Signed-off-by: ryang <decatf@gmail.com>
----
- drivers/clk/tegra/clk-pll.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+Acked-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 830d1c87fa7c..17a058c3bbc1 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -582,9 +582,8 @@ static int _calc_rate(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
- 	}
- 
- 	/* Raise VCO to guarantee 0.5% accuracy */
--	for (cfg->output_rate = rate; cfg->output_rate < 200 * cfreq;
--	     cfg->output_rate <<= 1)
--		p_div++;
-+	p_div = rate ? fls((200 * cfreq) / rate) : 0;
-+	cfg->output_rate = rate << p_div;
- 
- 	cfg->m = parent_rate / cfreq;
- 	cfg->n = cfg->output_rate / cfreq;
+> ---
+>  drivers/base/devres.c  | 38 ++++++++++++++++++++++++++++++++++++++
+>  include/linux/device.h |  3 +++
+>  2 files changed, 41 insertions(+)
+> 
+> diff --git a/drivers/base/devres.c b/drivers/base/devres.c
+> index 438c91a43508..48185d57bc5b 100644
+> --- a/drivers/base/devres.c
+> +++ b/drivers/base/devres.c
+> @@ -11,6 +11,8 @@
+>  #include <linux/slab.h>
+>  #include <linux/percpu.h>
+> 
+> +#include <asm/sections.h>
+> +
+>  #include "base.h"
+> 
+>  struct devres_node {
+> @@ -822,6 +824,28 @@ char *devm_kstrdup(struct device *dev, const char *s, gfp_t gfp)
+>  }
+>  EXPORT_SYMBOL_GPL(devm_kstrdup);
+> 
+> +/**
+> + * devm_kstrdup_const - resource managed conditional string duplication
+> + * @dev: device for which to duplicate the string
+> + * @s: the string to duplicate
+> + * @gfp: the GFP mask used in the kmalloc() call when allocating memory
+> + *
+> + * Strings allocated by devm_kstrdup_const will be automatically freed when
+> + * the associated device is detached.
+> + *
+> + * RETURNS:
+> + * Source string if it is in .rodata section otherwise it falls back to
+> + * devm_kstrdup.
+> + */
+> +const char *devm_kstrdup_const(struct device *dev, const char *s, gfp_t gfp)
+> +{
+> +	if (is_kernel_rodata((unsigned long)s))
+> +		return s;
+> +
+> +	return devm_kstrdup(dev, s, gfp);
+> +}
+> +EXPORT_SYMBOL(devm_kstrdup_const);
+> +
+>  /**
+>   * devm_kvasprintf - Allocate resource managed space and format a string
+>   *		     into that.
+> @@ -895,6 +919,20 @@ void devm_kfree(struct device *dev, const void *p)
+>  }
+>  EXPORT_SYMBOL_GPL(devm_kfree);
+> 
+> +/**
+> + * devm_kfree_const - Resource managed conditional kfree
+> + * @dev: device this memory belongs to
+> + * @p: memory to free
+> + *
+> + * Function calls devm_kfree only if @p is not in .rodata section.
+> + */
+> +void devm_kfree_const(struct device *dev, const void *p)
+> +{
+> +	if (!is_kernel_rodata((unsigned long)p))
+> +		devm_kfree(dev, p);
+> +}
+> +EXPORT_SYMBOL(devm_kfree_const);
+> +
+>  /**
+>   * devm_kmemdup - Resource-managed kmemdup
+>   * @dev: Device this memory belongs to
+> diff --git a/include/linux/device.h b/include/linux/device.h
+> index 33f7cb271fbb..79ccc6eb0975 100644
+> --- a/include/linux/device.h
+> +++ b/include/linux/device.h
+> @@ -693,7 +693,10 @@ static inline void *devm_kcalloc(struct device *dev,
+>  	return devm_kmalloc_array(dev, n, size, flags | __GFP_ZERO);
+>  }
+>  extern void devm_kfree(struct device *dev, const void *p);
+> +extern void devm_kfree_const(struct device *dev, const void *p);
+>  extern char *devm_kstrdup(struct device *dev, const char *s, gfp_t gfp) __malloc;
+> +extern const char *devm_kstrdup_const(struct device *dev,
+> +				      const char *s, gfp_t gfp);
+>  extern void *devm_kmemdup(struct device *dev, const void *src, size_t len,
+>  			  gfp_t gfp);
+> 
+> -- 
+> 2.18.0
+> 
+
 -- 
-2.17.1
+Sincerely yours,
+Mike.
