@@ -1,46 +1,86 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:34775 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726640AbeILSV2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Sep 2018 14:21:28 -0400
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH] clk: samsung: exynos5433: Keep sclk_uart clocks enabled in
- suspend
-Date: Wed, 12 Sep 2018 15:16:41 +0200
-Message-id: <20180912131641.21688-1-m.szyprowski@samsung.com>
-References: <CGME20180912131657eucas1p2eecc0e4a01ed9ddbf4417c17eba0fee0@eucas1p2.samsung.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <vabhav.sharma@nxp.com>
+From: Vabhav Sharma <vabhav.sharma@nxp.com>
+To: sudeep.holla@arm.com,
+	oss@buserror.net,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	robh+dt@kernel.org,
+	mark.rutland@arm.com,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-arm-kernel@lists.infradead.org,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	rjw@rjwysocki.net,
+	viresh.kumar@linaro.org,
+	linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-kernel-owner@vger.kernel.org,
+	catalin.marinas@arm.com,
+	will.deacon@arm.com,
+	gregkh@linuxfoundation.org,
+	arnd@arndb.de,
+	kstewart@linuxfoundation.org,
+	yamada.masahiro@socionext.com
+Cc: linux@armlinux.org.uk,
+	V.Sethi@nxp.com,
+	udit.kumar@nxp.com,
+	Vabhav Sharma <vabhav.sharma@nxp.com>
+Subject: [PATCH v3 0/6]  arm64: dts: NXP: add basic dts file for LX2160A SoC
+Date: Mon, 24 Sep 2018 05:38:55 +0530
+Message-Id: <1537747741-6245-1-git-send-email-vabhav.sharma@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-Path: vabhav.sharma@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-All sclk_uart clocks in TOP CMU have to be kept enabled for suspend/resume
-cycle, otherwise TM2(e) boards hangs before entering the suspend mode.
+Changes for v3:
+-Split clockgen support patch into below two patches:
+- a)Updated array size of cmux_to_group[] with NUM_CMUX+1 to include -1
+ terminator and p4080 cmux_to_group[] array with -1 terminator
+- b)Add clockgen support for lx2160a
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
-This change was missing in the initial patch, because 'no_console_suspend'
-kernel option did almost the same.
----
- drivers/clk/samsung/clk-exynos5433.c | 2 ++
- 1 file changed, 2 insertions(+)
+Changes for v2:
+- Modified cmux_to_group array to include -1 terminator
+- Revert NUM_CMUX to original value 8 from 16
+- Remove “As LX2160A is 16 core, so modified value for NUM_CMUX”
+  in patch "[PATCH 3/5] drivers: clk-qoriq: Add clockgen support for
+  lx2160a" description
+- Populated cache properties for L1 and L2 cache in lx2160a device-tree.
+- Removed reboot node from lx2160a device-tree as PSCI is implemented.
+- Removed incorrect comment for timer node interrupt property in
+  lx2160a device-tree.
+- Modified pmu node compatible property from "arm,armv8-pmuv3" to
+  "arm,cortex-a72-pmu" in lx2160a device-tree
+- Non-standard aliases removed in lx2160a rdb board device-tree
+- Updated i2c child nodes to generic name in lx2160a rdb device-tree.
 
-diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-index 13384f4911c7..84eac0ce5682 100644
---- a/drivers/clk/samsung/clk-exynos5433.c
-+++ b/drivers/clk/samsung/clk-exynos5433.c
-@@ -180,6 +180,8 @@ static const unsigned long top_clk_regs[] __initconst = {
- static const struct samsung_clk_reg_dump top_suspend_regs[] = {
- 	/* force all aclk clocks enabled */
- 	{ ENABLE_ACLK_TOP, 0x67ecffed },
-+	/* force all sclk_uart clocks enabled */
-+	{ ENABLE_SCLK_TOP_PERIC, 0x38 },
- 	/* ISP PLL has to be enabled for suspend: reset value + ENABLE bit */
- 	{ ISP_PLL_CON0, 0x85cc0502 },
- 	/* ISP PLL has to be enabled for suspend: reset value + ENABLE bit */
+Changes for v1:
+- Add compatible string for LX2160A clockgen support
+- Add compatible string to initialize LX2160A guts driver
+- Add compatible string for LX2160A support in dt-bindings
+- Add dts file to enable support for LX2160A SoC and LX2160A RDB
+  (Reference design board)
+
+Vabhav Sharma (4):
+  dt-bindings: arm64: add compatible for LX2160A
+  soc/fsl/guts: Add compatible string for LX2160A
+  arm64: dts: add QorIQ LX2160A SoC support
+  arm64: dts: add LX2160ARDB board support
+
+Yogesh Gaur (2):
+  drivers: clk-qoriq: increase array size of cmux_to_group
+  drivers: clk-qoriq: Add clockgen support for lx2160a
+
+ Documentation/devicetree/bindings/arm/fsl.txt     |  12 +
+ arch/arm64/boot/dts/freescale/Makefile            |   1 +
+ arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts |  88 +++
+ arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi    | 693 ++++++++++++++++++++++
+ drivers/clk/clk-qoriq.c                           |  16 +-
+ drivers/cpufreq/qoriq-cpufreq.c                   |   1 +
+ drivers/soc/fsl/guts.c                            |   1 +
+ 7 files changed, 810 insertions(+), 2 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
+ create mode 100644 arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
+
 -- 
-2.17.1
+2.7.4
