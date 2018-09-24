@@ -1,82 +1,144 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from hermes.aosc.io ([199.195.250.187]:55269 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726640AbeILUmp (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 12 Sep 2018 16:42:45 -0400
-Date: Wed, 12 Sep 2018 23:37:24 +0800
-In-Reply-To: <CAGb2v64t40yTbrnkg33N2=jBdnvV45H1XSCF8U230LGAyuVySw@mail.gmail.com>
-References: <20180902072643.4917-1-jernej.skrabec@siol.net> <20180902072643.4917-3-jernej.skrabec@siol.net> <CAGb2v65y1W=52SAFFqyCOnHd80nx+oPHUDeysHWBy7o8_g=eeQ@mail.gmail.com> <9915D9F1-1C60-4AEF-9074-CE040FCD7BF0@aosc.io> <CAGb2v64t40yTbrnkg33N2=jBdnvV45H1XSCF8U230LGAyuVySw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Subject: Re: [linux-sunxi] Re: [PATCH 02/27] arm64: allwinner: h6: add system controller device tree node
-To: linux-arm-kernel@lists.infradead.org, Chen-Yu Tsai <wens@csie.org>
-CC: Mark Rutland <mark.rutland@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Mike Turquette <mturquette@baylibre.com>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-From: Icenowy Zheng <icenowy@aosc.io>
-Message-ID: <B9D0F336-B0C0-453C-AD56-325DAA9883A0@aosc.io>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <chris.brandt@renesas.com>
+From: Chris Brandt <chris.brandt@renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Simon Horman <horms+renesas@verge.net.au>,
+	Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH v2 3/3] clk: renesas: r7s9210: Move table update to separate function
+Date: Mon, 24 Sep 2018 11:49:37 -0500
+Message-Id: <20180924164937.36536-4-chris.brandt@renesas.com>
+In-Reply-To: <20180924164937.36536-1-chris.brandt@renesas.com>
+References: <20180924164937.36536-1-chris.brandt@renesas.com>
 List-ID: <linux-clk.vger.kernel.org>
 
+Same functionality, just easier to read.
 
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+---
+ drivers/clk/renesas/r7s9210-cpg-mssr.c | 94 ++++++++++++++++++----------------
+ 1 file changed, 49 insertions(+), 45 deletions(-)
 
-于 2018年9月12日 GMT+08:00 下午10:49:12, Chen-Yu Tsai <wens@csie.org> 写到:
->On Tue, Sep 4, 2018 at 4:44 PM Icenowy Zheng <icenowy@aosc.io> wrote:
->>
->>
->>
->> 于 2018年9月4日 GMT+08:00 下午4:40:56, Chen-Yu Tsai <wens@csie.org> 写到:
->> >On Sun, Sep 2, 2018 at 3:27 PM Jernej Skrabec
-><jernej.skrabec@siol.net>
->> >wrote:
->> >>
->> >> From: Icenowy Zheng <icenowy@aosc.io>
->> >>
->> >> As we have already binding for the H6 system controller, add its
->node
->> >> to the device tree.
->> >>
->> >> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
->> >> [fixed compatible string]
->> >> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
->> >
->> >Reviewed-by: Chen-Yu Tsai <wens@csie.org>
->>
->> By the way can these patches be applied first? (patches
->> related to syscon).
->>
->> They're also needed for EMAC.
->
->Applied.
->
->BTW, the H6 system control EMAC register also has the internal PHY
->related controls seen on H3/H5. IIRC you previously mentioned that
->they have no effect?
-
-Yes, because the "internal PHY" on H6 is on AC200.
-
-The internal/external mux bit has effect (although it will mux
-to a non-existent PHY when switching to "internal", render
-EMAC not usable), but it also has effect on A64 (same effect
-with H6), on which it's not documented.
-
->
->ChenYu
->
->_______________________________________________
->linux-arm-kernel mailing list
->linux-arm-kernel@lists.infradead.org
->http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+diff --git a/drivers/clk/renesas/r7s9210-cpg-mssr.c b/drivers/clk/renesas/r7s9210-cpg-mssr.c
+index 7ab9030ef8b9..f9c22b61883b 100644
+--- a/drivers/clk/renesas/r7s9210-cpg-mssr.c
++++ b/drivers/clk/renesas/r7s9210-cpg-mssr.c
+@@ -97,6 +97,53 @@ static const struct mssr_mod_clk r7s9210_mod_clks[] __initconst = {
+ 
+ };
+ 
++/* The clock dividers in the table vary based on DT and register settings */
++static void r7s9210_update_clk_table(struct clk *extal_clk, void __iomem *base)
++{
++	int i;
++	u16 frqcr;
++	u8 index;
++
++	/* If EXTAL is above 12MHz, then we know it is Mode 1 */
++	if (clk_get_rate(extal_clk) > 12000000)
++		cpg_mode = 1;
++
++	frqcr = clk_readl(base + CPG_FRQCR) & 0xFFF;
++	if (frqcr == 0x012)
++		index = 0;
++	else if (frqcr == 0x112)
++		index = 1;
++	else if (frqcr == 0x212)
++		index = 2;
++	else if (frqcr == 0x322)
++		index = 3;
++	else if (frqcr == 0x333)
++		index = 4;
++	else
++		BUG_ON(1);	/* Illegal FRQCR value */
++
++	for (i = 0; i < ARRAY_SIZE(r7s9210_core_clks); i++) {
++		switch (r7s9210_core_clks[i].id) {
++		case R7S9210_CLK_I:
++			r7s9210_core_clks[i].div = ratio_tab[index].i;
++			break;
++		case R7S9210_CLK_G:
++			r7s9210_core_clks[i].div = ratio_tab[index].g;
++			break;
++		case R7S9210_CLK_B:
++			r7s9210_core_clks[i].div = ratio_tab[index].b;
++			break;
++		case R7S9210_CLK_P1:
++		case R7S9210_CLK_P1C:
++			r7s9210_core_clks[i].div = ratio_tab[index].p1;
++			break;
++		case R7S9210_CLK_P0:
++			r7s9210_core_clks[i].div = 32;
++			break;
++		}
++	}
++}
++
+ struct clk * __init rza2_cpg_clk_register(struct device *dev,
+ 	const struct cpg_core_clk *core, const struct cpg_mssr_info *info,
+ 	struct clk **clks, void __iomem *base,
+@@ -105,9 +152,6 @@ struct clk * __init rza2_cpg_clk_register(struct device *dev,
+ 	struct clk *parent;
+ 	unsigned int mult = 1;
+ 	unsigned int div = 1;
+-	u16 frqcr;
+-	u8 index;
+-	int i;
+ 
+ 	parent = clks[core->parent];
+ 	if (IS_ERR(parent))
+@@ -128,48 +172,8 @@ struct clk * __init rza2_cpg_clk_register(struct device *dev,
+ 		return ERR_PTR(-EINVAL);
+ 	}
+ 
+-	/* Adjust the dividers based on the current FRQCR setting */
+-	if (core->id == CLK_MAIN) {
+-
+-		/* If EXTAL is above 12MHz, then we know it is Mode 1 */
+-		if (clk_get_rate(parent) > 12000000)
+-			cpg_mode = 1;
+-
+-		frqcr = clk_readl(base + CPG_FRQCR) & 0xFFF;
+-		if (frqcr == 0x012)
+-			index = 0;
+-		else if (frqcr == 0x112)
+-			index = 1;
+-		else if (frqcr == 0x212)
+-			index = 2;
+-		else if (frqcr == 0x322)
+-			index = 3;
+-		else if (frqcr == 0x333)
+-			index = 4;
+-		else
+-			BUG_ON(1);	/* Illegal FRQCR value */
+-
+-		for (i = 0; i < ARRAY_SIZE(r7s9210_core_clks); i++) {
+-			switch (r7s9210_core_clks[i].id) {
+-			case R7S9210_CLK_I:
+-				r7s9210_core_clks[i].div = ratio_tab[index].i;
+-				break;
+-			case R7S9210_CLK_G:
+-				r7s9210_core_clks[i].div = ratio_tab[index].g;
+-				break;
+-			case R7S9210_CLK_B:
+-				r7s9210_core_clks[i].div = ratio_tab[index].b;
+-				break;
+-			case R7S9210_CLK_P1:
+-			case R7S9210_CLK_P1C:
+-				r7s9210_core_clks[i].div = ratio_tab[index].p1;
+-				break;
+-			case R7S9210_CLK_P0:
+-				r7s9210_core_clks[i].div = 32;
+-				break;
+-			}
+-		}
+-	}
++	if (core->id == CLK_MAIN)
++		r7s9210_update_clk_table(parent, base);
+ 
+ 	return clk_register_fixed_factor(NULL, core->name,
+ 					 __clk_get_name(parent), 0, mult, div);
+-- 
+2.16.1
