@@ -1,95 +1,141 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: "A.s. Dong" <aisheng.dong@nxp.com>
-To: "thor.thayer@linux.intel.com" <thor.thayer@linux.intel.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, "sboyd@kernel.org"
-	<sboyd@kernel.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "mturquette@baylibre.com"
-	<mturquette@baylibre.com>, "shawnguo@kernel.org" <shawnguo@kernel.org>,
-	dl-linux-imx <linux-imx@nxp.com>, "hdegoede@redhat.com" <hdegoede@redhat.com>
-Subject: RE: [PATCH V6 0/4] clk: new APIs to handle all available clocks
-Date: Thu, 20 Sep 2018 02:14:21 +0000
-Message-ID: 
- <AM0PR04MB4211B170CAC1B3F9E7356AF980130@AM0PR04MB4211.eurprd04.prod.outlook.com>
-References: <1535690756-22234-1-git-send-email-aisheng.dong@nxp.com>
- <AM0PR04MB4211EF6D783562BA8C8D690380010@AM0PR04MB4211.eurprd04.prod.outlook.com>
- <AM0PR04MB4211A3900BC5A2DF857F7451801F0@AM0PR04MB4211.eurprd04.prod.outlook.com>
- <7e612f6f-e9d2-2f6f-1903-3a6bcf1b65ba@linux.intel.com>
-In-Reply-To: <7e612f6f-e9d2-2f6f-1903-3a6bcf1b65ba@linux.intel.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
+References: <20180921152054.117774-1-chris.brandt@renesas.com> <20180921152054.117774-3-chris.brandt@renesas.com>
+In-Reply-To: <20180921152054.117774-3-chris.brandt@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 24 Sep 2018 11:09:45 +0200
+Message-ID: <CAMuHMdUbMJwgQ5-UQuHAMszHnQf+4m0sSws4pW-vA8di+L2RQQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] clk: renesas: r7s9210: Convert some clocks to early
+To: Chris Brandt <chris.brandt@renesas.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Simon Horman <horms+renesas@verge.net.au>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBUaG9yIFRoYXllciBbbWFpbHRv
-OnRob3IudGhheWVyQGxpbnV4LmludGVsLmNvbV0NCj4gU2VudDogV2VkbmVzZGF5LCBTZXB0ZW1i
-ZXIgMTksIDIwMTggMTA6NDcgUE0NCj4gVG86IEEucy4gRG9uZyA8YWlzaGVuZy5kb25nQG54cC5j
-b20+OyBsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnDQo+IENjOiBsaW51eC1rZXJuZWxAdmdlci5r
-ZXJuZWwub3JnOyBsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmc7DQo+IHNib3lk
-QGtlcm5lbC5vcmc7IG10dXJxdWV0dGVAYmF5bGlicmUuY29tOyBzaGF3bmd1b0BrZXJuZWwub3Jn
-Ow0KPiBkbC1saW51eC1pbXggPGxpbnV4LWlteEBueHAuY29tPjsgaGRlZ29lZGVAcmVkaGF0LmNv
-bQ0KPiBTdWJqZWN0OiBSZTogW1BBVENIIFY2IDAvNF0gY2xrOiBuZXcgQVBJcyB0byBoYW5kbGUg
-YWxsIGF2YWlsYWJsZSBjbG9ja3MNCj4gDQo+IEhpLA0KPiANCj4gT24gMDkvMTYvMjAxOCAwODoy
-NCBBTSwgQS5zLiBEb25nIHdyb3RlOg0KPiA+IFBpbmcgYWdhaW4NCj4gPg0KPiA+PiAtLS0tLU9y
-aWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiA+PiBGcm9tOiBBLnMuIERvbmcNCj4gPj4gU2VudDogVGh1
-cnNkYXksIFNlcHRlbWJlciA2LCAyMDE4IDExOjIzIEFNDQo+ID4+IFRvOiBsaW51eC1jbGtAdmdl
-ci5rZXJuZWwub3JnDQo+ID4+IENjOiBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOw0KPiA+
-PiBsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmc7DQo+ID4+IHNib3lkQGtlcm5l
-bC5vcmc7IG10dXJxdWV0dGVAYmF5bGlicmUuY29tOyBzaGF3bmd1b0BrZXJuZWwub3JnOw0KPiA+
-PiB0aG9yLnRoYXllckBsaW51eC5pbnRlbC5jb207IGRsLWxpbnV4LWlteCA8bGludXgtaW14QG54
-cC5jb20+Ow0KPiA+PiBoZGVnb2VkZUByZWRoYXQuY29tDQo+ID4+IFN1YmplY3Q6IFJFOiBbUEFU
-Q0ggVjYgMC80XSBjbGs6IG5ldyBBUElzIHRvIGhhbmRsZSBhbGwgYXZhaWxhYmxlDQo+ID4+IGNs
-b2Nrcw0KPiA+Pg0KPiA+PiBHZW50bHkgcGluZy4uLg0KPiA+Pg0KPiA+Pj4gLS0tLS1PcmlnaW5h
-bCBNZXNzYWdlLS0tLS0NCj4gPj4+IEZyb206IEEucy4gRG9uZw0KPiA+Pj4gU2VudDogRnJpZGF5
-LCBBdWd1c3QgMzEsIDIwMTggMTI6NDYgUE0NCj4gPj4+IFRvOiBsaW51eC1jbGtAdmdlci5rZXJu
-ZWwub3JnDQo+ID4+PiBDYzogbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsNCj4gPj4+IGxp
-bnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZzsNCj4gPj4+IHNib3lkQGtlcm5lbC5v
-cmc7IG10dXJxdWV0dGVAYmF5bGlicmUuY29tOyBzaGF3bmd1b0BrZXJuZWwub3JnOw0KPiA+Pj4g
-dGhvci50aGF5ZXJAbGludXguaW50ZWwuY29tOyBkbC1saW51eC1pbXggPGxpbnV4LWlteEBueHAu
-Y29tPjsNCj4gPj4+IGhkZWdvZWRlQHJlZGhhdC5jb207IEEucy4gRG9uZyA8YWlzaGVuZy5kb25n
-QG54cC5jb20+DQo+ID4+PiBTdWJqZWN0OiBbUEFUQ0ggVjYgMC80XSBjbGs6IG5ldyBBUElzIHRv
-IGhhbmRsZSBhbGwgYXZhaWxhYmxlIGNsb2Nrcw0KPiA+Pj4NCj4gPj4+IFRoaXMgcGF0Y2ggc2Vy
-aWVzIGlzIGEgY29udGludWUgb2YgZGlzY3Vzc2lvbiBmcm9tIGhlcmUsDQo+ID4+PiBodHRwczov
-L2VtZWEwMS5zYWZlbGlua3MucHJvdGVjdGlvbi5vdXRsb29rLmNvbS8/dXJsPWh0dHBzJTNBJTJG
-JTJGcA0KPiA+Pj4NCj4gYXRjaHdvcmsua2VybmVsLm9yZyUyRnBhdGNoJTJGOTk4NjI5MyUyRiZh
-bXA7ZGF0YT0wMiU3QzAxJTdDYWlzaGUNCj4gbmcuDQo+ID4+Pg0KPiBkb25nJTQwbnhwLmNvbSU3
-Q2I3OWYwYWE4Yzc0YzRmOTM1YWRiMDhkNjFlM2U3OTQ0JTdDNjg2ZWExZDNiYw0KPiAyYjRjNmYN
-Cj4gPj4+DQo+IGE5MmNkOTljNWMzMDE2MzUlN0MwJTdDMCU3QzYzNjcyOTY1MTAxNDU0OTYzMyZh
-bXA7c2RhdGE9emgwUlANCj4gVnQ0cHF5TQ0KPiA+Pj4gODRTVUZScERjYklINTgzSk5PTmxCaFRR
-ZUxZd0RGbyUzRCZhbXA7cmVzZXJ2ZWQ9MA0KPiA+Pj4gdGhhdCBzb21lIHVzZXJzIG1heSB3YW50
-IHRvIGhhbmRsZSBhbGwgYXZhaWxhYmxlIGNsb2NrcyBmcm9tIGRldmljZQ0KPiA+Pj4gdHJlZSB3
-aXRob3V0IG5lZWQgdG8ga25vdyB0aGUgZGV0YWlsZWQgY2xvY2sgaW5mb3JtYXRpb24gbGlrZXMg
-Y2xvY2sNCj4gPj4+IG51bWJlcnMgYW5kIG5hbWVzLiBUaGlzIGlzIHVzZWZ1bCBpbiB3cml0aW5n
-IHNvbWUgZ2VuZXJpYyBkcml2ZXJzIHRvDQo+ID4+PiBoYW5kbGUNCj4gPj4gY2xvY2sgcGFydC4N
-Cj4gPj4+DQo+ID4+PiBOb3RlOg0KPiA+Pj4gVGhpcyBwYXRjaCBzZXJpZXMgaXMgdGVzdGVkIG9u
-IE1YNlEgU0RCIGNwdWZyZXEgZHJpdmVyIHdpdGggYSBtaW5vcg0KPiA+Pj4gY2hhbmdlIHRvIHN3
-aXRjaCB0byB1c2UgY2xrX2J1bGtfZ2V0X2FsbC4NCj4gPj4+IEJ1dCBwYXRjaCA0IG9ubHkgdGVz
-dCBjb21waWxpbmcuIEhvcGVmdWxseSBzb21lb25lIGNvdWxkIGhlbHAgdGVzdA0KPiA+Pj4gdGhl
-IGZ1bmN0aW9uLg0KPiA+Pj4NCj4gPj4+IHYzLT52NDoNCj4gPj4+ICAgKiBpbXByb3ZlICdkZXZy
-ZXMtPmNsa3MgPSAqY2xrcycgYWNjb3JkaW5nIHRvIFN0ZXBoZW4ncyBzdWdnZXN0aW9uDQo+ID4+
-PiB2Mi0+djM6DQo+ID4+PiAgICogYWRkcmVzcyBhbGwgY29tbWVudHMgZnJvbSBTdGVwaGVuDQo+
-ID4+PiAgICogZml4IGJ1aWxkIHdhcm5pbmdzIG9uIG90aGVyIGFyY2hpdGVjdHVyZXMuDQo+ID4+
-PiB2MS0+djI6DQo+ID4+PiAgICogYWRkIGNsa19idWxrX3tnZXR8cHV0fV9hbGwoKSB3aGljaCBv
-bmx5IHN1cHBvcnRzIERUIHBsYXRmb3JtDQo+ID4+PiBjdXJyZW50bHkNCj4gPj4+ICAgKiByZW1v
-dmUgX2FsbCB2YXJpYW50cyBhbmQgdGhlIHdyYXBwZXIgc3RydWN0IGNsa19idWxrDQo+ID4+PiAg
-ICogbWFrZSBvZl9jbGtfYnVsa19nZXQgYW5kIG9mX2Nsa19idWxrX2dldF9hbGwgcHJpdmF0ZSB1
-bnRpbCBzb21lb25lDQo+ID4+PiAgICAgcHJvdmVzIHRoZXkgbmVlZCBpdCBiZWNhdXNlIHRoZXkg
-ZG9uJ3QgaGF2ZSBhIHN0cnVjdCBkZXZpY2UgcG9pbnRlci4NCj4gPj4+DQo+ID4+PiBEb25nIEFp
-c2hlbmcgKDQpOg0KPiA+Pj4gICAgY2xrOiBidWxrOiBhZGQgb2ZfY2xrX2J1bGtfZ2V0KCkNCj4g
-Pj4+ICAgIGNsazogYWRkIG5ldyBBUElzIHRvIG9wZXJhdGUgb24gYWxsIGF2YWlsYWJsZSBjbG9j
-a3MNCj4gPj4+ICAgIGNsazogYWRkIG1hbmFnZWQgdmVyc2lvbiBvZiBjbGtfYnVsa19nZXRfYWxs
-DQo+ID4+PiAgICB2aWRlbzogc2ltcGxlZmI6IHN3aXRjaCB0byB1c2UgY2xrX2J1bGsgQVBJIHRv
-IHNpbXBsaWZ5IGNsb2NrDQo+ID4+PiAgICAgIG9wZXJhdGlvbnMNCj4gPj4+DQo+ID4+PiAgIGRy
-aXZlcnMvY2xrL2Nsay1idWxrLmMgICAgICAgICB8IDgwDQo+ID4+PiArKysrKysrKysrKysrKysr
-KysrKysrKysrKysrKysrKysrKysrKysrKysNCj4gPj4+ICAgZHJpdmVycy9jbGsvY2xrLWRldnJl
-cy5jICAgICAgIHwgMjQgKysrKysrKysrKysrKw0KPiA+Pj4gICBkcml2ZXJzL3ZpZGVvL2ZiZGV2
-L3NpbXBsZWZiLmMgfCA3MiArKysrKysrKysrLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQo+
-ID4+PiAgIGluY2x1ZGUvbGludXgvY2xrLmggICAgICAgICAgICB8IDY1DQo+ID4+PiArKysrKysr
-KysrKysrKysrKysrKysrKysrKysrKysrKystDQo+ID4+PiAgIDQgZmlsZXMgY2hhbmdlZCwgMTg2
-IGluc2VydGlvbnMoKyksIDU1IGRlbGV0aW9ucygtKQ0KPiA+Pj4NCj4gPj4+IC0tDQo+ID4+PiAy
-LjcuNA0KPiA+DQo+IEp1c3QgY2hlY2tpbmcgb24gdGhlIHN0YXR1cyBvZiB0aGlzIHBhdGNoLiBU
-aGUgY2xvY2sgcm91dGluZXMgKHBhdGNoZXMNCj4gMS0zKSBhcmUgdXNlZnVsIGZvciBvbmUgb2Yg
-bXkgZHJpdmVycyBidXQgaWYgdGhleSBhcmVuJ3QgYWNjZXB0ZWQgb3Igd2lsbCB0YWtlIGENCj4g
-bG9uZyB0aW1lIHRvIGJlIGFjY2VwdGVkLCBJJ2xsIG5lZWQgdG8gcmVmYWN0b3IgbXkgZHJpdmVy
-Lg0KPiANCg0KVGhhbmtzIGZvciB0aGlzIGluZm9ybWF0aW9uLg0KDQpTdGVwaGVuLA0KV291bGQg
-eW91IGhlbHAgdG8gcHJvY2VlZCB0aGlzPw0KDQpSZWdhcmRzDQpEb25nIEFpc2hlbmcNCg==
+Hi Chris,
+
+On Fri, Sep 21, 2018 at 5:21 PM Chris Brandt <chris.brandt@renesas.com> wrote:
+> The OSTM timer driver for RZ/A2 uses TIMER_OF_DECLARE which requires the
+> ostm module clocks to be registers early in boot.
+>
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+
+Thanks for your patch!
+
+> --- a/drivers/clk/renesas/r7s9210-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r7s9210-cpg-mssr.c
+> @@ -55,25 +55,25 @@ enum clk_ids {
+
+I'd put the early core clocks here ...
+
+>  static struct cpg_core_clk r7s9210_core_clks[] = {
+>         /* External Clock Inputs */
+> -       DEF_INPUT("extal",     CLK_EXTAL),
+> +       /*        ".extal"  exists as early clock */
+>
+>         /* Internal Core Clocks */
+> -       DEF_BASE(".main",       CLK_MAIN, CLK_TYPE_RZA_MAIN, CLK_EXTAL),
+> -       DEF_BASE(".pll",       CLK_PLL, CLK_TYPE_RZA_PLL, CLK_MAIN),
+> +       /*        ".main"   exists as early clock */
+> +       /*        ".pll"    exists as early clock */
+
+... so comments like the above are not needed.
+
+>
+>         /* Core Clock Outputs */
+>         DEF_FIXED("i",      R7S9210_CLK_I,     CLK_PLL,          2, 1),
+>         DEF_FIXED("g",      R7S9210_CLK_G,     CLK_PLL,          4, 1),
+>         DEF_FIXED("b",      R7S9210_CLK_B,     CLK_PLL,          8, 1),
+>         DEF_FIXED("p1",     R7S9210_CLK_P1,    CLK_PLL,         16, 1),
+> -       DEF_FIXED("p1c",    R7S9210_CLK_P1C,   CLK_PLL,         16, 1),
+> +       /*        "p1c"     exists as early clock */
+>         DEF_FIXED("p0",     R7S9210_CLK_P0,    CLK_PLL,         32, 1),
+>  };
+>
+
+Same for early module clocks...
+
+>  static const struct mssr_mod_clk r7s9210_mod_clks[] __initconst = {
+> -       DEF_MOD_STB("ostm2",     34,    R7S9210_CLK_P1C),
+> -       DEF_MOD_STB("ostm1",     35,    R7S9210_CLK_P1C),
+> -       DEF_MOD_STB("ostm0",     36,    R7S9210_CLK_P1C),
+> +       /*          "ostm2"      36     exists as early clock */
+> +       /*          "ostm1"      35     exists as early clock */
+> +       /*          "ostm0"      34     exists as early clock */
+
+... and these comments.
+
+>
+>         DEF_MOD_STB("scif4",     43,    R7S9210_CLK_P1C),
+>         DEF_MOD_STB("scif3",     44,    R7S9210_CLK_P1C),
+
+> +/* The clock dividers in the table vary based on DT and register settings */
+> +static void r7s9210_update_clk_table(struct clk *extal_clk, void __iomem *base)
+> +{
+
+[...]
+
+> +}
+> +
+>  struct clk * __init rza2_cpg_clk_register(struct device *dev,
+>         const struct cpg_core_clk *core, const struct cpg_mssr_info *info,
+>         struct clk **clks, void __iomem *base,
+> @@ -99,9 +164,6 @@ struct clk * __init rza2_cpg_clk_register(struct device *dev,
+>         struct clk *parent;
+>         unsigned int mult = 1;
+>         unsigned int div = 1;
+> -       u16 frqcr;
+> -       u8 index;
+> -       int i;
+>
+>         parent = clks[core->parent];
+>         if (IS_ERR(parent))
+> @@ -123,47 +185,8 @@ struct clk * __init rza2_cpg_clk_register(struct device *dev,
+>         }
+>
+>         /* Adjust the dividers based on the current FRQCR setting */
+> -       if (core->id == CLK_MAIN) {
+
+[...]
+
+> -       }
+> +       if (core->id == CLK_MAIN)
+> +               r7s9210_update_clk_table(parent, base);
+
+While factoring out this block into its own function is a good idea, it's not
+related to this patch, is it? So I think it should be done in a separate patch.
+
+> @@ -181,9 +204,25 @@ const struct cpg_mssr_info r7s9210_cpg_mssr_info __initconst = {
+>         .num_mod_clks = ARRAY_SIZE(r7s9210_mod_clks),
+>         .num_hw_mod_clks = 11 * 32, /* includes STBCR0 which doesn't exist */
+>
+> +       /* Early Core Clocks */
+> +       .early_core_clks = r7s9210_early_core_clks,
+> +       .num_early_core_clks = ARRAY_SIZE(r7s9210_early_core_clks),
+> +
+> +       /* Early Module Clocks */
+> +       .early_mod_clks = r7s9210_early_mod_clks,
+> +       .num_early_mod_clks = ARRAY_SIZE(r7s9210_early_mod_clks),
+
+All early clocks at the top?
+
+> +
+>         /* Callbacks */
+>         .cpg_clk_register = rza2_cpg_clk_register,
+>
+>         /* RZ/A2 has Standby Control Registers */
+>         .stbyctrl = true,
+>  };
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
