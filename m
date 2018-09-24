@@ -2,161 +2,136 @@ Return-Path: <SRS0=Dsg5=MG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.3 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF73AC433F4
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 12:58:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A234CC433F4
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 14:34:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55DDD2086E
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 12:58:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B31B214AB
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 14:34:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="diLcrLAj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55DDD2086E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nD3cHRx5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B31B214AB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729987AbeIXR6A (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Sep 2018 13:58:00 -0400
-Received: from mail-he1eur01on0056.outbound.protection.outlook.com ([104.47.0.56]:23336
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729224AbeIXR56 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 24 Sep 2018 13:57:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GuqniBJqZWxi8fi46ZY3UdMLuNOKGv4agb6OGyxTLmo=;
- b=diLcrLAjtynoEZP6rdFXDoevc+oseUBgPo6MzSqANhC7f/gdIafHNvGWbjxVQEOjnSr9IsjKCj++peMjuaowGYoQUG3MurVVWIRuBdtSNBd0OSVPSNkimus40lP3JQSbVB6Na2WJqkIhER9DQU22beqi2umJ+e0Q/oFml3+cLNQ=
-Received: from VI1PR04MB4800.eurprd04.prod.outlook.com (20.177.48.221) by
- VI1PR04MB4846.eurprd04.prod.outlook.com (20.177.49.15) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1143.18; Mon, 24 Sep 2018 11:56:09 +0000
-Received: from VI1PR04MB4800.eurprd04.prod.outlook.com
- ([fe80::6d90:90af:e2ce:80f2]) by VI1PR04MB4800.eurprd04.prod.outlook.com
- ([fe80::6d90:90af:e2ce:80f2%3]) with mapi id 15.20.1143.017; Mon, 24 Sep 2018
- 11:56:09 +0000
-From:   Vabhav Sharma <vabhav.sharma@nxp.com>
-To:     Scott Wood <oss@buserror.net>,
-        "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
-        "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-kernel-owner@vger.kernel.org" 
-        <linux-kernel-owner@vger.kernel.org>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
-        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>
-CC:     "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>,
-        Andy Tang <andy.tang@nxp.com>
-Subject: RE: [PATCH v2 3/5] drivers: clk-qoriq: Add clockgen support for
- lx2160a
-Thread-Topic: [PATCH v2 3/5] drivers: clk-qoriq: Add clockgen support for
- lx2160a
-Thread-Index: AQHUTAb6cv1C3xaC1EGZKHQAGneRK6Txu1qAgA2nBsA=
-Date:   Mon, 24 Sep 2018 11:56:08 +0000
-Message-ID:
- <VI1PR04MB4800CA1AFEB6EB7B56680CBBF3170@VI1PR04MB4800.eurprd04.prod.outlook.com>
-References: <1536871075-3732-1-git-send-email-vabhav.sharma@nxp.com>
-         <1536871075-3732-4-git-send-email-vabhav.sharma@nxp.com>
- <4fa10f679ad4b1b619daa521a8641c145cf8537e.camel@buserror.net>
-In-Reply-To: <4fa10f679ad4b1b619daa521a8641c145cf8537e.camel@buserror.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=vabhav.sharma@nxp.com; 
-x-originating-ip: [92.121.36.198]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR04MB4846;6:WbnNVH6i7VwzIqzTuQEKR5ktwJYbilKAssVtbVFHj9fM2LL6kSEtOFTbA6oz730NK3O5nz0yu0L7doZ4EPILudP2UL9h7z0K4HlKkCvq6b74YWNFZ7bX4Kp3dKBXI2LtZyTjGhpje5M9CRooAb4EDWFB5CJw2cQxF5hLs+lUqFeH3lx3j6X6HTHtYCmavhUtLP84NYcFzZduDoYUqcwKZ7PqUHI9rJ0/O7Ebx5g+nYucKd0mHLD5vLpiZfgOWKJ0cTufxYmGFcIHJ8p/0x5dXZ3eKz6PlCY1wQd5uiLnNfQzZtazcqmwgPd7//F8XeoWT8EHEXUu5FNyeKLAr8aMwzTZRxhoTlw/oMiI/2G8nQXPkDo05LA9T2wDGkr5z8W7AGpl8qUtkqfPryh+sZ2P8/t0UlxNFIhce+9ThvVhq6TZNqCv+ernfmvbIYzs7/3FETujFXfEEkN6Tqs9HVtn5w==;5:5SicK3CcWb8B0CH+8jPre2BsutLRGMsHX477Lc8zofl7wirbLVTZMmalKciGFeWXuWyEGXj8eBmREFu/OuMguDFkYiF93QDwLm74e+iL97WzbxCiqd4Z/8LtD0coeNXvoVRkwz9wIzeE3fPZ6KcrLcX8D8zcKLJlyYfJL+E2av8=;7:VUw6/FX4HXlCtADahnma6vgutzro7+uShNW60bpCDwkgAOlrnhcMCTKl3+oYpDLnDTzgjDqdPhoY0UO/OYJ110pf2qZ33cxc8NvAcklNV2pC/rLm45wlvB3pZ2Qx7WOjlnp64tBs8OhmsMy0ev/bInfiMvdp8mfxqq+PQtBUCCtFcV2XhJD5+fV5ie/NMTFqidXf+OxHlkMoXJC2oTBGHXM3USz98thF5CPhcQ9/YVAjxYGcAHVWVwXXzNTcWnDA
-x-ms-office365-filtering-correlation-id: 8511f67a-5ede-4e3d-e255-08d62214b76c
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB4846;
-x-ms-traffictypediagnostic: VI1PR04MB4846:
-x-microsoft-antispam-prvs: <VI1PR04MB48461659BC8DE1ACFB901CEFF3170@VI1PR04MB4846.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(180628864354917)(9452136761055)(65623756079841)(258649278758335)(185117386973197);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231355)(944501410)(52105095)(93006095)(93001095)(10201501046)(3002001)(6055026)(149066)(150027)(6041310)(20161123562045)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(201708071742011)(7699051);SRVR:VI1PR04MB4846;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB4846;
-x-forefront-prvs: 0805EC9467
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(366004)(376002)(396003)(346002)(136003)(189003)(199004)(13464003)(71190400001)(71200400001)(44832011)(14444005)(6506007)(106356001)(53546011)(486006)(26005)(2501003)(229853002)(478600001)(186003)(66066001)(2900100001)(14454004)(102836004)(105586002)(9686003)(5250100002)(97736004)(68736007)(55016002)(8936002)(53936002)(76176011)(99286004)(316002)(2906002)(6436002)(476003)(8676002)(33656002)(3846002)(6116002)(446003)(110136005)(11346002)(54906003)(7696005)(81156014)(86362001)(5660300001)(7416002)(6246003)(4326008)(25786009)(305945005)(2201001)(7736002)(81166006)(256004)(74316002)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB4846;H:VI1PR04MB4800.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: ncf1+jwvHc9ETxN7Iojbcnc526VNYwin1NtBLWReq1dwvg8MPqg4uHUf0ls8J9fgvJH2YUFFZMyiT1qSOVPwgUdBfCHU0FGP6vadbBDOHs19IjYmKrWS66XNLG9LTJT6pMDFxt6DBNE5BEexNskmvztEprtEOPa/aO/gOCvXag/7u2Oh2lH0jKHxkBbJofj+hho5MKGWdh147+0ILXHmBrDVAknW7RMQriRQc8Qr0ELDKNhSxjKo2ax1L3AIoL+kMAvMFzBntAWrVqrcaT4MJQx4uLnAkcbFnPuNhZkQzSSFHii+NLUnVYCenmraEL+0LdssgM5KOpHIxzO1UFeHOjjFDucb93Zek49XxQcW/jw=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1729701AbeIXUg2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Sep 2018 16:36:28 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:41112 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726956AbeIXUg2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Sep 2018 16:36:28 -0400
+Received: by mail-wr1-f65.google.com with SMTP id j15-v6so15843019wrt.8;
+        Mon, 24 Sep 2018 07:34:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:user-agent:in-reply-to:references:mime-version
+         :content-transfer-encoding:subject:to:cc:from:message-id;
+        bh=aBPKqR/n5BjqXnSvkqOsKROveni0783ITST5+Mc8ikQ=;
+        b=nD3cHRx5c5TJ/+ABYsYVFIc4lwo7RoCO+QYVdJMfOHg5Isk0Gp6PIS273zlCL+zehW
+         +/bmxcwpiu/Iye/xDua3uBSDbpVoe/V7vyhq8QcptdTtN42pKppE5dVTWkm5UGPvHZbu
+         xWvdTc7m44oh706iQsIGjbzld/cYywPnx1J8Q35qnUwrb6RkVsycdUrWEIlArCDSKGsh
+         Q1VuFJ3iApgwPsb0KBzRuCa55SFwOG46Pqq5FrtOuat2sGErUtKwWrZA5qLAeGNOrhs0
+         WHfVSUtQuQoqpfZ8jxGvgg0KDT8NJRqD3nBIYF9WLkN3ltE4/+vT8TFgMNwxau4rNyIB
+         URzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:user-agent:in-reply-to:references
+         :mime-version:content-transfer-encoding:subject:to:cc:from
+         :message-id;
+        bh=aBPKqR/n5BjqXnSvkqOsKROveni0783ITST5+Mc8ikQ=;
+        b=hKHeIzIR8fFuGYi9DN3pdJsHTJwHUHZCoCGT6Ty7iDK05O/8qGEgvTS6B6kxpqiiuZ
+         x2ATQF3DWKeJnP9FmkzfgGpgvj4SuMp94EXa4po1V+tHbqu5UQTwjMtD8MsX4OIA4HSv
+         Nw5EJdotHwy1dbpHUTsCqvXEcVE3VSq0kJ5xKm8shCOl5+Mg3iZoQb3bxA+Vd5i+iB78
+         u0UzCYCcKya7d47Wc7z5qGEpQvXLIcswcRGPUaZpgHYLT4IsAFiVPxrASiUKEvdL+vQf
+         DfN73SJ429pP3dRyNKeDXm7HugvR4G95fBZii7u5yTr/P+EaAGcHfwh+fPKaVB8EZ/1+
+         G1iw==
+X-Gm-Message-State: ABuFfojpjA8yVECB2zjPts9oPxjqcfMjMWubNlfmfEbKAdJMp8gY6zIr
+        VtQ/sNUkCtSGT17mN9E8fg==
+X-Google-Smtp-Source: ACcGV61hnGAOZ95fhCmO898sPbEac34nODFSXfDg4m4tX+EvXKCLBMhG2+fWMsp1xwY5Yr2GF4sTpg==
+X-Received: by 2002:a5d:4b52:: with SMTP id w18-v6mr9012119wrs.87.1537799640062;
+        Mon, 24 Sep 2018 07:34:00 -0700 (PDT)
+Received: from android-dhcp-8-1-0-d4-38-9c-a2-1f-05.home (host86-147-9-252.range86-147.btcentralplus.com. [86.147.9.252])
+        by smtp.gmail.com with ESMTPSA id 132-v6sm11759386wmd.13.2018.09.24.07.33.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 24 Sep 2018 07:33:59 -0700 (PDT)
+Date:   Mon, 24 Sep 2018 15:33:56 +0100
+User-Agent: K-9 Mail for Android
+In-Reply-To: <9156720.4hgryJ20kK@phil>
+References: <20180407135934.26122-1-ctatlor97@gmail.com> <69cf26ba-5dae-e84c-2fa8-15699fdd9986@codeaurora.org> <63F4E7C0-6925-4EC0-84B9-75B31AC664E4@gmail.com> <9156720.4hgryJ20kK@phil>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8511f67a-5ede-4e3d-e255-08d62214b76c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Sep 2018 11:56:08.9841
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4846
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] clk: qcom: Add Global Clock controller (GCC) driver for SDM660
+To:     Heiko Stuebner <heiko@sntech.de>
+CC:     Taniya Das <tdas@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-soc@vger.kernel.org
+From:   Craig <ctatlor97@gmail.com>
+Message-ID: <0E2DD374-B1DA-47D9-B327-D5BBC39F7FBB@gmail.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
-Message-ID: <20180924115608.4LisHfiAo3bMUTwvHfJTjxJl1aHG-Y1P9zZVDEnALAs@z>
+Message-ID: <20180924143356.zxcZI3AmsXSLEfyGOEZsFsr2sdlxaQjxIA5Um8qhRV8@z>
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogU2NvdHQgV29vZCA8b3Nz
-QGJ1c2Vycm9yLm5ldD4NCj4gU2VudDogU3VuZGF5LCBTZXB0ZW1iZXIgMTYsIDIwMTggMTI6NTQg
-QU0NCj4gVG86IFZhYmhhdiBTaGFybWEgPHZhYmhhdi5zaGFybWFAbnhwLmNvbT47IHN1ZGVlcC5o
-b2xsYUBhcm0uY29tOyBsaW51eC0NCj4ga2VybmVsQHZnZXIua2VybmVsLm9yZzsgZGV2aWNldHJl
-ZUB2Z2VyLmtlcm5lbC5vcmc7IHJvYmgrZHRAa2VybmVsLm9yZzsNCj4gbWFyay5ydXRsYW5kQGFy
-bS5jb207IGxpbnV4cHBjLWRldkBsaXN0cy5vemxhYnMub3JnOyBsaW51eC1hcm0tDQo+IGtlcm5l
-bEBsaXN0cy5pbmZyYWRlYWQub3JnOyBtdHVycXVldHRlQGJheWxpYnJlLmNvbTsgc2JveWRAa2Vy
-bmVsLm9yZzsNCj4gcmp3QHJqd3lzb2NraS5uZXQ7IHZpcmVzaC5rdW1hckBsaW5hcm8ub3JnOyBs
-aW51eC1jbGtAdmdlci5rZXJuZWwub3JnOyBsaW51eC0NCj4gcG1Admdlci5rZXJuZWwub3JnOyBs
-aW51eC1rZXJuZWwtb3duZXJAdmdlci5rZXJuZWwub3JnOw0KPiBjYXRhbGluLm1hcmluYXNAYXJt
-LmNvbTsgd2lsbC5kZWFjb25AYXJtLmNvbTsNCj4gZ3JlZ2toQGxpbnV4Zm91bmRhdGlvbi5vcmc7
-IGFybmRAYXJuZGIuZGU7IGtzdGV3YXJ0QGxpbnV4Zm91bmRhdGlvbi5vcmc7DQo+IHlhbWFkYS5t
-YXNhaGlyb0Bzb2Npb25leHQuY29tDQo+IENjOiBsaW51eEBhcm1saW51eC5vcmcudWs7IFZhcnVu
-IFNldGhpIDxWLlNldGhpQG54cC5jb20+OyBVZGl0IEt1bWFyDQo+IDx1ZGl0Lmt1bWFyQG54cC5j
-b20+OyBZb2dlc2ggTmFyYXlhbiBHYXVyDQo+IDx5b2dlc2huYXJheWFuLmdhdXJAbnhwLmNvbT47
-IEFuZHkgVGFuZyA8YW5keS50YW5nQG54cC5jb20+DQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjIg
-My81XSBkcml2ZXJzOiBjbGstcW9yaXE6IEFkZCBjbG9ja2dlbiBzdXBwb3J0IGZvciBseDIxNjBh
-DQo+IA0KPiBPbiBGcmksIDIwMTgtMDktMTQgYXQgMDI6MDcgKzA1MzAsIFZhYmhhdiBTaGFybWEg
-d3JvdGU6DQo+ID4gRnJvbTogWW9nZXNoIEdhdXIgPHlvZ2VzaG5hcmF5YW4uZ2F1ckBueHAuY29t
-Pg0KPiA+DQo+ID4gQWRkIGNsb2NrZ2VuIHN1cHBvcnQgZm9yIGx4MjE2MGEuDQo+ID4gQWRkZWQg
-ZW50cnkgZm9yIGNvbXBhdCAnZnNsLGx4MjE2MGEtY2xvY2tnZW4nLg0KPiA+DQo+ID4gU2lnbmVk
-LW9mZi1ieTogVGFuZyBZdWFudGlhbiA8YW5keS50YW5nQG54cC5jb20+DQo+ID4gU2lnbmVkLW9m
-Zi1ieTogWW9nZXNoIEdhdXIgPHlvZ2VzaG5hcmF5YW4uZ2F1ckBueHAuY29tPg0KPiA+IFNpZ25l
-ZC1vZmYtYnk6IFZhYmhhdiBTaGFybWEgPHZhYmhhdi5zaGFybWFAbnhwLmNvbT4NCj4gPiBBY2tl
-ZC1ieTogU3RlcGhlbiBCb3lkIDxzYm95ZEBrZXJuZWwub3JnPg0KPiA+IC0tLQ0KPiA+ICBkcml2
-ZXJzL2Nsay9jbGstcW9yaXEuYyAgICAgICAgIHwgMTQgKysrKysrKysrKysrKy0NCj4gPiAgZHJp
-dmVycy9jcHVmcmVxL3FvcmlxLWNwdWZyZXEuYyB8ICAxICsNCj4gPiAgMiBmaWxlcyBjaGFuZ2Vk
-LCAxNCBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pDQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEv
-ZHJpdmVycy9jbGsvY2xrLXFvcmlxLmMgYi9kcml2ZXJzL2Nsay9jbGstcW9yaXEuYyBpbmRleA0K
-PiA+IDNhMTgxMmYuLmU5YWU3MGIgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9jbGsvY2xrLXFv
-cmlxLmMNCj4gPiArKysgYi9kcml2ZXJzL2Nsay9jbGstcW9yaXEuYw0KPiA+IEBAIC03OSw3ICs3
-OSw3IEBAIHN0cnVjdCBjbG9ja2dlbl9jaGlwaW5mbyB7DQo+ID4gIAljb25zdCBzdHJ1Y3QgY2xv
-Y2tnZW5fbXV4aW5mbyAqY211eF9ncm91cHNbMl07DQo+ID4gIAljb25zdCBzdHJ1Y3QgY2xvY2tn
-ZW5fbXV4aW5mbyAqaHdhY2NlbFtOVU1fSFdBQ0NFTF07DQo+ID4gIAl2b2lkICgqaW5pdF9wZXJp
-cGgpKHN0cnVjdCBjbG9ja2dlbiAqY2cpOw0KPiA+IC0JaW50IGNtdXhfdG9fZ3JvdXBbTlVNX0NN
-VVhdOyAvKiAtMSB0ZXJtaW5hdGVzIGlmIGZld2VyIHRoYW4NCj4gPiBOVU1fQ01VWCAqLw0KPiA+
-ICsJaW50IGNtdXhfdG9fZ3JvdXBbTlVNX0NNVVgrMV07IC8qIC0xIHRlcm1pbmF0ZSBpZiBmZXdl
-ciB0bw0KPiA+IE5VTV9DTVVYKzEgKi8NCj4gDQo+IFlvdSBuZWVkIHRvIGFkZCB0aGUgLTEgdGVy
-bWluYXRvciB0byBwNDA4MCwgYW5kIHJlbW92ZSB0aGUgImlmIGZld2VyIg0KPiBjb21tZW50IHNp
-bmNlIHRoZSB3aG9sZSBwb2ludCBvZiB0aGlzIGlzIHRoYXQgZXZlcnkgYXJyYXkgZ2V0cyAtMSB0
-ZXJtaW5hdGVkLg0KT2ssIFVwZGF0ZWQNCj4gDQo+IFdoeSBkaWQgeW91IGNoYW5nZSAidGVybWlu
-YXRlcyIgdG8gInRlcm1pbmF0ZSIgYW5kICJ0aGFuIiB0byAidG8iPw0KPiANCj4gVGhpcyArMSBj
-aGFuZ2Ugc2hvdWxkIGJlIGEgc2VwYXJhdGUgcGF0Y2ggZnJvbSBseDIxNjBhIHN1cHBvcnQuDQpT
-dXJlLCBTZW5kaW5nIGFzIHNlcGFyYXRlIHBhdGNoDQo+IA0KPiAtU2NvdHQNCg0K
+
+
+On 24 September 2018 13:44:33 BST, Heiko Stuebner <heiko@sntech=2Ede> wrot=
+e:
+>Hi Craig,
+>
+>Am Montag, 13=2E August 2018, 09:45:09 CEST schrieb Craig Tatlor:
+>> On 13 August 2018 07:55:34 BST, Taniya Das <tdas@codeaurora=2Eorg>
+>wrote:
+>> >Hello Craig,
+>> >
+>> >Could you please correct the authorship and also provide the
+>reference=20
+>> >to code where this is picked from?
+>> Okay,=20
+>> Got code from here
+>https://github=2Ecom/sonyxperiadev/kernel/blob/aosp/LA=2EUM=2E6=2E4=2Er1/=
+drivers/clk/qcom/gcc-sdm660=2Ec
+>> but changed it quite a bit for upstream,
+>> Should I change the commit author and add your signed off by and say
+>I did cleanups on my signed off by=2E
+>
+>yep, for something this huge it is really the correct way to keep the
+>original authorship intact as Taniya did the initial big work, and just
+>add you change-description, so something like
+>
+>---- 8< ------
+>Add support for the global clock controller found on SDM660
+>based devices=2E This should allow most non-multimedia device
+>drivers to probe and control their clocks=2E
+>Based on CAF implementation=2E
+>
+>Signed-off-by: Taniya Das <tdas@codeaurora=2Eorg>
+>[ description of changes =2E=2E=2E often seen in these brackets ]
+>Signed-off-by: Craig Tatlor <ctatlor97@gmail=2Ecom>
+>---- 8< ------
+>
+Sure, will do, though I'm sure qcom have a program to generate the drivers=
+ :)
+
+>Also, do you plan to continue working on this, as I would be
+>interessted
+>in the clock driver for a sdm660-based phone as well
+Yup, was really just waiting for reply to this question,
+>
+>
+>Thanks
+>Heiko
+
+--=20
