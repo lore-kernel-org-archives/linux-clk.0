@@ -2,84 +2,114 @@ Return-Path: <SRS0=Dsg5=MG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A421C433F4
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 08:04:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24DA5C433F4
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 08:06:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09A2D20C0A
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 08:04:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09A2D20C0A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id D10A520C0A
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 08:06:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="YyqV+INi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D10A520C0A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727335AbeIXOFr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Sep 2018 10:05:47 -0400
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:33114 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726167AbeIXOFr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Sep 2018 10:05:47 -0400
-Received: by mail-ua1-f68.google.com with SMTP id i4-v6so7947313uak.0;
-        Mon, 24 Sep 2018 01:04:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wVYYDI8d34KV6qgp5nkLD+SQVaAPrc1x0QC+9WB2O/Q=;
-        b=KgAtSf4XZjNdqTB1Kx89489WHnakOpcxYmIHINHkfU6qncQDj3SFAjYkPAhcUjHkkD
-         QgOqd8n8DBxjRRUJO/3Ydx6LElYcBnqGaC6lBtRVDe8Uxjac5LvbuAtvQIs6+AY+7Zz1
-         LSjGre1KZp26azZyI95LoR5HE9WZaU4wdG0Pt631O2oRLoKFuJzAIjq0ui4AlvRUMqtZ
-         J6pL4dh3GPwWfWUe4915vDVWtKefxvkxH2/mq2mv4+NUlUhNZi+B9Izf7fIGuF5rb4GW
-         fZ6+g2v+4/YC6Ef/5WLxaRZWKmAGkYs6B4iInGeftFdxFZCX/f18vQLRaj2LEYKsZXdO
-         awRQ==
-X-Gm-Message-State: ABuFfohDyPk6nHOWlJZ+0zHt86Q6i+45D0irCU3KmZdmZIwqZFQIJqk3
-        E+wywnbcGHL+FpYmvfC5+86V2jYWRdOrZV4iAuCmjifi
-X-Google-Smtp-Source: ACcGV61rRXp76LYUcMLjUR/9PH3A6xIxzH3hpEPViXjndtLvJUmTBSpQW7q7Rr5KCDjk7KOTLC4V7h0P7tT2pMwaGOg=
-X-Received: by 2002:a9f:35f1:: with SMTP id u46-v6mr946987uad.20.1537776296303;
- Mon, 24 Sep 2018 01:04:56 -0700 (PDT)
-MIME-Version: 1.0
-References: <5b7895ac-11c1-ac2d-837b-56726bc6226a@cogentembedded.com> <53539d21-bb00-eb11-bfde-206f3b7e3fe0@cogentembedded.com>
-In-Reply-To: <53539d21-bb00-eb11-bfde-206f3b7e3fe0@cogentembedded.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 24 Sep 2018 10:04:44 +0200
-Message-ID:
- <CAMuHMdVCa6SgOJnQKXq9xGkhvBeXfj7eo3+F4JaNtDY2QEF8Xg@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: r8a77970: add TPU clock
-To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        id S1726377AbeIXOH3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Sep 2018 10:07:29 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:15778 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726074AbeIXOH3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Sep 2018 10:07:29 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5ba89b0f0000>; Mon, 24 Sep 2018 01:06:39 -0700
+Received: from HQMAIL101.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 24 Sep 2018 01:06:37 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 24 Sep 2018 01:06:37 -0700
+Received: from tbergstrom-lnx.Nvidia.com (10.124.1.5) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 24 Sep
+ 2018 08:06:37 +0000
+Received: by tbergstrom-lnx.Nvidia.com (Postfix, from userid 1002)
+        id 861C8F8076D; Mon, 24 Sep 2018 11:06:31 +0300 (EEST)
+Date:   Mon, 24 Sep 2018 11:06:31 +0300
+From:   Peter De Schrijver <pdeschrijver@nvidia.com>
+To:     ryang <decatf@gmail.com>
+CC:     Prashant Gaikwad <pgaikwad@nvidia.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] clk: tegra: Fix an infinite loop when clock rate is zero
+Message-ID: <20180924080631.GE7636@tbergstrom-lnx.Nvidia.com>
+References: <20180921220037.16862-1-decatf@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20180921220037.16862-1-decatf@gmail.com>
+X-NVConfidentiality: public
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1537776400; bh=JBa6cNfMJOdqf+mnmUeztcbQDvOdMgoxkEdEFDmNxF4=;
+        h=X-PGP-Universal:Date:From:To:CC:Subject:Message-ID:References:
+         MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
+         X-NVConfidentiality:User-Agent:X-Originating-IP:X-ClientProxiedBy;
+        b=YyqV+INiayn3aOno02S6LXOW0sWnGUsctCcFMYlklVjtBFxSMR0GCr9JuopbPzTAL
+         FnRxi1DHkiSG8TaFE2ls15v8e96ckVMBZgL/A6o3lT5+FIpRrJYGMTaSZAwoiUI+Sk
+         +Q4BEhhoVq81vNJ1revzE91frty/RWAuDisl/fvtTQYB31BwaT42IbyaYPW9GkhiTr
+         KYNw6o8yx9Hqk2Fcb/x/bUtQon/fKfYKhyITvZv22DmLLDpl2gKCPwhm0iIMzPzl08
+         7xsfGFq2vTXJxvgEnpgqJe2JovzCcPRnzHEf+gjnN6Rtt15gn/j3OCwHDxDq2zjF9C
+         K19Eu7NB7k6qA==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
-Message-ID: <20180924080444.m9fZ7I248WPlkvXTo_HY9YYI-7hB9qLNCEZMGDd7se8@z>
+Message-ID: <20180924080631.duFnvUDZ-NZ-PrwZwLMXUKInLkMmKO6OBeqBjfoJ6-M@z>
 
-On Wed, Sep 19, 2018 at 8:10 PM Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> The TPU0 clock wasn't present in the original R8A77970 patch by Daisuke
-> Matsushita, it was added in a later BSP version...
->
-> Based on the original (and large) patch by Vladimir Barinov.
->
-> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+On Fri, Sep 21, 2018 at 06:00:37PM -0400, ryang wrote:
+> Calling clk_set_rate or clk_round_rate will lock up the kernel when the
+> rate is zero. This avoids the infinite loop and uses a slightly more
+> optimized p divider calculation.
+> 
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in clk-renesas-for-v4.20.
+Acked-By: Peter De Schrijver <pdeschrijver@nvidia.com>
 
-Gr{oetje,eeting}s,
+At some point we should also limit pdiv to its maximum possible value, but
+that's not so obvious as we need to take into account PLLs where pdiv is
+non-linear.
 
-                        Geert
+Peter.
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> Signed-off-by: ryang <decatf@gmail.com>
+> ---
+>  drivers/clk/tegra/clk-pll.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+> index 830d1c87fa7c..17a058c3bbc1 100644
+> --- a/drivers/clk/tegra/clk-pll.c
+> +++ b/drivers/clk/tegra/clk-pll.c
+> @@ -582,9 +582,8 @@ static int _calc_rate(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
+>  	}
+>  
+>  	/* Raise VCO to guarantee 0.5% accuracy */
+> -	for (cfg->output_rate = rate; cfg->output_rate < 200 * cfreq;
+> -	     cfg->output_rate <<= 1)
+> -		p_div++;
+> +	p_div = rate ? fls((200 * cfreq) / rate) : 0;
+> +	cfg->output_rate = rate << p_div;
+>  
+>  	cfg->m = parent_rate / cfreq;
+>  	cfg->n = cfg->output_rate / cfreq;
+> -- 
+> 2.17.1
+> 
