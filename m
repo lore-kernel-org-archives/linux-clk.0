@@ -2,114 +2,134 @@ Return-Path: <SRS0=Dsg5=MG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9529BECE567
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 05:35:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AF9BECE561
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 06:49:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52F0D20989
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 05:35:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="F0A+IgX8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52F0D20989
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id C02BA21486
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 06:49:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C02BA21486
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725853AbeIXLfe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Sep 2018 07:35:34 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:40462 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727420AbeIXLfb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Sep 2018 07:35:31 -0400
-Received: by mail-wm1-f68.google.com with SMTP id o2-v6so2065353wmh.5
-        for <linux-clk@vger.kernel.org>; Sun, 23 Sep 2018 22:35:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Z9R1aXWDdyaRlMfRGrp94QSZu/fyz5EfI5I6L2UcPxw=;
-        b=F0A+IgX8KvCefyU4euLvooaN8cO+Z0pYMbkFBYMrjwVARWC0azKYZ4SdpFTUhsaGi8
-         A6VyP3FiL1qHpmaymEvzUYH5q0i9Op5xgMz9NNjpzE4EgPk3xgJVKNwepYUgAc/kjLea
-         jWMawZ9ALhUyFVxk/Osw8W0qusXqQ0HqRAh9M=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Z9R1aXWDdyaRlMfRGrp94QSZu/fyz5EfI5I6L2UcPxw=;
-        b=ueCxMVQjPIOLwDOYDfGkk/RpRzYh+fcMPOrsAsR4v9eg/qbyCvUhWjM5Zekjw/gdQ+
-         3c2eLfWRC0rI9+Uo3bq7RPNuGeDn96c2bYJ0Q1nBusBtsS0UmxCk0MH24w06KiunC5Ya
-         BzIYn75kFhmUbmj6Z4wEqYMUAkotNMBj7ujlK2ODQHTj2tddbM/Mp5QuDK90t8F1ie35
-         nF1g9gSZWCxM5hd8Z2oWwxSdMVImiRU9CzY7Pwmzc7yKNvc3TRiYofSoSFYtOPgXYShT
-         KD5+R3JHcQSzjlgklF/6naUyyk0GUs187sF587fpVDaHLYN4TB7gjWNUncOcplk4321X
-         FFSA==
-X-Gm-Message-State: APzg51CiW9F0Ds4T2LeDGUB79I48iIVRq6vOE3XxS/fZkcU7p+t/ItFW
-        Hbe4tia67DScXjY13IQmqUbW6A==
-X-Google-Smtp-Source: ACcGV60TeS+4vcb6rH4dZXvnDjrJlrphbSBaoBASF7zbDuvGACWs16RYgXPlwsoESjE1xZsta9UP8g==
-X-Received: by 2002:a1c:f210:: with SMTP id s16-v6mr4263888wmc.36.1537767307505;
-        Sun, 23 Sep 2018 22:35:07 -0700 (PDT)
-Received: from [192.168.0.41] (89.154.136.77.rev.sfr.net. [77.136.154.89])
-        by smtp.googlemail.com with ESMTPSA id g2-v6sm2558997wmh.16.2018.09.23.22.35.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 23 Sep 2018 22:35:06 -0700 (PDT)
-Subject: Re: [PATCH v7 05/24] clocksource: Add a new timer-ingenic driver
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     Mathieu Malaterre <malat@debian.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Rob Herring <robh+dt@kernel.org>, linux-doc@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        od@zcrc.me, linux-mips@linux-mips.org,
-        Paul Burton <paul.burton@mips.com>,
-        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-pwm@vger.kernel.org
-References: <5ba8750a.1c69fb81.501e8.d0f0SMTPIN_ADDED_MISSING@mx.google.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <58645f14-aec2-4f66-3a39-34beeabdb035@linaro.org>
-Date:   Mon, 24 Sep 2018 07:35:05 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1727480AbeIXMsG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Sep 2018 08:48:06 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:46373 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726157AbeIXMsF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Sep 2018 08:48:05 -0400
+Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <sha@pengutronix.de>)
+        id 1g4KeA-0003In-Py; Mon, 24 Sep 2018 08:47:06 +0200
+Received: from sha by dude.hi.pengutronix.de with local (Exim 4.91)
+        (envelope-from <sha@pengutronix.de>)
+        id 1g4Ke7-0007IH-SK; Mon, 24 Sep 2018 08:47:03 +0200
+Date:   Mon, 24 Sep 2018 08:47:03 +0200
+From:   Sascha Hauer <s.hauer@pengutronix.de>
+To:     Abel Vesa <abel.vesa@nxp.com>
+Cc:     Lucas Stach <l.stach@pengutronix.de>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Rob Herring <robh@kernel.org>, linux-imx@nxp.com,
+        Abel Vesa <abelvesa@linux.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v8 4/5] clk: imx: add imx composite clock
+Message-ID: <20180924064703.GY4097@pengutronix.de>
+References: <1537531894-18499-1-git-send-email-abel.vesa@nxp.com>
+ <1537531894-18499-5-git-send-email-abel.vesa@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <5ba8750a.1c69fb81.501e8.d0f0SMTPIN_ADDED_MISSING@mx.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1537531894-18499-5-git-send-email-abel.vesa@nxp.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 08:39:50 up 129 days, 18:20, 153 users,  load average: 0.68, 1.36,
+ 1.30
+User-Agent: Mutt/1.10.0 (2018-05-17)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
-Message-ID: <20180924053505.uy1QtyE8-84U6w3Bh6fvT7DSZ8M09eQNgp-VpP25PeU@z>
+Message-ID: <20180924064703.YA6QKP-rjmLriIcHCXAHKirhzIAuHzTwqWDqa4LoG4Q@z>
 
-On 24/09/2018 07:24, Paul Cercueil wrote:
-> Hi Daniel,
+Hi Abel,
+
+On Fri, Sep 21, 2018 at 03:11:33PM +0300, Abel Vesa wrote:
+> Since a lot of clocks on imx8 are formed by a mux, gate, predivider and
+> divider, the idea here is to combine all of those into one composite clock,
+> but we need to deal with both predivider and divider at the same time and
+> therefore we add the imx_clk_composite_divider_ops and register the composite
+> clock with those.
 > 
-> Le 24 sept. 2018 05:12, Daniel Lezcano <daniel.lezcano@linaro.org> a écrit :
->>
->> On 21/08/2018 19:16, Paul Cercueil wrote: 
->>> This driver handles the TCU (Timer Counter Unit) present on the Ingenic 
->>> JZ47xx SoCs, and provides the kernel with a system timer, and optionally 
->>> with a clocksource and a sched_clock. 
->>>
->>> It also provides clocks and interrupt handling to client drivers. 
->>
->> Can you provide a much more complete description of the timer in order 
->> to make my life easier for the review of this patch? 
+> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+> Suggested-by: Sascha Hauer <s.hauer@pengutronix.de>
+> ---
+>  drivers/clk/imx/Makefile        |   1 +
+>  drivers/clk/imx/clk-composite.c | 156 ++++++++++++++++++++++++++++++++++++++++
+>  drivers/clk/imx/clk.h           |  14 ++++
+>  3 files changed, 171 insertions(+)
+>  create mode 100644 drivers/clk/imx/clk-composite.c
 > 
-> See patch [03/24], it adds a doc file that describes the hardware.
+> +static int imx_clk_composite_divider_set_rate(struct clk_hw *hw,
+> +					unsigned long rate,
+> +					unsigned long parent_rate)
+> +{
+> +	struct clk_divider *divider = to_clk_divider(hw);
+> +	unsigned long prediv_rate;
+> +	unsigned long flags = 0;
+> +	int prediv_value;
+> +	int div_value;
+> +	u32 val;
+> +
+> +	prediv_value = divider_get_val(rate, parent_rate, NULL,
+> +				PCG_PREDIV_WIDTH, CLK_DIVIDER_ROUND_CLOSEST);
+> +	if (prediv_value < 0)
+> +		return prediv_value;
+> +
+> +	prediv_rate = DIV_ROUND_UP_ULL((u64)parent_rate, prediv_value + 1);
+> +
+> +	div_value = divider_get_val(rate, prediv_rate, NULL,
+> +				PCG_DIV_WIDTH, CLK_DIVIDER_ROUND_CLOSEST);
+> +	if (div_value < 0)
+> +		return div_value;
 
-Thanks, I went through but it is incomplete to understand what the timer
-do. I will reverse-engineer the code but it would help if you can give
-the gross approach. Why multiple channels ? mutexes and completion ?
+Does this work with expected accuracy? Consider the best divider you are
+looking for is 9. With the above you'll end up with a predivider of 8
+and a postdivider of 1 instead of the optimum divider values of 3 and 3.
 
+I think you have to iterate over all possible divider combinations and
+then use the best one found. The original divider code does this, albeit
+a little obfuscated.
+
+You have to do the same in round_rate aswell.
+
+Sorry, I missed that when I last looked at it in v6.
+
+Sascha
 
 -- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
