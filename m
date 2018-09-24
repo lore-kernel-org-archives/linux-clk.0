@@ -2,145 +2,84 @@ Return-Path: <SRS0=Dsg5=MG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0620ECE561
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 07:14:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A421C433F4
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 08:04:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A179208E3
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 07:14:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="S+o2Fv41"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A179208E3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 09A2D20C0A
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 08:04:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09A2D20C0A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727159AbeIXNPL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Sep 2018 09:15:11 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:41513 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726167AbeIXNPL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Sep 2018 09:15:11 -0400
-Received: by mail-wr1-f68.google.com with SMTP id j15-v6so14427806wrt.8
-        for <linux-clk@vger.kernel.org>; Mon, 24 Sep 2018 00:14:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=WuG1X1M3KFSddiJgkJ0AwqTU/xMGLDpRyA5DOLC5w1U=;
-        b=S+o2Fv41yiCbgxZnkAkjHKlxTtIEptB915xs1gdcKJQ3uXDJvskK56BFGCRuopQQ2t
-         gWLg0P3P8LXWegkr66xzTgMxPp8E3i9huZUKOGup/ehJb7LxiIqhZx1MkJ25C6FRWo/p
-         KaqGgKbUCeup3TLkPgxlf/W1mRwj/ceywId9g=
+        id S1727335AbeIXOFr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Sep 2018 10:05:47 -0400
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:33114 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726167AbeIXOFr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Sep 2018 10:05:47 -0400
+Received: by mail-ua1-f68.google.com with SMTP id i4-v6so7947313uak.0;
+        Mon, 24 Sep 2018 01:04:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=WuG1X1M3KFSddiJgkJ0AwqTU/xMGLDpRyA5DOLC5w1U=;
-        b=tVDG0KZ9H1Jfarrdoc3/EfwOp5xR43EZkuYY4tC5PtG0G56vlqgpCnecV0saqOL7il
-         hvGe+Toh8BnY4PdL/QoXMMgn8MvshIQyHWdnXBLZen3dpnsJMVUEUKv73CqCXT5/WQ7I
-         2N3ZnkReOzBJc++KFSyV/vs3lfx8GLknorlNzrAbHzJICcAAq6rZG9k4+0tg4ztJg1CS
-         DCPtIeilT3JL/u0ieWNCVttmXU+JI+TrOGfITxlY8gJkP4I+NW5CgPUQ5lk/uN5hQZsv
-         COqOfkUZMmzJtuQS6LkuYF40bTpxc6o6tGXWSdiB+mdK2Dx6OEUAyxsjx39KobR0yrXk
-         qCmw==
-X-Gm-Message-State: ABuFfoiqNJeHyDq9+Uf0H5DysWlEPn3ksdiCRpFunWTG7jPCW7Yn2IEr
-        GCM8Vh8SfsrdRMu9jQaB9tcmtQ==
-X-Google-Smtp-Source: ACcGV60s4laND56QrgYhaZFALQur/k4kF1YTXHLrwNFcFHOwCO/BhsK4F0Mi5w89AooR/Mwfby0jJg==
-X-Received: by 2002:a5d:4b52:: with SMTP id w18-v6mr7202299wrs.87.1537773268575;
-        Mon, 24 Sep 2018 00:14:28 -0700 (PDT)
-Received: from [192.168.0.41] (89.154.136.77.rev.sfr.net. [77.136.154.89])
-        by smtp.googlemail.com with ESMTPSA id l5sm838709wrx.69.2018.09.24.00.14.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 24 Sep 2018 00:14:27 -0700 (PDT)
-Subject: Re: [PATCH v7 05/24] clocksource: Add a new timer-ingenic driver
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     Mathieu Malaterre <malat@debian.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Rob Herring <robh+dt@kernel.org>, linux-doc@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        od@zcrc.me, linux-mips@linux-mips.org,
-        Paul Burton <paul.burton@mips.com>,
-        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-pwm@vger.kernel.org
-References: <5ba88a1a.1c69fb81.2ba56.ccdaSMTPIN_ADDED_MISSING@mx.google.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <a9d7366a-7118-9819-4d15-cdc10fa6c41c@linaro.org>
-Date:   Mon, 24 Sep 2018 09:14:26 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wVYYDI8d34KV6qgp5nkLD+SQVaAPrc1x0QC+9WB2O/Q=;
+        b=KgAtSf4XZjNdqTB1Kx89489WHnakOpcxYmIHINHkfU6qncQDj3SFAjYkPAhcUjHkkD
+         QgOqd8n8DBxjRRUJO/3Ydx6LElYcBnqGaC6lBtRVDe8Uxjac5LvbuAtvQIs6+AY+7Zz1
+         LSjGre1KZp26azZyI95LoR5HE9WZaU4wdG0Pt631O2oRLoKFuJzAIjq0ui4AlvRUMqtZ
+         J6pL4dh3GPwWfWUe4915vDVWtKefxvkxH2/mq2mv4+NUlUhNZi+B9Izf7fIGuF5rb4GW
+         fZ6+g2v+4/YC6Ef/5WLxaRZWKmAGkYs6B4iInGeftFdxFZCX/f18vQLRaj2LEYKsZXdO
+         awRQ==
+X-Gm-Message-State: ABuFfohDyPk6nHOWlJZ+0zHt86Q6i+45D0irCU3KmZdmZIwqZFQIJqk3
+        E+wywnbcGHL+FpYmvfC5+86V2jYWRdOrZV4iAuCmjifi
+X-Google-Smtp-Source: ACcGV61rRXp76LYUcMLjUR/9PH3A6xIxzH3hpEPViXjndtLvJUmTBSpQW7q7Rr5KCDjk7KOTLC4V7h0P7tT2pMwaGOg=
+X-Received: by 2002:a9f:35f1:: with SMTP id u46-v6mr946987uad.20.1537776296303;
+ Mon, 24 Sep 2018 01:04:56 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <5ba88a1a.1c69fb81.2ba56.ccdaSMTPIN_ADDED_MISSING@mx.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <5b7895ac-11c1-ac2d-837b-56726bc6226a@cogentembedded.com> <53539d21-bb00-eb11-bfde-206f3b7e3fe0@cogentembedded.com>
+In-Reply-To: <53539d21-bb00-eb11-bfde-206f3b7e3fe0@cogentembedded.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 24 Sep 2018 10:04:44 +0200
+Message-ID:
+ <CAMuHMdVCa6SgOJnQKXq9xGkhvBeXfj7eo3+F4JaNtDY2QEF8Xg@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r8a77970: add TPU clock
+To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
-Message-ID: <20180924071426.q27DYDX654iVvacClXo3N2QGxgZwQtaIQ8QW9K6qKqc@z>
+Message-ID: <20180924080444.m9fZ7I248WPlkvXTo_HY9YYI-7hB9qLNCEZMGDd7se8@z>
 
-On 24/09/2018 08:53, Paul Cercueil wrote:
-> 
-> Le 24 sept. 2018 07:58, Daniel Lezcano <daniel.lezcano@linaro.org> a écrit :
->>
->> On 24/09/2018 07:49, Paul Cercueil wrote: 
->>>
->>> Le 24 sept. 2018 07:35, Daniel Lezcano <daniel.lezcano@linaro.org> a 
->>> écrit : 
->>>>
->>>> On 24/09/2018 07:24, Paul Cercueil wrote: 
->>>>> Hi Daniel, 
->>>>>
->>>>> Le 24 sept. 2018 05:12, Daniel Lezcano 
->>>>> <daniel.lezcano@linaro.org> a écrit : 
->>>>>>
->>>>>> On 21/08/2018 19:16, Paul Cercueil wrote: 
->>>>>>> This driver handles the TCU (Timer Counter Unit) present on 
->>>>>>> the Ingenic JZ47xx SoCs, and provides the kernel with a 
->>>>>>> system timer, and optionally with a clocksource and a 
->>>>>>> sched_clock. 
->>>>>>>
->>>>>>> It also provides clocks and interrupt handling to client 
->>>>>>> drivers. 
->>>>>>
->>>>>> Can you provide a much more complete description of the timer 
->>>>>> in order to make my life easier for the review of this patch? 
->>>>>
->>>>> See patch [03/24], it adds a doc file that describes the 
->>>>> hardware. 
->>>>
->>>> Thanks, I went through but it is incomplete to understand what the 
->>>> timer do. I will reverse-engineer the code but it would help if you 
->>>> can give the gross approach. Why multiple channels ? mutexes and 
->>>> completion ? 
->>>
->>> Much of the complexity is because of the multi-purpose nature of the 
->>> TCU channels. Each one can be used as timer/clocksource, or PWM. 
->>>
->>> The driver starts by using channels 0 and 1 as system timer and 
->>> clocksource, respectively, the other ones being unused for now. Then, 
->>> *if* the PWM driver requests one of the channels in use by the 
->>> timer/clocksource driver, say channel 0, the timer/clocksource driver 
->>> will dynamically reassign the system timer to a free channel, from 
->>> channel 0 to e.g. channel 2. Only in that case the completion/mutex 
->>> are actually used. 
->>
->> Why do you need to do this? Can't be the channels dedicated and reserved 
->> for clocksource and clockevent? 
-> 
-> That's what I had in place (ingenic,timer-channel and ingenic,clocksource-channel DT properties), but Rob didn't want any linux-specific properties in the devicetree binding :(
+On Wed, Sep 19, 2018 at 8:10 PM Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> The TPU0 clock wasn't present in the original R8A77970 patch by Daisuke
+> Matsushita, it was added in a later BSP version...
+>
+> Based on the original (and large) patch by Vladimir Barinov.
+>
+> Signed-off-by: Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-Isn't possible to specify the channel to use in the DT? like renesas16 ?
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in clk-renesas-for-v4.20.
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
