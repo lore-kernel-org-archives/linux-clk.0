@@ -2,136 +2,128 @@ Return-Path: <SRS0=Dsg5=MG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.3 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A234CC433F4
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 14:34:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA787ECE560
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 16:33:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B31B214AB
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 14:34:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 598172087A
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Sep 2018 16:33:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nD3cHRx5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B31B214AB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="TyvlG4o+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 598172087A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729701AbeIXUg2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Sep 2018 16:36:28 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:41112 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726956AbeIXUg2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Sep 2018 16:36:28 -0400
-Received: by mail-wr1-f65.google.com with SMTP id j15-v6so15843019wrt.8;
-        Mon, 24 Sep 2018 07:34:00 -0700 (PDT)
+        id S1728731AbeIXWgo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Sep 2018 18:36:44 -0400
+Received: from relmlor3.renesas.com ([210.160.252.173]:45239 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728006AbeIXWgo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Sep 2018 18:36:44 -0400
+Received: from unknown (HELO relmlir2.idc.renesas.com) ([10.200.68.152])
+  by relmlie2.idc.renesas.com with ESMTP; 25 Sep 2018 01:33:44 +0900
+Received: from relmlii1.idc.renesas.com (relmlii1.idc.renesas.com [10.200.68.65])
+        by relmlir2.idc.renesas.com (Postfix) with ESMTP id 1419841CB0;
+        Tue, 25 Sep 2018 01:33:44 +0900 (JST)
+X-IronPort-AV: E=Sophos;i="5.54,298,1534777200"; 
+   d="scan'208";a="291769941"
+Received: from mail-os2jpn01lp0144.outbound.protection.outlook.com (HELO JPN01-OS2-obe.outbound.protection.outlook.com) ([23.103.139.144])
+  by relmlii1.idc.renesas.com with ESMTP/TLS/AES256-SHA256; 25 Sep 2018 01:33:43 +0900
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:user-agent:in-reply-to:references:mime-version
-         :content-transfer-encoding:subject:to:cc:from:message-id;
-        bh=aBPKqR/n5BjqXnSvkqOsKROveni0783ITST5+Mc8ikQ=;
-        b=nD3cHRx5c5TJ/+ABYsYVFIc4lwo7RoCO+QYVdJMfOHg5Isk0Gp6PIS273zlCL+zehW
-         +/bmxcwpiu/Iye/xDua3uBSDbpVoe/V7vyhq8QcptdTtN42pKppE5dVTWkm5UGPvHZbu
-         xWvdTc7m44oh706iQsIGjbzld/cYywPnx1J8Q35qnUwrb6RkVsycdUrWEIlArCDSKGsh
-         Q1VuFJ3iApgwPsb0KBzRuCa55SFwOG46Pqq5FrtOuat2sGErUtKwWrZA5qLAeGNOrhs0
-         WHfVSUtQuQoqpfZ8jxGvgg0KDT8NJRqD3nBIYF9WLkN3ltE4/+vT8TFgMNwxau4rNyIB
-         URzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:user-agent:in-reply-to:references
-         :mime-version:content-transfer-encoding:subject:to:cc:from
-         :message-id;
-        bh=aBPKqR/n5BjqXnSvkqOsKROveni0783ITST5+Mc8ikQ=;
-        b=hKHeIzIR8fFuGYi9DN3pdJsHTJwHUHZCoCGT6Ty7iDK05O/8qGEgvTS6B6kxpqiiuZ
-         x2ATQF3DWKeJnP9FmkzfgGpgvj4SuMp94EXa4po1V+tHbqu5UQTwjMtD8MsX4OIA4HSv
-         Nw5EJdotHwy1dbpHUTsCqvXEcVE3VSq0kJ5xKm8shCOl5+Mg3iZoQb3bxA+Vd5i+iB78
-         u0UzCYCcKya7d47Wc7z5qGEpQvXLIcswcRGPUaZpgHYLT4IsAFiVPxrASiUKEvdL+vQf
-         DfN73SJ429pP3dRyNKeDXm7HugvR4G95fBZii7u5yTr/P+EaAGcHfwh+fPKaVB8EZ/1+
-         G1iw==
-X-Gm-Message-State: ABuFfojpjA8yVECB2zjPts9oPxjqcfMjMWubNlfmfEbKAdJMp8gY6zIr
-        VtQ/sNUkCtSGT17mN9E8fg==
-X-Google-Smtp-Source: ACcGV61hnGAOZ95fhCmO898sPbEac34nODFSXfDg4m4tX+EvXKCLBMhG2+fWMsp1xwY5Yr2GF4sTpg==
-X-Received: by 2002:a5d:4b52:: with SMTP id w18-v6mr9012119wrs.87.1537799640062;
-        Mon, 24 Sep 2018 07:34:00 -0700 (PDT)
-Received: from android-dhcp-8-1-0-d4-38-9c-a2-1f-05.home (host86-147-9-252.range86-147.btcentralplus.com. [86.147.9.252])
-        by smtp.gmail.com with ESMTPSA id 132-v6sm11759386wmd.13.2018.09.24.07.33.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 24 Sep 2018 07:33:59 -0700 (PDT)
-Date:   Mon, 24 Sep 2018 15:33:56 +0100
-User-Agent: K-9 Mail for Android
-In-Reply-To: <9156720.4hgryJ20kK@phil>
-References: <20180407135934.26122-1-ctatlor97@gmail.com> <69cf26ba-5dae-e84c-2fa8-15699fdd9986@codeaurora.org> <63F4E7C0-6925-4EC0-84B9-75B31AC664E4@gmail.com> <9156720.4hgryJ20kK@phil>
-MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] clk: qcom: Add Global Clock controller (GCC) driver for SDM660
-To:     Heiko Stuebner <heiko@sntech.de>
-CC:     Taniya Das <tdas@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+ d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4bGBwo5tpWQ8zjnINfT0eOhzmtV7fmY0aP+0OYFIGhs=;
+ b=TyvlG4o+DdwMAjl16otr3sGMVFZWdUTY4hB6OO7H80H+zv26jhm8KB1VfF3u/TAyGqmuI7RD7hlMUydvAvKFtnQRymS6T34WCF7jkKQPhJ9Oh4FowWMfuKAWe8WdJ0I+ei3wvyesM+KPJcan4PfP6nfPxOV68P+HXuy4Aa09gbQ=
+Received: from TY1PR01MB1562.jpnprd01.prod.outlook.com (52.133.162.18) by
+ TY1PR01MB1801.jpnprd01.prod.outlook.com (52.133.164.12) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1143.17; Mon, 24 Sep 2018 16:33:42 +0000
+Received: from TY1PR01MB1562.jpnprd01.prod.outlook.com
+ ([fe80::ddef:a4c2:976a:66d1]) by TY1PR01MB1562.jpnprd01.prod.outlook.com
+ ([fe80::ddef:a4c2:976a:66d1%2]) with mapi id 15.20.1164.024; Mon, 24 Sep 2018
+ 16:33:42 +0000
+From:   Chris Brandt <Chris.Brandt@renesas.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+CC:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-soc@vger.kernel.org
-From:   Craig <ctatlor97@gmail.com>
-Message-ID: <0E2DD374-B1DA-47D9-B327-D5BBC39F7FBB@gmail.com>
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: RE: [PATCH 1/2] clk: renesas: cpg-mssr: Add early clock support
+Thread-Topic: [PATCH 1/2] clk: renesas: cpg-mssr: Add early clock support
+Thread-Index: AQHUUb68Hdk61d2nPEGv1I3hQX/iS6T/KAoAgAB6CUA=
+Date:   Mon, 24 Sep 2018 16:33:42 +0000
+Message-ID:
+ <TY1PR01MB15626143507C7AB078EB2B9D8A170@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+References: <20180921152054.117774-1-chris.brandt@renesas.com>
+ <20180921152054.117774-2-chris.brandt@renesas.com>
+ <CAMuHMdUWFp9nBR8EQtADHePPqGQZ-3bHrANQULz-QnXJLQy2fA@mail.gmail.com>
+In-Reply-To: <CAMuHMdUWFp9nBR8EQtADHePPqGQZ-3bHrANQULz-QnXJLQy2fA@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Chris.Brandt@renesas.com; 
+x-originating-ip: [75.60.247.61]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;TY1PR01MB1801;20:Z5NEouvsuzGYPqjAq0YVbP0zNrcwvNez7JH+bRgzF0D5NcX7VBNoSdXJFAm0exFPJMqicWo0wz8tn4KuUHDjeQqjFQpLI+GxkTPCmo7Lge9HAyIABMtu6pvWM411rGXx5ef3FLeIpLa+H6PDMqUCRMZYUPg7Kt3AzAPKWPP2Fs4=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: fd131d36-1566-4f9f-56ae-08d6223b7d75
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:TY1PR01MB1801;
+x-ms-traffictypediagnostic: TY1PR01MB1801:
+x-microsoft-antispam-prvs: <TY1PR01MB1801237BCFD0153C426ED8658A170@TY1PR01MB1801.jpnprd01.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93001095)(3002001)(3231355)(944501410)(52105095)(6055026)(149066)(150027)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123562045)(201708071742011)(7699051);SRVR:TY1PR01MB1801;BCL:0;PCL:0;RULEID:;SRVR:TY1PR01MB1801;
+x-forefront-prvs: 0805EC9467
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(39850400004)(136003)(346002)(396003)(376002)(199004)(189003)(102836004)(106356001)(316002)(305945005)(229853002)(86362001)(4326008)(486006)(6436002)(74316002)(7696005)(54906003)(99286004)(105586002)(76176011)(6916009)(9686003)(2906002)(256004)(7736002)(26005)(53936002)(71190400001)(55016002)(68736007)(71200400001)(81166006)(81156014)(8936002)(66066001)(11346002)(446003)(2900100001)(5250100002)(186003)(33656002)(8676002)(6506007)(14454004)(478600001)(5660300001)(97736004)(6246003)(72206003)(476003)(3846002)(25786009)(6116002);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB1801;H:TY1PR01MB1562.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: renesas.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: aqS7wJsCeWMKMoTG/4MD0XAScE6nncYJCI0tphrVHkLtBgKjftOEUVM7O/8YaawbrYTnWxyGwNGV/5xOkiur1aYBOR5U2Jbd3g5Lt26zdLnMt20v8l78hf9lsWAnYLvxUiwim13YQ50plvZ1mAxnNPRs/4q3B9okCmyO+eGFqrYs1xeL+ol8oxtIlWEUiLqnyZqm5L5VfH84aiGaPaotmYecn1I/ge4IIo10kBqZ1gLlu/y98nr/VawsOZSFUqr7W0SLD7MCoKBAkTwgJyPB5ctBBp6dhSmADtFi609zAEeBCGU7rDdnID09xqhTf/WeQ1OTLcEsiDrWaoE71twF9So3aFklc12aYQEP0WCmcoM=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fd131d36-1566-4f9f-56ae-08d6223b7d75
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Sep 2018 16:33:42.2340
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1801
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
-Message-ID: <20180924143356.zxcZI3AmsXSLEfyGOEZsFsr2sdlxaQjxIA5Um8qhRV8@z>
+Message-ID: <20180924163342.fNwhSJ-rBpoxRpa4Z5zNHnoB12kAsh62-aJ1YRrlwOo@z>
 
-
-
-On 24 September 2018 13:44:33 BST, Heiko Stuebner <heiko@sntech=2Ede> wrot=
-e:
->Hi Craig,
->
->Am Montag, 13=2E August 2018, 09:45:09 CEST schrieb Craig Tatlor:
->> On 13 August 2018 07:55:34 BST, Taniya Das <tdas@codeaurora=2Eorg>
->wrote:
->> >Hello Craig,
->> >
->> >Could you please correct the authorship and also provide the
->reference=20
->> >to code where this is picked from?
->> Okay,=20
->> Got code from here
->https://github=2Ecom/sonyxperiadev/kernel/blob/aosp/LA=2EUM=2E6=2E4=2Er1/=
-drivers/clk/qcom/gcc-sdm660=2Ec
->> but changed it quite a bit for upstream,
->> Should I change the commit author and add your signed off by and say
->I did cleanups on my signed off by=2E
->
->yep, for something this huge it is really the correct way to keep the
->original authorship intact as Taniya did the initial big work, and just
->add you change-description, so something like
->
->---- 8< ------
->Add support for the global clock controller found on SDM660
->based devices=2E This should allow most non-multimedia device
->drivers to probe and control their clocks=2E
->Based on CAF implementation=2E
->
->Signed-off-by: Taniya Das <tdas@codeaurora=2Eorg>
->[ description of changes =2E=2E=2E often seen in these brackets ]
->Signed-off-by: Craig Tatlor <ctatlor97@gmail=2Ecom>
->---- 8< ------
->
-Sure, will do, though I'm sure qcom have a program to generate the drivers=
- :)
-
->Also, do you plan to continue working on this, as I would be
->interessted
->in the clock driver for a sdm660-based phone as well
-Yup, was really just waiting for reply to this question,
->
->
->Thanks
->Heiko
-
---=20
+SGkgR2VlcnQsDQoNCk9uIE1vbmRheSwgU2VwdGVtYmVyIDI0LCAyMDE4LCBHZWVydCBVeXR0ZXJo
+b2V2ZW4gd3JvdGU6DQo+IFRoYW5rcyBmb3IgeW91ciBwYXRjaCENCg0KVGhhbmtzIGZvciB5b3Vy
+IHJldmlldyENCg0KPiA+ICtzdHJ1Y3QgY3BnX21zc3JfcHJpdiAqZWFybHlfcHJpdjsNCj4gDQo+
+IHN0YXRpYw0KPiANCj4gSnVzdCBjYWxsIHRoZSBwb2ludGVyIGNwZ19tc3NyX3ByaXYsIGFzIHlv
+dSdyZSBnb25uYSBuZWVkIGl0IGluIGJvdGgNCj4gY2FzZXMNCj4gKHNlZSBiZWxvdyk/DQoNClNl
+ZW1zIHN0cmFuZ2UgdG8gaGF2ZSBhIHZhcmlhYmxlIHdpdGggdGhlIHNhbWUgbmFtZSBvZiB0aGUg
+c3RydWN0IHR5cGUgDQp0aGF0IGl0IGlzLi4uLmJ1dCBJIGNoYW5nZWQgYXMgeW91IHN1Z2dlc3Rl
+ZC4NCg0KDQpJIGFsc28gbWFkZSBhbGwgdGhlIG90aGVyIGNoYW5nZXMgeW91IHN1Z2dlc3RlZCBm
+b3IgYm90aCBwYXRjaGVzIGFuZCANCnJldGVzdGVkLg0KDQoNCj4gPiArICAgICAgIGlmIChlYXJs
+eV9wcml2KSB7DQo+ID4gKyAgICAgICAgICAgICAgIHByaXYgPSBlYXJseV9wcml2Ow0KPiA+ICsg
+ICAgICAgICAgICAgICBwcml2LT5kZXYgPSAmcGRldi0+ZGV2Ow0KPiA+ICsgICAgICAgfSBlbHNl
+IHsNCj4gPiArICAgICAgICAgICAgICAgZXJyb3IgPSBjcGdfbXNzcl9jb21tb25faW5pdChkZXYs
+IGRldi0+b2Zfbm9kZSwgaW5mbyk7DQo+IA0KPiBPb3BzLCBwcml2IGlzIG5vdCBzZXQgPT4gQk9P
+TS4NCj4gSSBndWVzcyB5b3UgaGF2ZSBubyBvdGhlciBoYXJkd2FyZSB1c2luZyB0aGUgcmVuZXNh
+cy1jcGctbXNzciBkcml2ZXI/DQo+IFlvdSBjYW4gcHJvYmFibHkgc3RpbGwgdGVzdCB0aGlzIGNh
+c2Ugb24gUlovQTIgd2l0aG91dCBwYXRjaCAyIChvciB3aXRoDQo+IHRoZQ0KPiBPRl9DTEtfREVD
+TEFSRV9EUklWRVIoKSBsaW5lIGNvbW1lbnRlZCBvdXQpLCBhbmQgd2l0aCB0aGUgT1NUTSB0aW1l
+cg0KPiBoYWNrDQo+IHlvdSBwb3N0ZWQgYmVmb3JlLg0KDQpXZWxsLi4uSSBoYXZlIGEgUlovRzEg
+Ym9hcmQgaW4gYSBib3ggc29tZXdoZXJlLi4uDQoNCkJ1dCBpbnN0ZWFkLCBsaWtlIHlvdSBzdWdn
+ZXN0ZWQsIEkgYXBwbGllZCB0aGUgT1NUTSBzdWJzeXNfaW5pdGNhbGwgaGFjaw0KYmFjayBpbiBh
+bmQgY2hhbmdlZCByN3M5MjEwLWNwZy1tc3NyLmMgdG8gYmUgbm9uLWVhcmx5IGxpa2UgdGhlIG90
+aGVyIA0KUi1DYXIgU29Dcy4NCkFuZCBub3csIG5vIGNyYXNoLiBTbyBJIHRoaW5rIEknbSBnb29k
+IHRoaXMgdGltZS4NCg0KVGhhbmtzIQ0KDQpDaHJpcw0KDQo=
