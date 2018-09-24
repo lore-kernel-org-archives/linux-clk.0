@@ -1,86 +1,83 @@
-Return-Path: <vabhav.sharma@nxp.com>
-From: Vabhav Sharma <vabhav.sharma@nxp.com>
-To: sudeep.holla@arm.com,
-	oss@buserror.net,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	rjw@rjwysocki.net,
-	viresh.kumar@linaro.org,
-	linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-kernel-owner@vger.kernel.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	gregkh@linuxfoundation.org,
-	arnd@arndb.de,
-	kstewart@linuxfoundation.org,
-	yamada.masahiro@socionext.com
-Cc: linux@armlinux.org.uk,
-	V.Sethi@nxp.com,
-	udit.kumar@nxp.com,
-	Vabhav Sharma <vabhav.sharma@nxp.com>
-Subject: [PATCH v3 0/6]  arm64: dts: NXP: add basic dts file for LX2160A SoC
-Date: Mon, 24 Sep 2018 05:38:55 +0530
-Message-Id: <1537747741-6245-1-git-send-email-vabhav.sharma@nxp.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: Re: [PATCH v7 05/24] clocksource: Add a new timer-ingenic driver
+To: Paul Cercueil <paul@crapouillou.net>
+Cc: Mathieu Malaterre <malat@debian.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Rob Herring <robh+dt@kernel.org>, linux-doc@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        od@zcrc.me, linux-mips@linux-mips.org,
+        Paul Burton <paul.burton@mips.com>,
+        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-pwm@vger.kernel.org
+References: <5ba88a1a.1c69fb81.2ba56.ccdaSMTPIN_ADDED_MISSING@mx.google.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <a9d7366a-7118-9819-4d15-cdc10fa6c41c@linaro.org>
+Date: Mon, 24 Sep 2018 09:14:26 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-Path: vabhav.sharma@nxp.com
+In-Reply-To: <5ba88a1a.1c69fb81.2ba56.ccdaSMTPIN_ADDED_MISSING@mx.google.com>
+Content-Type: text/plain; charset=utf-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Changes for v3:
--Split clockgen support patch into below two patches:
-- a)Updated array size of cmux_to_group[] with NUM_CMUX+1 to include -1
- terminator and p4080 cmux_to_group[] array with -1 terminator
-- b)Add clockgen support for lx2160a
+On 24/09/2018 08:53, Paul Cercueil wrote:
+> 
+> Le 24 sept. 2018 07:58, Daniel Lezcano <daniel.lezcano@linaro.org> a écrit :
+>>
+>> On 24/09/2018 07:49, Paul Cercueil wrote: 
+>>>
+>>> Le 24 sept. 2018 07:35, Daniel Lezcano <daniel.lezcano@linaro.org> a 
+>>> écrit : 
+>>>>
+>>>> On 24/09/2018 07:24, Paul Cercueil wrote: 
+>>>>> Hi Daniel, 
+>>>>>
+>>>>> Le 24 sept. 2018 05:12, Daniel Lezcano 
+>>>>> <daniel.lezcano@linaro.org> a écrit : 
+>>>>>>
+>>>>>> On 21/08/2018 19:16, Paul Cercueil wrote: 
+>>>>>>> This driver handles the TCU (Timer Counter Unit) present on 
+>>>>>>> the Ingenic JZ47xx SoCs, and provides the kernel with a 
+>>>>>>> system timer, and optionally with a clocksource and a 
+>>>>>>> sched_clock. 
+>>>>>>>
+>>>>>>> It also provides clocks and interrupt handling to client 
+>>>>>>> drivers. 
+>>>>>>
+>>>>>> Can you provide a much more complete description of the timer 
+>>>>>> in order to make my life easier for the review of this patch? 
+>>>>>
+>>>>> See patch [03/24], it adds a doc file that describes the 
+>>>>> hardware. 
+>>>>
+>>>> Thanks, I went through but it is incomplete to understand what the 
+>>>> timer do. I will reverse-engineer the code but it would help if you 
+>>>> can give the gross approach. Why multiple channels ? mutexes and 
+>>>> completion ? 
+>>>
+>>> Much of the complexity is because of the multi-purpose nature of the 
+>>> TCU channels. Each one can be used as timer/clocksource, or PWM. 
+>>>
+>>> The driver starts by using channels 0 and 1 as system timer and 
+>>> clocksource, respectively, the other ones being unused for now. Then, 
+>>> *if* the PWM driver requests one of the channels in use by the 
+>>> timer/clocksource driver, say channel 0, the timer/clocksource driver 
+>>> will dynamically reassign the system timer to a free channel, from 
+>>> channel 0 to e.g. channel 2. Only in that case the completion/mutex 
+>>> are actually used. 
+>>
+>> Why do you need to do this? Can't be the channels dedicated and reserved 
+>> for clocksource and clockevent? 
+> 
+> That's what I had in place (ingenic,timer-channel and ingenic,clocksource-channel DT properties), but Rob didn't want any linux-specific properties in the devicetree binding :(
 
-Changes for v2:
-- Modified cmux_to_group array to include -1 terminator
-- Revert NUM_CMUX to original value 8 from 16
-- Remove “As LX2160A is 16 core, so modified value for NUM_CMUX”
-  in patch "[PATCH 3/5] drivers: clk-qoriq: Add clockgen support for
-  lx2160a" description
-- Populated cache properties for L1 and L2 cache in lx2160a device-tree.
-- Removed reboot node from lx2160a device-tree as PSCI is implemented.
-- Removed incorrect comment for timer node interrupt property in
-  lx2160a device-tree.
-- Modified pmu node compatible property from "arm,armv8-pmuv3" to
-  "arm,cortex-a72-pmu" in lx2160a device-tree
-- Non-standard aliases removed in lx2160a rdb board device-tree
-- Updated i2c child nodes to generic name in lx2160a rdb device-tree.
-
-Changes for v1:
-- Add compatible string for LX2160A clockgen support
-- Add compatible string to initialize LX2160A guts driver
-- Add compatible string for LX2160A support in dt-bindings
-- Add dts file to enable support for LX2160A SoC and LX2160A RDB
-  (Reference design board)
-
-Vabhav Sharma (4):
-  dt-bindings: arm64: add compatible for LX2160A
-  soc/fsl/guts: Add compatible string for LX2160A
-  arm64: dts: add QorIQ LX2160A SoC support
-  arm64: dts: add LX2160ARDB board support
-
-Yogesh Gaur (2):
-  drivers: clk-qoriq: increase array size of cmux_to_group
-  drivers: clk-qoriq: Add clockgen support for lx2160a
-
- Documentation/devicetree/bindings/arm/fsl.txt     |  12 +
- arch/arm64/boot/dts/freescale/Makefile            |   1 +
- arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts |  88 +++
- arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi    | 693 ++++++++++++++++++++++
- drivers/clk/clk-qoriq.c                           |  16 +-
- drivers/cpufreq/qoriq-cpufreq.c                   |   1 +
- drivers/soc/fsl/guts.c                            |   1 +
- 7 files changed, 810 insertions(+), 2 deletions(-)
- create mode 100644 arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
- create mode 100644 arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
+Isn't possible to specify the channel to use in the DT? like renesas16 ?
 
 -- 
-2.7.4
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
