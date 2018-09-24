@@ -1,94 +1,268 @@
-Return-Path: <olof@lixom.net>
+Return-Path: <abel.vesa@nxp.com>
+From: Abel Vesa <abel.vesa@nxp.com>
+To: Lucas Stach <l.stach@pengutronix.de>,
+	Sascha Hauer <kernel@pengutronix.de>,
+	Dong Aisheng <aisheng.dong@nxp.com>,
+	Fabio Estevam <fabio.estevam@nxp.com>,
+	Anson Huang <anson.huang@nxp.com>,
+	Andrey Smirnov <andrew.smirnov@gmail.com>,
+	Rob Herring <robh@kernel.org>
+Cc: linux-imx@nxp.com,
+	Abel Vesa <abelvesa@linux.com>,
+	Abel Vesa <abel.vesa@nxp.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-kernel@vger.kernel.org (open list),
+	linux-arm-kernel@lists.infradead.org (moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE),
+	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK)
+Subject: [PATCH v9 4/5] clk: imx: add imx composite clock
+Date: Mon, 24 Sep 2018 13:39:56 +0300
+Message-Id: <1537785597-26499-5-git-send-email-abel.vesa@nxp.com>
+In-Reply-To: <1537785597-26499-1-git-send-email-abel.vesa@nxp.com>
+References: <1537785597-26499-1-git-send-email-abel.vesa@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <1533318808-10781-9-git-send-email-jollys@xilinx.com>
-References: <1533318808-10781-1-git-send-email-jollys@xilinx.com> <1533318808-10781-9-git-send-email-jollys@xilinx.com>
-From: Olof Johansson <olof@lixom.net>
-Date: Sat, 8 Sep 2018 18:15:11 -0700
-Message-ID: <CAOesGMjMcznFAQj0L-=J5+gJ5ENsdejqP2SdYomu=C9bJqG+YQ@mail.gmail.com>
-Subject: Re: [PATCH v11 08/11] firmware: xilinx: Add debugfs for query data API
-To: Jolly Shah <jolly.shah@xilinx.com>
-Cc: "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>, Ingo Molnar <mingo@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, matt@codeblueprint.co.uk,
-	Sudeep Holla <sudeep.holla@arm.com>, hkallweit1@gmail.com,
-	Kees Cook <keescook@chromium.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
-	Michal Simek <michal.simek@xilinx.com>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, linux-clk <linux-clk@vger.kernel.org>, rajanv@xilinx.com,
-	Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, DTML <devicetree@vger.kernel.org>,
-	Jolly Shah <jollys@xilinx.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+Return-Path: abel.vesa@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi,
+Since a lot of clocks on imx8 are formed by a mux, gate, predivider and
+divider, the idea here is to combine all of those into one composite clock,
+but we need to deal with both predivider and divider at the same time and
+therefore we add the imx_clk_composite_divider_ops and register
+the composite clock with those.
 
-I noticed the below when I was reviewing the code for merge into
-arm-soc. Would you mind following up with an incremental patch? I
-don't think we need to ask Michal to respin for this:
+Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+Suggested-by: Sascha Hauer <s.hauer@pengutronix.de>
+---
+ drivers/clk/imx/Makefile        |   1 +
+ drivers/clk/imx/clk-composite.c | 181 ++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/imx/clk.h           |  14 ++++
+ 3 files changed, 196 insertions(+)
+ create mode 100644 drivers/clk/imx/clk-composite.c
 
-On Fri, Aug 3, 2018 at 10:53 AM, Jolly Shah <jolly.shah@xilinx.com> wrote:
-> From: Rajan Vaja <rajanv@xilinx.com>
->
-> Add debugfs file to query platform specific data from firmware
-> using debugfs interface.
->
-> Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
-> Signed-off-by: Jolly Shah <jollys@xilinx.com>
-> ---
->  drivers/firmware/xilinx/zynqmp-debug.c | 27 +++++++++++++++++++++++++++
->  1 file changed, 27 insertions(+)
->
-> diff --git a/drivers/firmware/xilinx/zynqmp-debug.c b/drivers/firmware/xilinx/zynqmp-debug.c
-> index fc11db9..4532bd0 100644
-> --- a/drivers/firmware/xilinx/zynqmp-debug.c
-> +++ b/drivers/firmware/xilinx/zynqmp-debug.c
-> @@ -33,6 +33,7 @@ static char debugfs_buf[PAGE_SIZE];
->  static struct pm_api_info pm_api_list[] = {
->         PM_API(PM_GET_API_VERSION),
->         PM_API(PM_IOCTL),
-> +       PM_API(PM_QUERY_DATA),
->  };
->
->  /**
-> @@ -105,6 +106,32 @@ static int process_api_request(u32 pm_id, u64 *pm_api_arg, u32 *pm_api_ret)
->                         sprintf(debugfs_buf, "IOCTL return value: %u\n",
->                                 pm_api_ret[1]);
->                 break;
-> +       case PM_QUERY_DATA:
-> +       {
-> +               struct zynqmp_pm_query_data qdata = {0};
-> +
-> +               qdata.qid = pm_api_arg[0];
-> +               qdata.arg1 = pm_api_arg[1];
-> +               qdata.arg2 = pm_api_arg[2];
-> +               qdata.arg3 = pm_api_arg[3];
-
-This is usually a pattern we try to avoid (having full code blocks in
-a switch statement, and local variables).
-
-Please move the declaration of qdata to the top of the function so you
-can drop the braces.
-
-> +
-> +               ret = eemi_ops->query_data(qdata, pm_api_ret);
-> +               if (ret)
-> +                       break;
-> +
-> +               if (qdata.qid == PM_QID_CLOCK_GET_NAME)
-> +                       sprintf(debugfs_buf, "Clock name = %s\n",
-> +                               (char *)pm_api_ret);
-> +               else if (qdata.qid == PM_QID_CLOCK_GET_FIXEDFACTOR_PARAMS)
-> +                       sprintf(debugfs_buf, "Multiplier = %d, Divider = %d\n",
-> +                               pm_api_ret[1], pm_api_ret[2]);
-> +               else
-> +                       sprintf(debugfs_buf,
-> +                               "data[0] = 0x%08x\ndata[1] = 0x%08x\n data[2] = 0x%08x\ndata[3] = 0x%08x\n",
-> +                               pm_api_ret[0], pm_api_ret[1],
-> +                               pm_api_ret[2], pm_api_ret[3]);
-
-If you anticipate more qids here later, a switch could be nicer than a
-sequence of if/else.
-
-
-
--Olof
+diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
+index b87513c..4fabb0a 100644
+--- a/drivers/clk/imx/Makefile
++++ b/drivers/clk/imx/Makefile
+@@ -3,6 +3,7 @@
+ obj-y += \
+ 	clk.o \
+ 	clk-busy.o \
++	clk-composite.o \
+ 	clk-cpu.o \
+ 	clk-fixup-div.o \
+ 	clk-fixup-mux.o \
+diff --git a/drivers/clk/imx/clk-composite.c b/drivers/clk/imx/clk-composite.c
+new file mode 100644
+index 0000000..4b03107
+--- /dev/null
++++ b/drivers/clk/imx/clk-composite.c
+@@ -0,0 +1,181 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright 2018 NXP
++ */
++
++#include <linux/errno.h>
++#include <linux/slab.h>
++#include <linux/clk-provider.h>
++#include <linux/clk.h>
++
++#include "clk.h"
++
++#define PCG_PREDIV_SHIFT	16
++#define PCG_PREDIV_WIDTH	3
++#define PCG_PREDIV_MAX		8
++
++#define PCG_DIV_SHIFT		0
++#define PCG_DIV_WIDTH		6
++#define PCG_DIV_MAX		64
++
++#define PCG_PCS_SHIFT		24
++#define PCG_PCS_MASK		0x7
++
++#define PCG_CGC_SHIFT		28
++
++static unsigned long imx_clk_composite_divider_recalc_rate(struct clk_hw *hw,
++						unsigned long parent_rate)
++{
++	struct clk_divider *divider = to_clk_divider(hw);
++	unsigned long prediv_rate;
++	unsigned int prediv_value;
++	unsigned int div_value;
++
++	prediv_value = clk_readl(divider->reg) >> divider->shift;
++	prediv_value &= clk_div_mask(divider->width);
++
++	prediv_rate = divider_recalc_rate(hw, parent_rate, prediv_value,
++						NULL, divider->flags,
++						divider->width);
++
++	div_value = clk_readl(divider->reg) >> PCG_DIV_SHIFT;
++	div_value &= clk_div_mask(PCG_DIV_WIDTH);
++
++	return divider_recalc_rate(hw, prediv_rate, div_value, NULL,
++				   divider->flags, PCG_DIV_WIDTH);
++}
++
++static int imx_clk_composite_compute_dividers(unsigned long rate,
++						unsigned long parent_rate,
++						int *prediv, int *postdiv)
++{
++	int div1, div2;
++	int error = INT_MAX;
++	int ret = -EINVAL;
++
++	/* default values */
++	*prediv = 1;
++	*postdiv = 1;
++
++	for (div1 = 1; div1 <= PCG_PREDIV_MAX; div1++) {
++		for (div2 = 1; div2 <= PCG_DIV_MAX; div2++) {
++			int new_error = ((parent_rate / div1) / div2) - rate;
++
++			if (abs(new_error) < abs(error)) {
++				*prediv = div1;
++				*postdiv = div2;
++				error = new_error;
++				ret = 0;
++			}
++		}
++	}
++	return ret;
++}
++
++static long imx_clk_composite_divider_round_rate(struct clk_hw *hw,
++						unsigned long rate,
++						unsigned long *prate)
++{
++	int prediv_value;
++	int div_value;
++
++	imx_clk_composite_compute_dividers(rate, *prate,
++						&prediv_value, &div_value);
++
++	rate = DIV_ROUND_UP_ULL((u64)*prate, prediv_value);
++	rate = DIV_ROUND_UP_ULL((u64)rate, div_value);
++
++	return rate;
++}
++
++static int imx_clk_composite_divider_set_rate(struct clk_hw *hw,
++					unsigned long rate,
++					unsigned long parent_rate)
++{
++	struct clk_divider *divider = to_clk_divider(hw);
++	unsigned long flags = 0;
++	int prediv_value;
++	int div_value;
++	int ret = 0;
++	u32 val;
++
++	ret = imx_clk_composite_compute_dividers(rate, parent_rate,
++						&prediv_value, &div_value);
++	if (ret)
++		return -EINVAL;
++
++	spin_lock_irqsave(divider->lock, flags);
++
++	val = clk_readl(divider->reg);
++	val &= ~((clk_div_mask(divider->width) << divider->shift) |
++			(clk_div_mask(PCG_DIV_WIDTH) << PCG_DIV_SHIFT));
++
++	val |= (u32)(prediv_value  - 1) << divider->shift;
++	val |= (u32)(div_value - 1) << PCG_DIV_SHIFT;
++	clk_writel(val, divider->reg);
++
++	spin_unlock_irqrestore(divider->lock, flags);
++
++	return ret;
++}
++
++static const struct clk_ops imx_clk_composite_divider_ops = {
++	.recalc_rate = imx_clk_composite_divider_recalc_rate,
++	.round_rate = imx_clk_composite_divider_round_rate,
++	.set_rate = imx_clk_composite_divider_set_rate,
++};
++
++struct clk *imx_clk_composite_flags(const char *name,
++					const char **parent_names,
++					int num_parents, void __iomem *reg,
++					unsigned long flags)
++{
++	struct clk_hw *mux_hw = NULL, *div_hw = NULL, *gate_hw = NULL;
++	struct clk_divider *div = NULL;
++	struct clk_gate *gate = NULL;
++	struct clk_mux *mux = NULL;
++	struct clk *clk = ERR_PTR(-ENOMEM);
++
++	mux = kzalloc(sizeof(*mux), GFP_KERNEL);
++	if (!mux)
++		goto fail;
++
++	mux_hw = &mux->hw;
++	mux->reg = reg;
++	mux->shift = PCG_PCS_SHIFT;
++	mux->mask = PCG_PCS_MASK;
++
++	div = kzalloc(sizeof(*div), GFP_KERNEL);
++	if (!div)
++		goto fail;
++
++	div_hw = &div->hw;
++	div->reg = reg;
++	div->shift = PCG_PREDIV_SHIFT;
++	div->width = PCG_PREDIV_WIDTH;
++	div->lock = &imx_ccm_lock;
++	div->flags = CLK_DIVIDER_ROUND_CLOSEST;
++
++	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
++	if (!gate)
++		goto fail;
++
++	gate_hw = &gate->hw;
++	gate->reg = reg;
++	gate->bit_idx = PCG_CGC_SHIFT;
++
++	clk = clk_register_composite(NULL, name, parent_names, num_parents,
++					mux_hw, &clk_mux_ops, div_hw,
++					&imx_clk_composite_divider_ops, gate_hw,
++					&clk_gate_ops, flags);
++	if (IS_ERR(clk))
++		goto fail;
++
++	return clk;
++
++fail:
++	kfree(gate);
++	kfree(div);
++	kfree(mux);
++	return clk;
++}
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index 12b3fd6..9d7c9c8 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -232,4 +232,18 @@ struct clk *imx_clk_cpu(const char *name, const char *parent_name,
+ 		struct clk *div, struct clk *mux, struct clk *pll,
+ 		struct clk *step);
+ 
++struct clk *imx_clk_composite_flags(const char *name, const char **parent_names,
++		int num_parents, void __iomem *reg, unsigned long flags);
++
++#define __imx_clk_composite(name, parent_names, reg, flags) \
++	imx_clk_composite_flags(name, parent_names, \
++		ARRAY_SIZE(parent_names), reg, \
++		flags | CLK_SET_RATE_NO_REPARENT | CLK_OPS_PARENT_ENABLE)
++
++#define imx_clk_composite(name, parent_names, reg) \
++	__imx_clk_composite(name, parent_names, reg, 0)
++
++#define imx_clk_composite_critical(name, parent_names, reg) \
++	__imx_clk_composite(name, parent_names, reg, CLK_IS_CRITICAL)
++
+ #endif
+-- 
+2.7.4
