@@ -1,141 +1,104 @@
-Return-Path: <anson.huang@nxp.com>
-From: Anson Huang <Anson.Huang@nxp.com>
-To: robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	fabio.estevam@nxp.com,
-	linux@armlinux.org.uk,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	ping.bai@nxp.com,
-	Aisheng.dong@nxp.com,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Cc: Linux-imx@nxp.com
-Subject: [PATCH V2 4/4] ARM: dts: imx: add i.mx6ulz and i.mx6ulz 14x14 evk support
-Date: Wed, 19 Sep 2018 14:04:48 +0800
-Message-Id: <1537337088-28819-5-git-send-email-Anson.Huang@nxp.com>
-In-Reply-To: <1537337088-28819-1-git-send-email-Anson.Huang@nxp.com>
-References: <1537337088-28819-1-git-send-email-Anson.Huang@nxp.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:14251 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727165AbeIYTLF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Sep 2018 15:11:05 -0400
+Date: Tue, 25 Sep 2018 16:03:29 +0300
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Rob Herring <robh@kernel.org>
+CC: <vkuruturi@nvidia.com>, <linux-clk@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <devicetree@vger.kernel.org>,
+        <daniel@octaforge.org>, <a.heider@gmail.com>, <swtcr0@gmail.com>
+Subject: Re: [RFC 14/14] dt-bindings: tegra: Add Tegra210 EMC binding
+Message-ID: <20180925130329.GK7636@tbergstrom-lnx.Nvidia.com>
+References: <1536955389-30442-1-git-send-email-pdeschrijver@nvidia.com>
+ <1536955389-30442-15-git-send-email-pdeschrijver@nvidia.com>
+ <5baa1ae9.1c69fb81.1ab9.1805@mx.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: Anson.Huang@nxp.com
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <5baa1ae9.1c69fb81.1ab9.1805@mx.google.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-i.MX6ULZ is new SoC of i.MX6 family, compared to i.MX6ULL,
-it removes below modules:
+On Mon, Sep 24, 2018 at 02:04:24PM -0700, Rob Herring wrote:
+> On Fri, Sep 14, 2018 at 11:03:09PM +0300, Peter De Schrijver wrote:
+> > Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> 
+> Needs a commit msg.
+> 
+> > ---
+> >  .../memory-controllers/nvidia,tegra210-emc.txt     | 448 +++++++++++++++++++++
+> >  1 file changed, 448 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt
+> > 
+> > diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt
+> > new file mode 100644
+> > index 0000000..1c52f47
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt
+> > @@ -0,0 +1,448 @@
+> > +NVIDIA Tegra210 SoC EMC (external memory controller)
+> > +====================================================
+> > +
+> > +Required properties :
+> > +- compatible : Should be "nvidia,tegra21-emc", "nvidia,tegra124-emc".
+> > +- reg : physical base address and length of the controller's registers.
+> > +- nvidia,memory-controller : phandle of the MC driver.
+> 
+> Huh? What is this block then?
+> 
+> > +- clocks : phandles of the possible source clocks
+> > +- clock-names : names of the possible source clocks
+> > +
+> > +The node should contain a "emc-table" subnode for each supported RAM type
+> > +(see field RAM_CODE in register PMC_STRAPPING_OPT_A), with its unit address
+> > +being its RAM_CODE.
+> 
+> Unit address is based on reg property.
+> 
+> > +
+> > +Required properties for "emc-table" nodes :
+> > +- nvidia,ram-code : Should contain the value of RAM_CODE this timing set is
+> > +used for.
+> > +
+> > +Each "emc-table" node should contain a "emc-table" subnode for every supported
+> > +EMC clock rate. The "emc-table" subnodes should have the clock rate in kHz as
+> > +their unit address.
+> > +
+> > +Required properties for "emc-table" nodes :
+> 
+> Which emc-table nodes, the child or grand-child nodes?
+> 
+> > +- compatible  "nvidia,tegra21-emc-table", "nvidia,tegra210-emc-table"
+> 
+> > +- nvidia,revision : revision of the parameter set used for this node. All
+> > +                    nodes in the same "emc-table" should have the same revision
+> > +- clock-frequency : frequency in kHz
+> > +- nvidia,emc-min-mv : minimum voltage for this OPP
+> > +- nvidia,gk20a-min-mv : minimum GPU voltage for this OPP
+> > +- nvidia,source : clock source to be used for this OPP
+> 
+> Is this memory timings/settings or OPPs? We have a binding for OPPs 
+> already.
+> 
+> > +- nvidia,src-sel-reg : value of EMC CAR register to be used for this OPP
+> > +- nvidia,needs-training : 1 if the OPP needs training at boot, 0 otherwise
+> > +- nvidia,trained : 1 if initial training has been done by firmware, 0 otherwise
+> > +- nvidia,periodic_training : 1 if the OPP needs periodic training, 0 otherwise
+> > +- nvidia,trained_dram_clktree_c0d0u0 : training data word
+> > +- nvidia,trained_dram_clktree_c0d0u1 : training data word
+> 
+> [...]
+> 
+> This is a huge list of properties. For all the things that are memory 
+> timings, is there really value to defining a property for each setting? 
+> Perhaps you should just define your own format and either make it a 
+> separate firmware file or include that file in the dtb.
+> 
 
-- UART5/UART6/UART7/UART8;
-- PWM5/PWM6/PWM7/PWM8;
-- eCSPI3/eCSPI4;
-- CAN1/CAN2;
-- FEC1/FEC2;
-- I2C3/I2C4;
-- EPIT2;
-- LCDIF;
-- GPT2;
-- ADC1;
-- TSC;
+The problem with moving to a binary blob is that it will break compatibility
+with existing devices (eg. Jetson TX1 and shield TV) because their bootloaders
+rely on the existing format.
 
-This patch adds support for i.MX6ULZ and i.MX6ULZ 14x14 EVK
-board.
-
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- arch/arm/boot/dts/Makefile              |  3 ++-
- arch/arm/boot/dts/imx6ulz-14x14-evk.dts | 20 +++++++++++++++++
- arch/arm/boot/dts/imx6ulz.dtsi          | 38 +++++++++++++++++++++++++++++++++
- 3 files changed, 60 insertions(+), 1 deletion(-)
- create mode 100644 arch/arm/boot/dts/imx6ulz-14x14-evk.dts
- create mode 100644 arch/arm/boot/dts/imx6ulz.dtsi
-
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index b3ec70d..d7268ae 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -560,7 +560,8 @@ dtb-$(CONFIG_SOC_IMX6UL) += \
- 	imx6ul-tx6ul-mainboard.dtb \
- 	imx6ull-14x14-evk.dtb \
- 	imx6ull-colibri-eval-v3.dtb \
--	imx6ull-colibri-wifi-eval-v3.dtb
-+	imx6ull-colibri-wifi-eval-v3.dtb \
-+	imx6ulz-14x14-evk.dtb
- dtb-$(CONFIG_SOC_IMX7D) += \
- 	imx7d-cl-som-imx7.dtb \
- 	imx7d-colibri-emmc-eval-v3.dtb \
-diff --git a/arch/arm/boot/dts/imx6ulz-14x14-evk.dts b/arch/arm/boot/dts/imx6ulz-14x14-evk.dts
-new file mode 100644
-index 0000000..e2d67a3
---- /dev/null
-+++ b/arch/arm/boot/dts/imx6ulz-14x14-evk.dts
-@@ -0,0 +1,20 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+//
-+// Copyright 2018 NXP.
-+
-+/dts-v1/;
-+
-+#include "imx6ulz.dtsi"
-+#include "imx6ul-14x14-evk.dtsi"
-+
-+/delete-node/ &fec1;
-+/delete-node/ &fec2;
-+/delete-node/ &lcdif;
-+/delete-node/ &tsc;
-+
-+/ {
-+	model = "Freescale i.MX6 ULZ 14x14 EVK Board";
-+	compatible = "fsl,imx6ulz-14x14-evk", "fsl,imx6ulz";
-+
-+	/delete-node/ panel;
-+};
-diff --git a/arch/arm/boot/dts/imx6ulz.dtsi b/arch/arm/boot/dts/imx6ulz.dtsi
-new file mode 100644
-index 0000000..ae6d7e5
---- /dev/null
-+++ b/arch/arm/boot/dts/imx6ulz.dtsi
-@@ -0,0 +1,38 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+//
-+// Copyright 2018 NXP.
-+
-+#include "imx6ull.dtsi"
-+
-+/ {
-+	aliases {
-+		/delete-property/ ethernet0;
-+		/delete-property/ ethernet1;
-+		/delete-property/ i2c2;
-+		/delete-property/ i2c3;
-+		/delete-property/ serial4;
-+		/delete-property/ serial5;
-+		/delete-property/ serial6;
-+		/delete-property/ serial7;
-+		/delete-property/ spi2;
-+		/delete-property/ spi3;
-+	};
-+};
-+
-+/delete-node/ &adc1;
-+/delete-node/ &can1;
-+/delete-node/ &can2;
-+/delete-node/ &ecspi3;
-+/delete-node/ &ecspi4;
-+/delete-node/ &epit2;
-+/delete-node/ &gpt2;
-+/delete-node/ &i2c3;
-+/delete-node/ &i2c4;
-+/delete-node/ &pwm5;
-+/delete-node/ &pwm6;
-+/delete-node/ &pwm7;
-+/delete-node/ &pwm8;
-+/delete-node/ &uart5;
-+/delete-node/ &uart6;
-+/delete-node/ &uart7;
-+/delete-node/ &uart8;
--- 
-2.7.4
+Peter.
