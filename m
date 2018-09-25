@@ -1,70 +1,73 @@
-Return-Path: <broonie@sirena.org.uk>
-Date: Mon, 10 Sep 2018 16:19:26 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	kernel@pengutronix.de, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Leonard Crestez <leonard.crestez@nxp.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@codeaurora.org>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Russell King <linux@armlinux.org.uk>, linux-imx@nxp.com,
-	yibin.gong@nxp.com, "A.s. Dong" <aisheng.dong@nxp.com>
-Subject: Re: [PATCH v9 3/6] kernel/reboot.c: export pm_power_off_prepare
-Message-ID: <20180910151926.GA10889@sirena.org.uk>
-References: <20180802103425.3053-1-o.rempel@pengutronix.de>
- <20180802103425.3053-4-o.rempel@pengutronix.de>
- <20180802104443.GH9117@sirena.org.uk>
- <94d48ecb-7302-c7ed-e815-730be0426a04@pengutronix.de>
- <20180802113552.GJ9117@sirena.org.uk>
- <20180827014815.GD29208@dragon>
- <20180906101516.GA5360@sirena.org.uk>
- <20180909020021.GA18838@dragon>
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: linux-clk@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	sboyd@kernel.org,
+	mturquette@baylibre.com,
+	shawnguo@kernel.org,
+	fabio.estevam@nxp.com,
+	linux-imx@nxp.com,
+	kernel@pengutronix.de,
+	Dong Aisheng <aisheng.dong@nxp.com>
+Subject: [PATCH V2 09/11] clk: imx: add common imx_clk_hw_fixed functions
+Date: Wed, 26 Sep 2018 00:43:55 +0800
+Message-Id: <1537893837-31172-10-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1537893837-31172-1-git-send-email-aisheng.dong@nxp.com>
+References: <1537893837-31172-1-git-send-email-aisheng.dong@nxp.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="G4iJoqBmSsgzjUCe"
-In-Reply-To: <20180909020021.GA18838@dragon>
+Content-Type: text/plain
+Return-Path: aisheng.dong@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
+This may be used by both mmio and scu clks. So let's put it
+into a common file.
 
---G4iJoqBmSsgzjUCe
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Sascha Hauer <kernel@pengutronix.de>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+---
+ drivers/clk/imx/clk-common.h  | 16 ++++++++++++++++
+ drivers/clk/imx/scu/clk-scu.h |  2 ++
+ 2 files changed, 18 insertions(+)
+ create mode 100644 drivers/clk/imx/clk-common.h
 
-On Sun, Sep 09, 2018 at 10:00:23AM +0800, Shawn Guo wrote:
-> On Thu, Sep 06, 2018 at 11:15:17AM +0100, Mark Brown wrote:
-
-> > I was expecting to get a pull request with the precursor patches in it -
-> > the regulator driver seems to get a moderate amount of development so
-> > there's a reasonable risk of conflicts.
-
-> What about you create a stable topic branch for regulator patches and I
-> pull it into IMX tree?
-
-Sure, I can send a pull request back but the first two patches in the
-series are ARM ones - are you OK with me just applying them and sending
-them in the pull request or do you want to apply them first?
-
---G4iJoqBmSsgzjUCe
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAluWi30ACgkQJNaLcl1U
-h9DfjQf+Mzg14+HDipidgPh6Bdg+IJD1Nj7k+nkPf1Swd7eZoS05uU8JnDGs2EPD
-xNvyzY4s12YQUOt5PwoTsQqa78Qi4VlkyQ64alwucoTZAqr49ohIThUfst/igMXP
-7GydiWcdwcGyxgecT45qT9AU/sULkb0ygCdTgUL4Jnhcy5D2YZGeWOc7PFQ2kI4j
-GDyXyQGJTGq4kSmKLtZPyyshFYcfjc/ICzU9gt8e0SerwSD5HcK/ZAleF/9HRK22
-QqSg/Z4BPi1Q1dWXJcwD4QdHC+0FRLQPCOIQx20GPgOuW0hNavALc55scwkdmMgg
-9t9K8G+F9Y9TjZvYapu910gdzOriJA==
-=y7uB
------END PGP SIGNATURE-----
-
---G4iJoqBmSsgzjUCe--
+diff --git a/drivers/clk/imx/clk-common.h b/drivers/clk/imx/clk-common.h
+new file mode 100644
+index 0000000..e3634a5
+--- /dev/null
++++ b/drivers/clk/imx/clk-common.h
+@@ -0,0 +1,16 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
++/*
++ * Copyright 2018 NXP
++ */
++
++#ifndef __IMX_CLK_COMMON_H
++#define __IMX_CLK_COMMON_H
++
++#include <linux/clk-provider.h>
++
++static inline struct clk_hw *imx_clk_hw_fixed(const char *name, int rate)
++{
++	return clk_hw_register_fixed_rate(NULL, name, NULL, 0, rate);
++}
++
++#endif /* __IMX_CLK_COMMON_H */
+diff --git a/drivers/clk/imx/scu/clk-scu.h b/drivers/clk/imx/scu/clk-scu.h
+index 828700d..60c476b 100644
+--- a/drivers/clk/imx/scu/clk-scu.h
++++ b/drivers/clk/imx/scu/clk-scu.h
+@@ -11,6 +11,8 @@
+ #include <linux/spinlock.h>
+ #include <soc/imx/scu/sci.h>
+ 
++#include "../clk-common.h"
++
+ extern spinlock_t imx_ccm_lock;
+ extern struct sc_ipc *ccm_ipc_handle;
+ 
+-- 
+2.7.4
