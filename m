@@ -1,71 +1,192 @@
-Return-Path: <mazziesaccount@gmail.com>
-Return-Path: <mazziesaccount@gmail.com>
-Date: Mon, 10 Sep 2018 10:28:18 +0300
-From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To: zyw@rock-chips.com, mturquette@baylibre.com, sboyd@kernel.org,
-	w.egorov@phytec.de
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: Does Rockchip RK808 driver unload work as intended?
-Message-ID: <20180910072818.GA2454@localhost.localdomain>
-References: <20180907101940.GE2472@localhost.localdomain>
+Return-Path: <aisheng.dong@nxp.com>
+From: "A.s. Dong" <aisheng.dong@nxp.com>
+To: "sboyd@kernel.org" <sboyd@kernel.org>, "shawnguo@kernel.org"
+	<shawnguo@kernel.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "mturquette@baylibre.com"
+	<mturquette@baylibre.com>, Anson Huang <anson.huang@nxp.com>, Jacky Bai
+	<ping.bai@nxp.com>, dl-linux-imx <linux-imx@nxp.com>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: RE: [PATCH V4 0/9] clk: add imx7ulp clk support
+Date: Tue, 25 Sep 2018 09:11:13 +0000
+Message-ID: 
+ <AM0PR04MB4211732CC6C078017C8B849680160@AM0PR04MB4211.eurprd04.prod.outlook.com>
+References: <1531921023-18497-1-git-send-email-aisheng.dong@nxp.com>
+ <AM0PR04MB421169829CFE1A6A32DCC209802B0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+ <AM0PR04MB421153E1441FBE356E1B859E800B0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+ <AM0PR04MB421176CFEF18F815CE0EC1A980010@AM0PR04MB4211.eurprd04.prod.outlook.com>
+In-Reply-To: 
+ <AM0PR04MB421176CFEF18F815CE0EC1A980010@AM0PR04MB4211.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <20180907101940.GE2472@localhost.localdomain>
 List-ID: <linux-clk.vger.kernel.org>
 
-Hello,
+It's been a few months without comments.
 
-On Fri, Sep 07, 2018 at 01:19:40PM +0300, Matti Vaittinen wrote:
-> While doing this I hit to Rockchip RK808 driver which seems to utilize
-> oarent device (MFD dev) for pretty much all devm releasing. I wonder if
-> this is safe? What happens if one tries to remove the RK808 clk module?
-> 
-> I guess the clk deregistration and cleanups are not ran as parent device
-> stays there, right? But is the clk module and clk module code still
-> unload? So won't clk operation pointers registered to clk core become
-> invalid?
- 
-Maybe it is a good idea to paste some code and add my thoughts as
-comments here.
+Shawn & Stephen,
+Would you provide some suggestions on how to handle this?
 
-static int rk808_clkout_probe(struct platform_device *pdev)
-{
-	/* Get the i2c device "driven by" the parent MFD driver */
-        struct rk808 *rk808 = dev_get_drvdata(pdev->dev.parent);
-        struct i2c_client *client = rk808->i2c;
+Regards
+Dong Aisheng
 
-	[snip]
-
-	/* Allocate driver provate data using devm - but bind it to MFD
-	   device */
-	rk808_clkout = devm_kzalloc(&client->dev,
-                                    sizeof(*rk808_clkout), GFP_KERNEL);
-
-	[snip]
-
-	/* init clk ops to point operations brought in kernel in this
-	   module */
-	init.ops = &rk808_clkout1_ops;
-        rk808_clkout->clkout1_hw.init = &init;
-
-	[snip]
-
-	/* register clock using devm - bound to parent device again */
-        ret = devm_clk_hw_register(&client->dev, &rk808_clkout->clkout1_hw);
-
-	[snip]
-
-/* Omit remove callback => no clk deregistration at module removal */
-static struct platform_driver rk808_clkout_driver = {
-        .probe = rk808_clkout_probe,
-        .driver         = {
-                .name   = "rk808-clkout",
-        },
-};
-
-module_platform_driver(rk808_clkout_driver);
-
-
-> So can someone please shed some light on this? Is this a bug or am I
-> just plain wrong?
-> 
+> -----Original Message-----
+> From: A.s. Dong
+> Sent: Thursday, September 6, 2018 11:25 AM
+> To: linux-clk@vger.kernel.org; sboyd@kernel.org; shawnguo@kernel.org
+> Cc: linux-kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
+> mturquette@baylibre.com; Anson Huang <anson.huang@nxp.com>; Jacky Bai
+> <ping.bai@nxp.com>; dl-linux-imx <linux-imx@nxp.com>
+> Subject: RE: [PATCH V4 0/9] clk: add imx7ulp clk support
+>=20
+> Hi Stephen,
+>=20
+> Would you shine some lights on how to proceed?
+>=20
+> Regards
+> Dong Aisheng
+>=20
+> > -----Original Message-----
+> > From: A.s. Dong
+> > Sent: Monday, August 27, 2018 11:46 AM
+> > To: linux-clk@vger.kernel.org; sboyd@kernel.org; shawnguo@kernel.org
+> > Cc: linux-kernel@vger.kernel.org;
+> > linux-arm-kernel@lists.infradead.org;
+> > mturquette@baylibre.com; Anson Huang <anson.huang@nxp.com>; Jacky
+> Bai
+> > <ping.bai@nxp.com>; dl-linux-imx <linux-imx@nxp.com>
+> > Subject: RE: [PATCH V4 0/9] clk: add imx7ulp clk support
+> >
+> > Kindly ping again...  This is really pending too long...
+> >
+> > Stephen & Shawn,
+> > Any suggestion on how to proceed this patch set?
+> >
+> > Regards
+> > Dong Aisheng
+> >
+> > > -----Original Message-----
+> > > From: A.s. Dong
+> > > Sent: Thursday, July 26, 2018 9:51 AM
+> > > To: linux-clk@vger.kernel.org; sboyd@kernel.org
+> > > Cc: linux-kernel@vger.kernel.org;
+> > > linux-arm-kernel@lists.infradead.org;
+> > > mturquette@baylibre.com; shawnguo@kernel.org; Anson Huang
+> > > <anson.huang@nxp.com>; Jacky Bai <ping.bai@nxp.com>; dl-linux-imx
+> > > <linux-imx@nxp.com>
+> > > Subject: RE: [PATCH V4 0/9] clk: add imx7ulp clk support
+> > >
+> > > Hi Stephen,
+> > >
+> > > Do you have a chance to look at it?
+> > > This patch series has been pending for quite a long time without
+> > > much comments.
+> > >
+> > > Regards
+> > > Dong Aisheng
+> > >
+> > > > -----Original Message-----
+> > > > From: A.s. Dong
+> > > > Sent: Wednesday, July 18, 2018 9:37 PM
+> > > > To: linux-clk@vger.kernel.org
+> > > > Cc: linux-kernel@vger.kernel.org;
+> > > > linux-arm-kernel@lists.infradead.org;
+> > > > sboyd@kernel.org; mturquette@baylibre.com; shawnguo@kernel.org;
+> > > Anson
+> > > > Huang <anson.huang@nxp.com>; Jacky Bai <ping.bai@nxp.com>; dl-
+> > > > linux-imx <linux-imx@nxp.com>; A.s. Dong <aisheng.dong@nxp.com>
+> > > > Subject: [PATCH V4 0/9] clk: add imx7ulp clk support
+> > > >
+> > > > This is a rebased version of below patch series against latest clk =
+tree.
+> > > > [PATCH RESEND V3 0/9] clk: add imx7ulp clk support
+> > > > https://lkml.org/lkml/2018/3/16/310
+> > > >
+> > > > This patch series intends to add imx7ulp clk support.
+> > > >
+> > > > i.MX7ULP Clock functions are under joint control of the System
+> > > > Clock Generation (SCG) modules, Peripheral Clock Control (PCC)
+> > > > modules, and Core Mode Controller (CMC)1 blocks
+> > > >
+> > > > The clocking scheme provides clear separation between M4 domain
+> > > > and
+> > > > A7 domain. Except for a few clock sources shared between two
+> > > > domains, such as the System Oscillator clock, the Slow IRC (SIRC),
+> > > > and and the Fast IRC clock (FIRCLK), clock sources and clock
+> > > > management are separated and contained within each domain.
+> > > >
+> > > > M4 clock management consists of SCG0, PCC0, PCC1, and CMC0
+> modules.
+> > > > A7 clock management consists of SCG1, PCC2, PCC3, and CMC1 modules.
+> > > >
+> > > > Note: this series only adds A7 clock domain support as M4 clock
+> > > > domain will be handled by M4 seperately.
+> > > >
+> > > > Change Log:
+> > > > v3->v4:
+> > > >  * rebased to latest kernel
+> > > >  * make scg and pcc separate nodes according to Rob's suggestion
+> > > >
+> > > > v2->v3:
+> > > >  * Patch 1 changed on: 1) split normal and gate ops 2) fix the poss=
+ible
+> racy
+> > > >    Others no changes.
+> > > >
+> > > > v1->v2:
+> > > >  * add enable/disable for the type of CLK_DIVIDER_ZERO_GATE
+> > > > dividers
+> > > >  * use clk_hw apis to register clocks
+> > > >  * use of_clk_add_hw_provider
+> > > >  * split the clocks register process into two parts: early part for=
+ possible
+> > > >    timers clocks registered by CLK_OF_DECLARE_DRIVER and the later
+> > > > part
+> > > for
+> > > >    the left normal peripheral clocks registered by a platform drive=
+r.
+> > > >
+> > > > Dong Aisheng (9):
+> > > >   clk: clk-divider: add CLK_DIVIDER_ZERO_GATE clk support
+> > > >   clk: fractional-divider: add CLK_FRAC_DIVIDER_ZERO_BASED flag
+> > support
+> > > >   clk: imx: add pllv4 support
+> > > >   clk: imx: add pfdv2 support
+> > > >   clk: imx: add composite clk support
+> > > >   dt-bindings: clock: add imx7ulp clock binding doc
+> > > >   clk: imx: make mux parent strings const
+> > > >   clk: imx: implement new clk_hw based APIs
+> > > >   clk: imx: add imx7ulp clk driver
+> > > >
+> > > >  .../devicetree/bindings/clock/imx7ulp-clock.txt    |  87 +++++++++
+> > > >  drivers/clk/clk-divider.c                          | 152
+> > > +++++++++++++++
+> > > >  drivers/clk/clk-fractional-divider.c               |  10 +
+> > > >  drivers/clk/imx/Makefile                           |   6 +-
+> > > >  drivers/clk/imx/clk-busy.c                         |   2 +-
+> > > >  drivers/clk/imx/clk-composite.c                    |  85
+> +++++++++
+> > > >  drivers/clk/imx/clk-fixup-mux.c                    |   2 +-
+> > > >  drivers/clk/imx/clk-imx7ulp.c                      | 209
+> > > +++++++++++++++++++++
+> > > >  drivers/clk/imx/clk-pfdv2.c                        | 201
+> > > ++++++++++++++++++++
+> > > >  drivers/clk/imx/clk-pllv4.c                        | 182
+> > > ++++++++++++++++++
+> > > >  drivers/clk/imx/clk.c                              |  22 +++
+> > > >  drivers/clk/imx/clk.h                              |  92
+> ++++++++-
+> > > >  include/dt-bindings/clock/imx7ulp-clock.h          | 109
+> > +++++++++++
+> > > >  include/linux/clk-provider.h                       |  17 ++
+> > > >  14 files changed, 1166 insertions(+), 10 deletions(-)  create
+> > > > mode
+> > > > 100644 Documentation/devicetree/bindings/clock/imx7ulp-clock.txt
+> > > >  create mode 100644 drivers/clk/imx/clk-composite.c  create mode
+> > > > 100644 drivers/clk/imx/clk-imx7ulp.c  create mode 100644
+> > > > drivers/clk/imx/clk- pfdv2.c  create mode 100644
+> > > > drivers/clk/imx/clk-pllv4.c  create mode 100644
+> > > > include/dt-bindings/clock/imx7ulp-clock.h
+> > > >
+> > > > --
+> > > > 2.7.4
