@@ -7,43 +7,43 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFF74C43382
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Sep 2018 17:00:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF6B9C43382
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Sep 2018 17:00:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2986A206B5
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Sep 2018 17:00:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 931DA206B5
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Sep 2018 17:00:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="l6GgeUDd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2986A206B5
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="OrlXsNSs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 931DA206B5
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727234AbeIYXIh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Sep 2018 19:08:37 -0400
-Received: from mail-eopbgr70075.outbound.protection.outlook.com ([40.107.7.75]:45688
+        id S1726322AbeIYXJR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Sep 2018 19:09:17 -0400
+Received: from mail-eopbgr70052.outbound.protection.outlook.com ([40.107.7.52]:28491
         "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726322AbeIYXIg (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 25 Sep 2018 19:08:36 -0400
+        id S1726922AbeIYXJR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 25 Sep 2018 19:09:17 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aOdwUcML8JyXyOMEitL51ftuJ5giqLxaU9kwVKy31DE=;
- b=l6GgeUDdHtzTOHOA3odThe7ThIm75/ivj4hEOHqZ85eLE4/rP9r6mpluTPqDgRVPXrHZcsbnzagdWoY717ExS164UjlYAzHjNX7TVaiyBm3LkZObeAYxRh6NeDc0/prm+1yWgw+hQTmFWL6oEmG7KB8OH99DbrTPrjRh30/H2rQ=
+ bh=L0aqRxqzfrR+rMGrufs3ngka3mKBVYboCo1OtZNhb3E=;
+ b=OrlXsNSs7vUsXx9bm7SbxBIyY8Ofa/FBvQUAFcW0KEOuOm/T25ndNXYceQaujlZcD5H6wU2TeZVzxrnQDFEb9JIR2OjPbiWgWS5sBy9HYsYCWBSO+gklwYPHW5G8xThqW77svc3uJd3zRO6xPoY0JpoU+inxQzaJAt5zQCvduMo=
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=aisheng.dong@nxp.com; 
 Received: from shlinux2.ap.freescale.net (119.31.174.66) by
  AM0PR04MB4211.eurprd04.prod.outlook.com (2603:10a6:208:66::21) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1164.22; Tue, 25 Sep 2018 16:59:38 +0000
+ 15.20.1164.22; Tue, 25 Sep 2018 16:59:27 +0000
 From:   Dong Aisheng <aisheng.dong@nxp.com>
 To:     linux-clk@vger.kernel.org
 Cc:     linux-arm-kernel@lists.infradead.org, sboyd@kernel.org,
         mturquette@baylibre.com, shawnguo@kernel.org,
         fabio.estevam@nxp.com, linux-imx@nxp.com, kernel@pengutronix.de,
         Dong Aisheng <aisheng.dong@nxp.com>
-Subject: [PATCH V2 11/11] clk: imx: add imx8qxp clk driver
-Date:   Wed, 26 Sep 2018 00:43:57 +0800
-Message-Id: <1537893837-31172-12-git-send-email-aisheng.dong@nxp.com>
+Subject: [PATCH V2 08/11] clk: imx: scu: add scu clock gpr mux
+Date:   Wed, 26 Sep 2018 00:43:54 +0800
+Message-Id: <1537893837-31172-9-git-send-email-aisheng.dong@nxp.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1537893837-31172-1-git-send-email-aisheng.dong@nxp.com>
 References: <1537893837-31172-1-git-send-email-aisheng.dong@nxp.com>
@@ -54,52 +54,50 @@ X-ClientProxiedBy: HK0PR03CA0033.apcprd03.prod.outlook.com
  (2603:1096:203:2f::21) To AM0PR04MB4211.eurprd04.prod.outlook.com
  (2603:10a6:208:66::21)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: eee0133f-fbbc-4cf2-8754-08d623084965
+X-MS-Office365-Filtering-Correlation-Id: f98c4dd0-857e-4902-750a-08d6230842d9
 X-MS-Office365-Filtering-HT: Tenant
 X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB4211;
-X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4211;3:ZJpzSnsdiqwm+qpFAlqCDicZyyNzkqjLitwVYxX4his2oCI312VXh1YDzHdo02kQImRedqpo9uWXYGDUQwxjjMAXTuSQJOx8bhlq/1n9R27+ZIfFd9JHjz+M62FbBx9NzJSyF42bu8lrX3DOWsJ4bRfWyWJHeZXcZiaDcCm0WnNE/jfndD8up0DflRi8yn+outaPE/NYPSXdPype88b9hNfXf0aLGNr3j73vnX/zRSDkSdOYn1Jovq5QW/Mc6UrG;25:W3JNZ7DYJv7ir39qlPYT52blFLyWibWv78/72uBnvFA/VYBgVak/DLusGrTxFvUrUu8UqKqPBMzctB9EKmOm0AFkeeKZqNxAOs03++9lWfw8/5Sy7GJJBQTBMOuuZAoe7tzW4TEDKizjvUujCaHNaaD/P0PHeMyBFlJk0LDXxydzZ66ha/BjVhDg551PFPRG8yJvTcm9sfEpd7VynRLv4QIYPKEpp535s+IFff9jPqNVn7k2KyMBtumYaSuLtL0iOt4kHyoKxs1onjmSWS7uiXvL3IBRVyQf+7LcJC44mHliohL8LWcVBzwDVeECI4B54K/7tn2bYcrhgC8xCkh2Eg==;31:n+xZPRJhBVMA//XLRzZ/pxMJBq1UiizBlXUbKB2ciMNUqQOezzfU2zHosDIRuEW/AYa3t3MYGYmSgwfbsFcQOjdePgKS58ksN4l6LIuNOIW5L2MhvXS+2vbNNewjKNZmA7vrtZEGj7OdbSH+uXVpMGATrvHMWYX1c7PQ8ZQDbZ27Uis3wdSMQEGFVHzoKTHnebPUbIhIHGLPqUoVGz4xen8dMMwjV/p6Q8wAnRaLgbg=
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4211;3:sUcphyPim6rGfId5Sq9yiIueNWb1yXkYPuT00IzdylBjlYlzVAtN0s6vt7UgAvgkn+Z/acMUiHsXkuM8MonPR6FFWHlRCIepfPqAM97NIIsphunU0FkU0BYpxOIJrTaA9tz+ftiLuQYxqvLHk1mvQ/Vhd075Ob/hmqF6hFTlOMVBjcW2LD91ct4UfgriEUMgD2SzUI4Jry7SG47G/tjkffR41Mfa0jSJZmRM+v0WiFJ0qiAfVduXnypyw/gBxMKA;25:kganZjWGt1m/6c5eLXUZfdSfGQrIT8ibTkEniQMKPZKVxgihUUNi7/Yx5hG3rNFqmwMczHBQWB5+tVr5wgPyOEzeaF0292E2DFpnSJ9aTZoZRkgMVYN/iY34ynC8mAPcqhL7RCPrQarfwvq7AMHyhn96PXGh5UkiLvXXnVbaS9bED4HXIELLdBwyq2XS6rVzBfhKdSbghFUCXBSUT/u8p8wITuqF11X3yl/DpdjRz4I/UXGd9LZHbwenY7l/dV2R+uIk1sFtRihRPzB+wyLBvVjEpyfVhEgXCWTw3sp6+z6ODYVs23XDUh5merKN6H6l0/PAbngw6NP9igQLlrSqVQ==;31:Rq3w7pOvJHcbzIUWVKTXD92UB3uwY7VeGTPzeVV/VppZuDzVSZBahvDGsnETwRB6OMjV656tkgFxKfh8x4QIprVXHM107TzPQ7lXeZit5OC2L6seJpDPgkUGzr0kCta7z8jZ482Jot80AphlaslyD+KShPsLMc9bekSA7uOUzDy1zKy/142PeQFM8QWzQbsCAwtqnT6qAvzJwMOZYYNBrlSU7iiOMT6JA1rItoRStL0=
 X-MS-TrafficTypeDiagnostic: AM0PR04MB4211:
-X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4211;20:N62QVPlef/Zuh7m+j5Wzq6ya/oWlKvu2uZM/p4zW819doNtLbYI5fsegRvPfs0LvKyOBoAOkjfOvDQsrfun7tH29w2ryATyQkqFmV8NGUXLAjhDWPeTHwnvCeHQI0xG0KKDEmhldp1MDU9SaSH2n5U2Zma1CJmffxrgV28J8s8P+pADrx6nP1MQWBO5fl1yPhkbIUbTt1oCp047fBTycT8AJB7EvJJBYjNmCVgxW+gtdjALWu8gHjd00uMnd2P9RN3Fq1dsMjx1uwrgWqwaALytklDtUXHSSk7jZOAh0ZOmoR2y13zIRzvNpFws6KzrZgkmWqUI9byCqrFg/kkoLLehtjNJIF9HAzLUS0C4Y3foMxqdxCckpQUjvZ51Wo1zMODyAQHFeSUXUQl9dTTvn169Mcx+RdeHerznZJ+OpARL4/g7kCIyDGM7LdI6s70sAGkMQJqjPxc1TNJnUzhmocT/jCTgnyYtalkpf75/sunN+RDLBxsz65eUdPRpFWtY/;4:bUewyM0HxhMS+ggqWlS7vSFp2lP8lvkBQytGWasQGPju+V+CzKDCSa2de0SGRqr0c03S4dGJDLjzI3a1U1ZAk1fQ83TNySUxxwi4YI8N/eWqgfFShb2Q0PX0HZphpzWv5TiFfbH9gGqCvpSqoy6fl6YNi1o3nR6z1f8kmn2c6ZHvbgxOXGaNWf9EVSjbhcR5rWP7B8o6jBty26GItTejZ5fjEQMpM4DPTq2zxB+CXcQFrrVAYfS7+WCgx8AvlPSTpDGJdmw1bKQpJRZ0qHo5P80u2byI/Mcv5VEgxw9vgIvlgcKnV+pIR7npO1jX4IRX
-X-Microsoft-Antispam-PRVS: <AM0PR04MB42119A17C5C7AC85DD4B9D6780160@AM0PR04MB4211.eurprd04.prod.outlook.com>
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4211;20:Mn5oiZtZghtegrdcgXOVb6rlfIWmHASf5zpz9J3qRTuBKp2JqgTEmU0EiR7V/IDcFRvKvkd2aXW419iFGq5yKWUbm21CVpyUt1TrM2XK1X8Hdl/1fzh0F4GZBb1dbZatvgLjgFamY3/mTwSuUDpJwVumrbW2zsmFdDb1z5GhojH5FF9eZpPZ4Jpq+F++vpHcskhxVzfFUoOyCBrieAgSLCJgFfGvpDEJb7uy5KIhFqPNn13oqZ3C/CINqnZPLVAPe2ju/HVu8j2ImmnrRTi0JIvkII8mESE5q4KP2ikPhf86vWbMsrxRkWEPkmiCrJ7pGrMTI+BB8SwRRgIhkDYcVyQgPeOsIZk3a/Q1RaWRE9yEgNYrB7lMt8igThheArY49UIjal9ijCRhq304O1sTpU1RE7FdtGCKCWWI7knOYWQv4dKOvF7rqe/CabpvlO1QqQC3ApR8x3qA/mwa9Ug9W/G8lMRivVUk5pSSRT/sadRItCObJan5fMjEsD72Y6wT;4:+WkLX7RHN0aPvyqaURUQ3iD9cXwSh2ZPi+bmbMNDFYZdhS19v7lissf8npxHIDIz+qrkpahKtiNl1FT2+04bM8XW+tYZpctqp3fKNCm3bFn7Hwj0wQdFkMqpPZ4qCDlrKI2QQtVL0UXmA0dMc1/R3F5IR/QbQIdP8Ft4D1pOGCu2aCE+9+3M1j1H2qqYTFUNNvWBRmWB/DxfZnq4AO02i5O77Kw7KxV+C5EdLsNunbXrX8ULuizcVg/R4xM0QPloLZs721lQGGQqSRTBm1ZWuaaSWgRHGt4S4gjwX/pGXF3Y+UHD98ARNvijy4p7XnbZ
+X-Microsoft-Antispam-PRVS: <AM0PR04MB421138968614B66C145C19D180160@AM0PR04MB4211.eurprd04.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(185117386973197);
 X-MS-Exchange-SenderADCheck: 1
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231355)(944501410)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(149066)(150027)(6041310)(20161123564045)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(201708071742011)(7699051);SRVR:AM0PR04MB4211;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB4211;
 X-Forefront-PRVS: 08062C429B
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(136003)(366004)(39860400002)(396003)(346002)(376002)(54534003)(199004)(189003)(478600001)(6486002)(11346002)(446003)(53936002)(6512007)(68736007)(2906002)(48376002)(53946003)(6116002)(316002)(3846002)(34290500001)(106356001)(186003)(16526019)(2361001)(2351001)(26005)(305945005)(7736002)(486006)(36756003)(66066001)(4326008)(47776003)(25786009)(105586002)(6916009)(6666003)(50226002)(97736004)(81156014)(8676002)(16586007)(5660300001)(956004)(575784001)(52116002)(386003)(86362001)(2616005)(476003)(76176011)(51416003)(6506007)(8936002)(50466002)(81166006)(32563001)(579004)(559001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4211;H:shlinux2.ap.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(136003)(366004)(39860400002)(396003)(346002)(376002)(54534003)(199004)(189003)(478600001)(6486002)(11346002)(446003)(53936002)(6512007)(68736007)(2906002)(48376002)(6116002)(316002)(3846002)(34290500001)(14444005)(106356001)(186003)(16526019)(2361001)(2351001)(26005)(305945005)(7736002)(486006)(36756003)(66066001)(4326008)(47776003)(25786009)(105586002)(6916009)(6666003)(50226002)(97736004)(81156014)(8676002)(16586007)(5660300001)(956004)(52116002)(386003)(86362001)(2616005)(476003)(76176011)(51416003)(6506007)(8936002)(50466002)(81166006);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4211;H:shlinux2.ap.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 Received-SPF: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM0PR04MB4211;23:5wiWE3SSx7MJbWBN4JgEXG77wwQ+FMU0A5WsouPPP?=
- =?us-ascii?Q?quXjWiQCiTX3i6c4S5KOV9J3uNZSZ4eISaUJPOk6IAi21nHIOOrxEjxoq4xw?=
- =?us-ascii?Q?tfY11yFBRQpIOFFtJu/vKI+zcVMCK+ViTsX2pFlb/RI/HMzhWk3CfRZKGNQ3?=
- =?us-ascii?Q?zLsV7iXlLeYo/iS0Dkx9isdThS40qrofKpo3h+hgO/RAhQQ2DZ2jB01bunuz?=
- =?us-ascii?Q?N7awceo0AAaAq/fvOzS6yY3QdhH0Gw1ACFiqg3wGo+FW8TrlHcmOK9lAA5Zv?=
- =?us-ascii?Q?rWDt8O22fNDI9tWTtPpMf+W4OOlO2n461BvMnVZdb1hyrLtoMZxL3UT5I6hD?=
- =?us-ascii?Q?PSy3PP2dNMou3vdnicAyWJBCx8ThheCh7Ya4jIxlohTm5sF8NxooHv2lpX6R?=
- =?us-ascii?Q?uUzVtj7n8s58tfHWhbX7JPgCndc2Ht9DOTc5B3CB656GR07ecrSkoVBp2lbW?=
- =?us-ascii?Q?CK0BhtNEfitH+zpFR1C4PLjfYQ3gPkKSAHVXV+bThrvXexwKJ1MeShoi1vLT?=
- =?us-ascii?Q?JLLIR0+Qn8NXsLHFpIQWUUw6DjZqpmmQS0tCSVqEslfCJT6KP3bdcoOqV++0?=
- =?us-ascii?Q?s99RXLXQav0l2nPiC5GlTHPE1WIe7NU3s+DQDX5gXAN39RBfw9LRaKMl4giW?=
- =?us-ascii?Q?Gx+tF0mkxvC5N0Rw62xeJNCwzZQ9jDDiOKdpX0U6mBhnGySo/kMVfnMkDkNF?=
- =?us-ascii?Q?AcZg0lsWCUWvfFn3cjncwFwabXIgO16SevRxNMJZTYdK5fTWl+usWC2AysMW?=
- =?us-ascii?Q?ku3nOBAKeU29eeOetzQmoBBkhlzSgC8JJKYCZwy7hptw4Y9tC+zMN06bCsji?=
- =?us-ascii?Q?maBSMPkGKFPLuC5Qth7Tp8m6+tLHgLNiastFyiXwvqWGpw40tnR0D3y9vCRb?=
- =?us-ascii?Q?29xRf3LsU0NUQVK11w6+6Ibll7T4ADaaN8GJ2cfgI5tJ6bKhOTxnesXf59tv?=
- =?us-ascii?Q?Qsuz1cK6pvYIcVDnSEdlCnP/tExTPvDt7WSR/wk/t1k8xs7pR4Rxpl7Hl+R5?=
- =?us-ascii?Q?mu8W0HZIxEME/e8JdolPLqhOWbtrs6aeQYV9V4W9K9P7npAFLnS1V6wZzwgd?=
- =?us-ascii?Q?V6aNl+5qUN9atbWkp5fFcru45Jf8NhaDq9bPSdAKazhWbNbCmQ+hSx8zAcEk?=
- =?us-ascii?Q?GEa5oR3P5sllWYNzFfZVRCms3KIs3Bv4uXQA71Ftws1KobbKGm9aM1rwm5M9?=
- =?us-ascii?Q?84zpYLJa2kjVR73l9C6oUWYsPSZlTjMNb+bgVNCxqIdWaPrejlr60DkKbN7d?=
- =?us-ascii?Q?9caA/n7oPTS6qKfc92QD0sV2sGkut1BEz2q3aI9w0k7EjBgJ+NevOnspPCzM?=
- =?us-ascii?Q?cLqrjmTvFmxzWF/tZskeKvsW4sYqhP/Q5/xMwfkNqXSk3eG5gIUHTYTcRQGx?=
- =?us-ascii?Q?RqpuA=3D=3D?=
-X-Microsoft-Antispam-Message-Info: S9FZbt8oLYkkBG9yzNRC9bTUXHh0LtxBSp02bF8qaXJvSdfv73Xm+KMf+5kh/gU5R92lvm9axZhOR6q6blqHi+QHYFZg4R0VPGbegEAtAgZi7hjmV0W6wfJZNtDsRuQc4eZXycchMN3dwuGGmAxq3gfUwlUcrFTsREcIWhzXJedQX3kucEd1CkVe8IXJRAcA0QA7Q1PAGttAJeJ7CzEKNvxw+2S1FeDPGfHCj263AGMLxcDAbDfwIfBr8D7m0a7albyok07y3nvXOFOKkBFh8S4aZcU/KuCzwViOE5rszzJYsshu65cGsdfAh5c5/I7GSHBk+j2Y8fYZY00SZ9BCTt7Yg/N48B8uNFFKBOD/orU=
-X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4211;6:mSjaO/SkeVILlgU9U5NGL6FUQIczbaaUDpmEf4GiiyBBIRXmpTCmNmblRFKZprwOcQumV7WnH6j1O4YOukvE0M1Ife1FBXxuyAaVtyrvsIkfYs1jGKPJusYMxeCCBVXHrj+ZmIEswWp+/JYQzf+WeWJXrwEY0KsgiPHMlCCuSgqfZyiT6ZiSEiLML7poob+O1dm8s+bfQwv62AfDIdKbDmU/AfxEVmzcBH6tltDBsEoA0+YO9+N2F9IyXIEMUuE8GfQj/H8AZTCz9pYhT/4z/rZNp1hQlbBf1TY71XsneWMA0mOvhS76JGm8e+ZO5IUEpu31xdcB1ko57fST80VYoW4F3UPlQaPIN2vFC9JOK5XEnpKKhjboYiyfpof1akFq6b4chi8ALehhCWO+Q1O+ACa/t26INUKjp2MKaKdP9SCCPZT5ui5DaClJRaonM00NWoA5h0A+HT+KfSb7WwSAtg==;5:piCNVEvXnmgGokpxZApp7nbihhuYH82iRmko7CxlxaN3O9oYwureBmERTNkvDCnN3Ei7itPVhpd+DUM/kQYWS3/k9w/ZbvNg2JsY5e5bOLKhVFUOebDACAvII/5racdM9/L2lA7M6Lz9WbxqBPkmuHEgnj9Fm85tlmZeIk5Dml4=;7:QL/XGMQWmIt9ngIHDJk9FqqWMSL84IVAtvDrHqXFX1F+zO2IvIb/xaz8clASVc3wWJ4E0trgZQ5qpnernPXebDewRgiGQG3sBUifEjGDX2EkI18gzS0uXrUMCUuMhFMkxZEma1iq162UJIa9OstZL4OndXpaoVs/J2wzQIhAo/lJXo2KOUr08V8Y99XjJLeTjEiBs/smgEIRPPLwFe3KvIfmliKgmCi03R/7iIIHfe5hxdfoynKpZraIeTk+RZt8
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM0PR04MB4211;23:Hj66sEgA/7EU9IPKbCVUOZSSHaa3dyDVgSx94j06s?=
+ =?us-ascii?Q?Of/Ytezs7k6hP8gFuibH0fNiINAe6q6iMIN/qRWx2j3T20U2Ifje2ug2Ho+P?=
+ =?us-ascii?Q?1xNCF3QO2CfUOxze8dNs0RXk3v5eOZCD7shFeZEzyjhG+5sGuStQRVnQwwbx?=
+ =?us-ascii?Q?L7tF8NylWg2tHXeZpy8BjoSsjoozQwYvU0V/+46lnXhoBU/sJLIO6ye3aiA+?=
+ =?us-ascii?Q?3RAhCWl0n5bfVoIETyllnhVxcHJktGMVdBS8dssZdvRi+FXMVphI37gxK8ox?=
+ =?us-ascii?Q?k3+bPXwvmVMUiHLO6YHVZPpuV2Lpapfr1l3lGFE8m4VXVlO6YPlo/IxysHrk?=
+ =?us-ascii?Q?0K+o4vhzi1SQhConprHGu6yam/sSZ5oDHLyxHZ2H8z/12Pb9duJpoUa8QZRz?=
+ =?us-ascii?Q?nl0nIRYzGekFCsl8d31Pa5KMtVqpvi+H36lOim/e9egEVzTJ6XiA03WgMHcB?=
+ =?us-ascii?Q?vzwxOVqkZxpv+cQ6XZjlRRcYhqkfADFlL151kzouOAEYfB0pQaXVD0v0OHw9?=
+ =?us-ascii?Q?CvRX51mF0JydkMXw7ZLTQYsDMFN075cmQNn1xy/wti8t0k32ri381Gsn24UX?=
+ =?us-ascii?Q?LpqPe7MeAFXg/iiHnVOw3906XbqFr4uFYc4d289PG9YvRd6zYLovpdVTDqCs?=
+ =?us-ascii?Q?4d/R3FsoPnBnHye9GJGmvwCqbyy2b1rfcjsuhAyVtgKUpIXLRVWBLjPTE4F0?=
+ =?us-ascii?Q?KrpKbbGBHVYqBTERrbWjWn6V64GbdueuaiEWtFc4efqq2XllfPkW2ls+4PZ1?=
+ =?us-ascii?Q?MmsKW0UzXnjZWD/DOE/89PMEzo6IXvDyob6iZ9bgIrafR83eOycHedaTjn00?=
+ =?us-ascii?Q?murct4m3YGZ4yq6Xf1LWS8Ilt0ouiN6PrmP+kKBTPSs7+wxMRGVofMby6ob0?=
+ =?us-ascii?Q?VizSwjM5+6fa3VMPgRItHmOzLnjXXFPq278OJdNnAWHUIeDl/KtHHh4v8xb/?=
+ =?us-ascii?Q?j+c4pP9US6GtpA1O2B5j+dQJBgwbE814fqpPV3nMCUQwU3qPYxTYDmJH3Kye?=
+ =?us-ascii?Q?Q/ORdqe2iFJqMhlAJldIssKVn9mlnoHYJb3TZQgvI9XlEwsUD+eAU7Ll50nG?=
+ =?us-ascii?Q?WMGY1G3p0LFVmhw0ZhRASyJDAZmZXnL+US9dAwI8/2cSa1leP7jHj6omgJxq?=
+ =?us-ascii?Q?6QSfRDsZ21f3CT81OXGbGLZhapD8OYb6THVtYfpCYOurBGi03x0/dl+0bm8p?=
+ =?us-ascii?Q?5u4HiyHf2wvJGLY0uMxKwILG3OvEekzp3IjEkkBcvsBBi0+SuNE7UgPQ7gEN?=
+ =?us-ascii?Q?x3To3EaKncKXGO4EItm+vyrv45ysqg2ph/T0Gcc?=
+X-Microsoft-Antispam-Message-Info: 8cpiE3fwSnTKL3LAUljj/LeR6+JM3kPFeuphV7Q5GkUQcX234D1uDvzpbRd1683eK9lVHEH3a35Jww1/nV+1P9/GhwrzyPBM3LjNzr+y/L8nj2PCO0+qfb3FIqSVX4AN86akVTI2Kh3ff520IFd+Bc07kYav3H8qnC66ome9JG5u4+AeOkFNIyxulk1dk6ca+6D6B9GcCqoLqGd3LHYlBzNFWvcqOqx84wtzi7zqJWF53gnhrpMPrLcdYO6mYypWOydpUQiQ2qutdJyAiSdfeimu1wij71O/E1u4gixefvvBlGs6zX+n5r9F4YAJukhHZrtR3YhC0I1M82+K2EKcKqq+h+L8yw/PrVluKTZo2YU=
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4211;6:6iiZ1/J1+kYLemOifm7wWxa+MFjrJCPlZiny5d6N4ajetzjFS7ZyVdXORn3XR5CIuRJeWAyeXcxam8gJthRRIMOD48gIrS+zfsRTh4/Ilk4mGBpQpDGiLpTCydpH6eqQFfJlnVO1iMLQ1ibF06iUva8PI0WuL1tpslUS4IZEx3WxgjSwFj2TidSCFvLrQ0W63kly0AYawfMU/LHx0UNoA0hySBlMg/pUSffVNcoThkC7GT8jPE5lTo03ZwDoGjZDpUPN+SFsKQ7XlAIE17viuEFARQzGtoYdc1qgm0IE3Pmo7df6lnLg3irbhtUPHmZ9awgZvna20EV/1NqjHfD36l8xF2rE/dUv2nz7dhw6uhngalX4uogvZWl/y/tr1ADEHR5G8yMRuH6n/dAKHG31VCwLmVDbYAidmQ+OkTamLrD/f/NtjMVJnsisSb9FGbVeCxV1s0leLnq6ikIrbH02DQ==;5:RI6c6G0SlFkwJF+1ackniEsDhBwUIty/howeS3vxxMPqXYemtSveghccslPzm5ZCVQXdqBIAx6ShhOj4aDWaYwOaj9RJRdGkctCo/0NXTRzQFJhAzWAaL5CWH5h1d5Tc3yd3Ttbw0MJ2U/33+UwQ8ntGKgBRESCXB5hCQ5f9i1s=;7:dU0bHjaQYHh6dJCvnVieTH6GzZUTJL6bcj0r5iHR+YO8yHxcporeKTdq9F4COujOqOTaNnxTqAFtgCxP7G6XHvv/QFdeN2Du9R43jmmsuCrOXhEIbmIBZL8x0HMRqYHfuiLebkW8fvxT5HUTISaxxgNZYmCKCSJVKKGOTPdF19XmtfJw3uNIjrX/iZxPlWLiqr9ZGi800IWI0C/mmsgheP0e+hq0J1pGpdFSlwhgEmFMfZ4lJ5feBFkSmUX83ZaN
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Sep 2018 16:59:38.8073
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Sep 2018 16:59:27.8543
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: eee0133f-fbbc-4cf2-8754-08d623084965
+X-MS-Exchange-CrossTenant-Network-Message-Id: f98c4dd0-857e-4902-750a-08d6230842d9
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4211
@@ -107,9 +105,11 @@ Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
-Message-ID: <20180925164357.XTAZRmEYjtvo548MNddLfR5Eu92yl3J5DSF5FTGrLDY@z>
+Message-ID: <20180925164354.Rpe61lNKoAJr2CYfGA6d4EwazyVcqtBu78540yNasAk@z>
 
-Add imx8qxp clk driver which is based on SCU firmware clock service.
+Add scu based clock gpr mux. Unlike the normal scu mux, such
+muxes are controlled by GPR bits through SCU sc_misc_set_control
+API.
 
 Cc: Shawn Guo <shawnguo@kernel.org>
 Cc: Sascha Hauer <kernel@pengutronix.de>
@@ -119,32 +119,32 @@ Cc: Michael Turquette <mturquette@baylibre.com>
 Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 ---
 ChangeLog:
-v1->v2:
- * no changes except headfile name updated
+ v1->v2:
+  * no changes except headfile name updated
 ---
- drivers/clk/imx/scu/Makefile      |   2 +
- drivers/clk/imx/scu/clk-imx8qxp.c | 426 ++++++++++++++++++++++++++++++++++++++
- include/soc/imx/imx8qxp/lpcg.h    | 186 +++++++++++++++++
- 3 files changed, 614 insertions(+)
- create mode 100644 drivers/clk/imx/scu/clk-imx8qxp.c
- create mode 100644 include/soc/imx/imx8qxp/lpcg.h
+ drivers/clk/imx/scu/Makefile          |  3 +-
+ drivers/clk/imx/scu/clk-mux-gpr-scu.c | 90 +++++++++++++++++++++++++++++++++++
+ drivers/clk/imx/scu/clk-scu.h         | 11 +++++
+ 3 files changed, 103 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/imx/scu/clk-mux-gpr-scu.c
 
 diff --git a/drivers/clk/imx/scu/Makefile b/drivers/clk/imx/scu/Makefile
-index a76ed78..68e2d7f 100644
+index aee56bf..a76ed78 100644
 --- a/drivers/clk/imx/scu/Makefile
 +++ b/drivers/clk/imx/scu/Makefile
-@@ -8,3 +8,5 @@ obj-$(CONFIG_MXC_CLK_SCU) += \
+@@ -6,4 +6,5 @@ obj-$(CONFIG_MXC_CLK_SCU) += \
+ 	clk-divider-gpr-scu.o \
+ 	clk-gate-scu.o \
  	clk-gate-gpr-scu.o \
- 	clk-mux-scu.o \
- 	clk-mux-gpr-scu.o
-+
-+obj-$(CONFIG_SOC_IMX8QXP)	+= clk-imx8qxp.o
-diff --git a/drivers/clk/imx/scu/clk-imx8qxp.c b/drivers/clk/imx/scu/clk-imx8qxp.c
+-	clk-mux-scu.o
++	clk-mux-scu.o \
++	clk-mux-gpr-scu.o
+diff --git a/drivers/clk/imx/scu/clk-mux-gpr-scu.c b/drivers/clk/imx/scu/clk-mux-gpr-scu.c
 new file mode 100644
-index 0000000..1a55757
+index 0000000..c4b5687
 --- /dev/null
-+++ b/drivers/clk/imx/scu/clk-imx8qxp.c
-@@ -0,0 +1,426 @@
++++ b/drivers/clk/imx/scu/clk-mux-gpr-scu.c
+@@ -0,0 +1,90 @@
 +// SPDX-License-Identifier: GPL-2.0+
 +/*
 + * Copyright (C) 2016 Freescale Semiconductor, Inc.
@@ -152,617 +152,109 @@ index 0000000..1a55757
 + *	Dong Aisheng <aisheng.dong@nxp.com>
 + */
 +
-+#include <dt-bindings/clock/imx8qxp-clock.h>
-+#include <linux/clk.h>
++#include <linux/clk-provider.h>
 +#include <linux/err.h>
 +#include <linux/io.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/platform_device.h>
 +#include <linux/slab.h>
-+
-+#include <soc/imx/imx8qxp/lpcg.h>
 +#include <soc/imx/scu/sci.h>
 +
 +#include "clk-scu.h"
 +
-+static struct clk_hw_onecell_data *clk_data;
++struct clk_mux_gpr_scu {
++	struct clk_hw hw;
++	sc_rsrc_t	rsrc_id;
++	sc_ctrl_t	gpr_id;
++};
 +
-+static const char * const enet_sels[] = { "enet_25MHz", "enet_125MHz", };
-+static const char * const enet0_rmii_tx_sels[] = { "enet0_ref_div", "dummy", };
-+static const char * const enet1_rmii_tx_sels[] = { "enet1_ref_div", "dummy", };
++#define to_clk_mux_gpr_scu(_hw) container_of(_hw, struct clk_mux_gpr_scu, hw)
 +
-+static int imx8qxp_clk_probe(struct platform_device *pdev)
++static u8 clk_mux_gpr_scu_get_parent(struct clk_hw *hw)
 +{
-+	struct device_node *ccm_node = pdev->dev.of_node;
-+	struct clk_hw **clks;
-+	int ret;
++	struct clk_mux_gpr_scu *gpr_mux = to_clk_mux_gpr_scu(hw);
++	sc_err_t ret;
++	u32 val = 0;
 +
-+	ret = imx_clk_scu_init();
-+	if (ret)
-+		return ret;
++	ret = sc_misc_get_control(ccm_ipc_handle, gpr_mux->rsrc_id,
++				  gpr_mux->gpr_id, &val);
++	if (ret != SC_ERR_NONE) {
++		pr_warn("%s: failed to get clock parent %d\n",
++			clk_hw_get_name(hw), ret);
++		return 0;
++	}
 +
-+	clk_data = devm_kzalloc(&pdev->dev, sizeof(*clk_data) +
-+				sizeof(*clk_data->hws) * IMX8QXP_CLK_END,
-+				GFP_KERNEL);
-+	if (!clk_data)
-+		return -ENOMEM;
++	return (u8)val;
++}
 +
-+	clk_data->num = IMX8QXP_CLK_END;
-+	clks = clk_data->hws;
++static int clk_mux_gpr_scu_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct clk_mux_gpr_scu *gpr_mux = to_clk_mux_gpr_scu(hw);
++	sc_err_t ret;
 +
-+	/* Fixed clocks */
-+	clks[IMX8QXP_CLK_DUMMY]		= imx_clk_hw_fixed("dummy", 0);
-+	clks[IMX8QXP_24MHZ]		= imx_clk_hw_fixed("xtal_24MHz", 24000000);
-+	clks[IMX8QXP_GPT_3M]		= imx_clk_hw_fixed("gpt_3m", 3000000);
-+	clks[IMX8QXP_32KHZ]		= imx_clk_hw_fixed("xtal_32KHz", 32768);
-+
-+	/* ARM core */
-+	clks[IMX8QXP_A35_DIV]		= imx_clk_divider_scu("a35_div", SC_R_A35, SC_PM_CLK_CPU);
-+
-+	clks[IMX8QXP_IPG_DMA_CLK_ROOT]	= imx_clk_hw_fixed("ipg_dma_clk_root", 120000000);
-+	clks[IMX8QXP_AXI_CONN_CLK_ROOT] = imx_clk_hw_fixed("axi_conn_clk_root", 333333333);
-+	clks[IMX8QXP_AHB_CONN_CLK_ROOT] = imx_clk_hw_fixed("ahb_conn_clk_root", 166666666);
-+	clks[IMX8QXP_IPG_CONN_CLK_ROOT] = imx_clk_hw_fixed("ipg_conn_clk_root", 83333333);
-+	clks[IMX8QXP_DC_AXI_EXT_CLK]	= imx_clk_hw_fixed("axi_ext_dc_clk_root", 800000000);
-+	clks[IMX8QXP_DC_AXI_INT_CLK]	= imx_clk_hw_fixed("axi_int_dc_clk_root", 400000000);
-+	clks[IMX8QXP_DC_CFG_CLK]	= imx_clk_hw_fixed("cfg_dc_clk_root", 100000000);
-+	clks[IMX8QXP_MIPI_IPG_CLK]	= imx_clk_hw_fixed("ipg_mipi_clk_root", 120000000);
-+	clks[IMX8QXP_IMG_AXI_CLK]	= imx_clk_hw_fixed("axi_img_clk_root", 400000000);
-+	clks[IMX8QXP_IMG_IPG_CLK]	= imx_clk_hw_fixed("ipg_img_clk_root", 200000000);
-+	clks[IMX8QXP_IMG_PXL_CLK]	= imx_clk_hw_fixed("pxl_img_clk_root", 600000000);
-+	clks[IMX8QXP_HSIO_AXI_CLK]	= imx_clk_hw_fixed("axi_hsio_clk_root", 400000000);
-+	clks[IMX8QXP_HSIO_PER_CLK]	= imx_clk_hw_fixed("per_hsio_clk_root", 133333333);
-+
-+	clks[IMX8QXP_UART0_DIV]		= imx_clk_divider_scu("uart0_div", SC_R_UART_0, SC_PM_CLK_PER);
-+	clks[IMX8QXP_UART0_IPG_CLK]	= imx_clk_gate2_scu("uart0_ipg_clk", "ipg_dma_clk_root", (void __iomem *)(LPUART_0_LPCG), 16, 0);
-+	clks[IMX8QXP_UART0_CLK]		= imx_clk_gate_scu("uart0_clk", "uart0_div", SC_R_UART_0, SC_PM_CLK_PER, (void __iomem *)(LPUART_0_LPCG), 0, 0);
-+
-+	clks[IMX8QXP_GPU0_CORE_DIV]	= imx_clk_divider_scu("gpu_core0_div", SC_R_GPU_0_PID0, SC_PM_CLK_PER);
-+	clks[IMX8QXP_GPU0_SHADER_DIV]	= imx_clk_divider_scu("gpu_shader0_div", SC_R_GPU_0_PID0, SC_PM_CLK_MISC);
-+	clks[IMX8QXP_GPU0_CORE_CLK]	= imx_clk_gate_scu("gpu_core0_clk", "gpu_core0_div", SC_R_GPU_0_PID0, SC_PM_CLK_PER, NULL, 0, 0);
-+	clks[IMX8QXP_GPU0_SHADER_CLK]	= imx_clk_gate_scu("gpu_shader0_clk", "gpu_shader0_div", SC_R_GPU_0_PID0, SC_PM_CLK_MISC, NULL, 0, 0);
-+
-+	/* LSIO SS */
-+	clks[IMX8QXP_LSIO_MEM_CLK]	= imx_clk_hw_fixed("lsio_mem_clk_root", 100000000);
-+	clks[IMX8QXP_LSIO_BUS_CLK]	= imx_clk_hw_fixed("lsio_bus_clk_root", 200000000);
-+
-+	clks[IMX8QXP_LSIO_PWM0_DIV]		= imx_clk_divider_scu("pwm_0_div", SC_R_PWM_0, SC_PM_CLK_PER);
-+	clks[IMX8QXP_LSIO_PWM0_IPG_S_CLK]	= imx_clk_gate_scu("pwm_0_ipg_s_clk", "pwm_0_div", SC_R_PWM_0, SC_PM_CLK_PER, (void __iomem *)(PWM_0_LPCG), 0x10, 0);
-+	clks[IMX8QXP_LSIO_PWM0_IPG_SLV_CLK]	= imx_clk_gate_scu("pwm_0_ipg_slv_clk", "pwm_0_ipg_s_clk", SC_R_PWM_0, SC_PM_CLK_PER, (void __iomem *)(PWM_0_LPCG), 0x14, 0);
-+	clks[IMX8QXP_LSIO_PWM0_IPG_MSTR_CLK]	= imx_clk_gate2_scu("pwm_0_ipg_mstr_clk", "lsio_bus_clk_root", (void __iomem *)(PWM_0_LPCG), 0x18, 0);
-+	clks[IMX8QXP_LSIO_PWM0_HF_CLK]		= imx_clk_gate_scu("pwm_0_hf_clk", "pwm_0_ipg_slv_clk", SC_R_PWM_0, SC_PM_CLK_PER, (void __iomem *)(PWM_0_LPCG), 4, 0);
-+	clks[IMX8QXP_LSIO_PWM0_CLK]		= imx_clk_gate_scu("pwm_0_clk", "pwm_0_ipg_slv_clk", SC_R_PWM_0, SC_PM_CLK_PER, (void __iomem *)(PWM_0_LPCG), 0, 0);
-+	clks[IMX8QXP_LSIO_PWM1_DIV]		= imx_clk_divider_scu("pwm_1_div", SC_R_PWM_1, SC_PM_CLK_PER);
-+	clks[IMX8QXP_LSIO_PWM1_IPG_S_CLK]	= imx_clk_gate_scu("pwm_1_ipg_s_clk", "pwm_1_div", SC_R_PWM_1, SC_PM_CLK_PER, (void __iomem *)(PWM_1_LPCG), 0x10, 0);
-+	clks[IMX8QXP_LSIO_PWM1_IPG_SLV_CLK]	= imx_clk_gate_scu("pwm_1_ipg_slv_clk", "pwm_1_ipg_s_clk", SC_R_PWM_1, SC_PM_CLK_PER, (void __iomem *)(PWM_1_LPCG), 0x14, 0);
-+	clks[IMX8QXP_LSIO_PWM1_IPG_MSTR_CLK]	= imx_clk_gate2_scu("pwm_1_ipg_mstr_clk", "lsio_bus_clk_root", (void __iomem *)(PWM_1_LPCG), 0x18, 0);
-+	clks[IMX8QXP_LSIO_PWM1_HF_CLK]		= imx_clk_gate_scu("pwm_1_hf_clk", "pwm_1_ipg_slv_clk", SC_R_PWM_1, SC_PM_CLK_PER, (void __iomem *)(PWM_1_LPCG), 4, 0);
-+	clks[IMX8QXP_LSIO_PWM1_CLK]		= imx_clk_gate_scu("pwm_1_clk", "pwm_1_ipg_slv_clk", SC_R_PWM_1, SC_PM_CLK_PER, (void __iomem *)(PWM_1_LPCG), 0, 0);
-+	clks[IMX8QXP_LSIO_PWM2_DIV]		= imx_clk_divider_scu("pwm_2_div", SC_R_PWM_2, SC_PM_CLK_PER);
-+	clks[IMX8QXP_LSIO_PWM2_IPG_S_CLK]	= imx_clk_gate_scu("pwm_2_ipg_s_clk", "pwm_2_div", SC_R_PWM_2, SC_PM_CLK_PER, (void __iomem *)(PWM_2_LPCG), 0x10, 0);
-+	clks[IMX8QXP_LSIO_PWM2_IPG_SLV_CLK]	= imx_clk_gate_scu("pwm_2_ipg_slv_clk", "pwm_2_ipg_s_clk", SC_R_PWM_2, SC_PM_CLK_PER, (void __iomem *)(PWM_2_LPCG), 0x14, 0);
-+	clks[IMX8QXP_LSIO_PWM2_IPG_MSTR_CLK]	= imx_clk_gate2_scu("pwm_2_ipg_mstr_clk", "lsio_bus_clk_root", (void __iomem *)(PWM_2_LPCG), 0x18, 0);
-+	clks[IMX8QXP_LSIO_PWM2_HF_CLK]		= imx_clk_gate_scu("pwm_2_hf_clk", "pwm_2_ipg_slv_clk", SC_R_PWM_2, SC_PM_CLK_PER, (void __iomem *)(PWM_2_LPCG), 4, 0);
-+	clks[IMX8QXP_LSIO_PWM2_CLK]		= imx_clk_gate_scu("pwm_2_clk", "pwm_2_ipg_slv_clk", SC_R_PWM_2, SC_PM_CLK_PER, (void __iomem *)(PWM_2_LPCG), 0, 0);
-+	clks[IMX8QXP_LSIO_PWM3_DIV]		= imx_clk_divider_scu("pwm_3_div", SC_R_PWM_3, SC_PM_CLK_PER);
-+	clks[IMX8QXP_LSIO_PWM3_IPG_S_CLK]	= imx_clk_gate_scu("pwm_3_ipg_s_clk", "pwm_3_div", SC_R_PWM_3, SC_PM_CLK_PER, (void __iomem *)(PWM_3_LPCG), 0x10, 0);
-+	clks[IMX8QXP_LSIO_PWM3_IPG_SLV_CLK]	= imx_clk_gate_scu("pwm_3_ipg_slv_clk", "pwm_3_ipg_s_clk", SC_R_PWM_3, SC_PM_CLK_PER, (void __iomem *)(PWM_3_LPCG), 0x14, 0);
-+	clks[IMX8QXP_LSIO_PWM3_IPG_MSTR_CLK]	= imx_clk_gate2_scu("pwm_3_ipg_mstr_clk", "lsio_bus_clk_root", (void __iomem *)(PWM_3_LPCG), 0x18, 0);
-+	clks[IMX8QXP_LSIO_PWM3_HF_CLK]		= imx_clk_gate_scu("pwm_3_hf_clk", "pwm_3_ipg_slv_clk", SC_R_PWM_3, SC_PM_CLK_PER, (void __iomem *)(PWM_3_LPCG), 4, 0);
-+	clks[IMX8QXP_LSIO_PWM3_CLK]		= imx_clk_gate_scu("pwm_3_clk", "pwm_3_ipg_slv_clk", SC_R_PWM_3, SC_PM_CLK_PER, (void __iomem *)(PWM_3_LPCG), 0, 0);
-+	clks[IMX8QXP_LSIO_PWM4_DIV]		= imx_clk_divider_scu("pwm_4_div", SC_R_PWM_4, SC_PM_CLK_PER);
-+	clks[IMX8QXP_LSIO_PWM4_IPG_S_CLK]	= imx_clk_gate_scu("pwm_4_ipg_s_clk", "pwm_4_div", SC_R_PWM_4, SC_PM_CLK_PER, (void __iomem *)(PWM_4_LPCG), 0x10, 0);
-+	clks[IMX8QXP_LSIO_PWM4_IPG_SLV_CLK]	= imx_clk_gate_scu("pwm_4_ipg_slv_clk", "pwm_4_ipg_s_clk", SC_R_PWM_4, SC_PM_CLK_PER, (void __iomem *)(PWM_4_LPCG), 0x14, 0);
-+	clks[IMX8QXP_LSIO_PWM4_IPG_MSTR_CLK]	= imx_clk_gate2_scu("pwm_4_ipg_mstr_clk", "lsio_bus_clk_root", (void __iomem *)(PWM_4_LPCG), 0x18, 0);
-+	clks[IMX8QXP_LSIO_PWM4_HF_CLK]		= imx_clk_gate_scu("pwm_4_hf_clk", "pwm_4_ipg_slv_clk", SC_R_PWM_4, SC_PM_CLK_PER, (void __iomem *)(PWM_4_LPCG), 4, 0);
-+	clks[IMX8QXP_LSIO_PWM4_CLK]		= imx_clk_gate_scu("pwm_4_clk", "pwm_4_ipg_slv_clk", SC_R_PWM_4, SC_PM_CLK_PER, (void __iomem *)(PWM_4_LPCG), 0, 0);
-+	clks[IMX8QXP_LSIO_PWM5_DIV]		= imx_clk_divider_scu("pwm_5_div", SC_R_PWM_5, SC_PM_CLK_PER);
-+	clks[IMX8QXP_LSIO_PWM5_IPG_S_CLK]	= imx_clk_gate_scu("pwm_5_ipg_s_clk", "pwm_5_div", SC_R_PWM_5, SC_PM_CLK_PER, (void __iomem *)(PWM_5_LPCG), 0x10, 0);
-+	clks[IMX8QXP_LSIO_PWM5_IPG_SLV_CLK]	= imx_clk_gate_scu("pwm_5_ipg_slv_clk", "pwm_5_ipg_s_clk", SC_R_PWM_5, SC_PM_CLK_PER, (void __iomem *)(PWM_5_LPCG), 0x14, 0);
-+	clks[IMX8QXP_LSIO_PWM5_IPG_MSTR_CLK]	= imx_clk_gate2_scu("pwm_5_ipg_mstr_clk", "lsio_bus_clk_root", (void __iomem *)(PWM_5_LPCG), 0x18, 0);
-+	clks[IMX8QXP_LSIO_PWM5_HF_CLK]		= imx_clk_gate_scu("pwm_5_hf_clk", "pwm_5_ipg_slv_clk", SC_R_PWM_5, SC_PM_CLK_PER, (void __iomem *)(PWM_5_LPCG), 4, 0);
-+	clks[IMX8QXP_LSIO_PWM5_CLK]		= imx_clk_gate_scu("pwm_5_clk", "pwm_5_ipg_slv_clk", SC_R_PWM_5, SC_PM_CLK_PER, (void __iomem *)(PWM_5_LPCG), 0, 0);
-+	clks[IMX8QXP_LSIO_PWM6_DIV]		= imx_clk_divider_scu("pwm_6_div", SC_R_PWM_6, SC_PM_CLK_PER);
-+	clks[IMX8QXP_LSIO_PWM6_IPG_S_CLK]	= imx_clk_gate_scu("pwm_6_ipg_s_clk", "pwm_6_div", SC_R_PWM_6, SC_PM_CLK_PER, (void __iomem *)(PWM_6_LPCG), 0x10, 0);
-+	clks[IMX8QXP_LSIO_PWM6_IPG_SLV_CLK]	= imx_clk_gate_scu("pwm_6_ipg_slv_clk", "pwm_6_ipg_s_clk", SC_R_PWM_6, SC_PM_CLK_PER, (void __iomem *)(PWM_6_LPCG), 0x14, 0);
-+	clks[IMX8QXP_LSIO_PWM6_IPG_MSTR_CLK]	= imx_clk_gate2_scu("pwm_6_ipg_mstr_clk", "lsio_bus_clk_root", (void __iomem *)(PWM_6_LPCG), 0x18, 0);
-+	clks[IMX8QXP_LSIO_PWM6_HF_CLK]		= imx_clk_gate_scu("pwm_6_hf_clk", "pwm_6_ipg_slv_clk", SC_R_PWM_6, SC_PM_CLK_PER, (void __iomem *)(PWM_6_LPCG), 4, 0);
-+	clks[IMX8QXP_LSIO_PWM6_CLK]		= imx_clk_gate_scu("pwm_6_clk", "pwm_6_ipg_slv_clk", SC_R_PWM_6, SC_PM_CLK_PER, (void __iomem *)(PWM_6_LPCG), 0, 0);
-+	clks[IMX8QXP_LSIO_PWM7_DIV]		= imx_clk_divider_scu("pwm_7_div", SC_R_PWM_7, SC_PM_CLK_PER);
-+	clks[IMX8QXP_LSIO_PWM7_IPG_S_CLK]	= imx_clk_gate_scu("pwm_7_ipg_s_clk", "pwm_7_div", SC_R_PWM_7, SC_PM_CLK_PER, (void __iomem *)(PWM_7_LPCG), 0x10, 0);
-+	clks[IMX8QXP_LSIO_PWM7_IPG_SLV_CLK]	= imx_clk_gate_scu("pwm_7_ipg_slv_clk", "pwm_7_ipg_s_clk", SC_R_PWM_7, SC_PM_CLK_PER, (void __iomem *)(PWM_7_LPCG), 0x14, 0);
-+	clks[IMX8QXP_LSIO_PWM7_IPG_MSTR_CLK]	= imx_clk_gate2_scu("pwm_7_ipg_mstr_clk", "lsio_bus_clk_root", (void __iomem *)(PWM_7_LPCG), 0x18, 0);
-+	clks[IMX8QXP_LSIO_PWM7_HF_CLK]		= imx_clk_gate_scu("pwm_7_hf_clk", "pwm_7_ipg_slv_clk", SC_R_PWM_7, SC_PM_CLK_PER, (void __iomem *)(PWM_7_LPCG), 4, 0);
-+	clks[IMX8QXP_LSIO_PWM7_CLK]		= imx_clk_gate_scu("pwm_7_clk", "pwm_7_ipg_slv_clk", SC_R_PWM_7, SC_PM_CLK_PER, (void __iomem *)(PWM_7_LPCG), 0, 0);
-+	clks[IMX8QXP_LSIO_GPT0_DIV]		= imx_clk_divider_scu("gpt_0_div", SC_R_GPT_4, SC_PM_CLK_PER);
-+	clks[IMX8QXP_LSIO_GPT0_IPG_S_CLK]	= imx_clk_gate_scu("gpt_0_ipg_s_clk", "gpt_0_div", SC_R_GPT_0, SC_PM_CLK_PER, (void __iomem *)(GPT_0_LPCG), 0x10, 0);
-+	clks[IMX8QXP_LSIO_GPT0_IPG_SLV_CLK]	= imx_clk_gate_scu("gpt_0_ipg_slv_clk", "gpt_0_ipg_s_clk", SC_R_GPT_0, SC_PM_CLK_PER, (void __iomem *)(GPT_0_LPCG), 0x14, 0);
-+	clks[IMX8QXP_LSIO_GPT0_CLK]		= imx_clk_gate_scu("gpt_0_clk", "gpt_0_ipg_slv_clk", SC_R_GPT_0, SC_PM_CLK_PER, (void __iomem *)(GPT_0_LPCG), 0, 0);
-+	clks[IMX8QXP_LSIO_GPT0_IPG_MSTR_CLK]	= imx_clk_gate2_scu("gpt_0_ipg_mstr_clk", "lsio_bus_clk_root", (void __iomem *)(GPT_0_LPCG), 0x18, 0);
-+	clks[IMX8QXP_LSIO_GPT0_HF_CLK]		= imx_clk_gate_scu("gpt_0_hf_clk", "gpt_0_ipg_slv_clk", SC_R_GPT_0, SC_PM_CLK_PER, (void __iomem *)(GPT_0_LPCG), 4, 0);
-+	clks[IMX8QXP_LSIO_GPT1_DIV]		= imx_clk_divider_scu("gpt_1_div", SC_R_GPT_4, SC_PM_CLK_PER);
-+	clks[IMX8QXP_LSIO_GPT1_IPG_S_CLK]	= imx_clk_gate_scu("gpt_1_ipg_s_clk", "gpt_1_div", SC_R_GPT_1, SC_PM_CLK_PER, (void __iomem *)(GPT_1_LPCG), 0x10, 0);
-+	clks[IMX8QXP_LSIO_GPT1_IPG_SLV_CLK]	= imx_clk_gate_scu("gpt_1_ipg_slv_clk", "gpt_1_ipg_s_clk", SC_R_GPT_1, SC_PM_CLK_PER, (void __iomem *)(GPT_1_LPCG), 0x14, 0);
-+	clks[IMX8QXP_LSIO_GPT1_CLK]		= imx_clk_gate_scu("gpt_1_clk", "gpt_1_ipg_slv_clk", SC_R_GPT_1, SC_PM_CLK_PER, (void __iomem *)(GPT_1_LPCG), 0, 0);
-+	clks[IMX8QXP_LSIO_GPT1_HF_CLK]		= imx_clk_gate_scu("gpt_1_hf_clk", "gpt_1_ipg_slv_clk", SC_R_GPT_1, SC_PM_CLK_PER, (void __iomem *)(GPT_1_LPCG), 4, 0);
-+	clks[IMX8QXP_LSIO_GPT1_IPG_MSTR_CLK]	= imx_clk_gate2_scu("gpt_1_ipg_mstr_clk", "lsio_bus_clk_root", (void __iomem *)(GPT_1_LPCG), 0x18, 0);
-+	clks[IMX8QXP_LSIO_GPT2_DIV]		= imx_clk_divider_scu("gpt_2_div", SC_R_GPT_4, SC_PM_CLK_PER);
-+	clks[IMX8QXP_LSIO_GPT2_IPG_S_CLK]	= imx_clk_gate_scu("gpt_2_ipg_s_clk", "gpt_2_div", SC_R_GPT_2, SC_PM_CLK_PER, (void __iomem *)(GPT_2_LPCG), 0x10, 0);
-+	clks[IMX8QXP_LSIO_GPT2_IPG_SLV_CLK]	= imx_clk_gate_scu("gpt_2_ipg_slv_clk", "gpt_2_ipg_s_clk", SC_R_GPT_2, SC_PM_CLK_PER, (void __iomem *)(GPT_2_LPCG), 0x14, 0);
-+	clks[IMX8QXP_LSIO_GPT2_CLK]		= imx_clk_gate_scu("gpt_2_clk", "gpt_2_ipg_slv_clk", SC_R_GPT_2, SC_PM_CLK_PER, (void __iomem *)(GPT_2_LPCG), 0, 0);
-+	clks[IMX8QXP_LSIO_GPT2_HF_CLK]		= imx_clk_gate_scu("gpt_2_hf_clk", "gpt_2_div", SC_R_GPT_2, SC_PM_CLK_PER, (void __iomem *)(GPT_2_LPCG), 4, 0);
-+	clks[IMX8QXP_LSIO_GPT2_IPG_MSTR_CLK]	= imx_clk_gate2_scu("gpt_2_ipg_mstr_clk", "lsio_bus_clk_root", (void __iomem *)(GPT_2_LPCG), 0x18, 0);
-+	clks[IMX8QXP_LSIO_GPT3_DIV]		= imx_clk_divider_scu("gpt_3_div", SC_R_GPT_4, SC_PM_CLK_PER);
-+	clks[IMX8QXP_LSIO_GPT3_IPG_S_CLK]	= imx_clk_gate_scu("gpt_3_ipg_s_clk", "gpt_3_div", SC_R_GPT_3, SC_PM_CLK_PER, (void __iomem *)(GPT_3_LPCG), 0x10, 0);
-+	clks[IMX8QXP_LSIO_GPT3_IPG_SLV_CLK]	= imx_clk_gate_scu("gpt_3_ipg_slv_clk", "gpt_3_ipg_s_clk", SC_R_GPT_3, SC_PM_CLK_PER, (void __iomem *)(GPT_3_LPCG), 0x14, 0);
-+	clks[IMX8QXP_LSIO_GPT3_CLK]		= imx_clk_gate_scu("gpt_3_clk", "gpt_3_ipg_slv_clk", SC_R_GPT_3, SC_PM_CLK_PER, (void __iomem *)(GPT_3_LPCG), 0, 0);
-+	clks[IMX8QXP_LSIO_GPT3_HF_CLK]		= imx_clk_gate_scu("gpt_3_hf_clk", "gpt_3_ipg_slv_clk", SC_R_GPT_3, SC_PM_CLK_PER, (void __iomem *)(GPT_3_LPCG), 4, 0);
-+	clks[IMX8QXP_LSIO_GPT3_IPG_MSTR_CLK]	= imx_clk_gate2_scu("gpt_3_ipg_mstr_clk", "lsio_bus_clk_root", (void __iomem *)(GPT_3_LPCG), 0x18, 0);
-+	clks[IMX8QXP_LSIO_GPT4_DIV]		= imx_clk_divider_scu("gpt_4_div", SC_R_GPT_4, SC_PM_CLK_PER);
-+	clks[IMX8QXP_LSIO_GPT4_IPG_S_CLK]	= imx_clk_gate_scu("gpt_4_ipg_s_clk", "gpt_4_div", SC_R_GPT_4, SC_PM_CLK_PER, (void __iomem *)(GPT_4_LPCG), 0x10, 0);
-+	clks[IMX8QXP_LSIO_GPT4_IPG_SLV_CLK]	= imx_clk_gate_scu("gpt_4_ipg_slv_clk", "gpt_4_ipg_s_clk", SC_R_GPT_4, SC_PM_CLK_PER, (void __iomem *)(GPT_4_LPCG), 0x14, 0);
-+	clks[IMX8QXP_LSIO_GPT4_CLK]		= imx_clk_gate_scu("gpt_4_clk", "gpt_4_div", SC_R_GPT_4, SC_PM_CLK_PER, (void __iomem *)(GPT_4_LPCG), 0, 0);
-+	clks[IMX8QXP_LSIO_GPT4_HF_CLK]		= imx_clk_gate_scu("gpt_4_hf_clk", "gpt_4_div", SC_R_GPT_4, SC_PM_CLK_PER, (void __iomem *)(GPT_4_LPCG), 4, 0);
-+	clks[IMX8QXP_LSIO_GPT4_IPG_MSTR_CLK]	= imx_clk_gate2_scu("gpt_4_ipg_mstr_clk", "lsio_bus_clk_root", (void __iomem *)(GPT_4_LPCG), 0x18, 0);
-+	clks[IMX8QXP_LSIO_FSPI0_DIV]		= imx_clk_divider_scu("fspi_0_div", SC_R_FSPI_0, SC_PM_CLK_PER);
-+	clks[IMX8QXP_LSIO_FSPI0_HCLK]		= imx_clk_gate2_scu("fspi0_hclk_clk", "lsio_mem_clk_root", (void __iomem *)(FSPI_0_LPCG), 0x10, 0);
-+	clks[IMX8QXP_LSIO_FSPI0_IPG_S_CLK]	= imx_clk_gate2_scu("fspi0_ipg_s_clk", "lsio_bus_clk_root", (void __iomem *)(FSPI_0_LPCG), 0x18, 0);
-+	clks[IMX8QXP_LSIO_FSPI0_IPG_CLK]	= imx_clk_gate2_scu("fspi0_ipg_clk", "fspi0_ipg_s_clk", (void __iomem *)(FSPI_0_LPCG), 0x14, 0);
-+	clks[IMX8QXP_LSIO_FSPI0_CLK]		= imx_clk_gate_scu("fspi_0_clk", "fspi_0_div", SC_R_FSPI_0, SC_PM_CLK_PER, (void __iomem *)(FSPI_0_LPCG), 0, 0);
-+	clks[IMX8QXP_LSIO_FSPI1_DIV]		= imx_clk_divider_scu("fspi_1_div", SC_R_FSPI_1, SC_PM_CLK_PER);
-+	clks[IMX8QXP_LSIO_FSPI1_HCLK]		= imx_clk_gate2_scu("fspi1_hclk_clk", "lsio_mem_clk_root", (void __iomem *)(FSPI_1_LPCG), 0x10, 0);
-+	clks[IMX8QXP_LSIO_FSPI1_IPG_S_CLK]	= imx_clk_gate2_scu("fspi1_ipg_s_clk", "lsio_bus_clk_root", (void __iomem *)(FSPI_1_LPCG), 0x18, 0);
-+	clks[IMX8QXP_LSIO_FSPI1_IPG_CLK]	= imx_clk_gate2_scu("fspi1_ipg_clk", "fspi1_ipg_s_clk", (void __iomem *)(FSPI_1_LPCG), 0x14, 0);
-+	clks[IMX8QXP_LSIO_FSPI1_CLK]		= imx_clk_gate_scu("fspi_1_clk", "fspi_1_div", SC_R_FSPI_1, SC_PM_CLK_PER, (void __iomem *)(FSPI_1_LPCG), 0, 0);
-+	clks[IMX8QXP_LSIO_GPIO0_IPG_S_CLK]	= imx_clk_gate2_scu("gpio0_ipg_s_clk", "lsio_bus_clk_root", (void __iomem *)(GPIO_0_LPCG), 0x10, 0);
-+	clks[IMX8QXP_LSIO_GPIO1_IPG_S_CLK]	= imx_clk_gate2_scu("gpio1_ipg_s_clk", "lsio_bus_clk_root", (void __iomem *)(GPIO_1_LPCG), 0x10, 0);
-+	clks[IMX8QXP_LSIO_GPIO2_IPG_S_CLK]	= imx_clk_gate2_scu("gpio2_ipg_s_clk", "lsio_bus_clk_root", (void __iomem *)(GPIO_2_LPCG), 0x10, 0);
-+	clks[IMX8QXP_LSIO_GPIO3_IPG_S_CLK]	= imx_clk_gate2_scu("gpio3_ipg_s_clk", "lsio_bus_clk_root", (void __iomem *)(GPIO_3_LPCG), 0x10, 0);
-+	clks[IMX8QXP_LSIO_GPIO4_IPG_S_CLK]	= imx_clk_gate2_scu("gpio4_ipg_s_clk", "lsio_bus_clk_root", (void __iomem *)(GPIO_4_LPCG), 0x10, 0);
-+	clks[IMX8QXP_LSIO_GPIO5_IPG_S_CLK]	= imx_clk_gate2_scu("gpio5_ipg_s_clk", "lsio_bus_clk_root", (void __iomem *)(GPIO_5_LPCG), 0x10, 0);
-+	clks[IMX8QXP_LSIO_GPIO6_IPG_S_CLK]	= imx_clk_gate2_scu("gpio6_ipg_s_clk", "lsio_bus_clk_root", (void __iomem *)(GPIO_6_LPCG), 0x10, 0);
-+	clks[IMX8QXP_LSIO_GPIO7_IPG_S_CLK]	= imx_clk_gate2_scu("gpio7_ipg_s_clk", "lsio_bus_clk_root", (void __iomem *)(GPIO_7_LPCG), 0x10, 0);
-+	clks[IMX8QXP_LSIO_ROMCP_REG_CLK]	= imx_clk_gate2_scu("romcp_reg_clk", "lsio_bus_clk_root", (void __iomem *)(ROMCP_LPCG), 0x10, 0);
-+	clks[IMX8QXP_LSIO_ROMCP_CLK]		= imx_clk_gate2_scu("romcp_clk", "lsio_mem_clk_root", (void __iomem *)(ROMCP_LPCG), 0x0, 0);
-+	clks[IMX8QXP_LSIO_96KROM_CLK]		= imx_clk_gate2_scu("96krom_clk", "lsio_mem_clk_root", (void __iomem *)(ROMCP_LPCG), 0x4, 0);
-+	clks[IMX8QXP_LSIO_OCRAM_MEM_CLK]	= imx_clk_gate2_scu("ocram_lk", "lsio_mem_clk_root", (void __iomem *)(OCRAM_LPCG), 0x4, 0);
-+	clks[IMX8QXP_LSIO_OCRAM_CTRL_CLK]	= imx_clk_gate2_scu("ocram_ctrl_clk", "lsio_mem_clk_root", (void __iomem *)(OCRAM_LPCG), 0x0, 0);
-+
-+	/* ADMA SS */
-+	clks[IMX8QXP_UART1_IPG_CLK]	= imx_clk_gate2_scu("uart1_ipg_clk", "ipg_dma_clk_root", (void __iomem *)(LPUART_1_LPCG), 16, 0);
-+	clks[IMX8QXP_UART2_IPG_CLK]	= imx_clk_gate2_scu("uart2_ipg_clk", "ipg_dma_clk_root", (void __iomem *)(LPUART_2_LPCG), 16, 0);
-+	clks[IMX8QXP_UART3_IPG_CLK]	= imx_clk_gate2_scu("uart3_ipg_clk", "ipg_dma_clk_root", (void __iomem *)(LPUART_3_LPCG), 16, 0);
-+	clks[IMX8QXP_UART1_DIV]		= imx_clk_divider_scu("uart1_div", SC_R_UART_1, SC_PM_CLK_PER);
-+	clks[IMX8QXP_UART2_DIV]		= imx_clk_divider_scu("uart2_div", SC_R_UART_2, SC_PM_CLK_PER);
-+	clks[IMX8QXP_UART3_DIV]		= imx_clk_divider_scu("uart3_div", SC_R_UART_3, SC_PM_CLK_PER);
-+	clks[IMX8QXP_UART1_CLK]		= imx_clk_gate_scu("uart1_clk", "uart1_div", SC_R_UART_1, SC_PM_CLK_PER, (void __iomem *)(LPUART_1_LPCG), 0, 0);
-+	clks[IMX8QXP_UART2_CLK]		= imx_clk_gate_scu("uart2_clk", "uart2_div", SC_R_UART_2, SC_PM_CLK_PER, (void __iomem *)(LPUART_2_LPCG), 0, 0);
-+	clks[IMX8QXP_UART3_CLK]		= imx_clk_gate_scu("uart3_clk", "uart3_div", SC_R_UART_3, SC_PM_CLK_PER, (void __iomem *)(LPUART_3_LPCG), 0, 0);
-+	clks[IMX8QXP_SPI0_IPG_CLK]	= imx_clk_gate2_scu("spi0_ipg_clk", "ipg_dma_clk_root", (void __iomem *)(LPSPI_0_LPCG), 16, 0);
-+	clks[IMX8QXP_SPI1_IPG_CLK]	= imx_clk_gate2_scu("spi1_ipg_clk", "ipg_dma_clk_root", (void __iomem *)(LPSPI_1_LPCG), 16, 0);
-+	clks[IMX8QXP_SPI2_IPG_CLK]	= imx_clk_gate2_scu("spi2_ipg_clk", "ipg_dma_clk_root", (void __iomem *)(LPSPI_2_LPCG), 16, 0);
-+	clks[IMX8QXP_SPI3_IPG_CLK]	= imx_clk_gate2_scu("spi3_ipg_clk", "ipg_dma_clk_root", (void __iomem *)(LPSPI_3_LPCG), 16, 0);
-+	clks[IMX8QXP_SPI0_DIV]		= imx_clk_divider_scu("spi0_div", SC_R_SPI_0, SC_PM_CLK_PER);
-+	clks[IMX8QXP_SPI1_DIV]		= imx_clk_divider_scu("spi1_div", SC_R_SPI_1, SC_PM_CLK_PER);
-+	clks[IMX8QXP_SPI2_DIV]		= imx_clk_divider_scu("spi2_div", SC_R_SPI_2, SC_PM_CLK_PER);
-+	clks[IMX8QXP_SPI3_DIV]		= imx_clk_divider_scu("spi3_div", SC_R_SPI_3, SC_PM_CLK_PER);
-+	clks[IMX8QXP_SPI0_CLK]		= imx_clk_gate_scu("spi0_clk", "spi0_div", SC_R_SPI_0, SC_PM_CLK_PER, (void __iomem *)(LPSPI_0_LPCG), 0, 0);
-+	clks[IMX8QXP_SPI1_CLK]		= imx_clk_gate_scu("spi1_clk", "spi1_div", SC_R_SPI_2, SC_PM_CLK_PER, (void __iomem *)(LPSPI_1_LPCG), 0, 0);
-+	clks[IMX8QXP_SPI2_CLK]		= imx_clk_gate_scu("spi2_clk", "spi2_div", SC_R_SPI_2, SC_PM_CLK_PER, (void __iomem *)(LPSPI_2_LPCG), 0, 0);
-+	clks[IMX8QXP_SPI3_CLK]		= imx_clk_gate_scu("spi3_clk", "spi3_div", SC_R_SPI_3, SC_PM_CLK_PER, (void __iomem *)(LPSPI_3_LPCG), 0, 0);
-+	clks[IMX8QXP_CAN0_IPG_CHI_CLK]	= imx_clk_gate2_scu("can0_ipg_chi_clk", "ipg_dma_clk_root", (void __iomem *)(FLEX_CAN_0_LPCG), 20, 0);
-+	clks[IMX8QXP_CAN0_IPG_CLK]	= imx_clk_gate2_scu("can0_ipg_clk", "can0_ipg_chi_clk", (void __iomem *)(FLEX_CAN_0_LPCG), 16, 0);
-+	clks[IMX8QXP_CAN1_IPG_CHI_CLK]	= imx_clk_gate2_scu("can1_ipg_chi_clk", "ipg_dma_clk_root", (void __iomem *)(FLEX_CAN_1_LPCG), 20, 0);
-+	clks[IMX8QXP_CAN1_IPG_CLK]	= imx_clk_gate2_scu("can1_ipg_clk", "can1_ipg_chi_clk", (void __iomem *)(FLEX_CAN_1_LPCG), 16, 0);
-+	clks[IMX8QXP_CAN2_IPG_CHI_CLK]	= imx_clk_gate2_scu("can2_ipg_chi_clk", "ipg_dma_clk_root", (void __iomem *)(FLEX_CAN_2_LPCG), 20, 0);
-+	clks[IMX8QXP_CAN2_IPG_CLK]	= imx_clk_gate2_scu("can2_ipg_clk", "can2_ipg_chi_clk", (void __iomem *)(FLEX_CAN_2_LPCG), 16, 0);
-+	clks[IMX8QXP_CAN0_DIV]		= imx_clk_divider_scu("can0_div", SC_R_CAN_0, SC_PM_CLK_PER);
-+	clks[IMX8QXP_CAN1_DIV]		= imx_clk_divider_scu("can1_div", SC_R_CAN_1, SC_PM_CLK_PER);
-+	clks[IMX8QXP_CAN2_DIV]		= imx_clk_divider_scu("can2_div", SC_R_CAN_2, SC_PM_CLK_PER);
-+	clks[IMX8QXP_CAN0_CLK]		= imx_clk_gate_scu("can0_clk", "can0_div", SC_R_CAN_0, SC_PM_CLK_PER, (void __iomem *)(FLEX_CAN_0_LPCG), 0, 0);
-+	clks[IMX8QXP_CAN1_CLK]		= imx_clk_gate_scu("can1_clk", "can1_div", SC_R_CAN_1, SC_PM_CLK_PER, (void __iomem *)(FLEX_CAN_1_LPCG), 0, 0);
-+	clks[IMX8QXP_CAN2_CLK]		= imx_clk_gate_scu("can2_clk", "can2_div", SC_R_CAN_2, SC_PM_CLK_PER, (void __iomem *)(FLEX_CAN_2_LPCG), 0, 0);
-+	clks[IMX8QXP_I2C0_IPG_CLK]	= imx_clk_gate2_scu("i2c0_ipg_clk", "ipg_dma_clk_root", (void __iomem *)(LPI2C_0_LPCG), 16, 0);
-+	clks[IMX8QXP_I2C1_IPG_CLK]	= imx_clk_gate2_scu("i2c1_ipg_clk", "ipg_dma_clk_root", (void __iomem *)(LPI2C_1_LPCG), 16, 0);
-+	clks[IMX8QXP_I2C2_IPG_CLK]	= imx_clk_gate2_scu("i2c2_ipg_clk", "ipg_dma_clk_root", (void __iomem *)(LPI2C_2_LPCG), 16, 0);
-+	clks[IMX8QXP_I2C3_IPG_CLK]	= imx_clk_gate2_scu("i2c3_ipg_clk", "ipg_dma_clk_root", (void __iomem *)(LPI2C_3_LPCG), 16, 0);
-+	clks[IMX8QXP_I2C0_DIV]		= imx_clk_divider_scu("i2c0_div", SC_R_I2C_0, SC_PM_CLK_PER);
-+	clks[IMX8QXP_I2C1_DIV]		= imx_clk_divider_scu("i2c1_div", SC_R_I2C_1, SC_PM_CLK_PER);
-+	clks[IMX8QXP_I2C2_DIV]		= imx_clk_divider_scu("i2c2_div", SC_R_I2C_2, SC_PM_CLK_PER);
-+	clks[IMX8QXP_I2C3_DIV]		= imx_clk_divider_scu("i2c3_div", SC_R_I2C_3, SC_PM_CLK_PER);
-+	clks[IMX8QXP_I2C0_CLK]		= imx_clk_gate_scu("i2c0_clk", "i2c0_div", SC_R_I2C_0, SC_PM_CLK_PER, (void __iomem *)(LPI2C_0_LPCG), 0, 0);
-+	clks[IMX8QXP_I2C1_CLK]		= imx_clk_gate_scu("i2c1_clk", "i2c1_div", SC_R_I2C_1, SC_PM_CLK_PER, (void __iomem *)(LPI2C_1_LPCG), 0, 0);
-+	clks[IMX8QXP_I2C2_CLK]		= imx_clk_gate_scu("i2c2_clk", "i2c2_div", SC_R_I2C_2, SC_PM_CLK_PER, (void __iomem *)(LPI2C_2_LPCG), 0, 0);
-+	clks[IMX8QXP_I2C3_CLK]		= imx_clk_gate_scu("i2c3_clk", "i2c3_div", SC_R_I2C_3, SC_PM_CLK_PER, (void __iomem *)(LPI2C_3_LPCG), 0, 0);
-+	clks[IMX8QXP_FTM0_IPG_CLK]	= imx_clk_gate2_scu("ftm0_ipg_clk", "ipg_dma_clk_root", (void __iomem *)(FTM_0_LPCG), 16, 0);
-+	clks[IMX8QXP_FTM1_IPG_CLK]	= imx_clk_gate2_scu("ftm1_ipg_clk", "ipg_dma_clk_root", (void __iomem *)(FTM_1_LPCG), 16, 0);
-+	clks[IMX8QXP_FTM0_DIV]		= imx_clk_divider_scu("ftm0_div", SC_R_FTM_0, SC_PM_CLK_PER);
-+	clks[IMX8QXP_FTM1_DIV]		= imx_clk_divider_scu("ftm1_div", SC_R_FTM_1, SC_PM_CLK_PER);
-+	clks[IMX8QXP_FTM0_CLK]		= imx_clk_gate_scu("ftm0_clk", "ftm0_div", SC_R_FTM_0, SC_PM_CLK_PER, (void __iomem *)(FTM_0_LPCG), 0, 0);
-+	clks[IMX8QXP_FTM1_CLK]		= imx_clk_gate_scu("ftm1_clk", "ftm1_div", SC_R_FTM_1, SC_PM_CLK_PER, (void __iomem *)(FTM_1_LPCG), 0, 0);
-+	clks[IMX8QXP_ADC0_IPG_CLK]	= imx_clk_gate2_scu("adc0_ipg_clk", "ipg_dma_clk_root", (void __iomem *)(ADC_0_LPCG), 16, 0);
-+	clks[IMX8QXP_ADC0_DIV]		= imx_clk_divider_scu("adc0_div", SC_R_ADC_0, SC_PM_CLK_PER);
-+	clks[IMX8QXP_ADC0_CLK]		= imx_clk_gate_scu("adc0_clk", "adc0_div", SC_R_ADC_0, SC_PM_CLK_PER, (void __iomem *)(ADC_0_LPCG), 0, 0);
-+	clks[IMX8QXP_PWM_IPG_CLK]	= imx_clk_gate2_scu("pwm_ipg_clk", "ipg_dma_clk_root", (void __iomem *)(PWM_LPCG), 16, 0);
-+	clks[IMX8QXP_PWM_DIV]		= imx_clk_divider_scu("pwm_div", SC_R_LCD_0_PWM_0, SC_PM_CLK_PER);
-+	clks[IMX8QXP_PWM_CLK]		= imx_clk_gate_scu("pwm_clk", "pwm_div", SC_R_LCD_0_PWM_0, SC_PM_CLK_PER, (void __iomem *)(PWM_LPCG), 0, 0);
-+	clks[IMX8QXP_LCD_IPG_CLK]	= imx_clk_gate2_scu("lcd_ipg_clk", "ipg_dma_clk_root", (void __iomem *)(LCD_LPCG), 16, 0);
-+	clks[IMX8QXP_LCD_DIV]		= imx_clk_divider_scu("lcd_div", SC_R_LCD_0, SC_PM_CLK_PER);
-+	clks[IMX8QXP_LCD_CLK]		= imx_clk_gate_scu("lcd_clk", "lcd_div", SC_R_LCD_0, SC_PM_CLK_PER, (void __iomem *)(LCD_LPCG), 0, 0);
-+
-+	/* Connectivity */
-+	clks[IMX8QXP_SDHC0_IPG_CLK]	= imx_clk_gate2_scu("sdhc0_ipg_clk", "ipg_conn_clk_root", (void __iomem *)(USDHC_0_LPCG), 16, 0);
-+	clks[IMX8QXP_SDHC1_IPG_CLK]	= imx_clk_gate2_scu("sdhc1_ipg_clk", "ipg_conn_clk_root", (void __iomem *)(USDHC_1_LPCG), 16, 0);
-+	clks[IMX8QXP_SDHC2_IPG_CLK]	= imx_clk_gate2_scu("sdhc2_ipg_clk", "ipg_conn_clk_root", (void __iomem *)(USDHC_2_LPCG), 16, 0);
-+	clks[IMX8QXP_SDHC0_DIV]		= imx_clk_divider_scu("sdhc0_div", SC_R_SDHC_0, SC_PM_CLK_PER);
-+	clks[IMX8QXP_SDHC1_DIV]		= imx_clk_divider_scu("sdhc1_div", SC_R_SDHC_1, SC_PM_CLK_PER);
-+	clks[IMX8QXP_SDHC2_DIV]		= imx_clk_divider_scu("sdhc2_div", SC_R_SDHC_2, SC_PM_CLK_PER);
-+	clks[IMX8QXP_SDHC0_CLK]		= imx_clk_gate_scu("sdhc0_clk", "sdhc0_div", SC_R_SDHC_0, SC_PM_CLK_PER, (void __iomem *)(USDHC_0_LPCG), 0, 0);
-+	clks[IMX8QXP_SDHC1_CLK]		= imx_clk_gate_scu("sdhc1_clk", "sdhc1_div", SC_R_SDHC_1, SC_PM_CLK_PER, (void __iomem *)(USDHC_1_LPCG), 0, 0);
-+	clks[IMX8QXP_SDHC2_CLK]		= imx_clk_gate_scu("sdhc2_clk", "sdhc1_div", SC_R_SDHC_2, SC_PM_CLK_PER, (void __iomem *)(USDHC_2_LPCG), 0, 0);
-+	clks[IMX8QXP_ENET0_ROOT_DIV]	= imx_clk_divider_scu("enet0_root_div", SC_R_ENET_0, SC_PM_CLK_PER);
-+	clks[IMX8QXP_ENET0_REF_DIV]	= imx_clk_divider_gpr_scu("enet0_ref_div", "enet0_root_clk", SC_R_ENET_0, SC_C_CLKDIV);
-+	clks[IMX8QXP_ENET1_REF_DIV]	= imx_clk_divider_gpr_scu("enet1_ref_div", "enet1_root_clk", SC_R_ENET_1, SC_C_CLKDIV);
-+	clks[IMX8QXP_ENET0_BYPASS_DIV]	= imx_clk_divider_scu("enet0_bypass_div", SC_R_ENET_0, SC_PM_CLK_BYPASS);
-+	clks[IMX8QXP_ENET0_RGMII_DIV]	= imx_clk_divider_scu("enet0_rgmii_div", SC_R_ENET_0, SC_PM_CLK_MISC0);
-+	clks[IMX8QXP_ENET1_ROOT_DIV]	= imx_clk_divider_scu("enet1_root_div", SC_R_ENET_1, SC_PM_CLK_PER);
-+	clks[IMX8QXP_ENET1_BYPASS_DIV]	= imx_clk_divider_scu("enet1_bypass_div", SC_R_ENET_1, SC_PM_CLK_BYPASS);
-+	clks[IMX8QXP_ENET1_RGMII_DIV]	= imx_clk_divider_scu("enet1_rgmii_div", SC_R_ENET_1, SC_PM_CLK_MISC0);
-+	clks[IMX8QXP_ENET0_AHB_CLK]	= imx_clk_gate2_scu("enet0_ahb_clk", "axi_conn_clk_root", (void __iomem *)(ENET_0_LPCG), 8, 0);
-+	clks[IMX8QXP_ENET0_IPG_S_CLK]	= imx_clk_gate2_scu("enet0_ipg_s_clk", "ipg_conn_clk_root", (void __iomem *)(ENET_0_LPCG), 20, 0);
-+	clks[IMX8QXP_ENET0_IPG_CLK]	= imx_clk_gate2_scu("enet0_ipg_clk", "enet0_ipg_s_clk", (void __iomem *)(ENET_0_LPCG), 16, 0);
-+	clks[IMX8QXP_ENET1_AHB_CLK]	= imx_clk_gate2_scu("enet1_ahb_clk", "axi_conn_clk_root", (void __iomem *)(ENET_1_LPCG), 8, 0);
-+	clks[IMX8QXP_ENET1_IPG_S_CLK]	= imx_clk_gate2_scu("enet1_ipg_s_clk", "ipg_conn_clk_root", (void __iomem *)(ENET_1_LPCG), 20, 0);
-+	clks[IMX8QXP_ENET1_IPG_CLK]	= imx_clk_gate2_scu("enet1_ipg_clk", "enet1_ipg_s_clk", (void __iomem *)(ENET_1_LPCG), 16, 0);
-+	clks[IMX8QXP_ENET0_ROOT_CLK]	= imx_clk_gate_scu("enet0_root_clk", "enet0_root_div", SC_R_ENET_0, SC_PM_CLK_PER, NULL, 0, 0);
-+	clks[IMX8QXP_ENET1_ROOT_CLK]	= imx_clk_gate_scu("enet1_root_clk", "enet1_root_div", SC_R_ENET_1, SC_PM_CLK_PER, NULL, 0, 0);
-+	clks[IMX8QXP_ENET0_TX_CLK]	= imx_clk_gate2_scu("enet0_tx_2x_clk", "enet0_root_div", (void __iomem *)(ENET_0_LPCG), 4, 0);
-+	clks[IMX8QXP_ENET1_TX_CLK]	= imx_clk_gate2_scu("enet1_tx_2x_clk", "enet1_root_div", (void __iomem *)(ENET_1_LPCG), 4, 0);
-+	clks[IMX8QXP_ENET0_PTP_CLK]	= imx_clk_gate2_scu("enet0_ptp_clk", "enet0_ref_div", (void __iomem *)(ENET_0_LPCG), 0, 0);
-+	clks[IMX8QXP_ENET1_PTP_CLK]	= imx_clk_gate2_scu("enet1_ptp_clk", "enet1_ref_div", (void __iomem *)(ENET_1_LPCG), 0, 0);
-+	clks[IMX8QXP_ENET0_REF_25MHZ_125MHZ_SEL] = imx_clk_mux_gpr_scu("enet0_ref_25_125_sel", enet_sels, ARRAY_SIZE(enet_sels), SC_R_ENET_0, SC_C_SEL_125);
-+	clks[IMX8QXP_ENET1_REF_25MHZ_125MHZ_SEL] = imx_clk_mux_gpr_scu("enet1_ref_25_125_sel", enet_sels, ARRAY_SIZE(enet_sels), SC_R_ENET_1, SC_C_SEL_125);
-+	clks[IMX8QXP_ENET0_RMII_TX_SEL]	= imx_clk_mux_gpr_scu("enet0_rmii_tx_sel", enet0_rmii_tx_sels, ARRAY_SIZE(enet0_rmii_tx_sels), SC_R_ENET_0, SC_C_TXCLK);
-+	clks[IMX8QXP_ENET1_RMII_TX_SEL]	= imx_clk_mux_gpr_scu("enet1_rmii_tx_sel", enet1_rmii_tx_sels, ARRAY_SIZE(enet1_rmii_tx_sels), SC_R_ENET_1, SC_C_TXCLK);
-+	clks[IMX8QXP_ENET0_RGMII_TX_CLK] = imx_clk_gate2_scu("enet0_rgmii_tx_clk", "enet0_rmii_tx_sel", (void __iomem *)(ENET_0_LPCG), 12, 0);
-+	clks[IMX8QXP_ENET1_RGMII_TX_CLK] = imx_clk_gate2_scu("enet1_rgmii_tx_clk", "enet1_rmii_tx_sel", (void __iomem *)(ENET_1_LPCG), 12, 0);
-+	clks[IMX8QXP_ENET0_RMII_RX_CLK]	= imx_clk_gate2_scu("enet0_rgmii_rx_clk", "enet0_rgmii_div", (void __iomem *)(ENET_0_LPCG + 0x4), 0, 0);
-+	clks[IMX8QXP_ENET1_RMII_RX_CLK]	= imx_clk_gate2_scu("enet1_rgmii_rx_clk", "enet1_rgmii_div", (void __iomem *)(ENET_1_LPCG + 0x4), 0, 0);
-+	clks[IMX8QXP_ENET0_REF_25MHZ_125MHZ_CLK] = imx_clk_gate_gpr_scu("enet0_ref_25_125_clk", "enet0_ref_25_125_sel", SC_R_ENET_0, SC_C_DISABLE_125, true);
-+	clks[IMX8QXP_ENET1_REF_25MHZ_125MHZ_CLK] = imx_clk_gate_gpr_scu("enet1_ref_25_125_clk", "enet1_ref_25_125_sel", SC_R_ENET_1, SC_C_DISABLE_125, true);
-+	clks[IMX8QXP_ENET0_REF_50MHZ_CLK] = imx_clk_gate_gpr_scu("enet0_ref_50_clk", NULL, SC_R_ENET_0, SC_C_DISABLE_50, true);
-+	clks[IMX8QXP_ENET1_REF_50MHZ_CLK] = imx_clk_gate_gpr_scu("enet1_ref_50_clk", NULL, SC_R_ENET_1, SC_C_DISABLE_50, true);
-+	clks[IMX8QXP_GPMI_BCH_IO_DIV]	= imx_clk_divider_scu("gpmi_io_div", SC_R_NAND, SC_PM_CLK_MST_BUS);
-+	clks[IMX8QXP_GPMI_BCH_DIV]	= imx_clk_divider_scu("gpmi_bch_div", SC_R_NAND, SC_PM_CLK_PER);
-+	clks[IMX8QXP_GPMI_APB_CLK]	= imx_clk_gate2_scu("gpmi_apb_clk", "axi_conn_clk_root", (void __iomem *)(NAND_LPCG), 16, 0);
-+	clks[IMX8QXP_GPMI_APB_BCH_CLK]	= imx_clk_gate2_scu("gpmi_apb_bch_clk", "axi_conn_clk_root", (void __iomem *)(NAND_LPCG), 20, 0);
-+	clks[IMX8QXP_GPMI_BCH_IO_CLK]	= imx_clk_gate_scu("gpmi_io_clk", "gpmi_io_div", SC_R_NAND, SC_PM_CLK_MST_BUS, (void __iomem *)(NAND_LPCG), 4, 0);
-+	clks[IMX8QXP_GPMI_BCH_CLK]	= imx_clk_gate_scu("gpmi_bch_clk", "gpmi_bch_div", SC_R_NAND, SC_PM_CLK_PER, (void __iomem *)(NAND_LPCG), 0, 0);
-+	clks[IMX8QXP_APBHDMA_CLK]	= imx_clk_gate2_scu("gpmi_clk", "axi_conn_clk_root", (void __iomem *)(NAND_LPCG + 0x4), 16, 0);
-+	clks[IMX8QXP_USB3_ACLK_DIV]	= imx_clk_divider_scu("usb3_aclk_div", SC_R_USB_2, SC_PM_CLK_PER);
-+	clks[IMX8QXP_USB3_BUS_DIV]	= imx_clk_divider_scu("usb3_bus_div", SC_R_USB_2, SC_PM_CLK_MST_BUS);
-+	clks[IMX8QXP_USB3_LPM_DIV]	= imx_clk_divider_scu("usb3_lpm_div", SC_R_USB_2, SC_PM_CLK_MISC);
-+	clks[IMX8QXP_USB2_OH_AHB_CLK]	= imx_clk_gate2_scu("usboh3", "ahb_conn_clk_root", (void __iomem *)(USB_2_LPCG), 24, 0);
-+	clks[IMX8QXP_USB2_OH_IPG_S_CLK]	= imx_clk_gate2_scu("usboh3_ipg_s", "ipg_conn_clk_root", (void __iomem *)(USB_2_LPCG), 16, 0);
-+	clks[IMX8QXP_USB2_OH_IPG_S_PL301_CLK] = imx_clk_gate2_scu("usboh3_ipg_pl301_s", "ipg_conn_clk_root", (void __iomem *)(USB_2_LPCG), 20, 0);
-+	clks[IMX8QXP_USB2_PHY_IPG_CLK]	= imx_clk_gate2_scu("usboh3_phy_clk", "ipg_conn_clk_root", (void __iomem *)(USB_2_LPCG), 28, 0);
-+	clks[IMX8QXP_USB3_IPG_CLK]	= imx_clk_gate2_scu("usb3_ipg_clk", "ipg_conn_clk_root", (void __iomem *)(USB_3_LPCG), 16, 0);
-+	clks[IMX8QXP_USB3_CORE_PCLK]	= imx_clk_gate2_scu("usb3_core_clk", "ipg_conn_clk_root", (void __iomem *)(USB_3_LPCG), 20, 0);
-+	clks[IMX8QXP_USB3_PHY_CLK]	= imx_clk_gate2_scu("usb3_phy_clk", "usb3_ipg_clk", (void __iomem *)(USB_3_LPCG), 24, 0);
-+	clks[IMX8QXP_USB3_ACLK]		= imx_clk_gate_scu("usb3_aclk", "usb3_aclk_div", SC_R_USB_2, SC_PM_CLK_PER, (void __iomem *)(USB_3_LPCG), 28, 0);
-+	clks[IMX8QXP_USB3_BUS_CLK]	= imx_clk_gate_scu("usb3_bus_clk", "usb3_bus_div", SC_R_USB_2, SC_PM_CLK_MST_BUS, (void __iomem *)(USB_3_LPCG), 0, 0);
-+	clks[IMX8QXP_USB3_LPM_CLK]	= imx_clk_gate_scu("usb3_lpm_clk", "usb3_lpm_div", SC_R_USB_2, SC_PM_CLK_MISC, (void __iomem *)(USB_3_LPCG), 4, 0);
-+	clks[IMX8QXP_EDMA_CLK]		= imx_clk_gate2_scu("edma_clk", "axi_conn_clk_root", (void __iomem *)(EDMA_LPCG), 0, 0);
-+	clks[IMX8QXP_EDMA_IPG_CLK]	= imx_clk_gate2_scu("edma_ipg_clk", "ipg_conn_clk_root", (void __iomem *)(EDMA_LPCG), 16, 0);
-+	clks[IMX8QXP_MLB_HCLK]		= imx_clk_gate2_scu("mlb_hclk", "axi_conn_clk_root", (void __iomem *)(MLB_LPCG), 20, 0);
-+	clks[IMX8QXP_MLB_CLK]		= imx_clk_gate2_scu("mlb_clk", "mlb_hclk", (void __iomem *)(MLB_LPCG), 0, 0);
-+	clks[IMX8QXP_MLB_IPG_CLK]	= imx_clk_gate2_scu("mlb_ipg_clk", "ipg_conn_clk_root", (void __iomem *)(MLB_LPCG), 16, 0);
-+
-+	/* Display controller - DC0 SS */
-+	clks[IMX8QXP_DC0_DISP0_CLK]	= imx_clk_gate_scu("dc0_disp0_clk", "dc0_disp0_div", SC_R_DC_0, SC_PM_CLK_MISC0, (void __iomem *)(DC_0_LPCG), 0, 0);
-+	clks[IMX8QXP_DC0_DISP1_CLK]	= imx_clk_gate_scu("dc0_disp1_clk", "dc0_disp1_div", SC_R_DC_0, SC_PM_CLK_MISC1, (void __iomem *)(DC_0_LPCG), 4, 0);
-+	clks[IMX8QXP_DC0_PRG0_RTRAM_CLK] = imx_clk_gate2_scu("dc0_prg0_rtram_clk", "axi_int_dc_clk_root", (void __iomem *)(DC_0_LPCG + 0x20), 0, 0);
-+	clks[IMX8QXP_DC0_PRG0_APB_CLK]	= imx_clk_gate2_scu("dc0_prg0_apb_clk", "cfg_dc_clk_root", (void __iomem *)(DC_0_LPCG + 0x20), 16, 0);
-+	clks[IMX8QXP_DC0_PRG1_RTRAM_CLK] = imx_clk_gate2_scu("dc0_prg1_rtram_clk", "axi_int_dc_clk_root", (void __iomem *)(DC_0_LPCG + 0x24), 0, 0);
-+	clks[IMX8QXP_DC0_PRG1_APB_CLK]	= imx_clk_gate2_scu("dc0_prg1_apb_clk", "cfg_dc_clk_root", (void __iomem *)(DC_0_LPCG + 0x24), 16, 0);
-+	clks[IMX8QXP_DC0_PRG2_RTRAM_CLK] = imx_clk_gate2_scu("dc0_prg2_rtram_clk", "axi_int_dc_clk_root", (void __iomem *)(DC_0_LPCG + 0x28), 0, 0);
-+	clks[IMX8QXP_DC0_PRG2_APB_CLK]	= imx_clk_gate2_scu("dc0_prg2_apb_clk", "cfg_dc_clk_root", (void __iomem *)(DC_0_LPCG + 0x28), 16, 0);
-+	clks[IMX8QXP_DC0_PRG3_RTRAM_CLK] = imx_clk_gate2_scu("dc0_prg3_rtram_clk", "axi_int_dc_clk_root", (void __iomem *)(DC_0_LPCG + 0x34), 0, 0);
-+	clks[IMX8QXP_DC0_PRG3_APB_CLK]	= imx_clk_gate2_scu("dc0_prg3_apb_clk", "cfg_dc_clk_root", (void __iomem *)(DC_0_LPCG + 0x34), 16, 0);
-+	clks[IMX8QXP_DC0_PRG4_RTRAM_CLK] = imx_clk_gate2_scu("dc0_prg4_rtram_clk", "axi_int_dc_clk_root", (void __iomem *)(DC_0_LPCG + 0x38), 0, 0);
-+	clks[IMX8QXP_DC0_PRG4_APB_CLK]	= imx_clk_gate2_scu("dc0_prg4_apb_clk", "cfg_dc_clk_root", (void __iomem *)(DC_0_LPCG + 0x38), 16, 0);
-+	clks[IMX8QXP_DC0_PRG5_RTRAM_CLK] = imx_clk_gate2_scu("dc0_prg5_rtram_clk", "axi_int_dc_clk_root", (void __iomem *)(DC_0_LPCG + 0x3c), 0, 0);
-+	clks[IMX8QXP_DC0_PRG5_APB_CLK]	= imx_clk_gate2_scu("dc0_prg5_apb_clk", "cfg_dc_clk_root", (void __iomem *)(DC_0_LPCG + 0x3c), 16, 0);
-+	clks[IMX8QXP_DC0_PRG6_RTRAM_CLK] = imx_clk_gate2_scu("dc0_prg6_rtram_clk", "axi_int_dc_clk_root", (void __iomem *)(DC_0_LPCG + 0x40), 0, 0);
-+	clks[IMX8QXP_DC0_PRG6_APB_CLK]	= imx_clk_gate2_scu("dc0_prg6_apb_clk", "cfg_dc_clk_root", (void __iomem *)(DC_0_LPCG + 0x40), 16, 0);
-+	clks[IMX8QXP_DC0_PRG7_RTRAM_CLK] = imx_clk_gate2_scu("dc0_prg7_rtram_clk", "axi_int_dc_clk_root", (void __iomem *)(DC_0_LPCG + 0x44), 0, 0);
-+	clks[IMX8QXP_DC0_PRG7_APB_CLK]	= imx_clk_gate2_scu("dc0_prg7_apb_clk", "cfg_dc_clk_root", (void __iomem *)(DC_0_LPCG + 0x44), 16, 0);
-+	clks[IMX8QXP_DC0_PRG8_RTRAM_CLK] = imx_clk_gate2_scu("dc0_prg8_rtram_clk", "axi_int_dc_clk_root", (void __iomem *)(DC_0_LPCG + 0x48), 0, 0);
-+	clks[IMX8QXP_DC0_PRG8_APB_CLK]	= imx_clk_gate2_scu("dc0_prg8_apb_clk", "cfg_dc_clk_root", (void __iomem *)(DC_0_LPCG + 0x48), 16, 0);
-+	clks[IMX8QXP_DC0_DPR0_APB_CLK]	= imx_clk_gate2_scu("dc0_dpr0_apb_clk", "cfg_dc_clk_root", (void __iomem *)(DC_0_LPCG + 0x18), 16, 0);
-+	clks[IMX8QXP_DC0_DPR0_B_CLK]	= imx_clk_gate2_scu("dc0_dpr0_b_clk", "axi_ext_dc_clk_root", (void __iomem *)(DC_0_LPCG + 0x18), 20, 0);
-+	clks[IMX8QXP_DC0_RTRAM0_CLK]	= imx_clk_gate2_scu("dc0_rtrm0_clk", "axi_int_dc_clk_root", (void __iomem *)(DC_0_LPCG + 0x1C), 0, 0);
-+	clks[IMX8QXP_DC0_RTRAM1_CLK]	= imx_clk_gate2_scu("dc0_rtrm1_clk", "axi_int_dc_clk_root", (void __iomem *)(DC_0_LPCG + 0x30), 0, 0);
-+
-+	/* Display interface - MIPI-LVDS SS */
-+	clks[IMX8QXP_MIPI0_I2C0_DIV]	= imx_clk_divider_scu("mipi_i2c0_div", SC_R_MIPI_0_I2C_0, SC_PM_CLK_MISC2);
-+	clks[IMX8QXP_MIPI0_I2C1_DIV]	= imx_clk_divider_scu("mipi_i2c1_div", SC_R_MIPI_0_I2C_1, SC_PM_CLK_MISC2);
-+	clks[IMX8QXP_MIPI0_I2C0_CLK]	= imx_clk_gate_scu("mipi_i2c0_clk", "mipi_i2c0_div", SC_R_MIPI_0_I2C_0, SC_PM_CLK_MISC2, (void __iomem *)(DI_MIPI0_LPCG + 0x14), 0, 0);
-+	clks[IMX8QXP_MIPI0_I2C1_CLK]	= imx_clk_gate_scu("mipi_i2c1_clk", "mipi_i2c1_div", SC_R_MIPI_0_I2C_1, SC_PM_CLK_MISC2, (void __iomem *)(DI_MIPI0_LPCG + 0x14), 0, 0);
-+	clks[IMX8QXP_MIPI0_I2C0_IPG_S_CLK] = imx_clk_gate2_scu("mipi_i2c0_ipg_s", "ipg_mipi_clk_root", (void __iomem *)(DI_MIPI0_LPCG + 0x10), 0, 0);
-+	clks[IMX8QXP_MIPI0_I2C0_IPG_CLK]	= imx_clk_gate2_scu("mipi_i2c0_ipg_clk", "mipi_i2c0_ipg_s", (void __iomem *)(DI_MIPI0_LPCG), 0, 0);
-+	clks[IMX8QXP_MIPI0_I2C1_IPG_S_CLK] = imx_clk_gate2_scu("mipi_i2c1_ipg_s", "ipg_mipi_clk_root", (void __iomem *)(DI_MIPI0_LPCG + 0x14), 0, 0);
-+	clks[IMX8QXP_MIPI0_I2C1_IPG_CLK]	= imx_clk_gate2_scu("mipi_i2c1_ipg_clk", "mipi_i2c1_ipg_s", (void __iomem *)(DI_MIPI0_LPCG), 0, 0);
-+	clks[IMX8QXP_MIPI0_PWM_IPG_S_CLK] = imx_clk_gate2_scu("mipi_pwm_ipg_s", "ipg_mipi_clk_root", (void __iomem *)(DI_MIPI0_LPCG + 0xC), 0, 0);
-+	clks[IMX8QXP_MIPI0_PWM_IPG_CLK]	= imx_clk_gate2_scu("mipi_pwm_ipg_clk", "mipi_pwm_ipg_s", (void __iomem *)(DI_MIPI0_LPCG + 0xC), 0, 0);
-+	clks[IMX8QXP_MIPI0_PWM_32K_CLK]	= imx_clk_gate2_scu("mipi_pwm_32K_clk", "xtal_32KHz", (void __iomem *)(DI_MIPI0_LPCG + 0xC), 0, 0);
-+	clks[IMX8QXP_MIPI0_GPIO_IPG_CLK]	= imx_clk_gate2_scu("mipi_gpio_ipg_clk", "ipg_mipi_clk_root", (void __iomem *)(DI_MIPI0_LPCG + 0x8), 0, 0);
-+
-+	/* Imaging SS */
-+	clks[IMX8QXP_IMG_JPEG_ENC_IPG_CLK]	= imx_clk_gate2_scu("img_jpeg_enc_ipg_clk", "ipg_img_clk_root", (void __iomem *)(IMG_JPEG_ENC_LPCG), 16, 0);
-+	clks[IMX8QXP_IMG_JPEG_ENC_CLK]		= imx_clk_gate2_scu("img_jpeg_enc_clk", "img_jpeg_enc_ipg_clk", (void __iomem *)(IMG_JPEG_ENC_LPCG), 0, 0);
-+	clks[IMX8QXP_IMG_JPEG_DEC_IPG_CLK]	= imx_clk_gate2_scu("img_jpeg_dec_ipg_clk", "ipg_img_clk_root", (void __iomem *)(IMG_JPEG_DEC_LPCG), 16, 0);
-+	clks[IMX8QXP_IMG_JPEG_DEC_CLK]		= imx_clk_gate2_scu("img_jpeg_dec_clk", "img_jpeg_dec_ipg_clk", (void __iomem *)(IMG_JPEG_DEC_LPCG), 0, 0);
-+	clks[IMX8QXP_IMG_PXL_LINK_DC0_CLK]	= imx_clk_gate2_scu("img_pxl_link_dc0_clk", "pxl_img_clk_root", (void __iomem *)(IMG_PXL_LINK_DC0_LPCG), 0, 0);
-+	clks[IMX8QXP_IMG_PXL_LINK_DC1_CLK]	= imx_clk_gate2_scu("img_pxl_link_dc1_clk", "pxl_img_clk_root", (void __iomem *)(IMG_PXL_LINK_DC1_LPCG), 0, 0);
-+	clks[IMX8QXP_IMG_PXL_LINK_CSI0_CLK]	= imx_clk_gate2_scu("img_pxl_link_csi0_clk", "pxl_img_clk_root", (void __iomem *)(IMG_PXL_LINK_CSI0_LPCG), 0, 0);
-+	clks[IMX8QXP_IMG_PXL_LINK_CSI1_CLK]	= imx_clk_gate2_scu("img_pxl_link_csi1_clk", "pxl_img_clk_root", (void __iomem *)(IMG_PXL_LINK_CSI1_LPCG), 0, 0);
-+	clks[IMX8QXP_IMG_PXL_LINK_HDMI_IN_CLK]	= imx_clk_gate2_scu("img_pxl_link_hdmi_in_clk", "pxl_img_clk_root", (void __iomem *)(IMG_PXL_LINK_HDMI_LPCG), 0, 0);
-+	clks[IMX8QXP_IMG_PDMA_0_CLK]		= imx_clk_gate2_scu("img_pdma0_clk", "pxl_img_clk_root", (void __iomem *)(IMG_PDMA_0_LPCG), 0, 0);
-+	clks[IMX8QXP_IMG_PDMA_1_CLK]		= imx_clk_gate2_scu("img_pdma1_clk", "pxl_img_clk_root", (void __iomem *)(IMG_PDMA_1_LPCG), 0, 0);
-+	clks[IMX8QXP_IMG_PDMA_2_CLK]		= imx_clk_gate2_scu("img_pdma2_clk", "pxl_img_clk_root", (void __iomem *)(IMG_PDMA_2_LPCG), 0, 0);
-+	clks[IMX8QXP_IMG_PDMA_3_CLK]		= imx_clk_gate2_scu("img_pdma3_clk", "pxl_img_clk_root", (void __iomem *)(IMG_PDMA_3_LPCG), 0, 0);
-+	clks[IMX8QXP_IMG_PDMA_4_CLK]		= imx_clk_gate2_scu("img_pdma4_clk", "pxl_img_clk_root", (void __iomem *)(IMG_PDMA_4_LPCG), 0, 0);
-+	clks[IMX8QXP_IMG_PDMA_5_CLK]		= imx_clk_gate2_scu("img_pdma5_clk", "pxl_img_clk_root", (void __iomem *)(IMG_PDMA_5_LPCG), 0, 0);
-+	clks[IMX8QXP_IMG_PDMA_6_CLK]		= imx_clk_gate2_scu("img_pdma6_clk", "pxl_img_clk_root", (void __iomem *)(IMG_PDMA_6_LPCG), 0, 0);
-+	clks[IMX8QXP_IMG_PDMA_7_CLK]		= imx_clk_gate2_scu("img_pdma7_clk", "pxl_img_clk_root", (void __iomem *)(IMG_PDMA_7_LPCG), 0, 0);
-+
-+	/* MIPI CSI SS */
-+	clks[IMX8QXP_CSI0_I2C0_DIV]	= imx_clk_divider_scu("mipi_csi0_i2c0_div", SC_R_CSI_0_I2C_0, SC_PM_CLK_PER);
-+	clks[IMX8QXP_CSI0_PWM0_DIV]	= imx_clk_divider_scu("mipi_csi0_pwm0_div", SC_R_CSI_0_PWM_0, SC_PM_CLK_PER);
-+	clks[IMX8QXP_CSI0_CORE_DIV]	= imx_clk_divider_scu("mipi_csi0_core_div", SC_R_CSI_0, SC_PM_CLK_PER);
-+	clks[IMX8QXP_CSI0_ESC_DIV]	= imx_clk_divider_scu("mipi_csi0_esc_div", SC_R_CSI_0, SC_PM_CLK_MISC);
-+	clks[IMX8QXP_CSI0_IPG_CLK_S]	= imx_clk_gate2_scu("mipi_csi0_ipg_s", "ipg_mipi_csi_clk_root", (void __iomem *)(MIPI_CSI_0_LPCG + 0x8), 16, 0);
-+	clks[IMX8QXP_CSI0_IPG_CLK]	= imx_clk_gate2_scu("mipi_csi0_ipg", "mipi_csi0_ipg_s", (void __iomem *)(MIPI_CSI_0_LPCG), 16, 0);
-+	clks[IMX8QXP_CSI0_APB_CLK]	= imx_clk_gate2_scu("mipi_csi0_apb_clk", "ipg_mipi_csi_clk_root", (void __iomem *)(MIPI_CSI_0_LPCG + 0x4), 16,  0);
-+	clks[IMX8QXP_CSI0_I2C0_IPG_CLK]	= imx_clk_gate2_scu("mipi_csi0_i2c0_ipg_s", "ipg_mipi_csi_clk_root", (void __iomem *)(MIPI_CSI_0_LPCG + 0x14), 16, 0);
-+	clks[IMX8QXP_CSI0_I2C0_CLK]	= imx_clk_gate_scu("mipi_csi0_i2c0_clk", "mipi_csi0_i2c0_div", SC_R_CSI_0_I2C_0, SC_PM_CLK_PER, (void __iomem *)(MIPI_CSI_0_LPCG + 0x14), 0, 0);
-+	clks[IMX8QXP_CSI0_PWM0_IPG_CLK]	= imx_clk_gate2_scu("mipi_csi0_pwm0_ipg_s", "ipg_mipi_csi_clk_root", (void __iomem *)(MIPI_CSI_0_LPCG + 0x10), 16, 0);
-+	clks[IMX8QXP_CSI0_PWM0_CLK]	= imx_clk_gate_scu("mipi_csi0_pwm0_clk", "mipi_csi0_pwm0_div", SC_R_CSI_0_PWM_0, SC_PM_CLK_PER, (void __iomem *)(MIPI_CSI_0_LPCG + 0x10), 0, 0);
-+	clks[IMX8QXP_CSI0_CORE_CLK]	= imx_clk_gate_scu("mipi_csi0_core_clk", "mipi_csi0_core_div", SC_R_CSI_0, SC_PM_CLK_PER, (void __iomem *)(MIPI_CSI_0_LPCG + 0x18), 16, 0);
-+	clks[IMX8QXP_CSI0_ESC_CLK]	= imx_clk_gate_scu("mipi_csi0_esc_clk", "mipi_csi0_esc_div", SC_R_CSI_0, SC_PM_CLK_MISC, (void __iomem *)(MIPI_CSI_0_LPCG + 0x1C), 16, 0);
-+
-+	/* HSIO SS */
-+	clks[IMX8QXP_HSIO_PCIE_MSTR_AXI_CLK]	= imx_clk_gate2_scu("hsio_pcie_mstr_axi_clk", "axi_hsio_clk_root", (void __iomem *)(HSIO_PCIE_X1_LPCG), 16, 0);
-+	clks[IMX8QXP_HSIO_PCIE_SLV_AXI_CLK]	= imx_clk_gate2_scu("hsio_pcie_slv_axi_clk", "axi_hsio_clk_root", (void __iomem *)(HSIO_PCIE_X1_LPCG), 20, 0);
-+	clks[IMX8QXP_HSIO_PCIE_DBI_AXI_CLK]	= imx_clk_gate2_scu("hsio_pcie_dbi_axi_clk", "axi_hsio_clk_root", (void __iomem *)(HSIO_PCIE_X1_LPCG), 24, 0);
-+	clks[IMX8QXP_HSIO_PCIE_X1_PER_CLK]	= imx_clk_gate2_scu("hsio_pcie_x1_per_clk", "per_hsio_clk_root", (void __iomem *)(HSIO_PCIE_X1_CRR3_LPCG), 16, 0);
-+	clks[IMX8QXP_HSIO_PHY_X1_PER_CLK]	= imx_clk_gate2_scu("hsio_phy_x1_per_clk", "per_hsio_clk_root", (void __iomem *)(HSIO_PHY_X1_CRR1_LPCG), 16, 0);
-+	clks[IMX8QXP_HSIO_MISC_PER_CLK]		= imx_clk_gate2_scu("hsio_misc_per_clk", "per_hsio_clk_root", (void __iomem *)(HSIO_MISC_LPCG), 16, 0);
-+	clks[IMX8QXP_HSIO_PHY_X1_APB_CLK]	= imx_clk_gate2_scu("hsio_phy_x1_apb_clk", "per_hsio_clk_root", (void __iomem *)(HSIO_PHY_X1_LPCG), 16, 0);
-+	clks[IMX8QXP_HSIO_GPIO_CLK]		= imx_clk_gate2_scu("hsio_gpio_clk", "per_hsio_clk_root", (void __iomem *)(HSIO_GPIO_LPCG), 16, 0);
-+	clks[IMX8QXP_HSIO_PHY_X1_PCLK]		= imx_clk_gate2_scu("hsio_phy_x1_pclk", "dummy", (void __iomem *)(HSIO_PHY_X1_LPCG), 0, 0);
-+
-+	imx_check_clk_hws(clks, clk_data->num);
-+
-+	of_clk_add_hw_provider(ccm_node, of_clk_hw_onecell_get, clk_data);
-+
-+	pr_info("i.MX8QXP clock tree init done.\n");
++	ret = sc_misc_set_control(ccm_ipc_handle, gpr_mux->rsrc_id,
++				  gpr_mux->gpr_id, index);
++	if (ret != SC_ERR_NONE)
++		return -EINVAL;
 +
 +	return 0;
 +}
 +
-+static const struct of_device_id imx8qxp_match[] = {
-+	{ .compatible = "fsl,imx8qxp-clk", },
-+	{ /* sentinel */ }
++static const struct clk_ops clk_mux_gpr_scu_ops = {
++	.get_parent = clk_mux_gpr_scu_get_parent,
++	.set_parent = clk_mux_gpr_scu_set_parent,
 +};
 +
-+static struct platform_driver imx8qxp_clk_driver = {
-+	.driver = {
-+		.name = "imx8qxp-clk",
-+		.of_match_table = imx8qxp_match,
-+	},
-+	.probe = imx8qxp_clk_probe,
-+};
-+
-+static int __init imx8qxp_clk_init(void)
++struct clk_hw *clk_register_mux_gpr_scu(const char *name, const char * const *parents,
++					int num_parents, unsigned long flags,
++					sc_rsrc_t rsrc_id, sc_ctrl_t gpr_id)
 +{
-+	return platform_driver_register(&imx8qxp_clk_driver);
++	struct clk_mux_gpr_scu *mux;
++	struct clk_init_data init;
++	struct clk_hw *hw;
++	int ret;
++
++	mux = kzalloc(sizeof(*mux), GFP_KERNEL);
++	if (!mux)
++		return ERR_PTR(-ENOMEM);
++
++	init.name = name;
++	init.ops = &clk_mux_gpr_scu_ops;
++	init.parent_names = parents;
++	init.num_parents = num_parents;
++	init.flags = flags;
++
++	mux->hw.init = &init;
++	mux->rsrc_id = rsrc_id;
++	mux->gpr_id = gpr_id;
++
++	hw = &mux->hw;
++	ret = clk_hw_register(NULL, hw);
++	if (ret) {
++		kfree(mux);
++		hw = ERR_PTR(ret);
++	}
++
++	return hw;
 +}
-+core_initcall(imx8qxp_clk_init);
-diff --git a/include/soc/imx/imx8qxp/lpcg.h b/include/soc/imx/imx8qxp/lpcg.h
-new file mode 100644
-index 0000000..afbb5da
---- /dev/null
-+++ b/include/soc/imx/imx8qxp/lpcg.h
-@@ -0,0 +1,186 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
-+/*
-+ * Copyright (C) 2016 Freescale Semiconductor, Inc.
-+ * Copyright 2017~2018 NXP
-+ *
-+ */
+diff --git a/drivers/clk/imx/scu/clk-scu.h b/drivers/clk/imx/scu/clk-scu.h
+index 43009c4..828700d 100644
+--- a/drivers/clk/imx/scu/clk-scu.h
++++ b/drivers/clk/imx/scu/clk-scu.h
+@@ -81,4 +81,15 @@ static inline struct clk_hw *imx_clk_mux_scu(const char *name,
+ 			clk_type);
+ }
+ 
++struct clk_hw *clk_register_mux_gpr_scu(const char *name, const char * const *parents,
++			int num_parents, unsigned long flags,
++			sc_rsrc_t rsrc_id, sc_ctrl_t gpr_id);
 +
-+#ifndef _SC_LPCG_H
-+#define _SC_LPCG_H
++static inline struct clk_hw *imx_clk_mux_gpr_scu(const char *name, const char * const *parents,
++			int num_parents, sc_rsrc_t rsrc_id, sc_ctrl_t gpr_id)
++{
++	return clk_register_mux_gpr_scu(name, parents, num_parents,
++			CLK_SET_RATE_NO_REPARENT, rsrc_id, gpr_id);
++}
 +
-+/*LSIO SS */
-+#define		PWM_0_LPCG		0x5D400000
-+#define		PWM_1_LPCG		0x5D410000
-+#define		PWM_2_LPCG		0x5D420000
-+#define		PWM_3_LPCG		0x5D430000
-+#define		PWM_4_LPCG		0x5D440000
-+#define		PWM_5_LPCG		0x5D450000
-+#define		PWM_6_LPCG		0x5D460000
-+#define		PWM_7_LPCG		0x5D470000
-+#define		GPIO_0_LPCG		0x5D480000
-+#define		GPIO_1_LPCG		0x5D490000
-+#define		GPIO_2_LPCG		0x5D4A0000
-+#define		GPIO_3_LPCG		0x5D4B0000
-+#define		GPIO_4_LPCG		0x5D4C0000
-+#define		GPIO_5_LPCG		0x5D4D0000
-+#define		GPIO_6_LPCG		0x5D4E0000
-+#define		GPIO_7_LPCG		0x5D4F0000
-+#define		FSPI_0_LPCG		0x5D520000
-+#define		FSPI_1_LPCG		0x5D530000
-+#define		GPT_0_LPCG		0x5D540000
-+#define		GPT_1_LPCG		0x5D550000
-+#define		GPT_2_LPCG		0x5D560000
-+#define		GPT_3_LPCG		0x5D570000
-+#define		GPT_4_LPCG		0x5D580000
-+#define		OCRAM_LPCG		0x5D590000
-+#define		KPP_LPCG		0x5D5A0000
-+#define		ROMCP_LPCG		0x5D500000
-+
-+/* HSIO SS */
-+#define		CRR_5_LPCG		0x5F0F0000
-+#define		CRR_4_LPCG		0x5F0E0000
-+#define		CRR_3_LPCG		0x5F0D0000
-+#define		CRR_2_LPCG		0x5F0C0000
-+#define		CRR_1_LPCG		0x5F0B0000
-+#define		CRR_0_LPCG		0x5F0A0000
-+#define		PHY_1_LPCG		0x5F090000
-+#define		PHY_2_LPCG		0x5F080000
-+#define		SATA_0_LPCG		0x5F070000
-+#define		PCIE_B_LPCG		0x5F060000
-+#define		PCIE_A_LPCG		0x5F050000
-+
-+/* DMA SS */
-+#define		FLEX_CAN_2_LPCG		0x5ACF0000
-+#define		FLEX_CAN_1_LPCG		0x5ACE0000
-+#define		FLEX_CAN_0_LPCG		0x5ACD0000
-+#define		FTM_1_LPCG		0x5ACB0000
-+#define		FTM_0_LPCG		0x5ACA0000
-+#define		ADC_0_LPCG		0x5AC80000
-+#define		LPI2C_3_LPCG		0x5AC30000
-+#define		LPI2C_2_LPCG		0x5AC20000
-+#define		LPI2C_1_LPCG		0x5AC10000
-+#define		LPI2C_0_LPCG		0x5AC00000
-+#define		PWM_LPCG		0x5A590000
-+#define		LCD_LPCG		0x5A580000
-+#define		LPUART_3_LPCG		0x5A490000
-+#define		LPUART_2_LPCG		0x5A480000
-+#define		LPUART_1_LPCG		0x5A470000
-+#define		LPUART_0_LPCG		0x5A460000
-+#define		LPSPI_3_LPCG		0x5A430000
-+#define		LPSPI_2_LPCG		0x5A420000
-+#define		LPSPI_1_LPCG		0x5A410000
-+#define		LPSPI_0_LPCG		0x5A400000
-+
-+/* Display SS */
-+#define		DC_0_LPCG		0x56010000
-+#define		DC_1_LPCG		0x57010000
-+
-+/* LVDS */
-+#define		DI_LVDS_0_LPCG		0x56243000
-+#define		DI_LVDS_1_LPCG		0x57243000
-+
-+/* DI HDMI */
-+#define		DI_HDMI_LPCG		0x56263000
-+
-+/* RX-HDMI */
-+#define		RX_HDMI_LPCG		0x58263000
-+
-+/* MIPI CSI SS */
-+#define		MIPI_CSI_0_LPCG		0x58223000
-+#define		MIPI_CSI_1_LPCG		0x58243000
-+
-+/* PARALLEL CSI SS */
-+#define		PARALLEL_CSI_LPCG	0x58263000
-+
-+/* Display MIPI SS */
-+#define		DI_MIPI0_LPCG		0x56223000
-+#define		DI_MIPI1_LPCG		0x56243000
-+
-+/* Imaging SS */
-+#define		IMG_JPEG_ENC_LPCG	0x585F0000
-+#define		IMG_JPEG_DEC_LPCG	0x585D0000
-+#define		IMG_PXL_LINK_DC1_LPCG	0x585C0000
-+#define		IMG_PXL_LINK_DC0_LPCG	0x585B0000
-+#define		IMG_PXL_LINK_HDMI_LPCG	0x585A0000
-+#define		IMG_PXL_LINK_CSI1_LPCG	0x58590000
-+#define		IMG_PXL_LINK_CSI0_LPCG	0x58580000
-+#define		IMG_PDMA_7_LPCG		0x58570000
-+#define		IMG_PDMA_6_LPCG		0x58560000
-+#define		IMG_PDMA_5_LPCG		0x58550000
-+#define		IMG_PDMA_4_LPCG		0x58540000
-+#define		IMG_PDMA_3_LPCG		0x58530000
-+#define		IMG_PDMA_2_LPCG		0x58520000
-+#define		IMG_PDMA_1_LPCG		0x58510000
-+#define		IMG_PDMA_0_LPCG		0x58500000
-+
-+/* HSIO SS */
-+#define		HSIO_GPIO_LPCG		0x5F100000
-+#define		HSIO_MISC_LPCG		0x5F0F0000
-+#define		HSIO_SATA_CRR4_LPCG	0x5F0E0000
-+#define		HSIO_PCIE_X1_CRR3_LPCG	0x5F0D0000
-+#define		HSIO_PCIE_X2_CRR2_LPCG	0x5F0C0000
-+#define		HSIO_PHY_X1_CRR1_LPCG	0x5F0B0000
-+#define		HSIO_PHY_X2_CRR0_LPCG	0x5F0A0000
-+#define		HSIO_PHY_X1_LPCG	0x5F090000
-+#define		HSIO_PHY_X2_LPCG	0x5F080000
-+#define		HSIO_SATA_LPCG		0x5F070000
-+#define		HSIO_PCIE_X1_LPCG	0x5F060000
-+#define		HSIO_PCIE_X2_LPCG	0x5F050000
-+
-+/* M4 SS */
-+#define		M4_0_I2C_LPCG		0x37630000
-+#define		M4_0_LPUART_LPCG	0x37620000
-+#define		M4_0_LPIT_LPCG		0x37610000
-+#define		M4_1_I2C_LPCG		0x3B630000
-+#define		M4_1_LPUART_LPCG	0x3B620000
-+#define		M4_1_LPIT_LPCG		0x3B610000
-+
-+/* Audio SS */
-+#define		AUD_ASRC_0_LPCG		0x59400000
-+#define		AUD_ESAI_0_LPCG		0x59410000
-+#define		AUD_SPDIF_0_LPCG	0x59420000
-+#define		AUD_SAI_0_LPCG		0x59440000
-+#define		AUD_SAI_1_LPCG		0x59450000
-+#define		AUD_SAI_2_LPCG		0x59460000
-+#define		AUD_SAI_3_LPCG		0x59470000
-+#define		AUD_GPT_5_LPCG		0x594B0000
-+#define		AUD_GPT_6_LPCG		0x594C0000
-+#define		AUD_GPT_7_LPCG		0x594D0000
-+#define		AUD_GPT_8_LPCG		0x594E0000
-+#define		AUD_GPT_9_LPCG		0x594F0000
-+#define		AUD_GPT_10_LPCG		0x59500000
-+#define		AUD_HIFI_LPCG		0x59580000
-+#define		AUD_OCRAM_LPCG		0x59590000
-+#define		AUD_EDMA_0_LPCG		0x595f0000
-+#define		AUD_ASRC_1_LPCG		0x59c00000
-+#define		AUD_SAI_4_LPCG		0x59c20000
-+#define		AUD_SAI_5_LPCG		0x59c30000
-+#define		AUD_AMIX_LPCG		0x59c40000
-+#define		AUD_MQS_LPCG		0x59c50000
-+#define		AUD_ACM_LPCG		0x59c60000
-+#define		AUD_REC_CLK0_LPCG	0x59d00000
-+#define		AUD_REC_CLK1_LPCG	0x59d10000
-+#define		AUD_PLL_CLK0_LPCG	0x59d20000
-+#define		AUD_PLL_CLK1_LPCG	0x59d30000
-+#define		AUD_MCLKOUT0_LPCG	0x59d50000
-+#define		AUD_MCLKOUT1_LPCG	0x59d60000
-+#define		AUD_EDMA_1_LPCG		0x59df0000
-+
-+
-+/* Connectivity SS */
-+#define		USDHC_0_LPCG		0x5B200000
-+#define		USDHC_1_LPCG		0x5B210000
-+#define		USDHC_2_LPCG		0x5B220000
-+#define		ENET_0_LPCG		0x5B230000
-+#define		ENET_1_LPCG		0x5B240000
-+#define		DTCP_LPCG		0x5B250000
-+#define		MLB_LPCG		0x5B260000
-+#define		USB_2_LPCG		0x5B270000
-+#define		USB_3_LPCG		0x5B280000
-+#define		NAND_LPCG		0x5B290000
-+#define		EDMA_LPCG		0x5B2A0000
-+
-+/* CM40 SS */
-+#define		CM40_I2C_LPCG		0x37630000
-+
-+#endif
+ #endif
 -- 
 2.7.4
 
