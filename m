@@ -1,36 +1,162 @@
-Return-Path: <chris.brandt@renesas.com>
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH] clk: renesas: r7s9210: Add SPI clocks
-Date: Wed, 26 Sep 2018 08:39:56 -0500
-Message-Id: <20180926133956.79788-1-chris.brandt@renesas.com>
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: linux-clk@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	sboyd@kernel.org,
+	mturquette@baylibre.com,
+	shawnguo@kernel.org,
+	fabio.estevam@nxp.com,
+	linux-imx@nxp.com,
+	kernel@pengutronix.de,
+	Dong Aisheng <aisheng.dong@nxp.com>
+Subject: [PATCH V2 06/11] clk: imx: scu: add scu clock gpr gate
+Date: Wed, 26 Sep 2018 00:43:52 +0800
+Message-Id: <1537893837-31172-7-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1537893837-31172-1-git-send-email-aisheng.dong@nxp.com>
+References: <1537893837-31172-1-git-send-email-aisheng.dong@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: aisheng.dong@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Add RSPI clocks for RZ/A2.
+Add scu based clock gpr gate. Unlike the normal scu gate, such
+gates are controlled by GPR bits through SCU sc_misc_set_control
+API.
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Sascha Hauer <kernel@pengutronix.de>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 ---
- drivers/clk/renesas/r7s9210-cpg-mssr.c | 3 +++
- 1 file changed, 3 insertions(+)
+ChangeLog:
+    v1->v2: no changes except update headfile name
+---
+ drivers/clk/imx/scu/Makefile           |  3 +-
+ drivers/clk/imx/scu/clk-gate-gpr-scu.c | 84 ++++++++++++++++++++++++++++++++++
+ drivers/clk/imx/scu/clk-scu.h          |  9 ++++
+ 3 files changed, 95 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/imx/scu/clk-gate-gpr-scu.c
 
-diff --git a/drivers/clk/renesas/r7s9210-cpg-mssr.c b/drivers/clk/renesas/r7s9210-cpg-mssr.c
-index d8ff4cb0defc..5135f13ec628 100644
---- a/drivers/clk/renesas/r7s9210-cpg-mssr.c
-+++ b/drivers/clk/renesas/r7s9210-cpg-mssr.c
-@@ -95,6 +95,9 @@ static const struct mssr_mod_clk r7s9210_mod_clks[] __initconst = {
- 	DEF_MOD_STB("i2c1",	 86,	R7S9210_CLK_P1),
- 	DEF_MOD_STB("i2c0",	 87,	R7S9210_CLK_P1),
+diff --git a/drivers/clk/imx/scu/Makefile b/drivers/clk/imx/scu/Makefile
+index 2abed17..25d3511 100644
+--- a/drivers/clk/imx/scu/Makefile
++++ b/drivers/clk/imx/scu/Makefile
+@@ -4,4 +4,5 @@ obj-$(CONFIG_MXC_CLK_SCU) += \
+ 	clk-scu.o \
+ 	clk-divider-scu.o \
+ 	clk-divider-gpr-scu.o \
+-	clk-gate-scu.o
++	clk-gate-scu.o \
++	clk-gate-gpr-scu.o
+diff --git a/drivers/clk/imx/scu/clk-gate-gpr-scu.c b/drivers/clk/imx/scu/clk-gate-gpr-scu.c
+new file mode 100644
+index 0000000..ea3d4fb
+--- /dev/null
++++ b/drivers/clk/imx/scu/clk-gate-gpr-scu.c
+@@ -0,0 +1,84 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Copyright (C) 2016 Freescale Semiconductor, Inc.
++ * Copyright 2017~2018 NXP
++ *	Dong Aisheng <aisheng.dong@nxp.com>
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/err.h>
++#include <linux/io.h>
++#include <linux/slab.h>
++#include <soc/imx/scu/sci.h>
++
++#include "clk-scu.h"
++
++struct clk_gate_gpr_scu {
++	struct clk_hw hw;
++	sc_rsrc_t	rsrc_id;
++	sc_ctrl_t	gpr_id;
++
++	/* default: enable 1 disable 0 */
++	bool	invert;
++};
++
++#define to_clk_gate_gpr_scu(_hw) container_of(_hw, struct clk_gate_gpr_scu, hw)
++
++static int clk_gate_gpr_scu_enable(struct clk_hw *hw)
++{
++	struct clk_gate_gpr_scu *gate = to_clk_gate_gpr_scu(hw);
++
++	return sc_misc_set_control(ccm_ipc_handle, gate->rsrc_id,
++				   gate->gpr_id, !gate->invert);
++}
++
++static void clk_gate_gpr_scu_disable(struct clk_hw *hw)
++{
++	struct clk_gate_gpr_scu *gate = to_clk_gate_gpr_scu(hw);
++	sc_err_t sci_err;
++
++	sci_err = sc_misc_set_control(ccm_ipc_handle, gate->rsrc_id,
++				      gate->gpr_id, gate->invert);
++	if (sci_err)
++		pr_warn("%s: %s: clk disable failed %d\n",
++			__func__, clk_hw_get_name(hw), sci_err);
++}
++
++static const struct clk_ops clk_gate_gpr_scu_ops = {
++	.enable = clk_gate_gpr_scu_enable,
++	.disable = clk_gate_gpr_scu_disable,
++};
++
++struct clk_hw *clk_register_gate_gpr_scu(const char *name, const char *parent_name,
++					 sc_rsrc_t rsrc_id, sc_ctrl_t gpr_id,
++					 bool invert_flag)
++{
++	struct clk_gate_gpr_scu *gate;
++	struct clk_init_data init;
++	struct clk_hw *hw;
++	int ret;
++
++	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
++	if (!gate)
++		return ERR_PTR(-ENOMEM);
++
++	gate->rsrc_id = rsrc_id;
++	gate->gpr_id = gpr_id;
++	gate->invert = invert_flag;
++
++	init.name = name;
++	init.ops = &clk_gate_gpr_scu_ops;
++	init.parent_names = parent_name ? &parent_name : NULL;
++	init.num_parents = parent_name ? 1 : 0;
++
++	gate->hw.init = &init;
++
++	hw = &gate->hw;
++	ret = clk_hw_register(NULL, hw);
++	if (ret) {
++		kfree(gate);
++		hw = ERR_PTR(ret);
++	}
++
++	return hw;
++}
+diff --git a/drivers/clk/imx/scu/clk-scu.h b/drivers/clk/imx/scu/clk-scu.h
+index 99e45ae..13af045 100644
+--- a/drivers/clk/imx/scu/clk-scu.h
++++ b/drivers/clk/imx/scu/clk-scu.h
+@@ -59,4 +59,13 @@ static inline struct clk_hw *imx_clk_gate2_scu(const char *name, const char *par
+ 	return clk_register_gate2_scu(name, parent, 0, reg, bit_idx, hw_gate);
+ }
  
-+	DEF_MOD_STB("spi2",	 95,	R7S9210_CLK_P1),
-+	DEF_MOD_STB("spi1",	 96,	R7S9210_CLK_P1),
-+	DEF_MOD_STB("spi0",	 97,	R7S9210_CLK_P1),
- };
- 
- /* The clock dividers in the table vary based on DT and register settings */
++struct clk_hw *clk_register_gate_gpr_scu(const char *name, const char *parent_name,
++				sc_rsrc_t rsrc_id, sc_ctrl_t gpr_id, bool invert_flag);
++
++static inline struct clk_hw *imx_clk_gate_gpr_scu(const char *name, const char *parent,
++				sc_rsrc_t rsrc_id, sc_ctrl_t gpr_id, bool invert_flag)
++{
++	return clk_register_gate_gpr_scu(name, parent, rsrc_id, gpr_id, invert_flag);
++}
++
+ #endif
 -- 
-2.16.1
+2.7.4
