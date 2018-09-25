@@ -1,487 +1,139 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Maxime Ripard <maxime.ripard@bootlin.com>, Mark Rutland <mark.rutland@arm.com>, Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, David Airlie <airlied@linux.ie>, Archit Taneja <architt@codeaurora.org>, Andrzej Hajda <a.hajda@samsung.com>, devicetree <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [PATCH 21/27] drm/sun4i: Add support for H6 HDMI PHY
-Date: Sun, 23 Sep 2018 21:29:33 +0200
-Message-ID: <3593541.d8rxrvbqPe@jernej-laptop>
-In-Reply-To: <CAGb2v66RqR3pGh+1_rnvMQ4LJaSkKmky9D36tdxQS7cyJb6GYA@mail.gmail.com>
-References: <20180902072643.4917-1-jernej.skrabec@siol.net> <20180902072643.4917-22-jernej.skrabec@siol.net> <CAGb2v66RqR3pGh+1_rnvMQ4LJaSkKmky9D36tdxQS7cyJb6GYA@mail.gmail.com>
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: linux-clk@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	sboyd@kernel.org,
+	mturquette@baylibre.com,
+	shawnguo@kernel.org,
+	fabio.estevam@nxp.com,
+	linux-imx@nxp.com,
+	kernel@pengutronix.de,
+	Dong Aisheng <aisheng.dong@nxp.com>
+Subject: [PATCH V2 02/11] clk: imx: scu: add scu clock common part
+Date: Wed, 26 Sep 2018 00:43:48 +0800
+Message-Id: <1537893837-31172-3-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1537893837-31172-1-git-send-email-aisheng.dong@nxp.com>
+References: <1537893837-31172-1-git-send-email-aisheng.dong@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
+Return-Path: aisheng.dong@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Dne sobota, 22. september 2018 ob 17:55:35 CEST je Chen-Yu Tsai napisal(a):
-> On Sun, Sep 2, 2018 at 3:28 PM Jernej Skrabec <jernej.skrabec@siol.net> 
-wrote:
-> > H6 has Synopsys DWC HDMI 2.0 TX PHY.
-> > 
-> > mpll settings were calculated from specifications of similar Synopsys
-> > HDMI PHY found in i.MX6. Other PHY settings were derived from BSP PHY
-> > driver code.
-> > 
-> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> > ---
-> > 
-> >  drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c | 137 +++++++++++++++++++++++++
-> >  1 file changed, 137 insertions(+)
-> > 
-> > diff --git a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-> > b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c index ee2bf61cd4d2..2f5499bd35ec
-> > 100644
-> > --- a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-> > +++ b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-> > @@ -14,6 +14,122 @@
-> > 
-> >   */
-> >  
-> >  #define I2C_ADDR       0x69
-> > 
-> > +static const struct dw_hdmi_mpll_config sun50i_h6_mpll_cfg[] = {
-> 
-> How did you choose the pixel clock points for this table? The values
-> sort of match up with the BSP.
+Add scu clock common part which will be used by client clock drivers.
 
-I used this script:
-https://chromium.googlesource.com/chromiumos/platform/drm-tests/+/master/
-rk3288_hdmitables.py
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Sascha Hauer <kernel@pengutronix.de>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+---
+ChangeLog:
+v1->v2:
+ * update function call name
+---
+ drivers/clk/imx/Kconfig       |  2 ++
+ drivers/clk/imx/Makefile      |  2 ++
+ drivers/clk/imx/scu/Kconfig   |  5 +++++
+ drivers/clk/imx/scu/Makefile  |  4 ++++
+ drivers/clk/imx/scu/clk-scu.c | 17 +++++++++++++++++
+ drivers/clk/imx/scu/clk-scu.h | 18 ++++++++++++++++++
+ 6 files changed, 48 insertions(+)
+ create mode 100644 drivers/clk/imx/scu/Kconfig
+ create mode 100644 drivers/clk/imx/scu/Makefile
+ create mode 100644 drivers/clk/imx/scu/clk-scu.c
+ create mode 100644 drivers/clk/imx/scu/clk-scu.h
 
-I forgot already how I came to conclusion that there are identical register 
-settings. After all, imx6 manual describes DWC HDMI PHY and it seems that 
-settings are identical for DWC HDMI PHY contained in imx6, rk3288 and h6.
-
-Check out that script, it has some explanation how values are calculated.
-
-Part of the reason why I didn't use original settings is that it is pain to 
-convert BSP PHY settings table to this form. Not all frequencies have settings 
-for 8, 10 and 12 bit depth.
-
-> 
-> > +       {
-> > +               30666000, {
-> > +                       { 0x00b3, 0x0000 },
-> > +                       { 0x2153, 0x0000 },
-> > +                       { 0x40f3, 0x0000 },
-> > +               },
-> > +       },  {
-> > +               36800000, {
-> > +                       { 0x00b3, 0x0000 },
-> > +                       { 0x2153, 0x0000 },
-> > +                       { 0x40a2, 0x0001 },
-> > +               },
-> > +       },  {
-> > +               46000000, {
-> > +                       { 0x00b3, 0x0000 },
-> > +                       { 0x2142, 0x0001 },
-> > +                       { 0x40a2, 0x0001 },
-> > +               },
-> > +       },  {
-> > +               61333000, {
-> > +                       { 0x0072, 0x0001 },
-> > +                       { 0x2142, 0x0001 },
-> > +                       { 0x40a2, 0x0001 },
-> > +               },
-> > +       },  {
-> > +               73600000, {
-> > +                       { 0x0072, 0x0001 },
-> > +                       { 0x2142, 0x0001 },
-> > +                       { 0x4061, 0x0002 },
-> > +               },
-> > +       },  {
-> > +               92000000, {
-> > +                       { 0x0072, 0x0001 },
-> > +                       { 0x2145, 0x0002 },
-> > +                       { 0x4061, 0x0002 },
-> > +               },
-> > +       },  {
-> > +               122666000, {
-> > +                       { 0x0051, 0x0002 },
-> > +                       { 0x2145, 0x0002 },
-> > +                       { 0x4061, 0x0002 },
-> > +               },
-> > +       },  {
-> > +               147200000, {
-> > +                       { 0x0051, 0x0002 },
-> > +                       { 0x2145, 0x0002 },
-> > +                       { 0x4064, 0x0003 },
-> > +               },
-> > +       },  {
-> > +               184000000, {
-> > +                       { 0x0051, 0x0002 },
-> > +                       { 0x214c, 0x0003 },
-> > +                       { 0x4064, 0x0003 },
-> > +               },
-> > +       },  {
-> > +               226666000, {
-> > +                       { 0x0040, 0x0003 },
-> > +                       { 0x214c, 0x0003 },
-> > +                       { 0x4064, 0x0003 },
-> > +               },
-> > +       },  {
-> > +               272000000, {
-> > +                       { 0x0040, 0x0003 },
-> > +                       { 0x214c, 0x0003 },
-> > +                       { 0x5a64, 0x0003 },
-> > +               },
-> > +       },  {
-> > +               340000000, {
-> > +                       { 0x0040, 0x0003 },
-> > +                       { 0x3b4c, 0x0003 },
-> > +                       { 0x5a64, 0x0003 },
-> > +               },
-> > +       },  {
-> > +               600000000, {
-> 
-> 594000000 is the proper clock rate.
-> 
-> > +                       { 0x1a40, 0x0003 },
-> > +                       { 0x3b4c, 0x0003 },
-> > +                       { 0x5a64, 0x0003 },
-> > +               },
-> > +       }, {
-> > +               ~0UL, {
-> > +                       { 0x0000, 0x0000 },
-> > +                       { 0x0000, 0x0000 },
-> > +                       { 0x0000, 0x0000 },
-> > +               },
-> > +       }
-> > +};
-> > +
-> > +static const struct dw_hdmi_curr_ctrl sun50i_h6_cur_ctr[] = {
-> 
-> The BSP sometimes uses different settings depending on the pixel repetition.
-> Any ideas about this? I assume it's because the TMDS clock changes as a
-> result of pixel repetition, as is the same with different bit depths.
-
-No, no idea. As I said before, I went easy way out using script mentioned 
-before.
-
-> > +       /* pixelclk    bpp8    bpp10   bpp12 */
-> > +       { 25175000,  { 0x0000, 0x0000, 0x0000 }, },
-> > +       { 27000000,  { 0x0012, 0x0000, 0x0000 }, },
-> > +       { 59400000,  { 0x0008, 0x0008, 0x0008 }, },
-> > +       { 72000000,  { 0x0008, 0x0008, 0x001b }, },
-> > +       { 74250000,  { 0x0013, 0x0013, 0x0013 }, },
-> > +       { 90000000,  { 0x0008, 0x001a, 0x001b }, },
-> > +       { 118800000, { 0x001b, 0x001a, 0x001b }, },
-> > +       { 144000000, { 0x001b, 0x001a, 0x0034 }, },
-> > +       { 180000000, { 0x001b, 0x0033, 0x0034 }, },
-> > +       { 216000000, { 0x0036, 0x0033, 0x0034 }, },
-> > +       { 237600000, { 0x0036, 0x0033, 0x001b }, },
-> > +       { 288000000, { 0x0036, 0x001b, 0x001b }, },
-> > +       { 297000000, { 0x0019, 0x001b, 0x0019 }, },
-> > +       { 330000000, { 0x0036, 0x001b, 0x001b }, },
-> > +       { 600000000, { 0x003f, 0x001b, 0x001b }, },
-> > +       { ~0UL,      { 0x0000, 0x0000, 0x0000 }, }
-> > +};
-> > +
-> > +static const struct dw_hdmi_phy_config sun50i_h6_phy_config[] = {
-> > +       /*pixelclk   symbol   term   vlev*/
-> 
-> I see a slightly different setting for 27000000, and this frequency
-> below 74250000
-> only, and even different for all three bit depths (not listed here). So:
-> 
->     { 25175000,  0x8009, 0x0004, 0x0232 },
->     { 27000000,  0x8009, 0x0007, 0x02b0 },
-> 
-> And,
-> 
-> > +       { 74250000,  0x8009, 0x0004, 0x0232},
-> > +       { 148500000, 0x8029, 0x0004, 0x0273},
-> 
-> These two don't match what I see in the BSP. BTW, which table did you use?
-> phy301 or phy303? The code seems to indicate that model 301 is the one.
-> 
-
-yes, BSP uses 301.
-
-Best regards,
-Jernej
-
-> > +       { 600000000, 0x8039, 0x0004, 0x014a},
-> 
-> 594000000 is the proper pixel clock you're after.
-> 
-> > +       { ~0UL,      0x0000, 0x0000, 0x0000}
-> > +};
-> > +
-> > 
-> >  static int sun8i_hdmi_phy_config_a83t(struct dw_hdmi *hdmi,
-> >  
-> >                                       struct sun8i_hdmi_phy *phy,
-> >                                       unsigned int clk_rate)
-> > 
-> > @@ -290,6 +406,16 @@ static void sun8i_hdmi_phy_unlock(struct
-> > sun8i_hdmi_phy *phy)> 
-> >                      SUN8I_HDMI_PHY_UNSCRAMBLE_MAGIC);
-> >  
-> >  }
-> > 
-> > +static void sun50i_hdmi_phy_init_h6(struct sun8i_hdmi_phy *phy)
-> > +{
-> > +       regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_REXT_CTRL_REG,
-> > +                          SUN8I_HDMI_PHY_REXT_CTRL_REXT_EN,
-> > +                          SUN8I_HDMI_PHY_REXT_CTRL_REXT_EN);
-> > +
-> > +       regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_REXT_CTRL_REG,
-> > +                          0xffff0000, 0x80c00000);
-> > +}
-> > +
-> > 
-> >  static void sun8i_hdmi_phy_init_a83t(struct sun8i_hdmi_phy *phy)
-> >  {
-> >  
-> >         sun8i_hdmi_phy_unlock(phy);
-> > 
-> > @@ -423,6 +549,13 @@ static const struct sun8i_hdmi_phy_variant
-> > sun50i_a64_hdmi_phy = {> 
-> >         .phy_config = &sun8i_hdmi_phy_config_h3,
-> >  
-> >  };
-> > 
-> > +static const struct sun8i_hdmi_phy_variant sun50i_h6_hdmi_phy = {
-> > +       .cur_ctr  = sun50i_h6_cur_ctr,
-> > +       .mpll_cfg = sun50i_h6_mpll_cfg,
-> > +       .phy_cfg  = sun50i_h6_phy_config,
-> > +       .phy_init = &sun50i_hdmi_phy_init_h6,
-> > +};
-> > +
-> > 
-> >  static const struct sun8i_hdmi_phy_variant sun8i_a83t_hdmi_phy = {
-> >  
-> >         .is_custom_phy = true,
-> >         .phy_init = &sun8i_hdmi_phy_init_a83t,
-> > 
-> > @@ -443,6 +576,10 @@ static const struct of_device_id
-> > sun8i_hdmi_phy_of_table[] = {> 
-> >                 .compatible = "allwinner,sun50i-a64-hdmi-phy",
-> >                 .data = &sun50i_a64_hdmi_phy,
-> >         
-> >         },
-> > 
-> > +       {
-> > +               .compatible = "allwinner,sun50i-h6-hdmi-phy",
-> > +               .data = &sun50i_h6_hdmi_phy,
-> > +       },
-> 
-> Version sort please.
-> 
-> Regards
-> ChenYu
-> 
-> >         {
-> >         
-> >                 .compatible = "allwinner,sun8i-a83t-hdmi-phy",
-> >                 .data = &sun8i_a83t_hdmi_phy,
-> > 
-> > --
-> > 2.18.0
-> 
-> On Sun, Sep 2, 2018 at 3:28 PM Jernej Skrabec <jernej.skrabec@siol.net> 
-wrote:
-> > H6 has Synopsys DWC HDMI 2.0 TX PHY.
-> > 
-> > mpll settings were calculated from specifications of similar Synopsys
-> > HDMI PHY found in i.MX6. Other PHY settings were derived from BSP PHY
-> > driver code.
-> > 
-> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> > ---
-> > 
-> >  drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c | 137 +++++++++++++++++++++++++
-> >  1 file changed, 137 insertions(+)
-> > 
-> > diff --git a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-> > b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c index ee2bf61cd4d2..2f5499bd35ec
-> > 100644
-> > --- a/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-> > +++ b/drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c
-> > @@ -14,6 +14,122 @@
-> > 
-> >   */
-> >  
-> >  #define I2C_ADDR       0x69
-> > 
-> > +static const struct dw_hdmi_mpll_config sun50i_h6_mpll_cfg[] = {
-> > +       {
-> > +               30666000, {
-> > +                       { 0x00b3, 0x0000 },
-> > +                       { 0x2153, 0x0000 },
-> > +                       { 0x40f3, 0x0000 },
-> > +               },
-> > +       },  {
-> > +               36800000, {
-> > +                       { 0x00b3, 0x0000 },
-> > +                       { 0x2153, 0x0000 },
-> > +                       { 0x40a2, 0x0001 },
-> > +               },
-> > +       },  {
-> > +               46000000, {
-> > +                       { 0x00b3, 0x0000 },
-> > +                       { 0x2142, 0x0001 },
-> > +                       { 0x40a2, 0x0001 },
-> > +               },
-> > +       },  {
-> > +               61333000, {
-> > +                       { 0x0072, 0x0001 },
-> > +                       { 0x2142, 0x0001 },
-> > +                       { 0x40a2, 0x0001 },
-> > +               },
-> > +       },  {
-> > +               73600000, {
-> > +                       { 0x0072, 0x0001 },
-> > +                       { 0x2142, 0x0001 },
-> > +                       { 0x4061, 0x0002 },
-> > +               },
-> > +       },  {
-> > +               92000000, {
-> > +                       { 0x0072, 0x0001 },
-> > +                       { 0x2145, 0x0002 },
-> > +                       { 0x4061, 0x0002 },
-> > +               },
-> > +       },  {
-> > +               122666000, {
-> > +                       { 0x0051, 0x0002 },
-> > +                       { 0x2145, 0x0002 },
-> > +                       { 0x4061, 0x0002 },
-> > +               },
-> > +       },  {
-> > +               147200000, {
-> > +                       { 0x0051, 0x0002 },
-> > +                       { 0x2145, 0x0002 },
-> > +                       { 0x4064, 0x0003 },
-> > +               },
-> > +       },  {
-> > +               184000000, {
-> > +                       { 0x0051, 0x0002 },
-> > +                       { 0x214c, 0x0003 },
-> > +                       { 0x4064, 0x0003 },
-> > +               },
-> > +       },  {
-> > +               226666000, {
-> > +                       { 0x0040, 0x0003 },
-> > +                       { 0x214c, 0x0003 },
-> > +                       { 0x4064, 0x0003 },
-> > +               },
-> > +       },  {
-> > +               272000000, {
-> > +                       { 0x0040, 0x0003 },
-> > +                       { 0x214c, 0x0003 },
-> > +                       { 0x5a64, 0x0003 },
-> > +               },
-> > +       },  {
-> > +               340000000, {
-> > +                       { 0x0040, 0x0003 },
-> > +                       { 0x3b4c, 0x0003 },
-> > +                       { 0x5a64, 0x0003 },
-> > +               },
-> > +       },  {
-> > +               600000000, {
-> > +                       { 0x1a40, 0x0003 },
-> > +                       { 0x3b4c, 0x0003 },
-> > +                       { 0x5a64, 0x0003 },
-> > +               },
-> > +       }, {
-> > +               ~0UL, {
-> > +                       { 0x0000, 0x0000 },
-> > +                       { 0x0000, 0x0000 },
-> > +                       { 0x0000, 0x0000 },
-> > +               },
-> > +       }
-> > +};
-> > +
-> > +static const struct dw_hdmi_curr_ctrl sun50i_h6_cur_ctr[] = {
-> > +       /* pixelclk    bpp8    bpp10   bpp12 */
-> > +       { 25175000,  { 0x0000, 0x0000, 0x0000 }, },
-> > +       { 27000000,  { 0x0012, 0x0000, 0x0000 }, },
-> > +       { 59400000,  { 0x0008, 0x0008, 0x0008 }, },
-> > +       { 72000000,  { 0x0008, 0x0008, 0x001b }, },
-> > +       { 74250000,  { 0x0013, 0x0013, 0x0013 }, },
-> > +       { 90000000,  { 0x0008, 0x001a, 0x001b }, },
-> > +       { 118800000, { 0x001b, 0x001a, 0x001b }, },
-> > +       { 144000000, { 0x001b, 0x001a, 0x0034 }, },
-> > +       { 180000000, { 0x001b, 0x0033, 0x0034 }, },
-> > +       { 216000000, { 0x0036, 0x0033, 0x0034 }, },
-> > +       { 237600000, { 0x0036, 0x0033, 0x001b }, },
-> > +       { 288000000, { 0x0036, 0x001b, 0x001b }, },
-> > +       { 297000000, { 0x0019, 0x001b, 0x0019 }, },
-> > +       { 330000000, { 0x0036, 0x001b, 0x001b }, },
-> > +       { 600000000, { 0x003f, 0x001b, 0x001b }, },
-> > +       { ~0UL,      { 0x0000, 0x0000, 0x0000 }, }
-> > +};
-> > +
-> > +static const struct dw_hdmi_phy_config sun50i_h6_phy_config[] = {
-> > +       /*pixelclk   symbol   term   vlev*/
-> > +       { 74250000,  0x8009, 0x0004, 0x0232},
-> > +       { 148500000, 0x8029, 0x0004, 0x0273},
-> > +       { 600000000, 0x8039, 0x0004, 0x014a},
-> > +       { ~0UL,      0x0000, 0x0000, 0x0000}
-> > +};
-> > +
-> > 
-> >  static int sun8i_hdmi_phy_config_a83t(struct dw_hdmi *hdmi,
-> >  
-> >                                       struct sun8i_hdmi_phy *phy,
-> >                                       unsigned int clk_rate)
-> > 
-> > @@ -290,6 +406,16 @@ static void sun8i_hdmi_phy_unlock(struct
-> > sun8i_hdmi_phy *phy)> 
-> >                      SUN8I_HDMI_PHY_UNSCRAMBLE_MAGIC);
-> >  
-> >  }
-> > 
-> > +static void sun50i_hdmi_phy_init_h6(struct sun8i_hdmi_phy *phy)
-> > +{
-> > +       regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_REXT_CTRL_REG,
-> > +                          SUN8I_HDMI_PHY_REXT_CTRL_REXT_EN,
-> > +                          SUN8I_HDMI_PHY_REXT_CTRL_REXT_EN);
-> > +
-> > +       regmap_update_bits(phy->regs, SUN8I_HDMI_PHY_REXT_CTRL_REG,
-> > +                          0xffff0000, 0x80c00000);
-> > +}
-> > +
-> > 
-> >  static void sun8i_hdmi_phy_init_a83t(struct sun8i_hdmi_phy *phy)
-> >  {
-> >  
-> >         sun8i_hdmi_phy_unlock(phy);
-> > 
-> > @@ -423,6 +549,13 @@ static const struct sun8i_hdmi_phy_variant
-> > sun50i_a64_hdmi_phy = {> 
-> >         .phy_config = &sun8i_hdmi_phy_config_h3,
-> >  
-> >  };
-> > 
-> > +static const struct sun8i_hdmi_phy_variant sun50i_h6_hdmi_phy = {
-> > +       .cur_ctr  = sun50i_h6_cur_ctr,
-> > +       .mpll_cfg = sun50i_h6_mpll_cfg,
-> > +       .phy_cfg  = sun50i_h6_phy_config,
-> > +       .phy_init = &sun50i_hdmi_phy_init_h6,
-> > +};
-> > +
-> > 
-> >  static const struct sun8i_hdmi_phy_variant sun8i_a83t_hdmi_phy = {
-> >  
-> >         .is_custom_phy = true,
-> >         .phy_init = &sun8i_hdmi_phy_init_a83t,
-> > 
-> > @@ -443,6 +576,10 @@ static const struct of_device_id
-> > sun8i_hdmi_phy_of_table[] = {> 
-> >                 .compatible = "allwinner,sun50i-a64-hdmi-phy",
-> >                 .data = &sun50i_a64_hdmi_phy,
-> >         
-> >         },
-> > 
-> > +       {
-> > +               .compatible = "allwinner,sun50i-h6-hdmi-phy",
-> > +               .data = &sun50i_h6_hdmi_phy,
-> > +       },
-> > 
-> >         {
-> >         
-> >                 .compatible = "allwinner,sun8i-a83t-hdmi-phy",
-> >                 .data = &sun8i_a83t_hdmi_phy,
-> > 
-> > --
-> > 2.18.0
+diff --git a/drivers/clk/imx/Kconfig b/drivers/clk/imx/Kconfig
+index 43a3ecc..b1599bf 100644
+--- a/drivers/clk/imx/Kconfig
++++ b/drivers/clk/imx/Kconfig
+@@ -3,3 +3,5 @@
+ config MXC_CLK
+ 	bool
+ 	depends on ARCH_MXC
++
++source drivers/clk/imx/scu/Kconfig
+diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
+index d447f8c..79b641a 100644
+--- a/drivers/clk/imx/Makefile
++++ b/drivers/clk/imx/Makefile
+@@ -13,6 +13,8 @@ obj-$(CONFIG_MXC_CLK) += \
+ 	clk-pllv3.o \
+ 	clk-pfd.o
+ 
++obj-y += scu/
++
+ obj-$(CONFIG_SOC_IMX1)   += clk-imx1.o
+ obj-$(CONFIG_SOC_IMX21)  += clk-imx21.o
+ obj-$(CONFIG_SOC_IMX25)  += clk-imx25.o
+diff --git a/drivers/clk/imx/scu/Kconfig b/drivers/clk/imx/scu/Kconfig
+new file mode 100644
+index 0000000..4d018fd
+--- /dev/null
++++ b/drivers/clk/imx/scu/Kconfig
+@@ -0,0 +1,5 @@
++# SPDX-License-Identifier: GPL-2.0
++# SCU based common clock support for NXP i.MX SoC family.
++config MXC_CLK_SCU
++	bool
++	depends on ARCH_MXC && ARM64
+diff --git a/drivers/clk/imx/scu/Makefile b/drivers/clk/imx/scu/Makefile
+new file mode 100644
+index 0000000..7dead13
+--- /dev/null
++++ b/drivers/clk/imx/scu/Makefile
+@@ -0,0 +1,4 @@
++# SPDX-License-Identifier: GPL-2.0
++
++obj-$(CONFIG_MXC_CLK_SCU) += \
++	clk-scu.o
+diff --git a/drivers/clk/imx/scu/clk-scu.c b/drivers/clk/imx/scu/clk-scu.c
+new file mode 100644
+index 0000000..4c253a5
+--- /dev/null
++++ b/drivers/clk/imx/scu/clk-scu.c
+@@ -0,0 +1,17 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Copyright (C) 2016 Freescale Semiconductor, Inc.
++ * Copyright 2017~2018 NXP
++ *	Dong Aisheng <aisheng.dong@nxp.com>
++ */
++
++#include <linux/errno.h>
++#include "clk-scu.h"
++
++DEFINE_SPINLOCK(imx_ccm_lock);
++struct sc_ipc *ccm_ipc_handle;
++
++int imx_clk_scu_init(void)
++{
++	return imx_scu_get_handle(&ccm_ipc_handle);
++}
+diff --git a/drivers/clk/imx/scu/clk-scu.h b/drivers/clk/imx/scu/clk-scu.h
+new file mode 100644
+index 0000000..c503a52
+--- /dev/null
++++ b/drivers/clk/imx/scu/clk-scu.h
+@@ -0,0 +1,18 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
++/*
++ * Copyright (C) 2016 Freescale Semiconductor, Inc.
++ * Copyright 2017~2018 NXP
++ */
++
++#ifndef __IMX_CLK_SCU_H
++#define __IMX_CLK_SCU_H
++
++#include <linux/spinlock.h>
++#include <soc/imx/scu/sci.h>
++
++extern spinlock_t imx_ccm_lock;
++extern struct sc_ipc *ccm_ipc_handle;
++
++int imx_clk_scu_init(void);
++
++#endif
+-- 
+2.7.4
