@@ -1,368 +1,129 @@
-Return-Path: <gregory.clement@bootlin.com>
-From: Gregory CLEMENT <gregory.clement@bootlin.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-	Mike Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Jason Cooper <jason@lakedaemon.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory CLEMENT <gregory.clement@bootlin.com>,
-	Antoine Tenart <antoine.tenart@bootlin.com>,
-	=?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@bootlin.com>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>
-Subject: [PATCH] clk: mvebu: use SPDX-License-Identifier
-Date: Wed, 12 Sep 2018 15:40:17 +0200
-Message-Id: <20180912134017.11236-1-gregory.clement@bootlin.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:46004 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729209AbeIYUqB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 25 Sep 2018 16:46:01 -0400
+MIME-Version: 1.0
+References: <1536955389-30442-1-git-send-email-pdeschrijver@nvidia.com>
+ <1536955389-30442-15-git-send-email-pdeschrijver@nvidia.com>
+ <5baa1ae9.1c69fb81.1ab9.1805@mx.google.com> <20180925121107.GJ7636@tbergstrom-lnx.Nvidia.com>
+In-Reply-To: <20180925121107.GJ7636@tbergstrom-lnx.Nvidia.com>
+From: Rob Herring <robh@kernel.org>
+Date: Tue, 25 Sep 2018 09:37:59 -0500
+Message-ID: <CAL_JsqLY93P52idTiD2b_WwgTc2+s9A24+TdUEQsUeaUDwGK7A@mail.gmail.com>
+Subject: Re: [RFC 14/14] dt-bindings: tegra: Add Tegra210 EMC binding
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: vkuruturi@nvidia.com, linux-tegra@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
+        daniel@octaforge.org, Andre Heider <a.heider@gmail.com>,
+        swtcr0@gmail.com, linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Convert the remaining files to SPDX license description.
+On Tue, Sep 25, 2018 at 7:11 AM Peter De Schrijver
+<pdeschrijver@nvidia.com> wrote:
+>
+> On Mon, Sep 24, 2018 at 02:04:24PM -0700, Rob Herring wrote:
+> > On Fri, Sep 14, 2018 at 11:03:09PM +0300, Peter De Schrijver wrote:
+> > > Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> >
+> > Needs a commit msg.
+> >
+> > > ---
+> > >  .../memory-controllers/nvidia,tegra210-emc.txt     | 448 +++++++++++++++++++++
+> > >  1 file changed, 448 insertions(+)
+> > >  create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt
+> > > new file mode 100644
+> > > index 0000000..1c52f47
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt
+> > > @@ -0,0 +1,448 @@
+> > > +NVIDIA Tegra210 SoC EMC (external memory controller)
+> > > +====================================================
+> > > +
+> > > +Required properties :
+> > > +- compatible : Should be "nvidia,tegra21-emc", "nvidia,tegra124-emc".
+> > > +- reg : physical base address and length of the controller's registers.
+> > > +- nvidia,memory-controller : phandle of the MC driver.
+> >
+> > Huh? What is this block then?
+> >
+>
+> This is the EMC. The EMC handles the interface with the external DRAM chips.
+> The MC aggregates and schedules requests to the EMC. It also handles address
+> translation. See figure 33 of the TRM.
 
-Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
----
- drivers/clk/mvebu/ap806-system-controller.c | 4 +---
- drivers/clk/mvebu/armada-370.c              | 4 +---
- drivers/clk/mvebu/armada-375.c              | 4 +---
- drivers/clk/mvebu/armada-37xx-tbg.c         | 5 +----
- drivers/clk/mvebu/armada-37xx-xtal.c        | 4 +---
- drivers/clk/mvebu/armada-38x.c              | 4 +---
- drivers/clk/mvebu/armada-39x.c              | 4 +---
- drivers/clk/mvebu/armada-xp.c               | 4 +---
- drivers/clk/mvebu/clk-corediv.c             | 4 +---
- drivers/clk/mvebu/clk-cpu.c                 | 4 +---
- drivers/clk/mvebu/common.c                  | 4 +---
- drivers/clk/mvebu/common.h                  | 4 +---
- drivers/clk/mvebu/cp110-system-controller.c | 4 +---
- drivers/clk/mvebu/dove.c                    | 4 +---
- drivers/clk/mvebu/kirkwood.c                | 4 +---
- drivers/clk/mvebu/mv98dx3236.c              | 4 +---
- drivers/clk/mvebu/orion.c                   | 4 +---
- 17 files changed, 17 insertions(+), 52 deletions(-)
+Sorry, but I hardly have time to go read TRM's for every binding.
 
-diff --git a/drivers/clk/mvebu/ap806-system-controller.c b/drivers/clk/mvebu/ap806-system-controller.c
-index fa2fbd2cef4a..9fbec3eb725f 100644
---- a/drivers/clk/mvebu/ap806-system-controller.c
-+++ b/drivers/clk/mvebu/ap806-system-controller.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Marvell Armada AP806 System Controller
-  *
-@@ -5,9 +6,6 @@
-  *
-  * Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-  *
-- * This file is licensed under the terms of the GNU General Public
-- * License version 2.  This program is licensed "as is" without any
-- * warranty of any kind, whether express or implied.
-  */
- 
- #define pr_fmt(fmt) "ap806-system-controller: " fmt
-diff --git a/drivers/clk/mvebu/armada-370.c b/drivers/clk/mvebu/armada-370.c
-index 2c7c1085f883..7dedfaa6e152 100644
---- a/drivers/clk/mvebu/armada-370.c
-+++ b/drivers/clk/mvebu/armada-370.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Marvell Armada 370 SoC clocks
-  *
-@@ -7,9 +8,6 @@
-  * Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-  * Andrew Lunn <andrew@lunn.ch>
-  *
-- * This file is licensed under the terms of the GNU General Public
-- * License version 2.  This program is licensed "as is" without any
-- * warranty of any kind, whether express or implied.
-  */
- 
- #include <linux/kernel.h>
-diff --git a/drivers/clk/mvebu/armada-375.c b/drivers/clk/mvebu/armada-375.c
-index c7af2242b796..a7157c690238 100644
---- a/drivers/clk/mvebu/armada-375.c
-+++ b/drivers/clk/mvebu/armada-375.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Marvell Armada 375 SoC clocks
-  *
-@@ -7,9 +8,6 @@
-  * Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-  * Andrew Lunn <andrew@lunn.ch>
-  *
-- * This file is licensed under the terms of the GNU General Public
-- * License version 2.  This program is licensed "as is" without any
-- * warranty of any kind, whether express or implied.
-  */
- 
- #include <linux/kernel.h>
-diff --git a/drivers/clk/mvebu/armada-37xx-tbg.c b/drivers/clk/mvebu/armada-37xx-tbg.c
-index 7ff041f73b55..71f30149e80e 100644
---- a/drivers/clk/mvebu/armada-37xx-tbg.c
-+++ b/drivers/clk/mvebu/armada-37xx-tbg.c
-@@ -1,13 +1,10 @@
-+// SPDX-License-Identifier: GPL-2.0+
- /*
-  * Marvell Armada 37xx SoC Time Base Generator clocks
-  *
-  * Copyright (C) 2016 Marvell
-  *
-  * Gregory CLEMENT <gregory.clement@free-electrons.com>
-- *
-- * This file is licensed under the terms of the GNU General Public
-- * License version 2 or later. This program is licensed "as is"
-- * without any warranty of any kind, whether express or implied.
-  */
- 
- #include <linux/clk-provider.h>
-diff --git a/drivers/clk/mvebu/armada-37xx-xtal.c b/drivers/clk/mvebu/armada-37xx-xtal.c
-index 612d65ede10a..e9e306d4e9af 100644
---- a/drivers/clk/mvebu/armada-37xx-xtal.c
-+++ b/drivers/clk/mvebu/armada-37xx-xtal.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Marvell Armada 37xx SoC xtal clocks
-  *
-@@ -5,9 +6,6 @@
-  *
-  * Gregory CLEMENT <gregory.clement@free-electrons.com>
-  *
-- * This file is licensed under the terms of the GNU General Public
-- * License version 2.  This program is licensed "as is" without any
-- * warranty of any kind, whether express or implied.
-  */
- 
- #include <linux/clk-provider.h>
-diff --git a/drivers/clk/mvebu/armada-38x.c b/drivers/clk/mvebu/armada-38x.c
-index 9ff4ea63932d..ef2ab81f087d 100644
---- a/drivers/clk/mvebu/armada-38x.c
-+++ b/drivers/clk/mvebu/armada-38x.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Marvell Armada 380/385 SoC clocks
-  *
-@@ -7,9 +8,6 @@
-  * Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-  * Andrew Lunn <andrew@lunn.ch>
-  *
-- * This file is licensed under the terms of the GNU General Public
-- * License version 2.  This program is licensed "as is" without any
-- * warranty of any kind, whether express or implied.
-  */
- 
- #include <linux/kernel.h>
-diff --git a/drivers/clk/mvebu/armada-39x.c b/drivers/clk/mvebu/armada-39x.c
-index 4fdfd32247a9..674ccfd6236e 100644
---- a/drivers/clk/mvebu/armada-39x.c
-+++ b/drivers/clk/mvebu/armada-39x.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Marvell Armada 39x SoC clocks
-  *
-@@ -8,9 +9,6 @@
-  * Andrew Lunn <andrew@lunn.ch>
-  * Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-  *
-- * This file is licensed under the terms of the GNU General Public
-- * License version 2.  This program is licensed "as is" without any
-- * warranty of any kind, whether express or implied.
-  */
- 
- #include <linux/kernel.h>
-diff --git a/drivers/clk/mvebu/armada-xp.c b/drivers/clk/mvebu/armada-xp.c
-index 0ec44ae9a2a2..e8f03293ec83 100644
---- a/drivers/clk/mvebu/armada-xp.c
-+++ b/drivers/clk/mvebu/armada-xp.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Marvell Armada XP SoC clocks
-  *
-@@ -7,9 +8,6 @@
-  * Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-  * Andrew Lunn <andrew@lunn.ch>
-  *
-- * This file is licensed under the terms of the GNU General Public
-- * License version 2.  This program is licensed "as is" without any
-- * warranty of any kind, whether express or implied.
-  */
- 
- #include <linux/kernel.h>
-diff --git a/drivers/clk/mvebu/clk-corediv.c b/drivers/clk/mvebu/clk-corediv.c
-index 68f05c53d40e..1fc84b0e72ee 100644
---- a/drivers/clk/mvebu/clk-corediv.c
-+++ b/drivers/clk/mvebu/clk-corediv.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * MVEBU Core divider clock
-  *
-@@ -5,9 +6,6 @@
-  *
-  * Ezequiel Garcia <ezequiel.garcia@free-electrons.com>
-  *
-- * This file is licensed under the terms of the GNU General Public
-- * License version 2.  This program is licensed "as is" without any
-- * warranty of any kind, whether express or implied.
-  */
- 
- #include <linux/kernel.h>
-diff --git a/drivers/clk/mvebu/clk-cpu.c b/drivers/clk/mvebu/clk-cpu.c
-index 072aa38374ce..d1a715767364 100644
---- a/drivers/clk/mvebu/clk-cpu.c
-+++ b/drivers/clk/mvebu/clk-cpu.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Marvell MVEBU CPU clock handling.
-  *
-@@ -5,9 +6,6 @@
-  *
-  * Gregory CLEMENT <gregory.clement@free-electrons.com>
-  *
-- * This file is licensed under the terms of the GNU General Public
-- * License version 2.  This program is licensed "as is" without any
-- * warranty of any kind, whether express or implied.
-  */
- #include <linux/kernel.h>
- #include <linux/slab.h>
-diff --git a/drivers/clk/mvebu/common.c b/drivers/clk/mvebu/common.c
-index 472c88b90256..6ab3c2e627c7 100644
---- a/drivers/clk/mvebu/common.c
-+++ b/drivers/clk/mvebu/common.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Marvell EBU SoC common clock handling
-  *
-@@ -7,9 +8,6 @@
-  * Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-  * Andrew Lunn <andrew@lunn.ch>
-  *
-- * This file is licensed under the terms of the GNU General Public
-- * License version 2.  This program is licensed "as is" without any
-- * warranty of any kind, whether express or implied.
-  */
- 
- #include <linux/kernel.h>
-diff --git a/drivers/clk/mvebu/common.h b/drivers/clk/mvebu/common.h
-index f0de6c8a494a..d1ab79b43105 100644
---- a/drivers/clk/mvebu/common.h
-+++ b/drivers/clk/mvebu/common.h
-@@ -1,3 +1,4 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * Marvell EBU SoC common clock handling
-  *
-@@ -7,9 +8,6 @@
-  * Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-  * Andrew Lunn <andrew@lunn.ch>
-  *
-- * This file is licensed under the terms of the GNU General Public
-- * License version 2. This program is licensed "as is" without any
-- * warranty of any kind, whether express or implied.
-  */
- 
- #ifndef __CLK_MVEBU_COMMON_H_
-diff --git a/drivers/clk/mvebu/cp110-system-controller.c b/drivers/clk/mvebu/cp110-system-controller.c
-index 75bf7b8f282f..9781b1bf5998 100644
---- a/drivers/clk/mvebu/cp110-system-controller.c
-+++ b/drivers/clk/mvebu/cp110-system-controller.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Marvell Armada CP110 System Controller
-  *
-@@ -5,9 +6,6 @@
-  *
-  * Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-  *
-- * This file is licensed under the terms of the GNU General Public
-- * License version 2.  This program is licensed "as is" without any
-- * warranty of any kind, whether express or implied.
-  */
- 
- /*
-diff --git a/drivers/clk/mvebu/dove.c b/drivers/clk/mvebu/dove.c
-index 59fad9546c84..e0dd99f36bf4 100644
---- a/drivers/clk/mvebu/dove.c
-+++ b/drivers/clk/mvebu/dove.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Marvell Dove SoC clocks
-  *
-@@ -7,9 +8,6 @@
-  * Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-  * Andrew Lunn <andrew@lunn.ch>
-  *
-- * This file is licensed under the terms of the GNU General Public
-- * License version 2.  This program is licensed "as is" without any
-- * warranty of any kind, whether express or implied.
-  */
- 
- #include <linux/kernel.h>
-diff --git a/drivers/clk/mvebu/kirkwood.c b/drivers/clk/mvebu/kirkwood.c
-index a2a8d614039d..6f784167bda4 100644
---- a/drivers/clk/mvebu/kirkwood.c
-+++ b/drivers/clk/mvebu/kirkwood.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Marvell Kirkwood SoC clocks
-  *
-@@ -7,9 +8,6 @@
-  * Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-  * Andrew Lunn <andrew@lunn.ch>
-  *
-- * This file is licensed under the terms of the GNU General Public
-- * License version 2.  This program is licensed "as is" without any
-- * warranty of any kind, whether express or implied.
-  */
- 
- #include <linux/kernel.h>
-diff --git a/drivers/clk/mvebu/mv98dx3236.c b/drivers/clk/mvebu/mv98dx3236.c
-index 6e203af73cac..0a74cf7a7725 100644
---- a/drivers/clk/mvebu/mv98dx3236.c
-+++ b/drivers/clk/mvebu/mv98dx3236.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Marvell MV98DX3236 SoC clocks
-  *
-@@ -7,9 +8,6 @@
-  * Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-  * Andrew Lunn <andrew@lunn.ch>
-  *
-- * This file is licensed under the terms of the GNU General Public
-- * License version 2.  This program is licensed "as is" without any
-- * warranty of any kind, whether express or implied.
-  */
- 
- #include <linux/kernel.h>
-diff --git a/drivers/clk/mvebu/orion.c b/drivers/clk/mvebu/orion.c
-index a6e5bee23385..f681a65be20a 100644
---- a/drivers/clk/mvebu/orion.c
-+++ b/drivers/clk/mvebu/orion.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Marvell Orion SoC clocks
-  *
-@@ -5,9 +6,6 @@
-  *
-  * Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-  *
-- * This file is licensed under the terms of the GNU General Public
-- * License version 2.  This program is licensed "as is" without any
-- * warranty of any kind, whether express or implied.
-  */
- 
- #include <linux/kernel.h>
--- 
-2.18.0
+Just explain what the MC is here and remove 'driver'.
+
+> > > +- clocks : phandles of the possible source clocks
+> > > +- clock-names : names of the possible source clocks
+> > > +
+> > > +The node should contain a "emc-table" subnode for each supported RAM type
+> > > +(see field RAM_CODE in register PMC_STRAPPING_OPT_A), with its unit address
+> > > +being its RAM_CODE.
+> >
+> > Unit address is based on reg property.
+> >
+> > > +
+> > > +Required properties for "emc-table" nodes :
+> > > +- nvidia,ram-code : Should contain the value of RAM_CODE this timing set is
+> > > +used for.
+> > > +
+> > > +Each "emc-table" node should contain a "emc-table" subnode for every supported
+> > > +EMC clock rate. The "emc-table" subnodes should have the clock rate in kHz as
+> > > +their unit address.
+> > > +
+> > > +Required properties for "emc-table" nodes :
+> >
+> > Which emc-table nodes, the child or grand-child nodes?
+> >
+>
+> The child "emc-table" node.
+>
+> > > +- compatible  "nvidia,tegra21-emc-table", "nvidia,tegra210-emc-table"
+> >
+> > > +- nvidia,revision : revision of the parameter set used for this node. All
+> > > +                    nodes in the same "emc-table" should have the same revision
+> > > +- clock-frequency : frequency in kHz
+> > > +- nvidia,emc-min-mv : minimum voltage for this OPP
+> > > +- nvidia,gk20a-min-mv : minimum GPU voltage for this OPP
+> > > +- nvidia,source : clock source to be used for this OPP
+> >
+> > Is this memory timings/settings or OPPs? We have a binding for OPPs
+> > already.
+> >
+>
+> This is memory timings.
+>
+> > > +- nvidia,src-sel-reg : value of EMC CAR register to be used for this OPP
+> > > +- nvidia,needs-training : 1 if the OPP needs training at boot, 0 otherwise
+> > > +- nvidia,trained : 1 if initial training has been done by firmware, 0 otherwise
+> > > +- nvidia,periodic_training : 1 if the OPP needs periodic training, 0 otherwise
+> > > +- nvidia,trained_dram_clktree_c0d0u0 : training data word
+> > > +- nvidia,trained_dram_clktree_c0d0u1 : training data word
+> >
+> > [...]
+> >
+> > This is a huge list of properties. For all the things that are memory
+> > timings, is there really value to defining a property for each setting?
+> > Perhaps you should just define your own format and either make it a
+> > separate firmware file or include that file in the dtb.
+>
+> If it's a binary structure, how would this be passed given the bootloader has
+> to fill in the training information?
+
+Perhaps training data makes sense to keep as DT properties, but it is
+not all training data, right? Things like a list of register
+initialization values do not sound like training data.
+
+I assume the the training data is read back from the h/w, can't the
+kernel just do that itself? Or the data is lost after init is
+complete?
+
+Rob
