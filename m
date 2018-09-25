@@ -1,49 +1,71 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.bootlin.com ([62.4.15.54]:58147 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726798AbeILUlX (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 12 Sep 2018 16:41:23 -0400
-From: Gregory CLEMENT <gregory.clement@bootlin.com>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-        Mike Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        =?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>
-Subject: [PATCH] clk: mvebu: ap806: Remove superfluous of_clk_add_provider
-Date: Wed, 12 Sep 2018 17:35:49 +0200
-Message-Id: <20180912153549.14437-1-gregory.clement@bootlin.com>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: linux-clk@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	sboyd@kernel.org,
+	mturquette@baylibre.com,
+	shawnguo@kernel.org,
+	fabio.estevam@nxp.com,
+	linux-imx@nxp.com,
+	kernel@pengutronix.de,
+	Dong Aisheng <aisheng.dong@nxp.com>
+Subject: [PATCH V2 00/11] clk: imx: add imx8qxp clock support
+Date: Wed, 26 Sep 2018 00:43:46 +0800
+Message-Id: <1537893837-31172-1-git-send-email-aisheng.dong@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Return-Path: aisheng.dong@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-While applying the commit a8309cedcdce ("clk: apn806: Add eMMC clock to
-system controller driver"), of_clk_add_provider was added wheres it was
-already present in the probe function.
+This patch series adds i.MX8QXP clock support which is based
+on the clock service provided by SCU firmware.
+It depends on SCU driver.
 
-This extraneous call is harmless but not useful so remove it.
+Dong Aisheng (11):
+  clk: imx: add configuration option for mmio clks
+  clk: imx: scu: add scu clock common part
+  clk: imx: scu: add scu clock divider
+  clk: imx: scu: add scu clock gpr divider
+  clk: imx: scu: add scu clock gate
+  clk: imx: scu: add scu clock gpr gate
+  clk: imx: scu: add scu clock mux
+  clk: imx: scu: add scu clock gpr mux
+  clk: imx: add common imx_clk_hw_fixed functions
+  clk: imx: add imx_check_clk_hws helper function
+  clk: imx: add imx8qxp clk driver
 
-Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
----
- drivers/clk/mvebu/ap806-system-controller.c | 1 -
- 1 file changed, 1 deletion(-)
+ arch/arm/mach-imx/Kconfig                 |  11 +
+ drivers/clk/Kconfig                       |   1 +
+ drivers/clk/imx/Kconfig                   |   7 +
+ drivers/clk/imx/Makefile                  |   4 +-
+ drivers/clk/imx/clk-common.h              |  27 ++
+ drivers/clk/imx/scu/Kconfig               |   5 +
+ drivers/clk/imx/scu/Makefile              |  12 +
+ drivers/clk/imx/scu/clk-divider-gpr-scu.c | 131 +++++++++
+ drivers/clk/imx/scu/clk-divider-scu.c     | 190 +++++++++++++
+ drivers/clk/imx/scu/clk-gate-gpr-scu.c    |  84 ++++++
+ drivers/clk/imx/scu/clk-gate-scu.c        | 230 ++++++++++++++++
+ drivers/clk/imx/scu/clk-imx8qxp.c         | 426 ++++++++++++++++++++++++++++++
+ drivers/clk/imx/scu/clk-mux-gpr-scu.c     |  90 +++++++
+ drivers/clk/imx/scu/clk-mux-scu.c         | 142 ++++++++++
+ drivers/clk/imx/scu/clk-scu.c             |  17 ++
+ drivers/clk/imx/scu/clk-scu.h             |  97 +++++++
+ include/soc/imx/imx8qxp/lpcg.h            | 186 +++++++++++++
+ 17 files changed, 1659 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/imx/Kconfig
+ create mode 100644 drivers/clk/imx/clk-common.h
+ create mode 100644 drivers/clk/imx/scu/Kconfig
+ create mode 100644 drivers/clk/imx/scu/Makefile
+ create mode 100644 drivers/clk/imx/scu/clk-divider-gpr-scu.c
+ create mode 100644 drivers/clk/imx/scu/clk-divider-scu.c
+ create mode 100644 drivers/clk/imx/scu/clk-gate-gpr-scu.c
+ create mode 100644 drivers/clk/imx/scu/clk-gate-scu.c
+ create mode 100644 drivers/clk/imx/scu/clk-imx8qxp.c
+ create mode 100644 drivers/clk/imx/scu/clk-mux-gpr-scu.c
+ create mode 100644 drivers/clk/imx/scu/clk-mux-scu.c
+ create mode 100644 drivers/clk/imx/scu/clk-scu.c
+ create mode 100644 drivers/clk/imx/scu/clk-scu.h
+ create mode 100644 include/soc/imx/imx8qxp/lpcg.h
 
-diff --git a/drivers/clk/mvebu/ap806-system-controller.c b/drivers/clk/mvebu/ap806-system-controller.c
-index 9fbec3eb725f..ea54a874bbda 100644
---- a/drivers/clk/mvebu/ap806-system-controller.c
-+++ b/drivers/clk/mvebu/ap806-system-controller.c
-@@ -153,7 +153,6 @@ static int ap806_syscon_common_probe(struct platform_device *pdev,
- 		goto fail4;
- 	}
- 
--	of_clk_add_provider(np, of_clk_src_onecell_get, &ap806_clk_data);
- 	ret = of_clk_add_provider(np, of_clk_src_onecell_get, &ap806_clk_data);
- 	if (ret)
- 		goto fail_clk_add;
 -- 
-2.18.0
+2.7.4
