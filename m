@@ -1,267 +1,202 @@
-Return-Path: <abel.vesa@nxp.com>
-From: Abel Vesa <abel.vesa@nxp.com>
-To: Lucas Stach <l.stach@pengutronix.de>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Dong Aisheng <aisheng.dong@nxp.com>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Anson Huang <anson.huang@nxp.com>,
-	Andrey Smirnov <andrew.smirnov@gmail.com>,
-	Rob Herring <robh@kernel.org>
-Cc: linux-imx@nxp.com,
-	Abel Vesa <abelvesa@linux.com>,
-	Abel Vesa <abel.vesa@nxp.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-kernel@vger.kernel.org (open list),
-	linux-arm-kernel@lists.infradead.org (moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE),
-	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK)
-Subject: [PATCH v9 4/5] clk: imx: add imx composite clock
-Date: Mon, 24 Sep 2018 13:39:56 +0300
-Message-Id: <1537785597-26499-5-git-send-email-abel.vesa@nxp.com>
-In-Reply-To: <1537785597-26499-1-git-send-email-abel.vesa@nxp.com>
-References: <1537785597-26499-1-git-send-email-abel.vesa@nxp.com>
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: linux-clk@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	sboyd@kernel.org,
+	mturquette@baylibre.com,
+	shawnguo@kernel.org,
+	fabio.estevam@nxp.com,
+	linux-imx@nxp.com,
+	kernel@pengutronix.de,
+	Dong Aisheng <aisheng.dong@nxp.com>
+Subject: [PATCH V2 04/11] clk: imx: scu: add scu clock gpr divider
+Date: Wed, 26 Sep 2018 00:43:50 +0800
+Message-Id: <1537893837-31172-5-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1537893837-31172-1-git-send-email-aisheng.dong@nxp.com>
+References: <1537893837-31172-1-git-send-email-aisheng.dong@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Return-Path: abel.vesa@nxp.com
+Return-Path: aisheng.dong@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Since a lot of clocks on imx8 are formed by a mux, gate, predivider and
-divider, the idea here is to combine all of those into one composite clock,
-but we need to deal with both predivider and divider at the same time and
-therefore we add the imx_clk_composite_divider_ops and register
-the composite clock with those.
+Add scu based clock gpr divider. Unlike the normal scu divider, such
+dividers are controlled by GPR bits through SCU sc_misc_set_control
+API.
 
-Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-Suggested-by: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Sascha Hauer <kernel@pengutronix.de>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 ---
- drivers/clk/imx/Makefile        |   1 +
- drivers/clk/imx/clk-composite.c | 181 ++++++++++++++++++++++++++++++++++++++++
- drivers/clk/imx/clk.h           |  14 ++++
- 3 files changed, 196 insertions(+)
- create mode 100644 drivers/clk/imx/clk-composite.c
+ChangeLog:
+v1->v2: no changes except update headfile name
+---
+ drivers/clk/imx/scu/Makefile              |   3 +-
+ drivers/clk/imx/scu/clk-divider-gpr-scu.c | 131 ++++++++++++++++++++++++++++++
+ drivers/clk/imx/scu/clk-scu.h             |   3 +
+ 3 files changed, 136 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/imx/scu/clk-divider-gpr-scu.c
 
-diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
-index b87513c..4fabb0a 100644
---- a/drivers/clk/imx/Makefile
-+++ b/drivers/clk/imx/Makefile
-@@ -3,6 +3,7 @@
- obj-y += \
- 	clk.o \
- 	clk-busy.o \
-+	clk-composite.o \
- 	clk-cpu.o \
- 	clk-fixup-div.o \
- 	clk-fixup-mux.o \
-diff --git a/drivers/clk/imx/clk-composite.c b/drivers/clk/imx/clk-composite.c
+diff --git a/drivers/clk/imx/scu/Makefile b/drivers/clk/imx/scu/Makefile
+index 7e360e2..9e7f4aa 100644
+--- a/drivers/clk/imx/scu/Makefile
++++ b/drivers/clk/imx/scu/Makefile
+@@ -2,4 +2,5 @@
+ 
+ obj-$(CONFIG_MXC_CLK_SCU) += \
+ 	clk-scu.o \
+-	clk-divider-scu.o
++	clk-divider-scu.o \
++	clk-divider-gpr-scu.o
+diff --git a/drivers/clk/imx/scu/clk-divider-gpr-scu.c b/drivers/clk/imx/scu/clk-divider-gpr-scu.c
 new file mode 100644
-index 0000000..4b03107
+index 0000000..14deb7a
 --- /dev/null
-+++ b/drivers/clk/imx/clk-composite.c
-@@ -0,0 +1,181 @@
-+// SPDX-License-Identifier: GPL-2.0
++++ b/drivers/clk/imx/scu/clk-divider-gpr-scu.c
+@@ -0,0 +1,131 @@
++// SPDX-License-Identifier: GPL-2.0+
 +/*
-+ * Copyright 2018 NXP
++ * Copyright (C) 2016 Freescale Semiconductor, Inc.
++ * Copyright 2017~2018 NXP
++ *	Dong Aisheng <aisheng.dong@nxp.com>
 + */
 +
-+#include <linux/errno.h>
-+#include <linux/slab.h>
 +#include <linux/clk-provider.h>
-+#include <linux/clk.h>
++#include <linux/err.h>
++#include <linux/io.h>
++#include <linux/slab.h>
++#include <soc/imx/scu/sci.h>
 +
-+#include "clk.h"
++#include "clk-scu.h"
 +
-+#define PCG_PREDIV_SHIFT	16
-+#define PCG_PREDIV_WIDTH	3
-+#define PCG_PREDIV_MAX		8
++struct clk_divider_gpr_scu {
++	struct clk_hw	hw;
++	sc_rsrc_t	rsrc_id;
++	sc_ctrl_t	gpr_id;
++};
 +
-+#define PCG_DIV_SHIFT		0
-+#define PCG_DIV_WIDTH		6
-+#define PCG_DIV_MAX		64
-+
-+#define PCG_PCS_SHIFT		24
-+#define PCG_PCS_MASK		0x7
-+
-+#define PCG_CGC_SHIFT		28
-+
-+static unsigned long imx_clk_composite_divider_recalc_rate(struct clk_hw *hw,
-+						unsigned long parent_rate)
++static inline struct clk_divider_gpr_scu *to_clk_divider_gpr_scu(struct clk_hw *hw)
 +{
-+	struct clk_divider *divider = to_clk_divider(hw);
-+	unsigned long prediv_rate;
-+	unsigned int prediv_value;
-+	unsigned int div_value;
-+
-+	prediv_value = clk_readl(divider->reg) >> divider->shift;
-+	prediv_value &= clk_div_mask(divider->width);
-+
-+	prediv_rate = divider_recalc_rate(hw, parent_rate, prediv_value,
-+						NULL, divider->flags,
-+						divider->width);
-+
-+	div_value = clk_readl(divider->reg) >> PCG_DIV_SHIFT;
-+	div_value &= clk_div_mask(PCG_DIV_WIDTH);
-+
-+	return divider_recalc_rate(hw, prediv_rate, div_value, NULL,
-+				   divider->flags, PCG_DIV_WIDTH);
++	return container_of(hw, struct clk_divider_gpr_scu, hw);
 +}
 +
-+static int imx_clk_composite_compute_dividers(unsigned long rate,
-+						unsigned long parent_rate,
-+						int *prediv, int *postdiv)
++/*
++ * clk_divider_scu_recalc_rate - Get clock rate for a SCU clock
++ * @hw: clock to get rate for
++ * @parent_rate: parent rate provided by common clock framework
++ *
++ * Gets the current clock rate of a SCU clock. Returns the current
++ * clock rate, or zero in failure.
++ */
++static unsigned long clk_divider_gpr_scu_recalc_rate(struct clk_hw *hw,
++						     unsigned long parent_rate)
 +{
-+	int div1, div2;
-+	int error = INT_MAX;
-+	int ret = -EINVAL;
++	struct clk_divider_gpr_scu *clk = to_clk_divider_gpr_scu(hw);
++	uint32_t rate = 0;
++	sc_err_t sci_err;
++	uint32_t val;
 +
-+	/* default values */
-+	*prediv = 1;
-+	*postdiv = 1;
++	sci_err = sc_misc_get_control(ccm_ipc_handle, clk->rsrc_id,
++				      clk->gpr_id, &val);
 +
-+	for (div1 = 1; div1 <= PCG_PREDIV_MAX; div1++) {
-+		for (div2 = 1; div2 <= PCG_DIV_MAX; div2++) {
-+			int new_error = ((parent_rate / div1) / div2) - rate;
++	rate  = val ? parent_rate / 2 : parent_rate;
 +
-+			if (abs(new_error) < abs(error)) {
-+				*prediv = div1;
-+				*postdiv = div2;
-+				error = new_error;
-+				ret = 0;
-+			}
-+		}
-+	}
-+	return ret;
++	return sci_err ? 0 : rate;
 +}
 +
-+static long imx_clk_composite_divider_round_rate(struct clk_hw *hw,
-+						unsigned long rate,
-+						unsigned long *prate)
++/*
++ * clk_divider_scu_round_rate - Round clock rate for a SCU clock
++ * @hw: clock to round rate for
++ * @rate: rate to round
++ * @parent_rate: parent rate provided by common clock framework
++ *
++ * Gets the current clock rate of a SCU clock. Returns the current
++ * clock rate, or zero in failure.
++ */
++static long clk_divider_gpr_scu_round_rate(struct clk_hw *hw, unsigned long rate,
++					   unsigned long *prate)
 +{
-+	int prediv_value;
-+	int div_value;
-+
-+	imx_clk_composite_compute_dividers(rate, *prate,
-+						&prediv_value, &div_value);
-+
-+	rate = DIV_ROUND_UP_ULL((u64)*prate, prediv_value);
-+	rate = DIV_ROUND_UP_ULL((u64)rate, div_value);
++	if (rate < *prate)
++		rate = *prate / 2;
++	else
++		rate = *prate;
 +
 +	return rate;
 +}
 +
-+static int imx_clk_composite_divider_set_rate(struct clk_hw *hw,
-+					unsigned long rate,
-+					unsigned long parent_rate)
++/*
++ * clk_divider_scu_set_rate - Set rate for a SCU clock
++ * @hw: clock to change rate for
++ * @rate: target rate for the clock
++ * @parent_rate: rate of the clock parent
++ *
++ * Sets a clock frequency for a SCU clock. Returns the SCU
++ * protocol status.
++ */
++static int clk_divider_gpr_scu_set_rate(struct clk_hw *hw, unsigned long rate,
++		unsigned long parent_rate)
 +{
-+	struct clk_divider *divider = to_clk_divider(hw);
-+	unsigned long flags = 0;
-+	int prediv_value;
-+	int div_value;
-+	int ret = 0;
-+	u32 val;
++	struct clk_divider_gpr_scu *clk = to_clk_divider_gpr_scu(hw);
++	uint32_t val;
++	sc_err_t sci_err;
 +
-+	ret = imx_clk_composite_compute_dividers(rate, parent_rate,
-+						&prediv_value, &div_value);
-+	if (ret)
-+		return -EINVAL;
++	val = (rate < parent_rate) ? 1 : 0;
++	sci_err = sc_misc_set_control(ccm_ipc_handle, clk->rsrc_id,
++		clk->gpr_id, val);
 +
-+	spin_lock_irqsave(divider->lock, flags);
-+
-+	val = clk_readl(divider->reg);
-+	val &= ~((clk_div_mask(divider->width) << divider->shift) |
-+			(clk_div_mask(PCG_DIV_WIDTH) << PCG_DIV_SHIFT));
-+
-+	val |= (u32)(prediv_value  - 1) << divider->shift;
-+	val |= (u32)(div_value - 1) << PCG_DIV_SHIFT;
-+	clk_writel(val, divider->reg);
-+
-+	spin_unlock_irqrestore(divider->lock, flags);
-+
-+	return ret;
++	return sci_err ? -EINVAL : 0;
 +}
 +
-+static const struct clk_ops imx_clk_composite_divider_ops = {
-+	.recalc_rate = imx_clk_composite_divider_recalc_rate,
-+	.round_rate = imx_clk_composite_divider_round_rate,
-+	.set_rate = imx_clk_composite_divider_set_rate,
++static struct clk_ops clk_divider_gpr_scu_ops = {
++	.recalc_rate = clk_divider_gpr_scu_recalc_rate,
++	.round_rate = clk_divider_gpr_scu_round_rate,
++	.set_rate = clk_divider_gpr_scu_set_rate,
 +};
 +
-+struct clk *imx_clk_composite_flags(const char *name,
-+					const char **parent_names,
-+					int num_parents, void __iomem *reg,
-+					unsigned long flags)
++struct clk_hw *imx_clk_divider_gpr_scu(const char *name, const char *parent_name,
++				       sc_rsrc_t rsrc_id, sc_ctrl_t gpr_id)
 +{
-+	struct clk_hw *mux_hw = NULL, *div_hw = NULL, *gate_hw = NULL;
-+	struct clk_divider *div = NULL;
-+	struct clk_gate *gate = NULL;
-+	struct clk_mux *mux = NULL;
-+	struct clk *clk = ERR_PTR(-ENOMEM);
-+
-+	mux = kzalloc(sizeof(*mux), GFP_KERNEL);
-+	if (!mux)
-+		goto fail;
-+
-+	mux_hw = &mux->hw;
-+	mux->reg = reg;
-+	mux->shift = PCG_PCS_SHIFT;
-+	mux->mask = PCG_PCS_MASK;
++	struct clk_divider_gpr_scu *div;
++	struct clk_init_data init;
++	struct clk_hw *hw;
++	int ret;
 +
 +	div = kzalloc(sizeof(*div), GFP_KERNEL);
 +	if (!div)
-+		goto fail;
++		return ERR_PTR(-ENOMEM);
 +
-+	div_hw = &div->hw;
-+	div->reg = reg;
-+	div->shift = PCG_PREDIV_SHIFT;
-+	div->width = PCG_PREDIV_WIDTH;
-+	div->lock = &imx_ccm_lock;
-+	div->flags = CLK_DIVIDER_ROUND_CLOSEST;
++	div->rsrc_id = rsrc_id;
++	div->gpr_id = gpr_id;
 +
-+	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
-+	if (!gate)
-+		goto fail;
++	init.name = name;
++	init.ops = &clk_divider_gpr_scu_ops;
++	init.flags = CLK_GET_RATE_NOCACHE;
++	init.parent_names = parent_name ? &parent_name : NULL;
++	init.num_parents = parent_name ? 1 : 0;
 +
-+	gate_hw = &gate->hw;
-+	gate->reg = reg;
-+	gate->bit_idx = PCG_CGC_SHIFT;
++	div->hw.init = &init;
 +
-+	clk = clk_register_composite(NULL, name, parent_names, num_parents,
-+					mux_hw, &clk_mux_ops, div_hw,
-+					&imx_clk_composite_divider_ops, gate_hw,
-+					&clk_gate_ops, flags);
-+	if (IS_ERR(clk))
-+		goto fail;
++	hw = &div->hw;
++	ret = clk_hw_register(NULL, hw);
++	if (ret) {
++		kfree(div);
++		hw = ERR_PTR(ret);
++	}
 +
-+	return clk;
-+
-+fail:
-+	kfree(gate);
-+	kfree(div);
-+	kfree(mux);
-+	return clk;
++	return hw;
 +}
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index 12b3fd6..9d7c9c8 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -232,4 +232,18 @@ struct clk *imx_clk_cpu(const char *name, const char *parent_name,
- 		struct clk *div, struct clk *mux, struct clk *pll,
- 		struct clk *step);
+diff --git a/drivers/clk/imx/scu/clk-scu.h b/drivers/clk/imx/scu/clk-scu.h
+index c433cd4..97d8bdc 100644
+--- a/drivers/clk/imx/scu/clk-scu.h
++++ b/drivers/clk/imx/scu/clk-scu.h
+@@ -33,4 +33,7 @@ static inline struct clk_hw *imx_clk_divider2_scu(const char *name,
+ 	return imx_clk_register_divider_scu(name, parent_name, rsrc_id, clk_type);
+ }
  
-+struct clk *imx_clk_composite_flags(const char *name, const char **parent_names,
-+		int num_parents, void __iomem *reg, unsigned long flags);
-+
-+#define __imx_clk_composite(name, parent_names, reg, flags) \
-+	imx_clk_composite_flags(name, parent_names, \
-+		ARRAY_SIZE(parent_names), reg, \
-+		flags | CLK_SET_RATE_NO_REPARENT | CLK_OPS_PARENT_ENABLE)
-+
-+#define imx_clk_composite(name, parent_names, reg) \
-+	__imx_clk_composite(name, parent_names, reg, 0)
-+
-+#define imx_clk_composite_critical(name, parent_names, reg) \
-+	__imx_clk_composite(name, parent_names, reg, CLK_IS_CRITICAL)
++struct clk_hw *imx_clk_divider_gpr_scu(const char *name, const char *parent_name,
++				sc_rsrc_t rsrc_id, sc_ctrl_t gpr_id);
 +
  #endif
 -- 
