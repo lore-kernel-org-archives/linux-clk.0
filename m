@@ -7,43 +7,43 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7ACCC43382
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Sep 2018 16:59:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31774C43382
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Sep 2018 16:59:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 977E720676
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Sep 2018 16:59:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D572420676
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Sep 2018 16:59:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="OdNxqpOh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 977E720676
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="CnUW/w7j"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D572420676
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726323AbeIYXHd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Sep 2018 19:07:33 -0400
+        id S1726417AbeIYXHf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Sep 2018 19:07:35 -0400
 Received: from mail-eopbgr70048.outbound.protection.outlook.com ([40.107.7.48]:58664
         "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726322AbeIYXHd (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 25 Sep 2018 19:07:33 -0400
+        id S1726322AbeIYXHf (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 25 Sep 2018 19:07:35 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=U0ZdmevMHupoBR2Z8tXV+fzs/FQ2InGLT2J9g7F/l+M=;
- b=OdNxqpOhNze5K2QgwKeobyraaBnKs+h79UhDlse/dNapNrtf6hKyJthc+J2v7wVQSE1kkIaGGWdTYZfnUGvBez0sbKRdxF0dppe8oBrW3XNEtVeyZIbX0JjLD2WksAPYVRYXmfGq3mseDoEG6kfqRk/P/nSMaSmFe2Rz8F6ZzBI=
+ bh=3RBWCR5YA0FIa154nkzRbfnbFkDsmfsloqXK4HBVTzg=;
+ b=CnUW/w7jaAbfrCI4WlitGj+kKbIbrcq0N2/xLA7mS3C4XaZVmdtKH6Jz4mbe+Lyo9AaUyJB5vzrXNa+w5iNMUCJ2NyWrwaob82I+W3zG/63OndFlVCjJEdxt4j5qTgPmJYhndXebjQeCI3ppxSJoUiZxMZYC9/KDmNUTwEZWdVw=
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=aisheng.dong@nxp.com; 
 Received: from shlinux2.ap.freescale.net (119.31.174.66) by
  AM0PR04MB4211.eurprd04.prod.outlook.com (2603:10a6:208:66::21) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1164.22; Tue, 25 Sep 2018 16:59:02 +0000
+ 15.20.1164.22; Tue, 25 Sep 2018 16:59:05 +0000
 From:   Dong Aisheng <aisheng.dong@nxp.com>
 To:     linux-clk@vger.kernel.org
 Cc:     linux-arm-kernel@lists.infradead.org, sboyd@kernel.org,
         mturquette@baylibre.com, shawnguo@kernel.org,
         fabio.estevam@nxp.com, linux-imx@nxp.com, kernel@pengutronix.de,
         Dong Aisheng <aisheng.dong@nxp.com>
-Subject: [PATCH V2 01/11] clk: imx: add configuration option for mmio clks
-Date:   Wed, 26 Sep 2018 00:43:47 +0800
-Message-Id: <1537893837-31172-2-git-send-email-aisheng.dong@nxp.com>
+Subject: [PATCH V2 02/11] clk: imx: scu: add scu clock common part
+Date:   Wed, 26 Sep 2018 00:43:48 +0800
+Message-Id: <1537893837-31172-3-git-send-email-aisheng.dong@nxp.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1537893837-31172-1-git-send-email-aisheng.dong@nxp.com>
 References: <1537893837-31172-1-git-send-email-aisheng.dong@nxp.com>
@@ -54,50 +54,50 @@ X-ClientProxiedBy: HK0PR03CA0033.apcprd03.prod.outlook.com
  (2603:1096:203:2f::21) To AM0PR04MB4211.eurprd04.prod.outlook.com
  (2603:10a6:208:66::21)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 0b46f7ea-c5bd-4407-08d7-08d623083391
+X-MS-Office365-Filtering-Correlation-Id: bc895fab-dff1-42cd-296c-08d6230835ba
 X-MS-Office365-Filtering-HT: Tenant
 X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB4211;
-X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4211;3:2mKbGZkrGEWzZ0Y567ZR7JV9FfY0E5Hp32qFgDkmQgzQFvhnAIJp5+Znsc5k9Gl+V31XLUTt/8BZNY1GahZsTsNVIJzwcuzngIMoGUNOmBm23dCopqcYIdu6BMyUcD+SY7Lg0jwLTsvLPDsOIOFeeTUlG9hO8j+HWB/mv4Qvwl19/TPOi9Y79ScX3oasvMsV1HoTTu0evIPyKFUIcTgtkiDkpV41qP1JEeDQZhHmc2rZF6xJygKldmZStQLxp47e;25:FaEI/pFqoNeYFR7lGGzIxeMEfSAIJfkCLkwB+jxfSetXoBPsMfXMxIjbuHSy6jAU7kUth1XK0md71y3xqd2zDzGgDNYg1usA2ayycgvAUNWStQ/wChF/vAom7t2nH+VM94Abn2N+A8wkDO71cgihB4A8k0pI0UGyXe/1kmkh5ubQvFQSTrbqxqm+tcTgerM0Mt/zeZWpk6H9j8E44eLqSSFjIaR6ucRRyCzy+H2+LBQ4xPxEnqCuymu0H6euKDbrPiakHFxb/qI0JjeYQPIzudMoXkexWXLs3k1Z7gcsJFw4OmwtHsdo1jrh9ENwB0LfaDnQxkxUIlCF75XX9W5dVg==;31:qnt0cDtovaVVEJFTTKUjrWgmQ8u26r84l8h64cOIZGFthg+ngH7vYN6gv6U5tdqT6vyMImtvHEvi54G8fj2uOrIxEG1jjaNwwPyI/1eiqcjmhRDpoyJ4+eIDujWNEE/EMgRjgPqfLBfXVsIfPAgMdofW+mn/qLeiia77Qj9+CYdOaElJ/yFN+AyD8fspues+tAiM9lWrX+Mb4XXFDuT15uKOIWI4fM0Eg+yn22QMOWQ=
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4211;3:6b00MzqX3adRXN042KIWntNNZw7JnY6v43tWnTssgic/09OsXpoJ4PBNp1Ce1rrCi4NHqm3jrM7dEQybPx7AynTfesXW9IFxKhufjY9tl2r1UOkhAxPGDBIX2P0/ukcJvmXR4JHsSL/nVun46G+2X8uugxYVcOFFY5fPvgsF/K0NC1nLJrVG8UN4gN8SeA3h1J1vjwYVcN05Bt5b6WX0z9XVVKY7aVp+VNaPJzx/N0OvxjHr4UUsxhaE99JsT7Tq;25:NH1b8aBlwBnySMkPf3sK7e0NgMMo7MEMMJ8t9UWRJ4tQ5csA9pwvLMq2eySFPwYyp9WcUguw8pm3rFywKry622XzNPw7xvYFxLSATfJ/WOIaCKwQnpdXV/KZiyy3Jd7y7iRHqxk0NM1JAuBxg7axyVf9aruhiMrsr+Svjv1E7PhTa+luzFEOS1W9RAhbDD2OadWbEpfI7bxK7Z4ZG5AGoip2jPO/Eboneev0GKtwk7wNbmXbonZ1x/hlgeiEckQkv1PFQLzdU10LeCf5BDSVrKJPQZINfJTGkpZwTxs8PWsQdQZ6SU3Xt2K3qDnU+Dkhd8e86leqRxQhntwT1X/HlA==;31:7X1pltC6nQC0HUqK74HCDmA9Cx5bKQdU4rjNVvck0RvQqq0Q55RUZ8xXuTxVjNh3ps4d34e1CXmxh+WRuxALvhoxJR/97kqC/Rv86Y2KnUsVSm7IN1iaYm7lcprZ15CGX2uzxWuSZbM7x2+6jIajNAy68hRBGhIVFynDL0zTbSb6Eh2K1/y4cv6TK89QdbB79N+5Fj4ViwXMGFmV5JRcubRV7KHUrbMI587DOFoa4y8=
 X-MS-TrafficTypeDiagnostic: AM0PR04MB4211:
-X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4211;20:wnvdTivgYkYdVEBqpdPIWsPNbkWCMG5dFWq6anb7JuuZwCVAjUlkoYZKSqhTmp6j/F9CO2YGZcDuhh2yQjzIND/wFiC2tzjOWw4WgMD+VwgugCaLbYkaji2l5MQi/TF0mEwJc5cp7JqE0AMmZlqPckNfaHMjs46SGQ1mQ37Fml4vF4OtiGZnuHdIrlFhifFxIqL8qhY+dKadCoNHvu96poWIpwUHs1AJMYVFZm4AM5QyQvasHsEYU9IRdpg8nUAEh6kKeYfurz6QfOup226fzTcv5z1K6JxrEZv1z30ShRfOXsPY2poIAujQUHf/gJBsV41KvRv27v9BOqyOuVEKeLCtja7U8YN/U+QORUi657dXRIN/1s3GnV/730la3YPr7jl5gcUc8Sh8EbDboJBcfwjYVIRCM/dwACLHFrTKvFnp8J1qKk8dvfsFZ1u3vACCAvUz1Yd0eURu7fdr2eDe8q0MYuwOMacr3dtNdCBvZtE44y7cyIHF/3lN3LC/yJit;4:5e10743twBG1VHhflF6JOlkEwVrhGXCucRHAhK2GUe6lPu3TzkP2ZKCgIfWiy1ktOFOpSGgyvtrYGgdG8BRwUztaTh3rsVEafUvyfN040Ll6yElBbyPrVj29PEWAyiejnNAjrS2S/JZTMs0fSdZMk33VvmyevvTIjqOshelNIo0ue6l94ZQcL5yh6Fs014/Hh3wbi1DGr2ZBo+iYOp9iCgENJLTtUz3gCUZQuW6fiowsNHEEcW09hvf7es9mEpZ4VjRc0rKUZPuaT97fz/GU0FRq6TiDlkf+slq0BCfp7XMa/pOSqk4eEguCuWJAkPvV
-X-Microsoft-Antispam-PRVS: <AM0PR04MB42112284BEAA305FD2C0FE0680160@AM0PR04MB4211.eurprd04.prod.outlook.com>
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4211;20:ghqbGY754xlbEsZNPPAkifwGq4kAOVREtVppocfEGC9etiMPMKOaUeUsqUyxsxiE6zuFN+Gvhix+KrqypCsBtNCxtnm3VJVaxucLBbAH+KosXn68k0dQGwhjBjk+z3ToYsK6XgXH6VPb8k0QgB9tduL0q8+716epdNw1xRrS8u+fQ2ZoJ0IWFy5HAz5OcPzBatCV7iUe6HIoXsFTSDtu3Xcb7ru9BDUh7nRv5FV7xO1cdd5VqnctfYZYM+Ni5ecpkoUeUdKh+c5CIhOPtT1O0lWTeluSXP3KLHLOMdEbodmISGcppAyjmG7GL11+xf3stKdXff+Qi62yOgxuniNjm1nsErCa1jZ3SorUW3J/FzJvhEVEXPuM+6OVlTRpZ0/TmW8oyawfNgpwOUl46wZp+hjkkXCIgl9BxO7tqBi4RhbRq5VjAPyoTeXnnTPDAbePNhBi4knCB+Q3nOwfc9kewJFqpNf3k+juSUIqrZEnUT9oGqpVH2Ea76sIrt59mVL7;4:+COEOUI0Hiqv6wnkr9Lt6lQ21BiQjLqBgnC2VZvuPoTj5gW4fPSuoPk+lx/8d9GNU24c3TKy+r0YtR5T0fkBljR/3l09kCsxJR62TWPw1mk9Y9GM6zJxXRBNQsbzHjyreBDfBOrW8TV5bsn8QawC3RfQLSipurcu+brlIQ4yF7laqm89DrKeJQ7J1rBD/XYFrhzlr/GsSUofdBzfhx+fMDWOrhEZW6DFt+iZr22HPpYpZI4xzS99yC3I8I5qctaYzDobUJkH4vKBvaXqWLpKWRF+FTPlY8luF3U2sXijlCuffzssUtRxJyRkDKZ5WlLH
+X-Microsoft-Antispam-PRVS: <AM0PR04MB4211A91347D3D17E6D0A2A1880160@AM0PR04MB4211.eurprd04.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(185117386973197);
 X-MS-Exchange-SenderADCheck: 1
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231355)(944501410)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(149066)(150027)(6041310)(20161123564045)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(201708071742011)(7699051);SRVR:AM0PR04MB4211;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB4211;
 X-Forefront-PRVS: 08062C429B
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(136003)(366004)(39860400002)(396003)(346002)(376002)(199004)(189003)(478600001)(6486002)(11346002)(446003)(53936002)(6512007)(68736007)(2906002)(48376002)(6116002)(316002)(3846002)(34290500001)(14444005)(106356001)(186003)(16526019)(2361001)(2351001)(26005)(305945005)(7736002)(486006)(36756003)(66066001)(4326008)(47776003)(25786009)(105586002)(6916009)(6666003)(50226002)(97736004)(81156014)(8676002)(16586007)(5660300001)(956004)(52116002)(386003)(86362001)(2616005)(476003)(76176011)(51416003)(6506007)(8936002)(50466002)(81166006);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4211;H:shlinux2.ap.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(136003)(366004)(39860400002)(396003)(346002)(376002)(54534003)(199004)(189003)(478600001)(6486002)(11346002)(446003)(53936002)(6512007)(68736007)(2906002)(48376002)(6116002)(316002)(3846002)(34290500001)(14444005)(106356001)(186003)(16526019)(2361001)(2351001)(26005)(305945005)(7736002)(486006)(36756003)(66066001)(4326008)(47776003)(25786009)(105586002)(6916009)(6666003)(50226002)(97736004)(81156014)(8676002)(16586007)(5660300001)(956004)(52116002)(386003)(86362001)(2616005)(476003)(76176011)(51416003)(6506007)(8936002)(50466002)(81166006);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4211;H:shlinux2.ap.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 Received-SPF: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM0PR04MB4211;23:3wAzLNfgAll1RzAwlO6xAVuyd50vRYiBur8ldQPTY?=
- =?us-ascii?Q?gA4cBY/X0ntQ4XzE50Hjw9hI3L/1moOm+UtEnLSRdt4IfgDBuI3tOKrz9vaU?=
- =?us-ascii?Q?Amdg6T3a3OOFkP/HGam2cE1rvCOxtnzUBrForqLJ6E7W6/nYYj1+xOdMeX55?=
- =?us-ascii?Q?n2KoMNWjAS4xKLjvKuzALVld/cHDTYLiATk9FHHV4daXd5IuipGbulBxDIhG?=
- =?us-ascii?Q?z72bW1b3ehnHvQxgjd+kJ70vHtcVEY83jCwze6P68JxRIb6P4yLTKD/UvEW1?=
- =?us-ascii?Q?IawkuUbwu+OFwQ2UWiT27cPmDqUVaMVvpDyw+I0i9YE/UV/AWXdKA4qtPQGo?=
- =?us-ascii?Q?+2i8O3HeVc1WEZWsu5l0hsyD8nDAqCYL0yUUvvA61iheHMOjxgmsD1aYhKdG?=
- =?us-ascii?Q?CXn5r63RHwZJwzprk15514WnH0RDL/Up5Fx13C9AFiJh1d7KPi3Aip7cEMhX?=
- =?us-ascii?Q?EtOaH1aIxS66AeDIYZ8cZ5bolNZkThjQVXQJ+pNS8hpLz3qle10r0ETWPZVZ?=
- =?us-ascii?Q?zNyX5L+LWd4XNH1w7bzn33OumhW+Tm8bAq19jIADBGC3WXezXDEhfi1pXfbJ?=
- =?us-ascii?Q?9rtlo6UUpCVfuU4zO0bVABQpLNDG3q3uM32AiZJatN5L5U3M9MifE1ZBygJC?=
- =?us-ascii?Q?uDLfOnMw0cBK6rKc4arm47fMR4REjeLXV2yqoSbQP02GRu2t9YFJF1ywAhUU?=
- =?us-ascii?Q?VxRJ0WsL+PJZq4v6h46uVrRNPZn1KIxSRMiveybfU3qoBmv4llWZJUDu9SNa?=
- =?us-ascii?Q?ZeSJjHxMK+s2rcb56BupjY8+3tuTu2oARgfz5MqSJbgKG26MsVxik0HHnb0j?=
- =?us-ascii?Q?CZy+/40jae16ZUrjw+D/nQXIiMRI+mG8QkM20sTvpU3/4l/RYCxz+8kUrd0M?=
- =?us-ascii?Q?l6qq+ejyCbG1kH6QYV7swduMLucXxHKGGGuTNDnTuiSUIiFea68qIJwqRc2y?=
- =?us-ascii?Q?qIWVCDW1i54cJhV/Vz1xdaENTw2pxVnayF7Ma7YD9LaiADlsV252Jt1tvQ4X?=
- =?us-ascii?Q?bWxdG+jS15U97JgnntckB46aXc5TQz0en/PXTcOfr2Fi02UXojdqoP5RmUub?=
- =?us-ascii?Q?R+cA9GE+MKUlGhvn9OSPUqoVANS4lqnmhzEVf59E03m6hLtFAkbqxg6Gq1SM?=
- =?us-ascii?Q?v22l+y4hMbK/CSTYQRrqcenoixd4S94yiob2vWfHD3GzCSpWg4iPHiYOk9Vr?=
- =?us-ascii?Q?fuqRv60kuO8O3HhlxpKoo9Z6833kZSJ0ynEpeCMCc2Ahg+2gxd2icKSuGsF6?=
- =?us-ascii?Q?IsV4Y2blbbXqPip10o=3D?=
-X-Microsoft-Antispam-Message-Info: Be3PhbvK2fi1Xao5/fwk+FHZjPfAyqoCGAZ6quWyHyv0MbQa1dC1jl4vgm9MzfRCqt13P4DMJe8Dsnzc29qC4UrTU2ZcJwh7cHcivwYwJbrRnnJ4UHMbOf6A17OjHKPX8CZF9Qm2vkzM53kXqjlRPe3cu57JFXlSAoH5V/pM1Pq1X1yqM7mb25vQie6IN6PeRT3cVlGfUXesMq7Q0+rh7TryHDwCZu2dH16TsE0W/8LJqtGYEw7zNHHDkdSM1Aau7EQcenww1evC40tn08DMkpmLD1Qv7vYybzfAWf8Cmn7+pWWL/aNazOfl5c7y646QKEY5qpI5adrxagKNUPRsayfhgKy3OY6MXwcL7JV82W4=
-X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4211;6:LJq3saTS4lgWAiHrr3paHyfIgXMrb5+6EiTOArCBdxaCcDWdFZpqP6KpacIx9tXZk+EbuqRESPMvEdii3paClbC6j/q48MCGu96jzsS2/L4bmLmv9NdB5JhJFA9rxNkdMfz4Dx+JPTfpyvfTaPMkXG3zY6l2JgWf8PpB3vyW7mdJKZW0SYMAntK++Cz63w8RBRi+VowfUlDKyNtTG8uR1MJDOfOoldxUDAevMec2lT6rmeNjGN6eqHSZ/LDQR8YhidsxhxoSLZCJdKIBDo0ruTuNDG2h9LXFIrW9En5wNGkqAXLR88le0EaHFePoQe9yMWUk+qGE2qfgMKYJKbCuIbRWIko3/Z8+y47lIPRxTri+rGd6DDHObHOemWVCX/DDF/Lcachpe7kxyIXoTozkhtPZwIQgxfhaFmN7gWR/9w8+ZbmGvpK/szvGs8mGsAWYnHfB46XV9Vq8f+CLgJqn1A==;5:KtjPYStPJbjTV/4DZ8Q3OIo6kKACIDphRPEyLB4LatBllwAUiqd2HWmgNVrATp0XRXhiXbOcN17+suObsfCVRaFFFTGjbTegGGZ+gmRu5+5putskARXklc9Cq81wvSDo63WdiQhtRGMFpFOeahWDerfQiIOO191Syqxw4u1g/YM=;7:mziIUIE1UbU5+AQM29CGokfT6foRDE83RpmhSq+vdHOQsSvrfu6AoXgRC1yUKr+NSWLuVDxgAlr8UWQT2Q9KBNLppVEZXIyN1aAIltbpRr9pvTpbQHUyCVF2Ef0fKS1s6P4IKEslKahF457VbkCLSVZ07+6tKhvVbSlAK/zlGyMRNHBJwS3jRbjJFofWo0TpXQRItka0JMLDl9PMs5lZPf23Ln7MW/zvp4VjvQhcPFbkHJOJsfDbChQ5VP5iYEuV
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM0PR04MB4211;23:BXxCUPzoILC3vDx7luJziVUBLOJeTjy5Hqgbdym2X?=
+ =?us-ascii?Q?4NXBp0hIWVzq2NpbvzscKFaFfVPzPAFdmvWP8zs6mSAr/DSCHPRslwqbYV7v?=
+ =?us-ascii?Q?7ZBPtHOgjs3nIJEuQGT6XGZ2zCORfxRLJQO0SARptMmfSu67dmYImwAGaBC6?=
+ =?us-ascii?Q?pFAycQZr3TG/F1X4z+nGV4YexY0PbdHS3HFLb55hut/PZ+O18I1XLe7j0euD?=
+ =?us-ascii?Q?EvkMeAcQFNqr6O/7yAvROvXAVolLGdRibCGaH2zIzLpdR8HUK76pD44JbnEw?=
+ =?us-ascii?Q?6vp83vYzpnRi7bxyaY+a+tSCd2xrRTZImgS4NeASYor707sQtvquqH1SsZnV?=
+ =?us-ascii?Q?MWtX9GJr3S/c7dV9Gx2vQJQ/8PsS3QxRxp7E7PN8v1twxQblHIChQjJoYVbw?=
+ =?us-ascii?Q?5nX97xCgUGM26RLJz0Ksw10lhXNoi2ur453vVSq862cblgfb8mpkwk7ZVeEF?=
+ =?us-ascii?Q?G0XqQDzXpkhxeyeE1Y+3cDUcxlI+pk4MYZAJ8w1X4Wd9Xh46rC6w/0gTG3J0?=
+ =?us-ascii?Q?oXxP6K3Lh48IDOnJ44LSMfPd2sz1EtBNqolumLloFByxWoHCONcwih80iJUb?=
+ =?us-ascii?Q?9gHo5+ooosfB30hfmLzycmdwsjGJFhzycYZynwxtLLn1zd/PcF/xj3Tt9rZi?=
+ =?us-ascii?Q?gZSGrtDo7/0SC7XpCNPJXxnqhgyHb5tJw1ykMLy0IBCAwd8MmTtXJXE41v9X?=
+ =?us-ascii?Q?dtf18Pd7HM/WEdIn75hcQlZOnvmg4+qerVLNvsFNlEzzI7fGyaRecRxKt+Ci?=
+ =?us-ascii?Q?y06BYCeZ9Z0dkBxckkkjGK7Fbwcoyy4hG25sHdbXRepj9b0BV0brEJHsWUur?=
+ =?us-ascii?Q?z2vRHdgBHXoX/GE1n1u7OU+ydWl7bUIjLlclSnxakWN8Uy5y/ivBwle70yK9?=
+ =?us-ascii?Q?A/8oEGmpa8fj0aWjO1hD0OKzGdpV4RPAl6opUjQ4Tih5mS9a0TVAW7NaRAMp?=
+ =?us-ascii?Q?/FVQzccXf6qRF1iyxdo2WGOsbpoqsr0mtTbdFEuMf7TflyQxReBndF8tvwgK?=
+ =?us-ascii?Q?Npr5irtHShcig2aMAZyElftuXORKXomRwUVCR5wQC4sO7AJ0fzeKIe+aYaZq?=
+ =?us-ascii?Q?89+t67ZucKarR6stMpnz45Mo+frgX9xPTGwvikCBm2QDVFfeVqR9sLB4+yRz?=
+ =?us-ascii?Q?puKr5auup637Fn9MOXf8kcILpJbOgz5FAlJUSpO8z3yjQctQDtWLUQUH2eOg?=
+ =?us-ascii?Q?iikdr/Rxw5g3076r4rkPlY4Hk9yi18lKEWIaHnJAeMgMQ20OVQKBWVrAjwEH?=
+ =?us-ascii?Q?Ev7zn4huYww1DN0LTbgWncAVGMUdJJQNIuDuls9?=
+X-Microsoft-Antispam-Message-Info: jxMnSttNADFjwXl3oTKcAQeQzMm5xJrNlJTmKbbP6IHkm9KtzYeezK8LYMQsSEdC5VGaJtg//52aVmhTplLCO7lskkOa1KL94VYUZinUhDyiAZ7a5HVs8bKCcCbUpDp06v+JtqH+D3IboG3YBT8kS0aqoEq3ttmkCvZO2cWigdIEcfWRsWlUlplQouZkVhB3oP2gfWR2TP838u4wv4dsHcJpgcW2zkJ1Svg2swa1QQWIm5nHc9RzCD6BhgpIjhJoe4vc7K97GJly1yTJ8C7F+Lys3yalidWcl2mZMjI9KwCURQ76jLxfePudbCUxNCJFVYiYZw2SEP33ZxmKgHsm2aRv18Pryl+gDsuk+ivQ06k=
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4211;6:rrREgQi/fyTyd+T+J06l7sP4ROhU+fpLxPf3/CAfsZf/6ORCa+sIz669CxhrTxEp+ZKWutgJ66mOOOrLMxjx23sEWhgS05Mlo+uYgWkYfUOlWsqptdNDWH74dCb3+eQyigSo7z59uMtQxJDVnRLtnJfM4IqeAoXm/EPNSG0+OPoEGZbA+9QnVBHNNTmEbmw+Qd9YxSWYn3yjH9cMAPAQ0joYgvUjH4kwvF2wePUlso6VuM7W4pqFxfFremiNos/dcd3NrhZ3VXtl584up7jqEDgByXygwTGwae3gH8lhedpXRgK9rHksVPcBNHsN0/XMjOdwypuOB9fhuZOPpfjpghckkpR+/NcogIFPHbZG5kPNGoVlXLOPn4KDYZvTQXQNQOyjrRRRt53RLEBUj5NUDOYZP5VS0svDyhHr3yLIci+7SW8wz4R2KWUrxuKe+1UnouIMXGmu1n4Vhs32AA1CwA==;5:z6zJr3RTbrqDr2aQNhksjRbPeQBBQg1VI9xFLbQPit7pLFZNGScvVGQBSb3eSX5N+d6uUS1eiEYPrTZuhvAsvkhqOt5UG7OznVp2GtSUQlcXb9+4SLJkQPo0mGYrp8ozG5xECjwKzkWZFRr9O6i5n/JF1cWRr1a0f30U6I7Z7hI=;7:suXMlnrimI5CaMcPWKLw39kkmGi1Pg/Mjhbog1cR8v/yflDFq3dszlb9JT6jJa4J/AL4dvi3tlaaH00V13VPW6MJ/MyD2PltLr+mUpKFajoXunkKiecQXQax3iEnPVnf3fkIYvRlFjgXkAp2RPmVb9kxhtqpiq68JKqLkTyy74qycdwzMs41n8pH3KLbC6Tqt15S65J4Syomkq1UheoXV1LxJOyuFdk7QXu3K6ioKQb0gJrnkTy4QrZMpZun8jkl
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Sep 2018 16:59:02.2138
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Sep 2018 16:59:05.8388
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0b46f7ea-c5bd-4407-08d7-08d623083391
+X-MS-Exchange-CrossTenant-Network-Message-Id: bc895fab-dff1-42cd-296c-08d6230835ba
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4211
@@ -105,11 +105,9 @@ Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
-Message-ID: <20180925164347._PfNRshQvTjjNe8bDFNpA3oxXOJ4dsad37U8eXzUowk@z>
+Message-ID: <20180925164348.PVJlWnfR8pJCJPHC8vdZ-lNliJHdZtZRX_6H3hzuAHw@z>
 
-The patch introduces CONFIG_MXC_CLK option for legacy MMIO clocks,
-this is required to compile legacy MMIO clock conditionally when adding
-SCU based clocks for MX8 platforms later.
+Add scu clock common part which will be used by client clock drivers.
 
 Cc: Shawn Guo <shawnguo@kernel.org>
 Cc: Sascha Hauer <kernel@pengutronix.de>
@@ -118,133 +116,113 @@ Cc: Stephen Boyd <sboyd@kernel.org>
 Cc: Michael Turquette <mturquette@baylibre.com>
 Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 ---
- arch/arm/mach-imx/Kconfig | 11 +++++++++++
- drivers/clk/Kconfig       |  1 +
- drivers/clk/imx/Kconfig   |  5 +++++
- drivers/clk/imx/Makefile  |  2 +-
- 4 files changed, 18 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/imx/Kconfig
+ChangeLog:
+v1->v2:
+ * update function call name
+---
+ drivers/clk/imx/Kconfig       |  2 ++
+ drivers/clk/imx/Makefile      |  2 ++
+ drivers/clk/imx/scu/Kconfig   |  5 +++++
+ drivers/clk/imx/scu/Makefile  |  4 ++++
+ drivers/clk/imx/scu/clk-scu.c | 17 +++++++++++++++++
+ drivers/clk/imx/scu/clk-scu.h | 18 ++++++++++++++++++
+ 6 files changed, 48 insertions(+)
+ create mode 100644 drivers/clk/imx/scu/Kconfig
+ create mode 100644 drivers/clk/imx/scu/Makefile
+ create mode 100644 drivers/clk/imx/scu/clk-scu.c
+ create mode 100644 drivers/clk/imx/scu/clk-scu.h
 
-diff --git a/arch/arm/mach-imx/Kconfig b/arch/arm/mach-imx/Kconfig
-index abc3371..11a9661 100644
---- a/arch/arm/mach-imx/Kconfig
-+++ b/arch/arm/mach-imx/Kconfig
-@@ -57,23 +57,27 @@ config SOC_IMX21
- 	select CPU_ARM926T
- 	select IMX_HAVE_IOMUX_V1
- 	select MXC_AVIC
-+	select MXC_CLK
- 
- config SOC_IMX27
- 	bool
- 	select CPU_ARM926T
- 	select IMX_HAVE_IOMUX_V1
- 	select MXC_AVIC
-+	select MXC_CLK
- 	select PINCTRL_IMX27
- 
- config SOC_IMX31
- 	bool
- 	select CPU_V6
- 	select MXC_AVIC
-+	select MXC_CLK
- 
- config SOC_IMX35
- 	bool
- 	select ARCH_MXC_IOMUX_V3
- 	select MXC_AVIC
-+	select MXC_CLK
- 	select PINCTRL_IMX35
- 
- if ARCH_MULTI_V5
-@@ -417,6 +421,7 @@ config SOC_IMX1
- 	bool "i.MX1 support"
- 	select CPU_ARM920T
- 	select MXC_AVIC
-+	select MXC_CLK
- 	select PINCTRL_IMX1
- 	help
- 	  This enables support for Freescale i.MX1 processor
-@@ -430,6 +435,7 @@ config SOC_IMX25
- 	select ARCH_MXC_IOMUX_V3
- 	select CPU_ARM926T
- 	select MXC_AVIC
-+	select MXC_CLK
- 	select PINCTRL_IMX25
- 	help
- 	  This enables support for Freescale i.MX25 processor
-@@ -442,6 +448,7 @@ comment "Cortex-A platforms"
- config SOC_IMX5
- 	bool
- 	select HAVE_IMX_SRC
-+	select MXC_CLK
- 	select MXC_TZIC
- 
- config	SOC_IMX50
-@@ -478,6 +485,7 @@ config SOC_IMX6
- 	select HAVE_IMX_MMDC
- 	select HAVE_IMX_SRC
- 	select MFD_SYSCON
-+	select MXC_CLK
- 	select PL310_ERRATA_769419 if CACHE_L2X0
- 
- config SOC_IMX6Q
-@@ -545,10 +553,12 @@ config SOC_IMX7D_CA7
- 	select HAVE_IMX_MMDC
- 	select HAVE_IMX_SRC
- 	select IMX_GPCV2
-+	select MXC_CLK
- 
- config SOC_IMX7D_CM4
- 	bool
- 	select ARMV7M_SYSTICK
-+	select MXC_CLK
- 
- config SOC_IMX7D
- 	bool "i.MX7 Dual support"
-@@ -561,6 +571,7 @@ config SOC_IMX7D
- config SOC_VF610
- 	bool "Vybrid Family VF610 support"
- 	select ARM_GIC if ARCH_MULTI_V7
-+	select MXC_CLK
- 	select PINCTRL_VF610
- 
- 	help
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 721572a..c4886be 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -281,6 +281,7 @@ source "drivers/clk/actions/Kconfig"
- source "drivers/clk/bcm/Kconfig"
- source "drivers/clk/hisilicon/Kconfig"
- source "drivers/clk/imgtec/Kconfig"
-+source "drivers/clk/imx/Kconfig"
- source "drivers/clk/keystone/Kconfig"
- source "drivers/clk/mediatek/Kconfig"
- source "drivers/clk/meson/Kconfig"
 diff --git a/drivers/clk/imx/Kconfig b/drivers/clk/imx/Kconfig
-new file mode 100644
-index 0000000..43a3ecc
---- /dev/null
+index 43a3ecc..b1599bf 100644
+--- a/drivers/clk/imx/Kconfig
 +++ b/drivers/clk/imx/Kconfig
-@@ -0,0 +1,5 @@
-+# SPDX-License-Identifier: GPL-2.0
-+# common clock support for NXP i.MX SoC family.
-+config MXC_CLK
-+	bool
-+	depends on ARCH_MXC
+@@ -3,3 +3,5 @@
+ config MXC_CLK
+ 	bool
+ 	depends on ARCH_MXC
++
++source drivers/clk/imx/scu/Kconfig
 diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
-index 8c3baa7..d447f8c 100644
+index d447f8c..79b641a 100644
 --- a/drivers/clk/imx/Makefile
 +++ b/drivers/clk/imx/Makefile
-@@ -1,6 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
+@@ -13,6 +13,8 @@ obj-$(CONFIG_MXC_CLK) += \
+ 	clk-pllv3.o \
+ 	clk-pfd.o
  
--obj-y += \
-+obj-$(CONFIG_MXC_CLK) += \
- 	clk.o \
- 	clk-busy.o \
- 	clk-cpu.o \
++obj-y += scu/
++
+ obj-$(CONFIG_SOC_IMX1)   += clk-imx1.o
+ obj-$(CONFIG_SOC_IMX21)  += clk-imx21.o
+ obj-$(CONFIG_SOC_IMX25)  += clk-imx25.o
+diff --git a/drivers/clk/imx/scu/Kconfig b/drivers/clk/imx/scu/Kconfig
+new file mode 100644
+index 0000000..4d018fd
+--- /dev/null
++++ b/drivers/clk/imx/scu/Kconfig
+@@ -0,0 +1,5 @@
++# SPDX-License-Identifier: GPL-2.0
++# SCU based common clock support for NXP i.MX SoC family.
++config MXC_CLK_SCU
++	bool
++	depends on ARCH_MXC && ARM64
+diff --git a/drivers/clk/imx/scu/Makefile b/drivers/clk/imx/scu/Makefile
+new file mode 100644
+index 0000000..7dead13
+--- /dev/null
++++ b/drivers/clk/imx/scu/Makefile
+@@ -0,0 +1,4 @@
++# SPDX-License-Identifier: GPL-2.0
++
++obj-$(CONFIG_MXC_CLK_SCU) += \
++	clk-scu.o
+diff --git a/drivers/clk/imx/scu/clk-scu.c b/drivers/clk/imx/scu/clk-scu.c
+new file mode 100644
+index 0000000..4c253a5
+--- /dev/null
++++ b/drivers/clk/imx/scu/clk-scu.c
+@@ -0,0 +1,17 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Copyright (C) 2016 Freescale Semiconductor, Inc.
++ * Copyright 2017~2018 NXP
++ *	Dong Aisheng <aisheng.dong@nxp.com>
++ */
++
++#include <linux/errno.h>
++#include "clk-scu.h"
++
++DEFINE_SPINLOCK(imx_ccm_lock);
++struct sc_ipc *ccm_ipc_handle;
++
++int imx_clk_scu_init(void)
++{
++	return imx_scu_get_handle(&ccm_ipc_handle);
++}
+diff --git a/drivers/clk/imx/scu/clk-scu.h b/drivers/clk/imx/scu/clk-scu.h
+new file mode 100644
+index 0000000..c503a52
+--- /dev/null
++++ b/drivers/clk/imx/scu/clk-scu.h
+@@ -0,0 +1,18 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
++/*
++ * Copyright (C) 2016 Freescale Semiconductor, Inc.
++ * Copyright 2017~2018 NXP
++ */
++
++#ifndef __IMX_CLK_SCU_H
++#define __IMX_CLK_SCU_H
++
++#include <linux/spinlock.h>
++#include <soc/imx/scu/sci.h>
++
++extern spinlock_t imx_ccm_lock;
++extern struct sc_ipc *ccm_ipc_handle;
++
++int imx_clk_scu_init(void);
++
++#endif
 -- 
 2.7.4
 
