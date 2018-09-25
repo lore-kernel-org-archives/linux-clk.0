@@ -1,100 +1,55 @@
-Return-Path: <JOLLYS@xilinx.com>
-From: Jolly Shah <JOLLYS@xilinx.com>
-To: Olof Johansson <olof@lixom.net>
-CC: "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>, Ingo Molnar
-	<mingo@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"matt@codeblueprint.co.uk" <matt@codeblueprint.co.uk>, Sudeep Holla
-	<sudeep.holla@arm.com>, "hkallweit1@gmail.com" <hkallweit1@gmail.com>, Kees
- Cook <keescook@chromium.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@codeaurora.org>, Michal Simek <michals@xilinx.com>, Rob Herring
-	<robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-clk
-	<linux-clk@vger.kernel.org>, Rajan Vaja <RAJANV@xilinx.com>, Linux ARM
- Mailing List <linux-arm-kernel@lists.infradead.org>, Linux Kernel Mailing
- List <linux-kernel@vger.kernel.org>, DTML <devicetree@vger.kernel.org>
-Subject: RE: [PATCH v11 08/11] firmware: xilinx: Add debugfs for query data
- API
-Date: Mon, 10 Sep 2018 19:19:00 +0000
-Message-ID: 
- <CY1PR02MB21386F9699EC6FA4CD344497B8050@CY1PR02MB2138.namprd02.prod.outlook.com>
-References: <1533318808-10781-1-git-send-email-jollys@xilinx.com>
- <1533318808-10781-9-git-send-email-jollys@xilinx.com>
- <CAOesGMjMcznFAQj0L-=J5+gJ5ENsdejqP2SdYomu=C9bJqG+YQ@mail.gmail.com>
-In-Reply-To: 
- <CAOesGMjMcznFAQj0L-=J5+gJ5ENsdejqP2SdYomu=C9bJqG+YQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <robherring2@gmail.com>
+Return-Path: <robherring2@gmail.com>
+Date: Tue, 25 Sep 2018 14:10:47 -0500
+From: Rob Herring <robh@kernel.org>
+To: Edgar Bernardi Righi <edgar.righi@lsitec.org.br>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Daniel Lezcano <daniel.lezcano@linaro.org>, linux@armlinux.org.uk,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Guilherme =?iso-8859-1?B?Ry4gU2lt9WVz?= <guilherme.simoes@lsitec.org.br>,
+	Jon maddog Hall <jon.maddog.hall@gmail.com>, mkzuffo@lsi.usp.br,
+	Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+	sboyd@kernel.org, mark.rutland@arm.com, linux@cubietech.com,
+	support@cubietech.com, catalin.marinas@arm.com,
+	Michael Turquette <mturquette@baylibre.com>, will.deacon@arm.com,
+	thomas liau <thomas.liau@actions-semi.com>, darren@cubietech.com,
+	jeff.chen@actions-semi.com, pn@denx.de, mp-cs@actions-semi.com,
+	Laisa Costa - LSI-TEC <laisa.costa@lsitec.org.br>
+Subject: Re: [PATCH v2 01/03] dt-bindings: clock: Add Clock Management Unit
+ for Actions Semi S500 SoC
+Message-ID: <20180925191047.GA14410@bogus>
+References: <CADHB5bBkyE90LVrWjt0ziU+oe=4sc8G_513VGECc++6xQ2ACdA@mail.gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CADHB5bBkyE90LVrWjt0ziU+oe=4sc8G_513VGECc++6xQ2ACdA@mail.gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgT2xvZiwNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBPbG9mIEpv
-aGFuc3NvbiBbbWFpbHRvOm9sb2ZAbGl4b20ubmV0XQ0KPiBTZW50OiBTYXR1cmRheSwgU2VwdGVt
-YmVyIDA4LCAyMDE4IDY6MTUgUE0NCj4gVG86IEpvbGx5IFNoYWggPEpPTExZU0B4aWxpbnguY29t
-Pg0KPiBDYzogYXJkLmJpZXNoZXV2ZWxAbGluYXJvLm9yZzsgSW5nbyBNb2xuYXIgPG1pbmdvQGtl
-cm5lbC5vcmc+OyBHcmVnIEtyb2FoLQ0KPiBIYXJ0bWFuIDxncmVna2hAbGludXhmb3VuZGF0aW9u
-Lm9yZz47IG1hdHRAY29kZWJsdWVwcmludC5jby51azsgU3VkZWVwDQo+IEhvbGxhIDxzdWRlZXAu
-aG9sbGFAYXJtLmNvbT47IGhrYWxsd2VpdDFAZ21haWwuY29tOyBLZWVzIENvb2sNCj4gPGtlZXNj
-b29rQGNocm9taXVtLm9yZz47IERtaXRyeSBUb3Jva2hvdiA8ZG1pdHJ5LnRvcm9raG92QGdtYWls
-LmNvbT47DQo+IE1pY2hhZWwgVHVycXVldHRlIDxtdHVycXVldHRlQGJheWxpYnJlLmNvbT47IFN0
-ZXBoZW4gQm95ZA0KPiA8c2JveWRAY29kZWF1cm9yYS5vcmc+OyBNaWNoYWwgU2ltZWsgPG1pY2hh
-bHNAeGlsaW54LmNvbT47IFJvYiBIZXJyaW5nDQo+IDxyb2JoK2R0QGtlcm5lbC5vcmc+OyBNYXJr
-IFJ1dGxhbmQgPG1hcmsucnV0bGFuZEBhcm0uY29tPjsgbGludXgtY2xrDQo+IDxsaW51eC1jbGtA
-dmdlci5rZXJuZWwub3JnPjsgUmFqYW4gVmFqYSA8UkFKQU5WQHhpbGlueC5jb20+OyBMaW51eCBB
-Uk0NCj4gTWFpbGluZyBMaXN0IDxsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmc+
-OyBMaW51eCBLZXJuZWwgTWFpbGluZyBMaXN0DQo+IDxsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwu
-b3JnPjsgRFRNTCA8ZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmc+OyBKb2xseQ0KPiBTaGFoIDxK
-T0xMWVNAeGlsaW54LmNvbT4NCj4gU3ViamVjdDogUmU6IFtQQVRDSCB2MTEgMDgvMTFdIGZpcm13
-YXJlOiB4aWxpbng6IEFkZCBkZWJ1Z2ZzIGZvciBxdWVyeSBkYXRhIEFQSQ0KPiANCj4gSGksDQo+
-IA0KPiBJIG5vdGljZWQgdGhlIGJlbG93IHdoZW4gSSB3YXMgcmV2aWV3aW5nIHRoZSBjb2RlIGZv
-ciBtZXJnZSBpbnRvIGFybS1zb2MuDQo+IFdvdWxkIHlvdSBtaW5kIGZvbGxvd2luZyB1cCB3aXRo
-IGFuIGluY3JlbWVudGFsIHBhdGNoPyBJIGRvbid0IHRoaW5rIHdlIG5lZWQNCj4gdG8gYXNrIE1p
-Y2hhbCB0byByZXNwaW4gZm9yIHRoaXM6DQo+IA0KDQpTdXJlLiBJIHdpbGwgc3VibWl0IGluY3Jl
-bWVudGFsIHBhdGNoZXMgZm9yIHN1Z2dlc3RlZCBjaGFuZ2VzLg0KDQpUaGFua3MsDQpKb2xseSBT
-aGFoDQoNCg0KPiBPbiBGcmksIEF1ZyAzLCAyMDE4IGF0IDEwOjUzIEFNLCBKb2xseSBTaGFoIDxq
-b2xseS5zaGFoQHhpbGlueC5jb20+IHdyb3RlOg0KPiA+IEZyb206IFJhamFuIFZhamEgPHJhamFu
-dkB4aWxpbnguY29tPg0KPiA+DQo+ID4gQWRkIGRlYnVnZnMgZmlsZSB0byBxdWVyeSBwbGF0Zm9y
-bSBzcGVjaWZpYyBkYXRhIGZyb20gZmlybXdhcmUgdXNpbmcNCj4gPiBkZWJ1Z2ZzIGludGVyZmFj
-ZS4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IFJhamFuIFZhamEgPHJhamFudkB4aWxpbnguY29t
-Pg0KPiA+IFNpZ25lZC1vZmYtYnk6IEpvbGx5IFNoYWggPGpvbGx5c0B4aWxpbnguY29tPg0KPiA+
-IC0tLQ0KPiA+ICBkcml2ZXJzL2Zpcm13YXJlL3hpbGlueC96eW5xbXAtZGVidWcuYyB8IDI3DQo+
-ID4gKysrKysrKysrKysrKysrKysrKysrKysrKysrDQo+ID4gIDEgZmlsZSBjaGFuZ2VkLCAyNyBp
-bnNlcnRpb25zKCspDQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9maXJtd2FyZS94aWxp
-bngvenlucW1wLWRlYnVnLmMNCj4gPiBiL2RyaXZlcnMvZmlybXdhcmUveGlsaW54L3p5bnFtcC1k
-ZWJ1Zy5jDQo+ID4gaW5kZXggZmMxMWRiOS4uNDUzMmJkMCAxMDA2NDQNCj4gPiAtLS0gYS9kcml2
-ZXJzL2Zpcm13YXJlL3hpbGlueC96eW5xbXAtZGVidWcuYw0KPiA+ICsrKyBiL2RyaXZlcnMvZmly
-bXdhcmUveGlsaW54L3p5bnFtcC1kZWJ1Zy5jDQo+ID4gQEAgLTMzLDYgKzMzLDcgQEAgc3RhdGlj
-IGNoYXIgZGVidWdmc19idWZbUEFHRV9TSVpFXTsgIHN0YXRpYyBzdHJ1Y3QNCj4gPiBwbV9hcGlf
-aW5mbyBwbV9hcGlfbGlzdFtdID0gew0KPiA+ICAgICAgICAgUE1fQVBJKFBNX0dFVF9BUElfVkVS
-U0lPTiksDQo+ID4gICAgICAgICBQTV9BUEkoUE1fSU9DVEwpLA0KPiA+ICsgICAgICAgUE1fQVBJ
-KFBNX1FVRVJZX0RBVEEpLA0KPiA+ICB9Ow0KPiA+DQo+ID4gIC8qKg0KPiA+IEBAIC0xMDUsNiAr
-MTA2LDMyIEBAIHN0YXRpYyBpbnQgcHJvY2Vzc19hcGlfcmVxdWVzdCh1MzIgcG1faWQsIHU2NA0K
-PiAqcG1fYXBpX2FyZywgdTMyICpwbV9hcGlfcmV0KQ0KPiA+ICAgICAgICAgICAgICAgICAgICAg
-ICAgIHNwcmludGYoZGVidWdmc19idWYsICJJT0NUTCByZXR1cm4gdmFsdWU6ICV1XG4iLA0KPiA+
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcG1fYXBpX3JldFsxXSk7DQo+ID4gICAg
-ICAgICAgICAgICAgIGJyZWFrOw0KPiA+ICsgICAgICAgY2FzZSBQTV9RVUVSWV9EQVRBOg0KPiA+
-ICsgICAgICAgew0KPiA+ICsgICAgICAgICAgICAgICBzdHJ1Y3QgenlucW1wX3BtX3F1ZXJ5X2Rh
-dGEgcWRhdGEgPSB7MH07DQo+ID4gKw0KPiA+ICsgICAgICAgICAgICAgICBxZGF0YS5xaWQgPSBw
-bV9hcGlfYXJnWzBdOw0KPiA+ICsgICAgICAgICAgICAgICBxZGF0YS5hcmcxID0gcG1fYXBpX2Fy
-Z1sxXTsNCj4gPiArICAgICAgICAgICAgICAgcWRhdGEuYXJnMiA9IHBtX2FwaV9hcmdbMl07DQo+
-ID4gKyAgICAgICAgICAgICAgIHFkYXRhLmFyZzMgPSBwbV9hcGlfYXJnWzNdOw0KPiANCj4gVGhp
-cyBpcyB1c3VhbGx5IGEgcGF0dGVybiB3ZSB0cnkgdG8gYXZvaWQgKGhhdmluZyBmdWxsIGNvZGUg
-YmxvY2tzIGluIGEgc3dpdGNoDQo+IHN0YXRlbWVudCwgYW5kIGxvY2FsIHZhcmlhYmxlcykuDQo+
-IA0KPiBQbGVhc2UgbW92ZSB0aGUgZGVjbGFyYXRpb24gb2YgcWRhdGEgdG8gdGhlIHRvcCBvZiB0
-aGUgZnVuY3Rpb24gc28geW91IGNhbiBkcm9wDQo+IHRoZSBicmFjZXMuDQo+IA0KPiA+ICsNCj4g
-PiArICAgICAgICAgICAgICAgcmV0ID0gZWVtaV9vcHMtPnF1ZXJ5X2RhdGEocWRhdGEsIHBtX2Fw
-aV9yZXQpOw0KPiA+ICsgICAgICAgICAgICAgICBpZiAocmV0KQ0KPiA+ICsgICAgICAgICAgICAg
-ICAgICAgICAgIGJyZWFrOw0KPiA+ICsNCj4gPiArICAgICAgICAgICAgICAgaWYgKHFkYXRhLnFp
-ZCA9PSBQTV9RSURfQ0xPQ0tfR0VUX05BTUUpDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAg
-c3ByaW50ZihkZWJ1Z2ZzX2J1ZiwgIkNsb2NrIG5hbWUgPSAlc1xuIiwNCj4gPiArICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgIChjaGFyICopcG1fYXBpX3JldCk7DQo+ID4gKyAgICAgICAg
-ICAgICAgIGVsc2UgaWYgKHFkYXRhLnFpZCA9PSBQTV9RSURfQ0xPQ0tfR0VUX0ZJWEVERkFDVE9S
-X1BBUkFNUykNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICBzcHJpbnRmKGRlYnVnZnNfYnVm
-LCAiTXVsdGlwbGllciA9ICVkLCBEaXZpZGVyID0gJWRcbiIsDQo+ID4gKyAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICBwbV9hcGlfcmV0WzFdLCBwbV9hcGlfcmV0WzJdKTsNCj4gPiArICAg
-ICAgICAgICAgICAgZWxzZQ0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIHNwcmludGYoZGVi
-dWdmc19idWYsDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAiZGF0YVswXSA9
-IDB4JTA4eFxuZGF0YVsxXSA9IDB4JTA4eFxuIGRhdGFbMl0gPQ0KPiAweCUwOHhcbmRhdGFbM10g
-PSAweCUwOHhcbiIsDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBwbV9hcGlf
-cmV0WzBdLCBwbV9hcGlfcmV0WzFdLA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgcG1fYXBpX3JldFsyXSwgcG1fYXBpX3JldFszXSk7DQo+IA0KPiBJZiB5b3UgYW50aWNpcGF0
-ZSBtb3JlIHFpZHMgaGVyZSBsYXRlciwgYSBzd2l0Y2ggY291bGQgYmUgbmljZXIgdGhhbiBhIHNl
-cXVlbmNlIG9mDQo+IGlmL2Vsc2UuDQo+IA0KPiANCj4gDQo+IC1PbG9mDQo=
+On Tue, Sep 04, 2018 at 12:36:36PM -0300, Edgar Bernardi Righi wrote:
+> Add Clock Management Unit for Actions Semi S500 SoC. Dt-Bindings
+> constants added.
+> Tested on a Lemaker Guitar board.
+> 
+> Signed-off-by: Edgar Bernardi Righi <edgar.righi@lsitec.org.br>
+> 
+> diff --git a/include/dt-bindings/clock/actions,s500-cmu.h
+> b/include/dt-bindings/clock/actions,s500-cmu.h
+> new file mode 100644
+> index 000000000000..34e5849ffcf1
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/actions,s500-cmu.h
+> @@ -0,0 +1,78 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+
+Headers should be /* */ style comments.
+
+Otherwise,
+
+Reviewed-by: Rob Herring <robh@kernel.org>
+
+> +//
+> +// Device Tree binding constants for Actions Semi S500 Clock Management Unit
+> +//
+> +// Copyright (c) 2014 Actions Semi Inc.
+> +// Copyright (c) 2018 Linaro Ltd.
+> +// Copyright (c) 2018 LSI-TEC - Caninos Loucos
