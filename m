@@ -1,76 +1,120 @@
-Return-Path: <jagan@amarulasolutions.com>
-Return-Path: <jagan@amarulasolutions.com>
-From: Jagan Teki <jagan@amarulasolutions.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Icenowy Zheng <icenowy@aosc.io>,
-	Jernej Skrabec <jernej.skrabec@siol.net>,
-	Vasily Khoruzhick <anarsoul@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Cc: Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH 04/12] drm/sun4i: sun6i_mipi_dsi: Enable missing DSI bus clock
-Date: Thu, 27 Sep 2018 17:18:42 +0530
-Message-Id: <20180927114850.24565-5-jagan@amarulasolutions.com>
-In-Reply-To: <20180927114850.24565-1-jagan@amarulasolutions.com>
-References: <20180927114850.24565-1-jagan@amarulasolutions.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:17207 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728829AbeIYS6t (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Sep 2018 14:58:49 -0400
+Date: Tue, 25 Sep 2018 15:51:17 +0300
+From: Peter De Schrijver <pdeschrijver@nvidia.com>
+To: Rob Herring <robh@kernel.org>
+CC: <vkuruturi@nvidia.com>, <linux-clk@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <devicetree@vger.kernel.org>,
+        <daniel@octaforge.org>, <a.heider@gmail.com>, <swtcr0@gmail.com>
+Subject: Re: [RFC 14/14] dt-bindings: tegra: Add Tegra210 EMC binding
+Message-ID: <20180925125117.GA30156@tbergstrom-lnx.Nvidia.com>
+References: <1536955389-30442-1-git-send-email-pdeschrijver@nvidia.com>
+ <1536955389-30442-15-git-send-email-pdeschrijver@nvidia.com>
+ <5baa1ae9.1c69fb81.1ab9.1805@mx.google.com>
+ <20180925121107.GJ7636@tbergstrom-lnx.Nvidia.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20180925121107.GJ7636@tbergstrom-lnx.Nvidia.com>
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-DSI bus_clk is already available in sun6i_dsi but missed to
-get the clk and process for enable/disable.
 
-This patch add support for it.
+Corrected the address of linux-clk in the CC line.
 
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
----
- drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Peter.
 
-diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-index 8e9c76febca2..156b371243c6 100644
---- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-+++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-@@ -1004,6 +1004,12 @@ static int sun6i_dsi_probe(struct platform_device *pdev)
- 		return PTR_ERR(dsi->reset);
- 	}
- 
-+	dsi->bus_clk = devm_clk_get(dev, "bus");
-+	if (IS_ERR(dsi->bus_clk)) {
-+		dev_err(dev, "Couldn't get the DSI bus clock\n");
-+		return PTR_ERR(dsi->bus_clk);
-+	}
-+
- 	if (dsi->variant->has_mod_clk) {
- 		dsi->mod_clk = devm_clk_get(dev, "mod");
- 		if (IS_ERR(dsi->mod_clk)) {
-@@ -1012,6 +1018,7 @@ static int sun6i_dsi_probe(struct platform_device *pdev)
- 		}
- 	}
- 
-+	clk_prepare_enable(dsi->bus_clk);
- 	/*
- 	 * In order to operate properly, that clock seems to be always
- 	 * set to 297MHz.
-@@ -1065,6 +1072,7 @@ static int sun6i_dsi_remove(struct platform_device *pdev)
- 	sun6i_dphy_remove(dsi);
- 	if (dsi->variant->has_mod_clk)
- 		clk_rate_exclusive_put(dsi->mod_clk);
-+	clk_disable_unprepare(dsi->bus_clk);
- 
- 	return 0;
- }
--- 
-2.18.0.321.gffc6fa0e3
+On Tue, Sep 25, 2018 at 03:11:07PM +0300, Peter De Schrijver wrote:
+> On Mon, Sep 24, 2018 at 02:04:24PM -0700, Rob Herring wrote:
+> > On Fri, Sep 14, 2018 at 11:03:09PM +0300, Peter De Schrijver wrote:
+> > > Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> > 
+> > Needs a commit msg.
+> > 
+> > > ---
+> > >  .../memory-controllers/nvidia,tegra210-emc.txt     | 448 +++++++++++++++++++++
+> > >  1 file changed, 448 insertions(+)
+> > >  create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt
+> > > 
+> > > diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt
+> > > new file mode 100644
+> > > index 0000000..1c52f47
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.txt
+> > > @@ -0,0 +1,448 @@
+> > > +NVIDIA Tegra210 SoC EMC (external memory controller)
+> > > +====================================================
+> > > +
+> > > +Required properties :
+> > > +- compatible : Should be "nvidia,tegra21-emc", "nvidia,tegra124-emc".
+> > > +- reg : physical base address and length of the controller's registers.
+> > > +- nvidia,memory-controller : phandle of the MC driver.
+> > 
+> > Huh? What is this block then?
+> > 
+> 
+> This is the EMC. The EMC handles the interface with the external DRAM chips.
+> The MC aggregates and schedules requests to the EMC. It also handles address
+> translation. See figure 33 of the TRM.
+> 
+> > > +- clocks : phandles of the possible source clocks
+> > > +- clock-names : names of the possible source clocks
+> > > +
+> > > +The node should contain a "emc-table" subnode for each supported RAM type
+> > > +(see field RAM_CODE in register PMC_STRAPPING_OPT_A), with its unit address
+> > > +being its RAM_CODE.
+> > 
+> > Unit address is based on reg property.
+> > 
+> > > +
+> > > +Required properties for "emc-table" nodes :
+> > > +- nvidia,ram-code : Should contain the value of RAM_CODE this timing set is
+> > > +used for.
+> > > +
+> > > +Each "emc-table" node should contain a "emc-table" subnode for every supported
+> > > +EMC clock rate. The "emc-table" subnodes should have the clock rate in kHz as
+> > > +their unit address.
+> > > +
+> > > +Required properties for "emc-table" nodes :
+> > 
+> > Which emc-table nodes, the child or grand-child nodes?
+> > 
+> 
+> The child "emc-table" node.
+> 
+> > > +- compatible  "nvidia,tegra21-emc-table", "nvidia,tegra210-emc-table"
+> > 
+> > > +- nvidia,revision : revision of the parameter set used for this node. All
+> > > +                    nodes in the same "emc-table" should have the same revision
+> > > +- clock-frequency : frequency in kHz
+> > > +- nvidia,emc-min-mv : minimum voltage for this OPP
+> > > +- nvidia,gk20a-min-mv : minimum GPU voltage for this OPP
+> > > +- nvidia,source : clock source to be used for this OPP
+> > 
+> > Is this memory timings/settings or OPPs? We have a binding for OPPs 
+> > already.
+> > 
+> 
+> This is memory timings.
+> 
+> > > +- nvidia,src-sel-reg : value of EMC CAR register to be used for this OPP
+> > > +- nvidia,needs-training : 1 if the OPP needs training at boot, 0 otherwise
+> > > +- nvidia,trained : 1 if initial training has been done by firmware, 0 otherwise
+> > > +- nvidia,periodic_training : 1 if the OPP needs periodic training, 0 otherwise
+> > > +- nvidia,trained_dram_clktree_c0d0u0 : training data word
+> > > +- nvidia,trained_dram_clktree_c0d0u1 : training data word
+> > 
+> > [...]
+> > 
+> > This is a huge list of properties. For all the things that are memory 
+> > timings, is there really value to defining a property for each setting? 
+> > Perhaps you should just define your own format and either make it a 
+> > separate firmware file or include that file in the dtb.
+> 
+> If it's a binary structure, how would this be passed given the bootloader has
+> to fill in the training information?
+> 
+> Peter.
