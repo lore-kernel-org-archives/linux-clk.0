@@ -1,420 +1,189 @@
-Return-Path: <jagan@amarulasolutions.com>
-Return-Path: <jagan@amarulasolutions.com>
-From: Jagan Teki <jagan@amarulasolutions.com>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Icenowy Zheng <icenowy@aosc.io>,
-	Jernej Skrabec <jernej.skrabec@siol.net>,
-	Vasily Khoruzhick <anarsoul@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>,
-	David Airlie <airlied@linux.ie>,
-	dri-devel@lists.freedesktop.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@googlegroups.com
-Cc: Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH 10/12] drm/panel: Add Bananapi S070WV20-CT16 MIPI-DSI panel driver
-Date: Thu, 27 Sep 2018 17:18:48 +0530
-Message-Id: <20180927114850.24565-11-jagan@amarulasolutions.com>
-In-Reply-To: <20180927114850.24565-1-jagan@amarulasolutions.com>
-References: <20180927114850.24565-1-jagan@amarulasolutions.com>
+Return-Path: <grahamr@codeaurora.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Date: Tue, 25 Sep 2018 14:26:25 -0700
+From: grahamr@codeaurora.org
+To: Michael Turquette <mturquette@baylibre.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Peter De Schrijver
+ <pdeschrijver@nvidia.com>, Stephen Boyd <sboyd@kernel.org>, Viresh Kumar
+ <viresh.kumar@linaro.org>, linux-clk <linux-clk@vger.kernel.org>, Linux PM
+ <linux-pm@vger.kernel.org>, Doug Anderson <dianders@chromium.org>, Taniya
+ Das <tdas@codeaurora.org>, Rajendra Nayak <rnayak@codeaurora.org>, Amit
+ Nischal <anischal@codeaurora.org>, Vincent Guittot
+ <vincent.guittot@linaro.org>, Amit Kucheria <amit.kucheria@linaro.org>,
+ linux-clk-owner@vger.kernel.org
+Subject: Re: [RFD] Voltage dependencies for clocks (DVFS)
+In-Reply-To: <20180918230023.67076.42969@harbor.lan>
+References: <9439bd29e3ccd5424a8e9b464c8c7bd9@codeaurora.org>
+ <CAPDyKFo-Z=H2mJXm7mN0Mt=iRzOaEuJSXc2gdE4i5NEfZ_OM6A@mail.gmail.com>
+ <153210674909.48062.14786835684020975508@swboyd.mtv.corp.google.com>
+ <20180723082641.GJ1636@tbergstrom-lnx.Nvidia.com>
+ <153247347784.48062.15923823598346148594@swboyd.mtv.corp.google.com>
+ <20180725054400.96956.13278@harbor.lan>
+ <20180725112702.GN1636@tbergstrom-lnx.Nvidia.com>
+ <CAPDyKFqHNOc-KHcA-LGpyScZ54rsa-FWgJihStgW6sPmXgw07A@mail.gmail.com>
+ <83d6a10252e7238f326e378957f2ff70@codeaurora.org>
+ <CAPDyKFrthH5djDN=Ves0VK4GpSVWQrerqc-JC6EAkJz4U_nGQw@mail.gmail.com>
+ <20180918230023.67076.42969@harbor.lan>
+Message-ID: <8495bbcc9fcdafde536e61459f2cb814@codeaurora.org>
 List-ID: <linux-clk.vger.kernel.org>
 
-Bananapi S070WV20-CT16 is 800x480, 4-lane MIPI-DSI panel which
-can be used to connect via BPI-M64 board, so add a driver for it.
+On 2018-09-18 16:00, Michael Turquette wrote:
+> Quoting Ulf Hansson (2018-08-23 06:20:11)
+>> On 31 July 2018 at 22:02,  <grahamr@codeaurora.org> wrote:
+>> > I have two significant concerns with using a wrapper framework to support
+>> > DVFS.  The first may be Qualcomm-specific, and more of a practical concern
+>> > rather than a principled one.  We (clock driver owners) get
+>> > voltage/frequency operating points from the clock controller designers in a
+>> > single data-set, it is not information that is provided to or coming from
+>> > the clock consumer hardware or software teams.  Tracking, updating, and
+>> > debugging frequency/voltage mismatches falls completely into the clock team,
+>> > so moving the responsibility of handling the relationship in code to the
+>> > consumer would be a disaster (SDM845 has almost 200 clock domains and over
+>> > 800 clock branches - not all controlled by Linux but a large proportion
+>> > are).  It would mean all clock consumers using any clk_set_rate or
+>> > clk_enable APIs would need to make the appropriate voltage requests as well
+>> > - and even if they could look up the required voltage based on frequency
+>> > from some central location (which I expect would be delivered and maintained
+>> > by the clock driver team) the chance that everyone would do that correctly
+>> > is, frankly, zero.  The types of problems that arise from under-volting a
+>> > clock generator or consumer are very hard to debug (since it can essentially
+>> > result in random behavior).
+>> 
+>> Okay, I see.
+>> 
+>> Wouldn't a nice script that does a search/replace work out? :-)
+>> 
+>> >
+>> > My second concern is that we do have voltage requirements coming from the
+>> > clock controller itself, not related to the clock consumer.  The clock
+>> > hardware components themselves (PLLs, muxes, etc) require voltage levels
+>> > that may differ from that of the final consumer of the output clock.  We
+>> > could hack all these requirements into the frequency/voltage tuple table
+>> > that consumers look up, but at that point we have diverged fairly
+>> > dramatically from Stephen's principle that the clock framework should not
+>> > directly require any voltage - fundamentally they do (at least ours do).
+>> 
+>> This changes my view, as I didn't know about these kind of cases.
+>> 
+>> First, it seems like you need to associate a struct device with the
+>> clock controller, such that it can be attached to its corresponding PM
+>> domain (genpd). Of course, then you also needs to deploy runtime PM
+>> support for the clock driver for this clock controller device. Do note
+>> that runtime PM is already supported by the clock core, so should be
+>> trivial. Why, because this is needed to properly allow genpd to
+>> aggregates the votes for the PM domain(s), in case there are other
+>> devices in the same PM domain (or if there are dependencies to
+>> subdomains).
+> 
+> Your struct device can be considered as Done. Stephen and I have been
+> forcing clock driver authors to write proper platform drivers for a
+> while now.
+> 
+>> 
+>> Also, if I am not mistaken, the runtime PM enablement is something
+>> that is already being used (or at least tried out) for some Exynos
+>> clock drivers. I recall there were some discussions around locking
+>> issues around the runtime PM support in the clock core. Let me see if
+>> can search the mail archive to see if I find out if/what went wrong, I
+>> will come back to this.
+> 
+> This was mostly related to idle power management issues, but yes there
+> is some basic runtime pm awareness in the clock framework.
+> 
+>> 
+>> Anyway, in regards to control the performance state for these clock
+>> controller devices, to me it seems like there are no other way, but
+>> explicitly allow clock drivers to call an "OPP API" to request a
+>> performance state. Simply, because it's the clock driver that needs
+>> the performance state for its device. Whether the "OPP API" is the
+>> new, dev_pm_genpd_set_performance_state() or something not even
+>> invented yet, is another question.
+> 
+> I completely agree, with the exception that I don't think it will be an
+> "OPP API" but instead I hope it will be some runtime pm performance 
+> api.
 
-The same panel PCB comes with parallel RBG which is supported via
-panel-simple driver with "bananapi,s070wv20-ct16" compatible.
+If we allow the clock framework to use runtime pm to request performance 
+levels for its own voltage requirements, what is the real difference in 
+having it cover all voltage requirements based on the chosen clock 
+frequency/state (because on/off affect the voltage requirement as well 
+as the rate)?  From an implementation and data structure point of view 
+there is no difference at all - we will need to track a voltage 
+requirement per clock operating point for the clock controller needs.  
+Including the consumer requirements as well adds nothing and removes the 
+need for any consumer changes to themselves use runtime pm.
+I get the principle of having the consumer deal with their own specific 
+needs, but the consumers in the SOCs I've seen do not know what their 
+voltage requirements are - it's data managed by the clock provider.  It 
+seems once the door is open to have the clock driver use runtime pm, why 
+not allow SOCs with that kind of data management policy to build in the 
+consumer requirements that way as well since it is zero extra work?
 
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
----
- drivers/gpu/drm/panel/Kconfig                 |   9 +
- drivers/gpu/drm/panel/Makefile                |   1 +
- .../gpu/drm/panel/panel-bananapi-s070wv20.c   | 336 ++++++++++++++++++
- 3 files changed, 346 insertions(+)
- create mode 100644 drivers/gpu/drm/panel/panel-bananapi-s070wv20.c
+Graham
 
-diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
-index 6020c30a33b3..d25960a63b10 100644
---- a/drivers/gpu/drm/panel/Kconfig
-+++ b/drivers/gpu/drm/panel/Kconfig
-@@ -17,6 +17,15 @@ config DRM_PANEL_ARM_VERSATILE
- 	  reference designs. The panel is detected using special registers
- 	  in the Versatile family syscon registers.
- 
-+config DRM_PANEL_BANANAPI_S070WV20
-+	tristate "Bananapi S070WV20-CT16 MIPI-DSI panel driver"
-+	depends on OF
-+	depends on DRM_MIPI_DSI
-+	depends on BACKLIGHT_CLASS_DEVICE
-+	help
-+	  Say Y if you want to enable support for panels based on the
-+	  Bananapi S070WV20-CT16 MIPI-DSI controller.
-+
- config DRM_PANEL_LVDS
- 	tristate "Generic LVDS panel driver"
- 	depends on OF
-diff --git a/drivers/gpu/drm/panel/Makefile b/drivers/gpu/drm/panel/Makefile
-index 5ccaaa9d13af..345b6475d3a4 100644
---- a/drivers/gpu/drm/panel/Makefile
-+++ b/drivers/gpu/drm/panel/Makefile
-@@ -1,5 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
- obj-$(CONFIG_DRM_PANEL_ARM_VERSATILE) += panel-arm-versatile.o
-+obj-$(CONFIG_DRM_PANEL_BANANAPI_S070WV20) += panel-bananapi-s070wv20.o
- obj-$(CONFIG_DRM_PANEL_LVDS) += panel-lvds.o
- obj-$(CONFIG_DRM_PANEL_SIMPLE) += panel-simple.o
- obj-$(CONFIG_DRM_PANEL_ILITEK_IL9322) += panel-ilitek-ili9322.o
-diff --git a/drivers/gpu/drm/panel/panel-bananapi-s070wv20.c b/drivers/gpu/drm/panel/panel-bananapi-s070wv20.c
-new file mode 100644
-index 000000000000..6c9adbec6dd8
---- /dev/null
-+++ b/drivers/gpu/drm/panel/panel-bananapi-s070wv20.c
-@@ -0,0 +1,336 @@
-+// SPDX-License-Identifier: (GPL-2.0+ or MIT)
-+/*
-+ * Copyright (C) 2018 Amarula Solutions
-+ * Author: Jagan Teki <jagan@amarulasolutions.com>
-+ */
-+
-+#include <linux/backlight.h>
-+#include <linux/delay.h>
-+#include <linux/device.h>
-+#include <linux/err.h>
-+#include <linux/errno.h>
-+#include <linux/fb.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+
-+#include <linux/gpio/consumer.h>
-+#include <linux/regulator/consumer.h>
-+
-+#include <drm/drm_mipi_dsi.h>
-+#include <drm/drm_modes.h>
-+#include <drm/drm_panel.h>
-+
-+#include <video/mipi_display.h>
-+
-+struct s070wv20 {
-+	struct drm_panel	panel;
-+	struct mipi_dsi_device	*dsi;
-+
-+	struct backlight_device	*backlight;
-+	struct regulator	*dvdd;
-+	struct regulator	*avdd;
-+	struct gpio_desc	*reset;
-+
-+	bool			is_enabled;
-+	bool			is_prepared;
-+};
-+
-+static inline struct s070wv20 *panel_to_s070wv20(struct drm_panel *panel)
-+{
-+	return container_of(panel, struct s070wv20, panel);
-+}
-+
-+struct s070wv20_init_cmd {
-+	size_t len;
-+	const char *data;
-+};
-+
-+#define S070WV20_INIT_CMD(...) { \
-+	.len = sizeof((char[]){__VA_ARGS__}), \
-+	.data = (char[]){__VA_ARGS__} }
-+
-+static const struct s070wv20_init_cmd s070wv20_init_cmds[] = {
-+	S070WV20_INIT_CMD(0x7A, 0xC1),
-+	S070WV20_INIT_CMD(0x20, 0x20),
-+	S070WV20_INIT_CMD(0x21, 0xE0),
-+	S070WV20_INIT_CMD(0x22, 0x13),
-+	S070WV20_INIT_CMD(0x23, 0x28),
-+	S070WV20_INIT_CMD(0x24, 0x30),
-+	S070WV20_INIT_CMD(0x25, 0x28),
-+	S070WV20_INIT_CMD(0x26, 0x00),
-+	S070WV20_INIT_CMD(0x27, 0x0D),
-+	S070WV20_INIT_CMD(0x28, 0x03),
-+	S070WV20_INIT_CMD(0x29, 0x1D),
-+	S070WV20_INIT_CMD(0x34, 0x80),
-+	S070WV20_INIT_CMD(0x36, 0x28),
-+	S070WV20_INIT_CMD(0xB5, 0xA0),
-+	S070WV20_INIT_CMD(0x5C, 0xFF),
-+	S070WV20_INIT_CMD(0x2A, 0x01),
-+	S070WV20_INIT_CMD(0x56, 0x92),
-+	S070WV20_INIT_CMD(0x6B, 0x71),
-+	S070WV20_INIT_CMD(0x69, 0x2B),
-+	S070WV20_INIT_CMD(0x10, 0x40),
-+	S070WV20_INIT_CMD(0x11, 0x98),
-+	S070WV20_INIT_CMD(0xB6, 0x20),
-+	S070WV20_INIT_CMD(0x51, 0x20),
-+	S070WV20_INIT_CMD(0x09, 0x10),
-+};
-+
-+static int s070wv20_prepare(struct drm_panel *panel)
-+{
-+	struct s070wv20 *ctx = panel_to_s070wv20(panel);
-+	struct mipi_dsi_device *dsi = ctx->dsi;
-+	unsigned int i;
-+	int ret;
-+
-+	if (ctx->is_prepared)
-+		return 0;
-+
-+	msleep(50);
-+
-+	gpiod_set_value(ctx->reset, 1);
-+	msleep(50);
-+
-+	gpiod_set_value(ctx->reset, 0);
-+	msleep(50);
-+
-+	gpiod_set_value(ctx->reset, 1);
-+	msleep(20);
-+
-+	ret = mipi_dsi_dcs_exit_sleep_mode(dsi);
-+	if (ret < 0) {
-+		dev_err(panel->dev, "failed to exit sleep mode: %d\n", ret);
-+		return ret;
-+	}
-+
-+	msleep(120);
-+
-+	for (i = 0; i < ARRAY_SIZE(s070wv20_init_cmds); i++) {
-+		const struct s070wv20_init_cmd *cmd = &s070wv20_init_cmds[i];
-+
-+		ret = mipi_dsi_generic_write(dsi, cmd->data, cmd->len);
-+		if (ret < 0)
-+			return ret;
-+
-+		msleep(10);
-+	}
-+
-+	ret = mipi_dsi_dcs_set_display_on(dsi);
-+	if (ret < 0) {
-+		dev_err(panel->dev, "failed to set display on: %d\n", ret);
-+		return ret;
-+	}
-+
-+	ctx->is_prepared = true;
-+
-+	return 0;
-+}
-+
-+static int s070wv20_enable(struct drm_panel *panel)
-+{
-+	struct s070wv20 *ctx = panel_to_s070wv20(panel);
-+
-+	if (ctx->is_enabled)
-+		return 0;
-+
-+	msleep(120);
-+
-+	backlight_enable(ctx->backlight);
-+	ctx->is_enabled = true;
-+
-+	return 0;
-+}
-+
-+static int s070wv20_disable(struct drm_panel *panel)
-+{
-+	struct s070wv20 *ctx = panel_to_s070wv20(panel);
-+
-+	if (!ctx->is_enabled)
-+		return 0;
-+
-+	backlight_disable(ctx->backlight);
-+	ctx->is_enabled = false;
-+
-+	return 0;
-+}
-+
-+static int s070wv20_unprepare(struct drm_panel *panel)
-+{
-+	struct s070wv20 *ctx = panel_to_s070wv20(panel);
-+	int ret;
-+
-+	if (!ctx->is_prepared)
-+		return 0;
-+
-+	ret = mipi_dsi_dcs_set_display_off(ctx->dsi);
-+	if (ret < 0)
-+		dev_err(panel->dev, "failed to set display off: %d\n", ret);
-+
-+	ret = mipi_dsi_dcs_enter_sleep_mode(ctx->dsi);
-+	if (ret < 0)
-+		dev_err(panel->dev, "failed to enter sleep mode: %d\n", ret);
-+
-+	msleep(100);
-+
-+	regulator_disable(ctx->avdd);
-+
-+	regulator_disable(ctx->dvdd);
-+
-+	gpiod_set_value(ctx->reset, 0);
-+
-+	gpiod_set_value(ctx->reset, 1);
-+
-+	gpiod_set_value(ctx->reset, 0);
-+
-+	ctx->is_prepared = false;
-+
-+	return 0;
-+}
-+
-+static const struct drm_display_mode s070wv20_default_mode = {
-+	.clock = 30000,
-+	.vrefresh = 60,
-+
-+	.hdisplay = 800,
-+	.hsync_start = 800 + 40,
-+	.hsync_end = 800 + 40 + 48,
-+	.htotal = 800 + 40 + 48 + 40,
-+
-+	.vdisplay = 480,
-+	.vsync_start = 480 + 13,
-+	.vsync_end = 480 + 13 + 3,
-+	.vtotal = 480 + 13 + 3 + 29,
-+};
-+
-+static int s070wv20_get_modes(struct drm_panel *panel)
-+{
-+	struct drm_connector *connector = panel->connector;
-+	struct s070wv20 *ctx = panel_to_s070wv20(panel);
-+	struct drm_display_mode *mode;
-+
-+	mode = drm_mode_duplicate(panel->drm, &s070wv20_default_mode);
-+	if (!mode) {
-+		dev_err(&ctx->dsi->dev, "failed to add mode %ux%ux@%u\n",
-+			s070wv20_default_mode.hdisplay,
-+			s070wv20_default_mode.vdisplay,
-+			s070wv20_default_mode.vrefresh);
-+		return -ENOMEM;
-+	}
-+
-+	drm_mode_set_name(mode);
-+
-+	mode->type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED;
-+	drm_mode_probed_add(connector, mode);
-+
-+	panel->connector->display_info.width_mm = 86;
-+	panel->connector->display_info.height_mm = 154;
-+
-+	return 1;
-+}
-+
-+static const struct drm_panel_funcs s070wv20_funcs = {
-+	.disable = s070wv20_disable,
-+	.unprepare = s070wv20_unprepare,
-+	.prepare = s070wv20_prepare,
-+	.enable = s070wv20_enable,
-+	.get_modes = s070wv20_get_modes,
-+};
-+
-+static int s070wv20_dsi_probe(struct mipi_dsi_device *dsi)
-+{
-+	struct device_node *np;
-+	struct s070wv20 *ctx;
-+	int ret;
-+
-+	ctx = devm_kzalloc(&dsi->dev, sizeof(*ctx), GFP_KERNEL);
-+	if (!ctx)
-+		return -ENOMEM;
-+	mipi_dsi_set_drvdata(dsi, ctx);
-+	ctx->dsi = dsi;
-+
-+	drm_panel_init(&ctx->panel);
-+	ctx->panel.dev = &dsi->dev;
-+	ctx->panel.funcs = &s070wv20_funcs;
-+
-+	ctx->dvdd = devm_regulator_get(&dsi->dev, "dvdd");
-+	if (IS_ERR(ctx->dvdd)) {
-+		dev_err(&dsi->dev, "Couldn't get dvdd regulator\n");
-+		return PTR_ERR(ctx->dvdd);
-+	}
-+
-+	ctx->avdd = devm_regulator_get(&dsi->dev, "avdd");
-+	if (IS_ERR(ctx->avdd)) {
-+		dev_err(&dsi->dev, "Couldn't get avdd regulator\n");
-+		return PTR_ERR(ctx->avdd);
-+	}
-+
-+	ret = regulator_enable(ctx->dvdd);
-+	if (ret)
-+		return ret;
-+
-+	msleep(5);
-+
-+	ret = regulator_enable(ctx->avdd);
-+	if (ret)
-+		return ret;
-+
-+	msleep(5);
-+
-+	ctx->reset = devm_gpiod_get(&dsi->dev, "reset", GPIOD_OUT_LOW);
-+	if (IS_ERR(ctx->reset)) {
-+		dev_err(&dsi->dev, "Couldn't get our reset GPIO\n");
-+		return PTR_ERR(ctx->reset);
-+	}
-+
-+	np = of_parse_phandle(dsi->dev.of_node, "backlight", 0);
-+	if (np) {
-+		ctx->backlight = of_find_backlight_by_node(np);
-+		of_node_put(np);
-+
-+		if (!ctx->backlight)
-+			return -EPROBE_DEFER;
-+	}
-+
-+	ret = drm_panel_add(&ctx->panel);
-+	if (ret < 0)
-+		return ret;
-+
-+	dsi->mode_flags = MIPI_DSI_MODE_VIDEO_SYNC_PULSE;
-+	dsi->format = MIPI_DSI_FMT_RGB888;
-+	dsi->lanes = 4;
-+
-+	return mipi_dsi_attach(dsi);
-+}
-+
-+static int s070wv20_dsi_remove(struct mipi_dsi_device *dsi)
-+{
-+	struct s070wv20 *ctx = mipi_dsi_get_drvdata(dsi);
-+
-+	mipi_dsi_detach(dsi);
-+	drm_panel_remove(&ctx->panel);
-+
-+	if (ctx->backlight)
-+		put_device(&ctx->backlight->dev);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id s070wv20_of_match[] = {
-+	{ .compatible = "bananapi,s070wv20-ct16-dsi", },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, s070wv20_of_match);
-+
-+static struct mipi_dsi_driver s070wv20_driver = {
-+	.probe = s070wv20_dsi_probe,
-+	.remove = s070wv20_dsi_remove,
-+	.driver = {
-+		.name = "bananapi-s070wv20-ct16-dsi",
-+		.of_match_table = s070wv20_of_match,
-+	},
-+};
-+module_mipi_dsi_driver(s070wv20_driver);
-+
-+MODULE_AUTHOR("Jagan Teki <jagan@amarulasolutions.com>");
-+MODULE_DESCRIPTION("Bananapi S070WV20-CT16 MIPI-DSI");
-+MODULE_LICENSE("GPL v2");
--- 
-2.18.0.321.gffc6fa0e3
+
+
+
+>> 
+>> My conclusion so far is, that we seems to fall back to a potential
+>> locking problem. In regards to that, I am wondering whether that is
+>> actually more of hypothetical problem than a real problem for your
+>> case.
+> 
+> For reference, this is why we allow reentrancy into the clock 
+> framework.
+> It is common that consumer A calls clk_set_rate to set clock X to a
+> rate, but in order for clock X to acheive that rate the clock provider
+> might need to call clk_set_rate on another clock. We support reentrancy
+> for this type of case.
+> 
+> The problem described by Graham seems analogous. There are times when a
+> performance provider itself will need to adjust it's own performance 
+> (as
+> consumed by some other parent provider). I'm under the impression that
+> runtime pm allows reentrancy and genpd allows for nested genpds, so
+> hopefully this should Just Work.
+> 
+>> 
+>> > Our most recent patch that Taniya posted has gone in the direction similar
+>> > to Tegra - instead of having the framework handle it, we use prepare and
+>> > set_rate hooks to implement voltage (corner) voting in the qcom drivers via
+>> > the new genpd.  This is not fully proven yet but is so far working well and
+>> > will likely be our internal solution going forward if the framework
+>> > consensus is to force consumers to manage their frequency-based voltage
+>> > requirements themselves - I just do not see that as a practical solution for
+>> > a complicated SoC with a large, highly distributed, clock tree.  That being
+>> > said I do see potential future deadlock race conditions between clk and
+>> > genpd which concern me - it remains a downside of that coupling.
+>> >
+>> > Would there be some way to prevent consumers from directly calling
+>> > clk_set_rate or clk_enable and force them to go via another framework for
+>> > these calls?  It would at least prevent people from using the "wrong"
+>> > interface and bypassing voltage requirements.  That of course means having
+>> > to mirror any of the clk APIs that update clock state into genpd/opp, which
+>> > Stephen finds distasteful (and I agree).
+>> 
+>> I am not sure about this. Sound like an awful wrapper API.
+> 
+> Yeah, overloading the prepare callbacks is just a symptom of the 
+> greater
+> problem: we don't have a real DVFS api.
+> 
+> Regards,
+> Mike
+> 
+>> 
+>> However, what Mike seems to express the need for, is a common consumer
+>> OPP API to set a performance state for a device, but also a way to to
+>> allow SoC specific performance state providers to manage the backend
+>> parts of actually changing the performance state.
+>> 
+>> I am wondering whether this could be a way forward, maybe not exactly
+>> what you was looking for, but perhaps it can address your concerns?
+>> 
+>> [...]
+>> 
+>> Kind regards
+>> Uffe
