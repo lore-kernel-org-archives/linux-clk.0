@@ -2,128 +2,307 @@ Return-Path: <SRS0=aw6K=MH=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51E04C43382
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Sep 2018 08:44:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B3D6C43382
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Sep 2018 08:49:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D811E20C0A
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Sep 2018 08:44:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0D082087A
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Sep 2018 08:49:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="YAEaqUNB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D811E20C0A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="NJg48zgt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0D082087A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727507AbeIYOuy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Sep 2018 10:50:54 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:4101 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727308AbeIYOux (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Sep 2018 10:50:53 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5ba9f56b0001>; Tue, 25 Sep 2018 01:44:27 -0700
-Received: from HQMAIL101.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 25 Sep 2018 01:44:25 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 25 Sep 2018 01:44:25 -0700
-Received: from tbergstrom-lnx.Nvidia.com (172.20.13.39) by
- HQMAIL101.nvidia.com (172.20.187.10) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 25 Sep 2018 08:44:25 +0000
-Received: by tbergstrom-lnx.Nvidia.com (Postfix, from userid 1002)
-        id 77EA2F806DD; Tue, 25 Sep 2018 11:44:19 +0300 (EEST)
-Date:   Tue, 25 Sep 2018 11:44:19 +0300
-From:   Peter De Schrijver <pdeschrijver@nvidia.com>
-To:     r yang <decatf@gmail.com>
-CC:     Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] clk: tegra: Return the exact clock rate from
- clk_round_rate
-Message-ID: <20180925084419.GI7636@tbergstrom-lnx.Nvidia.com>
-References: <20180921220149.17136-1-decatf@gmail.com>
- <20180924080803.GF7636@tbergstrom-lnx.Nvidia.com>
- <20180924191804.GA20060@r>
+        id S1728212AbeIYO4X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Sep 2018 10:56:23 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:36967 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726208AbeIYO4X (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Sep 2018 10:56:23 -0400
+Received: by mail-pf1-f193.google.com with SMTP id x26-v6so705934pfn.4
+        for <linux-clk@vger.kernel.org>; Tue, 25 Sep 2018 01:49:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=QA1xJbsShDdVjIaCDPv07Gd9rn3MI9CCJi3SGgUTdD0=;
+        b=NJg48zgtzBwtbc03uXly+7oIV9krSK6iPrXqM5lKQxfkmDGn9TnUgl5MBiH/tqovbk
+         nupVJ5CkqBjwSlkiWqNu2EgNFZNCQYZNxl3ccUikABuNBKhknH4mRlYCqVD0agobn+MZ
+         jux4NtYOcJ0hirWMR1dtnbtvTpqpO6RJa0dO4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=QA1xJbsShDdVjIaCDPv07Gd9rn3MI9CCJi3SGgUTdD0=;
+        b=OyEUXeBI0RbWcwshvt1Ky09mRu9IL0WYr7VlsCU3int+Ejw+/PkxqNDU1j9fPT0VbC
+         p01tJQF3m/FQYniwb6e5o+yys+WAuf9NhKDzor/TBv/NLfGKDAh7AViWLEN4VbHyPcDe
+         735S4Pp8dzLOTm91oYodoPeHqx/bmILKCSWuWAhhT+k81yAIcFclehchO05uMG5QFszY
+         HFlO8KBJ6ZCU6I5GVYkKOIAcwRpHrnQVkoXqBZZP+sXktwyHtKNDZDGJVkbm9YB7Rg+x
+         zk0xoTmHmF2G4wGXfAcEtMwv2/jLu8JwRdcWzu45W/Ta73TpbEBok3Dva4yk73rTivRW
+         o+3w==
+X-Gm-Message-State: ABuFfohqMks4DkDoDD1GRplr2mnW2yoAyiA+tX2rWyvbPktdAK5dJCHw
+        fbv4r7glo13t3rENSmAeGTRp/A==
+X-Google-Smtp-Source: ACcGV606ZonDpIxtCcVeCpRmR09h62ZHojLMi2qsVb+ZdIXhoPbsKYgM1QlXH6k/pQhMgrmRPwc/gw==
+X-Received: by 2002:a62:3545:: with SMTP id c66-v6mr2521408pfa.63.1537865393466;
+        Tue, 25 Sep 2018 01:49:53 -0700 (PDT)
+Received: from localhost.localdomain ([27.7.51.1])
+        by smtp.gmail.com with ESMTPSA id f62-v6sm2184295pfg.74.2018.09.25.01.49.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 25 Sep 2018 01:49:52 -0700 (PDT)
+From:   Jagan Teki <jagan@amarulasolutions.com>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
+Cc:     Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH v5 1/2] arm64: dts: allwinner: a64: Add display pipeline
+Date:   Tue, 25 Sep 2018 14:19:39 +0530
+Message-Id: <20180925084940.27903-1-jagan@amarulasolutions.com>
+X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20180924191804.GA20060@r>
-X-NVConfidentiality: public
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL101.nvidia.com (172.20.187.10)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1537865068; bh=aXsxd+3rtPXr+10I5nifS1fkeWU1s9jaSzVzrg3Jnhk=;
-        h=X-PGP-Universal:Date:From:To:CC:Subject:Message-ID:References:
-         MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
-         X-NVConfidentiality:User-Agent:X-Originating-IP:X-ClientProxiedBy;
-        b=YAEaqUNBYslqOGmfSw46pGXcL/63elCqP9tnw/zz+p91IOO0PyYcLb0VRJZe0ElYg
-         6eMRVoxW7HMGaTvbuNNFgMLNcigr41Cvii9a1u9HeS7LdtyucciT/gAPQe65iuixii
-         cOoTfSd02J9YkfszQUZMU6I3cMWxT0Y0AAN8Bks2yoXx6nu/lsVf0zTJep0NyW9TZB
-         e5xlRCi6/n4wanSq6+gXjl/tLg6yQa0UTi6EEV2tUuHwYRrtFg3FBTRmQhNcbtoXQU
-         kVdOYqvNksz5wxSVFEcLQk/yOQ1YQFLX0xFsdwnoIvZafXHrG8M6KpgzIJO635BWF/
-         WQlSy+Y8yZcig==
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
-Message-ID: <20180925084419.4g4JyJDYV5zR7_NXuzkLvUP3q3tpPONL21A4thPF2vE@z>
+Message-ID: <20180925084939.q_jbmII0OiWWJ6LxJf2x_0FreU_UDzO7d8nmAd6Q-Xw@z>
 
-On Mon, Sep 24, 2018 at 03:18:04PM -0400, r yang wrote:
-> On Mon, Sep 24, 2018 at 11:08:03AM +0300, Peter De Schrijver wrote:
-> > On Fri, Sep 21, 2018 at 06:01:49PM -0400, ryang wrote:
-> > > The current behavior is that clk_round_rate would return the same clock
-> > > rate passed to it for valid PLL configurations. This change will return
-> > > the exact rate the PLL will provide in accordance with clk API.
-> > > 
-> > > Signed-off-by: ryang <decatf@gmail.com>
-> > > ---
-> > >  drivers/clk/tegra/clk-pll.c | 7 ++++++-
-> > >  1 file changed, 6 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-> > > index 17a058c3bbc1..36014a6ec42e 100644
-> > > --- a/drivers/clk/tegra/clk-pll.c
-> > > +++ b/drivers/clk/tegra/clk-pll.c
-> > > @@ -595,7 +595,12 @@ static int _calc_rate(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
-> > >  		return -EINVAL;
-> > >  	}
-> > >  
-> > > -	cfg->output_rate >>= p_div;
-> > > +	if (cfg->m == 0) {
-> > > +		cfg->output_rate = 0;
-> > 
-> > I think a WARN_ON() is appropriate here. the input divider should never be 0.
-> > 
-> > Peter.
-> > 
-> 
-> Should it return -EINVAL (or some error) too? _calc_rate is also in the
-> clk_set_rate code path. I think we want to avoid programming the
-> register to 0 input divider all together?
-> 
+Allwinner A64 have a display pipeline with 2 mixers/TCONs, the first
+TCON is connected to LCD and the second is to HDMI.
 
-Yes. writing 0 to the input divider is usually not allowed. In some cases it's
-equivalent to writing 1, but better not count on that.
+The HDMI controller/PHY pair is similar to the one on H3/H5.
 
-Peter.
+Add all required device tree nodes of the display pipeline, including
+the TCON0 LCD one and the TCON1 HDMI one.
 
-> > > +	} else {
-> > > +		cfg->output_rate = cfg->n * DIV_ROUND_UP(parent_rate, cfg->m);
-> > > +		cfg->output_rate >>= p_div;
-> > > +	}
-> > >  
-> > >  	if (pll->params->pdiv_tohw) {
-> > >  		ret = _p_div_to_hw(hw, 1 << p_div);
-> > > -- 
-> > > 2.17.1
-> > > 
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+[Icenowy: refactor commit message and add 1st pipeline]
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+Changes for v5:
+- Use hdmi_phy compatible for A64
+Changes for v4:
+- Misc fixes
+- Dropped second PLL from HDMI PHY clock
+Changes for v3.1:
+- Refactor commit message to make it more clear.
+- Added first pipeline (mixer0 -> tcon0)
+Changes for v3:
+- Squash all pipeline components in one patch
+- Add status for mixer1 and tcon1
+Changes for v2:
+- Change compatibles and other based on previous patch changes
+
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 166 ++++++++++++++++++
+ 1 file changed, 166 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+index e4cfa8778623..f3a66f888205 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+@@ -121,6 +121,13 @@
+ 		};
+ 	};
+ 
++	de: display-engine {
++		compatible = "allwinner,sun50i-a64-display-engine";
++		allwinner,pipelines = <&mixer0>,
++				      <&mixer1>;
++		status = "disabled";
++	};
++
+ 	osc24M: osc24M_clk {
+ 		#clock-cells = <0>;
+ 		compatible = "fixed-clock";
+@@ -203,6 +210,52 @@
+ 				#clock-cells = <1>;
+ 				#reset-cells = <1>;
+ 			};
++
++			mixer0: mixer@100000 {
++				compatible = "allwinner,sun50i-a64-de2-mixer-0";
++				reg = <0x100000 0x100000>;
++				clocks = <&display_clocks CLK_BUS_MIXER0>,
++					 <&display_clocks CLK_MIXER0>;
++				clock-names = "bus",
++					      "mod";
++				resets = <&display_clocks RST_MIXER0>;
++
++				ports {
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					mixer0_out: port@1 {
++						reg = <1>;
++
++						mixer0_out_tcon0: endpoint {
++							remote-endpoint = <&tcon0_in_mixer0>;
++						};
++					};
++				};
++			};
++
++			mixer1: mixer@200000 {
++				compatible = "allwinner,sun50i-a64-de2-mixer-1";
++				reg = <0x200000 0x100000>;
++				clocks = <&display_clocks CLK_BUS_MIXER1>,
++					 <&display_clocks CLK_MIXER1>;
++				clock-names = "bus",
++					      "mod";
++				resets = <&display_clocks RST_MIXER1>;
++
++				ports {
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					mixer1_out: port@1 {
++						reg = <1>;
++
++						mixer1_out_tcon1: endpoint {
++							remote-endpoint = <&tcon1_in_mixer1>;
++						};
++					};
++				};
++			};
+ 		};
+ 
+ 		syscon: syscon@1c00000 {
+@@ -237,6 +290,75 @@
+ 			#dma-cells = <1>;
+ 		};
+ 
++		tcon0: lcd-controller@1c0c000 {
++			compatible = "allwinner,sun50i-a64-tcon-lcd",
++				     "allwinner,sun8i-a83t-tcon-lcd";
++			reg = <0x01c0c000 0x1000>;
++			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&ccu CLK_BUS_TCON0>, <&ccu CLK_TCON0>;
++			clock-names = "ahb", "tcon-ch0";
++			clock-output-names = "tcon-pixel-clock";
++			resets = <&ccu RST_BUS_TCON0>, <&ccu RST_BUS_LVDS>;
++			reset-names = "lcd", "lvds";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				tcon0_in: port@0 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <0>;
++
++					tcon0_in_mixer0: endpoint@0 {
++						reg = <0>;
++						remote-endpoint = <&mixer0_out_tcon0>;
++					};
++				};
++
++				tcon0_out: port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <1>;
++				};
++			};
++		};
++
++		tcon1: lcd-controller@1c0d000 {
++			compatible = "allwinner,sun50i-a64-tcon-tv",
++				     "allwinner,sun8i-a83t-tcon-tv";
++			reg = <0x01c0d000 0x1000>;
++			interrupts = <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&ccu CLK_BUS_TCON1>, <&ccu CLK_TCON1>;
++			clock-names = "ahb", "tcon-ch1";
++			resets = <&ccu RST_BUS_TCON1>;
++			reset-names = "lcd";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				tcon1_in: port@0 {
++					reg = <0>;
++
++					tcon1_in_mixer1: endpoint {
++						remote-endpoint = <&mixer1_out_tcon1>;
++					};
++				};
++
++				tcon1_out: port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <1>;
++
++					tcon1_out_hdmi: endpoint@1 {
++						reg = <1>;
++						remote-endpoint = <&hdmi_in_tcon1>;
++					};
++				};
++			};
++		};
++
+ 		mmc0: mmc@1c0f000 {
+ 			compatible = "allwinner,sun50i-a64-mmc";
+ 			reg = <0x01c0f000 0x1000>;
+@@ -707,6 +829,50 @@
+ 			status = "disabled";
+ 		};
+ 
++		hdmi: hdmi@1ee0000 {
++			compatible = "allwinner,sun50i-a64-dw-hdmi",
++				     "allwinner,sun8i-a83t-dw-hdmi";
++			reg = <0x01ee0000 0x10000>;
++			reg-io-width = <1>;
++			interrupts = <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&ccu CLK_BUS_HDMI>, <&ccu CLK_HDMI_DDC>,
++				 <&ccu CLK_HDMI>;
++			clock-names = "iahb", "isfr", "tmds";
++			resets = <&ccu RST_BUS_HDMI1>;
++			reset-names = "ctrl";
++			phys = <&hdmi_phy>;
++			phy-names = "hdmi-phy";
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				hdmi_in: port@0 {
++					reg = <0>;
++
++					hdmi_in_tcon1: endpoint {
++						remote-endpoint = <&tcon1_out_hdmi>;
++					};
++				};
++
++				hdmi_out: port@1 {
++					reg = <1>;
++				};
++			};
++		};
++
++		hdmi_phy: hdmi-phy@1ef0000 {
++			compatible = "allwinner,sun50i-a64-hdmi-phy";
++			reg = <0x01ef0000 0x10000>;
++			clocks = <&ccu CLK_BUS_HDMI>, <&ccu CLK_HDMI_DDC>,
++				 <&ccu 7>;
++			clock-names = "bus", "mod", "pll-0";
++			resets = <&ccu RST_BUS_HDMI0>;
++			reset-names = "phy";
++			#phy-cells = <0>;
++		};
++
+ 		rtc: rtc@1f00000 {
+ 			compatible = "allwinner,sun6i-a31-rtc";
+ 			reg = <0x01f00000 0x54>;
+-- 
+2.18.0.321.gffc6fa0e3
+
