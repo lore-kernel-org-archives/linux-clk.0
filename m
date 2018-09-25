@@ -7,43 +7,43 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 649CAC43382
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Sep 2018 16:59:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB155C43382
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Sep 2018 16:59:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10034206B5
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Sep 2018 16:59:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7BA9B206B5
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Sep 2018 16:59:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="kd4pfB4P"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10034206B5
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="SZ6P22hN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BA9B206B5
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727064AbeIYXIL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Sep 2018 19:08:11 -0400
-Received: from mail-eopbgr70052.outbound.protection.outlook.com ([40.107.7.52]:28491
+        id S1727045AbeIYXIU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Sep 2018 19:08:20 -0400
+Received: from mail-eopbgr70075.outbound.protection.outlook.com ([40.107.7.75]:45688
         "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726922AbeIYXIK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 25 Sep 2018 19:08:10 -0400
+        id S1726322AbeIYXIU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 25 Sep 2018 19:08:20 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lmQNfqkRoVm6YWOtUq0KmQtduOwOk4FaMHzr3dgV9vU=;
- b=kd4pfB4P7JvTKIgbBue59mwpMZbrgEjVsdH4u8KkpTb7AjKuym2Bll4vsfCgxMgAvFO0MkX2bANwlfeIw3FFO5lVB0OQU1a3FibSTsP2GVelOyYSgwLuc75RSzAZd85hH5s8xve2HJLN5lKw+rGFi0xmwwgln2dgtjLpmXXmhgM=
+ bh=PEfScXKk89RCcKo+i8Hh2Gf9qME/mFEbiQOPYHd3khs=;
+ b=SZ6P22hN6rlkp+mT1XgNQSIb+L9BpAnVi7ltWopGee660SNzz157jWTvgHA4fWRWTVOKUS7Oh8RvrFv+OePdX0qWWMFcpPyZhwY1o6PuCRr2xOgcnyNqpBecMyi002+8RTw1stzB+LBo8Y5MVfl9cXEpk6bg7lDieBYNSR3FKhQ=
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=aisheng.dong@nxp.com; 
 Received: from shlinux2.ap.freescale.net (119.31.174.66) by
  AM0PR04MB4211.eurprd04.prod.outlook.com (2603:10a6:208:66::21) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1164.22; Tue, 25 Sep 2018 16:59:23 +0000
+ 15.20.1164.22; Tue, 25 Sep 2018 16:59:16 +0000
 From:   Dong Aisheng <aisheng.dong@nxp.com>
 To:     linux-clk@vger.kernel.org
 Cc:     linux-arm-kernel@lists.infradead.org, sboyd@kernel.org,
         mturquette@baylibre.com, shawnguo@kernel.org,
         fabio.estevam@nxp.com, linux-imx@nxp.com, kernel@pengutronix.de,
         Dong Aisheng <aisheng.dong@nxp.com>
-Subject: [PATCH V2 07/11] clk: imx: scu: add scu clock mux
-Date:   Wed, 26 Sep 2018 00:43:53 +0800
-Message-Id: <1537893837-31172-8-git-send-email-aisheng.dong@nxp.com>
+Subject: [PATCH V2 05/11] clk: imx: scu: add scu clock gate
+Date:   Wed, 26 Sep 2018 00:43:51 +0800
+Message-Id: <1537893837-31172-6-git-send-email-aisheng.dong@nxp.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1537893837-31172-1-git-send-email-aisheng.dong@nxp.com>
 References: <1537893837-31172-1-git-send-email-aisheng.dong@nxp.com>
@@ -54,13 +54,13 @@ X-ClientProxiedBy: HK0PR03CA0033.apcprd03.prod.outlook.com
  (2603:1096:203:2f::21) To AM0PR04MB4211.eurprd04.prod.outlook.com
  (2603:10a6:208:66::21)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: d3449ded-7117-4c89-ddce-08d6230840b9
+X-MS-Office365-Filtering-Correlation-Id: 15903eee-b864-401b-4e7d-08d623083c59
 X-MS-Office365-Filtering-HT: Tenant
 X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534165)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB4211;
-X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4211;3:lBmQtYR1mOO5MGgSaTLqp0nhPeM9geiHICT65LngZYDTyzeg02Uau9floEIVNmkBIh7VWzNTQA9dZQF8jLOSJ/FQ8wzwpYr/p59urlvIRQX/BAsRSDZ9EEpTvAMAUGHhKVtS3hftfXr5OxJeOraD+xJyyXzMwUyd1WbcgkbMaY2e5LsSTd0hg/DlfO8rP0TTJKn/2RIEzisGwTUQUefITGrtXbG2NHQm4LKtIwgImw8LkIJaHJ198vFHSVfiYSFf;25:ve0aCPtA9Fp1mNaU8HIGywFSgvZY4q+8tDkpbIuziq0/WEqKteAhdm+aT3t0u/h+peyir9WVv8KLzny8K8UG5JZV+VINHkiWPwDulbQ1ZmmEGv6Csm8izqudQO3wrbEBTHT21B551h+6/1biBXtQuLDngrKbcLkqzElWzz+Jp4kR1NswzxoSVZMM5D3T0VvpNVT+CoCUho/cQJvwvPvfpDvRjrYJdT/+DxA9j8Roc7Yz3LBsaQ2PE1wMcvsH05J8s3WDxtWTvDEXMFl9YXNm7OLKIbES3RigKFHnkUpJA9pJELhjRM41XBcfgUTnrvuLPa6MW5faEHxO0o/ArpFB0w==;31:obfqEivYxLYmSk8Cit0QDuTpqF3n5BINkp8Ji1Ch5ZkGRkLNd0EtAfh+wt5ACR3gYKzW886u3MOso+Lg4pxTyrunLFltFVxDNl1AKRWiySOOJkoA1uGoYZKyWE4ImcHsAVOtetaLSZ1Sh9QkofO9VIfEqn1EOtL9/xpFvm1BNsCGONqePZbIKxAWCJwyeC6ZXTFJHLKysA9vx9EdQB9n0gKDk5qagBdR4K24RQ6dz0I=
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4211;3:dFb8A9jM4RPWIwK+q1f8FKL0fE/ip0Vl25RV6azdcwkF9Iv1Frq60vGyJ+xIrFT9tVIKmZVCcwivqEq3zEgY7BCWf0ymRMqurJKEgAo89dnUD5WAGQTgWRNPzU8AW0KpjiNccx6DhSAF5XZMrUCMhDTlfNrRg/Px9qsexl5d2miCH1qv23f555zaJWdpTbLbdJh5RoTUUZtGCPrNr4CnPi4UoT1Rk2I89kbhEFkj4yIFNQ8+qzqPMOBb3+BQdee2;25:zi6Ylzpi/L/62wQcQFPToZxWCMFclPLbvTXAxs5jpudKBCgNkDl7dxS2vW7q0R1/xXkc1UpYHdkWUeT5NZHZIXbhjYGb2RJxlRZ27t9xYZqPfTnIi67sI8eCfeiSYW6BVZUnoE0u9vXgv/E7hVrGUAjNUtpAmOB0OkumOF4MhZ2WfPrUknkN7k4Zo11fP8O6TmnOy+6XOmODdVJAmqZby4UbTLwoEPJcUhaXux7z9HwKOcbp6uviKW8bRwod3si7RPJQvelOUPYeFpEnseZSR3x0sMDZLqrYG/3c3juKuX0iGIQ60yC3o0dN0FO46zJ38Fhc/xBKqbwQEAG1egftHQ==;31:Xgycd80/Crx1plXDHaRjWF4Q/H+YEjv7oqSNbJI9qaUQmGvJ6hld8WaOkxiawZue0096cwGSC8XYU3FwOXKtG8AsoEVeCYsDmmFJd1IOzqXdrc+/MJxrzOlPryzYefKWOyxE4HEdliaBcrVGFYZ3Yo8czZniX4eZDk+GNZnawjjtlLgju7iqA4Y0UrHgjscXGCxRwMMuiC69XCLs/y59SteMC2FsGRH5bLmbxeiwV24=
 X-MS-TrafficTypeDiagnostic: AM0PR04MB4211:
-X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4211;20:Ll/6aLgk6Jn4rqKcagA2ikrrVC0aB7A8MGCw0nM52qQ/iUNoJ2xxyqbsRnRjC2wEYGooG9EGsTwVm2RNM1WG+kHPCe5gcwVpFBKHZhvDdg71j7Gr/Y1WvtzErGg7rySUGuE1QZxjIrcpwSDk91FgTXLkUN3VWzr5/A6DJ6HeIrcd63e8QsV3YrOX3fpDoJ4PzkZ3Zt3iNlqzoeCFH25WHEHKPA8+vryLdczo6DrxE3eQNHObie2OQEBjiy4Rqlv769RSO8ZLTa+FbnYO6gHy+kvNeVa4QveZLLnxWRF5tL0Nc0lvkBA3J65Id2ema4O7IwnEQmu1MVE6BLqSaL50d78VtqPSIQUxbyIQ/AEZ0WNO3I1fNHw8h0chCFtF/2DiarwSVPgeBIARh1w6DLFVAaeEyVlwqJpodCmLncrPZ6B1gN8mr8ETv++ACzYBONVXO2X1xtdyXJGs7KkI+Ad/Ht3zUBXnCidmQ8KOgS/awpgoLPVIoWW2X5Pekgcz95FW;4:GxesGNhSaMPWtMrTgd+5uk+vtYT0Bt5S5rIrlSOx3aBZKBMsFC0cfnMVSHmSrs84v5kn5PuwPNr2/9WWlNyESYprZga8GkPhkvpLfQF/GZymY4avk7nOI8mNX31ej0C4JWODpptzpL2GnFyKDE4BLypqZ6OLY1lGMuwx2CsOLMD5qZEkmSLLwTQn1Quvo77i0qzWHO8aPo2r1xkJtVb04FORtcXQFkLzX1/EHpRGxORoIWc1FdOU2DIDHOJpJFB5beGs/Fe6rR8OiXA2mW8DpfClrPvgrDYSVkh+YM4S2i1DFh4qUlCGw6drKtYlwjZ6
-X-Microsoft-Antispam-PRVS: <AM0PR04MB4211F36C1301EA4EF68CB56680160@AM0PR04MB4211.eurprd04.prod.outlook.com>
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4211;20:CRZYGqkvdHxDvnOwWlLRx0hd+MYdZFcrj8QXN44jYHcoTR25+9SNGoqXlAYvoVf7NGrIngfSXBmJhzbi638hq/U+GCuI95fkpHvcsnBig9vkV9nedKaAuGLo+FtE5d9QAPudawe19iYwDZfgqmCcGp9B/ewQRaGn4tebhcsUAqjJ/i1fd9kNPd5HM9wbX1PJDzdKElVAyp7HicTlCrP3F+NDPaGW1DAj/gIbWEuHm/63Som1uWGLBtBULUjZ6VsW6D458kSyD4dNgWf4qgShSoJ+4sEbf14kWGYD/qRL+i54hfVTKjHK/iQwVIhNFBeH///QrLrsXRU0ZbaHtZpjGHyg2GhmlALZlcd2R3Rv/nX8OfsZiln7zUYHwhZF89yc08yILS3wn/XlRXyQzwx5Pr/ZuLzoD5mPlEUJ4Y7RkNFH3kmiZAGLXkPSgvHX5aXRzNSeErU5aO7EKu3hZFhe/MLYjNCNKFd1O/z6zFSsVeeLiA4vpEnPeYTt0rKRPV0d;4:3MjnW+LdzQcSPxMv4PxhIC9R0nklaN/T6Lt2kd01vS4BCKicY5jcBfrQKTeF4S4Rc7uwsF8sQNrVKp91q0atn+Fh5fOjmlsRpRt5dU5EXOPyudIoz+YLGuVkdyo58P8mkVV5rCQO4KVFpXYvy6Iv0WF7AYeZa++B7IE3WkA4BKDQir4cYLwLunHnX2ZNdPCyYrLW7Ub6bJS5QIm8bBpQ419TtEE/SnNsJVgU+11zIfU9SFQAypyqPD4g8G9bDPHhFJN2VHN0Xgm5N53cm39VVJ+Q6lYDJsa3A8gznn1u0sfNVHMgOBBi//eOViHgHlft
+X-Microsoft-Antispam-PRVS: <AM0PR04MB421172CE6B67D096C86EE2CF80160@AM0PR04MB4211.eurprd04.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(185117386973197);
 X-MS-Exchange-SenderADCheck: 1
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231355)(944501410)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(149066)(150027)(6041310)(20161123564045)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(201708071742011)(7699051);SRVR:AM0PR04MB4211;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB4211;
@@ -68,36 +68,36 @@ X-Forefront-PRVS: 08062C429B
 X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(136003)(366004)(39860400002)(396003)(346002)(376002)(54534003)(199004)(189003)(478600001)(6486002)(11346002)(446003)(53936002)(6512007)(68736007)(2906002)(48376002)(6116002)(316002)(3846002)(34290500001)(14444005)(106356001)(186003)(16526019)(2361001)(2351001)(26005)(305945005)(7736002)(486006)(36756003)(66066001)(4326008)(47776003)(25786009)(105586002)(6916009)(6666003)(50226002)(97736004)(81156014)(8676002)(16586007)(5660300001)(956004)(52116002)(386003)(86362001)(2616005)(476003)(76176011)(51416003)(6506007)(8936002)(50466002)(81166006);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4211;H:shlinux2.ap.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 Received-SPF: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM0PR04MB4211;23:ZVIpezHtx6mtsYSn10gheaWq2qJlK8bwV4H1h6sdZ?=
- =?us-ascii?Q?gFAb2Qe784Nf3uUQS77xmyEOQ3NkepBMWG/UAKFJc3ZZyjBqzazRYahBtWnk?=
- =?us-ascii?Q?2AXlwS/dqcb3Ey4Aj0MLR36uPcYVXDWj+ksE9qtDzMcPuniFibD3vdgYtHRt?=
- =?us-ascii?Q?oyX3SaDFR7SBXc61izcuiWrDNMT9vMDVJWol31fgtybinvhA2c1mGP42GgHW?=
- =?us-ascii?Q?nR1oDPiQJ6GJgLp/nTR+AUXyxyFwP9YhtPkKWlIYb47knPc5AQsgIbLXLgdp?=
- =?us-ascii?Q?1AA7BJr2VJdwLbWs1tEPYCY/9oQw6YwgpTczK3bikpIzSPcoo2SkDdi0Ofnd?=
- =?us-ascii?Q?4t77b0CfX6XPtXrs/UWeGRO5lXzYy+Af1Wc7sYun+BdJKtEW1r0neJ5du+Bl?=
- =?us-ascii?Q?kQnqCJY9w0C9Py8ijTD65trEBXngym01llw8P0dlOrUUfBxpDtUhTvvdmFh2?=
- =?us-ascii?Q?yl8xcpW8MpUPL1emyOJg3aZuZQR1HmMzjwp5kPCWPeIFuop3mTvhNFVtSJWE?=
- =?us-ascii?Q?C5DtY9ox/k9sv56XOXgW12On11pPFquvHwi6O22Mb8qz5ZB7SLdPBf4OIdie?=
- =?us-ascii?Q?8Ey55PlsFfv8ygHK2C19jqQf45fzJGpewk3rCdYfECEMix+b8gkZ/uMMsmxF?=
- =?us-ascii?Q?c7BgohevRU1lIZ0SseFV15+y/EjLz+plbkQREmSFYsdWx+2QeZkPQvxzo17R?=
- =?us-ascii?Q?eM15a0dv97H0O2GCJHIjvu6RZsKTzqa9PgqrJRZxCGSsPAXMtZXqDTzSzbO8?=
- =?us-ascii?Q?7mwLAoUf7v27AHpF6wAUfge/zLqDosRaMhpKp1OZv5J4a2qb6HOwM0mv/HCW?=
- =?us-ascii?Q?v0MUY7uSjY7J0hDnEc7RgZWG9SczPLR8rjqnWCqrxWkwvLWMVruKpxFHPxVg?=
- =?us-ascii?Q?geiOHP90csz9dJ1+fx26mMYTRvZ0PswL/6tGfkGg3kathL+0ipRXaCKALKgm?=
- =?us-ascii?Q?JTn1PNwRnxtiRvg1Jcg+grQNwWX9AQAHlZ6HK5y3fkL5xLZYa3bj731nGEdU?=
- =?us-ascii?Q?WzYNatd5JM18uivjdAv7xLCGkDDcNImaKfmcoQwWacEBMlM4Fa3n9/qvZETr?=
- =?us-ascii?Q?mvmwSxRIPzb0GyXa/Zl77YYrGFVAb87kun7F8GpbHCxhMsFmlQeyyuCezRJA?=
- =?us-ascii?Q?AfdRQTkdRbncyBqE/0zFPQGrzLbt8juAFZcalAbcRGTlrhFrSeuyTu3CRQ5y?=
- =?us-ascii?Q?Om1l7PsCHSgYKjCsUyJoQlNQ8gYfzCUhiCDIN0X8J3vSNlvc98Fao+/eBse+?=
- =?us-ascii?Q?wXQfcESfb9lO5wgjqMVUa4xyjtZzohnNhuok918?=
-X-Microsoft-Antispam-Message-Info: cTjWDIxh7JnRTLKqTGHsXhfqQbQMxeRDCtkpLeTNBYcoHtG+wkcxz54prxVYLZqb1tO+x7VCgSJCTK22b/wzP7EvPud02djKVhm545s7GuItqbI5f4UKhRosmhn6+WAWc/9RAMxD2kTNVuEyE7G6DGij2roA94pNxArhGWF3//VIa6JwDVQmvSP2kp5Bfv6Fh73JPIOzQ1yS/B7Ba1ix4LTI1/gmamqisy4RtXl6z9FI182o4UIEfBvnUgF+NRJRaoMFzL4nOSmsTqVfz49ppHUYTcmG+KD6mFPUMacdCw4mNPe203xLGhznCkb+mHg6MDd21nkZF8/VUVeJUydBAl9HT9/WEGlwYYV5vW/aMq8=
-X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4211;6:cVVWfMCx7i8JUEG2vlvcoKA4jOYkXsJk9sCpS0F2Ug4Va0dpUYUGg+h7HRtQjw3pYT5w/Bt0sO0cfljgqvS13VoXxhpnj09JRZqNLiEzkW538aIW359nhKaOweaWa9sZZb8vAjDLcbSPB4wSXGErU1eFG3YcSZOSdDrf7gZeZzxufcGvDqkDPFW5qlMDbfZuya8oQT9T0aFgQ6uBi1BqQf3JjOWpz9yeIPQveWiafBBPeugobKEY5DTVoC8qgvoWiUgZ03EfnQE6Xs8KL2x2iTTNOzgA1R/NnV/5AYTiCmf/Hr9cY7QYsd6WKgFfVCziMLhj+HV6dxHG0fJ/B4FfAjfiv7RK5rSyxTak0VTX+FAvGmSKDeBZXmyClVP7SrQY52G8MJraEWUoq5DvtyM9fjGqhfEX0V2xcLDJjovOaDCawP5wKC6pOyjZLFWdUF0Ac5gdrcgJ8rBK1nf4SwlDqg==;5:RuTtp/heeyOOqOY4FvuW3kGbdMeP0D1kSTujmM3q2ZKjrGlyftdQj3HyAebiXDk6KVL7UqUvkVgZc4fpZqBIqiI/1bmZO+usDFJpdxvlFxPFoW0R/lK5eYDIKhO7RD9Nil1pRnxZzJPhGGL1nMkyyId7Pzb+YkJ38G3JUbzl5A8=;7:L4+qYaM026veGwfr2yDyUQMzdDbY52kXR9Z4/0YPdIOYFJa04BDN0aspX/Np9sli4L2WukfHRJ0edDfhmEz4eJj/OqtLY87g/C2+CXsmRAZ/wqWW7sGiHSEWTscin2m4H9GFumIiSgps90N6vlcKerUn+spsn2+BDcseXP7cNPHTZNrHJCUvFW9k1d76cu9qyflrqv3nVKu9QKbhtAUbdlv1J1XqAuGNFohbRseUaS6fpzv8kMCRlNtlOndsZmTQ
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM0PR04MB4211;23:vUfZC+0MrgDkTiPK70URQo2yVW06netSrEQl95kar?=
+ =?us-ascii?Q?ZQjANHN4f1oShrsHqrv5BgP4nlerXFok+OBFP5PZGqIgImHohijPdB166ZeL?=
+ =?us-ascii?Q?0eul8z+s8Pbb1TCKfBSjSJxb3yhG4COk9Tb0ZQvHaH3N9cjN3+QX5ZuEaMzR?=
+ =?us-ascii?Q?sVrjXcf4SLkBWxDvdsNCfP4cYSC+XbzccL//U6UeO16rw5iMZH5r+/DbFEq2?=
+ =?us-ascii?Q?4ZvLrZa8fLju3+KZP5Ts4jUqu0dlKhDL/B/N7Guwsn+qAr0oivxlZVcfdDOT?=
+ =?us-ascii?Q?HkN/5nahaRKUknywcO7BjiwDa0iGWINM/apepJyhzIFngdO2NxEwfd9B3bcA?=
+ =?us-ascii?Q?1Wb5J7bC8PhJ1dMBqAxDO8VM8zUWMnITFh3h92/qUea4ECciMSSwo5WGOKmL?=
+ =?us-ascii?Q?act4R/hgr6obbWVrinx/KD8nRz4oMWb+qJFKd4PgTdgzCUi/0tmcPFWoiPn7?=
+ =?us-ascii?Q?WyTLzpfThc3j4MRb8cUvk1lEPgI7crkCk7ts1qUAOXRz9CzCbKh/vJX1cx4D?=
+ =?us-ascii?Q?bdhv8as+TaPY3t5aPWSHZAqdI3To9b/IHpaXmwgn4fcUksPZEabpd6wpSIt/?=
+ =?us-ascii?Q?3umb48nwJeQiFbFLd6Djhxd5d3UGI3OkgLwaMeadXTPyzCWRU21lNpUShk7F?=
+ =?us-ascii?Q?2hVLKFUB5jbC0s2cTP9cKsocOlLZKgBDVdpLB/an3EfhTLHSJQRiqLd+whgq?=
+ =?us-ascii?Q?uYaC/4Wlpo08JhiV/Pz5VXhQt7HmTclTSqUI91Nmbj2nhFKdPNd3eiveSFC4?=
+ =?us-ascii?Q?NLEusK+WdDBYHGLgdTTjGuBgjG3S4PT7y8xuGMkB7mQS0p1k+0BMKIHegEdD?=
+ =?us-ascii?Q?lBzHvvS1VqJB1/mQewIrUuFqwNvD8tviC8NXgaCs+441Xb/5Q1bDLGffjmJK?=
+ =?us-ascii?Q?VMM6Q6V4DGck8vYIL/DMvRejkCR30mUDMxT8yqjsXs14VQTZzcBjhrzDbOeN?=
+ =?us-ascii?Q?2LP3UYrkPEP12TfIdcp9Ydl//rU0RbLVS9TQf9lve8o6AL5THdselTmpnHVb?=
+ =?us-ascii?Q?Hw7TQAJKzXTqgNWTJogLSvN07gFsyoJts51S5430DGx/zPuSfZBBMJ49x7tP?=
+ =?us-ascii?Q?Q/QdOtVJXTyBQicmj870qCPuFkNuacoWPgBFwkLDV/KYulAnZDUD2vEVW/gV?=
+ =?us-ascii?Q?RHO1p6Yf7cQs9SgkKgJciVmoPgcDv2hgYnRtm7/QBQgkKDqMb2MnrW0dTYLu?=
+ =?us-ascii?Q?oI73tXeg5THlf1Ifpkux2/omRBggAVFhgbJj8YoVCo0FxRFYOoyxa86OiPcj?=
+ =?us-ascii?Q?mDytUSPI7aaw/dyXfb7nvxy7dcRLEDPJkDdAaAq?=
+X-Microsoft-Antispam-Message-Info: up+aGy96pry7hd5To23n1Te5q6KOs9XQG8PEthsuhLVGI/DcxGcLV17rBjumeaQOxFcbd5Op0O2B+2MaCkV1vCflRWWFWsU8xVcHyv0+NzfaBLdxNXvfY/wq8yXTsZZdJQwFFra6ep1rsF5Wp11TRClbpj6Xi6t8K11NMIBYwqKuCcpkxMPA+j3kRZuDhxrYcml5+D/3JKWt8LzlfGs+jjY3H65TGQQgBqE2FuIoCuW0OmxYAWBWK6ZPVib8GGsbBhVO4UP3ZI1HVxM5eH6OkDHvFhTHGrj6UyhispgnynhgnSVkHQ55iYGbVTTcjyc7MkpQcHKPkMJuXH2p9tKLpi32c7qQ7yRZHOkxFL5Riz8=
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR04MB4211;6:nXOqvDYu+SxXVSYiY81mM+vuuEHG9nzo9w11vAGZQBqqIFXJwVkM6gwIN3YGvRXjbvf69XzQsUMz/zODqZOE2ru+XkGHFscLlqaOcwraBn4e+Wu7DPYkhpwUi24NSyuaXGLvBfpGB1EgCM9O4S+OptbaiaQ0qvQnqC8fcGxZe4/ZZD5ldeTLRRjAG0SaywLnYVh4HKtrZtABJHv1GoXbIk/f+egxgp8qyCkS2LTcLpRI4cQImOZf2008KsoZaQO7qqZ0af5izjAcjQItwnasXnFLXxiaQTYs2/8OI7gOOzbp6mIAuCmHMJ1lIcCM4tF23ABN/HQ688/ms46A8dliQgBXkj/N+1Q/GJCsQpuu3Ou97g2yVWvSNU8/5NuISnOl88+ncn5lo5+qs3IIWuDaavzp1LdUJRx47GHoElLMVNe6iEpLqeAusDfy8zUyl+e/Wl+/IMK5oPf0HkqH+mWexA==;5:D5pd8H7rarDM76hxfpJ3elI+TM16e5ebc0+INQ3Qycpz6awRLnnW6Mt/6tbAsE+LQql7Yp/Kx17YShvyB0Gxysa7OJioG+NolbwK+A0uMoB48PUK0ikZOH1Vm2J2Fcu42HnZNr7wumL7KsziSzimUE66VYEtMac3wPT6MMMh5DE=;7:LNvyyQwH68NhEXac2tOal7OP5YQ843ffj3QwQB1zQ9ehp0iho+evI3jo05DxIUUDtrUPj3Qpd5FxuNKJxLSFmWVAPH5k87Amye0KKo2L5dRXqAB9kCsBhQ0s8W2Sq1kyEn0QhbtPxLzHLDKgxdlk00sOhbrcSEtFZ3jTVPhXXEH0C3FG6PxoUl3NEhmEwNGxOmqRD+hMWPZmgDtSAd5NDZ5o0lJseJF/CcS6NuoxPRhsRGf981hypq6QGMg/tASq
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Sep 2018 16:59:23.9637
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Sep 2018 16:59:16.9325
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d3449ded-7117-4c89-ddce-08d6230840b9
+X-MS-Exchange-CrossTenant-Network-Message-Id: 15903eee-b864-401b-4e7d-08d623083c59
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4211
@@ -105,9 +105,9 @@ Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
-Message-ID: <20180925164353.rMn7ALGcZGwQY4LJ6yavRpdlM4b2GgW7YRGmfZbJhSU@z>
+Message-ID: <20180925164351.RK-bCZKeK9_8KF2WFSaiwnmFP_1OEE_92vCY_DpnfAs@z>
 
-Add scu based clock mux.
+Add scu based clock gate.
 
 Cc: Shawn Guo <shawnguo@kernel.org>
 Cc: Sascha Hauer <kernel@pengutronix.de>
@@ -117,32 +117,32 @@ Cc: Michael Turquette <mturquette@baylibre.com>
 Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 ---
 ChangeLog:
-v1->v2:
- * move SCU clock API implementation into driver
+    v1->v2:
+     * move SCU clock API implementation into driver
 ---
- drivers/clk/imx/scu/Makefile      |   3 +-
- drivers/clk/imx/scu/clk-mux-scu.c | 142 ++++++++++++++++++++++++++++++++++++++
- drivers/clk/imx/scu/clk-scu.h     |  13 ++++
- 3 files changed, 157 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/imx/scu/clk-mux-scu.c
+ drivers/clk/imx/scu/Makefile       |   3 +-
+ drivers/clk/imx/scu/clk-gate-scu.c | 230 +++++++++++++++++++++++++++++++++++++
+ drivers/clk/imx/scu/clk-scu.h      |  23 ++++
+ 3 files changed, 255 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/imx/scu/clk-gate-scu.c
 
 diff --git a/drivers/clk/imx/scu/Makefile b/drivers/clk/imx/scu/Makefile
-index 25d3511..aee56bf 100644
+index 9e7f4aa..2abed17 100644
 --- a/drivers/clk/imx/scu/Makefile
 +++ b/drivers/clk/imx/scu/Makefile
-@@ -5,4 +5,5 @@ obj-$(CONFIG_MXC_CLK_SCU) += \
+@@ -3,4 +3,5 @@
+ obj-$(CONFIG_MXC_CLK_SCU) += \
+ 	clk-scu.o \
  	clk-divider-scu.o \
- 	clk-divider-gpr-scu.o \
- 	clk-gate-scu.o \
--	clk-gate-gpr-scu.o
-+	clk-gate-gpr-scu.o \
-+	clk-mux-scu.o
-diff --git a/drivers/clk/imx/scu/clk-mux-scu.c b/drivers/clk/imx/scu/clk-mux-scu.c
+-	clk-divider-gpr-scu.o
++	clk-divider-gpr-scu.o \
++	clk-gate-scu.o
+diff --git a/drivers/clk/imx/scu/clk-gate-scu.c b/drivers/clk/imx/scu/clk-gate-scu.c
 new file mode 100644
-index 0000000..bd6f51b
+index 0000000..6edcf29
 --- /dev/null
-+++ b/drivers/clk/imx/scu/clk-mux-scu.c
-@@ -0,0 +1,142 @@
++++ b/drivers/clk/imx/scu/clk-gate-scu.c
+@@ -0,0 +1,230 @@
 +// SPDX-License-Identifier: GPL-2.0+
 +/*
 + * Copyright (C) 2016 Freescale Semiconductor, Inc.
@@ -158,152 +158,250 @@ index 0000000..bd6f51b
 +
 +#include "clk-scu.h"
 +
-+struct clk_mux_scu {
++/*
++ * basic gatable clock which can gate and ungate it's output
++ *
++ * Traits of this clock:
++ * prepare - clk_(un)prepare only ensures parent is (un)prepared
++ * enable - clk_enable and clk_disable are functional & control gating
++ * rate - inherits rate from parent.  No clk_set_rate support
++ * parent - fixed parent.  No clk_set_parent support
++ */
++
++#define CLK_GATE_SCU_LPCG_MASK		0x3
++#define CLK_GATE_SCU_LPCG_HW_SEL	BIT(0)
++#define CLK_GATE_SCU_LPCG_SW_SEL	BIT(1)
++
++struct clk_gate_scu {
 +	struct clk_hw	hw;
++	void __iomem	*reg;
++	u8		bit_idx;
++	bool		hw_gate;
 +	sc_rsrc_t	rsrc_id;
-+	uint8_t	clk_type;
++	uint8_t		clk_type;
 +};
 +
-+#define to_clk_mux_scu(_hw) container_of(_hw, struct clk_mux_scu, hw)
-+
++#define to_clk_gate_scu(_hw) container_of(_hw, struct clk_gate_scu, hw)
 +
 +/* SCU Clock Protocol definitions */
-+struct imx_sc_msg_req_set_clock_parent {
++struct imx_sc_msg_req_clock_enable {
 +	struct sc_rpc_msg hdr;
 +	u16 resource;
 +	u8 clk;
-+	u8 parent;
++	u8 enable;
++	u8 autog;
 +} __packed;
 +
-+struct imx_sc_msg_req_get_clock_parent {
-+	struct sc_rpc_msg hdr;
-+	u16 resource;
-+	u8 clk;
-+} __packed;
-+
-+struct imx_sc_msg_resp_get_clock_parent {
-+	struct sc_rpc_msg hdr;
-+	u8 parent;
-+} __packed;
-+
-+static u8 clk_mux_scu_get_parent(struct clk_hw *hw)
++/* Write to the LPCG bits. */
++static int clk_gate_scu_enable(struct clk_hw *hw)
 +{
-+	struct clk_mux_scu *mux = to_clk_mux_scu(hw);
-+	struct imx_sc_msg_req_get_clock_parent msg;
-+	struct imx_sc_msg_resp_get_clock_parent *resp;
-+	struct sc_rpc_msg *hdr = &msg.hdr;
-+	sc_err_t sci_err;
-+	int ret;
++	struct clk_gate_scu *gate = to_clk_gate_scu(hw);
++	u32 reg;
 +
-+	hdr->ver = SC_RPC_VERSION;
-+	hdr->svc = (uint8_t)SC_RPC_SVC_PM;
-+	hdr->func = (uint8_t)PM_FUNC_GET_CLOCK_PARENT;
-+	hdr->size = 2;
-+
-+	msg.resource = mux->rsrc_id;
-+	msg.clk = mux->clk_type;
-+
-+	ret = imx_scu_call_rpc(ccm_ipc_handle, &msg, true);
-+	if (ret)
-+		return ret;
-+
-+	resp = (struct imx_sc_msg_resp_get_clock_parent *)&msg;
-+	sci_err = (sc_err_t)resp->hdr.func;
-+	if (sci_err) {
-+		pr_err("%s: failed to get clock parent %d\n",
-+			clk_hw_get_name(hw), sci_err);
-+		return -EINVAL;
-+	}
-+
-+	return resp->parent;
-+}
-+
-+static int clk_mux_scu_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct clk_mux_scu *mux = to_clk_mux_scu(hw);
-+	struct imx_sc_msg_req_set_clock_parent msg;
-+	struct sc_rpc_msg *hdr = &msg.hdr;
-+	sc_err_t sci_err;
-+	int ret;
-+
-+	hdr->ver = SC_RPC_VERSION;
-+	hdr->svc = (uint8_t)SC_RPC_SVC_PM;
-+	hdr->func = (uint8_t)PM_FUNC_SET_CLOCK_PARENT;
-+	hdr->size = 2;
-+
-+	msg.resource = mux->rsrc_id;
-+	msg.clk = mux->clk_type;
-+	msg.parent = index;
-+
-+	ret = imx_scu_call_rpc(ccm_ipc_handle, &msg, true);
-+	if (ret)
-+		return ret;
-+
-+	sci_err = (sc_err_t)hdr->func;
-+	if (sci_err) {
-+		pr_err("%s: failed to set clock parent %d : ret %d\n",
-+			clk_hw_get_name(hw), index, sci_err);
-+		return -EINVAL;
++	if (gate->reg) {
++		reg = readl(gate->reg);
++		reg &= ~(CLK_GATE_SCU_LPCG_MASK << gate->bit_idx);
++		if (gate->hw_gate)
++			reg |= (CLK_GATE_SCU_LPCG_HW_SEL |
++				CLK_GATE_SCU_LPCG_SW_SEL) << gate->bit_idx;
++		else
++			reg |= (CLK_GATE_SCU_LPCG_SW_SEL << gate->bit_idx);
++		writel(reg, gate->reg);
 +	}
 +
 +	return 0;
 +}
 +
-+static const struct clk_ops clk_mux_scu_ops = {
-+	.get_parent = clk_mux_scu_get_parent,
-+	.set_parent = clk_mux_scu_set_parent,
++static void clk_gate_scu_disable(struct clk_hw *hw)
++{
++	struct clk_gate_scu *gate = to_clk_gate_scu(hw);
++	u32 reg;
++
++	if (gate->reg) {
++		reg = readl(gate->reg);
++		reg &= ~(CLK_GATE_SCU_LPCG_MASK << gate->bit_idx);
++		writel(reg, gate->reg);
++	}
++}
++
++static sc_err_t sc_pm_clock_enable(struct sc_ipc *ipc, sc_rsrc_t resource,
++				   uint8_t clk, bool enable, bool autog)
++{
++       struct imx_sc_msg_req_clock_enable msg;
++       struct sc_rpc_msg *hdr = &msg.hdr;
++       int ret;
++
++       hdr->ver = SC_RPC_VERSION;
++       hdr->svc = (uint8_t)SC_RPC_SVC_PM;
++       hdr->func = (uint8_t)PM_FUNC_CLOCK_ENABLE;
++       hdr->size = 3;
++
++       msg.resource = resource;
++       msg.clk = clk;
++       msg.enable = (uint8_t)enable;
++       msg.autog = (uint8_t)autog;
++
++       ret = imx_scu_call_rpc(ccm_ipc_handle, &msg, true);
++       if (ret)
++               return ret;
++
++       return (sc_err_t)hdr->func;
++}
++
++static int clk_gate_scu_prepare(struct clk_hw *hw)
++{
++	struct clk_gate_scu *gate = to_clk_gate_scu(hw);
++	sc_err_t sci_err;
++
++	/* Enable the clock at the DSC slice level */
++	sci_err = sc_pm_clock_enable(ccm_ipc_handle, gate->rsrc_id,
++				     gate->clk_type, true, gate->hw_gate);
++
++	if (sci_err)
++		pr_err("%s: %s: clk prepare failed %d\n",
++			__func__, clk_hw_get_name(hw), sci_err);
++
++	return sci_err;
++}
++
++static void clk_gate_scu_unprepare(struct clk_hw *hw)
++{
++	struct clk_gate_scu *gate = to_clk_gate_scu(hw);
++	sc_err_t sci_err;
++
++	sci_err = sc_pm_clock_enable(ccm_ipc_handle, gate->rsrc_id,
++				     gate->clk_type, false, false);
++	if (sci_err)
++		pr_err("%s: %s: clk unprepare failed %d\n",
++			__func__, clk_hw_get_name(hw), sci_err);
++}
++
++static const struct clk_ops clk_gate_scu_ops = {
++	.prepare = clk_gate_scu_prepare,
++	.unprepare = clk_gate_scu_unprepare,
++	.enable = clk_gate_scu_enable,
++	.disable = clk_gate_scu_disable,
 +};
 +
-+struct clk_hw *clk_register_mux_scu(const char *name, const char * const *parents,
-+				    int num_parents, unsigned long flags,
-+				    sc_rsrc_t rsrc_id, uint8_t clk_type)
++struct clk_hw *clk_register_gate_scu(const char *name, const char *parent_name,
++				     unsigned long flags, sc_rsrc_t rsrc_id,
++				     uint8_t clk_type, void __iomem *reg,
++				     u8 bit_idx, bool hw_gate)
 +{
++	struct clk_gate_scu *gate;
 +	struct clk_init_data init;
-+	struct clk_mux_scu *mux;
 +	struct clk_hw *hw;
 +	int ret;
 +
-+	mux = kzalloc(sizeof(*mux), GFP_KERNEL);
-+	if (!mux)
++	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
++	if (!gate)
 +		return ERR_PTR(-ENOMEM);
 +
++	gate->rsrc_id = rsrc_id;
++	gate->clk_type = clk_type;
++	if (reg) {
++		gate->reg = ioremap((phys_addr_t)reg, SZ_64K);
++		if (!gate->reg) {
++			kfree(gate);
++			return ERR_PTR(-ENOMEM);
++		}
++	}
++
++	gate->bit_idx = bit_idx;
++	gate->hw_gate = hw_gate;
++
 +	init.name = name;
-+	init.ops = &clk_mux_scu_ops;
-+	init.parent_names = parents;
-+	init.num_parents = num_parents;
++	init.ops = &clk_gate_scu_ops;
++	init.flags = flags;
++	init.parent_names = parent_name ? &parent_name : NULL;
++	init.num_parents = parent_name ? 1 : 0;
 +
-+	mux->hw.init = &init;
-+	mux->rsrc_id = rsrc_id;
-+	mux->clk_type = clk_type;
++	gate->hw.init = &init;
 +
-+	hw = &mux->hw;
++	hw = &gate->hw;
 +	ret = clk_hw_register(NULL, hw);
 +	if (ret) {
-+		kfree(mux);
++		iounmap(gate->reg);
++		kfree(gate);
++		hw = ERR_PTR(ret);
++	}
++
++	return hw;
++}
++
++static const struct clk_ops clk_gate2_scu_ops = {
++	.enable = clk_gate_scu_enable,
++	.disable = clk_gate_scu_disable,
++};
++
++struct clk_hw *clk_register_gate2_scu(const char *name, const char *parent_name,
++				      unsigned long flags, void __iomem *reg,
++				      u8 bit_idx, bool hw_gate)
++{
++	struct clk_gate_scu *gate;
++	struct clk_init_data init;
++	struct clk_hw *hw;
++	int ret;
++
++	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
++	if (!gate)
++		return ERR_PTR(-ENOMEM);
++
++	gate->reg = ioremap((phys_addr_t)reg, SZ_64K);
++	if (!gate->reg) {
++		kfree(gate);
++		return ERR_PTR(-ENOMEM);
++	}
++	gate->bit_idx = bit_idx;
++	gate->hw_gate = hw_gate;
++
++	init.name = name;
++	init.ops = &clk_gate2_scu_ops;
++	init.flags = flags;
++	init.parent_names = parent_name ? &parent_name : NULL;
++	init.num_parents = parent_name ? 1 : 0;
++
++	gate->hw.init = &init;
++
++	hw = &gate->hw;
++	ret = clk_hw_register(NULL, hw);
++	if (ret) {
++		iounmap(gate->reg);
++		kfree(gate);
 +		hw = ERR_PTR(ret);
 +	}
 +
 +	return hw;
 +}
 diff --git a/drivers/clk/imx/scu/clk-scu.h b/drivers/clk/imx/scu/clk-scu.h
-index 13af045..43009c4 100644
+index 97d8bdc..99e45ae 100644
 --- a/drivers/clk/imx/scu/clk-scu.h
 +++ b/drivers/clk/imx/scu/clk-scu.h
-@@ -68,4 +68,17 @@ static inline struct clk_hw *imx_clk_gate_gpr_scu(const char *name, const char *
- 	return clk_register_gate_gpr_scu(name, parent, rsrc_id, gpr_id, invert_flag);
- }
+@@ -36,4 +36,27 @@ static inline struct clk_hw *imx_clk_divider2_scu(const char *name,
+ struct clk_hw *imx_clk_divider_gpr_scu(const char *name, const char *parent_name,
+ 				sc_rsrc_t rsrc_id, sc_ctrl_t gpr_id);
  
-+struct clk_hw *clk_register_mux_scu(const char *name, const char * const *parents,
-+			int num_parents, unsigned long flags,
-+			sc_rsrc_t rsrc_id, uint8_t clk_type);
++struct clk_hw *clk_register_gate_scu(const char *name, const char *parent_name,
++				unsigned long flags, sc_rsrc_t rsrc_id,
++				uint8_t clk_type, void __iomem *reg,
++				u8 bit_idx, bool hw_gate);
 +
-+static inline struct clk_hw *imx_clk_mux_scu(const char *name,
-+			const char * const *parents, int num_parents,
-+			sc_rsrc_t rsrc_id, uint8_t clk_type)
++struct clk_hw *clk_register_gate2_scu(const char *name, const char *parent_name,
++				unsigned long flags, void __iomem *reg,
++				u8 bit_idx, bool hw_gate);
++
++static inline struct clk_hw *imx_clk_gate_scu(const char *name, const char *parent,
++				sc_rsrc_t rsrc_id, uint8_t clk_type,
++				void __iomem *reg, u8 bit_idx, bool hw_gate)
 +{
-+	return clk_register_mux_scu(name, parents, num_parents,
-+			CLK_SET_RATE_NO_REPARENT, rsrc_id,
-+			clk_type);
++	return clk_register_gate_scu(name, parent, CLK_SET_RATE_PARENT,
++				     rsrc_id, clk_type, reg, bit_idx, hw_gate);
++}
++
++static inline struct clk_hw *imx_clk_gate2_scu(const char *name, const char *parent,
++				void __iomem *reg, u8 bit_idx, bool hw_gate)
++{
++	return clk_register_gate2_scu(name, parent, 0, reg, bit_idx, hw_gate);
 +}
 +
  #endif
