@@ -1,104 +1,283 @@
-Return-Path: <hverkuil@xs4all.nl>
-Subject: Re: [PATCH 0/4] media: platform: Add Aspeed Video Engine driver
-To: Eddie James <eajames@linux.vnet.ibm.com>, linux-kernel@vger.kernel.org
-Cc: linux-media@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
- openbmc@lists.ozlabs.org, andrew@aj.id.au, mchehab@kernel.org,
- joel@jms.id.au, robh+dt@kernel.org, mark.rutland@arm.com,
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
- mturquette@baylibre.com, sboyd@kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <1535576973-8067-1-git-send-email-eajames@linux.vnet.ibm.com>
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <364c2565-fdb0-dd31-5852-6358066810a5@xs4all.nl>
-Date: Mon, 3 Sep 2018 13:57:46 +0200
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: linux-clk@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	sboyd@kernel.org,
+	mturquette@baylibre.com,
+	shawnguo@kernel.org,
+	fabio.estevam@nxp.com,
+	linux-imx@nxp.com,
+	kernel@pengutronix.de,
+	Dong Aisheng <aisheng.dong@nxp.com>
+Subject: [PATCH V2 03/11] clk: imx: scu: add scu clock divider
+Date: Wed, 26 Sep 2018 00:43:49 +0800
+Message-Id: <1537893837-31172-4-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1537893837-31172-1-git-send-email-aisheng.dong@nxp.com>
+References: <1537893837-31172-1-git-send-email-aisheng.dong@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <1535576973-8067-1-git-send-email-eajames@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain
+Return-Path: aisheng.dong@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Hi Eddie,
+Add scu based clock divider.
 
-Thank you for your work on this. Interesting to see support for this SoC :-)
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Sascha Hauer <kernel@pengutronix.de>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+---
+ChangeLog:
+v1->v2:
+ * move SCU clock API implementation into driver
+---
+ drivers/clk/imx/scu/Makefile          |   3 +-
+ drivers/clk/imx/scu/clk-divider-scu.c | 190 ++++++++++++++++++++++++++++++++++
+ drivers/clk/imx/scu/clk-scu.h         |  18 ++++
+ 3 files changed, 210 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/imx/scu/clk-divider-scu.c
 
-On 08/29/2018 11:09 PM, Eddie James wrote:
-> The Video Engine (VE) embedded in the Aspeed AST2400 and AST2500 SOCs
-> can capture and compress video data from digital or analog sources. With
-> the Aspeed chip acting as a service processor, the Video Engine can
-> capture the host processor graphics output.
-> 
-> This series adds a V4L2 driver for the VE, providing a read() interface
-> only. The driver triggers the hardware to capture the host graphics output
-> and compress it to JPEG format.
-> 
-> Testing on an AST2500 determined that the videobuf/streaming/mmap interface
-> was significantly slower than the simple read() interface, so I have not
-> included the streaming part.
-
-Do you know why? It should be equal or faster, not slower.
-
-I reviewed about half of the driver, but then I stopped since there were too
-many things missing.
-
-First of all, you need to test your driver with v4l2-compliance (available here:
-https://git.linuxtv.org/v4l-utils.git/). Always compile from the git repo since
-the versions from distros tend to be too old.
-
-Just run 'v4l2-compliance -d /dev/videoX' and fix all issues. Then run
-'v4l2-compliance -s -d /dev/videoX' to test streaming.
-
-This utility checks if the driver follows the V4L2 API correctly, implements
-all ioctls that it should and fills in all the fields that it should.
-
-Please add the output of 'v4l2-compliance -s' to future versions of this patch
-series: I don't accept V4L2 drivers without a clean report of this utility.
-
-If you have any questions, then mail me or (usually quicker) ask on the #v4l
-freenode irc channel (I'm in the CET timezone).
-
-One thing that needs more explanation: from what I could tell from the driver
-the VIDIOC_G_FMT ioctl returns the detected format instead of the current
-format. This is wrong. Instead you should implement the VIDIOC_*_DV_TIMINGS
-ioctls and the V4L2_EVENT_SOURCE_CHANGE event.
-
-The normal sequence is that userspace queries the current timings with
-VIDIOC_QUERY_DV_TIMINGS, if it finds valid timings, then it sets these
-timings with _S_DV_TIMINGS. Now it can call G/S_FMT. If the timings
-change, then the driver should detect that and send a V4L2_EVENT_SOURCE_CHANGE
-event.
-
-When the application receives this event it can take action, such as
-increasing the size of the buffer for the jpeg data that it reads into.
-
-The reason for this sequence of events is that you can't just change the
-format/resolution mid-stream without giving userspace the chance to
-reconfigure.
-
-Regards,
-
-	Hans
-
-> 
-> It's also possible to use an automatic mode for the VE such that
-> re-triggering the HW every frame isn't necessary. However this wasn't
-> reliable on the AST2400, and probably used more CPU anyway due to excessive
-> interrupts. It was approximately 15% faster.
-> 
-> The series also adds the necessary parent clock definitions to the Aspeed
-> clock driver, with both a mux and clock divider.
-> 
-> Eddie James (4):
->   clock: aspeed: Add VIDEO reset index definition
->   clock: aspeed: Setup video engine clocking
->   dt-bindings: media: Add Aspeed Video Engine binding documentation
->   media: platform: Add Aspeed Video Engine driver
-> 
->  .../devicetree/bindings/media/aspeed-video.txt     |   23 +
->  drivers/clk/clk-aspeed.c                           |   41 +-
->  drivers/media/platform/Kconfig                     |    8 +
->  drivers/media/platform/Makefile                    |    1 +
->  drivers/media/platform/aspeed-video.c              | 1307 ++++++++++++++++++++
->  include/dt-bindings/clock/aspeed-clock.h           |    1 +
->  6 files changed, 1379 insertions(+), 2 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/media/aspeed-video.txt
->  create mode 100644 drivers/media/platform/aspeed-video.c
-> 
+diff --git a/drivers/clk/imx/scu/Makefile b/drivers/clk/imx/scu/Makefile
+index 7dead13..7e360e2 100644
+--- a/drivers/clk/imx/scu/Makefile
++++ b/drivers/clk/imx/scu/Makefile
+@@ -1,4 +1,5 @@
+ # SPDX-License-Identifier: GPL-2.0
+ 
+ obj-$(CONFIG_MXC_CLK_SCU) += \
+-	clk-scu.o
++	clk-scu.o \
++	clk-divider-scu.o
+diff --git a/drivers/clk/imx/scu/clk-divider-scu.c b/drivers/clk/imx/scu/clk-divider-scu.c
+new file mode 100644
+index 0000000..9da75ae
+--- /dev/null
++++ b/drivers/clk/imx/scu/clk-divider-scu.c
+@@ -0,0 +1,190 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Copyright (C) 2016 Freescale Semiconductor, Inc.
++ * Copyright 2017~2018 NXP
++ *	Dong Aisheng <aisheng.dong@nxp.com>
++ *
++ */
++#include <linux/clk.h>
++#include <linux/clk-provider.h>
++#include <linux/err.h>
++#include <linux/io.h>
++#include <linux/jiffies.h>
++#include <linux/slab.h>
++#include <soc/imx/scu/sci.h>
++
++#include "clk-scu.h"
++
++struct clk_divider_scu {
++	struct clk_hw	hw;
++	sc_rsrc_t	rsrc_id;
++	uint8_t	clk_type;
++};
++
++/* SCU Clock Protocol definitions */
++struct imx_sc_msg_req_set_clock_rate {
++	struct sc_rpc_msg hdr;
++	u32 rate;
++	u16 resource;
++	u8 clk;
++} __packed;
++
++struct imx_sc_msg_req_get_clock_rate {
++	struct sc_rpc_msg hdr;
++	u16 resource;
++	u8 clk;
++} __packed;
++
++struct imx_sc_msg_resp_get_clock_rate {
++	struct sc_rpc_msg hdr;
++	u32 rate;
++} __packed;
++
++
++static inline struct clk_divider_scu *to_clk_divider_scu(struct clk_hw *hw)
++{
++	return container_of(hw, struct clk_divider_scu, hw);
++}
++
++/*
++ * clk_divider_scu_recalc_rate - Get clock rate for a SCU clock
++ * @hw: clock to get rate for
++ * @parent_rate: parent rate provided by common clock framework, not used
++ *
++ * Gets the current clock rate of a SCU clock. Returns the current
++ * clock rate, or zero in failure.
++ */
++static unsigned long clk_divider_scu_recalc_rate(struct clk_hw *hw,
++						  unsigned long parent_rate)
++{
++	struct clk_divider_scu *div = to_clk_divider_scu(hw);
++	struct imx_sc_msg_req_get_clock_rate msg;
++	struct imx_sc_msg_resp_get_clock_rate *resp;
++	struct sc_rpc_msg *hdr = &msg.hdr;
++	sc_err_t sci_err;
++	int ret;
++
++	hdr->ver = SC_RPC_VERSION;
++	hdr->svc = (uint8_t)SC_RPC_SVC_PM;
++	hdr->func = (uint8_t)PM_FUNC_GET_CLOCK_RATE;
++	hdr->size = 2;
++
++	msg.resource = div->rsrc_id;
++	msg.clk = div->clk_type;
++
++	ret = imx_scu_call_rpc(ccm_ipc_handle, &msg, true);
++	if (ret)
++		return ret;
++
++	resp = (struct imx_sc_msg_resp_get_clock_rate *)&msg;
++	sci_err = (sc_err_t)resp->hdr.func;
++	if (sci_err) {
++		pr_err("%s: failed to get clock rate %d\n",
++			clk_hw_get_name(hw), ret);
++		return 0;
++	}
++
++	return resp->rate;
++}
++
++/*
++ * clk_divider_scu_round_rate - Round clock rate for a SCU clock
++ * @hw: clock to round rate for
++ * @rate: rate to round
++ * @parent_rate: parent rate provided by common clock framework, not used
++ *
++ * Gets the current clock rate of a SCU clock. Returns the current
++ * clock rate, or zero in failure.
++ */
++static long clk_divider_scu_round_rate(struct clk_hw *hw, unsigned long rate,
++				       unsigned long *parent_rate)
++{
++	/*
++	 * Assume we support all the requested rate and let the SCU firmware
++	 * to handle the left work
++	 */
++	return rate;
++}
++
++/*
++ * clk_divider_scu_set_rate - Set rate for a SCU clock
++ * @hw: clock to change rate for
++ * @rate: target rate for the clock
++ * @parent_rate: rate of the clock parent, not used for SCU clocks
++ *
++ * Sets a clock frequency for a SCU clock. Returns the SCU
++ * protocol status.
++ */
++static int clk_divider_scu_set_rate(struct clk_hw *hw, unsigned long rate,
++				    unsigned long parent_rate)
++{
++	struct clk_divider_scu *div = to_clk_divider_scu(hw);
++	struct imx_sc_msg_req_set_clock_rate msg;
++	struct imx_sc_msg_resp_get_clock_rate *resp;
++	struct sc_rpc_msg *hdr = &msg.hdr;
++	sc_err_t sci_err;
++	int ret;
++
++	hdr->ver = SC_RPC_VERSION;
++	hdr->svc = (uint8_t)SC_RPC_SVC_PM;
++	hdr->func = (uint8_t)PM_FUNC_SET_CLOCK_RATE;
++	hdr->size = 3;
++
++	msg.rate = rate;
++	msg.resource = div->rsrc_id;
++	msg.clk = div->clk_type;
++
++	ret = imx_scu_call_rpc(ccm_ipc_handle, &msg, true);
++	if (ret)
++		return ret;
++
++	resp = (struct imx_sc_msg_resp_get_clock_rate *)&msg;
++	sci_err = (sc_err_t)resp->hdr.func;
++	if (sci_err) {
++		pr_err("%s: failed to set clock rate %ld : ret %d\n",
++			clk_hw_get_name(hw), rate, sci_err);
++		return -EINVAL;
++	}
++
++	return 0;
++}
++
++static const struct clk_ops clk_divider_scu_ops = {
++	.recalc_rate = clk_divider_scu_recalc_rate,
++	.round_rate = clk_divider_scu_round_rate,
++	.set_rate = clk_divider_scu_set_rate,
++};
++
++struct clk_hw *imx_clk_register_divider_scu(const char *name,
++					    const char *parent_name,
++					    sc_rsrc_t rsrc_id,
++					    uint8_t clk_type)
++{
++	struct clk_divider_scu *div;
++	struct clk_init_data init;
++	struct clk_hw *hw;
++	int ret;
++
++	div = kzalloc(sizeof(*div), GFP_KERNEL);
++	if (!div)
++		return ERR_PTR(-ENOMEM);
++
++	div->rsrc_id = rsrc_id;
++	div->clk_type = clk_type;
++
++	init.name = name;
++	init.ops = &clk_divider_scu_ops;
++	init.flags = CLK_GET_RATE_NOCACHE;
++	init.parent_names = parent_name ? &parent_name : NULL;
++	init.num_parents = parent_name ? 1 : 0;
++	div->hw.init = &init;
++
++	hw = &div->hw;
++	ret = clk_hw_register(NULL, hw);
++	if (ret) {
++		kfree(div);
++		hw = ERR_PTR(ret);
++	}
++
++	return hw;
++}
+diff --git a/drivers/clk/imx/scu/clk-scu.h b/drivers/clk/imx/scu/clk-scu.h
+index c503a52..c433cd4 100644
+--- a/drivers/clk/imx/scu/clk-scu.h
++++ b/drivers/clk/imx/scu/clk-scu.h
+@@ -7,6 +7,7 @@
+ #ifndef __IMX_CLK_SCU_H
+ #define __IMX_CLK_SCU_H
+ 
++#include <linux/clk-provider.h>
+ #include <linux/spinlock.h>
+ #include <soc/imx/scu/sci.h>
+ 
+@@ -15,4 +16,21 @@ extern struct sc_ipc *ccm_ipc_handle;
+ 
+ int imx_clk_scu_init(void);
+ 
++struct clk_hw *imx_clk_register_divider_scu(const char *name,
++				const char *parent_name, sc_rsrc_t rsrc_id,
++				uint8_t clk_type);
++
++static inline struct clk_hw *imx_clk_divider_scu(const char *name,
++				sc_rsrc_t rsrc_id, uint8_t clk_type)
++{
++	return imx_clk_register_divider_scu(name, NULL, rsrc_id, clk_type);
++}
++
++static inline struct clk_hw *imx_clk_divider2_scu(const char *name,
++				const char *parent_name,
++				sc_rsrc_t rsrc_id, uint8_t clk_type)
++{
++	return imx_clk_register_divider_scu(name, parent_name, rsrc_id, clk_type);
++}
++
+ #endif
+-- 
+2.7.4
