@@ -1,43 +1,55 @@
-Return-Path: <nm@ti.com>
-Date: Fri, 21 Sep 2018 14:53:40 -0500
-From: Nishanth Menon <nm@ti.com>
-To: Santosh Shilimkar <santosh.shilimkar@oracle.com>
-CC: Santosh Shilimkar <ssantosh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <t-kristo@ti.com>, <tony@atomide.com>, <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH] clk: keystone: Enable TISCI clocks if K3_ARCH
-Message-ID: <20180921195340.jo3m5bisgntk6wsh@kahuna>
-References: <20180828005056.27326-1-nm@ti.com>
- <d2027284-5265-388e-f793-cd048ac8a587@oracle.com>
+Return-Path: <aisheng.dong@nxp.com>
+From: Dong Aisheng <aisheng.dong@nxp.com>
+To: linux-clk@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	sboyd@kernel.org,
+	mturquette@baylibre.com,
+	shawnguo@kernel.org,
+	fabio.estevam@nxp.com,
+	linux-imx@nxp.com,
+	kernel@pengutronix.de,
+	Dong Aisheng <aisheng.dong@nxp.com>
+Subject: [PATCH V2 10/11] clk: imx: add imx_check_clk_hws helper function
+Date: Wed, 26 Sep 2018 00:43:56 +0800
+Message-Id: <1537893837-31172-11-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1537893837-31172-1-git-send-email-aisheng.dong@nxp.com>
+References: <1537893837-31172-1-git-send-email-aisheng.dong@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-In-Reply-To: <d2027284-5265-388e-f793-cd048ac8a587@oracle.com>
+Content-Type: text/plain
+Return-Path: aisheng.dong@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-On 00:55-20180828, Santosh Shilimkar wrote:
-> On 8/27/2018 5:50 PM, Nishanth Menon wrote:
-> > K3_ARCH uses TISCI for clocks as well. Enable the same
-> > for the driver support.
-> > 
-> > Signed-off-by: Nishanth Menon <nm@ti.com>
-> > ---
-> > 
-> > Ref: https://patchwork.kernel.org/patch/10447677/
-> > 
-> > Since ARCH_K3 only got integrated in v4.19-rc1, rebased to v4.19-rc1 tag..
-> > 
-> >   drivers/clk/Makefile         | 1 +
-> >   drivers/clk/keystone/Kconfig | 2 +-
-> >   2 files changed, 2 insertions(+), 1 deletion(-)
-> > 
-> Acked-by: Santosh Shilimkar <ssantosh@kernel.org>
+Add imx_check_clk_hws helper function
 
-Since it is almost a month.. Gentle poke? I am not sure when clk
-gets picked up.. but checked clk-next (7be9338d38a6 Merge branch
-'clk-mvebu-periph-pm' into clk-next) and linux-next ( next-20180921 )
-and did'nt see the patch..
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Sascha Hauer <kernel@pengutronix.de>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+---
+ drivers/clk/imx/clk-common.h | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
+diff --git a/drivers/clk/imx/clk-common.h b/drivers/clk/imx/clk-common.h
+index e3634a5..01550fd 100644
+--- a/drivers/clk/imx/clk-common.h
++++ b/drivers/clk/imx/clk-common.h
+@@ -13,4 +13,15 @@ static inline struct clk_hw *imx_clk_hw_fixed(const char *name, int rate)
+ 	return clk_hw_register_fixed_rate(NULL, name, NULL, 0, rate);
+ }
+ 
++static inline void imx_check_clk_hws(struct clk_hw *clks[], unsigned int count)
++{
++	unsigned int i;
++
++	for (i = 0; i < count; i++) {
++		if (IS_ERR(clks[i]))
++			pr_err("i.MX clk %u: register failed with %ld\n",
++				i, PTR_ERR(clks[i]));
++	}
++}
++
+ #endif /* __IMX_CLK_COMMON_H */
 -- 
-Regards,
-Nishanth Menon
+2.7.4
