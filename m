@@ -1,55 +1,55 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: Dong Aisheng <aisheng.dong@nxp.com>
-To: linux-clk@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	sboyd@kernel.org,
-	mturquette@baylibre.com,
-	shawnguo@kernel.org,
-	fabio.estevam@nxp.com,
-	linux-imx@nxp.com,
-	kernel@pengutronix.de,
-	Dong Aisheng <aisheng.dong@nxp.com>
-Subject: [PATCH V2 10/11] clk: imx: add imx_check_clk_hws helper function
-Date: Wed, 26 Sep 2018 00:43:56 +0800
-Message-Id: <1537893837-31172-11-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1537893837-31172-1-git-send-email-aisheng.dong@nxp.com>
-References: <1537893837-31172-1-git-send-email-aisheng.dong@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-Return-Path: aisheng.dong@nxp.com
+Return-Path: <decatf@gmail.com>
+Return-Path: <decatf@gmail.com>
+From: Robert Yang <decatf@gmail.com>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Robert Yang <decatf@gmail.com>
+Subject: [PATCH V2] clk: tegra: Return the exact clock rate from clk_round_rate
+Date: Tue, 25 Sep 2018 17:49:40 -0400
+Message-Id: <20180925214940.15188-1-decatf@gmail.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-Add imx_check_clk_hws helper function
+The current behavior is that clk_round_rate would return the same clock
+rate passed to it for valid PLL configurations. This change will return
+the exact rate the PLL will provide in accordance with clk API.
 
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Sascha Hauer <kernel@pengutronix.de>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+Signed-off-by: Robert Yang <decatf@gmail.com>
 ---
- drivers/clk/imx/clk-common.h | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+Changes in V2:
+ - Move input divider (m == 0) check into the cfg constraints check
+   condition. Forgo adding WARN_ON and avoid using 0 input divider
+   all together.
 
-diff --git a/drivers/clk/imx/clk-common.h b/drivers/clk/imx/clk-common.h
-index e3634a5..01550fd 100644
---- a/drivers/clk/imx/clk-common.h
-+++ b/drivers/clk/imx/clk-common.h
-@@ -13,4 +13,15 @@ static inline struct clk_hw *imx_clk_hw_fixed(const char *name, int rate)
- 	return clk_hw_register_fixed_rate(NULL, name, NULL, 0, rate);
- }
+ drivers/clk/tegra/clk-pll.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index 17a058c3bbc1..2a800a9c56e6 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -589,12 +589,13 @@ static int _calc_rate(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
+ 	cfg->n = cfg->output_rate / cfreq;
+ 	cfg->cpcon = OUT_OF_TABLE_CPCON;
  
-+static inline void imx_check_clk_hws(struct clk_hw *clks[], unsigned int count)
-+{
-+	unsigned int i;
-+
-+	for (i = 0; i < count; i++) {
-+		if (IS_ERR(clks[i]))
-+			pr_err("i.MX clk %u: register failed with %ld\n",
-+				i, PTR_ERR(clks[i]));
-+	}
-+}
-+
- #endif /* __IMX_CLK_COMMON_H */
+-	if (cfg->m > divm_max(pll) || cfg->n > divn_max(pll) ||
+-	    (1 << p_div) > divp_max(pll)
+-	    || cfg->output_rate > pll->params->vco_max) {
++	if (cfg->m == 0 || cfg->m > divm_max(pll) ||
++	    cfg->n > divn_max(pll) || (1 << p_div) > divp_max(pll) ||
++	    cfg->output_rate > pll->params->vco_max) {
+ 		return -EINVAL;
+ 	}
+ 
++	cfg->output_rate = cfg->n * DIV_ROUND_UP(parent_rate, cfg->m);
+ 	cfg->output_rate >>= p_div;
+ 
+ 	if (pll->params->pdiv_tohw) {
 -- 
-2.7.4
+2.17.1
