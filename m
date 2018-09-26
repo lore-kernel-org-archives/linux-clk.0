@@ -6,84 +6,76 @@ X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB30DC43382
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Sep 2018 22:47:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E13CDC43382
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Sep 2018 22:55:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F94721533
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Sep 2018 22:47:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F94721533
+	by mail.kernel.org (Postfix) with ESMTP id 980AD2154B
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Sep 2018 22:55:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 980AD2154B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726049AbeI0FC4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Sep 2018 01:02:56 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:37107 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726041AbeI0FC4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Sep 2018 01:02:56 -0400
-Received: by mail-ot1-f66.google.com with SMTP id o13-v6so661249otl.4;
-        Wed, 26 Sep 2018 15:47:44 -0700 (PDT)
+        id S1726347AbeI0FK6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Sep 2018 01:10:58 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:35986 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726262AbeI0FK6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Sep 2018 01:10:58 -0400
+Received: by mail-oi1-f193.google.com with SMTP id p125-v6so577628oic.3;
+        Wed, 26 Sep 2018 15:55:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=aiwEYd0SsbhzuaQYt5rkOoDQbtAkX4SyqpYZCUqYFYs=;
-        b=q1JUi/O1Hnvsq/hnUDTBOQyFq6Ajv8EU17WX+0aIpj2UJiGRl1Qi3zdcsLCvT/9aSA
-         s6epI/+JI2SZKHdZWEk5yaaIPVBfKJZJ/4e5eTDC4TZWKhvXBg9cjINl+d0HYkI99BV+
-         vFiX8cC0am5benPWimakGb2lxoigoAL3QL2KBj0OiBbJhKjHI7OwhrF6+iMzgVyMDOOu
-         M2hoeFMtHgf1GpTkyHehVGn+/ya7pBrpSeOkKYIxiyEZYK2ZPAHRWtl4kkbhprVwH+L+
-         sXXFS5fj4qR/mOM11+pzLryN+rAeYP1VBSQy1y1OYhtsT4b33khQG0xSoqeCyI2+ECZE
-         XJ0Q==
-X-Gm-Message-State: ABuFfog6tsGbFfuoj7G0ZlULHq4TDF6WeYkFrbebJxv6Wk+B5TbL05MM
-        TkFIOkaDIE/1hl5oCzMd0Q==
-X-Google-Smtp-Source: ACcGV63owTNBfmrkDqzqQWi0gd+6vGK3ib2vnuEEyWpx2s+OUkHxvGO61V4rk5mhwlgtOPp7FrqvCg==
-X-Received: by 2002:a9d:542:: with SMTP id 60-v6mr5892566otw.71.1538002063879;
-        Wed, 26 Sep 2018 15:47:43 -0700 (PDT)
+        bh=QZvh8F1h8/k/4SCeGOUgGF1a4pqt43zsP1FDiv8i3rQ=;
+        b=GiWsQm8TEFFsl5CBUcMMNTjuDNs6mkXk6qZ5scL9OP/KywzZszg+pK8N+JuOiI8iHl
+         b1xOJfOM5RTv62CsnyVnKP62Qu4pDD5OrSl/JuJ6QKm0ojHEfRCFLg89sOKEUHgFeD4s
+         rWkfSE4F3xPC1q9DO1a8lV3IuGUSVQUjBjk5ZxXLcmyo//Zn5MlifZKz+hJZcAZt2gUy
+         eEWt+Pyo1nftXoqjZPt0fMeyG1FGQikgqD9pw2rGt8zeBhyqIPVcRlzsJyHWdIA5FTG6
+         MiSArRZ9DsCLMNYH0Ar0r+vMBOpaNY2RaMutDp6RFoY4yXILYxZJIygral1PZA9HYZhl
+         2gdQ==
+X-Gm-Message-State: ABuFfoht/r2n+c8rI5Hs8zIvVZMiGeKVnjSAS18mXihQ7mquZ2shVp8o
+        EGAy2Qc3H+4pNh4G2bklsQ==
+X-Google-Smtp-Source: ACcGV62LzyFL8bX3Kk6oqb22SlxBI4x8QZqG2ZTt5oK36ux24gyboMLRnr3sVm+F1+shgZfrQe+lkw==
+X-Received: by 2002:aca:400b:: with SMTP id n11-v6mr1952153oia.150.1538002544176;
+        Wed, 26 Sep 2018 15:55:44 -0700 (PDT)
 Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id e14-v6sm161665oib.2.2018.09.26.15.47.43
+        by smtp.gmail.com with ESMTPSA id 39-v6sm378580otz.67.2018.09.26.15.55.43
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 26 Sep 2018 15:47:43 -0700 (PDT)
-Date:   Wed, 26 Sep 2018 17:47:42 -0500
+        Wed, 26 Sep 2018 15:55:43 -0700 (PDT)
+Date:   Wed, 26 Sep 2018 17:55:43 -0500
 From:   Rob Herring <robh@kernel.org>
-To:     Taniya Das <tdas@codeaurora.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, robh@kernel.org,
-        Taniya Das <tdas@codeaurora.org>
-Subject: Re: [PATCH v5 1/2] dt-bindings: clock: Introduce QCOM LPASS clock
- bindings
-Message-ID: <20180926224742.GA9096@bogus>
-References: <1537266338-18661-1-git-send-email-tdas@codeaurora.org>
- <1537266338-18661-2-git-send-email-tdas@codeaurora.org>
+To:     Anson Huang <Anson.Huang@nxp.com>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de,
+        fabio.estevam@nxp.com, linux@armlinux.org.uk,
+        mturquette@baylibre.com, sboyd@kernel.org, ping.bai@nxp.com,
+        Aisheng.dong@nxp.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, Linux-imx@nxp.com
+Subject: Re: [PATCH V2 3/4] dt-bindings: arm: add compatible for i.MX6ULZ
+ 14x14 EVK board
+Message-ID: <20180926225543.GA20330@bogus>
+References: <1537337088-28819-1-git-send-email-Anson.Huang@nxp.com>
+ <1537337088-28819-4-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1537266338-18661-2-git-send-email-tdas@codeaurora.org>
+In-Reply-To: <1537337088-28819-4-git-send-email-Anson.Huang@nxp.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
-Message-ID: <20180926224742.fo9gKAhdte4bIfy5424sSCXRMTK9hlK_fPT6WNJQ0ck@z>
+Message-ID: <20180926225543.EVb6MXJFv9p5iF_xKmh0-zYOKXvW6UjPGmtxDeZZMIY@z>
 
-On Tue, 18 Sep 2018 15:55:37 +0530, Taniya Das wrote:
-> Add device tree bindings for Low Power Audio subsystem clock controller for
-> Qualcomm Technology Inc's SDM845 SoCs.
+On Wed, 19 Sep 2018 14:04:47 +0800, Anson Huang wrote:
+> This patch adds compatible for i.MX6ULZ 14x14 EVK board.
 > 
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 > ---
->  .../devicetree/bindings/clock/qcom,gcc.txt         |  2 ++
->  .../devicetree/bindings/clock/qcom,lpasscc.txt     | 35 ++++++++++++++++++++++
->  include/dt-bindings/clock/qcom,gcc-sdm845.h        |  2 ++
->  include/dt-bindings/clock/qcom,lpass-sdm845.h      | 16 ++++++++++
->  4 files changed, 55 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,lpasscc.txt
->  create mode 100644 include/dt-bindings/clock/qcom,lpass-sdm845.h
+>  Documentation/devicetree/bindings/arm/fsl.txt | 4 ++++
+>  1 file changed, 4 insertions(+)
 > 
 
 Reviewed-by: Rob Herring <robh@kernel.org>
