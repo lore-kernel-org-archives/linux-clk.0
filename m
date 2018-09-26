@@ -1,126 +1,51 @@
-Return-Path: <tdas@codeaurora.org>
-From: Taniya Das <tdas@codeaurora.org>
-To: Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>,
-	David Brown <david.brown@linaro.org>,
-	Rajendra Nayak <rnayak@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	robh@kernel.org,
-	Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH v5 1/2] dt-bindings: clock: Introduce QCOM LPASS clock bindings
-Date: Tue, 18 Sep 2018 15:55:37 +0530
-Message-Id: <1537266338-18661-2-git-send-email-tdas@codeaurora.org>
-In-Reply-To: <1537266338-18661-1-git-send-email-tdas@codeaurora.org>
-References: <1537266338-18661-1-git-send-email-tdas@codeaurora.org>
+Return-Path: <geert.uytterhoeven@gmail.com>
+MIME-Version: 1.0
+References: <20180924164937.36536-1-chris.brandt@renesas.com> <20180924164937.36536-4-chris.brandt@renesas.com>
+In-Reply-To: <20180924164937.36536-4-chris.brandt@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 26 Sep 2018 11:27:06 +0200
+Message-ID: <CAMuHMdXRWRvxNb12GPDi-agEFhLg3_Cnukm6LwapFdaT8Fpddg@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] clk: renesas: r7s9210: Move table update to
+ separate function
+To: Chris Brandt <chris.brandt@renesas.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+	Simon Horman <horms+renesas@verge.net.au>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Add device tree bindings for Low Power Audio subsystem clock controller for
-Qualcomm Technology Inc's SDM845 SoCs.
+On Mon, Sep 24, 2018 at 6:50 PM Chris Brandt <chris.brandt@renesas.com> wrote:
+> Same functionality, just easier to read.
+>
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+> ---
+>  drivers/clk/renesas/r7s9210-cpg-mssr.c | 94 ++++++++++++++++++----------------
+>  1 file changed, 49 insertions(+), 45 deletions(-)
+>
+> diff --git a/drivers/clk/renesas/r7s9210-cpg-mssr.c b/drivers/clk/renesas/r7s9210-cpg-mssr.c
+> index 7ab9030ef8b9..f9c22b61883b 100644
+> --- a/drivers/clk/renesas/r7s9210-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r7s9210-cpg-mssr.c
+> @@ -97,6 +97,53 @@ static const struct mssr_mod_clk r7s9210_mod_clks[] __initconst = {
+>
+>  };
+>
+> +/* The clock dividers in the table vary based on DT and register settings */
+> +static void r7s9210_update_clk_table(struct clk *extal_clk, void __iomem *base)
 
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
----
- .../devicetree/bindings/clock/qcom,gcc.txt         |  2 ++
- .../devicetree/bindings/clock/qcom,lpasscc.txt     | 35 ++++++++++++++++++++++
- include/dt-bindings/clock/qcom,gcc-sdm845.h        |  2 ++
- include/dt-bindings/clock/qcom,lpass-sdm845.h      | 16 ++++++++++
- 4 files changed, 55 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,lpasscc.txt
- create mode 100644 include/dt-bindings/clock/qcom,lpass-sdm845.h
+Can be __init.
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc.txt b/Documentation/devicetree/bindings/clock/qcom,gcc.txt
-index 664ea1f..b3ff6e8 100644
---- a/Documentation/devicetree/bindings/clock/qcom,gcc.txt
-+++ b/Documentation/devicetree/bindings/clock/qcom,gcc.txt
-@@ -32,6 +32,8 @@ be part of GCC and hence the TSENS properties can also be
- part of the GCC/clock-controller node.
- For more details on the TSENS properties please refer
- Documentation/devicetree/bindings/thermal/qcom-tsens.txt
-+- qcom,lpass-protected : Indicate that the LPASS clock branches within GCC are
-+			 unusable due to firmware access control restrictions.
- 
- Example:
- 	clock-controller@900000 {
-diff --git a/Documentation/devicetree/bindings/clock/qcom,lpasscc.txt b/Documentation/devicetree/bindings/clock/qcom,lpasscc.txt
-new file mode 100644
-index 0000000..6a718c8
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,lpasscc.txt
-@@ -0,0 +1,35 @@
-+Qualcomm LPASS Clock Controller Binding
-+-----------------------------------------------
-+
-+Required properties :
-+- compatible		: shall contain "qcom,sdm845-lpasscc"
-+- #clock-cells		: from common clock binding, shall contain 1.
-+- reg			: shall contain base register address and size,
-+			  in the order
-+			Index-0 maps to LPASS_CC register region
-+			Index-1 maps to LPASS_QDSP6SS register region
-+
-+Optional properties :
-+- reg-names	: register names of LPASS domain
-+		 "cc", "qdsp6ss".
-+
-+Example:
-+
-+The below node has to be defined in the cases where the LPASS peripheral loader
-+would bring the subsystem out of reset.
-+
-+	lpasscc: clock-controller@17014000 {
-+		compatible = "qcom,sdm845-lpasscc";
-+		reg = <0x17014000 0x1f004>, <0x17300000 0x200>;
-+		reg-names = "cc", "qdsp6ss";
-+		#clock-cells = <1>;
-+	};
-+
-+	gcc: clock-controller@100000 {
-+		reg = <0x100000 0x4000>;
-+		compatible = "qcom,gcc-sdm845";
-+		qcom,lpass-protected;
-+		#clock-cells = <1>;
-+		#reset-cells = <1>;
-+		#power-domain-cells = <1>;
-+	};
-diff --git a/include/dt-bindings/clock/qcom,gcc-sdm845.h b/include/dt-bindings/clock/qcom,gcc-sdm845.h
-index b8eae5a..968fa65 100644
---- a/include/dt-bindings/clock/qcom,gcc-sdm845.h
-+++ b/include/dt-bindings/clock/qcom,gcc-sdm845.h
-@@ -197,6 +197,8 @@
- #define GCC_QSPI_CORE_CLK_SRC					187
- #define GCC_QSPI_CORE_CLK					188
- #define GCC_QSPI_CNOC_PERIPH_AHB_CLK				189
-+#define GCC_LPASS_Q6_AXI_CLK					190
-+#define GCC_LPASS_SWAY_CLK					191
- 
- /* GCC Resets */
- #define GCC_MMSS_BCR						0
-diff --git a/include/dt-bindings/clock/qcom,lpass-sdm845.h b/include/dt-bindings/clock/qcom,lpass-sdm845.h
-new file mode 100644
-index 0000000..015968e
---- /dev/null
-+++ b/include/dt-bindings/clock/qcom,lpass-sdm845.h
-@@ -0,0 +1,16 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+ */
-+
-+#ifndef _DT_BINDINGS_CLK_SDM_LPASS_SDM845_H
-+#define _DT_BINDINGS_CLK_SDM_LPASS_SDM845_H
-+
-+#define LPASS_AUDIO_WRAPPER_AON_CLK			0
-+#define LPASS_Q6SS_AHBM_AON_CLK				1
-+#define LPASS_Q6SS_AHBS_AON_CLK				2
-+#define LPASS_QDSP6SS_XO_CLK				3
-+#define LPASS_QDSP6SS_SLEEP_CLK				4
-+#define LPASS_QDSP6SS_CORE_CLK				5
-+
-+#endif
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in clk-renesas-for-v4.20, with the above fixed.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
