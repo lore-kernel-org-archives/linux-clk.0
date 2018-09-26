@@ -6,67 +6,69 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85128C43382
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Sep 2018 09:58:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EFD3C43382
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Sep 2018 09:59:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B036214C5
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Sep 2018 09:58:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A45C214C5
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Sep 2018 09:59:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="OhcedHL/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B036214C5
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="Q/Qa19Tc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A45C214C5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726565AbeIZQKM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 26 Sep 2018 12:10:12 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:34206 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726404AbeIZQKM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Sep 2018 12:10:12 -0400
-Received: by mail-wr1-f66.google.com with SMTP id t15so18426780wrx.1
-        for <linux-clk@vger.kernel.org>; Wed, 26 Sep 2018 02:58:01 -0700 (PDT)
+        id S1726880AbeIZQLq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 26 Sep 2018 12:11:46 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:51890 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726404AbeIZQLp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Sep 2018 12:11:45 -0400
+Received: by mail-wm1-f68.google.com with SMTP id y25-v6so1591467wmi.1
+        for <linux-clk@vger.kernel.org>; Wed, 26 Sep 2018 02:59:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=message-id:subject:from:to:cc:date:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=EpBkYQes5v2ZXRz9ObcXfv9A6MvzAO55GjZKvUfhW2E=;
-        b=OhcedHL/AReKF/uzUROfS2wOO34Bi6H19/TnlB6A15iydJ7hI5dxhUQvwo2YeF6G4J
-         ZY4DOhHYn7FINQvoeLPKCXL/JnaxNcitX6VJtGkGGlubczEBEn/p2ahj84OXeM9uELHT
-         uK/UlOeZZDCfXZDiFjV7a3gzsOOMdmAyKD37cvNxByNwsSGTk7q5utS2A59oD8L7nRwm
-         9r+lC8UUuJq3ivOJAVaoAoiZJcmQDs1UQ+tpAcPt5S6uF4tSGZY8LEcmHYA/Q5zBdDzZ
-         HfOVzzY41Jztw4P3cpPsJCUqFxvr+onF694Gilnrx9t1tSOftqioKekfJi2h7p+B3Tm2
-         0Zkg==
+        bh=531H7wSqmTGNxBOsJ1X79g+MnPu8zH5Q997nw3eCUec=;
+        b=Q/Qa19TcQgb+3/qCu2F9tL0if13jiVmZX5TxzZm/ASCsEb5fH8qQRY3DoEE91wMXhi
+         8i3Y2beH0OCN1a2jbSbZwPHAhg7Vzxuv3cCLWNDpb2F0M3q7Bdu5Oy71MFzbdI6+8Ya1
+         44Bn+j20S8unmlCugoaGgmNgx2Rbko8b4HlfpP18YTJEACeHvXUeB/POHJMX4hRPdf/D
+         24eRZ3+voUBn455Zrb8MXG+AgAjqKl79KyTceM3jT105cwwF/nvHjME9Knfx42auYZ8X
+         jnBTXRUvv4iBPKSfNU8XLWuUTLJ80C60l2niHdjHHG5xqP4KD29V6Rh2wbjrGqV9j8a4
+         ckTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=EpBkYQes5v2ZXRz9ObcXfv9A6MvzAO55GjZKvUfhW2E=;
-        b=S02os9bAvyrHwgzKwZzoXsNkM6ui9z6DjbRAx1wk5OQKMvjRtPEtxokIF22BDA0BLG
-         XNDAzi5opBS5Q8VNvBGQXmbCe4I/7hqICMB++cQGbwXdhvfJv8VXRIlkqvO6B1Y+BTjL
-         BKedEmPn3npolWJtuff28BGFEecgBB8Wtyi0m/3s/zL2eu7xbDtaf6WB+iH5+GEJHe06
-         D2JUJZFmJaeD4YwHNz2PztISdnQi18oGXiFqrSCazGDLrQxERhfdTOFeJgEV2k9e9Hou
-         biRkKJgiKey78oOPiPeYB6sDSHyMM+PJBe9pkQynQS5ccjTgql2MdBq9VydIbDxmw5WI
-         WmXg==
-X-Gm-Message-State: ABuFfogcvUAC9/3cr7Fgru4Bleiri/QVvqvT1QxKCmLtuSUsDHDI4mxs
-        M1IJCIFU+V2J26dW4j6C4S3yXw==
-X-Google-Smtp-Source: ACcGV61LdXDfTd6Y+FfDEIQMZuUxs//32GSH2/hO0grMSG6qjE/2Xs/0A9mueYCaBeQIe/jp/iODxA==
-X-Received: by 2002:a5d:6a46:: with SMTP id t6-v6mr4276881wrw.192.1537955880637;
-        Wed, 26 Sep 2018 02:58:00 -0700 (PDT)
+        bh=531H7wSqmTGNxBOsJ1X79g+MnPu8zH5Q997nw3eCUec=;
+        b=fDg9zZEq/UzJCklqT2P7A9CANVIGJ2aBtLPFinYI90avWP/OBBSgjs3rgILOW9S8lo
+         FqjfAxs4AW8Dkp5jgDiMj12uSY2JnhZd84VUpy6+StTqO9ttFRimGNf3Ntj9wdHAUhzu
+         gRq6cdXXJZIyJV3hYNV337FFti1GIZfi6gJwhlHYPVq1VwTBFSO/sOYq2hxCXQYuvxzn
+         Fb6x8CZiZv8c01JZ6CHdkYwtcNCq8DVmIfh81F+qQNyV1ox5hjNhPpLmtyyAaWE7pf4w
+         MMYT7tDzVSoj9D3N6cW7Wl6odnMMKzpnOT3Qne14pPsEbasc1ZxFYU0mKwl54Dc+8MHD
+         Yktw==
+X-Gm-Message-State: ABuFfojIrB4gftT28bd51QarDqUus5eSFxq9drhsNBv1mA5OPXLC7r/W
+        P4RSpXRNUe7H/cNOnWL8mfDQYg==
+X-Google-Smtp-Source: ACcGV62tv/5rj4VjDkU84zpV935ZPXS0yfcLLxE0DKpOcmwH1WedrLyAHaHFUJ5YO+N9ylnPyWX01g==
+X-Received: by 2002:a1c:dc41:: with SMTP id t62-v6mr3842085wmg.137.1537955973902;
+        Wed, 26 Sep 2018 02:59:33 -0700 (PDT)
 Received: from boomer ([2a00:8c40:243:232:9287:a644:860c:5a1b])
-        by smtp.gmail.com with ESMTPSA id z3-v6sm2485599wrh.49.2018.09.26.02.57.59
+        by smtp.gmail.com with ESMTPSA id l12-v6sm4232127wrv.29.2018.09.26.02.59.32
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 26 Sep 2018 02:57:59 -0700 (PDT)
-Message-ID: <712835e0336389d9d8c360bf3dec608a44ef84d0.camel@baylibre.com>
-Subject: Re: [PATCH v2 0/2] meson8b: register the clock controller early
+        Wed, 26 Sep 2018 02:59:33 -0700 (PDT)
+Message-ID: <2868cb9dc7536d8c3b94a83ce14694f93643d555.camel@baylibre.com>
+Subject: Re: [PATCH 0/2] meson8b: add the CPU_DIV16 clock for the ARM TWD
 From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        narmstrong@baylibre.com, linux-amlogic@lists.infradead.org,
-        sboyd@kernel.org
-Cc:     mturquette@baylibre.com, carlo@caione.org, khilman@baylibre.com,
-        linux-clk@vger.kernel.org
-Date:   Wed, 26 Sep 2018 11:57:58 +0200
-In-Reply-To: <20180901162146.5656-1-martin.blumenstingl@googlemail.com>
-References: <20180901162146.5656-1-martin.blumenstingl@googlemail.com>
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        carlo@caione.org, khilman@baylibre.com, sboyd@kernel.org,
+        mturquette@baylibre.com, jianxin.pan@amlogic.com
+Date:   Wed, 26 Sep 2018 11:59:32 +0200
+In-Reply-To: <CAFBinCAxB7MLK_dypQMkKD7=GeFSCN-L47Yoz3PqRssD88bZsw@mail.gmail.com>
+References: <20180721172537.15639-1-martin.blumenstingl@googlemail.com>
+         <1532337101.26720.89.camel@baylibre.com>
+         <CAFBinCAxB7MLK_dypQMkKD7=GeFSCN-L47Yoz3PqRssD88bZsw@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
 Mime-Version: 1.0
@@ -75,64 +77,16 @@ Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
-Message-ID: <20180926095758.DuyXkn-RDWxoYNoehEjvHAQQjyTp8FthO3Y0dHwtAJQ@z>
+Message-ID: <20180926095932.9zMRQN7ZApto2Rsv9YUV_0RaUETb56usY_sU9fW2sPU@z>
 
-On Sat, 2018-09-01 at 18:21 +0200, Martin Blumenstingl wrote:
-> Some parts of the SoC are initialized early in the boot process, such
-> as the SRAM and the TWD timer. This means that the corresponding
-> drivers need to access the clock controller early as well.
+On Wed, 2018-09-26 at 11:56 +0200, Martin Blumenstingl wrote:
+> > Queued for 4.20
 > 
-> Before this series the clock controller was registered as platform
-> driver, which is too late for the TWD timer (just as an example).
-> The reset controller (built into the clock controller driver) was
-> already registered early, basically for the same reason (the reset
-> lines are used to start the secondary CPUs, which is done very early
-> in the boot process).
-> 
-> Register the clock controller early enough so we're able to use the
-> TWD timer (as we need to pass a clock which is provided by this
-> clock controller) in a second step.
-> 
-> NOTE: Neil suggested in v1 to switch to one of core_initcall,
-> postcore_initcall, subsys_initcall but I couldn't find any driver
-> that I could use as "reference" which registers it's clock controller
-> before the device model (platform_device) is ready. this is why I'm
-> still using CLK_OF_DECLARE - but I'm open to suggestions.
-> 
-> The second patch simplifies the reset controller (built into the clock
-> controller driver) because the regmap is already available early and
-> thus can be used by the reset controller driver as well.
-> 
-> 
-> Changes since v1 at [0]:
-> - switch from CLK_OF_DECLARE_DRIVER to CLK_OF_DECLARE because with
->   this series there is only one initialization function for the clock
->   controller driver (unlike before: where the reset controller was
->   registered early and the clock controller was registered as platform
->   device)
-> - rebased on top of clk-meson, commit:
->   684b97b13b175a ("clk: meson-axg: pcie: drop the mpll3 clock parent")
-> 
-> 
-> [0] https://patchwork.kernel.org/cover/10538971/
+> sorry, but I found out that this doesn't work.
+> I'm not sure why I assumed that this has to be a CPU_DIV16 clock but
+> it's most likely a "divide by 4" (more details below).
+> so please feel free to revert this / drop the patches until I have
+> more information
 
-As explained earlier, the clock framework is trying to avoid CLK_OF_DECLARE*
-In this case, I don't see a away around it yet so:
-
-Rebased and Applied
-
-but should keep trying to remove this is future, when possible.
-
-Thx
-
-> 
-> 
-> Martin Blumenstingl (2):
->   clk: meson: meson8b: register the clock controller early
->   clk: meson: meson8b: use the regmap in the internal reset controller
-> 
->  drivers/clk/meson/meson8b.c | 110 +++++++++++++-----------------------
->  1 file changed, 40 insertions(+), 70 deletions(-)
-> 
-
+Dropped for now, feel free to send it again when things get more clear ;)
 
