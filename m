@@ -2,91 +2,108 @@ Return-Path: <SRS0=Lp8A=MI=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EFD3C43382
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Sep 2018 09:59:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0969C43382
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Sep 2018 12:02:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A45C214C5
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Sep 2018 09:59:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6765320666
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Sep 2018 12:02:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="Q/Qa19Tc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A45C214C5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f8Ad3erh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6765320666
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726880AbeIZQLq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 26 Sep 2018 12:11:46 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:51890 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726404AbeIZQLp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Sep 2018 12:11:45 -0400
-Received: by mail-wm1-f68.google.com with SMTP id y25-v6so1591467wmi.1
-        for <linux-clk@vger.kernel.org>; Wed, 26 Sep 2018 02:59:34 -0700 (PDT)
+        id S1726593AbeIZSOs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 26 Sep 2018 14:14:48 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:42857 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726777AbeIZSOs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Sep 2018 14:14:48 -0400
+Received: by mail-ot1-f66.google.com with SMTP id h26-v6so27846918otl.9;
+        Wed, 26 Sep 2018 05:02:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=531H7wSqmTGNxBOsJ1X79g+MnPu8zH5Q997nw3eCUec=;
-        b=Q/Qa19TcQgb+3/qCu2F9tL0if13jiVmZX5TxzZm/ASCsEb5fH8qQRY3DoEE91wMXhi
-         8i3Y2beH0OCN1a2jbSbZwPHAhg7Vzxuv3cCLWNDpb2F0M3q7Bdu5Oy71MFzbdI6+8Ya1
-         44Bn+j20S8unmlCugoaGgmNgx2Rbko8b4HlfpP18YTJEACeHvXUeB/POHJMX4hRPdf/D
-         24eRZ3+voUBn455Zrb8MXG+AgAjqKl79KyTceM3jT105cwwF/nvHjME9Knfx42auYZ8X
-         jnBTXRUvv4iBPKSfNU8XLWuUTLJ80C60l2niHdjHHG5xqP4KD29V6Rh2wbjrGqV9j8a4
-         ckTA==
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=Ktg5ovKSPSBwpjpSXwCWjbFvp8TZfoNhcKkgdpyREkw=;
+        b=f8Ad3erhHz++NboUWAoa4oE6XhpsAd4JyYBrgn9+0OVpFYlM0rP/XKNNOhcsj+G0Mj
+         q0x+DWqhqwOXP9zqLiA9uVghiQ9xKa3WdI2VpeIgzgmRuIO8Zg7oMQVAS80fRqQ1v6O9
+         djySca93NUseIPBa8Q463Tdi9cw8OXgfovKMDH6BSIBwey/mU9KTeGRWlLLR05UhiuU3
+         q5eCb62w0r+BlbwQS5HhupcPClQc0t8USvXgl+K7AcpMViAaiW09bu9cw9+1Xr5UbXh5
+         bCSWenAQxOJ3H9MT7GUYGrjv/LVgvoXBCU57noXyZMScitvx1Gh8f+5BBpbgKfsZBZEE
+         uDYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=531H7wSqmTGNxBOsJ1X79g+MnPu8zH5Q997nw3eCUec=;
-        b=fDg9zZEq/UzJCklqT2P7A9CANVIGJ2aBtLPFinYI90avWP/OBBSgjs3rgILOW9S8lo
-         FqjfAxs4AW8Dkp5jgDiMj12uSY2JnhZd84VUpy6+StTqO9ttFRimGNf3Ntj9wdHAUhzu
-         gRq6cdXXJZIyJV3hYNV337FFti1GIZfi6gJwhlHYPVq1VwTBFSO/sOYq2hxCXQYuvxzn
-         Fb6x8CZiZv8c01JZ6CHdkYwtcNCq8DVmIfh81F+qQNyV1ox5hjNhPpLmtyyAaWE7pf4w
-         MMYT7tDzVSoj9D3N6cW7Wl6odnMMKzpnOT3Qne14pPsEbasc1ZxFYU0mKwl54Dc+8MHD
-         Yktw==
-X-Gm-Message-State: ABuFfojIrB4gftT28bd51QarDqUus5eSFxq9drhsNBv1mA5OPXLC7r/W
-        P4RSpXRNUe7H/cNOnWL8mfDQYg==
-X-Google-Smtp-Source: ACcGV62tv/5rj4VjDkU84zpV935ZPXS0yfcLLxE0DKpOcmwH1WedrLyAHaHFUJ5YO+N9ylnPyWX01g==
-X-Received: by 2002:a1c:dc41:: with SMTP id t62-v6mr3842085wmg.137.1537955973902;
-        Wed, 26 Sep 2018 02:59:33 -0700 (PDT)
-Received: from boomer ([2a00:8c40:243:232:9287:a644:860c:5a1b])
-        by smtp.gmail.com with ESMTPSA id l12-v6sm4232127wrv.29.2018.09.26.02.59.32
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 26 Sep 2018 02:59:33 -0700 (PDT)
-Message-ID: <2868cb9dc7536d8c3b94a83ce14694f93643d555.camel@baylibre.com>
-Subject: Re: [PATCH 0/2] meson8b: add the CPU_DIV16 clock for the ARM TWD
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        carlo@caione.org, khilman@baylibre.com, sboyd@kernel.org,
-        mturquette@baylibre.com, jianxin.pan@amlogic.com
-Date:   Wed, 26 Sep 2018 11:59:32 +0200
-In-Reply-To: <CAFBinCAxB7MLK_dypQMkKD7=GeFSCN-L47Yoz3PqRssD88bZsw@mail.gmail.com>
-References: <20180721172537.15639-1-martin.blumenstingl@googlemail.com>
-         <1532337101.26720.89.camel@baylibre.com>
-         <CAFBinCAxB7MLK_dypQMkKD7=GeFSCN-L47Yoz3PqRssD88bZsw@mail.gmail.com>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=Ktg5ovKSPSBwpjpSXwCWjbFvp8TZfoNhcKkgdpyREkw=;
+        b=bB1xsxnEo+T+5Zxr6FhgV0Un2D2gdd1Ga6X+Hpn5QhlEd+HYfK07Dx0DkyF2LQuFNP
+         O1VbQlyU9gm+mNLP+hgACpa6eQMhFoXPCXE14nYc+zm0wCLYpvBeXjLZVGRdXb9loSSp
+         sYx4u+K2gdwxGouJ2jeWJAOKM/v6nsYk8SI6fkjlxBCkQWEo8sdRwxTZIpAV9IB9slhi
+         Hx099EnldMeDSitNYy94efoDimlImzLlDhE9wyCQNWaA0COlaBAwf+2qsJ8C2bQmJglv
+         0aN5fEcLwEjqAY5prW6ktae83PLMrgVXWqov5VySSgHY5n5abmXb6PB54fn+T4QaK1u1
+         TB/w==
+X-Gm-Message-State: ABuFfohtLyFF8EHogLazdBY8KVNa+8iWRVhj9eIaYq9coScXVJgAwFfI
+        lZsSLZqg+TyLzHx54netxvHr5ghQRzQN3pknvlM=
+X-Google-Smtp-Source: ACcGV60lzNGzfflYZdHCoqj9Dc9r5wDp5Vi/PobUYyOkpk1BZqoOdJTuS8sSl5YAqUgQRV2l5dpI2JyXS01Q232Bwcc=
+X-Received: by 2002:a9d:23a3:: with SMTP id t32-v6mr3663621otb.65.1537963327897;
+ Wed, 26 Sep 2018 05:02:07 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a9d:2d28:0:0:0:0:0 with HTTP; Wed, 26 Sep 2018 05:02:07
+ -0700 (PDT)
+In-Reply-To: <20180926064752.GM4097@pengutronix.de>
+References: <1537785597-26499-1-git-send-email-abel.vesa@nxp.com>
+ <1537785597-26499-5-git-send-email-abel.vesa@nxp.com> <CAOMZO5D7yLUzriOub4RWsq1K8_fTj6c0LFOnSZwHyjqMPYu=0A@mail.gmail.com>
+ <20180926064752.GM4097@pengutronix.de>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Wed, 26 Sep 2018 09:02:07 -0300
+Message-ID:
+ <CAOMZO5D-40WbanPC=-O_Nj98znOk6Aa3dAqpCuwHTv+GuFR6_g@mail.gmail.com>
+Subject: Re: [PATCH v9 4/5] clk: imx: add imx composite clock
+To:     Sascha Hauer <s.hauer@pengutronix.de>
+Cc:     Abel Vesa <abel.vesa@nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+        Abel Vesa <abelvesa@linux.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
-Message-ID: <20180926095932.9zMRQN7ZApto2Rsv9YUV_0RaUETb56usY_sU9fW2sPU@z>
+Message-ID: <20180926120207.9-vdTCWpZRh-qhD4-OwciYdFuN1dNLI1Q7wWtoDUlVI@z>
 
-On Wed, 2018-09-26 at 11:56 +0200, Martin Blumenstingl wrote:
-> > Queued for 4.20
-> 
-> sorry, but I found out that this doesn't work.
-> I'm not sure why I assumed that this has to be a CPU_DIV16 clock but
-> it's most likely a "divide by 4" (more details below).
-> so please feel free to revert this / drop the patches until I have
-> more information
+Hi Sascha,
 
-Dropped for now, feel free to send it again when things get more clear ;)
+On Wed, Sep 26, 2018 at 3:47 AM, Sascha Hauer <s.hauer@pengutronix.de> wrote:
 
+> It's:
+>         rate = *prate / prediv_value;
+>         rate = rate / div_value;
+
+Yes, this looks correct. Thanks for the feedback.
+
+> To me this looks correct. However, For an unsigned long type we have
+> DIV_ROUND_UP() with which we do not need any casting. For 64bit code
+> unsigned long is 64bit anyway which makes the cast a no-op and for 32bit
+> code there's also no point in exanding the initial 32bit value to 64bit.
+
+That's a good point too.
+
+Thanks
