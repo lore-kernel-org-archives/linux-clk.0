@@ -1,114 +1,116 @@
-Return-Path: <SRS0=aw6K=MH=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=Lp8A=MI=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75E23C43382
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Sep 2018 21:50:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E94E5ECE562
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Sep 2018 06:47:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DFED20685
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Sep 2018 21:50:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jBbFAUWb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DFED20685
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id A87AB208E4
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Sep 2018 06:47:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A87AB208E4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726934AbeIZD7l (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Sep 2018 23:59:41 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:40740 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726497AbeIZD7l (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Sep 2018 23:59:41 -0400
-Received: by mail-io1-f65.google.com with SMTP id w16-v6so3588755iom.7;
-        Tue, 25 Sep 2018 14:50:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=ysfSkpixO2yl8uMGR1FCWmHvdez/6Jg2aRagge3VwsU=;
-        b=jBbFAUWbb4xkEO792L3X5JCO5yWP6VIu45P0DL7N0Ixo8uJ37ADKtmoKzYU+u5Vo8Q
-         8dGHGi44/RIDAluh+TGlQghv++nRzboupvH6rkBT6eRHkMmch1DtrPLB20yo28ntBfwG
-         s3tVlK0Mt8XgLOhThSCLAJqd/BY9p+ken7lESBlE6Kb+eK2iYIuDy8KUrXiUYsxlc+jn
-         mJNxgo+pSj6mkUadSLhMyoYioX7i97JUyIiGq16NeV0i/h7O31ZxH+rKyzifpZNh3cYF
-         f2HIlyVQxAVwkha0Jb6Pwr1/BmmAalrZdQjFYDx0LDL9+icXBYUAPLsXRkX/TMcsI131
-         gCCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=ysfSkpixO2yl8uMGR1FCWmHvdez/6Jg2aRagge3VwsU=;
-        b=KhRXgHXv8ghRN3nh+xaaCYhShANB8uah3CD0DrtAfNJhmxlGt2XpdACWpmPiednlww
-         z/eN5fA8L3UxpcJzDApexYXO6w4GrjK61pOfME7LaQehBAdxZXARMyHZc6Qmj0RDXKqL
-         XH5AOafWq1l10oOFZeyClH5ZOOw0oN4Evi0ZnRouOmpwNIcL2yXizFX4DnYHlXAWePqL
-         R5LmxA7LeB5xR1bfjMdBJ8YYTV3xBPaWKAu7oHz7dSSIhZJJ1ERydlVaBrtIcVcgRjJB
-         x2iByvUflM0p+2hXrgDDD6ESXbZm9f2MW5k08e4I+awjae0TTrbTsbs+WJDlT9faK4b2
-         OBuw==
-X-Gm-Message-State: ABuFfojsN7yfVlNnnIwrfDwQSd+oqzBYcmU3Z07Ms/BhCJzlyfhgFing
-        OVuL+AaX7V87d7otkm/n6g==
-X-Google-Smtp-Source: ACcGV62x0C5s3KaKNbBnH8bZMmkFFuOAllckZQehbOTWe+vV3TC43EvjxzjN1WPoaaSmZc1pZTiKTA==
-X-Received: by 2002:a5e:d612:: with SMTP id w18-v6mr2811602iom.54.1537912204620;
-        Tue, 25 Sep 2018 14:50:04 -0700 (PDT)
-Received: from localhost.localdomain (CPE1cabc0918a93-CM1cabc0918a90.cpe.net.cable.rogers.com. [99.229.26.117])
-        by smtp.gmail.com with ESMTPSA id w193-v6sm1519981ita.11.2018.09.25.14.50.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 25 Sep 2018 14:50:03 -0700 (PDT)
-From:   Robert Yang <decatf@gmail.com>
-To:     Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc:     Prashant Gaikwad <pgaikwad@nvidia.com>,
+        id S1726368AbeIZM7V (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 26 Sep 2018 08:59:21 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:55215 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726951AbeIZM7V (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Sep 2018 08:59:21 -0400
+Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <sha@pengutronix.de>)
+        id 1g53c2-0002EY-TX; Wed, 26 Sep 2018 08:47:54 +0200
+Received: from sha by dude.hi.pengutronix.de with local (Exim 4.91)
+        (envelope-from <sha@pengutronix.de>)
+        id 1g53c0-0000JJ-JO; Wed, 26 Sep 2018 08:47:52 +0200
+Date:   Wed, 26 Sep 2018 08:47:52 +0200
+From:   Sascha Hauer <s.hauer@pengutronix.de>
+To:     Fabio Estevam <festevam@gmail.com>
+Cc:     Abel Vesa <abel.vesa@nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Robert Yang <decatf@gmail.com>
-Subject: [PATCH V2] clk: tegra: Return the exact clock rate from clk_round_rate
-Date:   Tue, 25 Sep 2018 17:49:40 -0400
-Message-Id: <20180925214940.15188-1-decatf@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+        Abel Vesa <abelvesa@linux.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v9 4/5] clk: imx: add imx composite clock
+Message-ID: <20180926064752.GM4097@pengutronix.de>
+References: <1537785597-26499-1-git-send-email-abel.vesa@nxp.com>
+ <1537785597-26499-5-git-send-email-abel.vesa@nxp.com>
+ <CAOMZO5D7yLUzriOub4RWsq1K8_fTj6c0LFOnSZwHyjqMPYu=0A@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOMZO5D7yLUzriOub4RWsq1K8_fTj6c0LFOnSZwHyjqMPYu=0A@mail.gmail.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 08:37:07 up 131 days, 18:17, 163 users,  load average: 21.66,
+ 19.09, 11.16
+User-Agent: Mutt/1.10.0 (2018-05-17)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
-Message-ID: <20180925214940.8A2QbhPSWDsFKea14JkUyITHcgn1pxOKFXdx2EIizTk@z>
+Message-ID: <20180926064752.eTjOfdksfiYAJqQC0Qes3uBV0PgFkn8ArGgOJ9TbShY@z>
 
-The current behavior is that clk_round_rate would return the same clock
-rate passed to it for valid PLL configurations. This change will return
-the exact rate the PLL will provide in accordance with clk API.
+On Tue, Sep 25, 2018 at 01:42:12PM -0300, Fabio Estevam wrote:
+> Hi Abel,
+> 
+> On Mon, Sep 24, 2018 at 7:39 AM, Abel Vesa <abel.vesa@nxp.com> wrote:
+> 
+> > +static long imx_clk_composite_divider_round_rate(struct clk_hw *hw,
+> > +                                               unsigned long rate,
+> > +                                               unsigned long *prate)
+> > +{
+> > +       int prediv_value;
+> > +       int div_value;
+> > +
+> > +       imx_clk_composite_compute_dividers(rate, *prate,
+> > +                                               &prediv_value, &div_value);
+> > +
+> > +       rate = DIV_ROUND_UP_ULL((u64)*prate, prediv_value);
+> 
+> You assing a value to 'rate' here.
+> 
+> > +       rate = DIV_ROUND_UP_ULL((u64)rate, div_value);
+> 
+> And then overwrite it immediately after.
 
-Signed-off-by: Robert Yang <decatf@gmail.com>
----
-Changes in V2:
- - Move input divider (m == 0) check into the cfg constraints check
-   condition. Forgo adding WARN_ON and avoid using 0 input divider
-   all together.
+It's:
+	rate = *prate / prediv_value;
+	rate = rate / div_value;
 
- drivers/clk/tegra/clk-pll.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+To me this looks correct. However, For an unsigned long type we have
+DIV_ROUND_UP() with which we do not need any casting. For 64bit code
+unsigned long is 64bit anyway which makes the cast a no-op and for 32bit
+code there's also no point in exanding the initial 32bit value to 64bit.
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 17a058c3bbc1..2a800a9c56e6 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -589,12 +589,13 @@ static int _calc_rate(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
- 	cfg->n = cfg->output_rate / cfreq;
- 	cfg->cpcon = OUT_OF_TABLE_CPCON;
- 
--	if (cfg->m > divm_max(pll) || cfg->n > divn_max(pll) ||
--	    (1 << p_div) > divp_max(pll)
--	    || cfg->output_rate > pll->params->vco_max) {
-+	if (cfg->m == 0 || cfg->m > divm_max(pll) ||
-+	    cfg->n > divn_max(pll) || (1 << p_div) > divp_max(pll) ||
-+	    cfg->output_rate > pll->params->vco_max) {
- 		return -EINVAL;
- 	}
- 
-+	cfg->output_rate = cfg->n * DIV_ROUND_UP(parent_rate, cfg->m);
- 	cfg->output_rate >>= p_div;
- 
- 	if (pll->params->pdiv_tohw) {
+Sascha
+
 -- 
-2.17.1
-
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
