@@ -1,66 +1,106 @@
-Return-Path: <sha@pengutronix.de>
-Date: Wed, 26 Sep 2018 08:47:52 +0200
-From: Sascha Hauer <s.hauer@pengutronix.de>
-To: Fabio Estevam <festevam@gmail.com>
-Cc: Abel Vesa <abel.vesa@nxp.com>, Lucas Stach <l.stach@pengutronix.de>,
-	Sascha Hauer <kernel@pengutronix.de>,
-	Dong Aisheng <aisheng.dong@nxp.com>,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Anson Huang <anson.huang@nxp.com>,
-	Andrey Smirnov <andrew.smirnov@gmail.com>,
-	Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-	Abel Vesa <abelvesa@linux.com>, NXP Linux Team <linux-imx@nxp.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v9 4/5] clk: imx: add imx composite clock
-Message-ID: <20180926064752.GM4097@pengutronix.de>
-References: <1537785597-26499-1-git-send-email-abel.vesa@nxp.com>
- <1537785597-26499-5-git-send-email-abel.vesa@nxp.com>
- <CAOMZO5D7yLUzriOub4RWsq1K8_fTj6c0LFOnSZwHyjqMPYu=0A@mail.gmail.com>
+Return-Path: <linux-kernel-owner@vger.kernel.org>
+Subject: Re: [PATCH v7 05/24] clocksource: Add a new timer-ingenic driver
+To: Paul Cercueil <paul@crapouillou.net>
+Cc: Mathieu Malaterre <malat@debian.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Rob Herring <robh+dt@kernel.org>, linux-doc@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        od@zcrc.me, linux-mips@linux-mips.org,
+        Paul Burton <paul.burton@mips.com>,
+        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-pwm@vger.kernel.org
+References: <5bab3024.1c69fb81.b6a71.9c38SMTPIN_ADDED_MISSING@mx.google.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <5af26854-0752-312b-6148-3ffa9abb2570@linaro.org>
+Date: Wed, 26 Sep 2018 10:05:13 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-In-Reply-To: <CAOMZO5D7yLUzriOub4RWsq1K8_fTj6c0LFOnSZwHyjqMPYu=0A@mail.gmail.com>
+In-Reply-To: <5bab3024.1c69fb81.b6a71.9c38SMTPIN_ADDED_MISSING@mx.google.com>
+Content-Type: text/plain; charset=utf-8
+Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Sep 25, 2018 at 01:42:12PM -0300, Fabio Estevam wrote:
-> Hi Abel,
+On 26/09/2018 08:01, Paul Cercueil wrote:
 > 
-> On Mon, Sep 24, 2018 at 7:39 AM, Abel Vesa <abel.vesa@nxp.com> wrote:
+> Le 25 sept. 2018 10:12 PM, Daniel Lezcano <daniel.lezcano@linaro.org> a écrit :
+>>
+>> On 25/09/2018 15:38, Paul Cercueil wrote: 
+>>>
+>>> Le 24 sept. 2018 9:14 AM, Daniel Lezcano <daniel.lezcano@linaro.org> a écrit : 
+>>>>
+>>>> On 24/09/2018 08:53, Paul Cercueil wrote: 
+>>>>>
+>>>>> Le 24 sept. 2018 07:58, Daniel Lezcano <daniel.lezcano@linaro.org> a écrit : 
+>>>>>>
+>>>>>> On 24/09/2018 07:49, Paul Cercueil wrote: 
+>>>>>>>
+>>>>>>> Le 24 sept. 2018 07:35, Daniel Lezcano <daniel.lezcano@linaro.org> a 
+>>>>>>> écrit : 
+>>>>>>>>
+>>>>>>>> On 24/09/2018 07:24, Paul Cercueil wrote: 
+>>>>>>>>> Hi Daniel, 
+>>>>>>>>>
+>>>>>>>>> Le 24 sept. 2018 05:12, Daniel Lezcano 
+>>>>>>>>> <daniel.lezcano@linaro.org> a écrit : 
+>>>>>>>>>>
+>>>>>>>>>> On 21/08/2018 19:16, Paul Cercueil wrote: 
+>>>>>>>>>>> This driver handles the TCU (Timer Counter Unit) present on 
+>>>>>>>>>>> the Ingenic JZ47xx SoCs, and provides the kernel with a 
+>>>>>>>>>>> system timer, and optionally with a clocksource and a 
+>>>>>>>>>>> sched_clock. 
+>>>>>>>>>>>
+>>>>>>>>>>> It also provides clocks and interrupt handling to client 
+>>>>>>>>>>> drivers. 
+>>>>>>>>>>
+>>>>>>>>>> Can you provide a much more complete description of the timer 
+>>>>>>>>>> in order to make my life easier for the review of this patch? 
+>>>>>>>>>
+>>>>>>>>> See patch [03/24], it adds a doc file that describes the 
+>>>>>>>>> hardware. 
+>>>>>>>>
+>>>>>>>> Thanks, I went through but it is incomplete to understand what the 
+>>>>>>>> timer do. I will reverse-engineer the code but it would help if you 
+>>>>>>>> can give the gross approach. Why multiple channels ? mutexes and 
+>>>>>>>> completion ? 
+>>>>>>>
+>>>>>>> Much of the complexity is because of the multi-purpose nature of the 
+>>>>>>> TCU channels. Each one can be used as timer/clocksource, or PWM. 
+>>>>>>>
+>>>>>>> The driver starts by using channels 0 and 1 as system timer and 
+>>>>>>> clocksource, respectively, the other ones being unused for now. Then, 
+>>>>>>> *if* the PWM driver requests one of the channels in use by the 
+>>>>>>> timer/clocksource driver, say channel 0, the timer/clocksource driver 
+>>>>>>> will dynamically reassign the system timer to a free channel, from 
+>>>>>>> channel 0 to e.g. channel 2. Only in that case the completion/mutex 
+>>>>>>> are actually used. 
+>>>>>>
+>>>>>> Why do you need to do this? Can't be the channels dedicated and reserved 
+>>>>>> for clocksource and clockevent? 
+>>>>>
+>>>>> That's what I had in place (ingenic,timer-channel and ingenic,clocksource-channel DT properties), but Rob didn't want any linux-specific properties in the devicetree binding :( 
+>>>>
+>>>> Isn't possible to specify the channel to use in the DT? like renesas16 ? 
+>>>
+>>> That's what I did in V6 (and before), but Rob did not want me to add properties for Linux-specific concepts such as clocksource. 
+>>
+>> Hmm, I remember something like that, yes but I did a delete of the 
+>> previous version when you posted the v7. Can you give a pointer to its 
+>> answer ? 
 > 
-> > +static long imx_clk_composite_divider_round_rate(struct clk_hw *hw,
-> > +                                               unsigned long rate,
-> > +                                               unsigned long *prate)
-> > +{
-> > +       int prediv_value;
-> > +       int div_value;
-> > +
-> > +       imx_clk_composite_compute_dividers(rate, *prate,
-> > +                                               &prediv_value, &div_value);
-> > +
-> > +       rate = DIV_ROUND_UP_ULL((u64)*prate, prediv_value);
+> Yes, this was his answer:
+> https://lkml.org/lkml/2018/7/25/508
 > 
-> You assing a value to 'rate' here.
-> 
-> > +       rate = DIV_ROUND_UP_ULL((u64)rate, div_value);
-> 
-> And then overwrite it immediately after.
+> Then mine:
+> https://lkml.org/lkml/2018/7/30/883
 
-It's:
-	rate = *prate / prediv_value;
-	rate = rate / div_value;
+Thanks !
 
-To me this looks correct. However, For an unsigned long type we have
-DIV_ROUND_UP() with which we do not need any casting. For 64bit code
-unsigned long is 64bit anyway which makes the cast a no-op and for 32bit
-code there's also no point in exanding the initial 32bit value to 64bit.
-
-Sascha
 
 -- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
