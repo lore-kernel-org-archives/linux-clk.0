@@ -1,57 +1,30 @@
-Return-Path: <lkundrak@v3.sk>
-From: Lubomir Rintel <lkundrak@v3.sk>
-To: linux-kernel@vger.kernel.org
-Cc: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-input@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH 2/8] dt-bindings: olpc,ap-sp: add GPIO lines
-Date: Mon, 10 Sep 2018 13:26:48 +0200
-Message-Id: <20180910112654.42061-3-lkundrak@v3.sk>
-In-Reply-To: <20180910112654.42061-1-lkundrak@v3.sk>
-References: <20180910112654.42061-1-lkundrak@v3.sk>
+Return-Path: <Chris.Brandt@renesas.com>
+From: Chris Brandt <Chris.Brandt@renesas.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+CC: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk
+	<linux-clk@vger.kernel.org>, Linux-Renesas
+	<linux-renesas-soc@vger.kernel.org>, Simon Horman
+	<horms+renesas@verge.net.au>
+Subject: RE: [PATCH v2 3/3] clk: renesas: r7s9210: Move table update to
+ separate function
+Date: Wed, 26 Sep 2018 12:34:16 +0000
+Message-ID: 
+ <TYXPR01MB1568A4A2196EEFB785E4505C8A150@TYXPR01MB1568.jpnprd01.prod.outlook.com>
+References: <20180924164937.36536-1-chris.brandt@renesas.com>
+ <20180924164937.36536-4-chris.brandt@renesas.com>
+ <CAMuHMdXRWRvxNb12GPDi-agEFhLg3_Cnukm6LwapFdaT8Fpddg@mail.gmail.com>
+In-Reply-To: 
+ <CAMuHMdXRWRvxNb12GPDi-agEFhLg3_Cnukm6LwapFdaT8Fpddg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Add properties describing the GPIO lines used by the keyboard controller.
-The olpc-apsp driver will do happily without them, but they are still part
-of the hardware description. The driver could still reserve the lines,
-so that nothing else touches them.
-
-This makes the device node almost compatible with "ps2-gpio". I'm not
-adding a compatible property, because ps2-gpio would use a different
-interrupt, so that we'd need to name it. And I haven't actually tried it.
-
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
----
- Documentation/devicetree/bindings/serio/olpc,ap-sp.txt | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/serio/olpc,ap-sp.txt b/Documentation/devicetree/bindings/serio/olpc,ap-sp.txt
-index 36603419d6f8..2b1b1dbb54c1 100644
---- a/Documentation/devicetree/bindings/serio/olpc,ap-sp.txt
-+++ b/Documentation/devicetree/bindings/serio/olpc,ap-sp.txt
-@@ -7,6 +7,10 @@ Required properties:
- - clocks : phandle + clock-specifier for the clock that drives the WTM
- - clock-names:  should be "sp"
- 
-+Optional properties:
-+- data-gpios : GPIO line used for PS/2 interface data
-+- clk-gpios : GPIO line used for PS/2 interface clock
-+
- Example:
- 	ap-sp@d4290000 {
- 		compatible = "olpc,ap-sp";
-@@ -14,4 +18,6 @@ Example:
- 		interrupts = <40>;
- 		clocks = <&soc_clocks MMP2_CLK_SP>;
- 		clock-names = "sp";
-+		data-gpios = <&gpio 72 GPIO_ACTIVE_HIGH>;
-+		clk-gpios = <&gpio 71 GPIO_ACTIVE_HIGH>;
- 	}
--- 
-2.17.1
+SGkgR2VlcnQsDQoNCk9uIFdlZG5lc2RheSwgU2VwdGVtYmVyIDI2LCAyMDE4LCBHZWVydCBVeXR0
+ZXJob2V2ZW4gd3JvdGU6DQo+ID4gKy8qIFRoZSBjbG9jayBkaXZpZGVycyBpbiB0aGUgdGFibGUg
+dmFyeSBiYXNlZCBvbiBEVCBhbmQgcmVnaXN0ZXINCj4gc2V0dGluZ3MgKi8NCj4gPiArc3RhdGlj
+IHZvaWQgcjdzOTIxMF91cGRhdGVfY2xrX3RhYmxlKHN0cnVjdCBjbGsgKmV4dGFsX2Nsaywgdm9p
+ZA0KPiBfX2lvbWVtICpiYXNlKQ0KPiANCj4gQ2FuIGJlIF9faW5pdC4NCj4gDQo+IFJldmlld2Vk
+LWJ5OiBHZWVydCBVeXR0ZXJob2V2ZW4gPGdlZXJ0K3JlbmVzYXNAZ2xpZGVyLmJlPg0KPiBpLmUu
+IHdpbGwgcXVldWUgaW4gY2xrLXJlbmVzYXMtZm9yLXY0LjIwLCB3aXRoIHRoZSBhYm92ZSBmaXhl
+ZC4NCg0KT0ssIHRoYW5rIHlvdSENCg0KQ2hyaXMNCg0K
