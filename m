@@ -1,72 +1,63 @@
-Return-Path: <lkundrak@v3.sk>
-From: Lubomir Rintel <lkundrak@v3.sk>
-To: linux-kernel@vger.kernel.org
-Cc: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-input@vger.kernel.org,
-	Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH 6/8] Input: olpc_apsp: check FIFO status on open(), not probe()
-Date: Mon, 10 Sep 2018 13:26:52 +0200
-Message-Id: <20180910112654.42061-7-lkundrak@v3.sk>
-In-Reply-To: <20180910112654.42061-1-lkundrak@v3.sk>
-References: <20180910112654.42061-1-lkundrak@v3.sk>
+Return-Path: <JOLLYS@xilinx.com>
+Return-Path: jolly.shah@xilinx.com
+From: Jolly Shah <jolly.shah@xilinx.com>
+To: <olof@lixom.net>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<michal.simek@xilinx.com>, <arm@kernel.org>, <linux-clk@vger.kernel.org>
+CC: <rajanv@xilinx.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, Jolly Shah <jollys@xilinx.com>
+Subject: [PATCH v3 0/4] drivers: clk: Add ZynqMP clock driver support
+Date: Wed, 26 Sep 2018 11:12:57 -0700
+Message-ID: <1537985581-32164-1-git-send-email-jollys@xilinx.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 List-ID: <linux-clk.vger.kernel.org>
 
-Let's defer the FIFO status checking until open().
+This patchset adds CCF compliant clock driver for ZynqMP.Clock driver queries 
+supported clock information from firmware and regiters pll and output clocks with CCF.
 
-When we'll get a clk handle, this will allow us to defer clock enablement
-until the device is actually used.
+This patch series is earlier reveiwed as part of FW patchset (https://patchwork.kernel.org/cover/10555405/). 
+FW driver from that patchset is merged. This patchset contains only clock driver and is based on top of 
+xilinx firmware patch set available in below tree:
+https://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git/log/?h=next/drivers
 
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
----
- drivers/input/serio/olpc_apsp.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+v3:
+ - Added check to pass only valid ioctls for ioctl eemi api
+ - Added eemi documentation including ioctl details
 
-diff --git a/drivers/input/serio/olpc_apsp.c b/drivers/input/serio/olpc_apsp.c
-index 8e9a4209fcad..8b19a47dfa46 100644
---- a/drivers/input/serio/olpc_apsp.c
-+++ b/drivers/input/serio/olpc_apsp.c
-@@ -145,8 +145,15 @@ static int olpc_apsp_open(struct serio *port)
- {
- 	struct olpc_apsp *priv = port->port_data;
- 	unsigned int tmp;
-+	unsigned long l;
- 
- 	if (priv->open_count++ == 0) {
-+		l = readl(priv->base + COMMAND_FIFO_STATUS);
-+		if (!(l & CMD_STS_MASK)) {
-+			dev_err(priv->dev, "SP cannot accept commands.\n");
-+			return -EIO;
-+		}
-+
- 		/* Enable interrupt 0 by clearing its bit */
- 		tmp = readl(priv->base + PJ_INTERRUPT_MASK);
- 		writel(tmp & ~INT_0, priv->base + PJ_INTERRUPT_MASK);
-@@ -173,7 +180,6 @@ static int olpc_apsp_probe(struct platform_device *pdev)
- 	struct olpc_apsp *priv;
- 	struct resource *res;
- 	struct device_node *np;
--	unsigned long l;
- 	int error;
- 
- 	priv = devm_kzalloc(&pdev->dev, sizeof(struct olpc_apsp), GFP_KERNEL);
-@@ -192,12 +198,6 @@ static int olpc_apsp_probe(struct platform_device *pdev)
- 	if (priv->irq < 0)
- 		return priv->irq;
- 
--	l = readl(priv->base + COMMAND_FIFO_STATUS);
--	if (!(l & CMD_STS_MASK)) {
--		dev_err(&pdev->dev, "SP cannot accept commands.\n");
--		return -EIO;
--	}
--
- 	/* KEYBOARD */
- 	kb_serio = kzalloc(sizeof(struct serio), GFP_KERNEL);
- 	if (!kb_serio)
+Jolly Shah (1):
+  drivers: clk: Add ZynqMP clock driver
+
+Rajan Vaja (3):
+  Documentation: xilinx: Add documentation for eemi APIs
+  firmware: xilinx: Add zynqmp IOCTL API for device control
+  dt-bindings: clock: Add bindings for ZynqMP clock driver
+
+ .../firmware/xilinx/xlnx,zynqmp-firmware.txt       |  53 ++
+ Documentation/xilinx/eemi.txt                      |  67 ++
+ drivers/clk/Kconfig                                |   1 +
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/zynqmp/Kconfig                         |  10 +
+ drivers/clk/zynqmp/Makefile                        |   4 +
+ drivers/clk/zynqmp/clk-gate-zynqmp.c               | 144 +++++
+ drivers/clk/zynqmp/clk-mux-zynqmp.c                | 141 ++++
+ drivers/clk/zynqmp/clk-zynqmp.h                    |  68 ++
+ drivers/clk/zynqmp/clkc.c                          | 716 +++++++++++++++++++++
+ drivers/clk/zynqmp/divider.c                       | 217 +++++++
+ drivers/clk/zynqmp/pll.c                           | 335 ++++++++++
+ drivers/firmware/xilinx/zynqmp.c                   |  43 ++
+ include/dt-bindings/clock/xlnx,zynqmp-clk.h        | 116 ++++
+ include/linux/firmware/xlnx-zynqmp.h               |   5 +-
+ 15 files changed, 1920 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/xilinx/eemi.txt
+ create mode 100644 drivers/clk/zynqmp/Kconfig
+ create mode 100644 drivers/clk/zynqmp/Makefile
+ create mode 100644 drivers/clk/zynqmp/clk-gate-zynqmp.c
+ create mode 100644 drivers/clk/zynqmp/clk-mux-zynqmp.c
+ create mode 100644 drivers/clk/zynqmp/clk-zynqmp.h
+ create mode 100644 drivers/clk/zynqmp/clkc.c
+ create mode 100644 drivers/clk/zynqmp/divider.c
+ create mode 100644 drivers/clk/zynqmp/pll.c
+ create mode 100644 include/dt-bindings/clock/xlnx,zynqmp-clk.h
+
 -- 
-2.17.1
+2.7.4
