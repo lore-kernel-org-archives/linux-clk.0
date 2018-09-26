@@ -2,168 +2,186 @@ Return-Path: <SRS0=Lp8A=MI=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39DB3C43382
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Sep 2018 08:05:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E79A1C43382
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Sep 2018 09:24:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D086A214AB
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Sep 2018 08:05:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KDukd2yS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D086A214AB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 9473321480
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Sep 2018 09:24:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9473321480
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727479AbeIZOQ7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 26 Sep 2018 10:16:59 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:50836 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727038AbeIZOQ6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Sep 2018 10:16:58 -0400
-Received: by mail-wm1-f67.google.com with SMTP id s12-v6so1211985wmc.0
-        for <linux-clk@vger.kernel.org>; Wed, 26 Sep 2018 01:05:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ONWisPtFURwS+Dv/RY9Ijg+ZXudgqyV5XWp/wD93EE4=;
-        b=KDukd2ySxu3ajHjovgrOo8VKtSSAwHEUxFESObdGL6Gp9oEw5g8aXWSVu3aHB3ar5a
-         4GrQte6urNaoeZ4/7RB2JAyflTfF8kZHR/ksDpGVqNXl0nfznGnNOAYQN8YnCX84ROiO
-         c14ErtmL52sfmrXmUbmK39VwmE55Rr07MRCSw=
+        id S1728199AbeIZPgH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 26 Sep 2018 11:36:07 -0400
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:41122 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727352AbeIZPgH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Sep 2018 11:36:07 -0400
+Received: by mail-ua1-f67.google.com with SMTP id f11-v6so3850562uaq.8;
+        Wed, 26 Sep 2018 02:24:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ONWisPtFURwS+Dv/RY9Ijg+ZXudgqyV5XWp/wD93EE4=;
-        b=elde1gk0HTcdXI4onbBqvTYXjEKQEVHUXZLYavFsNZpB4rVyzqxzA5AClYZjnPCOWT
-         wNlH7UO6ud/pjTg/aCHzVkZz2jHf8CB1CY2VB9EVRgKi1zC3CPJ4IOKNq9tLfjEVB0J1
-         gZuUVxZc6BGWtmDMgH/vELXDQ+Bu+kD4GmMbVnqmiUPRMlB6nqd/F+ZhGP7hGkMuj/Ea
-         BmydqamV9royTUyXtV0EBFJviYmhIh/eHVWmonPH5sPFiu6JTPI7A3t99mJHv4VH9fne
-         ZvK1q0lpY+UqkWWNMglYt8Tm2cmQmHKQLDh+BZ9/lEZbCpsxI9KuwmEpHGwFNgTgdiwa
-         MFyQ==
-X-Gm-Message-State: ABuFfojTLIsn9NG1KGv3NMSvwieywnfSQInM5CyYFuUI7WJDXhaFOnIu
-        BHUffI8pq0Fit2fwVceSe1mxzA==
-X-Google-Smtp-Source: ACcGV61YB0//qGNB5fJ37rThZMXcjhFfRTt3HGmJf+URWtGGKGr19WXg+SGonBnZo+OihsEdZHK8cw==
-X-Received: by 2002:a1c:b58e:: with SMTP id e136-v6mr3234019wmf.114.1537949115637;
-        Wed, 26 Sep 2018 01:05:15 -0700 (PDT)
-Received: from [192.168.0.41] (42.168.88.92.rev.sfr.net. [92.88.168.42])
-        by smtp.googlemail.com with ESMTPSA id k7-v6sm4468535wmf.41.2018.09.26.01.05.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 26 Sep 2018 01:05:14 -0700 (PDT)
-Subject: Re: [PATCH v7 05/24] clocksource: Add a new timer-ingenic driver
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     Mathieu Malaterre <malat@debian.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Rob Herring <robh+dt@kernel.org>, linux-doc@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        od@zcrc.me, linux-mips@linux-mips.org,
-        Paul Burton <paul.burton@mips.com>,
-        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-pwm@vger.kernel.org
-References: <5bab3024.1c69fb81.b6a71.9c38SMTPIN_ADDED_MISSING@mx.google.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <5af26854-0752-312b-6148-3ffa9abb2570@linaro.org>
-Date:   Wed, 26 Sep 2018 10:05:13 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0MMEVBkmvsBbwhqE5BnVUeqkN1NoUa2KgXRLwUfs9r4=;
+        b=lajhzfWbixXkznj7omB9XqLL8ZBr+r8KqMRaB5v03j0jcDamg3zd46gR7/SvZrc4DV
+         1a48iOieYoX9eRKyFyhKw+YbdN2ZsTUxXhL8uE9QtmrSmBKQfRJLlNLeKqFesa5fLmKh
+         +MIUIPduBQmkYfxZdyjQBMpa+dp09hsFvSMmui6c3ivYamBE6ip1vpFHhLHfY6tKn2mT
+         gnJwMWjCZ9mnRRCQYUZpZqH+ihVfXCHyWEM4eXk0ssEUuWNQz2rj/LrGKSMM34UQYkoh
+         7QFGhx25Xk5A1eTowXFZwiBc1w0R6FiVmOYGWx4ll03uGuKPCppxoDwwRCldzPtCOV7G
+         C2TA==
+X-Gm-Message-State: ABuFfoi2f7xAhCAVWsikubrpLWa41J9i4gmy6iIkH355YV3z7mhoqE63
+        6I4t+s2yBm3MNxLe9zy/228dVx39cFfbKtdaugY=
+X-Google-Smtp-Source: ACcGV61wa7Zrf5b1QcRLDECrtnzBDq/YeB5vvNns603THw/NQW4RUFyTdoyqAl7nhQTaraXYnlPnE11/7UgGIEd+Ac0=
+X-Received: by 2002:ab0:1e46:: with SMTP id n6-v6mr1477216uak.78.1537953844641;
+ Wed, 26 Sep 2018 02:24:04 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <5bab3024.1c69fb81.b6a71.9c38SMTPIN_ADDED_MISSING@mx.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20180924164937.36536-1-chris.brandt@renesas.com> <20180924164937.36536-2-chris.brandt@renesas.com>
+In-Reply-To: <20180924164937.36536-2-chris.brandt@renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 26 Sep 2018 11:23:53 +0200
+Message-ID:
+ <CAMuHMdWhO0A6_wQR44QrB9TkOy6ka417cJN-9bkx8=_k=kfVAQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] clk: renesas: cpg-mssr: Add early clock support
+To:     Chris Brandt <chris.brandt@renesas.com>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms+renesas@verge.net.au>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
-Message-ID: <20180926080513.AtAhjUd5c7SmIsKgDs6YXOXzQsVbhKsnymVkihm_N5o@z>
+Message-ID: <20180926092353.cBOnMCtjPItQ8GSfkd55JMRJCb2owaYY9hpAuouAlIk@z>
 
-On 26/09/2018 08:01, Paul Cercueil wrote:
-> 
-> Le 25 sept. 2018 10:12 PM, Daniel Lezcano <daniel.lezcano@linaro.org> a écrit :
->>
->> On 25/09/2018 15:38, Paul Cercueil wrote: 
->>>
->>> Le 24 sept. 2018 9:14 AM, Daniel Lezcano <daniel.lezcano@linaro.org> a écrit : 
->>>>
->>>> On 24/09/2018 08:53, Paul Cercueil wrote: 
->>>>>
->>>>> Le 24 sept. 2018 07:58, Daniel Lezcano <daniel.lezcano@linaro.org> a écrit : 
->>>>>>
->>>>>> On 24/09/2018 07:49, Paul Cercueil wrote: 
->>>>>>>
->>>>>>> Le 24 sept. 2018 07:35, Daniel Lezcano <daniel.lezcano@linaro.org> a 
->>>>>>> écrit : 
->>>>>>>>
->>>>>>>> On 24/09/2018 07:24, Paul Cercueil wrote: 
->>>>>>>>> Hi Daniel, 
->>>>>>>>>
->>>>>>>>> Le 24 sept. 2018 05:12, Daniel Lezcano 
->>>>>>>>> <daniel.lezcano@linaro.org> a écrit : 
->>>>>>>>>>
->>>>>>>>>> On 21/08/2018 19:16, Paul Cercueil wrote: 
->>>>>>>>>>> This driver handles the TCU (Timer Counter Unit) present on 
->>>>>>>>>>> the Ingenic JZ47xx SoCs, and provides the kernel with a 
->>>>>>>>>>> system timer, and optionally with a clocksource and a 
->>>>>>>>>>> sched_clock. 
->>>>>>>>>>>
->>>>>>>>>>> It also provides clocks and interrupt handling to client 
->>>>>>>>>>> drivers. 
->>>>>>>>>>
->>>>>>>>>> Can you provide a much more complete description of the timer 
->>>>>>>>>> in order to make my life easier for the review of this patch? 
->>>>>>>>>
->>>>>>>>> See patch [03/24], it adds a doc file that describes the 
->>>>>>>>> hardware. 
->>>>>>>>
->>>>>>>> Thanks, I went through but it is incomplete to understand what the 
->>>>>>>> timer do. I will reverse-engineer the code but it would help if you 
->>>>>>>> can give the gross approach. Why multiple channels ? mutexes and 
->>>>>>>> completion ? 
->>>>>>>
->>>>>>> Much of the complexity is because of the multi-purpose nature of the 
->>>>>>> TCU channels. Each one can be used as timer/clocksource, or PWM. 
->>>>>>>
->>>>>>> The driver starts by using channels 0 and 1 as system timer and 
->>>>>>> clocksource, respectively, the other ones being unused for now. Then, 
->>>>>>> *if* the PWM driver requests one of the channels in use by the 
->>>>>>> timer/clocksource driver, say channel 0, the timer/clocksource driver 
->>>>>>> will dynamically reassign the system timer to a free channel, from 
->>>>>>> channel 0 to e.g. channel 2. Only in that case the completion/mutex 
->>>>>>> are actually used. 
->>>>>>
->>>>>> Why do you need to do this? Can't be the channels dedicated and reserved 
->>>>>> for clocksource and clockevent? 
->>>>>
->>>>> That's what I had in place (ingenic,timer-channel and ingenic,clocksource-channel DT properties), but Rob didn't want any linux-specific properties in the devicetree binding :( 
->>>>
->>>> Isn't possible to specify the channel to use in the DT? like renesas16 ? 
->>>
->>> That's what I did in V6 (and before), but Rob did not want me to add properties for Linux-specific concepts such as clocksource. 
->>
->> Hmm, I remember something like that, yes but I did a delete of the 
->> previous version when you posted the v7. Can you give a pointer to its 
->> answer ? 
-> 
-> Yes, this was his answer:
-> https://lkml.org/lkml/2018/7/25/508
-> 
-> Then mine:
-> https://lkml.org/lkml/2018/7/30/883
+Hi Chris,
 
-Thanks !
+On Mon, Sep 24, 2018 at 6:50 PM Chris Brandt <chris.brandt@renesas.com> wrote:
+> Add support for SoCs that need to register core and module clocks early in
+> order to use OF drivers that exclusively use macros such as
+> TIMER_OF_DECLARE.
+>
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+> ---
+> v2:
+>  * List early clocks first
+>  * Renamed early_priv to cpg_mssr_priv and make it static
+>  * Always set cpg_mssr_priv(early_priv) because it is used for early and
+>    non-early cases.
+>  * of_iomap returns NULL on error, not negative number
+>  * Removed various unnecessary comments
+>  * Add __init to cpg_mssr_common_init
+>  * fixed dev_set_drvdata was not being called for early drivers
 
+Thanks for the update!
+Works fine on R-Car Gen2 and Gen3.
+
+> --- a/drivers/clk/renesas/renesas-cpg-mssr.c
+> +++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+
+> @@ -877,42 +879,43 @@ static const struct dev_pm_ops cpg_mssr_pm = {
+>  #define DEV_PM_OPS     NULL
+>  #endif /* CONFIG_PM_SLEEP && CONFIG_ARM_PSCI_FW */
+>
+> -static int __init cpg_mssr_probe(struct platform_device *pdev)
+> +static int __init cpg_mssr_common_init(struct device *dev,
+> +                                      struct device_node *np,
+> +                                      const struct cpg_mssr_info *info)
+>  {
+> -       struct device *dev = &pdev->dev;
+> -       struct device_node *np = dev->of_node;
+> -       const struct cpg_mssr_info *info;
+>         struct cpg_mssr_priv *priv;
+>         unsigned int nclks, i;
+> -       struct resource *res;
+>         struct clk **clks;
+
+In v1, you initialized clks to NULL, which was needed ...
+
+>         int error;
+>
+> -       info = of_device_get_match_data(dev);
+>         if (info->init) {
+>                 error = info->init(dev);
+>                 if (error)
+>                         return error;
+>         }
+>
+> -       priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> +       priv = kzalloc(sizeof(*priv), GFP_KERNEL);
+>         if (!priv)
+>                 return -ENOMEM;
+>
+> +       priv->np = np;
+>         priv->dev = dev;
+>         spin_lock_init(&priv->rmw_lock);
+>
+> -       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -       priv->base = devm_ioremap_resource(dev, res);
+> -       if (IS_ERR(priv->base))
+> -               return PTR_ERR(priv->base);
+> +       priv->base = of_iomap(np, 0);
+> +       if (!priv->base) {
+> +               error = -ENOMEM;
+> +               goto out_err;
+
+... because else it's still uninitialized here ...
+> +       }
+>
+>         nclks = info->num_total_core_clks + info->num_hw_mod_clks;
+> -       clks = devm_kmalloc_array(dev, nclks, sizeof(*clks), GFP_KERNEL);
+> -       if (!clks)
+> -               return -ENOMEM;
+> +       clks = kmalloc_array(nclks, sizeof(*clks), GFP_KERNEL);
+> +       if (!clks) {
+> +               error = -ENOMEM;
+> +               goto out_err;
+> +       }
+>
+> -       dev_set_drvdata(dev, priv);
+> +       cpg_mssr_priv = priv;
+>         priv->clks = clks;
+>         priv->num_core_clks = info->num_total_core_clks;
+>         priv->num_mod_clks = info->num_hw_mod_clks;
+> @@ -923,16 +926,68 @@ static int __init cpg_mssr_probe(struct platform_device *pdev)
+>         for (i = 0; i < nclks; i++)
+>                 clks[i] = ERR_PTR(-ENOENT);
+>
+> +       error = of_clk_add_provider(np, cpg_mssr_clk_src_twocell_get, priv);
+> +       if (error)
+> +               goto out_err;
+> +
+> +       return 0;
+> +
+> +out_err:
+> +       kfree(clks);
+
+... and freed here.
+
+> +       if (priv->base)
+> +               iounmap(priv->base);
+> +       kfree(priv);
+> +
+> +       return error;
+> +}
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in clk-renesas-for-v4.20, with the above fixed.
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
