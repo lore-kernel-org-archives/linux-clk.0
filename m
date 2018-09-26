@@ -6,47 +6,47 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E79A1C43382
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Sep 2018 09:24:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30DADC43382
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Sep 2018 09:25:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9473321480
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Sep 2018 09:24:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9473321480
+	by mail.kernel.org (Postfix) with ESMTP id D31AD21480
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Sep 2018 09:25:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D31AD21480
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728199AbeIZPgH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 26 Sep 2018 11:36:07 -0400
-Received: from mail-ua1-f67.google.com ([209.85.222.67]:41122 "EHLO
-        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727352AbeIZPgH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Sep 2018 11:36:07 -0400
-Received: by mail-ua1-f67.google.com with SMTP id f11-v6so3850562uaq.8;
-        Wed, 26 Sep 2018 02:24:05 -0700 (PDT)
+        id S1727352AbeIZPhJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 26 Sep 2018 11:37:09 -0400
+Received: from mail-vk1-f195.google.com ([209.85.221.195]:42946 "EHLO
+        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726777AbeIZPhJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Sep 2018 11:37:09 -0400
+Received: by mail-vk1-f195.google.com with SMTP id t202-v6so1961868vke.9;
+        Wed, 26 Sep 2018 02:25:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=0MMEVBkmvsBbwhqE5BnVUeqkN1NoUa2KgXRLwUfs9r4=;
-        b=lajhzfWbixXkznj7omB9XqLL8ZBr+r8KqMRaB5v03j0jcDamg3zd46gR7/SvZrc4DV
-         1a48iOieYoX9eRKyFyhKw+YbdN2ZsTUxXhL8uE9QtmrSmBKQfRJLlNLeKqFesa5fLmKh
-         +MIUIPduBQmkYfxZdyjQBMpa+dp09hsFvSMmui6c3ivYamBE6ip1vpFHhLHfY6tKn2mT
-         gnJwMWjCZ9mnRRCQYUZpZqH+ihVfXCHyWEM4eXk0ssEUuWNQz2rj/LrGKSMM34UQYkoh
-         7QFGhx25Xk5A1eTowXFZwiBc1w0R6FiVmOYGWx4ll03uGuKPCppxoDwwRCldzPtCOV7G
-         C2TA==
-X-Gm-Message-State: ABuFfoi2f7xAhCAVWsikubrpLWa41J9i4gmy6iIkH355YV3z7mhoqE63
-        6I4t+s2yBm3MNxLe9zy/228dVx39cFfbKtdaugY=
-X-Google-Smtp-Source: ACcGV61wa7Zrf5b1QcRLDECrtnzBDq/YeB5vvNns603THw/NQW4RUFyTdoyqAl7nhQTaraXYnlPnE11/7UgGIEd+Ac0=
-X-Received: by 2002:ab0:1e46:: with SMTP id n6-v6mr1477216uak.78.1537953844641;
- Wed, 26 Sep 2018 02:24:04 -0700 (PDT)
+        bh=VO5UYdUiRAQQTIBi+H897GA9J7lbkaGWeJEJHD11dN4=;
+        b=hdT7ygwiMylTz29M9+zg2xnQqhoFExWxAG3FyQqh726Nnyu6hmWurCGUb+Vn51MeT5
+         9XaFhsN0lVjaduoJ0X4Wdkyr81fwOyefetl/Ae6c9SaJpwZMIGBECuxy11ozjFy33Ul/
+         v0/+MTa97l7EL8TZmOlnymTkHNW15A7QZkfXI3WLotdj3NnRrjI3uOcfHko9H0UGpVcm
+         TlCGppj+NnPiuMneX6vUKW6yBK+5O+m/bKm38JEwYGJbPp4Xrl5Y0reBGoemaBMaCT34
+         MCrU+j57sm+UPmtlsWXVWZbgPj0oOZWfr7ApM1DMEfEtX6nPQLjmLBfB5MNTINevXKCk
+         NBIg==
+X-Gm-Message-State: ABuFfojDUs4MCY8lPelTStx7sN+RbH6RMB2SvQDHatq+EagQQoZFYLdq
+        T3VnStyV7sQdanh5yz2G7QjndyHFVABhORvISnQ=
+X-Google-Smtp-Source: ACcGV61ErHjIZWwBOnj8JFKq+jdRJw+LcHTIXjS06B/Ole9rrzwzy9YbOzyNDtwiP2R8m74Pg3Zq1Ou4iGdBezBZtCM=
+X-Received: by 2002:a1f:8b84:: with SMTP id n126-v6mr1529678vkd.74.1537953907154;
+ Wed, 26 Sep 2018 02:25:07 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180924164937.36536-1-chris.brandt@renesas.com> <20180924164937.36536-2-chris.brandt@renesas.com>
-In-Reply-To: <20180924164937.36536-2-chris.brandt@renesas.com>
+References: <20180924164937.36536-1-chris.brandt@renesas.com> <20180924164937.36536-3-chris.brandt@renesas.com>
+In-Reply-To: <20180924164937.36536-3-chris.brandt@renesas.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 26 Sep 2018 11:23:53 +0200
+Date:   Wed, 26 Sep 2018 11:24:55 +0200
 Message-ID:
- <CAMuHMdWhO0A6_wQR44QrB9TkOy6ka417cJN-9bkx8=_k=kfVAQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] clk: renesas: cpg-mssr: Add early clock support
+ <CAMuHMdWZ5BE4bjOCbVL5BoE4-pYRhD3x3zRs=gPGuCgNKb+=oA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] clk: renesas: r7s9210: Convert some clocks to early
 To:     Chris Brandt <chris.brandt@renesas.com>
 Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -59,121 +59,22 @@ Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
-Message-ID: <20180926092353.cBOnMCtjPItQ8GSfkd55JMRJCb2owaYY9hpAuouAlIk@z>
-
-Hi Chris,
+Message-ID: <20180926092455.1ybzFANi3A7QmkRTpmCBeA-geTulI_rrcKTnfbywmCw@z>
 
 On Mon, Sep 24, 2018 at 6:50 PM Chris Brandt <chris.brandt@renesas.com> wrote:
-> Add support for SoCs that need to register core and module clocks early in
-> order to use OF drivers that exclusively use macros such as
-> TIMER_OF_DECLARE.
+> The OSTM timer driver for RZ/A2 uses TIMER_OF_DECLARE which requires the
+> ostm module clocks to be registers early in boot.
 >
 > Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
 > ---
 > v2:
 >  * List early clocks first
->  * Renamed early_priv to cpg_mssr_priv and make it static
->  * Always set cpg_mssr_priv(early_priv) because it is used for early and
->    non-early cases.
->  * of_iomap returns NULL on error, not negative number
->  * Removed various unnecessary comments
->  * Add __init to cpg_mssr_common_init
->  * fixed dev_set_drvdata was not being called for early drivers
-
-Thanks for the update!
-Works fine on R-Car Gen2 and Gen3.
-
-> --- a/drivers/clk/renesas/renesas-cpg-mssr.c
-> +++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-
-> @@ -877,42 +879,43 @@ static const struct dev_pm_ops cpg_mssr_pm = {
->  #define DEV_PM_OPS     NULL
->  #endif /* CONFIG_PM_SLEEP && CONFIG_ARM_PSCI_FW */
->
-> -static int __init cpg_mssr_probe(struct platform_device *pdev)
-> +static int __init cpg_mssr_common_init(struct device *dev,
-> +                                      struct device_node *np,
-> +                                      const struct cpg_mssr_info *info)
->  {
-> -       struct device *dev = &pdev->dev;
-> -       struct device_node *np = dev->of_node;
-> -       const struct cpg_mssr_info *info;
->         struct cpg_mssr_priv *priv;
->         unsigned int nclks, i;
-> -       struct resource *res;
->         struct clk **clks;
-
-In v1, you initialized clks to NULL, which was needed ...
-
->         int error;
->
-> -       info = of_device_get_match_data(dev);
->         if (info->init) {
->                 error = info->init(dev);
->                 if (error)
->                         return error;
->         }
->
-> -       priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> +       priv = kzalloc(sizeof(*priv), GFP_KERNEL);
->         if (!priv)
->                 return -ENOMEM;
->
-> +       priv->np = np;
->         priv->dev = dev;
->         spin_lock_init(&priv->rmw_lock);
->
-> -       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -       priv->base = devm_ioremap_resource(dev, res);
-> -       if (IS_ERR(priv->base))
-> -               return PTR_ERR(priv->base);
-> +       priv->base = of_iomap(np, 0);
-> +       if (!priv->base) {
-> +               error = -ENOMEM;
-> +               goto out_err;
-
-... because else it's still uninitialized here ...
-> +       }
->
->         nclks = info->num_total_core_clks + info->num_hw_mod_clks;
-> -       clks = devm_kmalloc_array(dev, nclks, sizeof(*clks), GFP_KERNEL);
-> -       if (!clks)
-> -               return -ENOMEM;
-> +       clks = kmalloc_array(nclks, sizeof(*clks), GFP_KERNEL);
-> +       if (!clks) {
-> +               error = -ENOMEM;
-> +               goto out_err;
-> +       }
->
-> -       dev_set_drvdata(dev, priv);
-> +       cpg_mssr_priv = priv;
->         priv->clks = clks;
->         priv->num_core_clks = info->num_total_core_clks;
->         priv->num_mod_clks = info->num_hw_mod_clks;
-> @@ -923,16 +926,68 @@ static int __init cpg_mssr_probe(struct platform_device *pdev)
->         for (i = 0; i < nclks; i++)
->                 clks[i] = ERR_PTR(-ENOENT);
->
-> +       error = of_clk_add_provider(np, cpg_mssr_clk_src_twocell_get, priv);
-> +       if (error)
-> +               goto out_err;
-> +
-> +       return 0;
-> +
-> +out_err:
-> +       kfree(clks);
-
-... and freed here.
-
-> +       if (priv->base)
-> +               iounmap(priv->base);
-> +       kfree(priv);
-> +
-> +       return error;
-> +}
+>  * Remove unnecessary comments
+>  * Removed new function r7s9210_update_clk_table (to be included in a
+>    separate patch)
 
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in clk-renesas-for-v4.20, with the above fixed.
+i.e. will queue in clk-renesas-for-v4.20.
 
 Gr{oetje,eeting}s,
 
