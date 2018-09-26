@@ -1,59 +1,106 @@
-Return-Path: <vabhav.sharma@nxp.com>
-From: Vabhav Sharma <vabhav.sharma@nxp.com>
-To: sudeep.holla@arm.com,
-	oss@buserror.net,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	robh+dt@kernel.org,
-	mark.rutland@arm.com,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	rjw@rjwysocki.net,
-	viresh.kumar@linaro.org,
-	linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-kernel-owner@vger.kernel.org,
-	catalin.marinas@arm.com,
-	will.deacon@arm.com,
-	gregkh@linuxfoundation.org,
-	arnd@arndb.de,
-	kstewart@linuxfoundation.org,
-	yamada.masahiro@socionext.com
-Cc: linux@armlinux.org.uk,
-	V.Sethi@nxp.com,
-	udit.kumar@nxp.com,
-	Vabhav Sharma <vabhav.sharma@nxp.com>
-Subject: [PATCH v2 2/5] soc/fsl/guts: Add compatible string for LX2160A
-Date: Fri, 14 Sep 2018 02:07:52 +0530
-Message-Id: <1536871075-3732-3-git-send-email-vabhav.sharma@nxp.com>
-In-Reply-To: <1536871075-3732-1-git-send-email-vabhav.sharma@nxp.com>
-References: <1536871075-3732-1-git-send-email-vabhav.sharma@nxp.com>
+Return-Path: <JOLLYS@xilinx.com>
+Return-Path: jolly.shah@xilinx.com
+From: Jolly Shah <jolly.shah@xilinx.com>
+To: <olof@lixom.net>, <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
+	<michal.simek@xilinx.com>, <arm@kernel.org>, <linux-clk@vger.kernel.org>
+CC: <rajanv@xilinx.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, Rajan Vaja <rajan.vaja@xilinx.com>, Jolly
+ Shah <jollys@xilinx.com>
+Subject: [PATCH v3 1/4] Documentation: xilinx: Add documentation for eemi APIs
+Date: Wed, 26 Sep 2018 11:12:58 -0700
+Message-ID: <1537985581-32164-2-git-send-email-jollys@xilinx.com>
+In-Reply-To: <1537985581-32164-1-git-send-email-jollys@xilinx.com>
+References: <1537985581-32164-1-git-send-email-jollys@xilinx.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Return-Path: vabhav.sharma@nxp.com
 List-ID: <linux-clk.vger.kernel.org>
 
-Adding compatible string "lx2160a-dcfg" to
-initialize guts driver for lx2160
+From: Rajan Vaja <rajan.vaja@xilinx.com>
 
-Signed-off-by: Vabhav Sharma <vabhav.sharma@nxp.com>
+Add documentation for embedded energy management interface (EEMI)
+APIs. It includes information about eemi ops and how to use them.
+It also includes API information and supported IOCTL IDs which can
+be used for device and control configuration.
+
+Signed-off-by: Rajan Vaja <rajan.vaja@xilinx.com>
+Signed-off-by: Jolly Shah <jollys@xilinx.com>
 ---
- drivers/soc/fsl/guts.c | 1 +
- 1 file changed, 1 insertion(+)
+ Documentation/xilinx/eemi.txt | 67 +++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 67 insertions(+)
+ create mode 100644 Documentation/xilinx/eemi.txt
 
-diff --git a/drivers/soc/fsl/guts.c b/drivers/soc/fsl/guts.c
-index 302e0c8..5e1e633 100644
---- a/drivers/soc/fsl/guts.c
-+++ b/drivers/soc/fsl/guts.c
-@@ -222,6 +222,7 @@ static const struct of_device_id fsl_guts_of_match[] = {
- 	{ .compatible = "fsl,ls1088a-dcfg", },
- 	{ .compatible = "fsl,ls1012a-dcfg", },
- 	{ .compatible = "fsl,ls1046a-dcfg", },
-+	{ .compatible = "fsl,lx2160a-dcfg", },
- 	{}
- };
- MODULE_DEVICE_TABLE(of, fsl_guts_of_match);
+diff --git a/Documentation/xilinx/eemi.txt b/Documentation/xilinx/eemi.txt
+new file mode 100644
+index 0000000..0ab686c
+--- /dev/null
++++ b/Documentation/xilinx/eemi.txt
+@@ -0,0 +1,67 @@
++---------------------------------------------------------------------
++Xilinx Zynq MPSoC EEMI Documentation
++---------------------------------------------------------------------
++
++Xilinx Zynq MPSoC Firmware Interface
++-------------------------------------
++The zynqmp-firmware node describes the interface to platform firmware.
++ZynqMP has an interface to communicate with secure firmware. Firmware
++driver provides an interface to firmware APIs. Interface APIs can be
++used by any driver to communicate with PMC(Platform Management Controller).
++
++Embedded Energy Management Interface (EEMI)
++----------------------------------------------
++The embedded energy management interface is used to allow software
++components running across different processing clusters on a chip or
++device to communicate with a power management controller (PMC) on a
++device to issue or respond to power management requests.
++
++EEMI ops is a structure containing all eemi APIs supported by Zynq MPSoC.
++The zynqmp-firmware driver maintain all EEMI APIs in zynqmp_eemi_ops
++structure. Any driver who want to communicate with PMC using EEMI APIs
++can call zynqmp_pm_get_eemi_ops().
++
++Example of EEMI ops:
++
++	/* zynqmp-firmware driver maintain all EEMI APIs */
++	struct zynqmp_eemi_ops {
++		int (*get_api_version)(u32 *version);
++		int (*query_data)(struct zynqmp_pm_query_data qdata, u32 *out);
++	};
++
++	static const struct zynqmp_eemi_ops eemi_ops = {
++		.get_api_version = zynqmp_pm_get_api_version,
++		.query_data = zynqmp_pm_query_data,
++	};
++
++Example of EEMI ops usage:
++
++	static const struct zynqmp_eemi_ops *eemi_ops;
++	u32 ret_payload[PAYLOAD_ARG_CNT];
++	int ret;
++
++	eemi_ops = zynqmp_pm_get_eemi_ops();
++	if (!eemi_ops)
++		return -ENXIO;
++
++	ret = eemi_ops->query_data(qdata, ret_payload);
++
++IOCTL
++------
++IOCTL API is for device control and configuration. It is not a system
++IOCTL but it is an EEMI API. This API can be used by master to control
++any device specific configuration. IOCTL definitions can be platform
++specific. This API also manage shared device configuration.
++
++The following IOCTL IDs are valid for device control:
++- IOCTL_SET_PLL_FRAC_MODE	8
++- IOCTL_GET_PLL_FRAC_MODE	9
++- IOCTL_SET_PLL_FRAC_DATA	10
++- IOCTL_GET_PLL_FRAC_DATA	11
++
++Refer EEMI API guide [0] for IOCTL specific parameters and other EEMI APIs.
++
++References
++----------
++[0] Embedded Energy Management Interface (EEMI) API guide:
++    https://www.xilinx.com/support/documentation/user_guides/ug1200-eemi-api.pdf
 -- 
 2.7.4
