@@ -1,117 +1,146 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:40641 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726929AbeI0PQq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Sep 2018 11:16:46 -0400
-Received: by mail-wr1-f65.google.com with SMTP id y8-v6so1684272wrh.7
-        for <linux-clk@vger.kernel.org>; Thu, 27 Sep 2018 01:59:33 -0700 (PDT)
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To: linux-amlogic@lists.infradead.org, jbrunet@baylibre.com,
-        narmstrong@baylibre.com
-Cc: linux-clk@vger.kernel.org, carlo@caione.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH 1/2] clk: meson: meson8b: fix incorrect divider mapping in cpu_scale_table
-Date: Thu, 27 Sep 2018 10:59:20 +0200
-Message-Id: <20180927085921.24627-2-martin.blumenstingl@googlemail.com>
-In-Reply-To: <20180927085921.24627-1-martin.blumenstingl@googlemail.com>
-References: <20180927085921.24627-1-martin.blumenstingl@googlemail.com>
+Return-Path: <olof@lixom.net>
 MIME-Version: 1.0
-Sender: linux-clk-owner@vger.kernel.org
+References: <1537985581-32164-1-git-send-email-jollys@xilinx.com> <1537985581-32164-3-git-send-email-jollys@xilinx.com>
+In-Reply-To: <1537985581-32164-3-git-send-email-jollys@xilinx.com>
+From: Olof Johansson <olof@lixom.net>
+Date: Wed, 26 Sep 2018 13:48:41 -0700
+Message-ID: <CAOesGMhEcMB4caAPtCSq-m5zQBDc-8Z4f_xAkomnEwVaHyX2Mw@mail.gmail.com>
+Subject: Re: [PATCH v3 2/4] firmware: xilinx: Add zynqmp IOCTL API for device control
+To: Jolly Shah <jolly.shah@xilinx.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>,
+	Michal Simek <michal.simek@xilinx.com>, ARM-SoC Maintainers <arm@kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>, Rajan Vaja <rajanv@xilinx.com>,
+	Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, rajan.vaja@xilinx.com,
+	Jolly Shah <jollys@xilinx.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-The public S805 datasheet only mentions that
-HHI_SYS_CPU_CLK_CNTL1[20:29] contains a divider called "cpu_scale_div".
-Unfortunately it does not mention how to use the register contents.
+Hi,
 
-The Amlogic 3.10 GPL kernel sources are using the following code to
-calculate the CPU clock based on that register (taken from
-arch/arm/mach-meson8/clock.c in the 3.10 Amlogic kernel, shortened to
-make it easier to read):
-N = (aml_read_reg32(P_HHI_SYS_CPU_CLK_CNTL1) >> 20) & 0x3FF;
-if (sel == 3) /* use cpu_scale_div */
-  div = 2 * N;
-else
-  div = ... /* not relevant for this example */
-cpu_clk = parent_clk / div;
+Just nits on code readability below. Approach looks OK to me.
 
-This suggests that the formula is: parent_rate / 2 * register_value
-However, running perf (which can measure the CPU clock rate thanks to
-the ARM PMU) shows that this formula is not correct.
-This can be reproduced with the following steps:
-1. boot into u-boot
-2. let the CPU clock run off the XTAL clock:
-   mw.l 0xC110419C 0x30 1
-3. set the cpu_scale_div register:
-   to value 0x1: mw.l 0xC110415C 0x801016A2 1
-   to value 0x2: mw.l 0xC110415C 0x802016A2 1
-   to value 0x5: mw.l 0xC110415C 0x805016A2 1
-4. let the CPU clock run off cpu_scale_div:
-   mw.l 0xC110419C 0xbd 1
-5. boot Linux
-6. run: perf stat -aB stress --cpu 4 --timeout 10
-7. check the "cycles" value
+On Wed, Sep 26, 2018 at 11:13 AM Jolly Shah <jolly.shah@xilinx.com> wrote:
+>
+> From: Rajan Vaja <rajan.vaja@xilinx.com>
+>
+> Add ZynqMP firmware IOCTL API to control and configure
+> devices like PLLs, SD, Gem, etc.
+>
+> Signed-off-by: Rajan Vaja <rajan.vaja@xilinx.com>
+> Signed-off-by: Jolly Shah <jollys@xilinx.com>
+> ---
+>  drivers/firmware/xilinx/zynqmp.c     | 43 ++++++++++++++++++++++++++++++++++++
+>  include/linux/firmware/xlnx-zynqmp.h |  4 +++-
+>  2 files changed, 46 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
+> index 84b3fd2..671a37a 100644
+> --- a/drivers/firmware/xilinx/zynqmp.c
+> +++ b/drivers/firmware/xilinx/zynqmp.c
+> @@ -428,6 +428,48 @@ static int zynqmp_pm_clock_getparent(u32 clock_id, u32 *parent_id)
+>         return ret;
+>  }
+>
+> +/**
+> + * zynqmp_is_valid_ioctl() - Check whether IOCTL ID is valid or not
+> + * @ioctl_id:  IOCTL ID
+> + *
+> + * Return: 0 if IOCTL is valid, else -EINVAL
+> + */
+> +static inline int zynqmp_is_valid_ioctl(u32 ioctl_id)
 
-I get the following results depending on the cpu_scale_div value:
-- (cpu_in_sel - this is the input clock for cpu_scale_div - runs at
-   1.2GHz)
-- 0x1 = 300MHz
-- 0x2 = 200MHz
-- 0x5 = 100MHz
+I think most who come across the use of this would expect an
+.*is_valid() to return true (non-0) when valid, and 0 otherwise.
 
-This means that the actual formula to calculate the output of the
-cpu_scale_div clock is: parent_rate / 2 * (register value + 1).
+> +{
+> +       if (ioctl_id == IOCTL_SET_PLL_FRAC_MODE ||
+> +           ioctl_id == IOCTL_GET_PLL_FRAC_MODE ||
+> +           ioctl_id == IOCTL_SET_PLL_FRAC_DATA ||
+> +           ioctl_id == IOCTL_GET_PLL_FRAC_DATA)
+> +               return 0;
 
-The register value 0x0 is reserved. When letting the CPU clock run off
-the cpu_scale_div while the value is 0x0 the whole board hangs (even in
-u-boot).
+This is purely a matter of taste, and no requirement to change, but I
+find a switch slightly easier to read for this kind of usage:
 
-I also verified this with the TWD timer: when adding this to the .dts
-without specifying it's clock it will auto-detect the PERIPH (which is
-the input clock of the TWD) clock rate (and the result is shown in the
-kernel log). On Meson8, Meson8b and Meson8m2 the PERIPH clock is CPUCLK
-divided by 4. This also matched for all three test-cases from above (in
-all cases the TWD timer clock rate was approx. one fourth of the CPU
-clock rate).
+        switch(ioctl_id) {
+        case IOCTL_SET_PLL_FRAC_MODE:
+        case IOCTL_GET_PLL_FRAC_MODE:
+        case IOCTL_SET_PLL_FRAC_DATA:
+        case IOCTL_GET_PLL_FRAC_DATA:
+                return 1;
+        default:
+                return 0;
+        }
 
-A small note regarding the "fixes" tag: the original issue seems to
-exist virtually since forever. Even commit 28b9fcd016126e ("clk:
-meson8b: Add support for Meson8b clocks") seems to handle this wrong. I
-still decided to use commit 251b6fd38bcb9c ("clk: meson: rework meson8b
-cpu clock") because this is the first commit which gets the CPU hiearchy
-correct and thus it's the first commit where the cpu_scale_div register
-is used correctly (apart from the bug in the cpu_scale_table).
+> +
+> +       return -EINVAL;
+> +}
+> +
+> +/**
+> + * zynqmp_pm_ioctl() - PM IOCTL API for device control and configs
+> + * @node_id:   Node ID of the device
+> + * @ioctl_id:  ID of the requested IOCTL
+> + * @arg1:      Argument 1 to requested IOCTL call
+> + * @arg2:      Argument 2 to requested IOCTL call
+> + * @out:       Returned output value
+> + *
+> + * This function calls IOCTL to firmware for device control and configuration.
+> + *
+> + * Return: Returns status, either success or error+reason
+> + */
+> +static int zynqmp_pm_ioctl(u32 node_id, u32 ioctl_id, u32 arg1, u32 arg2,
+> +                          u32 *out)
+> +{
+> +       int ret;
+> +
+> +       ret = zynqmp_is_valid_ioctl(ioctl_id);
+> +       if (ret)
+> +               return ret;
 
-Fixes: 251b6fd38bcb9c ("clk: meson: rework meson8b cpu clock")
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
----
- drivers/clk/meson/meson8b.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+So with changed return values, this would turn into:
 
-diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-index e7fe66f61d7b..d3f4e11d106d 100644
---- a/drivers/clk/meson/meson8b.c
-+++ b/drivers/clk/meson/meson8b.c
-@@ -579,13 +579,14 @@ static struct clk_fixed_factor meson8b_cpu_div3 = {
- };
- 
- static const struct clk_div_table cpu_scale_table[] = {
--	{ .val = 2, .div = 4 },
--	{ .val = 3, .div = 6 },
--	{ .val = 4, .div = 8 },
--	{ .val = 5, .div = 10 },
--	{ .val = 6, .div = 12 },
--	{ .val = 7, .div = 14 },
--	{ .val = 8, .div = 16 },
-+	{ .val = 1, .div = 4 },
-+	{ .val = 2, .div = 6 },
-+	{ .val = 3, .div = 8 },
-+	{ .val = 4, .div = 10 },
-+	{ .val = 5, .div = 12 },
-+	{ .val = 6, .div = 14 },
-+	{ .val = 7, .div = 16 },
-+	{ .val = 8, .div = 18 },
- 	{ /* sentinel */ },
- };
- 
--- 
-2.19.0
+        if (!zynqmp_is_valid_ioctl(ioctl_id))
+                return -EINVAL;
+
+> +
+> +       return zynqmp_pm_invoke_fn(PM_IOCTL, node_id, ioctl_id,
+> +                                  arg1, arg2, out);
+> +}
+> +
+>  static const struct zynqmp_eemi_ops eemi_ops = {
+>         .get_api_version = zynqmp_pm_get_api_version,
+>         .query_data = zynqmp_pm_query_data,
+> @@ -440,6 +482,7 @@ static const struct zynqmp_eemi_ops eemi_ops = {
+>         .clock_getrate = zynqmp_pm_clock_getrate,
+>         .clock_setparent = zynqmp_pm_clock_setparent,
+>         .clock_getparent = zynqmp_pm_clock_getparent,
+> +       .ioctl = zynqmp_pm_ioctl,
+>  };
+>
+>  /**
+> diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
+> index 015e130..7a9db08 100644
+> --- a/include/linux/firmware/xlnx-zynqmp.h
+> +++ b/include/linux/firmware/xlnx-zynqmp.h
+> @@ -34,7 +34,8 @@
+>
+>  enum pm_api_id {
+>         PM_GET_API_VERSION = 1,
+> -       PM_QUERY_DATA = 35,
+> +       PM_IOCTL = 34,
+> +       PM_QUERY_DATA,
+>         PM_CLOCK_ENABLE,
+>         PM_CLOCK_DISABLE,
+>         PM_CLOCK_GETSTATE,
+> @@ -99,6 +100,7 @@ struct zynqmp_eemi_ops {
+>         int (*clock_getrate)(u32 clock_id, u64 *rate);
+>         int (*clock_setparent)(u32 clock_id, u32 parent_id);
+>         int (*clock_getparent)(u32 clock_id, u32 *parent_id);
+> +       int (*ioctl)(u32 node_id, u32 ioctl_id, u32 arg1, u32 arg2, u32 *out);
+>  };
+>
+>  #if IS_REACHABLE(CONFIG_ARCH_ZYNQMP)
+> --
+> 2.7.4
+>
