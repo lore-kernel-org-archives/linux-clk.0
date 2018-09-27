@@ -1,144 +1,58 @@
-Return-Path: <chris.brandt@renesas.com>
-From: Chris Brandt <chris.brandt@renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Simon Horman <horms+renesas@verge.net.au>,
-	Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v2 3/3] clk: renesas: r7s9210: Move table update to separate function
-Date: Mon, 24 Sep 2018 11:49:37 -0500
-Message-Id: <20180924164937.36536-4-chris.brandt@renesas.com>
-In-Reply-To: <20180924164937.36536-1-chris.brandt@renesas.com>
-References: <20180924164937.36536-1-chris.brandt@renesas.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:52520 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726760AbeI0PQr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Sep 2018 11:16:47 -0400
+Received: by mail-wm1-f67.google.com with SMTP id l7-v6so5053314wme.2
+        for <linux-clk@vger.kernel.org>; Thu, 27 Sep 2018 01:59:34 -0700 (PDT)
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To: linux-amlogic@lists.infradead.org, jbrunet@baylibre.com,
+        narmstrong@baylibre.com
+Cc: linux-clk@vger.kernel.org, carlo@caione.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH 2/2] clk: meson: meson8b: fix the width of the cpu_scale_div clock
+Date: Thu, 27 Sep 2018 10:59:21 +0200
+Message-Id: <20180927085921.24627-3-martin.blumenstingl@googlemail.com>
+In-Reply-To: <20180927085921.24627-1-martin.blumenstingl@googlemail.com>
+References: <20180927085921.24627-1-martin.blumenstingl@googlemail.com>
+MIME-Version: 1.0
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-Same functionality, just easier to read.
+According to the public S805 datasheet HHI_SYS_CPU_CLK_CNTL1[29:20] is
+the register for the CPU scale_div clock. This matches the code in
+Amlogic's 3.10 GPL kernel sources:
+N = (aml_read_reg32(P_HHI_SYS_CPU_CLK_CNTL1) >> 20) & 0x3FF;
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+This means that the divider register is 10 bit wide instead of 9 bits.
+So far this is not a problem since all u-boot versions I have seen are
+not using the cpu_scale_div clock at all (instead they are configuring
+the CPU clock to run off cpu_in_sel directly).
+
+The fixes tag points to the latest rework of the CPU clocks. However,
+even before the rework it was wrong. Commit 7a29a869434e8b ("clk: meson:
+Add support for Meson clock controller") defines MESON_N_WIDTH as 9 (in
+drivers/clk/meson/clk-cpu.c). But since the old clk-cpu implementation
+this only carries the fixes tag for the CPU clock rewordk.
+
+Fixes: 251b6fd38bcb9c ("clk: meson: rework meson8b cpu clock")
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 ---
- drivers/clk/renesas/r7s9210-cpg-mssr.c | 94 ++++++++++++++++++----------------
- 1 file changed, 49 insertions(+), 45 deletions(-)
+ drivers/clk/meson/meson8b.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/renesas/r7s9210-cpg-mssr.c b/drivers/clk/renesas/r7s9210-cpg-mssr.c
-index 7ab9030ef8b9..f9c22b61883b 100644
---- a/drivers/clk/renesas/r7s9210-cpg-mssr.c
-+++ b/drivers/clk/renesas/r7s9210-cpg-mssr.c
-@@ -97,6 +97,53 @@ static const struct mssr_mod_clk r7s9210_mod_clks[] __initconst = {
- 
- };
- 
-+/* The clock dividers in the table vary based on DT and register settings */
-+static void r7s9210_update_clk_table(struct clk *extal_clk, void __iomem *base)
-+{
-+	int i;
-+	u16 frqcr;
-+	u8 index;
-+
-+	/* If EXTAL is above 12MHz, then we know it is Mode 1 */
-+	if (clk_get_rate(extal_clk) > 12000000)
-+		cpg_mode = 1;
-+
-+	frqcr = clk_readl(base + CPG_FRQCR) & 0xFFF;
-+	if (frqcr == 0x012)
-+		index = 0;
-+	else if (frqcr == 0x112)
-+		index = 1;
-+	else if (frqcr == 0x212)
-+		index = 2;
-+	else if (frqcr == 0x322)
-+		index = 3;
-+	else if (frqcr == 0x333)
-+		index = 4;
-+	else
-+		BUG_ON(1);	/* Illegal FRQCR value */
-+
-+	for (i = 0; i < ARRAY_SIZE(r7s9210_core_clks); i++) {
-+		switch (r7s9210_core_clks[i].id) {
-+		case R7S9210_CLK_I:
-+			r7s9210_core_clks[i].div = ratio_tab[index].i;
-+			break;
-+		case R7S9210_CLK_G:
-+			r7s9210_core_clks[i].div = ratio_tab[index].g;
-+			break;
-+		case R7S9210_CLK_B:
-+			r7s9210_core_clks[i].div = ratio_tab[index].b;
-+			break;
-+		case R7S9210_CLK_P1:
-+		case R7S9210_CLK_P1C:
-+			r7s9210_core_clks[i].div = ratio_tab[index].p1;
-+			break;
-+		case R7S9210_CLK_P0:
-+			r7s9210_core_clks[i].div = 32;
-+			break;
-+		}
-+	}
-+}
-+
- struct clk * __init rza2_cpg_clk_register(struct device *dev,
- 	const struct cpg_core_clk *core, const struct cpg_mssr_info *info,
- 	struct clk **clks, void __iomem *base,
-@@ -105,9 +152,6 @@ struct clk * __init rza2_cpg_clk_register(struct device *dev,
- 	struct clk *parent;
- 	unsigned int mult = 1;
- 	unsigned int div = 1;
--	u16 frqcr;
--	u8 index;
--	int i;
- 
- 	parent = clks[core->parent];
- 	if (IS_ERR(parent))
-@@ -128,48 +172,8 @@ struct clk * __init rza2_cpg_clk_register(struct device *dev,
- 		return ERR_PTR(-EINVAL);
- 	}
- 
--	/* Adjust the dividers based on the current FRQCR setting */
--	if (core->id == CLK_MAIN) {
--
--		/* If EXTAL is above 12MHz, then we know it is Mode 1 */
--		if (clk_get_rate(parent) > 12000000)
--			cpg_mode = 1;
--
--		frqcr = clk_readl(base + CPG_FRQCR) & 0xFFF;
--		if (frqcr == 0x012)
--			index = 0;
--		else if (frqcr == 0x112)
--			index = 1;
--		else if (frqcr == 0x212)
--			index = 2;
--		else if (frqcr == 0x322)
--			index = 3;
--		else if (frqcr == 0x333)
--			index = 4;
--		else
--			BUG_ON(1);	/* Illegal FRQCR value */
--
--		for (i = 0; i < ARRAY_SIZE(r7s9210_core_clks); i++) {
--			switch (r7s9210_core_clks[i].id) {
--			case R7S9210_CLK_I:
--				r7s9210_core_clks[i].div = ratio_tab[index].i;
--				break;
--			case R7S9210_CLK_G:
--				r7s9210_core_clks[i].div = ratio_tab[index].g;
--				break;
--			case R7S9210_CLK_B:
--				r7s9210_core_clks[i].div = ratio_tab[index].b;
--				break;
--			case R7S9210_CLK_P1:
--			case R7S9210_CLK_P1C:
--				r7s9210_core_clks[i].div = ratio_tab[index].p1;
--				break;
--			case R7S9210_CLK_P0:
--				r7s9210_core_clks[i].div = 32;
--				break;
--			}
--		}
--	}
-+	if (core->id == CLK_MAIN)
-+		r7s9210_update_clk_table(parent, base);
- 
- 	return clk_register_fixed_factor(NULL, core->name,
- 					 __clk_get_name(parent), 0, mult, div);
+diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+index d3f4e11d106d..8658a662b10e 100644
+--- a/drivers/clk/meson/meson8b.c
++++ b/drivers/clk/meson/meson8b.c
+@@ -594,7 +594,7 @@ static struct clk_regmap meson8b_cpu_scale_div = {
+ 	.data = &(struct clk_regmap_div_data){
+ 		.offset =  HHI_SYS_CPU_CLK_CNTL1,
+ 		.shift = 20,
+-		.width = 9,
++		.width = 10,
+ 		.table = cpu_scale_table,
+ 		.flags = CLK_DIVIDER_ALLOW_ZERO,
+ 	},
 -- 
-2.16.1
+2.19.0
