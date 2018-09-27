@@ -1,96 +1,100 @@
-Return-Path: <wens213@gmail.com>
-Return-Path: <wens213@gmail.com>
+Return-Path: <maxime.ripard@bootlin.com>
+Date: Thu, 27 Sep 2018 19:16:27 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Jagan Teki <jagan@amarulasolutions.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+	Jernej Skrabec <jernej.skrabec@siol.net>,
+	Vasily Khoruzhick <anarsoul@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 11/12] arm64: dts: allwinner: a64: Add DSI pipeline
+Message-ID: <20180927171627.7svkvflamxrmjgve@flea>
+References: <20180927114850.24565-1-jagan@amarulasolutions.com>
+ <20180927114850.24565-12-jagan@amarulasolutions.com>
 MIME-Version: 1.0
-References: <20180902072643.4917-1-jernej.skrabec@siol.net>
- <20180902072643.4917-8-jernej.skrabec@siol.net> <CAGb2v65AsKzEH3AgmQi+RRvVa6AO-cpAckGnNkvWwONsCCsoxw@mail.gmail.com>
-In-Reply-To: <CAGb2v65AsKzEH3AgmQi+RRvVa6AO-cpAckGnNkvWwONsCCsoxw@mail.gmail.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Tue, 4 Sep 2018 17:05:16 +0800
-Message-ID: <CAGb2v67udJ1_668Q4MFb3MbEQXzukNBKtEu3FYHsw+QyVA9J2Q@mail.gmail.com>
-Subject: Re: [PATCH 07/27] dt-bindings: clock: sun8i-de2: Add H6 DE3 clock description
-To: Jernej Skrabec <jernej.skrabec@siol.net>
-Cc: Rob Herring <robh+dt@kernel.org>, Maxime Ripard <maxime.ripard@bootlin.com>,
-	Mark Rutland <mark.rutland@arm.com>, Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, David Airlie <airlied@linux.ie>,
-	Archit Taneja <architt@codeaurora.org>, Andrzej Hajda <a.hajda@samsung.com>,
-	devicetree <devicetree@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	dri-devel <dri-devel@lists.freedesktop.org>,
-	linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180927114850.24565-12-jagan@amarulasolutions.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Sep 4, 2018 at 4:59 PM Chen-Yu Tsai <wens@csie.org> wrote:
->
-> Hi,
->
-> On Sun, Sep 2, 2018 at 3:27 PM Jernej Skrabec <jernej.skrabec@siol.net> wrote:
-> >
-> > This commit adds necessary description and dt includes for H6 DE3 clock.
-> > It is very similar to others, but memory region has some additional
-> > registers not found in DE2.
-> >
-> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> > ---
-> >  Documentation/devicetree/bindings/clock/sun8i-de2.txt | 5 +++--
-> >  include/dt-bindings/clock/sun8i-de2.h                 | 3 +++
-> >  include/dt-bindings/reset/sun8i-de2.h                 | 1 +
-> >  3 files changed, 7 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/Documentation/devicetree/bindings/clock/sun8i-de2.txt b/Documentation/devicetree/bindings/clock/sun8i-de2.txt
-> > index e94582e8b8a9..41a52c2acffd 100644
-> > --- a/Documentation/devicetree/bindings/clock/sun8i-de2.txt
-> > +++ b/Documentation/devicetree/bindings/clock/sun8i-de2.txt
-> > @@ -1,5 +1,5 @@
-> > -Allwinner Display Engine 2.0 Clock Control Binding
-> > ---------------------------------------------------
-> > +Allwinner Display Engine 2.0/3.0 Clock Control Binding
-> > +------------------------------------------------------
-> >
-> >  Required properties :
-> >  - compatible: must contain one of the following compatibles:
-> > @@ -8,6 +8,7 @@ Required properties :
-> >                 - "allwinner,sun8i-v3s-de2-clk"
-> >                 - "allwinner,sun50i-a64-de2-clk"
-> >                 - "allwinner,sun50i-h5-de2-clk"
-> > +               - "allwinner,sun50i-h6-de3-clk"
-> >
-> >  - reg: Must contain the registers base address and length
-> >  - clocks: phandle to the clocks feeding the display engine subsystem.
-> > diff --git a/include/dt-bindings/clock/sun8i-de2.h b/include/dt-bindings/clock/sun8i-de2.h
-> > index 3bed63b524aa..7768f73b051e 100644
-> > --- a/include/dt-bindings/clock/sun8i-de2.h
-> > +++ b/include/dt-bindings/clock/sun8i-de2.h
-> > @@ -15,4 +15,7 @@
-> >  #define CLK_MIXER1             7
-> >  #define CLK_WB                 8
-> >
-> > +#define CLK_BUS_ROT            9
-> > +#define CLK_ROT                        10
-> > +
-> >  #endif /* _DT_BINDINGS_CLOCK_SUN8I_DE2_H_ */
-> > diff --git a/include/dt-bindings/reset/sun8i-de2.h b/include/dt-bindings/reset/sun8i-de2.h
-> > index 9526017432f0..1c36a6ac86d6 100644
-> > --- a/include/dt-bindings/reset/sun8i-de2.h
-> > +++ b/include/dt-bindings/reset/sun8i-de2.h
-> > @@ -10,5 +10,6 @@
-> >  #define RST_MIXER0     0
-> >  #define RST_MIXER1     1
-> >  #define RST_WB         2
-> > +#define RST_ROT                3
->
-> Looking at the DE 2.0 register guide, the "Rotate" related fields are also
-> found on the A83T. So this is not DE 3.0 specific. And you could also have
-> the H6 DE3 compatible fall back to the A83T for the common parts.
+On Thu, Sep 27, 2018 at 05:18:49PM +0530, Jagan Teki wrote:
+> The A64 has a MIPI-DSI block which is similar to A31
+> without mod clock.
+>=20
+> So, add dsi node with A64 compatible, dphy node with
+> A31 compatible and finally connect dsi to tcon0 to
+> make proper DSI pipeline.
+>=20
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> ---
+>  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 44 +++++++++++++++++++
+>  1 file changed, 44 insertions(+)
+>=20
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/b=
+oot/dts/allwinner/sun50i-a64.dtsi
+> index f3a66f888205..308eedc53150 100644
+> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+> @@ -320,6 +320,11 @@
+>  					#address-cells =3D <1>;
+>  					#size-cells =3D <0>;
+>  					reg =3D <1>;
+> +
+> +					tcon0_out_dsi: endpoint@1 {
+> +						reg =3D <1>;
+> +						remote-endpoint =3D <&dsi_in_tcon0>;
+> +					};
+>  				};
+>  			};
+>  		};
+> @@ -818,6 +823,45 @@
+>  			#interrupt-cells =3D <3>;
+>  		};
+> =20
+> +
+> +		dsi: dsi@1ca0000 {
+> +			compatible =3D "allwinner,sun50i-a64-mipi-dsi";
+> +			reg =3D <0x01ca0000 0x1000>;
+> +			interrupts =3D <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks =3D <&ccu CLK_BUS_MIPI_DSI>;
+> +			clock-names =3D "bus";
+> +			resets =3D <&ccu RST_BUS_MIPI_DSI>;
+> +			phys =3D <&dphy>;
+> +			phy-names =3D "dphy";
+> +			status =3D "disabled";
+> +
+> +			ports {
+> +				#address-cells =3D <1>;
+> +				#size-cells =3D <0>;
+> +
+> +				port@0 {
+> +					#address-cells =3D <1>;
+> +					#size-cells =3D <0>;
+> +					reg =3D <0>;
+> +
+> +					dsi_in_tcon0: endpoint {
+> +						remote-endpoint =3D <&tcon0_out_dsi>;
+> +					};
+> +				};
+> +			};
+> +		};
+> +
+> +		dphy: d-phy@1ca1000 {
+> +			compatible =3D "allwinner,sun6i-a31-mipi-dphy";
 
-I take that back. The A83T has a different clock tree structure because it
-lacks the DE mod clock, so it's not compatible.
+You should add an A64 compatible there.
 
-> ChenYu
->
-> >
-> >  #endif /* _DT_BINDINGS_RESET_SUN8I_DE2_H_ */
-> > --
-> > 2.18.0
-> >
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
