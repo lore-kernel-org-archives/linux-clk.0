@@ -1,44 +1,78 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-it0-f66.google.com ([209.85.214.66]:39013 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725986AbeIGIw3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Sep 2018 04:52:29 -0400
-Received: by mail-it0-f66.google.com with SMTP id h1-v6so18296290itj.4
-        for <linux-clk@vger.kernel.org>; Thu, 06 Sep 2018 21:13:30 -0700 (PDT)
+Return-Path: <jagan@amarulasolutions.com>
 MIME-Version: 1.0
-In-Reply-To: <20180905075056.tob7itg3judccooe@flea>
-References: <20180904044053.15425-1-icenowy@aosc.io> <20180904044053.15425-9-icenowy@aosc.io>
- <20180905075056.tob7itg3judccooe@flea>
+References: <20180927114850.24565-1-jagan@amarulasolutions.com>
+ <20180927114850.24565-9-jagan@amarulasolutions.com> <20180927171451.7iqt2nt2log5qojf@flea>
+In-Reply-To: <20180927171451.7iqt2nt2log5qojf@flea>
 From: Jagan Teki <jagan@amarulasolutions.com>
-Date: Fri, 7 Sep 2018 09:43:29 +0530
-Message-ID: <CAMty3ZBo+X5o22i1=HR9d1VjkEWQ7=DHHPL9RLtbzbyzCZLyFw@mail.gmail.com>
-Subject: Re: [PATCH v4 08/11] arm64: dts: allwinner: a64: Add display pipeline
+Date: Thu, 27 Sep 2018 23:03:19 +0530
+Message-ID: <CAMty3ZDxpLwVDsgVMjX+6+uz89sQ1aZaXHHZ+-5aogrA4MHmqw@mail.gmail.com>
+Subject: Re: [PATCH 08/12] drm/sun4i: sun6i_mipi_dsi: Refactor vertical video
+ start delay
 To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Icenowy Zheng <icenowy@aosc.io>, Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+	Jernej Skrabec <jernej.skrabec@siol.net>, Vasily Khoruzhick <anarsoul@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
+	David Airlie <airlied@linux.ie>, dri-devel <dri-devel@lists.freedesktop.org>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>
 Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Sep 5, 2018 at 1:20 PM, Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-> On Tue, Sep 04, 2018 at 12:40:50PM +0800, Icenowy Zheng wrote:
->> +             hdmi_phy: hdmi-phy@1ef0000 {
->> +                     compatible = "allwinner,sun8i-h3-hdmi-phy";
->> +                     reg = <0x01ef0000 0x10000>;
->> +                     clocks = <&ccu CLK_BUS_HDMI>, <&ccu CLK_HDMI_DDC>,
->> +                              <&ccu 7>;
->> +                     clock-names = "bus", "mod", "pll-0";
->> +                     resets = <&ccu RST_BUS_HDMI0>;
->> +                     reset-names = "phy";
->> +                     #phy-cells = <0>;
->> +             };
+On Thu, Sep 27, 2018 at 10:44 PM Maxime Ripard
+<maxime.ripard@bootlin.com> wrote:
 >
-> This needs to use the bindings we have for that phy.
+> On Thu, Sep 27, 2018 at 05:18:46PM +0530, Jagan Teki wrote:
+> > Accordingly to BPI-M64-bsp DE DSI code Video start delay
+> > can be computed by subtracting total vertical timing with
+> > front porch timing and with adding 1 delay line for TCON.
+>
+> This is what the current code is doing as well.
 
-You mean allwinner,sun50i-a64-hdmi-phy ?
+The current code
+return mode->vtotal - (mode->vsync_end - mode->vdisplay) + 1;
+
+(mode->vsync_end - mode->vdisplay) = front porch + sync
+
+but I'm updating here only front porch.
+
+>
+> > This patch simply add the start_delay logic from BPI-M64-bsp,
+> > w/o this new computation, the DSI on A64 encounter vblank time out.
+> >
+> > [CRTC:36:crtc-0] vblank wait timed out
+> >
+> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > ---
+> >  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 12 +++++++++++-
+> >  1 file changed, 11 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> > index 9918fdb990ff..217db74c6dc3 100644
+> > --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> > +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> > @@ -358,7 +358,17 @@ static void sun6i_dsi_inst_init(struct sun6i_dsi *dsi,
+> >  static u16 sun6i_dsi_get_video_start_delay(struct sun6i_dsi *dsi,
+> >                                          struct drm_display_mode *mode)
+> >  {
+> > -     return mode->vtotal - (mode->vsync_end - mode->vdisplay) + 1;
+> > +     u32 vfp = mode->vsync_start - mode->vdisplay;
+
+let me explain this.
+
+Actual code from Allwinner
+u32 vfp = panel->lcd_vt - panel->lcd_y - panel->lcd_vbp;
+
+So,
+
+=> (panel->lcd_vt - panel->lcd_y) - (panel->lcd_vbp)
+=> (front porch + sync + back porch) - (back porch + sync)
+=> front porch + sync + back porch - back porch - sync
+=> front porch
+=> mode->vsync_start - mode->vdisplay
+
+Hope it clear.
