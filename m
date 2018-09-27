@@ -1,46 +1,53 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej Skrabec <jernej.skrabec@siol.net>
-To: robh+dt@kernel.org,
-	maxime.ripard@bootlin.com,
-	wens@csie.org
-Cc: mark.rutland@arm.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	airlied@linux.ie,
-	architt@codeaurora.org,
-	a.hajda@samsung.com,
-	jernej.skrabec@siol.net,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
+Return-Path: <jagan@amarulasolutions.com>
+Return-Path: <jagan@amarulasolutions.com>
+From: Jagan Teki <jagan@amarulasolutions.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Icenowy Zheng <icenowy@aosc.io>,
+	Jernej Skrabec <jernej.skrabec@siol.net>,
+	Vasily Khoruzhick <anarsoul@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	David Airlie <airlied@linux.ie>,
 	dri-devel@lists.freedesktop.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-clk@vger.kernel.org,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
 	linux-sunxi@googlegroups.com
-Subject: [PATCH 10/27] drm/sun4i: Add compatible for H6 display engine
-Date: Sun,  2 Sep 2018 09:26:26 +0200
-Message-Id: <20180902072643.4917-11-jernej.skrabec@siol.net>
-In-Reply-To: <20180902072643.4917-1-jernej.skrabec@siol.net>
-References: <20180902072643.4917-1-jernej.skrabec@siol.net>
+Cc: Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH 03/12] dt-bindings: sun6i-dsi: Add compatible for A64 MIPI DSI
+Date: Thu, 27 Sep 2018 17:18:41 +0530
+Message-Id: <20180927114850.24565-4-jagan@amarulasolutions.com>
+In-Reply-To: <20180927114850.24565-1-jagan@amarulasolutions.com>
+References: <20180927114850.24565-1-jagan@amarulasolutions.com>
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-H6 is first Allwinner SoC which supports 10 bit colors, HDR and AFBC.
+The MIPI DSI controller on Allwinner A64 is similar to
+Allwinner A31 without support of DSI mod clock.
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
- drivers/gpu/drm/sun4i/sun4i_drv.c | 1 +
+ Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
-index dd19d674055c..e5731d092e1a 100644
---- a/drivers/gpu/drm/sun4i/sun4i_drv.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
-@@ -410,6 +410,7 @@ static int sun4i_drv_remove(struct platform_device *pdev)
- 
- static const struct of_device_id sun4i_drv_of_table[] = {
- 	{ .compatible = "allwinner,sun4i-a10-display-engine" },
-+	{ .compatible = "allwinner,sun50i-h6-display-engine" },
- 	{ .compatible = "allwinner,sun5i-a10s-display-engine" },
- 	{ .compatible = "allwinner,sun5i-a13-display-engine" },
- 	{ .compatible = "allwinner,sun6i-a31-display-engine" },
+diff --git a/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt b/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
+index 6a6cf5de08b0..9fa6e7a758ad 100644
+--- a/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
++++ b/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
+@@ -12,6 +12,7 @@ The DSI Encoder generates the DSI signal from the TCON's.
+ Required properties:
+   - compatible: value must be one of:
+     * allwinner,sun6i-a31-mipi-dsi
++    * allwinner,sun50i-a64-mipi-dsi
+   - reg: base address and size of memory-mapped region
+   - interrupts: interrupt associated to this IP
+   - clocks: phandles to the clocks feeding the DSI encoder
 -- 
-2.18.0
+2.18.0.321.gffc6fa0e3
