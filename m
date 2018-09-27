@@ -1,76 +1,70 @@
-Return-Path: <linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org>
-Message-ID: <4fa10f679ad4b1b619daa521a8641c145cf8537e.camel@buserror.net>
-From: Scott Wood <oss@buserror.net>
-To: Vabhav Sharma <vabhav.sharma@nxp.com>, sudeep.holla@arm.com,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- robh+dt@kernel.org,  mark.rutland@arm.com, linuxppc-dev@lists.ozlabs.org,
- linux-arm-kernel@lists.infradead.org, mturquette@baylibre.com,
- sboyd@kernel.org,  rjw@rjwysocki.net, viresh.kumar@linaro.org,
- linux-clk@vger.kernel.org,  linux-pm@vger.kernel.org,
- linux-kernel-owner@vger.kernel.org,  catalin.marinas@arm.com,
- will.deacon@arm.com, gregkh@linuxfoundation.org,  arnd@arndb.de,
- kstewart@linuxfoundation.org, yamada.masahiro@socionext.com
-Date: Sat, 15 Sep 2018 14:24:21 -0500
-In-Reply-To: <1536871075-3732-4-git-send-email-vabhav.sharma@nxp.com>
-References: <1536871075-3732-1-git-send-email-vabhav.sharma@nxp.com>
- <1536871075-3732-4-git-send-email-vabhav.sharma@nxp.com>
-Mime-Version: 1.0
-Subject: Re: [PATCH v2 3/5] drivers: clk-qoriq: Add clockgen support for
- lx2160a
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Cc: Tang Yuantian <andy.tang@nxp.com>, udit.kumar@nxp.com,
- Yogesh Gaur <yogeshnarayan.gaur@nxp.com>, linux@armlinux.org.uk,
- V.Sethi@nxp.com
-Content-Type: text/plain; charset="us-ascii"
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+mturquette=baylibre.com@lists.infradead.org
+Return-Path: <jagan@amarulasolutions.com>
+Return-Path: <jagan@amarulasolutions.com>
+From: Jagan Teki <jagan@amarulasolutions.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Icenowy Zheng <icenowy@aosc.io>,
+	Jernej Skrabec <jernej.skrabec@siol.net>,
+	Vasily Khoruzhick <anarsoul@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-clk@vger.kernel.org,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Cc: Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH 09/12] dt-bindings: panel: Add Bananapi S070WV20-CT16 MIPI-DSI panel bindings
+Date: Thu, 27 Sep 2018 17:18:47 +0530
+Message-Id: <20180927114850.24565-10-jagan@amarulasolutions.com>
+In-Reply-To: <20180927114850.24565-1-jagan@amarulasolutions.com>
+References: <20180927114850.24565-1-jagan@amarulasolutions.com>
+MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-On Fri, 2018-09-14 at 02:07 +0530, Vabhav Sharma wrote:
-> From: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
-> 
-> Add clockgen support for lx2160a.
-> Added entry for compat 'fsl,lx2160a-clockgen'.
-> 
-> Signed-off-by: Tang Yuantian <andy.tang@nxp.com>
-> Signed-off-by: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
-> Signed-off-by: Vabhav Sharma <vabhav.sharma@nxp.com>
-> Acked-by: Stephen Boyd <sboyd@kernel.org>
-> ---
->  drivers/clk/clk-qoriq.c         | 14 +++++++++++++-
->  drivers/cpufreq/qoriq-cpufreq.c |  1 +
->  2 files changed, 14 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
-> index 3a1812f..e9ae70b 100644
-> --- a/drivers/clk/clk-qoriq.c
-> +++ b/drivers/clk/clk-qoriq.c
-> @@ -79,7 +79,7 @@ struct clockgen_chipinfo {
->  	const struct clockgen_muxinfo *cmux_groups[2];
->  	const struct clockgen_muxinfo *hwaccel[NUM_HWACCEL];
->  	void (*init_periph)(struct clockgen *cg);
-> -	int cmux_to_group[NUM_CMUX]; /* -1 terminates if fewer than
-> NUM_CMUX */
-> +	int cmux_to_group[NUM_CMUX+1]; /* -1 terminate if fewer to
-> NUM_CMUX+1 */
+Bananapi S070WV20-CT16 is 800x480, 4-lane MIPI-DSI panel, the
+same panel PCB comes with parallel RBG which is supported via
+panel-simple with "bananapi,s070wv20-ct16" compatible.
 
-You need to add the -1 terminator to p4080, and remove the "if fewer" comment
-since the whole point of this is that every array gets -1 terminated.
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+---
+ .../panel/bananapi,s070wv20-ct16-dsi.txt      | 21 +++++++++++++++++++
+ 1 file changed, 21 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16-dsi.txt
 
-Why did you change "terminates" to "terminate" and "than" to "to"?
-
-This +1 change should be a separate patch from lx2160a support.
-
--Scott
-
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+diff --git a/Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16-dsi.txt b/Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16-dsi.txt
+new file mode 100644
+index 000000000000..c477163f7999
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16-dsi.txt
+@@ -0,0 +1,21 @@
++Bananapi S070WV20 CT16 MIPI-DSI panel
++
++Required properties:
++- compatible: must be "bananapi,s070wv20-ct16-dsi"
++- reg: DSI virtual channel used by that screen
++- avdd-supply: analog regulator dc1 switch
++- dvdd-supply: 3v3 digital regulator
++- reset-gpios: a GPIO phandle for the reset pin
++
++Optional properties:
++- backlight: phandle for the backlight control.
++
++Example:
++panel@0 {
++	compatible = "bananapi,s070wv20-ct16-dsi";
++	reg = <0>;
++	avdd-supply = <&reg_dc1sw>;
++	dvdd-supply = <&reg_dldo1>;
++	reset-gpios = <&pio 3 6 GPIO_ACTIVE_HIGH>; /* PD6 */
++	backlight = <&backlight_dsi>;
++};
+-- 
+2.18.0.321.gffc6fa0e3
