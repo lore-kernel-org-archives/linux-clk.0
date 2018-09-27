@@ -1,179 +1,90 @@
-Return-Path: <jernej.skrabec@siol.net>
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Maxime Ripard <maxime.ripard@bootlin.com>, Mark Rutland <mark.rutland@arm.com>, Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, David Airlie <airlied@linux.ie>, Archit Taneja <architt@codeaurora.org>, Andrzej Hajda <a.hajda@samsung.com>, devicetree <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, linux-sunxi <linux-sunxi@googlegroups.com>, Icenowy Zheng <icenowy@aosc.io>
-Subject: Re: [linux-sunxi] [PATCH 11/27] drm/sun4i: Rework DE2 register defines
-Date: Sun, 23 Sep 2018 22:02:24 +0200
-Message-ID: <2037444.yZ41eTID0S@jernej-laptop>
-In-Reply-To: <CAGb2v67jweJ5OdSzKhj302OLbz7DacKmSGMKS536uquzKGZtAQ@mail.gmail.com>
-References: <20180902072643.4917-1-jernej.skrabec@siol.net> <20180902072643.4917-12-jernej.skrabec@siol.net> <CAGb2v67jweJ5OdSzKhj302OLbz7DacKmSGMKS536uquzKGZtAQ@mail.gmail.com>
+Return-Path: <wens213@gmail.com>
+Return-Path: <wens213@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+References: <20180927114850.24565-1-jagan@amarulasolutions.com>
+ <20180927114850.24565-5-jagan@amarulasolutions.com> <CAGb2v66No3-AODYCCGifBrm9uvPjaNdR2W5MDQdazRAPomT9CQ@mail.gmail.com>
+ <CAMty3ZBUQKVLJsmkU=hjaO_O5bhetDfAh9-7iLkUqOznVc0KyA@mail.gmail.com>
+ <CAGb2v67pKgORe7uo6r6F+xaVi=Q-p6_DKotZJD7P=46Z=4RhEA@mail.gmail.com> <CAMty3ZAsF=uSJqj2L9ZS8N3CqcSUPzFSdtH8WtZPTg3m-K8COQ@mail.gmail.com>
+In-Reply-To: <CAMty3ZAsF=uSJqj2L9ZS8N3CqcSUPzFSdtH8WtZPTg3m-K8COQ@mail.gmail.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Fri, 28 Sep 2018 00:33:39 +0800
+Message-ID: <CAGb2v66RPYqH2uDF_izW3PdNrvBhmXecs5A6ThW-3xMeQampqA@mail.gmail.com>
+Subject: Re: [linux-sunxi] Re: [PATCH 04/12] drm/sun4i: sun6i_mipi_dsi: Enable
+ missing DSI bus clock
+To: Jagan Teki <jagan@amarulasolutions.com>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Icenowy Zheng <icenowy@aosc.io>,
+	Jernej Skrabec <jernej.skrabec@siol.net>, Vasily Khoruzhick <anarsoul@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
+	David Airlie <airlied@linux.ie>, dri-devel <dri-devel@lists.freedesktop.org>,
+	Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-Dne sobota, 22. september 2018 ob 14:32:30 CEST je Chen-Yu Tsai napisal(a):
-> Hi,
-> 
-> On Sun, Sep 2, 2018 at 3:27 PM Jernej Skrabec <jernej.skrabec@siol.net> 
-wrote:
-> > Most, if not all, registers found in DE2 still exists in DE3. However,
-> > units are on different base addresses.
-> > 
-> > To prepare for addition of DE3 support, registers macros are reworked so
-> > they take base address as parameter.
-> > 
-> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> > [rebased]
-> > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> 
-> This patch mostly checks out. But see below.
-> 
-> > diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.h
-> > b/drivers/gpu/drm/sun4i/sun8i_mixer.h index 406c42e752d7..020b0a097c84
-> > 100644
-> > --- a/drivers/gpu/drm/sun4i/sun8i_mixer.h
-> > +++ b/drivers/gpu/drm/sun4i/sun8i_mixer.h
-> > @@ -29,20 +29,24 @@
-> > 
-> >  #define SUN8I_MIXER_GLOBAL_DBUFF_ENABLE                BIT(0)
-> > 
-> > -#define SUN8I_MIXER_BLEND_PIPE_CTL             0x1000
-> > -#define SUN8I_MIXER_BLEND_ATTR_FCOLOR(x)       (0x1004 + 0x10 * (x) +
-> > 0x0)
-> > -#define SUN8I_MIXER_BLEND_ATTR_INSIZE(x)       (0x1004 + 0x10 * (x) +
-> > 0x4)
-> > -#define SUN8I_MIXER_BLEND_ATTR_COORD(x)                (0x1004 + 0x10 *
-> > (x) + 0x8) -#define SUN8I_MIXER_BLEND_ROUTE                        0x1080
-> > -#define SUN8I_MIXER_BLEND_PREMULTIPLY          0x1084
-> > -#define SUN8I_MIXER_BLEND_BKCOLOR              0x1088
-> > -#define SUN8I_MIXER_BLEND_OUTSIZE              0x108c
-> > -#define SUN8I_MIXER_BLEND_MODE(x)              (0x1090 + 0x04 * (x))
-> > -#define SUN8I_MIXER_BLEND_CK_CTL               0x10b0
-> > -#define SUN8I_MIXER_BLEND_CK_CFG               0x10b4
-> > -#define SUN8I_MIXER_BLEND_CK_MAX(x)            (0x10c0 + 0x04 * (x))
-> > -#define SUN8I_MIXER_BLEND_CK_MIN(x)            (0x10e0 + 0x04 * (x))
-> > -#define SUN8I_MIXER_BLEND_OUTCTL               0x10fc
-> > +#define DE2_BLD_BASE                           0x1000
-> > +#define DE2_CH_BASE                            0x2000
-> > +#define DE2_CH_SIZE                            0x1000
-> > +
-> > +#define SUN8I_MIXER_BLEND_PIPE_CTL(base)       ((base) + 0)
-> > +#define SUN8I_MIXER_BLEND_ATTR_FCOLOR(base, x) ((base) + 0x4 + 0x10 *
-> > (x))
-> > +#define SUN8I_MIXER_BLEND_ATTR_INSIZE(base, x) ((base) + 0x8 + 0x10 *
-> > (x))
-> > +#define SUN8I_MIXER_BLEND_ATTR_COORD(base, x)  ((base) + 0xC + 0x10 *
-> > (x))
-> 
-> Nit: Use lowercase for '0xC' to be consistent.
-> 
-> > +#define SUN8I_MIXER_BLEND_ROUTE(base)          ((base) + 0x80)
-> > +#define SUN8I_MIXER_BLEND_PREMULTIPLY(base)    ((base) + 0x84)
-> > +#define SUN8I_MIXER_BLEND_BKCOLOR(base)                ((base) + 0x88)
-> > +#define SUN8I_MIXER_BLEND_OUTSIZE(base)                ((base) + 0x8c)
-> > +#define SUN8I_MIXER_BLEND_MODE(base, x)                ((base) + 0x90 +
-> > 0x04 * (x)) +#define SUN8I_MIXER_BLEND_CK_CTL(base)         ((base) +
-> > 0xb0)
-> > +#define SUN8I_MIXER_BLEND_CK_CFG(base)         ((base) + 0xb4)
-> > +#define SUN8I_MIXER_BLEND_CK_MAX(base, x)      ((base) + 0xc0 + 0x04 *
-> > (x)) +#define SUN8I_MIXER_BLEND_CK_MIN(base, x)      ((base) + 0xe0 +
-> > 0x04 * (x)) +#define SUN8I_MIXER_BLEND_OUTCTL(base)         ((base) +
-> > 0xfc)
-> > 
-> >  #define SUN8I_MIXER_BLEND_PIPE_CTL_EN_MSK      GENMASK(12, 8)
-> >  #define SUN8I_MIXER_BLEND_PIPE_CTL_EN(pipe)    BIT(8 + pipe)
-> 
-> [...]
-> 
-> > diff --git a/drivers/gpu/drm/sun4i/sun8i_ui_scaler.c
-> > b/drivers/gpu/drm/sun4i/sun8i_ui_scaler.c index
-> > 6bb2aa164c8e..c68eab8a748f 100644
-> > --- a/drivers/gpu/drm/sun4i/sun8i_ui_scaler.c
-> > +++ b/drivers/gpu/drm/sun4i/sun8i_ui_scaler.c
-> > @@ -10,6 +10,7 @@
-> > 
-> >   */
-> >  
-> >  #include "sun8i_ui_scaler.h"
-> > 
-> > +#include "sun8i_vi_scaler.h"
-> > 
-> >  static const u32 lan2coefftab16[240] = {
-> >  
-> >         0x00004000, 0x00033ffe, 0x00063efc, 0x000a3bfb,
-> > 
-> > @@ -88,6 +89,14 @@ static const u32 lan2coefftab16[240] = {
-> > 
-> >         0x0b1c1603, 0x0d1c1502, 0x0e1d1401, 0x0f1d1301,
-> >  
-> >  };
-> > 
-> > +static inline u32 sun8i_ui_scaler_base(struct sun8i_mixer *mixer, int
-> > channel)
-> I recently saw a review comment stating one should not inline functions
-> unless they are defined in header files. Otherwise the decision should
-> be left up to the compiler.
-> 
-> > +{
-> > +       int vi_num = mixer->cfg->vi_num;
-> > +
-> > +       return DE2_VI_SCALER_BASE + DE2_VI_SCALER_SIZE * vi_num +
-> > +              DE2_UI_SCALER_SIZE * (channel - vi_num);
-> > +}
-> > +
-> > 
-> >  static int sun8i_ui_scaler_coef_index(unsigned int step)
-> >  {
-> >  
-> >         unsigned int scale, int_part, float_part;
-> 
-> [...]
-> 
-> > diff --git a/drivers/gpu/drm/sun4i/sun8i_vi_scaler.c
-> > b/drivers/gpu/drm/sun4i/sun8i_vi_scaler.c index
-> > d3f1acb234b7..8697afc36023 100644
-> > --- a/drivers/gpu/drm/sun4i/sun8i_vi_scaler.c
-> > +++ b/drivers/gpu/drm/sun4i/sun8i_vi_scaler.c
-> > @@ -833,6 +833,11 @@ static const u32 bicubic4coefftab32[480] = {
-> > 
-> >         0x1012110d, 0x1012110d, 0x1013110c, 0x1013110c,
-> >  
-> >  };
-> > 
-> > +static inline u32 sun8i_vi_scaler_base(struct sun8i_mixer *mixer, int
-> > channel) +{
-> > +       return DE2_VI_SCALER_BASE + DE2_VI_SCALER_SIZE * channel;
-> > +}
-> > +
-> 
-> This one as well.
-> 
-> >  static int sun8i_vi_scaler_coef_index(unsigned int step)
-> >  {
-> >  
-> >         unsigned int scale, int_part, float_part;
-> > 
-> > @@ -857,7 +862,7 @@ static int sun8i_vi_scaler_coef_index(unsigned int
-> > step)> 
-> >         }
-> >  
-> >  }
-> > 
-> > -static void sun8i_vi_scaler_set_coeff(struct regmap *map, int layer,
-> > +static void sun8i_vi_scaler_set_coeff(struct regmap *map, u32 base,
-> > 
-> >                                       u32 hstep, u32 vstep,
-> >                                       const struct drm_format_info
-> >                                       *format)
-> 
-> This is the only instance where a function's "layer" parameter was changed
-> to "base". It would be nice if it were consistent.
+On Fri, Sep 28, 2018 at 12:26 AM Jagan Teki <jagan@amarulasolutions.com> wrote:
+>
+> On Thu, Sep 27, 2018 at 7:47 PM Chen-Yu Tsai <wens@csie.org> wrote:
+> >
+> > On Thu, Sep 27, 2018 at 9:44 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
+> > >
+> > > On Thu, Sep 27, 2018 at 6:13 PM Chen-Yu Tsai <wens@csie.org> wrote:
+> > > >
+> > > > Hi,
+> > > >
+> > > > On Thu, Sep 27, 2018 at 7:49 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
+> > > > >
+> > > > > DSI bus_clk is already available in sun6i_dsi but missed to
+> > > > > get the clk and process for enable/disable.
+> > > > >
+> > > > > This patch add support for it.
+> > > > >
+> > > > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > > > > ---
+> > > > >  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 8 ++++++++
+> > > > >  1 file changed, 8 insertions(+)
+> > > > >
+> > > > > diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> > > > > index 8e9c76febca2..156b371243c6 100644
+> > > > > --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> > > > > +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> > > > > @@ -1004,6 +1004,12 @@ static int sun6i_dsi_probe(struct platform_device *pdev)
+> > > > >                 return PTR_ERR(dsi->reset);
+> > > > >         }
+> > > > >
+> > > > > +       dsi->bus_clk = devm_clk_get(dev, "bus");
+> > > > > +       if (IS_ERR(dsi->bus_clk)) {
+> > > > > +               dev_err(dev, "Couldn't get the DSI bus clock\n");
+> > > > > +               return PTR_ERR(dsi->bus_clk);
+> > > > > +       }
+> > > > > +
+> > > >
+> > > > The DSI driver uses devm_regmap_init_mmio_clk, which enables the
+> > > > clock behind the scenes when regmap access needs it enabled.
+> > > >
+> > > > Did you have any issues without this patch?
+> > >
+> > > I'm unable to read register values via devmem, I see all 0's for all
+> > > dsi reg space.
+> >
+> > Well that is to be expected given how mmio with clk regmap works.
+> > Did you encounter any other problems besides this?
+>
+> no
+>
+> >
+> > FYI you can dump regmap contents using /sys/kernel/debug/regmap/*/registers
+>
+> Thanks, but ccu not using regmap I believe so can't see bus enabled
+> bit set via devmap
+> # devmem 0x01C20060
+> 0x33800000
 
-Why not? Caller already have base address calculated, so it poses no overhead. 
-Additionally, sun8i_vi_scaler_set_coeff() doesn't have struct sun8i_mixer 
-*mixer parameter, which would allow calculating base address based on layer 
-id. So, you can chose between existing variant or adding additional parameter 
-for no real reason.
+That is perfectly normal. It is only enabled when there are accesses to the
+DSI regmap.
 
-Best regards,
-Jernej
+ChenYu
