@@ -1,18 +1,19 @@
 Return-Path: <jagan@amarulasolutions.com>
 MIME-Version: 1.0
-In-Reply-To: <20180905070819.gisznpkvvuqire7c@flea>
-References: <20180904163609.10171-1-jagan@amarulasolutions.com>
- <20180904163609.10171-4-jagan@amarulasolutions.com> <20180905070819.gisznpkvvuqire7c@flea>
+References: <20180927114850.24565-1-jagan@amarulasolutions.com>
+ <20180927114850.24565-6-jagan@amarulasolutions.com> <20180927171831.2nfybgn2xmc4vrgt@flea>
+In-Reply-To: <20180927171831.2nfybgn2xmc4vrgt@flea>
 From: Jagan Teki <jagan@amarulasolutions.com>
-Date: Wed, 5 Sep 2018 13:54:42 +0530
-Message-ID: <CAMty3ZAzjSwq86BwB8O_7DrT0jrhn3ByzN34dY37pF3ZsAZ6uA@mail.gmail.com>
-Subject: Re: [PATCH v4 4/4] drm/sun4i: Enable DesignWare HDMI for SUN50I
+Date: Thu, 27 Sep 2018 23:06:50 +0530
+Message-ID: <CAMty3ZCD4ArjhPJYxv3ztWXdnby8YXQ73QqoVNoHFBc-DAxx_w@mail.gmail.com>
+Subject: Re: [PATCH 05/12] drm/sun4i: sun6i_mipi_dsi: Add DSI Generic short
+ write 2 param transfer
 To: Maxime Ripard <maxime.ripard@bootlin.com>
 Cc: Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-	Jernej Skrabec <jernej.skrabec@siol.net>, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>,
-	dri-devel <dri-devel@lists.freedesktop.org>,
+	Jernej Skrabec <jernej.skrabec@siol.net>, Vasily Khoruzhick <anarsoul@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
+	David Airlie <airlied@linux.ie>, dri-devel <dri-devel@lists.freedesktop.org>,
 	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
 	linux-clk <linux-clk@vger.kernel.org>,
 	Michael Trimarchi <michael@amarulasolutions.com>,
@@ -22,17 +23,50 @@ Cc: Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
 Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, Sep 5, 2018 at 12:38 PM, Maxime Ripard
+On Thu, Sep 27, 2018 at 10:48 PM Maxime Ripard
 <maxime.ripard@bootlin.com> wrote:
-> On Tue, Sep 04, 2018 at 10:06:09PM +0530, Jagan Teki wrote:
->> Allwinner SUN50I are now using DesignWare HDMI so enable
->> them as default. This can build DRM_SUN8I_DW_HDMI as module
->> since DRM in arm64 has module.
->>
->> Making this as defult to SUN8I, may cause an issue while
->> loading since arm32 DRM built as static.
 >
-> Uh? Why? We should fix this instead of working around it.
+> On Thu, Sep 27, 2018 at 05:18:43PM +0530, Jagan Teki wrote:
+> > Short transfer write support for DCS and Generic transfer types
+> > share similar way to process command sequence in DSI block so
+> > add generic write 2 param transfer type macro so-that the panels
+> > which are requesting similar transfer type may process properly.
+> >
+> > Also added error check for unsupporting transfer types this make
+> > debugging easy for new transfer types.
+> >
+> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > ---
+> >  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> >
+> > diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> > index 156b371243c6..1c7e42015645 100644
+> > --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> > +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> > @@ -869,6 +869,7 @@ static ssize_t sun6i_dsi_transfer(struct mipi_dsi_host *host,
+> >                    SUN6I_DSI_CMD_CTL_TX_FLAG);
+> >
+> >       switch (msg->type) {
+> > +     case MIPI_DSI_GENERIC_SHORT_WRITE_2_PARAM:
+> >       case MIPI_DSI_DCS_SHORT_WRITE:
+> >       case MIPI_DSI_DCS_SHORT_WRITE_PARAM:
+>
+> You should order them by alphabetical order.
 
-I didn't dig further on this. Since ARM64 has is fine with it both
-(module and static) may be we can take this.
+I just placed it with transfer code, ok will add it alphabetical
+
+>
+> >               ret = sun6i_dsi_dcs_write_short(dsi, msg);
+> > @@ -885,6 +886,8 @@ static ssize_t sun6i_dsi_transfer(struct mipi_dsi_host *host,
+> >               }
+> >
+> >       default:
+> > +             dev_err(dsi->dev, "unsupported message type 0x%02x\n",
+> > +                     msg->type);
+>
+> And this isn't an error check.
+
+But unsupported message type by sun6i_dsi should be an error
+eventually isn't it? and we can easily figure out where the error
+trigger.
