@@ -6,80 +6,93 @@ X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2E37C43382
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Sep 2018 19:32:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EB96C43382
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Sep 2018 19:51:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A6F921710
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Sep 2018 19:32:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A6F921710
+	by mail.kernel.org (Postfix) with ESMTP id 447012170E
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Sep 2018 19:51:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 447012170E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728598AbeI1Bwb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Sep 2018 21:52:31 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:46358 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728582AbeI1Bwb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Sep 2018 21:52:31 -0400
-Received: by mail-oi1-f195.google.com with SMTP id k64-v6so3189482oia.13;
-        Thu, 27 Sep 2018 12:32:41 -0700 (PDT)
+        id S1727358AbeI1CLa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Sep 2018 22:11:30 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:36430 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727294AbeI1CLa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Sep 2018 22:11:30 -0400
+Received: by mail-oi1-f194.google.com with SMTP id p125-v6so3285401oic.3;
+        Thu, 27 Sep 2018 12:51:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=tnSYaK0DUOE5vwk8CXbgIKk4JjzqMvOiW++MdLQZSJ0=;
-        b=NS4cGzTBsCdIZIfUuy2SbK8dPibTJhuK9BD6bCvY5N8E2yTv87yjkSG/IC5/bB9Tp2
-         vrAMCP1b/kdkj4Etmn6ZzlwnctKRpDe02nDecc4MFHTbeb4rZ9zJwz8g0NW3O5oO5xON
-         ZM0hL/4I8EVyCOk9Bco8Nq+GhaYyWxh+bH8gIkJRShPIIfGWVu5tKyKHH0IIhP+7NQgV
-         mlTKlqGreKCi3lB1Uog5uKQcUBMgoE5dPGHPq3SQ+AHp5s0bYC+KuBZlPHNDShbloWxD
-         Vj1RgjCtcOIKKX6w4+CpzLFUtPzoA67A2JCiLi0LBSVE3rTwk1Z7EDhbmOy00GW706UE
-         6ioQ==
-X-Gm-Message-State: ABuFfoiz2JnlQIanfW+EDAHQ0SiYLdNuA77LUnfCsHN+bCnwL668zN/W
-        wZzkq/WHxRf16dG3/0JSmGEQYJaRMxEu
-X-Google-Smtp-Source: ACcGV60TmkVwBvyfbPHx9Z793dhCXq0b3Vp8Jkc/cxewLDo4IcxfS1BazWHaS0g8+C4aXg8fqpt/zg==
-X-Received: by 2002:aca:dad7:: with SMTP id r206-v6mr4054236oig.271.1538076761491;
-        Thu, 27 Sep 2018 12:32:41 -0700 (PDT)
+        bh=08IFIA8w2uFiET0+TGKYWHOVLyp19QotfFxi2V2zgPs=;
+        b=ezvxRoWPWFmUoB/+xkqv7QzjNzLjb7B82AvYhrqj4i42gBZNY2R6uQBkkSpFaaKWV7
+         FsRuiiAI+tcljMuD1A3fRVFe5dcuIHRSdPscCIjMJKHO4n4RtYK/yIt8dDPal9Sucet+
+         shiWAAXnSEGOZaE+Jn2o0JS0EePr0EgxTzNkiTfatqUGTkJYW+1nlY5pjSM7gBQsApU2
+         0ePgTrYD9En+viWtgv8o1aSkx8Oa26lXVlJtMLLNAbula/AXFrc9TpwIPa7p/Dxqh1xI
+         ulXZG7jFp3njZRzMgLSV2mkfQsx15ZcE6WfMTi+1JmfOEAIKjdTkXBef96yKvs6AjkJC
+         ZQAg==
+X-Gm-Message-State: ABuFfoiOHz9jJbi4iQGSwJLDw4kQDYp1mSHy+E9iZJgyUFDy76idcw3l
+        IyJdwggnldHlYEhYCUQJQQ==
+X-Google-Smtp-Source: ACcGV61aJ1OxLzzjEWtyX/ZLGaa/RboV1Hs+M0RuYVOaQfBtpXAkV0DITWJy104hIohxa+OqJ/O2jQ==
+X-Received: by 2002:aca:54ca:: with SMTP id i193-v6mr4111882oib.340.1538077895781;
+        Thu, 27 Sep 2018 12:51:35 -0700 (PDT)
 Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id s25-v6sm1130411ote.35.2018.09.27.12.32.40
+        by smtp.gmail.com with ESMTPSA id 31-v6sm1289774ota.23.2018.09.27.12.51.34
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 27 Sep 2018 12:32:40 -0700 (PDT)
-Date:   Thu, 27 Sep 2018 14:32:40 -0500
+        Thu, 27 Sep 2018 12:51:35 -0700 (PDT)
+Date:   Thu, 27 Sep 2018 14:51:34 -0500
 From:   Rob Herring <robh@kernel.org>
-To:     Vabhav Sharma <vabhav.sharma@nxp.com>
-Cc:     sudeep.holla@arm.com, oss@buserror.net,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org, mturquette@baylibre.com,
-        sboyd@kernel.org, rjw@rjwysocki.net, viresh.kumar@linaro.org,
-        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel-owner@vger.kernel.org, catalin.marinas@arm.com,
-        will.deacon@arm.com, gregkh@linuxfoundation.org, arnd@arndb.de,
-        kstewart@linuxfoundation.org, yamada.masahiro@socionext.com,
-        udit.kumar@nxp.com, linux@armlinux.org.uk,
-        Vabhav Sharma <vabhav.sharma@nxp.com>, V.Sethi@nxp.com
-Subject: Re: [PATCH v3 1/6] dt-bindings: arm64: add compatible for LX2160A
-Message-ID: <20180927193240.GA29253@bogus>
-References: <1537747741-6245-1-git-send-email-vabhav.sharma@nxp.com>
- <1537747741-6245-2-git-send-email-vabhav.sharma@nxp.com>
+To:     Craig Tatlor <ctatlor97@gmail.com>
+Cc:     linux-arm-msm@vger.kernel.org, Taniya Das <tdas@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-soc@vger.kernel.org
+Subject: Re: [PATCH v3] clk: qcom: Add Global Clock controller (GCC) driver
+ for SDM660
+Message-ID: <20180927195134.GA19806@bogus>
+References: <20180810202123.29238-1-ctatlor97@gmail.com>
+ <20180925173603.2274-1-ctatlor97@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1537747741-6245-2-git-send-email-vabhav.sharma@nxp.com>
+In-Reply-To: <20180925173603.2274-1-ctatlor97@gmail.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
-Message-ID: <20180927193240.eSJzFrZIpD0WAStCGvopoBFtGnhEsrM88g0ekW5jSFA@z>
+Message-ID: <20180927195134.jj3sNkm3ucSD12eWtRHiPbIX6geSV8nkAiupT53qX2s@z>
 
-On Mon, 24 Sep 2018 05:38:56 +0530, Vabhav Sharma wrote:
-> Add compatible for LX2160A SoC,QDS and RDB board
+On Tue, Sep 25, 2018 at 06:35:58PM +0100, Craig Tatlor wrote:
+> From: Taniya Das <tdas@codeaurora.org>
 > 
-> Signed-off-by: Vabhav Sharma <vabhav.sharma@nxp.com>
+> Add support for the global clock controller found on SDM660
+> based devices. This should allow most non-multimedia device
+> drivers to probe and control their clocks.
+> Based on CAF implementation.
+> 
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> [craig: rename parents to fit upstream, and other cleanups]
+> Signed-off-by: Craig Tatlor <ctatlor97@gmail.com>
 > ---
->  Documentation/devicetree/bindings/arm/fsl.txt | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
+> Changes from V1:
+>     Change authorship
+>     Add sdm630 compatible
+>  .../devicetree/bindings/clock/qcom,gcc.txt    |    1 +
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Rob Herring <robh@kernel.org>
+
+>  drivers/clk/qcom/Kconfig                      |    9 +
+>  drivers/clk/qcom/Makefile                     |    1 +
+>  drivers/clk/qcom/gcc-sdm660.c                 | 2480 +++++++++++++++++
+>  include/dt-bindings/clock/qcom,gcc-sdm660.h   |  159 ++
+>  5 files changed, 2650 insertions(+)
+>  create mode 100644 drivers/clk/qcom/gcc-sdm660.c
+>  create mode 100644 include/dt-bindings/clock/qcom,gcc-sdm660.h
