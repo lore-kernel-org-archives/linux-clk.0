@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB952C43382
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Sep 2018 17:14:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08E49C43382
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Sep 2018 17:16:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B79C21582
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Sep 2018 17:14:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B79C21582
+	by mail.kernel.org (Postfix) with ESMTP id B23812159D
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Sep 2018 17:16:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B23812159D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727588AbeI0XeL convert rfc822-to-8bit (ORCPT
+        id S1727588AbeI0Xfr convert rfc822-to-8bit (ORCPT
         <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Sep 2018 19:34:11 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:60723 "EHLO mail.bootlin.com"
+        Thu, 27 Sep 2018 19:35:47 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:60795 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727622AbeI0XeL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 27 Sep 2018 19:34:11 -0400
+        id S1727587AbeI0Xfq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 27 Sep 2018 19:35:46 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 0299120798; Thu, 27 Sep 2018 19:14:52 +0200 (CEST)
+        id D83DC20798; Thu, 27 Sep 2018 19:16:27 +0200 (CEST)
 Received: from localhost (unknown [91.116.141.28])
-        by mail.bootlin.com (Postfix) with ESMTPSA id B0C4F2075C;
-        Thu, 27 Sep 2018 19:14:51 +0200 (CEST)
-Date:   Thu, 27 Sep 2018 19:14:51 +0200
+        by mail.bootlin.com (Postfix) with ESMTPSA id 91F5C20730;
+        Thu, 27 Sep 2018 19:16:27 +0200 (CEST)
+Date:   Thu, 27 Sep 2018 19:16:27 +0200
 From:   Maxime Ripard <maxime.ripard@bootlin.com>
 To:     Jagan Teki <jagan@amarulasolutions.com>
 Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
@@ -44,83 +44,89 @@ Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
         Michael Trimarchi <michael@amarulasolutions.com>,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 08/12] drm/sun4i: sun6i_mipi_dsi: Refactor vertical video
- start delay
-Message-ID: <20180927171451.7iqt2nt2log5qojf@flea>
+Subject: Re: [PATCH 11/12] arm64: dts: allwinner: a64: Add DSI pipeline
+Message-ID: <20180927171627.7svkvflamxrmjgve@flea>
 References: <20180927114850.24565-1-jagan@amarulasolutions.com>
- <20180927114850.24565-9-jagan@amarulasolutions.com>
+ <20180927114850.24565-12-jagan@amarulasolutions.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: 8BIT
-In-Reply-To: <20180927114850.24565-9-jagan@amarulasolutions.com>
+In-Reply-To: <20180927114850.24565-12-jagan@amarulasolutions.com>
 User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
-Message-ID: <20180927171451.aTECHpL6UsVnULGoZ8IlpW0m6AxyQII89YM1U71L8MU@z>
+Message-ID: <20180927171627.bl6mPjX-TEwAMU3yJsErE8PNfWGe62ehrRh8GymghJo@z>
 
-On Thu, Sep 27, 2018 at 05:18:46PM +0530, Jagan Teki wrote:
-> Accordingly to BPI-M64-bsp DE DSI code Video start delay
-> can be computed by subtracting total vertical timing with
-> front porch timing and with adding 1 delay line for TCON.
-
-This is what the current code is doing as well.
-
-> This patch simply add the start_delay logic from BPI-M64-bsp,
-> w/o this new computation, the DSI on A64 encounter vblank time out.
+On Thu, Sep 27, 2018 at 05:18:49PM +0530, Jagan Teki wrote:
+> The A64 has a MIPI-DSI block which is similar to A31
+> without mod clock.
 > 
-> [CRTC:36:crtc-0] vblank wait timed out
->
+> So, add dsi node with A64 compatible, dphy node with
+> A31 compatible and finally connect dsi to tcon0 to
+> make proper DSI pipeline.
+> 
 > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 > ---
->  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 12 +++++++++++-
->  1 file changed, 11 insertions(+), 1 deletion(-)
+>  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 44 +++++++++++++++++++
+>  1 file changed, 44 insertions(+)
 > 
-> diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> index 9918fdb990ff..217db74c6dc3 100644
-> --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> @@ -358,7 +358,17 @@ static void sun6i_dsi_inst_init(struct sun6i_dsi *dsi,
->  static u16 sun6i_dsi_get_video_start_delay(struct sun6i_dsi *dsi,
->  					   struct drm_display_mode *mode)
->  {
-> -	return mode->vtotal - (mode->vsync_end - mode->vdisplay) + 1;
-> +	u32 vfp = mode->vsync_start - mode->vdisplay;
-
-Again, this is wrong and contrary to what your commit log is saying.
-
-The Allwinner code has:
-
-u32 vfp = panel->lcd_vt - panel->lcd_y - panel->lcd_vbp;
-u32 dsi_start_delay = panel->lcd_vt - vfp + 1;
-
-So, essentially:
-
-vtotal - (vtotal - vdisplay - back porch) + 1
-
-The backporch is hsync_total - hsync_end, so we end up, removing the
-addition / removal of vtotal, with:
-
-vdisplay - (vsync_total - vsync_end) + 1
-
-The formula used there looks indeed different, but unlike what you
-were saying.
-
-> +	u32 start_delay;
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+> index f3a66f888205..308eedc53150 100644
+> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+> @@ -320,6 +320,11 @@
+>  					#address-cells = <1>;
+>  					#size-cells = <0>;
+>  					reg = <1>;
 > +
-> +	start_delay = mode->vtotal - vfp + 1;
-> +	if (start_delay > mode->vtotal)
-> +		start_delay -= mode->vtotal;
+> +					tcon0_out_dsi: endpoint@1 {
+> +						reg = <1>;
+> +						remote-endpoint = <&dsi_in_tcon0>;
+> +					};
+>  				};
+>  			};
+>  		};
+> @@ -818,6 +823,45 @@
+>  			#interrupt-cells = <3>;
+>  		};
+>  
 > +
-> +	if (!start_delay)
-> +		start_delay = 1;
+> +		dsi: dsi@1ca0000 {
+> +			compatible = "allwinner,sun50i-a64-mipi-dsi";
+> +			reg = <0x01ca0000 0x1000>;
+> +			interrupts = <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&ccu CLK_BUS_MIPI_DSI>;
+> +			clock-names = "bus";
+> +			resets = <&ccu RST_BUS_MIPI_DSI>;
+> +			phys = <&dphy>;
+> +			phy-names = "dphy";
+> +			status = "disabled";
 > +
+> +			ports {
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +
+> +				port@0 {
+> +					#address-cells = <1>;
+> +					#size-cells = <0>;
+> +					reg = <0>;
+> +
+> +					dsi_in_tcon0: endpoint {
+> +						remote-endpoint = <&tcon0_out_dsi>;
+> +					};
+> +				};
+> +			};
+> +		};
+> +
+> +		dphy: d-phy@1ca1000 {
+> +			compatible = "allwinner,sun6i-a31-mipi-dphy";
 
-I guess that it's actually the clamping that fixes thing. It should be
-mentionned in your commit log.
+You should add an A64 compatible there.
 
+Thanks!
 Maxime
 
 -- 
