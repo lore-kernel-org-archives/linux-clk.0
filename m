@@ -1,91 +1,60 @@
-Return-Path: <aisheng.dong@nxp.com>
-From: "A.s. Dong" <aisheng.dong@nxp.com>
-To: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "sboyd@kernel.org"
-	<sboyd@kernel.org>, "mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"shawnguo@kernel.org" <shawnguo@kernel.org>, "thor.thayer@linux.intel.com"
-	<thor.thayer@linux.intel.com>, dl-linux-imx <linux-imx@nxp.com>,
-	"hdegoede@redhat.com" <hdegoede@redhat.com>
-Subject: RE: [PATCH V6 0/4] clk: new APIs to handle all available clocks
-Date: Sun, 16 Sep 2018 13:24:57 +0000
-Message-ID: 
- <AM0PR04MB4211A3900BC5A2DF857F7451801F0@AM0PR04MB4211.eurprd04.prod.outlook.com>
-References: <1535690756-22234-1-git-send-email-aisheng.dong@nxp.com>
- <AM0PR04MB4211EF6D783562BA8C8D690380010@AM0PR04MB4211.eurprd04.prod.outlook.com>
-In-Reply-To: 
- <AM0PR04MB4211EF6D783562BA8C8D690380010@AM0PR04MB4211.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset="us-ascii"
+Return-Path: <jagan@amarulasolutions.com>
+Return-Path: <jagan@amarulasolutions.com>
+From: Jagan Teki <jagan@amarulasolutions.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Icenowy Zheng <icenowy@aosc.io>,
+	Jernej Skrabec <jernej.skrabec@siol.net>,
+	Vasily Khoruzhick <anarsoul@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-clk@vger.kernel.org,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Cc: Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH 07/12] drm/sun4i: sun6i_mipi_dsi: Fix TCON DRQ set bits
+Date: Thu, 27 Sep 2018 17:18:45 +0530
+Message-Id: <20180927114850.24565-8-jagan@amarulasolutions.com>
+In-Reply-To: <20180927114850.24565-1-jagan@amarulasolutions.com>
+References: <20180927114850.24565-1-jagan@amarulasolutions.com>
 MIME-Version: 1.0
 List-ID: <linux-clk.vger.kernel.org>
 
-Ping again
+TCON DRQ set bits for non-burst DSI mode can computed via
+horizontal front porch instead of front porch + sync timings.
 
-> -----Original Message-----
-> From: A.s. Dong
-> Sent: Thursday, September 6, 2018 11:23 AM
-> To: linux-clk@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
-> sboyd@kernel.org; mturquette@baylibre.com; shawnguo@kernel.org;
-> thor.thayer@linux.intel.com; dl-linux-imx <linux-imx@nxp.com>;
-> hdegoede@redhat.com
-> Subject: RE: [PATCH V6 0/4] clk: new APIs to handle all available clocks
->=20
-> Gently ping...
->=20
-> > -----Original Message-----
-> > From: A.s. Dong
-> > Sent: Friday, August 31, 2018 12:46 PM
-> > To: linux-clk@vger.kernel.org
-> > Cc: linux-kernel@vger.kernel.org;
-> > linux-arm-kernel@lists.infradead.org;
-> > sboyd@kernel.org; mturquette@baylibre.com; shawnguo@kernel.org;
-> > thor.thayer@linux.intel.com; dl-linux-imx <linux-imx@nxp.com>;
-> > hdegoede@redhat.com; A.s. Dong <aisheng.dong@nxp.com>
-> > Subject: [PATCH V6 0/4] clk: new APIs to handle all available clocks
-> >
-> > This patch series is a continue of discussion from here,
-> > https://patchwork.kernel.org/patch/9986293/
-> > that some users may want to handle all available clocks from device
-> > tree without need to know the detailed clock information likes clock
-> > numbers and names. This is useful in writing some generic drivers to ha=
-ndle
-> clock part.
-> >
-> > Note:
-> > This patch series is tested on MX6Q SDB cpufreq driver with a minor
-> > change to switch to use clk_bulk_get_all.
-> > But patch 4 only test compiling. Hopefully someone could help test the
-> > function.
-> >
-> > v3->v4:
-> >  * improve 'devres->clks =3D *clks' according to Stephen's suggestion
-> > v2->v3:
-> >  * address all comments from Stephen
-> >  * fix build warnings on other architectures.
-> > v1->v2:
-> >  * add clk_bulk_{get|put}_all() which only supports DT platform
-> > currently
-> >  * remove _all variants and the wrapper struct clk_bulk
-> >  * make of_clk_bulk_get and of_clk_bulk_get_all private until someone
-> >    proves they need it because they don't have a struct device pointer.
-> >
-> > Dong Aisheng (4):
-> >   clk: bulk: add of_clk_bulk_get()
-> >   clk: add new APIs to operate on all available clocks
-> >   clk: add managed version of clk_bulk_get_all
-> >   video: simplefb: switch to use clk_bulk API to simplify clock
-> >     operations
-> >
-> >  drivers/clk/clk-bulk.c         | 80
-> > ++++++++++++++++++++++++++++++++++++++++++
-> >  drivers/clk/clk-devres.c       | 24 +++++++++++++
-> >  drivers/video/fbdev/simplefb.c | 72 ++++++++++------------------------=
+Since there no documentation for TCON_DRQ_REG(0x7c) register
+this change is taken as reference from BPI-M64-bsp.
+
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
-> >  include/linux/clk.h            | 65
-> > +++++++++++++++++++++++++++++++++-
-> >  4 files changed, 186 insertions(+), 55 deletions(-)
-> >
-> > --
-> > 2.7.4
+ drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+index 599284971ab6..9918fdb990ff 100644
+--- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
++++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+@@ -367,9 +367,9 @@ static void sun6i_dsi_setup_burst(struct sun6i_dsi *dsi,
+ 	struct mipi_dsi_device *device = dsi->device;
+ 	u32 val = 0;
+ 
+-	if ((mode->hsync_end - mode->hdisplay) > 20) {
++	if ((mode->hsync_start - mode->hdisplay) > 20) {
+ 		/* Maaaaaagic */
+-		u16 drq = (mode->hsync_end - mode->hdisplay) - 20;
++		u16 drq = (mode->hsync_start - mode->hdisplay) - 20;
+ 
+ 		drq *= mipi_dsi_pixel_format_to_bpp(device->format);
+ 		drq /= 32;
+-- 
+2.18.0.321.gffc6fa0e3
