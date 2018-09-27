@@ -1,41 +1,117 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:40641 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726929AbeI0PQq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Sep 2018 11:16:46 -0400
+Received: by mail-wr1-f65.google.com with SMTP id y8-v6so1684272wrh.7
+        for <linux-clk@vger.kernel.org>; Thu, 27 Sep 2018 01:59:33 -0700 (PDT)
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To: linux-amlogic@lists.infradead.org, jbrunet@baylibre.com,
+        narmstrong@baylibre.com
+Cc: linux-clk@vger.kernel.org, carlo@caione.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH 1/2] clk: meson: meson8b: fix incorrect divider mapping in cpu_scale_table
+Date: Thu, 27 Sep 2018 10:59:20 +0200
+Message-Id: <20180927085921.24627-2-martin.blumenstingl@googlemail.com>
+In-Reply-To: <20180927085921.24627-1-martin.blumenstingl@googlemail.com>
+References: <20180927085921.24627-1-martin.blumenstingl@googlemail.com>
 MIME-Version: 1.0
-References: <20180924164937.36536-1-chris.brandt@renesas.com> <20180924164937.36536-3-chris.brandt@renesas.com>
-In-Reply-To: <20180924164937.36536-3-chris.brandt@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 26 Sep 2018 11:24:55 +0200
-Message-ID: <CAMuHMdWZ5BE4bjOCbVL5BoE4-pYRhD3x3zRs=gPGuCgNKb+=oA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] clk: renesas: r7s9210: Convert some clocks to early
-To: Chris Brandt <chris.brandt@renesas.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	Simon Horman <horms+renesas@verge.net.au>
-Content-Type: text/plain; charset="UTF-8"
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Mon, Sep 24, 2018 at 6:50 PM Chris Brandt <chris.brandt@renesas.com> wrote:
-> The OSTM timer driver for RZ/A2 uses TIMER_OF_DECLARE which requires the
-> ostm module clocks to be registers early in boot.
->
-> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-> ---
-> v2:
->  * List early clocks first
->  * Remove unnecessary comments
->  * Removed new function r7s9210_update_clk_table (to be included in a
->    separate patch)
+The public S805 datasheet only mentions that
+HHI_SYS_CPU_CLK_CNTL1[20:29] contains a divider called "cpu_scale_div".
+Unfortunately it does not mention how to use the register contents.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in clk-renesas-for-v4.20.
+The Amlogic 3.10 GPL kernel sources are using the following code to
+calculate the CPU clock based on that register (taken from
+arch/arm/mach-meson8/clock.c in the 3.10 Amlogic kernel, shortened to
+make it easier to read):
+N = (aml_read_reg32(P_HHI_SYS_CPU_CLK_CNTL1) >> 20) & 0x3FF;
+if (sel == 3) /* use cpu_scale_div */
+  div = 2 * N;
+else
+  div = ... /* not relevant for this example */
+cpu_clk = parent_clk / div;
 
-Gr{oetje,eeting}s,
+This suggests that the formula is: parent_rate / 2 * register_value
+However, running perf (which can measure the CPU clock rate thanks to
+the ARM PMU) shows that this formula is not correct.
+This can be reproduced with the following steps:
+1. boot into u-boot
+2. let the CPU clock run off the XTAL clock:
+   mw.l 0xC110419C 0x30 1
+3. set the cpu_scale_div register:
+   to value 0x1: mw.l 0xC110415C 0x801016A2 1
+   to value 0x2: mw.l 0xC110415C 0x802016A2 1
+   to value 0x5: mw.l 0xC110415C 0x805016A2 1
+4. let the CPU clock run off cpu_scale_div:
+   mw.l 0xC110419C 0xbd 1
+5. boot Linux
+6. run: perf stat -aB stress --cpu 4 --timeout 10
+7. check the "cycles" value
 
-                        Geert
+I get the following results depending on the cpu_scale_div value:
+- (cpu_in_sel - this is the input clock for cpu_scale_div - runs at
+   1.2GHz)
+- 0x1 = 300MHz
+- 0x2 = 200MHz
+- 0x5 = 100MHz
 
+This means that the actual formula to calculate the output of the
+cpu_scale_div clock is: parent_rate / 2 * (register value + 1).
+
+The register value 0x0 is reserved. When letting the CPU clock run off
+the cpu_scale_div while the value is 0x0 the whole board hangs (even in
+u-boot).
+
+I also verified this with the TWD timer: when adding this to the .dts
+without specifying it's clock it will auto-detect the PERIPH (which is
+the input clock of the TWD) clock rate (and the result is shown in the
+kernel log). On Meson8, Meson8b and Meson8m2 the PERIPH clock is CPUCLK
+divided by 4. This also matched for all three test-cases from above (in
+all cases the TWD timer clock rate was approx. one fourth of the CPU
+clock rate).
+
+A small note regarding the "fixes" tag: the original issue seems to
+exist virtually since forever. Even commit 28b9fcd016126e ("clk:
+meson8b: Add support for Meson8b clocks") seems to handle this wrong. I
+still decided to use commit 251b6fd38bcb9c ("clk: meson: rework meson8b
+cpu clock") because this is the first commit which gets the CPU hiearchy
+correct and thus it's the first commit where the cpu_scale_div register
+is used correctly (apart from the bug in the cpu_scale_table).
+
+Fixes: 251b6fd38bcb9c ("clk: meson: rework meson8b cpu clock")
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+---
+ drivers/clk/meson/meson8b.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+index e7fe66f61d7b..d3f4e11d106d 100644
+--- a/drivers/clk/meson/meson8b.c
++++ b/drivers/clk/meson/meson8b.c
+@@ -579,13 +579,14 @@ static struct clk_fixed_factor meson8b_cpu_div3 = {
+ };
+ 
+ static const struct clk_div_table cpu_scale_table[] = {
+-	{ .val = 2, .div = 4 },
+-	{ .val = 3, .div = 6 },
+-	{ .val = 4, .div = 8 },
+-	{ .val = 5, .div = 10 },
+-	{ .val = 6, .div = 12 },
+-	{ .val = 7, .div = 14 },
+-	{ .val = 8, .div = 16 },
++	{ .val = 1, .div = 4 },
++	{ .val = 2, .div = 6 },
++	{ .val = 3, .div = 8 },
++	{ .val = 4, .div = 10 },
++	{ .val = 5, .div = 12 },
++	{ .val = 6, .div = 14 },
++	{ .val = 7, .div = 16 },
++	{ .val = 8, .div = 18 },
+ 	{ /* sentinel */ },
+ };
+ 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.19.0
