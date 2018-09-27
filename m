@@ -7,59 +7,59 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09504C004D5
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Sep 2018 17:33:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0FCEC43382
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Sep 2018 17:37:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B97E9216FE
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Sep 2018 17:33:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 98D60216FE
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Sep 2018 17:37:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="S2TusLdE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B97E9216FE
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="KjLG+UpD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98D60216FE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727522AbeI0Xwx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Sep 2018 19:52:53 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:39394 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727622AbeI0Xwx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Sep 2018 19:52:53 -0400
-Received: by mail-io1-f65.google.com with SMTP id l7-v6so2500849iok.6
-        for <linux-clk@vger.kernel.org>; Thu, 27 Sep 2018 10:33:32 -0700 (PDT)
+        id S1727522AbeI0X4X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Sep 2018 19:56:23 -0400
+Received: from mail-it1-f196.google.com ([209.85.166.196]:50879 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728255AbeI0X4X (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Sep 2018 19:56:23 -0400
+Received: by mail-it1-f196.google.com with SMTP id j81-v6so8939726ite.0
+        for <linux-clk@vger.kernel.org>; Thu, 27 Sep 2018 10:37:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=upAJt5JjsEgGTilofDZiD86RdDDV65fhE/GZVLweSb0=;
-        b=S2TusLdE8JZ6ESOnPh0LrIoOmccKHutEZrOh/2aUG64VevNUTYHWw0S0xsLyGWUN7a
-         /77n2nmov7k010m3AAss5fzv5jEp6ICpN81KXilcpzQe5czqsJg2MQPvcH1h8bQy/COP
-         Im8cnFqeRzKwba8QM76ZmCJJ7JHEn8wWvLS6s=
+        bh=obtE2YEIwUU4EGWgNtv90np7kXoKjqfs5aq6vD3BoWY=;
+        b=KjLG+UpDjsD1mwWz8NLAIV/YViJdTKpAyaYPjshM8EGwln/MwG8DtOeNJ7RJ+OcfhD
+         SbMNQbwpZbMqptDcaVZ5ZzUocRAThsEVuQo9s5oiJNOy84Y0JWyS7CDaOzmWa1eKLorY
+         S5MFNH3v0fSM4wiAzRXGKesMUUKoAdu3jODqM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=upAJt5JjsEgGTilofDZiD86RdDDV65fhE/GZVLweSb0=;
-        b=bzHPAs54y+ddpwDQmJd5Wo5NtPZF8bWGvcB6IozE9zQG5x6UfybHgp6iK0q5uXgAD0
-         FfSBxVZT+cuan57o/thYiDezIidVltkVPalu6DWDxmriQ99NbPG8jT1LyhIzf5UcuaLw
-         3FekXk8R+vYaFS/H7FhOi88KtNtUr/It5Am7MerqHxBJKlICgN/kZsA/SjQ+cKeb81Af
-         F9dFlzZC+Zb2qACgkjiSIni92hBQPNatkE5EdDs6SDPdvIKCn+9x2MSL8KcMQVpxjpMw
-         G6aF01GfPx6wahcRHMl5H0i7WEpJb1x33zaH6IXOEsLXRIht+rmofLzGty7ftMzafmIh
-         pvWA==
-X-Gm-Message-State: ABuFfojai39sgw2deBqMrDy6icFegWTcCmOr3cX22Q2Yc1a7SA8bl19r
-        LTpPm90cBa9DhAPv7LL2jfbYqKEHZD8GzNYaxwuRww==
-X-Google-Smtp-Source: ACcGV62KkXKtpm9wv91Zp8lFzxWZLFyntZG0gPQUgEGUPxcD7A5crbOJQxbOKsCEKuGp9iNpx9g0+ojFnqI3GBHywOE=
-X-Received: by 2002:a6b:94c6:: with SMTP id w189-v6mr9927312iod.252.1538069611588;
- Thu, 27 Sep 2018 10:33:31 -0700 (PDT)
+        bh=obtE2YEIwUU4EGWgNtv90np7kXoKjqfs5aq6vD3BoWY=;
+        b=jMAx57q2L0FtQqdwd3eLFV1NqdaFuTCO9tkv9q99iWGv9z9XjQY//DpJlxcF9LVttQ
+         0S4cAHsA6jvEDS5KN3Ahlak+kb+37CBpqGLI8sIEwIIg71W0Zfh0PlVh0QfL6kC6JzPq
+         B+if8Czensz1MzPhC/lFxLrls7nk10pxbTm8RLGvdT5J/ZqdRQ8vfygbX8ER8hKHsHLQ
+         QXDnDCkNP0a2pGPCSAUFF7Bvfun3s4OlUIv+Mu0XdGZaBcwG3R4MVfkY/A9o+weWz5nz
+         IjjvaXM+NUbMrAz5RdofHh7Qqsr0RhGptIi+qAmJU+zzd8p16OPIdihZZG8dNlZpywko
+         ZgGA==
+X-Gm-Message-State: ABuFfojEEURdfS7V8WHu41rU+zS1ibb+z71jC1uwgiz5FMBTwKsAeKDn
+        LP9/oTLPRUj0bM1dJpHcV97h0FEPlkD4H9eNzqlLNA==
+X-Google-Smtp-Source: ACcGV61KG3VBOr8sKz4CquBgRRpo/FHW4UwpUDXNbQn1eVm7EpWZI558TIGghRsl5tUdmsl7XTeM9Uj7fyexm2mmsqk=
+X-Received: by 2002:a24:8083:: with SMTP id g125-v6mr10403373itd.2.1538069821754;
+ Thu, 27 Sep 2018 10:37:01 -0700 (PDT)
 MIME-Version: 1.0
 References: <20180927114850.24565-1-jagan@amarulasolutions.com>
- <20180927114850.24565-9-jagan@amarulasolutions.com> <20180927171451.7iqt2nt2log5qojf@flea>
-In-Reply-To: <20180927171451.7iqt2nt2log5qojf@flea>
+ <20180927114850.24565-6-jagan@amarulasolutions.com> <20180927171831.2nfybgn2xmc4vrgt@flea>
+In-Reply-To: <20180927171831.2nfybgn2xmc4vrgt@flea>
 From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Thu, 27 Sep 2018 23:03:19 +0530
+Date:   Thu, 27 Sep 2018 23:06:50 +0530
 Message-ID:
- <CAMty3ZDxpLwVDsgVMjX+6+uz89sQ1aZaXHHZ+-5aogrA4MHmqw@mail.gmail.com>
-Subject: Re: [PATCH 08/12] drm/sun4i: sun6i_mipi_dsi: Refactor vertical video
- start delay
+ <CAMty3ZCD4ArjhPJYxv3ztWXdnby8YXQ73QqoVNoHFBc-DAxx_w@mail.gmail.com>
+Subject: Re: [PATCH 05/12] drm/sun4i: sun6i_mipi_dsi: Add DSI Generic short
+ write 2 param transfer
 To:     Maxime Ripard <maxime.ripard@bootlin.com>
 Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
         Jernej Skrabec <jernej.skrabec@siol.net>,
@@ -83,58 +83,52 @@ Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
-Message-ID: <20180927173319.qjQ5B-ZIk3iHGQZxxBhlYId7Z-1Oz9J-9BbDbggr-JE@z>
+Message-ID: <20180927173650.N-zkd2215-hd0X90jZ365VWozyDc86MsviQrbDCCPFM@z>
 
-On Thu, Sep 27, 2018 at 10:44 PM Maxime Ripard
+On Thu, Sep 27, 2018 at 10:48 PM Maxime Ripard
 <maxime.ripard@bootlin.com> wrote:
 >
-> On Thu, Sep 27, 2018 at 05:18:46PM +0530, Jagan Teki wrote:
-> > Accordingly to BPI-M64-bsp DE DSI code Video start delay
-> > can be computed by subtracting total vertical timing with
-> > front porch timing and with adding 1 delay line for TCON.
->
-> This is what the current code is doing as well.
-
-The current code
-return mode->vtotal - (mode->vsync_end - mode->vdisplay) + 1;
-
-(mode->vsync_end - mode->vdisplay) = front porch + sync
-
-but I'm updating here only front porch.
-
->
-> > This patch simply add the start_delay logic from BPI-M64-bsp,
-> > w/o this new computation, the DSI on A64 encounter vblank time out.
+> On Thu, Sep 27, 2018 at 05:18:43PM +0530, Jagan Teki wrote:
+> > Short transfer write support for DCS and Generic transfer types
+> > share similar way to process command sequence in DSI block so
+> > add generic write 2 param transfer type macro so-that the panels
+> > which are requesting similar transfer type may process properly.
 > >
-> > [CRTC:36:crtc-0] vblank wait timed out
+> > Also added error check for unsupporting transfer types this make
+> > debugging easy for new transfer types.
 > >
 > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 > > ---
-> >  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 12 +++++++++++-
-> >  1 file changed, 11 insertions(+), 1 deletion(-)
+> >  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 3 +++
+> >  1 file changed, 3 insertions(+)
 > >
 > > diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> > index 9918fdb990ff..217db74c6dc3 100644
+> > index 156b371243c6..1c7e42015645 100644
 > > --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
 > > +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> > @@ -358,7 +358,17 @@ static void sun6i_dsi_inst_init(struct sun6i_dsi *dsi,
-> >  static u16 sun6i_dsi_get_video_start_delay(struct sun6i_dsi *dsi,
-> >                                          struct drm_display_mode *mode)
-> >  {
-> > -     return mode->vtotal - (mode->vsync_end - mode->vdisplay) + 1;
-> > +     u32 vfp = mode->vsync_start - mode->vdisplay;
+> > @@ -869,6 +869,7 @@ static ssize_t sun6i_dsi_transfer(struct mipi_dsi_host *host,
+> >                    SUN6I_DSI_CMD_CTL_TX_FLAG);
+> >
+> >       switch (msg->type) {
+> > +     case MIPI_DSI_GENERIC_SHORT_WRITE_2_PARAM:
+> >       case MIPI_DSI_DCS_SHORT_WRITE:
+> >       case MIPI_DSI_DCS_SHORT_WRITE_PARAM:
+>
+> You should order them by alphabetical order.
 
-let me explain this.
+I just placed it with transfer code, ok will add it alphabetical
 
-Actual code from Allwinner
-u32 vfp = panel->lcd_vt - panel->lcd_y - panel->lcd_vbp;
+>
+> >               ret = sun6i_dsi_dcs_write_short(dsi, msg);
+> > @@ -885,6 +886,8 @@ static ssize_t sun6i_dsi_transfer(struct mipi_dsi_host *host,
+> >               }
+> >
+> >       default:
+> > +             dev_err(dsi->dev, "unsupported message type 0x%02x\n",
+> > +                     msg->type);
+>
+> And this isn't an error check.
 
-So,
-
-=> (panel->lcd_vt - panel->lcd_y) - (panel->lcd_vbp)
-=> (front porch + sync + back porch) - (back porch + sync)
-=> front porch + sync + back porch - back porch - sync
-=> front porch
-=> mode->vsync_start - mode->vdisplay
-
-Hope it clear.
+But unsupported message type by sun6i_dsi should be an error
+eventually isn't it? and we can easily figure out where the error
+trigger.
