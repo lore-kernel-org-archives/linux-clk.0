@@ -7,59 +7,58 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0FCEC43382
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Sep 2018 17:37:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 093F6C43382
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Sep 2018 17:46:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98D60216FE
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Sep 2018 17:37:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F76B2156B
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Sep 2018 17:46:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="KjLG+UpD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98D60216FE
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="IhfmQYfm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F76B2156B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727522AbeI0X4X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Sep 2018 19:56:23 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:50879 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728255AbeI0X4X (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Sep 2018 19:56:23 -0400
-Received: by mail-it1-f196.google.com with SMTP id j81-v6so8939726ite.0
-        for <linux-clk@vger.kernel.org>; Thu, 27 Sep 2018 10:37:02 -0700 (PDT)
+        id S1728255AbeI1AFY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Sep 2018 20:05:24 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:45233 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727307AbeI1AFY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Sep 2018 20:05:24 -0400
+Received: by mail-io1-f67.google.com with SMTP id e12-v6so2482817iok.12
+        for <linux-clk@vger.kernel.org>; Thu, 27 Sep 2018 10:46:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=obtE2YEIwUU4EGWgNtv90np7kXoKjqfs5aq6vD3BoWY=;
-        b=KjLG+UpDjsD1mwWz8NLAIV/YViJdTKpAyaYPjshM8EGwln/MwG8DtOeNJ7RJ+OcfhD
-         SbMNQbwpZbMqptDcaVZ5ZzUocRAThsEVuQo9s5oiJNOy84Y0JWyS7CDaOzmWa1eKLorY
-         S5MFNH3v0fSM4wiAzRXGKesMUUKoAdu3jODqM=
+        bh=OBWRnqY8VjCI4bodmPyr9voKbRjCxPSITWLW6TzZFjE=;
+        b=IhfmQYfmvdRDId02yUyGnqIaAnCt1sBulgYElSaKRhRYQgDg+Ye91OHGoZEQQ2XFYi
+         boHK8awyjMNr2qhHUg+zeit4mJ8Lx1fgqhbqzpc0zihbE9gOzKXGrEXCxLQ3bp45Yjpx
+         QB+H57C+D5kgQHH++lgHToii/CLOn5UakInmM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=obtE2YEIwUU4EGWgNtv90np7kXoKjqfs5aq6vD3BoWY=;
-        b=jMAx57q2L0FtQqdwd3eLFV1NqdaFuTCO9tkv9q99iWGv9z9XjQY//DpJlxcF9LVttQ
-         0S4cAHsA6jvEDS5KN3Ahlak+kb+37CBpqGLI8sIEwIIg71W0Zfh0PlVh0QfL6kC6JzPq
-         B+if8Czensz1MzPhC/lFxLrls7nk10pxbTm8RLGvdT5J/ZqdRQ8vfygbX8ER8hKHsHLQ
-         QXDnDCkNP0a2pGPCSAUFF7Bvfun3s4OlUIv+Mu0XdGZaBcwG3R4MVfkY/A9o+weWz5nz
-         IjjvaXM+NUbMrAz5RdofHh7Qqsr0RhGptIi+qAmJU+zzd8p16OPIdihZZG8dNlZpywko
-         ZgGA==
-X-Gm-Message-State: ABuFfojEEURdfS7V8WHu41rU+zS1ibb+z71jC1uwgiz5FMBTwKsAeKDn
-        LP9/oTLPRUj0bM1dJpHcV97h0FEPlkD4H9eNzqlLNA==
-X-Google-Smtp-Source: ACcGV61KG3VBOr8sKz4CquBgRRpo/FHW4UwpUDXNbQn1eVm7EpWZI558TIGghRsl5tUdmsl7XTeM9Uj7fyexm2mmsqk=
-X-Received: by 2002:a24:8083:: with SMTP id g125-v6mr10403373itd.2.1538069821754;
- Thu, 27 Sep 2018 10:37:01 -0700 (PDT)
+        bh=OBWRnqY8VjCI4bodmPyr9voKbRjCxPSITWLW6TzZFjE=;
+        b=k89qbkhDsaSdVADNMWjvZNjruVO61nJr0+EOm/z8UYX2GSYZU4MjpBFot++dsYi3qf
+         /o05UWtFRhbSNoM4deWMEfo/S06g2aXj9mCalNHQG08dDtiq5xisc1enZhWVCmU6283b
+         FV0d+1OD6vSw0Hrz6jrx5e2WoPlluhbg47NH7TVlzbBk7aMRvYEBppX8K3uZam2kVMvq
+         1r0wz2zgVduhT3grRW4O4u5w+cr9nNrDFb7QVz4DtH37oI10ZoYaY1DzvP2u7IEzMs1O
+         qlPB8LQ0MThU90bGbjSI+QlZIwLV0hPWnPvasvn7H/r6WCcB1IwJfx0JSHTAMLc+zTwl
+         zcgQ==
+X-Gm-Message-State: ABuFfogLAYUF+ix7eXzES5VuNSiG7y3hP7jwXQAQbPy3pyJF6ayuMyl7
+        3oy1pBj4DjA8jhf7oKf65kbOWCmXMHR5ueyAgBrQmw==
+X-Google-Smtp-Source: ACcGV60m6SJPSNB8YVbB9s0eAwtjTqAWq3wdH0AnV95wqttR+LrVl9EB7mpo5DcHh+rayCs2m57CLKSUWfuUf2K5C8g=
+X-Received: by 2002:a6b:b383:: with SMTP id c125-v6mr9775129iof.267.1538070361145;
+ Thu, 27 Sep 2018 10:46:01 -0700 (PDT)
 MIME-Version: 1.0
 References: <20180927114850.24565-1-jagan@amarulasolutions.com>
- <20180927114850.24565-6-jagan@amarulasolutions.com> <20180927171831.2nfybgn2xmc4vrgt@flea>
-In-Reply-To: <20180927171831.2nfybgn2xmc4vrgt@flea>
+ <20180927114850.24565-8-jagan@amarulasolutions.com> <20180927165853.dpluekbqzat663q7@flea>
+In-Reply-To: <20180927165853.dpluekbqzat663q7@flea>
 From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Thu, 27 Sep 2018 23:06:50 +0530
+Date:   Thu, 27 Sep 2018 23:15:50 +0530
 Message-ID:
- <CAMty3ZCD4ArjhPJYxv3ztWXdnby8YXQ73QqoVNoHFBc-DAxx_w@mail.gmail.com>
-Subject: Re: [PATCH 05/12] drm/sun4i: sun6i_mipi_dsi: Add DSI Generic short
- write 2 param transfer
+ <CAMty3ZDUxqokipNqnn6c618pebdVBWc8Pfzaz+4+SYqR42Yerg@mail.gmail.com>
+Subject: Re: [PATCH 07/12] drm/sun4i: sun6i_mipi_dsi: Fix TCON DRQ set bits
 To:     Maxime Ripard <maxime.ripard@bootlin.com>
 Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
         Jernej Skrabec <jernej.skrabec@siol.net>,
@@ -83,52 +82,63 @@ Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
-Message-ID: <20180927173650.N-zkd2215-hd0X90jZ365VWozyDc86MsviQrbDCCPFM@z>
+Message-ID: <20180927174550.rUuep0dDGM0PscpG21iPT2tOrkk2A_2raSupbOmeKKE@z>
 
-On Thu, Sep 27, 2018 at 10:48 PM Maxime Ripard
+On Thu, Sep 27, 2018 at 10:28 PM Maxime Ripard
 <maxime.ripard@bootlin.com> wrote:
 >
-> On Thu, Sep 27, 2018 at 05:18:43PM +0530, Jagan Teki wrote:
-> > Short transfer write support for DCS and Generic transfer types
-> > share similar way to process command sequence in DSI block so
-> > add generic write 2 param transfer type macro so-that the panels
-> > which are requesting similar transfer type may process properly.
+> On Thu, Sep 27, 2018 at 05:18:45PM +0530, Jagan Teki wrote:
+> > TCON DRQ set bits for non-burst DSI mode can computed via
+> > horizontal front porch instead of front porch + sync timings.
 > >
-> > Also added error check for unsupporting transfer types this make
-> > debugging easy for new transfer types.
-> >
+> > Since there no documentation for TCON_DRQ_REG(0x7c) register
+> > this change is taken as reference from BPI-M64-bsp.
+>
+> Detailing more what the issue is would be great.
+>
 > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 > > ---
-> >  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 3 +++
-> >  1 file changed, 3 insertions(+)
+> >  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
 > >
 > > diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> > index 156b371243c6..1c7e42015645 100644
+> > index 599284971ab6..9918fdb990ff 100644
 > > --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
 > > +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> > @@ -869,6 +869,7 @@ static ssize_t sun6i_dsi_transfer(struct mipi_dsi_host *host,
-> >                    SUN6I_DSI_CMD_CTL_TX_FLAG);
-> >
-> >       switch (msg->type) {
-> > +     case MIPI_DSI_GENERIC_SHORT_WRITE_2_PARAM:
-> >       case MIPI_DSI_DCS_SHORT_WRITE:
-> >       case MIPI_DSI_DCS_SHORT_WRITE_PARAM:
+> > @@ -367,9 +367,9 @@ static void sun6i_dsi_setup_burst(struct sun6i_dsi *dsi,
+> >       struct mipi_dsi_device *device = dsi->device;
+> >       u32 val = 0;
 >
-> You should order them by alphabetical order.
+> The computation here is in the A64 driver:
+>
+> if ((panel->lcd_ht - panel->lcd_x - panel->lcd_hbp) < 21) {
+>         dsi_dev[sel]->dsi_tcon_drq.bits.drq_mode = 0;
+> } else {
+>         dsi_dev[sel]->dsi_tcon_drq.bits.drq_set =
+>                 (panel->lcd_ht-panel->lcd_x-panel->lcd_hbp-20) *
+>                 dsi_pixel_bits[panel->lcd_dsi_format]/(8*4);
+> }
+>
+> It is testing that the sync + front porch is smaller than 21, and
+> otherwise sets the drq.
+>
+> > -     if ((mode->hsync_end - mode->hdisplay) > 20) {
+>
+> My code here is testing that the difference between hsync_end and
+> hdisplay is superior to 20, and sets the DRQ if true. The condition is
+> reversed, but otherwise, that difference is the front porch plus the
+> sync length.
 
-I just placed it with transfer code, ok will add it alphabetical
+True, I understand this, but does drq setting here is specific to SoC?
+I thought of finding DRQ in A31 BSP but I couldn't find the code. do
+you have bsp somewhere in github?
 
 >
-> >               ret = sun6i_dsi_dcs_write_short(dsi, msg);
-> > @@ -885,6 +886,8 @@ static ssize_t sun6i_dsi_transfer(struct mipi_dsi_host *host,
-> >               }
-> >
-> >       default:
-> > +             dev_err(dsi->dev, "unsupported message type 0x%02x\n",
-> > +                     msg->type);
+> > +     if ((mode->hsync_start - mode->hdisplay) > 20) {
 >
-> And this isn't an error check.
+> However, you are testing for just the front porch, unlike what your
+> commit log is saying, and unlike what allwinner's code is saying. So
+> this deserves some explanation.
 
-But unsupported message type by sun6i_dsi should be an error
-eventually isn't it? and we can easily figure out where the error
-trigger.
+but A64 is doing this, do you think it's completely A64 specific or
+testing panel with front porch drq?
