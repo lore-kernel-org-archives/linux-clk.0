@@ -1,31 +1,122 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:43948 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727679AbeIMCJA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 12 Sep 2018 22:09:00 -0400
-Subject: Re: [PATCH] clk: samsung: exynos5433: Keep sclk_uart clocks enabled
- in suspend
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-References: <CGME20180912131657eucas1p2eecc0e4a01ed9ddbf4417c17eba0fee0@eucas1p2.samsung.com>
- <20180912131641.21688-1-m.szyprowski@samsung.com>
-From: Sylwester Nawrocki <snawrocki@kernel.org>
-Message-ID: <eaa1c0c4-3f3e-c2c0-1429-45576d25fa92@kernel.org>
-Date: Wed, 12 Sep 2018 23:02:37 +0200
+Return-Path: <jagan@amarulasolutions.com>
+Return-Path: <jagan@amarulasolutions.com>
+From: Jagan Teki <jagan@amarulasolutions.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Icenowy Zheng <icenowy@aosc.io>,
+	Jernej Skrabec <jernej.skrabec@siol.net>,
+	Vasily Khoruzhick <anarsoul@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-clk@vger.kernel.org,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com
+Cc: Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH 12/12] arm64: dts: allwinner: bananapi-m64: Bananapi S070WV20-CT16 DSI panel
+Date: Thu, 27 Sep 2018 17:18:50 +0530
+Message-Id: <20180927114850.24565-13-jagan@amarulasolutions.com>
+In-Reply-To: <20180927114850.24565-1-jagan@amarulasolutions.com>
+References: <20180927114850.24565-1-jagan@amarulasolutions.com>
 MIME-Version: 1.0
-In-Reply-To: <20180912131641.21688-1-m.szyprowski@samsung.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
+This patch add support for Bananapi S070WV20-CT16 DSI panel to
+BPI-M64 board.
 
-On 09/12/2018 03:16 PM, Marek Szyprowski wrote:
-> All sclk_uart clocks in TOP CMU have to be kept enabled for suspend/resume
-> cycle, otherwise TM2(e) boards hangs before entering the suspend mode.
-> 
-> Signed-off-by: Marek Szyprowski<m.szyprowski@samsung.com>
+DSI panel connected via board DSI port with,
+- DC1SW as AVDD supply
+- DCDC1 as DVDD supply
+- PD6 gpio for reset pin
+- PD5 gpio for backlight enable pin
+- PD7 gpio for backlight vdd supply
 
-Patch applied, thanks.
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+---
+ .../dts/allwinner/sun50i-a64-bananapi-m64.dts | 42 +++++++++++++++++++
+ 1 file changed, 42 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
+index ef1c90401bb2..c0be949be68d 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
+@@ -45,6 +45,7 @@
+ #include "sun50i-a64.dtsi"
+ 
+ #include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/pwm/pwm.h>
+ 
+ / {
+ 	model = "BananaPi-M64";
+@@ -56,6 +57,24 @@
+ 		serial1 = &uart1;
+ 	};
+ 
++	vdd_bl: regulator@0 {
++		compatible = "regulator-fixed";
++		regulator-name = "bl-3v3";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		gpio = <&pio 3 7 GPIO_ACTIVE_HIGH>; /* PD7 */
++		enable-active-high;
++	};
++
++	backlight_dsi: backlight-dsi {
++		compatible = "pwm-backlight";
++		pwms = <&r_pwm 0 50000 PWM_POLARITY_INVERTED>;
++		brightness-levels = <0 10 20 30 40 50 60 70 80 90 100>;
++		default-brightness-level = <2>;
++		enable-gpios = <&pio 3 5 GPIO_ACTIVE_HIGH>; /* PD5 */
++		power-supply = <&vdd_bl>;
++	};
++
+ 	chosen {
+ 		stdout-path = "serial0:115200n8";
+ 	};
+@@ -101,6 +120,23 @@
+ 	status = "okay";
+ };
+ 
++&dphy {
++	status = "okay";
++};
++
++&dsi {
++	status = "okay";
++
++	panel@0 {
++		compatible = "bananapi,s070wv20-ct16-dsi";
++		reg = <0>;
++		avdd-supply = <&reg_dc1sw>;
++		dvdd-supply = <&reg_dldo1>;
++		reset-gpios = <&pio 3 6 GPIO_ACTIVE_HIGH>; /* PD6 */
++		backlight = <&backlight_dsi>;
++	};
++};
++
+ &ehci0 {
+ 	status = "okay";
+ };
+@@ -193,6 +229,12 @@
+ 	status = "okay";
+ };
+ 
++&r_pwm {
++	pinctrl-names = "default";
++	pinctrl-0 = <&r_pwm_pin>;
++	status = "okay";
++};
++
+ &r_rsb {
+ 	status = "okay";
+ 
+-- 
+2.18.0.321.gffc6fa0e3
