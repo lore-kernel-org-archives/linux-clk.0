@@ -1,43 +1,49 @@
-Return-Path: <Chris.Brandt@renesas.com>
-From: Chris Brandt <Chris.Brandt@renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-clk
-	<linux-clk@vger.kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE
- TREE BINDINGS" <devicetree@vger.kernel.org>, Linux-Renesas
-	<linux-renesas-soc@vger.kernel.org>, Simon Horman
-	<horms+renesas@verge.net.au>
-Subject: RE: [PATCH v3] clk: renesas: cpg-mssr: Add R7S9210 support
-Date: Wed, 5 Sep 2018 15:02:19 +0000
-Message-ID: 
- <TYXPR01MB1568DD90490B28E46E949D658A020@TYXPR01MB1568.jpnprd01.prod.outlook.com>
-References: <20180829132841.64787-1-chris.brandt@renesas.com>
- <TY1PR01MB1562F79382CA2AA33AA661EB8A020@TY1PR01MB1562.jpnprd01.prod.outlook.com>
- <CAMuHMdVZbaGxwuL6aJfv0Nsoxyrj_M7nL0X1Oo6_KoDYJTwi-w@mail.gmail.com>
-In-Reply-To: 
- <CAMuHMdVZbaGxwuL6aJfv0Nsoxyrj_M7nL0X1Oo6_KoDYJTwi-w@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from mail-wm1-f44.google.com ([209.85.128.44]:53702 "EHLO
+        mail-wm1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726760AbeI0PQo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Sep 2018 11:16:44 -0400
+Received: by mail-wm1-f44.google.com with SMTP id b19-v6so5053159wme.3
+        for <linux-clk@vger.kernel.org>; Thu, 27 Sep 2018 01:59:32 -0700 (PDT)
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To: linux-amlogic@lists.infradead.org, jbrunet@baylibre.com,
+        narmstrong@baylibre.com
+Cc: linux-clk@vger.kernel.org, carlo@caione.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH 0/2] Meson8b: fixes for the cpu_scale_div clock
+Date: Thu, 27 Sep 2018 10:59:19 +0200
+Message-Id: <20180927085921.24627-1-martin.blumenstingl@googlemail.com>
 MIME-Version: 1.0
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-SGkgR2VlcnQsDQoNCk9uIFdlZG5lc2RheSwgU2VwdGVtYmVyIDA1LCAyMDE4IDEsIEdlZXJ0IFV5
-dHRlcmhvZXZlbiB3cm90ZToNCj4gPiBTbywgSSB0aGluayBJIG5lZWQgdG8gcmV3b3JrIHRoaXMg
-ZHJpdmVyIHRvIGFkZCB0aGUgYWJpbGl0eSB0byBhZGQNCj4gPiBtdWx0aXBsZSBhZGRyZXNzIHJl
-Z2lvbnMuDQo+IA0KPiBZb3VyIG1haW4gZHJpdmVyIGZvciB0aGlzIGJsb2NrIChjbG9jaz8pIGNh
-biByZWdpc3RlciB0aGUgd2F0Y2hkb2cuDQo+IEVpdGhlciBkaXJlY3RseSB3aXRoIHRoZSB3YXRj
-aGRvZyBzdWJzeXN0ZW0sIG9yIGJ5IHJlZ2lzdGVyaW5nIGFuDQo+ICJyemFfd2R0IiBwbGF0Zm9y
-bSBkZXZpY2UuDQoNCkl0IHdvdWxkIHNlZW0gc3RyYW5nZSB0aGF0IHRoZSBjbG9jayBkcml2ZXIg
-d291bGQgcmVnaXN0ZXIgdGhlIHdhdGNoZG9nIA0KdGltZXIgZm9yIG5vIG90aGVyIHJlYXNvbiBv
-dGhlciB0aGFuIHdoZXJlIHRoZSBjaGlwIGRlc2lnbmVyIGhhcHBlbiB0byANCnB1dCB0aGUgcmVn
-aXN0ZXIgYWRkcmVzc2VzLg0KDQoNCk5vdyB0aGF0IEkgbG9vayBhdCBpdDoNCiBDUEcgaXMgYXQg
-RkNGRV8wMDEwIC0gRkNGRV8wMTA0DQpNU1RQIGlzIGF0IEZDRkVfMDQwMCAtIEZDRkVfMDQ2NA0K
-DQpOb3RoaW5nIHNpdHMgaW4gYmV0d2VlbiBDUEcgYW5kIE1TVFAuDQoNCkluIHRoZSBoYXJkd2Fy
-ZSBtYW51YWwsIHRoZXJlIGlzIG90aGVyICdyYW5kb20gb3RoZXIgc3R1ZmYnIHRoYXQgdGhleSAN
-CnB1dCBpbiB0aGF0IGNoYXB0ZXIgdGhhdCBpcyBsb2NhdGVkIGluIG11bHRpcGxlIGFkZHJlc3Mg
-cGxhY2VzLCBidXQgdGhhdCANCmRvZXNuJ3QgbWVhbiBJIGhhdmUgdG8gbWFwIHRoZW0gYWxsIGlu
-IHRoaXMgZHJpdmVyLg0KDQoNCkkgc2ltcGx5IGNoYW5nZWQgdGhlIERUUyB0byBqdXN0IG1hcCBD
-UEcgYW5kIE1TVFAgYW5kIG5vdyBldmVyeXRoaW5nIGlzIA0KZmluZS4gTXkgd2F0Y2hkb2cgZHJp
-dmVyIGlzIGhhcHB5IGFuZCB0aGlzIENQRy9NU1RQIGRyaXZlciB3b3JrcyB0aGUgDQpzYW1lLg0K
-DQpTby4uLi5JIGd1ZXNzIEkgZGlkbid0IHJlYWxseSBoYXZlIGFuIGlzc3VlIGFmdGVyIGFsbC4N
-Cg0KQ2hyaXMNCg0K
+While trying to add support for the TWD timer I found that our CPU clock
+calculation (when running off the "cpu_scale_div clock) is incorrect.
+
+The main problem was the cpu_scale_div clock:
+it's divider table has an off-by-one error. the old formula was:
+  parent_rate / 2 * register_value
+however, testing shows that the correct formula is:
+  parent_rate / 2 * (register value + 1)
+See the commit message of patch #1 for a complete description of the
+problem and it's history.
+
+While looking at the "cpu_scale_div" clock I also found that it's
+register width was also off-by-one, so this is fixed in a separate patch
+as well.
+
+Both patches are not critical because I haven't seen a case where u-boot
+uses cpu_scale_div for the CPU clock. It's only a problem when playing
+with the CPU clock in u-boot (by writing registers manually) or as soon
+as we support CPU frequency scaling.
+
+
+Martin Blumenstingl (2):
+  clk: meson: meson8b: fix incorrect divider mapping in cpu_scale_table
+  clk: meson: meson8b: fix the width of the cpu_scale_div clock
+
+ drivers/clk/meson/meson8b.c | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
+
+-- 
+2.19.0
