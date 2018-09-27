@@ -1,29 +1,67 @@
-Return-Path: <jbrunet@baylibre.com>
-Return-Path: <jbrunet@baylibre.com>
-Message-ID: <2868cb9dc7536d8c3b94a83ce14694f93643d555.camel@baylibre.com>
-Subject: Re: [PATCH 0/2] meson8b: add the CPU_DIV16 clock for the ARM TWD
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: Neil Armstrong <narmstrong@baylibre.com>,
- linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- carlo@caione.org,  khilman@baylibre.com, sboyd@kernel.org,
- mturquette@baylibre.com,  jianxin.pan@amlogic.com
-Date: Wed, 26 Sep 2018 11:59:32 +0200
-In-Reply-To: <CAFBinCAxB7MLK_dypQMkKD7=GeFSCN-L47Yoz3PqRssD88bZsw@mail.gmail.com>
-References: <20180721172537.15639-1-martin.blumenstingl@googlemail.com>
-	 <1532337101.26720.89.camel@baylibre.com>
-	 <CAFBinCAxB7MLK_dypQMkKD7=GeFSCN-L47Yoz3PqRssD88bZsw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
+Return-Path: <linux-clk-owner@vger.kernel.org>
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:19101 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727266AbeI0IsF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Sep 2018 04:48:05 -0400
+From: Joseph Lo <josephl@nvidia.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>
+CC: <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        Joseph Lo <josephl@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>
+Subject: [PATCH V2] clk: tegra: Fixes for MBIST work around
+Date: Thu, 27 Sep 2018 10:32:03 +0800
+Message-ID: <20180927023203.9218-1-josephl@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+Sender: linux-clk-owner@vger.kernel.org
 List-ID: <linux-clk.vger.kernel.org>
 
-On Wed, 2018-09-26 at 11:56 +0200, Martin Blumenstingl wrote:
-> > Queued for 4.20
-> 
-> sorry, but I found out that this doesn't work.
-> I'm not sure why I assumed that this has to be a CPU_DIV16 clock but
-> it's most likely a "divide by 4" (more details below).
-> so please feel free to revert this / drop the patches until I have
-> more information
+Fix some incorrect data in LVL2 offset and bit mask.
 
-Dropped for now, feel free to send it again when things get more clear ;)
+Fixes: e403d0057343 ("clk: tegra: MBIST work around for Tegra210")
+Signed-off-by: Joseph Lo <josephl@nvidia.com>
+Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
+---
+V2:
+Add "Fixes" tag.
+---
+ drivers/clk/tegra/clk-tegra210.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra=
+210.c
+index 9eb1cb14fce1..290f7cb6a051 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -2603,7 +2603,7 @@ static struct tegra210_domain_mbist_war tegra210_pg_m=
+bist_war[] =3D {
+ 	[TEGRA_POWERGATE_MPE] =3D {
+ 		.handle_lvl2_ovr =3D tegra210_generic_mbist_war,
+ 		.lvl2_offset =3D LVL2_CLK_GATE_OVRE,
+-		.lvl2_mask =3D BIT(2),
++		.lvl2_mask =3D BIT(29),
+ 	},
+ 	[TEGRA_POWERGATE_SOR] =3D {
+ 		.handle_lvl2_ovr =3D tegra210_generic_mbist_war,
+@@ -2654,14 +2654,14 @@ static struct tegra210_domain_mbist_war tegra210_pg=
+_mbist_war[] =3D {
+ 		.num_clks =3D ARRAY_SIZE(nvdec_slcg_clkids),
+ 		.clk_init_data =3D nvdec_slcg_clkids,
+ 		.handle_lvl2_ovr =3D tegra210_generic_mbist_war,
+-		.lvl2_offset =3D LVL2_CLK_GATE_OVRC,
++		.lvl2_offset =3D LVL2_CLK_GATE_OVRE,
+ 		.lvl2_mask =3D BIT(9) | BIT(31),
+ 	},
+ 	[TEGRA_POWERGATE_NVJPG] =3D {
+ 		.num_clks =3D ARRAY_SIZE(nvjpg_slcg_clkids),
+ 		.clk_init_data =3D nvjpg_slcg_clkids,
+ 		.handle_lvl2_ovr =3D tegra210_generic_mbist_war,
+-		.lvl2_offset =3D LVL2_CLK_GATE_OVRC,
++		.lvl2_offset =3D LVL2_CLK_GATE_OVRE,
+ 		.lvl2_mask =3D BIT(9) | BIT(31),
+ 	},
+ 	[TEGRA_POWERGATE_AUD] =3D {
+--=20
+2.19.0
