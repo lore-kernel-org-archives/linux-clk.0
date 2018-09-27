@@ -1,42 +1,82 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from shell.v3.sk ([90.176.6.54]:36083 "EHLO shell.v3.sk"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727727AbeIJQzq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 10 Sep 2018 12:55:46 -0400
-From: Lubomir Rintel <lkundrak@v3.sk>
-To: linux-kernel@vger.kernel.org
-Cc: linux-clk@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH] clk: mmp2: fix the clock id for sdh2_clk and sdh3_clk
-Date: Mon, 10 Sep 2018 14:01:44 +0200
-Message-Id: <20180910120144.163788-1-lkundrak@v3.sk>
-Sender: linux-clk-owner@vger.kernel.org
+Return-Path: <maxime.ripard@bootlin.com>
+Date: Thu, 27 Sep 2018 18:58:53 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Jagan Teki <jagan@amarulasolutions.com>
+Cc: Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+	Jernej Skrabec <jernej.skrabec@siol.net>,
+	Vasily Khoruzhick <anarsoul@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>,
+	dri-devel@lists.freedesktop.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 07/12] drm/sun4i: sun6i_mipi_dsi: Fix TCON DRQ set bits
+Message-ID: <20180927165853.dpluekbqzat663q7@flea>
+References: <20180927114850.24565-1-jagan@amarulasolutions.com>
+ <20180927114850.24565-8-jagan@amarulasolutions.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <20180927114850.24565-8-jagan@amarulasolutions.com>
 List-ID: <linux-clk.vger.kernel.org>
 
-A typo that makes it impossible to get the correct clocks for
-MMP2_CLK_SDH2 and MMP2_CLK_SDH3.
+On Thu, Sep 27, 2018 at 05:18:45PM +0530, Jagan Teki wrote:
+> TCON DRQ set bits for non-burst DSI mode can computed via
+> horizontal front porch instead of front porch + sync timings.
+>
+> Since there no documentation for TCON_DRQ_REG(0x7c) register
+> this change is taken as reference from BPI-M64-bsp.
 
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
----
- drivers/clk/mmp/clk-of-mmp2.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Detailing more what the issue is would be great.
 
-diff --git a/drivers/clk/mmp/clk-of-mmp2.c b/drivers/clk/mmp/clk-of-mmp2.c
-index 0fc75c395957..d083b860f083 100644
---- a/drivers/clk/mmp/clk-of-mmp2.c
-+++ b/drivers/clk/mmp/clk-of-mmp2.c
-@@ -227,8 +227,8 @@ static struct mmp_param_gate_clk apmu_gate_clks[] = {
- 	/* The gate clocks has mux parent. */
- 	{MMP2_CLK_SDH0, "sdh0_clk", "sdh_mix_clk", CLK_SET_RATE_PARENT, APMU_SDH0, 0x1b, 0x1b, 0x0, 0, &sdh_lock},
- 	{MMP2_CLK_SDH1, "sdh1_clk", "sdh_mix_clk", CLK_SET_RATE_PARENT, APMU_SDH1, 0x1b, 0x1b, 0x0, 0, &sdh_lock},
--	{MMP2_CLK_SDH1, "sdh2_clk", "sdh_mix_clk", CLK_SET_RATE_PARENT, APMU_SDH2, 0x1b, 0x1b, 0x0, 0, &sdh_lock},
--	{MMP2_CLK_SDH1, "sdh3_clk", "sdh_mix_clk", CLK_SET_RATE_PARENT, APMU_SDH3, 0x1b, 0x1b, 0x0, 0, &sdh_lock},
-+	{MMP2_CLK_SDH2, "sdh2_clk", "sdh_mix_clk", CLK_SET_RATE_PARENT, APMU_SDH2, 0x1b, 0x1b, 0x0, 0, &sdh_lock},
-+	{MMP2_CLK_SDH3, "sdh3_clk", "sdh_mix_clk", CLK_SET_RATE_PARENT, APMU_SDH3, 0x1b, 0x1b, 0x0, 0, &sdh_lock},
- 	{MMP2_CLK_DISP0, "disp0_clk", "disp0_div", CLK_SET_RATE_PARENT, APMU_DISP0, 0x1b, 0x1b, 0x0, 0, &disp0_lock},
- 	{MMP2_CLK_DISP0_SPHY, "disp0_sphy_clk", "disp0_sphy_div", CLK_SET_RATE_PARENT, APMU_DISP0, 0x1024, 0x1024, 0x0, 0, &disp0_lock},
- 	{MMP2_CLK_DISP1, "disp1_clk", "disp1_div", CLK_SET_RATE_PARENT, APMU_DISP1, 0x1b, 0x1b, 0x0, 0, &disp1_lock},
--- 
-2.17.1
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> ---
+>  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun=
+4i/sun6i_mipi_dsi.c
+> index 599284971ab6..9918fdb990ff 100644
+> --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> @@ -367,9 +367,9 @@ static void sun6i_dsi_setup_burst(struct sun6i_dsi *d=
+si,
+>  	struct mipi_dsi_device *device =3D dsi->device;
+>  	u32 val =3D 0;
+
+The computation here is in the A64 driver:
+
+if ((panel->lcd_ht - panel->lcd_x - panel->lcd_hbp) < 21) {
+	dsi_dev[sel]->dsi_tcon_drq.bits.drq_mode =3D 0;
+} else {
+	dsi_dev[sel]->dsi_tcon_drq.bits.drq_set	=3D
+		(panel->lcd_ht-panel->lcd_x-panel->lcd_hbp-20) *
+		dsi_pixel_bits[panel->lcd_dsi_format]/(8*4);
+}
+
+It is testing that the sync + front porch is smaller than 21, and
+otherwise sets the drq.
+
+> -	if ((mode->hsync_end - mode->hdisplay) > 20) {
+
+My code here is testing that the difference between hsync_end and
+hdisplay is superior to 20, and sets the DRQ if true. The condition is
+reversed, but otherwise, that difference is the front porch plus the
+sync length.
+
+> +	if ((mode->hsync_start - mode->hdisplay) > 20) {
+
+However, you are testing for just the front porch, unlike what your
+commit log is saying, and unlike what allwinner's code is saying. So
+this deserves some explanation.
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
