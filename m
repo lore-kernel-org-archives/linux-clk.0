@@ -2,67 +2,35 @@ Return-Path: <SRS0=b9GY=MJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF4FCC43382
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Sep 2018 16:33:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2118FC43382
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Sep 2018 16:58:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B5922168B
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Sep 2018 16:33:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B5922168B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id CDD572152F
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Sep 2018 16:58:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDD572152F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727437AbeI0WxA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Sep 2018 18:53:00 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:35966 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727335AbeI0WxA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Sep 2018 18:53:00 -0400
-Received: by mail-ed1-f65.google.com with SMTP id f4-v6so5639495edq.3;
-        Thu, 27 Sep 2018 09:33:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+QhkkuE/aSNr/1GY7/FBZYBzRSbsyy/VBOfzU0BL+zI=;
-        b=dPKfLuI3rCuT2BafNolzrvCGbRaoosI+YtYu4+/unXdW09tPtxYDNoqjbZCFcNmeYF
-         p6LgOhvMQpB8OMTTQaFb7toKA1WG4vL11nLYqxiFNUOxi20jXNpBwZH+bwMJlsGI/RPR
-         kgDE6Xy6hvIwt9PsrQ1lYOj3y0JA0RoER3700N1CgHdw8erNxfeDNuprTH/JAhDzns9F
-         1ExSHBK4XKnZlZPDgzA1bFKdDBVEWl5wUygzjPrMTU7LYFevNUlEM5MDkGAB3d3IWejh
-         iNmOWubYZTCeoK6mS0kTnI7N6TSGNfjXk0jCsJIzLuVnBTvekbz7CMWkqeKixSAs+kKg
-         DuIQ==
-X-Gm-Message-State: ABuFfogZaVMqfRQkcimJt7sc1VNobSLqo8z31/7n9pMZkrdg04Zfgqwb
-        qqhse0Nwyw2RN0J0aZ3Nekg/I0lBgrI=
-X-Google-Smtp-Source: ACcGV630h9iLzlfLz2dBPbOaoSF3Xa5TWf4MSbjjHhbtMNzrGjT2D1FJCoXgwhAPi/LftKnuJZMskw==
-X-Received: by 2002:a17:906:e2c6:: with SMTP id gr6-v6mr2846366ejb.13.1538066033473;
-        Thu, 27 Sep 2018 09:33:53 -0700 (PDT)
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com. [209.85.221.42])
-        by smtp.gmail.com with ESMTPSA id c1-v6sm480844edr.18.2018.09.27.09.33.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Sep 2018 09:33:52 -0700 (PDT)
-Received: by mail-wr1-f42.google.com with SMTP id z4-v6so1953196wrb.1;
-        Thu, 27 Sep 2018 09:33:51 -0700 (PDT)
-X-Received: by 2002:a05:6000:82:: with SMTP id m2mr9264461wrx.28.1538066031697;
- Thu, 27 Sep 2018 09:33:51 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180927114850.24565-1-jagan@amarulasolutions.com>
- <20180927114850.24565-5-jagan@amarulasolutions.com> <CAGb2v66No3-AODYCCGifBrm9uvPjaNdR2W5MDQdazRAPomT9CQ@mail.gmail.com>
- <CAMty3ZBUQKVLJsmkU=hjaO_O5bhetDfAh9-7iLkUqOznVc0KyA@mail.gmail.com>
- <CAGb2v67pKgORe7uo6r6F+xaVi=Q-p6_DKotZJD7P=46Z=4RhEA@mail.gmail.com> <CAMty3ZAsF=uSJqj2L9ZS8N3CqcSUPzFSdtH8WtZPTg3m-K8COQ@mail.gmail.com>
-In-Reply-To: <CAMty3ZAsF=uSJqj2L9ZS8N3CqcSUPzFSdtH8WtZPTg3m-K8COQ@mail.gmail.com>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Fri, 28 Sep 2018 00:33:39 +0800
-X-Gmail-Original-Message-ID: <CAGb2v66RPYqH2uDF_izW3PdNrvBhmXecs5A6ThW-3xMeQampqA@mail.gmail.com>
-Message-ID:
- <CAGb2v66RPYqH2uDF_izW3PdNrvBhmXecs5A6ThW-3xMeQampqA@mail.gmail.com>
-Subject: Re: [linux-sunxi] Re: [PATCH 04/12] drm/sun4i: sun6i_mipi_dsi: Enable
- missing DSI bus clock
+        id S1727599AbeI0XSH convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Sep 2018 19:18:07 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:60494 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727522AbeI0XSH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 27 Sep 2018 19:18:07 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id E0F8C20795; Thu, 27 Sep 2018 18:58:53 +0200 (CEST)
+Received: from localhost (unknown [91.116.141.28])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 98FDB20730;
+        Thu, 27 Sep 2018 18:58:53 +0200 (CEST)
+Date:   Thu, 27 Sep 2018 18:58:53 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
 To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Icenowy Zheng <icenowy@aosc.io>,
+Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
         Jernej Skrabec <jernej.skrabec@siol.net>,
         Vasily Khoruzhick <anarsoul@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -70,81 +38,79 @@ Cc:     Maxime Ripard <maxime.ripard@free-electrons.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
         David Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
+        dri-devel@lists.freedesktop.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
         Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 07/12] drm/sun4i: sun6i_mipi_dsi: Fix TCON DRQ set bits
+Message-ID: <20180927165853.dpluekbqzat663q7@flea>
+References: <20180927114850.24565-1-jagan@amarulasolutions.com>
+ <20180927114850.24565-8-jagan@amarulasolutions.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20180927114850.24565-8-jagan@amarulasolutions.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
-Message-ID: <20180927163339.tb9KsEXnzLu7p_UNQ1-VC5_aibH0UFyMYnn2mcFOC_U@z>
+Message-ID: <20180927165853.a19_UFZK5HCV2mTb9VKljCZp1OLAIPe4VN7t-JUD7UY@z>
 
-On Fri, Sep 28, 2018 at 12:26 AM Jagan Teki <jagan@amarulasolutions.com> wrote:
+On Thu, Sep 27, 2018 at 05:18:45PM +0530, Jagan Teki wrote:
+> TCON DRQ set bits for non-burst DSI mode can computed via
+> horizontal front porch instead of front porch + sync timings.
 >
-> On Thu, Sep 27, 2018 at 7:47 PM Chen-Yu Tsai <wens@csie.org> wrote:
-> >
-> > On Thu, Sep 27, 2018 at 9:44 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
-> > >
-> > > On Thu, Sep 27, 2018 at 6:13 PM Chen-Yu Tsai <wens@csie.org> wrote:
-> > > >
-> > > > Hi,
-> > > >
-> > > > On Thu, Sep 27, 2018 at 7:49 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
-> > > > >
-> > > > > DSI bus_clk is already available in sun6i_dsi but missed to
-> > > > > get the clk and process for enable/disable.
-> > > > >
-> > > > > This patch add support for it.
-> > > > >
-> > > > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> > > > > ---
-> > > > >  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 8 ++++++++
-> > > > >  1 file changed, 8 insertions(+)
-> > > > >
-> > > > > diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> > > > > index 8e9c76febca2..156b371243c6 100644
-> > > > > --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> > > > > +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> > > > > @@ -1004,6 +1004,12 @@ static int sun6i_dsi_probe(struct platform_device *pdev)
-> > > > >                 return PTR_ERR(dsi->reset);
-> > > > >         }
-> > > > >
-> > > > > +       dsi->bus_clk = devm_clk_get(dev, "bus");
-> > > > > +       if (IS_ERR(dsi->bus_clk)) {
-> > > > > +               dev_err(dev, "Couldn't get the DSI bus clock\n");
-> > > > > +               return PTR_ERR(dsi->bus_clk);
-> > > > > +       }
-> > > > > +
-> > > >
-> > > > The DSI driver uses devm_regmap_init_mmio_clk, which enables the
-> > > > clock behind the scenes when regmap access needs it enabled.
-> > > >
-> > > > Did you have any issues without this patch?
-> > >
-> > > I'm unable to read register values via devmem, I see all 0's for all
-> > > dsi reg space.
-> >
-> > Well that is to be expected given how mmio with clk regmap works.
-> > Did you encounter any other problems besides this?
->
-> no
->
-> >
-> > FYI you can dump regmap contents using /sys/kernel/debug/regmap/*/registers
->
-> Thanks, but ccu not using regmap I believe so can't see bus enabled
-> bit set via devmap
-> # devmem 0x01C20060
-> 0x33800000
+> Since there no documentation for TCON_DRQ_REG(0x7c) register
+> this change is taken as reference from BPI-M64-bsp.
 
-That is perfectly normal. It is only enabled when there are accesses to the
-DSI regmap.
+Detailing more what the issue is would be great.
 
-ChenYu
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> ---
+>  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> index 599284971ab6..9918fdb990ff 100644
+> --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> @@ -367,9 +367,9 @@ static void sun6i_dsi_setup_burst(struct sun6i_dsi *dsi,
+>  	struct mipi_dsi_device *device = dsi->device;
+>  	u32 val = 0;
+
+The computation here is in the A64 driver:
+
+if ((panel->lcd_ht - panel->lcd_x - panel->lcd_hbp) < 21) {
+	dsi_dev[sel]->dsi_tcon_drq.bits.drq_mode = 0;
+} else {
+	dsi_dev[sel]->dsi_tcon_drq.bits.drq_set	=
+		(panel->lcd_ht-panel->lcd_x-panel->lcd_hbp-20) *
+		dsi_pixel_bits[panel->lcd_dsi_format]/(8*4);
+}
+
+It is testing that the sync + front porch is smaller than 21, and
+otherwise sets the drq.
+
+> -	if ((mode->hsync_end - mode->hdisplay) > 20) {
+
+My code here is testing that the difference between hsync_end and
+hdisplay is superior to 20, and sets the DRQ if true. The condition is
+reversed, but otherwise, that difference is the front porch plus the
+sync length.
+
+> +	if ((mode->hsync_start - mode->hdisplay) > 20) {
+
+However, you are testing for just the front porch, unlike what your
+commit log is saying, and unlike what allwinner's code is saying. So
+this deserves some explanation.
+
+Maxime
+
+-- 
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
