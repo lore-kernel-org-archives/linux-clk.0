@@ -7,53 +7,53 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E634C43382
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Sep 2018 11:50:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E037C43382
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Sep 2018 11:50:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 189C621531
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Sep 2018 11:50:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF2152150D
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Sep 2018 11:50:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="UrQt3Oh+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 189C621531
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="PbjR4KQv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF2152150D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727451AbeI0SIH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Sep 2018 14:08:07 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:44990 "EHLO
+        id S1727691AbeI0SIP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Sep 2018 14:08:15 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:45884 "EHLO
         mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727270AbeI0SIH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Sep 2018 14:08:07 -0400
-Received: by mail-pg1-f193.google.com with SMTP id g2-v6so1765537pgu.11
-        for <linux-clk@vger.kernel.org>; Thu, 27 Sep 2018 04:50:12 -0700 (PDT)
+        with ESMTP id S1727145AbeI0SIO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Sep 2018 14:08:14 -0400
+Received: by mail-pg1-f193.google.com with SMTP id t70-v6so1761118pgd.12
+        for <linux-clk@vger.kernel.org>; Thu, 27 Sep 2018 04:50:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=V0R68Y/KzwdIumM6zfyEnPevd749hoDtm4cNpSj8lHM=;
-        b=UrQt3Oh+h3lHXl9yq+YbsI4BIj37f6E/418FWFbw2leiym7BkzqO0wDW7L66LC8hQH
-         dMw3mR4yfjL0UttZBbUvKBghOkokwFcBlP/r9iRVIVqgQOD+sU9RiBOJc0oZH2Foweny
-         Tf7Ckqitg+pcY9xhvI1zuRPmP4SQxg3XEpeu4=
+        bh=Mkh8JJna+rFqognYZHFz3DRcgzLcGu1+fY41Hy8qrpw=;
+        b=PbjR4KQv278yn6tIoN3/UxyFcBTGR6EhU58tPxm99ztmRy+8b7lwqHnSjqgZkyZW55
+         ThgjqV0+/G+uyHRsslyTnSI9CFQ/Qib1NZnjwEuO+D/Rg12g8HFe8TOPmKgBH0YVBWwL
+         LmGV+Azj29nFbqThY1BwcF16/bz6x1xR0qPM8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=V0R68Y/KzwdIumM6zfyEnPevd749hoDtm4cNpSj8lHM=;
-        b=d7yIcOxX84VsGc1NA8zNl7OvMepfYByoMlDtYdHKnyP94SWavtTM9hwJngiF0YUlrM
-         25iAn8nd5qGpxLQgKC2gm+e1+y4eML3dBNrliO8s3SKIw/av6HFZyKJ+r/+W+dvRbrbr
-         WJFBE34U5gHESlZrM/Y710IHBwzcmGumj6k0Yb8jImp/pwiCzfPZ91KThpcVrgjkJJBY
-         GPZSlzkp/6shH+GKSbHd4RyJ/rWSx4ySRwR1hGqifo622av0d9YsdyagsX+5koeu2Ty0
-         06AyqHk9FCdYE37bVJb6NSFnCHrWM6OIZv4LRzr3tnMdLtzO6HyjvgzVwBW1LJE6XfeE
-         /dEA==
-X-Gm-Message-State: ABuFfogCpqpfQtbi41pArbFw1RcUd1/4/fQ/CQFzmGMWMCZzWIok/ubJ
-        xP4VxKtO2yPaVTQPaxycJ33ggw==
-X-Google-Smtp-Source: ACcGV62iZgr6a1wPuCr8fIWrr0mf1eoTyBfPRoHo5BLUU2Swc38AUSdthHx5XNtUnk+Nngsr4XPO7g==
-X-Received: by 2002:a62:8145:: with SMTP id t66-v6mr10902156pfd.192.1538049011667;
-        Thu, 27 Sep 2018 04:50:11 -0700 (PDT)
+        bh=Mkh8JJna+rFqognYZHFz3DRcgzLcGu1+fY41Hy8qrpw=;
+        b=q+nmuFah5SB43XqvZY6XGcZ9132TOjgqYIx3kMcHT9OQzQ9aLoLpV0iDcm+Xw6ZQBb
+         zPyV0IZE1phzxdjFklYGRFgR/vWB+oX6cm6BzWucHHue6Hih0CtXv2/nkUikXmpITY7o
+         I4DfF7BQQArFvO556+X8TRnRkOKZHxLENMvRzw6RqXFXUm6XeDhUgu2Ie4b/qlNs7TcW
+         BzRnXs8nxGp4IIBKpinCh989lCS6nB1wx8sUrbZKP4YonKmWmGYXbs1iH8qpC75Ui05v
+         Z9thEPAt4gHR7LzMxVdqI2IW9I0wddg9wJDH6OKEfuMmcoVDjWBlkHAMBHIHrTxQ5HNx
+         T6VA==
+X-Gm-Message-State: ABuFfoi5MvUtEr76a6uqhPeRtEHjkX3308C2uef7j6vhr0L9L+6uvVII
+        Ud+nhBD4CMuOtBted/46H5tDdg==
+X-Google-Smtp-Source: ACcGV60bLPZdblOC8fzTH/0IpFLn86HNJg+N6Up5oAb3AZpOuyCezCuas754jeIQiT6nwku3nimuJQ==
+X-Received: by 2002:a63:7c1d:: with SMTP id x29-v6mr9872440pgc.273.1538049019101;
+        Thu, 27 Sep 2018 04:50:19 -0700 (PDT)
 Received: from localhost.localdomain ([183.82.230.83])
-        by smtp.gmail.com with ESMTPSA id v36-v6sm3744872pgn.85.2018.09.27.04.50.04
+        by smtp.gmail.com with ESMTPSA id v36-v6sm3744872pgn.85.2018.09.27.04.50.11
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Sep 2018 04:50:10 -0700 (PDT)
+        Thu, 27 Sep 2018 04:50:18 -0700 (PDT)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Maxime Ripard <maxime.ripard@free-electrons.com>,
         Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
@@ -71,9 +71,9 @@ To:     Maxime Ripard <maxime.ripard@free-electrons.com>,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
 Cc:     Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH 08/12] drm/sun4i: sun6i_mipi_dsi: Refactor vertical video start delay
-Date:   Thu, 27 Sep 2018 17:18:46 +0530
-Message-Id: <20180927114850.24565-9-jagan@amarulasolutions.com>
+Subject: [PATCH 09/12] dt-bindings: panel: Add Bananapi S070WV20-CT16 MIPI-DSI panel bindings
+Date:   Thu, 27 Sep 2018 17:18:47 +0530
+Message-Id: <20180927114850.24565-10-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 In-Reply-To: <20180927114850.24565-1-jagan@amarulasolutions.com>
 References: <20180927114850.24565-1-jagan@amarulasolutions.com>
@@ -83,45 +83,45 @@ Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
-Message-ID: <20180927114846.-M7mQ9j4JFq4if_R86dVT9h5zjpZS30iv9Wrzzu3kJ4@z>
+Message-ID: <20180927114847.V7MT_5sl7lsDszSOZ2hDeYtu5VfINITOmmNPTXoaMo4@z>
 
-Accordingly to BPI-M64-bsp DE DSI code Video start delay
-can be computed by subtracting total vertical timing with
-front porch timing and with adding 1 delay line for TCON.
-
-This patch simply add the start_delay logic from BPI-M64-bsp,
-w/o this new computation, the DSI on A64 encounter vblank time out.
-
-[CRTC:36:crtc-0] vblank wait timed out
+Bananapi S070WV20-CT16 is 800x480, 4-lane MIPI-DSI panel, the
+same panel PCB comes with parallel RBG which is supported via
+panel-simple with "bananapi,s070wv20-ct16" compatible.
 
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
- drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ .../panel/bananapi,s070wv20-ct16-dsi.txt      | 21 +++++++++++++++++++
+ 1 file changed, 21 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16-dsi.txt
 
-diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-index 9918fdb990ff..217db74c6dc3 100644
---- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-+++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-@@ -358,7 +358,17 @@ static void sun6i_dsi_inst_init(struct sun6i_dsi *dsi,
- static u16 sun6i_dsi_get_video_start_delay(struct sun6i_dsi *dsi,
- 					   struct drm_display_mode *mode)
- {
--	return mode->vtotal - (mode->vsync_end - mode->vdisplay) + 1;
-+	u32 vfp = mode->vsync_start - mode->vdisplay;
-+	u32 start_delay;
+diff --git a/Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16-dsi.txt b/Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16-dsi.txt
+new file mode 100644
+index 000000000000..c477163f7999
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16-dsi.txt
+@@ -0,0 +1,21 @@
++Bananapi S070WV20 CT16 MIPI-DSI panel
 +
-+	start_delay = mode->vtotal - vfp + 1;
-+	if (start_delay > mode->vtotal)
-+		start_delay -= mode->vtotal;
++Required properties:
++- compatible: must be "bananapi,s070wv20-ct16-dsi"
++- reg: DSI virtual channel used by that screen
++- avdd-supply: analog regulator dc1 switch
++- dvdd-supply: 3v3 digital regulator
++- reset-gpios: a GPIO phandle for the reset pin
 +
-+	if (!start_delay)
-+		start_delay = 1;
++Optional properties:
++- backlight: phandle for the backlight control.
 +
-+	return start_delay;
- }
- 
- static void sun6i_dsi_setup_burst(struct sun6i_dsi *dsi,
++Example:
++panel@0 {
++	compatible = "bananapi,s070wv20-ct16-dsi";
++	reg = <0>;
++	avdd-supply = <&reg_dc1sw>;
++	dvdd-supply = <&reg_dldo1>;
++	reset-gpios = <&pio 3 6 GPIO_ACTIVE_HIGH>; /* PD6 */
++	backlight = <&backlight_dsi>;
++};
 -- 
 2.18.0.321.gffc6fa0e3
 
