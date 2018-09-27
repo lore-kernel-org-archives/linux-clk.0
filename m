@@ -2,117 +2,224 @@ Return-Path: <SRS0=b9GY=MJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E796AC43382
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Sep 2018 06:31:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55C3CC43382
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Sep 2018 08:53:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B29B2156D
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Sep 2018 06:31:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE22F21570
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Sep 2018 08:53:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="RMUEqNsn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B29B2156D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="yNcrUJJH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE22F21570
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726669AbeI0MsJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Sep 2018 08:48:09 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:47252 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726590AbeI0MsJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Sep 2018 08:48:09 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id w8R6VOiv124170;
-        Thu, 27 Sep 2018 01:31:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1538029884;
-        bh=1IS3RfECzp4+yPCu8fzjwJ2GGWDfD7iZeXcr1uevwlo=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=RMUEqNsn0bc0jOaLPMepR9WWtEyz0X0nnKQ5ohwUn+45SL7WAXRd0t1ViqOnT2lc8
-         NkEhmMzt02Zy7c2r6hdiXvG8oHfbPxr9KQK78e8LoWOMMHUqlkwvdPjZT4x/hv7M9P
-         cNWyYJAeCwUr8mfL63ALY5As6yWHYHBTR3MkrnIM=
-Received: from DLEE110.ent.ti.com (dlee110.ent.ti.com [157.170.170.21])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8R6VOD2021927;
-        Thu, 27 Sep 2018 01:31:24 -0500
-Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 27
- Sep 2018 01:31:20 -0500
-Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Thu, 27 Sep 2018 01:31:21 -0500
-Received: from [127.0.0.1] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w8R6VIjt010569;
-        Thu, 27 Sep 2018 01:31:19 -0500
-Subject: Re: [PATCH 00/11] clk: ti: clkctrl data split based on clkdm
- boundaries
-To:     Tony Lindgren <tony@atomide.com>
-CC:     <linux-clk@vger.kernel.org>, <sboyd@kernel.org>,
-        <mturquette@baylibre.com>, <linux-omap@vger.kernel.org>
-References: <1535728027-24573-1-git-send-email-t-kristo@ti.com>
- <20180904153657.GB5662@atomide.com> <20180926191301.GX5662@atomide.com>
-From:   Tero Kristo <t-kristo@ti.com>
-Message-ID: <e4e90740-393f-edaf-947c-aa1010ab79a3@ti.com>
-Date:   Thu, 27 Sep 2018 09:31:10 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1727015AbeI0PKb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Sep 2018 11:10:31 -0400
+Received: from mail-it1-f196.google.com ([209.85.166.196]:36118 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726820AbeI0PKb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Sep 2018 11:10:31 -0400
+Received: by mail-it1-f196.google.com with SMTP id c85-v6so6690124itd.1
+        for <linux-clk@vger.kernel.org>; Thu, 27 Sep 2018 01:53:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=LN82kBLMbUwOGlu9+EOQTrB7Wt/hDKp4rCdGDeOv1hU=;
+        b=yNcrUJJHTaZ69VBCpoNwoiH7e9mHAURHrwy4i+D0moCXLsSJygObO49oOZodtqIt1G
+         37xQmjfSiO7uSJBuR+RwJLCfbmfFswUZuAfDKiKhNpt4S4iCxCN0IAFu2+8hw9vbo4hv
+         WvctYUI3K1svuObW/1o84HURnZsjFYZ77DR7pYhGClNU3ZxKSvrQmIXMC+oOP0slmxYf
+         RDrnsiSLv//JGlendXJBPh4o4GJ6DyUDodpo3LJD1HFwfdjCOR7GgWhlCIQfCurjeqp8
+         7BZz7/4i915fplPapGKBdz9uYcD4fuOpgo75En6pW/rXA0/JwmCtBdYlH1jwYeH+UOAf
+         mr9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=LN82kBLMbUwOGlu9+EOQTrB7Wt/hDKp4rCdGDeOv1hU=;
+        b=AkNN7l6pDtBHUDxRT3lr41prs/LebZiHdRqX0nm3scjde3WF7DQ/CTKzgLeazO8u8M
+         mzSw0IOcEf4txMRneGTyPSvZPg8Fbf+uQdOCUpQVty0BhrdSPK8MsJGdlaBuidFEwNPV
+         Xt+PRG/dsjLdQT7uTurrQsjsmHjeLnOJ2SUVQfEdyGsRETHD0k5yDBVP/hLPXdkU03uq
+         hh8TzBEfmDiWmn9sVF4U/lZleVoW+ixS698tuVXDUYVP5adapF872a8l3CeE4xIP8ojg
+         fcsK2MccTz/fIS8os6v1UDngl1yN6c8BXwoR4dWwbIkOpYYGWQpf75v4QaThdpiSMZYz
+         nCNQ==
+X-Gm-Message-State: ABuFfogWa3TvkbndmFvamDbysQbRnNrYNuRKgkr+PAtKGUFsnZMGvB/M
+        /EXbj8LeWLu1NZoKkBjDjtCiHaxYvzG2vT7toN200A==
+X-Google-Smtp-Source: ACcGV60iCLhThrzzBUtuF9GNUPiCRpucvcXy5ZPaWX/f351Dz7XjcRH/rgmEphqSR6Pkv1mmhM0yqgNzT5o+sPu0ueQ=
+X-Received: by 2002:a02:943:: with SMTP id f64-v6mr9038771jad.31.1538038400916;
+ Thu, 27 Sep 2018 01:53:20 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180926191301.GX5662@atomide.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20180924101150.23349-1-brgl@bgdev.pl> <20180924101150.23349-4-brgl@bgdev.pl>
+ <CAGXu5j+GGbRyQDU=TKKXb9EbRSczEJYqjTaDSsmeBeQn3Qdu_g@mail.gmail.com>
+In-Reply-To: <CAGXu5j+GGbRyQDU=TKKXb9EbRSczEJYqjTaDSsmeBeQn3Qdu_g@mail.gmail.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Thu, 27 Sep 2018 10:53:09 +0200
+Message-ID:
+ <CAMRc=McNoV6JA=ON71LByVn7e+mMDQW2-YrSMBOPDML2k=Z4bQ@mail.gmail.com>
+Subject: Re: [PATCH v3 3/4] devres: provide devm_kstrdup_const()
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Arend van Spriel <aspriel@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Joe Perches <joe@perches.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jonathan Corbet <corbet@lwn.net>, Roman Gushchin <guro@fb.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
-Message-ID: <20180927063110.sEiMdNXq4qbDso0bcSRmYp5Z5oxfpgFDB2AxfG2BQks@z>
+Message-ID: <20180927085309.qYRf_-8sLdH9VqewIfb0aJ_bqFoY6LS06UdwFrKq8bM@z>
 
-On 26/09/18 22:13, Tony Lindgren wrote:
-> Hi,
-> 
-> * Tony Lindgren <tony@atomide.com> [180904 15:41]:
->> * Tero Kristo <t-kristo@ti.com> [180831 15:11]:
->>> Hi,
->>>
->>> This series splits up the clkctrl data for TI SoCs based on clockdomain
->>> boundaries, instead of the current CM boundaries. For rest of the SoCs,
->>> the CM boundaries are actually the same as clockdomains, only am3/am4/dra7
->>> are mutants.
->>>
->>> This is done in preparation for better supporting Tony's upcoming
->>> interconnect driver data introduction for these SoCs.
->>>
->>> One thing to note is that we maintain backwards compatibility with this
->>> series, the compat data is introduced temporarily for this purpose. The
->>> compat data can be ditched after couple of release cycles when nobody
->>> needs it anymore.
->>>
->>> The series can be applied independently, as the compat data support
->>> makes care that the switch is only done once DT changes are in place.
->>
->> When this is ready for merging, can you guys please set up an
->> immutable branch against v4.19-rc1 with the drivers/clk changes
->> for me to merge in too?
->>
->> I've tested this on am335x and am437x so far and it works fine
->> for me, so for the whole series:
->>
->> Tested-by: Tony Lindgren <tony@atomide.com>
-> 
-> Any news on getting this into Linux next and merged? The
-> immutable is still needed too for the dts changes.
-> 
+czw., 27 wrz 2018 o 01:20 Kees Cook <keescook@chromium.org> napisa=C5=82(a)=
+:
+>
+> On Mon, Sep 24, 2018 at 3:11 AM, Bartosz Golaszewski <brgl@bgdev.pl> wrot=
+e:
+> > Provide a resource managed version of kstrdup_const(). This variant
+> > internally calls devm_kstrdup() on pointers that are outside of
+> > .rodata section and returns the string as is otherwise.
+> >
+> > Also provide a corresponding version of devm_kfree().
+> >
+> > Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+> > Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> > ---
+> >  drivers/base/devres.c  | 38 ++++++++++++++++++++++++++++++++++++++
+> >  include/linux/device.h |  3 +++
+> >  2 files changed, 41 insertions(+)
+> >
+> > diff --git a/drivers/base/devres.c b/drivers/base/devres.c
+> > index 438c91a43508..48185d57bc5b 100644
+> > --- a/drivers/base/devres.c
+> > +++ b/drivers/base/devres.c
+> > @@ -11,6 +11,8 @@
+> >  #include <linux/slab.h>
+> >  #include <linux/percpu.h>
+> >
+> > +#include <asm/sections.h>
+> > +
+> >  #include "base.h"
+> >
+> >  struct devres_node {
+> > @@ -822,6 +824,28 @@ char *devm_kstrdup(struct device *dev, const char =
+*s, gfp_t gfp)
+> >  }
+> >  EXPORT_SYMBOL_GPL(devm_kstrdup);
+> >
+> > +/**
+> > + * devm_kstrdup_const - resource managed conditional string duplicatio=
+n
+> > + * @dev: device for which to duplicate the string
+> > + * @s: the string to duplicate
+> > + * @gfp: the GFP mask used in the kmalloc() call when allocating memor=
+y
+> > + *
+> > + * Strings allocated by devm_kstrdup_const will be automatically freed=
+ when
+> > + * the associated device is detached.
+> > + *
+> > + * RETURNS:
+> > + * Source string if it is in .rodata section otherwise it falls back t=
+o
+> > + * devm_kstrdup.
+> > + */
+> > +const char *devm_kstrdup_const(struct device *dev, const char *s, gfp_=
+t gfp)
+> > +{
+> > +       if (is_kernel_rodata((unsigned long)s))
+> > +               return s;
+> > +
+> > +       return devm_kstrdup(dev, s, gfp);
+> > +}
+> > +EXPORT_SYMBOL(devm_kstrdup_const);
+> > +
+> >  /**
+> >   * devm_kvasprintf - Allocate resource managed space and format a stri=
+ng
+> >   *                  into that.
+> > @@ -895,6 +919,20 @@ void devm_kfree(struct device *dev, const void *p)
+> >  }
+> >  EXPORT_SYMBOL_GPL(devm_kfree);
+> >
+> > +/**
+> > + * devm_kfree_const - Resource managed conditional kfree
+> > + * @dev: device this memory belongs to
+> > + * @p: memory to free
+> > + *
+> > + * Function calls devm_kfree only if @p is not in .rodata section.
+> > + */
+> > +void devm_kfree_const(struct device *dev, const void *p)
+> > +{
+> > +       if (!is_kernel_rodata((unsigned long)p))
+> > +               devm_kfree(dev, p);
+> > +}
+> > +EXPORT_SYMBOL(devm_kfree_const);
+> > +
+> >  /**
+> >   * devm_kmemdup - Resource-managed kmemdup
+> >   * @dev: Device this memory belongs to
+> > diff --git a/include/linux/device.h b/include/linux/device.h
+> > index 33f7cb271fbb..79ccc6eb0975 100644
+> > --- a/include/linux/device.h
+> > +++ b/include/linux/device.h
+> > @@ -693,7 +693,10 @@ static inline void *devm_kcalloc(struct device *de=
+v,
+> >         return devm_kmalloc_array(dev, n, size, flags | __GFP_ZERO);
+> >  }
+> >  extern void devm_kfree(struct device *dev, const void *p);
+> > +extern void devm_kfree_const(struct device *dev, const void *p);
+>
+> With devm_kfree and devm_kfree_const both taking "const", how are
+> devm_kstrdup_const() and devm_kfree_const() going to be correctly
+> paired at compile time? (i.e. I wasn't expecting the prototype change
+> to devm_kfree())
+>
 
-This is currently blocked from my side, as the patch [1] from Johan got 
-in clk-next is conflicting with my series. Asked Stephen for either 
-dropping that patch and letting me pick it up but no response so far.
+I guess the same as with kfree() and kfree_const() which both take
+const void * as argument - it's up to users to only use
+devm_kfree_const() on resources allocated with devm_kstrdup_const().
 
-[1] https://lkml.org/lkml/2018/8/22/160
+Bart
 
--Tero
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+> -Kees
+>
+> >  extern char *devm_kstrdup(struct device *dev, const char *s, gfp_t gfp=
+) __malloc;
+> > +extern const char *devm_kstrdup_const(struct device *dev,
+> > +                                     const char *s, gfp_t gfp);
+> >  extern void *devm_kmemdup(struct device *dev, const void *src, size_t =
+len,
+> >                           gfp_t gfp);
+> >
+> > --
+> > 2.18.0
+> >
+>
+>
+>
+> --
+> Kees Cook
+> Pixel Security
