@@ -7,60 +7,63 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5020EC43382
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Sep 2018 16:20:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60288C43382
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Sep 2018 16:26:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8459216FE
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Sep 2018 16:20:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 187BF2168B
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Sep 2018 16:26:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="ouJFqEan"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8459216FE
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="QjkdlCgJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 187BF2168B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727516AbeI0Wjr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Sep 2018 18:39:47 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:50623 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727437AbeI0Wjr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Sep 2018 18:39:47 -0400
-Received: by mail-it1-f196.google.com with SMTP id j81-v6so8651426ite.0
-        for <linux-clk@vger.kernel.org>; Thu, 27 Sep 2018 09:20:46 -0700 (PDT)
+        id S1727700AbeI0Wpr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Sep 2018 18:45:47 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:33442 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727212AbeI0Wpr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Sep 2018 18:45:47 -0400
+Received: by mail-io1-f68.google.com with SMTP id l25-v6so2389963ioj.0
+        for <linux-clk@vger.kernel.org>; Thu, 27 Sep 2018 09:26:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=1VeUtHWJ3hOtNfiEHSMOXor7IJiBoxL53Ef0kdq6OmY=;
-        b=ouJFqEanR0LXNdZwbHwVdWHvYWycT3QG5ko6/tkZsgU2VfeIC3c+hsRqqsZUu9Tyjg
-         Xc/EGSieyzJvvFbTNmyyJZC1YGSUpYXv9Rk/hC8Wd7PE3mUpmmBLSrrZX8h+E/7WTBvC
-         xGFUg/InUIfFV5BsyuJwMv8MYleOH0bO52tNk=
+        bh=w9hSiC8g54IX3RJR+iMR9+AIUkN0OY+U1tp3s7puVQc=;
+        b=QjkdlCgJdx4RgxSnd4IBF9TCLlx15K6CP17BovV3U4xnUDqgAkiNz1vU4KOaB0lscv
+         jQkV5+k+4G2Yk2/rdGBuacuVO9YESIiS+eLZR4DO+HDZxAtOi+VPVrnrELx2zPvU1nC7
+         1zZpoWFHLRX9SWE9+NKRowoxvJqbh2Rxjhvks=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=1VeUtHWJ3hOtNfiEHSMOXor7IJiBoxL53Ef0kdq6OmY=;
-        b=Y6rts0CliuMzTB43o/CKZqnrA5Z9R1JMvsybC5f4vSpNazomLqD9tO03WQpxrh0UpG
-         czRDK1leRVlC+7FWXI/yd3N0KcTq4XwbRdcX4HJRINuu4ikpxRTTMpsMx2kvSRLgKSIi
-         8+eIgP9cq68bN3uRmALG4QMktbn3pUlLIftV8NEZLe99KPwmMBqtIZu8+nAvaMpQA2c7
-         oGk0k8r97TR6pbEMaAVdD4X9U3B0taiRaPX/rtS3zyh7dXClcK0bAQCI9eKudbFNYwd5
-         /CDqkAIqXCM1H196c4wA6eg+JsoD01zSagTOw77YqJP8lcXl+/sRzN7dmYNgUZy7ghne
-         kt5g==
-X-Gm-Message-State: ABuFfohlyfKciHmKz6FajdJRfWwTuJi5BLbBOOROEQcmfG6a7VQsO3dh
-        hLOLi/rSVt6+6VWz0oPCdhuu6GNal0XEjvb75Y3kmQ==
-X-Google-Smtp-Source: ACcGV603XjvQBcuXF8BUeqBg3UhyEiugcdBAXPKq57gRju76W56Aap6+J83Ua+wd4cI+VJmL8TwvD0miXnH7z+lg9pA=
-X-Received: by 2002:a24:5214:: with SMTP id d20-v6mr7771107itb.24.1538065245874;
- Thu, 27 Sep 2018 09:20:45 -0700 (PDT)
+        bh=w9hSiC8g54IX3RJR+iMR9+AIUkN0OY+U1tp3s7puVQc=;
+        b=IwJTAa90TohGPIXHiqX56hch2wNKADPQHPOXc/MMTGZy7nZg8Hv6vXT3I6kIFf3EUo
+         7lLZkW7Fey1C3EUHDa7citMUWzPWCvwGAOqwZCyZ8bp2HPmQGvNz9ZxJSWQjVrDJFHXP
+         VeM52N9FXIpaYr9nxhj5SwMYx/ltXv1VXgh+IQ/e9Z+fP0KMqj5IYWgGTuWaXfyk1tm4
+         Q8aT2BWkSq6uAcqyg8oh8BPbQyRliSJS8VIS5TjC1OJ17dLCp1B8R213u4JmKR2yNqFH
+         ZQP+Sdwboii5dGQDejFPxfpg0wCg7kUgFZ5zkuLzV8kZcFFYPE+yES7YCDOD9nbSWWAr
+         Bs2A==
+X-Gm-Message-State: ABuFfohRIGBb1/BzJoaeIXOEjz/rNj2A+CVDNVgk69Ms5g8jCj2eiiZ8
+        mJ6P0ly1UucMuXjI+YswLoeCOBwG+ZPUJQ7f8h2mpg==
+X-Google-Smtp-Source: ACcGV62+o7mCNMpe+GL/yo18S2xAjJ7K8jR0nZqh+3wOI0neK7sus0F3j7hJye1+rdEYCT23gvXSrbvQIdAr9D5BF1E=
+X-Received: by 2002:a6b:5104:: with SMTP id f4-v6mr9330998iob.114.1538065604192;
+ Thu, 27 Sep 2018 09:26:44 -0700 (PDT)
 MIME-Version: 1.0
 References: <20180927114850.24565-1-jagan@amarulasolutions.com>
- <20180927114850.24565-7-jagan@amarulasolutions.com> <20180927152126.vovnvwmqdfpuxgdm@flea>
-In-Reply-To: <20180927152126.vovnvwmqdfpuxgdm@flea>
+ <20180927114850.24565-5-jagan@amarulasolutions.com> <CAGb2v66No3-AODYCCGifBrm9uvPjaNdR2W5MDQdazRAPomT9CQ@mail.gmail.com>
+ <CAMty3ZBUQKVLJsmkU=hjaO_O5bhetDfAh9-7iLkUqOznVc0KyA@mail.gmail.com> <CAGb2v67pKgORe7uo6r6F+xaVi=Q-p6_DKotZJD7P=46Z=4RhEA@mail.gmail.com>
+In-Reply-To: <CAGb2v67pKgORe7uo6r6F+xaVi=Q-p6_DKotZJD7P=46Z=4RhEA@mail.gmail.com>
 From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Thu, 27 Sep 2018 21:50:34 +0530
+Date:   Thu, 27 Sep 2018 21:56:32 +0530
 Message-ID:
- <CAMty3ZABx9Fod5W_T7JciZEsn7jGvuM-LsBFATdA=hQ2CVwELw@mail.gmail.com>
-Subject: Re: [PATCH 06/12] drm/sun4i: sun6i_mipi_dsi: Fix VBP size calculation
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+ <CAMty3ZAsF=uSJqj2L9ZS8N3CqcSUPzFSdtH8WtZPTg3m-K8COQ@mail.gmail.com>
+Subject: Re: [linux-sunxi] Re: [PATCH 04/12] drm/sun4i: sun6i_mipi_dsi: Enable
+ missing DSI bus clock
+To:     Chen-Yu Tsai <wens@csie.org>
+Cc:     Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
         Jernej Skrabec <jernej.skrabec@siol.net>,
         Vasily Khoruzhick <anarsoul@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -82,41 +85,60 @@ Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
-Message-ID: <20180927162034.vOFWzKyndWqWVDooT_HtzNk46RvXX-31W4bL4vZaw34@z>
+Message-ID: <20180927162632.vn00EazGy8yEvXpYTZNdWImJDWUgwQuIJQDaFKh61rs@z>
 
-On Thu, Sep 27, 2018 at 8:51 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+On Thu, Sep 27, 2018 at 7:47 PM Chen-Yu Tsai <wens@csie.org> wrote:
 >
-> On Thu, Sep 27, 2018 at 05:18:44PM +0530, Jagan Teki wrote:
-> > According to horizontal and vertical timings are defined
-> > per the diagram from include/drm/drm_modes.h
+> On Thu, Sep 27, 2018 at 9:44 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
 > >
-> > Back porch = [hv]total - [hv]sync_end
+> > On Thu, Sep 27, 2018 at 6:13 PM Chen-Yu Tsai <wens@csie.org> wrote:
+> > >
+> > > Hi,
+> > >
+> > > On Thu, Sep 27, 2018 at 7:49 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
+> > > >
+> > > > DSI bus_clk is already available in sun6i_dsi but missed to
+> > > > get the clk and process for enable/disable.
+> > > >
+> > > > This patch add support for it.
+> > > >
+> > > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > > > ---
+> > > >  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 8 ++++++++
+> > > >  1 file changed, 8 insertions(+)
+> > > >
+> > > > diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> > > > index 8e9c76febca2..156b371243c6 100644
+> > > > --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> > > > +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> > > > @@ -1004,6 +1004,12 @@ static int sun6i_dsi_probe(struct platform_device *pdev)
+> > > >                 return PTR_ERR(dsi->reset);
+> > > >         }
+> > > >
+> > > > +       dsi->bus_clk = devm_clk_get(dev, "bus");
+> > > > +       if (IS_ERR(dsi->bus_clk)) {
+> > > > +               dev_err(dev, "Couldn't get the DSI bus clock\n");
+> > > > +               return PTR_ERR(dsi->bus_clk);
+> > > > +       }
+> > > > +
+> > >
+> > > The DSI driver uses devm_regmap_init_mmio_clk, which enables the
+> > > clock behind the scenes when regmap access needs it enabled.
+> > >
+> > > Did you have any issues without this patch?
 > >
-> > So, update SUN6I_DSI_BASIC_SIZE0_VBP calculation as
-> > mode->vtotal - mode->vsync_end
-> >
-> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> > ---
-> >  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> > index 1c7e42015645..599284971ab6 100644
-> > --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> > +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> > @@ -526,8 +526,8 @@ static void sun6i_dsi_setup_timings(struct sun6i_dsi *dsi,
-> >       regmap_write(dsi->regs, SUN6I_DSI_BASIC_SIZE0_REG,
-> >                    SUN6I_DSI_BASIC_SIZE0_VSA(mode->vsync_end -
-> >                                              mode->vsync_start) |
-> > -                  SUN6I_DSI_BASIC_SIZE0_VBP(mode->vsync_start -
-> > -                                            mode->vdisplay));
-> > +                  SUN6I_DSI_BASIC_SIZE0_VBP(mode->vtotal -
-> > +                                            mode->vsync_end));
+> > I'm unable to read register values via devmem, I see all 0's for all
+> > dsi reg space.
 >
-> Is it purely theoretical, or did you find some source that back that?
+> Well that is to be expected given how mmio with clk regmap works.
+> Did you encounter any other problems besides this?
 
-VSA is done as per that, sync_end - sync start would give sync time.
-VBP also done in BPI-M64-bsp[1] which results back porch existing code
-results fron porch.
+no
 
-[1] https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c#L955
+>
+> FYI you can dump regmap contents using /sys/kernel/debug/regmap/*/registers
+
+Thanks, but ccu not using regmap I believe so can't see bus enabled
+bit set via devmap
+# devmem 0x01C20060
+0x33800000
