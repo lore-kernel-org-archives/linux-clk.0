@@ -1,42 +1,63 @@
-Return-Path: <linux-clk-owner@vger.kernel.org>
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:35874 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726201AbeIYQg4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Sep 2018 12:36:56 -0400
+Return-Path: <linux@rasmusvillemoes.dk>
+Return-Path: <linux@rasmusvillemoes.dk>
+Subject: Re: [PATCH v3 3/4] devres: provide devm_kstrdup_const()
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: Kees Cook <keescook@chromium.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Greg KH <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+ Arend van Spriel <aspriel@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Bjorn Helgaas <bhelgaas@google.com>, vivek.gautam@codeaurora.org,
+ Robin Murphy <robin.murphy@arm.com>, Joe Perches <joe@perches.com>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Mike Rapoport <rppt@linux.vnet.ibm.com>, Michal Hocko <mhocko@suse.com>,
+ Al Viro <viro@zeniv.linux.org.uk>, Jonathan Corbet <corbet@lwn.net>,
+ guro@fb.com, Huang Ying <ying.huang@intel.com>,
+ =?UTF-8?Q?Bj=c3=b6rn_Andersson?= <bjorn.andersson@linaro.org>,
+ Arnd Bergmann <arnd@arndb.de>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ linux-clk <linux-clk@vger.kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux MM <linux-mm@kvack.org>
+References: <20180924101150.23349-1-brgl@bgdev.pl>
+ <20180924101150.23349-4-brgl@bgdev.pl>
+ <CAGXu5j+GGbRyQDU=TKKXb9EbRSczEJYqjTaDSsmeBeQn3Qdu_g@mail.gmail.com>
+ <9ad301dc-47ef-cd7d-699d-e51716d1703f@rasmusvillemoes.dk>
+ <CAMuHMdWi0TQfu093po9-TniiLa2=T1E1c5R0S0tr85F==GcaGw@mail.gmail.com>
+From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Message-ID: <c9d0cf98-628d-f2c2-016c-c13d5bdb76c7@rasmusvillemoes.dk>
+Date: Thu, 27 Sep 2018 13:30:13 +0200
 MIME-Version: 1.0
-References: <20180925084940.27903-1-jagan@amarulasolutions.com>
-In-Reply-To: <20180925084940.27903-1-jagan@amarulasolutions.com>
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Tue, 25 Sep 2018 18:29:48 +0800
-Message-ID: <CAGb2v64vzD5y5PMRscfWkdh+7b=KUJFf0chvOpsrw6XTg+_YYg@mail.gmail.com>
-Subject: Re: [PATCH v5 1/2] arm64: dts: allwinner: a64: Add display pipeline
-To: Jagan Teki <jagan@amarulasolutions.com>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
-Sender: linux-clk-owner@vger.kernel.org
+In-Reply-To: <CAMuHMdWi0TQfu093po9-TniiLa2=T1E1c5R0S0tr85F==GcaGw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 List-ID: <linux-clk.vger.kernel.org>
 
-On Tue, Sep 25, 2018 at 4:49 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
->
-> Allwinner A64 have a display pipeline with 2 mixers/TCONs, the first
-> TCON is connected to LCD and the second is to HDMI.
->
-> The HDMI controller/PHY pair is similar to the one on H3/H5.
->
-> Add all required device tree nodes of the display pipeline, including
-> the TCON0 LCD one and the TCON1 HDMI one.
->
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> [Icenowy: refactor commit message and add 1st pipeline]
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+On 2018-09-27 13:01, Geert Uytterhoeven wrote:
+> Hi Rasmus,
+> 
+> On Thu, Sep 27, 2018 at 12:55 PM Rasmus Villemoes
+> <linux@rasmusvillemoes.dk> wrote:
+>> On 2018-09-27 01:13, Kees Cook wrote:
+>>
+>> Just drop devm_kfree_const and teach devm_kfree to ignore
+>> is_kernel_rodata(). That avoids the 50-100 bytes of overhead for adding
+>> yet another EXPORT_SYMBOL and makes it easier to port drivers to
+>> devm_kstrdup_const (and avoids the bugs Kees is worried about). devm
+>> managed resources are almost never freed explicitly, so that single
+>> extra comparison in devm_kfree shouldn't matter for performance.
+> 
+> I guess we can also teach kfree() to ignore is_kernel_rodata(), and
+> drop kfree_const()?
 
-Merged both patches for 4.20. Thanks.
+In principle, yes, but the difference is that kfree() is called a lot
+more frequently, and on normal code paths, whereas devm_kfree is more
+often (though not always) called on error paths.
+
+The goal of _const variants of strdup is to save some memory, so one
+place to start is to reduce the .text overhead of that feature. And it
+avoids introducing subtle bugs if some devm_kfree() call is missed
+during conversion to devm_kstrdup_const().
+
+Rasmus
