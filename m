@@ -1,61 +1,91 @@
-Return-Path: <digetx@gmail.com>
-Return-Path: <digetx@gmail.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: Re: [PATCH v2 2/2] clk: tegra20: Enable lock-status polling for PLLs
-Date: Tue, 4 Sep 2018 12:06:36 +0300
-Cc: Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>,
- linux-clk@vger.kernel.org,
- linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20180830184210.5369-1-digetx@gmail.com> <909e2a52-4116-9ee7-db23-8ea1dfffade0@gmail.com> <20180903080111.GR1636@tbergstrom-lnx.Nvidia.com>
-In-Reply-To: <20180903080111.GR1636@tbergstrom-lnx.Nvidia.com>
+Return-Path: <geert.uytterhoeven@gmail.com>
 MIME-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Message-Id: <201809041206.37080.digetx@gmail.com>
+References: <20180924101150.23349-1-brgl@bgdev.pl> <20180924101150.23349-4-brgl@bgdev.pl>
+ <CAGXu5j+GGbRyQDU=TKKXb9EbRSczEJYqjTaDSsmeBeQn3Qdu_g@mail.gmail.com> <9ad301dc-47ef-cd7d-699d-e51716d1703f@rasmusvillemoes.dk>
+In-Reply-To: <9ad301dc-47ef-cd7d-699d-e51716d1703f@rasmusvillemoes.dk>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 27 Sep 2018 13:01:50 +0200
+Message-ID: <CAMuHMdWi0TQfu093po9-TniiLa2=T1E1c5R0S0tr85F==GcaGw@mail.gmail.com>
+Subject: Re: [PATCH v3 3/4] devres: provide devm_kstrdup_const()
+To: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: Kees Cook <keescook@chromium.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	Greg KH <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Arend van Spriel <aspriel@gmail.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	vivek.gautam@codeaurora.org, Robin Murphy <robin.murphy@arm.com>,
+	Joe Perches <joe@perches.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Andrew Morton <akpm@linux-foundation.org>, Mike Rapoport <rppt@linux.vnet.ibm.com>,
+	Michal Hocko <mhocko@suse.com>, Al Viro <viro@zeniv.linux.org.uk>,
+	Jonathan Corbet <corbet@lwn.net>, guro@fb.com, Huang Ying <ying.huang@intel.com>,
+	=?UTF-8?Q?Bj=C3=B6rn_Andersson?= <bjorn.andersson@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux MM <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-On Monday 03 September 2018 11:01:11 Peter De Schrijver wrote:
-> On Fri, Aug 31, 2018 at 12:45:17PM +0300, Dmitry Osipenko wrote:
-> > On 8/31/18 12:29 PM, Peter De Schrijver wrote:
-> > > On Thu, Aug 30, 2018 at 09:42:10PM +0300, Dmitry Osipenko wrote:
-> > >> Currently all PLL's on Tegra20 use a hardcoded delay despite of having
-> > >> a lock-status bit. The lock-status polling was disabled ~7 years ago
-> > >> because PLLE was failing to lock and was a suspicion that other PLLs
-> > >> might be faulty too. Other PLLs are okay, hence enable the lock-status
-> > >> polling for them. This reduces delay of any operation that require PLL
-> > >> to lock.
-> > >>
-> > >> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> > >> ---
-> > >>
-> > >> Changelog:
-> > >>
-> > >> v2:	Don't enable polling for PLLE as it known to not being able to
-> > >> lock.
-> > >
-> > > This isn't correct. The lock bit of PLLE can declare lock too early,
-> > > but the PLL itself does lock.
+Hi Rasmus,
+
+On Thu, Sep 27, 2018 at 12:55 PM Rasmus Villemoes
+<linux@rasmusvillemoes.dk> wrote:
+> On 2018-09-27 01:13, Kees Cook wrote:
+> > On Mon, Sep 24, 2018 at 3:11 AM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> >> Provide a resource managed version of kstrdup_const(). This variant
+> >> internally calls devm_kstrdup() on pointers that are outside of
+> >> .rodata section and returns the string as is otherwise.
+> >>
+> >> Also provide a corresponding version of devm_kfree().
+> >>
+> >> +/**
+> >> + * devm_kfree_const - Resource managed conditional kfree
+> >> + * @dev: device this memory belongs to
+> >> + * @p: memory to free
+> >> + *
+> >> + * Function calls devm_kfree only if @p is not in .rodata section.
+> >> + */
+> >> +void devm_kfree_const(struct device *dev, const void *p)
+> >> +{
+> >> +       if (!is_kernel_rodata((unsigned long)p))
+> >> +               devm_kfree(dev, p);
+> >> +}
+> >> +EXPORT_SYMBOL(devm_kfree_const);
+> >> +
+> >>  /**
+> >>   * devm_kmemdup - Resource-managed kmemdup
+> >>   * @dev: Device this memory belongs to
+> >> diff --git a/include/linux/device.h b/include/linux/device.h
+> >> index 33f7cb271fbb..79ccc6eb0975 100644
+> >> --- a/include/linux/device.h
+> >> +++ b/include/linux/device.h
+> >> @@ -693,7 +693,10 @@ static inline void *devm_kcalloc(struct device *dev,
+> >>         return devm_kmalloc_array(dev, n, size, flags | __GFP_ZERO);
+> >>  }
+> >>  extern void devm_kfree(struct device *dev, const void *p);
+> >> +extern void devm_kfree_const(struct device *dev, const void *p);
 > >
-> > Indeed, it locks but can't be polled for the lock-status as it doesn't
-> > have the lock-status bit.
-> >
-> > Do you want me to adjust the commit description or it is fine as is?
+> > With devm_kfree and devm_kfree_const both taking "const", how are
+> > devm_kstrdup_const() and devm_kfree_const() going to be correctly
+> > paired at compile time? (i.e. I wasn't expecting the prototype change
+> > to devm_kfree())
 >
-> I think it's better to adjust it.
+> Just drop devm_kfree_const and teach devm_kfree to ignore
+> is_kernel_rodata(). That avoids the 50-100 bytes of overhead for adding
+> yet another EXPORT_SYMBOL and makes it easier to port drivers to
+> devm_kstrdup_const (and avoids the bugs Kees is worried about). devm
+> managed resources are almost never freed explicitly, so that single
+> extra comparison in devm_kfree shouldn't matter for performance.
 
-Okay. I expect to get a review from you for the other clock (and related) 
-patches too and will send the new version once all the current patches will 
-be reviewed. Please take a look at them once you'll have some free time, 
-thanks.
+I guess we can also teach kfree() to ignore is_kernel_rodata(), and
+drop kfree_const()?
 
-> > It is also a bit odd that PLLE has "lock_delay = 0", is it correct?
->
-> That seems odd yes..
+Gr{oetje,eeting}s,
 
-:)
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
