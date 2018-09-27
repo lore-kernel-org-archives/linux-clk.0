@@ -1,186 +1,82 @@
-Return-Path: <j-keerthy@ti.com>
-From: Keerthy <j-keerthy@ti.com>
-To: <tony@atomide.com>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <t-kristo@ti.com>
-CC: <ssantosh@kernel.org>, <d-gerlach@ti.com>, <linux-omap@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <j-keerthy@ti.com>, <russ.dill@ti.com>, Russ Dill <Russ.Dill@ti.com>
-Subject: [PATCH v3 RESEND 1/4] clk: clk: Add functions to save/restore clock context en-masse
-Date: Tue, 4 Sep 2018 12:19:35 +0530
-Message-ID: <1536043778-2232-2-git-send-email-j-keerthy@ti.com>
-In-Reply-To: <1536043778-2232-1-git-send-email-j-keerthy@ti.com>
-References: <1536043778-2232-1-git-send-email-j-keerthy@ti.com>
+Return-Path: <wens213@gmail.com>
+Return-Path: <wens213@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20180927114850.24565-1-jagan@amarulasolutions.com> <20180927114850.24565-5-jagan@amarulasolutions.com>
+In-Reply-To: <20180927114850.24565-5-jagan@amarulasolutions.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Thu, 27 Sep 2018 20:42:53 +0800
+Message-ID: <CAGb2v66No3-AODYCCGifBrm9uvPjaNdR2W5MDQdazRAPomT9CQ@mail.gmail.com>
+Subject: Re: [PATCH 04/12] drm/sun4i: sun6i_mipi_dsi: Enable missing DSI bus clock
+To: Jagan Teki <jagan@amarulasolutions.com>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Icenowy Zheng <icenowy@aosc.io>,
+	Jernej Skrabec <jernej.skrabec@siol.net>, Vasily Khoruzhick <anarsoul@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>,
+	David Airlie <airlied@linux.ie>, dri-devel <dri-devel@lists.freedesktop.org>,
+	Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	devicetree <devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 List-ID: <linux-clk.vger.kernel.org>
 
-From: Russ Dill <Russ.Dill@ti.com>
+Hi,
 
-Deep enough power saving mode can result into losing context of the clock
-registers also, and they need to be restored once coming back from the power
-saving mode. Hence add functions to save/restore clock context.
+On Thu, Sep 27, 2018 at 7:49 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
+>
+> DSI bus_clk is already available in sun6i_dsi but missed to
+> get the clk and process for enable/disable.
+>
+> This patch add support for it.
+>
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> ---
+>  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> index 8e9c76febca2..156b371243c6 100644
+> --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> @@ -1004,6 +1004,12 @@ static int sun6i_dsi_probe(struct platform_device *pdev)
+>                 return PTR_ERR(dsi->reset);
+>         }
+>
+> +       dsi->bus_clk = devm_clk_get(dev, "bus");
+> +       if (IS_ERR(dsi->bus_clk)) {
+> +               dev_err(dev, "Couldn't get the DSI bus clock\n");
+> +               return PTR_ERR(dsi->bus_clk);
+> +       }
+> +
 
-Signed-off-by: Keerthy <j-keerthy@ti.com>
-Signed-off-by: Russ Dill <Russ.Dill@ti.com>
-Acked-by: Tony Lindgren <tony@atomide.com>
----
- drivers/clk/clk.c            | 74 ++++++++++++++++++++++++++++++++++++++++++++
- include/linux/clk-provider.h |  7 +++++
- include/linux/clk.h          | 25 +++++++++++++++
- 3 files changed, 106 insertions(+)
+The DSI driver uses devm_regmap_init_mmio_clk, which enables the
+clock behind the scenes when regmap access needs it enabled.
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index d31055a..8a0254a 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -923,6 +923,80 @@ static int clk_core_enable_lock(struct clk_core *core)
- 	return ret;
- }
- 
-+static int _clk_save_context(struct clk_core *clk)
-+{
-+	struct clk_core *child;
-+	int ret = 0;
-+
-+	hlist_for_each_entry(child, &clk->children, child_node) {
-+		ret = _clk_save_context(child);
-+		if (ret < 0)
-+			return ret;
-+	}
-+
-+	if (clk->ops && clk->ops->save_context)
-+		ret = clk->ops->save_context(clk->hw);
-+
-+	return ret;
-+}
-+
-+static void _clk_restore_context(struct clk_core *clk)
-+{
-+	struct clk_core *child;
-+
-+	if (clk->ops && clk->ops->restore_context)
-+		clk->ops->restore_context(clk->hw);
-+
-+	hlist_for_each_entry(child, &clk->children, child_node)
-+		_clk_restore_context(child);
-+}
-+
-+/**
-+ * clk_save_context - save clock context for poweroff
-+ *
-+ * Saves the context of the clock register for powerstates in which the
-+ * contents of the registers will be lost. Occurs deep within the suspend
-+ * code.  Returns 0 on success.
-+ */
-+int clk_save_context(void)
-+{
-+	struct clk_core *clk;
-+	int ret;
-+
-+	hlist_for_each_entry(clk, &clk_root_list, child_node) {
-+		ret = _clk_save_context(clk);
-+		if (ret < 0)
-+			return ret;
-+	}
-+
-+	hlist_for_each_entry(clk, &clk_orphan_list, child_node) {
-+		ret = _clk_save_context(clk);
-+		if (ret < 0)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(clk_save_context);
-+
-+/**
-+ * clk_restore_context - restore clock context after poweroff
-+ *
-+ * Restore the saved clock context upon resume.
-+ *
-+ */
-+void clk_restore_context(void)
-+{
-+	struct clk_core *clk;
-+
-+	hlist_for_each_entry(clk, &clk_root_list, child_node)
-+		_clk_restore_context(clk);
-+
-+	hlist_for_each_entry(clk, &clk_orphan_list, child_node)
-+		_clk_restore_context(clk);
-+}
-+EXPORT_SYMBOL_GPL(clk_restore_context);
-+
- /**
-  * clk_enable - ungate a clock
-  * @clk: the clk being ungated
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 08b1aa7..df7379d 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -119,6 +119,11 @@ struct clk_duty {
-  *		Called with enable_lock held.  This function must not
-  *		sleep.
-  *
-+ * @save_context: Save the context of the clock in prepration for poweroff.
-+ *
-+ * @restore_context: Restore the context of the clock after a restoration
-+ *		of power.
-+ *
-  * @recalc_rate	Recalculate the rate of this clock, by querying hardware. The
-  *		parent rate is an input parameter.  It is up to the caller to
-  *		ensure that the prepare_mutex is held across this call.
-@@ -223,6 +228,8 @@ struct clk_ops {
- 	void		(*disable)(struct clk_hw *hw);
- 	int		(*is_enabled)(struct clk_hw *hw);
- 	void		(*disable_unused)(struct clk_hw *hw);
-+	int		(*save_context)(struct clk_hw *hw);
-+	void		(*restore_context)(struct clk_hw *hw);
- 	unsigned long	(*recalc_rate)(struct clk_hw *hw,
- 					unsigned long parent_rate);
- 	long		(*round_rate)(struct clk_hw *hw, unsigned long rate,
-diff --git a/include/linux/clk.h b/include/linux/clk.h
-index 4f750c4..7da754d 100644
---- a/include/linux/clk.h
-+++ b/include/linux/clk.h
-@@ -629,6 +629,23 @@ int __must_check clk_bulk_enable(int num_clks,
-  */
- struct clk *clk_get_sys(const char *dev_id, const char *con_id);
- 
-+/**
-+ * clk_save_context - save clock context for poweroff
-+ *
-+ * Saves the context of the clock register for powerstates in which the
-+ * contents of the registers will be lost. Occurs deep within the suspend
-+ * code so locking is not necessary.
-+ */
-+int clk_save_context(void);
-+
-+/**
-+ * clk_restore_context - restore clock context after poweroff
-+ *
-+ * This occurs with all clocks enabled. Occurs deep within the resume code
-+ * so locking is not necessary.
-+ */
-+void clk_restore_context(void);
-+
- #else /* !CONFIG_HAVE_CLK */
- 
- static inline struct clk *clk_get(struct device *dev, const char *id)
-@@ -728,6 +745,14 @@ static inline struct clk *clk_get_sys(const char *dev_id, const char *con_id)
- {
- 	return NULL;
- }
-+
-+static inline int clk_save_context(void)
-+{
-+	return 0;
-+}
-+
-+static inline void clk_restore_context(void) {}
-+
- #endif
- 
- /* clk_prepare_enable helps cases using clk_enable in non-atomic context. */
--- 
-1.9.1
+Did you have any issues without this patch?
+
+ChenYu
+
+>         if (dsi->variant->has_mod_clk) {
+>                 dsi->mod_clk = devm_clk_get(dev, "mod");
+>                 if (IS_ERR(dsi->mod_clk)) {
+> @@ -1012,6 +1018,7 @@ static int sun6i_dsi_probe(struct platform_device *pdev)
+>                 }
+>         }
+>
+> +       clk_prepare_enable(dsi->bus_clk);
+>         /*
+>          * In order to operate properly, that clock seems to be always
+>          * set to 297MHz.
+> @@ -1065,6 +1072,7 @@ static int sun6i_dsi_remove(struct platform_device *pdev)
+>         sun6i_dphy_remove(dsi);
+>         if (dsi->variant->has_mod_clk)
+>                 clk_rate_exclusive_put(dsi->mod_clk);
+> +       clk_disable_unprepare(dsi->bus_clk);
+>
+>         return 0;
+>  }
+> --
+> 2.18.0.321.gffc6fa0e3
+>
