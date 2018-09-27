@@ -2,124 +2,138 @@ Return-Path: <SRS0=b9GY=MJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A28FCC43382
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Sep 2018 13:44:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48B65C43382
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Sep 2018 14:45:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DC9F216E3
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Sep 2018 13:44:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DAE99216C4
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Sep 2018 14:45:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="UC8vHvy/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DC9F216E3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="WmwuxokE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAE99216C4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727097AbeI0UCz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Sep 2018 16:02:55 -0400
-Received: from mail-it1-f195.google.com ([209.85.166.195]:38648 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727124AbeI0UCz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Sep 2018 16:02:55 -0400
-Received: by mail-it1-f195.google.com with SMTP id p129-v6so7701422ite.3
-        for <linux-clk@vger.kernel.org>; Thu, 27 Sep 2018 06:44:35 -0700 (PDT)
+        id S1727334AbeI0VDm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Sep 2018 17:03:42 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:34916 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727307AbeI0VDl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Sep 2018 17:03:41 -0400
+Received: by mail-wr1-f66.google.com with SMTP id o16so2950922wrx.2
+        for <linux-clk@vger.kernel.org>; Thu, 27 Sep 2018 07:45:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3jb2dhamBEySQq3tlMPPwXytp5Yy7pFNJZUAGdgr9iU=;
-        b=UC8vHvy/9Y+I+NV+M+IRDebAWl7k0Lb7JvBchMJwfo1AseXZVtOujLIfpHzgQk1tl2
-         dr5XQlg5xPfL4lHMkhyjKFo60S3qnLpA1AKh2IDkQTXnIbbzw8wrBUAq30i/TYEI16zN
-         Kow2WHPYft9DkgM1VPHbtEtaDtjW+CYcf8JXM=
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:mime-version
+         :content-transfer-encoding;
+        bh=yFrvAVplhmN2YFC9txo34qKmvTq4Ooz+md+iX7txy9Y=;
+        b=WmwuxokEAk/bwJXFhUdiiE29gwrn3Ts/q5wx3kRAH4/4FThSdQQuc+Xi2w93bdcjmr
+         hLaxSkVN3Hx4upS941RdHUbCrgF1lbLXWmIA1uuPp6cZVNuQqyy6irLd6l14aNK0czdK
+         V0t+AjyW5JxqH28FqjpAlAKm4QgOYF4WhSCWyIDeRH3FHuOYrnsu4PBfhOv/2RrHaJz1
+         xgAp6TehIJ0tbJrJiQGF9v5NhAdLSEewBqtm913nXXV1iixsmQprdNspqSkojpCBz8pS
+         Uesyr9t4maXSutyA1nlPi+iD5A88dK7LFkjm/MLpHHnAnovOailfaq9xnTb6FU0MtoUN
+         bXIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3jb2dhamBEySQq3tlMPPwXytp5Yy7pFNJZUAGdgr9iU=;
-        b=HbiC72MHY9FcisKgwvS1zbIHYfFdifmnNAQN0at/P3227kwxyFs5twGxT3U20fxcBR
-         0X8b7Qc+esKfwdmGfG6zV4QqEaVRGcpzue/dJ2Fz/fOXHdu6U88+yGvoctj+PtqHMoiZ
-         orRhQKMqt9Mvdo7G7EoAy26t6eY9ZMipVNlwb871whA9VuFHd8YR48D+3tVY5e9JR/PI
-         BxMls9gZovRrfMiOa7CDR1Nbzb20YDoWU2MhaNZdSQF3qVsllXx9fpMVBFNuISO8fi3X
-         dxj/iUhlSD+B2kXoHca0JGjFryjfc3Jq61gLAT4RQItFF/whl9YgG2ZJuiE3dPomtuw2
-         1N0w==
-X-Gm-Message-State: ABuFfoiAhN+b/CE6dlmktJvkNxf3Q4B+UiOoQJg1THADi2uV9m7jvPk9
-        uM9xuQPPyr8k6T0SRUJNpPYf86S4MbgsWw0nqVBaGg==
-X-Google-Smtp-Source: ACcGV61qzbpHFHATfSAeY6ymznsP74MF/OHV7iyRAxm7/CbuYHVoF8pbnEKCbMXmwvb30Yki99agsf2b/Uv1Ewc6Orc=
-X-Received: by 2002:a24:809:: with SMTP id 9-v6mr8633158itc.31.1538055875071;
- Thu, 27 Sep 2018 06:44:35 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180927114850.24565-1-jagan@amarulasolutions.com>
- <20180927114850.24565-5-jagan@amarulasolutions.com> <CAGb2v66No3-AODYCCGifBrm9uvPjaNdR2W5MDQdazRAPomT9CQ@mail.gmail.com>
-In-Reply-To: <CAGb2v66No3-AODYCCGifBrm9uvPjaNdR2W5MDQdazRAPomT9CQ@mail.gmail.com>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Thu, 27 Sep 2018 19:14:23 +0530
-Message-ID:
- <CAMty3ZBUQKVLJsmkU=hjaO_O5bhetDfAh9-7iLkUqOznVc0KyA@mail.gmail.com>
-Subject: Re: [PATCH 04/12] drm/sun4i: sun6i_mipi_dsi: Enable missing DSI bus clock
-To:     Chen-Yu Tsai <wens@csie.org>
-Cc:     Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:mime-version
+         :content-transfer-encoding;
+        bh=yFrvAVplhmN2YFC9txo34qKmvTq4Ooz+md+iX7txy9Y=;
+        b=dNC7OBRyGnHxl4tDJetBCJAP3OOr26xI2wezFjOWZ8rw7NGku95aDDB0m9JkQNReSe
+         1z325FqNjiDUVj50u7eb5N+TGVj+5L9DY7jXiKGznHeaNJvJ1F+DqUoBLUwQ7VI1dkTy
+         bgV/wrboKAeBbFAaHkJSVe+h3K5FFT0g7m9D2+oCRS2W9+LrEyGOu3Y9A6gSnSpgYmbh
+         kJfDy5mL5mPw2f+uS8YHfTdKFx2W+xiKBWlb9+wPYnAgP6EEClBJg1Hu400dul3X4H2K
+         8Zts0JcQrwt4QlsEAk7XqHbfu/NzO11OKh/amhRLX+GyfebWnR+9cOyS8+1V5GbBvbs5
+         qgmA==
+X-Gm-Message-State: ABuFfoj7OfiP539ELSVxtsYraRczv7K6DIz9Yym+YOKvwkGpCI22GpRI
+        S8H31jnwCpN6PKvOOX28gCw5UQ==
+X-Google-Smtp-Source: ACcGV63L9YVkdilrAPDa2fdCetNO1yNPE1zb+/TwmnQezMR6M/XPtc9u1o/AcYgfkufVbxR/uOadDQ==
+X-Received: by 2002:adf:9564:: with SMTP id 91-v6mr8917660wrs.60.1538059504236;
+        Thu, 27 Sep 2018 07:45:04 -0700 (PDT)
+Received: from boomer ([2a00:8c40:243:232:9287:a644:860c:5a1b])
+        by smtp.gmail.com with ESMTPSA id w5-v6sm815487wmf.31.2018.09.27.07.45.03
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 27 Sep 2018 07:45:03 -0700 (PDT)
+Message-ID: <ee3c1d81101e3e42218c696f663fb8716dfd53a7.camel@baylibre.com>
+Subject: [GIT PULL] clk: meson: updates for v4.20
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
         linux-clk <linux-clk@vger.kernel.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
+        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>
+Date:   Thu, 27 Sep 2018 16:45:02 +0200
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
-Message-ID: <20180927134423.NHCLRXGTcAHrh9Nl0M0pDbxQSKdsesYSR-SgdpFFzPU@z>
+Message-ID: <20180927144502.SO1jPwdSxx34Kwqt5cCEmWa-J1HuGynPmKL6t9b0NXw@z>
 
-On Thu, Sep 27, 2018 at 6:13 PM Chen-Yu Tsai <wens@csie.org> wrote:
->
-> Hi,
->
-> On Thu, Sep 27, 2018 at 7:49 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
-> >
-> > DSI bus_clk is already available in sun6i_dsi but missed to
-> > get the clk and process for enable/disable.
-> >
-> > This patch add support for it.
-> >
-> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> > ---
-> >  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 8 ++++++++
-> >  1 file changed, 8 insertions(+)
-> >
-> > diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> > index 8e9c76febca2..156b371243c6 100644
-> > --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> > +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> > @@ -1004,6 +1004,12 @@ static int sun6i_dsi_probe(struct platform_device *pdev)
-> >                 return PTR_ERR(dsi->reset);
-> >         }
-> >
-> > +       dsi->bus_clk = devm_clk_get(dev, "bus");
-> > +       if (IS_ERR(dsi->bus_clk)) {
-> > +               dev_err(dev, "Couldn't get the DSI bus clock\n");
-> > +               return PTR_ERR(dsi->bus_clk);
-> > +       }
-> > +
->
-> The DSI driver uses devm_regmap_init_mmio_clk, which enables the
-> clock behind the scenes when regmap access needs it enabled.
->
-> Did you have any issues without this patch?
+Dear clock maintainers,
 
-I'm unable to read register values via devmem, I see all 0's for all
-dsi reg space.
+Below is a request to pull updates for Amlogic clocks.
+There is not much out of the ordinary there, except:
+- Even if we don't like it, the entire meson8b is now using
+  CLK_OF_DECLARE_DRIVER(). Previously, only the reset controller
+  part used this but it seems there is no way around it (yet) to
+  handle certain things on this SoC, such as the TWD timer.
+- We are a bit late compared to the usual schedule, sorry about that.
+
+Thanks for pulling
+
+Cheers
+Jerome
+
+The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
+
+  Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
+
+are available in the Git repository at:
+
+  git://github.com/BayLibre/clk-meson.git tags/meson-clk-4.20-1
+
+for you to fetch changes up to 93c873d686461652921fe18b137ac28002dfe166:
+
+  clk: meson: meson8b: use the regmap in the internal reset controller (2018-09-26 12:02:00 +0200)
+
+----------------------------------------------------------------
+Update for meson clocks targeted at v4.20
+
+- clk-pll driver improvements and updates
+- add axg audio controller system clocks
+- drop mpll3 from the possible pcie clock parent of the axg
+- register meson8b clock controller early
+
+----------------------------------------------------------------
+Jerome Brunet (5):
+      clk: meson: clk-pll: add enable bit
+      clk: meson: clk-pll: drop CLK_GET_RATE_NOCACHE where unnecessary
+      clk: meson: clk-pll: remove od parameters
+      clk: meson: clk-pll: drop hard-coded rates from pll tables
+      clk: meson: axg: round audio system master clocks down
+
+Martin Blumenstingl (2):
+      clk: meson: meson8b: register the clock controller early
+      clk: meson: meson8b: use the regmap in the internal reset controller
+
+Yixun Lan (1):
+      clk: meson-axg: pcie: drop the mpll3 clock parent
+
+ drivers/clk/meson/axg-audio.c |  34 ++-
+ drivers/clk/meson/axg.c       | 332 +++++++++++++++------------
+ drivers/clk/meson/axg.h       |   8 +-
+ drivers/clk/meson/clk-pll.c   | 156 ++++++++-----
+ drivers/clk/meson/clkc.h      |  16 +-
+ drivers/clk/meson/gxbb.c      | 518 +++++++++++++++++++++---------------------
+ drivers/clk/meson/gxbb.h      |  10 +-
+ drivers/clk/meson/meson8b.c   | 280 +++++++++++------------
+ drivers/clk/meson/meson8b.h   |   5 +-
+ 9 files changed, 732 insertions(+), 627 deletions(-)
+
+
