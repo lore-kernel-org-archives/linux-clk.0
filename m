@@ -2,138 +2,107 @@ Return-Path: <SRS0=b9GY=MJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48B65C43382
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Sep 2018 14:45:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 214D3C43382
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Sep 2018 14:49:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DAE99216C4
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Sep 2018 14:45:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="WmwuxokE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAE99216C4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by mail.kernel.org (Postfix) with ESMTP id D587E216C4
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Sep 2018 14:49:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D587E216C4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727334AbeI0VDm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Sep 2018 17:03:42 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:34916 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727307AbeI0VDl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Sep 2018 17:03:41 -0400
-Received: by mail-wr1-f66.google.com with SMTP id o16so2950922wrx.2
-        for <linux-clk@vger.kernel.org>; Thu, 27 Sep 2018 07:45:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:mime-version
-         :content-transfer-encoding;
-        bh=yFrvAVplhmN2YFC9txo34qKmvTq4Ooz+md+iX7txy9Y=;
-        b=WmwuxokEAk/bwJXFhUdiiE29gwrn3Ts/q5wx3kRAH4/4FThSdQQuc+Xi2w93bdcjmr
-         hLaxSkVN3Hx4upS941RdHUbCrgF1lbLXWmIA1uuPp6cZVNuQqyy6irLd6l14aNK0czdK
-         V0t+AjyW5JxqH28FqjpAlAKm4QgOYF4WhSCWyIDeRH3FHuOYrnsu4PBfhOv/2RrHaJz1
-         xgAp6TehIJ0tbJrJiQGF9v5NhAdLSEewBqtm913nXXV1iixsmQprdNspqSkojpCBz8pS
-         Uesyr9t4maXSutyA1nlPi+iD5A88dK7LFkjm/MLpHHnAnovOailfaq9xnTb6FU0MtoUN
-         bXIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:mime-version
-         :content-transfer-encoding;
-        bh=yFrvAVplhmN2YFC9txo34qKmvTq4Ooz+md+iX7txy9Y=;
-        b=dNC7OBRyGnHxl4tDJetBCJAP3OOr26xI2wezFjOWZ8rw7NGku95aDDB0m9JkQNReSe
-         1z325FqNjiDUVj50u7eb5N+TGVj+5L9DY7jXiKGznHeaNJvJ1F+DqUoBLUwQ7VI1dkTy
-         bgV/wrboKAeBbFAaHkJSVe+h3K5FFT0g7m9D2+oCRS2W9+LrEyGOu3Y9A6gSnSpgYmbh
-         kJfDy5mL5mPw2f+uS8YHfTdKFx2W+xiKBWlb9+wPYnAgP6EEClBJg1Hu400dul3X4H2K
-         8Zts0JcQrwt4QlsEAk7XqHbfu/NzO11OKh/amhRLX+GyfebWnR+9cOyS8+1V5GbBvbs5
-         qgmA==
-X-Gm-Message-State: ABuFfoj7OfiP539ELSVxtsYraRczv7K6DIz9Yym+YOKvwkGpCI22GpRI
-        S8H31jnwCpN6PKvOOX28gCw5UQ==
-X-Google-Smtp-Source: ACcGV63L9YVkdilrAPDa2fdCetNO1yNPE1zb+/TwmnQezMR6M/XPtc9u1o/AcYgfkufVbxR/uOadDQ==
-X-Received: by 2002:adf:9564:: with SMTP id 91-v6mr8917660wrs.60.1538059504236;
-        Thu, 27 Sep 2018 07:45:04 -0700 (PDT)
-Received: from boomer ([2a00:8c40:243:232:9287:a644:860c:5a1b])
-        by smtp.gmail.com with ESMTPSA id w5-v6sm815487wmf.31.2018.09.27.07.45.03
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 27 Sep 2018 07:45:03 -0700 (PDT)
-Message-ID: <ee3c1d81101e3e42218c696f663fb8716dfd53a7.camel@baylibre.com>
-Subject: [GIT PULL] clk: meson: updates for v4.20
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>
-Date:   Thu, 27 Sep 2018 16:45:02 +0200
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1727555AbeI0VI3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Sep 2018 17:08:29 -0400
+Received: from muru.com ([72.249.23.125]:57438 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727270AbeI0VI3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 27 Sep 2018 17:08:29 -0400
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 4E71E809B;
+        Thu, 27 Sep 2018 14:54:14 +0000 (UTC)
+Date:   Thu, 27 Sep 2018 07:49:49 -0700
+From:   Tony Lindgren <tony@atomide.com>
+To:     Tero Kristo <t-kristo@ti.com>
+Cc:     linux-clk@vger.kernel.org, sboyd@kernel.org,
+        mturquette@baylibre.com, linux-omap@vger.kernel.org
+Subject: Re: [PATCH 00/11] clk: ti: clkctrl data split based on clkdm
+ boundaries
+Message-ID: <20180927144949.GZ5662@atomide.com>
+References: <1535728027-24573-1-git-send-email-t-kristo@ti.com>
+ <20180904153657.GB5662@atomide.com>
+ <20180926191301.GX5662@atomide.com>
+ <e4e90740-393f-edaf-947c-aa1010ab79a3@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e4e90740-393f-edaf-947c-aa1010ab79a3@ti.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
-Message-ID: <20180927144502.SO1jPwdSxx34Kwqt5cCEmWa-J1HuGynPmKL6t9b0NXw@z>
+Message-ID: <20180927144949.kXFMZgDx9yrHIM4GINMQeNh09n0kBwfGi3J77rGwt8Q@z>
 
-Dear clock maintainers,
+* Tero Kristo <t-kristo@ti.com> [180927 06:35]:
+> On 26/09/18 22:13, Tony Lindgren wrote:
+> > Hi,
+> > 
+> > * Tony Lindgren <tony@atomide.com> [180904 15:41]:
+> > > * Tero Kristo <t-kristo@ti.com> [180831 15:11]:
+> > > > Hi,
+> > > > 
+> > > > This series splits up the clkctrl data for TI SoCs based on clockdomain
+> > > > boundaries, instead of the current CM boundaries. For rest of the SoCs,
+> > > > the CM boundaries are actually the same as clockdomains, only am3/am4/dra7
+> > > > are mutants.
+> > > > 
+> > > > This is done in preparation for better supporting Tony's upcoming
+> > > > interconnect driver data introduction for these SoCs.
+> > > > 
+> > > > One thing to note is that we maintain backwards compatibility with this
+> > > > series, the compat data is introduced temporarily for this purpose. The
+> > > > compat data can be ditched after couple of release cycles when nobody
+> > > > needs it anymore.
+> > > > 
+> > > > The series can be applied independently, as the compat data support
+> > > > makes care that the switch is only done once DT changes are in place.
+> > > 
+> > > When this is ready for merging, can you guys please set up an
+> > > immutable branch against v4.19-rc1 with the drivers/clk changes
+> > > for me to merge in too?
+> > > 
+> > > I've tested this on am335x and am437x so far and it works fine
+> > > for me, so for the whole series:
+> > > 
+> > > Tested-by: Tony Lindgren <tony@atomide.com>
+> > 
+> > Any news on getting this into Linux next and merged? The
+> > immutable is still needed too for the dts changes.
+> > 
+> 
+> This is currently blocked from my side, as the patch [1] from Johan got in
+> clk-next is conflicting with my series. Asked Stephen for either dropping
+> that patch and letting me pick it up but no response so far.
+> 
+> [1] https://lkml.org/lkml/2018/8/22/160
 
-Below is a request to pull updates for Amlogic clocks.
-There is not much out of the ordinary there, except:
-- Even if we don't like it, the entire meson8b is now using
-  CLK_OF_DECLARE_DRIVER(). Previously, only the reset controller
-  part used this but it seems there is no way around it (yet) to
-  handle certain things on this SoC, such as the TWD timer.
-- We are a bit late compared to the usual schedule, sorry about that.
+Hmm well the idea is to not redo branches. So how about
+send Stephen a pull request against Johan's patch commit
+00a461cc32ec ("clk: ti: fix OF child-node lookup")?
 
-Thanks for pulling
+That is assuming 00a461cc32ec is considered immutable and
+OK to use as a base by Stephen? :)
 
-Cheers
-Jerome
+And assuming that your pull request gets merged, and we
+all consider that branch immutable too, then I can merge it
+in too for the dts changes. It will bring also Rob's
+clean-up patch 00a461cc32ec ("clk: ti: fix OF child-node
+lookup") too but that's just fine.
 
-The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
+Regards,
 
-  Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
-
-are available in the Git repository at:
-
-  git://github.com/BayLibre/clk-meson.git tags/meson-clk-4.20-1
-
-for you to fetch changes up to 93c873d686461652921fe18b137ac28002dfe166:
-
-  clk: meson: meson8b: use the regmap in the internal reset controller (2018-09-26 12:02:00 +0200)
-
-----------------------------------------------------------------
-Update for meson clocks targeted at v4.20
-
-- clk-pll driver improvements and updates
-- add axg audio controller system clocks
-- drop mpll3 from the possible pcie clock parent of the axg
-- register meson8b clock controller early
-
-----------------------------------------------------------------
-Jerome Brunet (5):
-      clk: meson: clk-pll: add enable bit
-      clk: meson: clk-pll: drop CLK_GET_RATE_NOCACHE where unnecessary
-      clk: meson: clk-pll: remove od parameters
-      clk: meson: clk-pll: drop hard-coded rates from pll tables
-      clk: meson: axg: round audio system master clocks down
-
-Martin Blumenstingl (2):
-      clk: meson: meson8b: register the clock controller early
-      clk: meson: meson8b: use the regmap in the internal reset controller
-
-Yixun Lan (1):
-      clk: meson-axg: pcie: drop the mpll3 clock parent
-
- drivers/clk/meson/axg-audio.c |  34 ++-
- drivers/clk/meson/axg.c       | 332 +++++++++++++++------------
- drivers/clk/meson/axg.h       |   8 +-
- drivers/clk/meson/clk-pll.c   | 156 ++++++++-----
- drivers/clk/meson/clkc.h      |  16 +-
- drivers/clk/meson/gxbb.c      | 518 +++++++++++++++++++++---------------------
- drivers/clk/meson/gxbb.h      |  10 +-
- drivers/clk/meson/meson8b.c   | 280 +++++++++++------------
- drivers/clk/meson/meson8b.h   |   5 +-
- 9 files changed, 732 insertions(+), 627 deletions(-)
-
-
+Tony
