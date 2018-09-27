@@ -1,190 +1,61 @@
-Return-Path: <andrew.smirnov@gmail.com>
+Return-Path: <t-kristo@ti.com>
+Subject: Re: [PATCH 00/11] clk: ti: clkctrl data split based on clkdm
+ boundaries
+To: Tony Lindgren <tony@atomide.com>
+CC: <linux-clk@vger.kernel.org>, <sboyd@kernel.org>, <mturquette@baylibre.com>,
+        <linux-omap@vger.kernel.org>
+References: <1535728027-24573-1-git-send-email-t-kristo@ti.com>
+ <20180904153657.GB5662@atomide.com> <20180926191301.GX5662@atomide.com>
+From: Tero Kristo <t-kristo@ti.com>
+Message-ID: <e4e90740-393f-edaf-947c-aa1010ab79a3@ti.com>
+Date: Thu, 27 Sep 2018 09:31:10 +0300
 MIME-Version: 1.0
-References: <1537438000-20313-1-git-send-email-abel.vesa@nxp.com> <1537438000-20313-3-git-send-email-abel.vesa@nxp.com>
-In-Reply-To: <1537438000-20313-3-git-send-email-abel.vesa@nxp.com>
-From: Andrey Smirnov <andrew.smirnov@gmail.com>
-Date: Thu, 20 Sep 2018 16:45:49 -0700
-Message-ID: <CAHQ1cqHkp5-XyLAPTWPota6cxM79oaToZEQpa+tewH4CVt9XSA@mail.gmail.com>
-Subject: Re: [PATCH v7 2/5] clk: imx: add fractional PLL output clock
-To: Abel Vesa <abel.vesa@nxp.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>, Sascha Hauer <kernel@pengutronix.de>,
-	Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <fabio.estevam@nxp.com>,
-	Anson Huang <anson.huang@nxp.com>, Rob Herring <robh@kernel.org>, linux-imx@nxp.com,
-	abelvesa@linux.com, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>, Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180926191301.GX5662@atomide.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 List-ID: <linux-clk.vger.kernel.org>
 
-On Thu, Sep 20, 2018 at 3:07 AM Abel Vesa <abel.vesa@nxp.com> wrote:
->
-> From: Lucas Stach <l.stach@pengutronix.de>
->
-> This is a new clock type introduced on i.MX8.
->
-> Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-> ---
->  drivers/clk/imx/Makefile       |   1 +
->  drivers/clk/imx/clk-frac-pll.c | 230 +++++++++++++++++++++++++++++++++++++++++
->  drivers/clk/imx/clk.h          |   3 +
->  3 files changed, 234 insertions(+)
->  create mode 100644 drivers/clk/imx/clk-frac-pll.c
->
-> diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
-> index 8c3baa7..4893c1f 100644
-> --- a/drivers/clk/imx/Makefile
-> +++ b/drivers/clk/imx/Makefile
-> @@ -6,6 +6,7 @@ obj-y += \
->         clk-cpu.o \
->         clk-fixup-div.o \
->         clk-fixup-mux.o \
-> +       clk-frac-pll.o \
->         clk-gate-exclusive.o \
->         clk-gate2.o \
->         clk-pllv1.o \
-> diff --git a/drivers/clk/imx/clk-frac-pll.c b/drivers/clk/imx/clk-frac-pll.c
-> new file mode 100644
-> index 0000000..c80c6ed
-> --- /dev/null
-> +++ b/drivers/clk/imx/clk-frac-pll.c
-> @@ -0,0 +1,230 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright 2018 NXP.
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/err.h>
-> +#include <linux/io.h>
-> +#include <linux/iopoll.h>
-> +#include <linux/jiffies.h>
-> +#include <linux/slab.h>
-> +
-> +#include "clk.h"
-> +
-> +#define PLL_CFG0               0x0
-> +#define PLL_CFG1               0x4
-> +
-> +#define PLL_LOCK_STATUS                BIT(31)
-> +#define PLL_PD                 19
-> +#define PLL_PD_MASK            BIT(PLL_PD)
-> +#define PLL_BYPASS             14
-> +#define PLL_BYPASS_MASK                BIT(PLL_BYPASS)
-> +#define PLL_NEWDIV_VAL         BIT(12)
-> +#define PLL_NEWDIV_ACK         BIT(11)
-> +#define PLL_FRAC_DIV_MASK      0xffffff
-> +#define PLL_INT_DIV_MASK       0x7f
-> +#define PLL_OUTPUT_DIV_MASK    0x1f
-> +#define PLL_FRAC_DENOM         0x1000000
-> +
-> +struct clk_frac_pll {
-> +       struct clk_hw   hw;
-> +       void __iomem    *base;
-> +};
-> +
-> +#define to_clk_frac_pll(_hw) container_of(_hw, struct clk_frac_pll, hw)
-> +
-> +static int clk_wait_lock(struct clk_frac_pll *pll)
-> +{
-> +       unsigned long timeout = jiffies + msecs_to_jiffies(10);
-> +       u32 val;
-> +
-> +       /* Wait for PLL to lock */
-> +       do {
-> +               if (readl_relaxed(pll->base) & PLL_LOCK_STATUS)
-> +                       break;
-> +               if (time_after(jiffies, timeout))
-> +                       break;
-> +       } while (1);
-> +
-> +       return readl_poll_timeout(pll->base, val,
-> +                                       val & PLL_LOCK_STATUS, 0, 1000);
+On 26/09/18 22:13, Tony Lindgren wrote:
+> Hi,
+> 
+> * Tony Lindgren <tony@atomide.com> [180904 15:41]:
+>> * Tero Kristo <t-kristo@ti.com> [180831 15:11]:
+>>> Hi,
+>>>
+>>> This series splits up the clkctrl data for TI SoCs based on clockdomain
+>>> boundaries, instead of the current CM boundaries. For rest of the SoCs,
+>>> the CM boundaries are actually the same as clockdomains, only am3/am4/dra7
+>>> are mutants.
+>>>
+>>> This is done in preparation for better supporting Tony's upcoming
+>>> interconnect driver data introduction for these SoCs.
+>>>
+>>> One thing to note is that we maintain backwards compatibility with this
+>>> series, the compat data is introduced temporarily for this purpose. The
+>>> compat data can be ditched after couple of release cycles when nobody
+>>> needs it anymore.
+>>>
+>>> The series can be applied independently, as the compat data support
+>>> makes care that the switch is only done once DT changes are in place.
+>>
+>> When this is ready for merging, can you guys please set up an
+>> immutable branch against v4.19-rc1 with the drivers/clk changes
+>> for me to merge in too?
+>>
+>> I've tested this on am335x and am437x so far and it works fine
+>> for me, so for the whole series:
+>>
+>> Tested-by: Tony Lindgren <tony@atomide.com>
+> 
+> Any news on getting this into Linux next and merged? The
+> immutable is still needed too for the dts changes.
+> 
 
-Is this code intentional? It seems to me those two are almost
-identical wait loops, so it's a bit confusing to see without at least
-a comment why it is done that way. If it is intentional, can the first
-loop be replaced with readx_poll_timeout(readl_relaxed, ...) ?
+This is currently blocked from my side, as the patch [1] from Johan got 
+in clk-next is conflicting with my series. Asked Stephen for either 
+dropping that patch and letting me pick it up but no response so far.
 
-> +}
-> +
-> +static int clk_wait_ack(struct clk_frac_pll *pll)
-> +{
-> +       unsigned long timeout = jiffies + msecs_to_jiffies(50);
-> +       u32 val;
-> +
-> +       /* return directly if the pll is in powerdown or in bypass */
-> +       if (readl_relaxed(pll->base) & (PLL_PD_MASK | PLL_BYPASS_MASK))
-> +               return 0;
-> +
-> +       /* Wait for the pll's divfi and divff to be reloaded */
-> +       do {
-> +               if (readl_relaxed(pll->base) & PLL_NEWDIV_ACK)
-> +                       break;
-> +               if (time_after(jiffies, timeout))
-> +                       break;
-> +       } while (1);
-> +
-> +       return readl_poll_timeout(pll->base, val,
-> +                                       val & PLL_NEWDIV_ACK, 0, 1000);
-> +}
+[1] https://lkml.org/lkml/2018/8/22/160
 
-Ditto.
-
-> +
-> +static int clk_pll_prepare(struct clk_hw *hw)
-> +{
-> +       struct clk_frac_pll *pll = to_clk_frac_pll(hw);
-> +       u32 val;
-> +
-> +       val = readl_relaxed(pll->base + PLL_CFG0);
-> +       val &= ~PLL_PD_MASK;
-> +       writel_relaxed(val, pll->base + PLL_CFG0);
-> +
-> +       return clk_wait_lock(pll);
-> +}
-> +
-> +static void clk_pll_unprepare(struct clk_hw *hw)
-> +{
-> +       struct clk_frac_pll *pll = to_clk_frac_pll(hw);
-> +       u32 val;
-> +
-> +       val = readl_relaxed(pll->base + PLL_CFG0);
-> +       val |= PLL_PD_MASK;
-> +       writel_relaxed(val, pll->base + PLL_CFG0);
-> +}
-> +
-> +static int clk_pll_is_prepared(struct clk_hw *hw)
-> +{
-> +       struct clk_frac_pll *pll = to_clk_frac_pll(hw);
-> +       u32 val;
-> +
-> +       val = readl_relaxed(pll->base + PLL_CFG0);
-> +       return (val & PLL_PD_MASK) ? 0 : 1;
-> +}
-> +
-> +static unsigned long clk_pll_recalc_rate(struct clk_hw *hw,
-> +                                        unsigned long parent_rate)
-> +{
-> +       struct clk_frac_pll *pll = to_clk_frac_pll(hw);
-> +       u32 val, divff, divfi, divq;
-> +       u64 temp64;
-> +
-> +       val = readl_relaxed(pll->base + PLL_CFG0);
-> +       divq = ((val & PLL_OUTPUT_DIV_MASK) + 1) * 2;
-> +       val = readl_relaxed(pll->base + PLL_CFG1);
-> +       divff = (val >> 7) & PLL_FRAC_DIV_MASK;
-
-Just as a suggestion you can do:
-
-#define PLL_FRAC_DIV GENMASK(30, 7)
-
-divff = FIELD_GET(PLL_FRAC_DIV, val)
-
-it's a bit nicer (IMHO, of course) because it allows you to avoid
-having to encode shit and mask separately and mask definition can be
-easily verified against the datasheet.
-
-Thanks,
-Andrey Smirnov
+-Tero
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
