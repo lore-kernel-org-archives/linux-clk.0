@@ -2,43 +2,62 @@ Return-Path: <SRS0=2F0X=ML=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13796C43143
-	for <linux-clk@archiver.kernel.org>; Sat, 29 Sep 2018 15:05:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71B47C43143
+	for <linux-clk@archiver.kernel.org>; Sat, 29 Sep 2018 15:28:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C16C12073F
-	for <linux-clk@archiver.kernel.org>; Sat, 29 Sep 2018 15:05:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C16C12073F
+	by mail.kernel.org (Postfix) with ESMTP id 29311206B8
+	for <linux-clk@archiver.kernel.org>; Sat, 29 Sep 2018 15:28:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29311206B8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728249AbeI2Vdy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 29 Sep 2018 17:33:54 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:55382 "EHLO mail.bootlin.com"
+        id S1728249AbeI2V4u (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 29 Sep 2018 17:56:50 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:55847 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728111AbeI2Vdy (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 29 Sep 2018 17:33:54 -0400
+        id S1728246AbeI2V4u (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 29 Sep 2018 17:56:50 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id B70A22075C; Sat, 29 Sep 2018 17:05:06 +0200 (CEST)
+        id 7EF9F2075C; Sat, 29 Sep 2018 17:27:58 +0200 (CEST)
 Received: from localhost (unknown [212.145.226.70])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 7B690203DA;
-        Sat, 29 Sep 2018 17:05:06 +0200 (CEST)
-Date:   Sat, 29 Sep 2018 17:05:06 +0200
+        by mail.bootlin.com (Postfix) with ESMTPSA id 3B753206D0;
+        Sat, 29 Sep 2018 17:27:58 +0200 (CEST)
+Date:   Sat, 29 Sep 2018 17:27:58 +0200
 From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc:     Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: [GIT PULL] Allwinner clock fixes for 4.19
-Message-ID: <20180929150506.vch5wuujblgkngfp@flea>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [PATCH 08/12] drm/sun4i: sun6i_mipi_dsi: Refactor vertical video
+ start delay
+Message-ID: <20180929152758.g3goxwjud2ym5rft@flea>
+References: <20180927114850.24565-1-jagan@amarulasolutions.com>
+ <20180927114850.24565-9-jagan@amarulasolutions.com>
+ <20180927171451.7iqt2nt2log5qojf@flea>
+ <CAMty3ZDxpLwVDsgVMjX+6+uz89sQ1aZaXHHZ+-5aogrA4MHmqw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ppfl4xfwicb6p4ps"
+        protocol="application/pgp-signature"; boundary="xe5bugg4kqq4qxfb"
 Content-Disposition: inline
+In-Reply-To: <CAMty3ZDxpLwVDsgVMjX+6+uz89sQ1aZaXHHZ+-5aogrA4MHmqw@mail.gmail.com>
 User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
@@ -46,68 +65,92 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---ppfl4xfwicb6p4ps
+--xe5bugg4kqq4qxfb
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Mike, Stephen,
+On Thu, Sep 27, 2018 at 11:03:19PM +0530, Jagan Teki wrote:
+> On Thu, Sep 27, 2018 at 10:44 PM Maxime Ripard
+> <maxime.ripard@bootlin.com> wrote:
+> >
+> > On Thu, Sep 27, 2018 at 05:18:46PM +0530, Jagan Teki wrote:
+> > > Accordingly to BPI-M64-bsp DE DSI code Video start delay
+> > > can be computed by subtracting total vertical timing with
+> > > front porch timing and with adding 1 delay line for TCON.
+> >
+> > This is what the current code is doing as well.
+>=20
+> The current code
+> return mode->vtotal - (mode->vsync_end - mode->vdisplay) + 1;
+>=20
+> (mode->vsync_end - mode->vdisplay) =3D front porch + sync
+>=20
+> but I'm updating here only front porch.
+>=20
+> >
+> > > This patch simply add the start_delay logic from BPI-M64-bsp,
+> > > w/o this new computation, the DSI on A64 encounter vblank time out.
+> > >
+> > > [CRTC:36:crtc-0] vblank wait timed out
+> > >
+> > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > > ---
+> > >  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 12 +++++++++++-
+> > >  1 file changed, 11 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm=
+/sun4i/sun6i_mipi_dsi.c
+> > > index 9918fdb990ff..217db74c6dc3 100644
+> > > --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> > > +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> > > @@ -358,7 +358,17 @@ static void sun6i_dsi_inst_init(struct sun6i_dsi=
+ *dsi,
+> > >  static u16 sun6i_dsi_get_video_start_delay(struct sun6i_dsi *dsi,
+> > >                                          struct drm_display_mode *mod=
+e)
+> > >  {
+> > > -     return mode->vtotal - (mode->vsync_end - mode->vdisplay) + 1;
+> > > +     u32 vfp =3D mode->vsync_start - mode->vdisplay;
+>=20
+> let me explain this.
+>=20
+> Actual code from Allwinner
+> u32 vfp =3D panel->lcd_vt - panel->lcd_y - panel->lcd_vbp;
+>=20
+> So,
+>=20
+> =3D> (panel->lcd_vt - panel->lcd_y) - (panel->lcd_vbp)
+> =3D> (front porch + sync + back porch) - (back porch + sync)
 
-Here is one fix for 4.19.
+Unless Allwinner is doing something fishy, in which case that should
+be mentionned, the back porch doesn't contain the sync pulse.
 
-Thanks!
 Maxime
-
-The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
-
-  Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/sunx=
-i-clk-fixes-for-4.19
-
-for you to fetch changes up to 80a6ec7d5e1653208eb53f6738620dab98f6f50e:
-
-  clk: sunxi-ng: sun4i: Set VCO and PLL bias current to lowest setting (201=
-8-09-07 10:20:50 +0200)
-
-----------------------------------------------------------------
-Allwinner clk fixes for 4.19
-
-One fix for the Audio PLL that were not properly set and generating noise
-on the A10 SoCs.
-
-----------------------------------------------------------------
-Chen-Yu Tsai (1):
-      clk: sunxi-ng: sun4i: Set VCO and PLL bias current to lowest setting
-
- drivers/clk/sunxi-ng/ccu-sun4i-a10.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
 
 --=20
 Maxime Ripard, Bootlin
 Embedded Linux and Kernel engineering
 https://bootlin.com
 
---ppfl4xfwicb6p4ps
+--xe5bugg4kqq4qxfb
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluvlKEACgkQ0rTAlCFN
-r3TltA/+Mj0jc5cOpEmR6B8VrU23majafHm0W6URBmJC5HgxwpArFg3VeuFY4fJM
-S60e6RD531whsQi6+vE63PO8oefhmk4J2JNtnTPEghdSGhUfkZEED4cpIMIroyuR
-yC1GXrT0nBfNPzyPx3mAt0Vv8922V0mqESR/2S/mM8BRzdYGM9M6cFbmxK67cUMj
-KUCh07aUEdweHBcxPBzyRCDkUHA31Wp7qZmb7Vvvm5u9QET3FiIfhrkIx7S34zTy
-S0SKZ8fY5z3kGE9RAE/zwY7UyYKgSL9fukJkYFrWnauiEfdXLlijjHSo07BO+m8c
-h8eNgVBzUula/UdfwPzWRqnf6BDvaAgT3jiA43BG6UkoK8HSvV1I4zeUh00YF8oF
-+3VH/oerSBNWST/du8hJ0+Tb57G3HQ+4LB6/7r4R4BnNiQ4uF7tNtUTJT9vyARm1
-qVOcFMNHsDERNSYHq0IoYVyHOwG1UpIHZtjRgwbo3RKOnc3iIn3BvLIgJgk0RENl
-ZX5q1RfKGNa9Wi1leP4FmaVzB+eSUwBsTc+VIsqKp2xL/gQwMfM+zhjNZ1aPmNqd
-20T2o7RrH33K6UF0968Etw4zt8zCy0wL1yfU4uELGIQfRY7326QV039oZLzBkr5C
-NWrPJ2EiRYVm3DFpmpMQ52FpaInSKLGr/Y0+inRy7xVl67lYMw4=
-=9xmF
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluvmf0ACgkQ0rTAlCFN
+r3T3RxAAikSkcLX64xL4ADEaM4iclHBK2Ny9w5ont72SDIPINg16ropWPGImoMcB
+pv6NSMPvqAMiOw09wdUWRQRWMf53RLqGoZAMyB9P8E2WWg51OZ9lYCL1XKRzIrdv
+NTN2452YF1eIfT7hDNuS+lLWeQVV0q36x5flkA8L7tMXvqM2//GVq/k21FBTNNXr
+fUqxdTxAEivmIO8eVB14rgcruZSlyFyYRyqjLZIqFityeOWxBpzRPyj5YmP3kLZl
+4NJPPCIv8RhqyOXWQbzmEFmVRp/4bHkQT+0WdnDBVrBIKGG85pS45J5mnlrYK094
+cO8xZHRxYoV3jm5xdzMzLwiOQ5yYD867CIUwgVsQMT/0E8wzfRhZG4FuxEVbyZJL
+YaTjxMC9GwzJgTu7GDCFgx/IaGqLhBO52iYLwNUcZDA9WCuwNN7N3/iirTFhegEU
+IshO6l6UOr/HyTAdlAoF4tTtaJ4YtYDYhLBMcH8D56u/jV1ef5y405NLEubtL8ko
+eXEfC4Xw1aoOhQ8xmBeqzTBfmR9FzAg+B5qIxiDGJqpemgxwkG31/VI7rDfk6S9h
+cSV/jP3hIgTQXHq9es+NQ46dokpNt8MPJ+B0gh3pzo0dLDfC/3sBSKaPrcbdZlzR
+Bbkgp8cA7XB4dRZ3ebBZtZtuA5ri73FZJL37ABSptILhC2vgzX8=
+=3cYf
 -----END PGP SIGNATURE-----
 
---ppfl4xfwicb6p4ps--
+--xe5bugg4kqq4qxfb--
