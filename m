@@ -2,65 +2,47 @@ Return-Path: <SRS0=8ZDx=MO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8A83C43143
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Oct 2018 15:09:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7C63C43143
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Oct 2018 15:28:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19B72206B2
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Oct 2018 15:09:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC68120666
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Oct 2018 15:28:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="v7zDka7k"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19B72206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="IusagCOo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC68120666
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727819AbeJBVww (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 2 Oct 2018 17:52:52 -0400
-Received: from mail-it1-f193.google.com ([209.85.166.193]:51549 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727269AbeJBVww (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Oct 2018 17:52:52 -0400
-Received: by mail-it1-f193.google.com with SMTP id 74-v6so3872032itw.1
-        for <linux-clk@vger.kernel.org>; Tue, 02 Oct 2018 08:09:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=MnlnS188YYea8DLlC4K7nX+l67DmB/7ZL/XmqLqjkSM=;
-        b=v7zDka7k3j2q1e8iyKcU0qMyS9eLMNTES4+SUV4zJJmRA3AHeEnABShE43CbP5VqgS
-         PfNkA0p0HwhgYsPrk/2S4qJLNfX9eTNdy7oQkHKDNc++LnGv+mePpaVe8zVNR9jGhayv
-         ibW2hIiKHWrPpI7BaPv0Livb+SLi7J3Ype5eyotlYRXjRfSE2GvwLusxWWSu1f6JRL+s
-         A94vgcv5veBt0w6AUu5R4Rnr1Ixndk3MLj7UJIjfEFqNO42adHNBuCGoy8tJE9DgGEi9
-         Y8KpwVv0vKuBrR0+qSeXYPQJMqNq6ZfdHRHB0h07qKesbiVBPuN13QvfXQWQEwHXpH0N
-         ewUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=MnlnS188YYea8DLlC4K7nX+l67DmB/7ZL/XmqLqjkSM=;
-        b=C5Tn/egBwsV+DEcB8E56wMhNcndCC9Y0ReOE1cY2mNgY/oiZJJDQ4TxLYxBg8Y/UTe
-         5gK08sbUTGTKpr4Afush0wZvcII4VWdURt/9TNoJs6SKjuzZu+mFxmMDP0oxsqIQ0ZPf
-         pDTA1R8+tJhvxFj1OhkVZ2jvsMXYUG6MunZ2i8SU7FGGbG0DZyIuPW/fwfr68k0+Nakn
-         SdSoRRGppXApAxDCZ5g1hN9HaEeZWn/e3dCL/+u+eqPLucu2wQ08Pfu65oAyagor3wmw
-         b37PN58+vYZKDKVuob8HWKdKwByrtn1ilB+Y4wCA7V4jNhxQA+xnV+9sT8MQPZB4B4Vr
-         lDjg==
-X-Gm-Message-State: ABuFfojb9zF/BdD2OKqczDJJQm3rz4M9po/O5PxW3uat48OE2niAx/2s
-        KADxa3zPhwk4/WMrc7je57p8f+1w3XORvRhSaTQ5mQ==
-X-Google-Smtp-Source: ACcGV62/ZowmigBB6LItqxf/D2zFFiVlQikrNGTRcSwXQMiBBNsc7nXkCsULSX8XahBvDGQpGGee24F5zKs3Rs0OoLI=
-X-Received: by 2002:a24:f047:: with SMTP id p7-v6mr2262197iti.125.1538492940783;
- Tue, 02 Oct 2018 08:09:00 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180621073706.22812-1-brgl@bgdev.pl> <20180621073706.22812-3-brgl@bgdev.pl>
- <160f4225-236c-af54-9693-120e834af578@lechnology.com>
-In-Reply-To: <160f4225-236c-af54-9693-120e834af578@lechnology.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Tue, 2 Oct 2018 17:08:49 +0200
-Message-ID: <CAMRc=McmwWt5OdCxGntDJ-5cxte+Ad2FJcnmWT8NxnBtzP40DA@mail.gmail.com>
-Subject: Re: [PATCH v7 2/4] clk: davinci: kill davinci_clk_reset_assert/deassert()
-To:     David Lechner <david@lechnology.com>
+        id S1727222AbeJBWMp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 2 Oct 2018 18:12:45 -0400
+Received: from vern.gendns.com ([206.190.152.46]:42362 "EHLO vern.gendns.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726330AbeJBWMp (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 2 Oct 2018 18:12:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=Ery2w7D+ksXEHdXAvw8WOM/X879V79mzUm4ZPMHAtsA=; b=IusagCOo6DokguKVtd+CJoYr0y
+        5sR1to8U/+nbMijYLPrFMsvBLtGaaUIHPA5ewTtHhmc4HJi6ga4yBdFBG6BurUYauKEe9H3LCrA1c
+        MFytb12jsjsGXcHOBLYlIlRCwA1f/nGbw345hs3q6hxF7IFbjmnEjRM2y+PlGo6xZvxHqvJieiJNg
+        hdENy0hNe9Vlrr2biLR3Z+UHywraFaQIkZh5jNBKHfDr1zLyQrR6SX1cswhF/Pbqedcv+TDQyCjZ6
+        w8O0nL87tXmqYtZWhgBej02e1mQef+h4Klf6c2G9jeYFehhVcXi3urQJLjPUTh2cHE64vppfFAtVK
+        4BTA6Aww==;
+Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:50784 helo=[192.168.0.134])
+        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <david@lechnology.com>)
+        id 1g7MbN-004G7M-0d; Tue, 02 Oct 2018 11:28:45 -0400
+Subject: Re: [PATCH v7 2/4] clk: davinci: kill
+ davinci_clk_reset_assert/deassert()
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
 Cc:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -75,33 +57,61 @@ Cc:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         linux-clk <linux-clk@vger.kernel.org>,
         linux-remoteproc@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+References: <20180621073706.22812-1-brgl@bgdev.pl>
+ <20180621073706.22812-3-brgl@bgdev.pl>
+ <160f4225-236c-af54-9693-120e834af578@lechnology.com>
+ <CAMRc=McmwWt5OdCxGntDJ-5cxte+Ad2FJcnmWT8NxnBtzP40DA@mail.gmail.com>
+From:   David Lechner <david@lechnology.com>
+Message-ID: <159d6244-8077-e21f-36d9-ccb1eeb3ed78@lechnology.com>
+Date:   Tue, 2 Oct 2018 10:28:44 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <CAMRc=McmwWt5OdCxGntDJ-5cxte+Ad2FJcnmWT8NxnBtzP40DA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-pt., 6 lip 2018 o 19:54 David Lechner <david@lechnology.com> napisa=C5=82(a=
-):
->
-> On 06/21/2018 02:37 AM, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> >
-> > This code is no longer used. Remove it.
-> >
-> > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > Reviewed-by: David Lechner <david@lechnology.com>
-> > Acked-by: Stephen Boyd <sboyd@kernel.org>
-> > ---
->
-> I've picked this up in clk-davinci-4.20, so it will just hang out
-> there for a while until the rest of this series gets merged.
->
+On 10/02/2018 10:08 AM, Bartosz Golaszewski wrote:
+> pt., 6 lip 2018 o 19:54 David Lechner <david@lechnology.com> napisał(a):
+>>
+>> On 06/21/2018 02:37 AM, Bartosz Golaszewski wrote:
+>>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>>
+>>> This code is no longer used. Remove it.
+>>>
+>>> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>> Reviewed-by: David Lechner <david@lechnology.com>
+>>> Acked-by: Stephen Boyd <sboyd@kernel.org>
+>>> ---
+>>
+>> I've picked this up in clk-davinci-4.20, so it will just hang out
+>> there for a while until the rest of this series gets merged.
+>>
+> 
+> Hi David,
+> 
+> I don't see this patch in next yet. Is it queued for 4.20?
+> 
+> Thanks in advance,
+> Bartosz
+> 
 
-Hi David,
+This is currently the only clk-davinici patch I have queued, so it
+might be easier to just resend it and let Stephen/Mike pick it up
+directly instead of me sending a pull request for one patch.
 
-I don't see this patch in next yet. Is it queued for 4.20?
-
-Thanks in advance,
-Bartosz
