@@ -2,175 +2,106 @@ Return-Path: <SRS0=8ZDx=MO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E00DDC43143
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Oct 2018 14:02:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8A83C43143
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Oct 2018 15:09:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6BB92064A
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Oct 2018 14:02:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6BB92064A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 19B72206B2
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Oct 2018 15:09:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="v7zDka7k"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19B72206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730237AbeJBUNW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:13:22 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:37319 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729584AbeJBUNU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:13:20 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 3F69B20DDD; Tue,  2 Oct 2018 15:29:56 +0200 (CEST)
-Received: from localhost (AAubervilliers-681-1-24-95.w90-88.abo.wanadoo.fr [90.88.144.95])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 0C7D320DD5;
-        Tue,  2 Oct 2018 15:29:46 +0200 (CEST)
-Date:   Tue, 2 Oct 2018 15:29:46 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Jagan Teki <jagan@openedev.com>
-Cc:     Jagan Teki <jagan@amarulasolutions.com>,
-        Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
+        id S1727819AbeJBVww (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 2 Oct 2018 17:52:52 -0400
+Received: from mail-it1-f193.google.com ([209.85.166.193]:51549 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727269AbeJBVww (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Oct 2018 17:52:52 -0400
+Received: by mail-it1-f193.google.com with SMTP id 74-v6so3872032itw.1
+        for <linux-clk@vger.kernel.org>; Tue, 02 Oct 2018 08:09:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=MnlnS188YYea8DLlC4K7nX+l67DmB/7ZL/XmqLqjkSM=;
+        b=v7zDka7k3j2q1e8iyKcU0qMyS9eLMNTES4+SUV4zJJmRA3AHeEnABShE43CbP5VqgS
+         PfNkA0p0HwhgYsPrk/2S4qJLNfX9eTNdy7oQkHKDNc++LnGv+mePpaVe8zVNR9jGhayv
+         ibW2hIiKHWrPpI7BaPv0Livb+SLi7J3Ype5eyotlYRXjRfSE2GvwLusxWWSu1f6JRL+s
+         A94vgcv5veBt0w6AUu5R4Rnr1Ixndk3MLj7UJIjfEFqNO42adHNBuCGoy8tJE9DgGEi9
+         Y8KpwVv0vKuBrR0+qSeXYPQJMqNq6ZfdHRHB0h07qKesbiVBPuN13QvfXQWQEwHXpH0N
+         ewUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=MnlnS188YYea8DLlC4K7nX+l67DmB/7ZL/XmqLqjkSM=;
+        b=C5Tn/egBwsV+DEcB8E56wMhNcndCC9Y0ReOE1cY2mNgY/oiZJJDQ4TxLYxBg8Y/UTe
+         5gK08sbUTGTKpr4Afush0wZvcII4VWdURt/9TNoJs6SKjuzZu+mFxmMDP0oxsqIQ0ZPf
+         pDTA1R8+tJhvxFj1OhkVZ2jvsMXYUG6MunZ2i8SU7FGGbG0DZyIuPW/fwfr68k0+Nakn
+         SdSoRRGppXApAxDCZ5g1hN9HaEeZWn/e3dCL/+u+eqPLucu2wQ08Pfu65oAyagor3wmw
+         b37PN58+vYZKDKVuob8HWKdKwByrtn1ilB+Y4wCA7V4jNhxQA+xnV+9sT8MQPZB4B4Vr
+         lDjg==
+X-Gm-Message-State: ABuFfojb9zF/BdD2OKqczDJJQm3rz4M9po/O5PxW3uat48OE2niAx/2s
+        KADxa3zPhwk4/WMrc7je57p8f+1w3XORvRhSaTQ5mQ==
+X-Google-Smtp-Source: ACcGV62/ZowmigBB6LItqxf/D2zFFiVlQikrNGTRcSwXQMiBBNsc7nXkCsULSX8XahBvDGQpGGee24F5zKs3Rs0OoLI=
+X-Received: by 2002:a24:f047:: with SMTP id p7-v6mr2262197iti.125.1538492940783;
+ Tue, 02 Oct 2018 08:09:00 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180621073706.22812-1-brgl@bgdev.pl> <20180621073706.22812-3-brgl@bgdev.pl>
+ <160f4225-236c-af54-9693-120e834af578@lechnology.com>
+In-Reply-To: <160f4225-236c-af54-9693-120e834af578@lechnology.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Tue, 2 Oct 2018 17:08:49 +0200
+Message-ID: <CAMRc=McmwWt5OdCxGntDJ-5cxte+Ad2FJcnmWT8NxnBtzP40DA@mail.gmail.com>
+Subject: Re: [PATCH v7 2/4] clk: davinci: kill davinci_clk_reset_assert/deassert()
+To:     David Lechner <david@lechnology.com>
+Cc:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
+        Russell King <linux@armlinux.org.uk>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
         devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [linux-sunxi] Re: [PATCH 08/12] drm/sun4i: sun6i_mipi_dsi:
- Refactor vertical video start delay
-Message-ID: <20181002132946.edwzz2bu3n563624@flea>
-References: <20180927114850.24565-1-jagan@amarulasolutions.com>
- <20180927114850.24565-9-jagan@amarulasolutions.com>
- <20180927171451.7iqt2nt2log5qojf@flea>
- <CAMty3ZDxpLwVDsgVMjX+6+uz89sQ1aZaXHHZ+-5aogrA4MHmqw@mail.gmail.com>
- <20180929152758.g3goxwjud2ym5rft@flea>
- <c6933daf-c445-ade4-a31b-f311ddae7256@openedev.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="nezefevfeqbrgb5f"
-Content-Disposition: inline
-In-Reply-To: <c6933daf-c445-ade4-a31b-f311ddae7256@openedev.com>
-User-Agent: NeoMutt/20180716
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-remoteproc@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+pt., 6 lip 2018 o 19:54 David Lechner <david@lechnology.com> napisa=C5=82(a=
+):
+>
+> On 06/21/2018 02:37 AM, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> >
+> > This code is no longer used. Remove it.
+> >
+> > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> > Reviewed-by: David Lechner <david@lechnology.com>
+> > Acked-by: Stephen Boyd <sboyd@kernel.org>
+> > ---
+>
+> I've picked this up in clk-davinci-4.20, so it will just hang out
+> there for a while until the rest of this series gets merged.
+>
 
---nezefevfeqbrgb5f
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi David,
 
-On Mon, Oct 01, 2018 at 01:25:59PM +0530, Jagan Teki wrote:
-> On Saturday 29 September 2018 08:57 PM, Maxime Ripard wrote:
-> > On Thu, Sep 27, 2018 at 11:03:19PM +0530, Jagan Teki wrote:
-> > > On Thu, Sep 27, 2018 at 10:44 PM Maxime Ripard
-> > > <maxime.ripard@bootlin.com> wrote:
-> > > >=20
-> > > > On Thu, Sep 27, 2018 at 05:18:46PM +0530, Jagan Teki wrote:
-> > > > > Accordingly to BPI-M64-bsp DE DSI code Video start delay
-> > > > > can be computed by subtracting total vertical timing with
-> > > > > front porch timing and with adding 1 delay line for TCON.
-> > > >=20
-> > > > This is what the current code is doing as well.
-> > >=20
-> > > The current code
-> > > return mode->vtotal - (mode->vsync_end - mode->vdisplay) + 1;
-> > >=20
-> > > (mode->vsync_end - mode->vdisplay) =3D front porch + sync
-> > >=20
-> > > but I'm updating here only front porch.
-> > >=20
-> > > >=20
-> > > > > This patch simply add the start_delay logic from BPI-M64-bsp,
-> > > > > w/o this new computation, the DSI on A64 encounter vblank time ou=
-t.
-> > > > >=20
-> > > > > [CRTC:36:crtc-0] vblank wait timed out
-> > > > >=20
-> > > > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> > > > > ---
-> > > > >   drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 12 +++++++++++-
-> > > > >   1 file changed, 11 insertions(+), 1 deletion(-)
-> > > > >=20
-> > > > > diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu=
-/drm/sun4i/sun6i_mipi_dsi.c
-> > > > > index 9918fdb990ff..217db74c6dc3 100644
-> > > > > --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> > > > > +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> > > > > @@ -358,7 +358,17 @@ static void sun6i_dsi_inst_init(struct sun6i=
-_dsi *dsi,
-> > > > >   static u16 sun6i_dsi_get_video_start_delay(struct sun6i_dsi *ds=
-i,
-> > > > >                                           struct drm_display_mode=
- *mode)
-> > > > >   {
-> > > > > -     return mode->vtotal - (mode->vsync_end - mode->vdisplay) + =
-1;
-> > > > > +     u32 vfp =3D mode->vsync_start - mode->vdisplay;
-> > >=20
-> > > let me explain this.
-> > >=20
-> > > Actual code from Allwinner
-> > > u32 vfp =3D panel->lcd_vt - panel->lcd_y - panel->lcd_vbp;
-> > >=20
-> > > So,
-> > >=20
-> > > =3D> (panel->lcd_vt - panel->lcd_y) - (panel->lcd_vbp)
-> > > =3D> (front porch + sync + back porch) - (back porch + sync)
-> >=20
-> > Unless Allwinner is doing something fishy, in which case that should
-> > be mentionned, the back porch doesn't contain the sync pulse.
->=20
-> As per as I understand panel->lcd_vbp is not back porch timings value whi=
-ch
-> i used by drm. It is BSP DTS property value and actual back porch is
-> calculated as "panel->lcd_vbp - panel->sync"
->=20
-> timmings->ver_sync_time=3D panel_info->lcd_vspw;
-> timmings->ver_back_porch=3D panel_info->lcd_vbp-panel_info->lcd_vspw;
+I don't see this patch in next yet. Is it queued for 4.20?
 
-Then this is what you should have started with in your commit
-log. Where is that code coming from? Have you been able to confirm
-that with an oscilloscope?
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---nezefevfeqbrgb5f
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluzcskACgkQ0rTAlCFN
-r3RGKQ/+MKAFwlfjgJ/YvdWDI2luHGncQPgcpERl8m1sB3/n0rQCi9rChz+ivF/B
-MLz0GhbNkbjuLnxmTU/Ts1QaFZUGFk9o3nB5yft80idlxEarsr9u690OhAfqVTcK
-cY3KFzFKf2Qu+dAn8AmzRC6M79cS9ovl0jNMPTRCPzX7QEE8SLhDtQR84KBNINbX
-2eb/iXNVhuPkmKGOK3oVyNQtiLqnkO+yqiNy89v70UQaK6BbVkmOI98nZjw3082g
-J+lc/Rw8sY/iMKUinBQ3v1UWgAgqDBc/ImNfyCzTHZSwSQ62QG65aYPXZps2nefV
-MGaKRrql6K23nCUIgBTsiTk6yVXDmwTsFPsYJcQdHK27WKvxFnHZLaKTstixTchc
-h06rwYWkL17ZtHBWASreMEJnd1VNjMzQLRwEbZf5wFOGdMtQMo0fuNVw7uSRc0Uo
-VOH2HHkw2gGNWH1+9m0T3JVpwrfR545Cve5LFIe3fVIfWrFPkQAjG+Ctn76a3R6x
-YxYeqYX7GDORQti9KXwFOC8nt92zSnyILnfCVj6Uk/NT9TKkYHtxcCrx8OLg1bB7
-oviZNgd/f4FcTL1jXkkA+5yPhGHRntAqoYOl4P47C0PiyFoDUc0TrwdWTwUIpeAR
-tdoEGcv9eM0qz17x8LI3gKUxL3hzW8EL818xFitvVPTOS/wltl4=
-=vYGs
------END PGP SIGNATURE-----
-
---nezefevfeqbrgb5f--
+Thanks in advance,
+Bartosz
