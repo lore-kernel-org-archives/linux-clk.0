@@ -3,78 +3,76 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FC99C004D2
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Oct 2018 07:18:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49283C004D2
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Oct 2018 07:36:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE1462089A
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Oct 2018 07:18:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E2F02089C
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Oct 2018 07:36:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tsXGVLa5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE1462089A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0t/mtGoU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E2F02089C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727131AbeJBOAU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 2 Oct 2018 10:00:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36156 "EHLO mail.kernel.org"
+        id S1726874AbeJBORw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 2 Oct 2018 10:17:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41424 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726758AbeJBOAT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 2 Oct 2018 10:00:19 -0400
+        id S1726304AbeJBORw (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 2 Oct 2018 10:17:52 -0400
 Received: from localhost (unknown [104.132.0.94])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9C0652089A;
-        Tue,  2 Oct 2018 07:18:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 34BFD20878;
+        Tue,  2 Oct 2018 07:36:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538464711;
-        bh=gv8XA+Oh9Czgq+uiOsbl9jkuVzFTFtx2fdGGtyrtULQ=;
+        s=default; t=1538465760;
+        bh=JaBxdk8dlc75n+tiHyHmslRgG4Lljg32mJmDqV4Bh5Q=;
         h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=tsXGVLa5q5QJY19wSGB+nxU1gFWqPNRAUK2vTRU9xQIowE5PMmO/7zfPJ0+qWxaBM
-         8mfg99R6WVul2+HM2cZakfx243ji+LWsph6gK8wEpASSS7CcVc4NQ/8gCdn7sELsor
-         gAyL5IOC7uiQiPSWF1EWa6Rbpu/gHjSXeMCPTfQc=
+        b=0t/mtGoUgUUxiMDQVFq6100Fq+0mDM7mFOjff+MycZoBWftAQfXEXFvqjO81CWVY2
+         1UcjDYpkBIbWTp0yBbZ13ac0Pbo94kAmyUg0HZJ2DtTNjSTp1eMSsEUFQuOThgr7MJ
+         9PObHDjmai1QlPyDxBAWMvyxgmCTWHJP4/lWwifM=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-To:     Lubomir Rintel <lkundrak@v3.sk>, linux-kernel@vger.kernel.org
+To:     Peter De Schrijver <pdeschrijver@nvidia.com>,
+        ryang <decatf@gmail.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180910112654.42061-5-lkundrak@v3.sk>
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-input@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+In-Reply-To: <153843172633.119890.17243129066234373128@swboyd.mtv.corp.google.com>
+Cc:     Prashant Gaikwad <pgaikwad@nvidia.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Lubomir Rintel <lkundrak@v3.sk>
-References: <20180910112654.42061-1-lkundrak@v3.sk>
- <20180910112654.42061-5-lkundrak@v3.sk>
-Message-ID: <153846471096.119890.948010578540326036@swboyd.mtv.corp.google.com>
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ryang <decatf@gmail.com>
+References: <20180921220037.16862-1-decatf@gmail.com>
+ <153843172633.119890.17243129066234373128@swboyd.mtv.corp.google.com>
+Message-ID: <153846575952.119890.6094475401652816252@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.7
-Subject: Re: [PATCH 4/8] clk: mmp2: add SP clock
-Date:   Tue, 02 Oct 2018 00:18:30 -0700
+Subject: Re: [PATCH] clk: tegra: Fix an infinite loop when clock rate is zero
+Date:   Tue, 02 Oct 2018 00:35:59 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Lubomir Rintel (2018-09-10 04:26:50)
-> The "security processor", sometimes referred to as "wireless trusted
-> module" or "generic encrypt unit" is a low-power core present on MMP2,
-> that has nothing to do with security, wireless, trust or encryption.
+Quoting Stephen Boyd (2018-10-01 15:08:46)
+> Quoting ryang (2018-09-21 15:00:37)
+> > Calling clk_set_rate or clk_round_rate will lock up the kernel when the
+> > rate is zero. This avoids the infinite loop and uses a slightly more
+> > optimized p divider calculation.
+> > =
+
+> > Signed-off-by: ryang <decatf@gmail.com>
 > =
 
-> On an OLPC machine it runs CForth and serves as a keyboard controller:
-> http://dev.laptop.org/git/users/wmb/cforth/tree/src/app/arm-xo-1.75/ps2.f=
-th
+> Do you have a more proper name? Or you want the author name to show up as
+> "ryang"?
 > =
 
-> The register address was obtained from the OLPC kernel, since the
-> datasheet seems to be the Marvell's most important business secret.
-> =
 
-> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-> ---
-
-Acked-by: Stephen Boyd <sboyd@kernel.org>
-
+I see a v2 on the list, and it looks similar so I'm going to assume this
+is superseded now.
