@@ -6,41 +6,41 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 235AFC43143
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Oct 2018 07:18:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FC99C004D2
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Oct 2018 07:18:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC15D2089A
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Oct 2018 07:18:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE1462089A
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Oct 2018 07:18:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="X8D0R45J"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC15D2089A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tsXGVLa5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE1462089A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726868AbeJBOAI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 2 Oct 2018 10:00:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36064 "EHLO mail.kernel.org"
+        id S1727131AbeJBOAU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 2 Oct 2018 10:00:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36156 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726783AbeJBOAH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 2 Oct 2018 10:00:07 -0400
+        id S1726758AbeJBOAT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 2 Oct 2018 10:00:19 -0400
 Received: from localhost (unknown [104.132.0.94])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C2E052089A;
-        Tue,  2 Oct 2018 07:18:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9C0652089A;
+        Tue,  2 Oct 2018 07:18:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538464699;
-        bh=KSsVEqcYfFENW6VCAM36i/oqdb6GCEtSX413F/ErMOA=;
+        s=default; t=1538464711;
+        bh=gv8XA+Oh9Czgq+uiOsbl9jkuVzFTFtx2fdGGtyrtULQ=;
         h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=X8D0R45JcdCp4oW/gbci4s0lSWOi50TyjnIDCxtYQkdpKKjwAQxhqY4ny7wk15DWB
-         x0xMzcgwjgO/dNqjPVdci1Aj216+Y3uKeZSQFt4s9cLeQvZIlUoIIgCTs6GWl6zsht
-         8RTv2bpDcIxHOhyOI5U01vA0y575QeM5qAv1vZMs=
+        b=tsXGVLa5q5QJY19wSGB+nxU1gFWqPNRAUK2vTRU9xQIowE5PMmO/7zfPJ0+qWxaBM
+         8mfg99R6WVul2+HM2cZakfx243ji+LWsph6gK8wEpASSS7CcVc4NQ/8gCdn7sELsor
+         gAyL5IOC7uiQiPSWF1EWa6Rbpu/gHjSXeMCPTfQc=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 To:     Lubomir Rintel <lkundrak@v3.sk>, linux-kernel@vger.kernel.org
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180910112654.42061-4-lkundrak@v3.sk>
+In-Reply-To: <20180910112654.42061-5-lkundrak@v3.sk>
 Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-input@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -48,18 +48,29 @@ Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         Michael Turquette <mturquette@baylibre.com>,
         Lubomir Rintel <lkundrak@v3.sk>
 References: <20180910112654.42061-1-lkundrak@v3.sk>
- <20180910112654.42061-4-lkundrak@v3.sk>
-Message-ID: <153846469907.119890.12700901744521125166@swboyd.mtv.corp.google.com>
+ <20180910112654.42061-5-lkundrak@v3.sk>
+Message-ID: <153846471096.119890.948010578540326036@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.7
-Subject: Re: [PATCH 3/8] dt-bindings: marvell,mmp2: Add clock id for the SP clock
-Date:   Tue, 02 Oct 2018 00:18:19 -0700
+Subject: Re: [PATCH 4/8] clk: mmp2: add SP clock
+Date:   Tue, 02 Oct 2018 00:18:30 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Lubomir Rintel (2018-09-10 04:26:49)
-> This is the clock for the "security processor" core.
+Quoting Lubomir Rintel (2018-09-10 04:26:50)
+> The "security processor", sometimes referred to as "wireless trusted
+> module" or "generic encrypt unit" is a low-power core present on MMP2,
+> that has nothing to do with security, wireless, trust or encryption.
+> =
+
+> On an OLPC machine it runs CForth and serves as a keyboard controller:
+> http://dev.laptop.org/git/users/wmb/cforth/tree/src/app/arm-xo-1.75/ps2.f=
+th
+> =
+
+> The register address was obtained from the OLPC kernel, since the
+> datasheet seems to be the Marvell's most important business secret.
 > =
 
 > Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
