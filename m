@@ -3,33 +3,34 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A615C43143
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Oct 2018 13:20:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E00DDC43143
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Oct 2018 14:02:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E93DD2082A
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Oct 2018 13:20:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E93DD2082A
+	by mail.kernel.org (Postfix) with ESMTP id A6BB92064A
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Oct 2018 14:02:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6BB92064A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726689AbeJBUDk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 2 Oct 2018 16:03:40 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:36440 "EHLO mail.bootlin.com"
+        id S1730237AbeJBUNW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 2 Oct 2018 16:13:22 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:37319 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726649AbeJBUDj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 2 Oct 2018 16:03:39 -0400
+        id S1729584AbeJBUNU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 2 Oct 2018 16:13:20 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 697F6208C2; Tue,  2 Oct 2018 15:20:18 +0200 (CEST)
+        id 3F69B20DDD; Tue,  2 Oct 2018 15:29:56 +0200 (CEST)
 Received: from localhost (AAubervilliers-681-1-24-95.w90-88.abo.wanadoo.fr [90.88.144.95])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 3D98D20A90;
-        Tue,  2 Oct 2018 15:20:08 +0200 (CEST)
-Date:   Tue, 2 Oct 2018 15:20:08 +0200
+        by mail.bootlin.com (Postfix) with ESMTPSA id 0C7D320DD5;
+        Tue,  2 Oct 2018 15:29:46 +0200 (CEST)
+Date:   Tue, 2 Oct 2018 15:29:46 +0200
 From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+To:     Jagan Teki <jagan@openedev.com>
+Cc:     Jagan Teki <jagan@amarulasolutions.com>,
+        Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
         Jernej Skrabec <jernej.skrabec@siol.net>,
         Vasily Khoruzhick <anarsoul@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -46,17 +47,20 @@ Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
         devicetree <devicetree@vger.kernel.org>,
         linux-kernel <linux-kernel@vger.kernel.org>,
         linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [PATCH 07/12] drm/sun4i: sun6i_mipi_dsi: Fix TCON DRQ set bits
-Message-ID: <20181002132008.qtatwtbb3ldu75ay@flea>
+Subject: Re: [linux-sunxi] Re: [PATCH 08/12] drm/sun4i: sun6i_mipi_dsi:
+ Refactor vertical video start delay
+Message-ID: <20181002132946.edwzz2bu3n563624@flea>
 References: <20180927114850.24565-1-jagan@amarulasolutions.com>
- <20180927114850.24565-8-jagan@amarulasolutions.com>
- <20180927165853.dpluekbqzat663q7@flea>
- <CAMty3ZDUxqokipNqnn6c618pebdVBWc8Pfzaz+4+SYqR42Yerg@mail.gmail.com>
+ <20180927114850.24565-9-jagan@amarulasolutions.com>
+ <20180927171451.7iqt2nt2log5qojf@flea>
+ <CAMty3ZDxpLwVDsgVMjX+6+uz89sQ1aZaXHHZ+-5aogrA4MHmqw@mail.gmail.com>
+ <20180929152758.g3goxwjud2ym5rft@flea>
+ <c6933daf-c445-ade4-a31b-f311ddae7256@openedev.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="e3ngso3ragygfnwc"
+        protocol="application/pgp-signature"; boundary="nezefevfeqbrgb5f"
 Content-Disposition: inline
-In-Reply-To: <CAMty3ZDUxqokipNqnn6c618pebdVBWc8Pfzaz+4+SYqR42Yerg@mail.gmail.com>
+In-Reply-To: <c6933daf-c445-ade4-a31b-f311ddae7256@openedev.com>
 User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
@@ -64,105 +68,109 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---e3ngso3ragygfnwc
+--nezefevfeqbrgb5f
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 27, 2018 at 11:15:50PM +0530, Jagan Teki wrote:
-> On Thu, Sep 27, 2018 at 10:28 PM Maxime Ripard
-> <maxime.ripard@bootlin.com> wrote:
-> >
-> > On Thu, Sep 27, 2018 at 05:18:45PM +0530, Jagan Teki wrote:
-> > > TCON DRQ set bits for non-burst DSI mode can computed via
-> > > horizontal front porch instead of front porch + sync timings.
-> > >
-> > > Since there no documentation for TCON_DRQ_REG(0x7c) register
-> > > this change is taken as reference from BPI-M64-bsp.
-> >
-> > Detailing more what the issue is would be great.
-> >
-> > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> > > ---
-> > >  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 4 ++--
-> > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm=
-/sun4i/sun6i_mipi_dsi.c
-> > > index 599284971ab6..9918fdb990ff 100644
-> > > --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> > > +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> > > @@ -367,9 +367,9 @@ static void sun6i_dsi_setup_burst(struct sun6i_ds=
-i *dsi,
-> > >       struct mipi_dsi_device *device =3D dsi->device;
-> > >       u32 val =3D 0;
-> >
-> > The computation here is in the A64 driver:
-> >
-> > if ((panel->lcd_ht - panel->lcd_x - panel->lcd_hbp) < 21) {
-> >         dsi_dev[sel]->dsi_tcon_drq.bits.drq_mode =3D 0;
-> > } else {
-> >         dsi_dev[sel]->dsi_tcon_drq.bits.drq_set =3D
-> >                 (panel->lcd_ht-panel->lcd_x-panel->lcd_hbp-20) *
-> >                 dsi_pixel_bits[panel->lcd_dsi_format]/(8*4);
-> > }
-> >
-> > It is testing that the sync + front porch is smaller than 21, and
-> > otherwise sets the drq.
-> >
-> > > -     if ((mode->hsync_end - mode->hdisplay) > 20) {
-> >
-> > My code here is testing that the difference between hsync_end and
-> > hdisplay is superior to 20, and sets the DRQ if true. The condition is
-> > reversed, but otherwise, that difference is the front porch plus the
-> > sync length.
+On Mon, Oct 01, 2018 at 01:25:59PM +0530, Jagan Teki wrote:
+> On Saturday 29 September 2018 08:57 PM, Maxime Ripard wrote:
+> > On Thu, Sep 27, 2018 at 11:03:19PM +0530, Jagan Teki wrote:
+> > > On Thu, Sep 27, 2018 at 10:44 PM Maxime Ripard
+> > > <maxime.ripard@bootlin.com> wrote:
+> > > >=20
+> > > > On Thu, Sep 27, 2018 at 05:18:46PM +0530, Jagan Teki wrote:
+> > > > > Accordingly to BPI-M64-bsp DE DSI code Video start delay
+> > > > > can be computed by subtracting total vertical timing with
+> > > > > front porch timing and with adding 1 delay line for TCON.
+> > > >=20
+> > > > This is what the current code is doing as well.
+> > >=20
+> > > The current code
+> > > return mode->vtotal - (mode->vsync_end - mode->vdisplay) + 1;
+> > >=20
+> > > (mode->vsync_end - mode->vdisplay) =3D front porch + sync
+> > >=20
+> > > but I'm updating here only front porch.
+> > >=20
+> > > >=20
+> > > > > This patch simply add the start_delay logic from BPI-M64-bsp,
+> > > > > w/o this new computation, the DSI on A64 encounter vblank time ou=
+t.
+> > > > >=20
+> > > > > [CRTC:36:crtc-0] vblank wait timed out
+> > > > >=20
+> > > > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > > > > ---
+> > > > >   drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 12 +++++++++++-
+> > > > >   1 file changed, 11 insertions(+), 1 deletion(-)
+> > > > >=20
+> > > > > diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu=
+/drm/sun4i/sun6i_mipi_dsi.c
+> > > > > index 9918fdb990ff..217db74c6dc3 100644
+> > > > > --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> > > > > +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> > > > > @@ -358,7 +358,17 @@ static void sun6i_dsi_inst_init(struct sun6i=
+_dsi *dsi,
+> > > > >   static u16 sun6i_dsi_get_video_start_delay(struct sun6i_dsi *ds=
+i,
+> > > > >                                           struct drm_display_mode=
+ *mode)
+> > > > >   {
+> > > > > -     return mode->vtotal - (mode->vsync_end - mode->vdisplay) + =
+1;
+> > > > > +     u32 vfp =3D mode->vsync_start - mode->vdisplay;
+> > >=20
+> > > let me explain this.
+> > >=20
+> > > Actual code from Allwinner
+> > > u32 vfp =3D panel->lcd_vt - panel->lcd_y - panel->lcd_vbp;
+> > >=20
+> > > So,
+> > >=20
+> > > =3D> (panel->lcd_vt - panel->lcd_y) - (panel->lcd_vbp)
+> > > =3D> (front porch + sync + back porch) - (back porch + sync)
+> >=20
+> > Unless Allwinner is doing something fishy, in which case that should
+> > be mentionned, the back porch doesn't contain the sync pulse.
 >=20
-> True, I understand this, but does drq setting here is specific to SoC?
-> I thought of finding DRQ in A31 BSP but I couldn't find the code. do
-> you have bsp somewhere in github?
+> As per as I understand panel->lcd_vbp is not back porch timings value whi=
+ch
+> i used by drm. It is BSP DTS property value and actual back porch is
+> calculated as "panel->lcd_vbp - panel->sync"
 >=20
-> >
-> > > +     if ((mode->hsync_start - mode->hdisplay) > 20) {
-> >
-> > However, you are testing for just the front porch, unlike what your
-> > commit log is saying, and unlike what allwinner's code is saying. So
-> > this deserves some explanation.
->=20
-> but A64 is doing this, do you think it's completely A64 specific or
-> testing panel with front porch drq?
+> timmings->ver_sync_time=3D panel_info->lcd_vspw;
+> timmings->ver_back_porch=3D panel_info->lcd_vbp-panel_info->lcd_vspw;
 
-See the above code excerpt:
-panel->lcd_ht - panel->lcd_x - panel->lcd_hbp
-
-This is hsync + front porch. Not the sole front porch. So no, it's not
-doing this.
+Then this is what you should have started with in your commit
+log. Where is that code coming from? Have you been able to confirm
+that with an oscilloscope?
 
 Maxime
-
 
 --=20
 Maxime Ripard, Bootlin
 Embedded Linux and Kernel engineering
 https://bootlin.com
 
---e3ngso3ragygfnwc
+--nezefevfeqbrgb5f
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluzcIcACgkQ0rTAlCFN
-r3QaUA//UqgcQMvezF4AVH8GOBqM98kZm6zSSgnfvobj+hXIdaewSkDYYY5PNTa6
-anrc5WJ9VtL+Y+TUJ1s/Gz8M8hd1RosFvAOQg5SaZt8ijeNuTCIUj9+mlGJi2M5f
-ouh4SLSSOwY4sn7aWB44AA/Zo+Mx4aXBcvHg7xMNIxKHctemelAuFTDWvojZLNe9
-foeGzILwAY8CbXIGrOxViSRnI/aUOmxXGyExHulKWUGh1e58c6F6harsUpaLDCQH
-G8/DhZmYHEXhekFR1KaoncQwkdMpgPpwqJIXTB9ScDWbkRzfMjFFmdfKKN3jLTJr
-/gsdqLyuQ1mhH0Mkf9lJsrBLDXXfMc8DX/9abfEBoASc7cblEWFAr1T8Qi1kiA6t
-0wYss1i19BQap9nA3eJvySfz7c4lkrCJXpJxhNq8589JIBbphzGN9//m/Ij24XSr
-XHndjIept97cnIR0x+zCYpscA7lisKrIyDtAwwgg4j6navWoH10Xsu8JXommr8aX
-FmVpPMx8QyLObU57YVTHzKM6r6dg1fgqKq0iQqKzOeOK77T2xTcTI5gU4QYLZwzv
-e+qiEmdCm0pMyBShXSW3BtM+AWPOSsAjcsyPJvsHHz4g/WxQKdZGkCc9kvbQsoA6
-QdqSjUj5sFGdt8lXRL6lrjtzNWwVlb/RuHKVOe3Fp4e6jl8DSjs=
-=JRz4
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAluzcskACgkQ0rTAlCFN
+r3RGKQ/+MKAFwlfjgJ/YvdWDI2luHGncQPgcpERl8m1sB3/n0rQCi9rChz+ivF/B
+MLz0GhbNkbjuLnxmTU/Ts1QaFZUGFk9o3nB5yft80idlxEarsr9u690OhAfqVTcK
+cY3KFzFKf2Qu+dAn8AmzRC6M79cS9ovl0jNMPTRCPzX7QEE8SLhDtQR84KBNINbX
+2eb/iXNVhuPkmKGOK3oVyNQtiLqnkO+yqiNy89v70UQaK6BbVkmOI98nZjw3082g
+J+lc/Rw8sY/iMKUinBQ3v1UWgAgqDBc/ImNfyCzTHZSwSQ62QG65aYPXZps2nefV
+MGaKRrql6K23nCUIgBTsiTk6yVXDmwTsFPsYJcQdHK27WKvxFnHZLaKTstixTchc
+h06rwYWkL17ZtHBWASreMEJnd1VNjMzQLRwEbZf5wFOGdMtQMo0fuNVw7uSRc0Uo
+VOH2HHkw2gGNWH1+9m0T3JVpwrfR545Cve5LFIe3fVIfWrFPkQAjG+Ctn76a3R6x
+YxYeqYX7GDORQti9KXwFOC8nt92zSnyILnfCVj6Uk/NT9TKkYHtxcCrx8OLg1bB7
+oviZNgd/f4FcTL1jXkkA+5yPhGHRntAqoYOl4P47C0PiyFoDUc0TrwdWTwUIpeAR
+tdoEGcv9eM0qz17x8LI3gKUxL3hzW8EL818xFitvVPTOS/wltl4=
+=vYGs
 -----END PGP SIGNATURE-----
 
---e3ngso3ragygfnwc--
+--nezefevfeqbrgb5f--
