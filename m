@@ -1,85 +1,69 @@
-Return-Path: <SRS0=O2Xu=MN=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=8ZDx=MO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82929C43143
-	for <linux-clk@archiver.kernel.org>; Mon,  1 Oct 2018 22:24:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 235AFC43143
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Oct 2018 07:18:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 499122146D
-	for <linux-clk@archiver.kernel.org>; Mon,  1 Oct 2018 22:24:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC15D2089A
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Oct 2018 07:18:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mxsGDQ9I"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 499122146D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="X8D0R45J"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC15D2089A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726502AbeJBFEQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 2 Oct 2018 01:04:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55528 "EHLO mail.kernel.org"
+        id S1726868AbeJBOAI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 2 Oct 2018 10:00:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36064 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725878AbeJBFEQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 2 Oct 2018 01:04:16 -0400
+        id S1726783AbeJBOAH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 2 Oct 2018 10:00:07 -0400
 Received: from localhost (unknown [104.132.0.94])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D30272089A;
-        Mon,  1 Oct 2018 22:24:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C2E052089A;
+        Tue,  2 Oct 2018 07:18:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538432656;
-        bh=jaKuze6p7RtHvubPW0GFfMfL1tb6urRBrUekqWv6QD8=;
+        s=default; t=1538464699;
+        bh=KSsVEqcYfFENW6VCAM36i/oqdb6GCEtSX413F/ErMOA=;
         h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=mxsGDQ9Ii8rrjFP69t8Kl+Ml9eLzIGj+Z/+rjAxFgtlEJ7UOsFcr2u1eMXfFcbbyh
-         QV5GsT6af7/5aWxhgnyIkKNxDX3lKU7301hM/EYGAxvEGTg58kUtmgEPTasCLe9VmD
-         FtDH+BP5mzRLX6gN8B5W9sg7+j4zrdDw+7yFHc/E=
+        b=X8D0R45JcdCp4oW/gbci4s0lSWOi50TyjnIDCxtYQkdpKKjwAQxhqY4ny7wk15DWB
+         x0xMzcgwjgO/dNqjPVdci1Aj216+Y3uKeZSQFt4s9cLeQvZIlUoIIgCTs6GWl6zsht
+         8RTv2bpDcIxHOhyOI5U01vA0y575QeM5qAv1vZMs=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-To:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
+To:     Lubomir Rintel <lkundrak@v3.sk>, linux-kernel@vger.kernel.org
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180929150506.vch5wuujblgkngfp@flea>
-Cc:     Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-References: <20180929150506.vch5wuujblgkngfp@flea>
-Message-ID: <153843265620.119890.14162967539697574651@swboyd.mtv.corp.google.com>
+In-Reply-To: <20180910112654.42061-4-lkundrak@v3.sk>
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-input@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Lubomir Rintel <lkundrak@v3.sk>
+References: <20180910112654.42061-1-lkundrak@v3.sk>
+ <20180910112654.42061-4-lkundrak@v3.sk>
+Message-ID: <153846469907.119890.12700901744521125166@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.7
-Subject: Re: [GIT PULL] Allwinner clock fixes for 4.19
-Date:   Mon, 01 Oct 2018 15:24:16 -0700
+Subject: Re: [PATCH 3/8] dt-bindings: marvell,mmp2: Add clock id for the SP clock
+Date:   Tue, 02 Oct 2018 00:18:19 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Maxime Ripard (2018-09-29 08:05:06)
-> Hi Mike, Stephen,
+Quoting Lubomir Rintel (2018-09-10 04:26:49)
+> This is the clock for the "security processor" core.
 > =
 
-> Here is one fix for 4.19.
-> =
+> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+> ---
 
-> Thanks!
-> Maxime
-> =
+Acked-by: Stephen Boyd <sboyd@kernel.org>
 
-> The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343f=
-f3:
-> =
-
->   Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
-> =
-
-> are available in the Git repository at:
-> =
-
->   https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/su=
-nxi-clk-fixes-for-4.19
-> =
-
-
-Ok. Pulled into fixes. Should send in a couple days.
