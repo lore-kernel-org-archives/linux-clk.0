@@ -2,71 +2,76 @@ Return-Path: <SRS0=W+YX=MP=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68EC6C00449
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Oct 2018 21:03:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48C1EC00449
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Oct 2018 22:25:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1388D21473
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Oct 2018 21:03:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uVFJbIxv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1388D21473
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 01B13213A2
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Oct 2018 22:25:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01B13213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726969AbeJDDx3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 3 Oct 2018 23:53:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44340 "EHLO mail.kernel.org"
+        id S1726209AbeJDFQP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 4 Oct 2018 01:16:15 -0400
+Received: from mga07.intel.com ([134.134.136.100]:58241 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726967AbeJDDx3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 3 Oct 2018 23:53:29 -0400
-Received: from [192.168.0.13] (89-70-52-184.dynamic.chello.pl [89.70.52.184])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A3A6F20684;
-        Wed,  3 Oct 2018 21:03:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538600607;
-        bh=1UyZsfA5ZcPfr11PTNBHzXEQXRT2Eab5LmKdP6fh5p4=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=uVFJbIxv8aDjFkBdZBhxSqyD3GKwZeCIVmxD4BUNa8X69GjHphdq2PK+/F2zDf5nF
-         YeIW9tzvZS/Uouk3iO+jJu+gnIXPatVPRoztZhG/bNI0jdxlrFNjlMMR5VEbk8IgE6
-         QbBDdzBtCzsuFhcjbxzj+fQPxF5/gm80awSDnASY=
-Subject: Re: [PATCH] clk: samsung: Use clk_hw API for calling clk framework
- from clk notifiers
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-References: <CGME20181002115219eucas1p23816d543c4dedb233406869c22713a95@eucas1p2.samsung.com>
- <20181002115210.15541-1-m.szyprowski@samsung.com>
-From:   Sylwester Nawrocki <snawrocki@kernel.org>
-Message-ID: <0834f69e-0b25-200f-f15a-fe4bc929223f@kernel.org>
-Date:   Wed, 3 Oct 2018 23:03:23 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20181002115210.15541-1-m.szyprowski@samsung.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1725922AbeJDFQP (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 4 Oct 2018 01:16:15 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Oct 2018 15:25:56 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,337,1534834800"; 
+   d="scan'208";a="88962346"
+Received: from tthayer-hp-z620.an.intel.com ([10.122.105.132])
+  by orsmga003.jf.intel.com with ESMTP; 03 Oct 2018 15:25:54 -0700
+From:   thor.thayer@linux.intel.com
+To:     dinguyen@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        will.deacon@arm.com, robin.murphy@arm.com, joro@8bytes.org,
+        aisheng.dong@nxp.com, sboyd@kernel.org
+Cc:     vivek.gautam@codeaurora.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        iommu@lists.linux-foundation.org,
+        Thor Thayer <thor.thayer@linux.intel.com>
+Subject: [PATCHv3 0/2] iommu/arm-smmu: Add Stratix10 SMMU Support
+Date:   Wed,  3 Oct 2018 17:28:11 -0500
+Message-Id: <1538605693-22073-1-git-send-email-thor.thayer@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 10/02/2018 01:52 PM, Marek Szyprowski wrote:
-> clk_notifier_register() documentation states, that the provided notifier
-> callbacks associated with the notifier must not re-enter into the clk
-> framework by calling any top-level clk APIs. Fix this by replacing
-> clk_get_rate() calls with clk_hw_get_rate(), which is safe in this
-> context.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+From: Thor Thayer <thor.thayer@linux.intel.com>
 
-Thanks for fixing this, I have applied the patch to samsung-clk tree.
+Add SMMU support for the Stratix10 SOCFPGA. This patch requires
+clock enables for the master TBUs and therefore has a dependency
+on patches currently being reviewed.
+
+This patchset is dependent on the patch series
+"[PATCH V6 0/4] clk: new APIs to handle all available clocks"
+(https://lkml.org/lkml/2018/8/31/97)
+
+v1->v2  Change to dependency on 
+"iommu/arm-smmu: Add runtime pm/sleep support"
+(https://patchwork.ozlabs.org/cover/946160/)
+
+v2->v3  Change dependency on device tree bulk clock patches.
+
+Thor Thayer (2):
+  arm64: dts: stratix10: Add Stratix10 SMMU support
+  iommu/arm-smmu: Add SMMU clock
+
+ arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi | 28 +++++++++++++++++++++++
+ drivers/iommu/arm-smmu.c                          | 20 ++++++++++++++++
+ 2 files changed, 48 insertions(+)
+
+-- 
+2.7.4
+
