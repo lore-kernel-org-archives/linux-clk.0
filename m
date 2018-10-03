@@ -1,139 +1,98 @@
 Return-Path: <SRS0=W+YX=MP=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 181D4C00449
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Oct 2018 14:25:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 443FEC64EB8
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Oct 2018 20:43:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7DF921476
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Oct 2018 14:25:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0304721473
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Oct 2018 20:43:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="jDl4ZXOg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7DF921476
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MNzg1906"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0304721473
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727269AbeJCVOY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 3 Oct 2018 17:14:24 -0400
-Received: from mail-eopbgr80043.outbound.protection.outlook.com ([40.107.8.43]:64019
-        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726818AbeJCVOY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 3 Oct 2018 17:14:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sYldc+NVQvFZze/pOtOVpevxr1wYg9JZoWt7521A6bo=;
- b=jDl4ZXOgfCEnt7BKPo6fKiyIqQDSBONM78XeFBFcl+mUhSqXAjeSFnMHpy6ZWhuWh/1JsUE4As+jkfjkFfIjA55TEyu2E28rzfOzwpZvJSW/KuZQjrZ0uQsscedKdmYN1A9+/uo4IJ222j/toPevLMEk/BBiiTIVZ+kt2YdrR+g=
-Received: from VI1PR04MB4800.eurprd04.prod.outlook.com (20.177.48.221) by
- VI1PR04MB1438.eurprd04.prod.outlook.com (10.163.166.142) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1185.25; Wed, 3 Oct 2018 14:25:41 +0000
-Received: from VI1PR04MB4800.eurprd04.prod.outlook.com
- ([fe80::a45f:ad96:edec:a2df]) by VI1PR04MB4800.eurprd04.prod.outlook.com
- ([fe80::a45f:ad96:edec:a2df%3]) with mapi id 15.20.1207.021; Wed, 3 Oct 2018
- 14:25:41 +0000
-From:   Vabhav Sharma <vabhav.sharma@nxp.com>
-To:     Stephen Boyd <sboyd@kernel.org>, "arnd@arndb.de" <arnd@arndb.de>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel-owner@vger.kernel.org" 
-        <linux-kernel-owner@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "oss@buserror.net" <oss@buserror.net>,
-        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
-        "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>
-CC:     "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        Varun Sethi <V.Sethi@nxp.com>, Udit Kumar <udit.kumar@nxp.com>,
-        Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>,
-        Andy Tang <andy.tang@nxp.com>
-Subject: RE: [PATCH v3 4/6] drivers: clk-qoriq: Add clockgen support for
- lx2160a
-Thread-Topic: [PATCH v3 4/6] drivers: clk-qoriq: Add clockgen support for
- lx2160a
-Thread-Index: AQHUVAAm1gYYBo78LEiziDkOWcA876UK/WwAgAKkcsA=
-Date:   Wed, 3 Oct 2018 14:25:41 +0000
-Message-ID: <VI1PR04MB48006A2701212ADAF1977D94F3E90@VI1PR04MB4800.eurprd04.prod.outlook.com>
-References: <1537747741-6245-1-git-send-email-vabhav.sharma@nxp.com>
- <1537747741-6245-5-git-send-email-vabhav.sharma@nxp.com>
- <153843146463.119890.6551025813220021124@swboyd.mtv.corp.google.com>
-In-Reply-To: <153843146463.119890.6551025813220021124@swboyd.mtv.corp.google.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=vabhav.sharma@nxp.com; 
-x-originating-ip: [92.121.36.197]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR04MB1438;6:UZ17tSG/CQz2TyVC+FENJ65EdWGqXrgizr9uNIQsoKR8CnutU6rAiWNRgmDBqpCKW+PVQe2pkgZzzQU7wEB7O5rCmfgxA7ncuJgwy8ku5hCEtX8Qtr8ckdoxM2gfYbfj6w+DZ2NofZwYeg8mmmOL7uJGS+o1b4IxjE2poySZliwpgKQS5rIBwzGvHFrkESC+Q6wk6P1MrNGYsOOs+IKLVyef5ZktBLRKS/Fl1j58iLeYVQZDa4CEuB+/Bpgzl+04vwqDyrV0rPrt+Cf1wjrH+3stWPranGmTGplMinBMZqhmfGNWp9tZ8ZIatGZE74K0K7WY01hMnlHDjppUu+sGFy12LZzFREQ57MyhUsaeIwjlBxLtx4J1sgLUwCnBipHl8iEmCO63ru2PCH1jGgIyYfYYAbqO2HqRRTfD67sDnABUONxlqduCFcvdpnVO11NmgVwSxZIZEuQxLVPNkWEXGQ==;5:z6GrDtJ3gH4zdRfZC1ajU3o7mcNqWiW0wHHAoA722kZfRv+DE7xWRB+1U3ZbPFayheW2tTqw0qFpFp/bLLkuC8WYrXLIrynR7o0FuFFTl+3s374Xn/9nO/VfqSnw0UEaFsQxf5wihioxk90DqmPRpDlNDx/nN61AH+H5JB5Z/5E=;7:Lv5as/keNpggSua9toHSvb5Vm7Ur0lo7kZm9I7PFpQVbiElfpwM7AunimNBSRGF9ZXDdFHnjluR8A8/RUEDtIDgnX+2DgdmEzznY9DebzQRfvy+ZCp0jbLlFt5XtZBD+iq6dkC7YzhKGkQc+3c0kURnaqQrSKWvDoGalAie5BVOMUwJZ1qlKzvfutI8pHzGp1bb4JFCD3FDf3aWmJEzXBvht8dKNKgLXLmiTKZXDZF3PbfIQxdQsunTr1mvE2GF2
-x-ms-office365-filtering-correlation-id: eb6a7389-1afd-419e-bad3-08d6293c1938
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB1438;
-x-ms-traffictypediagnostic: VI1PR04MB1438:
-x-microsoft-antispam-prvs: <VI1PR04MB143889C7C04A1E24721367A4F3E90@VI1PR04MB1438.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(180628864354917)(258649278758335)(65623756079841)(185117386973197);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(3231355)(944501410)(52105095)(10201501046)(93006095)(93001095)(6055026)(149066)(150057)(6041310)(20161123560045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(201708071742011)(7699051);SRVR:VI1PR04MB1438;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB1438;
-x-forefront-prvs: 0814A2C7A3
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(39860400002)(136003)(376002)(396003)(346002)(199004)(189003)(13464003)(7416002)(81156014)(71190400001)(53546011)(102836004)(26005)(71200400001)(74316002)(2201001)(54906003)(110136005)(316002)(14454004)(4326008)(66066001)(86362001)(2501003)(5250100002)(6246003)(8936002)(186003)(6116002)(478600001)(3846002)(2906002)(76176011)(6506007)(7696005)(105586002)(44832011)(53936002)(97736004)(5660300001)(256004)(106356001)(68736007)(99286004)(6436002)(9686003)(25786009)(305945005)(55016002)(2900100001)(8676002)(446003)(11346002)(33656002)(81166006)(229853002)(486006)(476003)(7736002)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB1438;H:VI1PR04MB4800.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 8JmBbjO+a5KTRRIBrRipub0TimsfcDbBO+1EkPzt9trzAQ2+MIwq9yyxYPM9PS8VJHaHHnF32gn0QVitu1MaKsQ4bOvXbyZtttEUNS+VgUDQVnH/PqiJmYSXy7KnPtC0e6sH5+BLa4VCBMewSrDo4RdM3NO8fPfRZK9IUUUmQ5ZlBx12zkVq1+I5mEi81jNiHK6JjRYnBsuVXGbDrYyef/sO5VqGJCRYTMJwH9myA+uuG+6qVaNmPD4VXY6kntvx8pUy8OPBfn8jjuN7Mw14tD4jZBkzTQX2rFQFZoxVNEO9aviNG2kdLQYcoSoNzApAiHLUZyqgkK3yDJmmML1YVMKF8a01CGSb8IJXo1LkEDs=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1727436AbeJDDdV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 3 Oct 2018 23:33:21 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:43916 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727143AbeJDDdV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 Oct 2018 23:33:21 -0400
+Received: by mail-lj1-f193.google.com with SMTP id r8-v6so6354609ljc.10;
+        Wed, 03 Oct 2018 13:43:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=jIv8XYNvpuqRyYvebFgQDSQXBcROd4ogA6brrgm/q3U=;
+        b=MNzg1906hyFqTMUi5N5lM+JK+enoKIx+SM88uy2ndgGJDp+o3ZAvM03+KJLn/DoAmL
+         iNTqROjXe9RwaUJMlMpaOE9haTsNXnfxO66cG33iZvZcsF0qSEcL/G2uptRI/DRunnxO
+         fYR4LrKlGa32PcXI6r3moIZ1MQdc+VFNMSO7C/3DOmfCdg53XttM63OIJ5cbM3vLdVCc
+         Uf+Whqf4HRcA34oCGw276ad+jTsd6TVM7L8q60YEOADKSUp8SLSYsexXB1LCBNu/zs/C
+         gSZtmZhAUEstxMAufk2cxpZ71MpFHr69nMj6vB/4DIGXXpT8qt8jFEHpjGY+UesfJ0tw
+         k6Pw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=jIv8XYNvpuqRyYvebFgQDSQXBcROd4ogA6brrgm/q3U=;
+        b=Q0KKNAdNmIGupoIjl3XoWffvz2nbKXeH+8llzICbHKawhg2VQC32hzrGu5jhQb8Xxn
+         ap3IkEh3V4pgr7jvLpsIASGWh2yAi6BeKjsG2pBEgWjW7zNeXRXDpziUXEuf0LXifiSE
+         7zQa2CyNsJriz//h7mt695mFf/2DxV+hekvLfV+njBMdO1wp1FkOnTf5No80y79R7X/e
+         i9d5CVyCyIlKmP1JEFRwA6nmFAxf8Jxwo5UUSTlpwu+cD6mcUcrsF5QMFzBKUJgQQkU/
+         1cE+hAyuUD3Td5M5p0WVNDHJ2KgIa0X0uflhiGEpZX+8qsy71HSLXXnlC9ReSoPhJ5lE
+         3mZQ==
+X-Gm-Message-State: ABuFfoiKYT3dZtltP+lZNGmIFyqUlNUJDX2a06A1grl8QwrDy2wOFKdw
+        8WKZju4v960pxl/R0NCVVcs=
+X-Google-Smtp-Source: ACcGV61owKtg2vcVw92RilwuC5U0y0I8Um9KFDX6KBPE41GsdIvKS1/+D5NXbvE0xQO174llePy6tA==
+X-Received: by 2002:a2e:9b46:: with SMTP id o6-v6mr2381341ljj.78.1538599400960;
+        Wed, 03 Oct 2018 13:43:20 -0700 (PDT)
+Received: from [192.168.0.13] (89-70-52-184.dynamic.chello.pl. [89.70.52.184])
+        by smtp.googlemail.com with ESMTPSA id 12-v6sm556276lje.67.2018.10.03.13.43.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 03 Oct 2018 13:43:20 -0700 (PDT)
+Subject: Re: [PATCH] clk: samsung: exynos5420: Define CLK_SECKEY gate clock
+ only or Exynos5420
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+References: <CGME20180924110106eucas1p2465d1fdd263f7921ae6e9c65d32155f6@eucas1p2.samsung.com>
+ <20180924110056.21033-1-m.szyprowski@samsung.com>
+From:   Sylwester Nawrocki <sylwester.nawrocki@gmail.com>
+Message-ID: <c4bef37d-3bc9-41ec-c5d8-dfc8d5e8bc89@gmail.com>
+Date:   Wed, 3 Oct 2018 22:43:19 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: eb6a7389-1afd-419e-bad3-08d6293c1938
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Oct 2018 14:25:41.5397
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB1438
+In-Reply-To: <20180924110056.21033-1-m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogZGV2aWNldHJlZS1vd25l
-ckB2Z2VyLmtlcm5lbC5vcmcgPGRldmljZXRyZWUtb3duZXJAdmdlci5rZXJuZWwub3JnPg0KPiBP
-biBCZWhhbGYgT2YgU3RlcGhlbiBCb3lkDQo+IFNlbnQ6IFR1ZXNkYXksIE9jdG9iZXIgMiwgMjAx
-OCAzOjM0IEFNDQo+IFRvOiBWYWJoYXYgU2hhcm1hIDx2YWJoYXYuc2hhcm1hQG54cC5jb20+OyBh
-cm5kQGFybmRiLmRlOw0KPiBjYXRhbGluLm1hcmluYXNAYXJtLmNvbTsgZGV2aWNldHJlZUB2Z2Vy
-Lmtlcm5lbC5vcmc7DQo+IGdyZWdraEBsaW51eGZvdW5kYXRpb24ub3JnOyBrc3Rld2FydEBsaW51
-eGZvdW5kYXRpb24ub3JnOyBsaW51eC1hcm0tDQo+IGtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3Jn
-OyBsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWwtDQo+IG93bmVyQHZnZXIu
-a2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgbGludXgtDQo+IHBtQHZn
-ZXIua2VybmVsLm9yZzsgbGludXhwcGMtZGV2QGxpc3RzLm96bGFicy5vcmc7IG1hcmsucnV0bGFu
-ZEBhcm0uY29tOw0KPiBtdHVycXVldHRlQGJheWxpYnJlLmNvbTsgb3NzQGJ1c2Vycm9yLm5ldDsg
-cmp3QHJqd3lzb2NraS5uZXQ7DQo+IHJvYmgrZHRAa2VybmVsLm9yZzsgc3VkZWVwLmhvbGxhQGFy
-bS5jb207IHZpcmVzaC5rdW1hckBsaW5hcm8ub3JnOw0KPiB3aWxsLmRlYWNvbkBhcm0uY29tOyB5
-YW1hZGEubWFzYWhpcm9Ac29jaW9uZXh0LmNvbQ0KPiBDYzogbGludXhAYXJtbGludXgub3JnLnVr
-OyBWYXJ1biBTZXRoaSA8Vi5TZXRoaUBueHAuY29tPjsgVWRpdCBLdW1hcg0KPiA8dWRpdC5rdW1h
-ckBueHAuY29tPjsgWW9nZXNoIE5hcmF5YW4gR2F1cg0KPiA8eW9nZXNobmFyYXlhbi5nYXVyQG54
-cC5jb20+OyBBbmR5IFRhbmcgPGFuZHkudGFuZ0BueHAuY29tPjsgVmFiaGF2DQo+IFNoYXJtYSA8
-dmFiaGF2LnNoYXJtYUBueHAuY29tPg0KPiBTdWJqZWN0OiBSZTogW1BBVENIIHYzIDQvNl0gZHJp
-dmVyczogY2xrLXFvcmlxOiBBZGQgY2xvY2tnZW4gc3VwcG9ydCBmb3IgbHgyMTYwYQ0KPiANCj4g
-U2FtZSBzdWJqZWN0IGNvbW1lbnQuDQpPaw0KPiANCj4gUXVvdGluZyBWYWJoYXYgU2hhcm1hICgy
-MDE4LTA5LTIzIDE3OjA4OjU5KQ0KPiA+IEZyb206IFlvZ2VzaCBHYXVyIDx5b2dlc2huYXJheWFu
-LmdhdXJAbnhwLmNvbT4NCj4gPg0KPiA+IEFkZCBjbG9ja2dlbiBzdXBwb3J0IGZvciBseDIxNjBh
-Lg0K
+On 09/24/2018 01:00 PM, Marek Szyprowski wrote:
+> From: Joonyoung Shim<jy0922.shim@samsung.com>
+> 
+> The bit of GATE_BUS_PERIS1 for CLK_SECKEY is just reserved on
+> exynos5422/5800, not exynos5420. Define gate clk for exynos5420 to
+> handle the bit only on exynos5420.
+> 
+> Signed-off-by: Joonyoung Shim<jy0922.shim@samsung.com>
+> [m.szyprow: rewrote commit subject]
+> Signed-off-by: Marek Szyprowski<m.szyprowski@samsung.com>
+
+Patch applied, thanks.
