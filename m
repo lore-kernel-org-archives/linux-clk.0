@@ -2,197 +2,267 @@ Return-Path: <SRS0=W+YX=MP=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF5EDC64EBC
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Oct 2018 03:22:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F090C00449
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Oct 2018 06:21:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 690D62082A
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Oct 2018 03:22:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C49DA20878
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Oct 2018 06:21:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=openedev.com header.i=@openedev.com header.b="gnLO3GTD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 690D62082A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=openedev.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="eY0+NU24"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C49DA20878
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726405AbeJCKJG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 3 Oct 2018 06:09:06 -0400
-Received: from se15t.web-hosting.com ([162.255.118.154]:45963 "EHLO
-        se15t.web-hosting.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726162AbeJCKJG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 Oct 2018 06:09:06 -0400
-Received: from [68.65.123.203] (helo=server153.web-hosting.com)
-        by se15.registrar-servers.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89)
-        (envelope-from <jagan@openedev.com>)
-        id 1g7Xk6-0009BO-5m; Tue, 02 Oct 2018 20:22:33 -0700
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=openedev.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=1+rsfaL4+0JUpyeX3w7JnPQECDMypg22Jm7Gh5WCBe0=; b=gnLO3GTDDyZWvM5H1Mm3ql+PYi
-        gWRHrGuJqEnSHd15ZOGRs4VxzWe5r8j6Asg3+7ZTDWk/GTwYQmd9g/mLhr0QWrg+a0s6gtq0S6Yj4
-        zK861g+JKTPQ6KSQT4Tqprl2r/03wRjPZoBclTja/OyN27jAAHrD3Bx5MciTZ+QtcJ6vmiI33iMKl
-        +29J6Y8p3IcCM7Q2zoa9jCAm42f1/Yz59z8l50wMnHNFe0BbmPhhyk5PBfUonuY5znYlLXH9P9jBp
-        KK9IDUIlJkhjaJ+Je08LY891ypjhHi5tb3yvknXSDaFTuTO9Dg/Qc8l17rNMWRdIEDtkE/ShOmF4G
-        qbH4SE2Q==;
-Received: from [27.7.51.1] (port=46186 helo=[192.168.0.10])
-        by server153.web-hosting.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <jagan@openedev.com>)
-        id 1g7Xjr-004LfF-P3; Tue, 02 Oct 2018 23:22:16 -0400
-Subject: Re: [linux-sunxi] Re: [PATCH 07/12] drm/sun4i: sun6i_mipi_dsi: Fix
- TCON DRQ set bits
-To:     maxime.ripard@bootlin.com, Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
+        id S1726606AbeJCNIK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 3 Oct 2018 09:08:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59720 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726405AbeJCNIK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 3 Oct 2018 09:08:10 -0400
+Received: from localhost (unknown [171.76.113.63])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5E2F020652;
+        Wed,  3 Oct 2018 06:21:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1538547673;
+        bh=MQ75G/iCRrdibJ2pzDqGrsDWCDTEqtfZjRvkASSyN1g=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=eY0+NU24+v8Ev2cxeBnyxcmcRdZumg+CLDLInRfGr+py82QNfyYtKe1wx32NJ9+fN
+         J1QQG3eLUZs3TkHv8uSvO4wUNw49zgThxSpu3zvByXVHB1/UIMvSUP1Qln4Nu7c581
+         OKMGl1JUDLiP/Ni9hpD50u67mmYESQ/leBQ5VMyA=
+Date:   Wed, 3 Oct 2018 11:51:03 +0530
+From:   Vinod <vkoul@kernel.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Shefali Jain <shefjain@codeaurora.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-References: <20180927114850.24565-1-jagan@amarulasolutions.com>
- <20180927114850.24565-8-jagan@amarulasolutions.com>
- <20180927165853.dpluekbqzat663q7@flea>
- <CAMty3ZDUxqokipNqnn6c618pebdVBWc8Pfzaz+4+SYqR42Yerg@mail.gmail.com>
- <20181002132008.qtatwtbb3ldu75ay@flea>
-From:   Jagan Teki <jagan@openedev.com>
-Message-ID: <45dbebe9-d0bd-4a1c-f8ee-3afd64cf35f9@openedev.com>
-Date:   Wed, 3 Oct 2018 08:52:06 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Anu Ramanathan <anur@codeaurora.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>
+Subject: Re: [PATCH 2/2] clk: qcom: gcc: Add global clock controller driver
+ for QCS404
+Message-ID: <20181003062103.GN19792@vkoul-mobl>
+References: <20180921185936.9590-1-vkoul@kernel.org>
+ <20180921185936.9590-2-vkoul@kernel.org>
+ <153841434099.119890.3912925112860077471@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-In-Reply-To: <20181002132008.qtatwtbb3ldu75ay@flea>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-OutGoing-Spam-Status: No, score=-1.0
-X-Originating-IP: 68.65.123.203
-X-SpamExperts-Domain: nctest.net
-X-SpamExperts-Username: whmcalls3
-Authentication-Results: registrar-servers.com; auth=pass (login) smtp.auth=whmcalls3@nctest.net
-X-SpamExperts-Outgoing-Class: ham
-X-SpamExperts-Outgoing-Evidence: Combined (0.03)
-X-Recommended-Action: accept
-X-Filter-ID: EX5BVjFpneJeBchSMxfU5gC00jEDO6ikw1TyIiswBhV602E9L7XzfQH6nu9C/Fh9KJzpNe6xgvOx
- q3u0UDjvO0Ma0zdKrj2HeYAO9pcN4rBgaa/6KAnDjbDW9Kfk8S67rc0diZKnmpMa4igsMUptb3ws
- 3TRjaC42FtNJuTWwh7zDil9nzpwm+X/neb6NqWhvt8C9mOBdONdnsxgsk1D2p81t61bzOH+dRuda
- OCHhfvkbONHJki/bT3w/adEN9DqaPbFM3vei53Yyp3v779HcSLG62plOzR5DsoLGZCSqoE3JNAYC
- 28t8cR5ITCXTcZqmvaqpXrmasHx4eiR7j6vX9B9laqTmco/p+9en7IdA6p9E/g67cwxyIR8VmA5e
- WtNvnSJzSMipXLKj208wF0l+/LRpsq1uynJlGc1wGBNxKAasUDAM310p3PNWWaIaSygi7PgEVsGe
- cFro/0JGrOyRSaDNUgpG8fAJ7Lg21L451C+Y73wey0WZIByhkSafuhnLcy3brt7kvrJyGkSOIbze
- Phts3vFtUDOwEYF9reFkRh1Z2XmZE6Ulo3Sg6/fHCWNx01dKq9doQCQL/RyDC8HpXAynucv4rnju
- YPOfZh8jslwg7QT+iN5/VyfWKR5edUF17qyCLW5GY4F23J7eq8SL0BtM8UT3jCT30WOGa77ANY69
- cBNhkoiRE9GgA7DbpeRaXeO0Hg/cLwycMnvIieVWIs4dJKDqjPjhvPjqAjKg6VeiSiHqKnOM6HUc
- 1C6txUOgA50Rgoi231VkAC4d/u07DCMMQ72GN0COt/Z36GxUDe1/x2bFJS+Hj6rj4u8HaEmUFFea
- Ix4/vVSo+8WBYHv3R/Quc8Wou4TIK4Bcb6TQCr94GXpVQ2KwGtu81JXrQcgqRYMJqVDlz3D3q3rG
- z4wpqXduuWzX2YNPcyspnKOz/GpVtBEI/lNmY9JL/ej0hsKuKmLtSOgDyocRXs5/Dj5QrbiOquAw
- kPRjlgIoLaXIRRdYY1xob1S/a4Rw9BKeg+GlaQRG0qurVqDgRPCOBb4ws+nK6Hdu5ythdss+87CL
- YnNBoGfS0DhK3BfvFNI4fRpBbmGFHU0Fd1FYwiLqVhSu3v+nCpyCSdscG09FH1xvLyyjtb2gYbxM
- T6+Iy9pOFZK275ou5bBvQX3uElphnHsYcHZLfQ+dkTJQ3t6fkiyQeQV6EipRzMVZ5LqwTx7Vvn9S
- VCuiP+10HNhHuWYhdKNkJvfZdFJiZZPY9MnZD1O5yq1ycjOgLhowTS+P/adv11jhqolFBFG+qwPb
- Jka7IFxibF3lEJ6eq2YzxUsDUmAQ1VjUsuiVMUz2osEFaYRxsB6RP1WtefrqFnxOMi6sKMFKy5Lq
- LFUIM7si3XKl+gouHE7VOEtHO7BXRk+kb0Ie3l6uI43eRHGnZHBV/yCqCu6qSBhrvScipRPhH6Ca
- KplAIvddMUFowKRpR2Sag0odmmn9nSUfEaFbXfx3YmWV3Eu1dd5T48p+m8Gi9mpWQ6cJTOhMhoTy
- AjQts04eAyoaGqs2BxWyJ5iZ/mYkQw5Sva7E5XuqpjkxjsxX7/OU+X56MDbCOXzqrgeRjh9HHXX0
- 2BXFZ0oSYx0xwIlnSxHDnJq+tjf1ariSumYaswHs71h51UM9FqN9xH7aeMYHGsZ/4QaVkaMLBQ2N
- o2eCxS3UTYtuZQ==
-X-Report-Abuse-To: spam@se16.registrar-servers.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <153841434099.119890.3912925112860077471@swboyd.mtv.corp.google.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tuesday 02 October 2018 06:50 PM, Maxime Ripard wrote:
-> On Thu, Sep 27, 2018 at 11:15:50PM +0530, Jagan Teki wrote:
->> On Thu, Sep 27, 2018 at 10:28 PM Maxime Ripard
->> <maxime.ripard@bootlin.com> wrote:
->>>
->>> On Thu, Sep 27, 2018 at 05:18:45PM +0530, Jagan Teki wrote:
->>>> TCON DRQ set bits for non-burst DSI mode can computed via
->>>> horizontal front porch instead of front porch + sync timings.
->>>>
->>>> Since there no documentation for TCON_DRQ_REG(0x7c) register
->>>> this change is taken as reference from BPI-M64-bsp.
->>>
->>> Detailing more what the issue is would be great.
->>>
->>>> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
->>>> ---
->>>>   drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 4 ++--
->>>>   1 file changed, 2 insertions(+), 2 deletions(-)
->>>>
->>>> diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
->>>> index 599284971ab6..9918fdb990ff 100644
->>>> --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
->>>> +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
->>>> @@ -367,9 +367,9 @@ static void sun6i_dsi_setup_burst(struct sun6i_dsi *dsi,
->>>>        struct mipi_dsi_device *device = dsi->device;
->>>>        u32 val = 0;
->>>
->>> The computation here is in the A64 driver:
->>>
->>> if ((panel->lcd_ht - panel->lcd_x - panel->lcd_hbp) < 21) {
->>>          dsi_dev[sel]->dsi_tcon_drq.bits.drq_mode = 0;
->>> } else {
->>>          dsi_dev[sel]->dsi_tcon_drq.bits.drq_set =
->>>                  (panel->lcd_ht-panel->lcd_x-panel->lcd_hbp-20) *
->>>                  dsi_pixel_bits[panel->lcd_dsi_format]/(8*4);
->>> }
->>>
->>> It is testing that the sync + front porch is smaller than 21, and
->>> otherwise sets the drq.
->>>
->>>> -     if ((mode->hsync_end - mode->hdisplay) > 20) {
->>>
->>> My code here is testing that the difference between hsync_end and
->>> hdisplay is superior to 20, and sets the DRQ if true. The condition is
->>> reversed, but otherwise, that difference is the front porch plus the
->>> sync length.
->>
->> True, I understand this, but does drq setting here is specific to SoC?
->> I thought of finding DRQ in A31 BSP but I couldn't find the code. do
->> you have bsp somewhere in github?
->>
->>>
->>>> +     if ((mode->hsync_start - mode->hdisplay) > 20) {
->>>
->>> However, you are testing for just the front porch, unlike what your
->>> commit log is saying, and unlike what allwinner's code is saying. So
->>> this deserves some explanation.
->>
->> but A64 is doing this, do you think it's completely A64 specific or
->> testing panel with front porch drq?
+Hi Stephen,
+
+Thanks for the comments,
+
+On 01-10-18, 10:19, Stephen Boyd wrote:
+> Quoting Vinod Koul (2018-09-21 11:59:36)
+> > From: Shefali Jain <shefjain@codeaurora.org>
+> > 
+> > Add the clocks supported in global clock controller which clock the
+> > peripherals like BLSPs, SDCC, USB, MDSS etc. Register all the clocks
+> > to the clock framework for the clients to be able to request for them.
+> > 
+> > Signed-off-by: Shefali Jain <shefjain@codeaurora.org>
+> > Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> > Co-developed-by: Taniya Das <tdas@codeaurora.org>
+> > Signed-off-by: Anu Ramanathan <anur@codeaurora.org>
+> > [rebase and tidyup for upstream]
 > 
-> See the above code excerpt:
-> panel->lcd_ht - panel->lcd_x - panel->lcd_hbp
+> Who did the tidying?
+
+both of us :)
+
+> > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> > Signed-off-by: Vinod Koul <vkoul@kernel.org>
+> > ---
+> >  - reg : shall contain base register location and length
+> > diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+> > index 064768699fe7..529d84cc7503 100644
+> > --- a/drivers/clk/qcom/Kconfig
+> > +++ b/drivers/clk/qcom/Kconfig
+> > @@ -235,6 +235,14 @@ config MSM_GCC_8998
+> >           Say Y if you want to use peripheral devices such as UART, SPI,
+> >           i2c, USB, UFS, SD/eMMC, PCIe, etc.
+> >  
+> > +config QCS_GCC_404
+> > +       tristate "QCS404 Global Clock Controller"
+> > +       depends on COMMON_CLK_QCOM
+> > +       help
+> > +        Support for the global clock controller on QCS404 devices.
+> > +        Say Y if you want to use peripheral devices such as UART, SPI, I2C,
+> > +        USB, SD/eMMC, PCIe, etc.
 > 
-> This is hsync + front porch. Not the sole front porch. So no, it's not
-> doing this.
+> It seems to include multimedia display clks and ethernet? Maybe include
+> those too.
 
-=> panel->lcd_ht - panel->lcd_x - panel->lcd_hbp
+Sure will add
 
-from drivers/video/sunxi/disp2/disp/de/disp_lcd.c
-timmings->hor_front_porch= panel_info->lcd_ht-panel_info->lcd_hbp - 
-panel_info->lcd_x;
+> > +#include <linux/kernel.h>
+> > +#include <linux/platform_device.h>
+> > +#include <linux/module.h>
+> > +#include <linux/of.h>
+> > +#include <linux/clk.h>
+> 
+> Please don't include this.
 
-=> (timmings->hor_front_porch + panel->lcd_hbp + panel->lcd_x) - 
-panel->lcd_x - panel->hbp
-=> timmings->hor_front_porch
-=> mode->hsync_start - mode->hdisplay
+OK will check if this is required, any reason for not including this?
 
-This is simply a front porch.
+> > +/* 930MHz configuration */
+> > +static const struct alpha_pll_config gpll3_config = {
+> > +       .l = 48,
+> > +       .alpha = 0x0,
+> > +       .alpha_en_mask = BIT(24),
+> > +       .post_div_mask = 0xf << 8,
+> > +       .post_div_val = 0x1 << 8,
+> > +       .vco_mask = 0x3 << 20,
+> > +       .main_output_mask = 0x1,
+> > +       .config_ctl_val = 0x4001055b,
+> > +};
+> > +
+> > +static struct pll_vco gpll3_vco[] = {
+> 
+> const?
+
+sure
+
+> > +static struct clk_branch gcc_pwm1_xo512_clk = {
+> > +       .halt_reg = 0x49004,
+> > +       .halt_check = BRANCH_HALT,
+> > +       .clkr = {
+> > +               .enable_reg = 0x49004,
+> > +               .enable_mask = BIT(0),
+> > +               .hw.init = &(struct clk_init_data){
+> > +                       .name = "gcc_pwm1_xo512_clk",
+> > +                       .ops = &clk_branch2_ops,
+> 
+> Do these pwm clks have a parent clk of the XO?
+
+Yes they do
+
+> > +       [GCC_USB_HS_PHY_CFG_AHB_CLK] = &gcc_usb_hs_phy_cfg_ahb_clk.clkr,
+> > +       [GCC_USB_HS_SYSTEM_CLK] = &gcc_usb_hs_system_clk.clkr,
+> > +       [GFX3D_CLK_SRC] = &gfx3d_clk_src.clkr,
+> > +       [GP1_CLK_SRC] = &gp1_clk_src.clkr,
+> 
+> Why are some of these missing GCC_ prefix?
+
+will add..
+
+> > +static int gcc_qcs404_probe(struct platform_device *pdev)
+> > +{
+> > +       struct regmap *regmap;
+> > +       int ret;
+> > +
+> > +       ret = qcom_cc_register_board_clk(&pdev->dev,
+> > +                                        "xo_board", "cxo", 19200000);
+> 
+> You shouldn't need to do this. This function is for transitioning DT
+> that doesn't have the board clk in DT to something the driver wants to
+> use, in this case "cxo". So you can either register a fixed factor 1/1
+> clk to do the translation between board and cxo names, or use xo_board
+> as the parent of things that can take crystal.
+
+Okay will modify this. If I go about using xo_board as parent, I would
+need to register that right? FWIW I see the same thing done in gcc-msm8916
+
+> 
+> > +       if (ret)
+> > +               return ret;
+> > +
+> > +       regmap = qcom_cc_map(pdev, &gcc_qcs404_desc);
+> > +       if (IS_ERR(regmap))
+> > +               return PTR_ERR(regmap);
+> > +
+> > +       clk_alpha_pll_configure(&gpll3_out_main, regmap, &gpll3_config);
+> > +       clk_set_rate(apss_ahb_clk_src.clkr.hw.clk, 19200000);
+> 
+> use assigned clock rates from DT please.
+
+ok
+
+> > +       clk_prepare_enable(apss_ahb_clk_src.clkr.hw.clk);
+> > +       clk_prepare_enable(gpll0_ao_out_main.clkr.hw.clk);
+> 
+> And these should be marked as critical clocks.
+
+Okay and how do we go about doing that?
+
+> > +#define GCC_USB2A_PHY_SLEEP_CLK                                89
+> > +#define GCC_USB30_MASTER_CLK                           90
+> > +#define GCC_USB30_MOCK_UTMI_CLK                                91
+> > +#define gcc_usb30_sleep_clk                            92
+> > +#define gcc_usb3_phy_aux_clk                           93
+> > +#define gcc_usb3_phy_pipe_clk                          94
+> > +#define gcc_usb_hs_phy_cfg_ahb_clk                     95
+> > +#define gcc_usb_hs_system_clk                          96
+> > +#define gfx3d_clk_src                                  97
+> > +#define gp1_clk_src                                    98
+> > +#define gp2_clk_src                                    99
+> > +#define gp3_clk_src                                    100
+> > +#define gpll0_out_main                                 101
+> > +#define gpll1_out_main                                 102
+> > +#define gpll3_out_main                                 103
+> > +#define gpll4_out_main                                 104
+> > +#define hdmi_app_clk_src                               105
+> > +#define hdmi_pclk_clk_src                              106
+> > +#define mdp_clk_src                                    107
+> > +#define pcie_0_aux_clk_src                             108
+> > +#define pcie_0_pipe_clk_src                            109
+> > +#define pclk0_clk_src                                  110
+> > +#define pdm2_clk_src                                   111
+> > +#define sdcc1_apps_clk_src                             112
+> > +#define sdcc1_ice_core_clk_src                         113
+> > +#define sdcc2_apps_clk_src                             114
+> > +#define usb20_mock_utmi_clk_src                                115
+> > +#define usb30_master_clk_src                           116
+> > +#define usb30_mock_utmi_clk_src                                117
+> > +#define usb3_phy_aux_clk_src                           118
+> > +#define usb_hs_system_clk_src                          119
+> > +#define gpll0_ao_clk_src                               120
+> > +#define wcnss_m_clk                                    121
+> > +#define gcc_usb_hs_inactivity_timers_clk               122
+> 
+> Please capitalize all these macros.
+
+Will do
+
+> > +#define GCC_GENI_IR_BCR                                        0
+> > +#define GCC_USB_HS_BCR                                 1
+> > +#define GCC_USB2_HS_PHY_ONLY_BCR                       2
+> > +#define GCC_QUSB2_PHY_BCR                              3
+> > +#define GCC_USB_HS_PHY_CFG_AHB_BCR                     4
+> > +#define GCC_USB2A_PHY_BCR                              5
+> > +#define GCC_USB3_PHY_BCR                               6
+> > +#define GCC_USB_30_BCR                                 7
+> > +#define GCC_USB3PHY_PHY_BCR                            8
+> > +#define GCC_PCIE_0_BCR                                 9
+> > +#define GCC_PCIE_0_PHY_BCR                             10
+> > +#define GCC_PCIE_0_LINK_DOWN_BCR                       11
+> > +#define GCC_PCIEPHY_0_PHY_BCR                          12
+> > +#define GCC_EMAC_BCR                                   13
+> 
+> No GDSCs? Ok.
+
+Downstream doesn't seem to have one, will recheck specs.
+
+-- 
+~Vinod
