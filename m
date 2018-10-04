@@ -2,39 +2,39 @@ Return-Path: <SRS0=t8U+=MQ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=DATE_IN_PAST_12_24,
+X-Spam-Status: No, score=-8.0 required=3.0 tests=DATE_IN_PAST_12_24,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60461C64EB8
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Oct 2018 13:09:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3048C64EB8
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Oct 2018 13:10:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 121FF2084D
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Oct 2018 13:09:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9EC532084D
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Oct 2018 13:10:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="GTXBHlPp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 121FF2084D
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="hv+BoHZ+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EC532084D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727694AbeJDUCV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 4 Oct 2018 16:02:21 -0400
-Received: from mail-eopbgr00086.outbound.protection.outlook.com ([40.107.0.86]:28160
+        id S1727471AbeJDUDP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 4 Oct 2018 16:03:15 -0400
+Received: from mail-eopbgr00058.outbound.protection.outlook.com ([40.107.0.58]:28932
         "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727367AbeJDUCU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 4 Oct 2018 16:02:20 -0400
+        id S1727385AbeJDUDP (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 4 Oct 2018 16:03:15 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uBUYz0ZAKkYCX+vb0d2FcxP8RwdATIPUWCf29kJ00mk=;
- b=GTXBHlPpLD3uepooUf0el2fz3d9vf8AC+4opxEl4Ks1YJKw3SzZSerdJXq02/fyMIWpBagErIOzoIsccso2P+2QItvnqH5T2+aAG4LahFrDuWKDAgzWshERpoXV1ldGCY9+zaOZIWptK5D/QxMv4+xsfpCDugEG4NBMqzqdLRqM=
+ bh=ENZf9WlZ9JcmInlc9Gwfp+dVJ9b/6YqEJuylq7nmdis=;
+ b=hv+BoHZ+NDGWr+9ys4oOEaF1BBbk42JQNUOxl3T4ZUT9wN7KeoZcMuPo0pxTD5fI1ANkWcly1ZWocyOAwb7ah4pm95ZTI535+i+1ARkf+OzZ/B/53wN1IE3aXtlQ9rrkZ2/Kq4LF4y9p8+sHar8LjNPfpmxjRea7vNeIZMZWrJw=
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=vabhav.sharma@nxp.com; 
 Received: from uefi-OptiPlex-790.ap.freescale.net (14.143.30.134) by
  AM6PR04MB4792.eurprd04.prod.outlook.com (2603:10a6:20b:3::29) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1185.24; Thu, 4 Oct 2018 13:08:58 +0000
+ 15.20.1185.24; Thu, 4 Oct 2018 13:09:19 +0000
 From:   Vabhav Sharma <vabhav.sharma@nxp.com>
 To:     sudeep.holla@arm.com, oss@buserror.net,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
@@ -48,69 +48,67 @@ To:     sudeep.holla@arm.com, oss@buserror.net,
         kstewart@linuxfoundation.org, yamada.masahiro@socionext.com,
         leoyang.li@nxp.com, shawnguo@kernel.org
 Cc:     linux@armlinux.org.uk, V.Sethi@nxp.com, udit.kumar@nxp.com,
-        pankaj.bansal@nxp.com, Vabhav Sharma <vabhav.sharma@nxp.com>
-Subject: [PATCH v4 0/6] arm64: dts: NXP: add basic dts file for LX2160A SoC
-Date:   Thu,  4 Oct 2018 06:33:45 +0530
-Message-Id: <1538615031-7507-1-git-send-email-vabhav.sharma@nxp.com>
+        pankaj.bansal@nxp.com, Yogesh Gaur <yogeshnarayan.gaur@nxp.com>,
+        Tang Yuantian <andy.tang@nxp.com>,
+        Vabhav Sharma <vabhav.sharma@nxp.com>
+Subject: [PATCH v4 4/6] clk: qoriq: Add clockgen support for lx2160a
+Date:   Thu,  4 Oct 2018 06:33:49 +0530
+Message-Id: <1538615031-7507-5-git-send-email-vabhav.sharma@nxp.com>
 X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1538615031-7507-1-git-send-email-vabhav.sharma@nxp.com>
+References: <1538615031-7507-1-git-send-email-vabhav.sharma@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 X-Originating-IP: [14.143.30.134]
 X-ClientProxiedBy: PN1PR0101CA0006.INDPRD01.PROD.OUTLOOK.COM
  (2603:1096:c00:e::16) To AM6PR04MB4792.eurprd04.prod.outlook.com
  (2603:10a6:20b:3::29)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 21a3ea9b-bbad-4d86-b0b2-08d629fa8ec6
+X-MS-Office365-Filtering-Correlation-Id: 72ea4354-5da1-4ff6-2db7-08d629fa9b89
 X-MS-Office365-Filtering-HT: Tenant
 X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM6PR04MB4792;
-X-Microsoft-Exchange-Diagnostics: 1;AM6PR04MB4792;3:8XCplk60EZHXf3taaIklrEix0W+8tiRC4A68EWf3y+m6hnfDRWGGU7M/mZ9XloK3FZVFFP2EJYid7Th4ZepU3s82NpHzPtogHkbxyl4+RfI7n9QC8IZBwUgtsMpsD8h4OMcn6XY2gXscSIi4KHm/q3eZQEQlu/nkOWLMjBE3jkdmBqJjTuCZmrkMcsbcaFuDT+2bMh0gkmMt7YpNLpOCvcNR4SjQR8z9/XxredCP6EcWewD1psaFd4ZfzblcADiy;25:u6GWxDlKUjXLxVxT6oBk+006i7SIkdGIhwHYDFKDKghbEMRheCDspxGLnUct5NFlcBoLNWcLjHMKu9Iiq+S3uEt72NeZrzScI8J5GrCxhm7OAaHDyR8sZ/646nkcWaZzKpO+n96yG0u+ON0emeE08T2Cd4+LCtGn8pXQ41qi+3HD8OPPLSloc4QWj0TQ9N0oexJU6cAN6mSdJlEnoJXkq9MGW7pFBCFERNGT+PeibC08PGLaqNHCytnDxKX06jU2iuZi5eXmG+E1PrM+Glg4PvojGKXFmO+Q89TQIbWN6rs857zFGVkt2KVP4Bt2NpbC91HIe3DaAVADwhWkMKwP1w==;31:ySQzxMULgFW0aYCoqVsspkrTBfpCWyuPaMItL5QCN7bcX3CI+1rzECHnlVbXJlBv4+i7d7+2iqArNTzRE6I/XrhLRtmTmw6SH1tS14x3D+sHW1cWYVqCJtXAZVKdW0AXHk9UNQ53bDghVgvpKOqU/we2IigMYXXYyN6DQ7Y2B9S01j+m+Kbs2JZPnXRa9iNp2aoKZmfewUS4xRsjDBUMukL5sYulyb2n5pdbbpVUq/Q=
+X-Microsoft-Exchange-Diagnostics: 1;AM6PR04MB4792;3:Kkgz4I5HzJMOjslLgjaP5Kk5zCKzZ6fhR0rcRokahV6JXl3UME3hXSh1zb0SSK26J+2NjYve5C02W7eKJxRrL8sYlb1R7IHzCAUh/VLpSDCp24Xg1ekZIhJEtiMgNF2+MTetRNtUnXVem9M0vm3MGTDFczH6rfenaP8Qvbi5zid3e9XAGMly0y+jGcH6XWP60qQ4YZd2uaXLb/f4nk+3SYaBiZCwUBgYWbTisac4bQkqMoXPsXL+JIXl2z2ZhAkQ;25:Y/ru52jKOfJyIlhqC75VFveJnQ6Xx2/1U75lfZR7sGHkCn0yfZQUOVGDswMxcaCA3hP8dAAKV/Of8ezC032knxnhNBLzoVstgf18J6x+SARwcGcjGH7wHFv0N2NsdM1P+1Sl6mn5zB1oCxg3/yHnUYjZXUC5i3njiHvxCaWdKRTxDuHUfICu+2w2s6rgiYMWwKUGARYr09oVrZGV5jpSGlk3B85GII9r3ZreBOFNna41Ty8gC3OehJOvYMmushtpPohGLvYHe8Qs7LPkKWOpR/eI8mculU5Nz8SbYREIMJbJlxiD3fE/yaGElefZwY9fIIptYjV0R2mgUIU/7fFWXw==;31:h4D1BivSzQMX+iR94G+hX6Ger+fL0CoSygJ5GYCBlOajjzuolSFZhOXU3RMxNkLK0MGvXAITi81PyESqepiQe0R7+p9qqUWv0PoGYjO+bfFV6stlSqLXzuU0+mTCqjlwviq8A4nY53qnOYMXNlVNtTOIxP7Zcp6gPAEpBZbsR73NLxEDjzKZU7WLjVY+rIG9WhVrX+ZcundytPKq6t7U/2kQ+d0RzGcBUMaMob1GohQ=
 X-MS-TrafficTypeDiagnostic: AM6PR04MB4792:
-X-Microsoft-Exchange-Diagnostics: 1;AM6PR04MB4792;20:kBSugg13aJXbYAGVlBPO1r6b1q7NCpKpAztO6uk23xMw3gRq1RvLOKGPwQEegGjKIZT8dqxICH6CrEqWWWRqm2vioIygZpWd0lXrq46aFGERcjBtNTPLlz1S0JDLMb8JorQKqnJR83CPRUAHBmMkJ237uLelo6Rj5nmYg0G0vb9xhHk5mWYhWt26VOXQS9PNPrdkKQ+UkQHUknNWlTwHkXbbkHyYXxDxG/zC7AEYGbcfsNJyqCoYSZE7i3UBvl0saoAGp0GkHLGOVdmNXFJWRtgj2+3xnjC8uC2nDzFimhzFpRstD71sSrFzhYmIZbLzytofr/Y6EC8H0s60F+ywJ/BxFWN9bNoHXBJfv1oIuvBNBCgoHDj0fSuuao40yQashlTDgpIqMSVxgp9GHcQD5ZTLYMukUF/NLKrnjHvP0qAR31qkZVbwNN5CRMeVSVuad0w3EFGyJxy71ROaJm9bONqSqbaADQhvGdCgN2Kv7Uj2QKld/Vkkzvzn28dapymD;4:VZdlRnpAD8luoSIq2KoQ8nCA7QU142FH31sJUa2G8Vp/9bTF+4RC6Vhn/bqt7RGZqgqbw42lGhhFtT8Stf6Pc4J5bTl0q5AIBGz8wHPNhIhfHwvt90lN1Is77FcBqdo04htc6161VMY2BqBB1M4jzIvSbW2Z7Uq1++G2moxxGVbb6D77XFFXgOoKtSIlO7fOWtoFWtoTY2lu9x0FFhKizD0oxdVUANQzxOyzmqmLSeNvcSNzWk60mcY8r4xeN8/UGMc3CHNAXlrkhPDEdMnsmA==
-X-Microsoft-Antispam-PRVS: <AM6PR04MB47923C0177D7587FA7F63EEDF3EA0@AM6PR04MB4792.eurprd04.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
+X-Microsoft-Exchange-Diagnostics: 1;AM6PR04MB4792;20:OdhblsmVM4JMoboFz/kexLRCvpyr6O4MlRTadDubwasQOid9Rn5w6DAJA0M1YO6QPPlTVsbRKhiOUsp+NA8lmUOuygKvg/9xfQc03+qYmyKcspjShtT5hzaHwzGR+FzLEUn9taASmYCt1bgncbipHLYh+qRRdaS0/ArXnLFnkiemIoN2iGJwAOCKio4q1OrY6Zk0HBsRAFJTpUG1R3XXCS+3heQpDmzIWNHmvuuKiCmlK8P4+4hT4y9cF++rwk46lt1PXG9bmULB5vHChjEw0NcX4U97ad4/T+z5dfH8IIYWkH7DqqJqxgDM7QbpLXvMJMj2R11wY3ArncIocuylzuvNbfeMI3E5ev36IP1x8IVZHQo3AHS43D+MxOsyI5qfVVapCmRm7P42RuqBQ6k9AsnhpaJo0lhTd5MPGOr2HosFwom8J9FvGWUcqmExu+XSiqePZVhqZfEr9IKS7FggvfhPre1dE7NTNYe5uv7KF87cA7c7see7nWdfu72aFojs;4:aGqbPz2MhI/9l9giEB9w8ub0YyB2dDKFR5JXvWPl9fw4p7IB6s9TZa7qN37yj+yn0sa1OYyLH6nIxgF5e8aG3ahelUkqIvfHwc+KKNWOTgvf6ybUIKcYGTI5BtyaHgP6wmn3J1SyLICiMFi6bikQajYDxlJ8wGnS67dUpZNQA2jj2xxajlUz6/bM0n7KBl3rZgdX01Z5HX8kWTLGZrC1tiR1+Wy49C2T0EA+Jkkhy0LqwllMXyc7n9kvIR2yzWDO4Ao86QbpTA/NIRUnABfwvPIsWFnlGiU/orKUUlVjnJLphGbdUKTL0x7XgF2fwGgj
+X-Microsoft-Antispam-PRVS: <AM6PR04MB4792267306B4515864877D7AF3EA0@AM6PR04MB4792.eurprd04.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(185117386973197);
 X-MS-Exchange-SenderADCheck: 1
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231355)(944501410)(52105095)(10201501046)(3002001)(93006095)(93001095)(6055026)(149066)(150057)(6041310)(20161123564045)(20161123560045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051);SRVR:AM6PR04MB4792;BCL:0;PCL:0;RULEID:;SRVR:AM6PR04MB4792;
 X-Forefront-PRVS: 0815F8251E
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(396003)(39860400002)(136003)(346002)(376002)(366004)(199004)(189003)(97736004)(106356001)(8936002)(305945005)(3846002)(7416002)(6116002)(7736002)(6486002)(81166006)(6512007)(478600001)(2906002)(53936002)(50466002)(68736007)(5009440100003)(105586002)(55236004)(6506007)(2616005)(956004)(36756003)(386003)(16526019)(316002)(476003)(5660300001)(86362001)(66066001)(186003)(44832011)(25786009)(486006)(6666003)(26005)(2870700001)(8676002)(50226002)(23676004)(52116002)(81156014)(47776003)(4326008)(110426005)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR04MB4792;H:uefi-OptiPlex-790.ap.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(396003)(39860400002)(136003)(346002)(376002)(366004)(199004)(189003)(97736004)(48376002)(106356001)(8936002)(305945005)(3846002)(7416002)(54906003)(6116002)(7736002)(6486002)(81166006)(6512007)(478600001)(2906002)(53936002)(50466002)(68736007)(5009440100003)(105586002)(55236004)(6506007)(2616005)(956004)(446003)(11346002)(36756003)(386003)(16526019)(316002)(476003)(5660300001)(86362001)(66066001)(186003)(44832011)(25786009)(486006)(16586007)(6666003)(26005)(8676002)(76176011)(50226002)(51416003)(52116002)(81156014)(47776003)(4326008)(110426005)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR04MB4792;H:uefi-OptiPlex-790.ap.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 Received-SPF: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtBTTZQUjA0TUI0NzkyOzIzOlB4d2hIVmhQSTRydXlaNkRjaFNwbk1Xa0pB?=
- =?utf-8?B?ZEkwU0ViUGRrS1lvNW1pU2NqNEp4Z2NHbVd3dmtmRDh3Sm1LdUpYdlg3SzJC?=
- =?utf-8?B?VDBEdWVRRm5NT2ZibEJMTUVsdnZiMlkxQmd5U1V1K1lqWTlQTXh3V3VMekxZ?=
- =?utf-8?B?UE5kd25BaTZiWHppekRKWkZXMk9od0xxQzB3WUU1T3lHbWcvZktFVzJxUnJM?=
- =?utf-8?B?bzR3NzlFUWw3UjdKeXl6NDVNdDB0Nm5PdWk3dCtHL2x2MTk4S3lLb3RtZHd5?=
- =?utf-8?B?Y3hDbmsrcHNacWNUc1h5dWxJUWZVcXNmRDlpaUZkcHZkVjNRbHQ2ZzNBWkJv?=
- =?utf-8?B?Rm1QQ00vVTZvbzMzcy9STWhoWXp6RnArd0JMU2w0bC9NUXVrWVBzL24xWHRL?=
- =?utf-8?B?amJRZndQT0k0MXhBVDF5L2FPTVJjSjZlYUtuaHNWVVN2Q3VwR0pJNHNNRHBQ?=
- =?utf-8?B?VjNiWWhuZG55ZHhHM3NRWHBZLzhWazhvU1VWZkRLdzFaZ0RNbS8zWkdzUThz?=
- =?utf-8?B?UGNKbjhCU0RsQnBJUU9Pak5ONnBOaFdGUStEMEJ3U0NrVGRUY2g4SnBtTGwv?=
- =?utf-8?B?VmYrUGZNU0ZydWFZbWdxbDRzeFpLVGxvK0x0MXhZV1kyTmN3b04zN1M2TzBS?=
- =?utf-8?B?SkZoWWlQSHhBa3hic1RaUFpUV0R3WnJUa1lLNGRIem1mcGdhSXkrNFdWckli?=
- =?utf-8?B?NUNFQUdNMUQwci9TODZTM3Z5dUFSWmd4YTlNc0tVNFoveVc0U081T1pJKzFP?=
- =?utf-8?B?dU16cUdvYVJPSFcvYnMvVEwwRmsvd2dkS3VBRk5GZ3dNa2FQQTc4RHdlWVU2?=
- =?utf-8?B?ZkhPaUJsdGZzNTI5ZS9GWDZKdEUrV2hvaWRnUUhaTGhjT3JZTnJSZHdjMGpZ?=
- =?utf-8?B?YWR0TE52Njg5WDVuTHkzNzVtSUgzRFYrSDI1UjhBRUZoYmRYa2JOOGM0NmJ4?=
- =?utf-8?B?Rll5Qk5mOUQvWnpEdDNlanIxOXNoQlc4OGlTVjRGcnAyQWc0Nk1zSlZzVHkx?=
- =?utf-8?B?dWdTTGF0YnVoSG5Pd2VCR3E5MExDaG4wWXpEcktxSGdSZUF1NkFRSklzNWln?=
- =?utf-8?B?U0hsd3BGaUN1LzhXSkJDd2RjYU0wM29RTXFNaWREYnhkc3dkak04Ly9OU21J?=
- =?utf-8?B?VzJBQXdCSTJMZ1pITElaNFJyc3pPRXY0OTJremczQVpnOGprdVRZZUMyVTRy?=
- =?utf-8?B?ajJ5Y241Q3doTUpLa3JQZDh6cmtUdEt5NWNSQi9yNVArVVFjRkU4MjlveUEv?=
- =?utf-8?B?ZlhaSXRvM0Z5dWVqQzFGOCtTVUNjOEJaOWtwOHlzWlVXdFNNN3NKaHVMR1FD?=
- =?utf-8?B?N084Qk95dWtvaCtGenZzSVVsRDkyL1ExbHdDblgwK0hKS1Y1TlAxZlh3aDJi?=
- =?utf-8?B?RVRsTEduMXJOVlh2NkhKWWxWUmlHYjI1ZW9uaWtzUzNia21qcGh6VTI5dkFB?=
- =?utf-8?B?NVRKK3FneWVGU2hGZkw3MGRxanZ1Zk9mVUxXdVh4bzlYcWVPa2VqamdEbmtO?=
- =?utf-8?B?UnlUMGlrQ0pLcVE5Z3NOWUdQV015ZDFMWXZ0YlI3V1JCRDR4LzJueGFwTnFC?=
- =?utf-8?B?WUd1YmpyKzE4MTBIaWtKcEIvWGExSm9yQnJKUmN1ejZLdmt6V0ZLTTFOYlQ3?=
- =?utf-8?B?VDNVMGFNeDZqTzlldlVTT0VsN1BBT05xWUFhWGNSbXZYelNseUdTM1lBPT0=?=
-X-Microsoft-Antispam-Message-Info: iAe0xQTDd3ueEO1jVTMfrR6HX7eI007pP6JKIlpuoEWILOTLZo1CwjvsNsGb7Sx9+ojsGzhkeI7lk7wNJy/RNPZLZ6VAP/gxNlAXvgWfe9xp12KkjqpUu28pqU7sjzZGEGJ3jGPNIiaRgwGyJahnGXgfcTOcaymsDINO0pz0teFFTU/0nud4YALhZFvkbRX+uTOudSDvhfrqUQMI4YPRb62Su3GIXuEr5TpFZ5VcAYZVpLRgePjlfTkmXxzYY1hGB/VfNwz0Wqq9UXN/ZdkpUaLKxN9YV09L5PeDkTQD3E68VOdxS/EdMk8jXLISYHRrWWS4NFr9yiotMf+MKYoKlFCAqR/ZSmVsfn70sc3C4NE=
-X-Microsoft-Exchange-Diagnostics: 1;AM6PR04MB4792;6:+EFQfvggGvnm/NGx2C/iUii/3QWFrP9Kp2isWeHjkPS8ioRgGvNJ/OnHuz7FxeDdY9GaSJVogGyVBM0V5Oc+T5lxeKIRjNjOpnkVkxc7WhEtdI3X14RABXSg4pRXfoTqPGbqsc6O2q0fC/kzIttf08k90jMECp12VBjTT7ZkS1i73b80g1KBjS676QAmZU6cVU88S/ycB9SR853gyWMBHCUaR6y1lXbfuzJpj+ki/i7hoW2zwsuHkP2LtrcATYfQ4uarlA/gOLFE63NdjfUZfkIUSUfwJK1VUTpIhaCA/iZUmcvJEsJQ0en3yQK3JarXOBECjwfZo6IfSlGt1EkEtdRMinnoBJsOTaYHrU70ZDqQQb9dCHA0m5sWVYVVl1t+MHIyANyZsj7/Ieo70vs+n6z9j3clgrcnKEYWNojkuT7ftgoeBc7fP6dDd8gqet+yc9KlaDZh048QJdA5LLeiDQ==;5:/bGYbduBpeXniy8FhNKTSWdjkXf9ZoUtorZeXEm+QeewJb/aY9gVSilIBgPBsxlvjxeScdY+HKVyb2/o8kycYhf8/0p7qIgRW6d32InNYaQRn0KU09c5518/o9871L61YpAY6iD82fYMOx38jucMVimES4z0O21EPbQJFlwCOfc=;7:QRmZvjkBAADW640Xj7ScNHjMbswWxTeEHinNaHjslJBdPnhKWX2UV86+NxbHUhoSXPUvI4On/Ynx57V7ggoLZL+CvsxVzz+knya8gcGC6zXAPGgrSRCl5n7XUFoc/F2Yv0IzGj5195mqubTiAosPCPsd0mgjpwFQjfb8cRUqwj5YPWxVx5bHhGZsekEOA39lB03DtJhite7aAts/5mfXpZZmvLRWP0P9o/m1MhkrUcAHNHGyiLPJTeVVUDL1ekn4
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM6PR04MB4792;23:cFYPpPGGe2+BGnBwUqW/FRp7AUH6IfHnj25Yp23D9?=
+ =?us-ascii?Q?o8aHkp7HJwHr/zdPCbdQAucRsBte+zTxOvzfUNvQbiowmYY7hv3aof2Hp/tR?=
+ =?us-ascii?Q?CCoWNhJYcMdha757W+JNhCfIBl9y8W4t/H7RQsTy9T2AZm6VgJ7eFDWTRD0B?=
+ =?us-ascii?Q?NNa5X65RDW7f3fGghhUCpI3+6u+aEgIwKbhKn/T/mpVrxHdYaqAlLazwZLff?=
+ =?us-ascii?Q?GJ4FNStY++HYFC1TG3w6yeHftHuqRbRefKjqw34KTySjN9AqzWSvr2bR7Yhp?=
+ =?us-ascii?Q?fhCvXpuBNltI3HUi4wyHjzBvP2aCbwuYNImn+sLjqKVcNQprgGq1TXyfARV7?=
+ =?us-ascii?Q?9PDxih5+vKdjuyzxqoNsAOR9+pAc5iXIZN66NyDgiQxvumqR8RU4iPASZc4h?=
+ =?us-ascii?Q?X8swFmdKAC0ZF4bnQl3K/QdFeZhTF3pMjW9rOd4NT4O9uq2gpekc9wRmdNrM?=
+ =?us-ascii?Q?exbNy+jg9gZfb2UUO5oNn9LO8k6PP1vAbTvaJA03gMNHgCcBvqg1pck4tejX?=
+ =?us-ascii?Q?cSofGgcBLVm+obDBoOwelRVc/9Q3HOf7nRGps5Hti8ygyPdi6ihLaRZfkKTr?=
+ =?us-ascii?Q?65xvXAyJ+YmnY4+r+sopDVItMdV/tAFS+XMirT/6Ex1jG0eE3IGu2+OoKOrO?=
+ =?us-ascii?Q?NgfMbyB7s+hDXcfpUUuIFQWdU/zkMOa2I9WHEXV3VfrrZc93bGLPFnx97wWJ?=
+ =?us-ascii?Q?QJ66QxH8+JUJLZTRGW34QKRtaff3yHav051Gs1eD5N/7bklUqx/yPpbGnRJ0?=
+ =?us-ascii?Q?DowdG2lrD0BQXvyv+/fHZWvG7TQDoWIdlZUtADvbatIlEu+lcL9tCQLxS5iu?=
+ =?us-ascii?Q?KTQpwgXT2qnSfYUWfWLbQB6MQfnU/1nJYfquiuhScC7eIyOOu0a7xhYsCgak?=
+ =?us-ascii?Q?NaXsz1tFuserhdSNPdAZ7T/Esza7tKlarTaOd6L2VmklUN4Ugapj2H4tNc6g?=
+ =?us-ascii?Q?peAlvmYXf1valE0V/LkaSc2u7FWjtyfM2HMiN9m8ltCEd/TPSoOJjKAaIZKN?=
+ =?us-ascii?Q?1DLucyuUo15LzacnrqlpIudU7WU9gckceW1LGpLiKcU5Ekzf6mPJzifOkCtS?=
+ =?us-ascii?Q?4mnyGGZB1FB96Df8RcKOubZqhA8Aej/n1dS0qJP0ff3MuFcHDDP2r+VVydum?=
+ =?us-ascii?Q?0Q3wAz3tY88OVXu3kW93Oguw7U4S9ijVYePNJyK9zz4igU4OgOJLDx9ro7QQ?=
+ =?us-ascii?Q?JeWuoZKzwOKb7H+ma0bPxEnMyxiIcPf5V0yDtczFPn/IaYgQOs/aGgiqCa7S?=
+ =?us-ascii?Q?ZAdLEzidMHvEQyRXzufCnTdD1MTydmNbGax4kogf6SS0Z/2yYec2cjHUtmAJ?=
+ =?us-ascii?Q?fyiZZxrcj6PNGtCXWxbphA=3D?=
+X-Microsoft-Antispam-Message-Info: VStcfQuOJgqW19Rwwf0izz407n9T/kAcfTs12QPHnXmkIojh1WApdLXxniU6phBZdluMc3iGQqz2bOMROu06+hPseMJ3GipSjrniDb7mWv6rWkRvYmmQCcmXQISRlF2AmeCojyM6ejx22boI8ZmkxiJqUozS0MTy/hySSk0JRZ+5+rjoL7vDmzV6JuFEDE6bBEHGPdoWo/BEaO/6p6nYlq2raq8TiyGT9k28ZU2VrceCOIemM1mX0pnBY23/gK1ZA04n0+IDGIISxQkOGyjVHrJq3ngWV5PfIAOYFRKuSsBLs0pYcdBrSZ7ePhBWZJXRZlCQ927uHa3jncNFgHJOnBL7dKOsJ/HswuIAiWQ0qZ4=
+X-Microsoft-Exchange-Diagnostics: 1;AM6PR04MB4792;6:tAae30KYK1se3axK1Svy6dkjlsWneaQhaCqNNkBmcCI0jxMUM6MynIBHYJk3i+O2z8KVgVO5ttHPAJwQGn66rYorEfbai2S38ROhlkg5ppHQaphV+NNxweZVYNOqBSqXupuB4gr8esc8LMNVumFyHi2a+Qi0r0yURMwri7pXWDr99obj89bnXKfDnne7ymKO/rSN6eqgQrZcG/o4kk52E1PU8FPRuOhlVYGtqxWsTXqRmOS/dyzpQDxVbXn9m82Xjqcyd1sJ97+JwCuFFlm3K4pqaxvBuPsUyA0+Wc5xw0C1L+xcTZuRThFYsNAfqc9sK6DV7nShiQ5kEr2/H+BpiNc5IYRVFHPCdK2awakz8Npdk0BG5sASx1pAiQBEOZmxeIKoA/OfmBMcQlDi3IK6xiPGuW91cxQKEPhsmwo48WZCDSXo8CKAVAC5EBonW0mjBnZoqfz0Y3i1TSCi2lrBeg==;5:rXEDrzIif4KCVIOMCs8VDGH/z6xNSun9xbu69x4NUTMBpMtokcts8WI0IZtmdbF+GVZgEu7X/ZC1a2pp7XC5KWOzCtAsSGd0xx3vVM1/FvtmcUB2Ey+vcqit4T9iVurHj8yaKUsmzeA8MVCcBxtYLatpSllYTOk74vK5AD/4j7M=;7:PPFdclUq8HHVIx6oZHhgIPVWC+AK7mlRQ4s4dc8YVwu9viPlMim70HEOs7uHjEe+kC64rlPnx5+X9fTz/cqA82YhRk+6NIcpGMWP1NoJwOkgztDk/Dxf/692/UpxiZj1SgAoyXzsKwHZ7diVuR3F+dycmidfoGE2F626K4XYeAHgIpSjBOPuCr4F7qJr6PhlT9rOT6g/3bS/JnBre9K5d2ssgB1cdqe49uvogS6BloE5gjZlvEbxJvNhK73vSXc6
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Oct 2018 13:08:58.6575
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Oct 2018 13:09:19.7835
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 21a3ea9b-bbad-4d86-b0b2-08d629fa8ec6
+X-MS-Exchange-CrossTenant-Network-Message-Id: 72ea4354-5da1-4ff6-2db7-08d629fa9b89
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB4792
@@ -119,67 +117,62 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Changes for v4:
--Updated bindings for lx2160a clockgen and dcfg
--Modified commit message for lx2160a clockgen changes
--Updated interrupt property with macro definition
--Added required enable-method property to each core node with psci value
--Removed unused node syscon in device tree
--Removed blank lines in device tree fsl-lx2160a.dtsi
--Updated uart node compatible sbsa-uart first
--Added and defined vcc-supply property to temperature sensor node in
- device tree fsl-lx2160a-rdb.dts
+From: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
 
-Changes for v3:
--Split clockgen support patch into below two patches:
-- a)Updated array size of cmux_to_group[] with NUM_CMUX+1 to include -1
- terminator and p4080 cmux_to_group[] array with -1 terminator
-- b)Add clockgen support for lx2160a
+Add clockgen support for lx2160a.
+Added entry for compat 'fsl,lx2160a-clockgen'.
 
-Changes for v2:
-- Modified cmux_to_group array to include -1 terminator
-- Revert NUM_CMUX to original value 8 from 16
-- Remove “As LX2160A is 16 core, so modified value for NUM_CMUX”
-  in patch "[PATCH 3/5] drivers: clk-qoriq: Add clockgen support for
-  lx2160a" description
-- Populated cache properties for L1 and L2 cache in lx2160a device-tree.
-- Removed reboot node from lx2160a device-tree as PSCI is implemented.
-- Removed incorrect comment for timer node interrupt property in
-  lx2160a device-tree.
-- Modified pmu node compatible property from "arm,armv8-pmuv3" to
-  "arm,cortex-a72-pmu" in lx2160a device-tree
-- Non-standard aliases removed in lx2160a rdb board device-tree
-- Updated i2c child nodes to generic name in lx2160a rdb device-tree.
+Signed-off-by: Tang Yuantian <andy.tang@nxp.com>
+Signed-off-by: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
+Signed-off-by: Vabhav Sharma <vabhav.sharma@nxp.com>
+Acked-by: Stephen Boyd <sboyd@kernel.org>
+---
+ drivers/clk/clk-qoriq.c         | 12 ++++++++++++
+ drivers/cpufreq/qoriq-cpufreq.c |  1 +
+ 2 files changed, 13 insertions(+)
 
-Changes for v1:
-- Add compatible string for LX2160A clockgen support
-- Add compatible string to initialize LX2160A guts driver
-- Add compatible string for LX2160A support in dt-bindings
-- Add dts file to enable support for LX2160A SoC and LX2160A RDB
-  (Reference design board)
-
-Vabhav Sharma (4):
-  dt-bindings: arm64: add compatible for LX2160A
-  soc/fsl/guts: Add compatible string for LX2160A
-  arm64: dts: add QorIQ LX2160A SoC support
-  arm64: dts: add LX2160ARDB board support
-
-Yogesh Gaur (2):
-  clk: qoriq: increase array size of cmux_to_group
-  clk: qoriq: Add clockgen support for lx2160a
-
- Documentation/devicetree/bindings/arm/fsl.txt      |  14 +-
- .../devicetree/bindings/clock/qoriq-clock.txt      |   1 +
- arch/arm64/boot/dts/freescale/Makefile             |   1 +
- arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts  | 100 +++
- arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi     | 702 +++++++++++++++++++++
- drivers/clk/clk-qoriq.c                            |  16 +-
- drivers/cpufreq/qoriq-cpufreq.c                    |   1 +
- drivers/soc/fsl/guts.c                             |   1 +
- 8 files changed, 833 insertions(+), 3 deletions(-)
- create mode 100644 arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
- create mode 100644 arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
-
+diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
+index e152bfb..99675de 100644
+--- a/drivers/clk/clk-qoriq.c
++++ b/drivers/clk/clk-qoriq.c
+@@ -570,6 +570,17 @@ static const struct clockgen_chipinfo chipinfo[] = {
+ 		.flags = CG_VER3 | CG_LITTLE_ENDIAN,
+ 	},
+ 	{
++		.compat = "fsl,lx2160a-clockgen",
++		.cmux_groups = {
++			&clockgen2_cmux_cga12, &clockgen2_cmux_cgb
++		},
++		.cmux_to_group = {
++			0, 0, 0, 0, 1, 1, 1, 1, -1
++		},
++		.pll_mask = 0x37,
++		.flags = CG_VER3 | CG_LITTLE_ENDIAN,
++	},
++	{
+ 		.compat = "fsl,p2041-clockgen",
+ 		.guts_compat = "fsl,qoriq-device-config-1.0",
+ 		.init_periph = p2041_init_periph,
+@@ -1424,6 +1435,7 @@ CLK_OF_DECLARE(qoriq_clockgen_ls1043a, "fsl,ls1043a-clockgen", clockgen_init);
+ CLK_OF_DECLARE(qoriq_clockgen_ls1046a, "fsl,ls1046a-clockgen", clockgen_init);
+ CLK_OF_DECLARE(qoriq_clockgen_ls1088a, "fsl,ls1088a-clockgen", clockgen_init);
+ CLK_OF_DECLARE(qoriq_clockgen_ls2080a, "fsl,ls2080a-clockgen", clockgen_init);
++CLK_OF_DECLARE(qoriq_clockgen_lx2160a, "fsl,lx2160a-clockgen", clockgen_init);
+ 
+ /* Legacy nodes */
+ CLK_OF_DECLARE(qoriq_sysclk_1, "fsl,qoriq-sysclk-1.0", sysclk_init);
+diff --git a/drivers/cpufreq/qoriq-cpufreq.c b/drivers/cpufreq/qoriq-cpufreq.c
+index 3d773f6..83921b7 100644
+--- a/drivers/cpufreq/qoriq-cpufreq.c
++++ b/drivers/cpufreq/qoriq-cpufreq.c
+@@ -295,6 +295,7 @@ static const struct of_device_id node_matches[] __initconst = {
+ 	{ .compatible = "fsl,ls1046a-clockgen", },
+ 	{ .compatible = "fsl,ls1088a-clockgen", },
+ 	{ .compatible = "fsl,ls2080a-clockgen", },
++	{ .compatible = "fsl,lx2160a-clockgen", },
+ 	{ .compatible = "fsl,p4080-clockgen", },
+ 	{ .compatible = "fsl,qoriq-clockgen-1.0", },
+ 	{ .compatible = "fsl,qoriq-clockgen-2.0", },
 -- 
 2.7.4
 
