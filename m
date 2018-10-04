@@ -2,136 +2,116 @@ Return-Path: <SRS0=t8U+=MQ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E703CC64EB8
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Oct 2018 05:52:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64FDAC64EB8
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Oct 2018 12:01:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD810213A2
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Oct 2018 05:52:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B9CA20684
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Oct 2018 12:01:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="QZ9Ux2Bt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD810213A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="gO0c81DQ";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="FrXjyX3c"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B9CA20684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727375AbeJDMnp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 4 Oct 2018 08:43:45 -0400
-Received: from mail.andi.de1.cc ([85.214.239.24]:59978 "EHLO
-        h2641619.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726438AbeJDMno (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Oct 2018 08:43:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=kemnade.info; s=20180802; h=References:In-Reply-To:Message-Id:Date:Subject:
-        Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=06LAMQJB8ip9/Ma0/muLzq4j1/rsfXZ5Gl2usBBhVpg=; b=QZ9Ux2Bt6nfVxKWqtwRxHkQoa
-        lDb+NIJuMJ4kmgd+TDXmDHuwNFHxtGPFI0nAWn0N7NWbTCIsza9sgSYgRzX36cDehtZKPuANVPHsF
-        1Mjpark4yZFwNaHhCp2ECo57zJaaNUIXGf4OsIrsEkftyeOYrTaDskYOF8136/Kf5ysL4=;
-Received: from p200300ccfbcbd5001a3da2fffebfd33a.dip0.t-ipconnect.de ([2003:cc:fbcb:d500:1a3d:a2ff:febf:d33a] helo=aktux)
-        by h2641619.stratoserver.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1g7wYM-0003YA-60; Thu, 04 Oct 2018 07:52:02 +0200
-Received: from andi by aktux with local (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1g7wYM-00060Y-32; Thu, 04 Oct 2018 07:52:02 +0200
-From:   Andreas Kemnade <andreas@kemnade.info>
-To:     t-kristo@ti.com, mturquette@baylibre.com, sboyd@kernel.org,
-        linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, paul@pwsan.com, tony@atomide.com,
-        letux-kernel@openphoenux.org
-Cc:     Andreas Kemnade <andreas@kemnade.info>
-Subject: [PATCH RFC 1/2] clk: ti: add a usecount for autoidle
-Date:   Thu,  4 Oct 2018 07:51:46 +0200
-Message-Id: <20181004055147.23048-2-andreas@kemnade.info>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20181004055147.23048-1-andreas@kemnade.info>
-References: <20181004055147.23048-1-andreas@kemnade.info>
+        id S1727454AbeJDSye (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 4 Oct 2018 14:54:34 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:33688 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727264AbeJDSye (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Oct 2018 14:54:34 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 1B14B60C8C; Thu,  4 Oct 2018 12:01:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1538654496;
+        bh=8Ga/4yLMbU/+1RUDe+Xy96polwRYsZDxnOQjF9Ha1TY=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=gO0c81DQ+NFAmND7mUydWfrWQKyk1ptplCe/SN343npm+ED4IWKKQwESFRiQ5YWZt
+         IiaSJMYhoB1LdcnoiER51964rwDA1QeNo2haX4uxsz4SNwPDkTmvEv7TXmXBvomMoX
+         /6ZRj5xYn6wrUJXo/osL9TBRYu7d6S8iFh2knbJ8=
+Received: from [192.168.225.247] (unknown [49.33.236.147])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id A8BFB60C62;
+        Thu,  4 Oct 2018 12:01:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1538654495;
+        bh=8Ga/4yLMbU/+1RUDe+Xy96polwRYsZDxnOQjF9Ha1TY=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=FrXjyX3cBg1AxaLAnwW9bfpg8T2rBOwukdD3rnGCJfD+6J8pTBEbCn0Xh1V/SG9SQ
+         +OWnWfTztXgb1MtndJdYVjo8o9ZlqjXICwwdhNYvzQg3WVkj/Iahu4mMwG8QZQBCtV
+         Q0lQnNZ3P/Dj9NIi9NHIcA7wfP3WFxCvMNI9SyCY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A8BFB60C62
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+Subject: Re: [PATCH v5 2/2] clk: qcom: Add lpass clock controller driver for
+ SDM845
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, robh@kernel.org
+References: <1537266338-18661-1-git-send-email-tdas@codeaurora.org>
+ <1537266338-18661-3-git-send-email-tdas@codeaurora.org>
+ <153816066933.119890.2976485722156069351@swboyd.mtv.corp.google.com>
+From:   Taniya Das <tdas@codeaurora.org>
+Message-ID: <66fc65d8-92ec-f32c-6edb-ad4952695395@codeaurora.org>
+Date:   Thu, 4 Oct 2018 17:31:27 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <153816066933.119890.2976485722156069351@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-We have the scenario that first autoidle is disabled for all clocks,
-then it is disabled for selected ones and then enabled for all. So
-we should have some counting here, also according to the
-comment in  _setup_iclk_autoidle()
 
-Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
----
- drivers/clk/ti/autoidle.c | 20 ++++++++++++--------
- include/linux/clk/ti.h    |  1 +
- 2 files changed, 13 insertions(+), 8 deletions(-)
+On 9/29/2018 12:21 AM, Stephen Boyd wrote:
+> Quoting Taniya Das (2018-09-18 03:25:38)
+>> @@ -3469,6 +3495,8 @@ enum {
+>>          [GCC_QSPI_CORE_CLK_SRC] = &gcc_qspi_core_clk_src.clkr,
+>>          [GCC_QSPI_CORE_CLK] = &gcc_qspi_core_clk.clkr,
+>>          [GCC_QSPI_CNOC_PERIPH_AHB_CLK] = &gcc_qspi_cnoc_periph_ahb_clk.clkr,
+>> +       [GCC_LPASS_Q6_AXI_CLK] = NULL,
+>> +       [GCC_LPASS_SWAY_CLK] = NULL,
+>>   };
+>>   
+>>   static const struct qcom_reset_map gcc_sdm845_resets[] = {
+>> @@ -3583,6 +3611,13 @@ static int gcc_sdm845_probe(struct platform_device *pdev)
+>>          if (ret)
+>>                  return ret;
+>>   
+>> +       if (of_property_read_bool(pdev->dev.of_node, "qcom,lpass-protected")) {
+> 
+> Shouldn't this be negated? So that we only add the clks when lpass isn't
+> protected?
+>
 
-diff --git a/drivers/clk/ti/autoidle.c b/drivers/clk/ti/autoidle.c
-index 7bb9afbe4058..be2ce42e4f33 100644
---- a/drivers/clk/ti/autoidle.c
-+++ b/drivers/clk/ti/autoidle.c
-@@ -48,8 +48,11 @@ int omap2_clk_deny_idle(struct clk *clk)
- 	struct clk_hw_omap *c;
- 
- 	c = to_clk_hw_omap(__clk_get_hw(clk));
--	if (c->ops && c->ops->deny_idle)
--		c->ops->deny_idle(c);
-+	if (c->ops && c->ops->deny_idle) {
-+		c->autoidle_count--;
-+		if (c->autoidle_count == -1)
-+			c->ops->deny_idle(c);
-+	}
- 	return 0;
- }
- 
-@@ -64,8 +67,11 @@ int omap2_clk_allow_idle(struct clk *clk)
- 	struct clk_hw_omap *c;
- 
- 	c = to_clk_hw_omap(__clk_get_hw(clk));
--	if (c->ops && c->ops->allow_idle)
--		c->ops->allow_idle(c);
-+	if (c->ops && c->ops->allow_idle) {
-+		c->autoidle_count++;
-+		if (c->autoidle_count == 0)
-+			c->ops->allow_idle(c);
-+	}
- 	return 0;
- }
- 
-@@ -201,8 +207,7 @@ int omap2_clk_enable_autoidle_all(void)
- 	struct clk_hw_omap *c;
- 
- 	list_for_each_entry(c, &clk_hw_omap_clocks, node)
--		if (c->ops && c->ops->allow_idle)
--			c->ops->allow_idle(c);
-+		omap2_clk_allow_idle(c->hw.clk);
- 
- 	_clk_generic_allow_autoidle_all();
- 
-@@ -223,8 +228,7 @@ int omap2_clk_disable_autoidle_all(void)
- 	struct clk_hw_omap *c;
- 
- 	list_for_each_entry(c, &clk_hw_omap_clocks, node)
--		if (c->ops && c->ops->deny_idle)
--			c->ops->deny_idle(c);
-+		omap2_clk_deny_idle(c->hw.clk);
- 
- 	_clk_generic_deny_autoidle_all();
- 
-diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
-index a8faa38b1ed6..c460355419c0 100644
---- a/include/linux/clk/ti.h
-+++ b/include/linux/clk/ti.h
-@@ -159,6 +159,7 @@ struct clk_hw_omap {
- 	const char		*clkdm_name;
- 	struct clockdomain	*clkdm;
- 	const struct clk_hw_omap_ops	*ops;
-+	int autoidle_count;
- };
- 
- /*
+I was of the opinion to add the flag only when LPASS clocks are 
+required. But I am fine negating it too.
+
+>> +               gcc_sdm845_clocks[GCC_LPASS_Q6_AXI_CLK] =
+>> +                       &gcc_lpass_q6_axi_clk.clkr;
+>> +               gcc_sdm845_clocks[GCC_LPASS_SWAY_CLK] =
+>> +                       &gcc_lpass_sway_clk.clkr;
+>> +       }
+>> +
+>>          return qcom_cc_really_probe(pdev, &gcc_sdm845_desc, regmap);
+
 -- 
-2.11.0
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
 
+--
