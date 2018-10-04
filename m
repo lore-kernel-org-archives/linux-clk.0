@@ -2,155 +2,119 @@ Return-Path: <SRS0=t8U+=MQ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C4D2C64EBC
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Oct 2018 20:38:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A5ADC64EB8
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Oct 2018 21:02:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C812F20877
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Oct 2018 20:38:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="AU1VWG6c"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C812F20877
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info
+	by mail.kernel.org (Postfix) with ESMTP id 0C9C52084D
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Oct 2018 21:02:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C9C52084D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727638AbeJEDd3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 4 Oct 2018 23:33:29 -0400
-Received: from mail.andi.de1.cc ([85.214.239.24]:33926 "EHLO
-        h2641619.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727354AbeJEDd3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Oct 2018 23:33:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=kemnade.info; s=20180802; h=References:In-Reply-To:Message-Id:Date:Subject:
-        Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=hxKaBbQP9Ohf6unfmS5C4E5JDsTkQe6IxUA7qgDVBQc=; b=AU1VWG6c6U0Tcj29nA5TnaB9i
-        yf4HzBgo0h+2bKYXNSnhpf3lj0a4NtcoVGVBrXWLH8DxemA4oiPT7q6XF0laRSRMGb1kzKABT2+Cs
-        wtSGEbhs1MhP7951I3K/trG7ArKgYwTwPOrx0xCH/q3WxJPjzObu7tT1f2JRQWgWU6ZMc=;
-Received: from p200300ccfbcbd5001a3da2fffebfd33a.dip0.t-ipconnect.de ([2003:cc:fbcb:d500:1a3d:a2ff:febf:d33a] helo=aktux)
-        by h2641619.stratoserver.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1g8AOA-0007GZ-C4; Thu, 04 Oct 2018 22:38:26 +0200
-Received: from andi by aktux with local (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1g8AOA-0005mB-1h; Thu, 04 Oct 2018 22:38:26 +0200
-From:   Andreas Kemnade <andreas@kemnade.info>
-To:     t-kristo@ti.com, mturquette@baylibre.com, sboyd@kernel.org,
-        linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, bcousson@baylibre.com,
-        paul@pwsan.com, tony@atomide.com, letux-kernel@openphoenux.org
-Cc:     Andreas Kemnade <andreas@kemnade.info>
-Subject: [PATCH 1/2] clk: ti: add a usecount for autoidle
-Date:   Thu,  4 Oct 2018 22:38:16 +0200
-Message-Id: <20181004203817.22101-2-andreas@kemnade.info>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20181004203817.22101-1-andreas@kemnade.info>
-References: <20181004203817.22101-1-andreas@kemnade.info>
+        id S1727535AbeJED5m (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 4 Oct 2018 23:57:42 -0400
+Received: from mga07.intel.com ([134.134.136.100]:30929 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727354AbeJED5m (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 4 Oct 2018 23:57:42 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Oct 2018 14:02:36 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,341,1534834800"; 
+   d="scan'208";a="238574673"
+Received: from tthayer-hp-z620.an.intel.com (HELO [10.122.105.132]) ([10.122.105.132])
+  by orsmga004.jf.intel.com with ESMTP; 04 Oct 2018 13:58:22 -0700
+From:   Thor Thayer <thor.thayer@linux.intel.com>
+Subject: Re: [PATCHv3 2/2] iommu/arm-smmu: Add SMMU clock
+Reply-To: thor.thayer@linux.intel.com
+To:     Vivek Gautam <vivek.gautam@codeaurora.org>, dinguyen@kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, will.deacon@arm.com,
+        robin.murphy@arm.com, joro@8bytes.org, aisheng.dong@nxp.com,
+        sboyd@kernel.org
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        iommu@lists.linux-foundation.org
+References: <1538605693-22073-1-git-send-email-thor.thayer@linux.intel.com>
+ <1538605693-22073-3-git-send-email-thor.thayer@linux.intel.com>
+ <1898b9fb-0523-4de4-741a-a52de5fdab70@codeaurora.org>
+Message-ID: <793d47b7-cb56-9017-2030-e248921ccab4@linux.intel.com>
+Date:   Thu, 4 Oct 2018 16:00:48 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <1898b9fb-0523-4de4-741a-a52de5fdab70@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-We have the scenario that first autoidle is disabled for all clocks,
-then it is disabled for selected ones and then enabled for all. So
-we should have some counting here, also according to the
-comment in  _setup_iclk_autoidle()
+Hi Vivek,
 
-Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
----
- drivers/clk/ti/autoidle.c | 32 ++++++++++++++++++++++++--------
- include/linux/clk/ti.h    |  1 +
- 2 files changed, 25 insertions(+), 8 deletions(-)
+On 10/04/2018 01:49 PM, Vivek Gautam wrote:
+> Hi Thor,
+> 
+> 
+> On 10/4/2018 3:58 AM, thor.thayer@linux.intel.com wrote:
+>> From: Thor Thayer <thor.thayer@linux.intel.com>
+>>
+>> Add a clock to the SMMU structure. In the device tree case,
+>> check for a clock node and enable the clock if found.
+>>
+>> This patch is dependent upon the following patches that add
+>> a device tree bulk clock function.
+>> "[V6, 1/4] clk: bulk: add of_clk_bulk_get()"
+>> https://patchwork.kernel.org/patch/10583133/
+>> "[V6, 2/4] clk: add new APIs to operation on all available
+>> clocks"
+>> https://patchwork.kernel.org/patch/10583131/
+>> "[V6, 3/4] clk: add managed version of clk_bulk_get_all"
+>> https://patchwork.kernel.org/patch/10583139/
+>>
+>> Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
+>> ---
+>>   drivers/iommu/arm-smmu.c | 20 ++++++++++++++++++++
+>>   1 file changed, 20 insertions(+)
+> 
+> The clock part is already handled by one of the patch in the
+> runtime pm series of arm-smmu [1]. This patch should not be needed.
+> 
+> [1] https://patchwork.kernel.org/patch/10581899/
+> 
+> [...]
+> 
+> Regards
+> Vivek
+> 
 
-diff --git a/drivers/clk/ti/autoidle.c b/drivers/clk/ti/autoidle.c
-index 7bb9afbe4058..bb6cff168e73 100644
---- a/drivers/clk/ti/autoidle.c
-+++ b/drivers/clk/ti/autoidle.c
-@@ -37,6 +37,14 @@ struct clk_ti_autoidle {
- static LIST_HEAD(autoidle_clks);
- static LIST_HEAD(clk_hw_omap_clocks);
- 
-+/*
-+ * we have some non-atomic read/write
-+ * operations behind it, so lets
-+ * take one mutex for handling autoidle
-+ * of all clocks
-+ */
-+static DEFINE_MUTEX(autoidle_mutex);
-+
- /**
-  * omap2_clk_deny_idle - disable autoidle on an OMAP clock
-  * @clk: struct clk * to disable autoidle for
-@@ -48,8 +56,13 @@ int omap2_clk_deny_idle(struct clk *clk)
- 	struct clk_hw_omap *c;
- 
- 	c = to_clk_hw_omap(__clk_get_hw(clk));
--	if (c->ops && c->ops->deny_idle)
--		c->ops->deny_idle(c);
-+	if (c->ops && c->ops->deny_idle) {
-+		mutex_lock(&autoidle_mutex);
-+		c->autoidle_count--;
-+		if (c->autoidle_count == -1)
-+			c->ops->deny_idle(c);
-+		mutex_unlock(&autoidle_mutex);
-+	}
- 	return 0;
- }
- 
-@@ -64,8 +77,13 @@ int omap2_clk_allow_idle(struct clk *clk)
- 	struct clk_hw_omap *c;
- 
- 	c = to_clk_hw_omap(__clk_get_hw(clk));
--	if (c->ops && c->ops->allow_idle)
--		c->ops->allow_idle(c);
-+	if (c->ops && c->ops->allow_idle) {
-+		mutex_lock(&autoidle_mutex);
-+		c->autoidle_count++;
-+		if (c->autoidle_count == 0)
-+			c->ops->allow_idle(c);
-+		mutex_unlock(&autoidle_mutex);
-+	}
- 	return 0;
- }
- 
-@@ -201,8 +219,7 @@ int omap2_clk_enable_autoidle_all(void)
- 	struct clk_hw_omap *c;
- 
- 	list_for_each_entry(c, &clk_hw_omap_clocks, node)
--		if (c->ops && c->ops->allow_idle)
--			c->ops->allow_idle(c);
-+		omap2_clk_allow_idle(c->hw.clk);
- 
- 	_clk_generic_allow_autoidle_all();
- 
-@@ -223,8 +240,7 @@ int omap2_clk_disable_autoidle_all(void)
- 	struct clk_hw_omap *c;
- 
- 	list_for_each_entry(c, &clk_hw_omap_clocks, node)
--		if (c->ops && c->ops->deny_idle)
--			c->ops->deny_idle(c);
-+		omap2_clk_deny_idle(c->hw.clk);
- 
- 	_clk_generic_deny_autoidle_all();
- 
-diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
-index a8faa38b1ed6..c460355419c0 100644
---- a/include/linux/clk/ti.h
-+++ b/include/linux/clk/ti.h
-@@ -159,6 +159,7 @@ struct clk_hw_omap {
- 	const char		*clkdm_name;
- 	struct clockdomain	*clkdm;
- 	const struct clk_hw_omap_ops	*ops;
-+	int autoidle_count;
- };
- 
- /*
--- 
-2.11.0
+Thanks. FYI, I had problems applying [v16,2/5] on [1] but was able to 
+apply [v17,2/5] cleanly.
 
+The bigger issue is that with your patchset I need to create a new 
+structure for my variation of the ARM SMMUv2 due to the 
+of_device_get_match_data() call in arm_smmu_device_dt_probe(). I want to 
+use the default arm_mmu500 but it doesn't have a clock specified and I 
+end up with num_clks of 0.
+
+Creating a new smmu_match_data structure for each variant feels wrong 
+because I have the clock data specified in my device tree. The 
+of_clk_bulk_get() call handles this nicely but that patchset isn't 
+getting much attention.
+
+I'll investigate adding the of_clk_bulk_get() call on top of your 
+patches. This may simplify your patches too since the additional 
+structures in [v16,5/5] wouldn't be needed.
+
+Thanks,
+
+Thor
+
+[1] git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git - next
