@@ -2,93 +2,81 @@ Return-Path: <SRS0=F5gx=MR=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3557DC00449
-	for <linux-clk@archiver.kernel.org>; Fri,  5 Oct 2018 18:11:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FECDC00449
+	for <linux-clk@archiver.kernel.org>; Fri,  5 Oct 2018 20:55:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F416E213A2
-	for <linux-clk@archiver.kernel.org>; Fri,  5 Oct 2018 18:11:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="CxNnXw5m"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F416E213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 5F11C213A2
+	for <linux-clk@archiver.kernel.org>; Fri,  5 Oct 2018 20:55:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F11C213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728314AbeJFBKz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 5 Oct 2018 21:10:55 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:55704 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728044AbeJFBKz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 5 Oct 2018 21:10:55 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w95I9ZOE151854;
-        Fri, 5 Oct 2018 18:10:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=5t68NkqHszAd8FzaLqCdRacqTD3iIgyZ3b8oZwvabc8=;
- b=CxNnXw5mOSm/THHWOEcUZ0CcZtyFgDyaZvtL7yn6+c6tmkTn7mZfUfMeXO+JOqAIcHHv
- 38mOhmrpN9oe95d43rSLJO9BxacObEda3GxVlxA9c3KUrITrNpCVdf1FZrs05diz37AW
- UU9p8R/+aNU0E4np6JEjFg8LHNrWC5Fa0Sxp7PA63z5/7pLbMqG8SVkyIw91Lp1ZgwfP
- TJmspWdZ78oYMP215++LLf6o4hfqKtc9FzMSbGYXmtBsOad5i199pjAgSITS38mPUQUS
- VY6BfZuR+lboNaQi2883pwK5kBjxL9+6ZaC/Ltp0/gQb1NjTQl5YrepOzb2cZR+lDT7D rA== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2130.oracle.com with ESMTP id 2mt0tuc84e-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 05 Oct 2018 18:10:58 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w95IAvnL014675
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 5 Oct 2018 18:10:58 GMT
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w95IAvLT006582;
-        Fri, 5 Oct 2018 18:10:57 GMT
-Received: from [10.209.243.127] (/10.209.243.127)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 05 Oct 2018 18:10:57 +0000
-Subject: Re: [PATCH] clk: keystone: add missing MODULE_LICENSE
-To:     Arnd Bergmann <arnd@arndb.de>, Stephen Boyd <sboyd@kernel.org>
-Cc:     Santosh Shilimkar <ssantosh@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-References: <20181005161126.704214-1-arnd@arndb.de>
-From:   Santosh Shilimkar <santosh.shilimkar@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <e33fad94-fa85-e151-9b29-e1c03ad8d1b9@oracle.com>
-Date:   Fri, 5 Oct 2018 11:10:55 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20181005161126.704214-1-arnd@arndb.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9037 signatures=668706
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1810050178
+        id S1728510AbeJFDzz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 5 Oct 2018 23:55:55 -0400
+Received: from mga06.intel.com ([134.134.136.31]:1454 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728139AbeJFDzz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 5 Oct 2018 23:55:55 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Oct 2018 13:55:28 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,346,1534834800"; 
+   d="scan'208";a="263254384"
+Received: from tthayer-hp-z620.an.intel.com ([10.122.105.132])
+  by orsmga005.jf.intel.com with ESMTP; 05 Oct 2018 13:55:27 -0700
+From:   thor.thayer@linux.intel.com
+To:     dinguyen@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        will.deacon@arm.com, robin.murphy@arm.com, joro@8bytes.org,
+        aisheng.dong@nxp.com, sboyd@kernel.org
+Cc:     vivek.gautam@codeaurora.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        iommu@lists.linux-foundation.org,
+        Thor Thayer <thor.thayer@linux.intel.com>
+Subject: [PATCHv4 0/2] iommu/arm-smmu: Add Stratix10 SMMU Support
+Date:   Fri,  5 Oct 2018 15:56:58 -0500
+Message-Id: <1538773020-27784-1-git-send-email-thor.thayer@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 10/5/2018 9:11 AM, Arnd Bergmann wrote:
-> A randconfig build showed that two clk modules have no license tag:
-> 
-> WARNING: modpost: missing MODULE_LICENSE() in drivers/clk/keystone/gate.o
-> see include/linux/module.h for more information
-> WARNING: modpost: missing MODULE_LICENSE() in drivers/clk/keystone/pll.o
-> see include/linux/module.h for more information
-> 
-> Add the appropriate information from the comment at the start of the
-> two files.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
-Thanks Arnd.
-Acked-by: Santosh Shilimkar <ssantosh@krenel.org>
+From: Thor Thayer <thor.thayer@linux.intel.com>
+
+Add SMMU support for the Stratix10 SOCFPGA. This patch requires
+clock enables for the master TBUs and therefore has a dependency
+on patches currently being reviewed.
+
+This patchset is dependent on the patch series [1]
+
+v4  Address Vivek's comment.
+    Abandon dependency on [2] (no recent activity/reviews)
+    Implement device tree parsing of clock on top of [1].
+v3  Address comment from Robin and change dependency on device
+    tree bulk clock patches [2].
+v2  Change to dependency on [1].
+
+[1] [v16,0/5] iommu/arm-smmu: Add runtime pm/sleep support
+https://patchwork.kernel.org/cover/10581891/
+
+[2] [PATCH V6 0/4] clk: new APIs to handle all available clocks
+https://lkml.org/lkml/2018/8/31/97
+
+Thor Thayer (2):
+  arm64: dts: stratix10: Add Stratix10 SMMU support
+  iommu/arm-smmu: Get clock config from device tree
+
+ arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi | 29 ++++++++++++++++++++++
+ drivers/iommu/arm-smmu.c                          | 30 ++++++++++++++++++++---
+ 2 files changed, 56 insertions(+), 3 deletions(-)
+
+-- 
+2.7.4
+
