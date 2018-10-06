@@ -2,129 +2,582 @@ Return-Path: <SRS0=ubrc=MS=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F244C64EB8
-	for <linux-clk@archiver.kernel.org>; Sat,  6 Oct 2018 09:21:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DE9BC65C31
+	for <linux-clk@archiver.kernel.org>; Sat,  6 Oct 2018 15:35:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF11E21473
-	for <linux-clk@archiver.kernel.org>; Sat,  6 Oct 2018 09:21:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF11E21473
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 1B8E72089D
+	for <linux-clk@archiver.kernel.org>; Sat,  6 Oct 2018 15:35:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B8E72089D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727807AbeJFQXf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 6 Oct 2018 12:23:35 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:38948 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727703AbeJFQXf (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 6 Oct 2018 12:23:35 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 4CD9820802; Sat,  6 Oct 2018 11:20:59 +0200 (CEST)
-Received: from localhost (unknown [88.191.26.124])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 19B52206A2;
-        Sat,  6 Oct 2018 11:20:49 +0200 (CEST)
-Date:   Sat, 6 Oct 2018 11:20:50 +0200
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>, robh@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Guenter Roeck <linux@roeck-us.net>, linux-doc@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        linux-mips@linux-mips.org, Stephen Boyd <sboyd@kernel.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-pwm@vger.kernel.org
-Subject: Re: [PATCH v5 04/21] dt-bindings: Add doc for the Ingenic TCU drivers
-Message-ID: <20181006092050.GA32272@piout.net>
-References: <S23990757AbeJCKjwPaYBe/20181003103952Z+1106@eddie.linux-mips.org>
+        id S1726085AbeJFWio convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 6 Oct 2018 18:38:44 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:43403 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725815AbeJFWin (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 6 Oct 2018 18:38:43 -0400
+Received: by mail-ed1-f67.google.com with SMTP id y20-v6so7428915eds.10;
+        Sat, 06 Oct 2018 08:34:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=9xBb/oCzx6L1zGRQVmzlalIWfvJK1IodR0KLwP4/C74=;
+        b=h1Xzgq+/gOHopFWc/2qNQrwn+yhP9o2FYCRHivt1w7Ktl6zM7fnSW1VhKFM4a1I0ps
+         Ep7gF0n3mmAGfXhIgfQdsO3IAn9RKFuwPAlVWN5t8H8mdGLhLVeQLDrU+ryH9acmzNoE
+         WW2CVFBNxZRmzmFSkgj8F18/N2fDkXEcrGtkqL0g/LZlVrjyWP4YocZrQdHEG7W3S6Nu
+         /SSEMFi3eKxxTbyFYeYLSk/RXtIJmr9YANrU5K8qHqWiy3Z5d7w5gVLyRbjA7BPbzRwL
+         C2z5phEZQCVYrCEk9MbmcYplHtO2Jm/C3Bo7fpeyhK6iG5LG5a+yw+iVqnsgHS5pmBOF
+         D/LQ==
+X-Gm-Message-State: ABuFfohr21f/REmqSwxWaBqGEoasVYGLU6VIgZz8vTxGiSA7RgdgA07Z
+        RfOBQaoJh3BkIUAml/F9UfnD6uy0iqQ=
+X-Google-Smtp-Source: ACcGV637oQ8usOopkOyV1/yKDsH98zxr+pKtNCA1FaEdMnqbgV/6edd7rBzHcx79FTVVDYLulrIEEQ==
+X-Received: by 2002:a17:906:3d31:: with SMTP id l17-v6mr15883130ejf.89.1538840094983;
+        Sat, 06 Oct 2018 08:34:54 -0700 (PDT)
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com. [209.85.221.44])
+        by smtp.gmail.com with ESMTPSA id j22-v6sm3230742edr.96.2018.10.06.08.34.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 06 Oct 2018 08:34:54 -0700 (PDT)
+Received: by mail-wr1-f44.google.com with SMTP id g15-v6so13756842wru.9;
+        Sat, 06 Oct 2018 08:34:54 -0700 (PDT)
+X-Received: by 2002:adf:9503:: with SMTP id 3-v6mr12263168wrs.91.1538840093615;
+ Sat, 06 Oct 2018 08:34:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <S23990757AbeJCKjwPaYBe/20181003103952Z+1106@eddie.linux-mips.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20180902072643.4917-1-jernej.skrabec@siol.net>
+ <20180902072643.4917-13-jernej.skrabec@siol.net> <CAGb2v65tt4S-k=AF2AmjQyEkUydzMimB8TT2Uiqmpf6G8qD1Cw@mail.gmail.com>
+ <1603658.HpHSbfQY4F@jernej-laptop>
+In-Reply-To: <1603658.HpHSbfQY4F@jernej-laptop>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Sat, 6 Oct 2018 23:34:41 +0800
+X-Gmail-Original-Message-ID: <CAGb2v67VgB3Chpjn4YLUD8ZDtm26E7zHfJ76ctD1mz3DzR3PiA@mail.gmail.com>
+Message-ID: <CAGb2v67VgB3Chpjn4YLUD8ZDtm26E7zHfJ76ctD1mz3DzR3PiA@mail.gmail.com>
+Subject: Re: [linux-sunxi] Re: [PATCH 12/27] drm/sun4i: Add basic support for DE3
+To:     Jernej Skrabec <jernej.skrabec@siol.net>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 03/10/2018 12:32:51+0200, Paul Cercueil wrote:
-> 
-> Le 1 oct. 2018 10:48, Daniel Lezcano <daniel.lezcano@linaro.org> a écrit :
+On Sat, Oct 6, 2018 at 1:51 AM Jernej Å krabec <jernej.skrabec@siol.net> wrote:
+>
+> Dne sobota, 22. september 2018 ob 15:19:12 CEST je Chen-Yu Tsai napisal(a):
+> > On Sun, Sep 2, 2018 at 3:27 PM Jernej Skrabec <jernej.skrabec@siol.net>
+> wrote:
+> > > Display Engine 3 is an upgrade of DE2 with new features like support for
+> > > 10 bit color formats and support for AFBC.
+> > >
+> > > Most of DE2 code works with DE3, except some small details.
+> > >
+> > > Add support for it.
+> > >
+> > > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> > > ---
+> > >
+> > >  drivers/gpu/drm/sun4i/sun8i_csc.c       | 96 +++++++++++++++++++++++--
+> > >  drivers/gpu/drm/sun4i/sun8i_mixer.c     | 17 ++++-
+> > >  drivers/gpu/drm/sun4i/sun8i_mixer.h     | 21 +++++-
+> > >  drivers/gpu/drm/sun4i/sun8i_ui_scaler.c |  8 ++-
+> > >  drivers/gpu/drm/sun4i/sun8i_ui_scaler.h |  1 +
+> > >  drivers/gpu/drm/sun4i/sun8i_vi_layer.c  |  8 +++
+> > >  drivers/gpu/drm/sun4i/sun8i_vi_layer.h  |  2 +
+> > >  drivers/gpu/drm/sun4i/sun8i_vi_scaler.c | 34 ++++++++-
+> > >  drivers/gpu/drm/sun4i/sun8i_vi_scaler.h | 23 ++++++
+> > >  9 files changed, 197 insertions(+), 13 deletions(-)
+> > >
+> > > diff --git a/drivers/gpu/drm/sun4i/sun8i_csc.c
+> > > b/drivers/gpu/drm/sun4i/sun8i_csc.c index b14925b40ccf..101901ccf2dc
+> > > 100644
+> > > --- a/drivers/gpu/drm/sun4i/sun8i_csc.c
+> > > +++ b/drivers/gpu/drm/sun4i/sun8i_csc.c
+> > > @@ -34,6 +34,34 @@ static const u32 yvu2rgb[] = {
+> > >
+> > >         0x000004A8, 0x00000000, 0x00000813, 0xFFFBAC4A,
+> > >
+> > >  };
+> > >
+> > > +/*
+> > > + * DE3 has a bit different CSC units. Factors are in two's complement
+> > > format. + * First three have 17 bits for fractinal part and last two 2
+> > > bits. First + * three values in each line are multiplication factor, 4th
+> > > is difference, + * which is subtracted from the input value before the
+> > > multiplication and + * last value is constant, which is added at the end.
+> > > + *
+> > > + * x' = c00 * (x + d0) + c01 * (y + d1) + c02 * (z + d2) + const0
+> > > + * y' = c10 * (x + d0) + c11 * (y + d1) + c12 * (z + d2) + const1
+> > > + * z' = c20 * (x + d0) + c21 * (y + d1) + c22 * (z + d2) + const2
+> > > + *
+> > > + * Please note that above formula is true only for Blender CSC. Other DE3
+> > > CSC + * units takes only positive value for difference. From what can be
+> > > deducted + * from BSP driver code, those units probably automatically
+> > > assume that + * difference has to be subtracted.
+> > > + */
+> > > +static const u32 yuv2rgb_de3[] = {
+> > > +       0x0002542a, 0x00000000, 0x0003312a, 0xffffffc0, 0x00000000,
+> > > +       0x0002542a, 0xffff376b, 0xfffe5fc3, 0xfffffe00, 0x00000000,
+> > > +       0x0002542a, 0x000408d3, 0x00000000, 0xfffffe00, 0x00000000,
+> > > +};
+> > > +
+> > > +static const u32 yvu2rgb_de3[] = {
+> > > +       0x0002542a, 0x0003312a, 0x00000000, 0xffffffc0, 0x00000000,
+> > > +       0x0002542a, 0xfffe5fc3, 0xffff376b, 0xfffffe00, 0x00000000,
+> > > +       0x0002542a, 0x00000000, 0x000408d3, 0xfffffe00, 0x00000000,
+> > > +};
+> > > +
+> > >
+> > >  static void sun8i_csc_set_coefficients(struct regmap *map, u32 base,
+> > >
+> > >                                        enum sun8i_csc_mode mode)
+> > >
+> > >  {
+> > >
+> > > @@ -61,6 +89,38 @@ static void sun8i_csc_set_coefficients(struct regmap
+> > > *map, u32 base,>
+> > >         }
+> > >
+> > >  }
+> > >
+> > > +static void sun8i_de3_ccsc_set_coefficients(struct regmap *map, int
+> > > layer,
+> > > +                                           enum sun8i_csc_mode mode)
+> > > +{
+> > > +       const u32 *table;
+> > > +       int i, j;
+> > > +
+> > > +       switch (mode) {
+> > > +       case SUN8I_CSC_MODE_YUV2RGB:
+> > > +               table = yuv2rgb_de3;
+> > > +               break;
+> > > +       case SUN8I_CSC_MODE_YVU2RGB:
+> > > +               table = yvu2rgb_de3;
+> > > +               break;
+> > > +       default:
+> > > +               DRM_WARN("Wrong CSC mode specified.\n");
+> > > +               return;
+> > > +       }
+> > > +
+> > > +       for (i = 0; i < 3; i++) {
+> > > +               for (j = 0; j < 3; j++)
+> > > +                       regmap_write(map,
+> > > +
+> > > SUN8I_MIXER_BLEND_CSC_COEFF(DE3_BLD_BASE, +
+> > >                                  layer, i, j), +
+> > >           table[i * 5 + j]);
 > >
-> > On 31/07/2018 00:01, Paul Cercueil wrote: 
-> >
-> > [ ... ] 
-> >
-> > >>>  +- ingenic,timer-channel: Specifies the TCU channel that should be 
-> > >>> used as 
-> > >>>  +  system timer. If not provided, the TCU channel 0 is used for the 
-> > >>> system timer. 
-> > >>>  + 
-> > >>>  +- ingenic,clocksource-channel: Specifies the TCU channel that 
-> > >>> should be used 
-> > >>>  +  as clocksource and sched_clock. It must be a different channel 
-> > >>> than the one 
-> > >>>  +  used as system timer. If not provided, neither a clocksource nor a 
-> > >>>  +  sched_clock is instantiated. 
-> > >> 
-> > >> clocksource and sched_clock are Linux specific and don't belong in DT. 
-> > >> You should define properties of the hardware or use existing properties 
-> > >> like interrupts or clocks to figure out which channel to use. For 
-> > >> example, if some channels don't have an interrupt, then use them for 
-> > >> clocksource and not a clockevent. Or you could have timers that run in 
-> > >> low-power modes or not. If all the channels are identical, then it 
-> > >> shouldn't matter which ones the OS picks. 
-> >
-> > It can't work in this case because the pmw and the timer driver are not 
-> > communicating and the first one can stole a channel to the last one. 
-> 
-> In that particular case the timer driver will always request its channels first; with no timer set the system hangs before subsys_initcall, and the PWM driver is a subnode of the timer node, so is probed only after the timer probed.
-> 
-> > > We already talked about that. All the TCU channels can be used for PWM. 
-> > > The problem is I cannot know from the driver's scope which channels will 
-> > > be free and which channels will be requested for PWM. You suggested that I 
-> > > parse the devicetree for clients, and I did that in the V3/V4 patchset. But 
-> > > it only works for clients requesting through devicetree, not from platform 
-> > > code or even sysfs. 
-> > > 
-> > > One thing I can try is to dynamically change the channels the system timer 
-> > > and clocksource are using when the current ones are requested for PWM. But 
-> > > that sounds hardcore... 
-> >
-> > Yes, it is :/ 
-> >
-> > Sorry for letting you wasting time and effort to write an overkill code 
-> > not suitable for upstream. 
-> >
-> > A very gross thought, wouldn't be possible to "register" a channel from 
-> > the timer driver code in a shared data area (but well self-encapsulated) 
-> > and the pwm code will check such channel isn't in use ? 
-> 
-> Probably, but it's the contrary I need to do. The timer driver code can use any channel, and probes first. The PWM driver code must use specific channels, and probes last. So either the timer driver knows what channels it can't use, thanks to a device property, or it adapts itself when a channel in use is requested for PWM, which is what I tried in v7.
-> 
-> I think we could find a way to use a devicetree property that doesn't trigger Rob. That would still be the easiest and cleanest solution. 
-> 
-> Maybe "ingenic,reserved-channels-mask", which would contain a mask of channels that can only be used by the timer driver. And what the timer driver does with these channels, would be specific to the implementation and would not appear in the bindings. I hope Rob can work with that.
-> 
+> > Given that the first three values occupy contiguous addresses,
+> > you can use regmap_bulk_write() here.
+>
+> Do you mind if I rework table in a way that directly fits in registers and use
+> regmap_bulk_write() on whole table? This means I must combine two values into
+> one for "const" register, but I would explain it better in a comment. It would
+> be most elegant solution, one call to regmap_bulk_write() instead of two for
+> loops and some arithmetics.
 
-Rob did ack the following binding:
+With proper comments I see no problem with it. The constants are hexidecimal
+and only loaded once. It's unlikely others would use it any other way.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/mfd/atmel-tcb.txt
+> I guess macro for "const" part can stay as documentation.
 
-another subdevice is a PWM (not documented here).
+I agree.
 
+>
+> >
+> > > +               regmap_write(map,
+> > > +                            SUN8I_MIXER_BLEND_CSC_CONST(DE3_BLD_BASE,
+> > > +                                                        layer, i),
+> > > +                            SUN8I_MIXER_BLEND_CSC_CONST_VAL(table[i * 5 +
+> > > 3], +                                                            table[i
+> > > * 5 + 4]));
+> > Nit: Using a two-dimension array might make it easier to read.
+> >
+> > > +       }
+> > > +}
+> > > +
+> > >
+> > >  static void sun8i_csc_enable(struct regmap *map, u32 base, bool enable)
+> > >  {
+> > >
+> > >         u32 val;
+> > >
+> > > @@ -73,21 +133,45 @@ static void sun8i_csc_enable(struct regmap *map, u32
+> > > base, bool enable)>
+> > >         regmap_update_bits(map, SUN8I_CSC_CTRL(base), SUN8I_CSC_CTRL_EN,
+> > >         val);
+> > >
+> > >  }
+> > >
+> > > +static void sun8i_de3_ccsc_enable(struct regmap *map, int layer, bool
+> > > enable) +{
+> > > +       u32 val, mask;
+> > > +
+> > > +       mask = SUN8I_MIXER_BLEND_CSC_CTL_EN(layer);
+> > > +
+> > > +       if (enable)
+> > > +               val = mask;
+> > > +       else
+> > > +               val = 0;
+> > > +
+> > > +       regmap_update_bits(map, SUN8I_MIXER_BLEND_CSC_CTL(DE3_BLD_BASE),
+> > > +                          mask, val);
+> > > +}
+> > > +
+> > >
+> > >  void sun8i_csc_set_ccsc_coefficients(struct sun8i_mixer *mixer, int
+> > >  layer,
+> > >
+> > >                                      enum sun8i_csc_mode mode)
+> > >
+> > >  {
+> > >
+> > > -       u32 base;
+> > > +       if (!mixer->cfg->is_de3) {
+> > > +               u32 base;
+> >
+> > You could rewrite this as
+> >
+> >     if (mixer->cfg->is_de3) {
+> >                sun8i_de3_ccsc_set_coefficients(mixer->engine.regs,
+> >                                                layer, mode);
+> >                return;
+> >     }
+> >
+> > That way you don't need to change the indentation on the existing lines.
+> > I suppose this is more of a personal preference. The downside is the control
+> > flow is slightly more complicated.
+> >
+> > > -       base = ccsc_base[mixer->cfg->ccsc][layer];
+> > > +               base = ccsc_base[mixer->cfg->ccsc][layer];
+> > >
+> > > -       sun8i_csc_set_coefficients(mixer->engine.regs, base, mode);
+> > > +               sun8i_csc_set_coefficients(mixer->engine.regs, base,
+> > > mode);
+> > > +       } else {
+> > > +               sun8i_de3_ccsc_set_coefficients(mixer->engine.regs,
+> > > +                                               layer, mode);
+> > > +       }
+> > >
+> > >  }
+> > >
+> > >  void sun8i_csc_enable_ccsc(struct sun8i_mixer *mixer, int layer, bool
+> > >  enable) {
+> > >
+> > > -       u32 base;
+> > > +       if (!mixer->cfg->is_de3) {
+> > > +               u32 base;
+> > >
+> > > -       base = ccsc_base[mixer->cfg->ccsc][layer];
+> > > +               base = ccsc_base[mixer->cfg->ccsc][layer];
+> > >
+> > > -       sun8i_csc_enable(mixer->engine.regs, base, enable);
+> > > +               sun8i_csc_enable(mixer->engine.regs, base, enable);
+> > > +       } else {
+> > > +               sun8i_de3_ccsc_enable(mixer->engine.regs, layer, enable);
+> > > +       }
+> > >
+> > >  }
+> > >
+> > > diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c
+> > > b/drivers/gpu/drm/sun4i/sun8i_mixer.c index 743941a33d88..a9218abf0935
+> > > 100644
+> > > --- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
+> > > +++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
+> > > @@ -460,8 +460,21 @@ static int sun8i_mixer_bind(struct device *dev,
+> > > struct device *master,>
+> > >         base = sun8i_blender_base(mixer);
+> > >
+> > >         /* Reset the registers */
+> > >
+> > > -       for (i = 0x0; i < 0x20000; i += 4)
+> > > -               regmap_write(mixer->engine.regs, i, 0);
+> > > +       if (mixer->cfg->is_de3) {
+> > > +               for (i = 0x0; i < 0x3000; i += 4)
+> > > +                       regmap_write(mixer->engine.regs, i, 0);
+> > > +               for (i = 0x20000; i < 0x40000; i += 4)
+> > > +                       regmap_write(mixer->engine.regs, i, 0);
+> > > +               for (i = 0x70000; i < 0x88000; i += 4)
+> > > +                       regmap_write(mixer->engine.regs, i, 0);
+> > > +               for (i = 0xa0000; i < 0xb0000; i += 4)
+> > > +                       regmap_write(mixer->engine.regs, i, 0);
+> > > +               for (i = 0xd0000; i < 0xe0000; i += 4)
+> > > +                       regmap_write(mixer->engine.regs, i, 0);
+> >
+> > Could you use the macros *_BASE and *_SIZE here? That would make
+> > it more obviously what parts you're clearing.
+> >
+> > The last offset, 0xd0000, isn't even defined in the DE3 spec.
+> >
+> > > +       } else {
+> > > +               for (i = 0x0; i < 0x20000; i += 4)
+> > > +                       regmap_write(mixer->engine.regs, i, 0);
+> > > +       }
+> > >
+> > >         /* Enable the mixer */
+> > >         regmap_write(mixer->engine.regs, SUN8I_MIXER_GLOBAL_CTL,
+> > >
+> > > diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.h
+> > > b/drivers/gpu/drm/sun4i/sun8i_mixer.h index 020b0a097c84..4c9a442bbb44
+> > > 100644
+> > > --- a/drivers/gpu/drm/sun4i/sun8i_mixer.h
+> > > +++ b/drivers/gpu/drm/sun4i/sun8i_mixer.h
+> > > @@ -33,6 +33,10 @@
+> > >
+> > >  #define DE2_CH_BASE                            0x2000
+> > >  #define DE2_CH_SIZE                            0x1000
+> > >
+> > > +#define DE3_BLD_BASE                           0x0800
+> > > +#define DE3_CH_BASE                            0x1000
+> > > +#define DE3_CH_SIZE                            0x0800
+> > > +
+> > >
+> > >  #define SUN8I_MIXER_BLEND_PIPE_CTL(base)       ((base) + 0)
+> > >  #define SUN8I_MIXER_BLEND_ATTR_FCOLOR(base, x) ((base) + 0x4 + 0x10 *
+> > >  (x))
+> > >  #define SUN8I_MIXER_BLEND_ATTR_INSIZE(base, x) ((base) + 0x8 + 0x10 *
+> > >  (x))
+> > >
+> > > @@ -47,6 +51,11 @@
+> > >
+> > >  #define SUN8I_MIXER_BLEND_CK_MAX(base, x)      ((base) + 0xc0 + 0x04 *
+> > >  (x))
+> > >  #define SUN8I_MIXER_BLEND_CK_MIN(base, x)      ((base) + 0xe0 + 0x04 *
+> > >  (x))
+> > >  #define SUN8I_MIXER_BLEND_OUTCTL(base)         ((base) + 0xfc)
+> > >
+> > > +#define SUN8I_MIXER_BLEND_CSC_CTL(base)                ((base) + 0x100)
+> > > +#define SUN8I_MIXER_BLEND_CSC_COEFF(base, layer, x, y) \
+> > > +       ((base) + 0x110 + (layer) * 0x30 +  (x) * 0x10 + 4 * (y))
+> > > +#define SUN8I_MIXER_BLEND_CSC_CONST(base, layer, i) \
+> > > +       ((base) + 0x110 + (layer) * 0x30 +  (i) * 0x10 + 0x0c)
+> >
+> > Should these have a DE3 prefix?
+>
+> How do you want this to look like?
+>
+> SUN50I_DE3_MIXER_BLEND_CSC_CONST?
+>
+> SUN8I prefix doesn't fit for DE3, but as usual, there is a chance that AW
+> releases 32 bit SoC with DE3.
+>
+> At the end, it would be better to rename everything to have just DE2 or DE3
+> prefix without mentioning any SoC family. After all, DE2 is also supported on
+> sun50i family, which makes any family name in DE2/3 macros confusing...
 
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Probably SUNXI_DEx_MIXER_foo or just DEx_MIXER_foo ...
+Since it's contained in the driver I think the latter would suffice.
+
+> Do you think I can squeeze dropping SUN8I prefix to a previous patch, where
+> macros are reworked anyway?
+
+Given there's a lot of them, and you're only changing about half of them
+in that patch, I suggest you have a separate patch to do all the renaming.
+
+ChenYu
+
+> Best regards,
+> Jernej
+>
+> >
+> > >  #define SUN8I_MIXER_BLEND_PIPE_CTL_EN_MSK      GENMASK(12, 8)
+> > >  #define SUN8I_MIXER_BLEND_PIPE_CTL_EN(pipe)    BIT(8 + pipe)
+> > >
+> > > @@ -61,6 +70,9 @@
+> > >
+> > >  #define SUN8I_MIXER_BLEND_OUTCTL_INTERLACED    BIT(1)
+> > >
+> > > +#define SUN8I_MIXER_BLEND_CSC_CTL_EN(ch)       BIT(ch)
+> > > +#define SUN8I_MIXER_BLEND_CSC_CONST_VAL(d, c)  (((d) << 16) | ((c) &
+> > > 0xffff)) +
+> >
+> > Same here.
+> >
+> > >  #define SUN8I_MIXER_FBFMT_ARGB8888     0
+> > >  #define SUN8I_MIXER_FBFMT_ABGR8888     1
+> > >  #define SUN8I_MIXER_FBFMT_RGBA8888     2
+> >
+> > [...]
+> >
+> > > diff --git a/drivers/gpu/drm/sun4i/sun8i_vi_layer.h
+> > > b/drivers/gpu/drm/sun4i/sun8i_vi_layer.h index 46f0237c17bb..3d0ad64178ea
+> > > 100644
+> > > --- a/drivers/gpu/drm/sun4i/sun8i_vi_layer.h
+> > > +++ b/drivers/gpu/drm/sun4i/sun8i_vi_layer.h
+> > > @@ -30,6 +30,8 @@
+> > >
+> > >  #define SUN8I_MIXER_CHAN_VI_LAYER_ATTR_RGB_MODE                BIT(15)
+> > >  #define SUN8I_MIXER_CHAN_VI_LAYER_ATTR_FBFMT_OFFSET    8
+> > >  #define SUN8I_MIXER_CHAN_VI_LAYER_ATTR_FBFMT_MASK      GENMASK(12, 8)
+> > >
+> > > +#define SUN8I_MIXER_CHAN_VI_LAYER_ATTR_ALPHA_MASK      GENMASK(31, 24)
+> > > +#define SUN8I_MIXER_CHAN_VI_LAYER_ATTR_ALPHA(x)                ((x) <<
+> > > 24)
+> >
+> > DE3 prefix?
+> >
+> > >  struct sun8i_mixer;
+> > >
+> > > diff --git a/drivers/gpu/drm/sun4i/sun8i_vi_scaler.c
+> > > b/drivers/gpu/drm/sun4i/sun8i_vi_scaler.c index
+> > > 8697afc36023..22e1ed5cd7a4 100644
+> > > --- a/drivers/gpu/drm/sun4i/sun8i_vi_scaler.c
+> > > +++ b/drivers/gpu/drm/sun4i/sun8i_vi_scaler.c
+> > > @@ -835,7 +835,10 @@ static const u32 bicubic4coefftab32[480] = {
+> > >
+> > >  static inline u32 sun8i_vi_scaler_base(struct sun8i_mixer *mixer, int
+> > >  channel) {
+> > >
+> > > -       return DE2_VI_SCALER_BASE + DE2_VI_SCALER_SIZE * channel;
+> > > +       if (mixer->cfg->is_de3)
+> > > +               return DE3_VI_SCALER_BASE + DE3_VI_SCALER_SIZE * channel;
+> > > +       else
+> > > +               return DE2_VI_SCALER_BASE + DE2_VI_SCALER_SIZE * channel;
+> > >
+> > >  }
+> > >
+> > >  static int sun8i_vi_scaler_coef_index(unsigned int step)
+> > >
+> > > @@ -951,6 +954,35 @@ void sun8i_vi_scaler_setup(struct sun8i_mixer *mixer,
+> > > int layer,>
+> > >                 cvphase = vphase;
+> > >
+> > >         }
+> > >
+> > > +       if (mixer->cfg->is_de3) {
+> > > +               u32 val;
+> > > +
+> > > +               if (format->hsub == 1 && format->vsub == 1)
+> > > +                       val = SUN8I_SCALER_VSU_SCALE_MODE_UI;
+> > > +               else
+> > > +                       val = SUN8I_SCALER_VSU_SCALE_MODE_NORMAL;
+> > > +
+> > > +               regmap_write(mixer->engine.regs,
+> > > +                            SUN8I_SCALER_VSU_SCALE_MODE(base), val);
+> >
+> > The remaining settings seem to be related to the edge detection scaling
+> > method. Since you aren't supporting it, are they necessary?
+> >
+> > > +               regmap_write(mixer->engine.regs,
+> > > +                            SUN8I_SCALER_VSU_DIR_THR(base),
+> > > +                            SUN8I_SCALER_VSU_SUB_ZERO_DIR_THR(0) |
+> > > +                            SUN8I_SCALER_VSU_ZERO_DIR_THR(0) |
+> > > +                            SUN8I_SCALER_VSU_HORZ_DIR_THR(0xff) |
+> > > +                            SUN8I_SCALER_VSU_VERT_DIR_THR(1));
+> > > +               regmap_write(mixer->engine.regs,
+> > > +                            SUN8I_SCALER_VSU_EDGE_THR(base),
+> > > +                            SUN8I_SCALER_VSU_EDGE_SHIFT(8) |
+> > > +                            SUN8I_SCALER_VSU_EDGE_OFFSET(0));
+> > > +               regmap_write(mixer->engine.regs,
+> > > +                            SUN8I_SCALER_VSU_EDSCL_CTRL(base), 0);
+> > > +               regmap_write(mixer->engine.regs,
+> > > +                            SUN8I_SCALER_VSU_ANGLE_THR(base),
+> > > +                            SUN8I_SCALER_VSU_ANGLE_SHIFT(2) |
+> > > +                            SUN8I_SCALER_VSU_ANGLE_OFFSET(0));
+> > > +       }
+> > > +
+> > >
+> > >         regmap_write(mixer->engine.regs,
+> > >
+> > >                      SUN8I_SCALER_VSU_OUTSIZE(base), outsize);
+> > >
+> > >         regmap_write(mixer->engine.regs,
+> > >
+> > > diff --git a/drivers/gpu/drm/sun4i/sun8i_vi_scaler.h
+> > > b/drivers/gpu/drm/sun4i/sun8i_vi_scaler.h index
+> > > cd015405f66d..c322f5652481 100644
+> > > --- a/drivers/gpu/drm/sun4i/sun8i_vi_scaler.h
+> > > +++ b/drivers/gpu/drm/sun4i/sun8i_vi_scaler.h
+> > > @@ -15,6 +15,9 @@
+> > >
+> > >  #define DE2_VI_SCALER_BASE 0x20000
+> > >  #define DE2_VI_SCALER_SIZE 0x20000
+> > >
+> > > +#define DE3_VI_SCALER_BASE 0x20000
+> > > +#define DE3_VI_SCALER_SIZE 0x08000
+> > > +
+> > >
+> > >  /* this two macros assumes 16 fractional bits which is standard in DRM */
+> > >  #define SUN8I_VI_SCALER_SCALE_MIN              1
+> > >  #define SUN8I_VI_SCALER_SCALE_MAX              ((1UL << 20) - 1)
+> > >
+> > > @@ -25,6 +28,11 @@
+> > >
+> > >  #define SUN8I_VI_SCALER_SIZE(w, h)             (((h) - 1) << 16 | ((w) -
+> > >  1))
+> > >
+> > >  #define SUN8I_SCALER_VSU_CTRL(base)            ((base) + 0x0)
+> > >
+> > > +#define SUN8I_SCALER_VSU_SCALE_MODE(base)      ((base) + 0x10)
+> > > +#define SUN8I_SCALER_VSU_DIR_THR(base)         ((base) + 0x20)
+> > > +#define SUN8I_SCALER_VSU_EDGE_THR(base)                ((base) + 0x24)
+> > > +#define SUN8I_SCALER_VSU_EDSCL_CTRL(base)      ((base) + 0x28)
+> > > +#define SUN8I_SCALER_VSU_ANGLE_THR(base)       ((base) + 0x2c)
+> >
+> > DE3 prefix for the new ones please.
+> >
+> > >  #define SUN8I_SCALER_VSU_OUTSIZE(base)         ((base) + 0x40)
+> > >  #define SUN8I_SCALER_VSU_YINSIZE(base)         ((base) + 0x80)
+> > >  #define SUN8I_SCALER_VSU_YHSTEP(base)          ((base) + 0x88)
+> > >
+> > > @@ -46,6 +54,21 @@
+> > >
+> > >  #define SUN8I_SCALER_VSU_CTRL_EN               BIT(0)
+> > >  #define SUN8I_SCALER_VSU_CTRL_COEFF_RDY                BIT(4)
+> > >
+> > > +#define SUN8I_SCALER_VSU_SUB_ZERO_DIR_THR(x)   (((x) << 24) & 0xFF)
+> > > +#define SUN8I_SCALER_VSU_ZERO_DIR_THR(x)       (((x) << 16) & 0xFF)
+> > > +#define SUN8I_SCALER_VSU_HORZ_DIR_THR(x)       (((x) << 8) & 0xFF)
+> > > +#define SUN8I_SCALER_VSU_VERT_DIR_THR(x)       ((x) & 0xFF)
+> > > +
+> > > +#define SUN8I_SCALER_VSU_SCALE_MODE_UI         0
+> > > +#define SUN8I_SCALER_VSU_SCALE_MODE_NORMAL     1
+> > > +#define SUN8I_SCALER_VSU_SCALE_MODE_ED_SCALE   2
+> > > +
+> > > +#define SUN8I_SCALER_VSU_EDGE_SHIFT(x)         (((x) << 16) & 0xF)
+> > > +#define SUN8I_SCALER_VSU_EDGE_OFFSET(x)                ((x) & 0xFF)
+> > > +
+> > > +#define SUN8I_SCALER_VSU_ANGLE_SHIFT(x)                (((x) << 16) &
+> > > 0xF)
+> > > +#define SUN8I_SCALER_VSU_ANGLE_OFFSET(x)       ((x) & 0xFF)
+> > > +
+> >
+> > Same here.
+> >
+> > Regards
+> > ChenYu
+> >
+> > >  void sun8i_vi_scaler_enable(struct sun8i_mixer *mixer, int layer, bool
+> > >  enable); void sun8i_vi_scaler_setup(struct sun8i_mixer *mixer, int
+> > >  layer,
+> > >
+> > >                            u32 src_w, u32 src_h, u32 dst_w, u32 dst_h,
+> > >
+> > > --
+> > > 2.18.0
+>
+>
+>
+>
+> --
+> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
+> For more options, visit https://groups.google.com/d/optout.
