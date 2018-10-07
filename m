@@ -3,38 +3,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1808BC677F5
-	for <linux-clk@archiver.kernel.org>; Sun,  7 Oct 2018 09:41:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 510B6C65C30
+	for <linux-clk@archiver.kernel.org>; Sun,  7 Oct 2018 09:42:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D385F2084D
-	for <linux-clk@archiver.kernel.org>; Sun,  7 Oct 2018 09:41:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D385F2084D
+	by mail.kernel.org (Postfix) with ESMTP id 24DAC2084D
+	for <linux-clk@archiver.kernel.org>; Sun,  7 Oct 2018 09:42:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24DAC2084D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=siol.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727808AbeJGQqN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 7 Oct 2018 12:46:13 -0400
-Received: from mailoutvs22.siol.net ([185.57.226.213]:39630 "EHLO
+        id S1726874AbeJGQqG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 7 Oct 2018 12:46:06 -0400
+Received: from mailoutvs53.siol.net ([185.57.226.244]:39583 "EHLO
         mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725994AbeJGQqM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 7 Oct 2018 12:46:12 -0400
+        with ESMTP id S1725994AbeJGQqF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 7 Oct 2018 12:46:05 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id 8317C520BDE;
-        Sun,  7 Oct 2018 11:39:27 +0200 (CEST)
+        by mail.siol.net (Postfix) with ESMTP id C85B9520BC5;
+        Sun,  7 Oct 2018 11:39:20 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at psrvmta10.zcs-production.pri
 Received: from mail.siol.net ([127.0.0.1])
         by localhost (psrvmta10.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id CLUkU-rQORuV; Sun,  7 Oct 2018 11:39:27 +0200 (CEST)
+        with ESMTP id dQnvNgxfUEiy; Sun,  7 Oct 2018 11:39:20 +0200 (CEST)
 Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id E8B91520BE4;
-        Sun,  7 Oct 2018 11:39:26 +0200 (CEST)
+        by mail.siol.net (Postfix) with ESMTPS id 70ECC520BC6;
+        Sun,  7 Oct 2018 11:39:20 +0200 (CEST)
 Received: from localhost.localdomain (cpe1-8-82.cable.triera.net [213.161.8.82])
         (Authenticated sender: 031275009)
-        by mail.siol.net (Postfix) with ESMTPSA id 1C69F520BDE;
-        Sun,  7 Oct 2018 11:39:24 +0200 (CEST)
+        by mail.siol.net (Postfix) with ESMTPSA id D9EF6520BC5;
+        Sun,  7 Oct 2018 11:39:17 +0200 (CEST)
 From:   Jernej Skrabec <jernej.skrabec@siol.net>
 To:     maxime.ripard@bootlin.com, wens@csie.org
 Cc:     robh+dt@kernel.org, sboyd@kernel.org, airlied@linux.ie,
@@ -43,9 +43,9 @@ Cc:     robh+dt@kernel.org, sboyd@kernel.org, airlied@linux.ie,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-sunxi@googlegroups.com
-Subject: [PATCH v2 04/29] clk: sunxi-ng: h6: Set video PLLs limits
-Date:   Sun,  7 Oct 2018 11:38:40 +0200
-Message-Id: <20181007093905.11253-5-jernej.skrabec@siol.net>
+Subject: [PATCH v2 02/29] clk: sunxi-ng: Adjust MP clock parent rate when allowed
+Date:   Sun,  7 Oct 2018 11:38:38 +0200
+Message-Id: <20181007093905.11253-3-jernej.skrabec@siol.net>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181007093905.11253-1-jernej.skrabec@siol.net>
 References: <20181007093905.11253-1-jernej.skrabec@siol.net>
@@ -56,42 +56,107 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Video PLL factors can be set in a way that final PLL rate is outside
-stable range. H6 user manual specifically says that N factor should not
-be below 12. While it doesn't says anything about maximum stable rate, it
-is clear that PLL doesn't work at 6.096 GHz (254 * 24 MHz).
+Currently MP clocks don't consider adjusting parent rate even if they
+are allowed to do so. Such behaviour considerably lowers amount of
+possible rates, which is very inconvenient when such clock is used for
+pixel clock, for example.
 
-Set minimum allowed PLL video rate to 288 MHz (12 * 24 MHz) and maximum
-to 2.4 GHz, which is maximum in BSP driver.
+In order to improve the situation, adjusting parent rate is considered
+when allowed.
+
+This code is inspired by clk_divider_bestdiv() function, which does
+basically the same thing for different clock type.
 
 Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- drivers/clk/sunxi-ng/ccu-sun50i-h6.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/clk/sunxi-ng/ccu_mp.c | 64 +++++++++++++++++++++++++++++++++--
+ 1 file changed, 62 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c b/drivers/clk/sunxi-ng/=
-ccu-sun50i-h6.c
-index 2193e1495086..19ff09f610e4 100644
---- a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
-@@ -120,6 +120,8 @@ static struct ccu_nm pll_video0_clk =3D {
- 	.n		=3D _SUNXI_CCU_MULT_MIN(8, 8, 12),
- 	.m		=3D _SUNXI_CCU_DIV(1, 1), /* input divider */
- 	.fixed_post_div	=3D 4,
-+	.min_rate	=3D 288000000,
-+	.max_rate	=3D 2400000000UL,
- 	.common		=3D {
- 		.reg		=3D 0x040,
- 		.features	=3D CCU_FEATURE_FIXED_POSTDIV,
-@@ -136,6 +138,8 @@ static struct ccu_nm pll_video1_clk =3D {
- 	.n		=3D _SUNXI_CCU_MULT_MIN(8, 8, 12),
- 	.m		=3D _SUNXI_CCU_DIV(1, 1), /* input divider */
- 	.fixed_post_div	=3D 4,
-+	.min_rate	=3D 288000000,
-+	.max_rate	=3D 2400000000UL,
- 	.common		=3D {
- 		.reg		=3D 0x048,
- 		.features	=3D CCU_FEATURE_FIXED_POSTDIV,
+diff --git a/drivers/clk/sunxi-ng/ccu_mp.c b/drivers/clk/sunxi-ng/ccu_mp.=
+c
+index 5d0af4051737..0357349eb767 100644
+--- a/drivers/clk/sunxi-ng/ccu_mp.c
++++ b/drivers/clk/sunxi-ng/ccu_mp.c
+@@ -40,6 +40,61 @@ static void ccu_mp_find_best(unsigned long parent, uns=
+igned long rate,
+ 	*p =3D best_p;
+ }
+=20
++static unsigned long ccu_mp_find_best_with_parent_adj(struct clk_hw *hw,
++						      unsigned long *parent,
++						      unsigned long rate,
++						      unsigned int max_m,
++						      unsigned int max_p)
++{
++	unsigned long parent_rate_saved;
++	unsigned long parent_rate, now;
++	unsigned long best_rate =3D 0;
++	unsigned int _m, _p, div;
++	unsigned long maxdiv;
++
++	parent_rate_saved =3D *parent;
++
++	/*
++	 * The maximum divider we can use without overflowing
++	 * unsigned long in rate * m * p below
++	 */
++	maxdiv =3D max_m * max_p;
++	maxdiv =3D min(ULONG_MAX / rate, maxdiv);
++
++	for (_p =3D 1; _p <=3D max_p; _p <<=3D 1) {
++		for (_m =3D 1; _m <=3D max_m; _m++) {
++			div =3D _m * _p;
++
++			if (div > maxdiv)
++				break;
++
++			if (rate * div =3D=3D parent_rate_saved) {
++				/*
++				 * It's the most ideal case if the requested
++				 * rate can be divided from parent clock without
++				 * needing to change parent rate, so return the
++				 * divider immediately.
++				 */
++				*parent =3D parent_rate_saved;
++				return rate;
++			}
++
++			parent_rate =3D clk_hw_round_rate(hw, rate * div);
++			now =3D parent_rate / div;
++
++			if (now <=3D rate && now > best_rate) {
++				best_rate =3D now;
++				*parent =3D parent_rate;
++
++				if (now =3D=3D rate)
++					return rate;
++			}
++		}
++	}
++
++	return best_rate;
++}
++
+ static unsigned long ccu_mp_round_rate(struct ccu_mux_internal *mux,
+ 				       struct clk_hw *hw,
+ 				       unsigned long *parent_rate,
+@@ -56,8 +111,13 @@ static unsigned long ccu_mp_round_rate(struct ccu_mux=
+_internal *mux,
+ 	max_m =3D cmp->m.max ?: 1 << cmp->m.width;
+ 	max_p =3D cmp->p.max ?: 1 << ((1 << cmp->p.width) - 1);
+=20
+-	ccu_mp_find_best(*parent_rate, rate, max_m, max_p, &m, &p);
+-	rate =3D *parent_rate / p / m;
++	if (!(clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT)) {
++		ccu_mp_find_best(*parent_rate, rate, max_m, max_p, &m, &p);
++		rate =3D *parent_rate / p / m;
++	} else {
++		rate =3D ccu_mp_find_best_with_parent_adj(hw, parent_rate, rate,
++							max_m, max_p);
++	}
+=20
+ 	if (cmp->common.features & CCU_FEATURE_FIXED_POSTDIV)
+ 		rate /=3D cmp->fixed_post_div;
 --=20
 2.19.0
 
