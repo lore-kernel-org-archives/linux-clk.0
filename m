@@ -2,39 +2,39 @@ Return-Path: <SRS0=ehPu=MT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A2AAC65C30
-	for <linux-clk@archiver.kernel.org>; Sun,  7 Oct 2018 09:39:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D23AC677F5
+	for <linux-clk@archiver.kernel.org>; Sun,  7 Oct 2018 09:39:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 263352084D
-	for <linux-clk@archiver.kernel.org>; Sun,  7 Oct 2018 09:39:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 263352084D
+	by mail.kernel.org (Postfix) with ESMTP id E47072084D
+	for <linux-clk@archiver.kernel.org>; Sun,  7 Oct 2018 09:39:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E47072084D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=siol.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726310AbeJGQqB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 7 Oct 2018 12:46:01 -0400
-Received: from mailoutvs24.siol.net ([185.57.226.215]:39545 "EHLO
+        id S1727103AbeJGQqJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 7 Oct 2018 12:46:09 -0400
+Received: from mailoutvs18.siol.net ([185.57.226.209]:39604 "EHLO
         mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725994AbeJGQqB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 7 Oct 2018 12:46:01 -0400
+        with ESMTP id S1725994AbeJGQqI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 7 Oct 2018 12:46:08 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id 55F7E520B92;
-        Sun,  7 Oct 2018 11:39:15 +0200 (CEST)
+        by mail.siol.net (Postfix) with ESMTP id B083D520BC7;
+        Sun,  7 Oct 2018 11:39:24 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at psrvmta10.zcs-production.pri
 Received: from mail.siol.net ([127.0.0.1])
         by localhost (psrvmta10.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id Mg1qRiN1NEQy; Sun,  7 Oct 2018 11:39:14 +0200 (CEST)
+        with ESMTP id e1FTxHqgNsBP; Sun,  7 Oct 2018 11:39:24 +0200 (CEST)
 Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id AF003520BB3;
-        Sun,  7 Oct 2018 11:39:14 +0200 (CEST)
+        by mail.siol.net (Postfix) with ESMTPS id 0F0D2520BCC;
+        Sun,  7 Oct 2018 11:39:24 +0200 (CEST)
 Received: from localhost.localdomain (cpe1-8-82.cable.triera.net [213.161.8.82])
         (Authenticated sender: 031275009)
-        by mail.siol.net (Postfix) with ESMTPSA id B99FD520B92;
-        Sun,  7 Oct 2018 11:39:12 +0200 (CEST)
+        by mail.siol.net (Postfix) with ESMTPSA id 7D9CC520BC7;
+        Sun,  7 Oct 2018 11:39:20 +0200 (CEST)
 From:   Jernej Skrabec <jernej.skrabec@siol.net>
 To:     maxime.ripard@bootlin.com, wens@csie.org
 Cc:     robh+dt@kernel.org, sboyd@kernel.org, airlied@linux.ie,
@@ -42,11 +42,13 @@ Cc:     robh+dt@kernel.org, sboyd@kernel.org, airlied@linux.ie,
         Laurent.pinchart@ideasonboard.com, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-sunxi@googlegroups.com
-Subject: [PATCH v2 00/29] Allwinner H6 DE3 and HDMI support
-Date:   Sun,  7 Oct 2018 11:38:36 +0200
-Message-Id: <20181007093905.11253-1-jernej.skrabec@siol.net>
+        linux-sunxi@googlegroups.com, stable@vger.kernel.org
+Subject: [PATCH v2 03/29] clk: sunxi-ng: Use u64 for calculation of NM rate
+Date:   Sun,  7 Oct 2018 11:38:39 +0200
+Message-Id: <20181007093905.11253-4-jernej.skrabec@siol.net>
 X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20181007093905.11253-1-jernej.skrabec@siol.net>
+References: <20181007093905.11253-1-jernej.skrabec@siol.net>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-clk-owner@vger.kernel.org
@@ -54,114 +56,77 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This series adds support for Display Engine 3.0 and HDMI 2.0a, which
-can be found on H6 SoC.
+Allwinner H6 SoC has multiplier N range between 1 and 254. Since parent
+rate is 24MHz, intermediate result when calculating final rate easily
+overflows 32 bit variable.
 
-Display Engine 3.0 in comparison to 2.0 mostly adds features needed for
-displaying and processing 10-bit and AFBC formats, which are not yet
-supported by this series.
+Because of that, introduce function for calculating clock rate which
+uses 64 bit variable for intermediate result.
 
-This series is based on linux-next at next-20180828, which has working
-R40 display pipeline support. I'll rebase series on later linux-next, if
-needed, once R40 display pipeline support is reintroduced.
+Fixes: 6174a1e24b0d ("clk: sunxi-ng: Add N-M-factor clock support")
+Fixes: ee28648cb2b4 ("clk: sunxi-ng: Remove the use of rational computati=
+ons")
 
-I suggest all patches go through allwinner tree, except DRM patches,
-which should go through drm-misc tree.
+CC: <stable@vger.kernel.org>
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+ drivers/clk/sunxi-ng/ccu_nm.c | 18 +++++++++++++++---
+ 1 file changed, 15 insertions(+), 3 deletions(-)
 
-Last detail, PineH64 model A schematic has DDC_EN signal, which enables
-DDC voltage level shifter. TL Lim, PINE64 founder, said that this
-signal is not actually present on PineH64 model A board. It is, however
-present on PineH64 model B engineering samples, but it will be removed
-in production version. Because of that, I didn't include any code for
-it.
-
-Please take a look.
-
-Best regards,
-Jernej
-
-Changes from v1:
-- Collected tags
-- Reworked some commit messages and titles
-- Remove two patches which were already merged
-- Added new patches (10, 11, 12, 21)
-- Lowered max. supported HDMI pixel clock to 594 MHz
-- Reordered compatibles and quirks by family name
-- Fixed kbuild test robot warnings
-- renamed CLK_NUMBER to CLK_NUMBER_WITHOUT_ROT and introduced
-  CLK_NUMBER_WITH_ROT
-- removed "inline" from functions in c file
-- used regmap_bulk_write() for writing DE3 CSC table
-- DE3 specific macros have "DE3_" prefix now
-- reworked DE2/3 mixer registers initialization
-- removed writing to edge detection registers because
-  functionality is not used
-
-Icenowy Zheng (5):
-  dt-bindings: bus: add H6 DE3 bus binding
-  dt-bindings: display: sunxi: add DT binding for Allwinner H6 DW HDMI
-  drm: sun4i: add quirks for TCON TOP
-  dt-bindings: display: sun4i-drm: document H6 TCON TOP
-  drm: sun4i: add support for H6 TCON TOP
-
-Jernej Skrabec (24):
-  clk: sunxi-ng: Adjust MP clock parent rate when allowed
-  clk: sunxi-ng: Use u64 for calculation of NM rate
-  clk: sunxi-ng: h6: Set video PLLs limits
-  dt-bindings: clock: sun8i-de2: Add H6 DE3 clock description
-  clk: sunxi-ng: Add support for H6 DE3 clocks
-  dt-bindings: display: sun4i-drm: Add H6 display engine compatibles
-  drm/sun4i: Add compatible for H6 display engine
-  drm/sun4i: Rework DE2 register defines
-  drm/sun4i: Rename DE2 registers related macros
-  drm/sun4i: Fix DE2 mixer size
-  drm/sun4i: Disable unused DE2 sub-engines
-  drm/sun4i: Add basic support for DE3
-  drm/sun4i: Add support for H6 DE3 mixer 0
-  drm/bridge/synopsys: dw-hdmi: Enable workaround for v2.12a
-  drm/sun4i: Not all DW HDMI controllers has scrambled addresses
-  drm/sun4i: dw-hdmi: Make mode_valid function configurable
-  drm/sun4i: dw-hdmi: Add quirk for setting TMDS clock
-  drm/sun4i: Add support for H6 DW HDMI controller
-  drm/sun4i: dw-hdmi-phy: Reorder quirks by family
-  drm/sun4i: Add support for Synopsys HDMI PHY
-  drm/sun4i: Add support for H6 HDMI PHY
-  drm/sun4i: Initialize registers in tcon-top driver
-  arm64: dts: allwinner: h6: Add HDMI pipeline
-  arm64: dts: allwinner: h6: Enable HDMI output on Pine H64 board
-
- .../bindings/bus/sun50i-de2-bus.txt           |   9 +-
- .../devicetree/bindings/clock/sun8i-de2.txt   |   5 +-
- .../bindings/display/sunxi/sun4i-drm.txt      |  30 ++-
- .../boot/dts/allwinner/sun50i-h6-pine-h64.dts |  25 +++
- arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi  | 201 +++++++++++++++++
- drivers/clk/sunxi-ng/ccu-sun50i-h6.c          |   4 +
- drivers/clk/sunxi-ng/ccu-sun8i-de2.c          |  71 +++++-
- drivers/clk/sunxi-ng/ccu-sun8i-de2.h          |   4 +-
- drivers/clk/sunxi-ng/ccu_mp.c                 |  64 +++++-
- drivers/clk/sunxi-ng/ccu_nm.c                 |  18 +-
- drivers/gpu/drm/bridge/synopsys/dw-hdmi.c     |   1 +
- drivers/gpu/drm/sun4i/sun4i_drv.c             |   1 +
- drivers/gpu/drm/sun4i/sun8i_csc.c             |  89 +++++++-
- drivers/gpu/drm/sun4i/sun8i_csc.h             |   6 +-
- drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c         |  46 +++-
- drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h         |  14 +-
- drivers/gpu/drm/sun4i/sun8i_hdmi_phy.c        | 201 +++++++++++++++--
- drivers/gpu/drm/sun4i/sun8i_mixer.c           | 147 ++++++++-----
- drivers/gpu/drm/sun4i/sun8i_mixer.h           | 205 +++++++++++-------
- drivers/gpu/drm/sun4i/sun8i_tcon_top.c        |  58 ++++-
- drivers/gpu/drm/sun4i/sun8i_ui_layer.c        |  81 ++++---
- drivers/gpu/drm/sun4i/sun8i_ui_layer.h        |  49 +++--
- drivers/gpu/drm/sun4i/sun8i_ui_scaler.c       |  67 +++---
- drivers/gpu/drm/sun4i/sun8i_ui_scaler.h       |  50 ++---
- drivers/gpu/drm/sun4i/sun8i_vi_layer.c        |  91 +++++---
- drivers/gpu/drm/sun4i/sun8i_vi_layer.h        |  35 +--
- drivers/gpu/drm/sun4i/sun8i_vi_scaler.c       | 101 +++++----
- drivers/gpu/drm/sun4i/sun8i_vi_scaler.h       |  90 +++++---
- include/dt-bindings/clock/sun8i-de2.h         |   3 +
- include/dt-bindings/reset/sun8i-de2.h         |   1 +
- 30 files changed, 1333 insertions(+), 434 deletions(-)
-
+diff --git a/drivers/clk/sunxi-ng/ccu_nm.c b/drivers/clk/sunxi-ng/ccu_nm.=
+c
+index 6fe3c14f7b2d..424d8635b053 100644
+--- a/drivers/clk/sunxi-ng/ccu_nm.c
++++ b/drivers/clk/sunxi-ng/ccu_nm.c
+@@ -19,6 +19,17 @@ struct _ccu_nm {
+ 	unsigned long	m, min_m, max_m;
+ };
+=20
++static unsigned long ccu_nm_calc_rate(unsigned long parent,
++				      unsigned long n, unsigned long m)
++{
++	u64 rate =3D parent;
++
++	rate *=3D n;
++	do_div(rate, m);
++
++	return rate;
++}
++
+ static void ccu_nm_find_best(unsigned long parent, unsigned long rate,
+ 			     struct _ccu_nm *nm)
+ {
+@@ -28,7 +39,8 @@ static void ccu_nm_find_best(unsigned long parent, unsi=
+gned long rate,
+=20
+ 	for (_n =3D nm->min_n; _n <=3D nm->max_n; _n++) {
+ 		for (_m =3D nm->min_m; _m <=3D nm->max_m; _m++) {
+-			unsigned long tmp_rate =3D parent * _n  / _m;
++			unsigned long tmp_rate =3D ccu_nm_calc_rate(parent,
++								  _n, _m);
+=20
+ 			if (tmp_rate > rate)
+ 				continue;
+@@ -100,7 +112,7 @@ static unsigned long ccu_nm_recalc_rate(struct clk_hw=
+ *hw,
+ 	if (ccu_sdm_helper_is_enabled(&nm->common, &nm->sdm))
+ 		rate =3D ccu_sdm_helper_read_rate(&nm->common, &nm->sdm, m, n);
+ 	else
+-		rate =3D parent_rate * n / m;
++		rate =3D ccu_nm_calc_rate(parent_rate, n, m);
+=20
+ 	if (nm->common.features & CCU_FEATURE_FIXED_POSTDIV)
+ 		rate /=3D nm->fixed_post_div;
+@@ -149,7 +161,7 @@ static long ccu_nm_round_rate(struct clk_hw *hw, unsi=
+gned long rate,
+ 	_nm.max_m =3D nm->m.max ?: 1 << nm->m.width;
+=20
+ 	ccu_nm_find_best(*parent_rate, rate, &_nm);
+-	rate =3D *parent_rate * _nm.n / _nm.m;
++	rate =3D ccu_nm_calc_rate(*parent_rate, _nm.n, _nm.m);
+=20
+ 	if (nm->common.features & CCU_FEATURE_FIXED_POSTDIV)
+ 		rate /=3D nm->fixed_post_div;
 --=20
 2.19.0
 
