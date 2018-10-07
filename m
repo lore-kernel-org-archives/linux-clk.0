@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24CD0C65C30
-	for <linux-clk@archiver.kernel.org>; Sun,  7 Oct 2018 09:40:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00A30C677F5
+	for <linux-clk@archiver.kernel.org>; Sun,  7 Oct 2018 09:40:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB23B2084D
-	for <linux-clk@archiver.kernel.org>; Sun,  7 Oct 2018 09:40:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB23B2084D
+	by mail.kernel.org (Postfix) with ESMTP id C5BEA20895
+	for <linux-clk@archiver.kernel.org>; Sun,  7 Oct 2018 09:40:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5BEA20895
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=siol.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728609AbeJGQrI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 7 Oct 2018 12:47:08 -0400
-Received: from mailoutvs40.siol.net ([185.57.226.231]:40195 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728371AbeJGQrH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 7 Oct 2018 12:47:07 -0400
+        id S1728592AbeJGQrG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 7 Oct 2018 12:47:06 -0400
+Received: from mailoutvs7.siol.net ([185.57.226.198]:40162 "EHLO mail.siol.net"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728533AbeJGQrF (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 7 Oct 2018 12:47:05 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id B0AE8520CDF;
-        Sun,  7 Oct 2018 11:40:22 +0200 (CEST)
+        by mail.siol.net (Postfix) with ESMTP id 449255204AC;
+        Sun,  7 Oct 2018 11:40:20 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at psrvmta10.zcs-production.pri
 Received: from mail.siol.net ([127.0.0.1])
         by localhost (psrvmta10.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id pTaSKvJxoTh6; Sun,  7 Oct 2018 11:40:22 +0200 (CEST)
+        with ESMTP id 9yU0msLKzA-P; Sun,  7 Oct 2018 11:40:19 +0200 (CEST)
 Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id 60885520CD8;
-        Sun,  7 Oct 2018 11:40:22 +0200 (CEST)
+        by mail.siol.net (Postfix) with ESMTPS id E1AB8520A87;
+        Sun,  7 Oct 2018 11:40:19 +0200 (CEST)
 Received: from localhost.localdomain (cpe1-8-82.cable.triera.net [213.161.8.82])
         (Authenticated sender: 031275009)
-        by mail.siol.net (Postfix) with ESMTPSA id E9110520CBF;
-        Sun,  7 Oct 2018 11:40:19 +0200 (CEST)
+        by mail.siol.net (Postfix) with ESMTPSA id 745035204AC;
+        Sun,  7 Oct 2018 11:40:17 +0200 (CEST)
 From:   Jernej Skrabec <jernej.skrabec@siol.net>
 To:     maxime.ripard@bootlin.com, wens@csie.org
 Cc:     robh+dt@kernel.org, sboyd@kernel.org, airlied@linux.ie,
@@ -43,9 +43,9 @@ Cc:     robh+dt@kernel.org, sboyd@kernel.org, airlied@linux.ie,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v2 26/29] dt-bindings: display: sun4i-drm: document H6 TCON TOP
-Date:   Sun,  7 Oct 2018 11:39:02 +0200
-Message-Id: <20181007093905.11253-27-jernej.skrabec@siol.net>
+Subject: [PATCH v2 25/29] drm: sun4i: add quirks for TCON TOP
+Date:   Sun,  7 Oct 2018 11:39:01 +0200
+Message-Id: <20181007093905.11253-26-jernej.skrabec@siol.net>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181007093905.11253-1-jernej.skrabec@siol.net>
 References: <20181007093905.11253-1-jernej.skrabec@siol.net>
@@ -58,61 +58,109 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Icenowy Zheng <icenowy@aosc.io>
 
-Allwinner H6 SoC has a cut down version of TCON TOP.
+Some SoCs, such as H6, doesn't have a full-featured TCON TOP.
 
-Add binding documentation for it.
+Add quirks support for TCON TOP.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Currently the presence of TCON_TV1 and DSI is controlled via the quirks
+structure.
+
 Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-[expanded description]
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- .../bindings/display/sunxi/sun4i-drm.txt           | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/sun4i/sun8i_tcon_top.c | 43 ++++++++++++++++++++------
+ 1 file changed, 34 insertions(+), 9 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.tx=
-t b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-index 478b288eebd9..f426bdb42f18 100644
---- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-+++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-@@ -228,24 +228,26 @@ It allows display pipeline to be configured in very=
- different ways:
-                  \ [3] TCON-TV1 [1] - TVE1/RGB
+diff --git a/drivers/gpu/drm/sun4i/sun8i_tcon_top.c b/drivers/gpu/drm/sun=
+4i/sun8i_tcon_top.c
+index 37158548b447..ed13233cad88 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
++++ b/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
+@@ -9,11 +9,17 @@
+ #include <linux/component.h>
+ #include <linux/device.h>
+ #include <linux/module.h>
++#include <linux/of_device.h>
+ #include <linux/of_graph.h>
+ #include <linux/platform_device.h>
 =20
- Note that both TCON TOP references same physical unit. Both mixers can b=
-e
--connected to any TCON.
-+connected to any TCON. Not all TCON TOP variants support all features.
+ #include "sun8i_tcon_top.h"
 =20
- Required properties:
-   - compatible: value must be one of:
-     * allwinner,sun8i-r40-tcon-top
-+    * allwinner,sun50i-h6-tcon-top
-   - reg: base address and size of the memory-mapped region.
-   - clocks: phandle to the clocks feeding the TCON TOP
-     * bus: TCON TOP interface clock
-     * tcon-tv0: TCON TV0 clock
--    * tve0: TVE0 clock
--    * tcon-tv1: TCON TV1 clock
--    * tve1: TVE0 clock
--    * dsi: MIPI DSI clock
-+    * tve0: TVE0 clock (R40 only)
-+    * tcon-tv1: TCON TV1 clock (R40 only)
-+    * tve1: TVE0 clock (R40 only)
-+    * dsi: MIPI DSI clock (R40 only)
-   - clock-names: clock name mentioned above
-   - resets: phandle to the reset line driving the TCON TOP
-   - #clock-cells : must contain 1
-   - clock-output-names: Names of clocks created for TCON TV0 channel clo=
-ck,
--    TCON TV1 channel clock and DSI channel clock, in that order.
-+    TCON TV1 channel clock (R40 only) and DSI channel clock (R40 only), =
-in
-+    that order.
++struct sun8i_tcon_top_quirks {
++	bool has_tcon_tv1;
++	bool has_dsi;
++};
++
+ static bool sun8i_tcon_top_node_is_tcon_top(struct device_node *node)
+ {
+ 	return !!of_match_node(sun8i_tcon_top_of_table, node);
+@@ -121,10 +127,13 @@ static int sun8i_tcon_top_bind(struct device *dev, =
+struct device *master,
+ 	struct platform_device *pdev =3D to_platform_device(dev);
+ 	struct clk_hw_onecell_data *clk_data;
+ 	struct sun8i_tcon_top *tcon_top;
++	const struct sun8i_tcon_top_quirks *quirks;
+ 	struct resource *res;
+ 	void __iomem *regs;
+ 	int ret, i;
 =20
- - ports: A ports node with endpoint definitions as defined in
-     Documentation/devicetree/bindings/media/video-interfaces.txt. 6 port=
-s should
++	quirks =3D of_device_get_match_data(&pdev->dev);
++
+ 	tcon_top =3D devm_kzalloc(dev, sizeof(*tcon_top), GFP_KERNEL);
+ 	if (!tcon_top)
+ 		return -ENOMEM;
+@@ -187,15 +196,23 @@ static int sun8i_tcon_top_bind(struct device *dev, =
+struct device *master,
+ 					     &tcon_top->reg_lock,
+ 					     TCON_TOP_TCON_TV0_GATE, 0);
+=20
+-	clk_data->hws[CLK_TCON_TOP_TV1] =3D
+-		sun8i_tcon_top_register_gate(dev, "tcon-tv1", regs,
+-					     &tcon_top->reg_lock,
+-					     TCON_TOP_TCON_TV1_GATE, 1);
++	if (quirks->has_tcon_tv1) {
++		clk_data->hws[CLK_TCON_TOP_TV1] =3D
++			sun8i_tcon_top_register_gate(dev, "tcon-tv1", regs,
++						     &tcon_top->reg_lock,
++						     TCON_TOP_TCON_TV1_GATE, 1);
++	} else {
++		clk_data->hws[CLK_TCON_TOP_TV1] =3D NULL;
++	}
+=20
+-	clk_data->hws[CLK_TCON_TOP_DSI] =3D
+-		sun8i_tcon_top_register_gate(dev, "dsi", regs,
+-					     &tcon_top->reg_lock,
+-					     TCON_TOP_TCON_DSI_GATE, 2);
++	if (quirks->has_dsi) {
++		clk_data->hws[CLK_TCON_TOP_DSI] =3D
++			sun8i_tcon_top_register_gate(dev, "dsi", regs,
++						     &tcon_top->reg_lock,
++						     TCON_TOP_TCON_DSI_GATE, 2);
++	} else {
++		clk_data->hws[CLK_TCON_TOP_DSI] =3D NULL;
++	}
+=20
+ 	for (i =3D 0; i < CLK_NUM; i++)
+ 		if (IS_ERR(clk_data->hws[i])) {
+@@ -257,9 +274,17 @@ static int sun8i_tcon_top_remove(struct platform_dev=
+ice *pdev)
+ 	return 0;
+ }
+=20
++const struct sun8i_tcon_top_quirks sun8i_r40_tcon_top_quirks =3D {
++	.has_tcon_tv1	=3D true,
++	.has_dsi	=3D true,
++};
++
+ /* sun4i_drv uses this list to check if a device node is a TCON TOP */
+ const struct of_device_id sun8i_tcon_top_of_table[] =3D {
+-	{ .compatible =3D "allwinner,sun8i-r40-tcon-top" },
++	{
++		.compatible =3D "allwinner,sun8i-r40-tcon-top",
++		.data =3D &sun8i_r40_tcon_top_quirks
++	},
+ 	{ /* sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(of, sun8i_tcon_top_of_table);
 --=20
 2.19.0
 
