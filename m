@@ -2,98 +2,161 @@ Return-Path: <SRS0=ehPu=MT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95B22C65C30
-	for <linux-clk@archiver.kernel.org>; Sun,  7 Oct 2018 09:50:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B951C65C1D
+	for <linux-clk@archiver.kernel.org>; Sun,  7 Oct 2018 13:28:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E86920882
-	for <linux-clk@archiver.kernel.org>; Sun,  7 Oct 2018 09:50:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7E4720882
+	for <linux-clk@archiver.kernel.org>; Sun,  7 Oct 2018 13:28:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GQ5Yg9HJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E86920882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fIL1FFK/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7E4720882
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726378AbeJGQ5k (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 7 Oct 2018 12:57:40 -0400
-Received: from mail-wr1-f46.google.com ([209.85.221.46]:45770 "EHLO
-        mail-wr1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726152AbeJGQ5k (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 7 Oct 2018 12:57:40 -0400
-Received: by mail-wr1-f46.google.com with SMTP id q5-v6so17616740wrw.12;
-        Sun, 07 Oct 2018 02:50:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=1Km3shdmMfTCI64wZ03MRdpiPgg+D4OMTEmkORIjYWg=;
-        b=GQ5Yg9HJNXVZBzJXAsTkxapB2oKPcKNBVVh0yXeAqMIew/x2U0jNg/nOk+hJI50HFo
-         imxu8BNCtTQV6BqOS6peryVQ8HXppFU9ORRz3dE5VLQilNe78oGUHzl/UQyYXL1vGog9
-         cESTsbkW5vIbSOcQyHbTjhsBj01MSFH4bkODsvtfg6jIjyE86nqYJtIur4ZV0pXLW++P
-         wjuSY4TvCA6W4o0w5CHQ4bQURbaIzQVbkxFLXYdzPrr+pR/rSXTnzAzwb163iXDV9GBG
-         yPFh8KocLIQNhgdek9X3XuUosBbdcDr0qr/y4LQDiUkrRl5By3FHdw2NavPYo9eThmpC
-         2ihg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=1Km3shdmMfTCI64wZ03MRdpiPgg+D4OMTEmkORIjYWg=;
-        b=ZjWB9HDQ4EUD7vkGFaJlLeBkt8KEVAw8tpvTrlb4Bv32URXDe+Qi82Bo5wluE9Od7/
-         +YEdX1Pbt0kpdiM8ElgbD+i7/PMz9yO+OLvigD/TPuVBCOr3R7ZJsbU+92rO/1IdwFIo
-         1ewk0vmfpyNelOrs6t7OzDfrm4gylZRdcULWy88kAqsrFAO6POUBjQhkfoyw3QYYtFGW
-         dKXvbLEwcDOa1FdRzCB8FqedLQepHvWcTw9bPZY2Ty/2jD7sOjQ7iJY556B3VdtlLSpf
-         obIYT4PcJu96hgpnQDq81uMnKJxFlE5/i9ivo9k3l9Yze6SWWPCDHJI/qAwsEPgrEanS
-         uCgA==
-X-Gm-Message-State: ABuFfojOV1mD1jTjXCzekMEehb7mhD162B27iPExdXGin1VnPVBqo2Jl
-        kLHIVsV3fTOkLFLLRyKZtuU=
-X-Google-Smtp-Source: ACcGV60ugt6F0O043Gvkwuo3YlCB5wW7m4CmBQXslDOPAfvdA0giYPTGVH0rJyi/QzHR0cQmjidCRw==
-X-Received: by 2002:adf:ef0a:: with SMTP id e10-v6mr13353084wro.292.1538905854578;
-        Sun, 07 Oct 2018 02:50:54 -0700 (PDT)
-Received: from jernej-laptop.localnet (cpe1-8-82.cable.triera.net. [213.161.8.82])
-        by smtp.gmail.com with ESMTPSA id z12-v6sm1220453wrv.46.2018.10.07.02.50.52
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 07 Oct 2018 02:50:53 -0700 (PDT)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To:     linux-sunxi@googlegroups.com
-Cc:     maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org,
-        sboyd@kernel.org, airlied@linux.ie, architt@codeaurora.org,
-        a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Subject: Re: [linux-sunxi] [PATCH v2 00/29] Allwinner H6 DE3 and HDMI support
-Date:   Sun, 07 Oct 2018 11:50:52 +0200
-Message-ID: <3147828.SFUzx6Pm4T@jernej-laptop>
-In-Reply-To: <20181007093905.11253-1-jernej.skrabec@siol.net>
-References: <20181007093905.11253-1-jernej.skrabec@siol.net>
+        id S1727796AbeJGUfM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 7 Oct 2018 16:35:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59440 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726785AbeJGUfL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 7 Oct 2018 16:35:11 -0400
+Received: from localhost (unknown [171.76.113.63])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8544D20882;
+        Sun,  7 Oct 2018 13:27:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1538918877;
+        bh=27GaVKNOvJHWRYuIF+IGIhpFqOqm3Dobwsct232tXLY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=fIL1FFK/EnzjeA/AFIoe66qC/EmWMQK8mveOkEhRdLiYBl8Fg+If6+46bwVBiFvvu
+         F6LSmqQ+301RwP3J5F+ifUEjZAamLpvj6pExi6uSutb+NaIY0A7fibY981u7BDjLsF
+         RDnZzfQMzThutzXTzL7mSpIs03SYfMGgcElemfcg=
+Date:   Sun, 7 Oct 2018 18:57:47 +0530
+From:   Vinod <vkoul@kernel.org>
+To:     Taniya Das <tdas@codeaurora.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Shefali Jain <shefjain@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Anu Ramanathan <anur@codeaurora.org>,
+        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>
+Subject: Re: [PATCH 2/2] clk: qcom: gcc: Add global clock controller driver
+ for QCS404
+Message-ID: <20181007132747.GR2372@vkoul-mobl>
+References: <20180921185936.9590-1-vkoul@kernel.org>
+ <20180921185936.9590-2-vkoul@kernel.org>
+ <153841434099.119890.3912925112860077471@swboyd.mtv.corp.google.com>
+ <20181003062103.GN19792@vkoul-mobl>
+ <6986bbb2-eb89-7758-7fac-d8ac79da55ec@codeaurora.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6986bbb2-eb89-7758-7fac-d8ac79da55ec@codeaurora.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Dne nedelja, 07. oktober 2018 ob 11:38:36 CEST je Jernej Skrabec napisal(a):
-> This series adds support for Display Engine 3.0 and HDMI 2.0a, which
-> can be found on H6 SoC.
+Hi Tanya,
+
+On 06-10-18, 23:19, Taniya Das wrote:
+
+> > > > +static struct clk_branch gcc_pwm1_xo512_clk = {
+> > > > +       .halt_reg = 0x49004,
+> > > > +       .halt_check = BRANCH_HALT,
+> > > > +       .clkr = {
+> > > > +               .enable_reg = 0x49004,
+> > > > +               .enable_mask = BIT(0),
+> > > > +               .hw.init = &(struct clk_init_data){
+> > > > +                       .name = "gcc_pwm1_xo512_clk",
+> > > > +                       .ops = &clk_branch2_ops,
+> > > 
+> > > Do these pwm clks have a parent clk of the XO?
+> > 
+> > Yes they do
 > 
-> Display Engine 3.0 in comparison to 2.0 mostly adds features needed for
-> displaying and processing 10-bit and AFBC formats, which are not yet
-> supported by this series.
+> We do not need to specify the parent here.
+
+Any specific reason for that?
+
 > 
-> This series is based on linux-next at next-20180828, which has working
-> R40 display pipeline support. I'll rebase series on later linux-next, if
-> needed, once R40 display pipeline support is reintroduced.
+> > > > +       [GCC_USB_HS_PHY_CFG_AHB_CLK] = &gcc_usb_hs_phy_cfg_ahb_clk.clkr,
+> > > > +       [GCC_USB_HS_SYSTEM_CLK] = &gcc_usb_hs_system_clk.clkr,
+> > > > +       [GFX3D_CLK_SRC] = &gfx3d_clk_src.clkr,
+> > > > +       [GP1_CLK_SRC] = &gp1_clk_src.clkr,
+> > > 
+> > > Why are some of these missing GCC_ prefix?
+> > 
+> > will add..
+> > 
+> 
+> These clocks in HW plans do not have GCC prefixed, so it better to leave
+> them as they are represented in the HW.
 
-Sorry, I forgot to update above text. It is based on next-20181004 and R40 
-HDMI support is already fixed.
+That's right but I think Stephan wants this namespaced properly which IMO
+makes sense. Btw looking at other examples I saw that drivers are using
+GCC_ tag even if HW representation does not have that
 
-Best regards,
-Jernej
+> > > > +static int gcc_qcs404_probe(struct platform_device *pdev)
+> > > > +{
+> > > > +       struct regmap *regmap;
+> > > > +       int ret;
+> > > > +
+> > > > +       ret = qcom_cc_register_board_clk(&pdev->dev,
+> > > > +                                        "xo_board", "cxo", 19200000);
+> > > 
+> > > You shouldn't need to do this. This function is for transitioning DT
+> > > that doesn't have the board clk in DT to something the driver wants to
+> > > use, in this case "cxo". So you can either register a fixed factor 1/1
+> > > clk to do the translation between board and cxo names, or use xo_board
+> > > as the parent of things that can take crystal.
+> > 
+> > Okay will modify this. If I go about using xo_board as parent, I would
+> > need to register that right? FWIW I see the same thing done in gcc-msm8916
+> 
+> As Stephen suggested it should be defined in DT till we use the
+> clk-smd-rpm.c.
 
+OK will check this
 
+> > > > +#define GCC_GENI_IR_BCR                                        0
+> > > > +#define GCC_USB_HS_BCR                                 1
+> > > > +#define GCC_USB2_HS_PHY_ONLY_BCR                       2
+> > > > +#define GCC_QUSB2_PHY_BCR                              3
+> > > > +#define GCC_USB_HS_PHY_CFG_AHB_BCR                     4
+> > > > +#define GCC_USB2A_PHY_BCR                              5
+> > > > +#define GCC_USB3_PHY_BCR                               6
+> > > > +#define GCC_USB_30_BCR                                 7
+> > > > +#define GCC_USB3PHY_PHY_BCR                            8
+> > > > +#define GCC_PCIE_0_BCR                                 9
+> > > > +#define GCC_PCIE_0_PHY_BCR                             10
+> > > > +#define GCC_PCIE_0_LINK_DOWN_BCR                       11
+> > > > +#define GCC_PCIEPHY_0_PHY_BCR                          12
+> > > > +#define GCC_EMAC_BCR                                   13
+> > > 
+> > > No GDSCs? Ok.
+> > 
+> > Downstream doesn't seem to have one, will recheck specs.
+> > 
+> 
+> Downstream uses different way to handle GDSC, there are 2 GDSCs which have
+> to be added 1 for MDSS and 1 OXILI_GX.
+
+Okay will check and add
+
+-- 
+~Vinod
