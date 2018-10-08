@@ -6,98 +6,73 @@ X-Spam-Status: No, score=-1.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2850C6787D
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Oct 2018 02:45:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 871C5C6787E
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Oct 2018 02:47:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88CDF2084D
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Oct 2018 02:45:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3852D2086D
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Oct 2018 02:47:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ieKzkGCp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88CDF2084D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qwEBjLsW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3852D2086D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725941AbeJHJzR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 8 Oct 2018 05:55:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60828 "EHLO mail.kernel.org"
+        id S1726028AbeJHJ45 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 8 Oct 2018 05:56:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33266 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725807AbeJHJzQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 8 Oct 2018 05:55:16 -0400
+        id S1725993AbeJHJ45 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 8 Oct 2018 05:56:57 -0400
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 02FC92084D;
-        Mon,  8 Oct 2018 02:45:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 149322084D;
+        Mon,  8 Oct 2018 02:47:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1538966752;
-        bh=uly+y61DsSOoA3/xVHk/hGOpSBy7C3WpsZO1k7j7Kio=;
+        s=default; t=1538966852;
+        bh=FTFv6uXBqtCjnUQd8FP2o8aPDcs1S0kLS9GD5Kr6cdc=;
         h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=ieKzkGCpgA5+y+ycdvvclQb6Vv7IPBbmaoy+o0DiepLWjIh508DOu/qxM2/jAoOz1
-         k/UzIXJWXx/7FIfAZ02ACRoiYDIVvwFT3sYJJvlip8pO8si/rMcZtcMif1lzgZUewJ
-         d7f/mnd9bclqI21G0WOtVtvbGAyx83ZfWdQLIpnI=
+        b=qwEBjLsW5K7k3xXhDqsE4RpmQE6kownkEyTEwxgV5J3DGoy4dKPTriMDdpd+fSUbS
+         K9OqQzN0fK/Wh+A11dsp2Wo5u9sotOlZQK/r5J/lirm53YpQkdTsf7Q+dqsDnZsges
+         Y6j+b/0e+dIrOolMx/WQfjKFSu5wMR2S2vI4qBEw=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <66fc65d8-92ec-f32c-6edb-ad4952695395@codeaurora.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, robh@kernel.org
-References: <1537266338-18661-1-git-send-email-tdas@codeaurora.org>
- <1537266338-18661-3-git-send-email-tdas@codeaurora.org>
- <153816066933.119890.2976485722156069351@swboyd.mtv.corp.google.com>
- <66fc65d8-92ec-f32c-6edb-ad4952695395@codeaurora.org>
-Message-ID: <153896675144.119890.3991549600874849177@swboyd.mtv.corp.google.com>
+In-Reply-To: <20181002115210.15541-1-m.szyprowski@samsung.com>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+References: <CGME20181002115219eucas1p23816d543c4dedb233406869c22713a95@eucas1p2.samsung.com>
+ <20181002115210.15541-1-m.szyprowski@samsung.com>
+Message-ID: <153896685140.119890.3664164252562492456@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.7
-Subject: Re: [PATCH v5 2/2] clk: qcom: Add lpass clock controller driver for SDM845
-Date:   Sun, 07 Oct 2018 19:45:51 -0700
+Subject: Re: [PATCH] clk: samsung: Use clk_hw API for calling clk framework from clk
+ notifiers
+Date:   Sun, 07 Oct 2018 19:47:31 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Taniya Das (2018-10-04 05:01:27)
-> =
+Quoting Marek Szyprowski (2018-10-02 04:52:10)
+> @@ -432,7 +432,7 @@ int __init exynos_register_cpu_clock(struct samsung_c=
+lk_provider *ctx,
+>         else
+>                 cpuclk->clk_nb.notifier_call =3D exynos_cpuclk_notifier_c=
+b;
+>  =
 
-> On 9/29/2018 12:21 AM, Stephen Boyd wrote:
-> > Quoting Taniya Das (2018-09-18 03:25:38)
-> >> @@ -3469,6 +3495,8 @@ enum {
-> >>          [GCC_QSPI_CORE_CLK_SRC] =3D &gcc_qspi_core_clk_src.clkr,
-> >>          [GCC_QSPI_CORE_CLK] =3D &gcc_qspi_core_clk.clkr,
-> >>          [GCC_QSPI_CNOC_PERIPH_AHB_CLK] =3D &gcc_qspi_cnoc_periph_ahb_=
-clk.clkr,
-> >> +       [GCC_LPASS_Q6_AXI_CLK] =3D NULL,
-> >> +       [GCC_LPASS_SWAY_CLK] =3D NULL,
-> >>   };
-> >>   =
+> -       cpuclk->alt_parent =3D __clk_lookup(alt_parent);
+> +       cpuclk->alt_parent =3D __clk_get_hw(__clk_lookup(alt_parent));
 
-> >>   static const struct qcom_reset_map gcc_sdm845_resets[] =3D {
-> >> @@ -3583,6 +3611,13 @@ static int gcc_sdm845_probe(struct platform_dev=
-ice *pdev)
-> >>          if (ret)
-> >>                  return ret;
-> >>   =
+It would be nice to get rid of __clk_lookup() from here too. Please try
+to do that if at all possible.
 
-> >> +       if (of_property_read_bool(pdev->dev.of_node, "qcom,lpass-prote=
-cted")) {
-> > =
-
-> > Shouldn't this be negated? So that we only add the clks when lpass isn't
-> > protected?
-> >
-> =
-
-> I was of the opinion to add the flag only when LPASS clocks are =
-
-> required. But I am fine negating it too.
-
-It's stating that lpass clks are protected, so presumably we wouldn't
-add the property on devices without the XPU configured. This means that
-most configurations would have it protected and then this flag is needed
-almost all the time. O well!
-
+>         if (!cpuclk->alt_parent) {
+>                 pr_err("%s: could not lookup alternate parent %s\n",
+>                                 __func__, alt_parent);
