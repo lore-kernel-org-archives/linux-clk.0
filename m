@@ -2,164 +2,75 @@ Return-Path: <SRS0=r4nj=MU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60F22C65C20
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Oct 2018 15:09:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81501C65C20
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Oct 2018 16:24:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E5482075C
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Oct 2018 15:09:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E5482075C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=siol.net
+	by mail.kernel.org (Postfix) with ESMTP id 4D8442089D
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Oct 2018 16:24:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D8442089D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726159AbeJHWV5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 8 Oct 2018 18:21:57 -0400
-Received: from mailoutvs50.siol.net ([185.57.226.241]:42009 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726078AbeJHWV5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 Oct 2018 18:21:57 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Zimbra) with ESMTP id 69F3052101C;
-        Mon,  8 Oct 2018 17:09:44 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at psrvmta12.zcs-production.pri
-Received: from mail.siol.net ([127.0.0.1])
-        by localhost (psrvmta12.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id 9BEfd-RCm4tW; Mon,  8 Oct 2018 17:09:43 +0200 (CEST)
-Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Zimbra) with ESMTPS id CA0385205FB;
-        Mon,  8 Oct 2018 17:09:43 +0200 (CEST)
-Received: from jernej-laptop.localnet (cpe1-8-82.cable.triera.net [213.161.8.82])
-        (Authenticated sender: 031275009)
-        by mail.siol.net (Zimbra) with ESMTPA id BDDD6520CBD;
-        Mon,  8 Oct 2018 17:09:42 +0200 (CEST)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     wens@csie.org, robh+dt@kernel.org, sboyd@kernel.org,
-        airlied@linux.ie, architt@codeaurora.org, a.hajda@samsung.com,
-        Laurent.pinchart@ideasonboard.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 18/29] drm/sun4i: dw-hdmi: Add quirk for setting TMDS clock
-Date:   Mon, 08 Oct 2018 17:09:42 +0200
-Message-ID: <8016466.hta3A6eauk@jernej-laptop>
-In-Reply-To: <20181008091406.yjs2u22fmj72e4rj@flea>
-References: <20181007093905.11253-1-jernej.skrabec@siol.net> <20181007093905.11253-19-jernej.skrabec@siol.net> <20181008091406.yjs2u22fmj72e4rj@flea>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        id S1726564AbeJHXgk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 8 Oct 2018 19:36:40 -0400
+Received: from relmlor4.renesas.com ([210.160.252.174]:35644 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726396AbeJHXgk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 Oct 2018 19:36:40 -0400
+Received: from unknown (HELO relmlir4.idc.renesas.com) ([10.200.68.154])
+  by relmlie3.idc.renesas.com with ESMTP; 09 Oct 2018 01:24:08 +0900
+Received: from relmlii2.idc.renesas.com (relmlii2.idc.renesas.com [10.200.68.66])
+        by relmlir4.idc.renesas.com (Postfix) with ESMTP id 6F1563D843;
+        Tue,  9 Oct 2018 01:24:08 +0900 (JST)
+X-IronPort-AV: E=Sophos;i="5.54,357,1534777200"; 
+   d="scan'208";a="294565717"
+Received: from unknown (HELO rtamta01.rta.renesas.com) ([143.103.48.75])
+  by relmlii2.idc.renesas.com with ESMTP; 09 Oct 2018 01:24:06 +0900
+Received: from ubuntu.localdomain (unknown [143.103.58.6])
+        by rtamta01.rta.renesas.com (Postfix) with ESMTP id CF601F2;
+        Mon,  8 Oct 2018 16:24:01 +0000 (UTC)
+From:   Chris Brandt <chris.brandt@renesas.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-clk@vger.kernel.org, linux-mmc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH 0/3] mmc: tmio_mmc: Add support for RZ/A2
+Date:   Mon,  8 Oct 2018 11:23:46 -0500
+Message-Id: <20181008162349.42957-1-chris.brandt@renesas.com>
+X-Mailer: git-send-email 2.16.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Dne ponedeljek, 08. oktober 2018 ob 11:14:06 CEST je Maxime Ripard napisal(a):
-> Hi,
-> 
-> On Sun, Oct 07, 2018 at 11:38:54AM +0200, Jernej Skrabec wrote:
-> > It turns out that H6 HDMI BSP kernel driver doesn't change TMDS rate at
-> > all. At this point it is not clear whether it is just not necessary or
-> > it would cause some kind of issues.
-> > 
-> > Add a quirk for it.
-> > 
-> > Reviewed-by: Chen-Yu Tsai <wens@csie.org>
-> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> > ---
-> > 
-> >  drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c | 5 ++++-
-> >  drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h | 1 +
-> >  2 files changed, 5 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
-> > b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c index ec122136ee9d..e9e93f174b35
-> > 100644
-> > --- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
-> > +++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
-> > @@ -165,7 +165,9 @@ static int sun8i_dw_hdmi_bind(struct device *dev,
-> > struct device *master,> 
-> >  		goto err_disable_clk_tmds;
-> >  	
-> >  	}
-> > 
-> > -	drm_encoder_helper_add(encoder, &sun8i_dw_hdmi_encoder_helper_funcs);
-> > +	if (hdmi->quirks->set_rate)
-> > +		drm_encoder_helper_add(encoder,
-> > +				       &sun8i_dw_hdmi_encoder_helper_funcs);
-> 
-> That seems a bit backward, it only works because we only have mode_set
-> at the moment, and the only thing it does is changing the clock
-> rate. As soon as we change one of these two assumptions, the code will
-> break.
-> 
-> Why not just return in mode_set if that boolean is true?
+Basically the same HW block that was used in R-Car Gen 3 is used in
+RZ/A2 (with only a couple small differences).
 
-My original intention was to optimize execution time a bit. If there is no 
-helpers registered, there is no need to call callback which does nothing. But 
-your way is probably more reasonable approach.
-
-However, I'm pretty sure that even older HDMI controller doesn't need this 
-rate changing code. All tests shown that changing HDMI controller divider 
-doesn't have an effect on video or audio output. It's only there because BSP 
-kernel driver set rate and AW engineer said it's necessary.
-
-> 
-> >  	drm_encoder_init(drm, encoder, &sun8i_dw_hdmi_encoder_funcs,
-> >  	
-> >  			 DRM_MODE_ENCODER_TMDS, NULL);
-> > 
-> > @@ -235,6 +237,7 @@ static int sun8i_dw_hdmi_remove(struct platform_device
-> > *pdev)> 
-> >  static const struct sun8i_dw_hdmi_quirks sun8i_a83t_quirks = {
-> >  
-> >  	.mode_valid = sun8i_dw_hdmi_mode_valid_a83t,
-> > 
-> > +	.set_rate = true,
-> > 
-> >  };
-> >  
-> >  static const struct of_device_id sun8i_dw_hdmi_dt_ids[] = {
-> > 
-> > diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
-> > b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h index a645b8bc9f58..f9eb663865a4
-> > 100644
-> > --- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
-> > +++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
-> > @@ -173,6 +173,7 @@ struct sun8i_hdmi_phy {
-> > 
-> >  struct sun8i_dw_hdmi_quirks {
-> >  
-> >  	enum drm_mode_status (*mode_valid)(struct drm_connector *connector,
-> >  	
-> >  					   const struct drm_display_mode *mode);
-> > 
-> > +	bool set_rate;
-> 
-> This triggers a check in checkpatch. You should address them (and
-> there's several in your series).
-
-Till now we used bools in driver internal structures in spite of this 
-warnings. So should we start using unsigned int? Or maybe bitfield with 
-unsigned int as a base according to https://lkml.org/lkml/2017/11/21/384
-
-As far as other issues reported by strict checkpatch go, most of them are DT 
-lines over 80 charachters. This was tolerated till now. Last type of issues is 
-that macro parameters weren't enclosed with braces. These issues won't be 
-reported anymore in new series because sun8i_csc.h won't be touched if I drop 
-patch which renames DE2 register macros (but original issue will remain).
-
-Best regards,
-Jernej
-
-> 
-> With both addressed,
-> Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
-> 
-> Thanks!
+Not sure if you're going to like the Kconfig change or not.
 
 
 
+Chris Brandt (3):
+  clk: renesas: r7s9210: Add SDHI clocks
+  mmc: renesas_sdhi_internal_dmac: Add R7S9210 support
+  dt-bindings: mmc: tmio_mmc: Document Renesas R7S9210
+
+ Documentation/devicetree/bindings/mmc/tmio_mmc.txt |  1 +
+ drivers/clk/renesas/r7s9210-cpg-mssr.c             |  5 ++++
+ drivers/mmc/host/Kconfig                           |  5 ++--
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c      | 28 ++++++++++++++++++++--
+ 4 files changed, 35 insertions(+), 4 deletions(-)
+
+-- 
+2.16.1
 
