@@ -2,106 +2,189 @@ Return-Path: <SRS0=r4nj=MU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FD5AC00449
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Oct 2018 10:43:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74DC7C65C20
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Oct 2018 10:51:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EF6720841
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Oct 2018 10:43:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="GT774ZZh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EF6720841
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id 35AC52087C
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Oct 2018 10:51:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35AC52087C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726794AbeJHRyK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 8 Oct 2018 13:54:10 -0400
-Received: from mail-eopbgr50082.outbound.protection.outlook.com ([40.107.5.82]:25376
-        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726728AbeJHRyK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 8 Oct 2018 13:54:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EObf8ZYHmch7CHvCgSOTBSrxPxdgKie7v2ZEIovj6wI=;
- b=GT774ZZh/ScVzpeJ182ZhngJtr1kjdCGt9Q4rOBUfnwmyBccR6JG9sL9HIdhJyUioNh2/DBxI5NE6pBx071GyfHRJnah64uvFqRdP1geNH0hJvNcE42YqZznfF/KhPuoNrMBc8aVSwAjboQU4llbFYN/t5YpJ/WYXsYmZoHyOLE=
-Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.126.21) by
- AM0PR04MB4337.eurprd04.prod.outlook.com (52.134.126.156) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1207.18; Mon, 8 Oct 2018 10:43:01 +0000
-Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
- ([fe80::25a0:3167:d718:91c1]) by AM0PR04MB4211.eurprd04.prod.outlook.com
- ([fe80::25a0:3167:d718:91c1%3]) with mapi id 15.20.1207.024; Mon, 8 Oct 2018
- 10:43:01 +0000
-From:   "A.s. Dong" <aisheng.dong@nxp.com>
-To:     "thor.thayer@linux.intel.com" <thor.thayer@linux.intel.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "sboyd@kernel.org" <sboyd@kernel.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "hdegoede@redhat.com" <hdegoede@redhat.com>
-Subject: RE: [PATCH V6 0/4] clk: new APIs to handle all available clocks
-Thread-Topic: [PATCH V6 0/4] clk: new APIs to handle all available clocks
-Thread-Index: AQHUQOYAqzg0fl5c6km76P92aepQ6qTin9AQgBBfjVCABM4uAIAAv5kggBzYKaA=
-Date:   Mon, 8 Oct 2018 10:43:01 +0000
-Message-ID: <AM0PR04MB42119BD28DDB7826DEE577F180E60@AM0PR04MB4211.eurprd04.prod.outlook.com>
-References: <1535690756-22234-1-git-send-email-aisheng.dong@nxp.com>
- <AM0PR04MB4211EF6D783562BA8C8D690380010@AM0PR04MB4211.eurprd04.prod.outlook.com>
- <AM0PR04MB4211A3900BC5A2DF857F7451801F0@AM0PR04MB4211.eurprd04.prod.outlook.com>
- <7e612f6f-e9d2-2f6f-1903-3a6bcf1b65ba@linux.intel.com>
- <AM0PR04MB4211B170CAC1B3F9E7356AF980130@AM0PR04MB4211.eurprd04.prod.outlook.com>
-In-Reply-To: <AM0PR04MB4211B170CAC1B3F9E7356AF980130@AM0PR04MB4211.eurprd04.prod.outlook.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=aisheng.dong@nxp.com; 
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM0PR04MB4337;6:3na37N/kH32MxdZxHi07JQC0SZ0WCQehYNzZolzN4syYECprtdpmnX23fzvuIm+EB/Iv2rvsoifV+2PpNZ9OaF0FM+4fL8hKz2wwTDCm6DwFjw4Y9Se0WOCcpdSll8eHTYfmqMsUhYdI1+0Ln0AU1jK8ejj0lgXYogOrvlPdcfPup908ds38+S2RI1Phje27+0qa91RGm6eB4H20tMHziuwUB51hJR/fYjM/gtuT/TqnNgq/xwq7BWlMK0wnGx3glGMvneefKm0ZfEHmeuMMvBoAlaVbk+M8KcbMJSbb2Uv6YZNAtE+17/UM75ctAVCsSggQqP3rbzR/Se+dSsLnVhnjfCDNzo31PW14d7vnsPZhrILMs/srCgi93Cq35Zf/qIn0b8ttUTz/WcxwspT3Y0E4326jMKI6qNr2x1kigXgNLGAtzG2HIjxAa4mjvEHbMF6D2XecAKRrvAhqq5Y5tQ==;5:Dto6BBVYe8RcNsnL32SrYc4sDoGPcpgPCXlLZhrwFVyNo/4ImPW+Jz5OdUOtJiZVXBd/FTrSaLMqynpvxLaVM0NTxnkmVJocHRCxUTjrtANMy0iiB09IiC529tC8pkQWIyWQPtzGzaoU1lb55IviM8QcC4hcZQcaIWEav9ZIYrM=;7:Wpqv44kJBi+NjaQ5bwXxjbizJSq+8vxIT4YebgfXkThk8geI15isKdMoS/bJg7lHZzZb7d1gnp1j82n9yW6hhK3Ip091vATPbHDbTm7VA2HBlw6HjrzIscJzcWHU/nMGyGFx+wdmyMfal6K0CJpoIZ/i5EkPDHwsF8NlfxX9n3J2wG1i05bmWCiepzcozaLmypSoaQ4obg/vs/XXXNF67KSjqIl17gDeSxiQUg7VTTyzny+iBoMhwTmvSbeb4oHE
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 9ef37f3b-104f-4a46-7a2d-08d62d0ad1e0
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB4337;
-x-ms-traffictypediagnostic: AM0PR04MB4337:
-x-microsoft-antispam-prvs: <AM0PR04MB4337B363FDA8D53FF872C7DA80E60@AM0PR04MB4337.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3002001)(3231355)(944501410)(52105095)(6055026)(149066)(150057)(6041310)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(201708071742011)(7699051);SRVR:AM0PR04MB4337;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB4337;
-x-forefront-prvs: 081904387B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(979002)(346002)(376002)(39860400002)(366004)(396003)(136003)(189003)(199004)(2501003)(25786009)(8676002)(256004)(6436002)(478600001)(3846002)(6116002)(99286004)(2906002)(8936002)(105586002)(229853002)(110136005)(2900100001)(33656002)(54906003)(81156014)(81166006)(71200400001)(71190400001)(5250100002)(106356001)(5660300001)(93886005)(305945005)(7736002)(66066001)(6506007)(102836004)(68736007)(6246003)(186003)(26005)(7696005)(86362001)(97736004)(486006)(4326008)(53936002)(476003)(9686003)(55016002)(11346002)(76176011)(2201001)(316002)(446003)(14454004)(74316002)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4337;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: Yat/+7w22JmXvNhfTGVLVWwm7+AB8jPNbk955loxq/A3UG/OnoU50yXDScDjiM4n4NepuzcTanPtWVY1k/QNU34IrQL8ra2QYZh/wZas7cQIIl38f/ihFGihVzOFCKQkUeJ5t5PIcACBwikozujOnReCiH2OyEspDXUgHjjJTIlds3TNREVf7UqLVXFrs+MTt34/7CJWitGftIME62MTzcJ1J5DXKB61THzw+ErWr0Mozk56oa4JNZTJhNM0/7n30jJgqYE0h/714lvtYH/RwRmDKSS7SB/vqG/KtpgK42Ju3QPLXRIOBShOu1S3C1XHvpkGXRCXYif0H3CnfEyXoauiKufBBGOe4paVXp5ju4Q=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1727715AbeJHSCH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 8 Oct 2018 14:02:07 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:43441 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726511AbeJHSCG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 Oct 2018 14:02:06 -0400
+Received: by mail-ed1-f65.google.com with SMTP id y20-v6so10509566eds.10;
+        Mon, 08 Oct 2018 03:50:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=sp1Rt77FbE0VElAV0LDzuDpOt6j+idfasg4Y/aRM7S0=;
+        b=CMDq7R/SvgWQ3N2gIn/2vi9otq9O983CdvYDvz7CK6NpR0r2upZOPIDoKQMsXRW2fB
+         uG2ghjP647tlfOcEIUQJX1Vp40Ww2yjpluoCLjv9BHfBS0cg6X+Nviulya0LjOSQ8NIy
+         KHrYKL9KcfddvySdHmHBM7SoPRnPAPhYeQYEHtWG4eiozvhcDm65vn6qEUe8Hh4O4Krj
+         I8FB6euZXqVNMkLinPnXO/qsfr64pD5/wsQgb335wp1eXODZFzKiCUazjQKHylfSDVWq
+         uHk9A2hQEiARkkmRmb0QrXY8zqiLg5qWiDj5zmO+1g0gKWzI1TReeOLOqalHPFhQHSA7
+         6Yiw==
+X-Gm-Message-State: ABuFfoixVsQ1OIwB+IY4ZEgFu7VWFd0v4TfUaEaQm+PWKc90khqBOiWW
+        hW6t52CP+Gd8Zyh4FEz2iCdf0xE0yH0=
+X-Google-Smtp-Source: ACcGV63bRL2rl1VcFcrguZQeRMbJaeOAiRxsRCaoPeExsG5A0MKmIxzJjOW+f0bePgtNE1grUsfU6Q==
+X-Received: by 2002:a17:906:70c3:: with SMTP id g3-v6mr22367610ejk.194.1538995857175;
+        Mon, 08 Oct 2018 03:50:57 -0700 (PDT)
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com. [209.85.128.50])
+        by smtp.gmail.com with ESMTPSA id e38-v6sm5597250eda.67.2018.10.08.03.50.56
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 08 Oct 2018 03:50:56 -0700 (PDT)
+Received: by mail-wm1-f50.google.com with SMTP id 189-v6so7666881wmw.2;
+        Mon, 08 Oct 2018 03:50:56 -0700 (PDT)
+X-Received: by 2002:a1c:e717:: with SMTP id e23-v6mr4168295wmh.145.1538995856186;
+ Mon, 08 Oct 2018 03:50:56 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9ef37f3b-104f-4a46-7a2d-08d62d0ad1e0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Oct 2018 10:43:01.3266
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4337
+References: <20181007093905.11253-1-jernej.skrabec@siol.net>
+ <20181007093905.11253-26-jernej.skrabec@siol.net> <20181008085112.mejpwvl3dpu7sopy@flea>
+ <CAGb2v64avzzrGJeg2HU_Ze686C1nmVsNwXJGzsUbQvQTZKuSMw@mail.gmail.com> <20181008102021.ox34mqbw65euvsb4@flea>
+In-Reply-To: <20181008102021.ox34mqbw65euvsb4@flea>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Mon, 8 Oct 2018 18:50:44 +0800
+X-Gmail-Original-Message-ID: <CAGb2v65vG2sCMLOFSVAko+MUBDQa_A+qrMZLFe20QXJhApd1Gw@mail.gmail.com>
+Message-ID: <CAGb2v65vG2sCMLOFSVAko+MUBDQa_A+qrMZLFe20QXJhApd1Gw@mail.gmail.com>
+Subject: Re: [PATCH v2 25/29] drm: sun4i: add quirks for TCON TOP
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Jernej Skrabec <jernej.skrabec@siol.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        Icenowy Zheng <icenowy@aosc.io>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-SGkgU3RlcGhlbiwNCg0KR2VudGx5IHBpbmcgYWdhaW4uLg0KDQo+ID4gPg0KPiA+IEp1c3QgY2hl
-Y2tpbmcgb24gdGhlIHN0YXR1cyBvZiB0aGlzIHBhdGNoLiBUaGUgY2xvY2sgcm91dGluZXMgKHBh
-dGNoZXMNCj4gPiAxLTMpIGFyZSB1c2VmdWwgZm9yIG9uZSBvZiBteSBkcml2ZXJzIGJ1dCBpZiB0
-aGV5IGFyZW4ndCBhY2NlcHRlZCBvcg0KPiA+IHdpbGwgdGFrZSBhIGxvbmcgdGltZSB0byBiZSBh
-Y2NlcHRlZCwgSSdsbCBuZWVkIHRvIHJlZmFjdG9yIG15IGRyaXZlci4NCj4gPg0KPiANCj4gVGhh
-bmtzIGZvciB0aGlzIGluZm9ybWF0aW9uLg0KPiANCj4gU3RlcGhlbiwNCj4gV291bGQgeW91IGhl
-bHAgdG8gcHJvY2VlZCB0aGlzPw0KPiANCg0KUmVnYXJkcw0KRG9uZyBBaXNoZW5nDQo=
+On Mon, Oct 8, 2018 at 6:20 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+>
+> On Mon, Oct 08, 2018 at 05:06:45PM +0800, Chen-Yu Tsai wrote:
+> > On Mon, Oct 8, 2018 at 4:51 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+> > >
+> > > On Sun, Oct 07, 2018 at 11:39:01AM +0200, Jernej Skrabec wrote:
+> > > > From: Icenowy Zheng <icenowy@aosc.io>
+> > > >
+> > > > Some SoCs, such as H6, doesn't have a full-featured TCON TOP.
+> > > >
+> > > > Add quirks support for TCON TOP.
+> > > >
+> > > > Currently the presence of TCON_TV1 and DSI is controlled via the quirks
+> > > > structure.
+> > > >
+> > > > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> > > > ---
+> > > >  drivers/gpu/drm/sun4i/sun8i_tcon_top.c | 43 ++++++++++++++++++++------
+> > > >  1 file changed, 34 insertions(+), 9 deletions(-)
+> > > >
+> > > > diff --git a/drivers/gpu/drm/sun4i/sun8i_tcon_top.c b/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
+> > > > index 37158548b447..ed13233cad88 100644
+> > > > --- a/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
+> > > > +++ b/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
+> > > > @@ -9,11 +9,17 @@
+> > > >  #include <linux/component.h>
+> > > >  #include <linux/device.h>
+> > > >  #include <linux/module.h>
+> > > > +#include <linux/of_device.h>
+> > > >  #include <linux/of_graph.h>
+> > > >  #include <linux/platform_device.h>
+> > > >
+> > > >  #include "sun8i_tcon_top.h"
+> > > >
+> > > > +struct sun8i_tcon_top_quirks {
+> > > > +     bool has_tcon_tv1;
+> > > > +     bool has_dsi;
+> > > > +};
+> > > > +
+> > > >  static bool sun8i_tcon_top_node_is_tcon_top(struct device_node *node)
+> > > >  {
+> > > >       return !!of_match_node(sun8i_tcon_top_of_table, node);
+> > > > @@ -121,10 +127,13 @@ static int sun8i_tcon_top_bind(struct device *dev, struct device *master,
+> > > >       struct platform_device *pdev = to_platform_device(dev);
+> > > >       struct clk_hw_onecell_data *clk_data;
+> > > >       struct sun8i_tcon_top *tcon_top;
+> > > > +     const struct sun8i_tcon_top_quirks *quirks;
+> > > >       struct resource *res;
+> > > >       void __iomem *regs;
+> > > >       int ret, i;
+> > > >
+> > > > +     quirks = of_device_get_match_data(&pdev->dev);
+> > > > +
+> > > >       tcon_top = devm_kzalloc(dev, sizeof(*tcon_top), GFP_KERNEL);
+> > > >       if (!tcon_top)
+> > > >               return -ENOMEM;
+> > > > @@ -187,15 +196,23 @@ static int sun8i_tcon_top_bind(struct device *dev, struct device *master,
+> > > >                                            &tcon_top->reg_lock,
+> > > >                                            TCON_TOP_TCON_TV0_GATE, 0);
+> > > >
+> > > > -     clk_data->hws[CLK_TCON_TOP_TV1] =
+> > > > -             sun8i_tcon_top_register_gate(dev, "tcon-tv1", regs,
+> > > > -                                          &tcon_top->reg_lock,
+> > > > -                                          TCON_TOP_TCON_TV1_GATE, 1);
+> > > > +     if (quirks->has_tcon_tv1) {
+> > > > +             clk_data->hws[CLK_TCON_TOP_TV1] =
+> > > > +                     sun8i_tcon_top_register_gate(dev, "tcon-tv1", regs,
+> > > > +                                                  &tcon_top->reg_lock,
+> > > > +                                                  TCON_TOP_TCON_TV1_GATE, 1);
+> > > > +     } else {
+> > > > +             clk_data->hws[CLK_TCON_TOP_TV1] = NULL;
+> > > > +     }
+> > > >
+> > > > -     clk_data->hws[CLK_TCON_TOP_DSI] =
+> > > > -             sun8i_tcon_top_register_gate(dev, "dsi", regs,
+> > > > -                                          &tcon_top->reg_lock,
+> > > > -                                          TCON_TOP_TCON_DSI_GATE, 2);
+> > > > +     if (quirks->has_dsi) {
+> > > > +             clk_data->hws[CLK_TCON_TOP_DSI] =
+> > > > +                     sun8i_tcon_top_register_gate(dev, "dsi", regs,
+> > > > +                                                  &tcon_top->reg_lock,
+> > > > +                                                  TCON_TOP_TCON_DSI_GATE, 2);
+> > > > +     } else {
+> > > > +             clk_data->hws[CLK_TCON_TOP_DSI] = NULL;
+> > >
+> > > clk_data has been kzalloc'd so its content is already NULL.
+> > >
+> > > And you shouldn't have brackets for single line blocks.
+> > >
+> > > with that fixed,
+> >
+> > FYI checkpatch.pl complains if you use brackets for the if block
+> > but not for the else block. They should be matching.
+>
+> Checkpatch might not warn on this, but
+> https://www.kernel.org/doc/Documentation/process/coding-style.rst,
+> section 3 is pretty clear on whether we should use them or not.
+
+Right. What I'm pointing out what checkpatch.pl complains about is
+shown in the second last example in section 3:
+
+    This does not apply if only one branch of a conditional statement
+is a single
+    statement; in the latter case use braces in both branches:
+
+Which is where I think your comment on "shouldn't have brackets for
+single line blocks"
+is pointing in the opposite direction.
+
+ChenYu
