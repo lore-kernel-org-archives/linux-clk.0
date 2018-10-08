@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F04B1C65C20
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Oct 2018 16:24:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50E9AC677D4
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Oct 2018 16:24:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1B48213A2
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Oct 2018 16:24:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1B48213A2
+	by mail.kernel.org (Postfix) with ESMTP id 183A1213A2
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Oct 2018 16:24:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 183A1213A2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726668AbeJHXgm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 8 Oct 2018 19:36:42 -0400
-Received: from relmlor3.renesas.com ([210.160.252.173]:15409 "EHLO
+        id S1726691AbeJHXgn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 8 Oct 2018 19:36:43 -0400
+Received: from relmlor3.renesas.com ([210.160.252.173]:15012 "EHLO
         relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726451AbeJHXgm (ORCPT
+        by vger.kernel.org with ESMTP id S1726415AbeJHXgm (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Mon, 8 Oct 2018 19:36:42 -0400
-Received: from unknown (HELO relmlir1.idc.renesas.com) ([10.200.68.151])
-  by relmlie2.idc.renesas.com with ESMTP; 09 Oct 2018 01:24:10 +0900
-Received: from relmlii1.idc.renesas.com (relmlii1.idc.renesas.com [10.200.68.65])
-        by relmlir1.idc.renesas.com (Postfix) with ESMTP id 359AC439AF;
-        Tue,  9 Oct 2018 01:24:10 +0900 (JST)
+Received: from unknown (HELO relmlir4.idc.renesas.com) ([10.200.68.154])
+  by relmlie2.idc.renesas.com with ESMTP; 09 Oct 2018 01:24:12 +0900
+Received: from relmlii2.idc.renesas.com (relmlii2.idc.renesas.com [10.200.68.66])
+        by relmlir4.idc.renesas.com (Postfix) with ESMTP id 315CD3D844;
+        Tue,  9 Oct 2018 01:24:12 +0900 (JST)
 X-IronPort-AV: E=Sophos;i="5.54,357,1534777200"; 
-   d="scan'208";a="292982932"
+   d="scan'208";a="294565718"
 Received: from unknown (HELO rtamta01.rta.renesas.com) ([143.103.48.75])
-  by relmlii1.idc.renesas.com with ESMTP; 09 Oct 2018 01:24:08 +0900
+  by relmlii2.idc.renesas.com with ESMTP; 09 Oct 2018 01:24:10 +0900
 Received: from ubuntu.localdomain (unknown [143.103.58.6])
-        by rtamta01.rta.renesas.com (Postfix) with ESMTP id 1D83322B;
-        Mon,  8 Oct 2018 16:24:04 +0000 (UTC)
+        by rtamta01.rta.renesas.com (Postfix) with ESMTP id 37724233;
+        Mon,  8 Oct 2018 16:24:05 +0000 (UTC)
 From:   Chris Brandt <chris.brandt@renesas.com>
 To:     Ulf Hansson <ulf.hansson@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -44,9 +44,9 @@ Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
         linux-clk@vger.kernel.org, linux-mmc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH 2/3] mmc: renesas_sdhi_internal_dmac: Add R7S9210 support
-Date:   Mon,  8 Oct 2018 11:23:48 -0500
-Message-Id: <20181008162349.42957-3-chris.brandt@renesas.com>
+Subject: [PATCH 3/3] dt-bindings: mmc: tmio_mmc: Document Renesas R7S9210
+Date:   Mon,  8 Oct 2018 11:23:49 -0500
+Message-Id: <20181008162349.42957-4-chris.brandt@renesas.com>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20181008162349.42957-1-chris.brandt@renesas.com>
 References: <20181008162349.42957-1-chris.brandt@renesas.com>
@@ -55,110 +55,25 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The SDHI/MMC controller in the RZ/A2 is almost the same as R-Car gen3, but
-with some minor differences.
+Document support for the RZ/A2 (R7S9210) SoC.
 
 Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
 ---
- drivers/mmc/host/Kconfig                      |  5 +++--
- drivers/mmc/host/renesas_sdhi_internal_dmac.c | 28 +++++++++++++++++++++++++--
- 2 files changed, 29 insertions(+), 4 deletions(-)
+ Documentation/devicetree/bindings/mmc/tmio_mmc.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-index cf984f0f0246..33840ce2221d 100644
---- a/drivers/mmc/host/Kconfig
-+++ b/drivers/mmc/host/Kconfig
-@@ -636,13 +636,14 @@ config MMC_SDHI_SYS_DMAC
- 
- config MMC_SDHI_INTERNAL_DMAC
- 	tristate "DMA for SDHI SD/SDIO controllers using on-chip bus mastering"
--	depends on ARM64 || COMPILE_TEST
-+	depends on ARM64 ||  ARCH_R7S9210 || COMPILE_TEST
- 	depends on MMC_SDHI
- 	default MMC_SDHI if ARM64
- 	help
- 	  This provides DMA support for SDHI SD/SDIO controllers
- 	  using on-chip bus mastering. This supports the controllers
--	  found in arm64 based SoCs.
-+	  found in arm64 based SoCs. This controller is also found in
-+	  RZ/A2 series SoCs.
- 
- config MMC_UNIPHIER
- 	tristate "UniPhier SD/eMMC Host Controller support"
-diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-index e5e5015ca680..19c32ea237dd 100644
---- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-@@ -34,7 +34,7 @@
- #define DTRAN_MODE_CH_NUM_CH0	0	/* "downstream" = for write commands */
- #define DTRAN_MODE_CH_NUM_CH1	BIT(16)	/* "upstream" = for read commands */
- #define DTRAN_MODE_BUS_WIDTH	(BIT(5) | BIT(4))
--#define DTRAN_MODE_ADDR_MODE	BIT(0)	/* 1 = Increment address */
-+#define DTRAN_MODE_ADDR_MODE	BIT(0)	/* 1 = Increment address, 0 = Fixed */
- 
- /* DM_CM_DTRAN_CTRL */
- #define DTRAN_CTRL_DM_START	BIT(0)
-@@ -73,6 +73,9 @@ static unsigned long global_flags;
- #define SDHI_INTERNAL_DMAC_ONE_RX_ONLY	0
- #define SDHI_INTERNAL_DMAC_RX_IN_USE	1
- 
-+/* RZ/A2 does not have this bit (not safe to set it) */
-+#define SDHI_INTERNAL_DMAC_ADRR_MODE_FIXED 2
-+
- /* Definitions for sampling clocks */
- static struct renesas_sdhi_scc rcar_gen3_scc_taps[] = {
- 	{
-@@ -81,6 +84,21 @@ static struct renesas_sdhi_scc rcar_gen3_scc_taps[] = {
- 	},
- };
- 
-+static const struct renesas_sdhi_of_data of_rza2_compatible = {
-+	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_CLK_ACTUAL |
-+			  TMIO_MMC_HAVE_CBSY,
-+	.tmio_ocr_mask	= MMC_VDD_32_33,
-+	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ |
-+			  MMC_CAP_CMD23,
-+	.bus_shift	= 2,
-+	.scc_offset	= (0 - 0x1000),
-+	.taps		= rcar_gen3_scc_taps,
-+	.taps_num	= ARRAY_SIZE(rcar_gen3_scc_taps),
-+	/* DMAC can handle 0xffffffff blk count but only 1 segment */
-+	.max_blk_count	= 0xffffffff,
-+	.max_segs	= 1,
-+};
-+
- static const struct renesas_sdhi_of_data of_rcar_r8a7795_compatible = {
- 	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_CLK_ACTUAL |
- 			  TMIO_MMC_HAVE_CBSY | TMIO_MMC_MIN_RCAR2 |
-@@ -113,6 +131,7 @@ static const struct renesas_sdhi_of_data of_rcar_gen3_compatible = {
- };
- 
- static const struct of_device_id renesas_sdhi_internal_dmac_of_match[] = {
-+	{ .compatible = "renesas,sdhi-r7s9210", .data = &of_rza2_compatible, },
- 	{ .compatible = "renesas,sdhi-r8a7795", .data = &of_rcar_r8a7795_compatible, },
- 	{ .compatible = "renesas,sdhi-r8a7796", .data = &of_rcar_r8a7795_compatible, },
- 	{ .compatible = "renesas,rcar-gen3-sdhi", .data = &of_rcar_gen3_compatible, },
-@@ -171,7 +190,10 @@ renesas_sdhi_internal_dmac_start_dma(struct tmio_mmc_host *host,
- 				     struct mmc_data *data)
- {
- 	struct scatterlist *sg = host->sg_ptr;
--	u32 dtran_mode = DTRAN_MODE_BUS_WIDTH | DTRAN_MODE_ADDR_MODE;
-+	u32 dtran_mode = DTRAN_MODE_BUS_WIDTH;
-+
-+	if (!test_bit(SDHI_INTERNAL_DMAC_ADRR_MODE_FIXED, &global_flags))
-+		dtran_mode |= DTRAN_MODE_ADDR_MODE;
- 
- 	if (!dma_map_sg(&host->pdev->dev, sg, host->sg_len,
- 			mmc_get_dma_dir(data)))
-@@ -290,6 +312,8 @@ static const struct tmio_mmc_dma_ops renesas_sdhi_internal_dmac_dma_ops = {
-  */
- static const struct soc_device_attribute gen3_soc_whitelist[] = {
- 	/* specific ones */
-+	{ .soc_id = "r7s9210",
-+	  .data = (void *)BIT(SDHI_INTERNAL_DMAC_ADRR_MODE_FIXED) },
- 	{ .soc_id = "r8a7795", .revision = "ES1.*",
- 	  .data = (void *)BIT(SDHI_INTERNAL_DMAC_ONE_RX_ONLY) },
- 	{ .soc_id = "r8a7796", .revision = "ES1.0",
+diff --git a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+index 79ecaf4161a0..16c7e656a33d 100644
+--- a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
++++ b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+@@ -13,6 +13,7 @@ Required properties:
+ - compatible: should contain one or more of the following:
+ 		"renesas,sdhi-sh73a0" - SDHI IP on SH73A0 SoC
+ 		"renesas,sdhi-r7s72100" - SDHI IP on R7S72100 SoC
++		"renesas,sdhi-r7s9210" - SDHI IP on R7S9210 SoC
+ 		"renesas,sdhi-r8a73a4" - SDHI IP on R8A73A4 SoC
+ 		"renesas,sdhi-r8a7740" - SDHI IP on R8A7740 SoC
+ 		"renesas,sdhi-r8a7743" - SDHI IP on R8A7743 SoC
 -- 
 2.16.1
 
