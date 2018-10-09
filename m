@@ -4,39 +4,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5CE7C64EB8
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Oct 2018 08:37:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 065DAC64EAD
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Oct 2018 08:37:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76A90214C4
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Oct 2018 08:37:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B055F214C4
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Oct 2018 08:37:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="Ni1cn6iR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76A90214C4
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="MEtqaHWi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B055F214C4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726636AbeJIPxZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 Oct 2018 11:53:25 -0400
+        id S1726725AbeJIPxb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 Oct 2018 11:53:31 -0400
 Received: from mail-eopbgr00087.outbound.protection.outlook.com ([40.107.0.87]:11264
         "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725855AbeJIPxW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 9 Oct 2018 11:53:22 -0400
+        id S1726563AbeJIPx3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 9 Oct 2018 11:53:29 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Iy6HLD6Jjj0k5P3MoS1GMKROGnx40JAI9Yb2UTqcGb8=;
- b=Ni1cn6iRAh/EKzQyL70xtxUFe4qA1nDtheeEiTWooNhYru5NOMRRkeqVN6CHtFmajDhvlrR8bWUFKPjGIvxRpVXAovCgsfYx7NRFZjfdSVUpvmE3hX/AIyCybXMT2OHx488Q1um342s18NS5xABSm6pHximx2bAX1/mt5qIE3vQ=
+ bh=sJsxzwWmsU3u6U3+iUBL8XegvbIV2DJhdrOtba0mlCw=;
+ b=MEtqaHWiE845AbINaFdxAslmDB6Lvx4/tvzceFmecBXDcbmRGGpSN/LLq0QkE0i2nhXrjKfzP1bP/0yCJhkNZFAzTkBKcRPQbCk+cSHNoUX6ki+nxfpq5Rosls7PPFo1Qnh3jg6yjuIlO1R6o2faTWrWMIjg/EcZvRqid6v1Hh0=
 Received: from VI1PR04MB1613.eurprd04.prod.outlook.com (10.164.84.147) by
  VI1PR04MB5343.eurprd04.prod.outlook.com (52.134.123.158) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1207.26; Tue, 9 Oct 2018 08:37:27 +0000
+ 15.20.1207.26; Tue, 9 Oct 2018 08:37:30 +0000
 Received: from VI1PR04MB1613.eurprd04.prod.outlook.com
  ([fe80::f014:635a:bee7:76b3]) by VI1PR04MB1613.eurprd04.prod.outlook.com
  ([fe80::f014:635a:bee7:76b3%3]) with mapi id 15.20.1207.024; Tue, 9 Oct 2018
- 08:37:27 +0000
+ 08:37:30 +0000
 From:   Abel Vesa <abel.vesa@nxp.com>
 To:     Sascha Hauer <kernel@pengutronix.de>,
         Lucas Stach <l.stach@pengutronix.de>,
@@ -53,11 +53,11 @@ CC:     Michael Turquette <mturquette@baylibre.com>,
         "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>,
         Abel Vesa <abelvesa@linux.com>, Abel Vesa <abel.vesa@nxp.com>
-Subject: [PATCH v10 2/5] clk: imx: add fractional PLL output clock
-Thread-Topic: [PATCH v10 2/5] clk: imx: add fractional PLL output clock
-Thread-Index: AQHUX6tPNLKeJgrqOUOKDpMq9zy3Cg==
-Date:   Tue, 9 Oct 2018 08:37:27 +0000
-Message-ID: <1539074230-27277-3-git-send-email-abel.vesa@nxp.com>
+Subject: [PATCH v10 4/5] clk: imx: add imx composite clock
+Thread-Topic: [PATCH v10 4/5] clk: imx: add imx composite clock
+Thread-Index: AQHUX6tQJ9541kIf10SWRaGOsstznA==
+Date:   Tue, 9 Oct 2018 08:37:30 +0000
+Message-ID: <1539074230-27277-5-git-send-email-abel.vesa@nxp.com>
 References: <1539074230-27277-1-git-send-email-abel.vesa@nxp.com>
 In-Reply-To: <1539074230-27277-1-git-send-email-abel.vesa@nxp.com>
 Accept-Language: en-US
@@ -70,12 +70,12 @@ x-clientproxiedby: VI1PR02CA0058.eurprd02.prod.outlook.com
 x-originating-ip: [95.76.156.53]
 x-ms-exchange-messagesentrepresentingtype: 1
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR04MB5343;6:x+LZnIU7ZiPbxBW1H+veZ3DsZTps6iOcrh4hu/ZDZKW3O7Eo5OJB9IXMK0l0Kd2g0e5xxtA8gWRB6XkxyJo10Jb/Fy6cNdF3qwSPoQOfVUm2PeR8MuNjg3KcjUABQkBgF4GuIiWA1wrS3cclPQzkeOSZX4dfaAs4mUAKfsljKz/i+pbSE/rfTv4TdnuG5MaPxtYyYW17tKZj87RAkgFnmIzJau6vtU/RJVSBNKUB3gcjYRE2HdbTkIK07Si2+sf8hC8xvupVodf/6FCrZC0rh8YuKplk6HU7+v4N5mJXfcUuC9JHrSBBMOuSbldkeY5dw9aXNqISF0Q5SrUBU2sgwzJahDSJB5LCKg6JEpN34MR5L9ZBuj6CmEY8xc5xV6V25Cl7O4aQehBS7bGOCtvs7vecAJacZQyU6MtQaam7/TACI/757j60whWr+bShy0C4G2gx3CICNnD44cUQufeuuA==;5:cS2JiNmC6bNfKxSm0AkdNktZDLWHIOLnTfP+/vbIHDuiPJ8it4uaThUP8e2sK4i/2seLqfJiVDTyPu3ndft2EupZq9N7L2roX8g7H6p8kw4VfNcVlpH2S6QWZ8WozYk+lj/1mzFSlX6TzpvLz0/ZUhsfL67AnNemOiakDVsBLmg=;7:A7oiCWOgHlI/qbomKN422nK/812vrn+ZLlwW/tEqL/642XXqiquA8O7UNlaj4IjY2GtV7wD4BgnVxVXsgzneM1WiKExetp6WuQm44sMSFYlt4/hFPMZgrZYYrCNiTzSDz06nXIMfOUAP2ZVJFC2/3qzUO13o7o5Xw+1JVrh25bSpvumlAGPPblNGmPKFnNKv9NN2K17QOc6N8CkPYJTrBkRwrB77jG41P/W3RF8nSnfnqzkQ+PZuZUO7sYU1YV1A
-x-ms-office365-filtering-correlation-id: 0cdc2e8f-3e7c-4abf-88a7-08d62dc2717d
+x-microsoft-exchange-diagnostics: 1;VI1PR04MB5343;6:J5MGx9KTThcebspO3m7EaHEcj7sI7BnQAV2F/ZYpaMiEILHpYrn3v+Y0hIfiecKobye+rxV+XAX8pIc15DS8yA8Z1k9JWbHz8hezFjJ67bNf8o31OEIZD79bhaayrIeQckSwOH57YNduvwWVBUdfmkY7Dq3pz0rHKnh5qdbGZbh0rrJPGxlFnr5UEoBiyu8aaFBu2VsCtpeS78U49dgB/zfdOxNpJmQwNfpDc2BlGN8/wgeZ/TVAnelOm+OLcAW3hGARKhXVp8fo2YK6IfEoxeilsFd2vkrDbugwcmFBL8blhmexleOptANbEhS895BjoRFh/eJmmd7p2RcgBBEhg9rR0TOyiRCIiIEy7EBR1XN293taT5PXYNoOkPHYDsmPmze20D+X12V7sWzAYZzZcH5SQYzAibbL5XhCnRwh+HpDB3sYk2mX+ozrvRdGqfyf8cZZ1mFWjiaoaZPTs4hJIw==;5:2GkRS7G8CRL0+vurELsIuFSQ5y2vzfIOi5KeGcsQMNIG3CUzopTzfVvpzaWjni604FrYge91QJ0mZPNVp+8YUwLvlvfljWH0A+VuLsD41DuHL7tmkyu0jnFQ6seNmzpWKh6qnGY4LMwtRvrtToepCCb0KAZdrGcLfi8GzeBlEms=;7:TYxS7rZLQ54KLyaJnHJdwXPJYDWc7o4PxQ1NV6RQeDYGaohKEtE6WQP0vjstKehSsGM5f9L7TrV9gk/TDzZQMoxIZErBkdFLty5Io97ACr5xczobh/jdGBdmalVZbHUgqSMzg9XOMHe2jw5zmkZ50av2sXgdULisOuFxjcH5DoNV4AQD9sLy7b9j/8/yvbG4kQfiazPtHSr5D5pgPH9CdYsu/TGfdnazzVoy9JE3oYv+vxsQDjJktyuPhznSTxBB
+x-ms-office365-filtering-correlation-id: 9a88cbc0-220d-43f4-b3b9-08d62dc27349
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB5343;
 x-ms-traffictypediagnostic: VI1PR04MB5343:
-x-microsoft-antispam-prvs: <VI1PR04MB5343DC13FACF83CD4F91FAE3F6E70@VI1PR04MB5343.eurprd04.prod.outlook.com>
+x-microsoft-antispam-prvs: <VI1PR04MB53432F17996D2280039B4FCEF6E70@VI1PR04MB5343.eurprd04.prod.outlook.com>
 x-exchange-antispam-report-test: UriScan:(185117386973197);
 x-ms-exchange-senderadcheck: 1
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231355)(944501410)(52105095)(6055026)(149066)(150057)(6041310)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(201708071742011)(7699051)(76991055);SRVR:VI1PR04MB5343;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB5343;
@@ -85,15 +85,15 @@ received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=abel.vesa@nxp.com; 
-x-microsoft-antispam-message-info: T8SvRm2Luy6K4nAOkU7WpZgwd7ctciYPftly4doZm+6OeLMwCFjd+A1Fl6oPANsXkhaEG/U/uXfn741LY7Yhbf4ka7QWFZBfnYC5+kY6Lt85wcyvgF2DKz7B9gfGI8caKC8M7Yr2W3l7isppTtQbO4O605bN3Nciiz9q/ghdwJ6kOfT0FbOgFudIBpq9l/b+/w9ddFWeQaLsmLy7w5SkTbsuVE4b78CMNJeZGPKQZIyH1b/2UApuWA2T+D1bLydGCSjWhQnKiL5FbZSvAgxvPvlIhDlivQ2AWZRsmZeop0V0hF/I65/VS5MDbqzy7TTDUiNOyF+Qhu86bv917Er6FahYSYW25Q6yN35MkKjR1T0=
+x-microsoft-antispam-message-info: duGSNflW+2nr9bhVQ2NrO2s+yf06xBYEdMiuSi16cGuZXW6Li6ZelhMQzJIsRTHdkeTg2tYUB6hRsqc4Z0A9y95B1T+MZ1aF0LP7wy5wmE9o3ZP+NVRQYifVhSXehbcvdZgQmVrOSi2gEyZgdPq8HzrC1e4UYOYkvrsuCvznjIsb1UmDwFiNoWvVLewFpI9HzmNFkC6v6Vz7mdj/3PW9+OGOotnx6T3ExwNgs5Br1x+bc7GSqEsuevnI/68c0gOed5NIab/bh7fBo61qNKD6lIPMomWe9X1tys/Y2YxRRr234eOkcgIcIRlTnho3t6wmZu6uAATsUCTRR3gkVD32HUFH2qsiMpIHeOO3CLRWhzg=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0cdc2e8f-3e7c-4abf-88a7-08d62dc2717d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Oct 2018 08:37:27.4680
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9a88cbc0-220d-43f4-b3b9-08d62dc27349
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Oct 2018 08:37:30.4681
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
@@ -103,271 +103,250 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Lucas Stach <l.stach@pengutronix.de>
+Since a lot of clocks on imx8m are formed by a mux, gate, predivider and
+divider, the idea here is to combine all of those into one composite clock,
+but we need to deal with both predivider and divider at the same time and
+therefore we add the imx_clk_composite_8m_divider_ops and register
+the composite clock with those.
 
-This is a new clock type introduced on i.MX8.
-
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
 Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+Suggested-by: Sascha Hauer <s.hauer@pengutronix.de>
 Reviewed-by: Sascha Hauer <s.hauer@pengutronix.de>
 ---
- drivers/clk/imx/Makefile       |   1 +
- drivers/clk/imx/clk-frac-pll.c | 215 +++++++++++++++++++++++++++++++++++++=
+ drivers/clk/imx/Makefile           |   1 +
+ drivers/clk/imx/clk-composite-8m.c | 181 +++++++++++++++++++++++++++++++++=
 ++++
- drivers/clk/imx/clk.h          |   3 +
- 3 files changed, 219 insertions(+)
- create mode 100644 drivers/clk/imx/clk-frac-pll.c
+ drivers/clk/imx/clk.h              |  16 ++++
+ 3 files changed, 198 insertions(+)
+ create mode 100644 drivers/clk/imx/clk-composite-8m.c
 
 diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
-index 8c3baa7..4893c1f 100644
+index b87513c..237444b 100644
 --- a/drivers/clk/imx/Makefile
 +++ b/drivers/clk/imx/Makefile
-@@ -6,6 +6,7 @@ obj-y +=3D \
+@@ -3,6 +3,7 @@
+ obj-y +=3D \
+ 	clk.o \
+ 	clk-busy.o \
++	clk-composite-8m.o \
  	clk-cpu.o \
  	clk-fixup-div.o \
  	clk-fixup-mux.o \
-+	clk-frac-pll.o \
- 	clk-gate-exclusive.o \
- 	clk-gate2.o \
- 	clk-pllv1.o \
-diff --git a/drivers/clk/imx/clk-frac-pll.c b/drivers/clk/imx/clk-frac-pll.=
-c
+diff --git a/drivers/clk/imx/clk-composite-8m.c b/drivers/clk/imx/clk-compo=
+site-8m.c
 new file mode 100644
-index 0000000..030df76
+index 0000000..a28f6ac
 --- /dev/null
-+++ b/drivers/clk/imx/clk-frac-pll.c
-@@ -0,0 +1,215 @@
++++ b/drivers/clk/imx/clk-composite-8m.c
+@@ -0,0 +1,181 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * Copyright 2018 NXP.
++ * Copyright 2018 NXP
 + */
 +
-+#include <linux/clk-provider.h>
-+#include <linux/err.h>
-+#include <linux/io.h>
-+#include <linux/iopoll.h>
-+#include <linux/jiffies.h>
++#include <linux/errno.h>
 +#include <linux/slab.h>
-+#include <linux/bitfield.h>
++#include <linux/clk-provider.h>
++#include <linux/clk.h>
 +
 +#include "clk.h"
 +
-+#define PLL_CFG0		0x0
-+#define PLL_CFG1		0x4
++#define PCG_PREDIV_SHIFT	16
++#define PCG_PREDIV_WIDTH	3
++#define PCG_PREDIV_MAX		8
 +
-+#define PLL_LOCK_STATUS		BIT(31)
-+#define PLL_PD_MASK		BIT(19)
-+#define PLL_BYPASS_MASK		BIT(14)
-+#define PLL_NEWDIV_VAL		BIT(12)
-+#define PLL_NEWDIV_ACK		BIT(11)
-+#define PLL_FRAC_DIV_MASK	GENMASK(30, 7)
-+#define PLL_INT_DIV_MASK	GENMASK(6, 0)
-+#define PLL_OUTPUT_DIV_MASK	GENMASK(4, 0)
-+#define PLL_FRAC_DENOM		0x1000000
++#define PCG_DIV_SHIFT		0
++#define PCG_DIV_WIDTH		6
++#define PCG_DIV_MAX		64
 +
-+#define PLL_FRAC_LOCK_TIMEOUT	10000
-+#define PLL_FRAC_ACK_TIMEOUT	500000
++#define PCG_PCS_SHIFT		24
++#define PCG_PCS_MASK		0x7
 +
-+struct clk_frac_pll {
-+	struct clk_hw	hw;
-+	void __iomem	*base;
-+};
++#define PCG_CGC_SHIFT		28
 +
-+#define to_clk_frac_pll(_hw) container_of(_hw, struct clk_frac_pll, hw)
-+
-+static int clk_wait_lock(struct clk_frac_pll *pll)
++static unsigned long imx_clk_composite_8m_divider_recalc_rate(struct clk_h=
+w *hw,
++						unsigned long parent_rate)
 +{
++	struct clk_divider *divider =3D to_clk_divider(hw);
++	unsigned long prediv_rate;
++	unsigned int prediv_value;
++	unsigned int div_value;
++
++	prediv_value =3D clk_readl(divider->reg) >> divider->shift;
++	prediv_value &=3D clk_div_mask(divider->width);
++
++	prediv_rate =3D divider_recalc_rate(hw, parent_rate, prediv_value,
++						NULL, divider->flags,
++						divider->width);
++
++	div_value =3D clk_readl(divider->reg) >> PCG_DIV_SHIFT;
++	div_value &=3D clk_div_mask(PCG_DIV_WIDTH);
++
++	return divider_recalc_rate(hw, prediv_rate, div_value, NULL,
++				   divider->flags, PCG_DIV_WIDTH);
++}
++
++static int imx_clk_composite_8m_compute_dividers(unsigned long rate,
++						unsigned long parent_rate,
++						int *prediv, int *postdiv)
++{
++	int div1, div2;
++	int error =3D INT_MAX;
++	int ret =3D -EINVAL;
++
++	/* default values */
++	*prediv =3D 1;
++	*postdiv =3D 1;
++
++	for (div1 =3D 1; div1 <=3D PCG_PREDIV_MAX; div1++) {
++		for (div2 =3D 1; div2 <=3D PCG_DIV_MAX; div2++) {
++			int new_error =3D ((parent_rate / div1) / div2) - rate;
++
++			if (abs(new_error) < abs(error)) {
++				*prediv =3D div1;
++				*postdiv =3D div2;
++				error =3D new_error;
++				ret =3D 0;
++			}
++		}
++	}
++	return ret;
++}
++
++static long imx_clk_composite_8m_divider_round_rate(struct clk_hw *hw,
++						unsigned long rate,
++						unsigned long *prate)
++{
++	int prediv_value;
++	int div_value;
++
++	imx_clk_composite_8m_compute_dividers(rate, *prate,
++						&prediv_value, &div_value);
++
++	rate =3D DIV_ROUND_UP(*prate, prediv_value);
++	rate =3D DIV_ROUND_UP(rate, div_value);
++
++	return rate;
++}
++
++static int imx_clk_composite_8m_divider_set_rate(struct clk_hw *hw,
++					unsigned long rate,
++					unsigned long parent_rate)
++{
++	struct clk_divider *divider =3D to_clk_divider(hw);
++	unsigned long flags =3D 0;
++	int prediv_value;
++	int div_value;
++	int ret =3D 0;
 +	u32 val;
 +
-+	return readl_poll_timeout(pll->base, val, val & PLL_LOCK_STATUS, 0,
-+					PLL_FRAC_LOCK_TIMEOUT);
-+}
++	ret =3D imx_clk_composite_8m_compute_dividers(rate, parent_rate,
++						&prediv_value, &div_value);
++	if (ret)
++		return -EINVAL;
 +
-+static int clk_wait_ack(struct clk_frac_pll *pll)
-+{
-+	u32 val;
++	spin_lock_irqsave(divider->lock, flags);
 +
-+	/* return directly if the pll is in powerdown or in bypass */
-+	if (readl_relaxed(pll->base) & (PLL_PD_MASK | PLL_BYPASS_MASK))
-+		return 0;
++	val =3D clk_readl(divider->reg);
++	val &=3D ~((clk_div_mask(divider->width) << divider->shift) |
++			(clk_div_mask(PCG_DIV_WIDTH) << PCG_DIV_SHIFT));
 +
-+	/* Wait for the pll's divfi and divff to be reloaded */
-+	return readl_poll_timeout(pll->base, val, val & PLL_NEWDIV_ACK, 0,
-+					PLL_FRAC_ACK_TIMEOUT);
-+}
++	val |=3D (u32)(prediv_value  - 1) << divider->shift;
++	val |=3D (u32)(div_value - 1) << PCG_DIV_SHIFT;
++	clk_writel(val, divider->reg);
 +
-+static int clk_pll_prepare(struct clk_hw *hw)
-+{
-+	struct clk_frac_pll *pll =3D to_clk_frac_pll(hw);
-+	u32 val;
-+
-+	val =3D readl_relaxed(pll->base + PLL_CFG0);
-+	val &=3D ~PLL_PD_MASK;
-+	writel_relaxed(val, pll->base + PLL_CFG0);
-+
-+	return clk_wait_lock(pll);
-+}
-+
-+static void clk_pll_unprepare(struct clk_hw *hw)
-+{
-+	struct clk_frac_pll *pll =3D to_clk_frac_pll(hw);
-+	u32 val;
-+
-+	val =3D readl_relaxed(pll->base + PLL_CFG0);
-+	val |=3D PLL_PD_MASK;
-+	writel_relaxed(val, pll->base + PLL_CFG0);
-+}
-+
-+static int clk_pll_is_prepared(struct clk_hw *hw)
-+{
-+	struct clk_frac_pll *pll =3D to_clk_frac_pll(hw);
-+	u32 val;
-+
-+	val =3D readl_relaxed(pll->base + PLL_CFG0);
-+	return (val & PLL_PD_MASK) ? 0 : 1;
-+}
-+
-+static unsigned long clk_pll_recalc_rate(struct clk_hw *hw,
-+					 unsigned long parent_rate)
-+{
-+	struct clk_frac_pll *pll =3D to_clk_frac_pll(hw);
-+	u32 val, divff, divfi, divq;
-+	u64 temp64;
-+
-+	val =3D readl_relaxed(pll->base + PLL_CFG0);
-+	divq =3D ((val & PLL_OUTPUT_DIV_MASK) + 1) * 2;
-+	val =3D readl_relaxed(pll->base + PLL_CFG1);
-+	divff =3D FIELD_GET(PLL_FRAC_DIV_MASK, val);
-+	divfi =3D (val & PLL_INT_DIV_MASK);
-+
-+	temp64 =3D (u64)parent_rate * 8;
-+	temp64 *=3D divff;
-+	do_div(temp64, PLL_FRAC_DENOM);
-+	temp64 /=3D divq;
-+
-+	return parent_rate * 8 * (divfi + 1) / divq + (unsigned long)temp64;
-+}
-+
-+static long clk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
-+			       unsigned long *prate)
-+{
-+	unsigned long parent_rate =3D *prate;
-+	u32 divff, divfi;
-+	u64 temp64;
-+
-+	parent_rate *=3D 8;
-+	rate *=3D 2;
-+	divfi =3D rate / parent_rate;
-+	temp64 =3D (u64)(rate - divfi * parent_rate);
-+	temp64 *=3D PLL_FRAC_DENOM;
-+	do_div(temp64, parent_rate);
-+	divff =3D temp64;
-+
-+	temp64 =3D (u64)parent_rate;
-+	temp64 *=3D divff;
-+	do_div(temp64, PLL_FRAC_DENOM);
-+
-+	return (parent_rate * divfi + (unsigned long)temp64) / 2;
-+}
-+
-+/*
-+ * To simplify the clock calculation, we can keep the 'PLL_OUTPUT_VAL' at =
-zero
-+ * (means the PLL output will be divided by 2). So the PLL output can use
-+ * the below formula:
-+ * pllout =3D parent_rate * 8 / 2 * DIVF_VAL;
-+ * where DIVF_VAL =3D 1 + DIVFI + DIVFF / 2^24.
-+ */
-+static int clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
-+			    unsigned long parent_rate)
-+{
-+	struct clk_frac_pll *pll =3D to_clk_frac_pll(hw);
-+	u32 val, divfi, divff;
-+	u64 temp64;
-+	int ret;
-+
-+	parent_rate *=3D 8;
-+	rate *=3D 2;
-+	divfi =3D rate / parent_rate;
-+	temp64 =3D (u64) (rate - divfi * parent_rate);
-+	temp64 *=3D PLL_FRAC_DENOM;
-+	do_div(temp64, parent_rate);
-+	divff =3D temp64;
-+
-+	val =3D readl_relaxed(pll->base + PLL_CFG1);
-+	val &=3D ~(PLL_FRAC_DIV_MASK | PLL_INT_DIV_MASK);
-+	val |=3D ((divff << 7) | (divfi - 1));
-+	writel_relaxed(val, pll->base + PLL_CFG1);
-+
-+	val =3D readl_relaxed(pll->base + PLL_CFG0);
-+	val &=3D ~0x1f;
-+	writel_relaxed(val, pll->base + PLL_CFG0);
-+
-+	/* Set the NEV_DIV_VAL to reload the DIVFI and DIVFF */
-+	val =3D readl_relaxed(pll->base + PLL_CFG0);
-+	val |=3D PLL_NEWDIV_VAL;
-+	writel_relaxed(val, pll->base + PLL_CFG0);
-+
-+	ret =3D clk_wait_ack(pll);
-+
-+	/* clear the NEV_DIV_VAL */
-+	val =3D readl_relaxed(pll->base + PLL_CFG0);
-+	val &=3D ~PLL_NEWDIV_VAL;
-+	writel_relaxed(val, pll->base + PLL_CFG0);
++	spin_unlock_irqrestore(divider->lock, flags);
 +
 +	return ret;
 +}
 +
-+static const struct clk_ops clk_frac_pll_ops =3D {
-+	.prepare	=3D clk_pll_prepare,
-+	.unprepare	=3D clk_pll_unprepare,
-+	.is_prepared	=3D clk_pll_is_prepared,
-+	.recalc_rate	=3D clk_pll_recalc_rate,
-+	.round_rate	=3D clk_pll_round_rate,
-+	.set_rate	=3D clk_pll_set_rate,
++static const struct clk_ops imx_clk_composite_8m_divider_ops =3D {
++	.recalc_rate =3D imx_clk_composite_8m_divider_recalc_rate,
++	.round_rate =3D imx_clk_composite_8m_divider_round_rate,
++	.set_rate =3D imx_clk_composite_8m_divider_set_rate,
 +};
 +
-+struct clk *imx_clk_frac_pll(const char *name, const char *parent_name,
-+			     void __iomem *base)
++struct clk *imx_clk_composite_8m_flags(const char *name,
++					const char **parent_names,
++					int num_parents, void __iomem *reg,
++					unsigned long flags)
 +{
-+	struct clk_init_data init;
-+	struct clk_frac_pll *pll;
-+	struct clk *clk;
++	struct clk_hw *mux_hw =3D NULL, *div_hw =3D NULL, *gate_hw =3D NULL;
++	struct clk_divider *div =3D NULL;
++	struct clk_gate *gate =3D NULL;
++	struct clk_mux *mux =3D NULL;
++	struct clk *clk =3D ERR_PTR(-ENOMEM);
 +
-+	pll =3D kzalloc(sizeof(*pll), GFP_KERNEL);
-+	if (!pll)
-+		return ERR_PTR(-ENOMEM);
++	mux =3D kzalloc(sizeof(*mux), GFP_KERNEL);
++	if (!mux)
++		goto fail;
 +
-+	pll->base =3D base;
-+	init.name =3D name;
-+	init.ops =3D &clk_frac_pll_ops;
-+	init.flags =3D 0;
-+	init.parent_names =3D &parent_name;
-+	init.num_parents =3D 1;
++	mux_hw =3D &mux->hw;
++	mux->reg =3D reg;
++	mux->shift =3D PCG_PCS_SHIFT;
++	mux->mask =3D PCG_PCS_MASK;
 +
-+	pll->hw.init =3D &init;
++	div =3D kzalloc(sizeof(*div), GFP_KERNEL);
++	if (!div)
++		goto fail;
 +
-+	clk =3D clk_register(NULL, &pll->hw);
++	div_hw =3D &div->hw;
++	div->reg =3D reg;
++	div->shift =3D PCG_PREDIV_SHIFT;
++	div->width =3D PCG_PREDIV_WIDTH;
++	div->lock =3D &imx_ccm_lock;
++	div->flags =3D CLK_DIVIDER_ROUND_CLOSEST;
++
++	gate =3D kzalloc(sizeof(*gate), GFP_KERNEL);
++	if (!gate)
++		goto fail;
++
++	gate_hw =3D &gate->hw;
++	gate->reg =3D reg;
++	gate->bit_idx =3D PCG_CGC_SHIFT;
++
++	clk =3D clk_register_composite(NULL, name, parent_names, num_parents,
++					mux_hw, &clk_mux_ops, div_hw,
++					&imx_clk_composite_8m_divider_ops,
++					gate_hw, &clk_gate_ops, flags);
 +	if (IS_ERR(clk))
-+		kfree(pll);
++		goto fail;
 +
++	return clk;
++
++fail:
++	kfree(gate);
++	kfree(div);
++	kfree(mux);
 +	return clk;
 +}
 diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index 8076ec0..13daf1c 100644
+index 12b3fd6..37c8c4a 100644
 --- a/drivers/clk/imx/clk.h
 +++ b/drivers/clk/imx/clk.h
-@@ -27,6 +27,9 @@ struct clk *imx_clk_pllv1(enum imx_pllv1_type type, const=
- char *name,
- struct clk *imx_clk_pllv2(const char *name, const char *parent,
- 		void __iomem *base);
+@@ -232,4 +232,20 @@ struct clk *imx_clk_cpu(const char *name, const char *=
+parent_name,
+ 		struct clk *div, struct clk *mux, struct clk *pll,
+ 		struct clk *step);
 =20
-+struct clk *imx_clk_frac_pll(const char *name, const char *parent_name,
-+			     void __iomem *base);
++struct clk *imx_clk_composite_8m_flags(const char *name,
++					const char **parent_names,
++					int num_parents, void __iomem *reg,
++					unsigned long flags);
 +
- enum imx_pllv3_type {
- 	IMX_PLLV3_GENERIC,
- 	IMX_PLLV3_SYS,
++#define __imx_clk_composite_8m(name, parent_names, reg, flags) \
++	imx_clk_composite_8m_flags(name, parent_names, \
++		ARRAY_SIZE(parent_names), reg, \
++		flags | CLK_SET_RATE_NO_REPARENT | CLK_OPS_PARENT_ENABLE)
++
++#define imx_clk_composite_8m(name, parent_names, reg) \
++	__imx_clk_composite_8m(name, parent_names, reg, 0)
++
++#define imx_clk_composite_8m_critical(name, parent_names, reg) \
++	__imx_clk_composite_8m(name, parent_names, reg, CLK_IS_CRITICAL)
++
+ #endif
 --=20
 2.7.4
 
