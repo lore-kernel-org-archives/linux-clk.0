@@ -2,129 +2,271 @@ Return-Path: <SRS0=ggfB=MV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A007C64EB8
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Oct 2018 15:54:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2320C64EB8
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Oct 2018 17:26:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EAC62214DC
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Oct 2018 15:54:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAC62214DC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 624A8214DC
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Oct 2018 17:26:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="YuWftbhB";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="AIwj7pZt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 624A8214DC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726703AbeJIXLf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 Oct 2018 19:11:35 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:56601 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726393AbeJIXLf (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 9 Oct 2018 19:11:35 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 975AE207C8; Tue,  9 Oct 2018 17:53:57 +0200 (CEST)
-Received: from localhost (AAubervilliers-681-1-28-153.w90-88.abo.wanadoo.fr [90.88.148.153])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 62F5120618;
-        Tue,  9 Oct 2018 17:53:47 +0200 (CEST)
-Date:   Tue, 9 Oct 2018 17:53:48 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@siol.net>
-Cc:     wens@csie.org, robh+dt@kernel.org, sboyd@kernel.org,
-        airlied@linux.ie, architt@codeaurora.org, a.hajda@samsung.com,
-        Laurent.pinchart@ideasonboard.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 10/29] drm/sun4i: Rename DE2 registers related macros
-Message-ID: <20181009155348.exmeyvvelxwnv3b5@flea>
-References: <20181007093905.11253-1-jernej.skrabec@siol.net>
- <20181007093905.11253-11-jernej.skrabec@siol.net>
- <20181008101828.hb4xtppbexwalbkk@flea>
- <11072788.dZi9MDiihb@jernej-laptop>
+        id S1726486AbeJJAot (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 Oct 2018 20:44:49 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:43018 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726393AbeJJAot (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Oct 2018 20:44:49 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id D870C60BFA; Tue,  9 Oct 2018 17:26:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539106007;
+        bh=yIV8hU/6HN8K79p4PamdNMet+LwRCL4Sfns+H5y4I+c=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=YuWftbhB+XMLi0fhKbSWFBWnRjHVLqqtFYu5K9pnlXjz4MTvneCdcOo4+/FHqVaKL
+         uMDUuKQucsGvJXOUTlU6GhzWaglTP2XViDqo8J+aADOW8ElDLbJq5TC+iXYPS01NtM
+         JyEBs/eq1/mMVJZ0dYN/j52piJMJhB+Fc4SQWb9g=
+Received: from [192.168.225.247] (unknown [49.32.123.122])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4EFB3600C1;
+        Tue,  9 Oct 2018 17:26:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539106006;
+        bh=yIV8hU/6HN8K79p4PamdNMet+LwRCL4Sfns+H5y4I+c=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=AIwj7pZtbXblQtS3MfT1CfZOTRHTav6y9rx6D25WVsvtWcs2w7vfCwpSWl6FtPxwN
+         Rgz2hWJ1aqLqAV69B0bN1SLGUwyeIn3WJCldto0gRYVgrD5stvYhlajo017yrVsSm3
+         k9U88bVD+a6StBLs5fCPBMSXmyNqozF1OxibTLzQ=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4EFB3600C1
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+Subject: Re: [PATCH v6] clk: qcom: Add lpass clock controller driver for
+ SDM845
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1538654546-31204-1-git-send-email-tdas@codeaurora.org>
+ <1538654546-31204-2-git-send-email-tdas@codeaurora.org>
+ <153896666821.119890.13143150697797456341@swboyd.mtv.corp.google.com>
+From:   Taniya Das <tdas@codeaurora.org>
+Message-ID: <ba0d7d92-5ad9-2dcf-c5a5-21332df193f0@codeaurora.org>
+Date:   Tue, 9 Oct 2018 22:56:38 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="qlwprrpwi56itdhx"
-Content-Disposition: inline
-In-Reply-To: <11072788.dZi9MDiihb@jernej-laptop>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <153896666821.119890.13143150697797456341@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hello Stephen,
 
---qlwprrpwi56itdhx
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 10/8/2018 8:14 AM, Stephen Boyd wrote:
+> Quoting Taniya Das (2018-10-04 05:02:26)
+>> Add support for the lpass clock controller found on SDM845 based devices.
+>> This would allow lpass peripheral loader drivers to control the clocks to
+>> bring the subsystem out of reset.
+>> LPASS clocks present on the global clock controller would be registered
+>> with the clock framework based on the device tree flag. Also do not gate
+>> these clocks if they are left unused.
+> 
+> Why not gate them? This statement states what the code is doing, not why
+> it's doing it which is the more crucial information that should be
+> described in the commit text. Also, please add a comment about it to the
+> code next to the flag.
+> 
+> I am concerned that it doesn't make any sense though, so probably it
+> shouldn't be marked as CLK_IGNORE_UNUSED and it's papering over some
+> other larger bug that needs to be fixed.
+> 
 
-On Mon, Oct 08, 2018 at 04:28:41PM +0200, Jernej =C5=A0krabec wrote:
-> Dne ponedeljek, 08. oktober 2018 ob 12:18:28 CEST je Maxime Ripard napisa=
-l(a):
-> > Hi,
-> >=20
-> > On Sun, Oct 07, 2018 at 11:38:46AM +0200, Jernej Skrabec wrote:
-> > > In preparation to introduce DE3 support, change prefix from "SUN8I_" =
-to
-> > > "DE2_". Current prefix suggest that it's valid only for one family,
-> > > whereas in reality, DE2 unit is used also on sun50i family.
-> > > Additionally, it will be easier to distinguish DE3 specific macros by
-> > > using "DE3_" prefix.
-> > >=20
-> > > No functional change in this commit.
-> >=20
-> > I'm not too sure about this one. There's basically two ways to look at
-> > this: you described the first one, and the second one would be to
-> > treat it as we do for the compatibles: the IP was introduced on one
-> > SoC family, and then got used on some other ones.
-> >=20
-> > Trying to always match the one you have however have a quite big
-> > maintainance cost, as can be shown by your patch: you always have to
-> > adapt comments, function names, defines, etc. This creates a lot of
-> > useless churns (ie, non-functional changes) in the drivers, that need
-> > to be written in the first place, and then reviewed.
-> >=20
-> > It's just not worth it.
->=20
-> Well, using family neutral way would mean that there is no need
-> anymore for adaptation in the future, but as you wish.
+It does not have any bug, it is just that to access these lpass 
+registers we would need the GCC lpass registers to be enabled. I would 
+update the same in the commit text.
 
-If you consider only the DE case, where it has been numbered by
-design, yes. If you consider all the other controllers that haven't
-been (like, SPI, or the USB PHY, for example), then you end up with
-two drivers that are using the same names, with no easy way to tell
-which is which
+During clock late_init these clocks should not be accessed to check the 
+clock status as they would result in unclocked access. The client would 
+request these clocks in the correct order and it would not have any issue.
 
-> What prefix should I use for DE3 specific registers?
 
-We should just follow the same pattern, and use the first family where
-it was introduced. So sun50i, I guess?
+>>
+>> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+>> ---
+>> diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
+>> index 08d593e..6379b8b 100644
+>> --- a/drivers/clk/qcom/gcc-sdm845.c
+>> +++ b/drivers/clk/qcom/gcc-sdm845.c
+>> @@ -3169,6 +3169,32 @@ enum {
+>>          },
+>>   };
+>>
+>> +static struct clk_branch gcc_lpass_q6_axi_clk = {
+>> +       .halt_reg = 0x47000,
+>> +       .halt_check = BRANCH_HALT,
+>> +       .clkr = {
+>> +               .enable_reg = 0x47000,
+>> +               .enable_mask = BIT(0),
+>> +               .hw.init = &(struct clk_init_data){
+>> +                       .name = "gcc_lpass_q6_axi_clk",
+>> +                       .ops = &clk_branch2_ops,
+>> +               },
+>> +       },
+>> +};
+>> +
+>> +static struct clk_branch gcc_lpass_sway_clk = {
+>> +       .halt_reg = 0x47008,
+>> +       .halt_check = BRANCH_HALT,
+>> +       .clkr = {
+>> +               .enable_reg = 0x47008,
+>> +               .enable_mask = BIT(0),
+>> +               .hw.init = &(struct clk_init_data){
+>> +                       .name = "gcc_lpass_sway_clk",
+>> +                       .ops = &clk_branch2_ops,
+>> +               },
+>> +       },
+>> +};
+>> +
+>>   static struct gdsc pcie_0_gdsc = {
+>>          .gdscr = 0x6b004,
+>>          .pd = {
+>> @@ -3469,6 +3495,8 @@ enum {
+>>          [GCC_QSPI_CORE_CLK_SRC] = &gcc_qspi_core_clk_src.clkr,
+>>          [GCC_QSPI_CORE_CLK] = &gcc_qspi_core_clk.clkr,
+>>          [GCC_QSPI_CNOC_PERIPH_AHB_CLK] = &gcc_qspi_cnoc_periph_ahb_clk.clkr,
+>> +       [GCC_LPASS_Q6_AXI_CLK] = NULL,
+>> +       [GCC_LPASS_SWAY_CLK] = NULL,
+>>   };
+>>
+>>   static const struct qcom_reset_map gcc_sdm845_resets[] = {
+>> @@ -3583,6 +3611,13 @@ static int gcc_sdm845_probe(struct platform_device *pdev)
+>>          if (ret)
+>>                  return ret;
+>>
+>> +       if (!of_property_read_bool(pdev->dev.of_node, "qcom,lpass-protected")) {
+>> +               gcc_sdm845_clocks[GCC_LPASS_Q6_AXI_CLK] =
+>> +                       &gcc_lpass_q6_axi_clk.clkr;
+>> +               gcc_sdm845_clocks[GCC_LPASS_SWAY_CLK] =
+>> +                       &gcc_lpass_sway_clk.clkr;
+>> +       }
+>> +
+>>          return qcom_cc_really_probe(pdev, &gcc_sdm845_desc, regmap);
+>>   }
+>>
+>> diff --git a/drivers/clk/qcom/lpasscc-sdm845.c b/drivers/clk/qcom/lpasscc-sdm845.c
+>> new file mode 100644
+>> index 0000000..f7b9b0f
+>> --- /dev/null
+>> +++ b/drivers/clk/qcom/lpasscc-sdm845.c
+>> @@ -0,0 +1,201 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
+>> + */
+>> +
+>> +#include <linux/bitops.h>
+> 
+> Is this needed?
+> 
 
-Maxime
+Would check this.
 
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+>> +/* CLK_OFF would not toggle until LPASS is not out of reset */
+>> +static struct clk_branch lpass_qdsp6ss_xo_clk = {
+>> +       .halt_reg = 0x38,
+>> +       .halt_check = BRANCH_HALT_SKIP,
+>> +       .clkr = {
+>> +               .enable_reg = 0x38,
+>> +               .enable_mask = BIT(0),
+>> +               .hw.init = &(struct clk_init_data){
+>> +                       .name = "lpass_qdsp6ss_xo_clk",
+>> +                       .flags = CLK_IGNORE_UNUSED,
+>> +                       .ops = &clk_branch2_ops,
+>> +               },
+>> +       },
+>> +};
+>> +
+>> +/* CLK_OFF would not toggle until LPASS is not out of reset */
+> 
+> Move this comment next to BRANCH_HALT_SKIP please so we know what it
+> relates to.
+> 
 
---qlwprrpwi56itdhx
-Content-Type: application/pgp-signature; name="signature.asc"
+Sure would take care in the next patch.
 
------BEGIN PGP SIGNATURE-----
+>> +static struct clk_branch lpass_qdsp6ss_sleep_clk = {
+>> +       .halt_reg = 0x3c,
+>> +       .halt_check = BRANCH_HALT_SKIP,
+>> +       .clkr = {
+>> +               .enable_reg = 0x3c,
+>> +               .enable_mask = BIT(0),
+>> +               .hw.init = &(struct clk_init_data){
+>> +                       .name = "lpass_qdsp6ss_sleep_clk",
+>> +                       .flags = CLK_IGNORE_UNUSED,
+>> +                       .ops = &clk_branch2_ops,
+>> +               },
+>> +       },
+>> +};
+>> +
+>> +static int lpass_clocks_sdm845_probe(struct platform_device *pdev, int index,
+>> +                                    const struct qcom_cc_desc *desc)
+>> +{
+>> +       struct regmap *regmap;
+>> +       struct resource *res;
+>> +       void __iomem *base;
+>> +
+>> +       res = platform_get_resource(pdev, IORESOURCE_MEM, index);
+>> +       base = devm_ioremap_resource(&pdev->dev, res);
+>> +       if (IS_ERR(base))
+>> +               return PTR_ERR(base);
+>> +
+>> +       regmap = devm_regmap_init_mmio(&pdev->dev, base, desc->config);
+>> +       if (IS_ERR(regmap))
+>> +               return PTR_ERR(regmap);
+> 
+> If this happens again in the future we should move this into the
+> common.c file and let qcom_cc_probe_index() exist.
+> 
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlu8zwsACgkQ0rTAlCFN
-r3QqwQ/+IoZy8t7aGMla11oE/6yNeaFJ34IxjnNbHLImveD7Ovr9f5ba3XSoQpxX
-AX83BsNpV0Y3c42ZOIAE5O1sJ9dO0P9YAQXsWIhtglWpt6PByfJ6fP6oHmV2Oacn
-4THjYt00r1vGtrjU9RpTVQ5deR1dLTLobPc1pB0gTCzRn3W7mnqdMs2p/yT2SMyT
-sPqwmVvK7flMM1B/h6yG9nzTsWzj4Xh64+Y7w+eviUUVqS7PpL5yG+y2zFeag3rH
-3KYKqWzaewOisFJZhHv9T/Q3NC1XXdNn8Dv4fg3i6zcPJFxi1oWFp44PXEMHEJsd
-3FtTxLSbk8IvYSRWkd+qVKLKngstpA97wJ84MTpRaEeIVk39vwBYRuvQwwG6aior
-+1juz0zdqLmDihnNfo/JhyEd8z32CPOxSAJBaWz9AspFynHtS17vM0qzFupQfiSK
-w7iCl8cplcfoFRJj+qFexAzPeL6Q3HSNRu0nQJ/hRnXQs3QbXFNWalHJ8R9slzH2
-S4hsP7X9xGx55xZEQM23CtHve1zMQ6uZPdJ8ncRmkFsAA6OL2YGCVTEauSxa8bge
-dXD7ZMm3+ucSJ6c4jRFJb9VL13FVFxgYYn9u1HcY9B7DK97Y1UldMP4jHs+SQFGy
-SI1gafvdOxtaIaATXp2SbPmAoh3PjKgVLr//lAjul9m822mnxLU=
-=VJae
------END PGP SIGNATURE-----
+Yes, I agree, could submit a patch to add the new function and then 
+clean it up.
 
---qlwprrpwi56itdhx--
+>> +
+>> +       return qcom_cc_really_probe(pdev, desc, regmap);
+>> +}
+>> +
+>> +/* LPASS CC clock controller */
+> 
+> Please remove this comment. It's useless.
+> 
+
+Would take care in the next patch.
+
+>> +static const struct of_device_id lpass_cc_sdm845_match_table[] = {
+>> +       { .compatible = "qcom,sdm845-lpasscc" },
+>> +       { }
+>> +};
+>> +MODULE_DEVICE_TABLE(of, lpass_cc_sdm845_match_table);
+>> +
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
+
+--
