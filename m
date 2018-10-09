@@ -6,42 +6,42 @@ X-Spam-Status: No, score=-4.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB91AC65BD1
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Oct 2018 20:34:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92FC2C65BD1
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Oct 2018 20:46:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6116C214C4
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Oct 2018 20:34:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 51B4D213A2
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Oct 2018 20:46:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="c02aZUvJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6116C214C4
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="eUslgJAm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51B4D213A2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726649AbeJJDxI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 Oct 2018 23:53:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33886 "EHLO mail.kernel.org"
+        id S1727268AbeJJEFZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Oct 2018 00:05:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39246 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726579AbeJJDxI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 9 Oct 2018 23:53:08 -0400
+        id S1726607AbeJJEFZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 10 Oct 2018 00:05:25 -0400
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 77ABD214C4;
-        Tue,  9 Oct 2018 20:34:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A33DE213A2;
+        Tue,  9 Oct 2018 20:46:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539117264;
-        bh=geTX9f2Q1fw8JCj0sx4lXutNXjoTCgnePKZhWPFcrmE=;
+        s=default; t=1539117999;
+        bh=7L3W3D1LSExK7RCCuBflEjR+VfF3EG1spu2DjWVMb3Q=;
         h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=c02aZUvJnZPbR+2nyAtphQlD5yfP0v0PNTnMYWjUNEhWEGA5fzCtnrHGgnGnCo8m6
-         TYAbONMMAvoREkYFgxb+YAmEb5ghKOg1PDEwSNEPERESPen/Qa06Stx+tTkFE719ga
-         XWSCLUdIJaYKpgBBsboJO3Yw3BCOap9LavBq/OxI=
+        b=eUslgJAmu105cKIFRT7rjALqIJVlqU0fgrLDONpKHYcqXC4yTCDMTZ4j41iqmKPpR
+         JnX2rGCk3KApDotLRPkDVFsiTkBR4Q2Bc7g0cmUKRR7ayh/80kuyZJkwuV9ZZLlIxY
+         YAPhKJjPY2tjxbCFCYwZ9oTnY/P9JoNmNyObPymM=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 To:     Michael Turquette <mturquette@baylibre.com>,
         Taniya Das <tdas@codeaurora.org>
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1539093467-12123-3-git-send-email-tdas@codeaurora.org>
+In-Reply-To: <1539093467-12123-2-git-send-email-tdas@codeaurora.org>
 Cc:     Andy Gross <andy.gross@linaro.org>,
         David Brown <david.brown@linaro.org>,
         Rajendra Nayak <rnayak@codeaurora.org>,
@@ -49,215 +49,141 @@ Cc:     Andy Gross <andy.gross@linaro.org>,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         chandanu@codeaurora.org, Taniya Das <tdas@codeaurora.org>
 References: <1539093467-12123-1-git-send-email-tdas@codeaurora.org>
- <1539093467-12123-3-git-send-email-tdas@codeaurora.org>
-Message-ID: <153911726378.119890.5522594539667887860@swboyd.mtv.corp.google.com>
+ <1539093467-12123-2-git-send-email-tdas@codeaurora.org>
+Message-ID: <153911799897.119890.15102407227774253910@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.7
-Subject: Re: [PATCH v1 2/2] clk: qcom : dispcc: Add support for display port clocks
-Date:   Tue, 09 Oct 2018 13:34:23 -0700
+Subject: Re: [PATCH v1 1/2] clk: qcom: rcg2: Add support for display port clock ops
+Date:   Tue, 09 Oct 2018 13:46:38 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Taniya Das (2018-10-09 06:57:47)
-> diff --git a/drivers/clk/qcom/dispcc-sdm845.c b/drivers/clk/qcom/dispcc-s=
-dm845.c
-> index 0cc4909..6d3136a 100644
-> --- a/drivers/clk/qcom/dispcc-sdm845.c
-> +++ b/drivers/clk/qcom/dispcc-sdm845.c
-> @@ -128,6 +144,100 @@ enum {
->         },
->  };
-> =
+Quoting Taniya Das (2018-10-09 06:57:46)
+> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+> index 6e3bd19..ca6142f 100644
+> --- a/drivers/clk/qcom/clk-rcg2.c
+> +++ b/drivers/clk/qcom/clk-rcg2.c
+> @@ -10,6 +10,7 @@
+>  #include <linux/export.h>
+>  #include <linux/clk-provider.h>
+>  #include <linux/delay.h>
+> +#include <linux/rational.h>
 
-> +static const struct freq_tbl ftbl_disp_cc_mdss_dp_aux_clk_src[] =3D {
-> +       F(19200000, P_BI_TCXO, 1, 0, 0),
-> +       { }
-> +};
-> +
-> +static struct clk_rcg2 disp_cc_mdss_dp_aux_clk_src =3D {
-> +       .cmd_rcgr =3D 0x219c,
-> +       .mnd_width =3D 0,
-> +       .hid_width =3D 5,
-> +       .parent_map =3D disp_cc_parent_map_2,
-> +       .freq_tbl =3D ftbl_disp_cc_mdss_dp_aux_clk_src,
-> +       .clkr.hw.init =3D &(struct clk_init_data){
-> +               .name =3D "disp_cc_mdss_dp_aux_clk_src",
-> +               .parent_names =3D disp_cc_parent_names_2,
-> +               .num_parents =3D 2,
-> +               .flags =3D CLK_SET_RATE_PARENT,
-> +               .ops =3D &clk_rcg2_ops,
-> +       },
-> +};
-> +
-> +static const struct freq_tbl ftbl_disp_cc_mdss_dp_crypto_clk_src[] =3D {
-> +       F(108000, P_DP_PHY_PLL_LINK_CLK,   3,   0,   0),
-> +       F(180000, P_DP_PHY_PLL_LINK_CLK,   3,   0,   0),
-> +       F(360000, P_DP_PHY_PLL_LINK_CLK,   3,   0,   0),
-> +       F(540000, P_DP_PHY_PLL_LINK_CLK,   3,   0,   0),
-> +       { }
-> +};
-> +
-> +static struct clk_rcg2 disp_cc_mdss_dp_crypto_clk_src =3D {
-> +       .cmd_rcgr =3D 0x2154,
-> +       .mnd_width =3D 0,
-> +       .hid_width =3D 5,
-> +       .parent_map =3D disp_cc_parent_map_1,
-> +       .freq_tbl =3D ftbl_disp_cc_mdss_dp_crypto_clk_src,
-> +       .clkr.hw.init =3D &(struct clk_init_data){
-> +               .name =3D "disp_cc_mdss_dp_crypto_clk_src",
-> +               .parent_names =3D disp_cc_parent_names_1,
-> +               .num_parents =3D 4,
-> +               .flags =3D CLK_GET_RATE_NOCACHE,
+Can you also select RATIONAL in the Kconfig language? Yes the clk
+subsystem is already selecting it, but it's nice to be explicit in the
+subdrivers.
 
-Why?
+>  #include <linux/regmap.h>
+>  #include <linux/math64.h>
+>  #include <linux/slab.h>
+> @@ -1124,3 +1125,88 @@ int qcom_cc_register_rcg_dfs(struct regmap *regmap,
+>         return 0;
+>  }
+>  EXPORT_SYMBOL_GPL(qcom_cc_register_rcg_dfs);
+> +
+> +static int clk_rcg2_dp_set_rate(struct clk_hw *hw, unsigned long rate,
+> +                       unsigned long parent_rate)
+> +{
+> +       struct clk_rcg2 *rcg =3D to_clk_rcg2(hw);
+> +       struct freq_tbl f =3D { 0 };
+> +       unsigned long src_rate;
+> +       unsigned long num, den;
+> +       u32 mask =3D BIT(rcg->hid_width) - 1;
+> +       u32 hid_div, cfg;
+> +       int i, num_parents =3D clk_hw_get_num_parents(hw);
+> +
+> +       src_rate =3D clk_hw_get_rate(clk_hw_get_parent(hw));
 
-> +               .ops =3D &clk_rcg2_ops,
-> +       },
-> +};
-> +
-> +static const struct freq_tbl ftbl_disp_cc_mdss_dp_link_clk_src[] =3D {
-> +       F(162000, P_DP_PHY_PLL_LINK_CLK,   1,   0,   0),
-> +       F(270000, P_DP_PHY_PLL_LINK_CLK,   1,   0,   0),
-> +       F(540000, P_DP_PHY_PLL_LINK_CLK,   1,   0,   0),
-> +       F(810000, P_DP_PHY_PLL_LINK_CLK,   1,   0,   0),
+What is this doing? We shouldn't need to check the parent clk for any
+rate here when we're setting the rate.
 
-Are these in kHz? They really look like it and that's bad. Why do we
-need them at all? Just to make sure the display driver picks these exact
-frequencies? It seems like we could just pass whatever number comes in
-up to the parent and see what it can do.
+> +       if (src_rate <=3D 0) {
+> +               pr_err("Invalid RCG parent rate\n");
+> +               return -EINVAL;
+> +       }
+> +
+> +       rational_best_approximation(src_rate, rate,
+> +                       (unsigned long)(1 << 16) - 1,
 
-> +       { }
-> +};
-> +
-> +static struct clk_rcg2 disp_cc_mdss_dp_link_clk_src =3D {
-> +       .cmd_rcgr =3D 0x2138,
-> +       .mnd_width =3D 0,
-> +       .hid_width =3D 5,
-> +       .parent_map =3D disp_cc_parent_map_1,
-> +       .freq_tbl =3D ftbl_disp_cc_mdss_dp_link_clk_src,
-> +       .clkr.hw.init =3D &(struct clk_init_data){
-> +               .name =3D "disp_cc_mdss_dp_link_clk_src",
-> +               .parent_names =3D disp_cc_parent_names_1,
-> +               .num_parents =3D 4,
-> +               .flags =3D CLK_SET_RATE_PARENT,
-> +               .ops =3D &clk_rcg2_ops,
-> +       },
-> +};
-> +
-> +static struct clk_rcg2 disp_cc_mdss_dp_pixel1_clk_src =3D {
-> +       .cmd_rcgr =3D 0x2184,
-> +       .mnd_width =3D 16,
-> +       .hid_width =3D 5,
-> +       .parent_map =3D disp_cc_parent_map_1,
-> +       .clkr.hw.init =3D &(struct clk_init_data){
-> +               .name =3D "disp_cc_mdss_dp_pixel1_clk_src",
-> +               .parent_names =3D disp_cc_parent_names_1,
-> +               .num_parents =3D 4,
-> +               .flags =3D CLK_SET_RATE_PARENT,
-> +               .ops =3D &clk_dp_ops,
-> +       },
-> +};
-> +
-> +static struct clk_rcg2 disp_cc_mdss_dp_pixel_clk_src =3D {
-> +       .cmd_rcgr =3D 0x216c,
-> +       .mnd_width =3D 16,
-> +       .hid_width =3D 5,
-> +       .parent_map =3D disp_cc_parent_map_1,
-> +       .clkr.hw.init =3D &(struct clk_init_data){
-> +               .name =3D "disp_cc_mdss_dp_pixel_clk_src",
-> +               .parent_names =3D disp_cc_parent_names_1,
-> +               .num_parents =3D 4,
-> +               .flags =3D CLK_SET_RATE_PARENT,
-> +               .ops =3D &clk_dp_ops,
-> +       },
-> +};
-> +
->  static const struct freq_tbl ftbl_disp_cc_mdss_esc0_clk_src[] =3D {
->         F(19200000, P_BI_TCXO, 1, 0, 0),
->         { }
-> @@ -391,6 +501,115 @@ enum {
->         },
->  };
-> =
+Use GENMASK?
 
-> +static struct clk_branch disp_cc_mdss_dp_aux_clk =3D {
-> +       .halt_reg =3D 0x2054,
-> +       .halt_check =3D BRANCH_HALT,
-> +       .clkr =3D {
-> +               .enable_reg =3D 0x2054,
-> +               .enable_mask =3D BIT(0),
-> +               .hw.init =3D &(struct clk_init_data){
-> +                       .name =3D "disp_cc_mdss_dp_aux_clk",
-> +                       .parent_names =3D (const char *[]){
-> +                               "disp_cc_mdss_dp_aux_clk_src",
-> +                       },
-> +                       .num_parents =3D 1,
-> +                       .flags =3D CLK_SET_RATE_PARENT,
-> +                       .ops =3D &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_branch disp_cc_mdss_dp_crypto_clk =3D {
-> +       .halt_reg =3D 0x2048,
-> +       .halt_check =3D BRANCH_HALT,
-> +       .clkr =3D {
-> +               .enable_reg =3D 0x2048,
-> +               .enable_mask =3D BIT(0),
-> +               .hw.init =3D &(struct clk_init_data){
-> +                       .name =3D "disp_cc_mdss_dp_crypto_clk",
-> +                       .parent_names =3D (const char *[]){
-> +                               "disp_cc_mdss_dp_crypto_clk_src",
-> +                       },
-> +                       .num_parents =3D 1,
-> +                       .flags =3D CLK_SET_RATE_PARENT,
-> +                       .ops =3D &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_branch disp_cc_mdss_dp_link_clk =3D {
-> +       .halt_reg =3D 0x2040,
-> +       .halt_check =3D BRANCH_HALT,
-> +       .clkr =3D {
-> +               .enable_reg =3D 0x2040,
-> +               .enable_mask =3D BIT(0),
-> +               .hw.init =3D &(struct clk_init_data){
-> +                       .name =3D "disp_cc_mdss_dp_link_clk",
-> +                       .parent_names =3D (const char *[]){
-> +                               "disp_cc_mdss_dp_link_clk_src",
-> +                       },
-> +                       .num_parents =3D 1,
-> +                       .flags =3D CLK_SET_RATE_PARENT,
-> +                       .ops =3D &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +/* reset state of disp_cc_mdss_dp_link_div_clk_src divider is 0x3 (div 4=
-) */
+> +                       (unsigned long)(1 << 16) - 1, &den, &num);
 
-Not sure what this comment is for. But it's interesting nonetheless.
+Same?
 
-> +static struct clk_branch disp_cc_mdss_dp_link_intf_clk =3D {
-> +       .halt_reg =3D 0x2044,
-> +       .halt_check =3D BRANCH_HALT,
-> +       .clkr =3D {
-> +               .enable_reg =3D 0x2044,
-> +               .enable_mask =3D BIT(0),
-> +               .hw.init =3D &(struct clk_init_data){
-> +                       .name =3D "disp_cc_mdss_dp_link_intf_clk",
-> +                       .parent_names =3D (const char *[]){
-> +                               "disp_cc_mdss_dp_link_clk_src",
-> +                       },
-> +                       .num_parents =3D 1,
-> +                       .flags =3D CLK_GET_RATE_NOCACHE,
-
-Why?
-
-> +                       .ops =3D &clk_branch2_ops,
-> +               },
-> +       },
-> +};
 > +
+> +       if (!num || !den) {
+> +               pr_err("Invalid MN values derived for requested rate %lu\=
+n",
+> +                                                       rate);
+> +               return -EINVAL;
+> +       }
+> +
+> +       regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG, &cfg);
+> +       hid_div =3D cfg;
+> +       cfg &=3D CFG_SRC_SEL_MASK;
+> +       cfg >>=3D CFG_SRC_SEL_SHIFT;
+> +
+> +       for (i =3D 0; i < num_parents; i++)
+> +               if (cfg =3D=3D rcg->parent_map[i].cfg) {
+> +                       f.src =3D rcg->parent_map[i].src;
+> +                       break;
+> +       }
+> +
+> +       f.pre_div =3D hid_div;
+> +       f.pre_div >>=3D CFG_SRC_DIV_SHIFT;
+> +       f.pre_div &=3D mask;
+> +
+> +       if (num =3D=3D den) {
+> +               f.m =3D 0;
+> +               f.n =3D 0;
+> +       } else {
+> +               f.m =3D num;
+> +               f.n =3D den;
+> +       }
+> +
+> +       return clk_rcg2_configure(rcg, &f);
+> +}
+> +
+> +static int clk_rcg2_dp_set_rate_and_parent(struct clk_hw *hw,
+> +               unsigned long rate, unsigned long parent_rate, u8 index)
+> +{
+> +       return clk_rcg2_dp_set_rate(hw, rate, parent_rate);
+> +}
+> +
+> +static int clk_rcg2_dp_determine_rate(struct clk_hw *hw,
+> +                               struct clk_rate_request *req)
+> +{
+> +       if (!hw)
+> +               return -EINVAL;
+> +
+> +       if (!clk_hw_get_parent(hw)) {
+> +               pr_err("Missing the parent for the DP RCG\n");
+> +               return -EINVAL;
+> +       }
+
+Let me Harry Potter this stuff. Expelliarmus!
+
+> +
+> +       req->best_parent_rate =3D clk_hw_get_rate(clk_hw_get_parent(hw));
+
+Presumably we should ask the parent clk for the rate that is requested
+here by calling determine rate up and see if the parent can do it. Sure,
+this clk does nothing, so we don't really need any sort of op here then
+and we can just flag the clk as CLK_SET_RATE_PARENT and let the core do
+the rest.
+
+> +       return 0;
+> +}
+> +
+> +const struct clk_ops clk_dp_ops =3D {
+> +       .is_enabled =3D clk_rcg2_is_enabled,
+> +       .get_parent =3D clk_rcg2_get_parent,
+> +       .set_parent =3D clk_rcg2_set_parent,
+> +       .recalc_rate =3D clk_rcg2_recalc_rate,
+> +       .set_rate =3D clk_rcg2_dp_set_rate,
+> +       .set_rate_and_parent =3D clk_rcg2_dp_set_rate_and_parent,
+> +       .determine_rate =3D clk_rcg2_dp_determine_rate,
+> +};
+> +EXPORT_SYMBOL_GPL(clk_dp_ops);
