@@ -2,187 +2,109 @@ Return-Path: <SRS0=ggfB=MV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0CDDC64EB0
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Oct 2018 20:52:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8275DC64EB0
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Oct 2018 21:23:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91A4B214C5
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Oct 2018 20:52:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D17FF20C0A
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Oct 2018 21:23:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="08yVeUgo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91A4B214C5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="SkXQ2Lfv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D17FF20C0A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726476AbeJJEKy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Oct 2018 00:10:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40452 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725748AbeJJEKy (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 10 Oct 2018 00:10:54 -0400
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D4E41213A2;
-        Tue,  9 Oct 2018 20:52:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539118327;
-        bh=Hkq7UK/xxfWcHd6VgR70r3z/I2A5gFw3W+VSCg8VF7Q=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=08yVeUgoYoQOPes9jWOTuNKvURFT/b3qWEjbbodFmuOXlRBdy/HaAF1w6fKeBaopb
-         ywTljhguqAihYebqXeWz04bmM3xl2ZO1ll05ZFkko3qiXbYF3pZMdojTrZkgSGj/GF
-         bHIQYjMMhb5pUbT9QxVsXk/TTYXS660rEOvCRKvs=
-Content-Type: text/plain; charset="utf-8"
+        id S1726656AbeJJEmq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Oct 2018 00:42:46 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:37896 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725837AbeJJEmq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Oct 2018 00:42:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=51XTrruwT6Zk4jQmCrFDDypXOWKMNqzH2FZ+M5ceMCs=; b=SkXQ2LfveGeaL7fhRg9p6SvAf
+        iy2y5LgSW1zgkhgYBvczJ94GsFilrvqyDhJJmxDFixDjfNlhFlRvm/ybEOJDumfvkj3LpALjbljh/
+        aS/7TXkFptgW0q1bZJEafITIqX005BN9ra8AX5SUrnA+jFtprQ1AII4CByuUwfmCdM1Xc=;
+Received: from n2100.armlinux.org.uk ([fd8f:7570:feb6:1:214:fdff:fe10:4f86]:60057)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1g9zTj-00036f-89; Tue, 09 Oct 2018 22:23:43 +0100
+Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
+        (envelope-from <linux@n2100.armlinux.org.uk>)
+        id 1g9zTg-0001ow-0u; Tue, 09 Oct 2018 22:23:40 +0100
+Date:   Tue, 9 Oct 2018 22:23:37 +0100
+From:   Russell King - ARM Linux <linux@armlinux.org.uk>
+To:     Ilia Mirkin <imirkin@alum.mit.edu>
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        devicetree <devicetree@vger.kernel.org>, jernej.skrabec@siol.net,
+        Andrzej Hajda <a.hajda@samsung.com>, maxime.ripard@bootlin.com,
+        David Airlie <airlied@linux.ie>, linux-sunxi@googlegroups.com,
+        Archit Taneja <architt@codeaurora.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>, sboyd@kernel.org,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 15/29] drm/bridge/synopsys: dw-hdmi: Enable workaround
+ for v2.12a
+Message-ID: <20181009212337.GL30658@n2100.armlinux.org.uk>
+References: <20181007093905.11253-1-jernej.skrabec@siol.net>
+ <20181007093905.11253-16-jernej.skrabec@siol.net>
+ <3616158.EzHeIcd69b@avalon>
+ <CAKb7Uvgmv4-t0g=b-Xsimn9AiRL1L4sQ51vu5xMTFKNdDC9bLw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <ba0d7d92-5ad9-2dcf-c5a5-21332df193f0@codeaurora.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1538654546-31204-1-git-send-email-tdas@codeaurora.org>
- <1538654546-31204-2-git-send-email-tdas@codeaurora.org>
- <153896666821.119890.13143150697797456341@swboyd.mtv.corp.google.com>
- <ba0d7d92-5ad9-2dcf-c5a5-21332df193f0@codeaurora.org>
-Message-ID: <153911832719.119890.11984877060665330428@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v6] clk: qcom: Add lpass clock controller driver for SDM845
-Date:   Tue, 09 Oct 2018 13:52:07 -0700
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKb7Uvgmv4-t0g=b-Xsimn9AiRL1L4sQ51vu5xMTFKNdDC9bLw@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Taniya Das (2018-10-09 10:26:38)
-> Hello Stephen,
-> =
+On Tue, Oct 09, 2018 at 01:56:04PM -0400, Ilia Mirkin wrote:
+> On Tue, Oct 9, 2018 at 1:40 PM Laurent Pinchart
+> <laurent.pinchart@ideasonboard.com> wrote:
+> > commit 9c305eb442f3b371fc722ade827bbf673514123e
+> > Author: Neil Armstrong <narmstrong@baylibre.com>
+> > Date:   Fri Feb 23 12:44:37 2018 +0100
+> >
+> >     drm: bridge: dw-hdmi: Fix overflow workaround for Amlogic Meson GX SoCs
+> >
+> > I haven't paid too much attention to the patch back then, and have now double-
+> > checked the HDMI output on R-Car Gen3. Enabling the workaround doesn't cause
+> > any regression, and reverting the commit doesn't cause any issue either. I
+> > thus wonder whether we shouldn't enable the workaround with count = 1 in the
+> > default case instead of adding new IP core versions to the list. It would be
+> > nice if someone from Synopsys could comment on this.
+> 
+> I hope this comment isn't *incredibly* off-topic, but we encountered a
+> similar issue with NVIDIA (and I believe AMD) hardware a while back,
+> related to HDMI. This was due to infoframes not being sent, but
+> (perhaps) HDMI Audio being enabled.
 
-> On 10/8/2018 8:14 AM, Stephen Boyd wrote:
-> > Quoting Taniya Das (2018-10-04 05:02:26)
-> >> Add support for the lpass clock controller found on SDM845 based devic=
-es.
-> >> This would allow lpass peripheral loader drivers to control the clocks=
- to
-> >> bring the subsystem out of reset.
-> >> LPASS clocks present on the global clock controller would be registered
-> >> with the clock framework based on the device tree flag. Also do not ga=
-te
-> >> these clocks if they are left unused.
-> > =
+You're probably right about the infoframes.  The errata documentation
+for this workaround on iMX6 states:
 
-> > Why not gate them? This statement states what the code is doing, not why
-> > it's doing it which is the more crucial information that should be
-> > described in the commit text. Also, please add a comment about it to the
-> > code next to the flag.
-> > =
+ Each time one writes to some FC registers, and depending on the clock relation of sfr clk and tmds
+ clk, some of these train of pulses (when these registers are configured in sequence), may not be
+ caught by the arithmetic unit while it is busy processing/updating the first ones, so, it gets wrong
+ video timing values, although the registers FC_* hold correct values. Even a soft reset will not
+ make the arithmetic unit update correctly. Video will still pass correctly to the HDMI, but packets
+ would not because the frame composer is holding internally incorrect video timing and this will
+ quickly build up and overflow the packet FIFOs.
 
-> > I am concerned that it doesn't make any sense though, so probably it
-> > shouldn't be marked as CLK_IGNORE_UNUSED and it's papering over some
-> > other larger bug that needs to be fixed.
-> > =
+So, the workaround is about kicking the frame composer so that the
+packets (iow, non-video data) are passed through correctly.
 
-> =
-
-> It does not have any bug, it is just that to access these lpass =
-
-> registers we would need the GCC lpass registers to be enabled. I would =
-
-> update the same in the commit text.
-> =
-
-> During clock late_init these clocks should not be accessed to check the =
-
-> clock status as they would result in unclocked access. The client would =
-
-> request these clocks in the correct order and it would not have any issue.
-> =
-
-
-That seems like the bug right there. If the LPASS registers can't be
-accessed unless the clks in GCC are enabled then this driver needs to
-turn the clks on before reading/writing registers. Marking the clks as
-ignore unused is skipping around the real problem.
-
-> =
-
-> >>
-> >> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> >> ---
-> >> diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm8=
-45.c
-> >> index 08d593e..6379b8b 100644
-> >> --- a/drivers/clk/qcom/gcc-sdm845.c
-> >> +++ b/drivers/clk/qcom/gcc-sdm845.c
-> >> @@ -3583,6 +3611,13 @@ static int gcc_sdm845_probe(struct platform_dev=
-ice *pdev)
-> >>          if (ret)
-> >>                  return ret;
-> >>
-> >> +       if (!of_property_read_bool(pdev->dev.of_node, "qcom,lpass-prot=
-ected")) {
-> >> +               gcc_sdm845_clocks[GCC_LPASS_Q6_AXI_CLK] =3D
-> >> +                       &gcc_lpass_q6_axi_clk.clkr;
-> >> +               gcc_sdm845_clocks[GCC_LPASS_SWAY_CLK] =3D
-> >> +                       &gcc_lpass_sway_clk.clkr;
-
-For all intents and purposes could we not just mark these two as
-CLK_IS_CRITICAL and then let the LPASS turn these on and off when it
-cares (does it ever do so)? Or even just turn them on once in probe here
-with direct register writes and then not care anymore to touch them
-again? Or do we need to turn these clks on again later on when the
-subsystem crashes to read/write the registers and cycle the clks back on
-and off?
-
-> >> +       }
-> >> +
-> >>          return qcom_cc_really_probe(pdev, &gcc_sdm845_desc, regmap);
-> >>   }
-> >>
-> >> diff --git a/drivers/clk/qcom/lpasscc-sdm845.c b/drivers/clk/qcom/lpas=
-scc-sdm845.c
-> >> new file mode 100644
-> >> index 0000000..f7b9b0f
-> >> --- /dev/null
-> >> +++ b/drivers/clk/qcom/lpasscc-sdm845.c
-> >> +               },
-> >> +       },
-> >> +};
-> >> +
-> >> +static int lpass_clocks_sdm845_probe(struct platform_device *pdev, in=
-t index,
-> >> +                                    const struct qcom_cc_desc *desc)
-> >> +{
-> >> +       struct regmap *regmap;
-> >> +       struct resource *res;
-> >> +       void __iomem *base;
-> >> +
-> >> +       res =3D platform_get_resource(pdev, IORESOURCE_MEM, index);
-> >> +       base =3D devm_ioremap_resource(&pdev->dev, res);
-> >> +       if (IS_ERR(base))
-> >> +               return PTR_ERR(base);
-> >> +
-> >> +       regmap =3D devm_regmap_init_mmio(&pdev->dev, base, desc->confi=
-g);
-> >> +       if (IS_ERR(regmap))
-> >> +               return PTR_ERR(regmap);
-> > =
-
-> > If this happens again in the future we should move this into the
-> > common.c file and let qcom_cc_probe_index() exist.
-> > =
-
-> =
-
-> Yes, I agree, could submit a patch to add the new function and then =
-
-> clean it up.
-
-Ok, but please don't do anything now because we don't care yet.
-
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
