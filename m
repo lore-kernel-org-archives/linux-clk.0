@@ -2,411 +2,211 @@ Return-Path: <SRS0=ggfB=MV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 847C1C64EB8
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Oct 2018 08:37:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC75AC64EAD
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Oct 2018 09:14:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 325FE2089D
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Oct 2018 08:37:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="TmHaUGqf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 325FE2089D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id 53DBE2077C
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Oct 2018 09:14:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53DBE2077C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726656AbeJIPx2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 Oct 2018 11:53:28 -0400
-Received: from mail-eopbgr00087.outbound.protection.outlook.com ([40.107.0.87]:11264
-        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725861AbeJIPx2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 9 Oct 2018 11:53:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ya/fdEE8TRNaTNBm4CSTHVnR6V62rTvDH8GZFOGaFCo=;
- b=TmHaUGqfKzDxoI6N/0T+aTvwitZb5cHlgTwvHG+3rUGIKCfSvZ8MwTb4C/RASFSVs6eeZBA/pcLjtiCo948buDFWtWuZHQXJ4MaX5AETaVa+LNsVak5lIiHO06TRz5RjnF9qGWFAw9LKGNJpxJs7FzC/rj2pFhr3+pltLWm0w0M=
-Received: from VI1PR04MB1613.eurprd04.prod.outlook.com (10.164.84.147) by
- VI1PR04MB5343.eurprd04.prod.outlook.com (52.134.123.158) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1207.26; Tue, 9 Oct 2018 08:37:29 +0000
-Received: from VI1PR04MB1613.eurprd04.prod.outlook.com
- ([fe80::f014:635a:bee7:76b3]) by VI1PR04MB1613.eurprd04.prod.outlook.com
- ([fe80::f014:635a:bee7:76b3%3]) with mapi id 15.20.1207.024; Tue, 9 Oct 2018
- 08:37:29 +0000
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Sascha Hauer <kernel@pengutronix.de>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        "A.s. Dong" <aisheng.dong@nxp.com>
-CC:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Abel Vesa <abelvesa@linux.com>, Abel Vesa <abel.vesa@nxp.com>
-Subject: [PATCH v10 3/5] clk: imx: add SCCG PLL type
-Thread-Topic: [PATCH v10 3/5] clk: imx: add SCCG PLL type
-Thread-Index: AQHUX6tQ/Bo5W6SYIEqYUDYNmW32Fg==
-Date:   Tue, 9 Oct 2018 08:37:28 +0000
-Message-ID: <1539074230-27277-4-git-send-email-abel.vesa@nxp.com>
-References: <1539074230-27277-1-git-send-email-abel.vesa@nxp.com>
-In-Reply-To: <1539074230-27277-1-git-send-email-abel.vesa@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: VI1PR02CA0058.eurprd02.prod.outlook.com
- (2603:10a6:802:14::29) To VI1PR04MB1613.eurprd04.prod.outlook.com
- (2a01:111:e400:596b::19)
-x-originating-ip: [95.76.156.53]
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR04MB5343;6:LmgiYtYP1BS3tCjtN3e7T1j0ktNsTULwBM0m+XE7VEhPsgDb2fsXfRtfKd0ODPThFp/kYCynh8Ab5qzkJUxpD7KT1zipUT4D4FldRr1+JrFuXajXhIXiWaApa7OuIKFWcWbIdHMIJMOLEdSTlaPDbywdAkkjYl0qGuB7+3KJGLtTMcC0PPCbEQ/6wIGHHxR5UYAU2Wgu4yILko3aoqKl5pO4q3RiTEFVXa0PgQk6GWgOUiukpPNPN7CWm7y45nZabNZM9CnE4DYoSXX5Kz/sP0DMrXSKypHmEV12VmihxPxKUlALoQi/b+DsL7/l1zXPXn4I2SbdaPhuVzWbmcxJlWZn7nqmPrexTM0g/t1e0oX/aY32ZCAAMD81d2cD/P+qgdnc4pbW44lK6/U6CKO3DE4eLbblRqKNtvyX1KqjfF037edb0kqF1tncCYAI3ohCgpq86EinSILuOS1kSZOxJg==;5:xNAZQznKFpYKCLexqe63WmwGzhRLZTnb3UorLNdMehuO9dsdhxeIT00IW8HLhFZRHUSrk+7Fg/NsIx5FWEHihd8n1d8oAqodvseE8iH1J3jRNHqRJM3X1ONWgkNv05kIoaM8pc+YIIIQW4jnHomM9ws+ar3qjl/cgosQ6bTDc4A=;7:mh9FcIXVieSvZhvSyR2USEkLtM3U7iGZcyYc86qhYMLRHNlhwLjXnydn/D4oq5lQZHvFDS6l47RkOYGFf3kIGk5ZbCbopaon8zawpG+SOLF328hrbgXJm5BgCwTjHAYPMTwEr0FQrR3VR4y+DUVop/fr0GXbSVkgMQhr0NVoleXsXHSTfsREoQ0mQSC8b7Be0ex+wp06y9NXfouJKqqvfzBUnXCha5FwJNcgcOo5fhgzWX+YKxK3KloqYT/b/Bwd
-x-ms-office365-filtering-correlation-id: 3aeecd6f-439f-48a2-0a9c-08d62dc27260
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB5343;
-x-ms-traffictypediagnostic: VI1PR04MB5343:
-x-microsoft-antispam-prvs: <VI1PR04MB53432F82167AD4EF9ACA010AF6E70@VI1PR04MB5343.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(185117386973197);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231355)(944501410)(52105095)(6055026)(149066)(150057)(6041310)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(201708071742011)(7699051)(76991055);SRVR:VI1PR04MB5343;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB5343;
-x-forefront-prvs: 08200063E9
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(396003)(136003)(346002)(366004)(376002)(199004)(189003)(476003)(486006)(44832011)(6512007)(446003)(6636002)(36756003)(5660300001)(2906002)(5250100002)(68736007)(2616005)(11346002)(6116002)(3846002)(106356001)(7736002)(217873002)(305945005)(105586002)(81166006)(81156014)(8676002)(71190400001)(52116002)(110136005)(71200400001)(25786009)(14454004)(478600001)(256004)(86362001)(6486002)(2900100001)(14444005)(4326008)(186003)(6436002)(54906003)(6506007)(8936002)(386003)(66066001)(7416002)(102836004)(6346003)(53936002)(97736004)(99286004)(76176011)(316002)(26005);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5343;H:VI1PR04MB1613.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=abel.vesa@nxp.com; 
-x-microsoft-antispam-message-info: 2geuTDrZ0XLpgKtQCb/zdpKeJ9MRgp161BsHCwnuBc86ZHDnt6fpKDxdDcLxuadwmPgvVV1YtgVmxHMheOqNPoIfaZMo7+nQi9xqLG/ub0RinRTa96z27O9M7iql1ohYylQ/LHq/BvynTREyT3drTDV9J6hJEU8HwoaPBH019pzl+PfMBG5MkfqlmSjgDBN03jgmxU5qXMZcPPX03J/SLVBwlTgYWFLhCLZfeyBXfheNGSHj5fNXrJjobUTgHsYrpNSASvbyhw+9PjeAtheShdtJYXGlKxQ6rksWjEGOAGzO5jO3ADRi+KZhQVYBdN8J4GupD5m47Os0OvpkoIk11Q==
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S1726434AbeJIQaK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 Oct 2018 12:30:10 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:45193 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725927AbeJIQaK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 9 Oct 2018 12:30:10 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 2054120731; Tue,  9 Oct 2018 11:14:12 +0200 (CEST)
+Received: from localhost (AAubervilliers-681-1-28-153.w90-88.abo.wanadoo.fr [90.88.148.153])
+        by mail.bootlin.com (Postfix) with ESMTPSA id DEBEF20726;
+        Tue,  9 Oct 2018 11:14:01 +0200 (CEST)
+Date:   Tue, 9 Oct 2018 11:14:02 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@siol.net>
+Cc:     wens@csie.org, robh+dt@kernel.org, sboyd@kernel.org,
+        airlied@linux.ie, architt@codeaurora.org, a.hajda@samsung.com,
+        Laurent.pinchart@ideasonboard.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v2 18/29] drm/sun4i: dw-hdmi: Add quirk for setting TMDS
+ clock
+Message-ID: <20181009091402.gjaruavagscq6wt5@flea>
+References: <20181007093905.11253-1-jernej.skrabec@siol.net>
+ <20181007093905.11253-19-jernej.skrabec@siol.net>
+ <20181008091406.yjs2u22fmj72e4rj@flea>
+ <8016466.hta3A6eauk@jernej-laptop>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3aeecd6f-439f-48a2-0a9c-08d62dc27260
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Oct 2018 08:37:28.9993
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5343
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="uycfxtqpuxuus2aj"
+Content-Disposition: inline
+In-Reply-To: <8016466.hta3A6eauk@jernej-laptop>
+User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Lucas Stach <l.stach@pengutronix.de>
 
-The SCCG is a new PLL type introduced on i.MX8. Add support for this.
-The driver currently misses the PLL lock check, as the preliminary
-documentation mentions lock configurations, but is quiet about where
-to find the actual lock status signal.
+--uycfxtqpuxuus2aj
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-Reviewed-by: Sascha Hauer <s.hauer@pengutronix.de>
----
- drivers/clk/imx/Makefile       |   3 +-
- drivers/clk/imx/clk-sccg-pll.c | 237 +++++++++++++++++++++++++++++++++++++=
-++++
- drivers/clk/imx/clk.h          |   9 ++
- 3 files changed, 248 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/imx/clk-sccg-pll.c
+On Mon, Oct 08, 2018 at 05:09:42PM +0200, Jernej =C5=A0krabec wrote:
+> Dne ponedeljek, 08. oktober 2018 ob 11:14:06 CEST je Maxime Ripard napisa=
+l(a):
+> > Hi,
+> >=20
+> > On Sun, Oct 07, 2018 at 11:38:54AM +0200, Jernej Skrabec wrote:
+> > > It turns out that H6 HDMI BSP kernel driver doesn't change TMDS rate =
+at
+> > > all. At this point it is not clear whether it is just not necessary or
+> > > it would cause some kind of issues.
+> > >=20
+> > > Add a quirk for it.
+> > >=20
+> > > Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+> > > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> > > ---
+> > >=20
+> > >  drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c | 5 ++++-
+> > >  drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h | 1 +
+> > >  2 files changed, 5 insertions(+), 1 deletion(-)
+> > >=20
+> > > diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
+> > > b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c index ec122136ee9d..e9e93f174=
+b35
+> > > 100644
+> > > --- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
+> > > +++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
+> > > @@ -165,7 +165,9 @@ static int sun8i_dw_hdmi_bind(struct device *dev,
+> > > struct device *master,>=20
+> > >  		goto err_disable_clk_tmds;
+> > >  =09
+> > >  	}
+> > >=20
+> > > -	drm_encoder_helper_add(encoder, &sun8i_dw_hdmi_encoder_helper_funcs=
+);
+> > > +	if (hdmi->quirks->set_rate)
+> > > +		drm_encoder_helper_add(encoder,
+> > > +				       &sun8i_dw_hdmi_encoder_helper_funcs);
+> >=20
+> > That seems a bit backward, it only works because we only have mode_set
+> > at the moment, and the only thing it does is changing the clock
+> > rate. As soon as we change one of these two assumptions, the code will
+> > break.
+> >=20
+> > Why not just return in mode_set if that boolean is true?
+>=20
+> My original intention was to optimize execution time a bit. If there is n=
+o=20
+> helpers registered, there is no need to call callback which does nothing.=
+ But=20
+> your way is probably more reasonable approach.
+>=20
+> However, I'm pretty sure that even older HDMI controller doesn't need thi=
+s=20
+> rate changing code. All tests shown that changing HDMI controller divider=
+=20
+> doesn't have an effect on video or audio output. It's only there because =
+BSP=20
+> kernel driver set rate and AW engineer said it's necessary.
 
-diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
-index 4893c1f..b87513c 100644
---- a/drivers/clk/imx/Makefile
-+++ b/drivers/clk/imx/Makefile
-@@ -12,7 +12,8 @@ obj-y +=3D \
- 	clk-pllv1.o \
- 	clk-pllv2.o \
- 	clk-pllv3.o \
--	clk-pfd.o
-+	clk-pfd.o \
-+	clk-sccg-pll.o
+Maybe we can simply remove it then, and see if it breaks. Given the
+feedback from Allwinner, I'd prefer to have the behaviour they
+recommend though, at least from MMC experience, it proved to be
+needed.
+
+> >=20
+> > >  	drm_encoder_init(drm, encoder, &sun8i_dw_hdmi_encoder_funcs,
+> > >  =09
+> > >  			 DRM_MODE_ENCODER_TMDS, NULL);
+> > >=20
+> > > @@ -235,6 +237,7 @@ static int sun8i_dw_hdmi_remove(struct platform_d=
+evice
+> > > *pdev)>=20
+> > >  static const struct sun8i_dw_hdmi_quirks sun8i_a83t_quirks =3D {
+> > > =20
+> > >  	.mode_valid =3D sun8i_dw_hdmi_mode_valid_a83t,
+> > >=20
+> > > +	.set_rate =3D true,
+> > >=20
+> > >  };
+> > > =20
+> > >  static const struct of_device_id sun8i_dw_hdmi_dt_ids[] =3D {
+> > >=20
+> > > diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
+> > > b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h index a645b8bc9f58..f9eb66386=
+5a4
+> > > 100644
+> > > --- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
+> > > +++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
+> > > @@ -173,6 +173,7 @@ struct sun8i_hdmi_phy {
+> > >=20
+> > >  struct sun8i_dw_hdmi_quirks {
+> > > =20
+> > >  	enum drm_mode_status (*mode_valid)(struct drm_connector *connector,
+> > >  =09
+> > >  					   const struct drm_display_mode *mode);
+> > >=20
+> > > +	bool set_rate;
+> >=20
+> > This triggers a check in checkpatch. You should address them (and
+> > there's several in your series).
+>=20
+> Till now we used bools in driver internal structures in spite of this=20
+> warnings. So should we start using unsigned int? Or maybe bitfield with=
 =20
- obj-$(CONFIG_SOC_IMX1)   +=3D clk-imx1.o
- obj-$(CONFIG_SOC_IMX21)  +=3D clk-imx21.o
-diff --git a/drivers/clk/imx/clk-sccg-pll.c b/drivers/clk/imx/clk-sccg-pll.=
-c
-new file mode 100644
-index 0000000..a9837fa
---- /dev/null
-+++ b/drivers/clk/imx/clk-sccg-pll.c
-@@ -0,0 +1,237 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+/*
-+ * Copyright 2018 NXP.
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/err.h>
-+#include <linux/io.h>
-+#include <linux/iopoll.h>
-+#include <linux/slab.h>
-+#include <linux/delay.h>
-+#include <linux/bitfield.h>
-+
-+#include "clk.h"
-+
-+/* PLL CFGs */
-+#define PLL_CFG0		0x0
-+#define PLL_CFG1		0x4
-+#define PLL_CFG2		0x8
-+
-+#define PLL_DIVF1_MASK		GENMASK(18, 13)
-+#define PLL_DIVF2_MASK		GENMASK(12, 7)
-+#define PLL_DIVR1_MASK		GENMASK(27, 25)
-+#define PLL_DIVR2_MASK		GENMASK(24, 19)
-+#define PLL_REF_MASK		GENMASK(2, 0)
-+
-+#define PLL_LOCK_MASK		BIT(31)
-+#define PLL_PD_MASK		BIT(7)
-+
-+#define OSC_25M			25000000
-+#define OSC_27M			27000000
-+
-+#define PLL_SCCG_LOCK_TIMEOUT	70
-+
-+struct clk_sccg_pll {
-+	struct clk_hw	hw;
-+	void __iomem	*base;
-+};
-+
-+#define to_clk_sccg_pll(_hw) container_of(_hw, struct clk_sccg_pll, hw)
-+
-+static int clk_pll_wait_lock(struct clk_sccg_pll *pll)
-+{
-+	u32 val;
-+
-+	return readl_poll_timeout(pll->base, val, val & PLL_LOCK_MASK, 0,
-+					PLL_SCCG_LOCK_TIMEOUT);
-+}
-+
-+static int clk_pll1_is_prepared(struct clk_hw *hw)
-+{
-+	struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
-+	u32 val;
-+
-+	val =3D readl_relaxed(pll->base + PLL_CFG0);
-+	return (val & PLL_PD_MASK) ? 0 : 1;
-+}
-+
-+static unsigned long clk_pll1_recalc_rate(struct clk_hw *hw,
-+					 unsigned long parent_rate)
-+{
-+	struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
-+	u32 val, divf;
-+
-+	val =3D readl_relaxed(pll->base + PLL_CFG2);
-+	divf =3D FIELD_GET(PLL_DIVF1_MASK, val);
-+
-+	return parent_rate * 2 * (divf + 1);
-+}
-+
-+static long clk_pll1_round_rate(struct clk_hw *hw, unsigned long rate,
-+			       unsigned long *prate)
-+{
-+	unsigned long parent_rate =3D *prate;
-+	u32 div;
-+
-+	div =3D rate / (parent_rate * 2);
-+
-+	return parent_rate * div * 2;
-+}
-+
-+static int clk_pll1_set_rate(struct clk_hw *hw, unsigned long rate,
-+			    unsigned long parent_rate)
-+{
-+	struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
-+	u32 val;
-+	u32 divf;
-+
-+	divf =3D rate / (parent_rate * 2);
-+
-+	val =3D readl_relaxed(pll->base + PLL_CFG2);
-+	val &=3D ~PLL_DIVF1_MASK;
-+	val |=3D FIELD_PREP(PLL_DIVF1_MASK, divf - 1);
-+	writel_relaxed(val, pll->base + PLL_CFG2);
-+
-+	return clk_pll_wait_lock(pll);
-+}
-+
-+static int clk_pll1_prepare(struct clk_hw *hw)
-+{
-+	struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
-+	u32 val;
-+
-+	val =3D readl_relaxed(pll->base + PLL_CFG0);
-+	val &=3D ~PLL_PD_MASK;
-+	writel_relaxed(val, pll->base + PLL_CFG0);
-+
-+	return clk_pll_wait_lock(pll);
-+}
-+
-+static void clk_pll1_unprepare(struct clk_hw *hw)
-+{
-+	struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
-+	u32 val;
-+
-+	val =3D readl_relaxed(pll->base + PLL_CFG0);
-+	val |=3D PLL_PD_MASK;
-+	writel_relaxed(val, pll->base + PLL_CFG0);
-+
-+}
-+
-+static unsigned long clk_pll2_recalc_rate(struct clk_hw *hw,
-+					 unsigned long parent_rate)
-+{
-+	struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
-+	u32 val, ref, divr1, divf1, divr2, divf2;
-+	u64 temp64;
-+
-+	val =3D readl_relaxed(pll->base + PLL_CFG0);
-+	switch (FIELD_GET(PLL_REF_MASK, val)) {
-+	case 0:
-+		ref =3D OSC_25M;
-+		break;
-+	case 1:
-+		ref =3D OSC_27M;
-+		break;
-+	default:
-+		ref =3D OSC_25M;
-+		break;
-+	}
-+
-+	val =3D readl_relaxed(pll->base + PLL_CFG2);
-+	divr1 =3D FIELD_GET(PLL_DIVR1_MASK, val);
-+	divr2 =3D FIELD_GET(PLL_DIVR2_MASK, val);
-+	divf1 =3D FIELD_GET(PLL_DIVF1_MASK, val);
-+	divf2 =3D FIELD_GET(PLL_DIVF2_MASK, val);
-+
-+	temp64 =3D ref * 2;
-+	temp64 *=3D (divf1 + 1) * (divf2 + 1);
-+
-+	do_div(temp64, (divr1 + 1) * (divr2 + 1));
-+
-+	return (unsigned long)temp64;
-+}
-+
-+static long clk_pll2_round_rate(struct clk_hw *hw, unsigned long rate,
-+			       unsigned long *prate)
-+{
-+	u32 div;
-+	unsigned long parent_rate =3D *prate;
-+
-+	div =3D rate / (parent_rate);
-+
-+	return parent_rate * div;
-+}
-+
-+static int clk_pll2_set_rate(struct clk_hw *hw, unsigned long rate,
-+			    unsigned long parent_rate)
-+{
-+	u32 val;
-+	u32 divf;
-+	struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
-+
-+	divf =3D rate / (parent_rate);
-+
-+	val =3D readl_relaxed(pll->base + PLL_CFG2);
-+	val &=3D ~PLL_DIVF2_MASK;
-+	val |=3D FIELD_PREP(PLL_DIVF2_MASK, divf - 1);
-+	writel_relaxed(val, pll->base + PLL_CFG2);
-+
-+	return clk_pll_wait_lock(pll);
-+}
-+
-+static const struct clk_ops clk_sccg_pll1_ops =3D {
-+	.is_prepared	=3D clk_pll1_is_prepared,
-+	.recalc_rate	=3D clk_pll1_recalc_rate,
-+	.round_rate	=3D clk_pll1_round_rate,
-+	.set_rate	=3D clk_pll1_set_rate,
-+};
-+
-+static const struct clk_ops clk_sccg_pll2_ops =3D {
-+	.prepare	=3D clk_pll1_prepare,
-+	.unprepare	=3D clk_pll1_unprepare,
-+	.recalc_rate	=3D clk_pll2_recalc_rate,
-+	.round_rate	=3D clk_pll2_round_rate,
-+	.set_rate	=3D clk_pll2_set_rate,
-+};
-+
-+struct clk *imx_clk_sccg_pll(const char *name,
-+				const char *parent_name,
-+				void __iomem *base,
-+				enum imx_sccg_pll_type pll_type)
-+{
-+	struct clk_sccg_pll *pll;
-+	struct clk *clk;
-+	struct clk_init_data init;
-+
-+	pll =3D kzalloc(sizeof(*pll), GFP_KERNEL);
-+	if (!pll)
-+		return ERR_PTR(-ENOMEM);
-+
-+	pll->base =3D base;
-+	init.name =3D name;
-+	switch (pll_type) {
-+	case SCCG_PLL1:
-+		init.ops =3D &clk_sccg_pll1_ops;
-+		break;
-+	case SCCG_PLL2:
-+		init.ops =3D &clk_sccg_pll2_ops;
-+		break;
-+	default:
-+		kfree(pll);
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	init.flags =3D 0;
-+	init.parent_names =3D &parent_name;
-+	init.num_parents =3D 1;
-+
-+	pll->hw.init =3D &init;
-+
-+	clk =3D clk_register(NULL, &pll->hw);
-+	if (IS_ERR(clk))
-+		kfree(pll);
-+
-+	return clk;
-+}
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index 13daf1c..12b3fd6 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -21,6 +21,11 @@ enum imx_pllv1_type {
- 	IMX_PLLV1_IMX35,
- };
+> unsigned int as a base according to https://lkml.org/lkml/2017/11/21/384
+
+That warning has been introduced pretty recently, so we do indeed have
+some drivers that use a bool in their structure.
+
+> As far as other issues reported by strict checkpatch go, most of them are=
+ DT=20
+> lines over 80 charachters. This was tolerated till now. Last type of issu=
+es is=20
+> that macro parameters weren't enclosed with braces. These issues won't be=
 =20
-+enum imx_sccg_pll_type {
-+	SCCG_PLL1,
-+	SCCG_PLL2,
-+};
-+
- struct clk *imx_clk_pllv1(enum imx_pllv1_type type, const char *name,
- 		const char *parent, void __iomem *base);
-=20
-@@ -30,6 +35,10 @@ struct clk *imx_clk_pllv2(const char *name, const char *=
-parent,
- struct clk *imx_clk_frac_pll(const char *name, const char *parent_name,
- 			     void __iomem *base);
-=20
-+struct clk *imx_clk_sccg_pll(const char *name, const char *parent_name,
-+			     void __iomem *base,
-+			     enum imx_sccg_pll_type pll_type);
-+
- enum imx_pllv3_type {
- 	IMX_PLLV3_GENERIC,
- 	IMX_PLLV3_SYS,
+> reported anymore in new series because sun8i_csc.h won't be touched if I =
+drop=20
+> patch which renames DE2 register macros (but original issue will remain).
+
+Yeah, I don't worry about those.
+
+Thanks!
+Maxime
+
 --=20
-2.7.4
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
+--uycfxtqpuxuus2aj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlu8cVkACgkQ0rTAlCFN
+r3Qitg//W2A0VndfZeKOlQuNqD+WOEb7E0Ug/AQF+nZ/RkJY+QAePt2Cy8/6TYGZ
+8XjJfnp3VBzWN/MhzWR1LYC1ClaaTdFRqBJ7DgkHn14Z7ocP2wjFj14KgBGXlf+h
+N57tg5csjGLp/0eMh4174gg4A2IJkBWcZ673PKwxvSPtepQ/UTqFpKZ0oOB6Y269
+9x8EtPF4uM6gHyp/azOqaFRdC39hOVYWGEUSwuwmCw9Mqhh5djSgMK7+XfRQ4Ik+
+ECXOPAXTL8RgcrlzVGCx9mk8V2KtXKjHVKwX4SENgObllIARCusPh3nMJPNyyvZS
+gQFJbi8AlI6gcilvy6+oOhaFkH74/N07UF5k5Jnq6HeQp6Mv85ns+XMTYB5qTnag
+0gKvRzTOsAONOvT8/VGokW1+RRbhJfBrdpLpfJIfiXMICpVlR+EAFJiNwXIzGvrd
+Fl2POkNIB3Xu8bhRocSJpsZGbOnwOkSMUnlUFRWo5mb6SR7MAM94vQc1DeXHNUxJ
+pRjqXL/kBHjZyvC9VnIvWLa17T4O8ZpDcp8E7bH1oEp/6KQKGxBAYWRjrEeVXliz
+b/UNVrTiGar3Yy0eCfX10c0VGhTaN3J4k9ngRnmX2sJ4iwVYm+Fu7WEdDAJM50d2
+wbqxvxholpMTSv5iLNzYstFXtIQ4dButuxSvxRoHn9IbZ52NFB0=
+=+zwh
+-----END PGP SIGNATURE-----
+
+--uycfxtqpuxuus2aj--
