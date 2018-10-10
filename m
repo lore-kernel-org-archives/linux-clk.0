@@ -1,122 +1,133 @@
-Return-Path: <SRS0=ggfB=MV=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=fkKI=MW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5A99C43441
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Oct 2018 22:56:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B557C43441
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Oct 2018 02:15:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D1582087D
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Oct 2018 22:56:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 015B8206B2
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Oct 2018 02:15:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="hxvTjsdr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D1582087D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="mX0ac9DU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 015B8206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725750AbeJJGPc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Oct 2018 02:15:32 -0400
-Received: from mail-ve1eur01on0087.outbound.protection.outlook.com ([104.47.1.87]:52027
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725748AbeJJGPc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 10 Oct 2018 02:15:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+        id S1727095AbeJJJfs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Oct 2018 05:35:48 -0400
+Received: from relmlor4.renesas.com ([210.160.252.174]:21359 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727193AbeJJJfr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Oct 2018 05:35:47 -0400
+Received: from unknown (HELO relmlir3.idc.renesas.com) ([10.200.68.153])
+  by relmlie3.idc.renesas.com with ESMTP; 10 Oct 2018 11:15:52 +0900
+Received: from relmlii2.idc.renesas.com (relmlii2.idc.renesas.com [10.200.68.66])
+        by relmlir3.idc.renesas.com (Postfix) with ESMTP id 5FD877802D;
+        Wed, 10 Oct 2018 11:15:51 +0900 (JST)
+X-IronPort-AV: E=Sophos;i="5.54,362,1534777200"; 
+   d="scan'208";a="294715616"
+Received: from mail-os2jpn01lp0144.outbound.protection.outlook.com (HELO JPN01-OS2-obe.outbound.protection.outlook.com) ([23.103.139.144])
+  by relmlii2.idc.renesas.com with ESMTP/TLS/AES256-SHA256; 10 Oct 2018 11:15:51 +0900
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mwiowa2eqkofnGaSPvJgZoKq18XdU0IYw4hW/JJcMuA=;
- b=hxvTjsdrFp0ttYSLih6saZUz2caMtAQqzCZ20Cd+wpfbFju7hu+CY6sHAIbL0haLKNkCj/p5YEZ0E+xdIXnXguXBSBd3bG7Fc8a4LZaRviQ2ujNoXsMhWi1ZH9pOsK8rf0Dht3fm6MwPE4SKLbW2RscZb9BPpy6CAb0wrfLyfB0=
-Received: from AM0PR04MB4290.eurprd04.prod.outlook.com (52.134.126.145) by
- AM0PR04MB5314.eurprd04.prod.outlook.com (20.177.42.87) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1207.23; Tue, 9 Oct 2018 22:56:14 +0000
-Received: from AM0PR04MB4290.eurprd04.prod.outlook.com
- ([fe80::3836:6416:4ebd:34ef]) by AM0PR04MB4290.eurprd04.prod.outlook.com
- ([fe80::3836:6416:4ebd:34ef%3]) with mapi id 15.20.1207.029; Tue, 9 Oct 2018
- 22:56:14 +0000
-From:   Leonard Crestez <leonard.crestez@nxp.com>
-To:     "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "A.s. Dong" <aisheng.dong@nxp.com>
-CC:     dl-linux-imx <linux-imx@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "abelvesa@linux.com" <abelvesa@linux.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "robh@kernel.org" <robh@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v10 4/5] clk: imx: add imx composite clock
-Thread-Topic: [PATCH v10 4/5] clk: imx: add imx composite clock
-Thread-Index: AQHUX6tSKa6+rH5QiEuV7vcmHTUupKUXhzeA
-Date:   Tue, 9 Oct 2018 22:56:14 +0000
-Message-ID: <5c0cc4de8403fca17431a9382f7e34e8003f497b.camel@nxp.com>
-References: <1539074230-27277-1-git-send-email-abel.vesa@nxp.com>
-         <1539074230-27277-5-git-send-email-abel.vesa@nxp.com>
-In-Reply-To: <1539074230-27277-5-git-send-email-abel.vesa@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=leonard.crestez@nxp.com; 
-x-originating-ip: [85.204.4.237]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM0PR04MB5314;6:vz6eNnoRmTWewS3yf2idi5CGftRRPZWcyfWVIXSPFdP3FlSEkhwFgjKHgA35Ro+0H2PmvozfWQOW4V8Ts+c0fTP5XcodDThRR+LFxiHwBqIriNy313+lzicm33U/wYzdcz/8a/pVaV7fjad3WB/Q1TJeuzLvrjkUTeFNVrWVQ9/FWIjwC/nHS9P9nhdLWI/v6WtSf1u7gpT8An8XVRvJ4xujUp4YSHgIdZlRAfF7AkjibdgJ+EzNtS6COfqfRH0hWls/XHH7A+xlLIsnKeAotRwIAaByQng/9pXD/KQRvnfQG+AUGw61rQi57cAkIA1djtuyDRwg94r3aLdBiETo8DAOUm+1kB0+VtpxIZDOJuWMLdpUnxeWbM4LXAhxj/0lEG1Ob9uI6ZiZoxnDcSPPplLQ7czeBEXKNoUXPxxRKJGazCywOd0veTS8MxRtcE6J4ZuRzxzhGft7Z4d6ckRyGQ==;5:TeF+sGfF04shidN8JWjrbxW63iQJZlr0+Pjx5JkVIDcJy4/DxJdq/VxPM9UMjDvQlOD/frZeEizx4E1FH0FQzQzmP6wInuGxpywgq5mwBjY+oDWZz8ZrNBa1YYKsfQusBbSZhqjmxGrx15vwLUdDT/lQs22/l8nkOdOrM+fw4LI=;7:/i/gQKb+Dqxzaw5J1f3dWOZjRC+8/b86N11EZdeRepx9jlReMrUuhnTdHAPlWfde9cpDStIXPc/gJQbnHxpSQaMpht2484olFOG4a3oRBOuZV8jsTrNUL8j3qr+oEQowpWv53yxrccx0c9H5HUJ4BnXjOP8lK3+aLJDzysu3MkX2Xc033caS87O4iJ/t2ofzmx/IeP6JPi6mtP3BbkuwG+sAlgyNNucClUB1KaFoVrBzqvvu7XHV3hBJiqU3ttNX
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 486ef59d-6647-4873-5779-08d62e3a6a1c
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(4534185)(4627221)(201703031133081)(201702281549075)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB5314;
-x-ms-traffictypediagnostic: AM0PR04MB5314:
-x-microsoft-antispam-prvs: <AM0PR04MB53142A6AB1596F5BBBDF6EF3EEE70@AM0PR04MB5314.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231355)(944501410)(52105095)(6055026)(149066)(150057)(6041310)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051);SRVR:AM0PR04MB5314;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB5314;
-x-forefront-prvs: 08200063E9
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(346002)(366004)(136003)(396003)(376002)(189003)(199004)(476003)(14454004)(8936002)(81166006)(7416002)(54906003)(8676002)(81156014)(2900100001)(6636002)(118296001)(5660300001)(71200400001)(71190400001)(7736002)(305945005)(99286004)(6506007)(97736004)(36756003)(110136005)(76176011)(68736007)(53936002)(11346002)(2616005)(229853002)(6512007)(6436002)(25786009)(6486002)(2906002)(446003)(478600001)(6246003)(105586002)(106356001)(66066001)(256004)(44832011)(86362001)(2501003)(2201001)(486006)(186003)(4326008)(102836004)(316002)(6116002)(3846002)(26005)(5250100002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5314;H:AM0PR04MB4290.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
+ bh=1FNwJyw77//AoYOD6omFyZf8X53mpudZVhFybWnl4e4=;
+ b=mX0ac9DU3BlQO+e6gHgKpaia9ZSg56nie/rk757iHoFFj2VV4Ncjgs5Bv7bddPUO1OSCaMWWHZqEclzfRyWi35oFA1caWhb+i4HM00A158WX8ahlfqtuxrFoKwglWf6Lbh14MT7eAdUJITMCm+wfubK38xO/pkBWrvSatMnKdnE=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=kuninori.morimoto.gx@renesas.com; 
+Received: from morimoto-PC.renesas.com (211.11.155.130) by
+ TY1PR01MB1866.jpnprd01.prod.outlook.com (2603:1096:403:2::22) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1207.23; Wed, 10 Oct 2018 02:15:48 +0000
+Message-ID: <87efcy1rm4.wl-kuninori.morimoto.gx@renesas.com>
+From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Subject: [PATCH 0/2] add 74aup1g157gw 2-input multiplexer as clock driver
+User-Agent: Wanderlust/2.15.9 Emacs/24.5 Mule/6.0
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+Date:   Wed, 10 Oct 2018 02:15:48 +0000
+X-Originating-IP: [211.11.155.130]
+X-ClientProxiedBy: KAWPR01CA0076.jpnprd01.prod.outlook.com
+ (2603:1096:402:c::12) To TY1PR01MB1866.jpnprd01.prod.outlook.com
+ (2603:1096:403:2::22)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 439acd58-cca3-43ec-ae72-08d62e564b71
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:TY1PR01MB1866;
+X-Microsoft-Exchange-Diagnostics: 1;TY1PR01MB1866;3:rFVpUv7LUWPsTZCgBrSYVqy6fIEGweFuwOHyKIbE25f52seoqxSLwIOSqxUUEVvkuU+UTVLeSGkB948bPLZx4+LB6dGl5F/aTjn9rlCe5XSXjI94Xx88asJzv8F61JabMHdHpSp3xYqo3xfZwtRK3YlfG+J6UcACzWy/wlSoDedv2wc7L4E5IuW073RYA2azyLvLNOedPGcBmO2EBfpg6uInuXAkkB/wp1j478yMfOe3GMqy/+TGMg+bxCe6fHKX;25:+H6UG/pgA3RZ4qC+vHAfB43zhF/Jt86QqD29Z5tt5sEy1Ct66bOEJjtAE8VB6ybNdqkjascWCQ/7p3F2v75VUURCkqJ9SXIyzIlBgiWE3hYmBtZ6BlFD29D+LEnlLmNjycyi9XrNOzHOWoYJV9Qu9vTBgWJtffZqGwpurpuLXHCORAv+1Xf5esa57+CwcgZzJhKUDtQRV8u4NkYa2oKzhD7SNPdwMRQcJ1hxVXd69dRWzuQalV1Z16lqPh6dBPKvK12vW5EgJUUEQX9fb8VkCeWBkf8fVEJix5odqTGvhFa6Smlz9WgL2rX0lghuuOVUDTIKEedefmriSWhW94XpQg==;31:PdqiIqnc+hm+LZf3MBLDly6O9lTJdFaI5yD2UyCHa+NEcUFqYRF1wG0TrcZgpAgaNuSX9la0CBulinBSBTcIbEr2p5kgfFIPSIzjqMhF7EvoLE7DOWHebqzyHpylexR5TYLLxIeCN5gkNfCXcuzEU1kHnIXonj5tPbqFA9XfNQWshkqQjdze38yECMIV0fyNaf8VCL+eDJn58MjiKhwCDYJ5gLfhx5NXPWRLbohXsGE=
+X-MS-TrafficTypeDiagnostic: TY1PR01MB1866:
+X-Microsoft-Exchange-Diagnostics: 1;TY1PR01MB1866;20:rIOLcOYIno9ZdwAKgsNe4qPnfRZX5sT0z0lSNb3w2IA0m+5/Uydlsq4gEhjLc+VTcn5fYLswUUtewVN7sbK975sBLR6TfLtEM/VY5jiD2LQX7kwSPBITPkRinN4aR3wZUp+tG8yikGrf3O2ZRS92WN5F2b7FgjyuGC6qmfVpifEfaY3pFe7sRzMq2vMYTGSAn9e4m0zSFU0cpD8TqR0Wa2Evn47xE4KY/e5YQI/LJQ6fkqP9pBSnEXgf+Z0j68ajamp8sPONAL0MMc6J7tFREsPa4kN264Eiw2e3umUigO87P1xmbrFrYw+EYv7Gk4cgCjmWuQ0mSrz2gQ/iBNr7AwQ5Xk9Uh+U27/g3wCBVfRYWv3arQo0o52UYPvOudAKKHZktJcO6FOWZksUl2Pe09O5zJmM2cryeXO9OmSCGiRsqPuhgOa1J6dYGVKXpaDPSguO09EJJgLlPd+SUaIKvACKZ1VzM/lDltMM7FdIMQ3PuD7hBfU7abUK4v+QY7d5t;4:HSojHqBZzUWfIgubt+HuUHVFBoRtW27BlG4mrcqA4ofo2HjXlJKTFU3WUvTcNtrW699kMF7CRQP9uI2xZ8dXwJWW0qLo8XJoXdpzbN/kDvmbJuSbUfkPQ4Bf3oGb9PZgG3wmHS6ujOiNZPlNprzmSN4wLg3mk8P8C61mkrqXQS5e5gNWr75MhGJkGEzBp1S5ydaUUwyGnR1XDA6RgSd2dWON4pVVBqyB5VrWrNeRpZkB0TwO0//CIxYDdEcS6i11KxTePv3ytf+V1wmuBRmLVQ==
+X-Microsoft-Antispam-PRVS: <TY1PR01MB1866A05F7576DF89336CA779D4E00@TY1PR01MB1866.jpnprd01.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3002001)(10201501046)(3231355)(944501410)(52105095)(6055026)(149066)(150057)(6041310)(20161123562045)(20161123558120)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051);SRVR:TY1PR01MB1866;BCL:0;PCL:0;RULEID:;SRVR:TY1PR01MB1866;
+X-Forefront-PRVS: 08213D42D3
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(396003)(39860400002)(366004)(136003)(376002)(346002)(189003)(199004)(16526019)(8676002)(81166006)(7736002)(8936002)(186003)(14444005)(81156014)(305945005)(4326008)(50466002)(486006)(36756003)(2616005)(26005)(86362001)(956004)(68736007)(476003)(47776003)(97736004)(66066001)(386003)(478600001)(7696005)(23726003)(5660300001)(53936002)(3846002)(6116002)(110136005)(16586007)(316002)(106356001)(52116002)(2906002)(58126008)(53416004)(105586002)(6486002)(25786009)(69596002)(16060500001);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB1866;H:morimoto-PC.renesas.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: renesas.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: NcfFRSsom8OcswN04NgA4BUypPy5Bsi7YLCnVoq0pHhLSEq3hePebG69hhZwAHlAKuOhq8uNt9+v3U/6NHytuKsov61qGOeMJGlXLn4cGlm8wwlZOUDdgzXXeoTpABNyxvU1g57Vh7PO8W+3G9/nvIlAc5g2iXE4NjqSoBhV1YuYb9BEfx7h7LwKoAK0OZuFBFN28shO0oBFdypw/Ieg1NL6e2wolrf4tophYIlQSuyTejkt2M3KVVEI2rajS6LWINYU3S5K2GenGVe2XApYwvtwnNAhpSMTceNHDhh7maJo3l5OG6Hft+BOklNz26zaICQnNwGAZmY8BsprYp664NnIuyECxCT7Wzdm1A7JZiM=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <AEA48455CA4CA74B83BCBD9A667AE2B6@eurprd04.prod.outlook.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 486ef59d-6647-4873-5779-08d62e3a6a1c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Oct 2018 22:56:14.1796
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5314
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;TY1PR01MB1866;23:ezrAH3hUVaVfNP6x9BdorDGYJMTDdrTSaGZHzEvgG?=
+ =?us-ascii?Q?FgeACkKfeiBZpjbVuFrQZ5lxyd7zHMXmIcuTmF4LVuMzvK9YktWOD7OR36uR?=
+ =?us-ascii?Q?Bs7FP8SFB7OraUdZVw44iuTzvYod9uJhBxh24exVLZ13WjfvmMTEZrUfVqEE?=
+ =?us-ascii?Q?ScAzJohKohIC34d0mHWO07dxVVWiFhH33E2o1AcopcfUlLKxcKtwshNe+Kxj?=
+ =?us-ascii?Q?nG2dozpK1fftT8dwO95/7I8OeOSksNGy0L7SqKslpVGQyfOd3ngTjMgI5zNp?=
+ =?us-ascii?Q?oXpuwOuMCouzgLqBkLOV0VfV8NHlK5YjJqrD7tMBO24upYyo/9OuyqN0da9m?=
+ =?us-ascii?Q?9VRkYYC9ribeZRTO2KARzoksuKgJkWrTyonuUI+mQsh/Vqp4ZQ8uxZ/H5m7C?=
+ =?us-ascii?Q?eNzMWM7KTTDJEBavzh0Z99LSo9G4tzeYVhpyN4jTmFBQ/2Fyt7NlLQRqLk/C?=
+ =?us-ascii?Q?qUbCOaeGNT/dha1bDQ2R4ytYogKoUJgPQbFM19EjDOYSFkZRrZUcVI0je69X?=
+ =?us-ascii?Q?BQc0nTjX4VN08lio7j6zLaD6/IrPa0zWRRWuNiWju8SljHWwoZYccX1/0fDs?=
+ =?us-ascii?Q?RGYj5Ao7glIN/BOJRQMFiHTjCwJDZkiXm3vSFUWMaXHXdhI5++afSjZhpPHb?=
+ =?us-ascii?Q?ThPJ44MgQ9vfck+rNC1KwXXVcoNQlTgormv+lqNSXhsVyiH+w/SqFYWqUtVe?=
+ =?us-ascii?Q?Hf0ObhUwvlNp2hpSzxEE4FtzT77odBigMng4ZxNv8EHLbx0aFP4nCE3m+Mlz?=
+ =?us-ascii?Q?J53gB/2Xyzzfh/EyPG4o5Hjul8+Amv8Y33zRdgI8r5TIFxYU8QdZqTa7+TFe?=
+ =?us-ascii?Q?7SJ0jdHZIDwkgfJ9QyEX8Z4yWwkl8Npg5WXF12chvOVFM7O4IWPjgSRxAWJh?=
+ =?us-ascii?Q?AobJt4oQBURjwAaHm9yLAnEkbugO/k7NQfQSA/arZsYjfle2GZGsxKLNop4/?=
+ =?us-ascii?Q?WhrVcUtgrqXzsw0wmOOUt4jO5quQoLCT/WVI2EWgiyn8YnQGL24/gFP7zjPo?=
+ =?us-ascii?Q?eLq0dTymfWz8//5WPA+MBgOd24vVnoDf5HupAUu5CxKdpcd7pZd+1HaCC5AO?=
+ =?us-ascii?Q?aTdXsR+ZUltMhefUzvP6ptVK8R2qd6gbJGWWjDW8a8pVDCKfiAonCC4x2FFI?=
+ =?us-ascii?Q?ARfH5Wm0dA7GZqT1PWzIGSyanBbBRt3?=
+X-Microsoft-Antispam-Message-Info: d4eNQuxHBIW8r+C+KktxFGxR+4GQsQoNNGOlKldmtpGepb2GDmRwyxwBV+9XY5U1Kh8OWeAHvJ87in8C1xbqXV35BD+tK/4GydxQOJaVGryF1WfM2wwD28bgLNXzCDRXdqSt0JnnGwH8C4IGwGUiewpoSRnpS6QDxdZ4129G6GsPBYHOM69njeH0OV3BSfYg6LLh4YzQUni+8DuLdMXswKCylBNMXY1jXmfttIfNMtU8wpe3IXivdSYq44eFvak1MifRPG0J1BFh1hH7snUE77OXVmuUCF2QL2ydqXSpWAA93p8Mvjg1g5svcP9uLoXE+1Oy0bW8/5xLucxqMdPXfzyn2wCB/NqUS18C44bxAvU=
+X-Microsoft-Exchange-Diagnostics: 1;TY1PR01MB1866;6:1o/yIQm2TcyX7lHHgYYn+VSYkIwP6GJJKOaUUggl8IaM0wxJiAgGiZuPJ8zY5vFNQuu6VzOER6rhMdhMitYR1cwArLm+WD0VghMFsGSNDQxWZUrsWvbHTBGsfBtE5G3hz328JcwJ1NaexHA30H8465l8ufqcgztt6xnaWzqCNeyw+nILeJKPylDenI8kyEHWhDRFPm7oSMR2tmO/ybORZIALLvdvzartHhqr0g8t3TITD/azR24EmihOef1nhixQB09VGJOZtIYLyI1ipYWy03gBeX/n+A9DMJ4mb1WGzOB6vOFz2pSiy+Vz023PVgU8upwtBhyy8uorsmSZ+cdI574I44VdRXCBeyCFFp91yK+AMkwt2HEQ3zUP/3GrTIa0mXgZDV6MAdWR9Xb+Y0FgNp7PD91Ys7Cl8XtNwYdKlO3EWCAhR4YPJ/lDQaur0VAXmjX34tk7g4ZdTqNUNHy7yg==;5:5M/m7Xo7y4108Dga0xd+YeqQ3WjAlScpnrIohyIFmswlwqKX5MEnBBOW7pk4lkkJ4u+kn0VgRkRvD0/ft9hjEcXU97fYcAOLAFZbCMgVrfLJzwMtL6yv5T5VbaUv+KSkzeIp2h8uRVlec+VnGkdIRDKcHCLiOetPZhLhYmN5kQY=;7:3BoUvCiLhm0ZhzzYjmf8Z9fgkLdVp06PMK5OwlqvZ+LSstwAU9VVh1K+3O0tJZFsio+1dTTB/H1oQ6ckjulztlosRXq8IkowaGQnr3LwulnE1btGNPjWoHXb+PJBn8CthtXCuS9o0ErzK8OSdF6AoLFf++F7Dhw06mw+ck/VomP1AJbX8PPSvHFuuHU+wXWYv6Zwgi0yGopLNFgc+AI1hZPKCTcFj1qTOLfPKZwaNDhsNxrgQVtS46F7dWfK4g3w
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;TY1PR01MB1866;20:TOEAlrmfpYtvkfv1bAQ8VbSguagxZUyBCI/9WLVROZTfT01f2WRZ1dw4EMcX+zWNWJV7owUgAq1xp12edK0W06t9zCONfXv+yaLO6kFmGQdFe3V6Rm4p/Ir3ioZTq/KlXo4ON7t5kzFeo3ZGPwNGqF0p+6F5f3Jo+7X7CAZL6iA=
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Oct 2018 02:15:48.6239 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 439acd58-cca3-43ec-ae72-08d62e564b71
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1866
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-T24gVHVlLCAyMDE4LTEwLTA5IGF0IDA4OjM3ICswMDAwLCBBYmVsIFZlc2Egd3JvdGU6DQo+ICtz
-dHJ1Y3QgY2xrICppbXhfY2xrX2NvbXBvc2l0ZV84bV9mbGFncyhjb25zdCBjaGFyICpuYW1lLA0K
-PiArCQkJCQljb25zdCBjaGFyICoqcGFyZW50X25hbWVzLA0KPiArCQkJCQlpbnQgbnVtX3BhcmVu
-dHMsIHZvaWQgX19pb21lbSAqcmVnLA0KPiArCQkJCQl1bnNpZ25lZCBsb25nIGZsYWdzKTsNCj4g
-Kw0KPiArI2RlZmluZSBfX2lteF9jbGtfY29tcG9zaXRlXzhtKG5hbWUsIHBhcmVudF9uYW1lcywg
-cmVnLCBmbGFncykgXA0KPiArCWlteF9jbGtfY29tcG9zaXRlXzhtX2ZsYWdzKG5hbWUsIHBhcmVu
-dF9uYW1lcywgXA0KPiArCQlBUlJBWV9TSVpFKHBhcmVudF9uYW1lcyksIHJlZywgXA0KPiArCQlm
-bGFncyB8IENMS19TRVRfUkFURV9OT19SRVBBUkVOVCB8IENMS19PUFNfUEFSRU5UX0VOQUJMRSkN
-Cj4gKw0KPiArI2RlZmluZSBpbXhfY2xrX2NvbXBvc2l0ZV84bShuYW1lLCBwYXJlbnRfbmFtZXMs
-IHJlZykgXA0KPiArCV9faW14X2Nsa19jb21wb3NpdGVfOG0obmFtZSwgcGFyZW50X25hbWVzLCBy
-ZWcsIDApDQo+ICsNCj4gKyNkZWZpbmUgaW14X2Nsa19jb21wb3NpdGVfOG1fY3JpdGljYWwobmFt
-ZSwgcGFyZW50X25hbWVzLCByZWcpIFwNCj4gKwlfX2lteF9jbGtfY29tcG9zaXRlXzhtKG5hbWUs
-IHBhcmVudF9uYW1lcywgcmVnLCBDTEtfSVNfQ1JJVElDQUwpDQoNCkRvZXMgYW55b25lIGVsc2Ug
-dGhpbmsgdGhhdCB0aGUgIjhtIiB3b3VsZCBiZSBwcmV0dGllciBuZXh0IHRvIGlteA0KcmF0aGVy
-IHRoYW4gYXMgYSBzdWZmaXg/IFVzaW5nIGlteDhtX2Nsa19jb21wb3NpdGUqIGFuZA0KaW14N3Vs
-cF9jbGtfY29tcG9zaXRlKiBtYWtlcyBtb3JlIHNlbnNlIHRvIG1lLg0KDQotLQ0KUmVnYXJkcywN
-Ckxlb25hcmQNCg==
+
+Hi Michael, Stephen, Rob, Mark
+
+These adds 74aup1g157gw 2-input multiplexer as clock driver.
+
+Kuninori Morimoto (2):
+      dt-bindings: clock: add description of 74aup1g157gw
+      clk: add 74aup1g157gw 2-input multiplexer as clock driver
+
+ Documentation/devicetree/bindings/clock/nxp,74aup1g157gw.txt |  19 ++++++
+ drivers/clk/Kconfig                                          |   1 +
+ drivers/clk/Makefile                                         |   2 +-
+ drivers/clk/nxp/Kconfig                                      |   4 ++
+ drivers/clk/nxp/Makefile                                     |   1 +
+ drivers/clk/nxp/clk-74aup1g157gw.c                           | 213 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 6 files changed, 239 insertions(+), 1 deletion(-)
+
+-- 
+2.7.4
+
