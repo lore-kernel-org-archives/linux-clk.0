@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E8A0C43441
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Oct 2018 08:41:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB185C43441
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Oct 2018 08:42:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3DE58214FF
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Oct 2018 08:41:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DE58214FF
+	by mail.kernel.org (Postfix) with ESMTP id A9660214FF
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Oct 2018 08:42:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9660214FF
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726617AbeJJQCH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Oct 2018 12:02:07 -0400
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:42274 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726722AbeJJQCH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Oct 2018 12:02:07 -0400
-Received: by mail-vs1-f65.google.com with SMTP id e126so4252310vsc.9;
-        Wed, 10 Oct 2018 01:40:59 -0700 (PDT)
+        id S1726822AbeJJQD5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Oct 2018 12:03:57 -0400
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:39475 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726722AbeJJQD5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Oct 2018 12:03:57 -0400
+Received: by mail-vs1-f68.google.com with SMTP id m5so4254453vsk.6;
+        Wed, 10 Oct 2018 01:42:49 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=JsU9oWtKpBB3ekTUeuHIk/QRb3o/smx+Tm9LRWAU3Es=;
-        b=qntwW7VHhEC97ZtUjjBtrLLCQfNdb9+i71Km/2v8r8I+Trpy+rZ1Ffk7MW6AzkXqSC
-         QQqM/17ksitAGfnhOyWIjwz0+e9VHfE2nEzWqUmonM9eCepoJLnD2QIOqiws71tKD6us
-         gqi9+7cndVuzrNIpYWF72fkQqc/fCSqa2NS9RmqPJNugPGT4fXt1P0zPLuTncjxsCcAR
-         ODghdQcK+qhWpFbuN9xEv/XFHL2O251Nff3okJotaXsdtbJbewuynU8DJAjvnMMHFhbB
-         r+q4rSXEqwYKt+Wgt3xFSVaNkFM6HTRw9Vlmcf3Tac++/kUMKxNcygvCm05bgItMn//U
-         hfYA==
-X-Gm-Message-State: ABuFfoiZicd29qzezsL6RgkwUKwHaDYy/zS7rgiGZ92CFFco9tRVH5VJ
-        BLfOOYc6CmuThRQO2+Rhp2MGmWLwsHrPx1s0iNg=
-X-Google-Smtp-Source: ACcGV63GQAIm86CYQmBVGxiiE0+b1cetActUQWfeuBRN6rdm0n2HXysT41ocosJkQj8Kn55cOKDD5LoQ1RwsCNJ8VTU=
-X-Received: by 2002:a9f:30cb:: with SMTP id k11-v6mr4085914uab.28.1539160859524;
- Wed, 10 Oct 2018 01:40:59 -0700 (PDT)
+        bh=xGYmO5QSUBxub28gwMWwD+Hc5Y7bOP+lsELfHImt96o=;
+        b=Ygrwj2565qw/m2DR0eFgaZSuQg2r/AmimsJelYO4Q/7Hdovs+PUBmTtRLPgFVrN0sD
+         CNFzuo4DJAq5EImnTbJ9gD+fEfEXnqI2ypyvoCNJWSBW4DuCblaqwFDxSwbb6JHA4pwl
+         WPz7mhrIfDXGPs7wWAuxvcByWEQIuQr2tRSA5kBDcbGqNX7X73w2+6jKuL6W5u8PUllA
+         +zI9C6XhWq75Qch0SLrx4/+wu2HS9O5gmknAJY9S6VdtIPPQLQLZg6jefyoX6KBH+Inf
+         Clxbg8oZz2Up0TBvq9ubLkDBJ8ZQFLFpcNv1XybDdc27E0tQhjaQszSdtrwI/1TSbFb7
+         +tuw==
+X-Gm-Message-State: ABuFfojyyLl+if598Y/TVmnX7jbYhVDHE9PEWTxSupPeh+9+aZXyujN1
+        0j1h2Hyve3xv5dX3KC8iw2irbNNdnIPgf0MHxi0=
+X-Google-Smtp-Source: ACcGV63JcRFMFmiE9TDUxV8womySziUJXkSrt4eZVKpYRL/lWFqd3PwXojcBD6ComzsTaIFbxHsDIx6bZX3fHN9Gbno=
+X-Received: by 2002:ab0:6093:: with SMTP id i19mr5918295ual.75.1539160968874;
+ Wed, 10 Oct 2018 01:42:48 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181008162349.42957-1-chris.brandt@renesas.com> <20181008162349.42957-3-chris.brandt@renesas.com>
-In-Reply-To: <20181008162349.42957-3-chris.brandt@renesas.com>
+References: <20181008162349.42957-1-chris.brandt@renesas.com> <20181008162349.42957-4-chris.brandt@renesas.com>
+In-Reply-To: <20181008162349.42957-4-chris.brandt@renesas.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 10 Oct 2018 10:40:47 +0200
-Message-ID: <CAMuHMdWNe2Z=q1tHO5_YLX1Q6+ef5BiQU=feBdcJfzcNvzo8HQ@mail.gmail.com>
-Subject: Re: [PATCH 2/3] mmc: renesas_sdhi_internal_dmac: Add R7S9210 support
+Date:   Wed, 10 Oct 2018 10:42:37 +0200
+Message-ID: <CAMuHMdXRKOggSQo8uX3iKXF+6y+6HgkgoP7m0xKUsTmZ8STVVw@mail.gmail.com>
+Subject: Re: [PATCH 3/3] dt-bindings: mmc: tmio_mmc: Document Renesas R7S9210
 To:     Chris Brandt <chris.brandt@renesas.com>
 Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -68,40 +68,30 @@ X-Mailing-List: linux-clk@vger.kernel.org
 Hi Chris,
 
 On Mon, Oct 8, 2018 at 6:24 PM Chris Brandt <chris.brandt@renesas.com> wrote:
-> The SDHI/MMC controller in the RZ/A2 is almost the same as R-Car gen3, but
-> with some minor differences.
+> Document support for the RZ/A2 (R7S9210) SoC.
 >
 > Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
 
 Thanks for your patch!
 
-> --- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-> +++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-> @@ -34,7 +34,7 @@
->  #define DTRAN_MODE_CH_NUM_CH0  0       /* "downstream" = for write commands */
->  #define DTRAN_MODE_CH_NUM_CH1  BIT(16) /* "upstream" = for read commands */
->  #define DTRAN_MODE_BUS_WIDTH   (BIT(5) | BIT(4))
-> -#define DTRAN_MODE_ADDR_MODE   BIT(0)  /* 1 = Increment address */
-> +#define DTRAN_MODE_ADDR_MODE   BIT(0)  /* 1 = Increment address, 0 = Fixed */
->
->  /* DM_CM_DTRAN_CTRL */
->  #define DTRAN_CTRL_DM_START    BIT(0)
-> @@ -73,6 +73,9 @@ static unsigned long global_flags;
->  #define SDHI_INTERNAL_DMAC_ONE_RX_ONLY 0
->  #define SDHI_INTERNAL_DMAC_RX_IN_USE   1
->
-> +/* RZ/A2 does not have this bit (not safe to set it) */
+> --- a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+> +++ b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
+> @@ -13,6 +13,7 @@ Required properties:
+>  - compatible: should contain one or more of the following:
+>                 "renesas,sdhi-sh73a0" - SDHI IP on SH73A0 SoC
+>                 "renesas,sdhi-r7s72100" - SDHI IP on R7S72100 SoC
+> +               "renesas,sdhi-r7s9210" - SDHI IP on R7S9210 SoC
+>                 "renesas,sdhi-r8a73a4" - SDHI IP on R8A73A4 SoC
+>                 "renesas,sdhi-r8a7740" - SDHI IP on R8A7740 SoC
+>                 "renesas,sdhi-r8a7743" - SDHI IP on R8A7743 SoC
 
-This comment confused me, as SDHI_INTERNAL_DMAC_ADRR_MODE_FIXED is
-set for RZ/A2.
+With
 
-s/this bit/the ADDR_MODE bit/?
+          Devices which have more than 1 clock are listed below:
+-         2: R7S72100
++         2: R7S72100, R7S9210
 
-> +#define SDHI_INTERNAL_DMAC_ADRR_MODE_FIXED 2
-> +
->  /* Definitions for sampling clocks */
->  static struct renesas_sdhi_scc rcar_gen3_scc_taps[] = {
->         {
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 Gr{oetje,eeting}s,
 
