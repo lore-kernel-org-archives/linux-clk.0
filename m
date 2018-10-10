@@ -2,95 +2,91 @@ Return-Path: <SRS0=fkKI=MW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB8CFC43441
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Oct 2018 18:06:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDCBAC43441
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Oct 2018 18:19:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 680152087A
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Oct 2018 18:06:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 680152087A
+	by mail.kernel.org (Postfix) with ESMTP id C216E2087D
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Oct 2018 18:19:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C216E2087D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726714AbeJKBaK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Oct 2018 21:30:10 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:33979 "EHLO mail.bootlin.com"
+        id S1726734AbeJKBmi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Oct 2018 21:42:38 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:34156 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726701AbeJKBaK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 10 Oct 2018 21:30:10 -0400
+        id S1726701AbeJKBmi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 10 Oct 2018 21:42:38 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id A3F45207B4; Wed, 10 Oct 2018 20:06:51 +0200 (CEST)
+        id 9658C207B4; Wed, 10 Oct 2018 20:19:16 +0200 (CEST)
 Received: from localhost (87-231-134-186.rev.numericable.fr [87.231.134.186])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 736F520714;
-        Wed, 10 Oct 2018 20:06:41 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 64AB7206A1;
+        Wed, 10 Oct 2018 20:19:06 +0200 (CEST)
 From:   Gregory CLEMENT <gregory.clement@bootlin.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+To:     Stephen Boyd <sboyd@codeaurora.org>,
+        Mike Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         linux-arm-kernel@lists.infradead.org,
         Jason Cooper <jason@lakedaemon.net>,
         Andrew Lunn <andrew@lunn.ch>,
         Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
         Antoine Tenart <antoine.tenart@bootlin.com>,
-        =?utf-8?Q?Miqu=C3=A8l?= Raynal <miquel.raynal@bootlin.com>,
+        =?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@bootlin.com>,
         Maxime Chevallier <maxime.chevallier@bootlin.com>
-Subject: Re: [PATCH] clk: mvebu: armada-37xx-tbg: Balance devm_clk_get in probe
-References: <20180914153421.7090-1-gregory.clement@bootlin.com>
-        <153919299293.119890.9655297515756412545@swboyd.mtv.corp.google.com>
-Date:   Wed, 10 Oct 2018 20:06:42 +0200
-In-Reply-To: <153919299293.119890.9655297515756412545@swboyd.mtv.corp.google.com>
-        (Stephen Boyd's message of "Wed, 10 Oct 2018 10:36:32 -0700")
-Message-ID: <87va69he19.fsf@bootlin.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+Subject: [PATCH v2] clk: mvebu: armada-37xx-tbg: Switch to clk_get and balance it in probe
+Date:   Wed, 10 Oct 2018 20:18:38 +0200
+Message-Id: <20181010181838.26923-1-gregory.clement@bootlin.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+The parent clock is get only to have its name, and then the clock is no
+more used, so we can safely free it using clk_put. Furthermore as between
+the successful devm_clk_get() and the devm_clk_put() call we don't exit
+the probe function in error so I can use non managed version of clk_get()
+and clk_put().
+
+Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+---
+Changelog:
+v1 -> v2
+
+ - Use the non managed version of clk_get() and clk_put() (suggested
+   by Stephen Boyd)
+ - Modify the title and the commit log to reflect this change
+
+drivers/clk/mvebu/armada-37xx-tbg.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/mvebu/armada-37xx-tbg.c b/drivers/clk/mvebu/armada-37xx-tbg.c
+index 71f30149e80e..ee272d4d8c24 100644
+--- a/drivers/clk/mvebu/armada-37xx-tbg.c
++++ b/drivers/clk/mvebu/armada-37xx-tbg.c
+@@ -96,12 +96,13 @@ static int armada_3700_tbg_clock_probe(struct platform_device *pdev)
+ 	hw_tbg_data->num = NUM_TBG;
+ 	platform_set_drvdata(pdev, hw_tbg_data);
  
- On mer., oct. 10 2018, Stephen Boyd <sboyd@kernel.org> wrote:
-
-> Quoting Gregory CLEMENT (2018-09-14 08:34:21)
->> The parent clock is get only to have its name, and then the clock is no
->> more used, so we can safely free it using devm_clk_put.
->> 
->> Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
->> ---
->>  drivers/clk/mvebu/armada-37xx-tbg.c | 1 +
->>  1 file changed, 1 insertion(+)
->> 
->> diff --git a/drivers/clk/mvebu/armada-37xx-tbg.c b/drivers/clk/mvebu/armada-37xx-tbg.c
->> index 71f30149e80e..caaa91a41683 100644
->> --- a/drivers/clk/mvebu/armada-37xx-tbg.c
->> +++ b/drivers/clk/mvebu/armada-37xx-tbg.c
->> @@ -102,6 +102,7 @@ static int armada_3700_tbg_clock_probe(struct platform_device *pdev)
->>                 return -EINVAL;
->>         }
->>         parent_name = __clk_get_name(parent);
->> +       devm_clk_put(dev, parent);
->
-> So then why use devm_clk_get()? Please replace both so tha
-> devm_clk_put() doesn't need to be used..
-
-Indeed between the successful devm_clk_get and the devm_clk_put we don't
-exit the function in error so I can use clk_get and clk_put.
-
-Gregory
-
->
->>  
->>         res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->>         reg = devm_ioremap_resource(dev, res);
-
+-	parent = devm_clk_get(dev, NULL);
++	parent = clk_get(dev, NULL);
+ 	if (IS_ERR(parent)) {
+ 		dev_err(dev, "Could get the clock parent\n");
+ 		return -EINVAL;
+ 	}
+ 	parent_name = __clk_get_name(parent);
++	clk_put(parent);
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	reg = devm_ioremap_resource(dev, res);
 -- 
-Gregory Clement, Bootlin
-Embedded Linux and Kernel engineering
-http://bootlin.com
+2.19.1
+
