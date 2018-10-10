@@ -2,94 +2,144 @@ Return-Path: <SRS0=fkKI=MW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECEA3C43610
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Oct 2018 14:26:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A65A9C43441
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Oct 2018 14:51:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B15C62085B
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Oct 2018 14:26:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B15C62085B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=v3.sk
+	by mail.kernel.org (Postfix) with ESMTP id 6CB372087A
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Oct 2018 14:51:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="VaCZvNLD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CB372087A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727033AbeJJVrs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Oct 2018 17:47:48 -0400
-Received: from shell.v3.sk ([90.176.6.54]:53457 "EHLO shell.v3.sk"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726649AbeJJVrs (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 10 Oct 2018 17:47:48 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id D87F5BCF70;
-        Wed, 10 Oct 2018 16:25:20 +0200 (CEST)
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id qQBA9q_2mvtx; Wed, 10 Oct 2018 16:25:10 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 43F3EBCEFC;
-        Wed, 10 Oct 2018 16:25:10 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at zimbra.v3.sk
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id J3wt5QcidaZa; Wed, 10 Oct 2018 16:25:09 +0200 (CEST)
-Received: from belphegor.lan (ip-89-102-31-34.net.upcbroadband.cz [89.102.31.34])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id F1D09BCF5E;
-        Wed, 10 Oct 2018 16:25:08 +0200 (CEST)
-From:   Lubomir Rintel <lkundrak@v3.sk>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+        id S1726515AbeJJWN4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Oct 2018 18:13:56 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:44895 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726700AbeJJWNz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Oct 2018 18:13:55 -0400
+Received: by mail-lf1-f66.google.com with SMTP id m18-v6so4196431lfl.11
+        for <linux-clk@vger.kernel.org>; Wed, 10 Oct 2018 07:51:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=xl9O8IEpp2cEN5QUJI0GUcCgTVO1EUGLNZR6+ed6+4o=;
+        b=VaCZvNLDTKfPxlEoXCKCPg5LZOmZfywxO31wdH0LPDblueXGNBkuAqEe3WjxbTSVAQ
+         FGyDSSxO8rcw4dXnjsiAVMmlZynUju/uBgtNj2j22suJEwojlLX+sHP5aAEiB1kGY4O2
+         LAuOqjGUvLKC/GxjdTCzO8Fc1qtec1SoXtCA+y/Ii1U2ZWgZ+JB4RW07BvC4Zc/X6gKq
+         ITeSPM7IE+WUqmWNxMMvsZulK7Uc6F+hARFphq7L6krJtU95BLOnsPSrcHgxw1SeqpSn
+         JRYCmRhemVUT00yYKPUM6f9XLRdPizSibgz3jQLZ1T7nrO+N+L9Z079Fk2lLj24USTV8
+         VQ0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=xl9O8IEpp2cEN5QUJI0GUcCgTVO1EUGLNZR6+ed6+4o=;
+        b=JT5k5ES14wieZKPcj/vPHIJoc+Gc3SbZhOlnlyokH0HcNBx9DULqp1izVY+3YmWRgT
+         pXwxzmaWj1pAC8kIVdpvJdeZ4X1AZlp438zz0Eco0KqMH977jkk2GSRlvxRK9q4VWkgv
+         pWZVliS9q4hMb54TugjCXASdD/FQc4n6ftU5bXkmnFJCbZyRunbHMpr3eV3fVvVgq9gz
+         rS+boJ5LqMEiD9BqmCN8pq0KSmm3/kKVcHX0CjKykxigZ7752ECcGSsxCCglcm0UypBZ
+         FzxxjTClPvYbIP4HY5tox4eG/azqHZ86sREdTxNXZd7yU4hfkT1sy3Ko+t9FiaMnD2Lb
+         qsXw==
+X-Gm-Message-State: ABuFfoiQn4uOhAEj+VPQ4+iwkeNYDo1MUuT2ygT8/g5VuGqo1ozb+B+8
+        6MU3bRm32kO8BbZsTsvnUmulUQ==
+X-Google-Smtp-Source: ACcGV614Yn0IEF2V5gnzJBgJCHvvsAr2Sn/NE+Un6FUwh6B3kN54UvHAfhpQXhL37NIrpOMiLho+pQ==
+X-Received: by 2002:a19:e013:: with SMTP id x19-v6mr17792981lfg.89.1539183082232;
+        Wed, 10 Oct 2018 07:51:22 -0700 (PDT)
+Received: from wasted.cogentembedded.com ([31.173.80.247])
+        by smtp.gmail.com with ESMTPSA id v19-v6sm5557992lji.10.2018.10.10.07.51.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 10 Oct 2018 07:51:21 -0700 (PDT)
+Subject: Re: [PATCH v2 2/3] mmc: renesas_sdhi_internal_dmac: Add R7S9210
+ support
+To:     Chris Brandt <chris.brandt@renesas.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        James Cameron <quozl@laptop.org>, linux-input@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH v2 1/8] dt-bindings: olpc,ap-sp: add clock
-Date:   Wed, 10 Oct 2018 16:24:57 +0200
-Message-Id: <20181010142504.233467-2-lkundrak@v3.sk>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20181010142504.233467-1-lkundrak@v3.sk>
-References: <20181010142504.233467-1-lkundrak@v3.sk>
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-clk@vger.kernel.org, linux-mmc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+References: <20181010123713.67541-1-chris.brandt@renesas.com>
+ <20181010123713.67541-3-chris.brandt@renesas.com>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Organization: Cogent Embedded
+Message-ID: <fbb500df-239b-4c67-98ed-3aa606c9cc57@cogentembedded.com>
+Date:   Wed, 10 Oct 2018 17:51:20 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20181010123713.67541-3-chris.brandt@renesas.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The clock is necessary for the device operation, hence it's required.
-Its name, "sp", stands for "Security Processor". It is one of several
-names that are used for the processor that serves as the keyboard
-controller on an OLPC and is consistent with the node name.
+Hello!
 
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
----
- Documentation/devicetree/bindings/serio/olpc,ap-sp.txt | 4 ++++
- 1 file changed, 4 insertions(+)
+On 10/10/2018 03:37 PM, Chris Brandt wrote:
 
-diff --git a/Documentation/devicetree/bindings/serio/olpc,ap-sp.txt b/Doc=
-umentation/devicetree/bindings/serio/olpc,ap-sp.txt
-index 0e72183f52bc..36603419d6f8 100644
---- a/Documentation/devicetree/bindings/serio/olpc,ap-sp.txt
-+++ b/Documentation/devicetree/bindings/serio/olpc,ap-sp.txt
-@@ -4,10 +4,14 @@ Required properties:
- - compatible : "olpc,ap-sp"
- - reg : base address and length of SoC's WTM registers
- - interrupts : SP-AP interrupt
-+- clocks : phandle + clock-specifier for the clock that drives the WTM
-+- clock-names:  should be "sp"
-=20
- Example:
- 	ap-sp@d4290000 {
- 		compatible =3D "olpc,ap-sp";
- 		reg =3D <0xd4290000 0x1000>;
- 		interrupts =3D <40>;
-+		clocks =3D <&soc_clocks MMP2_CLK_SP>;
-+		clock-names =3D "sp";
- 	}
---=20
-2.19.0
+> The SDHI/MMC controller in the RZ/A2 is almost the same as R-Car gen3, but
+> with some minor differences.
+> 
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+> ---
+> v2:
+>  * Made comment clearer
+> ---
+>  drivers/mmc/host/Kconfig                      |  5 +++--
+>  drivers/mmc/host/renesas_sdhi_internal_dmac.c | 28 +++++++++++++++++++++++++--
+>  2 files changed, 29 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+> index cf984f0f0246..33840ce2221d 100644
+> --- a/drivers/mmc/host/Kconfig
+> +++ b/drivers/mmc/host/Kconfig
+> @@ -636,13 +636,14 @@ config MMC_SDHI_SYS_DMAC
+>  
+>  config MMC_SDHI_INTERNAL_DMAC
+>  	tristate "DMA for SDHI SD/SDIO controllers using on-chip bus mastering"
+> -	depends on ARM64 || COMPILE_TEST
+> +	depends on ARM64 ||  ARCH_R7S9210 || COMPILE_TEST
+
+   Double space hardly needed here...
+
+[...]
+> diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+> index e5e5015ca680..89066237d6f0 100644
+> --- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+> +++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+[...]
+> @@ -81,6 +84,21 @@ static struct renesas_sdhi_scc rcar_gen3_scc_taps[] = {
+>  	},
+>  };
+>  
+> +static const struct renesas_sdhi_of_data of_rza2_compatible = {
+> +	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_CLK_ACTUAL |
+> +			  TMIO_MMC_HAVE_CBSY,
+> +	.tmio_ocr_mask	= MMC_VDD_32_33,
+> +	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ |
+> +			  MMC_CAP_CMD23,
+> +	.bus_shift	= 2,
+> +	.scc_offset	= (0 - 0x1000),
+
+   Parens hardly needed here...
+
+[...]
+
+MBR, Sergei
 
