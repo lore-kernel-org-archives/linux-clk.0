@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 388BAC43441
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Oct 2018 14:26:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECEA3C43610
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Oct 2018 14:26:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 095802085B
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Oct 2018 14:26:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 095802085B
+	by mail.kernel.org (Postfix) with ESMTP id B15C62085B
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Oct 2018 14:26:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B15C62085B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=v3.sk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727398AbeJJVr7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Oct 2018 17:47:59 -0400
-Received: from shell.v3.sk ([90.176.6.54]:53494 "EHLO shell.v3.sk"
+        id S1727033AbeJJVrs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Oct 2018 17:47:48 -0400
+Received: from shell.v3.sk ([90.176.6.54]:53457 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726649AbeJJVr7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 10 Oct 2018 17:47:59 -0400
+        id S1726649AbeJJVrs (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 10 Oct 2018 17:47:48 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id E0105BCF62;
-        Wed, 10 Oct 2018 16:25:31 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTP id D87F5BCF70;
+        Wed, 10 Oct 2018 16:25:20 +0200 (CEST)
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id BPkrXXem0ap3; Wed, 10 Oct 2018 16:25:21 +0200 (CEST)
+        with ESMTP id qQBA9q_2mvtx; Wed, 10 Oct 2018 16:25:10 +0200 (CEST)
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 65983BCF5E;
-        Wed, 10 Oct 2018 16:25:15 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTP id 43F3EBCEFC;
+        Wed, 10 Oct 2018 16:25:10 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at zimbra.v3.sk
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id M16OtDS2XjH9; Wed, 10 Oct 2018 16:25:12 +0200 (CEST)
+        with ESMTP id J3wt5QcidaZa; Wed, 10 Oct 2018 16:25:09 +0200 (CEST)
 Received: from belphegor.lan (ip-89-102-31-34.net.upcbroadband.cz [89.102.31.34])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 8F761BCF6B;
-        Wed, 10 Oct 2018 16:25:11 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTPSA id F1D09BCF5E;
+        Wed, 10 Oct 2018 16:25:08 +0200 (CEST)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
@@ -46,9 +46,9 @@ Cc:     Michael Turquette <mturquette@baylibre.com>,
         James Cameron <quozl@laptop.org>, linux-input@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH v2 8/8] Input: olpc_apsp: allocate the GPIOs used
-Date:   Wed, 10 Oct 2018 16:25:04 +0200
-Message-Id: <20181010142504.233467-9-lkundrak@v3.sk>
+Subject: [PATCH v2 1/8] dt-bindings: olpc,ap-sp: add clock
+Date:   Wed, 10 Oct 2018 16:24:57 +0200
+Message-Id: <20181010142504.233467-2-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181010142504.233467-1-lkundrak@v3.sk>
 References: <20181010142504.233467-1-lkundrak@v3.sk>
@@ -59,58 +59,37 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Take the GPIO lines are used by the SP. The driver doesn't touch the
-lines -- this is done to disallow anything else from fiddling with
-them because that would confuse the SP firmware.
+The clock is necessary for the device operation, hence it's required.
+Its name, "sp", stands for "Security Processor". It is one of several
+names that are used for the processor that serves as the keyboard
+controller on an OLPC and is consistent with the node name.
 
-Also, the lines are now nicely visible in /sys/kernel/debug/gpio.
-
+Reviewed-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 ---
- drivers/input/serio/olpc_apsp.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ Documentation/devicetree/bindings/serio/olpc,ap-sp.txt | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/input/serio/olpc_apsp.c b/drivers/input/serio/olpc_a=
-psp.c
-index fe9e19014e70..287759c5f36d 100644
---- a/drivers/input/serio/olpc_apsp.c
-+++ b/drivers/input/serio/olpc_apsp.c
-@@ -24,6 +24,7 @@
- #include <linux/slab.h>
- #include <linux/delay.h>
- #include <linux/clk.h>
-+#include <linux/gpio/consumer.h>
+diff --git a/Documentation/devicetree/bindings/serio/olpc,ap-sp.txt b/Doc=
+umentation/devicetree/bindings/serio/olpc,ap-sp.txt
+index 0e72183f52bc..36603419d6f8 100644
+--- a/Documentation/devicetree/bindings/serio/olpc,ap-sp.txt
++++ b/Documentation/devicetree/bindings/serio/olpc,ap-sp.txt
+@@ -4,10 +4,14 @@ Required properties:
+ - compatible : "olpc,ap-sp"
+ - reg : base address and length of SoC's WTM registers
+ - interrupts : SP-AP interrupt
++- clocks : phandle + clock-specifier for the clock that drives the WTM
++- clock-names:  should be "sp"
 =20
- /*
-  * The OLPC XO-1.75 and XO-4 laptops do not have a hardware PS/2 control=
-ler.
-@@ -76,6 +77,8 @@ struct olpc_apsp {
- 	struct serio *padio;
- 	void __iomem *base;
- 	struct clk *clk;
-+	struct gpio_desc *clk_gpio;
-+	struct gpio_desc *data_gpio;
- 	int open_count;
- 	int irq;
- };
-@@ -211,6 +214,16 @@ static int olpc_apsp_probe(struct platform_device *p=
-dev)
- 	if (IS_ERR(priv->clk))
- 		return PTR_ERR(priv->clk);
-=20
-+	priv->clk_gpio =3D devm_gpiod_get_optional(&pdev->dev, "clk",
-+							GPIOD_ASIS);
-+	if (IS_ERR(priv->clk_gpio))
-+		return PTR_ERR(priv->clk_gpio);
-+
-+	priv->data_gpio =3D devm_gpiod_get_optional(&pdev->dev, "data",
-+							GPIOD_ASIS);
-+	if (IS_ERR(priv->data_gpio))
-+		return PTR_ERR(priv->data_gpio);
-+
- 	/* KEYBOARD */
- 	kb_serio =3D kzalloc(sizeof(struct serio), GFP_KERNEL);
- 	if (!kb_serio)
+ Example:
+ 	ap-sp@d4290000 {
+ 		compatible =3D "olpc,ap-sp";
+ 		reg =3D <0xd4290000 0x1000>;
+ 		interrupts =3D <40>;
++		clocks =3D <&soc_clocks MMP2_CLK_SP>;
++		clock-names =3D "sp";
+ 	}
 --=20
 2.19.0
 
