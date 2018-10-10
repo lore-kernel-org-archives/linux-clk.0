@@ -2,169 +2,155 @@ Return-Path: <SRS0=fkKI=MW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A66BC43441
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Oct 2018 15:07:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7649AC43441
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Oct 2018 17:09:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E603214DA
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Oct 2018 15:07:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E603214DA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
+	by mail.kernel.org (Postfix) with ESMTP id 3D6632086D
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Oct 2018 17:09:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aG+LuNA7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D6632086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726886AbeJJW3u (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Oct 2018 18:29:50 -0400
-Received: from relmlor3.renesas.com ([210.160.252.173]:12889 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726713AbeJJW3u (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Oct 2018 18:29:50 -0400
-Received: from unknown (HELO relmlir4.idc.renesas.com) ([10.200.68.154])
-  by relmlie2.idc.renesas.com with ESMTP; 11 Oct 2018 00:07:12 +0900
-Received: from relmlii1.idc.renesas.com (relmlii1.idc.renesas.com [10.200.68.65])
-        by relmlir4.idc.renesas.com (Postfix) with ESMTP id 4311E86BE3;
-        Thu, 11 Oct 2018 00:07:12 +0900 (JST)
-X-IronPort-AV: E=Sophos;i="5.54,364,1534777200"; 
-   d="scan'208";a="293194387"
-Received: from unknown (HELO rtamta01.rta.renesas.com) ([143.103.48.75])
-  by relmlii1.idc.renesas.com with ESMTP; 11 Oct 2018 00:07:10 +0900
-Received: from ubuntu.localdomain (unknown [143.103.58.82])
-        by rtamta01.rta.renesas.com (Postfix) with ESMTP id 3C308233;
-        Wed, 10 Oct 2018 15:07:05 +0000 (UTC)
-From:   Chris Brandt <chris.brandt@renesas.com>
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        id S1727180AbeJKAcJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Oct 2018 20:32:09 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:44454 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726525AbeJKAcJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Oct 2018 20:32:09 -0400
+Received: by mail-pl1-f196.google.com with SMTP id p25-v6so2822841pli.11;
+        Wed, 10 Oct 2018 10:09:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=MpB53qiALrrQbh7hdU4WgS0zkcNzQ3Z+7sUqL6DpFg8=;
+        b=aG+LuNA7exG5bqk5yAe14dy2JTz6UoZcilKEm7X7ZyKMK6A4agJtOGl4bX9zgYRnTO
+         PFVmwFYNCpM7C5sOmjqEOIuhZrnVjzfI+jQHoiVmle1gRSMfm7PbwwsaL0tymb6jthIh
+         uKXDo2S0Isb+h1jFUikgD+OfV7tsqfOUMYOcQuJv2tRmy8D+89TysYztRCDeCSJ1uC9h
+         UHhxa62GZhx+yRUAkl7NqeciZDLDJ3sDee6pvC/K1FpZPouUCPA80evBKb6kPpkstHkO
+         brldF/Zk0Qg7NCGBxhpo0DwjORBy1M6gOKIQBfKrQGykhfB6jz+/j8Zp4q2OLWsVoa8t
+         C7Vw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=MpB53qiALrrQbh7hdU4WgS0zkcNzQ3Z+7sUqL6DpFg8=;
+        b=tcjfGlB8CP+AgeOekLqhoYEnjFRY/37UkqmmpIbqs5812+ie50JoXGbX5eSYk7bZaF
+         CL+h6pfPxalxSweuOC382ghNAxUMekM5yuA4P187C3PF9Heuy21S4Ob+01TMmOBXPLyI
+         ToFFOJWWr3XmqO9ODQCsjGbmR0g9SqBNQy/XsSAtuA5knXHQ1cpBamgkGBa8S9LccQzl
+         Bxo/73fh6DW4GmTqlk5j+QX5UecwID5gqJc+Okp3LZgECdwfkfhY0WmexYS+HlUODy0F
+         Yoigl2bA/JMYJ5wuWpzzzzEmNZ5VJ3mBiERRm/VscMkR/kx3zyloyKsdOdgxrDD9R3wl
+         M48w==
+X-Gm-Message-State: ABuFfog2ADLF0iMwvbM9TbjVvj04g6u1fAejnyWqE/9QKSPIgLAOoIj8
+        VIuUq0vgHqPadEiR1zxg+hw=
+X-Google-Smtp-Source: ACcGV61AAJHXX91jiYR+qqyFZN+4YwENHwnLETgt8vw1TUCKzqUpXyUeUHogbsjWNT2lC9NZmHUXYQ==
+X-Received: by 2002:a17:902:4503:: with SMTP id m3-v6mr32931425pld.168.1539191345042;
+        Wed, 10 Oct 2018 10:09:05 -0700 (PDT)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id v38-v6sm50337744pgn.57.2018.10.10.10.09.03
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 10 Oct 2018 10:09:04 -0700 (PDT)
+Date:   Wed, 10 Oct 2018 10:09:01 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Lubomir Rintel <lkundrak@v3.sk>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-clk@vger.kernel.org, linux-mmc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v3 2/3] mmc: renesas_sdhi_internal_dmac: Add R7S9210 support
-Date:   Wed, 10 Oct 2018 10:06:41 -0500
-Message-Id: <20181010150642.73890-3-chris.brandt@renesas.com>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20181010150642.73890-1-chris.brandt@renesas.com>
-References: <20181010150642.73890-1-chris.brandt@renesas.com>
+        Stephen Boyd <sboyd@kernel.org>,
+        James Cameron <quozl@laptop.org>, linux-input@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 7/8] Input: olpc_apsp: enable the SP clock
+Message-ID: <20181010170901.GC47260@dtor-ws>
+References: <20181010142504.233467-1-lkundrak@v3.sk>
+ <20181010142504.233467-8-lkundrak@v3.sk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181010142504.233467-8-lkundrak@v3.sk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The SDHI/MMC controller in the RZ/A2 is almost the same as R-Car gen3, but
-with some minor differences.
+On Wed, Oct 10, 2018 at 04:25:03PM +0200, Lubomir Rintel wrote:
+> Without the clock, the keyboard controller won't operate.
+> Tested on an OLPC XO 1.75.
+> 
+> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+> ---
+>  drivers/input/serio/olpc_apsp.c | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+> 
+> diff --git a/drivers/input/serio/olpc_apsp.c b/drivers/input/serio/olpc_apsp.c
+> index 8b19a47dfa46..fe9e19014e70 100644
+> --- a/drivers/input/serio/olpc_apsp.c
+> +++ b/drivers/input/serio/olpc_apsp.c
+> @@ -23,6 +23,7 @@
+>  #include <linux/of.h>
+>  #include <linux/slab.h>
+>  #include <linux/delay.h>
+> +#include <linux/clk.h>
+>  
+>  /*
+>   * The OLPC XO-1.75 and XO-4 laptops do not have a hardware PS/2 controller.
+> @@ -74,6 +75,7 @@ struct olpc_apsp {
+>  	struct serio *kbio;
+>  	struct serio *padio;
+>  	void __iomem *base;
+> +	struct clk *clk;
+>  	int open_count;
+>  	int irq;
+>  };
+> @@ -146,8 +148,13 @@ static int olpc_apsp_open(struct serio *port)
+>  	struct olpc_apsp *priv = port->port_data;
+>  	unsigned int tmp;
+>  	unsigned long l;
+> +	int error;
+>  
+>  	if (priv->open_count++ == 0) {
+> +		error = clk_prepare_enable(priv->clk);
+> +		if (error)
+> +			return error;
+> +
+>  		l = readl(priv->base + COMMAND_FIFO_STATUS);
+>  		if (!(l & CMD_STS_MASK)) {
+>  			dev_err(priv->dev, "SP cannot accept commands.\n");
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
-v3:
- * Removed extra space in Kconfig
- * Removed unneeded parentheses
-v2:
- * Made comment clearer
----
- drivers/mmc/host/Kconfig                      |  5 +++--
- drivers/mmc/host/renesas_sdhi_internal_dmac.c | 28 +++++++++++++++++++++++++--
- 2 files changed, 29 insertions(+), 4 deletions(-)
+I think you need to disable clock here.
 
-diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-index cf984f0f0246..b69d5cd45d0f 100644
---- a/drivers/mmc/host/Kconfig
-+++ b/drivers/mmc/host/Kconfig
-@@ -636,13 +636,14 @@ config MMC_SDHI_SYS_DMAC
- 
- config MMC_SDHI_INTERNAL_DMAC
- 	tristate "DMA for SDHI SD/SDIO controllers using on-chip bus mastering"
--	depends on ARM64 || COMPILE_TEST
-+	depends on ARM64 || ARCH_R7S9210 || COMPILE_TEST
- 	depends on MMC_SDHI
- 	default MMC_SDHI if ARM64
- 	help
- 	  This provides DMA support for SDHI SD/SDIO controllers
- 	  using on-chip bus mastering. This supports the controllers
--	  found in arm64 based SoCs.
-+	  found in arm64 based SoCs. This controller is also found in
-+	  RZ/A2 series SoCs.
- 
- config MMC_UNIPHIER
- 	tristate "UniPhier SD/eMMC Host Controller support"
-diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-index e5e5015ca680..e3c4fa764609 100644
---- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-@@ -34,7 +34,7 @@
- #define DTRAN_MODE_CH_NUM_CH0	0	/* "downstream" = for write commands */
- #define DTRAN_MODE_CH_NUM_CH1	BIT(16)	/* "upstream" = for read commands */
- #define DTRAN_MODE_BUS_WIDTH	(BIT(5) | BIT(4))
--#define DTRAN_MODE_ADDR_MODE	BIT(0)	/* 1 = Increment address */
-+#define DTRAN_MODE_ADDR_MODE	BIT(0)	/* 1 = Increment address, 0 = Fixed */
- 
- /* DM_CM_DTRAN_CTRL */
- #define DTRAN_CTRL_DM_START	BIT(0)
-@@ -73,6 +73,9 @@ static unsigned long global_flags;
- #define SDHI_INTERNAL_DMAC_ONE_RX_ONLY	0
- #define SDHI_INTERNAL_DMAC_RX_IN_USE	1
- 
-+/* RZ/A2 does not have the ADRR_MODE bit */
-+#define SDHI_INTERNAL_DMAC_ADRR_MODE_FIXED 2
-+
- /* Definitions for sampling clocks */
- static struct renesas_sdhi_scc rcar_gen3_scc_taps[] = {
- 	{
-@@ -81,6 +84,21 @@ static struct renesas_sdhi_scc rcar_gen3_scc_taps[] = {
- 	},
- };
- 
-+static const struct renesas_sdhi_of_data of_rza2_compatible = {
-+	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_CLK_ACTUAL |
-+			  TMIO_MMC_HAVE_CBSY,
-+	.tmio_ocr_mask	= MMC_VDD_32_33,
-+	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ |
-+			  MMC_CAP_CMD23,
-+	.bus_shift	= 2,
-+	.scc_offset	= 0 - 0x1000,
-+	.taps		= rcar_gen3_scc_taps,
-+	.taps_num	= ARRAY_SIZE(rcar_gen3_scc_taps),
-+	/* DMAC can handle 0xffffffff blk count but only 1 segment */
-+	.max_blk_count	= 0xffffffff,
-+	.max_segs	= 1,
-+};
-+
- static const struct renesas_sdhi_of_data of_rcar_r8a7795_compatible = {
- 	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_CLK_ACTUAL |
- 			  TMIO_MMC_HAVE_CBSY | TMIO_MMC_MIN_RCAR2 |
-@@ -113,6 +131,7 @@ static const struct renesas_sdhi_of_data of_rcar_gen3_compatible = {
- };
- 
- static const struct of_device_id renesas_sdhi_internal_dmac_of_match[] = {
-+	{ .compatible = "renesas,sdhi-r7s9210", .data = &of_rza2_compatible, },
- 	{ .compatible = "renesas,sdhi-r8a7795", .data = &of_rcar_r8a7795_compatible, },
- 	{ .compatible = "renesas,sdhi-r8a7796", .data = &of_rcar_r8a7795_compatible, },
- 	{ .compatible = "renesas,rcar-gen3-sdhi", .data = &of_rcar_gen3_compatible, },
-@@ -171,7 +190,10 @@ renesas_sdhi_internal_dmac_start_dma(struct tmio_mmc_host *host,
- 				     struct mmc_data *data)
- {
- 	struct scatterlist *sg = host->sg_ptr;
--	u32 dtran_mode = DTRAN_MODE_BUS_WIDTH | DTRAN_MODE_ADDR_MODE;
-+	u32 dtran_mode = DTRAN_MODE_BUS_WIDTH;
-+
-+	if (!test_bit(SDHI_INTERNAL_DMAC_ADRR_MODE_FIXED, &global_flags))
-+		dtran_mode |= DTRAN_MODE_ADDR_MODE;
- 
- 	if (!dma_map_sg(&host->pdev->dev, sg, host->sg_len,
- 			mmc_get_dma_dir(data)))
-@@ -290,6 +312,8 @@ static const struct tmio_mmc_dma_ops renesas_sdhi_internal_dmac_dma_ops = {
-  */
- static const struct soc_device_attribute gen3_soc_whitelist[] = {
- 	/* specific ones */
-+	{ .soc_id = "r7s9210",
-+	  .data = (void *)BIT(SDHI_INTERNAL_DMAC_ADRR_MODE_FIXED) },
- 	{ .soc_id = "r8a7795", .revision = "ES1.*",
- 	  .data = (void *)BIT(SDHI_INTERNAL_DMAC_ONE_RX_ONLY) },
- 	{ .soc_id = "r8a7796", .revision = "ES1.0",
+> @@ -171,6 +178,8 @@ static void olpc_apsp_close(struct serio *port)
+>  		/* Disable interrupt 0 */
+>  		tmp = readl(priv->base + PJ_INTERRUPT_MASK);
+>  		writel(tmp | INT_0, priv->base + PJ_INTERRUPT_MASK);
+> +
+> +		clk_disable_unprepare(priv->clk);
+>  	}
+>  }
+>  
+> @@ -198,6 +207,10 @@ static int olpc_apsp_probe(struct platform_device *pdev)
+>  	if (priv->irq < 0)
+>  		return priv->irq;
+>  
+> +	priv->clk = devm_clk_get(&pdev->dev, "sp");
+> +	if (IS_ERR(priv->clk))
+> +		return PTR_ERR(priv->clk);
+> +
+>  	/* KEYBOARD */
+>  	kb_serio = kzalloc(sizeof(struct serio), GFP_KERNEL);
+>  	if (!kb_serio)
+> -- 
+> 2.19.0
+> 
+
 -- 
-2.16.1
-
+Dmitry
