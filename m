@@ -2,107 +2,195 @@ Return-Path: <SRS0=fkKI=MW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78A4FC43441
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Oct 2018 05:38:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D147C43441
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Oct 2018 06:12:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 423742085B
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Oct 2018 05:38:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 423742085B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id EE5EF2087D
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Oct 2018 06:12:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="SckED/wg";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="NlB30NYK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE5EF2087D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726607AbeJJM61 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Oct 2018 08:58:27 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:44137 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725837AbeJJM61 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Oct 2018 08:58:27 -0400
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <sha@pengutronix.de>)
-        id 1gA7Bs-0001qN-7C; Wed, 10 Oct 2018 07:37:48 +0200
-Received: from sha by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <sha@pengutronix.de>)
-        id 1gA7Bo-0007uF-RM; Wed, 10 Oct 2018 07:37:44 +0200
-Date:   Wed, 10 Oct 2018 07:37:44 +0200
-From:   Sascha Hauer <s.hauer@pengutronix.de>
-To:     Leonard Crestez <leonard.crestez@nxp.com>
-Cc:     "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "robh@kernel.org" <robh@kernel.org>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "abelvesa@linux.com" <abelvesa@linux.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v10 4/5] clk: imx: add imx composite clock
-Message-ID: <20181010053744.5pxrlcdxmmyisu62@pengutronix.de>
-References: <1539074230-27277-1-git-send-email-abel.vesa@nxp.com>
- <1539074230-27277-5-git-send-email-abel.vesa@nxp.com>
- <5c0cc4de8403fca17431a9382f7e34e8003f497b.camel@nxp.com>
+        id S1726485AbeJJNdT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Oct 2018 09:33:19 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:40638 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725837AbeJJNdT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Oct 2018 09:33:19 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 9351A60C63; Wed, 10 Oct 2018 06:12:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539151963;
+        bh=+T79VCL8rQMgdRg0vUhtPIRuPqt6d2LXW1Bs97epAGQ=;
+        h=From:Subject:To:Cc:References:Date:In-Reply-To:From;
+        b=SckED/wg7w7HP0hVQf29py+bQYSSQjl57s11X7TAsM//7A1ZRws80a9LlEMfGXpuB
+         j8FHGMXtOgz7dKhxRnIJua4UgUcA7mTRubWyDOLTiHIz4L50+7H5hDFNiRnCQynHUb
+         mj2nGQdybx/7pxkNI1b25kZnGlvbm+eKxwx2MyBA=
+Received: from [192.168.225.247] (unknown [49.32.132.157])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 95AB76021C;
+        Wed, 10 Oct 2018 06:12:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539151962;
+        bh=+T79VCL8rQMgdRg0vUhtPIRuPqt6d2LXW1Bs97epAGQ=;
+        h=From:Subject:To:Cc:References:Date:In-Reply-To:From;
+        b=NlB30NYKQnaDb0WUzXtwb4iuEg85MIxaJCYD824eSWOeFF7fEtf0QiCkYoUkIbLPA
+         nUhgo2d0FLkzqVkjonkJDEbkFSBFZkEqGNXJwbSwwEvPFA9Nx6O/y7mVfyE0hyWGz4
+         ETfsGlxdPEmufVIJPYWGNwtqz5mILHqBeEKrPoiY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 95AB76021C
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+From:   Taniya Das <tdas@codeaurora.org>
+Subject: Re: [PATCH v6] clk: qcom: Add lpass clock controller driver for
+ SDM845
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1538654546-31204-1-git-send-email-tdas@codeaurora.org>
+ <1538654546-31204-2-git-send-email-tdas@codeaurora.org>
+ <153896666821.119890.13143150697797456341@swboyd.mtv.corp.google.com>
+ <ba0d7d92-5ad9-2dcf-c5a5-21332df193f0@codeaurora.org>
+ <153911832719.119890.11984877060665330428@swboyd.mtv.corp.google.com>
+Message-ID: <7d4012b9-e71d-f114-b228-7198f07ea767@codeaurora.org>
+Date:   Wed, 10 Oct 2018 11:42:27 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5c0cc4de8403fca17431a9382f7e34e8003f497b.camel@nxp.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 07:37:28 up 119 days, 14:46, 77 users,  load average: 0.09, 0.10,
- 0.09
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+In-Reply-To: <153911832719.119890.11984877060665330428@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Oct 09, 2018 at 10:56:14PM +0000, Leonard Crestez wrote:
-> On Tue, 2018-10-09 at 08:37 +0000, Abel Vesa wrote:
-> > +struct clk *imx_clk_composite_8m_flags(const char *name,
-> > +					const char **parent_names,
-> > +					int num_parents, void __iomem *reg,
-> > +					unsigned long flags);
-> > +
-> > +#define __imx_clk_composite_8m(name, parent_names, reg, flags) \
-> > +	imx_clk_composite_8m_flags(name, parent_names, \
-> > +		ARRAY_SIZE(parent_names), reg, \
-> > +		flags | CLK_SET_RATE_NO_REPARENT | CLK_OPS_PARENT_ENABLE)
-> > +
-> > +#define imx_clk_composite_8m(name, parent_names, reg) \
-> > +	__imx_clk_composite_8m(name, parent_names, reg, 0)
-> > +
-> > +#define imx_clk_composite_8m_critical(name, parent_names, reg) \
-> > +	__imx_clk_composite_8m(name, parent_names, reg, CLK_IS_CRITICAL)
+
+
+On 10/10/2018 2:22 AM, Stephen Boyd wrote:
+> Quoting Taniya Das (2018-10-09 10:26:38)
+>> Hello Stephen,
+>>
+>> On 10/8/2018 8:14 AM, Stephen Boyd wrote:
+>>> Quoting Taniya Das (2018-10-04 05:02:26)
+>>>> Add support for the lpass clock controller found on SDM845 based devices.
+>>>> This would allow lpass peripheral loader drivers to control the clocks to
+>>>> bring the subsystem out of reset.
+>>>> LPASS clocks present on the global clock controller would be registered
+>>>> with the clock framework based on the device tree flag. Also do not gate
+>>>> these clocks if they are left unused.
+>>>
+>>> Why not gate them? This statement states what the code is doing, not why
+>>> it's doing it which is the more crucial information that should be
+>>> described in the commit text. Also, please add a comment about it to the
+>>> code next to the flag.
+>>>
+>>> I am concerned that it doesn't make any sense though, so probably it
+>>> shouldn't be marked as CLK_IGNORE_UNUSED and it's papering over some
+>>> other larger bug that needs to be fixed.
+>>>
+>>
+>> It does not have any bug, it is just that to access these lpass
+>> registers we would need the GCC lpass registers to be enabled. I would
+>> update the same in the commit text.
+>>
+>> During clock late_init these clocks should not be accessed to check the
+>> clock status as they would result in unclocked access. The client would
+>> request these clocks in the correct order and it would not have any issue.
+>>
 > 
-> Does anyone else think that the "8m" would be prettier next to imx
-> rather than as a suffix? Using imx8m_clk_composite* and
-> imx7ulp_clk_composite* makes more sense to me.
+> That seems like the bug right there. If the LPASS registers can't be
+> accessed unless the clks in GCC are enabled then this driver needs to
+> turn the clks on before reading/writing registers. Marking the clks as
+> ignore unused is skipping around the real problem.
+> 
 
-+1
+If the driver requests for the clocks they would maintain the order. But 
+if the clock late init call is invoked before the driver requests, there 
+is no way I could manage this dependency, that is the only reason to 
+mark them unused.
 
-Sascha
+>>
+>>>>
+>>>> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+>>>> ---
+>>>> diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
+>>>> index 08d593e..6379b8b 100644
+>>>> --- a/drivers/clk/qcom/gcc-sdm845.c
+>>>> +++ b/drivers/clk/qcom/gcc-sdm845.c
+>>>> @@ -3583,6 +3611,13 @@ static int gcc_sdm845_probe(struct platform_device *pdev)
+>>>>           if (ret)
+>>>>                   return ret;
+>>>>
+>>>> +       if (!of_property_read_bool(pdev->dev.of_node, "qcom,lpass-protected")) {
+>>>> +               gcc_sdm845_clocks[GCC_LPASS_Q6_AXI_CLK] =
+>>>> +                       &gcc_lpass_q6_axi_clk.clkr;
+>>>> +               gcc_sdm845_clocks[GCC_LPASS_SWAY_CLK] =
+>>>> +                       &gcc_lpass_sway_clk.clkr;
+> 
+> For all intents and purposes could we not just mark these two as
+> CLK_IS_CRITICAL and then let the LPASS turn these on and off when it
+> cares (does it ever do so)? Or even just turn them on once in probe here
+> with direct register writes and then not care anymore to touch them
+> again? Or do we need to turn these clks on again later on when the
+> subsystem crashes to read/write the registers and cycle the clks back on
+> and off?
+> 
+>>>> +       }
+>>>> +
+>>>>           return qcom_cc_really_probe(pdev, &gcc_sdm845_desc, regmap);
+>>>>    }
+>>>>
+>>>> diff --git a/drivers/clk/qcom/lpasscc-sdm845.c b/drivers/clk/qcom/lpasscc-sdm845.c
+>>>> new file mode 100644
+>>>> index 0000000..f7b9b0f
+>>>> --- /dev/null
+>>>> +++ b/drivers/clk/qcom/lpasscc-sdm845.c
+>>>> +               },
+>>>> +       },
+>>>> +};
+>>>> +
+>>>> +static int lpass_clocks_sdm845_probe(struct platform_device *pdev, int index,
+>>>> +                                    const struct qcom_cc_desc *desc)
+>>>> +{
+>>>> +       struct regmap *regmap;
+>>>> +       struct resource *res;
+>>>> +       void __iomem *base;
+>>>> +
+>>>> +       res = platform_get_resource(pdev, IORESOURCE_MEM, index);
+>>>> +       base = devm_ioremap_resource(&pdev->dev, res);
+>>>> +       if (IS_ERR(base))
+>>>> +               return PTR_ERR(base);
+>>>> +
+>>>> +       regmap = devm_regmap_init_mmio(&pdev->dev, base, desc->config);
+>>>> +       if (IS_ERR(regmap))
+>>>> +               return PTR_ERR(regmap);
+>>>
+>>> If this happens again in the future we should move this into the
+>>> common.c file and let qcom_cc_probe_index() exist.
+>>>
+>>
+>> Yes, I agree, could submit a patch to add the new function and then
+>> clean it up.
+> 
+> Ok, but please don't do anything now because we don't care yet.
+> 
 
 -- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
+
+--
