@@ -2,152 +2,109 @@ Return-Path: <SRS0=eZMu=MX=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A26E3C46463
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Oct 2018 07:19:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16037C32788
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Oct 2018 07:36:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65E3920841
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Oct 2018 07:19:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uh67muk5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65E3920841
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 0A6D02085B
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Oct 2018 07:36:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A6D02085B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rock-chips.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727215AbeJKOp2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 Oct 2018 10:45:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33218 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726008AbeJKOp1 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 11 Oct 2018 10:45:27 -0400
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9D08720841;
-        Thu, 11 Oct 2018 07:19:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539242369;
-        bh=bfIoTAeZnIU4SbKiAAJRAQ4ELaMwo9AbHJaFI46F32U=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=Uh67muk5ityVGvT8v256PnsIPp1+zQ3fltxO3SQ99MsbslOZV+po1txlFG+J9TWWe
-         wZjovQO2OZ+3mOqAqWuSP9Jv+lyOBcJ786uAZxSg87cNqWbapRnR8FS40RKmGfLllw
-         EAke/9V1SHHXFlyVSAXROaqhowLxoPHo4WALbOec=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Vinod <vkoul@kernel.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20181008035144.GD2372@vkoul-mobl>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Shefali Jain <shefjain@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Anu Ramanathan <anur@codeaurora.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>
-References: <20180921185936.9590-1-vkoul@kernel.org>
- <20180921185936.9590-2-vkoul@kernel.org>
- <153841434099.119890.3912925112860077471@swboyd.mtv.corp.google.com>
- <20181003062103.GN19792@vkoul-mobl>
- <153896630923.119890.17169150168947487135@swboyd.mtv.corp.google.com>
- <20181008035144.GD2372@vkoul-mobl>
-Message-ID: <153924236897.5275.4858274509208170603@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH 2/2] clk: qcom: gcc: Add global clock controller driver for QCS404
-Date:   Thu, 11 Oct 2018 00:19:28 -0700
+        id S1726311AbeJKPCH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 Oct 2018 11:02:07 -0400
+Received: from lucky1.263xmail.com ([211.157.147.134]:33966 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726135AbeJKPCH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Oct 2018 11:02:07 -0400
+X-Greylist: delayed 463 seconds by postgrey-1.27 at vger.kernel.org; Thu, 11 Oct 2018 11:02:05 EDT
+Received: from shawn.lin?rock-chips.com (unknown [192.168.167.153])
+        by lucky1.263xmail.com (Postfix) with ESMTP id 37CAC2CD;
+        Thu, 11 Oct 2018 15:28:18 +0800 (CST)
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 1
+X-MAIL-DELIVERY: 0
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+Received: from localhost.localdomain (localhost [127.0.0.1])
+        by smtp.263.net (Postfix) with ESMTPA id D5D003B4;
+        Thu, 11 Oct 2018 15:28:16 +0800 (CST)
+X-IP-DOMAINF: 1
+X-RL-SENDER: shawn.lin@rock-chips.com
+X-FST-TO: heiko@sntech.de
+X-SENDER-IP: 58.22.7.114
+X-LOGIN-NAME: shawn.lin@rock-chips.com
+X-UNIQUE-TAG: <34d9d4df5a45e49f42c554f1c9e8da8b>
+X-ATTACHMENT-NUM: 0
+X-SENDER: lintao@rock-chips.com
+X-DNS-TYPE: 0
+Received: from localhost.localdomain (unknown [58.22.7.114])
+        by smtp.263.net (Postfix) whith ESMTP id 270034B9X3N;
+        Thu, 11 Oct 2018 15:28:17 +0800 (CST)
+From:   Shawn Lin <shawn.lin@rock-chips.com>
+To:     Heiko Stuebner <heiko@sntech.de>
+Cc:     linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org,
+        Finley Xiao <finley.xiao@rock-chips.com>,
+        Elaine Zhang <zhangqing@rock-chips.com>,
+        Ziyuan Xu <xzy.xu@rock-chips.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>
+Subject: [PATCH] clk: rockchip: fix wrong mmc sample phase shift for rk3328
+Date:   Thu, 11 Oct 2018 15:26:43 +0800
+Message-Id: <1539242803-68356-1-git-send-email-shawn.lin@rock-chips.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Vinod (2018-10-07 20:51:44)
-> On 07-10-18, 19:38, Stephen Boyd wrote:
-> > Quoting Vinod (2018-10-02 23:21:03)
-> > > Hi Stephen,
-> > > =
+From: Ziyuan Xu <xzy.xu@rock-chips.com>
 
-> > > Thanks for the comments,
-> > > =
+mmc sample shift is 0 for RK3328 referring to the TRM.
+So fix them.
 
-> > > On 01-10-18, 10:19, Stephen Boyd wrote:
-> > > > Quoting Vinod Koul (2018-09-21 11:59:36)
-> > > > > From: Shefali Jain <shefjain@codeaurora.org>
-> > > > > =
+Signed-off-by: Ziyuan Xu <xzy.xu@rock-chips.com>
+Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+---
 
-> > > > > Add the clocks supported in global clock controller which clock t=
-he
-> > > > > peripherals like BLSPs, SDCC, USB, MDSS etc. Register all the clo=
-cks
-> > > > > to the clock framework for the clients to be able to request for =
-them.
-> > > > > =
+ drivers/clk/rockchip/clk-rk3328.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-> > > > > Signed-off-by: Shefali Jain <shefjain@codeaurora.org>
-> > > > > Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> > > > > Co-developed-by: Taniya Das <tdas@codeaurora.org>
-> > > > > Signed-off-by: Anu Ramanathan <anur@codeaurora.org>
-> > > > > [rebase and tidyup for upstream]
-> > > > =
+diff --git a/drivers/clk/rockchip/clk-rk3328.c b/drivers/clk/rockchip/clk-rk3328.c
+index 252366a..2c54266 100644
+--- a/drivers/clk/rockchip/clk-rk3328.c
++++ b/drivers/clk/rockchip/clk-rk3328.c
+@@ -813,22 +813,22 @@ enum rk3328_plls {
+ 	MMC(SCLK_SDMMC_DRV, "sdmmc_drv", "clk_sdmmc",
+ 	    RK3328_SDMMC_CON0, 1),
+ 	MMC(SCLK_SDMMC_SAMPLE, "sdmmc_sample", "clk_sdmmc",
+-	    RK3328_SDMMC_CON1, 1),
++	    RK3328_SDMMC_CON1, 0),
+ 
+ 	MMC(SCLK_SDIO_DRV, "sdio_drv", "clk_sdio",
+ 	    RK3328_SDIO_CON0, 1),
+ 	MMC(SCLK_SDIO_SAMPLE, "sdio_sample", "clk_sdio",
+-	    RK3328_SDIO_CON1, 1),
++	    RK3328_SDIO_CON1, 0),
+ 
+ 	MMC(SCLK_EMMC_DRV, "emmc_drv", "clk_emmc",
+ 	    RK3328_EMMC_CON0, 1),
+ 	MMC(SCLK_EMMC_SAMPLE, "emmc_sample", "clk_emmc",
+-	    RK3328_EMMC_CON1, 1),
++	    RK3328_EMMC_CON1, 0),
+ 
+ 	MMC(SCLK_SDMMC_EXT_DRV, "sdmmc_ext_drv", "clk_sdmmc_ext",
+ 	    RK3328_SDMMC_EXT_CON0, 1),
+ 	MMC(SCLK_SDMMC_EXT_SAMPLE, "sdmmc_ext_sample", "clk_sdmmc_ext",
+-	    RK3328_SDMMC_EXT_CON1, 1),
++	    RK3328_SDMMC_EXT_CON1, 0),
+ };
+ 
+ static const char *const rk3328_critical_clocks[] __initconst = {
+-- 
+1.9.1
 
-> > > > Who did the tidying?
-> > > =
-
-> > > both of us :)
-> > =
-
-> > OK, please add the username of both people per the kernel sign off
-> > standards.
-> > =
-
-> > > > > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > > > > Signed-off-by: Vinod Koul <vkoul@kernel.org>
-> =
-
-> Sorry not sure I understand, Bjorn and me did cleanup and we signed-off
-> per process, did I miss something?
-
-I mean doing something like:
-
-[bjorn.andersson@linaro.org: Clean and tidy]
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-[vkoul@kernel.org: Clean and tidy even more]
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
-
-Would be the kernel standard for maintainer tags.
-
-> =
-
-> > > > > +       [GCC_USB_HS_PHY_CFG_AHB_CLK] =3D &gcc_usb_hs_phy_cfg_ahb_=
-clk.clkr,
-> > > > > +       [GCC_USB_HS_SYSTEM_CLK] =3D &gcc_usb_hs_system_clk.clkr,
-> > > > > +       [GFX3D_CLK_SRC] =3D &gfx3d_clk_src.clkr,
-> > > > > +       [GP1_CLK_SRC] =3D &gp1_clk_src.clkr,
-> > > > =
-
-> > > > Why are some of these missing GCC_ prefix?
-> > > =
-
-> > > will add..
-> > =
-
-> > Thanks!
-> =
-
-> Btw Taniya also commented on this, do you want this as GCC_ or as per hw
-> documentation?
-> =
-
-
-I don't care. Either way is fine with me.
 
