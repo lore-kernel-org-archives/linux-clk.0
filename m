@@ -2,135 +2,90 @@ Return-Path: <SRS0=EEPi=MY=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1ED1C67877
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Oct 2018 17:35:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28F5BC67877
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Oct 2018 17:42:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E03E21470
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Oct 2018 17:35:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DAAB62147C
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Oct 2018 17:42:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZRhvvDPn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E03E21470
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kNyJ+DJl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAAB62147C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727470AbeJMBJT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 12 Oct 2018 21:09:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57640 "EHLO mail.kernel.org"
+        id S1726788AbeJMBPx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 12 Oct 2018 21:15:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59392 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726665AbeJMBJT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 12 Oct 2018 21:09:19 -0400
+        id S1725854AbeJMBPx (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 12 Oct 2018 21:15:53 -0400
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BD07E21470;
-        Fri, 12 Oct 2018 17:35:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5AD4D20865;
+        Fri, 12 Oct 2018 17:42:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539365744;
-        bh=Rgt1QL6cPUerUj+FNhXWL/Yz8dn6bcl8zgyM915Sbnw=;
+        s=default; t=1539366137;
+        bh=IEwEL0ecmTw4TnbGarl4OUsbQV5zjeuwrstOqlLC56M=;
         h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=ZRhvvDPnAvqj0e+JSfSGZT6Hyxc/vr+XnqjED0B9lf7jZpUvA9nUqXM04O5SBl21W
-         HfvPGgJVbQvUBcZMxyvuoTnVUhcaopPy0asSWGknSe4ZQY4bUNdzBdibQXsOQ6DK5d
-         umF1vqLfG7UojurDT2PbLabSiEiauJgfhtWkVQCw=
+        b=kNyJ+DJlBycKdxZzOhajBCbe1lnk0uyutC16iU8crsWN6i6vMfwSgoq4EKcUzD0Nr
+         5/IY41lnH4bqyKkbNwp1xfnQhYgzBLew+Z4KiQH+kVsSLBNSu8PU6GfnyZp3u7ccez
+         NN00v7W7P8B4f6GL+o31p8cDrFp7jzNIXbrMZTi0=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>
+To:     Gregory CLEMENT <gregory.clement@bootlin.com>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <7d4012b9-e71d-f114-b228-7198f07ea767@codeaurora.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1538654546-31204-1-git-send-email-tdas@codeaurora.org>
- <1538654546-31204-2-git-send-email-tdas@codeaurora.org>
- <153896666821.119890.13143150697797456341@swboyd.mtv.corp.google.com>
- <ba0d7d92-5ad9-2dcf-c5a5-21332df193f0@codeaurora.org>
- <153911832719.119890.11984877060665330428@swboyd.mtv.corp.google.com>
- <7d4012b9-e71d-f114-b228-7198f07ea767@codeaurora.org>
-Message-ID: <153936574404.5275.10513827793530511886@swboyd.mtv.corp.google.com>
+In-Reply-To: <20180922181709.13007-7-gregory.clement@bootlin.com>
+Cc:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        =?utf-8?q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>
+References: <20180922181709.13007-1-gregory.clement@bootlin.com>
+ <20180922181709.13007-7-gregory.clement@bootlin.com>
+Message-ID: <153936613666.5275.6122138233361141260@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.7
-Subject: Re: [PATCH v6] clk: qcom: Add lpass clock controller driver for SDM845
-Date:   Fri, 12 Oct 2018 10:35:44 -0700
+Subject: Re: [PATCH 6/6] arm64: dts: marvell: Add cpu clock node on Armada 7K/8K
+Date:   Fri, 12 Oct 2018 10:42:16 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Taniya Das (2018-10-09 23:12:27)
-> =
++Rob
 
-> =
+Quoting Gregory CLEMENT (2018-09-22 11:17:09)
+> diff --git a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi b/arch/arm64/b=
+oot/dts/marvell/armada-ap806.dtsi
+> index 4a65e4e830aa..27c840e91abe 100644
+> --- a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
+> +++ b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
+> @@ -280,6 +280,12 @@
+>                                 #address-cells =3D <1>;
+>                                 #size-cells =3D <1>;
+>  =
 
-> On 10/10/2018 2:22 AM, Stephen Boyd wrote:
-> > Quoting Taniya Das (2018-10-09 10:26:38)
-> >> Hello Stephen,
-> >>
-> >> On 10/8/2018 8:14 AM, Stephen Boyd wrote:
-> >>> Quoting Taniya Das (2018-10-04 05:02:26)
-> >>>> Add support for the lpass clock controller found on SDM845 based dev=
-ices.
-> >>>> This would allow lpass peripheral loader drivers to control the cloc=
-ks to
-> >>>> bring the subsystem out of reset.
-> >>>> LPASS clocks present on the global clock controller would be registe=
-red
-> >>>> with the clock framework based on the device tree flag. Also do not =
-gate
-> >>>> these clocks if they are left unused.
-> >>>
-> >>> Why not gate them? This statement states what the code is doing, not =
-why
-> >>> it's doing it which is the more crucial information that should be
-> >>> described in the commit text. Also, please add a comment about it to =
-the
-> >>> code next to the flag.
-> >>>
-> >>> I am concerned that it doesn't make any sense though, so probably it
-> >>> shouldn't be marked as CLK_IGNORE_UNUSED and it's papering over some
-> >>> other larger bug that needs to be fixed.
-> >>>
-> >>
-> >> It does not have any bug, it is just that to access these lpass
-> >> registers we would need the GCC lpass registers to be enabled. I would
-> >> update the same in the commit text.
-> >>
-> >> During clock late_init these clocks should not be accessed to check the
-> >> clock status as they would result in unclocked access. The client would
-> >> request these clocks in the correct order and it would not have any is=
-sue.
-> >>
-> > =
+> +                               cpu_clk: clock-cpu {
+> +                                       compatible =3D "marvell,ap806-cpu=
+-clock";
+> +                                       clocks =3D <&ap_clk 0>, <&ap_clk =
+1>;
+> +                                       #clock-cells =3D <1>;
+> +                               };
 
-> > That seems like the bug right there. If the LPASS registers can't be
-> > accessed unless the clks in GCC are enabled then this driver needs to
-> > turn the clks on before reading/writing registers. Marking the clks as
-> > ignore unused is skipping around the real problem.
-> > =
-
-> =
-
-> If the driver requests for the clocks they would maintain the order. But =
-
-> if the clock late init call is invoked before the driver requests, there =
-
-> is no way I could manage this dependency, that is the only reason to =
-
-> mark them unused.
-> =
-
-
-Which driver are we talking about here? The lpass clk driver? Presumably
-the lpass clk driver would request the GCC clks and turn them on in
-probe and then register any lpass clks. If the lpass clk driver probes
-bfeore late init, then the gcc clks will be enabled and everything
-works, and if the lpass clk driver probes after late init then the clks
-that can't be touched without gcc clks enabled won't be registered, and
-then they won't be touched. What goes wrong?
-
+This looks like the wrong place because there isn't a reg property. It
+should go to the root of the tree. And then it looks like we're adding
+something to DT to get a driver to probe, which is improper DT design.
 
