@@ -2,146 +2,101 @@ Return-Path: <SRS0=EEPi=MY=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10699C6783C
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Oct 2018 10:44:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16F22C43441
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Oct 2018 11:08:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5B562087D
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Oct 2018 10:44:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MuKYxT3W"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5B562087D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id DA6442077C
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Oct 2018 11:08:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA6442077C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728009AbeJLSQF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 12 Oct 2018 14:16:05 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:43361 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726665AbeJLSQE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 Oct 2018 14:16:04 -0400
-Received: by mail-wr1-f68.google.com with SMTP id n1-v6so12900990wrt.10;
-        Fri, 12 Oct 2018 03:44:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=TG27+xIK25GzwB3sLm2rIdsHlo9uLNjnjrSgSL3ZnIA=;
-        b=MuKYxT3WxdCe3DNB4E+EIrsXFel+QDJZLORESJgPvIaGSwL/9W2f5bkeBEp/d6ZflK
-         huEIqSLTUawcjlyD8/tLviy+4aExa3LRzi1zWMMfqQkELfEnlLC8e6yXyY34kTCrB9cw
-         uW2Ol2Ph8x1XzqnbKXfuIhdvpBQm9yy7cgddMPSz6Cl48KnYbnSKt9MbCAmBWGw4enQC
-         m5lKsOLDctFYJWDWVylYuqBTdQ+W2V628P6Ssgm/obW1Jp5S50cNwAZIsBT3jXpXAypa
-         +Zpn+xej+fVe0gCw3e/CGyLGKeeJa8S663VY3CVAfwLxfzetb0kJcL0xlpDWAHghUylD
-         +rRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=TG27+xIK25GzwB3sLm2rIdsHlo9uLNjnjrSgSL3ZnIA=;
-        b=FP019INhDKYxDdAoLk4mmJpUPyeCcquWv3eCG07Gfj7BT34p+VM3D0MLq/Y0pOkr46
-         vYgXbbA1C1H1umd4W9YJJ2JRpmBN78VYxUXayDqUICvJHb4HVrqK8cP9Y3bCiKT1gbSA
-         jDb0N3sszE9NFTGGBFESnZi4MTpvU399il4iyRGSFkni7xwVb1HmICOteDBvE4t63TUj
-         mjtucF5fk0IY/SaIocP2+BD7bMzY/ybxHjl2qpdSMMJQF/ghLDM6olGNjZrdtisL82Hg
-         cKIre1p8bqU60nM+M7K3CVg2ZtZRpHZnQaJ299PXFEe+OQZx6ivo2hROdkQ3itHoeo80
-         teIg==
-X-Gm-Message-State: ABuFfogKCQCMdZBRI25SwLwJt0+p6DlzRxFMVahg8WAooGbQQ7Wl+ffb
-        QKp0Z1rStd1MrkRuwEgORYo=
-X-Google-Smtp-Source: ACcGV600/DfgP3odqNjuoljwtfkJMsad/+0s5NUbtEdoHcQeyydpu8eODNn904bIOnkQFF3K3l/mmA==
-X-Received: by 2002:a5d:4c4d:: with SMTP id n13-v6mr4475150wrt.120.1539341054544;
-        Fri, 12 Oct 2018 03:44:14 -0700 (PDT)
-Received: from localhost (p2E5BEEEA.dip0.t-ipconnect.de. [46.91.238.234])
-        by smtp.gmail.com with ESMTPSA id j46-v6sm1139280wre.91.2018.10.12.03.44.13
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 12 Oct 2018 03:44:14 -0700 (PDT)
-Date:   Fri, 12 Oct 2018 12:44:13 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        id S1727652AbeJLSjz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 12 Oct 2018 14:39:55 -0400
+Received: from sauhun.de ([88.99.104.3]:46522 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725854AbeJLSjz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 12 Oct 2018 14:39:55 -0400
+Received: from localhost (p54B3365E.dip0.t-ipconnect.de [84.179.54.94])
+        by pokefinder.org (Postfix) with ESMTPSA id CC0A82C3256;
+        Fri, 12 Oct 2018 13:07:58 +0200 (CEST)
+Date:   Fri, 12 Oct 2018 13:07:55 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Chris Brandt <chris.brandt@renesas.com>
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Jonathan Corbet <corbet@lwn.net>, od@zcrc.me,
-        Mathieu Malaterre <malat@debian.org>,
-        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-mips@linux-mips.org, linux-doc@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v7 14/24] pwm: jz4740: Drop dependency on MACH_INGENIC,
- use COMPILE_TEST
-Message-ID: <20181012104413.GL9162@ulmo>
-References: <20180821171635.22740-1-paul@crapouillou.net>
- <20180821171635.22740-15-paul@crapouillou.net>
- <20181012104150.GH9162@ulmo>
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-clk@vger.kernel.org, linux-mmc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v3 2/3] mmc: renesas_sdhi_internal_dmac: Add R7S9210
+ support
+Message-ID: <20181012110755.qdnevfoyq5qymf42@ninjato>
+References: <20181010150642.73890-1-chris.brandt@renesas.com>
+ <20181010150642.73890-3-chris.brandt@renesas.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="KIbT1ud6duwZIwNL"
+        protocol="application/pgp-signature"; boundary="hiadxleck5bwbuvf"
 Content-Disposition: inline
-In-Reply-To: <20181012104150.GH9162@ulmo>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181010150642.73890-3-chris.brandt@renesas.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---KIbT1ud6duwZIwNL
+--hiadxleck5bwbuvf
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 12, 2018 at 12:41:50PM +0200, Thierry Reding wrote:
-> On Tue, Aug 21, 2018 at 07:16:25PM +0200, Paul Cercueil wrote:
-> > Depending on MACH_INGENIC prevent us from creating a generic kernel that
-> > works on more than one MIPS board. Instead, we just depend on MIPS being
-> > set.
-> >=20
-> > On other architectures, this driver can still be built, thanks to
-> > COMPILE_TEST. This is used by automated tools to find bugs, for
-> > instance.
-> >=20
-> > Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> > ---
-> >=20
-> > Notes:
-> >      v5: New patch
-> >    =20
-> >      v6: No change
-> >    =20
-> >      v7: No change
-> >=20
-> >  drivers/pwm/Kconfig | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> Acked-by: Thierry Reding <treding@nvidia.com>
+Hi Chris,
 
-Again, technically:
+> +/* RZ/A2 does not have the ADRR_MODE bit */
+> +#define SDHI_INTERNAL_DMAC_ADRR_MODE_FIXED 2
 
-Acked-by: Thierry Reding <thierry.reding@gmail.com>
+First, there is a typo: s/ADRR/ADDR/g
 
---KIbT1ud6duwZIwNL
+Also, I think it would make the code much more comprehensible if this
+macro was named SDHI_INTERNAL_DMAC_ADDR_MODE_BROKEN. Or maybe
+SDHI_INTERNAL_DMAC_FIXED_ADDR_MODE_BROKEN. Currently, on first read I
+thought this mode was fixed on this SoC and broken on all the others and
+was confused.
+
+What do you think?
+
+Rest looks okay to me!
+
+Regards,
+
+   Wolfram
+
+
+--hiadxleck5bwbuvf
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlvAevwACgkQ3SOs138+
-s6GelQ/+IO3/3WkTMSnpQ2QJHnzotuHHGdyWg9WiVsJXTCWZBd3gXvHrg8HwLrDH
-DrxXd4eh/0ZJLoY5/HO0UdtsWcSkCm5DyL3UrZ8WeIYjxZAQGTnxsHGip1yMnOtN
-grZXhj171MGsvyJlnjULrWYRjOKQaHlMNusp1J54zLH9gsfKAiv3kjhunxPTCfWT
-5yxsy7dAlKp2mlwKg5nT3PFEJvRIk803EvKcivowpSIzhiK5uijW0vWYM/KpyGUJ
-1zHK1HJsm097AJrb1d7MXbVx72uMjclZTmVk8RXgqESYGOSHqt5LdenA2xlqUwZ5
-Myp5bbr2I0F45H8A8NCw7BYQwXUkSLoCLw+Up9U142QAEjG02rV09vgBzC2gAbxB
-piSs6XMY5IHmf6oR7ujMLM/14epj1BdrGPwG/VH7dSKt+VERC6QZ4eNYdyOUzkHr
-RtdrCk2Vol8cedHbk70hdWQMMSY8sB3QurTCYaTg/ZIIyViUxR/lu2Zf3xwFqbt7
-w/+ICttqjsY750sU/aFUv7lIS40skAgYEIPXxu3Nj95nkaWmrEtfvFQ7YJ+GkPgT
-5j4g6cStKFoJ498CDkZGThTGD8Eyb5vJZGFMS768xKdlRkXajXOwoP9cSuqBJGaS
-/IbRlVmrzOy7/VYQzJNWzwfEUz+6a5CUi51+6na99M/eT0xsBDE=
-=yYfr
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlvAgIcACgkQFA3kzBSg
+Kbbm1w//UEi+13JYUznxfmxVXj9qbxY2IDh2wOJVgiRXeMGy4J3WtyLbn5Vtk/Rs
+ZClhLg3ZxQqNpxEmDuBzxLGCF0GPsOzTKYXumgTVNCe6seKVuEvgLRwMRIaInDUg
+yvDguToE3rLXQM8y7exAIPlCnyQzJrM2c/RNvP79hzva8tF09DJxJkhKdBLgvRaV
+BfHIxxtOAFzYUhBLrNHoUN0pA3A73/bkifVsHALOfRJar1xJbKeLQumbyb5Lb0wR
+94kmqsP13nTCL+caFNdeUsBngOlbDxN2Ehxd4577rcD6yt09gmXRLzONTwIQJYrH
+PXhnt15jGn+faKxoGkfWQN/+2b5KFqKoeOHWJNnNCw6XIFhXekd09AnBCLQu9AgU
+CBIvGWlbPVLWzXxoZf46A+uxpH9GQipCl4gM7NMTrv9LqYU9QvK0+feJ0Mk2GHKX
+RUnjvhhWqHr+q22QoF56nZRGidFuhWrJW4zHWAGIethcXGr254iotYcuiEAFoOtF
+WIEVbD5pO84QQnMXOnXHJ94Es3TgRmcF+PkcPJeZwB7oaJMFZ3pxKA/+qItrZoH+
+ZodETlGthNTs+EYZDtjSC6wlPu9nx6WFoua8uH9o7rjUrSZyE7M35xZrfRS6E64w
+jzYX5p7y5/L4D4oFIf1kwUw9AdmPpvYskpTCQtlGjSKZR2mHCxM=
+=11CP
 -----END PGP SIGNATURE-----
 
---KIbT1ud6duwZIwNL--
+--hiadxleck5bwbuvf--
