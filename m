@@ -2,112 +2,134 @@ Return-Path: <SRS0=EEPi=MY=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9BEBC67877
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Oct 2018 17:48:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C16CDC67877
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Oct 2018 17:53:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A655F21477
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Oct 2018 17:48:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8DD7721477
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Oct 2018 17:53:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ztApA76S"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A655F21477
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cx7+jb0+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DD7721477
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726917AbeJMBWf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 12 Oct 2018 21:22:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34176 "EHLO mail.kernel.org"
+        id S1726158AbeJMB1C (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 12 Oct 2018 21:27:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36082 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726665AbeJMBWf (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 12 Oct 2018 21:22:35 -0400
+        id S1725929AbeJMB1C (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 12 Oct 2018 21:27:02 -0400
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 42EC620644;
-        Fri, 12 Oct 2018 17:48:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 521892077C;
+        Fri, 12 Oct 2018 17:53:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539366538;
-        bh=Ak1iUSeun0foLkLjtG8/O0QnLK9KJ4noGMA0eOjORIA=;
+        s=default; t=1539366804;
+        bh=dEYbNONSKBvuOQkevEa86ChpTfk8xvzr5l2a4w2Z31Q=;
         h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=ztApA76SByyihZKveHAjaOW6ntJ1y2Ezx5YEpMWKHKEwJ86jbiJWksvW/GpMoaiLt
-         h2pyBEyvOSa9rlXoqRTpCNlBdfRD2MkgNklzq8nzXjZkL2OlZVuyS5LH68nekggYJ5
-         C3IDX6NTyWLMr0T74/gaik7i8x10V3s6000yV8Xs=
+        b=Cx7+jb0+RDv+OGwctjogP/yteW490Mi0uI/dulbpkwhJtf2dQZJEz+1NBLlNGQOi+
+         PkkG3PY7iC3dgCeS36qQl/XR15VJiNvceuNGTusG3IgenSnMicAFf9gdmWdr8u73s4
+         cq7CLEqYkAn04lmM2BK9iz+xz5moNlOuzLMoML1k=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh@kernel.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Weiyi Lu <weiyi.lu@mediatek.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <CAMRc=McmvkWEKV71pX9_PbNaYYf2VpovO2JrUQckWJ_0taqCZw@mail.gmail.com>
-Cc:     linux-clk <linux-clk@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-mm@kvack.org,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arend van Spriel <aspriel@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Huang Ying <ying.huang@intel.com>,
-        Joe Perches <joe@perches.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Roman Gushchin <guro@fb.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>
-References: <20180828093332.20674-1-brgl@bgdev.pl>
- <CAMRc=McmvkWEKV71pX9_PbNaYYf2VpovO2JrUQckWJ_0taqCZw@mail.gmail.com>
-Message-ID: <153936653758.5275.9529030954345523691@swboyd.mtv.corp.google.com>
+In-Reply-To: <20180920095727.11868-5-weiyi.lu@mediatek.com>
+Cc:     James Liao <jamesjj.liao@mediatek.com>,
+        Fan Chen <fan.chen@mediatek.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+        srv_heupstream@mediatek.com, Weiyi Lu <weiyi.lu@mediatek.com>
+References: <20180920095727.11868-1-weiyi.lu@mediatek.com>
+ <20180920095727.11868-5-weiyi.lu@mediatek.com>
+Message-ID: <153936680359.5275.14901579706860255114@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.7
-Subject: Re: [PATCH v2 0/4] devres: provide and use devm_kstrdup_const()
-Date:   Fri, 12 Oct 2018 10:48:57 -0700
+Subject: Re: [PATCH v1 3/3] clk: mediatek: mt2712: add pll reference support
+Date:   Fri, 12 Oct 2018 10:53:23 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Bartosz Golaszewski (2018-09-20 05:59:54)
-> 2018-08-28 11:33 GMT+02:00 Bartosz Golaszewski <brgl@bgdev.pl>:
-> > This series implements devm_kstrdup_const() together with some
-> > prerequisite changes and uses it in pmc-atom driver.
-> >
-> > v1 -> v2:
-> > - fixed the changelog in the patch implementing devm_kstrdup_const()
-> > - fixed the kernel doc
-> > - moved is_kernel_rodata() to asm-generic/sections.h
-> > - fixed constness
-> >
-> > Bartosz Golaszewski (4):
-> >   devres: constify p in devm_kfree()
-> >   mm: move is_kernel_rodata() to asm-generic/sections.h
-> >   devres: provide devm_kstrdup_const()
-> >   clk: pmc-atom: use devm_kstrdup_const()
-> >
-> >  drivers/base/devres.c          | 43 ++++++++++++++++++++++++++++++++--
-> >  drivers/clk/x86/clk-pmc-atom.c | 19 ++++-----------
-> >  include/asm-generic/sections.h | 14 +++++++++++
-> >  include/linux/device.h         |  5 +++-
-> >  mm/util.c                      |  7 ------
-> >  5 files changed, 63 insertions(+), 25 deletions(-)
-> >
-> > --
-> > 2.18.0
-> >
+Quoting Weiyi Lu (2018-09-20 02:57:27)
+> For some MT2712 projects, audpll could select another reference
+> clock source if there exists an extra Crystal Oscillators than
+> the default clk26m XTAL.
+> Declare with the property "mediatek,refclk-aud" to switch
+> the audpll reference clock.
+> And also support to modify the reference clock of all PLL with
+> property "mediatek,refclk" instead of the default source "clk26m".
 > =
 
-> If there are no objections - can this be picked up for 4.20?
-> =
+> Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+> ---
+> diff --git a/drivers/clk/mediatek/clk-mt2712.c b/drivers/clk/mediatek/clk=
+-mt2712.c
+> index e36f4aab634d..2a4db1718089 100644
+> --- a/drivers/clk/mediatek/clk-mt2712.c
+> +++ b/drivers/clk/mediatek/clk-mt2712.c
+[...]
+> +       size_t i;
+> +       u32 r;
+> +
+> +       base =3D of_iomap(node, 0);
+> +       if (base) {
+> +               sel_addr =3D base + 0x40;
+> +       } else {
+> +               pr_err("%s(): ioremap failed\n", __func__);
+> +               return;
+> +       }
 
+Nitpick: Write this as
 
-There are so many people on To: line who do you want to pick this up?
-Maybe you can send a pull request to Greg directly.
+	base =3D of_iomap();
+	if (!base)
+		return;
+	sel_addr =3D base + 0x40;
 
+> +
+> +       rc =3D of_parse_phandle_with_args(node, "mediatek,refclk",
+> +                       "#clock-cells", 0, &refclk);
+> +       if (!rc) {
+> +               of_property_read_string(refclk.np, "clock-output-names",
+> +                               &refclk_name);
+> +               for (i =3D 0; i < num_plls; i++)
+> +                       plls[i].parent_name =3D refclk_name;
+
+Use of_clk_parent_fill()?
+
+> +       }
+> +
+> +       rc =3D of_parse_phandle_with_args(node, "mediatek,refclk-aud",
+> +                       "#clock-cells", 0, &refclk_aud);
+
+This is odd. Is this a custom 'clocks' property? What's going on here?
+Why can't we use assigned clock parents for this?
+
+> +       if (!rc) {
+> +               of_property_read_string(refclk_aud.np, "clock-output-name=
+s",
+> +                               &refclk_aud_name);
+> +               if (strcmp(refclk_name, refclk_aud_name)) {
+> +                       plls[CLK_APMIXED_APLL1].parent_name =3D refclk_au=
+d_name;
+> +                       plls[CLK_APMIXED_APLL2].parent_name =3D refclk_au=
+d_name;
+> +                       r =3D readl(sel_addr) | 0x60000;
+> +               } else {
+> +                       r =3D readl(sel_addr) & ~0x60000;
+> +               }
+> +
+> +               writel(r, sel_addr);
+> +       }
+> +}
+> +
