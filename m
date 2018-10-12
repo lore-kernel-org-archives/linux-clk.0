@@ -3,110 +3,72 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66172C43441
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Oct 2018 12:13:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D946EC43441
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Oct 2018 12:29:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 375472086A
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Oct 2018 12:13:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 375472086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
+	by mail.kernel.org (Postfix) with ESMTP id 99A1B20868
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Oct 2018 12:29:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99A1B20868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728644AbeJLTpV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 12 Oct 2018 15:45:21 -0400
-Received: from sauhun.de ([88.99.104.3]:46976 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728145AbeJLTpV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 12 Oct 2018 15:45:21 -0400
-Received: from localhost (p54B3365E.dip0.t-ipconnect.de [84.179.54.94])
-        by pokefinder.org (Postfix) with ESMTPSA id 140252C3256;
-        Fri, 12 Oct 2018 14:13:08 +0200 (CEST)
-Date:   Fri, 12 Oct 2018 14:13:07 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Chris Brandt <Chris.Brandt@renesas.com>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
+        id S1728483AbeJLUCE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 12 Oct 2018 16:02:04 -0400
+Received: from relmlor4.renesas.com ([210.160.252.174]:16285 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727838AbeJLUCE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 Oct 2018 16:02:04 -0400
+Received: from unknown (HELO relmlir2.idc.renesas.com) ([10.200.68.152])
+  by relmlie3.idc.renesas.com with ESMTP; 12 Oct 2018 21:29:47 +0900
+Received: from relmlii2.idc.renesas.com (relmlii2.idc.renesas.com [10.200.68.66])
+        by relmlir2.idc.renesas.com (Postfix) with ESMTP id A94F78ECAF;
+        Fri, 12 Oct 2018 21:29:47 +0900 (JST)
+X-IronPort-AV: E=Sophos;i="5.54,372,1534777200"; 
+   d="scan'208";a="294981303"
+Received: from unknown (HELO rtamta01.rta.renesas.com) ([143.103.48.75])
+  by relmlii2.idc.renesas.com with ESMTP; 12 Oct 2018 21:29:45 +0900
+Received: from ubuntu.localdomain (unknown [143.103.58.43])
+        by rtamta01.rta.renesas.com (Postfix) with ESMTP id 1730F166;
+        Fri, 12 Oct 2018 12:29:41 +0000 (UTC)
+From:   Chris Brandt <chris.brandt@renesas.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH v3 2/3] mmc: renesas_sdhi_internal_dmac: Add R7S9210
- support
-Message-ID: <20181012121307.u3hwqmthoqllxd7r@ninjato>
-References: <20181010150642.73890-1-chris.brandt@renesas.com>
- <20181010150642.73890-3-chris.brandt@renesas.com>
- <20181012110755.qdnevfoyq5qymf42@ninjato>
- <TY1PR01MB1562B5DCB7298E72C96B92998AE20@TY1PR01MB1562.jpnprd01.prod.outlook.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="67l76gewuthmtrwx"
-Content-Disposition: inline
-In-Reply-To: <TY1PR01MB1562B5DCB7298E72C96B92998AE20@TY1PR01MB1562.jpnprd01.prod.outlook.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-clk@vger.kernel.org, linux-mmc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH v4 0/3] mmc: tmio_mmc: Add support for RZ/A2
+Date:   Fri, 12 Oct 2018 07:29:21 -0500
+Message-Id: <20181012122924.5543-1-chris.brandt@renesas.com>
+X-Mailer: git-send-email 2.16.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Basically the same HW block that was used in R-Car Gen 3 is used in
+RZ/A2 (with only a couple small differences).
 
---67l76gewuthmtrwx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Not sure if you're going to like the Kconfig change or not.
 
+Chris Brandt (3):
+  clk: renesas: r7s9210: Add SDHI clocks
+  mmc: renesas_sdhi_internal_dmac: Add R7S9210 support
+  dt-bindings: mmc: tmio_mmc: Document Renesas R7S9210
 
-> Even after you pointed that out...I had to stare real hard to see it. I=
-=20
-> guess the brain corrects what you see.
+ Documentation/devicetree/bindings/mmc/tmio_mmc.txt |  3 ++-
+ drivers/clk/renesas/r7s9210-cpg-mssr.c             |  5 ++++
+ drivers/mmc/host/Kconfig                           |  5 ++--
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c      | 28 ++++++++++++++++++++--
+ 4 files changed, 36 insertions(+), 5 deletions(-)
 
-Yes. c57d3e7a9391 ("i2c-dev: Fix typo in ioctl name reference") fixed
-something in 2015 which was around forever. I had to look twice at this
-patch as well.
+-- 
+2.16.1
 
-> I was getting information through someone that was not in the design
-> team. So to be fair to the chip design guys, I want to avoid the word
-> "broken". They took the bit out of the hardware manual, and since the
-> HW was designed to work either way (and the default register setting
-> is for fixed), I consider it an 'unsupported feature'.
->=20
-> So, how about a compromise of:
->=20
-> #define SDHI_INTERNAL_DMAC_ADDR_MODE_FIXED_ONLY 2
-
-Perfect. Now we nailed it, I think.
-
-> I don't think this applies to Gen3. This is just a RZ/A2 thing.
-
-OK. Thanks for the heads up!
-
-
---67l76gewuthmtrwx
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlvAj88ACgkQFA3kzBSg
-KbYuaxAArFozp5f24+QVGZNC4XF4NEZSJtz+JO5yJMOOtU5w+hBrIVPV+aF5ae6E
-T9znsxnPUV26TOBJeEvCGMSFyx5JQCfm9KlQ1ynKzpqtCk7fWd67ib+y34+tyRWh
-X16ygX0r7BV3PCyypwb+3Taat4hOntaEYPQjU8L1Yu5cG9o0P0OF9ESMz7gvNkJg
-NsGYsWtdqCtjiFviYyZvBaTHRdJ3oE1LNk04dTP2HG1ypziqutxB6s/dJJh3+5us
-rQHq/5jS8NJkQf3e129YCdN+YJr0zMd9ixZX2iMK0dXP5OxjUp/gW781uyxDL0OW
-RsRMKb1eywoOrWfrcgJ30/vaCpLHPaLK8FG4YsPBZ7lWE7OKoGFB0ZIo1rDyvDAi
-bX50ZHWMdFHWU7t3Ob2Vh917Lrjckgi28bFanfubodxb6Z9e1leEzstyFv54N4W/
-PN8dSEC+YTlvFLztOyFe4VJYgNO3gMQpQuAzKXyTm5aWW86YeZoXQ0Pi/vzx3MWu
-JWKEJXOMtJFU7TwDghXPFq8SpNTn2/Ou+pIGmXUcxJxB4WVdW52UjVqi2uGfRCun
-YDS4R0X+s7GEhvWhhvN6TsKigfKY2fPrjTCb0gO5cE8xZv10egs51rlOLuKUPlmJ
-I2pEG+icOeSWusj/lvyvruMe9gzpTQIN2CbZ24LmyZ70YYEtOVo=
-=O0B3
------END PGP SIGNATURE-----
-
---67l76gewuthmtrwx--
