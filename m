@@ -2,107 +2,135 @@ Return-Path: <SRS0=EEPi=MY=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A78D9C6783C
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Oct 2018 16:52:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1ED1C67877
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Oct 2018 17:35:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B1D920868
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Oct 2018 16:52:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E03E21470
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Oct 2018 17:35:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="ME5ba8Qm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B1D920868
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZRhvvDPn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E03E21470
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726788AbeJMA0L (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 12 Oct 2018 20:26:11 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:33598 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725854AbeJMA0L (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 Oct 2018 20:26:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=nkNm0pNQcczh+mZcJoRwkg4aK/vn5OyCpzSAdKe6yJk=; b=ME5ba8QmMkgCbuSw1MPqO7F62
-        YN3n4Ek3nixmoOedwIb9HD/WJ647oSzuFUi+ka5jXjQI5rCrs4bLDCM6VspULcWmfXnh1/yZ442qk
-        dbV67+gCli5Qk9s2J67By4t5LsXs4tMkNmj0yL+xjDxRJFxIjdFRb0LqWOtuaCDgwIiV0=;
-Received: from [91.126.136.150] (helo=finisterre.ee.mobilebroadband)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gB0g5-0006cj-V7; Fri, 12 Oct 2018 16:52:42 +0000
-Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 50524440078; Fri, 12 Oct 2018 18:52:41 +0200 (CEST)
-Date:   Fri, 12 Oct 2018 18:52:41 +0200
-From:   Mark Brown <broonie@kernel.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Charles Keepax <ckeepax@opensource.cirrus.com>,
-        lee.jones@linaro.org, linus.walleij@linaro.org,
-        mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        lgirdwood@gmail.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, patches@opensource.cirrus.com,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v2 3/5] clk: lochnagar: Add support for the Cirrus Logic
- Lochnagar
-Message-ID: <20181012165241.GH2340@sirena.org.uk>
-References: <20181008132542.19775-1-ckeepax@opensource.cirrus.com>
- <20181008132542.19775-3-ckeepax@opensource.cirrus.com>
- <153924124658.207691.10370075148426001371@swboyd.mtv.corp.google.com>
- <20181011145422.GG25351@sirena.org.uk>
- <153928658292.5275.11321177725702156165@swboyd.mtv.corp.google.com>
+        id S1727470AbeJMBJT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 12 Oct 2018 21:09:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57640 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726665AbeJMBJT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 12 Oct 2018 21:09:19 -0400
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BD07E21470;
+        Fri, 12 Oct 2018 17:35:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539365744;
+        bh=Rgt1QL6cPUerUj+FNhXWL/Yz8dn6bcl8zgyM915Sbnw=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=ZRhvvDPnAvqj0e+JSfSGZT6Hyxc/vr+XnqjED0B9lf7jZpUvA9nUqXM04O5SBl21W
+         HfvPGgJVbQvUBcZMxyvuoTnVUhcaopPy0asSWGknSe4ZQY4bUNdzBdibQXsOQ6DK5d
+         umF1vqLfG7UojurDT2PbLabSiEiauJgfhtWkVQCw=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="YrlhzR9YrZtruaFS"
-Content-Disposition: inline
-In-Reply-To: <153928658292.5275.11321177725702156165@swboyd.mtv.corp.google.com>
-X-Cookie: He's dead, Jim.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <tdas@codeaurora.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <7d4012b9-e71d-f114-b228-7198f07ea767@codeaurora.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1538654546-31204-1-git-send-email-tdas@codeaurora.org>
+ <1538654546-31204-2-git-send-email-tdas@codeaurora.org>
+ <153896666821.119890.13143150697797456341@swboyd.mtv.corp.google.com>
+ <ba0d7d92-5ad9-2dcf-c5a5-21332df193f0@codeaurora.org>
+ <153911832719.119890.11984877060665330428@swboyd.mtv.corp.google.com>
+ <7d4012b9-e71d-f114-b228-7198f07ea767@codeaurora.org>
+Message-ID: <153936574404.5275.10513827793530511886@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v6] clk: qcom: Add lpass clock controller driver for SDM845
+Date:   Fri, 12 Oct 2018 10:35:44 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Quoting Taniya Das (2018-10-09 23:12:27)
+> =
 
---YrlhzR9YrZtruaFS
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> =
 
-On Thu, Oct 11, 2018 at 12:36:22PM -0700, Stephen Boyd wrote:
-> Quoting Mark Brown (2018-10-11 07:54:22)
-> > On Thu, Oct 11, 2018 at 12:00:46AM -0700, Stephen Boyd wrote:
+> On 10/10/2018 2:22 AM, Stephen Boyd wrote:
+> > Quoting Taniya Das (2018-10-09 10:26:38)
+> >> Hello Stephen,
+> >>
+> >> On 10/8/2018 8:14 AM, Stephen Boyd wrote:
+> >>> Quoting Taniya Das (2018-10-04 05:02:26)
+> >>>> Add support for the lpass clock controller found on SDM845 based dev=
+ices.
+> >>>> This would allow lpass peripheral loader drivers to control the cloc=
+ks to
+> >>>> bring the subsystem out of reset.
+> >>>> LPASS clocks present on the global clock controller would be registe=
+red
+> >>>> with the clock framework based on the device tree flag. Also do not =
+gate
+> >>>> these clocks if they are left unused.
+> >>>
+> >>> Why not gate them? This statement states what the code is doing, not =
+why
+> >>> it's doing it which is the more crucial information that should be
+> >>> described in the commit text. Also, please add a comment about it to =
+the
+> >>> code next to the flag.
+> >>>
+> >>> I am concerned that it doesn't make any sense though, so probably it
+> >>> shouldn't be marked as CLK_IGNORE_UNUSED and it's papering over some
+> >>> other larger bug that needs to be fixed.
+> >>>
+> >>
+> >> It does not have any bug, it is just that to access these lpass
+> >> registers we would need the GCC lpass registers to be enabled. I would
+> >> update the same in the commit text.
+> >>
+> >> During clock late_init these clocks should not be accessed to check the
+> >> clock status as they would result in unclocked access. The client would
+> >> request these clocks in the correct order and it would not have any is=
+sue.
+> >>
+> > =
 
-> > > Is this used for anything besides getting the regmap? Can you get the
-> > > pointer to the parent in probe and use that to get the regmap pointer
-> > > from dev_get_remap() and also use the of_node of the parent to register
+> > That seems like the bug right there. If the LPASS registers can't be
+> > accessed unless the clks in GCC are enabled then this driver needs to
+> > turn the clks on before reading/writing registers. Marking the clks as
+> > ignore unused is skipping around the real problem.
+> > =
 
-> > dev_get_regmap() is pretty expensive, I'd not advise using it in
-> > anything that might approximate a fast path.  It's kind of debatable
-> > when I2C gets involved but still feels wrong.
+> =
 
-> I'm suggesting the regmap is acquired in probe and a pointer is stored
-> here in this structure. That is not a fastpath as far as I know.
+> If the driver requests for the clocks they would maintain the order. But =
 
-Ah, great - that's the intended usage.
+> if the clock late init call is invoked before the driver requests, there =
 
---YrlhzR9YrZtruaFS
-Content-Type: application/pgp-signature; name="signature.asc"
+> is no way I could manage this dependency, that is the only reason to =
 
------BEGIN PGP SIGNATURE-----
+> mark them unused.
+> =
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlvA0VgACgkQJNaLcl1U
-h9AWSAf/bRb9XA4nmyIZXZ01LsvCh9qzzhBcZK8rnMdHUgpTfEHzByErkofBCbu9
-pkNZlcYzcBiyf4P+0zMHXJMzEXhX8OZzz4TQOZvTojgfo/UzhJFOJ3wFiuzJbqZK
-FTbHUNcVPEOPE+kWkHhM40+ZxGG9ETD9sRWlnQjcMLlwoQLPIIv7vhmgljUJ+BM/
-ZibZx7kvxYVEc11sPvkJ6WmMWJninFFRG9obj/R/Hsy/9OqNMVM1IUvSxFIWWPAu
-0joXz/xBHyvhGx1U79Fcb5f+hMc5Yuvr3YzEaQjX+cxf1KZkS2qhnGc4v9EnCRkW
-l14g4c+0bp32wQ57TsgcDZs0aDXKdw==
-=zUtC
------END PGP SIGNATURE-----
 
---YrlhzR9YrZtruaFS--
+Which driver are we talking about here? The lpass clk driver? Presumably
+the lpass clk driver would request the GCC clks and turn them on in
+probe and then register any lpass clks. If the lpass clk driver probes
+bfeore late init, then the gcc clks will be enabled and everything
+works, and if the lpass clk driver probes after late init then the clks
+that can't be touched without gcc clks enabled won't be registered, and
+then they won't be touched. What goes wrong?
+
+
