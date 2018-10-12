@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E56AC6783C
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Oct 2018 10:41:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEF18C43441
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Oct 2018 10:42:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30DBB2086A
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Oct 2018 10:41:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 743302086A
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Oct 2018 10:42:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dqIFSLUj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30DBB2086A
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DCG5HTBw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 743302086A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728192AbeJLSNn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 12 Oct 2018 14:13:43 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:37207 "EHLO
+        id S1727838AbeJLSOX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 12 Oct 2018 14:14:23 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:40443 "EHLO
         mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727583AbeJLSNm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 Oct 2018 14:13:42 -0400
-Received: by mail-wr1-f65.google.com with SMTP id y11-v6so12887917wrd.4;
-        Fri, 12 Oct 2018 03:41:53 -0700 (PDT)
+        with ESMTP id S1727583AbeJLSOX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 Oct 2018 14:14:23 -0400
+Received: by mail-wr1-f65.google.com with SMTP id d2-v6so12921741wro.7;
+        Fri, 12 Oct 2018 03:42:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=fPDxcroJciIMsvfFT+WvfSSZGRz40ykKSUracXzD23Y=;
-        b=dqIFSLUjkJDFGfPIgZkmQBCwM8kEXq6NKnTbWTDm6aAYo0uQeU3tF1pwEm+EzWRr+V
-         irxU+MhlM0Pu1BJn/oN3AyX6GTLmbFk9tri4OqIGipwkZMTtgdaXDADFTeFnnwLudt52
-         n3qt98gr7qbwk9zbnZ5w9ioaIUBgc+6AHmvYCT8gNFzxqUkGMMETyb0gUmGIAePJZjVP
-         jLxmlj/ygZYrfSXLLmtfVkzgIlxpBKPpGe6V5sicYryd1qVkWS+kNJ6olEkdM9c0BT53
-         sCyRMCYTZADaCjHu/q7GzqdCwzl6dsT+QJi9i1dTw6mdlcYB56v/VnkHN2rA/hT1NaHN
-         dQNA==
+        bh=jAZc40z4iCg8HXnJNjcYhwdy1UtTUGPD1xND8ey1V3g=;
+        b=DCG5HTBwn7D1uSVwIXgDw5NRHO0fJeNlRMIE+bSOvwkglu3/YgTXVWpgIwLSEp9NZx
+         I58j2b7Ntlffzet4jm5o0SP7/tG4eLl6WHGtAO0CyCAor4zLlnqOZrIlUi629TTMWrms
+         Oo9D2qRu11n/8JIZV0SyYO6rLqPU1D2pax4pbXfVvvVJuFs8hpTYIYBRw0/x2tEYeWLG
+         kC8KRpXZ9FvlCKoQsSVqkacnPOK3Nz6Y9HTejJ2PmWm3+/uTlzlnOqunuGzZrbSD9SPG
+         PT/6I9fb4HppbCMD0A5MUUjuJ2Xlea2+AsPuTYudLMEGj2N0j1KLLwjNE3nQy+CySevm
+         FmxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=fPDxcroJciIMsvfFT+WvfSSZGRz40ykKSUracXzD23Y=;
-        b=QjgizwEqATFrG43PfMz1WHay62VIPuqK5TORdR0tcIlzw2BBXsYWLUeGHkRSKR3aJM
-         y4zEUJTI3jud0kcOmDYAfjrNO2OEKDsyF/2VpiRRqT3d84SMRqu0QVrc19EK5ZQx+ZQT
-         ueoN1h7M6sYP2M/aoR8OHJJpkVECGUIFSqlSW6yVYmOemu7+bqdh+lpKbdbPzBHw5k+C
-         KjOiFFeD00Guq0SD2A7I4mMnZFIY7Mw+EZvlirNMFHkSjzPo0qpm+Uw2qxlmD2WZgl2x
-         VJsne/FJYiP5GqNh9s2sLXEyL727trTbPp6ILoMsCCSF7T2U+ytAfHRryeV7JACl4T3X
-         rvIw==
-X-Gm-Message-State: ABuFfohxvxA8T+QD8k7xhfJ3hRVUZnMEjxu2Hw4ut0LGHRvbyopbquhz
-        265oJWTs0DBQt280MEVcuxw=
-X-Google-Smtp-Source: ACcGV63S61DkjUKnutYPOSb34zVjavbTjZzNkDDVOTY37UfcPpm6CDzvOmoTNoM1o2OLE3U0MnLZbw==
-X-Received: by 2002:a5d:620b:: with SMTP id y11-v6mr4788024wru.105.1539340912279;
-        Fri, 12 Oct 2018 03:41:52 -0700 (PDT)
+        bh=jAZc40z4iCg8HXnJNjcYhwdy1UtTUGPD1xND8ey1V3g=;
+        b=ZnsaWA6DCpK1rfzKXudhyp24s/Z9K9gTjwkwNRaseiAMSZ0XFWYzSvOesFm4zLnvZG
+         GUfNtD+OfIoXb8sTdK/tLR/MiMq5sTCl+2Gt10l549fn9WJUEXMQJWzPBfrNyLA5SlKs
+         hCQlAm43O8rttn4jxeGGIOtupPciRHCxwtdDbjf9l7jjU40dJQ/k06qL7YebnsXAdwX+
+         BJo5hE3Mdt/dAhXUjRIivf8wcRKJEuYSLRHfUhjqiTxFaBVxe1ifDqVT93bui7hUytam
+         3FvXT5iUmBJsOO4DYpdLciyQbMRFq27sDWPs6rgtztUrSB6k6KcRXdcl7D8QIgAZPUfm
+         DH6g==
+X-Gm-Message-State: ABuFfoh11FL2hRJI423G+DnSPHFAINDPeC2sqEn8PgfNDkuLsHqb51jq
+        Z5UuiXtY4CeedhMhZVdW9jk=
+X-Google-Smtp-Source: ACcGV61bVNRDyXyl8kw/vgJ1DnmBhq/SRKWIseLYbKg30uu4g7z9+FBngoSrZOW/zmdj3mzqMBINSA==
+X-Received: by 2002:a5d:4e0a:: with SMTP id p10-v6mr5001263wrt.320.1539340953246;
+        Fri, 12 Oct 2018 03:42:33 -0700 (PDT)
 Received: from localhost (p2E5BEEEA.dip0.t-ipconnect.de. [46.91.238.234])
-        by smtp.gmail.com with ESMTPSA id a1-v6sm818238wrt.79.2018.10.12.03.41.51
+        by smtp.gmail.com with ESMTPSA id o17-v6sm1094742wro.2.2018.10.12.03.42.32
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 12 Oct 2018 03:41:51 -0700 (PDT)
-Date:   Fri, 12 Oct 2018 12:41:50 +0200
+        Fri, 12 Oct 2018 03:42:32 -0700 (PDT)
+Date:   Fri, 12 Oct 2018 12:42:31 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Paul Cercueil <paul@crapouillou.net>
 Cc:     Thomas Gleixner <tglx@linutronix.de>,
@@ -72,16 +72,16 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
         linux-mips@linux-mips.org, linux-doc@vger.kernel.org,
         linux-clk@vger.kernel.org
-Subject: Re: [PATCH v7 14/24] pwm: jz4740: Drop dependency on MACH_INGENIC,
- use COMPILE_TEST
-Message-ID: <20181012104150.GH9162@ulmo>
+Subject: Re: [PATCH v7 15/24] pwm: jz4740: Remove unused devicetree
+ compatible strings
+Message-ID: <20181012104231.GI9162@ulmo>
 References: <20180821171635.22740-1-paul@crapouillou.net>
- <20180821171635.22740-15-paul@crapouillou.net>
+ <20180821171635.22740-16-paul@crapouillou.net>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="J/zg8ciPNcraoWb6"
+        protocol="application/pgp-signature"; boundary="0XMZdl/q8hSSmFeD"
 Content-Disposition: inline
-In-Reply-To: <20180821171635.22740-15-paul@crapouillou.net>
+In-Reply-To: <20180821171635.22740-16-paul@crapouillou.net>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
@@ -89,19 +89,16 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---J/zg8ciPNcraoWb6
+--0XMZdl/q8hSSmFeD
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 21, 2018 at 07:16:25PM +0200, Paul Cercueil wrote:
-> Depending on MACH_INGENIC prevent us from creating a generic kernel that
-> works on more than one MIPS board. Instead, we just depend on MIPS being
-> set.
->=20
-> On other architectures, this driver can still be built, thanks to
-> COMPILE_TEST. This is used by automated tools to find bugs, for
-> instance.
+On Tue, Aug 21, 2018 at 07:16:26PM +0200, Paul Cercueil wrote:
+> Right now none of the Ingenic-based boards probe this driver from
+> devicetree. This driver defined three compatible strings for the exact
+> same behaviour. Before these strings are used, we can remove two of
+> them.
 >=20
 > Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 > ---
@@ -113,29 +110,29 @@ On Tue, Aug 21, 2018 at 07:16:25PM +0200, Paul Cercueil wrote:
 >    =20
 >      v7: No change
 >=20
->  drivers/pwm/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/pwm/pwm-jz4740.c | 2 --
+>  1 file changed, 2 deletions(-)
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+Acked-by: Thierry Reding <thierry.reding@gmail.com>
 
---J/zg8ciPNcraoWb6
+--0XMZdl/q8hSSmFeD
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlvAem4ACgkQ3SOs138+
-s6G1TRAAux8060Bb39lvD0m2DyAcY+wj728JjVVoR4ewIrMKra16L/zRXspBZiK5
-NE29yVOUrXx3h/C0/JD5zNTx7b6LajBoTYJ48FS2UVh3u04rky6MLHCyH97SnIA7
-WKt+PWrDi5pXZ5ooh6tNURClbe5iETYuVjjXudUFjVtNC0ptAEaY9PvX7HrlcB0R
-Eu1OUbp0k/RBhktlJJPkX/K/NqpBhncHo1GqHa2SRKf7+xkLia3V2SrszJC4q/g/
-EtLjaOrsOjHkcolpePxX9Gc1V52Jpy6yDuB/TSmsAAkZGLbUBDZWh5VH21XJlbBZ
-EDC28EJRnPDp3L6i9S2Kpy2anUNFblez+DAYY+takC3q/B+pKs/z4crRI9EwcVBA
-AQFDwWbovRGB0Ery54rZSUYIOBKclO1hlBbMYROpd7bsadsA/PE4VtjGjrlkSJhz
-GDF3anIdsvB5h23zZySwW3rOAKr8hGehlrWWu9tPCxacnKLZavMOHOThSDG2St9v
-60glgFNZCH86gcJ47HOgg3pr+xejpvwF9s85dN378nNIqxiMEPiF6rrvELG+YzFp
-Tv89gFw+06At4es9Gh+BlTqwYoiNGuIakwJHKoczVXCKxRThMiLkrjzhpomgh28y
-x9DLbMSigzYstEPL1Q/VlRZGEYWRRa/vCWqu9Y0RMSSxnmMSLkc=
-=ywfF
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlvAepcACgkQ3SOs138+
+s6HYNA/+ONd+BCqmE0Z29A+IoPCHFyLIVoy/aZWszgeBoqk9D9PAKKbi2eHSBBL2
+Iq0GqudniRWhko8hmM9NU0XhYgDm8sq98sTAQReqW1ctn7/Fx5FNwM9Rtxe9yKfx
+EWELqIPbypO7nHU/6kC9ekdf7KI+a35Envx+/8oOdgF//KqzzVMQsuVCFlnzPCvp
+tXHT+2zHxrxMnaDVSxJQsXC5lnrFeP+lAE6+XN0W/d9x+wAtL56Nh0DOO8OJIfpm
+aJYZHN8hmZxTMxNUV5j3gip0uF4+m9iumnwAXAY1SZH84NPBviqGho5P/I9NqCwO
+GvncripVWrqlJVAGYfh5c/2Vg6mEGTE3gqjDumEpvPh6nyqAS4U/rmiB9wr2pE7u
+FlmbeqgUe8FBm9gm/uaP7iMxkeH2ChSsQ3OKtYUv+frGhte1iCbpe4RSIK4q4FGN
+Wxc5rJcOzud1GGhbrPmARDE9RzjX68N7XlIZtpDsxDLakwkmh1rJLk5wHWSLkYeh
+nGRXMhOm1R5jTaipnpJ6C+h14xp7+5N4ccXHa+2Uu1x8wn01L1SL2jg4JpfidAnO
+9z5i5OjGgs8ZsJOR0u3zaZSKq/fdgkw+CGXxvz3sQXRvZ/HjOpdXAXvDeweO87Ax
+7H9hEhbaGvSzmyBSP0Sn5KxlE+5xfOpajThQsJhWBASaWaTlKUk=
+=81jk
 -----END PGP SIGNATURE-----
 
---J/zg8ciPNcraoWb6--
+--0XMZdl/q8hSSmFeD--
