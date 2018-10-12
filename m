@@ -2,100 +2,107 @@ Return-Path: <SRS0=EEPi=MY=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED756C67872
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Oct 2018 16:08:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A78D9C6783C
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Oct 2018 16:52:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B62FD20865
-	for <linux-clk@archiver.kernel.org>; Fri, 12 Oct 2018 16:08:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B1D920868
+	for <linux-clk@archiver.kernel.org>; Fri, 12 Oct 2018 16:52:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="V00dRRtI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B62FD20865
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="ME5ba8Qm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B1D920868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728977AbeJLXl6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 12 Oct 2018 19:41:58 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:42696 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728725AbeJLXl6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 Oct 2018 19:41:58 -0400
-Received: by mail-pl1-f194.google.com with SMTP id c8-v6so6137731plo.9
-        for <linux-clk@vger.kernel.org>; Fri, 12 Oct 2018 09:08:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Ez4SRIglukkf5nltCWJKGGJlZNrR6iJIm8371lpCNVQ=;
-        b=V00dRRtIC7xIV4NxKDxNk6SxgUZwzcyRYYhEQaxcWWGdNXWhz0Jfy6tin6r2ac2VT4
-         bzz9c/Op2W1MLN5t4+IeXnthPx9Qkr6Dk4qg4fBMLtVQgR6pOD3eMau4hBJAEZDeeEt9
-         jAorwFSErbKQItJPxgoaooNCffe+DPzR1NSpY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Ez4SRIglukkf5nltCWJKGGJlZNrR6iJIm8371lpCNVQ=;
-        b=K1N51bFLcEfQ396eT0Gyn2bHPqLtxiJbcOwSi9Uh/EQZ0sn+4tZnBBEc7AfHSfryyQ
-         x6qOfFosVsQtBzDIl1mIfjLJzzL8DW5zAvCgAjlwUPlztThrvXyxMiNEXw4evmkLDtOw
-         7tRMzqoTE/EgSWRYVx/JO7wfbqoEByf9BXtUA52Z+ViZXTLW1DWuBxW1LdgI/MjX3BVk
-         x2sAmtlu8pnwaLAhhuSFx6e3mN+D0cjiQFFlZfXnBwFtD6ZQxMR8yY5YFEzV5R0f0pgw
-         t3xM86rF6HRMfOLpj511aJRuJi08eykywNB2CPx9z6KDXSs9l9b3XuAZSgD/YzG8y11c
-         WR6A==
-X-Gm-Message-State: ABuFfoiWzN06l/jqhVSwSo3BqpnZLtAqBay3cjiyq8xfZ9RTacwNbFYA
-        BSjegCxh2MkuARMpc41lpM5f
-X-Google-Smtp-Source: ACcGV60jAx5MebsVCQXP2v0kvSOh+vFe7K3Jfj+MR1f9DDvfpiS1rXKu23w/i8I3/wrLAxuhG7eEeA==
-X-Received: by 2002:a17:902:d908:: with SMTP id c8-v6mr6392862plz.227.1539360527179;
-        Fri, 12 Oct 2018 09:08:47 -0700 (PDT)
-Received: from Mani-XPS-13-9360 ([2409:4072:99a:7af8:5434:2d24:93e3:3797])
-        by smtp.gmail.com with ESMTPSA id p84-v6sm2989091pfi.22.2018.10.12.09.08.41
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 12 Oct 2018 09:08:46 -0700 (PDT)
-Date:   Fri, 12 Oct 2018 21:38:37 +0530
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+        id S1726788AbeJMA0L (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 12 Oct 2018 20:26:11 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:33598 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725854AbeJMA0L (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 Oct 2018 20:26:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=nkNm0pNQcczh+mZcJoRwkg4aK/vn5OyCpzSAdKe6yJk=; b=ME5ba8QmMkgCbuSw1MPqO7F62
+        YN3n4Ek3nixmoOedwIb9HD/WJ647oSzuFUi+ka5jXjQI5rCrs4bLDCM6VspULcWmfXnh1/yZ442qk
+        dbV67+gCli5Qk9s2J67By4t5LsXs4tMkNmj0yL+xjDxRJFxIjdFRb0LqWOtuaCDgwIiV0=;
+Received: from [91.126.136.150] (helo=finisterre.ee.mobilebroadband)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gB0g5-0006cj-V7; Fri, 12 Oct 2018 16:52:42 +0000
+Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
+        id 50524440078; Fri, 12 Oct 2018 18:52:41 +0200 (CEST)
+Date:   Fri, 12 Oct 2018 18:52:41 +0200
+From:   Mark Brown <broonie@kernel.org>
 To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     mturquette@baylibre.com, robh+dt@kernel.org, xuwei5@hisilicon.com,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, amit.kucheria@linaro.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH 0/4] Add clock support for Hi3670 SoC
-Message-ID: <20181012160837.GA11560@Mani-XPS-13-9360>
-References: <20180921060103.21370-1-manivannan.sadhasivam@linaro.org>
- <20181012033857.GA5438@Mani-XPS-13-9360>
- <153936020982.5275.4942701350789062401@swboyd.mtv.corp.google.com>
+Cc:     Charles Keepax <ckeepax@opensource.cirrus.com>,
+        lee.jones@linaro.org, linus.walleij@linaro.org,
+        mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        lgirdwood@gmail.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, patches@opensource.cirrus.com,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v2 3/5] clk: lochnagar: Add support for the Cirrus Logic
+ Lochnagar
+Message-ID: <20181012165241.GH2340@sirena.org.uk>
+References: <20181008132542.19775-1-ckeepax@opensource.cirrus.com>
+ <20181008132542.19775-3-ckeepax@opensource.cirrus.com>
+ <153924124658.207691.10370075148426001371@swboyd.mtv.corp.google.com>
+ <20181011145422.GG25351@sirena.org.uk>
+ <153928658292.5275.11321177725702156165@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="YrlhzR9YrZtruaFS"
 Content-Disposition: inline
-In-Reply-To: <153936020982.5275.4942701350789062401@swboyd.mtv.corp.google.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <153928658292.5275.11321177725702156165@swboyd.mtv.corp.google.com>
+X-Cookie: He's dead, Jim.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Oct 12, 2018 at 09:03:29AM -0700, Stephen Boyd wrote:
-> Quoting Manivannan Sadhasivam (2018-10-11 20:38:58)
-> > On Thu, Sep 20, 2018 at 11:00:59PM -0700, Manivannan Sadhasivam wrote:
-> > > This patchset adds clock support for Hi3670 SoC from HiSilicon utilizing
-> > > the HiSi common clock code. While adding clock support, let's remove the
-> > > fixed clock for UART and source SoC clock on HiKey970 board.
-> > > 
-> > > This patchset has been verified on HiKey970 board.
-> > >
-> > 
-> > Hi,
-> > 
-> > Any update on this series?
-> > 
-> 
-> Can I merge the clk driver part by itself? Are you looking for an ack
-> from clk maintainers?
-> 
 
-Yes, please. I'm not sure about the maintainer for this clk part and it
-is best if you can take a look and merge if its ok.
+--YrlhzR9YrZtruaFS
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Thanks,
-Mani
+On Thu, Oct 11, 2018 at 12:36:22PM -0700, Stephen Boyd wrote:
+> Quoting Mark Brown (2018-10-11 07:54:22)
+> > On Thu, Oct 11, 2018 at 12:00:46AM -0700, Stephen Boyd wrote:
+
+> > > Is this used for anything besides getting the regmap? Can you get the
+> > > pointer to the parent in probe and use that to get the regmap pointer
+> > > from dev_get_remap() and also use the of_node of the parent to register
+
+> > dev_get_regmap() is pretty expensive, I'd not advise using it in
+> > anything that might approximate a fast path.  It's kind of debatable
+> > when I2C gets involved but still feels wrong.
+
+> I'm suggesting the regmap is acquired in probe and a pointer is stored
+> here in this structure. That is not a fastpath as far as I know.
+
+Ah, great - that's the intended usage.
+
+--YrlhzR9YrZtruaFS
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlvA0VgACgkQJNaLcl1U
+h9AWSAf/bRb9XA4nmyIZXZ01LsvCh9qzzhBcZK8rnMdHUgpTfEHzByErkofBCbu9
+pkNZlcYzcBiyf4P+0zMHXJMzEXhX8OZzz4TQOZvTojgfo/UzhJFOJ3wFiuzJbqZK
+FTbHUNcVPEOPE+kWkHhM40+ZxGG9ETD9sRWlnQjcMLlwoQLPIIv7vhmgljUJ+BM/
+ZibZx7kvxYVEc11sPvkJ6WmMWJninFFRG9obj/R/Hsy/9OqNMVM1IUvSxFIWWPAu
+0joXz/xBHyvhGx1U79Fcb5f+hMc5Yuvr3YzEaQjX+cxf1KZkS2qhnGc4v9EnCRkW
+l14g4c+0bp32wQ57TsgcDZs0aDXKdw==
+=zUtC
+-----END PGP SIGNATURE-----
+
+--YrlhzR9YrZtruaFS--
