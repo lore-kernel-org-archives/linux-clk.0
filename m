@@ -4,59 +4,61 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EF5DC28CF8
-	for <linux-clk@archiver.kernel.org>; Sat, 13 Oct 2018 13:26:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2737C28CF8
+	for <linux-clk@archiver.kernel.org>; Sat, 13 Oct 2018 13:34:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E602A20895
-	for <linux-clk@archiver.kernel.org>; Sat, 13 Oct 2018 13:26:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3698E20895
+	for <linux-clk@archiver.kernel.org>; Sat, 13 Oct 2018 13:34:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="gj34291X"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E602A20895
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="USyS9cwA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3698E20895
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726255AbeJMVED (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 13 Oct 2018 17:04:03 -0400
-Received: from mail-eopbgr70085.outbound.protection.outlook.com ([40.107.7.85]:41424
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        id S1726292AbeJMVLg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 13 Oct 2018 17:11:36 -0400
+Received: from mail-eopbgr30083.outbound.protection.outlook.com ([40.107.3.83]:11632
+        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726235AbeJMVEC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 13 Oct 2018 17:04:02 -0400
+        id S1726281AbeJMVLg (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 13 Oct 2018 17:11:36 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3F1hh0Anbu/qXj9tlGf5Gc8HqJJFXKFu7XsCYdQg0jA=;
- b=gj34291X8sGD9rVV9p70SMPuoKpCUFZFS7lk9KErd1MU6u1tqCHgHAGb1EeUzQGPLa0TsSQT3vctosKRGdmbIRXtiHDD3XQ3EW2wcwrNi4uBF0Z89/3b6mdBcvKSY44tzD49606T/wdyxjzE0+1Gs6MFMA6WY/zXp9EiB0ePdDk=
+ bh=i8m/8kKJ5N0iT+fv5TrhYPceo1FnCEIb2JLs6qLPUzM=;
+ b=USyS9cwAgvP1mavQued7usdz4uFt1Bg/XW1Oc80pzK24tszJntNYhNdqaJ6ChBIsaoPHRBdUmYeMqzeyTl8X3/0PwVv+t872DnYEO+DI72xFaAMAx3kehNZ1TxqMztjD665OO0lMnlkw4GdKnvsYQYdBfI8a5GfaUB/vqp14duo=
 Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.126.21) by
- AM0PR04MB4900.eurprd04.prod.outlook.com (20.176.215.209) with Microsoft SMTP
+ AM0PR04MB5060.eurprd04.prod.outlook.com (20.177.40.153) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1228.26; Sat, 13 Oct 2018 13:26:47 +0000
+ 15.20.1228.25; Sat, 13 Oct 2018 13:33:54 +0000
 Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
  ([fe80::25a0:3167:d718:91c1]) by AM0PR04MB4211.eurprd04.prod.outlook.com
  ([fe80::25a0:3167:d718:91c1%3]) with mapi id 15.20.1228.020; Sat, 13 Oct 2018
- 13:26:47 +0000
+ 13:33:54 +0000
 From:   "A.s. Dong" <aisheng.dong@nxp.com>
-To:     "sboyd@kernel.org" <sboyd@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>
+To:     "thor.thayer@linux.intel.com" <thor.thayer@linux.intel.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "sboyd@kernel.org" <sboyd@kernel.org>
 CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>,
         "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>, dl-linux-imx <linux-imx@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: RE: [PATCH V4 0/9] clk: add imx7ulp clk support
-Thread-Topic: [PATCH V4 0/9] clk: add imx7ulp clk support
-Thread-Index: AQHUHpzNbEQ50bW8r0K17gNet3HqL6Sgx+QwgDJrIKCAD7HAYIAePDVAgBySYiA=
-Date:   Sat, 13 Oct 2018 13:26:46 +0000
-Message-ID: <AM0PR04MB4211DA1E7F0C9DBD635E136780E30@AM0PR04MB4211.eurprd04.prod.outlook.com>
-References: <1531921023-18497-1-git-send-email-aisheng.dong@nxp.com>
- <AM0PR04MB421169829CFE1A6A32DCC209802B0@AM0PR04MB4211.eurprd04.prod.outlook.com>
- <AM0PR04MB421153E1441FBE356E1B859E800B0@AM0PR04MB4211.eurprd04.prod.outlook.com>
- <AM0PR04MB421176CFEF18F815CE0EC1A980010@AM0PR04MB4211.eurprd04.prod.outlook.com>
- <AM0PR04MB4211732CC6C078017C8B849680160@AM0PR04MB4211.eurprd04.prod.outlook.com>
-In-Reply-To: <AM0PR04MB4211732CC6C078017C8B849680160@AM0PR04MB4211.eurprd04.prod.outlook.com>
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "hdegoede@redhat.com" <hdegoede@redhat.com>
+Subject: RE: [PATCH V6 0/4] clk: new APIs to handle all available clocks
+Thread-Topic: [PATCH V6 0/4] clk: new APIs to handle all available clocks
+Thread-Index: AQHUQOYAqzg0fl5c6km76P92aepQ6qTin9AQgBBfjVCABM4uAIAAv5kggBzYKaCACAuTYA==
+Date:   Sat, 13 Oct 2018 13:33:54 +0000
+Message-ID: <AM0PR04MB4211DBDC8D0684442A927CE580E30@AM0PR04MB4211.eurprd04.prod.outlook.com>
+References: <1535690756-22234-1-git-send-email-aisheng.dong@nxp.com>
+ <AM0PR04MB4211EF6D783562BA8C8D690380010@AM0PR04MB4211.eurprd04.prod.outlook.com>
+ <AM0PR04MB4211A3900BC5A2DF857F7451801F0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+ <7e612f6f-e9d2-2f6f-1903-3a6bcf1b65ba@linux.intel.com>
+ <AM0PR04MB4211B170CAC1B3F9E7356AF980130@AM0PR04MB4211.eurprd04.prod.outlook.com>
+ <AM0PR04MB42119BD28DDB7826DEE577F180E60@AM0PR04MB4211.eurprd04.prod.outlook.com>
+In-Reply-To: <AM0PR04MB42119BD28DDB7826DEE577F180E60@AM0PR04MB4211.eurprd04.prod.outlook.com>
 Accept-Language: zh-CN, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -65,221 +67,51 @@ authentication-results: spf=none (sender IP is )
  smtp.mailfrom=aisheng.dong@nxp.com; 
 x-originating-ip: [119.31.174.66]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM0PR04MB4900;6:SrThWGOWTVDvQtGPyEjQo7zUwJLnq7w8SqFqpGhsiJasq0OvsgwtrzyyezEWGQ8cxDCBOMuEU99oZnBwodsMGQG/9sBQoUbSUeZihRfVxtAL0wa7y3YdkPUKpO9wsaty4jO0DS3AF6qnAiVCdy3H+43BOkI85zTQSV4myvsOsjPKJMPeB+oidBdZ7Wc9UKvAG3nC2mx03vpWsr68/L7Qu/amZYWlzr3eraHMj7cJenPla+JVQe+zkxLjtrO4wiZSZ0HZOsLu/Y8gCWtHghTp97q7AtS4YTpyNbNspU/nPzylA/Mf7dIpQMC55zhKnIwC6M0SGnUQsGn0bH1qmXpMLLkhGSqHGiBSO/Ajk6PUPnICb/mPbtd6blGhNtlv5u+FkuXOFmQim/w9ASsS5SdEddbAUg0its1/R0wx0N+tINBUTN7eoGNvGFkztdb4IkNspjQjoqcPSyilM8nbxiaOUw==;5:YrMsxPTLlK7UkxMbBdYX4zJK+k5sBDq9ugR4KUuvkqFtrcKCVFDFiQs9jfEP+U7J+Yx3kKoIPOwzb68ka7cCcUy7iY9YE6p0y3lh7LBLJLz9xlaPGxGaMCKOVFnYcnzeCe5plKpu1x93QYcFqY66ONwVD/AFrq3okR6t+enMIao=;7:4GH03tfg5t5CW7nR3zCMNOmGbFF/Jmx2fM774/bIDZWfaDtW8IOeVzDnWOBl8MsyKTU7yoVmWiy+PvKpdFNx970wZJcD3e2hrYyb91sgQwGyBxW6a7BujGeM0QW+iVQqKtswPVoRwrUbtJ4Fd0BF2/aUQQClxTot5vIFGEov9P4FD1+v36vtwdZ0biM2DV38TgrE+Ftyn/LI7xMJUUyowg+d5Ja8Y5UMeoeDB3YzWCbmQpu+ulleRGbolkjsF3gW
+x-microsoft-exchange-diagnostics: 1;AM0PR04MB5060;6:nM+WUeNYZamMZCDeaBABPRyIXPz/KgxGHi7Qz2zfVLayqFM31LgDg8Px2++4pDKLL2YxXgNvrvFFfzsUHnpEsREGqUweIkI8gBLvqQXPosSc6iChLbg4oQGu0KQsaUqDzUM02uUS/oeKprA9SOwrC08IL4Np32hHrguKrvi1NjfYMCTB6ytA3jnctsR/jHdg38y5YLOUtccmhRYTc8388I4rzwfdHT8gSnA9ySNCANUIxhRKCZyZ6lzzTjaE1L2vSxFK/edjx1wanx2KFlEBjMDjeAIzLb7sOU9THA+Jp1o/ZFYvl9Lo+pG/o7qzAimNz0C5t8J0HHYwhHiN6BuOw5hrCx5ILJuNTiClRfF2nGN+0tOtW1vgGHT/y/6KyZj+lZs4hEzpZezNjvcE8quvGVbPNK4yintdaZJ3LWmZ8k1TEnx/9uf7bvk4iXXIcct2k/lZyiPXHsQLwYUaxadFgQ==;5:rBA5U7RSzPYm90Gy5PDsbm31AlSZFCIX0pYx2wU8swOsjM4KJXab26nIZUH6XtHfyQOWTg7WM5n9Um+I9qO/1JDVRk1qSb9jfKfjvyA0HLXVeKlL2P4M78gDjsvI7SBJBmUnUENmRFtT5l5oslk5IKf2vN0sY7/qlP4eUusBTrE=;7:v7WjPclYx9w8jRnJseRa3FCQUflkWuaRIOTDF+qpz8abh7MAFipUcqtgBy7shaKBDMGlof0LN9Q+f+0yox5YJdi1b+nTZIkrRx8CbV5bfycLKErOFJRaXLogbkh8HhavkPt8pfGISRndIDnWx7QjbMMJA930c73NZv9lASh7xEj7gyg9BDb1KkTKjaHr9dZf1NvwnBt9cxlrBBKKmkE2Qr/fH+wvagifSMRYu+yOIUTRcF3tRvbrtCFUofotamxt
 x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 17b3916e-4049-4892-967b-08d6310f86a2
+x-ms-office365-filtering-correlation-id: b3ced4ec-1761-43b5-a83c-08d631108515
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB4900;
-x-ms-traffictypediagnostic: AM0PR04MB4900:
-x-microsoft-antispam-prvs: <AM0PR04MB490000C6F48333175F4FCC9280E30@AM0PR04MB4900.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(258649278758335)(269456686620040)(185117386973197);
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB5060;
+x-ms-traffictypediagnostic: AM0PR04MB5060:
+x-microsoft-antispam-prvs: <AM0PR04MB50604526C764BA4FE43E92B680E30@AM0PR04MB5060.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(228905959029699)(9452136761055)(258649278758335)(185117386973197);
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3231355)(944501410)(52105095)(3002001)(6055026)(149066)(150057)(6041310)(20161123562045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(201708071742011)(7699051);SRVR:AM0PR04MB4900;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB4900;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231355)(944501410)(52105095)(6055026)(149066)(150057)(6041310)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(201708071742011)(7699051);SRVR:AM0PR04MB5060;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB5060;
 x-forefront-prvs: 082465FB26
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(376002)(136003)(366004)(346002)(396003)(199004)(189003)(13464003)(54534003)(26005)(11346002)(446003)(68736007)(5660300001)(6246003)(2900100001)(106356001)(14444005)(256004)(478600001)(99286004)(966005)(4326008)(74316002)(14454004)(25786009)(105586002)(7696005)(486006)(7736002)(476003)(186003)(305945005)(33656002)(6116002)(102836004)(3846002)(53936002)(316002)(97736004)(55016002)(6436002)(76176011)(86362001)(8936002)(6306002)(81156014)(93886005)(5250100002)(2501003)(110136005)(54906003)(6506007)(53546011)(81166006)(71200400001)(71190400001)(8676002)(229853002)(2906002)(66066001)(9686003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4900;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(136003)(39860400002)(396003)(366004)(346002)(199004)(189003)(13464003)(86362001)(2201001)(68736007)(8676002)(3846002)(54906003)(6116002)(97736004)(5660300001)(106356001)(105586002)(102836004)(110136005)(8936002)(256004)(33656002)(71190400001)(14454004)(71200400001)(2906002)(478600001)(81156014)(81166006)(55016002)(25786009)(9686003)(4326008)(53936002)(74316002)(6436002)(11346002)(229853002)(6246003)(316002)(305945005)(99286004)(7736002)(26005)(76176011)(486006)(186003)(2900100001)(93886005)(2501003)(476003)(446003)(5250100002)(66066001)(7696005)(53546011)(6506007);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5060;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: 6g7tYyNX5BmtRYsmQVMcxTs570ce3fI+3mviSjRGHvYdzJF90DsZrfJbW3wUmZgIEmBTgaEC9vb5umR+HmwMvaESRFGguwY5ClxbT4oE55vr3yksOEhw36BKLSSPYTuFJwM7fQxoOoJy6u4wBTiybBgIzqkfpBKu/Cm+AyAlU7NnGqqwax1A9RcJo0PopRL7kiduDLvvy+Elx2lopdRsBELHOnl/kiTogCKG56z8TrfI06NU8dxGYhRRyTADiQxLG2jVzHEs4MEkS1w2lpZV1Fxl5J/Mac1CA46QpQynVruE8QKyw0p+IG0/lNQTwKYOCogOR7VGhsZDSGyGUG9NJDbVUtqmmhMK1mCZyhbWby8=
+x-microsoft-antispam-message-info: yhn7//pbBwlwnU36kzCCItTVgW2Lk3ekHc7GadEZ4VtFpoag+QthqOW4Dw0D63Ywa3acMx8eLXT52kLSKPvx6sWPhFMLPKxha+kS5f4MNvgTfVKhuf4aZ6MxDRk5r7Aed9n/TcM0xqy5MgqJ9kbYb/SxC9K2wHPGb+9Ge0umsg9NiJg7VNitBA85mSSnmBf4o0PWZhtuxSWSbmnI+aP1T9iEoUK2Pnv9bInmJieriEm3HAoyncqDPSrR3oTKz7HPejzmZecgdWVtppLD9p31/6fXILRyqhAr1uTTC4AcenVtIMXtF94oS+0e8POvQ8y5x5IXXAehlqiWkzDuaXu1rb3p57Rt+SRYZAugSr55DLM=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 17b3916e-4049-4892-967b-08d6310f86a2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Oct 2018 13:26:47.0725
+X-MS-Exchange-CrossTenant-Network-Message-Id: b3ced4ec-1761-43b5-a83c-08d631108515
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Oct 2018 13:33:54.0830
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4900
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5060
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Ping
-
-> -----Original Message-----
-> From: A.s. Dong
-> Sent: Tuesday, September 25, 2018 5:11 PM
-> To: sboyd@kernel.org; shawnguo@kernel.org
-> Cc: linux-kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
-> mturquette@baylibre.com; Anson Huang <anson.huang@nxp.com>; Jacky Bai
-> <ping.bai@nxp.com>; dl-linux-imx <linux-imx@nxp.com>;
-> linux-clk@vger.kernel.org
-> Subject: RE: [PATCH V4 0/9] clk: add imx7ulp clk support
->=20
-> It's been a few months without comments.
->=20
-> Shawn & Stephen,
-> Would you provide some suggestions on how to handle this?
->=20
-> Regards
-> Dong Aisheng
->=20
-> > -----Original Message-----
-> > From: A.s. Dong
-> > Sent: Thursday, September 6, 2018 11:25 AM
-> > To: linux-clk@vger.kernel.org; sboyd@kernel.org; shawnguo@kernel.org
-> > Cc: linux-kernel@vger.kernel.org;
-> > linux-arm-kernel@lists.infradead.org;
-> > mturquette@baylibre.com; Anson Huang <anson.huang@nxp.com>; Jacky
-> Bai
-> > <ping.bai@nxp.com>; dl-linux-imx <linux-imx@nxp.com>
-> > Subject: RE: [PATCH V4 0/9] clk: add imx7ulp clk support
-> >
-> > Hi Stephen,
-> >
-> > Would you shine some lights on how to proceed?
-> >
-> > Regards
-> > Dong Aisheng
-> >
-> > > -----Original Message-----
-> > > From: A.s. Dong
-> > > Sent: Monday, August 27, 2018 11:46 AM
-> > > To: linux-clk@vger.kernel.org; sboyd@kernel.org; shawnguo@kernel.org
-> > > Cc: linux-kernel@vger.kernel.org;
-> > > linux-arm-kernel@lists.infradead.org;
-> > > mturquette@baylibre.com; Anson Huang <anson.huang@nxp.com>; Jacky
-> > Bai
-> > > <ping.bai@nxp.com>; dl-linux-imx <linux-imx@nxp.com>
-> > > Subject: RE: [PATCH V4 0/9] clk: add imx7ulp clk support
-> > >
-> > > Kindly ping again...  This is really pending too long...
-> > >
-> > > Stephen & Shawn,
-> > > Any suggestion on how to proceed this patch set?
-> > >
-> > > Regards
-> > > Dong Aisheng
-> > >
-> > > > -----Original Message-----
-> > > > From: A.s. Dong
-> > > > Sent: Thursday, July 26, 2018 9:51 AM
-> > > > To: linux-clk@vger.kernel.org; sboyd@kernel.org
-> > > > Cc: linux-kernel@vger.kernel.org;
-> > > > linux-arm-kernel@lists.infradead.org;
-> > > > mturquette@baylibre.com; shawnguo@kernel.org; Anson Huang
-> > > > <anson.huang@nxp.com>; Jacky Bai <ping.bai@nxp.com>; dl-linux-imx
-> > > > <linux-imx@nxp.com>
-> > > > Subject: RE: [PATCH V4 0/9] clk: add imx7ulp clk support
-> > > >
-> > > > Hi Stephen,
-> > > >
-> > > > Do you have a chance to look at it?
-> > > > This patch series has been pending for quite a long time without
-> > > > much comments.
-> > > >
-> > > > Regards
-> > > > Dong Aisheng
-> > > >
-> > > > > -----Original Message-----
-> > > > > From: A.s. Dong
-> > > > > Sent: Wednesday, July 18, 2018 9:37 PM
-> > > > > To: linux-clk@vger.kernel.org
-> > > > > Cc: linux-kernel@vger.kernel.org;
-> > > > > linux-arm-kernel@lists.infradead.org;
-> > > > > sboyd@kernel.org; mturquette@baylibre.com; shawnguo@kernel.org;
-> > > > Anson
-> > > > > Huang <anson.huang@nxp.com>; Jacky Bai <ping.bai@nxp.com>; dl-
-> > > > > linux-imx <linux-imx@nxp.com>; A.s. Dong <aisheng.dong@nxp.com>
-> > > > > Subject: [PATCH V4 0/9] clk: add imx7ulp clk support
-> > > > >
-> > > > > This is a rebased version of below patch series against latest cl=
-k tree.
-> > > > > [PATCH RESEND V3 0/9] clk: add imx7ulp clk support
-> > > > > https://lkml.org/lkml/2018/3/16/310
-> > > > >
-> > > > > This patch series intends to add imx7ulp clk support.
-> > > > >
-> > > > > i.MX7ULP Clock functions are under joint control of the System
-> > > > > Clock Generation (SCG) modules, Peripheral Clock Control (PCC)
-> > > > > modules, and Core Mode Controller (CMC)1 blocks
-> > > > >
-> > > > > The clocking scheme provides clear separation between M4 domain
-> > > > > and
-> > > > > A7 domain. Except for a few clock sources shared between two
-> > > > > domains, such as the System Oscillator clock, the Slow IRC
-> > > > > (SIRC), and and the Fast IRC clock (FIRCLK), clock sources and
-> > > > > clock management are separated and contained within each domain.
-> > > > >
-> > > > > M4 clock management consists of SCG0, PCC0, PCC1, and CMC0
-> > modules.
-> > > > > A7 clock management consists of SCG1, PCC2, PCC3, and CMC1
-> modules.
-> > > > >
-> > > > > Note: this series only adds A7 clock domain support as M4 clock
-> > > > > domain will be handled by M4 seperately.
-> > > > >
-> > > > > Change Log:
-> > > > > v3->v4:
-> > > > >  * rebased to latest kernel
-> > > > >  * make scg and pcc separate nodes according to Rob's suggestion
-> > > > >
-> > > > > v2->v3:
-> > > > >  * Patch 1 changed on: 1) split normal and gate ops 2) fix the
-> > > > > possible
-> > racy
-> > > > >    Others no changes.
-> > > > >
-> > > > > v1->v2:
-> > > > >  * add enable/disable for the type of CLK_DIVIDER_ZERO_GATE
-> > > > > dividers
-> > > > >  * use clk_hw apis to register clocks
-> > > > >  * use of_clk_add_hw_provider
-> > > > >  * split the clocks register process into two parts: early part f=
-or
-> possible
-> > > > >    timers clocks registered by CLK_OF_DECLARE_DRIVER and the
-> > > > > later part
-> > > > for
-> > > > >    the left normal peripheral clocks registered by a platform dri=
-ver.
-> > > > >
-> > > > > Dong Aisheng (9):
-> > > > >   clk: clk-divider: add CLK_DIVIDER_ZERO_GATE clk support
-> > > > >   clk: fractional-divider: add CLK_FRAC_DIVIDER_ZERO_BASED flag
-> > > support
-> > > > >   clk: imx: add pllv4 support
-> > > > >   clk: imx: add pfdv2 support
-> > > > >   clk: imx: add composite clk support
-> > > > >   dt-bindings: clock: add imx7ulp clock binding doc
-> > > > >   clk: imx: make mux parent strings const
-> > > > >   clk: imx: implement new clk_hw based APIs
-> > > > >   clk: imx: add imx7ulp clk driver
-> > > > >
-> > > > >  .../devicetree/bindings/clock/imx7ulp-clock.txt    |  87 +++++++=
-++
-> > > > >  drivers/clk/clk-divider.c                          | 152
-> > > > +++++++++++++++
-> > > > >  drivers/clk/clk-fractional-divider.c               |  10 +
-> > > > >  drivers/clk/imx/Makefile                           |   6 +-
-> > > > >  drivers/clk/imx/clk-busy.c                         |   2 +-
-> > > > >  drivers/clk/imx/clk-composite.c                    |  85
-> > +++++++++
-> > > > >  drivers/clk/imx/clk-fixup-mux.c                    |   2 +-
-> > > > >  drivers/clk/imx/clk-imx7ulp.c                      | 209
-> > > > +++++++++++++++++++++
-> > > > >  drivers/clk/imx/clk-pfdv2.c                        | 201
-> > > > ++++++++++++++++++++
-> > > > >  drivers/clk/imx/clk-pllv4.c                        | 182
-> > > > ++++++++++++++++++
-> > > > >  drivers/clk/imx/clk.c                              |  22 +++
-> > > > >  drivers/clk/imx/clk.h                              |  92
-> > ++++++++-
-> > > > >  include/dt-bindings/clock/imx7ulp-clock.h          | 109
-> > > +++++++++++
-> > > > >  include/linux/clk-provider.h                       |  17 ++
-> > > > >  14 files changed, 1166 insertions(+), 10 deletions(-)  create
-> > > > > mode
-> > > > > 100644 Documentation/devicetree/bindings/clock/imx7ulp-clock.txt
-> > > > >  create mode 100644 drivers/clk/imx/clk-composite.c  create mode
-> > > > > 100644 drivers/clk/imx/clk-imx7ulp.c  create mode 100644
-> > > > > drivers/clk/imx/clk- pfdv2.c  create mode 100644
-> > > > > drivers/clk/imx/clk-pllv4.c  create mode 100644
-> > > > > include/dt-bindings/clock/imx7ulp-clock.h
-> > > > >
-> > > > > --
-> > > > > 2.7.4
-
+UGluZw0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IEEucy4gRG9uZw0K
+PiBTZW50OiBNb25kYXksIE9jdG9iZXIgOCwgMjAxOCA2OjQzIFBNDQo+IFRvOiB0aG9yLnRoYXll
+ckBsaW51eC5pbnRlbC5jb207IGxpbnV4LWNsa0B2Z2VyLmtlcm5lbC5vcmc7IHNib3lkQGtlcm5l
+bC5vcmcNCj4gQ2M6IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWFybS1rZXJu
+ZWxAbGlzdHMuaW5mcmFkZWFkLm9yZzsNCj4gbXR1cnF1ZXR0ZUBiYXlsaWJyZS5jb207IHNoYXdu
+Z3VvQGtlcm5lbC5vcmc7IGRsLWxpbnV4LWlteA0KPiA8bGludXgtaW14QG54cC5jb20+OyBoZGVn
+b2VkZUByZWRoYXQuY29tDQo+IFN1YmplY3Q6IFJFOiBbUEFUQ0ggVjYgMC80XSBjbGs6IG5ldyBB
+UElzIHRvIGhhbmRsZSBhbGwgYXZhaWxhYmxlIGNsb2Nrcw0KPiANCj4gSGkgU3RlcGhlbiwNCj4g
+DQo+IEdlbnRseSBwaW5nIGFnYWluLi4NCj4gDQo+ID4gPiA+DQo+ID4gPiBKdXN0IGNoZWNraW5n
+IG9uIHRoZSBzdGF0dXMgb2YgdGhpcyBwYXRjaC4gVGhlIGNsb2NrIHJvdXRpbmVzDQo+ID4gPiAo
+cGF0Y2hlcw0KPiA+ID4gMS0zKSBhcmUgdXNlZnVsIGZvciBvbmUgb2YgbXkgZHJpdmVycyBidXQg
+aWYgdGhleSBhcmVuJ3QgYWNjZXB0ZWQgb3INCj4gPiA+IHdpbGwgdGFrZSBhIGxvbmcgdGltZSB0
+byBiZSBhY2NlcHRlZCwgSSdsbCBuZWVkIHRvIHJlZmFjdG9yIG15IGRyaXZlci4NCj4gPiA+DQo+
+ID4NCj4gPiBUaGFua3MgZm9yIHRoaXMgaW5mb3JtYXRpb24uDQo+ID4NCj4gPiBTdGVwaGVuLA0K
+PiA+IFdvdWxkIHlvdSBoZWxwIHRvIHByb2NlZWQgdGhpcz8NCj4gPg0KPiANCj4gUmVnYXJkcw0K
+PiBEb25nIEFpc2hlbmcNCg==
