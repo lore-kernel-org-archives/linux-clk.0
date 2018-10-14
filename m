@@ -7,34 +7,34 @@ X-Spam-Status: No, score=-8.0 required=3.0 tests=DATE_IN_PAST_12_24,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 870DBC7112A
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Oct 2018 05:14:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C772C7112A
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Oct 2018 05:14:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 387972086A
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Oct 2018 05:14:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0AAEC2086A
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Oct 2018 05:14:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="a0ga+Ewn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 387972086A
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="OsXYytUt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AAEC2086A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726628AbeJOM5g (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 15 Oct 2018 08:57:36 -0400
-Received: from mail-eopbgr30068.outbound.protection.outlook.com ([40.107.3.68]:64243
+        id S1726926AbeJOM51 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 15 Oct 2018 08:57:27 -0400
+Received: from mail-eopbgr30082.outbound.protection.outlook.com ([40.107.3.82]:58192
         "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726663AbeJOM5g (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 15 Oct 2018 08:57:36 -0400
+        id S1726736AbeJOM5Z (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 15 Oct 2018 08:57:25 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fv0EnvO8kXX71+WZmbyEZ5jXDcBP+JBLAwdHi0fq7QE=;
- b=a0ga+EwnM2cvO/zk/cRhNeMt/bdAmO43fpdDR10Rp2/8PEAZ2reJLcR4pOkiIuODKwMMBnVwk51L4JcXy90ETErozhp4hs4QmGJ7VDxmj4jbMyyicqjIJkkHnF+tTcCfK+pbrk4Gscxu+QOp9t7s7qIY23UIWjqzhq7/KmVCXsg=
+ bh=v9hMqqThZ68alsJmloQ2lTVQ1zkW/136SvAplbvzl3M=;
+ b=OsXYytUt6oiagcEbSy2CacCmr+bUpUYmEO/rkM5XmogxalWtc4327yTgU6YEaM3QkVbzbn/oLEyAHSxewbq2l8sdslWsd+yJns7qEOXfjEzVsYCH6wKUXxb/YEMu/Tqr/6ZAStJKuK+hcpUPcj7++WzxGC/YN++uq4RN9zO7QxQ=
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=vabhav.sharma@nxp.com; 
 Received: from uefi-OptiPlex-790.ap.freescale.net (14.143.30.134) by
  AM6PR04MB4790.eurprd04.prod.outlook.com (2603:10a6:20b:3::27) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1228.26; Mon, 15 Oct 2018 05:13:49 +0000
+ 15.20.1228.26; Mon, 15 Oct 2018 05:13:35 +0000
 From:   Vabhav Sharma <vabhav.sharma@nxp.com>
 To:     sudeep.holla@arm.com, oss@buserror.net,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
@@ -49,16 +49,12 @@ To:     sudeep.holla@arm.com, oss@buserror.net,
         leoyang.li@nxp.com, shawnguo@kernel.org
 Cc:     linux@armlinux.org.uk, adrian.hunter@intel.com,
         ulf.hansson@linaro.org, V.Sethi@nxp.com, udit.kumar@nxp.com,
-        pankaj.bansal@nxp.com, Vabhav Sharma <vabhav.sharma@nxp.com>,
-        Priyanka Jain <priyanka.jain@nxp.com>,
-        Sriram Dash <sriram.dash@nxp.com>,
-        Horia Geanta <horia.geanta@nxp.com>,
-        Ran Wang <ran.wang_1@nxp.com>,
-        Zhang Ying-22455 <ying.zhang22455@nxp.com>,
-        Yinbo Zhu <yinbo.zhu@nxp.com>
-Subject: [PATCH v5 6/6] arm64: dts: add LX2160ARDB board support
-Date:   Sun, 14 Oct 2018 22:38:03 +0530
-Message-Id: <1539536883-1928-7-git-send-email-vabhav.sharma@nxp.com>
+        pankaj.bansal@nxp.com, Yogesh Gaur <yogeshnarayan.gaur@nxp.com>,
+        Tang Yuantian <andy.tang@nxp.com>,
+        Vabhav Sharma <vabhav.sharma@nxp.com>
+Subject: [PATCH v5 4/6] clk: qoriq: Add clockgen support for lx2160a
+Date:   Sun, 14 Oct 2018 22:38:01 +0530
+Message-Id: <1539536883-1928-5-git-send-email-vabhav.sharma@nxp.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1539536883-1928-1-git-send-email-vabhav.sharma@nxp.com>
 References: <1539536883-1928-1-git-send-email-vabhav.sharma@nxp.com>
@@ -69,51 +65,52 @@ X-ClientProxiedBy: PN1PR01CA0082.INDPRD01.PROD.OUTLOOK.COM
  (2603:1096:c00:1::22) To AM6PR04MB4790.eurprd04.prod.outlook.com
  (2603:10a6:20b:3::27)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 25678a4c-bbfe-42be-7b09-08d6325d0165
+X-MS-Office365-Filtering-Correlation-Id: 6a2cc02a-4f06-4915-a633-08d6325cf903
 X-MS-Office365-Filtering-HT: Tenant
 X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM6PR04MB4790;
-X-Microsoft-Exchange-Diagnostics: 1;AM6PR04MB4790;3:e9DTD8B2hGAeKvKAQEUHCmuH+hUeAvByyO98qqxdNvin+uDvLYA4/RLsoO0iCH4+5J7Eul3Y+Itgu5dc2v+r8+63BmQTgY0Lu77oeuIpxPxkEsJeRNAnniqop5/FU9BRJmZRYpOeKUEPFDAFvDNGNs6VF9VeG8wH8xqhjsYjzSDJMOnOQwZ82UAy/ogjJRLofzixlkHciyWtTB96bn6hRwNDDE9ZDyxpcjid22D3p5pa+x8eEPC0R3zs4+n6jWC+;25:lrtg+o8AdrrELtbY0OK0kUToxEYxNGw7S5pbGOJ9NCQUQYRYYeSFtqwQibRqvdhNoS62WA7GNjxUADM2ZBkVv5UIYJ+qhsb9UxLun0R1vmRcj8fdR+3SkLcq3nZOfwR3E0o+KGhIpgFH4EyvuqviJRQeRLV2UWCAV6SwFdQ1eTY5TMXybcUIZhpKo64EPyyemEnUJSA/x9oS3o0EMkQcCT2IywPa0J51dvErEXb8KoHZuwmYc85As4hvMKrxVUwuoXNLNB9hNRVgA4byVoT2RNJO9zaSURVO9L97CgtTzIl2XMY0dxztvmiVqLfIUDkHDD1EI+Okqxipi8HfHfZX4A==;31:Ggp4FL+Ql8Ul8Qqq84S+PYL9PlIBMy+XQBwgC7Y6GS6F+hcWh5qr2CSWZJ/J/qmc8/Z2qdXwo6T/Hy6KBH3qNOO/qVV+E4d0xVuK0b8luJ+3c8LuazuPYmlJ+lzD7dUX7jye+pK6sD9wsYialQGQpPcVWwc8wfk1xrc8c8dCKp4fUQZ9J8xLi1kAvzB20HmlGO6gJl3hxwDrgTDge2ZoCufFJtExLJqbE4VD1hLXzfY=
+X-Microsoft-Exchange-Diagnostics: 1;AM6PR04MB4790;3:sDHDGzm1g5Lv8jctNE1kZXVF0VOkownX5ijgjmZRmMd6BF4eEQHrAwk64Uqcnt8SpOdK/vHJUBgLx+gNUtYRSdIje+uKmBrSMX82J+IunnfG7Idmfvi5qvgKAA9uiJV1HduHZfQIL6fYo1avVvQt+Rqi0rR961t35O51URUVW3byGo0lrsAs2Gdyx7Ug/O9Ibjt5/h1qDN2zAUOsnurI22jYvAJzm7ob9Y2gtRHHZkmwEjEWrUPSotAg5OWZTz+/;25:zNGSq3dyQZK1yoasLZBPGteTlbLxr28C+vqkJVcgIZw/l95sDGr7r018mFa9yZSa2lzc8mT5O1IOGDMf1uotF0FgPmKtHKQwvAcHzwYvIR4Lmz7Tc1Dwf1mrLAp5wPKEgbiW9j2fiDgvWNJq0FYh7wyF7b5Nn8kT9pGMaolWK++fVlK4VnX9MCMJgB7e1NmSlJ6AqzDL67HGrgq44rMn6uLP/srj63iv9AzNYiX/bPERIuHyb0zIdrXL0NKyI1tecMZ3lLNaf3z5piPdXtdNCmKKMOX9lXO5yX88LAFsZprY559pkuNOAIRknpLbs2hZ0kOgikWMaXkY49pVJKsqlw==;31:7UbLQacQ9zS/rtPf/dmKu9GTa6d79kpdkege7q86rJ6SY+VwyHlAYj0M5XP5bMtqIaOLpuqEk4m5tZuS9xFL4mJ53ST1D2yEeyBxoVHpshXC5xTtAVEPfcJQQeWZhjFNUl3wFXN5ryYMVTzGPvpEvHAQG4mCCH/e7LBtt5mHEpkoQdJVisAuASITM3lXDxkildMs/YJBcuyr5L6IRcnLqq/Z5VYLsI21BFBGGd40Y48=
 X-MS-TrafficTypeDiagnostic: AM6PR04MB4790:
-X-Microsoft-Exchange-Diagnostics: 1;AM6PR04MB4790;20:SyrxfSvUSBjOhgAekBx5GLhU4vV7nW1Oj/Mt9xdTeizN3B+EkNiSjPBZQqZp2I+qTVPjqsuRZkOEQEXt2xCa/ZHiJ03PDk16m32fAbHjyy2Rg/60s+XrnCe0yCpIgzBzewY1aIFfqYxCP3R+TBJPSTeoTapSLmt3LEk2RKaY97FQ8rdsEiOuffqFopfQWqceri1zpbAinfVJ//yJIDsC7Hbq0BF4mjR0tvdkdriq/hYt20a2mH1OqBUx766evJ0yFFSiysgrXn9rjmeBPjB7LuZm8cn9ekFRgM3cg0QGwF+rKYGGh03XA9kZPM4+b7FFfV/AcC/WzlEl5qTKY3OPjtZeDcf6SVqcqJlyXssd+Y0V6lPBp49K8l0zits29addaaFUeS3lqPBdq7Ii1Ve3mTyBrDuuLqx6CexHMXsYUj6JH1qT2fcLeoshIy/Y7eCgnnW8KvCbg5GzmiSmNoyioscC0YO3axrVWeakZ8vG2wxO1PJz2/GOD7rtcwv4XvLC;4:pk7S0PUc5f1SOQESXFWgUlylEviuJMa9PWj5SwrLl8IhRPuK/awzMxkHjRvdRno3QG648schGGubRnAB0wy4xYVE/5cE5chIV5Id17hKH1BhOOl1QXxW0qX8jX69nuGmK19lw/i+k5Ooyt/QQmaX3gWdTmE22xiQmGIdKt4IHiV34qfZdqlrR4tc4M1qZgiVGfdFBIjpUXlIR9Kl3iGp//YC54LMKeaNwS/Yx+kdJaE6FM/0kzt6/sVSkbgPQeV5sHpbhHx7/IEQbGk9hLMwJz7tLTTAHngdODPoMLggcCxmojRAksgbIQWmR+ja0qcP
-X-Microsoft-Antispam-PRVS: <AM6PR04MB47906A42898B5A2F0A294680F3FD0@AM6PR04MB4790.eurprd04.prod.outlook.com>
+X-Microsoft-Exchange-Diagnostics: 1;AM6PR04MB4790;20:kDqT82M2nvsI9UBf/UIqA8URdS80k32TevElyGvtAFtA4NaCIYjNabysCCRReKsvm/Yv8LsvBQLWGyEz15TLJnB/ZIBFKeDVPXdjJ088ZLFzxCYN+veNNSqai2f43Bkr8x6Gphiswhmap1icR5LKXH3mv9M56HtZOf9/skYz0jAGM1mPPjA6M33E4h8snPvwTNtFBRnrD+wIM68BqwPa1UkVT5tRWVFAPUksb1cDBOr97Srm6vb7VUYA+vBfw/l7G6WrrKnnPosBi+jGqZfTdLYOIVr8Jk2EKVj8W04d+w1RxFz9+EzxNAVpAAn0tdkaW/Zje7dKBk2eSeTN/3fLiLTNOzB32LWjJ0vIm6iP7ym1/kcdXKXNJ+fsRyyz3XoSqMOGrZXIcBTBj+EbLPen1alG+JFeEFw/icOis/h9v8MwkHYk13/kRRK8C3lJkpvED+2h1HGJEKttPO3uAisjof8v7TGcV7sztpPXAj2dQaTQc00O1GBwvfjgdftcfAFG;4:DkPSKgF0ZS3qGC71t+qoYzjtZiMdcSy4UXDqVIk4iyw4o8iQXIIpdbaB7xfueP8SbOCNnIHXFl3lEjXVPczeW7halvavXW9zgUYXthBJv6IM4q8BzmIWf47E+PnxyiMJaUV+JnwWSHqKsx6ezKh0rwNfHVGXlHSHh8N98uDJO/4c5U8ojDjXFyADyjk82E2eOc5cWVo1ggNyh8RAGvNQd5lOxDiXVVbezYB9jIx+7cUiWX9VG5KINw3E+QVhegVw9T51e1ABQVnvrBzdnqU47lJUfkDIDqytoHJvJ4Q6eTeyEZzTBs7hL2FHVXZyrD0S
+X-Microsoft-Antispam-PRVS: <AM6PR04MB47903E8459A147431CFFB1FCF3FD0@AM6PR04MB4790.eurprd04.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(185117386973197);
 X-MS-Exchange-SenderADCheck: 1
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231355)(944501410)(52105095)(6055026)(149066)(150057)(6041310)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991067);SRVR:AM6PR04MB4790;BCL:0;PCL:0;RULEID:;SRVR:AM6PR04MB4790;
 X-Forefront-PRVS: 0826B2F01B
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(346002)(376002)(39860400002)(136003)(366004)(396003)(199004)(189003)(53936002)(478600001)(6512007)(2906002)(52116002)(51416003)(3846002)(6116002)(1006002)(86362001)(6666004)(5660300001)(316002)(50226002)(8936002)(8676002)(97736004)(68736007)(81156014)(81166006)(486006)(956004)(44832011)(2616005)(476003)(7736002)(47776003)(305945005)(66066001)(25786009)(186003)(16526019)(50466002)(48376002)(26005)(106356001)(36756003)(105586002)(446003)(11346002)(4326008)(76176011)(386003)(6506007)(54906003)(55236004)(7416002)(6486002)(16586007)(110426005)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR04MB4790;H:uefi-OptiPlex-790.ap.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(979002)(346002)(376002)(39860400002)(136003)(366004)(396003)(199004)(189003)(53936002)(478600001)(6512007)(2906002)(52116002)(51416003)(3846002)(6116002)(1006002)(86362001)(6666004)(5660300001)(316002)(50226002)(8936002)(8676002)(97736004)(68736007)(81156014)(81166006)(486006)(956004)(44832011)(2616005)(476003)(7736002)(47776003)(305945005)(66066001)(25786009)(186003)(16526019)(50466002)(48376002)(26005)(106356001)(36756003)(105586002)(446003)(11346002)(4326008)(76176011)(386003)(6506007)(54906003)(55236004)(7416002)(6486002)(16586007)(110426005)(921003)(1121003)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR04MB4790;H:uefi-OptiPlex-790.ap.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 Received-SPF: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM6PR04MB4790;23:YbqoxlPMTbujm00k/MOgjnXYMXRJYQiTkoLiV+orr?=
- =?us-ascii?Q?kgUAOoPlgV4ku597xemPqJdyiux1wbUapi6qXX5fX4ATjj67OUNbG7qpOzqs?=
- =?us-ascii?Q?U/qiIGqBJcMWLakTJEnmids8AXwuzJ8aEi7NabB6/IuDp6EqDM6QmkndlR8I?=
- =?us-ascii?Q?0XosMwwQ4B4SD0ku9erUTa59UOBBMFX/DBm9hb8/X1OVmdwoDnFkvhYDh7ac?=
- =?us-ascii?Q?j7fRbdsbJjyrfNR2KP7/uxVer4ajX15NxLMOYlbXrub0ZtEiD8bq0dXtdYaQ?=
- =?us-ascii?Q?3updLJLp9sx82HwS6QdxgokJRuLiUYOj6ysx770jykVF5wgxrpE8FmiYEzEw?=
- =?us-ascii?Q?ULE0FgwvgtVcfqnWzr8PpDRP/NLT66jVtQCKFA2bjGora+9eI96YVFHHif3U?=
- =?us-ascii?Q?AVgnFTVQWGjUGaWhknE+3LcjGUKtVSqQIn/Cgq1TYJRvtnEKWUgFNjLkrtiy?=
- =?us-ascii?Q?6FEhPp1c+Il8M64+9ZRkx1Gsmp9xQKQXrUWMMPZXrhbTB8G7a9ZMG4kgdm94?=
- =?us-ascii?Q?GKuT4mYLttYEzsZqV6/VZFeozSE0MdmgsP7aF5CsYHuCNupDNjozMl9Z7R3n?=
- =?us-ascii?Q?83prsNu0TOUyGThd4PzN16sHzBAcGJryHVtNgl7VqgK1t1UyXNZ2iIgbkEBB?=
- =?us-ascii?Q?NbZJ1jHbailJbfo++jt5BZVxitHMvUrNbjNnmFWiq0TxTRPIGD04qd/zdBTy?=
- =?us-ascii?Q?rYTBMMQclbOIeduG0Nz85RTb3qISNKqxGNkGQQyXxObwNY8jIyX8hYUe0bhd?=
- =?us-ascii?Q?wjsVBrEmlYP583neY93a5OZqPXLDsa0+AhWssbAX4xVCGIfGdMxhrBXDTSsm?=
- =?us-ascii?Q?2FBx19fUhVoPuGP8W1IDypRz7La6cSdbG/sobNQuzawkkprTe9zfYe5UdJoW?=
- =?us-ascii?Q?b4vP716H1LWRr8IhnMqN2BI3blXtbtkji1DewoLvoKl75rlG4GFYRP2e+U4U?=
- =?us-ascii?Q?cPYhYRItR5vdFd5XHg8CVYcKg5AGVaDkFoyAD+EAA96pLMqY1b0wfkKuK9v3?=
- =?us-ascii?Q?zLzIfWUQcv7RqYgflthyAuKJ6WVwS7j7snjXxOYLk28UtlUXIWwel5zAq9hG?=
- =?us-ascii?Q?Fqw2bi84dwy36gUcKgORiDLTjGx0qm2+Ty8MYDBfbp/n5pVpx7Yf8CEH32Fe?=
- =?us-ascii?Q?RKzcWgwtmVlFpwX8uYSpxSq1x58UMt/hE8sNS3miqavnS09VXFbuIlM+I8yv?=
- =?us-ascii?Q?dTXIje9Iwd9VxoYTqYppPJk9vkjnOs0qnPg9M4MUaw2kWvINZTv4KzkCtPWa?=
- =?us-ascii?Q?T+TGIkayXBoBrp2+AbpAzUCmM7tH8pLCl+dJp+LJRKtYLglRWPchT7DrCqEH?=
- =?us-ascii?Q?n79bzNpKQdlYvPUXJZyxIA=3D?=
-X-Microsoft-Antispam-Message-Info: 0ZBfAsDyfiG2u4l19hg3dCgY3oHbmgpeH8OFpfJ33rG+mFE+ULpm8jjpHJ/vJHfQZ1CKnQI3CD6qDGbn6W+CT0uZ2w1rYasBAA8LJTn8wuaaSarbfx5gEqzbuGNY0NZnxjC7xOIk+4RnNyhM8Qle+JySpZA1mkdcgbhC+XXOpD3YkM50Jg7noAG+sc6qWNu0tYILoxHDxDfZ2OKkFYJ7Y6DJHUVo8vXkFpMmXnwnkrjrRvJVfxXa/tRL2ZwlAHSiyDoPtq54Ei6CBBeYQaGwVWkd2MNtmHEj0eI9zXfDnfS1x7mEUELjcOke6WNyjL4kW1nv2unduAdZNUz1AD/Z6m8R8UC3TakmBbHkKgdjKG8=
-X-Microsoft-Exchange-Diagnostics: 1;AM6PR04MB4790;6:kFaH+54+LA2+DaG5+QrirLp0yeEVe/Wub9nh17TLI2Vj1l8kxDtYusrpnOemv0y8ffb3d/tSlRjobd/73CBJ7pxPYRO9cgxzyegNCGIEeZxS6grTMAnlMCLzenl1Cy+urdqnjLRkarRINxvIZlrzoSnfHFhO7wbYF+I7vte8/qbW+K5Oe/W8YzHrqk4zCH0WBy1LvYvhArG2B5v8ebnlNMrJnUqUdijLKTbOblmA4ayOT+BBjVHcsLfQgY/32Z93FS8ZwoadPbG95IyHhr3MZxO+D1FvKPFtfleped68LP848kDHEvY8/6kXYZP8oNe7ekd+NfBG/PcY4/9h1Fwh41dDIdcBkO+0GhWtKhrmIN/8qeJRBvNNhVvevgHLVlRJ43D+6NWSGSJ/+rFwC6xbM308/khwKqjNFnfZyJdXQ8nF2XNVy8ubJN/YsdN22HC8Q8TSN5iP4OZiTWAqdMh9ig==;5:iTiLETMy0/y5DXrcsAiUddpaDB/anRQIqOyEFZqHbAPm3g4axFrA8++GwdkL1DHDRA1si+U1gXHtNNm7Gl+0ypcKzH1Ja49cMUpcG3pC0of+XGu0lHjBo7+T5Y+owCtxkniBsSbRvBuGt3p/jpJG/u4VSddMcjStRnev7ntJTzg=;7:Wop3VDZKTAaAG3snI5+RzdgG6kV2Rl55LTeNf4JGTg1z5h4b6WkBw4/Cg1WrIEhJLnqt+f8+qKgaaEmw1WVzOdUt9TBZX5vZ3Z+cpRFbcBYjfo8eVyNieIKThWoSa273XGogbEeV1eLZJacWYV0XOve2EmHUWqNrEOMq1scX0+AdaH3eDqCOcTJKxnpEKB86yYlbkGuj7uhzpZGucmvp/u+E+vIN9AH/A+JFSxs956wVTRStvZqrLLI6s0GM8ALM
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM6PR04MB4790;23:5n1NqLOkcyZ+1EG4BI9TneCjjgrPKe4oqbDI61xYS?=
+ =?us-ascii?Q?avx8LjMKPOpXeUzAhZFYGQ9VOMYTB91Jf1xkX+yHFHdiUTmBzV3LWvCk2P85?=
+ =?us-ascii?Q?caC+WFrqpqkpKbmTAQ4d50StbQxRKZEbXh1OoHxgSs69wf4PFb233BLxLPm2?=
+ =?us-ascii?Q?GoYEjJOkqnPIcmvLKTHXYqTbBWvpQ9/UaxR8OIajSqlIT1qKzZbJcZuxMFTi?=
+ =?us-ascii?Q?infUAEtz2NQLHITYJzab4t5w7h7CpmdpIfJoGvoYIrZSI20sjs/+zExctAu2?=
+ =?us-ascii?Q?RZnmnq9YsBNwexMsnBlfDhqOU1nVqrgbRQjAkeXINt6liWhjBO8ShJzrvcjh?=
+ =?us-ascii?Q?vRLVJ6LuqgO4P0nXbCBSDAEDJ7bFKk3T9U3gjy4icbSANIcyJ/X69YTB+Sd1?=
+ =?us-ascii?Q?QhQeFfe7VrkPnrQ48Z436IrlYzkyQGH22hU882AEt3c3mccbBh4jwk/CPqBt?=
+ =?us-ascii?Q?shBPckIPlgQ6ad9YM5yHy096AM0IMAdeIdI5fi6iKEbYctCPHmeV6GBNkCA8?=
+ =?us-ascii?Q?VOi4X8sUwceQUJm8Zw0HFQ5/EW2rt5fe+sK3iT18M3ZrvkTV2Jnr2k7Xxsbl?=
+ =?us-ascii?Q?igOrvr9eki4aGyfRsoCccaycI3sBKHNSg2hYLeRqvzcKFo3tcScz4xx15GlP?=
+ =?us-ascii?Q?CTMY6JbVuZmWG4S+ZMX1iHc2acJp5dKNVyRWOW1fb+PJpPYNjk0zUm46BvQW?=
+ =?us-ascii?Q?3r24SXofoLuSS8asWlwhMgPXlFo/Sl5879EicQ5CI9eBoFBMxf+2+Ze3n2L8?=
+ =?us-ascii?Q?bT/jk/zHflffC/mIdSHChjAr+QvctDFmDBftFfRubqeMv+tsBMp/tZORf3Br?=
+ =?us-ascii?Q?KdLjZBfIUZakUzyE/3nyd3olXUDLU+Jkc497jKaGYacyuEA9EJiuL4hrh0/S?=
+ =?us-ascii?Q?yvvRf2mhoAoxeiFExYUTPymz8EYX1aB0NqrRHB6n0W5gs5/zjgnrtc0rlJEv?=
+ =?us-ascii?Q?eMq35eRUq3X5NCTn6D0sJGCN1L6ESPb+7x6oyY+P5g3A4ZpxPqhKbLJ/W1Ep?=
+ =?us-ascii?Q?rkYLLb2kIyvH8ePSZ2hfwxteMbPJYf1EuRju/3/bhghsCKyqdMj14DMFcmHt?=
+ =?us-ascii?Q?SLsxOrGes8nYm+rVGjC0AZa347XcNj1V0GpXttL2lbJwgroxMU3lxScER9b8?=
+ =?us-ascii?Q?ub5yeCohVXyUx/K6aiahZZNJvsmHyGJWQB17zhbvjxoYwgvoPCWuDrNyIGgB?=
+ =?us-ascii?Q?qf/f+OnWo1uiEopPusJzVSoSKAXX8LgaUgtjafDx/toBtJqEBMIgoaASX4vY?=
+ =?us-ascii?Q?rVT2HvxF8J3WhJf099ezu31FNwh2xvDPqnXTu/LTWO4XaWey+mhCsDhFjYNv?=
+ =?us-ascii?Q?+v3UqFRnecJMCdRMfuZAY5whbfr4On4fo6OQcprZc+UL3KGoz/q/4IcYFTkC?=
+ =?us-ascii?Q?8Rqyz32ofHitysg9plnd3kvzzR9UzU/zBqKakSLXWSL0edj?=
+X-Microsoft-Antispam-Message-Info: L4zr1VCersf7u3xIfLXsQDQ/Z48tqm4zH/oRJe6ygPTZTFAviD/SCOqDwpVbm/dXyHaf1oa1abWcZQKQ9BXp03P7KNWkAORDvbZTlXFNfSSCst6Jz4NpiwTlfZy9lpMgkSXfuGexg7jp2EEwmUtx1ikXYwi23nnEoDae6Or2/O/UDlZGf03V1bNjFOUtYRxoXaNZCP5HZOfrafFACf9aVxh6COpOyJhJPqq0YWDOuQH7GR8RpuPSm9Bt3ELYOrUGQUnGMKTwxHFVuOA8dELjOJdViF7JqURSz6sEB2GYIlo+2RUOG50sTsAGAmfbK24O8u0k6U4UZkmPosR84WiA+6lS/C2VhrsRk66N8HM8hzs=
+X-Microsoft-Exchange-Diagnostics: 1;AM6PR04MB4790;6:10ulJmmopEak43GYD9EbHqX9O5inzN+iGF4fMBUXlJEw8RDQIZCYxqgaO0K0V3scDwfn7/gbxiqkRnJMZLWimez7+J9EVkd1efYWvBp3ydXuw/GTu59ylKFYk+1NddwQaGqQ5XyRt0TA+DN1mUiOnOHDVupq1RBr08uo1umzC2U0qcfhitiv8nxEnPpuQ7kttiiynF0GnvIlLeXuVOB+BYVbvxOVrkUOwjggGL14J9SJCCLxItuafc/Bt6ENbQQWPpWG1aZmLEnL8wo+ZR9ADbgajclL3OthPsKE5cr5jAHJ/SwPOCKJ4Vo8nIBZwPtvZwPxAWpbf099ne0snJiUzZKaQtpIxH7m/d6rrWHkwlf33STEdOGwvmBlzoKKrokDSGk0aw1PNz4iiB2bGgrl3OVciABH7hlwrd81amyAmiwrO/ngp1jOXLwhNURtsqwjS5YNnVJd0Fl+rn0wyswVqA==;5:XgC6kvvTpA+8rWiLlZQNdNO3Wz1lHM/CkWrgZwxpkSX36QnyLFJ5BUb4zPf3f/RLxopxi0M+73+NlrKs33DtKuHra5Qax9WPysoBLOMhzLd/1uncV3jmJbHAGWCI4XSbJmu1Ogjw9hazLgd62mviHMAFtiELu56HBgQdeh+JC6Q=;7:8yYOEab/+HHlwhNoHnxs+r1bmR2xPYyUAW5Wh2oxtTGypoZ5FNEEgxBlGtpF4K5vOGu/RACsf2H7A3ksuP9MHSedk0z4rJE+PnLcsO5aKqTvkokmQj/k+isKE+iFtF4mNHTZ3l3LcNyNTnEbNyeuryB6FPlqvxHeyb173rlLr9FxvwHsG5+zmgJk8yOpRfUsmoO8+YyKdzBDCKACa58KulER6SFGJvCJPo6chDW9qxWwLx2QFTcyr0I3Iexm4uf1
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2018 05:13:49.2844
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2018 05:13:35.8799
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 25678a4c-bbfe-42be-7b09-08d6325d0165
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6a2cc02a-4f06-4915-a633-08d6325cf903
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB4790
@@ -122,157 +119,63 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-LX2160A reference design board (RDB) is a high-performance
-computing, evaluation, and development platform with LX2160A
-SoC.
+From: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
 
-Signed-off-by: Priyanka Jain <priyanka.jain@nxp.com>
-Signed-off-by: Sriram Dash <sriram.dash@nxp.com>
+Add clockgen support for lx2160a.
+Added entry for compat 'fsl,lx2160a-clockgen'.
+
+Signed-off-by: Tang Yuantian <andy.tang@nxp.com>
+Signed-off-by: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
 Signed-off-by: Vabhav Sharma <vabhav.sharma@nxp.com>
-Signed-off-by: Horia Geanta <horia.geanta@nxp.com>
-Signed-off-by: Ran Wang <ran.wang_1@nxp.com>
-Signed-off-by: Zhang Ying-22455 <ying.zhang22455@nxp.com>
-Signed-off-by: Yinbo Zhu <yinbo.zhu@nxp.com>
+Acked-by: Stephen Boyd <sboyd@kernel.org>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 ---
- arch/arm64/boot/dts/freescale/Makefile            |   1 +
- arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts | 119 ++++++++++++++++++++++
- 2 files changed, 120 insertions(+)
- create mode 100644 arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
+ drivers/clk/clk-qoriq.c         | 12 ++++++++++++
+ drivers/cpufreq/qoriq-cpufreq.c |  1 +
+ 2 files changed, 13 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-index 86e18ad..445b72b 100644
---- a/arch/arm64/boot/dts/freescale/Makefile
-+++ b/arch/arm64/boot/dts/freescale/Makefile
-@@ -13,3 +13,4 @@ dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2080a-rdb.dtb
- dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2080a-simu.dtb
- dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2088a-qds.dtb
- dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2088a-rdb.dtb
-+dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-lx2160a-rdb.dtb
-diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts b/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
-new file mode 100644
-index 0000000..6481e5f
---- /dev/null
-+++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
-@@ -0,0 +1,119 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+//
-+// Device Tree file for LX2160ARDB
-+//
-+// Copyright 2018 NXP
-+
-+/dts-v1/;
-+
-+#include "fsl-lx2160a.dtsi"
-+
-+/ {
-+	model = "NXP Layerscape LX2160ARDB";
-+	compatible = "fsl,lx2160a-rdb", "fsl,lx2160a";
-+
-+	aliases {
-+		crypto = &crypto;
-+		serial0 = &uart0;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	sb_3v3: regulator-sb3v3 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "MC34717-3.3VSB";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+};
-+
-+&crypto {
-+	status = "okay";
-+};
-+
-+&esdhc0 {
-+	sd-uhs-sdr104;
-+	sd-uhs-sdr50;
-+	sd-uhs-sdr25;
-+	sd-uhs-sdr12;
-+	status = "okay";
-+};
-+
-+&esdhc1 {
-+	mmc-hs200-1_8v;
-+	mmc-hs400-1_8v;
-+	bus-width = <8>;
-+	status = "okay";
-+};
-+
-+&i2c0 {
-+	status = "okay";
-+
-+	i2c-mux@77 {
-+		compatible = "nxp,pca9547";
-+		reg = <0x77>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		i2c@2 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0x2>;
-+
-+			power-monitor@40 {
-+				compatible = "ti,ina220";
-+				reg = <0x40>;
-+				shunt-resistor = <1000>;
-+			};
-+		};
-+
-+		i2c@3 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0x3>;
-+
-+			temperature-sensor@4c {
-+				compatible = "nxp,sa56004";
-+				reg = <0x4c>;
-+				vcc-supply = <&sb_3v3>;
-+			};
-+
-+			temperature-sensor@4d {
-+				compatible = "nxp,sa56004";
-+				reg = <0x4d>;
-+				vcc-supply = <&sb_3v3>;
-+			};
-+		};
-+	};
-+};
-+
-+&i2c4 {
-+	status = "okay";
-+
-+	rtc@51 {
-+		compatible = "nxp,pcf2129";
-+		reg = <0x51>;
-+		// IRQ10_B
-+		interrupts = <0 150 0x4>;
-+	};
-+};
-+
-+&uart0 {
-+	status = "okay";
-+};
-+
-+&uart1 {
-+	status = "okay";
-+};
-+
-+&usb0 {
-+	status = "okay";
-+};
-+
-+&usb1 {
-+	status = "okay";
-+};
+diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
+index e152bfb..99675de 100644
+--- a/drivers/clk/clk-qoriq.c
++++ b/drivers/clk/clk-qoriq.c
+@@ -570,6 +570,17 @@ static const struct clockgen_chipinfo chipinfo[] = {
+ 		.flags = CG_VER3 | CG_LITTLE_ENDIAN,
+ 	},
+ 	{
++		.compat = "fsl,lx2160a-clockgen",
++		.cmux_groups = {
++			&clockgen2_cmux_cga12, &clockgen2_cmux_cgb
++		},
++		.cmux_to_group = {
++			0, 0, 0, 0, 1, 1, 1, 1, -1
++		},
++		.pll_mask = 0x37,
++		.flags = CG_VER3 | CG_LITTLE_ENDIAN,
++	},
++	{
+ 		.compat = "fsl,p2041-clockgen",
+ 		.guts_compat = "fsl,qoriq-device-config-1.0",
+ 		.init_periph = p2041_init_periph,
+@@ -1424,6 +1435,7 @@ CLK_OF_DECLARE(qoriq_clockgen_ls1043a, "fsl,ls1043a-clockgen", clockgen_init);
+ CLK_OF_DECLARE(qoriq_clockgen_ls1046a, "fsl,ls1046a-clockgen", clockgen_init);
+ CLK_OF_DECLARE(qoriq_clockgen_ls1088a, "fsl,ls1088a-clockgen", clockgen_init);
+ CLK_OF_DECLARE(qoriq_clockgen_ls2080a, "fsl,ls2080a-clockgen", clockgen_init);
++CLK_OF_DECLARE(qoriq_clockgen_lx2160a, "fsl,lx2160a-clockgen", clockgen_init);
+ 
+ /* Legacy nodes */
+ CLK_OF_DECLARE(qoriq_sysclk_1, "fsl,qoriq-sysclk-1.0", sysclk_init);
+diff --git a/drivers/cpufreq/qoriq-cpufreq.c b/drivers/cpufreq/qoriq-cpufreq.c
+index 3d773f6..83921b7 100644
+--- a/drivers/cpufreq/qoriq-cpufreq.c
++++ b/drivers/cpufreq/qoriq-cpufreq.c
+@@ -295,6 +295,7 @@ static const struct of_device_id node_matches[] __initconst = {
+ 	{ .compatible = "fsl,ls1046a-clockgen", },
+ 	{ .compatible = "fsl,ls1088a-clockgen", },
+ 	{ .compatible = "fsl,ls2080a-clockgen", },
++	{ .compatible = "fsl,lx2160a-clockgen", },
+ 	{ .compatible = "fsl,p4080-clockgen", },
+ 	{ .compatible = "fsl,qoriq-clockgen-1.0", },
+ 	{ .compatible = "fsl,qoriq-clockgen-2.0", },
 -- 
 2.7.4
 
