@@ -2,168 +2,124 @@ Return-Path: <SRS0=3y70=M3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0262AC04AA5
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Oct 2018 17:08:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 098B8C71133
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Oct 2018 17:44:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B06C22089E
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Oct 2018 17:08:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="gxIj2DdH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B06C22089E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by mail.kernel.org (Postfix) with ESMTP id CD89120881
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Oct 2018 17:43:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD89120881
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=siol.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726654AbeJPAyI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 15 Oct 2018 20:54:08 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:36570 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726638AbeJPAyH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Oct 2018 20:54:07 -0400
-Received: by mail-wr1-f68.google.com with SMTP id y16so22240021wrw.3
-        for <linux-clk@vger.kernel.org>; Mon, 15 Oct 2018 10:08:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=dh+I41dhmOIbT1OIEBdjr5aoOYlS8O6tWmG6ePE8p7k=;
-        b=gxIj2DdH85G1Z6agbRWN6ImiFkRDodnIcAG+pWkRESplybBADvSodDg3qMB1RtYbpV
-         tl+om52DA0gJluwBf3ONn3Ar0LhmPN7kvFbKp6NNw+ofhHkavLZyx03P4O14dy+Gkf+E
-         Ci83VkExtQMaF3263E1G9iUrWA4Zsc3y/1MeNHBlO03LXpL+V20bEMVPoZVmBv2RKWW1
-         f0bhDBTsLfAR8+VSD886PcUXj7MAqlqLzNgKoxfvGvKlnZF2d4DKqYqkWzHMdNZxEXRV
-         XzbjplGAHPQ5Dab68J8cFtFVOMHWgYYpRsf1xxkfhUbLheDZDCJqoyC42z2kbum8OtO/
-         aZKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=dh+I41dhmOIbT1OIEBdjr5aoOYlS8O6tWmG6ePE8p7k=;
-        b=HeWk3yGR/zkXtchiw1NlKj0XAvim5l+9KZxMagWv6BxTbL03O+nnQpRU5NMC2DZHnW
-         vhjxkOfFwYARjkjAxbScc4QwJoA/khGBI5P/4aqwR40ehK6BPSMdc8JdbUxgH2VXjlqn
-         vBtiZ6yx7CDuT/NJIv+2FCVVW+DAEu6cPzHTZwFZT86Lwa2VEyTSh09jLvdxzWH+HiSu
-         Fw/d00qCW8PMglx22n4aJ/cQRbjjI/Ik3fpfc0LYmWt+vGhihkTxbqrqEltuKsjW8UNE
-         6iFkPCLn29g8A4pBwHRloWI6p93pnc+kXg9w4zqeVR6728nJv2WGEK0b9RvN7flPEGfk
-         PYVQ==
-X-Gm-Message-State: ABuFfoiC9vXmPb9ndqm6B0oOnrpN/W84H22vkttbqKlTh0HZRDPmYm7B
-        nV/odWzLfRWKYPrJkzRsOHsm4g==
-X-Google-Smtp-Source: ACcGV63WvDro8j9wJ3io4RG63DgnxBzgyEjabpAC9sTZQLmPMCLqqP3AGn90jook31wF7pp8Q0+YBw==
-X-Received: by 2002:adf:e752:: with SMTP id c18-v6mr16689379wrn.143.1539623281428;
-        Mon, 15 Oct 2018 10:08:01 -0700 (PDT)
-Received: from boomer ([90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id b14-v6sm10499846wrp.42.2018.10.15.10.08.00
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 15 Oct 2018 10:08:00 -0700 (PDT)
-Message-ID: <ed6a889eeec4e2809f0840c9e8188b5e4b24fa76.camel@baylibre.com>
-Subject: Re: [PATCH] clk: meson-gxbb: set fclk_div3 as CLK_IS_CRITICAL
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Christian Hewitt <christianshewitt@gmail.com>
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Carlo Caione <carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Date:   Mon, 15 Oct 2018 19:07:59 +0200
-In-Reply-To: <20181013160810.88481.14237@resonance>
-References: <1539425086-10997-1-git-send-email-christianshewitt@gmail.com>
-         <20181013160810.88481.14237@resonance>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1726766AbeJPBaH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 15 Oct 2018 21:30:07 -0400
+Received: from mailoutvs30.siol.net ([185.57.226.221]:49883 "EHLO
+        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726639AbeJPBaH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Oct 2018 21:30:07 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mail.siol.net (Zimbra) with ESMTP id 6AEB7521577;
+        Mon, 15 Oct 2018 19:43:51 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at psrvmta12.zcs-production.pri
+Received: from mail.siol.net ([127.0.0.1])
+        by localhost (psrvmta12.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id H68FphBlTTer; Mon, 15 Oct 2018 19:43:51 +0200 (CEST)
+Received: from mail.siol.net (localhost [127.0.0.1])
+        by mail.siol.net (Zimbra) with ESMTPS id 048355208C1;
+        Mon, 15 Oct 2018 19:43:51 +0200 (CEST)
+Received: from jernej-laptop.localnet (cpe1-8-82.cable.triera.net [213.161.8.82])
+        (Authenticated sender: 031275009)
+        by mail.siol.net (Zimbra) with ESMTPA id B6B72521577;
+        Mon, 15 Oct 2018 19:43:44 +0200 (CEST)
+From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To:     linux-sunxi@googlegroups.com, laurent.pinchart@ideasonboard.com
+Cc:     maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org,
+        sboyd@kernel.org, airlied@linux.ie, architt@codeaurora.org,
+        a.hajda@samsung.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org
+Subject: Re: [linux-sunxi] Re: [PATCH v2 15/29] drm/bridge/synopsys: dw-hdmi: Enable workaround for v2.12a
+Date:   Mon, 15 Oct 2018 19:43:44 +0200
+Message-ID: <1599508.L0GctDr0rS@jernej-laptop>
+In-Reply-To: <3616158.EzHeIcd69b@avalon>
+References: <20181007093905.11253-1-jernej.skrabec@siol.net> <20181007093905.11253-16-jernej.skrabec@siol.net> <3616158.EzHeIcd69b@avalon>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, 2018-10-13 at 18:08 +0200, Michael Turquette wrote:
-> Quoting Christian Hewitt (2018-10-13 12:04:46)
-> > On the Khadas VIM2 (GXM) and LePotato (GXL) board there are problems
-> > with reboot; e.g. a ~60 second delay between issuing reboot and the
-> > board power cycling (and in some OS configurations reboot will fail
-> > and require manual power cycling).
+Hi,
+
+Dne torek, 09. oktober 2018 ob 19:40:44 CEST je Laurent Pinchart napisal(a):
+> Hi Jernej,
+> 
+> Thank you for the patch.
+> 
+> On Sunday, 7 October 2018 12:38:51 EEST Jernej Skrabec wrote:
+> > It turns out that even new DW HDMI controllers exhibits same magenta
+> > line issues as older versions.
 > > 
-> > Similar to 'commit c987ac6f1f088663b6dad39281071aeb31d450a8 ("clk:
-> > meson-gxbb: set fclk_div2 as CLK_IS_CRITICAL")' the SCPI Cortex-M4
-> > Co-Processor seems to depend on FCLK_DIV3 being operational.
-> > 
-> > Bisect gives 'commit 05f814402d6174369b3b29832cbb5eb5ed287059 ("clk:
-> > meson: add fdiv clock gates") between 4.16 and 4.16-rc1 as the first
-> > bad commit. This added support for the missing clock gates before the
-> > fixed PLL fixed dividers (FCLK_DIVx) and the clock framework which
-> > disabled all the unused fixed dividers, thus it disabled a critical
-> > clock path for the SCPI Co-Processor.
-> > 
-> > This change simply sets the FCLK_DIV3 gate as critical to ensure
-> > nothing can disable it.
+> > Enable workaround for v2.12a.
 > 
-> I'm a bit skeptical of this. If FCLK_DIV3 is gated at run-time, there is
-> no side effect other than long and/or failed reboot?
+> This doesn't affect the platforms I maintain, so I can't really test this,
+> but I'm wondering whether there could be other platforms using a v2.12a DW
+> HDMI that wouldn't need the workaround.
 > 
-> Seems like someone should be managing this clock, and simply leaving it
-> on all the time isn't necessarily the right approach. Any chance that
-> you can dig into this behavior to better understand it?
+> My platforms use a previous version, namely v2.01a. The workaround for that
+> version has been enabled by
 > 
-> It's easy to solve issues by leaving clocks on all the time, but this
-> becomes a problem later on when trying to tune a device for power.
+> commit 9c305eb442f3b371fc722ade827bbf673514123e
+> Author: Neil Armstrong <narmstrong@baylibre.com>
+> Date:   Fri Feb 23 12:44:37 2018 +0100
+> 
+>     drm: bridge: dw-hdmi: Fix overflow workaround for Amlogic Meson GX SoCs
+> 
+> I haven't paid too much attention to the patch back then, and have now
+> double- checked the HDMI output on R-Car Gen3. Enabling the workaround
+> doesn't cause any regression, and reverting the commit doesn't cause any
+> issue either. I thus wonder whether we shouldn't enable the workaround with
+> count = 1 in the default case instead of adding new IP core versions to the
+> list. It would be nice if someone from Synopsys could comment on this.
 
-Hi Mike,
+I was thinking about that too, or even having parameter in dw_hdmi_plat_data 
+which would tell how many times to repeat workaround procedure for a specific 
+platform. But this might be an overkill.
 
-I totally agree with you and, in perfect a world, I would prefer not to use this
-CLK_IS_CRITICAL at all. It looks like a cheap fix for:
-
-"this is required, I don't for what but it is, so please leave it on"
-
-The problem is this issue is a regression. We added a few gates to better model
-the clock tree a while ago. Before, those those clock were left enabled by the
-bootloader.
-
-Now that linux turn them off, we are learning a few things about what the FWs
-are doing behind our backs.
-
-Among the 5 clocks which got a new gates, only 2 needs to back the old way using
-CLK_IS_CRITICAL, so this is still an improvement.
+Best regards,
+Jernej
 
 > 
-> Also, if this commit really is the right fix, it should include a
-> comment for FCLK_DIV3 stating why the CLK_IS_CRITICAL flag was set,
-> which may be helpful later on to know if it is safe to remove it. Same
-> is true for FCLK_DIV2 in c987ac6f1f088663b6dad39281071aeb31d450a8.
-
-+1 There should be FIXME notice in the driver explaining why we put that flag in
-the first place, so we can remove it as soon as a driver properly handle this
-clock.
-
-Christian, is Ok if I amend your patch, or do you prefer to post a v2 ?
-Mike, with explained, is this change OK with you ?
-
-> 
-> Regards,
-> Mike
-> 
-> > 
-> > Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
+> > Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 > > ---
-> >  drivers/clk/meson/gxbb.c | 1 +
+> > 
+> >  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 1 +
 > >  1 file changed, 1 insertion(+)
 > > 
-> > diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-> > index 86d3ae5..4c8925d 100644
-> > --- a/drivers/clk/meson/gxbb.c
-> > +++ b/drivers/clk/meson/gxbb.c
-> > @@ -509,6 +509,7 @@ static struct clk_fixed_factor gxbb_fclk_div3_div = {
-> >                 .ops = &clk_fixed_factor_ops,
-> >                 .parent_names = (const char *[]){ "fixed_pll" },
-> >                 .num_parents = 1,
-> > +               .flags = CLK_IS_CRITICAL,
-> >         },
-> >  };
-> >  
-> > -- 
-> > 2.7.4
+> > diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+> > b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c index
+> > 5971976284bf..df1c7a2d6961 100644
+> > --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+> > +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+> > @@ -1664,6 +1664,7 @@ static void dw_hdmi_clear_overflow(struct dw_hdmi
+> > 
+> > *hdmi) case 0x131a:
+> >  	case 0x132a:
+> > 
+> >  	case 0x201a:
+> > +	case 0x212a:
+> >  		count = 1;
+> >  		break;
+> >  	
+> >  	default:
+
+
 
 
