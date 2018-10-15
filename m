@@ -2,135 +2,152 @@ Return-Path: <SRS0=3y70=M3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CDEAC04AA5
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Oct 2018 10:49:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7585DC04AA5
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Oct 2018 12:40:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2464A2083C
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Oct 2018 10:49:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2464A2083C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
+	by mail.kernel.org (Postfix) with ESMTP id 2DDA02064A
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Oct 2018 12:40:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bkUBuwRE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DDA02064A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726477AbeJOSd4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 15 Oct 2018 14:33:56 -0400
-Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:44912 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726273AbeJOSd4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Oct 2018 14:33:56 -0400
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-        by mx0b-001ae601.pphosted.com (8.16.0.23/8.16.0.23) with SMTP id w9FAn7Hn028178;
-        Mon, 15 Oct 2018 05:49:07 -0500
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from mail3.cirrus.com ([87.246.76.56])
-        by mx0b-001ae601.pphosted.com with ESMTP id 2n3es3t35e-1;
-        Mon, 15 Oct 2018 05:49:07 -0500
-Received: from EX17.ad.cirrus.com (ex17.ad.cirrus.com [172.20.9.81])
-        by mail3.cirrus.com (Postfix) with ESMTP id A8096611C8B0;
-        Mon, 15 Oct 2018 05:51:22 -0500 (CDT)
-Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
- (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Mon, 15 Oct 2018
- 11:49:06 +0100
-Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
-        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id w9FAn5qk011136; Mon,
- 15 Oct 2018 11:49:05 +0100
-Date:   Mon, 15 Oct 2018 11:49:05 +0100
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-CC:     <broonie@kernel.org>, <lee.jones@linaro.org>,
-        <linus.walleij@linaro.org>, <mturquette@baylibre.com>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <lgirdwood@gmail.com>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>,
-        <linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>
-Subject: Re: [PATCH v2 3/5] clk: lochnagar: Add support for the Cirrus Logic
- Lochnagar
-Message-ID: <20181015104905.GF1653@imbe.wolfsonmicro.main>
-References: <20181008132542.19775-1-ckeepax@opensource.cirrus.com>
- <20181008132542.19775-3-ckeepax@opensource.cirrus.com>
- <153924124658.207691.10370075148426001371@swboyd.mtv.corp.google.com>
- <20181011132602.GD1653@imbe.wolfsonmicro.main>
- <153935999691.5275.1587207165396958375@swboyd.mtv.corp.google.com>
+        id S1726512AbeJOUZl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 15 Oct 2018 16:25:41 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:38293 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726400AbeJOUZl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Oct 2018 16:25:41 -0400
+Received: by mail-lf1-f65.google.com with SMTP id g89-v6so13954114lfl.5;
+        Mon, 15 Oct 2018 05:40:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Y4EQh+C9j0+kHUIFQpo4hXkDvT8kHmvPw1ZXxQNAYcg=;
+        b=bkUBuwRE+bpAwl7t/79cHph/2bwUnoM/HA85rensuatzY3vRk++9i+vYpJ2QKsGZE/
+         qxLWaFDcPDFm7oPXjKhWPQi4D3vhlZyxz4IvNQXlScUnJx6YnYnfYdjZJ/JHslaYAa1c
+         EcKQM4PjN3OMdgqBGXZ6gQMExc54CDkPcRCaWrk4Ofm8SPqoc4RhWgvvuOKm4HQrCp9g
+         3YNeHx6++c8xkHr/pB3k74gR7Rs2sJmuyVBtATdOKNiuKQLD1fLrE3ReKEUw3PaFPRZK
+         AaEm7IBtkA0mmqT5UlmLm8WdXXbmO/eg2okvG5EESImyR+E5NI4yUOPxW58V4ADLfj2s
+         rAVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Y4EQh+C9j0+kHUIFQpo4hXkDvT8kHmvPw1ZXxQNAYcg=;
+        b=mzdhuiQc+zXhSwnWDquxecGuqQfKluzUQCh6OiiXAxd+sPpqgNd095lIVMoOQbtYNT
+         LdRwqNSLQPgLhvSeBzmuB9uvEsy5XZNMjqTLeZZt0PaeiPufoWlOAyUu6mL6Beqr6pmE
+         OrdZVkn3+CYOQaA7XmDgo0L2im2oC9pPZzoRPwQQtGpcRftY0TpZo0Fjd40ZwJmYjSFX
+         0MAnqfrTWUee8eCbHJmjSn9/U/IMmhB0/SZFndS2DObLCLGsiav9dS+r4XjcZ7CWS/W5
+         DfODano0t3pfSXp11htoct5kXv9C7hVO325400tdFBXhaPmko6ZypLwRCM6zCqEUJKq4
+         HQ1Q==
+X-Gm-Message-State: ABuFfoj+LJCjg88aXsGKvcDGIUfHT5afLrvs7UqIC3gVj9TX38JhJINo
+        HnOmFWTQwB2YP34g9EEw6pSmaJIU
+X-Google-Smtp-Source: ACcGV62IP896XFm5oBXRJvQbtRIJJRkbmTaXBdRrhkCFWLPimorg1TKvHRv7OmEpYR6fpRHCDk+asA==
+X-Received: by 2002:a19:a3d1:: with SMTP id m200-v6mr9173233lfe.38.1539607230072;
+        Mon, 15 Oct 2018 05:40:30 -0700 (PDT)
+Received: from [192.168.2.145] ([109.252.91.118])
+        by smtp.googlemail.com with ESMTPSA id g68-v6sm2402376lje.44.2018.10.15.05.40.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 15 Oct 2018 05:40:29 -0700 (PDT)
+Subject: Re: [PATCH v5 0/8] Tegra20 External Memory Controller driver
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180724164221.3307-1-digetx@gmail.com>
+Message-ID: <775736e9-0f13-94b0-1d90-871de16ed330@gmail.com>
+Date:   Mon, 15 Oct 2018 15:40:25 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <153935999691.5275.1587207165396958375@swboyd.mtv.corp.google.com>
-User-Agent: Mutt/1.5.20 (2009-12-10)
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1807170000
- definitions=main-1810150100
+In-Reply-To: <20180724164221.3307-1-digetx@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Oct 12, 2018 at 08:59:56AM -0700, Stephen Boyd wrote:
-> Quoting Charles Keepax (2018-10-11 06:26:02)
-> > On Thu, Oct 11, 2018 at 12:00:46AM -0700, Stephen Boyd wrote:
-> > > Quoting Charles Keepax (2018-10-08 06:25:40)
-> > > > +struct lochnagar_clk_priv {
-> > > > +       struct device *dev;
-> > > > +       struct lochnagar *lochnagar;
-> > > 
-> > > Is this used for anything besides getting the regmap? Can you get the
-> > > pointer to the parent in probe and use that to get the regmap pointer
-> > > from dev_get_remap() and also use the of_node of the parent to register
-> > > a clk provider? It would be nice to avoid including the mfd header file
-> > > unless it's providing something useful.
-> > > 
-> > 
-> > It is also used to find out which type of Lochnagar we have
-> > connected, which determines which clocks we should register. I
+On 7/24/18 7:42 PM, Dmitry Osipenko wrote:
+> Changelog:
 > 
-> Can that be done through some device ID? So the driver can be untangled
-> from the MFD part.
+> v5:
+>         - Fixed wrong EMC clock divider type in the "Turn EMC clock gate into
+>           divider" patch. It is a Tegra's fractional 7.1 divider and not a
+>           simple integer divider. Peter, please take a look at the change.
 > 
-> > could perhaps pass that using another mechanism but we would
-> > still want to include the MFD stuff to get the register
-> > definitions. So this approach seems simplest.
+> v4:
+>         - Fixed "bad of_node_put()" error which was revealed by enabling
+>           some extra kernel debug config options.
 > 
-> Can the register definitions be moved to this clk driver?
+>         - The "emc-table" DT nodes are now parsed starting from the "emc"
+>           node instead of the DT root.
 > 
-> Maybe you now get the hint, but I'd really like to be able to merge and
-> compile the clk driver all by itself without relying on the parent MFD
-> device to provide anything at compile time.
+>         - Adjusted code comment in the "Turn EMC clock gate into divider"
+>           patch as was suggested by Stephen Boyd to the v3.
+> 
+> v3:
+>         - Handle "nvidia,use-ram-code" DT property, its handling was missed
+>           in the previous versions.
+> 
+>         - Honor "emc-tables" DT node naming which is explicitly specified
+>           in the DT binding, also was missed in the previous versions.
+> 
+>         - Two new DT binding patches: one adds the EMC clock property,
+>           other relocates the binding doc file to the appropriate directory.
+>           One new patch that adds EMC clock property to the DTS file.
+> 
+>         - Addressed v2 review comments from Thierry Reding. Driver does not
+>           preserve backwards compatibility with older device tree binding.
+> 
+>         - The PLL_M and PLL_P clocks are kept internal to the driver because
+>           after some more considering I couldn't find a really good reason why
+>           these clocks should be in the device tree.
+> 
+>         - Some minor cleanups and fixes in the drivers code.
+> 
+> v2:
+>         - Minor code cleanups like consistent use of writel_relaxed instead
+>           of non-relaxed version, reworded error messages, etc.
+> 
+>         - Factored out use_pllm_ud bit checking into a standalone patch for
+>           consistency.
+> 
+> Dmitry Osipenko (8):
+>   dt: bindings: tegra20-emc: Document interrupt property
+>   dt: bindings: tegra20-emc: Document clock property
+>   dt: bindings: Move tegra20-emc binding to memory-controllers directory
+>   ARM: dts: tegra20: Add interrupt entry to External Memory Controller
+>   ARM: dts: tegra20: Add clock entry to External Memory Controller
+>   clk: tegra20: Turn EMC clock gate into divider
+>   clk: tegra20: Check whether direct PLLM sourcing is turned off for EMC
+>   memory: tegra: Introduce Tegra20 EMC driver
+> 
+>  .../nvidia,tegra20-emc.txt                    |   4 +
+>  arch/arm/boot/dts/tegra20.dtsi                |   2 +
+>  drivers/clk/tegra/clk-tegra20.c               |  46 +-
+>  drivers/memory/tegra/Kconfig                  |  10 +
+>  drivers/memory/tegra/Makefile                 |   1 +
+>  drivers/memory/tegra/tegra20-emc.c            | 575 ++++++++++++++++++
+>  6 files changed, 628 insertions(+), 10 deletions(-)
+>  rename Documentation/devicetree/bindings/{arm/tegra => memory-controllers}/nvidia,tegra20-emc.txt (95%)
+>  create mode 100644 drivers/memory/tegra/tegra20-emc.c
 > 
 
-If you feel strongly but since the MFD needs to hold the regmap
-(which needs to define the read/volatile regs and defaults)
-these will need to be duplicate defines and personally i would
-rather only have one copy as it makes updating things much less
-error prone.
-
-> > > > +       if (lclk->regmap.dir_mask) {
-> > > > +               ret = regmap_update_bits(regmap, lclk->regmap.cfg_reg,
-> > > > +                                        lclk->regmap.dir_mask,
-> > > > +                                        lclk->regmap.dir_mask);
-> > > > +               if (ret < 0) {
-> > > > +                       dev_err(priv->dev, "Failed to set %s direction: %d\n",
-> > > 
-> > > What does direction mean?
-> > > 
-> > 
-> > Some of the clocks can both generate and receive a clock. For
-> > example the PSIA (external audio interface) MCLKs, the attached
-> > device could be expecting or providing a master audio clock. If
-> > the user assigns a parent to the clock we assume the attached
-> > device is providing a clock to us, otherwise we assume we are
-> > providing the clock.
-> 
-> And this directionality is determined by dir_mask? It would be great if
-> this sort of information was in the commit text or in a comment in the
-> driver so we know what's going on here.
-> 
-
-No problem will make this more clear.
-
-Thanks,
-Charles
+Thierry, I now have v6 with some extra minor changes. Do you see any problems that need to be addressed in v5?
