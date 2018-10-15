@@ -2,92 +2,84 @@ Return-Path: <SRS0=3y70=M3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB4F3C7113E
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Oct 2018 19:56:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D898C04AA5
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Oct 2018 21:22:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AF0720881
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Oct 2018 19:56:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AF0720881
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 248FF205F4
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Oct 2018 21:22:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="eECz1377"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 248FF205F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726926AbeJPDm7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 15 Oct 2018 23:42:59 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:52439 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726802AbeJPDm7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Oct 2018 23:42:59 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 56D4E80882; Mon, 15 Oct 2018 21:56:14 +0200 (CEST)
-Date:   Mon, 15 Oct 2018 21:56:12 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Lubomir Rintel <lkundrak@v3.sk>
-Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        James Cameron <quozl@laptop.org>, linux-input@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 0/8] OLPC 1.75 Keyboard/Touchpad fixes
-Message-ID: <20181015195612.GB29649@amd>
-References: <20181010142504.233467-1-lkundrak@v3.sk>
+        id S1726060AbeJPFJE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 16 Oct 2018 01:09:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56782 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725974AbeJPFJE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 16 Oct 2018 01:09:04 -0400
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E1F5B205F4;
+        Mon, 15 Oct 2018 21:22:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539638524;
+        bh=hzgYdSJSoUR9uLuQfnmTAwOh7QaSjFFZoyjV0lzNYcM=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=eECz1377SGfZlrsomxiIZonOmWew3/i2gGl7uBEsNUZSLf7GB7OvMP1DoInYSU3TY
+         WuWWtn+keb/QTZOIFIHwpUQwrjz6g32W95g+mi8d5hi77EmtZ1yy+7Wku6gQK2/ZGy
+         GNN//TigLpSo2yetIbWRldysQOpmzHpE3zxxTDOk=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="KdquIMZPjGJQvRdI"
-Content-Disposition: inline
-In-Reply-To: <20181010142504.233467-1-lkundrak@v3.sk>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: quoted-printable
+To:     Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Sylwester Nawrocki <snawrocki@kernel.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <9cf68fe8-73cf-4ee9-6ad4-d6b7ba8f02f8@kernel.org>
+Cc:     linux-clk@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-samsung-soc@vger.kernel.org
+References: <9cf68fe8-73cf-4ee9-6ad4-d6b7ba8f02f8@kernel.org>
+Message-ID: <153963852324.5275.14467434252596945402@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [GIT PULL] clk/samsung updates for 4.20-rc1
+Date:   Mon, 15 Oct 2018 14:22:03 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Quoting Sylwester Nawrocki (2018-10-05 04:49:14)
+> Hi Stephen, Mike,
+> =
 
---KdquIMZPjGJQvRdI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343f=
+f3:
+> =
 
-Hi!
+>   Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
+> =
 
-> This makes keyboard/touchpad work on a DT MMP2 platform.
->=20
-> I believe that it would be a good idea if this, once reviewed, went in
-> via the input tree. The DT and CLK parts got reviews/acks.
->=20
-> Changes from v1:
-> - Basically none, just re-send, including Ack and Review tags in patches
->   that received them. Plus an extra Cc.
->   I'd be very thankful for reviews.
+> are available in the git repository at:
+> =
 
-Ok, I believe I have OLPC 1.75, and it is actually a nice
-machine. Can I get recent kernel working there in useful fashion? (Is
-there docs somewhere)?
+>   git://git.kernel.org/pub/scm/linux/kernel/git/snawrocki/clk.git tags/cl=
+k-v4.20-samsung
+> =
 
-Thanks,
-									Pavel
+> for you to fetch changes up to 9dbcfe1ace4e9c57b819df1054eaeceb9bfd34f5:
+> =
 
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+>   dt-bindings: clock: samsung: Add SPDX license identifiers (2018-10-05 1=
+3:36:40 +0200)
+> =
 
---KdquIMZPjGJQvRdI
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlvE8NwACgkQMOfwapXb+vI2KgCeI9J1eFIIGQoI6DjKF8tVwWAo
-d7YAn1to8igBlQUzqsK+63hL0gAd8mrT
-=NPNW
------END PGP SIGNATURE-----
-
---KdquIMZPjGJQvRdI--
+Thanks. Pulled into clk-next.
