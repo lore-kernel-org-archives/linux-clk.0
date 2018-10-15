@@ -2,84 +2,92 @@ Return-Path: <SRS0=3y70=M3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67B65C04AA5
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Oct 2018 18:24:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB4F3C7113E
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Oct 2018 19:56:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C17720881
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Oct 2018 18:24:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C17720881
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 9AF0720881
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Oct 2018 19:56:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AF0720881
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726854AbeJPCLO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 15 Oct 2018 22:11:14 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:46238 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726704AbeJPCLO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Oct 2018 22:11:14 -0400
-Received: by mail-oi1-f195.google.com with SMTP id k64-v6so15849999oia.13;
-        Mon, 15 Oct 2018 11:24:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=RobSL7XGuLEyO5xKg9D0ti9B2XzYKcBMnyQjErhWyvU=;
-        b=P8f+wBHWYw0w9maTHtLQsN2IKgbiOS59pFAQ42p72SeJ7xMRyoKrA9riliKXEphmz6
-         6fB19LMGNWvtrXx1FFQZ81wVYyjy2VVC7gaksOOeCLGkWSyAkgqXWAADd+e6sxjyOrUP
-         N5+p6SEJ8tu+Av+fGffmX8HdUhOdNDlCcTwm/fXEB8FbEYNc+NUmE3HBPp5BlRzeYUbW
-         dC6V+7EuKVdGnt7Du0T8EuFxQJ7TWOggxMeNzoTN7V+XZN3W+bARyMpar1xHGb9dP7I9
-         ld60SFRodCmi3zE5XlZWUlJVhxFfxq0NOu3cV/cmYMtGWyNWI7kHWxamA4sDVzDsaYVM
-         sz9g==
-X-Gm-Message-State: ABuFfoiXtxUoqV0vUj22mhGTxLMkbSs22mtS78fk5E08dFpJdOh5aSbA
-        zPBeHw7bLIadm/fxlMa4EQ==
-X-Google-Smtp-Source: ACcGV63iNQV0GCFf6Zi9U42PglE/E1Sd/VHW9gN7vfC0/lUZg8LZR83muVKoo783gjFRkxsIfP7m2Q==
-X-Received: by 2002:aca:cc12:: with SMTP id c18-v6mr9507739oig.150.1539627890348;
-        Mon, 15 Oct 2018 11:24:50 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id g36sm4495817otd.66.2018.10.15.11.24.49
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 15 Oct 2018 11:24:49 -0700 (PDT)
-Date:   Mon, 15 Oct 2018 13:24:48 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        linux-clk@vger.kernel.org,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Jagan Teki <jagan@amarulasolutions.com>
-Subject: Re: [PATCH 09/12] dt-bindings: panel: Add Bananapi S070WV20-CT16
- MIPI-DSI panel bindings
-Message-ID: <20181015182448.GA7134@bogus>
-References: <20180927114850.24565-1-jagan@amarulasolutions.com>
- <20180927114850.24565-10-jagan@amarulasolutions.com>
+        id S1726926AbeJPDm7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 15 Oct 2018 23:42:59 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:52439 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726802AbeJPDm7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Oct 2018 23:42:59 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 56D4E80882; Mon, 15 Oct 2018 21:56:14 +0200 (CEST)
+Date:   Mon, 15 Oct 2018 21:56:12 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Lubomir Rintel <lkundrak@v3.sk>
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        James Cameron <quozl@laptop.org>, linux-input@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 0/8] OLPC 1.75 Keyboard/Touchpad fixes
+Message-ID: <20181015195612.GB29649@amd>
+References: <20181010142504.233467-1-lkundrak@v3.sk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="KdquIMZPjGJQvRdI"
 Content-Disposition: inline
-In-Reply-To: <20180927114850.24565-10-jagan@amarulasolutions.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20181010142504.233467-1-lkundrak@v3.sk>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 27 Sep 2018 17:18:47 +0530, Jagan Teki wrote:
-> Bananapi S070WV20-CT16 is 800x480, 4-lane MIPI-DSI panel, the
-> same panel PCB comes with parallel RBG which is supported via
-> panel-simple with "bananapi,s070wv20-ct16" compatible.
-> 
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> ---
->  .../panel/bananapi,s070wv20-ct16-dsi.txt      | 21 +++++++++++++++++++
->  1 file changed, 21 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16-dsi.txt
-> 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+--KdquIMZPjGJQvRdI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi!
+
+> This makes keyboard/touchpad work on a DT MMP2 platform.
+>=20
+> I believe that it would be a good idea if this, once reviewed, went in
+> via the input tree. The DT and CLK parts got reviews/acks.
+>=20
+> Changes from v1:
+> - Basically none, just re-send, including Ack and Review tags in patches
+>   that received them. Plus an extra Cc.
+>   I'd be very thankful for reviews.
+
+Ok, I believe I have OLPC 1.75, and it is actually a nice
+machine. Can I get recent kernel working there in useful fashion? (Is
+there docs somewhere)?
+
+Thanks,
+									Pavel
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--KdquIMZPjGJQvRdI
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlvE8NwACgkQMOfwapXb+vI2KgCeI9J1eFIIGQoI6DjKF8tVwWAo
+d7YAn1to8igBlQUzqsK+63hL0gAd8mrT
+=NPNW
+-----END PGP SIGNATURE-----
+
+--KdquIMZPjGJQvRdI--
