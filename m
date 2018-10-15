@@ -2,137 +2,168 @@ Return-Path: <SRS0=3y70=M3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 549ABC71133
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Oct 2018 17:01:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0262AC04AA5
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Oct 2018 17:08:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C1F6208D9
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Oct 2018 17:01:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B06C22089E
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Oct 2018 17:08:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QdL+KWKD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C1F6208D9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="gxIj2DdH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B06C22089E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726681AbeJPArF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 15 Oct 2018 20:47:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41380 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726557AbeJPArF (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 15 Oct 2018 20:47:05 -0400
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D7A57208AE;
-        Mon, 15 Oct 2018 17:01:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539622862;
-        bh=gLFcpTCnsBgQsDE0lV5l0wLZMN5ByP67oSJFmBcXqbg=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=QdL+KWKDChEfRgoI7HxXyQInTw3HJGomPcFfXRfeBEosu/V9XOrUIXwJ8Lt7HmTe0
-         ZkuRFtN9tstPBgzTNvEHE5FgfqctE9KLxT12reSFv2mWNd1WPM/Tw0COt+qFd97s34
-         Jpk6EAtqTn1a+6XptBcBL+wE2PFZB0L3Q170yFvc=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     "A.s. Dong" <aisheng.dong@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <AM0PR04MB4211DE29E5644C8C9A33278780310@AM0PR04MB4211.eurprd04.prod.outlook.com>
-Cc:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "patchwork-lst@pengutronix.de" <patchwork-lst@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-References: <20180731102009.6710-1-l.stach@pengutronix.de>
- <20180731102009.6710-2-l.stach@pengutronix.de>
- <AM0PR04MB4211DE29E5644C8C9A33278780310@AM0PR04MB4211.eurprd04.prod.outlook.com>
-Message-ID: <153962286120.5275.13550019093922282541@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: RE: [PATCH 2/3] clk: imx6q: optionally get CCM inputs via standard clock
- handles
-Date:   Mon, 15 Oct 2018 10:01:01 -0700
+        id S1726654AbeJPAyI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 15 Oct 2018 20:54:08 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:36570 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726638AbeJPAyH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Oct 2018 20:54:07 -0400
+Received: by mail-wr1-f68.google.com with SMTP id y16so22240021wrw.3
+        for <linux-clk@vger.kernel.org>; Mon, 15 Oct 2018 10:08:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=dh+I41dhmOIbT1OIEBdjr5aoOYlS8O6tWmG6ePE8p7k=;
+        b=gxIj2DdH85G1Z6agbRWN6ImiFkRDodnIcAG+pWkRESplybBADvSodDg3qMB1RtYbpV
+         tl+om52DA0gJluwBf3ONn3Ar0LhmPN7kvFbKp6NNw+ofhHkavLZyx03P4O14dy+Gkf+E
+         Ci83VkExtQMaF3263E1G9iUrWA4Zsc3y/1MeNHBlO03LXpL+V20bEMVPoZVmBv2RKWW1
+         f0bhDBTsLfAR8+VSD886PcUXj7MAqlqLzNgKoxfvGvKlnZF2d4DKqYqkWzHMdNZxEXRV
+         XzbjplGAHPQ5Dab68J8cFtFVOMHWgYYpRsf1xxkfhUbLheDZDCJqoyC42z2kbum8OtO/
+         aZKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=dh+I41dhmOIbT1OIEBdjr5aoOYlS8O6tWmG6ePE8p7k=;
+        b=HeWk3yGR/zkXtchiw1NlKj0XAvim5l+9KZxMagWv6BxTbL03O+nnQpRU5NMC2DZHnW
+         vhjxkOfFwYARjkjAxbScc4QwJoA/khGBI5P/4aqwR40ehK6BPSMdc8JdbUxgH2VXjlqn
+         vBtiZ6yx7CDuT/NJIv+2FCVVW+DAEu6cPzHTZwFZT86Lwa2VEyTSh09jLvdxzWH+HiSu
+         Fw/d00qCW8PMglx22n4aJ/cQRbjjI/Ik3fpfc0LYmWt+vGhihkTxbqrqEltuKsjW8UNE
+         6iFkPCLn29g8A4pBwHRloWI6p93pnc+kXg9w4zqeVR6728nJv2WGEK0b9RvN7flPEGfk
+         PYVQ==
+X-Gm-Message-State: ABuFfoiC9vXmPb9ndqm6B0oOnrpN/W84H22vkttbqKlTh0HZRDPmYm7B
+        nV/odWzLfRWKYPrJkzRsOHsm4g==
+X-Google-Smtp-Source: ACcGV63WvDro8j9wJ3io4RG63DgnxBzgyEjabpAC9sTZQLmPMCLqqP3AGn90jook31wF7pp8Q0+YBw==
+X-Received: by 2002:adf:e752:: with SMTP id c18-v6mr16689379wrn.143.1539623281428;
+        Mon, 15 Oct 2018 10:08:01 -0700 (PDT)
+Received: from boomer ([90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id b14-v6sm10499846wrp.42.2018.10.15.10.08.00
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 15 Oct 2018 10:08:00 -0700 (PDT)
+Message-ID: <ed6a889eeec4e2809f0840c9e8188b5e4b24fa76.camel@baylibre.com>
+Subject: Re: [PATCH] clk: meson-gxbb: set fclk_div3 as CLK_IS_CRITICAL
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Christian Hewitt <christianshewitt@gmail.com>
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Carlo Caione <carlo@caione.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Date:   Mon, 15 Oct 2018 19:07:59 +0200
+In-Reply-To: <20181013160810.88481.14237@resonance>
+References: <1539425086-10997-1-git-send-email-christianshewitt@gmail.com>
+         <20181013160810.88481.14237@resonance>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting A.s. Dong (2018-08-21 01:56:09)
-> Hi Lucas,
-> =
+On Sat, 2018-10-13 at 18:08 +0200, Michael Turquette wrote:
+> Quoting Christian Hewitt (2018-10-13 12:04:46)
+> > On the Khadas VIM2 (GXM) and LePotato (GXL) board there are problems
+> > with reboot; e.g. a ~60 second delay between issuing reboot and the
+> > board power cycling (and in some OS configurations reboot will fail
+> > and require manual power cycling).
+> > 
+> > Similar to 'commit c987ac6f1f088663b6dad39281071aeb31d450a8 ("clk:
+> > meson-gxbb: set fclk_div2 as CLK_IS_CRITICAL")' the SCPI Cortex-M4
+> > Co-Processor seems to depend on FCLK_DIV3 being operational.
+> > 
+> > Bisect gives 'commit 05f814402d6174369b3b29832cbb5eb5ed287059 ("clk:
+> > meson: add fdiv clock gates") between 4.16 and 4.16-rc1 as the first
+> > bad commit. This added support for the missing clock gates before the
+> > fixed PLL fixed dividers (FCLK_DIVx) and the clock framework which
+> > disabled all the unused fixed dividers, thus it disabled a critical
+> > clock path for the SCPI Co-Processor.
+> > 
+> > This change simply sets the FCLK_DIV3 gate as critical to ensure
+> > nothing can disable it.
+> 
+> I'm a bit skeptical of this. If FCLK_DIV3 is gated at run-time, there is
+> no side effect other than long and/or failed reboot?
+> 
+> Seems like someone should be managing this clock, and simply leaving it
+> on all the time isn't necessarily the right approach. Any chance that
+> you can dig into this behavior to better understand it?
+> 
+> It's easy to solve issues by leaving clocks on all the time, but this
+> becomes a problem later on when trying to tune a device for power.
 
-> > -----Original Message-----
-> > From: Lucas Stach <l.stach@pengutronix.de>
-> > Sent: Tuesday, July 31, 2018 6:20 PM
-> =
+Hi Mike,
 
-> [...]
-> =
+I totally agree with you and, in perfect a world, I would prefer not to use this
+CLK_IS_CRITICAL at all. It looks like a cheap fix for:
 
-> > When specifying external clock inputs to the CCM the current code requi=
-res
-> > the clocks to be in a "clocks" child node of the DT root.
-> > This is not really conformant with DT best practices.
-> > =
+"this is required, I don't for what but it is, so please leave it on"
 
-> > To avoid the need to deviate from those best practices, allow the clock=
- inputs
-> > to be specifies via standard clock handles. This is in line with how dr=
-ivers of
-> > the later CCM driver revisions on newer i.MX SoCs handle this.
-> > =
+The problem is this issue is a regression. We added a few gates to better model
+the clock tree a while ago. Before, those those clock were left enabled by the
+bootloader.
 
-> > As we can't retroactively change the DT binding, allow this as an optio=
-n with a
-> > fallback to the old way of how this has been handled.
-> > =
+Now that linux turn them off, we are learning a few things about what the FWs
+are doing behind our backs.
 
-> > Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+Among the 5 clocks which got a new gates, only 2 needs to back the old way using
+CLK_IS_CRITICAL, so this is still an improvement.
+
+> 
+> Also, if this commit really is the right fix, it should include a
+> comment for FCLK_DIV3 stating why the CLK_IS_CRITICAL flag was set,
+> which may be helpful later on to know if it is safe to remove it. Same
+> is true for FCLK_DIV2 in c987ac6f1f088663b6dad39281071aeb31d450a8.
+
++1 There should be FIXME notice in the driver explaining why we put that flag in
+the first place, so we can remove it as soon as a driver properly handle this
+clock.
+
+Christian, is Ok if I amend your patch, or do you prefer to post a v2 ?
+Mike, with explained, is this change OK with you ?
+
+> 
+> Regards,
+> Mike
+> 
+> > 
+> > Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
 > > ---
-> >  .../devicetree/bindings/clock/imx6q-clock.txt |  5 +++++
-> >  drivers/clk/imx/clk-imx6q.c                   | 22 ++++++++++++++-----
-> >  2 files changed, 22 insertions(+), 5 deletions(-)
-> > =
-
-> > diff --git a/Documentation/devicetree/bindings/clock/imx6q-clock.txt
-> > b/Documentation/devicetree/bindings/clock/imx6q-clock.txt
-> > index a45ca67a9d5f..ce6aa9920c05 100644
-> > --- a/Documentation/devicetree/bindings/clock/imx6q-clock.txt
-> > +++ b/Documentation/devicetree/bindings/clock/imx6q-clock.txt
-> > @@ -6,6 +6,11 @@ Required properties:
-> >  - interrupts: Should contain CCM interrupt
-> >  - #clock-cells: Should be <1>
-> > =
-
-> > +Optional properties:
-> > +- clocks: list of clock specifiers, must contain an entry for each ent=
-ry
-> > +          in clock-names
-> > +- clock-names: valid names are "osc", "ckil", "ckil", "anaclk1" and "a=
-naclk2"
-> =
-
-> A minor issue: =
-
-> The third name should be "ckih1".
-> =
-
-> Otherwise:
-> Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
-> =
-
-
-Is this going to be resent? I don't see anything new and there are
-review comments on this patch series so I'm dropping it from the clk
-review queue. Please resend.
+> >  drivers/clk/meson/gxbb.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+> > index 86d3ae5..4c8925d 100644
+> > --- a/drivers/clk/meson/gxbb.c
+> > +++ b/drivers/clk/meson/gxbb.c
+> > @@ -509,6 +509,7 @@ static struct clk_fixed_factor gxbb_fclk_div3_div = {
+> >                 .ops = &clk_fixed_factor_ops,
+> >                 .parent_names = (const char *[]){ "fixed_pll" },
+> >                 .num_parents = 1,
+> > +               .flags = CLK_IS_CRITICAL,
+> >         },
+> >  };
+> >  
+> > -- 
+> > 2.7.4
 
 
