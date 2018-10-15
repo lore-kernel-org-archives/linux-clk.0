@@ -2,102 +2,137 @@ Return-Path: <SRS0=3y70=M3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83764C71133
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Oct 2018 16:55:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 549ABC71133
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Oct 2018 17:01:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B6FB204FD
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Oct 2018 16:55:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C1F6208D9
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Oct 2018 17:01:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="RryXLG70"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B6FB204FD
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QdL+KWKD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C1F6208D9
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726810AbeJPAlj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 15 Oct 2018 20:41:39 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:33052 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726576AbeJPAlj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Oct 2018 20:41:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=KKqd6PUx/B91ioDUGYSY2r+lknaGXet/5wZ5Q9ZiPng=; b=RryXLG70OWgHyXWPSRbio7aGp
-        GtLCAlCUX8GrIEka79Cku9x8F4EETD9qWXgtA7mElH+vbMAyWGQ0BiGPFGta2J+7P8Jty+3eEF9Fg
-        7LMW/Kpf7vwHQlirZjcKxNwbr/VMnCXuIJRo4SX0r2L/S5UF/YfcoIw4ZpBhhvM8jhtl0=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gC69R-0003aV-Fw; Mon, 15 Oct 2018 16:55:29 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id C6E4011224A9; Mon, 15 Oct 2018 17:55:28 +0100 (BST)
-Date:   Mon, 15 Oct 2018 17:55:28 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Charles Keepax <ckeepax@opensource.cirrus.com>,
-        lee.jones@linaro.org, linus.walleij@linaro.org,
-        mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        lgirdwood@gmail.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, patches@opensource.cirrus.com,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v2 3/5] clk: lochnagar: Add support for the Cirrus Logic
- Lochnagar
-Message-ID: <20181015165528.GD12949@sirena.org.uk>
-References: <20181008132542.19775-1-ckeepax@opensource.cirrus.com>
- <20181008132542.19775-3-ckeepax@opensource.cirrus.com>
- <153924124658.207691.10370075148426001371@swboyd.mtv.corp.google.com>
- <20181011132602.GD1653@imbe.wolfsonmicro.main>
- <153935999691.5275.1587207165396958375@swboyd.mtv.corp.google.com>
- <20181015104905.GF1653@imbe.wolfsonmicro.main>
- <153962159992.5275.9275448716859702011@swboyd.mtv.corp.google.com>
+        id S1726681AbeJPArF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 15 Oct 2018 20:47:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41380 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726557AbeJPArF (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 15 Oct 2018 20:47:05 -0400
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D7A57208AE;
+        Mon, 15 Oct 2018 17:01:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539622862;
+        bh=gLFcpTCnsBgQsDE0lV5l0wLZMN5ByP67oSJFmBcXqbg=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=QdL+KWKDChEfRgoI7HxXyQInTw3HJGomPcFfXRfeBEosu/V9XOrUIXwJ8Lt7HmTe0
+         ZkuRFtN9tstPBgzTNvEHE5FgfqctE9KLxT12reSFv2mWNd1WPM/Tw0COt+qFd97s34
+         Jpk6EAtqTn1a+6XptBcBL+wE2PFZB0L3Q170yFvc=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="qGV0fN9tzfkG3CxV"
-Content-Disposition: inline
-In-Reply-To: <153962159992.5275.9275448716859702011@swboyd.mtv.corp.google.com>
-X-Cookie: Kill Ugly Radio
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+To:     "A.s. Dong" <aisheng.dong@nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <AM0PR04MB4211DE29E5644C8C9A33278780310@AM0PR04MB4211.eurprd04.prod.outlook.com>
+Cc:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "patchwork-lst@pengutronix.de" <patchwork-lst@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+References: <20180731102009.6710-1-l.stach@pengutronix.de>
+ <20180731102009.6710-2-l.stach@pengutronix.de>
+ <AM0PR04MB4211DE29E5644C8C9A33278780310@AM0PR04MB4211.eurprd04.prod.outlook.com>
+Message-ID: <153962286120.5275.13550019093922282541@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: RE: [PATCH 2/3] clk: imx6q: optionally get CCM inputs via standard clock
+ handles
+Date:   Mon, 15 Oct 2018 10:01:01 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Quoting A.s. Dong (2018-08-21 01:56:09)
+> Hi Lucas,
+> =
 
---qGV0fN9tzfkG3CxV
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> > -----Original Message-----
+> > From: Lucas Stach <l.stach@pengutronix.de>
+> > Sent: Tuesday, July 31, 2018 6:20 PM
+> =
 
-On Mon, Oct 15, 2018 at 09:39:59AM -0700, Stephen Boyd wrote:
+> [...]
+> =
 
-> Ok if there's going to be read/volatile regs and defaults then it makes
-> sense to leave the defines in some shared header file, which is
-> unfortunate for the independent merge of driver bits. Either way, I
+> > When specifying external clock inputs to the CCM the current code requi=
+res
+> > the clocks to be in a "clocks" child node of the DT root.
+> > This is not really conformant with DT best practices.
+> > =
 
-Kconfig dependencies take care of that pretty well - if there's a
-dependency on the MFD then the function driver just won't get built
-until the MFD gets merged. =20
+> > To avoid the need to deviate from those best practices, allow the clock=
+ inputs
+> > to be specifies via standard clock handles. This is in line with how dr=
+ivers of
+> > the later CCM driver revisions on newer i.MX SoCs handle this.
+> > =
 
---qGV0fN9tzfkG3CxV
-Content-Type: application/pgp-signature; name="signature.asc"
+> > As we can't retroactively change the DT binding, allow this as an optio=
+n with a
+> > fallback to the old way of how this has been handled.
+> > =
 
------BEGIN PGP SIGNATURE-----
+> > Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+> > ---
+> >  .../devicetree/bindings/clock/imx6q-clock.txt |  5 +++++
+> >  drivers/clk/imx/clk-imx6q.c                   | 22 ++++++++++++++-----
+> >  2 files changed, 22 insertions(+), 5 deletions(-)
+> > =
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlvExn8ACgkQJNaLcl1U
-h9Cm3wgAg68zzKd/x3cvsnLK+nLQu7ZH+s4qIBqCK+IZxuyQrrt22j+bCIyr1g7X
-+oydMFZWxBkys3SvNyBAl+NF61lUhSsrrrmf6qc1RWdsIYAH7O9YFwKWQB6KiJnX
-rroyNjAogqw/6vlI/VaOQ7nbWz9qjnyQDAgfgcxkNKL+EeLu2viJwiyCiU6Ybi0F
-GUSIWcK9m/ha8HitOmrc0OX/TMykmiKPsWS3F3XgdLI0Spv91QOwd98dK+EAjhS7
-nXdtijJMvFVIxFUngCmxPLOAJhkuj2fburxVSH/rgGlRx3eRYLPYjsKn4UO9WU+Z
-0ZkKYkYeqinWW970tKk/qicJ+FCEGQ==
-=kjjT
------END PGP SIGNATURE-----
+> > diff --git a/Documentation/devicetree/bindings/clock/imx6q-clock.txt
+> > b/Documentation/devicetree/bindings/clock/imx6q-clock.txt
+> > index a45ca67a9d5f..ce6aa9920c05 100644
+> > --- a/Documentation/devicetree/bindings/clock/imx6q-clock.txt
+> > +++ b/Documentation/devicetree/bindings/clock/imx6q-clock.txt
+> > @@ -6,6 +6,11 @@ Required properties:
+> >  - interrupts: Should contain CCM interrupt
+> >  - #clock-cells: Should be <1>
+> > =
 
---qGV0fN9tzfkG3CxV--
+> > +Optional properties:
+> > +- clocks: list of clock specifiers, must contain an entry for each ent=
+ry
+> > +          in clock-names
+> > +- clock-names: valid names are "osc", "ckil", "ckil", "anaclk1" and "a=
+naclk2"
+> =
+
+> A minor issue: =
+
+> The third name should be "ckih1".
+> =
+
+> Otherwise:
+> Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
+> =
+
+
+Is this going to be resent? I don't see anything new and there are
+review comments on this patch series so I'm dropping it from the clk
+review queue. Please resend.
+
+
