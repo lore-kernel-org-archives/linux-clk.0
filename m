@@ -2,186 +2,135 @@ Return-Path: <SRS0=3y70=M3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E65C6C7112A
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Oct 2018 09:53:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CDEAC04AA5
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Oct 2018 10:49:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B76F12064E
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Oct 2018 09:53:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B76F12064E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 2464A2083C
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Oct 2018 10:49:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2464A2083C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726525AbeJORiQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 15 Oct 2018 13:38:16 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:58737 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726273AbeJORiQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Oct 2018 13:38:16 -0400
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <sha@pengutronix.de>)
-        id 1gBzZH-00009C-EX; Mon, 15 Oct 2018 11:53:43 +0200
-Received: from sha by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <sha@pengutronix.de>)
-        id 1gBzZG-0004hy-S7; Mon, 15 Oct 2018 11:53:42 +0200
-Date:   Mon, 15 Oct 2018 11:53:42 +0200
-From:   Sascha Hauer <s.hauer@pengutronix.de>
-To:     "A.s. Dong" <aisheng.dong@nxp.com>
-Cc:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH V4 05/11] clk: imx: scu: add scu clock gate
-Message-ID: <20181015095342.kjokajxyugugbtcw@pengutronix.de>
-References: <1539504194-28289-1-git-send-email-aisheng.dong@nxp.com>
- <1539504194-28289-6-git-send-email-aisheng.dong@nxp.com>
- <20181015073207.66npcgegibl2rybb@pengutronix.de>
- <AM0PR04MB4211129386C9088C6AFEDAF580FD0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+        id S1726477AbeJOSd4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 15 Oct 2018 14:33:56 -0400
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:44912 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726273AbeJOSd4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Oct 2018 14:33:56 -0400
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+        by mx0b-001ae601.pphosted.com (8.16.0.23/8.16.0.23) with SMTP id w9FAn7Hn028178;
+        Mon, 15 Oct 2018 05:49:07 -0500
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from mail3.cirrus.com ([87.246.76.56])
+        by mx0b-001ae601.pphosted.com with ESMTP id 2n3es3t35e-1;
+        Mon, 15 Oct 2018 05:49:07 -0500
+Received: from EX17.ad.cirrus.com (ex17.ad.cirrus.com [172.20.9.81])
+        by mail3.cirrus.com (Postfix) with ESMTP id A8096611C8B0;
+        Mon, 15 Oct 2018 05:51:22 -0500 (CDT)
+Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
+ (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Mon, 15 Oct 2018
+ 11:49:06 +0100
+Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
+        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id w9FAn5qk011136; Mon,
+ 15 Oct 2018 11:49:05 +0100
+Date:   Mon, 15 Oct 2018 11:49:05 +0100
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+CC:     <broonie@kernel.org>, <lee.jones@linaro.org>,
+        <linus.walleij@linaro.org>, <mturquette@baylibre.com>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <lgirdwood@gmail.com>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>,
+        <linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>
+Subject: Re: [PATCH v2 3/5] clk: lochnagar: Add support for the Cirrus Logic
+ Lochnagar
+Message-ID: <20181015104905.GF1653@imbe.wolfsonmicro.main>
+References: <20181008132542.19775-1-ckeepax@opensource.cirrus.com>
+ <20181008132542.19775-3-ckeepax@opensource.cirrus.com>
+ <153924124658.207691.10370075148426001371@swboyd.mtv.corp.google.com>
+ <20181011132602.GD1653@imbe.wolfsonmicro.main>
+ <153935999691.5275.1587207165396958375@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <AM0PR04MB4211129386C9088C6AFEDAF580FD0@AM0PR04MB4211.eurprd04.prod.outlook.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 11:49:56 up 124 days, 18:59, 82 users,  load average: 0.02, 0.10,
- 0.11
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+In-Reply-To: <153935999691.5275.1587207165396958375@swboyd.mtv.corp.google.com>
+User-Agent: Mutt/1.5.20 (2009-12-10)
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1807170000
+ definitions=main-1810150100
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Oct 15, 2018 at 09:17:14AM +0000, A.s. Dong wrote:
-> > -----Original Message-----
-> > From: Sascha Hauer [mailto:s.hauer@pengutronix.de]
-> > Sent: Monday, October 15, 2018 3:32 PM
-> > To: A.s. Dong <aisheng.dong@nxp.com>
-> > Cc: linux-clk@vger.kernel.org; sboyd@kernel.org; mturquette@baylibre.com;
-> > dl-linux-imx <linux-imx@nxp.com>; kernel@pengutronix.de; Fabio Estevam
-> > <fabio.estevam@nxp.com>; shawnguo@kernel.org;
-> > linux-arm-kernel@lists.infradead.org
-> > Subject: Re: [PATCH V4 05/11] clk: imx: scu: add scu clock gate
+On Fri, Oct 12, 2018 at 08:59:56AM -0700, Stephen Boyd wrote:
+> Quoting Charles Keepax (2018-10-11 06:26:02)
+> > On Thu, Oct 11, 2018 at 12:00:46AM -0700, Stephen Boyd wrote:
+> > > Quoting Charles Keepax (2018-10-08 06:25:40)
+> > > > +struct lochnagar_clk_priv {
+> > > > +       struct device *dev;
+> > > > +       struct lochnagar *lochnagar;
+> > > 
+> > > Is this used for anything besides getting the regmap? Can you get the
+> > > pointer to the parent in probe and use that to get the regmap pointer
+> > > from dev_get_remap() and also use the of_node of the parent to register
+> > > a clk provider? It would be nice to avoid including the mfd header file
+> > > unless it's providing something useful.
+> > > 
 > > 
-> > On Sun, Oct 14, 2018 at 08:07:56AM +0000, A.s. Dong wrote:
-> > > +/* Write to the LPCG bits. */
-> > > +static int clk_gate_scu_enable(struct clk_hw *hw) {
-> > > +	struct clk_gate_scu *gate = to_clk_gate_scu(hw);
-> > > +	u32 reg;
-> > > +
-> > > +	if (gate->reg) {
-> > > +		reg = readl(gate->reg);
-> > > +		reg &= ~(CLK_GATE_SCU_LPCG_MASK << gate->bit_idx);
-> > > +		if (gate->hw_gate)
-> > > +			reg |= (CLK_GATE_SCU_LPCG_HW_SEL |
-> > > +				CLK_GATE_SCU_LPCG_SW_SEL) << gate->bit_idx;
-> > > +		else
-> > > +			reg |= (CLK_GATE_SCU_LPCG_SW_SEL << gate->bit_idx);
-> > > +		writel(reg, gate->reg);
-> > > +	}
-> > 
-> > These register manipulations look like they need locking.
-> > 
+> > It is also used to find out which type of Lochnagar we have
+> > connected, which determines which clocks we should register. I
 > 
-> Unlike the legacy MX6&7 SoCs, each clock has a separate LPCG register.
-> Do we still need locking?
-
-Let's take PWM_0_LPCG as an example:
-
-+       clks[IMX8QXP_LSIO_PWM0_IPG_S_CLK]       = imx_clk_gate_scu("pwm_0_ipg_s_clk", "pwm_0_div", IMX_SC_R_PWM_0, IMX_SC_PM_CLK_PER, (void __iomem *)(PWM_0_LPCG), 0x10, 0);
-+       clks[IMX8QXP_LSIO_PWM0_IPG_SLV_CLK]     = imx_clk_gate_scu("pwm_0_ipg_slv_clk", "pwm_0_ipg_s_clk", IMX_SC_R_PWM_0, IMX_SC_PM_CLK_PER, (void __iomem *)(PWM_0_LPCG), 0x14, 0);
-+       clks[IMX8QXP_LSIO_PWM0_IPG_MSTR_CLK]    = imx_clk_gate2_scu("pwm_0_ipg_mstr_clk", "lsio_bus_clk_root", (void __iomem *)(PWM_0_LPCG), 0x18, 0);
-+       clks[IMX8QXP_LSIO_PWM0_HF_CLK]          = imx_clk_gate_scu("pwm_0_hf_clk", "pwm_0_ipg_slv_clk", IMX_SC_R_PWM_0, IMX_SC_PM_CLK_PER, (void __iomem *)(PWM_0_LPCG), 4, 0);
-+       clks[IMX8QXP_LSIO_PWM0_CLK]             = imx_clk_gate_scu("pwm_0_clk", "pwm_0_ipg_slv_clk", IMX_SC_R_PWM_0, IMX_SC_PM_CLK_PER, (void __iomem *)(PWM_0_LPCG), 0, 0);
-
-This register is used in five different clocks.
-
+> Can that be done through some device ID? So the driver can be untangled
+> from the MFD part.
 > 
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +
-> > > +struct clk_hw *clk_register_gate_scu(const char *name, const char
-> > *parent_name,
-> > > +				     unsigned long flags, u32 rsrc_id,
-> > > +				     u8 clk_type, void __iomem *reg,
-> > > +				     u8 bit_idx, bool hw_gate)
-> > > +{
-> > > +	struct clk_gate_scu *gate;
-> > > +	struct clk_init_data init;
-> > > +	struct clk_hw *hw;
-> > > +	int ret;
-> > > +
-> > > +	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
-> > > +	if (!gate)
-> > > +		return ERR_PTR(-ENOMEM);
-> > > +
-> > > +	gate->rsrc_id = rsrc_id;
-> > > +	gate->clk_type = clk_type;
-> > > +	if (reg) {
-> > > +		gate->reg = ioremap((phys_addr_t)reg, SZ_64K);
-> > 
-> > ioremap never takes a void __iomem * as argument. Given that you have to
-> > cast it here to another type and to void __iomem * when calling this function
-> > is a clear sign that the type of this variable is poorly chosen.
-> > 
+> > could perhaps pass that using another mechanism but we would
+> > still want to include the MFD stuff to get the register
+> > definitions. So this approach seems simplest.
 > 
-> Good catch. I missed it.
-> Thanks for pointing it out.
-> Looks like I should use struct phy_addr_t for it by default.
+> Can the register definitions be moved to this clk driver?
 > 
-> > > +		if (!gate->reg) {
-> > > +			kfree(gate);
-> > > +			return ERR_PTR(-ENOMEM);
-> > > +		}
-> > > +	}
-> > > +
-> > > +	gate->bit_idx = bit_idx;
-> > > +	gate->hw_gate = hw_gate;
-> > > +
-> > > +	init.name = name;
-> > > +	init.ops = &clk_gate_scu_ops;
-> > > +	init.flags = flags;
-> > > +	init.parent_names = parent_name ? &parent_name : NULL;
-> > > +	init.num_parents = parent_name ? 1 : 0;
-> > > +
-> > > +	gate->hw.init = &init;
-> > > +
-> > > +	hw = &gate->hw;
-> > > +	ret = clk_hw_register(NULL, hw);
-> > > +	if (ret) {
-> > > +		iounmap(gate->reg);
-> > 
-> > Is iounmap on a NULL pointer allowed? Otherwise the error path is wrong
-> > here.
-> > 
+> Maybe you now get the hint, but I'd really like to be able to merge and
+> compile the clk driver all by itself without relying on the parent MFD
+> device to provide anything at compile time.
 > 
-> If gate->reg is NULL, the execution seems can't reach here.
-> Am I missing something?
 
-Yes. gate->reg is only valid when the input parameter reg in non NULL.
+If you feel strongly but since the MFD needs to hold the regmap
+(which needs to define the read/volatile regs and defaults)
+these will need to be duplicate defines and personally i would
+rather only have one copy as it makes updating things much less
+error prone.
 
-Sascha
+> > > > +       if (lclk->regmap.dir_mask) {
+> > > > +               ret = regmap_update_bits(regmap, lclk->regmap.cfg_reg,
+> > > > +                                        lclk->regmap.dir_mask,
+> > > > +                                        lclk->regmap.dir_mask);
+> > > > +               if (ret < 0) {
+> > > > +                       dev_err(priv->dev, "Failed to set %s direction: %d\n",
+> > > 
+> > > What does direction mean?
+> > > 
+> > 
+> > Some of the clocks can both generate and receive a clock. For
+> > example the PSIA (external audio interface) MCLKs, the attached
+> > device could be expecting or providing a master audio clock. If
+> > the user assigns a parent to the clock we assume the attached
+> > device is providing a clock to us, otherwise we assume we are
+> > providing the clock.
+> 
+> And this directionality is determined by dir_mask? It would be great if
+> this sort of information was in the commit text or in a comment in the
+> driver so we know what's going on here.
+> 
 
+No problem will make this more clear.
 
--- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Thanks,
+Charles
