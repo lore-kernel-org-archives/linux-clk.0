@@ -2,102 +2,148 @@ Return-Path: <SRS0=3y70=M3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07280C04AA5
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Oct 2018 15:47:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E248C04AA5
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Oct 2018 15:58:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF9A32089D
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Oct 2018 15:47:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 007E1208E4
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Oct 2018 15:58:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="jNJMFmBW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF9A32089D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=verge.net.au
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="aYnezPBB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 007E1208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726660AbeJOXct (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 15 Oct 2018 19:32:49 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:48555 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726524AbeJOXct (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Oct 2018 19:32:49 -0400
-Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 40D3D25B815;
-        Tue, 16 Oct 2018 02:46:59 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1539618419; bh=DFfjGCdxqktqqdQB/hSnDquUZXX0R0Zv04ue02Esqa4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jNJMFmBWwAT0nIrRksZJTTI7fjX26WMutilRN205TVt3qLaNXIDbOv6pklxCfuWeQ
-         oCnGgGrQxJ5rsBXWSJyEsmYFdJ9P4tD6NPe8e3M10kaelVHkezgIkpGErH6cbS1N4Y
-         0jQ4zrrQleVa4o6F1wLpFIxqynDKdBnz9DrKHm/8=
-Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 2E20B940443; Mon, 15 Oct 2018 17:46:57 +0200 (CEST)
-Date:   Mon, 15 Oct 2018 17:46:57 +0200
-From:   Simon Horman <horms@verge.net.au>
-To:     Chris Brandt <chris.brandt@renesas.com>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+        id S1726678AbeJOXoY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 15 Oct 2018 19:44:24 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:52822 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726651AbeJOXoY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Oct 2018 19:44:24 -0400
+Received: from dflxv15.itg.ti.com ([128.247.5.124])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id w9FFwOqf027979;
+        Mon, 15 Oct 2018 10:58:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1539619104;
+        bh=hMYOcYkEf7TmbhjGxOi7UuwxaJlHDxQK96z/7dkEqX0=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=aYnezPBBYQM9giZ0236hDfIxsepN2UF9+wE42yXMuiSvHc67nMoEeYAchS8Mjxbps
+         iVmZ2VgEaOuee1/spHVA8z4ZpeEJsuFH+5SM3dXWuHt2TPsviNdOfVT0NUwXewkfpS
+         8wQtUOFKVd0K3/5hiGOGVpoTkmRMlML3cOpUFCNg=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9FFwOS7002660;
+        Mon, 15 Oct 2018 10:58:24 -0500
+Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Mon, 15
+ Oct 2018 10:58:24 -0500
+Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Mon, 15 Oct 2018 10:58:24 -0500
+Received: from [127.0.0.1] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9FFwL9Y017853;
+        Mon, 15 Oct 2018 10:58:22 -0500
+Subject: Re: [PATCH 04/11] clk: ti: clkctrl: support multiple clkctrl nodes
+ under a cm node
+To:     Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>
+CC:     linux-clk <linux-clk@vger.kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-clk@vger.kernel.org, linux-mmc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v4 3/3] dt-bindings: mmc: tmio_mmc: Document Renesas
- R7S9210
-Message-ID: <20181015154656.zlzfuw2oi5oazni3@verge.net.au>
-References: <20181012122924.5543-1-chris.brandt@renesas.com>
- <20181012122924.5543-4-chris.brandt@renesas.com>
+        linux-omap <linux-omap@vger.kernel.org>,
+        Tony Lindgren <tony@atomide.com>
+References: <1535728027-24573-1-git-send-email-t-kristo@ti.com>
+ <1535728027-24573-5-git-send-email-t-kristo@ti.com>
+ <153937953037.5275.784660292030040696@swboyd.mtv.corp.google.com>
+ <CAL_Jsq+68yemY+6qxv7DrfHkdqiCQTOuCiLBtrWgYE+CPd1iGQ@mail.gmail.com>
+ <153938180944.5275.885829910555690983@swboyd.mtv.corp.google.com>
+From:   Tero Kristo <t-kristo@ti.com>
+Message-ID: <7163c8e6-9bd5-194c-c6f9-4ecfe83a214d@ti.com>
+Date:   Mon, 15 Oct 2018 18:58:21 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181012122924.5543-4-chris.brandt@renesas.com>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <153938180944.5275.885829910555690983@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Oct 12, 2018 at 07:29:24AM -0500, Chris Brandt wrote:
-> Document support for the RZ/A2 (R7S9210) SoC.
+On 13/10/18 01:03, Stephen Boyd wrote:
+> Quoting Rob Herring (2018-10-12 14:45:08)
+>> On Fri, Oct 12, 2018 at 4:25 PM Stephen Boyd <sboyd@kernel.org> wrote:
+>>>
+>>> Quoting Tero Kristo (2018-08-31 08:07:00)
+>>>> @@ -492,19 +501,35 @@ static void __init _ti_omap4_clkctrl_setup(struct device_node *node)
+>>>>
+>>>>          provider->base = of_iomap(node, 0);
+>>>>
+>>>> -       provider->clkdm_name = kmalloc(strlen(node->parent->name) + 3,
+>>>> -                                      GFP_KERNEL);
+>>>> -       if (!provider->clkdm_name) {
+>>>> -               kfree(provider);
+>>>> -               return;
+>>>> +       if (ti_clk_get_features()->flags & TI_CLK_CLKCTRL_COMPAT) {
+>>>> +               provider->clkdm_name = kmalloc(strlen(node->parent->name) + 3,
+>>>> +                                              GFP_KERNEL);
+>>>> +               if (!provider->clkdm_name) {
+>>>> +                       kfree(provider);
+>>>> +                       return;
+>>>> +               }
+>>>> +
+>>>> +               /*
+>>>> +                * Create default clkdm name, replace _cm from end of parent
+>>>> +                * node name with _clkdm
+>>>> +                */
+>>>> +               strcpy(provider->clkdm_name, node->parent->name);
+>>
+>> kasprintf can replace kmalloc, strlen and strcpy here and remove the
+>> direct access of .name in the process.
+>>
+>>>> +               provider->clkdm_name[strlen(provider->clkdm_name) - 2] = 0;
+>>>> +       } else {
+>>>> +               provider->clkdm_name = kmalloc(strlen(node->name), GFP_KERNEL);
+>>>> +               if (!provider->clkdm_name) {
+>>>> +                       kfree(provider);
+>>>> +                       return;
+>>>> +               }
+>>>> +
+>>>> +               /*
+>>>> +                * Create default clkdm name, replace _clkctrl from end of
+>>>> +                * node name with _clkdm
+>>>> +                */
+>>>> +               strcpy(provider->clkdm_name, node->name);
+>>
+>> and here.
+>>
+>>>> +               provider->clkdm_name[strlen(provider->clkdm_name) - 7] = 0;
+>>>>          }
+>>>>
+>>>
+>>> This conflicts with Rob's change so I tried to fix it up. Let me know if
+>>> something is horribly wrong with it. I suspect Rob will need to figure
+>>> out how to make node::name usage go away again, but I put it back.
+>>
+>> Then I don't have to find and fix. :)
+>>
 > 
-> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Can you send a patch? Otherwise I will try and fix this up tomorrow.
+> You can use this git tree for reference:
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-ti
+> 
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Sorry, I've also been OoO for last week, just captured this.
 
-> ---
-> v2:
->  * Documented that R7S9210 has 2 clocks
-> ---
->  Documentation/devicetree/bindings/mmc/tmio_mmc.txt | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-> index d39d5e46f7d2..cdfbcce34b97 100644
-> --- a/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-> +++ b/Documentation/devicetree/bindings/mmc/tmio_mmc.txt
-> @@ -13,6 +13,7 @@ Required properties:
->  - compatible: should contain one or more of the following:
->  		"renesas,sdhi-sh73a0" - SDHI IP on SH73A0 SoC
->  		"renesas,sdhi-r7s72100" - SDHI IP on R7S72100 SoC
-> +		"renesas,sdhi-r7s9210" - SDHI IP on R7S9210 SoC
->  		"renesas,sdhi-r8a73a4" - SDHI IP on R8A73A4 SoC
->  		"renesas,sdhi-r8a7740" - SDHI IP on R8A7740 SoC
->  		"renesas,sdhi-r8a7743" - SDHI IP on R8A7743 SoC
-> @@ -54,7 +55,7 @@ Required properties:
->  	  "core" and "cd". If the controller only has 1 clock, naming is not
->  	  required.
->  	  Devices which have more than 1 clock are listed below:
-> -	  2: R7S72100
-> +	  2: R7S72100, R7S9210
->  
->  Optional properties:
->  - pinctrl-names: should be "default", "state_uhs"
-> -- 
-> 2.16.1
-> 
+Do you need help on this one? I can take a look at it tomorrow if there 
+is a specific merge conflict you want me to take a look at.
+
+-Tero
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
