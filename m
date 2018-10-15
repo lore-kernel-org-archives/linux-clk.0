@@ -1,149 +1,299 @@
-Return-Path: <SRS0=5HZW=M2=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=3y70=M3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E298C070C3
-	for <linux-clk@archiver.kernel.org>; Sun, 14 Oct 2018 23:53:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EB75C070C3
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Oct 2018 02:44:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E9A320853
-	for <linux-clk@archiver.kernel.org>; Sun, 14 Oct 2018 23:53:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F176820652
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Oct 2018 02:44:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="OczBXhfc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E9A320853
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="YpuRa9fN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F176820652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726107AbeJOHgP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 15 Oct 2018 03:36:15 -0400
-Received: from relmlor4.renesas.com ([210.160.252.174]:27739 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725792AbeJOHgP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Oct 2018 03:36:15 -0400
-Received: from unknown (HELO relmlir4.idc.renesas.com) ([10.200.68.154])
-  by relmlie3.idc.renesas.com with ESMTP; 15 Oct 2018 08:53:30 +0900
-Received: from relmlii2.idc.renesas.com (relmlii2.idc.renesas.com [10.200.68.66])
-        by relmlir4.idc.renesas.com (Postfix) with ESMTP id F18AD60280;
-        Mon, 15 Oct 2018 08:53:29 +0900 (JST)
-X-IronPort-AV: E=Sophos;i="5.54,382,1534777200"; 
-   d="scan'208";a="295117171"
-Received: from mail-ty1jpn01lp0176.outbound.protection.outlook.com (HELO JPN01-TY1-obe.outbound.protection.outlook.com) ([23.103.139.176])
-  by relmlii2.idc.renesas.com with ESMTP/TLS/AES256-GCM-SHA384; 15 Oct 2018 08:53:29 +0900
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
+        id S1726404AbeJOK1R (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 15 Oct 2018 06:27:17 -0400
+Received: from mail-ve1eur01on0076.outbound.protection.outlook.com ([104.47.1.76]:7920
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726262AbeJOK1R (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 15 Oct 2018 06:27:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Wy8qqYOV6/5nQoRdHFXDbEygyeQycAvHG+G44klFjDQ=;
- b=OczBXhfcfGcrzzOnlTYSuVReM3lwZA+msDAh1xpb4PEZkVZVY8+YhdDDSnuOhxCBSF2jcc/QaoHcBMbYIoPQcNSv5FAYz3jGXoPQ/dsIv54XNFS/qkr5d3H1F3r6tU5LMXK2RnvbKTPmdKrKOA6MsOiWPGOtQ/E/SHmXVI7n5bo=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=kuninori.morimoto.gx@renesas.com; 
-Received: from morimoto-PC.renesas.com (211.11.155.130) by
- OSXPR01MB0615.jpnprd01.prod.outlook.com (2603:1096:600:14::25) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1228.26; Sun, 14 Oct 2018 23:53:24 +0000
-Message-ID: <87tvlo2iv0.wl-kuninori.morimoto.gx@renesas.com>
-From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] clk: add 74aup1g157gw 2-input multiplexer as clock driver
-In-Reply-To: <153936040246.5275.14492857755273657122@swboyd.mtv.corp.google.com>
-References: <87efcy1rm4.wl-kuninori.morimoto.gx@renesas.com>
-        <87bm821rkf.wl-kuninori.morimoto.gx@renesas.com>
-        <153923999820.207691.114282732524143268@swboyd.mtv.corp.google.com>
-        <87woqoaty1.wl-kuninori.morimoto.gx@renesas.com>
-        <153936040246.5275.14492857755273657122@swboyd.mtv.corp.google.com>
-User-Agent: Wanderlust/2.15.9 Emacs/24.5 Mule/6.0
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-Date:   Sun, 14 Oct 2018 23:53:24 +0000
-X-Originating-IP: [211.11.155.130]
-X-ClientProxiedBy: TY1PR01CA0139.jpnprd01.prod.outlook.com
- (2603:1096:402:1::15) To OSXPR01MB0615.jpnprd01.prod.outlook.com
- (2603:1096:600:14::25)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 69aa519a-0941-486e-9c4b-08d632303b20
-X-MS-Office365-Filtering-HT: Tenant
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:OSXPR01MB0615;
-X-Microsoft-Exchange-Diagnostics: 1;OSXPR01MB0615;3:jWHJHOxqqL5yvWzC9VgO4dBmVtKKuEI9+iJCK2Z6oEUGksRMsGQJUr4K1stdgjbKHtc6VkT5B+SlAMs9KAIGXEsAKrad0oskr4KAIcxIssCncXPdBlxZYQKRkzbWQxg375Bcy2++b+XS0S7WraXUDu4RWQ8WCqCcFZO2bdioE5M7rrGGj62KOxPCf+DAwZTM15UninrqmWUm+KoYiR1T8H7LUgAqExWaVyJZ/5GsBTQtS/6TtgqCrO2MrJB8hbLf;25:F1sXyIxbVwbR96H8qEUqkHC660CLHwwVlEIsDrOiFUVCLE++80c3SMGR2w59cX4t4M59flCpCa8R08lhoNNQarbv5nPo2qA5AS0mNFijfJiQwcbnB9utnequRoFDB+Ruoc/7AEdB65qUBgtiYpc9rPRG+tszUmcb9b1LmPtF+jMM17Unx2duJVNxi04pogVrM4oZP5CWIxHvJFFAizfWKRso3NDYn+Gq8iuMUNrbgyNHdpOXnBnJmY96n1ffbwAz00SA75iaT7wlEREhTxUlcJIpgeSqgxJPpfi5ASPY93ei43wnQp/j0uc32LG9IpY5WSCdrNq1jGXs+a0DCcma5A==;31:q1GJAJUzJCK3amcxOY2igv23oid2/sibv8PHnU2wn3GNzBV8Qs5fPl+ybFbWrpyltk36nk6UdyjJaEIt4imumDfpP9iesVaDYA4kaDlArtrifTK9TJoE8FZCTZGRXJ+RXt0wi28/CJrMZoviK62vg2bwGtrS5odbwW+8S9jAnCWqwXq+1lOstf5+P/KarADH4C4I/3oDBcy4Bchi9k0XtA8ClzDWXQbt9E59rZ34DhU=
-X-MS-TrafficTypeDiagnostic: OSXPR01MB0615:
-X-Microsoft-Exchange-Diagnostics: 1;OSXPR01MB0615;20:c+eYaoLIpgoqrl+DOsZSHSGEkzhGHoj2wB3S79W4fcc3T11rXfpsbPSsAdc3el/R9rg+8F2aqCf6iBrYkTBenhJBDSvhN4l1KcIuuHngg719+ym1mQBfT0Bdkw5l44kOa8KIwv41HDiM2bhnx6eZkBqtYJwKouCQPuvdM4esBRD5B2qT/5C//zM3SxInN3HsxYZbKa9aXvydfozJP7X5dFdbcHAQxq/fU8w67RtajU7XtWJkhrKgPOO79B15vgBr+j+kD8fHnrBiJhNlcuYHyCEN9oYMUyP/bTwv4sfJKLVJd3zq+eEELMXDmU375Mp6NjfnIJJQ6yH/356Nnjftb+DPANi/bZFk7nAF0OofPQSnBnmfxj1eLFQj3Yw0LpExyZ+rf7bsWlrrvLLQQj496cirEV8sCyqipzfjWkPN6sc4pj9RtiXQLw7GA4+KEziOydsgyrkqlhg8+FFpkjQMcHXgG1JTBoDxCd7fEy2ng7b6lvXcAZ5g4IHtRjKe8sHG;4:G4gUnwGN1OMO9mVrV6GuNiBe4EuKbASbKh8aB8qJ1uZJYHQjyw93XzqhE06GLCHg2EqZtZb2qvTjArBuxLWCj7gCrLfyOaz/46uJAobm52ks8tL/UjcNtBziaQGY1ak12VRzdENHpUURDS9n9Nk+e6r1BpgzFR1Cpae5hlT4hxToM7KdnqDCDPRM9HfFADlX524VYnaVO5i/T4mWaHCRtIH2+taEgLJPyb/Q8WhQ2H34PU0THeBX8xh+1HsSOvhP0HAHDhCNODmIbBc/3IWHLw==
-X-Microsoft-Antispam-PRVS: <OSXPR01MB0615CFEBBCA043F0AECD85B6D4FC0@OSXPR01MB0615.jpnprd01.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(3231355)(944501410)(52105095)(10201501046)(93006095)(93001095)(6055026)(149066)(150057)(6041310)(20161123560045)(20161123558120)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051);SRVR:OSXPR01MB0615;BCL:0;PCL:0;RULEID:;SRVR:OSXPR01MB0615;
-X-Forefront-PRVS: 08252193F3
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(346002)(376002)(136003)(39850400004)(396003)(366004)(189003)(199004)(52314003)(47776003)(16586007)(7736002)(186003)(16526019)(345774005)(97736004)(26005)(68736007)(93886005)(14444005)(86362001)(66066001)(316002)(4326008)(5660300001)(6916009)(25786009)(476003)(478600001)(6246003)(69596002)(486006)(106356001)(53416004)(105586002)(36756003)(2616005)(81166006)(50466002)(23726003)(386003)(6116002)(54906003)(3846002)(53936002)(11346002)(956004)(446003)(81156014)(8676002)(58126008)(2906002)(8936002)(76176011)(52116002)(7696005)(6486002)(229853002)(305945005)(16060500001);DIR:OUT;SFP:1102;SCL:1;SRVR:OSXPR01MB0615;H:morimoto-PC.renesas.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-Received-SPF: None (protection.outlook.com: renesas.com does not designate
+ bh=cvfXcbcPT92V0EoRrFy9VTWTC15NL6A/GVLru9qx7AQ=;
+ b=YpuRa9fNmgcV/tfVg6rvoPPyeADydeLYE1FX09fSRwwOHMiWmLoecKS+UQLPgs5fmT/0ywAqmpiCEsz1vEwaD1CtuaVtwdgvs6KI88gFzM3eVy/EjUIuGqPxVYExtS7ysf37OFsfBci9Y2QzUphLNNqbuPWKOicLKoDsV7M4YEE=
+Received: from VI1PR04MB4800.eurprd04.prod.outlook.com (20.177.48.221) by
+ VI1PR04MB5279.eurprd04.prod.outlook.com (20.177.51.220) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1228.23; Mon, 15 Oct 2018 02:44:00 +0000
+Received: from VI1PR04MB4800.eurprd04.prod.outlook.com
+ ([fe80::a45f:ad96:edec:a2df]) by VI1PR04MB4800.eurprd04.prod.outlook.com
+ ([fe80::a45f:ad96:edec:a2df%3]) with mapi id 15.20.1228.027; Mon, 15 Oct 2018
+ 02:44:00 +0000
+From:   Vabhav Sharma <vabhav.sharma@nxp.com>
+To:     Shawn Guo <shawnguo@kernel.org>
+CC:     "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
+        "oss@buserror.net" <oss@buserror.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
+        "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "linux-kernel-owner@vger.kernel.org" 
+        <linux-kernel-owner@vger.kernel.org>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
+        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
+        Leo Li <leoyang.li@nxp.com>,
+        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+        Varun Sethi <V.Sethi@nxp.com>, Udit Kumar <udit.kumar@nxp.com>,
+        Pankaj Bansal <pankaj.bansal@nxp.com>,
+        Priyanka Jain <priyanka.jain@nxp.com>,
+        Sriram Dash <sriram.dash@nxp.com>
+Subject: RE: [PATCH v4 6/6] arm64: dts: add LX2160ARDB board support
+Thread-Topic: [PATCH v4 6/6] arm64: dts: add LX2160ARDB board support
+Thread-Index: AQHUW+OAQmr4YeRg8k+lnJ1eSFizYaUU3kmAgArJwGA=
+Date:   Mon, 15 Oct 2018 02:44:00 +0000
+Message-ID: <VI1PR04MB4800555506B64C9E93F9ED36F3FD0@VI1PR04MB4800.eurprd04.prod.outlook.com>
+References: <1538615031-7507-1-git-send-email-vabhav.sharma@nxp.com>
+ <1538615031-7507-7-git-send-email-vabhav.sharma@nxp.com>
+ <20181008055159.GH3587@dragon>
+In-Reply-To: <20181008055159.GH3587@dragon>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=vabhav.sharma@nxp.com; 
+x-originating-ip: [14.143.30.134]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR04MB5279;6:4S1KZpJaVMzLqOMOJ6SYKGumCvp7wxrwVLhBcLs2rqCbbFBxJ2gLH9HwpKMnZM/wotFwKk+Gs+FxSroXIRXwOWGZ1KtPgJgmFJDN86K6+gH3FzrHF64Pg3wBx4DYxJKf3mhTUAGwqwIwsvNISEkt2Re3eU1Dos6Z48SE1ZRok1x35Iepcv+dBJhREyJcEEwbMdcuGbbiKE37JcVvZiwi3puVZhHtqleR2L/zaOmXypoB4uytJXlSqgGiUIIPEvhT4GBPg76CuhAutxVhker6W9OAZXaoB8ozyLEjvKR5/OjvcAXQtFh6hLG51UjnzX/htpX7NX0pGX8wchFtwLLeMRbtQM0eb0VI4Uek9OV+MIxp5sto6zrehgmR/fywwEKL3AIcXJSJks79k7kGMrXd/X50oCNQB0bIfBRPKJfe/F5Y9tyLega17lL8v4QdyrK2MDI2STgRag9roVCeKcrJ0Q==;5:abnehYpK8KxiVELu3ZJampWfPpyswAjdoHwqJZw0D6+6WO3N5TknekJ6OmKWCQUYeD12vHr3czagW2XykGG30GZBXSDCt6VXJXnt5a+HJcsCE/T5QKNe6JGoqzTJ8xrcTT+ZgKTLxKnU0nk2aR8yj8JsA5X0kwh5xrfFEyfj+kc=;7:AeI2nvQXtb55CqP/lQCED2fKuHN4Bf7CLD8EsndysqpikvIPO7loFJMm7d07tuum6Ehr+ee0gTit2ZvGX5zWZUxKdK8bZrPLLIJP2n9bdM3o4tRqApmOfQKfudtxXRdjCW2ICKiYOOF+7QEx9AvCTpDyhh93+MiiIDan+kJInhYVESL6Dk6LKcrnFzFnYukih4VuzFBeodPOtqGlTTG1kaKZ6swAgQ9wuQgStm35A1LjWXjUhLyw4WzcFEfnl+2e
+x-ms-office365-filtering-correlation-id: eccb7d9b-4155-4646-c78d-08d632480ff6
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB5279;
+x-ms-traffictypediagnostic: VI1PR04MB5279:
+x-microsoft-antispam-prvs: <VI1PR04MB5279B131D25699F2AC9E9CA4F3FD0@VI1PR04MB5279.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(9452136761055)(180628864354917)(65623756079841)(258649278758335)(185117386973197);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231355)(944501410)(52105095)(6055026)(149066)(150057)(6041310)(20161123562045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(201708071742011)(7699051)(76991067);SRVR:VI1PR04MB5279;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB5279;
+x-forefront-prvs: 0826B2F01B
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(376002)(346002)(136003)(396003)(366004)(189003)(199004)(13464003)(7416002)(55236004)(305945005)(7736002)(256004)(446003)(74316002)(25786009)(68736007)(54906003)(8676002)(86362001)(55016002)(81166006)(81156014)(9686003)(6436002)(53936002)(76176011)(26005)(4326008)(5660300001)(186003)(7696005)(99286004)(53546011)(6506007)(6916009)(486006)(102836004)(476003)(11346002)(14444005)(44832011)(8936002)(2906002)(6116002)(3846002)(316002)(33656002)(2900100001)(71190400001)(97736004)(71200400001)(6246003)(14454004)(478600001)(5250100002)(66066001)(105586002)(106356001)(229853002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5279;H:VI1PR04MB4800.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;OSXPR01MB0615;23:4YJQMlLdnXdIRm27hYJfE1rzNYkmJFI8ZvuIWo37U?=
- =?us-ascii?Q?7FWkSr4bEAv+aaLs7QpD/Q5St7CZbSd1ghGS8HuQb5HiXhNSpCcdPrEczP/m?=
- =?us-ascii?Q?LAH8V0A/S5fHhZuzkPyhyfHvIYmUwYqDwSLEShaydMMiW+tSHerIC+pgN9oK?=
- =?us-ascii?Q?f4EW3qRn2Qz1ouSb+vE51dkvjWbm+rsKQLLfBsC+B5KhpDpv2T8/YbFo87nR?=
- =?us-ascii?Q?9O7QTAJauA0osncdWca+jLSuZ8r9AkvnN3T9wgYW5zD++9Tm5d0LuRwSyRdb?=
- =?us-ascii?Q?x5TYqRwghM8IQXhwk5jpQTTNiiXm8kTk+IPtnXJ+aWj5ALFhgPOoAkCxE0gy?=
- =?us-ascii?Q?hrVliaHcUvSsmD0lC5gFZIh0yzsU/FdHq9fc3oBIBXv7aZHrDB85PeGpBUPP?=
- =?us-ascii?Q?HTtbp1BOl7Ii1ZC2IkoSbh/VrwthcNecTnMYsHheVxS9AvvANakndKvyGXBw?=
- =?us-ascii?Q?ivH6fveZqvwOFYyojvoKQtBMt+8+GC5L+3Z7aBFsD/rg1VmHYtdZqKl4xZYC?=
- =?us-ascii?Q?/EspzdPR3axkSghJgxlKb9fkl9U8WvNTrre0xz/QyyvJfxC9rmjPVwLLNuQ9?=
- =?us-ascii?Q?bzqSTY6XzjOoYZKCbT9pHoKCQa4hAp7Ya5oagMmQkt6Lzg+axg+NVmx3pxUf?=
- =?us-ascii?Q?kq9L2Hndn0M0tRPOgJG5MZi3SSCGQUMcHwjc9dsYD7FqoUkmu1pd4K3GJx2f?=
- =?us-ascii?Q?g+YlyqHmppP0+abE5K3kVrFxsKNWYLSoS1pKCb31nTDmkiLeT3ft60KkUWAA?=
- =?us-ascii?Q?eefK6tLMiyni9oKoOgZQ6MicHbO4M8t6MTLqoJCP7c6aUSV3ExgNAHH63R4R?=
- =?us-ascii?Q?z06LKd+HNWki5Jy83awLByCK8kuGHyc0aS5LHftpEee8RsTFtifET0yqLyox?=
- =?us-ascii?Q?+pQb/cnAjq83BCccW+YU/l7Bp/IxcMHVkOL9PnfVMc5UM3xT8reDx6sbZuZi?=
- =?us-ascii?Q?OSdLFArBgAx/uL60ILrMiCabhJB5P3pi99ijdAohhCoKcN2UM2g+GMVW00UX?=
- =?us-ascii?Q?ZENMARjp0C91Psfq0TStla6tuKdTP52DwqQ+dKlXwy1cbugbTBjmxL7TUQL2?=
- =?us-ascii?Q?7XV9pfxzvWFqoK9NrOWG47DusSKni00FzF0XJXmN19spaezpLOhBEpNI58oU?=
- =?us-ascii?Q?56h+EbqCf2r7RtINDdpO7HcdKZ+Dng/IahM0pnjOPa469AoAYAba19QSVRM4?=
- =?us-ascii?Q?LxImmSy2Ok8G99QrjXRC+dWKNNtj1zLhmJ6+t+L1LNTAbOtHtbZw8NUgCdV0?=
- =?us-ascii?Q?vkj5zaYi4sKJpJBwOZpBGOd4i3MOj8uf9xRC+rSkXCGr7PJi/PpDZreUiUR9?=
- =?us-ascii?Q?x7/0S1AEertcUaK1Z1y82HcRO9Ft6L+Mf0rAgi+u+V9?=
-X-Microsoft-Antispam-Message-Info: DTbeQogOTtxcBKH6I+sMolbW5I2S1Sj9arxLexfcmw+M/JEbXn1OYeTbIUKEeD993RO1ZOr0aBHBeQI1zI1imzCLWO4k9vpVlZZdH7uZxcWFUC+zIX1HynV/67qe4egsXP3JkcFqXL3fhS94TmYVjkrLY4/vZGIpnpC0S0qQiGhYUTJ9EFDNSafTbTAprnOUj0Hk4521I2uuDNLhsWlpE8qKYBjbgu3qShgEo1bbhDg7Bb92GX/nkdRCcYjdSp1YP/60Sdz5L8bViIy+/zjA6nH5rem7XFebRzMcQKRmJFzsnKlIxigo3ylYzuc8E4Mnp/UBooE9jn9+zB0GC8SekZP26LuO06GPo3GK2s/mWBw=
-X-Microsoft-Exchange-Diagnostics: 1;OSXPR01MB0615;6:AKsaA3M3fvnnctP1uuV9nY1Pmm6TzkCNti07+DQoq0GKP4odY2z2dgus6NIXATyc3USgar2uk+X45ACichd57JAnb8paJkZ+5x06VKIyznD9NdbTZSAK7CTnUcgoKy4VbidqvGyNlnlD8Io6icAL/3x7ps2jd3BTf3a0ALydQ99kf8hxRa53Ry0UFXjTKqdLvNhajXZ++2stB3WnUfMYsdFkkBMo9FXnNbX1p8cIvKWF12pDQdTw/SlnRQiQ6+bXfZsfE/8n0YjbjT0HimRCfB55GifJSqStA+vNVJiJv8uQECriFLOeaRjuwg+C6Xd9A8PKSBXr3tBRymIJhfOc8nJ1xuksiW7b0Nd3yRwawcCC5na70VYM+ysa5Tgzat8kjlFF1TZJKboqVklxcK0/94zvwqXWMYGjaSy73SotuAMX7Xoy0AVybrWege+MX67/fptPd47v0KIpQQqavY0cxA==;5:SDJY6BEm3zi7rNG0Uwgc6buibgqbW++RJEo6E1pe0y47F7dtnZzsxuN5WdDSjqrBL63Yv+WGgRoifLEz1YE1OSPbnPywfsWqKTUQWhGIl33efz9dQyV2T+FH2X2SRcDsW0av1ppWvzUTtoIraHgPHeFl+KCeenbBHHUL+3kO544=;7:1G3W2LTOHaXmC112zwYjeqrzUx1rzGkgA/750Upt9oEu+vAuy9LoqwoTfHXKcqmv0MIcp1YmjhhTNbopK+hb4MFaYnb+FTVWWtKivSFNXvT/rAKLR5ryAEf05ySk3JyjnR7oTZwjR4QMHec1WXGEq//Yl8EL79EnvB7hlZXdSG4FeqCj4GSEIPW4WxOu609C2+9o8/UUH7KCerzUButoxS2/opOQGuVWKEZODsAqYmDMFLIgb4rOP44CKBwYMQV0
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;OSXPR01MB0615;20:jy0nf35xVUMysTgTKO/q2ldYuif/F4pAZqROsghWItux8Wk1Nj97DqSwxeNFrG0E7i8Jg8ioz4bUe3+Rnyfl8WVQNvDOz3PZOl4jq3ojc+ZymyP+SSMx0rioZjdfbUbfZmqc2zjsCQL4FIg0QgMM8BlywAmSx4XVS3KR4/hIvZk=
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2018 23:53:24.9804 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 69aa519a-0941-486e-9c4b-08d632303b20
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSXPR01MB0615
+x-microsoft-antispam-message-info: ShH4R0lUmq7bxZcoWS6kfyJ5Oon5qOtCeghWqWrx86xpqnvouRWlTgRBXjNZ5YN/2pXV4mDv84lt1o9aPZxxUMM1CkX6PDPGOxURmk3DxvZdYHXvFgcUaBydba1hjx+sIyh0yyUrfx2WawRC9w7pZMlwy4GTEKHwsermlihDgbSMQb+Ca7RSDTC4R85gJ1mOkKRqeBSn1V973WPhdoykrwUgTK4EzBqQAtAcu8h/7eXzPxReAsqRTHo/wvyUSCwTR1No4N7KBvWsFLF1vgZqNHWRvLqbYl95Cu/5f9CDkDh5O9mtDdl38ulcA6Rd7tlVL2I7TS7JvKDZzqiBPgvxFz3+fFjsCAxGyzeiPembTy8=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: eccb7d9b-4155-4646-c78d-08d632480ff6
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Oct 2018 02:44:00.4037
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5279
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
-Hi Stephen
 
-> > > > +       .recalc_rate    = clk74_recalc_rate,
-> > > > +       .get_parent     = clk74_get_parent,
-> > > > +};
-> > > 
-> > > Can this all be handled by the 'gpio-mux-clock' compatible/driver? I
-> > > suppose it may need an update to add the rounding policy that you want
-> > > via some sort of DT property, but otherwise it would be fine?
-> > 
-> > Hmm.. not sure.
-> > If we can add new feature (= .round_rate ?) on gpio-mux-clock,
-> > I can consider it.
-> 
-> Yes that would be the idea. Extend gpio-mux-clock driver to have what
-> you want with rounding. I'm not really sure why there is a rounding
-> policy needed though. Is it a static configuration at boot, or does the
-> code using this gpio clk need to search the parent rate space somehow
-> and mux it over?
-
-Thank you for pointing gpio-mux-clock.
-I tried to use it, and it works well instead of new driver.
-Actually, it is not 100%, but it should be solved sound side,
-not clock side, I think.
-But anyway, this driver is no longer needed, please drop it.
-Thank you very much
-
+> -----Original Message-----
+> From: linux-kernel-owner@vger.kernel.org <linux-kernel-
+> owner@vger.kernel.org> On Behalf Of Shawn Guo
+> Sent: Monday, October 8, 2018 11:22 AM
+> To: Vabhav Sharma <vabhav.sharma@nxp.com>
+> Cc: sudeep.holla@arm.com; oss@buserror.net; linux-kernel@vger.kernel.org;
+> devicetree@vger.kernel.org; robh+dt@kernel.org; mark.rutland@arm.com;
+> linuxppc-dev@lists.ozlabs.org; linux-arm-kernel@lists.infradead.org;
+> mturquette@baylibre.com; sboyd@kernel.org; rjw@rjwysocki.net;
+> viresh.kumar@linaro.org; linux-clk@vger.kernel.org; linux-pm@vger.kernel.=
+org;
+> linux-kernel-owner@vger.kernel.org; catalin.marinas@arm.com;
+> will.deacon@arm.com; gregkh@linuxfoundation.org; arnd@arndb.de;
+> kstewart@linuxfoundation.org; yamada.masahiro@socionext.com; Leo Li
+> <leoyang.li@nxp.com>; linux@armlinux.org.uk; Varun Sethi <V.Sethi@nxp.com=
+>;
+> Udit Kumar <udit.kumar@nxp.com>; Pankaj Bansal <pankaj.bansal@nxp.com>;
+> Priyanka Jain <priyanka.jain@nxp.com>; Sriram Dash <sriram.dash@nxp.com>
+> Subject: Re: [PATCH v4 6/6] arm64: dts: add LX2160ARDB board support
+>=20
+> On Thu, Oct 04, 2018 at 06:33:51AM +0530, Vabhav Sharma wrote:
+> > LX2160A reference design board (RDB) is a high-performance computing,
+> > evaluation, and development platform with LX2160A SoC.
+> >
+> > Signed-off-by: Priyanka Jain <priyanka.jain@nxp.com>
+> > Signed-off-by: Sriram Dash <sriram.dash@nxp.com>
+> > Signed-off-by: Vabhav Sharma <vabhav.sharma@nxp.com>
+> > ---
+> >  arch/arm64/boot/dts/freescale/Makefile            |   1 +
+> >  arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts | 100
+> > ++++++++++++++++++++++
+> >  2 files changed, 101 insertions(+)
+> >  create mode 100644 arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
+> >
+> > diff --git a/arch/arm64/boot/dts/freescale/Makefile
+> > b/arch/arm64/boot/dts/freescale/Makefile
+> > index 86e18ad..445b72b 100644
+> > --- a/arch/arm64/boot/dts/freescale/Makefile
+> > +++ b/arch/arm64/boot/dts/freescale/Makefile
+> > @@ -13,3 +13,4 @@ dtb-$(CONFIG_ARCH_LAYERSCAPE) +=3D fsl-ls2080a-
+> rdb.dtb
+> >  dtb-$(CONFIG_ARCH_LAYERSCAPE) +=3D fsl-ls2080a-simu.dtb
+> >  dtb-$(CONFIG_ARCH_LAYERSCAPE) +=3D fsl-ls2088a-qds.dtb
+> >  dtb-$(CONFIG_ARCH_LAYERSCAPE) +=3D fsl-ls2088a-rdb.dtb
+> > +dtb-$(CONFIG_ARCH_LAYERSCAPE) +=3D fsl-lx2160a-rdb.dtb
+> > diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
+> > b/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
+> > new file mode 100644
+> > index 0000000..1483071
+> > --- /dev/null
+> > +++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
+> > @@ -0,0 +1,100 @@
+> > +// SPDX-License-Identifier: (GPL-2.0 OR MIT) // // Device Tree file
+> > +for LX2160ARDB // // Copyright 2018 NXP
+> > +
+> > +/dts-v1/;
+> > +
+> > +#include "fsl-lx2160a.dtsi"
+> > +
+> > +/ {
+> > +	model =3D "NXP Layerscape LX2160ARDB";
+> > +	compatible =3D "fsl,lx2160a-rdb", "fsl,lx2160a";
+> > +
+> > +	chosen {
+> > +		stdout-path =3D "serial0:115200n8";
+> > +	};
+> > +
+> > +	sb_3v3: regulator-fixed {
+>=20
+> The node name should probably be named like regulator-sb3v3 or something,=
+ so
+> that the pattern can be followed when we have another fixed regulator to =
+be
+> added.
+Ok, Agree this is fixed 3.3 standby voltage for i2c subchannels
+Updating to regulator-sb3v3=20
+>=20
+> > +		compatible =3D "regulator-fixed";
+> > +		regulator-name =3D "fixed-3.3V";
+>=20
+> The name should be something we can find on board schematics.
+Sure, I will update SMPS name which provide fixed 3.3 stand-by voltage
+>=20
+> > +		regulator-min-microvolt =3D <3300000>;
+> > +		regulator-max-microvolt =3D <3300000>;
+> > +		regulator-boot-on;
+> > +		regulator-always-on;
+> > +	};
+> > +
+> > +};
+> > +
+> > +&uart0 {
+> > +	status =3D "okay";
+> > +};
+> > +
+> > +&uart1 {
+> > +	status =3D "okay";
+> > +};
+> > +
+> > +&i2c0 {
+>=20
+> Please keep these labeled nodes sorted alphabetically.
+Ok
+>=20
+> > +	status =3D "okay";
+>=20
+> Have a newline between properties and child node.
+Sure.
+>=20
+> > +	i2c-mux@77 {
+> > +		compatible =3D "nxp,pca9547";
+> > +		reg =3D <0x77>;
+> > +		#address-cells =3D <1>;
+> > +		#size-cells =3D <0>;
+> > +
+> > +		i2c@2 {
+> > +			#address-cells =3D <1>;
+> > +			#size-cells =3D <0>;
+> > +			reg =3D <0x2>;
+> > +
+> > +			power-monitor@40 {
+> > +				compatible =3D "ti,ina220";
+> > +				reg =3D <0x40>;
+> > +				shunt-resistor =3D <1000>;
+> > +			};
+> > +		};
+> > +
+> > +		i2c@3 {
+> > +			#address-cells =3D <1>;
+> > +			#size-cells =3D <0>;
+> > +			reg =3D <0x3>;
+> > +
+> > +			temperature-sensor@4c {
+> > +				compatible =3D "nxp,sa56004";
+> > +				reg =3D <0x4c>;
+> > +				vcc-supply =3D <&sb_3v3>;
+> > +			};
+> > +
+> > +			temperature-sensor@4d {
+> > +				compatible =3D "nxp,sa56004";
+> > +				reg =3D <0x4d>;
+> > +				vcc-supply =3D <&sb_3v3>;
+> > +			};
+> > +		};
+> > +	};
+> > +};
+> > +
+> > +&i2c4 {
+> > +	status =3D "okay";
+> > +
+> > +	rtc@51 {
+> > +		compatible =3D "nxp,pcf2129";
+> > +		reg =3D <0x51>;
+> > +		// IRQ10_B
+> > +		interrupts =3D <0 150 0x4>;
+> > +		};
+>=20
+> Bad indentation.
+My mistake, Updated
+>=20
+> Shawn
+>=20
+> > +
+> > +};
+> > +
+> > +&usb0 {
+> > +	status =3D "okay";
+> > +};
+> > +
+> > +&usb1 {
+> > +	status =3D "okay";
+> > +};
+> > +
+> > +&crypto {
+> > +	status =3D "okay";
+> > +};
+> > --
+> > 2.7.4
+> >
