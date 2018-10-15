@@ -2,133 +2,102 @@ Return-Path: <SRS0=3y70=M3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B8BAC04AA5
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Oct 2018 16:48:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83764C71133
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Oct 2018 16:55:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6344208AE
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Oct 2018 16:48:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B6FB204FD
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Oct 2018 16:55:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cqj8iPOm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6344208AE
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="RryXLG70"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B6FB204FD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726708AbeJPAeg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 15 Oct 2018 20:34:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38176 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726684AbeJPAeg (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 15 Oct 2018 20:34:36 -0400
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2C1E62064A;
-        Mon, 15 Oct 2018 16:48:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539622114;
-        bh=znxwo/KkYuHQ7BZTi+VB2plhm/XsXVWQ2KyC/W+QbvM=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=cqj8iPOmE0KwFpKdbX+XPS0iIcDG2F7RmFYwZnmFdWHEv2canwwM0bYQk7OAqdWgW
-         tfNy6Xzn3VcFhdN1j7pB1p9YDeuPrlkh/XVNdObILkeArwMQEQqxBce/C42ZypoCQ4
-         YmW7nuNfDVUq6uBl1ynceoY1bGkrDANf+PyLHZ+E=
-Content-Type: text/plain; charset="utf-8"
+        id S1726810AbeJPAlj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 15 Oct 2018 20:41:39 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:33052 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726576AbeJPAlj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Oct 2018 20:41:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=KKqd6PUx/B91ioDUGYSY2r+lknaGXet/5wZ5Q9ZiPng=; b=RryXLG70OWgHyXWPSRbio7aGp
+        GtLCAlCUX8GrIEka79Cku9x8F4EETD9qWXgtA7mElH+vbMAyWGQ0BiGPFGta2J+7P8Jty+3eEF9Fg
+        7LMW/Kpf7vwHQlirZjcKxNwbr/VMnCXuIJRo4SX0r2L/S5UF/YfcoIw4ZpBhhvM8jhtl0=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gC69R-0003aV-Fw; Mon, 15 Oct 2018 16:55:29 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id C6E4011224A9; Mon, 15 Oct 2018 17:55:28 +0100 (BST)
+Date:   Mon, 15 Oct 2018 17:55:28 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Charles Keepax <ckeepax@opensource.cirrus.com>,
+        lee.jones@linaro.org, linus.walleij@linaro.org,
+        mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        lgirdwood@gmail.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, patches@opensource.cirrus.com,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v2 3/5] clk: lochnagar: Add support for the Cirrus Logic
+ Lochnagar
+Message-ID: <20181015165528.GD12949@sirena.org.uk>
+References: <20181008132542.19775-1-ckeepax@opensource.cirrus.com>
+ <20181008132542.19775-3-ckeepax@opensource.cirrus.com>
+ <153924124658.207691.10370075148426001371@swboyd.mtv.corp.google.com>
+ <20181011132602.GD1653@imbe.wolfsonmicro.main>
+ <153935999691.5275.1587207165396958375@swboyd.mtv.corp.google.com>
+ <20181015104905.GF1653@imbe.wolfsonmicro.main>
+ <153962159992.5275.9275448716859702011@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Shawn Guo <shawnguo@kernel.org>,
-        Vabhav Sharma <vabhav.sharma@nxp.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <VI1PR04MB4800C0AB214B258793AF9ABAF3FD0@VI1PR04MB4800.eurprd04.prod.outlook.com>
-Cc:     "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
-        "oss@buserror.net" <oss@buserror.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
-        "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-kernel-owner@vger.kernel.org" 
-        <linux-kernel-owner@vger.kernel.org>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
-        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
-        Leo Li <leoyang.li@nxp.com>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        Varun Sethi <V.Sethi@nxp.com>, Udit Kumar <udit.kumar@nxp.com>,
-        Pankaj Bansal <pankaj.bansal@nxp.com>,
-        Ramneek Mehresh <ramneek.mehresh@nxp.com>,
-        Ying Zhang <ying.zhang22455@nxp.com>,
-        Nipun Gupta <nipun.gupta@nxp.com>,
-        Priyanka Jain <priyanka.jain@nxp.com>,
-        Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>,
-        Sriram Dash <sriram.dash@nxp.com>
-References: <1538615031-7507-1-git-send-email-vabhav.sharma@nxp.com>
- <1538615031-7507-6-git-send-email-vabhav.sharma@nxp.com>
- <20181008054510.GG3587@dragon>
- <VI1PR04MB4800C0AB214B258793AF9ABAF3FD0@VI1PR04MB4800.eurprd04.prod.outlook.com>
-Message-ID: <153962211360.5275.18031876744546062419@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: RE: [PATCH v4 5/6] arm64: dts: add QorIQ LX2160A SoC support
-Date:   Mon, 15 Oct 2018 09:48:33 -0700
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="qGV0fN9tzfkG3CxV"
+Content-Disposition: inline
+In-Reply-To: <153962159992.5275.9275448716859702011@swboyd.mtv.corp.google.com>
+X-Cookie: Kill Ugly Radio
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Vabhav Sharma (2018-10-14 19:58:15)
-> > > +
-> > > +   pmu {
-> > > +           compatible =3D "arm,cortex-a72-pmu";
-> > > +           interrupts =3D <GIC_PPI 7 IRQ_TYPE_LEVEL_LOW>;
-> > > +   };
-> > > +
-> > > +   psci {
-> > > +           compatible =3D "arm,psci-0.2";
-> > > +           method =3D "smc";
-> > > +   };
-> > > +
-> > > +   memory@80000000 {
-> > > +           // DRAM space - 1, size : 2 GB DRAM
-> > > +           device_type =3D "memory";
-> > > +           reg =3D <0x00000000 0x80000000 0 0x80000000>;
-> > > +   };
-> > > +
-> > > +   ddr1: memory-controller@1080000 {
-> > > +           compatible =3D "fsl,qoriq-memory-controller";
-> > > +           reg =3D <0x0 0x1080000 0x0 0x1000>;
-> > > +           interrupts =3D <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
-> > > +           little-endian;
-> > > +   };
-> > > +
-> > > +   ddr2: memory-controller@1090000 {
-> > > +           compatible =3D "fsl,qoriq-memory-controller";
-> > > +           reg =3D <0x0 0x1090000 0x0 0x1000>;
-> > > +           interrupts =3D <GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH>;
-> > > +           little-endian;
-> > > +   };
-> > > +
-> > > +   sysclk: sysclk {
-> > =
 
-> > Name the node a bit generic like clock-xxx.
-> There is only one clock-unit, Bootloader(U-boot) require sysclk node duri=
-ng device tree fix-up as different platform support varied platform frequen=
-cy as per reset configuration word used.
-> Referred other ARM based platform with one clock using name as x: x
+--qGV0fN9tzfkG3CxV
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Please add a comment above this node with this information. Newcomers
-reading this DTS file won't have any idea why this node is specially
-named and a comment will help tremendously here.
+On Mon, Oct 15, 2018 at 09:39:59AM -0700, Stephen Boyd wrote:
 
+> Ok if there's going to be read/volatile regs and defaults then it makes
+> sense to leave the defines in some shared header file, which is
+> unfortunate for the independent merge of driver bits. Either way, I
+
+Kconfig dependencies take care of that pretty well - if there's a
+dependency on the MFD then the function driver just won't get built
+until the MFD gets merged. =20
+
+--qGV0fN9tzfkG3CxV
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlvExn8ACgkQJNaLcl1U
+h9Cm3wgAg68zzKd/x3cvsnLK+nLQu7ZH+s4qIBqCK+IZxuyQrrt22j+bCIyr1g7X
++oydMFZWxBkys3SvNyBAl+NF61lUhSsrrrmf6qc1RWdsIYAH7O9YFwKWQB6KiJnX
+rroyNjAogqw/6vlI/VaOQ7nbWz9qjnyQDAgfgcxkNKL+EeLu2viJwiyCiU6Ybi0F
+GUSIWcK9m/ha8HitOmrc0OX/TMykmiKPsWS3F3XgdLI0Spv91QOwd98dK+EAjhS7
+nXdtijJMvFVIxFUngCmxPLOAJhkuj2fburxVSH/rgGlRx3eRYLPYjsKn4UO9WU+Z
+0ZkKYkYeqinWW970tKk/qicJ+FCEGQ==
+=kjjT
+-----END PGP SIGNATURE-----
+
+--qGV0fN9tzfkG3CxV--
