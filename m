@@ -2,174 +2,273 @@ Return-Path: <SRS0=lNOc=M4=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68E91C5ACC6
-	for <linux-clk@archiver.kernel.org>; Tue, 16 Oct 2018 21:18:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A32FDC5ACCC
+	for <linux-clk@archiver.kernel.org>; Tue, 16 Oct 2018 21:26:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C4E121470
-	for <linux-clk@archiver.kernel.org>; Tue, 16 Oct 2018 21:18:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4DF0D21470
+	for <linux-clk@archiver.kernel.org>; Tue, 16 Oct 2018 21:26:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jTOdzPIp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C4E121470
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sPH2IPi6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DF0D21470
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726957AbeJQFKt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 Oct 2018 01:10:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46790 "EHLO mail.kernel.org"
+        id S1726132AbeJQFSn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 Oct 2018 01:18:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49144 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725960AbeJQFKt (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 17 Oct 2018 01:10:49 -0400
+        id S1725960AbeJQFSn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 17 Oct 2018 01:18:43 -0400
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2D4D12098A;
-        Tue, 16 Oct 2018 21:18:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3978C2145D;
+        Tue, 16 Oct 2018 21:26:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539724712;
-        bh=GmJVp6PvtK4/mP4RQK2wS2cKmtjcmSNtoMl8QX4PDLI=;
+        s=default; t=1539725184;
+        bh=jprEVF8VN0+6mXyh3smAQOgyckWdCoHi5F5J/xPpz8I=;
         h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=jTOdzPIp2WGiuvJQADo1RdRBqMBNIJOhZ57XQPgAMvwO0OXdJhT20El1OQdVIofu1
-         cTV6I3g+Z5df2n3mxzTmGdYppcTc9zn1HaDwdmtwdJ+SSRJQECMIhwwVPtkwJwNpc4
-         vdFq0sP1ohLM4Dp+2PLbXawZ+Genhk6J8y1tHG9I=
+        b=sPH2IPi6ZV4vxYsILH8V5KeL6Bifr05vvKtI8U5RW/3Hg7O1VYt0RNB87fDWK8QRV
+         bF+UloDdD8KbuOodoCgm6H9txxOvvd2sJP1znemQ2jTJ3KH12rP2XLalBTcJeRuinM
+         UpxtLntamgrP+lD1pYkOVg4wtq4E0kNsxADlHhoY=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 To:     "A.s. Dong" <aisheng.dong@nxp.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <AM0PR04MB42111FD6D3542E12250E556880FD0@AM0PR04MB4211.eurprd04.prod.outlook.com>
-Cc:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+In-Reply-To: <1539504194-28289-4-git-send-email-aisheng.dong@nxp.com>
+Cc:     "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
         "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
         dl-linux-imx <linux-imx@nxp.com>,
         "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
+        "A.s. Dong" <aisheng.dong@nxp.com>
 References: <1539504194-28289-1-git-send-email-aisheng.dong@nxp.com>
- <1539504194-28289-6-git-send-email-aisheng.dong@nxp.com>
- <20181015073207.66npcgegibl2rybb@pengutronix.de>
- <AM0PR04MB4211129386C9088C6AFEDAF580FD0@AM0PR04MB4211.eurprd04.prod.outlook.com>
- <20181015095342.kjokajxyugugbtcw@pengutronix.de>
- <AM0PR04MB42111FD6D3542E12250E556880FD0@AM0PR04MB4211.eurprd04.prod.outlook.com>
-Message-ID: <153972471150.5275.14761857440358508106@swboyd.mtv.corp.google.com>
+ <1539504194-28289-4-git-send-email-aisheng.dong@nxp.com>
+Message-ID: <153972518358.5275.8551722631185725008@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.7
-Subject: RE: [PATCH V4 05/11] clk: imx: scu: add scu clock gate
-Date:   Tue, 16 Oct 2018 14:18:31 -0700
+Subject: Re: [PATCH V4 03/11] clk: imx: scu: add scu clock divider
+Date:   Tue, 16 Oct 2018 14:26:23 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting A.s. Dong (2018-10-15 08:30:45)
-> > -----Original Message-----
-> > From: Sascha Hauer [mailto:s.hauer@pengutronix.de]
-> > Sent: Monday, October 15, 2018 5:54 PM
-> > To: A.s. Dong <aisheng.dong@nxp.com>
-> > Cc: linux-clk@vger.kernel.org; sboyd@kernel.org; mturquette@baylibre.co=
-m;
-> > dl-linux-imx <linux-imx@nxp.com>; kernel@pengutronix.de; Fabio Estevam
-> > <fabio.estevam@nxp.com>; shawnguo@kernel.org;
-> > linux-arm-kernel@lists.infradead.org
-> > Subject: Re: [PATCH V4 05/11] clk: imx: scu: add scu clock gate
-> > =
+Quoting A.s. Dong (2018-10-14 01:07:49)
+> diff --git a/drivers/clk/imx/scu/clk-divider-scu.c b/drivers/clk/imx/scu/=
+clk-divider-scu.c
+> new file mode 100644
+> index 0000000..51cb816
+> --- /dev/null
+> +++ b/drivers/clk/imx/scu/clk-divider-scu.c
+> @@ -0,0 +1,176 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * Copyright (C) 2016 Freescale Semiconductor, Inc.
+> + * Copyright 2017~2018 NXP
+> + *     Dong Aisheng <aisheng.dong@nxp.com>
+> + *
+> + */
+> +#include <linux/clk.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/err.h>
+> +#include <linux/io.h>
+> +#include <linux/jiffies.h>
 
-> > On Mon, Oct 15, 2018 at 09:17:14AM +0000, A.s. Dong wrote:
-> > > > -----Original Message-----
-> > > > From: Sascha Hauer [mailto:s.hauer@pengutronix.de]
-> > > > Sent: Monday, October 15, 2018 3:32 PM
-> > > > To: A.s. Dong <aisheng.dong@nxp.com>
-> > > > Cc: linux-clk@vger.kernel.org; sboyd@kernel.org;
-> > > > mturquette@baylibre.com; dl-linux-imx <linux-imx@nxp.com>;
-> > > > kernel@pengutronix.de; Fabio Estevam <fabio.estevam@nxp.com>;
-> > > > shawnguo@kernel.org; linux-arm-kernel@lists.infradead.org
-> > > > Subject: Re: [PATCH V4 05/11] clk: imx: scu: add scu clock gate
-> > > >
-> > > > On Sun, Oct 14, 2018 at 08:07:56AM +0000, A.s. Dong wrote:
-> > > > > +/* Write to the LPCG bits. */
-> > > > > +static int clk_gate_scu_enable(struct clk_hw *hw) {
-> > > > > +       struct clk_gate_scu *gate =3D to_clk_gate_scu(hw);
-> > > > > +       u32 reg;
-> > > > > +
-> > > > > +       if (gate->reg) {
-> > > > > +               reg =3D readl(gate->reg);
-> > > > > +               reg &=3D ~(CLK_GATE_SCU_LPCG_MASK << gate->bit_id=
-x);
-> > > > > +               if (gate->hw_gate)
-> > > > > +                       reg |=3D (CLK_GATE_SCU_LPCG_HW_SEL |
-> > > > > +                               CLK_GATE_SCU_LPCG_SW_SEL) << gate=
-->bit_idx;
-> > > > > +               else
-> > > > > +                       reg |=3D (CLK_GATE_SCU_LPCG_SW_SEL << gat=
-e->bit_idx);
-> > > > > +               writel(reg, gate->reg);
-> > > > > +       }
-> > > >
-> > > > These register manipulations look like they need locking.
-> > > >
-> > >
-> > > Unlike the legacy MX6&7 SoCs, each clock has a separate LPCG register.
-> > > Do we still need locking?
-> > =
+Is this used?
 
-> > Let's take PWM_0_LPCG as an example:
-> > =
+> +#include <linux/slab.h>
+> +
+> +#include "clk-scu.h"
+> +
+> +struct clk_divider_scu {
+> +       struct clk_hw   hw;
 
-> > +       clks[IMX8QXP_LSIO_PWM0_IPG_S_CLK]       =3D
-> > imx_clk_gate_scu("pwm_0_ipg_s_clk", "pwm_0_div", IMX_SC_R_PWM_0,
-> > IMX_SC_PM_CLK_PER, (void __iomem *)(PWM_0_LPCG), 0x10, 0);
-> > +       clks[IMX8QXP_LSIO_PWM0_IPG_SLV_CLK]     =3D
-> > imx_clk_gate_scu("pwm_0_ipg_slv_clk", "pwm_0_ipg_s_clk",
-> > IMX_SC_R_PWM_0, IMX_SC_PM_CLK_PER, (void __iomem *)(PWM_0_LPCG),
-> > 0x14, 0);
-> > +       clks[IMX8QXP_LSIO_PWM0_IPG_MSTR_CLK]    =3D
-> > imx_clk_gate2_scu("pwm_0_ipg_mstr_clk", "lsio_bus_clk_root", (void
-> > __iomem *)(PWM_0_LPCG), 0x18, 0);
-> > +       clks[IMX8QXP_LSIO_PWM0_HF_CLK]          =3D
-> > imx_clk_gate_scu("pwm_0_hf_clk", "pwm_0_ipg_slv_clk", IMX_SC_R_PWM_0,
-> > IMX_SC_PM_CLK_PER, (void __iomem *)(PWM_0_LPCG), 4, 0);
-> > +       clks[IMX8QXP_LSIO_PWM0_CLK]             =3D
-> > imx_clk_gate_scu("pwm_0_clk", "pwm_0_ipg_slv_clk", IMX_SC_R_PWM_0,
-> > IMX_SC_PM_CLK_PER, (void __iomem *)(PWM_0_LPCG), 0, 0);
-> > =
+Nitpick: No idea why this is spaced out from clk_hw.
 
-> > This register is used in five different clocks.
-> > =
+> +       u32 rsrc_id;
+> +       u8 clk_type;
+> +};
+> +
+> +/* SCU Clock Protocol definitions */
+> +struct imx_sc_msg_req_set_clock_rate {
+> +       struct imx_sc_rpc_msg hdr;
+> +       u32 rate;
+> +       u16 resource;
+> +       u8 clk;
+> +} __packed;
+> +
+> +struct imx_sc_msg_req_get_clock_rate {
+> +       struct imx_sc_rpc_msg hdr;
+> +       u16 resource;
+> +       u8 clk;
+> +} __packed;
+> +
+> +struct imx_sc_msg_resp_get_clock_rate {
+> +       struct imx_sc_rpc_msg hdr;
+> +       u32 rate;
+> +} __packed;
+> +
+> +
+> +static inline struct clk_divider_scu *to_clk_divider_scu(struct clk_hw *=
+hw)
+> +{
+> +       return container_of(hw, struct clk_divider_scu, hw);
+> +}
+> +
+> +/*
+> + * clk_divider_scu_recalc_rate - Get clock rate for a SCU clock
+> + * @hw: clock to get rate for
+> + * @parent_rate: parent rate provided by common clock framework, not used
+> + *
+> + * Gets the current clock rate of a SCU clock. Returns the current
+> + * clock rate, or zero in failure.
+> + */
+> +static unsigned long clk_divider_scu_recalc_rate(struct clk_hw *hw,
+> +                                                 unsigned long parent_ra=
+te)
+> +{
+> +       struct clk_divider_scu *div =3D to_clk_divider_scu(hw);
+> +       struct imx_sc_msg_req_get_clock_rate msg;
+> +       struct imx_sc_msg_resp_get_clock_rate *resp;
+> +       struct imx_sc_rpc_msg *hdr =3D &msg.hdr;
+> +       int ret;
+> +
+> +       hdr->ver =3D IMX_SC_RPC_VERSION;
+> +       hdr->svc =3D (uint8_t)IMX_SC_RPC_SVC_PM;
+> +       hdr->func =3D (uint8_t)IMX_SC_PM_FUNC_GET_CLOCK_RATE;
+> +       hdr->size =3D 2;
+> +
+> +       msg.resource =3D div->rsrc_id;
+> +       msg.clk =3D div->clk_type;
+> +
+> +       ret =3D imx_scu_call_rpc(ccm_ipc_handle, &msg, true);
+> +       if (ret) {
+> +               pr_err("%s: failed to get clock rate %d\n",
+> +                       clk_hw_get_name(hw), ret);
+> +               return 0;
+> +       }
+> +
+> +       resp =3D (struct imx_sc_msg_resp_get_clock_rate *)&msg;
 
-> =
+Does the response get written to the same place that the message is
+written? If so, it would be better to combine the different structs into
+a union that's always large enough to handle this? For example, it looks
+like there are only 16 + 8 bytes for the get_clock_rate structure, but
+then the response is returning the rate in 32 bytes. When we cast that
+here we're now getting an extra 8 bytes of stack, aren't we? Combining
+the different structures into one bigger structure would alleviate this
+and avoid the need for casting.
 
-> Good catch.
-> BTW, it seems for the same clk group, we may still not need lock
-> as the clock framework already defined the global enable/disable lock
-> for the same group.
-> =
+> +
+> +       return resp->rate;
+> +}
+> +
+> +/*
+> + * clk_divider_scu_round_rate - Round clock rate for a SCU clock
+> + * @hw: clock to round rate for
+> + * @rate: rate to round
+> + * @parent_rate: parent rate provided by common clock framework, not used
+> + *
+> + * Gets the current clock rate of a SCU clock. Returns the current
+> + * clock rate, or zero in failure.
+> + */
+> +static long clk_divider_scu_round_rate(struct clk_hw *hw, unsigned long =
+rate,
+> +                                      unsigned long *parent_rate)
+> +{
+> +       /*
+> +        * Assume we support all the requested rate and let the SCU firmw=
+are
+> +        * to handle the left work
+> +        */
+> +       return rate;
+> +}
+> +
+> +/*
+> + * clk_divider_scu_set_rate - Set rate for a SCU clock
+> + * @hw: clock to change rate for
+> + * @rate: target rate for the clock
+> + * @parent_rate: rate of the clock parent, not used for SCU clocks
+> + *
+> + * Sets a clock frequency for a SCU clock. Returns the SCU
+> + * protocol status.
+> + */
+> +static int clk_divider_scu_set_rate(struct clk_hw *hw, unsigned long rat=
+e,
+> +                                   unsigned long parent_rate)
+> +{
+> +       struct clk_divider_scu *div =3D to_clk_divider_scu(hw);
+> +       struct imx_sc_msg_req_set_clock_rate msg;
+> +       struct imx_sc_rpc_msg *hdr =3D &msg.hdr;
+> +       int ret;
+> +
+> +       hdr->ver =3D IMX_SC_RPC_VERSION;
+> +       hdr->svc =3D (uint8_t)IMX_SC_RPC_SVC_PM;
+> +       hdr->func =3D (uint8_t)IMX_SC_PM_FUNC_SET_CLOCK_RATE;
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/D=
-ocumentation/driver-api/clk.rst
-> " Drivers don't need to manually protect resources shared between the ope=
-rations
-> of one group, regardless of whether those resources are shared by multiple
-> clocks or not. However, access to resources that are shared between opera=
-tions
-> of the two groups needs to be protected by the drivers."
-> =
+Are these casts necessary?
 
-> Do you think it's okay to drop it?
-> =
+> +       hdr->size =3D 3;
+> +
+> +       msg.rate =3D rate;
+> +       msg.resource =3D div->rsrc_id;
+> +       msg.clk =3D div->clk_type;
+> +
+> +       ret =3D imx_scu_call_rpc(ccm_ipc_handle, &msg, true);
+> +       if (ret)
+> +               pr_err("%s: failed to set clock rate %ld : ret %d\n",
+> +                       clk_hw_get_name(hw), rate, ret);
+> +
+> +       return 0;
+> +}
+> +
+> +static const struct clk_ops clk_divider_scu_ops =3D {
+> +       .recalc_rate =3D clk_divider_scu_recalc_rate,
+> +       .round_rate =3D clk_divider_scu_round_rate,
+> +       .set_rate =3D clk_divider_scu_set_rate,
+> +};
+> +
+> +struct clk_hw *imx_clk_register_divider_scu(const char *name,
+> +                                           const char *parent_name,
+> +                                           u32 rsrc_id,
+> +                                           u8 clk_type)
+> +{
+> +       struct clk_divider_scu *div;
+> +       struct clk_init_data init;
+> +       struct clk_hw *hw;
+> +       int ret;
+> +
+> +       div =3D kzalloc(sizeof(*div), GFP_KERNEL);
+> +       if (!div)
+> +               return ERR_PTR(-ENOMEM);
+> +
+> +       div->rsrc_id =3D rsrc_id;
+> +       div->clk_type =3D clk_type;
+> +
+> +       init.name =3D name;
+> +       init.ops =3D &clk_divider_scu_ops;
+> +       init.flags =3D CLK_GET_RATE_NOCACHE;
 
+Why nocache? Please have a good reason and add a comment indicating why.
 
-No it's not OK. We prefer that clk drivers don't assume the global locks
-in the clk framework are going to protect them from concurrent access to
-the same resource between different clks. Drivers can assume that a clk
-op won't be called in parallel for the same clk, but they shouldn't
-assume that everything is protected otherwise. If they did, we would
-have to go find all the drivers that make this assumption and then fix
-them when we eventually split the lock into smaller pieces.
-
-Long story short, if you have something shared (i.e. a register) and you
-plan to write to it and read from it for multiple clks, add a lock
-around it.
+> +       init.parent_names =3D parent_name ? &parent_name : NULL;
+> +       init.num_parents =3D parent_name ? 1 : 0;
+> +       div->hw.init =3D &init;
+> +
+> +       hw =3D &div->hw;
+> +       ret =3D clk_hw_register(NULL, hw);
+> +       if (ret) {
+> +               kfree(div);
+> +               hw =3D ERR_PTR(ret);
+> +       }
+> +
+> +       return hw;
+> +}
