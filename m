@@ -1,155 +1,99 @@
 Return-Path: <SRS0=lNOc=M4=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 319ECC04EBD
-	for <linux-clk@archiver.kernel.org>; Tue, 16 Oct 2018 14:24:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96795C04EBD
+	for <linux-clk@archiver.kernel.org>; Tue, 16 Oct 2018 15:37:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF1632086E
-	for <linux-clk@archiver.kernel.org>; Tue, 16 Oct 2018 14:24:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF1632086E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 5EAA2208E4
+	for <linux-clk@archiver.kernel.org>; Tue, 16 Oct 2018 15:37:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="w7JjIL1Y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EAA2208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727242AbeJPWMz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 16 Oct 2018 18:12:55 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:48125 "EHLO mail.bootlin.com"
+        id S1727100AbeJPX2L (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 16 Oct 2018 19:28:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45150 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726978AbeJPWMy (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 16 Oct 2018 18:12:54 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 9280F20E02; Tue, 16 Oct 2018 16:22:10 +0200 (CEST)
-Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 6620C20794;
-        Tue, 16 Oct 2018 16:22:00 +0200 (CEST)
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH v2 00/22] clk: at91: Rework DT bindings
-Date:   Tue, 16 Oct 2018 16:21:38 +0200
-Message-Id: <20181016142200.19741-1-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.19.1
+        id S1727006AbeJPX2L (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 16 Oct 2018 19:28:11 -0400
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E4D8B20881;
+        Tue, 16 Oct 2018 15:37:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539704231;
+        bh=hQ37OYdjansv879QImf7ruiWk7Rxq3P2lmE3IE22bsA=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=w7JjIL1YEiCLY/ML2Q5m+ygDk4ViZx2NwV+HsPRWjtG41FuQ4Ps/pGxHiWVo4CDLC
+         xIyBiCQPRrJb2tHgo5+shHdqgVEfsaQz9mT3tjlaSzpgqbUH6MfIW+BBP7b016LtrX
+         F9r8SAEAo1VrH5pDLsM+7KOS8mU6CA89KdgXw7Oo=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+To:     Rob Herring <robh+dt@kernel.org>, Tero Kristo <t-kristo@ti.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <e886fb85-c857-5aec-d1e2-5c428be9c059@ti.com>
+Cc:     linux-clk <linux-clk@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-omap <linux-omap@vger.kernel.org>,
+        Tony Lindgren <tony@atomide.com>
+References: <1535728027-24573-1-git-send-email-t-kristo@ti.com>
+ <1535728027-24573-5-git-send-email-t-kristo@ti.com>
+ <153937953037.5275.784660292030040696@swboyd.mtv.corp.google.com>
+ <CAL_Jsq+68yemY+6qxv7DrfHkdqiCQTOuCiLBtrWgYE+CPd1iGQ@mail.gmail.com>
+ <153938180944.5275.885829910555690983@swboyd.mtv.corp.google.com>
+ <7163c8e6-9bd5-194c-c6f9-4ecfe83a214d@ti.com>
+ <153964669678.5275.18141587800966295694@swboyd.mtv.corp.google.com>
+ <e886fb85-c857-5aec-d1e2-5c428be9c059@ti.com>
+Message-ID: <153970423020.5275.7771549930550361343@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH 04/11] clk: ti: clkctrl: support multiple clkctrl nodes under a
+ cm node
+Date:   Tue, 16 Oct 2018 08:37:10 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This is the promised rework of the at91 PMC clocks driver. It is mainly
-necessary to remove the DTC warnings but it also complies with the CCF
-rule that there should be one node per controller instead of one node
-per clock.
+Quoting Tero Kristo (2018-10-16 00:37:06)
+> On 16/10/18 02:38, Stephen Boyd wrote:
+> >                       return;
+> > @@ -531,10 +530,9 @@ static void __init _ti_omap4_clkctrl_setup(struct =
+device_node *node)
+> >                * Create default clkdm name, replace _cm from end of par=
+ent
+> >                * node name with _clkdm
+> >                */
+> > -             strcpy(provider->clkdm_name, node->parent->name);
+> > -             provider->clkdm_name[strlen(provider->clkdm_name) - 2] =
+=3D 0;
+> > +             provider->clkdm_name[strlen(provider->clkdm_name) - 5] =
+=3D 0;
+> >       } else {
+> > -             provider->clkdm_name =3D kmalloc(strlen(node->name), GFP_=
+KERNEL);
+> > +             provider->clkdm_name =3D kasprintf(GFP_KERNEL, "%pOFn", n=
+ode->name);
+> =
 
-This only handles the PMC, I'm planning to also rework the SCKC bindings
-later (without breaking the DT ABI).
+> should be:
+> =
 
-The series is based on top of v4.19-rc1.
+>   +             provider->clkdm_name =3D kasprintf(GFP_KERNEL, "%pOFn", n=
+ode);
+> =
 
-The first two patches are actually fixes and may be considered for this
-cycle.
+> ...instead right?
+> =
 
-I'll take the device tree changes through the at91 tree as DT backward
-compatibility is working.
 
-Changes in v2:
- - Add at91sam926x and at91sam9rl drivers
- - use CLK_OF_DECLARE_DRIVER
- - Add helpers to allocate for the proper number of clocks
- - Collected Rob's acks
-
-Alexandre Belloni (22):
-  clk: at91: audio-pll: fix audio pmc type
-  clk: at91: generated: SSCs don't have a gclk
-  clk: at91: h32mx: separate registration from DT parsing
-  clk: at91: audio-pll: separate registration from DT parsing
-  clk: at91: generated: set audio_pll_allowed in
-    at91_clk_register_generated()
-  clk: at91: allow clock registration from C code
-  clk: at91: add pmc_data struct and helpers
-  dt-bindings: clk: at91: Document new PMC binding
-  clk: at91: add new DT lookup function
-  clk: at91: add sama5d4 pmc driver
-  clk: at91: add sama5d2 PMC driver
-  clk: at91: add at91sam9260 PMC driver
-  clk: at91: add at91sam9x5 PMCs driver
-  clk: at91: add at91sam9rl PMC driver
-  clk: at91: move DT compatibility code to its own file
-  ARM: dts: at91: sama5d4: switch to new clock bindings
-  ARM: dts: at91: sama5d2: switch to new binding
-  ARM: dts: at91: at91sam9260: switch to new clock bindings
-  ARM: dts: at91: at91sam9261: switch to new clock bindings
-  ARM: dts: at91: at91sam9263: switch to new clock bindings
-  ARM: dts: at91: at91sam9x5: switch to new clock bindings
-  ARM: dts: at91: at91sam9rl: switch to new clock bindings
-
- .../devicetree/bindings/clock/at91-clock.txt  | 516 +---------
- arch/arm/boot/dts/at91-sama5d27_som1_ek.dts   |  12 +-
- arch/arm/boot/dts/at91-sama5d2_ptc_ek.dts     |   2 +-
- arch/arm/boot/dts/at91-sama5d2_xplained.dts   |   4 +-
- arch/arm/boot/dts/at91-sama5d4ek.dts          |   2 +-
- arch/arm/boot/dts/at91sam9260.dtsi            | 308 +-----
- arch/arm/boot/dts/at91sam9261.dtsi            | 287 +-----
- arch/arm/boot/dts/at91sam9263.dtsi            | 315 +-----
- arch/arm/boot/dts/at91sam9g15.dtsi            |   4 +
- arch/arm/boot/dts/at91sam9g20.dtsi            |  23 +-
- arch/arm/boot/dts/at91sam9g25.dtsi            |   4 +
- arch/arm/boot/dts/at91sam9g25ek.dts           |   4 +-
- arch/arm/boot/dts/at91sam9g35.dtsi            |   4 +
- arch/arm/boot/dts/at91sam9rl.dtsi             | 239 +----
- arch/arm/boot/dts/at91sam9x25.dtsi            |   4 +
- arch/arm/boot/dts/at91sam9x35.dtsi            |   4 +
- arch/arm/boot/dts/at91sam9x5.dtsi             | 326 +-----
- arch/arm/boot/dts/at91sam9x5_can.dtsi         |  18 +-
- arch/arm/boot/dts/at91sam9x5_isi.dtsi         |  11 +-
- arch/arm/boot/dts/at91sam9x5_lcd.dtsi         |  19 +-
- arch/arm/boot/dts/at91sam9x5_macb0.dtsi       |  11 +-
- arch/arm/boot/dts/at91sam9x5_macb1.dtsi       |  11 +-
- arch/arm/boot/dts/at91sam9x5_usart3.dtsi      |  11 +-
- arch/arm/boot/dts/sama5d2.dtsi                | 642 +-----------
- arch/arm/boot/dts/sama5d4.dtsi                | 535 +---------
- drivers/clk/at91/Makefile                     |   5 +-
- drivers/clk/at91/at91sam9260.c                | 494 +++++++++
- drivers/clk/at91/at91sam9rl.c                 | 171 ++++
- drivers/clk/at91/at91sam9x5.c                 | 309 ++++++
- drivers/clk/at91/clk-audio-pll.c              | 107 +-
- drivers/clk/at91/clk-generated.c              |  81 +-
- drivers/clk/at91/clk-h32mx.c                  |  22 +-
- drivers/clk/at91/clk-i2s-mux.c                |  40 +-
- drivers/clk/at91/clk-main.c                   | 112 +-
- drivers/clk/at91/clk-master.c                 |  99 +-
- drivers/clk/at91/clk-peripheral.c             |  81 +-
- drivers/clk/at91/clk-pll.c                    | 187 +---
- drivers/clk/at91/clk-plldiv.c                 |  27 +-
- drivers/clk/at91/clk-programmable.c           |  81 +-
- drivers/clk/at91/clk-slow.c                   |  32 +-
- drivers/clk/at91/clk-smd.c                    |  34 +-
- drivers/clk/at91/clk-system.c                 |  39 +-
- drivers/clk/at91/clk-usb.c                    |  94 +-
- drivers/clk/at91/clk-utmi.c                   |  45 +-
- drivers/clk/at91/dt-compat.c                  | 961 ++++++++++++++++++
- drivers/clk/at91/pmc.c                        |  78 ++
- drivers/clk/at91/pmc.h                        | 159 +++
- drivers/clk/at91/sama5d2.c                    | 336 ++++++
- drivers/clk/at91/sama5d4.c                    | 264 +++++
- include/dt-bindings/clock/at91.h              |  15 +
- 50 files changed, 3185 insertions(+), 4004 deletions(-)
- create mode 100644 drivers/clk/at91/at91sam9260.c
- create mode 100644 drivers/clk/at91/at91sam9rl.c
- create mode 100644 drivers/clk/at91/at91sam9x5.c
- create mode 100644 drivers/clk/at91/dt-compat.c
- create mode 100644 drivers/clk/at91/sama5d2.c
- create mode 100644 drivers/clk/at91/sama5d4.c
-
--- 
-2.19.1
+Yes. Thanks for catching it!
 
