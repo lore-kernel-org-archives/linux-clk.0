@@ -2,188 +2,116 @@ Return-Path: <SRS0=lNOc=M4=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7E77C04EBD
-	for <linux-clk@archiver.kernel.org>; Tue, 16 Oct 2018 04:54:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 299E1C04EBD
+	for <linux-clk@archiver.kernel.org>; Tue, 16 Oct 2018 06:17:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 598602089E
-	for <linux-clk@archiver.kernel.org>; Tue, 16 Oct 2018 04:54:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA32A20866
+	for <linux-clk@archiver.kernel.org>; Tue, 16 Oct 2018 06:17:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aqL/1weJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 598602089E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="rsuxpqzK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA32A20866
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727031AbeJPMmq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 16 Oct 2018 08:42:46 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:36980 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726780AbeJPMmq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 Oct 2018 08:42:46 -0400
-Received: by mail-wr1-f66.google.com with SMTP id y11-v6so23744446wrd.4;
-        Mon, 15 Oct 2018 21:54:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=4RTbRxsDJCzmWQwMBiR5E1tOA3tl/s4MT9DXmaGA/kU=;
-        b=aqL/1weJMDrL/H2GKHmrv77f2RiXWGEEWOh+Baizc71+7kbk2kS9unYtjFkNm4xqcO
-         v6oWQQutNz0kWK4AWL9eAX/D1updyAaAzR7CijrhADwYdbcn27a8sAS+QMqrQH+K+vju
-         wUQ9THQlrjHDrLjIhwxcqXOSIlpRYzd6XaLAEpBeTTW2abrCIvYONmKJ38saYNKaBAjw
-         XY9ANoU7Ye3azK01opnTwOX3xol3fPImQ7I/wkWb6fU/WrKH2k2nOUkTyXDoU3pkB/9T
-         y1M3pwZAv9mv+FIaToynnS7KZ+WFcIcUj9OsgCWl4mu07P+0z0v+Z6WwASQGJUbtz6sc
-         32tQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=4RTbRxsDJCzmWQwMBiR5E1tOA3tl/s4MT9DXmaGA/kU=;
-        b=Oi83a2lUHNVAZRLTxzixICaLyccL4rowFlqyS6sY/P/Gk0iP/O6h8YHGQfc4FYfFmH
-         xDgXtGYO+N4686A11cbv+wexsDLzUTWnWfG5U2DTp7AIiHFk9hNqYxWoRDOmjBnJqxui
-         eHBnjwVVSLLTgXuIQUUCMeAoVfH/zGpVfThTPfxjPHilmBdIWMNoPV2Ru6hSSHj6sSUG
-         k/ZuU4uF2Qy3y2PaPwEHIlJpHm2mZ9us7HwJgCEe/kbbMmjNURd4nO5KJlWCSxipQmhe
-         Qu4Z0QR9l2xvyqko2fpx0iDOosxFBVDcY6gNYUs/7Jp3ZFDsqGwrokleojcX+vljeTPh
-         23yw==
-X-Gm-Message-State: ABuFfojRtzVqkVcmH8ZmdQ1d10WBPF9y/DFgwZ22bT1ddkluAwm7xgvz
-        T8Z03ndHXOaFd0zH7gj9YzM=
-X-Google-Smtp-Source: ACcGV602hE29hsHiup7T9fnI186jwpUvwBypXVqUUBsA7n6jXibqYau9lF459PJpDNCwZphlBPQtCA==
-X-Received: by 2002:a5d:6242:: with SMTP id m2-v6mr16999498wrv.162.1539665650976;
-        Mon, 15 Oct 2018 21:54:10 -0700 (PDT)
-Received: from [172.16.20.20] ([94.204.252.234])
-        by smtp.gmail.com with ESMTPSA id d16-v6sm9674559wrw.78.2018.10.15.21.54.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 15 Oct 2018 21:54:10 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
-Subject: Re: [PATCH] clk: meson-gxbb: set fclk_div3 as CLK_IS_CRITICAL
-From:   Christian Hewitt <christianshewitt@gmail.com>
-In-Reply-To: <ed6a889eeec4e2809f0840c9e8188b5e4b24fa76.camel@baylibre.com>
-Date:   Tue, 16 Oct 2018 08:54:05 +0400
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Carlo Caione <carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <8A3A1316-DC7F-4C5A-9DD8-C115EBB613BB@gmail.com>
-References: <1539425086-10997-1-git-send-email-christianshewitt@gmail.com>
- <20181013160810.88481.14237@resonance>
- <ed6a889eeec4e2809f0840c9e8188b5e4b24fa76.camel@baylibre.com>
-To:     Jerome Brunet <jbrunet@baylibre.com>
-X-Mailer: Apple Mail (2.3445.9.1)
+        id S1726990AbeJPOGQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 16 Oct 2018 10:06:16 -0400
+Received: from mail-eopbgr00054.outbound.protection.outlook.com ([40.107.0.54]:62584
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726729AbeJPOGQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 16 Oct 2018 10:06:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gmLpy7U2+YuF1dN4fa92ulhdOZouC/xuCfwnec8ki5E=;
+ b=rsuxpqzKOJbZ1mIT3+/rSXXx32hm22pxzVbYb4ZxvPRmcXjOOZxzabxmbkfvDEKSA2rjzL4OpYTnG2Jwc3c5Qy6v88BA1wjsjszDMkjPX9yA0/8KLFTocREV6k9we8t/p+dikPx35nbjtTqkeSGirnH5KRCbJtcRxbwqQ/ao7tc=
+Received: from DB5PR0401MB2213.eurprd04.prod.outlook.com (10.166.173.8) by
+ DB5PR0401MB1733.eurprd04.prod.outlook.com (10.165.5.135) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1228.25; Tue, 16 Oct 2018 06:17:20 +0000
+Received: from DB5PR0401MB2213.eurprd04.prod.outlook.com
+ ([fe80::c0b5:26f1:bc9e:5a31]) by DB5PR0401MB2213.eurprd04.prod.outlook.com
+ ([fe80::c0b5:26f1:bc9e:5a31%6]) with mapi id 15.20.1228.027; Tue, 16 Oct 2018
+ 06:17:18 +0000
+From:   Andy Tang <andy.tang@nxp.com>
+To:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "oss@buserror.net" <oss@buserror.net>
+CC:     "sboyd@kernel.org" <sboyd@kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: RE: [PATCH 1/3] clk: qoriq: add t1023 soc support
+Thread-Topic: [PATCH 1/3] clk: qoriq: add t1023 soc support
+Thread-Index: AQHUT+xXwE+pIxtpN025CWssqdGm96Uhj7tw
+Date:   Tue, 16 Oct 2018 06:17:18 +0000
+Message-ID: <DB5PR0401MB22134ACEF603C05F6B0D9980F3FE0@DB5PR0401MB2213.eurprd04.prod.outlook.com>
+References: <20180919073906.34187-1-andy.tang@nxp.com>
+In-Reply-To: <20180919073906.34187-1-andy.tang@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=andy.tang@nxp.com; 
+x-originating-ip: [119.31.174.73]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DB5PR0401MB1733;6:dIYo6AI/Sw84lXhqteq8xmqMiJaiL60FOMepaHwZ/RdCcFNPYs1PNWUIc/0aSG+TCsNjSEu1et8YKS7fxz0a8Hku3zBFwL/LiaelL2yBv4pRQkQEIOD0ybSQxzVKb5dbtC5bwL+YsdO0a3gtTiJfk/gttQjADRX2pknomhBNtbxT15h7y+l93dV5w8pgtF0VUWpXrMFwTqbF+SbnvtobYqU8J99dqg6FMtGTHbIZnI+yawEDyE/qBVRmfCK5XCZAjtaDe30nE1H9emiNsFBZuec6ZI/QT/ud5x+NeirJEL4JzvYyZatBRpVuNQGfQu6/IqD8mfnk7L9YnqsVkQ+eAqEBorjE3p9TIlYLd9SS1bC+5hIfaAQ8+Xp9S8ebacoK4urHCqoCQ8TmnG2zXbjScaAWUwIaW5kJPD9XC91wgCIwv1bjKu5jv4OnT5NKG3ZEG4ySOtQXaU6csSUXzvCajg==;5:T371+Z3lTGENXtu3zmM8bZHHABAjs556XBYP1tQujl2C1ySXHYlV9PQdWJ5z/+jzF4k9k/8AqO6u9giJ+CGxUDK1Te++vAg7VCYPD52trpR2CexKmz1L8jbNV/bYqjNpyCu8G9ASZk/8z6M9rPdxWmc/4lxufMajQiLSKzGsOmA=;7:/2dC5+H30rZZhN6D5sXlN8W/d8QccEKEClgXA6Ka14+3CRIE2IznNSPzTxPVzhErZMUWaReVxfqBa3iqJ+aEMCoQX3Osd0vqYsdudvJYZb98ZdZ/XlyMzwHzyJiBKP6xgbAlSuyd09AZ2kW/VfbeDABOrDx3GbrH5lqL2qSmAcFpDN2voi9NpNss8ZXBG380FpHMWJ/iRpxtSfVxYBEOkYx7ug90jPq8Uy85D3AXSXq8tvKjxuypylIpd3bFsEj7
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 73506088-e5ed-4fad-94aa-08d6332f06b0
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DB5PR0401MB1733;
+x-ms-traffictypediagnostic: DB5PR0401MB1733:
+x-microsoft-antispam-prvs: <DB5PR0401MB1733B01629D798D748FEFB42F3FE0@DB5PR0401MB1733.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(185117386973197)(180628864354917)(9452136761055);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231355)(944501410)(52105095)(6055026)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(201708071742011)(7699051);SRVR:DB5PR0401MB1733;BCL:0;PCL:0;RULEID:;SRVR:DB5PR0401MB1733;
+x-forefront-prvs: 0827D7ACB9
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(376002)(366004)(346002)(396003)(39860400002)(13464003)(501624003)(189003)(199004)(97736004)(229853002)(26005)(14454004)(2501003)(7736002)(305945005)(74316002)(4326008)(478600001)(33656002)(256004)(5250100002)(106356001)(102836004)(6246003)(11346002)(105586002)(71200400001)(446003)(66066001)(53936002)(71190400001)(55016002)(68736007)(54906003)(81166006)(81156014)(8676002)(6436002)(486006)(186003)(5660300001)(44832011)(2906002)(99286004)(316002)(8936002)(76176011)(86362001)(25786009)(110136005)(53546011)(476003)(7696005)(3846002)(9686003)(6116002)(2900100001)(6506007);DIR:OUT;SFP:1101;SCL:1;SRVR:DB5PR0401MB1733;H:DB5PR0401MB2213.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: 3HaSNVqK9XeA+px9mhH9Q7Lh5y22DzGc0NsYJyhgMA34b4fsgY5MNYZXqkyztZMh7eaa4lxOObs0t76trqfS+kWdBKl+vXOZotjUUPYsV7fiXGWf67afIC8vLqFK71h8YTblYOQTboc6Tgajgs+8c4X0NC7EPkTueYiUJB+HB7MwBfT0cOW9xL1D693CIqkq+bcCr1oXL+KBBGdmdmnKPvBhrd63VOft0QBkB5hCDArs4dce/QwrVad8Oz7b1iqs4SCBaenuAMW8WJLYuD72xvwT9vD+RPhyS1WZDkjOD7G803RG8p0Cexo3YvAGmIfjc0obiMIzc/T9HRfzypdomriNCq/z79DCHE5OXeOKafc=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 73506088-e5ed-4fad-94aa-08d6332f06b0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Oct 2018 06:17:18.3595
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB5PR0401MB1733
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 15 Oct 2018, at 9:07 pm, Jerome Brunet <jbrunet@baylibre.com> wrote:
->=20
-> On Sat, 2018-10-13 at 18:08 +0200, Michael Turquette wrote:
->> Quoting Christian Hewitt (2018-10-13 12:04:46)
->>> On the Khadas VIM2 (GXM) and LePotato (GXL) board there are problems
->>> with reboot; e.g. a ~60 second delay between issuing reboot and the
->>> board power cycling (and in some OS configurations reboot will fail
->>> and require manual power cycling).
->>>=20
->>> Similar to 'commit c987ac6f1f088663b6dad39281071aeb31d450a8 ("clk:
->>> meson-gxbb: set fclk_div2 as CLK_IS_CRITICAL")' the SCPI Cortex-M4
->>> Co-Processor seems to depend on FCLK_DIV3 being operational.
->>>=20
->>> Bisect gives 'commit 05f814402d6174369b3b29832cbb5eb5ed287059 ("clk:
->>> meson: add fdiv clock gates") between 4.16 and 4.16-rc1 as the first
->>> bad commit. This added support for the missing clock gates before =
-the
->>> fixed PLL fixed dividers (FCLK_DIVx) and the clock framework which
->>> disabled all the unused fixed dividers, thus it disabled a critical
->>> clock path for the SCPI Co-Processor.
->>>=20
->>> This change simply sets the FCLK_DIV3 gate as critical to ensure
->>> nothing can disable it.
->>=20
->> I'm a bit skeptical of this. If FCLK_DIV3 is gated at run-time, there =
-is
->> no side effect other than long and/or failed reboot?
->>=20
->> Seems like someone should be managing this clock, and simply leaving =
-it
->> on all the time isn't necessarily the right approach. Any chance that
->> you can dig into this behavior to better understand it?
->>=20
->> It's easy to solve issues by leaving clocks on all the time, but this
->> becomes a problem later on when trying to tune a device for power.
->=20
-> Hi Mike,
->=20
-> I totally agree with you and, in perfect a world, I would prefer not =
-to use this
-> CLK_IS_CRITICAL at all. It looks like a cheap fix for:
->=20
-> "this is required, I don't for what but it is, so please leave it on"
->=20
-> The problem is this issue is a regression. We added a few gates to =
-better model
-> the clock tree a while ago. Before, those those clock were left =
-enabled by the
-> bootloader.
->=20
-> Now that linux turn them off, we are learning a few things about what =
-the FWs
-> are doing behind our backs.
->=20
-> Among the 5 clocks which got a new gates, only 2 needs to back the old =
-way using
-> CLK_IS_CRITICAL, so this is still an improvement.
->=20
->>=20
->> Also, if this commit really is the right fix, it should include a
->> comment for FCLK_DIV3 stating why the CLK_IS_CRITICAL flag was set,
->> which may be helpful later on to know if it is safe to remove it. =
-Same
->> is true for FCLK_DIV2 in c987ac6f1f088663b6dad39281071aeb31d450a8.
->=20
-> +1 There should be FIXME notice in the driver explaining why we put =
-that flag in
-> the first place, so we can remove it as soon as a driver properly =
-handle this
-> clock.
->=20
-> Christian, is Ok if I amend your patch, or do you prefer to post a v2 =
-?
-> Mike, with explained, is this change OK with you ?
-
-I=E2=80=99m happy for you to amend, it=E2=80=99s easier for me.
-Christian
-
->>=20
->> Regards,
->> Mike
->>=20
->>>=20
->>> Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
->>> ---
->>> drivers/clk/meson/gxbb.c | 1 +
->>> 1 file changed, 1 insertion(+)
->>>=20
->>> diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
->>> index 86d3ae5..4c8925d 100644
->>> --- a/drivers/clk/meson/gxbb.c
->>> +++ b/drivers/clk/meson/gxbb.c
->>> @@ -509,6 +509,7 @@ static struct clk_fixed_factor =
-gxbb_fclk_div3_div =3D {
->>>                .ops =3D &clk_fixed_factor_ops,
->>>                .parent_names =3D (const char *[]){ "fixed_pll" },
->>>                .num_parents =3D 1,
->>> +               .flags =3D CLK_IS_CRITICAL,
->>>        },
->>> };
->>>=20
->>> --=20
->>> 2.7.4
-
+SGksDQoNCkFwcHJlY2lhdGUgaWYgeW91IGNhbiB0YWtlIGEgbG9vayBhdCB0aGlzIHBhdGNoIHNl
+dC4NCg0KQlIsDQpBbmR5DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTog
+YW5keS50YW5nQG54cC5jb20gPGFuZHkudGFuZ0BueHAuY29tPg0KPiBTZW50OiAyMDE4xOo51MIx
+OcjVIDE1OjM5DQo+IFRvOiBtdHVycXVldHRlQGJheWxpYnJlLmNvbTsgb3NzQGJ1c2Vycm9yLm5l
+dA0KPiBDYzogc2JveWRAa2VybmVsLm9yZzsgcm9iaCtkdEBrZXJuZWwub3JnOyBtYXJrLnJ1dGxh
+bmRAYXJtLmNvbTsNCj4gbGludXgtY2xrQHZnZXIua2VybmVsLm9yZzsgZGV2aWNldHJlZUB2Z2Vy
+Lmtlcm5lbC5vcmc7IEFuZHkgVGFuZw0KPiA8YW5keS50YW5nQG54cC5jb20+DQo+IFN1YmplY3Q6
+IFtQQVRDSCAxLzNdIGNsazogcW9yaXE6IGFkZCB0MTAyMyBzb2Mgc3VwcG9ydA0KPiANCj4gRnJv
+bTogWXVhbnRpYW4gVGFuZyA8YW5keS50YW5nQG54cC5jb20+DQo+IA0KPiBBZGQgdDEwMjMgY2xv
+Y2sgY29tcGF0aWJsZSBzdHJpbmcgdG8gdGhlIGJpbmRpbmdzLg0KPiANCj4gU2lnbmVkLW9mZi1i
+eTogVGFuZyBZdWFudGlhbiA8YW5keS50YW5nQG54cC5jb20+DQo+IC0tLQ0KPiAgLi4uL2Rldmlj
+ZXRyZWUvYmluZGluZ3MvY2xvY2svcW9yaXEtY2xvY2sudHh0ICAgICAgfCAgICAxICsNCj4gIDEg
+ZmlsZXMgY2hhbmdlZCwgMSBpbnNlcnRpb25zKCspLCAwIGRlbGV0aW9ucygtKQ0KPiANCj4gZGlm
+ZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9jbG9jay9xb3JpcS1j
+bG9jay50eHQNCj4gYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvY2xvY2svcW9y
+aXEtY2xvY2sudHh0DQo+IGluZGV4IDk3ZjQ2YWQuLjM0ZTE5MzMgMTAwNjQ0DQo+IC0tLSBhL0Rv
+Y3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9jbG9jay9xb3JpcS1jbG9jay50eHQNCj4g
+KysrIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Nsb2NrL3FvcmlxLWNsb2Nr
+LnR4dA0KPiBAQCAtMzcsNiArMzcsNyBAQCBSZXF1aXJlZCBwcm9wZXJ0aWVzOg0KPiAgCSogImZz
+bCxsczEwNDZhLWNsb2NrZ2VuIg0KPiAgCSogImZzbCxsczEwODhhLWNsb2NrZ2VuIg0KPiAgCSog
+ImZzbCxsczIwODBhLWNsb2NrZ2VuIg0KPiArCSogImZzbCx0MTAyMy1jbG9ja2dlbiINCj4gIAlD
+aGFzc2lzLXZlcnNpb24gY2xvY2sgc3RyaW5ncyBpbmNsdWRlOg0KPiAgCSogImZzbCxxb3JpcS1j
+bG9ja2dlbi0xLjAiOiBmb3IgY2hhc3NpcyAxLjAgY2xvY2tzDQo+ICAJKiAiZnNsLHFvcmlxLWNs
+b2NrZ2VuLTIuMCI6IGZvciBjaGFzc2lzIDIuMCBjbG9ja3MNCj4gLS0NCj4gMS43LjENCg0K
