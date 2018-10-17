@@ -3,69 +3,90 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3734ECDE32
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Oct 2018 15:22:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82678ECDE32
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Oct 2018 15:25:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97A6221527
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Oct 2018 15:22:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 499C621526
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Oct 2018 15:25:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="e+xo8mcC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97A6221527
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NeL5oABZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 499C621526
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727053AbeJQXSM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 Oct 2018 19:18:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48750 "EHLO mail.kernel.org"
+        id S1727448AbeJQXVw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 Oct 2018 19:21:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49372 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727013AbeJQXSM (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 17 Oct 2018 19:18:12 -0400
+        id S1727032AbeJQXVw (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 17 Oct 2018 19:21:52 -0400
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 80F6A2151D;
-        Wed, 17 Oct 2018 15:22:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D0CAA2148D;
+        Wed, 17 Oct 2018 15:25:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539789721;
-        bh=x86kSX3/ZqkTtcpBCPTVWZaWrkKvvVMPMXawP91vQSA=;
+        s=default; t=1539789939;
+        bh=OZj2GDmdvVDHedppTdL1IX5SjvozIaFPyfL3J/X7J2Y=;
         h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=e+xo8mcCStn53G1MB8QJQ81ml/x23RsZ+9D2ZWfInmN66e01HddwWd6CknS/kKBL8
-         X4A1bJvsm03/hB3/faenoLUAeknZ2j4odV5jn1/tqAs+gr1aa/pwvizKOOC4GwKfwz
-         12f8O2k2IE8wSMg46duPMy5Xe+aRSM8ijJ3xx5dk=
+        b=NeL5oABZ93VeuK6jNxGKdkegUxxc4c28YiE+SgcRhCvMFmJs2Dkrb+/g5nIMIke2P
+         Rl6B6WP3bucQYu+VT1opJ79mJ69pLle3oKvo7wsTuWeKzPQp06y2ghrsAgE/84vVY3
+         i+fzxmxXL5MvcE89xQqFdtK2UMrigqjyR25+tUEM=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-To:     Rajan Vaja <rajan.vaja@xilinx.com>, michal.simek@xilinx.com,
-        mturquette@baylibre.com, olof@lixom.net,
-        shubhrajyoti.datta@xilinx.com
+To:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Anson Huang <anson.huang@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1539762392-12512-1-git-send-email-rajan.vaja@xilinx.com>
-Cc:     rajan.vaja@xilinx.com, jolly.shah@xilinx.com,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <1539762392-12512-1-git-send-email-rajan.vaja@xilinx.com>
-Message-ID: <153978972088.5275.4505414322881956934@swboyd.mtv.corp.google.com>
+In-Reply-To: <1539756441-18776-2-git-send-email-Anson.Huang@nxp.com>
+Cc:     dl-linux-imx <linux-imx@nxp.com>
+References: <1539756441-18776-1-git-send-email-Anson.Huang@nxp.com>
+ <1539756441-18776-2-git-send-email-Anson.Huang@nxp.com>
+Message-ID: <153978993915.5275.9461015919945429893@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.7
-Subject: Re: [PATCH] clk: zynqmp: handle fixed factor param query error
-Date:   Wed, 17 Oct 2018 08:22:00 -0700
+Subject: Re: [PATCH 2/2] clk: imx7d: remove CLK_IS_CRITICAL flag for arm_a7_root_clk
+Date:   Wed, 17 Oct 2018 08:25:39 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Rajan Vaja (2018-10-17 00:46:32)
-> Return proper error code in case query for fixed factor
-> parameter fails. This also fixes build warning for set
-> but not used variable 'ret'.
+Quoting Anson Huang (2018-10-16 23:12:04)
+> i.MX7D uses virtual cpu clock of "arm" clock to be child clock
+
+This statement is concerning. Why do we have virtual clks?
+
+> of "arm_a7_root_clk" and it is with CLK_IS_CRITICAL flag set, so
+> no need to add CLK_IS_CRITICAL flag for keeping "arm_a7_root_clk"
+> use count correct, latest clock tree is as below in clk_summary:
 > =
 
-> Signed-off-by: Rajan Vaja <rajan.vaja@xilinx.com>
+> pll_arm_main                         1        1        0   792000000     =
+     0
+>       pll_arm_main_bypass            1        1        0   792000000     =
+     0
+>          pll_arm_main_clk            1        1        0   792000000     =
+     0
+>             arm_a7_src               1        1        0   792000000     =
+     0
+>                arm_a7_cg             1        1        0   792000000     =
+     0
+>                   arm_a7_div         1        1        0   792000000     =
+     0
+>                      arm_a7_root_clk       1        1        0   79200000=
+0    0
+>                         arm          1        1        0   792000000
+> =
 
-Fixes tag? And I think this is going through arm-soc already? If so,
-
-Acked-by: Stephen Boyd <sboyd@kernel.org>
-
-with the appropriate fixes tag added.
-
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
