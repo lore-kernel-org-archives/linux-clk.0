@@ -2,39 +2,39 @@ Return-Path: <SRS0=5IOi=M5=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FE74ECDE32
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Oct 2018 19:44:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0C93ECDE32
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Oct 2018 19:51:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7FE921479
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Oct 2018 19:44:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9135C21477
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Oct 2018 19:51:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iLIhekn2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7FE921479
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gJM0tjbM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9135C21477
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727040AbeJRDmG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 Oct 2018 23:42:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38750 "EHLO mail.kernel.org"
+        id S1727344AbeJRDsv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 Oct 2018 23:48:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43930 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727014AbeJRDmG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 17 Oct 2018 23:42:06 -0400
+        id S1727186AbeJRDsu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 17 Oct 2018 23:48:50 -0400
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DF6D82086E;
-        Wed, 17 Oct 2018 19:44:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E446C2145D;
+        Wed, 17 Oct 2018 19:51:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539805493;
-        bh=Wj/Uqtu1elTDzgvfPfD7xo1Oklxr7ThmW4O50rSVwr0=;
+        s=default; t=1539805896;
+        bh=3cZWgSbJz6QOo4+sKFC0BRwcUF6DXysyiT5nPE3u/i0=;
         h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=iLIhekn2tGtl6b+5tWc2p2OVnLQc+yGAB7IBp+XnqZQMLAdlSg/7TXyBMHhGhihIw
-         mN33rhL2ZyIT///ls8hgyQrkvgwgACOFyrPZCuFtvOaXdGLUSuoon68zyv5eoMMwkO
-         Rn5fvMvycYUGCx8c17Rsi2LZbdiPda6q8krakPm8=
+        b=gJM0tjbMj79fVZ/H7x7HtewXyBWLsKJyQuYblIkhZEA5fb0AKxYMfbfOXy/yZVeoy
+         xxYTXz5lo5z7ydpxa3tciEwhjawAvc/VEvluuhjj7T/6ZOkNML/fUTsBf5KDW9s3wK
+         fs4WmNoU9oYg4kQKa/8m6jZMXFBjX4r7Vwx/tfEA=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -47,7 +47,7 @@ To:     Abel Vesa <abel.vesa@nxp.com>,
         Rob Herring <robh@kernel.org>,
         Sascha Hauer <kernel@pengutronix.de>
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1537785597-26499-6-git-send-email-abel.vesa@nxp.com>
+In-Reply-To: <1537785597-26499-5-git-send-email-abel.vesa@nxp.com>
 Cc:     linux-imx@nxp.com, Abel Vesa <abelvesa@linux.com>,
         Abel Vesa <abel.vesa@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
         Sascha Hauer <s.hauer@pengutronix.de>,
@@ -57,252 +57,225 @@ Cc:     linux-imx@nxp.com, Abel Vesa <abelvesa@linux.com>,
         <linux-arm-kernel@lists.infradead.org>,
         "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
 References: <1537785597-26499-1-git-send-email-abel.vesa@nxp.com>
- <1537785597-26499-6-git-send-email-abel.vesa@nxp.com>
-Message-ID: <153980549223.5275.1496899374465535150@swboyd.mtv.corp.google.com>
+ <1537785597-26499-5-git-send-email-abel.vesa@nxp.com>
+Message-ID: <153980589525.5275.9065338436630625817@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.7
-Subject: Re: [PATCH v9 5/5] clk: imx: add clock driver for i.MX8MQ CCM
-Date:   Wed, 17 Oct 2018 12:44:52 -0700
+Subject: Re: [PATCH v9 4/5] clk: imx: add imx composite clock
+Date:   Wed, 17 Oct 2018 12:51:35 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Abel Vesa (2018-09-24 03:39:57)
-> From: Lucas Stach <l.stach@pengutronix.de>
-> =
-
-> Add driver for the Clock Control Module found on i.MX8MQ.
-> =
-
-> This is largely based on the downstream driver from Anson Huang and
-> Bai Ping at NXP, plus the imx composite clock from Abel Vesa at NXP,
-> with only some small adaptions to mainline from me.
-
-Can you point to the downstream driver so we can know what small
-adaptations were made.
-
-> =
-
-> Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-> ---
->  drivers/clk/imx/Makefile     |   1 +
->  drivers/clk/imx/clk-imx8mq.c | 602 +++++++++++++++++++++++++++++++++++++=
-++++++
->  drivers/clk/imx/clk.h        |  36 +++
->  3 files changed, 639 insertions(+)
->  create mode 100644 drivers/clk/imx/clk-imx8mq.c
-> =
-
-> diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
-> index 4fabb0a..64e695c 100644
-> --- a/drivers/clk/imx/Makefile
-> +++ b/drivers/clk/imx/Makefile
-> @@ -30,3 +30,4 @@ obj-$(CONFIG_SOC_IMX6SX) +=3D clk-imx6sx.o
->  obj-$(CONFIG_SOC_IMX6UL) +=3D clk-imx6ul.o
->  obj-$(CONFIG_SOC_IMX7D)  +=3D clk-imx7d.o
->  obj-$(CONFIG_SOC_VF610)  +=3D clk-vf610.o
-> +obj-$(CONFIG_SOC_IMX8MQ) +=3D clk-imx8mq.o
-
-Please try to keep this alphabetical on CONFIG symbol.
-
-> diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-imx8mq.c
+Quoting Abel Vesa (2018-09-24 03:39:56)
+> diff --git a/drivers/clk/imx/clk-composite.c b/drivers/clk/imx/clk-compos=
+ite.c
 > new file mode 100644
-> index 0000000..aadb523
+> index 0000000..4b03107
 > --- /dev/null
-> +++ b/drivers/clk/imx/clk-imx8mq.c
-> @@ -0,0 +1,602 @@
+> +++ b/drivers/clk/imx/clk-composite.c
+> @@ -0,0 +1,181 @@
 > +// SPDX-License-Identifier: GPL-2.0
 > +/*
-> + * Copyright 2018 NXP.
-> + * Copyright (C) 2017 Pengutronix, Lucas Stach <kernel@pengutronix.de>
+> + * Copyright 2018 NXP
 > + */
 > +
-> +#include <dt-bindings/clock/imx8mq-clock.h>
+> +#include <linux/errno.h>
+> +#include <linux/slab.h>
+> +#include <linux/clk-provider.h>
 > +#include <linux/clk.h>
-> +#include <linux/clkdev.h>
 
-Are these two includes used?
+Is this include used?
 
-> +#include <linux/err.h>
-> +#include <linux/init.h>
-> +#include <linux/io.h>
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +#include <linux/of_irq.h>
-> +#include <linux/types.h>
 > +
 > +#include "clk.h"
 > +
-> +static u32 share_count_sai1;
-> +static u32 share_count_sai2;
-> +static u32 share_count_sai3;
-> +static u32 share_count_sai4;
-> +static u32 share_count_sai5;
-> +static u32 share_count_sai6;
-> +static u32 share_count_dcss;
-> +static u32 share_count_nand;
+> +#define PCG_PREDIV_SHIFT       16
+> +#define PCG_PREDIV_WIDTH       3
+> +#define PCG_PREDIV_MAX         8
 > +
-[...]
+> +#define PCG_DIV_SHIFT          0
+> +#define PCG_DIV_WIDTH          6
+> +#define PCG_DIV_MAX            64
 > +
-> +static const char *imx8mq_ecspi3_sels[] =3D {"osc_25m", "sys2_pll_200m",=
- "sys1_pll_40m", "sys1_pll_160m",
-> +                                          "sys1_pll_800m", "sys3_pll2_ou=
-t", "sys2_pll_250m", "audio_pll2_out", };
-> +static const char *imx8mq_dram_core_sels[] =3D {"dram_pll_out", "dram_al=
-t_root", };
+> +#define PCG_PCS_SHIFT          24
+> +#define PCG_PCS_MASK           0x7
 > +
-> +static const char *imx8mq_clko2_sels[] =3D {"osc_25m", "sys2_pll_200m", =
-"sys1_pll_400m", "sys2_pll_166m", "audio_pll1_out",
-> +                                        "video_pll1_out", "ckil", };
+> +#define PCG_CGC_SHIFT          28
 > +
-> +static struct clk_onecell_data clk_data;
-> +
-> +static void __init imx8mq_clocks_init(struct device_node *ccm_node)
+> +static unsigned long imx_clk_composite_divider_recalc_rate(struct clk_hw=
+ *hw,
+> +                                               unsigned long parent_rate)
 > +{
-> +       struct device_node *np;
-> +       void __iomem *base;
-> +       int i;
+> +       struct clk_divider *divider =3D to_clk_divider(hw);
+> +       unsigned long prediv_rate;
+> +       unsigned int prediv_value;
+> +       unsigned int div_value;
 > +
-> +       clks[IMX8MQ_CLK_DUMMY] =3D imx_clk_fixed("dummy", 0);
-> +       clks[IMX8MQ_CLK_32K] =3D of_clk_get_by_name(ccm_node, "ckil");
-> +       clks[IMX8MQ_CLK_25M] =3D of_clk_get_by_name(ccm_node, "osc_25m");
-> +       clks[IMX8MQ_CLK_27M] =3D of_clk_get_by_name(ccm_node, "osc_27m");
-> +       clks[IMX8MQ_CLK_EXT1] =3D of_clk_get_by_name(ccm_node, "clk_ext1"=
+> +       prediv_value =3D clk_readl(divider->reg) >> divider->shift;
+> +       prediv_value &=3D clk_div_mask(divider->width);
+> +
+> +       prediv_rate =3D divider_recalc_rate(hw, parent_rate, prediv_value,
+> +                                               NULL, divider->flags,
+> +                                               divider->width);
+> +
+> +       div_value =3D clk_readl(divider->reg) >> PCG_DIV_SHIFT;
+> +       div_value &=3D clk_div_mask(PCG_DIV_WIDTH);
+> +
+> +       return divider_recalc_rate(hw, prediv_rate, div_value, NULL,
+> +                                  divider->flags, PCG_DIV_WIDTH);
+> +}
+> +
+> +static int imx_clk_composite_compute_dividers(unsigned long rate,
+> +                                               unsigned long parent_rate,
+> +                                               int *prediv, int *postdiv)
+> +{
+> +       int div1, div2;
+> +       int error =3D INT_MAX;
+> +       int ret =3D -EINVAL;
+> +
+> +       /* default values */
+> +       *prediv =3D 1;
+> +       *postdiv =3D 1;
+> +
+> +       for (div1 =3D 1; div1 <=3D PCG_PREDIV_MAX; div1++) {
+> +               for (div2 =3D 1; div2 <=3D PCG_DIV_MAX; div2++) {
+> +                       int new_error =3D ((parent_rate / div1) / div2) -=
+ rate;
+> +
+> +                       if (abs(new_error) < abs(error)) {
+> +                               *prediv =3D div1;
+> +                               *postdiv =3D div2;
+> +                               error =3D new_error;
+> +                               ret =3D 0;
+> +                       }
+> +               }
+> +       }
+> +       return ret;
+> +}
+> +
+> +static long imx_clk_composite_divider_round_rate(struct clk_hw *hw,
+> +                                               unsigned long rate,
+> +                                               unsigned long *prate)
+> +{
+> +       int prediv_value;
+> +       int div_value;
+> +
+> +       imx_clk_composite_compute_dividers(rate, *prate,
+> +                                               &prediv_value, &div_value=
 );
-> +       clks[IMX8MQ_CLK_EXT2] =3D of_clk_get_by_name(ccm_node, "clk_ext2"=
-);
-> +       clks[IMX8MQ_CLK_EXT3] =3D of_clk_get_by_name(ccm_node, "clk_ext3"=
-);
-> +       clks[IMX8MQ_CLK_EXT4] =3D of_clk_get_by_name(ccm_node, "clk_ext4"=
-);
 > +
-> +       np =3D of_find_compatible_node(NULL, NULL, "fsl,imx8mq-anatop");
-> +       base =3D of_iomap(np, 0);
-> +       WARN_ON(!base);
+> +       rate =3D DIV_ROUND_UP_ULL((u64)*prate, prediv_value);
+> +       rate =3D DIV_ROUND_UP_ULL((u64)rate, div_value);
+> +
+> +       return rate;
 
-And if that fails? return without continuing?
+Looks the same as another patch, maybe it is?
 
-> +
-> +       clks[IMX8MQ_ARM_PLL_REF_SEL] =3D imx_clk_mux("arm_pll_ref_sel", b=
-ase + 0x28, 16, 2, pll_ref_sels, ARRAY_SIZE(pll_ref_sels));
-> +       clks[IMX8MQ_GPU_PLL_REF_SEL] =3D imx_clk_mux("gpu_pll_ref_sel", b=
-ase + 0x18, 16, 2, pll_ref_sels, ARRAY_SIZE(pll_ref_sels));
-> +       clks[IMX8MQ_VPU_PLL_REF_SEL] =3D imx_clk_mux("vpu_pll_ref_sel", b=
-ase + 0x20, 16, 2, pll_ref_sels, ARRAY_SIZE(pll_ref_sels));
-> +       clks[IMX8MQ_AUDIO_PLL1_REF_SEL] =3D imx_clk_mux("audio_pll1_ref_s=
-el", base + 0x0, 16, 2, pll_ref_sels, ARRAY_SIZE(pll_ref_sels));
-[..]
-> +       clks[IMX8MQ_CLK_DSI_CORE] =3D imx_clk_composite("dsi_core", imx8m=
-q_dsi_core_sels, base + 0xbb00);
-> +       clks[IMX8MQ_CLK_DSI_PHY_REF] =3D imx_clk_composite("dsi_phy_ref",=
- imx8mq_dsi_phy_sels, base + 0xbb80);
-> +       clks[IMX8MQ_CLK_DSI_DBI] =3D imx_clk_composite("dsi_dbi", imx8mq_=
-dsi_dbi_sels, base + 0xbc00);
-> +       clks[IMX8MQ_CLK_DSI_ESC] =3D imx_clk_composite("dsi_esc", imx8mq_=
-dsi_esc_sels, base + 0xbc80);
-> +       clks[IMX8MQ_CLK_DSI_AHB] =3D imx_clk_composite("dsi_ahb", imx8mq_=
-dsi_ahb_sels, base + 0x9200);
-> +       clks[IMX8MQ_CLK_CSI1_CORE] =3D imx_clk_composite("csi1_core", imx=
-8mq_csi1_core_sels, base + 0xbd00);
-> +       clks[IMX8MQ_CLK_CSI1_PHY_REF] =3D imx_clk_composite("csi1_phy_ref=
-", imx8mq_csi1_phy_sels, base + 0xbd80);
-> +       clks[IMX8MQ_CLK_CSI1_ESC] =3D imx_clk_composite("csi1_esc", imx8m=
-q_csi1_esc_sels, base + 0xbe00);
-> +       clks[IMX8MQ_CLK_CSI2_CORE] =3D imx_clk_composite("csi2_core", imx=
-8mq_csi2_core_sels, base + 0xbe80);
-> +       clks[IMX8MQ_CLK_CSI2_PHY_REF] =3D imx_clk_composite("csi2_phy_ref=
-", imx8mq_csi2_phy_sels, base + 0xbf00);
-> +       clks[IMX8MQ_CLK_CSI2_ESC] =3D imx_clk_composite("csi2_esc", imx8m=
-q_csi2_esc_sels, base + 0xbf80);
-> +       clks[IMX8MQ_CLK_PCIE2_CTRL] =3D imx_clk_composite("pcie2_ctrl", i=
-mx8mq_pcie2_ctrl_sels, base + 0xc000);
-> +       clks[IMX8MQ_CLK_PCIE2_PHY] =3D imx_clk_composite("pcie2_phy", imx=
-8mq_pcie2_phy_sels, base + 0xc080);
-> +       clks[IMX8MQ_CLK_PCIE2_AUX] =3D imx_clk_composite("pcie2_aux", imx=
-8mq_pcie2_aux_sels, base + 0xc100);
-> +       clks[IMX8MQ_CLK_ECSPI3] =3D imx_clk_composite("ecspi3", imx8mq_ec=
-spi3_sels, base + 0xc180);
-> +
-> +       /*FIXME, the doc is not ready now */
-
-What does this mean?
-
-> +       clks[IMX8MQ_CLK_ECSPI1_ROOT] =3D imx_clk_gate4("ecspi1_root_clk",=
- "ecspi1", base + 0x4070, 0);
-> +       clks[IMX8MQ_CLK_ECSPI2_ROOT] =3D imx_clk_gate4("ecspi2_root_clk",=
- "ecspi2", base + 0x4080, 0);
-> +       clks[IMX8MQ_CLK_ECSPI3_ROOT] =3D imx_clk_gate4("ecspi3_root_clk",=
- "ecspi3", base + 0x4090, 0);
-> +       clks[IMX8MQ_CLK_ENET1_ROOT] =3D imx_clk_gate4("enet1_root_clk", "=
-enet_axi", base + 0x40a0, 0);
-> +       clks[IMX8MQ_CLK_GPT1_ROOT] =3D imx_clk_gate4("gpt1_root_clk", "gp=
-t1", base + 0x4100, 0);
-[...]
-> +
-> +       clks[IMX8MQ_GPT_3M_CLK] =3D imx_clk_fixed_factor("gpt_3m", "osc_2=
-5m", 1, 8);
-> +       clks[IMX8MQ_CLK_DRAM_ALT_ROOT] =3D imx_clk_fixed_factor("dram_alt=
-_root", "dram_alt", 1, 4);
-> +
-> +       for (i =3D 0; i < IMX8MQ_CLK_END; i++)
-> +               if (IS_ERR(clks[i]))
-> +                       pr_err("i.MX8mq clk %u register failed with %ld\n=
-",
-> +                              i, PTR_ERR(clks[i]));
-> +
-> +       clk_data.clks =3D clks;
-> +       clk_data.clk_num =3D ARRAY_SIZE(clks);
-> +       of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
-
-Any chance to move to using clk_hw based provider and clk registration
-APIs?
-
-> +
-> +       clk_set_parent(clks[IMX8MQ_CLK_AHB], clks[IMX8MQ_SYS1_PLL_133M]);
-> +       clk_set_parent(clks[IMX8MQ_CLK_NAND_USDHC_BUS], clks[IMX8MQ_SYS1_=
-PLL_266M]);
-> +       clk_set_parent(clks[IMX8MQ_CLK_AUDIO_AHB], clks[IMX8MQ_SYS2_PLL_5=
-00M]);
-> +
-> +       /* config video_pll1 clock */
-> +       clk_set_parent(clks[IMX8MQ_VIDEO_PLL1_REF_SEL], clks[IMX8MQ_CLK_2=
-7M]);
-> +       clk_set_rate(clks[IMX8MQ_VIDEO_PLL1], 593999999);
-> +
-> +       /* increase NOC clock to achieve best DDR access performance */
-> +       clk_set_rate(clks[IMX8MQ_CLK_NOC], clk_get_rate(clks[IMX8MQ_SYS1_=
-PLL_800M]));
-> +
-> +       /* set pcie root's parent clk source */
-> +       clk_set_parent(clks[IMX8MQ_CLK_PCIE1_CTRL], clks[IMX8MQ_SYS2_PLL_=
-250M]);
-> +       clk_set_parent(clks[IMX8MQ_CLK_PCIE1_PHY], clks[IMX8MQ_SYS2_PLL_1=
-00M]);
-> +       clk_set_parent(clks[IMX8MQ_CLK_PCIE2_CTRL], clks[IMX8MQ_SYS2_PLL_=
-250M]);
-> +       clk_set_parent(clks[IMX8MQ_CLK_PCIE2_PHY], clks[IMX8MQ_SYS2_PLL_1=
-00M]);
-> +
-> +       clk_set_parent(clks[IMX8MQ_CLK_CSI1_CORE], clks[IMX8MQ_SYS1_PLL_2=
-66M]);
-> +       clk_set_parent(clks[IMX8MQ_CLK_CSI1_PHY_REF], clks[IMX8MQ_SYS2_PL=
-L_1000M]);
-> +       clk_set_parent(clks[IMX8MQ_CLK_CSI1_ESC], clks[IMX8MQ_SYS1_PLL_80=
-0M]);
-> +       clk_set_parent(clks[IMX8MQ_CLK_CSI2_CORE], clks[IMX8MQ_SYS1_PLL_2=
-66M]);
-> +       clk_set_parent(clks[IMX8MQ_CLK_CSI2_PHY_REF], clks[IMX8MQ_SYS2_PL=
-L_1000M]);
-> +       clk_set_parent(clks[IMX8MQ_CLK_CSI2_ESC], clks[IMX8MQ_SYS1_PLL_80=
-0M]);
-
-Can this be done with assigned clock parents and assigned clock rates?
+Anyway, same nitpick about returning the DIV_ROUND_UP_ULL() result.
 
 > +}
 > +
-> +CLK_OF_DECLARE(imx8mq, "fsl,imx8mq-ccm", imx8mq_clocks_init);
+> +static int imx_clk_composite_divider_set_rate(struct clk_hw *hw,
+> +                                       unsigned long rate,
+> +                                       unsigned long parent_rate)
+> +{
+> +       struct clk_divider *divider =3D to_clk_divider(hw);
+> +       unsigned long flags =3D 0;
+> +       int prediv_value;
+> +       int div_value;
+> +       int ret =3D 0;
+> +       u32 val;
+> +
+> +       ret =3D imx_clk_composite_compute_dividers(rate, parent_rate,
+> +                                               &prediv_value, &div_value=
+);
+> +       if (ret)
+> +               return -EINVAL;
+> +
+> +       spin_lock_irqsave(divider->lock, flags);
+> +
+> +       val =3D clk_readl(divider->reg);
+> +       val &=3D ~((clk_div_mask(divider->width) << divider->shift) |
+> +                       (clk_div_mask(PCG_DIV_WIDTH) << PCG_DIV_SHIFT));
+> +
+> +       val |=3D (u32)(prediv_value  - 1) << divider->shift;
+> +       val |=3D (u32)(div_value - 1) << PCG_DIV_SHIFT;
+> +       clk_writel(val, divider->reg);
 
-Can you please add a comment indicating why this can't be done with a
-platform driver, or convert this to be a platform driver?
+Please don't use clk_writel().
 
+> +
+> +       spin_unlock_irqrestore(divider->lock, flags);
+> +
+> +       return ret;
+> +}
+> +
+> +static const struct clk_ops imx_clk_composite_divider_ops =3D {
+> +       .recalc_rate =3D imx_clk_composite_divider_recalc_rate,
+> +       .round_rate =3D imx_clk_composite_divider_round_rate,
+> +       .set_rate =3D imx_clk_composite_divider_set_rate,
+> +};
+> +
+> +struct clk *imx_clk_composite_flags(const char *name,
+> +                                       const char **parent_names,
+> +                                       int num_parents, void __iomem *re=
+g,
+> +                                       unsigned long flags)
+> +{
+> +       struct clk_hw *mux_hw =3D NULL, *div_hw =3D NULL, *gate_hw =3D NU=
+LL;
+> +       struct clk_divider *div =3D NULL;
+> +       struct clk_gate *gate =3D NULL;
+> +       struct clk_mux *mux =3D NULL;
+> +       struct clk *clk =3D ERR_PTR(-ENOMEM);
+> +
+> +       mux =3D kzalloc(sizeof(*mux), GFP_KERNEL);
+> +       if (!mux)
+> +               goto fail;
+> +
+> +       mux_hw =3D &mux->hw;
+> +       mux->reg =3D reg;
+> +       mux->shift =3D PCG_PCS_SHIFT;
+> +       mux->mask =3D PCG_PCS_MASK;
+> +
+> +       div =3D kzalloc(sizeof(*div), GFP_KERNEL);
+> +       if (!div)
+> +               goto fail;
+> +
+> +       div_hw =3D &div->hw;
+> +       div->reg =3D reg;
+> +       div->shift =3D PCG_PREDIV_SHIFT;
+> +       div->width =3D PCG_PREDIV_WIDTH;
+> +       div->lock =3D &imx_ccm_lock;
+> +       div->flags =3D CLK_DIVIDER_ROUND_CLOSEST;
+> +
+> +       gate =3D kzalloc(sizeof(*gate), GFP_KERNEL);
+> +       if (!gate)
+> +               goto fail;
+> +
+> +       gate_hw =3D &gate->hw;
+> +       gate->reg =3D reg;
+> +       gate->bit_idx =3D PCG_CGC_SHIFT;
+> +
+> +       clk =3D clk_register_composite(NULL, name, parent_names, num_pare=
+nts,
+> +                                       mux_hw, &clk_mux_ops, div_hw,
+> +                                       &imx_clk_composite_divider_ops, g=
+ate_hw,
+> +                                       &clk_gate_ops, flags);
+
+Didn't I already review this? I'd prefer we move this to using clk_hw
+based APIs and then return the clk pointer if needed.
+
+> +       if (IS_ERR(clk))
+> +               goto fail;
+> +
+> +       return clk;
+> +
+> +fail:
+> +       kfree(gate);
+> +       kfree(div);
+> +       kfree(mux);
+> +       return clk;
+> +}
