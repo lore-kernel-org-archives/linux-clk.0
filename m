@@ -3,38 +3,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0C93ECDE32
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Oct 2018 19:51:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19C17ECDE3B
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Oct 2018 19:55:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9135C21477
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Oct 2018 19:51:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A72EA21477
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Oct 2018 19:55:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gJM0tjbM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9135C21477
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zixtee1A"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A72EA21477
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727344AbeJRDsv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 Oct 2018 23:48:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43930 "EHLO mail.kernel.org"
+        id S1727132AbeJRDxK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 Oct 2018 23:53:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44336 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727186AbeJRDsu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 17 Oct 2018 23:48:50 -0400
+        id S1727108AbeJRDxJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 17 Oct 2018 23:53:09 -0400
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E446C2145D;
-        Wed, 17 Oct 2018 19:51:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3ED202087A;
+        Wed, 17 Oct 2018 19:55:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539805896;
-        bh=3cZWgSbJz6QOo4+sKFC0BRwcUF6DXysyiT5nPE3u/i0=;
+        s=default; t=1539806153;
+        bh=sSFO3yRF1qzL71OKneUdoVEKpbzJEfLPDG3LjVCPGWU=;
         h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=gJM0tjbMj79fVZ/H7x7HtewXyBWLsKJyQuYblIkhZEA5fb0AKxYMfbfOXy/yZVeoy
-         xxYTXz5lo5z7ydpxa3tciEwhjawAvc/VEvluuhjj7T/6ZOkNML/fUTsBf5KDW9s3wK
-         fs4WmNoU9oYg4kQKa/8m6jZMXFBjX4r7Vwx/tfEA=
+        b=zixtee1AKNg/P5vM03ZwTNw6RqC1TxZjjNwxGTCMm9OlkHJNqQAjogtxBmnTqorz5
+         J2zFC4x/YExcb0LdDN45Ez0cvH3ywTT9DDx/oHb9uHFiEJ3M4P/h2qqFWYrMQggFkP
+         oMprCHx28dy3sr7cQw8JaauSmlFjwraOsEXYReLw=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -47,7 +47,7 @@ To:     Abel Vesa <abel.vesa@nxp.com>,
         Rob Herring <robh@kernel.org>,
         Sascha Hauer <kernel@pengutronix.de>
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1537785597-26499-5-git-send-email-abel.vesa@nxp.com>
+In-Reply-To: <1537785597-26499-4-git-send-email-abel.vesa@nxp.com>
 Cc:     linux-imx@nxp.com, Abel Vesa <abelvesa@linux.com>,
         Abel Vesa <abel.vesa@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
         Sascha Hauer <s.hauer@pengutronix.de>,
@@ -57,225 +57,285 @@ Cc:     linux-imx@nxp.com, Abel Vesa <abelvesa@linux.com>,
         <linux-arm-kernel@lists.infradead.org>,
         "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
 References: <1537785597-26499-1-git-send-email-abel.vesa@nxp.com>
- <1537785597-26499-5-git-send-email-abel.vesa@nxp.com>
-Message-ID: <153980589525.5275.9065338436630625817@swboyd.mtv.corp.google.com>
+ <1537785597-26499-4-git-send-email-abel.vesa@nxp.com>
+Message-ID: <153980615257.5275.13866740376184829057@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.7
-Subject: Re: [PATCH v9 4/5] clk: imx: add imx composite clock
-Date:   Wed, 17 Oct 2018 12:51:35 -0700
+Subject: Re: [PATCH v9 3/5] clk: imx: add SCCG PLL type
+Date:   Wed, 17 Oct 2018 12:55:52 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Abel Vesa (2018-09-24 03:39:56)
-> diff --git a/drivers/clk/imx/clk-composite.c b/drivers/clk/imx/clk-compos=
-ite.c
+Quoting Abel Vesa (2018-09-24 03:39:55)
+> diff --git a/drivers/clk/imx/clk-sccg-pll.c b/drivers/clk/imx/clk-sccg-pl=
+l.c
 > new file mode 100644
-> index 0000000..4b03107
+> index 0000000..a9837fa
 > --- /dev/null
-> +++ b/drivers/clk/imx/clk-composite.c
-> @@ -0,0 +1,181 @@
-> +// SPDX-License-Identifier: GPL-2.0
+> +++ b/drivers/clk/imx/clk-sccg-pll.c
+> @@ -0,0 +1,237 @@
+> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
 > +/*
-> + * Copyright 2018 NXP
+> + * Copyright 2018 NXP.
 > + */
 > +
-> +#include <linux/errno.h>
-> +#include <linux/slab.h>
-> +#include <linux/clk-provider.h>
 > +#include <linux/clk.h>
 
-Is this include used?
+Is this include used? Otherwise should see clk-provider.h included here.
 
+> +#include <linux/err.h>
+> +#include <linux/io.h>
+> +#include <linux/iopoll.h>
+> +#include <linux/slab.h>
+> +#include <linux/delay.h>
+> +#include <linux/bitfield.h>
 > +
 > +#include "clk.h"
 > +
-> +#define PCG_PREDIV_SHIFT       16
-> +#define PCG_PREDIV_WIDTH       3
-> +#define PCG_PREDIV_MAX         8
+> +/* PLL CFGs */
+> +#define PLL_CFG0               0x0
+> +#define PLL_CFG1               0x4
+> +#define PLL_CFG2               0x8
 > +
-> +#define PCG_DIV_SHIFT          0
-> +#define PCG_DIV_WIDTH          6
-> +#define PCG_DIV_MAX            64
+> +#define PLL_DIVF1_MASK         GENMASK(18, 13)
+> +#define PLL_DIVF2_MASK         GENMASK(12, 7)
+> +#define PLL_DIVR1_MASK         GENMASK(27, 25)
+> +#define PLL_DIVR2_MASK         GENMASK(24, 19)
+> +#define PLL_REF_MASK           GENMASK(2, 0)
 > +
-> +#define PCG_PCS_SHIFT          24
-> +#define PCG_PCS_MASK           0x7
+> +#define PLL_LOCK_MASK          BIT(31)
+> +#define PLL_PD_MASK            BIT(7)
 > +
-> +#define PCG_CGC_SHIFT          28
+> +#define OSC_25M                        25000000
+> +#define OSC_27M                        27000000
 > +
-> +static unsigned long imx_clk_composite_divider_recalc_rate(struct clk_hw=
- *hw,
-> +                                               unsigned long parent_rate)
-> +{
-> +       struct clk_divider *divider =3D to_clk_divider(hw);
-> +       unsigned long prediv_rate;
-> +       unsigned int prediv_value;
-> +       unsigned int div_value;
+> +#define PLL_SCCG_LOCK_TIMEOUT  70
 > +
-> +       prediv_value =3D clk_readl(divider->reg) >> divider->shift;
-> +       prediv_value &=3D clk_div_mask(divider->width);
-> +
-> +       prediv_rate =3D divider_recalc_rate(hw, parent_rate, prediv_value,
-> +                                               NULL, divider->flags,
-> +                                               divider->width);
-> +
-> +       div_value =3D clk_readl(divider->reg) >> PCG_DIV_SHIFT;
-> +       div_value &=3D clk_div_mask(PCG_DIV_WIDTH);
-> +
-> +       return divider_recalc_rate(hw, prediv_rate, div_value, NULL,
-> +                                  divider->flags, PCG_DIV_WIDTH);
-> +}
-> +
-> +static int imx_clk_composite_compute_dividers(unsigned long rate,
-> +                                               unsigned long parent_rate,
-> +                                               int *prediv, int *postdiv)
-> +{
-> +       int div1, div2;
-> +       int error =3D INT_MAX;
-> +       int ret =3D -EINVAL;
-> +
-> +       /* default values */
-> +       *prediv =3D 1;
-> +       *postdiv =3D 1;
-> +
-> +       for (div1 =3D 1; div1 <=3D PCG_PREDIV_MAX; div1++) {
-> +               for (div2 =3D 1; div2 <=3D PCG_DIV_MAX; div2++) {
-> +                       int new_error =3D ((parent_rate / div1) / div2) -=
- rate;
-> +
-> +                       if (abs(new_error) < abs(error)) {
-> +                               *prediv =3D div1;
-> +                               *postdiv =3D div2;
-> +                               error =3D new_error;
-> +                               ret =3D 0;
-> +                       }
-> +               }
-> +       }
-> +       return ret;
-> +}
-> +
-> +static long imx_clk_composite_divider_round_rate(struct clk_hw *hw,
-> +                                               unsigned long rate,
-> +                                               unsigned long *prate)
-> +{
-> +       int prediv_value;
-> +       int div_value;
-> +
-> +       imx_clk_composite_compute_dividers(rate, *prate,
-> +                                               &prediv_value, &div_value=
-);
-> +
-> +       rate =3D DIV_ROUND_UP_ULL((u64)*prate, prediv_value);
-> +       rate =3D DIV_ROUND_UP_ULL((u64)rate, div_value);
-> +
-> +       return rate;
-
-Looks the same as another patch, maybe it is?
-
-Anyway, same nitpick about returning the DIV_ROUND_UP_ULL() result.
-
-> +}
-> +
-> +static int imx_clk_composite_divider_set_rate(struct clk_hw *hw,
-> +                                       unsigned long rate,
-> +                                       unsigned long parent_rate)
-> +{
-> +       struct clk_divider *divider =3D to_clk_divider(hw);
-> +       unsigned long flags =3D 0;
-> +       int prediv_value;
-> +       int div_value;
-> +       int ret =3D 0;
-> +       u32 val;
-> +
-> +       ret =3D imx_clk_composite_compute_dividers(rate, parent_rate,
-> +                                               &prediv_value, &div_value=
-);
-> +       if (ret)
-> +               return -EINVAL;
-> +
-> +       spin_lock_irqsave(divider->lock, flags);
-> +
-> +       val =3D clk_readl(divider->reg);
-> +       val &=3D ~((clk_div_mask(divider->width) << divider->shift) |
-> +                       (clk_div_mask(PCG_DIV_WIDTH) << PCG_DIV_SHIFT));
-> +
-> +       val |=3D (u32)(prediv_value  - 1) << divider->shift;
-> +       val |=3D (u32)(div_value - 1) << PCG_DIV_SHIFT;
-> +       clk_writel(val, divider->reg);
-
-Please don't use clk_writel().
-
-> +
-> +       spin_unlock_irqrestore(divider->lock, flags);
-> +
-> +       return ret;
-> +}
-> +
-> +static const struct clk_ops imx_clk_composite_divider_ops =3D {
-> +       .recalc_rate =3D imx_clk_composite_divider_recalc_rate,
-> +       .round_rate =3D imx_clk_composite_divider_round_rate,
-> +       .set_rate =3D imx_clk_composite_divider_set_rate,
+> +struct clk_sccg_pll {
+> +       struct clk_hw   hw;
+> +       void __iomem    *base;
 > +};
 > +
-> +struct clk *imx_clk_composite_flags(const char *name,
-> +                                       const char **parent_names,
-> +                                       int num_parents, void __iomem *re=
-g,
-> +                                       unsigned long flags)
+> +#define to_clk_sccg_pll(_hw) container_of(_hw, struct clk_sccg_pll, hw)
+> +
+> +static int clk_pll_wait_lock(struct clk_sccg_pll *pll)
 > +{
-> +       struct clk_hw *mux_hw =3D NULL, *div_hw =3D NULL, *gate_hw =3D NU=
-LL;
-> +       struct clk_divider *div =3D NULL;
-> +       struct clk_gate *gate =3D NULL;
-> +       struct clk_mux *mux =3D NULL;
-> +       struct clk *clk =3D ERR_PTR(-ENOMEM);
+> +       u32 val;
 > +
-> +       mux =3D kzalloc(sizeof(*mux), GFP_KERNEL);
-> +       if (!mux)
-> +               goto fail;
+> +       return readl_poll_timeout(pll->base, val, val & PLL_LOCK_MASK, 0,
+> +                                       PLL_SCCG_LOCK_TIMEOUT);
+> +}
 > +
-> +       mux_hw =3D &mux->hw;
-> +       mux->reg =3D reg;
-> +       mux->shift =3D PCG_PCS_SHIFT;
-> +       mux->mask =3D PCG_PCS_MASK;
+> +static int clk_pll1_is_prepared(struct clk_hw *hw)
+> +{
+> +       struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
+> +       u32 val;
 > +
-> +       div =3D kzalloc(sizeof(*div), GFP_KERNEL);
-> +       if (!div)
-> +               goto fail;
+> +       val =3D readl_relaxed(pll->base + PLL_CFG0);
+> +       return (val & PLL_PD_MASK) ? 0 : 1;
+> +}
 > +
-> +       div_hw =3D &div->hw;
-> +       div->reg =3D reg;
-> +       div->shift =3D PCG_PREDIV_SHIFT;
-> +       div->width =3D PCG_PREDIV_WIDTH;
-> +       div->lock =3D &imx_ccm_lock;
-> +       div->flags =3D CLK_DIVIDER_ROUND_CLOSEST;
+> +static unsigned long clk_pll1_recalc_rate(struct clk_hw *hw,
+> +                                        unsigned long parent_rate)
+> +{
+> +       struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
+> +       u32 val, divf;
 > +
-> +       gate =3D kzalloc(sizeof(*gate), GFP_KERNEL);
-> +       if (!gate)
-> +               goto fail;
+> +       val =3D readl_relaxed(pll->base + PLL_CFG2);
+> +       divf =3D FIELD_GET(PLL_DIVF1_MASK, val);
 > +
-> +       gate_hw =3D &gate->hw;
-> +       gate->reg =3D reg;
-> +       gate->bit_idx =3D PCG_CGC_SHIFT;
+> +       return parent_rate * 2 * (divf + 1);
+> +}
 > +
-> +       clk =3D clk_register_composite(NULL, name, parent_names, num_pare=
-nts,
-> +                                       mux_hw, &clk_mux_ops, div_hw,
-> +                                       &imx_clk_composite_divider_ops, g=
-ate_hw,
-> +                                       &clk_gate_ops, flags);
+> +static long clk_pll1_round_rate(struct clk_hw *hw, unsigned long rate,
+> +                              unsigned long *prate)
+> +{
+> +       unsigned long parent_rate =3D *prate;
+> +       u32 div;
+> +
+> +       div =3D rate / (parent_rate * 2);
 
-Didn't I already review this? I'd prefer we move this to using clk_hw
-based APIs and then return the clk pointer if needed.
+Can parent_rate be 0?
+
+> +
+> +       return parent_rate * div * 2;
+> +}
+> +
+> +static int clk_pll1_set_rate(struct clk_hw *hw, unsigned long rate,
+> +                           unsigned long parent_rate)
+> +{
+> +       struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
+> +       u32 val;
+> +       u32 divf;
+> +
+> +       divf =3D rate / (parent_rate * 2);
+
+Can parent_rate be 0?
+
+> +
+> +       val =3D readl_relaxed(pll->base + PLL_CFG2);
+> +       val &=3D ~PLL_DIVF1_MASK;
+> +       val |=3D FIELD_PREP(PLL_DIVF1_MASK, divf - 1);
+> +       writel_relaxed(val, pll->base + PLL_CFG2);
+> +
+> +       return clk_pll_wait_lock(pll);
+> +}
+> +
+> +static int clk_pll1_prepare(struct clk_hw *hw)
+> +{
+> +       struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
+> +       u32 val;
+> +
+> +       val =3D readl_relaxed(pll->base + PLL_CFG0);
+> +       val &=3D ~PLL_PD_MASK;
+> +       writel_relaxed(val, pll->base + PLL_CFG0);
+> +
+> +       return clk_pll_wait_lock(pll);
+> +}
+> +
+> +static void clk_pll1_unprepare(struct clk_hw *hw)
+> +{
+> +       struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
+> +       u32 val;
+> +
+> +       val =3D readl_relaxed(pll->base + PLL_CFG0);
+> +       val |=3D PLL_PD_MASK;
+> +       writel_relaxed(val, pll->base + PLL_CFG0);
+> +
+> +}
+> +
+> +static unsigned long clk_pll2_recalc_rate(struct clk_hw *hw,
+> +                                        unsigned long parent_rate)
+> +{
+> +       struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
+> +       u32 val, ref, divr1, divf1, divr2, divf2;
+> +       u64 temp64;
+> +
+> +       val =3D readl_relaxed(pll->base + PLL_CFG0);
+> +       switch (FIELD_GET(PLL_REF_MASK, val)) {
+> +       case 0:
+> +               ref =3D OSC_25M;
+> +               break;
+> +       case 1:
+> +               ref =3D OSC_27M;
+> +               break;
+> +       default:
+> +               ref =3D OSC_25M;
+
+Does this information not come through 'parent_rate'?
+
+> +               break;
+> +       }
+> +
+> +       val =3D readl_relaxed(pll->base + PLL_CFG2);
+> +       divr1 =3D FIELD_GET(PLL_DIVR1_MASK, val);
+> +       divr2 =3D FIELD_GET(PLL_DIVR2_MASK, val);
+> +       divf1 =3D FIELD_GET(PLL_DIVF1_MASK, val);
+> +       divf2 =3D FIELD_GET(PLL_DIVF2_MASK, val);
+> +
+> +       temp64 =3D ref * 2;
+> +       temp64 *=3D (divf1 + 1) * (divf2 + 1);
+> +
+> +       do_div(temp64, (divr1 + 1) * (divr2 + 1));
+
+Nitpicks: A comment with the equation may be helpful to newcomers.
+
+> +
+> +       return (unsigned long)temp64;
+
+Drop useless cast please.
+
+> +}
+> +
+> +static long clk_pll2_round_rate(struct clk_hw *hw, unsigned long rate,
+> +                              unsigned long *prate)
+> +{
+> +       u32 div;
+> +       unsigned long parent_rate =3D *prate;
+> +
+> +       div =3D rate / (parent_rate);
+> +
+> +       return parent_rate * div;
+> +}
+> +
+> +static int clk_pll2_set_rate(struct clk_hw *hw, unsigned long rate,
+> +                           unsigned long parent_rate)
+> +{
+> +       u32 val;
+> +       u32 divf;
+> +       struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
+> +
+> +       divf =3D rate / (parent_rate);
+
+Drop useless parenthesis please.
+
+> +
+> +       val =3D readl_relaxed(pll->base + PLL_CFG2);
+> +       val &=3D ~PLL_DIVF2_MASK;
+> +       val |=3D FIELD_PREP(PLL_DIVF2_MASK, divf - 1);
+> +       writel_relaxed(val, pll->base + PLL_CFG2);
+> +
+> +       return clk_pll_wait_lock(pll);
+> +}
+> +
+> +static const struct clk_ops clk_sccg_pll1_ops =3D {
+> +       .is_prepared    =3D clk_pll1_is_prepared,
+> +       .recalc_rate    =3D clk_pll1_recalc_rate,
+> +       .round_rate     =3D clk_pll1_round_rate,
+> +       .set_rate       =3D clk_pll1_set_rate,
+> +};
+> +
+> +static const struct clk_ops clk_sccg_pll2_ops =3D {
+> +       .prepare        =3D clk_pll1_prepare,
+> +       .unprepare      =3D clk_pll1_unprepare,
+> +       .recalc_rate    =3D clk_pll2_recalc_rate,
+> +       .round_rate     =3D clk_pll2_round_rate,
+> +       .set_rate       =3D clk_pll2_set_rate,
+> +};
+> +
+> +struct clk *imx_clk_sccg_pll(const char *name,
+> +                               const char *parent_name,
+> +                               void __iomem *base,
+> +                               enum imx_sccg_pll_type pll_type)
+> +{
+> +       struct clk_sccg_pll *pll;
+> +       struct clk *clk;
+> +       struct clk_init_data init;
+> +
+> +       pll =3D kzalloc(sizeof(*pll), GFP_KERNEL);
+> +       if (!pll)
+> +               return ERR_PTR(-ENOMEM);
+> +
+> +       pll->base =3D base;
+> +       init.name =3D name;
+> +       switch (pll_type) {
+> +       case SCCG_PLL1:
+> +               init.ops =3D &clk_sccg_pll1_ops;
+> +               break;
+> +       case SCCG_PLL2:
+> +               init.ops =3D &clk_sccg_pll2_ops;
+> +               break;
+> +       default:
+> +               kfree(pll);
+> +               return ERR_PTR(-EINVAL);
+
+Do this case statement before allocating? So that kfree() isn't required
+here?
+
+> +       }
+> +
+> +       init.flags =3D 0;
+> +       init.parent_names =3D &parent_name;
+> +       init.num_parents =3D 1;
+> +
+> +       pll->hw.init =3D &init;
+> +
+> +       clk =3D clk_register(NULL, &pll->hw);
+
+Any chance to use clk_hw based registration APIs?
 
 > +       if (IS_ERR(clk))
-> +               goto fail;
+> +               kfree(pll);
 > +
 > +       return clk;
-> +
-> +fail:
-> +       kfree(gate);
-> +       kfree(div);
-> +       kfree(mux);
-> +       return clk;
-> +}
