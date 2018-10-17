@@ -2,154 +2,123 @@ Return-Path: <SRS0=5IOi=M5=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23400C04EB9
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Oct 2018 06:12:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA7FDECDE32
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Oct 2018 07:28:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D474821523
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Oct 2018 06:12:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 667852151D
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Oct 2018 07:28:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="TXL/V97O"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D474821523
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="j16gouCI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 667852151D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726947AbeJQOGM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 Oct 2018 10:06:12 -0400
-Received: from mail-eopbgr20076.outbound.protection.outlook.com ([40.107.2.76]:11568
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        id S1726947AbeJQPXI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 Oct 2018 11:23:08 -0400
+Received: from mail-db5eur01on0046.outbound.protection.outlook.com ([104.47.2.46]:2087
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726663AbeJQOGL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 17 Oct 2018 10:06:11 -0400
+        id S1726622AbeJQPXI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 17 Oct 2018 11:23:08 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FOjGy3/zBPn+SEbPR8LwGZsHmr+SeGkQJhOgkK7x5/U=;
- b=TXL/V97OMBQsZmYko0N0eWZiYyTsbv0ngDhkrGz5uQJENFZP2Hmk1PfJh56s/7SjisndvAG2zxWbKz3k1v8TwZxtEMRHpEazixcg4vSlAAJHj/c2N9SwYsOsoTVVEvXU4gkvv6OJH3N+qG0oXuOjlKTCs5GaHS2TK2pnn5T2COI=
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
- DB3PR0402MB3802.eurprd04.prod.outlook.com (52.134.71.150) with Microsoft SMTP
+ bh=1oSXhExSzclM1D11v3PNdDS4t+SzlofGO1ooMN0TMvU=;
+ b=j16gouCI+M0pp/PSvJoTysPl1gmgRXOElN9r9ROc45Omu0y40pniCvGcFIV93eAIogS9BDImwk7OFiK/Y+Amxh2PdvhsFTwVstzy5MqEcHDGSKBoP3AAQLpnd1fkXK0Fz4Ugnnup5BveeqxA3NJACSudkjOAU8zOUAOaq6uLu4Y=
+Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.126.21) by
+ AM0PR04MB5251.eurprd04.prod.outlook.com (20.177.42.32) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1250.20; Wed, 17 Oct 2018 06:12:04 +0000
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::ddfd:3571:1813:2ee4]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::ddfd:3571:1813:2ee4%3]) with mapi id 15.20.1250.020; Wed, 17 Oct 2018
- 06:12:04 +0000
-From:   Anson Huang <anson.huang@nxp.com>
-To:     "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+ 15.20.1228.26; Wed, 17 Oct 2018 07:28:45 +0000
+Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
+ ([fe80::25a0:3167:d718:91c1]) by AM0PR04MB4211.eurprd04.prod.outlook.com
+ ([fe80::25a0:3167:d718:91c1%3]) with mapi id 15.20.1228.032; Wed, 17 Oct 2018
+ 07:28:44 +0000
+From:   "A.s. Dong" <aisheng.dong@nxp.com>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>
+CC:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
         "kernel@pengutronix.de" <kernel@pengutronix.de>,
         Fabio Estevam <fabio.estevam@nxp.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
         "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     dl-linux-imx <linux-imx@nxp.com>
-Subject: [PATCH 2/2] clk: imx7d: remove CLK_IS_CRITICAL flag for
- arm_a7_root_clk
-Thread-Topic: [PATCH 2/2] clk: imx7d: remove CLK_IS_CRITICAL flag for
- arm_a7_root_clk
-Thread-Index: AQHUZeBT5yWP/06UtkGmmrLiGQA/ug==
-Date:   Wed, 17 Oct 2018 06:12:04 +0000
-Message-ID: <1539756441-18776-2-git-send-email-Anson.Huang@nxp.com>
-References: <1539756441-18776-1-git-send-email-Anson.Huang@nxp.com>
-In-Reply-To: <1539756441-18776-1-git-send-email-Anson.Huang@nxp.com>
-Accept-Language: en-US
+        <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH V4 05/11] clk: imx: scu: add scu clock gate
+Thread-Topic: [PATCH V4 05/11] clk: imx: scu: add scu clock gate
+Thread-Index: AQHUY5UDa12Huho8BEyIYtM4b8PGa6Uf6y+AgAAZoyCAAA3sAIAAOofAgAIXJICAAKlxcA==
+Date:   Wed, 17 Oct 2018 07:28:44 +0000
+Message-ID: <AM0PR04MB4211CA6F8AF1A312A516DB0180FF0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+References: <1539504194-28289-1-git-send-email-aisheng.dong@nxp.com>
+ <1539504194-28289-6-git-send-email-aisheng.dong@nxp.com>
+ <20181015073207.66npcgegibl2rybb@pengutronix.de>
+ <AM0PR04MB4211129386C9088C6AFEDAF580FD0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+ <20181015095342.kjokajxyugugbtcw@pengutronix.de>
+ <AM0PR04MB42111FD6D3542E12250E556880FD0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+ <153972471150.5275.14761857440358508106@swboyd.mtv.corp.google.com>
+In-Reply-To: <153972471150.5275.14761857440358508106@swboyd.mtv.corp.google.com>
+Accept-Language: zh-CN, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-mailer: git-send-email 2.7.4
-x-clientproxiedby: HK0PR03CA0023.apcprd03.prod.outlook.com
- (2603:1096:203:2e::35) To DB3PR0402MB3916.eurprd04.prod.outlook.com
- (2603:10a6:8:10::18)
-x-ms-exchange-messagesentrepresentingtype: 1
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=aisheng.dong@nxp.com; 
 x-originating-ip: [119.31.174.66]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DB3PR0402MB3802;6:W8eqdetNsunrB1YArXh6/NNM07Uo9I4EbVINObm9DVzVRfz3q9uF1VIJPNP66Ci9UHJ3n5pGvFX5CISaUnmMzGv1BhnaX6RP1PiIYfqqcUvsHE2GwgknGXUheHD3JdC2tiZxVtK6W3A54at7sxHt9N1+hUWEsDTmOWaj+CdMc/DUlPuk7E7VzFIx37hLGVf5VK2lB+5q0FJIhuiOG15nNqm9hXtdImUG4rZvmWjUeijPG9FYMI2ZvZ8tfOJGOQL4xwu3NZJnF1L8uiNel8QhslxG99OZ88cXm3Ty2NiPiznsdVxJVm92vEFQhDEAJN1wEUyDgXmBAilcrCk93uGNK+vnGEBUryQ99zCnncVzaFhs0YLvxI3CL6F4rcYpqt6WPyvBmZZ3d2En2NMfIj2ZUqJyVYo6PinpINGLuKryvuBQUAtc73ew2t9J+nSsUeaj1zM15wGyyhprB2sd8us35w==;5:5f+P8Ip8gYU43SriPl/xLuSIQR5YhQubqNqlc86/fUiVjybrTzNj5afWW32kZXGwDTdBjGTNUiHBMduftnqLUzFUqFNiqdk4oJSJR/fGeIbsEdv8EgSI+FvbTSDQvqTqOft8uUWAKxPFLUR8txv9Li9P5cVAkgO3ZIdbOWUH3qg=;7:ywq/3uFxn8NV/M6O0AM0Z/LYpTaA5pnd/IiF9qMdYbFCW7t9j6tCKeSQhlPCEWTRo9+V2i6UNOV726osZXQBE5tcEcJJCr6nGiqOpRHX+E5gvyP4tH/GhEdUG8oeAqWNL9JjD9rR2Jvo9X95afPcD/2fS3yu8K8XrY8teS8HI8p9ju21EE6cfJtcPv8tYReg4y2sIHWBPD4NI6BIUVarOnC4M9vfuulcYTqO0LFAKIXY6XvLBDxs/L7gFGM6KAEg
-x-ms-office365-filtering-correlation-id: 158417a3-e5c5-4bd1-f603-08d633f7756c
+x-microsoft-exchange-diagnostics: 1;AM0PR04MB5251;6:INxpu8bgnPgiZ83FwBqmN28j/LM0PjRu9ao7/LARQrp0RgiDSbgKRBMCxzFY4DNIaucf4I3uwS1IS86RdW1O9i3fie1kSZFC2U0wBckXMmHKjTNZfbuFgkKX7zQjnlg3bvZPteO64FsTSH5r+v+InGFR4ZnK0UwxhEUOiGlkRteCk1yAad2m2LemF3iTInOhhFWkL6DHx20O7PVqdlezj1L7GvFJjoZVlxcQlUYQG3fKx2mmSKUi0MebW4L3tq9GXenCFsFOVG7JRjNHshnZGbLPm5nL5ogAQd5FA/dB76F3y1M3tpMH4lNl3FWyD/LruFAxjN7Vseg7WkbOkOn2O2jOqYuI2x2Z36yTFXDXuqBgdwZCFG6mEL9aWoV1PejW36Ns0QK+RHC3jXA+yGlklQMrTB2g4afrsr1f4tQmgZWO8Rh7nT/d3mtOvrDG8KqRtwf+Sv8c14QMR+alP9ganA==;5:IKu/zy7QYwGprqlsMTeWrcGEIbYHINE8CyjBtr/+avkvenS30lue4et8WM+2WBsZcY3mhRH1h0Xh1cgRvHmJVIig6xg363WLnd+zstY2IRdlESvWz1E8lREInq9YdC48H0VZ+VQXpoC0t6fN9a58n4dwzdKt1qiHoL/NOkK+aes=;7:sjD9Kyd+0NJGo36IY+BtaQsSAXtsp1sHYyDSLBzpLRdrwW7X6irteRH8LItZkqTe6i8iRMWkemY/KkebhZFbjQz0cm7ikKnr5pQvtGPSDbdYPk1HGDQocIYYWZAmUImVzPE/KeHLiFXrqfrA7X3J2GzfrrRch5KZkzMVvRA4Edy2EMlUwTMnbxxyc8mhczxQfjIu3Ixqo9FpaX51A3GnA15aZyoo2WL9HqXM3a8bmRB29c4gfAV+mmtXiMPyAEiX
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 8b60aba0-7808-4f6c-bec8-08d634022bd3
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:DB3PR0402MB3802;
-x-ms-traffictypediagnostic: DB3PR0402MB3802:
-x-microsoft-antispam-prvs: <DB3PR0402MB3802683F7AF9B83498842DCAF5FF0@DB3PR0402MB3802.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(185117386973197);
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB5251;
+x-ms-traffictypediagnostic: AM0PR04MB5251:
+x-microsoft-antispam-prvs: <AM0PR04MB5251679303C683B5A16BF97080FF0@AM0PR04MB5251.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3002001)(3231355)(944501410)(52105095)(6055026)(149066)(150057)(6041310)(20161123560045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699051)(76991092);SRVR:DB3PR0402MB3802;BCL:0;PCL:0;RULEID:;SRVR:DB3PR0402MB3802;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(3231355)(944501410)(52105095)(10201501046)(93006095)(93001095)(6055026)(149066)(150057)(6041310)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:AM0PR04MB5251;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB5251;
 x-forefront-prvs: 08286A0BE2
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(346002)(39860400002)(396003)(136003)(366004)(199004)(189003)(3846002)(386003)(6116002)(76176011)(2906002)(97736004)(66066001)(5250100002)(102836004)(2201001)(86362001)(2501003)(4326008)(2900100001)(52116002)(36756003)(25786009)(6506007)(99286004)(5660300001)(14454004)(68736007)(110136005)(316002)(105586002)(106356001)(186003)(71200400001)(478600001)(256004)(6486002)(14444005)(71190400001)(6346003)(8676002)(50226002)(26005)(6512007)(8936002)(81156014)(11346002)(7736002)(305945005)(6436002)(53936002)(81166006)(476003)(486006)(2616005)(446003);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3802;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(376002)(136003)(39860400002)(396003)(366004)(189003)(199004)(229853002)(14454004)(4326008)(305945005)(26005)(74316002)(478600001)(33656002)(5250100002)(256004)(14444005)(7736002)(5660300001)(6246003)(105586002)(71190400001)(53936002)(11346002)(66066001)(106356001)(446003)(97736004)(71200400001)(102836004)(99286004)(486006)(3846002)(68736007)(81156014)(81166006)(8676002)(54906003)(6436002)(7696005)(186003)(55016002)(93886005)(2906002)(76176011)(316002)(86362001)(8936002)(25786009)(476003)(2900100001)(6116002)(6506007)(9686003)(110136005);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5251;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=anson.huang@nxp.com; 
-x-microsoft-antispam-message-info: JmXvpkJBxDjEAOcV73jxNp6Wto0WGsWkaORYiqIUen3TqsrUbUqSmwXXvkX1wCZtfl/1+MmaI41UQxVjPsUemHK6aw0EC6hB5s7GjO4+pDYkgkKQZpCrTC9MhMrK5xWgsmh6wIPY9NZxIJCw5lF6gIZmVZHd+ozH1YxB7quHVYsqT2aaaHdrsRvRTE4BXfVnvblC9nexnCYVRl+UYHE9IGwmeEOG6gDoeBkbGy9LiGqtyaIDRdPdiB6CJ9AY8iidOaPv6PZ/rQusGj1ZazR/fcFIAgDNsqNyrVGgvkya3F1dxRgUXJl7XEglwHHm2bKKhrW7UCjkyFTEyzv1O8admOVsBZdknxsNjncgxvMAWqE=
+x-microsoft-antispam-message-info: Z5cKrHlRB7EPtkB2Y3OoUIG4oTre8HKSFSqCEUncpxT5tqFd1/szKarCf/b2u18aJJrCSZ7Xwf1LVD4QNEADJWoeHtRaK9yap6/7RfnK6hRxhbLb15R62bk7yUTP+CbcbeXNxh47+KXFybGKYAUgzFAvLFWY2MbJ47ycAi8YOQW2u2Ymg7W61Vo/uLYu/uQf12Y+TdmMbBYSLLcryLuB6pGRwHWc6SEqU2hZewvZO3PmkrezUWmZQZJRv7mNJRsSmGCYMMtOg6C2vZobZOfsZ322z0txBZeofDnUXRVd+9sASlliuhSYfxzlM7nmv4fCY4au2HKmNbDeIb5pkCI3+D0Q5RQnx6ugxVvXxFLqREg=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 158417a3-e5c5-4bd1-f603-08d633f7756c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Oct 2018 06:12:04.2017
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8b60aba0-7808-4f6c-bec8-08d634022bd3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Oct 2018 07:28:44.8649
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3802
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5251
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-i.MX7D uses virtual cpu clock of "arm" clock to be child clock
-of "arm_a7_root_clk" and it is with CLK_IS_CRITICAL flag set, so
-no need to add CLK_IS_CRITICAL flag for keeping "arm_a7_root_clk"
-use count correct, latest clock tree is as below in clk_summary:
-
-pll_arm_main                         1        1        0   792000000       =
-   0
-      pll_arm_main_bypass            1        1        0   792000000       =
-   0
-         pll_arm_main_clk            1        1        0   792000000       =
-   0
-            arm_a7_src               1        1        0   792000000       =
-   0
-               arm_a7_cg             1        1        0   792000000       =
-   0
-                  arm_a7_div         1        1        0   792000000       =
-   0
-                     arm_a7_root_clk       1        1        0   792000000 =
-   0
-                        arm          1        1        0   792000000
-
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- drivers/clk/imx/clk-imx7d.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-index 076460b..adb08f6 100644
---- a/drivers/clk/imx/clk-imx7d.c
-+++ b/drivers/clk/imx/clk-imx7d.c
-@@ -775,7 +775,7 @@ static void __init imx7d_clocks_init(struct device_node=
- *ccm_node)
- 	clks[IMX7D_CLKO1_ROOT_DIV] =3D imx_clk_divider2("clko1_post_div", "clko1_=
-pre_div", base + 0xbd80, 0, 6);
- 	clks[IMX7D_CLKO2_ROOT_DIV] =3D imx_clk_divider2("clko2_post_div", "clko2_=
-pre_div", base + 0xbe00, 0, 6);
-=20
--	clks[IMX7D_ARM_A7_ROOT_CLK] =3D imx_clk_gate2_flags("arm_a7_root_clk", "a=
-rm_a7_div", base + 0x4000, 0, CLK_IS_CRITICAL | CLK_OPS_PARENT_ENABLE);
-+	clks[IMX7D_ARM_A7_ROOT_CLK] =3D imx_clk_gate2_flags("arm_a7_root_clk", "a=
-rm_a7_div", base + 0x4000, 0, CLK_OPS_PARENT_ENABLE);
- 	clks[IMX7D_ARM_M4_ROOT_CLK] =3D imx_clk_gate4("arm_m4_root_clk", "arm_m4_=
-div", base + 0x4010, 0);
- 	clks[IMX7D_MAIN_AXI_ROOT_CLK] =3D imx_clk_gate2_flags("main_axi_root_clk"=
-, "axi_post_div", base + 0x4040, 0, CLK_IS_CRITICAL | CLK_OPS_PARENT_ENABLE=
-);
- 	clks[IMX7D_DISP_AXI_ROOT_CLK] =3D imx_clk_gate4("disp_axi_root_clk", "dis=
-p_axi_post_div", base + 0x4050, 0);
---=20
-2.7.4
-
+DQo+IEZyb206IFN0ZXBoZW4gQm95ZCBbbWFpbHRvOnNib3lkQGtlcm5lbC5vcmddDQo+IFNlbnQ6
+IFdlZG5lc2RheSwgT2N0b2JlciAxNywgMjAxOCA1OjE5IEFNDQoNClsuLi5dDQoNCj4gPiAiIERy
+aXZlcnMgZG9uJ3QgbmVlZCB0byBtYW51YWxseSBwcm90ZWN0IHJlc291cmNlcyBzaGFyZWQgYmV0
+d2VlbiB0aGUNCj4gPiBvcGVyYXRpb25zIG9mIG9uZSBncm91cCwgcmVnYXJkbGVzcyBvZiB3aGV0
+aGVyIHRob3NlIHJlc291cmNlcyBhcmUNCj4gPiBzaGFyZWQgYnkgbXVsdGlwbGUgY2xvY2tzIG9y
+IG5vdC4gSG93ZXZlciwgYWNjZXNzIHRvIHJlc291cmNlcyB0aGF0DQo+ID4gYXJlIHNoYXJlZCBi
+ZXR3ZWVuIG9wZXJhdGlvbnMgb2YgdGhlIHR3byBncm91cHMgbmVlZHMgdG8gYmUgcHJvdGVjdGVk
+IGJ5DQo+IHRoZSBkcml2ZXJzLiINCj4gPg0KPiA+IERvIHlvdSB0aGluayBpdCdzIG9rYXkgdG8g
+ZHJvcCBpdD8NCj4gPg0KPiANCj4gTm8gaXQncyBub3QgT0suIFdlIHByZWZlciB0aGF0IGNsayBk
+cml2ZXJzIGRvbid0IGFzc3VtZSB0aGUgZ2xvYmFsIGxvY2tzIGluIHRoZQ0KPiBjbGsgZnJhbWV3
+b3JrIGFyZSBnb2luZyB0byBwcm90ZWN0IHRoZW0gZnJvbSBjb25jdXJyZW50IGFjY2VzcyB0byB0
+aGUgc2FtZQ0KPiByZXNvdXJjZSBiZXR3ZWVuIGRpZmZlcmVudCBjbGtzLiBEcml2ZXJzIGNhbiBh
+c3N1bWUgdGhhdCBhIGNsayBvcCB3b24ndCBiZQ0KPiBjYWxsZWQgaW4gcGFyYWxsZWwgZm9yIHRo
+ZSBzYW1lIGNsaywgYnV0IHRoZXkgc2hvdWxkbid0IGFzc3VtZSB0aGF0IGV2ZXJ5dGhpbmcgaXMN
+Cj4gcHJvdGVjdGVkIG90aGVyd2lzZS4gSWYgdGhleSBkaWQsIHdlIHdvdWxkIGhhdmUgdG8gZ28g
+ZmluZCBhbGwgdGhlIGRyaXZlcnMgdGhhdA0KPiBtYWtlIHRoaXMgYXNzdW1wdGlvbiBhbmQgdGhl
+biBmaXggdGhlbSB3aGVuIHdlIGV2ZW50dWFsbHkgc3BsaXQgdGhlIGxvY2sgaW50bw0KPiBzbWFs
+bGVyIHBpZWNlcy4NCj4gDQo+IExvbmcgc3Rvcnkgc2hvcnQsIGlmIHlvdSBoYXZlIHNvbWV0aGlu
+ZyBzaGFyZWQgKGkuZS4gYSByZWdpc3RlcikgYW5kIHlvdSBwbGFuIHRvDQo+IHdyaXRlIHRvIGl0
+IGFuZCByZWFkIGZyb20gaXQgZm9yIG11bHRpcGxlIGNsa3MsIGFkZCBhIGxvY2sgYXJvdW5kIGl0
+Lg0KDQpPa2F5LCBnb3QgaXQuIEFwcHJlY2lhdGVkIGZvciB0aGUgZGV0YWlsZWQgZXhwbGFuYXRp
+b24uDQoNClJlZ2FyZHMNCkRvbmcgQWlzaGVuZw0K
