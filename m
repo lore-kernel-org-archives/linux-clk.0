@@ -3,38 +3,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 693F5ECDE39
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Oct 2018 18:28:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C089ECDE32
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Oct 2018 18:32:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3819D2148E
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Oct 2018 18:28:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 68D402148E
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Oct 2018 18:32:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YkzPIcVt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3819D2148E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0RAmgjFU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68D402148E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728261AbeJRCZc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 Oct 2018 22:25:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47044 "EHLO mail.kernel.org"
+        id S1728216AbeJRC3K (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 Oct 2018 22:29:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48512 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727014AbeJRCZb (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 17 Oct 2018 22:25:31 -0400
+        id S1727014AbeJRC3K (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 17 Oct 2018 22:29:10 -0400
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 708FB21476;
-        Wed, 17 Oct 2018 18:28:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3C68021476;
+        Wed, 17 Oct 2018 18:32:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539800916;
-        bh=AOcvqqiqmnhG5mnXYc170DN/kng+EK5Ia1mj91xzTUo=;
+        s=default; t=1539801134;
+        bh=6jz7+gJ/Q97AzpykflWof4gbC1TERmI3QHYKYdh0zQg=;
         h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=YkzPIcVtpHtim59+v9P4VlKMXOnCoxsIMecvv6yuzUmYmDBUCU7+RmnAHnWlNuDbA
-         qXGyOJoho3fnmJ9uvdQxfJ8qHE9Oe4vpdGcBt2+gePv+4C481/URK8y3gTVHAaX4pH
-         LjuaVIwGTBdeHNLC0KXVCkPDev8mO+IWu59SvfXg=
+        b=0RAmgjFUCXo+ZbXkL+D+y84OoM0QOSKtmg+uqgaHZl3t139eKLBaEo573zYrptYsa
+         Vj189uuILFi8t9YKNwMoUrlveW4saCY/y85gQIBYZxDSoDMBVVv7LmztLLS5vZ8uCs
+         /p0tLQOyQKxWVWlN9xCZe6v7gmCbw7f971sdrUOQ=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -43,7 +43,7 @@ To:     Gregory CLEMENT <gregory.clement@bootlin.com>,
         Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180922181709.13007-5-gregory.clement@bootlin.com>
+In-Reply-To: <20180922181709.13007-3-gregory.clement@bootlin.com>
 Cc:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         linux-arm-kernel@lists.infradead.org,
         Jason Cooper <jason@lakedaemon.net>,
@@ -54,23 +54,79 @@ Cc:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         =?utf-8?q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>,
         Maxime Chevallier <maxime.chevallier@bootlin.com>
 References: <20180922181709.13007-1-gregory.clement@bootlin.com>
- <20180922181709.13007-5-gregory.clement@bootlin.com>
-Message-ID: <153980091588.5275.2414842812770832337@swboyd.mtv.corp.google.com>
+ <20180922181709.13007-3-gregory.clement@bootlin.com>
+Message-ID: <153980113358.5275.6784587664499905114@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.7
-Subject: Re: [PATCH 4/6] clk: mvebu: ap806: Fix clock name for the cluster
-Date:   Wed, 17 Oct 2018 11:28:35 -0700
+Subject: Re: [PATCH 2/6] clk: mvebu: add helper file for Armada AP and CP clocks
+Date:   Wed, 17 Oct 2018 11:32:13 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Gregory CLEMENT (2018-09-22 11:17:07)
-> Actually, the clocks exposed for the cluster are not the CPU clocks, but
-> the PLL clock used as entry clock for the CPU clocks. The CPU clock will
-> be managed by a driver submitting in the following patches.
-> =
+Quoting Gregory CLEMENT (2018-09-22 11:17:05)
+> diff --git a/drivers/clk/mvebu/armada_ap_cp_helper.c b/drivers/clk/mvebu/=
+armada_ap_cp_helper.c
+> new file mode 100644
+> index 000000000000..5f2457719b10
+> --- /dev/null
+> +++ b/drivers/clk/mvebu/armada_ap_cp_helper.c
+> @@ -0,0 +1,28 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * Marvell Armada AP and CP110 helper
+> + *
+> + * Copyright (C) 2018 Marvell
+> + *
+> + * Gregory Clement <gregory.clement@bootlin.com>
+> + *
+> + */
+> +
+> +#include "armada_ap_cp_helper.h"
+> +#include <linux/device.h>
+> +
+> +char *ap_cp_unique_name(struct device *dev, struct device_node *np,
+> +                       const char *name)
+> +{
+> +       const __be32 *reg;
+> +       u64 addr;
+> +
+> +       /* Do not create a name if there is no clock */
+> +       if (!name)
+> +               return NULL;
+> +
+> +       reg =3D of_get_property(np, "reg", NULL);
+> +       addr =3D of_translate_address(np, reg);
+> +       return devm_kasprintf(dev, GFP_KERNEL, "%llx-%s",
+> +                             (unsigned long long)addr, name);
 
-> Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+We probably don't want to leak physical addresses into debugfs, but I
+guess this is how it's already been, so maybe something in the future
+should change this for security purposes.
 
-Does this need a fixes tag?
+> +}
+> diff --git a/drivers/clk/mvebu/armada_ap_cp_helper.h b/drivers/clk/mvebu/=
+armada_ap_cp_helper.h
+> new file mode 100644
+> index 000000000000..23aa29f3fcf7
+> --- /dev/null
+> +++ b/drivers/clk/mvebu/armada_ap_cp_helper.h
+> @@ -0,0 +1,11 @@
+> +/* SPDX-License-Identifier: GPL-2.0+ */
+> +
+> +#ifndef __ARMADA_AP_CP_HELPER_H
+> +#define __ARMADA_AP_CP_HELPER_H
+> +
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
 
+Drop these includes? And forward declare =
+
+
+struct device;
+struct device_node;
+
+> +
+> +char *ap_cp_unique_name(struct device *dev, struct device_node *np,
+> +                       const char *name);
+> +#endif
