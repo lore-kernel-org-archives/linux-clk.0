@@ -2,128 +2,114 @@ Return-Path: <SRS0=5IOi=M5=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EC72C5ACCC
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Oct 2018 02:57:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66DDAC5ACCC
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Oct 2018 03:27:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4538D214C4
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Oct 2018 02:57:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15CC9214FA
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Oct 2018 03:27:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XvMwPKnF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4538D214C4
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Or3Av8ax"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15CC9214FA
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727353AbeJQKuq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 Oct 2018 06:50:46 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:40372 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727357AbeJQKul (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 Oct 2018 06:50:41 -0400
-Received: by mail-pl1-f195.google.com with SMTP id 1-v6so11937565plv.7
-        for <linux-clk@vger.kernel.org>; Tue, 16 Oct 2018 19:57:12 -0700 (PDT)
+        id S1727192AbeJQLVa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 Oct 2018 07:21:30 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:36384 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727260AbeJQLV3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 Oct 2018 07:21:29 -0400
+Received: by mail-pf1-f193.google.com with SMTP id l81-v6so12472116pfg.3
+        for <linux-clk@vger.kernel.org>; Tue, 16 Oct 2018 20:27:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=ff12+Pu8Xbp0aBuOhuiDomuzkIHYVm2v0rQ8Xhsd4+c=;
-        b=XvMwPKnFPObnC32yMzHQq7IPMmERPn+pEBp906KJKbUv0+l2KcS9M3PC2UmMtkPRU2
-         O6fHZR5uQ6wk3QLNuVsxB/yc0A2T2VVXU4yZMMFmIb1PbsGaGzmWOCH+vFNMGh8nemot
-         RkBKyOuPceh3byoHD0oyzpYAe82I7kwASNIJg=
+        bh=c2NGBkleLooUmiW44+p0aReBMQJapUb9eKrSpvpqdLY=;
+        b=Or3Av8axUrV4bBZsq8J9dfjAfolYL9nbYK4wT7+9BB8yO0cKv0RM28Lz/xzxgffmA/
+         vG46WJQU5ASVNlao0Nk2cnDEGg6tsAUI5dKp9Jqe+De7vP6gDu3Dm/rH7pze6mZmwNCy
+         D71Gfe1Isz8Ji4K+5hM9prGBciEKOUICf6i5E=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ff12+Pu8Xbp0aBuOhuiDomuzkIHYVm2v0rQ8Xhsd4+c=;
-        b=fTgVxwLiiw1jul3sYWhpzY6iGn/2z9bIk4i1hqyIWx4ZS4mkzLZNYj0ZiNWmod69yt
-         32Y0QFCAew/hZzJdlBJmgXuDqOgXUgCd7LaJmoHUPXcOsrP4GVM8qn9G8L/brmurb2WI
-         YXoCArLZUxuJ0sAb4TedBC9nxY3q4iotmg6JaXT33SO7YEeSMXyYZy0euqHwWo4gGhcx
-         RzqLHWs2gomHh2kvpHBnGNuWlxqDuiVkFNKowxBHZVZhcKfJwFbA2NxIkpxpUFWpzApz
-         1btcqDtAZTqQ9z0kSmgRP9h/f3wDwjPFVirV9G56JeXOAYffJCi7Hgg1G5C+ba/5Omkl
-         utTw==
-X-Gm-Message-State: ABuFfoi9bU33KGITXMMyerIbIMCQRkWRbxQmonnRc/GyDCN5pbLHj6Pe
-        8zq6ss0v7Pc7jsDPbx5SuGRg
-X-Google-Smtp-Source: ACcGV61v2G9TKHELQyqtyj3XYVzTaiDZfULapX3pgiO8Zacyh178/FI/FWUeEFhIpRsQjPodlcdy2w==
-X-Received: by 2002:a17:902:4103:: with SMTP id e3-v6mr23945355pld.236.1539745032171;
-        Tue, 16 Oct 2018 19:57:12 -0700 (PDT)
+        bh=c2NGBkleLooUmiW44+p0aReBMQJapUb9eKrSpvpqdLY=;
+        b=uGmu6JXh765su5osrgzo/p2WGfW6TdQR1zRjUkNqU0JHNNutO9Da9NkbB5+rUR1oKw
+         LsCMs4lO4CESG7FBuSFZ5wnHcOcZyoZyfqOh+I8NXSSf8OJeWH+s+j1DJjY5rrh7kkfO
+         hefZ19O/uYTI87wnR1kMyNUnSuUl0sYdSq536PawVuQzPixd8lkzJi4rmU4BXbpsm/UV
+         pO7BWUj/3ReePFxe+rx8NpZGJwNf0xhGP0YVON9QU0txZLwmUk/i3Ywua+6vf0AYILda
+         x9xtiQdfiuUSuvRdTYwOxrM1nVd49sjhkkso51+GXHThiKOmIRf+12T+bHME0u+DhsJa
+         V+yA==
+X-Gm-Message-State: ABuFfoj4F9uQ/uJeOAdFj+YOX4pfWOu4ZxSbRrQRUjfjeIKb08qBDQAE
+        kpo/+gxQlazwGajL6etkyNrS
+X-Google-Smtp-Source: ACcGV61l82DxE/pDVALljfjIVxQgnBCBMhE2kiv/OPYPmejIER83dRfp97JdbmuCWUKmGRzGzruuaQ==
+X-Received: by 2002:a63:3181:: with SMTP id x123-v6mr386739pgx.83.1539746874866;
+        Tue, 16 Oct 2018 20:27:54 -0700 (PDT)
 Received: from Mani-XPS-13-9360 ([2409:4072:6305:1a9d:4c38:eda8:7f99:11d3])
-        by smtp.gmail.com with ESMTPSA id a1-v6sm24399721pfj.38.2018.10.16.19.56.59
+        by smtp.gmail.com with ESMTPSA id 187-v6sm24701183pfu.129.2018.10.16.20.27.49
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 16 Oct 2018 19:57:11 -0700 (PDT)
-Date:   Wed, 17 Oct 2018 08:26:55 +0530
+        Tue, 16 Oct 2018 20:27:54 -0700 (PDT)
+Date:   Wed, 17 Oct 2018 08:57:46 +0530
 From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     afaerber@suse.de, mturquette@baylibre.com, p.zabel@pengutronix.de,
-        robh+dt@kernel.org, linux-clk@vger.kernel.org,
-        liuwei@actions-semi.com, mp-cs@actions-semi.com,
-        96boards@ucrobotics.com, devicetree@vger.kernel.org,
-        daniel.thompson@linaro.org, amit.kucheria@linaro.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        hzhang@ucrobotics.com, bdong@ucrobotics.com,
-        manivannanece23@gmail.com, thomas.liau@actions-semi.com,
-        jeff.chen@actions-semi.com, pn@denx.de, edgar.righi@lsitec.org.br,
-        sravanhome@gmail.com
-Subject: Re: [PATCH v3 6/9] arm64: dts: actions: Add Reset Controller support
- for S900 SoC
-Message-ID: <20181017025655.GA2888@Mani-XPS-13-9360>
-References: <20180810095113.25292-1-manivannan.sadhasivam@linaro.org>
- <20180810095113.25292-7-manivannan.sadhasivam@linaro.org>
- <153972613980.5275.10581925529054373344@swboyd.mtv.corp.google.com>
+To:     xuwei5@hisilicon.com
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, amit.kucheria@linaro.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH 0/4] Add clock support for Hi3670 SoC
+Message-ID: <20181017032746.GB2888@Mani-XPS-13-9360>
+References: <20180921060103.21370-1-manivannan.sadhasivam@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <153972613980.5275.10581925529054373344@swboyd.mtv.corp.google.com>
+In-Reply-To: <20180921060103.21370-1-manivannan.sadhasivam@linaro.org>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Oct 16, 2018 at 02:42:19PM -0700, Stephen Boyd wrote:
-> Quoting Manivannan Sadhasivam (2018-08-10 02:51:10)
-> > Add reset controller property and bindings header for the
-> > Actions Semi S900 SoC DTS.
-> > 
-> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > ---
+On Thu, Sep 20, 2018 at 11:00:59PM -0700, Manivannan Sadhasivam wrote:
+> This patchset adds clock support for Hi3670 SoC from HiSilicon utilizing
+> the HiSi common clock code. While adding clock support, let's remove the
+> fixed clock for UART and source SoC clock on HiKey970 board.
 > 
-> Are these DT patches necessary for me to apply the clk patches? I'd like
-> to apply the clk patches without these dts bits.
->
+> This patchset has been verified on HiKey970 board.
+> 
+> Thanks,
+> Mani
+> 
+> Manivannan Sadhasivam (4):
+>   dt-bindings: clk: hisilicon: Add bindings for Hi3670 clk
+>   arm64: dts: hisilicon: Add clock nodes for Hi3670 SoC
+>   arm64: dts: hisilicon: Source SoC clock for UART6
 
-Not necessary, you can just apply the clk and bindings patches. DTS patches
-will go through Actions tree.
+Hi Wei,
+
+Since the clk patches are merged, can you please take the DTS patches
+through HiSi tree? I will post the pinctrl/gpio patches soon which will
+depend on clk bits.
 
 Thanks,
 Mani
 
-> >  arch/arm64/boot/dts/actions/s900.dtsi | 2 ++
-> >  1 file changed, 2 insertions(+)
-> > 
-> > diff --git a/arch/arm64/boot/dts/actions/s900.dtsi b/arch/arm64/boot/dts/actions/s900.dtsi
-> > index aa3a49b0d646..4fbb39fd7971 100644
-> > --- a/arch/arm64/boot/dts/actions/s900.dtsi
-> > +++ b/arch/arm64/boot/dts/actions/s900.dtsi
-> > @@ -6,6 +6,7 @@
-> >  
-> >  #include <dt-bindings/clock/actions,s900-cmu.h>
-> >  #include <dt-bindings/interrupt-controller/arm-gic.h>
-> > +#include <dt-bindings/reset/actions,s900-reset.h>
-> >  
-> >  / {
-> >         compatible = "actions,s900";
-> > @@ -172,6 +173,7 @@
-> >                         reg = <0x0 0xe0160000 0x0 0x1000>;
-> >                         clocks = <&hosc>, <&losc>;
-> >                         #clock-cells = <1>;
-> > +                       #reset-cells = <1>;
-> >                 };
-> >  
-> >                 pinctrl: pinctrl@e01b0000 {
-> > -- 
-> > 2.17.1
-> > 
+>   clk: hisilicon: Add clock driver for Hi3670 SoC
+> 
+>  .../bindings/clock/hi3670-clock.txt           |   43 +
+>  arch/arm64/boot/dts/hisilicon/hi3670.dtsi     |   48 +-
+>  drivers/clk/hisilicon/Kconfig                 |    7 +
+>  drivers/clk/hisilicon/Makefile                |    1 +
+>  drivers/clk/hisilicon/clk-hi3670.c            | 1016 +++++++++++++++++
+>  include/dt-bindings/clock/hi3670-clock.h      |  348 ++++++
+>  6 files changed, 1458 insertions(+), 5 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/clock/hi3670-clock.txt
+>  create mode 100644 drivers/clk/hisilicon/clk-hi3670.c
+>  create mode 100644 include/dt-bindings/clock/hi3670-clock.h
+> 
+> -- 
+> 2.17.1
+> 
