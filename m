@@ -3,44 +3,44 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91CE9ECDE39
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Oct 2018 17:50:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05378ECDE39
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Oct 2018 17:50:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D61720869
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Oct 2018 17:50:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BC2FA214C2
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Oct 2018 17:50:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iY10+8WF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D61720869
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="05TNXIEV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC2FA214C2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728240AbeJRBq5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 Oct 2018 21:46:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34866 "EHLO mail.kernel.org"
+        id S1728282AbeJRBrC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 Oct 2018 21:47:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35006 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727186AbeJRBq4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 17 Oct 2018 21:46:56 -0400
+        id S1728256AbeJRBrB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 17 Oct 2018 21:47:01 -0400
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 669B4214C3;
-        Wed, 17 Oct 2018 17:50:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7EE352148E;
+        Wed, 17 Oct 2018 17:50:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539798610;
-        bh=8Kvy7fMCLCEnEL8UcvCcD9I6SAPgiPY9DCy5AWSu2B4=;
+        s=default; t=1539798615;
+        bh=r/vpRz4WN0eKwcYbWx66QGhQPNozVTj3fUs6wH2JGtQ=;
         h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=iY10+8WFbIQOInlwmfn/Rxf+qJipHnvSwjZ0K7cXI4GXWcGlBN9JBHKJctry0fAvS
-         gyA4p3B0+N0PQ3XFa3L/MJdLMwBcQrqOQjxE/Wwcdl3cRSf6bDaFxvJwVidRPUBotC
-         iy6wxxg4L0JhPaxUjbi6jF8i0dbsz+IbdWldPdVk=
+        b=05TNXIEVyleQfFqp9rmTUAOLnPvRzyhlkDeh7vsEijNerTQoURwwVdXzHZ9w/+yUI
+         u9TFgUQnxV4QwQDhTIMxwvaIuShh00fjjUZNDyQgDf8fOEvi1hgGyXbduWxtQz9Nft
+         GrV17Cm8kmC00kiE4RHVmyQWeIHWGmWl1IfwGt9U=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20181016142200.19741-13-alexandre.belloni@bootlin.com>
+In-Reply-To: <20181016142200.19741-15-alexandre.belloni@bootlin.com>
 Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
@@ -48,19 +48,18 @@ Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Alexandre Belloni <alexandre.belloni@bootlin.com>
 References: <20181016142200.19741-1-alexandre.belloni@bootlin.com>
- <20181016142200.19741-13-alexandre.belloni@bootlin.com>
-Message-ID: <153979860985.5275.7074929178439297354@swboyd.mtv.corp.google.com>
+ <20181016142200.19741-15-alexandre.belloni@bootlin.com>
+Message-ID: <153979861495.5275.12921138104455395506@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.7
-Subject: Re: [PATCH v2 12/22] clk: at91: add at91sam9260 PMC driver
-Date:   Wed, 17 Oct 2018 10:50:09 -0700
+Subject: Re: [PATCH v2 14/22] clk: at91: add at91sam9rl PMC driver
+Date:   Wed, 17 Oct 2018 10:50:14 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Alexandre Belloni (2018-10-16 07:21:50)
-> Add a driver for the PMC clocks of the at91sam9260, at91sam9261,
-> at91am9263 and at91sam9g20 SoCs.
+Quoting Alexandre Belloni (2018-10-16 07:21:52)
+> Add a driver for the PMC clocks of the at91sam9rl SoC.
 > =
 
 > Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
