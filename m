@@ -2,74 +2,125 @@ Return-Path: <SRS0=5IOi=M5=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF36EC5ACCD
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Oct 2018 06:03:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 162FDC04EB9
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Oct 2018 06:12:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95F352150D
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Oct 2018 06:03:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C58FC21523
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Oct 2018 06:12:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cuTK5FQ6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95F352150D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="W1pVzHbL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C58FC21523
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727108AbeJQN4q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 Oct 2018 09:56:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49526 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726663AbeJQN4q (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 17 Oct 2018 09:56:46 -0400
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 60E602150B;
-        Wed, 17 Oct 2018 06:02:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539756166;
-        bh=ITNP1jZTqpro3zbrpUK8VqRK3wiRgOYVsO65AKbglqo=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=cuTK5FQ6cN5UK27Sm+rx7Decil9Iq600ewR4UBQHc3XKgPJJZ/vuzqOJzjLv5aqr3
-         j6mTd4XDWw4eCQBq2UAx9/6FBeyWMxhj/FB3ocx+K2gV/lzqGvHhuo5c/y2Fj3VhCi
-         uH5XbcH2XeGk0HmrkgkLMkSR30YOAhrDvJs7T4Vc=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
+        id S1726947AbeJQOGF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 Oct 2018 10:06:05 -0400
+Received: from mail-eopbgr60040.outbound.protection.outlook.com ([40.107.6.40]:24112
+        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726663AbeJQOGE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 17 Oct 2018 10:06:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nagH/4X26CtrrSYDW6wqSApRiVo2ninpbN2hDXPsEWc=;
+ b=W1pVzHbLjvoxf7SkDJrYVjJXyVQNn9Ir+k4VahS3RO7yjcAlwvJJFcQW+Abrd1IgLhebxrr9VHh/AfkMNCwXzISXSdY6A+OPiGKr0Xp95NGapv9ybdrqTs3sR6r9TfGTGt+A+d2shOJzEOOKmImd8ziTw1445+aOd2MFFI+aXZM=
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
+ DB3PR0402MB3883.eurprd04.prod.outlook.com (52.134.71.25) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1228.26; Wed, 17 Oct 2018 06:11:59 +0000
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::ddfd:3571:1813:2ee4]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::ddfd:3571:1813:2ee4%3]) with mapi id 15.20.1250.020; Wed, 17 Oct 2018
+ 06:11:59 +0000
+From:   Anson Huang <anson.huang@nxp.com>
+To:     "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     dl-linux-imx <linux-imx@nxp.com>
+Subject: [PATCH 1/2] clk: imx: cpu clock should be always critical
+Thread-Topic: [PATCH 1/2] clk: imx: cpu clock should be always critical
+Thread-Index: AQHUZeBQyTR9MeyjOke3JZ4UgZ2tsA==
+Date:   Wed, 17 Oct 2018 06:11:59 +0000
+Message-ID: <1539756441-18776-1-git-send-email-Anson.Huang@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.7.4
+x-clientproxiedby: HK0PR03CA0023.apcprd03.prod.outlook.com
+ (2603:1096:203:2e::35) To DB3PR0402MB3916.eurprd04.prod.outlook.com
+ (2603:10a6:8:10::18)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=anson.huang@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DB3PR0402MB3883;6:w4HKpFMJgAWyQg52L7KSRBxPvQjMJZfEeZEAQoX2DRKsXiSv70j9wbzb4XPSoIVRvdTWU09A7WA0TQcAAoG9LSpIBevyCc82qs1LphN+B10FgrBPLC6XCjV0kVe5zrdnUpGTigjYzOudeHD+u8kPTiouSBZJ5SndC2XSNkzLabmHUPDLbSdzh6zBZED0eviv0q+6ZR5yq427xCbPzJ82/Zb+srL4UDCgT2sjywmKhzw1ws/Zc93dppfzCksg+3LlzsDiF+Vm+yyu5LdfgfOTTBL6vzrpK4iIxHnTxXwS1MwTSDHyy7/yNvTe1jIT9N5JsFQFnYbfds4uuZzi0i5ZOuaGXB41NipfB0OuHdytiuUPbS7jLEpKILXUyFy4UIiVtFlqkXcu+npakF22bPM7sdkacA7bb4xQfuejLpHDB0nxqYmRfdXY2fiXEs9ucXN2Op0dxeO8vVZkszKpTzC1OQ==;5:B4D7KewN7CwCa6XksJlLj5d5o2/c03fQ03+oi+XXfcxkCabwo7+YYO9B1MfaTgi/KL7IRBPsodsAjRccmEzUs4ZbgmwGXMeCNpCCiCWKa9MtdFAevYlHdXkxqaC5akU8KnGDF/UpTkfmJ8YSe/WTDbYRFB+RTfkbVMkNkwaCIKU=;7:et+hx9lUuPM8xKARADhuOtwfdemQm/gRItPZiN2RKFQolMkEXeznNzTXuQxcuY16XG9/O37WsmO9c85Qz+SuQ+m/TnPMabpgIWh1AJcslHRbeICS2ocfvVaF4zSlITlfwmx7OMjap516plJE2nPUoqj/gcZ30AqN9xNN/VB7g96a1TRLqdyc8NOnVB6SuwILRMxBm2P5DlVI/rWzMwEvBfMC3lhXhlWJNWYn98mzXSvXPbPRBCUk1V3rmQDEe0hb
+x-ms-office365-filtering-correlation-id: b604fbda-f153-4987-a1fb-08d633f7726f
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DB3PR0402MB3883;
+x-ms-traffictypediagnostic: DB3PR0402MB3883:
+x-microsoft-antispam-prvs: <DB3PR0402MB3883DAB4342500450CD24475F5FF0@DB3PR0402MB3883.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(185117386973197);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3231355)(944501410)(52105095)(3002001)(6055026)(149066)(150057)(6041310)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991093);SRVR:DB3PR0402MB3883;BCL:0;PCL:0;RULEID:;SRVR:DB3PR0402MB3883;
+x-forefront-prvs: 08286A0BE2
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(396003)(39860400002)(376002)(346002)(366004)(199004)(189003)(316002)(106356001)(2900100001)(68736007)(6486002)(6436002)(53936002)(386003)(36756003)(6116002)(102836004)(3846002)(52116002)(6506007)(305945005)(7736002)(50226002)(6512007)(2906002)(8676002)(486006)(66066001)(81156014)(110136005)(105586002)(71190400001)(8936002)(476003)(5660300001)(81166006)(71200400001)(478600001)(14444005)(256004)(14454004)(26005)(2201001)(99286004)(4326008)(97736004)(25786009)(2616005)(5250100002)(2501003)(86362001)(186003);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3883;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: BPUYAjxNwMVkL1Wcb6f46kyb+tnBg9AOpC2fEfAIz4p0lNzxj3xsywSMz+CTYJeD/gb4/i9BmhO8ue/2+qZSST7j6T2kNOyTeFSTst2ryzL8xj3XVCt5rsp3tKCBhCGvRlHCTncnuYyAer9FVPXys70BFLqspA/AAz2oeA0pT5dmX478v2jAhxRsdr3sZ1kmOHGMp+zcr4+j6SUW+7xyTET2KFMpXXBPq7YJzPX0pOIpXzMQOdsJx4OGMus4EtI2SXTWjr0SKdSqbjZWvoaJJ5rEgm0K1MigIcfjSijYdhKKn9904f51M2iENEk/GjGGJ/vdJuYH/oXmgWoWlkZJYwXsVmI6kulDeYE312WqzBo=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        afaerber@suse.de, mturquette@baylibre.com, p.zabel@pengutronix.de,
-        robh+dt@kernel.org
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180810095113.25292-8-manivannan.sadhasivam@linaro.org>
-Cc:     linux-clk@vger.kernel.org, liuwei@actions-semi.com,
-        mp-cs@actions-semi.com, 96boards@ucrobotics.com,
-        devicetree@vger.kernel.org, daniel.thompson@linaro.org,
-        amit.kucheria@linaro.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, hzhang@ucrobotics.com,
-        bdong@ucrobotics.com, manivannanece23@gmail.com,
-        thomas.liau@actions-semi.com, jeff.chen@actions-semi.com,
-        pn@denx.de, edgar.righi@lsitec.org.br, sravanhome@gmail.com,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-References: <20180810095113.25292-1-manivannan.sadhasivam@linaro.org>
- <20180810095113.25292-8-manivannan.sadhasivam@linaro.org>
-Message-ID: <153975616584.5275.13274791459629637227@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v3 7/9] clk: actions: Add Actions Semi Owl SoCs Reset Management
- Unit support
-Date:   Tue, 16 Oct 2018 23:02:45 -0700
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b604fbda-f153-4987-a1fb-08d633f7726f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Oct 2018 06:11:59.4986
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3883
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Manivannan Sadhasivam (2018-08-10 02:51:11)
-> Add Reset Management Unit (RMU) support for Actions Semi Owl SoCs.
-> =
+Add CLK_IS_CRITICAL flag for cpu clock type to
+make cpu clock use count correct, as cpu clock
+should be always critical.
 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+ drivers/clk/imx/clk-cpu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied to clk-next
+diff --git a/drivers/clk/imx/clk-cpu.c b/drivers/clk/imx/clk-cpu.c
+index 9d46eac..ed1b7e9 100644
+--- a/drivers/clk/imx/clk-cpu.c
++++ b/drivers/clk/imx/clk-cpu.c
+@@ -94,7 +94,7 @@ struct clk *imx_clk_cpu(const char *name, const char *par=
+ent_name,
+=20
+ 	init.name =3D name;
+ 	init.ops =3D &clk_cpu_ops;
+-	init.flags =3D 0;
++	init.flags =3D CLK_IS_CRITICAL;
+ 	init.parent_names =3D &parent_name;
+ 	init.num_parents =3D 1;
+=20
+--=20
+2.7.4
 
