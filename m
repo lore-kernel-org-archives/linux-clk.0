@@ -2,82 +2,78 @@ Return-Path: <SRS0=5IOi=M5=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C03B8ECDE30
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Oct 2018 11:52:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A53BECDE30
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Oct 2018 12:04:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83A4F2150D
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Oct 2018 11:52:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3FC0A2150D
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Oct 2018 12:04:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="guEq1lof"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83A4F2150D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="PvMYFxUT";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="i0PuzvVq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FC0A2150D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727114AbeJQTr7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 Oct 2018 15:47:59 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:41765 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726954AbeJQTr6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 Oct 2018 15:47:58 -0400
-Received: by mail-lf1-f65.google.com with SMTP id q39-v6so19538812lfi.8;
-        Wed, 17 Oct 2018 04:52:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=cfSG1buupXCJHF8jEHW3x2+z7RFJydFSFEVUQlA+auM=;
-        b=guEq1lofLc+hLXvba6ZyXOb3a7J1se9Opg0WAFrkiC75OIc3+YcpBlfKefwgXu8z8F
-         TsJ4M7fvuoDd/5LjSQYA9y3sVZ6vPcMmTU/+reUygSPMh2iVAHP7JA/D5AnvvKG8XxaT
-         NLlB3VM9O7wXDrrItAP2rcm6EZVMVNYPxIYinxm09vftGolf8tOAqhC7Ys8yJx0huQ4/
-         /2MyB6iK5BSzOAQg2GCF9GgI00CPEF8gV5yhsiQzZQasGZ7ABNfnAGce6mXkZ5eSkoq8
-         i/G1V3a5qlbaMiEEYwNZs7yXA2Yzf/bALtvivIaZGYXSsxG0ToLopcKSz+b367201HJN
-         9EGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=cfSG1buupXCJHF8jEHW3x2+z7RFJydFSFEVUQlA+auM=;
-        b=l1etdYtXR9NryRZnx240WywvMrV73kd8wK3foJJBLbHZqMP5mcwn9w6RyUSvOXJ6Bg
-         3td6fginHvt1wzoB9Z6rJ5cy8mKzJEdFWD5Im5PS1VdzUJFXMEbPAOYnwlh4+1lWh+HK
-         yNmHw3evChUc2BQAvbwsVRlNsEe2NcKDhRWmOcsuXpLMzIyfDS0K9YyDgUW2AMD7/epi
-         4vG7Z805EUaRZHvdLocMheSDrkh4JcEBfRJyLKFREnvQLJvfE3j99nweG3B7le1oLHWP
-         xVy30AA0aTHJ2QFAGfJzgRG/1XawpLCtG+Ors6ghmPoOGCmrj6J7Q+a3Ha2EaJjnkV5k
-         24/A==
-X-Gm-Message-State: ABuFfojeV6SQ6Q0aVUXwfJvY+oKrzq1F6JNhKSloz3H3eyZj+9knxLZi
-        OlFOV10TEeQM1U3kDXwAGD6EzvBf
-X-Google-Smtp-Source: ACcGV62hAcBCGzD8qXv1fpPXpAuIu3Uv6PMwFEQMAI2WkddnfT1SlTCF72cgXfddlKpz76D9Log6pw==
-X-Received: by 2002:a19:a686:: with SMTP id p128-v6mr14905522lfe.42.1539777155232;
-        Wed, 17 Oct 2018 04:52:35 -0700 (PDT)
-Received: from [192.168.2.145] ([109.252.91.118])
-        by smtp.googlemail.com with ESMTPSA id k18-v6sm3922402ljk.58.2018.10.17.04.52.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 17 Oct 2018 04:52:34 -0700 (PDT)
-Subject: Re: [PATCH v2 2/2] clk: tegra20: Enable lock-status polling for PLLs
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180830184210.5369-1-digetx@gmail.com>
- <20180830184210.5369-2-digetx@gmail.com>
- <20180831092948.GP1636@tbergstrom-lnx.Nvidia.com>
- <909e2a52-4116-9ee7-db23-8ea1dfffade0@gmail.com>
-Message-ID: <2e877ee7-2977-496b-5073-772256c76191@gmail.com>
-Date:   Wed, 17 Oct 2018 14:52:27 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        id S1727129AbeJQT7m (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 Oct 2018 15:59:42 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:41156 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727013AbeJQT7m (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 Oct 2018 15:59:42 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 97CD6612F8; Wed, 17 Oct 2018 12:04:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539777857;
+        bh=S7RnobJyql3BkZQjoqrvG61iLOEMZE+Oqov9+xP5MeM=;
+        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
+        b=PvMYFxUTDINiIa1Yzrc13qmSmehuWNgwwXTevXaTbDwEblFI+tfYNhWW2/WA8KUgG
+         U+GOpezAzYjkYiyBVzAD2NpoWJ5fTwcZvMVCy5HqKoG3R6y/0qM9HJJFRXtka9N5tf
+         fUpXCqbaloAj9hhpEO/gPBFxavMzs8GRYoLe0eiM=
+Received: from [192.168.225.247] (unknown [49.33.192.137])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 155C1612F8;
+        Wed, 17 Oct 2018 12:04:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1539777856;
+        bh=S7RnobJyql3BkZQjoqrvG61iLOEMZE+Oqov9+xP5MeM=;
+        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
+        b=i0PuzvVqx/96ETEOLwNuHcRSfsK3s0JUhgL1LtY5FVaLtFknsVeLQbaeyegmCp2RW
+         fDo6fUIfQjE1YQndUV0iV5dLCgSl+RqkF4CA5IoTwadEtqOueVElvrzVlaC5CsEzMK
+         S7CAGmC8S79/TIWrl9B/mf80m8aqNxr67bHGMD4Q=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 155C1612F8
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+Subject: Re: [PATCH v6] clk: qcom: Add lpass clock controller driver for
+ SDM845
+From:   Taniya Das <tdas@codeaurora.org>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1538654546-31204-1-git-send-email-tdas@codeaurora.org>
+ <1538654546-31204-2-git-send-email-tdas@codeaurora.org>
+ <153896666821.119890.13143150697797456341@swboyd.mtv.corp.google.com>
+ <ba0d7d92-5ad9-2dcf-c5a5-21332df193f0@codeaurora.org>
+ <153911832719.119890.11984877060665330428@swboyd.mtv.corp.google.com>
+ <7d4012b9-e71d-f114-b228-7198f07ea767@codeaurora.org>
+ <153936574404.5275.10513827793530511886@swboyd.mtv.corp.google.com>
+ <7ad2344b-2307-3fb3-c34e-7443fb3a1ec8@codeaurora.org>
+Message-ID: <42e20a5e-beb4-fdc1-cf4a-f6329b09a476@codeaurora.org>
+Date:   Wed, 17 Oct 2018 17:34:10 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <909e2a52-4116-9ee7-db23-8ea1dfffade0@gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <7ad2344b-2307-3fb3-c34e-7443fb3a1ec8@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
@@ -85,28 +81,100 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 8/31/18 12:45 PM, Dmitry Osipenko wrote:
-> On 8/31/18 12:29 PM, Peter De Schrijver wrote:
->> On Thu, Aug 30, 2018 at 09:42:10PM +0300, Dmitry Osipenko wrote:
->>> Currently all PLL's on Tegra20 use a hardcoded delay despite of having
->>> a lock-status bit. The lock-status polling was disabled ~7 years ago
->>> because PLLE was failing to lock and was a suspicion that other PLLs
->>> might be faulty too. Other PLLs are okay, hence enable the lock-status
->>> polling for them. This reduces delay of any operation that require PLL
->>> to lock.
+
+
+On 10/17/2018 5:07 PM, Taniya Das wrote:
+> Hello Stephen,
+> 
+> On 10/12/2018 11:05 PM, Stephen Boyd wrote:
+>> Quoting Taniya Das (2018-10-09 23:12:27)
 >>>
->>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>> ---
 >>>
->>> Changelog:
+>>> On 10/10/2018 2:22 AM, Stephen Boyd wrote:
+>>>> Quoting Taniya Das (2018-10-09 10:26:38)
+>>>>> Hello Stephen,
+>>>>>
+>>>>> On 10/8/2018 8:14 AM, Stephen Boyd wrote:
+>>>>>> Quoting Taniya Das (2018-10-04 05:02:26)
+>>>>>>> Add support for the lpass clock controller found on SDM845 based 
+>>>>>>> devices.
+>>>>>>> This would allow lpass peripheral loader drivers to control the 
+>>>>>>> clocks to
+>>>>>>> bring the subsystem out of reset.
+>>>>>>> LPASS clocks present on the global clock controller would be 
+>>>>>>> registered
+>>>>>>> with the clock framework based on the device tree flag. Also do 
+>>>>>>> not gate
+>>>>>>> these clocks if they are left unused.
+>>>>>>
+>>>>>> Why not gate them? This statement states what the code is doing, 
+>>>>>> not why
+>>>>>> it's doing it which is the more crucial information that should be
+>>>>>> described in the commit text. Also, please add a comment about it 
+>>>>>> to the
+>>>>>> code next to the flag.
+>>>>>>
+>>>>>> I am concerned that it doesn't make any sense though, so probably it
+>>>>>> shouldn't be marked as CLK_IGNORE_UNUSED and it's papering over some
+>>>>>> other larger bug that needs to be fixed.
+>>>>>>
+>>>>>
+>>>>> It does not have any bug, it is just that to access these lpass
+>>>>> registers we would need the GCC lpass registers to be enabled. I would
+>>>>> update the same in the commit text.
+>>>>>
+>>>>> During clock late_init these clocks should not be accessed to check 
+>>>>> the
+>>>>> clock status as they would result in unclocked access. The client 
+>>>>> would
+>>>>> request these clocks in the correct order and it would not have any 
+>>>>> issue.
+>>>>>
+>>>>
+>>>> That seems like the bug right there. If the LPASS registers can't be
+>>>> accessed unless the clks in GCC are enabled then this driver needs to
+>>>> turn the clks on before reading/writing registers. Marking the clks as
+>>>> ignore unused is skipping around the real problem.
+>>>>
 >>>
->>> v2:	Don't enable polling for PLLE as it known to not being able to lock.
+>>> If the driver requests for the clocks they would maintain the order. But
+>>> if the clock late init call is invoked before the driver requests, there
+>>> is no way I could manage this dependency, that is the only reason to
+>>> mark them unused.
 >>>
 >>
->> This isn't correct. The lock bit of PLLE can declare lock too early, but the
->> PLL itself does lock.
+>> Which driver are we talking about here? The lpass clk driver? Presumably
+>> the lpass clk driver would request the GCC clks and turn them on in
+>> probe and then register any lpass clks. If the lpass clk driver probes
+>> bfeore late init, then the gcc clks will be enabled and everything
+>> works, and if the lpass clk driver probes after late init then the clks
+>> that can't be touched without gcc clks enabled won't be registered, and
+>> then they won't be touched. What goes wrong?
+>>
+>>
 > 
-> Indeed, it locks but can't be polled for the lock-status as it doesn't have the
-> lock-status bit.
+> Okay, sure, I will take the GCC clock handles and then enable/disable 
+> them accordingly.
+> 
+> I missed earlier, so here is what you suggest
 
-Actually it has lock-status bit. Not sure how I managed to miss it before.
+gcc_probe --> GCC LPASS clocks registered.
+lpass_probe --> clk_get on gcc_lpass_clocks/ clk_prepare_enable -->
+register the lpass clocks --> clk_disable_unprepare gcc_lpass_clocks.
+
+But the problem is not during the above. It is the below
+static void clk_disable_unused_subtree(struct clk_core *core)
+{
+....
+
+         if (clk_core_is_enabled(core)) {  --> This access fails.
+....
+
+}
+
+Please let me know your comments in case I missed something.
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
+
+--
