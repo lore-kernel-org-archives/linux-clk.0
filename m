@@ -2,114 +2,76 @@ Return-Path: <SRS0=5IOi=M5=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66DDAC5ACCC
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Oct 2018 03:27:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D733DC04EB9
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Oct 2018 06:02:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15CC9214FA
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Oct 2018 03:27:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9DC1A214FE
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Oct 2018 06:02:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Or3Av8ax"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15CC9214FA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JWoMdtZR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DC1A214FE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727192AbeJQLVa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 Oct 2018 07:21:30 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:36384 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727260AbeJQLV3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 Oct 2018 07:21:29 -0400
-Received: by mail-pf1-f193.google.com with SMTP id l81-v6so12472116pfg.3
-        for <linux-clk@vger.kernel.org>; Tue, 16 Oct 2018 20:27:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=c2NGBkleLooUmiW44+p0aReBMQJapUb9eKrSpvpqdLY=;
-        b=Or3Av8axUrV4bBZsq8J9dfjAfolYL9nbYK4wT7+9BB8yO0cKv0RM28Lz/xzxgffmA/
-         vG46WJQU5ASVNlao0Nk2cnDEGg6tsAUI5dKp9Jqe+De7vP6gDu3Dm/rH7pze6mZmwNCy
-         D71Gfe1Isz8Ji4K+5hM9prGBciEKOUICf6i5E=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=c2NGBkleLooUmiW44+p0aReBMQJapUb9eKrSpvpqdLY=;
-        b=uGmu6JXh765su5osrgzo/p2WGfW6TdQR1zRjUkNqU0JHNNutO9Da9NkbB5+rUR1oKw
-         LsCMs4lO4CESG7FBuSFZ5wnHcOcZyoZyfqOh+I8NXSSf8OJeWH+s+j1DJjY5rrh7kkfO
-         hefZ19O/uYTI87wnR1kMyNUnSuUl0sYdSq536PawVuQzPixd8lkzJi4rmU4BXbpsm/UV
-         pO7BWUj/3ReePFxe+rx8NpZGJwNf0xhGP0YVON9QU0txZLwmUk/i3Ywua+6vf0AYILda
-         x9xtiQdfiuUSuvRdTYwOxrM1nVd49sjhkkso51+GXHThiKOmIRf+12T+bHME0u+DhsJa
-         V+yA==
-X-Gm-Message-State: ABuFfoj4F9uQ/uJeOAdFj+YOX4pfWOu4ZxSbRrQRUjfjeIKb08qBDQAE
-        kpo/+gxQlazwGajL6etkyNrS
-X-Google-Smtp-Source: ACcGV61l82DxE/pDVALljfjIVxQgnBCBMhE2kiv/OPYPmejIER83dRfp97JdbmuCWUKmGRzGzruuaQ==
-X-Received: by 2002:a63:3181:: with SMTP id x123-v6mr386739pgx.83.1539746874866;
-        Tue, 16 Oct 2018 20:27:54 -0700 (PDT)
-Received: from Mani-XPS-13-9360 ([2409:4072:6305:1a9d:4c38:eda8:7f99:11d3])
-        by smtp.gmail.com with ESMTPSA id 187-v6sm24701183pfu.129.2018.10.16.20.27.49
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 16 Oct 2018 20:27:54 -0700 (PDT)
-Date:   Wed, 17 Oct 2018 08:57:46 +0530
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     xuwei5@hisilicon.com
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, amit.kucheria@linaro.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH 0/4] Add clock support for Hi3670 SoC
-Message-ID: <20181017032746.GB2888@Mani-XPS-13-9360>
-References: <20180921060103.21370-1-manivannan.sadhasivam@linaro.org>
+        id S1727213AbeJQN4Y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 Oct 2018 09:56:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49156 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727023AbeJQN4Y (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 17 Oct 2018 09:56:24 -0400
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5F327214C4;
+        Wed, 17 Oct 2018 06:02:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539756144;
+        bh=1EYjIybDDJI750QXBtBdOTJlG8T5cp/Eib8My+JrvxE=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=JWoMdtZRM2riPZlraOKRdv+q2+Po/ZNdl7O79UbXQ7X80Pi4ovKK6CxI5SAu7hftE
+         BnY4cdrjBhygS6XieWtjPrvY8+WJ3DUi+CBjddpAoURHdCfwIAm9I1n1zHEWPMJ7wR
+         nH5RQatbwEfjXex6sPuFHY1ZeUS6DPOU4LMCaaKk=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180921060103.21370-1-manivannan.sadhasivam@linaro.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: quoted-printable
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        afaerber@suse.de, mturquette@baylibre.com, p.zabel@pengutronix.de,
+        robh+dt@kernel.org
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20180810095113.25292-2-manivannan.sadhasivam@linaro.org>
+Cc:     linux-clk@vger.kernel.org, liuwei@actions-semi.com,
+        mp-cs@actions-semi.com, 96boards@ucrobotics.com,
+        devicetree@vger.kernel.org, daniel.thompson@linaro.org,
+        amit.kucheria@linaro.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, hzhang@ucrobotics.com,
+        bdong@ucrobotics.com, manivannanece23@gmail.com,
+        thomas.liau@actions-semi.com, jeff.chen@actions-semi.com,
+        pn@denx.de, edgar.righi@lsitec.org.br, sravanhome@gmail.com,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+References: <20180810095113.25292-1-manivannan.sadhasivam@linaro.org>
+ <20180810095113.25292-2-manivannan.sadhasivam@linaro.org>
+Message-ID: <153975614377.5275.13892464901714156121@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v3 1/9] clk: actions: Cache regmap info in private clock
+ descriptor
+Date:   Tue, 16 Oct 2018 23:02:23 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Sep 20, 2018 at 11:00:59PM -0700, Manivannan Sadhasivam wrote:
-> This patchset adds clock support for Hi3670 SoC from HiSilicon utilizing
-> the HiSi common clock code. While adding clock support, let's remove the
-> fixed clock for UART and source SoC clock on HiKey970 board.
-> 
-> This patchset has been verified on HiKey970 board.
-> 
-> Thanks,
-> Mani
-> 
-> Manivannan Sadhasivam (4):
->   dt-bindings: clk: hisilicon: Add bindings for Hi3670 clk
->   arm64: dts: hisilicon: Add clock nodes for Hi3670 SoC
->   arm64: dts: hisilicon: Source SoC clock for UART6
+Quoting Manivannan Sadhasivam (2018-08-10 02:51:05)
+> In order to support the reset controller, regmap info needs to
+> be cached in the private clock descriptor, owl_clk_desc. Hence,
+> save that and also make the clock descriptor struct non const.
+> =
 
-Hi Wei,
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
 
-Since the clk patches are merged, can you please take the DTS patches
-through HiSi tree? I will post the pinctrl/gpio patches soon which will
-depend on clk bits.
+Applied to clk-next
 
-Thanks,
-Mani
-
->   clk: hisilicon: Add clock driver for Hi3670 SoC
-> 
->  .../bindings/clock/hi3670-clock.txt           |   43 +
->  arch/arm64/boot/dts/hisilicon/hi3670.dtsi     |   48 +-
->  drivers/clk/hisilicon/Kconfig                 |    7 +
->  drivers/clk/hisilicon/Makefile                |    1 +
->  drivers/clk/hisilicon/clk-hi3670.c            | 1016 +++++++++++++++++
->  include/dt-bindings/clock/hi3670-clock.h      |  348 ++++++
->  6 files changed, 1458 insertions(+), 5 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/clock/hi3670-clock.txt
->  create mode 100644 drivers/clk/hisilicon/clk-hi3670.c
->  create mode 100644 include/dt-bindings/clock/hi3670-clock.h
-> 
-> -- 
-> 2.17.1
-> 
