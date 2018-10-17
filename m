@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82678ECDE32
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Oct 2018 15:25:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC9F1ECDE32
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Oct 2018 15:26:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 499C621526
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Oct 2018 15:25:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 751C521526
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Oct 2018 15:26:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NeL5oABZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 499C621526
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1YAAy6U/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 751C521526
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727448AbeJQXVw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 Oct 2018 19:21:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49372 "EHLO mail.kernel.org"
+        id S1727797AbeJQXWq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 Oct 2018 19:22:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49596 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727032AbeJQXVw (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 17 Oct 2018 19:21:52 -0400
+        id S1727132AbeJQXWp (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 17 Oct 2018 19:22:45 -0400
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D0CAA2148D;
-        Wed, 17 Oct 2018 15:25:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D766321527;
+        Wed, 17 Oct 2018 15:26:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539789939;
-        bh=OZj2GDmdvVDHedppTdL1IX5SjvozIaFPyfL3J/X7J2Y=;
+        s=default; t=1539789993;
+        bh=AxayswVADNuOS65eJITuNANdHZhcl4q0uIAb465Ys10=;
         h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=NeL5oABZ93VeuK6jNxGKdkegUxxc4c28YiE+SgcRhCvMFmJs2Dkrb+/g5nIMIke2P
-         Rl6B6WP3bucQYu+VT1opJ79mJ69pLle3oKvo7wsTuWeKzPQp06y2ghrsAgE/84vVY3
-         i+fzxmxXL5MvcE89xQqFdtK2UMrigqjyR25+tUEM=
+        b=1YAAy6U/Xcv4kA+uLPx3IRDj3LpXmKVPxfTNfae3mYY7f+iz+7aqu2CUFtE4KlsrR
+         rZzFreAoJq9Z5vJ8iVPU3OefXvVlnmzqAKNIUz2coiF4QQ6KY/kTqHU96XgFuMXO2m
+         WerVlv6egENUOvNcHacNUKCwMZihlyipwX5JB+MU=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -53,10 +53,10 @@ In-Reply-To: <1539756441-18776-2-git-send-email-Anson.Huang@nxp.com>
 Cc:     dl-linux-imx <linux-imx@nxp.com>
 References: <1539756441-18776-1-git-send-email-Anson.Huang@nxp.com>
  <1539756441-18776-2-git-send-email-Anson.Huang@nxp.com>
-Message-ID: <153978993915.5275.9461015919945429893@swboyd.mtv.corp.google.com>
+Message-ID: <153978999232.5275.9499110259610344794@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.7
 Subject: Re: [PATCH 2/2] clk: imx7d: remove CLK_IS_CRITICAL flag for arm_a7_root_clk
-Date:   Wed, 17 Oct 2018 08:25:39 -0700
+Date:   Wed, 17 Oct 2018 08:26:32 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
@@ -64,9 +64,6 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 Quoting Anson Huang (2018-10-16 23:12:04)
 > i.MX7D uses virtual cpu clock of "arm" clock to be child clock
-
-This statement is concerning. Why do we have virtual clks?
-
 > of "arm_a7_root_clk" and it is with CLK_IS_CRITICAL flag set, so
 > no need to add CLK_IS_CRITICAL flag for keeping "arm_a7_root_clk"
 > use count correct, latest clock tree is as below in clk_summary:
@@ -90,3 +87,7 @@ This statement is concerning. Why do we have virtual clks?
 > =
 
 > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> ---
+
+Applied to clk-next
+
