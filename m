@@ -4,74 +4,70 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52851ECDE32
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Oct 2018 18:02:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A87F8ECDE39
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Oct 2018 18:16:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11A9B214AB
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Oct 2018 18:02:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 783A1214DD
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Oct 2018 18:16:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wHFM0+Sw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11A9B214AB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bw2No9+L"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 783A1214DD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727082AbeJRB7c (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 Oct 2018 21:59:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40352 "EHLO mail.kernel.org"
+        id S1728121AbeJRCNe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 Oct 2018 22:13:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43060 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727037AbeJRB7c (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 17 Oct 2018 21:59:32 -0400
+        id S1727400AbeJRCNe (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 17 Oct 2018 22:13:34 -0400
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D37562148E;
-        Wed, 17 Oct 2018 18:02:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DEB442145D;
+        Wed, 17 Oct 2018 18:16:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539799362;
-        bh=fMzQqZxEQjVE8obLe3u7fT2QPx5aooUoihRJ2yj5yDI=;
+        s=default; t=1539800202;
+        bh=MJUVhLXS0nJ+lrjVH2czH8ETt4bV3aZv09GHZMpmTp8=;
         h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=wHFM0+SwpgkOvkbT6980Neq5CyofWp2HBd5+jrVNjbmsUqmdaDYkrTIgqtDIiJ8yS
-         uV8AfJSf9JyH9qvTN+84Fc66Dc0HkwJ+qaE3sfS5njL59zKYGaQVPUUoY+M61gy2hT
-         EezNG5+Z064v+ordBvxXMznKyvQ5OwzQl4lXPiiU=
+        b=bw2No9+LbPxuPJER3HIcriKH1I2PNZtKabw09N8y3sTRs7Pc5aQ3A1Lx630wZeNNB
+         9hZ5E1KdbXjgjj8nlw+tYO5qZChBONaBAqlNGjO9Domqs98+M+hVweowl1NVM/PkqU
+         T5hyqUEWpm3fzHU0UMKva9at3dJtYMOAS17mJcmQ=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-To:     Abel Vesa <abel.vesa@nxp.com>, Dong Aisheng <aisheng.dong@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>
+To:     Anson Huang <Anson.Huang@nxp.com>, aisheng.dong@nxp.com,
+        clement.peron@devialet.com, colin.didier@devialet.com,
+        devicetree@vger.kernel.org, fabio.estevam@nxp.com,
+        kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux@armlinux.org.uk, mark.rutland@arm.com,
+        matteo.lisi@engicam.com, michael@amarulasolutions.com,
+        mturquette@baylibre.com, ping.bai@nxp.com, robh+dt@kernel.org,
+        s.hauer@pengutronix.de, shawnguo@kernel.org, shengjiu.wang@nxp.com
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1539157520-25081-2-git-send-email-abel.vesa@nxp.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>, linux-imx@nxp.com,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Abel Vesa <abelvesa@linux.com>, Abel Vesa <abel.vesa@nxp.com>
-References: <1539157520-25081-1-git-send-email-abel.vesa@nxp.com>
- <1539157520-25081-2-git-send-email-abel.vesa@nxp.com>
-Message-ID: <153979936233.5275.16984530832638476058@swboyd.mtv.corp.google.com>
+In-Reply-To: <1535701998-20443-3-git-send-email-Anson.Huang@nxp.com>
+Cc:     Linux-imx@nxp.com
+References: <1535701998-20443-1-git-send-email-Anson.Huang@nxp.com>
+ <1535701998-20443-3-git-send-email-Anson.Huang@nxp.com>
+Message-ID: <153980020125.5275.8353288870810048258@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.7
-Subject: Re: [PATCH v11 1/5] dt-bindings: add binding for i.MX8MQ CCM
-Date:   Wed, 17 Oct 2018 11:02:42 -0700
+Subject: Re: [PATCH 2/7] clk: imx6ul: add mmdc1 ipg clock
+Date:   Wed, 17 Oct 2018 11:16:41 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Abel Vesa (2018-10-10 00:45:16)
-> From: Lucas Stach <l.stach@pengutronix.de>
+Quoting Anson Huang (2018-08-31 00:53:13)
+> i.MX6UL has MMDC1 ipg clock in CCM CCGR, add it into
+> clock tree for clock management.
 > =
 
-> This adds the binding for the i.MX8MQ Clock Controller Module.
-> =
-
-> Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 > ---
 
-Looks ok, but I'll wait for the resend.
+Applied to clk-next
+
