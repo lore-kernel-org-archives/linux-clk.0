@@ -2,102 +2,64 @@ Return-Path: <SRS0=5IOi=M5=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 788C6ECDE30
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Oct 2018 12:27:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59F59ECDE30
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Oct 2018 13:35:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D9902098A
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Oct 2018 12:27:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IwJ1Fso2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D9902098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 296512087A
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Oct 2018 13:35:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 296512087A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sntech.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727049AbeJQUXD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 Oct 2018 16:23:03 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:44850 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726954AbeJQUXD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 Oct 2018 16:23:03 -0400
-Received: by mail-lf1-f65.google.com with SMTP id m18-v6so19639596lfl.11;
-        Wed, 17 Oct 2018 05:27:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=EyldOrl1AnlI7bDeSkD8n3QBfB1hJho+erDX8iZ85/s=;
-        b=IwJ1Fso2PgZU6HOwFCFc0BVHhFn7dAbnbny+NqUpkrjribbvX94WCURXyApn5BP4RA
-         z14wX59eLmaERvim275eJA+Yo/103F1r992dIO/XLKC2DRKl8u9p1ZlHjfoG2hGEayvW
-         m6lCsezlscDJ1oakuZRc9ZoctRV+DXREmDc1DFJtSIqncEdBZJQToMqzoiA+kK0QHd5K
-         /kvymPJ/ivUbQdQHmgqp712MMb5i22KlNlZJL6Fk7e1/XPpgOXVt8iaPvgucf7laZXmE
-         c9wVGcyj00pILZlc1blJMqmdY/ojFtgS9pBdNwwNl9+H3qoBi5u60uMLk2jT3x+6VAM5
-         5uxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=EyldOrl1AnlI7bDeSkD8n3QBfB1hJho+erDX8iZ85/s=;
-        b=WkGy5NyTjI4Sk5wvWL7f5k7AMYGO5hWjblXHqWBZCRqmOaGSdkpmipZmzs+PLOyv4I
-         beXTuhJZ3rUsz75bruewHsyEd+Kyb74giRLBI7K3z9p+T4hkBvwasigwIJ6kuSO43zsG
-         kP375ldE3xz0HPAY9/T23c2SFZkvgt/nxqrxBciV5MGOph1bQy8wGUlAcfNYIA8NAT0z
-         XuH6cfdj5f+gFHd93/bt7vO200bSohBidrtJKCaYqmRXG2P1ImciTlMiAvY1A2ZsAAIR
-         cdUok+DCSP/VZofaQEgf33gaZDHlGw03RGgt9V4XcEfLMGVjurkcykh7rWejywuakrG7
-         m+SQ==
-X-Gm-Message-State: ABuFfoj5wicWraD7aoBY1DbPimMEWzzEpYRnn2llgqfBzH24q8kFByAl
-        tMLbLK36pfxVXFU1TAeKzFbczNt4
-X-Google-Smtp-Source: ACcGV609L5u4voduDTYHIB8fdIkubV1Buw2BdRViIDrfJRLJPaw9zS8bDY1YioiIo7EvgvCpV6Hbew==
-X-Received: by 2002:a19:d7d6:: with SMTP id q83-v6mr15583396lfi.27.1539779252844;
-        Wed, 17 Oct 2018 05:27:32 -0700 (PDT)
-Received: from [192.168.2.145] ([109.252.91.118])
-        by smtp.googlemail.com with ESMTPSA id g92-v6sm4117414lji.24.2018.10.17.05.27.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 17 Oct 2018 05:27:31 -0700 (PDT)
-Subject: Re: [PATCH v1 1/3] clk: tegra: Convert CCLKG mux to mux + clock
- divider on Tegra30
-To:     Jon Hunter <jonathanh@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        id S1727018AbeJQVbS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 Oct 2018 17:31:18 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:53128 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727000AbeJQVbS (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 17 Oct 2018 17:31:18 -0400
+Received: from ip5f5a8a55.dynamic.kabel-deutschland.de ([95.90.138.85] helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.0:ECDHE_RSA_AES_256_CBC_SHA1:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1gClz2-0003yh-D6; Wed, 17 Oct 2018 15:35:32 +0200
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc:     linux-kernel@vger.kernel.org, kernel@collabora.com,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180830192045.11017-1-digetx@gmail.com>
- <20180830192045.11017-2-digetx@gmail.com>
- <19523f37-eb78-067c-cc62-b6ceaad985a9@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <b1265595-f01d-5ab2-aaf9-6c4d674f9f3a@gmail.com>
-Date:   Wed, 17 Oct 2018 15:27:24 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] clk: rockchip: Fix static checker warning in rockchip_ddrclk_get_parent call
+Date:   Wed, 17 Oct 2018 15:35:31 +0200
+Message-ID: <2363939.EMdi4fOIx9@phil>
+In-Reply-To: <20181016134144.12461-1-enric.balletbo@collabora.com>
+References: <20181016134144.12461-1-enric.balletbo@collabora.com>
 MIME-Version: 1.0
-In-Reply-To: <19523f37-eb78-067c-cc62-b6ceaad985a9@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 10/17/18 11:53 AM, Jon Hunter wrote:
+Am Dienstag, 16. Oktober 2018, 15:41:44 CEST schrieb Enric Balletbo i Serra:
+> Fixes the signedness bug returning '(-22)' on the return type by removing the
+> sanity checker in rockchip_ddrclk_get_parent(). The function should return
+> and unsigned value only and it's safe to remove the sanity checker as the
+> core functions that call get_parent like clk_core_get_parent_by_index already
+> ensures the validity of the clk index returned (index >= core->num_parents).
 > 
-> On 30/08/2018 20:20, Dmitry Osipenko wrote:
->> Some of the CCLKG parents aren't accessible via device tree because they
->> are created as non-DT clocks. Apparently there is no reason to define
->> these clocks in that manner, hence convert CCLKG mux to mux + clock
->> divider to remove the non-DT parent clocks. Now it is possible to request
->> all of CCLKG parents from device tree, which is necessary for the CPUFreq
->> driver.
-> 
-> Is it likely that all of these clock parents will be used by the CPUFreq
-> driver for these devices? If the clocks you currently need are available
-> then my preference would be to stick with what we have for now.
+> Fixes: a4f182bf81f18 ("clk: rockchip: add new clock-type for the ddrclk")
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 
-You could use them all if you want, that's what HW allow. The current clock description doesn't fully describe the HW, though it should be enough at least for the CPUFreq driver if we are going to use clk_get_sys() and stick to the "default" parent. Peter?
+applied to my clk-branch with Stephen's Review
+
+
+Thanks
+Heiko
+
+
