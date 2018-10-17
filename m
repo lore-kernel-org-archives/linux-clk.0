@@ -2,46 +2,46 @@ Return-Path: <SRS0=5IOi=M5=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBC0CECDE38
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Oct 2018 15:17:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BD32ECDE30
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Oct 2018 15:17:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 835D621526
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Oct 2018 15:17:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22B6821527
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Oct 2018 15:17:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="RWlC7M/t"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 835D621526
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="J6aS3HUa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22B6821527
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727090AbeJQXNQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 Oct 2018 19:13:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47482 "EHLO mail.kernel.org"
+        id S1727350AbeJQXNy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 Oct 2018 19:13:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47662 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727013AbeJQXNQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 17 Oct 2018 19:13:16 -0400
+        id S1727309AbeJQXNy (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 17 Oct 2018 19:13:54 -0400
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 157DD2150D;
-        Wed, 17 Oct 2018 15:17:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B61302150D;
+        Wed, 17 Oct 2018 15:17:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539789426;
-        bh=kHfJqcFK0QDiUidmnuVQO6BxM/MoagU0lZ4F810gN58=;
+        s=default; t=1539789464;
+        bh=JmvtNrm7t2U8I0IP1g+bpoKqdtzPmkPoq1xSnB0okO4=;
         h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=RWlC7M/tztIX07gt5isCq4Kdgn2ChrDSUM/Bsqam4kDkndrv6EjEO4f8M9PzL3otB
-         sro5SWjCgeeFtHO2g3DWAQYR4stec43mkGzyBysQqXOTbF+qerXYMtYvnHKMLBeWzO
-         o54QqXrEzNIH3JVsiVpCAuGc0Cv98XDNgj+rrIRY=
+        b=J6aS3HUaVFkGiaqDLIk0ywqCrytOocNp9kqU8vlKO498T3ZEEJN9/sdWwkHDHBLw5
+         xhwltbxkV+KRi22/jNLaHJjykCILkXsz5UpZ/xh5Pi5mMfMuOwvFHVnupeiK9fyYHm
+         gwfb0wcoNch2KCElv+1NwH4afHkuvioqejZD/buE=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 To:     "A.s. Dong" <aisheng.dong@nxp.com>,
         "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <AM0PR04MB42111D180BE6D7557F71D15380FF0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+In-Reply-To: <AM0PR04MB42119987039050D9488EB30F80FF0@AM0PR04MB4211.eurprd04.prod.outlook.com>
 Cc:     "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>,
         "mturquette@baylibre.com" <mturquette@baylibre.com>,
@@ -50,153 +50,58 @@ Cc:     "linux-arm-kernel@lists.infradead.org"
         dl-linux-imx <linux-imx@nxp.com>,
         "kernel@pengutronix.de" <kernel@pengutronix.de>
 References: <1539504194-28289-1-git-send-email-aisheng.dong@nxp.com>
- <1539504194-28289-4-git-send-email-aisheng.dong@nxp.com>
- <153972518358.5275.8551722631185725008@swboyd.mtv.corp.google.com>
- <AM0PR04MB42111D180BE6D7557F71D15380FF0@AM0PR04MB4211.eurprd04.prod.outlook.com>
-Message-ID: <153978942538.5275.15892434593141965554@swboyd.mtv.corp.google.com>
+ <1539504194-28289-5-git-send-email-aisheng.dong@nxp.com>
+ <153972527843.5275.15123840961402192766@swboyd.mtv.corp.google.com>
+ <AM0PR04MB42119987039050D9488EB30F80FF0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+Message-ID: <153978946415.5275.1276338045125571065@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.7
-Subject: RE: [PATCH V4 03/11] clk: imx: scu: add scu clock divider
-Date:   Wed, 17 Oct 2018 08:17:05 -0700
+Subject: RE: [PATCH V4 04/11] clk: imx: scu: add scu clock gpr divider
+Date:   Wed, 17 Oct 2018 08:17:44 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting A.s. Dong (2018-10-17 01:56:35)
+Quoting A.s. Dong (2018-10-17 02:03:28)
+> > -----Original Message-----
 > > From: Stephen Boyd [mailto:sboyd@kernel.org]
-> > Sent: Wednesday, October 17, 2018 5:26 AM
-> > Quoting A.s. Dong (2018-10-14 01:07:49)
-> > > diff --git a/drivers/clk/imx/scu/clk-divider-scu.c
-> > > b/drivers/clk/imx/scu/clk-divider-scu.c
-> > > new file mode 100644
-> > > index 0000000..51cb816
-> > > --- /dev/null
-> > > +++ b/drivers/clk/imx/scu/clk-divider-scu.c
-> > > @@ -0,0 +1,176 @@
-> > > +       msg.clk =3D div->clk_type;
+> > Sent: Wednesday, October 17, 2018 5:28 AM
+> [...]
+> > Quoting A.s. Dong (2018-10-14 01:07:52)
+> > > +/*
+> > > + * clk_divider_scu_recalc_rate - Get clock rate for a SCU clock
+> > > + * @hw: clock to get rate for
+> > > + * @parent_rate: parent rate provided by common clock framework
+> > > + *
+> > > + * Gets the current clock rate of a SCU clock. Returns the current
+> > > + * clock rate, or zero in failure.
+> > > + */
+> > > +static unsigned long clk_divider_gpr_scu_recalc_rate(struct clk_hw *=
+hw,
+> > > +                                                    unsigned long
+> > > +parent_rate) {
+> > > +       struct clk_divider_gpr_scu *clk =3D to_clk_divider_gpr_scu(hw=
+);
+> > > +       u32 val;
+> > > +       int ret;
 > > > +
-> > > +       ret =3D imx_scu_call_rpc(ccm_ipc_handle, &msg, true);
+> > > +       ret =3D imx_sc_misc_get_control(ccm_ipc_handle, clk->rsrc_id,
+> > > +                                     clk->gpr_id, &val);
 > > > +       if (ret) {
 > > > +               pr_err("%s: failed to get clock rate %d\n",
 > > > +                       clk_hw_get_name(hw), ret);
 > > > +               return 0;
 > > > +       }
 > > > +
-> > > +       resp =3D (struct imx_sc_msg_resp_get_clock_rate *)&msg;
+> > > +       return val ? parent_rate / 2 : parent_rate;
 > > =
 
-> > Does the response get written to the same place that the message is wri=
-tten? If
-> =
-
-> Yes
-> =
-
-> > so, it would be better to combine the different structs into a union th=
-at's
-> > always large enough to handle this? For example, it looks like there ar=
-e only 16
-> > + 8 bytes for the get_clock_rate structure, but then the response is re=
-turning
-> > the rate in 32 bytes. When we cast that here we're now getting an extra=
- 8
-> > bytes of stack, aren't we? Combining the different structures into one =
-bigger
-> > structure would alleviate this and avoid the need for casting.
+> > I hope parent_rate can't be zero here.
 > > =
 
 > =
 
-> Good catch.
-> Thanks for the professional explanation.
-> =
+> It can be zero, I guess.
+> But zero seems safe to me, am I wrong?
 
-> How about do something like below?
-> struct req_get_clock_rate {
->         u16 resource;
->         u8 clk;
-> } __packed;
-> =
-
-> struct resp_get_clock_rate {
->         u32 rate;
-> } __packed;
-
-This doesn't need __packed because it's a single u32.
-
-> =
-
-> struct imx_sc_msg_get_clock_rate {
->         struct imx_sc_rpc_msg hdr;
->         union {
->                 struct req_get_clock_rate req;
->                 struct resp_get_clock_rate resp;
->         } data;
-> } __packed;
-> =
-
-
-Yes something like this would be best. And now I wonder if
-imx_scu_call_rpc() is doing endianness swapping? Or does it copy data
-into these response structures? I'm saying that the u32/16/8 may need to
-be __le32/16/8 and then have the proper accessors.
-
-> =
-
-> > > +       hdr->size =3D 3;
-> > > +
-> > > +       msg.rate =3D rate;
-> > > +       msg.resource =3D div->rsrc_id;
-> > > +       msg.clk =3D div->clk_type;
-> > > +
-> > > +       ret =3D imx_scu_call_rpc(ccm_ipc_handle, &msg, true);
-> > > +       if (ret)
-> > > +               pr_err("%s: failed to set clock rate %ld : ret %d\n",
-> > > +                       clk_hw_get_name(hw), rate, ret);
-> > > +
-> > > +       return 0;
-> > > +}
-> > > +
-> > > +static const struct clk_ops clk_divider_scu_ops =3D {
-> > > +       .recalc_rate =3D clk_divider_scu_recalc_rate,
-> > > +       .round_rate =3D clk_divider_scu_round_rate,
-> > > +       .set_rate =3D clk_divider_scu_set_rate, };
-> > > +
-> > > +struct clk_hw *imx_clk_register_divider_scu(const char *name,
-> > > +                                           const char
-> > *parent_name,
-> > > +                                           u32 rsrc_id,
-> > > +                                           u8 clk_type) {
-> > > +       struct clk_divider_scu *div;
-> > > +       struct clk_init_data init;
-> > > +       struct clk_hw *hw;
-> > > +       int ret;
-> > > +
-> > > +       div =3D kzalloc(sizeof(*div), GFP_KERNEL);
-> > > +       if (!div)
-> > > +               return ERR_PTR(-ENOMEM);
-> > > +
-> > > +       div->rsrc_id =3D rsrc_id;
-> > > +       div->clk_type =3D clk_type;
-> > > +
-> > > +       init.name =3D name;
-> > > +       init.ops =3D &clk_divider_scu_ops;
-> > > +       init.flags =3D CLK_GET_RATE_NOCACHE;
-> > =
-
-> > Why nocache? Please have a good reason and add a comment indicating why.
-> > =
-
-> =
-
-> Because on MX8, the clocks are tightly couple with power domain that
-> once the power domain is off, the clock status will be lost.
-> Making it NOCACHE helps user to retrieve the real clock status from HW
-> Instead of using the possible invalid cached rate.
-> =
-
-> Is that reasonable enough to specify it?
-
-Yes, you can add a comment like that. Or the clk rate can be restored
-when the power domain is enabled again?
-
+No nothing goes wrong so it's fine.
