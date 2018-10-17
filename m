@@ -7,79 +7,76 @@ X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62D70ECDE32
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Oct 2018 11:41:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C03B8ECDE30
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Oct 2018 11:52:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C87621526
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Oct 2018 11:41:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83A4F2150D
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Oct 2018 11:52:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WhFehsl5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C87621526
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="guEq1lof"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83A4F2150D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727097AbeJQThH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 Oct 2018 15:37:07 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:43122 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726868AbeJQThH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 Oct 2018 15:37:07 -0400
-Received: by mail-lf1-f67.google.com with SMTP id p34-v6so19519323lfg.10;
-        Wed, 17 Oct 2018 04:41:46 -0700 (PDT)
+        id S1727114AbeJQTr7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 Oct 2018 15:47:59 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:41765 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726954AbeJQTr6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 Oct 2018 15:47:58 -0400
+Received: by mail-lf1-f65.google.com with SMTP id q39-v6so19538812lfi.8;
+        Wed, 17 Oct 2018 04:52:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
+        h=subject:from:to:cc:references:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=sN9X7L740FZrYuYJfMLztPC1DIlobjMOaUJhoF7YYcw=;
-        b=WhFehsl5sa90Z8xNBGfts1rEggW56ePeLslTIxCzljDyocC8Q24XifZwMFYB37sdEe
-         oq9KiymwuXeocAcQli8daHdvh6bQBIsTx7zgJ3Qj4HXH+PMDHWASkzOcmx2cGnKI79LK
-         Lq+NRz/bL3KHV17Nj+8Gqekh/5pt/tVEaORzscUv0EfVuGgwMcKgSn2LwPmjNWwRnIJg
-         0sptBPKQ6aXdkTrXFoDNrnUix5fCwfW71asCJRMoNr7K7oB/HgSM0GaK8g/bcrbxGEfI
-         3oR+WlfAlee7LA98qCHzMkokQr4WLPPBNAaTAB5TMneqx/duDkmvXDAR9+6iRwGunm4c
-         ct1w==
+        bh=cfSG1buupXCJHF8jEHW3x2+z7RFJydFSFEVUQlA+auM=;
+        b=guEq1lofLc+hLXvba6ZyXOb3a7J1se9Opg0WAFrkiC75OIc3+YcpBlfKefwgXu8z8F
+         TsJ4M7fvuoDd/5LjSQYA9y3sVZ6vPcMmTU/+reUygSPMh2iVAHP7JA/D5AnvvKG8XxaT
+         NLlB3VM9O7wXDrrItAP2rcm6EZVMVNYPxIYinxm09vftGolf8tOAqhC7Ys8yJx0huQ4/
+         /2MyB6iK5BSzOAQg2GCF9GgI00CPEF8gV5yhsiQzZQasGZ7ABNfnAGce6mXkZ5eSkoq8
+         i/G1V3a5qlbaMiEEYwNZs7yXA2Yzf/bALtvivIaZGYXSsxG0ToLopcKSz+b367201HJN
+         9EGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=sN9X7L740FZrYuYJfMLztPC1DIlobjMOaUJhoF7YYcw=;
-        b=W/3UFSc0O+Ig+bCQzUFrsvthmRZmDY2eAOv4u+onVRzUby4Q7Zsk8kBy+11L72vw/D
-         QSXOAmgUmOVbxh5XPaAtBSttUhIPJjChY7IJJAAjPzzPQUsdGnjbI7wwZI+484WscESx
-         rjs88gIgGRfjEVEWElWVmjXdlwp2QUnL5f528hPzpzhuoK5yUikEAGR7ZTci9OQklus9
-         qAmHjUgGoYR1Cd6/+uVGjhq+IeiJdvORTD9N8wvDOR0ncMrfM2kYtrufrzISO4TJkNiW
-         KzxpKUUIYcM/ISqhYNugqwDg2Zy+Ii7JHCjOzeQqPcgyGl8TZSywVAIZO0DFHtsjyqKe
-         w57g==
-X-Gm-Message-State: ABuFfojB9jk8waj1MU4buPWQm8Njh6IaThiIVFldW7PlOo78L7sdgk3P
-        RCaFXzfYFOEUvykgjRAYm6XfC3Gt
-X-Google-Smtp-Source: ACcGV611/z7I2HXyk7dW61AGoBXQylJLWdmZ76YGuvglVuEb3/G45FxtkofXlhiu9IJhJO0WxDYw9Q==
-X-Received: by 2002:a19:274b:: with SMTP id n72-v6mr14920238lfn.153.1539776504537;
-        Wed, 17 Oct 2018 04:41:44 -0700 (PDT)
+        bh=cfSG1buupXCJHF8jEHW3x2+z7RFJydFSFEVUQlA+auM=;
+        b=l1etdYtXR9NryRZnx240WywvMrV73kd8wK3foJJBLbHZqMP5mcwn9w6RyUSvOXJ6Bg
+         3td6fginHvt1wzoB9Z6rJ5cy8mKzJEdFWD5Im5PS1VdzUJFXMEbPAOYnwlh4+1lWh+HK
+         yNmHw3evChUc2BQAvbwsVRlNsEe2NcKDhRWmOcsuXpLMzIyfDS0K9YyDgUW2AMD7/epi
+         4vG7Z805EUaRZHvdLocMheSDrkh4JcEBfRJyLKFREnvQLJvfE3j99nweG3B7le1oLHWP
+         xVy30AA0aTHJ2QFAGfJzgRG/1XawpLCtG+Ors6ghmPoOGCmrj6J7Q+a3Ha2EaJjnkV5k
+         24/A==
+X-Gm-Message-State: ABuFfojeV6SQ6Q0aVUXwfJvY+oKrzq1F6JNhKSloz3H3eyZj+9knxLZi
+        OlFOV10TEeQM1U3kDXwAGD6EzvBf
+X-Google-Smtp-Source: ACcGV62hAcBCGzD8qXv1fpPXpAuIu3Uv6PMwFEQMAI2WkddnfT1SlTCF72cgXfddlKpz76D9Log6pw==
+X-Received: by 2002:a19:a686:: with SMTP id p128-v6mr14905522lfe.42.1539777155232;
+        Wed, 17 Oct 2018 04:52:35 -0700 (PDT)
 Received: from [192.168.2.145] ([109.252.91.118])
-        by smtp.googlemail.com with ESMTPSA id 1-v6sm3975742ljc.46.2018.10.17.04.41.42
+        by smtp.googlemail.com with ESMTPSA id k18-v6sm3922402ljk.58.2018.10.17.04.52.34
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 17 Oct 2018 04:41:43 -0700 (PDT)
+        Wed, 17 Oct 2018 04:52:34 -0700 (PDT)
 Subject: Re: [PATCH v2 2/2] clk: tegra20: Enable lock-status polling for PLLs
-To:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        "pdeschrijver@nvidia.com" <pdeschrijver@nvidia.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "pgaikwad@nvidia.com" <pgaikwad@nvidia.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20180830184210.5369-1-digetx@gmail.com>
  <20180830184210.5369-2-digetx@gmail.com>
  <20180831092948.GP1636@tbergstrom-lnx.Nvidia.com>
- <1539773948.6233.23.camel@toradex.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <2a011477-26cb-7e89-a468-54a84465f178@gmail.com>
-Date:   Wed, 17 Oct 2018 14:41:35 +0300
+ <909e2a52-4116-9ee7-db23-8ea1dfffade0@gmail.com>
+Message-ID: <2e877ee7-2977-496b-5073-772256c76191@gmail.com>
+Date:   Wed, 17 Oct 2018 14:52:27 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <1539773948.6233.23.camel@toradex.com>
+In-Reply-To: <909e2a52-4116-9ee7-db23-8ea1dfffade0@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -88,19 +85,14 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 10/17/18 1:59 PM, Marcel Ziswiler wrote:
-> On Fri, 2018-08-31 at 12:29 +0300, Peter De Schrijver wrote:
+On 8/31/18 12:45 PM, Dmitry Osipenko wrote:
+> On 8/31/18 12:29 PM, Peter De Schrijver wrote:
 >> On Thu, Aug 30, 2018 at 09:42:10PM +0300, Dmitry Osipenko wrote:
->>> Currently all PLL's on Tegra20 use a hardcoded delay despite of
->>> having
->>> a lock-status bit. The lock-status polling was disabled ~7 years
->>> ago
->>> because PLLE was failing to lock and was a suspicion that other
->>> PLLs
->>> might be faulty too. Other PLLs are okay, hence enable the lock-
->>> status
->>> polling for them. This reduces delay of any operation that require
->>> PLL
+>>> Currently all PLL's on Tegra20 use a hardcoded delay despite of having
+>>> a lock-status bit. The lock-status polling was disabled ~7 years ago
+>>> because PLLE was failing to lock and was a suspicion that other PLLs
+>>> might be faulty too. Other PLLs are okay, hence enable the lock-status
+>>> polling for them. This reduces delay of any operation that require PLL
 >>> to lock.
 >>>
 >>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
@@ -108,20 +100,13 @@ On 10/17/18 1:59 PM, Marcel Ziswiler wrote:
 >>>
 >>> Changelog:
 >>>
->>> v2:	Don't enable polling for PLLE as it known to not being
->>> able to lock.
+>>> v2:	Don't enable polling for PLLE as it known to not being able to lock.
 >>>
 >>
->> This isn't correct. The lock bit of PLLE can declare lock too early,
->> but the
+>> This isn't correct. The lock bit of PLLE can declare lock too early, but the
 >> PLL itself does lock.
 > 
-> Is there an errata documenting this? As I could not really find any
-> mentioning of this anywhere at least up to the v11 from Dec 21, 2010 I
-> still have access to.
-> 
-> BTW: It looks like also PLLA may not always lock properly with those
-> changes. Is there anything known about that as well? Here is what I get
-> on various Colibri T20 modules (while random other ones seem to work
-> fine):
-Could you please try to increase the timeout value?
+> Indeed, it locks but can't be polled for the lock-status as it doesn't have the
+> lock-status bit.
+
+Actually it has lock-status bit. Not sure how I managed to miss it before.
