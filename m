@@ -2,96 +2,99 @@ Return-Path: <SRS0=Y0Ip=M6=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48492C67863
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Oct 2018 20:31:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8281ECDE43
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Oct 2018 20:34:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F19D52145D
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Oct 2018 20:31:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99D642145D
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Oct 2018 20:34:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="weSckufE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F19D52145D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZeOPrlBF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99D642145D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725774AbeJSEdt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 19 Oct 2018 00:33:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39596 "EHLO mail.kernel.org"
+        id S1726653AbeJSEgz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 19 Oct 2018 00:36:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40396 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725738AbeJSEdt (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 19 Oct 2018 00:33:49 -0400
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+        id S1725738AbeJSEgy (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 19 Oct 2018 00:36:54 -0400
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8588621479;
-        Thu, 18 Oct 2018 20:31:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1AB1021480;
+        Thu, 18 Oct 2018 20:34:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539894666;
-        bh=rj5jV9OQAYq1PRnre9bk/MxrESSL7Oa0YV1Pb26C4bg=;
+        s=default; t=1539894851;
+        bh=xibyru/6E+pbWcbcO1mQcay7znSyaxQ3AvZX6Uo7gF8=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=weSckufEM/NtgKiNqCW5Uj+Cj5czqMCnMTO0W1O6iN7Qfz7DJb/X+ehBRslkBcVEO
-         6Hi845suJX2QsI8qbQ1V/wDEBRGK+w0Uhxyy9vFir8izTZe+IXPYGVuBsQP+qVBUNr
-         uDo1jcaLmYhEvwP9vriVFyiBnxjY709GYla+kJGs=
-Received: by mail-ed1-f49.google.com with SMTP id l14-v6so20511500edq.0;
-        Thu, 18 Oct 2018 13:31:06 -0700 (PDT)
-X-Gm-Message-State: ABuFfojbkNxtNbCjdGp2d6fmlNnzXwv5Ye4BG0MEIpLFUglUsE6okBSY
-        9ZAM+PjO4jLoLsWB129H7WgGo4AlW+LEa70h0Bc=
-X-Google-Smtp-Source: ACcGV63G+IrWjVZ3Dpmr/XfXw8fKH3WW7NpkdX542hzTL2EvMjVMbsrRYhVBBzC+AfxSNTZzoMjIA3P7fCTkNEm79rs=
-X-Received: by 2002:a50:cd57:: with SMTP id d23-v6mr4590683edj.60.1539894665026;
- Thu, 18 Oct 2018 13:31:05 -0700 (PDT)
+        b=ZeOPrlBFocuLQWMoYmnhJeDyTbb6BbyuxBa/tCizpxwKo49IYr1qwzQ0t1/vYJDpe
+         uJCcJ402zOeRNNz1LaWRQyOus7OwtZKDYwptroV9ZuLaYx+pNpEHIHVYRgAKDv525Q
+         nAG4xXtt3+qA+mGnW/gxlZQCiLQ3UM2SVlhdnA/0=
+Received: by mail-ed1-f42.google.com with SMTP id y19-v6so29479177edd.2;
+        Thu, 18 Oct 2018 13:34:11 -0700 (PDT)
+X-Gm-Message-State: ABuFfoh1R0U+L2pkVwwSsGGqT1Yp+3DHneU7x9A5fUtXb0/VHUYm2kIe
+        qxS/pMen9j9T1gVVUdhfZXR6FidbCzq4fD4gT0Y=
+X-Google-Smtp-Source: ACcGV62fx7uprVHx4BIko1GPkcmpIgc+eNKc1q933vS9zTruPnOYKtb68bVQWIZCs3ymht1XL1olpE+QJfwuXiksE2A=
+X-Received: by 2002:a50:8bd5:: with SMTP id n21-v6mr4442093edn.41.1539894849583;
+ Thu, 18 Oct 2018 13:34:09 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181018195411.3449-1-atull@kernel.org> <153989416422.53599.5865157270835783532@swboyd.mtv.corp.google.com>
-In-Reply-To: <153989416422.53599.5865157270835783532@swboyd.mtv.corp.google.com>
+References: <1467735814-23518-1-git-send-email-ricardo.ribalda@gmail.com>
+ <1467735814-23518-11-git-send-email-ricardo.ribalda@gmail.com>
+ <CANk1AXRvJQtcmAysrkfAGurGUGVHSq55=8PZARGYsEZNv2zt0g@mail.gmail.com> <153989424794.53599.4926915592056818669@swboyd.mtv.corp.google.com>
+In-Reply-To: <153989424794.53599.4926915592056818669@swboyd.mtv.corp.google.com>
 From:   Alan Tull <atull@kernel.org>
-Date:   Thu, 18 Oct 2018 15:30:28 -0500
-X-Gmail-Original-Message-ID: <CANk1AXSnZqDX7zoBTGX1Cd8dt76zLk2aqR5-CfP4W87ZFCjvpA@mail.gmail.com>
-Message-ID: <CANk1AXSnZqDX7zoBTGX1Cd8dt76zLk2aqR5-CfP4W87ZFCjvpA@mail.gmail.com>
-Subject: Re: [PATCH] clk: fixed-rate: fix of_node_get-put imbalance
+Date:   Thu, 18 Oct 2018 15:33:33 -0500
+X-Gmail-Original-Message-ID: <CANk1AXRkO1uCPQ0ef1rBvkWtx6=qcc-F-8qk6YkY+CLiJES4wQ@mail.gmail.com>
+Message-ID: <CANk1AXRkO1uCPQ0ef1rBvkWtx6=qcc-F-8qk6YkY+CLiJES4wQ@mail.gmail.com>
+Subject: Re: [PATCH v5 8/8] clk: fixed-rate: Convert into a module platform driver
 To:     sboyd@kernel.org
-Cc:     mturquette@baylibre.com,
-        Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+Cc:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+        mturquette@baylibre.com, sboyd@codeaurora.org,
+        Sascha Hauer <s.hauer@pengutronix.de>,
         linux-clk@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Oct 18, 2018 at 3:22 PM Stephen Boyd <sboyd@kernel.org> wrote:
+On Thu, Oct 18, 2018 at 3:24 PM Stephen Boyd <sboyd@kernel.org> wrote:
 >
-> Quoting Alan Tull (2018-10-18 12:54:11)
-> > When the fixed rate clock is created by devicetree,
-> > of_clk_add_provider is called.  Add a call to
-> > of_clk_del_provider in the remove function to balance
-> > it out.
+> Quoting Alan Tull (2018-10-18 12:20:58)
+> > On Tue, Jul 5, 2016 at 11:45 AM Ricardo Ribalda Delgado
+> > <ricardo.ribalda@gmail.com> wrote:
 > >
-> > Signed-off-by: Alan Tull <atull@kernel.org>
-> > ---
+> > I've stumbled across a of_node_get/put imbalance that happens when the
+> > fixed rate clock is added and deleted using device tree.  The cause is
+> > that this driver calls of_clk_add_provider() when probed, but doesn't
+> > call of_clk_del_provider() when removed.
+> >
+> > It looks like a lot of clock drivers share that issue:
+> >
+> > $ cd drivers/clk/
+> > $ git grep -l of_clk_add_provider * | xargs grep -L of_clk_del_provider | wc -l
+> > 131
+> >
+> > It should be a one line fix, but for many files.
+> >
+> > I'm not a clock subsystem expert, so please let me know whether I'm
+> > missing something here.
+> >
 >
-> Fixes tag? I'll tack one on.
+> Patches welcome. Please include Fixes: tags for backports. Probably
+> drivers don't care because clk devices are almost never removed. That
+> isn't to say it shouldn't be fixed, but just giving some background on
+> why nobody has fixed it.
 
-Fixes 435779fe1336 ("clk: fixed-rate: Convert into a module platform driver")
+Thanks for the context.  I ran into this while testing some devicetree
+overlay code changes.  My use is FPGAs where a clock may be added or
+removed if the FPGA is reprogrammed.
 
-Thanks!
 Alan
-
->
-> >  drivers/clk/clk-fixed-rate.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/drivers/clk/clk-fixed-rate.c b/drivers/clk/clk-fixed-rate.c
-> > index b5c46b3f8764..6d6475c32ee5 100644
-> > --- a/drivers/clk/clk-fixed-rate.c
-> > +++ b/drivers/clk/clk-fixed-rate.c
-> > @@ -200,6 +200,7 @@ static int of_fixed_clk_remove(struct platform_device *pdev)
-> >  {
-> >         struct clk *clk = platform_get_drvdata(pdev);
-> >
-> > +       of_clk_del_provider(pdev->dev.of_node);
-> >         clk_unregister_fixed_rate(clk);
-> >
-> >         return 0;
