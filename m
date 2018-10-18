@@ -2,161 +2,109 @@ Return-Path: <SRS0=Y0Ip=M6=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2326ECDE42
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Oct 2018 00:15:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B005ECDE3D
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Oct 2018 01:00:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CBEE20869
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Oct 2018 00:15:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF02721473
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Oct 2018 01:00:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="OsRfInzJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CBEE20869
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="TvuEMmvW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF02721473
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727245AbeJRINv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 18 Oct 2018 04:13:51 -0400
-Received: from relmlor4.renesas.com ([210.160.252.174]:47861 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727090AbeJRINu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 Oct 2018 04:13:50 -0400
-Received: from unknown (HELO relmlir3.idc.renesas.com) ([10.200.68.153])
-  by relmlie3.idc.renesas.com with ESMTP; 18 Oct 2018 09:15:35 +0900
-Received: from relmlii1.idc.renesas.com (relmlii1.idc.renesas.com [10.200.68.65])
-        by relmlir3.idc.renesas.com (Postfix) with ESMTP id 5258151943;
-        Thu, 18 Oct 2018 09:15:35 +0900 (JST)
-X-IronPort-AV: E=Sophos;i="5.54,393,1534777200"; 
-   d="scan'208";a="293836242"
-Received: from mail-os2jpn01lp0144.outbound.protection.outlook.com (HELO JPN01-OS2-obe.outbound.protection.outlook.com) ([23.103.139.144])
-  by relmlii1.idc.renesas.com with ESMTP/TLS/AES256-GCM-SHA384; 18 Oct 2018 09:15:35 +0900
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
+        id S1727028AbeJRI7R (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 18 Oct 2018 04:59:17 -0400
+Received: from mail-ve1eur01on0059.outbound.protection.outlook.com ([104.47.1.59]:13719
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727019AbeJRI7R (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 18 Oct 2018 04:59:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xHBddyKZBbkEQZxMGxlWJf100lt2dW2J6hGmdLCj0ic=;
- b=OsRfInzJKPn3GooLJe45dBEqAKAGe93Bc0A7YXMdlKSeRGdhUy/c6Ya5VF1o0TEQJDJ/wjNKBBCMHY/4kmGtLiJRvAxNlleLkf4Ool8t2F3mOg46NpAIWP580h8zOyfoQOwN0Ury9dIVW15/VhaSiQfa5UBvAO2lgvTSlbSXbRk=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=kuninori.morimoto.gx@renesas.com; 
-Received: from morimoto-PC.renesas.com (211.11.155.130) by
- TYXPR01MB0624.jpnprd01.prod.outlook.com (2603:1096:401:7::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1228.24; Thu, 18 Oct 2018 00:15:33 +0000
-Message-ID: <87k1mgw219.wl-kuninori.morimoto.gx@renesas.com>
-From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] dt-bindings: clock: add description of 74aup1g157gw
-In-Reply-To: <20181017160556.GA14935@bogus>
-References: <87efcy1rm4.wl-kuninori.morimoto.gx@renesas.com>
-        <87d0si1rkt.wl-kuninori.morimoto.gx@renesas.com>
-        <20181017160556.GA14935@bogus>
-User-Agent: Wanderlust/2.15.9 Emacs/24.5 Mule/6.0
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-Date:   Thu, 18 Oct 2018 00:15:33 +0000
-X-Originating-IP: [211.11.155.130]
-X-ClientProxiedBy: TY2PR02CA0002.apcprd02.prod.outlook.com
- (2603:1096:404:56::14) To TYXPR01MB0624.jpnprd01.prod.outlook.com
- (2603:1096:401:7::7)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 2d0720b4-fd44-4219-5cb4-08d6348ed22f
-X-MS-Office365-Filtering-HT: Tenant
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:TYXPR01MB0624;
-X-Microsoft-Exchange-Diagnostics: 1;TYXPR01MB0624;3:gp5kAe6CTel3O2iFuBNog6FZZzMK/+YzReHI4fIT9XgwjPghRzNOB+UDGt1uGkz4CXh+ZaFCjTFN4AR2ckQTwJIDQn/gNGM08/bM4f8CGOBQR986YicYu4Xw5RSyYDqPayDnGa47Qp0MIYtfWLPGt1pfRXF9AFKzKqp0YD7eq7ipnl809HI47aAzsgkF7ZTdekoNyKQIQaYueLbWvbms8uIZejfAloA749JW4bVdh6w1kug7grMcUUt7lFzkrwd2;25:4yU4S3AdadEcalSJmmdGcjF7f6RjyGQdR0QuNvlxMYHNTT6w2VgULqFs3+apL5xNuD0ujSkc2wPjRSsMnkYhOQVyghw5eC2qkH/GOFEgKY+bo2cclpLMOvXZ4tkW8DSwMnix1UWJfBZcI9sHkhFGpSvVjvjYZ1W593fZG5vyULrUR3FJIq5X2DQY/56ATMtJUGnimdSywHhMegXIL2/JCvOUM/PbtDaR0rXn46DAJj5CMtDDSK7G0zUt6vmthz0CmRKha5QNk496bpa9RpnYtQmdgDNY7ySAXcbDUPWhEQ5t7HRg5qAPlES4FZ09seo11YDzlW0HGNcD/l2OkhUrYEEdLbxfPQpuyboBvIek77c=;31:jbJRPwILX1Oq9sIIaZZnWUFGrHofcU/deKSy5rk9a02qpnnmsddiCmEtceQUIdkD90FaKF6fpsu/HrCUmzhPOKZgJvptRFFq9Se9ppzVs0CY8N2lEuurpx1k+uEqod214X5tXzQNjB4DezGVhvKvzP2XJyw1Kj2Z7Dg3tQ2+vVCznu36XiMzS7wS3dFxBzTeE+sT2Apch2T5aY92maRJ+P9d59Zn3q2+62v6NuocQsI=
-X-MS-TrafficTypeDiagnostic: TYXPR01MB0624:
-X-Microsoft-Exchange-Diagnostics: 1;TYXPR01MB0624;20:yhMXj6wMyd6EQL+UFe60qt+sOkC1ePI3+LDQ8CBCWebV0fpF48tfVQH+pQYfNluhq6pp6MxruI2rwQusA33dhQEiANfVPOsQtBGqCFhQap4iOMd18TkZT67YEqfHksq5NBnyRppcBNc7Cz+geXwW6vV8iwDP+vn6nzz3QF9gj+j0oMuzYXBa+ZqbqFsCnJHUudyIDWeNHB4L/clhQPBYa4dEcr2uNhUAqId8JAebo+vzd2+SQSVWYcFI0YC9llcvoy2cHjp8355h4l44my79VqgGjWK3EnWTSIHAGB2VVMUe0Xi8jYwKCidKvqY22RaZIHM3L4aBPOn6SChhKu74nt98XIPbRzdGxMOCIfzoIepUeBltxFqiX4IKiYU+OBCvApql0bNyKLVfPvo5jw5HFJqHPypj7i9c5egJ/vSaF43wPqalNQqlCFVRd8RrGU7wCz4kLnfUzaox+2NMXowS8CCSkg70TcCUzZiJlmg5xEEH8vP7ar9BIc09DIgF6Eva;4:WZETZCwS6ebKMzMpMSAgX4jfQ+oa0Ufpqp8l1imRpFdOKAvyLU5msdB8CCP7N++4cOCpW5AL+Fw0cHvyo98jU5y0x2YChlFYcwHkbyCbuTmv/Rw3kXSmzEthdD6MYEecOqvdgW0vAsftrJlul4S2EXVywXVP8JkMhLC8IHUAMCmqTWGPAFYXonFlRHwGN0BdjqfnIaR5TsUzm8aCe50ZD2p8hTVCpOa5KQLs9PET3s3Zk6n524LLYwuCLj65xNSM8kVV8MCparzu27cyr2uAsg==
-X-Microsoft-Antispam-PRVS: <TYXPR01MB0624D1847ED28CDC0563B966D4F80@TYXPR01MB0624.jpnprd01.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231355)(944501410)(52105095)(3002001)(10201501046)(93006095)(93001095)(6055026)(149066)(150057)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(20161123564045)(20161123558120)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:TYXPR01MB0624;BCL:0;PCL:0;RULEID:;SRVR:TYXPR01MB0624;
-X-Forefront-PRVS: 08296C9B35
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(366004)(39860400002)(396003)(376002)(136003)(346002)(199004)(189003)(97736004)(508600001)(52116002)(86362001)(7696005)(76176011)(54906003)(58126008)(36756003)(105586002)(3846002)(6116002)(53416004)(23726003)(6916009)(4326008)(5660300001)(25786009)(47776003)(106356001)(2906002)(66066001)(316002)(81166006)(81156014)(16586007)(8936002)(68736007)(8676002)(6486002)(69596002)(6246003)(50466002)(53936002)(229853002)(345774005)(305945005)(7736002)(186003)(11346002)(476003)(16526019)(26005)(446003)(386003)(956004)(2616005)(486006)(16060500001);DIR:OUT;SFP:1102;SCL:1;SRVR:TYXPR01MB0624;H:morimoto-PC.renesas.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-Received-SPF: None (protection.outlook.com: renesas.com does not designate
+ bh=G+CeFmix9lqWVgIe+8bOHvhwdcp2IoIZSJtNE/y9t5E=;
+ b=TvuEMmvWProXR+K1tl5RGBZeWfq+VH7JENQSP431C6Yg0yn/NHFL0H5OadUKIvTxZU5ub1ujPx4CgDJceNDfm+gwIjzd1oJL0vsWSz2mYtql/oSMVSEvpVPHxzwXvhn0CnY2Z5q3MGt3qeYeglOXyke2fOx/dpAEfdBiwPQMxU0=
+Received: from DB5PR0401MB2213.eurprd04.prod.outlook.com (10.166.173.8) by
+ DB5PR0401MB1925.eurprd04.prod.outlook.com (10.166.10.148) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1228.26; Thu, 18 Oct 2018 01:00:51 +0000
+Received: from DB5PR0401MB2213.eurprd04.prod.outlook.com
+ ([fe80::c0b5:26f1:bc9e:5a31]) by DB5PR0401MB2213.eurprd04.prod.outlook.com
+ ([fe80::c0b5:26f1:bc9e:5a31%6]) with mapi id 15.20.1228.027; Thu, 18 Oct 2018
+ 01:00:51 +0000
+From:   Andy Tang <andy.tang@nxp.com>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "oss@buserror.net" <oss@buserror.net>
+CC:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: RE: [PATCH 1/3] clk: qoriq: add t1023 soc support
+Thread-Topic: [PATCH 1/3] clk: qoriq: add t1023 soc support
+Thread-Index: AQHUT+xXwE+pIxtpN025CWssqdGm96Uhj7twgAIsSQCAAJxXYA==
+Date:   Thu, 18 Oct 2018 01:00:51 +0000
+Message-ID: <DB5PR0401MB221359C5FB8FE3AAA36A3F0BF3F80@DB5PR0401MB2213.eurprd04.prod.outlook.com>
+References: <20180919073906.34187-1-andy.tang@nxp.com>
+ <DB5PR0401MB22134ACEF603C05F6B0D9980F3FE0@DB5PR0401MB2213.eurprd04.prod.outlook.com>
+ <153979005694.5275.12929241736979814342@swboyd.mtv.corp.google.com>
+In-Reply-To: <153979005694.5275.12929241736979814342@swboyd.mtv.corp.google.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=andy.tang@nxp.com; 
+x-originating-ip: [119.31.174.73]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DB5PR0401MB1925;6:nRAGtf7KVNKeSByNnDElZYffYwyCdBOdf9HoD41SYnK2x5/fji4qODTdELJm4qcVNc2XSTrbSW6CD9Iyf0UhlB3At/GZWKyagEUQ6z+dEYzNXC7U6EbRIC2aNtFAlYRraglTY+WLBoUsamW4TuX010R2koWnTveEYyTifSEVSWh6StxdNcTMrrNVzSpK2UfBDgP1IS+NHUKZhPDqdTeoHHTnuugkMLXYV4FYt3onWNhecl4Oe6xGG+Gdf2AdZV6v7WE+AZ64DF88hUtyF5Ky64qkKw726nsvLw8S00N6Up1z+h5yQUCd67GLz7jI9NkNtKrI9EW/8vdkGHL8fYTdtc8eANv4YG9oSQ/q9479b9w+3DBUdf9g5FFMFa/kfMjJAyqIRndDI0q/PBMhj5g1Ma8tCao4YGoyfXXSZSGVsnVigXPzOA1juqQymBsuwqitjjOg0hS7GH+PmL9HkPxy8w==;5:wsHi9lOqTrvmd+a9MbAOY6WCzgkBllynxJM9StD5JNnPXUSMG90nswy9oHmRTzAhJxvLBUASVWt25kDaaHs+UHy+ZSTTInkX4kCOmElU5mU6I4DD461GVqADGSNDNRjJf5oeXpQJ33BsXuQpDUVojfqM0efHlCxo0wl4H4foGks=;7:yW02uq/N1HDTh3lFkv4kDWE2sipLLZwWQfoxHPhOGm7O1pzAJ6Gw1HQPhUkuRf3G8Q0zl8FWNCMMYN9XOMmMgIh7GcTYnb/grEQM9aui0kfWBGWI5u/kQ8sRzhmafYSdNirRFLzgix9btqkczzWwVn0JqCWfSB5S81+PtypL90V8J0LC3nrt9EIdZb737c91SCwjYqQNEqZJFLwJGdqokuZSSXV1vNm64/Io4kmKJUQDPUhhcjGAAWzcSGkWGRp8
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 97064ee4-5bf5-4839-75a6-08d63495262d
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:DB5PR0401MB1925;
+x-ms-traffictypediagnostic: DB5PR0401MB1925:
+x-microsoft-antispam-prvs: <DB5PR0401MB192504D551D98175F7ADED21F3F80@DB5PR0401MB1925.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(180628864354917)(9452136761055)(185117386973197);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231355)(944501410)(52105095)(3002001)(10201501046)(93006095)(93001095)(6055026)(149066)(150057)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(20161123564045)(20161123558120)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:DB5PR0401MB1925;BCL:0;PCL:0;RULEID:;SRVR:DB5PR0401MB1925;
+x-forefront-prvs: 08296C9B35
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(376002)(346002)(136003)(39860400002)(366004)(501624003)(13464003)(189003)(199004)(74316002)(6436002)(66066001)(76176011)(86362001)(14454004)(33656002)(53936002)(2201001)(81166006)(54906003)(8936002)(97736004)(110136005)(68736007)(81156014)(99286004)(53546011)(6506007)(71200400001)(7696005)(8676002)(2906002)(508600001)(71190400001)(4001150100001)(5250100002)(6246003)(44832011)(105586002)(4326008)(2501003)(229853002)(256004)(476003)(316002)(25786009)(11346002)(446003)(102836004)(2900100001)(5660300001)(55016002)(9686003)(26005)(486006)(106356001)(3846002)(6116002)(7736002)(305945005)(186003);DIR:OUT;SFP:1101;SCL:1;SRVR:DB5PR0401MB1925;H:DB5PR0401MB2213.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;TYXPR01MB0624;23:hGq8dxYdPPabKXle5Jb+gSmjCrJ8pKhWLzybkXRa2?=
- =?us-ascii?Q?wMNktVB76DHiETG2feen7ePJejWA1/3XKb1rrlMAnt7774uf5xVIIBuU8ON2?=
- =?us-ascii?Q?1Xu3sz8OXWiOvvBA5Sa6f1PIWm/BoQ2ZxTJvzCrJwIg0IYgX77a5d1gmVs3S?=
- =?us-ascii?Q?ySN/GRxdiV5udmEy2zoF3BPZomkLh+hgRezeDELi/92tbkdOe8LvrGEvgM0R?=
- =?us-ascii?Q?XbXbCXFaBhFsbKnVIZJtj4TiqKTOGizpPgngsEI9ydiCMhISn+NEv7S+ARYm?=
- =?us-ascii?Q?BBqM9NZSTpQ1qO4T/ginwti3CO3aNkv3l0MAJO7vEc0+2k+Eno6+lvyRZPao?=
- =?us-ascii?Q?n4cwkSm+zFfR8uPIZ8OeU5jokQvRlXdygm5U+UWM+qNd5frs7AXXo3TsvXhe?=
- =?us-ascii?Q?7sfiSqSDtKXMaIgUL3nvWBZGN2bIh3KHwvCft68gBWaDASFCssNwujoG1l+d?=
- =?us-ascii?Q?e0VLdb7gZtK+ek8nTSMoUEH7pkN4yxBYnhvfD/cQ8LInBm7yJ+eOSKoOfKOl?=
- =?us-ascii?Q?x0VGcxO6lNuW1WM4Gr8usQR56T1Z8EKTPmxcH0yq1RpER5GMIySuENVB+1Qu?=
- =?us-ascii?Q?SdrS1pTdAOQWCen9cpgrD2CH5MkEGIZD8jr8N9a9JQN/kE0BbB8fetYXK8X+?=
- =?us-ascii?Q?nlukp128d8YbyDEF8dQgwpjyqIy8MfE80YUBZFiwachcWe+Eu0J0MyYlQwBd?=
- =?us-ascii?Q?/6f/iC2ZACDkkWZZV+MvcD6mVa95cXHgnjt/ubPtmGcHpWlorlN44X53WXuA?=
- =?us-ascii?Q?niZNDsLkj+TB1WJQpAtWCpRnSyf//9U3PdPqHd/+HdZsMJZrwopvnn7nbsDN?=
- =?us-ascii?Q?wMqNoltrFCD5oSklqjTK5VQkmcgRFbQnCFcYrfr0SB3+l3vmzpP30Ujf/WP8?=
- =?us-ascii?Q?LJjwkkStZJl9JTj/noGn9km1RntM3cJxUB4Jl7wX4Q8s4QT9cjJ5OT5MpQP3?=
- =?us-ascii?Q?7qTv97/L5lfxtFug2z36CaX7tAnlaBJ2ZIM9Twb0CRCTGzjJOKRD/mBNYWyL?=
- =?us-ascii?Q?vDEKLdvFkEgCPtgF4rCOsN4yKWxCS59MtbbXBRgY22DFLxLPZyxJvxvxR8x/?=
- =?us-ascii?Q?ahrJjQi9SB3hdbKOtT2Tgpp5haswZvndNWF6V7bn9kH1peYwBPkRDv3UX2mH?=
- =?us-ascii?Q?/st0mWea8gdCWH1s3sMN7IJUuKMbW0N0Q8jsGWNXQKjrwRAWG9ZZjrYFr0v9?=
- =?us-ascii?Q?z1PXz7l8ffC+ne/VHG780WK29qhAfmFb6FIprBLCUvaKoQvwsN0FuzyVkkrc?=
- =?us-ascii?Q?phoLGCFmiQsX7e86J5JKAdTwmiZW51RC/aXlRMw?=
-X-Microsoft-Antispam-Message-Info: gAm9rkzi/Mu1RKiSOVLpcv7gjf9d0Tp2KLN/wBLM9yzivgCalBYNh4J4lXfVfvNOK5aOBGqe9gXmbPFPP7xLSCQvAGcv5Ty0IwQqtF6lj5RlCXbPM2yf4LTxLc3Yz58IFkxWjI3VdLqJ3TXGOqFEHean2AaBJsjJFGZqwak64GerFSIyN6yPyFMlZfwp8AHVPXytw4owHY0sYo6jyenhrQpDe5014MYv3mvR2lrYkjygYFclGx4QnkUInJAVwvrGgJdeB8hYKXpRzKrD+p9Qik9nYq4tZ3JUU/7ZZpFsUb5FDV32YZ9jMUd3AwqXzEqgE/ecKn/9e//wTySSN1F95EE+m+cjaJky51P8jMBeRg4=
-X-Microsoft-Exchange-Diagnostics: 1;TYXPR01MB0624;6:5FHBOPZWTx1+jUu4mWMbEo2u7exzbdnzJLKcmRxPnJKt27s6tlXHuZ2uLxnnNHMoN2GmCblRNgvT1HsTPAfsnk1645Cty/XywuTktNHCgJo2ACn23Nu3vZ9bu7Zebrw7hWs+EIMXclyjuZU3/kuahd2L0aFQgK29RswwJVWwyyOXCWsLwbv6Sz6XgSOcYtY7Pr34svlDb5QcP7KRIoamimgvgPjFze9haAy2jDy3yXgvxeHwSZ8KxfD+mm4fm+5GbTrRHgxHPCWLdcGnsYZUyBUs6S9mD9EfnJS7ZBfWJ01rmfnPJHfUMEpX9V0u+GXwDQ1v4k+5UkhDWH6vhIKw17/r9ft/wNzf7K2oDan1+Kes6aNM8AT+L9HAcxtjXdn4lWHx/d8XSfLeSI5PdPCvV8n+g5YFVx+2H+4okdJylRJ7NswxP6a9scZhGTRm/EoWeRZrnUiHJVr/cdq71X1IUA==;5:yd55qPP2fXrKA6gh3medNwHdXCZaFNYZZ1ssFz1uGHx+Tmr8zTkoyeTOtmYCfWwr6YjIVxKIaqjziQe/e6DtAf1xiNEl55Rkg1Z8TMtwIUnS4qulgf8nzr5rNrmv5WnkvCgWm0w25LXNSDU9HU00dEf2XhUrcE6sXkhnO23rIRY=;7:rMHBhCIjg+ks/jPqnCIWLSPVdnxKl73/CN0QwJLcwv13uaxQjSsmDLcvAUTbthBZEVqcza3NiEknchKCEBm39j3fYz10di4eoaTECwrn2e6juEq9OB/rLXV2FYrkxo9qQUU7kcvS2VcRzDNrA1I673RrpzrAGSeNJbOpRJpf4YcVTbgHV55cDQ340aMidh4BhKne9ujyYuimhRX+kHjce/tzQbjbUyzXczwT3TbwhUOUOO8J/nnI03b0T1I4KNIy
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;TYXPR01MB0624;20:J1akSrG7xwrUiQDFXaKPFLoKV0gohmEckCGMwVSTqsbWXctyetjxnYkbhn/G7QdrgTYOX47GRJl+zOowkaaP2XTw8gELiAoqKDrDIZSi6qcAPrOk1tD5niOwmEDFLJ1SzFblrI7w3UTSehtwFC9MMBA8pFCVK3hQIv+HALUUd9Y=
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Oct 2018 00:15:33.4885 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2d0720b4-fd44-4219-5cb4-08d6348ed22f
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYXPR01MB0624
+x-microsoft-antispam-message-info: UGQtORBVjZV9R9XKbanHmO+nMWYAT+tDyeHtE7GEcU5ZiAWSEBE9L/8MlPEJTQAXXqM0pqG0foMgcqI/ppbwoJlb5Jpurvw5VW+ZAaQihYP+eRlLkiljp667BzCTJvrOJ0EkQtNQ0h6ZtlEXp73yn82JUUz/wqlm9LZY2a1UROEryXgb1CaV37BbHkCeFpzoiJnrCdd27s7CxxWGt2Puj28D2U0Klqo/k7wKvjlUCFzt4WFktWYTsvXxxl2BwxkoELd9gSPTcAVvetN5BFoSPAwmcRURTlXh7+reyPQwKo4zJ4SjAgO1HxgsznrRKFTd4ogM19Iv/Sr2R0JnvvkPI+ZZ4jSiJKF1tHQoWWXwDD8=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 97064ee4-5bf5-4839-75a6-08d63495262d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Oct 2018 01:00:51.3417
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB5PR0401MB1925
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-Hi Rob
-
-Thank you for your feedback
-
-> > From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> > 
-> > 74aup1g157gw needs i0 and i1 pin as input, select and output it by
-> > sel gpio pin. This patch adds description for 74aup1g157gw as clock
-> > multiplexer.
-> > "nxp,74aup1g157gw-clk" will select most closest input as output,
-> > "nxp,74aup1g157gw-audio-clk" will select 48kHz/44.1kHz categorized
-> > input as output.
-> > 
-> > Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> > ---
-> >  .../devicetree/bindings/clock/nxp,74aup1g157gw.txt    | 19 +++++++++++++++++++
-> >  1 file changed, 19 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/clock/nxp,74aup1g157gw.txt
-> > 
-> > diff --git a/Documentation/devicetree/bindings/clock/nxp,74aup1g157gw.txt b/Documentation/devicetree/bindings/clock/nxp,74aup1g157gw.txt
-> > new file mode 100644
-> > index 0000000..d07bc04
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/nxp,74aup1g157gw.txt
-> > @@ -0,0 +1,19 @@
-> > +NXP 74AUP1G157GW Low-power 2-input multiplexer for clock
-> > +
-> > +Required properties:
-> > +- compatible:	"nxp,74aup1g157gw-clk"      (select closest input as output)
-> > +		"nxp,74aup1g157gw-audio-clk (select 48kHz / 44.1kHz as output)
-> 
-> I don't understand why you need the second one.
-> 
-> 
-> What's wrong with the existing gpio-mux-clock binding?
-
-Thanks.
-I already noticed that gpio-mux-clock is very OK to me
-(and I think I posted it to ML).
-Please drop this patch.
-
+DQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IFN0ZXBoZW4gQm95ZCA8c2Jv
+eWRAa2VybmVsLm9yZz4NCj4gU2VudDogMjAxOOW5tDEw5pyIMTfml6UgMjM6MjgNCj4gVG86IG10
+dXJxdWV0dGVAYmF5bGlicmUuY29tOyBvc3NAYnVzZXJyb3IubmV0OyBBbmR5IFRhbmcNCj4gPGFu
+ZHkudGFuZ0BueHAuY29tPg0KPiBDYzogcm9iaCtkdEBrZXJuZWwub3JnOyBtYXJrLnJ1dGxhbmRA
+YXJtLmNvbTsNCj4gbGludXgtY2xrQHZnZXIua2VybmVsLm9yZzsgZGV2aWNldHJlZUB2Z2VyLmtl
+cm5lbC5vcmcNCj4gU3ViamVjdDogUkU6IFtQQVRDSCAxLzNdIGNsazogcW9yaXE6IGFkZCB0MTAy
+MyBzb2Mgc3VwcG9ydA0KPiANCj4gUXVvdGluZyBBbmR5IFRhbmcgKDIwMTgtMTAtMTUgMjM6MTc6
+MTgpDQo+ID4gSGksDQo+ID4NCj4gPiBBcHByZWNpYXRlIGlmIHlvdSBjYW4gdGFrZSBhIGxvb2sg
+YXQgdGhpcyBwYXRjaCBzZXQuDQo+ID4NCj4gDQo+IEkgY2FuIHBpY2sgdGhlIGNsayBwYXRjaGVz
+LCBidXQgbm90IHRoZSBkdHMgYml0cy4gU291bmQgZ29vZD8NCg0KTGV0J3Mgc2VlIHdoYXQgU2Nv
+dHQgc2F5Lg0KDQpIaSBTY290dCwNCg0KRG8geW91IGhhdmUgYW55IGNvbW1lbnRzIGFib3V0IHRo
+aXMgcGF0Y2ggc2V0Pw0KDQpEbyB5b3UgdGhpbmlrIGl0IGlzIG9rIGlmIFN0ZXBoZW4gcGlja3Mg
+dXAgdGhlIGNsayBwYXRjaCBhbmQgeW91IHBpY2sgdXAgdGhlIHJlc3Qgb2YgdHdvIHBhdGNoZXM/
+DQpPciBvbmUgb2YgeW91IEFja2VkIHRoZSBwYXRjaCBhbmQgdGhlIG90aGVyIG9uZSBhcHBseSB0
+aGVtIGFsbD8NCg0KVGhhbmtzDQpBbmR5DQoNCg==
