@@ -2,65 +2,78 @@ Return-Path: <SRS0=Y0Ip=M6=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AD42ECDE43
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Oct 2018 17:18:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC979C5ACCC
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Oct 2018 17:19:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 511142148D
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Oct 2018 17:18:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0A4821486
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Oct 2018 17:19:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rktuaE4m"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 511142148D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="K5TEM1QC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0A4821486
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727403AbeJSBT6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 18 Oct 2018 21:19:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39940 "EHLO mail.kernel.org"
+        id S1727421AbeJSBVw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 18 Oct 2018 21:21:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40126 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726463AbeJSBT6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 18 Oct 2018 21:19:58 -0400
+        id S1726444AbeJSBVw (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 18 Oct 2018 21:21:52 -0400
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5ED9F21486;
-        Thu, 18 Oct 2018 17:18:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6F9CB21479;
+        Thu, 18 Oct 2018 17:19:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539883082;
-        bh=EbJRFFLsIG2ViCYigaIwIaOPNV0BhxAcgdFDNGQfbfw=;
-        h=From:To:References:In-Reply-To:Subject:Date:From;
-        b=rktuaE4mQjPSwNVW4iqpoOzebK+xAwnZjLqInR0V7mLTF3+9yWunoAhGUhNVtaWfn
-         ba0oTJ9oAWLGWOcHEwFzT4s5reJ7GrNIBPGcwdokmRTTpPZLHdgVAkYGtGX8CI3g7x
-         1eJr93/JeA5dAepNUDYqwzkas8vR0br3ADE03NW4=
+        s=default; t=1539883195;
+        bh=dR6l4E4hpCwpSb1qkmCbuUOp9IPqGSsQzHeYzhv+RUg=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=K5TEM1QC6/7h7QGPv5GluS3uKR4n2tF+YehheAC7NLbzb+bz/ySUUR99D4iMZoddR
+         nxR1o0HA4f+JGnuyghnVu/8T4MH0iQbJjLlwwa7onoP8sPzbUIES2pcKkyBulO0Wrf
+         qrT2UHWEwmZx/JQKofvbTuyEX6yyR2oo/d991jxw=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+To:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Maxime Ripard <maxime.ripard@bootlin.com>
 From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20181018070729.52943-1-icenowy@aosc.io>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+References: <20181018070729.52943-1-icenowy@aosc.io>
+Message-ID: <153988319489.5275.13596491306786109572@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.7
-To:     Heiko Stuebner <heiko@sntech.de>,
-        Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-        linux-rockchip@lists.infradead.org, mturquette@baylibre.com
-References: <2902149.RM7SpLEE3J@phil>
-In-Reply-To: <2902149.RM7SpLEE3J@phil>
-Message-ID: <153988308170.5275.11684096735209361971@swboyd.mtv.corp.google.com>
-Subject: Re: [GIT PULL] Rockchip clock updates for 4.20
-Date:   Thu, 18 Oct 2018 10:18:01 -0700
+Subject: Re: [PATCH v2] clk: sunxi-ng: enable so-said LDOs for A64 SoC's pll-mipi
+ clock
+Date:   Thu, 18 Oct 2018 10:19:54 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Heiko Stuebner (2018-10-17 15:24:45)
-> Hi Mike, Stephen,
+Quoting Icenowy Zheng (2018-10-18 00:07:29)
+> In the user manual of A64 SoC, the bit 22 and 23 of pll-mipi control
+> register is called "LDO{1,2}_EN", and according to the BSP source code
+> from Allwinner , the LDOs are enabled during the clock's enabling
+> process.
 > =
 
-> no big changes again this time. Mainly 2 fixes and a bit of housekeeping.
-> So if it's not too late, please pull
+> The clock failed to generate output if the two LDOs are not enabled.
 > =
 
+> Add the two bits to the clock's gate bits, so that the LDOs are enabled
+> when the PLL is enabled.
+> =
 
-It's the last day. Pulled into clk-next. Thanks!
+> Fixes: c6a0637460c2 ("clk: sunxi-ng: Add A64 clocks")
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> ---
+
+Looks OK to me from not knowing anything about this driver. Shall I pick
+directly into clk-next for next release?
 
