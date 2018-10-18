@@ -2,87 +2,93 @@ Return-Path: <SRS0=Y0Ip=M6=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DAA5C67863
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Oct 2018 20:22:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8944ECDE43
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Oct 2018 20:24:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E48A2098A
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Oct 2018 20:22:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A1C22098A
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Oct 2018 20:24:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0lATk4k+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E48A2098A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kUZFRWZ/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A1C22098A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726680AbeJSEZZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 19 Oct 2018 00:25:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36672 "EHLO mail.kernel.org"
+        id S1727584AbeJSE0t (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 19 Oct 2018 00:26:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37298 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726454AbeJSEZZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 19 Oct 2018 00:25:25 -0400
+        id S1727466AbeJSE0t (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 19 Oct 2018 00:26:49 -0400
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E39F02098A;
-        Thu, 18 Oct 2018 20:22:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7F3562145D;
+        Thu, 18 Oct 2018 20:24:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1539894165;
-        bh=Cp1vWvodqUJ2SludGUJDRiO4xD4RlIkFUGNPaQ0UzJQ=;
+        s=default; t=1539894248;
+        bh=LTwHb6qAp8DzV3RHvYbcFRsDFqxvFRxWfnzX10e382Q=;
         h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=0lATk4k+etLGlCBEJ7xzDqShDwmBwnjiuCdwBmHpg7jCrffHVqeA2O3E1eMDGEV4L
-         AawrA+0UDhEjx5y4tSJxbbko0SFifbqpWW3CNo1D1tICQ3oFv+iwrye0eG9/k33pxk
-         yh1ov6QJTd7GvJpS65YD9eqJZk513V1AOx6MzP54=
+        b=kUZFRWZ/yLBSs3H8uiy7DPjQqb2iKMV8LjAO7ODJDVVamqyTm2qhrUA4ww1suw90M
+         6PJKRiM3NGXJ+n3GGgCE5rUmtHneTt/Xx2QJ8FABzNnR4rliJrKt8f74VyuovLiy0f
+         LBnGOctFW0ZOo4QEB6qxOfraOgVC6Ar2H4gGq+Us=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 To:     Alan Tull <atull@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
+        Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20181018195411.3449-1-atull@kernel.org>
-Cc:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
-        Alan Tull <atull@kernel.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20181018195411.3449-1-atull@kernel.org>
-Message-ID: <153989416422.53599.5865157270835783532@swboyd.mtv.corp.google.com>
+In-Reply-To: <CANk1AXRvJQtcmAysrkfAGurGUGVHSq55=8PZARGYsEZNv2zt0g@mail.gmail.com>
+Cc:     mturquette@baylibre.com, sboyd@codeaurora.org,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        linux-clk@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>
+References: <1467735814-23518-1-git-send-email-ricardo.ribalda@gmail.com>
+ <1467735814-23518-11-git-send-email-ricardo.ribalda@gmail.com>
+ <CANk1AXRvJQtcmAysrkfAGurGUGVHSq55=8PZARGYsEZNv2zt0g@mail.gmail.com>
+Message-ID: <153989424794.53599.4926915592056818669@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.7
-Subject: Re: [PATCH] clk: fixed-rate: fix of_node_get-put imbalance
-Date:   Thu, 18 Oct 2018 13:22:44 -0700
+Subject: Re: [PATCH v5 8/8] clk: fixed-rate: Convert into a module platform driver
+Date:   Thu, 18 Oct 2018 13:24:07 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Alan Tull (2018-10-18 12:54:11)
-> When the fixed rate clock is created by devicetree,
-> of_clk_add_provider is called.  Add a call to
-> of_clk_del_provider in the remove function to balance
-> it out.
+Quoting Alan Tull (2018-10-18 12:20:58)
+> On Tue, Jul 5, 2016 at 11:45 AM Ricardo Ribalda Delgado
+> <ricardo.ribalda@gmail.com> wrote:
 > =
 
-> Signed-off-by: Alan Tull <atull@kernel.org>
-> ---
-
-Fixes tag? I'll tack one on.
-
->  drivers/clk/clk-fixed-rate.c | 1 +
->  1 file changed, 1 insertion(+)
+> I've stumbled across a of_node_get/put imbalance that happens when the
+> fixed rate clock is added and deleted using device tree.  The cause is
+> that this driver calls of_clk_add_provider() when probed, but doesn't
+> call of_clk_del_provider() when removed.
 > =
 
-> diff --git a/drivers/clk/clk-fixed-rate.c b/drivers/clk/clk-fixed-rate.c
-> index b5c46b3f8764..6d6475c32ee5 100644
-> --- a/drivers/clk/clk-fixed-rate.c
-> +++ b/drivers/clk/clk-fixed-rate.c
-> @@ -200,6 +200,7 @@ static int of_fixed_clk_remove(struct platform_device=
- *pdev)
->  {
->         struct clk *clk =3D platform_get_drvdata(pdev);
->  =
+> It looks like a lot of clock drivers share that issue:
+> =
 
-> +       of_clk_del_provider(pdev->dev.of_node);
->         clk_unregister_fixed_rate(clk);
->  =
+> $ cd drivers/clk/
+> $ git grep -l of_clk_add_provider * | xargs grep -L of_clk_del_provider |=
+ wc -l
+> 131
+> =
 
->         return 0;
+> It should be a one line fix, but for many files.
+> =
+
+> I'm not a clock subsystem expert, so please let me know whether I'm
+> missing something here.
+> =
+
+
+Patches welcome. Please include Fixes: tags for backports. Probably
+drivers don't care because clk devices are almost never removed. That
+isn't to say it shouldn't be fixed, but just giving some background on
+why nobody has fixed it.
+
