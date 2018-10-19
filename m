@@ -2,104 +2,101 @@ Return-Path: <SRS0=xlmH=M7=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25515ECDE43
-	for <linux-clk@archiver.kernel.org>; Fri, 19 Oct 2018 12:21:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 974E7ECDE43
+	for <linux-clk@archiver.kernel.org>; Fri, 19 Oct 2018 12:34:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0A1F20836
-	for <linux-clk@archiver.kernel.org>; Fri, 19 Oct 2018 12:21:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="OcWqm1D2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0A1F20836
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 6948221486
+	for <linux-clk@archiver.kernel.org>; Fri, 19 Oct 2018 12:34:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6948221486
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726902AbeJSU1R (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 19 Oct 2018 16:27:17 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58134 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727014AbeJSU1R (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 Oct 2018 16:27:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=faQiBSpR0QmwjrLMPUvKhOP6fjDzGqi+Sqy0bsHPjlg=; b=OcWqm1D290UzhN+vZ7NMFvpnj
-        dHnYg7Re4RPv8YuA0fPPZg89RMxQwZrl/xj/SRyffVcY46tjdy4bPg4HMOyWGPz64F3aq7ZqKSY7a
-        pJSBXeY23UqwTFVKdLFKAG8t6nFeCnurPViumbfsnJiV+pnlaAYPDZrjnXtXi9JvD2T7w=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gDTmJ-0008TT-68; Fri, 19 Oct 2018 12:21:19 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id D36051122548; Fri, 19 Oct 2018 13:21:18 +0100 (BST)
-Date:   Fri, 19 Oct 2018 13:21:18 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc:     lee.jones@linaro.org, mturquette@baylibre.com, sboyd@kernel.org,
-        linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        lgirdwood@gmail.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, patches@opensource.cirrus.com,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
+        id S1727658AbeJSUkt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 19 Oct 2018 16:40:49 -0400
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:44424 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727333AbeJSUks (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 Oct 2018 16:40:48 -0400
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+        by mx0b-001ae601.pphosted.com (8.16.0.23/8.16.0.23) with SMTP id w9JCY6pZ007103;
+        Fri, 19 Oct 2018 07:34:44 -0500
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from mail1.cirrus.com (mail1.cirrus.com [141.131.3.20])
+        by mx0b-001ae601.pphosted.com with ESMTP id 2n3es40sey-1;
+        Fri, 19 Oct 2018 07:34:44 -0500
+Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
+        by mail1.cirrus.com (Postfix) with ESMTP id 23A1E611E120;
+        Fri, 19 Oct 2018 07:34:44 -0500 (CDT)
+Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
+ (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Fri, 19 Oct 2018
+ 13:34:42 +0100
+Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
+        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id w9JCYgL2020117; Fri,
+ 19 Oct 2018 13:34:42 +0100
+Date:   Fri, 19 Oct 2018 13:34:42 +0100
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     Mark Brown <broonie@kernel.org>
+CC:     <lee.jones@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <linus.walleij@linaro.org>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <lgirdwood@gmail.com>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>,
+        <linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>
 Subject: Re: [PATCH v3 4/5] regulator: lochnagar: Add support for the Cirrus
  Logic Lochnagar
-Message-ID: <20181019122118.GI5895@sirena.org.uk>
+Message-ID: <20181019123442.GM1653@imbe.wolfsonmicro.main>
 References: <20181019095003.26046-1-ckeepax@opensource.cirrus.com>
  <20181019095003.26046-4-ckeepax@opensource.cirrus.com>
  <20181019112622.GB5895@sirena.org.uk>
  <20181019121920.GL1653@imbe.wolfsonmicro.main>
+ <20181019122118.GI5895@sirena.org.uk>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="SdaPbLtAangIkrMZ"
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20181019121920.GL1653@imbe.wolfsonmicro.main>
-X-Cookie: Obey all traffic laws.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181019122118.GI5895@sirena.org.uk>
+User-Agent: Mutt/1.5.20 (2009-12-10)
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=946 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1807170000
+ definitions=main-1810190113
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Fri, Oct 19, 2018 at 01:21:18PM +0100, Mark Brown wrote:
+> On Fri, Oct 19, 2018 at 01:19:20PM +0100, Charles Keepax wrote:
+> > On Fri, Oct 19, 2018 at 12:26:22PM +0100, Mark Brown wrote:
+> 
+> > > Please do not submit new versions of already applied patches, please
+> > > submit incremental updates to the existing code.  Modifying existing
+> > > commits creates problems for other users building on top of those
+> > > commits so it's best practice to only change pubished git commits if
+> > > absolutely essential.
+> 
+> > I don't think any of this has been applied anywhere yet.
+> 
+> It looks a lot like
+> 
+> bef9391cbec547351c6a13e52f3a26bb2d271ec7 regulator: lochnagar: Add support for the Cirrus Logic Lochnagar
+> 
+> in -next.
 
---SdaPbLtAangIkrMZ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Well it sure does look a lot like my patch :-). Apologies
+something must have gone wrong on one of our ends as I don't
+seem to have ever received your usual confirmation email it
+was merged. I will try to keep a closer eye on people's trees
+in future.
 
-On Fri, Oct 19, 2018 at 01:19:20PM +0100, Charles Keepax wrote:
-> On Fri, Oct 19, 2018 at 12:26:22PM +0100, Mark Brown wrote:
+No changes in this version, was just updating other patches in the
+chain for some feedback so no harm done. Will send an incremental
+patch for comment style.
 
-> > Please do not submit new versions of already applied patches, please
-> > submit incremental updates to the existing code.  Modifying existing
-> > commits creates problems for other users building on top of those
-> > commits so it's best practice to only change pubished git commits if
-> > absolutely essential.
-
-> I don't think any of this has been applied anywhere yet.
-
-It looks a lot like
-
-bef9391cbec547351c6a13e52f3a26bb2d271ec7 regulator: lochnagar: Add support for the Cirrus Logic Lochnagar
-
-in -next.
-
---SdaPbLtAangIkrMZ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlvJzD4ACgkQJNaLcl1U
-h9AKnwf/UDfl1GLXVqX2b9G5IuHvIFzmhxgxkZdhFkTn+1So7ZJHnPi8Xokpa69C
-ZgL8GAuIu7ZtvTJyOgNKcZQisyZnNRhAzn59ZFec4eOkl2KahYhB88iST4BPmQ5E
-axOdt6c2/3wTJlvZjwmclUdulp5GGR7HB0omIhDPGaKu/5RDMyPrVNLl+qqZIXmH
-x4mjWvnNd9i5BeczEl4UkmqVXx1fGIbBSDbMHq3sfSRyjyTAwTQBN0+tfOB4Zpon
-muXfHs1x4cyTecQngjhlKQoXl5KhGX36eNrjaPqxrCMjQ3UIVUxDa2CvdPqFV5lv
-FBbsC/EwWntiepoQS2f6XT0XtpJjaA==
-=FmEB
------END PGP SIGNATURE-----
-
---SdaPbLtAangIkrMZ--
+Thanks,
+Charles
