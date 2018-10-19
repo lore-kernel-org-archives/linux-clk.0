@@ -1,96 +1,140 @@
-Return-Path: <SRS0=Y0Ip=M6=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=xlmH=M7=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84AFAECDE43
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Oct 2018 22:41:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B41BFC67863
+	for <linux-clk@archiver.kernel.org>; Fri, 19 Oct 2018 01:05:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34FA920866
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Oct 2018 22:41:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3EAAD2145D
+	for <linux-clk@archiver.kernel.org>; Fri, 19 Oct 2018 01:05:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Mt2S6KjD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34FA920866
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="MzzNdVED"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EAAD2145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727174AbeJSGpF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 19 Oct 2018 02:45:05 -0400
-Received: from mail-lf1-f45.google.com ([209.85.167.45]:43020 "EHLO
-        mail-lf1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727268AbeJSGpE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 Oct 2018 02:45:04 -0400
-Received: by mail-lf1-f45.google.com with SMTP id p34-v6so23812719lfg.10
-        for <linux-clk@vger.kernel.org>; Thu, 18 Oct 2018 15:41:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2FPgNYC9Wo3HfP/bcQeFolpgGa809OtH9KLcnjIBG4A=;
-        b=Mt2S6KjDtfo/o1ZgZHEvBvXIcEvaYhcuotzC2SywQjccz4KAAhGgIq3zpA5JxoN7lJ
-         GKAy1B1BkV8sAVrxH5g1chkQfRVL5RHD+dEnqRTWDadAC9F/ngts0gL6/0m7CwoeiIJO
-         MfFQRzXwPsB68DL82Fgqy/cQqC1fHNLYeZ5iY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2FPgNYC9Wo3HfP/bcQeFolpgGa809OtH9KLcnjIBG4A=;
-        b=CbFDjb0PLegph3Fxia3n3fhpT3FEGcgEXe0OgT/csoMZuu+ekgTc0xQPH1w129PX/0
-         fEsQbfExBSmlOP4vUoUEX6u65cDYMQo/66iuK2+UFR3xipThX0LhxriEhgTEkwJfq/6b
-         REK0yD5Uh7IlBZWfd83tlCPs5oOJrs7f5nAZJRmudzqW4qjZ1X4i+gGUtkPuBG3oyCwS
-         d3JoP/QPlIuwdgRfAdwEnUMJ0K/QEoiLqSSrdKHXp8B2nTdwf8Z/qtht4yvvALpiVZbc
-         fsXGic684q/XWreNGmpY7fncGp/rOzXZzJjI4dP0VviRJq7WLKRMZKI2Qh4PJoZ30fwP
-         9HKA==
-X-Gm-Message-State: ABuFfohFWSXV0bBThMZKslaqf7ITJk3XoLu1P7PrEMeXU3Xv1U84ntmD
-        107IuBLyH6OaUKU+4Hd5TbwZVZRAgD4=
-X-Google-Smtp-Source: ACcGV61Fw1FOOtBGqwu9cwy8H7mqH6DKZf43zoHF6jGDojllAdc3LNb8nq/+V6mChTvtOQcNUjPetg==
-X-Received: by 2002:a19:1365:: with SMTP id j98mr1293410lfi.55.1539902514264;
-        Thu, 18 Oct 2018 15:41:54 -0700 (PDT)
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com. [209.85.208.172])
-        by smtp.gmail.com with ESMTPSA id h87-v6sm5079198lji.9.2018.10.18.15.41.52
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 18 Oct 2018 15:41:53 -0700 (PDT)
-Received: by mail-lj1-f172.google.com with SMTP id y71-v6so29170823lje.9
-        for <linux-clk@vger.kernel.org>; Thu, 18 Oct 2018 15:41:52 -0700 (PDT)
-X-Received: by 2002:a2e:9d05:: with SMTP id t5-v6mr8572156lji.57.1539902511968;
- Thu, 18 Oct 2018 15:41:51 -0700 (PDT)
+        id S1726261AbeJSJJW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 19 Oct 2018 05:09:22 -0400
+Received: from mail-eopbgr20086.outbound.protection.outlook.com ([40.107.2.86]:10752
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726245AbeJSJJW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 19 Oct 2018 05:09:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wkdEd4WvK15Y96jmqKhYw9gk9vnw0fm8Lix7w+p8oIA=;
+ b=MzzNdVEDI4+EfYiG8KgDWDI7Vyp2hlHWVCqINm09Qj9EkK29y4ldYSC0hWspW3RhE+XLz7vEs940KttOeuwu69TFtTkWLWXuJyOUVPYSsY1kEF/sZTBam0BI+SYio+i7U8eszZ2xhmNaOL4LQTv8isbgEvSJBeof6HbsQ4XcPqc=
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
+ DB3PR0402MB3755.eurprd04.prod.outlook.com (52.134.71.155) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1228.26; Fri, 19 Oct 2018 01:05:36 +0000
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::ddfd:3571:1813:2ee4]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::ddfd:3571:1813:2ee4%3]) with mapi id 15.20.1250.028; Fri, 19 Oct 2018
+ 01:05:36 +0000
+From:   Anson Huang <anson.huang@nxp.com>
+To:     "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     dl-linux-imx <linux-imx@nxp.com>
+Subject: [PATCH V2] clk: imx7d: remove UART1 clock setting
+Thread-Topic: [PATCH V2] clk: imx7d: remove UART1 clock setting
+Thread-Index: AQHUZ0fX/clzkbvkKUacXQAxTw3NYQ==
+Date:   Fri, 19 Oct 2018 01:05:36 +0000
+Message-ID: <1539910863-2352-1-git-send-email-Anson.Huang@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.7.4
+x-clientproxiedby: HK0PR03CA0001.apcprd03.prod.outlook.com
+ (2603:1096:203:2e::13) To DB3PR0402MB3916.eurprd04.prod.outlook.com
+ (2603:10a6:8:10::18)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=anson.huang@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DB3PR0402MB3755;6:uyUhT5NlEE8hQ28G3PorY18fN9ZpEbKvXIVKD/mcoVuQBdlSrr7weUOjtktzOd1oB2XkdC2nTrj0a3CG2LDQzltDuuc0pjxXcrbX37RcKXwCyk0vvcvWTvOfkj6A3hZc15z3nDgjm5CSylOxhq6/zIZXi0Xe8wstNhSSUrIs4SchH1SUqpqWLvhPWf2i+MsoS4p6n+x+I23obJKpXoTTWjJmrNW64Bb2vLUp8gN2jHtM4mH8naKqpTA7NkqZgXTu2cpYj6g2WBw4UOn7cQn5wsjOfIIMBt6YsK2j+yOZZH1aHqXlhOQi6o3YS+Y8Ahs2p2tavuwQXWo6SzrdBtoCxfHjkgSHxgEtDSPoI3/8qLkG6LuLpeM9lf5JW6TV7edyA1jOzIVBJM3wyUZyo+M6yPkbPLxbGVQTs0QAzeWOmmhqCqcaOwXJxt0ewYuVtVF740iKW0cte/bAZS6Biv7IFA==;5:xqNjgac+9Sg+Y8Jmojy9DnFVlbpYx6kmnOSGbkcVlz7lLAHJEIFlpxvQCioyJX9O84Z3zOC4TCw78Oeln+47rdWf1LomlP+qrEo6LK4yYpSCwOwYkwf64vy8dntsmSBZCrQ6etu2VzwPjaU3duyfSHKyHEKAdMX9W+LlAMIhECI=;7:DGu0hpuDcDuywRVTkyYBzS8avhzqwkt86titjghYKdG5Jcu2sZDEMQtGxYOlCM1NUGUd/V1e6JOK+wq0BI4brM8PjCmPWQssbiH69LOwO/Hlo60OVwbcmTaJUB9KXa3L5Mst05s3R5m0hzeNL3pg3+ge0kJQXwo+hjp0dSZ0x9UFcmQieKYxKcbZRYAPyP9I4gTBH6f1EQOc221/VdM06qgFqHwCdwJnMriukgiYDlWrdNEmrf5FTekg2UpXQAxX
+x-ms-office365-filtering-correlation-id: 51534c72-5aa8-48ba-1250-08d6355ef9f4
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:DB3PR0402MB3755;
+x-ms-traffictypediagnostic: DB3PR0402MB3755:
+x-microsoft-antispam-prvs: <DB3PR0402MB3755E888E714B8C8CDEDFC74F5F90@DB3PR0402MB3755.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(185117386973197);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(3231355)(944501410)(52105095)(10201501046)(93006095)(93001095)(6055026)(149066)(150057)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:DB3PR0402MB3755;BCL:0;PCL:0;RULEID:;SRVR:DB3PR0402MB3755;
+x-forefront-prvs: 0830866D19
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(376002)(366004)(346002)(39860400002)(396003)(189003)(199004)(2501003)(97736004)(4326008)(66066001)(5250100002)(50226002)(6512007)(2900100001)(68736007)(36756003)(8936002)(8676002)(86362001)(2201001)(71190400001)(71200400001)(25786009)(316002)(81166006)(81156014)(7736002)(305945005)(5660300001)(3846002)(6116002)(110136005)(2906002)(14454004)(478600001)(256004)(52116002)(6486002)(53936002)(186003)(6436002)(476003)(486006)(26005)(386003)(102836004)(99286004)(6506007)(105586002)(106356001)(2616005);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3755;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: wp7oCVWqIUtwS1BL13U/zvfdEiGDgXFXJA0h74OgjchVjazkHiWiCMuAhc3fNwtaMUYchucNX5zaTq25vBEFRcmMeJXL1NBIcpo08PWarBCYkYfKu8DXtT2QiBUr6GlMkxm3dmp8oWzkx5+DKZc2ls28uspaIGgb8Wyc3XKVNWm7XwVn/GuRU+YVko4pcPx+1zfqqfsHF8mS/6IRsBIQepvQmkchxuCPxjnZQlfc4xanlgquwWqEPLv4Mldpmw0Vgj1ttaAERdWs5lUKxjzWeyxgf2os1uw2CHRRGwgPpkYLeVvGpIjzxVlrujfuntI4rALM7AhEPpyCLasmSkzHFtmRJ+GQtFUIgOJphiU4nBg=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <20181018220350.220357-1-evgreen@chromium.org> <153990178286.53599.2223333358659390565@swboyd.mtv.corp.google.com>
-In-Reply-To: <153990178286.53599.2223333358659390565@swboyd.mtv.corp.google.com>
-From:   Evan Green <evgreen@chromium.org>
-Date:   Thu, 18 Oct 2018 15:41:15 -0700
-X-Gmail-Original-Message-ID: <CAE=gft48VyPFAGdxzZ7QK=ixUwU_+PXVux7iq+YH+t-u1pAvLw@mail.gmail.com>
-Message-ID: <CAE=gft48VyPFAGdxzZ7QK=ixUwU_+PXVux7iq+YH+t-u1pAvLw@mail.gmail.com>
-Subject: Re: [PATCH] clk: qcom: Remove unused arrays in SDM845 GCC
-To:     sboyd@kernel.org
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 51534c72-5aa8-48ba-1250-08d6355ef9f4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Oct 2018 01:05:36.1692
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3755
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Oct 18, 2018 at 3:29 PM Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Quoting Evan Green (2018-10-18 15:03:50)
-> > This change removes a parent map and parent name array that
-> > appear to be completely unreferenced.
-> >
-> > Signed-off-by: Evan Green <evgreen@chromium.org>
-> > ---
->
-> Applied to clk-next. Can you change your commit text style going forward
-> to match Documentation/process/submitting-patches.rst, section 2, for an
-> "imperative mood"?
->
+There are clock assignments in all i.MX7D dtb files for UART1,
+below is the example in imx7d-sdb.dts, so setting UART1 clock
+in clock driver is NOT necessary, actually, module clocks setting
+should be done in module driver.
 
-Thanks. Will do.
+&uart1 {
+	pinctrl-names =3D "default";
+	pinctrl-0 =3D <&pinctrl_uart1>;
+	assigned-clocks =3D <&clks IMX7D_UART1_ROOT_SRC>;
+	assigned-clock-parents =3D <&clks IMX7D_PLL_SYS_MAIN_240M_CLK>;
+	status =3D "okay";
+};
+
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+ drivers/clk/imx/clk-imx7d.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
+index adb08f6..06c105d 100644
+--- a/drivers/clk/imx/clk-imx7d.c
++++ b/drivers/clk/imx/clk-imx7d.c
+@@ -886,9 +886,6 @@ static void __init imx7d_clocks_init(struct device_node=
+ *ccm_node)
+ 	/* use old gpt clk setting, gpt1 root clk must be twice as gpt counter fr=
+eq */
+ 	clk_set_parent(clks[IMX7D_GPT1_ROOT_SRC], clks[IMX7D_OSC_24M_CLK]);
+=20
+-	/* set uart module clock's parent clock source that must be great then 80=
+MHz */
+-	clk_set_parent(clks[IMX7D_UART1_ROOT_SRC], clks[IMX7D_OSC_24M_CLK]);
+-
+ 	/* Set clock rate for USBPHY, the USB_PLL at CCM is from USBOTG2 */
+ 	clks[IMX7D_USB1_MAIN_480M_CLK] =3D imx_clk_fixed_factor("pll_usb1_main_cl=
+k", "osc", 20, 1);
+ 	clks[IMX7D_USB_MAIN_480M_CLK] =3D imx_clk_fixed_factor("pll_usb_main_clk"=
+, "osc", 20, 1);
+--=20
+2.7.4
+
