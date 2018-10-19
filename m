@@ -2,149 +2,1377 @@ Return-Path: <SRS0=xlmH=M7=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UPPERCASE_50_75,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2329ECDE3D
-	for <linux-clk@archiver.kernel.org>; Fri, 19 Oct 2018 09:05:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E156ECDE3D
+	for <linux-clk@archiver.kernel.org>; Fri, 19 Oct 2018 09:50:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 417122064A
-	for <linux-clk@archiver.kernel.org>; Fri, 19 Oct 2018 09:05:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="Om4humB8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 417122064A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id C0A7B20645
+	for <linux-clk@archiver.kernel.org>; Fri, 19 Oct 2018 09:50:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0A7B20645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727020AbeJSRKc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 19 Oct 2018 13:10:32 -0400
-Received: from mail-ve1eur01on0047.outbound.protection.outlook.com ([104.47.1.47]:29767
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726968AbeJSRKc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 19 Oct 2018 13:10:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rMxYqj/zI06xfqWiur7fOzR2C7iZMGYl5vZgXuxHCWo=;
- b=Om4humB85gf1rz6C9V/bmuVOs5UAsLNpoJV5ABSVhL+HJOusd28OuXtzj2bVdi7dS12DF6IHPRyaSF7KXGuVM4pgEtNgMzWccoPpNuHr1jAC9932t0TaYi21RfT+TpUI8E1gP0CBEcKG5JYjI/FC+V03H+3hSeGebNiE03gajrY=
-Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.126.21) by
- AM0PR04MB5329.eurprd04.prod.outlook.com (52.134.125.150) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1250.29; Fri, 19 Oct 2018 09:05:16 +0000
-Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
- ([fe80::797a:f972:9281:6d10]) by AM0PR04MB4211.eurprd04.prod.outlook.com
- ([fe80::797a:f972:9281:6d10%2]) with mapi id 15.20.1250.028; Fri, 19 Oct 2018
- 09:05:16 +0000
-From:   "A.s. Dong" <aisheng.dong@nxp.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-CC:     "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>
-Subject: RE: [PATCH V5 9/9] clk: imx: add imx8qxp clk driver
-Thread-Topic: [PATCH V5 9/9] clk: imx: add imx8qxp clk driver
-Thread-Index: AQHUZwMzoA17UBIsSkGVKzG2jHXioaUlRLCAgAAIYRCAACwagIAAyKWw
-Date:   Fri, 19 Oct 2018 09:05:16 +0000
-Message-ID: <AM0PR04MB42112BEEF4DB939F13D6AF1680F90@AM0PR04MB4211.eurprd04.prod.outlook.com>
-References: <1539881347-20871-1-git-send-email-aisheng.dong@nxp.com>
- <1539881347-20871-10-git-send-email-aisheng.dong@nxp.com>
- <153988429912.5275.13469659599335212731@swboyd.mtv.corp.google.com>
- <AM0PR04MB42112CB1324B0994A26AB15D80F80@AM0PR04MB4211.eurprd04.prod.outlook.com>
- <153989556955.53599.9032716427049619310@swboyd.mtv.corp.google.com>
-In-Reply-To: <153989556955.53599.9032716427049619310@swboyd.mtv.corp.google.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM0PR04MB5329;6:/gPDfssP4YCcRirG//5AbDnHi73Ybvam2IyPPODbGp1XDbmCjOwEbLgxrUKklH1nWXsyWHlcMwg2gJDQEzgVczXB/lbyV0fVGMI537+yRAZKGOxVhPp+BFBRBSpule1KY+pFFWuUGQI3hsvpvkoEY3VfTYmekR3pzi/faf4h80U443kkTp5rDLrVLU7yrhw5VoG1ySkHUMUaMb7JAi9K3306ZC/WfZEGSpdBKFOJRWw/dER3MN8dEKHX6+SjTIEoYQjN0aCocUJoneJH5OD8mI3Z7I00K00CD6mHY86+wiTzixzrXeKMXHuVZruURQMGlK8gAGluWnXzahRuTvSEqR54s8M15q0tOo4A1t9IouN7M1xCBDv8CD7UUwFrK8secis9t76Ct6wfXTDgC/gCGfr+nbeuShvEpdwXAYBToayKwYSiHUCLYY7WLwZGVCcitR0TbXRvPdqJx0cPxLHGAg==;5:s47H76xy25wuTCLuvhd1nEuNGRKosLc2sJglNYXAviAa9OPdeIGk9EbNqf6yifck2BVHBKKG6sqMudIZnt9RNckCm2JZuk036qANWsEXwnnbC2EUX0CWjRyrcWs8tOBLVKQ76jH++yzhQRpiruA89RQGhw2KJF+CxApSLxcE9oo=;7:ZvGd/EqVpAwxO1DvwEuRD3HqQF8DAQGqINw3JkgEdLRoYWWNnfVVDc1ERXgA++wzWxdCi4vXVSTWwOpNtWkVvlME9qTZdrEp5QQ1oytGAooHlGUSMI+7Z4JTu9gQuNDF4ylO3IjoR31Av/jw02BJds+dDAnrmHwZPJvxPS2S0ZFEPt8AknfHWLiO35bL5dTKlKKLReBRt/y4Nw4FKGDEr+jJtlq+5L9Ma5scQ2VvWz0SkW8t0kmtA3CyhbfrdUxe
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 3c34fec3-ab8d-40b3-7aed-08d635a1fcf2
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB5329;
-x-ms-traffictypediagnostic: AM0PR04MB5329:
-x-microsoft-antispam-prvs: <AM0PR04MB53295D7DA73E5C8EEAC0421180F90@AM0PR04MB5329.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(258649278758335)(185117386973197);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(93006095)(93001095)(3231355)(944501410)(52105095)(10201501046)(6055026)(149066)(150057)(6041310)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:AM0PR04MB5329;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB5329;
-x-forefront-prvs: 0830866D19
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(396003)(376002)(39860400002)(366004)(346002)(52084003)(199004)(189003)(13464003)(74316002)(478600001)(66066001)(99286004)(7736002)(76176011)(2501003)(7696005)(305945005)(9686003)(55016002)(6346003)(26005)(53936002)(81156014)(6436002)(81166006)(102836004)(8676002)(2906002)(4001150100001)(229853002)(71190400001)(186003)(476003)(53546011)(6506007)(97736004)(11346002)(14454004)(446003)(6246003)(486006)(71200400001)(8936002)(93886005)(106356001)(54906003)(33656002)(105586002)(25786009)(256004)(14444005)(5250100002)(110136005)(4326008)(316002)(5660300001)(3846002)(6116002)(2900100001)(68736007)(86362001)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5329;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=aisheng.dong@nxp.com; 
-x-microsoft-antispam-message-info: HQyf2ua7SsirJxzkJBglxrvXlmlr58y/SNX5s4klqKq+L2bHcPXpQ1XL0xyV+Fj3IUMMzaZNmfPMyDsP7IrrFffPD546Vx/hoYdrqmZ7hX09cu+aPloLR8B9cIKTSIOeuJUGUuQ4M5SpYWzKt4dxtZfv9HwU3eZaCezfCArqZOumAGeE8xJ+RAi63mgk6SyoDYSx7yZMx+oEA36/gceY+brgpwwIdhn4enXiY8w2hsbRHz6cYl2aBEP0ARXagFnEYh4B/tbUhrgoFXGLsCk3lLo9uS3i9gFQZt+U2omfHPwUoAK0DOD5uo/b2snGO6wfnXjYEsBnO3Sjlh31Jg/4UTeeaVoWkxN6neHWUiP5QyU=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1727474AbeJSRzj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 19 Oct 2018 13:55:39 -0400
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:60156 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726964AbeJSRzi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 Oct 2018 13:55:38 -0400
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+        by mx0a-001ae601.pphosted.com (8.16.0.23/8.16.0.23) with SMTP id w9J9ncPQ006594;
+        Fri, 19 Oct 2018 04:50:06 -0500
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from mail3.cirrus.com ([87.246.76.56])
+        by mx0a-001ae601.pphosted.com with ESMTP id 2n3e40rv1d-1;
+        Fri, 19 Oct 2018 04:50:05 -0500
+Received: from EX17.ad.cirrus.com (ex17.ad.cirrus.com [172.20.9.81])
+        by mail3.cirrus.com (Postfix) with ESMTP id B1BE9611C8B1;
+        Fri, 19 Oct 2018 04:52:23 -0500 (CDT)
+Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
+ (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Fri, 19 Oct 2018
+ 10:50:03 +0100
+Received: from algalon.ad.cirrus.com (algalon.ad.cirrus.com [198.90.251.122])
+        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id w9J9o3ox015276; Fri,
+ 19 Oct 2018 10:50:04 +0100
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     <lee.jones@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <broonie@kernel.org>,
+        <linus.walleij@linaro.org>, <robh+dt@kernel.org>
+CC:     <mark.rutland@arm.com>, <lgirdwood@gmail.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <patches@opensource.cirrus.com>, <linux-clk@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>
+Subject: [PATCH v3 2/5] mfd: lochnagar: Add support for the Cirrus Logic Lochnagar
+Date:   Fri, 19 Oct 2018 10:50:00 +0100
+Message-ID: <20181019095003.26046-2-ckeepax@opensource.cirrus.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20181019095003.26046-1-ckeepax@opensource.cirrus.com>
+References: <20181019095003.26046-1-ckeepax@opensource.cirrus.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3c34fec3-ab8d-40b3-7aed-08d635a1fcf2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Oct 2018 09:05:16.8166
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5329
+Content-Type: text/plain
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1807170000
+ definitions=main-1810190090
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBTdGVwaGVuIEJveWQgW21haWx0
-bzpzYm95ZEBrZXJuZWwub3JnXQ0KPiBTZW50OiBGcmlkYXksIE9jdG9iZXIgMTksIDIwMTggNDo0
-NiBBTQ0KPiBUbzogQS5zLiBEb25nIDxhaXNoZW5nLmRvbmdAbnhwLmNvbT47IGxpbnV4LWNsa0B2
-Z2VyLmtlcm5lbC5vcmcNCj4gQ2M6IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9y
-ZzsgbXR1cnF1ZXR0ZUBiYXlsaWJyZS5jb207DQo+IHNoYXduZ3VvQGtlcm5lbC5vcmc7IEZhYmlv
-IEVzdGV2YW0gPGZhYmlvLmVzdGV2YW1AbnhwLmNvbT47IGRsLWxpbnV4LWlteA0KPiA8bGludXgt
-aW14QG54cC5jb20+OyBrZXJuZWxAcGVuZ3V0cm9uaXguZGUNCj4gU3ViamVjdDogUkU6IFtQQVRD
-SCBWNSA5LzldIGNsazogaW14OiBhZGQgaW14OHF4cCBjbGsgZHJpdmVyDQo+IA0KPiBRdW90aW5n
-IEEucy4gRG9uZyAoMjAxOC0xMC0xOCAxMToxMzozOSkNCj4gPiA+IC0tLS0tT3JpZ2luYWwgTWVz
-c2FnZS0tLS0tDQo+ID4gPiBGcm9tOiBTdGVwaGVuIEJveWQgW21haWx0bzpzYm95ZEBrZXJuZWwu
-b3JnXQ0KPiA+ID4gU2VudDogRnJpZGF5LCBPY3RvYmVyIDE5LCAyMDE4IDE6MzggQU0NCj4gPiA+
-IFRvOiBBLnMuIERvbmcgPGFpc2hlbmcuZG9uZ0BueHAuY29tPjsgbGludXgtY2xrQHZnZXIua2Vy
-bmVsLm9yZw0KPiA+ID4gQ2M6IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZzsg
-bXR1cnF1ZXR0ZUBiYXlsaWJyZS5jb207DQo+ID4gPiBzaGF3bmd1b0BrZXJuZWwub3JnOyBGYWJp
-byBFc3RldmFtIDxmYWJpby5lc3RldmFtQG54cC5jb20+Ow0KPiA+ID4gZGwtbGludXgtaW14IDxs
-aW51eC1pbXhAbnhwLmNvbT47IGtlcm5lbEBwZW5ndXRyb25peC5kZTsgQS5zLiBEb25nDQo+ID4g
-PiA8YWlzaGVuZy5kb25nQG54cC5jb20+DQo+ID4gPiBTdWJqZWN0OiBSZTogW1BBVENIIFY1IDkv
-OV0gY2xrOiBpbXg6IGFkZCBpbXg4cXhwIGNsayBkcml2ZXINCj4gPiA+DQo+ID4gPiBRdW90aW5n
-IEEucy4gRG9uZyAoMjAxOC0xMC0xOCAwOTo1NDoxNSkNCj4gPiA+ID4gKw0KPiA+ID4gPiArI2lu
-Y2x1ZGUgPGR0LWJpbmRpbmdzL2Nsb2NrL2lteDhxeHAtY2xvY2suaD4NCj4gPiA+ID4gKyNpbmNs
-dWRlIDxsaW51eC9jbGsuaD4NCj4gPiA+ID4gKyNpbmNsdWRlIDxsaW51eC9lcnIuaD4NCj4gPiA+
-ID4gKyNpbmNsdWRlIDxsaW51eC9pby5oPg0KPiA+ID4gPiArI2luY2x1ZGUgPGxpbnV4L29mLmg+
-DQo+ID4gPiA+ICsjaW5jbHVkZSA8bGludXgvb2ZfYWRkcmVzcy5oPg0KPiA+ID4gPiArI2luY2x1
-ZGUgPGxpbnV4L3BsYXRmb3JtX2RldmljZS5oPiAjaW5jbHVkZSA8bGludXgvc2xhYi5oPg0KPiA+
-ID4gPiArDQo+ID4gPiA+ICsjaW5jbHVkZSA8c29jL2lteC9pbXg4cXhwL2xwY2cuaD4NCj4gPiA+
-ID4gKw0KPiA+ID4gPiArI2luY2x1ZGUgImNsay1zY3UuaCINCj4gPiA+ID4gKw0KPiA+ID4gPiAr
-c3RhdGljIHN0cnVjdCBjbGtfaHdfb25lY2VsbF9kYXRhICppbXg4cXhwX2Nsa19kYXRhOw0KPiA+
-ID4gPiArDQo+ID4gPiA+ICtzdGF0aWMgY29uc3QgY2hhciAqIGNvbnN0IGVuZXRfc2Vsc1tdID0g
-eyAiZW5ldF8yNU1IeiIsDQo+ID4gPiA+ICsiZW5ldF8xMjVNSHoiLCB9OyBzdGF0aWMgY29uc3Qg
-Y2hhciAqIGNvbnN0IGVuZXQwX3JtaWlfdHhfc2Vsc1tdDQo+ID4gPiA+ICs9IHsgImVuZXQwX3Jl
-Zl9kaXYiLCAiZHVtbXkiLCB9OyBzdGF0aWMgY29uc3QgY2hhciAqIGNvbnN0DQo+ID4gPiA+ICtl
-bmV0MV9ybWlpX3R4X3NlbHNbXSA9IHsgImVuZXQxX3JlZl9kaXYiLCAiZHVtbXkiLCB9Ow0KPiA+
-ID4gPiArDQo+ID4gPiA+ICtzdGF0aWMgaW50IGlteDhxeHBfY2xrX3Byb2JlKHN0cnVjdCBwbGF0
-Zm9ybV9kZXZpY2UgKnBkZXYpIHsNCj4gPiA+ID4gKyAgICAgICBzdHJ1Y3QgZGV2aWNlX25vZGUg
-KmNjbV9ub2RlID0gcGRldi0+ZGV2Lm9mX25vZGU7DQo+ID4gPg0KPiA+ID4gV2hlcmUncyB0aGUg
-RFQgYmluZGluZyBmb3IgdGhpcyBkZXZpY2U/DQo+ID4NCj4gPiBTb3JyeSBmb3IgbWlzc2VkIHRv
-IG1lbnRpb24gdGhpcy4NCj4gPiBJdCdzIGJlZW4gbWVyZ2VkIGludG8gc2N1IGJpbmRpbmcgZG9j
-IHBlciBSb2IncyByZXF1ZXN0IHdoaWNoIGhhcw0KPiA+IGFscmVhZHkgYmVlbiBpbiBTaGF3bidz
-IHRyZWUuDQo+ID4NCj4gPiBQbGVhc2UgdGFrZSBhIGxvb2sgYXQgaGVyZToNClsuLi5dDQo+IA0K
-PiBPayBJIGFzayBiZWNhdXNlIGl0J3Mgb2RkIHRvIGhhcmRjb2RlIHBoeXNpY2FsIGFkZHJlc3Nl
-cyBpbiBhIGNsayBkcml2ZXIgd2hlbg0KPiB0aG9zZSBzaG91bGQgY29tZSBmcm9tIERUIGluIHJl
-ZyBwcm9wZXJ0aWVzLiBXYXMgUm9iIGF3YXJlIHRoYXQgdGhpcyBjbGsNCj4gbm9kZSB3YXMgY29t
-YmluaW5nIEkvTyBtZW1vcnkgYW5kIG1lc3NhZ2UgcGFzc2luZz8NCg0KWWVzLCBJIGFncmVlIHdp
-dGggeW91LiBUaGF0IHNlZW1zIGxpa2UgYSBzcGVjaWFsIHRvIGkuTVggY2FzZS4NClRoZSBwcm9i
-bGVtIGlzIG5vdCBhbGwgY2xvY2tzIGhhdmluZyBhIExQQ0cgZ2F0ZS4gQW5kIHRob3NlIExQQ0dz
-IGFyZSBhbHNvIG5vdA0KY29udGludW91cyBhbmQgbWF5IGJlIHNoYXJlZCBieSBtYW55IGNsb2Nr
-cyB3aGljaCBtYWtlIHRoaW5ncyBtb3JlIGNvbXBsaWNhdGVkLg0KSSdtIG5vdCBzdXJlIHBhcnNp
-bmcgZnJvbSBkZXZpY2UgdHJlZSBjb3VsZCBiZSBiZXR0ZXIgd2F5IHRvIGRvIGl0Lg0KUHJvYmFi
-bHkgbmVlZCBodWdlIGNoYW5nZXMuDQoNCkhvdyB3b3VsZCB5b3Ugc3VnZ2VzdD8NCkRvIHlvdSB0
-aGluayB3ZSBjYW4gd29ya2Fyb3VuZCB0aGlzIGR1ZSB0byB0aGUgc3BlY2lhbCBpTVg/DQoNClJl
-Z2FyZHMNCkRvbmcgQWlzaGVuZw0K
+Lochnagar is an evaluation and development board for Cirrus
+Logic Smart CODEC and Amp devices. It allows the connection of
+most Cirrus Logic devices on mini-cards, as well as allowing
+connection of various application processor systems to provide a
+full evaluation platform. This driver supports the board
+controller chip on the Lochnagar board. Audio system topology,
+clocking and power can all be controlled through the Lochnagar
+controller chip, allowing the device under test to be used in
+a variety of possible use cases.
+
+As the Lochnagar is a fairly complex device this MFD driver
+allows the drivers for the various features to be bound
+in. Initially clocking, regulator and pinctrl will be added as
+these are necessary to configure the system. But in time at least
+audio and voltage/current monitoring will also be added.
+
+Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+---
+
+Changes since v2:
+ - Minor updates to the device names bound in for the clock driver
+
+Thanks,
+Charles
+
+ MAINTAINERS                         |  13 +
+ drivers/mfd/Kconfig                 |   8 +
+ drivers/mfd/Makefile                |   2 +
+ drivers/mfd/lochnagar-i2c.c         | 732 ++++++++++++++++++++++++++++++++++++
+ include/linux/mfd/lochnagar.h       |  48 +++
+ include/linux/mfd/lochnagar1_regs.h | 157 ++++++++
+ include/linux/mfd/lochnagar2_regs.h | 253 +++++++++++++
+ 7 files changed, 1213 insertions(+)
+ create mode 100644 drivers/mfd/lochnagar-i2c.c
+ create mode 100644 include/linux/mfd/lochnagar.h
+ create mode 100644 include/linux/mfd/lochnagar1_regs.h
+ create mode 100644 include/linux/mfd/lochnagar2_regs.h
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index d9e6d86488df4..f1f3494ac5cd8 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -3557,6 +3557,19 @@ L:	netdev@vger.kernel.org
+ S:	Maintained
+ F:	drivers/net/ethernet/cirrus/ep93xx_eth.c
+ 
++CIRRUS LOGIC LOCHNAGAR DRIVER
++M:	Charles Keepax <ckeepax@opensource.cirrus.com>
++M:	Richard Fitzgerald <rf@opensource.cirrus.com>
++L:	patches@opensource.cirrus.com
++S:	Supported
++F:	drivers/clk/clk-lochnagar.c
++F:	drivers/mfd/lochnagar-i2c.c
++F:	drivers/pinctrl/cirrus/pinctrl-lochnagar.c
++F:	drivers/regulator/lochnagar-regulator.c
++F:	include/dt-bindings/clk/lochnagar.h
++F:	include/dt-bindings/pinctrl/lochnagar.h
++F:	include/linux/mfd/lochnagar*
++
+ CISCO FCOE HBA DRIVER
+ M:	Satish Kharat <satishkh@cisco.com>
+ M:	Sesidhar Baddela <sebaddel@cisco.com>
+diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+index f3a5f8d027906..dc64151373714 100644
+--- a/drivers/mfd/Kconfig
++++ b/drivers/mfd/Kconfig
+@@ -1676,6 +1676,14 @@ config MFD_VX855
+ 	  VIA VX855/VX875 south bridge. You will need to enable the vx855_spi
+ 	  and/or vx855_gpio drivers for this to do anything useful.
+ 
++config MFD_LOCHNAGAR
++	bool "Cirrus Logic Lochnagar Audio Development Board"
++	select MFD_CORE
++	select REGMAP_I2C
++	depends on I2C=y && OF
++	help
++	  Support for Cirrus Logic Lochnagar audio development board.
++
+ config MFD_ARIZONA
+ 	select REGMAP
+ 	select REGMAP_IRQ
+diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+index 5856a9489cbd8..f16773cb887ff 100644
+--- a/drivers/mfd/Makefile
++++ b/drivers/mfd/Makefile
+@@ -37,6 +37,8 @@ obj-$(CONFIG_MFD_T7L66XB)	+= t7l66xb.o tmio_core.o
+ obj-$(CONFIG_MFD_TC6387XB)	+= tc6387xb.o tmio_core.o
+ obj-$(CONFIG_MFD_TC6393XB)	+= tc6393xb.o tmio_core.o
+ 
++obj-$(CONFIG_MFD_LOCHNAGAR)	+= lochnagar-i2c.o
++
+ obj-$(CONFIG_MFD_ARIZONA)	+= arizona-core.o
+ obj-$(CONFIG_MFD_ARIZONA)	+= arizona-irq.o
+ obj-$(CONFIG_MFD_ARIZONA_I2C)	+= arizona-i2c.o
+diff --git a/drivers/mfd/lochnagar-i2c.c b/drivers/mfd/lochnagar-i2c.c
+new file mode 100644
+index 0000000000000..b878a79a49066
+--- /dev/null
++++ b/drivers/mfd/lochnagar-i2c.c
+@@ -0,0 +1,732 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Lochnagar I2C bus interface
++ *
++ * Copyright (c) 2012-2018 Cirrus Logic, Inc. and
++ *                         Cirrus Logic International Semiconductor Ltd.
++ *
++ * Author: Charles Keepax <ckeepax@opensource.cirrus.com>
++ */
++
++#include <linux/delay.h>
++#include <linux/device.h>
++#include <linux/err.h>
++#include <linux/gpio/consumer.h>
++#include <linux/i2c.h>
++#include <linux/mfd/core.h>
++#include <linux/mutex.h>
++#include <linux/of.h>
++#include <linux/of_platform.h>
++#include <linux/regmap.h>
++
++#include <linux/mfd/lochnagar.h>
++
++#define LOCHNAGAR_BOOT_RETRIES		10
++#define LOCHNAGAR_BOOT_DELAY_MS		350
++
++#define LOCHNAGAR_CONFIG_POLL_US	10000
++
++static bool lochnagar1_readable_register(struct device *dev, unsigned int reg)
++{
++	switch (reg) {
++	case LOCHNAGAR_SOFTWARE_RESET:
++	case LOCHNAGAR_FIRMWARE_ID1:
++	case LOCHNAGAR_FIRMWARE_ID2:
++	case LOCHNAGAR1_CDC_AIF1_SEL:
++	case LOCHNAGAR1_CDC_AIF2_SEL:
++	case LOCHNAGAR1_CDC_AIF3_SEL:
++	case LOCHNAGAR1_CDC_MCLK1_SEL:
++	case LOCHNAGAR1_CDC_MCLK2_SEL:
++	case LOCHNAGAR1_CDC_AIF_CTRL1:
++	case LOCHNAGAR1_CDC_AIF_CTRL2:
++	case LOCHNAGAR1_EXT_AIF_CTRL:
++	case LOCHNAGAR1_DSP_AIF1_SEL:
++	case LOCHNAGAR1_DSP_AIF2_SEL:
++	case LOCHNAGAR1_DSP_CLKIN_SEL:
++	case LOCHNAGAR1_DSP_AIF:
++	case LOCHNAGAR1_GF_AIF1:
++	case LOCHNAGAR1_GF_AIF2:
++	case LOCHNAGAR1_PSIA_AIF:
++	case LOCHNAGAR1_PSIA1_SEL:
++	case LOCHNAGAR1_PSIA2_SEL:
++	case LOCHNAGAR1_SPDIF_AIF_SEL:
++	case LOCHNAGAR1_GF_AIF3_SEL:
++	case LOCHNAGAR1_GF_AIF4_SEL:
++	case LOCHNAGAR1_GF_CLKOUT1_SEL:
++	case LOCHNAGAR1_GF_AIF1_SEL:
++	case LOCHNAGAR1_GF_AIF2_SEL:
++	case LOCHNAGAR1_GF_GPIO2:
++	case LOCHNAGAR1_GF_GPIO3:
++	case LOCHNAGAR1_GF_GPIO7:
++	case LOCHNAGAR1_RST:
++	case LOCHNAGAR1_LED1:
++	case LOCHNAGAR1_LED2:
++	case LOCHNAGAR1_I2C_CTRL:
++		return true;
++	default:
++		return false;
++	}
++}
++
++static const struct reg_default lochnagar1_reg_defaults[] = {
++	{ LOCHNAGAR1_CDC_AIF1_SEL,    0x00 },
++	{ LOCHNAGAR1_CDC_AIF2_SEL,    0x00 },
++	{ LOCHNAGAR1_CDC_AIF3_SEL,    0x00 },
++	{ LOCHNAGAR1_CDC_MCLK1_SEL,   0x00 },
++	{ LOCHNAGAR1_CDC_MCLK2_SEL,   0x00 },
++	{ LOCHNAGAR1_CDC_AIF_CTRL1,   0x00 },
++	{ LOCHNAGAR1_CDC_AIF_CTRL2,   0x00 },
++	{ LOCHNAGAR1_EXT_AIF_CTRL,    0x00 },
++	{ LOCHNAGAR1_DSP_AIF1_SEL,    0x00 },
++	{ LOCHNAGAR1_DSP_AIF2_SEL,    0x00 },
++	{ LOCHNAGAR1_DSP_CLKIN_SEL,   0x01 },
++	{ LOCHNAGAR1_DSP_AIF,         0x08 },
++	{ LOCHNAGAR1_GF_AIF1,         0x00 },
++	{ LOCHNAGAR1_GF_AIF2,         0x00 },
++	{ LOCHNAGAR1_PSIA_AIF,        0x00 },
++	{ LOCHNAGAR1_PSIA1_SEL,       0x00 },
++	{ LOCHNAGAR1_PSIA2_SEL,       0x00 },
++	{ LOCHNAGAR1_SPDIF_AIF_SEL,   0x00 },
++	{ LOCHNAGAR1_GF_AIF3_SEL,     0x00 },
++	{ LOCHNAGAR1_GF_AIF4_SEL,     0x00 },
++	{ LOCHNAGAR1_GF_CLKOUT1_SEL,  0x00 },
++	{ LOCHNAGAR1_GF_AIF1_SEL,     0x00 },
++	{ LOCHNAGAR1_GF_AIF2_SEL,     0x00 },
++	{ LOCHNAGAR1_GF_GPIO2,        0x00 },
++	{ LOCHNAGAR1_GF_GPIO3,        0x00 },
++	{ LOCHNAGAR1_GF_GPIO7,        0x00 },
++	{ LOCHNAGAR1_RST,             0x00 },
++	{ LOCHNAGAR1_LED1,            0x00 },
++	{ LOCHNAGAR1_LED2,            0x00 },
++	{ LOCHNAGAR1_I2C_CTRL,        0x01 },
++};
++
++static const struct regmap_config lochnagar1_i2c_regmap = {
++	.reg_bits = 8,
++	.val_bits = 8,
++	.reg_format_endian = REGMAP_ENDIAN_BIG,
++	.val_format_endian = REGMAP_ENDIAN_BIG,
++
++	.max_register = 0x50,
++	.readable_reg = lochnagar1_readable_register,
++
++	.use_single_rw = true,
++
++	.cache_type = REGCACHE_RBTREE,
++
++	.reg_defaults = lochnagar1_reg_defaults,
++	.num_reg_defaults = ARRAY_SIZE(lochnagar1_reg_defaults),
++};
++
++static const struct reg_sequence lochnagar1_patch[] = {
++	{ 0x40, 0x0083 },
++	{ 0x46, 0x0001 },
++	{ 0x47, 0x0018 },
++	{ 0x50, 0x0000 },
++};
++
++static struct mfd_cell lochnagar1_devs[] = {
++	{
++		.name = "lochnagar-pinctrl",
++	},
++	{
++		.name = "lochnagar1-clk",
++	},
++};
++
++static bool lochnagar2_readable_register(struct device *dev, unsigned int reg)
++{
++	switch (reg) {
++	case LOCHNAGAR_SOFTWARE_RESET:
++	case LOCHNAGAR_FIRMWARE_ID1:
++	case LOCHNAGAR_FIRMWARE_ID2:
++	case LOCHNAGAR2_CDC_AIF1_CTRL:
++	case LOCHNAGAR2_CDC_AIF2_CTRL:
++	case LOCHNAGAR2_CDC_AIF3_CTRL:
++	case LOCHNAGAR2_DSP_AIF1_CTRL:
++	case LOCHNAGAR2_DSP_AIF2_CTRL:
++	case LOCHNAGAR2_PSIA1_CTRL:
++	case LOCHNAGAR2_PSIA2_CTRL:
++	case LOCHNAGAR2_GF_AIF3_CTRL:
++	case LOCHNAGAR2_GF_AIF4_CTRL:
++	case LOCHNAGAR2_GF_AIF1_CTRL:
++	case LOCHNAGAR2_GF_AIF2_CTRL:
++	case LOCHNAGAR2_SPDIF_AIF_CTRL:
++	case LOCHNAGAR2_USB_AIF1_CTRL:
++	case LOCHNAGAR2_USB_AIF2_CTRL:
++	case LOCHNAGAR2_ADAT_AIF_CTRL:
++	case LOCHNAGAR2_CDC_MCLK1_CTRL:
++	case LOCHNAGAR2_CDC_MCLK2_CTRL:
++	case LOCHNAGAR2_DSP_CLKIN_CTRL:
++	case LOCHNAGAR2_PSIA1_MCLK_CTRL:
++	case LOCHNAGAR2_PSIA2_MCLK_CTRL:
++	case LOCHNAGAR2_SPDIF_MCLK_CTRL:
++	case LOCHNAGAR2_GF_CLKOUT1_CTRL:
++	case LOCHNAGAR2_GF_CLKOUT2_CTRL:
++	case LOCHNAGAR2_ADAT_MCLK_CTRL:
++	case LOCHNAGAR2_SOUNDCARD_MCLK_CTRL:
++	case LOCHNAGAR2_GPIO_FPGA_GPIO1:
++	case LOCHNAGAR2_GPIO_FPGA_GPIO2:
++	case LOCHNAGAR2_GPIO_FPGA_GPIO3:
++	case LOCHNAGAR2_GPIO_FPGA_GPIO4:
++	case LOCHNAGAR2_GPIO_FPGA_GPIO5:
++	case LOCHNAGAR2_GPIO_FPGA_GPIO6:
++	case LOCHNAGAR2_GPIO_CDC_GPIO1:
++	case LOCHNAGAR2_GPIO_CDC_GPIO2:
++	case LOCHNAGAR2_GPIO_CDC_GPIO3:
++	case LOCHNAGAR2_GPIO_CDC_GPIO4:
++	case LOCHNAGAR2_GPIO_CDC_GPIO5:
++	case LOCHNAGAR2_GPIO_CDC_GPIO6:
++	case LOCHNAGAR2_GPIO_CDC_GPIO7:
++	case LOCHNAGAR2_GPIO_CDC_GPIO8:
++	case LOCHNAGAR2_GPIO_DSP_GPIO1:
++	case LOCHNAGAR2_GPIO_DSP_GPIO2:
++	case LOCHNAGAR2_GPIO_DSP_GPIO3:
++	case LOCHNAGAR2_GPIO_DSP_GPIO4:
++	case LOCHNAGAR2_GPIO_DSP_GPIO5:
++	case LOCHNAGAR2_GPIO_DSP_GPIO6:
++	case LOCHNAGAR2_GPIO_GF_GPIO2:
++	case LOCHNAGAR2_GPIO_GF_GPIO3:
++	case LOCHNAGAR2_GPIO_GF_GPIO7:
++	case LOCHNAGAR2_GPIO_CDC_AIF1_BCLK:
++	case LOCHNAGAR2_GPIO_CDC_AIF1_RXDAT:
++	case LOCHNAGAR2_GPIO_CDC_AIF1_LRCLK:
++	case LOCHNAGAR2_GPIO_CDC_AIF1_TXDAT:
++	case LOCHNAGAR2_GPIO_CDC_AIF2_BCLK:
++	case LOCHNAGAR2_GPIO_CDC_AIF2_RXDAT:
++	case LOCHNAGAR2_GPIO_CDC_AIF2_LRCLK:
++	case LOCHNAGAR2_GPIO_CDC_AIF2_TXDAT:
++	case LOCHNAGAR2_GPIO_CDC_AIF3_BCLK:
++	case LOCHNAGAR2_GPIO_CDC_AIF3_RXDAT:
++	case LOCHNAGAR2_GPIO_CDC_AIF3_LRCLK:
++	case LOCHNAGAR2_GPIO_CDC_AIF3_TXDAT:
++	case LOCHNAGAR2_GPIO_DSP_AIF1_BCLK:
++	case LOCHNAGAR2_GPIO_DSP_AIF1_RXDAT:
++	case LOCHNAGAR2_GPIO_DSP_AIF1_LRCLK:
++	case LOCHNAGAR2_GPIO_DSP_AIF1_TXDAT:
++	case LOCHNAGAR2_GPIO_DSP_AIF2_BCLK:
++	case LOCHNAGAR2_GPIO_DSP_AIF2_RXDAT:
++	case LOCHNAGAR2_GPIO_DSP_AIF2_LRCLK:
++	case LOCHNAGAR2_GPIO_DSP_AIF2_TXDAT:
++	case LOCHNAGAR2_GPIO_PSIA1_BCLK:
++	case LOCHNAGAR2_GPIO_PSIA1_RXDAT:
++	case LOCHNAGAR2_GPIO_PSIA1_LRCLK:
++	case LOCHNAGAR2_GPIO_PSIA1_TXDAT:
++	case LOCHNAGAR2_GPIO_PSIA2_BCLK:
++	case LOCHNAGAR2_GPIO_PSIA2_RXDAT:
++	case LOCHNAGAR2_GPIO_PSIA2_LRCLK:
++	case LOCHNAGAR2_GPIO_PSIA2_TXDAT:
++	case LOCHNAGAR2_GPIO_GF_AIF3_BCLK:
++	case LOCHNAGAR2_GPIO_GF_AIF3_RXDAT:
++	case LOCHNAGAR2_GPIO_GF_AIF3_LRCLK:
++	case LOCHNAGAR2_GPIO_GF_AIF3_TXDAT:
++	case LOCHNAGAR2_GPIO_GF_AIF4_BCLK:
++	case LOCHNAGAR2_GPIO_GF_AIF4_RXDAT:
++	case LOCHNAGAR2_GPIO_GF_AIF4_LRCLK:
++	case LOCHNAGAR2_GPIO_GF_AIF4_TXDAT:
++	case LOCHNAGAR2_GPIO_GF_AIF1_BCLK:
++	case LOCHNAGAR2_GPIO_GF_AIF1_RXDAT:
++	case LOCHNAGAR2_GPIO_GF_AIF1_LRCLK:
++	case LOCHNAGAR2_GPIO_GF_AIF1_TXDAT:
++	case LOCHNAGAR2_GPIO_GF_AIF2_BCLK:
++	case LOCHNAGAR2_GPIO_GF_AIF2_RXDAT:
++	case LOCHNAGAR2_GPIO_GF_AIF2_LRCLK:
++	case LOCHNAGAR2_GPIO_GF_AIF2_TXDAT:
++	case LOCHNAGAR2_GPIO_DSP_UART1_RX:
++	case LOCHNAGAR2_GPIO_DSP_UART1_TX:
++	case LOCHNAGAR2_GPIO_DSP_UART2_RX:
++	case LOCHNAGAR2_GPIO_DSP_UART2_TX:
++	case LOCHNAGAR2_GPIO_GF_UART2_RX:
++	case LOCHNAGAR2_GPIO_GF_UART2_TX:
++	case LOCHNAGAR2_GPIO_USB_UART_RX:
++	case LOCHNAGAR2_GPIO_CDC_PDMCLK1:
++	case LOCHNAGAR2_GPIO_CDC_PDMDAT1:
++	case LOCHNAGAR2_GPIO_CDC_PDMCLK2:
++	case LOCHNAGAR2_GPIO_CDC_PDMDAT2:
++	case LOCHNAGAR2_GPIO_CDC_DMICCLK1:
++	case LOCHNAGAR2_GPIO_CDC_DMICDAT1:
++	case LOCHNAGAR2_GPIO_CDC_DMICCLK2:
++	case LOCHNAGAR2_GPIO_CDC_DMICDAT2:
++	case LOCHNAGAR2_GPIO_CDC_DMICCLK3:
++	case LOCHNAGAR2_GPIO_CDC_DMICDAT3:
++	case LOCHNAGAR2_GPIO_CDC_DMICCLK4:
++	case LOCHNAGAR2_GPIO_CDC_DMICDAT4:
++	case LOCHNAGAR2_GPIO_DSP_DMICCLK1:
++	case LOCHNAGAR2_GPIO_DSP_DMICDAT1:
++	case LOCHNAGAR2_GPIO_DSP_DMICCLK2:
++	case LOCHNAGAR2_GPIO_DSP_DMICDAT2:
++	case LOCHNAGAR2_GPIO_I2C2_SCL:
++	case LOCHNAGAR2_GPIO_I2C2_SDA:
++	case LOCHNAGAR2_GPIO_I2C3_SCL:
++	case LOCHNAGAR2_GPIO_I2C3_SDA:
++	case LOCHNAGAR2_GPIO_I2C4_SCL:
++	case LOCHNAGAR2_GPIO_I2C4_SDA:
++	case LOCHNAGAR2_GPIO_DSP_STANDBY:
++	case LOCHNAGAR2_GPIO_CDC_MCLK1:
++	case LOCHNAGAR2_GPIO_CDC_MCLK2:
++	case LOCHNAGAR2_GPIO_DSP_CLKIN:
++	case LOCHNAGAR2_GPIO_PSIA1_MCLK:
++	case LOCHNAGAR2_GPIO_PSIA2_MCLK:
++	case LOCHNAGAR2_GPIO_GF_GPIO1:
++	case LOCHNAGAR2_GPIO_GF_GPIO5:
++	case LOCHNAGAR2_GPIO_DSP_GPIO20:
++	case LOCHNAGAR2_GPIO_CHANNEL1:
++	case LOCHNAGAR2_GPIO_CHANNEL2:
++	case LOCHNAGAR2_GPIO_CHANNEL3:
++	case LOCHNAGAR2_GPIO_CHANNEL4:
++	case LOCHNAGAR2_GPIO_CHANNEL5:
++	case LOCHNAGAR2_GPIO_CHANNEL6:
++	case LOCHNAGAR2_GPIO_CHANNEL7:
++	case LOCHNAGAR2_GPIO_CHANNEL8:
++	case LOCHNAGAR2_GPIO_CHANNEL9:
++	case LOCHNAGAR2_GPIO_CHANNEL10:
++	case LOCHNAGAR2_GPIO_CHANNEL11:
++	case LOCHNAGAR2_GPIO_CHANNEL12:
++	case LOCHNAGAR2_GPIO_CHANNEL13:
++	case LOCHNAGAR2_GPIO_CHANNEL14:
++	case LOCHNAGAR2_GPIO_CHANNEL15:
++	case LOCHNAGAR2_GPIO_CHANNEL16:
++	case LOCHNAGAR2_MINICARD_RESETS:
++	case LOCHNAGAR2_ANALOGUE_PATH_CTRL1:
++	case LOCHNAGAR2_ANALOGUE_PATH_CTRL2:
++	case LOCHNAGAR2_COMMS_CTRL4:
++	case LOCHNAGAR2_SPDIF_CTRL:
++	case LOCHNAGAR2_POWER_CTRL:
++	case LOCHNAGAR2_MICVDD_CTRL1:
++	case LOCHNAGAR2_MICVDD_CTRL2:
++	case LOCHNAGAR2_VDDCORE_CDC_CTRL1:
++	case LOCHNAGAR2_VDDCORE_CDC_CTRL2:
++	case LOCHNAGAR2_SOUNDCARD_AIF_CTRL:
++		return true;
++	default:
++		return false;
++	}
++}
++
++static bool lochnagar2_volatile_register(struct device *dev, unsigned int reg)
++{
++	switch (reg) {
++	case LOCHNAGAR2_GPIO_CHANNEL1:
++	case LOCHNAGAR2_GPIO_CHANNEL2:
++	case LOCHNAGAR2_GPIO_CHANNEL3:
++	case LOCHNAGAR2_GPIO_CHANNEL4:
++	case LOCHNAGAR2_GPIO_CHANNEL5:
++	case LOCHNAGAR2_GPIO_CHANNEL6:
++	case LOCHNAGAR2_GPIO_CHANNEL7:
++	case LOCHNAGAR2_GPIO_CHANNEL8:
++	case LOCHNAGAR2_GPIO_CHANNEL9:
++	case LOCHNAGAR2_GPIO_CHANNEL10:
++	case LOCHNAGAR2_GPIO_CHANNEL11:
++	case LOCHNAGAR2_GPIO_CHANNEL12:
++	case LOCHNAGAR2_GPIO_CHANNEL13:
++	case LOCHNAGAR2_GPIO_CHANNEL14:
++	case LOCHNAGAR2_GPIO_CHANNEL15:
++	case LOCHNAGAR2_GPIO_CHANNEL16:
++	case LOCHNAGAR2_ANALOGUE_PATH_CTRL1:
++		return true;
++	default:
++		return false;
++	}
++}
++
++static const struct reg_default lochnagar2_reg_defaults[] = {
++	{ LOCHNAGAR2_CDC_AIF1_CTRL,         0x0000 },
++	{ LOCHNAGAR2_CDC_AIF2_CTRL,         0x0000 },
++	{ LOCHNAGAR2_CDC_AIF3_CTRL,         0x0000 },
++	{ LOCHNAGAR2_DSP_AIF1_CTRL,         0x0000 },
++	{ LOCHNAGAR2_DSP_AIF2_CTRL,         0x0000 },
++	{ LOCHNAGAR2_PSIA1_CTRL,            0x0000 },
++	{ LOCHNAGAR2_PSIA2_CTRL,            0x0000 },
++	{ LOCHNAGAR2_GF_AIF3_CTRL,          0x0000 },
++	{ LOCHNAGAR2_GF_AIF4_CTRL,          0x0000 },
++	{ LOCHNAGAR2_GF_AIF1_CTRL,          0x0000 },
++	{ LOCHNAGAR2_GF_AIF2_CTRL,          0x0000 },
++	{ LOCHNAGAR2_SPDIF_AIF_CTRL,        0x0000 },
++	{ LOCHNAGAR2_USB_AIF1_CTRL,         0x0000 },
++	{ LOCHNAGAR2_USB_AIF2_CTRL,         0x0000 },
++	{ LOCHNAGAR2_ADAT_AIF_CTRL,         0x0000 },
++	{ LOCHNAGAR2_CDC_MCLK1_CTRL,        0x0000 },
++	{ LOCHNAGAR2_CDC_MCLK2_CTRL,        0x0000 },
++	{ LOCHNAGAR2_DSP_CLKIN_CTRL,        0x0000 },
++	{ LOCHNAGAR2_PSIA1_MCLK_CTRL,       0x0000 },
++	{ LOCHNAGAR2_PSIA2_MCLK_CTRL,       0x0000 },
++	{ LOCHNAGAR2_SPDIF_MCLK_CTRL,       0x0000 },
++	{ LOCHNAGAR2_GF_CLKOUT1_CTRL,       0x0000 },
++	{ LOCHNAGAR2_GF_CLKOUT2_CTRL,       0x0000 },
++	{ LOCHNAGAR2_ADAT_MCLK_CTRL,        0x0000 },
++	{ LOCHNAGAR2_SOUNDCARD_MCLK_CTRL,   0x0000 },
++	{ LOCHNAGAR2_GPIO_FPGA_GPIO1,       0x0000 },
++	{ LOCHNAGAR2_GPIO_FPGA_GPIO2,       0x0000 },
++	{ LOCHNAGAR2_GPIO_FPGA_GPIO3,       0x0000 },
++	{ LOCHNAGAR2_GPIO_FPGA_GPIO4,       0x0000 },
++	{ LOCHNAGAR2_GPIO_FPGA_GPIO5,       0x0000 },
++	{ LOCHNAGAR2_GPIO_FPGA_GPIO6,       0x0000 },
++	{ LOCHNAGAR2_GPIO_CDC_GPIO1,        0x0000 },
++	{ LOCHNAGAR2_GPIO_CDC_GPIO2,        0x0000 },
++	{ LOCHNAGAR2_GPIO_CDC_GPIO3,        0x0000 },
++	{ LOCHNAGAR2_GPIO_CDC_GPIO4,        0x0000 },
++	{ LOCHNAGAR2_GPIO_CDC_GPIO5,        0x0000 },
++	{ LOCHNAGAR2_GPIO_CDC_GPIO6,        0x0000 },
++	{ LOCHNAGAR2_GPIO_CDC_GPIO7,        0x0000 },
++	{ LOCHNAGAR2_GPIO_CDC_GPIO8,        0x0000 },
++	{ LOCHNAGAR2_GPIO_DSP_GPIO1,        0x0000 },
++	{ LOCHNAGAR2_GPIO_DSP_GPIO2,        0x0000 },
++	{ LOCHNAGAR2_GPIO_DSP_GPIO3,        0x0000 },
++	{ LOCHNAGAR2_GPIO_DSP_GPIO4,        0x0000 },
++	{ LOCHNAGAR2_GPIO_DSP_GPIO5,        0x0000 },
++	{ LOCHNAGAR2_GPIO_DSP_GPIO6,        0x0000 },
++	{ LOCHNAGAR2_GPIO_GF_GPIO2,         0x0000 },
++	{ LOCHNAGAR2_GPIO_GF_GPIO3,         0x0000 },
++	{ LOCHNAGAR2_GPIO_GF_GPIO7,         0x0000 },
++	{ LOCHNAGAR2_GPIO_CDC_AIF1_BCLK,    0x0000 },
++	{ LOCHNAGAR2_GPIO_CDC_AIF1_RXDAT,   0x0000 },
++	{ LOCHNAGAR2_GPIO_CDC_AIF1_LRCLK,   0x0000 },
++	{ LOCHNAGAR2_GPIO_CDC_AIF1_TXDAT,   0x0000 },
++	{ LOCHNAGAR2_GPIO_CDC_AIF2_BCLK,    0x0000 },
++	{ LOCHNAGAR2_GPIO_CDC_AIF2_RXDAT,   0x0000 },
++	{ LOCHNAGAR2_GPIO_CDC_AIF2_LRCLK,   0x0000 },
++	{ LOCHNAGAR2_GPIO_CDC_AIF2_TXDAT,   0x0000 },
++	{ LOCHNAGAR2_GPIO_CDC_AIF3_BCLK,    0x0000 },
++	{ LOCHNAGAR2_GPIO_CDC_AIF3_RXDAT,   0x0000 },
++	{ LOCHNAGAR2_GPIO_CDC_AIF3_LRCLK,   0x0000 },
++	{ LOCHNAGAR2_GPIO_CDC_AIF3_TXDAT,   0x0000 },
++	{ LOCHNAGAR2_GPIO_DSP_AIF1_BCLK,    0x0000 },
++	{ LOCHNAGAR2_GPIO_DSP_AIF1_RXDAT,   0x0000 },
++	{ LOCHNAGAR2_GPIO_DSP_AIF1_LRCLK,   0x0000 },
++	{ LOCHNAGAR2_GPIO_DSP_AIF1_TXDAT,   0x0000 },
++	{ LOCHNAGAR2_GPIO_DSP_AIF2_BCLK,    0x0000 },
++	{ LOCHNAGAR2_GPIO_DSP_AIF2_RXDAT,   0x0000 },
++	{ LOCHNAGAR2_GPIO_DSP_AIF2_LRCLK,   0x0000 },
++	{ LOCHNAGAR2_GPIO_DSP_AIF2_TXDAT,   0x0000 },
++	{ LOCHNAGAR2_GPIO_PSIA1_BCLK,       0x0000 },
++	{ LOCHNAGAR2_GPIO_PSIA1_RXDAT,      0x0000 },
++	{ LOCHNAGAR2_GPIO_PSIA1_LRCLK,      0x0000 },
++	{ LOCHNAGAR2_GPIO_PSIA1_TXDAT,      0x0000 },
++	{ LOCHNAGAR2_GPIO_PSIA2_BCLK,       0x0000 },
++	{ LOCHNAGAR2_GPIO_PSIA2_RXDAT,      0x0000 },
++	{ LOCHNAGAR2_GPIO_PSIA2_LRCLK,      0x0000 },
++	{ LOCHNAGAR2_GPIO_PSIA2_TXDAT,      0x0000 },
++	{ LOCHNAGAR2_GPIO_GF_AIF3_BCLK,     0x0000 },
++	{ LOCHNAGAR2_GPIO_GF_AIF3_RXDAT,    0x0000 },
++	{ LOCHNAGAR2_GPIO_GF_AIF3_LRCLK,    0x0000 },
++	{ LOCHNAGAR2_GPIO_GF_AIF3_TXDAT,    0x0000 },
++	{ LOCHNAGAR2_GPIO_GF_AIF4_BCLK,     0x0000 },
++	{ LOCHNAGAR2_GPIO_GF_AIF4_RXDAT,    0x0000 },
++	{ LOCHNAGAR2_GPIO_GF_AIF4_LRCLK,    0x0000 },
++	{ LOCHNAGAR2_GPIO_GF_AIF4_TXDAT,    0x0000 },
++	{ LOCHNAGAR2_GPIO_GF_AIF1_BCLK,     0x0000 },
++	{ LOCHNAGAR2_GPIO_GF_AIF1_RXDAT,    0x0000 },
++	{ LOCHNAGAR2_GPIO_GF_AIF1_LRCLK,    0x0000 },
++	{ LOCHNAGAR2_GPIO_GF_AIF1_TXDAT,    0x0000 },
++	{ LOCHNAGAR2_GPIO_GF_AIF2_BCLK,     0x0000 },
++	{ LOCHNAGAR2_GPIO_GF_AIF2_RXDAT,    0x0000 },
++	{ LOCHNAGAR2_GPIO_GF_AIF2_LRCLK,    0x0000 },
++	{ LOCHNAGAR2_GPIO_GF_AIF2_TXDAT,    0x0000 },
++	{ LOCHNAGAR2_GPIO_DSP_UART1_RX,     0x0000 },
++	{ LOCHNAGAR2_GPIO_DSP_UART1_TX,     0x0000 },
++	{ LOCHNAGAR2_GPIO_DSP_UART2_RX,     0x0000 },
++	{ LOCHNAGAR2_GPIO_DSP_UART2_TX,     0x0000 },
++	{ LOCHNAGAR2_GPIO_GF_UART2_RX,      0x0000 },
++	{ LOCHNAGAR2_GPIO_GF_UART2_TX,      0x0000 },
++	{ LOCHNAGAR2_GPIO_USB_UART_RX,      0x0000 },
++	{ LOCHNAGAR2_GPIO_CDC_PDMCLK1,      0x0000 },
++	{ LOCHNAGAR2_GPIO_CDC_PDMDAT1,      0x0000 },
++	{ LOCHNAGAR2_GPIO_CDC_PDMCLK2,      0x0000 },
++	{ LOCHNAGAR2_GPIO_CDC_PDMDAT2,      0x0000 },
++	{ LOCHNAGAR2_GPIO_CDC_DMICCLK1,     0x0000 },
++	{ LOCHNAGAR2_GPIO_CDC_DMICDAT1,     0x0000 },
++	{ LOCHNAGAR2_GPIO_CDC_DMICCLK2,     0x0000 },
++	{ LOCHNAGAR2_GPIO_CDC_DMICDAT2,     0x0000 },
++	{ LOCHNAGAR2_GPIO_CDC_DMICCLK3,     0x0000 },
++	{ LOCHNAGAR2_GPIO_CDC_DMICDAT3,     0x0000 },
++	{ LOCHNAGAR2_GPIO_CDC_DMICCLK4,     0x0000 },
++	{ LOCHNAGAR2_GPIO_CDC_DMICDAT4,     0x0000 },
++	{ LOCHNAGAR2_GPIO_DSP_DMICCLK1,     0x0000 },
++	{ LOCHNAGAR2_GPIO_DSP_DMICDAT1,     0x0000 },
++	{ LOCHNAGAR2_GPIO_DSP_DMICCLK2,     0x0000 },
++	{ LOCHNAGAR2_GPIO_DSP_DMICDAT2,     0x0000 },
++	{ LOCHNAGAR2_GPIO_I2C2_SCL,         0x0000 },
++	{ LOCHNAGAR2_GPIO_I2C2_SDA,         0x0000 },
++	{ LOCHNAGAR2_GPIO_I2C3_SCL,         0x0000 },
++	{ LOCHNAGAR2_GPIO_I2C3_SDA,         0x0000 },
++	{ LOCHNAGAR2_GPIO_I2C4_SCL,         0x0000 },
++	{ LOCHNAGAR2_GPIO_I2C4_SDA,         0x0000 },
++	{ LOCHNAGAR2_GPIO_DSP_STANDBY,      0x0000 },
++	{ LOCHNAGAR2_GPIO_CDC_MCLK1,        0x0000 },
++	{ LOCHNAGAR2_GPIO_CDC_MCLK2,        0x0000 },
++	{ LOCHNAGAR2_GPIO_DSP_CLKIN,        0x0000 },
++	{ LOCHNAGAR2_GPIO_PSIA1_MCLK,       0x0000 },
++	{ LOCHNAGAR2_GPIO_PSIA2_MCLK,       0x0000 },
++	{ LOCHNAGAR2_GPIO_GF_GPIO1,         0x0000 },
++	{ LOCHNAGAR2_GPIO_GF_GPIO5,         0x0000 },
++	{ LOCHNAGAR2_GPIO_DSP_GPIO20,       0x0000 },
++	{ LOCHNAGAR2_MINICARD_RESETS,       0x0000 },
++	{ LOCHNAGAR2_ANALOGUE_PATH_CTRL2,   0x0000 },
++	{ LOCHNAGAR2_COMMS_CTRL4,           0x0001 },
++	{ LOCHNAGAR2_SPDIF_CTRL,            0x0008 },
++	{ LOCHNAGAR2_POWER_CTRL,            0x0001 },
++	{ LOCHNAGAR2_SOUNDCARD_AIF_CTRL,    0x0000 },
++};
++
++static const struct regmap_config lochnagar2_i2c_regmap = {
++	.reg_bits = 16,
++	.val_bits = 16,
++	.reg_format_endian = REGMAP_ENDIAN_BIG,
++	.val_format_endian = REGMAP_ENDIAN_BIG,
++
++	.max_register = 0x1F1F,
++	.readable_reg = lochnagar2_readable_register,
++	.volatile_reg = lochnagar2_volatile_register,
++
++	.cache_type = REGCACHE_RBTREE,
++
++	.reg_defaults = lochnagar2_reg_defaults,
++	.num_reg_defaults = ARRAY_SIZE(lochnagar2_reg_defaults),
++};
++
++static const struct reg_sequence lochnagar2_patch[] = {
++	{ 0x00EE, 0x0000 },
++	{ 0x00F0, 0x0001 },
++};
++
++static struct mfd_cell lochnagar2_devs[] = {
++	{
++		.name = "lochnagar-pinctrl",
++	},
++	{
++		.name = "lochnagar2-clk",
++	},
++	{
++		.name = "lochnagar-regulator",
++	},
++	{
++		.name = "lochnagar2-sound-card",
++	},
++};
++
++static struct lochnagar_config {
++	int id;
++	const char * const name;
++	enum lochnagar_type type;
++	const struct regmap_config *regmap;
++	struct mfd_cell *devs;
++	int ndevs;
++	const struct reg_sequence *patch;
++	int npatch;
++} lochnagar_configs[] = {
++	{
++		.id = 0x50,
++		.name = "lochnagar1",
++		.type = LOCHNAGAR1,
++		.regmap = &lochnagar1_i2c_regmap,
++		.devs = lochnagar1_devs,
++		.ndevs = ARRAY_SIZE(lochnagar1_devs),
++		.patch = lochnagar1_patch,
++		.npatch = ARRAY_SIZE(lochnagar1_patch),
++	},
++	{
++		.id = 0xCB58,
++		.name = "lochnagar2",
++		.type = LOCHNAGAR2,
++		.regmap = &lochnagar2_i2c_regmap,
++		.devs = lochnagar2_devs,
++		.ndevs = ARRAY_SIZE(lochnagar2_devs),
++		.patch = lochnagar2_patch,
++		.npatch = ARRAY_SIZE(lochnagar2_patch),
++	},
++};
++
++static const struct of_device_id lochnagar_of_match[] = {
++	{ .compatible = "cirrus,lochnagar1", .data = &lochnagar_configs[0] },
++	{ .compatible = "cirrus,lochnagar2", .data = &lochnagar_configs[1] },
++	{},
++};
++
++static int lochnagar_wait_for_boot(struct regmap *regmap, unsigned int *id)
++{
++	int i, ret;
++
++	for (i = 0; i < LOCHNAGAR_BOOT_RETRIES; ++i) {
++		msleep(LOCHNAGAR_BOOT_DELAY_MS);
++
++		ret = regmap_read(regmap, LOCHNAGAR_SOFTWARE_RESET, id);
++		if (!ret)
++			return ret;
++	}
++
++	return -ETIMEDOUT;
++}
++
++int lochnagar_update_config(struct lochnagar *lochnagar)
++{
++	struct regmap *regmap = lochnagar->regmap;
++	unsigned int done = LOCHNAGAR2_ANALOGUE_PATH_UPDATE_STS_MASK;
++	int timeout_ms = LOCHNAGAR_BOOT_DELAY_MS * LOCHNAGAR_BOOT_RETRIES;
++	unsigned int val = 0;
++	int ret;
++
++	switch (lochnagar->type) {
++	case LOCHNAGAR1:
++		return 0;
++	case LOCHNAGAR2:
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	ret = regmap_write(regmap, LOCHNAGAR2_ANALOGUE_PATH_CTRL1, 0);
++	if (ret < 0)
++		return ret;
++
++	ret = regmap_write(regmap, LOCHNAGAR2_ANALOGUE_PATH_CTRL1,
++			   LOCHNAGAR2_ANALOGUE_PATH_UPDATE_MASK);
++	if (ret < 0)
++		return ret;
++
++	ret = regmap_read_poll_timeout(regmap,
++				       LOCHNAGAR2_ANALOGUE_PATH_CTRL1, val,
++				       (val & done), LOCHNAGAR_CONFIG_POLL_US,
++				       timeout_ms * 1000);
++	if (ret < 0)
++		return ret;
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(lochnagar_update_config);
++
++static int lochnagar_i2c_probe(struct i2c_client *i2c)
++{
++	struct device *dev = &i2c->dev;
++	const struct lochnagar_config *config = NULL;
++	const struct of_device_id *of_id;
++	struct lochnagar *lochnagar;
++	unsigned int val;
++	struct gpio_desc *reset, *present;
++	unsigned int firmwareid;
++	int devid, rev;
++	int ret;
++
++	lochnagar = devm_kzalloc(dev, sizeof(*lochnagar), GFP_KERNEL);
++	if (!lochnagar)
++		return -ENOMEM;
++
++	of_id = of_match_device(lochnagar_of_match, dev);
++	if (!of_id)
++		return -EINVAL;
++
++	config = of_id->data;
++
++	lochnagar->dev = dev;
++	mutex_init(&lochnagar->analogue_config_lock);
++
++	dev_set_drvdata(dev, lochnagar);
++
++	reset = devm_gpiod_get(dev, "reset", GPIOD_OUT_LOW);
++	if (IS_ERR(reset)) {
++		ret = PTR_ERR(reset);
++		dev_err(dev, "Failed to get reset GPIO: %d\n", ret);
++		return ret;
++	}
++
++	present = devm_gpiod_get_optional(dev, "present", GPIOD_OUT_HIGH);
++	if (IS_ERR(present)) {
++		ret = PTR_ERR(present);
++		dev_err(dev, "Failed to get present GPIO: %d\n", ret);
++		return ret;
++	}
++
++	msleep(20);
++
++	/* Bring Lochnagar out of reset */
++	gpiod_set_value_cansleep(reset, 1);
++
++	/* Identify Lochnagar */
++	lochnagar->type = config->type;
++	lochnagar->regmap = devm_regmap_init_i2c(i2c, config->regmap);
++	if (IS_ERR(lochnagar->regmap)) {
++		ret = PTR_ERR(lochnagar->regmap);
++		dev_err(dev, "Failed to allocate register map: %d\n", ret);
++		return ret;
++	}
++
++	/* Wait for Lochnagar to boot */
++	ret = lochnagar_wait_for_boot(lochnagar->regmap, &val);
++	if (ret < 0) {
++		dev_err(dev, "Failed to read device ID: %d\n", ret);
++		return ret;
++	}
++
++	devid = val & LOCHNAGAR_DEVICE_ID_MASK;
++	rev = val & LOCHNAGAR_REV_ID_MASK;
++
++	if (devid != config->id) {
++		dev_err(dev,
++			"ID does not match %s (expected 0x%x got 0x%x)\n",
++			config->name, config->id, devid);
++		return -ENODEV;
++	}
++
++	/* Identify firmware */
++	ret = regmap_read(lochnagar->regmap, LOCHNAGAR_FIRMWARE_ID1, &val);
++	if (ret < 0) {
++		dev_err(dev, "Failed to read firmware id 1: %d\n", ret);
++		return ret;
++	}
++
++	firmwareid = val;
++
++	ret = regmap_read(lochnagar->regmap, LOCHNAGAR_FIRMWARE_ID2, &val);
++	if (ret < 0) {
++		dev_err(dev, "Failed to read firmware id 2: %d\n", ret);
++		return ret;
++	}
++
++	firmwareid |= (val << config->regmap->val_bits);
++
++	dev_info(dev, "Found %s (0x%x) revision %d firmware 0x%.6x\n",
++		 config->name, devid, rev + 1, firmwareid);
++
++	ret = regmap_register_patch(lochnagar->regmap, config->patch,
++				    config->npatch);
++	if (ret < 0) {
++		dev_err(dev, "Failed to register patch: %d\n", ret);
++		return ret;
++	}
++
++	ret = devm_mfd_add_devices(dev, PLATFORM_DEVID_NONE, config->devs,
++				   config->ndevs, NULL, 0, NULL);
++	if (ret != 0) {
++		dev_err(dev, "Failed to add subdevices: %d\n", ret);
++		return ret;
++	}
++
++	ret = devm_of_platform_populate(dev);
++	if (ret < 0) {
++		dev_err(dev, "Failed to populate child nodes: %d\n", ret);
++		return ret;
++	}
++
++	return ret;
++}
++
++static struct i2c_driver lochnagar_i2c_driver = {
++	.driver = {
++		.name = "lochnagar",
++		.of_match_table = of_match_ptr(lochnagar_of_match),
++		.suppress_bind_attrs = true,
++	},
++
++	.probe_new = lochnagar_i2c_probe,
++};
++
++static int __init lochnagar_i2c_init(void)
++{
++	int ret;
++
++	ret = i2c_add_driver(&lochnagar_i2c_driver);
++	if (ret != 0)
++		pr_err("Failed to register Lochnagar driver: %d\n", ret);
++
++	return ret;
++}
++subsys_initcall(lochnagar_i2c_init);
+diff --git a/include/linux/mfd/lochnagar.h b/include/linux/mfd/lochnagar.h
+new file mode 100644
+index 0000000000000..be485d6714f7c
+--- /dev/null
++++ b/include/linux/mfd/lochnagar.h
+@@ -0,0 +1,48 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Lochnagar internals
++ *
++ * Copyright (c) 2013-2018 Cirrus Logic, Inc. and
++ *                         Cirrus Logic International Semiconductor Ltd.
++ *
++ * Author: Charles Keepax <ckeepax@opensource.cirrus.com>
++ */
++
++#ifndef CIRRUS_LOCHNAGAR_H
++#define CIRRUS_LOCHNAGAR_H
++
++#include "lochnagar1_regs.h"
++#include "lochnagar2_regs.h"
++
++struct device;
++struct regmap;
++struct mutex;
++
++enum lochnagar_type {
++	LOCHNAGAR1,
++	LOCHNAGAR2,
++};
++
++struct lochnagar {
++	enum lochnagar_type type;
++	struct device *dev;
++	struct regmap *regmap;
++
++	/* Lock to protect updates to the analogue configuration */
++	struct mutex analogue_config_lock;
++};
++
++/* Register Addresses */
++#define LOCHNAGAR_SOFTWARE_RESET                             0x00
++#define LOCHNAGAR_FIRMWARE_ID1                               0x01
++#define LOCHNAGAR_FIRMWARE_ID2                               0x02
++
++/* (0x0000)  Software Reset */
++#define LOCHNAGAR_DEVICE_ID_MASK                           0xFFFC
++#define LOCHNAGAR_DEVICE_ID_SHIFT                               2
++#define LOCHNAGAR_REV_ID_MASK                              0x0003
++#define LOCHNAGAR_REV_ID_SHIFT                                  0
++
++int lochnagar_update_config(struct lochnagar *lochnagar);
++
++#endif
+diff --git a/include/linux/mfd/lochnagar1_regs.h b/include/linux/mfd/lochnagar1_regs.h
+new file mode 100644
+index 0000000000000..114b846245d96
+--- /dev/null
++++ b/include/linux/mfd/lochnagar1_regs.h
+@@ -0,0 +1,157 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Lochnagar1 register definitions
++ *
++ * Copyright (c) 2017-2018 Cirrus Logic, Inc. and
++ *                         Cirrus Logic International Semiconductor Ltd.
++ *
++ * Author: Charles Keepax <ckeepax@opensource.cirrus.com>
++ */
++
++#ifndef LOCHNAGAR1_REGISTERS_H
++#define LOCHNAGAR1_REGISTERS_H
++
++/* Register Addresses */
++#define LOCHNAGAR1_CDC_AIF1_SEL                       0x0008
++#define LOCHNAGAR1_CDC_AIF2_SEL                       0x0009
++#define LOCHNAGAR1_CDC_AIF3_SEL                       0x000A
++#define LOCHNAGAR1_CDC_MCLK1_SEL                      0x000B
++#define LOCHNAGAR1_CDC_MCLK2_SEL                      0x000C
++#define LOCHNAGAR1_CDC_AIF_CTRL1                      0x000D
++#define LOCHNAGAR1_CDC_AIF_CTRL2                      0x000E
++#define LOCHNAGAR1_EXT_AIF_CTRL                       0x000F
++#define LOCHNAGAR1_DSP_AIF1_SEL                       0x0010
++#define LOCHNAGAR1_DSP_AIF2_SEL                       0x0011
++#define LOCHNAGAR1_DSP_CLKIN_SEL                      0x0012
++#define LOCHNAGAR1_DSP_AIF                            0x0013
++#define LOCHNAGAR1_GF_AIF1                            0x0014
++#define LOCHNAGAR1_GF_AIF2                            0x0015
++#define LOCHNAGAR1_PSIA_AIF                           0x0016
++#define LOCHNAGAR1_PSIA1_SEL                          0x0017
++#define LOCHNAGAR1_PSIA2_SEL                          0x0018
++#define LOCHNAGAR1_SPDIF_AIF_SEL                      0x0019
++#define LOCHNAGAR1_GF_AIF3_SEL                        0x001C
++#define LOCHNAGAR1_GF_AIF4_SEL                        0x001D
++#define LOCHNAGAR1_GF_CLKOUT1_SEL                     0x001E
++#define LOCHNAGAR1_GF_AIF1_SEL                        0x001F
++#define LOCHNAGAR1_GF_AIF2_SEL                        0x0020
++#define LOCHNAGAR1_GF_GPIO2                           0x0026
++#define LOCHNAGAR1_GF_GPIO3                           0x0027
++#define LOCHNAGAR1_GF_GPIO7                           0x0028
++#define LOCHNAGAR1_RST                                0x0029
++#define LOCHNAGAR1_LED1                               0x002A
++#define LOCHNAGAR1_LED2                               0x002B
++#define LOCHNAGAR1_I2C_CTRL                           0x0046
++
++/*
++ * (0x0008 - 0x000C, 0x0010 - 0x0012, 0x0017 - 0x0020)
++ * CDC_AIF1_SEL - GF_AIF2_SEL
++ */
++#define LOCHNAGAR1_SRC_MASK                             0xFF
++#define LOCHNAGAR1_SRC_SHIFT                               0
++
++/* (0x000D)  CDC_AIF_CTRL1 */
++#define LOCHNAGAR1_CDC_AIF2_LRCLK_DIR_MASK              0x40
++#define LOCHNAGAR1_CDC_AIF2_LRCLK_DIR_SHIFT                6
++#define LOCHNAGAR1_CDC_AIF2_BCLK_DIR_MASK               0x20
++#define LOCHNAGAR1_CDC_AIF2_BCLK_DIR_SHIFT                 5
++#define LOCHNAGAR1_CDC_AIF2_ENA_MASK                    0x10
++#define LOCHNAGAR1_CDC_AIF2_ENA_SHIFT                      4
++#define LOCHNAGAR1_CDC_AIF1_LRCLK_DIR_MASK              0x04
++#define LOCHNAGAR1_CDC_AIF1_LRCLK_DIR_SHIFT                2
++#define LOCHNAGAR1_CDC_AIF1_BCLK_DIR_MASK               0x02
++#define LOCHNAGAR1_CDC_AIF1_BCLK_DIR_SHIFT                 1
++#define LOCHNAGAR1_CDC_AIF1_ENA_MASK                    0x01
++#define LOCHNAGAR1_CDC_AIF1_ENA_SHIFT                      0
++
++/* (0x000E)  CDC_AIF_CTRL2 */
++#define LOCHNAGAR1_CDC_AIF3_LRCLK_DIR_MASK              0x40
++#define LOCHNAGAR1_CDC_AIF3_LRCLK_DIR_SHIFT                6
++#define LOCHNAGAR1_CDC_AIF3_BCLK_DIR_MASK               0x20
++#define LOCHNAGAR1_CDC_AIF3_BCLK_DIR_SHIFT                 5
++#define LOCHNAGAR1_CDC_AIF3_ENA_MASK                    0x10
++#define LOCHNAGAR1_CDC_AIF3_ENA_SHIFT                      4
++#define LOCHNAGAR1_CDC_MCLK1_ENA_MASK                   0x02
++#define LOCHNAGAR1_CDC_MCLK1_ENA_SHIFT                     1
++#define LOCHNAGAR1_CDC_MCLK2_ENA_MASK                   0x01
++#define LOCHNAGAR1_CDC_MCLK2_ENA_SHIFT                     0
++
++/* (0x000F)  EXT_AIF_CTRL */
++#define LOCHNAGAR1_SPDIF_AIF_LRCLK_DIR_MASK             0x20
++#define LOCHNAGAR1_SPDIF_AIF_LRCLK_DIR_SHIFT               5
++#define LOCHNAGAR1_SPDIF_AIF_BCLK_DIR_MASK              0x10
++#define LOCHNAGAR1_SPDIF_AIF_BCLK_DIR_SHIFT                4
++#define LOCHNAGAR1_SPDIF_AIF_ENA_MASK                   0x08
++#define LOCHNAGAR1_SPDIF_AIF_ENA_SHIFT                     3
++
++/* (0x0013)  DSP_AIF */
++#define LOCHNAGAR1_DSP_AIF2_LRCLK_DIR_MASK              0x40
++#define LOCHNAGAR1_DSP_AIF2_LRCLK_DIR_SHIFT                6
++#define LOCHNAGAR1_DSP_AIF2_BCLK_DIR_MASK               0x20
++#define LOCHNAGAR1_DSP_AIF2_BCLK_DIR_SHIFT                 5
++#define LOCHNAGAR1_DSP_AIF2_ENA_MASK                    0x10
++#define LOCHNAGAR1_DSP_AIF2_ENA_SHIFT                      4
++#define LOCHNAGAR1_DSP_CLKIN_ENA_MASK                   0x08
++#define LOCHNAGAR1_DSP_CLKIN_ENA_SHIFT                     3
++#define LOCHNAGAR1_DSP_AIF1_LRCLK_DIR_MASK              0x04
++#define LOCHNAGAR1_DSP_AIF1_LRCLK_DIR_SHIFT                2
++#define LOCHNAGAR1_DSP_AIF1_BCLK_DIR_MASK               0x02
++#define LOCHNAGAR1_DSP_AIF1_BCLK_DIR_SHIFT                 1
++#define LOCHNAGAR1_DSP_AIF1_ENA_MASK                    0x01
++#define LOCHNAGAR1_DSP_AIF1_ENA_SHIFT                      0
++
++/* (0x0014)  GF_AIF1 */
++#define LOCHNAGAR1_GF_CLKOUT1_ENA_MASK                  0x40
++#define LOCHNAGAR1_GF_CLKOUT1_ENA_SHIFT                    6
++#define LOCHNAGAR1_GF_AIF3_LRCLK_DIR_MASK               0x20
++#define LOCHNAGAR1_GF_AIF3_LRCLK_DIR_SHIFT                 5
++#define LOCHNAGAR1_GF_AIF3_BCLK_DIR_MASK                0x10
++#define LOCHNAGAR1_GF_AIF3_BCLK_DIR_SHIFT                  4
++#define LOCHNAGAR1_GF_AIF3_ENA_MASK                     0x08
++#define LOCHNAGAR1_GF_AIF3_ENA_SHIFT                       3
++#define LOCHNAGAR1_GF_AIF1_LRCLK_DIR_MASK               0x04
++#define LOCHNAGAR1_GF_AIF1_LRCLK_DIR_SHIFT                 2
++#define LOCHNAGAR1_GF_AIF1_BCLK_DIR_MASK                0x02
++#define LOCHNAGAR1_GF_AIF1_BCLK_DIR_SHIFT                  1
++#define LOCHNAGAR1_GF_AIF1_ENA_MASK                     0x01
++#define LOCHNAGAR1_GF_AIF1_ENA_SHIFT                       0
++
++/* (0x0015)  GF_AIF2 */
++#define LOCHNAGAR1_GF_AIF4_LRCLK_DIR_MASK               0x20
++#define LOCHNAGAR1_GF_AIF4_LRCLK_DIR_SHIFT                 5
++#define LOCHNAGAR1_GF_AIF4_BCLK_DIR_MASK                0x10
++#define LOCHNAGAR1_GF_AIF4_BCLK_DIR_SHIFT                  4
++#define LOCHNAGAR1_GF_AIF4_ENA_MASK                     0x08
++#define LOCHNAGAR1_GF_AIF4_ENA_SHIFT                       3
++#define LOCHNAGAR1_GF_AIF2_LRCLK_DIR_MASK               0x04
++#define LOCHNAGAR1_GF_AIF2_LRCLK_DIR_SHIFT                 2
++#define LOCHNAGAR1_GF_AIF2_BCLK_DIR_MASK                0x02
++#define LOCHNAGAR1_GF_AIF2_BCLK_DIR_SHIFT                  1
++#define LOCHNAGAR1_GF_AIF2_ENA_MASK                     0x01
++#define LOCHNAGAR1_GF_AIF2_ENA_SHIFT                       0
++
++/* (0x0016)  PSIA_AIF */
++#define LOCHNAGAR1_PSIA2_LRCLK_DIR_MASK                 0x40
++#define LOCHNAGAR1_PSIA2_LRCLK_DIR_SHIFT                   6
++#define LOCHNAGAR1_PSIA2_BCLK_DIR_MASK                  0x20
++#define LOCHNAGAR1_PSIA2_BCLK_DIR_SHIFT                    5
++#define LOCHNAGAR1_PSIA2_ENA_MASK                       0x10
++#define LOCHNAGAR1_PSIA2_ENA_SHIFT                         4
++#define LOCHNAGAR1_PSIA1_LRCLK_DIR_MASK                 0x04
++#define LOCHNAGAR1_PSIA1_LRCLK_DIR_SHIFT                   2
++#define LOCHNAGAR1_PSIA1_BCLK_DIR_MASK                  0x02
++#define LOCHNAGAR1_PSIA1_BCLK_DIR_SHIFT                    1
++#define LOCHNAGAR1_PSIA1_ENA_MASK                       0x01
++#define LOCHNAGAR1_PSIA1_ENA_SHIFT                         0
++
++/* (0x0029)  RST */
++#define LOCHNAGAR1_DSP_RESET_MASK                       0x02
++#define LOCHNAGAR1_DSP_RESET_SHIFT                         1
++#define LOCHNAGAR1_CDC_RESET_MASK                       0x01
++#define LOCHNAGAR1_CDC_RESET_SHIFT                         0
++
++/* (0x0046)  I2C_CTRL */
++#define LOCHNAGAR1_CDC_CIF_MODE_MASK                    0x01
++#define LOCHNAGAR1_CDC_CIF_MODE_SHIFT                      0
++
++#endif
+diff --git a/include/linux/mfd/lochnagar2_regs.h b/include/linux/mfd/lochnagar2_regs.h
+new file mode 100644
+index 0000000000000..2c6340c3006b7
+--- /dev/null
++++ b/include/linux/mfd/lochnagar2_regs.h
+@@ -0,0 +1,253 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Lochnagar2 register definitions
++ *
++ * Copyright (c) 2017-2018 Cirrus Logic, Inc. and
++ *                         Cirrus Logic International Semiconductor Ltd.
++ *
++ * Author: Charles Keepax <ckeepax@opensource.cirrus.com>
++ */
++
++#ifndef LOCHNAGAR2_REGISTERS_H
++#define LOCHNAGAR2_REGISTERS_H
++
++/* Register Addresses */
++#define LOCHNAGAR2_CDC_AIF1_CTRL                      0x000D
++#define LOCHNAGAR2_CDC_AIF2_CTRL                      0x000E
++#define LOCHNAGAR2_CDC_AIF3_CTRL                      0x000F
++#define LOCHNAGAR2_DSP_AIF1_CTRL                      0x0010
++#define LOCHNAGAR2_DSP_AIF2_CTRL                      0x0011
++#define LOCHNAGAR2_PSIA1_CTRL                         0x0012
++#define LOCHNAGAR2_PSIA2_CTRL                         0x0013
++#define LOCHNAGAR2_GF_AIF3_CTRL                       0x0014
++#define LOCHNAGAR2_GF_AIF4_CTRL                       0x0015
++#define LOCHNAGAR2_GF_AIF1_CTRL                       0x0016
++#define LOCHNAGAR2_GF_AIF2_CTRL                       0x0017
++#define LOCHNAGAR2_SPDIF_AIF_CTRL                     0x0018
++#define LOCHNAGAR2_USB_AIF1_CTRL                      0x0019
++#define LOCHNAGAR2_USB_AIF2_CTRL                      0x001A
++#define LOCHNAGAR2_ADAT_AIF_CTRL                      0x001B
++#define LOCHNAGAR2_CDC_MCLK1_CTRL                     0x001E
++#define LOCHNAGAR2_CDC_MCLK2_CTRL                     0x001F
++#define LOCHNAGAR2_DSP_CLKIN_CTRL                     0x0020
++#define LOCHNAGAR2_PSIA1_MCLK_CTRL                    0x0021
++#define LOCHNAGAR2_PSIA2_MCLK_CTRL                    0x0022
++#define LOCHNAGAR2_SPDIF_MCLK_CTRL                    0x0023
++#define LOCHNAGAR2_GF_CLKOUT1_CTRL                    0x0024
++#define LOCHNAGAR2_GF_CLKOUT2_CTRL                    0x0025
++#define LOCHNAGAR2_ADAT_MCLK_CTRL                     0x0026
++#define LOCHNAGAR2_SOUNDCARD_MCLK_CTRL                0x0027
++#define LOCHNAGAR2_GPIO_FPGA_GPIO1                    0x0031
++#define LOCHNAGAR2_GPIO_FPGA_GPIO2                    0x0032
++#define LOCHNAGAR2_GPIO_FPGA_GPIO3                    0x0033
++#define LOCHNAGAR2_GPIO_FPGA_GPIO4                    0x0034
++#define LOCHNAGAR2_GPIO_FPGA_GPIO5                    0x0035
++#define LOCHNAGAR2_GPIO_FPGA_GPIO6                    0x0036
++#define LOCHNAGAR2_GPIO_CDC_GPIO1                     0x0037
++#define LOCHNAGAR2_GPIO_CDC_GPIO2                     0x0038
++#define LOCHNAGAR2_GPIO_CDC_GPIO3                     0x0039
++#define LOCHNAGAR2_GPIO_CDC_GPIO4                     0x003A
++#define LOCHNAGAR2_GPIO_CDC_GPIO5                     0x003B
++#define LOCHNAGAR2_GPIO_CDC_GPIO6                     0x003C
++#define LOCHNAGAR2_GPIO_CDC_GPIO7                     0x003D
++#define LOCHNAGAR2_GPIO_CDC_GPIO8                     0x003E
++#define LOCHNAGAR2_GPIO_DSP_GPIO1                     0x003F
++#define LOCHNAGAR2_GPIO_DSP_GPIO2                     0x0040
++#define LOCHNAGAR2_GPIO_DSP_GPIO3                     0x0041
++#define LOCHNAGAR2_GPIO_DSP_GPIO4                     0x0042
++#define LOCHNAGAR2_GPIO_DSP_GPIO5                     0x0043
++#define LOCHNAGAR2_GPIO_DSP_GPIO6                     0x0044
++#define LOCHNAGAR2_GPIO_GF_GPIO2                      0x0045
++#define LOCHNAGAR2_GPIO_GF_GPIO3                      0x0046
++#define LOCHNAGAR2_GPIO_GF_GPIO7                      0x0047
++#define LOCHNAGAR2_GPIO_CDC_AIF1_BCLK                 0x0048
++#define LOCHNAGAR2_GPIO_CDC_AIF1_RXDAT                0x0049
++#define LOCHNAGAR2_GPIO_CDC_AIF1_LRCLK                0x004A
++#define LOCHNAGAR2_GPIO_CDC_AIF1_TXDAT                0x004B
++#define LOCHNAGAR2_GPIO_CDC_AIF2_BCLK                 0x004C
++#define LOCHNAGAR2_GPIO_CDC_AIF2_RXDAT                0x004D
++#define LOCHNAGAR2_GPIO_CDC_AIF2_LRCLK                0x004E
++#define LOCHNAGAR2_GPIO_CDC_AIF2_TXDAT                0x004F
++#define LOCHNAGAR2_GPIO_CDC_AIF3_BCLK                 0x0050
++#define LOCHNAGAR2_GPIO_CDC_AIF3_RXDAT                0x0051
++#define LOCHNAGAR2_GPIO_CDC_AIF3_LRCLK                0x0052
++#define LOCHNAGAR2_GPIO_CDC_AIF3_TXDAT                0x0053
++#define LOCHNAGAR2_GPIO_DSP_AIF1_BCLK                 0x0054
++#define LOCHNAGAR2_GPIO_DSP_AIF1_RXDAT                0x0055
++#define LOCHNAGAR2_GPIO_DSP_AIF1_LRCLK                0x0056
++#define LOCHNAGAR2_GPIO_DSP_AIF1_TXDAT                0x0057
++#define LOCHNAGAR2_GPIO_DSP_AIF2_BCLK                 0x0058
++#define LOCHNAGAR2_GPIO_DSP_AIF2_RXDAT                0x0059
++#define LOCHNAGAR2_GPIO_DSP_AIF2_LRCLK                0x005A
++#define LOCHNAGAR2_GPIO_DSP_AIF2_TXDAT                0x005B
++#define LOCHNAGAR2_GPIO_PSIA1_BCLK                    0x005C
++#define LOCHNAGAR2_GPIO_PSIA1_RXDAT                   0x005D
++#define LOCHNAGAR2_GPIO_PSIA1_LRCLK                   0x005E
++#define LOCHNAGAR2_GPIO_PSIA1_TXDAT                   0x005F
++#define LOCHNAGAR2_GPIO_PSIA2_BCLK                    0x0060
++#define LOCHNAGAR2_GPIO_PSIA2_RXDAT                   0x0061
++#define LOCHNAGAR2_GPIO_PSIA2_LRCLK                   0x0062
++#define LOCHNAGAR2_GPIO_PSIA2_TXDAT                   0x0063
++#define LOCHNAGAR2_GPIO_GF_AIF3_BCLK                  0x0064
++#define LOCHNAGAR2_GPIO_GF_AIF3_RXDAT                 0x0065
++#define LOCHNAGAR2_GPIO_GF_AIF3_LRCLK                 0x0066
++#define LOCHNAGAR2_GPIO_GF_AIF3_TXDAT                 0x0067
++#define LOCHNAGAR2_GPIO_GF_AIF4_BCLK                  0x0068
++#define LOCHNAGAR2_GPIO_GF_AIF4_RXDAT                 0x0069
++#define LOCHNAGAR2_GPIO_GF_AIF4_LRCLK                 0x006A
++#define LOCHNAGAR2_GPIO_GF_AIF4_TXDAT                 0x006B
++#define LOCHNAGAR2_GPIO_GF_AIF1_BCLK                  0x006C
++#define LOCHNAGAR2_GPIO_GF_AIF1_RXDAT                 0x006D
++#define LOCHNAGAR2_GPIO_GF_AIF1_LRCLK                 0x006E
++#define LOCHNAGAR2_GPIO_GF_AIF1_TXDAT                 0x006F
++#define LOCHNAGAR2_GPIO_GF_AIF2_BCLK                  0x0070
++#define LOCHNAGAR2_GPIO_GF_AIF2_RXDAT                 0x0071
++#define LOCHNAGAR2_GPIO_GF_AIF2_LRCLK                 0x0072
++#define LOCHNAGAR2_GPIO_GF_AIF2_TXDAT                 0x0073
++#define LOCHNAGAR2_GPIO_DSP_UART1_RX                  0x0074
++#define LOCHNAGAR2_GPIO_DSP_UART1_TX                  0x0075
++#define LOCHNAGAR2_GPIO_DSP_UART2_RX                  0x0076
++#define LOCHNAGAR2_GPIO_DSP_UART2_TX                  0x0077
++#define LOCHNAGAR2_GPIO_GF_UART2_RX                   0x0078
++#define LOCHNAGAR2_GPIO_GF_UART2_TX                   0x0079
++#define LOCHNAGAR2_GPIO_USB_UART_RX                   0x007A
++#define LOCHNAGAR2_GPIO_CDC_PDMCLK1                   0x007C
++#define LOCHNAGAR2_GPIO_CDC_PDMDAT1                   0x007D
++#define LOCHNAGAR2_GPIO_CDC_PDMCLK2                   0x007E
++#define LOCHNAGAR2_GPIO_CDC_PDMDAT2                   0x007F
++#define LOCHNAGAR2_GPIO_CDC_DMICCLK1                  0x0080
++#define LOCHNAGAR2_GPIO_CDC_DMICDAT1                  0x0081
++#define LOCHNAGAR2_GPIO_CDC_DMICCLK2                  0x0082
++#define LOCHNAGAR2_GPIO_CDC_DMICDAT2                  0x0083
++#define LOCHNAGAR2_GPIO_CDC_DMICCLK3                  0x0084
++#define LOCHNAGAR2_GPIO_CDC_DMICDAT3                  0x0085
++#define LOCHNAGAR2_GPIO_CDC_DMICCLK4                  0x0086
++#define LOCHNAGAR2_GPIO_CDC_DMICDAT4                  0x0087
++#define LOCHNAGAR2_GPIO_DSP_DMICCLK1                  0x0088
++#define LOCHNAGAR2_GPIO_DSP_DMICDAT1                  0x0089
++#define LOCHNAGAR2_GPIO_DSP_DMICCLK2                  0x008A
++#define LOCHNAGAR2_GPIO_DSP_DMICDAT2                  0x008B
++#define LOCHNAGAR2_GPIO_I2C2_SCL                      0x008C
++#define LOCHNAGAR2_GPIO_I2C2_SDA                      0x008D
++#define LOCHNAGAR2_GPIO_I2C3_SCL                      0x008E
++#define LOCHNAGAR2_GPIO_I2C3_SDA                      0x008F
++#define LOCHNAGAR2_GPIO_I2C4_SCL                      0x0090
++#define LOCHNAGAR2_GPIO_I2C4_SDA                      0x0091
++#define LOCHNAGAR2_GPIO_DSP_STANDBY                   0x0092
++#define LOCHNAGAR2_GPIO_CDC_MCLK1                     0x0093
++#define LOCHNAGAR2_GPIO_CDC_MCLK2                     0x0094
++#define LOCHNAGAR2_GPIO_DSP_CLKIN                     0x0095
++#define LOCHNAGAR2_GPIO_PSIA1_MCLK                    0x0096
++#define LOCHNAGAR2_GPIO_PSIA2_MCLK                    0x0097
++#define LOCHNAGAR2_GPIO_GF_GPIO1                      0x0098
++#define LOCHNAGAR2_GPIO_GF_GPIO5                      0x0099
++#define LOCHNAGAR2_GPIO_DSP_GPIO20                    0x009A
++#define LOCHNAGAR2_GPIO_CHANNEL1                      0x00B9
++#define LOCHNAGAR2_GPIO_CHANNEL2                      0x00BA
++#define LOCHNAGAR2_GPIO_CHANNEL3                      0x00BB
++#define LOCHNAGAR2_GPIO_CHANNEL4                      0x00BC
++#define LOCHNAGAR2_GPIO_CHANNEL5                      0x00BD
++#define LOCHNAGAR2_GPIO_CHANNEL6                      0x00BE
++#define LOCHNAGAR2_GPIO_CHANNEL7                      0x00BF
++#define LOCHNAGAR2_GPIO_CHANNEL8                      0x00C0
++#define LOCHNAGAR2_GPIO_CHANNEL9                      0x00C1
++#define LOCHNAGAR2_GPIO_CHANNEL10                     0x00C2
++#define LOCHNAGAR2_GPIO_CHANNEL11                     0x00C3
++#define LOCHNAGAR2_GPIO_CHANNEL12                     0x00C4
++#define LOCHNAGAR2_GPIO_CHANNEL13                     0x00C5
++#define LOCHNAGAR2_GPIO_CHANNEL14                     0x00C6
++#define LOCHNAGAR2_GPIO_CHANNEL15                     0x00C7
++#define LOCHNAGAR2_GPIO_CHANNEL16                     0x00C8
++#define LOCHNAGAR2_MINICARD_RESETS                    0x00DF
++#define LOCHNAGAR2_ANALOGUE_PATH_CTRL1                0x00E3
++#define LOCHNAGAR2_ANALOGUE_PATH_CTRL2                0x00E4
++#define LOCHNAGAR2_COMMS_CTRL4                        0x00F0
++#define LOCHNAGAR2_SPDIF_CTRL                         0x00FE
++#define LOCHNAGAR2_POWER_CTRL                         0x0116
++#define LOCHNAGAR2_MICVDD_CTRL1                       0x0119
++#define LOCHNAGAR2_MICVDD_CTRL2                       0x011B
++#define LOCHNAGAR2_VDDCORE_CDC_CTRL1                  0x011E
++#define LOCHNAGAR2_VDDCORE_CDC_CTRL2                  0x0120
++#define LOCHNAGAR2_SOUNDCARD_AIF_CTRL                 0x0180
++
++/* (0x000D-0x001B, 0x0180)  CDC_AIF1_CTRL - SOUNCARD_AIF_CTRL */
++#define LOCHNAGAR2_AIF_ENA_MASK                       0x8000
++#define LOCHNAGAR2_AIF_ENA_SHIFT                          15
++#define LOCHNAGAR2_AIF_LRCLK_DIR_MASK                 0x4000
++#define LOCHNAGAR2_AIF_LRCLK_DIR_SHIFT                    14
++#define LOCHNAGAR2_AIF_BCLK_DIR_MASK                  0x2000
++#define LOCHNAGAR2_AIF_BCLK_DIR_SHIFT                     13
++#define LOCHNAGAR2_AIF_SRC_MASK                       0x00FF
++#define LOCHNAGAR2_AIF_SRC_SHIFT                           0
++
++/* (0x001E - 0x0027)  CDC_MCLK1_CTRL - SOUNDCARD_MCLK_CTRL */
++#define LOCHNAGAR2_CLK_ENA_MASK                       0x8000
++#define LOCHNAGAR2_CLK_ENA_SHIFT                          15
++#define LOCHNAGAR2_CLK_DIR_MASK                       0x4000
++#define LOCHNAGAR2_CLK_DIR_SHIFT                          14
++#define LOCHNAGAR2_CLK_SRC_MASK                       0x00FF
++#define LOCHNAGAR2_CLK_SRC_SHIFT                           0
++
++/* (0x0031 - 0x009A)  GPIO_FPGA_GPIO1 - GPIO_DSP_GPIO20 */
++#define LOCHNAGAR2_GPIO_SRC_MASK                      0x00FF
++#define LOCHNAGAR2_GPIO_SRC_SHIFT                          0
++
++/* (0x00B9 - 0x00C8)  GPIO_CHANNEL1 - GPIO_CHANNEL16 */
++#define LOCHNAGAR2_GPIO_CHANNEL_STS_MASK              0x8000
++#define LOCHNAGAR2_GPIO_CHANNEL_STS_SHIFT                 15
++#define LOCHNAGAR2_GPIO_CHANNEL_SRC_MASK              0x00FF
++#define LOCHNAGAR2_GPIO_CHANNEL_SRC_SHIFT                  0
++
++/* (0x00DF)  MINICARD_RESETS */
++#define LOCHNAGAR2_DSP_RESET_MASK                     0x0002
++#define LOCHNAGAR2_DSP_RESET_SHIFT                         1
++#define LOCHNAGAR2_CDC_RESET_MASK                     0x0001
++#define LOCHNAGAR2_CDC_RESET_SHIFT                         0
++
++/* (0x00E3)  ANALOGUE_PATH_CTRL1 */
++#define LOCHNAGAR2_ANALOGUE_PATH_UPDATE_MASK          0x8000
++#define LOCHNAGAR2_ANALOGUE_PATH_UPDATE_SHIFT             15
++#define LOCHNAGAR2_ANALOGUE_PATH_UPDATE_STS_MASK      0x4000
++#define LOCHNAGAR2_ANALOGUE_PATH_UPDATE_STS_SHIFT         14
++
++/* (0x00E4)  ANALOGUE_PATH_CTRL2 */
++#define LOCHNAGAR2_P2_INPUT_BIAS_ENA_MASK             0x0080
++#define LOCHNAGAR2_P2_INPUT_BIAS_ENA_SHIFT                 7
++#define LOCHNAGAR2_P1_INPUT_BIAS_ENA_MASK             0x0040
++#define LOCHNAGAR2_P1_INPUT_BIAS_ENA_SHIFT                 6
++#define LOCHNAGAR2_P2_MICBIAS_SRC_MASK                0x0038
++#define LOCHNAGAR2_P2_MICBIAS_SRC_SHIFT                    3
++#define LOCHNAGAR2_P1_MICBIAS_SRC_MASK                0x0007
++#define LOCHNAGAR2_P1_MICBIAS_SRC_SHIFT                    0
++
++/* (0x00F0)  COMMS_CTRL4 */
++#define LOCHNAGAR2_CDC_CIF1MODE_MASK                  0x0001
++#define LOCHNAGAR2_CDC_CIF1MODE_SHIFT                      0
++
++/* (0x00FE)  SPDIF_CTRL */
++#define LOCHNAGAR2_SPDIF_HWMODE_MASK                  0x0008
++#define LOCHNAGAR2_SPDIF_HWMODE_SHIFT                      3
++#define LOCHNAGAR2_SPDIF_RESET_MASK                   0x0001
++#define LOCHNAGAR2_SPDIF_RESET_SHIFT                       0
++
++/* (0x0116)  POWER_CTRL */
++#define LOCHNAGAR2_PWR_ENA_MASK                       0x0001
++#define LOCHNAGAR2_PWR_ENA_SHIFT                           0
++
++/* (0x0119)  MICVDD_CTRL1 */
++#define LOCHNAGAR2_MICVDD_REG_ENA_MASK                0x8000
++#define LOCHNAGAR2_MICVDD_REG_ENA_SHIFT                   15
++
++/* (0x011B)  MICVDD_CTRL2 */
++#define LOCHNAGAR2_MICVDD_VSEL_MASK                   0x001F
++#define LOCHNAGAR2_MICVDD_VSEL_SHIFT                       0
++
++/* (0x011E)  VDDCORE_CDC_CTRL1 */
++#define LOCHNAGAR2_VDDCORE_CDC_REG_ENA_MASK           0x8000
++#define LOCHNAGAR2_VDDCORE_CDC_REG_ENA_SHIFT              15
++
++/* (0x0120)  VDDCORE_CDC_CTRL2 */
++#define LOCHNAGAR2_VDDCORE_CDC_VSEL_MASK              0x007F
++#define LOCHNAGAR2_VDDCORE_CDC_VSEL_SHIFT                  0
++
++#endif
+-- 
+2.11.0
+
