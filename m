@@ -2,107 +2,115 @@ Return-Path: <SRS0=xlmH=M7=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17BB5ECDE43
-	for <linux-clk@archiver.kernel.org>; Fri, 19 Oct 2018 12:38:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA8F6ECDE3D
+	for <linux-clk@archiver.kernel.org>; Fri, 19 Oct 2018 15:50:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D10B12064A
-	for <linux-clk@archiver.kernel.org>; Fri, 19 Oct 2018 12:38:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="voSjHxcD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D10B12064A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 7BD0F205F4
+	for <linux-clk@archiver.kernel.org>; Fri, 19 Oct 2018 15:50:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BD0F205F4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727220AbeJSUoo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 19 Oct 2018 16:44:44 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59544 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727011AbeJSUoo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 Oct 2018 16:44:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=NTHM+hUmysi02WJjSwOg+yOHqodh7BLy55z9nZNro0s=; b=voSjHxcD3XrgbW/fVwCZHGtQ9
-        nI71Fr3aIsap5rRpmAVpViBqSIfAu2Qu+VfaYceydTbxd9y76jwjWOPHg1ZbRO7zQugjGhXqWJ5QH
-        zFprQh4tePdKuCtbJmxhz+x+nvijOrnYkI6xh7X1dkOnB50EuWk79i6sJabyOoerEsz8A=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gDU36-000098-Hy; Fri, 19 Oct 2018 12:38:40 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 301101122548; Fri, 19 Oct 2018 13:38:40 +0100 (BST)
-Date:   Fri, 19 Oct 2018 13:38:40 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc:     lee.jones@linaro.org, mturquette@baylibre.com, sboyd@kernel.org,
-        linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        lgirdwood@gmail.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, patches@opensource.cirrus.com,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v3 4/5] regulator: lochnagar: Add support for the Cirrus
- Logic Lochnagar
-Message-ID: <20181019123840.GL5895@sirena.org.uk>
-References: <20181019095003.26046-1-ckeepax@opensource.cirrus.com>
- <20181019095003.26046-4-ckeepax@opensource.cirrus.com>
- <20181019112622.GB5895@sirena.org.uk>
- <20181019121920.GL1653@imbe.wolfsonmicro.main>
- <20181019122118.GI5895@sirena.org.uk>
- <20181019123442.GM1653@imbe.wolfsonmicro.main>
+        id S1727682AbeJSX5O (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 19 Oct 2018 19:57:14 -0400
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:47289 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726935AbeJSX5O (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 Oct 2018 19:57:14 -0400
+Received: from [192.168.0.111] (223.166.104.93) by mail-sh2.amlogic.com
+ (10.18.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Fri, 19 Oct
+ 2018 23:50:14 +0800
+Subject: Re: [PATCH v5 2/3] clk: meson: add DT documentation for emmc clock
+ controller
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+CC:     Yixun Lan <yixun.lan@amlogic.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Liang Yang <liang.yang@amlogic.com>,
+        Jian Hu <jian.hu@amlogic.com>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1539839245-13793-1-git-send-email-jianxin.pan@amlogic.com>
+ <1539839245-13793-3-git-send-email-jianxin.pan@amlogic.com>
+ <153988248599.5275.8444799485095155762@swboyd.mtv.corp.google.com>
+From:   Jianxin Pan <jianxin.pan@amlogic.com>
+Message-ID: <efc5b030-f344-80ce-f57e-582207f436fe@amlogic.com>
+Date:   Fri, 19 Oct 2018 23:50:08 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="oOpJzULQ70+PGW7h"
-Content-Disposition: inline
-In-Reply-To: <20181019123442.GM1653@imbe.wolfsonmicro.main>
-X-Cookie: Obey all traffic laws.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <153988248599.5275.8444799485095155762@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [223.166.104.93]
+X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
+ (10.18.11.6)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 2018/10/19 1:08, Stephen Boyd wrote:
+> Quoting Jianxin Pan (2018-10-17 22:07:24)
+>> diff --git a/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
+>> new file mode 100644
+>> index 0000000..9e6d343
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
+>> @@ -0,0 +1,31 @@
+>> +* Amlogic MMC Sub Clock Controller Driver
+>> +
+>> +The Amlogic MMC clock controller generates and supplies clock to support
+>> +MMC and NAND controller
+>> +
+>> +Required Properties:
+>> +
+>> +- compatible: should be:
+>> +               "amlogic,gx-mmc-clkc"
+>> +               "amlogic,axg-mmc-clkc"
+>> +
+>> +- #clock-cells: should be 1.
+>> +- clocks: phandles to clocks corresponding to the clock-names property
+>> +- clock-names: list of parent clock names
+>> +       - "clkin0", "clkin1"
+>> +
+>> +Parent node should have the following properties :
+> 
+> The example only has one node. Can you add two nodes?
+OK. This clock is used by nand and emmc. I will add a new example for emmc too.
+Thank you for your review.
+> 
+>> +- compatible: "amlogic,axg-mmc-clkc", "syscon".
+>> +- reg: base address and size of the MMC control register space.
+>> +
+>> +Example: Clock controller node:
+>> +
+>> +sd_mmc_c_clkc: clock-controller@7000 {
+>> +       compatible = "amlogic,axg-mmc-clkc", "syscon";
+>> +       reg = <0x0 0x7000 0x0 0x4>;
+>> +       #clock-cells = <1>;
+>> +
+>> +       clock-names = "clkin0", "clkin1";
+>> +       clocks = <&clkc CLKID_SD_MMC_C_CLK0>,
+>> +                <&clkc CLKID_FCLK_DIV2>;
+>> +};
+> 
+> .
+> 
 
---oOpJzULQ70+PGW7h
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Fri, Oct 19, 2018 at 01:34:42PM +0100, Charles Keepax wrote:
-> On Fri, Oct 19, 2018 at 01:21:18PM +0100, Mark Brown wrote:
-
-> > It looks a lot like
-
-> > bef9391cbec547351c6a13e52f3a26bb2d271ec7 regulator: lochnagar: Add support for the Cirrus Logic Lochnagar
-
-> > in -next.
-
-> Well it sure does look a lot like my patch :-). Apologies
-> something must have gone wrong on one of our ends as I don't
-> seem to have ever received your usual confirmation email it
-> was merged. I will try to keep a closer eye on people's trees
-> in future.
-
-They do sometimes seem to get flagged as spam, I think due to the amount
-of boilerplate and possibly even the fact that they include the patches.
-
---oOpJzULQ70+PGW7h
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlvJ0E8ACgkQJNaLcl1U
-h9AbXgf8DhZ8F5ouO3YDC0DRt0RqX2RDoLGELBtfApk5ZkNbeHJCCVV0hScGSfK3
-XQ0aRncbrXuR8w4HV7uS7yqXUM9zvjTrhZ1pP6bBskFCnnpjXyLUvbILlJUZuViq
-JSbTJHGmbMrK1x9Tm9u2CamGRM8gE+5fpKPt67p/PQ/z0peADKBGRZ1sVY2Yu0t7
-qHqFdSvmYgkRkmQVfOAOZ0RxNJk/t8i5R3j4Hy01xqkMQI9UitQPY2JpBPFterLn
-exCRh2Oi3KQrCynABN9+fpd4S4H3izOkLBaj6/3f7H+F2/d4/7LAImpcg8M/DA4C
-R5LlPB2DMmxonXXT2UzFds/dcRz2+g==
-=o511
------END PGP SIGNATURE-----
-
---oOpJzULQ70+PGW7h--
