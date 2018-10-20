@@ -1,152 +1,152 @@
-Return-Path: <SRS0=xlmH=M7=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=uWeH=NA=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FB93ECDE43
-	for <linux-clk@archiver.kernel.org>; Fri, 19 Oct 2018 23:07:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DEE8ECDE3D
+	for <linux-clk@archiver.kernel.org>; Sat, 20 Oct 2018 13:38:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2541720843
-	for <linux-clk@archiver.kernel.org>; Fri, 19 Oct 2018 23:07:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37E972152F
+	for <linux-clk@archiver.kernel.org>; Sat, 20 Oct 2018 13:38:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="i/PliEip"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2541720843
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="OBiHFoRW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37E972152F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726349AbeJTHPj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 20 Oct 2018 03:15:39 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:38733 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726321AbeJTHPj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 20 Oct 2018 03:15:39 -0400
-Received: by mail-io1-f68.google.com with SMTP id q18-v6so1900218iod.5
-        for <linux-clk@vger.kernel.org>; Fri, 19 Oct 2018 16:07:33 -0700 (PDT)
+        id S1727364AbeJTVtO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 20 Oct 2018 17:49:14 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:44813 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727537AbeJTVtN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 20 Oct 2018 17:49:13 -0400
+Received: by mail-wr1-f65.google.com with SMTP id q6-v6so3868611wrw.11
+        for <linux-clk@vger.kernel.org>; Sat, 20 Oct 2018 06:38:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=V6NTIQparOMPx9sx9IqYeTGacmCxgEWqBM1eJiLj60c=;
-        b=i/PliEip8BaRyJonZCHOuZ8EGqoXw7PP8wmv4tcNnOyQvMJF+xtW9y7QdvT/KSDN08
-         kpvW6Vqu84oroqSQzdMdDGBaW3I98WOBLaiB4LeR8YzPf26jUpkG8T5oatnsf5o8c4zV
-         j0tpujAkgnI2fpx1LFEDhpQczzYeP3wfC4tPU=
+        d=sifive.com; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=ZvxOUP5Fom85HZYW6S3mncAl5RrZvlD+akPdxng1h0A=;
+        b=OBiHFoRWGSmBv7ST/JPrISARyB8LRjBOUYLcjAKz8XWUZyA2L3FCOttjWFJeXVvyqr
+         8pmxNj86PAIkXrw187mSpr/qK6pFofaNLRlMy6UGs4YGUurpYeF4CRgVj5TZtu044yTQ
+         tnOkMWY3yO1d8QsgpkyEFSagnyoQ8V63WzoAvGHfsjKXe+vs1xlbNiXXYReSUfNJbz05
+         cVKM0NTvF/EzQw68ymE6YMT9gk12+lnfDvvUKOA3lTxUKR6rsStWSsCM2yZIux+HCi+u
+         Nz2A+UKrw+pukQTAYkmMJulGQL2XogQTiR8Vvh9myI7W17+0yhw4cKvD99XGBcPZTevm
+         ScCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=V6NTIQparOMPx9sx9IqYeTGacmCxgEWqBM1eJiLj60c=;
-        b=qz/zv5d8+pfN4N+WQoZ96tzhaR2G6/vYZUN76q8dqO15ZWNxgxIp8taHFh0hAA57MA
-         4ZzXuwo7Hfzl26hw1W8Rf+gsLHANxP9klmPIhbtjiwtyv4YBmRAN/c0XffN9oXTgEo/7
-         v/i+gwy+I69bnlcY6fHocMgy4FlmPGLbr54UMKysNgK4cxUCTLEhZtL0im5/STSUYPwW
-         JFxu88FyKVz5kAf7gRwiiNkIRighEIs7h9MVC5mQmFzrytOUpMrh0TJSc95iH2IKev78
-         9RX0gxcavOYtWuIB2muvVJWMU+WLVvoL6z5LH14EjCSGCgGm0QdeLtoKfjGkAcGx0wSN
-         nM6Q==
-X-Gm-Message-State: AGRZ1gKtU/D5z8jaBcE7RXl+XRkVUBnLvVaNhEloQ0BiKAGrOW2JkBT+
-        R1OVRn2b+z+LbRPOJyRHSFPcysHrnF9m0i1o/cFRlg==
-X-Google-Smtp-Source: AJdET5cIjgL8IGj7k+o0I1ZkoTaS3lpFEUz3B8vjfR1GQHLy53yejX5PdMpNLGqi7QTnz9TFtyzmaTF2DHoAYB1HMTE=
-X-Received: by 2002:a6b:ac45:: with SMTP id v66-v6mr4530142ioe.66.1539990453084;
- Fri, 19 Oct 2018 16:07:33 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=ZvxOUP5Fom85HZYW6S3mncAl5RrZvlD+akPdxng1h0A=;
+        b=JRTSYbysd9I04eBD52vaHG7dPbB9b4yJTttuMQqgtIL0K/F/OIOmjDyu3JbzhJQbgw
+         QhfNcNqb6SHZlDiTLgaC04cOJrmQCtSbnHkztN6CKEjRWnwG5yJNiIT6Ad0QGw8Gd5Ai
+         JdaRMiEZFhk9EuHPIy2XniYezmxTTxzuVcjikVErDPWfMGe2OTYpNJgahrBMG+SxnUHO
+         2xXL0FZpaXxLy8ECtBLaNXiIzGlNJry5Lxl2wphj/VSzLKoS8pskmhoRwq6+KsN0Fra7
+         2f2mdytARas4DI0xTDtMK4VD5Ab/eXt79W7Okpxin3dSRZeJfEQzHThCNh23fMwLv18a
+         TZCw==
+X-Gm-Message-State: AGRZ1gKZvSKTU3cHcp+XyCgEFIOCPl28+rnKlXcrrFnSMTdswNeddpj9
+        lOxh+PfIChE7IfaPcQ89okzvjhUDObRCmA==
+X-Google-Smtp-Source: AJdET5fwa2wuI67FoW/kdcoyeYefbSZ/8qcn2kZ0BY8xUuW5D54vtMt75emXeALF9/wR6n/a2pEKTg==
+X-Received: by 2002:adf:9246:: with SMTP id 64-v6mr6403097wrj.130.1540042721693;
+        Sat, 20 Oct 2018 06:38:41 -0700 (PDT)
+Received: from viisi.sifive.com ([37.152.39.96])
+        by smtp.gmail.com with ESMTPSA id f1-v6sm5227207wme.23.2018.10.20.06.38.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 20 Oct 2018 06:38:41 -0700 (PDT)
+From:   Paul Walmsley <paul.walmsley@sifive.com>
+To:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+Cc:     Paul Walmsley <paul.walmsley@sifive.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Megan Wachs <megan@sifive.com>,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Paul Walmsley <paul@pwsan.com>
+Subject: [PATCH 2/3] dt-bindings: clk: add documentation for the SiFive PRCI driver
+Date:   Sat, 20 Oct 2018 06:38:23 -0700
+Message-Id: <20181020133823.27103-3-paul.walmsley@sifive.com>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181020133823.27103-1-paul.walmsley@sifive.com>
+References: <20181020133823.27103-1-paul.walmsley@sifive.com>
 MIME-Version: 1.0
-References: <20180831212007.247186-1-dbasehore@chromium.org>
-In-Reply-To: <20180831212007.247186-1-dbasehore@chromium.org>
-From:   "dbasehore ." <dbasehore@chromium.org>
-Date:   Fri, 19 Oct 2018 16:07:21 -0700
-Message-ID: <CAGAzgsqayRfva3om-3juAhE+VDuY0hV6q-DuyiJ-QU=szPSaew@mail.gmail.com>
-Subject: Re: [PATCH] clk: fix clk_calc_subtree compute duplications
-To:     sboyd@kernel.org
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Aug 31, 2018 at 2:20 PM Derek Basehore <dbasehore@chromium.org> wrote:
->
-> clk_calc_subtree was called at every step up the clk tree in
-> clk_calc_new_rates. Since it recursively calls itself for its
-> children, this means it would be called once on each clk for each
-> step above the top clk is.
->
-> This is fixed by adding a non-recursive function called at every
-> step in clk_calc_new_rates that fills in new_rate, new_parent, etc.
-> Since the clks not called directly for clk_calc_new_rates can only
-> change their rate, we only set new_rate in clk_calc_subtree.
-> clk_calc_subtree is also only called on the top clk after it's found
-> via clk_calc_new_rates to remove the duplicate recursive calls.
->
-> Signed-off-by: Derek Basehore <dbasehore@chromium.org>
-> ---
->  drivers/clk/clk.c | 20 ++++++++++++--------
->  1 file changed, 12 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index d31055ae6ec6..52032fb1a8a2 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -1609,11 +1609,18 @@ static int __clk_speculate_rates(struct clk_core *core,
->         return ret;
->  }
->
-> -static void clk_calc_subtree(struct clk_core *core, unsigned long new_rate,
-> -                            struct clk_core *new_parent, u8 p_index)
-> +static void clk_calc_subtree(struct clk_core *core, unsigned long new_rate)
->  {
->         struct clk_core *child;
->
-> +       core->new_rate = new_rate;
-> +       hlist_for_each_entry(child, &core->children, child_node)
-> +               clk_calc_subtree(child, clk_recalc(child, new_rate));
-> +}
-> +
-> +static void clk_set_change(struct clk_core *core, unsigned long new_rate,
-> +                          struct clk_core *new_parent, u8 p_index)
-> +{
->         core->new_rate = new_rate;
->         core->new_parent = new_parent;
->         core->new_parent_index = p_index;
-> @@ -1621,11 +1628,6 @@ static void clk_calc_subtree(struct clk_core *core, unsigned long new_rate,
->         core->new_child = NULL;
->         if (new_parent && new_parent != core->parent)
->                 new_parent->new_child = core;
-> -
-> -       hlist_for_each_entry(child, &core->children, child_node) {
-> -               child->new_rate = clk_recalc(child, new_rate);
-> -               clk_calc_subtree(child, child->new_rate, NULL, 0);
-> -       }
->  }
->
->  /*
-> @@ -1709,7 +1711,7 @@ static struct clk_core *clk_calc_new_rates(struct clk_core *core,
->                 top = clk_calc_new_rates(parent, best_parent_rate);
->
->  out:
-> -       clk_calc_subtree(core, new_rate, parent, p_index);
-> +       clk_set_change(core, new_rate, parent, p_index);
->
->         return top;
->  }
-> @@ -1910,6 +1912,8 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
->         if (ret)
->                 return ret;
->
-> +       clk_calc_subtree(top, top->new_rate);
-> +
+Add DT binding documentation for the Linux driver for the SiFive
+PRCI clock & reset control IP block, as found on the SiFive
+FU540 chip.
 
-Oops. This is wrong.  Calling here will overwrite new rate settings
-such as when determine_rate/round_rate return something different than
-clk_recalc(core, parent_rate). I'm working on a larger patch series
-where this will be fixed.
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Palmer Dabbelt <palmer@sifive.com>
+Cc: Megan Wachs <megan@sifive.com>                                                                                                                    Cc: linux-clk@vger.kernel.org
+Cc: devicetree@vger.kernel.org
+Cc: linux-riscv@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
+Signed-off-by: Paul Walmsley <paul@pwsan.com>
+---
+ .../bindings/clock/sifive/fu540-prci.txt      | 40 +++++++++++++++++++
+ 1 file changed, 40 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/sifive/fu540-prci.txt
 
->         /* notify that we are about to change rates */
->         fail_clk = clk_propagate_rate_change(top, PRE_RATE_CHANGE);
->         if (fail_clk) {
-> --
-> 2.19.0.rc1.350.ge57e33dbd1-goog
->
+diff --git a/Documentation/devicetree/bindings/clock/sifive/fu540-prci.txt b/Documentation/devicetree/bindings/clock/sifive/fu540-prci.txt
+new file mode 100644
+index 000000000000..27d8fdd4f3a2
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/sifive/fu540-prci.txt
+@@ -0,0 +1,40 @@
++SiFive FU540 PRCI bindings
++
++On the FU540 family of SoCs, most system-wide clock and reset integration
++is via the PRCI IP block.
++
++Required properties:
++- compatible: Should be "sifive,fu540-c000-prci0"
++- reg: Should describe the PRCI's register target physical address region
++- clocks: Should point to the hfclk device tree node and the rtcclk
++          device tree node.  The RTC clock here is not a time-of-day clock,
++	  but is instead a high-stability clock source for system timers
++	  and cycle counters.
++- #clock-cells: Should be <1>
++
++The clock consumer should specify the desired clock via the clock ID
++macros defined in include/linux/clk/sifive-fu540-prci.h.  These macros
++begin with PRCI_CLK_.
++
++
++
++Examples:
++
++hfclk: hfclk {
++	#clock-cells = <0>;
++	compatible = "fixed-clock";
++	clock-frequency = <33333333>;
++	clock-output-names = "hfclk";
++};
++rtcclk: rtcclk {
++	#clock-cells = <0>;
++	compatible = "fixed-clock";
++	clock-frequency = <1000000>;
++	clock-output-names = "rtcclk";
++};
++prci0: prci@10000000 {
++	compatible = "sifive,fu540-c000-prci0", "sifive,prci0";
++	reg = <0x0 0x10000000 0x0 0x1000>;
++	clocks = <&hfclk>, <&rtcclk>;
++	#clock-cells = <1>;
++};
+-- 
+2.19.1
+
