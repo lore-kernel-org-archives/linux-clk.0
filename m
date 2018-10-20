@@ -7,56 +7,56 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F5CDC67863
-	for <linux-clk@archiver.kernel.org>; Sat, 20 Oct 2018 13:39:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4AD0ECDE3D
+	for <linux-clk@archiver.kernel.org>; Sat, 20 Oct 2018 13:50:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9F5621529
-	for <linux-clk@archiver.kernel.org>; Sat, 20 Oct 2018 13:39:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8948D204FD
+	for <linux-clk@archiver.kernel.org>; Sat, 20 Oct 2018 13:50:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="ggF7jUHb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9F5621529
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="hLHJWG8A"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8948D204FD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727532AbeJTVtd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 20 Oct 2018 17:49:33 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:44808 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727476AbeJTVtJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 20 Oct 2018 17:49:09 -0400
-Received: by mail-wr1-f65.google.com with SMTP id q6-v6so3868496wrw.11
-        for <linux-clk@vger.kernel.org>; Sat, 20 Oct 2018 06:38:38 -0700 (PDT)
+        id S1727543AbeJTWBM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 20 Oct 2018 18:01:12 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:39220 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727397AbeJTWBH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 20 Oct 2018 18:01:07 -0400
+Received: by mail-wm1-f65.google.com with SMTP id y144-v6so6116357wmd.4
+        for <linux-clk@vger.kernel.org>; Sat, 20 Oct 2018 06:50:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=sifive.com; s=google;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=RK1db71p1doYFuCGfEE1NLdP4LEETqtV01w8eRQfie0=;
-        b=ggF7jUHbQPMBuzgjjE1ZSJ9H0neYUI42BFHKGWNXK7GgHTtct8R+T39RVP0cx41h3M
-         L360cSFJLESd44XCP+s89e523uYEmm77QVO8RhAis+eMLTT11YlI3CBmLBkJyyWhOyl9
-         jwF6OzRb9puvAQfqBA3ji19Pb5jBj5kmQs5urLofh92esCujfvmu9tlgbhZmP+DDVyxw
-         2sB34Jx8KzJz5KsS9V7py3MmgFZMgCHcvyyPbLNfm8RGL2qqUgWXQOWDjqMByVmidS0K
-         QcBx3k2OICAk3BGTb9Oh7woQxI7Hj5jya4WBxdlCK+fFkZt16DC24RfXHONj+KHg21N7
-         i6nw==
+        bh=LlbabcyQd1j/wICcOq6oJhFka402EV/LPkkjkVKQIUg=;
+        b=hLHJWG8ATbbUnsr+VLWBYj85dk2wCVNErURhl2WpGrKPNcu84h0I+Po/hAOxAzRcXh
+         q8uK6Aut6yUPuEKh2KOShDrhH+LPaBo0H+ae4E6humcFaeCJ5wzJ5UDorW/XnqHY8KUZ
+         L2FNg2QPFtTiaMEDExRD8mgCsjvpbrumEPj8B1dxR8yL/+1/+fCZj2xd/KPRX18Tgcvg
+         YAFpoMucVxUsgXYoSznTVvENRNTRVL1uQrXM79ADktBh6I0dQLbOCuK15snY9fPkhLvG
+         phxh5Ss2X2WnDA2HRGpucmCd3Njp36ICbzZBaitx6qGs7Ov3Gi2rpkR1HgB/8POQAhEu
+         sb2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=RK1db71p1doYFuCGfEE1NLdP4LEETqtV01w8eRQfie0=;
-        b=sg4a9+HG3SzA60gxeUkVCOcdPoaTLSMYD/q+INL6j7600QWw+o94LMRk6si5XyoNkZ
-         7JoK/y5atdxWSFmtoKewF70HfNr2PXNTeghulkGacjSntLyUqLF14WGIw5cvEZ0x2UFJ
-         hhYKs6CUgaaEzPreWvPev42iHy5elrpEBRn29SgttlPDmY0rYspz0zD796fCiIyM5voz
-         dacN5cisTjjMRVBUw8Swv764aKZM7XzHoklSI8DMdstY2cBgs3MHR5UqLeAKYVlp5wji
-         A49nwhEJr/JHNYEHRXEndv2Pq8jsw13DiRDDRyHD7gHlKzNGSppnbv6bLwBNSiqQRzVi
-         fUBQ==
-X-Gm-Message-State: AGRZ1gLtvvYRhKEcnJGUWcfDOK95PjGDanrelURptZRnp136P5CZIVjM
-        GNmyl1BE0J+A59/GOTAlQpVQieLnpgduXg==
-X-Google-Smtp-Source: AJdET5fai4n4Ip1a0hHB33795iEBz3hBXBP3ecQ6x/4i9IveVrF6RZUuoWlbXtxm2O0tkc3e8pKlyw==
-X-Received: by 2002:adf:dd8d:: with SMTP id x13-v6mr8459254wrl.237.1540042717701;
-        Sat, 20 Oct 2018 06:38:37 -0700 (PDT)
+        bh=LlbabcyQd1j/wICcOq6oJhFka402EV/LPkkjkVKQIUg=;
+        b=S3UnkaysTjiWN2BUM3SZiCQqtv2443SCnY8ByIYXC56xzxFrbRgZ+yuSU4mKqt1N+Z
+         jPoq0lUqWUAMA3xXTsr5gPAv4EAWe7IJ03dcybghBT4Bciv8lDbSViJ952Yada8b0h9N
+         aM9hbE0gjlgU9w5x3CZSN9GkZI36RROz3nxIF5r8wvzXiFULqMoKnbOEJv0tEVw1UqQY
+         9Gc68B2gf9bGT6GQ+laJ4gZVLrYy73LYtuUT3othwzRCRtheDwomvwJI5Tu/yBBr8dVS
+         IBDGPxRyIdIKM5v3x4RlcUAaj641xJUbmN5fvMD2HC3Sxo+6KqKg/Bs7zFvqWuDX4Ym4
+         1Y/w==
+X-Gm-Message-State: ABuFfoh6ZoF4xUshP3Y17TufxQ5GGsfBOvlBi1ce51hPGkRITL5tftac
+        6AEE5m6mZ6teccaXGMErNSFHizeuIwws1A==
+X-Google-Smtp-Source: ACcGV63StSgMHPhXytIVulh7lSgv9KF4DTrx0iLRWBJmnl1yLvDiNn6Fyc7tov+0pZqHpU2MvLKHuA==
+X-Received: by 2002:a1c:1fcd:: with SMTP id f196-v6mr8968379wmf.19.1540043433471;
+        Sat, 20 Oct 2018 06:50:33 -0700 (PDT)
 Received: from viisi.sifive.com ([37.152.39.96])
-        by smtp.gmail.com with ESMTPSA id f1-v6sm5227207wme.23.2018.10.20.06.38.36
+        by smtp.gmail.com with ESMTPSA id o4-v6sm16906615wrj.45.2018.10.20.06.50.31
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 20 Oct 2018 06:38:36 -0700 (PDT)
+        Sat, 20 Oct 2018 06:50:32 -0700 (PDT)
 From:   Paul Walmsley <paul.walmsley@sifive.com>
 To:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org
 Cc:     Paul Walmsley <paul.walmsley@sifive.com>,
@@ -69,9 +69,9 @@ Cc:     Paul Walmsley <paul.walmsley@sifive.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 0/3] clk: add driver for the SiFive FU540 PRCI and PLLs it controls
-Date:   Sat, 20 Oct 2018 06:38:21 -0700
-Message-Id: <20181020133823.27103-1-paul.walmsley@sifive.com>
+Subject: [PATCH v2 0/3] clk: add driver for the SiFive FU540 PRCI and PLLs it controls
+Date:   Sat, 20 Oct 2018 06:50:21 -0700
+Message-Id: <20181020135024.28573-1-paul.walmsley@sifive.com>
 X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -93,6 +93,9 @@ what it's doing makes sense.
 Boot-tested on a SiFive HiFive Unleashed board.  COREPLL rate changes
 and notification were also tested on the same board.
 
+This second version corrects the DT binding documentation patch; an
+out-of-date version of that patch was sent with the first version.
+
 This patch series is also available at:
 
 https://github.com/sifive/riscv-linux/tree/dev/paulw/prci-v4.19-rc7
@@ -103,7 +106,7 @@ Paul Walmsley (3):
   dt-bindings: clk: add documentation for the SiFive PRCI driver
   clk: sifive: add a driver for the SiFive FU540 PRCI IP block
 
- .../bindings/clock/sifive/fu540-prci.txt      |  40 ++
+ .../bindings/clock/sifive/fu540-prci.txt      |  43 ++
  MAINTAINERS                                   |   6 +
  drivers/clk/Kconfig                           |   2 +
  drivers/clk/Makefile                          |   2 +
@@ -115,7 +118,7 @@ Paul Walmsley (3):
  drivers/clk/sifive/fu540-prci.c               | 634 ++++++++++++++++++
  include/linux/clk/analogbits-wrpll-cln28hpc.h |  99 +++
  include/linux/clk/sifive-fu540-prci.h         |  27 +
- 12 files changed, 1221 insertions(+)
+ 12 files changed, 1224 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/clock/sifive/fu540-prci.txt
  create mode 100644 drivers/clk/analogbits/Kconfig
  create mode 100644 drivers/clk/analogbits/Makefile
