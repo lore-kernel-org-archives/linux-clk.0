@@ -2,206 +2,150 @@ Return-Path: <SRS0=kIYd=NB=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EA9BECDE44
-	for <linux-clk@archiver.kernel.org>; Sun, 21 Oct 2018 13:15:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A655ECDE43
+	for <linux-clk@archiver.kernel.org>; Sun, 21 Oct 2018 18:31:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2516520843
-	for <linux-clk@archiver.kernel.org>; Sun, 21 Oct 2018 13:15:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DCE9B20838
+	for <linux-clk@archiver.kernel.org>; Sun, 21 Oct 2018 18:31:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="t4sj9tGg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2516520843
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eN/a9190"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCE9B20838
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727377AbeJUV3b (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 21 Oct 2018 17:29:31 -0400
-Received: from mail-he1eur01on0047.outbound.protection.outlook.com ([104.47.0.47]:42784
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726982AbeJUV3b (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 21 Oct 2018 17:29:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=G53vIzWOFNjPMyIC8+G3p4O83GmTd8nPjEntWpFV+Mk=;
- b=t4sj9tGgCs1N9IICKbUSL8ww4UkSry/VA/gAWNMlAHFFsTvivlSUpkE/aDgoxU2ZjfkpTsvzxLLC+SHFClV2JSCDx9OPslRY6YKQYCwxtUbbgT5C/hiMACyHsgCk8QzHtNIUxFdmwRhnHiL+LaFcE+G1JxQV16I3cyXDhF/nh9U=
-Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.126.21) by
- AM0PR04MB4580.eurprd04.prod.outlook.com (52.135.149.18) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1250.30; Sun, 21 Oct 2018 13:15:07 +0000
-Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
- ([fe80::797a:f972:9281:6d10]) by AM0PR04MB4211.eurprd04.prod.outlook.com
- ([fe80::797a:f972:9281:6d10%2]) with mapi id 15.20.1250.028; Sun, 21 Oct 2018
- 13:15:07 +0000
-From:   "A.s. Dong" <aisheng.dong@nxp.com>
-To:     "sboyd@kernel.org" <sboyd@kernel.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Anson Huang <anson.huang@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>, dl-linux-imx <linux-imx@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: RE: [PATCH RESEND V4 0/9] clk: add imx7ulp clk support
-Thread-Topic: [PATCH RESEND V4 0/9] clk: add imx7ulp clk support
-Thread-Index: AQHUaT95oCO6Jr50e0qyeeRGaZQa8qUprLpg
-Date:   Sun, 21 Oct 2018 13:15:07 +0000
-Message-ID: <AM0PR04MB4211576EF2FE906A6B0C3F1680FB0@AM0PR04MB4211.eurprd04.prod.outlook.com>
-References: <1540127173-21346-1-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1540127173-21346-1-git-send-email-aisheng.dong@nxp.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=aisheng.dong@nxp.com; 
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM0PR04MB4580;6:lmoqFo//9hMCaHgSd0Zs3/Nth6XaS6aRlZr7ax21XodpLMUwK3j11UbiR6b4HD7peHXn1E1He4OET2B85GI7tnYEwwGMPwNPHluGrZjWlXYLQ5zQwVqg9TB3LrKdzodxfu47ERN5RyKuNq9sHnzAgZKG0pJJ2aniUj0hucGnYabom/QgMKzNU+EkfAwmCpYzT1/siol/CJAxt8ZJJFCeKCNLBuc4YQGkYVsivdBZ2zQAPkEr47hW7bOlRAMKYi/l1onRuZ4E+27k9E8InyfDQqJAMLAcNqCGlUSaQkxSYHWLRg7kNt5KVBOhHmXsCkhtI78/FE0kKO1HA77DZoRRgEAVO8ATWqDSWenyszAmcixMOSul2MqWFj5BGEvshsDV+fRkuI6n2yQAlYm9LGxT62NHEEYw3YlC7lAXUiypLebwFMV0hbVXLr1z86kTDJXbggKs5qzt8HQGs90CiW06Xg==;5:N2oeKHZI+deuKKleZhdRIbKG7veTzQthYuhfeUMAdqvhwcOiaHNxqjXRdhGCKmlBzV9tQBl5n5WVE04zSE2iR08zvkVdhHTvbwSkXdCawK9njak9vFu2WQ1FhV1aJxJb+g39hIJFonngCkgCCawJqulRhkthFD94TX5qmqFUovQ=;7:s9eGE7tmysmrh9eo+0WxIiKnklBl4MyTSTShIHsIgPvwJLZW5Aclcn0JbJ/g2vmWgqMSyRWBMDA+yxk4HhV+tMbiKEL9iGnbh0hB3BYlCI8ajXcIQIvr2oop9PczbavriKsTrp9gPmsjeS6vPui2lTi/YBE1fsjfPdqBjOQZnjb+nmGaXoVu0O6T/otV1GsiYYyfQ9wb413e4aDKUfrP/bChXOqBBR7GQxqNIAQsxCCHqlTtbE0vptJO4BiBf238
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: aaca81a5-15ce-42c6-5fa1-08d6375738ab
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB4580;
-x-ms-traffictypediagnostic: AM0PR04MB4580:
-x-microsoft-antispam-prvs: <AM0PR04MB4580E9C8D878F035F9DCFAFF80FB0@AM0PR04MB4580.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(258649278758335)(269456686620040)(185117386973197);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231355)(944501410)(52105095)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:AM0PR04MB4580;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB4580;
-x-forefront-prvs: 083289FD26
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(396003)(366004)(346002)(39850400004)(136003)(54534003)(13464003)(199004)(189003)(476003)(11346002)(446003)(66066001)(54906003)(316002)(26005)(74316002)(7696005)(99286004)(486006)(186003)(7736002)(53546011)(6506007)(305945005)(102836004)(105586002)(76176011)(86362001)(106356001)(256004)(14444005)(1730700003)(81156014)(81166006)(217873002)(8936002)(8676002)(6916009)(5250100002)(25786009)(2900100001)(2501003)(68736007)(71190400001)(2906002)(5660300001)(14454004)(3846002)(4326008)(6116002)(6306002)(33656002)(6246003)(9686003)(53936002)(2351001)(966005)(71200400001)(478600001)(229853002)(5640700003)(55016002)(97736004)(6436002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4580;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: OOwNFhZvDhT49IMJBC322cTuAIrnMED5UBoKcRVhZulFl0ev/lW5rsgR7onq2PYK7bp8XoQpjQgs8AVwmIEIzumUAYSXiAUBU6WHf1iOCMTLEbCcQQB0pUTkP5P/wqD6zrUNQ/FNh5OYlJg1YOoy0jL/Jut08loEjsPj9tNCHU9WDXIF+5yW+Rgn6HdgJBIJPvGxtVwOdAur59T2XfDqVV2wy771mIlmhFrMZaulIeTifP40on/jmNEkxs31MCZODimsvbqhOoSOe/VlQJCd0c+Op2+CpoIuXXulpIFwGGnyjCOHz7Uwxhju2EkCm8v1lkJ9WW1cUljHexaMtv2m+ZPDKDDTapRUnq0w5wH8BtA=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1727859AbeJVCqu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 21 Oct 2018 22:46:50 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:38054 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727827AbeJVCqt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 21 Oct 2018 22:46:49 -0400
+Received: by mail-pl1-f195.google.com with SMTP id w13-v6so616002plp.5;
+        Sun, 21 Oct 2018 11:31:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=y/KJRVv0hdo/cpLDuoUFR+NtUH0S1YMHEjIvjB0eomw=;
+        b=eN/a9190dtrVKjhR0gJsrNNj3i/hM+Y3hJr3uWWnafK1PYbeCjfnxenqnG7gkUcYn9
+         IPKKS/vvoyTaFXJ50joEp/yo4R4/zUSr6IPWdUEM/bAn/mBd2IGwvMp5IGk/9bxLymWW
+         KHzHIp3+Sv/k+OYsMRSTSFKGI5+f61Fm0dpVYsOIyoNSYarqUjRseWXTIdfPhd2pJTfN
+         2+EcBbzwjAFwKWLt4McdA6IQZO468cIPubmjXNiEt3HWJmONrjvfUhRX8qS3QO9Hq+SH
+         Lwy2Z0KneGVznl7dSNkn9gq/CppUVm/QwJtvibKBzqGz4eW8bk9B1ZcqqoRth36fd2/P
+         HzBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=y/KJRVv0hdo/cpLDuoUFR+NtUH0S1YMHEjIvjB0eomw=;
+        b=LVUA8BvVG/IgQr+6o/BN/Wxc9nHVIqmSthO7pXLeRvu6dxqEH0LRvCYMI+8qASTQfX
+         0VDlOk8fpWwapml3iqePoZHeSXA15Nmq3SK5rrOEgwZ8DLSj4bFl+CRo0X1FRfsFyxi7
+         mCXiSPOwDFxhdzUyQFmxtrGdbGJxBHmsi5/vGU7/orXHok3E3KFB6j+u3/2VzfFh+EzL
+         AYlWLLmOZ3dtfWmAJL2meN0SFfKv47GQxJ/bAWR7dyudhhpbhipjhF10iZf3UDtELatS
+         I5DRAlXzqnUQHWGbi//C9T6K6KaBdQ+dUtcVL1aduVQlQ5Ifk7GfnQ4V3WwgaTm+zEXX
+         Q1Yw==
+X-Gm-Message-State: ABuFfohbOKMxKOzigPiysZ2yALmIpQUzdeUhOcObrN14ej8uPwfhHqqx
+        SCI1jczf/6IZQhCQZhD1lN30mEn+
+X-Google-Smtp-Source: ACcGV61W6W20yOL1Zy7jxE3biwsEmmLxF+3lU1u/KiDkHsqdhxsCSRnJqF/fbPeU8vPdyDAzTSY2rw==
+X-Received: by 2002:a17:902:8c84:: with SMTP id t4-v6mr42374943plo.188.1540146697146;
+        Sun, 21 Oct 2018 11:31:37 -0700 (PDT)
+Received: from localhost.localdomain ([109.252.91.118])
+        by smtp.gmail.com with ESMTPSA id v5-v6sm45467047pfd.64.2018.10.21.11.31.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 21 Oct 2018 11:31:36 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>
+Cc:     linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v6 0/8] Tegra20 External Memory Controller driver
+Date:   Sun, 21 Oct 2018 21:30:44 +0300
+Message-Id: <20181021183052.32023-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: aaca81a5-15ce-42c6-5fa1-08d6375738ab
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Oct 2018 13:15:07.1160
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4580
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+Changelog:
 
-In case you might miss to queue this series into your review list, so I res=
-end this series again.
-This series actually has been pending for a couple of months without commen=
-ts.
-Hopefully you could help find some time to handle it when you're free.
+v6:
+        - Driver now handles "refresh request overflow" interrupt by
+          reporting error message.
 
-Thanks
+        - EMC rate is set during driver initialization to ensure that clock
+          divider is in a proper state.
 
-Regards
-Dong Aisheng
+v5:
+        - Fixed wrong EMC clock divider type in the "Turn EMC clock gate into
+          divider" patch. It is a Tegra's fractional 7.1 divider and not a
+          simple integer divider. Peter, please take a look at the change.
 
-> -----Original Message-----
-> From: A.s. Dong
-> Sent: Sunday, October 21, 2018 9:11 PM
-> To: linux-clk@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
-> sboyd@kernel.org; mturquette@baylibre.com; shawnguo@kernel.org; Anson
-> Huang <anson.huang@nxp.com>; Jacky Bai <ping.bai@nxp.com>; dl-linux-imx
-> <linux-imx@nxp.com>; A.s. Dong <aisheng.dong@nxp.com>
-> Subject: [PATCH RESEND V4 0/9] clk: add imx7ulp clk support
->=20
-> This is a rebased version of below patch series against latest clk tree.
-> [PATCH RESEND V3 0/9] clk: add imx7ulp clk support
-> https://lkml.org/lkml/2018/3/16/310
->=20
-> It only updates the license to SPDX format as well as a minor fix of pllv=
-4.
->=20
-> This patch series intends to add imx7ulp clk support.
->=20
-> i.MX7ULP Clock functions are under joint control of the System Clock
-> Generation (SCG) modules, Peripheral Clock Control (PCC) modules, and Cor=
-e
-> Mode Controller (CMC)1 blocks
->=20
-> The clocking scheme provides clear separation between M4 domain and A7
-> domain. Except for a few clock sources shared between two domains, such a=
-s
-> the System Oscillator clock, the Slow IRC (SIRC), and and the Fast IRC cl=
-ock
-> (FIRCLK), clock sources and clock management are separated and contained
-> within each domain.
->=20
-> M4 clock management consists of SCG0, PCC0, PCC1, and CMC0 modules.
-> A7 clock management consists of SCG1, PCC2, PCC3, and CMC1 modules.
->=20
-> Note: this series only adds A7 clock domain support as M4 clock domain wi=
-ll
-> be handled by M4 seperately.
->=20
-> Change Log:
-> v3->v4:
->  * update after changing scg and pcc into separete nodes according to
->    Rob's suggestion
-> v2->v3:
->  * Patch 1 changed on: 1) split normal and gate ops 2) fix the possible r=
-acy
->    Others no changes.
->=20
-> v1->v2:
->  * add enable/disable for the type of CLK_DIVIDER_ZERO_GATE dividers
->  * use clk_hw apis to register clocks
->  * use of_clk_add_hw_provider
->  * split the clocks register process into two parts: early part for possi=
-ble
->    timers clocks registered by CLK_OF_DECLARE_DRIVER and the later part f=
-or
->    the left normal peripheral clocks registered by a platform driver.
->=20
-> Dong Aisheng (9):
->   clk: clk-divider: add CLK_DIVIDER_ZERO_GATE clk support
->   clk: fractional-divider: add CLK_FRAC_DIVIDER_ZERO_BASED flag support
->   clk: imx: add pllv4 support
->   clk: imx: add pfdv2 support
->   clk: imx: add composite clk support
->   dt-bindings: clock: add imx7ulp clock binding doc
->   clk: imx: make mux parent strings const
->   clk: imx: implement new clk_hw based APIs
->   clk: imx: add imx7ulp clk driver
->=20
->  .../devicetree/bindings/clock/imx7ulp-clock.txt    |  87 +++++++++
->  drivers/clk/clk-divider.c                          | 152
-> +++++++++++++++
->  drivers/clk/clk-fractional-divider.c               |  10 +
->  drivers/clk/imx/Makefile                           |   6 +-
->  drivers/clk/imx/clk-busy.c                         |   2 +-
->  drivers/clk/imx/clk-composite.c                    |  85 +++++++++
->  drivers/clk/imx/clk-fixup-mux.c                    |   2 +-
->  drivers/clk/imx/clk-imx7ulp.c                      | 209
-> +++++++++++++++++++++
->  drivers/clk/imx/clk-pfdv2.c                        | 201
-> ++++++++++++++++++++
->  drivers/clk/imx/clk-pllv4.c                        | 182
-> ++++++++++++++++++
->  drivers/clk/imx/clk.c                              |  22 +++
->  drivers/clk/imx/clk.h                              |  92 ++++++++-
->  include/dt-bindings/clock/imx7ulp-clock.h          | 109 +++++++++++
->  include/linux/clk-provider.h                       |  17 ++
->  14 files changed, 1166 insertions(+), 10 deletions(-)  create mode 10064=
-4
-> Documentation/devicetree/bindings/clock/imx7ulp-clock.txt
->  create mode 100644 drivers/clk/imx/clk-composite.c  create mode 100644
-> drivers/clk/imx/clk-imx7ulp.c  create mode 100644
-> drivers/clk/imx/clk-pfdv2.c  create mode 100644 drivers/clk/imx/clk-pllv4=
-.c
-> create mode 100644 include/dt-bindings/clock/imx7ulp-clock.h
->=20
-> --
-> 2.7.4
+v4:
+        - Fixed "bad of_node_put()" error which was revealed by enabling
+          some extra kernel debug config options.
+
+        - The "emc-table" DT nodes are now parsed starting from the "emc"
+          node instead of the DT root.
+
+        - Adjusted code comment in the "Turn EMC clock gate into divider"
+          patch as was suggested by Stephen Boyd to the v3.
+
+v3:
+        - Handle "nvidia,use-ram-code" DT property, its handling was missed
+          in the previous versions.
+
+        - Honor "emc-tables" DT node naming which is explicitly specified
+          in the DT binding, also was missed in the previous versions.
+
+        - Two new DT binding patches: one adds the EMC clock property,
+          other relocates the binding doc file to the appropriate directory.
+          One new patch that adds EMC clock property to the DTS file.
+
+        - Addressed v2 review comments from Thierry Reding. Driver does not
+          preserve backwards compatibility with older device tree binding.
+
+        - The PLL_M and PLL_P clocks are kept internal to the driver because
+          after some more considering I couldn't find a really good reason why
+          these clocks should be in the device tree.
+
+        - Some minor cleanups and fixes in the drivers code.
+
+v2:
+        - Minor code cleanups like consistent use of writel_relaxed instead
+          of non-relaxed version, reworded error messages, etc.
+
+        - Factored out use_pllm_ud bit checking into a standalone patch for
+          consistency.
+
+Dmitry Osipenko (8):
+  dt: bindings: tegra20-emc: Document interrupt property
+  dt: bindings: tegra20-emc: Document clock property
+  dt: bindings: Move tegra20-emc binding to memory-controllers directory
+  ARM: dts: tegra20: Add interrupt entry to External Memory Controller
+  ARM: dts: tegra20: Add clock entry to External Memory Controller
+  clk: tegra20: Turn EMC clock gate into divider
+  clk: tegra20: Check whether direct PLLM sourcing is turned off for EMC
+  memory: tegra: Introduce Tegra20 EMC driver
+
+ .../nvidia,tegra20-emc.txt                    |   4 +
+ arch/arm/boot/dts/tegra20.dtsi                |   2 +
+ drivers/clk/tegra/clk-tegra20.c               |  46 +-
+ drivers/memory/tegra/Kconfig                  |  10 +
+ drivers/memory/tegra/Makefile                 |   1 +
+ drivers/memory/tegra/tegra20-emc.c            | 591 ++++++++++++++++++
+ 6 files changed, 644 insertions(+), 10 deletions(-)
+ rename Documentation/devicetree/bindings/{arm/tegra => memory-controllers}/nvidia,tegra20-emc.txt (95%)
+ create mode 100644 drivers/memory/tegra/tegra20-emc.c
+
+-- 
+2.19.0
 
