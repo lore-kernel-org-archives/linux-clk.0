@@ -2,119 +2,113 @@ Return-Path: <SRS0=3SWV=NC=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7601BC67863
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Oct 2018 04:09:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A54C5C67863
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Oct 2018 05:20:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20B8C20852
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Oct 2018 04:09:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ERwvKObS";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="MjFPXS0G"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20B8C20852
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 5558220779
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Oct 2018 05:20:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5558220779
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=buserror.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726949AbeJVM0A (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 Oct 2018 08:26:00 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:60790 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726694AbeJVM0A (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Oct 2018 08:26:00 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id B34A66021C; Mon, 22 Oct 2018 04:09:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1540181353;
-        bh=z6FqOa/XSOoctBykfcv0+4BKYmTQ/5R9gT+O5WYx9V4=;
-        h=Subject:To:References:From:Date:In-Reply-To:From;
-        b=ERwvKObSibXb+l/YWzYSF/nF2CNyOtfn4E7hBRyauiWgZGKuEJH9pQBo10A3/J/OX
-         eq+sb3K14E6RIT/Ghh9Fqgd/1xMNvaD6bGaY31JYrMaJOV15JmWx4bbEgFQze6+Yv7
-         TqxH4isBU/uJ0oo8jUzcWbjL7Q3cigXn/3IZMPHU=
-Received: from [10.201.3.39] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sricharan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 6DBC56021C;
-        Mon, 22 Oct 2018 04:09:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1540181352;
-        bh=z6FqOa/XSOoctBykfcv0+4BKYmTQ/5R9gT+O5WYx9V4=;
-        h=Subject:To:References:From:Date:In-Reply-To:From;
-        b=MjFPXS0Gm9zS00CJUlDaR8kT5H+CTa1qJABtpJpRDLnYUzE/n8BM3r9nBmfSivREn
-         5L1due8BXjRxNWLTSv4g2/Hfdw2hyewcvop8pEwWPkARH/Bd4C21DQo8rN2NImZifh
-         15njT1YphE+i8OkCVAB0w3J7atxJSJWrzNM2YtX0=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6DBC56021C
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
-Subject: Re: [PATCH V12 00/14] Krait clocks + Krait CPUfreq
-To:     Stephen Boyd <sboyd@kernel.org>, Craig <ctatlor97@gmail.com>,
-        andy.gross@linaro.org, david.brown@linaro.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux@arm.linux.org.uk,
-        linux@armlinux.org.uk, mark.rutland@arm.com,
-        mturquette@baylibre.com, niklas.cassel@linaro.org,
-        rjw@rjwysocki.net, robh@kernel.org, sboyd@codeaurora.org,
-        sudeep.holla@arm.com, thierry.escande@linaro.org,
-        viresh.kumar@linaro.org
-References: <1534248753-2440-1-git-send-email-sricharan@codeaurora.org>
- <2ae96741-94c0-ba4c-fc19-05d33179683c@codeaurora.org>
- <d682580d-5070-0271-197f-29d988172937@codeaurora.org>
- <D8FC68C0-2572-4A86-81D9-D0099D314A45@gmail.com>
- <F5A89365-C613-4FE2-AD32-DC0AC6DF380B@gmail.com>
- <fb81b8d5-3d24-b413-8d59-33cb70e46f8b@codeaurora.org>
- <153979105280.5275.841088095583550635@swboyd.mtv.corp.google.com>
- <153980741313.5275.10376918222904341760@swboyd.mtv.corp.google.com>
-From:   Sricharan R <sricharan@codeaurora.org>
-Message-ID: <c5f492c0-19a2-db8f-a114-d3cfe17ae6c6@codeaurora.org>
-Date:   Mon, 22 Oct 2018 09:39:03 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <153980741313.5275.10376918222904341760@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1727342AbeJVNht (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 22 Oct 2018 09:37:49 -0400
+Received: from baldur.buserror.net ([165.227.176.147]:52598 "EHLO
+        baldur.buserror.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726784AbeJVNht (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Oct 2018 09:37:49 -0400
+Received: from [2601:449:8400:7293:12bf:48ff:fe84:c9a0]
+        by baldur.buserror.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <oss@buserror.net>)
+        id 1gESdy-0002MH-J3; Mon, 22 Oct 2018 00:20:47 -0500
+Message-ID: <23919e8b8ec0d7cd9eb7fb1a134adbb9a17ca209.camel@buserror.net>
+From:   Scott Wood <oss@buserror.net>
+To:     Andy Tang <andy.tang@nxp.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>
+Cc:     "sboyd@kernel.org" <sboyd@kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Date:   Mon, 22 Oct 2018 00:20:45 -0500
+In-Reply-To: <DB5PR0401MB2213DC3FA17E6B8E42258EDFF3F40@DB5PR0401MB2213.eurprd04.prod.outlook.com>
+References: <20180919073906.34187-1-andy.tang@nxp.com>
+         <20180919073906.34187-2-andy.tang@nxp.com>
+         <bb158670f1556156f17c3a9eefaa0a5e35c1591e.camel@buserror.net>
+         <DB5PR0401MB2213DC3FA17E6B8E42258EDFF3F40@DB5PR0401MB2213.eurprd04.prod.outlook.com>
+Organization: Red Hat
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2601:449:8400:7293:12bf:48ff:fe84:c9a0
+X-SA-Exim-Rcpt-To: andy.tang@nxp.com, mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+X-SA-Exim-Mail-From: oss@buserror.net
+Subject: Re: [PATCH 2/3] powerpc: t102x: upgrade the legacy clock node
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on baldur.buserror.net)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
-
-On 10/18/2018 1:46 AM, Stephen Boyd wrote:
-> Quoting Stephen Boyd (2018-10-17 08:44:12)
->> Quoting Sricharan R (2018-09-20 06:03:31)
->>>
->>>
->>> On 9/20/2018 1:54 AM, Craig wrote:
->>>> Yup, this patch seems to have fixed the higher frequencies from the quick test I did.
->>>>
->>>       Thanks !!. Can i take that as 
->>>           Tested-by: Craig Tatlor <ctatlor97@gmail.com>  ?
->>>
->>
->> Is this patch series going to be resent?
->>
+On Mon, 2018-10-22 at 01:34 +0000, Andy Tang wrote:
+> Hi Scott,
 > 
-> Nevermind. Looking at it I think I can apply all the clk ones and we're
-> good to go. If you can send a followup patch series to change the
-> registration and provider APIs to be clk_hw instead of clk based I would
-> appreciate it.
+> Please see my reply inline.
 > 
+> > -----Original Message-----
+> > From: Scott Wood <oss@buserror.net>
+> > Sent: 2018年10月21日 7:54
+> > To: Andy Tang <andy.tang@nxp.com>; mturquette@baylibre.com
+> > Cc: sboyd@kernel.org; robh+dt@kernel.org; mark.rutland@arm.com;
+> > linux-clk@vger.kernel.org; devicetree@vger.kernel.org
+> > Subject: Re: [PATCH 2/3] powerpc: t102x: upgrade the legacy clock node
+> > 
+> > On Wed, 2018-09-19 at 15:39 +0800, andy.tang@nxp.com wrote:
+> > > +clockgen: global-utilities@e1000 {
+> > > +	compatible = "fsl,qoriq-clockgen";
+> > 
+> > Where does this compatible string come from?
+> > 
+> > > +		compatible = "fsl,t1023-clockgen";
+> > >  	};
+> > 
+> > And here you overwrite it with only the chip-specific compatible?
+> > 
+> > Is t1023 incompatible with both fsl,qoriq-clockgen-1.0 and
+> > fsl,qoriq-clockgen- 2.0?  The existing dts says 2.0; is that wrong?
+> > 
+> > BTW, assuming it is 2.0 compatible and thus the use of
+> > qoriq-clockgen2.dtsi is correct, the best course of action is probably to
+> > to
+> > remove the legacy stuff from all fsl chips, rather than introduce a new
+> > dtsi.
+> > In fact it'd be nice to see it all removed in any case. :-)
+> 
+> qoriq-clockgen*.dtsi are used by legacy bindings. The contents are all of
+> legacy bindings.
+> To use new framework, I introduce a new dtsi which contains new bindings and
+> used for all PPC soc.
+> A chip-specific compatible is needed because driver will use it to get chip-
+> specific clock tree information.
+> The clock information was defined in driver not in dts in new framework,
+> remember?
 
-Sorry for the late response. Was away.
-Only pending thing was separating out the binding documentation for the cpu-freq
-driver and fixing the text in documentation.  That means, yes its fine to merge
-the clk ones as you said. I will resend that. Also, will send a follow up series for clk_hw to
-clk change as you mentioned separately.
+I'm aware that a chip-specific compatible is required.  What is unusual (on
+PPC) is providing *only* the chip-specific compatible.  I was expecting
+something more along the lines of https://patchwork.ozlabs.org/patch/486565/
 
-Regards,
- Sricharan
+Granted, the driver requiring two different compatibles to be present is odd,
+and was a convenience based on what was already in the device trees, but the
+fsl,qoriq-clockgen-2.0 compatible is part of the new binding (albeit an
+optional part).  I guess I don't mind no longer relying on it, but at least
+remove the "fsl,qoriq-clockgen" string.
 
--- 
-"QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+-Scott
+
