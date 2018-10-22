@@ -2,113 +2,117 @@ Return-Path: <SRS0=3SWV=NC=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A54C5C67863
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Oct 2018 05:20:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E835C67863
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Oct 2018 05:59:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5558220779
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Oct 2018 05:20:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5558220779
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=buserror.net
+	by mail.kernel.org (Postfix) with ESMTP id 0000620779
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Oct 2018 05:59:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0000620779
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727342AbeJVNht (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 Oct 2018 09:37:49 -0400
-Received: from baldur.buserror.net ([165.227.176.147]:52598 "EHLO
-        baldur.buserror.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726784AbeJVNht (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Oct 2018 09:37:49 -0400
-Received: from [2601:449:8400:7293:12bf:48ff:fe84:c9a0]
-        by baldur.buserror.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <oss@buserror.net>)
-        id 1gESdy-0002MH-J3; Mon, 22 Oct 2018 00:20:47 -0500
-Message-ID: <23919e8b8ec0d7cd9eb7fb1a134adbb9a17ca209.camel@buserror.net>
-From:   Scott Wood <oss@buserror.net>
-To:     Andy Tang <andy.tang@nxp.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>
-Cc:     "sboyd@kernel.org" <sboyd@kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Date:   Mon, 22 Oct 2018 00:20:45 -0500
-In-Reply-To: <DB5PR0401MB2213DC3FA17E6B8E42258EDFF3F40@DB5PR0401MB2213.eurprd04.prod.outlook.com>
-References: <20180919073906.34187-1-andy.tang@nxp.com>
-         <20180919073906.34187-2-andy.tang@nxp.com>
-         <bb158670f1556156f17c3a9eefaa0a5e35c1591e.camel@buserror.net>
-         <DB5PR0401MB2213DC3FA17E6B8E42258EDFF3F40@DB5PR0401MB2213.eurprd04.prod.outlook.com>
-Organization: Red Hat
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
+        id S1727516AbeJVOQg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 22 Oct 2018 10:16:36 -0400
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:36767 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727322AbeJVOQg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Oct 2018 10:16:36 -0400
+Received: from [10.18.29.185] (10.18.29.185) by mail-sh2.amlogic.com
+ (10.18.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Mon, 22 Oct
+ 2018 13:59:18 +0800
+Subject: Re: [PATCH v5 3/3] clk: meson: add sub MMC clock controller driver
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+CC:     Yixun Lan <yixun.lan@amlogic.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Liang Yang <liang.yang@amlogic.com>,
+        Jian Hu <jian.hu@amlogic.com>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1539839245-13793-1-git-send-email-jianxin.pan@amlogic.com>
+ <1539839245-13793-4-git-send-email-jianxin.pan@amlogic.com>
+ <153988282130.5275.17528969137837015544@swboyd.mtv.corp.google.com>
+ <01d07c83-b17e-70b5-6e9b-8150ee3aedf2@amlogic.com>
+ <153997220960.53599.2059896905852359614@swboyd.mtv.corp.google.com>
+From:   Jianxin Pan <jianxin.pan@amlogic.com>
+Message-ID: <9ddb0f0f-994c-b743-99cd-05ec094a6afc@amlogic.com>
+Date:   Mon, 22 Oct 2018 13:59:18 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <153997220960.53599.2059896905852359614@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2601:449:8400:7293:12bf:48ff:fe84:c9a0
-X-SA-Exim-Rcpt-To: andy.tang@nxp.com, mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-X-SA-Exim-Mail-From: oss@buserror.net
-Subject: Re: [PATCH 2/3] powerpc: t102x: upgrade the legacy clock node
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on baldur.buserror.net)
+X-Originating-IP: [10.18.29.185]
+X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
+ (10.18.11.6)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 2018-10-22 at 01:34 +0000, Andy Tang wrote:
-> Hi Scott,
+On 2018/10/20 2:03, Stephen Boyd wrote:
+> Quoting Jianxin Pan (2018-10-19 09:12:53)
+>> On 2018/10/19 1:13, Stephen Boyd wrote:
+>>> Quoting Jianxin Pan (2018-10-17 22:07:25)
+>>>> diff --git a/drivers/clk/meson/clk-regmap.c b/drivers/clk/meson/clk-regmap.c
+>>>> index 305ee30..f96314d 100644
+>>>> --- a/drivers/clk/meson/clk-regmap.c
+>>>> +++ b/drivers/clk/meson/clk-regmap.c
+>>>> @@ -113,8 +113,25 @@ static int clk_regmap_div_set_rate(struct clk_hw *hw, unsigned long rate,
+>>>>                                   clk_div_mask(div->width) << div->shift, val);
+>>>>  };
+>>>>  
+>>>> -/* Would prefer clk_regmap_div_ro_ops but clashes with qcom */
+>>>> +static void clk_regmap_div_init(struct clk_hw *hw)
+>>>> +{
+>>>> +       struct clk_regmap *clk = to_clk_regmap(hw);
+>>>> +       struct clk_regmap_div_data *div = clk_get_regmap_div_data(clk);
+>>>> +       unsigned int val;
+>>>> +       int ret;
+>>>> +
+>>>> +       ret = regmap_read(clk->map, div->offset, &val);
+>>>> +       if (ret)
+>>>> +               return;
+>>>>  
+>>>> +       val &= (clk_div_mask(div->width) << div->shift);
+>>>> +       if (!val)
+>>>> +               regmap_update_bits(clk->map, div->offset,
+>>>> +                                  clk_div_mask(div->width) << div->shift,
+>>>> +                                  clk_div_mask(div->width));
+>>>> +}
+>>>> +
+>>>> +/* Would prefer clk_regmap_div_ro_ops but clashes with qcom */
+>>>
+>>> We should add a patch to rename the symbol for qcom, i.e.
+>>> qcom_clk_regmap_div_ro_ops, and then any symbols in this directory
+>>> should be meson_clk_regmap_div_ro_ops.
+>> "/* Would prefer clk_regmap_div_ro_ops but clashes with qcom */"
+>> This comment is not introduced in this patch.
+>> I followed the naming style in this file and add clk_regmap_divider_with_init_ops.
+>>
+>> @Jerome， What's your suggestion about this？
 > 
-> Please see my reply inline.
+> Yes you don't need to fix anything in this series. Just saying that in
+> the future we should work on cleaning this up.
 > 
-> > -----Original Message-----
-> > From: Scott Wood <oss@buserror.net>
-> > Sent: 2018年10月21日 7:54
-> > To: Andy Tang <andy.tang@nxp.com>; mturquette@baylibre.com
-> > Cc: sboyd@kernel.org; robh+dt@kernel.org; mark.rutland@arm.com;
-> > linux-clk@vger.kernel.org; devicetree@vger.kernel.org
-> > Subject: Re: [PATCH 2/3] powerpc: t102x: upgrade the legacy clock node
-> > 
-> > On Wed, 2018-09-19 at 15:39 +0800, andy.tang@nxp.com wrote:
-> > > +clockgen: global-utilities@e1000 {
-> > > +	compatible = "fsl,qoriq-clockgen";
-> > 
-> > Where does this compatible string come from?
-> > 
-> > > +		compatible = "fsl,t1023-clockgen";
-> > >  	};
-> > 
-> > And here you overwrite it with only the chip-specific compatible?
-> > 
-> > Is t1023 incompatible with both fsl,qoriq-clockgen-1.0 and
-> > fsl,qoriq-clockgen- 2.0?  The existing dts says 2.0; is that wrong?
-> > 
-> > BTW, assuming it is 2.0 compatible and thus the use of
-> > qoriq-clockgen2.dtsi is correct, the best course of action is probably to
-> > to
-> > remove the legacy stuff from all fsl chips, rather than introduce a new
-> > dtsi.
-> > In fact it'd be nice to see it all removed in any case. :-)
+OK. Thank you!
+> .
 > 
-> qoriq-clockgen*.dtsi are used by legacy bindings. The contents are all of
-> legacy bindings.
-> To use new framework, I introduce a new dtsi which contains new bindings and
-> used for all PPC soc.
-> A chip-specific compatible is needed because driver will use it to get chip-
-> specific clock tree information.
-> The clock information was defined in driver not in dts in new framework,
-> remember?
-
-I'm aware that a chip-specific compatible is required.  What is unusual (on
-PPC) is providing *only* the chip-specific compatible.  I was expecting
-something more along the lines of https://patchwork.ozlabs.org/patch/486565/
-
-Granted, the driver requiring two different compatibles to be present is odd,
-and was a convenience based on what was already in the device trees, but the
-fsl,qoriq-clockgen-2.0 compatible is part of the new binding (albeit an
-optional part).  I guess I don't mind no longer relying on it, but at least
-remove the "fsl,qoriq-clockgen" string.
-
--Scott
 
