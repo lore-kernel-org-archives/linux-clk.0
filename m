@@ -1,725 +1,128 @@
-Return-Path: <SRS0=kIYd=NB=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=3SWV=NC=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98A10ECDE43
-	for <linux-clk@archiver.kernel.org>; Sun, 21 Oct 2018 18:32:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E9D2ECDE43
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Oct 2018 01:34:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 456ED2083A
-	for <linux-clk@archiver.kernel.org>; Sun, 21 Oct 2018 18:32:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 027CC2083E
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Oct 2018 01:34:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B0Fx0pic"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 456ED2083A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="bf4dEkX1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 027CC2083E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727832AbeJVCrk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 21 Oct 2018 22:47:40 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:36894 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727794AbeJVCrk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 21 Oct 2018 22:47:40 -0400
-Received: by mail-pf1-f194.google.com with SMTP id j23-v6so18774826pfi.4;
-        Sun, 21 Oct 2018 11:32:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=3wDGST9YjPG3al/MimzetNy3VK4Rt7hKBF5GZGqlTh4=;
-        b=B0Fx0picPqCoLfCOFQSZHeayucwttSMYU6RGDzp2/j4Cx2v2ql7lFnWWGm1TubPna6
-         KaNFlzsjRv6QmYrjLXCE6gBMxXXbYJZ2en7aHZ+MslHyUQw3H7Vgyo8nFKEAjKR1wjP7
-         dMTAVj47/T3Eof5V04/P8EOpmoNddHgJUkM+hzKagSnlCjehNs0vFZz98+/O9bzEBlSS
-         /LVTWqhGKJOleuBmq4sdqwIJUPHSde9AjYaYi0lxZvPPvQNy8hDVbKIdeHwyAa4HSfhv
-         RrGhcPu05nDZTS2C+PgQNhkUsjkJlupx3anjOMBYq94RiJ1LHGjNwPh+gc3xQ2n7VsGa
-         byEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=3wDGST9YjPG3al/MimzetNy3VK4Rt7hKBF5GZGqlTh4=;
-        b=kWxnvoI7EuHJRRS0TI0lVvDhJrwS9f9mymU29NHr0HBIRdVZdvLbOP3kqjsdEAFj8x
-         lIXv6FvrcSuc4icW+feh+UQC5bZU5P0yPI9H5IzQEP5iQs0TohUCp/iqP80+mUNp7C0A
-         UBZ8SE7R9g9YjQNTP1vpaNPMGVzIzYqYjxgtQgxBQT+sualrpF4SgN2AOxb7HHlIDuWe
-         sMkBjp0SzcqSGLnO6dT7oEGRSh+iG+z6kQfnQRLizsAtpXf92QnNWKKIff2xKGuz4JmH
-         kVCasJKeO35ZHZ4o2gDsMS/809KXbJRKyr3nnK8CxZz9GphIXqXPiC/7Ei+Slwem7aSc
-         GpRA==
-X-Gm-Message-State: ABuFfojbRLnwUfr9tSy92EbZjPU/cYoalOM5qzW0ilML38zRgX42asWh
-        7flfhwH9cfLrEXM4cHOK087CmhyT
-X-Google-Smtp-Source: ACcGV61BmrqX8ysWqPE1YrTqFlXj22rvwVubUMuETKJ9zlqF9oDGg7ZralUhj8MaiUBCgnsq7/9VxA==
-X-Received: by 2002:a62:cac4:: with SMTP id y65-v6mr42504224pfk.27.1540146747046;
-        Sun, 21 Oct 2018 11:32:27 -0700 (PDT)
-Received: from localhost.localdomain ([109.252.91.118])
-        by smtp.gmail.com with ESMTPSA id v5-v6sm45467047pfd.64.2018.10.21.11.32.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 21 Oct 2018 11:32:26 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>
-Cc:     linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v6 8/8] memory: tegra: Introduce Tegra20 EMC driver
-Date:   Sun, 21 Oct 2018 21:30:52 +0300
-Message-Id: <20181021183052.32023-9-digetx@gmail.com>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20181021183052.32023-1-digetx@gmail.com>
-References: <20181021183052.32023-1-digetx@gmail.com>
+        id S1726997AbeJVJvH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 22 Oct 2018 05:51:07 -0400
+Received: from mail-eopbgr10065.outbound.protection.outlook.com ([40.107.1.65]:43296
+        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725884AbeJVJvH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 22 Oct 2018 05:51:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=muj1aecMYMEWE+lU2h4dC+PhyhvdvoBhb7yf8dJbvdY=;
+ b=bf4dEkX1d/TakoYpTWN2LyZWbKGB+bGcZthsrUWjOhxZDo5Nk46MXEb6my4Oz8Pk88YItjLGiuPj25scHeLSEugo3JDrsJWSHjBh8W9uMwqQeooSnCr68dmG2IldDylg/Bnrb8NQxJiWgJCItr1mF2qC74lvEZeVd2bMWxbewnw=
+Received: from DB5PR0401MB2213.eurprd04.prod.outlook.com (10.166.173.8) by
+ DB5PR0401MB1941.eurprd04.prod.outlook.com (10.166.10.152) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1250.30; Mon, 22 Oct 2018 01:34:42 +0000
+Received: from DB5PR0401MB2213.eurprd04.prod.outlook.com
+ ([fe80::24b9:d390:896d:12f7]) by DB5PR0401MB2213.eurprd04.prod.outlook.com
+ ([fe80::24b9:d390:896d:12f7%3]) with mapi id 15.20.1250.028; Mon, 22 Oct 2018
+ 01:34:42 +0000
+From:   Andy Tang <andy.tang@nxp.com>
+To:     Scott Wood <oss@buserror.net>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>
+CC:     "sboyd@kernel.org" <sboyd@kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: RE: [PATCH 2/3] powerpc: t102x: upgrade the legacy clock node
+Thread-Topic: [PATCH 2/3] powerpc: t102x: upgrade the legacy clock node
+Thread-Index: AQHUT+xZH3kPzESPnESoP3hZgQQ+vqUpAHwAgAGkwfA=
+Date:   Mon, 22 Oct 2018 01:34:41 +0000
+Message-ID: <DB5PR0401MB2213DC3FA17E6B8E42258EDFF3F40@DB5PR0401MB2213.eurprd04.prod.outlook.com>
+References: <20180919073906.34187-1-andy.tang@nxp.com>
+         <20180919073906.34187-2-andy.tang@nxp.com>
+ <bb158670f1556156f17c3a9eefaa0a5e35c1591e.camel@buserror.net>
+In-Reply-To: <bb158670f1556156f17c3a9eefaa0a5e35c1591e.camel@buserror.net>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=andy.tang@nxp.com; 
+x-originating-ip: [119.31.174.73]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DB5PR0401MB1941;6:3LdrHB7lbtRCHeJfjLdELy5D6XWB3fZJ544PB1vu+Y4n88tUbDpR8QA3wOoDIRyO/HlMFJwlpY5DYcBCb1YY2y16kI5R6tTWlhjYAUL+8OcVKjU1eGNkMeYOYDJsl4fYdFW9n5Kb4GINMG7135q+gsCDtUBN6+jhDZJrN85ulZ9VtYCu8AyRwNTqC1vzF4UTH3iQeTYGtN7lLP1Tbx4LZbBo3h/agXlHVbov8urHIaXLbYk0kX4z9d5lzqy/Rb2Nmt0MhrYjODVoklqyOlxzFSrqVswH3SHTuWLQd8U9pQuclRjGzSsfr7UlzahofB1BRcP98VJEAcETdT/zHUapmWAKMJBw0WzF18SlfatFukKB+IlHe8Rm1kLcUcbTkbbW066+ocH57l3eAq/Np434haIX0/s3TsGh+hU7npQx1BWRcLjuw469tEfTv77wW9BLbYt0oxSIuHkux+7TuiYUrQ==;5:bOapXw99e6ylT431HOwAjvG/OCUQtYKt5o/b8ohYRUQwrqqPZJaMdLEkyismUQjPVDinj1iw4OU7v1Y31JLlbeqVQydUe16QxiMAAWkjLi8fqDNe/7x07fUjHYk0CEpj1SPY3vjxQoPmxmCUSVzhy6O5DrOkTqmWLBP8V5yc90g=;7:d1fFOzbNFEGvyHcjT8gBaHVzb07U/4bZE0KKDscNYzxlH7MKiO/oWWRGXNnNV7oNNEo97GZ6JvmQXOHk1tJhPZlnICAgmLEXo2vfC9skgcplSECywWhSVr4V07vHX6bH4sL6J90LLQxufmnTgYmfMoxbu2YKeo6DNGJEkOTxMtK9VGcvqU7OkcOYuomyYJMw43xXGo5QJTN2bU21f/15JH4MVzkRuSSihq9t1DkZD63T3hinFi5BIAxigwda5g3D
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 2904fe13-c458-4e37-1e23-08d637be8a1e
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:DB5PR0401MB1941;
+x-ms-traffictypediagnostic: DB5PR0401MB1941:
+x-microsoft-antispam-prvs: <DB5PR0401MB19417D55D2C1369C6105C055F3F40@DB5PR0401MB1941.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(180628864354917)(9452136761055)(185117386973197);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231355)(944501410)(52105095)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:DB5PR0401MB1941;BCL:0;PCL:0;RULEID:;SRVR:DB5PR0401MB1941;
+x-forefront-prvs: 08331F819E
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(366004)(39860400002)(376002)(396003)(346002)(199004)(189003)(13464003)(8676002)(3846002)(6116002)(81166006)(476003)(11346002)(446003)(106356001)(186003)(33656002)(105586002)(7696005)(6506007)(97736004)(102836004)(5250100002)(2501003)(53546011)(26005)(110136005)(316002)(54906003)(486006)(44832011)(76176011)(99286004)(14454004)(74316002)(53936002)(6436002)(6246003)(55016002)(9686003)(14444005)(256004)(305945005)(7736002)(2900100001)(86362001)(229853002)(4326008)(25786009)(5660300001)(8936002)(66066001)(2906002)(478600001)(81156014)(68736007)(71190400001)(71200400001);DIR:OUT;SFP:1101;SCL:1;SRVR:DB5PR0401MB1941;H:DB5PR0401MB2213.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: 7DPVLDhB49lRhhHjGzcPU38plkeIUV4ih7kWfgo1/HSq6/I4l4ZcIKrIE3Wp7YonsRLAn9+dWbtWtE7ZtFhi+DrYWVaxWzra0lc1QXImy20k1xtoNvKzhKLquYngSoCI+1XtUvzK2MxF8v8fG77yl5mLWCSJdXgZk0SQ2umFBUHQ/0ExjEC8GUWOmimcYIhFsG5szZ879WBCJRu+9bEthXBtJruWrra4JFlsQSDD3Xqn4G5lXl3DzNISoa3X5M8L4ZetEOPp9FfriQiNHhQqQ2d+1dAtd7Ba7NkWY6byTHb56thRYm51I51mKk6TTffAtj/j1pp9yUGbnHe/NzTHXkeO5W2gxBBhRfuo1I+TrWc=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2904fe13-c458-4e37-1e23-08d637be8a1e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Oct 2018 01:34:41.9109
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB5PR0401MB1941
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Introduce driver for the External Memory Controller (EMC) found on Tegra20
-chips, which controls the external DRAM on the board. The purpose of this
-driver is to program memory timing for external memory on the EMC clock
-rate change.
-
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
----
- drivers/memory/tegra/Kconfig       |  10 +
- drivers/memory/tegra/Makefile      |   1 +
- drivers/memory/tegra/tegra20-emc.c | 591 +++++++++++++++++++++++++++++
- 3 files changed, 602 insertions(+)
- create mode 100644 drivers/memory/tegra/tegra20-emc.c
-
-diff --git a/drivers/memory/tegra/Kconfig b/drivers/memory/tegra/Kconfig
-index 6d74e499e18d..34e0b70f5c5f 100644
---- a/drivers/memory/tegra/Kconfig
-+++ b/drivers/memory/tegra/Kconfig
-@@ -6,6 +6,16 @@ config TEGRA_MC
- 	  This driver supports the Memory Controller (MC) hardware found on
- 	  NVIDIA Tegra SoCs.
- 
-+config TEGRA20_EMC
-+	bool "NVIDIA Tegra20 External Memory Controller driver"
-+	default y
-+	depends on ARCH_TEGRA_2x_SOC
-+	help
-+	  This driver is for the External Memory Controller (EMC) found on
-+	  Tegra20 chips. The EMC controls the external DRAM on the board.
-+	  This driver is required to change memory timings / clock rate for
-+	  external memory.
-+
- config TEGRA124_EMC
- 	bool "NVIDIA Tegra124 External Memory Controller driver"
- 	default y
-diff --git a/drivers/memory/tegra/Makefile b/drivers/memory/tegra/Makefile
-index 94ab16ba075b..3971a6b7c487 100644
---- a/drivers/memory/tegra/Makefile
-+++ b/drivers/memory/tegra/Makefile
-@@ -10,5 +10,6 @@ tegra-mc-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210.o
- 
- obj-$(CONFIG_TEGRA_MC) += tegra-mc.o
- 
-+obj-$(CONFIG_TEGRA20_EMC)  += tegra20-emc.o
- obj-$(CONFIG_TEGRA124_EMC) += tegra124-emc.o
- obj-$(CONFIG_ARCH_TEGRA_186_SOC) += tegra186.o
-diff --git a/drivers/memory/tegra/tegra20-emc.c b/drivers/memory/tegra/tegra20-emc.c
-new file mode 100644
-index 000000000000..9ee5bef49e47
---- /dev/null
-+++ b/drivers/memory/tegra/tegra20-emc.c
-@@ -0,0 +1,591 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Tegra20 External Memory Controller driver
-+ *
-+ * Author: Dmitry Osipenko <digetx@gmail.com>
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/completion.h>
-+#include <linux/err.h>
-+#include <linux/interrupt.h>
-+#include <linux/iopoll.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/sort.h>
-+#include <linux/types.h>
-+
-+#include <soc/tegra/fuse.h>
-+
-+#define EMC_INTSTATUS				0x000
-+#define EMC_INTMASK				0x004
-+#define EMC_TIMING_CONTROL			0x028
-+#define EMC_RC					0x02c
-+#define EMC_RFC					0x030
-+#define EMC_RAS					0x034
-+#define EMC_RP					0x038
-+#define EMC_R2W					0x03c
-+#define EMC_W2R					0x040
-+#define EMC_R2P					0x044
-+#define EMC_W2P					0x048
-+#define EMC_RD_RCD				0x04c
-+#define EMC_WR_RCD				0x050
-+#define EMC_RRD					0x054
-+#define EMC_REXT				0x058
-+#define EMC_WDV					0x05c
-+#define EMC_QUSE				0x060
-+#define EMC_QRST				0x064
-+#define EMC_QSAFE				0x068
-+#define EMC_RDV					0x06c
-+#define EMC_REFRESH				0x070
-+#define EMC_BURST_REFRESH_NUM			0x074
-+#define EMC_PDEX2WR				0x078
-+#define EMC_PDEX2RD				0x07c
-+#define EMC_PCHG2PDEN				0x080
-+#define EMC_ACT2PDEN				0x084
-+#define EMC_AR2PDEN				0x088
-+#define EMC_RW2PDEN				0x08c
-+#define EMC_TXSR				0x090
-+#define EMC_TCKE				0x094
-+#define EMC_TFAW				0x098
-+#define EMC_TRPAB				0x09c
-+#define EMC_TCLKSTABLE				0x0a0
-+#define EMC_TCLKSTOP				0x0a4
-+#define EMC_TREFBW				0x0a8
-+#define EMC_QUSE_EXTRA				0x0ac
-+#define EMC_ODT_WRITE				0x0b0
-+#define EMC_ODT_READ				0x0b4
-+#define EMC_FBIO_CFG5				0x104
-+#define EMC_FBIO_CFG6				0x114
-+#define EMC_AUTO_CAL_INTERVAL			0x2a8
-+#define EMC_CFG_2				0x2b8
-+#define EMC_CFG_DIG_DLL				0x2bc
-+#define EMC_DLL_XFORM_DQS			0x2c0
-+#define EMC_DLL_XFORM_QUSE			0x2c4
-+#define EMC_ZCAL_REF_CNT			0x2e0
-+#define EMC_ZCAL_WAIT_CNT			0x2e4
-+#define EMC_CFG_CLKTRIM_0			0x2d0
-+#define EMC_CFG_CLKTRIM_1			0x2d4
-+#define EMC_CFG_CLKTRIM_2			0x2d8
-+
-+#define EMC_CLKCHANGE_REQ_ENABLE		BIT(0)
-+#define EMC_CLKCHANGE_PD_ENABLE			BIT(1)
-+#define EMC_CLKCHANGE_SR_ENABLE			BIT(2)
-+
-+#define EMC_TIMING_UPDATE			BIT(0)
-+
-+#define EMC_REFRESH_OVERFLOW_INT		BIT(3)
-+#define EMC_CLKCHANGE_COMPLETE_INT		BIT(4)
-+
-+static const u16 emc_timing_registers[] = {
-+	EMC_RC,
-+	EMC_RFC,
-+	EMC_RAS,
-+	EMC_RP,
-+	EMC_R2W,
-+	EMC_W2R,
-+	EMC_R2P,
-+	EMC_W2P,
-+	EMC_RD_RCD,
-+	EMC_WR_RCD,
-+	EMC_RRD,
-+	EMC_REXT,
-+	EMC_WDV,
-+	EMC_QUSE,
-+	EMC_QRST,
-+	EMC_QSAFE,
-+	EMC_RDV,
-+	EMC_REFRESH,
-+	EMC_BURST_REFRESH_NUM,
-+	EMC_PDEX2WR,
-+	EMC_PDEX2RD,
-+	EMC_PCHG2PDEN,
-+	EMC_ACT2PDEN,
-+	EMC_AR2PDEN,
-+	EMC_RW2PDEN,
-+	EMC_TXSR,
-+	EMC_TCKE,
-+	EMC_TFAW,
-+	EMC_TRPAB,
-+	EMC_TCLKSTABLE,
-+	EMC_TCLKSTOP,
-+	EMC_TREFBW,
-+	EMC_QUSE_EXTRA,
-+	EMC_FBIO_CFG6,
-+	EMC_ODT_WRITE,
-+	EMC_ODT_READ,
-+	EMC_FBIO_CFG5,
-+	EMC_CFG_DIG_DLL,
-+	EMC_DLL_XFORM_DQS,
-+	EMC_DLL_XFORM_QUSE,
-+	EMC_ZCAL_REF_CNT,
-+	EMC_ZCAL_WAIT_CNT,
-+	EMC_AUTO_CAL_INTERVAL,
-+	EMC_CFG_CLKTRIM_0,
-+	EMC_CFG_CLKTRIM_1,
-+	EMC_CFG_CLKTRIM_2,
-+};
-+
-+struct emc_timing {
-+	unsigned long rate;
-+	u32 data[ARRAY_SIZE(emc_timing_registers)];
-+};
-+
-+struct tegra_emc {
-+	struct device *dev;
-+	struct completion clk_handshake_complete;
-+	struct notifier_block clk_nb;
-+	struct clk *backup_clk;
-+	struct clk *emc_mux;
-+	struct clk *pll_m;
-+	struct clk *clk;
-+	void __iomem *regs;
-+
-+	struct emc_timing *timings;
-+	unsigned int num_timings;
-+};
-+
-+static irqreturn_t tegra_emc_isr(int irq, void *data)
-+{
-+	struct tegra_emc *emc = data;
-+	u32 intmask = EMC_REFRESH_OVERFLOW_INT | EMC_CLKCHANGE_COMPLETE_INT;
-+	u32 status;
-+
-+	status = readl_relaxed(emc->regs + EMC_INTSTATUS) & intmask;
-+	if (!status)
-+		return IRQ_NONE;
-+
-+	/* notify about EMC-CAR handshake completion */
-+	if (status & EMC_CLKCHANGE_COMPLETE_INT)
-+		complete(&emc->clk_handshake_complete);
-+
-+	/* notify about HW problem */
-+	if (status & EMC_REFRESH_OVERFLOW_INT)
-+		dev_err_ratelimited(emc->dev,
-+				    "refresh request overflow timeout\n");
-+
-+	/* clear interrupts */
-+	writel_relaxed(status, emc->regs + EMC_INTSTATUS);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static struct emc_timing *tegra_emc_find_timing(struct tegra_emc *emc,
-+						unsigned long rate)
-+{
-+	struct emc_timing *timing = NULL;
-+	unsigned int i;
-+
-+	for (i = 0; i < emc->num_timings; i++) {
-+		if (emc->timings[i].rate >= rate) {
-+			timing = &emc->timings[i];
-+			break;
-+		}
-+	}
-+
-+	if (!timing) {
-+		dev_err(emc->dev, "no timing for rate %lu\n", rate);
-+		return NULL;
-+	}
-+
-+	return timing;
-+}
-+
-+static int emc_prepare_timing_change(struct tegra_emc *emc, unsigned long rate)
-+{
-+	struct emc_timing *timing = tegra_emc_find_timing(emc, rate);
-+	unsigned int i;
-+
-+	if (!timing)
-+		return -EINVAL;
-+
-+	dev_dbg(emc->dev, "%s: using timing rate %lu for requested rate %lu\n",
-+		__func__, timing->rate, rate);
-+
-+	/* program shadow registers */
-+	for (i = 0; i < ARRAY_SIZE(timing->data); i++)
-+		writel_relaxed(timing->data[i],
-+			       emc->regs + emc_timing_registers[i]);
-+
-+	/* wait until programming has settled */
-+	readl_relaxed(emc->regs + emc_timing_registers[i - 1]);
-+
-+	reinit_completion(&emc->clk_handshake_complete);
-+
-+	return 0;
-+}
-+
-+static int emc_complete_timing_change(struct tegra_emc *emc, bool flush)
-+{
-+	long timeout;
-+
-+	dev_dbg(emc->dev, "%s: flush %d\n", __func__, flush);
-+
-+	if (flush) {
-+		/* manually initiate memory timing update */
-+		writel_relaxed(EMC_TIMING_UPDATE,
-+			       emc->regs + EMC_TIMING_CONTROL);
-+		return 0;
-+	}
-+
-+	timeout = wait_for_completion_timeout(&emc->clk_handshake_complete,
-+					      usecs_to_jiffies(100));
-+	if (timeout == 0) {
-+		dev_err(emc->dev, "EMC-CAR handshake failed\n");
-+		return -EIO;
-+	} else if (timeout < 0) {
-+		dev_err(emc->dev, "failed to wait for EMC-CAR handshake: %ld\n",
-+			timeout);
-+		return timeout;
-+	}
-+
-+	return 0;
-+}
-+
-+static int tegra_emc_clk_change_notify(struct notifier_block *nb,
-+				       unsigned long msg, void *data)
-+{
-+	struct tegra_emc *emc = container_of(nb, struct tegra_emc, clk_nb);
-+	struct clk_notifier_data *cnd = data;
-+	int err;
-+
-+	switch (msg) {
-+	case PRE_RATE_CHANGE:
-+		err = emc_prepare_timing_change(emc, cnd->new_rate);
-+		break;
-+
-+	case ABORT_RATE_CHANGE:
-+		err = emc_prepare_timing_change(emc, cnd->old_rate);
-+		if (err)
-+			break;
-+
-+		err = emc_complete_timing_change(emc, true);
-+		break;
-+
-+	case POST_RATE_CHANGE:
-+		err = emc_complete_timing_change(emc, false);
-+		break;
-+
-+	default:
-+		return NOTIFY_DONE;
-+	}
-+
-+	return notifier_from_errno(err);
-+}
-+
-+static int load_one_timing_from_dt(struct tegra_emc *emc,
-+				   struct emc_timing *timing,
-+				   struct device_node *node)
-+{
-+	u32 rate;
-+	int err;
-+
-+	if (!of_device_is_compatible(node, "nvidia,tegra20-emc-table")) {
-+		dev_err(emc->dev, "incompatible DT node: %pOF\n", node);
-+		return -EINVAL;
-+	}
-+
-+	err = of_property_read_u32(node, "clock-frequency", &rate);
-+	if (err) {
-+		dev_err(emc->dev, "timing %pOF: failed to read rate: %d\n",
-+			node, err);
-+		return err;
-+	}
-+
-+	err = of_property_read_u32_array(node, "nvidia,emc-registers",
-+					 timing->data,
-+					 ARRAY_SIZE(emc_timing_registers));
-+	if (err) {
-+		dev_err(emc->dev,
-+			"timing %pOF: failed to read emc timing data: %d\n",
-+			node, err);
-+		return err;
-+	}
-+
-+	/*
-+	 * The EMC clock rate is twice the bus rate, and the bus rate is
-+	 * measured in kHz.
-+	 */
-+	timing->rate = rate * 2 * 1000;
-+
-+	dev_dbg(emc->dev, "%s: %pOF: EMC rate %lu\n",
-+		__func__, node, timing->rate);
-+
-+	return 0;
-+}
-+
-+static int cmp_timings(const void *_a, const void *_b)
-+{
-+	const struct emc_timing *a = _a;
-+	const struct emc_timing *b = _b;
-+
-+	if (a->rate < b->rate)
-+		return -1;
-+
-+	if (a->rate > b->rate)
-+		return 1;
-+
-+	return 0;
-+}
-+
-+static int tegra_emc_load_timings_from_dt(struct tegra_emc *emc,
-+					  struct device_node *node)
-+{
-+	struct device_node *child;
-+	struct emc_timing *timing;
-+	int child_count;
-+	int err;
-+
-+	child_count = of_get_child_count(node);
-+	if (!child_count) {
-+		dev_err(emc->dev, "no memory timings in DT node: %pOF\n", node);
-+		return -EINVAL;
-+	}
-+
-+	emc->timings = devm_kcalloc(emc->dev, child_count, sizeof(*timing),
-+				    GFP_KERNEL);
-+	if (!emc->timings)
-+		return -ENOMEM;
-+
-+	emc->num_timings = child_count;
-+	timing = emc->timings;
-+
-+	for_each_child_of_node(node, child) {
-+		err = load_one_timing_from_dt(emc, timing++, child);
-+		if (err) {
-+			of_node_put(child);
-+			return err;
-+		}
-+	}
-+
-+	sort(emc->timings, emc->num_timings, sizeof(*timing), cmp_timings,
-+	     NULL);
-+
-+	return 0;
-+}
-+
-+static struct device_node *
-+tegra_emc_find_node_by_ram_code(struct device *dev)
-+{
-+	struct device_node *np;
-+	u32 value, ram_code;
-+	int err;
-+
-+	if (!of_property_read_bool(dev->of_node, "nvidia,use-ram-code"))
-+		return of_node_get(dev->of_node);
-+
-+	ram_code = tegra_read_ram_code();
-+
-+	for (np = of_find_node_by_name(dev->of_node, "emc-tables"); np;
-+	     np = of_find_node_by_name(np, "emc-tables")) {
-+		err = of_property_read_u32(np, "nvidia,ram-code", &value);
-+		if (err || value != ram_code) {
-+			of_node_put(np);
-+			continue;
-+		}
-+
-+		return np;
-+	}
-+
-+	dev_err(dev, "no memory timings for RAM code %u found in device tree\n",
-+		ram_code);
-+
-+	return NULL;
-+}
-+
-+static int emc_setup_hw(struct tegra_emc *emc)
-+{
-+	u32 intmask = EMC_REFRESH_OVERFLOW_INT | EMC_CLKCHANGE_COMPLETE_INT;
-+	u32 emc_cfg;
-+
-+	emc_cfg = readl_relaxed(emc->regs + EMC_CFG_2);
-+
-+	/*
-+	 * Depending on a memory type, DRAM should enter either self-refresh
-+	 * or power-down state on EMC clock change.
-+	 */
-+	if (!(emc_cfg & EMC_CLKCHANGE_PD_ENABLE) &&
-+	    !(emc_cfg & EMC_CLKCHANGE_SR_ENABLE)) {
-+		dev_err(emc->dev,
-+			"bootloader didn't specify DRAM auto-suspend mode\n");
-+		return -EINVAL;
-+	}
-+
-+	/* enable EMC and CAR to handshake on PLL divider/source changes */
-+	emc_cfg |= EMC_CLKCHANGE_REQ_ENABLE;
-+	writel_relaxed(emc_cfg, emc->regs + EMC_CFG_2);
-+
-+	/* initialize interrupt */
-+	writel_relaxed(intmask, emc->regs + EMC_INTMASK);
-+	writel_relaxed(intmask, emc->regs + EMC_INTSTATUS);
-+
-+	return 0;
-+}
-+
-+static int emc_init(struct tegra_emc *emc, unsigned long rate)
-+{
-+	int err;
-+
-+	err = clk_set_parent(emc->emc_mux, emc->backup_clk);
-+	if (err) {
-+		dev_err(emc->dev,
-+			"failed to reparent to backup source: %d\n", err);
-+		return err;
-+	}
-+
-+	err = clk_set_rate(emc->pll_m, rate);
-+	if (err) {
-+		dev_err(emc->dev,
-+			"failed to change pll_m rate: %d\n", err);
-+		return err;
-+	}
-+
-+	err = clk_set_parent(emc->emc_mux, emc->pll_m);
-+	if (err) {
-+		dev_err(emc->dev,
-+			"failed to reparent to pll_m: %d\n", err);
-+		return err;
-+	}
-+
-+	err = clk_set_rate(emc->clk, rate);
-+	if (err) {
-+		dev_err(emc->dev,
-+			"failed to change emc rate: %d\n", err);
-+		return err;
-+	}
-+
-+	return 0;
-+}
-+
-+static int tegra_emc_probe(struct platform_device *pdev)
-+{
-+	struct device_node *np;
-+	struct tegra_emc *emc;
-+	struct resource *res;
-+	int irq, err;
-+
-+	/* driver has nothing to do in a case of memory timing absence */
-+	if (of_get_child_count(pdev->dev.of_node) == 0) {
-+		dev_info(&pdev->dev,
-+			 "EMC device tree node doesn't have memory timings\n");
-+		return 0;
-+	}
-+
-+	irq = platform_get_irq(pdev, 0);
-+	if (irq < 0) {
-+		dev_err(&pdev->dev, "interrupt not specified\n");
-+		dev_err(&pdev->dev, "please update your device tree\n");
-+		return irq;
-+	}
-+
-+	np = tegra_emc_find_node_by_ram_code(&pdev->dev);
-+	if (!np)
-+		return -EINVAL;
-+
-+	emc = devm_kzalloc(&pdev->dev, sizeof(*emc), GFP_KERNEL);
-+	if (!emc) {
-+		of_node_put(np);
-+		return -ENOMEM;
-+	}
-+
-+	init_completion(&emc->clk_handshake_complete);
-+	emc->clk_nb.notifier_call = tegra_emc_clk_change_notify;
-+	emc->dev = &pdev->dev;
-+
-+	err = tegra_emc_load_timings_from_dt(emc, np);
-+	of_node_put(np);
-+	if (err)
-+		return err;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	emc->regs = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(emc->regs))
-+		return PTR_ERR(emc->regs);
-+
-+	err = emc_setup_hw(emc);
-+	if (err)
-+		return err;
-+
-+	err = devm_request_irq(&pdev->dev, irq, tegra_emc_isr, 0,
-+			       dev_name(&pdev->dev), emc);
-+	if (err) {
-+		dev_err(&pdev->dev, "failed to request IRQ#%u: %d\n", irq, err);
-+		return err;
-+	}
-+
-+	emc->clk = devm_clk_get(&pdev->dev, "emc");
-+	if (IS_ERR(emc->clk)) {
-+		err = PTR_ERR(emc->clk);
-+		dev_err(&pdev->dev, "failed to get emc clock: %d\n", err);
-+		return err;
-+	}
-+
-+	emc->pll_m = clk_get_sys(NULL, "pll_m");
-+	if (IS_ERR(emc->pll_m)) {
-+		err = PTR_ERR(emc->pll_m);
-+		dev_err(&pdev->dev, "failed to get pll_m clock: %d\n", err);
-+		return err;
-+	}
-+
-+	emc->backup_clk = clk_get_sys(NULL, "pll_p");
-+	if (IS_ERR(emc->backup_clk)) {
-+		err = PTR_ERR(emc->backup_clk);
-+		dev_err(&pdev->dev, "failed to get pll_p clock: %d\n", err);
-+		goto put_pll_m;
-+	}
-+
-+	emc->emc_mux = clk_get_parent(emc->clk);
-+	if (IS_ERR(emc->emc_mux)) {
-+		err = PTR_ERR(emc->emc_mux);
-+		dev_err(&pdev->dev, "failed to get emc_mux clock: %d\n", err);
-+		goto put_backup;
-+	}
-+
-+	err = clk_notifier_register(emc->clk, &emc->clk_nb);
-+	if (err) {
-+		dev_err(&pdev->dev, "failed to register clk notifier: %d\n",
-+			err);
-+		goto put_backup;
-+	}
-+
-+	/* set DRAM clock rate to maximum */
-+	err = emc_init(emc, emc->timings[emc->num_timings - 1].rate);
-+	if (err) {
-+		dev_err(&pdev->dev, "failed to initialize EMC clock rate: %d\n",
-+			err);
-+		goto unreg_notifier;
-+	}
-+
-+	return 0;
-+
-+unreg_notifier:
-+	clk_notifier_unregister(emc->clk, &emc->clk_nb);
-+put_backup:
-+	clk_put(emc->backup_clk);
-+put_pll_m:
-+	clk_put(emc->pll_m);
-+
-+	return err;
-+}
-+
-+static const struct of_device_id tegra_emc_of_match[] = {
-+	{ .compatible = "nvidia,tegra20-emc", },
-+	{},
-+};
-+
-+static struct platform_driver tegra_emc_driver = {
-+	.probe = tegra_emc_probe,
-+	.driver = {
-+		.name = "tegra20-emc",
-+		.of_match_table = tegra_emc_of_match,
-+		.suppress_bind_attrs = true,
-+	},
-+};
-+
-+static int __init tegra_emc_init(void)
-+{
-+	return platform_driver_register(&tegra_emc_driver);
-+}
-+subsys_initcall(tegra_emc_init);
--- 
-2.19.0
-
+SGkgU2NvdHQsDQoNClBsZWFzZSBzZWUgbXkgcmVwbHkgaW5saW5lLg0KDQo+IC0tLS0tT3JpZ2lu
+YWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IFNjb3R0IFdvb2QgPG9zc0BidXNlcnJvci5uZXQ+DQo+
+IFNlbnQ6IDIwMTjlubQxMOaciDIx5pelIDc6NTQNCj4gVG86IEFuZHkgVGFuZyA8YW5keS50YW5n
+QG54cC5jb20+OyBtdHVycXVldHRlQGJheWxpYnJlLmNvbQ0KPiBDYzogc2JveWRAa2VybmVsLm9y
+Zzsgcm9iaCtkdEBrZXJuZWwub3JnOyBtYXJrLnJ1dGxhbmRAYXJtLmNvbTsNCj4gbGludXgtY2xr
+QHZnZXIua2VybmVsLm9yZzsgZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmcNCj4gU3ViamVjdDog
+UmU6IFtQQVRDSCAyLzNdIHBvd2VycGM6IHQxMDJ4OiB1cGdyYWRlIHRoZSBsZWdhY3kgY2xvY2sg
+bm9kZQ0KPiANCj4gT24gV2VkLCAyMDE4LTA5LTE5IGF0IDE1OjM5ICswODAwLCBhbmR5LnRhbmdA
+bnhwLmNvbSB3cm90ZToNCj4gPiArY2xvY2tnZW46IGdsb2JhbC11dGlsaXRpZXNAZTEwMDAgew0K
+PiA+ICsJY29tcGF0aWJsZSA9ICJmc2wscW9yaXEtY2xvY2tnZW4iOw0KPiANCj4gV2hlcmUgZG9l
+cyB0aGlzIGNvbXBhdGlibGUgc3RyaW5nIGNvbWUgZnJvbT8NCj4gDQo+ID4gKwkJY29tcGF0aWJs
+ZSA9ICJmc2wsdDEwMjMtY2xvY2tnZW4iOw0KPiA+ICAJfTsNCj4gDQo+IEFuZCBoZXJlIHlvdSBv
+dmVyd3JpdGUgaXQgd2l0aCBvbmx5IHRoZSBjaGlwLXNwZWNpZmljIGNvbXBhdGlibGU/DQo+IA0K
+PiBJcyB0MTAyMyBpbmNvbXBhdGlibGUgd2l0aCBib3RoIGZzbCxxb3JpcS1jbG9ja2dlbi0xLjAg
+YW5kDQo+IGZzbCxxb3JpcS1jbG9ja2dlbi0gMi4wPyAgVGhlIGV4aXN0aW5nIGR0cyBzYXlzIDIu
+MDsgaXMgdGhhdCB3cm9uZz8NCj4gDQo+IEJUVywgYXNzdW1pbmcgaXQgaXMgMi4wIGNvbXBhdGli
+bGUgYW5kIHRodXMgdGhlIHVzZSBvZg0KPiBxb3JpcS1jbG9ja2dlbjIuZHRzaSBpcyBjb3JyZWN0
+LCB0aGUgYmVzdCBjb3Vyc2Ugb2YgYWN0aW9uIGlzIHByb2JhYmx5IHRvIHRvDQo+IHJlbW92ZSB0
+aGUgbGVnYWN5IHN0dWZmIGZyb20gYWxsIGZzbCBjaGlwcywgcmF0aGVyIHRoYW4gaW50cm9kdWNl
+IGEgbmV3IGR0c2kuDQo+IEluIGZhY3QgaXQnZCBiZSBuaWNlIHRvIHNlZSBpdCBhbGwgcmVtb3Zl
+ZCBpbiBhbnkgY2FzZS4gOi0pDQpxb3JpcS1jbG9ja2dlbiouZHRzaSBhcmUgdXNlZCBieSBsZWdh
+Y3kgYmluZGluZ3MuIFRoZSBjb250ZW50cyBhcmUgYWxsIG9mIGxlZ2FjeSBiaW5kaW5ncy4NClRv
+IHVzZSBuZXcgZnJhbWV3b3JrLCBJIGludHJvZHVjZSBhIG5ldyBkdHNpIHdoaWNoIGNvbnRhaW5z
+IG5ldyBiaW5kaW5ncyBhbmQgdXNlZCBmb3IgYWxsIFBQQyBzb2MuDQpBIGNoaXAtc3BlY2lmaWMg
+Y29tcGF0aWJsZSBpcyBuZWVkZWQgYmVjYXVzZSBkcml2ZXIgd2lsbCB1c2UgaXQgdG8gZ2V0IGNo
+aXAtc3BlY2lmaWMgY2xvY2sgdHJlZSBpbmZvcm1hdGlvbi4NClRoZSBjbG9jayBpbmZvcm1hdGlv
+biB3YXMgZGVmaW5lZCBpbiBkcml2ZXIgbm90IGluIGR0cyBpbiBuZXcgZnJhbWV3b3JrLCByZW1l
+bWJlcj8NCg0KVGhpcyBwYXRjaCBzZXQgaXMgdGhlIGZpcnN0IHN0ZXAgdG8gY29udmVydCBpdCB0
+byB1c2luZyBuZXcgZnJhbWV3b3JrLiBBZnRlciBhbGwgdGhlIGNoaXBzIGhhdmUgYmVlbiB1cGRh
+dGVkLA0KdGhlIGxlZ2FjeSBzdHVmZiB3aWxsIGJlIHJlbW92ZWQuIEluY2x1ZGluZyBxb3JpcS1j
+bG9ja2dlbiouZHRzaS4NCj4gDQo+IEFsc28sIHBsZWFzZSBwb3N0IGFueSBwYXRjaGVzIHRoYXQg
+eW91IHdhbnQgbWUgdG8gYXBwbHkgdG8gdGhlDQo+IGxpbnV4cHBjLWRldiBtYWlsaW5nIGxpc3Qu
+DQpTdXJlLCBubyBwcm9ibGVtLg0KDQpCUiwNCkFuZHkNCj4gDQo+IC1TY290dA0KDQo=
