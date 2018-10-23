@@ -2,396 +2,695 @@ Return-Path: <SRS0=m775=ND=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21A99C004D3
-	for <linux-clk@archiver.kernel.org>; Tue, 23 Oct 2018 02:10:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B772C67863
+	for <linux-clk@archiver.kernel.org>; Tue, 23 Oct 2018 03:20:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD91220665
-	for <linux-clk@archiver.kernel.org>; Tue, 23 Oct 2018 02:10:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="RebF4Osu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD91220665
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id 0D8C3207DD
+	for <linux-clk@archiver.kernel.org>; Tue, 23 Oct 2018 03:20:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D8C3207DD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rock-chips.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725883AbeJWKbK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 23 Oct 2018 06:31:10 -0400
-Received: from mail-he1eur01on0059.outbound.protection.outlook.com ([104.47.0.59]:33616
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725768AbeJWKbK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 23 Oct 2018 06:31:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1dwPLxt6CIZb4Tbvg6A5d7Ksw4i4/Yeto1xpJbXePIA=;
- b=RebF4Osuj/ipaY9I1Boux/fsbByKuVZufcXnT5nQeaiCwfAdFtFm89vUKzsSwzq6Am9xA9cnm4sc1Uyo6bH8uyw4JIRdCWb963inLc6+STI7mMS1BqI1PscG03gRX34ZAQ5ViwWcJus2trG95VEt44QgGsWZST9oLwnhFsHwxEs=
-Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.126.21) by
- AM0PR04MB5171.eurprd04.prod.outlook.com (20.177.42.12) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1250.29; Tue, 23 Oct 2018 02:09:53 +0000
-Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
- ([fe80::797a:f972:9281:6d10]) by AM0PR04MB4211.eurprd04.prod.outlook.com
- ([fe80::797a:f972:9281:6d10%2]) with mapi id 15.20.1250.028; Tue, 23 Oct 2018
- 02:09:46 +0000
-From:   "A.s. Dong" <aisheng.dong@nxp.com>
-To:     Rob Herring <robh@kernel.org>
-CC:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Anson Huang <anson.huang@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>, dl-linux-imx <linux-imx@nxp.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: RE: [PATCH RESEND V4 6/9] dt-bindings: clock: add imx7ulp clock
- binding doc
-Thread-Topic: [PATCH RESEND V4 6/9] dt-bindings: clock: add imx7ulp clock
- binding doc
-Thread-Index: AQHUaT+I20/8Q3iJLk2UPqnv4RdOr6Ur10+AgAA58zA=
-Date:   Tue, 23 Oct 2018 02:09:46 +0000
-Message-ID: <AM0PR04MB4211C2A2273C4B7C4673B62380F50@AM0PR04MB4211.eurprd04.prod.outlook.com>
-References: <1540127173-21346-1-git-send-email-aisheng.dong@nxp.com>
- <1540127173-21346-7-git-send-email-aisheng.dong@nxp.com>
- <20181022221639.GA31408@bogus>
-In-Reply-To: <20181022221639.GA31408@bogus>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [101.93.238.110]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM0PR04MB5171;6:x+hP8+FtIXJfKXPlrW9BRBB9Xz5b7DJETxBv0oo+vD2WxSzC2WqVob+5WbXgiTfU4AAlcTvTgF7f6h1LLnA7Xgv/YwGyvtNHPnYTzwkY+s3NOyvcXHbmOjRIoj2cOrIiCSiPMN/1LXnJcC60/lU6arXYwIi1suRyVB2nuuSnqBLv2eNGoF2Kj8Ueje5RGfyHc+1HLr8eIhg8Mk8Tdv1OILwa3DlgKSF/TrNd4juqxHtHuhsvU8XczjgzxOA+AezvloKIjyGREcS3qYsF+QUgdr2IA5gu79cEVHzM4DMpFr95cBjMaKU2nwmDH7Kfu6KcQGRu2APytDB04AJ9aeoHf5sHEiPcvxNbmNmrflnxozIGlfUIA3B39oM7DTDJ2D34WXoo++tlfhkyGtb91l4VxJ4NOu/jLpEiuLGocmVlbAhuyshz467rbmum3QgSFlJ+q5s+wKyYZ2icgR2CPZjT5Q==;5:eExOM96+2TvHE7/Obg6yBCS+OTX3cXX4Fcp1sBo3mGgi5t67vubJ+bvaWqh6oTqT2oaO790rp1szWQbNW9E0xnYEWcN2qK/18qFvFpRz23oHTosNBKoSIQONZrHmg/DV1i+1y/THpHBVLtf/5pLpUSKoxyySHzR07tp33RTyg3I=;7:RL4PcABvsrD/GHMLZIBVyEJ4zH8ZbkNvf5/S5yecoGN5CYxdJj8neMdSOcEsxyZy9LzRMgug5MeZjnsWmvYuJ3Gg7XzTX5n/VQlmXVL7DTz5wKvmDWSwofjjSWjdXeKJRb6xJ0mY2toNkpg9LDHBscFzG3NcHDHwLQ6rqufvnT3KKCeJYUm4lBQUvC7+uIT7d5GKw7BLAU3Wxu11NMGQIZyc2aYRPn5/O2NnokPgNC2LeEGKwD7PYpCKhob/EwZv
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: d01d55a7-0f71-49b0-a07a-08d6388c9b28
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB5171;
-x-ms-traffictypediagnostic: AM0PR04MB5171:
-x-microsoft-antispam-prvs: <AM0PR04MB5171F42199C77BC4C5F8C3C880F50@AM0PR04MB5171.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(269456686620040)(180628864354917)(185117386973197);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93001095)(3002001)(3231355)(944501410)(52105095)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123560045)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:AM0PR04MB5171;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB5171;
-x-forefront-prvs: 0834BAF534
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(366004)(39860400002)(376002)(346002)(396003)(199004)(189003)(54534003)(13464003)(6346003)(7736002)(229853002)(217873002)(5660300001)(6506007)(6436002)(6246003)(102836004)(14454004)(71200400001)(76176011)(105586002)(8936002)(106356001)(81166006)(71190400001)(33656002)(8676002)(81156014)(68736007)(478600001)(2900100001)(54906003)(99286004)(316002)(5250100002)(3846002)(66066001)(25786009)(6916009)(305945005)(2906002)(6116002)(256004)(7416002)(476003)(186003)(26005)(486006)(11346002)(446003)(9686003)(4326008)(97736004)(86362001)(74316002)(7696005)(55016002)(53936002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5171;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=aisheng.dong@nxp.com; 
-x-microsoft-antispam-message-info: ZXWomw81CgxE0+AVUEmd9aBrvsSJI+a1WvFaTLtD0olTl1bQKWIS8p0/12oeE6ESYqrXa5Qqt3WwRLRtMQI0NdMoeZmGOS9uqejMZEqnMAhKIIJZCVQfoafbkvdX0cH8cIlXiB4IxssP/PssaOsLvJrg15XPxoOFLGRZ6EqQ7fRuKFSVOo/IAqMoe8pcJN4/vpnozAiYtlIzla0kntnJbrGKCvJGox/KdVJtpLcUbiDnMLQVlgM/YbxTKVQqkQqzdK9/RumDqyoiyplAwKj/uJv9H8gPzoL2sGTuA7vKbwmSuyBj2xsfAtDFvX4tTzbZTv2xGh/Bc7tx/oDIMrAuTBF8BpRTC0VV3rwaaRPEcjE=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1727014AbeJWLl2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 23 Oct 2018 07:41:28 -0400
+Received: from lucky1.263xmail.com ([211.157.147.134]:38390 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726764AbeJWLl2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 Oct 2018 07:41:28 -0400
+X-Greylist: delayed 426 seconds by postgrey-1.27 at vger.kernel.org; Tue, 23 Oct 2018 07:41:24 EDT
+Received: from tony.xie?rock-chips.com (unknown [192.168.167.87])
+        by lucky1.263xmail.com (Postfix) with ESMTP id BBC25295;
+        Tue, 23 Oct 2018 11:12:53 +0800 (CST)
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 1
+X-MAIL-DELIVERY: 0
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+Received: from [172.16.12.36] (localhost [127.0.0.1])
+        by smtp.263.net (Postfix) with ESMTPA id 5D4963B9;
+        Tue, 23 Oct 2018 11:12:47 +0800 (CST)
+X-IP-DOMAINF: 1
+X-RL-SENDER: tony.xie@rock-chips.com
+X-FST-TO: huangtao@rock-chips.com
+X-SENDER-IP: 58.22.7.114
+X-LOGIN-NAME: tony.xie@rock-chips.com
+X-UNIQUE-TAG: <5d9e12c9a0035d1d185863810bed84c1>
+X-ATTACHMENT-NUM: 0
+X-SENDER: xxx@rock-chips.com
+X-DNS-TYPE: 0
+Received: from [172.16.12.36] (unknown [58.22.7.114])
+        by smtp.263.net (Postfix) whith ESMTP id 26837CH9QSH;
+        Tue, 23 Oct 2018 11:12:52 +0800 (CST)
+Subject: Re: [PATCH v3 1/5] mfd: rk808: Add RK817 and RK809 support
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     heiko@sntech.de, broonie@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
+        xsf@rock-chips.com, zhangqing@rock-chips.com,
+        huangtao@rock-chips.com
+References: <1535081441-20718-1-git-send-email-tony.xie@rock-chips.com>
+ <1535081441-20718-2-git-send-email-tony.xie@rock-chips.com>
+ <20180911114732.GL4185@dell>
+From:   tony <tony.xie@rock-chips.com>
+Message-ID: <b0f9fff3-3084-91b3-fa78-5163ebd43bbb@rock-chips.com>
+Date:   Tue, 23 Oct 2018 11:12:43 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d01d55a7-0f71-49b0-a07a-08d6388c9b28
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Oct 2018 02:09:46.8274
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5171
+In-Reply-To: <20180911114732.GL4185@dell>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-> -----Original Message-----
-> From: Rob Herring [mailto:robh@kernel.org]
-> Sent: Tuesday, October 23, 2018 6:17 AM
-[...]
->=20
-> On Sun, Oct 21, 2018 at 01:11:09PM +0000, A.s. Dong wrote:
-> > i.MX7ULP Clock functions are under joint control of the System Clock
-> > Generation (SCG) modules, Peripheral Clock Control (PCC) modules, and
-> > Core Mode Controller (CMC)1 blocks
-> >
-> > Note IMX7ULP has two clock domains: M4 and A7. This binding doc is
-> > only for A7 clock domain.
-> >
-> > Cc: Rob Herring <robh+dt@kernel.org>
-> > Cc: Mark Rutland <mark.rutland@arm.com>
-> > Cc: Stephen Boyd <sboyd@codeaurora.org>
-> > Cc: Michael Turquette <mturquette@baylibre.com>
-> > Cc: devicetree@vger.kernel.org
-> > Cc: Shawn Guo <shawnguo@kernel.org>
-> > Cc: Anson Huang <Anson.Huang@nxp.com>
-> > Cc: Bai Ping <ping.bai@nxp.com>
-> > Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-> >
-> > ---
-> > ChangeLog:
-> > v3->v4:
-> >  * make scg, pcc separate nodes according to Rob's suggestion
-> > v2->v3:
-> >  * no changes
-> > v1->v2: no changes
-> > ---
-> >  .../devicetree/bindings/clock/imx7ulp-clock.txt    |  87
-> ++++++++++++++++
-> >  include/dt-bindings/clock/imx7ulp-clock.h          | 109
-> +++++++++++++++++++++
-> >  2 files changed, 196 insertions(+)
-> >  create mode 100644
-> > Documentation/devicetree/bindings/clock/imx7ulp-clock.txt
-> >  create mode 100644 include/dt-bindings/clock/imx7ulp-clock.h
-> >
-> > diff --git a/Documentation/devicetree/bindings/clock/imx7ulp-clock.txt
-> > b/Documentation/devicetree/bindings/clock/imx7ulp-clock.txt
-> > new file mode 100644
-> > index 0000000..2239383
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/imx7ulp-clock.txt
-> > @@ -0,0 +1,87 @@
-> > +* Clock bindings for Freescale i.MX7ULP
-> > +
-> > +i.MX7ULP Clock functions are under joint control of the System Clock
-> > +Generation (SCG) modules, Peripheral Clock Control (PCC) modules, and
-> > +Core Mode Controller (CMC)1 blocks
-> > +
-> > +The clocking scheme provides clear separation between M4 domain and
-> > +A7 domain. Except for a few clock sources shared between two domains,
-> > +such as the System Oscillator clock, the Slow IRC (SIRC), and and the
-> > +Fast IRC clock (FIRCLK), clock sources and clock management are
-> > +separated and contained within each domain.
-> > +
-> > +M4 clock management consists of SCG0, PCC0, PCC1, and CMC0 modules.
-> > +A7 clock management consists of SCG1, PCC2, PCC3, and CMC1 modules.
->=20
-> Where's the CMC1 binding?
->=20
 
-CMC module is more related to low power control, so did not put in
-clock series. But yes, it's missed in early series, will add it in next Arc=
-h
-patch series.
-
-> > +
-> > +Note: this binding doc is only for A7 clock domain.
-> > +
-> > +System Clock Generation (SCG) modules:
-> > +---------------------------------------------------------------------
-> > +The System Clock Generation (SCG) is responsible for clock generation
-> > +and distribution across this device. Functions performed by the SCG
-> > +include: clock reference selection, generation of clock used to
-> > +derive processor, system, peripheral bus and external memory
-> > +interface clocks, source selection for peripheral clocks and control
-> > +of power saving clock gating mode.
-> > +
-> > +Required properties:
-> > +
-> > +- compatible:	Should be "fsl,imx7ulp-scg1".
-> > +- reg : 	Should contain registers location and length.
-> > +- #clock-cells:	Should be <1>.
-> > +- clocks:	Should contain the fixed input clocks.
-> > +- clock-name:   Should contain the following clock names:"rosc", "sosc=
-",
->=20
-> clock-names
+> On Fri, 24 Aug 2018, Tony Xie wrote:
 >
-
-Got it
-=20
-> > +		"sirc", "firc", "upll", "mpll".
-> > +
-> > +Peripheral Clock Control (PCC) modules:
-> > +---------------------------------------------------------------------
-> > +The Peripheral Clock Control (PCC) is responsible for clock
-> > +selection, optional division and clock gating mode for peripherals in
-> > +their respected power domain
-> > +
-> > +Required properties:
-> > +- compatible:	Should be "fsl,imx7ulp-pcc2" or "fsl,imx7ulp-pcc3".
->=20
-> Please format one per line.
->=20
-
-Got it
-
-> There's some register layout difference between PCC2 and PCC3?
+>>      The rk809 and rk817 are a Power Management IC (PMIC) for multimedia
+>>      and handheld devices. It contains the following components:
+>>
+>>          - Regulators
+>>          - RTC
+>>          - Clocking
+>>
+>>      Both RK809 and RK817 chips are using a similar register map,
+>>      so we can reuse the RTC and Clocking and regulators functionality.
+>>
+>> Signed-off-by: Tony Xie <tony.xie@rock-chips.com>
+>> ---
+>>   drivers/mfd/Kconfig       |   6 +-
+>>   drivers/mfd/rk808.c       | 218 +++++++++++++++++++++++++++++++++++++++++++++-
+>>   include/linux/mfd/rk808.h | 172 ++++++++++++++++++++++++++++++++++++
+>>   kernel/reboot.c           |   1 +
+>>   4 files changed, 391 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+>> index b860eb5..84f2f22 100644
+>> --- a/drivers/mfd/Kconfig
+>> +++ b/drivers/mfd/Kconfig
+>> @@ -967,14 +967,14 @@ config MFD_RC5T583
+>>   	  different functionality of the device.
+>>   
+>>   config MFD_RK808
+>> -	tristate "Rockchip RK805/RK808/RK818 Power Management Chip"
+>> +	tristate "Rockchip RK805/RK808/RK809/RK817/RK818 Power Management Chip"
+>>   	depends on I2C && OF
+>>   	select MFD_CORE
+>>   	select REGMAP_I2C
+>>   	select REGMAP_IRQ
+>>   	help
+>> -	  If you say yes here you get support for the RK805, RK808 and RK818
+>> -	  Power Management chips.
+>> +	  If you say yes here you get support for the RK805, RK809 and RK817,
+>> +	  RK808 and RK818 Power Management chips.
+> Any reason why you've taken these out of order?
 >
+>>   	  This driver provides common support for accessing the device
+>>   	  through I2C interface. The device supports multiple sub-devices
+>>   	  including interrupts, RTC, LDO & DCDC regulators, and onkey.
+>> diff --git a/drivers/mfd/rk808.c b/drivers/mfd/rk808.c
+>> index 216fbf6..62e2fe1 100644
+>> --- a/drivers/mfd/rk808.c
+>> +++ b/drivers/mfd/rk808.c
+>> @@ -62,6 +62,29 @@ static bool rk808_is_volatile_reg(struct device *dev, unsigned int reg)
+>>   	return false;
+>>   }
+>>   
+>> +static bool rk817_is_volatile_reg(struct device *dev, unsigned int reg)
+>> +{
+>> +	/*
+>> +	 * Notes:
+>> +	 * - Technically the ROUND_30s bit makes RTC_CTRL_REG volatile, but
+>> +	 *   we don't use that feature.  It's better to cache.
+>> +	 * - It's unlikely we care that RK808_DEVCTRL_REG is volatile since
+>> +	 *   bits are cleared in case when we shutoff anyway, but better safe.
+>> +	 */
+>> +
+>> +	switch (reg) {
+>> +	case RK817_SECONDS_REG ... RK817_WEEKS_REG:
+>> +	case RK817_RTC_STATUS_REG:
+>> +	case RK817_INT_STS_REG0:
+>> +	case RK817_INT_STS_REG1:
+>> +	case RK817_INT_STS_REG2:
+>> +	case RK817_SYS_STS:
+>> +		return true;
+>> +	}
+>> +
+>> +	return true;
+>> +}
+>> +
+>>   static const struct regmap_config rk818_regmap_config = {
+>>   	.reg_bits = 8,
+>>   	.val_bits = 8,
+>> @@ -86,6 +109,14 @@ static bool rk808_is_volatile_reg(struct device *dev, unsigned int reg)
+>>   	.volatile_reg = rk808_is_volatile_reg,
+>>   };
+>>   
+>> +static const struct regmap_config rk817_regmap_config = {
+>> +	.reg_bits = 8,
+>> +	.val_bits = 8,
+>> +	.max_register = RK817_GPIO_INT_CFG,
+>> +	.cache_type = REGCACHE_NONE,
+>> +	.volatile_reg = rk817_is_volatile_reg,
+>> +};
+>> +
+>>   static struct resource rtc_resources[] = {
+>>   	{
+>>   		.start  = RK808_IRQ_RTC_ALARM,
+>> @@ -94,6 +125,13 @@ static bool rk808_is_volatile_reg(struct device *dev, unsigned int reg)
+>>   	}
+>>   };
+>>   
+>> +static struct resource rk817_rtc_resources[] = {
+>> +	{
+>> +		.start  = RK817_IRQ_RTC_ALARM,
+>> +		.end    = RK817_IRQ_RTC_ALARM,
+>> +		.flags  = IORESOURCE_IRQ,
+>> +	}
+>> +};
+>>   static struct resource rk805_key_resources[] = {
+>>   	{
+>>   		.start  = RK805_IRQ_PWRON_FALL,
+>> @@ -107,6 +145,19 @@ static bool rk808_is_volatile_reg(struct device *dev, unsigned int reg)
+>>   	}
+>>   };
+>>   
+>> +static struct resource rk817_pwrkey_resources[] = {
+>> +	{
+>> +		.start  = RK817_IRQ_PWRON_RISE,
+>> +		.end    = RK817_IRQ_PWRON_RISE,
+>> +		.flags  = IORESOURCE_IRQ,
+>> +	},
+>> +	{
+>> +		.start  = RK817_IRQ_PWRON_FALL,
+>> +		.end    = RK817_IRQ_PWRON_FALL,
+>> +		.flags  = IORESOURCE_IRQ,
+>> +	},
+>> +};
+>> +
+>>   static const struct mfd_cell rk805s[] = {
+>>   	{ .name = "rk808-clkout", },
+>>   	{ .name = "rk808-regulator", },
+>> @@ -132,6 +183,21 @@ static bool rk808_is_volatile_reg(struct device *dev, unsigned int reg)
+>>   	},
+>>   };
+>>   
+>> +static const struct mfd_cell rk817s[] = {
+>> +	{ .name = "rk808-clkout",},
+>> +	{ .name = "rk808-regulator",},
+>> +	{
+>> +		.name = "rk8xx-pwrkey",
+>> +		.num_resources = ARRAY_SIZE(rk817_pwrkey_resources),
+>> +		.resources = &rk817_pwrkey_resources[0],
+>> +	},
+>> +	{
+>> +		.name = "rk808-rtc",
+>> +		.num_resources = ARRAY_SIZE(rk817_rtc_resources),
+>> +		.resources = &rk817_rtc_resources[0],
+>> +	},
+>> +};
+>> +
+>>   static const struct mfd_cell rk818s[] = {
+>>   	{ .name = "rk808-clkout", },
+>>   	{ .name = "rk808-regulator", },
+>> @@ -167,6 +233,13 @@ static bool rk808_is_volatile_reg(struct device *dev, unsigned int reg)
+>>   						    VB_LO_SEL_3500MV },
+>>   };
+>>   
+>> +static const struct rk808_reg_data rk817_pre_init_reg[] = {
+>> +	{RK817_RTC_CTRL_REG, RTC_STOP, RTC_STOP},
+>> +	{RK817_GPIO_INT_CFG, RK817_INT_POL_MSK, RK817_INT_POL_H},
+>> +	{RK817_SYS_CFG(1), RK817_HOTDIE_TEMP_MSK | RK817_TSD_TEMP_MSK,
+>> +					   RK817_HOTDIE_105 | RK817_TSD_140},
+>> +};
+>> +
+>>   static const struct rk808_reg_data rk818_pre_init_reg[] = {
+>>   	/* improve efficiency */
+>>   	{ RK818_BUCK2_CONFIG_REG, BUCK2_RATE_MASK,  BUCK_ILMIN_250MA },
+>> @@ -332,6 +405,39 @@ static bool rk808_is_volatile_reg(struct device *dev, unsigned int reg)
+>>   	},
+>>   };
+>>   
+>> +#define REGMAP_IRQ_M(_id) \
+>> +	[_id] = {				\
+>> +		.mask = BIT(((_id) % 8)),	\
+>> +		.reg_offset = ((_id) / 8),	\
+>> +	}
+> If this is helpful for you, it will be helpful for others.
+>
+> Please submit this to the Regmap subsystem.
+>
+> See: include/linux/regmap.h
+>
+>> +static const struct regmap_irq rk817_irqs[RK817_IRQ_END] = {
+>> +	REGMAP_IRQ_M(0),
+>> +	REGMAP_IRQ_M(1),
+>> +	REGMAP_IRQ_M(2),
+>> +	REGMAP_IRQ_M(3),
+>> +	REGMAP_IRQ_M(4),
+>> +	REGMAP_IRQ_M(5),
+>> +	REGMAP_IRQ_M(6),
+>> +	REGMAP_IRQ_M(7),
+>> +	REGMAP_IRQ_M(8),
+>> +	REGMAP_IRQ_M(9),
+>> +	REGMAP_IRQ_M(10),
+>> +	REGMAP_IRQ_M(11),
+>> +	REGMAP_IRQ_M(12),
+>> +	REGMAP_IRQ_M(13),
+>> +	REGMAP_IRQ_M(14),
+>> +	REGMAP_IRQ_M(15),
+>> +	REGMAP_IRQ_M(16),
+>> +	REGMAP_IRQ_M(17),
+>> +	REGMAP_IRQ_M(18),
+>> +	REGMAP_IRQ_M(19),
+>> +	REGMAP_IRQ_M(20),
+>> +	REGMAP_IRQ_M(21),
+>> +	REGMAP_IRQ_M(22),
+>> +	REGMAP_IRQ_M(23)
+>> +};
+>> +
+>>   static struct regmap_irq_chip rk805_irq_chip = {
+>>   	.name = "rk805",
+>>   	.irqs = rk805_irqs,
+>> @@ -355,6 +461,18 @@ static bool rk808_is_volatile_reg(struct device *dev, unsigned int reg)
+>>   	.init_ack_masked = true,
+>>   };
+>>   
+>> +static struct regmap_irq_chip rk817_irq_chip = {
+>> +	.name = "rk817",
+>> +	.irqs = rk817_irqs,
+>> +	.num_irqs = ARRAY_SIZE(rk817_irqs),
+>> +	.num_regs = 3,
+>> +	.irq_reg_stride = 2,
+>> +	.status_base = RK817_INT_STS_REG0,
+>> +	.mask_base = RK817_INT_STS_MSK_REG0,
+>> +	.ack_base = RK817_INT_STS_REG0,
+>> +	.init_ack_masked = true,
+>> +};
+>> +
+>>   static const struct regmap_irq_chip rk818_irq_chip = {
+>>   	.name = "rk818",
+>>   	.irqs = rk818_irqs,
+>> @@ -423,9 +541,39 @@ static void rk818_device_shutdown(void)
+>>   		dev_err(&rk808_i2c_client->dev, "power off error!\n");
+>>   }
+>>   
+>> +static void rk8xx_device_shutdown_prepare(void)
+>> +{
+>> +	int ret;
+>> +	struct rk808 *rk808 = i2c_get_clientdata(rk808_i2c_client);
+>> +
+>> +	if (!rk808) {
+>> +		dev_warn(&rk808_i2c_client->dev,
+>> +			 "have no rk808, so do nothing here\n");
+> This isn't a good warning to an end user.
+>
+> Where is "here"?
+>
+> Please provide something a little more forthcoming/descriptive.
+>
+>> +		return;
+>> +	}
+>> +
+>> +	switch (rk808->variant) {
+>> +	case RK809_ID:
+>> +	case RK817_ID:
+>> +		ret = regmap_update_bits(rk808->regmap,
+>> +					 RK817_SYS_CFG(3),
+>> +					 RK817_SLPPIN_FUNC_MSK,
+>> +					 SLPPIN_DN_FUN);
+>> +		if (ret) {
+>> +			dev_warn(&rk808_i2c_client->dev,
+>> +				 "switch pin func to power down error!\n");
+> Again, what does this mean to an end user?  Probably very little.
+>
+>> +		}
+>> +		break;
+>> +	default:
+>> +		break;
+>> +	}
+>> +}
+>> +
+>>   static const struct of_device_id rk808_of_match[] = {
+>>   	{ .compatible = "rockchip,rk805" },
+>>   	{ .compatible = "rockchip,rk808" },
+>> +	{ .compatible = "rockchip,rk809" },
+>> +	{ .compatible = "rockchip,rk817" },
+>>   	{ .compatible = "rockchip,rk818" },
+>>   	{ },
+>>   };
+>> @@ -438,10 +586,11 @@ static int rk808_probe(struct i2c_client *client,
+>>   	struct rk808 *rk808;
+>>   	const struct rk808_reg_data *pre_init_reg;
+>>   	const struct mfd_cell *cells;
+>> -	void (*pm_pwroff_fn)(void);
+>> +	void (*pm_pwroff_fn)(void) = NULL;
+>>   	int nr_pre_init_regs;
+>>   	int nr_cells;
+>>   	int pm_off = 0, msb, lsb;
+>> +	unsigned char pmic_id_msb = RK808_ID_MSB, pmic_id_lsb = RK808_ID_LSB;
+> Please place these on separate lines.
+>
+>>   	int ret;
+>>   	int i;
+>>   
+>> @@ -449,15 +598,20 @@ static int rk808_probe(struct i2c_client *client,
+>>   	if (!rk808)
+>>   		return -ENOMEM;
+>>   
+>> +	if (of_device_is_compatible(np, "rockchip,rk817") ||
+>> +	    of_device_is_compatible(np, "rockchip,rk809")) {
+>> +		pmic_id_msb = RK817_ID_MSB;
+>> +		pmic_id_lsb = RK817_ID_LSB;
+>> +	}
+> Rather than pre-assign default values at declaration, I think it would
+> be cleaner to have an else here.
+>
+>>   	/* Read chip variant */
+>> -	msb = i2c_smbus_read_byte_data(client, RK808_ID_MSB);
+>> +	msb = i2c_smbus_read_byte_data(client, pmic_id_msb);
+>>   	if (msb < 0) {
+>>   		dev_err(&client->dev, "failed to read the chip id at 0x%x\n",
+>>   			RK808_ID_MSB);
+>>   		return msb;
+>>   	}
+>>   
+>> -	lsb = i2c_smbus_read_byte_data(client, RK808_ID_LSB);
+>> +	lsb = i2c_smbus_read_byte_data(client, pmic_id_lsb);
+>>   	if (lsb < 0) {
+>>   		dev_err(&client->dev, "failed to read the chip id at 0x%x\n",
+>>   			RK808_ID_LSB);
+>> @@ -495,6 +649,16 @@ static int rk808_probe(struct i2c_client *client,
+>>   		nr_cells = ARRAY_SIZE(rk818s);
+>>   		pm_pwroff_fn = rk818_device_shutdown;
+>>   		break;
+>> +	case RK809_ID:
+>> +	case RK817_ID:
+>> +		rk808->regmap_cfg = &rk817_regmap_config;
+>> +		rk808->regmap_irq_chip = &rk817_irq_chip;
+>> +		pre_init_reg = rk817_pre_init_reg;
+>> +		nr_pre_init_regs = ARRAY_SIZE(rk817_pre_init_reg);
+>> +		cells = rk817s;
+>> +		nr_cells = ARRAY_SIZE(rk817s);
+>> +		pm_power_off_prepare = rk8xx_device_shutdown_prepare;
+>> +		break;
+>>   	default:
+>>   		dev_err(&client->dev, "Unsupported RK8XX ID %lu\n",
+>>   			rk808->variant);
+>> @@ -568,9 +732,56 @@ static int rk808_remove(struct i2c_client *client)
+>>   	return 0;
+>>   }
+>>   
+>> +static int rk8xx_suspend(struct device *dev)
+>> +{
+>> +	int ret = 0;
+>> +	struct rk808 *rk808 = i2c_get_clientdata(rk808_i2c_client);
+>> +
+>> +	switch (rk808->variant) {
+>> +	case RK809_ID:
+>> +	case RK817_ID:
+>> +		ret = regmap_update_bits(rk808->regmap,
+>> +					 RK817_SYS_CFG(3),
+>> +					 RK817_SLPPIN_FUNC_MSK,
+>> +					 SLPPIN_SLP_FUN);
+>> +		break;
+>> +	default:
+>> +		break;
+>> +	}
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +static int rk8xx_resume(struct device *dev)
+>> +{
+>> +	int ret = 0;
+>> +	struct rk808 *rk808 = i2c_get_clientdata(rk808_i2c_client);
+>> +
+>> +	switch (rk808->variant) {
+>> +	case RK809_ID:
+>> +	case RK817_ID:
+>> +		ret = regmap_update_bits(rk808->regmap,
+>> +					 RK817_SYS_CFG(3),
+>> +					 RK817_SLPPIN_FUNC_MSK,
+>> +					 SLPPIN_NULL_FUN);
+>> +		break;
+>> +	default:
+>> +		break;
+>> +	}
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +static const struct dev_pm_ops rk8xx_pm_ops = {
+>> +	.suspend = rk8xx_suspend,
+>> +	.resume =  rk8xx_resume,
+>> +};
+> Looks like you want SIMPLE_DEV_PM_OPS() here.
+>
+>>   static const struct i2c_device_id rk808_ids[] = {
+>>   	{ "rk805" },
+>>   	{ "rk808" },
+>> +	{ "rk809" },
+>> +	{ "rk817" },
+>>   	{ "rk818" },
+>>   	{ },
+>>   };
+> I don't think this table is required anymore.
+>
+> Try removing it.
+>
+>> @@ -580,6 +791,7 @@ static int rk808_remove(struct i2c_client *client)
+>>   	.driver = {
+>>   		.name = "rk808",
+>>   		.of_match_table = rk808_of_match,
+>> +		.pm = &rk8xx_pm_ops,
+>>   	},
+>>   	.probe    = rk808_probe,
+>>   	.remove   = rk808_remove,
+>> diff --git a/include/linux/mfd/rk808.h b/include/linux/mfd/rk808.h
+>> index d315659..b973b0a 100644
+>> --- a/include/linux/mfd/rk808.h
+>> +++ b/include/linux/mfd/rk808.h
+>> @@ -382,6 +382,7 @@ enum rk805_reg {
+>>   #define SWITCH1_EN	BIT(5)
+>>   #define DEV_OFF_RST	BIT(3)
+>>   #define DEV_OFF		BIT(0)
+>> +#define RTC_STOP	BIT(0)
+>>   
+>>   #define VB_LO_ACT		BIT(4)
+>>   #define VB_LO_SEL_3500MV	(7 << 0)
+>> @@ -396,6 +397,175 @@ enum rk805_reg {
+>>   #define SLEEP_FUN			(0x1 << 2)
+>>   #define RK8XX_ID_MSK			0xfff0
+>>   #define FPWM_MODE			BIT(7)
+>> +enum rk817_reg_id {
+>> +	RK817_ID_DCDC1 = 0,
+>> +	RK817_ID_DCDC2,
+>> +	RK817_ID_DCDC3,
+>> +	RK817_ID_DCDC4,
+>> +	RK817_ID_LDO1,
+>> +	RK817_ID_LDO2,
+>> +	RK817_ID_LDO3,
+>> +	RK817_ID_LDO4,
+>> +	RK817_ID_LDO5,
+>> +	RK817_ID_LDO6,
+>> +	RK817_ID_LDO7,
+>> +	RK817_ID_LDO8,
+>> +	RK817_ID_LDO9,
+>> +	RK817_ID_BOOST,
+>> +	RK817_ID_BOOST_OTG_SW,
+>> +	RK817_NUM_REGULATORS
+>> +};
+>> +
+>> +enum rk809_reg_id {
+>> +	RK809_ID_DCDC5 = RK817_ID_BOOST,
+>> +	RK809_ID_SW1,
+>> +	RK809_ID_SW2,
+>> +	RK809_NUM_REGULATORS
+>> +};
+>> +
+>> +#define RK817_SECONDS_REG		0x00
+>> +#define RK817_MINUTES_REG		0x01
+>> +#define RK817_HOURS_REG			0x02
+>> +#define RK817_DAYS_REG			0x03
+>> +#define RK817_MONTHS_REG		0x04
+>> +#define RK817_YEARS_REG			0x05
+>> +#define RK817_WEEKS_REG			0x06
+>> +#define RK817_ALARM_SECONDS_REG		0x07
+>> +#define RK817_ALARM_MINUTES_REG		0x08
+>> +#define RK817_ALARM_HOURS_REG		0x09
+>> +#define RK817_ALARM_DAYS_REG		0x0a
+>> +#define RK817_ALARM_MONTHS_REG		0x0b
+>> +#define RK817_ALARM_YEARS_REG		0x0c
+>> +#define RK817_RTC_CTRL_REG		0xd
+>> +#define RK817_RTC_STATUS_REG		0xe
+>> +#define RK817_RTC_INT_REG		0xf
+>> +#define RK817_RTC_COMP_LSB_REG		0x10
+>> +#define RK817_RTC_COMP_MSB_REG		0x11
+>> +
+>> +#define RK817_POWER_EN_REG(i)		(0xb1 + (i))
+>> +#define RK817_POWER_SLP_EN_REG(i)	(0xb5 + (i))
+>> +
+>> +#define RK817_POWER_CONFIG		(0xb9)
+>> +
+>> +#define RK817_BUCK_CONFIG_REG(i)	(0xba + (i) * 3)
+>> +
+>> +#define RK817_BUCK1_ON_VSEL_REG		0xBB
+>> +#define RK817_BUCK1_SLP_VSEL_REG	0xBC
+>> +
+>> +#define RK817_BUCK2_CONFIG_REG		0xBD
+>> +#define RK817_BUCK2_ON_VSEL_REG		0xBE
+>> +#define RK817_BUCK2_SLP_VSEL_REG	0xBF
+>> +
+>> +#define RK817_BUCK3_CONFIG_REG		0xC0
+>> +#define RK817_BUCK3_ON_VSEL_REG		0xC1
+>> +#define RK817_BUCK3_SLP_VSEL_REG	0xC2
+>> +
+>> +#define RK817_BUCK4_CONFIG_REG		0xC3
+>> +#define RK817_BUCK4_ON_VSEL_REG		0xC4
+>> +#define RK817_BUCK4_SLP_VSEL_REG	0xC5
+>> +
+>> +#define RK817_LDO_ON_VSEL_REG(idx)	(0xcc + (idx) * 2)
+>> +#define RK817_BOOST_OTG_CFG		(0xde)
+>> +
+>> +#define RK817_ID_MSB			0xed
+>> +#define RK817_ID_LSB			0xee
+>> +
+>> +#define RK817_SYS_STS			0xf0
+>> +#define RK817_SYS_CFG(i)		(0xf1 + (i))
+>> +
+>> +#define RK817_ON_SOURCE_REG		0xf5
+>> +#define RK817_OFF_SOURCE_REG		0xf6
+>> +
+>> +/* INTERRUPT REGISTER */
+>> +#define RK817_INT_STS_REG0		0xf8
+>> +#define RK817_INT_STS_MSK_REG0		0xf9
+>> +#define RK817_INT_STS_REG1		0xfa
+>> +#define RK817_INT_STS_MSK_REG1		0xfb
+>> +#define RK817_INT_STS_REG2		0xfc
+>> +#define RK817_INT_STS_MSK_REG2		0xfd
+>> +#define RK817_GPIO_INT_CFG		0xfe
+>> +
+>> +/* IRQ Definitions */
+>> +#define RK817_IRQ_PWRON_FALL		0
+>> +#define RK817_IRQ_PWRON_RISE		1
+>> +#define RK817_IRQ_PWRON			2
+>> +#define RK817_IRQ_PWMON_LP		3
+>> +#define RK817_IRQ_HOTDIE		4
+>> +#define RK817_IRQ_RTC_ALARM		5
+>> +#define RK817_IRQ_RTC_PERIOD		6
+>> +#define RK817_IRQ_VB_LO			7
+>> +#define RK817_IRQ_PLUG_IN		(8 + 0)
+>> +#define RK817_IRQ_PLUG_OUT		(8 + 1)
+>> +#define RK817_IRQ_CHRG_TERM		(8 + 2)
+>> +#define RK817_IRQ_CHRG_TIME		(8 + 3)
+>> +#define RK817_IRQ_CHRG_TS		(8 + 4)
+>> +#define RK817_IRQ_USB_OV		(8 + 5)
+>> +#define RK817_IRQ_CHRG_IN_CLMP		(8 + 6)
+>> +#define RK817_IRQ_BAT_DIS_ILIM		(8 + 7)
+>> +#define RK817_IRQ_GATE_GPIO		(16 + 0)
+>> +#define RK817_IRQ_TS_GPIO		(16 + 1)
+>> +#define RK817_IRQ_CODEC_PD		(16 + 2)
+>> +#define RK817_IRQ_CODEC_PO		(16 + 3)
+>> +#define RK817_IRQ_CLASSD_MUTE_DONE	(16 + 4)
+>> +#define RK817_IRQ_CLASSD_OCP		(16 + 5)
+>> +#define RK817_IRQ_BAT_OVP		(16 + 6)
+>> +#define RK817_IRQ_CHRG_BAT_HI		(16 + 7)
+>> +#define RK817_IRQ_END			(RK817_IRQ_CHRG_BAT_HI + 1)
+>> +
+>> +/*
+>> + * rtc_ctrl 0xd
+>> + * same as 808, except bit4
+>> + */
+>> +#define RK817_RTC_CTRL_RSV4		BIT(4)
+>> +
+>> +/* power config 0xb9 */
+>> +#define RK817_BUCK3_FB_RES_MSK		BIT(6)
+>> +#define RK817_BUCK3_FB_RES_INTER	BIT(6)
+>> +#define RK817_BUCK3_FB_RES_EXT		0
+>> +
+>> +/* buck config 0xba */
+>> +#define RK817_RAMP_RATE_OFFSET		6
+>> +#define RK817_RAMP_RATE_MASK		(0x3 << RK817_RAMP_RATE_OFFSET)
+>> +#define RK817_RAMP_RATE_3MV_PER_US	(0x0 << RK817_RAMP_RATE_OFFSET)
+>> +#define RK817_RAMP_RATE_6_3MV_PER_US	(0x1 << RK817_RAMP_RATE_OFFSET)
+>> +#define RK817_RAMP_RATE_12_5MV_PER_US	(0x2 << RK817_RAMP_RATE_OFFSET)
+>> +#define RK817_RAMP_RATE_25MV_PER_US	(0x3 << RK817_RAMP_RATE_OFFSET)
+>> +
+>> +/* sys_cfg1 0xf2 */
+>> +#define RK817_HOTDIE_TEMP_MSK		(0x3 << 4)
+>> +#define RK817_HOTDIE_85			(0x0 << 4)
+>> +#define RK817_HOTDIE_95			(0x1 << 4)
+>> +#define RK817_HOTDIE_105		(0x2 << 4)
+>> +#define RK817_HOTDIE_115		(0x3 << 4)
+>> +
+>> +#define RK817_TSD_TEMP_MSK		BIT(6)
+>> +#define RK817_TSD_140			0
+>> +#define RK817_TSD_160			BIT(6)
+>> +
+>> +#define RK817_CLK32KOUT2_EN		BIT(7)
+>> +
+>> +/* sys_cfg3 0xf4 */
+>> +#define RK817_SLPPIN_FUNC_MSK		(0x3 << 3)
+>> +#define SLPPIN_NULL_FUN			(0x0 << 3)
+>> +#define SLPPIN_SLP_FUN			(0x1 << 3)
+>> +#define SLPPIN_DN_FUN			(0x2 << 3)
+>> +#define SLPPIN_RST_FUN			(0x3 << 3)
+>> +
+>> +#define RK817_RST_FUNC_MSK		(0x3 << 6)
+>> +#define RK817_RST_FUNC_SFT		(6)
+>> +#define RK817_RST_FUNC_CNT		(3)
+>> +#define RK817_RST_FUNC_DEV		(0) /* reset the dev */
+>> +#define RK817_RST_FUNC_REG		(0x1 << 6) /* reset the reg only */
+>> +
+>> +#define RK817_SLPPOL_MSK		BIT(5)
+>> +#define RK817_SLPPOL_H			BIT(5)
+>> +#define RK817_SLPPOL_L			(0)
+>> +
+>> +/* gpio&int 0xfe */
+>> +#define RK817_INT_POL_MSK		BIT(1)
+>> +#define RK817_INT_POL_H			BIT(1)
+>> +#define RK817_INT_POL_L			0
+>> +#define RK809_BUCK5_CONFIG(i)		(RK817_BOOST_OTG_CFG + (i) * 1)
+>>   
+>>   enum {
+>>   	BUCK_ILMIN_50MA,
+>> @@ -443,6 +613,8 @@ enum {
+>>   enum {
+>>   	RK805_ID = 0x8050,
+>>   	RK808_ID = 0x0000,
+>> +	RK809_ID = 0x8090,
+>> +	RK817_ID = 0x8170,
+>>   	RK818_ID = 0x8181,
+>>   };
+>>   
+>> diff --git a/kernel/reboot.c b/kernel/reboot.c
+>> index e4ced88..83810d7 100644
+>> --- a/kernel/reboot.c
+>> +++ b/kernel/reboot.c
+>> @@ -49,6 +49,7 @@
+>>    */
+>>   
+>>   void (*pm_power_off_prepare)(void);
+>> +EXPORT_SYMBOL_GPL(pm_power_off_prepare);
+> Why do you need this where no other driver in the kernel does?
+     There is a gpio_slp pin for RK809 and RK817，this pin has 
+reset、power down and sleep functions，so
+     when system is going to power down, this pin is needed to switch to 
+power down function，and then we just only control
+     this pin to high to power down the system in atf at last。
+>
+>>   /**
+>>    *	emergency_restart - reboot the system
 
-Yes, they're for different clocks and the layout may be slightly different.
-For example, some clocks support rate setting (with dividers) while
-some of them not.
-=20
-> > +- reg : 	Should contain registers location and length.
-> > +- #clock-cells:	Should be <1>.
->=20
-> No input clocks to list?
->=20
 
-Sorry for missing them, should add it.
-
-Appreciate for the review.
-
-Regards
-Dong Aisheng
-
-> > +
-> > +The clock consumer should specify the desired clock by having the
-> > +clock ID in its "clocks" phandle cell.
-> > +See include/dt-bindings/clock/imx7ulp-clock.h
-> > +for the full list of i.MX7ULP clock IDs of each module.
-> > +
-> > +Examples:
-> > +
-> > +#include <dt-bindings/clock/imx7ulp-clock.h>
-> > +
-> > +scg1: scg1@403e0000 {
-> > +	compatible =3D "fsl,imx7ulp-scg1;
-> > +	reg =3D <0x403e0000 0x10000>;
-> > +	clocks =3D <&rosc>, <&sosc>, <&sirc>,
-> > +		 <&firc>, <&upll>, <&mpll>;
-> > +	clock-names =3D "rosc", "sosc", "sirc",
-> > +		      "firc", "upll", "mpll";
-> > +	#clock-cells =3D <1>;
-> > +};
-> > +
-> > +pcc2: pcc2@403f0000 {
-> > +	compatible =3D "fsl,imx7ulp-pcc2";
-> > +	reg =3D <0x403f0000 0x10000>;
-> > +	#clock-cells =3D <1>;
-> > +};
-> > +
-> > +pcc3: pcc3@40b30000 {
-> > +	compatible =3D "fsl,imx7ulp-pcc3";
-> > +	reg =3D <0x40b30000 0x10000>;
-> > +	#clock-cells =3D <1>;
-> > +};
-> > +
-> > +usdhc1: usdhc@40380000 {
-> > +	compatible =3D "fsl,imx7ulp-usdhc";
-> > +	reg =3D <0x40380000 0x10000>;
-> > +	interrupts =3D <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
-> > +	clocks =3D <&scg1 IMX7ULP_CLK_NIC1_BUS_DIV>,
-> > +		 <&scg1 IMX7ULP_CLK_NIC1_DIV>,
-> > +		 <&pcc2 IMX7ULP_CLK_USDHC1>;
-> > +	clock-names =3D"ipg", "ahb", "per";
-> > +	bus-width =3D <4>;
-> > +};
-> > diff --git a/include/dt-bindings/clock/imx7ulp-clock.h
-> > b/include/dt-bindings/clock/imx7ulp-clock.h
-> > new file mode 100644
-> > index 0000000..008c5ee
-> > --- /dev/null
-> > +++ b/include/dt-bindings/clock/imx7ulp-clock.h
-> > @@ -0,0 +1,109 @@
-> > +/* SPDX-License-Identifier: GPL-2.0+ */
-> > +/*
-> > + * Copyright (C) 2016 Freescale Semiconductor, Inc.
-> > + * Copyright 2017~2018 NXP
-> > + *
-> > + */
-> > +
-> > +#ifndef __DT_BINDINGS_CLOCK_IMX7ULP_H #define
-> > +__DT_BINDINGS_CLOCK_IMX7ULP_H
-> > +
-> > +/* SCG1 */
-> > +
-> > +#define IMX7ULP_CLK_DUMMY		0
-> > +#define IMX7ULP_CLK_ROSC		1
-> > +#define IMX7ULP_CLK_SOSC		2
-> > +#define IMX7ULP_CLK_FIRC		3
-> > +#define IMX7ULP_CLK_SPLL_PRE_SEL	4
-> > +#define IMX7ULP_CLK_SPLL_PRE_DIV	5
-> > +#define IMX7ULP_CLK_SPLL		6
-> > +#define IMX7ULP_CLK_SPLL_POST_DIV1	7
-> > +#define IMX7ULP_CLK_SPLL_POST_DIV2	8
-> > +#define IMX7ULP_CLK_SPLL_PFD0		9
-> > +#define IMX7ULP_CLK_SPLL_PFD1		10
-> > +#define IMX7ULP_CLK_SPLL_PFD2		11
-> > +#define IMX7ULP_CLK_SPLL_PFD3		12
-> > +#define IMX7ULP_CLK_SPLL_PFD_SEL	13
-> > +#define IMX7ULP_CLK_SPLL_SEL		14
-> > +#define IMX7ULP_CLK_APLL_PRE_SEL	15
-> > +#define IMX7ULP_CLK_APLL_PRE_DIV	16
-> > +#define IMX7ULP_CLK_APLL		17
-> > +#define IMX7ULP_CLK_APLL_POST_DIV1	18
-> > +#define IMX7ULP_CLK_APLL_POST_DIV2	19
-> > +#define IMX7ULP_CLK_APLL_PFD0		20
-> > +#define IMX7ULP_CLK_APLL_PFD1		21
-> > +#define IMX7ULP_CLK_APLL_PFD2		22
-> > +#define IMX7ULP_CLK_APLL_PFD3		23
-> > +#define IMX7ULP_CLK_APLL_PFD_SEL	24
-> > +#define IMX7ULP_CLK_APLL_SEL		25
-> > +#define IMX7ULP_CLK_UPLL		26
-> > +#define IMX7ULP_CLK_SYS_SEL		27
-> > +#define IMX7ULP_CLK_CORE_DIV		28
-> > +#define IMX7ULP_CLK_BUS_DIV		29
-> > +#define IMX7ULP_CLK_PLAT_DIV		30
-> > +#define IMX7ULP_CLK_DDR_SEL		31
-> > +#define IMX7ULP_CLK_DDR_DIV		32
-> > +#define IMX7ULP_CLK_NIC_SEL		33
-> > +#define IMX7ULP_CLK_NIC0_DIV		34
-> > +#define IMX7ULP_CLK_GPU_DIV		35
-> > +#define IMX7ULP_CLK_NIC1_DIV		36
-> > +#define IMX7ULP_CLK_NIC1_BUS_DIV	37
-> > +#define IMX7ULP_CLK_NIC1_EXT_DIV	38
-> > +#define IMX7ULP_CLK_MIPI_PLL		39
-> > +#define IMX7ULP_CLK_SIRC		40
-> > +#define IMX7ULP_CLK_SOSC_BUS_CLK	41
-> > +#define IMX7ULP_CLK_FIRC_BUS_CLK	42
-> > +#define IMX7ULP_CLK_SPLL_BUS_CLK	43
-> > +
-> > +#define IMX7ULP_CLK_SCG1_END		44
-> > +
-> > +/* PCC2 */
-> > +#define IMX7ULP_CLK_DMA1		0
-> > +#define IMX7ULP_CLK_RGPIO2P1		1
-> > +#define IMX7ULP_CLK_FLEXBUS		2
-> > +#define IMX7ULP_CLK_SEMA42_1		3
-> > +#define IMX7ULP_CLK_DMA_MUX1		4
-> > +#define IMX7ULP_CLK_SNVS		5
-> > +#define IMX7ULP_CLK_CAAM		6
-> > +#define IMX7ULP_CLK_LPTPM4		7
-> > +#define IMX7ULP_CLK_LPTPM5		8
-> > +#define IMX7ULP_CLK_LPIT1		9
-> > +#define IMX7ULP_CLK_LPSPI2		10
-> > +#define IMX7ULP_CLK_LPSPI3		11
-> > +#define IMX7ULP_CLK_LPI2C4		12
-> > +#define IMX7ULP_CLK_LPI2C5		13
-> > +#define IMX7ULP_CLK_LPUART4		14
-> > +#define IMX7ULP_CLK_LPUART5		15
-> > +#define IMX7ULP_CLK_FLEXIO1		16
-> > +#define IMX7ULP_CLK_USB0		17
-> > +#define IMX7ULP_CLK_USB1		18
-> > +#define IMX7ULP_CLK_USB_PHY		19
-> > +#define IMX7ULP_CLK_USB_PL301		20
-> > +#define IMX7ULP_CLK_USDHC0		21
-> > +#define IMX7ULP_CLK_USDHC1		22
-> > +#define IMX7ULP_CLK_WDG1		23
-> > +#define IMX7ULP_CLK_WDG2		24
-> > +
-> > +#define IMX7ULP_CLK_PCC2_END		25
-> > +
-> > +/* PCC3 */
-> > +#define IMX7ULP_CLK_LPTPM6		0
-> > +#define IMX7ULP_CLK_LPTPM7		1
-> > +#define IMX7ULP_CLK_LPI2C6		2
-> > +#define IMX7ULP_CLK_LPI2C7		3
-> > +#define IMX7ULP_CLK_LPUART6		4
-> > +#define IMX7ULP_CLK_LPUART7		5
-> > +#define IMX7ULP_CLK_VIU			6
-> > +#define IMX7ULP_CLK_DSI			7
-> > +#define IMX7ULP_CLK_LCDIF		8
-> > +#define IMX7ULP_CLK_MMDC		9
-> > +#define IMX7ULP_CLK_PCTLC		10
-> > +#define IMX7ULP_CLK_PCTLD		11
-> > +#define IMX7ULP_CLK_PCTLE		12
-> > +#define IMX7ULP_CLK_PCTLF		13
-> > +#define IMX7ULP_CLK_GPU3D		14
-> > +#define IMX7ULP_CLK_GPU2D		15
-> > +
-> > +#define IMX7ULP_CLK_PCC3_END		16
-> > +
-> > +#endif /* __DT_BINDINGS_CLOCK_IMX7ULP_H */
-> > --
-> > 2.7.4
-> >
