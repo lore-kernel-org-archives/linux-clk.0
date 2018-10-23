@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BF31ECDE44
-	for <linux-clk@archiver.kernel.org>; Tue, 23 Oct 2018 11:07:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81BC3C67863
+	for <linux-clk@archiver.kernel.org>; Tue, 23 Oct 2018 11:07:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D578B2075D
-	for <linux-clk@archiver.kernel.org>; Tue, 23 Oct 2018 11:07:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D578B2075D
+	by mail.kernel.org (Postfix) with ESMTP id 5570C2075D
+	for <linux-clk@archiver.kernel.org>; Tue, 23 Oct 2018 11:07:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5570C2075D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i2se.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728060AbeJWTaV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 23 Oct 2018 15:30:21 -0400
-Received: from mout.kundenserver.de ([212.227.126.134]:48461 "EHLO
+        id S1728064AbeJWTaX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 23 Oct 2018 15:30:23 -0400
+Received: from mout.kundenserver.de ([212.227.126.187]:34537 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726953AbeJWTaV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 Oct 2018 15:30:21 -0400
+        with ESMTP id S1726953AbeJWTaW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 Oct 2018 15:30:22 -0400
 Received: from localhost.localdomain ([37.4.249.153]) by
  mrelayeu.kundenserver.de (mreue009 [212.227.15.167]) with ESMTPSA (Nemesis)
- id 1MOiLv-1fxgki2ced-00QAez; Tue, 23 Oct 2018 13:06:55 +0200
+ id 1N336L-1fTao92B7V-013LF9; Tue, 23 Oct 2018 13:06:56 +0200
 Received: from localhost.localdomain ([37.4.249.153]) by
  mrelayeu.kundenserver.de (mreue009 [212.227.15.167]) with ESMTPSA (Nemesis)
- id 1MOiLv-1fxgki2ced-00QAez; Tue, 23 Oct 2018 13:06:55 +0200
+ id 1N336L-1fTao92B7V-013LF9; Tue, 23 Oct 2018 13:06:56 +0200
 From:   Stefan Wahren <stefan.wahren@i2se.com>
 To:     Florian Meier <florian.meier@koalo.de>,
         Chris Boot <bootc@bootc.net>,
@@ -38,27 +38,27 @@ Cc:     Michael Turquette <mturquette@baylibre.com>,
         linux-clk@vger.kernel.org, dmaengine@vger.kernel.org,
         linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Stefan Wahren <stefan.wahren@i2se.com>
-Subject: [PATCH 1/3] clk: bcm2835: make license text and module license match
-Date:   Tue, 23 Oct 2018 13:06:06 +0200
-Message-Id: <1540292769-5905-2-git-send-email-stefan.wahren@i2se.com>
+Subject: [PATCH 3/3] spi: bcm2835: make license text and module license match
+Date:   Tue, 23 Oct 2018 13:06:08 +0200
+Message-Id: <1540292769-5905-4-git-send-email-stefan.wahren@i2se.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1540292769-5905-1-git-send-email-stefan.wahren@i2se.com>
 References: <1540292769-5905-1-git-send-email-stefan.wahren@i2se.com>
-X-Provags-ID: V03:K1:3Nt3Bld7M3I37ZrwRHGbEI4JTKE+xuEEpwMPM0YcHUQtjC0pmoT
- /Rg4tMhn3COycw49Lann/iTYz6Obuug31sMyDGkbCRRkjHbzpmt3tlF8d356gdFpdaZza+4
- H651dGmOsQkNP+sLAJUh2aYJI6NIK+DSA2JbyO9gBCeBCf52z3+zzVR1SK3OodKd1cqWQnp
- Ff6v4kF/53r41LtePBTTQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:2TLN/yBkFd8=:WkIoLL0ZAsWh4B015zazAD
- TBEQsmE8zCYA8OEWuAlDWuVXeMq+z5ScRHyeXungoBVLw4FYbvawKz/p3yk7LghFML8lvNQ6X
- tQbRwKeyDksAhrUZTnG5q2NG8qjg1yXkoyMIss7vi0KkHNiEHkt0zJy9SEiDU0mFUCfR1KhIK
- k25fQOE8MOvJm5RI0lM7ZAg1HCP2Pubcu7o15KKL9zAaPNIzrdnbNAx2S5hgeMSOscfYChnIT
- 8kCTcP8dlSDFnAqhPpQx5qVg5IaHDRnpoIY/bnESKPSkMBQ8apSZO0pRFbB/KcetORgQwaOde
- EdwOLPy+63CirbTry+WUNyadB7GKNjqniXXmZZnSXa2AHHfgQOorfYEgR8To7M1yegZW7Y387
- U7xvf+v0v+K5FErqHP2y8SqP1sSa8a2S7HxqbLxkHfb9WzajyhvT9LMF2fX6/V03mbYKbb9l5
- Ej7/CuGn7GXubdu8G/Hn7p+2SZOGzwZBu6zzpwnwl3AyMqIcgL51X50O86YPgaWjtnKWWBc9x
- 7EcySOQyh4+VmZH/aFd5EMw8RbaE5kBUo1mWoZq+MqmKQpRcaFeKoIPzWOCpBKUgwowZjo5/s
- ZomiI+rhQ5RVNLs85YMd8htEuhPJm7IVDjQjE3K0+VsJYW/wPXz9Z4jZdUKv5zg4ilS/1F8Ry
- KB0boJz2egI/41iPqDvUkG9HCN5cxMTfTn652pxQlt4HZbnuhNdLaasZ0BAioLIokDmw=
+X-Provags-ID: V03:K1:PEMAF2+1ZpZBLAStRvotJdENaprOzKeQy5pL9T8W1c6KFgsl26T
+ IhkSVaOUHZI5nLUayHym49l1JD/irBbZUK0YG0XqwCXeVSopozgzVGwBYileBAecssNXF5y
+ Zv4ZwEz9dewEkJThWtdt5CFXi/VrRFiTVshsQEp7nQbaazabL2HP4pqPk+sn8jS7jcy6o/3
+ Sm5yIbbFWEOmIBw2J/O7A==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:2gE4XsoLKWw=:YkCO1h95OWRGzJ4WNycAgi
+ LHc1bjmSsoXoRe8Nyz+H/0Sd322yQpDaZVw3NyPgOfj5ObDhu6N+RgzV63tTACGKaxswerVby
+ KqDPPbFw+dzeIyS4RPPP0ZdTmZEzk1rK63pMpO5euSqmTFpaw4pAT9jNjjhyIvNR4I/CcKMYO
+ Kf72VKKNizqq+jMYIFueoMhatT2JGau+E8E3JwDj73Y+JhORRNaVtE9O+2Uy+cPj3bVtUPRGt
+ wFylAKJFUgM5TwXjGLwy7jAKblcA7rRsNmDL3KAHigsuVSuP1dmkziRTifxXMfAFuv6mdq6TY
+ Gy04FpynwZXaOoUaELwckc0MeiqKq6B07ReycKXT9EU4yanG9LZ+CBYXhU1EQRRNtGU5iXp1Z
+ uRufcj8HilKy8sy2ZjrSRNv1zbXbk8Hw3lSqZunYJ21+T+36iyMQWAB25zG7HRt1LOvW6E0u6
+ f8DpG9M3bBusFn4NwLc0ijqFOBUW/HlRZ9jdbCesZwT2rMG96ilC/nLuXjaPnWSnCnVQ3iBBb
+ 81Bt1QRKrPews53DFNmewojsnOPo8QmH4hSHM2aIfkjuy+2Lbja+gMMbXhvOWmPphrcnOzPQv
+ 8V3BFQj9ZOo2RWiv7Kb4/N516fhsnNO+CpFMIEbKE3VXequaqFcHEpV4tytT5gAoZlanLTuww
+ gJ/ZhO9ZJVjD91AsFEug325snpjhDjFSHEr2JMFF8YTC+Q77PXI7pciYtA1iDZ3DF2Ag=
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
@@ -70,28 +70,28 @@ license text as the correct one.
 
 Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
 ---
- drivers/clk/bcm/clk-bcm2835-aux.c | 2 +-
- drivers/clk/bcm/clk-bcm2835.c     | 2 +-
+ drivers/spi/spi-bcm2835.c    | 2 +-
+ drivers/spi/spi-bcm2835aux.c | 2 +-
  2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/bcm/clk-bcm2835-aux.c b/drivers/clk/bcm/clk-bcm2835-aux.c
-index f225ad2..e01d557 100644
---- a/drivers/clk/bcm/clk-bcm2835-aux.c
-+++ b/drivers/clk/bcm/clk-bcm2835-aux.c
-@@ -79,4 +79,4 @@ builtin_platform_driver(bcm2835_aux_clk_driver);
+diff --git a/drivers/spi/spi-bcm2835.c b/drivers/spi/spi-bcm2835.c
+index f35cc10..b0b87ff 100644
+--- a/drivers/spi/spi-bcm2835.c
++++ b/drivers/spi/spi-bcm2835.c
+@@ -843,4 +843,4 @@ module_platform_driver(bcm2835_spi_driver);
  
- MODULE_AUTHOR("Eric Anholt <eric@anholt.net>");
- MODULE_DESCRIPTION("BCM2835 auxiliary peripheral clock driver");
+ MODULE_DESCRIPTION("SPI controller driver for Broadcom BCM2835");
+ MODULE_AUTHOR("Chris Boot <bootc@bootc.net>");
 -MODULE_LICENSE("GPL v2");
 +MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 7bef066..6b6d836 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -2206,4 +2206,4 @@ builtin_platform_driver(bcm2835_clk_driver);
+diff --git a/drivers/spi/spi-bcm2835aux.c b/drivers/spi/spi-bcm2835aux.c
+index 3094d81..671e374 100644
+--- a/drivers/spi/spi-bcm2835aux.c
++++ b/drivers/spi/spi-bcm2835aux.c
+@@ -542,4 +542,4 @@ module_platform_driver(bcm2835aux_spi_driver);
  
- MODULE_AUTHOR("Eric Anholt <eric@anholt.net>");
- MODULE_DESCRIPTION("BCM2835 clock driver");
+ MODULE_DESCRIPTION("SPI controller driver for Broadcom BCM2835 aux");
+ MODULE_AUTHOR("Martin Sperl <kernel@martin.sperl.org>");
 -MODULE_LICENSE("GPL v2");
 +MODULE_LICENSE("GPL");
 -- 
