@@ -2,58 +2,58 @@ Return-Path: <SRS0=m775=ND=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5309C67863
-	for <linux-clk@archiver.kernel.org>; Tue, 23 Oct 2018 15:52:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD64DC67863
+	for <linux-clk@archiver.kernel.org>; Tue, 23 Oct 2018 15:52:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A63A20665
-	for <linux-clk@archiver.kernel.org>; Tue, 23 Oct 2018 15:52:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 85170207DD
+	for <linux-clk@archiver.kernel.org>; Tue, 23 Oct 2018 15:52:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="O7cpwft6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A63A20665
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="E1jZu/Nq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85170207DD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728621AbeJXAP6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 23 Oct 2018 20:15:58 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:45283 "EHLO
+        id S1728698AbeJXAQP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 23 Oct 2018 20:16:15 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:35834 "EHLO
         mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728618AbeJXAP6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 Oct 2018 20:15:58 -0400
-Received: by mail-pg1-f194.google.com with SMTP id s3-v6so842633pga.12
-        for <linux-clk@vger.kernel.org>; Tue, 23 Oct 2018 08:52:01 -0700 (PDT)
+        with ESMTP id S1728676AbeJXAQP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 Oct 2018 20:16:15 -0400
+Received: by mail-pg1-f194.google.com with SMTP id 32-v6so865417pgu.2
+        for <linux-clk@vger.kernel.org>; Tue, 23 Oct 2018 08:52:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Mxf9bLJ64wGfshFY8z9ZlFTV50JGRovm/Nkf235Myp8=;
-        b=O7cpwft6JaLDKZ9XT4opBiZzGwX6J4CvP6FV37dQY3QmBXyRnjI8vwpVK1E/ksxMm/
-         EJRhM2RQCqAoorhAq0ZJkEkoqSGIEwee+/HNMasHsrgzPnp1dn+kA+wsUyRO3ljdHaC3
-         mTSd/CwZ8pC5QN7q2i4I8nfxxzGwlyHr7knt0=
+        bh=yls8VK5SloeD7PLycjCBmh8RmhNZ2f5OyyDTNa+PUjw=;
+        b=E1jZu/NqK4UGLFtr/awcZP8ojZAlsCYBRElMj/TEE05ZRdtouaclx1alkrNZaaLgle
+         DaFTR1o6bOAQz6SgcUrthyxCbJhGcHMsNKzWtJFkal7Nn/SSnR/rkoCXxpol+2/tHHdF
+         lndDw74DMYYboS+XB/0w+LYxdTHR74KnyR6a4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Mxf9bLJ64wGfshFY8z9ZlFTV50JGRovm/Nkf235Myp8=;
-        b=Pl7YzyKU6kadybeF2Rndbb/baQ9TeT/2HApt+q1ILYOiZQLnYmiqw3931QL2Gtpbm3
-         UNUvgVugCcUVv4MBW+1VNQSWqfhj5GDnWS33jXqkjAzyYeGG2dZUcnRpkvol0FSbS52U
-         XdL3AF4d1WvFFD+jsy2BtfA7gVWvmBGQ9QbqvCmqF9XqB5VaoBPGbt75vB4B88mQxUQ+
-         F4EjbNomMlLXUXY+/e53YPwA2Tlw5EhFdMzHHyiNEvlrMLLalQ91kn3IIdQILq5yGiv/
-         2wS3A7IZFap1Aol1vssmd9fPlpofo8ZAG4piLa/Gg5eTlbFTHC0Odayfpaa3OKsZFfPC
-         Xziw==
-X-Gm-Message-State: ABuFfog5czxzA1K8Lwybv+nfzcDdX/3ZbpkrPJhEaaRyovJ5/39HD2zG
-        VotF/XrytrEEnBIJMPrXyuaFrw==
-X-Google-Smtp-Source: ACcGV60EbjWDJpyU6LQyMR5ISQRSoRJZ/WtrmDjL84l80LBmoGRyuaOkjS44bC3uBfcFNeoUfLBZAQ==
-X-Received: by 2002:a63:ce56:: with SMTP id r22-v6mr46751275pgi.217.1540309921005;
-        Tue, 23 Oct 2018 08:52:01 -0700 (PDT)
+        bh=yls8VK5SloeD7PLycjCBmh8RmhNZ2f5OyyDTNa+PUjw=;
+        b=R74lYtQORaGhZ7ZKAlybn0pp42lpOD7U2jfGnNjyTV05iFQ7jxBcrvEFToxLwxAr6B
+         szRHs79KYpcQhHXbAjXwTXcIka8E2OMfAcOjsxY+Bx9vC7hWG6zEacB2LKJ3AxjUdDG/
+         7rQJgOpJPcdhM9+2xNlqabDA5NWkmUZIq7rrIQrRFlxBHo8f9cuiEzDF5/3n5875bpG9
+         vJ8kcjbj2aBKplDNIth7+T/0DfPz5hyPtnpbnzXMRTyDVp29O4CvM8bF2aX6etSxLbml
+         +bBt5HR6LYu7RBeQHYbLXZYxsvk8bFYUqmYDYp/tdGBwXEOxwQ47N67+NGdcgv1BSCKA
+         DPVA==
+X-Gm-Message-State: ABuFfohsfove2b3ejtrsxNhm8rBUiW1SfhqpuJn4brqdsgq66afCRKHC
+        s0zreTGA7jtKMtjApVsxHTAB1w==
+X-Google-Smtp-Source: ACcGV61ixopvneYuQdnX9WKiA8YAnm8JF3FBR96qugo3dDIMzbSqceXp9QQfrYWOTLZDt7POpTm+OQ==
+X-Received: by 2002:a63:ce56:: with SMTP id r22-v6mr46752105pgi.217.1540309937928;
+        Tue, 23 Oct 2018 08:52:17 -0700 (PDT)
 Received: from localhost.localdomain ([27.7.51.1])
-        by smtp.gmail.com with ESMTPSA id o75-v6sm7442829pfg.0.2018.10.23.08.51.55
+        by smtp.gmail.com with ESMTPSA id o75-v6sm7442829pfg.0.2018.10.23.08.52.12
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 23 Oct 2018 08:52:00 -0700 (PDT)
+        Tue, 23 Oct 2018 08:52:17 -0700 (PDT)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Maxime Ripard <maxime.ripard@free-electrons.com>,
         Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
@@ -71,9 +71,9 @@ To:     Maxime Ripard <maxime.ripard@free-electrons.com>,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
 Cc:     Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v2 11/15] drm/panel: Add Bananapi S070WV20-CT16 ICN6211 MIPI-DSI to RGB bridge
-Date:   Tue, 23 Oct 2018 21:20:31 +0530
-Message-Id: <20181023155035.9101-12-jagan@amarulasolutions.com>
+Subject: [PATCH v2 14/15] arm64: dts: allwinner: a64: Add DSI pipeline
+Date:   Tue, 23 Oct 2018 21:20:34 +0530
+Message-Id: <20181023155035.9101-15-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 In-Reply-To: <20181023155035.9101-1-jagan@amarulasolutions.com>
 References: <20181023155035.9101-1-jagan@amarulasolutions.com>
@@ -84,403 +84,84 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Bananapi S070WV20-CT16 ICN6211 is 800x480, 4-lane MIPI-DSI to RGB bridge
-panel which can be used to connect via DSI port on BPI-M64 board,
-so add a driver for it.
+The A64 has a MIPI-DSI block which is similar to A31
+without mod clock.
 
-The same panel PCB comes with parallel RBG which is supported via
-panel-simple driver with "bananapi,s070wv20-ct16" compatible.
-
-Panel clock frequency used by BSP is 30MHz but the same cannot
-be handle via A64 PLL_MIPI and which is not working. So use 55MHz
-so-that it can rounded to 33MHz while calculating nkm dividers.
+So, add dsi node with A64 compatible, dphy node with
+A31 compatible and finally connect dsi to tcon0 to
+make proper DSI pipeline.
 
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
 Changes for v2:
-- Add detailed commit message
-- Update the compatible string for MIPI-DSI to RGB bridge
-- Use clock as 55MHz
+- use A64 dphy compatible
 
- drivers/gpu/drm/panel/Kconfig                 |   9 +
- drivers/gpu/drm/panel/Makefile                |   1 +
- .../panel/panel-bananapi-s070wv20-icn6211.c   | 336 ++++++++++++++++++
- 3 files changed, 346 insertions(+)
- create mode 100644 drivers/gpu/drm/panel/panel-bananapi-s070wv20-icn6211.c
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 45 +++++++++++++++++++
+ 1 file changed, 45 insertions(+)
 
-diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
-index 6020c30a33b3..20b88c275421 100644
---- a/drivers/gpu/drm/panel/Kconfig
-+++ b/drivers/gpu/drm/panel/Kconfig
-@@ -17,6 +17,15 @@ config DRM_PANEL_ARM_VERSATILE
- 	  reference designs. The panel is detected using special registers
- 	  in the Versatile family syscon registers.
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+index f3a66f888205..f82e6b165d57 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+@@ -320,6 +320,11 @@
+ 					#address-cells = <1>;
+ 					#size-cells = <0>;
+ 					reg = <1>;
++
++					tcon0_out_dsi: endpoint@1 {
++						reg = <1>;
++						remote-endpoint = <&dsi_in_tcon0>;
++					};
+ 				};
+ 			};
+ 		};
+@@ -818,6 +823,46 @@
+ 			#interrupt-cells = <3>;
+ 		};
  
-+config DRM_PANEL_BANANAPI_S070WV20_ICN6211
-+	tristate "Bananapi S070WV20-CT16 ICN6211 MIPI-DSI to RGB bridge panel driver"
-+	depends on OF
-+	depends on DRM_MIPI_DSI
-+	depends on BACKLIGHT_CLASS_DEVICE
-+	help
-+	  Say Y if you want to enable support for panels based on the
-+	  Bananapi S070WV20-CT16 MIPI-DSI controller.
 +
- config DRM_PANEL_LVDS
- 	tristate "Generic LVDS panel driver"
- 	depends on OF
-diff --git a/drivers/gpu/drm/panel/Makefile b/drivers/gpu/drm/panel/Makefile
-index 5ccaaa9d13af..04696bb85218 100644
---- a/drivers/gpu/drm/panel/Makefile
-+++ b/drivers/gpu/drm/panel/Makefile
-@@ -1,5 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
- obj-$(CONFIG_DRM_PANEL_ARM_VERSATILE) += panel-arm-versatile.o
-+obj-$(CONFIG_DRM_PANEL_BANANAPI_S070WV20_ICN6211) += panel-bananapi-s070wv20-icn6211.o
- obj-$(CONFIG_DRM_PANEL_LVDS) += panel-lvds.o
- obj-$(CONFIG_DRM_PANEL_SIMPLE) += panel-simple.o
- obj-$(CONFIG_DRM_PANEL_ILITEK_IL9322) += panel-ilitek-ili9322.o
-diff --git a/drivers/gpu/drm/panel/panel-bananapi-s070wv20-icn6211.c b/drivers/gpu/drm/panel/panel-bananapi-s070wv20-icn6211.c
-new file mode 100644
-index 000000000000..643b215bec34
---- /dev/null
-+++ b/drivers/gpu/drm/panel/panel-bananapi-s070wv20-icn6211.c
-@@ -0,0 +1,336 @@
-+// SPDX-License-Identifier: (GPL-2.0+ or MIT)
-+/*
-+ * Copyright (C) 2018 Amarula Solutions
-+ * Author: Jagan Teki <jagan@amarulasolutions.com>
-+ */
-+
-+#include <linux/backlight.h>
-+#include <linux/delay.h>
-+#include <linux/device.h>
-+#include <linux/err.h>
-+#include <linux/errno.h>
-+#include <linux/fb.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+
-+#include <linux/gpio/consumer.h>
-+#include <linux/regulator/consumer.h>
-+
-+#include <drm/drm_mipi_dsi.h>
-+#include <drm/drm_modes.h>
-+#include <drm/drm_panel.h>
-+
-+#include <video/mipi_display.h>
-+
-+struct s070wv20 {
-+	struct drm_panel	panel;
-+	struct mipi_dsi_device	*dsi;
-+
-+	struct backlight_device	*backlight;
-+	struct regulator	*dvdd;
-+	struct regulator	*avdd;
-+	struct gpio_desc	*reset;
-+
-+	bool			is_enabled;
-+	bool			is_prepared;
-+};
-+
-+static inline struct s070wv20 *panel_to_s070wv20(struct drm_panel *panel)
-+{
-+	return container_of(panel, struct s070wv20, panel);
-+}
-+
-+struct s070wv20_init_cmd {
-+	size_t len;
-+	const char *data;
-+};
-+
-+#define S070WV20_INIT_CMD(...) { \
-+	.len = sizeof((char[]){__VA_ARGS__}), \
-+	.data = (char[]){__VA_ARGS__} }
-+
-+static const struct s070wv20_init_cmd s070wv20_init_cmds[] = {
-+	S070WV20_INIT_CMD(0x7A, 0xC1),
-+	S070WV20_INIT_CMD(0x20, 0x20),
-+	S070WV20_INIT_CMD(0x21, 0xE0),
-+	S070WV20_INIT_CMD(0x22, 0x13),
-+	S070WV20_INIT_CMD(0x23, 0x28),
-+	S070WV20_INIT_CMD(0x24, 0x30),
-+	S070WV20_INIT_CMD(0x25, 0x28),
-+	S070WV20_INIT_CMD(0x26, 0x00),
-+	S070WV20_INIT_CMD(0x27, 0x0D),
-+	S070WV20_INIT_CMD(0x28, 0x03),
-+	S070WV20_INIT_CMD(0x29, 0x1D),
-+	S070WV20_INIT_CMD(0x34, 0x80),
-+	S070WV20_INIT_CMD(0x36, 0x28),
-+	S070WV20_INIT_CMD(0xB5, 0xA0),
-+	S070WV20_INIT_CMD(0x5C, 0xFF),
-+	S070WV20_INIT_CMD(0x2A, 0x01),
-+	S070WV20_INIT_CMD(0x56, 0x92),
-+	S070WV20_INIT_CMD(0x6B, 0x71),
-+	S070WV20_INIT_CMD(0x69, 0x2B),
-+	S070WV20_INIT_CMD(0x10, 0x40),
-+	S070WV20_INIT_CMD(0x11, 0x98),
-+	S070WV20_INIT_CMD(0xB6, 0x20),
-+	S070WV20_INIT_CMD(0x51, 0x20),
-+	S070WV20_INIT_CMD(0x09, 0x10),
-+};
-+
-+static int s070wv20_prepare(struct drm_panel *panel)
-+{
-+	struct s070wv20 *ctx = panel_to_s070wv20(panel);
-+	struct mipi_dsi_device *dsi = ctx->dsi;
-+	unsigned int i;
-+	int ret;
-+
-+	if (ctx->is_prepared)
-+		return 0;
-+
-+	msleep(50);
-+
-+	gpiod_set_value(ctx->reset, 1);
-+	msleep(50);
-+
-+	gpiod_set_value(ctx->reset, 0);
-+	msleep(50);
-+
-+	gpiod_set_value(ctx->reset, 1);
-+	msleep(20);
-+
-+	ret = mipi_dsi_dcs_exit_sleep_mode(dsi);
-+	if (ret < 0) {
-+		dev_err(panel->dev, "failed to exit sleep mode: %d\n", ret);
-+		return ret;
-+	}
-+
-+	msleep(120);
-+
-+	for (i = 0; i < ARRAY_SIZE(s070wv20_init_cmds); i++) {
-+		const struct s070wv20_init_cmd *cmd = &s070wv20_init_cmds[i];
-+
-+		ret = mipi_dsi_generic_write(dsi, cmd->data, cmd->len);
-+		if (ret < 0)
-+			return ret;
-+
-+		msleep(10);
-+	}
-+
-+	ret = mipi_dsi_dcs_set_display_on(dsi);
-+	if (ret < 0) {
-+		dev_err(panel->dev, "failed to set display on: %d\n", ret);
-+		return ret;
-+	}
-+
-+	ctx->is_prepared = true;
-+
-+	return 0;
-+}
-+
-+static int s070wv20_enable(struct drm_panel *panel)
-+{
-+	struct s070wv20 *ctx = panel_to_s070wv20(panel);
-+
-+	if (ctx->is_enabled)
-+		return 0;
-+
-+	msleep(120);
-+
-+	backlight_enable(ctx->backlight);
-+	ctx->is_enabled = true;
-+
-+	return 0;
-+}
-+
-+static int s070wv20_disable(struct drm_panel *panel)
-+{
-+	struct s070wv20 *ctx = panel_to_s070wv20(panel);
-+
-+	if (!ctx->is_enabled)
-+		return 0;
-+
-+	backlight_disable(ctx->backlight);
-+	ctx->is_enabled = false;
-+
-+	return 0;
-+}
-+
-+static int s070wv20_unprepare(struct drm_panel *panel)
-+{
-+	struct s070wv20 *ctx = panel_to_s070wv20(panel);
-+	int ret;
-+
-+	if (!ctx->is_prepared)
-+		return 0;
-+
-+	ret = mipi_dsi_dcs_set_display_off(ctx->dsi);
-+	if (ret < 0)
-+		dev_err(panel->dev, "failed to set display off: %d\n", ret);
-+
-+	ret = mipi_dsi_dcs_enter_sleep_mode(ctx->dsi);
-+	if (ret < 0)
-+		dev_err(panel->dev, "failed to enter sleep mode: %d\n", ret);
-+
-+	msleep(100);
-+
-+	regulator_disable(ctx->avdd);
-+
-+	regulator_disable(ctx->dvdd);
-+
-+	gpiod_set_value(ctx->reset, 0);
-+
-+	gpiod_set_value(ctx->reset, 1);
-+
-+	gpiod_set_value(ctx->reset, 0);
-+
-+	ctx->is_prepared = false;
-+
-+	return 0;
-+}
-+
-+static const struct drm_display_mode s070wv20_default_mode = {
-+	.clock = 55000,
-+	.vrefresh = 60,
-+
-+	.hdisplay = 800,
-+	.hsync_start = 800 + 40,
-+	.hsync_end = 800 + 40 + 48,
-+	.htotal = 800 + 40 + 48 + 40,
-+
-+	.vdisplay = 480,
-+	.vsync_start = 480 + 13,
-+	.vsync_end = 480 + 13 + 3,
-+	.vtotal = 480 + 13 + 3 + 29,
-+};
-+
-+static int s070wv20_get_modes(struct drm_panel *panel)
-+{
-+	struct drm_connector *connector = panel->connector;
-+	struct s070wv20 *ctx = panel_to_s070wv20(panel);
-+	struct drm_display_mode *mode;
-+
-+	mode = drm_mode_duplicate(panel->drm, &s070wv20_default_mode);
-+	if (!mode) {
-+		dev_err(&ctx->dsi->dev, "failed to add mode %ux%ux@%u\n",
-+			s070wv20_default_mode.hdisplay,
-+			s070wv20_default_mode.vdisplay,
-+			s070wv20_default_mode.vrefresh);
-+		return -ENOMEM;
-+	}
-+
-+	drm_mode_set_name(mode);
-+
-+	mode->type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED;
-+	drm_mode_probed_add(connector, mode);
-+
-+	panel->connector->display_info.width_mm = 86;
-+	panel->connector->display_info.height_mm = 154;
-+
-+	return 1;
-+}
-+
-+static const struct drm_panel_funcs s070wv20_funcs = {
-+	.disable = s070wv20_disable,
-+	.unprepare = s070wv20_unprepare,
-+	.prepare = s070wv20_prepare,
-+	.enable = s070wv20_enable,
-+	.get_modes = s070wv20_get_modes,
-+};
-+
-+static int s070wv20_dsi_probe(struct mipi_dsi_device *dsi)
-+{
-+	struct device_node *np;
-+	struct s070wv20 *ctx;
-+	int ret;
-+
-+	ctx = devm_kzalloc(&dsi->dev, sizeof(*ctx), GFP_KERNEL);
-+	if (!ctx)
-+		return -ENOMEM;
-+	mipi_dsi_set_drvdata(dsi, ctx);
-+	ctx->dsi = dsi;
-+
-+	drm_panel_init(&ctx->panel);
-+	ctx->panel.dev = &dsi->dev;
-+	ctx->panel.funcs = &s070wv20_funcs;
-+
-+	ctx->dvdd = devm_regulator_get(&dsi->dev, "dvdd");
-+	if (IS_ERR(ctx->dvdd)) {
-+		dev_err(&dsi->dev, "Couldn't get dvdd regulator\n");
-+		return PTR_ERR(ctx->dvdd);
-+	}
-+
-+	ctx->avdd = devm_regulator_get(&dsi->dev, "avdd");
-+	if (IS_ERR(ctx->avdd)) {
-+		dev_err(&dsi->dev, "Couldn't get avdd regulator\n");
-+		return PTR_ERR(ctx->avdd);
-+	}
-+
-+	ret = regulator_enable(ctx->dvdd);
-+	if (ret)
-+		return ret;
-+
-+	msleep(5);
-+
-+	ret = regulator_enable(ctx->avdd);
-+	if (ret)
-+		return ret;
-+
-+	msleep(5);
-+
-+	ctx->reset = devm_gpiod_get(&dsi->dev, "reset", GPIOD_OUT_LOW);
-+	if (IS_ERR(ctx->reset)) {
-+		dev_err(&dsi->dev, "Couldn't get our reset GPIO\n");
-+		return PTR_ERR(ctx->reset);
-+	}
-+
-+	np = of_parse_phandle(dsi->dev.of_node, "backlight", 0);
-+	if (np) {
-+		ctx->backlight = of_find_backlight_by_node(np);
-+		of_node_put(np);
-+
-+		if (!ctx->backlight)
-+			return -EPROBE_DEFER;
-+	}
-+
-+	ret = drm_panel_add(&ctx->panel);
-+	if (ret < 0)
-+		return ret;
-+
-+	dsi->mode_flags = MIPI_DSI_MODE_VIDEO_SYNC_PULSE;
-+	dsi->format = MIPI_DSI_FMT_RGB888;
-+	dsi->lanes = 4;
-+
-+	return mipi_dsi_attach(dsi);
-+}
-+
-+static int s070wv20_dsi_remove(struct mipi_dsi_device *dsi)
-+{
-+	struct s070wv20 *ctx = mipi_dsi_get_drvdata(dsi);
-+
-+	mipi_dsi_detach(dsi);
-+	drm_panel_remove(&ctx->panel);
-+
-+	if (ctx->backlight)
-+		put_device(&ctx->backlight->dev);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id s070wv20_of_match[] = {
-+	{ .compatible = "bananapi,s070wv20-ct16-icn6211", },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, s070wv20_of_match);
-+
-+static struct mipi_dsi_driver s070wv20_driver = {
-+	.probe = s070wv20_dsi_probe,
-+	.remove = s070wv20_dsi_remove,
-+	.driver = {
-+		.name = "bananapi-s070wv20-ct16-icn6211",
-+		.of_match_table = s070wv20_of_match,
-+	},
-+};
-+module_mipi_dsi_driver(s070wv20_driver);
-+
-+MODULE_AUTHOR("Jagan Teki <jagan@amarulasolutions.com>");
-+MODULE_DESCRIPTION("Bananapi S070WV20-CT16 ICN6211 MIPI-DSI to RGB");
-+MODULE_LICENSE("GPL v2");
++		dsi: dsi@1ca0000 {
++			compatible = "allwinner,sun50i-a64-mipi-dsi";
++			reg = <0x01ca0000 0x1000>;
++			interrupts = <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&ccu CLK_BUS_MIPI_DSI>;
++			clock-names = "bus";
++			resets = <&ccu RST_BUS_MIPI_DSI>;
++			phys = <&dphy>;
++			phy-names = "dphy";
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@0 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <0>;
++
++					dsi_in_tcon0: endpoint {
++						remote-endpoint = <&tcon0_out_dsi>;
++					};
++				};
++			};
++		};
++
++		dphy: d-phy@1ca1000 {
++			compatible = "allwinner,sun50i-a64-mipi-dphy",
++				     "allwinner,sun6i-a31-mipi-dphy";
++			reg = <0x01ca1000 0x1000>;
++			clocks = <&ccu CLK_BUS_MIPI_DSI>,
++				 <&ccu CLK_DSI_DPHY>;
++			clock-names = "bus", "mod";
++			resets = <&ccu RST_BUS_MIPI_DSI>;
++			status = "disabled";
++			#phy-cells = <0>;
++		};
++
+ 		pwm: pwm@1c21400 {
+ 			compatible = "allwinner,sun50i-a64-pwm",
+ 				     "allwinner,sun5i-a13-pwm";
 -- 
 2.18.0.321.gffc6fa0e3
 
