@@ -2,135 +2,94 @@ Return-Path: <SRS0=m775=ND=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C2F9C46475
-	for <linux-clk@archiver.kernel.org>; Tue, 23 Oct 2018 17:10:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83CD1C46475
+	for <linux-clk@archiver.kernel.org>; Tue, 23 Oct 2018 18:31:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4616A20671
-	for <linux-clk@archiver.kernel.org>; Tue, 23 Oct 2018 17:10:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X5xZ38BL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4616A20671
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 4CB5820813
+	for <linux-clk@archiver.kernel.org>; Tue, 23 Oct 2018 18:31:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CB5820813
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=anholt.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728363AbeJXBei (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 23 Oct 2018 21:34:38 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:41874 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727730AbeJXBei (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 Oct 2018 21:34:38 -0400
-Received: by mail-ot1-f67.google.com with SMTP id c32so2143374otb.8;
-        Tue, 23 Oct 2018 10:10:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ncWcM9DGWaPmyt0qeW1DV8mg6dg8K6TB59ZY+H1rCrY=;
-        b=X5xZ38BLEMFudfE1xUWLivqQLOQzefdjZogjHCsTn6tvDTaosdqHMBwlUJFO1jyWgI
-         a1aZrfYIzWJ1cSEy6xN16ug1kq3DsHXnbgZu0VI3zJVDoEs8fMy5W1GJJlig9R8l99Hb
-         WAoahhqvqPTAFgd0zagmPSEP+qx5WVEFkonwvmpvfLTtwevIoiA4kaM6Mqxxsed6G2tK
-         K+c5YmKsSVfitKQc25d/nhEskKqzDyru1bdYg6gjmxqvqEQcoOYAmBcjaEI3GMlzcsSU
-         +QoUMvwDM+8E0KT2GoFGLRzzbafVBRK0/fe4iYVdQktEqgen9SvRJgHNrI/1QoFjTKZ1
-         sS1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ncWcM9DGWaPmyt0qeW1DV8mg6dg8K6TB59ZY+H1rCrY=;
-        b=cf6f25fhOe4dSeA/emFVuiU4VLebEduAvCGbfRIhMQnrXCQWjaGEZtMJ8DfQKVirZ3
-         Q3AEKxjBCNeTX8bGBlMspbMzDEzy6CZ5zJ8WY3WdaCO9luxgXvLqCCRvuoPhDjbBVhki
-         +3+asDS6llZs4y7mgnzOY3PZnMpRt8vSSIpTixnNxfssIts0yt/AwJAYu0UHHiO2ncwf
-         szkYPuHWfTQLzqZXW47iNudDNfRJb1JEcsoS0RNSN2TCh+nz0CDBom9c50YKxcccth1Q
-         zDptHhKj61Qvtfp+uMikp1rpkam7aue4S56y8rfhfTKfghobCZwjfcGajjnaRMw+QEXJ
-         rA6g==
-X-Gm-Message-State: AGRZ1gIm/SjrgVk+f4exUm69fXbygnjFzYiB8Vw04H5J4dylLDVYiQkt
-        EU2OML/XPnYwtzmaF8NARFyPPRyFLJc1IBgHnVc=
-X-Google-Smtp-Source: AJdET5c1D5ID4dhTVzhcRrw1JL2swMfwJbyCRR5rgBcT4VXC+WN3pjN9LXPnlSKRDU/2jadIykTybcT0Kcy+cWz9BAM=
-X-Received: by 2002:a9d:5910:: with SMTP id t16mr3814014oth.99.1540314622397;
- Tue, 23 Oct 2018 10:10:22 -0700 (PDT)
+        id S1728099AbeJXC41 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 23 Oct 2018 22:56:27 -0400
+Received: from anholt.net ([50.246.234.109]:43944 "EHLO anholt.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728052AbeJXC41 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 23 Oct 2018 22:56:27 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by anholt.net (Postfix) with ESMTP id BA47110A12D8;
+        Tue, 23 Oct 2018 11:31:54 -0700 (PDT)
+X-Virus-Scanned: Debian amavisd-new at anholt.net
+Received: from anholt.net ([127.0.0.1])
+        by localhost (kingsolver.anholt.net [127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id YjJoJH7aXMPV; Tue, 23 Oct 2018 11:31:53 -0700 (PDT)
+Received: from eliezer.anholt.net (localhost [127.0.0.1])
+        by anholt.net (Postfix) with ESMTP id 95F4A10A0414;
+        Tue, 23 Oct 2018 11:31:53 -0700 (PDT)
+Received: by eliezer.anholt.net (Postfix, from userid 1000)
+        id CA78A2FE1BEE; Tue, 23 Oct 2018 11:31:52 -0700 (PDT)
+From:   Eric Anholt <eric@anholt.net>
+To:     Stefan Wahren <stefan.wahren@i2se.com>,
+        Florian Meier <florian.meier@koalo.de>,
+        Chris Boot <bootc@bootc.net>,
+        Martin Sperl <kernel@martin.sperl.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Mark Brown <broonie@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        linux-clk@vger.kernel.org, dmaengine@vger.kernel.org,
+        linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Stefan Wahren <stefan.wahren@i2se.com>
+Subject: Re: [PATCH 1/3] clk: bcm2835: make license text and module license match
+In-Reply-To: <1540292769-5905-2-git-send-email-stefan.wahren@i2se.com>
+References: <1540292769-5905-1-git-send-email-stefan.wahren@i2se.com> <1540292769-5905-2-git-send-email-stefan.wahren@i2se.com>
+User-Agent: Notmuch/0.22.2+1~gb0bcfaa (http://notmuchmail.org) Emacs/25.2.2 (x86_64-pc-linux-gnu)
+Date:   Tue, 23 Oct 2018 11:31:50 -0700
+Message-ID: <877ei81pm1.fsf@anholt.net>
 MIME-Version: 1.0
-References: <20181023155035.9101-1-jagan@amarulasolutions.com> <20181023155035.9101-4-jagan@amarulasolutions.com>
-In-Reply-To: <20181023155035.9101-4-jagan@amarulasolutions.com>
-From:   Vasily Khoruzhick <anarsoul@gmail.com>
-Date:   Tue, 23 Oct 2018 10:10:22 -0700
-Message-ID: <CA+E=qVcs0xT2Vqksjs4tz5eBtp_RZ_dqX0AEPfjSaJqA5YBt-g@mail.gmail.com>
-Subject: Re: [PATCH v2 03/15] clk: sunxi-ng: Add check for maximum rate to NKM PLLs
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linux-clk <linux-clk@vger.kernel.org>,
-        michael@amarulasolutions.com,
-        arm-linux <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha512; protocol="application/pgp-signature"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Oct 23, 2018 at 8:51 AM Jagan Teki <jagan@amarulasolutions.com> wrote:
->
-> Some NKM PLLs, frequency can be set above PLL working range.
->
-> Add a constraint for maximum supported rate. This way, drivers can
-> specify which is maximum allowed rate for PLL.
+--=-=-=
+Content-Type: text/plain
 
-I'd squash patches 2 and 3 into a single patch.
+Stefan Wahren <stefan.wahren@i2se.com> writes:
 
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> ---
-> Changes for v2:
-> - new patch
+> The license text is specifying GPL v2 or later but the MODULE_LICENSE
+> is set to GPL v2 which means GNU Public License v2 only. So choose the
+> license text as the correct one.
 >
->  drivers/clk/sunxi-ng/ccu_nkm.c | 7 +++++++
->  drivers/clk/sunxi-ng/ccu_nkm.h | 1 +
->  2 files changed, 8 insertions(+)
->
-> diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_nkm.c
-> index d17539dc88dd..574fd2cd2a79 100644
-> --- a/drivers/clk/sunxi-ng/ccu_nkm.c
-> +++ b/drivers/clk/sunxi-ng/ccu_nkm.c
-> @@ -132,6 +132,13 @@ static unsigned long ccu_nkm_round_rate(struct ccu_mux_internal *mux,
->                 return rate;
->         }
->
-> +       if (nkm->max_rate && rate > nkm->max_rate) {
-> +               rate = nkm->max_rate;
-> +               if (nkm->common.features & CCU_FEATURE_FIXED_POSTDIV)
-> +                       rate /= nkm->fixed_post_div;
-> +               return rate;
-> +       }
-> +
->         ccu_nkm_find_best(*parent_rate, rate, &_nkm);
->
->         rate = *parent_rate * _nkm.n * _nkm.k / _nkm.m;
-> diff --git a/drivers/clk/sunxi-ng/ccu_nkm.h b/drivers/clk/sunxi-ng/ccu_nkm.h
-> index ff5bd00f429f..c82590481188 100644
-> --- a/drivers/clk/sunxi-ng/ccu_nkm.h
-> +++ b/drivers/clk/sunxi-ng/ccu_nkm.h
-> @@ -36,6 +36,7 @@ struct ccu_nkm {
->
->         unsigned int            fixed_post_div;
->         unsigned int            min_rate;
-> +       unsigned int            max_rate;
->
->         struct ccu_common       common;
->  };
-> --
-> 2.18.0.321.gffc6fa0e3
->
+> Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+
+For the series:
+
+Reviewed-by: Eric Anholt <eric@anholt.net>
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlvPaRcACgkQtdYpNtH8
+nuhl0g//QCNHTslEb1sIYbZw+iQFG4Qi0n2TjzPw+JVxnNFYAuU9sBM/roll1IsD
+dmykkOeeTtH4+SEYC1H1SuuaTaTqXO/AF+0JP7TGlN9DmZootrWXENIAbABZjfQp
+lyLmyGUlI8MYmRQzgQ+YN4p0dQ/9yNfVOspX06akGYT3OYEMmEEGJ6ADyc8I63Ae
+HxM6zl374y2BMp3vQx7F30l11uq8bk+boQ8DiPsty4kRx9fxVGml2Eo+k8mSjCTl
+ItnvlsY3IbHeAS/zyvqm0CicbgTMiwy/1jwDGImmLTEKcrcf/uyGOAHe6whTZctn
+q8bclvbIsyXYswDNkSKorQUGjWINQ7s/8H3ywRE4SIRxLGUXzqs9Y2xss+WTsImP
+POIo0VTJWH+gkQX55qGfiJ3yWX+r3eRGqKzxRAQMdhWIbz1dlKFda2r4XNeWdTgA
+7zN27MpzpRux8a8kpjDwoMmsuLAGiCxtjFRtlGODCmpRY0v4Mk0Q567ubUe4byYa
+f+nh9diHbj1YIZD0kIcTeFImPgJYYtUvQuwV8/FELS2PIjBHgzarYd4pz4f7704+
+plEXHeNzXQ4b2nzSTg2iK2QwBA+GNjazV9jLg7BDtTaP2RjFEE/fz0C9L+4eMVzj
+0GLFavyNTovd9QGGW5m54XmbyOsoJE4ObnIsMSP6qhaLwgmXfnU=
+=HIXV
+-----END PGP SIGNATURE-----
+--=-=-=--
