@@ -7,63 +7,65 @@ X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87BD1C67863
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Oct 2018 03:09:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E896C67863
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Oct 2018 03:15:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 348932075D
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Oct 2018 03:09:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 454492075D
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Oct 2018 03:15:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Qglqat34"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 348932075D
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Oq9hBHjf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 454492075D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726792AbeJXLfV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 24 Oct 2018 07:35:21 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:46309 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726258AbeJXLfU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Oct 2018 07:35:20 -0400
-Received: by mail-pl1-f195.google.com with SMTP id bb7-v6so1542836plb.13
-        for <linux-clk@vger.kernel.org>; Tue, 23 Oct 2018 20:09:16 -0700 (PDT)
+        id S1725998AbeJXLld (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 24 Oct 2018 07:41:33 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:44422 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725952AbeJXLlc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Oct 2018 07:41:32 -0400
+Received: by mail-pg1-f194.google.com with SMTP id w3-v6so1614401pgs.11
+        for <linux-clk@vger.kernel.org>; Tue, 23 Oct 2018 20:15:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=2rDz5In+P0C0bxVMrYHNwbI3vLV6HX8szmW5dC4SssQ=;
-        b=Qglqat34rgNx6f1LxKBsofQd3BhPuDsl7v2G4UtwZDyvGCaVMh0zZlpCZSuNNPkANv
-         CzRHlC8Ox7koYYMZyjnIFTtlMq1lUxGZXZOPsRS6NZyz4DVoB6QTT02fGvransfREIvl
-         PpjIKppsQLZT9UjHaaearBGMI/KfGqfEphtNE=
+        bh=sLIRKsPeonK/zKq59N3XJK3GG96UNWulOAZhs9ex8SY=;
+        b=Oq9hBHjfqen+WJ1439fJed/MhzNLjcC79qA5qQHQAIMzaws1C8fAIf3VfOarEvwhWT
+         r5J0q+QWxIrpKpO+5x8i/nZxWbf/4AY1bcFhLVCiKwSzy3gcM8vMH0Bp0p7QpIAlXrvQ
+         b6nIHrhDtzRLebe1aQipDiaNzS22jPD9vdXOk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=2rDz5In+P0C0bxVMrYHNwbI3vLV6HX8szmW5dC4SssQ=;
-        b=jzZk7J1YrPdhelS+t/WG4nCyDB4nZkJGs0J4Sv1BoL/nDLXXPgVL+1AEWkp++UNrkF
-         R5XglWu2O+uub6ooWeenkO1Z21s7q6LpM3ZD0oRnExhKc5SQqs3UQd71PWAA3saOmWpU
-         TnqO0J8Uc9XqWEtIyCGGPVnXDKWlBirJZ4oq+b7SUHB+dRZw4jTJDfuewMXMrXpNRdmn
-         sm1WUNNaQjt1oD+Y57UIl4XbXVbvrrtEcNYQDqAj4Rru4venxsko4SjdZNHsy2dDwLev
-         OhiMeeODIZlliy4ULjcR/HPCZ3V8tZjEKzE77QDsOHpqxm7wz4KTIZmpjvQSytyI3/qg
-         7Caw==
-X-Gm-Message-State: AGRZ1gJPEWCXWPWswalqN/B5i0q+fHng8F14b/tuRnVxER0ZFkaF1ip5
-        jdMNHqlYCq0XfWt2iKpMVp8oXAx+zIc=
-X-Google-Smtp-Source: AJdET5eB75cTGxW57v8UqI4QVxxEg26ewhGqhjk3ej5x6/q6GqQSkjhYTHbfKh87DrEzT/n0WL6Izg==
-X-Received: by 2002:a17:902:bcc3:: with SMTP id o3-v6mr626102pls.66.1540344708952;
-        Tue, 23 Oct 2018 18:31:48 -0700 (PDT)
+        bh=sLIRKsPeonK/zKq59N3XJK3GG96UNWulOAZhs9ex8SY=;
+        b=DVwjV6j8fkVkYVzbmWVTd7DHhKhQy15euFhRoaGKF4rv6GRNZk9Sx92EHdWXXGJOZO
+         2AhRvYJiu002iz3pOkNe+hxxPyfAzEsJdLSma6GFHPCQVHqCxDcH4Pob9VM/2TBf89U2
+         NuewiWO6us/oDu4uO4GQcVfQJzclixhWT6FKCyhtQGb8JrDgv/NuINXSIbyFU6bf8ZOq
+         gMI+N2IkA9geN4TcMLSzeZGr2rCVPc5Unpr/29qK2YYSIuuuPkVwB/B7mM41AdEi1DwQ
+         7+fUMCGGrA36L82rNM1tuWSpihrBqDq7+RRU9dy0by31B1QzWRD53RGutq7M5hGXLpo+
+         +OPA==
+X-Gm-Message-State: AGRZ1gIR99UnwTfr3xCXZ+z6GUzzvFGytOovAmqYYnXPxCepxRYXcrxE
+        +svnfJy1O5XY104PBXtHqSVhHFLZRI8=
+X-Google-Smtp-Source: AJdET5dNnQkWHsNuX1YpS5kddgO8he+p0IDdFMXZpwCjVhiBwvyf1ZDsSHKsxalh3KxPcd51MJp1CA==
+X-Received: by 2002:a63:fa4e:: with SMTP id g14-v6mr640117pgk.18.1540344702043;
+        Tue, 23 Oct 2018 18:31:42 -0700 (PDT)
 Received: from exogeni.mtv.corp.google.com ([2620:15c:202:1:5e2b:39df:72ed:4968])
-        by smtp.gmail.com with ESMTPSA id p4-v6sm3882341pfg.188.2018.10.23.18.31.47
+        by smtp.gmail.com with ESMTPSA id p4-v6sm3882341pfg.188.2018.10.23.18.31.40
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 23 Oct 2018 18:31:48 -0700 (PDT)
+        Tue, 23 Oct 2018 18:31:41 -0700 (PDT)
 From:   Derek Basehore <dbasehore@chromium.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-rockchip@lists.infradead.org, linux-doc@vger.kernel.org,
         sboyd@kernel.org, mturquette@baylibre.com, heiko@sntech.de,
         aisheng.dong@nxp.com, mchehab+samsung@kernel.org, corbet@lwn.net,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
         Derek Basehore <dbasehore@chromium.org>
-Subject: [PATCH 6/6] clk: rockchip: use pre_rate_req for cpuclk
-Date:   Tue, 23 Oct 2018 18:31:32 -0700
-Message-Id: <20181024013132.115907-7-dbasehore@chromium.org>
+Subject: [PATCH 1/6] clk: Remove recursion in clk_core_{prepare,enable}()
+Date:   Tue, 23 Oct 2018 18:31:27 -0700
+Message-Id: <20181024013132.115907-2-dbasehore@chromium.org>
 X-Mailer: git-send-email 2.19.1.568.g152ad8e336-goog
 In-Reply-To: <20181024013132.115907-1-dbasehore@chromium.org>
 References: <20181024013132.115907-1-dbasehore@chromium.org>
@@ -74,379 +76,201 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This makes the rockchip cpuclk use the pre_rate_req op to change to
-the alt parent instead of the clk notifier. This has the benefit of
-the clk not changing parents behind the back of the common clk
-framework. It also changes the divider setting for the alt parent to
-only divide when the alt parent rate is higher than both the old and
-new rates.
+From: Stephen Boyd <sboyd@codeaurora.org>
 
+Enabling and preparing clocks can be written quite naturally with
+recursion. We start at some point in the tree and recurse up the
+tree to find the oldest parent clk that needs to be enabled or
+prepared. Then we enable/prepare and return to the caller, going
+back to the clk we started at and enabling/preparing along the
+way.
+
+The problem is recursion isn't great for kernel code where we
+have a limited stack size. Furthermore, we may be calling this
+code inside clk_set_rate() which also has recursion in it, so
+we're really not looking good if we encounter a tall clk tree.
+
+Let's create a stack instead by looping over the parent chain and
+collecting clks of interest. Then the enable/prepare becomes as
+simple as iterating over that list and calling enable.
+
+Cc: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 Signed-off-by: Derek Basehore <dbasehore@chromium.org>
 ---
- drivers/clk/rockchip/clk-cpu.c | 256 ++++++++++++++++++---------------
- 1 file changed, 137 insertions(+), 119 deletions(-)
+ drivers/clk/clk.c | 113 ++++++++++++++++++++++++++--------------------
+ 1 file changed, 64 insertions(+), 49 deletions(-)
 
-diff --git a/drivers/clk/rockchip/clk-cpu.c b/drivers/clk/rockchip/clk-cpu.c
-index 32c19c0f1e14..3829e8e75c9e 100644
---- a/drivers/clk/rockchip/clk-cpu.c
-+++ b/drivers/clk/rockchip/clk-cpu.c
-@@ -45,8 +45,6 @@
-  * @alt_parent:	alternate parent clock to use when switching the speed
-  *		of the primary parent clock.
-  * @reg_base:	base register for cpu-clock values.
-- * @clk_nb:	clock notifier registered for changes in clock speed of the
-- *		primary parent clock.
-  * @rate_count:	number of rates in the rate_table
-  * @rate_table:	pll-rates and their associated dividers
-  * @reg_data:	cpu-specific register settings
-@@ -60,7 +58,6 @@ struct rockchip_cpuclk {
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index af011974d4ec..95d818f5edb2 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -71,6 +71,8 @@ struct clk_core {
+ 	struct hlist_head	children;
+ 	struct hlist_node	child_node;
+ 	struct hlist_head	clks;
++	struct list_head	prepare_list;
++	struct list_head	enable_list;
+ 	unsigned int		notifier_count;
+ #ifdef CONFIG_DEBUG_FS
+ 	struct dentry		*dentry;
+@@ -740,49 +742,48 @@ EXPORT_SYMBOL_GPL(clk_unprepare);
+ static int clk_core_prepare(struct clk_core *core)
+ {
+ 	int ret = 0;
++	struct clk_core *tmp, *parent;
++	LIST_HEAD(head);
  
- 	struct clk				*alt_parent;
- 	void __iomem				*reg_base;
--	struct notifier_block			clk_nb;
- 	unsigned int				rate_count;
- 	struct rockchip_cpuclk_rate_table	*rate_table;
- 	const struct rockchip_cpuclk_reg_data	*reg_data;
-@@ -78,12 +75,21 @@ static const struct rockchip_cpuclk_rate_table *rockchip_get_cpuclk_settings(
- 							cpuclk->rate_table;
- 	int i;
+ 	lockdep_assert_held(&prepare_lock);
  
-+	/*
-+	 * Find the lowest rate settings for which the prate is greater than or
-+	 * equal to the rate. Final rates should match exactly, but some
-+	 * intermediate rates from pre_rate_req will not exactly match, but the
-+	 * settings for a higher prate will work.
-+	 */
- 	for (i = 0; i < cpuclk->rate_count; i++) {
--		if (rate == rate_table[i].prate)
--			return &rate_table[i];
-+		if (rate > rate_table[i].prate)
+-	if (!core)
+-		return 0;
++	while (core) {
++		list_add(&core->prepare_list, &head);
++		/* Stop once we see a clk that is already prepared */
++		if (core->prepare_count)
 +			break;
- 	}
- 
--	return NULL;
-+	if (i == 0 || i == cpuclk->rate_count)
-+		return NULL;
-+
-+	return &rate_table[i - 1];
- }
- 
- static unsigned long rockchip_cpuclk_recalc_rate(struct clk_hw *hw,
-@@ -98,9 +104,70 @@ static unsigned long rockchip_cpuclk_recalc_rate(struct clk_hw *hw,
- 	return parent_rate / (clksel0 + 1);
- }
- 
--static const struct clk_ops rockchip_cpuclk_ops = {
--	.recalc_rate = rockchip_cpuclk_recalc_rate,
--};
-+static int rockchip_cpuclk_pre_rate_req(struct clk_hw *hw,
-+					const struct clk_rate_request *next,
-+					struct clk_rate_request *pre)
-+{
-+	struct rockchip_cpuclk *cpuclk = container_of(hw,
-+			struct rockchip_cpuclk, hw);
-+	const struct rockchip_cpuclk_reg_data *reg_data = cpuclk->reg_data;
-+	unsigned long alt_prate, alt_div, hi_rate;
-+
-+	pre->best_parent_hw = __clk_get_hw(cpuclk->alt_parent);
-+	alt_prate = clk_get_rate(cpuclk->alt_parent);
-+	pre->best_parent_rate = alt_prate;
-+	hi_rate = max_t(unsigned long, next->rate, clk_hw_get_rate(hw));
-+
-+	/* Set dividers if we would go above the current or next rate. */
-+	if (alt_prate > hi_rate) {
-+		alt_div =  DIV_ROUND_UP(alt_prate, hi_rate);
-+		if (alt_div > reg_data->div_core_mask) {
-+			pr_warn("%s: limiting alt-divider %lu to %d\n",
-+				__func__, alt_div, reg_data->div_core_mask);
-+			alt_div = reg_data->div_core_mask;
-+		}
-+
-+		pre->rate = alt_prate / alt_div;
-+	} else {
-+		pre->rate = alt_prate;
++		core = core->parent;
 +	}
-+
-+	return 1;
-+}
-+
-+static int rockchip_cpuclk_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct rockchip_cpuclk *cpuclk = container_of(hw,
-+			struct rockchip_cpuclk, hw);
-+	const struct rockchip_cpuclk_reg_data *reg_data = cpuclk->reg_data;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(cpuclk->lock, flags);
-+	writel(HIWORD_UPDATE(index,
-+			     reg_data->mux_core_mask,
-+			     reg_data->mux_core_shift),
-+	       cpuclk->reg_base + reg_data->core_reg);
-+	spin_unlock_irqrestore(cpuclk->lock, flags);
-+
-+	return 0;
-+}
-+
-+static u8 rockchip_cpuclk_get_parent(struct clk_hw *hw)
-+{
-+	struct rockchip_cpuclk *cpuclk = container_of(hw,
-+			struct rockchip_cpuclk, hw);
-+	const struct rockchip_cpuclk_reg_data *reg_data = cpuclk->reg_data;
-+	unsigned long flags;
-+	u32 val;
-+
-+	spin_lock_irqsave(cpuclk->lock, flags);
-+	val = readl_relaxed(cpuclk->reg_base + reg_data->core_reg);
-+	val >>= reg_data->mux_core_shift;
-+	val &= reg_data->mux_core_mask;
-+	spin_unlock_irqrestore(cpuclk->lock, flags);
-+
-+	return val;
-+}
  
- static void rockchip_cpuclk_set_dividers(struct rockchip_cpuclk *cpuclk,
- 				const struct rockchip_cpuclk_rate_table *rate)
-@@ -120,131 +187,92 @@ static void rockchip_cpuclk_set_dividers(struct rockchip_cpuclk *cpuclk,
- 	}
- }
+-	if (core->prepare_count == 0) {
+-		ret = clk_pm_runtime_get(core);
+-		if (ret)
+-			return ret;
++	list_for_each_entry_safe(core, tmp, &head, prepare_list) {
++		list_del_init(&core->prepare_list);
  
--static int rockchip_cpuclk_pre_rate_change(struct rockchip_cpuclk *cpuclk,
--					   struct clk_notifier_data *ndata)
-+static int rockchip_cpuclk_set_rate(struct clk_hw *hw, unsigned long rate,
-+					unsigned long parent_rate)
- {
-+	struct rockchip_cpuclk *cpuclk = container_of(hw,
-+			struct rockchip_cpuclk, hw);
- 	const struct rockchip_cpuclk_reg_data *reg_data = cpuclk->reg_data;
--	const struct rockchip_cpuclk_rate_table *rate;
--	unsigned long alt_prate, alt_div;
--	unsigned long flags;
-+	const struct rockchip_cpuclk_rate_table *rate_divs;
-+	unsigned long div = (parent_rate / rate) - 1;
-+	unsigned long old_rate, flags;
+-		ret = clk_core_prepare(core->parent);
+-		if (ret)
+-			goto runtime_put;
++		if (core->prepare_count == 0) {
++			ret = clk_pm_runtime_get(core);
++			if (ret)
++				goto err;
  
--	/* check validity of the new rate */
--	rate = rockchip_get_cpuclk_settings(cpuclk, ndata->new_rate);
--	if (!rate) {
--		pr_err("%s: Invalid rate : %lu for cpuclk\n",
--		       __func__, ndata->new_rate);
-+	if (div > reg_data->div_core_mask || rate > parent_rate) {
-+		pr_err("%s: Invalid rate : %lu %lu for cpuclk\n", __func__,
-+				rate, parent_rate);
- 		return -EINVAL;
+-		trace_clk_prepare(core);
++			trace_clk_prepare(core);
+ 
+-		if (core->ops->prepare)
+-			ret = core->ops->prepare(core->hw);
++			if (core->ops->prepare)
++				ret = core->ops->prepare(core->hw);
+ 
+-		trace_clk_prepare_complete(core);
++			trace_clk_prepare_complete(core);
+ 
+-		if (ret)
+-			goto unprepare;
++			if (ret) {
++				clk_pm_runtime_put(core);
++				goto err;
++			}
++		}
++		core->prepare_count++;
  	}
  
--	alt_prate = clk_get_rate(cpuclk->alt_parent);
+-	core->prepare_count++;
 -
-+	old_rate = clk_hw_get_rate(hw);
-+	rate_divs = rockchip_get_cpuclk_settings(cpuclk, rate);
- 	spin_lock_irqsave(cpuclk->lock, flags);
-+	if (old_rate < rate)
-+		rockchip_cpuclk_set_dividers(cpuclk, rate_divs);
- 
 -	/*
--	 * If the old parent clock speed is less than the clock speed
--	 * of the alternate parent, then it should be ensured that at no point
--	 * the armclk speed is more than the old_rate until the dividers are
--	 * set.
+-	 * CLK_SET_RATE_GATE is a special case of clock protection
+-	 * Instead of a consumer claiming exclusive rate control, it is
+-	 * actually the provider which prevents any consumer from making any
+-	 * operation which could result in a rate change or rate glitch while
+-	 * the clock is prepared.
 -	 */
--	if (alt_prate > ndata->old_rate) {
--		/* calculate dividers */
--		alt_div =  DIV_ROUND_UP(alt_prate, ndata->old_rate) - 1;
--		if (alt_div > reg_data->div_core_mask) {
--			pr_warn("%s: limiting alt-divider %lu to %d\n",
--				__func__, alt_div, reg_data->div_core_mask);
--			alt_div = reg_data->div_core_mask;
--		}
+-	if (core->flags & CLK_SET_RATE_GATE)
+-		clk_core_rate_protect(core);
 -
--		/*
--		 * Change parents and add dividers in a single transaction.
--		 *
--		 * NOTE: we do this in a single transaction so we're never
--		 * dividing the primary parent by the extra dividers that were
--		 * needed for the alt.
--		 */
--		pr_debug("%s: setting div %lu as alt-rate %lu > old-rate %lu\n",
--			 __func__, alt_div, alt_prate, ndata->old_rate);
--
--		writel(HIWORD_UPDATE(alt_div, reg_data->div_core_mask,
--					      reg_data->div_core_shift) |
--		       HIWORD_UPDATE(reg_data->mux_core_alt,
--				     reg_data->mux_core_mask,
--				     reg_data->mux_core_shift),
--		       cpuclk->reg_base + reg_data->core_reg);
--	} else {
--		/* select alternate parent */
--		writel(HIWORD_UPDATE(reg_data->mux_core_alt,
--				     reg_data->mux_core_mask,
--				     reg_data->mux_core_shift),
--		       cpuclk->reg_base + reg_data->core_reg);
--	}
-+	writel(HIWORD_UPDATE(div,
-+			     reg_data->div_core_mask,
-+			     reg_data->div_core_shift),
-+	       cpuclk->reg_base + reg_data->core_reg);
-+	if (old_rate > rate)
-+		rockchip_cpuclk_set_dividers(cpuclk, rate_divs);
- 
- 	spin_unlock_irqrestore(cpuclk->lock, flags);
-+
  	return 0;
+-unprepare:
+-	clk_core_unprepare(core->parent);
+-runtime_put:
+-	clk_pm_runtime_put(core);
++err:
++	parent = core->parent;
++	list_for_each_entry_safe_continue(core, tmp, &head, prepare_list)
++		list_del_init(&core->prepare_list);
++	clk_core_unprepare(parent);
+ 	return ret;
  }
  
--static int rockchip_cpuclk_post_rate_change(struct rockchip_cpuclk *cpuclk,
--					    struct clk_notifier_data *ndata)
-+static int rockchip_cpuclk_set_rate_and_parent(struct clk_hw *hw,
-+					unsigned long rate,
-+					unsigned long parent_rate,
-+					u8 index)
+@@ -878,37 +879,49 @@ EXPORT_SYMBOL_GPL(clk_disable);
+ static int clk_core_enable(struct clk_core *core)
  {
-+	struct rockchip_cpuclk *cpuclk = container_of(hw,
-+			struct rockchip_cpuclk, hw);
- 	const struct rockchip_cpuclk_reg_data *reg_data = cpuclk->reg_data;
--	const struct rockchip_cpuclk_rate_table *rate;
--	unsigned long flags;
-+	const struct rockchip_cpuclk_rate_table *rate_divs;
-+	unsigned long div = (parent_rate / rate) - 1;
-+	unsigned long old_rate, flags;
+ 	int ret = 0;
++	struct clk_core *tmp, *parent;
++	LIST_HEAD(head);
  
--	rate = rockchip_get_cpuclk_settings(cpuclk, ndata->new_rate);
--	if (!rate) {
--		pr_err("%s: Invalid rate : %lu for cpuclk\n",
--		       __func__, ndata->new_rate);
-+	if (div > reg_data->div_core_mask || rate > parent_rate) {
-+		pr_err("%s: Invalid rate : %lu %lu for cpuclk\n", __func__,
-+				rate, parent_rate);
- 		return -EINVAL;
+ 	lockdep_assert_held(&enable_lock);
+ 
+-	if (!core)
+-		return 0;
+-
+-	if (WARN(core->prepare_count == 0,
+-	    "Enabling unprepared %s\n", core->name))
+-		return -ESHUTDOWN;
++	while (core) {
++		list_add(&core->enable_list, &head);
++		/* Stop once we see a clk that is already enabled */
++		if (core->enable_count)
++			break;
++		core = core->parent;
++	}
+ 
+-	if (core->enable_count == 0) {
+-		ret = clk_core_enable(core->parent);
++	list_for_each_entry_safe(core, tmp, &head, enable_list) {
++		list_del_init(&core->enable_list);
+ 
+-		if (ret)
+-			return ret;
++		if (WARN_ON(core->prepare_count == 0)) {
++			ret = -ESHUTDOWN;
++			goto err;
++		}
+ 
+-		trace_clk_enable_rcuidle(core);
++		if (core->enable_count == 0) {
++			trace_clk_enable_rcuidle(core);
+ 
+-		if (core->ops->enable)
+-			ret = core->ops->enable(core->hw);
++			if (core->ops->enable)
++				ret = core->ops->enable(core->hw);
+ 
+-		trace_clk_enable_complete_rcuidle(core);
++			trace_clk_enable_complete_rcuidle(core);
+ 
+-		if (ret) {
+-			clk_core_disable(core->parent);
+-			return ret;
++			if (ret)
++				goto err;
+ 		}
++
++		core->enable_count++;
  	}
  
-+	old_rate = clk_hw_get_rate(hw);
-+	rate_divs = rockchip_get_cpuclk_settings(cpuclk, rate);
- 	spin_lock_irqsave(cpuclk->lock, flags);
--
--	if (ndata->old_rate < ndata->new_rate)
--		rockchip_cpuclk_set_dividers(cpuclk, rate);
--
- 	/*
--	 * post-rate change event, re-mux to primary parent and remove dividers.
--	 *
--	 * NOTE: we do this in a single transaction so we're never dividing the
--	 * primary parent by the extra dividers that were needed for the alt.
-+	 * TODO: This ain't great... Should change the get_cpuclk_settings code
-+	 * to work with inexact matches to work with alt parent rates.
- 	 */
--
--	writel(HIWORD_UPDATE(0, reg_data->div_core_mask,
--				reg_data->div_core_shift) |
--	       HIWORD_UPDATE(reg_data->mux_core_main,
--				reg_data->mux_core_mask,
--				reg_data->mux_core_shift),
-+	if (old_rate < rate)
-+		rockchip_cpuclk_set_dividers(cpuclk, rate_divs);
-+
-+	writel(HIWORD_UPDATE(div,
-+			     reg_data->div_core_mask,
-+			     reg_data->div_core_shift) |
-+	       HIWORD_UPDATE(index,
-+			     reg_data->mux_core_mask,
-+			     reg_data->mux_core_shift),
- 	       cpuclk->reg_base + reg_data->core_reg);
--
--	if (ndata->old_rate > ndata->new_rate)
--		rockchip_cpuclk_set_dividers(cpuclk, rate);
-+	/* Not technically correct */
-+	if (old_rate > rate)
-+		rockchip_cpuclk_set_dividers(cpuclk, rate_divs);
- 
- 	spin_unlock_irqrestore(cpuclk->lock, flags);
-+
+-	core->enable_count++;
  	return 0;
++err:
++	parent = core->parent;
++	list_for_each_entry_safe_continue(core, tmp, &head, enable_list)
++		list_del_init(&core->enable_list);
++	clk_core_disable(parent);
++	return ret;
  }
  
--/*
-- * This clock notifier is called when the frequency of the parent clock
-- * of cpuclk is to be changed. This notifier handles the setting up all
-- * the divider clocks, remux to temporary parent and handling the safe
-- * frequency levels when using temporary parent.
-- */
--static int rockchip_cpuclk_notifier_cb(struct notifier_block *nb,
--					unsigned long event, void *data)
--{
--	struct clk_notifier_data *ndata = data;
--	struct rockchip_cpuclk *cpuclk = to_rockchip_cpuclk_nb(nb);
--	int ret = 0;
--
--	pr_debug("%s: event %lu, old_rate %lu, new_rate: %lu\n",
--		 __func__, event, ndata->old_rate, ndata->new_rate);
--	if (event == PRE_RATE_CHANGE)
--		ret = rockchip_cpuclk_pre_rate_change(cpuclk, ndata);
--	else if (event == POST_RATE_CHANGE)
--		ret = rockchip_cpuclk_post_rate_change(cpuclk, ndata);
--
--	return notifier_from_errno(ret);
--}
-+static const struct clk_ops rockchip_cpuclk_ops = {
-+	.recalc_rate = rockchip_cpuclk_recalc_rate,
-+	.pre_rate_req = rockchip_cpuclk_pre_rate_req,
-+	.set_parent = rockchip_cpuclk_set_parent,
-+	.get_parent = rockchip_cpuclk_get_parent,
-+	.set_rate = rockchip_cpuclk_set_rate,
-+	.set_rate_and_parent = rockchip_cpuclk_set_rate_and_parent,
-+};
+ static int clk_core_enable_lock(struct clk_core *core)
+@@ -3281,6 +3294,8 @@ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
+ 	core->num_parents = hw->init->num_parents;
+ 	core->min_rate = 0;
+ 	core->max_rate = ULONG_MAX;
++	INIT_LIST_HEAD(&core->prepare_list);
++	INIT_LIST_HEAD(&core->enable_list);
+ 	hw->core = core;
  
- struct clk *rockchip_clk_register_cpuclk(const char *name,
- 			const char *const *parent_names, u8 num_parents,
-@@ -267,8 +295,8 @@ struct clk *rockchip_clk_register_cpuclk(const char *name,
- 		return ERR_PTR(-ENOMEM);
- 
- 	init.name = name;
--	init.parent_names = &parent_names[reg_data->mux_core_main];
--	init.num_parents = 1;
-+	init.parent_names = parent_names;
-+	init.num_parents = num_parents;
- 	init.ops = &rockchip_cpuclk_ops;
- 
- 	/* only allow rate changes when we have a rate table */
-@@ -282,7 +310,6 @@ struct clk *rockchip_clk_register_cpuclk(const char *name,
- 	cpuclk->reg_base = reg_base;
- 	cpuclk->lock = lock;
- 	cpuclk->reg_data = reg_data;
--	cpuclk->clk_nb.notifier_call = rockchip_cpuclk_notifier_cb;
- 	cpuclk->hw.init = &init;
- 
- 	cpuclk->alt_parent = __clk_lookup(parent_names[reg_data->mux_core_alt]);
-@@ -309,13 +336,6 @@ struct clk *rockchip_clk_register_cpuclk(const char *name,
- 		goto free_alt_parent;
- 	}
- 
--	ret = clk_notifier_register(clk, &cpuclk->clk_nb);
--	if (ret) {
--		pr_err("%s: failed to register clock notifier for %s\n",
--				__func__, name);
--		goto free_alt_parent;
--	}
--
- 	if (nrates > 0) {
- 		cpuclk->rate_count = nrates;
- 		cpuclk->rate_table = kmemdup(rates,
-@@ -323,7 +343,7 @@ struct clk *rockchip_clk_register_cpuclk(const char *name,
- 					     GFP_KERNEL);
- 		if (!cpuclk->rate_table) {
- 			ret = -ENOMEM;
--			goto unregister_notifier;
-+			goto free_alt_parent;
- 		}
- 	}
- 
-@@ -338,8 +358,6 @@ struct clk *rockchip_clk_register_cpuclk(const char *name,
- 
- free_rate_table:
- 	kfree(cpuclk->rate_table);
--unregister_notifier:
--	clk_notifier_unregister(clk, &cpuclk->clk_nb);
- free_alt_parent:
- 	clk_disable_unprepare(cpuclk->alt_parent);
- free_cpuclk:
+ 	/* allocate local copy in case parent_names is __initdata */
 -- 
 2.19.1.568.g152ad8e336-goog
 
