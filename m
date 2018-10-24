@@ -2,325 +2,127 @@ Return-Path: <SRS0=W7GY=NE=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB142C004D3
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Oct 2018 09:51:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47831C004D3
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Oct 2018 10:20:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49CBD2082E
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Oct 2018 09:51:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8A822075D
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Oct 2018 10:20:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="elEDehSC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49CBD2082E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FueVGAQt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8A822075D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726804AbeJXSSw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 24 Oct 2018 14:18:52 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:32789 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726720AbeJXSSw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Oct 2018 14:18:52 -0400
-Received: by mail-wr1-f65.google.com with SMTP id u1-v6so4867427wrn.0
-        for <linux-clk@vger.kernel.org>; Wed, 24 Oct 2018 02:51:25 -0700 (PDT)
+        id S1727009AbeJXSrm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 24 Oct 2018 14:47:42 -0400
+Received: from mail-it1-f193.google.com ([209.85.166.193]:35133 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727000AbeJXSrm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Oct 2018 14:47:42 -0400
+Received: by mail-it1-f193.google.com with SMTP id p64-v6so5889919itp.0
+        for <linux-clk@vger.kernel.org>; Wed, 24 Oct 2018 03:20:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=mGz8STzo41d6YwvbaiqmC+ruUS95KBkqAK4d6ib86UE=;
-        b=elEDehSC6PiSGgVO6eq55/qYS7m30sKTYhVPXvJG+AbtEKtL+stV2E9n5p3sbfveWz
-         MhcTGJrtzuQlOnX6a2QqN7dyWMt4yDSfJAA/pGKXmbciV0SKfkIfcffnoxZX5Wm9rQAU
-         PtckqzuSPXicf8j2lTN5XBfJUAX+Q9fRD8zPqFOqMfc4a7SQzp3kZquESIh2lvO69KXi
-         L+mWKTO6baLMA5aJ0BP5wxX9F7/PcGSDN34UJBHBNNiwcX+Ld7BqERaXt7ypVaKVZpQ4
-         JdXl6wm7s4W8jGDwnZuYNkSsllLYfv7WfyKniNPj9JDi9iDpeamvbYqkcYdzYbsn2QfU
-         SUMQ==
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=btM71ehVGal9Uwy0bcAIS+1picF6E2BQ3XMYNDA1xDc=;
+        b=FueVGAQtGS5amZR1XIy1e1uDgAOFO2EfNwLGsTIQ2IEsDxvtpY8KBFdfdavXQxLLVz
+         s0OQB5fWXoeaA6xoD7tJzRedpR397YC1kFmOt8MQm+kI/xG0+alyIGHbYBfW5GFBwSGV
+         VaDvE8m8OGtKOgyb3FsMHOr6Yw30sSIckydT4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=mGz8STzo41d6YwvbaiqmC+ruUS95KBkqAK4d6ib86UE=;
-        b=hbtZViC7XOiJcRRQDKYtL/5VTmzp1+aEuenLDdcFW2ZnBwzMDxGm9Mdbh215INf7a9
-         3SjgLYtTYvzuM9iqy6y3jfo2jH0sGb4J9jyjYGW+Dn5U2TJHF08zK7feQ6sLrJSjed03
-         D52aNujIWHpoJTUBhZUQuy7z58+OjQGectW1zedFm7cSOus4dUXUrteum2pZn2Z38q1u
-         CLOsYZy0d+hFku/XUjxvXQBV+pPPL20BLito9ydvP9J3VNqiHSBpNT1JuBX4VOMenHbA
-         Ic/rnPQw/JsB6oO73c4Ze2pPXPal4LblBTNebCyxBtdkl1QVu2JlfwKT3BPmo91Dlwro
-         jPEw==
-X-Gm-Message-State: AGRZ1gIXNTLqWRRXFC0ASjS5QJyYHSnrMp6bYN4Kqfjeft9Yhjou/ogi
-        OToglXu3guaDQPAHZuY06iAmKg==
-X-Google-Smtp-Source: AJdET5cF9FU+EWB/JR4VtzoZ013qZCHHdb6YOMzsp5gpH0tTqOJGO2kmCzei6dvn7lZJsFlEi3KoSw==
-X-Received: by 2002:a5d:6902:: with SMTP id t2-v6mr2031758wru.323.1540374684652;
-        Wed, 24 Oct 2018 02:51:24 -0700 (PDT)
-Received: from boomer ([90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id p7-v6sm4564973wrt.10.2018.10.24.02.51.23
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 24 Oct 2018 02:51:24 -0700 (PDT)
-Message-ID: <264adf2a81bcd602f2a58e4a46c3273cd7c77ca2.camel@baylibre.com>
-Subject: Re: [PATCH 1/6] clk: Remove recursion in clk_core_{prepare,enable}()
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Derek Basehore <dbasehore@chromium.org>,
-        linux-kernel@vger.kernel.org
-Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-doc@vger.kernel.org,
-        sboyd@kernel.org, mturquette@baylibre.com, heiko@sntech.de,
-        aisheng.dong@nxp.com, mchehab+samsung@kernel.org, corbet@lwn.net,
-        Stephen Boyd <sboyd@codeaurora.org>
-Date:   Wed, 24 Oct 2018 11:51:22 +0200
-In-Reply-To: <20181024013132.115907-2-dbasehore@chromium.org>
-References: <20181024013132.115907-1-dbasehore@chromium.org>
-         <20181024013132.115907-2-dbasehore@chromium.org>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=btM71ehVGal9Uwy0bcAIS+1picF6E2BQ3XMYNDA1xDc=;
+        b=Y533wl3Gc+gIHPQq0AacTGWYNHZCrleJR6sSchfiHvdXOwIvCybuf3LnOAl9bmsV9M
+         psiwHog0lzujI9m/Fw5a/yA85YM1sQDxtW1lmMG23JnSydpUeglIJlJ59nRBNpCsZ/w/
+         88rVdXMyWQKPcvabVM1yazY2EMLci5tUqPjWf/P8nDMIqqNGVEPT1/SBH6/3PsaDAF5F
+         Zp+l+g5osN97MQjKUxyUcvXyz5pkz5wPu2pcYIiyRgwdb+xFvA7+9zchGPZ7G7VAhJB7
+         oI2ksoOQZy9n6xfA24KI4fhzk0CJlQuKe7e8jzIGETg5DoMScxxXba5jAYbCqS+hir8y
+         F2Vw==
+X-Gm-Message-State: AGRZ1gLRemAF1HXS2y9/WJ07ufyIK+r5uVxl6J7z7xJTbIwPFeHauqjX
+        oAqwd4VcGQYZpFlMduXGyLv7+W2VS9/0Y8CGfToFvQ==
+X-Google-Smtp-Source: AJdET5eKjD6GC2j0sDN/VM4n8ENlQmkKDmWNA1J9FnSF40BiBp+hzvx+/9fbH02alvJv5WQnQeVtOVimRgQ/KXfV1po=
+X-Received: by 2002:a02:5f96:: with SMTP id x22-v6mr1256594jad.43.1540376411249;
+ Wed, 24 Oct 2018 03:20:11 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a02:3941:0:0:0:0:0 with HTTP; Wed, 24 Oct 2018 03:19:30
+ -0700 (PDT)
+In-Reply-To: <TY1PR01MB1562238AE99ADCB39C05C67A8AF50@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+References: <20181012122924.5543-1-chris.brandt@renesas.com>
+ <CAPDyKFqNeHC7VqXsRSZegb7PGLnKBv4F4L2Rx4UtGuO7_bv-JA@mail.gmail.com> <TY1PR01MB1562238AE99ADCB39C05C67A8AF50@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Wed, 24 Oct 2018 12:19:30 +0200
+Message-ID: <CAPDyKFox-UPeAeWn8GnGyHibrUk-dp-aWhWMFy1X1GwddebNLg@mail.gmail.com>
+Subject: Re: [PATCH v4 0/3] mmc: tmio_mmc: Add support for RZ/A2
+To:     Chris Brandt <Chris.Brandt@renesas.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 2018-10-23 at 18:31 -0700, Derek Basehore wrote:
-> From: Stephen Boyd <sboyd@codeaurora.org>
-> 
-> Enabling and preparing clocks can be written quite naturally with
-> recursion. We start at some point in the tree and recurse up the
-> tree to find the oldest parent clk that needs to be enabled or
-> prepared. Then we enable/prepare and return to the caller, going
-> back to the clk we started at and enabling/preparing along the
-> way.
-> 
-> The problem is recursion isn't great for kernel code where we
-> have a limited stack size. Furthermore, we may be calling this
-> code inside clk_set_rate() which also has recursion in it, so
-> we're really not looking good if we encounter a tall clk tree.
-> 
-> Let's create a stack instead by looping over the parent chain and
-> collecting clks of interest. Then the enable/prepare becomes as
-> simple as iterating over that list and calling enable.
+On 24 October 2018 at 00:28, Chris Brandt <Chris.Brandt@renesas.com> wrote:
+> On Tuesday, October 23, 2018, Ulf Hansson wrote:
+>> On 12 October 2018 at 14:29, Chris Brandt <chris.brandt@renesas.com>
+>> wrote:
+>> > Basically the same HW block that was used in R-Car Gen 3 is used in
+>> > RZ/A2 (with only a couple small differences).
+>> >
+>> > Not sure if you're going to like the Kconfig change or not.
+>> >
+>> > Chris Brandt (3):
+>> >   clk: renesas: r7s9210: Add SDHI clocks
+>> >   mmc: renesas_sdhi_internal_dmac: Add R7S9210 support
+>> >   dt-bindings: mmc: tmio_mmc: Document Renesas R7S9210
+>> >
+>> >  Documentation/devicetree/bindings/mmc/tmio_mmc.txt |  3 ++-
+>> >  drivers/clk/renesas/r7s9210-cpg-mssr.c             |  5 ++++
+>> >  drivers/mmc/host/Kconfig                           |  5 ++--
+>> >  drivers/mmc/host/renesas_sdhi_internal_dmac.c      | 28
+>> ++++++++++++++++++++--
+>> >  4 files changed, 36 insertions(+), 5 deletions(-)
+>> >
+>> > --
+>> > 2.16.1
+>>
+>> This looks good to me. So unless someone objects I intend to queue
+>> this up for 4.21, once 4.20 rc1 is out. Or perhaps the clock patch
+>> should go via the clock tree?
+>>
+>> Thanks!
+>> Uffe
+>
+> FYI,
+>
+> I just tried to apply my patches to what is in -next.
+> It looks likes Fabrizio beat me to it (RZ/G1C has the same controller),
+> so there will be conflicts because we were both be modifying the same
+> lines in Kconfig and in the driver (adding the compatible strings).
+>
+> It also looks like Fabrizio started using the name
+> "renesas,sdhi-mmc-xxxx" (as in, added the '-mmc'), but I'll probably
+> just keep mine the way it is (no '-mmc').
+>
+>
+> So if you don't feel like fixing it up, let me know and I'll send an update.
 
-Hi Derek,
+Please send an update.
 
-What about unprepare() and disable() ?
-
-This patch removes the recursion from the enable path but keeps it for the
-disable path ... this is very odd. Assuming doing so works, It certainly makes
-CCF a lot harder to understand.
-
-What about clock protection which essentially works on the same model as prepare
-and enable ?
-
-Overall, this change does not look like something that should be merged as it
-is. If you were just seeking comments, you should add the "RFC" tag to your
-series.
-
-Jerome.
-
-> 
-> Cc: Jerome Brunet <jbrunet@baylibre.com>
-
-If you don't mind, I would prefer to get the whole series next time. It helps to
-get the context.
-
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> Signed-off-by: Derek Basehore <dbasehore@chromium.org>
-> ---
->  drivers/clk/clk.c | 113 ++++++++++++++++++++++++++--------------------
->  1 file changed, 64 insertions(+), 49 deletions(-)
-> 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index af011974d4ec..95d818f5edb2 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -71,6 +71,8 @@ struct clk_core {
->  	struct hlist_head	children;
->  	struct hlist_node	child_node;
->  	struct hlist_head	clks;
-> +	struct list_head	prepare_list;
-> +	struct list_head	enable_list;
->  	unsigned int		notifier_count;
->  #ifdef CONFIG_DEBUG_FS
->  	struct dentry		*dentry;
-> @@ -740,49 +742,48 @@ EXPORT_SYMBOL_GPL(clk_unprepare);
->  static int clk_core_prepare(struct clk_core *core)
->  {
->  	int ret = 0;
-> +	struct clk_core *tmp, *parent;
-> +	LIST_HEAD(head);
->  
->  	lockdep_assert_held(&prepare_lock);
->  
-> -	if (!core)
-> -		return 0;
-> +	while (core) {
-> +		list_add(&core->prepare_list, &head);
-> +		/* Stop once we see a clk that is already prepared */
-> +		if (core->prepare_count)
-> +			break;
-> +		core = core->parent;
-> +	}
->  
-> -	if (core->prepare_count == 0) {
-> -		ret = clk_pm_runtime_get(core);
-> -		if (ret)
-> -			return ret;
-> +	list_for_each_entry_safe(core, tmp, &head, prepare_list) {
-> +		list_del_init(&core->prepare_list);
-
-Is there any point in removing it from the list ?
-Maybe I missed it but it does not seems useful.
-
-Without this, we could use list_for_each_entry()
-
->  
-> -		ret = clk_core_prepare(core->parent);
-> -		if (ret)
-> -			goto runtime_put;
-> +		if (core->prepare_count == 0) {
-
-Should we really check the count here ? You are not checking the count when the
-put() counterpart is called below.
-
-Since PM runtime has ref counting as well, either way would work I guess ... but
-we shall be consistent
-
-> +			ret = clk_pm_runtime_get(core);
-> +			if (ret)
-> +				goto err;
->  
-> -		trace_clk_prepare(core);
-> +			trace_clk_prepare(core);
->  
-> -		if (core->ops->prepare)
-> -			ret = core->ops->prepare(core->hw);
-> +			if (core->ops->prepare)
-> +				ret = core->ops->prepare(core->hw);
->  
-> -		trace_clk_prepare_complete(core);
-> +			trace_clk_prepare_complete(core);
->  
-> -		if (ret)
-> -			goto unprepare;
-> +			if (ret) {
-> +				clk_pm_runtime_put(core);
-> +				goto err;
-> +			}
-> +		}
-> +		core->prepare_count++;
->  	}
->  
-> -	core->prepare_count++;
-> -
-> -	/*
-> -	 * CLK_SET_RATE_GATE is a special case of clock protection
-> -	 * Instead of a consumer claiming exclusive rate control, it is
-> -	 * actually the provider which prevents any consumer from making any
-> -	 * operation which could result in a rate change or rate glitch while
-> -	 * the clock is prepared.
-> -	 */
-> -	if (core->flags & CLK_SET_RATE_GATE)
-> -		clk_core_rate_protect(core);
-
-This gets removed without anything replacing it.
-
-is CLK_SET_RATE_GATE and clock protection support dropped after this change ?
-
-> -
->  	return 0;
-> -unprepare:
-> -	clk_core_unprepare(core->parent);
-> -runtime_put:
-> -	clk_pm_runtime_put(core);
-> +err:
-> +	parent = core->parent;
-> +	list_for_each_entry_safe_continue(core, tmp, &head, prepare_list)
-> +		list_del_init(&core->prepare_list);
-> +	clk_core_unprepare(parent);
-
-If you get here because of failure clk_pm_runtime_get(), you will unprepare a
-clock which may have not been prepared first
-
-Overall the rework of error exit path does not seem right (or necessary)
-
->  	return ret;
->  }
->  
-> @@ -878,37 +879,49 @@ EXPORT_SYMBOL_GPL(clk_disable);
->  static int clk_core_enable(struct clk_core *core)
->  {
->  	int ret = 0;
-> +	struct clk_core *tmp, *parent;
-> +	LIST_HEAD(head);
->  
->  	lockdep_assert_held(&enable_lock);
->  
-> -	if (!core)
-> -		return 0;
-> -
-> -	if (WARN(core->prepare_count == 0,
-> -	    "Enabling unprepared %s\n", core->name))
-> -		return -ESHUTDOWN;
-> +	while (core) {
-> +		list_add(&core->enable_list, &head);
-> +		/* Stop once we see a clk that is already enabled */
-> +		if (core->enable_count)
-> +			break;
-> +		core = core->parent;
-> +	}
->  
-> -	if (core->enable_count == 0) {
-> -		ret = clk_core_enable(core->parent);
-> +	list_for_each_entry_safe(core, tmp, &head, enable_list) {
-> +		list_del_init(&core->enable_list);
->  
-> -		if (ret)
-> -			return ret;
-> +		if (WARN_ON(core->prepare_count == 0)) {
-> +			ret = -ESHUTDOWN;
-> +			goto err;
-> +		}
->  
-> -		trace_clk_enable_rcuidle(core);
-> +		if (core->enable_count == 0) {
-> +			trace_clk_enable_rcuidle(core);
->  
-> -		if (core->ops->enable)
-> -			ret = core->ops->enable(core->hw);
-> +			if (core->ops->enable)
-> +				ret = core->ops->enable(core->hw);
->  
-> -		trace_clk_enable_complete_rcuidle(core);
-> +			trace_clk_enable_complete_rcuidle(core);
->  
-> -		if (ret) {
-> -			clk_core_disable(core->parent);
-> -			return ret;
-> +			if (ret)
-> +				goto err;
->  		}
-> +
-> +		core->enable_count++;
->  	}
->  
-> -	core->enable_count++;
->  	return 0;
-> +err:
-> +	parent = core->parent;
-> +	list_for_each_entry_safe_continue(core, tmp, &head, enable_list)
-> +		list_del_init(&core->enable_list);
-> +	clk_core_disable(parent);
-> +	return ret;
->  }
->  
->  static int clk_core_enable_lock(struct clk_core *core)
-> @@ -3281,6 +3294,8 @@ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
->  	core->num_parents = hw->init->num_parents;
->  	core->min_rate = 0;
->  	core->max_rate = ULONG_MAX;
-> +	INIT_LIST_HEAD(&core->prepare_list);
-> +	INIT_LIST_HEAD(&core->enable_list);
->  	hw->core = core;
->  
->  	/* allocate local copy in case parent_names is __initdata */
-
-
+Kind regards
+Uffe
