@@ -2,156 +2,107 @@ Return-Path: <SRS0=W7GY=NE=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2970AECDE46
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Oct 2018 18:48:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91E12ECDE46
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Oct 2018 20:09:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD477207DD
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Oct 2018 18:48:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD477207DD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 244492082F
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Oct 2018 20:09:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="BCa/w9Kq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 244492082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726748AbeJYDRM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 24 Oct 2018 23:17:12 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:37401 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726521AbeJYDRM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Oct 2018 23:17:12 -0400
-Received: by mail-oi1-f193.google.com with SMTP id e17-v6so4958703oib.4;
-        Wed, 24 Oct 2018 11:48:00 -0700 (PDT)
+        id S1725994AbeJYEir (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 Oct 2018 00:38:47 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:35234 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725779AbeJYEir (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Oct 2018 00:38:47 -0400
+Received: by mail-io1-f68.google.com with SMTP id 79-v6so3976577iou.2
+        for <linux-clk@vger.kernel.org>; Wed, 24 Oct 2018 13:09:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=myUIaGAQ4FX09BC3WcQ/tTbGenycR0huzAA5WP9HNOM=;
+        b=BCa/w9Kqa9uMTeQwC1JOhravLnMIgNNPp8L1DXtvsKbPyw8Gzfh5L3JzRb+eI4HCAg
+         HjS2dou6uBQ189nOnHvQGwo/ZRm2eUgRRFAqtPONkVsGYF0c9W+6HAQTFcmIajf/HEmq
+         JuM4St/WzCKJ5lA+rwMCD0bGoQcuNoUNDnhw8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=1NkZzFYRgsDElNM8ngsz3f1bKhIZ4R18HX8fVURc9Ew=;
-        b=cK3I8fl4Qa84ij7eG8JwxTrWthW4rUESf41QIg8iNn22Nyn4OcXyPKuFfNtqSzfKBv
-         SwVWYpiHzLXMVnMNzIQ6cJv4fgq6yK4gkhLbWqaOriIcMXQ9PmYKttADuzpXYYQ/LR8y
-         W6WhZn97AUYCCYCt1uB1tkxc6e6W0Aox028KK/Rh/BaRq8reTk/YXdjND3RvBcKhWcRb
-         8y/+ywdpdjSVhyFWdhIqdQ6PG5I/3ztj2ZrN2g1x5Kvcy6NdDr24BwRo5485IWC2OLqx
-         tsvee/MKj5reaAV4cxPKU2rPcMYthLN02jS7oGt5WUcf9TXd0rOO2NKadeShuF/ZH7Lf
-         cuzg==
-X-Gm-Message-State: AGRZ1gIUmMgfHbfZSwNbrr5lxUoZBaJ++NHYbVvRwK8IkgDYA6yGRxns
-        /a3fiIrs3yLg3zO//KDQEg==
-X-Google-Smtp-Source: AJdET5fux4XPLGuA8vGYCGLj5kkpNTZgVuD/Kj/M5cpcVy6/8qyvhcynoqfT+Iuc2GuaPQ99A/Fw2g==
-X-Received: by 2002:aca:c743:: with SMTP id x64-v6mr1942668oif.139.1540406879532;
-        Wed, 24 Oct 2018 11:47:59 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id q16sm1677072otf.35.2018.10.24.11.47.58
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 24 Oct 2018 11:47:58 -0700 (PDT)
-Date:   Wed, 24 Oct 2018 13:47:57 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Paul Walmsley <paul.walmsley@sifive.com>
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Megan Wachs <megan@sifive.com>,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Paul Walmsley <paul@pwsan.com>
-Subject: Re: [PATCH v2 2/3] dt-bindings: clk: add documentation for the
- SiFive PRCI driver
-Message-ID: <20181024184757.GA22367@bogus>
-References: <20181020135024.28573-1-paul.walmsley@sifive.com>
- <20181020135024.28573-3-paul.walmsley@sifive.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=myUIaGAQ4FX09BC3WcQ/tTbGenycR0huzAA5WP9HNOM=;
+        b=PuaiwQuUT0jN+kxauzbRoVRx1LU9ZK6EceuqtXiUXnnIPdWXlXKIwTCly5/5SDr1ID
+         Eljfgt3zSXekndEZzqC0d3SdWgCG+U5UCl6SnCaMjoNSBR33IF4RxQaU7XiOodtnDrjD
+         +mwbEute/Ns3+G8rkI2rITHDaOaDwPMEOWjs9ed97M9ZQKMOlnqlYtYiPhDhE83f3gRC
+         aRcDLeeBpPI5kqVQGW0A+za84AS2aFpBm5h9PbB5LbudUOhe90JixaHygonZK15ifLJS
+         DaY0yD0lO7HbDD2Lb+aqOtLbYsKJYccM6sqczQTfIiyHKWdROBPEHB6ehhsO2xh3639Q
+         KA+g==
+X-Gm-Message-State: AGRZ1gJUdRSYY6yS3G4sAlgzHBKL7bSYw2zv/p1ww0w6CEjGPOHZozV1
+        w8wUEHRhbwo72IcTyyZgFQXvnNVEoJ7I3Q/rjrJqoA==
+X-Google-Smtp-Source: AJdET5eLstqBg2h3GbonuFksgEXQq4ZMRiv99rVwn5cFUv3HtbaQvHtHPVMlnYbM36oA68bbtoagdoolPEirK3hdR0w=
+X-Received: by 2002:a6b:ac45:: with SMTP id v66-v6mr16627405ioe.66.1540411758345;
+ Wed, 24 Oct 2018 13:09:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181020135024.28573-3-paul.walmsley@sifive.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181024013132.115907-1-dbasehore@chromium.org>
+ <20181024013132.115907-2-dbasehore@chromium.org> <154038647375.53599.631725372765617195@swboyd.mtv.corp.google.com>
+In-Reply-To: <154038647375.53599.631725372765617195@swboyd.mtv.corp.google.com>
+From:   "dbasehore ." <dbasehore@chromium.org>
+Date:   Wed, 24 Oct 2018 13:09:07 -0700
+Message-ID: <CAGAzgspGA0CExLBrJvM8E7a1ybp=PRDz6kJ-dKyp0hi9db-19g@mail.gmail.com>
+Subject: Re: [PATCH 1/6] clk: Remove recursion in clk_core_{prepare,enable}()
+To:     sboyd@kernel.org
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-doc@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+        aisheng.dong@nxp.com, mchehab+samsung@kernel.org, corbet@lwn.net,
+        Stephen Boyd <sboyd@codeaurora.org>, jbrunet@baylibre.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, Oct 20, 2018 at 06:50:23AM -0700, Paul Walmsley wrote:
-> Add DT binding documentation for the Linux driver for the SiFive
-> PRCI clock & reset control IP block, as found on the SiFive
-> FU540 chip.
-> 
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Palmer Dabbelt <palmer@sifive.com>
-> Cc: Megan Wachs <megan@sifive.com>
-> Cc: linux-clk@vger.kernel.org
-> Cc: devicetree@vger.kernel.org
-> Cc: linux-riscv@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
-> Signed-off-by: Paul Walmsley <paul@pwsan.com>
-> ---
-> v2: remove out-of-date example, add documentation for the compatible
->     string and for the required PCB clock nodes
-> 
-> .../bindings/clock/sifive/fu540-prci.txt      | 43 +++++++++++++++++++
->  1 file changed, 43 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/sifive/fu540-prci.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/sifive/fu540-prci.txt b/Documentation/devicetree/bindings/clock/sifive/fu540-prci.txt
-> new file mode 100644
-> index 000000000000..d7c1e83fa5ed
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/sifive/fu540-prci.txt
-> @@ -0,0 +1,43 @@
-> +SiFive FU540 PRCI bindings
-> +
-> +On the FU540 family of SoCs, most system-wide clock and reset integration
-> +is via the PRCI IP block.
-> +
-> +Required properties:
-> +- compatible: Should be "sifive,<chip>-prci<version>".  As of the time this
-> +              file was written, only one value is supported:
-> +	      "sifive,fu540-c000-prci0"
+On Wed, Oct 24, 2018 at 6:07 AM Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> Quoting Derek Basehore (2018-10-23 18:31:27)
+> > From: Stephen Boyd <sboyd@codeaurora.org>
+> >
+> > Enabling and preparing clocks can be written quite naturally with
+> > recursion. We start at some point in the tree and recurse up the
+> > tree to find the oldest parent clk that needs to be enabled or
+> > prepared. Then we enable/prepare and return to the caller, going
+> > back to the clk we started at and enabling/preparing along the
+> > way.
+> >
+> > The problem is recursion isn't great for kernel code where we
+> > have a limited stack size. Furthermore, we may be calling this
+> > code inside clk_set_rate() which also has recursion in it, so
+> > we're really not looking good if we encounter a tall clk tree.
+> >
+> > Let's create a stack instead by looping over the parent chain and
+> > collecting clks of interest. Then the enable/prepare becomes as
+> > simple as iterating over that list and calling enable.
+> >
+> > Cc: Jerome Brunet <jbrunet@baylibre.com>
+> > Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> > Signed-off-by: Derek Basehore <dbasehore@chromium.org>
+>
+> Did you change anything substantially? Or is it just a resend of my
+> patch from a while ago? If you can add a link to the original and also
+> describe what changed in a maintainer tag it would be much easier for me
+> to compare.
+>
 
-What happens with this depends on the discussion on the other bindings.
+It should just be your patch with the compilation warning fixed.
 
-Though here you are inconsistent without a fallback. Of course, I've 
-never seen a clock controller be the same across SoCs.
-
-> +- reg: Should describe the PRCI's register target physical address region
-> +- clocks: Should point to the hfclk device tree node and the rtcclk
-> +          device tree node.  The RTC clock here is not a time-of-day clock,
-> +	  but is instead a high-stability clock source for system timers
-> +	  and cycle counters.
-> +- #clock-cells: Should be <1>
-> +
-> +The clock consumer should specify the desired clock via the clock ID
-> +macros defined in include/linux/clk/sifive-fu540-prci.h.  These macros
-> +begin with PRCI_CLK_.
-> +
-> +The hfclk and rtcclk nodes are required, and represent physical
-> +crystals or resonators located on the PCB.
-> +
-> +Examples:
-> +
-> +hfclk: hfclk {
-> +	#clock-cells = <0>;
-> +	compatible = "fixed-clock";
-> +	clock-frequency = <33333333>;
-> +	clock-output-names = "hfclk";
-> +};
-> +rtcclk: rtcclk {
-> +	#clock-cells = <0>;
-> +	compatible = "fixed-clock";
-> +	clock-frequency = <1000000>;
-> +	clock-output-names = "rtcclk";
-> +};
-> +prci0: prci@10000000 {
-
-clock-controller@...
-
-> +	compatible = "sifive,fu540-c000-prci0";
-> +	reg = <0x0 0x10000000 0x0 0x1000>;
-> +	clocks = <&hfclk>, <&rtcclk>;
-> +	#clock-cells = <1>;
-> +};
-> -- 
-> 2.19.1
-> 
+This is picked up from https://lore.kernel.org/patchwork/patch/814369/
