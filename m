@@ -2,87 +2,73 @@ Return-Path: <SRS0=W7GY=NE=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93F24ECDE46
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Oct 2018 22:10:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 221EAECDE46
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Oct 2018 22:23:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6067D2075D
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Oct 2018 22:10:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6067D2075D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id CD7E820652
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Oct 2018 22:23:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD7E820652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726816AbeJYGk1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 Oct 2018 02:40:27 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:44842 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725829AbeJYGk0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Oct 2018 02:40:26 -0400
-Received: by mail-ot1-f68.google.com with SMTP id p23so6638242otf.11;
-        Wed, 24 Oct 2018 15:10:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=LhIr8hbjHvuQQvBGJVoJ8v9oFEk0k6Yf7Hyh/pi1Euk=;
-        b=REQT7ickiuQPponsoAl+7uNhea481JaD0lz3D/6MWcQm22OHZMtXSZdFM5t1B5LSKk
-         1g1kglposyrnrdHskIUaTQNAt41sETr2IfET5Q32RXYZtgb9naTCmcsOeoCdsPsOEzLf
-         N/GHvsIHB7OSn/dBIY3/9Py5ei9jajg3owdo/4K1FUO77RjAffIbI+Uo/R5RzUFs1dHn
-         jYQLdsQZEVMjU6ZG/9fD0UbRiKsnV8WwJ9KEFdJNfnutROxPFRRsu8PasO1pjIWFK66M
-         Hwk50Sdkuo4AC6BG9R7KV8+J4Yphzdxc0X0BXfTQrfJ/2hUqVt5Meh3tiF4Sd0BEtSpJ
-         apUA==
-X-Gm-Message-State: AGRZ1gJ9k8gyKL8ij0unsZTsqsJkth8BPIdFkPOUSfytpJfXOtCTCpm3
-        u3vSlg3zmFeMrx307WSDpWCTDog=
-X-Google-Smtp-Source: AJdET5cPOuuI8mxnir+fEmVpzrHl9aA3YyIjzAfVOKp6JTxQ2n+3RtBGnErADhDg4ZmXBW64acWNXw==
-X-Received: by 2002:a9d:8ea:: with SMTP id 97mr2995500otf.10.1540419035249;
-        Wed, 24 Oct 2018 15:10:35 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id m63-v6sm1867421oia.30.2018.10.24.15.10.34
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 24 Oct 2018 15:10:34 -0700 (PDT)
-Date:   Wed, 24 Oct 2018 17:10:33 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     andy.tang@nxp.com
-Cc:     sboyd@kernel.org, mturquette@baylibre.com, oss@buserror.net,
-        mark.rutland@arm.com, benh@kernel.crashing.org, paulus@samba.org,
-        mpe@ellerman.id.au, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH 2/3 v2] clk: qoriq: remove legacy bindings and add more
- compatibles
-Message-ID: <20181024221033.GA5876@bogus>
-References: <20181024021122.3942-1-andy.tang@nxp.com>
- <20181024021122.3942-2-andy.tang@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181024021122.3942-2-andy.tang@nxp.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1726809AbeJYGxd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 Oct 2018 02:53:33 -0400
+Received: from relmlor3.renesas.com ([210.160.252.173]:14974 "EHLO
+        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726297AbeJYGxd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Oct 2018 02:53:33 -0400
+Received: from unknown (HELO relmlir4.idc.renesas.com) ([10.200.68.154])
+  by relmlie2.idc.renesas.com with ESMTP; 25 Oct 2018 07:23:37 +0900
+Received: from relmlii1.idc.renesas.com (relmlii1.idc.renesas.com [10.200.68.65])
+        by relmlir4.idc.renesas.com (Postfix) with ESMTP id D4B0B3B18B;
+        Thu, 25 Oct 2018 07:23:37 +0900 (JST)
+X-IronPort-AV: E=Sophos;i="5.54,422,1534777200"; 
+   d="scan'208";a="294378232"
+Received: from unknown (HELO rtamta01.rta.renesas.com) ([143.103.48.75])
+  by relmlii1.idc.renesas.com with ESMTP; 25 Oct 2018 07:23:36 +0900
+Received: from localhost.localdomain (unknown [143.103.58.195])
+        by rtamta01.rta.renesas.com (Postfix) with ESMTP id 0DBB616B;
+        Wed, 24 Oct 2018 22:23:28 +0000 (UTC)
+From:   Chris Brandt <chris.brandt@renesas.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-clk@vger.kernel.org, linux-mmc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH v5 0/3] mmc: tmio_mmc: Add support for RZ/A2
+Date:   Wed, 24 Oct 2018 17:22:58 -0500
+Message-Id: <20181024222301.21455-1-chris.brandt@renesas.com>
+X-Mailer: git-send-email 2.16.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Oct 24, 2018 at 10:11:21AM +0800, andy.tang@nxp.com wrote:
-> From: Yuantian Tang <andy.tang@nxp.com>
-> 
-> The new bindings will be used, so delete the old bindings.
-> Add more SOC compatibles as needed as well.
+Basically the same HW block that was used in R-Car Gen 3 is used in
+RZ/A2 (with only a couple small differences).
 
-I'm a bit confused by this series. Normally you want to update the dts 
-files first and wait some period of time before removing driver support 
-(and bindings).
+V5 was just to rebase to fix merge conflicts
 
-Rob
+Chris Brandt (3):
+  clk: renesas: r7s9210: Add SDHI clocks
+  mmc: renesas_sdhi_internal_dmac: Add R7S9210 support
+  dt-bindings: mmc: tmio_mmc: Document Renesas R7S9210
 
-> 
-> Signed-off-by: Tang Yuantian <andy.tang@nxp.com>
-> ---
-> v2:
->   - involve more chips
-> 
->  .../devicetree/bindings/clock/qoriq-clock.txt      |  112 +------------------
->  1 files changed, 6 insertions(+), 106 deletions(-)
+ Documentation/devicetree/bindings/mmc/tmio_mmc.txt |  3 ++-
+ drivers/clk/renesas/r7s9210-cpg-mssr.c             |  5 ++++
+ drivers/mmc/host/Kconfig                           |  7 +++---
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c      | 28 ++++++++++++++++++++--
+ 4 files changed, 37 insertions(+), 6 deletions(-)
+
+-- 
+2.16.1
+
