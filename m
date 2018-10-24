@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27DC6ECDE44
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Oct 2018 18:06:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36607ECDE44
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Oct 2018 18:11:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D95742082F
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Oct 2018 18:06:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D95742082F
+	by mail.kernel.org (Postfix) with ESMTP id 09A76206B5
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Oct 2018 18:11:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09A76206B5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726800AbeJYCfp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 24 Oct 2018 22:35:45 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:52188 "EHLO mail.bootlin.com"
+        id S1726575AbeJYCkE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 24 Oct 2018 22:40:04 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:52550 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726652AbeJYCfp (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 24 Oct 2018 22:35:45 -0400
+        id S1726433AbeJYCkE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 24 Oct 2018 22:40:04 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 5743820797; Wed, 24 Oct 2018 20:06:39 +0200 (CEST)
+        id BB62E20890; Wed, 24 Oct 2018 20:10:58 +0200 (CEST)
 Received: from localhost (unknown [2.223.63.88])
-        by mail.bootlin.com (Postfix) with ESMTPSA id C02E220890;
-        Wed, 24 Oct 2018 20:06:32 +0200 (CEST)
-Date:   Wed, 24 Oct 2018 19:06:32 +0100
+        by mail.bootlin.com (Postfix) with ESMTPSA id 76A4E20890;
+        Wed, 24 Oct 2018 20:10:48 +0200 (CEST)
+Date:   Wed, 24 Oct 2018 19:10:48 +0100
 From:   Maxime Ripard <maxime.ripard@bootlin.com>
 To:     Jagan Teki <jagan@amarulasolutions.com>
 Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
@@ -43,16 +43,15 @@ Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
         Michael Trimarchi <michael@amarulasolutions.com>,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 04/15] drm/sun4i: sun6i_mipi_dsi: Add Allwinner A64
- MIPI DSI support
-Message-ID: <20181024180632.zrb3lrqsznspmwbk@flea>
+Subject: Re: [PATCH v2 14/15] arm64: dts: allwinner: a64: Add DSI pipeline
+Message-ID: <20181024181048.w4iwebtac6wzmgt4@flea>
 References: <20181023155035.9101-1-jagan@amarulasolutions.com>
- <20181023155035.9101-5-jagan@amarulasolutions.com>
+ <20181023155035.9101-15-jagan@amarulasolutions.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="aitkqvf7qrxfcgwr"
+        protocol="application/pgp-signature"; boundary="ce5b5wkoh6xeauxh"
 Content-Disposition: inline
-In-Reply-To: <20181023155035.9101-5-jagan@amarulasolutions.com>
+In-Reply-To: <20181023155035.9101-15-jagan@amarulasolutions.com>
 User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
@@ -60,167 +59,93 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---aitkqvf7qrxfcgwr
+--ce5b5wkoh6xeauxh
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 23, 2018 at 09:20:24PM +0530, Jagan Teki wrote:
-> The MIPI DSI controller on Allwinner A64 is similar to
-> Allwinner A31 without support of DSI mod clock(CLK_DSI_SCLK)
+On Tue, Oct 23, 2018 at 09:20:34PM +0530, Jagan Teki wrote:
+> The A64 has a MIPI-DSI block which is similar to A31
+> without mod clock.
 >=20
-> So, alter has_mod_clk bool via driver data for respective
-> SoC's compatible.
+> So, add dsi node with A64 compatible, dphy node with
+> A31 compatible and finally connect dsi to tcon0 to
+> make proper DSI pipeline.
 >=20
 > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 > ---
 > Changes for v2:
-> - none
+> - use A64 dphy compatible
 >=20
->  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 47 ++++++++++++++++++++------
->  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h |  5 +++
->  2 files changed, 41 insertions(+), 11 deletions(-)
+>  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 45 +++++++++++++++++++
+>  1 file changed, 45 insertions(+)
 >=20
-> diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun=
-4i/sun6i_mipi_dsi.c
-> index e3b34a345546..8e9c76febca2 100644
-> --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> @@ -10,6 +10,7 @@
->  #include <linux/component.h>
->  #include <linux/crc-ccitt.h>
->  #include <linux/of_address.h>
-> +#include <linux/of_device.h>
->  #include <linux/pm_runtime.h>
->  #include <linux/regmap.h>
->  #include <linux/reset.h>
-> @@ -981,6 +982,8 @@ static int sun6i_dsi_probe(struct platform_device *pd=
-ev)
->  	dsi->host.ops =3D &sun6i_dsi_host_ops;
->  	dsi->host.dev =3D dev;
-> =20
-> +	dsi->variant =3D of_device_get_match_data(dev);
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/b=
+oot/dts/allwinner/sun50i-a64.dtsi
+> index f3a66f888205..f82e6b165d57 100644
+> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+> @@ -320,6 +320,11 @@
+>  					#address-cells =3D <1>;
+>  					#size-cells =3D <0>;
+>  					reg =3D <1>;
 > +
->  	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
->  	base =3D devm_ioremap_resource(dev, res);
->  	if (IS_ERR(base)) {
-> @@ -1001,17 +1004,20 @@ static int sun6i_dsi_probe(struct platform_device=
- *pdev)
->  		return PTR_ERR(dsi->reset);
->  	}
-> =20
-> -	dsi->mod_clk =3D devm_clk_get(dev, "mod");
-> -	if (IS_ERR(dsi->mod_clk)) {
-> -		dev_err(dev, "Couldn't get the DSI mod clock\n");
-> -		return PTR_ERR(dsi->mod_clk);
-> +	if (dsi->variant->has_mod_clk) {
-> +		dsi->mod_clk =3D devm_clk_get(dev, "mod");
-> +		if (IS_ERR(dsi->mod_clk)) {
-> +			dev_err(dev, "Couldn't get the DSI mod clock\n");
-> +			return PTR_ERR(dsi->mod_clk);
-> +		}
->  	}
-> =20
->  	/*
->  	 * In order to operate properly, that clock seems to be always
->  	 * set to 297MHz.
->  	 */
-> -	clk_set_rate_exclusive(dsi->mod_clk, 297000000);
-> +	if (dsi->variant->has_mod_clk)
-> +		clk_set_rate_exclusive(dsi->mod_clk, 297000000);
-> =20
->  	dphy_node =3D of_parse_phandle(dev->of_node, "phys", 0);
->  	ret =3D sun6i_dphy_probe(dsi, dphy_node);
-> @@ -1043,7 +1049,8 @@ static int sun6i_dsi_probe(struct platform_device *=
-pdev)
->  	pm_runtime_disable(dev);
->  	sun6i_dphy_remove(dsi);
->  err_unprotect_clk:
-> -	clk_rate_exclusive_put(dsi->mod_clk);
-> +	if (dsi->variant->has_mod_clk)
-> +		clk_rate_exclusive_put(dsi->mod_clk);
->  	return ret;
->  }
-> =20
-> @@ -1056,7 +1063,8 @@ static int sun6i_dsi_remove(struct platform_device =
-*pdev)
->  	mipi_dsi_host_unregister(&dsi->host);
->  	pm_runtime_disable(dev);
->  	sun6i_dphy_remove(dsi);
-> -	clk_rate_exclusive_put(dsi->mod_clk);
-> +	if (dsi->variant->has_mod_clk)
-> +		clk_rate_exclusive_put(dsi->mod_clk);
-> =20
->  	return 0;
->  }
-> @@ -1066,7 +1074,8 @@ static int __maybe_unused sun6i_dsi_runtime_resume(=
-struct device *dev)
->  	struct sun6i_dsi *dsi =3D dev_get_drvdata(dev);
-> =20
->  	reset_control_deassert(dsi->reset);
-> -	clk_prepare_enable(dsi->mod_clk);
-> +	if (dsi->variant->has_mod_clk)
-> +		clk_prepare_enable(dsi->mod_clk);
-> =20
->  	/*
->  	 * Enable the DSI block.
-> @@ -1094,7 +1103,8 @@ static int __maybe_unused sun6i_dsi_runtime_suspend=
-(struct device *dev)
->  {
->  	struct sun6i_dsi *dsi =3D dev_get_drvdata(dev);
-> =20
-> -	clk_disable_unprepare(dsi->mod_clk);
-> +	if (dsi->variant->has_mod_clk)
-> +		clk_disable_unprepare(dsi->mod_clk);
->  	reset_control_assert(dsi->reset);
-> =20
->  	return 0;
-> @@ -1106,9 +1116,24 @@ static const struct dev_pm_ops sun6i_dsi_pm_ops =
-=3D {
->  			   NULL)
->  };
-> =20
-> +static const struct sun6i_dsi_variant sun6i_a31_dsi =3D {
-> +	.has_mod_clk =3D true,
-> +};
-> +
-> +static const struct sun6i_dsi_variant sun50i_a64_dsi =3D {
-> +	.has_mod_clk =3D false,
+> +					tcon0_out_dsi: endpoint@1 {
+> +						reg =3D <1>;
+> +						remote-endpoint =3D <&dsi_in_tcon0>;
 
-This is the default already.
+You need to set the allwinner,channel property there.
 
-> +};
+> +					};
+>  				};
+>  			};
+>  		};
+> @@ -818,6 +823,46 @@
+>  			#interrupt-cells =3D <3>;
+>  		};
+> =20
 > +
->  static const struct of_device_id sun6i_dsi_of_table[] =3D {
-> -	{ .compatible =3D "allwinner,sun6i-a31-mipi-dsi" },
-> -	{ }
-> +	{
-> +		.compatible =3D "allwinner,sun6i-a31-mipi-dsi",
-> +		.data =3D &sun6i_a31_dsi,
-> +	},
-> +	{
-> +		.compatible =3D "allwinner,sun50i-a64-mipi-dsi",
-> +		.data =3D &sun50i_a64_dsi,
-> +	},
-> +	{ /* sentinel */ }
->  };
->  MODULE_DEVICE_TABLE(of, sun6i_dsi_of_table);
-> =20
-> diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h b/drivers/gpu/drm/sun=
-4i/sun6i_mipi_dsi.h
-> index dbbc5b3ecbda..597b62227019 100644
-> --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h
-> +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h
-> @@ -20,6 +20,10 @@ struct sun6i_dphy {
->  	struct reset_control	*reset;
->  };
-> =20
-> +struct sun6i_dsi_variant {
-> +	bool			has_mod_clk;
-> +};
+> +		dsi: dsi@1ca0000 {
+> +			compatible =3D "allwinner,sun50i-a64-mipi-dsi";
+> +			reg =3D <0x01ca0000 0x1000>;
+> +			interrupts =3D <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks =3D <&ccu CLK_BUS_MIPI_DSI>;
+> +			clock-names =3D "bus";
+> +			resets =3D <&ccu RST_BUS_MIPI_DSI>;
+> +			phys =3D <&dphy>;
+> +			phy-names =3D "dphy";
+> +			status =3D "disabled";
+> +
+> +			ports {
+> +				#address-cells =3D <1>;
+> +				#size-cells =3D <0>;
+> +
+> +				port@0 {
+> +					#address-cells =3D <1>;
+> +					#size-cells =3D <0>;
+> +					reg =3D <0>;
+> +
+> +					dsi_in_tcon0: endpoint {
+> +						remote-endpoint =3D <&tcon0_out_dsi>;
+> +					};
+> +				};
+> +			};
+> +		};
+> +
+> +		dphy: d-phy@1ca1000 {
+> +			compatible =3D "allwinner,sun50i-a64-mipi-dphy",
+> +				     "allwinner,sun6i-a31-mipi-dphy";
+> +			reg =3D <0x01ca1000 0x1000>;
+> +			clocks =3D <&ccu CLK_BUS_MIPI_DSI>,
+> +				 <&ccu CLK_DSI_DPHY>;
+> +			clock-names =3D "bus", "mod";
+> +			resets =3D <&ccu RST_BUS_MIPI_DSI>;
+> +			status =3D "disabled";
+> +			#phy-cells =3D <0>;
+> +		};
 > +
 
-This should be part of a separate patch.
+You have to order the nodes per ascending physical address ordering.
 
 Maxime
 
@@ -229,15 +154,15 @@ Maxime Ripard, Bootlin
 Embedded Linux and Kernel engineering
 https://bootlin.com
 
---aitkqvf7qrxfcgwr
+--ce5b5wkoh6xeauxh
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW9C0ogAKCRDj7w1vZxhR
-xZdaAP40olQkSWZ1ui0lxclCdxfQbopVfIN6nOuNA+DWJ3h89QD/cuI/22VsYdek
-E39AIpNpFDQ9K/dzbeTBXakltdw4DAE=
-=tj4V
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW9C1qAAKCRDj7w1vZxhR
+xbjoAQCwjTtVKrcvRAMS44EuWEae1MmEN5c2t2CAe3+QicWY+wEA+Re13Dn09dUh
++xVIR7pJUz0RqK4drnZyTSjbPy+UeQg=
+=pPcm
 -----END PGP SIGNATURE-----
 
---aitkqvf7qrxfcgwr--
+--ce5b5wkoh6xeauxh--
