@@ -2,70 +2,71 @@ Return-Path: <SRS0=W7GY=NE=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C35FCC67863
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Oct 2018 08:59:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A2F8C004D3
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Oct 2018 09:00:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AF6C20824
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Oct 2018 08:59:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F6AC2082F
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Oct 2018 09:00:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="oXcNdu6l"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AF6C20824
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="ZEnexe6C"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F6AC2082F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727545AbeJXR0Q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 24 Oct 2018 13:26:16 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:53477 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727508AbeJXR0P (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Oct 2018 13:26:15 -0400
-Received: by mail-wm1-f66.google.com with SMTP id f8-v6so2110259wmc.3
-        for <linux-clk@vger.kernel.org>; Wed, 24 Oct 2018 01:58:59 -0700 (PDT)
+        id S1727508AbeJXR2J (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 24 Oct 2018 13:28:09 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:35784 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727653AbeJXR2I (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Oct 2018 13:28:08 -0400
+Received: by mail-wr1-f67.google.com with SMTP id w5-v6so4682704wrt.2
+        for <linux-clk@vger.kernel.org>; Wed, 24 Oct 2018 02:00:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=message-id:subject:from:to:cc:date:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=1XtO4+oBRrVx/c0XAlW9Z/yti7iEErTfBplykocc6Wk=;
-        b=oXcNdu6ln+hsr8SdNQ6+melzSbb6q4h1SJVBNMDSr9xYvUkTEtZ7HdAj1u8MToOCG+
-         gCocbKciGf3yrOe+a6tt5NdtIVZy0peEKWAfDAWuKZCUM4ROuMQ32i1cQjv6aiCA1C15
-         oNaRw39Z1XvVQNBKFlKjN7I2vkLFlOQiPwDofXX4lLX52JeodzY57qsTp+tsv6GWnpJr
-         7a87mYym2/CzOvnGA0Az6mCxXMJDlo0BhuyqZt9oq4X4B7hr4VvOvmiDAP6Dzh8FPXSL
-         9fR4NxJTHSPAdxNGT2Gk8hqL3xqV7sTZ63RymbjalweOASaP6UuJ55nXN5fpu+xSOVVV
-         mZ1A==
+        bh=R/ylNOdH39QL43SdexiX2HGNkk4m7fJKVsFO0muMG9s=;
+        b=ZEnexe6CW8XqCNNofwruaWMOTFrRy4cd0/faBqeGw1/O5Lf38lCHLewPXiqV8wehhN
+         /dL+bm/Lz6/CkMMOPO4v7siHBrUk0GGe42GFfc8Z4AkA2cFdw+YfNJQTgKsdgtT+gGE5
+         9KCuvQ1YBifGRvigkWk2PrHR3s7EZc3Xfddakl1q2WtfZe+RVQ+8Fqci6AfB2nWDh5bT
+         bp946V3skOdzxQvf2N5Bvx8y+dvZ/B48npKEVo9kt9JDss57Q9c0EvMdBQxWLWdDBpvL
+         3gwVo6CRHkrB/azwhY9BJEH1hI7EqUeGaDckD6C0e0Zrgs2HM4trbm5TeqAFiPAJLQ77
+         /uIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=1XtO4+oBRrVx/c0XAlW9Z/yti7iEErTfBplykocc6Wk=;
-        b=ipNY5X5+zH3vVDIYSZEWsMYMctQSQnMw+gp1zecc2WAPGb6hxhVCHVr3fogY0bjSzB
-         d5VGpshKMgIMeEDTlleZ9Zjh0bU8qnKk2HM5Gvj0qdkitxe6TkVqxqUMOca+FFYDYcoA
-         W1fJ3bITew/zxYIRYqdu/5jI6bdMQpOJPd3Nh3vr4iIsXgMw/gY/3RfXr0x1s74hFo2L
-         lPbNw6lsZklGoI5hEc0/A5G/fgt50J85JaA+Z6s9pSdVt51aa1M91cIo9lRojUCZMYn6
-         sleaPQvrYysxX1HCRUP71ZcQPx/VODDVzUthM/S5MzC4C3Gq1rNIRxdnGc9GTgee1Xr5
-         B42Q==
-X-Gm-Message-State: AGRZ1gLeOxlPCMDny7A00HNDzg8GwRxT/kirTA+4zqVvOwl0w6JwpwmN
-        z48gvdLZ8qgBHcTCgaLEsTCxQg==
-X-Google-Smtp-Source: AJdET5dsvmHJE1ApCxHke8P6hV6bLvFokOibzVC62XqI+NZtAPTakxOuP/+lfbwXL+B155bc4L/AmA==
-X-Received: by 2002:a1c:1b91:: with SMTP id b139-v6mr1693330wmb.147.1540371539036;
-        Wed, 24 Oct 2018 01:58:59 -0700 (PDT)
+        bh=R/ylNOdH39QL43SdexiX2HGNkk4m7fJKVsFO0muMG9s=;
+        b=ukBkk5OARXNqhnOAIpm5eAuZ+RtP6uIgI/7fMd780ENySzCoFJvcpqk84YDo/9PvRD
+         TwU4riQ3KbLmWGjRREUBzQDIEZYjWz4nLDo3Bwx3BAOrz6Pqt0OFWaCwFR9eebBMW2BP
+         snz3JdFvLmRFT3tVbBcXqlA89voM+e9owBk5aSjVw8e2d79FHPLM86RNYZqHQbn0Im18
+         TgljBvs/Ro1K7vpEZNAMkSfcr9wS2Fmcm/2Pat9fQ5mc72R3ukKPDOC3LQUnAJuQqrpS
+         u5Aa4tRrMbJsGTi/00gLJDW/p2eQcVWC53QNgqdlOCv6hf+Tqq86hMi/aNjRAi5de7If
+         ivJg==
+X-Gm-Message-State: AGRZ1gLswTa2/zJ6q4/w6Z5k7myTT9xh6PHLg1slrtsarYz2urJ6JgGP
+        aLgxn+KIMRF1ZOdmi/FSmvmVwQ==
+X-Google-Smtp-Source: AJdET5ftz1HxpzBHRF+qbPRHR+PeK3YpC+orO5wOj4DgwXaPFskYOmpukCIWiN6VelT3K0wpVHe5cg==
+X-Received: by 2002:a5d:4c84:: with SMTP id z4-v6mr1973892wrs.75.1540371652077;
+        Wed, 24 Oct 2018 02:00:52 -0700 (PDT)
 Received: from boomer ([90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id 77-v6sm6700260wmv.6.2018.10.24.01.58.57
+        by smtp.gmail.com with ESMTPSA id x185-v6sm3628943wmg.12.2018.10.24.02.00.50
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 24 Oct 2018 01:58:58 -0700 (PDT)
-Message-ID: <10a0572db79ef0cb4f345c8ba2685bea5670b1a5.camel@baylibre.com>
-Subject: Re: [PATCH v5 1/3] clk: meson: add emmc sub clock phase delay driver
+        Wed, 24 Oct 2018 02:00:51 -0700 (PDT)
+Message-ID: <9db735d01a0f9fc3f82be6d45c88c4b98362d062.camel@baylibre.com>
+Subject: Re: [PATCH v5 3/3] clk: meson: add sub MMC clock controller driver
 From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Jianxin Pan <jianxin.pan@amlogic.com>,
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
         Neil Armstrong <narmstrong@baylibre.com>
 Cc:     Yixun Lan <yixun.lan@amlogic.com>,
         Kevin Hilman <khilman@baylibre.com>,
         Carlo Caione <carlo@caione.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Rob Herring <robh@kernel.org>,
         Miquel Raynal <miquel.raynal@bootlin.com>,
         Boris Brezillon <boris.brezillon@bootlin.com>,
         Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
@@ -75,170 +76,81 @@ Cc:     Yixun Lan <yixun.lan@amlogic.com>,
         Hanjie Lin <hanjie.lin@amlogic.com>,
         Victor Wan <victor.wan@amlogic.com>, linux-clk@vger.kernel.org,
         linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Date:   Wed, 24 Oct 2018 10:58:56 +0200
-In-Reply-To: <1539839245-13793-2-git-send-email-jianxin.pan@amlogic.com>
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Date:   Wed, 24 Oct 2018 11:00:50 +0200
+In-Reply-To: <153997220960.53599.2059896905852359614@swboyd.mtv.corp.google.com>
 References: <1539839245-13793-1-git-send-email-jianxin.pan@amlogic.com>
-         <1539839245-13793-2-git-send-email-jianxin.pan@amlogic.com>
+         <1539839245-13793-4-git-send-email-jianxin.pan@amlogic.com>
+         <153988282130.5275.17528969137837015544@swboyd.mtv.corp.google.com>
+         <01d07c83-b17e-70b5-6e9b-8150ee3aedf2@amlogic.com>
+         <153997220960.53599.2059896905852359614@swboyd.mtv.corp.google.com>
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 2018-10-18 at 13:07 +0800, Jianxin Pan wrote:
-> From: Yixun Lan <yixun.lan@amlogic.com>
+On Fri, 2018-10-19 at 11:03 -0700, Stephen Boyd wrote:
+> Quoting Jianxin Pan (2018-10-19 09:12:53)
+> > On 2018/10/19 1:13, Stephen Boyd wrote:
+> > > Quoting Jianxin Pan (2018-10-17 22:07:25)
+> > > > diff --git a/drivers/clk/meson/clk-regmap.c b/drivers/clk/meson/clk-regmap.c
+> > > > index 305ee30..f96314d 100644
+> > > > --- a/drivers/clk/meson/clk-regmap.c
+> > > > +++ b/drivers/clk/meson/clk-regmap.c
+> > > > @@ -113,8 +113,25 @@ static int clk_regmap_div_set_rate(struct clk_hw *hw, unsigned long rate,
+> > > >                                   clk_div_mask(div->width) << div->shift, val);
+> > > >  };
+> > > >  
+> > > > -/* Would prefer clk_regmap_div_ro_ops but clashes with qcom */
+> > > > +static void clk_regmap_div_init(struct clk_hw *hw)
+> > > > +{
+> > > > +       struct clk_regmap *clk = to_clk_regmap(hw);
+> > > > +       struct clk_regmap_div_data *div = clk_get_regmap_div_data(clk);
+> > > > +       unsigned int val;
+> > > > +       int ret;
+> > > > +
+> > > > +       ret = regmap_read(clk->map, div->offset, &val);
+> > > > +       if (ret)
+> > > > +               return;
+> > > >  
+> > > > +       val &= (clk_div_mask(div->width) << div->shift);
+> > > > +       if (!val)
+> > > > +               regmap_update_bits(clk->map, div->offset,
+> > > > +                                  clk_div_mask(div->width) << div->shift,
+> > > > +                                  clk_div_mask(div->width));
+> > > > +}
+> > > > +
+> > > > +/* Would prefer clk_regmap_div_ro_ops but clashes with qcom */
+> > > 
+> > > We should add a patch to rename the symbol for qcom, i.e.
+> > > qcom_clk_regmap_div_ro_ops, and then any symbols in this directory
+> > > should be meson_clk_regmap_div_ro_ops.
+> > 
+> > "/* Would prefer clk_regmap_div_ro_ops but clashes with qcom */"
+> > This comment is not introduced in this patch.
+> > I followed the naming style in this file and add clk_regmap_divider_with_init_ops.
+> > 
+> > @Jerome， What's your suggestion about this？
 > 
-> Export the emmc sub clock phase delay ops which will be used
-> by the emmc sub clock driver itself.
-> 
-> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
-> Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
-> ---
->  drivers/clk/meson/Makefile          |  2 +-
->  drivers/clk/meson/clk-phase-delay.c | 79 +++++++++++++++++++++++++++++++++++++
->  drivers/clk/meson/clkc.h            | 13 ++++++
->  3 files changed, 93 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/clk/meson/clk-phase-delay.c
-> 
-> diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
-> index 72ec8c4..39ce566 100644
-> --- a/drivers/clk/meson/Makefile
-> +++ b/drivers/clk/meson/Makefile
-> @@ -2,7 +2,7 @@
->  # Makefile for Meson specific clk
->  #
->  
-> -obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-mpll.o clk-phase.o
-> +obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-mpll.o clk-phase.o clk-phase-delay.o
->  obj-$(CONFIG_COMMON_CLK_AMLOGIC_AUDIO)	+= clk-triphase.o sclk-div.o
->  obj-$(CONFIG_COMMON_CLK_MESON_AO) += meson-aoclk.o
->  obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
-> diff --git a/drivers/clk/meson/clk-phase-delay.c b/drivers/clk/meson/clk-phase-delay.c
-> new file mode 100644
-> index 0000000..b9573a7
-> --- /dev/null
-> +++ b/drivers/clk/meson/clk-phase-delay.c
-> @@ -0,0 +1,79 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +/*
-> + * Amlogic Meson MMC Sub Clock Controller Driver
-> + *
-> + * Copyright (c) 2017 Baylibre SAS.
-> + * Author: Jerome Brunet <jbrunet@baylibre.com>
-> + *
-> + * Copyright (c) 2018 Amlogic, inc.
-> + * Author: Yixun Lan <yixun.lan@amlogic.com>
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include "clkc.h"
-> +
-> +static int meson_clk_phase_delay_get_phase(struct clk_hw *hw)
-> +{
-> +	struct clk_regmap *clk = to_clk_regmap(hw);
-> +	struct meson_clk_phase_delay_data *ph =
-> +		meson_clk_get_phase_delay_data(clk);
-> +	unsigned long period_ps, p, d;
-> +	int degrees;
-> +	u32 val;
-> +
-> +	regmap_read(clk->map, ph->phase.reg_off, &val);
-> +	p = PARM_GET(ph->phase.width, ph->phase.shift, val);
+> Yes you don't need to fix anything in this series. Just saying that in
+> the future we should work on cleaning this up.
 
-there is an helper for this: meson_parm_read()
 
-> +	degrees = p * 360 / (1 << (ph->phase.width));
-> +
-> +	period_ps = DIV_ROUND_UP((unsigned long)NSEC_PER_SEC * 1000,
-> +				 clk_hw_get_rate(hw));
-> +
-> +	d = PARM_GET(ph->delay.width, ph->delay.shift, val);
-> +	degrees += d * ph->delay_step_ps * 360 / period_ps;
-> +	degrees %= 360;
-> +
-> +	return degrees;
-> +}
-> +
-> +static void meson_clk_apply_phase_delay(struct clk_regmap *clk,
-> +					unsigned int phase,
-> +					unsigned int delay)
+Well, first, I wonder why such a change ends up in a patch that is supposed to
+add a controller.
 
-This helper function is a bit overkill.
-simply call meson_parm_write() twice in meson_clk_phase_delay_set_phase().
+If such a change was really required to implement a generic div (which I doubt)
+it would need to be in separate with clear explanation.
 
-> +{
-> +	struct meson_clk_phase_delay_data *ph = clk->data;
-> +	u32 val;
-> +
-> +	regmap_read(clk->map, ph->delay.reg_off, &val);
-> +	val = PARM_SET(ph->phase.width, ph->phase.shift, val, phase);
-> +	val = PARM_SET(ph->delay.width, ph->delay.shift, val, delay);
-> +	regmap_write(clk->map, ph->delay.reg_off, val);
-> +}
-> +
-> +static int meson_clk_phase_delay_set_phase(struct clk_hw *hw, int degrees)
-> +{
-> +	struct clk_regmap *clk = to_clk_regmap(hw);
-> +	struct meson_clk_phase_delay_data *ph =
-> +		meson_clk_get_phase_delay_data(clk);
-> +	unsigned long period_ps, d = 0, r;
-> +	u64 p;
-> +
-> +	p = degrees % 360;
-> +	period_ps = DIV_ROUND_UP((unsigned long)NSEC_PER_SEC * 1000,
-> +				 clk_hw_get_rate(hw));
-> +
-> +	/* First compute the phase index (p), the remainder (r) is the
-> +	 * part we'll try to acheive using the delays (d).
-> +	 */
-> +	r = do_div(p, 360 / (1 << (ph->phase.width)));
-> +	d = DIV_ROUND_CLOSEST(r * period_ps,
-> +			      360 * ph->delay_step_ps);
-> +	d = min(d, PMASK(ph->delay.width));
-> +
-> +	meson_clk_apply_phase_delay(clk, p, d);
-> +	return 0;
-> +}
-> +
-> +const struct clk_ops meson_clk_phase_delay_ops = {
-> +	.get_phase = meson_clk_phase_delay_get_phase,
-> +	.set_phase = meson_clk_phase_delay_set_phase,
-> +};
-> +EXPORT_SYMBOL_GPL(meson_clk_phase_delay_ops);
-> diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
-> index 6b96d55..3309d78 100644
-> --- a/drivers/clk/meson/clkc.h
-> +++ b/drivers/clk/meson/clkc.h
-> @@ -105,6 +105,18 @@ struct clk_regmap _name = {						\
->  	},								\
->  };
->  
-> +struct meson_clk_phase_delay_data {
-> +	struct parm			phase;
-> +	struct parm			delay;
-> +	unsigned int			delay_step_ps;
-> +};
-> +
-> +static inline struct meson_clk_phase_delay_data *
-> +meson_clk_get_phase_delay_data(struct clk_regmap *clk)
-> +{
-> +	return (struct meson_clk_phase_delay_data *)clk->data;
-> +}
-> +
->  /* clk_ops */
->  extern const struct clk_ops meson_clk_pll_ro_ops;
->  extern const struct clk_ops meson_clk_pll_ops;
-> @@ -112,5 +124,6 @@ struct clk_regmap _name = {						\
->  extern const struct clk_ops meson_clk_mpll_ro_ops;
->  extern const struct clk_ops meson_clk_mpll_ops;
->  extern const struct clk_ops meson_clk_phase_ops;
-> +extern const struct clk_ops meson_clk_phase_delay_ops;
->  
->  #endif /* __CLKC_H */
+Stephen,
+I agree at some point we should squash the different regmap implementations and
+provide generic (enough) implementation. There is not only qcom and meson, some
+other controllers are redefining regmap ops and I bet driver outside of
+drivers/clk/* could use a generic implementation as well.
+
 
 
