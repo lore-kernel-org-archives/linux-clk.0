@@ -2,76 +2,156 @@ Return-Path: <SRS0=W7GY=NE=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19521ECDE46
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Oct 2018 18:37:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2970AECDE46
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Oct 2018 18:48:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8B942075D
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Oct 2018 18:37:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8B942075D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=buserror.net
+	by mail.kernel.org (Postfix) with ESMTP id BD477207DD
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Oct 2018 18:48:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD477207DD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726521AbeJYDGs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 24 Oct 2018 23:06:48 -0400
-Received: from baldur.buserror.net ([165.227.176.147]:35194 "EHLO
-        baldur.buserror.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727089AbeJYDGs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Oct 2018 23:06:48 -0400
-Received: from [2601:449:8400:7293:12bf:48ff:fe84:c9a0]
-        by baldur.buserror.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <oss@buserror.net>)
-        id 1gFO25-0002H4-Ni; Wed, 24 Oct 2018 13:37:30 -0500
-Message-ID: <d4598171243a37516faae71095eb3126d77fa723.camel@buserror.net>
-From:   Scott Wood <oss@buserror.net>
-To:     andy.tang@nxp.com, sboyd@kernel.org, mturquette@baylibre.com
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, benh@kernel.crashing.org,
-        paulus@samba.org, mpe@ellerman.id.au, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Date:   Wed, 24 Oct 2018 13:37:28 -0500
-In-Reply-To: <20181024021122.3942-3-andy.tang@nxp.com>
-References: <20181024021122.3942-1-andy.tang@nxp.com>
-         <20181024021122.3942-2-andy.tang@nxp.com>
-         <20181024021122.3942-3-andy.tang@nxp.com>
-Organization: Red Hat
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2601:449:8400:7293:12bf:48ff:fe84:c9a0
-X-SA-Exim-Rcpt-To: andy.tang@nxp.com, sboyd@kernel.org, mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com, benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-X-SA-Exim-Mail-From: oss@buserror.net
-Subject: Re: [PATCH 3/3 v2] clk: qoriq: update clock driver
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on baldur.buserror.net)
+        id S1726748AbeJYDRM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 24 Oct 2018 23:17:12 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:37401 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726521AbeJYDRM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Oct 2018 23:17:12 -0400
+Received: by mail-oi1-f193.google.com with SMTP id e17-v6so4958703oib.4;
+        Wed, 24 Oct 2018 11:48:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=1NkZzFYRgsDElNM8ngsz3f1bKhIZ4R18HX8fVURc9Ew=;
+        b=cK3I8fl4Qa84ij7eG8JwxTrWthW4rUESf41QIg8iNn22Nyn4OcXyPKuFfNtqSzfKBv
+         SwVWYpiHzLXMVnMNzIQ6cJv4fgq6yK4gkhLbWqaOriIcMXQ9PmYKttADuzpXYYQ/LR8y
+         W6WhZn97AUYCCYCt1uB1tkxc6e6W0Aox028KK/Rh/BaRq8reTk/YXdjND3RvBcKhWcRb
+         8y/+ywdpdjSVhyFWdhIqdQ6PG5I/3ztj2ZrN2g1x5Kvcy6NdDr24BwRo5485IWC2OLqx
+         tsvee/MKj5reaAV4cxPKU2rPcMYthLN02jS7oGt5WUcf9TXd0rOO2NKadeShuF/ZH7Lf
+         cuzg==
+X-Gm-Message-State: AGRZ1gIUmMgfHbfZSwNbrr5lxUoZBaJ++NHYbVvRwK8IkgDYA6yGRxns
+        /a3fiIrs3yLg3zO//KDQEg==
+X-Google-Smtp-Source: AJdET5fux4XPLGuA8vGYCGLj5kkpNTZgVuD/Kj/M5cpcVy6/8qyvhcynoqfT+Iuc2GuaPQ99A/Fw2g==
+X-Received: by 2002:aca:c743:: with SMTP id x64-v6mr1942668oif.139.1540406879532;
+        Wed, 24 Oct 2018 11:47:59 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id q16sm1677072otf.35.2018.10.24.11.47.58
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 24 Oct 2018 11:47:58 -0700 (PDT)
+Date:   Wed, 24 Oct 2018 13:47:57 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Paul Walmsley <paul.walmsley@sifive.com>
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Megan Wachs <megan@sifive.com>,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Paul Walmsley <paul@pwsan.com>
+Subject: Re: [PATCH v2 2/3] dt-bindings: clk: add documentation for the
+ SiFive PRCI driver
+Message-ID: <20181024184757.GA22367@bogus>
+References: <20181020135024.28573-1-paul.walmsley@sifive.com>
+ <20181020135024.28573-3-paul.walmsley@sifive.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181020135024.28573-3-paul.walmsley@sifive.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 2018-10-24 at 10:11 +0800, andy.tang@nxp.com wrote:
-> From: Yuantian Tang <andy.tang@nxp.com>
+On Sat, Oct 20, 2018 at 06:50:23AM -0700, Paul Walmsley wrote:
+> Add DT binding documentation for the Linux driver for the SiFive
+> PRCI clock & reset control IP block, as found on the SiFive
+> FU540 chip.
 > 
-> Legacy bindings are deleted. So the legacy support in driver
-> can be deleted safely.
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Palmer Dabbelt <palmer@sifive.com>
+> Cc: Megan Wachs <megan@sifive.com>
+> Cc: linux-clk@vger.kernel.org
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-riscv@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
+> Signed-off-by: Paul Walmsley <paul@pwsan.com>
+> ---
+> v2: remove out-of-date example, add documentation for the compatible
+>     string and for the required PCB clock nodes
+> 
+> .../bindings/clock/sifive/fu540-prci.txt      | 43 +++++++++++++++++++
+>  1 file changed, 43 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/sifive/fu540-prci.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/sifive/fu540-prci.txt b/Documentation/devicetree/bindings/clock/sifive/fu540-prci.txt
+> new file mode 100644
+> index 000000000000..d7c1e83fa5ed
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/sifive/fu540-prci.txt
+> @@ -0,0 +1,43 @@
+> +SiFive FU540 PRCI bindings
+> +
+> +On the FU540 family of SoCs, most system-wide clock and reset integration
+> +is via the PRCI IP block.
+> +
+> +Required properties:
+> +- compatible: Should be "sifive,<chip>-prci<version>".  As of the time this
+> +              file was written, only one value is supported:
+> +	      "sifive,fu540-c000-prci0"
 
-NACK (both this and 2/3).  The legacy support is intended to preserve
-compatibility, regardless of what the dts files in the current kernel tree do.
- If years later we find it's been broken for a while and nobody complained,
-then maybe it'll be time to remove it, but why deliberately throw away
-compatibility the instant the users have been removed from reference DTs that
-might be copied by board vendors, etc?
+What happens with this depends on the discussion on the other bindings.
 
-Note that even if we didn't care about long-term compatibility at all,
-removing the support in the same patchset as the change to the dts files means
-that the patches can't go in via separate trees (though if that's still the
-intent, you should make it clear who you're asking to take what by putting
-them in separate patchsets).
+Though here you are inconsistent without a fallback. Of course, I've 
+never seen a clock controller be the same across SoCs.
 
--Scott
+> +- reg: Should describe the PRCI's register target physical address region
+> +- clocks: Should point to the hfclk device tree node and the rtcclk
+> +          device tree node.  The RTC clock here is not a time-of-day clock,
+> +	  but is instead a high-stability clock source for system timers
+> +	  and cycle counters.
+> +- #clock-cells: Should be <1>
+> +
+> +The clock consumer should specify the desired clock via the clock ID
+> +macros defined in include/linux/clk/sifive-fu540-prci.h.  These macros
+> +begin with PRCI_CLK_.
+> +
+> +The hfclk and rtcclk nodes are required, and represent physical
+> +crystals or resonators located on the PCB.
+> +
+> +Examples:
+> +
+> +hfclk: hfclk {
+> +	#clock-cells = <0>;
+> +	compatible = "fixed-clock";
+> +	clock-frequency = <33333333>;
+> +	clock-output-names = "hfclk";
+> +};
+> +rtcclk: rtcclk {
+> +	#clock-cells = <0>;
+> +	compatible = "fixed-clock";
+> +	clock-frequency = <1000000>;
+> +	clock-output-names = "rtcclk";
+> +};
+> +prci0: prci@10000000 {
 
+clock-controller@...
+
+> +	compatible = "sifive,fu540-c000-prci0";
+> +	reg = <0x0 0x10000000 0x0 0x1000>;
+> +	clocks = <&hfclk>, <&rtcclk>;
+> +	#clock-cells = <1>;
+> +};
+> -- 
+> 2.19.1
+> 
