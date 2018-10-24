@@ -2,57 +2,58 @@ Return-Path: <SRS0=W7GY=NE=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2DDFC46475
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Oct 2018 03:23:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D9D0C46475
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Oct 2018 03:26:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66D2B20671
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Oct 2018 03:23:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF6C7206B5
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Oct 2018 03:26:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GWXU0gFJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66D2B20671
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="n/KxNjXu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF6C7206B5
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726301AbeJXLtq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 24 Oct 2018 07:49:46 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:35438 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726240AbeJXLtq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Oct 2018 07:49:46 -0400
-Received: by mail-pg1-f195.google.com with SMTP id 32-v6so1643748pgu.2
-        for <linux-clk@vger.kernel.org>; Tue, 23 Oct 2018 20:23:38 -0700 (PDT)
+        id S1726037AbeJXLww (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 24 Oct 2018 07:52:52 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:37559 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725896AbeJXLww (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Oct 2018 07:52:52 -0400
+Received: by mail-pl1-f194.google.com with SMTP id bh10-v6so1587414plb.4
+        for <linux-clk@vger.kernel.org>; Tue, 23 Oct 2018 20:26:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=HoUgDeYGHgBozPF8BvR8CllNS3AMMSk3lQsJUo6v4lQ=;
-        b=GWXU0gFJkxJKX37VY0PH8faOcJgPAk2h2QOJhmZvHjkvV33ad3FvB/6nc45ofMG8Mp
-         SE49qCNaKFsYCM/r7GbTA5qB6CfBoDup0AImuNY2v1E82Xpq7N4+6p/ofA4vDlfdn/Vs
-         aMySpjcm9euNg5ToOvba7Td9QO9M2lb+v+wXE=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=i9K0nyViFXBj0Drso8AJlM+PUE5qlmvWph59qni6wn8=;
+        b=n/KxNjXuw6UA4CkVkKthC4ej7XwtLwUUPxdcOhrUDuo4U5SEuR5iLEzLxjlxqDmeTm
+         98m3WGuMdHZUisCg/h7GfGBmRbRyDr4E/DaPyRSp4QwjobDkHFVi484fxQzag2+7GgAu
+         CdDsq1nS4v9iqKHF0ag5jYfl8YVnOhRu1N1oc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=HoUgDeYGHgBozPF8BvR8CllNS3AMMSk3lQsJUo6v4lQ=;
-        b=Zu54H6tBSQ7k/txfg8sfB+KIKkSi8klIUNwK415ZKmllN53UKhl60VbxvJiOh/Rssf
-         EZriVnHFNfWByfpari2FSJoVIaJKZrtx4uKWQpB6jcBjyQwNjh34kyiwm1quO/xev3H0
-         P+S2CEnNwV65jF+Y7zVgLOSM+8QoZ5Vv4YI/As7CgpaszOKaslRy8EfpP7fZNun1HQVF
-         21zDdQ7zBwZ+CNMIGPo6wUU5GhOsDquttmOP/SklCc2kqX4KUV0W4sO6w5GMR6OVOJS5
-         qt7XyoT1cru131Jsy5UcbFBnWt5lKaUY1CdMhVv2bU8UlLKFAvWfKnCv5qB0fSu2kr9n
-         5YVw==
-X-Gm-Message-State: AGRZ1gJvx3brLb1N8wVs52qfoADxJWGPJbia3PiyET72Cho9CZSiXLBX
-        hvMlIquN9e1+rk6ZO+TwpPz8kw==
-X-Google-Smtp-Source: AJdET5ezXFxvRDBDYDo41GXToJDTkUsqNwxqKxsspVnyYcmp5mbR44Btd+lDInTNkrKhw21HO5BGpg==
-X-Received: by 2002:a63:64c:: with SMTP id 73mr596598pgg.373.1540344700541;
-        Tue, 23 Oct 2018 18:31:40 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=i9K0nyViFXBj0Drso8AJlM+PUE5qlmvWph59qni6wn8=;
+        b=GeGygawFeVPXOwf6PFjMFqQyZkJ5xY07OICYQLY5VB5Iv7+4yaHznK2FMLqZjIp3L5
+         9skNHzYqB3DNvcsxW5adsTEGq4K7Dzf7tAS6v6I9BGPxI4hOX+gBrN35IFvGLMo6LPhy
+         mo2F+APM/V5UoNTBStsfw4Pv2VCPNQrujedfdFoGEX5h1xhjfuPLljIa2Viz69kk0uS4
+         dxVzMwM1uw6/dJQ3tMLBgyRkhvQdDx8BwrO4hVeA8mPRT/QmksLkfXgeJ5KwujJt3p8n
+         LnivcKZ0fWx6G439qtZ5qU60VdhWMN2VLFFFDL/b5iF3+9PgmQo2Ikdz2Yvli2Cm1KbF
+         XlIw==
+X-Gm-Message-State: AGRZ1gLFc4wgAyHJgMxCyzTPYOovtkl54P9Fb2JBDT6rfMPwWQ+48i+l
+        4wHxcF/BnxCLPXca2nfoxVrBcw==
+X-Google-Smtp-Source: AJdET5ciNObA0Ldg4HIecnAIeKWC8gKU0jnseVL1j8He0/pTawyqD5GeQW+arrhXQwVhOgZsRMrI6g==
+X-Received: by 2002:a17:902:2907:: with SMTP id g7-v6mr586984plb.201.1540344707606;
+        Tue, 23 Oct 2018 18:31:47 -0700 (PDT)
 Received: from exogeni.mtv.corp.google.com ([2620:15c:202:1:5e2b:39df:72ed:4968])
-        by smtp.gmail.com with ESMTPSA id p4-v6sm3882341pfg.188.2018.10.23.18.31.38
+        by smtp.gmail.com with ESMTPSA id p4-v6sm3882341pfg.188.2018.10.23.18.31.46
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 23 Oct 2018 18:31:39 -0700 (PDT)
+        Tue, 23 Oct 2018 18:31:46 -0700 (PDT)
 From:   Derek Basehore <dbasehore@chromium.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
@@ -60,10 +61,12 @@ Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         sboyd@kernel.org, mturquette@baylibre.com, heiko@sntech.de,
         aisheng.dong@nxp.com, mchehab+samsung@kernel.org, corbet@lwn.net,
         Derek Basehore <dbasehore@chromium.org>
-Subject: [PATCH 0/6] Coordinated Clks
-Date:   Tue, 23 Oct 2018 18:31:26 -0700
-Message-Id: <20181024013132.115907-1-dbasehore@chromium.org>
+Subject: [PATCH 5/6] docs: driver-api: add pre_rate_req to clk documentation
+Date:   Tue, 23 Oct 2018 18:31:31 -0700
+Message-Id: <20181024013132.115907-6-dbasehore@chromium.org>
 X-Mailer: git-send-email 2.19.1.568.g152ad8e336-goog
+In-Reply-To: <20181024013132.115907-1-dbasehore@chromium.org>
+References: <20181024013132.115907-1-dbasehore@chromium.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
@@ -71,30 +74,45 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Here's the first set of patches that I'm working on for the Common
-Clk Framework. Part of this patch series adds a new clk op,
-pre_rate_req. This is designed to replace the clk notifier approach
-that many clk drivers use right now to setup alt parents or temporary
-dividers. This should allow for the removal of the
-CLK_RECALC_NEW_RATES flag and the implementation of a better locking
-scheme for the prepare lock.
+This adds documentation for the new clk op pre_rate_req.
 
-Derek Basehore (5):
-  clk: fix clk_calc_subtree compute duplications
-  clk: change rates via list iteration
-  clk: add pre clk changes support
-  docs: driver-api: add pre_rate_req to clk documentation
-  clk: rockchip: use pre_rate_req for cpuclk
+Signed-off-by: Derek Basehore <dbasehore@chromium.org>
+---
+ Documentation/driver-api/clk.rst | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-Stephen Boyd (1):
-  clk: Remove recursion in clk_core_{prepare,enable}()
-
- Documentation/driver-api/clk.rst |   7 +-
- drivers/clk/clk.c                | 484 +++++++++++++++++++++++--------
- drivers/clk/rockchip/clk-cpu.c   | 256 ++++++++--------
- include/linux/clk-provider.h     |  10 +
- 4 files changed, 509 insertions(+), 248 deletions(-)
-
+diff --git a/Documentation/driver-api/clk.rst b/Documentation/driver-api/clk.rst
+index 593cca5058b1..917f6ac29645 100644
+--- a/Documentation/driver-api/clk.rst
++++ b/Documentation/driver-api/clk.rst
+@@ -82,6 +82,9 @@ the operations defined in clk-provider.h::
+ 						unsigned long *parent_rate);
+ 		int		(*determine_rate)(struct clk_hw *hw,
+ 						  struct clk_rate_request *req);
++		int		(*pre_rate_req)(struct clk_hw *hw,
++						const struct clk_rate_request *next,
++						struct clk_rate_request *pre);
+ 		int		(*set_parent)(struct clk_hw *hw, u8 index);
+ 		u8		(*get_parent)(struct clk_hw *hw);
+ 		int		(*set_rate)(struct clk_hw *hw,
+@@ -224,6 +227,8 @@ optional or must be evaluated on a case-by-case basis.
+    +----------------+------+-------------+---------------+-------------+------+
+    |.determine_rate |      | y [1]_      |               |             |      |
+    +----------------+------+-------------+---------------+-------------+------+
++   |.pre_rate_req   |      | y [1]_      |               |             |      |
++   +----------------+------+-------------+---------------+-------------+------+
+    |.set_rate       |      | y           |               |             |      |
+    +----------------+------+-------------+---------------+-------------+------+
+    +----------------+------+-------------+---------------+-------------+------+
+@@ -238,7 +243,7 @@ optional or must be evaluated on a case-by-case basis.
+    |.init           |      |             |               |             |      |
+    +----------------+------+-------------+---------------+-------------+------+
+ 
+-.. [1] either one of round_rate or determine_rate is required.
++.. [1] one of round_rate, determine_rate, or pre_rate_req is required.
+ 
+ Finally, register your clock at run-time with a hardware-specific
+ registration function.  This function simply populates struct clk_foo's
 -- 
 2.19.1.568.g152ad8e336-goog
 
