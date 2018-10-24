@@ -2,86 +2,104 @@ Return-Path: <SRS0=W7GY=NE=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71893C004D3
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Oct 2018 08:49:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0182EC004D3
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Oct 2018 08:51:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37E5120832
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Oct 2018 08:49:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q2bZyxEG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37E5120832
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id B8B0A2081B
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Oct 2018 08:51:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8B0A2081B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727219AbeJXRQx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 24 Oct 2018 13:16:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55162 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726720AbeJXRQx (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 24 Oct 2018 13:16:53 -0400
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0A0712082F;
-        Wed, 24 Oct 2018 08:49:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540370981;
-        bh=/r/uQVEgQJgOoCblGOZqP/08XrnHCSEfmo6FIoJhdng=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=Q2bZyxEG7PTTELFva0QXl3SXy/CzUrtT3WfnTxNC+48SO9TPQTkL0xf5vYb3OPAR1
-         5KsjDPmuNpEHGcKLOiG9GDpQUsEqipaRk/jpgcH41/1pm9NBqAR+/g6E74kIWJNpEI
-         OGozz6eCc7evpYfs085UXvGWo800r+Joo6M06A5c=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Catalin Marinas <catalin.marinas@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>, David Airlie <airlied@linux.ie>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
+        id S1727399AbeJXRSx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 24 Oct 2018 13:18:53 -0400
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:22426 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727333AbeJXRSx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Oct 2018 13:18:53 -0400
+Received: from [10.18.29.185] (10.18.29.185) by mail-sh2.amlogic.com
+ (10.18.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Wed, 24 Oct
+ 2018 16:51:28 +0800
+Subject: Re: [PATCH v5 3/3] clk: meson: add sub MMC clock controller driver
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+CC:     Yixun Lan <yixun.lan@amlogic.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Will Deacon <will.deacon@arm.com>, devicetree@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20181023155035.9101-13-jagan@amarulasolutions.com>
-Cc:     Jagan Teki <jagan@amarulasolutions.com>
-References: <20181023155035.9101-1-jagan@amarulasolutions.com>
- <20181023155035.9101-13-jagan@amarulasolutions.com>
-Message-ID: <154037098047.53599.11415144740017316303@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v2 12/15] clk: sunxi-ng: a64: Add min and max rate for PLL_MIPI
-Date:   Wed, 24 Oct 2018 01:49:40 -0700
+        Rob Herring <robh@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Liang Yang <liang.yang@amlogic.com>,
+        Jian Hu <jian.hu@amlogic.com>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1539839245-13793-1-git-send-email-jianxin.pan@amlogic.com>
+ <1539839245-13793-4-git-send-email-jianxin.pan@amlogic.com>
+ <153988282130.5275.17528969137837015544@swboyd.mtv.corp.google.com>
+ <ffb2e431-95a2-b5fc-34ee-432e101379a4@amlogic.com>
+ <154037087711.53599.12246779227164118041@swboyd.mtv.corp.google.com>
+From:   Jianxin Pan <jianxin.pan@amlogic.com>
+Message-ID: <40509901-a793-971d-eb2e-40230b67f490@amlogic.com>
+Date:   Wed, 24 Oct 2018 16:51:27 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <154037087711.53599.12246779227164118041@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.18.29.185]
+X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
+ (10.18.11.6)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jagan Teki (2018-10-23 08:50:32)
-> A64 manual say PLL_MIPI rates are 500MHz to 1.4GHz, but
-> using minimum 500MHz can't release the clock and which
-> is not working.
-> =
-
-> So use working minimum rate as 300MHz which is tested on
-> Bananapi DSI panel.
-
-That's weird, but OK.
-
-> =
-
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> ---
-
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+On 2018/10/24 16:47, Stephen Boyd wrote:
+> Quoting Jianxin Pan (2018-10-23 23:29:24)
+>> On 2018/10/19 1:13, Stephen Boyd wrote:
+>>> Quoting Jianxin Pan (2018-10-17 22:07:25)
+>> [...]
+>>>> diff --git a/drivers/clk/meson/mmc-clkc.c b/drivers/clk/meson/mmc-clkc.c
+>>>> new file mode 100644
+>>>> index 0000000..5555e3f
+>>>> --- /dev/null
+>>>> +++ b/drivers/clk/meson/mmc-clkc.c
+>>>> @@ -0,0 +1,296 @@
+>>>> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+>>>> +/*
+>>>> + * Amlogic Meson MMC Sub Clock Controller Driver
+>>>> + *
+>>>> + * Copyright (c) 2017 Baylibre SAS.
+>>>> + * Author: Jerome Brunet <jbrunet@baylibre.com>
+>>>> + *
+>>>> + * Copyright (c) 2018 Amlogic, inc.
+>>>> + * Author: Yixun Lan <yixun.lan@amlogic.com>
+>>>> + */
+>>>> +
+>>>> +#include <linux/clk.h>
+>>>
+>>> clk-provider.h instead of clk.h?>
+>> Maybe we need to keep clk.h
+>> devm_clk_get() is called in mmc_clkc_register_mux() to get parent in from DTS.
+>> I'm sorry to miss this in previous reply.
+> 
+> OK. But also include clk-provider.h if provider APIs are being used
+> here.
+OK. I will add it. Thank you.
+> 
+> .
+> 
 
