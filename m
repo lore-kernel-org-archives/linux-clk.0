@@ -2,192 +2,176 @@ Return-Path: <SRS0=W7GY=NE=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AE9EC46475
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Oct 2018 02:52:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 109D7C46475
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Oct 2018 02:56:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E33AE2082F
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Oct 2018 02:52:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E33AE2082F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id A77DC2082F
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Oct 2018 02:56:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GtyBDLNF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A77DC2082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726865AbeJXLSk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 24 Oct 2018 07:18:40 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:42470 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726371AbeJXLSj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 24 Oct 2018 07:18:39 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id A47231A00FC;
-        Wed, 24 Oct 2018 04:15:34 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 85B681A00E6;
-        Wed, 24 Oct 2018 04:15:28 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 6E9D7402A9;
-        Wed, 24 Oct 2018 10:15:21 +0800 (SGT)
-From:   andy.tang@nxp.com
-To:     sboyd@kernel.org, mturquette@baylibre.com, oss@buserror.net
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, benh@kernel.crashing.org,
-        paulus@samba.org, mpe@ellerman.id.au, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, Yuantian Tang <andy.tang@nxp.com>
-Subject: [PATCH 2/3 v2] clk: qoriq: remove legacy bindings and add more compatibles
-Date:   Wed, 24 Oct 2018 10:11:21 +0800
-Message-Id: <20181024021122.3942-2-andy.tang@nxp.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20181024021122.3942-1-andy.tang@nxp.com>
-References: <20181024021122.3942-1-andy.tang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1726407AbeJXLWv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 24 Oct 2018 07:22:51 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:42050 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726111AbeJXLWv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Oct 2018 07:22:51 -0400
+Received: by mail-pg1-f193.google.com with SMTP id i4-v6so1598542pgq.9
+        for <linux-clk@vger.kernel.org>; Tue, 23 Oct 2018 19:56:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=HrPsp6pBOcXi6Ct6scDVU4tHzdJBdJzFt1oM5B21HXE=;
+        b=GtyBDLNFzvLZzxjymVDzrpNr3fBuSlvxU/MQh7IQhJzy8+XXkC2fUbkg73+fsda2Qs
+         sJHS5iAJHP7OgQ7iY63HO5QyauIS6Uw0gKPodFy0O45+V+uaeOXi/yN0PclPRMAdn3RQ
+         I8gNwsb32Q34+sY7d1l592cLNsgw5GnApncD0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=HrPsp6pBOcXi6Ct6scDVU4tHzdJBdJzFt1oM5B21HXE=;
+        b=AtOjOBqwm6VKldMUyWm/+bsc58E9MwFAdcbcV7Of4d0KjiMyGeM59WC2SA/SLpwySU
+         tJfCOwn2EA1Yu4q2PXdtJ4NpH8aut4Q3fkQPQHiKd3/PCPSCEFDC/waiw4t5FPHxee5t
+         8NWWPGJF/1KufHsAcPSO5kIMFrVbj/R/acVq41wZY49xqZ4XMQ8Fmj1w5qA5Mlfh8erU
+         QvJ5vbcJ5qqlHZ+GTmQLfZ6L6V219vAa5FnLQKRvwaauaYWLaWOlQOoB8X1+zDtAdfYm
+         K04dULvIYDC/ZHlFwXgZjb+uZp/KzZMNYFeg9+lrEKsN+Zl+I63LUVg5dlUeiuub3NsH
+         cXqQ==
+X-Gm-Message-State: AGRZ1gJ+xEpq5QTgK6gC4r6HSXTUyEJqyBonf1dWRQfPsozrv2jFDRCq
+        fJGEACgL5xut0cNCVGF9VNUakQ==
+X-Google-Smtp-Source: AJdET5dfPdi7JYSGLyS7tEr6GCsinJHrF3Xs1kJM1Avu8z0ujvwHOk7N3fDsKHasPEFZbhUMwf+KJA==
+X-Received: by 2002:a63:5b1f:: with SMTP id p31mr641606pgb.56.1540344703450;
+        Tue, 23 Oct 2018 18:31:43 -0700 (PDT)
+Received: from exogeni.mtv.corp.google.com ([2620:15c:202:1:5e2b:39df:72ed:4968])
+        by smtp.gmail.com with ESMTPSA id p4-v6sm3882341pfg.188.2018.10.23.18.31.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 23 Oct 2018 18:31:42 -0700 (PDT)
+From:   Derek Basehore <dbasehore@chromium.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-doc@vger.kernel.org,
+        sboyd@kernel.org, mturquette@baylibre.com, heiko@sntech.de,
+        aisheng.dong@nxp.com, mchehab+samsung@kernel.org, corbet@lwn.net,
+        Derek Basehore <dbasehore@chromium.org>
+Subject: [PATCH 2/6] clk: fix clk_calc_subtree compute duplications
+Date:   Tue, 23 Oct 2018 18:31:28 -0700
+Message-Id: <20181024013132.115907-3-dbasehore@chromium.org>
+X-Mailer: git-send-email 2.19.1.568.g152ad8e336-goog
+In-Reply-To: <20181024013132.115907-1-dbasehore@chromium.org>
+References: <20181024013132.115907-1-dbasehore@chromium.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Yuantian Tang <andy.tang@nxp.com>
+clk_calc_subtree was called at every step up the clk tree in
+clk_calc_new_rates. Since it recursively calls itself for its
+children, this means it would be called once on each clk for each
+step above the top clk is.
 
-The new bindings will be used, so delete the old bindings.
-Add more SOC compatibles as needed as well.
+This fixes this by breaking the subtree calculation into two parts.
+The first part recalcs the rate for each child of the parent clk in
+clk_calc_new_rates. This part is not recursive itself. The second part
+recursively calls a new clk_calc_subtree on the clk_core that was
+passed into clk_set_rate.
 
-Signed-off-by: Tang Yuantian <andy.tang@nxp.com>
+Signed-off-by: Derek Basehore <dbasehore@chromium.org>
 ---
-v2:
-  - involve more chips
+ drivers/clk/clk.c | 30 ++++++++++++++++++++----------
+ 1 file changed, 20 insertions(+), 10 deletions(-)
 
- .../devicetree/bindings/clock/qoriq-clock.txt      |  112 +------------------
- 1 files changed, 6 insertions(+), 106 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/clock/qoriq-clock.txt b/Documentation/devicetree/bindings/clock/qoriq-clock.txt
-index 97f46ad..8484d90 100644
---- a/Documentation/devicetree/bindings/clock/qoriq-clock.txt
-+++ b/Documentation/devicetree/bindings/clock/qoriq-clock.txt
-@@ -28,6 +28,12 @@ Required properties:
- 	* "fsl,p4080-clockgen"
- 	* "fsl,p5020-clockgen"
- 	* "fsl,p5040-clockgen"
-+	* "fsl,t1023-clockgen"
-+	* "fsl,t1024-clockgen"
-+	* "fsl,t1040-clockgen"
-+	* "fsl,t1042-clockgen"
-+	* "fsl,t2080-clockgen"
-+	* "fsl,t2081-clockgen"
- 	* "fsl,t4240-clockgen"
- 	* "fsl,b4420-clockgen"
- 	* "fsl,b4860-clockgen"
-@@ -96,109 +102,3 @@ second cell is the clock index for the specified type.
- 		...
- 	};
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 95d818f5edb2..61de8ad3e4cf 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1717,11 +1717,19 @@ static int __clk_speculate_rates(struct clk_core *core,
+ 	return ret;
  }
--4. Legacy Child Nodes
+ 
+-static void clk_calc_subtree(struct clk_core *core, unsigned long new_rate,
+-			     struct clk_core *new_parent, u8 p_index)
++static void clk_calc_subtree(struct clk_core *core)
+ {
+ 	struct clk_core *child;
+ 
++	hlist_for_each_entry(child, &core->children, child_node) {
++		child->new_rate = clk_recalc(child, core->new_rate);
++		clk_calc_subtree(child);
++	}
++}
++
++static void clk_set_change(struct clk_core *core, unsigned long new_rate,
++			   struct clk_core *new_parent, u8 p_index)
++{
+ 	core->new_rate = new_rate;
+ 	core->new_parent = new_parent;
+ 	core->new_parent_index = p_index;
+@@ -1729,11 +1737,6 @@ static void clk_calc_subtree(struct clk_core *core, unsigned long new_rate,
+ 	core->new_child = NULL;
+ 	if (new_parent && new_parent != core->parent)
+ 		new_parent->new_child = core;
 -
--NOTE: These nodes are deprecated.  Kernels should continue to support
--device trees with these nodes, but new device trees should not use them.
--
--Most of the bindings are from the common clock binding[1].
-- [1] Documentation/devicetree/bindings/clock/clock-bindings.txt
--
--Required properties:
--- compatible : Should include one of the following:
--	* "fsl,qoriq-core-pll-1.0" for core PLL clocks (v1.0)
--	* "fsl,qoriq-core-pll-2.0" for core PLL clocks (v2.0)
--	* "fsl,qoriq-core-mux-1.0" for core mux clocks (v1.0)
--	* "fsl,qoriq-core-mux-2.0" for core mux clocks (v2.0)
--	* "fsl,qoriq-sysclk-1.0": for input system clock (v1.0).
--		It takes parent's clock-frequency as its clock.
--	* "fsl,qoriq-sysclk-2.0": for input system clock (v2.0).
--		It takes parent's clock-frequency as its clock.
--	* "fsl,qoriq-platform-pll-1.0" for the platform PLL clock (v1.0)
--	* "fsl,qoriq-platform-pll-2.0" for the platform PLL clock (v2.0)
--- #clock-cells: From common clock binding. The number of cells in a
--	clock-specifier. Should be <0> for "fsl,qoriq-sysclk-[1,2].0"
--	clocks, or <1> for "fsl,qoriq-core-pll-[1,2].0" clocks.
--	For "fsl,qoriq-core-pll-[1,2].0" clocks, the single
--	clock-specifier cell may take the following values:
--	* 0 - equal to the PLL frequency
--	* 1 - equal to the PLL frequency divided by 2
--	* 2 - equal to the PLL frequency divided by 4
--
--Recommended properties:
--- clocks: Should be the phandle of input parent clock
--- clock-names: From common clock binding, indicates the clock name
--- clock-output-names: From common clock binding, indicates the names of
--	output clocks
--- reg: Should be the offset and length of clock block base address.
--	The length should be 4.
--
--Legacy Example:
--/ {
--	clockgen: global-utilities@e1000 {
--		compatible = "fsl,p5020-clockgen", "fsl,qoriq-clockgen-1.0";
--		ranges = <0x0 0xe1000 0x1000>;
--		clock-frequency = <133333333>;
--		reg = <0xe1000 0x1000>;
--		#address-cells = <1>;
--		#size-cells = <1>;
--
--		sysclk: sysclk {
--			#clock-cells = <0>;
--			compatible = "fsl,qoriq-sysclk-1.0";
--			clock-output-names = "sysclk";
--		};
--
--		pll0: pll0@800 {
--			#clock-cells = <1>;
--			reg = <0x800 0x4>;
--			compatible = "fsl,qoriq-core-pll-1.0";
--			clocks = <&sysclk>;
--			clock-output-names = "pll0", "pll0-div2";
--		};
--
--		pll1: pll1@820 {
--			#clock-cells = <1>;
--			reg = <0x820 0x4>;
--			compatible = "fsl,qoriq-core-pll-1.0";
--			clocks = <&sysclk>;
--			clock-output-names = "pll1", "pll1-div2";
--		};
--
--		mux0: mux0@0 {
--			#clock-cells = <0>;
--			reg = <0x0 0x4>;
--			compatible = "fsl,qoriq-core-mux-1.0";
--			clocks = <&pll0 0>, <&pll0 1>, <&pll1 0>, <&pll1 1>;
--			clock-names = "pll0", "pll0-div2", "pll1", "pll1-div2";
--			clock-output-names = "cmux0";
--		};
--
--		mux1: mux1@20 {
--			#clock-cells = <0>;
--			reg = <0x20 0x4>;
--			compatible = "fsl,qoriq-core-mux-1.0";
--			clocks = <&pll0 0>, <&pll0 1>, <&pll1 0>, <&pll1 1>;
--			clock-names = "pll0", "pll0-div2", "pll1", "pll1-div2";
--			clock-output-names = "cmux1";
--		};
--
--		platform-pll: platform-pll@c00 {
--			#clock-cells = <1>;
--			reg = <0xc00 0x4>;
--			compatible = "fsl,qoriq-platform-pll-1.0";
--			clocks = <&sysclk>;
--			clock-output-names = "platform-pll", "platform-pll-div2";
--		};
--	};
--};
--
--Example for legacy clock consumer:
--
--/ {
--	cpu0: PowerPC,e5500@0 {
--		...
--		clocks = <&mux0>;
--		...
--	};
--};
+-	hlist_for_each_entry(child, &core->children, child_node) {
+-		child->new_rate = clk_recalc(child, new_rate);
+-		clk_calc_subtree(child, child->new_rate, NULL, 0);
+-	}
+ }
+ 
+ /*
+@@ -1744,7 +1747,7 @@ static struct clk_core *clk_calc_new_rates(struct clk_core *core,
+ 					   unsigned long rate)
+ {
+ 	struct clk_core *top = core;
+-	struct clk_core *old_parent, *parent;
++	struct clk_core *old_parent, *parent, *child;
+ 	unsigned long best_parent_rate = 0;
+ 	unsigned long new_rate;
+ 	unsigned long min_rate;
+@@ -1791,6 +1794,8 @@ static struct clk_core *clk_calc_new_rates(struct clk_core *core,
+ 		/* pass-through clock with adjustable parent */
+ 		top = clk_calc_new_rates(parent, rate);
+ 		new_rate = parent->new_rate;
++		hlist_for_each_entry(child, &parent->children, child_node)
++			child->new_rate = clk_recalc(child, new_rate);
+ 		goto out;
+ 	}
+ 
+@@ -1813,11 +1818,14 @@ static struct clk_core *clk_calc_new_rates(struct clk_core *core,
+ 	}
+ 
+ 	if ((core->flags & CLK_SET_RATE_PARENT) && parent &&
+-	    best_parent_rate != parent->rate)
++	    best_parent_rate != parent->rate) {
+ 		top = clk_calc_new_rates(parent, best_parent_rate);
++		hlist_for_each_entry(child, &parent->children, child_node)
++			child->new_rate = clk_recalc(child, parent->new_rate);
++	}
+ 
+ out:
+-	clk_calc_subtree(core, new_rate, parent, p_index);
++	clk_set_change(core, new_rate, parent, p_index);
+ 
+ 	return top;
+ }
+@@ -2018,6 +2026,8 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
+ 	if (ret)
+ 		return ret;
+ 
++	clk_calc_subtree(core);
++
+ 	/* notify that we are about to change rates */
+ 	fail_clk = clk_propagate_rate_change(top, PRE_RATE_CHANGE);
+ 	if (fail_clk) {
 -- 
-1.7.1
+2.19.1.568.g152ad8e336-goog
 
