@@ -2,31 +2,31 @@ Return-Path: <SRS0=W7GY=NE=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86D66ECDE46
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Oct 2018 18:13:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD3C5ECDE46
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Oct 2018 18:16:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5801E2082F
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Oct 2018 18:13:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5801E2082F
+	by mail.kernel.org (Postfix) with ESMTP id 8C4A12082F
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Oct 2018 18:16:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C4A12082F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726735AbeJYCmv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 24 Oct 2018 22:42:51 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:52832 "EHLO mail.bootlin.com"
+        id S1726851AbeJYCph (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 24 Oct 2018 22:45:37 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:52989 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726433AbeJYCmv (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 24 Oct 2018 22:42:51 -0400
+        id S1726433AbeJYCph (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 24 Oct 2018 22:45:37 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id E8D67208C7; Wed, 24 Oct 2018 20:13:44 +0200 (CEST)
+        id 4B065208BE; Wed, 24 Oct 2018 20:09:37 +0200 (CEST)
 Received: from localhost (unknown [2.223.63.88])
-        by mail.bootlin.com (Postfix) with ESMTPSA id AAA8020890;
-        Wed, 24 Oct 2018 20:13:34 +0200 (CEST)
-Date:   Wed, 24 Oct 2018 19:13:34 +0100
+        by mail.bootlin.com (Postfix) with ESMTPSA id 0BFDD20379;
+        Wed, 24 Oct 2018 20:09:27 +0200 (CEST)
+Date:   Wed, 24 Oct 2018 19:09:27 +0100
 From:   Maxime Ripard <maxime.ripard@bootlin.com>
 To:     Jagan Teki <jagan@amarulasolutions.com>
 Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
@@ -43,16 +43,16 @@ Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
         Michael Trimarchi <michael@amarulasolutions.com>,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 12/15] clk: sunxi-ng: a64: Add min and max rate for
- PLL_MIPI
-Message-ID: <20181024181334.lul7ta7ijluwfb7v@flea>
+Subject: Re: [PATCH v2 13/15] dt-bindings: sun6i-dsi: Add compatible for A64
+ DPHY
+Message-ID: <20181024180927.ejt7odo23ebzjgfg@flea>
 References: <20181023155035.9101-1-jagan@amarulasolutions.com>
- <20181023155035.9101-13-jagan@amarulasolutions.com>
+ <20181023155035.9101-14-jagan@amarulasolutions.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="bqw3vje525gqrsp3"
+        protocol="application/pgp-signature"; boundary="ui6phgloguktf2lb"
 Content-Disposition: inline
-In-Reply-To: <20181023155035.9101-13-jagan@amarulasolutions.com>
+In-Reply-To: <20181023155035.9101-14-jagan@amarulasolutions.com>
 User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
@@ -60,22 +60,39 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---bqw3vje525gqrsp3
+--ui6phgloguktf2lb
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 23, 2018 at 09:20:32PM +0530, Jagan Teki wrote:
-> A64 manual say PLL_MIPI rates are 500MHz to 1.4GHz, but
-> using minimum 500MHz can't release the clock and which
-> is not working.
->
-> So use working minimum rate as 300MHz which is tested on
-> Bananapi DSI panel.
+On Tue, Oct 23, 2018 at 09:20:33PM +0530, Jagan Teki wrote:
+> The MIPI DSI PHY HDMI controller on Allwinner A64 is similar
+> on the one on A31.
+>=20
+> Add A64 compatible and append A31 compatible as fallback.
+>=20
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> ---
+> Changes for v2:
+> - new patch
+>=20
+>  Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.tx=
+t b/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
+> index 9fa6e7a758ad..704fb31962f2 100644
+> --- a/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
+> +++ b/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
+> @@ -36,7 +36,7 @@ D-PHY
+> =20
+>  Required properties:
+>    - compatible: value must be one of:
+> -    * allwinner,sun6i-a31-mipi-dphy
+> +    * "allwinner,sun50i-a64-mipi-dphy", "allwinner,sun6i-a31-mipi-dphy"
 
-I'm not quite sure what you mean by that. What do you mean by "500MHz
-can't release the clock"? Why would 300MHz work better then? Should be
-avoid reaching 500MHz if it's a frequency in the valid range?
+No. you need both. The A64 MIPI DPHY one needs to be always set with
+the A31 fallback, but the A31 is also usable on its own.
 
 Maxime
 
@@ -84,15 +101,15 @@ Maxime Ripard, Bootlin
 Embedded Linux and Kernel engineering
 https://bootlin.com
 
---bqw3vje525gqrsp3
+--ui6phgloguktf2lb
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW9C2TgAKCRDj7w1vZxhR
-xRk5AP9l8gJcTk3NRkPKMtYP8PiTTLkMKZDifHCACpchw6KSEgD+Ip4W0VWvyICR
-hnTLjoVBjGzX3A4swj5luUG0JfnWRQo=
-=4oPG
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW9C1VwAKCRDj7w1vZxhR
+xXuTAQDzCZHL9SXKlA1ovDyGvoJ1vBXyWfqzogsxrCg1RyCHYwEAsrgUwe59jxcD
+kH3hkhaPYhxxvs8q/HSGKCfBCvlZQQ8=
+=aytP
 -----END PGP SIGNATURE-----
 
---bqw3vje525gqrsp3--
+--ui6phgloguktf2lb--
