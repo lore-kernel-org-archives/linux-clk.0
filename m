@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-4.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 431B8C67863
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Oct 2018 08:48:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71893C004D3
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Oct 2018 08:49:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09DE32082F
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Oct 2018 08:48:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37E5120832
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Oct 2018 08:49:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iNbshpYP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09DE32082F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q2bZyxEG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37E5120832
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727009AbeJXRQB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 24 Oct 2018 13:16:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54902 "EHLO mail.kernel.org"
+        id S1727219AbeJXRQx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 24 Oct 2018 13:16:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55162 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726720AbeJXRQA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 24 Oct 2018 13:16:00 -0400
+        id S1726720AbeJXRQx (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 24 Oct 2018 13:16:53 -0400
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D1B2320824;
-        Wed, 24 Oct 2018 08:48:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0A0712082F;
+        Wed, 24 Oct 2018 08:49:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540370928;
-        bh=KtgpGZ26D8fMaHalzLuSG4VrQHXEO9E0ZsvCXntySEE=;
+        s=default; t=1540370981;
+        bh=/r/uQVEgQJgOoCblGOZqP/08XrnHCSEfmo6FIoJhdng=;
         h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=iNbshpYPpDVD31rzmqsfphswy+4NBRJO0Kg/YDfONKyiuqSwGJqLX4kMwKw4MQlDK
-         UndEDLtr9XLMBZmjH7MueiC3ir3PZHKzzHhElAIX8haFlwX0WUvERV7Y2ovO6bz9kb
-         p6mg/bAwfrEzEVpzIHsiOeRLPqWbD6+ijkx8Nlnc=
+        b=Q2bZyxEG7PTTELFva0QXl3SXy/CzUrtT3WfnTxNC+48SO9TPQTkL0xf5vYb3OPAR1
+         5KsjDPmuNpEHGcKLOiG9GDpQUsEqipaRk/jpgcH41/1pm9NBqAR+/g6E74kIWJNpEI
+         OGozz6eCc7evpYfs085UXvGWo800r+Joo6M06A5c=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -54,25 +54,30 @@ To:     Catalin Marinas <catalin.marinas@arm.com>,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20181023155035.9101-4-jagan@amarulasolutions.com>
+In-Reply-To: <20181023155035.9101-13-jagan@amarulasolutions.com>
 Cc:     Jagan Teki <jagan@amarulasolutions.com>
 References: <20181023155035.9101-1-jagan@amarulasolutions.com>
- <20181023155035.9101-4-jagan@amarulasolutions.com>
-Message-ID: <154037092824.53599.14201561893996103915@swboyd.mtv.corp.google.com>
+ <20181023155035.9101-13-jagan@amarulasolutions.com>
+Message-ID: <154037098047.53599.11415144740017316303@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.7
-Subject: Re: [PATCH v2 03/15] clk: sunxi-ng: Add check for maximum rate to NKM PLLs
-Date:   Wed, 24 Oct 2018 01:48:48 -0700
+Subject: Re: [PATCH v2 12/15] clk: sunxi-ng: a64: Add min and max rate for PLL_MIPI
+Date:   Wed, 24 Oct 2018 01:49:40 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jagan Teki (2018-10-23 08:50:23)
-> Some NKM PLLs, frequency can be set above PLL working range.
+Quoting Jagan Teki (2018-10-23 08:50:32)
+> A64 manual say PLL_MIPI rates are 500MHz to 1.4GHz, but
+> using minimum 500MHz can't release the clock and which
+> is not working.
 > =
 
-> Add a constraint for maximum supported rate. This way, drivers can
-> specify which is maximum allowed rate for PLL.
+> So use working minimum rate as 300MHz which is tested on
+> Bananapi DSI panel.
+
+That's weird, but OK.
+
 > =
 
 > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
