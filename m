@@ -2,193 +2,107 @@ Return-Path: <SRS0=7v9C=NF=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B48DBC46475
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Oct 2018 15:51:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFA1EECDE46
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Oct 2018 18:36:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72F562083E
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Oct 2018 15:51:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91DF120665
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Oct 2018 18:36:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="QB78xZ2j"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72F562083E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fDtK7VvI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91DF120665
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727501AbeJZAZG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 Oct 2018 20:25:06 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:44230 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727477AbeJZAZF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Oct 2018 20:25:05 -0400
-Received: by mail-io1-f68.google.com with SMTP id c6-v6so5087748iob.11
-        for <linux-clk@vger.kernel.org>; Thu, 25 Oct 2018 08:51:44 -0700 (PDT)
+        id S1727417AbeJZDKd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 Oct 2018 23:10:33 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:32911 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727313AbeJZDKd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Oct 2018 23:10:33 -0400
+Received: by mail-lf1-f65.google.com with SMTP id w16-v6so5474680lfc.0;
+        Thu, 25 Oct 2018 11:36:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mNmH501pJq1L03TsrJKzjfnFGZDsR7D9AJlY6ypvFOY=;
-        b=QB78xZ2jZIwNX941jFVipaYSs4p95eF2ZXnQi/KyoFfO9ldUmoOjJHyTwUmtoIMXNY
-         R09cgr2I0C5eXF0Cl6KK7ev0sIw793k1sIPQ3HeHY12njC/gHbIBAm/eN0zvtSh2WO1h
-         WDttybFuFXvA86/guu5Ug/YMfZ0TtIcVrrIO4=
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=bjLdkWO5kl/kAahCNxU5ssT8CxsXjMsr5ouBEuduAnI=;
+        b=fDtK7VvIVMMg3tiQUwlvtJQD50x/qCv7kzBoqov72Qx9TCa/8g4B8KGQLqcMekiktY
+         s0/VrjDlQ3VaK59YZfZy5t5h1K/GTAf0Kt7EG4dt4zZS3j2qNSTsdXknjDQ9heg73VfK
+         LJ+D7ivFuIlaV6koOB0G0rQ9KJBgy4Zsi0fBH9h5T0Mn6OL2l0RLKIVbguYYC6r6+JYi
+         V5fCNM4t8LOSQ3sXcWYbO+hkMOctetJ8XVYM1bVd08yEHV0mN45WnBgu/LPMDJ4NYqWY
+         9P9zGvtYYbpqCQeKX0/BNL8ck6i7rX98FdOcOkMtw5RVTui1NbxJexyw12bq53BqAiZO
+         n/5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mNmH501pJq1L03TsrJKzjfnFGZDsR7D9AJlY6ypvFOY=;
-        b=o8s6HwwQpoYkxm4s7UQouHuSn8b1AUXHDAi/qruHxfeIH93oNvIqd6l+keSBj2nHXK
-         M07PMSgIp2zHYFOwuYbi7vZMGNZYYn6wPTBSUTP05ex2czOylGYgKqMcAG94e2TFvQyJ
-         qTpWAz9KXOhQphZU0bmcPrVkkkte5mvyBuJVtStmIa0iH3n314FiVMFV9KBCwSMc6qdw
-         enpYeDhd/xs2PoG4Qvd86WrIQoFoWgKZCHDYsny7rKvkenj7kfhwwUf+lInFUOErCp3K
-         bzCgweMg5vHzX+IALIX+tS3C3xxdlyYX6OvaLZwa7Z++CJ0xg8OsSb0nNEHTlULsiBJk
-         dP5A==
-X-Gm-Message-State: AGRZ1gLXJoJx4HXPJUPdGSw4wf65c4llPQ7zT5GZ00smTppdZhe3gCcu
-        ToEiHFeoCFtHkkpmBRUYtQ/oCYCWrtJoYh/oIlEmFw==
-X-Google-Smtp-Source: AJdET5eAx1uIy0TMAVygYVHRGVT4I0bhge06fCM87pUSXAEDFGsdMkXgYnIpNlhnK3oEZknximYYUQXtFSIpwVG0WlU=
-X-Received: by 2002:a6b:3e57:: with SMTP id l84-v6mr1354460ioa.252.1540482703243;
- Thu, 25 Oct 2018 08:51:43 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=bjLdkWO5kl/kAahCNxU5ssT8CxsXjMsr5ouBEuduAnI=;
+        b=KHMItqFzK7CTZ8P6LIJmxFl7C3sEVMcxJlJ5F/CE4xo+MBwlMk5dN7ytdOtf9Mo9/b
+         PGjz92E1hMElOo1jYbsE/HeCQL7cce94dl5okVXg2JPALGwLoJ+E+PvI8u5OxCG6wQEo
+         Wf9di2iTeIL6dp770oE/1EI9RKNGrw1biIeK+Pq0zbbkvYyqUQQUJ0a8Hy1rVrYkRVWR
+         B5QSwYfGkFdM4e6BKwtxDCxlrl5TKBi/KWaCws+Q3YZLjVPeKy+b+hx2lQmbv1PUUdyW
+         4iUDfNHiytLehDT8OEPpI6SEKBKr1uVFJvV722+78zHL4GHg4eNFe1v87swOD7/vCCry
+         8BwQ==
+X-Gm-Message-State: AGRZ1gIRjg3olrUaWsLkrhr1S7FvJesoZ6FPaobpAcY4j6ewp+pYJhxc
+        4sFYIVR0xK511aElzzoxzIPwNEO/
+X-Google-Smtp-Source: AJdET5e4bKNVoJ2q8DC9tyHnpSFP2UTXnrS4uXp5ajXJG/ICq1UdsMlpmaRnsZ1my/sWhP0Hbco/MA==
+X-Received: by 2002:a19:4c02:: with SMTP id z2-v6mr228824lfa.48.1540492596114;
+        Thu, 25 Oct 2018 11:36:36 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-91-118.nat.spd-mgts.ru. [109.252.91.118])
+        by smtp.googlemail.com with ESMTPSA id v13-v6sm1464840lfb.70.2018.10.25.11.36.34
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 25 Oct 2018 11:36:35 -0700 (PDT)
+Subject: Re: [PATCH v6 8/8] memory: tegra: Introduce Tegra20 EMC driver
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20181021183052.32023-1-digetx@gmail.com>
+ <20181021183052.32023-9-digetx@gmail.com> <20181025143853.GL21521@ulmo>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <221ac544-b57a-e85f-79ac-0b914615c9a9@gmail.com>
+Date:   Thu, 25 Oct 2018 21:36:33 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-References: <20181023155035.9101-1-jagan@amarulasolutions.com>
- <20181023155035.9101-13-jagan@amarulasolutions.com> <20181024181334.lul7ta7ijluwfb7v@flea>
-In-Reply-To: <20181024181334.lul7ta7ijluwfb7v@flea>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Thu, 25 Oct 2018 21:21:31 +0530
-Message-ID: <CAMty3ZBJcH1fz5FyhT1rk9qiJ-aWoQYiH7P1ZyQPLKmVWOCkdA@mail.gmail.com>
-Subject: Re: [PATCH v2 12/15] clk: sunxi-ng: a64: Add min and max rate for PLL_MIPI
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181025143853.GL21521@ulmo>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Oct 24, 2018 at 11:43 PM Maxime Ripard
-<maxime.ripard@bootlin.com> wrote:
->
-> On Tue, Oct 23, 2018 at 09:20:32PM +0530, Jagan Teki wrote:
-> > A64 manual say PLL_MIPI rates are 500MHz to 1.4GHz, but
-> > using minimum 500MHz can't release the clock and which
-> > is not working.
-> >
-> > So use working minimum rate as 300MHz which is tested on
-> > Bananapi DSI panel.
->
-> I'm not quite sure what you mean by that. What do you mean by "500MHz
-> can't release the clock"? Why would 300MHz work better then? Should be
-> avoid reaching 500MHz if it's a frequency in the valid range?
+On 10/25/18 5:38 PM, Thierry Reding wrote:
+> On Sun, Oct 21, 2018 at 09:30:52PM +0300, Dmitry Osipenko wrote:
+>> Introduce driver for the External Memory Controller (EMC) found on Tegra20
+>> chips, which controls the external DRAM on the board. The purpose of this
+>> driver is to program memory timing for external memory on the EMC clock
+>> rate change.
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+>> ---
+>>  drivers/memory/tegra/Kconfig       |  10 +
+>>  drivers/memory/tegra/Makefile      |   1 +
+>>  drivers/memory/tegra/tegra20-emc.c | 591 +++++++++++++++++++++++++++++
+>>  3 files changed, 602 insertions(+)
+>>  create mode 100644 drivers/memory/tegra/tegra20-emc.c
+> 
+> Applied to for-4.21/memory, thanks.
 
-PLL_MIPI can't be work with existing nkm where rate set to 270MHz
-(from PLL_VIDEO)
-/*** round rate call in ccu_nkm.c */
-[    2.408356] round: rate = 118800000
-[    2.408359] round: parent_rate = 158740688
-[    2.408417] round: rate = 148500000
-[    2.408420] round: parent_rate = 158740688
-[    2.408439] round: rate = 178200000
-[    2.408441] round: parent_rate = 158740688
-[    2.408460] round: rate = 205615384
-[    2.408462] round: parent_rate = 158740688
-[    2.408481] round: rate = 237600000
-[    2.408483] round: parent_rate = 158740688
-[    2.408502] round: rate = 270000000
-[    2.408504] round: parent_rate = 158740688
-[    2.408523] round: rate = 118800000
-[    2.408525] round: parent_rate = 158740560
-[    2.408544] round: rate = 148500000
-[    2.408546] round: parent_rate = 158740560
-[    2.408565] round: rate = 178200000
-[    2.408567] round: parent_rate = 158740560
-[    2.408586] round: rate = 205615384
-[    2.408588] round: parent_rate = 158740560
-[    2.408607] round: rate = 237600000
-[    2.408609] round: parent_rate = 158740560
-[    2.408627] round: rate = 270000000
-[    2.408630] round: parent_rate = 158740560
-[    2.408648] round: rate = 270000000
-[    2.408651] round: parent_rate = 158740640
-[    2.408670] round: rate = 270000000
-[    2.408672] round: parent_rate = 158740704
+Thank you! 
 
-/** set rate call in ccu_nkm **/
-[    2.408685] set: rate = 270000000
-[    2.408688] set: parent_rate = 297000000
-
-By using min and max rate as per A64 manual page 94 range of PLL can
-be 500MHz~1.4GHz getting 1,2,1 nkm dividers which can't be work.
-[    2.423589] sun4i_dclk_round_rate: min_div = 4 max_div = 127, rate = 55000000
-[    2.423643] ideal = 220000000, rounded = 0
-[    2.423647] ideal = 275000000, rounded = 0
-[    2.423651] ideal = 330000000, rounded = 0
-[    2.423692] ideal = 385000000, rounded = 384000000
-[    2.423732] ideal = 440000000, rounded = 440000000
-[    2.423736] sun4i_dclk_round_rate: div = 8 rate = 55000000
-[    2.423740] sun4i_dclk_round_rate: min_div = 4 max_div = 127, rate = 55000000
-[    2.423744] ideal = 220000000, rounded = 0
-[    2.423748] ideal = 275000000, rounded = 0
-[    2.423751] ideal = 330000000, rounded = 0
-[    2.423791] ideal = 385000000, rounded = 384000000
-[    2.423831] ideal = 440000000, rounded = 440000000
-[    2.423834] sun4i_dclk_round_rate: div = 8 rate = 55000000
-[    2.423957] sun4i_dclk_recalc_rate: val = 1, rate = 440000000
-[    2.423961] sun4i_dclk_recalc_rate: val = 1, rate = 440000000
-[    2.424378] ccu_nkm_set_rate: rate = 440000000, parent_rate = 220000000
-[    2.424381] ccu_nkm_set_rate: _nkm.n = 1
-[    2.424383] ccu_nkm_set_rate: _nkm.k = 2
-[    2.424385] ccu_nkm_set_rate: _nkm.m = 1
-[    2.424725] sun4i_dclk_set_rate div 8
-[    2.424732] sun4i_dclk_recalc_rate: val = 8, rate = 55000000
-[    2.561271] usb 3-1: new high-speed USB device number 2 using ehci-platform
-[    2.718486] hub 3-1:1.0: USB hub found
-[    2.718606] hub 3-1:1.0: 4 ports detected
-[    3.437263] ------------[ cut here ]------------
-[    3.437270] [CRTC:36:crtc-0] vblank wait timed out
-
-So, lowering the min rate by 300MHz seems working with bounded nkm
-dividers 5, 2, 9. Tested on two different panels.
-
-[    2.415773] [drm] No driver support for vblank timestamp query.
-[    2.424116] sun4i_dclk_round_rate: min_div = 4 max_div = 127, rate = 55000000
-[    2.424172] ideal = 220000000, rounded = 0
-[    2.424176] ideal = 275000000, rounded = 0
-[    2.424194] ccu_nkm_round_rate: rate = 330000000
-[    2.424197] ideal = 330000000, rounded = 330000000
-[    2.424201] sun4i_dclk_round_rate: div = 6 rate = 55000000
-[    2.424205] sun4i_dclk_round_rate: min_div = 4 max_div = 127, rate = 55000000
-[    2.424209] ideal = 220000000, rounded = 0
-[    2.424213] ideal = 275000000, rounded = 0
-[    2.424230] ccu_nkm_round_rate: rate = 330000000
-[    2.424233] ideal = 330000000, rounded = 330000000
-[    2.424236] sun4i_dclk_round_rate: div = 6 rate = 55000000
-[    2.424253] ccu_nkm_round_rate: rate = 330000000
-[    2.424270] ccu_nkm_round_rate: rate = 330000000
-[    2.424278] sun4i_dclk_recalc_rate: val = 1, rate = 330000000
-[    2.424281] sun4i_dclk_recalc_rate: val = 1, rate = 330000000
-[    2.424306] ccu_nkm_set_rate: rate = 330000000, parent_rate = 297000000
-[    2.424309] ccu_nkm_set_rate: _nkm.n = 5
-[    2.424311] ccu_nkm_set_rate: _nkm.k = 2
-[    2.424313] ccu_nkm_set_rate: _nkm.m = 9
-[    2.424661] sun4i_dclk_set_rate div 6
-[    2.424668] sun4i_dclk_recalc_rate: val = 6, rate = 55000000
-
-Note: BPI-M64-bsp is setting the rate directly to 180MHz with 297MHz
-parent with resulting dividers as 1, 2, 5. ans we can't produce this
-180MHz rate with dclk_round_rate and ccu_nkm.
+> Though I did notice that there's quite a bit of code that's very similar
+> between this and the existing Tegra124 driver, so I wonder if we can do
+> a pass over them and refactor some of it as a follow-up.
+I don't think this will really worth the effort.
