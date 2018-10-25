@@ -2,192 +2,259 @@ Return-Path: <SRS0=7v9C=NF=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50E10C46475
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Oct 2018 11:50:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86462C46475
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Oct 2018 12:49:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1127020831
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Oct 2018 11:50:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1127020831
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
+	by mail.kernel.org (Postfix) with ESMTP id 3478C2075D
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Oct 2018 12:49:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3478C2075D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727455AbeJYUWj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 Oct 2018 16:22:39 -0400
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:19098 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727208AbeJYUWj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Oct 2018 16:22:39 -0400
-Received: from [10.18.29.185] (10.18.29.185) by mail-sh2.amlogic.com
- (10.18.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Thu, 25 Oct
- 2018 19:50:11 +0800
-Subject: Re: [PATCH v5 2/3] clk: meson: add DT documentation for emmc clock
- controller
-To:     Yixun Lan <dlan@gentoo.org>, Jerome Brunet <jbrunet@baylibre.com>
-CC:     Neil Armstrong <narmstrong@baylibre.com>,
-        Rob Herring <robh@kernel.org>,
-        Hanjie Lin <hanjie.lin@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Yixun Lan <yixun.lan@amlogic.com>,
-        <linux-kernel@vger.kernel.org>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Liang Yang <liang.yang@amlogic.com>,
-        Jian Hu <jian.hu@amlogic.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Carlo Caione <carlo@caione.org>,
-        <linux-amlogic@lists.infradead.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Qiufang Dai <qiufang.dai@amlogic.com>
-References: <1539839245-13793-1-git-send-email-jianxin.pan@amlogic.com>
- <1539839245-13793-3-git-send-email-jianxin.pan@amlogic.com>
- <ca95948abd58876a23b2eb3e52b96124e9eed793.camel@baylibre.com>
- <20181024145513.GA6647@ofant>
-From:   Jianxin Pan <jianxin.pan@amlogic.com>
-Message-ID: <146f13c1-f309-d619-602b-b14535ab5f79@amlogic.com>
-Date:   Thu, 25 Oct 2018 19:50:11 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        id S1727240AbeJYVVy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 Oct 2018 17:21:54 -0400
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:41578 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727125AbeJYVVy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Oct 2018 17:21:54 -0400
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+        by mx0b-001ae601.pphosted.com (8.16.0.23/8.16.0.23) with SMTP id w9PCi5Wp023825;
+        Thu, 25 Oct 2018 07:49:07 -0500
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from mail3.cirrus.com ([87.246.76.56])
+        by mx0b-001ae601.pphosted.com with ESMTP id 2n80spekrm-1;
+        Thu, 25 Oct 2018 07:49:07 -0500
+Received: from EX17.ad.cirrus.com (ex17.ad.cirrus.com [172.20.9.81])
+        by mail3.cirrus.com (Postfix) with ESMTP id A3B77611C8B0;
+        Thu, 25 Oct 2018 07:51:30 -0500 (CDT)
+Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
+ (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Thu, 25 Oct 2018
+ 13:49:06 +0100
+Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
+        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id w9PCn5VU002201; Thu,
+ 25 Oct 2018 13:49:05 +0100
+Date:   Thu, 25 Oct 2018 13:49:05 +0100
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     Lee Jones <lee.jones@linaro.org>
+CC:     Richard Fitzgerald <rf@opensource.cirrus.com>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <broonie@kernel.org>, <linus.walleij@linaro.org>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <lgirdwood@gmail.com>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>,
+        <linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>
+Subject: Re: [PATCH v2 2/5] mfd: lochnagar: Add support for the Cirrus Logic
+ Lochnagar
+Message-ID: <20181025124905.GF16508@imbe.wolfsonmicro.main>
+References: <20181008132542.19775-1-ckeepax@opensource.cirrus.com>
+ <20181008132542.19775-2-ckeepax@opensource.cirrus.com>
+ <20181025074459.GF4939@dell>
+ <20181025082621.GD16508@imbe.wolfsonmicro.main>
+ <b2f85f45-cbe9-5a27-e9e8-ad28f2bd9bd6@opensource.cirrus.com>
+ <20181025114205.GC4870@dell>
 MIME-Version: 1.0
-In-Reply-To: <20181024145513.GA6647@ofant>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.18.29.185]
-X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
- (10.18.11.6)
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20181025114205.GC4870@dell>
+User-Agent: Mutt/1.5.20 (2009-12-10)
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1807170000
+ definitions=main-1810250112
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 2018/10/25 15:29, Yixun Lan wrote:
-> Hi Jerome, Jianxin:
+On Thu, Oct 25, 2018 at 12:42:05PM +0100, Lee Jones wrote:
+> On Thu, 25 Oct 2018, Richard Fitzgerald wrote:
+> > On 25/10/18 09:26, Charles Keepax wrote:
+> > > On Thu, Oct 25, 2018 at 08:44:59AM +0100, Lee Jones wrote:
+> > > > On Mon, 08 Oct 2018, Charles Keepax wrote:
+> > > > > From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+> > > > > +static const struct reg_default lochnagar1_reg_defaults[] = {
+> > > > > +	{ LOCHNAGAR1_CDC_AIF1_SEL,    0x00 },
+> > > > > +	{ LOCHNAGAR1_CDC_AIF2_SEL,    0x00 },
+> > > ...
+> > > > > +	{ LOCHNAGAR1_LED1,            0x00 },
+> > > > > +	{ LOCHNAGAR1_LED2,            0x00 },
+> > > > > +	{ LOCHNAGAR1_I2C_CTRL,        0x01 },
+> > > > > +};
+> > > > 
+> > > > Why do you need to specify each register value?
+> > > 
+> > > The way regmap operates it needs to know the starting value of
+> > > each register. It will use this to initialise the cache and to
+> > > determine if writes need to actually update the hardware on
+> > > cache_syncs after devices have been powered back up.
 > 
-> see my comments
+> That sounds crazy to me.  Some devices have thousands of registers.
+> At a line per register, that's thousands of lines of code/cruft.
+> Especially seeing as most (sane?) register layouts I've seen default
+> to zero.  Then default values can be changed at the leisure of the
+> s/w.
 > 
-> On 10:58 Wed 24 Oct     , Jerome Brunet wrote:
->> On Thu, 2018-10-18 at 13:07 +0800, Jianxin Pan wrote:
->>> From: Yixun Lan <yixun.lan@amlogic.com>
->>>
->>> Document the MMC sub clock controller driver, the potential consumer
->>> of this driver is MMC or NAND. Also add four clock bindings IDs which
->>> provided by this driver.
->>>
->>> Reviewed-by: Rob Herring <robh@kernel.org>
->>> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
->>> Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
->>> ---
->>>  .../devicetree/bindings/clock/amlogic,mmc-clkc.txt | 31 ++++++++++++++++++++++
->>>  include/dt-bindings/clock/amlogic,mmc-clkc.h       | 17 ++++++++++++
->>>  2 files changed, 48 insertions(+)
->>>  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
->>>  create mode 100644 include/dt-bindings/clock/amlogic,mmc-clkc.h
->>>
->>> diff --git a/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
->>> new file mode 100644
->>> index 0000000..9e6d343
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
->>> @@ -0,0 +1,31 @@
->>> +* Amlogic MMC Sub Clock Controller Driver
->>> +
->>> +The Amlogic MMC clock controller generates and supplies clock to support
->>> +MMC and NAND controller
->>> +
->>> +Required Properties:
->>> +
->>> +- compatible: should be:
->>> +		"amlogic,gx-mmc-clkc"
->>> +		"amlogic,axg-mmc-clkc"
->>> +
->>> +- #clock-cells: should be 1.
->>> +- clocks: phandles to clocks corresponding to the clock-names property
->>> +- clock-names: list of parent clock names
->>> +	- "clkin0", "clkin1"
->>> +
->>> +Parent node should have the following properties :
->>> +- compatible: "amlogic,axg-mmc-clkc", "syscon".
->>> +- reg: base address and size of the MMC control register space.
->>
->> I get why Stephen is confused by your description, I am too. The example
->> contradict the documentation.
->>
->> The  documentation above says that the parent node should be a syscon with the
->> mmc register space.
->>
->> But your example shows this in the node itself.
->>
-> 
-> yes, I think the documentation need to be fixed
-ok, Thankyou. I will fix it in the next version.
-> 
-> for the final solution, we decide to make 'mmc-clkc' an independent node
-> instead of being a sub-node of 'mmc', so both of them may exist in parallel..
-> 
-> the DT part may like this:
-> 
-> 			sd_emmc_c_clkc: clock-controller@7000 {
-> 				compatible = "amlogic,axg-mmc-clkc", "syscon";
-> 				reg = <0x0 0x7000 0x0 0x4>;
-> 				...
-> 			};
-> 
-> 			sd_emmc_c: mmc@7000 {
-> 				compatible = "amlogic,axg-mmc";
-> 				reg = <0x0 0x7000 0x0 0x800>;
-> 				...
-> 			};
-> 
-> 
->>> +
->>> +Example: Clock controller node:
->>> +
->>> +sd_mmc_c_clkc: clock-controller@7000 {
->>> +	compatible = "amlogic,axg-mmc-clkc", "syscon";
->>> +	reg = <0x0 0x7000 0x0 0x4>;
->>> +	#clock-cells = <1>;
->>> +
->>> +	clock-names = "clkin0", "clkin1";
->>> +	clocks = <&clkc CLKID_SD_MMC_C_CLK0>,
->>> +		 <&clkc CLKID_FCLK_DIV2>;
->>> +};
->>> diff --git a/include/dt-bindings/clock/amlogic,mmc-clkc.h b/include/dt-bindings/clock/amlogic,mmc-clkc.h
->>> new file mode 100644
->>> index 0000000..162b949
->>> --- /dev/null
->>> +++ b/include/dt-bindings/clock/amlogic,mmc-clkc.h
->>> @@ -0,0 +1,17 @@
->>> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
->>> +/*
->>> + * Meson MMC sub clock tree IDs
->>> + *
->>> + * Copyright (c) 2018 Amlogic, Inc. All rights reserved.
->>> + * Author: Yixun Lan <yixun.lan@amlogic.com>
->>> + */
->>> +
->>> +#ifndef __MMC_CLKC_H
->>> +#define __MMC_CLKC_H
->>> +
->>> +#define CLKID_MMC_DIV				1
->>> +#define CLKID_MMC_PHASE_CORE			2
->>> +#define CLKID_MMC_PHASE_TX			3
->>> +#define CLKID_MMC_PHASE_RX			4
->>> +
->>> +#endif
->>
->>
->>
->> _______________________________________________
->> linux-amlogic mailing list
->> linux-amlogic@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-amlogic
+> Even if it is absolutely critical that you have to supply these to
+> Regmap up-front, instead of on first use/read, why can't you just
+> supply the oddball non-zero ones?
 > 
 
+I don't think you can sensibly get away with not supplying
+default values. You say most sane register layouts have zero
+values, alas again you may not be the biggest fan of our hardware
+guys. The Lochnagar actually does have mostly zero defaults but
+that is very much not generally the case with our hardware.
+
+One of the main aims of regmap is to avoid bus accesses when
+possible but I guess on the first write/read to any register you
+could insert a read to pull the default, although I do worry
+there is some corner case/flexibility that is going to cause
+headaches later.
+
+I am not sure that dynamically constructing the defaults would be
+possible from a table of non-zero ones, or at least doing so would
+probably require a fairly major change to the way registers are
+specified since with the current callback based approach and a
+sparse regmap you could need to iterate over billions of
+potential registers to build the table.
+
+> > > > > +static bool lochnagar2_readable_register(struct device *dev, unsigned int reg)
+> > > > > +{
+> > > > > +	switch (reg) {
+> > > > > +	case LOCHNAGAR_SOFTWARE_RESET:
+> > > > > +	case LOCHNAGAR_FIRMWARE_ID1:
+> > > > > +	case LOCHNAGAR_FIRMWARE_ID2:
+> > > ...
+> > > > > +	case LOCHNAGAR2_MICVDD_CTRL2:
+> > > > > +	case LOCHNAGAR2_VDDCORE_CDC_CTRL1:
+> > > > > +	case LOCHNAGAR2_VDDCORE_CDC_CTRL2:
+> > > > > +	case LOCHNAGAR2_SOUNDCARD_AIF_CTRL:
+> > > > > +		return true;
+> > > > > +	default:
+> > > > > +		return false;
+> > > > > +	}
+> > > > > +}
+> > > > > +
+> > > > > +static bool lochnagar2_volatile_register(struct device *dev, unsigned int reg)
+> > > > > +{
+> > > > > +	switch (reg) {
+> > > > > +	case LOCHNAGAR2_GPIO_CHANNEL1:
+> > > > > +	case LOCHNAGAR2_GPIO_CHANNEL2:
+> > > > > +	case LOCHNAGAR2_GPIO_CHANNEL3:
+> > > ...
+> > > > > +	case LOCHNAGAR2_GPIO_CHANNEL13:
+> > > > > +	case LOCHNAGAR2_GPIO_CHANNEL14:
+> > > > > +	case LOCHNAGAR2_GPIO_CHANNEL15:
+> > > > > +	case LOCHNAGAR2_GPIO_CHANNEL16:
+> > > > > +	case LOCHNAGAR2_ANALOGUE_PATH_CTRL1:
+> > > > > +		return true;
+> > > > > +	default:
+> > > > > +		return false;
+> > > > > +	}
+> > > > > +}
+> > > > 
+> > > > This is getting silly now.  Can't you use ranges?
+> > > 
+> > > I can if you feel strongly about it? But it does make the drivers
+> > > much more error prone and significantly more annoying to work
+> > > with. I find it is really common to be checking that a register
+> > > is handled correctly through the regmap callbacks and it is nice
+> > > to just be able to grep for that. Obviously this won't work for
+> > > all devices/regmaps as well since many will not have consecutive
+> > > addresses on registers, for example having multi-byte registers
+> > > that are byte addressed.
+> > > 
+> > > How far would you like me to take this as well? Is it just the
+> > > numeric registers you want ranges for ie.
+> > > 
+> > > LOCHNAGAR2_GPIO_CHANNEL1...LOCHNAGAR_GPIO_CHANNEL16
+> > > 
+> > > Or is it all consecutive registers even if they are unrelated
+> > > (exmaple is probably not accurate as I haven't checked the
+> > > addresses):
+> > > 
+> > > LOCHNAGAR2_GPIO_CHANNEL1...LOCHNAGAR2_ANALOGURE_PATH_CTRL1
+> > > 
+> > > I don't mind the first at all but the second is getting really
+> > > horrible in my opinion.
+> 
+> My issue is that we have one end of the scale, where contributors are
+> submitting patches, trying to remove a line of code here, a line of
+> code there, then there are patches like this one which describe the
+> initial value, readable status, writable status and volatile status of
+> each and every register.
+> 
+
+Removing code is one thing but I would argue that data tables are
+somewhat less of a concern. I guess kernel size for very small
+systems but then is someone going to be using Lochnagar on one of
+those.
+
+> The API is obscene and needs a re-work IMHO.
+> 
+> I really hope we do not really have to list every register, but *if we
+> absolutely must*, let's do it once:
+> 
+>   REG_ADDRESS, WRV, INITIAL_VALUE
+> 
+
+It might be possible to combine all these into one thing,
+although again its a fairly major core change.
+
+> > > > > +static const struct reg_default lochnagar2_reg_defaults[] = {
+> > > > > +	{ LOCHNAGAR2_CDC_AIF1_CTRL,         0x0000 },
+> > > > > +	{ LOCHNAGAR2_CDC_AIF2_CTRL,         0x0000 },
+> > > > > +	{ LOCHNAGAR2_CDC_AIF3_CTRL,         0x0000 },
+> > > > > +	{ LOCHNAGAR2_DSP_AIF1_CTRL,         0x0000 },
+> > > ...
+> > > > > +	{ LOCHNAGAR2_MINICARD_RESETS,       0x0000 },
+> > > > > +	{ LOCHNAGAR2_ANALOGUE_PATH_CTRL2,   0x0000 },
+> > > > > +	{ LOCHNAGAR2_COMMS_CTRL4,           0x0001 },
+> > > > > +	{ LOCHNAGAR2_SPDIF_CTRL,            0x0008 },
+> > > > > +	{ LOCHNAGAR2_POWER_CTRL,            0x0001 },
+> > > > > +	{ LOCHNAGAR2_SOUNDCARD_AIF_CTRL,    0x0000 },
+> > > > > +};
+> > > > 
+> > > > OMG!  Vile, vile vile!
+> > > 
+> > > I really feel this isn't the driver you are objecting to as such
+> > > but the way regmap operates and also we seem to always have the same
+> > > discussions around regmap every time we push a driver.
+> 
+> Absolutely.  I didn't like it before.  I like it even less now.
+> 
+
+I guess the question from my side becomes do you want to block
+this driver pending on major refactoring to regmap? I will have a
+think about what I can do but its going to affect a LOT of drivers.
+
+> > > > > +	ret = devm_of_platform_populate(dev);
+> > > > > +	if (ret < 0) {
+> > > > > +		dev_err(dev, "Failed to populate child nodes: %d\n", ret);
+> > > > > +		return ret;
+> > > > > +	}
+> > > > 
+> > > > Please do not mix OF and MFD device registration strategies.
+> > > > 
+> > > > Pick one and register all devices through your chosen method.
+> > > 
+> > > Hmmm we use this to do things like register some fixed regulators
+> > > and clocks that don't need any control but do need to be associated
+> > > with the device. I could do that through the MFD although it is in
+> > > direct conflict with the feedback on the clock patches I received
+> > > to move the fixed clocks into devicetree rather than registering
+> > > them manually (see v2 of the patch chain).
+> 
+> The I suggest moving everything to DT.
+> 
+
+I will have a look and see what that would look like.
+
+Thanks,
+Charles
