@@ -2,294 +2,216 @@ Return-Path: <SRS0=7v9C=NF=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 934FAC46475
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Oct 2018 09:28:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D206C46475
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Oct 2018 09:34:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49A922082E
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Oct 2018 09:28:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49A922082E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
+	by mail.kernel.org (Postfix) with ESMTP id EE6972082E
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Oct 2018 09:34:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="iCbWWcjU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE6972082E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726785AbeJYSAV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 Oct 2018 14:00:21 -0400
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:46320 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726674AbeJYSAU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Oct 2018 14:00:20 -0400
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-        by mx0a-001ae601.pphosted.com (8.16.0.23/8.16.0.23) with SMTP id w9P9O97R000868;
-        Thu, 25 Oct 2018 04:28:19 -0500
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=rf@opensource.cirrus.com
-Received: from mail1.cirrus.com (mail1.cirrus.com [141.131.3.20])
-        by mx0a-001ae601.pphosted.com with ESMTP id 2n81s36jvc-1;
-        Thu, 25 Oct 2018 04:28:18 -0500
-Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
-        by mail1.cirrus.com (Postfix) with ESMTP id 2863D611C8AA;
-        Thu, 25 Oct 2018 04:28:18 -0500 (CDT)
-Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
- (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Thu, 25 Oct 2018
- 10:28:17 +0100
-Received: from [198.90.251.121] (edi-sw-dsktp006.ad.cirrus.com
- [198.90.251.121])      by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id
- w9P9SG6a021747;        Thu, 25 Oct 2018 10:28:16 +0100
-Subject: Re: [PATCH v2 2/5] mfd: lochnagar: Add support for the Cirrus Logic
- Lochnagar
-To:     Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Lee Jones <lee.jones@linaro.org>
-CC:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <broonie@kernel.org>, <linus.walleij@linaro.org>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <lgirdwood@gmail.com>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>,
-        <linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>
-References: <20181008132542.19775-1-ckeepax@opensource.cirrus.com>
- <20181008132542.19775-2-ckeepax@opensource.cirrus.com>
- <20181025074459.GF4939@dell> <20181025082621.GD16508@imbe.wolfsonmicro.main>
-From:   Richard Fitzgerald <rf@opensource.cirrus.com>
-Message-ID: <b2f85f45-cbe9-5a27-e9e8-ad28f2bd9bd6@opensource.cirrus.com>
-Date:   Thu, 25 Oct 2018 10:28:16 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S1726800AbeJYSGL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 Oct 2018 14:06:11 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:41997 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726637AbeJYSGL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Oct 2018 14:06:11 -0400
+Received: by mail-wr1-f67.google.com with SMTP id y15-v6so4163909wru.9
+        for <linux-clk@vger.kernel.org>; Thu, 25 Oct 2018 02:34:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=mATkZbDGH8tn/fwT8hdNECKo6B3IconM8zxALC89/iY=;
+        b=iCbWWcjUzydYbSEdgRRthpmxOQ2BlmC7UemKMVPsurMSaQMu3nSLmJnweayuUFxLDm
+         DQGumdt4yrmkhVY1w5VMfEm5/dHs1Z74TTPS3+TzkthBxZ1MyNt4JfePrH0AbM54IMjS
+         Uwn5zyMn41mGqOtc/hD6VRR+m452nMjfQWNF8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=mATkZbDGH8tn/fwT8hdNECKo6B3IconM8zxALC89/iY=;
+        b=RPIaeOfQe9Mbxam63M1C5ak3A4OsIdUg5gK4CJeVXjkmjPVkasNUSq2+n3YUyxgOCW
+         Fw7dZoJ10djsfWw6Pb0Pm0PddKVu5rfGBLVDBZMTXzQnrX8hW14xXSMg9Q3D6MdcP/fs
+         BGMxwtshPiB2FCYvCAiaQDfMl9qMoaeKRJ90vo5OI1iRH22ig3vogfG6l5bCoiOzwrh5
+         P+VxfLw+rWG2gkNQUVBsYLUah5fRYPAP1A62cs0poyemgo9A0eVUBlzgnBhSsMzNkIsr
+         DniUaT0K45Bv4tTOH+9Rlg1+0DudOwgCf0RWyUUFXhFSREjng7d3iMpaOmbSbjXix4vz
+         Il+w==
+X-Gm-Message-State: AGRZ1gLDj3hiCbRYPeXs3l73UKwe9nq9w/JsPyByKOfEBmaiPWlPY3ER
+        HfVtiYrsd7nNUjVSDKAK1zQ0Ig==
+X-Google-Smtp-Source: AJdET5cMSislzd0h0slrcnd6RmqXqYtyKZMkQuyMcJHuiYQCilcwV0ld07eWOGossILI+OljjNjDEA==
+X-Received: by 2002:a5d:65d1:: with SMTP id e17-v6mr1054158wrw.149.1540460052703;
+        Thu, 25 Oct 2018 02:34:12 -0700 (PDT)
+Received: from dell ([2.31.167.182])
+        by smtp.gmail.com with ESMTPSA id y141-v6sm1246047wme.10.2018.10.25.02.33.59
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 25 Oct 2018 02:34:11 -0700 (PDT)
+Date:   Thu, 25 Oct 2018 10:33:55 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Tony Xie <tony.xie@rock-chips.com>
+Cc:     heiko@sntech.de, broonie@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
+        xsf@rock-chips.com, zhangqing@rock-chips.com,
+        huangtao@rock-chips.com
+Subject: Re: [PATCH v5 1/5] mfd: rk808: Add RK817 and RK809 support
+Message-ID: <20181025093355.GN4939@dell>
+References: <1540294467-25813-1-git-send-email-tony.xie@rock-chips.com>
+ <1540294467-25813-2-git-send-email-tony.xie@rock-chips.com>
 MIME-Version: 1.0
-In-Reply-To: <20181025082621.GD16508@imbe.wolfsonmicro.main>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1807170000
- definitions=main-1810250086
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1540294467-25813-2-git-send-email-tony.xie@rock-chips.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 25/10/18 09:26, Charles Keepax wrote:
-> On Thu, Oct 25, 2018 at 08:44:59AM +0100, Lee Jones wrote:
->> On Mon, 08 Oct 2018, Charles Keepax wrote:
->>> From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
->>> +static const struct reg_default lochnagar1_reg_defaults[] = {
->>> +	{ LOCHNAGAR1_CDC_AIF1_SEL,    0x00 },
->>> +	{ LOCHNAGAR1_CDC_AIF2_SEL,    0x00 },
-> ...
->>> +	{ LOCHNAGAR1_LED1,            0x00 },
->>> +	{ LOCHNAGAR1_LED2,            0x00 },
->>> +	{ LOCHNAGAR1_I2C_CTRL,        0x01 },
->>> +};
->>
->> Why do you need to specify each register value?
->>
-> 
-> The way regmap operates it needs to know the starting value of
-> each register. It will use this to initialise the cache and to
-> determine if writes need to actually update the hardware on
-> cache_syncs after devices have been powered back up.
-> 
->>> +static const struct reg_sequence lochnagar1_patch[] = {
->>> +	{ 0x40, 0x0083 },
->>> +	{ 0x46, 0x0001 },
->>> +	{ 0x47, 0x0018 },
->>> +	{ 0x50, 0x0000 },
->>> +};
->>
->> I'm really not a fan of these so call 'patches'.
->>
->> Can't you set the registers up proper way?
->>
-> 
-> I will see if we could move any out of here or define any of the
-> registers but as we have discussed before it is not always possible.
-> 
+On Tue, 23 Oct 2018, Tony Xie wrote:
 
-Also patches generally come out of hardware tuning/qualification/tools
-as this list of address,value. So it's easy for people to dump an update
-into the driver as a trivial copy-paste but more work if they have to
-reverse-engineer the patch list from hardware/datasheet into what each
-line "means" and then find the relevant lines of code to change. It's also
-much easier to answer the question "Have these hardware patches been
-applied to the driver?" if we have them in the original documented format.
-It just makes people's lives more difficult if they have to search around
-the code to try to find something that looks like the originally specified
-patch list. We don't use them just as a lazy way to setup some registers.
+>     The rk809 and rk817 are a Power Management IC (PMIC) for multimedia
+>     and handheld devices. It contains the following components:
+> 
+>         - Regulators
+>         - RTC
+>         - Clocking
+> 
+>     Both RK809 and RK817 chips are using a similar register map,
+>     so we can reuse the RTC and Clocking and regulators functionality.
 
->>> +static bool lochnagar2_readable_register(struct device *dev, unsigned int reg)
->>> +{
->>> +	switch (reg) {
->>> +	case LOCHNAGAR_SOFTWARE_RESET:
->>> +	case LOCHNAGAR_FIRMWARE_ID1:
->>> +	case LOCHNAGAR_FIRMWARE_ID2:
-> ...
->>> +	case LOCHNAGAR2_MICVDD_CTRL2:
->>> +	case LOCHNAGAR2_VDDCORE_CDC_CTRL1:
->>> +	case LOCHNAGAR2_VDDCORE_CDC_CTRL2:
->>> +	case LOCHNAGAR2_SOUNDCARD_AIF_CTRL:
->>> +		return true;
->>> +	default:
->>> +		return false;
->>> +	}
->>> +}
->>> +
->>> +static bool lochnagar2_volatile_register(struct device *dev, unsigned int reg)
->>> +{
->>> +	switch (reg) {
->>> +	case LOCHNAGAR2_GPIO_CHANNEL1:
->>> +	case LOCHNAGAR2_GPIO_CHANNEL2:
->>> +	case LOCHNAGAR2_GPIO_CHANNEL3:
-> ...
->>> +	case LOCHNAGAR2_GPIO_CHANNEL13:
->>> +	case LOCHNAGAR2_GPIO_CHANNEL14:
->>> +	case LOCHNAGAR2_GPIO_CHANNEL15:
->>> +	case LOCHNAGAR2_GPIO_CHANNEL16:
->>> +	case LOCHNAGAR2_ANALOGUE_PATH_CTRL1:
->>> +		return true;
->>> +	default:
->>> +		return false;
->>> +	}
->>> +}
->>
->> This is getting silly now.  Can't you use ranges?
->>
-> 
-> I can if you feel strongly about it? But it does make the drivers
-> much more error prone and significantly more annoying to work
-> with. I find it is really common to be checking that a register
-> is handled correctly through the regmap callbacks and it is nice
-> to just be able to grep for that. Obviously this won't work for
-> all devices/regmaps as well since many will not have consecutive
-> addresses on registers, for example having multi-byte registers
-> that are byte addressed.
-> 
-> How far would you like me to take this as well? Is it just the
-> numeric registers you want ranges for ie.
-> 
-> LOCHNAGAR2_GPIO_CHANNEL1...LOCHNAGAR_GPIO_CHANNEL16
-> 
-> Or is it all consecutive registers even if they are unrelated
-> (exmaple is probably not accurate as I haven't checked the
-> addresses):
-> 
-> LOCHNAGAR2_GPIO_CHANNEL1...LOCHNAGAR2_ANALOGURE_PATH_CTRL1
-> 
-> I don't mind the first at all but the second is getting really
-> horrible in my opinion.
-> 
->>> +static const struct reg_default lochnagar2_reg_defaults[] = {
->>> +	{ LOCHNAGAR2_CDC_AIF1_CTRL,         0x0000 },
->>> +	{ LOCHNAGAR2_CDC_AIF2_CTRL,         0x0000 },
->>> +	{ LOCHNAGAR2_CDC_AIF3_CTRL,         0x0000 },
->>> +	{ LOCHNAGAR2_DSP_AIF1_CTRL,         0x0000 },
-> ...
->>> +	{ LOCHNAGAR2_MINICARD_RESETS,       0x0000 },
->>> +	{ LOCHNAGAR2_ANALOGUE_PATH_CTRL2,   0x0000 },
->>> +	{ LOCHNAGAR2_COMMS_CTRL4,           0x0001 },
->>> +	{ LOCHNAGAR2_SPDIF_CTRL,            0x0008 },
->>> +	{ LOCHNAGAR2_POWER_CTRL,            0x0001 },
->>> +	{ LOCHNAGAR2_SOUNDCARD_AIF_CTRL,    0x0000 },
->>> +};
->>
->> OMG!  Vile, vile vile!
->>
-> 
-> I really feel this isn't the driver you are objecting to as such
-> but the way regmap operates and also we seem to always have the same
-> discussions around regmap every time we push a driver. Is there
-> any way me, you and Mark could hash this out and find out a way to
-> handle regmaps that is acceptable to you? I don't suppose you are
-> in Edinburgh at the moment for ELCE?
-> 
+What's with the odd tabbing at the start of every line?
 
-I suppose if Mark was willing to promote the regmap drivers to be a
-top-level subsystem that could contain the regmap definitions of devices
-then we could dump our regmap definitions in there, where Mark can review
-it as he's familiar with regmap and the chips and the reasons why things
-are done the way they are, rather than Lee having to stress about it every
-time we need to create an MFD device that uses regmap. Though that would
-make the initialization of an MFD rather awkward with the code required
-to init the MFD it not actually being in the MFD tree.
+> Signed-off-by: Tony Xie <tony.xie@rock-chips.com>
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
+> ---
+>  drivers/mfd/Kconfig       |   6 +-
+>  drivers/mfd/rk808.c       | 225 +++++++++++++++++++++++++++++++++++++++++++---
+>  include/linux/mfd/rk808.h | 172 +++++++++++++++++++++++++++++++++++
+>  include/linux/regmap.h    |   6 ++
+>  4 files changed, 392 insertions(+), 17 deletions(-)
 
->>> +	/* Wait for Lochnagar to boot */
->>> +	ret = lochnagar_wait_for_boot(lochnagar->regmap, &val);
->>> +	if (ret < 0) {
->>> +		dev_err(dev, "Failed to read device ID: %d\n", ret);
->>
->> Eh?
->>
->> So you read the LOCHNAGAR_SOFTWARE_RESET register and out pops the
->> device/revision IDs?  That's just random!
->
-> I shall let the hardware guys know you don't approve of their
-> life choices :-) and add some comments to the code.
-> 
->>> +	ret = devm_of_platform_populate(dev);
->>> +	if (ret < 0) {
->>> +		dev_err(dev, "Failed to populate child nodes: %d\n", ret);
->>> +		return ret;
->>> +	}
->>
->> Please do not mix OF and MFD device registration strategies.
->>
->> Pick one and register all devices through your chosen method.
->>
-> 
-> Hmmm we use this to do things like register some fixed regulators
-> and clocks that don't need any control but do need to be associated
-> with the device. I could do that through the MFD although it is in
-> direct conflict with the feedback on the clock patches I received
-> to move the fixed clocks into devicetree rather than registering
-> them manually (see v2 of the patch chain).
-> 
-> I will have a look see if I can find any ideas that will make
-> everyone happy but we might need to discuss with Mark and the
-> clock guys.
-> 
->>> +	.probe_new = lochnagar_i2c_probe,
->>
->> Hasn't this been replaced yet?
->>
-> 
-> I will check, the patchset has been around internally for a while
-> so it is possible this is no longer needed.
-> 
->>> +#ifndef CIRRUS_LOCHNAGAR_H
->>> +#define CIRRUS_LOCHNAGAR_H
->>> +
->>> +#include "lochnagar1_regs.h"
->>> +#include "lochnagar2_regs.h"
->>
->> Why are you including these here?
->>
-> 
-> It is just a convenience so the drivers only need to include
-> lochnagar.h rather than including all three headers manually.
-> 
->>> diff --git a/include/linux/mfd/lochnagar1_regs.h b/include/linux/mfd/lochnagar1_regs.h
->>> diff --git a/include/linux/mfd/lochnagar2_regs.h b/include/linux/mfd/lochnagar2_regs.h
->>
->> So Lochnagar 1 and 2 are completely different devices?
->>
->> What do they do?
->>
-> 
-> Completely different devices is a bit strong, they are different
-> versions of the same system. They have quite different register
-> maps but provide very similar functionality.
-> 
+[...]
 
-The register maps are different partly because some silicon
-used on the V1 is no longer manufactured and partly because some
-silicon added in V2 didn't fit into the older register map.
+> +static struct resource rk817_rtc_resources[] = {
+> +	{
+> +		.start  = RK817_IRQ_RTC_ALARM,
+> +		.end    = RK817_IRQ_RTC_ALARM,
+> +		.flags  = IORESOURCE_IRQ,
+> +	}
+> +};
 
-> All the other comments I will get fixed up for the next spin of
-> the patches.
-> 
-> Thanks,
-> Charles
-> 
+There are MACROs for these.  Please consider converting to them.
 
+You don't need to do that for *this* patch though.
+
+[...]
+
+>  static const struct regmap_irq_chip rk818_irq_chip = {
+>  	.name = "rk818",
+>  	.irqs = rk818_irqs,
+> @@ -376,7 +489,7 @@ static void rk805_device_shutdown(void)
+>  
+>  	if (!rk808) {
+>  		dev_warn(&rk808_i2c_client->dev,
+> -			 "have no rk805, so do nothing here\n");
+> +			 "can not get the driver data of rk808!\n");
+
+Nit: "cannot"
+
+>  		return;
+>  	}
+>  
+> @@ -394,7 +507,7 @@ static void rk808_device_shutdown(void)
+>  
+>  	if (!rk808) {
+>  		dev_warn(&rk808_i2c_client->dev,
+> -			 "have no rk808, so do nothing here\n");
+> +			 "can not get the driver data of rk808!\n");
+
+As above (and below).
+
+>  		return;
+>  	}
+>  
+> @@ -412,7 +525,7 @@ static void rk818_device_shutdown(void)
+>  
+>  	if (!rk808) {
+>  		dev_warn(&rk808_i2c_client->dev,
+> -			 "have no rk818, so do nothing here\n");
+> +			 "can not get the driver data of rk808!\n");
+
+"RK808" in all prints and comments.
+
+>  		return;
+>  	}
+>  
+> @@ -423,9 +536,39 @@ static void rk818_device_shutdown(void)
+>  		dev_err(&rk808_i2c_client->dev, "power off error!\n");
+>  }
+>  
+> +static void rk8xx_syscore_shutdown(void)
+> +{
+> +	int ret;
+> +	struct rk808 *rk808 = i2c_get_clientdata(rk808_i2c_client);
+> +
+> +	if (!rk808) {
+> +		dev_warn(&rk808_i2c_client->dev,
+> +			 "can not get the driver data of rk808!\n");
+> +		return;
+> +	}
+> +
+> +	if (system_state == SYSTEM_POWER_OFF &&
+> +	    (rk808->variant == RK809_ID || rk808->variant == RK817_ID)) {
+> +		ret = regmap_update_bits(rk808->regmap,
+> +					 RK817_SYS_CFG(3),
+> +					 RK817_SLPPIN_FUNC_MSK,
+> +					 SLPPIN_DN_FUN);
+> +		if (ret) {
+> +			dev_warn(&rk808_i2c_client->dev,
+> +				 "the retset pin can not switch to power down function\n");
+
+Spellcheck.
+
+[...]
+
+> diff --git a/include/linux/regmap.h b/include/linux/regmap.h
+> index 4f38068..a468b81 100644
+> --- a/include/linux/regmap.h
+> +++ b/include/linux/regmap.h
+> @@ -1047,6 +1047,12 @@ struct regmap_irq {
+>  #define REGMAP_IRQ_REG(_irq, _off, _mask)		\
+>  	[_irq] = { .reg_offset = (_off), .mask = (_mask) }
+>  
+> +#define REGMAP_IRQ_REG_LINE(_id, _reg_bits) \
+> +	[_id] = {				\
+> +		.mask = BIT((_id) % (_reg_bits)),	\
+> +		.reg_offset = (_id) / (_reg_bits),	\
+> +	}
+> +
+>  /**
+>   * struct regmap_irq_chip - Description of a generic regmap irq_chip.
+>   *
+
+This needs to be a separate patch.
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
