@@ -8,57 +8,57 @@ X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3194BC46475
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Oct 2018 14:31:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C7D1C46475
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Oct 2018 14:31:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB0012083E
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Oct 2018 14:31:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C21652083E
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Oct 2018 14:31:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hes2lybs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB0012083E
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DtLcmTFh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C21652083E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728022AbeJYXEJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 Oct 2018 19:04:09 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:40275 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727313AbeJYXED (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Oct 2018 19:04:03 -0400
-Received: by mail-wm1-f65.google.com with SMTP id b203-v6so1750932wme.5;
-        Thu, 25 Oct 2018 07:31:01 -0700 (PDT)
+        id S1728320AbeJYXEs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 Oct 2018 19:04:48 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:44415 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727313AbeJYXEr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Oct 2018 19:04:47 -0400
+Received: by mail-wr1-f65.google.com with SMTP id q6-v6so9558919wrw.11;
+        Thu, 25 Oct 2018 07:31:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=lFLpehC3n+3CaT2liZ/Zga9em4kHxo5L6vj0o4AsfsQ=;
-        b=hes2lybslkNVqr+IXHNkw8Ek0bfvW+hxsXeJHOp2rMIhb7L8RzWv5SYiE/xIyrXl0Y
-         fmtiNtyO1hSkH+WXShOF9vZASde30+fumzID/Z6WGCpCKgdHhtKMlT6EXYnJtxMuYAN5
-         EC/idy5o4lfCyvS7l1S0UZiPbcEopDSr3rfddHB9wi0gHNl8UH2+VPNf0sulza3MXVOv
-         u0f87k1QzRbEXvGl6OxcndCqhhu3UaLDkdWgLm9PEBKkRsqH3gBTn/cQQnR3fMfR0xP7
-         X4tJ7KGljlxIi5uUrotk5OrTjPrEwpJXUIUNCAvdZPu8aq0C/glSAA8YfKlS92+Eh7mL
-         X+rg==
+        bh=WErQpG8wg1Wmtq6nHDyKzBNyscpt1Bdw9h5S8/O/kqE=;
+        b=DtLcmTFhtfOSDHj/m/ugA7Uqzq/zh+naBNlqT2/OgHbPPAGsjad9wOrhbHc9P3UQWo
+         UaNOIF6jTmht04ZZqSY80SZxU7YF9oow6cTbZETrnMbVBzSbDiG0hsoCeoKVFjwhbTrc
+         Bapxj5pB0aLFbaLIlr0UTE6WfQ7wGpV9RlENHBiiMXYCIMVh9houW0uFWtyBi+MrD8gf
+         tqghAUDRJUVG8t9AL2leTRjTuFuQTzyRpzijelOjqGY3Tb8OMChjynprcAXAAatBcAXO
+         0R0a7Af9DD/lT0xhUbKZL1xwVvSU8eJHYK7T2s0u1p6N5gj+auKndJYSOgGy7V6YkZaI
+         29gw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=lFLpehC3n+3CaT2liZ/Zga9em4kHxo5L6vj0o4AsfsQ=;
-        b=MLo2kDAABelLCa7QXMvV4HTJUKvoRvMHjEA3jEI4+LqavYkf13sO6J7hHDp2iaISs2
-         tkXSBtF+7sRQPeZH9z6UbM7R51mjDoQOaqSer7eh9HTRl+t6xPYCxHjBtuQELDV4ar8i
-         GKB1N/K1L6kRq+4seau+npI9gfP8Trg30pyUv0CPaetqVEy82sDjovkyicsNcqwuDFp/
-         b9bgWYMjEZ2wxM0uMlrqhnkLIpgVkuoTofGHnOxFxTTwvM5clsu8R+MYEmuH8TpFTipa
-         jt0GGkFFeGfAgNogmsnzk0Ue6QCcRplDZEgf6cv0v8ukIho+Sb45R/+pr/dz2GlQMCk8
-         wyvw==
-X-Gm-Message-State: AGRZ1gKbR8UaUIq0PMUdzkWl0nQflVNLJQr4wVAdJ95lmqasCa2hnG4R
-        PL2tLaxFsNhVpMR3h8JvbNM=
-X-Google-Smtp-Source: AJdET5flLNEcFBCI2MgUNJfMujfFIzlFyUWtBk0DKU+1Xg6z/6T1q00tEpj9j092WbGCwzMs2wAT4Q==
-X-Received: by 2002:a1c:1c0c:: with SMTP id c12-v6mr2084223wmc.18.1540477860216;
-        Thu, 25 Oct 2018 07:31:00 -0700 (PDT)
+        bh=WErQpG8wg1Wmtq6nHDyKzBNyscpt1Bdw9h5S8/O/kqE=;
+        b=D+RVcRPO2J2bZvn5ROeThRO1IghICljK0fSyuAjo3OqiNB6zTASOfe+fWpao27nGQ4
+         xEydj/8aCBqm5iss6Krsh3eUudLL6xu7SZhEaXFHVSOgyi54vDPEDEN20OZPWqLfUwRU
+         RYgfkZlv3GCbcHApkkguRZ44btNsQhN3x+U+rJfLe792erj210Rw25gUDEAc6/H5dMXR
+         khDJAmjwC8P4M8QjTcY72S2adNivBdtQiBDQoyHCsR1I9f+DxTq+xRWvumIpbtZ+L18i
+         TssJeTe8xSs0G+dV0o/xFPexi7HgW0HGGo1MS1BPRVHRJq4kd/lCvgmRCftnKPeyZ9pU
+         nc9g==
+X-Gm-Message-State: AGRZ1gLY/mocBC5H9MlXUXzbp5VwKAwgg6UYCsvbHruG9WhsWaueC2BN
+        mv6sexts2CzqZL5cdZN8mCg=
+X-Google-Smtp-Source: AJdET5fkKGZBsAFG/px/flZUpq/W5r9dwdzdB+YIzHnA0UXqKmPNNMcG1/tR9HLYxTjVck0O6O47OA==
+X-Received: by 2002:a5d:608e:: with SMTP id w14-v6mr2249219wrt.193.1540477903394;
+        Thu, 25 Oct 2018 07:31:43 -0700 (PDT)
 Received: from localhost (pD9E511F8.dip0.t-ipconnect.de. [217.229.17.248])
-        by smtp.gmail.com with ESMTPSA id m16-v6sm1904813wmd.35.2018.10.25.07.30.59
+        by smtp.gmail.com with ESMTPSA id 64-v6sm9934952wrr.64.2018.10.25.07.31.42
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 25 Oct 2018 07:30:59 -0700 (PDT)
-Date:   Thu, 25 Oct 2018 16:30:58 +0200
+        Thu, 25 Oct 2018 07:31:42 -0700 (PDT)
+Date:   Thu, 25 Oct 2018 16:31:41 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Dmitry Osipenko <digetx@gmail.com>
 Cc:     Peter De Schrijver <pdeschrijver@nvidia.com>,
@@ -66,15 +66,16 @@ Cc:     Peter De Schrijver <pdeschrijver@nvidia.com>,
         Prashant Gaikwad <pgaikwad@nvidia.com>,
         linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 6/8] clk: tegra20: Turn EMC clock gate into divider
-Message-ID: <20181025143058.GJ21521@ulmo>
+Subject: Re: [PATCH v6 7/8] clk: tegra20: Check whether direct PLLM sourcing
+ is turned off for EMC
+Message-ID: <20181025143141.GK21521@ulmo>
 References: <20181021183052.32023-1-digetx@gmail.com>
- <20181021183052.32023-7-digetx@gmail.com>
+ <20181021183052.32023-8-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="KjX7LgAomYr70Ka9"
+        protocol="application/pgp-signature"; boundary="Z9t8O/5YJLB6LEUl"
 Content-Disposition: inline
-In-Reply-To: <20181021183052.32023-7-digetx@gmail.com>
+In-Reply-To: <20181021183052.32023-8-digetx@gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
@@ -82,46 +83,44 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---KjX7LgAomYr70Ka9
+--Z9t8O/5YJLB6LEUl
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Oct 21, 2018 at 09:30:50PM +0300, Dmitry Osipenko wrote:
-> Kernel should never gate the EMC clock as it causes immediate lockup, so
-> removing clk-gate functionality doesn't affect anything. Turning EMC clk
-> gate into divider allows to implement glitch-less EMC scaling, avoiding
-> reparenting to a backup clock.
+On Sun, Oct 21, 2018 at 09:30:51PM +0300, Dmitry Osipenko wrote:
+> Ensure that direct PLLM sourcing is turned off for EMC as we don't support
+> that configuration in the clk driver.
 >=20
 > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 > Acked-by: Stephen Boyd <sboyd@kernel.org>
 > ---
->  drivers/clk/tegra/clk-tegra20.c | 36 ++++++++++++++++++++++++---------
->  1 file changed, 26 insertions(+), 10 deletions(-)
+>  drivers/clk/tegra/clk-tegra20.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
 
 Applied to for-4.21/clk, thanks.
 
 Thierry
 
---KjX7LgAomYr70Ka9
+--Z9t8O/5YJLB6LEUl
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlvR06IACgkQ3SOs138+
-s6Hduw/+KPDbRWcItPpfx2++bu7qjw3SiY5WGVhUWskHLChqi8McqinAdCJKyNnF
-xmVLc4St8pDZlJ46ygQA0nhgRmhP/rYhu2hI8n364/gIfUHXKG7FnSv9dqYRb+8T
-NTAnn32YvtW0A0murNKx/ajmE5ZKyEN7mCOMwDaP7o7DJ/R5x2YyldUossHh2KCV
-5tAGQ1AoNMlu1J7gpiMTwxJmdRNIHTjFuqDpZt8y/J/TFLvpq5gTnbYDr0DCn8Nf
-c4cKZ/FV26dcvL0Y4pxyfsda/JgOesi9spF4XYOeKRCSiJkbrPrcgVVnCFzi5LxL
-XQDit677vdaJIBKp64h+Uc0IR+qsUE3Zww4LRfcPZi5AsANYZtWqF0CWHveDZrj1
-A+IW6XUzzTDTROfSzTzbUN3k/TpSQIAgdQrKv4J4Bc+J1fURMKiV5uMpy2atDIoK
-T1R8VQoenDFQ7mwm8wu3/AQ7cSAn11foINt51irSNu8IWT46wlJHqctNez/AMI+G
-9zMQULVbVty6Pm8bQ5KE7TWrpxUrd7zzaF+1oJ/r1OtMjrZgIcmTrl4hhP9ytnzi
-k7xh3hd/eehxYYjP2hWKrrdJkua+JP0swXIgd4MmnKbsDrta4KnZIscluo2xZam3
-u1ee2NvDAG5kCF9nObr5Cnni2nmxC+Uz/67yDGwdo2MWdUM526Q=
-=Q3jp
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlvR080ACgkQ3SOs138+
+s6FyqBAAgtHHN3T6xW1Y/Dr30FKTXDoDZ/+OfYWpm1EQkHr6G6NuQ/RolegyZPA2
+Tm1B7qKy2zS1zXHHesd/B1juotJomXkBtJERZMfYMS9gYDfrCD5s+eScXWM+jsji
+hoylAC0snye0liLZ6+N48Nyf60kFiTYIBQTRzxRGkddpJmVmFWE/xG/kPjItk9qM
+oR0QftxAaPUi5LxOWEAxy4+7D6ZWWmdjJuqBc0s0nW+noNAk79xqCwdmvrZK7YyL
+A+zh5MDmYBMDVqup51mAUom6O6cicRIiv2nOHmElYs2NI4t9d8dOgXboJi7p5gjA
+IcFiN2s155e9egLUK3DJu5FSIpigy5ssEQQembH/Rq1MLG2PzY9zveDPW35DNNjk
+cuc4qxb6PsO7sOApgbVsiN7vpEIhEcjNaLF1XagzaKsHBSFO0tBLt9LAGf3KwHQ5
+ZR6ET5oLRMRJmMBSJxH7yzceyLIaVNd1D+TKHEWF61Y2iQptt6EBRv61X1gmHt85
+EgPpCWUgmTS4FFIeLKF5BpktA/u4MofIGKqqYJXEGBKDbhS9WAYXkV0JJ2rwM0v8
+zfSLrRXOYSRJTw5SA7I0167Z9UxpgcogpG3zXez8wA0I+yuGnL56vCtM2OFbWGCA
+dPewRlRuYh/tMwehkhoRaQjr/IOarvcEEpDtmGVo5QsH5yhMNts=
+=1zbT
 -----END PGP SIGNATURE-----
 
---KjX7LgAomYr70Ka9--
+--Z9t8O/5YJLB6LEUl--
