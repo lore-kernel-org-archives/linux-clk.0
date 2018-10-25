@@ -2,192 +2,142 @@ Return-Path: <SRS0=7v9C=NF=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A5B2ECDE47
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Oct 2018 09:38:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72F15C46475
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Oct 2018 10:13:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 624B520838
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Oct 2018 09:38:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E4D82082E
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Oct 2018 10:12:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="a7lJOjQh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 624B520838
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="wrcYVu6V"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E4D82082E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726676AbeJYSKb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 Oct 2018 14:10:31 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:40011 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726804AbeJYSKa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Oct 2018 14:10:30 -0400
-Received: by mail-wm1-f67.google.com with SMTP id b203-v6so796751wme.5
-        for <linux-clk@vger.kernel.org>; Thu, 25 Oct 2018 02:38:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=+HnnKwjZQssUkWhx+voXqgMEfZW8Kz+WvT1CBBer8XI=;
-        b=a7lJOjQhAqEFyJ+LTTccF0vyfUJcWHKSu8xpGg6Zy58Sj/6afJ1vONr5S5JYtIVUH/
-         iDNhb0GT5pqufAsqh6l+sRONGio4BHyGZ0WK+6vMxN9TGF66HIV7wW+uQ3SVJeOOeQJk
-         l/0QRVuRYOVxGlgIDRfXfiUl8WyT0suPEbfG4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=+HnnKwjZQssUkWhx+voXqgMEfZW8Kz+WvT1CBBer8XI=;
-        b=ofSXgJL62rN+GzdNNuGSExUizE537B/danYA2B05o4KHiJC4UTPQO957+IExzWu7Cc
-         F6/Q94Xd9YaeRAikaUmuODKSAsDiAUXYsjHzvHgtQWWnn5I0LgEaCX2jN7lV5rI2kjTD
-         riIjTXFjq0bdI0k0CgszodfEst6puTU+D1ar7lyCUiTXOk4m8ZiY3JjTpsce7NRwhsLr
-         8jIdq/Q2xyxm1VrU3V6wDMT98a1W3SxSoKtUFY2/5VBXY15ZUDzCIsKgQEu8Jrm1AGnY
-         pz3CL0IZVLwwmz1Qszt9atrIU2BqOwYh0rz7fjI0cgl46IkfcqUaHrb81hAZV9K6D0gR
-         6Z3A==
-X-Gm-Message-State: AGRZ1gKluOWwDwzgfJM1P3igtbYW0uxc0MzzPbJWrNb0hv/aAbPhPdJe
-        oxAgRcjGy7zkiRIHbbKY92mdFQ==
-X-Google-Smtp-Source: AJdET5dcrxQnLTyr6PNW9FquzlWa4TIvrm3JG12ofDpoZ9gxq2PEUaLU6v5y6kvba+hotIMHQ127iQ==
-X-Received: by 2002:a1c:3a92:: with SMTP id h140-v6mr1040460wma.69.1540460311058;
-        Thu, 25 Oct 2018 02:38:31 -0700 (PDT)
-Received: from dell ([2.31.167.182])
-        by smtp.gmail.com with ESMTPSA id b143-v6sm1318839wma.28.2018.10.25.02.38.29
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 25 Oct 2018 02:38:30 -0700 (PDT)
-Date:   Thu, 25 Oct 2018 10:38:27 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Tony Xie <tony.xie@rock-chips.com>
-Cc:     heiko@sntech.de, broonie@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
-        xsf@rock-chips.com, zhangqing@rock-chips.com,
-        huangtao@rock-chips.com
-Subject: Re: [PATCH v5 3/5] dt-bindings: mfd: rk808: Add binding information
- for RK809 and RK817.
-Message-ID: <20181025093827.GP4939@dell>
-References: <1540294467-25813-1-git-send-email-tony.xie@rock-chips.com>
- <1540294467-25813-4-git-send-email-tony.xie@rock-chips.com>
+        id S1727219AbeJYSpD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 Oct 2018 14:45:03 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:52884 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726832AbeJYSpC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Oct 2018 14:45:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=b5E7QjQfDDGJfTZb23d4dz34oPR/kFGmLT8xj+lJ4WA=; b=wrcYVu6V/PJQjyx55IJbXtx+t
+        mxj8a5PBKMSd/zhTPtp+MSPXcR4s65f2QWBf3+sTPVbRIFf9sNHS/ZazipVtoIK/p18T+/qnf3f8O
+        8zomZApK6C7g87dG1B0244xUgTgi7pqsThmRzN7cuQMzzk7gDD2Su2btcmtbgFpOH1Fuk=;
+Received: from [185.7.230.216] (helo=finisterre.ee.mobilebroadband)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gFcdG-0002Ey-AS; Thu, 25 Oct 2018 10:12:50 +0000
+Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
+        id 99158440078; Thu, 25 Oct 2018 12:12:48 +0200 (CEST)
+Date:   Thu, 25 Oct 2018 11:12:48 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Richard Fitzgerald <rf@opensource.cirrus.com>
+Cc:     Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Lee Jones <lee.jones@linaro.org>, mturquette@baylibre.com,
+        sboyd@kernel.org, linus.walleij@linaro.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, lgirdwood@gmail.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        patches@opensource.cirrus.com, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v2 2/5] mfd: lochnagar: Add support for the Cirrus Logic
+ Lochnagar
+Message-ID: <20181025101248.GT2103@sirena.org.uk>
+References: <20181008132542.19775-1-ckeepax@opensource.cirrus.com>
+ <20181008132542.19775-2-ckeepax@opensource.cirrus.com>
+ <20181025074459.GF4939@dell>
+ <20181025082621.GD16508@imbe.wolfsonmicro.main>
+ <b2f85f45-cbe9-5a27-e9e8-ad28f2bd9bd6@opensource.cirrus.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="xFAlB6MquX7/xpZD"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1540294467-25813-4-git-send-email-tony.xie@rock-chips.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <b2f85f45-cbe9-5a27-e9e8-ad28f2bd9bd6@opensource.cirrus.com>
+X-Cookie: Piece of cake!
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 23 Oct 2018, Tony Xie wrote:
 
-> Add device tree bindings documentation for Rockchip's RK809 & RK817 PMIC.
-> 
-> Signed-off-by: Tony Xie <tony.xie@rock-chips.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> ---
->  Documentation/devicetree/bindings/mfd/rk808.txt | 44 +++++++++++++++++++++++++
->  1 file changed, 44 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/mfd/rk808.txt b/Documentation/devicetree/bindings/mfd/rk808.txt
-> index 91b6522..d575780 100644
-> --- a/Documentation/devicetree/bindings/mfd/rk808.txt
-> +++ b/Documentation/devicetree/bindings/mfd/rk808.txt
-> @@ -3,11 +3,15 @@ RK8XX Power Management Integrated Circuit
->  The rk8xx family current members:
->  rk805
->  rk808
-> +rk809
-> +rk817
->  rk818
->  
->  Required properties:
->  - compatible: "rockchip,rk805"
->  - compatible: "rockchip,rk808"
-> +- compatible: "rockchip,rk809"
-> +- compatible: "rockchip,rk817"
->  - compatible: "rockchip,rk818"
->  - reg: I2C slave address
->  - interrupt-parent: The parent interrupt controller.
-> @@ -46,6 +50,23 @@ Optional RK808 properties:
->    the gpio controller. If DVS GPIOs aren't present, voltage changes will happen
->    very quickly with no slow ramp time.
->  
-> +Optional shared RK809 and RK817 properties:
-> +- vcc1-supply:  The input supply for DCDC_REG1
-> +- vcc2-supply:  The input supply for DCDC_REG2
-> +- vcc3-supply:  The input supply for DCDC_REG3
-> +- vcc4-supply:  The input supply for DCDC_REG4
-> +- vcc5-supply:  The input supply for LDO_REG1, LDO_REG2, LDO_REG3
-> +- vcc6-supply:  The input supply for LDO_REG4, LDO_REG5, LDO_REG6
-> +- vcc7-supply:  The input supply for LDO_REG7, LDO_REG8, LDO_REG9
-> +
-> +Optional RK809 properties:
-> +- vcc8-supply:  The input supply for SWITCH_REG1
-> +- vcc9-supply:  The input supply for DCDC_REG5, SWITCH_REG2
-> +
-> +Optional RK817 properties:
-> +- vcc8-supply:  The input supply for BOOST
-> +- vcc9-supply:  The input supply for OTG_SWITCH
-> +
->  Optional RK818 properties:
->  - vcc1-supply:  The input supply for DCDC_REG1
->  - vcc2-supply:  The input supply for DCDC_REG2
-> @@ -87,6 +108,21 @@ number as described in RK808 datasheet.
->  	- SWITCH_REGn
->  		- valid values for n are 1 to 2
->  
-> +Following regulators of the RK809 and RK817 PMIC blocks are supported. Note that
-> +the 'n' in regulator name, as in DCDC_REGn or LDOn, represents the DCDC or LDO
-> +number as described in RK809 and RK817 datasheets.
-> +
-> +	- DCDC_REGn
-> +		- valid values for n are 1 to 5 for RK809.
-> +		- valid values for n are 1 to 4 for RK817.
-> +	- LDO_REGn
-> +		- valid values for n are 1 to 9 for RK809.
-> +		- valid values for n are 1 to 9 for RK817.
-> +	- SWITCH_REGn
-> +		- valid values for n are 1 to 2 for RK809.
-> +	- BOOST for RK817
-> +	- OTG_SWITCH for RK817
-> +
->  Following regulators of the RK818 PMIC block are supported. Note that
->  the 'n' in regulator name, as in DCDC_REGn or LDOn, represents the DCDC or LDO
->  number as described in RK818 datasheet.
-> @@ -99,6 +135,14 @@ number as described in RK818 datasheet.
->  	- HDMI_SWITCH
->  	- OTG_SWITCH
->  
-> +There are three pins needed to config for each of RK809 and RK817,
+--xFAlB6MquX7/xpZD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Nit: "configure" in full please.
+On Thu, Oct 25, 2018 at 10:28:16AM +0100, Richard Fitzgerald wrote:
+> On 25/10/18 09:26, Charles Keepax wrote:
+> > On Thu, Oct 25, 2018 at 08:44:59AM +0100, Lee Jones wrote:
 
-Actually: "It is necessary to configure three pins for both the RK809 and RK817"
+> > > I'm really not a fan of these so call 'patches'.
 
-> +named "gpio_ts" "gpio_gt" "gpio_slp".
-> +	The gpio_gt and gpio_ts pins support the gpio function.
-> +	The gpio_slp pin is for controlling the pmic states, as below:
-> +		- reset
-> +		- power down
-> +		- sleep
-> +
->  Standard regulator bindings are used inside regulator subnodes. Check
->    Documentation/devicetree/bindings/regulator/regulator.txt
->  for more details
+> > > Can't you set the registers up proper way?
 
-Once that's fixed, please apply my:
+> > I will see if we could move any out of here or define any of the
+> > registers but as we have discussed before it is not always possible.
 
-For my own reference:
-  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+> Also patches generally come out of hardware tuning/qualification/tools
+> as this list of address,value. So it's easy for people to dump an update
+> into the driver as a trivial copy-paste but more work if they have to
+> reverse-engineer the patch list from hardware/datasheet into what each
+> line "means" and then find the relevant lines of code to change. It's also
+> much easier to answer the question "Have these hardware patches been
+> applied to the driver?" if we have them in the original documented format.
+> It just makes people's lives more difficult if they have to search around
+> the code to try to find something that looks like the originally specified
+> patch list. We don't use them just as a lazy way to setup some registers.
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Further, the main intended use for register patches is for registers
+that the device manufacturer has no intention of documenting beyond
+providing a list of register writes to be done on device startup.  The
+common example is test registers with chicken bits that turn out to have
+been needed, it's not realistic to expect that vendors are going to
+start documenting their test registers.  It's normal to see these
+applied only on early revisions of parts (eg, rev A needs a patch to
+adjust things to match rev B which is the mass production version).
+
+> > I really feel this isn't the driver you are objecting to as such
+> > but the way regmap operates and also we seem to always have the same
+> > discussions around regmap every time we push a driver. Is there
+> > any way me, you and Mark could hash this out and find out a way to
+> > handle regmaps that is acceptable to you? I don't suppose you are
+> > in Edinburgh at the moment for ELCE?
+
+> I suppose if Mark was willing to promote the regmap drivers to be a
+> top-level subsystem that could contain the regmap definitions of devices
+> then we could dump our regmap definitions in there, where Mark can review
+> it as he's familiar with regmap and the chips and the reasons why things
+> are done the way they are, rather than Lee having to stress about it every
+> time we need to create an MFD device that uses regmap. Though that would
+> make the initialization of an MFD rather awkward with the code required
+> to init the MFD it not actually being in the MFD tree.
+
+I'm not totally against dumping the data tables in some other directory
+(we could do ../regmap/tables or whatever) but I fear it's going to
+cause otherwise needless cross tree issues.
+
+--xFAlB6MquX7/xpZD
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlvRlx0ACgkQJNaLcl1U
+h9DPFQf/cSBA75O2AECIb92W4m3AIRaVsRSzNCzhKdSW4q0UKfU/W6EYBJmzBf+J
++6y1ob7KRu6M8QvfCdo7k98ccymhfLkz6htYoDGPr8GNoeBaSw2Q5leE5db0uXWX
+81U+e1+bLp4UoPX2eLN1jq40l/swUiTDksnA3N+4si5LeiyOHq6mZaprIER6N1bQ
+XF4QlzEedOdquIDW3NsRm7A8Rhw2Jhu4Gd5kwO6DvYl8TzI//EKp+1XqxdyqorbY
+t4QwAwf/cLcepVhWNM6ej9y1ZuHiQiu9lcsU+AciM+Nmo2lghBcE/92L2oh6U84n
+df6D7KQaYEowq8jlwDOmRJyvpj9+XA==
+=gjfa
+-----END PGP SIGNATURE-----
+
+--xFAlB6MquX7/xpZD--
