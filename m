@@ -2,105 +2,118 @@ Return-Path: <SRS0=7v9C=NF=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3251DC46475
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Oct 2018 13:20:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98CA7C46475
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Oct 2018 13:21:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF94920831
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Oct 2018 13:20:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF94920831
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
+	by mail.kernel.org (Postfix) with ESMTP id 5FF7720831
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Oct 2018 13:21:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="Qf3MX/oB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FF7720831
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727319AbeJYVxg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 Oct 2018 17:53:36 -0400
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:34620 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727234AbeJYVxg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Oct 2018 17:53:36 -0400
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-        by mx0a-001ae601.pphosted.com (8.16.0.23/8.16.0.23) with SMTP id w9PDGc9B022635;
-        Thu, 25 Oct 2018 08:20:45 -0500
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from mail1.cirrus.com (mail1.cirrus.com [141.131.3.20])
-        by mx0a-001ae601.pphosted.com with ESMTP id 2n81s36u59-1;
-        Thu, 25 Oct 2018 08:20:45 -0500
-Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
-        by mail1.cirrus.com (Postfix) with ESMTP id A4DAF611C8B7;
-        Thu, 25 Oct 2018 08:20:44 -0500 (CDT)
-Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
- (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Thu, 25 Oct 2018
- 14:20:43 +0100
-Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
-        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id w9PDKhVx010911; Thu,
- 25 Oct 2018 14:20:43 +0100
-Date:   Thu, 25 Oct 2018 14:20:43 +0100
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     Lee Jones <lee.jones@linaro.org>
-CC:     Richard Fitzgerald <rf@opensource.cirrus.com>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <broonie@kernel.org>, <linus.walleij@linaro.org>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <lgirdwood@gmail.com>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>,
-        <linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>
-Subject: Re: [PATCH v2 2/5] mfd: lochnagar: Add support for the Cirrus Logic
- Lochnagar
-Message-ID: <20181025132043.GG16508@imbe.wolfsonmicro.main>
-References: <20181008132542.19775-1-ckeepax@opensource.cirrus.com>
- <20181008132542.19775-2-ckeepax@opensource.cirrus.com>
- <20181025074459.GF4939@dell>
- <20181025082621.GD16508@imbe.wolfsonmicro.main>
- <b2f85f45-cbe9-5a27-e9e8-ad28f2bd9bd6@opensource.cirrus.com>
- <20181025114205.GC4870@dell>
- <20181025124905.GF16508@imbe.wolfsonmicro.main>
+        id S1727506AbeJYVyS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 Oct 2018 17:54:18 -0400
+Received: from mail-it1-f194.google.com ([209.85.166.194]:53860 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727234AbeJYVyL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Oct 2018 17:54:11 -0400
+Received: by mail-it1-f194.google.com with SMTP id q70-v6so1594204itb.3
+        for <linux-clk@vger.kernel.org>; Thu, 25 Oct 2018 06:21:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=+3Pr8Azj5r/pI/vbTSs4zjZ/yuzS5RwX1G1t8Tl5W2M=;
+        b=Qf3MX/oB0IGyH3oCDsG10VwJb4T4oz/U1wwn4EA+ZQtk4/j5qnTvwgrC1S6oek8Tau
+         /IhlgDhmagy3YJ33vEPk8MwPdxhYtbo7Tt/HzcEDC30SPSwD2Jn8GUYdEwtj6n2It8Si
+         5OPe7gADLM/EJ4MhNVV4VHoYEvHwIJWtre/qA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+3Pr8Azj5r/pI/vbTSs4zjZ/yuzS5RwX1G1t8Tl5W2M=;
+        b=tSzWQSyqslpgGEGwsTBorYBH4henyId7ebAuK0/kwvtJp6YxizYDFGdfKsv/nAmS3Q
+         x2BZzUWyG/7iL3DuCql8bbvw4LsDgNiIYxmOQHPavg98epvHDoVz/+ZhGrN9YQM/Ele2
+         X7Z9myKHWW9GODqwrdlGHCzz7AHNqpwfrF0Re7LNW1nyRKz/DX/fxo9AF2c4fY2dPasE
+         AqTEnFmt+WekRCsCcqCAFIRaPCFjpNiolM/DQ2gUddJPNtVJyTsAtgjNQ9XXa7SyvDsH
+         GQAA8QhGLYzhxa+AI+klopOho+ovdw45g3dLQgxrFpjeh/NKT0PJG5bkDnRQ9ITGYP4L
+         N2nA==
+X-Gm-Message-State: AGRZ1gIml+KKkC9O32+U+6wUwu5HSWu7H9AWAOkeNMXB2Y0zvLa1R3Q6
+        kO/1PPeDBR3ISthqb8ZCcRakNUeSco8tn/+rGi8APmWUBa0=
+X-Google-Smtp-Source: AJdET5cysqjMYmkkQx0ddTWAM9DK/YmVZL9cxII5nWg2cBRWg0pr8BJVR+StE4m6JQiHRJ8wUl+OAwZxwksR0AEENfg=
+X-Received: by 2002:a24:8a44:: with SMTP id v65-v6mr952325itd.173.1540473687071;
+ Thu, 25 Oct 2018 06:21:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20181025124905.GF16508@imbe.wolfsonmicro.main>
-User-Agent: Mutt/1.5.20 (2009-12-10)
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=967 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1807170000
- definitions=main-1810250115
+References: <20181023155035.9101-1-jagan@amarulasolutions.com>
+ <20181023155035.9101-15-jagan@amarulasolutions.com> <20181024181048.w4iwebtac6wzmgt4@flea>
+In-Reply-To: <20181024181048.w4iwebtac6wzmgt4@flea>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Thu, 25 Oct 2018 18:51:14 +0530
+Message-ID: <CAMty3ZC1jCfuP8tFKvgcdJ5R_Ou0ejAT_VYv=fV1Kh4UanLWcg@mail.gmail.com>
+Subject: Re: [PATCH v2 14/15] arm64: dts: allwinner: a64: Add DSI pipeline
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Oct 25, 2018 at 01:49:05PM +0100, Charles Keepax wrote:
-> On Thu, Oct 25, 2018 at 12:42:05PM +0100, Lee Jones wrote:
-> > On Thu, 25 Oct 2018, Richard Fitzgerald wrote:
-> > > On 25/10/18 09:26, Charles Keepax wrote:
-> > > > On Thu, Oct 25, 2018 at 08:44:59AM +0100, Lee Jones wrote:
-> > > > > On Mon, 08 Oct 2018, Charles Keepax wrote:
-> > > > > > From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-> > > > I really feel this isn't the driver you are objecting to as such
-> > > > but the way regmap operates and also we seem to always have the same
-> > > > discussions around regmap every time we push a driver.
-> > 
-> > Absolutely.  I didn't like it before.  I like it even less now.
-> > 
-> 
-> I guess the question from my side becomes do you want to block
-> this driver pending on major refactoring to regmap? I will have a
-> think about what I can do but its going to affect a LOT of drivers.
-> 
+On Wed, Oct 24, 2018 at 11:40 PM Maxime Ripard
+<maxime.ripard@bootlin.com> wrote:
+>
+> On Tue, Oct 23, 2018 at 09:20:34PM +0530, Jagan Teki wrote:
+> > The A64 has a MIPI-DSI block which is similar to A31
+> > without mod clock.
+> >
+> > So, add dsi node with A64 compatible, dphy node with
+> > A31 compatible and finally connect dsi to tcon0 to
+> > make proper DSI pipeline.
+> >
+> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > ---
+> > Changes for v2:
+> > - use A64 dphy compatible
+> >
+> >  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 45 +++++++++++++++++++
+> >  1 file changed, 45 insertions(+)
+> >
+> > diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+> > index f3a66f888205..f82e6b165d57 100644
+> > --- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+> > +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+> > @@ -320,6 +320,11 @@
+> >                                       #address-cells = <1>;
+> >                                       #size-cells = <0>;
+> >                                       reg = <1>;
+> > +
+> > +                                     tcon0_out_dsi: endpoint@1 {
+> > +                                             reg = <1>;
+> > +                                             remote-endpoint = <&dsi_in_tcon0>;
+>
+> You need to set the allwinner,channel property there.
 
-Actually one more thought, perhaps as a halfway for now i could
-look into removing the readables and defaults. We lose some things
-like error checking that we are reading real registers but as
-this driver doesnt currently do cache syncs we might be able to
-get away with this for now.
-
-Unless anyone strenuously objects i will have a look at the
-options there. As well as looking at wider refactoring but aiming
-further out.
-
-Thanks,
-Charles
+Are you referring to allwinner,tcon-channel = <1> ?
