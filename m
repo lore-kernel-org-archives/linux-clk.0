@@ -2,348 +2,521 @@ Return-Path: <SRS0=7v9C=NF=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA81DECDE47
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Oct 2018 11:42:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 965F1C46475
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Oct 2018 11:48:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7032520834
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Oct 2018 11:42:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ARScVoWu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7032520834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 42CF120831
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Oct 2018 11:48:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42CF120831
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727330AbeJYUOf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 Oct 2018 16:14:35 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:36832 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727261AbeJYUOf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Oct 2018 16:14:35 -0400
-Received: by mail-wr1-f66.google.com with SMTP id y16so8979035wrw.3
-        for <linux-clk@vger.kernel.org>; Thu, 25 Oct 2018 04:42:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=JvefQwpzz/XVjfAKaKrEc9qUYVbLEJG2GZ+Wcp+jAgg=;
-        b=ARScVoWujR7rtkqy4YcNMPQ4cObHv5nQvByQOfuHEE/p/EL58MIjencKlx/F5e/UAz
-         eesOo6fSeRxV11RzcDq0OmJMqPHv6tDNBDNiNowSzM5pNllFe+BYl6TcIhnxddPG7WDV
-         e4LhyZm8VfVZJfVTg11+Gm2Eg0plb+nYl719U=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=JvefQwpzz/XVjfAKaKrEc9qUYVbLEJG2GZ+Wcp+jAgg=;
-        b=iVOa5hiwYk4346QYYJXdukUVaVXjGvnGKMPkQjtUGxA+yL1VrMjGiLG6yE69rMxxtb
-         2dVUbyWA68eBLNIO9i6XISjhDIDukGdwvojAUKoWJLx4D/A7VGmr4Td/nlzglQDRe/8z
-         br3W2tHRt8MzE61Mjz4e6bvc9rjw/V1S03uVEzmTZsSZzRHl07JueAaTqmgUPLup9sCf
-         9NeniWlpHF/lCUP6n9LbZXZrYSNHZg1KxJ6Rwgs5fwSWR+rKpgjYfmnXjukPr9sDovsK
-         Foogu5K9zuYJWowsGDPhAH/MaSIcDpE0AOI4M/pdk/UXQM3xLedgYYUOHEFsOvioZi76
-         DDCA==
-X-Gm-Message-State: AGRZ1gI5AVIK43hNzjVnPhbZESfcgum5sBje3fTpz2wjgmo8E1EnXwr2
-        8KBl3tWQkb1cRrC9iwWkaP+48Q==
-X-Google-Smtp-Source: AJdET5e5527ybqw5mKaKX7n1bVuz0h6Y6JVwf95gVMKNOhY1gJuao24mN/HpdgGGVp2B7RzVIwP7Og==
-X-Received: by 2002:adf:c748:: with SMTP id b8-v6mr1577841wrh.134.1540467728205;
-        Thu, 25 Oct 2018 04:42:08 -0700 (PDT)
-Received: from dell ([2.31.167.182])
-        by smtp.gmail.com with ESMTPSA id v30-v6sm7139449wra.67.2018.10.25.04.42.06
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 25 Oct 2018 04:42:07 -0700 (PDT)
-Date:   Thu, 25 Oct 2018 12:42:05 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Richard Fitzgerald <rf@opensource.cirrus.com>
-Cc:     Charles Keepax <ckeepax@opensource.cirrus.com>,
-        mturquette@baylibre.com, sboyd@kernel.org, broonie@kernel.org,
-        linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        lgirdwood@gmail.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, patches@opensource.cirrus.com,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v2 2/5] mfd: lochnagar: Add support for the Cirrus Logic
- Lochnagar
-Message-ID: <20181025114205.GC4870@dell>
-References: <20181008132542.19775-1-ckeepax@opensource.cirrus.com>
- <20181008132542.19775-2-ckeepax@opensource.cirrus.com>
- <20181025074459.GF4939@dell>
- <20181025082621.GD16508@imbe.wolfsonmicro.main>
- <b2f85f45-cbe9-5a27-e9e8-ad28f2bd9bd6@opensource.cirrus.com>
+        id S1727236AbeJYUVT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 Oct 2018 16:21:19 -0400
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:17642 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727208AbeJYUVT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Oct 2018 16:21:19 -0400
+Received: from [10.18.29.185] (10.18.29.185) by mail-sh2.amlogic.com
+ (10.18.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Thu, 25 Oct
+ 2018 19:48:41 +0800
+Subject: Re: [PATCH v5 3/3] clk: meson: add sub MMC clock controller driver
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+CC:     Yixun Lan <yixun.lan@amlogic.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Liang Yang <liang.yang@amlogic.com>,
+        Jian Hu <jian.hu@amlogic.com>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1539839245-13793-1-git-send-email-jianxin.pan@amlogic.com>
+ <1539839245-13793-4-git-send-email-jianxin.pan@amlogic.com>
+ <a8d359208edfdc75cb5c6de378796f76e0572a0f.camel@baylibre.com>
+From:   Jianxin Pan <jianxin.pan@amlogic.com>
+Message-ID: <eda2faf2-cf06-902d-36ff-48ceafcb4a4b@amlogic.com>
+Date:   Thu, 25 Oct 2018 19:48:41 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b2f85f45-cbe9-5a27-e9e8-ad28f2bd9bd6@opensource.cirrus.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <a8d359208edfdc75cb5c6de378796f76e0572a0f.camel@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.18.29.185]
+X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
+ (10.18.11.6)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 25 Oct 2018, Richard Fitzgerald wrote:
-> On 25/10/18 09:26, Charles Keepax wrote:
-> > On Thu, Oct 25, 2018 at 08:44:59AM +0100, Lee Jones wrote:
-> > > On Mon, 08 Oct 2018, Charles Keepax wrote:
-> > > > From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-> > > > +static const struct reg_default lochnagar1_reg_defaults[] = {
-> > > > +	{ LOCHNAGAR1_CDC_AIF1_SEL,    0x00 },
-> > > > +	{ LOCHNAGAR1_CDC_AIF2_SEL,    0x00 },
-> > ...
-> > > > +	{ LOCHNAGAR1_LED1,            0x00 },
-> > > > +	{ LOCHNAGAR1_LED2,            0x00 },
-> > > > +	{ LOCHNAGAR1_I2C_CTRL,        0x01 },
-> > > > +};
-> > > 
-> > > Why do you need to specify each register value?
-> > 
-> > The way regmap operates it needs to know the starting value of
-> > each register. It will use this to initialise the cache and to
-> > determine if writes need to actually update the hardware on
-> > cache_syncs after devices have been powered back up.
+Hi Jerome,
 
-That sounds crazy to me.  Some devices have thousands of registers.
-At a line per register, that's thousands of lines of code/cruft.
-Especially seeing as most (sane?) register layouts I've seen default
-to zero.  Then default values can be changed at the leisure of the
-s/w.
-
-Even if it is absolutely critical that you have to supply these to
-Regmap up-front, instead of on first use/read, why can't you just
-supply the oddball non-zero ones?
-
-> > > > +static const struct reg_sequence lochnagar1_patch[] = {
-> > > > +	{ 0x40, 0x0083 },
-> > > > +	{ 0x46, 0x0001 },
-> > > > +	{ 0x47, 0x0018 },
-> > > > +	{ 0x50, 0x0000 },
-> > > > +};
-> > > 
-> > > I'm really not a fan of these so call 'patches'.
-> > > 
-> > > Can't you set the registers up proper way?
-> > > 
-> > 
-> > I will see if we could move any out of here or define any of the
-> > registers but as we have discussed before it is not always possible.
-> > 
+On 2018/10/24 17:01, Jerome Brunet wrote:
+> On Thu, 2018-10-18 at 13:07 +0800, Jianxin Pan wrote:
+>> From: Yixun Lan <yixun.lan@amlogic.com>
+>>
+>> The patch will add a MMC clock controller driver which used by MMC or NAND,
+>> It provide a mux and divider clock, and three phase clocks - core, tx, tx.
+>>
+[...]
+>> diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+>> index efaa70f..8b8ccbc 100644
+>> --- a/drivers/clk/meson/Kconfig
+>> +++ b/drivers/clk/meson/Kconfig
+>> @@ -15,6 +15,16 @@ config COMMON_CLK_MESON_AO
+>>  	select COMMON_CLK_REGMAP_MESON
+>>  	select RESET_CONTROLLER
+>>  
+>> +config COMMON_CLK_MMC_MESON
+>> +	tristate "Meson MMC Sub Clock Controller Driver"
+>> +	depends on COMMON_CLK_AMLOGIC
 > 
-> Also patches generally come out of hardware tuning/qualification/tools
-> as this list of address,value. So it's easy for people to dump an update
-> into the driver as a trivial copy-paste but more work if they have to
-> reverse-engineer the patch list from hardware/datasheet into what each
-> line "means" and then find the relevant lines of code to change. It's also
-> much easier to answer the question "Have these hardware patches been
-> applied to the driver?" if we have them in the original documented format.
-> It just makes people's lives more difficult if they have to search around
-> the code to try to find something that looks like the originally specified
-> patch list. We don't use them just as a lazy way to setup some registers.
-
-I understand why they normally exist (sometimes people are just lazy
-too) (Mark: BTW chicken-bits sound delicious!).  They're just ugly
-from an Open Source PoV.
-
-> > > > +static bool lochnagar2_readable_register(struct device *dev, unsigned int reg)
-> > > > +{
-> > > > +	switch (reg) {
-> > > > +	case LOCHNAGAR_SOFTWARE_RESET:
-> > > > +	case LOCHNAGAR_FIRMWARE_ID1:
-> > > > +	case LOCHNAGAR_FIRMWARE_ID2:
-> > ...
-> > > > +	case LOCHNAGAR2_MICVDD_CTRL2:
-> > > > +	case LOCHNAGAR2_VDDCORE_CDC_CTRL1:
-> > > > +	case LOCHNAGAR2_VDDCORE_CDC_CTRL2:
-> > > > +	case LOCHNAGAR2_SOUNDCARD_AIF_CTRL:
-> > > > +		return true;
-> > > > +	default:
-> > > > +		return false;
-> > > > +	}
-> > > > +}
-> > > > +
-> > > > +static bool lochnagar2_volatile_register(struct device *dev, unsigned int reg)
-> > > > +{
-> > > > +	switch (reg) {
-> > > > +	case LOCHNAGAR2_GPIO_CHANNEL1:
-> > > > +	case LOCHNAGAR2_GPIO_CHANNEL2:
-> > > > +	case LOCHNAGAR2_GPIO_CHANNEL3:
-> > ...
-> > > > +	case LOCHNAGAR2_GPIO_CHANNEL13:
-> > > > +	case LOCHNAGAR2_GPIO_CHANNEL14:
-> > > > +	case LOCHNAGAR2_GPIO_CHANNEL15:
-> > > > +	case LOCHNAGAR2_GPIO_CHANNEL16:
-> > > > +	case LOCHNAGAR2_ANALOGUE_PATH_CTRL1:
-> > > > +		return true;
-> > > > +	default:
-> > > > +		return false;
-> > > > +	}
-> > > > +}
-> > > 
-> > > This is getting silly now.  Can't you use ranges?
-> > 
-> > I can if you feel strongly about it? But it does make the drivers
-> > much more error prone and significantly more annoying to work
-> > with. I find it is really common to be checking that a register
-> > is handled correctly through the regmap callbacks and it is nice
-> > to just be able to grep for that. Obviously this won't work for
-> > all devices/regmaps as well since many will not have consecutive
-> > addresses on registers, for example having multi-byte registers
-> > that are byte addressed.
-> > 
-> > How far would you like me to take this as well? Is it just the
-> > numeric registers you want ranges for ie.
-> > 
-> > LOCHNAGAR2_GPIO_CHANNEL1...LOCHNAGAR_GPIO_CHANNEL16
-> > 
-> > Or is it all consecutive registers even if they are unrelated
-> > (exmaple is probably not accurate as I haven't checked the
-> > addresses):
-> > 
-> > LOCHNAGAR2_GPIO_CHANNEL1...LOCHNAGAR2_ANALOGURE_PATH_CTRL1
-> > 
-> > I don't mind the first at all but the second is getting really
-> > horrible in my opinion.
-
-My issue is that we have one end of the scale, where contributors are
-submitting patches, trying to remove a line of code here, a line of
-code there, then there are patches like this one which describe the
-initial value, readable status, writable status and volatile status of
-each and every register.
-
-The API is obscene and needs a re-work IMHO.
-
-I really hope we do not really have to list every register, but *if we
-absolutely must*, let's do it once:
-
-  REG_ADDRESS, WRV, INITIAL_VALUE
-
-> > > > +static const struct reg_default lochnagar2_reg_defaults[] = {
-> > > > +	{ LOCHNAGAR2_CDC_AIF1_CTRL,         0x0000 },
-> > > > +	{ LOCHNAGAR2_CDC_AIF2_CTRL,         0x0000 },
-> > > > +	{ LOCHNAGAR2_CDC_AIF3_CTRL,         0x0000 },
-> > > > +	{ LOCHNAGAR2_DSP_AIF1_CTRL,         0x0000 },
-> > ...
-> > > > +	{ LOCHNAGAR2_MINICARD_RESETS,       0x0000 },
-> > > > +	{ LOCHNAGAR2_ANALOGUE_PATH_CTRL2,   0x0000 },
-> > > > +	{ LOCHNAGAR2_COMMS_CTRL4,           0x0001 },
-> > > > +	{ LOCHNAGAR2_SPDIF_CTRL,            0x0008 },
-> > > > +	{ LOCHNAGAR2_POWER_CTRL,            0x0001 },
-> > > > +	{ LOCHNAGAR2_SOUNDCARD_AIF_CTRL,    0x0000 },
-> > > > +};
-> > > 
-> > > OMG!  Vile, vile vile!
-> > 
-> > I really feel this isn't the driver you are objecting to as such
-> > but the way regmap operates and also we seem to always have the same
-> > discussions around regmap every time we push a driver.
-
-Absolutely.  I didn't like it before.  I like it even less now.
-
-> > Is there
-> > any way me, you and Mark could hash this out and find out a way to
-> > handle regmaps that is acceptable to you? I don't suppose you are
-> > in Edinburgh at the moment for ELCE?
-
-I'm not at ELCE I'm afraid.
-
-> I suppose if Mark was willing to promote the regmap drivers to be a
-> top-level subsystem that could contain the regmap definitions of devices
-> then we could dump our regmap definitions in there, where Mark can review
-> it as he's familiar with regmap and the chips and the reasons why things
-> are done the way they are, rather than Lee having to stress about it every
-> time we need to create an MFD device that uses regmap. Though that would
-> make the initialization of an MFD rather awkward with the code required
-> to init the MFD it not actually being in the MFD tree.
-
-My issue isn't where all this bumph lives.
-
-It's the fact that it's required (at least at this level) at all.
-
-> > > > +	/* Wait for Lochnagar to boot */
-> > > > +	ret = lochnagar_wait_for_boot(lochnagar->regmap, &val);
-> > > > +	if (ret < 0) {
-> > > > +		dev_err(dev, "Failed to read device ID: %d\n", ret);
-> > > 
-> > > Eh?
-> > > 
-> > > So you read the LOCHNAGAR_SOFTWARE_RESET register and out pops the
-> > > device/revision IDs?  That's just random!
-> > 
-> > I shall let the hardware guys know you don't approve of their
-> > life choices :-) and add some comments to the code.
-
-Please do.  And tell them to stop drinking at lunch time. ;)
-
-> > > > +	ret = devm_of_platform_populate(dev);
-> > > > +	if (ret < 0) {
-> > > > +		dev_err(dev, "Failed to populate child nodes: %d\n", ret);
-> > > > +		return ret;
-> > > > +	}
-> > > 
-> > > Please do not mix OF and MFD device registration strategies.
-> > > 
-> > > Pick one and register all devices through your chosen method.
-> > 
-> > Hmmm we use this to do things like register some fixed regulators
-> > and clocks that don't need any control but do need to be associated
-> > with the device. I could do that through the MFD although it is in
-> > direct conflict with the feedback on the clock patches I received
-> > to move the fixed clocks into devicetree rather than registering
-> > them manually (see v2 of the patch chain).
-
-The I suggest moving everything to DT.
-
-> > I will have a look see if I can find any ideas that will make
-> > everyone happy but we might need to discuss with Mark and the
-> > clock guys.
-> > 
-> > > > +	.probe_new = lochnagar_i2c_probe,
-> > > 
-> > > Hasn't this been replaced yet?
-> > 
-> > I will check, the patchset has been around internally for a while
-> > so it is possible this is no longer needed.
-> > 
-> > > > +#ifndef CIRRUS_LOCHNAGAR_H
-> > > > +#define CIRRUS_LOCHNAGAR_H
-> > > > +
-> > > > +#include "lochnagar1_regs.h"
-> > > > +#include "lochnagar2_regs.h"
-> > > 
-> > > Why are you including these here?
-> > > 
-> > 
-> > It is just a convenience so the drivers only need to include
-> > lochnagar.h rather than including all three headers manually.
-
-That's against convention.
-
-If a source file needs a head, it should include it explicitly.
-
-> > > > diff --git a/include/linux/mfd/lochnagar1_regs.h b/include/linux/mfd/lochnagar1_regs.h
-> > > > diff --git a/include/linux/mfd/lochnagar2_regs.h b/include/linux/mfd/lochnagar2_regs.h
-> > > 
-> > > So Lochnagar 1 and 2 are completely different devices?
-> > > 
-> > > What do they do?
-> > 
-> > Completely different devices is a bit strong, they are different
-> > versions of the same system. They have quite different register
-> > maps but provide very similar functionality.
+> COMMON_CLK_AMLOGIC is not something that is manually enabled
+> You should select it, not depends on it. Have a look at how it is done for the
+> other controller (like in v4.19)
+OK. I will fix it.
 > 
-> The register maps are different partly because some silicon
-> used on the V1 is no longer manufactured and partly because some
-> silicon added in V2 didn't fit into the older register map.
+>> +	select MFD_SYSCON
+>> +	select REGMAP
+> 
+> this is already selected by COMMON_CLK_AMLOGIC, please drop this.
+OK.
+> 
+>> +	help
+>> +	  Support for the MMC sub clock controller on Amlogic Meson Platform,
+>> +	  which include S905 (GXBB, GXL), A113D/X (AXG) devices.
+>> +	  Say Y if you want this clock enabled.
+>> +
+>>  config COMMON_CLK_REGMAP_MESON
+>>  	bool
+>>  	select REGMAP
+>> diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
+>> index 39ce566..31c16d5 100644
+>> --- a/drivers/clk/meson/Makefile
+>> +++ b/drivers/clk/meson/Makefile
+>> @@ -9,4 +9,5 @@ obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
+>>  obj-$(CONFIG_COMMON_CLK_GXBB)	 += gxbb.o gxbb-aoclk.o gxbb-aoclk-32k.o
+>>  obj-$(CONFIG_COMMON_CLK_AXG)	 += axg.o axg-aoclk.o
+>>  obj-$(CONFIG_COMMON_CLK_AXG_AUDIO)	+= axg-audio.o
+>> +obj-$(CONFIG_COMMON_CLK_MMC_MESON) 	+= mmc-clkc.o
+>>  obj-$(CONFIG_COMMON_CLK_REGMAP_MESON)	+= clk-regmap.o
+>> diff --git a/drivers/clk/meson/clk-regmap.c b/drivers/clk/meson/clk-regmap.c
+>> index 305ee30..f96314d 100644
+>> --- a/drivers/clk/meson/clk-regmap.c
+>> +++ b/drivers/clk/meson/clk-regmap.c
+>> @@ -113,8 +113,25 @@ static int clk_regmap_div_set_rate(struct clk_hw *hw, unsigned long rate,
+>>  				  clk_div_mask(div->width) << div->shift, val);
+>>  };
+>>  
+>> -/* Would prefer clk_regmap_div_ro_ops but clashes with qcom */
+>> +static void clk_regmap_div_init(struct clk_hw *hw)
+>> +{
+>> +	struct clk_regmap *clk = to_clk_regmap(hw);
+>> +	struct clk_regmap_div_data *div = clk_get_regmap_div_data(clk);
+>> +	unsigned int val;
+>> +	int ret;
+>> +
+>> +	ret = regmap_read(clk->map, div->offset, &val);
+>> +	if (ret)
+>> +		return;
+>>  
+>> +	val &= (clk_div_mask(div->width) << div->shift);
+>> +	if (!val)
+>> +		regmap_update_bits(clk->map, div->offset,
+>> +				   clk_div_mask(div->width) << div->shift,
+>> +				   clk_div_mask(div->width));
+> 
+> This is wrong for several reasons:
+> * You should hard code the initial value in the driver.
+> * If shift is not 0, I doubt this will give the expected result.
+The value 0x00 of divider means nand clock off, then read/write nand register is forbidden.
+Should we set the initial value in nand driver, or in sub emmc clk driver?  
+> 
+>> +}
+> 
+> Please drop this. 
+> 
+>> +
+>> +/* Would prefer clk_regmap_div_ro_ops but clashes with qcom */
+>>  const struct clk_ops clk_regmap_divider_ops = {
+>>  	.recalc_rate = clk_regmap_div_recalc_rate,
+>>  	.round_rate = clk_regmap_div_round_rate,
+>> @@ -122,6 +139,14 @@ static int clk_regmap_div_set_rate(struct clk_hw *hw, unsigned long rate,
+>>  };
+>>  EXPORT_SYMBOL_GPL(clk_regmap_divider_ops);
+>>  
+>> +const struct clk_ops clk_regmap_divider_with_init_ops = {
+>> +	.recalc_rate = clk_regmap_div_recalc_rate,
+>> +	.round_rate = clk_regmap_div_round_rate,
+>> +	.set_rate = clk_regmap_div_set_rate,
+>> +	.init = clk_regmap_div_init,
+>> +};
+>> +EXPORT_SYMBOL_GPL(clk_regmap_divider_with_init_ops);
+> 
+> ... and this.
+> 
+>> +
+>>  const struct clk_ops clk_regmap_divider_ro_ops = {
+>>  	.recalc_rate = clk_regmap_div_recalc_rate,
+>>  	.round_rate = clk_regmap_div_round_rate,
+>> diff --git a/drivers/clk/meson/clk-regmap.h b/drivers/clk/meson/clk-regmap.h
+>> index ed2d434..0ab7d37 100644
+>> --- a/drivers/clk/meson/clk-regmap.h
+>> +++ b/drivers/clk/meson/clk-regmap.h
+>> @@ -109,5 +109,6 @@ struct clk_regmap_mux_data {
+>>  
+>>  extern const struct clk_ops clk_regmap_mux_ops;
+>>  extern const struct clk_ops clk_regmap_mux_ro_ops;
+>> +extern const struct clk_ops clk_regmap_divider_with_init_ops;
+> 
+> ... and this as well.
+> 
+> There is no reason to to init the divider to something other than what it is
+> already when we register the clock controller.
+> 
+> If your consumer needs the clocks to be initialised, it should call
+> clk_set_rate()
+> 
+>>  
+>>  #endif /* __CLK_REGMAP_H */
+>> diff --git a/drivers/clk/meson/mmc-clkc.c b/drivers/clk/meson/mmc-clkc.c
+>> new file mode 100644
+>> index 0000000..5555e3f
+>> --- /dev/null
+>> +++ b/drivers/clk/meson/mmc-clkc.c
+>> @@ -0,0 +1,296 @@
+>> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+>> +/*
+>> + * Amlogic Meson MMC Sub Clock Controller Driver
+>> + *
+>> + * Copyright (c) 2017 Baylibre SAS.
+>> + * Author: Jerome Brunet <jbrunet@baylibre.com>
+>> + *
+>> + * Copyright (c) 2018 Amlogic, inc.
+>> + * Author: Yixun Lan <yixun.lan@amlogic.com>
+>> + */
+>> +
+>> +#include <linux/clk.h>
+>> +#include <linux/module.h>
+>> +#include <linux/regmap.h>
+>> +#include <linux/slab.h>
+>> +#include <linux/of_device.h>
+>> +#include <linux/mfd/syscon.h>
+>> +#include <linux/platform_device.h>
+>> +#include <dt-bindings/clock/amlogic,mmc-clkc.h>
+>> +
+>> +#include "clkc.h"
+>> +
+>> +/* clock ID used by internal driver */
+>> +#define CLKID_MMC_MUX			0
+>> +
+>> +#define   SD_EMMC_CLOCK		0
+>> +#define   CLK_DELAY_STEP_PS		200
+>> +#define   CLK_PHASE_STEP		30
+>> +#define   CLK_PHASE_POINT_NUM		(360 / CLK_PHASE_STEP)
+>> +
+>> +#define MUX_CLK_NUM_PARENTS		2
+>> +#define MMC_MAX_CLKS			5
+>> +
+>> +struct mmc_clkc_data {
+>> +	struct meson_clk_phase_delay_data	tx;
+>> +	struct meson_clk_phase_delay_data	rx;
+>> +};
+>> +
+>> +static struct clk_regmap_mux_data mmc_clkc_mux_data = {
+>> +	.offset		= SD_EMMC_CLOCK,
+>> +	.mask		= 0x3,
+>> +	.shift		= 6,
+>> +	.flags		= CLK_DIVIDER_ROUND_CLOSEST,
+>> +};
+>> +
+>> +static struct clk_regmap_div_data mmc_clkc_div_data = {
+>> +	.offset		= SD_EMMC_CLOCK,
+>> +	.shift		= 0,
+>> +	.width		= 6,
+>> +	.flags		= CLK_DIVIDER_ROUND_CLOSEST | CLK_DIVIDER_ONE_BASED,
+>> +};
+>> +
+>> +static struct meson_clk_phase_data mmc_clkc_core_phase = {
+>> +	.ph = {
+>> +		.reg_off	= SD_EMMC_CLOCK,
+>> +		.shift	= 8,
+>> +		.width	= 2,
+>> +	}
+>> +};
+>> +
+>> +static const struct mmc_clkc_data mmc_clkc_gx_data = {
+>> +	.tx = {
+>> +		.phase = {
+>> +			.reg_off	= SD_EMMC_CLOCK,
+>> +			.shift	= 10,
+>> +			.width	= 2,
+>> +		},
+>> +		.delay = {
+>> +			.reg_off	= SD_EMMC_CLOCK,
+>> +			.shift	= 16,
+>> +			.width	= 4,
+>> +		},
+>> +		.delay_step_ps	= CLK_DELAY_STEP_PS,
+>> +	},
+>> +	.rx = {
+>> +		.phase = {
+>> +			.reg_off	= SD_EMMC_CLOCK,
+>> +			.shift	= 12,
+>> +			.width	= 2,
+>> +		},
+>> +		.delay = {
+>> +			.reg_off	= SD_EMMC_CLOCK,
+>> +			.shift	= 20,
+>> +			.width	= 4,
+>> +		},
+>> +		.delay_step_ps	= CLK_DELAY_STEP_PS,
+>> +	},
+>> +};
+>> +
+>> +static const struct mmc_clkc_data mmc_clkc_axg_data = {
+>> +	.tx = {
+>> +		.phase = {
+>> +			.reg_off	= SD_EMMC_CLOCK,
+>> +			.shift	= 10,
+>> +			.width	= 2,
+>> +		},
+>> +		.delay = {
+>> +			.reg_off	= SD_EMMC_CLOCK,
+>> +			.shift	= 16,
+>> +			.width	= 6,
+>> +		},
+>> +		.delay_step_ps	= CLK_DELAY_STEP_PS,
+>> +	},
+>> +	.rx = {
+>> +		.phase = {
+>> +			.reg_off	= SD_EMMC_CLOCK,
+>> +			.shift	= 12,
+>> +			.width	= 2,
+>> +		},
+>> +		.delay = {
+>> +			.reg_off	= SD_EMMC_CLOCK,
+>> +			.shift	= 22,
+>> +			.width	= 6,
+>> +		},
+>> +		.delay_step_ps	= CLK_DELAY_STEP_PS,
+>> +	},
+>> +};
+>> +
+>> +static const struct of_device_id mmc_clkc_match_table[] = {
+>> +	{
+>> +		.compatible	= "amlogic,gx-mmc-clkc",
+>> +		.data		= &mmc_clkc_gx_data
+>> +	},
+>> +	{
+>> +		.compatible	= "amlogic,axg-mmc-clkc",
+>> +		.data		= &mmc_clkc_axg_data
+>> +	},
+>> +	{}
+>> +};
+>> +MODULE_DEVICE_TABLE(of, mmc_clkc_match_table);
+>> +
+>> +static struct clk_regmap *
+>> +mmc_clkc_register_clk(struct device *dev, struct regmap *map,
+>> +		      struct clk_init_data *init,
+>> +		      const char *suffix, void *data)
+>> +{
+>> +	struct clk_regmap *clk;
+>> +	char *name;
+>> +	int ret;
+>> +
+>> +	clk = devm_kzalloc(dev, sizeof(*clk), GFP_KERNEL);
+>> +	if (!clk)
+>> +		return ERR_PTR(-ENOMEM);
+>> +
+>> +	name = kasprintf(GFP_KERNEL, "%s#%s", dev_name(dev), suffix);
+>> +	if (!name)
+>> +		return ERR_PTR(-ENOMEM);
+>> +
+>> +	init->name = name;
+>> +
+>> +	clk->map = map;
+>> +	clk->data = data;
+>> +	clk->hw.init = init;
+>> +
+>> +	ret = devm_clk_hw_register(dev, &clk->hw);
+>> +	if (ret)
+>> +		clk = ERR_PTR(ret);
+>> +
+>> +	kfree(name);
+>> +	return clk;
+>> +}
+>> +
+>> +static struct clk_regmap *mmc_clkc_register_mux(struct device *dev,
+>> +						struct regmap *map)
+>> +{
+>> +	const char *parent_names[MUX_CLK_NUM_PARENTS];
+>> +	struct clk_init_data init;
+>> +	struct clk_regmap *mux;
+>> +	struct clk *clk;
+>> +	int i;
+>> +
+>> +	for (i = 0; i < MUX_CLK_NUM_PARENTS; i++) {
+>> +		char name[8];
+>> +
+>> +		snprintf(name, sizeof(name), "clkin%d", i);
+>> +		clk = devm_clk_get(dev, name);
+>> +		if (IS_ERR(clk)) {
+>> +			if (clk != ERR_PTR(-EPROBE_DEFER))
+>> +				dev_err(dev, "Missing clock %s\n", name);
+>> +			return ERR_PTR((long)clk);
+>> +		}
+>> +
+>> +		parent_names[i] = __clk_get_name(clk);
+>> +	}
+>> +
+>> +	init.ops = &clk_regmap_mux_ops;
+>> +	init.flags = CLK_SET_RATE_PARENT;
+>> +	init.parent_names = parent_names;
+>> +	init.num_parents = MUX_CLK_NUM_PARENTS;
+>> +
+>> +	mux = mmc_clkc_register_clk(dev, map, &init, "mux", &mmc_clkc_mux_data);
+>> +	if (IS_ERR(mux))
+>> +		dev_err(dev, "Mux clock registration failed\n");
+>> +
+>> +	return mux;
+>> +}
+>> +
+>> +static struct clk_regmap *
+>> +mmc_clkc_register_clk_with_parent(struct device *dev, struct regmap *map,
+>> +				  char *suffix, const char *parent,
+> 
+> I would prefer if you passed the parent clk_hw pointer and call
+> clk_hw_get_name() in here
+OK. I will fix it. Thanks for your review.
+> 
+>> +				  unsigned long flags,
+>> +				  const struct clk_ops *ops, void *data)
+>> +{
+>> +	struct clk_init_data init;
+>> +	struct clk_regmap *clk;
+>> +
+>> +	init.ops = ops;
+>> +	init.flags = flags;
+>> +	init.parent_names = (const char* const []){ parent, };
+>> +	init.num_parents = 1;
+>> +
+>> +	clk = mmc_clkc_register_clk(dev, map, &init, suffix, data);
+>> +	if (IS_ERR(clk))
+>> +		dev_err(dev, "Core %s clock registration failed\n", suffix);
+>> +
+>> +	return clk;
+>> +}
+>> +
+>> +static int mmc_clkc_probe(struct platform_device *pdev)
+>> +{
+>> +	struct clk_hw_onecell_data *onecell_data;
+>> +	struct device *dev = &pdev->dev;
+>> +	struct mmc_clkc_data *data;
+>> +	struct regmap *map;
+>> +	struct clk_regmap *mux, *div, *core, *rx, *tx;
+> 
+> You really don't need all these local variables ( I think I already pointed this
+> out in past reviews ...)
+> 
+> You can keep one struct clk_regmap *clk and store the clk->hw in the onecell
+> data right after registering the clock.
+OK, I will remove them.
+> 
+> 
+>> +
+>> +	data = (struct mmc_clkc_data *)of_device_get_match_data(dev);
+>> +	if (!data)
+>> +		return -ENODEV;
+>> +
+>> +	map = syscon_node_to_regmap(dev->of_node);
+>> +	if (IS_ERR(map)) {
+>> +		dev_err(dev, "could not find mmc clock controller\n");
+>> +		return PTR_ERR(map);
+>> +	}
+>> +
+>> +	onecell_data = devm_kzalloc(dev, sizeof(*onecell_data) +
+>> +				    sizeof(*onecell_data->hws) * MMC_MAX_CLKS,
+>> +				    GFP_KERNEL);
+>> +	if (!onecell_data)
+>> +		return -ENOMEM;
+>> +
+>> +	mux = mmc_clkc_register_mux(dev, map);
+>> +	if (IS_ERR(mux))
+>> +		return PTR_ERR(mux);
+>> +
+>> +	div = mmc_clkc_register_clk_with_parent(dev, map, "div",
+>> +						clk_hw_get_name(&mux->hw),
+>> +						CLK_SET_RATE_PARENT,
+>> +						&clk_regmap_divider_with_init_ops,
+>> +						&mmc_clkc_div_data);
+>> +	if (IS_ERR(div))
+>> +		return PTR_ERR(div);
+>> +
+>> +	core = mmc_clkc_register_clk_with_parent(dev, map, "core",
+>> +						 clk_hw_get_name(&div->hw),
+>> +						 CLK_SET_RATE_PARENT,
+>> +						 &meson_clk_phase_ops,
+>> +						 &mmc_clkc_core_phase);
+>> +	if (IS_ERR(core))
+>> +		return PTR_ERR(core);
+>> +
+>> +	rx = mmc_clkc_register_clk_with_parent(dev, map, "rx",
+>> +					       clk_hw_get_name(&core->hw),  0,
+>> +					       &meson_clk_phase_delay_ops,
+>> +					       &data->rx);
+>> +	if (IS_ERR(rx))
+>> +		return PTR_ERR(rx);
+>> +
+>> +	tx = mmc_clkc_register_clk_with_parent(dev, map, "tx",
+>> +					       clk_hw_get_name(&core->hw),  0,
+>> +					       &meson_clk_phase_delay_ops,
+>> +					       &data->tx);
+>> +	if (IS_ERR(tx))
+>> +		return PTR_ERR(tx);
+>> +
+>> +	onecell_data->hws[CLKID_MMC_MUX]		= &mux->hw,
+>> +	onecell_data->hws[CLKID_MMC_DIV]		= &div->hw,
+>> +	onecell_data->hws[CLKID_MMC_PHASE_CORE]		= &core->hw,
+>> +	onecell_data->hws[CLKID_MMC_PHASE_RX]		= &rx->hw,
+>> +	onecell_data->hws[CLKID_MMC_PHASE_TX]		= &tx->hw,
+>> +	onecell_data->num				= MMC_MAX_CLKS;
+>> +
+>> +	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
+>> +					   onecell_data);
+>> +}
+>> +
+>> +static struct platform_driver mmc_clkc_driver = {
+>> +	.probe		= mmc_clkc_probe,
+>> +	.driver		= {
+>> +		.name	= "meson-mmc-clkc",
+>> +		.of_match_table = of_match_ptr(mmc_clkc_match_table),
+>> +	},
+>> +};
+>> +
+>> +module_platform_driver(mmc_clkc_driver);
+> 
+> This can be compiled as module so please append the proper:
+> MODULE_DESCRIPTION()
+> MODULE_AUTHOR()
+> MODULE_LICENSE()
+OK. I will fix it in the next version.
+> 
+> .
+> 
 
-I just looked at the maps, which appeared to be vastly different.
-
-> > All the other comments I will get fixed up for the next spin of
-> > the patches.
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
