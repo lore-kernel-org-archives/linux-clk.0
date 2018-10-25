@@ -2,261 +2,373 @@ Return-Path: <SRS0=7v9C=NF=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB80CC46475
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Oct 2018 08:26:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0180ECDE47
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Oct 2018 08:58:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91943204FD
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Oct 2018 08:26:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91943204FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
+	by mail.kernel.org (Postfix) with ESMTP id 8145E20824
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Oct 2018 08:58:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="WKsyFx2E"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8145E20824
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726709AbeJYQ6Q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 Oct 2018 12:58:16 -0400
-Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:49620 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726538AbeJYQ6Q (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Oct 2018 12:58:16 -0400
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-        by mx0b-001ae601.pphosted.com (8.16.0.23/8.16.0.23) with SMTP id w9P8O7me001354;
-        Thu, 25 Oct 2018 03:26:23 -0500
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from mail4.cirrus.com ([87.246.98.35])
-        by mx0b-001ae601.pphosted.com with ESMTP id 2n80speb3k-1;
-        Thu, 25 Oct 2018 03:26:22 -0500
-Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
-        by mail4.cirrus.com (Postfix) with ESMTP id A3F53611CE60;
-        Thu, 25 Oct 2018 03:29:19 -0500 (CDT)
-Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
- (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Thu, 25 Oct 2018
- 09:26:22 +0100
-Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
-        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id w9P8QLIF012015; Thu,
- 25 Oct 2018 09:26:21 +0100
-Date:   Thu, 25 Oct 2018 09:26:21 +0100
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     Lee Jones <lee.jones@linaro.org>
-CC:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <broonie@kernel.org>, <linus.walleij@linaro.org>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <lgirdwood@gmail.com>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>,
-        <linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>
-Subject: Re: [PATCH v2 2/5] mfd: lochnagar: Add support for the Cirrus Logic
- Lochnagar
-Message-ID: <20181025082621.GD16508@imbe.wolfsonmicro.main>
-References: <20181008132542.19775-1-ckeepax@opensource.cirrus.com>
- <20181008132542.19775-2-ckeepax@opensource.cirrus.com>
- <20181025074459.GF4939@dell>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20181025074459.GF4939@dell>
-User-Agent: Mutt/1.5.20 (2009-12-10)
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1807170000
- definitions=main-1810250078
+        id S1726899AbeJYR3q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 Oct 2018 13:29:46 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:38595 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726698AbeJYR3p (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Oct 2018 13:29:45 -0400
+Received: by mail-wm1-f65.google.com with SMTP id b14-v6so669861wmj.3
+        for <linux-clk@vger.kernel.org>; Thu, 25 Oct 2018 01:57:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=gt+7r3nSFdMDoGtsEQdlUzfir4mm4r9E6BuF0q/umCA=;
+        b=WKsyFx2EcxQqYVNLi2k5lR1+nSFDeopWDZnNCAXqv9lgGndWRJHcZ9zK126r7JqcCp
+         shlyf+kr8ggggxBU0WqdYOB/k9PPWZBXGcRE+i5qfWIUPWY8A36Izsbtz1QWf2s/rzfb
+         Kyj7qQzOxDVMi8L69/KHVGhBwB2RYRJvHOFz6U0PZiMIjMoL9V86vb0IYH9skkJWXIf4
+         EMJXxhFnuHHQMu0kLlSD9vLRzOp5ZWOzGRK4R48hScinFFfpE5INF9pSiIrSyXT5KK4g
+         NStyyJdV9DkRvhI65kTq8JSZpM1Pg+WH2ZNoQ13d1UpeMdy1unp9VC7YUGSwvGRohgsT
+         CGHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=gt+7r3nSFdMDoGtsEQdlUzfir4mm4r9E6BuF0q/umCA=;
+        b=sMYvOdPIYQcrO0SVubhgnG3QAUyTHF3078a6MtzaCuE5fy7knHzPnkyPekq+wh1L06
+         VifLHLUJjIUskw0E7JKrsRLpHGXlv8QFP3CjU0YzBDh1zlpv8QFu0hzUAN9XCLK+mTkM
+         cG+sEerCu9NpfDr6eyfGalv1mYJuzhj7v6JAtnDL3+PrdDQFSz5Ik9AIUJnL8emW7foe
+         cFngSqEaB0XEIR+m3wAeiIM7agpb2FIevQWX0B4ZHz3aJzs/2nf+ZejOcQ/TvacG0uWV
+         TMouYlpc3zvMBcgCKnav+4fegAPlvmvENkfE14s4Fpov/8x5sphHujWDOr6NV90viJxt
+         tI2w==
+X-Gm-Message-State: AGRZ1gJ8cmIWKmY3RAHQ74anTu+6dmrwSBxpPyM5f1KJJICDOY+k9LWg
+        MhGmEICkpgW8+Vm4WiRzaXoxgQ==
+X-Google-Smtp-Source: AJdET5d4s6Ch+QVjPSPR1sg/0lmJEaYIodn9VmjnB6+AGO4ekBAR7+WRMenfbD7ZJnTQv6xpqNA25Q==
+X-Received: by 2002:a1c:2984:: with SMTP id p126-v6mr975130wmp.5.1540457874768;
+        Thu, 25 Oct 2018 01:57:54 -0700 (PDT)
+Received: from boomer ([90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id v1-v6sm10970203wrd.24.2018.10.25.01.57.53
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 25 Oct 2018 01:57:54 -0700 (PDT)
+Message-ID: <cde2eb194fdcaf45894486349f35cad8f959bb58.camel@baylibre.com>
+Subject: Re: [PATCH 1/6] clk: Remove recursion in clk_core_{prepare,enable}()
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     "dbasehore ." <dbasehore@chromium.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-doc@vger.kernel.org,
+        sboyd@kernel.org, Michael Turquette <mturquette@baylibre.com>,
+        Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
+        aisheng.dong@nxp.com, mchehab+samsung@kernel.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Date:   Thu, 25 Oct 2018 10:57:52 +0200
+In-Reply-To: <CAGAzgsrTPoBaP_wZ1fUryTgbu6RhwOtGPDV_njamOoiiH9Or9g@mail.gmail.com>
+References: <20181024013132.115907-1-dbasehore@chromium.org>
+         <20181024013132.115907-2-dbasehore@chromium.org>
+         <264adf2a81bcd602f2a58e4a46c3273cd7c77ca2.camel@baylibre.com>
+         <CAGAzgspHFiuUpfTjD5v9-U=yAxwkBnZh3Mwtaom4wsiO-Bcfgw@mail.gmail.com>
+         <CAGAzgsrTPoBaP_wZ1fUryTgbu6RhwOtGPDV_njamOoiiH9Or9g@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Oct 25, 2018 at 08:44:59AM +0100, Lee Jones wrote:
-> On Mon, 08 Oct 2018, Charles Keepax wrote:
-> > From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-> > +static const struct reg_default lochnagar1_reg_defaults[] = {
-> > +	{ LOCHNAGAR1_CDC_AIF1_SEL,    0x00 },
-> > +	{ LOCHNAGAR1_CDC_AIF2_SEL,    0x00 },
-...
-> > +	{ LOCHNAGAR1_LED1,            0x00 },
-> > +	{ LOCHNAGAR1_LED2,            0x00 },
-> > +	{ LOCHNAGAR1_I2C_CTRL,        0x01 },
-> > +};
+On Wed, 2018-10-24 at 13:50 -0700, dbasehore . wrote:
+> On Wed, Oct 24, 2018 at 1:15 PM dbasehore . <dbasehore@chromium.org> wrote:
+> > 
+> > On Wed, Oct 24, 2018 at 2:51 AM Jerome Brunet <jbrunet@baylibre.com> wrote:
+> > > 
+> > > On Tue, 2018-10-23 at 18:31 -0700, Derek Basehore wrote:
+> > > > From: Stephen Boyd <sboyd@codeaurora.org>
+> > > > 
+> > > > Enabling and preparing clocks can be written quite naturally with
+> > > > recursion. We start at some point in the tree and recurse up the
+> > > > tree to find the oldest parent clk that needs to be enabled or
+> > > > prepared. Then we enable/prepare and return to the caller, going
+> > > > back to the clk we started at and enabling/preparing along the
+> > > > way.
+> > > > 
+> > > > The problem is recursion isn't great for kernel code where we
+> > > > have a limited stack size. Furthermore, we may be calling this
+> > > > code inside clk_set_rate() which also has recursion in it, so
+> > > > we're really not looking good if we encounter a tall clk tree.
+> > > > 
+> > > > Let's create a stack instead by looping over the parent chain and
+> > > > collecting clks of interest. Then the enable/prepare becomes as
+> > > > simple as iterating over that list and calling enable.
+> > > 
+> > > Hi Derek,
+> > > 
+> > > What about unprepare() and disable() ?
+> > > 
+> > > This patch removes the recursion from the enable path but keeps it for the
+> > > disable path ... this is very odd. Assuming doing so works, It certainly makes
+> > > CCF a lot harder to understand.
+> > > 
+> > > What about clock protection which essentially works on the same model as prepare
+> > > and enable ?
+> > > 
+> > > Overall, this change does not look like something that should be merged as it
+> > > is. If you were just seeking comments, you should add the "RFC" tag to your
+> > > series.
+> > > 
+> > > Jerome.
+> > > 
+> > > > 
+> > > > Cc: Jerome Brunet <jbrunet@baylibre.com>
+> > > 
+> > > If you don't mind, I would prefer to get the whole series next time. It helps to
+> > > get the context.
+> > > 
+> > > > Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> > > > Signed-off-by: Derek Basehore <dbasehore@chromium.org>
+> > > > ---
+> > > >  drivers/clk/clk.c | 113 ++++++++++++++++++++++++++--------------------
+> > > >  1 file changed, 64 insertions(+), 49 deletions(-)
+> > > > 
+> > > > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> > > > index af011974d4ec..95d818f5edb2 100644
+> > > > --- a/drivers/clk/clk.c
+> > > > +++ b/drivers/clk/clk.c
+> > > > @@ -71,6 +71,8 @@ struct clk_core {
+> > > >       struct hlist_head       children;
+> > > >       struct hlist_node       child_node;
+> > > >       struct hlist_head       clks;
+> > > > +     struct list_head        prepare_list;
+> > > > +     struct list_head        enable_list;
+> > > >       unsigned int            notifier_count;
+> > > >  #ifdef CONFIG_DEBUG_FS
+> > > >       struct dentry           *dentry;
+> > > > @@ -740,49 +742,48 @@ EXPORT_SYMBOL_GPL(clk_unprepare);
+> > > >  static int clk_core_prepare(struct clk_core *core)
+> > > >  {
+> > > >       int ret = 0;
+> > > > +     struct clk_core *tmp, *parent;
+> > > > +     LIST_HEAD(head);
+> > > > 
+> > > >       lockdep_assert_held(&prepare_lock);
+> > > > 
+> > > > -     if (!core)
+> > > > -             return 0;
+> > > > +     while (core) {
+> > > > +             list_add(&core->prepare_list, &head);
+> > > > +             /* Stop once we see a clk that is already prepared */
+> > > > +             if (core->prepare_count)
+> > > > +                     break;
+> > > > +             core = core->parent;
+> > > > +     }
+> > > > 
+> > > > -     if (core->prepare_count == 0) {
+> > > > -             ret = clk_pm_runtime_get(core);
+> > > > -             if (ret)
+> > > > -                     return ret;
+> > > > +     list_for_each_entry_safe(core, tmp, &head, prepare_list) {
+> > > > +             list_del_init(&core->prepare_list);
+> > > 
+> > > Is there any point in removing it from the list ?
+> > > Maybe I missed it but it does not seems useful.
+> > > 
+> > > Without this, we could use list_for_each_entry()
+> > > 
+> > > > 
+> > > > -             ret = clk_core_prepare(core->parent);
+> > > > -             if (ret)
+> > > > -                     goto runtime_put;
+> > > > +             if (core->prepare_count == 0) {
+> > > 
+> > > Should we really check the count here ? You are not checking the count when the
+> > > put() counterpart is called below.
+> > 
+> > I think I accidentally messed that up when I picked up the patch.
+> > There were some merge conflicts with the addition of the
+> > clk_pm_runtime code.
 > 
-> Why do you need to specify each register value?
+> Nevermind, this is incorrect. The clk_pm_runtime_put is within this if
+> statement too, so there isn't an issue here.
 > 
-
-The way regmap operates it needs to know the starting value of
-each register. It will use this to initialise the cache and to
-determine if writes need to actually update the hardware on
-cache_syncs after devices have been powered back up.
-
-> > +static const struct reg_sequence lochnagar1_patch[] = {
-> > +	{ 0x40, 0x0083 },
-> > +	{ 0x46, 0x0001 },
-> > +	{ 0x47, 0x0018 },
-> > +	{ 0x50, 0x0000 },
-> > +};
+> > 
+> > > 
+> > > Since PM runtime has ref counting as well, either way would work I guess ... but
+> > > we shall be consistent
+> > > 
+> > > > +                     ret = clk_pm_runtime_get(core);
+> > > > +                     if (ret)
+> > > > +                             goto err;
+> > > > 
+> > > > -             trace_clk_prepare(core);
+> > > > +                     trace_clk_prepare(core);
+> > > > 
+> > > > -             if (core->ops->prepare)
+> > > > -                     ret = core->ops->prepare(core->hw);
+> > > > +                     if (core->ops->prepare)
+> > > > +                             ret = core->ops->prepare(core->hw);
+> > > > 
+> > > > -             trace_clk_prepare_complete(core);
+> > > > +                     trace_clk_prepare_complete(core);
+> > > > 
+> > > > -             if (ret)
+> > > > -                     goto unprepare;
+> > > > +                     if (ret) {
+> > > > +                             clk_pm_runtime_put(core);
+> > > > +                             goto err;
+> > > > +                     }
+> > > > +             }
+> > > > +             core->prepare_count++;
+> > > >       }
+> > > > 
+> > > > -     core->prepare_count++;
+> > > > -
+> > > > -     /*
+> > > > -      * CLK_SET_RATE_GATE is a special case of clock protection
+> > > > -      * Instead of a consumer claiming exclusive rate control, it is
+> > > > -      * actually the provider which prevents any consumer from making any
+> > > > -      * operation which could result in a rate change or rate glitch while
+> > > > -      * the clock is prepared.
+> > > > -      */
+> > > > -     if (core->flags & CLK_SET_RATE_GATE)
+> > > > -             clk_core_rate_protect(core);
+> > > 
+> > > This gets removed without anything replacing it.
+> > > 
+> > > is CLK_SET_RATE_GATE and clock protection support dropped after this change ?
+> > 
+> > No, I think I just accidentally removed this when resolving conflicts.
+> > 
+> > > 
+> > > > -
+> > > >       return 0;
+> > > > -unprepare:
+> > > > -     clk_core_unprepare(core->parent);
+> > > > -runtime_put:
+> > > > -     clk_pm_runtime_put(core);
+> > > > +err:
+> > > > +     parent = core->parent;
+> > > > +     list_for_each_entry_safe_continue(core, tmp, &head, prepare_list)
+> > > > +             list_del_init(&core->prepare_list);
+> > > > +     clk_core_unprepare(parent);
+> > > 
+> > > If you get here because of failure clk_pm_runtime_get(), you will unprepare a
+> > > clock which may have not been prepared first
+> > > 
+> > > Overall the rework of error exit path does not seem right (or necessary)
+> > > 
+> > 
+> > Yeah, all of this seems to just be a poor resolution of patch
+> > conflicts on my part. Will fix.
 > 
-> I'm really not a fan of these so call 'patches'.
+> Nevermind, that's not the case. We add the first core that has a
+> non-zero prepare_count to the first (or we go all the way to root).
+> That core can't encounter an error since those only happen in the
+> prepare_count == 0 case. If it's NULL, clk_core_unprepare just
+> returns.
+
+Indeed, the diff is bit hard to follow and I got confused. With th patch
+applied, things are more clear. Sorry about that
+
+While correct, this code could simplified a bit
+
+* unless the prepare_list is used anywhere without starting with a list_add(),
+reseting the list pointer is not necessary. It should be possible to remove the
+list_del_init(). the 'err' label becomes just 'clk_core_unprepare(core->parent)'
+
+* rolling back change under 'if' or 'goto label' are both fine IMO. It would be
+easier to follow if only one method was used inside a single function, though.
+
+
 > 
-> Can't you set the registers up proper way?
-> 
+> > 
+> > > >       return ret;
+> > > >  }
+> > > > 
+> > > > @@ -878,37 +879,49 @@ EXPORT_SYMBOL_GPL(clk_disable);
+> > > >  static int clk_core_enable(struct clk_core *core)
+> > > >  {
+> > > >       int ret = 0;
+> > > > +     struct clk_core *tmp, *parent;
+> > > > +     LIST_HEAD(head);
+> > > > 
+> > > >       lockdep_assert_held(&enable_lock);
+> > > > 
+> > > > -     if (!core)
+> > > > -             return 0;
+> > > > -
+> > > > -     if (WARN(core->prepare_count == 0,
+> > > > -         "Enabling unprepared %s\n", core->name))
+> > > > -             return -ESHUTDOWN;
+> > > > +     while (core) {
+> > > > +             list_add(&core->enable_list, &head);
+> > > > +             /* Stop once we see a clk that is already enabled */
+> > > > +             if (core->enable_count)
+> > > > +                     break;
+> > > > +             core = core->parent;
+> > > > +     }
+> > > > 
+> > > > -     if (core->enable_count == 0) {
+> > > > -             ret = clk_core_enable(core->parent);
+> > > > +     list_for_each_entry_safe(core, tmp, &head, enable_list) {
+> > > > +             list_del_init(&core->enable_list);
+> > > > 
+> > > > -             if (ret)
+> > > > -                     return ret;
+> > > > +             if (WARN_ON(core->prepare_count == 0)) {
+> > > > +                     ret = -ESHUTDOWN;
+> > > > +                     goto err;
+> > > > +             }
+> > > > 
+> > > > -             trace_clk_enable_rcuidle(core);
+> > > > +             if (core->enable_count == 0) {
+> > > > +                     trace_clk_enable_rcuidle(core);
+> > > > 
+> > > > -             if (core->ops->enable)
+> > > > -                     ret = core->ops->enable(core->hw);
+> > > > +                     if (core->ops->enable)
+> > > > +                             ret = core->ops->enable(core->hw);
+> > > > 
+> > > > -             trace_clk_enable_complete_rcuidle(core);
+> > > > +                     trace_clk_enable_complete_rcuidle(core);
+> > > > 
+> > > > -             if (ret) {
+> > > > -                     clk_core_disable(core->parent);
+> > > > -                     return ret;
+> > > > +                     if (ret)
+> > > > +                             goto err;
+> > > >               }
+> > > > +
+> > > > +             core->enable_count++;
+> > > >       }
+> > > > 
+> > > > -     core->enable_count++;
+> > > >       return 0;
+> > > > +err:
+> > > > +     parent = core->parent;
+> > > > +     list_for_each_entry_safe_continue(core, tmp, &head, enable_list)
+> > > > +             list_del_init(&core->enable_list);
+> > > > +     clk_core_disable(parent);
+> > > > +     return ret;
+> > > >  }
+> > > > 
+> > > >  static int clk_core_enable_lock(struct clk_core *core)
+> > > > @@ -3281,6 +3294,8 @@ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
+> > > >       core->num_parents = hw->init->num_parents;
+> > > >       core->min_rate = 0;
+> > > >       core->max_rate = ULONG_MAX;
+> > > > +     INIT_LIST_HEAD(&core->prepare_list);
+> > > > +     INIT_LIST_HEAD(&core->enable_list);
+> > > >       hw->core = core;
+> > > > 
+> > > >       /* allocate local copy in case parent_names is __initdata */
+> > > 
+> > > 
 
-I will see if we could move any out of here or define any of the
-registers but as we have discussed before it is not always possible.
 
-> > +static bool lochnagar2_readable_register(struct device *dev, unsigned int reg)
-> > +{
-> > +	switch (reg) {
-> > +	case LOCHNAGAR_SOFTWARE_RESET:
-> > +	case LOCHNAGAR_FIRMWARE_ID1:
-> > +	case LOCHNAGAR_FIRMWARE_ID2:
-...
-> > +	case LOCHNAGAR2_MICVDD_CTRL2:
-> > +	case LOCHNAGAR2_VDDCORE_CDC_CTRL1:
-> > +	case LOCHNAGAR2_VDDCORE_CDC_CTRL2:
-> > +	case LOCHNAGAR2_SOUNDCARD_AIF_CTRL:
-> > +		return true;
-> > +	default:
-> > +		return false;
-> > +	}
-> > +}
-> > +
-> > +static bool lochnagar2_volatile_register(struct device *dev, unsigned int reg)
-> > +{
-> > +	switch (reg) {
-> > +	case LOCHNAGAR2_GPIO_CHANNEL1:
-> > +	case LOCHNAGAR2_GPIO_CHANNEL2:
-> > +	case LOCHNAGAR2_GPIO_CHANNEL3:
-...
-> > +	case LOCHNAGAR2_GPIO_CHANNEL13:
-> > +	case LOCHNAGAR2_GPIO_CHANNEL14:
-> > +	case LOCHNAGAR2_GPIO_CHANNEL15:
-> > +	case LOCHNAGAR2_GPIO_CHANNEL16:
-> > +	case LOCHNAGAR2_ANALOGUE_PATH_CTRL1:
-> > +		return true;
-> > +	default:
-> > +		return false;
-> > +	}
-> > +}
-> 
-> This is getting silly now.  Can't you use ranges?
-> 
-
-I can if you feel strongly about it? But it does make the drivers
-much more error prone and significantly more annoying to work
-with. I find it is really common to be checking that a register
-is handled correctly through the regmap callbacks and it is nice
-to just be able to grep for that. Obviously this won't work for
-all devices/regmaps as well since many will not have consecutive
-addresses on registers, for example having multi-byte registers
-that are byte addressed.
-
-How far would you like me to take this as well? Is it just the
-numeric registers you want ranges for ie.
-
-LOCHNAGAR2_GPIO_CHANNEL1...LOCHNAGAR_GPIO_CHANNEL16
-
-Or is it all consecutive registers even if they are unrelated
-(exmaple is probably not accurate as I haven't checked the
-addresses):
-
-LOCHNAGAR2_GPIO_CHANNEL1...LOCHNAGAR2_ANALOGURE_PATH_CTRL1
-
-I don't mind the first at all but the second is getting really
-horrible in my opinion.
-
-> > +static const struct reg_default lochnagar2_reg_defaults[] = {
-> > +	{ LOCHNAGAR2_CDC_AIF1_CTRL,         0x0000 },
-> > +	{ LOCHNAGAR2_CDC_AIF2_CTRL,         0x0000 },
-> > +	{ LOCHNAGAR2_CDC_AIF3_CTRL,         0x0000 },
-> > +	{ LOCHNAGAR2_DSP_AIF1_CTRL,         0x0000 },
-...
-> > +	{ LOCHNAGAR2_MINICARD_RESETS,       0x0000 },
-> > +	{ LOCHNAGAR2_ANALOGUE_PATH_CTRL2,   0x0000 },
-> > +	{ LOCHNAGAR2_COMMS_CTRL4,           0x0001 },
-> > +	{ LOCHNAGAR2_SPDIF_CTRL,            0x0008 },
-> > +	{ LOCHNAGAR2_POWER_CTRL,            0x0001 },
-> > +	{ LOCHNAGAR2_SOUNDCARD_AIF_CTRL,    0x0000 },
-> > +};
-> 
-> OMG!  Vile, vile vile!
-> 
-
-I really feel this isn't the driver you are objecting to as such
-but the way regmap operates and also we seem to always have the same
-discussions around regmap every time we push a driver. Is there
-any way me, you and Mark could hash this out and find out a way to
-handle regmaps that is acceptable to you? I don't suppose you are
-in Edinburgh at the moment for ELCE?
-
-> > +	/* Wait for Lochnagar to boot */
-> > +	ret = lochnagar_wait_for_boot(lochnagar->regmap, &val);
-> > +	if (ret < 0) {
-> > +		dev_err(dev, "Failed to read device ID: %d\n", ret);
-> 
-> Eh?
-> 
-> So you read the LOCHNAGAR_SOFTWARE_RESET register and out pops the
-> device/revision IDs?  That's just random!
-
-I shall let the hardware guys know you don't approve of their
-life choices :-) and add some comments to the code.
-
-> > +	ret = devm_of_platform_populate(dev);
-> > +	if (ret < 0) {
-> > +		dev_err(dev, "Failed to populate child nodes: %d\n", ret);
-> > +		return ret;
-> > +	}
-> 
-> Please do not mix OF and MFD device registration strategies.
-> 
-> Pick one and register all devices through your chosen method.
-> 
-
-Hmmm we use this to do things like register some fixed regulators
-and clocks that don't need any control but do need to be associated
-with the device. I could do that through the MFD although it is in
-direct conflict with the feedback on the clock patches I received
-to move the fixed clocks into devicetree rather than registering
-them manually (see v2 of the patch chain).
-
-I will have a look see if I can find any ideas that will make
-everyone happy but we might need to discuss with Mark and the
-clock guys.
-
-> > +	.probe_new = lochnagar_i2c_probe,
-> 
-> Hasn't this been replaced yet?
-> 
-
-I will check, the patchset has been around internally for a while
-so it is possible this is no longer needed.
-
-> > +#ifndef CIRRUS_LOCHNAGAR_H
-> > +#define CIRRUS_LOCHNAGAR_H
-> > +
-> > +#include "lochnagar1_regs.h"
-> > +#include "lochnagar2_regs.h"
-> 
-> Why are you including these here?
-> 
-
-It is just a convenience so the drivers only need to include
-lochnagar.h rather than including all three headers manually.
-
-> > diff --git a/include/linux/mfd/lochnagar1_regs.h b/include/linux/mfd/lochnagar1_regs.h
-> > diff --git a/include/linux/mfd/lochnagar2_regs.h b/include/linux/mfd/lochnagar2_regs.h
-> 
-> So Lochnagar 1 and 2 are completely different devices?
-> 
-> What do they do?
-> 
-
-Completely different devices is a bit strong, they are different
-versions of the same system. They have quite different register
-maps but provide very similar functionality.
-
-All the other comments I will get fixed up for the next spin of
-the patches.
-
-Thanks,
-Charles
