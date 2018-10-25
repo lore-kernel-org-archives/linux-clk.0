@@ -5,59 +5,60 @@ X-Spam-Level:
 X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E033EC46475
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Oct 2018 14:29:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3194BC46475
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Oct 2018 14:31:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A70542085B
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Oct 2018 14:29:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB0012083E
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Oct 2018 14:31:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jzQN1b2B"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A70542085B
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hes2lybs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB0012083E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727508AbeJYXCp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 Oct 2018 19:02:45 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:40124 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727501AbeJYXCp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Oct 2018 19:02:45 -0400
-Received: by mail-wm1-f66.google.com with SMTP id b203-v6so1746130wme.5;
-        Thu, 25 Oct 2018 07:29:42 -0700 (PDT)
+        id S1728022AbeJYXEJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 Oct 2018 19:04:09 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:40275 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727313AbeJYXED (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Oct 2018 19:04:03 -0400
+Received: by mail-wm1-f65.google.com with SMTP id b203-v6so1750932wme.5;
+        Thu, 25 Oct 2018 07:31:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=dimqwly2VbTS9LWCPKDZJRS2Dz/xOSE+EtdDGpWFtrQ=;
-        b=jzQN1b2BBckaRpljTs5dAd2LEZdd5k6LjrvU9WnMmQKuGpFYkikR4MZjOByG2EH0Q0
-         mvTHHMnpR/CXVkgp+yUkUl/7x5dXTW4VolTbcr6e4KvIaW9WnYA+jVhTv0RyZK/JhvPW
-         P4tF2eZftx7qkTxJ0o97kjR344RmBnPOtV6Uon90i0wr24ZA0Gx4Acx2DqVRNvdhcS1T
-         IYKnKcaK5dnRaGCrcZr8USxMLGa2U1p7rb3L3Q0atXroTJsH+DCMUuPnXUyFeZmFZPkA
-         DuC1geXMUGg7YlCnx4KpP2K8BwCtv0wWPUjYnzp9yPJTyac0avm1hgLMQ49xFkGW/6VH
-         e/RQ==
+        bh=lFLpehC3n+3CaT2liZ/Zga9em4kHxo5L6vj0o4AsfsQ=;
+        b=hes2lybslkNVqr+IXHNkw8Ek0bfvW+hxsXeJHOp2rMIhb7L8RzWv5SYiE/xIyrXl0Y
+         fmtiNtyO1hSkH+WXShOF9vZASde30+fumzID/Z6WGCpCKgdHhtKMlT6EXYnJtxMuYAN5
+         EC/idy5o4lfCyvS7l1S0UZiPbcEopDSr3rfddHB9wi0gHNl8UH2+VPNf0sulza3MXVOv
+         u0f87k1QzRbEXvGl6OxcndCqhhu3UaLDkdWgLm9PEBKkRsqH3gBTn/cQQnR3fMfR0xP7
+         X4tJ7KGljlxIi5uUrotk5OrTjPrEwpJXUIUNCAvdZPu8aq0C/glSAA8YfKlS92+Eh7mL
+         X+rg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=dimqwly2VbTS9LWCPKDZJRS2Dz/xOSE+EtdDGpWFtrQ=;
-        b=MxEv5zzWxqyc3KEz0PaqqF8H9Gcv9AMhYS9/zK4hbllNBxRLBAk90Como0sFeCAaYq
-         Ybs1EkE8R144oVL5C2sBP5Ei/hINzP8tpdiXKnMKvgfb4j9CdoxX+NTlwL0ve55o7lcG
-         SN71LX1vxsk8LUB0vIONxYhht3lc2DbbnR5uAGzI+lGTE3vGXTGdx//HLhVI3DGi6LvT
-         DTXiJ2/fXN9G5E0KWrLgw2gVkNNZA9QhOF5yOUgGmVVa9iHYqaV0xPJRs+j56y4WbMee
-         IKKOmljOyP1aRayccphRIyMy9QPf40Bt0a+BDpXFRqzToud1pG2p74x3SgBSj9HBXiBq
-         n/Dg==
-X-Gm-Message-State: AGRZ1gJZr1+tKqumlQkpy4GBp47C4EfQ8E7+dhnVoJH2mNb4sv2XP9Rd
-        sQBrWKt3bUWbLL+ALth1vis=
-X-Google-Smtp-Source: AJdET5e8aVLPOSoariSE4QXGk2M77WsZvznu7bP+2XBPTu01DUyYC3pWpkoOY+a6E1TAZXHJgC95rA==
-X-Received: by 2002:a1c:8fcc:: with SMTP id r195-v6mr2232759wmd.44.1540477781774;
-        Thu, 25 Oct 2018 07:29:41 -0700 (PDT)
+        bh=lFLpehC3n+3CaT2liZ/Zga9em4kHxo5L6vj0o4AsfsQ=;
+        b=MLo2kDAABelLCa7QXMvV4HTJUKvoRvMHjEA3jEI4+LqavYkf13sO6J7hHDp2iaISs2
+         tkXSBtF+7sRQPeZH9z6UbM7R51mjDoQOaqSer7eh9HTRl+t6xPYCxHjBtuQELDV4ar8i
+         GKB1N/K1L6kRq+4seau+npI9gfP8Trg30pyUv0CPaetqVEy82sDjovkyicsNcqwuDFp/
+         b9bgWYMjEZ2wxM0uMlrqhnkLIpgVkuoTofGHnOxFxTTwvM5clsu8R+MYEmuH8TpFTipa
+         jt0GGkFFeGfAgNogmsnzk0Ue6QCcRplDZEgf6cv0v8ukIho+Sb45R/+pr/dz2GlQMCk8
+         wyvw==
+X-Gm-Message-State: AGRZ1gKbR8UaUIq0PMUdzkWl0nQflVNLJQr4wVAdJ95lmqasCa2hnG4R
+        PL2tLaxFsNhVpMR3h8JvbNM=
+X-Google-Smtp-Source: AJdET5flLNEcFBCI2MgUNJfMujfFIzlFyUWtBk0DKU+1Xg6z/6T1q00tEpj9j092WbGCwzMs2wAT4Q==
+X-Received: by 2002:a1c:1c0c:: with SMTP id c12-v6mr2084223wmc.18.1540477860216;
+        Thu, 25 Oct 2018 07:31:00 -0700 (PDT)
 Received: from localhost (pD9E511F8.dip0.t-ipconnect.de. [217.229.17.248])
-        by smtp.gmail.com with ESMTPSA id x3-v6sm5704516wrp.27.2018.10.25.07.29.40
+        by smtp.gmail.com with ESMTPSA id m16-v6sm1904813wmd.35.2018.10.25.07.30.59
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 25 Oct 2018 07:29:41 -0700 (PDT)
-Date:   Thu, 25 Oct 2018 16:29:40 +0200
+        Thu, 25 Oct 2018 07:30:59 -0700 (PDT)
+Date:   Thu, 25 Oct 2018 16:30:58 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Dmitry Osipenko <digetx@gmail.com>
 Cc:     Peter De Schrijver <pdeschrijver@nvidia.com>,
@@ -65,16 +66,15 @@ Cc:     Peter De Schrijver <pdeschrijver@nvidia.com>,
         Prashant Gaikwad <pgaikwad@nvidia.com>,
         linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 5/8] ARM: dts: tegra20: Add clock entry to External
- Memory Controller
-Message-ID: <20181025142940.GI21521@ulmo>
+Subject: Re: [PATCH v6 6/8] clk: tegra20: Turn EMC clock gate into divider
+Message-ID: <20181025143058.GJ21521@ulmo>
 References: <20181021183052.32023-1-digetx@gmail.com>
- <20181021183052.32023-6-digetx@gmail.com>
+ <20181021183052.32023-7-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="PMULwz+zIGJzpDN9"
+        protocol="application/pgp-signature"; boundary="KjX7LgAomYr70Ka9"
 Content-Disposition: inline
-In-Reply-To: <20181021183052.32023-6-digetx@gmail.com>
+In-Reply-To: <20181021183052.32023-7-digetx@gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
@@ -82,41 +82,46 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---PMULwz+zIGJzpDN9
+--KjX7LgAomYr70Ka9
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Oct 21, 2018 at 09:30:49PM +0300, Dmitry Osipenko wrote:
-> Add clock entry into the EMC DT node.
+On Sun, Oct 21, 2018 at 09:30:50PM +0300, Dmitry Osipenko wrote:
+> Kernel should never gate the EMC clock as it causes immediate lockup, so
+> removing clk-gate functionality doesn't affect anything. Turning EMC clk
+> gate into divider allows to implement glitch-less EMC scaling, avoiding
+> reparenting to a backup clock.
 >=20
 > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
 > ---
->  arch/arm/boot/dts/tegra20.dtsi | 1 +
->  1 file changed, 1 insertion(+)
+>  drivers/clk/tegra/clk-tegra20.c | 36 ++++++++++++++++++++++++---------
+>  1 file changed, 26 insertions(+), 10 deletions(-)
 
-Applied to for-4.21/arm/dt, thanks.
+Applied to for-4.21/clk, thanks.
 
 Thierry
 
---PMULwz+zIGJzpDN9
+--KjX7LgAomYr70Ka9
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlvR01QACgkQ3SOs138+
-s6FUiRAAvpc81LLj0px2mgpDGg2rV4oVXDTtBUJ7t0K6JPKsd38NIuQVVlHpRSPe
-HbckwG/anIthCOV3rF/mzspz6d/w9Kf8tbewszz42rENn3jQ2GOoZXU1i8lX/Avf
-0IJvd3YBPLZMXMa8WG87n/uzQIVKorHXxWNf4eMBNwkjEpRKz5tBZR5eQbcakDqh
-46fgZc74WuphT9A0lcPZULNYrCAaoRBCAB3LYcspTFeVWovjATGg4i9dJeX8Wx2i
-Wh0R5Mq+/6DVG+qAt5dqNvGf0BTAcSXzHSsAA5OoI8HIaJiek/V7fBozsWmvqkGS
-s+h0m4Y4Zw1NpjDFeJx5EokXxhXZ0vHppN8mxRH+n89V8qMfbBXozmN0fLWs48UH
-Zi9UHN7B2EVdezbQSGMyOa54HUz9s+5KTYRiAa0ys1GGHRaZ3O0T+JKS0JeDmpFB
-+W3/HbNGLoOVCSixNglz1tNxokkdJN7sgbBEjsMFV0HK3tnjZdie3njrEQ7B2EG5
-kekn7T1O5bXSZranf7OZBQxadQG4gYBU/MiikZp2cYF/tLSIvGoKHC5TmMZgRjR7
-pvxe4qyS7caUj0Sj7TwKo68cYhIWEQdXSzalw0DuauB5LZNcqlQpovSTlgfvIZp5
-2dDrru99qT29XFDNX590/LeYAN9cGj26uQEM98YRehbDQFtT0qE=
-=i15n
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlvR06IACgkQ3SOs138+
+s6Hduw/+KPDbRWcItPpfx2++bu7qjw3SiY5WGVhUWskHLChqi8McqinAdCJKyNnF
+xmVLc4St8pDZlJ46ygQA0nhgRmhP/rYhu2hI8n364/gIfUHXKG7FnSv9dqYRb+8T
+NTAnn32YvtW0A0murNKx/ajmE5ZKyEN7mCOMwDaP7o7DJ/R5x2YyldUossHh2KCV
+5tAGQ1AoNMlu1J7gpiMTwxJmdRNIHTjFuqDpZt8y/J/TFLvpq5gTnbYDr0DCn8Nf
+c4cKZ/FV26dcvL0Y4pxyfsda/JgOesi9spF4XYOeKRCSiJkbrPrcgVVnCFzi5LxL
+XQDit677vdaJIBKp64h+Uc0IR+qsUE3Zww4LRfcPZi5AsANYZtWqF0CWHveDZrj1
+A+IW6XUzzTDTROfSzTzbUN3k/TpSQIAgdQrKv4J4Bc+J1fURMKiV5uMpy2atDIoK
+T1R8VQoenDFQ7mwm8wu3/AQ7cSAn11foINt51irSNu8IWT46wlJHqctNez/AMI+G
+9zMQULVbVty6Pm8bQ5KE7TWrpxUrd7zzaF+1oJ/r1OtMjrZgIcmTrl4hhP9ytnzi
+k7xh3hd/eehxYYjP2hWKrrdJkua+JP0swXIgd4MmnKbsDrta4KnZIscluo2xZam3
+u1ee2NvDAG5kCF9nObr5Cnni2nmxC+Uz/67yDGwdo2MWdUM526Q=
+=Q3jp
 -----END PGP SIGNATURE-----
 
---PMULwz+zIGJzpDN9--
+--KjX7LgAomYr70Ka9--
