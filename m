@@ -2,104 +2,241 @@ Return-Path: <SRS0=7v9C=NF=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4767ECDE46
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Oct 2018 10:56:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30AF1C46475
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Oct 2018 11:02:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70C8B2082E
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Oct 2018 10:56:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70C8B2082E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
+	by mail.kernel.org (Postfix) with ESMTP id DEE352082E
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Oct 2018 11:02:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="j5Hs2mPk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEE352082E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727265AbeJYT2w (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 Oct 2018 15:28:52 -0400
-Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:33190 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726852AbeJYT2w (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Oct 2018 15:28:52 -0400
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-        by mx0b-001ae601.pphosted.com (8.16.0.23/8.16.0.23) with SMTP id w9PAsBDB012370;
-        Thu, 25 Oct 2018 05:56:28 -0500
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from mail1.cirrus.com (mail1.cirrus.com [141.131.3.20])
-        by mx0b-001ae601.pphosted.com with ESMTP id 2n80speg0x-1;
-        Thu, 25 Oct 2018 05:56:28 -0500
-Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
-        by mail1.cirrus.com (Postfix) with ESMTP id D2226611E124;
-        Thu, 25 Oct 2018 05:56:27 -0500 (CDT)
-Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
- (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Thu, 25 Oct 2018
- 11:56:27 +0100
-Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
-        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id w9PAuQmK007651; Thu,
- 25 Oct 2018 11:56:26 +0100
-Date:   Thu, 25 Oct 2018 11:56:26 +0100
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     Mark Brown <broonie@kernel.org>
-CC:     Richard Fitzgerald <rf@opensource.cirrus.com>,
-        Lee Jones <lee.jones@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <linus.walleij@linaro.org>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <lgirdwood@gmail.com>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>,
-        <linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>
-Subject: Re: [PATCH v2 2/5] mfd: lochnagar: Add support for the Cirrus Logic
- Lochnagar
-Message-ID: <20181025105626.GE16508@imbe.wolfsonmicro.main>
-References: <20181008132542.19775-1-ckeepax@opensource.cirrus.com>
- <20181008132542.19775-2-ckeepax@opensource.cirrus.com>
- <20181025074459.GF4939@dell>
- <20181025082621.GD16508@imbe.wolfsonmicro.main>
- <b2f85f45-cbe9-5a27-e9e8-ad28f2bd9bd6@opensource.cirrus.com>
- <20181025101248.GT2103@sirena.org.uk>
+        id S1727308AbeJYTel (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 Oct 2018 15:34:41 -0400
+Received: from mail-it1-f196.google.com ([209.85.166.196]:52003 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727041AbeJYTee (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Oct 2018 15:34:34 -0400
+Received: by mail-it1-f196.google.com with SMTP id 74-v6so1130948itw.1
+        for <linux-clk@vger.kernel.org>; Thu, 25 Oct 2018 04:02:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9SrEHejOApHYwJ0m4n1YjfG9w4qNUXDuf0hH0pKMbhI=;
+        b=j5Hs2mPkuEYl7yg9gzXy2SIO/IRp79MOqGcHnxi/PscSp6EE3QkZ5raxZThxXnkdfZ
+         yJ7S9GbCt5DuqWWCgUOVjjtX6+RtUVnKBbdF7QuyEPy/BFVXn9+fye9VBDcU7ctW/EyN
+         aF4TVZfj+5Dz1ZdM2qLKITFgX4c+WLUm5lUiw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9SrEHejOApHYwJ0m4n1YjfG9w4qNUXDuf0hH0pKMbhI=;
+        b=PhWHQDwSnRBxO+v5pAh0nBaLvxdV9S3MLuAWzBweSnaKCsuSnOjwwuHZQAXf1cw7cO
+         Q9FXTQ8LLrrEoRI1MzJ5uIJ1bywKLi2P46714MepTXvxCZAM7OekZJ1puUAzXMpm5TWB
+         KJ0xNGNxeyAMxBcGM3FiSqNsBYlswEZzVBFP6dNSRUg2GpEfxmaiObUKMN//+gREmwlw
+         SOMUTB6wlW1cSFGTrx36Rx5ml9h02mSKMA26s0w/5kc5iun0YV+z7OnCrQKLI8hdBMY3
+         JJIVZLoPT1IE4w+SPcKQg6A9cVhzt4bKD6EkGn2pfcEhJw39baud+ko9ojxC3vtB96AU
+         a18w==
+X-Gm-Message-State: AGRZ1gKIHROczaYjSPETVScvIMD3+zDVip7J/GcI9kH08v7c2cOlmGZY
+        Ba/in6enOttWlUAJpMUUym5sx4OlVtzI5Yd1BaHHRQ==
+X-Google-Smtp-Source: AJdET5frjTBjwurvOX9mhd5JX2L6C+LvCGVzl/1dxlsuou3Gu/yi6KM/B1aMZ2HoZiiGn5xWmECJBWGEUHtd9t/vokA=
+X-Received: by 2002:a24:9f82:: with SMTP id c124-v6mr610270ite.32.1540465337870;
+ Thu, 25 Oct 2018 04:02:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20181025101248.GT2103@sirena.org.uk>
-User-Agent: Mutt/1.5.20 (2009-12-10)
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1807170000
- definitions=main-1810250098
+References: <20181023155035.9101-1-jagan@amarulasolutions.com>
+ <20181023155035.9101-5-jagan@amarulasolutions.com> <20181024180632.zrb3lrqsznspmwbk@flea>
+In-Reply-To: <20181024180632.zrb3lrqsznspmwbk@flea>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Thu, 25 Oct 2018 16:32:06 +0530
+Message-ID: <CAMty3ZDLd=vbYUut6Cwo9VKFR4T1u1p58FLg9vhN79JS1=0rag@mail.gmail.com>
+Subject: Re: [PATCH v2 04/15] drm/sun4i: sun6i_mipi_dsi: Add Allwinner A64
+ MIPI DSI support
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Oct 25, 2018 at 11:12:48AM +0100, Mark Brown wrote:
-> On Thu, Oct 25, 2018 at 10:28:16AM +0100, Richard Fitzgerald wrote:
-> > On 25/10/18 09:26, Charles Keepax wrote:
-> > > On Thu, Oct 25, 2018 at 08:44:59AM +0100, Lee Jones wrote:
-> > > I really feel this isn't the driver you are objecting to as such
-> > > but the way regmap operates and also we seem to always have the same
-> > > discussions around regmap every time we push a driver. Is there
-> > > any way me, you and Mark could hash this out and find out a way to
-> > > handle regmaps that is acceptable to you? I don't suppose you are
-> > > in Edinburgh at the moment for ELCE?
-> 
-> > I suppose if Mark was willing to promote the regmap drivers to be a
-> > top-level subsystem that could contain the regmap definitions of devices
-> > then we could dump our regmap definitions in there, where Mark can review
-> > it as he's familiar with regmap and the chips and the reasons why things
-> > are done the way they are, rather than Lee having to stress about it every
-> > time we need to create an MFD device that uses regmap. Though that would
-> > make the initialization of an MFD rather awkward with the code required
-> > to init the MFD it not actually being in the MFD tree.
-> 
-> I'm not totally against dumping the data tables in some other directory
-> (we could do ../regmap/tables or whatever) but I fear it's going to
-> cause otherwise needless cross tree issues.
+On Wed, Oct 24, 2018 at 11:36 PM Maxime Ripard
+<maxime.ripard@bootlin.com> wrote:
+>
+> On Tue, Oct 23, 2018 at 09:20:24PM +0530, Jagan Teki wrote:
+> > The MIPI DSI controller on Allwinner A64 is similar to
+> > Allwinner A31 without support of DSI mod clock(CLK_DSI_SCLK)
+> >
+> > So, alter has_mod_clk bool via driver data for respective
+> > SoC's compatible.
+> >
+> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > ---
+> > Changes for v2:
+> > - none
+> >
+> >  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 47 ++++++++++++++++++++------
+> >  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h |  5 +++
+> >  2 files changed, 41 insertions(+), 11 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> > index e3b34a345546..8e9c76febca2 100644
+> > --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> > +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> > @@ -10,6 +10,7 @@
+> >  #include <linux/component.h>
+> >  #include <linux/crc-ccitt.h>
+> >  #include <linux/of_address.h>
+> > +#include <linux/of_device.h>
+> >  #include <linux/pm_runtime.h>
+> >  #include <linux/regmap.h>
+> >  #include <linux/reset.h>
+> > @@ -981,6 +982,8 @@ static int sun6i_dsi_probe(struct platform_device *pdev)
+> >       dsi->host.ops = &sun6i_dsi_host_ops;
+> >       dsi->host.dev = dev;
+> >
+> > +     dsi->variant = of_device_get_match_data(dev);
+> > +
+> >       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> >       base = devm_ioremap_resource(dev, res);
+> >       if (IS_ERR(base)) {
+> > @@ -1001,17 +1004,20 @@ static int sun6i_dsi_probe(struct platform_device *pdev)
+> >               return PTR_ERR(dsi->reset);
+> >       }
+> >
+> > -     dsi->mod_clk = devm_clk_get(dev, "mod");
+> > -     if (IS_ERR(dsi->mod_clk)) {
+> > -             dev_err(dev, "Couldn't get the DSI mod clock\n");
+> > -             return PTR_ERR(dsi->mod_clk);
+> > +     if (dsi->variant->has_mod_clk) {
+> > +             dsi->mod_clk = devm_clk_get(dev, "mod");
+> > +             if (IS_ERR(dsi->mod_clk)) {
+> > +                     dev_err(dev, "Couldn't get the DSI mod clock\n");
+> > +                     return PTR_ERR(dsi->mod_clk);
+> > +             }
+> >       }
+> >
+> >       /*
+> >        * In order to operate properly, that clock seems to be always
+> >        * set to 297MHz.
+> >        */
+> > -     clk_set_rate_exclusive(dsi->mod_clk, 297000000);
+> > +     if (dsi->variant->has_mod_clk)
+> > +             clk_set_rate_exclusive(dsi->mod_clk, 297000000);
+> >
+> >       dphy_node = of_parse_phandle(dev->of_node, "phys", 0);
+> >       ret = sun6i_dphy_probe(dsi, dphy_node);
+> > @@ -1043,7 +1049,8 @@ static int sun6i_dsi_probe(struct platform_device *pdev)
+> >       pm_runtime_disable(dev);
+> >       sun6i_dphy_remove(dsi);
+> >  err_unprotect_clk:
+> > -     clk_rate_exclusive_put(dsi->mod_clk);
+> > +     if (dsi->variant->has_mod_clk)
+> > +             clk_rate_exclusive_put(dsi->mod_clk);
+> >       return ret;
+> >  }
+> >
+> > @@ -1056,7 +1063,8 @@ static int sun6i_dsi_remove(struct platform_device *pdev)
+> >       mipi_dsi_host_unregister(&dsi->host);
+> >       pm_runtime_disable(dev);
+> >       sun6i_dphy_remove(dsi);
+> > -     clk_rate_exclusive_put(dsi->mod_clk);
+> > +     if (dsi->variant->has_mod_clk)
+> > +             clk_rate_exclusive_put(dsi->mod_clk);
+> >
+> >       return 0;
+> >  }
+> > @@ -1066,7 +1074,8 @@ static int __maybe_unused sun6i_dsi_runtime_resume(struct device *dev)
+> >       struct sun6i_dsi *dsi = dev_get_drvdata(dev);
+> >
+> >       reset_control_deassert(dsi->reset);
+> > -     clk_prepare_enable(dsi->mod_clk);
+> > +     if (dsi->variant->has_mod_clk)
+> > +             clk_prepare_enable(dsi->mod_clk);
+> >
+> >       /*
+> >        * Enable the DSI block.
+> > @@ -1094,7 +1103,8 @@ static int __maybe_unused sun6i_dsi_runtime_suspend(struct device *dev)
+> >  {
+> >       struct sun6i_dsi *dsi = dev_get_drvdata(dev);
+> >
+> > -     clk_disable_unprepare(dsi->mod_clk);
+> > +     if (dsi->variant->has_mod_clk)
+> > +             clk_disable_unprepare(dsi->mod_clk);
+> >       reset_control_assert(dsi->reset);
+> >
+> >       return 0;
+> > @@ -1106,9 +1116,24 @@ static const struct dev_pm_ops sun6i_dsi_pm_ops = {
+> >                          NULL)
+> >  };
+> >
+> > +static const struct sun6i_dsi_variant sun6i_a31_dsi = {
+> > +     .has_mod_clk = true,
+> > +};
+> > +
+> > +static const struct sun6i_dsi_variant sun50i_a64_dsi = {
+> > +     .has_mod_clk = false,
+>
+> This is the default already.
 
-I guess there is a question here, if i split the regmap stuff
-into a separate file within mfd would that be enough? Is it just
-the mixing of these tables and the code you object to Lee or is
-it the fact the tables exist at all?
+True but we need to assign the .data. how about checking device
+compatible? I'm thinking of difference in driver data in future
+between SoC's
 
-Thanks,
-Charles
+>
+> > +};
+> > +
+> >  static const struct of_device_id sun6i_dsi_of_table[] = {
+> > -     { .compatible = "allwinner,sun6i-a31-mipi-dsi" },
+> > -     { }
+> > +     {
+> > +             .compatible = "allwinner,sun6i-a31-mipi-dsi",
+> > +             .data = &sun6i_a31_dsi,
+> > +     },
+> > +     {
+> > +             .compatible = "allwinner,sun50i-a64-mipi-dsi",
+> > +             .data = &sun50i_a64_dsi,
+> > +     },
+> > +     { /* sentinel */ }
+> >  };
+> >  MODULE_DEVICE_TABLE(of, sun6i_dsi_of_table);
+> >
+> > diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h
+> > index dbbc5b3ecbda..597b62227019 100644
+> > --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h
+> > +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h
+> > @@ -20,6 +20,10 @@ struct sun6i_dphy {
+> >       struct reset_control    *reset;
+> >  };
+> >
+> > +struct sun6i_dsi_variant {
+> > +     bool                    has_mod_clk;
+> > +};
+> > +
+>
+> This should be part of a separate patch.
+
+How come, because has_mod_clk is using in driver file?
