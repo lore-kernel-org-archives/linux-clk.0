@@ -2,157 +2,120 @@ Return-Path: <SRS0=HxJ1=NG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 303B3ECDE44
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Oct 2018 14:47:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6387C6786E
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Oct 2018 15:48:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E390B204FD
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Oct 2018 14:47:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F35C20856
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Oct 2018 15:48:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="jP95xZZa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E390B204FD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="oyxsJg8l"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F35C20856
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727787AbeJZXVe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 26 Oct 2018 19:21:34 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:45376 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727778AbeJZXVd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Oct 2018 19:21:33 -0400
-Received: by mail-pg1-f193.google.com with SMTP id s3-v6so627712pga.12
-        for <linux-clk@vger.kernel.org>; Fri, 26 Oct 2018 07:44:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=eZqm0CFEdgNM2tKHjKivQNx4i6KhyKtyrSoJgQ5hCEE=;
-        b=jP95xZZarKPxRpcTk4yOQdHhh67H3biXbiHdakPyEF9FUDJlTSCMnO0xUYhEyW1TkN
-         OV2Iag5L9QtyFR2U3nFaC+SzME8X1lihgttwy1Q8Uq27FIr6KQHi+0Pt8xRJHSbF9Fda
-         GdyDSWFclhbRhzqTwa56E/bRXuJ6B+2do8XZA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=eZqm0CFEdgNM2tKHjKivQNx4i6KhyKtyrSoJgQ5hCEE=;
-        b=Cq0lKXl98K4SgJ4qJ8/ZaRMU9H5CES8P8my2b6Yx+zj0nYy6m7YRhTkBTSnGZWmR0h
-         Yjhsz3eixdgnFXzHfh/Sn+cO49l9J2xYo32m6nC5W7z0hNL/QM84ijtXuZrAQ93vcQmH
-         N+VBLlSNWmT9/4Vmbg+2T7HdarAjxVx3T7WZWfxqVG/ZK8vttGSWLMbQRrL8PLj02f+H
-         Oe6VVhZuSIDehX02LirAt+eDlp79XUvSR0wFWIDok1lSeZsXnZ7WkXzI1rKlLPJ7Nypv
-         FAAfXFC3d+lxoez4JFiCtco96NcCzUDIUugnTQEK4zWG/6+recpxxJCOmjGh7vdaQji/
-         evkw==
-X-Gm-Message-State: AGRZ1gIBS3m+1W9Yk004plX+Ze4UnDU9Ng/4tRZMPqMUpZ6GKJ/ddTvB
-        AsBR9NFOVakHT0eZgSb3SA7Gn2glVSo=
-X-Google-Smtp-Source: AJdET5e09G5gEekKHPpWwXEsKeq6RP2nzY9YZ94thvyr9Xp6iJ8drFkIPbwp/kbr+AukXMI/VITHJw==
-X-Received: by 2002:a63:224f:: with SMTP id t15mr3730017pgm.69.1540565052740;
-        Fri, 26 Oct 2018 07:44:12 -0700 (PDT)
-Received: from localhost.localdomain ([27.7.51.1])
-        by smtp.gmail.com with ESMTPSA id z22-v6sm12044467pgv.24.2018.10.26.07.44.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 26 Oct 2018 07:44:12 -0700 (PDT)
-From:   Jagan Teki <jagan@amarulasolutions.com>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Cc:     Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v3 00/25] drm/sun4i: Allwinner A64 MIPI-DSI support 
-Date:   Fri, 26 Oct 2018 20:13:19 +0530
-Message-Id: <20181026144344.27778-1-jagan@amarulasolutions.com>
-X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
+        id S1727615AbeJ0AZc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 26 Oct 2018 20:25:32 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:38074 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726113AbeJ0AZb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Oct 2018 20:25:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Wzv1EIHIo+xf7l4NuQvWMa9Y1tL7EVaHiE9dv/HkItQ=; b=oyxsJg8lYNhBrd36t4RcKr1sG
+        utISkXj0D16nPsTZVegJuFOj0zBXcrgWrPnOISVgDNTb2hQEBv1ZiqFuJw6DuHhLtUo90GcrVzanL
+        Bsb3vsF9+2CO+uHZFUv25u/ELdMnWq+HjhEoBbl0uIFiyT0/a9cSZ0VreX1apaWyBuLfo=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gG4L1-0003oi-QV; Fri, 26 Oct 2018 15:47:51 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 5A8C61122667; Fri, 26 Oct 2018 16:47:51 +0100 (BST)
+Date:   Fri, 26 Oct 2018 16:47:51 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc:     Lee Jones <lee.jones@linaro.org>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        lgirdwood@gmail.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, patches@opensource.cirrus.com,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v2 2/5] mfd: lochnagar: Add support for the Cirrus Logic
+ Lochnagar
+Message-ID: <20181026154751.GA27137@sirena.org.uk>
+References: <20181008132542.19775-1-ckeepax@opensource.cirrus.com>
+ <20181008132542.19775-2-ckeepax@opensource.cirrus.com>
+ <20181025074459.GF4939@dell>
+ <20181025082621.GD16508@imbe.wolfsonmicro.main>
+ <b2f85f45-cbe9-5a27-e9e8-ad28f2bd9bd6@opensource.cirrus.com>
+ <20181025114205.GC4870@dell>
+ <20181025124905.GF16508@imbe.wolfsonmicro.main>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="pf9I7BMVVzbSWLtt"
+Content-Disposition: inline
+In-Reply-To: <20181025124905.GF16508@imbe.wolfsonmicro.main>
+X-Cookie: Kin, n.:
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This series fixed the issues related to work DSI on 2-lane panel
-which is reported on previous version[1].
 
-Few comments from previous version still in discussion, but I just
-send this version just to group all working changes together.
-anyway I will fix in this in next version if any.
+--pf9I7BMVVzbSWLtt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-PLL_MIPI min rate is still weird, I tried many possible dclock rate
-from panel driver to satisfy manual suggested min rate 500MHz but
-none working so eventually moved 300MHz. any inputs on this area
-are welcome.
+On Thu, Oct 25, 2018 at 01:49:05PM +0100, Charles Keepax wrote:
 
-All these changes are tested in 2-lane, 4-lane MIPI-DSI panels.
+> I don't think you can sensibly get away with not supplying
+> default values. You say most sane register layouts have zero
+> values, alas again you may not be the biggest fan of our hardware
+> guys. The Lochnagar actually does have mostly zero defaults but
+> that is very much not generally the case with our hardware.
 
-If anyone wants to test, use this repo [2] with WIP-A64-DSI branch.
+There's large classes of hardware where it's just not generally the
+default over all manufacturers - things like audio CODECs and regulators
+that have to represent continuous ranges of numerical values have to
+decide between a helpful representation of numbers with a non-zero
+default or having a more complicated representation of numbers which
+manage to make zero correspond to whatever the default value is.  It's
+also quite common for booleans you want to default on.
 
-Any inputs,
-Jagan.
+> One of the main aims of regmap is to avoid bus accesses when
+> possible but I guess on the first write/read to any register you
+> could insert a read to pull the default, although I do worry
+> there is some corner case/flexibility that is going to cause
+> headaches later.
 
-[2] https://github.com/amarula/linux-amarula
-[1] https://patchwork.kernel.org/cover/10653275/
+It will actually populate the cache from I/O if you don't provide
+defaults but it then can't tell what the physical defaults are, we could
+read back from hardware but then we have to sync that with the hardware
+being reset and if you read the whole thing back that gets super
+expensive with slow buses.
 
-Jagan Teki (25):
-  clk: sunxi-ng: a64: Fix gate bit of DSI DPHY
-  clk: sunxi-ng: Add check for minimal rate to NKM PLLs
-  clk: sunxi-ng: Add check for maximum rate to NKM PLLs
-  drm/sun4i: sun6i_mipi_dsi: Add Allwinner A64 MIPI DSI support
-  dt-bindings: sun6i-dsi: Add compatible for A64 MIPI DSI
-  drm/sun4i: sun6i_mipi_dsi: Add DSI Generic short write 2 param
-    transfer
-  drm/sun4i: sun6i_mipi_dsi: Fix VBP size calculation
-  drm/sun4i: sun6i_mipi_dsi: Fix TCON DRQ set bits
-  drm/sun4i: sun6i_mipi_dsi: Refactor vertical video start delay
-  drm/sun4i: sun6i_mipi_dsi: Fix DSI hbp timing value
-  drm/sun4i: sun6i_mipi_dsi: Fix DSI hblk timing calculation
-  drm/sun4i: sun6i_mipi_dsi: Add DSI hblk packet overhead
-  drm/sun4i: sun6i_mipi_dsi: Fix DSI hfp timing value
-  drm/sun4i: sun6i_mipi_dsi: Increase hfp packet overhead
-  drm/sun4i: sun6i_mipi_dsi: Set proper vblk timing calculation
-  drm/sun4i: sun6i_mipi_dsi: Add support for VCC-DSI voltage regulator
-  dt-bindings: panel: Add Bananapi S070WV20-CT16 ICN6211 MIPI-DSI to RGB
-    bridge
-  drm/panel: Add Bananapi S070WV20-CT16 ICN6211 MIPI-DSI to RGB bridge
-  dt-bindings: panel: Add Techstar TS8550B MIPI DSI panel
-  drm/panel: Add Techstar TS8550B MIPI-DSI LCD panel
-  clk: sunxi-ng: a64: Add min and max rate for PLL_MIPI
-  dt-bindings: sun6i-dsi: Add compatible for A64 DPHY
-  arm64: dts: allwinner: a64: Add DSI pipeline
-  [DO NOT MERGE] arm64: dts: allwinner: bananapi-m64: Bananapi S070WV20-CT16 DSI panel
-  arm64: dts: allwinner: a64-amarula-relic: Enable Techstar TS8550B
-    MIPI-DSI panel
+--pf9I7BMVVzbSWLtt
+Content-Type: application/pgp-signature; name="signature.asc"
 
- .../display/panel/bananapi,s070wv20-ct16.txt  |  31 +-
- .../display/panel/techstar,ts8550b.txt        |  20 +
- .../bindings/display/sunxi/sun6i-dsi.txt      |   3 +-
- .../allwinner/sun50i-a64-amarula-relic.dts    |  46 +++
- .../dts/allwinner/sun50i-a64-bananapi-m64.dts |  42 +++
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi |  45 +++
- drivers/clk/sunxi-ng/ccu-sun50i-a64.c         |   4 +-
- drivers/clk/sunxi-ng/ccu_nkm.c                |  14 +
- drivers/clk/sunxi-ng/ccu_nkm.h                |   2 +
- drivers/gpu/drm/panel/Kconfig                 |  18 +
- drivers/gpu/drm/panel/Makefile                |   2 +
- .../panel/panel-bananapi-s070wv20-icn6211.c   | 336 +++++++++++++++++
- .../gpu/drm/panel/panel-techstar-ts8550b.c    | 346 ++++++++++++++++++
- drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c        | 122 ++++--
- drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h        |   8 +
- 15 files changed, 1009 insertions(+), 30 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/display/panel/techstar,ts8550b.txt
- create mode 100644 drivers/gpu/drm/panel/panel-bananapi-s070wv20-icn6211.c
- create mode 100644 drivers/gpu/drm/panel/panel-techstar-ts8550b.c
+-----BEGIN PGP SIGNATURE-----
 
--- 
-2.18.0.321.gffc6fa0e3
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlvTNyQACgkQJNaLcl1U
+h9AgVgf/XQjp7lDEmVFGgiTZTgLJZyMHMn1vB7lgsxxiFxVBlNiZr7Zg8BiK8cT5
+1uTf6Z+Wn344YWwQ/Rx08GaLdcvfRKBPKQi6SGHpZ4pj5BJaOCobq3UlSyA9GXhO
+UPyMpdJa3yzXaF0PV7w6kXkYi0fJe9jVe21b06fJweZmCF0fGaF4WIAUDDn3B947
+Uj+hZywPa3UuH04sE/PybfrKrGtJz73U6tSo/FcXhKdPEfVy8KL0FgWXQiV5BPUi
+xLU92y/gX8mS7L1aVPAoIkTgESA6sS0VKD4YLWjm9/1nWI1mghsTSSYfRqGJurvI
+lXhYY+HkMGRV8jaOE4o/LIYmz+ow/A==
+=EHBh
+-----END PGP SIGNATURE-----
 
+--pf9I7BMVVzbSWLtt--
