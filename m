@@ -7,53 +7,53 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABF4DC6786E
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Oct 2018 14:46:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55FF0ECDE44
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Oct 2018 14:46:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 735712086B
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Oct 2018 14:46:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1EABD2086B
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Oct 2018 14:46:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="p/Xw8STA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 735712086B
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="Jyj6k50f"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EABD2086B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727841AbeJZXXu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 26 Oct 2018 19:23:50 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:32925 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727839AbeJZXXt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Oct 2018 19:23:49 -0400
-Received: by mail-pf1-f196.google.com with SMTP id a15-v6so684351pfn.0
-        for <linux-clk@vger.kernel.org>; Fri, 26 Oct 2018 07:46:28 -0700 (PDT)
+        id S1727809AbeJZXXc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 26 Oct 2018 19:23:32 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:45042 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727616AbeJZXXc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Oct 2018 19:23:32 -0400
+Received: by mail-pl1-f195.google.com with SMTP id d23-v6so610040pls.11
+        for <linux-clk@vger.kernel.org>; Fri, 26 Oct 2018 07:46:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Q6u30J53lPheTTjrrL7nM+PLAo3DbPBTmQWn02a2iHU=;
-        b=p/Xw8STAMTpBBLncROH5aKHWB2b0L06z/UhiqQp2F9+VrSZOIDsV0mmfx9hVuftiHz
-         pK5lph159Au6unI7SZNuaBJx+68/tHXUO1pND1fb0FXjmgJvdR0H2V5WMMdXQFSiNYoQ
-         Gb08ac3/q7cJqmSElroxmGb2h1MNwOkptPQ1Y=
+        bh=n0i8hVr1HP7XLYiUrhAKpcC+p7UJ+a7PvBsZMlOyWQg=;
+        b=Jyj6k50fMheXG0QrecuU6ptwpUp49kRk1iermMfawhZOURbTZPrMz0RSVUQN63lVky
+         0g3GYJ5kcVuv9Rth752gPEoF8TPJj8q0cJ/DwFIJ4S5OqZNgTAx9T85/LN4JhUTAuLfq
+         U8vg4lBvc3uiUshTqaq5N34JlRMfC9O+GNwxY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Q6u30J53lPheTTjrrL7nM+PLAo3DbPBTmQWn02a2iHU=;
-        b=fjc5IFJeO1DyPRhgeF/1TKKHYkeH6ev1pEMNdrwsKuWBjrjG5GcfaSw/YJdBurZ/lb
-         Whb2hhrvX1BGXrfROPAb0gzht0Qp07YD2LUA5alwbdRoeQguv+3MdSKZWPh/YtEejO8L
-         wsITk9XflMoMPvmcvJ2QKsmuyq1OmjDJAC44XlZLv5xAFjQgeHg8ex7eiS3EiVm+6/Pt
-         MDU0jIJSib7Xcb/EsKOqMBKNPzFdJK8RtPcXnEQmMTVsKoC2EFI8p44k4c3PVNaAAU21
-         NU4bmgNQEuGbYGwIlnxXcIhU3wMUqyA0xSOQhHzeQ/CKczoZmt6SNBuIwXauknrRSRVv
-         c/OA==
-X-Gm-Message-State: AGRZ1gKowRpu36V7zxty0qieOTCoBzFnts4a5MJxfkDd3OflIFElj+Ur
-        tzz/PiQipFIYSjQLRzdRxJBAmA==
-X-Google-Smtp-Source: AJdET5cgG0qlCI/VdYgL30LMx8lLSWukX6LeQQzQtqXJQ27TFAV39x3nA8JEMtCOtgWz3vmexzHz1Q==
-X-Received: by 2002:a63:dc54:: with SMTP id f20mr3787544pgj.410.1540565188096;
-        Fri, 26 Oct 2018 07:46:28 -0700 (PDT)
+        bh=n0i8hVr1HP7XLYiUrhAKpcC+p7UJ+a7PvBsZMlOyWQg=;
+        b=PIhW5mQyBRT29jBud9+hDw6o9geqmIFTPFIBlXE2UTzWTmkH97CMa0RNvQkJRtSt3c
+         rXA6X7fON1vsv6ibaxKAGNybgAQqbJapqhUNJFwoX2WHpa82yWILleabcMO/ANfXo4Tm
+         LVmzLtm1cSrfqgYOy0Zp2P0TU+cEoksuHneGa6DsnjGUrwJMpXzooPNTiKxXk8CywLe7
+         kl4CDFex53SOWX8QH/4ZZ10ChSpxOMkIZL68Ke8QAQzra5nKDycJL7zXM0iS7BlY1zm0
+         QPFG/+fuHkATjtHHXi3TVt7U1fxw4Mn0K+u1AmAkJSeIin6RX7hHAszVBFqIG2oXvXpz
+         mYNA==
+X-Gm-Message-State: AGRZ1gLlPFEZa3I9Rj2LcP9VR1bzGCx3V+eceqwHpq896F3ebmpDUU47
+        xU3M2WF/aP8dStoBt1miFWItnw==
+X-Google-Smtp-Source: AJdET5dlKpiD4p4HlpJuoB3vwRCoSCL+d2k+aWjgIKETuEcEw3+TUhPBfyKp6hMumO9lOdckqFBJfw==
+X-Received: by 2002:a17:902:8342:: with SMTP id z2-v6mr3744544pln.147.1540565171026;
+        Fri, 26 Oct 2018 07:46:11 -0700 (PDT)
 Received: from localhost.localdomain ([27.7.51.1])
-        by smtp.gmail.com with ESMTPSA id z22-v6sm12044467pgv.24.2018.10.26.07.46.22
+        by smtp.gmail.com with ESMTPSA id z22-v6sm12044467pgv.24.2018.10.26.07.46.05
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 26 Oct 2018 07:46:27 -0700 (PDT)
+        Fri, 26 Oct 2018 07:46:10 -0700 (PDT)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
@@ -71,9 +71,9 @@ To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
 Cc:     Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v3 24/25] [DO NOT MERGE] arm64: dts: allwinner: bananapi-m64: Bananapi S070WV20-CT16 DSI panel
-Date:   Fri, 26 Oct 2018 20:13:43 +0530
-Message-Id: <20181026144344.27778-25-jagan@amarulasolutions.com>
+Subject: [PATCH v3 21/25] clk: sunxi-ng: a64: Add min and max rate for PLL_MIPI
+Date:   Fri, 26 Oct 2018 20:13:40 +0530
+Message-Id: <20181026144344.27778-22-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 In-Reply-To: <20181026144344.27778-1-jagan@amarulasolutions.com>
 References: <20181026144344.27778-1-jagan@amarulasolutions.com>
@@ -84,111 +84,37 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This patch add support for Bananapi S070WV20-CT16 DSI panel to
-BPI-M64 board.
-
-DSI panel connected via board DSI port with,
-- DC1SW as AVDD supply
-- DCDC1 as DVDD supply
-- PD6 gpio for reset pin
-- PD5 gpio for backlight enable pin
-- PD7 gpio for backlight vdd supply
+Manual noted to use PLL_MIPI rate 500MHz to 1.4GHz,
+but lowering the min rate by 300MHz can result proper
+working nkms divider with the help of desired dclock
+rate from panel driver.
 
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+Acked-by: Stephen Boyd <sboyd@kernel.org>
 Tested-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
-Changes for v2:
-- remove unit address 0
-- add nodes in alphabetical order
-- Use backlight instead of backlight_dsi
+Changes for v3:
+- collect Stephen Ack
 - add tested credit
 Changes for v2:
-- Use quadratic rule on pwm brightness
+- none
 
- .../dts/allwinner/sun50i-a64-bananapi-m64.dts | 42 +++++++++++++++++++
- 1 file changed, 42 insertions(+)
+ drivers/clk/sunxi-ng/ccu-sun50i-a64.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
-index ef1c90401bb2..6cb010e3bbd9 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
-@@ -45,6 +45,7 @@
- #include "sun50i-a64.dtsi"
- 
- #include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/pwm/pwm.h>
- 
- / {
- 	model = "BananaPi-M64";
-@@ -56,6 +57,15 @@
- 		serial1 = &uart1;
- 	};
- 
-+	backlight: backlight {
-+		compatible = "pwm-backlight";
-+		pwms = <&r_pwm 0 50000 PWM_POLARITY_INVERTED>;
-+		brightness-levels = <1 2 4 8 16 32 64 128 512>;
-+		default-brightness-level = <2>;
-+		enable-gpios = <&pio 3 5 GPIO_ACTIVE_HIGH>; /* LCD-BL-EN: PD5 */
-+		power-supply = <&reg_vdd_backlight>;
-+	};
-+
- 	chosen {
- 		stdout-path = "serial0:115200n8";
- 	};
-@@ -91,6 +101,15 @@
- 		};
- 	};
- 
-+	reg_vdd_backlight: vdd-backlight {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vdd-backlight";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		gpio = <&pio 3 7 GPIO_ACTIVE_HIGH>; /* LCD-PWR-EN: PD7 */
-+		enable-active-high;
-+	};
-+
- 	wifi_pwrseq: wifi_pwrseq {
- 		compatible = "mmc-pwrseq-simple";
- 		reset-gpios = <&r_pio 0 2 GPIO_ACTIVE_LOW>; /* PL2 */
-@@ -101,6 +120,23 @@
- 	status = "okay";
- };
- 
-+&dphy {
-+	status = "okay";
-+};
-+
-+&dsi {
-+	status = "okay";
-+
-+	panel@0 {
-+		compatible = "bananapi,s070wv20-ct16-icn6211";
-+		reg = <0>;
-+		avdd-supply = <&reg_dc1sw>;
-+		dvdd-supply = <&reg_dldo1>;
-+		reset-gpios = <&pio 3 6 GPIO_ACTIVE_HIGH>; /* LCD-RST: PD6 */
-+		backlight = <&backlight>;
-+	};
-+};
-+
- &ehci0 {
- 	status = "okay";
- };
-@@ -193,6 +229,12 @@
- 	status = "okay";
- };
- 
-+&r_pwm {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&r_pwm_pin>;
-+	status = "okay";
-+};
-+
- &r_rsb {
- 	status = "okay";
- 
+diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+index 019d67bf97c4..5a3a5b821f8b 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
++++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+@@ -167,6 +167,8 @@ static struct ccu_nkm pll_mipi_clk = {
+ 	.n		= _SUNXI_CCU_MULT(8, 4),
+ 	.k		= _SUNXI_CCU_MULT_MIN(4, 2, 2),
+ 	.m		= _SUNXI_CCU_DIV(0, 4),
++	.min_rate	= 300000000,		/* Actual rate is 500MHz */
++	.max_rate	= 1400000000UL,
+ 	.common		= {
+ 		.reg		= 0x040,
+ 		.hw.init	= CLK_HW_INIT("pll-mipi", "pll-video0",
 -- 
 2.18.0.321.gffc6fa0e3
 
