@@ -7,53 +7,53 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64ED3C6786E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B93ABECDE44
 	for <linux-clk@archiver.kernel.org>; Fri, 26 Oct 2018 14:46:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C5A220870
+	by mail.kernel.org (Postfix) with ESMTP id 82EDB2086B
 	for <linux-clk@archiver.kernel.org>; Fri, 26 Oct 2018 14:46:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="cc1ITzOq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C5A220870
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="Yf5VhCYN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82EDB2086B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727608AbeJZXYJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S1726829AbeJZXYJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Fri, 26 Oct 2018 19:24:09 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:41760 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728023AbeJZXWX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Oct 2018 19:22:23 -0400
-Received: by mail-pl1-f194.google.com with SMTP id p5-v6so614592plq.8
-        for <linux-clk@vger.kernel.org>; Fri, 26 Oct 2018 07:45:03 -0700 (PDT)
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:38917 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727704AbeJZXWq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Oct 2018 19:22:46 -0400
+Received: by mail-pg1-f196.google.com with SMTP id r9-v6so643613pgv.6
+        for <linux-clk@vger.kernel.org>; Fri, 26 Oct 2018 07:45:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=ygp+3SnprJhnbmLUgRdGawXUPjC/BTULTbCFbZ067cc=;
-        b=cc1ITzOq6renkXS39VEzpzI9qforSXwKRu53A3Jcd2aCV7FRFjv31cecPUaNvVxUoL
-         vb93mpt2cy4W48WhC3IIdA1VhwXjL11I7qAOmITITn5nM8BLtMby3xvQ4GVbMg1hPp4g
-         I71GuCE7HLRpkqcMqlpl34E9OTCvPCgTWLQhI=
+        bh=gStIo7NjdB+TGqHNblRTUUqjFPTn5lbRTmfmm273Bxc=;
+        b=Yf5VhCYNunBsPm3e5TIp1NrtyNuZROnCExwWWP+jnKIHm/8MdKp3HleEcNYZvbuCHY
+         ygswg13ZW87y3w5GYwhMds9ymeERXjpJSE/u8Xv/NyRUW6+QXOI5d1hn2GnZrMol6SUL
+         gs1ZU94O9ECeCVRNBgDdaKvljgbrQXRsCNsvI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ygp+3SnprJhnbmLUgRdGawXUPjC/BTULTbCFbZ067cc=;
-        b=rWFbqIOelYoajko397cZ1vHO6Ztq23pxsKJE1PT3fbttd279Mx1IAS2f4IZ0y5+VFQ
-         8AIQkMZecPv+OLEc5ZpOT1cJVb9+XDrBoGgGCgdHLe/MhuYnRh9wDnJEvFJ4+uv4ejln
-         TQZPR7DB5XC5/LEeq0D/2JwjYOMUdvIyFbrUchuw6Fayv7Cmlk2UYGTHvpOSQUZB9YUE
-         eg+o3Oy4CtMwDl/BDVd9WYKneVIaYkvgxVIPJ5VGbGyh3xlMeitV12NLdDt/SJZBHxjI
-         4Rgntyr+CUeW3P1Y5LhTeBaIUEk6h38ce1FCU9ynX7csskvo9Qa0l2U0aLz0JTyKa47U
-         +4iw==
-X-Gm-Message-State: AGRZ1gLc31dCHELacOUShNBs6VbuC/LjNX0oLihoObEgTnLjlS7XxuNQ
-        ohfavAQA1TTf1AERY2SVrI9ZUA==
-X-Google-Smtp-Source: AJdET5f7igh1BKVvkMSAzIy+VfsF+TBLbwiw5FU55gW9N+8bQAN/icqoyRMN9cvvaQDvln/5hpjAyw==
-X-Received: by 2002:a17:902:aa45:: with SMTP id c5-v6mr3889262plr.100.1540565103086;
-        Fri, 26 Oct 2018 07:45:03 -0700 (PDT)
+        bh=gStIo7NjdB+TGqHNblRTUUqjFPTn5lbRTmfmm273Bxc=;
+        b=HCowe27X7dO/Gwsyk8U2p+1wi4jksGRyOCQKU5ezQwhLp9LVwz4GUUp+bWySR4viVX
+         mypKA1Kjw0FBKmhpCLnayMZtgeqqmENvsFeKCs4iX12AEjUeTYOlreEOTSaQHM7/Ni42
+         jUstlaPkarTL237/h71fHbYqNBxB/sxsN8wj/mfKBgFzoVDnnuDiwxCyJ34PL7j3Cx1k
+         smzVNyN13T6PnCoDR+vmggJqnBFprXue/jeuVcrwZbu37wzI6DJwudn9JggNw06oi/b/
+         ZxJU9MK3m6ve++5MyFgsUJKlxubB2QWPgQPyBbS4yf4RFRtq26gUVIQV5rkSJY9tewQu
+         qxkQ==
+X-Gm-Message-State: AGRZ1gI9kH3ssdAyedMIYV935zFK5EfqjGsLG6O1dqwL3jlbsoac8TJx
+        bDqDeVfjAQzAyGWHwyoyNbH+zg==
+X-Google-Smtp-Source: AJdET5f2tELebo7pA+gv81OluwfXob4rp1XQeVgf2g02+EfXF3ZDPpSJJx7eZAew0I6nmSg/Yy8auA==
+X-Received: by 2002:a63:b218:: with SMTP id x24mr3608910pge.223.1540565125481;
+        Fri, 26 Oct 2018 07:45:25 -0700 (PDT)
 Received: from localhost.localdomain ([27.7.51.1])
-        by smtp.gmail.com with ESMTPSA id z22-v6sm12044467pgv.24.2018.10.26.07.44.57
+        by smtp.gmail.com with ESMTPSA id z22-v6sm12044467pgv.24.2018.10.26.07.45.20
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 26 Oct 2018 07:45:02 -0700 (PDT)
+        Fri, 26 Oct 2018 07:45:25 -0700 (PDT)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
@@ -71,9 +71,9 @@ To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
 Cc:     Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v3 09/25] drm/sun4i: sun6i_mipi_dsi: Refactor vertical video start delay
-Date:   Fri, 26 Oct 2018 20:13:28 +0530
-Message-Id: <20181026144344.27778-10-jagan@amarulasolutions.com>
+Subject: [PATCH v3 13/25] drm/sun4i: sun6i_mipi_dsi: Fix DSI hfp timing value
+Date:   Fri, 26 Oct 2018 20:13:32 +0530
+Message-Id: <20181026144344.27778-14-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 In-Reply-To: <20181026144344.27778-1-jagan@amarulasolutions.com>
 References: <20181026144344.27778-1-jagan@amarulasolutions.com>
@@ -84,57 +84,60 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Video start delay can be computed by subtracting total vertical
-timing with front porch timing and with adding 1 delay line for TCON.
+Current driver is calculating hfp maximum value by subtracting
+htotal with hsync_end which is front back value, but the
+hpp refers to front porch.
 
-BSP code form BPI-M64-bsp is computing video start delay as
-(in linux-sunxi/drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c)
+Front porch value is calculating by subtracting hsync_start with
+hdisplay as per drm_mode timings, and BSP code from BPI-M64-bsp
+is eventually following the same.
 
-u32 vfp = panel->lcd_vt - panel->lcd_y - panel->lcd_vbp;
-=> (panel->lcd_vt) - panel->lcd_y - (panel->lcd_vbp)
-=> (timmings->ver_front_porch + panel->lcd_vbp + panel->lcd_y)
-   - panel->lcd_y - (panel->lcd_vbp)
-=> timmings->ver_front_porch + panel->lcd_vbp + panel->lcd_y
-  			     - panel->lcd_y - panel->lcd_vbp
-=> timmings->ver_front_porch
+BPI-M64-bsp is computing hfp as
+(in drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c)
+dsi_hbp = (hbp-hspw)*dsi_pixel_bits[format]/8 - (4+2);
+dsi_hact = x * dsi_pixel_bits[format]/8;
+dsi_hblk = (ht-hspw)*dsi_pixel_bits[format]/8-(4+4+2);
+dsi_hfp = dsi_hblk - (4+dsi_hact+2) - (4+dsi_hbp+2);
 
-So, update the start delay computation accordingly.
+Example,
+u32 fmt = dsi_pixel_bits[format]/8;
+=> ((ht-hspw)*fmt - 10) - (6 + x * fmt) - (6 + (hbp-hspw)*fmt - 6)
+=> (ht - hspw - x - (hbp - hspw)) * fmt - 16
+=> (ht - x - hbp) * fmt - 16
+=> (ht - x - (timmings->hor_total_time - timmings->hor_front_porch - x)
+* fmt - 16
+=> (timmings->hor_total_time - x - timmings->hor_total_time +
+timmings->hor_front_porch + x) * fmt - 16
+=> timmings->hor_front_porch * fmt - 16
+
+So, update the DSI hfp timing accordingly.
+
+Tested on 2-lane, 4-lane MIPI-DSI LCD panels.
 
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 Tested-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
 Changes for v3:
-- Fixed proper commit message
-- add tested credit
+- new patch
 Changes for v2:
 - none
 
- drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-index 8d154cf2e6d6..6bece492b1f7 100644
+index cf42be1f1ba1..6584b51736a9 100644
 --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
 +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-@@ -358,7 +358,17 @@ static void sun6i_dsi_inst_init(struct sun6i_dsi *dsi,
- static u16 sun6i_dsi_get_video_start_delay(struct sun6i_dsi *dsi,
- 					   struct drm_display_mode *mode)
- {
--	return mode->vtotal - (mode->vsync_end - mode->vdisplay) + 1;
-+	u32 vfp = mode->vsync_start - mode->vdisplay;
-+	u32 start_delay;
-+
-+	start_delay = mode->vtotal - vfp + 1;
-+	if (start_delay > mode->vtotal)
-+		start_delay -= mode->vtotal;
-+
-+	if (!start_delay)
-+		start_delay = 1;
-+
-+	return start_delay;
- }
+@@ -490,7 +490,7 @@ static void sun6i_dsi_setup_timings(struct sun6i_dsi *dsi,
+ 	 */
+ #define HFP_PACKET_OVERHEAD	6
+ 	hfp = max((unsigned int)HFP_PACKET_OVERHEAD,
+-		  (mode->htotal - mode->hsync_end) * Bpp - HFP_PACKET_OVERHEAD);
++		  (mode->hsync_start - mode->hdisplay) * Bpp - HFP_PACKET_OVERHEAD);
  
- static void sun6i_dsi_setup_burst(struct sun6i_dsi *dsi,
+ 	/*
+ 	 * hblk seems to be the line + porches length.
 -- 
 2.18.0.321.gffc6fa0e3
 
