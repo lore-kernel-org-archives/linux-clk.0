@@ -2,485 +2,285 @@ Return-Path: <SRS0=HxJ1=NG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 371AAECDE46
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Oct 2018 03:29:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86132C6786E
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Oct 2018 07:33:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCE8A20854
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Oct 2018 03:29:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A41C2084D
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Oct 2018 07:33:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Dz1VTobS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCE8A20854
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="c54zYjnZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A41C2084D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726014AbeJZMFE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 26 Oct 2018 08:05:04 -0400
-Received: from mail-it1-f193.google.com ([209.85.166.193]:53906 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725867AbeJZMFE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Oct 2018 08:05:04 -0400
-Received: by mail-it1-f193.google.com with SMTP id q70-v6so26391itb.3
-        for <linux-clk@vger.kernel.org>; Thu, 25 Oct 2018 20:29:48 -0700 (PDT)
+        id S1726028AbeJZQJA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 26 Oct 2018 12:09:00 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:41430 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727020AbeJZQJA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Oct 2018 12:09:00 -0400
+Received: by mail-wr1-f67.google.com with SMTP id x12-v6so229581wrw.8
+        for <linux-clk@vger.kernel.org>; Fri, 26 Oct 2018 00:33:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=T5P+7+1/GuIEttNWY+yqGtmQVIjb7W31z/R2eGq/fi8=;
-        b=Dz1VTobSwRQWuHjJzYoXOptyIsD4HMp/fzdqL7UPfFsTtT+qrkzUHxbm72Gt+XtWlb
-         CQuCiEslDJBTX2nmG+f12Rqo3KvllAZLeCmO/DbaEOB+a1byhXr+sp8fX7/V+VCDHyHJ
-         1Q3KbueYU4r0jeL0e9sQTbdx78Xo/nluoI+ig=
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=G0c4ImGFwOpFqUMC6JMIP2LONF6WwO1eqQvkHOcXcxM=;
+        b=c54zYjnZylbSkPEezFinnl8SN6Q9AV5exogEeM3VhuXjOVhhaD19E36ifJCi5jhxU2
+         WbAubVE4JA+nCjKEVdMlDxW4Fp4rKKSGXJXvSJ2vm9N+TVMD3i0HmAlBkw1iRQYFEyCW
+         ajjHVVUjTNTa5bJ0S402qmGiB07dKks1+qx9E=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=T5P+7+1/GuIEttNWY+yqGtmQVIjb7W31z/R2eGq/fi8=;
-        b=S9P21b2XSVj0tPoPY1ZjmwFyLhLb3uAHTHvx3xNzEUCJ9GzO0Qg1JUGRUFesmrGGc0
-         D/qB90pK/1UxKd/xpMFQUaqbgChgfD2PXWiY0qlWqHZN4vGAEMgCMH9M+8DOpDkmStUq
-         dLSB2Q9pN79yXEQTT2I/vCekP/0OUKPAhPtYh39RAGB9+bUs6u9g0+gOIuhJ916fQ+7g
-         K1vhWVLb2rB6Ee5krggNIspq9Yzq34Jqj486Izs0OFL0/OVdblzc5oLSMZ+QF9Eeq03W
-         t5ftnufA9gb0n7XGwJ4Pkd5bsiBNH3VTiTiqi+jH9sKhpS2epnTCQFwJtUilOt6D0hPB
-         Ht1w==
-X-Gm-Message-State: AGRZ1gKZKohv/ua70aJMYGRdtqawkZKgHkYRPj1bA9ZW7xLsR8f6mmq6
-        tD17C6Y1tZUHg1lFvRBzMDq6pxwQMd+RNSTxgWRMWg==
-X-Google-Smtp-Source: AJdET5fxLbjpRW2lTfrJsOx5sHY1JXnB34KD9lEFM33SwiXVSlXx8jFhgTptUmDSkq/y+fiyALyQYH7+PLTNuCoaV94=
-X-Received: by 2002:a24:4169:: with SMTP id x102-v6mr2811404ita.128.1540524587984;
- Thu, 25 Oct 2018 20:29:47 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=G0c4ImGFwOpFqUMC6JMIP2LONF6WwO1eqQvkHOcXcxM=;
+        b=mt9sZYLfLL9n2W2nhnLNJo1+6JjM5G5B1ms9SG5kP4Txf1A5EKRF4m72fxCXeyJMeN
+         q80nUEw/rOjUQCkPBTWCnql1W2LIGadTpOzh+5Npj4rlab5FeQC6tffcnPyqU//bEt+A
+         yQERiB4JYa12pWKfIxpBvu6OHSHvX7fga64DPKwsXAKy89x/SWAG3jod6Ijkz4NOYOQ9
+         zJz4qWfBa5nbCvRvg6aUCx+1c9G8scKeAvey6YF3wEBkAtO9lDKl5DW4UuPdB9BwFCVP
+         HKfdjDJfbE9wsb/Hnb6gQD/7aNyl3Vg1QqO3UvMe5IuLfI+8sYza3eKYwn8VZPhyV7JV
+         mBrw==
+X-Gm-Message-State: AGRZ1gItSbssK7Y/rUBvDLzjqIu48uWZOQfuO4lzD4cyO7TEWiTnI+r8
+        Xi2rQB+LaaLabYRfVHIVN++r7g==
+X-Google-Smtp-Source: AJdET5fHbT+dAEWXYURPLl4QDRdZsyCSjSjssmPtOAIrABZhPeqBrczTb0hF6ND1Rh2Y1f7d4n74kQ==
+X-Received: by 2002:adf:f252:: with SMTP id b18-v6mr4476959wrp.313.1540539184915;
+        Fri, 26 Oct 2018 00:33:04 -0700 (PDT)
+Received: from dell ([2.31.167.182])
+        by smtp.gmail.com with ESMTPSA id l4-v6sm14324862wrb.92.2018.10.26.00.33.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 26 Oct 2018 00:33:03 -0700 (PDT)
+Date:   Fri, 26 Oct 2018 08:33:01 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc:     Richard Fitzgerald <rf@opensource.cirrus.com>,
+        mturquette@baylibre.com, sboyd@kernel.org, broonie@kernel.org,
+        linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        lgirdwood@gmail.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, patches@opensource.cirrus.com,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v2 2/5] mfd: lochnagar: Add support for the Cirrus Logic
+ Lochnagar
+Message-ID: <20181026073301.GJ4870@dell>
+References: <20181008132542.19775-1-ckeepax@opensource.cirrus.com>
+ <20181008132542.19775-2-ckeepax@opensource.cirrus.com>
+ <20181025074459.GF4939@dell>
+ <20181025082621.GD16508@imbe.wolfsonmicro.main>
+ <b2f85f45-cbe9-5a27-e9e8-ad28f2bd9bd6@opensource.cirrus.com>
+ <20181025114205.GC4870@dell>
+ <20181025124905.GF16508@imbe.wolfsonmicro.main>
 MIME-Version: 1.0
-References: <20181024013132.115907-1-dbasehore@chromium.org> <20181024013132.115907-4-dbasehore@chromium.org>
-In-Reply-To: <20181024013132.115907-4-dbasehore@chromium.org>
-From:   "dbasehore ." <dbasehore@chromium.org>
-Date:   Thu, 25 Oct 2018 20:29:35 -0700
-Message-ID: <CAGAzgsrMiXHQ9_UMsPp8Wch-3LLkwS+uJgYKOBr_NjNMtcvOaQ@mail.gmail.com>
-Subject: Re: [PATCH 3/6] clk: change rates via list iteration
-To:     linux-kernel <linux-kernel@vger.kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-doc@vger.kernel.org,
-        sboyd@kernel.org, Michael Turquette <mturquette@baylibre.com>,
-        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-        aisheng.dong@nxp.com, mchehab+samsung@kernel.org,
-        Jonathan Corbet <corbet@lwn.net>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181025124905.GF16508@imbe.wolfsonmicro.main>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Oct 23, 2018 at 6:31 PM Derek Basehore <dbasehore@chromium.org> wrote:
->
-> This changes the clk_set_rate code to use lists instead of recursion.
-> While making this change, also add error handling for clk_set_rate.
-> This means that errors in the set_rate/set_parent/set_rate_and_parent
-> functions will not longer be ignored. When an error occurs, the clk
-> rates and parents are reset, unless an error occurs here, in which we
-> bail and cross our fingers.
->
-> Signed-off-by: Derek Basehore <dbasehore@chromium.org>
-> ---
->  drivers/clk/clk.c | 225 +++++++++++++++++++++++++++++++---------------
->  1 file changed, 153 insertions(+), 72 deletions(-)
->
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 61de8ad3e4cf..1db44b4e46b0 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -42,6 +42,13 @@ static LIST_HEAD(clk_notifier_list);
->
->  /***    private data structures    ***/
->
-> +struct clk_change {
-> +       struct list_head        change_list;
-> +       unsigned long           rate;
-> +       struct clk_core         *core;
-> +       struct clk_core         *parent;
-> +};
-> +
->  struct clk_core {
->         const char              *name;
->         const struct clk_ops    *ops;
-> @@ -52,11 +59,9 @@ struct clk_core {
->         const char              **parent_names;
->         struct clk_core         **parents;
->         u8                      num_parents;
-> -       u8                      new_parent_index;
->         unsigned long           rate;
->         unsigned long           req_rate;
-> -       unsigned long           new_rate;
-> -       struct clk_core         *new_parent;
-> +       struct clk_change       change;
->         struct clk_core         *new_child;
->         unsigned long           flags;
->         bool                    orphan;
-> @@ -1719,20 +1724,53 @@ static int __clk_speculate_rates(struct clk_core *core,
->
->  static void clk_calc_subtree(struct clk_core *core)
->  {
-> -       struct clk_core *child;
-> +       LIST_HEAD(tmp_list);
->
-> -       hlist_for_each_entry(child, &core->children, child_node) {
-> -               child->new_rate = clk_recalc(child, core->new_rate);
-> -               clk_calc_subtree(child);
-> +       list_add(&core->change.change_list, &tmp_list);
-> +       while (!list_empty(&tmp_list)) {
-> +               struct clk_change *change = list_first_entry(&tmp_list,
-> +                               struct clk_change, change_list);
-> +               struct clk_core *tmp = change->core;
-> +               struct clk_core *child;
-> +
-> +               hlist_for_each_entry(child, &tmp->children, child_node) {
-> +                       child->change.rate = clk_recalc(child,
-> +                                       tmp->change.rate);
-> +                       list_add_tail(&child->change.change_list, &tmp_list);
-> +               }
-> +
-> +               list_del_init(&change->change_list);
-> +       }
-> +}
-> +
-> +static void clk_prepare_changes(struct list_head *change_list,
-> +                               struct clk_core *core)
-> +{
-> +       LIST_HEAD(tmp_list);
-> +
-> +       list_add(&core->change.change_list, &tmp_list);
-> +       while (!list_empty(&tmp_list)) {
-> +               struct clk_change *change = list_first_entry(&tmp_list,
-> +                               struct clk_change, change_list);
-> +               struct clk_core *tmp = change->core;
-> +               struct clk_core *child;
-> +
-> +               hlist_for_each_entry(child, &tmp->children, child_node)
-> +                       list_add_tail(&child->change.change_list, &tmp_list);
-> +
-> +               child = tmp->new_child;
-> +               if (child)
-> +                       list_add_tail(&child->change.change_list, &tmp_list);
-> +
-> +               list_move_tail(&tmp->change.change_list, change_list);
->         }
->  }
->
->  static void clk_set_change(struct clk_core *core, unsigned long new_rate,
-> -                          struct clk_core *new_parent, u8 p_index)
-> +                          struct clk_core *new_parent)
->  {
-> -       core->new_rate = new_rate;
-> -       core->new_parent = new_parent;
-> -       core->new_parent_index = p_index;
-> +       core->change.rate = new_rate;
-> +       core->change.parent = new_parent;
->         /* include clk in new parent's PRE_RATE_CHANGE notifications */
->         core->new_child = NULL;
->         if (new_parent && new_parent != core->parent)
-> @@ -1752,7 +1790,6 @@ static struct clk_core *clk_calc_new_rates(struct clk_core *core,
->         unsigned long new_rate;
->         unsigned long min_rate;
->         unsigned long max_rate;
-> -       int p_index = 0;
->         long ret;
->
->         /* sanity */
-> @@ -1788,14 +1825,13 @@ static struct clk_core *clk_calc_new_rates(struct clk_core *core,
->                         return NULL;
->         } else if (!parent || !(core->flags & CLK_SET_RATE_PARENT)) {
->                 /* pass-through clock without adjustable parent */
-> -               core->new_rate = core->rate;
->                 return NULL;
->         } else {
->                 /* pass-through clock with adjustable parent */
->                 top = clk_calc_new_rates(parent, rate);
-> -               new_rate = parent->new_rate;
-> +               new_rate = parent->change.rate;
->                 hlist_for_each_entry(child, &parent->children, child_node)
-> -                       child->new_rate = clk_recalc(child, new_rate);
-> +                       child->change.rate = clk_recalc(child, new_rate);
->                 goto out;
->         }
->
-> @@ -1807,25 +1843,16 @@ static struct clk_core *clk_calc_new_rates(struct clk_core *core,
->                 return NULL;
->         }
->
-> -       /* try finding the new parent index */
-> -       if (parent && core->num_parents > 1) {
-> -               p_index = clk_fetch_parent_index(core, parent);
-> -               if (p_index < 0) {
-> -                       pr_debug("%s: clk %s can not be parent of clk %s\n",
-> -                                __func__, parent->name, core->name);
-> -                       return NULL;
-> -               }
-> -       }
-> -
->         if ((core->flags & CLK_SET_RATE_PARENT) && parent &&
->             best_parent_rate != parent->rate) {
->                 top = clk_calc_new_rates(parent, best_parent_rate);
->                 hlist_for_each_entry(child, &parent->children, child_node)
-> -                       child->new_rate = clk_recalc(child, parent->new_rate);
-> +                       child->change.rate = clk_recalc(child,
-> +                                       parent->change.rate);
->         }
->
->  out:
-> -       clk_set_change(core, new_rate, parent, p_index);
-> +       clk_set_change(core, new_rate, parent);
->
->         return top;
->  }
-> @@ -1841,18 +1868,18 @@ static struct clk_core *clk_propagate_rate_change(struct clk_core *core,
->         struct clk_core *child, *tmp_clk, *fail_clk = NULL;
->         int ret = NOTIFY_DONE;
->
-> -       if (core->rate == core->new_rate)
-> +       if (core->rate == core->change.rate)
->                 return NULL;
->
->         if (core->notifier_count) {
-> -               ret = __clk_notify(core, event, core->rate, core->new_rate);
-> +               ret = __clk_notify(core, event, core->rate, core->change.rate);
->                 if (ret & NOTIFY_STOP_MASK)
->                         fail_clk = core;
->         }
->
->         hlist_for_each_entry(child, &core->children, child_node) {
->                 /* Skip children who will be reparented to another clock */
-> -               if (child->new_parent && child->new_parent != core)
-> +               if (child->change.parent && child->change.parent != core)
->                         continue;
->                 tmp_clk = clk_propagate_rate_change(child, event);
->                 if (tmp_clk)
-> @@ -1873,28 +1900,30 @@ static struct clk_core *clk_propagate_rate_change(struct clk_core *core,
->   * walk down a subtree and set the new rates notifying the rate
->   * change on the way
->   */
-> -static void clk_change_rate(struct clk_core *core)
-> +static int clk_change_rate(struct clk_change *change)
->  {
-> -       struct clk_core *child;
-> -       struct hlist_node *tmp;
-> +       struct clk_core *core = change->core;
->         unsigned long old_rate;
->         unsigned long best_parent_rate = 0;
->         bool skip_set_rate = false;
-> -       struct clk_core *old_parent;
-> +       struct clk_core *old_parent = NULL;
->         struct clk_core *parent = NULL;
-> +       int p_index;
-> +       int ret = 0;
->
->         old_rate = core->rate;
->
-> -       if (core->new_parent) {
-> -               parent = core->new_parent;
-> -               best_parent_rate = core->new_parent->rate;
-> +       if (change->parent) {
-> +               parent = change->parent;
-> +               best_parent_rate = parent->rate;
->         } else if (core->parent) {
->                 parent = core->parent;
-> -               best_parent_rate = core->parent->rate;
-> +               best_parent_rate = parent->rate;
->         }
->
-> -       if (clk_pm_runtime_get(core))
-> -               return;
-> +       ret = clk_pm_runtime_get(core);
-> +       if (ret)
-> +               return ret;
->
->         if (core->flags & CLK_SET_RATE_UNGATE) {
->                 unsigned long flags;
-> @@ -1905,35 +1934,55 @@ static void clk_change_rate(struct clk_core *core)
->                 clk_enable_unlock(flags);
->         }
->
-> -       if (core->new_parent && core->new_parent != core->parent) {
-> -               old_parent = __clk_set_parent_before(core, core->new_parent);
-> -               trace_clk_set_parent(core, core->new_parent);
-> +       if (core->flags & CLK_OPS_PARENT_ENABLE)
-> +               clk_core_prepare_enable(parent);
-> +
-> +       if (parent != core->parent) {
-> +               p_index = clk_fetch_parent_index(core, parent);
-> +               if (p_index < 0) {
-> +                       pr_debug("%s: clk %s can not be parent of clk %s\n",
-> +                                __func__, parent->name, core->name);
-> +                       ret = p_index;
-> +                       goto out;
-> +               }
-> +               old_parent = __clk_set_parent_before(core, parent);
-> +
-> +               trace_clk_set_parent(core, change->parent);
->
->                 if (core->ops->set_rate_and_parent) {
->                         skip_set_rate = true;
-> -                       core->ops->set_rate_and_parent(core->hw, core->new_rate,
-> +                       ret = core->ops->set_rate_and_parent(core->hw,
-> +                                       change->rate,
->                                         best_parent_rate,
-> -                                       core->new_parent_index);
-> +                                       p_index);
->                 } else if (core->ops->set_parent) {
-> -                       core->ops->set_parent(core->hw, core->new_parent_index);
-> +                       ret = core->ops->set_parent(core->hw, p_index);
->                 }
->
-> -               trace_clk_set_parent_complete(core, core->new_parent);
-> -               __clk_set_parent_after(core, core->new_parent, old_parent);
-> -       }
-> +               trace_clk_set_parent_complete(core, change->parent);
-> +               __clk_set_parent_after(core, change->parent, old_parent);
-> +               if (ret)
-> +                       goto out;
+On Thu, 25 Oct 2018, Charles Keepax wrote:
 
-Need to handle the set_parent op failing here. __clk_set_parent_before
-needs to be undone, and we need to not call __clk_set_parent_after
-with the failed state.
+> On Thu, Oct 25, 2018 at 12:42:05PM +0100, Lee Jones wrote:
+> > On Thu, 25 Oct 2018, Richard Fitzgerald wrote:
+> > > On 25/10/18 09:26, Charles Keepax wrote:
+> > > > On Thu, Oct 25, 2018 at 08:44:59AM +0100, Lee Jones wrote:
+> > > > > On Mon, 08 Oct 2018, Charles Keepax wrote:
+> > > > > > From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+> > > > > > +static const struct reg_default lochnagar1_reg_defaults[] = {
+> > > > > > +	{ LOCHNAGAR1_CDC_AIF1_SEL,    0x00 },
+> > > > > > +	{ LOCHNAGAR1_CDC_AIF2_SEL,    0x00 },
+> > > > ...
+> > > > > > +	{ LOCHNAGAR1_LED1,            0x00 },
+> > > > > > +	{ LOCHNAGAR1_LED2,            0x00 },
+> > > > > > +	{ LOCHNAGAR1_I2C_CTRL,        0x01 },
+> > > > > > +};
+> > > > > 
+> > > > > Why do you need to specify each register value?
+> > > > 
+> > > > The way regmap operates it needs to know the starting value of
+> > > > each register. It will use this to initialise the cache and to
+> > > > determine if writes need to actually update the hardware on
+> > > > cache_syncs after devices have been powered back up.
+> > 
+> > That sounds crazy to me.  Some devices have thousands of registers.
+> > At a line per register, that's thousands of lines of code/cruft.
+> > Especially seeing as most (sane?) register layouts I've seen default
+> > to zero.  Then default values can be changed at the leisure of the
+> > s/w.
+> > 
+> > Even if it is absolutely critical that you have to supply these to
+> > Regmap up-front, instead of on first use/read, why can't you just
+> > supply the oddball non-zero ones?
+> 
+> I don't think you can sensibly get away with not supplying
+> default values. You say most sane register layouts have zero
+> values, alas again you may not be the biggest fan of our hardware
+> guys. The Lochnagar actually does have mostly zero defaults but
+> that is very much not generally the case with our hardware.
+> 
+> One of the main aims of regmap is to avoid bus accesses when
+> possible but I guess on the first write/read to any register you
+> could insert a read to pull the default, although I do worry
+> there is some corner case/flexibility that is going to cause
+> headaches later.
 
->
-> -       if (core->flags & CLK_OPS_PARENT_ENABLE)
-> -               clk_core_prepare_enable(parent);
-> +       }
->
-> -       trace_clk_set_rate(core, core->new_rate);
-> +       trace_clk_set_rate(core, change->rate);
->
->         if (!skip_set_rate && core->ops->set_rate)
-> -               core->ops->set_rate(core->hw, core->new_rate, best_parent_rate);
-> +               ret = core->ops->set_rate(core->hw, change->rate,
-> +                               best_parent_rate);
->
-> -       trace_clk_set_rate_complete(core, core->new_rate);
-> +       trace_clk_set_rate_complete(core, change->rate);
->
->         core->rate = clk_recalc(core, best_parent_rate);
->
-> +out:
-> +       if (core->flags & CLK_OPS_PARENT_ENABLE)
-> +               clk_core_disable_unprepare(parent);
-> +
-> +       if (core->notifier_count && old_rate != core->rate)
-> +               __clk_notify(core, POST_RATE_CHANGE, old_rate, core->rate);
-> +
->         if (core->flags & CLK_SET_RATE_UNGATE) {
->                 unsigned long flags;
->
-> @@ -1943,31 +1992,44 @@ static void clk_change_rate(struct clk_core *core)
->                 clk_core_unprepare(core);
->         }
->
-> -       if (core->flags & CLK_OPS_PARENT_ENABLE)
-> -               clk_core_disable_unprepare(parent);
-> -
-> -       if (core->notifier_count && old_rate != core->rate)
-> -               __clk_notify(core, POST_RATE_CHANGE, old_rate, core->rate);
-> +       clk_pm_runtime_put(core);
->
->         if (core->flags & CLK_RECALC_NEW_RATES)
-> -               (void)clk_calc_new_rates(core, core->new_rate);
-> +               (void)clk_calc_new_rates(core, change->rate);
->
->         /*
-> -        * Use safe iteration, as change_rate can actually swap parents
-> -        * for certain clock types.
-> +        * Keep track of old parent and requested rate in case we have
-> +        * to undo the change due to an error.
->          */
-> -       hlist_for_each_entry_safe(child, tmp, &core->children, child_node) {
-> -               /* Skip children who will be reparented to another clock */
-> -               if (child->new_parent && child->new_parent != core)
-> -                       continue;
-> -               clk_change_rate(child);
-> +       change->parent = old_parent;
-> +       change->rate = old_rate;
-> +       return ret;
-> +}
-> +
-> +static int clk_change_rates(struct list_head *list)
-> +{
-> +       struct clk_change *change, *tmp;
-> +       int ret = 0;
-> +
-> +       list_for_each_entry(change, list, change_list) {
-> +               ret = clk_change_rate(change);
-> +               if (ret)
-> +                       goto err;
->         }
->
-> -       /* handle the new child who might not be in core->children yet */
-> -       if (core->new_child)
-> -               clk_change_rate(core->new_child);
-> +       return 0;
-> +err:
-> +       list_for_each_entry_safe_continue(change, tmp, list, change_list)
-> +               list_del_init(&change->change_list);
->
-> -       clk_pm_runtime_put(core);
-> +       list_for_each_entry(change, list, change_list) {
-> +               /* Give up. Driver might want to shutdown/reboot. */
-> +               ret = clk_change_rate(change);
-> +               if (WARN_ON(ret))
-> +                       return ret;
-> +       }
-> +
-> +       return ret;
->  }
->
->  static unsigned long clk_core_req_round_rate_nolock(struct clk_core *core,
-> @@ -2001,7 +2063,9 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
->                                     unsigned long req_rate)
->  {
->         struct clk_core *top, *fail_clk;
-> +       struct clk_change *change, *tmp;
->         unsigned long rate;
-> +       LIST_HEAD(changes);
->         int ret = 0;
->
->         if (!core)
-> @@ -2028,6 +2092,9 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
->
->         clk_calc_subtree(core);
->
-> +       /* Construct the list of changes */
-> +       clk_prepare_changes(&changes, top);
-> +
->         /* notify that we are about to change rates */
->         fail_clk = clk_propagate_rate_change(top, PRE_RATE_CHANGE);
->         if (fail_clk) {
-> @@ -2039,7 +2106,19 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
->         }
->
->         /* change the rates */
-> -       clk_change_rate(top);
-> +       ret = clk_change_rates(&changes);
-> +       list_for_each_entry_safe(change, tmp, &changes, change_list) {
-> +               change->rate = 0;
-> +               change->parent = NULL;
-> +               list_del_init(&change->change_list);
-> +       }
-> +
-> +       if (ret) {
-> +               pr_debug("%s: failed to set %s rate via top clk %s\n", __func__,
-> +                               core->name, top->name);
-> +               clk_propagate_rate_change(top, ABORT_RATE_CHANGE);
-> +               goto err;
-> +       }
->
->         core->req_rate = req_rate;
->  err:
-> @@ -3306,6 +3385,8 @@ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
->         core->max_rate = ULONG_MAX;
->         INIT_LIST_HEAD(&core->prepare_list);
->         INIT_LIST_HEAD(&core->enable_list);
-> +       INIT_LIST_HEAD(&core->change.change_list);
-> +       core->change.core = core;
->         hw->core = core;
->
->         /* allocate local copy in case parent_names is __initdata */
-> --
-> 2.19.1.568.g152ad8e336-goog
->
+This is basically what I am suggesting.
+
+> I am not sure that dynamically constructing the defaults would be
+> possible from a table of non-zero ones, or at least doing so would
+> probably require a fairly major change to the way registers are
+> specified since with the current callback based approach and a
+> sparse regmap you could need to iterate over billions of
+> potential registers to build the table.
+
+What if a valid register range was provided with only the non-zero
+values?
+
+> > > > > > +static bool lochnagar2_readable_register(struct device *dev, unsigned int reg)
+> > > > > > +{
+> > > > > > +	switch (reg) {
+> > > > > > +	case LOCHNAGAR_SOFTWARE_RESET:
+> > > > > > +	case LOCHNAGAR_FIRMWARE_ID1:
+> > > > > > +	case LOCHNAGAR_FIRMWARE_ID2:
+> > > > ...
+> > > > > > +	case LOCHNAGAR2_MICVDD_CTRL2:
+> > > > > > +	case LOCHNAGAR2_VDDCORE_CDC_CTRL1:
+> > > > > > +	case LOCHNAGAR2_VDDCORE_CDC_CTRL2:
+> > > > > > +	case LOCHNAGAR2_SOUNDCARD_AIF_CTRL:
+> > > > > > +		return true;
+> > > > > > +	default:
+> > > > > > +		return false;
+> > > > > > +	}
+> > > > > > +}
+> > > > > > +
+> > > > > > +static bool lochnagar2_volatile_register(struct device *dev, unsigned int reg)
+> > > > > > +{
+> > > > > > +	switch (reg) {
+> > > > > > +	case LOCHNAGAR2_GPIO_CHANNEL1:
+> > > > > > +	case LOCHNAGAR2_GPIO_CHANNEL2:
+> > > > > > +	case LOCHNAGAR2_GPIO_CHANNEL3:
+> > > > ...
+> > > > > > +	case LOCHNAGAR2_GPIO_CHANNEL13:
+> > > > > > +	case LOCHNAGAR2_GPIO_CHANNEL14:
+> > > > > > +	case LOCHNAGAR2_GPIO_CHANNEL15:
+> > > > > > +	case LOCHNAGAR2_GPIO_CHANNEL16:
+> > > > > > +	case LOCHNAGAR2_ANALOGUE_PATH_CTRL1:
+> > > > > > +		return true;
+> > > > > > +	default:
+> > > > > > +		return false;
+> > > > > > +	}
+> > > > > > +}
+> > > > > 
+> > > > > This is getting silly now.  Can't you use ranges?
+> > > > 
+> > > > I can if you feel strongly about it? But it does make the drivers
+> > > > much more error prone and significantly more annoying to work
+> > > > with. I find it is really common to be checking that a register
+> > > > is handled correctly through the regmap callbacks and it is nice
+> > > > to just be able to grep for that. Obviously this won't work for
+> > > > all devices/regmaps as well since many will not have consecutive
+> > > > addresses on registers, for example having multi-byte registers
+> > > > that are byte addressed.
+> > > > 
+> > > > How far would you like me to take this as well? Is it just the
+> > > > numeric registers you want ranges for ie.
+> > > > 
+> > > > LOCHNAGAR2_GPIO_CHANNEL1...LOCHNAGAR_GPIO_CHANNEL16
+> > > > 
+> > > > Or is it all consecutive registers even if they are unrelated
+> > > > (exmaple is probably not accurate as I haven't checked the
+> > > > addresses):
+> > > > 
+> > > > LOCHNAGAR2_GPIO_CHANNEL1...LOCHNAGAR2_ANALOGURE_PATH_CTRL1
+> > > > 
+> > > > I don't mind the first at all but the second is getting really
+> > > > horrible in my opinion.
+> > 
+> > My issue is that we have one end of the scale, where contributors are
+> > submitting patches, trying to remove a line of code here, a line of
+> > code there, then there are patches like this one which describe the
+> > initial value, readable status, writable status and volatile status of
+> > each and every register.
+> 
+> Removing code is one thing but I would argue that data tables are
+> somewhat less of a concern. I guess kernel size for very small
+> systems but then is someone going to be using Lochnagar on one of
+> those.
+> 
+> > The API is obscene and needs a re-work IMHO.
+> > 
+> > I really hope we do not really have to list every register, but *if we
+> > absolutely must*, let's do it once:
+> > 
+> >   REG_ADDRESS, WRV, INITIAL_VALUE
+> 
+> It might be possible to combine all these into one thing,
+> although again its a fairly major core change.
+
+I'm not suggesting that this will be solved overnight.
+
+> > > > > > +static const struct reg_default lochnagar2_reg_defaults[] = {
+> > > > > > +	{ LOCHNAGAR2_CDC_AIF1_CTRL,         0x0000 },
+> > > > > > +	{ LOCHNAGAR2_CDC_AIF2_CTRL,         0x0000 },
+> > > > > > +	{ LOCHNAGAR2_CDC_AIF3_CTRL,         0x0000 },
+> > > > > > +	{ LOCHNAGAR2_DSP_AIF1_CTRL,         0x0000 },
+> > > > ...
+> > > > > > +	{ LOCHNAGAR2_MINICARD_RESETS,       0x0000 },
+> > > > > > +	{ LOCHNAGAR2_ANALOGUE_PATH_CTRL2,   0x0000 },
+> > > > > > +	{ LOCHNAGAR2_COMMS_CTRL4,           0x0001 },
+> > > > > > +	{ LOCHNAGAR2_SPDIF_CTRL,            0x0008 },
+> > > > > > +	{ LOCHNAGAR2_POWER_CTRL,            0x0001 },
+> > > > > > +	{ LOCHNAGAR2_SOUNDCARD_AIF_CTRL,    0x0000 },
+> > > > > > +};
+> > > > > 
+> > > > > OMG!  Vile, vile vile!
+> > > > 
+> > > > I really feel this isn't the driver you are objecting to as such
+> > > > but the way regmap operates and also we seem to always have the same
+> > > > discussions around regmap every time we push a driver.
+> > 
+> > Absolutely.  I didn't like it before.  I like it even less now.
+> 
+> I guess the question from my side becomes do you want to block
+> this driver pending on major refactoring to regmap? I will have a
+> think about what I can do but its going to affect a LOT of drivers.
+
+No one is NACKing this driver.
+
+We're using it as a vehicle for discussion.
+
+> > > > > > +	ret = devm_of_platform_populate(dev);
+> > > > > > +	if (ret < 0) {
+> > > > > > +		dev_err(dev, "Failed to populate child nodes: %d\n", ret);
+> > > > > > +		return ret;
+> > > > > > +	}
+> > > > > 
+> > > > > Please do not mix OF and MFD device registration strategies.
+> > > > > 
+> > > > > Pick one and register all devices through your chosen method.
+> > > > 
+> > > > Hmmm we use this to do things like register some fixed regulators
+> > > > and clocks that don't need any control but do need to be associated
+> > > > with the device. I could do that through the MFD although it is in
+> > > > direct conflict with the feedback on the clock patches I received
+> > > > to move the fixed clocks into devicetree rather than registering
+> > > > them manually (see v2 of the patch chain).
+> > 
+> > The I suggest moving everything to DT.
+> 
+> I will have a look and see what that would look like.
+
+Thanks.
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
