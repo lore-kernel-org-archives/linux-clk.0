@@ -2,491 +2,264 @@ Return-Path: <SRS0=HxJ1=NG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIM_ADSP_ALL,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34A42C6786E
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Oct 2018 16:22:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33E9CECDE44
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Oct 2018 20:32:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB7B620665
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Oct 2018 16:22:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D99FD207DD
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Oct 2018 20:32:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=plaes.org header.i=@plaes.org header.b="bcGaZCJZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB7B620665
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=plaes.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="EORurmrc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D99FD207DD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727418AbeJ0A76 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 26 Oct 2018 20:59:58 -0400
-Received: from plaes.org ([188.166.43.21]:57838 "EHLO plaes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727240AbeJ0A75 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 26 Oct 2018 20:59:57 -0400
-X-Greylist: delayed 532 seconds by postgrey-1.27 at vger.kernel.org; Fri, 26 Oct 2018 20:59:55 EDT
-Received: from plaes.org (localhost [127.0.0.1])
-        by plaes.org (Postfix) with ESMTPSA id 260244011A;
-        Fri, 26 Oct 2018 16:13:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=plaes.org; s=mail;
-        t=1540570405; bh=1mo3kqSxTjC6rPYQaoc78xe5NzatoQn/XoH2Q/kKxnE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=bcGaZCJZbwrhXMVuO0Iq7thgeGJ03FB34y3ZWPTdahS0T+QrYGmd83RqvFvYYtWa9
-         gmG3CKuLSW3C+u/Il7JaARCwASTp3S4+eKXkYQ1zgffVxaQHJl7bpbx/n2LjgM585e
-         9zU/1bsiKY8ZuzMjx2r0wByScXO6VbXtfj54+RAQkvH+ykrGhm9ml1wYWwJ+dpWZlG
-         dD1nK2zJlJe1ZeXowm/YBGxwqWlizCTXQgwqr7wcHX0FB4OS0KvgkfyhzQfX+7aDSW
-         zXrMsgnMdn7tB9Fh8lpd+2Fl5ZvsuJbUR3jyVSnBRUte8q03X6as8s3jrfPFDcfZxG
-         YxmGoBJIuYUdw==
-Date:   Fri, 26 Oct 2018 16:13:24 +0000
-From:   Priit Laes <plaes@plaes.org>
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [linux-sunxi] [PATCH v3 20/25] drm/panel: Add Techstar TS8550B
- MIPI-DSI LCD panel
-Message-ID: <20181026161324.qbpcpkpwyixi7juk@plaes.org>
-References: <20181026144344.27778-1-jagan@amarulasolutions.com>
- <20181026144344.27778-21-jagan@amarulasolutions.com>
+        id S1728012AbeJ0FK7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 27 Oct 2018 01:10:59 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35452 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726730AbeJ0FK7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 27 Oct 2018 01:10:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=QWb+3x/U+n8WXWQoSAO7xOhrKRdYbcAlsCHRQsVRf/M=; b=EORurmrcTHXtI8GGhGNjwQzBP
+        YujIoeX3pEoK5Mbhp30kXPU6RMotdFcaRbgG+XE++pL2iuS1184afoyQTAN7aJYWKZ4SWEuv6ww/F
+        0/xmJdxSqGszLNQ7tuxZTh1rM0gEErf+9V5BiHAQEnazcOyQkf4V1P2qXN3fiqLoOQHLA=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gG8mO-00043u-Bp; Fri, 26 Oct 2018 20:32:24 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 540F91122667; Fri, 26 Oct 2018 21:32:23 +0100 (BST)
+Date:   Fri, 26 Oct 2018 21:32:23 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Richard Fitzgerald <rf@opensource.cirrus.com>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        lgirdwood@gmail.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, patches@opensource.cirrus.com,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v2 2/5] mfd: lochnagar: Add support for the Cirrus Logic
+ Lochnagar
+Message-ID: <20181026203223.GC27137@sirena.org.uk>
+References: <20181008132542.19775-1-ckeepax@opensource.cirrus.com>
+ <20181008132542.19775-2-ckeepax@opensource.cirrus.com>
+ <20181025074459.GF4939@dell>
+ <20181025082621.GD16508@imbe.wolfsonmicro.main>
+ <b2f85f45-cbe9-5a27-e9e8-ad28f2bd9bd6@opensource.cirrus.com>
+ <20181025114205.GC4870@dell>
+ <33ea391c-aa6e-2709-6faf-4905e84229e4@opensource.cirrus.com>
+ <20181026080051.GK4870@dell>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="2/5bycvrmDh4d1IB"
 Content-Disposition: inline
-In-Reply-To: <20181026144344.27778-21-jagan@amarulasolutions.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20181026080051.GK4870@dell>
+X-Cookie: Kin, n.:
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Oct 26, 2018 at 08:13:39PM +0530, Jagan Teki wrote:
-> Techstar TS8550B MIPI DSI panel is 480x854, 2-lane MIPI DSI
-> LCD panel. Add panel driver for it.
-> 
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> Tested-by: Jagan Teki <jagan@amarulasolutions.com>
-> ---
-> Changes for v3:
-> - new patch
-> Changes for v2:
-> - none
-> 
->  drivers/gpu/drm/panel/Kconfig                 |   9 +
->  drivers/gpu/drm/panel/Makefile                |   1 +
->  .../gpu/drm/panel/panel-techstar-ts8550b.c    | 346 ++++++++++++++++++
->  3 files changed, 356 insertions(+)
->  create mode 100644 drivers/gpu/drm/panel/panel-techstar-ts8550b.c
-> 
-> diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
-> index 20b88c275421..d0d4e60f5153 100644
-> --- a/drivers/gpu/drm/panel/Kconfig
-> +++ b/drivers/gpu/drm/panel/Kconfig
-> @@ -195,4 +195,13 @@ config DRM_PANEL_SITRONIX_ST7789V
->  	  Say Y here if you want to enable support for the Sitronix
->  	  ST7789V controller for 240x320 LCD panels
->  
-> +config DRM_PANEL_TECHSTAR_TS8550B
-> +	tristate "Techstar TS8550B MIPI-DSI panel driver"
-> +	depends on OF
-> +	depends on DRM_MIPI_DSI
-> +	depends on BACKLIGHT_CLASS_DEVICE
-> +	help
-> +	  Say Y if you want to enable support for panels based on the
-> +	  Techstar TS8550B MIPI-DSI interface.
-> +
->  endmenu
-> diff --git a/drivers/gpu/drm/panel/Makefile b/drivers/gpu/drm/panel/Makefile
-> index 04696bb85218..88011f06edb8 100644
-> --- a/drivers/gpu/drm/panel/Makefile
-> +++ b/drivers/gpu/drm/panel/Makefile
-> @@ -20,3 +20,4 @@ obj-$(CONFIG_DRM_PANEL_SEIKO_43WVF1G) += panel-seiko-43wvf1g.o
->  obj-$(CONFIG_DRM_PANEL_SHARP_LQ101R1SX01) += panel-sharp-lq101r1sx01.o
->  obj-$(CONFIG_DRM_PANEL_SHARP_LS043T1LE01) += panel-sharp-ls043t1le01.o
->  obj-$(CONFIG_DRM_PANEL_SITRONIX_ST7789V) += panel-sitronix-st7789v.o
-> +obj-$(CONFIG_DRM_PANEL_TECHSTAR_TS8550B) += panel-techstar-ts8550b.o
-> diff --git a/drivers/gpu/drm/panel/panel-techstar-ts8550b.c b/drivers/gpu/drm/panel/panel-techstar-ts8550b.c
-> new file mode 100644
-> index 000000000000..8baca71595a7
-> --- /dev/null
-> +++ b/drivers/gpu/drm/panel/panel-techstar-ts8550b.c
-> @@ -0,0 +1,346 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * Copyright (C) 2019, Amarula Solutions.
-> + * Author: Jagan Teki <jagan@amarulasolutions.com>
-> + */
-> +
-> +#include <linux/backlight.h>
-> +#include <linux/delay.h>
-> +#include <linux/device.h>
-> +#include <linux/err.h>
-> +#include <linux/errno.h>
-> +#include <linux/fb.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +
-> +#include <linux/gpio/consumer.h>
-> +#include <linux/regulator/consumer.h>
-> +
-> +#include <drm/drm_mipi_dsi.h>
-> +#include <drm/drm_modes.h>
-> +#include <drm/drm_panel.h>
-> +
-> +#include <video/mipi_display.h>
-> +
-> +struct ts8550b {
-> +	struct drm_panel	panel;
-> +	struct mipi_dsi_device	*dsi;
-> +
-> +	struct backlight_device *backlight;
-> +	struct regulator	*dvdd;
-> +	struct regulator	*avdd;
-> +	struct gpio_desc	*reset;
-> +
-> +	bool			is_enabled;
-> +	bool			is_prepared;
-> +};
-> +
-> +static inline struct ts8550b *panel_to_ts8550b(struct drm_panel *panel)
-> +{
-> +	return container_of(panel, struct ts8550b, panel);
-> +}
-> +
-> +static inline int ts8550b_dcs_write_seq(struct ts8550b *ctx, const void *seq,
-> +					size_t len)
-> +{
-> +	return mipi_dsi_dcs_write_buffer(ctx->dsi, seq, len);
-> +};
-> +
-> +#define ts8550b_dcs_write_seq_static(ctx, seq...)		\
-> +	({							\
-> +		static const u8 d[] = { seq };			\
-> +		ts8550b_dcs_write_seq(ctx, d, ARRAY_SIZE(d));	\
-> +	})
-> +
-> +static void ts8550b_init_sequence(struct ts8550b *ctx)
 
-This seems to be pretty "standard" MIPI-based display, utilizing
-bunch of manufacturer-specific commands during init sequence.
+--2/5bycvrmDh4d1IB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Standard MIPI commands fall between 0x00..0xAF and are defined in <video/mipi.h>
+On Fri, Oct 26, 2018 at 09:00:51AM +0100, Lee Jones wrote:
+> On Thu, 25 Oct 2018, Richard Fitzgerald wrote:
 
-> +{
-> +	ts8550b_dcs_write_seq_static(ctx, 0x01, 0x00);
+> > Largely the point. How long do you think it would take to populate the
+> > cache if you had to read thousands of registers over I2C? Boot time matters.
+> > Deferring it until it's touched can create various unpredictable and
+> > annoying behaviour later, for example if a lot of cache entries are
+> > written while the chip is asleep and the initial values weren't known
+> > then a suspend/resume cannot filter out writes that are setting the
+> > register to its default (which regmap does to avoid unnecessary bus traffic).
+> > So the resume could have a large amount of unnecessary overhead writing
+> > registers to a value they already have or reading the initial values of
+> > those registers.
 
+> One more register read when initially writing to a register and one
+> more when resuming doesn't sound like a vast amount of over-head.
 
-MIPI_DCS_SOFT_RESET
+Especially on resume extra register I/O really adds up - people really
+care how long their system takes to come back from suspend, and how
+quickly individual devices come back.  For devices that are on slow
+buses like I2C this means that every register operation counts.  Boot
+can be similarly pressured of course, though it's a less frequent issue
+for these devices.
 
-> +	msleep(200);
-> +	ts8550b_dcs_write_seq_static(ctx, 0xFF, 0x77, 0x01, 0x00, 0x00, 0x11);
-> +	ts8550b_dcs_write_seq_static(ctx, 0xD1, 0x11);
-> +	ts8550b_dcs_write_seq_static(ctx, 0x11, 0x00);
+> Not sure what you think I was suggesting above.  If the default values
+> are actually non-zero that's fine - we'll either leave them as they
+> are (if they are never changed, in which case Regmap doesn't even need
+> to know about them), document only those (non-zero) ones or wait until
+> they are read for the first time, then populate the cache.
 
-MIPI_DCS_EXIT_SLEEP_MODE
+You can't assume that the device is in power on reset state unless the
+driver reset it itself which may or may not be a good idea or even
+possible, sometimes it's what you want but at other times even if it's
+possible it can cause user visible disruption during the boot process
+which is undesirable.
 
-> +	msleep(200);
-> +	ts8550b_dcs_write_seq_static(ctx, 0xFF, 0x77, 0x01, 0x00, 0x00, 0x10);
-> +	ts8550b_dcs_write_seq_static(ctx, 0xC0, 0xE9, 0x03);
-> +	ts8550b_dcs_write_seq_static(ctx, 0xC1, 0x12, 0x02);
-> +	ts8550b_dcs_write_seq_static(ctx, 0xC2, 0x07, 0x06);
-> +	ts8550b_dcs_write_seq_static(ctx, 0xB0, 0x00, 0x0E, 0x15, 0x0F, 0x11,
-> +				     0x08, 0x08, 0x08, 0x08, 0x23, 0x04, 0x13,
-> +				     0x12, 0x2B, 0x34, 0x1F);
-> +	ts8550b_dcs_write_seq_static(ctx, 0xB1, 0x00, 0x0E, 0x95, 0x0F, 0x13,
-> +				     0x07, 0x09, 0x08, 0x08, 0x22, 0x04, 0x10,
-> +				     0x0E, 0x2C, 0x34, 0x1F);
-> +	ts8550b_dcs_write_seq_static(ctx, 0xFF, 0x77, 0x01, 0x00, 0x00, 0x11);
-> +	ts8550b_dcs_write_seq_static(ctx, 0xB0, 0x45);
-> +	ts8550b_dcs_write_seq_static(ctx, 0xB1, 0x13);
-> +	ts8550b_dcs_write_seq_static(ctx, 0xB2, 0x07);
-> +	ts8550b_dcs_write_seq_static(ctx, 0xB3, 0x80);
-> +	ts8550b_dcs_write_seq_static(ctx, 0xB5, 0x47);
-> +	ts8550b_dcs_write_seq_static(ctx, 0xB7, 0x85);
-> +	ts8550b_dcs_write_seq_static(ctx, 0xB8, 0x20);
-> +	ts8550b_dcs_write_seq_static(ctx, 0xB9, 0x11);
-> +	ts8550b_dcs_write_seq_static(ctx, 0xC1, 0x78);
-> +	ts8550b_dcs_write_seq_static(ctx, 0xC2, 0x78);
-> +	ts8550b_dcs_write_seq_static(ctx, 0xD0, 0x88);
-> +	msleep(100);
-> +	ts8550b_dcs_write_seq_static(ctx, 0xE0, 0x00, 0x00, 0x02);
-> +	ts8550b_dcs_write_seq_static(ctx, 0xE1, 0x0B, 0x00, 0x0D, 0x00, 0x0C,
-> +				     0x00, 0x0E, 0x00, 0x00, 0x44, 0x44);
-> +	ts8550b_dcs_write_seq_static(ctx, 0xE2, 0x33, 0x33, 0x44, 0x44, 0x64,
-> +				     0x00, 0x66, 0x00, 0x65, 0x00, 0x67, 0x00,
-> +				     0x00);
-> +	ts8550b_dcs_write_seq_static(ctx, 0xE3, 0x00, 0x00, 0x33, 0x33);
-> +	ts8550b_dcs_write_seq_static(ctx, 0xE4, 0x44, 0x44);
-> +	ts8550b_dcs_write_seq_static(ctx, 0xE5, 0x0C, 0x78, 0x3C, 0xA0, 0x0E,
-> +				     0x78, 0x3C, 0xA0, 0x10, 0x78, 0x3C, 0xA0,
-> +				     0x12, 0x78, 0x3C, 0xA0);
-> +	ts8550b_dcs_write_seq_static(ctx, 0xE6, 0x00, 0x00, 0x33, 0x33);
-> +	ts8550b_dcs_write_seq_static(ctx, 0xE7, 0x44, 0x44);
-> +	ts8550b_dcs_write_seq_static(ctx, 0xE8, 0x0D, 0x78, 0x3C, 0xA0, 0x0F,
-> +				     0x78, 0x3C, 0xA0, 0x11, 0x78, 0x3C, 0xA0,
-> +				     0x13, 0x78, 0x3C, 0xA0);
-> +	ts8550b_dcs_write_seq_static(ctx, 0xEB, 0x02, 0x02, 0x39, 0x39, 0xEE,
-> +				     0x44, 0x00);
-> +	ts8550b_dcs_write_seq_static(ctx, 0xEC, 0x00, 0x00);
-> +	ts8550b_dcs_write_seq_static(ctx, 0xED, 0xFF, 0xF1, 0x04, 0x56, 0x72,
-> +				     0x3F, 0xFF, 0xFF, 0xFF, 0xFF, 0xF3, 0x27,
-> +				     0x65, 0x40, 0x1F, 0xFF);
-> +	ts8550b_dcs_write_seq_static(ctx, 0xFF, 0x77, 0x01, 0x00, 0x00, 0x00);
-> +	msleep(10);
-> +	ts8550b_dcs_write_seq_static(ctx, 0x29, 0x00);
+> Setting up the cache manually also sounds like a vector for potential
+> failure.  At least if you were to cache dynamically on first write
+> (either on start-up or after sleep) then the actual value will be
+> cached, rather than what a piece of C code says it should be.
 
-MIPI_DCS_SET_DISPLAY_ON
+Even where there's no problem getting the hardware into a clean state it
+can rapidly get very, very expensive to do this with larger register
+sets on slow buses, and at the framework level we can't assume that
+readback support is even present on the device (the earliest versions of
+cache support were written to support such devices).  Some of the
+userspaces that regmap devices get used with end up wanting to apply a
+bunch of configuration at startup, if we can cut down on the amount of
+I/O that's involved in doing that it can help them quite a bit.  You
+also get userspaces that want to enumerate device state at startup,
+that's a bit easier to change in userspace but it's not an unreasonable
+thing to want to do and can also get very I/O heavy.
 
-> +	msleep(200);
-> +}
-> +
-> +static int ts8550b_prepare(struct drm_panel *panel)
-> +{
-> +	struct ts8550b *ctx = panel_to_ts8550b(panel);
-> +	int ret;
-> +
-> +	if (ctx->is_prepared)
-> +		return 0;
-> +
-> +	gpiod_set_value(ctx->reset, 0);
-> +	msleep(20);
-> +
-> +	ret = regulator_enable(ctx->dvdd);
-> +	if (ret)
-> +		return ret;
-> +	msleep(20);
-> +
-> +	ret = regulator_enable(ctx->avdd);
-> +	if (ret)
-> +		return ret;
-> +	msleep(20);
-> +
-> +	gpiod_set_value(ctx->reset, 1);
-> +	msleep(20);
-> +
-> +	gpiod_set_value(ctx->reset, 0);
-> +	msleep(30);
-> +
-> +	gpiod_set_value(ctx->reset, 1);
-> +	msleep(150);
-> +
-> +	ts8550b_init_sequence(ctx);
-> +
-> +	ctx->is_prepared = true;
-> +
-> +	return 0;
-> +}
-> +
-> +static int ts8550b_enable(struct drm_panel *panel)
-> +{
-> +	struct ts8550b *ctx = panel_to_ts8550b(panel);
-> +
-> +	if (ctx->is_enabled)
-> +		return 0;
-> +
-> +	msleep(120);
-> +
-> +	backlight_enable(ctx->backlight);
-> +	ctx->is_enabled = true;
-> +
-> +	return 0;
-> +}
-> +
-> +static int ts8550b_disable(struct drm_panel *panel)
-> +{
-> +	struct ts8550b *ctx = panel_to_ts8550b(panel);
-> +
-> +	if (!ctx->is_enabled)
-> +		return 0;
-> +
-> +	backlight_disable(ctx->backlight);
-> +	ctx->is_enabled = false;
-> +
-> +	return 0;
-> +}
-> +
-> +static int ts8550b_unprepare(struct drm_panel *panel)
-> +{
-> +	struct ts8550b *ctx = panel_to_ts8550b(panel);
-> +	int ret;
-> +
-> +	if (!ctx->is_prepared)
-> +		return 0;
-> +
-> +	ret = mipi_dsi_dcs_set_display_off(ctx->dsi);
-> +	if (ret < 0)
-> +		dev_err(panel->dev, "failed to set display off: %d\n", ret);
-> +
-> +	ret = mipi_dsi_dcs_enter_sleep_mode(ctx->dsi);
-> +	if (ret < 0)
-> +		dev_err(panel->dev, "failed to enter sleep mode: %d\n", ret);
-> +
-> +	msleep(120);
-> +
-> +	regulator_disable(ctx->dvdd);
-> +
-> +	regulator_disable(ctx->avdd);
-> +
-> +	gpiod_set_value(ctx->reset, 0);
-> +
-> +	gpiod_set_value(ctx->reset, 1);
-> +
-> +	gpiod_set_value(ctx->reset, 0);
-> +
-> +	ctx->is_prepared = false;
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct drm_display_mode default_mode = {
-> +	.clock		= 27500,
-> +	.vrefresh	= 60,
-> +
-> +	.hdisplay	= 480,
-> +	.hsync_start	= 480 + 38,
-> +	.hsync_end	= 480 + 38 + 12,
-> +	.htotal		= 480 + 38 + 12 + 12,
-> +
-> +	.vdisplay	= 854,
-> +	.vsync_start	= 854 + 18,
-> +	.vsync_end	= 854 + 18 + 8,
-> +	.vtotal		= 854 + 18 + 8 + 4,
-> +};
-> +
-> +static int ts8550b_get_modes(struct drm_panel *panel)
-> +{
-> +	struct drm_connector *connector = panel->connector;
-> +	struct ts8550b *ctx = panel_to_ts8550b(panel);
-> +	struct drm_display_mode *mode;
-> +
-> +	mode = drm_mode_duplicate(panel->drm, &default_mode);
-> +	if (!mode) {
-> +		dev_err(&ctx->dsi->dev, "failed to add mode %ux%ux@%u\n",
-> +			default_mode.hdisplay, default_mode.vdisplay,
-> +			default_mode.vrefresh);
-> +		return -ENOMEM;
-> +	}
-> +
-> +	drm_mode_set_name(mode);
-> +
-> +	mode->type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED;
-> +	drm_mode_probed_add(connector, mode);
-> +
-> +	panel->connector->display_info.width_mm = 69;
-> +	panel->connector->display_info.height_mm = 139;
-> +
-> +	return 1;
-> +}
-> +
-> +static const struct drm_panel_funcs ts8550b_funcs = {
-> +	.disable	= ts8550b_disable,
-> +	.unprepare	= ts8550b_unprepare,
-> +	.prepare	= ts8550b_prepare,
-> +	.enable		= ts8550b_enable,
-> +	.get_modes	= ts8550b_get_modes,
-> +};
-> +
-> +static int ts8550b_dsi_probe(struct mipi_dsi_device *dsi)
-> +{
-> +	struct device_node *np;
-> +	struct ts8550b *ctx;
-> +	int ret;
-> +
-> +	ctx = devm_kzalloc(&dsi->dev, sizeof(*ctx), GFP_KERNEL);
-> +	if (!ctx)
-> +		return -ENOMEM;
-> +
-> +	mipi_dsi_set_drvdata(dsi, ctx);
-> +	ctx->dsi = dsi;
-> +
-> +	drm_panel_init(&ctx->panel);
-> +	ctx->panel.dev = &dsi->dev;
-> +	ctx->panel.funcs = &ts8550b_funcs;
-> +
-> +	ctx->dvdd = devm_regulator_get(&dsi->dev, "dvdd");
-> +	if (IS_ERR(ctx->dvdd)) {
-> +		dev_err(&dsi->dev, "Couldn't get dvdd regulator\n");
-> +		return PTR_ERR(ctx->dvdd);
-> +	}
-> +
-> +	ctx->avdd = devm_regulator_get(&dsi->dev, "avdd");
-> +	if (IS_ERR(ctx->avdd)) {
-> +		dev_err(&dsi->dev, "Couldn't get avdd regulator\n");
-> +		return PTR_ERR(ctx->avdd);
-> +	}
-> +
-> +	ctx->reset = devm_gpiod_get(&dsi->dev, "reset", GPIOD_OUT_LOW);
-> +	if (IS_ERR(ctx->reset)) {
-> +		dev_err(&dsi->dev, "Couldn't get our reset GPIO\n");
-> +		return PTR_ERR(ctx->reset);
-> +	}
-> +
-> +	np = of_parse_phandle(dsi->dev.of_node, "backlight", 0);
-> +	if (np) {
-> +		ctx->backlight = of_find_backlight_by_node(np);
-> +		of_node_put(np);
-> +
-> +		if (!ctx->backlight)
-> +			return -EPROBE_DEFER;
-> +	}
-> +
-> +	ret = drm_panel_add(&ctx->panel);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	dsi->mode_flags = MIPI_DSI_MODE_VIDEO;
-> +	dsi->format = MIPI_DSI_FMT_RGB888;
-> +	dsi->lanes = 2;
-> +
-> +	return mipi_dsi_attach(dsi);
-> +}
-> +
-> +static int ts8550b_dsi_remove(struct mipi_dsi_device *dsi)
-> +{
-> +	struct ts8550b *ctx = mipi_dsi_get_drvdata(dsi);
-> +
-> +	mipi_dsi_detach(dsi);
-> +	drm_panel_remove(&ctx->panel);
-> +
-> +	if (ctx->backlight)
-> +		put_device(&ctx->backlight->dev);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct of_device_id ts8550b_of_match[] = {
-> +	{ .compatible = "techstar,ts8550b" },
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(of, ts8550b_of_match);
-> +
-> +static struct mipi_dsi_driver ts8550b_dsi_driver = {
-> +	.probe		= ts8550b_dsi_probe,
-> +	.remove		= ts8550b_dsi_remove,
-> +	.driver = {
-> +		.name		= "techstar-ts8550b",
-> +		.of_match_table	= ts8550b_of_match,
-> +	},
-> +};
-> +module_mipi_dsi_driver(ts8550b_dsi_driver);
-> +
-> +MODULE_AUTHOR("Jagan Teki <jagan@amarulasolutions.com>");
-> +MODULE_DESCRIPTION("Techstar TS8550B MIPI-DSI LCD Panel Driver");
-> +MODULE_LICENSE("GPL v2");
-> -- 
-> 2.18.0.321.gffc6fa0e3
-> 
-> -- 
-> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
-> For more options, visit https://groups.google.com/d/optout.
+There is some potential for errors to be introduced but equally these
+tables can be both generated and verified mechanically, tasks that are
+particularly straightforward for the device vendors to do.  There are
+also potential risks in doing this at runtime if we didn't get the
+device reset, if we don't accurately mark the volatile registers as
+volatile or if there's otherwise bugs in the code.
+
+> Precisely my point.  Lochnagar is a small device yet it's required to
+> submit hundreds of lines of Regmap tables.  Imagine what that would
+> look like for a large device.
+
+There's no *requirement* to provide the data even if you're using the
+cache (and the cache support is entirely optional), there's just costs
+to not providing it in terms of what features you can get from the
+regmap API and the performance of the system.  Not every device is going
+to be bothered by those costs, many devices don't provide all of the
+data they could.
+
+I'm not clear to me that Lochnagar will particularly benefit from
+providing the cache defaults but it sounds like you've raised concerns
+about other devices which would, and it seems clear that the readability
+information is very useful for this device if there's registers that
+it's unsafe to try to read from.
+
+> > > Even if it is absolutely critical that you have to supply these to
+> > > Regmap up-front, instead of on first use/read, why can't you just
+> > > supply the oddball non-zero ones?
+
+That doesn't work, we need to know both if the register has a default
+value and what that value is - there's no great value in only supplying
+the defaults for registers with non-zero values.
+
+> > If you aren't happy with the regmap subsystem you could send some
+> > patches to change it to what you would be happy with (and patch the ~1300
+> > drivers that use it)
+
+> That may well happen.  This is the pre-patch discussion.
+
+> Apologies that it had to happen on your submission, but this is that
+> alerted me to the issue(s).
+
+The regmap cache API has been this way since it was introduced in 2011
+FWIW, we did add range based support later which is purely data driven.
+
+> > Like any kernel subsystem it has an API that we have to obey to be able to
+> > use it.
+
+> Again, this isn't about Lochnagar.
+
+I think from the perspective of Richard and Charles who are just trying
+to get their driver merged this is something of an abstract distinction.
+If the driver were merged and this discussion were happening separately
+their perspective would most likely be different.
+
+> > > The API is obscene and needs a re-work IMHO.
+
+> > > I really hope we do not really have to list every register, but *if we
+> > > absolutely must*, let's do it once:
+
+> > >    REG_ADDRESS, WRV, INITIAL_VALUE
+
+There is the option to specify range based access tables instead of a
+function, for a lot of devices this is a nice, easy way to specify
+things that makes more sense so we support it.  We don't combine the
+tables because they're range based and if there is 100% overlap you can
+always just point at the same table.
+
+We allow the functions partly because it lets people handle weird cases
+but also because it turned out when I looked at this that a lot of the
+time the compiler output for switch statements was pretty efficient with
+sparse register maps and it makes the code incredibly simple, much
+simpler than trying to parse access tables into a more efficient data
+structure and IIRC more compact too.  It's possible that those tradeoffs
+have changed since but at the time there was a class of devices where it
+wasn't clear that putting more effort in would result in substantially
+better outcomes.
+
+> > To re-iterate, regmap is a standard kernel subsystem. It's not owned by Cirrus,
+> > so it's not our responsibility if you don't like it. Mark Brown is the maintainer.
+
+> Sounds very much like you are saying, "it's not Cirrus' fault,
+> therefore it is not my problem"?  Which is a terrible attitude.
+
+I think from the perspective of Charles and Richard this is sounding an
+awful lot like you want them (or someone else) to rewrite a very widely
+used kernel API before they can get their driver merged.  To me that
+would be a completely disproportionate amount of effort for their goal
+but unfortunately people do get asked to do things like that so it's not
+an unreasonable fear for them to have.
+
+> Remember that the Linux kernel is an open community.  Anyone should be
+> free to discuss any relevant issue.  If we decide to take this
+> off-line, which is likely, then so be it.  In the mean time, as a
+> contributor to this community project, it's absolutely your
+> responsibly to help discuss and potentially solve wider issues than
+> just your lines of code.
+
+It's also a community of people with differing amounts of ability to
+contribute, due to things like time, energy and so on.  Not everyone can
+work on everything they want to, let alone other things people ask them
+to look at.
+
+> > As above, if one subsystem owner doesn't like another subsystem then those
+> > subsystem owners should talk to each other and sort something out. It shouldn't
+> > block patches that are just trying to use the subsystem as it currently exists
+> > in the kernel.
+
+> Again, no one is blocking this patch.
+
+> This driver was submitted for review/discussion.  We are discussing.
+
+I kind of said this above but just to be clear this driver seems to me
+like an idiomatic user of the regmap API as it is today.  My guess is
+that we could probably loose the defaults tables and not suffer too much
+but equally well they don't hurt from a regmap point of view.
+
+Reviwed-by: Mark Brown <broonie@kernel.org>
+
+--2/5bycvrmDh4d1IB
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlvTedYACgkQJNaLcl1U
+h9Dy/gf+IWGkOx2z6VrGgX6MVSxByvgRL6zFyYl/utyNdrjTfHk8RXlDk0v5b2r4
+LwRzZ2jHUUrcZ64X280vKQ5saIdikGlb6z0GWt0X6X5BBLooPwD7V0uMm3LZDttb
+41AyZ74fQmfTgICe80FuumK0IiRHPr+jYVcPI2p/mQBV5lfchZH/3fZ+QZ23MJY7
+g4Dik9mvkbIX0tz/un8N5C5flr8YwaPTC9kH0dGYrO1yB7qh6jq87H9fqMa4jDXo
+ISBr3edxfZdrHE3tj9b8fqUOLOOIfJGbKvL6pEi17ixq7yZJsmp+d0UsCWGBU0Xv
+qo6Br/xw7MjZwAa63NykvEiFtfg0sA==
+=VKBt
+-----END PGP SIGNATURE-----
+
+--2/5bycvrmDh4d1IB--
