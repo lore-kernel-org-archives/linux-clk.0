@@ -7,53 +7,53 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABC90C6786E
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Oct 2018 14:45:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66C89C6786E
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Oct 2018 14:46:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71CF620651
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Oct 2018 14:45:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3006D2086B
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Oct 2018 14:46:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="X6HHISz1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71CF620651
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="a6FCB3Rc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3006D2086B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727676AbeJZXXJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 26 Oct 2018 19:23:09 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:33679 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727683AbeJZXXJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Oct 2018 19:23:09 -0400
-Received: by mail-pl1-f195.google.com with SMTP id x6-v6so636707pln.0
-        for <linux-clk@vger.kernel.org>; Fri, 26 Oct 2018 07:45:48 -0700 (PDT)
+        id S1727790AbeJZXXV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 26 Oct 2018 19:23:21 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:34759 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727698AbeJZXXU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Oct 2018 19:23:20 -0400
+Received: by mail-pf1-f196.google.com with SMTP id f78-v6so678759pfe.1
+        for <linux-clk@vger.kernel.org>; Fri, 26 Oct 2018 07:46:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=oeSMNKpNfhPY+Ywe9odsVBbi7HxlUs5js+iUwbEI7fY=;
-        b=X6HHISz1Ob4/o1zChSdV8ygNvjFt/GbpwkT12/qLNrlRU2odUyoJjbDIza9uISvsop
-         zLNrn3eQOt2NZsewltYEGV/FWBiIk2blpLaAqQsCWy0A+l9JAOCimrLvXRc7bzzoQDNj
-         f1rhjI7deAaYEPIbrLjrljNStdOtyX3KuJyFQ=
+        bh=acJxcwDug0RNjCC0CqQln/iczgTpC/B74n+2IS67m6E=;
+        b=a6FCB3RcbuPty2mtbcfJLBbTlp1Fv20qcecUMSJWN4QMjgvdedzvRRgwzlf/NtU74O
+         /iGWt4wcXFBHbi3qDQ76I2Sv5Lq7Pvi5l9lFggSHRCv2WyHOFp/0MaC6aWrlI+wVhfiM
+         K2jCjxsEAapSBgGiovWVeBxF+qYgIAuvAvLf0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=oeSMNKpNfhPY+Ywe9odsVBbi7HxlUs5js+iUwbEI7fY=;
-        b=Hme1X3Tku8YCgxxh2oFIUeOrFds1h9w53iFXA34Jeg36EV+LlF5zNNtekU3zmfWTb5
-         j/ZH6LvEgtW8QeGkN1BY/YByrUZLR4g8RaxE8+urOmIR/qidhXvf8EBGmpKlYn19PBhC
-         waGm0GRnbHSRVZMtDx9KHgkrbI/wzzcMd4HNM5qlRJX/o4c5BkKtHb0K9vZvd6tWonnj
-         gKbF98egeeo17xs81SCLWmAWb74mDfWE0lokjHlsp2OEa1PCvBhPs07fzgl85CAHBlMt
-         H6zbvFkQ23LluEvcpeVuQU717dyu+ZMktDZ9XOsdmUbtdP1PjYu6BmBww0qiBjJcbywe
-         vzLg==
-X-Gm-Message-State: AGRZ1gK/GajmeH07+uAJRoej3Df5HR1tR8+wr2o7hERVw3MiZiDUfUd6
-        PbBoTmiReMOzgzSYj01ytqey5g==
-X-Google-Smtp-Source: AJdET5eCSw09pC+nyEzugpgTLUFFRA3oIYc1CZlO/7K3hhLsvt95Uo2gbj80mVh0MyOmVoCooM4DKw==
-X-Received: by 2002:a17:902:e00a:: with SMTP id ca10-v6mr3745128plb.166.1540565148172;
-        Fri, 26 Oct 2018 07:45:48 -0700 (PDT)
+        bh=acJxcwDug0RNjCC0CqQln/iczgTpC/B74n+2IS67m6E=;
+        b=hColMg5vIzydpkeQ4uJOytLCoNsNPjtsL5TK2Tfb5KgM6oOSA3lWJX0xYyEmE/HB12
+         BzIUbk0fVf4f8erEsgZ/4bp3V/ULYdA7KyZuGDA4CPsHe69QzSXfSZObQmCLCKIn72Um
+         81yYBq81ei/A+HKFUypZw8naBoIs4IxHDeN8PUnBBc8ZLOd1CaWp+y7UftaZCMZ0G2qp
+         xEfcMptUPoseOgtRpZ5RNUoRDpmC7QzpZUjpkxdmZVsemApVAcYwvRmS7uxCVF9KddXi
+         t/C67yA5YeS4ZB9yLT0IWgQla9jhoZKKOU+bWg68ixbMp04Q4KAbBp0W2WwR0eG35dNA
+         /N2w==
+X-Gm-Message-State: AGRZ1gLO2DJGG4hCYUH+m1mnaEyyHWwMS86r6yeIOehLiFAzZ7Laon1k
+        GSAvdQWpGlEH2yP6z/iWlPbs4w==
+X-Google-Smtp-Source: AJdET5dgy5QAYnte8XlvbEclZbd/2Gm9j+c/ltsRcQQzVB5sVcS0HdFs55TqX7ZZmMYPUN1jeAGk7Q==
+X-Received: by 2002:a63:cc51:: with SMTP id q17-v6mr3696782pgi.291.1540565159841;
+        Fri, 26 Oct 2018 07:45:59 -0700 (PDT)
 Received: from localhost.localdomain ([27.7.51.1])
-        by smtp.gmail.com with ESMTPSA id z22-v6sm12044467pgv.24.2018.10.26.07.45.42
+        by smtp.gmail.com with ESMTPSA id z22-v6sm12044467pgv.24.2018.10.26.07.45.54
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 26 Oct 2018 07:45:47 -0700 (PDT)
+        Fri, 26 Oct 2018 07:45:59 -0700 (PDT)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
@@ -71,9 +71,9 @@ To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
 Cc:     Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v3 17/25] dt-bindings: panel: Add Bananapi S070WV20-CT16 ICN6211 MIPI-DSI to RGB bridge
-Date:   Fri, 26 Oct 2018 20:13:36 +0530
-Message-Id: <20181026144344.27778-18-jagan@amarulasolutions.com>
+Subject: [PATCH v3 19/25] dt-bindings: panel: Add Techstar TS8550B MIPI DSI panel
+Date:   Fri, 26 Oct 2018 20:13:38 +0530
+Message-Id: <20181026144344.27778-20-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 In-Reply-To: <20181026144344.27778-1-jagan@amarulasolutions.com>
 References: <20181026144344.27778-1-jagan@amarulasolutions.com>
@@ -84,67 +84,45 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Bananapi S070WV20-CT16 ICN6211 is 800x480, 4-lane MIPI-DSI to RGB
-bridge panel, which is available on same PCB with 24-bit RGB interface.
-
-So, this patch adds DSI specific binding details on existing
-dt-bindings file.
+Techstar TS8550B MIPI DSI panel is 480x854, 2-lane MIPI DSI
+LCD panel. Add dt-bingings for it.
 
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
 Changes for v3:
-- Use existing binding doc and update dsi details
+- new patch
 Changes for v2:
 - none
 
- .../display/panel/bananapi,s070wv20-ct16.txt  | 31 +++++++++++++++++--
- 1 file changed, 29 insertions(+), 2 deletions(-)
+ .../display/panel/techstar,ts8550b.txt        | 20 +++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/techstar,ts8550b.txt
 
-diff --git a/Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16.txt b/Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16.txt
-index 35bc0c839f49..b7855dc7c66f 100644
---- a/Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16.txt
-+++ b/Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16.txt
-@@ -1,12 +1,39 @@
- Banana Pi 7" (S070WV20-CT16) TFT LCD Panel
- 
-+S070WV20-CT16 is 7" 800x480 panel connected through a 24-bit RGB interface.
+diff --git a/Documentation/devicetree/bindings/display/panel/techstar,ts8550b.txt b/Documentation/devicetree/bindings/display/panel/techstar,ts8550b.txt
+new file mode 100644
+index 000000000000..6da050621d07
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/panel/techstar,ts8550b.txt
+@@ -0,0 +1,20 @@
++Techstar TS8550B MIPI DSI LCD Panel
 +
-+Depending on the variant, the PCB attached to the panel module either
-+supports DSI, or DSI + 24-bit RGB. DSI is converted to 24-bit RGB via
-+an onboard ICN6211 MIPI DSI - RGB bridge chip, then fed to the panel
-+itself
-+
- Required properties:
--- compatible: should be "bananapi,s070wv20-ct16"
-+- compatible:
-+  for 24-bit RGB interface, use "bananapi,s070wv20-ct16"
-+  for ICN6211 MIPI-DSI to RGB bridge, use "bananapi,s070wv20-ct16-icn6211"
-+
-+Required properties for RGB:
- - power-supply: see ./panel-common.txt
- 
-+Required properties for MIPI-DSI to RGB:
-+- reg: for DSI virtual channel used by that screen
++Required properties:
++- compatible: must be "techstar,ts8550b"
++- reg: DSI virtual channel used by that screen
 +- avdd-supply: analog regulator dc1 switch
 +- dvdd-supply: 3v3 digital regulator
 +- reset-gpios: a GPIO phandle for the reset pin
 +
- Optional properties:
--- enable-gpios: see ./simple-panel.txt
-+- enable-gpios: see ./simple-panel.txt(not available in MIPI-DSI to RGB bridge)
- - backlight: see ./simple-panel.txt
- 
- This binding is compatible with the simple-panel binding, which is specified
- in ./simple-panel.txt.
++Optional properties:
++- backlight: phandle for the backlight control.
 +
-+Example:
 +panel@0 {
-+	compatible = "bananapi,s070wv20-ct16-icn6211";
++	compatible = "techstar,ts8550b";
 +	reg = <0>;
 +	avdd-supply = <&reg_dc1sw>;
-+	dvdd-supply = <&reg_dldo1>;
-+	reset-gpios = <&pio 3 6 GPIO_ACTIVE_HIGH>; /* PD6 */
-+	backlight = <&backlight_dsi>;
++	dvdd-supply = <&reg_dldo2>;
++	reset-gpios = <&pio 3 24 GPIO_ACTIVE_HIGH>; /* PD24 */
++	backlight = <&backlight>;
 +};
 -- 
 2.18.0.321.gffc6fa0e3
