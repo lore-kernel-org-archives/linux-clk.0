@@ -2,58 +2,57 @@ Return-Path: <SRS0=HxJ1=NG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B93ABECDE44
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Oct 2018 14:46:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 303B3ECDE44
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Oct 2018 14:47:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82EDB2086B
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Oct 2018 14:46:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E390B204FD
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Oct 2018 14:47:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="Yf5VhCYN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82EDB2086B
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="jP95xZZa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E390B204FD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726829AbeJZXYJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 26 Oct 2018 19:24:09 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:38917 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727704AbeJZXWq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Oct 2018 19:22:46 -0400
-Received: by mail-pg1-f196.google.com with SMTP id r9-v6so643613pgv.6
-        for <linux-clk@vger.kernel.org>; Fri, 26 Oct 2018 07:45:25 -0700 (PDT)
+        id S1727787AbeJZXVe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 26 Oct 2018 19:21:34 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:45376 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727778AbeJZXVd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Oct 2018 19:21:33 -0400
+Received: by mail-pg1-f193.google.com with SMTP id s3-v6so627712pga.12
+        for <linux-clk@vger.kernel.org>; Fri, 26 Oct 2018 07:44:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=gStIo7NjdB+TGqHNblRTUUqjFPTn5lbRTmfmm273Bxc=;
-        b=Yf5VhCYNunBsPm3e5TIp1NrtyNuZROnCExwWWP+jnKIHm/8MdKp3HleEcNYZvbuCHY
-         ygswg13ZW87y3w5GYwhMds9ymeERXjpJSE/u8Xv/NyRUW6+QXOI5d1hn2GnZrMol6SUL
-         gs1ZU94O9ECeCVRNBgDdaKvljgbrQXRsCNsvI=
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=eZqm0CFEdgNM2tKHjKivQNx4i6KhyKtyrSoJgQ5hCEE=;
+        b=jP95xZZarKPxRpcTk4yOQdHhh67H3biXbiHdakPyEF9FUDJlTSCMnO0xUYhEyW1TkN
+         OV2Iag5L9QtyFR2U3nFaC+SzME8X1lihgttwy1Q8Uq27FIr6KQHi+0Pt8xRJHSbF9Fda
+         GdyDSWFclhbRhzqTwa56E/bRXuJ6B+2do8XZA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=gStIo7NjdB+TGqHNblRTUUqjFPTn5lbRTmfmm273Bxc=;
-        b=HCowe27X7dO/Gwsyk8U2p+1wi4jksGRyOCQKU5ezQwhLp9LVwz4GUUp+bWySR4viVX
-         mypKA1Kjw0FBKmhpCLnayMZtgeqqmENvsFeKCs4iX12AEjUeTYOlreEOTSaQHM7/Ni42
-         jUstlaPkarTL237/h71fHbYqNBxB/sxsN8wj/mfKBgFzoVDnnuDiwxCyJ34PL7j3Cx1k
-         smzVNyN13T6PnCoDR+vmggJqnBFprXue/jeuVcrwZbu37wzI6DJwudn9JggNw06oi/b/
-         ZxJU9MK3m6ve++5MyFgsUJKlxubB2QWPgQPyBbS4yf4RFRtq26gUVIQV5rkSJY9tewQu
-         qxkQ==
-X-Gm-Message-State: AGRZ1gI9kH3ssdAyedMIYV935zFK5EfqjGsLG6O1dqwL3jlbsoac8TJx
-        bDqDeVfjAQzAyGWHwyoyNbH+zg==
-X-Google-Smtp-Source: AJdET5f2tELebo7pA+gv81OluwfXob4rp1XQeVgf2g02+EfXF3ZDPpSJJx7eZAew0I6nmSg/Yy8auA==
-X-Received: by 2002:a63:b218:: with SMTP id x24mr3608910pge.223.1540565125481;
-        Fri, 26 Oct 2018 07:45:25 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=eZqm0CFEdgNM2tKHjKivQNx4i6KhyKtyrSoJgQ5hCEE=;
+        b=Cq0lKXl98K4SgJ4qJ8/ZaRMU9H5CES8P8my2b6Yx+zj0nYy6m7YRhTkBTSnGZWmR0h
+         Yjhsz3eixdgnFXzHfh/Sn+cO49l9J2xYo32m6nC5W7z0hNL/QM84ijtXuZrAQ93vcQmH
+         N+VBLlSNWmT9/4Vmbg+2T7HdarAjxVx3T7WZWfxqVG/ZK8vttGSWLMbQRrL8PLj02f+H
+         Oe6VVhZuSIDehX02LirAt+eDlp79XUvSR0wFWIDok1lSeZsXnZ7WkXzI1rKlLPJ7Nypv
+         FAAfXFC3d+lxoez4JFiCtco96NcCzUDIUugnTQEK4zWG/6+recpxxJCOmjGh7vdaQji/
+         evkw==
+X-Gm-Message-State: AGRZ1gIBS3m+1W9Yk004plX+Ze4UnDU9Ng/4tRZMPqMUpZ6GKJ/ddTvB
+        AsBR9NFOVakHT0eZgSb3SA7Gn2glVSo=
+X-Google-Smtp-Source: AJdET5e09G5gEekKHPpWwXEsKeq6RP2nzY9YZ94thvyr9Xp6iJ8drFkIPbwp/kbr+AukXMI/VITHJw==
+X-Received: by 2002:a63:224f:: with SMTP id t15mr3730017pgm.69.1540565052740;
+        Fri, 26 Oct 2018 07:44:12 -0700 (PDT)
 Received: from localhost.localdomain ([27.7.51.1])
-        by smtp.gmail.com with ESMTPSA id z22-v6sm12044467pgv.24.2018.10.26.07.45.20
+        by smtp.gmail.com with ESMTPSA id z22-v6sm12044467pgv.24.2018.10.26.07.44.07
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 26 Oct 2018 07:45:25 -0700 (PDT)
+        Fri, 26 Oct 2018 07:44:12 -0700 (PDT)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
@@ -71,12 +70,10 @@ To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
 Cc:     Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v3 13/25] drm/sun4i: sun6i_mipi_dsi: Fix DSI hfp timing value
-Date:   Fri, 26 Oct 2018 20:13:32 +0530
-Message-Id: <20181026144344.27778-14-jagan@amarulasolutions.com>
+Subject: [PATCH v3 00/25] drm/sun4i: Allwinner A64 MIPI-DSI support 
+Date:   Fri, 26 Oct 2018 20:13:19 +0530
+Message-Id: <20181026144344.27778-1-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
-In-Reply-To: <20181026144344.27778-1-jagan@amarulasolutions.com>
-References: <20181026144344.27778-1-jagan@amarulasolutions.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
@@ -84,60 +81,78 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Current driver is calculating hfp maximum value by subtracting
-htotal with hsync_end which is front back value, but the
-hpp refers to front porch.
+This series fixed the issues related to work DSI on 2-lane panel
+which is reported on previous version[1].
 
-Front porch value is calculating by subtracting hsync_start with
-hdisplay as per drm_mode timings, and BSP code from BPI-M64-bsp
-is eventually following the same.
+Few comments from previous version still in discussion, but I just
+send this version just to group all working changes together.
+anyway I will fix in this in next version if any.
 
-BPI-M64-bsp is computing hfp as
-(in drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c)
-dsi_hbp = (hbp-hspw)*dsi_pixel_bits[format]/8 - (4+2);
-dsi_hact = x * dsi_pixel_bits[format]/8;
-dsi_hblk = (ht-hspw)*dsi_pixel_bits[format]/8-(4+4+2);
-dsi_hfp = dsi_hblk - (4+dsi_hact+2) - (4+dsi_hbp+2);
+PLL_MIPI min rate is still weird, I tried many possible dclock rate
+from panel driver to satisfy manual suggested min rate 500MHz but
+none working so eventually moved 300MHz. any inputs on this area
+are welcome.
 
-Example,
-u32 fmt = dsi_pixel_bits[format]/8;
-=> ((ht-hspw)*fmt - 10) - (6 + x * fmt) - (6 + (hbp-hspw)*fmt - 6)
-=> (ht - hspw - x - (hbp - hspw)) * fmt - 16
-=> (ht - x - hbp) * fmt - 16
-=> (ht - x - (timmings->hor_total_time - timmings->hor_front_porch - x)
-* fmt - 16
-=> (timmings->hor_total_time - x - timmings->hor_total_time +
-timmings->hor_front_porch + x) * fmt - 16
-=> timmings->hor_front_porch * fmt - 16
+All these changes are tested in 2-lane, 4-lane MIPI-DSI panels.
 
-So, update the DSI hfp timing accordingly.
+If anyone wants to test, use this repo [2] with WIP-A64-DSI branch.
 
-Tested on 2-lane, 4-lane MIPI-DSI LCD panels.
+Any inputs,
+Jagan.
 
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-Tested-by: Jagan Teki <jagan@amarulasolutions.com>
----
-Changes for v3:
-- new patch
-Changes for v2:
-- none
+[2] https://github.com/amarula/linux-amarula
+[1] https://patchwork.kernel.org/cover/10653275/
 
- drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Jagan Teki (25):
+  clk: sunxi-ng: a64: Fix gate bit of DSI DPHY
+  clk: sunxi-ng: Add check for minimal rate to NKM PLLs
+  clk: sunxi-ng: Add check for maximum rate to NKM PLLs
+  drm/sun4i: sun6i_mipi_dsi: Add Allwinner A64 MIPI DSI support
+  dt-bindings: sun6i-dsi: Add compatible for A64 MIPI DSI
+  drm/sun4i: sun6i_mipi_dsi: Add DSI Generic short write 2 param
+    transfer
+  drm/sun4i: sun6i_mipi_dsi: Fix VBP size calculation
+  drm/sun4i: sun6i_mipi_dsi: Fix TCON DRQ set bits
+  drm/sun4i: sun6i_mipi_dsi: Refactor vertical video start delay
+  drm/sun4i: sun6i_mipi_dsi: Fix DSI hbp timing value
+  drm/sun4i: sun6i_mipi_dsi: Fix DSI hblk timing calculation
+  drm/sun4i: sun6i_mipi_dsi: Add DSI hblk packet overhead
+  drm/sun4i: sun6i_mipi_dsi: Fix DSI hfp timing value
+  drm/sun4i: sun6i_mipi_dsi: Increase hfp packet overhead
+  drm/sun4i: sun6i_mipi_dsi: Set proper vblk timing calculation
+  drm/sun4i: sun6i_mipi_dsi: Add support for VCC-DSI voltage regulator
+  dt-bindings: panel: Add Bananapi S070WV20-CT16 ICN6211 MIPI-DSI to RGB
+    bridge
+  drm/panel: Add Bananapi S070WV20-CT16 ICN6211 MIPI-DSI to RGB bridge
+  dt-bindings: panel: Add Techstar TS8550B MIPI DSI panel
+  drm/panel: Add Techstar TS8550B MIPI-DSI LCD panel
+  clk: sunxi-ng: a64: Add min and max rate for PLL_MIPI
+  dt-bindings: sun6i-dsi: Add compatible for A64 DPHY
+  arm64: dts: allwinner: a64: Add DSI pipeline
+  [DO NOT MERGE] arm64: dts: allwinner: bananapi-m64: Bananapi S070WV20-CT16 DSI panel
+  arm64: dts: allwinner: a64-amarula-relic: Enable Techstar TS8550B
+    MIPI-DSI panel
 
-diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-index cf42be1f1ba1..6584b51736a9 100644
---- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-+++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-@@ -490,7 +490,7 @@ static void sun6i_dsi_setup_timings(struct sun6i_dsi *dsi,
- 	 */
- #define HFP_PACKET_OVERHEAD	6
- 	hfp = max((unsigned int)HFP_PACKET_OVERHEAD,
--		  (mode->htotal - mode->hsync_end) * Bpp - HFP_PACKET_OVERHEAD);
-+		  (mode->hsync_start - mode->hdisplay) * Bpp - HFP_PACKET_OVERHEAD);
- 
- 	/*
- 	 * hblk seems to be the line + porches length.
+ .../display/panel/bananapi,s070wv20-ct16.txt  |  31 +-
+ .../display/panel/techstar,ts8550b.txt        |  20 +
+ .../bindings/display/sunxi/sun6i-dsi.txt      |   3 +-
+ .../allwinner/sun50i-a64-amarula-relic.dts    |  46 +++
+ .../dts/allwinner/sun50i-a64-bananapi-m64.dts |  42 +++
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi |  45 +++
+ drivers/clk/sunxi-ng/ccu-sun50i-a64.c         |   4 +-
+ drivers/clk/sunxi-ng/ccu_nkm.c                |  14 +
+ drivers/clk/sunxi-ng/ccu_nkm.h                |   2 +
+ drivers/gpu/drm/panel/Kconfig                 |  18 +
+ drivers/gpu/drm/panel/Makefile                |   2 +
+ .../panel/panel-bananapi-s070wv20-icn6211.c   | 336 +++++++++++++++++
+ .../gpu/drm/panel/panel-techstar-ts8550b.c    | 346 ++++++++++++++++++
+ drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c        | 122 ++++--
+ drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h        |   8 +
+ 15 files changed, 1009 insertions(+), 30 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/techstar,ts8550b.txt
+ create mode 100644 drivers/gpu/drm/panel/panel-bananapi-s070wv20-icn6211.c
+ create mode 100644 drivers/gpu/drm/panel/panel-techstar-ts8550b.c
+
 -- 
 2.18.0.321.gffc6fa0e3
 
