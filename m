@@ -6,32 +6,32 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC547ECDE44
-	for <linux-clk@archiver.kernel.org>; Sat, 27 Oct 2018 06:23:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89814ECDE44
+	for <linux-clk@archiver.kernel.org>; Sat, 27 Oct 2018 06:23:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B42D820824
-	for <linux-clk@archiver.kernel.org>; Sat, 27 Oct 2018 06:23:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B42D820824
+	by mail.kernel.org (Postfix) with ESMTP id 59A6920824
+	for <linux-clk@archiver.kernel.org>; Sat, 27 Oct 2018 06:23:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59A6920824
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lip6.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728152AbeJ0PDC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S1728018AbeJ0PDC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Sat, 27 Oct 2018 11:03:02 -0400
-Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:40762
+Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:53787
         "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726610AbeJ0PDC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 27 Oct 2018 11:03:02 -0400
+        by vger.kernel.org with ESMTP id S1727845AbeJ0PDB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 27 Oct 2018 11:03:01 -0400
 X-IronPort-AV: E=Sophos;i="5.54,430,1534802400"; 
-   d="scan'208";a="283492153"
+   d="scan'208";a="283492152"
 Received: from palace.rsr.lip6.fr (HELO palace.lip6.fr) ([132.227.105.202])
   by mail3-relais-sop.national.inria.fr with ESMTP/TLS/AES128-SHA256; 27 Oct 2018 08:22:58 +0200
 From:   Julia Lawall <Julia.Lawall@lip6.fr>
 To:     Michael Turquette <mturquette@baylibre.com>
 Cc:     kernel-janitors@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 4/8] clk: pistachio: constify clk_ops structures
-Date:   Sat, 27 Oct 2018 07:47:38 +0200
-Message-Id: <1540619262-22681-5-git-send-email-Julia.Lawall@lip6.fr>
+Subject: [PATCH 3/8] clk: palmas: constify clk_ops structure
+Date:   Sat, 27 Oct 2018 07:47:37 +0200
+Message-Id: <1540619262-22681-4-git-send-email-Julia.Lawall@lip6.fr>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1540619262-22681-1-git-send-email-Julia.Lawall@lip6.fr>
 References: <1540619262-22681-1-git-send-email-Julia.Lawall@lip6.fr>
@@ -40,56 +40,29 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-These clk_ops structures are only stored in the ops field of a
-clk_init_data structure.  This field is const, so the clk_ops
-structures can be const as well.
+The clk_ops structure is only stored in the ops field of clk_init_data
+structures.  This field is const, so the clk_ops structure can be
+const as well.
 
 Identified and transformed using Coccinelle.
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- drivers/clk/pistachio/clk-pll.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/clk/clk-palmas.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/pistachio/clk-pll.c b/drivers/clk/pistachio/clk-pll.c
-index 7e8daab9025b..312c3580187f 100644
---- a/drivers/clk/pistachio/clk-pll.c
-+++ b/drivers/clk/pistachio/clk-pll.c
-@@ -298,7 +298,7 @@ static unsigned long pll_gf40lp_frac_recalc_rate(struct clk_hw *hw,
- 	return rate;
+diff --git a/drivers/clk/clk-palmas.c b/drivers/clk/clk-palmas.c
+index e9612e7068e9..e41a3a9f7528 100644
+--- a/drivers/clk/clk-palmas.c
++++ b/drivers/clk/clk-palmas.c
+@@ -115,7 +115,7 @@ static int palmas_clks_is_prepared(struct clk_hw *hw)
+ 	return !!(val & cinfo->clk_desc->enable_mask);
  }
  
--static struct clk_ops pll_gf40lp_frac_ops = {
-+static const struct clk_ops pll_gf40lp_frac_ops = {
- 	.enable = pll_gf40lp_frac_enable,
- 	.disable = pll_gf40lp_frac_disable,
- 	.is_enabled = pll_gf40lp_frac_is_enabled,
-@@ -307,7 +307,7 @@ static struct clk_ops pll_gf40lp_frac_ops = {
- 	.set_rate = pll_gf40lp_frac_set_rate,
- };
- 
--static struct clk_ops pll_gf40lp_frac_fixed_ops = {
-+static const struct clk_ops pll_gf40lp_frac_fixed_ops = {
- 	.enable = pll_gf40lp_frac_enable,
- 	.disable = pll_gf40lp_frac_disable,
- 	.is_enabled = pll_gf40lp_frac_is_enabled,
-@@ -430,7 +430,7 @@ static unsigned long pll_gf40lp_laint_recalc_rate(struct clk_hw *hw,
- 	return rate;
- }
- 
--static struct clk_ops pll_gf40lp_laint_ops = {
-+static const struct clk_ops pll_gf40lp_laint_ops = {
- 	.enable = pll_gf40lp_laint_enable,
- 	.disable = pll_gf40lp_laint_disable,
- 	.is_enabled = pll_gf40lp_laint_is_enabled,
-@@ -439,7 +439,7 @@ static struct clk_ops pll_gf40lp_laint_ops = {
- 	.set_rate = pll_gf40lp_laint_set_rate,
- };
- 
--static struct clk_ops pll_gf40lp_laint_fixed_ops = {
-+static const struct clk_ops pll_gf40lp_laint_fixed_ops = {
- 	.enable = pll_gf40lp_laint_enable,
- 	.disable = pll_gf40lp_laint_disable,
- 	.is_enabled = pll_gf40lp_laint_is_enabled,
+-static struct clk_ops palmas_clks_ops = {
++static const struct clk_ops palmas_clks_ops = {
+ 	.prepare	= palmas_clks_prepare,
+ 	.unprepare	= palmas_clks_unprepare,
+ 	.is_prepared	= palmas_clks_is_prepared,
 
