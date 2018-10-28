@@ -2,184 +2,196 @@ Return-Path: <SRS0=wuwk=NI=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02143C6786F
-	for <linux-clk@archiver.kernel.org>; Sun, 28 Oct 2018 12:09:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67A00C6786F
+	for <linux-clk@archiver.kernel.org>; Sun, 28 Oct 2018 15:13:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF79220665
-	for <linux-clk@archiver.kernel.org>; Sun, 28 Oct 2018 12:09:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="sX8mmoUQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF79220665
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=googlemail.com
+	by mail.kernel.org (Postfix) with ESMTP id 1287420664
+	for <linux-clk@archiver.kernel.org>; Sun, 28 Oct 2018 15:13:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1287420664
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727551AbeJ1Uxm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 28 Oct 2018 16:53:42 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:54211 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726379AbeJ1Uxl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 28 Oct 2018 16:53:41 -0400
-Received: by mail-wm1-f66.google.com with SMTP id l26-v6so5485006wmh.3;
-        Sun, 28 Oct 2018 05:09:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=pCVwO2pBEbg5sBAY1S5GVLpFl6+CDS82i+nFBiJ4vHk=;
-        b=sX8mmoUQLkygILuV+2MGSm1ScxZ3ofrqzRoLm/Ayt2MkedJplBijJ/3ikqJdv5zgFn
-         W2ib/INgEQ3tD6qKRLMqdcHdInLW96oCur+JWfD2q5RhsV7kJO4bbslaa01UsJuBgt2o
-         pQ2l/I+tgxt233wNL5S44/Da5Js7UUSkVCw3/91AfsqWFq/H4rqJFDHDe+AI2MCO4wIQ
-         AUSsPVJumTvh/3uPHDBh32xVY2eFwl9icpGu34vJZK8ZPuPVXVBP+E1VqWxvKHPG0lwL
-         rpO4EoSrxL98h/we/Sw9Z3JtgjFS2Ta7pIm2fI7XHY2PDVnEnsN1QwkwCD8eTHq+vJnQ
-         JNFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=pCVwO2pBEbg5sBAY1S5GVLpFl6+CDS82i+nFBiJ4vHk=;
-        b=KR07NWZ61xFohoXkhPgUKOWwFqp7K00VC5PFXciH38ZC7JOpGmQSFvMpGVeIBu/TVO
-         pFRJxGjvoCZcnzRAKy67HbrmhrBhdxouJRg9Dd2BVyVWhHW8Q4u6CXmQOWpiq4Rls8c3
-         f5B5tLnD+7RtC5Z7w6rVIKvfRrtsJp6RIMe8QfwKxBC0E39k/DgB8WisnDPza2Yag+72
-         0SnNjxjwHRJhYISydhc+3dt0CKGZ6n0Q7xFEOTiZ+AT+uRWm81JXWlBYDDyOlGS7ypys
-         IJffDlpIRpf/gVl90bPvWmRTq6h3vvG2fuUsmksTmS3xtI9Vc93ki6cisIsR8IZ9VP3m
-         BHxw==
-X-Gm-Message-State: AGRZ1gKpaZq/SlOC4kpUdKJ/P78z78Til84hGzVBMEIf5AQArJxcvMjB
-        T3zIk5b5Oghma6tlNTZvR6I=
-X-Google-Smtp-Source: AJdET5fvl+mLbUnYQ5xB6fNfeieKwUqPRZRPtd/vV7ppsIkT7JA0/bjjThDq48Jl4m/e+G6m32UYJQ==
-X-Received: by 2002:a1c:4601:: with SMTP id t1-v6mr1910446wma.102.1540728551551;
-        Sun, 28 Oct 2018 05:09:11 -0700 (PDT)
-Received: from blackbox.darklights.net (p200300DCD7072200691979D1FB980407.dip0.t-ipconnect.de. [2003:dc:d707:2200:6919:79d1:fb98:407])
-        by smtp.googlemail.com with ESMTPSA id 193-v6sm11699772wmj.21.2018.10.28.05.09.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 28 Oct 2018 05:09:11 -0700 (PDT)
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To:     narmstrong@baylibre.com, jbrunet@baylibre.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, linux-amlogic@lists.infradead.org,
-        devicetree@vger.kernel.org
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, carlo@caione.org,
-        khilman@baylibre.com, linux-clk@vger.kernel.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH v2 3/3] ARM: dts: meson: switch the clock controller to the HHI register area
-Date:   Sun, 28 Oct 2018 13:08:59 +0100
-Message-Id: <20181028120859.5735-4-martin.blumenstingl@googlemail.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181028120859.5735-1-martin.blumenstingl@googlemail.com>
-References: <20181028120859.5735-1-martin.blumenstingl@googlemail.com>
+        id S1727507AbeJ1X6F (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 28 Oct 2018 19:58:05 -0400
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:33160 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726492AbeJ1X6F (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 28 Oct 2018 19:58:05 -0400
+Received: from [192.168.0.111] (223.167.21.242) by mail-sh2.amlogic.com
+ (10.18.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Sun, 28 Oct
+ 2018 23:12:59 +0800
+Subject: Re: [PATCH v5 3/3] clk: meson: add sub MMC clock controller driver
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+CC:     Yixun Lan <yixun.lan@amlogic.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Liang Yang <liang.yang@amlogic.com>,
+        Jian Hu <jian.hu@amlogic.com>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1539839245-13793-1-git-send-email-jianxin.pan@amlogic.com>
+ <1539839245-13793-4-git-send-email-jianxin.pan@amlogic.com>
+ <a8d359208edfdc75cb5c6de378796f76e0572a0f.camel@baylibre.com>
+ <eda2faf2-cf06-902d-36ff-48ceafcb4a4b@amlogic.com>
+ <f4d239df2f1333b005680f9bfdd2eba93e7f86e5.camel@baylibre.com>
+From:   Jianxin Pan <jianxin.pan@amlogic.com>
+Message-ID: <d284b4dd-b479-f7a7-1527-7e36b4b7451f@amlogic.com>
+Date:   Sun, 28 Oct 2018 23:12:59 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <f4d239df2f1333b005680f9bfdd2eba93e7f86e5.camel@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [223.167.21.242]
+X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
+ (10.18.11.6)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The clock controller on Meson8/Meson8m2 and Meson8b is part of a
-register region called "HHI". This register area contains more
-functionality than just a clock controller:
-- the clock controller
-- some reset controller bits
-- temperature sensor calibration data (on Meson8b and Meson8m2 only)
-- HDMI controller
+Hi Jerome,
 
-Allow access to this HHI register area as "system controller". Also
-migrate the Meson8 and Meson8b clock controllers to this new node.
+On 2018/10/25 20:54, Jerome Brunet wrote:
+> On Thu, 2018-10-25 at 19:48 +0800, Jianxin Pan wrote:
+>> Hi Jerome,
+>>
+>> On 2018/10/24 17:01, Jerome Brunet wrote:
+>>> On Thu, 2018-10-18 at 13:07 +0800, Jianxin Pan wrote:
+>>>> From: Yixun Lan <yixun.lan@amlogic.com>
+>>>>
+>>>> The patch will add a MMC clock controller driver which used by MMC or NAND,
+>>>> It provide a mux and divider clock, and three phase clocks - core, tx, tx.
+>>>>
+[...]
+>>>>  
+>>>> -/* Would prefer clk_regmap_div_ro_ops but clashes with qcom */
+>>>> +static void clk_regmap_div_init(struct clk_hw *hw)
+>>>> +{
+>>>> +	struct clk_regmap *clk = to_clk_regmap(hw);
+>>>> +	struct clk_regmap_div_data *div = clk_get_regmap_div_data(clk);
+>>>> +	unsigned int val;
+>>>> +	int ret;
+>>>> +
+>>>> +	ret = regmap_read(clk->map, div->offset, &val);
+>>>> +	if (ret)
+>>>> +		return;
+>>>>  
+>>>> +	val &= (clk_div_mask(div->width) << div->shift);
+>>>> +	if (!val)
+>>>> +		regmap_update_bits(clk->map, div->offset,
+>>>> +				   clk_div_mask(div->width) << div->shift,
+>>>> +				   clk_div_mask(div->width));
+>>>
+>>> This is wrong for several reasons:
+>>> * You should hard code the initial value in the driver.
+>>> * If shift is not 0, I doubt this will give the expected result.
+>>
+>> The value 0x00 of divider means nand clock off then read/write nand register is forbidden.
+> 
+> That is not entirely true, you can access the clock register or you'd be in a
+> chicken and egg situation.
+> 
+>> Should we set the initial value in nand driver, or in sub emmc clk driver?
+> 
+> In the nand driver, which is the consumer of the clock. see my previous comments
+> about it.
+> 
+> If your device (nand in your case) needs a (sane) clock before doing anything
+> else, just call clk_set_rate() and enable it with clk_prepare_enable().
+> 
+> Look at our MMC driver, this is the first thing done after registering the
+> clocks.
+> 
+> The controller does no care at all about the clock rate or state. It is up to
+> the consumer to express their needs.
+> 
+> On a more general note:
+> I agree that having a 0 value for CLK_DIVIDER_ONE_BASED divider makes no sense.
+> If you think this point needs to be addressed, please:
+> 
+> * make separated generic patch
+> * against driver/clk/clk-divider.c 
+> * addressing specifically CLK_DIVIDER_ONE_BASED dividers (not all, as your
+> change does)
+> * with some comments explaining the intent.
+In our emmc driver, the CLK_DIV_MASK is hard coded before clock registering in meson_mmc_clk_init():
+ clk_reg |= CLK_DIV_MASK;
+ writel(clk_reg, host->regs + SD_EMMC_CLOCK);
+It's hard coded In previous version of nand driver.  I will drop the new ops.
 
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
----
- arch/arm/boot/dts/meson.dtsi   |  7 +++++++
- arch/arm/boot/dts/meson8.dtsi  | 15 ++++++++-------
- arch/arm/boot/dts/meson8b.dtsi | 15 ++++++++-------
- 3 files changed, 23 insertions(+), 14 deletions(-)
+In addition , Martin suggested in previous discussions that "sclk-div" could be used [0][1]. 
+This divider is just like a "sclk-div" with sclk->hi->width ==0. 
 
-diff --git a/arch/arm/boot/dts/meson.dtsi b/arch/arm/boot/dts/meson.dtsi
-index 0d9faf1a51ea..ad903d1a2cb6 100644
---- a/arch/arm/boot/dts/meson.dtsi
-+++ b/arch/arm/boot/dts/meson.dtsi
-@@ -80,6 +80,13 @@
- 			#size-cells = <1>;
- 			ranges = <0x0 0xc1100000 0x200000>;
- 
-+			hhi: system-controller@4000 {
-+				compatible = "amlogic,meson-hhi-sysctrl",
-+					     "simple-mfd",
-+					     "syscon";
-+				reg = <0x4000 0x400>;
-+			};
-+
- 			assist: assist@7c00 {
- 				compatible = "amlogic,meson-mx-assist", "syscon";
- 				reg = <0x7c00 0x200>;
-diff --git a/arch/arm/boot/dts/meson8.dtsi b/arch/arm/boot/dts/meson8.dtsi
-index 7162e0ca05b0..3e3d9c54cddc 100644
---- a/arch/arm/boot/dts/meson8.dtsi
-+++ b/arch/arm/boot/dts/meson8.dtsi
-@@ -190,13 +190,6 @@
- };
- 
- &cbus {
--	clkc: clock-controller@4000 {
--		#clock-cells = <1>;
--		#reset-cells = <1>;
--		compatible = "amlogic,meson8-clkc";
--		reg = <0x8000 0x4>, <0x4000 0x400>;
--	};
--
- 	reset: reset-controller@4404 {
- 		compatible = "amlogic,meson8b-reset";
- 		reg = <0x4404 0x9c>;
-@@ -323,6 +316,14 @@
- 	status = "okay";
- };
- 
-+&hhi {
-+	clkc: clock-controller {
-+		compatible = "amlogic,meson8-clkc";
-+		#clock-cells = <1>;
-+		#reset-cells = <1>;
-+	};
-+};
-+
- &hwrng {
- 	compatible = "amlogic,meson8-rng", "amlogic,meson-rng";
- 	clocks = <&clkc CLKID_RNG0>;
-diff --git a/arch/arm/boot/dts/meson8b.dtsi b/arch/arm/boot/dts/meson8b.dtsi
-index cd1ca9dda126..f92aab0aa247 100644
---- a/arch/arm/boot/dts/meson8b.dtsi
-+++ b/arch/arm/boot/dts/meson8b.dtsi
-@@ -159,13 +159,6 @@
- };
- 
- &cbus {
--	clkc: clock-controller@4000 {
--		#clock-cells = <1>;
--		#reset-cells = <1>;
--		compatible = "amlogic,meson8b-clkc";
--		reg = <0x8000 0x4>, <0x4000 0x400>;
--	};
--
- 	reset: reset-controller@4404 {
- 		compatible = "amlogic,meson8b-reset";
- 		reg = <0x4404 0x9c>;
-@@ -313,6 +306,14 @@
- 	status = "okay";
- };
- 
-+&hhi {
-+	clkc: clock-controller {
-+		compatible = "amlogic,meson8-clkc";
-+		#clock-cells = <1>;
-+		#reset-cells = <1>;
-+	};
-+};
-+
- &hwrng {
- 	compatible = "amlogic,meson8b-rng", "amlogic,meson-rng";
- 	clocks = <&clkc CLKID_RNG0>;
--- 
-2.19.1
 
+> 
+>>  
+>>>
+>>>> +}
+>>>
+>>> Please drop this. 
+OK. Thank you.
+>>>
+>>>> +
+>>>> +/* Would prefer clk_regmap_div_ro_ops but clashes with qcom */
+>>>>  const struct clk_ops clk_regmap_divider_ops = {
+>>>>  	.recalc_rate = clk_regmap_div_recalc_rate,
+>>>>  	.round_rate = clk_regmap_div_round_rate,
+>>>> @@ -122,6 +139,14 @@ static int clk_regmap_div_set_rate(struct clk_hw *hw, unsigned long rate,
+>>>>  };
+>>>>  EXPORT_SYMBOL_GPL(clk_regmap_divider_ops);
+>>>>  
+[...]
+>>>> +
+>>>> +static struct clk_regmap_mux_data mmc_clkc_mux_data = {
+>>>> +	.offset		= SD_EMMC_CLOCK,
+>>>> +	.mask		= 0x3,
+>>>> +	.shift		= 6,
+>>>> +	.flags		= CLK_DIVIDER_ROUND_CLOSEST,
+> 
+> Missed that earlier
+> 
+> This flag makes no sense for a mux.
+> Anyway this particular mux should never round up has doing so would be unsafe.
+> The clock provided to the nand or the eMMC should be the requested or lower.
+> 
+OK, I will drop it. Thanks for your time.
+>>>> +};
+>>>> +
+>>>> +static struct clk_regmap_div_data mmc_clkc_div_data = {
+>>>> +	.offset		= SD_EMMC_CLOCK,
+>>>> +	.shift		= 0,
+>>>> +	.width		= 6,
+>>>> +	.flags		= CLK_DIVIDER_ROUND_CLOSEST | CLK_DIVIDER_ONE_BASED,
+> 
+> Same here, drop CLK_DIVIDER_ROUND_CLOSEST
+OK, I will drop it. Thank you!
+> 
+>>>> +};
+>>>> +
+>>>> +static struct meson_clk_phase_data mmc_clkc_core_phase = {
+>>>> +	.ph = {
+>>>> +		.reg_off	= SD_EMMC_CLOCK,
+>>>> +		.shift	= 8,
+[...]
+> 
+> .
+> 
+
+[0] https://patchwork.kernel.org/patch/10607157/#22238243
+[1]https://lore.kernel.org/lkml/CAFBinCCuqUmVNdwUm7WbkHy1eWvOA5oQ5FcOuytbYNbgGcXnRQ@mail.gmail.com/T/#u
