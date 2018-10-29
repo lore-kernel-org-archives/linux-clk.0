@@ -3,372 +3,330 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2D39C2BC61
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 18:34:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 072FEC0044C
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 18:43:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72C7A2084A
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 18:34:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B26CA20657
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 18:43:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iBVI0mUL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72C7A2084A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QTtoY308"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B26CA20657
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729373AbeJ3DYf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 29 Oct 2018 23:24:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60816 "EHLO mail.kernel.org"
+        id S1729383AbeJ3DdI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 29 Oct 2018 23:33:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35066 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729359AbeJ3DYe (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 29 Oct 2018 23:24:34 -0400
+        id S1726036AbeJ3DdI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 29 Oct 2018 23:33:08 -0400
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E23AE2080A;
-        Mon, 29 Oct 2018 18:34:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4971820657;
+        Mon, 29 Oct 2018 18:43:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540838083;
-        bh=jeFpxn8Zxr6nDwuAcGWyFbQ0JdigRSQlGsAvItab+6I=;
+        s=default; t=1540838593;
+        bh=m/B0WyK8bYFkRNISlkWReG0unzpCQN2iR4pXsKVifk8=;
         h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=iBVI0mULuC9g3WlpFBwOg41r6GNPYH2Xdrgg1f5pQuPqxkBG5YqeX3YEEH3bOCpx4
-         Vr7KhQpbvwu8ZAJUQoFw0BU8W96+J3BOXVHG1OOtEVesBrGiNbdWCY5h0k92/91+ps
-         aChh8WkzYS+3EBJu0IMoedus/E02nDfwAN6GiqEE=
+        b=QTtoY308njuHGgEwulUeDLI8bbW7Mtp9Spu+ZeUwHReQSkioX59qUrp1gvtwY5d/y
+         fhfQj0VqxHxPfPuDHWw2ACml63y9pTI1usqT9wjpgO792843CYL1fo0NTojY/ff9T5
+         Wu7GfPSGDpYwZRPwwytMDEr8+pS8TOAyhad1h4f8=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-To:     geert+renesas@glider.be, horms@verge.net.au, jiada_wang@mentor.com,
-        magnus.damm@gmail.com, mark.rutland@arm.com,
-        mturquette@baylibre.com, robh+dt@kernel.org
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <tdas@codeaurora.org>
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20181025072349.15173-2-jiada_wang@mentor.com>
-Cc:     linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        jiada_wang@mentor.com
-References: <20181025072349.15173-1-jiada_wang@mentor.com>
- <20181025072349.15173-2-jiada_wang@mentor.com>
-Message-ID: <154083808229.98144.11678069495682135918@swboyd.mtv.corp.google.com>
+In-Reply-To: <9c359e26-3708-14b6-f22a-fb529446d325@codeaurora.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        chandanu@codeaurora.org, linux-arm-msm-owner@vger.kernel.org
+References: <1539093467-12123-1-git-send-email-tdas@codeaurora.org>
+ <1539093467-12123-3-git-send-email-tdas@codeaurora.org>
+ <153911726378.119890.5522594539667887860@swboyd.mtv.corp.google.com>
+ <3c4cccca-2c5c-927f-f471-2bbbd71b4155@codeaurora.org>
+ <9c359e26-3708-14b6-f22a-fb529446d325@codeaurora.org>
+Message-ID: <154083859263.98144.15690571729193618604@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.7
-Subject: Re: [PATCH linux-next v1 1/4] clk: renesas: clk-avb: add AVB Clock driver
-Date:   Mon, 29 Oct 2018 11:34:42 -0700
+Subject: Re: [PATCH v1 2/2] clk: qcom : dispcc: Add support for display port clocks
+Date:   Mon, 29 Oct 2018 11:43:12 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting jiada_wang@mentor.com (2018-10-25 00:23:46)
-> diff --git a/drivers/clk/renesas/Makefile b/drivers/clk/renesas/Makefile
-> index 71d4cafe15c0..17b05955e4f4 100644
-> --- a/drivers/clk/renesas/Makefile
-> +++ b/drivers/clk/renesas/Makefile
-> @@ -34,3 +34,4 @@ obj-$(CONFIG_CLK_RCAR_USB2_CLOCK_SEL) +=3D rcar-usb2-cl=
-ock-sel.o
->  obj-$(CONFIG_CLK_RENESAS_CPG_MSSR)     +=3D renesas-cpg-mssr.o
->  obj-$(CONFIG_CLK_RENESAS_CPG_MSTP)     +=3D clk-mstp.o
->  obj-$(CONFIG_CLK_RENESAS_DIV6)         +=3D clk-div6.o
-> +obj-$(CONFIG_CLK_RENESAS_CLK_AVB)      +=3D clk-avb.o
+Quoting Taniya Das (2018-10-28 03:34:55)
+> Hello Stephen,
+> =
 
-Any reason this can't be placed in some sort of alphabetical order
-instead of at the end of the file?
+> On 2018-10-19 16:04, Taniya Das wrote:
+> > Hello Stephen,
+> > =
 
-> diff --git a/drivers/clk/renesas/clk-avb.c b/drivers/clk/renesas/clk-avb.c
-> new file mode 100644
-> index 000000000000..bb1eef0e9bee
-> --- /dev/null
-> +++ b/drivers/clk/renesas/clk-avb.c
-> @@ -0,0 +1,257 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) 2017  Mentor
-> + *
-> + * Contact: Jiada Wang <jiada_wang@mentor.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation; version 2 of the License.
+> > On 10/10/2018 2:04 AM, Stephen Boyd wrote:
+> >> Quoting Taniya Das (2018-10-09 06:57:47)
+> >>> diff --git a/drivers/clk/qcom/dispcc-sdm845.c =
 
-Can you remove this paragraph? It duplicates the SPDX tag.
+> >>> b/drivers/clk/qcom/dispcc-sdm845.c
+> >>> index 0cc4909..6d3136a 100644
+> >>> --- a/drivers/clk/qcom/dispcc-sdm845.c
+> >>> +++ b/drivers/clk/qcom/dispcc-sdm845.c
+> >>> @@ -128,6 +144,100 @@ enum {
+> >>>          },
+> >>>   };
+> >>> =
 
-> + *
-> + * avb Common Clock Framework support
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/of_address.h>
-> +#include <linux/of_platform.h>
-> +#include <linux/slab.h>
-> +
-> +struct clk_avb_data {
-> +       void __iomem *base;
-> +
-> +       struct clk_onecell_data clk_data;
-> +       /* lock reg access */
-> +       spinlock_t lock;
-> +};
-> +
-> +struct clk_avb {
-> +       struct clk_hw hw;
-> +       unsigned int idx;
-> +       struct clk_avb_data *data;
-> +};
-> +
-> +#define to_clk_avb(_hw) container_of(_hw, struct clk_avb, hw)
-> +
-> +#define AVB_DIV_MASK   0x3ffff
-> +#define AVB_MAX_DIV    0x3ffc0
-> +#define AVB_COUNTER_MAX_FREQ   25000000
-> +#define AVB_COUNTER_NUM                8
-> +#define AVB_CLK_NAME_SIZE      10
-> +#define AVB_ID_TO_DIV(id)      ((id) * 4)
-> +
-> +#define AVB_CLK_CONFIG         0x20
-> +#define AVB_DIV_EN_COM         BIT(31)
-> +#define AVB_CLK_NAME           "avb"
-> +#define ADG_CLK_NAME           "adg"
-> +
-> +static int clk_avb_is_enabled(struct clk_hw *hw)
-> +{
-> +       struct clk_avb *avb =3D to_clk_avb(hw);
-> +
-> +       return (clk_readl(avb->data->base + AVB_CLK_CONFIG) & BIT(avb->id=
-x));
+> >>> +static const struct freq_tbl ftbl_disp_cc_mdss_dp_aux_clk_src[] =3D {
+> >>> +       F(19200000, P_BI_TCXO, 1, 0, 0),
+> >>> +       { }
+> >>> +};
+> >>> +
+> >>> +static struct clk_rcg2 disp_cc_mdss_dp_aux_clk_src =3D {
+> >>> +       .cmd_rcgr =3D 0x219c,
+> >>> +       .mnd_width =3D 0,
+> >>> +       .hid_width =3D 5,
+> >>> +       .parent_map =3D disp_cc_parent_map_2,
+> >>> +       .freq_tbl =3D ftbl_disp_cc_mdss_dp_aux_clk_src,
+> >>> +       .clkr.hw.init =3D &(struct clk_init_data){
+> >>> +               .name =3D "disp_cc_mdss_dp_aux_clk_src",
+> >>> +               .parent_names =3D disp_cc_parent_names_2,
+> >>> +               .num_parents =3D 2,
+> >>> +               .flags =3D CLK_SET_RATE_PARENT,
+> >>> +               .ops =3D &clk_rcg2_ops,
+> >>> +       },
+> >>> +};
+> >>> +
+> >>> +static const struct freq_tbl ftbl_disp_cc_mdss_dp_crypto_clk_src[] =
+=3D =
 
-Please drop the extra parenthesis.
+> >>> {
+> >>> +       F(108000, P_DP_PHY_PLL_LINK_CLK,   3,   0,   0),
+> >>> +       F(180000, P_DP_PHY_PLL_LINK_CLK,   3,   0,   0),
+> >>> +       F(360000, P_DP_PHY_PLL_LINK_CLK,   3,   0,   0),
+> >>> +       F(540000, P_DP_PHY_PLL_LINK_CLK,   3,   0,   0),
+> >>> +       { }
+> >>> +};
+> >>> +
+> >>> +static struct clk_rcg2 disp_cc_mdss_dp_crypto_clk_src =3D {
+> >>> +       .cmd_rcgr =3D 0x2154,
+> >>> +       .mnd_width =3D 0,
+> >>> +       .hid_width =3D 5,
+> >>> +       .parent_map =3D disp_cc_parent_map_1,
+> >>> +       .freq_tbl =3D ftbl_disp_cc_mdss_dp_crypto_clk_src,
+> >>> +       .clkr.hw.init =3D &(struct clk_init_data){
+> >>> +               .name =3D "disp_cc_mdss_dp_crypto_clk_src",
+> >>> +               .parent_names =3D disp_cc_parent_names_1,
+> >>> +               .num_parents =3D 4,
+> >>> +               .flags =3D CLK_GET_RATE_NOCACHE,
+> >> =
 
-> +}
-> +
-> +static int clk_avb_enabledisable(struct clk_hw *hw, int enable)
-> +{
-> +       struct clk_avb *avb =3D to_clk_avb(hw);
-> +       u32 val;
-> +
-> +       spin_lock(&avb->data->lock);
-> +
-> +       val =3D clk_readl(avb->data->base + AVB_CLK_CONFIG);
-> +       if (enable)
-> +               val |=3D BIT(avb->idx);
-> +       else
-> +               val &=3D ~BIT(avb->idx);
-> +       clk_writel(val, avb->data->base + AVB_CLK_CONFIG);
-> +
-> +       spin_unlock(&avb->data->lock);
-> +
-> +       return 0;
-> +}
-> +
-> +static int clk_avb_enable(struct clk_hw *hw)
-> +{
-> +       return clk_avb_enabledisable(hw, 1);
-> +}
-> +
-> +static void clk_avb_disable(struct clk_hw *hw)
-> +{
-> +       clk_avb_enabledisable(hw, 0);
-> +}
-> +
-> +static unsigned long clk_avb_recalc_rate(struct clk_hw *hw,
-> +                                        unsigned long parent_rate)
-> +{
-> +       struct clk_avb *avb =3D to_clk_avb(hw);
-> +       u32 div;
-> +
-> +       div =3D clk_readl(avb->data->base + AVB_ID_TO_DIV(avb->idx)) &
-> +                       AVB_DIV_MASK;
+> >> Why?
+> >> =
 
-Split this to two lines:
+> >>> +               .ops =3D &clk_rcg2_ops,
+> >>> +       },
+> >>> +};
+> >>> +
+> >>> +static const struct freq_tbl ftbl_disp_cc_mdss_dp_link_clk_src[] =3D=
+ {
+> >>> +       F(162000, P_DP_PHY_PLL_LINK_CLK,   1,   0,   0),
+> >>> +       F(270000, P_DP_PHY_PLL_LINK_CLK,   1,   0,   0),
+> >>> +       F(540000, P_DP_PHY_PLL_LINK_CLK,   1,   0,   0),
+> >>> +       F(810000, P_DP_PHY_PLL_LINK_CLK,   1,   0,   0),
+> >> =
 
-	div =3D readl(...);
-	div &=3D AVB_DIV_MASK;
+> >> Are these in kHz? They really look like it and that's bad. Why do we
+> >> need them at all? Just to make sure the display driver picks these =
 
-> +       if (!div)
-> +               return parent_rate;
-> +
-> +       return parent_rate * 32 / div;
-> +}
-> +
-> +static unsigned int clk_avb_calc_div(unsigned long rate,
-> +                                    unsigned long parent_rate)
-> +{
-> +       unsigned int div;
-> +
-> +       if (!rate)
-> +               rate =3D 1;
-> +
-> +       if (rate > AVB_COUNTER_MAX_FREQ)
-> +               rate =3D AVB_COUNTER_MAX_FREQ;
+> >> exact
+> >> frequencies? It seems like we could just pass whatever number comes in
+> >> up to the parent and see what it can do.
+> >> =
 
-rate =3D min(rate, AVB_COUNTER_MAX_FREQ);
+> > =
 
-> +
-> +       div =3D DIV_ROUND_CLOSEST(parent_rate * 32, rate);
-> +
-> +       if (div > AVB_MAX_DIV)
-> +               div =3D AVB_MAX_DIV;
+> > Let me check back the reason we had to make this change.
+> =
 
-div =3D min(div, AVB_MAX_DIV);
+> We will need this flag since we reset/power-down the PLL every time we =
 
-> +
-> +       return div;
-> +}
-> +
-> +static long clk_avb_round_rate(struct clk_hw *hw, unsigned long rate,
-> +                              unsigned long *parent_rate)
-> +{
-> +       unsigned int div =3D clk_avb_calc_div(rate, *parent_rate);
-> +
-> +       return (*parent_rate * 32) / div;
-> +}
-> +
-> +static int clk_avb_set_rate(struct clk_hw *hw, unsigned long rate,
-> +                           unsigned long parent_rate)
-> +{
-> +       struct clk_avb *avb =3D to_clk_avb(hw);
-> +       unsigned int div =3D clk_avb_calc_div(rate, parent_rate);
-> +       u32 val;
-> +
-> +       val =3D clk_readl(avb->data->base + AVB_ID_TO_DIV(avb->idx)) &
-> +                       ~AVB_DIV_MASK;
-> +       clk_writel(val | div, avb->data->base + AVB_ID_TO_DIV(avb->idx));
+> disconnect/connect the DP cable or during suspend/resume. Only with this =
 
-Any reason to use clk_readl/writel? Preferably these APIs aren't used
-and you just use readl/writel instead.
+> flag, the calls to the PLL driver are properly called.
 
-> +
-> +       return 0;
-> +}
-> +
-> +static const struct clk_ops clk_avb_ops =3D {
-> +       .enable =3D clk_avb_enable,
-> +       .disable =3D clk_avb_disable,
-> +       .is_enabled =3D clk_avb_is_enabled,
-> +       .recalc_rate =3D clk_avb_recalc_rate,
-> +       .round_rate =3D clk_avb_round_rate,
-> +       .set_rate =3D clk_avb_set_rate,
-> +};
-> +
-> +static struct clk *clk_register_avb(struct clk_avb_data *data,
-> +                                   unsigned int id)
-> +{
-> +       struct clk_init_data init;
-> +       struct clk_avb *avb;
-> +       struct clk *clk;
-> +       char name[AVB_CLK_NAME_SIZE];
-> +       const char *parent_name =3D ADG_CLK_NAME;
-> +
-> +       avb =3D kzalloc(sizeof(*avb), GFP_KERNEL);
-> +       if (!avb)
-> +               return ERR_PTR(-ENOMEM);
-> +
-> +       snprintf(name, AVB_CLK_NAME_SIZE, "%s.%u", AVB_CLK_NAME, id);
-> +
-> +       avb->idx =3D id;
-> +       avb->data =3D data;
-> +
-> +       /* Register the clock. */
-> +       init.name =3D name;
-> +       init.ops =3D &clk_avb_ops;
-> +       init.flags =3D CLK_IS_BASIC;
-> +       init.parent_names =3D &parent_name;
-> +       init.num_parents =3D 1;
-> +
-> +       avb->hw.init =3D &init;
-> +
-> +       /* init DIV to a valid state */
-> +       writel(AVB_MAX_DIV, data->base + AVB_ID_TO_DIV(avb->idx));
-> +
-> +       clk =3D clk_register(NULL, &avb->hw);
-> +       if (IS_ERR(clk))
-> +               kfree(avb);
-> +
-> +       return clk;
-> +}
-> +
-> +static void clk_unregister_avb(struct clk *clk)
-> +{
-> +       struct clk_avb *avb;
-> +       struct clk_hw *hw;
-> +
-> +       if (IS_ERR(clk))
-> +               return;
-> +
-> +       hw =3D __clk_get_hw(clk);
-> +       if (!hw)
-> +               return;
-> +
-> +       avb =3D to_clk_avb(hw);
-> +
-> +       clk_unregister(clk);
-> +       kfree(avb);
+What does this mean? I wanted to know about the weird frequencies listed
+above, and why it can't be done without a frequency table and direct
+rates passed up to the parent.
 
-Using clk_hw based registration APIs would make this a little cleaner.
+> =
 
-> +}
-> +
-> +static void __init clk_avb_setup(struct device_node *node)
-> +{
-> +       struct clk_avb_data *data;
-> +       struct clk_onecell_data *clk_data;
-> +       int ret, i;
-> +       struct resource res;
-> +
-> +       data =3D kzalloc(sizeof(*data), GFP_KERNEL);
-> +       if (!data)
-> +               return;
-> +
-> +       data->base =3D of_io_request_and_map(node, 0, of_node_full_name(n=
-ode));
-> +       if (IS_ERR(data->base))
-> +               goto err_data;
-> +
-> +       spin_lock_init(&data->lock);
-> +
-> +       clk_data =3D &data->clk_data;
-> +       clk_data->clk_num =3D AVB_COUNTER_NUM;
-> +       clk_data->clks =3D kmalloc_array(AVB_COUNTER_NUM,
-> +                                      sizeof(struct clk *),
-> +                                      GFP_KERNEL);
-> +       if (!clk_data->clks)
-> +               goto err_unmap;
-> +
-> +       for (i =3D 0; i < AVB_COUNTER_NUM; i++) {
-> +               clk_data->clks[i] =3D clk_register_avb(data, i);
-> +               if (IS_ERR(clk_data->clks[i])) {
-> +                       pr_err("failed to register clock %s.%d\n",
-> +                              AVB_CLK_NAME, i);
-> +                       goto err_clks;
-> +               }
-> +       }
-> +
-> +       ret =3D of_clk_add_provider(node, of_clk_src_onecell_get, clk_dat=
-a);
+> > =
 
-Can you use the clk_hw based registration and provider APIs?
+> >>> +       { }
+> >>> +};
+> >>> +
+> >>> +static struct clk_rcg2 disp_cc_mdss_dp_link_clk_src =3D {
+> >>> +       .cmd_rcgr =3D 0x2138,
+> >>> +       .mnd_width =3D 0,
+> >>> +       .hid_width =3D 5,
+> >>> +       .parent_map =3D disp_cc_parent_map_1,
+> >>> +       .freq_tbl =3D ftbl_disp_cc_mdss_dp_link_clk_src,
+> >>> +       .clkr.hw.init =3D &(struct clk_init_data){
+> >>> +               .name =3D "disp_cc_mdss_dp_link_clk_src",
+> >>> +               .parent_names =3D disp_cc_parent_names_1,
+> >>> +               .num_parents =3D 4,
+> >>> +               .flags =3D CLK_SET_RATE_PARENT,
+> >>> +               .ops =3D &clk_rcg2_ops,
+> >>> +       },
+> >>> +};
+> >>> +
+> >>> +static struct clk_rcg2 disp_cc_mdss_dp_pixel1_clk_src =3D {
+> >>> +       .cmd_rcgr =3D 0x2184,
+> >>> +       .mnd_width =3D 16,
+> >>> +       .hid_width =3D 5,
+> >>> +       .parent_map =3D disp_cc_parent_map_1,
+> >>> +       .clkr.hw.init =3D &(struct clk_init_data){
+> >>> +               .name =3D "disp_cc_mdss_dp_pixel1_clk_src",
+> >>> +               .parent_names =3D disp_cc_parent_names_1,
+> >>> +               .num_parents =3D 4,
+> >>> +               .flags =3D CLK_SET_RATE_PARENT,
+> >>> +               .ops =3D &clk_dp_ops,
+> >>> +       },
+> >>> +};
+> >>> +
+> >>> +static struct clk_rcg2 disp_cc_mdss_dp_pixel_clk_src =3D {
+> >>> +       .cmd_rcgr =3D 0x216c,
+> >>> +       .mnd_width =3D 16,
+> >>> +       .hid_width =3D 5,
+> >>> +       .parent_map =3D disp_cc_parent_map_1,
+> >>> +       .clkr.hw.init =3D &(struct clk_init_data){
+> >>> +               .name =3D "disp_cc_mdss_dp_pixel_clk_src",
+> >>> +               .parent_names =3D disp_cc_parent_names_1,
+> >>> +               .num_parents =3D 4,
+> >>> +               .flags =3D CLK_SET_RATE_PARENT,
+> >>> +               .ops =3D &clk_dp_ops,
+> >>> +       },
+> >>> +};
+> >>> +
+> >>>   static const struct freq_tbl ftbl_disp_cc_mdss_esc0_clk_src[] =3D {
+> >>>          F(19200000, P_BI_TCXO, 1, 0, 0),
+> >>>          { }
+> >>> @@ -391,6 +501,115 @@ enum {
+> >>>          },
+> >>>   };
+> >>> =
 
-> +       if (ret) {
-> +               pr_err("failed to register clock provider\n");
-> +               goto err_clks;
-> +       }
-> +
-> +       writel(AVB_DIV_EN_COM, data->base + AVB_CLK_CONFIG);
-> +
-> +       return;
-> +
-> +err_clks:
-> +       for (i =3D 0; i < AVB_COUNTER_NUM; i++)
-> +               clk_unregister_avb(clk_data->clks[i]);
-> +err_unmap:
-> +       iounmap(data->base);
-> +       of_address_to_resource(node, 0, &res);
-> +       release_mem_region(res.start, resource_size(&res));
-> +err_data:
-> +       kfree(data);
-> +}
-> +
-> +CLK_OF_DECLARE(avb, "renesas,clk-avb", clk_avb_setup);
+> >>> +static struct clk_branch disp_cc_mdss_dp_aux_clk =3D {
+> >>> +       .halt_reg =3D 0x2054,
+> >>> +       .halt_check =3D BRANCH_HALT,
+> >>> +       .clkr =3D {
+> >>> +               .enable_reg =3D 0x2054,
+> >>> +               .enable_mask =3D BIT(0),
+> >>> +               .hw.init =3D &(struct clk_init_data){
+> >>> +                       .name =3D "disp_cc_mdss_dp_aux_clk",
+> >>> +                       .parent_names =3D (const char *[]){
+> >>> +                               "disp_cc_mdss_dp_aux_clk_src",
+> >>> +                       },
+> >>> +                       .num_parents =3D 1,
+> >>> +                       .flags =3D CLK_SET_RATE_PARENT,
+> >>> +                       .ops =3D &clk_branch2_ops,
+> >>> +               },
+> >>> +       },
+> >>> +};
+> >>> +
+> >>> +static struct clk_branch disp_cc_mdss_dp_crypto_clk =3D {
+> >>> +       .halt_reg =3D 0x2048,
+> >>> +       .halt_check =3D BRANCH_HALT,
+> >>> +       .clkr =3D {
+> >>> +               .enable_reg =3D 0x2048,
+> >>> +               .enable_mask =3D BIT(0),
+> >>> +               .hw.init =3D &(struct clk_init_data){
+> >>> +                       .name =3D "disp_cc_mdss_dp_crypto_clk",
+> >>> +                       .parent_names =3D (const char *[]){
+> >>> +                               "disp_cc_mdss_dp_crypto_clk_src",
+> >>> +                       },
+> >>> +                       .num_parents =3D 1,
+> >>> +                       .flags =3D CLK_SET_RATE_PARENT,
+> >>> +                       .ops =3D &clk_branch2_ops,
+> >>> +               },
+> >>> +       },
+> >>> +};
+> >>> +
+> >>> +static struct clk_branch disp_cc_mdss_dp_link_clk =3D {
+> >>> +       .halt_reg =3D 0x2040,
+> >>> +       .halt_check =3D BRANCH_HALT,
+> >>> +       .clkr =3D {
+> >>> +               .enable_reg =3D 0x2040,
+> >>> +               .enable_mask =3D BIT(0),
+> >>> +               .hw.init =3D &(struct clk_init_data){
+> >>> +                       .name =3D "disp_cc_mdss_dp_link_clk",
+> >>> +                       .parent_names =3D (const char *[]){
+> >>> +                               "disp_cc_mdss_dp_link_clk_src",
+> >>> +                       },
+> >>> +                       .num_parents =3D 1,
+> >>> +                       .flags =3D CLK_SET_RATE_PARENT,
+> >>> +                       .ops =3D &clk_branch2_ops,
+> >>> +               },
+> >>> +       },
+> >>> +};
+> >>> +
+> >>> +/* reset state of disp_cc_mdss_dp_link_div_clk_src divider is 0x3 =
 
-Any reason to not use platform device APIs? If not, please change this
-to a platform driver. Otherwise, add a comment indicating why it can't
-be done.
+> >>> (div 4) */
+> >> =
 
+> >> Not sure what this comment is for. But it's interesting nonetheless.
+> >> =
+
+> >>> +static struct clk_branch disp_cc_mdss_dp_link_intf_clk =3D {
+> >>> +       .halt_reg =3D 0x2044,
+> >>> +       .halt_check =3D BRANCH_HALT,
+> >>> +       .clkr =3D {
+> >>> +               .enable_reg =3D 0x2044,
+> >>> +               .enable_mask =3D BIT(0),
+> >>> +               .hw.init =3D &(struct clk_init_data){
+> >>> +                       .name =3D "disp_cc_mdss_dp_link_intf_clk",
+> >>> +                       .parent_names =3D (const char *[]){
+> >>> +                               "disp_cc_mdss_dp_link_clk_src",
+> >>> +                       },
+> >>> +                       .num_parents =3D 1,
+> >>> +                       .flags =3D CLK_GET_RATE_NOCACHE,
+> >> =
+
+> >> Why?
+> >> =
+
+> > =
+
+> > It was a requirement, but let me get back on this too.
+> > =
+
+> I had a discussion with the Display Port teams and below is the requireme=
+nt,
+> =
+
+> This flag is required since we reset/power-down the PLL every time they
+> disconnect/connect the DP cable or during suspend/resume.
+> Only with this flag, the calls to the PLL driver properly.
+
+Ok. So that explains the get rate nocache flag. Can you please add a
+comment that explains that these clk registers here are lost across
+suspend/resume of the display device? It really sounds like these
+display clks are inside of the display power domain and thus they lose
+their state across the display power domain power down. It would be
+better if we could properly implement suspend/restore for these clk
+registers across suspend/resume of the display device so that we don't
+need this nocache flag and the display code can work together with the
+clk code here to restore the frequency to the clk.
+
+Is it really the case that the rcg here is always selecting a particular
+PLL and doing a div-1? Because that is very simple then to just write
+that setting again on genpd restore.
 
