@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72174C2BC61
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 14:26:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 951BAC2BC61
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 14:28:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3637820657
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 14:26:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E8EA20657
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 14:28:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="c4Lpqvcv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3637820657
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="iKZ2wHaT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E8EA20657
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725964AbeJ2XPf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 29 Oct 2018 19:15:35 -0400
-Received: from mail-it1-f194.google.com ([209.85.166.194]:34655 "EHLO
+        id S1725977AbeJ2XRG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 29 Oct 2018 19:17:06 -0400
+Received: from mail-it1-f194.google.com ([209.85.166.194]:38354 "EHLO
         mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726102AbeJ2XPe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Oct 2018 19:15:34 -0400
-Received: by mail-it1-f194.google.com with SMTP id e81-v6so10410933itc.1
-        for <linux-clk@vger.kernel.org>; Mon, 29 Oct 2018 07:26:41 -0700 (PDT)
+        with ESMTP id S1725989AbeJ2XRA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Oct 2018 19:17:00 -0400
+Received: by mail-it1-f194.google.com with SMTP id i76-v6so9594746ita.3
+        for <linux-clk@vger.kernel.org>; Mon, 29 Oct 2018 07:28:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=vwcLW3LNYYGydI4/fUe4zYSPYaXNLWgbJ8dUBFW9/4Y=;
-        b=c4LpqvcvymuZA+56QKDy7e7YzwQFpcAw2tsV0KGADKhreT/i+PS+RlvayOyUQM4jX1
-         4VVtT2ohDjkCDwyGYhPZ6h1scF+Eta1Hg/kb3XK8L0qyayLWbfaItQyPr6QeEsuxeXly
-         HUNHVA35+NTwojBZPLq0TUl71TmcIb5WR44Ok=
+        bh=csIQGmJZW/l9oIw4NG0CrTd9Cu8XhuD8enkaPjecEOQ=;
+        b=iKZ2wHaTvE6ksFUFqShoFkngC/STPgBDWs2hcguLbzLZ4nnwOXBV55Io9yOrnjVDRP
+         A8D0rscbbtt5lc/YhuaOPNF+dAC3rKYM3JCa3eXKBCfvEcd+XqLdMWeJW91eyspZEbar
+         PSZHe/jQoMXeKckz6dNitLi+Whoi2zwV8gsgg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=vwcLW3LNYYGydI4/fUe4zYSPYaXNLWgbJ8dUBFW9/4Y=;
-        b=b9eth5mJMlZsIB9sTQqk4W7Kf56p+qdWWIKIiLebdFIHU6vIPjxWKT6dgx318L5fWJ
-         3BfSst7Up78hFTZB1U9SvVVV30U2OHPpbO99ZojGS19lQw6PBG+b1ywgidrQF7RNP0CG
-         PwSPoX5eHmExXtSja+7xRw/CbipxTrRPhKD6GpQDP/mEP8BXWVXL/9hweGOoYfbyi1ym
-         3qvXAmeXii3Nv2lhF0pd0ILms0tSk4XnEXWB/4jORFf3RvyyKNILtL2oY1/jzZ1CfXxz
-         eUfqOQVfctxfPhskI6ROy89XpB9pALSNR1IrR6peteiFgg8VbE72DTg+V4NDWi4tSumE
-         2quw==
-X-Gm-Message-State: AGRZ1gIG9Bk2Dg1TT6zxwgA1G+Qobco5BTc8r8MDvfOt6+j04Sj8T9GQ
-        C6v/EtmwpzH2gYmUzBhbUC6TYXbzTmsznXHR0LDo0w==
-X-Google-Smtp-Source: AJdET5fMnsAArk8E1miDYi3V+FNFG8pbihMkdJ5HPZEJCCXDUw54IWSqhDcd49ZBoIjaCFdU0mivrbTVXxMuBdd0Sq4=
-X-Received: by 2002:a24:d0c2:: with SMTP id m185-v6mr3376418itg.173.1540823200535;
- Mon, 29 Oct 2018 07:26:40 -0700 (PDT)
+        bh=csIQGmJZW/l9oIw4NG0CrTd9Cu8XhuD8enkaPjecEOQ=;
+        b=OG93QbIEb7Khx9TU/6teHHY9JTRgtKyi8YHFp+3WlVUad4Lb6k44+5+HA9EJnn8xmK
+         HNHFu/PleFNVZftUg+fJmGH3ZP4kIhFRFgf36Od2mr6Gm1edRA6yXFLcZYfNqcNyEsOq
+         10DTxTgqS8N9y3YJ8oU0nw4HQ6Ll50xtv7gZeJtJDIpgvEdP0CI2meUTGeeHeZEuRbTf
+         OejzX253NFgZSYddbdlFwNYHH68oxB79nND0PZO0NC7/Y4dUp4R9csbmST8esQzegrvD
+         +wyB+0zTtai0HDefMHASph2SW5/iz+ZIZL6sbV9Ead84urzDBJGBevGwZWQ5zrTI6zWm
+         VdMw==
+X-Gm-Message-State: AGRZ1gIR8kdOVfyFCLEKkvI41JOhFBQ1Y+4bwwRqVPV3yQi0B85/KO6L
+        wcfY/GwiRC4aVqlYS/C4FYeclebJHOak+4q7NodMKg==
+X-Google-Smtp-Source: AJdET5eSOhIgrHT5t7Cf+O/UWztETUMyO8jP9QslfQGZF5eRcVE7azZvCoDzoPefeNZt5cymtvAOdOfLFbLayq0d9a0=
+X-Received: by 2002:a02:94d:: with SMTP id f74-v6mr10579109jad.85.1540823287094;
+ Mon, 29 Oct 2018 07:28:07 -0700 (PDT)
 MIME-Version: 1.0
 References: <20181026144344.27778-1-jagan@amarulasolutions.com>
- <20181026144344.27778-13-jagan@amarulasolutions.com> <20181029092227.mdxgvg5aqzh22j72@flea>
-In-Reply-To: <20181029092227.mdxgvg5aqzh22j72@flea>
+ <20181026144344.27778-15-jagan@amarulasolutions.com> <20181029092754.2tl7i5k5qpbn4557@flea>
+In-Reply-To: <20181029092754.2tl7i5k5qpbn4557@flea>
 From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Mon, 29 Oct 2018 19:56:27 +0530
-Message-ID: <CAMty3ZBHU5eXRLLJmUroLgSKcF6O9gHOHRM1XBnt9_Lp7B8rEA@mail.gmail.com>
-Subject: Re: [PATCH v3 12/25] drm/sun4i: sun6i_mipi_dsi: Add DSI hblk packet overhead
+Date:   Mon, 29 Oct 2018 19:57:56 +0530
+Message-ID: <CAMty3ZC6B-o1Oij_FLpotjN_900kF6OikK323y=bQ9VPzSPDgg@mail.gmail.com>
+Subject: Re: [PATCH v3 14/25] drm/sun4i: sun6i_mipi_dsi: Increase hfp packet overhead
 To:     Maxime Ripard <maxime.ripard@bootlin.com>
 Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
         Jernej Skrabec <jernej.skrabec@siol.net>,
@@ -82,17 +82,33 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Oct 29, 2018 at 2:52 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+On Mon, Oct 29, 2018 at 2:58 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
 >
-> On Fri, Oct 26, 2018 at 08:13:31PM +0530, Jagan Teki wrote:
-> > Add 10 bytes packet overhead for hblk where blank is set using
-> > a blanking packet like (4 bytes + 4 bytes + payload + 2 bytes)
+> On Fri, Oct 26, 2018 at 08:13:33PM +0530, Jagan Teki wrote:
+> > Increase the hfp packet overhead with another 10 bytes, the extra
+> > 10 bytes(which is hblk packet overhead) is adding for hfp packet
+> > overhead since hfp depends on hblk.
 > >
-> > This is according to BSP code from BPI-M64-bsp
+> > This is truely as per BSP code from BPI-M64-bsp.
+> > The real computation from BSP is
 > > (in drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c)
+> > dsi_hbp = (hbp-hspw)*dsi_pixel_bits[format]/8 - (4+2);
+> > dsi_hact = x * dsi_pixel_bits[format]/8;
 > > dsi_hblk = (ht-hspw)*dsi_pixel_bits[format]/8-(4+4+2);
+> > dsi_hfp = dsi_hblk - (4+dsi_hact+2) - (4+dsi_hbp+2);
 > >
-> > So, add 10 bytes packet overhead for DSI hblk.
+> > Example,
+> > u32 fmt = dsi_pixel_bits[format]/8;
+> > => ((ht-hspw)*fmt - 10) - (6 + x * fmt) - (6 + (hbp-hspw)*fmt - 6)
+> > => (ht - hspw - x - (hbp - hspw)) * fmt - 16
+> > => (ht - x - hbp) * fmt - 16
+> > => (ht - x - (timmings->hor_total_time - timmings->hor_front_porch - x)
+> > * fmt - 16
+> > => (timmings->hor_total_time - x - timmings->hor_total_time +
+> > timmings->hor_front_porch + x) * fmt - 16
+> > => timmings->hor_front_porch * fmt - 16
+> >
+> > So, increase the DSI hfp packet overhead by hblk packet overhead.
 > >
 > > Tested on 2-lane, 4-lane MIPI-DSI LCD panels.
 > >
@@ -104,50 +120,54 @@ On Mon, Oct 29, 2018 at 2:52 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
 > > Changes for v2:
 > > - none
 > >
-> >  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 9 +++++++--
-> >  1 file changed, 7 insertions(+), 2 deletions(-)
+> >  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 22 +++++++++++++---------
+> >  1 file changed, 13 insertions(+), 9 deletions(-)
 > >
 > > diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> > index 596e560263bf..cf42be1f1ba1 100644
+> > index 6584b51736a9..20e330186b7f 100644
 > > --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
 > > +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
 > > @@ -461,7 +461,7 @@ static void sun6i_dsi_setup_timings(struct sun6i_dsi *dsi,
 > >  {
 > >       struct mipi_dsi_device *device = dsi->device;
 > >       unsigned int Bpp = mipi_dsi_pixel_format_to_bpp(device->format) / 8;
-> > -     u16 hbp, hfp, hsa, hblk, vblk;
-> > +     u16 hbp, hfp, hsa, hblk_max, hblk, vblk;
+> > -     u16 hbp, hfp, hsa, hblk_max, hblk, vblk;
+> > +     u16 hbp, hfp_pkt_overhead, hfp, hsa, hblk_max, hblk, vblk;
 > >       size_t bytes;
 > >       u8 *buffer;
 > >
-> > @@ -494,8 +494,13 @@ static void sun6i_dsi_setup_timings(struct sun6i_dsi *dsi,
+> > @@ -484,14 +484,6 @@ static void sun6i_dsi_setup_timings(struct sun6i_dsi *dsi,
+> >       hbp = max((unsigned int)HBP_PACKET_OVERHEAD,
+> >                 (mode->htotal - mode->hsync_end) * Bpp - HBP_PACKET_OVERHEAD);
 > >
+> > -     /*
+> > -      * The frontporch is set using a blanking packet (4 bytes +
+> > -      * payload + 2 bytes). Its minimal size is therefore 6 bytes
+> > -      */
+> > -#define HFP_PACKET_OVERHEAD  6
+> > -     hfp = max((unsigned int)HFP_PACKET_OVERHEAD,
+> > -               (mode->hsync_start - mode->hdisplay) * Bpp - HFP_PACKET_OVERHEAD);
+> > -
 > >       /*
 > >        * hblk seems to be the line + porches length.
-> > +      * The blank is set using a blanking packet (4 bytes + 4 bytes +
-> > +      * payload + 2 bytes). So minimal size is 10 bytes
-> >        */
-> > -     hblk = (mode->htotal - (mode->hsync_end - mode->hsync_start)) * Bpp;
-> > +#define HBLK_PACKET_OVERHEAD 10
-> > +     hblk_max = (mode->htotal - (mode->hsync_end - mode->hsync_start)) * Bpp;
-> > +     hblk_max -= HBLK_PACKET_OVERHEAD;
-> > +     hblk = max((unsigned int)HBLK_PACKET_OVERHEAD, hblk_max);
+> >        * The blank is set using a blanking packet (4 bytes + 4 bytes +
+> > @@ -502,6 +494,18 @@ static void sun6i_dsi_setup_timings(struct sun6i_dsi *dsi,
+> >       hblk_max -= HBLK_PACKET_OVERHEAD;
+> >       hblk = max((unsigned int)HBLK_PACKET_OVERHEAD, hblk_max);
+> >
+> > +     /*
+> > +      * The frontporch is set using a blanking packet (4 bytes +
+> > +      * payload + 2 bytes). Its minimal size is therefore 6 bytes
+> > +      *
+> > +      * According to BSP code, extra 10 bytes(which is hblk packet overhead)
+> > +      * is adding for hfp packet overhead since hfp depends on hblk.
 >
-> I'd rather use the same convention than the other assignments done
-> before in that function.
+> "According to the BSP code, another 10 bytes (the HBLK packet
+> overhead) need to be added to the front porch overhead."
+>
+> How has this been verified? Since we have registers to set all the
+> parameters, this seems kind of weird.
 
-Yes, old code did use hsa. but it's added 10 bytes packet head instead
-of subtracting it.
-
-hblk = mode->htotal * Bpp - hsa;
-=> mode->htotal * Bpp - (mode->hsync_end - mode->hsync_start) * Bpp -
-HSA_PACKET_OVERHEAD);
-=> (mode->htotal - (mode->hsync_end - mode->hsync_start)) * Bpp +
-HSA_PACKET_OVERHEAD;
-
-And it should be
-(mode->htotal - (mode->hsync_end - mode->hsync_start)) * Bpp -
-HSA_PACKET_OVERHEAD;
-
-This patch is simply doing the same by explicitly adding packet over
-ahead macro, which again used in hfp.
+Verified based on the BSP calculation which I explained in commit
+message and tested by validating these numbers with mainline vs bsp
+code.
