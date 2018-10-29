@@ -2,31 +2,31 @@ Return-Path: <SRS0=SMsi=NJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 049B0C2BC61
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 09:31:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E8CBC46475
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 09:33:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC51820827
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 09:31:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC51820827
+	by mail.kernel.org (Postfix) with ESMTP id 500C220827
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 09:33:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 500C220827
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729495AbeJ2STp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 29 Oct 2018 14:19:45 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:56512 "EHLO mail.bootlin.com"
+        id S1729667AbeJ2SVJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 29 Oct 2018 14:21:09 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:56646 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729486AbeJ2STp (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 29 Oct 2018 14:19:45 -0400
+        id S1729592AbeJ2SVJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 29 Oct 2018 14:21:09 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id BD225208B0; Mon, 29 Oct 2018 10:31:52 +0100 (CET)
+        id 8A14A208CE; Mon, 29 Oct 2018 10:33:16 +0100 (CET)
 Received: from localhost (aaubervilliers-681-1-12-210.w90-88.abo.wanadoo.fr [90.88.133.210])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 874F020711;
-        Mon, 29 Oct 2018 10:31:42 +0100 (CET)
-Date:   Mon, 29 Oct 2018 10:31:42 +0100
+        by mail.bootlin.com (Postfix) with ESMTPSA id 59213207D4;
+        Mon, 29 Oct 2018 10:33:06 +0100 (CET)
+Date:   Mon, 29 Oct 2018 10:33:06 +0100
 From:   Maxime Ripard <maxime.ripard@bootlin.com>
 To:     Jagan Teki <jagan@amarulasolutions.com>
 Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
@@ -43,16 +43,16 @@ Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
         Michael Trimarchi <michael@amarulasolutions.com>,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v3 16/25] drm/sun4i: sun6i_mipi_dsi: Add support for
- VCC-DSI voltage regulator
-Message-ID: <20181029093142.hgn4q6o7q32voutf@flea>
+Subject: Re: [PATCH v3 18/25] drm/panel: Add Bananapi S070WV20-CT16 ICN6211
+ MIPI-DSI to RGB bridge
+Message-ID: <20181029093306.ysyfgnrozbo2ywcu@flea>
 References: <20181026144344.27778-1-jagan@amarulasolutions.com>
- <20181026144344.27778-17-jagan@amarulasolutions.com>
+ <20181026144344.27778-19-jagan@amarulasolutions.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="c44lc6ofhu4n4dbs"
+        protocol="application/pgp-signature"; boundary="hdtvfuanrelpecuc"
 Content-Disposition: inline
-In-Reply-To: <20181026144344.27778-17-jagan@amarulasolutions.com>
+In-Reply-To: <20181026144344.27778-19-jagan@amarulasolutions.com>
 User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
@@ -60,83 +60,27 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---c44lc6ofhu4n4dbs
+--hdtvfuanrelpecuc
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 26, 2018 at 08:13:35PM +0530, Jagan Teki wrote:
-> Some boards have VCC-DSI pin connected to voltage regulator which may
-> not be turned on by default.
+On Fri, Oct 26, 2018 at 08:13:37PM +0530, Jagan Teki wrote:
+> Bananapi S070WV20-CT16 ICN6211 is 800x480, 4-lane MIPI-DSI to RGB bridge
+> panel which can be used to connect via DSI port on BPI-M64 board,
+> so add a driver for it.
 >=20
-> Add support for such boards by adding voltage regulator handling code to
-> MIPI DSI driver.
+> The same panel PCB comes with parallel RBG which is supported via
+> panel-simple driver with "bananapi,s070wv20-ct16" compatible.
 >=20
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> Tested-by: Jagan Teki <jagan@amarulasolutions.com>
-> ---
-> Changes for v3:
-> - new patch
-> Changes for v2:
-> - none
+> BSP dclock of 30MHz is not working with existing sunxi-ng and sun4i
+> sun4i_dclk_recalc, so updated to 55MHz can result proper working
+> nkm dividers.
 >=20
->  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 14 ++++++++++++++
->  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h |  3 +++
->  2 files changed, 17 insertions(+)
->=20
-> diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun=
-4i/sun6i_mipi_dsi.c
-> index 42bd7506abaf..bc57343592e0 100644
-> --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> @@ -949,6 +949,12 @@ static int sun6i_dsi_bind(struct device *dev, struct=
- device *master,
-> =20
->  	dsi->drv =3D drv;
-> =20
-> +	ret =3D regulator_enable(dsi->regulator);
-> +	if (ret) {
-> +		dev_err(dev, "Failed to enable regulator\n");
-> +		return ret;
-> +	}
-> +
+> dclock, 30MHz =3D> PLL_MIPI, 300MHz =3D> set rate 440MHz with 1,2,1 nkm
+> dclock, 55MHz =3D> PLL_MIPI, 300MHz =3D> set rate 330MHz with 5,2,9 nkm
 
-The regulator should be enabled only when the device is in use.
-
->  	drm_encoder_helper_add(&dsi->encoder,
->  			       &sun6i_dsi_enc_helper_funcs);
->  	ret =3D drm_encoder_init(drm,
-> @@ -980,6 +986,7 @@ static int sun6i_dsi_bind(struct device *dev, struct =
-device *master,
-> =20
->  err_cleanup_connector:
->  	drm_encoder_cleanup(&dsi->encoder);
-> +	regulator_disable(dsi->regulator);
->  	return ret;
->  }
-> =20
-> @@ -989,6 +996,7 @@ static void sun6i_dsi_unbind(struct device *dev, stru=
-ct device *master,
->  	struct sun6i_dsi *dsi =3D dev_get_drvdata(dev);
-> =20
->  	drm_panel_detach(dsi->panel);
-> +	regulator_disable(dsi->regulator);
->  }
-> =20
->  static const struct component_ops sun6i_dsi_ops =3D {
-> @@ -1022,6 +1030,12 @@ static int sun6i_dsi_probe(struct platform_device =
-*pdev)
->  		return PTR_ERR(base);
->  	}
-> =20
-> +	dsi->regulator =3D devm_regulator_get(dev, "vcc-dsi");
-> +	if (IS_ERR(dsi->regulator)) {
-> +		dev_err(dev, "Couldn't get regulator\n");
-> +		return PTR_ERR(dsi->regulator);
-> +	}
-> +
-
-You haven't updated the DT bindings accordingly.
+That panel is generic, you don't need those details in your commit log.
 
 Maxime
 
@@ -145,15 +89,15 @@ Maxime Ripard, Bootlin
 Embedded Linux and Kernel engineering
 https://bootlin.com
 
---c44lc6ofhu4n4dbs
+--hdtvfuanrelpecuc
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW9bTfgAKCRDj7w1vZxhR
-xafeAQC/hk+cR3NR/oeGrMutYm3CO/ddSYmfepkr5BAd0Qg4YAEAn8uF6TFtcbAX
-akK7hkY59vjG9MdW7yEzdyHdpeNZjgU=
-=z4E+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW9bT0gAKCRDj7w1vZxhR
+xUQ8AP9YdRaccCX4pK7kzdP4KTovwRcg2mcNR6cZqeZM5zgHBAD8DPHFmJ01ST/h
+UbLtUvbCKLNiymS3lObWE6Qelee2ZAY=
+=qgcV
 -----END PGP SIGNATURE-----
 
---c44lc6ofhu4n4dbs--
+--hdtvfuanrelpecuc--
