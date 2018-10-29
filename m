@@ -2,105 +2,95 @@ Return-Path: <SRS0=SMsi=NJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 465A5C2BC61
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 08:04:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8B1FC2BC61
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 08:06:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3F102084A
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 08:04:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3F102084A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
+	by mail.kernel.org (Postfix) with ESMTP id 89D1E2080A
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 08:06:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="bgtfFerz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89D1E2080A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726079AbeJ2Qvm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 29 Oct 2018 12:51:42 -0400
-Received: from out1.zte.com.cn ([202.103.147.172]:38726 "EHLO mxct.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726036AbeJ2Qvl (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 29 Oct 2018 12:51:41 -0400
-Received: from mse01.zte.com.cn (unknown [10.30.3.20])
-        by Forcepoint Email with ESMTPS id 266BD12846B20A020724;
-        Mon, 29 Oct 2018 16:03:46 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse01.zte.com.cn with ESMTP id w9T83YTt088562;
-        Mon, 29 Oct 2018 16:03:34 +0800 (GMT-8)
-        (envelope-from wang.yi59@zte.com.cn)
-Received: from fox-host8.localdomain ([10.74.120.8])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2018102916034081-7352366 ;
-          Mon, 29 Oct 2018 16:03:40 +0800 
-From:   Yi Wang <wang.yi59@zte.com.cn>
-To:     paul.burton@mips.com
+        id S1729156AbeJ2QyN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 29 Oct 2018 12:54:13 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:34476 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727516AbeJ2QyM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Oct 2018 12:54:12 -0400
+Received: by mail-lj1-f194.google.com with SMTP id g8-v6so3939717ljk.1
+        for <linux-clk@vger.kernel.org>; Mon, 29 Oct 2018 01:06:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ajaYwJF4Ljrrll4IuoXvlD3RjAFhr9gdHOnHhXAu5Zs=;
+        b=bgtfFerzqxC6ZUuW/O5tRqis/zoiuS3TRapqRabfRAjRT6CbGF3xgSXW/A9SlH2G4O
+         s/JXPY7DoPAYN0uosA05sDINjNfda8s2Nq6OapQWkAyjEuyKBqs10HB7CSvEe14F5iEW
+         ZroMXJabEv34xiq5PH9zA7msP+7mqsRx2TqRJCOjq5I6oYTP/WDWWSzIYrjCkIl2ptTz
+         UX4P25hpz71nbGq1MgfQfwCnRO64i/GrEXANeX6hTTT/fGunYPdkCMCIb217u0ypIPrm
+         SPg9tGHE5M7ql0UsRWXrROLk3cCNHkiWOvY98Iuzbl6d1fjcwl3/ULZmjj0krWyOOi5K
+         iQpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ajaYwJF4Ljrrll4IuoXvlD3RjAFhr9gdHOnHhXAu5Zs=;
+        b=cVW0EIcY3bwUuk2LXBafarj+2oNSl2nmgd/2nqcYUWUZPjhs2OV/UFHi47dtF7ikkK
+         5rAYqgDaf/hfdA6cem3xGgQYqGmJkLankOJj1lyQdeR26kWkVj/+5YojE3QwM2zmoYu2
+         OLxB2i+tj6JOld51nGXEZpu8+2OILjPmtSnBXMIFBnT5rQc17oZf1DkXBCowxboJFgEO
+         cMFW+YGj/xXzzubWm9ckJKkmEkg4gpJtRekBrYNM6CuECpAKZJS7v8hKQC/UqaPMIqHr
+         ot442y6LVdoDm0Mxks2NABKFGIUHv/wZr4qxWd8NYDfTwXlOHkEfQKbR6FYI6EqJpPcQ
+         zhLQ==
+X-Gm-Message-State: AGRZ1gLJJhkerdJrU9jxLiaxTXJcwuljIaoxHClYZqaHmRRpUscYTDGW
+        N5X3S3MlP9QxJ+y15/O0IkKV/A==
+X-Google-Smtp-Source: AJdET5cKauyhWO1h2ZqTBuRWJK5O+Kd2QrHv5LHiQChZveprNqHnA11mW3b1cYjhThIm2NJUoLJRTQ==
+X-Received: by 2002:a2e:215a:: with SMTP id h87-v6mr9407080ljh.102.1540800398714;
+        Mon, 29 Oct 2018 01:06:38 -0700 (PDT)
+Received: from [192.168.0.126] ([31.173.80.69])
+        by smtp.gmail.com with ESMTPSA id c22sm2922682lfd.88.2018.10.29.01.06.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 29 Oct 2018 01:06:37 -0700 (PDT)
+Subject: Re: [PATCH] clk: boston: fix possible memory leak in
+ clk_boston_setup()
+To:     Yi Wang <wang.yi59@zte.com.cn>, paul.burton@mips.com
 Cc:     mturquette@baylibre.com, sboyd@kernel.org,
         linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, zhong.weidong@zte.com.cn,
-        Yi Wang <wang.yi59@zte.com.cn>
-Subject: [PATCH] clk: boston: fix possible memory leak in clk_boston_setup()
-Date:   Mon, 29 Oct 2018 16:04:37 +0800
-Message-Id: <1540800277-24524-1-git-send-email-wang.yi59@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2018-10-29 16:03:40,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2018-10-29 16:03:34,
-        Serialize complete at 2018-10-29 16:03:34
-X-MAIL: mse01.zte.com.cn w9T83YTt088562
+        linux-kernel@vger.kernel.org, zhong.weidong@zte.com.cn
+References: <1540800277-24524-1-git-send-email-wang.yi59@zte.com.cn>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <5484fe07-5909-dc67-5de6-72e878060a54@cogentembedded.com>
+Date:   Mon, 29 Oct 2018 11:06:41 +0300
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <1540800277-24524-1-git-send-email-wang.yi59@zte.com.cn>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-'onecell' is malloced in clk_boston_setup(), but not be freed
-before leaving from the error handling cases.
+Hello!
 
-Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
----
- drivers/clk/imgtec/clk-boston.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+On 10/29/2018 11:04 AM, Yi Wang wrote:
 
-diff --git a/drivers/clk/imgtec/clk-boston.c b/drivers/clk/imgtec/clk-boston.c
-index 15af423..f5d54a6 100644
---- a/drivers/clk/imgtec/clk-boston.c
-+++ b/drivers/clk/imgtec/clk-boston.c
-@@ -73,27 +73,32 @@ static void __init clk_boston_setup(struct device_node *np)
- 	hw = clk_hw_register_fixed_rate(NULL, "input", NULL, 0, in_freq);
- 	if (IS_ERR(hw)) {
- 		pr_err("failed to register input clock: %ld\n", PTR_ERR(hw));
--		return;
-+		goto error;
- 	}
- 	onecell->hws[BOSTON_CLK_INPUT] = hw;
- 
- 	hw = clk_hw_register_fixed_rate(NULL, "sys", "input", 0, sys_freq);
- 	if (IS_ERR(hw)) {
- 		pr_err("failed to register sys clock: %ld\n", PTR_ERR(hw));
--		return;
-+		goto error;
- 	}
- 	onecell->hws[BOSTON_CLK_SYS] = hw;
- 
- 	hw = clk_hw_register_fixed_rate(NULL, "cpu", "input", 0, cpu_freq);
- 	if (IS_ERR(hw)) {
- 		pr_err("failed to register cpu clock: %ld\n", PTR_ERR(hw));
--		return;
-+		goto error;
- 	}
- 	onecell->hws[BOSTON_CLK_CPU] = hw;
- 
- 	err = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, onecell);
- 	if (err)
- 		pr_err("failed to add DT provider: %d\n", err);
-+
-+	return;
-+
-+error:
-+	kfree(onecell);
- }
- 
- /*
--- 
-1.8.3.1
+> 'onecell' is malloced in clk_boston_setup(), but not be freed
+
+    Is not freed.
+
+> before leaving from the error handling cases.
+> 
+> Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
+[...]
+
+MBR, Sergei
 
