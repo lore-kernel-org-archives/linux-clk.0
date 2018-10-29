@@ -2,83 +2,105 @@ Return-Path: <SRS0=SMsi=NJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E4EEC2BC61
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 07:49:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 465A5C2BC61
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 08:04:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3256620851
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 07:49:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oFM98eQT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3256620851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id F3F102084A
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 08:04:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3F102084A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729093AbeJ2Qh1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 29 Oct 2018 12:37:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45068 "EHLO mail.kernel.org"
+        id S1726079AbeJ2Qvm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 29 Oct 2018 12:51:42 -0400
+Received: from out1.zte.com.cn ([202.103.147.172]:38726 "EHLO mxct.zte.com.cn"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729090AbeJ2Qh0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 29 Oct 2018 12:37:26 -0400
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A23B220851;
-        Mon, 29 Oct 2018 07:49:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540799397;
-        bh=VBIB3j/I8Wz+6iVanr0oduPk5nh0olzBHsMdqasuKoY=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=oFM98eQTTdSP6xfcrqiN0T2e4a6x9Z4iaZ4OSdQmtBL4RHmwt0RNmrzFPBUZb81X1
-         DjHmwN1WlSohmgXE/2AOpwFpvJgYAjdS8Ka1DFc4eekSYx5sbebEWXB0eT6baiu8HK
-         l5gXplZQlv27jEnuoaN51ppMeaQIkM+SJ6MAILIs=
-Received: by mail-lj1-f172.google.com with SMTP id x85-v6so2593438ljb.2;
-        Mon, 29 Oct 2018 00:49:56 -0700 (PDT)
-X-Gm-Message-State: AGRZ1gKWJZQovLwug5Pyt7jK1Oz4k21KBM7hUcm93iuLNYKLTHaCjR/b
-        RoV8s/hyPmvGq0qWXTsI2KB+th9cCf5962z1okk=
-X-Google-Smtp-Source: AJdET5dw1UJTz9IZH8g1rMLNw4ofWbW0ztaASjaOy1/pLg2B941Py6+IBd4BHBP94gdEjtSUDfETWCcbghQNIFlA8q4=
-X-Received: by 2002:a2e:6503:: with SMTP id z3-v6mr7348162ljb.153.1540799394752;
- Mon, 29 Oct 2018 00:49:54 -0700 (PDT)
-MIME-Version: 1.0
-References: <1540619262-22681-1-git-send-email-Julia.Lawall@lip6.fr> <1540619262-22681-2-git-send-email-Julia.Lawall@lip6.fr>
-In-Reply-To: <1540619262-22681-2-git-send-email-Julia.Lawall@lip6.fr>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Mon, 29 Oct 2018 08:49:43 +0100
-X-Gmail-Original-Message-ID: <CAJKOXPceTN=idoipU_X+jZQQorRVh3cBaepw72q5O-vn49OGzw@mail.gmail.com>
-Message-ID: <CAJKOXPceTN=idoipU_X+jZQQorRVh3cBaepw72q5O-vn49OGzw@mail.gmail.com>
-Subject: Re: [PATCH 1/8] clk: max77686: constify clk_ops structure
-To:     Julia.Lawall@lip6.fr
-Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
-        kernel-janitors@vger.kernel.org,
-        =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= 
-        <b.zolnierkie@samsung.com>, mturquette@baylibre.com,
-        sboyd@kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        id S1726036AbeJ2Qvl (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 29 Oct 2018 12:51:41 -0400
+Received: from mse01.zte.com.cn (unknown [10.30.3.20])
+        by Forcepoint Email with ESMTPS id 266BD12846B20A020724;
+        Mon, 29 Oct 2018 16:03:46 +0800 (CST)
+Received: from notes_smtp.zte.com.cn ([10.30.1.239])
+        by mse01.zte.com.cn with ESMTP id w9T83YTt088562;
+        Mon, 29 Oct 2018 16:03:34 +0800 (GMT-8)
+        (envelope-from wang.yi59@zte.com.cn)
+Received: from fox-host8.localdomain ([10.74.120.8])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2018102916034081-7352366 ;
+          Mon, 29 Oct 2018 16:03:40 +0800 
+From:   Yi Wang <wang.yi59@zte.com.cn>
+To:     paul.burton@mips.com
+Cc:     mturquette@baylibre.com, sboyd@kernel.org,
+        linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, zhong.weidong@zte.com.cn,
+        Yi Wang <wang.yi59@zte.com.cn>
+Subject: [PATCH] clk: boston: fix possible memory leak in clk_boston_setup()
+Date:   Mon, 29 Oct 2018 16:04:37 +0800
+Message-Id: <1540800277-24524-1-git-send-email-wang.yi59@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2018-10-29 16:03:40,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2018-10-29 16:03:34,
+        Serialize complete at 2018-10-29 16:03:34
+X-MAIL: mse01.zte.com.cn w9T83YTt088562
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, 27 Oct 2018 at 08:23, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
->
-> The clk_ops structure is only stored in the ops field of a
-> clk_init_data structure.  This field is const, so the clk_ops
-> structure can be const as well.
->
-> Identified and transformed using Coccinelle.
->
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->
-> ---
->  drivers/clk/clk-max77686.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
+'onecell' is malloced in clk_boston_setup(), but not be freed
+before leaving from the error handling cases.
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
+---
+ drivers/clk/imgtec/clk-boston.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/clk/imgtec/clk-boston.c b/drivers/clk/imgtec/clk-boston.c
+index 15af423..f5d54a6 100644
+--- a/drivers/clk/imgtec/clk-boston.c
++++ b/drivers/clk/imgtec/clk-boston.c
+@@ -73,27 +73,32 @@ static void __init clk_boston_setup(struct device_node *np)
+ 	hw = clk_hw_register_fixed_rate(NULL, "input", NULL, 0, in_freq);
+ 	if (IS_ERR(hw)) {
+ 		pr_err("failed to register input clock: %ld\n", PTR_ERR(hw));
+-		return;
++		goto error;
+ 	}
+ 	onecell->hws[BOSTON_CLK_INPUT] = hw;
+ 
+ 	hw = clk_hw_register_fixed_rate(NULL, "sys", "input", 0, sys_freq);
+ 	if (IS_ERR(hw)) {
+ 		pr_err("failed to register sys clock: %ld\n", PTR_ERR(hw));
+-		return;
++		goto error;
+ 	}
+ 	onecell->hws[BOSTON_CLK_SYS] = hw;
+ 
+ 	hw = clk_hw_register_fixed_rate(NULL, "cpu", "input", 0, cpu_freq);
+ 	if (IS_ERR(hw)) {
+ 		pr_err("failed to register cpu clock: %ld\n", PTR_ERR(hw));
+-		return;
++		goto error;
+ 	}
+ 	onecell->hws[BOSTON_CLK_CPU] = hw;
+ 
+ 	err = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, onecell);
+ 	if (err)
+ 		pr_err("failed to add DT provider: %d\n", err);
++
++	return;
++
++error:
++	kfree(onecell);
+ }
+ 
+ /*
+-- 
+1.8.3.1
+
