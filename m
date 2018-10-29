@@ -4,60 +4,61 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 951BAC2BC61
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 14:28:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F24DC2BC61
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 14:48:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E8EA20657
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 14:28:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E3F5B20870
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 14:48:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="iKZ2wHaT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E8EA20657
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="BwzsR2sV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3F5B20870
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725977AbeJ2XRG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 29 Oct 2018 19:17:06 -0400
-Received: from mail-it1-f194.google.com ([209.85.166.194]:38354 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725989AbeJ2XRA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Oct 2018 19:17:00 -0400
-Received: by mail-it1-f194.google.com with SMTP id i76-v6so9594746ita.3
-        for <linux-clk@vger.kernel.org>; Mon, 29 Oct 2018 07:28:07 -0700 (PDT)
+        id S1726556AbeJ2XhP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 29 Oct 2018 19:37:15 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:43319 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726311AbeJ2XhP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Oct 2018 19:37:15 -0400
+Received: by mail-io1-f66.google.com with SMTP id y10-v6so5100025ioa.10
+        for <linux-clk@vger.kernel.org>; Mon, 29 Oct 2018 07:48:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=csIQGmJZW/l9oIw4NG0CrTd9Cu8XhuD8enkaPjecEOQ=;
-        b=iKZ2wHaTvE6ksFUFqShoFkngC/STPgBDWs2hcguLbzLZ4nnwOXBV55Io9yOrnjVDRP
-         A8D0rscbbtt5lc/YhuaOPNF+dAC3rKYM3JCa3eXKBCfvEcd+XqLdMWeJW91eyspZEbar
-         PSZHe/jQoMXeKckz6dNitLi+Whoi2zwV8gsgg=
+        bh=MnfB3NBe0zr1IXXWgqSFxtO5BvGhLc8TBKxaaj9cCek=;
+        b=BwzsR2sVkdQHP5JgKSnEzD2CevxoIsomasmUYuhh1KOILyuYbFqPa6lEwLM9u9ZnN6
+         GnXQocNPvty0xv9gtYBb58l9zIXbR8/9hYS0s2rergrsb+QM8pxv9mboMdVABCHILRfI
+         7FFyiPw3aIIfCXH4nim+IJVs6cOMao3hqbKVQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=csIQGmJZW/l9oIw4NG0CrTd9Cu8XhuD8enkaPjecEOQ=;
-        b=OG93QbIEb7Khx9TU/6teHHY9JTRgtKyi8YHFp+3WlVUad4Lb6k44+5+HA9EJnn8xmK
-         HNHFu/PleFNVZftUg+fJmGH3ZP4kIhFRFgf36Od2mr6Gm1edRA6yXFLcZYfNqcNyEsOq
-         10DTxTgqS8N9y3YJ8oU0nw4HQ6Ll50xtv7gZeJtJDIpgvEdP0CI2meUTGeeHeZEuRbTf
-         OejzX253NFgZSYddbdlFwNYHH68oxB79nND0PZO0NC7/Y4dUp4R9csbmST8esQzegrvD
-         +wyB+0zTtai0HDefMHASph2SW5/iz+ZIZL6sbV9Ead84urzDBJGBevGwZWQ5zrTI6zWm
-         VdMw==
-X-Gm-Message-State: AGRZ1gIR8kdOVfyFCLEKkvI41JOhFBQ1Y+4bwwRqVPV3yQi0B85/KO6L
-        wcfY/GwiRC4aVqlYS/C4FYeclebJHOak+4q7NodMKg==
-X-Google-Smtp-Source: AJdET5eSOhIgrHT5t7Cf+O/UWztETUMyO8jP9QslfQGZF5eRcVE7azZvCoDzoPefeNZt5cymtvAOdOfLFbLayq0d9a0=
-X-Received: by 2002:a02:94d:: with SMTP id f74-v6mr10579109jad.85.1540823287094;
- Mon, 29 Oct 2018 07:28:07 -0700 (PDT)
+        bh=MnfB3NBe0zr1IXXWgqSFxtO5BvGhLc8TBKxaaj9cCek=;
+        b=U4hru+AwtoBYo3F2qlCeV5g997Bno1s1V0wO6jTW4XuK11OQ4iz1KoxKjUSOjX2XWT
+         Dm9zs7KGjJ1mrL7sZglYpFSC4QZH/Wmeh4iMdTsdfCZStwYZSPnzWKSIsqlbqv4Ip54W
+         DSZuchOHE36ZP1CFLeMdCrgklfWOeuEeZaGhQj3Vt06icf+225mGZE89wsNooF12pBnQ
+         wyLRedRyF2qjWMcUNioje5GgXHqV+hPUx6gG6jYxaI0WfXVlJq1Pes7f7eXGzTjhALOb
+         K1fOXpjZR0WzBaxHCbyBrbvxHvTb2RWgXO3Bm+FncTMerBiv4Me8XLx+yjy0bIamnOCc
+         oGHQ==
+X-Gm-Message-State: AGRZ1gLJ0WNNXKbfGmwOKTdNpLVzXFfbSH7Y3J39kP7s84qycFzSTZ8q
+        liFFoCCIR6XCXQ6jdbEdSZ8u77C6TnyUtmhVl+Ek7w==
+X-Google-Smtp-Source: AJdET5dBNFcx+T0XtSKsE12EO9npZjqqlsU9APzl/9F0+4onp8dO5yJlAcwiLNmA+uouQ3g3B3ZU1PD7iVmm5xlrOgY=
+X-Received: by 2002:a6b:3e57:: with SMTP id l84-v6mr8662688ioa.252.1540824497221;
+ Mon, 29 Oct 2018 07:48:17 -0700 (PDT)
 MIME-Version: 1.0
 References: <20181026144344.27778-1-jagan@amarulasolutions.com>
- <20181026144344.27778-15-jagan@amarulasolutions.com> <20181029092754.2tl7i5k5qpbn4557@flea>
-In-Reply-To: <20181029092754.2tl7i5k5qpbn4557@flea>
+ <20181026144344.27778-17-jagan@amarulasolutions.com> <20181029093142.hgn4q6o7q32voutf@flea>
+In-Reply-To: <20181029093142.hgn4q6o7q32voutf@flea>
 From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Mon, 29 Oct 2018 19:57:56 +0530
-Message-ID: <CAMty3ZC6B-o1Oij_FLpotjN_900kF6OikK323y=bQ9VPzSPDgg@mail.gmail.com>
-Subject: Re: [PATCH v3 14/25] drm/sun4i: sun6i_mipi_dsi: Increase hfp packet overhead
+Date:   Mon, 29 Oct 2018 20:18:05 +0530
+Message-ID: <CAMty3ZBky1kP-1Q+ja2BpcbTxdHgQOFn=T4bcnZwMz6zP+AcOQ@mail.gmail.com>
+Subject: Re: [PATCH v3 16/25] drm/sun4i: sun6i_mipi_dsi: Add support for
+ VCC-DSI voltage regulator
 To:     Maxime Ripard <maxime.ripard@bootlin.com>
 Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
         Jernej Skrabec <jernej.skrabec@siol.net>,
@@ -82,35 +83,14 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Oct 29, 2018 at 2:58 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+On Mon, Oct 29, 2018 at 3:01 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
 >
-> On Fri, Oct 26, 2018 at 08:13:33PM +0530, Jagan Teki wrote:
-> > Increase the hfp packet overhead with another 10 bytes, the extra
-> > 10 bytes(which is hblk packet overhead) is adding for hfp packet
-> > overhead since hfp depends on hblk.
+> On Fri, Oct 26, 2018 at 08:13:35PM +0530, Jagan Teki wrote:
+> > Some boards have VCC-DSI pin connected to voltage regulator which may
+> > not be turned on by default.
 > >
-> > This is truely as per BSP code from BPI-M64-bsp.
-> > The real computation from BSP is
-> > (in drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c)
-> > dsi_hbp = (hbp-hspw)*dsi_pixel_bits[format]/8 - (4+2);
-> > dsi_hact = x * dsi_pixel_bits[format]/8;
-> > dsi_hblk = (ht-hspw)*dsi_pixel_bits[format]/8-(4+4+2);
-> > dsi_hfp = dsi_hblk - (4+dsi_hact+2) - (4+dsi_hbp+2);
-> >
-> > Example,
-> > u32 fmt = dsi_pixel_bits[format]/8;
-> > => ((ht-hspw)*fmt - 10) - (6 + x * fmt) - (6 + (hbp-hspw)*fmt - 6)
-> > => (ht - hspw - x - (hbp - hspw)) * fmt - 16
-> > => (ht - x - hbp) * fmt - 16
-> > => (ht - x - (timmings->hor_total_time - timmings->hor_front_porch - x)
-> > * fmt - 16
-> > => (timmings->hor_total_time - x - timmings->hor_total_time +
-> > timmings->hor_front_porch + x) * fmt - 16
-> > => timmings->hor_front_porch * fmt - 16
-> >
-> > So, increase the DSI hfp packet overhead by hblk packet overhead.
-> >
-> > Tested on 2-lane, 4-lane MIPI-DSI LCD panels.
+> > Add support for such boards by adding voltage regulator handling code to
+> > MIPI DSI driver.
 > >
 > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 > > Tested-by: Jagan Teki <jagan@amarulasolutions.com>
@@ -120,54 +100,33 @@ On Mon, Oct 29, 2018 at 2:58 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
 > > Changes for v2:
 > > - none
 > >
-> >  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 22 +++++++++++++---------
-> >  1 file changed, 13 insertions(+), 9 deletions(-)
+> >  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 14 ++++++++++++++
+> >  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h |  3 +++
+> >  2 files changed, 17 insertions(+)
 > >
 > > diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> > index 6584b51736a9..20e330186b7f 100644
+> > index 42bd7506abaf..bc57343592e0 100644
 > > --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
 > > +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> > @@ -461,7 +461,7 @@ static void sun6i_dsi_setup_timings(struct sun6i_dsi *dsi,
-> >  {
-> >       struct mipi_dsi_device *device = dsi->device;
-> >       unsigned int Bpp = mipi_dsi_pixel_format_to_bpp(device->format) / 8;
-> > -     u16 hbp, hfp, hsa, hblk_max, hblk, vblk;
-> > +     u16 hbp, hfp_pkt_overhead, hfp, hsa, hblk_max, hblk, vblk;
-> >       size_t bytes;
-> >       u8 *buffer;
+> > @@ -949,6 +949,12 @@ static int sun6i_dsi_bind(struct device *dev, struct device *master,
 > >
-> > @@ -484,14 +484,6 @@ static void sun6i_dsi_setup_timings(struct sun6i_dsi *dsi,
-> >       hbp = max((unsigned int)HBP_PACKET_OVERHEAD,
-> >                 (mode->htotal - mode->hsync_end) * Bpp - HBP_PACKET_OVERHEAD);
+> >       dsi->drv = drv;
 > >
-> > -     /*
-> > -      * The frontporch is set using a blanking packet (4 bytes +
-> > -      * payload + 2 bytes). Its minimal size is therefore 6 bytes
-> > -      */
-> > -#define HFP_PACKET_OVERHEAD  6
-> > -     hfp = max((unsigned int)HFP_PACKET_OVERHEAD,
-> > -               (mode->hsync_start - mode->hdisplay) * Bpp - HFP_PACKET_OVERHEAD);
-> > -
-> >       /*
-> >        * hblk seems to be the line + porches length.
-> >        * The blank is set using a blanking packet (4 bytes + 4 bytes +
-> > @@ -502,6 +494,18 @@ static void sun6i_dsi_setup_timings(struct sun6i_dsi *dsi,
-> >       hblk_max -= HBLK_PACKET_OVERHEAD;
-> >       hblk = max((unsigned int)HBLK_PACKET_OVERHEAD, hblk_max);
-> >
-> > +     /*
-> > +      * The frontporch is set using a blanking packet (4 bytes +
-> > +      * payload + 2 bytes). Its minimal size is therefore 6 bytes
-> > +      *
-> > +      * According to BSP code, extra 10 bytes(which is hblk packet overhead)
-> > +      * is adding for hfp packet overhead since hfp depends on hblk.
+> > +     ret = regulator_enable(dsi->regulator);
+> > +     if (ret) {
+> > +             dev_err(dev, "Failed to enable regulator\n");
+> > +             return ret;
+> > +     }
+> > +
 >
-> "According to the BSP code, another 10 bytes (the HBLK packet
-> overhead) need to be added to the front porch overhead."
->
-> How has this been verified? Since we have registers to set all the
-> parameters, this seems kind of weird.
+> The regulator should be enabled only when the device is in use.
 
-Verified based on the BSP calculation which I explained in commit
-message and tested by validating these numbers with mainline vs bsp
-code.
+True, but there is no device specific quirk needed because who ever
+not needed simply use dummy regulator
+[    0.245821] sun6i-mipi-dsi 1ca0000.dsi: 1ca0000.dsi supply vcc-dsi
+not found, using dummy regulato
+r
+
+even like HVCC in hdmi driver [1]
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c?id=633ba1e086e1abbeef1ffd899911de8cf3987d9f
