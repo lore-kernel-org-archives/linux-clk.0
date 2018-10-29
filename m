@@ -2,176 +2,149 @@ Return-Path: <SRS0=SMsi=NJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BD0AC0044C
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 12:41:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 859ABC0044C
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 12:57:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33D0D2082D
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 12:41:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 235CE2082D
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 12:57:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=openedev.com header.i=@openedev.com header.b="aLX6M3Fy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33D0D2082D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=openedev.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="tjjVBYG7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 235CE2082D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729266AbeJ2V3j (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 29 Oct 2018 17:29:39 -0400
-Received: from se15t.web-hosting.com ([162.255.118.154]:56979 "EHLO
-        se15t.web-hosting.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729210AbeJ2V3j (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Oct 2018 17:29:39 -0400
-Received: from [68.65.123.203] (helo=server153.web-hosting.com)
-        by se15.registrar-servers.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89)
-        (envelope-from <jagan@openedev.com>)
-        id 1gH6qq-00056f-Ib; Mon, 29 Oct 2018 05:41:04 -0700
+        id S1725967AbeJ2VqL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 29 Oct 2018 17:46:11 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:55178 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725915AbeJ2VqL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Oct 2018 17:46:11 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=openedev.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=Twhaj3EeHbXtWFuvs41H1HaPwSZHo6QIZWBl/tLQTqM=; b=aLX6M3FyJbMN9IYyTT5HtCAfTf
-        ujJmHjhhwh5EfkygN89B/GsjLOa/YzDnAAKJM/gTB89lGGvyajznSofqfYW8r8y53AgZa+rpnQbH/
-        sd1hvS6N7YcE7jGYRu2UOZgZkO/VZ0DIsF0qLZqmvxg1u0q9Wc37d9KoesywzOpjfDd8AvfSoU4Uq
-        YaDmy2FZ4zuklrhpwyvsYYwDYto/FCcY0opjoQSUMdzy5BzZ2VoKNVOe8/dqferXu7RcBQn5nxkee
-        g88uGdGqXwbkYLmFOy/C2Su4xP7pMIG8EtwsNCFHDg08/yRr6BlgM5yVNrtL/nOhAqXcEJuL8nm4b
-        AaAb4WwA==;
-Received: from [27.7.51.1] (port=44346 helo=[192.168.0.10])
-        by server153.web-hosting.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <jagan@openedev.com>)
-        id 1gH6ql-0048DE-VK; Mon, 29 Oct 2018 08:40:56 -0400
-Subject: Re: [linux-sunxi] Re: [PATCH v2 02/15] clk: sunxi-ng: Add check for
- minimal rate to NKM PLLs
-To:     maxime.ripard@bootlin.com, Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi@googlegroups.com
-References: <20181023155035.9101-1-jagan@amarulasolutions.com>
- <20181023155035.9101-3-jagan@amarulasolutions.com>
- <20181024180436.5n3i3z6h2yezc4cv@flea>
- <CAMty3ZC2wn-DjR+93yc-n-bAmVCHaEqR_=4XPddoo+7LjebTEg@mail.gmail.com>
- <20181029085843.3bslqwktxbp2ywk2@flea>
-From:   Jagan Teki <jagan@openedev.com>
-Message-ID: <e7566001-8933-adbb-4c30-7a3f66ebae4e@openedev.com>
-Date:   Mon, 29 Oct 2018 18:10:47 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=rwZTerRkiTKrimTWT9P4+qnY8A7FVLlaR0G8/88Z0mo=; b=tjjVBYG7thRpd1Ac5FL9f5Ycn
+        TvfmjbVYdGfI/tB6JumxsIJvC4/tBwFZlw7KS3Z/9DTdqmUZJXvE0xqGUnD1+j9yKCK87LPZBXkkJ
+        Sp1qhsmBv0mnrAgHJMAGVI1G4F9EdBgzkvmN0xbrpwLG/yEiEsYr0hWCuIiyXyDY08i1M=;
+Received: from [87.246.78.46] (helo=finisterre.ee.mobilebroadband)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gH76o-00015a-1m; Mon, 29 Oct 2018 12:57:30 +0000
+Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
+        id 5F4E9440078; Mon, 29 Oct 2018 13:57:29 +0100 (CET)
+Date:   Mon, 29 Oct 2018 12:57:29 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Richard Fitzgerald <rf@opensource.cirrus.com>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        lgirdwood@gmail.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, patches@opensource.cirrus.com,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v2 2/5] mfd: lochnagar: Add support for the Cirrus Logic
+ Lochnagar
+Message-ID: <20181029125729.GW2103@sirena.org.uk>
+References: <20181008132542.19775-1-ckeepax@opensource.cirrus.com>
+ <20181008132542.19775-2-ckeepax@opensource.cirrus.com>
+ <20181025074459.GF4939@dell>
+ <20181025082621.GD16508@imbe.wolfsonmicro.main>
+ <b2f85f45-cbe9-5a27-e9e8-ad28f2bd9bd6@opensource.cirrus.com>
+ <20181025114205.GC4870@dell>
+ <33ea391c-aa6e-2709-6faf-4905e84229e4@opensource.cirrus.com>
+ <20181026080051.GK4870@dell>
+ <20181026203223.GC27137@sirena.org.uk>
+ <20181029110439.GS4870@dell>
 MIME-Version: 1.0
-In-Reply-To: <20181029085843.3bslqwktxbp2ywk2@flea>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-OutGoing-Spam-Status: No, score=-1.0
-X-Originating-IP: 68.65.123.203
-X-SpamExperts-Domain: nctest.net
-X-SpamExperts-Username: whmcalls3
-Authentication-Results: registrar-servers.com; auth=pass (login) smtp.auth=whmcalls3@nctest.net
-X-SpamExperts-Outgoing-Class: ham
-X-SpamExperts-Outgoing-Evidence: Combined (0.12)
-X-Recommended-Action: accept
-X-Filter-ID: EX5BVjFpneJeBchSMxfU5jtnxjJTX1r/FHjct7FdKQR602E9L7XzfQH6nu9C/Fh9KJzpNe6xgvOx
- q3u0UDjvO0Ma0zdKrj2HeYAO9pcN4rBgaa/6KAnDjbDW9Kfk8S67rc0diZKnmpMa4igsMUptb3ws
- 3TRjaC42FtNJuTWwh7zDil9nzpwm+X/neb6NqWhvt8C9mOBdONdnsxgsk1D2p81t61bzOH+dRuda
- OCHhfvkbONHJki/bT3w/adEN9DqaPbFM3vei53Yyp3v779HcSLG62plOzR5DsoLGZCSqoE3JNAYC
- 28t8cR5ITCXTcZqmvaqpXrmasHx4eiR7j6vX9B9laqTmco/p+9en7IdA6p9E/g67cwxyIR8VmA5e
- WtNvnSJzSMipXLKj208wF0l+/LRpsq1uynJlGc1wGBNxKAasUDAM310p3PNWWaIaSygi7PgEVsGe
- cFro/0JGrOyRSaDNUgpG8fAJ7Lg21L451C+Y73wey0WZIByhkSafuhnLcy3brt7kvrJyGkSOIbze
- Phts3vFtUDOwEYF9reFkRh1Z2XmZE6Ulo3Sg6/fHCWNx01dKq9doQCQL/RyDC8HpXAynucv4rnju
- YPOfZh8jslwg7QT+iN5/VyfWKR5edUF17qyCLW5GY4F23J7eq8SL0BtM8UT3jCT30WOGa77ANY69
- cBNhkoiRE9GgA7DbpeRaXeO0Hg/cLwycMnvIieVWIs4dJKDqjPjhvPjqAjKg6VeiSiHqKnOM6HUc
- 1C6txUOgA50Rgoi231VkAC4d/u07DCMMQ72GN0COt/Z36GxUDe1/x2bFJS+Hj6rj4u8HaEmUmRte
- 96yD8dzCpBzb1xqI9vQuc8Wou4TIK4Bcb6TQCr94GXpVQ2KwGtu81JXrQcgqRYMJqVDlz3D3q3rG
- z4wpqXduuWzX2YNPcyspnKOz/GpVtBEI/lNmY9JL/ej0hsKuKmLtSOgDyocRXs5/Dj5QrbiOquAw
- kPRjlgIoLaXIRRdYY1xob1S/a4Rw9BKeg+GlaQRG0qurVqDgRPCOBb4ws+nK6Hdu5ythdss+87CL
- YnNBoGfS0DhK3BfvFNI4fRpBbmGFHU0Fd1FYwiLqVhSu3v+nCpyCSdscG09FH1xvLyyjtb2gYbxM
- T6+Iy9pOFZK275ou5bBvQX3uElphnHsYcHZLfQ+dkTJQ3t6fkiyQeQV6EipRzMVZ5LqwTx7Vvn9S
- VCuiP+10HNhHuWYhdKNkJvfZdFJiZZPY9MnZD1O5yq1ycjOgLhowTS+P/adv11jhdDXJuCjECe9/
- DZu9RkdixH794DwLyWvhpaC58QnTx8fUsuiVMUz2osEFaYRxsB6RP1WtefrqFnxOMi6sKMFKy5Lq
- LFUIM7si3XKl+gouHE7VOEtHO7BXRk+kb0Ie3l6uI43eRHGnZHBV/yCqCu6qSDKF6cyRQGDgv3gB
- ylcgE5FvKJMDf827d4qRh+RMTc6UnSUfEaFbXfx3YmWV3Eu1dd5T48p+m8Gi9mpWQ6cJTOhMhoTy
- AjQts04eAyoaGqs2BxWyJ5iZ/mYkQw5Sva7E5XuqpjkxjsxX7/OU+X56MDbCOXzqrgeRjh9HHXX0
- 2BXFZ0oSYx0xwIlnSxHDnJq+tjf1ariSumYaswHs71h51UM9FqN9xH7aeMYHGsZ/4QaVkaMLBQ2N
- o2eCxS3UTYtuZQ==
-X-Report-Abuse-To: spam@se16.registrar-servers.com
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="eV9cGEf2bJwTs/8b"
+Content-Disposition: inline
+In-Reply-To: <20181029110439.GS4870@dell>
+X-Cookie: Piece of cake!
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 29/10/18 2:28 PM, Maxime Ripard wrote:
-> On Thu, Oct 25, 2018 at 04:25:59PM +0530, Jagan Teki wrote:
->> On Wed, Oct 24, 2018 at 11:34 PM Maxime Ripard
->> <maxime.ripard@bootlin.com> wrote:
->>>
->>> On Tue, Oct 23, 2018 at 09:20:22PM +0530, Jagan Teki wrote:
->>>> Some NKM PLLs doesn't work well when their output clock rate is set below
->>>> certain rate.
->>>>
->>>> So, add support for minimal rate for relevant PLLs.
->>>>
->>>> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
->>>> ---
->>>> Changes for v2:
->>>> - new patch
->>>>
->>>>   drivers/clk/sunxi-ng/ccu_nkm.c | 7 +++++++
->>>>   drivers/clk/sunxi-ng/ccu_nkm.h | 1 +
->>>>   2 files changed, 8 insertions(+)
->>>>
->>>> diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_nkm.c
->>>> index 841840e35e61..d17539dc88dd 100644
->>>> --- a/drivers/clk/sunxi-ng/ccu_nkm.c
->>>> +++ b/drivers/clk/sunxi-ng/ccu_nkm.c
->>>> @@ -125,6 +125,13 @@ static unsigned long ccu_nkm_round_rate(struct ccu_mux_internal *mux,
->>>>        if (nkm->common.features & CCU_FEATURE_FIXED_POSTDIV)
->>>>                rate *= nkm->fixed_post_div;
->>>>
->>>> +     if (rate < nkm->min_rate) {
->>>> +             rate = nkm->min_rate;
->>>> +             if (nkm->common.features & CCU_FEATURE_FIXED_POSTDIV)
->>>> +                     rate /= nkm->fixed_post_div;
->>>
->>> I'm not sure this is right. Is the post divider taken into account to
->>> calculate the minimum, or is the minimum on the rate before the fixed
->>> post divider.
->>
->> Since we are returning from here, we need to take care post div which
->> is actually doing at the end of round_rate.
-> 
-> That's not my point though. Does the rate needs to be superior to min
-> / post_div, or min?
 
-ie what I'm trying to say, since it's common code min or max should / 
-post_div and PLL_MIPI doesn't use any post_div.
+--eV9cGEf2bJwTs/8b
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-We need to take care post_div though the current test (PLL_MIPI) in not 
-used since it's common code. just like nkmp, nm etc.
+On Mon, Oct 29, 2018 at 11:04:39AM +0000, Lee Jones wrote:
+> On Fri, 26 Oct 2018, Mark Brown wrote:
 
-> 
->>>
->>> How did you test this?
->>
->> I've not used this on PLL_MIPI atleast, so I didn't test this.
-> 
-> If you've never tested this, why are you adding that code?
+> > There's no *requirement* to provide the data even if you're using the
+> > cache (and the cache support is entirely optional), there's just costs
+> > to not providing it in terms of what features you can get from the
+> > regmap API and the performance of the system.  Not every device is going
+> > to be bothered by those costs, many devices don't provide all of the
+> > data they could.
 
-Like above, it's common code. otherwise might effect.
+> So what do we do in the case where, due to the size of the device, the
+> amount of lines required by these tables go from crazy to grotesque?
+
+My recommendation when the tables get in the way of the rest of the
+driver is to move them into a separate file that contains only tables,
+these get big but they're sitting in a separate file that only contains
+big data tables so they're fairly simple to look at (and generate or
+whatever) and people working on the active code don't need to look at
+them.
+
+> > That doesn't work, we need to know both if the register has a default
+> > value and what that value is - there's no great value in only supplying
+> > the defaults for registers with non-zero values.
+
+> All registers have a default value.  Why can't we assume that if a
+> register is writable and a default value was omitted then the default
+> is zero?
+
+There are volatile registers which can't be part of the cache as the
+hardware might change the state, and we have things like device
+identification registers which are fixed but which we want to read from
+the device.  This second set of registers can usually be modelled quite
+happily as volatile registers though, we don't tend to read them often.
+
+There's also registers where the user just didn't tell us what's going
+on, either through oversight or because there's some code that touches
+undocumented test registers at runtime for quirk reasons using a read,
+modify write cycle.  We could try to insist that the device drivers
+always provide a default or mark things as volatile but that's likely to
+be an uphill struggle and more error prone.
+
+> Ah wait!  As I was typing the above, I just had a thought.  We don't
+> actually provide a list of writable registers do we?  Only a the
+> ability to verify if one is writable (presumably) before a write.
+
+> That's frustrating!
+
+You can provide the writability information either with the function or
+with data.  The tables code doesn't currently scale very well to large,
+sparse register maps but that could in theory be optimized.  Few devices
+bother providing distinct writability information as it's not often an
+issue.
+
+--eV9cGEf2bJwTs/8b
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlvXA7YACgkQJNaLcl1U
+h9CxeQf/W/V27ESuSoJs3wMr5mCJ3gVVxZd4wQ3AdCL4pMP2+epl+aQnWUQNHwY5
+PKJ2DINsrzAvtNq0fSdHVIzaRI4pEwftPxWdQvMOiGompOv3n0LMR9npUkdHEkOY
+dlLL5pgmWyTlesYy9FJ0d0JKUg1Y1Dwpl0mkP5zqmUpXdLAYBWITE8pQiRzCgmXQ
+ME8NjY92OdQQfuZqoIOkckO/PZa58z2VJzWpRWnCEmzsyPh2YcyWe+SFga0+9F2Z
+2iO1mGcTa50Xh5ACebTjOCFClG9swwnkVaOAwOGfEkl7Z3KbK4+b1ctGFECCM9vy
+pntQ6p9rm6cjs47nPc/thANV2xLGJA==
+=rOR1
+-----END PGP SIGNATURE-----
+
+--eV9cGEf2bJwTs/8b--
