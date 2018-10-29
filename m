@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3453CC2BC61
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 08:58:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84130C46475
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 08:58:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5ED720870
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 08:58:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 407B52084A
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 08:58:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="GqRNTl6q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5ED720870
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="AlltrJzM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 407B52084A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729606AbeJ2Rph (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 29 Oct 2018 13:45:37 -0400
-Received: from mail-he1eur01on0083.outbound.protection.outlook.com ([104.47.0.83]:39640
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        id S1729626AbeJ2Rpu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 29 Oct 2018 13:45:50 -0400
+Received: from mail-ve1eur01on0057.outbound.protection.outlook.com ([104.47.1.57]:64320
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729588AbeJ2Rpg (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 29 Oct 2018 13:45:36 -0400
+        id S1729625AbeJ2Rpt (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 29 Oct 2018 13:45:49 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MALEO5ltLd+Bp7OEryabJF+FlyngHm0DrJeZKbB87sM=;
- b=GqRNTl6qTOmGLhLMMSVcIBH3nxZk+vdzoK/x6DIJT/qo9FCsovjI7v5JFpWUrAkCRHYhGvn20RsXI3kklEnEw95CVJ9OcMJRXBd+9NbLAKgas00hvUVhZlgYpzPPMJqQjWvPFlY8Dxbo4WXZEaaMSMWiJBecBIu6r5CNQzC0jE0=
+ bh=yT1nD6+p3bPv4rTswzFGg/kLz3Cisik4qPqGu929Lzw=;
+ b=AlltrJzMnmDZGIvtEIU3ckDHvXXIXhOE+FsM1TsuoXm+eWVVMpVJ1+RftsFFSg6Sl/Np8VrL+VZu7mkMw7HJxnIPh5IW8LSd25hBU0ruz/QVGEUwpMmWOXJGsebOPaYFibSUu5qm8mEgb2f2X761hpsUtjVf7rF5wyvBzVUVj14=
 Received: from VI1PR04MB4800.eurprd04.prod.outlook.com (20.177.48.221) by
- VI1PR04MB4125.eurprd04.prod.outlook.com (52.133.14.154) with Microsoft SMTP
+ VI1PR04MB5149.eurprd04.prod.outlook.com (20.177.50.202) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1273.18; Mon, 29 Oct 2018 08:57:47 +0000
+ 15.20.1273.21; Mon, 29 Oct 2018 08:58:02 +0000
 Received: from VI1PR04MB4800.eurprd04.prod.outlook.com
  ([fe80::c9af:2da0:2fc4:1aca]) by VI1PR04MB4800.eurprd04.prod.outlook.com
  ([fe80::c9af:2da0:2fc4:1aca%3]) with mapi id 15.20.1273.027; Mon, 29 Oct 2018
- 08:57:47 +0000
+ 08:58:01 +0000
 From:   Vabhav Sharma <vabhav.sharma@nxp.com>
 To:     "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
         "oss@buserror.net" <oss@buserror.net>,
@@ -68,14 +68,18 @@ CC:     "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
         "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
         Varun Sethi <V.Sethi@nxp.com>, Udit Kumar <udit.kumar@nxp.com>,
         Pankaj Bansal <pankaj.bansal@nxp.com>,
-        Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>,
-        Andy Tang <andy.tang@nxp.com>,
-        Vabhav Sharma <vabhav.sharma@nxp.com>
-Subject: [PATCH v7 4/6] clk: qoriq: Add clockgen support for lx2160a
-Thread-Topic: [PATCH v7 4/6] clk: qoriq: Add clockgen support for lx2160a
-Thread-Index: AQHUb2V2fdiYZfrH3kSMzqsJmyAK6w==
-Date:   Mon, 29 Oct 2018 08:57:47 +0000
-Message-ID: <1540759926-3641-5-git-send-email-vabhav.sharma@nxp.com>
+        Vabhav Sharma <vabhav.sharma@nxp.com>,
+        Priyanka Jain <priyanka.jain@nxp.com>,
+        Sriram Dash <sriram.dash@nxp.com>,
+        Horia Geanta <horia.geanta@nxp.com>,
+        Ran Wang <ran.wang_1@nxp.com>,
+        Ying Zhang <ying.zhang22455@nxp.com>,
+        Yinbo Zhu <yinbo.zhu@nxp.com>
+Subject: [PATCH v7 6/6] arm64: dts: add LX2160ARDB board support
+Thread-Topic: [PATCH v7 6/6] arm64: dts: add LX2160ARDB board support
+Thread-Index: AQHUb2V/H+qQLgKfCkiPqStcYu8Q1w==
+Date:   Mon, 29 Oct 2018 08:58:01 +0000
+Message-ID: <1540759926-3641-7-git-send-email-vabhav.sharma@nxp.com>
 References: <1540759926-3641-1-git-send-email-vabhav.sharma@nxp.com>
 In-Reply-To: <1540759926-3641-1-git-send-email-vabhav.sharma@nxp.com>
 Accept-Language: en-US
@@ -85,106 +89,197 @@ X-MS-TNEF-Correlator:
 x-clientproxiedby: BM1PR0101CA0028.INDPRD01.PROD.OUTLOOK.COM
  (2603:1096:b00:1a::14) To VI1PR04MB4800.eurprd04.prod.outlook.com
  (2603:10a6:803:53::29)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=vabhav.sharma@nxp.com; 
 x-ms-exchange-messagesentrepresentingtype: 1
 x-originating-ip: [14.143.30.134]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR04MB4125;6:xilpQNb0f3m647I7vKU6L25fs2Z2/kbec8oCmQP9wYrKF/PeQVl9W9dy/rjngHiRXqNaRL2wEO6wEyAHtl2AKU1mTMvnDvgJw1Meu2Lsbn2nR6MXOtLJVGkx3IUzmclbOBDXDv7kPsO4V37gay+3eL/X0DjdYcKFlAY/PTEg3zF2N+3lfwzhJXqgGWlzupGiDLEfPPdnpdWXJmmtzKHhAFFdmA0EoJ4RmtaMX+Oicp2xWXtY+JfbuUOnDr5M1oMhO1sCLmkdtQA737VnOQwvcPQf9EgLuI1iPPwf+bZT3HEUMO4UfB/lGa3VTMmY/nts8X/CeIVRAciDDGx9C4V+lu3Bu2lk8Xmyc/5E+LVbyKyc5GZeg/oVuz60EWjIpouYsb/1CRv4oSJx95+YXDkBBbHpK4R3hBqVC8Z8numuMuDI63mWZsXN5XCo9kPgs6sDTfR2PNGPOssshrPZd2zSFA==;5:llEAlFQHdT6uM+s6dPaTRICONZrxXoX57gXi5uli8RarwMVI81gVw21DJ1yv+FC1WMAX6XfpnCOCDc5Feso07OxB5TwOBkvVFjZ2MxdaSscMZbJY7apE7rZr3ek41y13KAirfSJZmNpUIraXzObUYNefvaz3AD4tWBqTed/kFY8=;7:mmtt3p3U3khODb89UdH25x+E4XCi1NONkZm4J6DpsgDyQv2TXPh78dZTJYRy0MExTuqaCnFaTeaIl2FuWnn7ce8ZNhk7aSydwfumKtoAdl6D7wqAIBLc4kGykOWlmq71b4yBXs+qxOCN+kEnPciDAw==
-x-ms-office365-filtering-correlation-id: 916cc28c-8e2a-4139-3fb5-08d63d7c98f2
+x-microsoft-exchange-diagnostics: 1;VI1PR04MB5149;6:r/wQ6A9fcRK+JclZw5VDj75sjN1uLgvUKzomLfyzF1NooqLLT5MAmJ05iVkzNgg7cY9FFg4UKyjHd29gVG5ucrhKemAVPdU3pFqhvfb538jcSDllbLgPI6tsdMK+pxX5Pe4B7YOtgfeF9J39gTrgCZ72XbS+Y3E5xBz051FLRNw7xxqP7t0aG+ScX7GlRiNTt8VL72/K2vWWxNbfCtoQCBUoyrmm6GGjZ8Krk/skhDRLyCNgfqNt6m0EgRWq4WNq40+yzB6P2HAyaKFmYueKm7Eqmr0OlSNNUABVp1s+gvmDb6XFoaJSDLIuOxfqWwv/Rz5cX3r/A5TL1TcA1AKRLebrzwffAfgUDScrEfZ9Jy/a3ETabjIOkLd6UNl9jLvowVa6xDvDoNAWYgN0lQZipSXZLy/npAy/Oe4zNPPpvCWGx2HAnSwd4JoOcu8v93ZLNAs9L2PCxKLLPyaK2Gb28w==;5:87wnyIfVV+6REAMZaVcpgKBaVcj7g1jT+ENg3+mBDvjCkQO1fTYA6HOpvg2ro4CQ5K51IPpT9oewSJP0/xE+OL3Fip5LVtqu6qGvM+5FUXAYZ6EcBA7X8xXu4EylY6BSUiGD8Ow/EdnuVEjAHQ2Fwc22mZzHg6pUEy1OlB0HIb4=;7:kafpN+eSaEjHMJzjk+ESrKkp8BqpM4+NVXWdXUPqd35/cTcavrOgNEO/NRNr2zJvgVjiIxSw7H7/KKxrWVSynLoF+kjvbMPavPGsUWZMzLStbGEVEi8ymfJ+xaW5vSIUMlWqxzYq5ftBolNbE2MKEQ==
+x-ms-office365-filtering-correlation-id: 2ab801ae-48f8-4d5d-b252-08d63d7ca164
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB4125;
-x-ms-traffictypediagnostic: VI1PR04MB4125:
-x-microsoft-antispam-prvs: <VI1PR04MB41250940BEDDC2342E131BC2F3F30@VI1PR04MB4125.eurprd04.prod.outlook.com>
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB5149;
+x-ms-traffictypediagnostic: VI1PR04MB5149:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=vabhav.sharma@nxp.com; 
+x-microsoft-antispam-prvs: <VI1PR04MB514973FA069DEB8EB7370B11F3F30@VI1PR04MB5149.eurprd04.prod.outlook.com>
 x-exchange-antispam-report-test: UriScan:(185117386973197);
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(93006095)(93001095)(3231382)(944501410)(52105095)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:VI1PR04MB4125;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB4125;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231382)(944501410)(52105095)(93006095)(93001095)(10201501046)(3002001)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:VI1PR04MB5149;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB5149;
 x-forefront-prvs: 084080FC15
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(346002)(396003)(376002)(39860400002)(366004)(199004)(189003)(316002)(44832011)(86362001)(106356001)(5250100002)(2501003)(305945005)(11346002)(7736002)(71190400001)(446003)(8936002)(2616005)(476003)(71200400001)(2201001)(486006)(105586002)(186003)(76176011)(81156014)(81166006)(2906002)(110136005)(6512007)(54906003)(26005)(99286004)(6116002)(14454004)(25786009)(256004)(7416002)(36756003)(4326008)(53936002)(6436002)(3846002)(102836004)(6486002)(5660300001)(97736004)(52116002)(66066001)(2900100001)(68736007)(478600001)(8676002)(55236004)(386003)(6506007)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB4125;H:VI1PR04MB4800.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(979002)(396003)(39860400002)(136003)(376002)(346002)(366004)(189003)(199004)(86362001)(186003)(54906003)(44832011)(486006)(102836004)(2900100001)(256004)(2201001)(55236004)(386003)(6506007)(7736002)(478600001)(4326008)(97736004)(26005)(105586002)(110136005)(99286004)(446003)(2616005)(52116002)(14454004)(476003)(11346002)(76176011)(106356001)(2501003)(6512007)(5660300001)(316002)(8936002)(5250100002)(68736007)(71190400001)(71200400001)(7416002)(53936002)(6486002)(25786009)(3846002)(6116002)(8676002)(81156014)(81166006)(305945005)(36756003)(2906002)(6436002)(66066001)(921003)(1121003)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5149;H:VI1PR04MB4800.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: gsqK9s+N0Dm82zOwzWkHrUvsX2A1geJWOUEHTD7HO0raIzJDH0rTWqGYbZ3X84E47Bs+kByyI/BZA3xbKid0sicB+v2NjeOdb3aWyivB1ZG24a/O0S500oSzpxotoHvaM/Ybs+Zjr+yc/386noXbM/NJDWDVYODbriAJawQUIiPNKFS4wTihYkfIg7nmi3m2SrMV62qzqmGHmy8qcWtcKexs9eUO741BoiYkd+LLHKHnvvaA8AAsjd/Batv/jm7na8k8QNKZK8yjt/iqdDNwTdOXG/PUM8x4z9sw30jwKwJSPChdQXGtfNyHBB+zq6pY9srgeTRnN3QjL9qSV0hJAMzYv5NIE66Yh1VtRR7ZNuI=
+x-microsoft-antispam-message-info: 6V/ZB1zx2c4b2bWsBuAv/REY8VT6X/tO8LvfJBD+CS2i/MLvNUhTL+gsuziFipfgyRb/E93ASa75pCbgJlheEZcvlPJce74/AeOvSqO2ZToU2d3G0adTJpUCdbxmgANHMRt84HK0TPbuESgAnjooaAf4zb7rMTpn8T1GUe+MiQnoZQp0wXn17EVAmjrCgk2JlYPiI1bBriLGi7zPS+JeX2tV4XS6OQCCzZdKuWfdmPdjwVFu9lABLbSotJfuSwWpqvZw/fNwTjrVF6K2R4o/h6dMVBZzVI+pkq1YExP+wqSYdJBlDYEuvvVVVeHTg14AzncKroXrydCgVVuR+qgAucAUgrp1vfysaoxHY4Cg5xQ=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 916cc28c-8e2a-4139-3fb5-08d63d7c98f2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Oct 2018 08:57:47.5130
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2ab801ae-48f8-4d5d-b252-08d63d7ca164
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Oct 2018 08:58:01.7473
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4125
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5149
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
+LX2160A reference design board (RDB) is a high-performance
+computing, evaluation, and development platform with LX2160A
+SoC.
 
-Add clockgen support for lx2160a.
-Added entry for compat 'fsl,lx2160a-clockgen'.
-
-Signed-off-by: Tang Yuantian <andy.tang@nxp.com>
-Signed-off-by: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
+Signed-off-by: Priyanka Jain <priyanka.jain@nxp.com>
+Signed-off-by: Sriram Dash <sriram.dash@nxp.com>
 Signed-off-by: Vabhav Sharma <vabhav.sharma@nxp.com>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Horia Geanta <horia.geanta@nxp.com>
+Signed-off-by: Ran Wang <ran.wang_1@nxp.com>
+Signed-off-by: Zhang Ying-22455 <ying.zhang22455@nxp.com>
+Signed-off-by: Yinbo Zhu <yinbo.zhu@nxp.com>
+Acked-by: Li Yang <leoyang.li@nxp.com>
 ---
- drivers/clk/clk-qoriq.c         | 12 ++++++++++++
- drivers/cpufreq/qoriq-cpufreq.c |  1 +
- 2 files changed, 13 insertions(+)
+ arch/arm64/boot/dts/freescale/Makefile            |   1 +
+ arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts | 119 ++++++++++++++++++=
+++++
+ 2 files changed, 120 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
 
-diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
-index e152bfb..99675de 100644
---- a/drivers/clk/clk-qoriq.c
-+++ b/drivers/clk/clk-qoriq.c
-@@ -570,6 +570,17 @@ static const struct clockgen_chipinfo chipinfo[] =3D {
- 		.flags =3D CG_VER3 | CG_LITTLE_ENDIAN,
- 	},
- 	{
-+		.compat =3D "fsl,lx2160a-clockgen",
-+		.cmux_groups =3D {
-+			&clockgen2_cmux_cga12, &clockgen2_cmux_cgb
-+		},
-+		.cmux_to_group =3D {
-+			0, 0, 0, 0, 1, 1, 1, 1, -1
-+		},
-+		.pll_mask =3D 0x37,
-+		.flags =3D CG_VER3 | CG_LITTLE_ENDIAN,
-+	},
-+	{
- 		.compat =3D "fsl,p2041-clockgen",
- 		.guts_compat =3D "fsl,qoriq-device-config-1.0",
- 		.init_periph =3D p2041_init_periph,
-@@ -1424,6 +1435,7 @@ CLK_OF_DECLARE(qoriq_clockgen_ls1043a, "fsl,ls1043a-c=
-lockgen", clockgen_init);
- CLK_OF_DECLARE(qoriq_clockgen_ls1046a, "fsl,ls1046a-clockgen", clockgen_in=
-it);
- CLK_OF_DECLARE(qoriq_clockgen_ls1088a, "fsl,ls1088a-clockgen", clockgen_in=
-it);
- CLK_OF_DECLARE(qoriq_clockgen_ls2080a, "fsl,ls2080a-clockgen", clockgen_in=
-it);
-+CLK_OF_DECLARE(qoriq_clockgen_lx2160a, "fsl,lx2160a-clockgen", clockgen_in=
-it);
-=20
- /* Legacy nodes */
- CLK_OF_DECLARE(qoriq_sysclk_1, "fsl,qoriq-sysclk-1.0", sysclk_init);
-diff --git a/drivers/cpufreq/qoriq-cpufreq.c b/drivers/cpufreq/qoriq-cpufre=
-q.c
-index 3d773f6..83921b7 100644
---- a/drivers/cpufreq/qoriq-cpufreq.c
-+++ b/drivers/cpufreq/qoriq-cpufreq.c
-@@ -295,6 +295,7 @@ static const struct of_device_id node_matches[] __initc=
-onst =3D {
- 	{ .compatible =3D "fsl,ls1046a-clockgen", },
- 	{ .compatible =3D "fsl,ls1088a-clockgen", },
- 	{ .compatible =3D "fsl,ls2080a-clockgen", },
-+	{ .compatible =3D "fsl,lx2160a-clockgen", },
- 	{ .compatible =3D "fsl,p4080-clockgen", },
- 	{ .compatible =3D "fsl,qoriq-clockgen-1.0", },
- 	{ .compatible =3D "fsl,qoriq-clockgen-2.0", },
+diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/f=
+reescale/Makefile
+index 86e18ad..445b72b 100644
+--- a/arch/arm64/boot/dts/freescale/Makefile
++++ b/arch/arm64/boot/dts/freescale/Makefile
+@@ -13,3 +13,4 @@ dtb-$(CONFIG_ARCH_LAYERSCAPE) +=3D fsl-ls2080a-rdb.dtb
+ dtb-$(CONFIG_ARCH_LAYERSCAPE) +=3D fsl-ls2080a-simu.dtb
+ dtb-$(CONFIG_ARCH_LAYERSCAPE) +=3D fsl-ls2088a-qds.dtb
+ dtb-$(CONFIG_ARCH_LAYERSCAPE) +=3D fsl-ls2088a-rdb.dtb
++dtb-$(CONFIG_ARCH_LAYERSCAPE) +=3D fsl-lx2160a-rdb.dtb
+diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts b/arch/arm64=
+/boot/dts/freescale/fsl-lx2160a-rdb.dts
+new file mode 100644
+index 0000000..6481e5f
+--- /dev/null
++++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
+@@ -0,0 +1,119 @@
++// SPDX-License-Identifier: (GPL-2.0 OR MIT)
++//
++// Device Tree file for LX2160ARDB
++//
++// Copyright 2018 NXP
++
++/dts-v1/;
++
++#include "fsl-lx2160a.dtsi"
++
++/ {
++	model =3D "NXP Layerscape LX2160ARDB";
++	compatible =3D "fsl,lx2160a-rdb", "fsl,lx2160a";
++
++	aliases {
++		crypto =3D &crypto;
++		serial0 =3D &uart0;
++	};
++
++	chosen {
++		stdout-path =3D "serial0:115200n8";
++	};
++
++	sb_3v3: regulator-sb3v3 {
++		compatible =3D "regulator-fixed";
++		regulator-name =3D "MC34717-3.3VSB";
++		regulator-min-microvolt =3D <3300000>;
++		regulator-max-microvolt =3D <3300000>;
++		regulator-boot-on;
++		regulator-always-on;
++	};
++};
++
++&crypto {
++	status =3D "okay";
++};
++
++&esdhc0 {
++	sd-uhs-sdr104;
++	sd-uhs-sdr50;
++	sd-uhs-sdr25;
++	sd-uhs-sdr12;
++	status =3D "okay";
++};
++
++&esdhc1 {
++	mmc-hs200-1_8v;
++	mmc-hs400-1_8v;
++	bus-width =3D <8>;
++	status =3D "okay";
++};
++
++&i2c0 {
++	status =3D "okay";
++
++	i2c-mux@77 {
++		compatible =3D "nxp,pca9547";
++		reg =3D <0x77>;
++		#address-cells =3D <1>;
++		#size-cells =3D <0>;
++
++		i2c@2 {
++			#address-cells =3D <1>;
++			#size-cells =3D <0>;
++			reg =3D <0x2>;
++
++			power-monitor@40 {
++				compatible =3D "ti,ina220";
++				reg =3D <0x40>;
++				shunt-resistor =3D <1000>;
++			};
++		};
++
++		i2c@3 {
++			#address-cells =3D <1>;
++			#size-cells =3D <0>;
++			reg =3D <0x3>;
++
++			temperature-sensor@4c {
++				compatible =3D "nxp,sa56004";
++				reg =3D <0x4c>;
++				vcc-supply =3D <&sb_3v3>;
++			};
++
++			temperature-sensor@4d {
++				compatible =3D "nxp,sa56004";
++				reg =3D <0x4d>;
++				vcc-supply =3D <&sb_3v3>;
++			};
++		};
++	};
++};
++
++&i2c4 {
++	status =3D "okay";
++
++	rtc@51 {
++		compatible =3D "nxp,pcf2129";
++		reg =3D <0x51>;
++		// IRQ10_B
++		interrupts =3D <0 150 0x4>;
++	};
++};
++
++&uart0 {
++	status =3D "okay";
++};
++
++&uart1 {
++	status =3D "okay";
++};
++
++&usb0 {
++	status =3D "okay";
++};
++
++&usb1 {
++	status =3D "okay";
++};
 --=20
 2.7.4
 
