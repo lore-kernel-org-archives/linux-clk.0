@@ -2,927 +2,142 @@ Return-Path: <SRS0=SMsi=NJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FFAAC46475
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 08:58:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26F85C2BC61
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 08:58:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3A232084A
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 08:58:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="I1IiBENz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3A232084A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id DB4532084A
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 08:58:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB4532084A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729622AbeJ2Rpo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 29 Oct 2018 13:45:44 -0400
-Received: from mail-ve1eur01on0042.outbound.protection.outlook.com ([104.47.1.42]:48880
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729625AbeJ2Rpo (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 29 Oct 2018 13:45:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PWYhRi1wah/tw+Wxns7FBsPWeefyyJWfjNZwk6exO7U=;
- b=I1IiBENzYKBYXpbGnKTl/RKg+tJ88PN83xepvE3ePGvSUqaj8+C1w7ETGAjUlNj87T0dKIxjBGsIRvpzc9FViylBYpkyWr/EDXEQSbCycc+utQcNqriX9jgwnpDxMOGXywfyuCaWiL5z5cdQZSqE4nrnYE87xnjvOQYVuP/pjjQ=
-Received: from VI1PR04MB4800.eurprd04.prod.outlook.com (20.177.48.221) by
- VI1PR04MB5149.eurprd04.prod.outlook.com (20.177.50.202) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1273.21; Mon, 29 Oct 2018 08:57:55 +0000
-Received: from VI1PR04MB4800.eurprd04.prod.outlook.com
- ([fe80::c9af:2da0:2fc4:1aca]) by VI1PR04MB4800.eurprd04.prod.outlook.com
- ([fe80::c9af:2da0:2fc4:1aca%3]) with mapi id 15.20.1273.027; Mon, 29 Oct 2018
- 08:57:55 +0000
-From:   Vabhav Sharma <vabhav.sharma@nxp.com>
-To:     "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
-        "oss@buserror.net" <oss@buserror.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
-        "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-kernel-owner@vger.kernel.org" 
-        <linux-kernel-owner@vger.kernel.org>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
-        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
-        Leo Li <leoyang.li@nxp.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>
-CC:     "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        "adrian.hunter@intel.com" <adrian.hunter@intel.com>,
-        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
-        Varun Sethi <V.Sethi@nxp.com>, Udit Kumar <udit.kumar@nxp.com>,
-        Pankaj Bansal <pankaj.bansal@nxp.com>,
-        Vabhav Sharma <vabhav.sharma@nxp.com>,
-        Ramneek Mehresh <ramneek.mehresh@nxp.com>,
-        Ying Zhang <ying.zhang22455@nxp.com>,
-        Nipun Gupta <nipun.gupta@nxp.com>,
-        Priyanka Jain <priyanka.jain@nxp.com>,
-        Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>,
-        Sriram Dash <sriram.dash@nxp.com>,
-        Horia Geanta <horia.geanta@nxp.com>,
-        Ran Wang <ran.wang_1@nxp.com>, Yinbo Zhu <yinbo.zhu@nxp.com>
-Subject: [PATCH v7 5/6] arm64: dts: add QorIQ LX2160A SoC support
-Thread-Topic: [PATCH v7 5/6] arm64: dts: add QorIQ LX2160A SoC support
-Thread-Index: AQHUb2V6HUqIvxp1/EOTpefyOL59pA==
-Date:   Mon, 29 Oct 2018 08:57:54 +0000
-Message-ID: <1540759926-3641-6-git-send-email-vabhav.sharma@nxp.com>
-References: <1540759926-3641-1-git-send-email-vabhav.sharma@nxp.com>
-In-Reply-To: <1540759926-3641-1-git-send-email-vabhav.sharma@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: BM1PR0101CA0028.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:b00:1a::14) To VI1PR04MB4800.eurprd04.prod.outlook.com
- (2603:10a6:803:53::29)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [14.143.30.134]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR04MB5149;6:oN1XheuScXHAFO3YkuLubJQ9yNdUx/QGWMFhV50/UALimnlBTyxHCq6YxTR2gqdq3rndIvTNVT14rh+h+FfUvYiC2Ptxcew4I5vpHjau74Mpz3fJrT1xkvanSthNCetFRW85aJ+0s8BYQizL8wTboeYi6OUwzvVRP0TWCl1/iHavP+eEZShcncwJtdE8uR7oOoneLHazsb0gdlp6/trLpNU1I9Q5iAMPgdOXMOOFyVBhH/3Py6nEae9Mf6zLRXAs55I4+fr7u11cXsmtvMOrGocQAAQBIE7U0VyE4yFaNfK5tNxlnMNF0DRF7zYqhKhup/EB7SUnOdGrzyz5GtKwzG74R3fWzKxu2Z2uhxCufuMg8z2D/52LEpNRF0Ol69H9LjfbJfCO6ujqOxddMpU/NA8p6Br9IsvZS32DuHgtiTt22mOqezRMQrkhtR8nNkswLKGi0+ov83+1ERJWuOlNwA==;5:NyLOePHYSFX+AzucPXryL6gO13j/5BlPJ2A9HZfpHB2S0o7TAeRp4+U33pus7s53G5PhjADvMgwmjxZpkofDYvDCqHOq5u9t24iUa389s46Kh7Hx26mFdSBg2Hqrmvd9Rki/5N53Uya9mnQLBOZGi3d+Dh+ca6VNH/zD0GO8jYQ=;7:KV48Bnt/2U/NR17S9rClRP/YQ/YPRQdTtwvueDVth5Hl4la08q/ZaTf/dUCssr9nhKozjNCxs8a4TXl3WH4rThAplqbXZod2wuoo1nH3opZPJq7mVsE7hgZ9K0sMcPo9ZhyfgDLK0KuAZIz4AQnvXw==
-x-ms-office365-filtering-correlation-id: 1353ab77-a5bb-4fb4-a8ba-08d63d7c9d4b
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB5149;
-x-ms-traffictypediagnostic: VI1PR04MB5149:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=vabhav.sharma@nxp.com; 
-x-microsoft-antispam-prvs: <VI1PR04MB514941E281D2296CE6FE523DF3F30@VI1PR04MB5149.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(185117386973197);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231382)(944501410)(52105095)(93006095)(93001095)(10201501046)(3002001)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:VI1PR04MB5149;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB5149;
-x-forefront-prvs: 084080FC15
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(39860400002)(136003)(376002)(346002)(366004)(189003)(199004)(86362001)(575784001)(186003)(54906003)(14444005)(44832011)(486006)(102836004)(2900100001)(256004)(2201001)(55236004)(386003)(6506007)(7736002)(478600001)(4326008)(97736004)(26005)(105586002)(110136005)(99286004)(446003)(2616005)(52116002)(14454004)(476003)(11346002)(76176011)(106356001)(2501003)(6512007)(4744004)(5660300001)(316002)(8936002)(5250100002)(68736007)(71190400001)(71200400001)(7416002)(53936002)(6486002)(25786009)(3846002)(6116002)(8676002)(81156014)(81166006)(305945005)(36756003)(2906002)(6436002)(53946003)(66066001)(921003)(1121003)(579004);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5149;H:VI1PR04MB4800.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 2aIoUsYa8QLzgJaaMQT0MfARfKEv0+oWPhZllonTzOz/12SbHX2mAdoLTk26c/99akh534eZhbVR31MSUsaAZd1v1oMVoWm14FUIFvF8tmMVg5CYCcROjf/SqogCgSX7RMpdtZEyZSaOp9B0PJ346pwWNyBLVpwZFQ2IhepRMslo96sN9HzU3+cyMaKcX9mljXs1VH/Gm6i1APTw4I0PatuEF5AZfMk0mNnyehpP+ofgfNWaz9nr96LoClohBd/l6rrVVWWFRf/jYvm1nx8KvnBNr37RiGagVm/6yDGmNbijdZnk6dqLbcWpQ/Zb4KbgYJK5dUn0kyFT06H62blUfqGrk7ETf6hhLCCCceT+rpE=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S1729447AbeJ2Rqi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 29 Oct 2018 13:46:38 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:54061 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729300AbeJ2Rqi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 29 Oct 2018 13:46:38 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 8D5A3207D4; Mon, 29 Oct 2018 09:58:53 +0100 (CET)
+Received: from localhost (aaubervilliers-681-1-12-210.w90-88.abo.wanadoo.fr [90.88.133.210])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 4DA6720970;
+        Mon, 29 Oct 2018 09:58:43 +0100 (CET)
+Date:   Mon, 29 Oct 2018 09:58:43 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v2 02/15] clk: sunxi-ng: Add check for minimal rate to
+ NKM PLLs
+Message-ID: <20181029085843.3bslqwktxbp2ywk2@flea>
+References: <20181023155035.9101-1-jagan@amarulasolutions.com>
+ <20181023155035.9101-3-jagan@amarulasolutions.com>
+ <20181024180436.5n3i3z6h2yezc4cv@flea>
+ <CAMty3ZC2wn-DjR+93yc-n-bAmVCHaEqR_=4XPddoo+7LjebTEg@mail.gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1353ab77-a5bb-4fb4-a8ba-08d63d7c9d4b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Oct 2018 08:57:54.8567
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5149
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="5lt5pgqwghypjetl"
+Content-Disposition: inline
+In-Reply-To: <CAMty3ZC2wn-DjR+93yc-n-bAmVCHaEqR_=4XPddoo+7LjebTEg@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-LX2160A SoC is based on Layerscape Chassis Generation 3.2 Architecture.
 
-LX2160A features an advanced 16 64-bit ARM v8 CortexA72 processor cores
-in 8 cluster, CCN508, GICv3,two 64-bit DDR4 memory controller, 8 I2C
-controllers, 3 dspi, 2 esdhc,2 USB 3.0, mmu 500, 3 SATA, 4 PL011 SBSA
-UARTs etc.
+--5lt5pgqwghypjetl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Ramneek Mehresh <ramneek.mehresh@nxp.com>
-Signed-off-by: Zhang Ying-22455 <ying.zhang22455@nxp.com>
-Signed-off-by: Nipun Gupta <nipun.gupta@nxp.com>
-Signed-off-by: Priyanka Jain <priyanka.jain@nxp.com>
-Signed-off-by: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
-Signed-off-by: Sriram Dash <sriram.dash@nxp.com>
-Signed-off-by: Vabhav Sharma <vabhav.sharma@nxp.com>
-Signed-off-by: Horia Geanta <horia.geanta@nxp.com>
-Signed-off-by: Ran Wang <ran.wang_1@nxp.com>
-Signed-off-by: Yinbo Zhu <yinbo.zhu@nxp.com>
----
- arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi | 766 +++++++++++++++++++++=
-++++
- 1 file changed, 766 insertions(+)
- create mode 100644 arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
+On Thu, Oct 25, 2018 at 04:25:59PM +0530, Jagan Teki wrote:
+> On Wed, Oct 24, 2018 at 11:34 PM Maxime Ripard
+> <maxime.ripard@bootlin.com> wrote:
+> >
+> > On Tue, Oct 23, 2018 at 09:20:22PM +0530, Jagan Teki wrote:
+> > > Some NKM PLLs doesn't work well when their output clock rate is set b=
+elow
+> > > certain rate.
+> > >
+> > > So, add support for minimal rate for relevant PLLs.
+> > >
+> > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > > ---
+> > > Changes for v2:
+> > > - new patch
+> > >
+> > >  drivers/clk/sunxi-ng/ccu_nkm.c | 7 +++++++
+> > >  drivers/clk/sunxi-ng/ccu_nkm.h | 1 +
+> > >  2 files changed, 8 insertions(+)
+> > >
+> > > diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/cc=
+u_nkm.c
+> > > index 841840e35e61..d17539dc88dd 100644
+> > > --- a/drivers/clk/sunxi-ng/ccu_nkm.c
+> > > +++ b/drivers/clk/sunxi-ng/ccu_nkm.c
+> > > @@ -125,6 +125,13 @@ static unsigned long ccu_nkm_round_rate(struct c=
+cu_mux_internal *mux,
+> > >       if (nkm->common.features & CCU_FEATURE_FIXED_POSTDIV)
+> > >               rate *=3D nkm->fixed_post_div;
+> > >
+> > > +     if (rate < nkm->min_rate) {
+> > > +             rate =3D nkm->min_rate;
+> > > +             if (nkm->common.features & CCU_FEATURE_FIXED_POSTDIV)
+> > > +                     rate /=3D nkm->fixed_post_div;
+> >
+> > I'm not sure this is right. Is the post divider taken into account to
+> > calculate the minimum, or is the minimum on the rate before the fixed
+> > post divider.
+>=20
+> Since we are returning from here, we need to take care post div which
+> is actually doing at the end of round_rate.
 
-diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi b/arch/arm64/bo=
-ot/dts/freescale/fsl-lx2160a.dtsi
-new file mode 100644
-index 0000000..a79f5c1
---- /dev/null
-+++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
-@@ -0,0 +1,766 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+//
-+// Device Tree Include file for Layerscape-LX2160A family SoC.
-+//
-+// Copyright 2018 NXP
-+
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+/memreserve/ 0x80000000 0x00010000;
-+
-+/ {
-+	compatible =3D "fsl,lx2160a";
-+	interrupt-parent =3D <&gic>;
-+	#address-cells =3D <2>;
-+	#size-cells =3D <2>;
-+
-+	cpus {
-+		#address-cells =3D <1>;
-+		#size-cells =3D <0>;
-+
-+		// 8 clusters having 2 Cortex-A72 cores each
-+		cpu@0 {
-+			device_type =3D "cpu";
-+			compatible =3D "arm,cortex-a72";
-+			enable-method =3D "psci";
-+			reg =3D <0x0>;
-+			clocks =3D <&clockgen 1 0>;
-+			d-cache-size =3D <0x8000>;
-+			d-cache-line-size =3D <64>;
-+			d-cache-sets =3D <128>;
-+			i-cache-size =3D <0xC000>;
-+			i-cache-line-size =3D <64>;
-+			i-cache-sets =3D <192>;
-+			next-level-cache =3D <&cluster0_l2>;
-+		};
-+
-+		cpu@1 {
-+			device_type =3D "cpu";
-+			compatible =3D "arm,cortex-a72";
-+			enable-method =3D "psci";
-+			reg =3D <0x1>;
-+			clocks =3D <&clockgen 1 0>;
-+			d-cache-size =3D <0x8000>;
-+			d-cache-line-size =3D <64>;
-+			d-cache-sets =3D <128>;
-+			i-cache-size =3D <0xC000>;
-+			i-cache-line-size =3D <64>;
-+			i-cache-sets =3D <192>;
-+			next-level-cache =3D <&cluster0_l2>;
-+		};
-+
-+		cpu@100 {
-+			device_type =3D "cpu";
-+			compatible =3D "arm,cortex-a72";
-+			enable-method =3D "psci";
-+			reg =3D <0x100>;
-+			clocks =3D <&clockgen 1 1>;
-+			d-cache-size =3D <0x8000>;
-+			d-cache-line-size =3D <64>;
-+			d-cache-sets =3D <128>;
-+			i-cache-size =3D <0xC000>;
-+			i-cache-line-size =3D <64>;
-+			i-cache-sets =3D <192>;
-+			next-level-cache =3D <&cluster1_l2>;
-+		};
-+
-+		cpu@101 {
-+			device_type =3D "cpu";
-+			compatible =3D "arm,cortex-a72";
-+			enable-method =3D "psci";
-+			reg =3D <0x101>;
-+			clocks =3D <&clockgen 1 1>;
-+			d-cache-size =3D <0x8000>;
-+			d-cache-line-size =3D <64>;
-+			d-cache-sets =3D <128>;
-+			i-cache-size =3D <0xC000>;
-+			i-cache-line-size =3D <64>;
-+			i-cache-sets =3D <192>;
-+			next-level-cache =3D <&cluster1_l2>;
-+		};
-+
-+		cpu@200 {
-+			device_type =3D "cpu";
-+			compatible =3D "arm,cortex-a72";
-+			enable-method =3D "psci";
-+			reg =3D <0x200>;
-+			clocks =3D <&clockgen 1 2>;
-+			d-cache-size =3D <0x8000>;
-+			d-cache-line-size =3D <64>;
-+			d-cache-sets =3D <128>;
-+			i-cache-size =3D <0xC000>;
-+			i-cache-line-size =3D <64>;
-+			i-cache-sets =3D <192>;
-+			next-level-cache =3D <&cluster2_l2>;
-+		};
-+
-+		cpu@201 {
-+			device_type =3D "cpu";
-+			compatible =3D "arm,cortex-a72";
-+			enable-method =3D "psci";
-+			reg =3D <0x201>;
-+			clocks =3D <&clockgen 1 2>;
-+			d-cache-size =3D <0x8000>;
-+			d-cache-line-size =3D <64>;
-+			d-cache-sets =3D <128>;
-+			i-cache-size =3D <0xC000>;
-+			i-cache-line-size =3D <64>;
-+			i-cache-sets =3D <192>;
-+			next-level-cache =3D <&cluster2_l2>;
-+		};
-+
-+		cpu@300 {
-+			device_type =3D "cpu";
-+			compatible =3D "arm,cortex-a72";
-+			enable-method =3D "psci";
-+			reg =3D <0x300>;
-+			clocks =3D <&clockgen 1 3>;
-+			d-cache-size =3D <0x8000>;
-+			d-cache-line-size =3D <64>;
-+			d-cache-sets =3D <128>;
-+			i-cache-size =3D <0xC000>;
-+			i-cache-line-size =3D <64>;
-+			i-cache-sets =3D <192>;
-+			next-level-cache =3D <&cluster3_l2>;
-+		};
-+
-+		cpu@301 {
-+			device_type =3D "cpu";
-+			compatible =3D "arm,cortex-a72";
-+			enable-method =3D "psci";
-+			reg =3D <0x301>;
-+			clocks =3D <&clockgen 1 3>;
-+			d-cache-size =3D <0x8000>;
-+			d-cache-line-size =3D <64>;
-+			d-cache-sets =3D <128>;
-+			i-cache-size =3D <0xC000>;
-+			i-cache-line-size =3D <64>;
-+			i-cache-sets =3D <192>;
-+			next-level-cache =3D <&cluster3_l2>;
-+		};
-+
-+		cpu@400 {
-+			device_type =3D "cpu";
-+			compatible =3D "arm,cortex-a72";
-+			enable-method =3D "psci";
-+			reg =3D <0x400>;
-+			clocks =3D <&clockgen 1 4>;
-+			d-cache-size =3D <0x8000>;
-+			d-cache-line-size =3D <64>;
-+			d-cache-sets =3D <128>;
-+			i-cache-size =3D <0xC000>;
-+			i-cache-line-size =3D <64>;
-+			i-cache-sets =3D <192>;
-+			next-level-cache =3D <&cluster4_l2>;
-+		};
-+
-+		cpu@401 {
-+			device_type =3D "cpu";
-+			compatible =3D "arm,cortex-a72";
-+			enable-method =3D "psci";
-+			reg =3D <0x401>;
-+			clocks =3D <&clockgen 1 4>;
-+			d-cache-size =3D <0x8000>;
-+			d-cache-line-size =3D <64>;
-+			d-cache-sets =3D <128>;
-+			i-cache-size =3D <0xC000>;
-+			i-cache-line-size =3D <64>;
-+			i-cache-sets =3D <192>;
-+			next-level-cache =3D <&cluster4_l2>;
-+		};
-+
-+		cpu@500 {
-+			device_type =3D "cpu";
-+			compatible =3D "arm,cortex-a72";
-+			enable-method =3D "psci";
-+			reg =3D <0x500>;
-+			clocks =3D <&clockgen 1 5>;
-+			d-cache-size =3D <0x8000>;
-+			d-cache-line-size =3D <64>;
-+			d-cache-sets =3D <128>;
-+			i-cache-size =3D <0xC000>;
-+			i-cache-line-size =3D <64>;
-+			i-cache-sets =3D <192>;
-+			next-level-cache =3D <&cluster5_l2>;
-+		};
-+
-+		cpu@501 {
-+			device_type =3D "cpu";
-+			compatible =3D "arm,cortex-a72";
-+			enable-method =3D "psci";
-+			reg =3D <0x501>;
-+			clocks =3D <&clockgen 1 5>;
-+			d-cache-size =3D <0x8000>;
-+			d-cache-line-size =3D <64>;
-+			d-cache-sets =3D <128>;
-+			i-cache-size =3D <0xC000>;
-+			i-cache-line-size =3D <64>;
-+			i-cache-sets =3D <192>;
-+			next-level-cache =3D <&cluster5_l2>;
-+		};
-+
-+		cpu@600 {
-+			device_type =3D "cpu";
-+			compatible =3D "arm,cortex-a72";
-+			enable-method =3D "psci";
-+			reg =3D <0x600>;
-+			clocks =3D <&clockgen 1 6>;
-+			d-cache-size =3D <0x8000>;
-+			d-cache-line-size =3D <64>;
-+			d-cache-sets =3D <128>;
-+			i-cache-size =3D <0xC000>;
-+			i-cache-line-size =3D <64>;
-+			i-cache-sets =3D <192>;
-+			next-level-cache =3D <&cluster6_l2>;
-+		};
-+
-+		cpu@601 {
-+			device_type =3D "cpu";
-+			compatible =3D "arm,cortex-a72";
-+			enable-method =3D "psci";
-+			reg =3D <0x601>;
-+			clocks =3D <&clockgen 1 6>;
-+			d-cache-size =3D <0x8000>;
-+			d-cache-line-size =3D <64>;
-+			d-cache-sets =3D <128>;
-+			i-cache-size =3D <0xC000>;
-+			i-cache-line-size =3D <64>;
-+			i-cache-sets =3D <192>;
-+			next-level-cache =3D <&cluster6_l2>;
-+		};
-+
-+		cpu@700 {
-+			device_type =3D "cpu";
-+			compatible =3D "arm,cortex-a72";
-+			enable-method =3D "psci";
-+			reg =3D <0x700>;
-+			clocks =3D <&clockgen 1 7>;
-+			d-cache-size =3D <0x8000>;
-+			d-cache-line-size =3D <64>;
-+			d-cache-sets =3D <128>;
-+			i-cache-size =3D <0xC000>;
-+			i-cache-line-size =3D <64>;
-+			i-cache-sets =3D <192>;
-+			next-level-cache =3D <&cluster7_l2>;
-+		};
-+
-+		cpu@701 {
-+			device_type =3D "cpu";
-+			compatible =3D "arm,cortex-a72";
-+			enable-method =3D "psci";
-+			reg =3D <0x701>;
-+			clocks =3D <&clockgen 1 7>;
-+			d-cache-size =3D <0x8000>;
-+			d-cache-line-size =3D <64>;
-+			d-cache-sets =3D <128>;
-+			i-cache-size =3D <0xC000>;
-+			i-cache-line-size =3D <64>;
-+			i-cache-sets =3D <192>;
-+			next-level-cache =3D <&cluster7_l2>;
-+		};
-+
-+		cluster0_l2: l2-cache0 {
-+			compatible =3D "cache";
-+			cache-size =3D <0x100000>;
-+			cache-line-size =3D <64>;
-+			cache-sets =3D <1024>;
-+			cache-level =3D <2>;
-+		};
-+
-+		cluster1_l2: l2-cache1 {
-+			compatible =3D "cache";
-+			cache-size =3D <0x100000>;
-+			cache-line-size =3D <64>;
-+			cache-sets =3D <1024>;
-+			cache-level =3D <2>;
-+		};
-+
-+		cluster2_l2: l2-cache2 {
-+			compatible =3D "cache";
-+			cache-size =3D <0x100000>;
-+			cache-line-size =3D <64>;
-+			cache-sets =3D <1024>;
-+			cache-level =3D <2>;
-+		};
-+
-+		cluster3_l2: l2-cache3 {
-+			compatible =3D "cache";
-+			cache-size =3D <0x100000>;
-+			cache-line-size =3D <64>;
-+			cache-sets =3D <1024>;
-+			cache-level =3D <2>;
-+		};
-+
-+		cluster4_l2: l2-cache4 {
-+			compatible =3D "cache";
-+			cache-size =3D <0x100000>;
-+			cache-line-size =3D <64>;
-+			cache-sets =3D <1024>;
-+			cache-level =3D <2>;
-+		};
-+
-+		cluster5_l2: l2-cache5 {
-+			compatible =3D "cache";
-+			cache-size =3D <0x100000>;
-+			cache-line-size =3D <64>;
-+			cache-sets =3D <1024>;
-+			cache-level =3D <2>;
-+		};
-+
-+		cluster6_l2: l2-cache6 {
-+			compatible =3D "cache";
-+			cache-size =3D <0x100000>;
-+			cache-line-size =3D <64>;
-+			cache-sets =3D <1024>;
-+			cache-level =3D <2>;
-+		};
-+
-+		cluster7_l2: l2-cache7 {
-+			compatible =3D "cache";
-+			cache-size =3D <0x100000>;
-+			cache-line-size =3D <64>;
-+			cache-sets =3D <1024>;
-+			cache-level =3D <2>;
-+		};
-+	};
-+
-+	gic: interrupt-controller@6000000 {
-+		compatible =3D "arm,gic-v3";
-+		reg =3D <0x0 0x06000000 0 0x10000>, // GIC Dist
-+			<0x0 0x06200000 0 0x200000>, // GICR (RD_base +
-+						     // SGI_base)
-+			<0x0 0x0c0c0000 0 0x2000>, // GICC
-+			<0x0 0x0c0d0000 0 0x1000>, // GICH
-+			<0x0 0x0c0e0000 0 0x20000>; // GICV
-+		#interrupt-cells =3D <3>;
-+		#address-cells =3D <2>;
-+		#size-cells =3D <2>;
-+		ranges;
-+		interrupt-controller;
-+		interrupts =3D <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
-+
-+		its: gic-its@6020000 {
-+			compatible =3D "arm,gic-v3-its";
-+			msi-controller;
-+			reg =3D <0x0 0x6020000 0 0x20000>;
-+		};
-+	};
-+
-+	timer {
-+		compatible =3D "arm,armv8-timer";
-+		interrupts =3D <GIC_PPI 13 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_PPI 14 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_PPI 11 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_PPI 10 IRQ_TYPE_LEVEL_HIGH>;
-+	};
-+
-+	pmu {
-+		compatible =3D "arm,cortex-a72-pmu";
-+		interrupts =3D <GIC_PPI 7 IRQ_TYPE_LEVEL_LOW>;
-+	};
-+
-+	psci {
-+		compatible =3D "arm,psci-0.2";
-+		method =3D "smc";
-+	};
-+
-+	memory@80000000 {
-+		// DRAM space - 1, size : 2 GB DRAM
-+		device_type =3D "memory";
-+		reg =3D <0x00000000 0x80000000 0 0x80000000>;
-+	};
-+
-+	ddr1: memory-controller@1080000 {
-+		compatible =3D "fsl,qoriq-memory-controller";
-+		reg =3D <0x0 0x1080000 0x0 0x1000>;
-+		interrupts =3D <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
-+		little-endian;
-+	};
-+
-+	ddr2: memory-controller@1090000 {
-+		compatible =3D "fsl,qoriq-memory-controller";
-+		reg =3D <0x0 0x1090000 0x0 0x1000>;
-+		interrupts =3D <GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH>;
-+		little-endian;
-+	};
-+
-+	// One clock unit-sysclk node which bootloader require during DT fix-up
-+	sysclk: sysclk {
-+		compatible =3D "fixed-clock";
-+		#clock-cells =3D <0>;
-+		clock-frequency =3D <100000000>; // fixed up by bootloader
-+		clock-output-names =3D "sysclk";
-+	};
-+
-+	soc {
-+		compatible =3D "simple-bus";
-+		#address-cells =3D <2>;
-+		#size-cells =3D <2>;
-+		ranges;
-+
-+		crypto: crypto@8000000 {
-+			compatible =3D "fsl,sec-v5.0", "fsl,sec-v4.0";
-+			fsl,sec-era =3D <10>;
-+			#address-cells =3D <1>;
-+			#size-cells =3D <1>;
-+			ranges =3D <0x0 0x00 0x8000000 0x100000>;
-+			reg =3D <0x00 0x8000000 0x0 0x100000>;
-+			interrupts =3D <GIC_SPI 139 IRQ_TYPE_LEVEL_HIGH>;
-+			dma-coherent;
-+			status =3D "disabled";
-+
-+			sec_jr0: jr@10000 {
-+				compatible =3D "fsl,sec-v5.0-job-ring",
-+					     "fsl,sec-v4.0-job-ring";
-+				reg        =3D <0x10000 0x10000>;
-+				interrupts =3D <GIC_SPI 140 IRQ_TYPE_LEVEL_HIGH>;
-+			};
-+
-+			sec_jr1: jr@20000 {
-+				compatible =3D "fsl,sec-v5.0-job-ring",
-+					     "fsl,sec-v4.0-job-ring";
-+				reg        =3D <0x20000 0x10000>;
-+				interrupts =3D <GIC_SPI 141 IRQ_TYPE_LEVEL_HIGH>;
-+			};
-+
-+			sec_jr2: jr@30000 {
-+				compatible =3D "fsl,sec-v5.0-job-ring",
-+					     "fsl,sec-v4.0-job-ring";
-+				reg        =3D <0x30000 0x10000>;
-+				interrupts =3D <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>;
-+			};
-+
-+			sec_jr3: jr@40000 {
-+				compatible =3D "fsl,sec-v5.0-job-ring",
-+					     "fsl,sec-v4.0-job-ring";
-+				reg        =3D <0x40000 0x10000>;
-+				interrupts =3D <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>;
-+			};
-+		};
-+
-+		clockgen: clock-controller@1300000 {
-+			compatible =3D "fsl,lx2160a-clockgen";
-+			reg =3D <0 0x1300000 0 0xa0000>;
-+			#clock-cells =3D <2>;
-+			clocks =3D <&sysclk>;
-+		};
-+
-+		dcfg: syscon@1e00000 {
-+			compatible =3D "fsl,lx2160a-dcfg", "syscon";
-+			reg =3D <0x0 0x1e00000 0x0 0x10000>;
-+			little-endian;
-+		};
-+
-+		i2c0: i2c@2000000 {
-+			compatible =3D "fsl,vf610-i2c";
-+			#address-cells =3D <1>;
-+			#size-cells =3D <0>;
-+			reg =3D <0x0 0x2000000 0x0 0x10000>;
-+			interrupts =3D <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
-+			clock-names =3D "i2c";
-+			clocks =3D <&clockgen 4 7>;
-+			scl-gpio =3D <&gpio2 15 GPIO_ACTIVE_HIGH>;
-+			status =3D "disabled";
-+		};
-+
-+		i2c1: i2c@2010000 {
-+			compatible =3D "fsl,vf610-i2c";
-+			#address-cells =3D <1>;
-+			#size-cells =3D <0>;
-+			reg =3D <0x0 0x2010000 0x0 0x10000>;
-+			interrupts =3D <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
-+			clock-names =3D "i2c";
-+			clocks =3D <&clockgen 4 7>;
-+			status =3D "disabled";
-+		};
-+
-+		i2c2: i2c@2020000 {
-+			compatible =3D "fsl,vf610-i2c";
-+			#address-cells =3D <1>;
-+			#size-cells =3D <0>;
-+			reg =3D <0x0 0x2020000 0x0 0x10000>;
-+			interrupts =3D <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>;
-+			clock-names =3D "i2c";
-+			clocks =3D <&clockgen 4 7>;
-+			status =3D "disabled";
-+		};
-+
-+		i2c3: i2c@2030000 {
-+			compatible =3D "fsl,vf610-i2c";
-+			#address-cells =3D <1>;
-+			#size-cells =3D <0>;
-+			reg =3D <0x0 0x2030000 0x0 0x10000>;
-+			interrupts =3D <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>;
-+			clock-names =3D "i2c";
-+			clocks =3D <&clockgen 4 7>;
-+			status =3D "disabled";
-+		};
-+
-+		i2c4: i2c@2040000 {
-+			compatible =3D "fsl,vf610-i2c";
-+			#address-cells =3D <1>;
-+			#size-cells =3D <0>;
-+			reg =3D <0x0 0x2040000 0x0 0x10000>;
-+			interrupts =3D <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>;
-+			clock-names =3D "i2c";
-+			clocks =3D <&clockgen 4 7>;
-+			scl-gpio =3D <&gpio2 16 GPIO_ACTIVE_HIGH>;
-+			status =3D "disabled";
-+		};
-+
-+		i2c5: i2c@2050000 {
-+			compatible =3D "fsl,vf610-i2c";
-+			#address-cells =3D <1>;
-+			#size-cells =3D <0>;
-+			reg =3D <0x0 0x2050000 0x0 0x10000>;
-+			interrupts =3D <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>;
-+			clock-names =3D "i2c";
-+			clocks =3D <&clockgen 4 7>;
-+			status =3D "disabled";
-+		};
-+
-+		i2c6: i2c@2060000 {
-+			compatible =3D "fsl,vf610-i2c";
-+			#address-cells =3D <1>;
-+			#size-cells =3D <0>;
-+			reg =3D <0x0 0x2060000 0x0 0x10000>;
-+			interrupts =3D <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>;
-+			clock-names =3D "i2c";
-+			clocks =3D <&clockgen 4 7>;
-+			status =3D "disabled";
-+		};
-+
-+		i2c7: i2c@2070000 {
-+			compatible =3D "fsl,vf610-i2c";
-+			#address-cells =3D <1>;
-+			#size-cells =3D <0>;
-+			reg =3D <0x0 0x2070000 0x0 0x10000>;
-+			interrupts =3D <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>;
-+			clock-names =3D "i2c";
-+			clocks =3D <&clockgen 4 7>;
-+			status =3D "disabled";
-+		};
-+
-+		esdhc0: esdhc@2140000 {
-+			compatible =3D "fsl,esdhc";
-+			reg =3D <0x0 0x2140000 0x0 0x10000>;
-+			interrupts =3D <0 28 0x4>; /* Level high type */
-+			clocks =3D <&clockgen 4 1>;
-+			voltage-ranges =3D <1800 1800 3300 3300>;
-+			sdhci,auto-cmd12;
-+			little-endian;
-+			bus-width =3D <4>;
-+			status =3D "disabled";
-+		};
-+
-+		esdhc1: esdhc@2150000 {
-+			compatible =3D "fsl,esdhc";
-+			reg =3D <0x0 0x2150000 0x0 0x10000>;
-+			interrupts =3D <0 63 0x4>; /* Level high type */
-+			clocks =3D <&clockgen 4 1>;
-+			voltage-ranges =3D <1800 1800 3300 3300>;
-+			sdhci,auto-cmd12;
-+			broken-cd;
-+			little-endian;
-+			bus-width =3D <4>;
-+			status =3D "disabled";
-+		};
-+
-+		uart0: serial@21c0000 {
-+			compatible =3D "arm,sbsa-uart","arm,pl011";
-+			reg =3D <0x0 0x21c0000 0x0 0x1000>;
-+			interrupts =3D <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
-+			current-speed =3D <115200>;
-+			status =3D "disabled";
-+		};
-+
-+		uart1: serial@21d0000 {
-+			compatible =3D "arm,sbsa-uart","arm,pl011";
-+			reg =3D <0x0 0x21d0000 0x0 0x1000>;
-+			interrupts =3D <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>;
-+			current-speed =3D <115200>;
-+			status =3D "disabled";
-+		};
-+
-+		uart2: serial@21e0000 {
-+			compatible =3D "arm,sbsa-uart","arm,pl011";
-+			reg =3D <0x0 0x21e0000 0x0 0x1000>;
-+			interrupts =3D <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>;
-+			current-speed =3D <115200>;
-+			status =3D "disabled";
-+		};
-+
-+		uart3: serial@21f0000 {
-+			compatible =3D "arm,sbsa-uart","arm,pl011";
-+			reg =3D <0x0 0x21f0000 0x0 0x1000>;
-+			interrupts =3D <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
-+			current-speed =3D <115200>;
-+			status =3D "disabled";
-+		};
-+
-+		gpio0: gpio@2300000 {
-+			compatible =3D "fsl,qoriq-gpio";
-+			reg =3D <0x0 0x2300000 0x0 0x10000>;
-+			interrupts =3D <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
-+			gpio-controller;
-+			little-endian;
-+			#gpio-cells =3D <2>;
-+			interrupt-controller;
-+			#interrupt-cells =3D <2>;
-+		};
-+
-+		gpio1: gpio@2310000 {
-+			compatible =3D "fsl,qoriq-gpio";
-+			reg =3D <0x0 0x2310000 0x0 0x10000>;
-+			interrupts =3D <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
-+			gpio-controller;
-+			little-endian;
-+			#gpio-cells =3D <2>;
-+			interrupt-controller;
-+			#interrupt-cells =3D <2>;
-+		};
-+
-+		gpio2: gpio@2320000 {
-+			compatible =3D "fsl,qoriq-gpio";
-+			reg =3D <0x0 0x2320000 0x0 0x10000>;
-+			interrupts =3D <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
-+			gpio-controller;
-+			little-endian;
-+			#gpio-cells =3D <2>;
-+			interrupt-controller;
-+			#interrupt-cells =3D <2>;
-+		};
-+
-+		gpio3: gpio@2330000 {
-+			compatible =3D "fsl,qoriq-gpio";
-+			reg =3D <0x0 0x2330000 0x0 0x10000>;
-+			interrupts =3D <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
-+			gpio-controller;
-+			little-endian;
-+			#gpio-cells =3D <2>;
-+			interrupt-controller;
-+			#interrupt-cells =3D <2>;
-+		};
-+
-+		watchdog@23a0000 {
-+			compatible =3D "arm,sbsa-gwdt";
-+			reg =3D <0x0 0x23a0000 0 0x1000>,
-+			      <0x0 0x2390000 0 0x1000>;
-+			interrupts =3D <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>;
-+			timeout-sec =3D <30>;
-+		};
-+
-+		usb0: usb@3100000 {
-+			compatible =3D "snps,dwc3";
-+			reg =3D <0x0 0x3100000 0x0 0x10000>;
-+			interrupts =3D <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
-+			dr_mode =3D "host";
-+			snps,quirk-frame-length-adjustment =3D <0x20>;
-+			snps,dis_rxdet_inp3_quirk;
-+			status =3D "disabled";
-+		};
-+
-+		usb1: usb@3110000 {
-+			compatible =3D "snps,dwc3";
-+			reg =3D <0x0 0x3110000 0x0 0x10000>;
-+			interrupts =3D <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>;
-+			dr_mode =3D "host";
-+			snps,quirk-frame-length-adjustment =3D <0x20>;
-+			snps,dis_rxdet_inp3_quirk;
-+			status =3D "disabled";
-+		};
-+
-+		smmu: iommu@5000000 {
-+			compatible =3D "arm,mmu-500";
-+			reg =3D <0 0x5000000 0 0x800000>;
-+			#iommu-cells =3D <1>;
-+			#global-interrupts =3D <14>;
-+				     // global secure fault
-+			interrupts =3D <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>,
-+				     // combined secure
-+				     <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>,
-+				     // global non-secure fault
-+				     <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>,
-+				     // combined non-secure
-+				     <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>,
-+				     // performance counter interrupts 0-9
-+				     <GIC_SPI 211 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 212 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 213 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 214 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 215 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 216 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 217 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 218 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 219 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH>,
-+				     // per context interrupt, 64 interrupts
-+				     <GIC_SPI 146 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 147 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 149 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 150 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 151 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 159 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 160 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 161 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 171 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 172 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 175 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 176 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 177 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 178 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 179 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 180 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 181 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 182 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 183 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 184 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 185 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 190 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 191 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 192 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 193 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 194 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 195 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 198 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 199 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 201 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 202 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 203 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 204 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 205 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 206 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 207 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 209 IRQ_TYPE_LEVEL_HIGH>;
-+			dma-coherent;
-+		};
-+	};
-+};
+That's not my point though. Does the rate needs to be superior to min
+/ post_div, or min?
+
+> >
+> > How did you test this?
+>=20
+> I've not used this on PLL_MIPI atleast, so I didn't test this.
+
+If you've never tested this, why are you adding that code?
+
+Maxime
+
 --=20
-2.7.4
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
+--5lt5pgqwghypjetl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW9bLwwAKCRDj7w1vZxhR
+xbT0AP0fPto4coEig8ZR39G7ONTVrOWBcxXknPHHF4gUjPDIbAEA0V0BEp+iz73p
+SAD23hiIL4S+7qCvlNFZYYpGN5WsxAw=
+=XwoR
+-----END PGP SIGNATURE-----
+
+--5lt5pgqwghypjetl--
