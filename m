@@ -7,149 +7,162 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57D06C0044C
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 19:08:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27DD6C2BC61
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 19:45:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E28F2080A
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 19:08:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA7522082D
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 19:45:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SgxFmj9t"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E28F2080A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="ZR0WGkzW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA7522082D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=googlemail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727666AbeJ3D6W (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 29 Oct 2018 23:58:22 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:43461 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726384AbeJ3D6W (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Oct 2018 23:58:22 -0400
-Received: by mail-wr1-f66.google.com with SMTP id t10-v6so9914936wrn.10;
-        Mon, 29 Oct 2018 12:08:21 -0700 (PDT)
+        id S1728089AbeJ3Ef4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 30 Oct 2018 00:35:56 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:37121 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725911AbeJ3Ef4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Oct 2018 00:35:56 -0400
+Received: by mail-oi1-f193.google.com with SMTP id w66-v6so3929914oiw.4;
+        Mon, 29 Oct 2018 12:45:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=2FB+brlDErFcKaAXgeHxcJPKsFF2HZZjbUO9HWm2rW8=;
-        b=SgxFmj9tSXovSPYtHmggzlOV2TAkLud2T9hdGrUjOIKsBpgppYwnnLqTEU0sdN4IAE
-         kIa2Vsc9arcLQcWtZ6ayweDA0qV0cDKh2lGoEYXNdJRQk9iGoIHmvfx1bQcK15BkzUeD
-         8I50miv1tTfTe9bN12gA2FbKh63hI6hVgkUfMqd+jXCn9AfO33nsTjx8NGzlBpNL4uke
-         LQY6yiraP1f7x9UEC+n5tVi6QL+eU+0iWS++S2dPxHhxjBNHny34zr+rPjiUDUSWDvR1
-         nwu9zaGwCo+w4pQaNW5Ll85rvUGJS5cepwZFOxVqfIEpZJJy5f1ZFP+KmEt9fJhgm5mP
-         QaCA==
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=+P+YyHQN4mbzIEI8gj6PxHxuqBpIjDzGExY1dBY+9d4=;
+        b=ZR0WGkzWU75PY8YKcHoqeSHCE2QzOKCRQphzI2WtlaVsXOUKtRKMGlJI/OLbzhfTmV
+         6bulfiIJHwh0zHl3SDZmIiAIQ6V/Ak6Pm6hWWykhdf6NLPY3LH3dLDmcnWwnFDTXrxjb
+         q+n3+O7YTlqLoEKYc+NIZxXl281uTlPMs5eciFPfY+isNqRV1xX60OiqqEZTpirSyv6z
+         cuqEhBqLJr0NQfvekoLk462AbnZI2DuJYo7AYkS66sX06Uo/UuSy5C9SjkxH+bGUqwut
+         pjj4wXp+m5BGrCIGTr7RqTR4cyYPUHBenklsNifS0ho+oKQh2JzShCH929m/YzSJUOce
+         Q6WQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=2FB+brlDErFcKaAXgeHxcJPKsFF2HZZjbUO9HWm2rW8=;
-        b=AhUugMiJMA8CJAcuEtwmcjqH6A7Cwa3n/rdnPGGE0/bAKpzrztNE3uh2+XQBq7U24e
-         l5ybv9L2daW1od6xyg7fQ4+DCMc7EwYAyuf6fw7PvbO+4SK/pO+IxUwR/WsWOrYwD79C
-         E5zpKX7xD16i2bckdpO2wT2rEmt1NQ0L850SWibgX2R02usyqurb27SE0zhq/XcMkTJq
-         ruzHwpJYYYF+EgO8zqcb/w2RYvB9rzZ1X+oBZo7lseqdiNyVtWq5so+U4/UYbxVgY5o7
-         ovn4M6gnITlLwpqNQqTHxXJKh7txGTofonQSoIy5261shKt+spiIknlrGd/boamJmGni
-         s6xQ==
-X-Gm-Message-State: AGRZ1gISRCPeIKx7YXbhkcQ58/N5V2MAXzFXlK/Z/oH2tKEkxB54iohY
-        PtwaVH/EZqrmYajatGEpBYE=
-X-Google-Smtp-Source: AJdET5dkfCC4pzmu6hCTHcxltT55t4+hTeYl7bXqy1Z8bkkqvcX4gwTE0qc5HwHlaaEzTOTI0rny4A==
-X-Received: by 2002:adf:f384:: with SMTP id m4-v6mr15368677wro.111.1540840100875;
-        Mon, 29 Oct 2018 12:08:20 -0700 (PDT)
-Received: from picard ([194.207.103.1])
-        by smtp.gmail.com with ESMTPSA id l140-v6sm28577135wmb.24.2018.10.29.12.08.19
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 29 Oct 2018 12:08:20 -0700 (PDT)
-Date:   Mon, 29 Oct 2018 19:08:19 +0000
-From:   Dean Wallace <duffydack73@gmail.com>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Stable <stable@vger.kernel.org>,
-        Johannes Stezenbach <js@sig21.net>,
-        Carlo Caione <carlo@endlessm.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: Regression found (Stop-marking-clocks-as-CLK_IS_CRITICAL)
-Message-ID: <20181029190819.2ivlx73n6y6sx4vk@picard>
-References: <20181025232517.ywnw54qibemosjws@picard>
- <154083512089.98144.9141070901932719147@swboyd.mtv.corp.google.com>
- <CAHp75VfnN5tF1Z9+CDDhKFNG5QfCRcGOZeAkpf-5BfCEx16gvg@mail.gmail.com>
- <CAHp75VctdBE-GM60udJawBCXdmoOqZn4N=kFWz5GLHzjPG2iQQ@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+P+YyHQN4mbzIEI8gj6PxHxuqBpIjDzGExY1dBY+9d4=;
+        b=at1r8Zn0SH373L8PwllmBTBTlDr6qozrYXGEYj2Q5h3+s5bGpdiJPr/2mB6chSrKNu
+         td3mktyZsWWr2RDjkhrmtuD9TWFLNmAfTRuhILNzPXPz6KFVsGjaJWE/6NLZbfvfb1KN
+         QfpFmH5UuN1DNSXxASnAzricq4guFnxzx6zG6tUqruEdFhDJDKZUdvctjj8/Ue1B8BbT
+         zKNlPabHSAcE/RPKkCO2vxy76GozgpAPztoD3u8Hm/fmFo1Zjz3nqUPDr4SHuwg4a6Gf
+         n0DPsAgbyS9NzYwe+8uGoh8fZOvYK7ZcsXft3l469nbXZO3zjdQHtmkSoepoM5i8JAbC
+         PBww==
+X-Gm-Message-State: AGRZ1gL5OibHEN09T8be7JhV3HWQBWGypFadfkWH861ZW4lEitPs9xUa
+        VRZMk0hx2+yZ884sIdw3tCA0nfIGYJlSfLM3Bj8=
+X-Google-Smtp-Source: AJdET5f148hjpSoY5MEOJi9uus5q8o/KGxeQasLdb4cWdTXBeo7UlegKeKdZOXdGewwGlp8WMRhkx69t/NJmeQev4vM=
+X-Received: by 2002:aca:e804:: with SMTP id f4-v6mr8705120oih.38.1540842348082;
+ Mon, 29 Oct 2018 12:45:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAHp75VctdBE-GM60udJawBCXdmoOqZn4N=kFWz5GLHzjPG2iQQ@mail.gmail.com>
-X-Info: Keep It Simple, Stupid.
-X-Operating-System: Linux, kernel 4.18.16-arch1-1-ARCH
-X-Message-Flag: WARNING!! Outlook sucks
-User-Agent: Every email client sucks, this one just sucks less.
+References: <1539839245-13793-1-git-send-email-jianxin.pan@amlogic.com>
+ <1539839245-13793-4-git-send-email-jianxin.pan@amlogic.com>
+ <a8d359208edfdc75cb5c6de378796f76e0572a0f.camel@baylibre.com>
+ <eda2faf2-cf06-902d-36ff-48ceafcb4a4b@amlogic.com> <f4d239df2f1333b005680f9bfdd2eba93e7f86e5.camel@baylibre.com>
+ <CAFBinCCuqUmVNdwUm7WbkHy1eWvOA5oQ5FcOuytbYNbgGcXnRQ@mail.gmail.com> <3723695d951e0d30e8a0117d336d8f268269a030.camel@baylibre.com>
+In-Reply-To: <3723695d951e0d30e8a0117d336d8f268269a030.camel@baylibre.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Mon, 29 Oct 2018 20:45:36 +0100
+Message-ID: <CAFBinCDyoK0G5FoyqZq6zPZLXH+YHy+-7GBCrjuH4=LN+MpSDQ@mail.gmail.com>
+Subject: Re: [PATCH v5 3/3] clk: meson: add sub MMC clock controller driver
+To:     jbrunet@baylibre.com
+Cc:     jianxin.pan@amlogic.com, Neil Armstrong <narmstrong@baylibre.com>,
+        yixun.lan@amlogic.com, khilman@baylibre.com, carlo@caione.org,
+        mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+        miquel.raynal@bootlin.com, boris.brezillon@bootlin.com,
+        liang.yang@amlogic.com, jian.hu@amlogic.com,
+        qiufang.dai@amlogic.com, hanjie.lin@amlogic.com,
+        victor.wan@amlogic.com, linux-clk@vger.kernel.org,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 29-10-18, Andy Shevchenko wrote:
-> On Mon, Oct 29, 2018 at 7:52 PM Andy Shevchenko
-> <andy.shevchenko@gmail.com> wrote:
-> >
-> > Cc: Pierre as well.
-> >
-> > On Mon, Oct 29, 2018 at 7:48 PM Stephen Boyd <sboyd@kernel.org> wrote:
-> > >
-> > > Quoting Dean Wallace (2018-10-25 16:25:17)
-> > > > I have found a regression in 4.18.15 that means I lose sound on my old
-> > > > Toshiba Chromebook 2 (Swanky).  My system details are:-
-> > > >
-> > > > Toshiba Chromebook (Swanky)
-> > > > MrChromebox UEFI coreboot
-> > > > Arch Linux running latest alsa/pulseaudio
-> > > >
-> > > > Upgraded kernel from 4.18.14 to 4.18.15 and lost all sound output.  By
-> > > > output I mean, the card is still detected, the module loaded, all apps
-> > > > showing sound is being playing, but no actual audible sound comes
-> > > > through.  Upgraded to 4.18.16 same issue.
-> > > >
-> > > > Dug around and found Upstream commit 648e921888ad96ea3dc922739e96716ad3225d7f
-> > > > clk: x86: Stop marking clocks as CLK_IS_CRITICAL
-> > > > "This commit removes the CLK_IS_CRITICAL marking, fixing Cherry Trail
-> > > > devices not being able to reach S0i3 greatly decreasing their battery
-> > > > drain when suspended."
-> > > >
-> > > > I reverted it and compiled 4.18.16 and have sound back again.  Could
-> > > > this be looked into, with possibility of fix.
-> > > >
-> > >
-> > > Thanks for the bug report. I'm adding some people involved in the commit
-> > > you mention is causing audio regressions. The best plan is to probably
-> > > revert the commit from the 4.18 linux stable tree. Or there may be
-> > > another patch missing that would be useful to make this backported patch
-> > > work. Hopefully Hans or Andy knows.
-> >
-> > Hans has been investigating S0ix issues on Baytrail and Cherrytrail machines.
-> > I have a feeling that the problem can be fixed by properly handling
-> > clock in ASoC driver(s). Perhaps Hans and Pierre can figure this out
-> > better than me.
-> 
-> Looking to sound/soc/intel/boards/cht_bsw_rt5672.c I see no
-> suspend-resume hooks. Perhaps, adding them like in the commit
-> ac8bd9e13be2 ("r8169: Disable clk during suspend / resume") would
-> help.
-> 
-> Btw, what the drivers are in use for the machine you have? It's better
-> you run alsa-info.sh or alike to collect necessary information along
-> with output of `lsmod`, `dmesg`, etc.
-> 
-> -- 
-> With Best Regards,
-> Andy Shevchenko
+Hi Jerome,
 
-alsa-info.txt [1], cpuinfo [2], dmesg [3], and 'ls /sys/bus/i2c/devices' [4]
-[1] https://gist.github.com/duffydack/480be8ddced44515dbf981dc09f593ec#file-alsa-info
-[2] https://gist.github.com/duffydack/480be8ddced44515dbf981dc09f593ec#file-cpuinfo-log
-[3] https://gist.github.com/duffydack/480be8ddced44515dbf981dc09f593ec#file-dmesg-log
-[4] https://gist.github.com/duffydack/480be8ddced44515dbf981dc09f593ec#file-sys-bus-i2c-devices-log
+many thanks for the whole explanation!
+
+On Sun, Oct 28, 2018 at 8:16 PM Jerome Brunet <jbrunet@baylibre.com> wrote:
+>
+> On Thu, 2018-10-25 at 22:58 +0200, Martin Blumenstingl wrote:
+> > Hi Jerome,
+> >
+> > On Thu, Oct 25, 2018 at 2:54 PM Jerome Brunet <jbrunet@baylibre.com> wrote:
+> > [snip]
+> > > > > > +static void clk_regmap_div_init(struct clk_hw *hw)
+> > > > > > +{
+> > > > > > + struct clk_regmap *clk = to_clk_regmap(hw);
+> > > > > > + struct clk_regmap_div_data *div = clk_get_regmap_div_data(clk);
+> > > > > > + unsigned int val;
+> > > > > > + int ret;
+> > > > > > +
+> > > > > > + ret = regmap_read(clk->map, div->offset, &val);
+> > > > > > + if (ret)
+> > > > > > +         return;
+> > > > > >
+> > > > > > + val &= (clk_div_mask(div->width) << div->shift);
+> > > > > > + if (!val)
+> > > > > > +         regmap_update_bits(clk->map, div->offset,
+> > > > > > +                            clk_div_mask(div->width) << div->shift,
+> > > > > > +                            clk_div_mask(div->width));
+> > > > >
+> > > > > This is wrong for several reasons:
+> > > > > * You should hard code the initial value in the driver.
+> > > > > * If shift is not 0, I doubt this will give the expected result.
+> > > >
+> > > > The value 0x00 of divider means nand clock off then read/write nand register is forbidden.
+> > >
+> > > That is not entirely true, you can access the clock register or you'd be in a
+> > > chicken and egg situation.
+> > >
+> > > > Should we set the initial value in nand driver, or in sub emmc clk driver?
+> > >
+> > > In the nand driver, which is the consumer of the clock. see my previous comments
+> > > about it.
+> >
+> > an old version of this series had the code still in the NAND driver
+> > (by writing to the registers directly instead of using the clk API).
+> > this looks pretty much like a "sclk-div" to me (as I commented in v3
+> > of this series: [0]):
+> > - value 0 means disabled
+> > - positive divider values
+> > - (probably no duty control, but that's optional as far as I
+> > understand sclk-div)
+> > - uses max divider value when enabling the clock
+> >
+> > if switching to sclk-div works then we can get rid of some duplicate code
+>
+> It is possible:
+> There is a couple of things to note though:
+>
+> * sclk does not 'uses max divider value when enabling the clock': Since this
+> divider can gate, it needs to save the divider value when disabling, since the
+> divider value is no longer stored in the register,
+> On init, this cached value is  saved as it is. If the divider is initially
+> disabled, we have to set the cached value to something that makes sense, in case
+> the clock is enabled without a prior call to clk_set_rate().
+>
+> So in sclk, the clock setting is not changed nor hard coded in init, and this is
+> a very important difference.
+>
+> * Even if sclk zero value means gated, it is still a zero based divider, while
+> eMMC/Nand divider is one based. It this controller was to sclk, then something
+> needs to be done for this.
+>
+> * Since sclk caches a value in its data, and there can multiple instance of eMMC
+> /NAND clock controller, some care must be taken when registering the data.
+>
+> Both the generic divider and sclk could work here ... it's up to you Jianxin.
+to give even more options:
+the generic divider will (probably) get a CLK_DIVIDER_ZERO_GATE flag
+in the next development cycle, see [0] (this may require a small
+change to clk-regmap on top)
+
 
 Regards
--- 
-Dean
+Martin
+
+
+[0] https://patchwork.kernel.org/patch/10650797/
