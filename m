@@ -2,63 +2,62 @@ Return-Path: <SRS0=SMsi=NJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F24DC2BC61
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 14:48:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EE25C0044C
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 15:08:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3F5B20870
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 14:48:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4B632082D
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 15:08:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="BwzsR2sV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3F5B20870
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="Qeqv7CRd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4B632082D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726556AbeJ2XhP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 29 Oct 2018 19:37:15 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:43319 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726311AbeJ2XhP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Oct 2018 19:37:15 -0400
-Received: by mail-io1-f66.google.com with SMTP id y10-v6so5100025ioa.10
-        for <linux-clk@vger.kernel.org>; Mon, 29 Oct 2018 07:48:17 -0700 (PDT)
+        id S1726741AbeJ2X53 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 29 Oct 2018 19:57:29 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:34350 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726035AbeJ2X53 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Oct 2018 19:57:29 -0400
+Received: by mail-io1-f68.google.com with SMTP id d80-v6so5165433iof.1
+        for <linux-clk@vger.kernel.org>; Mon, 29 Oct 2018 08:08:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=MnfB3NBe0zr1IXXWgqSFxtO5BvGhLc8TBKxaaj9cCek=;
-        b=BwzsR2sVkdQHP5JgKSnEzD2CevxoIsomasmUYuhh1KOILyuYbFqPa6lEwLM9u9ZnN6
-         GnXQocNPvty0xv9gtYBb58l9zIXbR8/9hYS0s2rergrsb+QM8pxv9mboMdVABCHILRfI
-         7FFyiPw3aIIfCXH4nim+IJVs6cOMao3hqbKVQ=
+        bh=eOvBh6L9X5NzQeyvJl3WtqiMIqmWgzqgwXntttAkqE4=;
+        b=Qeqv7CRdqmUbWlLqk5muHyZsmqBEnn+zozYop2CyHru8+m52VJjyebrp0NwXaxVuJB
+         FL26w5NM4oopUJgXWOXhhd6Wm5eoyrmJBm/77JSxUz6l3DDcl+Aj/VNoe/lPfdLzn7SQ
+         +d+WGy2oGxAAMig1AJpAv2RNkYfQ7wglsg9So=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=MnfB3NBe0zr1IXXWgqSFxtO5BvGhLc8TBKxaaj9cCek=;
-        b=U4hru+AwtoBYo3F2qlCeV5g997Bno1s1V0wO6jTW4XuK11OQ4iz1KoxKjUSOjX2XWT
-         Dm9zs7KGjJ1mrL7sZglYpFSC4QZH/Wmeh4iMdTsdfCZStwYZSPnzWKSIsqlbqv4Ip54W
-         DSZuchOHE36ZP1CFLeMdCrgklfWOeuEeZaGhQj3Vt06icf+225mGZE89wsNooF12pBnQ
-         wyLRedRyF2qjWMcUNioje5GgXHqV+hPUx6gG6jYxaI0WfXVlJq1Pes7f7eXGzTjhALOb
-         K1fOXpjZR0WzBaxHCbyBrbvxHvTb2RWgXO3Bm+FncTMerBiv4Me8XLx+yjy0bIamnOCc
-         oGHQ==
-X-Gm-Message-State: AGRZ1gLJ0WNNXKbfGmwOKTdNpLVzXFfbSH7Y3J39kP7s84qycFzSTZ8q
-        liFFoCCIR6XCXQ6jdbEdSZ8u77C6TnyUtmhVl+Ek7w==
-X-Google-Smtp-Source: AJdET5dBNFcx+T0XtSKsE12EO9npZjqqlsU9APzl/9F0+4onp8dO5yJlAcwiLNmA+uouQ3g3B3ZU1PD7iVmm5xlrOgY=
-X-Received: by 2002:a6b:3e57:: with SMTP id l84-v6mr8662688ioa.252.1540824497221;
- Mon, 29 Oct 2018 07:48:17 -0700 (PDT)
+        bh=eOvBh6L9X5NzQeyvJl3WtqiMIqmWgzqgwXntttAkqE4=;
+        b=Eu2phrwijoDgLhTDLqnHwaA9sqflNgYzZN9OURCsC1ypQ+Rw4JFxuYB6K+ia9OJEue
+         l6FgafxrUsTQFpqJDbKrFNPvO4Pvv7+3prO8PDmwY99x5HjyA+WdL6geGHhG7E2spyEo
+         Yutwga1KN1YmIPnZAwBVQJ+R+buXJkZQysH2oZvAtK9j02wmgX15mNLMAI14NfduT2in
+         8hVGsaA6xk4XRWaNSv5vZa9gX1gTWGUxPM+Xqc80oze0Bps1Dqt6ZxAs6UeYMdIepOLU
+         5+rqdj0I5xGKyb1kur1BgFyui2FDQ+JuxrmjuyvUEmvEVvAQF+xtsDwQEnRTj57hDUjh
+         Zxgw==
+X-Gm-Message-State: AGRZ1gLDrqJ9TRSCeToz52Zz9R4N8LdWfBKtp4CvX7aZ4YykN9hRLN6W
+        bt/C5cUbbS59vvrAWBFn/DI7zNR7TDhvnnyrAc0l0g==
+X-Google-Smtp-Source: AJdET5f6vg+fmy5W1W7d+BLWX8WLHe9JQOIR0mSofPNURVct41G56N2eX/aO3jfwN9cc3+PlOKZL7J1DWj4XVubmy8I=
+X-Received: by 2002:a6b:918b:: with SMTP id t133-v6mr8814581iod.267.1540825706570;
+ Mon, 29 Oct 2018 08:08:26 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181026144344.27778-1-jagan@amarulasolutions.com>
- <20181026144344.27778-17-jagan@amarulasolutions.com> <20181029093142.hgn4q6o7q32voutf@flea>
-In-Reply-To: <20181029093142.hgn4q6o7q32voutf@flea>
+References: <20181023155035.9101-1-jagan@amarulasolutions.com>
+ <20181023155035.9101-13-jagan@amarulasolutions.com> <20181024181334.lul7ta7ijluwfb7v@flea>
+ <CAMty3ZBJcH1fz5FyhT1rk9qiJ-aWoQYiH7P1ZyQPLKmVWOCkdA@mail.gmail.com> <20181029090856.yyjnvaruyasgnzyz@flea>
+In-Reply-To: <20181029090856.yyjnvaruyasgnzyz@flea>
 From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Mon, 29 Oct 2018 20:18:05 +0530
-Message-ID: <CAMty3ZBky1kP-1Q+ja2BpcbTxdHgQOFn=T4bcnZwMz6zP+AcOQ@mail.gmail.com>
-Subject: Re: [PATCH v3 16/25] drm/sun4i: sun6i_mipi_dsi: Add support for
- VCC-DSI voltage regulator
+Date:   Mon, 29 Oct 2018 20:38:14 +0530
+Message-ID: <CAMty3ZBcTsoJsCZa=sM9vjWgHjCjEjY2cDordTQcNySQpzyR=Q@mail.gmail.com>
+Subject: Re: [PATCH v2 12/15] clk: sunxi-ng: a64: Add min and max rate for PLL_MIPI
 To:     Maxime Ripard <maxime.ripard@bootlin.com>
 Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
         Jernej Skrabec <jernej.skrabec@siol.net>,
@@ -83,50 +82,128 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Oct 29, 2018 at 3:01 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+On Mon, Oct 29, 2018 at 2:39 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
 >
-> On Fri, Oct 26, 2018 at 08:13:35PM +0530, Jagan Teki wrote:
-> > Some boards have VCC-DSI pin connected to voltage regulator which may
-> > not be turned on by default.
+> On Thu, Oct 25, 2018 at 09:21:31PM +0530, Jagan Teki wrote:
+> > On Wed, Oct 24, 2018 at 11:43 PM Maxime Ripard
+> > <maxime.ripard@bootlin.com> wrote:
+> > >
+> > > On Tue, Oct 23, 2018 at 09:20:32PM +0530, Jagan Teki wrote:
+> > > > A64 manual say PLL_MIPI rates are 500MHz to 1.4GHz, but
+> > > > using minimum 500MHz can't release the clock and which
+> > > > is not working.
+> > > >
+> > > > So use working minimum rate as 300MHz which is tested on
+> > > > Bananapi DSI panel.
+> > >
+> > > I'm not quite sure what you mean by that. What do you mean by "500MHz
+> > > can't release the clock"? Why would 300MHz work better then? Should be
+> > > avoid reaching 500MHz if it's a frequency in the valid range?
 > >
-> > Add support for such boards by adding voltage regulator handling code to
-> > MIPI DSI driver.
+> > PLL_MIPI can't be work with existing nkm where rate set to 270MHz
+> > (from PLL_VIDEO)
+> > /*** round rate call in ccu_nkm.c */
+> > [    2.408356] round: rate = 118800000
+> > [    2.408359] round: parent_rate = 158740688
+> > [    2.408417] round: rate = 148500000
+> > [    2.408420] round: parent_rate = 158740688
+> > [    2.408439] round: rate = 178200000
+> > [    2.408441] round: parent_rate = 158740688
+> > [    2.408460] round: rate = 205615384
+> > [    2.408462] round: parent_rate = 158740688
+> > [    2.408481] round: rate = 237600000
+> > [    2.408483] round: parent_rate = 158740688
+> > [    2.408502] round: rate = 270000000
+> > [    2.408504] round: parent_rate = 158740688
+> > [    2.408523] round: rate = 118800000
+> > [    2.408525] round: parent_rate = 158740560
+> > [    2.408544] round: rate = 148500000
+> > [    2.408546] round: parent_rate = 158740560
+> > [    2.408565] round: rate = 178200000
+> > [    2.408567] round: parent_rate = 158740560
+> > [    2.408586] round: rate = 205615384
+> > [    2.408588] round: parent_rate = 158740560
+> > [    2.408607] round: rate = 237600000
+> > [    2.408609] round: parent_rate = 158740560
+> > [    2.408627] round: rate = 270000000
+> > [    2.408630] round: parent_rate = 158740560
+> > [    2.408648] round: rate = 270000000
+> > [    2.408651] round: parent_rate = 158740640
+> > [    2.408670] round: rate = 270000000
+> > [    2.408672] round: parent_rate = 158740704
 > >
-> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> > Tested-by: Jagan Teki <jagan@amarulasolutions.com>
-> > ---
-> > Changes for v3:
-> > - new patch
-> > Changes for v2:
-> > - none
+> > /** set rate call in ccu_nkm **/
+> > [    2.408685] set: rate = 270000000
+> > [    2.408688] set: parent_rate = 297000000
 > >
-> >  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 14 ++++++++++++++
-> >  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h |  3 +++
-> >  2 files changed, 17 insertions(+)
+> > By using min and max rate as per A64 manual page 94 range of PLL can
+> > be 500MHz~1.4GHz getting 1,2,1 nkm dividers which can't be work.
+> > [    2.423589] sun4i_dclk_round_rate: min_div = 4 max_div = 127, rate = 55000000
+> > [    2.423643] ideal = 220000000, rounded = 0
+> > [    2.423647] ideal = 275000000, rounded = 0
+> > [    2.423651] ideal = 330000000, rounded = 0
+> > [    2.423692] ideal = 385000000, rounded = 384000000
+> > [    2.423732] ideal = 440000000, rounded = 440000000
+> > [    2.423736] sun4i_dclk_round_rate: div = 8 rate = 55000000
+> > [    2.423740] sun4i_dclk_round_rate: min_div = 4 max_div = 127, rate = 55000000
+> > [    2.423744] ideal = 220000000, rounded = 0
+> > [    2.423748] ideal = 275000000, rounded = 0
+> > [    2.423751] ideal = 330000000, rounded = 0
+> > [    2.423791] ideal = 385000000, rounded = 384000000
+> > [    2.423831] ideal = 440000000, rounded = 440000000
+> > [    2.423834] sun4i_dclk_round_rate: div = 8 rate = 55000000
+> > [    2.423957] sun4i_dclk_recalc_rate: val = 1, rate = 440000000
+> > [    2.423961] sun4i_dclk_recalc_rate: val = 1, rate = 440000000
+> > [    2.424378] ccu_nkm_set_rate: rate = 440000000, parent_rate = 220000000
+> > [    2.424381] ccu_nkm_set_rate: _nkm.n = 1
+> > [    2.424383] ccu_nkm_set_rate: _nkm.k = 2
+> > [    2.424385] ccu_nkm_set_rate: _nkm.m = 1
+> > [    2.424725] sun4i_dclk_set_rate div 8
+> > [    2.424732] sun4i_dclk_recalc_rate: val = 8, rate = 55000000
+> > [    2.561271] usb 3-1: new high-speed USB device number 2 using ehci-platform
+> > [    2.718486] hub 3-1:1.0: USB hub found
+> > [    2.718606] hub 3-1:1.0: 4 ports detected
+> > [    3.437263] ------------[ cut here ]------------
+> > [    3.437270] [CRTC:36:crtc-0] vblank wait timed out
 > >
-> > diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> > index 42bd7506abaf..bc57343592e0 100644
-> > --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> > +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> > @@ -949,6 +949,12 @@ static int sun6i_dsi_bind(struct device *dev, struct device *master,
+> > So, lowering the min rate by 300MHz seems working with bounded nkm
+> > dividers 5, 2, 9. Tested on two different panels.
 > >
-> >       dsi->drv = drv;
+> > [    2.415773] [drm] No driver support for vblank timestamp query.
+> > [    2.424116] sun4i_dclk_round_rate: min_div = 4 max_div = 127, rate = 55000000
+> > [    2.424172] ideal = 220000000, rounded = 0
+> > [    2.424176] ideal = 275000000, rounded = 0
+> > [    2.424194] ccu_nkm_round_rate: rate = 330000000
+> > [    2.424197] ideal = 330000000, rounded = 330000000
+> > [    2.424201] sun4i_dclk_round_rate: div = 6 rate = 55000000
+> > [    2.424205] sun4i_dclk_round_rate: min_div = 4 max_div = 127, rate = 55000000
+> > [    2.424209] ideal = 220000000, rounded = 0
+> > [    2.424213] ideal = 275000000, rounded = 0
+> > [    2.424230] ccu_nkm_round_rate: rate = 330000000
+> > [    2.424233] ideal = 330000000, rounded = 330000000
+> > [    2.424236] sun4i_dclk_round_rate: div = 6 rate = 55000000
+> > [    2.424253] ccu_nkm_round_rate: rate = 330000000
+> > [    2.424270] ccu_nkm_round_rate: rate = 330000000
+> > [    2.424278] sun4i_dclk_recalc_rate: val = 1, rate = 330000000
+> > [    2.424281] sun4i_dclk_recalc_rate: val = 1, rate = 330000000
+> > [    2.424306] ccu_nkm_set_rate: rate = 330000000, parent_rate = 297000000
+> > [    2.424309] ccu_nkm_set_rate: _nkm.n = 5
+> > [    2.424311] ccu_nkm_set_rate: _nkm.k = 2
+> > [    2.424313] ccu_nkm_set_rate: _nkm.m = 9
+> > [    2.424661] sun4i_dclk_set_rate div 6
+> > [    2.424668] sun4i_dclk_recalc_rate: val = 6, rate = 55000000
 > >
-> > +     ret = regulator_enable(dsi->regulator);
-> > +     if (ret) {
-> > +             dev_err(dev, "Failed to enable regulator\n");
-> > +             return ret;
-> > +     }
-> > +
+> > Note: BPI-M64-bsp is setting the rate directly to 180MHz with 297MHz
+> > parent with resulting dividers as 1, 2, 5. ans we can't produce this
+> > 180MHz rate with dclk_round_rate and ccu_nkm.
 >
-> The regulator should be enabled only when the device is in use.
+> I'm still not quite sure what you mean by "500MHz can't release the
+> clock".
+>
+> From what you're saying, this seems to be related to the boundaries of
+> the dividers rather than the rate itself.
 
-True, but there is no device specific quirk needed because who ever
-not needed simply use dummy regulator
-[    0.245821] sun6i-mipi-dsi 1ca0000.dsi: 1ca0000.dsi supply vcc-dsi
-not found, using dummy regulato
-r
-
-even like HVCC in hdmi driver [1]
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c?id=633ba1e086e1abbeef1ffd899911de8cf3987d9f
+Yes, with 500MHz rate the boundaries of the dividers never release
+hence it hangs during set_rate and finally after sometime it trigger
+vblank timeout. can't release here means the same, may be I would
+confused, sorry for that.
