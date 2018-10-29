@@ -2,131 +2,103 @@ Return-Path: <SRS0=SMsi=NJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 615FBC0044C
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 18:04:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE91CC0044C
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 18:29:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19E7C2084A
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 18:04:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8723A2084A
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 18:29:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c52Ze7da"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19E7C2084A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qYFpsqr2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8723A2084A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728114AbeJ3Cyc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 29 Oct 2018 22:54:32 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:33889 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726532AbeJ3Cyc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Oct 2018 22:54:32 -0400
-Received: by mail-qt1-f194.google.com with SMTP id z2-v6so10372855qts.1;
-        Mon, 29 Oct 2018 11:04:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3iDI9uNcgbd4WeSkgPK2jFWjSLsx2JhiA7S0p38mNzw=;
-        b=c52Ze7daZNSqDKJB3rUMiggb7JxImdR+XlDvq5IAA1DKf80aTS9crO9F9GKpt6oLqP
-         jiZP19FMVUwcfl+dJxuAwMqNH7tuYP2EAKjP+gIOEr9px8g7ohWnSAPaCW1aVw28C3+G
-         075tjn8+X8XEdz7Vb5ZvNToSz2+W38z0CPNkmm06Y9r+yGGOnltf3MhlIbMl2Hm4U6mF
-         Ou+QDKPm4JZeV7efn13KeIn0v5a3/D/D7RRKFr/0X6b6mQHsjcVn3aU6XW06iWLGQXB9
-         ERVMtS+NTBfa5mOpq7ltvdKy768NUQTZZxOMGSXIn6nK4bLfpJa6o3jZtbqumpexnmvu
-         9AIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3iDI9uNcgbd4WeSkgPK2jFWjSLsx2JhiA7S0p38mNzw=;
-        b=SVbNqOe3Wrd55WixSQFDCLWlUEsa5hPLOUyW4kmmKgAbgkcKQ5UnU2c+GPjefNxqtW
-         jtTJwAdjuT3xKw+stMsapU8C1AmT3q4vr04tERJvptIjnia46GHKtakBVRAGZu1qkDBE
-         euatNoKJ4Vm37oIfSfOFhVWxj0z8ESY/+Mp5kPwuwiSZtVSd9IcrEod9VcIwmIEAjWy+
-         cZvf4756ShnsD6qbmAa5+bmJ7Qs65zSZXQbz/HIV7JFAKm1f+dao9tZqiMhg62RQi8wE
-         uVjugtgnY9RC1CXlm2vX5X7XLEKeftfidTe/4teEtDNnHgkJ5/mHHs7LmfXYN8Ol06oJ
-         fGYw==
-X-Gm-Message-State: AGRZ1gJe3/C59dTrSLCFKd5cGYHdEbBgLTS1sSR/RsH17vZ2ScAR/FG7
-        dLtMYZ72oilsm3b7lj1vc6Xfc3Xd1YxuJKWefLU=
-X-Google-Smtp-Source: AJdET5ek3GpN8qjoV09qYCcDvP4Zle5MprTtp99IDbXtUm5Wl1KbhJTFQcJUz8UC7FmkcQlgrxJ0m2SZrIiWx4Re47A=
-X-Received: by 2002:aed:3e56:: with SMTP id m22-v6mr4345349qtf.99.1540836289189;
- Mon, 29 Oct 2018 11:04:49 -0700 (PDT)
+        id S1728315AbeJ3DTB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 29 Oct 2018 23:19:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57314 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726852AbeJ3DTB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 29 Oct 2018 23:19:01 -0400
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 55E272080A;
+        Mon, 29 Oct 2018 18:29:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1540837751;
+        bh=DmmkJElWMtcW2iNLRLdHlRZL6/ceYGta53SwvJwN/YA=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=qYFpsqr2NpbhGTufc0SAYl8xsZQik7rA4f8sGJQG92w4V9kyPciDvLI/lGNIWLLLG
+         IEqpr1ZAM4Dr4Zcq5wCQf4DgUHu+GH5dlrKGWTPpCx/n4oz96RHMTbtPpPYUrDb9Tm
+         5CjeQFrZQnnHbFAx4CGvMqVL3kSc02nVpOGTLEv0=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20181025232517.ywnw54qibemosjws@picard> <154083512089.98144.9141070901932719147@swboyd.mtv.corp.google.com>
- <CAHp75VfnN5tF1Z9+CDDhKFNG5QfCRcGOZeAkpf-5BfCEx16gvg@mail.gmail.com>
-In-Reply-To: <CAHp75VfnN5tF1Z9+CDDhKFNG5QfCRcGOZeAkpf-5BfCEx16gvg@mail.gmail.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Mon, 29 Oct 2018 20:04:38 +0200
-Message-ID: <CAHp75VctdBE-GM60udJawBCXdmoOqZn4N=kFWz5GLHzjPG2iQQ@mail.gmail.com>
-Subject: Re: Regression found (Stop-marking-clocks-as-CLK_IS_CRITICAL)
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc:     duffydack73@gmail.com, Hans de Goede <hdegoede@redhat.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Stable <stable@vger.kernel.org>,
-        Johannes Stezenbach <js@sig21.net>,
-        Carlo Caione <carlo@endlessm.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+To:     geert+renesas@glider.be, horms@verge.net.au, jiada_wang@mentor.com,
+        magnus.damm@gmail.com, mark.rutland@arm.com,
+        mturquette@baylibre.com, robh+dt@kernel.org
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20181025072349.15173-3-jiada_wang@mentor.com>
+Cc:     linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        jiada_wang@mentor.com
+References: <20181025072349.15173-1-jiada_wang@mentor.com>
+ <20181025072349.15173-3-jiada_wang@mentor.com>
+Message-ID: <154083775062.98144.11157403961171783929@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH linux-next v1 2/4] clk: renesas: Add binding document for AVB
+ Counter Clock
+Date:   Mon, 29 Oct 2018 11:29:10 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Oct 29, 2018 at 7:52 PM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
->
-> Cc: Pierre as well.
->
-> On Mon, Oct 29, 2018 at 7:48 PM Stephen Boyd <sboyd@kernel.org> wrote:
-> >
-> > Quoting Dean Wallace (2018-10-25 16:25:17)
-> > > I have found a regression in 4.18.15 that means I lose sound on my old
-> > > Toshiba Chromebook 2 (Swanky).  My system details are:-
-> > >
-> > > Toshiba Chromebook (Swanky)
-> > > MrChromebox UEFI coreboot
-> > > Arch Linux running latest alsa/pulseaudio
-> > >
-> > > Upgraded kernel from 4.18.14 to 4.18.15 and lost all sound output.  By
-> > > output I mean, the card is still detected, the module loaded, all apps
-> > > showing sound is being playing, but no actual audible sound comes
-> > > through.  Upgraded to 4.18.16 same issue.
-> > >
-> > > Dug around and found Upstream commit 648e921888ad96ea3dc922739e96716ad3225d7f
-> > > clk: x86: Stop marking clocks as CLK_IS_CRITICAL
-> > > "This commit removes the CLK_IS_CRITICAL marking, fixing Cherry Trail
-> > > devices not being able to reach S0i3 greatly decreasing their battery
-> > > drain when suspended."
-> > >
-> > > I reverted it and compiled 4.18.16 and have sound back again.  Could
-> > > this be looked into, with possibility of fix.
-> > >
-> >
-> > Thanks for the bug report. I'm adding some people involved in the commit
-> > you mention is causing audio regressions. The best plan is to probably
-> > revert the commit from the 4.18 linux stable tree. Or there may be
-> > another patch missing that would be useful to make this backported patch
-> > work. Hopefully Hans or Andy knows.
->
-> Hans has been investigating S0ix issues on Baytrail and Cherrytrail machines.
-> I have a feeling that the problem can be fixed by properly handling
-> clock in ASoC driver(s). Perhaps Hans and Pierre can figure this out
-> better than me.
+Quoting jiada_wang@mentor.com (2018-10-25 00:23:47)
+> From: Jiada Wang <jiada_wang@mentor.com>
+> =
 
-Looking to sound/soc/intel/boards/cht_bsw_rt5672.c I see no
-suspend-resume hooks. Perhaps, adding them like in the commit
-ac8bd9e13be2 ("r8169: Disable clk during suspend / resume") would
-help.
+> Add device tree bindings for avb counter clock for Renesas
+> R-Car Socs.
+> =
 
-Btw, what the drivers are in use for the machine you have? It's better
-you run alsa-info.sh or alike to collect necessary information along
-with output of `lsmod`, `dmesg`, etc.
+> Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
+> ---
+>  .../bindings/clock/renesas,avb-clk.txt        | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/renesas,avb-c=
+lk.txt
+> =
 
--- 
-With Best Regards,
-Andy Shevchenko
+> diff --git a/Documentation/devicetree/bindings/clock/renesas,avb-clk.txt =
+b/Documentation/devicetree/bindings/clock/renesas,avb-clk.txt
+> new file mode 100644
+> index 000000000000..03bf50b5830c
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/renesas,avb-clk.txt
+> @@ -0,0 +1,19 @@
+> +* Renesas AVB Counter Clock
+> +
+> +The AVB Counter Clocks are provided by avb_counter8 Clock Generator,
+> +avb_counter8 has dividers which operates with S0D1=CF=95 clock and has
+> +8 output clocks.
+> +
+> +Required Properties:
+> +  - compatible: Must be "renesas,clk-avb"
+> +  - reg: Base address and length of the memory resource used by the AVB
+> +  - #clock-cells: Must be 1
+> +
+> +Example
+> +-------
+> +
+> +       clk_avb: avb-clock@ec5a011c {
+> +               compatible =3D "renesas,clk-avb";
+> +               reg =3D <0 0xec5a011c 0 0x24>;
+
+This is an odd register offset. Is this just one clk inside of a larger
+clk controller?
+
