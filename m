@@ -2,124 +2,93 @@ Return-Path: <SRS0=SMsi=NJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DCD5C0044C
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 17:23:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8DC2C0044C
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 17:45:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 597652084A
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 17:23:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 855122082D
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 17:45:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MJBtKs9G"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 597652084A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="RH1cNrr6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 855122082D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726556AbeJ3CNU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 29 Oct 2018 22:13:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34780 "EHLO mail.kernel.org"
+        id S1727828AbeJ3CfA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 29 Oct 2018 22:35:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39030 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726212AbeJ3CNU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 29 Oct 2018 22:13:20 -0400
+        id S1726205AbeJ3CfA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 29 Oct 2018 22:35:00 -0400
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0532C20657;
-        Mon, 29 Oct 2018 17:23:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A63A22080A;
+        Mon, 29 Oct 2018 17:45:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540833828;
-        bh=w1YnWt+AnwXv/iS2szCUWKOpLQDHkLKhFgwvClfS/eA=;
+        s=default; t=1540835121;
+        bh=9jnjpqdkmmVYhR3OAGNlh5vZeGI0JEtXyDuBjW7V8Mo=;
         h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=MJBtKs9GnpyaQ0ZEieMECWGU9IX3goI8lnsgPjeQrGhQwWcbRJJ/6lzfYAP3biVAe
-         w5HB88qL6AbOwRLQZLb/47qCAp/9Y1Qe0ULzZ9F/X8leUWeHzUUrI2nwhsoDJUaEV1
-         Z+Bi4QsHJu3p4CrLmpwW+8i+0Nak4O8aiBgeuQfI=
+        b=RH1cNrr6/ZIX16Xnu+QqUzhA8CgGl5woC2RaCEXF5RnLf+4E/w+C4TsqpzUHUGx2R
+         IoseNSEycNUxPcrlEAbh10/UY1UgEAIy1vuV1mNDG90whR4r9lag1mXwL94szAOLDC
+         0w6uHMxy6xZCeE78jMiOv0aWQo2SPiwIoLgzyrKw=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-To:     Yi Wang <wang.yi59@zte.com.cn>, paul.burton@mips.com
+To:     Dean Wallace <duffydack73@gmail.com>,
+        Hans de Goede <hdegoede@redhat.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1540801907-31544-1-git-send-email-wang.yi59@zte.com.cn>
-Cc:     mturquette@baylibre.com, linux-mips@linux-mips.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        zhong.weidong@zte.com.cn, Yi Wang <wang.yi59@zte.com.cn>
-References: <1540801907-31544-1-git-send-email-wang.yi59@zte.com.cn>
-Message-ID: <154083382731.98144.10932242759017894372@swboyd.mtv.corp.google.com>
+In-Reply-To: <20181025232517.ywnw54qibemosjws@picard>
+Cc:     mturquette@baylibre.com, linux-clk@vger.kernel.org,
+        stable@vger.kernel.org, Johannes Stezenbach <js@sig21.net>,
+        Carlo Caione <carlo@endlessm.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-kernel@vger.kernel.org
+References: <20181025232517.ywnw54qibemosjws@picard>
+Message-ID: <154083512089.98144.9141070901932719147@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.7
-Subject: Re: [PATCH v2] clk: boston: fix possible memory leak in clk_boston_setup()
-Date:   Mon, 29 Oct 2018 10:23:47 -0700
+Subject: Re: Regression found (Stop-marking-clocks-as-CLK_IS_CRITICAL)
+Date:   Mon, 29 Oct 2018 10:45:20 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Yi Wang (2018-10-29 01:31:47)
-> 'onecell' is malloced in clk_boston_setup(), but is not freed
-> before leaving from the error handling cases.
-
-How did you find this? Visual inspection? Some coccinelle script?
-
+Quoting Dean Wallace (2018-10-25 16:25:17)
+> I have found a regression in 4.18.15 that means I lose sound on my old
+> Toshiba Chromebook 2 (Swanky).  My system details are:-
 > =
 
-> Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
-> ---
-> v2: fix syntax issue in comment, thanks to  Sergei.
+> Toshiba Chromebook (Swanky)
+> MrChromebox UEFI coreboot
+> Arch Linux running latest alsa/pulseaudio
 > =
 
->  drivers/clk/imgtec/clk-boston.c | 11 ++++++++---
->  1 file changed, 8 insertions(+), 3 deletions(-)
+> Upgraded kernel from 4.18.14 to 4.18.15 and lost all sound output.  By
+> output I mean, the card is still detected, the module loaded, all apps
+> showing sound is being playing, but no actual audible sound comes
+> through.  Upgraded to 4.18.16 same issue.
 > =
 
-> diff --git a/drivers/clk/imgtec/clk-boston.c b/drivers/clk/imgtec/clk-bos=
-ton.c
-> index 15af423..f5d54a6 100644
-> --- a/drivers/clk/imgtec/clk-boston.c
-> +++ b/drivers/clk/imgtec/clk-boston.c
-> @@ -73,27 +73,32 @@ static void __init clk_boston_setup(struct device_nod=
-e *np)
->         hw =3D clk_hw_register_fixed_rate(NULL, "input", NULL, 0, in_freq=
-);
->         if (IS_ERR(hw)) {
->                 pr_err("failed to register input clock: %ld\n", PTR_ERR(h=
-w));
-> -               return;
-> +               goto error;
->         }
->         onecell->hws[BOSTON_CLK_INPUT] =3D hw;
->  =
+> Dug around and found Upstream commit 648e921888ad96ea3dc922739e96716ad322=
+5d7f
+> clk: x86: Stop marking clocks as CLK_IS_CRITICAL
+> "This commit removes the CLK_IS_CRITICAL marking, fixing Cherry Trail
+> devices not being able to reach S0i3 greatly decreasing their battery
+> drain when suspended."
+> =
 
->         hw =3D clk_hw_register_fixed_rate(NULL, "sys", "input", 0, sys_fr=
-eq);
->         if (IS_ERR(hw)) {
->                 pr_err("failed to register sys clock: %ld\n", PTR_ERR(hw)=
-);
-> -               return;
-> +               goto error;
->         }
->         onecell->hws[BOSTON_CLK_SYS] =3D hw;
->  =
+> I reverted it and compiled 4.18.16 and have sound back again.  Could
+> this be looked into, with possibility of fix.
+> =
 
->         hw =3D clk_hw_register_fixed_rate(NULL, "cpu", "input", 0, cpu_fr=
-eq);
->         if (IS_ERR(hw)) {
->                 pr_err("failed to register cpu clock: %ld\n", PTR_ERR(hw)=
-);
-> -               return;
-> +               goto error;
->         }
->         onecell->hws[BOSTON_CLK_CPU] =3D hw;
->  =
 
->         err =3D of_clk_add_hw_provider(np, of_clk_hw_onecell_get, onecell=
-);
->         if (err)
->                 pr_err("failed to add DT provider: %d\n", err);
-> +
-> +       return;
-> +
-> +error:
-> +       kfree(onecell);
-
-Ok, sure. But then clks are still left registered on failure?
+Thanks for the bug report. I'm adding some people involved in the commit
+you mention is causing audio regressions. The best plan is to probably
+revert the commit from the 4.18 linux stable tree. Or there may be
+another patch missing that would be useful to make this backported patch
+work. Hopefully Hans or Andy knows.
 
