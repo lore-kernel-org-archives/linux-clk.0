@@ -1,167 +1,153 @@
-Return-Path: <SRS0=wuwk=NI=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=SMsi=NJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A210C2BC61
-	for <linux-clk@archiver.kernel.org>; Sun, 28 Oct 2018 19:16:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8672C2BC61
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 00:43:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF02820664
-	for <linux-clk@archiver.kernel.org>; Sun, 28 Oct 2018 19:16:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3C4A20843
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 00:43:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="w1gculpI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF02820664
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="rUny8L6H"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3C4A20843
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725822AbeJ2EBw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 29 Oct 2018 00:01:52 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:34656 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725810AbeJ2EBw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Oct 2018 00:01:52 -0400
-Received: by mail-wm1-f65.google.com with SMTP id f1-v6so8004906wmg.1
-        for <linux-clk@vger.kernel.org>; Sun, 28 Oct 2018 12:16:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=yqYxbWBntZOiBQ4wMXmHg9CfUSgdZlXVBTKCEUkgpB4=;
-        b=w1gculpIKqxO+26u1nUQSp4Xno4hTI5Pa9iSVfbR06GSfEJxk39RnhTfELSRfPsabS
-         rMS5EBARzHGVH5g1LjlABDAo/Ynr2okiXYKYZfR0z66SD2fP0AIf75oisaLFutGLaD/p
-         ciDlG9Gytz8EBWafYRrVslGFP72ZgvmZK63JKEM1MEIuh/Cx8yGe7dLo7j1G91lp2ugQ
-         1ilc572DtB29sM0CMgemyUhA3NiomS41G1C0N/pWYAXoC6zsmRbvrJRoRGW2NwTH/dUj
-         nkTc8YPsqg3P5Vd53J5QzQOAPPfTOhGqUCA+9M/c5JC5FfNYuBN/diswg5WuMxZrQs2I
-         1HQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=yqYxbWBntZOiBQ4wMXmHg9CfUSgdZlXVBTKCEUkgpB4=;
-        b=VpqT4+B1yWL5N+9m0UHvjRJH8ZxjVU/4MYVAm8qk6aLEdEYKTUGeKCQXV7tARIFku9
-         hm4T3vr3Hz3KHLzRs3TJTBGdLnUcjPZVAYtRzLaeZxkH4yXfe3PtsGNmC/E9BW7lvSuF
-         Ps6Fbov1+1fUx+KNKwO+We6XU9cY4JJRGPFTfgLg2SVGUgNOlnhoX2zhL2LUEZPxzki4
-         22gl9VMcFvZjTMnDtLhLhdduQpDTqfB8Nj0HtzuCO0faqb/Ro+WAr06x0hAdgswQ0fbl
-         4VQmoyV/91CTzZqNClYJXxPP1sCeBWKUma1/gdwn2vH/AaxMoXhnAkuZJ3jYXxW7UrO9
-         Gq2Q==
-X-Gm-Message-State: AGRZ1gIeWvnRcR0KPcIy74AylC+M1VAvK3xWSTUdlIpWNKowYET6mn4h
-        Yosp87kmSr478wFWQ6jMrgYbMA==
-X-Google-Smtp-Source: AJdET5d/BFKDvSjCLTdQKX4m1vkH/W8Xt3LF2u84la379hn4j3aESJNeVWu1HZaEbY7rmO2gebY87A==
-X-Received: by 2002:a1c:6382:: with SMTP id x124-v6mr3754701wmb.145.1540754175356;
-        Sun, 28 Oct 2018 12:16:15 -0700 (PDT)
-Received: from boomer (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
-        by smtp.gmail.com with ESMTPSA id l70-v6sm30506219wma.0.2018.10.28.12.16.13
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 28 Oct 2018 12:16:14 -0700 (PDT)
-Message-ID: <3723695d951e0d30e8a0117d336d8f268269a030.camel@baylibre.com>
-Subject: Re: [PATCH v5 3/3] clk: meson: add sub MMC clock controller driver
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc:     jianxin.pan@amlogic.com, Neil Armstrong <narmstrong@baylibre.com>,
-        yixun.lan@amlogic.com, khilman@baylibre.com, carlo@caione.org,
-        mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-        miquel.raynal@bootlin.com, boris.brezillon@bootlin.com,
-        liang.yang@amlogic.com, jian.hu@amlogic.com,
-        qiufang.dai@amlogic.com, hanjie.lin@amlogic.com,
-        victor.wan@amlogic.com, linux-clk@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Date:   Sun, 28 Oct 2018 20:16:12 +0100
-In-Reply-To: <CAFBinCCuqUmVNdwUm7WbkHy1eWvOA5oQ5FcOuytbYNbgGcXnRQ@mail.gmail.com>
-References: <1539839245-13793-1-git-send-email-jianxin.pan@amlogic.com>
-         <1539839245-13793-4-git-send-email-jianxin.pan@amlogic.com>
-         <a8d359208edfdc75cb5c6de378796f76e0572a0f.camel@baylibre.com>
-         <eda2faf2-cf06-902d-36ff-48ceafcb4a4b@amlogic.com>
-         <f4d239df2f1333b005680f9bfdd2eba93e7f86e5.camel@baylibre.com>
-         <CAFBinCCuqUmVNdwUm7WbkHy1eWvOA5oQ5FcOuytbYNbgGcXnRQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1725920AbeJ2J3r (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 29 Oct 2018 05:29:47 -0400
+Received: from mailout3.samsung.com ([203.254.224.33]:55383 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725890AbeJ2J3q (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Oct 2018 05:29:46 -0400
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20181029004326epoutp03b908baa2950bd0e2c7621fab37fffde8~h7Z0IV4QP1834418344epoutp03r;
+        Mon, 29 Oct 2018 00:43:26 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20181029004326epoutp03b908baa2950bd0e2c7621fab37fffde8~h7Z0IV4QP1834418344epoutp03r
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1540773806;
+        bh=xa/NeqQDx+fO+blCfxTV+Eo3ar9024/Ej0UIY3/D8ps=;
+        h=Date:From:To:Cc:Subject:In-reply-to:References:From;
+        b=rUny8L6H/Dw2/ZBwseHBnOn4qCpPWArkAmmHQziXrfnCswmpKSvc4QMEdUTA+U8x0
+         jIpa0dBWlvxc5AildbHNcYUzg9+vMw6miPRV9qsy4qWPB4FkcGgrROHlTTlXaDcGRN
+         ldqVbMJYo2Z4qxFZ6oCe+gnJwKI8ikd8ZaBUAj1Q=
+Received: from epsmges1p1.samsung.com (unknown [182.195.40.152]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20181029004323epcas1p222743bfc0c2e37a436a6e6b9f8bfbd2c~h7ZxO0Zqg1687816878epcas1p2i;
+        Mon, 29 Oct 2018 00:43:23 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        5F.CB.04072.BA756DB5; Mon, 29 Oct 2018 09:43:23 +0900 (KST)
+Received: from epsmgms2p1new.samsung.com (unknown [182.195.42.142]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20181029004322epcas1p4ddca49d3d523f9daee296a63edcf7371~h7ZxCaTCH2098320983epcas1p4V;
+        Mon, 29 Oct 2018 00:43:22 +0000 (GMT)
+X-AuditID: b6c32a35-3f1ff70000000fe8-8f-5bd657ab3a4b
+Received: from epmmp1.local.host ( [203.254.227.16]) by
+        epsmgms2p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        D7.CF.03701.AA756DB5; Mon, 29 Oct 2018 09:43:22 +0900 (KST)
+MIME-version: 1.0
+Content-transfer-encoding: 8BIT
+Content-type: text/plain; charset="UTF-8"
+Received: from [10.113.63.77] by mmp1.samsung.com (Oracle Communications
+        Messaging Server 7.0.5.31.0 64bit (built May  5 2014)) with ESMTPA id
+        <0PHC005WH4OAEO70@mmp1.samsung.com>; Mon, 29 Oct 2018 09:43:22 +0900 (KST)
+Message-id: <5BD657AA.1080108@samsung.com>
+Date:   Mon, 29 Oct 2018 09:43:22 +0900
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
+        Thunderbird/31.6.0
+To:     Julia Lawall <Julia.Lawall@lip6.fr>,
+        Sangbeom Kim <sbkim73@samsung.com>
+Cc:     kernel-janitors@vger.kernel.org,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 6/8] clk: s2mps11: constify clk_ops structure
+In-reply-to: <1540619262-22681-7-git-send-email-Julia.Lawall@lip6.fr>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrHKsWRmVeSWpSXmKPExsWy7bCmge7q8GvRBs872Sw2zljParHswWlG
+        i623pC3On9/AbvGx5x6rxeVdc9gsZpzfx2Rx8ZSrxcUVX5gs/l3byOLA5fH+Riu7x6ZVnWwe
+        e7dkefRtWcXo8XmTXABrVLZNRmpiSmqRQmpecn5KZl66rZJ3cLxzvKmZgaGuoaWFuZJCXmJu
+        qq2Si0+ArltmDtBJSgpliTmlQKGAxOJiJX07m6L80pJUhYz84hJbpdSClJwCywK94sTc4tK8
+        dL3k/FwrQwMDI1OgwoTsjAU7P7MWHOComL39JlMD4we2LkZODgkBE4m9j88zdzFycQgJ7GCU
+        mPX8HyOE851RYtLHxawwVdvuPQazhQR2M0qc77QDsXkFBCV+TL7H0sXIwcEsIC9x5FI2SJhZ
+        QFNi6+717BDldxkl7lz2BynhFdCS6JzrARJmEVCVOH70MxOIzQYU3v/iBtg9/AKKEld/PGYE
+        sUUFIiR2zv8GNkZEwFtixcYrbBDjNzFJLG1IA7GFBRwlttyYB3YZp4CrRPO9o1AXP2aT+N0l
+        D2G7SPzZdJ8FwhaWeHV8CzvIORIC0hKXjtqCfCsh0M4o8eVFMyuEM4FR4sOpzUwQDcYSzxZ2
+        MUEs5pN497WHFaKZV6KjTQiixENiV8NVaBheZpSY8+E00wRG2VlIITQLEUKzkEJoASPzKkax
+        1ILi3PTUYsMCQ+So28QITntapjsYp5zzOcQowMGoxMP7gPtatBBrYllxZe4hRgkOZiUR3hBp
+        oBBvSmJlVWpRfnxRaU5q8SFGU2AQT2SWEk3OB6bkvJJ4Q1MjY2NjCxNDM1NDQyVx3idSc6OF
+        BNITS1KzU1MLUotg+pg4OKUaGMWblvr1ciofOrUmY7PXxF+BFSUOZS7iSoZiPosOhbQfdn0Y
+        8KOhVbrVRs+OVaqj1rhzxRzJi74Mapf0vyQeP+AgvfL4PcVflyKbP8YZsfFqNax1vrehTDlM
+        W2tuyvrVnB9PX9G+aftGu2yr0sWZB4WVa4LeVYarzYvK/Mzxycn/7dKjT+dZKLEUZyQaajEX
+        FScCAHJ34ZyRAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrJLMWRmVeSWpSXmKPExsVy+t9jAd1V4deiDboOGVlsnLGe1WLZg9OM
+        FltvSVucP7+B3eJjzz1Wi8u75rBZzDi/j8ni4ilXi4srvjBZ/Lu2kcWBy+P9jVZ2j02rOtk8
+        9m7J8ujbsorR4/MmuQDWKC6blNSczLLUIn27BK6MBTs/sxYc4KiYvf0mUwPjB7YuRk4OCQET
+        iW33HrN2MXJxCAnsZJSYe2UqWIJXQFDix+R7LF2MHBzMAvISRy5lg4SZBdQlJs1bxAxRf59R
+        Ysaq6UwgNbwCWhKdcz1AalgEVCWOH/3MBGKzAYX3v7gBNpJfQFHi6o/HjCDlogIREt0nKkHC
+        IgLeEis2XmGDGL+JSWLSpXoQW1jAUWLLjXlQp11mlPj5cjsLSIJTwFWi+d5R1gmMArOQXDoL
+        4dJZSC5dwMi8ilEytaA4Nz232KjAMC+1XK84Mbe4NC9dLzk/dxMjMAK2Hdbq28F4f0n8IUYB
+        DkYlHt4H3NeihVgTy4orcw8xSnAwK4nwhkgDhXhTEiurUovy44tKc1KLDzFKc7AoifPezjsW
+        KSSQnliSmp2aWpBaBJNl4uCUamDkLS4WFlaxuPSO4/LFDaV8riLnY5c8CkmX/S00aetNg6nJ
+        iq1b776/LfavZbdOs7pizFaNpgcP/tQ9NnRaxceYwJ7Ao/z8sev59R/Orud9cetYooeHbJKU
+        7z0TpXfK3yxNNYqsTh490ZwiKCTwhbFb7Z3+VebCL3vO8y5sm6N+qXlRTmHn6qVKLMUZiYZa
+        zEXFiQBodC1UfAIAAA==
+X-CMS-MailID: 20181029004322epcas1p4ddca49d3d523f9daee296a63edcf7371
+X-Msg-Generator: CA
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20181027062328epcas3p1aed374207b7d5da30147ceea33585b67
+References: <1540619262-22681-1-git-send-email-Julia.Lawall@lip6.fr>
+        <CGME20181027062328epcas3p1aed374207b7d5da30147ceea33585b67@epcas3p1.samsung.com>
+        <1540619262-22681-7-git-send-email-Julia.Lawall@lip6.fr>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 2018-10-25 at 22:58 +0200, Martin Blumenstingl wrote:
-> Hi Jerome,
+On 2018년 10월 27일 14:47, Julia Lawall wrote:
+> The clk_ops structure is only stored in the ops fields of
+> clk_init_data structures.  This field is const, so the clk_ops
+> structure can be const as well.
 > 
-> On Thu, Oct 25, 2018 at 2:54 PM Jerome Brunet <jbrunet@baylibre.com> wrote:
-> [snip]
-> > > > > +static void clk_regmap_div_init(struct clk_hw *hw)
-> > > > > +{
-> > > > > + struct clk_regmap *clk = to_clk_regmap(hw);
-> > > > > + struct clk_regmap_div_data *div = clk_get_regmap_div_data(clk);
-> > > > > + unsigned int val;
-> > > > > + int ret;
-> > > > > +
-> > > > > + ret = regmap_read(clk->map, div->offset, &val);
-> > > > > + if (ret)
-> > > > > +         return;
-> > > > > 
-> > > > > + val &= (clk_div_mask(div->width) << div->shift);
-> > > > > + if (!val)
-> > > > > +         regmap_update_bits(clk->map, div->offset,
-> > > > > +                            clk_div_mask(div->width) << div->shift,
-> > > > > +                            clk_div_mask(div->width));
-> > > > 
-> > > > This is wrong for several reasons:
-> > > > * You should hard code the initial value in the driver.
-> > > > * If shift is not 0, I doubt this will give the expected result.
-> > > 
-> > > The value 0x00 of divider means nand clock off then read/write nand register is forbidden.
-> > 
-> > That is not entirely true, you can access the clock register or you'd be in a
-> > chicken and egg situation.
-> > 
-> > > Should we set the initial value in nand driver, or in sub emmc clk driver?
-> > 
-> > In the nand driver, which is the consumer of the clock. see my previous comments
-> > about it.
+> Identified and transformed using Coccinelle.
 > 
-> an old version of this series had the code still in the NAND driver
-> (by writing to the registers directly instead of using the clk API).
-> this looks pretty much like a "sclk-div" to me (as I commented in v3
-> of this series: [0]):
-> - value 0 means disabled
-> - positive divider values
-> - (probably no duty control, but that's optional as far as I
-> understand sclk-div)
-> - uses max divider value when enabling the clock
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 > 
-> if switching to sclk-div works then we can get rid of some duplicate code
-
-It is possible:
-There is a couple of things to note though:
-
-* sclk does not 'uses max divider value when enabling the clock': Since this
-divider can gate, it needs to save the divider value when disabling, since the
-divider value is no longer stored in the register,
-On init, this cached value is  saved as it is. If the divider is initially
-disabled, we have to set the cached value to something that makes sense, in case
-the clock is enabled without a prior call to clk_set_rate().
-
-So in sclk, the clock setting is not changed nor hard coded in init, and this is
-a very important difference.
- 
-* Even if sclk zero value means gated, it is still a zero based divider, while
-eMMC/Nand divider is one based. It this controller was to sclk, then something
-needs to be done for this.
-
-* Since sclk caches a value in its data, and there can multiple instance of eMMC
-/NAND clock controller, some care must be taken when registering the data.
-
-Both the generic divider and sclk could work here ... it's up to you Jianxin.
-
+> ---
+>  drivers/clk/clk-s2mps11.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
+> index 5b419b82f7ca..2ce370c804aa 100644
+> --- a/drivers/clk/clk-s2mps11.c
+> +++ b/drivers/clk/clk-s2mps11.c
+> @@ -71,7 +71,7 @@ static unsigned long s2mps11_clk_recalc_rate(struct clk_hw *hw,
+>  	return 32768;
+>  }
+>  
+> -static struct clk_ops s2mps11_clk_ops = {
+> +static const struct clk_ops s2mps11_clk_ops = {
+>  	.prepare	= s2mps11_clk_prepare,
+>  	.unprepare	= s2mps11_clk_unprepare,
+>  	.is_prepared	= s2mps11_clk_is_prepared,
 > 
 > 
-> Regards
-> Martin
 > 
-> 
-> [0] https://patchwork.kernel.org/patch/10607157/#22238243
 
+Looks good to me.
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
