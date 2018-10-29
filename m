@@ -2,31 +2,31 @@ Return-Path: <SRS0=SMsi=NJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D719C2BC61
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 09:15:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ABB9C2BC61
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 09:17:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A56820664
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 09:15:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A56820664
+	by mail.kernel.org (Postfix) with ESMTP id DF9552054F
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 09:17:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF9552054F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729374AbeJ2SDH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 29 Oct 2018 14:03:07 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:55242 "EHLO mail.bootlin.com"
+        id S1729426AbeJ2SE4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 29 Oct 2018 14:04:56 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:55425 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729467AbeJ2SDH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 29 Oct 2018 14:03:07 -0400
+        id S1729343AbeJ2SE4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 29 Oct 2018 14:04:56 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id D7EB320791; Mon, 29 Oct 2018 10:15:17 +0100 (CET)
+        id 127B6208B0; Mon, 29 Oct 2018 10:17:07 +0100 (CET)
 Received: from localhost (aaubervilliers-681-1-12-210.w90-88.abo.wanadoo.fr [90.88.133.210])
-        by mail.bootlin.com (Postfix) with ESMTPSA id A26992099B;
-        Mon, 29 Oct 2018 10:15:07 +0100 (CET)
-Date:   Mon, 29 Oct 2018 10:15:08 +0100
+        by mail.bootlin.com (Postfix) with ESMTPSA id D84D720791;
+        Mon, 29 Oct 2018 10:17:06 +0100 (CET)
+Date:   Mon, 29 Oct 2018 10:17:07 +0100
 From:   Maxime Ripard <maxime.ripard@bootlin.com>
 To:     Jagan Teki <jagan@amarulasolutions.com>
 Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
@@ -43,14 +43,16 @@ Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
         Michael Trimarchi <michael@amarulasolutions.com>,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v3 00/25] drm/sun4i: Allwinner A64 MIPI-DSI support
-Message-ID: <20181029091508.gyhn2m5fnbucvb34@flea>
+Subject: Re: [PATCH v3 06/25] drm/sun4i: sun6i_mipi_dsi: Add DSI Generic
+ short write 2 param transfer
+Message-ID: <20181029091707.shfxcqe5xchoqjqw@flea>
 References: <20181026144344.27778-1-jagan@amarulasolutions.com>
+ <20181026144344.27778-7-jagan@amarulasolutions.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="36y45ohgmtyd7cei"
+        protocol="application/pgp-signature"; boundary="7gh634hfx5aiabjc"
 Content-Disposition: inline
-In-Reply-To: <20181026144344.27778-1-jagan@amarulasolutions.com>
+In-Reply-To: <20181026144344.27778-7-jagan@amarulasolutions.com>
 User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
@@ -58,30 +60,22 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---36y45ohgmtyd7cei
+--7gh634hfx5aiabjc
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 26, 2018 at 08:13:19PM +0530, Jagan Teki wrote:
-> This series fixed the issues related to work DSI on 2-lane panel
-> which is reported on previous version[1].
+On Fri, Oct 26, 2018 at 08:13:25PM +0530, Jagan Teki wrote:
+> Short transfer write support for DCS and Generic transfer types
+> share similar way to process command sequence in DSI block so
+> add generic write 2 param transfer type macro so-that the panels
+> which are requesting similar transfer type may process properly.
 >=20
-> Few comments from previous version still in discussion, but I just
-> send this version just to group all working changes together.
-> anyway I will fix in this in next version if any.
->=20
-> PLL_MIPI min rate is still weird, I tried many possible dclock rate
-> from panel driver to satisfy manual suggested min rate 500MHz but
-> none working so eventually moved 300MHz. any inputs on this area
-> are welcome.
->=20
-> All these changes are tested in 2-lane, 4-lane MIPI-DSI panels.
->=20
-> If anyone wants to test, use this repo [2] with WIP-A64-DSI branch.
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> Tested-by: Jagan Teki <jagan@amarulasolutions.com>
 
-A changelog would be nice here, and usually you shouldn't send a new
-version while there is ongoing discussion on the previous version.
+I'm not sure why you have a Tested-by tag here. Of course we're
+expecting you to test your patches before sending them.
 
 Maxime
 
@@ -90,15 +84,15 @@ Maxime Ripard, Bootlin
 Embedded Linux and Kernel engineering
 https://bootlin.com
 
---36y45ohgmtyd7cei
+--7gh634hfx5aiabjc
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW9bPnAAKCRDj7w1vZxhR
-xc3TAPsGM9mbbgPEbeemnJdAp3i8+8IXWkv2qSQ+xPuWMuQo1AD/erFiP6S+Y096
-5le9/Ejs/zgE90IGY1rjAwpBliviFgs=
-=aut5
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW9bQEwAKCRDj7w1vZxhR
+xeseAQDz8aPgSwxZVYhseh/tDnCj9OgA6GEweTn+R5W/7KErkgD+PXw3fonKvhxX
+x24/22BY9/QOgTCiO/b45fetb7PLPA8=
+=b3jT
 -----END PGP SIGNATURE-----
 
---36y45ohgmtyd7cei--
+--7gh634hfx5aiabjc--
