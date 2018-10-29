@@ -2,305 +2,196 @@ Return-Path: <SRS0=SMsi=NJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2180AC0044C
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 11:04:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1684DC2BC61
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 11:09:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B55682080A
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 11:04:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AFC362064C
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 11:09:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="LXgiaHOp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B55682080A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="dYQnYqWT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFC362064C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726908AbeJ2TxC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 29 Oct 2018 15:53:02 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:55429 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726886AbeJ2Tw4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Oct 2018 15:52:56 -0400
-Received: by mail-wm1-f66.google.com with SMTP id s10-v6so7734512wmc.5
-        for <linux-clk@vger.kernel.org>; Mon, 29 Oct 2018 04:04:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=1BW7vSls9eYk1HLtfvsb6QBedgoztlM5rfgEnr846js=;
-        b=LXgiaHOpY6up2nJhGUHW16uhE3JMiRCxoATAY+5u0TS4R+1i9W4bZryTGGRrV3SW44
-         IDWNuiL+sKgyhZaiigeQlmEdDA6z4oXcjOs8wDj8yMuNUqkUBg95W7APYtY5habmnmPJ
-         MoLUYZmM6qOkMg9ZnUImKAnoWVDMETityGloc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=1BW7vSls9eYk1HLtfvsb6QBedgoztlM5rfgEnr846js=;
-        b=LKe6/HtqdzrcPPO21nmyIgGSMxfSFeVp2uvbq+wvpHHZxpRyw/i6OqmmRIy5QO5Fdm
-         iEQT57O14ObljQo2WSZpiOQOkTufAECXPuMCFVUBidsmhWc62mzM/YIqcEWNDoYd4fJo
-         lTxZLgvJ1BKLtPdo4KFiSDn3t0psEM8sYu09M5xzZ0knurgcpACi+JEUBsd8pf4tyoBc
-         8ryhJY9osuFaTFUDnI5U8RfMXIvK3fwBtUoK34lXqduuXSZTYThbkjcz1YbYcDhOHC7J
-         8DsyRRRtOl78fHAoVllqmHD3unrQjIhVmqCQGqWj8SFfgUbi/JAbNs8f7RW04x+H+tby
-         ih1A==
-X-Gm-Message-State: AGRZ1gJ6tsQNlM/fh50DnVJgb8VOoX1GSuwblqEboIgSofwL1hfYfPTk
-        FB7AKYeVreQGudk7xP+S6RCdWg==
-X-Google-Smtp-Source: AJdET5fhT7G3pI4uhpWJ6a3x1Oyd9x8JSZ9kyuqVVimyyUl+m3FOc44aFffZDLY1jOZsdIqxG1Okyw==
-X-Received: by 2002:a1c:845:: with SMTP id 66-v6mr14296667wmi.61.1540811083025;
-        Mon, 29 Oct 2018 04:04:43 -0700 (PDT)
-Received: from dell ([2.31.167.205])
-        by smtp.gmail.com with ESMTPSA id n2-v6sm982150wrm.36.2018.10.29.04.04.41
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 29 Oct 2018 04:04:41 -0700 (PDT)
-Date:   Mon, 29 Oct 2018 11:04:39 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Richard Fitzgerald <rf@opensource.cirrus.com>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        lgirdwood@gmail.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, patches@opensource.cirrus.com,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v2 2/5] mfd: lochnagar: Add support for the Cirrus Logic
- Lochnagar
-Message-ID: <20181029110439.GS4870@dell>
-References: <20181008132542.19775-1-ckeepax@opensource.cirrus.com>
- <20181008132542.19775-2-ckeepax@opensource.cirrus.com>
- <20181025074459.GF4939@dell>
- <20181025082621.GD16508@imbe.wolfsonmicro.main>
- <b2f85f45-cbe9-5a27-e9e8-ad28f2bd9bd6@opensource.cirrus.com>
- <20181025114205.GC4870@dell>
- <33ea391c-aa6e-2709-6faf-4905e84229e4@opensource.cirrus.com>
- <20181026080051.GK4870@dell>
- <20181026203223.GC27137@sirena.org.uk>
+        id S1728030AbeJ2T5o (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 29 Oct 2018 15:57:44 -0400
+Received: from mail-eopbgr30076.outbound.protection.outlook.com ([40.107.3.76]:22944
+        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726692AbeJ2T5n (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 29 Oct 2018 15:57:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pBNR15C2Z2rCaxKiZgYG1XL6dAzUvvn6KEJ5fIsFg6Q=;
+ b=dYQnYqWTJuLVY/ZZn3ms7Ao4jfnaDS7OWZP5XUjfGW2U4hqMLCiXtv6km/JWOjngOLFz9GS38zNn/Wbr7HEyB8BBuj+SPq/VxamQXkUR8QBqqDVqb3TfYEr46LK+EKoUFyhXxQJUMRSzHf4CzwI77CcLeqjXBQ5O5og3jfTw6AQ=
+Received: from VI1PR04MB4976.eurprd04.prod.outlook.com (20.177.49.217) by
+ VI1PR04MB1359.eurprd04.prod.outlook.com (10.163.166.14) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1273.25; Mon, 29 Oct 2018 11:09:24 +0000
+Received: from VI1PR04MB4976.eurprd04.prod.outlook.com
+ ([fe80::a425:3202:622e:7995]) by VI1PR04MB4976.eurprd04.prod.outlook.com
+ ([fe80::a425:3202:622e:7995%2]) with mapi id 15.20.1273.027; Mon, 29 Oct 2018
+ 11:09:24 +0000
+From:   Poonam Aggrwal <poonam.aggrwal@nxp.com>
+To:     Vabhav Sharma <vabhav.sharma@nxp.com>,
+        "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
+        "oss@buserror.net" <oss@buserror.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
+        "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "linux-kernel-owner@vger.kernel.org" 
+        <linux-kernel-owner@vger.kernel.org>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
+        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
+        Leo Li <leoyang.li@nxp.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>
+CC:     "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
+        Udit Kumar <udit.kumar@nxp.com>,
+        Pankaj Bansal <pankaj.bansal@nxp.com>,
+        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+        "adrian.hunter@intel.com" <adrian.hunter@intel.com>,
+        Varun Sethi <V.Sethi@nxp.com>,
+        Vabhav Sharma <vabhav.sharma@nxp.com>,
+        Yinbo Zhu <yinbo.zhu@nxp.com>
+Subject: RE: [PATCH v7 2/6] soc/fsl/guts: Add definition for LX2160A
+Thread-Topic: [PATCH v7 2/6] soc/fsl/guts: Add definition for LX2160A
+Thread-Index: AQHUb2jMtnB5YzdFEU2F1umur4t5tqU2EK4g
+Date:   Mon, 29 Oct 2018 11:09:24 +0000
+Message-ID: <VI1PR04MB4976D4A33E0561D125BE837486F30@VI1PR04MB4976.eurprd04.prod.outlook.com>
+References: <1540759926-3641-1-git-send-email-vabhav.sharma@nxp.com>
+ <1540759926-3641-3-git-send-email-vabhav.sharma@nxp.com>
+In-Reply-To: <1540759926-3641-3-git-send-email-vabhav.sharma@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=poonam.aggrwal@nxp.com; 
+x-originating-ip: [14.143.30.134]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR04MB1359;6:6wBhiTL3AGxbH/Rp7C9hO96MzXb6n8Wv3BmlJAAl3nyPKTeZH3zKDQYCLYHjUFR58FEHmo46Xn7wTD2zpQ1YCEueEMs41NG7sgqodAGGVNE+IqXvoeiKsCwraD7IQBWL04Se7vihKwPyjwpyw4/bxNO/z+jK40XfKPZ2lFwrCStfBbEST6U7Dw2pnfqEiBXmY/9x5hhZUKIX9ClZFW0cQGEzspDJohYxJhL3x9cNKF7NyIgohyvvdy34HfBFejP9sT+88kiAWgVNpe5HGS4OEVEHA+WM8r6ecYAlnyWM6uKqi2uADVn6lou/Tunm7dIODK/ypJVhOstMBEsthQ7b1Xkq731gioQHl3EAgIRCmABoLiU4SjupxSOVi7LNNnApMsNDh1TgYqgWmrku979BduqouX/xMsB9PMBrOjTsYxbfQ7UiGgjWUuQRTNDkFCBDHwvCfvcKbq9jPkGisM4abr1r/Ae+2vUbjBMwQ7wxcC4=;5:UAcrmjWun/1LpoKuDZKDszkTHxRLM6S6xYl4pZgbYNq6ZaSEtJmOhNsEC3bO7nrID48xggrSu2gmqKFs9IAJKfHWGiAVhkb7Yo9B6SNt+ubagAKTCHCv/I+rVtFC+RrtMjkmx3aZpjQdwda/XiOsw+khckuNCzBbM1is7UEU8qo=;7:YYkUpN37s5XE61Q+7EbzfIbQhZeqZcLOOgRx+6E+hhLhw5s/dBcsy658MFYP9nybcSK5lyEqtnmCjPxBcZkzDFUPisobt3os6mHzPHoYa4WDNEAQsq4IsqRfslJgEIhqQI3zHms0kAQyGNvu724T+A==
+x-ms-office365-filtering-correlation-id: 35ccc36f-af72-4b10-59d4-08d63d8efc44
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB1359;
+x-ms-traffictypediagnostic: VI1PR04MB1359:
+x-microsoft-antispam-prvs: <VI1PR04MB13590DAE631FD13B25328E7D86F30@VI1PR04MB1359.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(258649278758335)(180628864354917)(9452136761055)(65623756079841)(228905959029699)(45079756050767)(189930954265078)(185117386973197);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231382)(944501410)(4982022)(52105095)(3002001)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:VI1PR04MB1359;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB1359;
+x-forefront-prvs: 084080FC15
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(396003)(39860400002)(366004)(346002)(376002)(199004)(189003)(13464003)(44832011)(6246003)(4326008)(11346002)(6116002)(476003)(7736002)(53936002)(25786009)(256004)(446003)(99286004)(105586002)(2906002)(68736007)(3846002)(486006)(45080400002)(478600001)(106356001)(305945005)(74316002)(66066001)(33656002)(966005)(14454004)(2900100001)(71190400001)(8676002)(6436002)(6506007)(9686003)(55016002)(6306002)(97736004)(71200400001)(26005)(2501003)(5250100002)(55236004)(316002)(54906003)(575784001)(110136005)(53546011)(186003)(86362001)(7416002)(8936002)(2201001)(81156014)(229853002)(102836004)(7696005)(81166006)(5660300001)(76176011)(921003)(1121003)(473944003);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB1359;H:VI1PR04MB4976.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: oipseuV673D8gQYA824Z4QblrKciSu7eaKxthdS7wUprY4mzmu7M+pBFoPcyv5Kb4BZl0/6/Y8pphCUTpXBXz7QQNezDY+cMZYcJZLaOEnItp390ML5PrXx0j9df4zKcFN9TOFMdeFL7OtCMqMV/XGl6Y9n5jNskIJzLq5eA/FVBaB6DodnDhuszLfOVFLN8pqFigmiIa6suLw1AotykHx8yViEuit0LLSHbNwcpc55bEcGDIHBb1zoqVlkpx2C1KgUkRsE7RUSk90SQxXhdDCYy9rMYSpxhqNX7IxAmI17WkDgHXi/MdMUd6EahhEFA2eX3NYnGCEJj/8GbXo6MBOTeQdeK7ZOQZwTl+6u+TDk=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181026203223.GC27137@sirena.org.uk>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 35ccc36f-af72-4b10-59d4-08d63d8efc44
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Oct 2018 11:09:24.4460
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB1359
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 26 Oct 2018, Mark Brown wrote:
-> On Fri, Oct 26, 2018 at 09:00:51AM +0100, Lee Jones wrote:
-> > On Thu, 25 Oct 2018, Richard Fitzgerald wrote:
-> 
-> > > Largely the point. How long do you think it would take to populate the
-> > > cache if you had to read thousands of registers over I2C? Boot time matters.
-> > > Deferring it until it's touched can create various unpredictable and
-> > > annoying behaviour later, for example if a lot of cache entries are
-> > > written while the chip is asleep and the initial values weren't known
-> > > then a suspend/resume cannot filter out writes that are setting the
-> > > register to its default (which regmap does to avoid unnecessary bus traffic).
-> > > So the resume could have a large amount of unnecessary overhead writing
-> > > registers to a value they already have or reading the initial values of
-> > > those registers.
-> 
-> > One more register read when initially writing to a register and one
-> > more when resuming doesn't sound like a vast amount of over-head.
-> 
-> Especially on resume extra register I/O really adds up - people really
-> care how long their system takes to come back from suspend, and how
-> quickly individual devices come back.  For devices that are on slow
-> buses like I2C this means that every register operation counts.  Boot
-> can be similarly pressured of course, though it's a less frequent issue
-> for these devices.
-> 
-> > Not sure what you think I was suggesting above.  If the default values
-> > are actually non-zero that's fine - we'll either leave them as they
-> > are (if they are never changed, in which case Regmap doesn't even need
-> > to know about them), document only those (non-zero) ones or wait until
-> > they are read for the first time, then populate the cache.
-> 
-> You can't assume that the device is in power on reset state unless the
-> driver reset it itself which may or may not be a good idea or even
-> possible, sometimes it's what you want but at other times even if it's
-> possible it can cause user visible disruption during the boot process
-> which is undesirable.
-> 
-> > Setting up the cache manually also sounds like a vector for potential
-> > failure.  At least if you were to cache dynamically on first write
-> > (either on start-up or after sleep) then the actual value will be
-> > cached, rather than what a piece of C code says it should be.
-> 
-> Even where there's no problem getting the hardware into a clean state it
-> can rapidly get very, very expensive to do this with larger register
-> sets on slow buses, and at the framework level we can't assume that
-> readback support is even present on the device (the earliest versions of
-> cache support were written to support such devices).  Some of the
-> userspaces that regmap devices get used with end up wanting to apply a
-> bunch of configuration at startup, if we can cut down on the amount of
-> I/O that's involved in doing that it can help them quite a bit.  You
-> also get userspaces that want to enumerate device state at startup,
-> that's a bit easier to change in userspace but it's not an unreasonable
-> thing to want to do and can also get very I/O heavy.
-> 
-> There is some potential for errors to be introduced but equally these
-> tables can be both generated and verified mechanically, tasks that are
-> particularly straightforward for the device vendors to do.  There are
-> also potential risks in doing this at runtime if we didn't get the
-> device reset, if we don't accurately mark the volatile registers as
-> volatile or if there's otherwise bugs in the code.
-> 
-> > Precisely my point.  Lochnagar is a small device yet it's required to
-> > submit hundreds of lines of Regmap tables.  Imagine what that would
-> > look like for a large device.
-> 
-> There's no *requirement* to provide the data even if you're using the
-> cache (and the cache support is entirely optional), there's just costs
-> to not providing it in terms of what features you can get from the
-> regmap API and the performance of the system.  Not every device is going
-> to be bothered by those costs, many devices don't provide all of the
-> data they could.
 
-So what do we do in the case where, due to the size of the device, the
-amount of lines required by these tables go from crazy to grotesque?
 
-> I'm not clear to me that Lochnagar will particularly benefit from
-> providing the cache defaults but it sounds like you've raised concerns
-> about other devices which would, and it seems clear that the readability
-> information is very useful for this device if there's registers that
-> it's unsafe to try to read from.
-
-Any reduction in lines would be a good thing.  Charles, could you
-please define what specific benefits you gain from providing providing
-the pre-cache data please?  With a particular emphasis on whether the
-trade-off is justified.
-
-> > > > Even if it is absolutely critical that you have to supply these to
-> > > > Regmap up-front, instead of on first use/read, why can't you just
-> > > > supply the oddball non-zero ones?
-> 
-> That doesn't work, we need to know both if the register has a default
-> value and what that value is - there's no great value in only supplying
-> the defaults for registers with non-zero values.
-
-All registers have a default value.  Why can't we assume that if a
-register is writable and a default value was omitted then the default
-is zero?
-
-Ah wait!  As I was typing the above, I just had a thought.  We don't
-actually provide a list of writable registers do we?  Only a the
-ability to verify if one is writable (presumably) before a write.
-
-That's frustrating!
-
-> > > If you aren't happy with the regmap subsystem you could send some
-> > > patches to change it to what you would be happy with (and patch the ~1300
-> > > drivers that use it)
-> 
-> > That may well happen.  This is the pre-patch discussion.
-> 
-> > Apologies that it had to happen on your submission, but this is that
-> > alerted me to the issue(s).
-> 
-> The regmap cache API has been this way since it was introduced in 2011
-> FWIW, we did add range based support later which is purely data driven.
-
-Utilising range support here would certainly help IMHO.
-
-> > > Like any kernel subsystem it has an API that we have to obey to be able to
-> > > use it.
-> 
-> > Again, this isn't about Lochnagar.
-> 
-> I think from the perspective of Richard and Charles who are just trying
-> to get their driver merged this is something of an abstract distinction.
-> If the driver were merged and this discussion were happening separately
-> their perspective would most likely be different.
-
-Charles has already mentioned that he'd take a look at the current
-*use* (not changing the API, but the way in which Lochnagar
-*uses/consumes* it).  Actions which would be most welcomed.
-
-> > > > The API is obscene and needs a re-work IMHO.
-> 
-> > > > I really hope we do not really have to list every register, but *if we
-> > > > absolutely must*, let's do it once:
-> 
-> > > >    REG_ADDRESS, WRV, INITIAL_VALUE
-> 
-> There is the option to specify range based access tables instead of a
-> function, for a lot of devices this is a nice, easy way to specify
-> things that makes more sense so we support it.  We don't combine the
-> tables because they're range based and if there is 100% overlap you can
-> always just point at the same table.
-> 
-> We allow the functions partly because it lets people handle weird cases
-> but also because it turned out when I looked at this that a lot of the
-> time the compiler output for switch statements was pretty efficient with
-> sparse register maps and it makes the code incredibly simple, much
-> simpler than trying to parse access tables into a more efficient data
-> structure and IIRC more compact too.  It's possible that those tradeoffs
-> have changed since but at the time there was a class of devices where it
-> wasn't clear that putting more effort in would result in substantially
-> better outcomes.
-> 
-> > > To re-iterate, regmap is a standard kernel subsystem. It's not owned by Cirrus,
-> > > so it's not our responsibility if you don't like it. Mark Brown is the maintainer.
-> 
-> > Sounds very much like you are saying, "it's not Cirrus' fault,
-> > therefore it is not my problem"?  Which is a terrible attitude.
-> 
-> I think from the perspective of Charles and Richard this is sounding an
-> awful lot like you want them (or someone else) to rewrite a very widely
-> used kernel API before they can get their driver merged.  To me that
-> would be a completely disproportionate amount of effort for their goal
-> but unfortunately people do get asked to do things like that so it's not
-> an unreasonable fear for them to have.
-
-I would see that as an unreasonable request.
-
-To be clear, that is *not* what I am asking.
-
-> > Remember that the Linux kernel is an open community.  Anyone should be
-> > free to discuss any relevant issue.  If we decide to take this
-> > off-line, which is likely, then so be it.  In the mean time, as a
-> > contributor to this community project, it's absolutely your
-> > responsibly to help discuss and potentially solve wider issues than
-> > just your lines of code.
-> 
-> It's also a community of people with differing amounts of ability to
-> contribute, due to things like time, energy and so on.  Not everyone can
-> work on everything they want to, let alone other things people ask them
-> to look at.
-
-I'm not asking for code submission.  Merely contributing to this
-discussion, or simply allowing it to happen on the back of one of
-their submission is enough.
-
-Denouncing all responsibility and a lack of care is not okay.
-
-> > > As above, if one subsystem owner doesn't like another subsystem then those
-> > > subsystem owners should talk to each other and sort something out. It shouldn't
-> > > block patches that are just trying to use the subsystem as it currently exists
-> > > in the kernel.
-> 
-> > Again, no one is blocking this patch.
-> 
-> > This driver was submitted for review/discussion.  We are discussing.
-> 
-> I kind of said this above but just to be clear this driver seems to me
-> like an idiomatic user of the regmap API as it is today.  My guess is
-> that we could probably loose the defaults tables and not suffer too much
-> but equally well they don't hurt from a regmap point of view.
-
-Perhaps Charles could elaborate on whether this is possible or not?
-
-> Reviwed-by: Mark Brown <broonie@kernel.org>
-
-Thanks.
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+> -----Original Message-----
+> From: linux-arm-kernel [mailto:linux-arm-kernel-bounces@lists.infradead.o=
+rg]
+> On Behalf Of Vabhav Sharma
+> Sent: Monday, October 29, 2018 2:28 PM
+> To: sudeep.holla@arm.com; oss@buserror.net; linux-kernel@vger.kernel.org;
+> devicetree@vger.kernel.org; robh+dt@kernel.org; mark.rutland@arm.com;
+> linuxppc-dev@lists.ozlabs.org; linux-arm-kernel@lists.infradead.org;
+> mturquette@baylibre.com; sboyd@kernel.org; rjw@rjwysocki.net;
+> viresh.kumar@linaro.org; linux-clk@vger.kernel.org; linux-pm@vger.kernel.=
+org;
+> linux-kernel-owner@vger.kernel.org; catalin.marinas@arm.com;
+> will.deacon@arm.com; gregkh@linuxfoundation.org; arnd@arndb.de;
+> kstewart@linuxfoundation.org; yamada.masahiro@socionext.com; Leo Li
+> <leoyang.li@nxp.com>; shawnguo@kernel.org
+> Cc: ulf.hansson@linaro.org; Udit Kumar <udit.kumar@nxp.com>; Pankaj Bansa=
+l
+> <pankaj.bansal@nxp.com>; linux@armlinux.org.uk; adrian.hunter@intel.com;
+> Varun Sethi <V.Sethi@nxp.com>; Vabhav Sharma <vabhav.sharma@nxp.com>;
+> Yinbo Zhu <yinbo.zhu@nxp.com>
+> Subject: [PATCH v7 2/6] soc/fsl/guts: Add definition for LX2160A
+>=20
+> Adding compatible string "lx2160a-dcfg" to initialize guts driver for lx2=
+160 and
+> SoC die attribute definition for LX2160A
+>=20
+> Signed-off-by: Vabhav Sharma <vabhav.sharma@nxp.com>
+> Signed-off-by: Yinbo Zhu <yinbo.zhu@nxp.com>
+> Acked-by: Li Yang <leoyang.li@nxp.com>
+> ---
+>  drivers/soc/fsl/guts.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+>=20
+> diff --git a/drivers/soc/fsl/guts.c b/drivers/soc/fsl/guts.c index
+> 302e0c8..bcab1ee 100644
+> --- a/drivers/soc/fsl/guts.c
+> +++ b/drivers/soc/fsl/guts.c
+> @@ -100,6 +100,11 @@ static const struct fsl_soc_die_attr fsl_soc_die[] =
+=3D {
+>  	  .svr		=3D 0x87000000,
+>  	  .mask		=3D 0xfff70000,
+>  	},
+> +	/* Die: LX2160A, SoC: LX2160A/LX2120A/LX2080A */
+> +	{ .die          =3D "LX2160A",
+> +	  .svr          =3D 0x87360000,
+Do all  the threevariants " LX2160A/LX2120A/LX2080A"  have same SVR?
+> +	  .mask         =3D 0xff3f0000,
+> +	},
+>  	{ },
+>  };
+>=20
+> @@ -222,6 +227,7 @@ static const struct of_device_id fsl_guts_of_match[] =
+=3D {
+>  	{ .compatible =3D "fsl,ls1088a-dcfg", },
+>  	{ .compatible =3D "fsl,ls1012a-dcfg", },
+>  	{ .compatible =3D "fsl,ls1046a-dcfg", },
+> +	{ .compatible =3D "fsl,lx2160a-dcfg", },
+>  	{}
+>  };
+>  MODULE_DEVICE_TABLE(of, fsl_guts_of_match);
+> --
+> 2.7.4
+>=20
+>=20
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> https://emea01.safelinks.protection.outlook.com/?url=3Dhttp%3A%2F%2Flists=
+.infr
+> adead.org%2Fmailman%2Flistinfo%2Flinux-arm-
+> kernel&amp;data=3D02%7C01%7Cpoonam.aggrwal%40nxp.com%7Cd9b7c36c786
+> 54cd6dc4008d63d7fee63%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0
+> %7C636764017001504288&amp;sdata=3DpqFMlw6yVrHrvn4YRhqj%2FmoOnSscrZu
+> tcoYn3In8OJc%3D&amp;reserved=3D0
