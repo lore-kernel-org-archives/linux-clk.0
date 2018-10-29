@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8212C2BC61
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 09:09:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D719C2BC61
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 09:15:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8357D20664
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 09:09:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8357D20664
+	by mail.kernel.org (Postfix) with ESMTP id 0A56820664
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 09:15:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A56820664
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729524AbeJ2R4y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 29 Oct 2018 13:56:54 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:54810 "EHLO mail.bootlin.com"
+        id S1729374AbeJ2SDH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 29 Oct 2018 14:03:07 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:55242 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729455AbeJ2R4x (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 29 Oct 2018 13:56:53 -0400
+        id S1729467AbeJ2SDH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 29 Oct 2018 14:03:07 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 49D3B207D4; Mon, 29 Oct 2018 10:09:06 +0100 (CET)
+        id D7EB320791; Mon, 29 Oct 2018 10:15:17 +0100 (CET)
 Received: from localhost (aaubervilliers-681-1-12-210.w90-88.abo.wanadoo.fr [90.88.133.210])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 1562720711;
-        Mon, 29 Oct 2018 10:08:56 +0100 (CET)
-Date:   Mon, 29 Oct 2018 10:08:56 +0100
+        by mail.bootlin.com (Postfix) with ESMTPSA id A26992099B;
+        Mon, 29 Oct 2018 10:15:07 +0100 (CET)
+Date:   Mon, 29 Oct 2018 10:15:08 +0100
 From:   Maxime Ripard <maxime.ripard@bootlin.com>
 To:     Jagan Teki <jagan@amarulasolutions.com>
 Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
@@ -37,27 +37,20 @@ Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
         David Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
+        dri-devel@lists.freedesktop.org,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
         Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 12/15] clk: sunxi-ng: a64: Add min and max rate for
- PLL_MIPI
-Message-ID: <20181029090856.yyjnvaruyasgnzyz@flea>
-References: <20181023155035.9101-1-jagan@amarulasolutions.com>
- <20181023155035.9101-13-jagan@amarulasolutions.com>
- <20181024181334.lul7ta7ijluwfb7v@flea>
- <CAMty3ZBJcH1fz5FyhT1rk9qiJ-aWoQYiH7P1ZyQPLKmVWOCkdA@mail.gmail.com>
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v3 00/25] drm/sun4i: Allwinner A64 MIPI-DSI support
+Message-ID: <20181029091508.gyhn2m5fnbucvb34@flea>
+References: <20181026144344.27778-1-jagan@amarulasolutions.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="lcwzkqyl6fqt7dzg"
+        protocol="application/pgp-signature"; boundary="36y45ohgmtyd7cei"
 Content-Disposition: inline
-In-Reply-To: <CAMty3ZBJcH1fz5FyhT1rk9qiJ-aWoQYiH7P1ZyQPLKmVWOCkdA@mail.gmail.com>
+In-Reply-To: <20181026144344.27778-1-jagan@amarulasolutions.com>
 User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
@@ -65,136 +58,30 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---lcwzkqyl6fqt7dzg
+--36y45ohgmtyd7cei
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 25, 2018 at 09:21:31PM +0530, Jagan Teki wrote:
-> On Wed, Oct 24, 2018 at 11:43 PM Maxime Ripard
-> <maxime.ripard@bootlin.com> wrote:
-> >
-> > On Tue, Oct 23, 2018 at 09:20:32PM +0530, Jagan Teki wrote:
-> > > A64 manual say PLL_MIPI rates are 500MHz to 1.4GHz, but
-> > > using minimum 500MHz can't release the clock and which
-> > > is not working.
-> > >
-> > > So use working minimum rate as 300MHz which is tested on
-> > > Bananapi DSI panel.
-> >
-> > I'm not quite sure what you mean by that. What do you mean by "500MHz
-> > can't release the clock"? Why would 300MHz work better then? Should be
-> > avoid reaching 500MHz if it's a frequency in the valid range?
+On Fri, Oct 26, 2018 at 08:13:19PM +0530, Jagan Teki wrote:
+> This series fixed the issues related to work DSI on 2-lane panel
+> which is reported on previous version[1].
 >=20
-> PLL_MIPI can't be work with existing nkm where rate set to 270MHz
-> (from PLL_VIDEO)
-> /*** round rate call in ccu_nkm.c */
-> [    2.408356] round: rate =3D 118800000
-> [    2.408359] round: parent_rate =3D 158740688
-> [    2.408417] round: rate =3D 148500000
-> [    2.408420] round: parent_rate =3D 158740688
-> [    2.408439] round: rate =3D 178200000
-> [    2.408441] round: parent_rate =3D 158740688
-> [    2.408460] round: rate =3D 205615384
-> [    2.408462] round: parent_rate =3D 158740688
-> [    2.408481] round: rate =3D 237600000
-> [    2.408483] round: parent_rate =3D 158740688
-> [    2.408502] round: rate =3D 270000000
-> [    2.408504] round: parent_rate =3D 158740688
-> [    2.408523] round: rate =3D 118800000
-> [    2.408525] round: parent_rate =3D 158740560
-> [    2.408544] round: rate =3D 148500000
-> [    2.408546] round: parent_rate =3D 158740560
-> [    2.408565] round: rate =3D 178200000
-> [    2.408567] round: parent_rate =3D 158740560
-> [    2.408586] round: rate =3D 205615384
-> [    2.408588] round: parent_rate =3D 158740560
-> [    2.408607] round: rate =3D 237600000
-> [    2.408609] round: parent_rate =3D 158740560
-> [    2.408627] round: rate =3D 270000000
-> [    2.408630] round: parent_rate =3D 158740560
-> [    2.408648] round: rate =3D 270000000
-> [    2.408651] round: parent_rate =3D 158740640
-> [    2.408670] round: rate =3D 270000000
-> [    2.408672] round: parent_rate =3D 158740704
+> Few comments from previous version still in discussion, but I just
+> send this version just to group all working changes together.
+> anyway I will fix in this in next version if any.
 >=20
-> /** set rate call in ccu_nkm **/
-> [    2.408685] set: rate =3D 270000000
-> [    2.408688] set: parent_rate =3D 297000000
+> PLL_MIPI min rate is still weird, I tried many possible dclock rate
+> from panel driver to satisfy manual suggested min rate 500MHz but
+> none working so eventually moved 300MHz. any inputs on this area
+> are welcome.
 >=20
-> By using min and max rate as per A64 manual page 94 range of PLL can
-> be 500MHz~1.4GHz getting 1,2,1 nkm dividers which can't be work.
-> [    2.423589] sun4i_dclk_round_rate: min_div =3D 4 max_div =3D 127, rate=
- =3D 55000000
-> [    2.423643] ideal =3D 220000000, rounded =3D 0
-> [    2.423647] ideal =3D 275000000, rounded =3D 0
-> [    2.423651] ideal =3D 330000000, rounded =3D 0
-> [    2.423692] ideal =3D 385000000, rounded =3D 384000000
-> [    2.423732] ideal =3D 440000000, rounded =3D 440000000
-> [    2.423736] sun4i_dclk_round_rate: div =3D 8 rate =3D 55000000
-> [    2.423740] sun4i_dclk_round_rate: min_div =3D 4 max_div =3D 127, rate=
- =3D 55000000
-> [    2.423744] ideal =3D 220000000, rounded =3D 0
-> [    2.423748] ideal =3D 275000000, rounded =3D 0
-> [    2.423751] ideal =3D 330000000, rounded =3D 0
-> [    2.423791] ideal =3D 385000000, rounded =3D 384000000
-> [    2.423831] ideal =3D 440000000, rounded =3D 440000000
-> [    2.423834] sun4i_dclk_round_rate: div =3D 8 rate =3D 55000000
-> [    2.423957] sun4i_dclk_recalc_rate: val =3D 1, rate =3D 440000000
-> [    2.423961] sun4i_dclk_recalc_rate: val =3D 1, rate =3D 440000000
-> [    2.424378] ccu_nkm_set_rate: rate =3D 440000000, parent_rate =3D 2200=
-00000
-> [    2.424381] ccu_nkm_set_rate: _nkm.n =3D 1
-> [    2.424383] ccu_nkm_set_rate: _nkm.k =3D 2
-> [    2.424385] ccu_nkm_set_rate: _nkm.m =3D 1
-> [    2.424725] sun4i_dclk_set_rate div 8
-> [    2.424732] sun4i_dclk_recalc_rate: val =3D 8, rate =3D 55000000
-> [    2.561271] usb 3-1: new high-speed USB device number 2 using ehci-pla=
-tform
-> [    2.718486] hub 3-1:1.0: USB hub found
-> [    2.718606] hub 3-1:1.0: 4 ports detected
-> [    3.437263] ------------[ cut here ]------------
-> [    3.437270] [CRTC:36:crtc-0] vblank wait timed out
+> All these changes are tested in 2-lane, 4-lane MIPI-DSI panels.
 >=20
-> So, lowering the min rate by 300MHz seems working with bounded nkm
-> dividers 5, 2, 9. Tested on two different panels.
->=20
-> [    2.415773] [drm] No driver support for vblank timestamp query.
-> [    2.424116] sun4i_dclk_round_rate: min_div =3D 4 max_div =3D 127, rate=
- =3D 55000000
-> [    2.424172] ideal =3D 220000000, rounded =3D 0
-> [    2.424176] ideal =3D 275000000, rounded =3D 0
-> [    2.424194] ccu_nkm_round_rate: rate =3D 330000000
-> [    2.424197] ideal =3D 330000000, rounded =3D 330000000
-> [    2.424201] sun4i_dclk_round_rate: div =3D 6 rate =3D 55000000
-> [    2.424205] sun4i_dclk_round_rate: min_div =3D 4 max_div =3D 127, rate=
- =3D 55000000
-> [    2.424209] ideal =3D 220000000, rounded =3D 0
-> [    2.424213] ideal =3D 275000000, rounded =3D 0
-> [    2.424230] ccu_nkm_round_rate: rate =3D 330000000
-> [    2.424233] ideal =3D 330000000, rounded =3D 330000000
-> [    2.424236] sun4i_dclk_round_rate: div =3D 6 rate =3D 55000000
-> [    2.424253] ccu_nkm_round_rate: rate =3D 330000000
-> [    2.424270] ccu_nkm_round_rate: rate =3D 330000000
-> [    2.424278] sun4i_dclk_recalc_rate: val =3D 1, rate =3D 330000000
-> [    2.424281] sun4i_dclk_recalc_rate: val =3D 1, rate =3D 330000000
-> [    2.424306] ccu_nkm_set_rate: rate =3D 330000000, parent_rate =3D 2970=
-00000
-> [    2.424309] ccu_nkm_set_rate: _nkm.n =3D 5
-> [    2.424311] ccu_nkm_set_rate: _nkm.k =3D 2
-> [    2.424313] ccu_nkm_set_rate: _nkm.m =3D 9
-> [    2.424661] sun4i_dclk_set_rate div 6
-> [    2.424668] sun4i_dclk_recalc_rate: val =3D 6, rate =3D 55000000
->=20
-> Note: BPI-M64-bsp is setting the rate directly to 180MHz with 297MHz
-> parent with resulting dividers as 1, 2, 5. ans we can't produce this
-> 180MHz rate with dclk_round_rate and ccu_nkm.
+> If anyone wants to test, use this repo [2] with WIP-A64-DSI branch.
 
-I'm still not quite sure what you mean by "500MHz can't release the
-clock".
-
-=46rom what you're saying, this seems to be related to the boundaries of
-the dividers rather than the rate itself.
+A changelog would be nice here, and usually you shouldn't send a new
+version while there is ongoing discussion on the previous version.
 
 Maxime
 
@@ -203,15 +90,15 @@ Maxime Ripard, Bootlin
 Embedded Linux and Kernel engineering
 https://bootlin.com
 
---lcwzkqyl6fqt7dzg
+--36y45ohgmtyd7cei
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW9bOKAAKCRDj7w1vZxhR
-xTvpAP9bDZZoJC5eah5D5XltfM9QjZurgMCE/aLANzNHKFnHsAEApZh7dHjeh6Cr
-1UuUfqW9uwjyGIduMA3zs7v2LpIGUQo=
-=PTeb
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW9bPnAAKCRDj7w1vZxhR
+xc3TAPsGM9mbbgPEbeemnJdAp3i8+8IXWkv2qSQ+xPuWMuQo1AD/erFiP6S+Y096
+5le9/Ejs/zgE90IGY1rjAwpBliviFgs=
+=aut5
 -----END PGP SIGNATURE-----
 
---lcwzkqyl6fqt7dzg--
+--36y45ohgmtyd7cei--
