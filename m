@@ -4,29 +4,29 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E510CC2BC61
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 09:22:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60490C46475
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 09:28:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92725204FD
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 09:22:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92725204FD
+	by mail.kernel.org (Postfix) with ESMTP id 3367020827
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Oct 2018 09:28:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3367020827
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729514AbeJ2SKR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 29 Oct 2018 14:10:17 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:55897 "EHLO mail.bootlin.com"
+        id S1729590AbeJ2SQM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 29 Oct 2018 14:16:12 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:56116 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729510AbeJ2SKR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 29 Oct 2018 14:10:17 -0400
+        id S1729479AbeJ2SQL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 29 Oct 2018 14:16:11 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id D6435208CE; Mon, 29 Oct 2018 10:22:26 +0100 (CET)
+        id A636420993; Mon, 29 Oct 2018 10:28:19 +0100 (CET)
 Received: from localhost (aaubervilliers-681-1-12-210.w90-88.abo.wanadoo.fr [90.88.133.210])
-        by mail.bootlin.com (Postfix) with ESMTPSA id A7C85208B0;
-        Mon, 29 Oct 2018 10:22:26 +0100 (CET)
-Date:   Mon, 29 Oct 2018 10:22:27 +0100
+        by mail.bootlin.com (Postfix) with ESMTPSA id 7BA54208D9;
+        Mon, 29 Oct 2018 10:27:53 +0100 (CET)
+Date:   Mon, 29 Oct 2018 10:27:54 +0100
 From:   Maxime Ripard <maxime.ripard@bootlin.com>
 To:     Jagan Teki <jagan@amarulasolutions.com>
 Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
@@ -43,16 +43,16 @@ Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
         Michael Trimarchi <michael@amarulasolutions.com>,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v3 12/25] drm/sun4i: sun6i_mipi_dsi: Add DSI hblk packet
+Subject: Re: [PATCH v3 14/25] drm/sun4i: sun6i_mipi_dsi: Increase hfp packet
  overhead
-Message-ID: <20181029092227.mdxgvg5aqzh22j72@flea>
+Message-ID: <20181029092754.2tl7i5k5qpbn4557@flea>
 References: <20181026144344.27778-1-jagan@amarulasolutions.com>
- <20181026144344.27778-13-jagan@amarulasolutions.com>
+ <20181026144344.27778-15-jagan@amarulasolutions.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="lllrmm6ipxhi4upc"
+        protocol="application/pgp-signature"; boundary="pvlkcstvb3cw6o6f"
 Content-Disposition: inline
-In-Reply-To: <20181026144344.27778-13-jagan@amarulasolutions.com>
+In-Reply-To: <20181026144344.27778-15-jagan@amarulasolutions.com>
 User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
@@ -60,20 +60,36 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---lllrmm6ipxhi4upc
+--pvlkcstvb3cw6o6f
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 26, 2018 at 08:13:31PM +0530, Jagan Teki wrote:
-> Add 10 bytes packet overhead for hblk where blank is set using
-> a blanking packet like (4 bytes + 4 bytes + payload + 2 bytes)
+On Fri, Oct 26, 2018 at 08:13:33PM +0530, Jagan Teki wrote:
+> Increase the hfp packet overhead with another 10 bytes, the extra
+> 10 bytes(which is hblk packet overhead) is adding for hfp packet
+> overhead since hfp depends on hblk.
 >=20
-> This is according to BSP code from BPI-M64-bsp
+> This is truely as per BSP code from BPI-M64-bsp.
+> The real computation from BSP is
 > (in drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c)
+> dsi_hbp =3D (hbp-hspw)*dsi_pixel_bits[format]/8 - (4+2);
+> dsi_hact =3D x * dsi_pixel_bits[format]/8;
 > dsi_hblk =3D (ht-hspw)*dsi_pixel_bits[format]/8-(4+4+2);
+> dsi_hfp =3D dsi_hblk - (4+dsi_hact+2) - (4+dsi_hbp+2);
 >=20
-> So, add 10 bytes packet overhead for DSI hblk.
+> Example,
+> u32 fmt =3D dsi_pixel_bits[format]/8;
+> =3D> ((ht-hspw)*fmt - 10) - (6 + x * fmt) - (6 + (hbp-hspw)*fmt - 6)
+> =3D> (ht - hspw - x - (hbp - hspw)) * fmt - 16
+> =3D> (ht - x - hbp) * fmt - 16
+> =3D> (ht - x - (timmings->hor_total_time - timmings->hor_front_porch - x)
+> * fmt - 16
+> =3D> (timmings->hor_total_time - x - timmings->hor_total_time +
+> timmings->hor_front_porch + x) * fmt - 16
+> =3D> timmings->hor_front_porch * fmt - 16
+>=20
+> So, increase the DSI hfp packet overhead by hblk packet overhead.
 >=20
 > Tested on 2-lane, 4-lane MIPI-DSI LCD panels.
 >=20
@@ -85,12 +101,12 @@ On Fri, Oct 26, 2018 at 08:13:31PM +0530, Jagan Teki wrote:
 > Changes for v2:
 > - none
 >=20
->  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
+>  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 22 +++++++++++++---------
+>  1 file changed, 13 insertions(+), 9 deletions(-)
 >=20
 > diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun=
 4i/sun6i_mipi_dsi.c
-> index 596e560263bf..cf42be1f1ba1 100644
+> index 6584b51736a9..20e330186b7f 100644
 > --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
 > +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
 > @@ -461,7 +461,7 @@ static void sun6i_dsi_setup_timings(struct sun6i_dsi =
@@ -98,28 +114,44 @@ On Fri, Oct 26, 2018 at 08:13:31PM +0530, Jagan Teki wrote:
 >  {
 >  	struct mipi_dsi_device *device =3D dsi->device;
 >  	unsigned int Bpp =3D mipi_dsi_pixel_format_to_bpp(device->format) / 8;
-> -	u16 hbp, hfp, hsa, hblk, vblk;
-> +	u16 hbp, hfp, hsa, hblk_max, hblk, vblk;
+> -	u16 hbp, hfp, hsa, hblk_max, hblk, vblk;
+> +	u16 hbp, hfp_pkt_overhead, hfp, hsa, hblk_max, hblk, vblk;
 >  	size_t bytes;
 >  	u8 *buffer;
 > =20
-> @@ -494,8 +494,13 @@ static void sun6i_dsi_setup_timings(struct sun6i_dsi=
+> @@ -484,14 +484,6 @@ static void sun6i_dsi_setup_timings(struct sun6i_dsi=
  *dsi,
+>  	hbp =3D max((unsigned int)HBP_PACKET_OVERHEAD,
+>  		  (mode->htotal - mode->hsync_end) * Bpp - HBP_PACKET_OVERHEAD);
 > =20
+> -	/*
+> -	 * The frontporch is set using a blanking packet (4 bytes +
+> -	 * payload + 2 bytes). Its minimal size is therefore 6 bytes
+> -	 */
+> -#define HFP_PACKET_OVERHEAD	6
+> -	hfp =3D max((unsigned int)HFP_PACKET_OVERHEAD,
+> -		  (mode->hsync_start - mode->hdisplay) * Bpp - HFP_PACKET_OVERHEAD);
+> -
 >  	/*
 >  	 * hblk seems to be the line + porches length.
-> +	 * The blank is set using a blanking packet (4 bytes + 4 bytes +
-> +	 * payload + 2 bytes). So minimal size is 10 bytes
->  	 */
-> -	hblk =3D (mode->htotal - (mode->hsync_end - mode->hsync_start)) * Bpp;
-> +#define HBLK_PACKET_OVERHEAD	10
-> +	hblk_max =3D (mode->htotal - (mode->hsync_end - mode->hsync_start)) * B=
-pp;
-> +	hblk_max -=3D HBLK_PACKET_OVERHEAD;
-> +	hblk =3D max((unsigned int)HBLK_PACKET_OVERHEAD, hblk_max);
+>  	 * The blank is set using a blanking packet (4 bytes + 4 bytes +
+> @@ -502,6 +494,18 @@ static void sun6i_dsi_setup_timings(struct sun6i_dsi=
+ *dsi,
+>  	hblk_max -=3D HBLK_PACKET_OVERHEAD;
+>  	hblk =3D max((unsigned int)HBLK_PACKET_OVERHEAD, hblk_max);
+> =20
+> +	/*
+> +	 * The frontporch is set using a blanking packet (4 bytes +
+> +	 * payload + 2 bytes). Its minimal size is therefore 6 bytes
+> +	 *
+> +	 * According to BSP code, extra 10 bytes(which is hblk packet overhead)
+> +	 * is adding for hfp packet overhead since hfp depends on hblk.
 
-I'd rather use the same convention than the other assignments done
-before in that function.
+"According to the BSP code, another 10 bytes (the HBLK packet
+overhead) need to be added to the front porch overhead."
+
+How has this been verified? Since we have registers to set all the
+parameters, this seems kind of weird.
 
 Maxime
 
@@ -128,15 +160,15 @@ Maxime Ripard, Bootlin
 Embedded Linux and Kernel engineering
 https://bootlin.com
 
---lllrmm6ipxhi4upc
+--pvlkcstvb3cw6o6f
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW9bRUwAKCRDj7w1vZxhR
-xToJAP42zwMlUWetjTpxDylXTsNHV59JrZ091p3KqQ63YbmrugD/WWdKcs1Po0kx
-ijDFy7H+IgWHuPQLm9SshyJ5x+vBsQw=
-=WVlR
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW9bSmQAKCRDj7w1vZxhR
+xV/4AP0X2KFZoRZDY34MgjfcorC8g1jHZPf5NyAOs2h5CtEEsQD7BSBxi7gYABgv
+y2Z2cQkTC3os0qhX3cSKDQvaXAYjbQg=
+=TpO6
 -----END PGP SIGNATURE-----
 
---lllrmm6ipxhi4upc--
+--pvlkcstvb3cw6o6f--
