@@ -2,290 +2,176 @@ Return-Path: <SRS0=0weS=NK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B09EAECDE44
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Oct 2018 10:14:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCB37C2BC61
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Oct 2018 10:17:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 836BC20831
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Oct 2018 10:14:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 836BC20831
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rock-chips.com
+	by mail.kernel.org (Postfix) with ESMTP id 67FB920827
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Oct 2018 10:17:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67FB920827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726532AbeJ3TH0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 30 Oct 2018 15:07:26 -0400
-Received: from lucky1.263xmail.com ([211.157.147.131]:34292 "EHLO
-        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726551AbeJ3TH0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Oct 2018 15:07:26 -0400
-Received: from tony.xie?rock-chips.com (unknown [192.168.167.201])
-        by lucky1.263xmail.com (Postfix) with ESMTP id E5ABFFC6;
-        Tue, 30 Oct 2018 18:13:46 +0800 (CST)
-X-263anti-spam: KSV:0;
-X-MAIL-GRAY: 1
-X-MAIL-DELIVERY: 0
-X-KSVirus-check: 0
-X-ABS-CHECKED: 4
-Received: from localhost.localdomain (localhost [127.0.0.1])
-        by smtp.263.net (Postfix) with ESMTPA id 36F7C37E;
-        Tue, 30 Oct 2018 18:13:41 +0800 (CST)
-X-IP-DOMAINF: 1
-X-RL-SENDER: tony.xie@rock-chips.com
-X-FST-TO: heiko@sntech.de
-X-SENDER-IP: 58.22.7.114
-X-LOGIN-NAME: tony.xie@rock-chips.com
-X-UNIQUE-TAG: <76f192c27520321b4e20c9ccfe0511d3>
-X-ATTACHMENT-NUM: 0
-X-SENDER: xxx@rock-chips.com
-X-DNS-TYPE: 0
-Received: from localhost.localdomain (unknown [58.22.7.114])
-        by smtp.263.net (Postfix) whith ESMTP id 31943H85WBG;
-        Tue, 30 Oct 2018 18:13:45 +0800 (CST)
-From:   Tony Xie <tony.xie@rock-chips.com>
-To:     heiko@sntech.de
-Cc:     broonie@kernel.org, lee.jones@linaro.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
-        xsf@rock-chips.com, zhangqing@rock-chips.com,
-        huangtao@rock-chips.com, tony.xie@rock-chips.com
-Subject: [PATCH v6 5/6] rtc: rk808: add RK809 and RK817 support.
-Date:   Tue, 30 Oct 2018 18:16:40 +0800
-Message-Id: <1540894600-2828-1-git-send-email-tony.xie@rock-chips.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1540894081-31270-1-git-send-email-tony.xie@rock-chips.com>
-References: <1540894081-31270-1-git-send-email-tony.xie@rock-chips.com>
+        id S1726523AbeJ3TKj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 30 Oct 2018 15:10:39 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:52782 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726556AbeJ3TKj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Oct 2018 15:10:39 -0400
+Received: by mail-wm1-f68.google.com with SMTP id 189-v6so11131584wmw.2
+        for <linux-clk@vger.kernel.org>; Tue, 30 Oct 2018 03:17:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=iowrjOHigZyHV14gi4opNhkelmQgYGB7cDkGuQYssT8=;
+        b=h9g7NFesFfCM0Op8ZURyucl9va0VdMB0GXX6MScn6pMFRhV9IoRe1BkgTjyKS7cB0T
+         JL7Z2eswsHBIWGGObx+lKNc2S3BBl9cBHmpVSDvcAJIvPPW150hys5D3RpkK0wmpjiyM
+         atByYhXzXIfg3kKdud++WvfdIeTixXee3mXYwpg7Ukc0bWW/3ws1kIGT5Lrm5zjgM8Pf
+         1bMRhxbHIKSVRxsjZwrFIH6X3JbpSzy+Njh3UFGV9yPWrQ8Xe8k6Fxz/4ZmACvcbkQAT
+         TSfBCZncK53tlLXsAMaaMBDO6yIeBr7aFEJNKHsYYERJkr5/2IHF8HO9qV65n5VBaIwx
+         wLTw==
+X-Gm-Message-State: AGRZ1gKHIm7Nj12sb2osGl6Kb4BdHA4JpjoRbsR12Foq8I/2H47JTzTJ
+        V+j/hihqpuN8pVhhuNyYkhRxLQ==
+X-Google-Smtp-Source: AJdET5fq3jY0THeP+PJ1FHkT+xNZbprkT39PzR32cQbJS2oRmOAXwWwHMx+vdn1APFKxZiag55CmSQ==
+X-Received: by 2002:a1c:950f:: with SMTP id x15-v6mr1179865wmd.3.1540894666060;
+        Tue, 30 Oct 2018 03:17:46 -0700 (PDT)
+Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id t198-v6sm23486713wmd.9.2018.10.30.03.17.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Oct 2018 03:17:45 -0700 (PDT)
+Subject: Re: Regression found (Stop-marking-clocks-as-CLK_IS_CRITICAL)
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Dean Wallace <duffydack73@gmail.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Stable <stable@vger.kernel.org>,
+        Johannes Stezenbach <js@sig21.net>,
+        Carlo Caione <carlo@endlessm.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20181025232517.ywnw54qibemosjws@picard>
+ <154083512089.98144.9141070901932719147@swboyd.mtv.corp.google.com>
+ <CAHp75VfnN5tF1Z9+CDDhKFNG5QfCRcGOZeAkpf-5BfCEx16gvg@mail.gmail.com>
+ <CAHp75VctdBE-GM60udJawBCXdmoOqZn4N=kFWz5GLHzjPG2iQQ@mail.gmail.com>
+ <20181029190819.2ivlx73n6y6sx4vk@picard>
+ <ffc4bcc9-62c3-8940-85d6-d0fd01f3a1b8@linux.intel.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <ac7720fd-ed2e-dd77-d60b-7ab535daf167@redhat.com>
+Date:   Tue, 30 Oct 2018 11:17:43 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <ffc4bcc9-62c3-8940-85d6-d0fd01f3a1b8@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-RK809 and RK817 are power management IC chips for multimedia products.
-Most of their functions and registers are same, including the rtc.
+Hi Pierre-Louis,
 
-Signed-off-by: Tony Xie <tony.xie@rock-chips.com>
-Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
- drivers/rtc/Kconfig     |  4 +--
- drivers/rtc/rtc-rk808.c | 68 +++++++++++++++++++++++++++++++++++++++----------
- 2 files changed, 56 insertions(+), 16 deletions(-)
+On 29-10-18 23:03, Pierre-Louis Bossart wrote:
+> 
+> On 10/29/18 2:08 PM, Dean Wallace wrote:
+>> On 29-10-18, Andy Shevchenko wrote:
+>>> On Mon, Oct 29, 2018 at 7:52 PM Andy Shevchenko
+>>> <andy.shevchenko@gmail.com> wrote:
+>>>> Cc: Pierre as well.
+>>>>
+>>>> On Mon, Oct 29, 2018 at 7:48 PM Stephen Boyd <sboyd@kernel.org> wrote:
+>>>>> Quoting Dean Wallace (2018-10-25 16:25:17)
+>>>>>> I have found a regression in 4.18.15 that means I lose sound on my old
+>>>>>> Toshiba Chromebook 2 (Swanky).  My system details are:-
+>>>>>>
+>>>>>> Toshiba Chromebook (Swanky)
+>>>>>> MrChromebox UEFI coreboot
+>>>>>> Arch Linux running latest alsa/pulseaudio
+>>>>>>
+>>>>>> Upgraded kernel from 4.18.14 to 4.18.15 and lost all sound output.  By
+>>>>>> output I mean, the card is still detected, the module loaded, all apps
+>>>>>> showing sound is being playing, but no actual audible sound comes
+>>>>>> through.  Upgraded to 4.18.16 same issue.
+>>>>>>
+>>>>>> Dug around and found Upstream commit 648e921888ad96ea3dc922739e96716ad3225d7f
+>>>>>> clk: x86: Stop marking clocks as CLK_IS_CRITICAL
+>>>>>> "This commit removes the CLK_IS_CRITICAL marking, fixing Cherry Trail
+>>>>>> devices not being able to reach S0i3 greatly decreasing their battery
+>>>>>> drain when suspended."
+>>>>>>
+>>>>>> I reverted it and compiled 4.18.16 and have sound back again.  Could
+>>>>>> this be looked into, with possibility of fix.
+>>>>>>
+>>>>> Thanks for the bug report. I'm adding some people involved in the commit
+>>>>> you mention is causing audio regressions. The best plan is to probably
+>>>>> revert the commit from the 4.18 linux stable tree. Or there may be
+>>>>> another patch missing that would be useful to make this backported patch
+>>>>> work. Hopefully Hans or Andy knows.
+>>>> Hans has been investigating S0ix issues on Baytrail and Cherrytrail machines.
+>>>> I have a feeling that the problem can be fixed by properly handling
+>>>> clock in ASoC driver(s). Perhaps Hans and Pierre can figure this out
+>>>> better than me.
+>>> Looking to sound/soc/intel/boards/cht_bsw_rt5672.c I see no
+>>> suspend-resume hooks. Perhaps, adding them like in the commit
+>>> ac8bd9e13be2 ("r8169: Disable clk during suspend / resume") would
+>>> help.
+> 
+> I missed this change while i was away. It's indeed the expectation that the audio mclk is handled by the firmware,
 
-diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
-index a2ba5db..1aaf935 100644
---- a/drivers/rtc/Kconfig
-+++ b/drivers/rtc/Kconfig
-@@ -371,11 +371,11 @@ config RTC_DRV_MAX77686
- 	  will be called rtc-max77686.
- 
- config RTC_DRV_RK808
--	tristate "Rockchip RK805/RK808/RK818 RTC"
-+	tristate "Rockchip RK805/RK808/RK809/RK817/RK818 RTC"
- 	depends on MFD_RK808
- 	help
- 	  If you say yes here you will get support for the
--	  RTC of RK805, RK808 and RK818 PMIC.
-+	  RTC of RK805, RK809 and RK817, RK808 and RK818 PMIC.
- 
- 	  This driver can also be built as a module. If so, the module
- 	  will be called rk808-rtc.
-diff --git a/drivers/rtc/rtc-rk808.c b/drivers/rtc/rtc-rk808.c
-index 739c0d4..5bacdaf 100644
---- a/drivers/rtc/rtc-rk808.c
-+++ b/drivers/rtc/rtc-rk808.c
-@@ -50,9 +50,18 @@
- #define NUM_TIME_REGS	(RK808_WEEKS_REG - RK808_SECONDS_REG + 1)
- #define NUM_ALARM_REGS	(RK808_ALARM_YEARS_REG - RK808_ALARM_SECONDS_REG + 1)
- 
-+struct rk_rtc_compat_reg {
-+	unsigned int ctrl_reg;
-+	unsigned int status_reg;
-+	unsigned int alarm_seconds_reg;
-+	unsigned int int_reg;
-+	unsigned int seconds_reg;
-+};
-+
- struct rk808_rtc {
- 	struct rk808 *rk808;
- 	struct rtc_device *rtc;
-+	struct rk_rtc_compat_reg *creg;
- 	int irq;
- };
- 
-@@ -101,7 +110,7 @@ static int rk808_rtc_readtime(struct device *dev, struct rtc_time *tm)
- 	int ret;
- 
- 	/* Force an update of the shadowed registers right now */
--	ret = regmap_update_bits(rk808->regmap, RK808_RTC_CTRL_REG,
-+	ret = regmap_update_bits(rk808->regmap, rk808_rtc->creg->ctrl_reg,
- 				 BIT_RTC_CTRL_REG_RTC_GET_TIME,
- 				 BIT_RTC_CTRL_REG_RTC_GET_TIME);
- 	if (ret) {
-@@ -115,7 +124,7 @@ static int rk808_rtc_readtime(struct device *dev, struct rtc_time *tm)
- 	 * 32khz. If we clear the GET_TIME bit here, the time of i2c transfer
- 	 * certainly more than 31.25us: 16 * 2.5us at 400kHz bus frequency.
- 	 */
--	ret = regmap_update_bits(rk808->regmap, RK808_RTC_CTRL_REG,
-+	ret = regmap_update_bits(rk808->regmap, rk808_rtc->creg->ctrl_reg,
- 				 BIT_RTC_CTRL_REG_RTC_GET_TIME,
- 				 0);
- 	if (ret) {
-@@ -123,7 +132,7 @@ static int rk808_rtc_readtime(struct device *dev, struct rtc_time *tm)
- 		return ret;
- 	}
- 
--	ret = regmap_bulk_read(rk808->regmap, RK808_SECONDS_REG,
-+	ret = regmap_bulk_read(rk808->regmap, rk808_rtc->creg->seconds_reg,
- 			       rtc_data, NUM_TIME_REGS);
- 	if (ret) {
- 		dev_err(dev, "Failed to bulk read rtc_data: %d\n", ret);
-@@ -166,7 +175,7 @@ static int rk808_rtc_set_time(struct device *dev, struct rtc_time *tm)
- 	rtc_data[6] = bin2bcd(tm->tm_wday);
- 
- 	/* Stop RTC while updating the RTC registers */
--	ret = regmap_update_bits(rk808->regmap, RK808_RTC_CTRL_REG,
-+	ret = regmap_update_bits(rk808->regmap, rk808_rtc->creg->ctrl_reg,
- 				 BIT_RTC_CTRL_REG_STOP_RTC_M,
- 				 BIT_RTC_CTRL_REG_STOP_RTC_M);
- 	if (ret) {
-@@ -174,14 +183,14 @@ static int rk808_rtc_set_time(struct device *dev, struct rtc_time *tm)
- 		return ret;
- 	}
- 
--	ret = regmap_bulk_write(rk808->regmap, RK808_SECONDS_REG,
-+	ret = regmap_bulk_write(rk808->regmap, rk808_rtc->creg->seconds_reg,
- 				rtc_data, NUM_TIME_REGS);
- 	if (ret) {
- 		dev_err(dev, "Failed to bull write rtc_data: %d\n", ret);
- 		return ret;
- 	}
- 	/* Start RTC again */
--	ret = regmap_update_bits(rk808->regmap, RK808_RTC_CTRL_REG,
-+	ret = regmap_update_bits(rk808->regmap, rk808_rtc->creg->ctrl_reg,
- 				 BIT_RTC_CTRL_REG_STOP_RTC_M, 0);
- 	if (ret) {
- 		dev_err(dev, "Failed to update RTC control: %d\n", ret);
-@@ -199,8 +208,13 @@ static int rk808_rtc_readalarm(struct device *dev, struct rtc_wkalrm *alrm)
- 	uint32_t int_reg;
- 	int ret;
- 
--	ret = regmap_bulk_read(rk808->regmap, RK808_ALARM_SECONDS_REG,
-+	ret = regmap_bulk_read(rk808->regmap,
-+			       rk808_rtc->creg->alarm_seconds_reg,
- 			       alrm_data, NUM_ALARM_REGS);
-+	if (ret) {
-+		dev_err(dev, "Failed to read RTC alarm date REG: %d\n", ret);
-+		return ret;
-+	}
- 
- 	alrm->time.tm_sec = bcd2bin(alrm_data[0] & SECONDS_REG_MSK);
- 	alrm->time.tm_min = bcd2bin(alrm_data[1] & MINUTES_REG_MAK);
-@@ -210,7 +224,7 @@ static int rk808_rtc_readalarm(struct device *dev, struct rtc_wkalrm *alrm)
- 	alrm->time.tm_year = (bcd2bin(alrm_data[5] & YEARS_REG_MSK)) + 100;
- 	rockchip_to_gregorian(&alrm->time);
- 
--	ret = regmap_read(rk808->regmap, RK808_RTC_INT_REG, &int_reg);
-+	ret = regmap_read(rk808->regmap, rk808_rtc->creg->int_reg, &int_reg);
- 	if (ret) {
- 		dev_err(dev, "Failed to read RTC INT REG: %d\n", ret);
- 		return ret;
-@@ -231,7 +245,7 @@ static int rk808_rtc_stop_alarm(struct rk808_rtc *rk808_rtc)
- 	struct rk808 *rk808 = rk808_rtc->rk808;
- 	int ret;
- 
--	ret = regmap_update_bits(rk808->regmap, RK808_RTC_INT_REG,
-+	ret = regmap_update_bits(rk808->regmap, rk808_rtc->creg->int_reg,
- 				 BIT_RTC_INTERRUPTS_REG_IT_ALARM_M, 0);
- 
- 	return ret;
-@@ -242,7 +256,7 @@ static int rk808_rtc_start_alarm(struct rk808_rtc *rk808_rtc)
- 	struct rk808 *rk808 = rk808_rtc->rk808;
- 	int ret;
- 
--	ret = regmap_update_bits(rk808->regmap, RK808_RTC_INT_REG,
-+	ret = regmap_update_bits(rk808->regmap, rk808_rtc->creg->int_reg,
- 				 BIT_RTC_INTERRUPTS_REG_IT_ALARM_M,
- 				 BIT_RTC_INTERRUPTS_REG_IT_ALARM_M);
- 
-@@ -274,7 +288,8 @@ static int rk808_rtc_setalarm(struct device *dev, struct rtc_wkalrm *alrm)
- 	alrm_data[4] = bin2bcd(alrm->time.tm_mon + 1);
- 	alrm_data[5] = bin2bcd(alrm->time.tm_year - 100);
- 
--	ret = regmap_bulk_write(rk808->regmap, RK808_ALARM_SECONDS_REG,
-+	ret = regmap_bulk_write(rk808->regmap,
-+				rk808_rtc->creg->alarm_seconds_reg,
- 				alrm_data, NUM_ALARM_REGS);
- 	if (ret) {
- 		dev_err(dev, "Failed to bulk write: %d\n", ret);
-@@ -318,7 +333,7 @@ static irqreturn_t rk808_alarm_irq(int irq, void *data)
- 	struct i2c_client *client = rk808->i2c;
- 	int ret;
- 
--	ret = regmap_write(rk808->regmap, RK808_RTC_STATUS_REG,
-+	ret = regmap_write(rk808->regmap, rk808_rtc->creg->status_reg,
- 			   RTC_STATUS_MASK);
- 	if (ret) {
- 		dev_err(&client->dev,
-@@ -371,6 +386,22 @@ static int rk808_rtc_resume(struct device *dev)
- static SIMPLE_DEV_PM_OPS(rk808_rtc_pm_ops,
- 	rk808_rtc_suspend, rk808_rtc_resume);
- 
-+static struct rk_rtc_compat_reg rk808_creg = {
-+	.ctrl_reg = RK808_RTC_CTRL_REG,
-+	.status_reg = RK808_RTC_STATUS_REG,
-+	.alarm_seconds_reg = RK808_ALARM_SECONDS_REG,
-+	.int_reg = RK808_RTC_INT_REG,
-+	.seconds_reg = RK808_SECONDS_REG,
-+};
-+
-+static struct rk_rtc_compat_reg rk817_creg = {
-+	.ctrl_reg = RK817_RTC_CTRL_REG,
-+	.status_reg = RK817_RTC_STATUS_REG,
-+	.alarm_seconds_reg = RK817_ALARM_SECONDS_REG,
-+	.int_reg = RK817_RTC_INT_REG,
-+	.seconds_reg = RK817_SECONDS_REG,
-+};
-+
- static int rk808_rtc_probe(struct platform_device *pdev)
- {
- 	struct rk808 *rk808 = dev_get_drvdata(pdev->dev.parent);
-@@ -381,11 +412,20 @@ static int rk808_rtc_probe(struct platform_device *pdev)
- 	if (rk808_rtc == NULL)
- 		return -ENOMEM;
- 
-+	switch (rk808->variant) {
-+	case RK809_ID:
-+	case RK817_ID:
-+		rk808_rtc->creg = &rk817_creg;
-+		break;
-+	default:
-+		rk808_rtc->creg = &rk808_creg;
-+		break;
-+	}
- 	platform_set_drvdata(pdev, rk808_rtc);
- 	rk808_rtc->rk808 = rk808;
- 
- 	/* start rtc running by default, and use shadowed timer. */
--	ret = regmap_update_bits(rk808->regmap, RK808_RTC_CTRL_REG,
-+	ret = regmap_update_bits(rk808->regmap, rk808_rtc->creg->ctrl_reg,
- 				 BIT_RTC_CTRL_REG_STOP_RTC_M |
- 				 BIT_RTC_CTRL_REG_RTC_READSEL_M,
- 				 BIT_RTC_CTRL_REG_RTC_READSEL_M);
-@@ -395,7 +435,7 @@ static int rk808_rtc_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
--	ret = regmap_write(rk808->regmap, RK808_RTC_STATUS_REG,
-+	ret = regmap_write(rk808->regmap, rk808_rtc->creg->status_reg,
- 			   RTC_STATUS_MASK);
- 	if (ret) {
- 		dev_err(&pdev->dev,
--- 
-1.9.1
+I believe that the statement "It's indeed the expectation that the
+audio mclk is handled by the firmware" is not correct for BYT/CHT
+platforms (and the commit causing the regression only affects BYT/CHT
+platforms). Various machine drivers under sound/soc/intel/boards have
+code to deal with the mclk themselves, like this:
 
+         drv->mclk = devm_clk_get(&pdev->dev, "pmc_plt_clk_3");
+...
 
+         if (SND_SOC_DAPM_EVENT_ON(event)) {
+                 ret = clk_prepare_enable(ctx->mclk);
+		...
+         } else {
+                 clk_disable_unprepare(ctx->mclk);
+         }
+
+The above code is from sound/soc/intel/boards/cht_bsw_max98090_ti.c
+which is the machine driver used on the machines for which problems
+are now being reported.
+
+And my commit introducing the problem is in essence a revert of:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit?id=d31fd43c0f9a41e2678a1e78c0f22f0384c6edd3
+
+Which is from 2017-07-14 and the ASoC code for BYT/CHT platforms is
+much older then that.
+
+Also I asked Carlo why he wrote that patch and it was to fix a problem
+with ethernet on some laptops.
+
+> not sure I understand why removing the CLK_IS_CRITICAL was necessary or what it has to do with S0ix.
+
+It is necessary, because if it is set the clock never gets disabled and
+on x86 platforms using suspend2idle we are responsible for *all* the hardware
+power-management as OS. If we do not disable the clocks then we can only
+reach S0i1 instead of S0i3 when suspended leading to increased battery
+drain during suspend.
+
+Also note that this patch is only causing problems on CHT + max98090 codec
+using machines. I've tested it on many other BYT/CHT machines myself and
+we've not had any other bug reports related to this.
+
+So this clearly points to a problem with the clock management in the
+cht_bsw_max98090_ti.c machine driver.
+
+I've some ideas how to fix this and I will prepare some patches to test.
+
+Regards,
+
+Hans
