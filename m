@@ -2,51 +2,42 @@ Return-Path: <SRS0=0weS=NK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11BE5C2BC61
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Oct 2018 18:31:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1084ECDE44
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Oct 2018 18:56:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6F242081B
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Oct 2018 18:31:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6F242081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 87BA620657
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Oct 2018 18:56:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="JwtPo8l/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87BA620657
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=protonmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727699AbeJaD0X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 30 Oct 2018 23:26:23 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:35906 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727551AbeJaD0X (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Oct 2018 23:26:23 -0400
-Received: by mail-wm1-f68.google.com with SMTP id a8-v6so12275935wmf.1
-        for <linux-clk@vger.kernel.org>; Tue, 30 Oct 2018 11:31:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=DFsFFLjRXDGHuUWoOloyRgpJvoEH8MXDHnD+qyam8/4=;
-        b=BTLtMqh3TdZ2wFxll+CVdSY6iJlJStY0KQ/GPiXIyGh6e9keLJqSPIw3r6oAMTxRjE
-         REdsnNk0//bWEOTuvu3GeXg9Ci6NZXKk0yKOSyc8b9C1vPgTdKA1lj2DzDyx8e8AozzI
-         zfC6bm5+Sq8RgUuNKr3/zoLXS+s02d61NNmnTZGoHz6xg39VmR9+LMp43bsenU6dxCaR
-         Oy6MB+00b/fXCA8CjcwSZpKpcqpn7TO/A5J/oem3Ec0KZ3RN/HMzMo8kwR9MfgqPDsVh
-         SGwA9RcaWr2mPIxbWWQWBtgICiaVJY4dlC0hgcB2c/UBVpaf2I5Fc2AeC4fu6kipSaAx
-         m3Wg==
-X-Gm-Message-State: AGRZ1gLWkEXP7L8hu+jqPdbbif5YuLHeiEd20dD/TqEX2/doTuJr1pt5
-        2S7IJ7VTu+N50PDQotlYaf4dIg==
-X-Google-Smtp-Source: AJdET5dOfR/+itHEF2hfqEdIn6ADZ3mt1Tz2WeLCQS/L20kTmZXjJ4tiZB8GtheM08vc2DVBFiVZZw==
-X-Received: by 2002:a1c:9b4b:: with SMTP id d72-v6mr15816wme.72.1540924306273;
-        Tue, 30 Oct 2018 11:31:46 -0700 (PDT)
-Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id x8-v6sm61689685wrd.54.2018.10.30.11.31.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Oct 2018 11:31:45 -0700 (PDT)
-Subject: Re: Regression found (Stop-marking-clocks-as-CLK_IS_CRITICAL)
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Dean Wallace <duffydack73@gmail.com>
-Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        id S1727789AbeJaDuu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 30 Oct 2018 23:50:50 -0400
+Received: from mail-40135.protonmail.ch ([185.70.40.135]:57574 "EHLO
+        mail-40135.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727679AbeJaDut (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Oct 2018 23:50:49 -0400
+Date:   Tue, 30 Oct 2018 18:56:00 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+        s=default; t=1540925765;
+        bh=4u+c6mhmAw0/UTd6udXLO9yic4Z8AJ3oip3NXi+3dro=;
+        h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:
+         Feedback-ID:From;
+        b=JwtPo8l/G2Ldz92FqOiY38VL80I0yq5i8gQ4eVaOl57r9k5QWIgJCJvRH2l2eDSgT
+         58/mll2wWIzoDj0pWohor2HbxtNW2M/2Iy3krAAilhCoXnImMvU5+G/utAap/7P57Y
+         /iONwkF1Mp1faBnSqVc+WsPdcvNpeKQuzCCA0BTM=
+To:     Hans de Goede <hdegoede@redhat.com>
+From:   Mogens Jensen <mogens-jensen@protonmail.com>
+Cc:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Dean Wallace <duffydack73@gmail.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         linux-clk <linux-clk@vger.kernel.org>,
@@ -54,11 +45,12 @@ Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
         Johannes Stezenbach <js@sig21.net>,
         Carlo Caione <carlo@endlessm.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mogens Jensen <mogens-jensen@protonmail.com>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Reply-To: Mogens Jensen <mogens-jensen@protonmail.com>
+Subject: Re: Regression found (Stop-marking-clocks-as-CLK_IS_CRITICAL)
+Message-ID: <BaxBOBmUCld7THAnRIDXUpKq8uQ2oJ49EaNlq0mZ11gFjA5JjhbfhVouLZGc1q74PrQC6uGfddKklIP059D_DtQwBqK-sn9rd4xEPhW9E6s=@protonmail.com>
+In-Reply-To: <e48696f0-aa3e-e20e-d038-9d8dda9cbfce@redhat.com>
 References: <20181025232517.ywnw54qibemosjws@picard>
- <154083512089.98144.9141070901932719147@swboyd.mtv.corp.google.com>
- <CAHp75VfnN5tF1Z9+CDDhKFNG5QfCRcGOZeAkpf-5BfCEx16gvg@mail.gmail.com>
  <CAHp75VctdBE-GM60udJawBCXdmoOqZn4N=kFWz5GLHzjPG2iQQ@mail.gmail.com>
  <20181029190819.2ivlx73n6y6sx4vk@picard>
  <ffc4bcc9-62c3-8940-85d6-d0fd01f3a1b8@linux.intel.com>
@@ -66,151 +58,76 @@ References: <20181025232517.ywnw54qibemosjws@picard>
  <20181030143836.feo7zcxiestylxoo@picard>
  <2d429c87-24c5-4075-683e-b0d12c3eb1c2@linux.intel.com>
  <d00df762-e4fc-06c5-701e-d5100bfd0e35@redhat.com>
- <783f17c2-ecc6-00fc-5629-02319b965205@redhat.com>
- <fe975fde-836a-8d24-46ca-55b02db06b45@linux.intel.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <be955ec5-7f37-3fd8-658d-c2070e46a0cb@redhat.com>
-Date:   Tue, 30 Oct 2018 19:31:44 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+ <e48696f0-aa3e-e20e-d038-9d8dda9cbfce@redhat.com>
+Feedback-ID: 4dFv7M8pOtP7CMTtfNdOwXARWpF2vcQYB4dRuX1h9mb-6008qkzO2MVweOzrAYHEdkjJ6P5PUdgJEubk4l9Lhg==:Ext:ProtonMail
 MIME-Version: 1.0
-In-Reply-To: <fe975fde-836a-8d24-46ca-55b02db06b45@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed;
+        boundary="b1_200e3efcb88cb1b28db041a66b2c6fc3"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Pierre-Louis,
+This is a multi-part message in MIME format.
 
-On 30-10-18 17:27, Pierre-Louis Bossart wrote:
-> 
-> On 10/30/18 11:02 AM, Hans de Goede wrote:
->> Hi,
->>
->> On 30-10-18 16:46, Hans de Goede wrote:
->>> Hi,
->>>
->>> On 30-10-18 16:04, Pierre-Louis Bossart wrote:
->>>>
->>>> On 10/30/18 9:38 AM, Dean Wallace wrote:
->>>>> On 30-10-18, Hans de Goede wrote:
->>>>>> Hi Dean,
->>>>>>
->>>>>> Attached are 2 different attempts at fixing this.
->>>>>>
->>>>>> When trying these patches do not forget to remove the revert of the
->>>>>> "Stop-marking-clocks-as-CLK_IS_CRITICAL" commit.
->>>>>>
->>>>>> Please first try the 0001-ASoC-intel-cht_bsw_max98090_ti-Use-pmc_plt_clk_0-ins.patch
->>>>>> patch I expect that one to do the trick indicating that the Swanky model
->>>>>> uses a different pmc clk then which is normally used for the codec clock.
->>>>>>
->>>>>> If that patch does not fix things, please give the other patch a try.
->>>>
->>>> For Baytrail devices, the audio platform clocks are not managed by the firmware. They are for CHT-based devices - as can be seen by clock resources being described in the DSDT. We used to have a if(baytrail) in the code which was replaced by this CRITICAL label, but the point remains that there is a difference between the two SOC versions.
->>>
->>> As I mentioned before the CRITICAL flag was only added a year ago to workaround
->>> an issue with on board ethernet needing plt_clk_4 on some laptops, this never
->>> had anything to do with sound.
->>
->> Ah I see now that you later made some changes based on the patch to fix the ethernet:
->>
->> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit?id=7735bce05a9c0bb0eb0f08c9002d65843a7c5798
->>
->> Note though that that does not touch the machine driver which we are discussing
->> now and the reporters machine is also BYT based.
->>
->> As explained below (in my original reply) I think it is fine to always
->> manage the clk from within the kernel. But if you think this is a bad
->> idea, we could re-introduce the is_valleyview() checks in machine
->> drivers which are used on CHT devices.
-> 
-> I am having difficulties following the proposal
-> 
-> for audio, managing the platform clocks from the kernel is only useful for Baytrail, and the code handling the CRITICAL flags is really equivalent to having a is_valleyview() test in the machine drivers. I don't quite understand the S0ix-related changes and I also don't get how using plt_clk_0 makes things better or wonder if audio on Swanky worked before the commit 7735bce05a9c ('ASoC: Intel: boards: use devm_clk_get() unconditionally'.
-> 
-> In other words, I don't know if we are dealing with a platform that only started working with 7735bce05a9c and does need a quirk to make use of plt_clk_0 or a fundamental issue with clock/power management.
+--b1_200e3efcb88cb1b28db041a66b2c6fc3
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Ok let me try to clarify this by breaking this out into the 3 separate
-things which I believe are in play here:
+=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90 Original Me=
+ssage =E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90
+On Tuesday, October 30, 2018 4:04 PM, Hans de Goede <hdegoede@redhat.com> w=
+rote:
+
+> Hi,
+>
+> On 30-10-18 16:46, Hans de Goede wrote:
+>
+> > Hi,
+> > On 30-10-18 16:04, Pierre-Louis Bossart wrote:
+> >
+> > > In addition I am not aware of any baytrail device using plt_clk_0, so=
+ moving a common machine driver such a cht_bsw_max98090_ti to use plt_clk0 =
+only would break other devices (e.g. Rambi/Orco). Asking for both clocks to=
+ be on might work though,
+> >
+> > Ok, so we need to have a DMI based quirk for the Swanky and maybe also
+> > the clapper to use plt_clk_0 there. Asking for 2 clks if we only need
+> > one does not seem like a good plan.
+>
+> Dean, Mogens,
+>
+> To write a proper patch for this I'm going to need DMI strings
+> from your devices.
+>
+> Can you please run (as normal user):
+>
+> grep . /sys/class/dmi/id/* 2> /dev/null
+>
+> And reply with the output of this command?
+I have attached the output from a coreboot seabios based clapper.
+
+Should I still test 0001-ASoC-intel-cht_bsw_max98090_ti-Use-pmc_plt_clk_0-i=
+ns.patch with SND_SOC_INTEL_CHT_BSW_MAX98090_TI_MACH and asoundrc from Dean=
+? There seems to have been some development in the case since that request =
+was made.
 
 
-1) The PMC clocks should NOT be marked as CLK_IS_CRITICAL
+--b1_200e3efcb88cb1b28db041a66b2c6fc3
+Content-Type: text/plain; name="mogens-clapper-dmi.txt"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename=mogens-clapper-dmi.txt
 
-Commit d31fd43c0f9a ("clk: x86: Do not gate clocks enabled by the firmware")
-should, in hindsight, never have been merged. CLK_IS_CRITICAL disables all
-management of the clk in question and is really intended for clks which are
-e.g. driving the CPU core itself or DRAM. The proper fix for the ethernet
-problem that patch was meant to address is for the ethernet driver to get
-and enable the clock itself. As I've done in a recent series which has as
-purpose to revert d31fd43c0f9a.
-
-d31fd43c0f9a marks any PMC clock which is enabled by the firmware as boot
-as critical, not only the codec mclk, but *any* clk.  This means that unless
-all clks which are enabled at boot are controlled by the firmware as
-either ACPI pwr-resources, or by a device's _PS3 method, some clks will
-stay on during suspend, see e.g. :
-
-https://bugzilla.kernel.org/show_bug.cgi?id=193891#c102
-https://bugzilla.kernel.org/show_bug.cgi?id=196861
-
-Also on BYT this means that if the firmware has enabled the coded mclk at
-boot it will get marked as CLK_IS_CRITICAL and we will now never disable it.
-
-If some clocks are still on during suspend then the SoC cannot reach its
-deepest sleep states while suspended, which obviously is bad.
-
-TL;DR: CLK_IS_CRITICAL block reaching the deepest sleep states so
-d31fd43c0f9a needs to be reverted.
+L3N5cy9jbGFzcy9kbWkvaWQvYmlvc19kYXRlOjA4LzIyLzIwMTQKL3N5cy9jbGFzcy9kbWkvaWQv
+Ymlvc192ZW5kb3I6Y29yZWJvb3QKL3N5cy9jbGFzcy9kbWkvaWQvY2hhc3Npc190eXBlOjMKL3N5
+cy9jbGFzcy9kbWkvaWQvY2hhc3Npc192ZW5kb3I6R09PR0xFCi9zeXMvY2xhc3MvZG1pL2lkL21v
+ZGFsaWFzOmRtaTpidm5jb3JlYm9vdDpidnI6YmQwOC8yMi8yMDE0OnN2bkdPT0dMRTpwbkNsYXBw
+ZXI6cHZyMS4wOmN2bkdPT0dMRTpjdDM6Y3ZyOgovc3lzL2NsYXNzL2RtaS9pZC9wcm9kdWN0X25h
+bWU6Q2xhcHBlcgovc3lzL2NsYXNzL2RtaS9pZC9wcm9kdWN0X3ZlcnNpb246MS4wCi9zeXMvY2xh
+c3MvZG1pL2lkL3N5c192ZW5kb3I6R09PR0xFCi9zeXMvY2xhc3MvZG1pL2lkL3VldmVudDpNT0RB
+TElBUz1kbWk6YnZuY29yZWJvb3Q6YnZyOmJkMDgvMjIvMjAxNDpzdm5HT09HTEU6cG5DbGFwcGVy
+OnB2cjEuMDpjdm5HT09HTEU6Y3QzOmN2cjoK
 
 
-2) Dropping the CLK_IS_CRITICAL flag means we are now also controlling
-the codec mclk on CHT.
+--b1_200e3efcb88cb1b28db041a66b2c6fc3--
 
-Just like setting the CLK_IS_CRITICAL flag on the mclk meant that we were
-effectively no longer controlling the mclk on BYT, reverting this change
-combined with your 7735bce05a9c ("ASoC: Intel: boards: use devm_clk_get()
-unconditionally") change means that we are now controlling the mclk on
-CHT platforms.
-
-As you point out the firmware also controls the mclk on these platforms,
-so arguably this is undesirable. As I tried to explain I do not believe
-that this is actually a problem. But if you think this is a problem then
-we will need to revert 7735bce05a9c. If you prefer to go that route then
-I can prepare a patch for this.
-
-
-3) No longer marking PMC clocks enabled at boot as CLK_IS_CRITICAL has
-caused a regression on Swanky and Clapper model chromebooks
-
-You wrote: "I wonder if audio on Swanky worked before the commit 7735bce05a9c"
-I don't think that that commit has impacted Swanky at all since Swanky is BYT
-based. Instead I believe that d31fd43c0f9a ("clk: x86: Do not gate clocks
-enabled by the firmware") has accidentally fixed audio on Swanky laptops.
-This also explains why my "Stop-marking-clocks-as-CLK_IS_CRITICAL" commit
-has broken it again as that is effectively a revert of d31fd43c0f9.
-
-As I wrote before the as a result of d31fd43c0f9a the clk enable/disable
-behavior is not only ignored on CHT, as you noticed when writing 7735bce05a9c,
-but it also causes it to be ignored on BYT, including the initial disable of
-unused clocks just before the kernel starts /sbin/init. This not only fixed
-the ethernet on the laptop model that d31fd43c0f9a targeted but also caused
-us to no longer disable plt_clk_0 on Swanky (debugging done outside of
-this thread has shown that d31fd43c0f9a sets CLK_IS_CRITICAL on plt_clk_0).
-
-TL;DR: d31fd43c0f9a ("clk: x86: Do not gate clocks enabled by the firmware")
-caused plt_clk_0 to be marked as CLK_IS_CRITICAL on Swanky, accidentally
-fixing audio. The proper fix for this is to make the cht_bsw_max98090_ti.c
-code control pmc_plt_clk_0 instead of pmc_plt_clk_3 as the Swanky board is
-actually using pmc_plt_clk_0 and since this is a BYT board we should be
-controlling the mclk there.
-
-
-I hope this helps to clarify things, if not please keep asking questions.
-
-Regards,
-
-Hans
