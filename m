@@ -2,48 +2,48 @@ Return-Path: <SRS0=0weS=NK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23E73C6786F
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Oct 2018 20:27:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B39BC2BC61
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Oct 2018 20:28:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E517820664
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Oct 2018 20:27:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E517820664
+	by mail.kernel.org (Postfix) with ESMTP id DE67320664
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Oct 2018 20:28:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE67320664
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726077AbeJaFW3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 31 Oct 2018 01:22:29 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:45229 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726026AbeJaFW3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 31 Oct 2018 01:22:29 -0400
-Received: by mail-ot1-f65.google.com with SMTP id g10so1379469otl.12;
-        Tue, 30 Oct 2018 13:27:30 -0700 (PDT)
+        id S1725931AbeJaFXc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 31 Oct 2018 01:23:32 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:40641 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725743AbeJaFXc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 31 Oct 2018 01:23:32 -0400
+Received: by mail-ot1-f68.google.com with SMTP id m15so12441097otl.7;
+        Tue, 30 Oct 2018 13:28:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=9Zd7eGUaOP7Hm+eTjWZlL4Elkwa0b9qjlU2Ei8d3yBw=;
-        b=f5c2HZ5++UiYkuyas764UvFvcFbH7fG8jMIoqAVTRvPhXN0DR+UHFVNh9j/hCNrMGS
-         niKGPeJ79q2HhtgfCwZx96Q04hPsL638x7uSWXGe8/z3CCaabzUA3tY8h+lmdTb0NGEN
-         dBpMhH6/QzViLtzC6B2dc1Ef/nscIG9Q5SpQp8uPoJWJZ1CA9nCNOyC5II2r6PZuJ1UJ
-         UPeGXXWBZVcTa1p1lsbvTfImitgDkEuhDDRf9t9s0Ui6+7t/knIPC0/NzyGbMVFw31PG
-         VgkbBGSahfBBlCHwq3BkrkatS0QCXFpTC1jST9gke6M8mJKqAVSEfpf8DDOR+BLZRFLZ
-         s1zg==
-X-Gm-Message-State: AGRZ1gLqdHl1evSjrYw3KtlenBo2i6NC5ycCsgGucRv0jWtXS6ofW/M2
-        KYkdE0a7W3E1FOkIoRpYQg==
-X-Google-Smtp-Source: AJdET5ezwMCObQdKf/OBJQj+XEw+nPBSqyMRs980jn6DjdAUbNCN6sYA63WoC1FfnSy/IgMYEINj6g==
-X-Received: by 2002:a9d:29f2:: with SMTP id g47mr153585otd.200.1540931250329;
-        Tue, 30 Oct 2018 13:27:30 -0700 (PDT)
+        bh=37aYZuhg1Zxza/c3j3Mc6wWnVbttgexS56fKhEeknMc=;
+        b=boC71BtWBuCLCSVa/XPfwrHIuyL5b/vSM9rGf2VPEs4qYARSHy9w4AGuG8LCZbDHBA
+         DQFQSuVV0GPmgcLKE66QK/vm+nDwVvKkwyRA5lvmEfPN3uIKnb265+GWlrGqy3Qg3/dN
+         0AJ38eL8XG6miRlFF98UscFwJWKhW7Ac8YjhG87JJdelX9XGJVGD9fzedfPg+LoClHbJ
+         lL640L3Bzz0O5SmoN3U7TwtFUHbEh/MjoK6mdW7mvb0EKoO/IGYXM5LuYvpvjMWqKxd9
+         L4TJ/MJIfIhMHnFupXr0CRj/dPUJHDjdZhhxavJmQT2dKDM1/aQsqfXfqpsnWzDoBfkO
+         dQHg==
+X-Gm-Message-State: AGRZ1gJilkSgCD7BX9iXgoDxBvhvJ8+a7f1YlDILp8uRy4MzTgWDljEb
+        Avg/zUQZZmt8y8uuLWuPdw==
+X-Google-Smtp-Source: AJdET5ecfvtN94QYoVj0R/ErV2Ndx7UCFG0MNNxcAFXy0efxki8bApnvOq1vBqBzdzbQ1zw/C3B4IA==
+X-Received: by 2002:a9d:c43:: with SMTP id 61mr154223otr.222.1540931313154;
+        Tue, 30 Oct 2018 13:28:33 -0700 (PDT)
 Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id t125-v6sm4520159oig.31.2018.10.30.13.27.29
+        by smtp.gmail.com with ESMTPSA id a93sm8563857otc.16.2018.10.30.13.28.32
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 30 Oct 2018 13:27:29 -0700 (PDT)
-Date:   Tue, 30 Oct 2018 15:27:23 -0500
+        Tue, 30 Oct 2018 13:28:32 -0700 (PDT)
+Date:   Tue, 30 Oct 2018 15:28:31 -0500
 From:   Rob Herring <robh@kernel.org>
 To:     Jagan Teki <jagan@amarulasolutions.com>
 Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
@@ -55,35 +55,36 @@ Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
         Jagan Teki <jagan@amarulasolutions.com>
-Subject: Re: [PATCH v3 19/25] dt-bindings: panel: Add Techstar TS8550B MIPI
- DSI panel
-Message-ID: <20181030202723.GA20468@bogus>
+Subject: Re: [PATCH v3 22/25] dt-bindings: sun6i-dsi: Add compatible for A64
+ DPHY
+Message-ID: <20181030202831.GA22352@bogus>
 References: <20181026144344.27778-1-jagan@amarulasolutions.com>
- <20181026144344.27778-20-jagan@amarulasolutions.com>
+ <20181026144344.27778-23-jagan@amarulasolutions.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181026144344.27778-20-jagan@amarulasolutions.com>
+In-Reply-To: <20181026144344.27778-23-jagan@amarulasolutions.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 26 Oct 2018 20:13:38 +0530, Jagan Teki wrote:
-> Techstar TS8550B MIPI DSI panel is 480x854, 2-lane MIPI DSI
-> LCD panel. Add dt-bingings for it.
+On Fri, 26 Oct 2018 20:13:41 +0530, Jagan Teki wrote:
+> The MIPI DSI PHY HDMI controller on Allwinner A64 is similar
+> on the one on A31.
+> 
+> Add A64 compatible and append A31 compatible as fallback.
 > 
 > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 > ---
 > Changes for v3:
-> - new patch
-> Changes for v2:
 > - none
+> Changes for v2:
+> - new patch
 > 
->  .../display/panel/techstar,ts8550b.txt        | 20 +++++++++++++++++++
->  1 file changed, 20 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/panel/techstar,ts8550b.txt
+>  Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
 
 Reviewed-by: Rob Herring <robh@kernel.org>
