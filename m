@@ -2,61 +2,60 @@ Return-Path: <SRS0=0weS=NK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE5CEC2BC61
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Oct 2018 13:04:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1B0EC2BC61
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Oct 2018 13:10:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76ED620823
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Oct 2018 13:04:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7838720831
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Oct 2018 13:10:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XOPmmUHt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76ED620823
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="f9KNOo5A"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7838720831
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727950AbeJ3V54 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 30 Oct 2018 17:57:56 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:45780 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726135AbeJ3V54 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Oct 2018 17:57:56 -0400
-Received: by mail-lj1-f195.google.com with SMTP id j4-v6so11250136ljc.12
-        for <linux-clk@vger.kernel.org>; Tue, 30 Oct 2018 06:04:32 -0700 (PDT)
+        id S1727868AbeJ3WEH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 30 Oct 2018 18:04:07 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:34704 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727863AbeJ3WEH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Oct 2018 18:04:07 -0400
+Received: by mail-lf1-f68.google.com with SMTP id n26-v6so8826966lfl.1
+        for <linux-clk@vger.kernel.org>; Tue, 30 Oct 2018 06:10:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=y3BUS53lzVMcPDlczJ3ucNN36+qQq8ngtOaDVAgo27Y=;
-        b=XOPmmUHt0rpmcq8gAQRnLIw2sRvaLqpdsnp/w7Qk/DQsaX4OM+jnEWlHy0tqkS26LZ
-         GjtcZmJev//CE15OCXGR7cKXeDekk4gkAciQmhWMHjKZsmDB+2iD1XRZHzuCZp5YB8u8
-         58Bgx7veNBno0B8UfTzpalxGJodmldIT7Jn6E=
+        bh=XrC8xFPbeEz5GfOc49fkwQzNqK0r/X7Qxa9aNATtfSU=;
+        b=f9KNOo5AAxX8B4e+6fkpEqkh/rqYSiMQ0CLhSXOl8wzHFK8nT+nO3/yoJNmH6zNYEQ
+         qS3xhqU7cY42MoQtv5yfh4JzIwWYCnYRZXBWRpOFs7+cpGiO2KN6mCy22+5PK5jOjHX8
+         Zk/y/XweOoXubwPHX5ysFZJ88WqlHrVmi6Wcc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=y3BUS53lzVMcPDlczJ3ucNN36+qQq8ngtOaDVAgo27Y=;
-        b=hviaZ90gpkd9yk7RWYF49TDaiTlfyck3O/ftOKf8j1RMItjBGM6CibqftsawSCB4kN
-         P8EP7iTOHcAnOsCcsc3jdyECpMz+nj6UzMUgpc38JmhnHU2qGDVv0RUuAYTijpf0s9ST
-         Mv6rroWJZX7mRltFLtCARGWf9MfJiVfK155KHRyIT+QD5Vk+TWKGPp2CVQKNmYq7a4l6
-         2KdIBnTNdX7zBBgxrr6hJ72g/G+o9x3QEliUGNNlLWLEGOBFv7JYpGp71yeElw9p88qf
-         IN3VqwiYIvZWwlvjW4f0+/hA3TtWctN6O0EVjKCEwmRBL9Ktq3Lmsgh0uQwXFV8XW+ix
-         R9Ug==
-X-Gm-Message-State: AGRZ1gIrif29ZsGG5+kxNoxBd9xwIuhjAUX2x+E/zD0BUdzLlmHfWpbA
-        pMiClUkMW14zTrV9rKAJTOmDsUGdZbkXL0KW4US+Pg==
-X-Google-Smtp-Source: AJdET5e+k6n0rWs1SroiOHQlNm9eLwV9G/nPtMlYQ9jbCK/IPwtVE25VBQzP4sTdoBVFwPBIVc9EO1A/s3c0wvfMkCk=
-X-Received: by 2002:a2e:760a:: with SMTP id r10-v6mr12217157ljc.97.1540904671957;
- Tue, 30 Oct 2018 06:04:31 -0700 (PDT)
+        bh=XrC8xFPbeEz5GfOc49fkwQzNqK0r/X7Qxa9aNATtfSU=;
+        b=gXD/GAHf0sHwcVCzHDRvBNRwyCJGddgz/U7T21vjcopINm3keqseUx72tO9tV+p6B0
+         tnu0R9wU91R9AFXTD3M6J805EiRPwKaEsetk5Zw4IR/114ITZPT8cJ5Hm6fALHV2nq5T
+         IEmFSGkxl5a9qm+5a7ulZRnBT0ZhATIiRViNZ2VzvhTQKpdJowmFG8Wov8y+3cE9d1EH
+         Cht4vm7UyX7DOYyqWTf4edCdiUaJaP2Awtbc7HrhnIvM21kcnqHmP+C51ggMyn5TZ1W3
+         J0naCrkuVB5FVGL12OWsXxawYB5jNvnDME1egHFgV29vxY7B1M82b0bzpPS7eyINMI6e
+         hhzA==
+X-Gm-Message-State: AGRZ1gIxnZRYIudjB0fVe1dkSHVV4KCHD/urMUtuQFZCPKgogTlzvNcn
+        9p5Bf/0Goq9cyqhbpzsEsBdBfGcZn0bH0ayZhNyHAQ==
+X-Google-Smtp-Source: AJdET5cnATZ4mzxgB5njx6Q7bd+9l9/6OoRDiP0aNGn1Blecs6hNCYOP+n9JQozCD40/3BYqFa9Y1HfPVh27Atuib/w=
+X-Received: by 2002:a19:2095:: with SMTP id g143-v6mr1827691lfg.62.1540905042408;
+ Tue, 30 Oct 2018 06:10:42 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181019095003.26046-1-ckeepax@opensource.cirrus.com> <20181019095003.26046-5-ckeepax@opensource.cirrus.com>
-In-Reply-To: <20181019095003.26046-5-ckeepax@opensource.cirrus.com>
+References: <20181019095003.26046-1-ckeepax@opensource.cirrus.com>
+In-Reply-To: <20181019095003.26046-1-ckeepax@opensource.cirrus.com>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 30 Oct 2018 14:04:20 +0100
-Message-ID: <CACRpkdbYtphSk+9E5Wzz4kZvQiT=RANDg_hYqRac7pb0M02oAA@mail.gmail.com>
-Subject: Re: [PATCH v3 5/5] pinctrl: lochnagar: Add support for the Cirrus
- Logic Lochnagar
+Date:   Tue, 30 Oct 2018 14:10:30 +0100
+Message-ID: <CACRpkdZGsD2uRmz3XL59KrLij6tFo0pT6rqVR99qFGxvitTUdQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/5] mfd: lochnagar: Add initial binding documentation
 To:     Charles Keepax <ckeepax@opensource.cirrus.com>
 Cc:     Lee Jones <lee.jones@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -80,156 +79,47 @@ X-Mailing-List: linux-clk@vger.kernel.org
 On Fri, Oct 19, 2018 at 11:50 AM Charles Keepax
 <ckeepax@opensource.cirrus.com> wrote:
 
-> Lochnagar is an evaluation and development board for Cirrus
-> Logic Smart CODEC and Amp devices. It allows the connection of
-> most Cirrus Logic devices on mini-cards, as well as allowing
-> connection of various application processor systems to provide a
-> full evaluation platform. This driver supports the board
-> controller chip on the Lochnagar board.
->
-> Lochnagar provides many pins which can generally be used for an
-> audio function such as an AIF or a PDM interface, but also as
-> GPIOs.
->
-> Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-> ---
->
-> Changes since v2:
->  - Updated aif-master/aif-slave to use a vendor prefix
->  - Correctly get and put of_node pointer in probe/remove
-
-Looks better and better! Some comments, probably not the last comments:
-
-> +#include <linux/err.h>
-> +#include <linux/errno.h>
-> +#include <linux/gpio/driver.h>
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/regmap.h>
-> +#include <linux/pinctrl/pinctrl.h>
-> +#include <linux/pinctrl/pinmux.h>
-> +#include <linux/pinctrl/pinconf.h>
-> +#include <linux/pinctrl/pinconf-generic.h>
-
-#include <linux/bits.h>
-
-> +struct lochnagar_aif {
-> +       const char name[16];
+> +      gf-aif2-txdat, usb-aif1, usb-aif2, adat-aif, soundcard-aif,
 > +
-> +       unsigned int pins[4];
-> +
-> +       unsigned int src_reg;
+> +  - aif-master : Specifies that an AIF group will be used as a master
+> +    interface (either this or aif-slave is required if a group is
+> +    being muxed to an AIF)
+> +  - aif-slave : Specifies that an AIF group will be used as a slave
+> +    interface (either this or aif-master is required if a group is
+> +    being muxed to an AIF)
 
-u32?
+This is not properly described as pin config parameters, but that is how
+they are used in the driver. Please describe that this is supposed to
+augment the pin config of the pins.
 
-> +       unsigned int src_mask;
+But I think it looks bogus. If the pins are already mixed to groups
+like that:
 
-u32?
+> +       pin-settings: pin-settings {
+> +               ap-aif {
+> +                       aif-slave;
+> +                       groups = "gf-aif1";
+> +                       function = "codec-aif3";
+> +               };
+> +               codec-aif {
+> +                       aif-master;
+> +                       groups = "codec-aif3";
+> +                       function = "gf-aif1";
+> +               };
+> +       };
 
-> +
-> +       unsigned int ctrl_reg;
+OK so what the "special properties" above indicates is really the
+direction of the pins, whether out (master) or in (slave".
 
-u32?
+Just use the standard bool pin config properties:
+input-enable;
+output-enable;
 
-> +       unsigned int ena_mask;
+Reference
+Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
 
-u32?
-
-> +       unsigned int master_mask;
-
-u32?
-
-> +struct lochnagar_func {
-> +       const char * const name;
-> +
-> +       enum lochnagar_func_type type;
-> +
-> +       int op;
-
-unsigned int? u32?
-
-Looks like u8 actually.
-
-> +struct lochnagar_group {
-> +       const char * const name;
-> +
-> +       enum lochnagar_func_type type;
-> +
-> +       const unsigned int *pins;
-> +       int npins;
-
-unsigned int npins?
-
-> +struct lochnagar_func_groups {
-> +       const char **groups;
-> +       int ngroups;
-
-unsigned int ngroups?
-
-> +struct lochnagar_pin_priv {
-> +       struct lochnagar *lochnagar;
-> +       struct device *dev;
-> +
-> +       const struct lochnagar_func *funcs;
-> +       int nfuncs;
-> +
-> +       const struct pinctrl_pin_desc *pins;
-> +       int npins;
-> +
-> +       const struct lochnagar_group *groups;
-> +       int ngroups;
-> +
-> +       struct lochnagar_func_groups func_groups[LN_FTYPE_COUNT];
-> +
-> +       struct gpio_chip gpio_chip;
-> +};
-
-I bet some of these should be unsigned as well.
-
-> +static const struct pinconf_generic_params lochnagar_dt_params[] = {
-> +       {"cirrus,aif-master", PIN_CONFIG_AIFMASTER,  0},
-> +       {"cirrus,aif-slave",  PIN_CONFIG_AIFSLAVE,   0},
-> +};
-
-I guess these are documented in the device tree bindings.
-
-They look suspciously like muxing but I guess it is explained
-there.
-
-> +static void lochnagar_gpio_set(struct gpio_chip *chip,
-> +                              unsigned int offset, int value)
-> +{
-> +       struct lochnagar_pin_priv *priv = gpiochip_get_data(chip);
-> +       struct lochnagar *lochnagar = priv->lochnagar;
-> +       const struct lochnagar_pin *pin = priv->pins[offset].drv_data;
-> +       int ret;
-> +
-> +       value = !!value;
-
-value = value ? BIT(pin->shift) : 0;
-
-> +       dev_dbg(priv->dev, "Set GPIO %s to %s\n",
-> +               pin->name, value ? "high" : "low");
-> +
-> +       switch (pin->type) {
-> +       case LN_PTYPE_MUX:
-> +               value |= LN2_OP_GPIO;
-> +
-> +               ret = lochnagar_pin_set_mux(priv, pin, value);
-> +               break;
-> +       case LN_PTYPE_GPIO:
-> +               if (pin->invert)
-> +                       value = !value;
-> +
-> +               ret = regmap_update_bits(lochnagar->regmap, pin->reg,
-> +                                        0x1 << pin->shift,
-
-BIT(pin->shift)
-
-> +                                        value << pin->shift);
-
-Just value provided you used the construction above
-to construct it.
+For this. If you want users to see that this is master and slave,
+just /* Write a comment */ in the device tree.
 
 Yours,
 Linus Walleij
