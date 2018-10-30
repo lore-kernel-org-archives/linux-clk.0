@@ -1,130 +1,164 @@
 Return-Path: <SRS0=0weS=NK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.0 required=3.0 tests=FUZZY_XPILL,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 984BFC6786F
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Oct 2018 19:10:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C900C2BC61
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Oct 2018 19:40:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58A922081B
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Oct 2018 19:10:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58A922081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 0C86920823
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Oct 2018 19:40:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C86920823
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=v3.sk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726030AbeJaEFL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 31 Oct 2018 00:05:11 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:39481 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726025AbeJaEFL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 31 Oct 2018 00:05:11 -0400
-Received: by mail-wm1-f67.google.com with SMTP id y144-v6so12355666wmd.4
-        for <linux-clk@vger.kernel.org>; Tue, 30 Oct 2018 12:10:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=N8lL8ewi2pT1RH28j6xWpur3+QBDIW5hctXSxhKT1S4=;
-        b=rPsVOgs9Fc+PRZdw4whlTuMm0dOcjWKZGfhbHJps7ikivt17szmK9ZR8XqMZPfeD2J
-         GuN4otEPZE9ZofS+qfL6H4+JYyRkf6IXMAziftzVtt0YZ2sHIDcWwkIJk6bS6aZVCZtw
-         YjRyF93JzOQ3bgix0jXQzi4s252p7cp21gAW+96Rv2q2TZAKvE0ViVWSw2/GfoFZHEXV
-         UA5Sk18zB1iAYCZMdfEJhSDkqdlz9KlM0L6q3NOLdqtIFwV8Mpdv6jJC9PdXPNZK9JFm
-         QW04Ks+Ga2IiRzf3sRxJj5YPzUnu0cEeXb+FYP3YpYFUzS2etA7AD9LFNTi69HDMMJhZ
-         sgiw==
-X-Gm-Message-State: AGRZ1gJJ8F0SlBDqF38Jt9yMO3gbuv578JDA9LUrjfGTSkWxvdhbEhg2
-        6lkLtYrma7ncGlOdJqdRrRIS0g==
-X-Google-Smtp-Source: AJdET5d9/F9UUaQnr7K03/KLsAS2ty78P4u+yRWCg0lX8erI3+kfl8RG4JTuXEpvX4gb10ItS5stlQ==
-X-Received: by 2002:a1c:2387:: with SMTP id j129-v6mr62064wmj.20.1540926627040;
-        Tue, 30 Oct 2018 12:10:27 -0700 (PDT)
-Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id c9-v6sm25764417wrh.50.2018.10.30.12.10.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Oct 2018 12:10:25 -0700 (PDT)
-Subject: Re: Regression found (Stop-marking-clocks-as-CLK_IS_CRITICAL)
-To:     Mogens Jensen <mogens-jensen@protonmail.com>
-Cc:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Dean Wallace <duffydack73@gmail.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        id S1726290AbeJaEfk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 31 Oct 2018 00:35:40 -0400
+Received: from shell.v3.sk ([90.176.6.54]:49499 "EHLO shell.v3.sk"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726072AbeJaEfk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 31 Oct 2018 00:35:40 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 648FFC48A9;
+        Tue, 30 Oct 2018 20:40:44 +0100 (CET)
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id lPgAu88fNFlh; Tue, 30 Oct 2018 20:40:41 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 53E53C48AA;
+        Tue, 30 Oct 2018 20:40:41 +0100 (CET)
+X-Virus-Scanned: amavisd-new at zimbra.v3.sk
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id EViGJRb0AfFv; Tue, 30 Oct 2018 20:40:40 +0100 (CET)
+Received: from odvarok.lan (ip-89-102-31-34.net.upcbroadband.cz [89.102.31.34])
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 3226CC48A9;
+        Tue, 30 Oct 2018 20:40:40 +0100 (CET)
+Message-ID: <2761d7e31cf7118492e466a5249303c92f68049b.camel@v3.sk>
+Subject: Re: [PATCH v2 0/8] OLPC 1.75 Keyboard/Touchpad fixes
+From:   Lubomir Rintel <lkundrak@v3.sk>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Stable <stable@vger.kernel.org>,
-        Johannes Stezenbach <js@sig21.net>,
-        Carlo Caione <carlo@endlessm.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20181025232517.ywnw54qibemosjws@picard>
- <CAHp75VctdBE-GM60udJawBCXdmoOqZn4N=kFWz5GLHzjPG2iQQ@mail.gmail.com>
- <20181029190819.2ivlx73n6y6sx4vk@picard>
- <ffc4bcc9-62c3-8940-85d6-d0fd01f3a1b8@linux.intel.com>
- <c8fb730a-c160-41b4-dad0-8ed8594e5687@redhat.com>
- <20181030143836.feo7zcxiestylxoo@picard>
- <2d429c87-24c5-4075-683e-b0d12c3eb1c2@linux.intel.com>
- <d00df762-e4fc-06c5-701e-d5100bfd0e35@redhat.com>
- <e48696f0-aa3e-e20e-d038-9d8dda9cbfce@redhat.com>
- <BaxBOBmUCld7THAnRIDXUpKq8uQ2oJ49EaNlq0mZ11gFjA5JjhbfhVouLZGc1q74PrQC6uGfddKklIP059D_DtQwBqK-sn9rd4xEPhW9E6s=@protonmail.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <d53738e1-4ba5-640e-7ef7-1705ab205061@redhat.com>
-Date:   Tue, 30 Oct 2018 20:10:25 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <BaxBOBmUCld7THAnRIDXUpKq8uQ2oJ49EaNlq0mZ11gFjA5JjhbfhVouLZGc1q74PrQC6uGfddKklIP059D_DtQwBqK-sn9rd4xEPhW9E6s=@protonmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        James Cameron <quozl@laptop.org>, linux-input@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Date:   Tue, 30 Oct 2018 20:40:38 +0100
+In-Reply-To: <20181030102610.GC21529@amd>
+References: <20181010142504.233467-1-lkundrak@v3.sk>
+         <20181015195612.GB29649@amd>
+         <c4edf9b09e88cd265a0829644aa962c28cbc3d51.camel@v3.sk>
+         <20181030100139.GB21529@amd> <20181030102610.GC21529@amd>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.1 (3.30.1-1.fc29) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+Hello Pavel,
 
-On 30-10-18 19:56, Mogens Jensen wrote:
-> ‐‐‐‐‐‐‐ Original Message ‐‐‐‐‐‐‐
-> On Tuesday, October 30, 2018 4:04 PM, Hans de Goede <hdegoede@redhat.com> wrote:
+On Tue, 2018-10-30 at 11:26 +0100, Pavel Machek wrote:
+> Hi!
 > 
->> Hi,
->>
->> On 30-10-18 16:46, Hans de Goede wrote:
->>
->>> Hi,
->>> On 30-10-18 16:04, Pierre-Louis Bossart wrote:
->>>
->>>> In addition I am not aware of any baytrail device using plt_clk_0, so moving a common machine driver such a cht_bsw_max98090_ti to use plt_clk0 only would break other devices (e.g. Rambi/Orco). Asking for both clocks to be on might work though,
->>>
->>> Ok, so we need to have a DMI based quirk for the Swanky and maybe also
->>> the clapper to use plt_clk_0 there. Asking for 2 clks if we only need
->>> one does not seem like a good plan.
->>
->> Dean, Mogens,
->>
->> To write a proper patch for this I'm going to need DMI strings
->> from your devices.
->>
->> Can you please run (as normal user):
->>
->> grep . /sys/class/dmi/id/* 2> /dev/null
->>
->> And reply with the output of this command?
-> I have attached the output from a coreboot seabios based clapper.
+> > > https://github.com/hackerspace/olpc-xo175-linux/wiki/How-to-run-an-up-to-date-Linux-on-a-XO-1.75
+> > > 
+> > > I didn't test it yet -- will do when I get home in the evening.
+> > > But
+> > > chances are it's good enough and I guess you'd be able to get it
+> > > working even if I messed up some details.
+> 
+> Instruction say make, but you really need to do make zImage and make
+> mmp2-olpc-xo-1-75.dtb .
 
-Thank you.
+Have you tried? I'm typically doing just a plain "make".
 
-> Should I still test 0001-ASoC-intel-cht_bsw_max98090_ti-Use-pmc_plt_clk_0-ins.patch with SND_SOC_INTEL_CHT_BSW_MAX98090_TI_MACH and asoundrc from Dean? There seems to have been some development in the case since that request was made.
+According to "make help", a plain "make" (assuming it's equivalent to
+"make all") includes "zImage" and "dtbs" targets.
 
-Yes please test that, I expect that to also fix things for the
-Clapper, but I need to have that confirmed before submitting a
-patch upstream adding a quirk for the Clapper to use pmc_plt_clk_0
-instead of pmc_plt_clk_3.
+> 
+> Instructions say "make -j", which is nice way to crash a machine. I
+> suggest "make -j 8" :-).
 
-Regards,
+Holy... what sort of a machine do you have?
 
-Hans
+> Ok, I think I followed the instructions. I am using empty root
+> filesystem, just with /boot -- want to see kernel messages first
+> before I mess with the userland.
+> 
+> But I don't get kernel messages during boot:
+> 
+> OLPC 1B1, 512 MiB memory...
+> OpenFirmware Q4C02 EC Frimware 0.3.02
 
+"Frimware" -- I assume you don't have a serial console hooked on? :)
 
+Doesn't matter though, your OF doesn't seem to even get to load the
+kernel anyways. And the framebuffer console (though only by the means
+of a hacked pxa168fb for the time being, no armada drm yet) works.
 
+Here's my bootup banner:
+
+OLPC 1B1, 800 MHz, 512 MiB memory, 4 GB internal storage...
+OpenFirmware  Q4D38   EC Firmware 1.0.01   2018-10-30 19:11:36 UTC
+
+I seem to have a bit newer OF.
+
+> Type any key to interrupt...
+> (but keys do not interrupt anything, ouch).
+
+In my version of the OLPC OF the routine is replaced with one that only
+accepts the Escape key, because kids like to press random keys without
+really wanting a shell. Maybe try that one?
+
+Although my prompt is also a bit different: "Type the Esc key to
+interrupt automatic startup"
+
+> Warning... partition type is 0xb...
+> Boot device: /usb/disk:\boot\olpc.fth Arguments:
+> Boot device ....
+> Warning... partition type is 0xb...
+
+Maybe the older version wouldn't support a VFAT volume, hence the
+complains about the id=0xb volume? Try ext3?
+> 
+> And that's it, cursor and no kernel messages.
+> 
+> Any ideas?
+> 
+> Could I get prepared binary zImage for testing?
+
+https://github.com/hackerspace/olpc-xo175-buildroot/releases
+
+Here's a SD card image that works for me. The topmost commit in the
+same repository is the build configuration that was used to generate
+it:
+
+https://github.com/hackerspace/olpc-xo175-buildroot/commit/71783d599.patch
+
+Note it is only going to boot off the SD card, because the root=
+argument is hardwired in the devicetree. Sorry about that -- I built
+the image before I noticed you're booting off an USB stick and I don't
+have the resources to regenerate the image at the moment.
+
+If this won't boot for you, we may need fixes for older FW. Until then
+it might be a good idea if you just update to the latest one (it is as
+easy as booting the last version of the stock distro with a charged
+battery pack).
+
+> Thanks.							
+>
+> 		
+> Pavel
+
+Take care
+Lubo
 
