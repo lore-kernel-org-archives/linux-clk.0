@@ -4,109 +4,87 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8541AC0044C
-	for <linux-clk@archiver.kernel.org>; Wed, 31 Oct 2018 07:40:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 321E5C0044C
+	for <linux-clk@archiver.kernel.org>; Wed, 31 Oct 2018 07:50:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A2CA20821
-	for <linux-clk@archiver.kernel.org>; Wed, 31 Oct 2018 07:40:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A2CA20821
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
+	by mail.kernel.org (Postfix) with ESMTP id DCDEF20840
+	for <linux-clk@archiver.kernel.org>; Wed, 31 Oct 2018 07:50:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCDEF20840
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727256AbeJaQh0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 31 Oct 2018 12:37:26 -0400
-Received: from out1.zte.com.cn ([202.103.147.172]:58492 "EHLO mxct.zte.com.cn"
+        id S1726493AbeJaQrZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 31 Oct 2018 12:47:25 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:54108 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725955AbeJaQh0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 31 Oct 2018 12:37:26 -0400
-Received: from mse01.zte.com.cn (unknown [10.30.3.20])
-        by Forcepoint Email with ESMTPS id 007A5BFE1B26685DCA5D;
-        Wed, 31 Oct 2018 15:39:53 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse01.zte.com.cn with ESMTP id w9V7dlrR015819;
-        Wed, 31 Oct 2018 15:39:47 +0800 (GMT-8)
-        (envelope-from wang.yi59@zte.com.cn)
-Received: from fox-host8.localdomain ([10.74.120.8])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2018103115400974-7800103 ;
-          Wed, 31 Oct 2018 15:40:09 +0800 
-From:   Yi Wang <wang.yi59@zte.com.cn>
-To:     paul.burton@mips.com, sboyd@kernel.org
-Cc:     mturquette@baylibre.com, linux-mips@linux-mips.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        zhong.weidong@zte.com.cn, Yi Wang <wang.yi59@zte.com.cn>
-Subject: [PATCH v3 1/2] clk: boston: fix possible memory leak in clk_boston_setup()
-Date:   Wed, 31 Oct 2018 15:41:41 +0800
-Message-Id: <1540971702-3133-2-git-send-email-wang.yi59@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1540971702-3133-1-git-send-email-wang.yi59@zte.com.cn>
-References: <1540971702-3133-1-git-send-email-wang.yi59@zte.com.cn>
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2018-10-31 15:40:09,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2018-10-31 15:39:39,
-        Serialize complete at 2018-10-31 15:39:39
-X-MAIL: mse01.zte.com.cn w9V7dlrR015819
+        id S1726336AbeJaQrZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 31 Oct 2018 12:47:25 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 362862000AB;
+        Wed, 31 Oct 2018 08:50:23 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 790822000A8;
+        Wed, 31 Oct 2018 08:50:20 +0100 (CET)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id BF7B2402C8;
+        Wed, 31 Oct 2018 15:50:16 +0800 (SGT)
+From:   Yuantian Tang <andy.tang@nxp.com>
+To:     mturquette@baylibre.com, sboyd@kernel.org
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Yuantian Tang <andy.tang@nxp.com>
+Subject: [PATCH v3] clk: qoriq: add more chips support
+Date:   Wed, 31 Oct 2018 15:46:16 +0800
+Message-Id: <20181031074616.24412-1-andy.tang@nxp.com>
+X-Mailer: git-send-email 2.14.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Smatch report warnings:
-drivers/clk/imgtec/clk-boston.c:76 clk_boston_setup() warn: possible memory leak of 'onecell'
-drivers/clk/imgtec/clk-boston.c:83 clk_boston_setup() warn: possible memory leak of 'onecell'
-drivers/clk/imgtec/clk-boston.c:90 clk_boston_setup() warn: possible memory leak of 'onecell'
+Add more chip-specific compatible strings to support more Socs.
 
-'onecell' is malloced in clk_boston_setup(), but not be freed
-before leaving from the error handling cases.
-
-Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
+Signed-off-by: Yuantian Tang <andy.tang@nxp.com>
 ---
- drivers/clk/imgtec/clk-boston.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+v3:
+  - undo deleting old bindings
+  - split dts and driver code to different patchset
+v2:
+  - remove all legacy code
 
-diff --git a/drivers/clk/imgtec/clk-boston.c b/drivers/clk/imgtec/clk-boston.c
-index 15af423..f5d54a6 100644
---- a/drivers/clk/imgtec/clk-boston.c
-+++ b/drivers/clk/imgtec/clk-boston.c
-@@ -73,27 +73,32 @@ static void __init clk_boston_setup(struct device_node *np)
- 	hw = clk_hw_register_fixed_rate(NULL, "input", NULL, 0, in_freq);
- 	if (IS_ERR(hw)) {
- 		pr_err("failed to register input clock: %ld\n", PTR_ERR(hw));
--		return;
-+		goto error;
- 	}
- 	onecell->hws[BOSTON_CLK_INPUT] = hw;
+ drivers/clk/clk-qoriq.c |   11 +++++++++++
+ 1 files changed, 11 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
+index 4c30b6e..5baa9e0 100644
+--- a/drivers/clk/clk-qoriq.c
++++ b/drivers/clk/clk-qoriq.c
+@@ -1418,12 +1418,23 @@ static void __init clockgen_init(struct device_node *np)
  
- 	hw = clk_hw_register_fixed_rate(NULL, "sys", "input", 0, sys_freq);
- 	if (IS_ERR(hw)) {
- 		pr_err("failed to register sys clock: %ld\n", PTR_ERR(hw));
--		return;
-+		goto error;
- 	}
- 	onecell->hws[BOSTON_CLK_SYS] = hw;
+ CLK_OF_DECLARE(qoriq_clockgen_1, "fsl,qoriq-clockgen-1.0", clockgen_init);
+ CLK_OF_DECLARE(qoriq_clockgen_2, "fsl,qoriq-clockgen-2.0", clockgen_init);
++CLK_OF_DECLARE(qoriq_clockgen_b4420, "fsl,b4420-clockgen", clockgen_init);
++CLK_OF_DECLARE(qoriq_clockgen_b4860, "fsl,b4860-clockgen", clockgen_init);
+ CLK_OF_DECLARE(qoriq_clockgen_ls1012a, "fsl,ls1012a-clockgen", clockgen_init);
+ CLK_OF_DECLARE(qoriq_clockgen_ls1021a, "fsl,ls1021a-clockgen", clockgen_init);
+ CLK_OF_DECLARE(qoriq_clockgen_ls1043a, "fsl,ls1043a-clockgen", clockgen_init);
+ CLK_OF_DECLARE(qoriq_clockgen_ls1046a, "fsl,ls1046a-clockgen", clockgen_init);
+ CLK_OF_DECLARE(qoriq_clockgen_ls1088a, "fsl,ls1088a-clockgen", clockgen_init);
+ CLK_OF_DECLARE(qoriq_clockgen_ls2080a, "fsl,ls2080a-clockgen", clockgen_init);
++CLK_OF_DECLARE(qoriq_clockgen_p2041, "fsl,p2041-clockgen", clockgen_init);
++CLK_OF_DECLARE(qoriq_clockgen_p3041, "fsl,p3041-clockgen", clockgen_init);
++CLK_OF_DECLARE(qoriq_clockgen_p4080, "fsl,p4080-clockgen", clockgen_init);
++CLK_OF_DECLARE(qoriq_clockgen_p5020, "fsl,p5020-clockgen", clockgen_init);
++CLK_OF_DECLARE(qoriq_clockgen_p5040, "fsl,p5040-clockgen", clockgen_init);
++CLK_OF_DECLARE(qoriq_clockgen_t1023, "fsl,t1023-clockgen", clockgen_init);
++CLK_OF_DECLARE(qoriq_clockgen_t1040, "fsl,t1040-clockgen", clockgen_init);
++CLK_OF_DECLARE(qoriq_clockgen_t2080, "fsl,t2080-clockgen", clockgen_init);
++CLK_OF_DECLARE(qoriq_clockgen_t4240, "fsl,t4240-clockgen", clockgen_init);
  
- 	hw = clk_hw_register_fixed_rate(NULL, "cpu", "input", 0, cpu_freq);
- 	if (IS_ERR(hw)) {
- 		pr_err("failed to register cpu clock: %ld\n", PTR_ERR(hw));
--		return;
-+		goto error;
- 	}
- 	onecell->hws[BOSTON_CLK_CPU] = hw;
- 
- 	err = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, onecell);
- 	if (err)
- 		pr_err("failed to add DT provider: %d\n", err);
-+
-+	return;
-+
-+error:
-+	kfree(onecell);
- }
- 
- /*
+ /* Legacy nodes */
+ CLK_OF_DECLARE(qoriq_sysclk_1, "fsl,qoriq-sysclk-1.0", sysclk_init);
 -- 
-1.8.3.1
+1.7.1
 
