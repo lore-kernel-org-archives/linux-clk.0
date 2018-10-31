@@ -2,164 +2,148 @@ Return-Path: <SRS0=PiCB=NL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8805C0044C
-	for <linux-clk@archiver.kernel.org>; Wed, 31 Oct 2018 09:16:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5083FC0044C
+	for <linux-clk@archiver.kernel.org>; Wed, 31 Oct 2018 09:29:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84F482054F
-	for <linux-clk@archiver.kernel.org>; Wed, 31 Oct 2018 09:16:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jq2wbLiK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84F482054F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 0FBD720838
+	for <linux-clk@archiver.kernel.org>; Wed, 31 Oct 2018 09:29:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FBD720838
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727764AbeJaSNY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 31 Oct 2018 14:13:24 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:34476 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725955AbeJaSNY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 31 Oct 2018 14:13:24 -0400
-Received: by mail-wr1-f67.google.com with SMTP id j26-v6so1422774wre.1;
-        Wed, 31 Oct 2018 02:16:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Fsq1VqTew96OoSDms5Ov7sKntaVeoGGNOSSHZqFQ0U4=;
-        b=jq2wbLiKUycP0bgpaY3R7vzvqANS2Jc0pmTU4WRpoayd+2U1Tu0ly+rsV8p8IntWiW
-         BYCPJf15sCtp1MfvAna1CnFbGVXyBQUTOmrTd98Bu0FjgUeytrwsY/VpdK79GIPToqS5
-         rzRwWTvxgDIAEJ76mGQ7BmCRlZAi8mTFk8ff0D65owh4kEbbhZHXtchjVh7kW6rbCjBZ
-         rv2rT0MHz6Lig7shp+GNs8YLh+mgDuQuN7nKzIc3EqC8XaED6gz/xCy2esJkU7QvjnGF
-         PqrDaX7H2jQYblRUw9/+ohtu6xV0b5tLOc7JrdrNBO8gjpDcLCLFKPb099+zjYpZ96qq
-         Gjvg==
+        id S1727791AbeJaS0y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 31 Oct 2018 14:26:54 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:34534 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727733AbeJaS0y (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 31 Oct 2018 14:26:54 -0400
+Received: by mail-ed1-f66.google.com with SMTP id w19-v6so12997119eds.1
+        for <linux-clk@vger.kernel.org>; Wed, 31 Oct 2018 02:29:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Fsq1VqTew96OoSDms5Ov7sKntaVeoGGNOSSHZqFQ0U4=;
-        b=XNpG0pz0GjNFpg3fE/Z0urLgNlZhzSmeu1RZiZ5fx4iF3jtFjrkNn37PeA7KDsq4g7
-         FhPc1pkq+RXBt6i8s8yqgo3+/iToRC3c7sqV6quqchbTBfaUcplmpA8gZ1yVHQXU3n1c
-         5hK0hj/kcwtKgxSs8zWGpG7zNxzArOS0M1tcZBeHyBDVFDpyx0gr2sFnqgBTWGxSQHkk
-         MlGYrizSx4Vckk8/SLmsD/QizJYf3AvyG8fdnFxhLDEb9JKBrM4DaWaSbDJtJmEPQGSO
-         sObe2xv3Yr0yEFxxmDGxRLYKbb2zCvCN8O8mF5BecpR2AsIacsZ8R/XZsAbTgx9kr3LJ
-         tFvQ==
-X-Gm-Message-State: AGRZ1gIAVKp35Z4CVmwUNwuMpnHoCLpiD3I7jAojpbRyBY57pAB/1D+I
-        q9FDaPf2wYV8UMr/DgsMo04BVj5tTpSCQoLyRtw=
-X-Google-Smtp-Source: AJdET5dV0Yd97hiCU4cmQta1pKPYHWajtwcagGwthP2Ia/JhwTyvEaxTlJIF+nC6KtRL2OorEx82F+hiBujsNMUtF2Y=
-X-Received: by 2002:adf:ae09:: with SMTP id x9-v6mr1881102wrc.102.1540977364981;
- Wed, 31 Oct 2018 02:16:04 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=LSDLSqkZwnwfLo7WPhPqkqH6UiOLAwoxdtNxltf3vrc=;
+        b=UMOlGiUHalNna3zvTkctJvZW1GZTqTaMiudjonvr/iISx9QQzJrAguM/jjIhgOcAWz
+         ovhpz0UXNBzVE71twmbtT/WqOuy67DbGCrmnIn56hwXAjTs5iAwvVvOhe0JQ6ZCjnioA
+         8YhYP18pZV2thIzdFOV23jJpE838BbInUcrcg/+hmMoa0m7o1UsKkPWUu9qcCQqsBEGs
+         ZUiQ8WTz/FBW4TqgOnzFpKvS1ryHBDv1i9UXpiz0vJbyMfWnxrwq/o/VfXJDWVafI975
+         umyGqpnAtEE3O2GJz66vhhWpYAS67tAzfEOZ/CQxZo9eTbvBCjB1uc//xh1R8isgDAF5
+         rMCg==
+X-Gm-Message-State: AGRZ1gJolkVykIpy/1zZno7j01jnd++bipV4u7iBN8hro/3851YLaWhw
+        6L3uIGf1jQtG1TcocVyTeo0p8g==
+X-Google-Smtp-Source: AJdET5fxkXE8MHnPLcPJW5FdL0IUVXE7BWhqakbEhNbU1gxjbClwSfflY30juRy/b57IxPob9RXXpg==
+X-Received: by 2002:a17:906:f285:: with SMTP id gu5-v6mr1023889ejb.64.1540978173735;
+        Wed, 31 Oct 2018 02:29:33 -0700 (PDT)
+Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id d23-v6sm50968ejk.21.2018.10.31.02.29.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 31 Oct 2018 02:29:33 -0700 (PDT)
+Subject: Re: Regression found (Stop-marking-clocks-as-CLK_IS_CRITICAL)
+To:     Mogens Jensen <mogens-jensen@protonmail.com>
+Cc:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Dean Wallace <duffydack73@gmail.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Stable <stable@vger.kernel.org>,
+        Johannes Stezenbach <js@sig21.net>,
+        Carlo Caione <carlo@endlessm.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20181025232517.ywnw54qibemosjws@picard>
+ <ffc4bcc9-62c3-8940-85d6-d0fd01f3a1b8@linux.intel.com>
+ <c8fb730a-c160-41b4-dad0-8ed8594e5687@redhat.com>
+ <20181030143836.feo7zcxiestylxoo@picard>
+ <2d429c87-24c5-4075-683e-b0d12c3eb1c2@linux.intel.com>
+ <d00df762-e4fc-06c5-701e-d5100bfd0e35@redhat.com>
+ <e48696f0-aa3e-e20e-d038-9d8dda9cbfce@redhat.com>
+ <BaxBOBmUCld7THAnRIDXUpKq8uQ2oJ49EaNlq0mZ11gFjA5JjhbfhVouLZGc1q74PrQC6uGfddKklIP059D_DtQwBqK-sn9rd4xEPhW9E6s=@protonmail.com>
+ <d53738e1-4ba5-640e-7ef7-1705ab205061@redhat.com>
+ <kAuINEBUUnlS5_uJafGtvryMEJVkDO4pb_yLfClwMcTS1h3sB1gYPcXBvg9X3RINfp5Uch7kLXuhTRX_JtouTYxoS6xNr77_b46e-mugl3k=@protonmail.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <b8849ae1-5a38-e7a1-da14-dc7f9d164825@redhat.com>
+Date:   Wed, 31 Oct 2018 10:29:32 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-References: <20181026144344.27778-1-jagan@amarulasolutions.com>
- <CGME20181029111305epcas5p2ee0ca644470de4e036762e000afbb71b@epcas5p2.samsung.com>
- <20181026144344.27778-18-jagan@amarulasolutions.com> <3c4c8a08-8c1e-1ac6-2b53-81389d69c97b@samsung.com>
- <CAGb2v66ENhmNXPz4PfdRJjNUNdpDNZYX2a3SH8AD6SMe9g2zLA@mail.gmail.com>
-In-Reply-To: <CAGb2v66ENhmNXPz4PfdRJjNUNdpDNZYX2a3SH8AD6SMe9g2zLA@mail.gmail.com>
-From:   Julian Calaby <julian.calaby@gmail.com>
-Date:   Wed, 31 Oct 2018 20:15:52 +1100
-Message-ID: <CAGRGNgWUpaG6W92CDBy7XCun10-TnPggTgY=iZ_4dg4E1cM7ew@mail.gmail.com>
-Subject: Re: [linux-sunxi] Re: [PATCH v3 17/25] dt-bindings: panel: Add
- Bananapi S070WV20-CT16 ICN6211 MIPI-DSI to RGB bridge
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     a.hajda@samsung.com, Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Icenowy Zheng <icenowy@aosc.io>, jernej.skrabec@siol.net,
-        anarsoul@gmail.com, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-        michael@amarulasolutions.com,
-        "Mailing List, Arm" <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-sunxi@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <kAuINEBUUnlS5_uJafGtvryMEJVkDO4pb_yLfClwMcTS1h3sB1gYPcXBvg9X3RINfp5Uch7kLXuhTRX_JtouTYxoS6xNr77_b46e-mugl3k=@protonmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Jagan,
+Hi,
 
-On Wed, Oct 31, 2018 at 7:58 PM Chen-Yu Tsai <wens@csie.org> wrote:
->
-> On Wed, Oct 31, 2018 at 4:53 PM Andrzej Hajda <a.hajda@samsung.com> wrote:
-> >
-> > On 26.10.2018 16:43, Jagan Teki wrote:
-> > > Bananapi S070WV20-CT16 ICN6211 is 800x480, 4-lane MIPI-DSI to RGB
-> > > bridge panel, which is available on same PCB with 24-bit RGB interface.
-> > >
-> > > So, this patch adds DSI specific binding details on existing
-> > > dt-bindings file.
-> > >
-> > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> > > ---
-> > > Changes for v3:
-> > > - Use existing binding doc and update dsi details
-> > > Changes for v2:
-> > > - none
-> > >
-> > >  .../display/panel/bananapi,s070wv20-ct16.txt  | 31 +++++++++++++++++--
-> > >  1 file changed, 29 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16.txt b/Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16.txt
-> > > index 35bc0c839f49..b7855dc7c66f 100644
-> > > --- a/Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16.txt
-> > > +++ b/Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16.txt
-> > > @@ -1,12 +1,39 @@
-> > >  Banana Pi 7" (S070WV20-CT16) TFT LCD Panel
-> > >
-> > > +S070WV20-CT16 is 7" 800x480 panel connected through a 24-bit RGB interface.
-> > > +
-> > > +Depending on the variant, the PCB attached to the panel module either
-> > > +supports DSI, or DSI + 24-bit RGB. DSI is converted to 24-bit RGB via
-> > > +an onboard ICN6211 MIPI DSI - RGB bridge chip, then fed to the panel
-> > > +itself
-> >
-> > As I understand this is display board, which contains 'pure' RGB panel
-> > S070WV20-CT16 and optionally ICN6211 DSI->RGB bridge.
-> > These are separate devices, just connected by vendor to simplify its
-> > assembly. Why don't you create then bridge driver for ICN6211 and RGB
-> > panel driver for S070WV20-CT16 - it looks more generic.
-> > Then you can describe both in dts and voila.
-> > Creating drivers for every combo of devices (panel + bridge), just
-> > because some vendor sells them together seems incorrect - we have
-> > devicetree for it.
->
-> Rob suggested this, and also the opposite: using the same
-> "bananapi,s070wv20-ct16"
-> compatible string for both types of connections, and have the driver deal with
-> detecting the bus type.
->
-> The thing about the bridge chip is that there's no available datasheet that
-> describes all the parts of the init sequence, in fact none at all. I managed
-> to work out some bits, but the others remain a mystery and must be hard-coded
-> to match the panel. That would work against having a generic bridge driver.
+On 31-10-18 07:02, Mogens Jensen wrote:
+> ‐‐‐‐‐‐‐ Original Message ‐‐‐‐‐‐‐
+> On Tuesday, October 30, 2018 7:10 PM, Hans de Goede <hdegoede@redhat.com> wrote:
+> 
+>> Hi,
+>>
+>> On 30-10-18 19:56, Mogens Jensen wrote:
+>>
+>>> ‐‐‐‐‐‐‐ Original Message ‐‐‐‐‐‐‐
+>>> On Tuesday, October 30, 2018 4:04 PM, Hans de Goede hdegoede@redhat.com wrote:
+>>>
+>>>> Hi,
+>>>> On 30-10-18 16:46, Hans de Goede wrote:
+>>>>
+>>>>> Hi,
+>>>>> On 30-10-18 16:04, Pierre-Louis Bossart wrote:
+>>>>>
+>>>>>> In addition I am not aware of any baytrail device using plt_clk_0, so moving a common machine driver such a cht_bsw_max98090_ti to use plt_clk0 only would break other devices (e.g. Rambi/Orco). Asking for both clocks to be on might work though,
+>>>>>
+>>>>> Ok, so we need to have a DMI based quirk for the Swanky and maybe also
+>>>>> the clapper to use plt_clk_0 there. Asking for 2 clks if we only need
+>>>>> one does not seem like a good plan.
+>>>>
+>>>> Dean, Mogens,
+>>>> To write a proper patch for this I'm going to need DMI strings
+>>>> from your devices.
+>>>> Can you please run (as normal user):
+>>>> grep . /sys/class/dmi/id/* 2> /dev/null
+>>>> And reply with the output of this command?
+>>>> I have attached the output from a coreboot seabios based clapper.
+>>
+>> Thank you.
+>>
+>>> Should I still test 0001-ASoC-intel-cht_bsw_max98090_ti-Use-pmc_plt_clk_0-ins.patch with SND_SOC_INTEL_CHT_BSW_MAX98090_TI_MACH and asoundrc from Dean? There seems to have been some development in the case since that request was made.
+>>
+>> Yes please test that, I expect that to also fix things for the
+>> Clapper, but I need to have that confirmed before submitting a
+>> patch upstream adding a quirk for the Clapper to use pmc_plt_clk_0
+>> instead of pmc_plt_clk_3.
+>>
+>> Regards,
+>>
+>> Hans
+>>
+> Unfortunately I only have access to longterm kernel 4.14 for building/running on this system, and 0001-ASoC-intel-cht_bsw_max98090_ti-Use-pmc_plt_clk_0-ins.patch does not patch against 4.14.78. Can a test patch for 4.14 be created?
 
-To me it seems logical that we'd model it as another step in the graph
-between the DSI component and the panel. It's conceivable that some
-other manufacturer will probably buy these for their panels and having
-a somewhat generic driver seems vaguely future proof to me.
+Can you run (as root):
 
-As I see it, the weird init process belongs to the bridge chip and the
-timings belong to the panel and we shouldn't "confuse" them by giving
-them the same compatible.
+for i in /sys/kernel/debug/clk/pmc_plt_clk_?; do echo -n "$i: "; cat $i/clk_flags; echo; done
 
-That said, I'm sure that these chips are already old hat and we'll
-have something different and even more incomprehensible next week.
+When running a kernel with working audio?
 
-Thanks,
+Then I can confirm that the Clapper is also using pmc_plt_clk_0, so that I can
+fix this for the clapper for 4.18+
 
---
-Julian Calaby
+I've just checked the 4.14 sources and in 4.14 the SND_SOC_INTEL_CHT_BSW_MAX98090_TI_MACH
+driver does not support mclk control yet, so for the 4.14 kernel the only way to
+fix this is to revert the 648e921888ad ("clk: x86: Stop marking clocks as CLK_IS_CRITICAL")
+commit.
 
-Email: julian.calaby@gmail.com
-Profile: http://www.google.com/profiles/julian.calaby/
+Regards,
+
+Hans
+
