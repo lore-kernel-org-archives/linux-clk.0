@@ -2,81 +2,71 @@ Return-Path: <SRS0=PiCB=NL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27871C0044C
-	for <linux-clk@archiver.kernel.org>; Wed, 31 Oct 2018 07:02:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DF31C0044C
+	for <linux-clk@archiver.kernel.org>; Wed, 31 Oct 2018 07:39:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB4B220821
-	for <linux-clk@archiver.kernel.org>; Wed, 31 Oct 2018 07:02:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB4B220821
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id 3791520821
+	for <linux-clk@archiver.kernel.org>; Wed, 31 Oct 2018 07:39:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3791520821
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725963AbeJaP6o (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 31 Oct 2018 11:58:44 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:59266 "EHLO inva021.nxp.com"
+        id S1725961AbeJaQgh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 31 Oct 2018 12:36:37 -0400
+Received: from mxhk.zte.com.cn ([63.217.80.70]:12624 "EHLO mxhk.zte.com.cn"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725931AbeJaP6o (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 31 Oct 2018 11:58:44 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 950EB2000AB;
-        Wed, 31 Oct 2018 08:01:51 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 91ABB2000AD;
-        Wed, 31 Oct 2018 08:01:45 +0100 (CET)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id E4632402D6;
-        Wed, 31 Oct 2018 15:01:37 +0800 (SGT)
-From:   Yuantian Tang <andy.tang@nxp.com>
-To:     oss@buserror.net
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, benh@kernel.crashing.org, paulus@samba.org,
-        mpe@ellerman.id.au, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, Yuantian Tang <andy.tang@nxp.com>
-Subject: [PATCH 2/2 v3] clk: qoriq: add more compatibles strings
-Date:   Wed, 31 Oct 2018 14:57:36 +0800
-Message-Id: <20181031065736.32719-2-andy.tang@nxp.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20181031065736.32719-1-andy.tang@nxp.com>
-References: <20181031065736.32719-1-andy.tang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1725955AbeJaQgh (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 31 Oct 2018 12:36:37 -0400
+Received: from mse01.zte.com.cn (unknown [10.30.3.20])
+        by Forcepoint Email with ESMTPS id 29A48546F684D577C821;
+        Wed, 31 Oct 2018 15:39:38 +0800 (CST)
+Received: from notes_smtp.zte.com.cn ([10.30.1.239])
+        by mse01.zte.com.cn with ESMTP id w9V7dSGe015250;
+        Wed, 31 Oct 2018 15:39:28 +0800 (GMT-8)
+        (envelope-from wang.yi59@zte.com.cn)
+Received: from fox-host8.localdomain ([10.74.120.8])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2018103115395006-7800048 ;
+          Wed, 31 Oct 2018 15:39:50 +0800 
+From:   Yi Wang <wang.yi59@zte.com.cn>
+To:     paul.burton@mips.com, sboyd@kernel.org
+Cc:     mturquette@baylibre.com, linux-mips@linux-mips.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        zhong.weidong@zte.com.cn, Yi Wang <wang.yi59@zte.com.cn>
+Subject: [PATCH v3 0/2] fix memory leak and unregister issue in clk_boston_setup()
+Date:   Wed, 31 Oct 2018 15:41:40 +0800
+Message-Id: <1540971702-3133-1-git-send-email-wang.yi59@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2018-10-31 15:39:50,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2018-10-31 15:39:20,
+        Serialize complete at 2018-10-31 15:39:20
+X-MAIL: mse01.zte.com.cn w9V7dSGe015250
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add more SoC compatible strings to support more chips.
+This fix two issues in clk_boston_setup() function:
+- possible memory leak of 'onecell'
+- registered clks not unregister when error happens
 
-Signed-off-by: Yuantian Tang <andy.tang@nxp.com>
----
-v3:
-  - undo deleting old bindings
-  - split the dts and driver to different patchset
+Changes from v2:
+- include smatch to the commit
+- unregister clks which registered before going out
 
- .../devicetree/bindings/clock/qoriq-clock.txt      |    6 ++++++
- 1 files changed, 6 insertions(+), 0 deletions(-)
+Yi Wang (2):
+  clk: boston: fix possible memory leak in clk_boston_setup()
+  clk: boston: unregister clks on failure in clk_boston_setup()
 
-diff --git a/Documentation/devicetree/bindings/clock/qoriq-clock.txt b/Documentation/devicetree/bindings/clock/qoriq-clock.txt
-index 97f46ad..c655f28 100644
---- a/Documentation/devicetree/bindings/clock/qoriq-clock.txt
-+++ b/Documentation/devicetree/bindings/clock/qoriq-clock.txt
-@@ -28,6 +28,12 @@ Required properties:
- 	* "fsl,p4080-clockgen"
- 	* "fsl,p5020-clockgen"
- 	* "fsl,p5040-clockgen"
-+	* "fsl,t1023-clockgen"
-+	* "fsl,t1024-clockgen"
-+	* "fsl,t1040-clockgen"
-+	* "fsl,t1042-clockgen"
-+	* "fsl,t2080-clockgen"
-+	* "fsl,t2081-clockgen"
- 	* "fsl,t4240-clockgen"
- 	* "fsl,b4420-clockgen"
- 	* "fsl,b4860-clockgen"
+ drivers/clk/imgtec/clk-boston.c | 21 +++++++++++++++++----
+ 1 file changed, 17 insertions(+), 4 deletions(-)
+
 -- 
-1.7.1
+1.8.3.1
 
