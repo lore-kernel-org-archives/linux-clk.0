@@ -2,248 +2,167 @@ Return-Path: <SRS0=PiCB=NL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.5 required=3.0 tests=FUZZY_XPILL,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E95AC0044C
-	for <linux-clk@archiver.kernel.org>; Wed, 31 Oct 2018 11:04:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E565C0044C
+	for <linux-clk@archiver.kernel.org>; Wed, 31 Oct 2018 11:54:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13AEF20657
-	for <linux-clk@archiver.kernel.org>; Wed, 31 Oct 2018 11:04:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13AEF20657
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 1F13120664
+	for <linux-clk@archiver.kernel.org>; Wed, 31 Oct 2018 11:54:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F13120664
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727637AbeJaUC3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 31 Oct 2018 16:02:29 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:39941 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726223AbeJaUC3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 31 Oct 2018 16:02:29 -0400
-Received: by mail-ed1-f67.google.com with SMTP id z12-v6so7451900edp.7
-        for <linux-clk@vger.kernel.org>; Wed, 31 Oct 2018 04:04:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language;
-        bh=MoKhVCGJrBuduLPa95Q3uN+e4avD6HdJ2vyCRrbe614=;
-        b=nNjF5zWch6/RBTIBx5pHcQU2Z/rcQCArjH33koZHwrAaIJiaYBvD6zHVm3Nk0ZtQYt
-         HLvSMM2GaIhZw013gJWwb7M1dCeaObcL6fUrS/Hny14lCbN2YVdnY6fzsy3XUYs5T5P/
-         20T91lEODk/n2RHFepTaVJkfRxfQ1T9jmgwL6fCSKIBwBZ3xqRBzwzcZrS1diauW4uVP
-         7w6JDkoXR2XGcWIR1mGLvqxUxxL5Xnjbr2z+rAupmXvQlle/yjvfkbixBjOjzSRk964n
-         JzVJm7HvV0gaLEmQtRRaQoHQfbpXqaZt1GZmtJDzhV5aYgp+cN+U9VAW188VLGh0JPRZ
-         71Ig==
-X-Gm-Message-State: AGRZ1gJ2KEs5Ncy6eUNi3XOsedbqU774/MY9sxXT+FJ96+JZU1/eahDq
-        iR8XVhRxUkaVIk1cfI9Ygb5VzQ==
-X-Google-Smtp-Source: AJdET5cfp2WEc9CCJ+0MV1c93/IRXAyi2h7HVSL25xLsTH47t5dzQ1q96HsUsU1IutqXpsDqK7fM4A==
-X-Received: by 2002:a50:9821:: with SMTP id g30-v6mr1661457edb.70.1540983891227;
-        Wed, 31 Oct 2018 04:04:51 -0700 (PDT)
-Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id b7-v6sm7405602edd.43.2018.10.31.04.04.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 31 Oct 2018 04:04:50 -0700 (PDT)
-Subject: Re: Regression found (Stop-marking-clocks-as-CLK_IS_CRITICAL)
-To:     Dean Wallace <duffydack73@gmail.com>
-Cc:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        id S1726672AbeJaUv7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 31 Oct 2018 16:51:59 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:51239 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726025AbeJaUv7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 31 Oct 2018 16:51:59 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id D7AE58082E; Wed, 31 Oct 2018 12:54:10 +0100 (CET)
+Date:   Wed, 31 Oct 2018 12:54:13 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Lubomir Rintel <lkundrak@v3.sk>
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Stable <stable@vger.kernel.org>,
-        Johannes Stezenbach <js@sig21.net>,
-        Carlo Caione <carlo@endlessm.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mogens Jensen <mogens-jensen@protonmail.com>
-References: <154083512089.98144.9141070901932719147@swboyd.mtv.corp.google.com>
- <CAHp75VfnN5tF1Z9+CDDhKFNG5QfCRcGOZeAkpf-5BfCEx16gvg@mail.gmail.com>
- <CAHp75VctdBE-GM60udJawBCXdmoOqZn4N=kFWz5GLHzjPG2iQQ@mail.gmail.com>
- <20181029190819.2ivlx73n6y6sx4vk@picard>
- <ffc4bcc9-62c3-8940-85d6-d0fd01f3a1b8@linux.intel.com>
- <c8fb730a-c160-41b4-dad0-8ed8594e5687@redhat.com>
- <20181030143836.feo7zcxiestylxoo@picard>
- <2d429c87-24c5-4075-683e-b0d12c3eb1c2@linux.intel.com>
- <d00df762-e4fc-06c5-701e-d5100bfd0e35@redhat.com>
- <e48696f0-aa3e-e20e-d038-9d8dda9cbfce@redhat.com>
- <20181030161534.wk5cf7nxbwhp2far@picard>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <307c2074-d268-a87a-6040-1240a2091a4d@redhat.com>
-Date:   Wed, 31 Oct 2018 12:04:49 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        James Cameron <quozl@laptop.org>, linux-input@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 0/8] OLPC 1.75 Keyboard/Touchpad fixes
+Message-ID: <20181031115413.GA14310@amd>
+References: <20181010142504.233467-1-lkundrak@v3.sk>
+ <20181015195612.GB29649@amd>
+ <c4edf9b09e88cd265a0829644aa962c28cbc3d51.camel@v3.sk>
+ <20181030100139.GB21529@amd>
+ <20181030102610.GC21529@amd>
+ <2761d7e31cf7118492e466a5249303c92f68049b.camel@v3.sk>
 MIME-Version: 1.0
-In-Reply-To: <20181030161534.wk5cf7nxbwhp2far@picard>
-Content-Type: multipart/mixed;
- boundary="------------1D6A7769062B0A81C24C5809"
-Content-Language: en-US
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="pf9I7BMVVzbSWLtt"
+Content-Disposition: inline
+In-Reply-To: <2761d7e31cf7118492e466a5249303c92f68049b.camel@v3.sk>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------1D6A7769062B0A81C24C5809
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-Hi,
+--pf9I7BMVVzbSWLtt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 30-10-18 17:15, Dean Wallace wrote:
-> On 30-10-18, Hans de Goede wrote:
->> Hi,
->>
->> On 30-10-18 16:46, Hans de Goede wrote:
->>> Hi,
->>>
->>> On 30-10-18 16:04, Pierre-Louis Bossart wrote:
->>>> In addition I am not aware of any baytrail device using plt_clk_0,
->>>> so moving a common machine driver such a cht_bsw_max98090_ti to use
->>>> plt_clk0 only would break other devices (e.g. Rambi/Orco). Asking
->>>> for both clocks to be on might work though,
->>>
->>> Ok, so we need to have a DMI based quirk for the Swanky and maybe also
->>> the clapper to use plt_clk_0 there. Asking for 2 clks if we only need
->>> one does not seem like a good plan.
->>
->> Dean, Mogens,
->>
->> To write a proper patch for this I'm going to need DMI strings
->> from your devices.
->>
->> Can you please run (as normal user):
->>
->> grep . /sys/class/dmi/id/* 2> /dev/null
->>
->> And reply with the output of this command?
-> Here's mine, for a coreboot uefi based swanky.
-> 
-> https://ptpb.pw/~swanky-dmi-log
+Hi!
 
-Thanks, can you give the attached patch a try. This does the same
-as the previous one you tested, but then only on the Swanky.
+> > > > https://github.com/hackerspace/olpc-xo175-linux/wiki/How-to-run-an-=
+up-to-date-Linux-on-a-XO-1.75
+> > > >=20
+> > > > I didn't test it yet -- will do when I get home in the evening.
+> > > > But
+> > > > chances are it's good enough and I guess you'd be able to get it
+> > > > working even if I messed up some details.
+> >=20
+> > Instruction say make, but you really need to do make zImage and make
+> > mmp2-olpc-xo-1-75.dtb .
+>=20
+> Have you tried? I'm typically doing just a plain "make".
+>=20
+> According to "make help", a plain "make" (assuming it's equivalent to
+> "make all") includes "zImage" and "dtbs" targets.
 
-Note I've added:
+I believe I did, but not 100% sure.
 
-Reported-and-tested-by: Dean Wallace <duffydack73@gmail.com>
+> > Instructions say "make -j", which is nice way to crash a machine. I
+> > suggest "make -j 8" :-).
+>=20
+> Holy... what sort of a machine do you have?
 
-To the commit message, I hope that is ok with you, if not let me
-know and I will drop it.
-
-Once you can confirm that this version also fixes things I will
-submit this version upstream.
-
-Regards,
-
-Hans
+Thinkpad X220. Is it too big or too small? :-). 4 threads, so I
+usually use -j 5, but -j 8 should be for my notebook and also bigger
+servers.
 
 
---------------1D6A7769062B0A81C24C5809
-Content-Type: text/x-patch;
- name="0001-ASoC-intel-cht_bsw_max98090_ti-Add-quirk-for-boards-.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
- filename*0="0001-ASoC-intel-cht_bsw_max98090_ti-Add-quirk-for-boards-.pa";
- filename*1="tch"
+> > Ok, I think I followed the instructions. I am using empty root
+> > filesystem, just with /boot -- want to see kernel messages first
+> > before I mess with the userland.
+> >=20
+> > But I don't get kernel messages during boot:
+> >=20
+> > OLPC 1B1, 512 MiB memory...
+> > OpenFirmware Q4C02 EC Frimware 0.3.02
+>=20
+> "Frimware" -- I assume you don't have a serial console hooked on? :)
 
-From 0413a62e99a00e77392011a07c9392fc132a9b15 Mon Sep 17 00:00:00 2001
-From: Hans de Goede <hdegoede@redhat.com>
-Date: Wed, 31 Oct 2018 11:35:52 +0100
-Subject: [PATCH v2] ASoC: intel: cht_bsw_max98090_ti: Add quirk for boards
- using pmc_plt_clk_0
+Not :-(. Altrough.. maybe I do have that cable somewhere, I just never
+used it.
 
-Some boards such as the Swanky model Chromebooks use pmc_plt_clk_0 for the
-mclk instead of pmc_plt_clk_3.
+> > Type any key to interrupt...
+> > (but keys do not interrupt anything, ouch).
+>=20
+> In my version of the OLPC OF the routine is replaced with one that only
+> accepts the Escape key, because kids like to press random keys without
+> really wanting a shell. Maybe try that one?
 
-This commit adds a DMI based quirk for this.
+Ok, will try.
 
-This fixing audio no longer working on these devices after
-commit 648e921888ad ("clk: x86: Stop marking clocks as CLK_IS_CRITICAL")
-that commit fixes us unnecessary keeping unused clocks on, but in case
-of the Swanky that was breaking audio support since we were not using
-the right clock in the cht_bsw_max98090_ti machine driver.
+> > And that's it, cursor and no kernel messages.
+> >=20
+> > Any ideas?
+> >=20
+> > Could I get prepared binary zImage for testing?
+>=20
+> https://github.com/hackerspace/olpc-xo175-buildroot/releases
+>=20
+> Here's a SD card image that works for me. The topmost commit in the
+> same repository is the build configuration that was used to generate
+> it:
 
-Cc: stable@vger.kernel.org
-Fixes: 648e921888ad ("clk: x86: Stop marking clocks as CLK_IS_CRITICAL")
-Reported-and-tested-by: Dean Wallace <duffydack73@gmail.com>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
----
- sound/soc/intel/boards/cht_bsw_max98090_ti.c | 32 ++++++++++++++++++--
- 1 file changed, 29 insertions(+), 3 deletions(-)
+Kernel works for me with this one. (First boot userland boots, then
+blinking cursor; next boot filesystem is corrupted. Hmm.) Feel free to
+add "Tested-by:" to patches this uses.
 
-diff --git a/sound/soc/intel/boards/cht_bsw_max98090_ti.c b/sound/soc/intel/boards/cht_bsw_max98090_ti.c
-index db6976f4ddaa..9d9f6e41d81c 100644
---- a/sound/soc/intel/boards/cht_bsw_max98090_ti.c
-+++ b/sound/soc/intel/boards/cht_bsw_max98090_ti.c
-@@ -19,6 +19,7 @@
-  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  */
- 
-+#include <linux/dmi.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
- #include <linux/slab.h>
-@@ -35,6 +36,8 @@
- #define CHT_PLAT_CLK_3_HZ	19200000
- #define CHT_CODEC_DAI	"HiFi"
- 
-+#define QUIRK_PMC_PLT_CLK_0				0x01
-+
- struct cht_mc_private {
- 	struct clk *mclk;
- 	struct snd_soc_jack jack;
-@@ -385,11 +388,29 @@ static struct snd_soc_card snd_soc_card_cht = {
- 	.num_controls = ARRAY_SIZE(cht_mc_controls),
- };
- 
-+static const struct dmi_system_id cht_max98090_quirk_table[] = {
-+	{
-+		/* Swanky model Chromebook (Toshiba Chromebook 2) */
-+		.matches = {
-+			DMI_MATCH(DMI_PRODUCT_NAME, "Swanky"),
-+		},
-+		.driver_data = (void *)QUIRK_PMC_PLT_CLK_0,
-+	},
-+	{}
-+};
-+
- static int snd_cht_mc_probe(struct platform_device *pdev)
- {
-+	const struct dmi_system_id *dmi_id;
- 	struct device *dev = &pdev->dev;
- 	int ret_val = 0;
- 	struct cht_mc_private *drv;
-+	const char *mclk_name;
-+	int quirks = 0;
-+
-+	dmi_id = dmi_first_match(cht_max98090_quirk_table);
-+	if (dmi_id)
-+		quirks = (unsigned long)dmi_id->driver_data;
- 
- 	drv = devm_kzalloc(&pdev->dev, sizeof(*drv), GFP_KERNEL);
- 	if (!drv)
-@@ -411,11 +432,16 @@ static int snd_cht_mc_probe(struct platform_device *pdev)
- 	snd_soc_card_cht.dev = &pdev->dev;
- 	snd_soc_card_set_drvdata(&snd_soc_card_cht, drv);
- 
--	drv->mclk = devm_clk_get(&pdev->dev, "pmc_plt_clk_3");
-+	if (quirks & QUIRK_PMC_PLT_CLK_0)
-+		mclk_name = "pmc_plt_clk_0";
-+	else
-+		mclk_name = "pmc_plt_clk_3";
-+
-+	drv->mclk = devm_clk_get(&pdev->dev, mclk_name);
- 	if (IS_ERR(drv->mclk)) {
- 		dev_err(&pdev->dev,
--			"Failed to get MCLK from pmc_plt_clk_3: %ld\n",
--			PTR_ERR(drv->mclk));
-+			"Failed to get MCLK from %s: %ld\n",
-+			mclk_name, PTR_ERR(drv->mclk));
- 		return PTR_ERR(drv->mclk);
- 	}
- 
--- 
-2.19.0
+> Note it is only going to boot off the SD card, because the root=3D
+> argument is hardwired in the devicetree. Sorry about that -- I built
+> the image before I noticed you're booting off an USB stick and I don't
+> have the resources to regenerate the image at the moment.
 
+No problem, I have SD cards here, too.
 
---------------1D6A7769062B0A81C24C5809--
+> If this won't boot for you, we may need fixes for older FW. Until then
+> it might be a good idea if you just update to the latest one (it is as
+> easy as booting the last version of the stock distro with a charged
+> battery pack).
+
+I'd need more instructions for firmware update. Or maybe ... lets
+ignore that. SD card is fine, and I don't want to brick it.
+
+I already broken it enough that keys need to be held during boot (or
+it does not boot).
+
+Best regards,
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--pf9I7BMVVzbSWLtt
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlvZl+UACgkQMOfwapXb+vJMVgCfRZWLBhOzRFH6OwGNv/TyiNX2
+dIAAnjK6J/WLQO9QyLAeM6KMcRuOUgRC
+=KdeG
+-----END PGP SIGNATURE-----
+
+--pf9I7BMVVzbSWLtt--
