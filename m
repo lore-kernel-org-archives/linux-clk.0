@@ -2,108 +2,109 @@ Return-Path: <SRS0=PiCB=NL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1A6FC0044C
-	for <linux-clk@archiver.kernel.org>; Wed, 31 Oct 2018 12:01:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E1B5C0044C
+	for <linux-clk@archiver.kernel.org>; Wed, 31 Oct 2018 12:29:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACFD520664
-	for <linux-clk@archiver.kernel.org>; Wed, 31 Oct 2018 12:01:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACFD520664
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mentor.com
+	by mail.kernel.org (Postfix) with ESMTP id 5254920685
+	for <linux-clk@archiver.kernel.org>; Wed, 31 Oct 2018 12:29:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5254920685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726464AbeJaU6o (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 31 Oct 2018 16:58:44 -0400
-Received: from relay1.mentorg.com ([192.94.38.131]:57786 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725897AbeJaU6o (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 31 Oct 2018 16:58:44 -0400
-Received: from svr-orw-mbx-03.mgc.mentorg.com ([147.34.90.203])
-        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
-        id 1gHpB8-0007Gv-IQ from Jiada_Wang@mentor.com ; Wed, 31 Oct 2018 05:00:54 -0700
-Received: from [172.30.112.218] (147.34.91.1) by
- svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203) with Microsoft SMTP Server
- (TLS) id 15.0.1320.4; Wed, 31 Oct 2018 05:00:50 -0700
-Subject: Re: [PATCH linux-next v1 2/4] clk: renesas: Add binding document for
- AVB Counter Clock
-To:     Stephen Boyd <sboyd@kernel.org>, <geert+renesas@glider.be>,
-        <horms@verge.net.au>, <magnus.damm@gmail.com>,
-        <mark.rutland@arm.com>, <mturquette@baylibre.com>,
-        <robh+dt@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-References: <20181025072349.15173-1-jiada_wang@mentor.com>
- <20181025072349.15173-3-jiada_wang@mentor.com>
- <154083775062.98144.11157403961171783929@swboyd.mtv.corp.google.com>
-From:   Jiada Wang <jiada_wang@mentor.com>
-Message-ID: <9f9fbf3a-4455-bdf3-0438-b39b9cdda112@mentor.com>
-Date:   Wed, 31 Oct 2018 21:00:49 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1728791AbeJaV1L (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 31 Oct 2018 17:27:11 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:52376 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728656AbeJaV1L (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 31 Oct 2018 17:27:11 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 093FE80834; Wed, 31 Oct 2018 13:29:17 +0100 (CET)
+Date:   Wed, 31 Oct 2018 13:29:19 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     James Cameron <quozl@laptop.org>
+Cc:     Lubomir Rintel <lkundrak@v3.sk>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-input@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 0/8] OLPC 1.75 Keyboard/Touchpad fixes
+Message-ID: <20181031122919.GA15074@amd>
+References: <20181010142504.233467-1-lkundrak@v3.sk>
+ <20181015195612.GB29649@amd>
+ <c4edf9b09e88cd265a0829644aa962c28cbc3d51.camel@v3.sk>
+ <20181030100139.GB21529@amd>
+ <20181030102610.GC21529@amd>
+ <20181030235430.GF30863@us.netrek.org>
 MIME-Version: 1.0
-In-Reply-To: <154083775062.98144.11157403961171783929@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-ClientProxiedBy: svr-orw-mbx-01.mgc.mentorg.com (147.34.90.201) To
- svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203)
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="wRRV7LY7NUeQGEoC"
+Content-Disposition: inline
+In-Reply-To: <20181030235430.GF30863@us.netrek.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen
 
-Thanks for your comments
+--wRRV7LY7NUeQGEoC
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 2018/10/30 3:29, Stephen Boyd wrote:
-> Quoting jiada_wang@mentor.com (2018-10-25 00:23:47)
->> From: Jiada Wang <jiada_wang@mentor.com>
->>
->> Add device tree bindings for avb counter clock for Renesas
->> R-Car Socs.
->>
->> Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
->> ---
->>   .../bindings/clock/renesas,avb-clk.txt        | 19 +++++++++++++++++++
->>   1 file changed, 19 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/clock/renesas,avb-clk.txt
->>
->> diff --git a/Documentation/devicetree/bindings/clock/renesas,avb-clk.txt b/Documentation/devicetree/bindings/clock/renesas,avb-clk.txt
->> new file mode 100644
->> index 000000000000..03bf50b5830c
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/renesas,avb-clk.txt
->> @@ -0,0 +1,19 @@
->> +* Renesas AVB Counter Clock
->> +
->> +The AVB Counter Clocks are provided by avb_counter8 Clock Generator,
->> +avb_counter8 has dividers which operates with S0D1ϕ clock and has
->> +8 output clocks.
->> +
->> +Required Properties:
->> +  - compatible: Must be "renesas,clk-avb"
->> +  - reg: Base address and length of the memory resource used by the AVB
->> +  - #clock-cells: Must be 1
->> +
->> +Example
->> +-------
->> +
->> +       clk_avb: avb-clock@ec5a011c {
->> +               compatible = "renesas,clk-avb";
->> +               reg = <0 0xec5a011c 0 0x24>;
-> This is an odd register offset. Is this just one clk inside of a larger
-> clk controller?
->
-Yes, avb_counter clock is part of Audio Clock Generator reg: <0 
-0xec5a0000 0 0x140>,
-but "adg" has already been declared in R-Car GEN2/GEN3 SoC .dtsi file, 
-with reg: <0 0xec5a0000 0 0x100>,
-which leaves <0 0xec5a0100 0 0x140> currently not used by any module.
+Hi!
 
-Thanks,
-Jiada
+> > But I don't get kernel messages during boot:
+> >=20
+> > OLPC 1B1, 512 MiB memory...
+> > OpenFirmware Q4C02 EC Frimware 0.3.02
+> >=20
+> > Type any key to interrupt...
+> > (but keys do not interrupt anything, ouch).
+> > Warning... partition type is 0xb...
+> > Boot device: /usb/disk:\boot\olpc.fth Arguments:
+> > Boot device ....
+> > Warning... partition type is 0xb...
+>=20
+> That firmware has problems with USB drives.  Please upgrade to Q4D38.
+> Quickest tested method is http://wiki.laptop.org/go/Upgrading_firmware
+
+Let me try that... Upgrading firmware said "USB drive" so I placed
+bootfw.zip on usb drive. It did quite a show, but I believe it said
+that my firmware is up to date?
+
+It all ended with "activation lease not found" message. Let me retry?
+Same result.
+
+Let me try "upgrading firmware" with SD card. It seems to work with SD
+card. Holding down both "yes" and "no" keys during boot results in
+more useful messages... good. I have now updated firmware, and it even
+fixed my previous boot problem. Good.
+
+Thanks!
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--wRRV7LY7NUeQGEoC
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlvZoB8ACgkQMOfwapXb+vIpwQCfWH+L06L+O7eJ1zs+wXKhuo3Y
+Y0cAoLRDSdd0TA/ttWF7HfBB4K/daRe+
+=hlkl
+-----END PGP SIGNATURE-----
+
+--wRRV7LY7NUeQGEoC--
