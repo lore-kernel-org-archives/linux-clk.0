@@ -2,51 +2,68 @@ Return-Path: <SRS0=PiCB=NL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5083FC0044C
-	for <linux-clk@archiver.kernel.org>; Wed, 31 Oct 2018 09:29:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6291BC0044C
+	for <linux-clk@archiver.kernel.org>; Wed, 31 Oct 2018 10:03:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FBD720838
-	for <linux-clk@archiver.kernel.org>; Wed, 31 Oct 2018 09:29:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FBD720838
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 2A147205F4
+	for <linux-clk@archiver.kernel.org>; Wed, 31 Oct 2018 10:03:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="heDiz94J"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A147205F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727791AbeJaS0y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 31 Oct 2018 14:26:54 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:34534 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727733AbeJaS0y (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 31 Oct 2018 14:26:54 -0400
-Received: by mail-ed1-f66.google.com with SMTP id w19-v6so12997119eds.1
-        for <linux-clk@vger.kernel.org>; Wed, 31 Oct 2018 02:29:34 -0700 (PDT)
+        id S1727645AbeJaTBP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 31 Oct 2018 15:01:15 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:44787 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727436AbeJaTBP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 31 Oct 2018 15:01:15 -0400
+Received: by mail-wr1-f65.google.com with SMTP id d17-v6so15453873wre.11;
+        Wed, 31 Oct 2018 03:03:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=rMsNriSRIA0+IzNyblsxfRhJ5PS/9torhfa6Q14Ev60=;
+        b=heDiz94JeNbHLB9Jbfq2S9RMKKgyx7RF4IP6d2hRtB5nZQZPet+gf9lJep9LvtS34p
+         TBVksDRm/qIZr85s4mPkmvXoI3zkXfQLLtCHeHbccIgu/ENoAekivElownajEj7Q7KO2
+         sYD9YGMHs62pqPdVl7tmmdyW61KlC/rJ3zPbXTnBM3sotuONDOyQ05rhAM/I64yCSgOU
+         Nt5Y2JAlF5/WR2Q1coZdLKGDV61ai+dUwCN9UvcISdODXLJjXssUiedMOwiurE1z3grC
+         zlE8Ka4dnDHPyjdNTtGih8GH19b5iG2bk5pFe2FLVACV89WRp2Gdz5TerWY8m5l7kXWj
+         e9nA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=LSDLSqkZwnwfLo7WPhPqkqH6UiOLAwoxdtNxltf3vrc=;
-        b=UMOlGiUHalNna3zvTkctJvZW1GZTqTaMiudjonvr/iISx9QQzJrAguM/jjIhgOcAWz
-         ovhpz0UXNBzVE71twmbtT/WqOuy67DbGCrmnIn56hwXAjTs5iAwvVvOhe0JQ6ZCjnioA
-         8YhYP18pZV2thIzdFOV23jJpE838BbInUcrcg/+hmMoa0m7o1UsKkPWUu9qcCQqsBEGs
-         ZUiQ8WTz/FBW4TqgOnzFpKvS1ryHBDv1i9UXpiz0vJbyMfWnxrwq/o/VfXJDWVafI975
-         umyGqpnAtEE3O2GJz66vhhWpYAS67tAzfEOZ/CQxZo9eTbvBCjB1uc//xh1R8isgDAF5
-         rMCg==
-X-Gm-Message-State: AGRZ1gJolkVykIpy/1zZno7j01jnd++bipV4u7iBN8hro/3851YLaWhw
-        6L3uIGf1jQtG1TcocVyTeo0p8g==
-X-Google-Smtp-Source: AJdET5fxkXE8MHnPLcPJW5FdL0IUVXE7BWhqakbEhNbU1gxjbClwSfflY30juRy/b57IxPob9RXXpg==
-X-Received: by 2002:a17:906:f285:: with SMTP id gu5-v6mr1023889ejb.64.1540978173735;
-        Wed, 31 Oct 2018 02:29:33 -0700 (PDT)
-Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id d23-v6sm50968ejk.21.2018.10.31.02.29.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 31 Oct 2018 02:29:33 -0700 (PDT)
-Subject: Re: Regression found (Stop-marking-clocks-as-CLK_IS_CRITICAL)
-To:     Mogens Jensen <mogens-jensen@protonmail.com>
-Cc:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Dean Wallace <duffydack73@gmail.com>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=rMsNriSRIA0+IzNyblsxfRhJ5PS/9torhfa6Q14Ev60=;
+        b=nfsIdwLpOoTJjeliELDs4NQJbCrqX/sWsTYFVWXTD2zzfjq0c9l3ZtvUuxAXQ4lnJK
+         CZLLtDfbAPCdZaJC31BqtBCTdbAeMgZEyeuNRhHYFIpGH/u6Tt38ce9RUEiZYRgv5InQ
+         KNPUrN4fA9aY41FzA8iVwt9gW5tj1AddehqvZqgIR+MWffrqJHm+6By4CgiXbuUMhsNN
+         RaVuJbxbQi1VjAcxNksJC9EB0gOf01fdsaoVCrps1yvn0YJbsu2cb99goIaC7x2PeJ3K
+         F9gWdiERhCmIypQ/k06UolmRtHmgrAIaes6PNM4nFwz1zSl7TGddMG3hJHEy/oV2Pb1Y
+         7kJQ==
+X-Gm-Message-State: AGRZ1gLfm5v8XASaew4/XnGoL483xiPXhm316oQNxYXMw6ZuHQIsL8zO
+        SQaKWmZTnwySGjmErZ5bTms=
+X-Google-Smtp-Source: AJdET5c7Fd3odKbCKNcMzYdWjyG2h1S5g6WIwZLuQrM0HvPi0yKfw7+8Z55RxuA9mwThiV5nAswJyQ==
+X-Received: by 2002:adf:9b84:: with SMTP id d4-v6mr1997082wrc.240.1540980225640;
+        Wed, 31 Oct 2018 03:03:45 -0700 (PDT)
+Received: from picard ([194.207.103.1])
+        by smtp.gmail.com with ESMTPSA id x18-v6sm14417205wrv.31.2018.10.31.03.03.44
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 31 Oct 2018 03:03:44 -0700 (PDT)
+Date:   Wed, 31 Oct 2018 10:03:43 +0000
+From:   Dean Wallace <duffydack73@gmail.com>
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Mogens Jensen <mogens-jensen@protonmail.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
         Andy Shevchenko <andy.shevchenko@gmail.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -56,8 +73,9 @@ Cc:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
         Carlo Caione <carlo@endlessm.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20181025232517.ywnw54qibemosjws@picard>
- <ffc4bcc9-62c3-8940-85d6-d0fd01f3a1b8@linux.intel.com>
+Subject: Re: Regression found (Stop-marking-clocks-as-CLK_IS_CRITICAL)
+Message-ID: <20181031100343.74tsj4j3e23q6r7a@picard>
+References: <ffc4bcc9-62c3-8940-85d6-d0fd01f3a1b8@linux.intel.com>
  <c8fb730a-c160-41b4-dad0-8ed8594e5687@redhat.com>
  <20181030143836.feo7zcxiestylxoo@picard>
  <2d429c87-24c5-4075-683e-b0d12c3eb1c2@linux.intel.com>
@@ -66,84 +84,93 @@ References: <20181025232517.ywnw54qibemosjws@picard>
  <BaxBOBmUCld7THAnRIDXUpKq8uQ2oJ49EaNlq0mZ11gFjA5JjhbfhVouLZGc1q74PrQC6uGfddKklIP059D_DtQwBqK-sn9rd4xEPhW9E6s=@protonmail.com>
  <d53738e1-4ba5-640e-7ef7-1705ab205061@redhat.com>
  <kAuINEBUUnlS5_uJafGtvryMEJVkDO4pb_yLfClwMcTS1h3sB1gYPcXBvg9X3RINfp5Uch7kLXuhTRX_JtouTYxoS6xNr77_b46e-mugl3k=@protonmail.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <b8849ae1-5a38-e7a1-da14-dc7f9d164825@redhat.com>
-Date:   Wed, 31 Oct 2018 10:29:32 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+ <b8849ae1-5a38-e7a1-da14-dc7f9d164825@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <kAuINEBUUnlS5_uJafGtvryMEJVkDO4pb_yLfClwMcTS1h3sB1gYPcXBvg9X3RINfp5Uch7kLXuhTRX_JtouTYxoS6xNr77_b46e-mugl3k=@protonmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <b8849ae1-5a38-e7a1-da14-dc7f9d164825@redhat.com>
+X-Info: Keep It Simple, Stupid.
+X-Operating-System: Linux, kernel 4.18.14-arch1-1-ARCH
+X-Message-Flag: WARNING!! Outlook sucks
+User-Agent: Every email client sucks, this one just sucks less.
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
-
-On 31-10-18 07:02, Mogens Jensen wrote:
-> ‐‐‐‐‐‐‐ Original Message ‐‐‐‐‐‐‐
-> On Tuesday, October 30, 2018 7:10 PM, Hans de Goede <hdegoede@redhat.com> wrote:
+On 31-10-18, Hans de Goede wrote:
+> Hi,
 > 
->> Hi,
->>
->> On 30-10-18 19:56, Mogens Jensen wrote:
->>
->>> ‐‐‐‐‐‐‐ Original Message ‐‐‐‐‐‐‐
->>> On Tuesday, October 30, 2018 4:04 PM, Hans de Goede hdegoede@redhat.com wrote:
->>>
->>>> Hi,
->>>> On 30-10-18 16:46, Hans de Goede wrote:
->>>>
->>>>> Hi,
->>>>> On 30-10-18 16:04, Pierre-Louis Bossart wrote:
->>>>>
->>>>>> In addition I am not aware of any baytrail device using plt_clk_0, so moving a common machine driver such a cht_bsw_max98090_ti to use plt_clk0 only would break other devices (e.g. Rambi/Orco). Asking for both clocks to be on might work though,
->>>>>
->>>>> Ok, so we need to have a DMI based quirk for the Swanky and maybe also
->>>>> the clapper to use plt_clk_0 there. Asking for 2 clks if we only need
->>>>> one does not seem like a good plan.
->>>>
->>>> Dean, Mogens,
->>>> To write a proper patch for this I'm going to need DMI strings
->>>> from your devices.
->>>> Can you please run (as normal user):
->>>> grep . /sys/class/dmi/id/* 2> /dev/null
->>>> And reply with the output of this command?
->>>> I have attached the output from a coreboot seabios based clapper.
->>
->> Thank you.
->>
->>> Should I still test 0001-ASoC-intel-cht_bsw_max98090_ti-Use-pmc_plt_clk_0-ins.patch with SND_SOC_INTEL_CHT_BSW_MAX98090_TI_MACH and asoundrc from Dean? There seems to have been some development in the case since that request was made.
->>
->> Yes please test that, I expect that to also fix things for the
->> Clapper, but I need to have that confirmed before submitting a
->> patch upstream adding a quirk for the Clapper to use pmc_plt_clk_0
->> instead of pmc_plt_clk_3.
->>
->> Regards,
->>
->> Hans
->>
-> Unfortunately I only have access to longterm kernel 4.14 for building/running on this system, and 0001-ASoC-intel-cht_bsw_max98090_ti-Use-pmc_plt_clk_0-ins.patch does not patch against 4.14.78. Can a test patch for 4.14 be created?
+> On 31-10-18 07:02, Mogens Jensen wrote:
+> > ‐‐‐‐‐‐‐ Original Message ‐‐‐‐‐‐‐
+> > On Tuesday, October 30, 2018 7:10 PM, Hans de Goede <hdegoede@redhat.com> wrote:
+> > 
+> > > Hi,
+> > > 
+> > > On 30-10-18 19:56, Mogens Jensen wrote:
+> > > 
+> > > > ‐‐‐‐‐‐‐ Original Message ‐‐‐‐‐‐‐
+> > > > On Tuesday, October 30, 2018 4:04 PM, Hans de Goede hdegoede@redhat.com wrote:
+> > > > 
+> > > > > Hi,
+> > > > > On 30-10-18 16:46, Hans de Goede wrote:
+> > > > > 
+> > > > > > Hi,
+> > > > > > On 30-10-18 16:04, Pierre-Louis Bossart wrote:
+> > > > > > 
+> > > > > > > In addition I am not aware of any baytrail device using plt_clk_0, so moving a common machine driver such a cht_bsw_max98090_ti to use plt_clk0 only would break other devices (e.g. Rambi/Orco). Asking for both clocks to be on might work though,
+> > > > > > 
+> > > > > > Ok, so we need to have a DMI based quirk for the Swanky and maybe also
+> > > > > > the clapper to use plt_clk_0 there. Asking for 2 clks if we only need
+> > > > > > one does not seem like a good plan.
+> > > > > 
+> > > > > Dean, Mogens,
+> > > > > To write a proper patch for this I'm going to need DMI strings
+> > > > > from your devices.
+> > > > > Can you please run (as normal user):
+> > > > > grep . /sys/class/dmi/id/* 2> /dev/null
+> > > > > And reply with the output of this command?
+> > > > > I have attached the output from a coreboot seabios based clapper.
+> > > 
+> > > Thank you.
+> > > 
+> > > > Should I still test 0001-ASoC-intel-cht_bsw_max98090_ti-Use-pmc_plt_clk_0-ins.patch with SND_SOC_INTEL_CHT_BSW_MAX98090_TI_MACH and asoundrc from Dean? There seems to have been some development in the case since that request was made.
+> > > 
+> > > Yes please test that, I expect that to also fix things for the
+> > > Clapper, but I need to have that confirmed before submitting a
+> > > patch upstream adding a quirk for the Clapper to use pmc_plt_clk_0
+> > > instead of pmc_plt_clk_3.
+> > > 
+> > > Regards,
+> > > 
+> > > Hans
+> > > 
+> > Unfortunately I only have access to longterm kernel 4.14 for building/running on this system, and 0001-ASoC-intel-cht_bsw_max98090_ti-Use-pmc_plt_clk_0-ins.patch does not patch against 4.14.78. Can a test patch for 4.14 be created?
+> 
+> Can you run (as root):
+> 
+> for i in /sys/kernel/debug/clk/pmc_plt_clk_?; do echo -n "$i: "; cat $i/clk_flags; echo; done
+> 
+> When running a kernel with working audio?
+> 
+> Then I can confirm that the Clapper is also using pmc_plt_clk_0, so that I can
+> fix this for the clapper for 4.18+
+> 
+> I've just checked the 4.14 sources and in 4.14 the SND_SOC_INTEL_CHT_BSW_MAX98090_TI_MACH
+> driver does not support mclk control yet, so for the 4.14 kernel the only way to
+> fix this is to revert the 648e921888ad ("clk: x86: Stop marking clocks as CLK_IS_CRITICAL")
+> commit.
+> 
+> Regards,
+> 
+> Hans
+> 
 
-Can you run (as root):
-
-for i in /sys/kernel/debug/clk/pmc_plt_clk_?; do echo -n "$i: "; cat $i/clk_flags; echo; done
-
-When running a kernel with working audio?
-
-Then I can confirm that the Clapper is also using pmc_plt_clk_0, so that I can
-fix this for the clapper for 4.18+
-
-I've just checked the 4.14 sources and in 4.14 the SND_SOC_INTEL_CHT_BSW_MAX98090_TI_MACH
-driver does not support mclk control yet, so for the 4.14 kernel the only way to
-fix this is to revert the 648e921888ad ("clk: x86: Stop marking clocks as CLK_IS_CRITICAL")
-commit.
-
-Regards,
-
-Hans
-
+Hi guys,
+Morgens, If you can't test a recent kernel on your Clapper, I might be able to
+give you a 'live' usb to boot with the kernel on, so you can quickly
+test.  It's basically just archlinux iso with xfce and tools, with arch's
+LTS and latest stable kernels.  If it will help.
+-- 
+Dean
