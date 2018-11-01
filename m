@@ -2,121 +2,101 @@ Return-Path: <SRS0=b8N2=NM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DACEC0044C
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Nov 2018 12:04:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E014C6786F
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Nov 2018 13:15:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 408702081B
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Nov 2018 12:04:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05885204FD
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Nov 2018 13:15:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="wxCepGSQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 408702081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ba2j8U9I"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05885204FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728326AbeKAVHU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 1 Nov 2018 17:07:20 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:43288 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728085AbeKAVHU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Nov 2018 17:07:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=+5Ol0FkgtUsBlmsV899qrV7t6L/m0ec1TMayPN265mA=; b=wxCepGSQPUdA31KzKBH2HFx7p
-        3SxGr7/aQcNF+3Q29AvFZYHXEJqViHjGKgpGDAkSpGKuqQ8UDxSCi3CiOP+ZVRry/nXBR57udodoh
-        +nhWxRS9oAIKMNR6Y9yLFne1Wk+k0dIbSsFvdNznhDINlN25dYceYlRomWh1m3ImCBJUQ=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gIBiE-0005T6-4o; Thu, 01 Nov 2018 12:04:34 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id D4611112260E; Thu,  1 Nov 2018 12:04:33 +0000 (GMT)
-Date:   Thu, 1 Nov 2018 12:04:33 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Richard Fitzgerald <rf@opensource.cirrus.com>
-Cc:     Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Lee Jones <lee.jones@linaro.org>, mturquette@baylibre.com,
-        sboyd@kernel.org, linus.walleij@linaro.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, lgirdwood@gmail.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        patches@opensource.cirrus.com, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v2 2/5] mfd: lochnagar: Add support for the Cirrus Logic
- Lochnagar
-Message-ID: <20181101120433.GC6425@sirena.org.uk>
-References: <20181025074459.GF4939@dell>
- <20181025082621.GD16508@imbe.wolfsonmicro.main>
- <b2f85f45-cbe9-5a27-e9e8-ad28f2bd9bd6@opensource.cirrus.com>
- <20181025114205.GC4870@dell>
- <33ea391c-aa6e-2709-6faf-4905e84229e4@opensource.cirrus.com>
- <20181026080051.GK4870@dell>
- <20181026203223.GC27137@sirena.org.uk>
- <20181029110439.GS4870@dell>
- <20181101102828.GM16508@imbe.wolfsonmicro.main>
- <71938ce2-00da-8ee0-c010-58c2670ee327@opensource.cirrus.com>
+        id S1728450AbeKAWSu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 1 Nov 2018 18:18:50 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:45270 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728351AbeKAWSu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Nov 2018 18:18:50 -0400
+Received: by mail-lj1-f194.google.com with SMTP id j4-v6so18008830ljc.12;
+        Thu, 01 Nov 2018 06:15:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=R3pv2G7gSVJDRDILlpFOB0c/JOxx5Q6+GpDJMALNQ8Y=;
+        b=Ba2j8U9I708Y3e6IyZNdqXVvqBY3BkM7fmnqK/al/3QeWkXte3vTv599Zt9R5Ve83Z
+         6C3VCgOVxJMAL7hQ9MFp7T/p0i2Mc3i3EnVWDyLPmma4CXsv2S7bwudOPIcsr0J91C++
+         HHqsQTpICE5g9IZs5nj3lVg8EBPhO2RSRmnhuHV/Hruvn8y5X3d1pBOgcJsOJ/3edF7I
+         y6P98QhI7gu+XY7QKWcB1r0tN+1f4JRTU64LQcVDPyf+TadZ9oR4IGQPjXt8JlKNwtac
+         /vetZy6V63D67S5CUAmyEjOj+1NHPTLutFahQegleFQDnFgGdz7d1m+tnBXLtUYVS0GG
+         BmeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=R3pv2G7gSVJDRDILlpFOB0c/JOxx5Q6+GpDJMALNQ8Y=;
+        b=Fhd9Eoyjv/Ip5y9L1CnTpBbr9l0fsqXfW69JFNegibX/yWRaTS7LLeAEml/Uts0909
+         ZZ/zrgIKALSn8lXFOLE6j1AEOCUT1b4lr44qYTJ32IBpXL5XGsGV8wo/XY4kQfotzuWh
+         FE5RAZWOqJDdUfWjAoRmwB+7vGUWyMLxxEfeWbvx56nrn1ZdOzIjJ3CGLJgsaC2w2Sx7
+         B/BXsZMnYsk9kW5d8JqhtOIHys2JSUHJMxyAAC/Kei7KjmKEFDoNxFwH6l4L74i7EG+3
+         Pr29kMAPI1T2w4vXWa26jTeTqXCmf5VDf78n8DqrpEFJFzInidQ1WFklPWyqvUFOjW/z
+         CBnQ==
+X-Gm-Message-State: AGRZ1gLS0GeQG5lkLc3KP1F2n1B8VM3qvMca3GyMO0BrZ5Ej/fk6/LAs
+        7hg4Ys3xHA9XJjyq/NweumcNcpvu2mc=
+X-Google-Smtp-Source: AJdET5ddsk9S0hLvya2w9nWUDevRrcCOGxBneehFhUoy0+mmVmo+J8yLesRMnS9Hz4uikgDsCsdORg==
+X-Received: by 2002:a2e:2e1a:: with SMTP id u26-v6mr5360401lju.8.1541078152899;
+        Thu, 01 Nov 2018 06:15:52 -0700 (PDT)
+Received: from neopili.qtec.com (cpe.xe-3-0-1-778.vbrnqe10.dk.customer.tdc.net. [80.197.57.18])
+        by smtp.gmail.com with ESMTPSA id 66-v6sm390741ljj.13.2018.11.01.06.15.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 01 Nov 2018 06:15:51 -0700 (PDT)
+From:   Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Alan Tull <atull@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Subject: [PATCH] clk: fixed-factor: fix of_node_get-put imbalance
+Date:   Thu,  1 Nov 2018 14:15:49 +0100
+Message-Id: <20181101131549.24497-1-ricardo.ribalda@gmail.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="TYecfFk8j8mZq+dy"
-Content-Disposition: inline
-In-Reply-To: <71938ce2-00da-8ee0-c010-58c2670ee327@opensource.cirrus.com>
-X-Cookie: Excellent day to have a rotten day.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+When the fixed factor clock is created by devicetree,
+of_clk_add_provider is called.  Add a call to
+of_clk_del_provider in the remove function to balance
+it out.
 
---TYecfFk8j8mZq+dy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Reported-by: Alan Tull <atull@kernel.org>
+Fixes: 971451b3b15d ("clk: fixed-factor: Convert into a module platform driver")
+Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+---
+ drivers/clk/clk-fixed-factor.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-On Thu, Nov 01, 2018 at 11:40:01AM +0000, Richard Fitzgerald wrote:
-> On 01/11/18 10:28, Charles Keepax wrote:
+diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-factor.c
+index 20724abd38bd..7df6b5b1e7ee 100644
+--- a/drivers/clk/clk-fixed-factor.c
++++ b/drivers/clk/clk-fixed-factor.c
+@@ -210,6 +210,7 @@ static int of_fixed_factor_clk_remove(struct platform_device *pdev)
+ {
+ 	struct clk *clk = platform_get_drvdata(pdev);
+ 
++	of_clk_del_provider(pdev->dev.of_node);
+ 	clk_unregister_fixed_factor(clk);
+ 
+ 	return 0;
+-- 
+2.19.1
 
-> > So pulling this out from earlier discussions in this thread,
-> > it seems I can happily move all the child device registration
-> > into device tree. I will also try this for the next version of
-> > the patch, unless anyone wants to object? But it does change
-> > the DT binding quite a lot as the individual sub drivers now
-> > each require their own node rather than one single unified
-> > Lochnagar node.
-
-> We went through this discussion with the Madera MFD patches. I had
-> originally implemented it using DT to register the child drivers and
-> it was nice in some ways each driver having its own node. But Mark
-> and Rob didn't like it so I went back to non-DT child registration with
-> all sharing the parent MFD node. It would be nice if we could stick to
-> one way of doing it so that Cirrus drivers don't flip-flop between
-> different styles of DT binding.
-
-The basic concern I have is encoding the current Linux idea of how to
-split the subfunctions up into drivers into an ABI - the clocks in CODEC
-drivers is the obvious example, they might want to be in the clock API
-in future.  If there's a very direct mapping onto individual hardware
-blocks that worries me a lot less since it's more obviously reflecting
-how the hardware is designed.
-
---TYecfFk8j8mZq+dy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlva69EACgkQJNaLcl1U
-h9CNKQf+IE/F7jz5M6NjKEd2X3SqqJcqEP1+CXLXM3Ny1yMI272FpSrV6BiQczlY
-Xjy0PP+Y+YsAHtyfaybjuf1s5E8iq8SN5XJk5Tw1pobUGjIKAnESL/0h3bf+jHtM
-xXAxmCfZP8QjJ/Gy42AgUf7+UWjycAmBlwqecvsViEUWRVctxsGYRh7ZrYrs7kEz
-/pjPMF2QG8mMkqSVGvMQuPtQrKL3Thd/IMlzUmMCF8hpKKjEYe6Yj3mKvOD4X7lx
-dnxvYEnH5tlkHiaVQ7K3JIJKTftVPwxdXiTDj0RePWR9mMdbKXe6kn8f272Yyer2
-fkAY/Ak3PYDPAH7NkXmYVp2xz1naAg==
-=l5Yg
------END PGP SIGNATURE-----
-
---TYecfFk8j8mZq+dy--
