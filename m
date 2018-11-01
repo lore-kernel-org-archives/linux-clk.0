@@ -4,60 +4,60 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 368E6C0044C
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Nov 2018 15:29:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46403C0044C
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Nov 2018 15:39:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5FDF20820
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Nov 2018 15:29:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F38BB2064C
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Nov 2018 15:39:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bsdhbVK8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5FDF20820
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eLaxYRBO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F38BB2064C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728664AbeKBAc5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 1 Nov 2018 20:32:57 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:39486 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728117AbeKBAc5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Nov 2018 20:32:57 -0400
-Received: by mail-wm1-f68.google.com with SMTP id u13-v6so1667365wmc.4;
-        Thu, 01 Nov 2018 08:29:29 -0700 (PDT)
+        id S1728588AbeKBAnT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 1 Nov 2018 20:43:19 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:51675 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727950AbeKBAnT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Nov 2018 20:43:19 -0400
+Received: by mail-wm1-f67.google.com with SMTP id w7-v6so1759655wmc.1;
+        Thu, 01 Nov 2018 08:39:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=qkip5qLR+KvGv/K81heC6OjvVKGGVTkT71nBtb3m2EQ=;
-        b=bsdhbVK8tHZZL1HekUZN/e3ntRkbYnIctluvVobWGLSb7Yf+tRzK5W4Z/fN9mSe4bC
-         XxcIPVpB/agtHCgqMN/2htZIx4oGzIMtH4hztwYEJOXLNPufhLLsEXWVVtefNLU8q/W+
-         Is7P4dy2YCSfCptlDzPwEINPktLnWiDTJlaU0Egq8bK1QHQ11IuOG3rM+QR/JK3OwJqy
-         WrBMIgX86uKryqHoXpmRhXb4DO0dkZ0befCpB2bSLPcu3N1fp2shu6ICWhnr6vxCiVNM
-         EImZCfoobUNd4luSS90wy67f2xtGj7jV3l8uDmG4Xw9yVBOxKtStfUgFW3T6TkIKhfn0
-         yn/Q==
+        bh=994nws7XqAPQMnBp8iw4F+ibLwdYGKQMyKbbMdgAhZY=;
+        b=eLaxYRBOk5sH26c3P8K1mZ/RpggIwtaZWY4u54UlLS3HrZuk/slW6yyaVwqVcU/WWp
+         xomW17Sel2jFusxGQbX72RCEde8sfFEWYqkRxSANNkL7Jd9nRdOlPWuiNPwSZieqfliZ
+         NmZ+DI1HbdDGrMp3EcmRduFcYzsCykOQuhGrvqIZKf2eZxBqs52z0d+8DeM9zCaO6fL7
+         qUWAjFwGf/ur1zbrbsJ+g4lMxc/CeSVQPyYRhb2WGfG4sVbh+594BARbdRbwEJfxCgaR
+         syY/TcntdHtLeeUATYzn0abDy0NYnXUlisMwtKtGP/4btfl3cjFOVy5v1byOr3B2aQlc
+         9PPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=qkip5qLR+KvGv/K81heC6OjvVKGGVTkT71nBtb3m2EQ=;
-        b=TfjpsKMrQcAn946AmyfczdRdPkt9KpML7wU5IEgDraJv9FojP/+K3HErZfTrt9j0Go
-         5fUYfeZGEWMaymiZb9ieQbliIr9dOWO9AmXukkuIWnF0FqAbIH4BOouumIF2tNxxRrOs
-         GXW/PchX659EJL7UCSfWYDrsk352gyxuEBov5z8QuzW1hHZoc6Xp0XThsRQ7NlAgvCQd
-         zIOGlVTYTv3M4cGUwICgwwyAq9IFJS3xI72zb1CAeFuIWca5DC3p3yJsJ2NlwnkMCzvQ
-         ckDWcA2qNAi27SN8HZsaX1h9mqGcfSqtx78hfhiT6gX7HxBx2VGOJtr9LdNUlAgEBY3U
-         M9Qw==
-X-Gm-Message-State: AGRZ1gKMdyIp/uWLcDuo3v+CVd/EP9zlfMCH1Byjl1IV1mqRvPLBmnM3
-        beqU4hNVr4FSBBFOJQvgerQE8C1IxIxYlA==
-X-Google-Smtp-Source: AJdET5fS1tX/zdU9CcyK/rSpNX7qzy0VrSV3qyFOnI3lgTf5QzVfdfQrJbqCuW3KDzXqh5LZuFTp4w==
-X-Received: by 2002:a1c:1c0c:: with SMTP id c12-v6mr5676716wmc.18.1541086168373;
-        Thu, 01 Nov 2018 08:29:28 -0700 (PDT)
+        bh=994nws7XqAPQMnBp8iw4F+ibLwdYGKQMyKbbMdgAhZY=;
+        b=Zpyqp8cyf7KCb0NgaPLR30bv+Rl4b8as80nVQOgChdwk5AS0CID2FPM62YGxOPaGZk
+         Xqrg3i+A3decsiPqk3cIGLh+S96kjN28yV6f8ioQsqxX45bCXnIrCDHaMwBCefe1OhVT
+         8GgunjNiJDT/8cao2PJisyCQwjWKPhkPgsMrBAFvEDISCV1wd+yhehguPhd9lfHiuZOD
+         e0Hhw+0QhrnR1nudPpi5KV4QTyI3xntbjvynsFGHvwoQlgTf8zw095OKHogf6gBB/tZC
+         kQp7YfayiNYaDAtrZqPcD/p1ULR/dYg6mLgIzKdJ4cdHU3Sehh0sgQebCTkiCCLZQzY2
+         1R5g==
+X-Gm-Message-State: AGRZ1gKwH/FxRvOuujp9VrIQy7BMOwMRiyyFi7B+NKwxgHwYf8NyXzIR
+        LCWdiFLOq5spQ5PpX38fK6I=
+X-Google-Smtp-Source: AJdET5ehuW01N8whU3S2uXJiBsqDqEJOL0oPJNQ5n+0g7e8hWJ51Okf7LtKE4sZA4zMWZD+KmEb8sA==
+X-Received: by 2002:a1c:a90:: with SMTP id 138-v6mr5707494wmk.89.1541086787513;
+        Thu, 01 Nov 2018 08:39:47 -0700 (PDT)
 Received: from picard ([194.207.103.1])
-        by smtp.gmail.com with ESMTPSA id c14-v6sm24289844wmh.44.2018.11.01.08.29.25
+        by smtp.gmail.com with ESMTPSA id o15-v6sm5979997wrw.47.2018.11.01.08.39.45
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 01 Nov 2018 08:29:26 -0700 (PDT)
-Date:   Thu, 1 Nov 2018 15:29:25 +0000
+        Thu, 01 Nov 2018 08:39:46 -0700 (PDT)
+Date:   Thu, 1 Nov 2018 15:39:45 +0000
 From:   Dean Wallace <duffydack73@gmail.com>
 To:     Hans de Goede <hdegoede@redhat.com>
 Cc:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
@@ -71,7 +71,7 @@ Cc:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Mogens Jensen <mogens-jensen@protonmail.com>
 Subject: Re: Regression found (Stop-marking-clocks-as-CLK_IS_CRITICAL)
-Message-ID: <20181101152925.gdmscgg7275md3km@picard>
+Message-ID: <20181101153945.tngxh2k2irtlsvdo@picard>
 References: <d00df762-e4fc-06c5-701e-d5100bfd0e35@redhat.com>
  <e48696f0-aa3e-e20e-d038-9d8dda9cbfce@redhat.com>
  <20181030161534.wk5cf7nxbwhp2far@picard>
@@ -176,9 +176,8 @@ On 01-11-18, Hans de Goede wrote:
 > 
 > Hans
 > 
-Ok Hans, I tried your patch on top of the quirk, and sound is
-immediately garbled (daleks again), and switching pulseuadio profiles
-or inserting headphones doesn't make it correct itself, whereas before
-sound would be fine, UNTIL, I did something like insert earphone etc.
+This is weird, now sound is ok on boot, until I plug in earphones,
+like before.  Still get spammed with errors until I fool around with
+pulse profile switching (it's hit and miss).
 
 -Dean
