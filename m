@@ -2,173 +2,219 @@ Return-Path: <SRS0=b8N2=NM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86010C0044C
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Nov 2018 14:41:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EC52C6786F
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Nov 2018 14:49:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49B462081B
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Nov 2018 14:41:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eKdar9Lc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49B462081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 1D6FC2081B
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Nov 2018 14:49:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D6FC2081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728110AbeKAXoG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 1 Nov 2018 19:44:06 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:40182 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728178AbeKAXoF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Nov 2018 19:44:05 -0400
-Received: by mail-lj1-f195.google.com with SMTP id t22-v6so18265843lji.7;
-        Thu, 01 Nov 2018 07:40:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=35XjVyJKaPXi3eDOVrzg+ahSd5WiXKjGMHZpZ9TPAEU=;
-        b=eKdar9Lc36XpSl0KXlHuQCVdgojy7S2VIwtPWnpjVjRJTsAJ0RCaUzOXiRKbwky4qS
-         5f3k3EeFY3G8ueO+Kko6FGz3Ymc2nBOx+xQaQ3Ulr0BOTfUq9zBE5sjMZADX8ZsWtbt1
-         N9J7mprDYuT1xJthMAujIIh5l6ImF0s2sL4+dHQ5PsFmrcP7r/W0XDPsSJvVzWnAZnI4
-         t3LlZMLX5GpLk1oCpLgFOYaDtXYzu2mhqNz6AgUs5wBdj7OeoF1cgeXvmqmvcmf+IF4g
-         cTAl7gB5fpvlwRvbyffaJ71gbza48RV4iZFKGa2R8y6Q3JLYQe4B66lQRbeKdfhyxoOH
-         D+Vg==
+        id S1728483AbeKAXxH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 1 Nov 2018 19:53:07 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:40587 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728449AbeKAXxG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Nov 2018 19:53:06 -0400
+Received: by mail-ed1-f68.google.com with SMTP id z12-v6so10988408edp.7
+        for <linux-clk@vger.kernel.org>; Thu, 01 Nov 2018 07:49:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=35XjVyJKaPXi3eDOVrzg+ahSd5WiXKjGMHZpZ9TPAEU=;
-        b=sdTzwV9qWAyWhiJt6JUu01lnyC5Nn/rGtzhot62kDyOVTAZpAR4vBPlWFsOfuYLUQD
-         4/Xlzh8mU3ssYuwHkjsqiz5SPVjmbtgsIH7KZjBM71l+CcvZ+iDjWG1M8X+pizyX4L98
-         k4MGbLBMnxtQoW3zBoD4ylCoGYTltgIgjqxbDeHlUZLHvny+T/L5P8FSLTGw84LH2nHu
-         MKulIx1IrujMMwwj0+OfQdp1sEeYtFN6RA+RIwqpHfuI1lLugn7iyEgQrpynw725Ext6
-         EJH6z+Nr8HXQ6RPYtha09EFdoZdHpg9n6v6tGVySy/9aHK0fcCbB8KN/MGHoTcm92gGA
-         hl0g==
-X-Gm-Message-State: AGRZ1gJeohqb/Hc+kAXac36tXvz9DHkCkQT8TKyw90J9sBuQE+vXMyyg
-        x9kiRmu3Ifc1eJOC5IiRX0Y=
-X-Google-Smtp-Source: AJdET5cTr4+3nMax9jGqZ3BpPFsSY5QA7Q/YwRu85pJUyBqyII3sQ0EUXsy8e8+gZ2+HhKtj7wFvrQ==
-X-Received: by 2002:a2e:9547:: with SMTP id t7-v6mr5010980ljh.63.1541083248464;
-        Thu, 01 Nov 2018 07:40:48 -0700 (PDT)
-Received: from neopili.qtec.com (cpe.xe-3-0-1-778.vbrnqe10.dk.customer.tdc.net. [80.197.57.18])
-        by smtp.gmail.com with ESMTPSA id a9sm404870lfa.19.2018.11.01.07.40.47
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language;
+        bh=2Fpw53EzW9CoJaasImTdQZHWdlesNBxs4g0CHhPe+YA=;
+        b=LmC6fWwBxClOUwoPC8do/Zw4CVlUynd5OcEp7jEUNEIq1tUj/NCerYNxTRQ+HWOvZo
+         Vg8Ye1KPfw/Y3tFhFtNcaGwKB50VpsxPYWLSnYtmuRRaD30ffyKGTYsGgY1d+8UDT2Nr
+         77hJjyP42ycIZ1zpOaDSiMGDneCGTVqFTz1HPQ/WOkeVGv2g0Iio0M7wDQyL0AFO8Eg2
+         6L0C2qgk61DDGrvUPQGH0wE87zW8mNt4tqO4ObXYeUz54GAEXL2cBAMhl9lYC6E/h1W2
+         eGVsK417kzYZeB/W3ukafD9GlWciamfumgii7YCiLWXzGVjzPjy3SUyh1mWB4IB2I9+L
+         9/iw==
+X-Gm-Message-State: AGRZ1gIBEusKE00dl+X99zlcLCEBpCKhU7E9AffoKgeDC1XJPGYGTMGB
+        I6zZbHNAnK3B+u9BzsDjrySXZg==
+X-Google-Smtp-Source: AJdET5d8XqdOWqvWv448mz0W+Mok7uYGRJ4q6H6KF+3bGtbX+n2GNXyqjNauqmd2eHU32bfw0WxwBw==
+X-Received: by 2002:a50:aa22:: with SMTP id o31-v6mr5350442edc.23.1541083786807;
+        Thu, 01 Nov 2018 07:49:46 -0700 (PDT)
+Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id g19-v6sm8957642edh.36.2018.11.01.07.49.45
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 01 Nov 2018 07:40:47 -0700 (PDT)
-From:   Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-To:     Stephen Boyd <sboyd@kernel.org>, Alan Tull <atull@kernel.org>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Subject: [PATCH 1/5] clk: Refactor of_clk_add_provider and of_clk_add_hw_provider
-Date:   Thu,  1 Nov 2018 15:40:40 +0100
-Message-Id: <20181101144044.11495-2-ricardo.ribalda@gmail.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181101144044.11495-1-ricardo.ribalda@gmail.com>
-References: <20181101144044.11495-1-ricardo.ribalda@gmail.com>
+        Thu, 01 Nov 2018 07:49:45 -0700 (PDT)
+Subject: Re: Regression found (Stop-marking-clocks-as-CLK_IS_CRITICAL)
+To:     Dean Wallace <duffydack73@gmail.com>
+Cc:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Stable <stable@vger.kernel.org>,
+        Johannes Stezenbach <js@sig21.net>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mogens Jensen <mogens-jensen@protonmail.com>
+References: <20181030143836.feo7zcxiestylxoo@picard>
+ <2d429c87-24c5-4075-683e-b0d12c3eb1c2@linux.intel.com>
+ <d00df762-e4fc-06c5-701e-d5100bfd0e35@redhat.com>
+ <e48696f0-aa3e-e20e-d038-9d8dda9cbfce@redhat.com>
+ <20181030161534.wk5cf7nxbwhp2far@picard>
+ <307c2074-d268-a87a-6040-1240a2091a4d@redhat.com>
+ <20181031200709.xrmu6wsdel7dtcjq@picard>
+ <da025116-580d-e442-d96f-875282306f1b@linux.intel.com>
+ <20181101103705.ay36te4qr5pxtgop@picard>
+ <37e44480-44d3-9355-6119-ae46bb38678a@redhat.com>
+ <20181101142859.oxtuhbwtt44h2u3r@picard>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <67a7d54b-49cc-aa4e-fe47-bb6277f02bc8@redhat.com>
+Date:   Thu, 1 Nov 2018 15:49:44 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181101142859.oxtuhbwtt44h2u3r@picard>
+Content-Type: multipart/mixed;
+ boundary="------------4C6AD7A7F5E4C83A3777E2D3"
+Content-Language: en-US
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Both functions have almost the same functionality. Create a helper
-function that is called by both functions.
+This is a multi-part message in MIME format.
+--------------4C6AD7A7F5E4C83A3777E2D3
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Hi,
+
+On 01-11-18 15:28, Dean Wallace wrote:
+> On 01-11-18, Hans de Goede wrote:
+>> Hi,
+>>
+>> On 01-11-18 11:37, Dean Wallace wrote:
+>>> On 31-10-18, Pierre-Louis Bossart wrote:
+>>>>
+>>>>> Just thought it worth mentioning, this new patch that fixes sound
+>>>>> again, seems to have ressurected an old issue with PLL unlock.  I'm
+>>>>> seeing journal entries after fresh boot ......
+>>>>>
+>>>>> ```
+>>>>> picard kernel: max98090 i2c-193C9890:00: PLL unlocked
+>>>>> picard systemd[462]: Started Sound Service.
+>>>>> picard kernel: max98090 i2c-193C9890:00: PLL unlocked
+>>>>> picard kernel: max98090 i2c-193C9890:00: PLL unlocked
+>>>>> picard kernel: max98090 i2c-193C9890:00: PLL unlocked
+>>>>> picard kernel: max98090 i2c-193C9890:00: PLL unlocked
+>>>>> picard kernel: max98090 i2c-193C9890:00: PLL unlocked
+>>>>> picard kernel: max98090 i2c-193C9890:00: PLL unlocked
+>>>>> picard kernel: max98090 i2c-193C9890:00: PLL unlocked
+>>>>> picard kernel: max98090 i2c-193C9890:00: PLL unlocked
+>>>>> picard kernel: max98090_pll_work: 141 callbacks suppressed
+>>>>> picard kernel: max98090 i2c-193C9890:00: PLL unlocked
+>>>>> ```
+>>>>>
+>>>>> sound is ok, but sometimes plugging in headphones spams journal with
+>>>>> those PLL messages, and sound turns into "daleks", and I have to
+>>>>> remove/insert headphones few times or stop/start audio to fix it.
+>>>>> It's a very old issue, maybe you'd know more about it.
+>>>>
+>>>> I noticed this error on my Orco device used for tests many moons ago, but I
+>>>> could never find out what led to this error case, it wasn't deterministic
+>>>> and didn't impact the audio quality. All I could do is rate_limit it... If
+>>>> we have an A vs. B situation it'd be really helpful to diagnose further.
+>>>>
+>>>> Is there really a causality between the changes from Hans and this PLL
+>>>> unlock error? Are you 100% sure this was not present in the previous install
+>>>> you used (4.18.14 as mentioned earlier in the thread)?
+>>>>
+>>>> Thanks
+>>>>
+>>>> -Pierre
+>>>>
+>>> Well, numerous boots, kernels, headphone inserting - no PLL or
+>>> 'Daleks'.  My laptop must have been haunted that day (halloween).
+>>> I'll put it to bed.
+>>
+>> So you can no longer reproduce. Bummer. Note this might be caused by
+>> the temperature of the laptop when you were running the tests...
+>>
+>> Anyways if you hit this again and you can reproduce it, please
+>> give adding a msleep(10) after code mucking with the clk a try.
+>>
+>> Regards,
+>>
+>> Hans
+>>
+> Right then, I can make it unlock and 'daleks' by going into
+> pavucontrol and switching the Profile back and forth from Stereo
+> Output to Stereo Output+Analog Mono Input, which is actually something
+> I've done to make it correct itself as well.  I don't use the mic or
+> anything so I've had it set to Stereo Ouput only which I 'think' has
+> somehow made it more stable for me.  With all my playing around, one
+> of the things I did was clean out my .config/pulse folder which meant
+> by default the 'Profile' in pavucontrol was set to Output+Input, which
+> seems to help trigger the PLL issue when inserting headphones.
+> 
+> So what would you like me to do, as I can trigger it on demand it
+> seems.
+
+Please give the attached patch a try (on top of my patch for the clk quirk)
+and let us know if that fixes these errors.
+
+Regards,
+
+Hans
+
+
+--------------4C6AD7A7F5E4C83A3777E2D3
+Content-Type: text/x-patch;
+ name="0001-ASoC-intel-cht_bsw_max98090_ti-Sleep-a-bit-after-ena.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+ filename*0="0001-ASoC-intel-cht_bsw_max98090_ti-Sleep-a-bit-after-ena.pa";
+ filename*1="tch"
+
+From d81f1906f08bb6d3aa45a0403adc1d36754c13cc Mon Sep 17 00:00:00 2001
+From: Hans de Goede <hdegoede@redhat.com>
+Date: Thu, 1 Nov 2018 15:47:42 +0100
+Subject: [PATCH] ASoC: intel: cht_bsw_max98090_ti: Sleep a bit after enabling
+ the mclk
+
+Sleep a bit after enabling the mclk to give the PLL some time to lock,
+this fixes the log showing a whole bunch of:
+
+kernel: max98090 i2c-193C9890:00: PLL unlocked
+
+errors.
+
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 ---
- drivers/clk/clk.c | 49 +++++++++++++++++++----------------------------
- 1 file changed, 20 insertions(+), 29 deletions(-)
+ sound/soc/intel/boards/cht_bsw_max98090_ti.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index d31055ae6ec6..cd3117e66ab8 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3723,15 +3723,11 @@ of_clk_hw_onecell_get(struct of_phandle_args *clkspec, void *data)
- }
- EXPORT_SYMBOL_GPL(of_clk_hw_onecell_get);
+diff --git a/sound/soc/intel/boards/cht_bsw_max98090_ti.c b/sound/soc/intel/boards/cht_bsw_max98090_ti.c
+index 9d9f6e41d81c..f3bc0bfdfe08 100644
+--- a/sound/soc/intel/boards/cht_bsw_max98090_ti.c
++++ b/sound/soc/intel/boards/cht_bsw_max98090_ti.c
+@@ -19,6 +19,7 @@
+  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  */
  
--/**
-- * of_clk_add_provider() - Register a clock provider for a node
-- * @np: Device node pointer associated with clock provider
-- * @clk_src_get: callback for decoding clock
-- * @data: context pointer for @clk_src_get callback.
-- */
--int of_clk_add_provider(struct device_node *np,
-+static int __of_clk_add_provider(struct device_node *np,
- 			struct clk *(*clk_src_get)(struct of_phandle_args *clkspec,
- 						   void *data),
-+			struct clk_hw *(*get)(struct of_phandle_args *clkspec,
-+						 void *data),
- 			void *data)
- {
- 	struct of_clk_provider *cp;
-@@ -3744,11 +3740,12 @@ int of_clk_add_provider(struct device_node *np,
- 	cp->node = of_node_get(np);
- 	cp->data = data;
- 	cp->get = clk_src_get;
-+	cp->get_hw = get;
- 
- 	mutex_lock(&of_clk_mutex);
- 	list_add(&cp->link, &of_clk_providers);
- 	mutex_unlock(&of_clk_mutex);
--	pr_debug("Added clock from %pOF\n", np);
-+	pr_debug("Added clock%s from %pOF\n", get?"_hw provider":"", np);
- 
- 	ret = of_clk_set_defaults(np, true);
- 	if (ret < 0)
-@@ -3756,6 +3753,20 @@ int of_clk_add_provider(struct device_node *np,
- 
- 	return ret;
- }
-+
-+/**
-+ * of_clk_add_provider() - Register a clock provider for a node
-+ * @np: Device node pointer associated with clock provider
-+ * @clk_src_get: callback for decoding clock
-+ * @data: context pointer for @clk_src_get callback.
-+ */
-+int of_clk_add_provider(struct device_node *np,
-+		struct clk *(*clk_src_get)(struct of_phandle_args *clkspec,
-+					   void *data),
-+		void *data)
-+{
-+	return  __of_clk_add_provider(np, clk_src_get, NULL, data);
-+}
- EXPORT_SYMBOL_GPL(of_clk_add_provider);
- 
- /**
-@@ -3769,27 +3780,7 @@ int of_clk_add_hw_provider(struct device_node *np,
- 						 void *data),
- 			   void *data)
- {
--	struct of_clk_provider *cp;
--	int ret;
--
--	cp = kzalloc(sizeof(*cp), GFP_KERNEL);
--	if (!cp)
--		return -ENOMEM;
--
--	cp->node = of_node_get(np);
--	cp->data = data;
--	cp->get_hw = get;
--
--	mutex_lock(&of_clk_mutex);
--	list_add(&cp->link, &of_clk_providers);
--	mutex_unlock(&of_clk_mutex);
--	pr_debug("Added clk_hw provider from %pOF\n", np);
--
--	ret = of_clk_set_defaults(np, true);
--	if (ret < 0)
--		of_clk_del_provider(np);
--
--	return ret;
-+	return  __of_clk_add_provider(np, NULL, get, data);
- }
- EXPORT_SYMBOL_GPL(of_clk_add_hw_provider);
- 
++#include <linux/delay.h>
+ #include <linux/dmi.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+@@ -66,6 +67,7 @@ static int platform_clock_control(struct snd_soc_dapm_widget *w,
+ 				"could not configure MCLK state");
+ 			return ret;
+ 		}
++		usleep_range(5000, 10000);
+ 	} else {
+ 		clk_disable_unprepare(ctx->mclk);
+ 	}
 -- 
-2.19.1
+2.19.0
 
+
+--------------4C6AD7A7F5E4C83A3777E2D3--
