@@ -2,81 +2,180 @@ Return-Path: <SRS0=b8N2=NM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 882F1C0044C
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Nov 2018 01:53:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DFC2C0044C
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Nov 2018 02:58:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A4BA2064C
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Nov 2018 01:53:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A4BA2064C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
+	by mail.kernel.org (Postfix) with ESMTP id AE54020664
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Nov 2018 02:58:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="HJVMfI+j"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE54020664
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726419AbeKAKxm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 1 Nov 2018 06:53:42 -0400
-Received: from mout.perfora.net ([74.208.4.197]:48611 "EHLO mout.perfora.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725970AbeKAKxm (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 1 Nov 2018 06:53:42 -0400
-Received: from localhost.localdomain.ziswiler.net ([188.155.129.42]) by
- mrelay.perfora.net (mreueus001 [74.208.5.2]) with ESMTPA (Nemesis) id
- 0MV4A7-1g3wiV1T0H-00YS8J; Thu, 01 Nov 2018 02:52:42 +0100
-Received: from localhost.localdomain.ziswiler.net ([188.155.129.42]) by
- mrelay.perfora.net (mreueus001 [74.208.5.2]) with ESMTPA (Nemesis) id
- 0MV4A7-1g3wiV1T0H-00YS8J; Thu, 01 Nov 2018 02:52:42 +0100
-From:   Marcel Ziswiler <marcel@ziswiler.com>
-To:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Marcel Ziswiler <marcel@ziswiler.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-serial@vger.kernel.org, Jiri Slaby <jslaby@suse.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org
-Subject: [PATCH v1 0/3] clk/serial tegra: uart related fixes
-Date:   Thu,  1 Nov 2018 02:52:27 +0100
-Message-Id: <20181101015230.27310-1-marcel@ziswiler.com>
-X-Mailer: git-send-email 2.14.5
-X-Provags-ID: V03:K1:ksI8/gSo/km7aS18ZGVWhEimC5c9P1mv1HOsuuJehGiYb5pHjDF
- R4kBmNItzwAW6uFfi6QoOH56qtNG8U6egUrF/LImKWK3krRxnlEVkLKvZalp+5SnUFBRRkf
- 5CnYVT9NH0CTfIfGed52bYxtBOYOxvdS5YGLtT/sTe8fmumOZ+JvClbx71St7B7NyL9XVp8
- jchHXdFurN4bhHRx6fRfg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:2m0vJmH542A=:L26udLIwMob/Vhvwhbql2Z
- ZEwnLHsGumEJN/UD/U7Q/ytATU974z337h2x/oMFY1k0A7789QHC3cxkdvn71NUTjC4eoF/8f
- tbMd50iAKJcsgee0rJopK8TWv/gBSwSQ2feEKkvpaebw3KjtTdSYgkj4cRH7HyOUCozaLtxm3
- 05gl2wCM4FgSwnohPbn08zZs0wxIVapbwfnN6gevd6syTCKMKk7nDPZVOAoPz5PIkohwPDLqa
- qNmuYtPB8JryfJUaQjeIRJ/gcFSDBA2G0nDIhOtzV3WfWPhCg2LWVAXr/LLjmeYx310etPCwz
- zrmsasTIC2fTQjtZTK650kKEilS1DVCBzi6p3tP+WpE5qq0NEUR2fqHk+f4rEvjhj6kpZjv2u
- rJsTRI4DQCBSh7eocBcKWh10eODpeSLe+gRxKixOnex20BRqj5uNQN/+MmCTUbV8u1dO4GIG/
- lECdtlYWuUsWyi8otffQjrnpF+lX6aXz1q0wKiqVs7xA7bY3DeSx/NAQRN16Jg55PozUq0VQt
- q1+tfvApsTHB0BzNH9CHgR41eGHNquMYlfixQgOiwxYo+9zqekHxbaesb1c0RHtRbao61dW9k
- fZY65iMISN6NjQW233/zkqaKNptxFSU/kSZcnkCj6VY7l29GgYD7DE4p0aZqrYsIvhwkuDWRP
- L99mqdO+xQ08iFwnhQ/+SbffJqUSsFomH43n31k3Jgjk91gZB2gejbn8XZhvY0+BrzNo=
+        id S1726327AbeKAL7n (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 1 Nov 2018 07:59:43 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:34107 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725978AbeKAL7n (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Nov 2018 07:59:43 -0400
+Received: by mail-io1-f66.google.com with SMTP id d80-v6so11253950iof.1
+        for <linux-clk@vger.kernel.org>; Wed, 31 Oct 2018 19:58:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=QOSxRggcjUksRsOCf6mfNAeYLRROOH7cdOzQ/0UZTUk=;
+        b=HJVMfI+jP8qwJ+T5gXrMmsDmI+ofJOL1Zc7zim6jzTGGjBzvvmdaAUYNxAcOCyoCZy
+         l2BbePFTLM8Xe7YOYDtJVOQBYIZquZv0DLCEil4aRxYlAUlkJQ9UBUU4/DZysgJ5+GCR
+         pRUeNr2la3NA+fWqclBbCtByJkyXS7UBZ8WCE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QOSxRggcjUksRsOCf6mfNAeYLRROOH7cdOzQ/0UZTUk=;
+        b=GfyXtZoHE0bC5fZHldTyrAKCgfCtQQBPKpCY1if05kHOYm7CO5INoIob0NfhJIpkpG
+         4vUZjmadD0G6J5p2l33QYDEO58CaRNI/T8jiNexzweoD//TiyekWf71rpu/MZlk2if9q
+         FClzFOkio4lh2t9ct0ReoEDtlVkHiyqnbkpx3A8N8wqf5WuCDduFkNgiRx8FEfsrVSKP
+         tITffdx+bPW+MbkBnVWYUmJ6VHU+i+EBx6b6ugRPSuraJXgB3K6iARTehywpKLB3couE
+         iapfrUEXa9g3ASRW0GhTlUxIaOsWhnNwu0noG/x5Etz3idV0QDOhd2CBTW5Q3/zwaCE1
+         6XkQ==
+X-Gm-Message-State: AGRZ1gI0CO/m/hfbjvkroR2zwdBWmV1EgCOHnzEJzXqbYr4Km5uDfXRY
+        wsP2wfZrFEJeHgh+qkSkyMa6PhcLUsfWL0IhUQY0mA==
+X-Google-Smtp-Source: AJdET5eZA+CWKB3xMB0hzxG9LyRzNKdrWtn4v/9O4XdnjqqJTf5GvP/0beC1RDChfnU77Yt0UhEG+fBV1EhpsBA/Ruc=
+X-Received: by 2002:a6b:acc5:: with SMTP id v188-v6mr4363558ioe.66.1541041122644;
+ Wed, 31 Oct 2018 19:58:42 -0700 (PDT)
+MIME-Version: 1.0
+References: <20181024013132.115907-1-dbasehore@chromium.org> <20181024013132.115907-3-dbasehore@chromium.org>
+In-Reply-To: <20181024013132.115907-3-dbasehore@chromium.org>
+From:   "dbasehore ." <dbasehore@chromium.org>
+Date:   Wed, 31 Oct 2018 19:58:31 -0700
+Message-ID: <CAGAzgsp-tuSAThRGPtGM98opK0pJ5OfmxB9tx+9VBuxT6rz3cA@mail.gmail.com>
+Subject: Re: [PATCH 2/6] clk: fix clk_calc_subtree compute duplications
+To:     linux-kernel <linux-kernel@vger.kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-doc@vger.kernel.org,
+        sboyd@kernel.org, Michael Turquette <mturquette@baylibre.com>,
+        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+        aisheng.dong@nxp.com, mchehab+samsung@kernel.org,
+        Jonathan Corbet <corbet@lwn.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Tue, Oct 23, 2018 at 6:31 PM Derek Basehore <dbasehore@chromium.org> wrote:
+>
+> clk_calc_subtree was called at every step up the clk tree in
+> clk_calc_new_rates. Since it recursively calls itself for its
+> children, this means it would be called once on each clk for each
+> step above the top clk is.
+>
+> This fixes this by breaking the subtree calculation into two parts.
+> The first part recalcs the rate for each child of the parent clk in
+> clk_calc_new_rates. This part is not recursive itself. The second part
+> recursively calls a new clk_calc_subtree on the clk_core that was
+> passed into clk_set_rate.
+>
+> Signed-off-by: Derek Basehore <dbasehore@chromium.org>
+> ---
+>  drivers/clk/clk.c | 30 ++++++++++++++++++++----------
+>  1 file changed, 20 insertions(+), 10 deletions(-)
+>
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 95d818f5edb2..61de8ad3e4cf 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -1717,11 +1717,19 @@ static int __clk_speculate_rates(struct clk_core *core,
+>         return ret;
+>  }
+>
+> -static void clk_calc_subtree(struct clk_core *core, unsigned long new_rate,
+> -                            struct clk_core *new_parent, u8 p_index)
+> +static void clk_calc_subtree(struct clk_core *core)
+>  {
+>         struct clk_core *child;
+>
+> +       hlist_for_each_entry(child, &core->children, child_node) {
+> +               child->new_rate = clk_recalc(child, core->new_rate);
+> +               clk_calc_subtree(child);
+> +       }
+> +}
+> +
+> +static void clk_set_change(struct clk_core *core, unsigned long new_rate,
+> +                          struct clk_core *new_parent, u8 p_index)
+> +{
+>         core->new_rate = new_rate;
+>         core->new_parent = new_parent;
+>         core->new_parent_index = p_index;
+> @@ -1729,11 +1737,6 @@ static void clk_calc_subtree(struct clk_core *core, unsigned long new_rate,
+>         core->new_child = NULL;
+>         if (new_parent && new_parent != core->parent)
+>                 new_parent->new_child = core;
+> -
+> -       hlist_for_each_entry(child, &core->children, child_node) {
+> -               child->new_rate = clk_recalc(child, new_rate);
+> -               clk_calc_subtree(child, child->new_rate, NULL, 0);
+> -       }
+>  }
+>
+>  /*
+> @@ -1744,7 +1747,7 @@ static struct clk_core *clk_calc_new_rates(struct clk_core *core,
+>                                            unsigned long rate)
+>  {
+>         struct clk_core *top = core;
+> -       struct clk_core *old_parent, *parent;
+> +       struct clk_core *old_parent, *parent, *child;
+>         unsigned long best_parent_rate = 0;
+>         unsigned long new_rate;
+>         unsigned long min_rate;
+> @@ -1791,6 +1794,8 @@ static struct clk_core *clk_calc_new_rates(struct clk_core *core,
+>                 /* pass-through clock with adjustable parent */
+>                 top = clk_calc_new_rates(parent, rate);
+>                 new_rate = parent->new_rate;
+> +               hlist_for_each_entry(child, &parent->children, child_node)
+> +                       child->new_rate = clk_recalc(child, new_rate);
+>                 goto out;
+>         }
+>
+> @@ -1813,11 +1818,14 @@ static struct clk_core *clk_calc_new_rates(struct clk_core *core,
+>         }
+>
+>         if ((core->flags & CLK_SET_RATE_PARENT) && parent &&
+> -           best_parent_rate != parent->rate)
+> +           best_parent_rate != parent->rate) {
+>                 top = clk_calc_new_rates(parent, best_parent_rate);
+> +               hlist_for_each_entry(child, &parent->children, child_node)
+> +                       child->new_rate = clk_recalc(child, parent->new_rate);
+> +       }
+>
+>  out:
+> -       clk_calc_subtree(core, new_rate, parent, p_index);
+> +       clk_set_change(core, new_rate, parent, p_index);
+>
+>         return top;
+>  }
+> @@ -2018,6 +2026,8 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
+>         if (ret)
+>                 return ret;
+>
+> +       clk_calc_subtree(core);
 
-This series features some UART related clock issue fix and clean-up.
+This should be:
+hlist_for_each_entry(child, core->new_parent? core->new_parent :
+core->parent, child_node)
+  clk_calc_subtree(child);
 
-
-Marcel Ziswiler (3):
-  clk: tegra: get rid of duplicate defines
-  clk: tegra: ignore unused vfir clock shared with uartb
-  serial: tegra: fix some spelling mistakes
-
- drivers/clk/tegra/clk-tegra-periph.c |  5 +----
- drivers/tty/serial/serial-tegra.c    | 10 +++++-----
- 2 files changed, 6 insertions(+), 9 deletions(-)
-
--- 
-2.14.5
-
+> +
+>         /* notify that we are about to change rates */
+>         fail_clk = clk_propagate_rate_change(top, PRE_RATE_CHANGE);
+>         if (fail_clk) {
+> --
+> 2.19.1.568.g152ad8e336-goog
+>
