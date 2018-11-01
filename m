@@ -1,44 +1,100 @@
-Return-Path: <SRS0=W/WI=NM=linkscen.top=info5@kernel.org>
+Return-Path: <SRS0=b8N2=NM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	HTML_MESSAGE,MIME_HTML_ONLY,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B187EC0044C
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Nov 2018 01:32:15 +0000 (UTC)
-X-Greylist: delayed 632 seconds by postgrey-1.34 at mail.kernel.org; Thu, 01 Nov 2018 01:32:07 UTC
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A42320821
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hikun.cn
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=info5@linkscen.top
-Received: from server1.osppcc.top (unknown [114.64.249.72])
-	by mail.kernel.org (Postfix) with ESMTP id 6A42320821
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Nov 2018 01:32:07 +0000 (UTC)
-Received: from DESKTOP-3THC5MT (183.17.124.172) by server1.osppcc.top id hr9bpo0e97c5 for <linux-clk@archiver.kernel.org>; Thu, 1 Nov 2018 09:21:38 +0800 (envelope-from <info5@linkscen.top>)
-From: "Lisa Gao" <lisa@hikun.cn>
-Subject: Re:Re:chargers and adapters in European Market.
-To: linux-clk@archiver.kernel.org
-Content-Type: text/html; charset=UTF-8
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Sender: info5@linkscen.top
-Reply-To: lisa@hikun.cn
-Date: Thu, 1 Nov 2018 09:21:31 +0800
-X-Priority: 3
-X-MSMail-Priority: Normal
-X-MimeOLE: Produced By Microsoft MimeOLE V6.00.3790.4913
-Content-Disposition: inline
-Message-Id: <20181101013207.6A42320821@mail.kernel.org>
-List-Id: <linux-clk.vger.kernel.org>
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D696C0044C
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Nov 2018 01:52:54 +0000 (UTC)
+Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
+	by mail.kernel.org (Postfix) with ESMTP id 16B342064C
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Nov 2018 01:52:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16B342064C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1725978AbeKAKxm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 1 Nov 2018 06:53:42 -0400
+Received: from mout.perfora.net ([74.208.4.194]:55997 "EHLO mout.perfora.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725955AbeKAKxm (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 1 Nov 2018 06:53:42 -0400
+Received: from localhost.localdomain.ziswiler.net ([188.155.129.42]) by
+ mrelay.perfora.net (mreueus001 [74.208.5.2]) with ESMTPA (Nemesis) id
+ 0MTQGn-1gA1WM0UC7-00SPSj; Thu, 01 Nov 2018 02:52:45 +0100
+Received: from localhost.localdomain.ziswiler.net ([188.155.129.42]) by
+ mrelay.perfora.net (mreueus001 [74.208.5.2]) with ESMTPA (Nemesis) id
+ 0MTQGn-1gA1WM0UC7-00SPSj; Thu, 01 Nov 2018 02:52:45 +0100
+From:   Marcel Ziswiler <marcel@ziswiler.com>
+To:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org
+Subject: [PATCH v1 1/3] clk: tegra: get rid of duplicate defines
+Date:   Thu,  1 Nov 2018 02:52:28 +0100
+Message-Id: <20181101015230.27310-2-marcel@ziswiler.com>
+X-Mailer: git-send-email 2.14.5
+In-Reply-To: <20181101015230.27310-1-marcel@ziswiler.com>
+References: <20181101015230.27310-1-marcel@ziswiler.com>
+X-Provags-ID: V03:K1:3wnizd8A0OqzJ27J54EHPOgL0BJzUY4k5AjZoTTCvBFgV4i91X+
+ YHknjiKozGqI5gjaE5K+X2CCwEMOyMQZ28aTQdtKw8gDj2Ox1NXVPw+tg3loiVBdsUXLSon
+ BNUJ3AVbCLxWG2etcGpUiuB/ncv4jyenC5YvBlZKm3KopARy5p7zYzICJs0oWOZlntzwf9G
+ tM4EA+JUxbjyt7+dqghMQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:EMQYdtALUoQ=:H3s/EthkZrwCIdJ926409g
+ zXae8gsgDlStiRK+9illoDEKv86cx6g6p53bQ7tyOs/r+pvA3k+y7ikyUSAUIwWd2axMJLA6m
+ g+I9yDINLh/pC+xpziMmFi4/zuZ2vpPKYZiuQZnzulyN0Vm6fREtGdD9SvP35wTZIQ7C2f/xe
+ YwNYHmEzPFazVPLk8d0yhYPbblY1Ib0aRvyHQxDH4Jd/EpQNVUismIscavVADbDhxNaeNoOR2
+ MGb74iYkbcIRJiJ9+ijx8mGgnMZMRI7y9hVrOlBO2q+d7N5nBFgHlSqYJjlwqhi/+EogNpBPL
+ AkDhhd6qvXmEmIZ3r2VonSrk14gjn0E3tMeCc9D6GR4ZX6tA6/Zl5SiwG4++10JEhHGWxdc3w
+ OHCL/aYwT9dmkV8hYpNS/8Wx34K48mJGyNossIMzXtDps/QVWTsoZtmrlsHfBGEsWbaoV9sy8
+ zFXyskgdv/tdRZJM7FTbEcr8UOsdF+wjeWSDPrqTLxHtyS+dXtzwc1EIWUUp7M/Ip1DpyIeWZ
+ kLLgCfnsCXdzXMbJOGDsSGRazwi9cmnsvmrF9aMP+nhH5Rm5hAweBZPEs2Uiw9oJpf47IAG5X
+ bQStMC9igSJUZXvtQf2mgQVFXlOSmpBRf4Qq1oFK8U3u4WcCVpc2k75oliTXbPrRoEpl4CYGD
+ S9CiRPnuIvbF/dSPAnfwcqmIIQm9YCKbISibD0tt47mgHg8BIZRIZFjy9bE/Pf9sqPv4=
+Sender: linux-clk-owner@vger.kernel.org
+Precedence: bulk
+List-ID: <linux-clk.vger.kernel.org>
+X-Mailing-List: linux-clk@vger.kernel.org
 
-PCFET0NUWVBFIEhUTUwgUFVCTElDICItLy9XM0MvL0RURCBIVE1MIDQuMCBUcmFuc2l0aW9uYWwv
-L0VOIj4NCjxIVE1MPjxIRUFEPg0KPE1FVEEgbmFtZT1HRU5FUkFUT1IgY29udGVudD0iTVNIVE1M
-IDExLjAwLjEwNTcwLjEwMDEiPjwvSEVBRD4NCjxCT0RZPg0KPFA+PEZPTlQgZmFjZT1BcmlhbD5I
-aSBtYW5hZ2Vy77yMPC9GT05UPjxGT05UIGZhY2U9QXJpYWw+PEJSPk5pY2UmbmJzcDtkYXkhIDxC
-Uj5XZSBhcmUmbmJzcDtjaGFyZ2VycyBhbmQgYWRhcHRvcnMmbmJzcDtzdXBwbGllcixhbmQgd2Ug
-aGF2ZSByZXNlYXJjaGVkICZhbXA7IGRlc2lnbmVkIHNvbWUgbmV3IHByb2R1Y3RzLjwvRk9OVD48
-Rk9OVCBmYWNlPUFyaWFsPjxCUj5JZiB5b3UgYXJlIGludGVyZXN0ZWQgaW4sIEkgJ2xsIHNlbmQg
-eW91IG91ciBjYXRhbG9ndWUuJm5ic3A7PEJSPlRoYW5rcyBmb3IgeW91ciB2YWx1YWJsZSB0aW1l
-LiA8QlI+PEJSPlJlZ2FyZHMuPC9GT05UPiA8L1A+DQo8UD5MaXNhJm5ic3A7R2FvPC9QPg0KPFA+
-d3d3LmNucG93ZXJhZGFwdGVyLmNvbSA8L1A+PC9CT0RZPjwvSFRNTD4NCg==
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+
+Get rid of 3 duplicate defines.
+
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+
+---
+
+ drivers/clk/tegra/clk-tegra-periph.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
+index 38c4eb28c8bf..cc5275ec2c01 100644
+--- a/drivers/clk/tegra/clk-tegra-periph.c
++++ b/drivers/clk/tegra/clk-tegra-periph.c
+@@ -79,7 +79,6 @@
+ #define CLK_SOURCE_3D 0x158
+ #define CLK_SOURCE_2D 0x15c
+ #define CLK_SOURCE_MPE 0x170
+-#define CLK_SOURCE_UARTE 0x1c4
+ #define CLK_SOURCE_VI_SENSOR 0x1a8
+ #define CLK_SOURCE_VI 0x148
+ #define CLK_SOURCE_EPP 0x16c
+@@ -117,8 +116,6 @@
+ #define CLK_SOURCE_ISP 0x144
+ #define CLK_SOURCE_SOR0 0x414
+ #define CLK_SOURCE_DPAUX 0x418
+-#define CLK_SOURCE_SATA_OOB 0x420
+-#define CLK_SOURCE_SATA 0x424
+ #define CLK_SOURCE_ENTROPY 0x628
+ #define CLK_SOURCE_VI_SENSOR2 0x658
+ #define CLK_SOURCE_HDMI_AUDIO 0x668
+-- 
+2.14.5
+
