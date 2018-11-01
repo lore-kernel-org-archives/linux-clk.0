@@ -2,49 +2,64 @@ Return-Path: <SRS0=b8N2=NM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EC52C6786F
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Nov 2018 14:49:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 368E6C0044C
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Nov 2018 15:29:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D6FC2081B
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Nov 2018 14:49:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D6FC2081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id E5FDF20820
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Nov 2018 15:29:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bsdhbVK8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5FDF20820
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728483AbeKAXxH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 1 Nov 2018 19:53:07 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:40587 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728449AbeKAXxG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Nov 2018 19:53:06 -0400
-Received: by mail-ed1-f68.google.com with SMTP id z12-v6so10988408edp.7
-        for <linux-clk@vger.kernel.org>; Thu, 01 Nov 2018 07:49:47 -0700 (PDT)
+        id S1728664AbeKBAc5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 1 Nov 2018 20:32:57 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:39486 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728117AbeKBAc5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Nov 2018 20:32:57 -0400
+Received: by mail-wm1-f68.google.com with SMTP id u13-v6so1667365wmc.4;
+        Thu, 01 Nov 2018 08:29:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=qkip5qLR+KvGv/K81heC6OjvVKGGVTkT71nBtb3m2EQ=;
+        b=bsdhbVK8tHZZL1HekUZN/e3ntRkbYnIctluvVobWGLSb7Yf+tRzK5W4Z/fN9mSe4bC
+         XxcIPVpB/agtHCgqMN/2htZIx4oGzIMtH4hztwYEJOXLNPufhLLsEXWVVtefNLU8q/W+
+         Is7P4dy2YCSfCptlDzPwEINPktLnWiDTJlaU0Egq8bK1QHQ11IuOG3rM+QR/JK3OwJqy
+         WrBMIgX86uKryqHoXpmRhXb4DO0dkZ0befCpB2bSLPcu3N1fp2shu6ICWhnr6vxCiVNM
+         EImZCfoobUNd4luSS90wy67f2xtGj7jV3l8uDmG4Xw9yVBOxKtStfUgFW3T6TkIKhfn0
+         yn/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language;
-        bh=2Fpw53EzW9CoJaasImTdQZHWdlesNBxs4g0CHhPe+YA=;
-        b=LmC6fWwBxClOUwoPC8do/Zw4CVlUynd5OcEp7jEUNEIq1tUj/NCerYNxTRQ+HWOvZo
-         Vg8Ye1KPfw/Y3tFhFtNcaGwKB50VpsxPYWLSnYtmuRRaD30ffyKGTYsGgY1d+8UDT2Nr
-         77hJjyP42ycIZ1zpOaDSiMGDneCGTVqFTz1HPQ/WOkeVGv2g0Iio0M7wDQyL0AFO8Eg2
-         6L0C2qgk61DDGrvUPQGH0wE87zW8mNt4tqO4ObXYeUz54GAEXL2cBAMhl9lYC6E/h1W2
-         eGVsK417kzYZeB/W3ukafD9GlWciamfumgii7YCiLWXzGVjzPjy3SUyh1mWB4IB2I9+L
-         9/iw==
-X-Gm-Message-State: AGRZ1gIBEusKE00dl+X99zlcLCEBpCKhU7E9AffoKgeDC1XJPGYGTMGB
-        I6zZbHNAnK3B+u9BzsDjrySXZg==
-X-Google-Smtp-Source: AJdET5d8XqdOWqvWv448mz0W+Mok7uYGRJ4q6H6KF+3bGtbX+n2GNXyqjNauqmd2eHU32bfw0WxwBw==
-X-Received: by 2002:a50:aa22:: with SMTP id o31-v6mr5350442edc.23.1541083786807;
-        Thu, 01 Nov 2018 07:49:46 -0700 (PDT)
-Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id g19-v6sm8957642edh.36.2018.11.01.07.49.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 01 Nov 2018 07:49:45 -0700 (PDT)
-Subject: Re: Regression found (Stop-marking-clocks-as-CLK_IS_CRITICAL)
-To:     Dean Wallace <duffydack73@gmail.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=qkip5qLR+KvGv/K81heC6OjvVKGGVTkT71nBtb3m2EQ=;
+        b=TfjpsKMrQcAn946AmyfczdRdPkt9KpML7wU5IEgDraJv9FojP/+K3HErZfTrt9j0Go
+         5fUYfeZGEWMaymiZb9ieQbliIr9dOWO9AmXukkuIWnF0FqAbIH4BOouumIF2tNxxRrOs
+         GXW/PchX659EJL7UCSfWYDrsk352gyxuEBov5z8QuzW1hHZoc6Xp0XThsRQ7NlAgvCQd
+         zIOGlVTYTv3M4cGUwICgwwyAq9IFJS3xI72zb1CAeFuIWca5DC3p3yJsJ2NlwnkMCzvQ
+         ckDWcA2qNAi27SN8HZsaX1h9mqGcfSqtx78hfhiT6gX7HxBx2VGOJtr9LdNUlAgEBY3U
+         M9Qw==
+X-Gm-Message-State: AGRZ1gKMdyIp/uWLcDuo3v+CVd/EP9zlfMCH1Byjl1IV1mqRvPLBmnM3
+        beqU4hNVr4FSBBFOJQvgerQE8C1IxIxYlA==
+X-Google-Smtp-Source: AJdET5fS1tX/zdU9CcyK/rSpNX7qzy0VrSV3qyFOnI3lgTf5QzVfdfQrJbqCuW3KDzXqh5LZuFTp4w==
+X-Received: by 2002:a1c:1c0c:: with SMTP id c12-v6mr5676716wmc.18.1541086168373;
+        Thu, 01 Nov 2018 08:29:28 -0700 (PDT)
+Received: from picard ([194.207.103.1])
+        by smtp.gmail.com with ESMTPSA id c14-v6sm24289844wmh.44.2018.11.01.08.29.25
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 01 Nov 2018 08:29:26 -0700 (PDT)
+Date:   Thu, 1 Nov 2018 15:29:25 +0000
+From:   Dean Wallace <duffydack73@gmail.com>
+To:     Hans de Goede <hdegoede@redhat.com>
 Cc:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
         Andy Shevchenko <andy.shevchenko@gmail.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -55,9 +70,9 @@ Cc:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Mogens Jensen <mogens-jensen@protonmail.com>
-References: <20181030143836.feo7zcxiestylxoo@picard>
- <2d429c87-24c5-4075-683e-b0d12c3eb1c2@linux.intel.com>
- <d00df762-e4fc-06c5-701e-d5100bfd0e35@redhat.com>
+Subject: Re: Regression found (Stop-marking-clocks-as-CLK_IS_CRITICAL)
+Message-ID: <20181101152925.gdmscgg7275md3km@picard>
+References: <d00df762-e4fc-06c5-701e-d5100bfd0e35@redhat.com>
  <e48696f0-aa3e-e20e-d038-9d8dda9cbfce@redhat.com>
  <20181030161534.wk5cf7nxbwhp2far@picard>
  <307c2074-d268-a87a-6040-1240a2091a4d@redhat.com>
@@ -66,155 +81,104 @@ References: <20181030143836.feo7zcxiestylxoo@picard>
  <20181101103705.ay36te4qr5pxtgop@picard>
  <37e44480-44d3-9355-6119-ae46bb38678a@redhat.com>
  <20181101142859.oxtuhbwtt44h2u3r@picard>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <67a7d54b-49cc-aa4e-fe47-bb6277f02bc8@redhat.com>
-Date:   Thu, 1 Nov 2018 15:49:44 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+ <67a7d54b-49cc-aa4e-fe47-bb6277f02bc8@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20181101142859.oxtuhbwtt44h2u3r@picard>
-Content-Type: multipart/mixed;
- boundary="------------4C6AD7A7F5E4C83A3777E2D3"
-Content-Language: en-US
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <67a7d54b-49cc-aa4e-fe47-bb6277f02bc8@redhat.com>
+X-Info: Keep It Simple, Stupid.
+X-Operating-System: Linux, kernel 4.19.0-arch1-1-ARCH-dirty
+X-Message-Flag: WARNING!! Outlook sucks
+User-Agent: Every email client sucks, this one just sucks less.
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------4C6AD7A7F5E4C83A3777E2D3
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-
-Hi,
-
-On 01-11-18 15:28, Dean Wallace wrote:
-> On 01-11-18, Hans de Goede wrote:
->> Hi,
->>
->> On 01-11-18 11:37, Dean Wallace wrote:
->>> On 31-10-18, Pierre-Louis Bossart wrote:
->>>>
->>>>> Just thought it worth mentioning, this new patch that fixes sound
->>>>> again, seems to have ressurected an old issue with PLL unlock.  I'm
->>>>> seeing journal entries after fresh boot ......
->>>>>
->>>>> ```
->>>>> picard kernel: max98090 i2c-193C9890:00: PLL unlocked
->>>>> picard systemd[462]: Started Sound Service.
->>>>> picard kernel: max98090 i2c-193C9890:00: PLL unlocked
->>>>> picard kernel: max98090 i2c-193C9890:00: PLL unlocked
->>>>> picard kernel: max98090 i2c-193C9890:00: PLL unlocked
->>>>> picard kernel: max98090 i2c-193C9890:00: PLL unlocked
->>>>> picard kernel: max98090 i2c-193C9890:00: PLL unlocked
->>>>> picard kernel: max98090 i2c-193C9890:00: PLL unlocked
->>>>> picard kernel: max98090 i2c-193C9890:00: PLL unlocked
->>>>> picard kernel: max98090 i2c-193C9890:00: PLL unlocked
->>>>> picard kernel: max98090_pll_work: 141 callbacks suppressed
->>>>> picard kernel: max98090 i2c-193C9890:00: PLL unlocked
->>>>> ```
->>>>>
->>>>> sound is ok, but sometimes plugging in headphones spams journal with
->>>>> those PLL messages, and sound turns into "daleks", and I have to
->>>>> remove/insert headphones few times or stop/start audio to fix it.
->>>>> It's a very old issue, maybe you'd know more about it.
->>>>
->>>> I noticed this error on my Orco device used for tests many moons ago, but I
->>>> could never find out what led to this error case, it wasn't deterministic
->>>> and didn't impact the audio quality. All I could do is rate_limit it... If
->>>> we have an A vs. B situation it'd be really helpful to diagnose further.
->>>>
->>>> Is there really a causality between the changes from Hans and this PLL
->>>> unlock error? Are you 100% sure this was not present in the previous install
->>>> you used (4.18.14 as mentioned earlier in the thread)?
->>>>
->>>> Thanks
->>>>
->>>> -Pierre
->>>>
->>> Well, numerous boots, kernels, headphone inserting - no PLL or
->>> 'Daleks'.  My laptop must have been haunted that day (halloween).
->>> I'll put it to bed.
->>
->> So you can no longer reproduce. Bummer. Note this might be caused by
->> the temperature of the laptop when you were running the tests...
->>
->> Anyways if you hit this again and you can reproduce it, please
->> give adding a msleep(10) after code mucking with the clk a try.
->>
->> Regards,
->>
->> Hans
->>
-> Right then, I can make it unlock and 'daleks' by going into
-> pavucontrol and switching the Profile back and forth from Stereo
-> Output to Stereo Output+Analog Mono Input, which is actually something
-> I've done to make it correct itself as well.  I don't use the mic or
-> anything so I've had it set to Stereo Ouput only which I 'think' has
-> somehow made it more stable for me.  With all my playing around, one
-> of the things I did was clean out my .config/pulse folder which meant
-> by default the 'Profile' in pavucontrol was set to Output+Input, which
-> seems to help trigger the PLL issue when inserting headphones.
+On 01-11-18, Hans de Goede wrote:
+> Hi,
 > 
-> So what would you like me to do, as I can trigger it on demand it
-> seems.
+> On 01-11-18 15:28, Dean Wallace wrote:
+> > On 01-11-18, Hans de Goede wrote:
+> > > Hi,
+> > > 
+> > > On 01-11-18 11:37, Dean Wallace wrote:
+> > > > On 31-10-18, Pierre-Louis Bossart wrote:
+> > > > > 
+> > > > > > Just thought it worth mentioning, this new patch that fixes sound
+> > > > > > again, seems to have ressurected an old issue with PLL unlock.  I'm
+> > > > > > seeing journal entries after fresh boot ......
+> > > > > > 
+> > > > > > ```
+> > > > > > picard kernel: max98090 i2c-193C9890:00: PLL unlocked
+> > > > > > picard systemd[462]: Started Sound Service.
+> > > > > > picard kernel: max98090 i2c-193C9890:00: PLL unlocked
+> > > > > > picard kernel: max98090 i2c-193C9890:00: PLL unlocked
+> > > > > > picard kernel: max98090 i2c-193C9890:00: PLL unlocked
+> > > > > > picard kernel: max98090 i2c-193C9890:00: PLL unlocked
+> > > > > > picard kernel: max98090 i2c-193C9890:00: PLL unlocked
+> > > > > > picard kernel: max98090 i2c-193C9890:00: PLL unlocked
+> > > > > > picard kernel: max98090 i2c-193C9890:00: PLL unlocked
+> > > > > > picard kernel: max98090 i2c-193C9890:00: PLL unlocked
+> > > > > > picard kernel: max98090_pll_work: 141 callbacks suppressed
+> > > > > > picard kernel: max98090 i2c-193C9890:00: PLL unlocked
+> > > > > > ```
+> > > > > > 
+> > > > > > sound is ok, but sometimes plugging in headphones spams journal with
+> > > > > > those PLL messages, and sound turns into "daleks", and I have to
+> > > > > > remove/insert headphones few times or stop/start audio to fix it.
+> > > > > > It's a very old issue, maybe you'd know more about it.
+> > > > > 
+> > > > > I noticed this error on my Orco device used for tests many moons ago, but I
+> > > > > could never find out what led to this error case, it wasn't deterministic
+> > > > > and didn't impact the audio quality. All I could do is rate_limit it... If
+> > > > > we have an A vs. B situation it'd be really helpful to diagnose further.
+> > > > > 
+> > > > > Is there really a causality between the changes from Hans and this PLL
+> > > > > unlock error? Are you 100% sure this was not present in the previous install
+> > > > > you used (4.18.14 as mentioned earlier in the thread)?
+> > > > > 
+> > > > > Thanks
+> > > > > 
+> > > > > -Pierre
+> > > > > 
+> > > > Well, numerous boots, kernels, headphone inserting - no PLL or
+> > > > 'Daleks'.  My laptop must have been haunted that day (halloween).
+> > > > I'll put it to bed.
+> > > 
+> > > So you can no longer reproduce. Bummer. Note this might be caused by
+> > > the temperature of the laptop when you were running the tests...
+> > > 
+> > > Anyways if you hit this again and you can reproduce it, please
+> > > give adding a msleep(10) after code mucking with the clk a try.
+> > > 
+> > > Regards,
+> > > 
+> > > Hans
+> > > 
+> > Right then, I can make it unlock and 'daleks' by going into
+> > pavucontrol and switching the Profile back and forth from Stereo
+> > Output to Stereo Output+Analog Mono Input, which is actually something
+> > I've done to make it correct itself as well.  I don't use the mic or
+> > anything so I've had it set to Stereo Ouput only which I 'think' has
+> > somehow made it more stable for me.  With all my playing around, one
+> > of the things I did was clean out my .config/pulse folder which meant
+> > by default the 'Profile' in pavucontrol was set to Output+Input, which
+> > seems to help trigger the PLL issue when inserting headphones.
+> > 
+> > So what would you like me to do, as I can trigger it on demand it
+> > seems.
+> 
+> Please give the attached patch a try (on top of my patch for the clk quirk)
+> and let us know if that fixes these errors.
+> 
+> Regards,
+> 
+> Hans
+> 
+Ok Hans, I tried your patch on top of the quirk, and sound is
+immediately garbled (daleks again), and switching pulseuadio profiles
+or inserting headphones doesn't make it correct itself, whereas before
+sound would be fine, UNTIL, I did something like insert earphone etc.
 
-Please give the attached patch a try (on top of my patch for the clk quirk)
-and let us know if that fixes these errors.
-
-Regards,
-
-Hans
-
-
---------------4C6AD7A7F5E4C83A3777E2D3
-Content-Type: text/x-patch;
- name="0001-ASoC-intel-cht_bsw_max98090_ti-Sleep-a-bit-after-ena.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
- filename*0="0001-ASoC-intel-cht_bsw_max98090_ti-Sleep-a-bit-after-ena.pa";
- filename*1="tch"
-
-From d81f1906f08bb6d3aa45a0403adc1d36754c13cc Mon Sep 17 00:00:00 2001
-From: Hans de Goede <hdegoede@redhat.com>
-Date: Thu, 1 Nov 2018 15:47:42 +0100
-Subject: [PATCH] ASoC: intel: cht_bsw_max98090_ti: Sleep a bit after enabling
- the mclk
-
-Sleep a bit after enabling the mclk to give the PLL some time to lock,
-this fixes the log showing a whole bunch of:
-
-kernel: max98090 i2c-193C9890:00: PLL unlocked
-
-errors.
-
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
----
- sound/soc/intel/boards/cht_bsw_max98090_ti.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/sound/soc/intel/boards/cht_bsw_max98090_ti.c b/sound/soc/intel/boards/cht_bsw_max98090_ti.c
-index 9d9f6e41d81c..f3bc0bfdfe08 100644
---- a/sound/soc/intel/boards/cht_bsw_max98090_ti.c
-+++ b/sound/soc/intel/boards/cht_bsw_max98090_ti.c
-@@ -19,6 +19,7 @@
-  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  */
- 
-+#include <linux/delay.h>
- #include <linux/dmi.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
-@@ -66,6 +67,7 @@ static int platform_clock_control(struct snd_soc_dapm_widget *w,
- 				"could not configure MCLK state");
- 			return ret;
- 		}
-+		usleep_range(5000, 10000);
- 	} else {
- 		clk_disable_unprepare(ctx->mclk);
- 	}
--- 
-2.19.0
-
-
---------------4C6AD7A7F5E4C83A3777E2D3--
+-Dean
