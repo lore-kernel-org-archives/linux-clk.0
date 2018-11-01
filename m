@@ -2,180 +2,146 @@ Return-Path: <SRS0=b8N2=NM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DFC2C0044C
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Nov 2018 02:58:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CD2AC0044C
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Nov 2018 05:02:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE54020664
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Nov 2018 02:58:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C57F205F4
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Nov 2018 05:02:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="HJVMfI+j"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE54020664
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="cZ/u97vG";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="nFcQ3sPD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C57F205F4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726327AbeKAL7n (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 1 Nov 2018 07:59:43 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:34107 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725978AbeKAL7n (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Nov 2018 07:59:43 -0400
-Received: by mail-io1-f66.google.com with SMTP id d80-v6so11253950iof.1
-        for <linux-clk@vger.kernel.org>; Wed, 31 Oct 2018 19:58:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=QOSxRggcjUksRsOCf6mfNAeYLRROOH7cdOzQ/0UZTUk=;
-        b=HJVMfI+jP8qwJ+T5gXrMmsDmI+ofJOL1Zc7zim6jzTGGjBzvvmdaAUYNxAcOCyoCZy
-         l2BbePFTLM8Xe7YOYDtJVOQBYIZquZv0DLCEil4aRxYlAUlkJQ9UBUU4/DZysgJ5+GCR
-         pRUeNr2la3NA+fWqclBbCtByJkyXS7UBZ8WCE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=QOSxRggcjUksRsOCf6mfNAeYLRROOH7cdOzQ/0UZTUk=;
-        b=GfyXtZoHE0bC5fZHldTyrAKCgfCtQQBPKpCY1if05kHOYm7CO5INoIob0NfhJIpkpG
-         4vUZjmadD0G6J5p2l33QYDEO58CaRNI/T8jiNexzweoD//TiyekWf71rpu/MZlk2if9q
-         FClzFOkio4lh2t9ct0ReoEDtlVkHiyqnbkpx3A8N8wqf5WuCDduFkNgiRx8FEfsrVSKP
-         tITffdx+bPW+MbkBnVWYUmJ6VHU+i+EBx6b6ugRPSuraJXgB3K6iARTehywpKLB3couE
-         iapfrUEXa9g3ASRW0GhTlUxIaOsWhnNwu0noG/x5Etz3idV0QDOhd2CBTW5Q3/zwaCE1
-         6XkQ==
-X-Gm-Message-State: AGRZ1gI0CO/m/hfbjvkroR2zwdBWmV1EgCOHnzEJzXqbYr4Km5uDfXRY
-        wsP2wfZrFEJeHgh+qkSkyMa6PhcLUsfWL0IhUQY0mA==
-X-Google-Smtp-Source: AJdET5eZA+CWKB3xMB0hzxG9LyRzNKdrWtn4v/9O4XdnjqqJTf5GvP/0beC1RDChfnU77Yt0UhEG+fBV1EhpsBA/Ruc=
-X-Received: by 2002:a6b:acc5:: with SMTP id v188-v6mr4363558ioe.66.1541041122644;
- Wed, 31 Oct 2018 19:58:42 -0700 (PDT)
+        id S1726263AbeKAODz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 1 Nov 2018 10:03:55 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:42526 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726208AbeKAODy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Nov 2018 10:03:54 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 01EA560795; Thu,  1 Nov 2018 05:02:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1541048552;
+        bh=Do00PobtbZla7MZ3DLlGPN3rzOic9p3z4301VRbKRgc=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=cZ/u97vGfB34SuQ7Wh1uCu/KmuZDtYpeX8wd1RUosjCA2bjMlYiUdx4IfPWRlASFs
+         ewTw3oaBrgpSzjcc5bQDyVVQmZorS5msUokjivoSEz5FXfIL8MUnrTatgfCt7IFBvW
+         TuiDT1zE18OYv24+y+jqIWUC3fKfSB+pXOyGbAS8=
+Received: from [10.79.162.146] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 2A85C6014B;
+        Thu,  1 Nov 2018 05:02:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1541048551;
+        bh=Do00PobtbZla7MZ3DLlGPN3rzOic9p3z4301VRbKRgc=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=nFcQ3sPDQ1VUa3P1Yk7org8SxXJX8JivSiBQQssOHLMq+zN5A2v22oKvSn7yoz12S
+         vlv97JGwreH3QLPLDmPvY+dI4az7e8b0o4lWXRL75h0uYVqmILNyubVsScAMILdvDX
+         sdrhFgp+V9LfDak4m7yEY6QXJIFctq2v2SbHkQcM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2A85C6014B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+Subject: Re: [PATCH v1 2/2] clk: qcom : dispcc: Add support for display port
+ clocks
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        chandanu@codeaurora.org
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        chandanu@codeaurora.org, linux-arm-msm-owner@vger.kernel.org
+References: <1539093467-12123-1-git-send-email-tdas@codeaurora.org>
+ <1539093467-12123-3-git-send-email-tdas@codeaurora.org>
+ <153911726378.119890.5522594539667887860@swboyd.mtv.corp.google.com>
+ <3c4cccca-2c5c-927f-f471-2bbbd71b4155@codeaurora.org>
+ <9c359e26-3708-14b6-f22a-fb529446d325@codeaurora.org>
+ <154083859263.98144.15690571729193618604@swboyd.mtv.corp.google.com>
+ <f3e40308-d2dd-cce9-4b19-3af419841bc1@codeaurora.org>
+ <154091723693.98144.6979314028521443413@swboyd.mtv.corp.google.com>
+From:   Taniya Das <tdas@codeaurora.org>
+Message-ID: <9c82010f-f3fd-2867-352e-3584ab4ba8f0@codeaurora.org>
+Date:   Thu, 1 Nov 2018 10:32:22 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20181024013132.115907-1-dbasehore@chromium.org> <20181024013132.115907-3-dbasehore@chromium.org>
-In-Reply-To: <20181024013132.115907-3-dbasehore@chromium.org>
-From:   "dbasehore ." <dbasehore@chromium.org>
-Date:   Wed, 31 Oct 2018 19:58:31 -0700
-Message-ID: <CAGAzgsp-tuSAThRGPtGM98opK0pJ5OfmxB9tx+9VBuxT6rz3cA@mail.gmail.com>
-Subject: Re: [PATCH 2/6] clk: fix clk_calc_subtree compute duplications
-To:     linux-kernel <linux-kernel@vger.kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-doc@vger.kernel.org,
-        sboyd@kernel.org, Michael Turquette <mturquette@baylibre.com>,
-        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-        aisheng.dong@nxp.com, mchehab+samsung@kernel.org,
-        Jonathan Corbet <corbet@lwn.net>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <154091723693.98144.6979314028521443413@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Oct 23, 2018 at 6:31 PM Derek Basehore <dbasehore@chromium.org> wrote:
->
-> clk_calc_subtree was called at every step up the clk tree in
-> clk_calc_new_rates. Since it recursively calls itself for its
-> children, this means it would be called once on each clk for each
-> step above the top clk is.
->
-> This fixes this by breaking the subtree calculation into two parts.
-> The first part recalcs the rate for each child of the parent clk in
-> clk_calc_new_rates. This part is not recursive itself. The second part
-> recursively calls a new clk_calc_subtree on the clk_core that was
-> passed into clk_set_rate.
->
-> Signed-off-by: Derek Basehore <dbasehore@chromium.org>
-> ---
->  drivers/clk/clk.c | 30 ++++++++++++++++++++----------
->  1 file changed, 20 insertions(+), 10 deletions(-)
->
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 95d818f5edb2..61de8ad3e4cf 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -1717,11 +1717,19 @@ static int __clk_speculate_rates(struct clk_core *core,
->         return ret;
->  }
->
-> -static void clk_calc_subtree(struct clk_core *core, unsigned long new_rate,
-> -                            struct clk_core *new_parent, u8 p_index)
-> +static void clk_calc_subtree(struct clk_core *core)
->  {
->         struct clk_core *child;
->
-> +       hlist_for_each_entry(child, &core->children, child_node) {
-> +               child->new_rate = clk_recalc(child, core->new_rate);
-> +               clk_calc_subtree(child);
-> +       }
-> +}
-> +
-> +static void clk_set_change(struct clk_core *core, unsigned long new_rate,
-> +                          struct clk_core *new_parent, u8 p_index)
-> +{
->         core->new_rate = new_rate;
->         core->new_parent = new_parent;
->         core->new_parent_index = p_index;
-> @@ -1729,11 +1737,6 @@ static void clk_calc_subtree(struct clk_core *core, unsigned long new_rate,
->         core->new_child = NULL;
->         if (new_parent && new_parent != core->parent)
->                 new_parent->new_child = core;
-> -
-> -       hlist_for_each_entry(child, &core->children, child_node) {
-> -               child->new_rate = clk_recalc(child, new_rate);
-> -               clk_calc_subtree(child, child->new_rate, NULL, 0);
-> -       }
->  }
->
->  /*
-> @@ -1744,7 +1747,7 @@ static struct clk_core *clk_calc_new_rates(struct clk_core *core,
->                                            unsigned long rate)
->  {
->         struct clk_core *top = core;
-> -       struct clk_core *old_parent, *parent;
-> +       struct clk_core *old_parent, *parent, *child;
->         unsigned long best_parent_rate = 0;
->         unsigned long new_rate;
->         unsigned long min_rate;
-> @@ -1791,6 +1794,8 @@ static struct clk_core *clk_calc_new_rates(struct clk_core *core,
->                 /* pass-through clock with adjustable parent */
->                 top = clk_calc_new_rates(parent, rate);
->                 new_rate = parent->new_rate;
-> +               hlist_for_each_entry(child, &parent->children, child_node)
-> +                       child->new_rate = clk_recalc(child, new_rate);
->                 goto out;
->         }
->
-> @@ -1813,11 +1818,14 @@ static struct clk_core *clk_calc_new_rates(struct clk_core *core,
->         }
->
->         if ((core->flags & CLK_SET_RATE_PARENT) && parent &&
-> -           best_parent_rate != parent->rate)
-> +           best_parent_rate != parent->rate) {
->                 top = clk_calc_new_rates(parent, best_parent_rate);
-> +               hlist_for_each_entry(child, &parent->children, child_node)
-> +                       child->new_rate = clk_recalc(child, parent->new_rate);
-> +       }
->
->  out:
-> -       clk_calc_subtree(core, new_rate, parent, p_index);
-> +       clk_set_change(core, new_rate, parent, p_index);
->
->         return top;
->  }
-> @@ -2018,6 +2026,8 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
->         if (ret)
->                 return ret;
->
-> +       clk_calc_subtree(core);
++ Chandan from Display Port team,
 
-This should be:
-hlist_for_each_entry(child, core->new_parent? core->new_parent :
-core->parent, child_node)
-  clk_calc_subtree(child);
+On 10/30/2018 10:03 PM, Stephen Boyd wrote:
+> Quoting Taniya Das (2018-10-29 23:01:44)
+>> On 10/30/2018 12:13 AM, Stephen Boyd wrote:
+>>> Quoting Taniya Das (2018-10-28 03:34:55)
+>>>> On 2018-10-19 16:04, Taniya Das wrote:
+>>>>> On 10/10/2018 2:04 AM, Stephen Boyd wrote:
+>>>>>> Quoting Taniya Das (2018-10-09 06:57:47)
+>>>>>>> diff --git a/drivers/clk/qcom/dispcc-sdm845.c
+>>>>>>> b/drivers/clk/qcom/dispcc-sdm845.c
+>>>>>>> index 0cc4909..6d3136a 100644
+>>>>>>> --- a/drivers/clk/qcom/dispcc-sdm845.c
+>>>>>>> +++ b/drivers/clk/qcom/dispcc-sdm845.c
+>>>>>>> +       },
+>>>>>>> +};
+>>>>>>> +
+>>>>>>> +static const struct freq_tbl ftbl_disp_cc_mdss_dp_link_clk_src[] = {
+>>>>>>> +       F(162000, P_DP_PHY_PLL_LINK_CLK,   1,   0,   0),
+>>>>>>> +       F(270000, P_DP_PHY_PLL_LINK_CLK,   1,   0,   0),
+>>>>>>> +       F(540000, P_DP_PHY_PLL_LINK_CLK,   1,   0,   0),
+>>>>>>> +       F(810000, P_DP_PHY_PLL_LINK_CLK,   1,   0,   0),
+>>>>>>
+>>>>>> Are these in kHz? They really look like it and that's bad. Why do we
+>>>>>> need them at all? Just to make sure the display driver picks these
+>>>>>> exact
+>>>>>> frequencies? It seems like we could just pass whatever number comes in
+>>>>>> up to the parent and see what it can do.
+>>>>>>
+>>>>>
+>>>>> Let me check back the reason we had to make this change.
+>>>>
+>>>> We will need this flag since we reset/power-down the PLL every time we
+>>>> disconnect/connect the DP cable or during suspend/resume. Only with this
+>>>> flag, the calls to the PLL driver are properly called.
+>>>
+>>> What does this mean? I wanted to know about the weird frequencies listed
+>>> above, and why it can't be done without a frequency table and direct
+>>> rates passed up to the parent.
+>>>
+>>
+>> OOps, my bad :(.
+>>
+>> We added these changes to handle higher clock rates. These rates when
+>> greater than 4.3Ghz cannot be represented in 32bit variables. For DP, we
+>> already have 5.4G and 8.1GHz freq for VCO clock. We will need these Khz
+>> freq list in clock driver.
+>>    Let me check if they can do something like the byte/pixel clocks of
+>> display.
+> 
+> Well then we really should just throw away the freq table here and have
+> rcg ops that pass the frequency up to the display PLL. Also, those
+> numbers look like gigabits per second (Gbit/s) for the DP spec which
+> isn't exactly the same as a clk frequency. What frequency does the PLL
+> run at for these various DP link speeds?
+> 
+Could you please help with the above query from Stephen?
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
 
-> +
->         /* notify that we are about to change rates */
->         fail_clk = clk_propagate_rate_change(top, PRE_RATE_CHANGE);
->         if (fail_clk) {
-> --
-> 2.19.1.568.g152ad8e336-goog
->
+--
