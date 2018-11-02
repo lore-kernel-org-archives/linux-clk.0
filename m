@@ -2,58 +2,53 @@ Return-Path: <SRS0=F2gG=NN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_DKIMWL_WL_HIGH,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBD52C32789
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Nov 2018 08:19:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54E09C32789
+	for <linux-clk@archiver.kernel.org>; Fri,  2 Nov 2018 09:18:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 896712082E
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Nov 2018 08:19:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kcvGbL6n"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 896712082E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 26B372082E
+	for <linux-clk@archiver.kernel.org>; Fri,  2 Nov 2018 09:18:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26B372082E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726515AbeKBRZo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 2 Nov 2018 13:25:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57552 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725843AbeKBRZn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 2 Nov 2018 13:25:43 -0400
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A676720847;
-        Fri,  2 Nov 2018 08:19:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541146764;
-        bh=VHu/m2oqXNqBTSoFBw7j54YwDQ2UAzdtPzrHV9w+6PQ=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=kcvGbL6nFTtuffuFjBvMppyx4h1i/LRq4X1wR0l99vCzd0JQ6W27fC02VVmYiMpm7
-         4rlX2CAS6jA4STC6u+aUSNr7Fys2bc8cypSMQoH52/iBP1PdKGE2JLbeA4J2KDW5Dr
-         IJJQc/8zF4miY1e30x5lGeGBZuGP0KcIwvyqypks=
-Received: by mail-lj1-f182.google.com with SMTP id z21-v6so1010652ljz.0;
-        Fri, 02 Nov 2018 01:19:23 -0700 (PDT)
-X-Gm-Message-State: AGRZ1gLFrjyvc9vr9swOLBKzhbuIQ6e/rZB62LgwALhunnwTqjZ8Fab0
-        koWijCdrWfJ4nb+uHsuVBT1sIQE6oRE94IjF5hE=
-X-Google-Smtp-Source: AJdET5ddBEeDxGY8VJnSMEPPMdA6KOdScrnbsF5cjrMUSFV91TAiY2A7xuzhwJ0VUV6awHEuXTtePLy3ihK/2/slV3o=
-X-Received: by 2002:a2e:990e:: with SMTP id v14-v6mr7563777lji.60.1541146761787;
- Fri, 02 Nov 2018 01:19:21 -0700 (PDT)
-MIME-Version: 1.0
-References: <cover.1541054985.git.matti.vaittinen@fi.rohmeurope.com> <8e396e22b328f35538a01193797fbd0d001f885d.1541054985.git.matti.vaittinen@fi.rohmeurope.com>
-In-Reply-To: <8e396e22b328f35538a01193797fbd0d001f885d.1541054985.git.matti.vaittinen@fi.rohmeurope.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Fri, 2 Nov 2018 09:19:10 +0100
-X-Gmail-Original-Message-ID: <CAJKOXPeM18c3a2nWeGGGw+Fn-GQ2C0ridwE3eqRsd1gVQ6zB5w@mail.gmail.com>
-Message-ID: <CAJKOXPeM18c3a2nWeGGGw+Fn-GQ2C0ridwE3eqRsd1gVQ6zB5w@mail.gmail.com>
-Subject: Re: [PATCH v2 3/8] clk: clk-s3c2410-dclk: clean up clkdev lookup leak
-To:     matti.vaittinen@fi.rohmeurope.com
+        id S1726098AbeKBSZB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 2 Nov 2018 14:25:01 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:36575 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726026AbeKBSZB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Nov 2018 14:25:01 -0400
+Received: by mail-lj1-f193.google.com with SMTP id s15-v6so1140389lji.3;
+        Fri, 02 Nov 2018 02:18:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=iKajEDCUUfGYjW9KmM0LTrwV5Iy9tOZeEY5tD1ICF6U=;
+        b=U062+/IiLC74KmxNyQVWi65BPlo4/8ZVm8apeA6Omh/gdrvNmjNJ0O51KdT6wAllKO
+         HaxwTNHd0bpnNIarx17lwT63IBlhp6eq3ZpJDvFvPp72HyubYKFUFdwlMzbIGgP2JQwE
+         c7CBTrXV5/EqamTIBG/wa2UWG1mximcyPW48VxOBI/daMMKfBvcDr5P5HAa/xd+MUP1k
+         2GqWu6UxIXdz/BHBF9XKapj1+ONUmVdU/n8TuLFfKtETwYe9Sb1LVjeaEc5NRDDl4tKq
+         uCw+PAMSHnm2xfPLanvkkb7CMQc5VQZ+pXSzUNyv+hkCVVbWqjFCyT3JGDtw9rZYNgfJ
+         GjVw==
+X-Gm-Message-State: AGRZ1gL9XfvWD0kqlcoM+YXJUAUc24WeK1NHGH2cSMD7GlIEOHNAgAhF
+        6Mhe8j1cWKaEcD42kaRnpmg=
+X-Google-Smtp-Source: AJdET5eT82FjdHXe9S/c+vJuh6LX7a5UlsNcl0OBo2WneB5PS6fAOVGHM+JMhkS7EdsQZRG2XpiK9w==
+X-Received: by 2002:a2e:9653:: with SMTP id z19-v6mr453914ljh.112.1541150309072;
+        Fri, 02 Nov 2018 02:18:29 -0700 (PDT)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id j12-v6sm2380329lja.8.2018.11.02.02.18.27
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 02 Nov 2018 02:18:28 -0700 (PDT)
+Date:   Fri, 2 Nov 2018 11:18:25 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
 Cc:     corbet@lwn.net, mturquette@baylibre.com, sboyd@kernel.org,
         Chanwoo Choi <cw00.choi@samsung.com>,
-        =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= 
+        =?utf-8?Q?Bart=C5=82omiej_=C5=BBo=C5=82nierkiewicz?= 
         <b.zolnierkie@samsung.com>, linux@armlinux.org.uk,
         andy.gross@linaro.org, david.brown@linaro.org, kgene@kernel.org,
         s.nawrocki@samsung.com, Tomasz Figa <tomasz.figa@gmail.com>,
@@ -66,25 +61,43 @@ Cc:     corbet@lwn.net, mturquette@baylibre.com, sboyd@kernel.org,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
         "linux-samsung-soc@vger.kernel.org" 
         <linux-samsung-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH v2 3/8] clk: clk-s3c2410-dclk: clean up clkdev lookup leak
+Message-ID: <20181102091825.GB29664@localhost.localdomain>
+References: <cover.1541054985.git.matti.vaittinen@fi.rohmeurope.com>
+ <8e396e22b328f35538a01193797fbd0d001f885d.1541054985.git.matti.vaittinen@fi.rohmeurope.com>
+ <CAJKOXPeM18c3a2nWeGGGw+Fn-GQ2C0ridwE3eqRsd1gVQ6zB5w@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJKOXPeM18c3a2nWeGGGw+Fn-GQ2C0ridwE3eqRsd1gVQ6zB5w@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 1 Nov 2018 at 08:19, Matti Vaittinen
-<matti.vaittinen@fi.rohmeurope.com> wrote:
->
-> Use devm variant of clkdev lookup registration in order to avoid
-> clkdev lookup leak at device remove.
->
-> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> ---
->  drivers/clk/samsung/clk-s3c2410-dclk.c | 15 ++++++++-------
->  1 file changed, 8 insertions(+), 7 deletions(-)
+Thanks Krzysztof!
 
-Driver has suppress_bind_attrs and it cannot be built as module so
-device removal should not be possible. There is no need to use devm.
+On Fri, Nov 02, 2018 at 09:19:10AM +0100, Krzysztof Kozlowski wrote:
+> On Thu, 1 Nov 2018 at 08:19, Matti Vaittinen
+> <matti.vaittinen@fi.rohmeurope.com> wrote:
+> >
+> > Use devm variant of clkdev lookup registration in order to avoid
+> > clkdev lookup leak at device remove.
+> >
+> > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> > ---
+> >  drivers/clk/samsung/clk-s3c2410-dclk.c | 15 ++++++++-------
+> >  1 file changed, 8 insertions(+), 7 deletions(-)
+> 
+> Driver has suppress_bind_attrs and it cannot be built as module so
+> device removal should not be possible. There is no need to use devm.
 
-Best regards,
-Krzysztof
+This is exactly what I wanted to hear =) I will drop this patch from
+series.
+
+-- 
+Matti Vaittinen
+ROHM Semiconductors
+
+~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
