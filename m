@@ -2,116 +2,187 @@ Return-Path: <SRS0=F2gG=NN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19C90C32789
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Nov 2018 19:25:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 324EAC32789
+	for <linux-clk@archiver.kernel.org>; Fri,  2 Nov 2018 20:52:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE1992082E
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Nov 2018 19:25:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA8FD2082E
+	for <linux-clk@archiver.kernel.org>; Fri,  2 Nov 2018 20:52:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="P2mbbIE4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE1992082E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bHRMyBwM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA8FD2082E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726024AbeKCEeW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 3 Nov 2018 00:34:22 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:39870 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726150AbeKCEeW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 3 Nov 2018 00:34:22 -0400
-Received: by mail-lf1-f67.google.com with SMTP id n18so2064150lfh.6
-        for <linux-clk@vger.kernel.org>; Fri, 02 Nov 2018 12:25:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=from:subject:to:references:organization:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=9ZDr4t8auOL2s2l0/vokJ3YO2nhpAkuEA8w+w0p37gA=;
-        b=P2mbbIE4N3HeF7JH46UEpqnR1N6jGHf2eklojliWUxZcVfPPAx8xSOAnbsAJeJcQHZ
-         m8Q6ukwOqQ70Q5nlTcIRD0LFtQUk02AGDW7uIUeyie6/mUw0Kf07k9Kg39JYs+urary2
-         NhOsHEJHZ3B6R4VDCFty8ZSUYaG0aABX95nDIx6xIw4H4cRf0QzqZoelP7V7bUofYpk4
-         pj4RO27xAjOiq5/9Ay5xq1cUg6tXoms9lKXniL0LGNJuf25+dnD4TUZb2KXwRdNBNj2W
-         yGT2TxNV2pGQ6kjWExrV58M4EKXFZRvmksJvz05Xa9O2lnNCf2gFY6TOvqh0aKD8o4Bc
-         bi7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:references:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=9ZDr4t8auOL2s2l0/vokJ3YO2nhpAkuEA8w+w0p37gA=;
-        b=kXqC/bi4fWOHIQ+58I32ubRL68XhLDE+Cl9B8ruDnBGm7qHAFkhuKyBjrg/JGwnMJj
-         fdJ0LTEuZmaynYF3mO3wqH5cTgnrnCPGxvlMaCc4aV8jIfgSonewbWkf5qV8nVgka20W
-         Im0gxKIW/bt7jXuyTu7qfiqul5exohSO3HZLAEoB/n5ihnu1WDkoG+ooHvbJR7teaL4a
-         /vVg3cHlWHncluwt+62mRvNjwybxuFxXpk3bEVlfQmr6dT/H6cA5Vh7GgR2spF8Y0V/q
-         6kUxVYeiYkwejQhwqzHAOHHc0NalN+XG+bWpBXBOGWA4dvc4bq5vlceSvdc1dnTka9P3
-         6c9w==
-X-Gm-Message-State: AGRZ1gKfJUihnJQFmypC9mpk3x7mKlNPG5/FPC6UqYXOZASIXDaZZMxo
-        YsJObTjDFw4CxmPC645Tzm6aImEAxSQ7ZQ==
-X-Google-Smtp-Source: AJdET5eBH3gyLqeUjsk/DnHcjn4su7b/n+4inELK9tQ/04J3a64EkTpbo99ikQHW0xkjlzXG09x13w==
-X-Received: by 2002:a19:9209:: with SMTP id u9-v6mr7958299lfd.26.1541186756074;
-        Fri, 02 Nov 2018 12:25:56 -0700 (PDT)
-Received: from wasted.cogentembedded.com ([94.72.11.11])
-        by smtp.gmail.com with ESMTPSA id c22sm5242680lfd.88.2018.11.02.12.25.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 02 Nov 2018 12:25:55 -0700 (PDT)
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: [PATCH] clk: renesas: r8a77970: add RPC clock
-To:     "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-clk@vger.kernel.org
-References: <5b7895ac-11c1-ac2d-837b-56726bc6226a@cogentembedded.com>
-Organization: Cogent Embedded
-Message-ID: <5a5c65f1-d446-9445-4e2a-579f57f00abf@cogentembedded.com>
-Date:   Fri, 2 Nov 2018 22:25:54 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        id S1726791AbeKCGBU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 3 Nov 2018 02:01:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39862 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725957AbeKCGBU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 3 Nov 2018 02:01:20 -0400
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4326A2082E;
+        Fri,  2 Nov 2018 20:52:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541191961;
+        bh=vJRDmfrp0jtDatYmo3aRaTmkmqRI/Xv0Ugemt64LReY=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=bHRMyBwMQfuEcZMAOsrXP9A88ZbyQnDUAH8K6XojqHQ2n37vqa8xPMhbDPO3NHD60
+         fMeuXs2YplK8sttWkllAq4DzWjtWD2bbh0SgqSmGbMeS2B3a+rOPcXFIYzlR2QWbRs
+         3zAcwkBYA0A94HvaPQJafgYnfABpBUy+P0yr9Yc0=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <5b7895ac-11c1-ac2d-837b-56726bc6226a@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+To:     Amit Nischal <anischal@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1534141987-29601-3-git-send-email-anischal@codeaurora.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Odelu Kukatla <okukatla@codeaurora.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Amit Nischal <anischal@codeaurora.org>
+References: <1534141987-29601-1-git-send-email-anischal@codeaurora.org>
+ <1534141987-29601-3-git-send-email-anischal@codeaurora.org>
+Message-ID: <154119196058.88331.1952304286743529280@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v3 2/4] clk: qcom: Add clk_rcg2_gfx3d_ops for SDM845
+Date:   Fri, 02 Nov 2018 13:52:40 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On R-Car V3M (R8A77970), the RPC/RPCD2 clocks are output by the common
-divider. Describe them, as well as the RPC-IF module clock.
+Quoting Amit Nischal (2018-08-12 23:33:05)
+> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+> index 52208d4..a57ce00 100644
+> --- a/drivers/clk/qcom/clk-rcg2.c
+> +++ b/drivers/clk/qcom/clk-rcg2.c
+> @@ -866,7 +866,7 @@ static int clk_rcg2_shared_set_rate_and_parent(struct=
+ clk_hw *hw,
+>         return clk_rcg2_shared_set_rate(hw, rate, parent_rate);
+>  }
+> =
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> -static int clk_rcg2_shared_enable(struct clk_hw *hw)
+> +static int __clk_rcg2_shared_enable(struct clk_hw *hw)
 
----
-This patch is against the 'clk-renesas' branch of Geert Uytterhoeven's
-'renesas-drivers.git' repo.
+Name this clk_rcg2_force_enable() please. Also add a comment above like:
 
- drivers/clk/renesas/r8a77970-cpg-mssr.c |    4 ++++
- 1 file changed, 4 insertions(+)
+/* Set RCG force enable bit and flush out any configuration settings */
 
-Index: renesas/drivers/clk/renesas/r8a77970-cpg-mssr.c
-===================================================================
---- renesas.orig/drivers/clk/renesas/r8a77970-cpg-mssr.c
-+++ renesas/drivers/clk/renesas/r8a77970-cpg-mssr.c
-@@ -94,6 +94,9 @@ static const struct cpg_core_clk r8a7797
- 		 CLK_PLL1_DIV2),
- 	DEF_BASE("sd0",	R8A77970_CLK_SD0, CLK_TYPE_R8A77970_SD0, CLK_PLL1_DIV2),
- 
-+	DEF_FIXED("rpc",	R8A77970_CLK_RPC,   CLK_PLL1_DIV2,  5, 1),
-+	DEF_FIXED("rpcd2",	R8A77970_CLK_RPCD2, CLK_PLL1_DIV2, 10, 1),
-+
- 	DEF_FIXED("cl",		R8A77970_CLK_CL,    CLK_PLL1_DIV2, 48, 1),
- 	DEF_FIXED("cp",		R8A77970_CLK_CP,    CLK_EXTAL,	    2, 1),
- 
-@@ -155,6 +158,7 @@ static const struct mssr_mod_clk r8a7797
- 	DEF_MOD("gpio1",		 911,	R8A77970_CLK_CP),
- 	DEF_MOD("gpio0",		 912,	R8A77970_CLK_CP),
- 	DEF_MOD("can-fd",		 914,	R8A77970_CLK_S2D2),
-+	DEF_MOD("rpc-if",		 917,	R8A77970_CLK_RPC),
- 	DEF_MOD("i2c4",			 927,	R8A77970_CLK_S2D2),
- 	DEF_MOD("i2c3",			 928,	R8A77970_CLK_S2D2),
- 	DEF_MOD("i2c2",			 929,	R8A77970_CLK_S2D2),
+>  {
+>         struct clk_rcg2 *rcg =3D to_clk_rcg2(hw);
+>         int ret;
+> @@ -879,7 +879,14 @@ static int clk_rcg2_shared_enable(struct clk_hw *hw)
+>         if (ret)
+>                 return ret;
+> =
+
+> -       ret =3D update_config(rcg);
+> +       return update_config(rcg);
+> +}
+> +
+> +static int clk_rcg2_shared_enable(struct clk_hw *hw)
+> +{
+> +       int ret;
+> +
+> +       ret =3D __clk_rcg2_shared_enable(hw);
+>         if (ret)
+>                 return ret;
+> =
+
+> @@ -929,3 +936,78 @@ static void clk_rcg2_shared_disable(struct clk_hw *h=
+w)
+>         .set_rate_and_parent =3D clk_rcg2_shared_set_rate_and_parent,
+>  };
+>  EXPORT_SYMBOL_GPL(clk_rcg2_shared_ops);
+> +
+> +static int clk_rcg2_gfx3d_enable(struct clk_hw *hw)
+> +{
+> +       return __clk_rcg2_shared_enable(hw);
+> +}
+
+And then drop this wrapper and just use clk_rcg2_force_enable() in the
+clk_ops structure.
+
+> +
+> +static int clk_rcg2_gfx3d_determine_rate(struct clk_hw *hw,
+> +                                       struct clk_rate_request *req)
+> +{
+> +       struct clk_rate_request parent_req =3D { };
+> +       struct clk_hw *p;
+> +       unsigned long rate =3D req->rate;
+> +       int ret;
+> +
+> +       rate =3D clamp(rate, req->min_rate, req->max_rate);
+
+Doesn't the core already clamp the rate for you? Seems wasteful to do it
+again.
+
+> +
+> +       /* Get fixed parent - GPU_CC_PLL0_OUT_EVEN */
+
+I hope this doesn't change in the future! Any way to make this
+detectable by storing the parent index somewhere so this op can work
+with any future index selection instead of hardcoding '1' here?
+
+> +       p =3D clk_hw_get_parent_by_index(hw, 1);
+> +
+> +       /* Parent should always run at twice of the requested rate */
+> +       parent_req.rate =3D 2 * rate;
+> +
+> +       ret =3D __clk_determine_rate(req->best_parent_hw, &parent_req);
+> +       if (ret)
+> +               return ret;
+> +
+> +       req->best_parent_hw =3D p;
+> +       req->best_parent_rate =3D parent_req.rate;
+> +       req->rate =3D parent_req.rate / 2;
+> +
+> +       return 0;
+> +}
+> +
+> +static int clk_rcg2_gfx3d_set_rate(struct clk_hw *hw, unsigned long rate,
+> +                                   unsigned long parent_rate)
+> +{
+> +       struct clk_rcg2 *rcg =3D to_clk_rcg2(hw);
+> +       int ret;
+> +       u32 cfg;
+> +
+> +       /* Configure fixed SRC and DIV */
+> +       cfg =3D rcg->parent_map[1].cfg << CFG_SRC_SEL_SHIFT;
+
+This would need to be dynamic too instead of hardcoding '1'.
+
+> +       cfg |=3D 0x3 << CFG_SRC_DIV_SHIFT;
+> +
+> +       ret =3D regmap_write(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG, c=
+fg);
+> +       if (ret)
+> +               return ret;
+> +
+> +       /*
+> +        * In case clock is disabled, update the SRC and DIV only
+> +        * and return without configuration update.
+
+Add:
+
+ When the clk is enabled, we'll configure the rate to be what we
+ requested here. This allows other users of this clk (i.e. GPU)
+ to change the rate when this clk is disabled from our perspective.
+
+> +        */
+> +       if (!__clk_is_enabled(hw->clk))
+> +               return 0;
+> +
+> +       return update_config(rcg);
+> +}
