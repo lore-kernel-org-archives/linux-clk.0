@@ -2,187 +2,84 @@ Return-Path: <SRS0=F2gG=NN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 324EAC32789
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Nov 2018 20:52:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3AAAC32789
+	for <linux-clk@archiver.kernel.org>; Fri,  2 Nov 2018 22:16:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA8FD2082E
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Nov 2018 20:52:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bHRMyBwM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA8FD2082E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id C06212082D
+	for <linux-clk@archiver.kernel.org>; Fri,  2 Nov 2018 22:16:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C06212082D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726791AbeKCGBU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 3 Nov 2018 02:01:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39862 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725957AbeKCGBU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 3 Nov 2018 02:01:20 -0400
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4326A2082E;
-        Fri,  2 Nov 2018 20:52:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541191961;
-        bh=vJRDmfrp0jtDatYmo3aRaTmkmqRI/Xv0Ugemt64LReY=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=bHRMyBwMQfuEcZMAOsrXP9A88ZbyQnDUAH8K6XojqHQ2n37vqa8xPMhbDPO3NHD60
-         fMeuXs2YplK8sttWkllAq4DzWjtWD2bbh0SgqSmGbMeS2B3a+rOPcXFIYzlR2QWbRs
-         3zAcwkBYA0A94HvaPQJafgYnfABpBUy+P0yr9Yc0=
-Content-Type: text/plain; charset="utf-8"
+        id S1728417AbeKCHZH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 3 Nov 2018 03:25:07 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:40798 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726586AbeKCHZH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 3 Nov 2018 03:25:07 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id D53B480919; Fri,  2 Nov 2018 23:16:07 +0100 (CET)
+Date:   Fri, 2 Nov 2018 23:16:09 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Lubomir Rintel <lkundrak@v3.sk>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-input@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH 6/8] Input: olpc_apsp: check FIFO status on open(), not
+ probe()
+Message-ID: <20181102221609.GA5322@amd>
+References: <20180910112654.42061-1-lkundrak@v3.sk>
+ <20180910112654.42061-7-lkundrak@v3.sk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Amit Nischal <anischal@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1534141987-29601-3-git-send-email-anischal@codeaurora.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Odelu Kukatla <okukatla@codeaurora.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Amit Nischal <anischal@codeaurora.org>
-References: <1534141987-29601-1-git-send-email-anischal@codeaurora.org>
- <1534141987-29601-3-git-send-email-anischal@codeaurora.org>
-Message-ID: <154119196058.88331.1952304286743529280@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v3 2/4] clk: qcom: Add clk_rcg2_gfx3d_ops for SDM845
-Date:   Fri, 02 Nov 2018 13:52:40 -0700
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="k+w/mQv8wyuph6w0"
+Content-Disposition: inline
+In-Reply-To: <20180910112654.42061-7-lkundrak@v3.sk>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Amit Nischal (2018-08-12 23:33:05)
-> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-> index 52208d4..a57ce00 100644
-> --- a/drivers/clk/qcom/clk-rcg2.c
-> +++ b/drivers/clk/qcom/clk-rcg2.c
-> @@ -866,7 +866,7 @@ static int clk_rcg2_shared_set_rate_and_parent(struct=
- clk_hw *hw,
->         return clk_rcg2_shared_set_rate(hw, rate, parent_rate);
->  }
-> =
 
-> -static int clk_rcg2_shared_enable(struct clk_hw *hw)
-> +static int __clk_rcg2_shared_enable(struct clk_hw *hw)
+--k+w/mQv8wyuph6w0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Name this clk_rcg2_force_enable() please. Also add a comment above like:
+On Mon 2018-09-10 13:26:52, Lubomir Rintel wrote:
+> Let's defer the FIFO status checking until open().
+>=20
+> When we'll get a clk handle, this will allow us to defer clock enablement
+> until the device is actually used.
+>=20
+> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 
-/* Set RCG force enable bit and flush out any configuration settings */
+Acked-by: Pavel Machek <pavel@ucw.cz>
 
->  {
->         struct clk_rcg2 *rcg =3D to_clk_rcg2(hw);
->         int ret;
-> @@ -879,7 +879,14 @@ static int clk_rcg2_shared_enable(struct clk_hw *hw)
->         if (ret)
->                 return ret;
-> =
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
-> -       ret =3D update_config(rcg);
-> +       return update_config(rcg);
-> +}
-> +
-> +static int clk_rcg2_shared_enable(struct clk_hw *hw)
-> +{
-> +       int ret;
-> +
-> +       ret =3D __clk_rcg2_shared_enable(hw);
->         if (ret)
->                 return ret;
-> =
+--k+w/mQv8wyuph6w0
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-> @@ -929,3 +936,78 @@ static void clk_rcg2_shared_disable(struct clk_hw *h=
-w)
->         .set_rate_and_parent =3D clk_rcg2_shared_set_rate_and_parent,
->  };
->  EXPORT_SYMBOL_GPL(clk_rcg2_shared_ops);
-> +
-> +static int clk_rcg2_gfx3d_enable(struct clk_hw *hw)
-> +{
-> +       return __clk_rcg2_shared_enable(hw);
-> +}
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-And then drop this wrapper and just use clk_rcg2_force_enable() in the
-clk_ops structure.
+iEYEARECAAYFAlvczKkACgkQMOfwapXb+vITPwCggk6ezBBtegkYFh2J6ErUWagC
+FbwAn2iRysWVzLxqHqsq3oCGgSpUk8lR
+=11n9
+-----END PGP SIGNATURE-----
 
-> +
-> +static int clk_rcg2_gfx3d_determine_rate(struct clk_hw *hw,
-> +                                       struct clk_rate_request *req)
-> +{
-> +       struct clk_rate_request parent_req =3D { };
-> +       struct clk_hw *p;
-> +       unsigned long rate =3D req->rate;
-> +       int ret;
-> +
-> +       rate =3D clamp(rate, req->min_rate, req->max_rate);
-
-Doesn't the core already clamp the rate for you? Seems wasteful to do it
-again.
-
-> +
-> +       /* Get fixed parent - GPU_CC_PLL0_OUT_EVEN */
-
-I hope this doesn't change in the future! Any way to make this
-detectable by storing the parent index somewhere so this op can work
-with any future index selection instead of hardcoding '1' here?
-
-> +       p =3D clk_hw_get_parent_by_index(hw, 1);
-> +
-> +       /* Parent should always run at twice of the requested rate */
-> +       parent_req.rate =3D 2 * rate;
-> +
-> +       ret =3D __clk_determine_rate(req->best_parent_hw, &parent_req);
-> +       if (ret)
-> +               return ret;
-> +
-> +       req->best_parent_hw =3D p;
-> +       req->best_parent_rate =3D parent_req.rate;
-> +       req->rate =3D parent_req.rate / 2;
-> +
-> +       return 0;
-> +}
-> +
-> +static int clk_rcg2_gfx3d_set_rate(struct clk_hw *hw, unsigned long rate,
-> +                                   unsigned long parent_rate)
-> +{
-> +       struct clk_rcg2 *rcg =3D to_clk_rcg2(hw);
-> +       int ret;
-> +       u32 cfg;
-> +
-> +       /* Configure fixed SRC and DIV */
-> +       cfg =3D rcg->parent_map[1].cfg << CFG_SRC_SEL_SHIFT;
-
-This would need to be dynamic too instead of hardcoding '1'.
-
-> +       cfg |=3D 0x3 << CFG_SRC_DIV_SHIFT;
-> +
-> +       ret =3D regmap_write(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG, c=
-fg);
-> +       if (ret)
-> +               return ret;
-> +
-> +       /*
-> +        * In case clock is disabled, update the SRC and DIV only
-> +        * and return without configuration update.
-
-Add:
-
- When the clk is enabled, we'll configure the rate to be what we
- requested here. This allows other users of this clk (i.e. GPU)
- to change the rate when this clk is disabled from our perspective.
-
-> +        */
-> +       if (!__clk_is_enabled(hw->clk))
-> +               return 0;
-> +
-> +       return update_config(rcg);
-> +}
+--k+w/mQv8wyuph6w0--
