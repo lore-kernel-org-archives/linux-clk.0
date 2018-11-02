@@ -2,125 +2,94 @@ Return-Path: <SRS0=F2gG=NN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D4E7C65C22
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Nov 2018 13:05:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88CEFC65C22
+	for <linux-clk@archiver.kernel.org>; Fri,  2 Nov 2018 16:05:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2445F204FD
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Nov 2018 13:05:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4322D20657
+	for <linux-clk@archiver.kernel.org>; Fri,  2 Nov 2018 16:05:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="seR4in71"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2445F204FD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KTCJt03L"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4322D20657
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727668AbeKBWM0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 2 Nov 2018 18:12:26 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:51315 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726200AbeKBWMZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Nov 2018 18:12:25 -0400
-Received: by mail-wm1-f66.google.com with SMTP id w7-v6so1937204wmc.1
-        for <linux-clk@vger.kernel.org>; Fri, 02 Nov 2018 06:05:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=cHE3B9mtOR8PbpfiQvYBO+fwkN4qt2SpdjzD+aBqjVk=;
-        b=seR4in71bzLCJMlCTmLaD4vpb4UbZMO/JB2dUD3iuvMA2xdaxx7B2sYahHRA16r+Fr
-         ZYgzaEJWlkYOvQknQ3Myftff4FA9i7gGG7J9J0OOAwTzFtQKU6p9bVNyQlF20CCdjI6z
-         LA3I/qf5TCa/E1wnWjWkdZQTk1N4PD3LGyL4PymBgvBG1lhsCxIRXdsYZTfEgw1wd9U5
-         TvFOYC983J2OWvRG/Y17i/mE7YaUw+YFedT00KOZJHSjvZ03ZVVHoTnxdmGAeCX8KZYW
-         mrDUzfbY6eTYcPSoSPFYJmUmHA24JYDZsG7DEHeo1951ErVKpr5E2c8wLUNGuaH4pJHg
-         tBvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=cHE3B9mtOR8PbpfiQvYBO+fwkN4qt2SpdjzD+aBqjVk=;
-        b=cOiQgQ8hi0gU+05TdVX2RttS2xrwOhmKsWTZ5E8YjJmJ1ESSAWqeREGZP7rgkPKv0r
-         i+fSOIXBCnkRRopH1Te4wkW+GQceWUTTwSDpSQvFoTcPFo+Ww+CB4DScl5JShPzcL3wW
-         RHCgfZj8B4RMm5gfYwGjQ2RpMHNhcQUz12rU7anlQ+KZG3VkZ4UZ7pSJSA1URUfjtcGn
-         FSXOwGaW9JD8iN+1eirshtgJULoDQrFDJwBqLuKtIW3IMKQskC33X8pxRUpAd5TQC7T7
-         pBnamqrIU12GgsZA15C22KA5JHuyP0CmCJmjcdaHKsYSEmxJzi2jURVLXesPE0NK63N7
-         2LzQ==
-X-Gm-Message-State: AGRZ1gKnTA+B4rwi3i+lJbfIwfFn+/ukOI5TawJnC12z+C0+VlIah84r
-        VIZg9YuBI3468+X874NUCRGsiQ==
-X-Google-Smtp-Source: AJdET5c6/o4NpfZYrPVYVtaUsQT2B37XB1nxCLqHdOZUZmSdECnqxZtVSjiwL+rPQfoVHlGCyr5Oew==
-X-Received: by 2002:a1c:c4f:: with SMTP id 76-v6mr733307wmm.6.1541163916868;
-        Fri, 02 Nov 2018 06:05:16 -0700 (PDT)
-Received: from boomer.baylibre.com ([90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id b127-v6sm6306838wme.43.2018.11.02.06.05.15
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 02 Nov 2018 06:05:15 -0700 (PDT)
-Message-ID: <ce0a3e6bf6ef438987f3ad390c2aa1bccc75f5ea.camel@baylibre.com>
-Subject: Re: [PATCH v6 3/3] clk: meson: add sub MMC clock controller driver
-From:   jbrunet@baylibre.com
-To:     Jianxin Pan <jianxin.pan@amlogic.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-Cc:     Yixun Lan <yixun.lan@amlogic.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Liang Yang <liang.yang@amlogic.com>,
-        Jian Hu <jian.hu@amlogic.com>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Hanjie Lin <hanjie.lin@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>, linux-clk@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Date:   Fri, 02 Nov 2018 14:05:14 +0100
-In-Reply-To: <1541089855-19356-4-git-send-email-jianxin.pan@amlogic.com>
-References: <1541089855-19356-1-git-send-email-jianxin.pan@amlogic.com>
-         <1541089855-19356-4-git-send-email-jianxin.pan@amlogic.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.1 (3.30.1-1.fc29) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1726316AbeKCBNI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 2 Nov 2018 21:13:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58196 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726085AbeKCBNH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 2 Nov 2018 21:13:07 -0400
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 15B6320657;
+        Fri,  2 Nov 2018 16:05:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541174732;
+        bh=Xzo2ah8+MOWC5eFrU2QkwjlZM1tsEzvBnGDVebFj1tM=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=KTCJt03L8wHXFUKn53H1R4PdWG6wjDuMAjodw6hNlKIl4Q79+WBde2DwAo6X8X4u8
+         qoQKWJ7Gd9WQfAeu+K3h4AUrHWobzgOA9PmxxWH0kqpcrQsTiEURjzQabEZCX72tpT
+         quU/iZl2Qwa4egpaQlGUwCSYe8hPYJzlkmBYrIx8=
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+To:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <CAPybu_3AGAYx2YKSuRvaNVBFSVkRVoOEa7oPaOAwuTDWK6drjQ@mail.gmail.com>
+Cc:     Alan Tull <atull@kernel.org>, linux-clk@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20181101144044.11495-1-ricardo.ribalda@gmail.com>
+ <154111534593.88331.1129843003477644482@swboyd.mtv.corp.google.com>
+ <CAPybu_3AGAYx2YKSuRvaNVBFSVkRVoOEa7oPaOAwuTDWK6drjQ@mail.gmail.com>
+Message-ID: <154117473137.88331.9628947623071045450@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH 0/5] Implement devm_of_clk_add_provider
+Date:   Fri, 02 Nov 2018 09:05:31 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 2018-11-02 at 00:30 +0800, Jianxin Pan wrote:
-> +struct meson_sclk_div_data  mmc_clkc_div_data = {
-> +       .div = {
-> +               .reg_off = SD_EMMC_CLOCK,
-> +               .shift   = (0),
-> +               .width   = (6),
-> +       },
-> +       .hi = {
-> +               .reg_off = 0,
-> +               .shift   = 0,
-> +               .width   = 0,
-> +       },
-> +};
+Quoting Ricardo Ribalda Delgado (2018-11-01 23:54:50)
+> Hi Stephen
+> On Fri, Nov 2, 2018 at 12:35 AM Stephen Boyd <sboyd@kernel.org> wrote:
+> >
+> > Quoting Ricardo Ribalda Delgado (2018-11-01 07:40:39)
+> > > All Tull reported that there might be a great ammount of drivers with
+> > > imbalance on clk_add_provider. This is an issue for Device tree overl=
+ays
+> > > (and also a bug) https://lkml.org/lkml/2018/10/18/1103
+> > >
+> > > This patchset implement a devm_ function of of_clk_add_provider, and
+> > > fixes 3 drivers.
+> > >
+> > > Drivers like clk-gpio will be easily fixed with coccinelle if this set
+> > > is accepted. (I volunteer, I want to learn how to use it, just seen t=
+he
+> > > great presentations from Julia).
+> >
+> > We already have devm_of_clk_add_hw_provider(), so any instances of
+> > of_clk_add_provider() should be replaced with that, instead of
+> > propagating the usage of of_clk_add_provider() any further. I'll gladly
+> > apply patches to convert drivers from struct clk based APIs to struct
+> > clk_hw based APIs so that we can clearly split clk providers from clk
+> > consumers. So if you're interested in working on some coccinelle script
+> > for that it would be great!
+> >
+> =
 
-Jianxin,
+> Will look into that.
+> Can you take a look to 1/5 of this patchset? I believe that it is
+> valid even if we do not take 2-5.
 
-When replying to v5: https://patchwork.kernel.org/patch/10646723/#22288117
-I think I have clearly explained that:
-a. sclk needs some change you want to use it for the eMMC (not done )
-b. you can't declare sclk statically like that since there is cached data in
-it and this would forbib multiple instance of the controller which is not
-acceptable for this pariticular controller
-
-This is just not adressed in your series.
-
-Also some comments from Martin about useless definition were already given on
-past version.
-
-Seeing this, I did not review the rest of series.
-Please make sure you have addressed all the comments of past reviews before
-reposting. It is OK to ask questions if things are unclear.
-
-Jerome
-
+Sure. Again, that patch is combining code that we eventually want to
+delete, so while it is a nice 9 line reduction, it again goes in the
+wrong direction by merging two functions together that we'll want to
+unmerge later when one of the functions is removed. I'd rather see
+effort put into converting all drivers than merging deprecated code.
 
