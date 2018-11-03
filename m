@@ -1,85 +1,103 @@
-Return-Path: <SRS0=F2gG=NN=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=gl0N=NO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_DKIMWL_WL_HIGH,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3AAAC32789
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Nov 2018 22:16:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D11C7C32789
+	for <linux-clk@archiver.kernel.org>; Sat,  3 Nov 2018 01:25:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C06212082D
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Nov 2018 22:16:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C06212082D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 6B16420840
+	for <linux-clk@archiver.kernel.org>; Sat,  3 Nov 2018 01:25:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="abQO6ANr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B16420840
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728417AbeKCHZH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 3 Nov 2018 03:25:07 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:40798 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726586AbeKCHZH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 3 Nov 2018 03:25:07 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id D53B480919; Fri,  2 Nov 2018 23:16:07 +0100 (CET)
-Date:   Fri, 2 Nov 2018 23:16:09 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Lubomir Rintel <lkundrak@v3.sk>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-input@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH 6/8] Input: olpc_apsp: check FIFO status on open(), not
- probe()
-Message-ID: <20181102221609.GA5322@amd>
-References: <20180910112654.42061-1-lkundrak@v3.sk>
- <20180910112654.42061-7-lkundrak@v3.sk>
+        id S1728164AbeKCKfX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 3 Nov 2018 06:35:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59754 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725865AbeKCKfX (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 3 Nov 2018 06:35:23 -0400
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id ED330204FD;
+        Sat,  3 Nov 2018 01:25:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541208353;
+        bh=+twmcdsnZ8OYM0Jd/yV/Qi12hom3HJuqBblUVJLRa/A=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=abQO6ANrlsl8p36irS/Jfmo2CzW/VWpD7sQ3s3+9j6NvTUVqdBlbN9jTnx3iO7AMs
+         s6Fd5PkEyjD3IKm7XQSJftvLss2nfHEKxVvwXRhdUirpuiA/J7tbUIQVqckDcqHAv4
+         nmbYp6q1ewMIg7AG6rmy/ENDOf1nztb8sTX4AY5s=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="k+w/mQv8wyuph6w0"
-Content-Disposition: inline
-In-Reply-To: <20180910112654.42061-7-lkundrak@v3.sk>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: quoted-printable
+To:     Ivan Babrou <ivan@cloudflare.com>, linux-clk@vger.kernel.org
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <CABWYdi1Bad325ZEUZUuPcQoGJtxzTWtkxuZYH8eCeKK1uMbn9A@mail.gmail.com>
+Cc:     trivial@kernel.org, mike.looijmans@topic.nl, mturquette@linaro.org
+References: <CABWYdi1Bad325ZEUZUuPcQoGJtxzTWtkxuZYH8eCeKK1uMbn9A@mail.gmail.com>
+Message-ID: <154120835220.88331.11131007130802849581@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH] clk: cleanup Kconfig to remove duplicate help tags
+Date:   Fri, 02 Nov 2018 18:25:52 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Quoting Ivan Babrou (2018-10-24 15:27:16)
+> Before:
+> =
 
---k+w/mQv8wyuph6w0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> =E2=94=8C=E2=94=80=E2=94=80 Clock driver for SiLabs 544 devices =E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=90
+> =E2=94=82                                                                =
+=E2=94=82
+> =E2=94=82 CONFIG_COMMON_CLK_SI544:                                       =
+=E2=94=82
+> =E2=94=82                                                                =
+=E2=94=82
+> =E2=94=82 ---help---                                                     =
+=E2=94=82
+> =E2=94=82   This driver supports the Silicon Labs 544 programmable clock =
+=E2=94=82
+> =E2=94=82   generator.                                                   =
+=E2=94=82
+> =
 
-On Mon 2018-09-10 13:26:52, Lubomir Rintel wrote:
-> Let's defer the FIFO status checking until open().
->=20
-> When we'll get a clk handle, this will allow us to defer clock enablement
-> until the device is actually used.
->=20
-> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+> After:
+> =
 
-Acked-by: Pavel Machek <pavel@ucw.cz>
+> =E2=94=8C=E2=94=80=E2=94=80 Clock driver for SiLabs 544 devices =E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=90
+> =E2=94=82                                                              =
+=E2=94=82
+> =E2=94=82 CONFIG_COMMON_CLK_SI544:                                     =
+=E2=94=82
+> =E2=94=82                                                              =
+=E2=94=82
+> =E2=94=82 This driver supports the Silicon Labs 544 programmable clock =
+=E2=94=82
+> =E2=94=82 generator.                                                   =
+=E2=94=82
+> =
 
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+> Signed-off-by: Ivan Babrou <ivan@cloudflare.com>
 
---k+w/mQv8wyuph6w0
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+What kconfigurator are you using? From
+Documentation/kbuild/kconfig-language.txt it says that help and
+---help--- are not actually different, so I think you should fix the
+configurator you're using instead of trying to patch all the triple dash
+helps out there.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlvczKkACgkQMOfwapXb+vITPwCggk6ezBBtegkYFh2J6ErUWagC
-FbwAn2iRysWVzLxqHqsq3oCGgSpUk8lR
-=11n9
------END PGP SIGNATURE-----
-
---k+w/mQv8wyuph6w0--
