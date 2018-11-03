@@ -2,126 +2,174 @@ Return-Path: <SRS0=gl0N=NO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6FADC0044C
-	for <linux-clk@archiver.kernel.org>; Sat,  3 Nov 2018 06:40:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F082DC0044C
+	for <linux-clk@archiver.kernel.org>; Sat,  3 Nov 2018 06:56:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F1A52082E
-	for <linux-clk@archiver.kernel.org>; Sat,  3 Nov 2018 06:40:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F97B2081D
+	for <linux-clk@archiver.kernel.org>; Sat,  3 Nov 2018 06:56:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="f1lrE9mS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F1A52082E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=cloudflare.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jTIN85M0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F97B2081D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726288AbeKCPuj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 3 Nov 2018 11:50:39 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:45244 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726229AbeKCPuj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 3 Nov 2018 11:50:39 -0400
-Received: by mail-qk1-f196.google.com with SMTP id d135so6575855qkc.12
-        for <linux-clk@vger.kernel.org>; Fri, 02 Nov 2018 23:40:22 -0700 (PDT)
+        id S1726165AbeKCQGq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 3 Nov 2018 12:06:46 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:39589 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726288AbeKCQGq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 3 Nov 2018 12:06:46 -0400
+Received: by mail-pg1-f194.google.com with SMTP id r9-v6so1919330pgv.6
+        for <linux-clk@vger.kernel.org>; Fri, 02 Nov 2018 23:56:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=q1ytv0B8N58TtbzujD20KCmXYnuYQY05JlyU0gR/1Ww=;
-        b=f1lrE9mS8TRfeySBF1mXawYZ/zt9Ma3dShcSVEi9emoZSd/YWLfl81fjOq59uuawtZ
-         YM9GEfHSC8S/au7b76TLYjx5aA80RkJ4eTQj2T0CHWA50D+AiQE0eO/UOwnf0uo3tzGo
-         EohbG8KTMPqiG3nDVvy5wnT1VtD6Fow+gSoPQ=
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=JfWafiBXzY3GqjbsFuSucku0AXH/F1fMBMNCXmqm9Bo=;
+        b=jTIN85M0e6ssJS2pgY1mxXpIKlMwc/fumm323nDFfbO/lCC1UUFxjEp5KYImaWgEOJ
+         urXdZiihu3RvQY8NwT6UeoQowWffDDKqbsavC6nGiVU0j8MRAgipxxslaZiRdCPA9YuQ
+         HSjUj54e6DdBAelP9paOtaX1lHbBAQvAazd0M=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=q1ytv0B8N58TtbzujD20KCmXYnuYQY05JlyU0gR/1Ww=;
-        b=Mpah2oRova99/sZe2pgAV6MeDbhi50Uk1qkZwR/RK7PtnWVAHyNVcoLD+cIKqHKTem
-         OQokEqsy8E0j9XHpLNTcNBbD9YIrBgLuBSe19911L7hhlGkvmPdILKnvP4m6asQiOOsJ
-         sWIaJEhP6MZvm6gHEYcRG3nBoFc/9oFMW7j7ctMx8s1xMX7A+V2bX05lCXwasipeG67I
-         8drb80IyEGElvozb0W9wFQpjU1Tzw0pE22dyNqkZ1dpSn9zVCyU0D32BqfbHNpeRlvb/
-         CX73eGB51m4551dgvi3/Ps+gFw2uzXNqUknjRVhzDaHEslxbQENHB+4ZIHo5sFn7AxTU
-         qREw==
-X-Gm-Message-State: AGRZ1gJEfoVAMQV6/WuCeSehQwIQQTslecDoNKh0enHIN5sI1HNFeVGk
-        /1gLsWUfdpn2um4YRlkbxtbAr0fhSRdajtKnN+rOVnxyLUUJuA==
-X-Google-Smtp-Source: AJdET5d6w0SPmRVKd92okOI9+aLgrU33U0jjp8oyoVLOkgcGa80bdO5SwY4/6U1KKcVGFugNumlpGlyDON6hnifxpME=
-X-Received: by 2002:a0c:bb82:: with SMTP id i2mr4149064qvg.159.1541227222041;
- Fri, 02 Nov 2018 23:40:22 -0700 (PDT)
-MIME-Version: 1.0
-References: <CABWYdi1Bad325ZEUZUuPcQoGJtxzTWtkxuZYH8eCeKK1uMbn9A@mail.gmail.com>
- <154120835220.88331.11131007130802849581@swboyd.mtv.corp.google.com>
-In-Reply-To: <154120835220.88331.11131007130802849581@swboyd.mtv.corp.google.com>
-From:   Ivan Babrou <ivan@cloudflare.com>
-Date:   Fri, 2 Nov 2018 23:40:12 -0700
-Message-ID: <CABWYdi0TCo=CO4rQfWvXim2_-Ker5QBZQ_mzVuW7dM-eTZQcUQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: cleanup Kconfig to remove duplicate help tags
-To:     sboyd@kernel.org
-Cc:     linux-clk@vger.kernel.org, trivial@kernel.org,
-        mike.looijmans@topic.nl, mturquette@linaro.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=JfWafiBXzY3GqjbsFuSucku0AXH/F1fMBMNCXmqm9Bo=;
+        b=p8ozmtS8VPGuu7ik7/Yq5STnqspHQe0lncySZLTX/0AVLgLcHaRWXb0b/PImsHux5q
+         rCFKcYTtme1hPy27UyG0GGUf5WEw2IrjC1zqSjn4ZPLHS+3UXlb53+zFyqSEsxn6gBAc
+         KhPvEuQK+QOybgZopHsy+FTxvBb0DAiNkFkWbI62gySuOegBq0Nhk+AOT0vpsipXyaM7
+         zuvkFiSBbs7RiwfOIh6jLcQFsRxN2892ucgx7NXN3M9XKx7Hzmr+8hsiLvYoQSDfYtna
+         H8LGeuuhF7FipHE0LC903YVzXCMsZK6pUA8ouxV7G+388hZKzDXEkOnak1Ux0nBfiOvu
+         jJrQ==
+X-Gm-Message-State: AGRZ1gKq6dHzsNVOtmVZj/TT9a+Cdl/01YpSh9EfT5JGZCq8aitc13IG
+        44X/Cf15oj+YFhsJGjWN4w21jQ==
+X-Google-Smtp-Source: AJdET5cv4jZDeako57nyoNlHrq9Y+KYf6FHxGMyH7tQ8QOlT0OfaLw5adWHs7M2IU3An62Ej3z/OOg==
+X-Received: by 2002:a62:9f90:: with SMTP id v16-v6mr14603111pfk.207.1541228187577;
+        Fri, 02 Nov 2018 23:56:27 -0700 (PDT)
+Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id p64-v6sm36254870pfi.22.2018.11.02.23.56.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 02 Nov 2018 23:56:26 -0700 (PDT)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org
+Subject: [PATCH] clk: qcom: smd: Add support for QCS404 rpm clocks
+Date:   Sat,  3 Nov 2018 00:00:02 -0700
+Message-Id: <20181103070002.19106-1-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-They are not different, but you only need one of them, not both in the
-same config option.
+From: Taniya Das <tdas@codeaurora.org>
 
-The following command can find all occurrences of double usage:
+Add rpm smd clocks, PMIC and bus clocks which are required on QCS404
+for clients to vote on.
 
-$ grep -Pzo '\thelp\n\t---help---' -r *
+Signed-off-by: Taniya Das <tdas@codeaurora.org>
+Signed-off-by: Anu Ramanathan <anur@codeaurora.org>
+[bjorn: Dropped cxo, voter clocks and static initialization]
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ .../devicetree/bindings/clock/qcom,rpmcc.txt  |  1 +
+ drivers/clk/qcom/clk-smd-rpm.c                | 45 +++++++++++++++++++
+ include/dt-bindings/clock/qcom,rpmcc.h        |  4 ++
+ 3 files changed, 50 insertions(+)
 
-I'm using nconfig, but I think I originally saw the issue with oldconfig.
+diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
+index 4491d1c104aa..87b4949e9bc8 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
++++ b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
+@@ -16,6 +16,7 @@ Required properties :
+ 			"qcom,rpmcc-msm8974", "qcom,rpmcc"
+ 			"qcom,rpmcc-apq8064", "qcom,rpmcc"
+ 			"qcom,rpmcc-msm8996", "qcom,rpmcc"
++			"qcom,rpmcc-qcs404", "qcom,rpmcc"
+ 
+ - #clock-cells : shall contain 1
+ 
+diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
+index 850c02a52248..d3aadaeb2903 100644
+--- a/drivers/clk/qcom/clk-smd-rpm.c
++++ b/drivers/clk/qcom/clk-smd-rpm.c
+@@ -611,10 +611,55 @@ static const struct rpm_smd_clk_desc rpm_clk_msm8996 = {
+ 	.num_clks = ARRAY_SIZE(msm8996_clks),
+ };
+ 
++/* QCS404 */
++DEFINE_CLK_SMD_RPM_QDSS(qcs404, qdss_clk, qdss_a_clk, QCOM_SMD_RPM_MISC_CLK, 1);
++
++DEFINE_CLK_SMD_RPM(qcs404, pnoc_clk, pnoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 0);
++DEFINE_CLK_SMD_RPM(qcs404, snoc_clk, snoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 1);
++
++DEFINE_CLK_SMD_RPM(qcs404, bimc_clk, bimc_a_clk, QCOM_SMD_RPM_MEM_CLK, 0);
++DEFINE_CLK_SMD_RPM(qcs404, bimc_gpu_clk, bimc_gpu_a_clk, QCOM_SMD_RPM_MEM_CLK, 2);
++
++DEFINE_CLK_SMD_RPM(qcs404, qpic_clk, qpic_a_clk, QCOM_SMD_RPM_QPIC_CLK, 0);
++DEFINE_CLK_SMD_RPM(qcs404, ce1_clk, ce1_a_clk, QCOM_SMD_RPM_CE_CLK, 0);
++
++DEFINE_CLK_SMD_RPM_XO_BUFFER(qcs404, rf_clk1, rf_clk1_a, 4);
++DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(qcs404, rf_clk1_pin, rf_clk1_a_pin, 4);
++
++DEFINE_CLK_SMD_RPM_XO_BUFFER(qcs404, ln_bb_clk, ln_bb_a_clk, 8);
++DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(qcs404, ln_bb_clk_pin, ln_bb_clk_a_pin, 8);
++
++static struct clk_smd_rpm *qcs404_clks[] = {
++	[RPM_SMD_QDSS_CLK] = &qcs404_qdss_clk,
++	[RPM_SMD_QDSS_A_CLK] = &qcs404_qdss_a_clk,
++	[RPM_SMD_PNOC_CLK] = &qcs404_pnoc_clk,
++	[RPM_SMD_PNOC_A_CLK] = &qcs404_pnoc_a_clk,
++	[RPM_SMD_SNOC_CLK] = &qcs404_snoc_clk,
++	[RPM_SMD_SNOC_A_CLK] = &qcs404_snoc_a_clk,
++	[RPM_SMD_BIMC_CLK] = &qcs404_bimc_clk,
++	[RPM_SMD_BIMC_A_CLK] = &qcs404_bimc_a_clk,
++	[RPM_SMD_BIMC_GPU_CLK] = &qcs404_bimc_gpu_clk,
++	[RPM_SMD_BIMC_GPU_A_CLK] = &qcs404_bimc_gpu_a_clk,
++	[RPM_SMD_QPIC_CLK] = &qcs404_qpic_clk,
++	[RPM_SMD_QPIC_CLK_A] = &qcs404_qpic_a_clk,
++	[RPM_SMD_CE1_CLK] = &qcs404_ce1_clk,
++	[RPM_SMD_CE1_A_CLK] = &qcs404_ce1_a_clk,
++	[RPM_SMD_RF_CLK1] = &qcs404_rf_clk1,
++	[RPM_SMD_RF_CLK1_A] = &qcs404_rf_clk1_a,
++	[RPM_SMD_LN_BB_CLK] = &qcs404_ln_bb_clk,
++	[RPM_SMD_LN_BB_A_CLK] = &qcs404_ln_bb_a_clk,
++};
++
++static const struct rpm_smd_clk_desc rpm_clk_qcs404 = {
++	.clks = qcs404_clks,
++	.num_clks = ARRAY_SIZE(qcs404_clks),
++};
++
+ static const struct of_device_id rpm_smd_clk_match_table[] = {
+ 	{ .compatible = "qcom,rpmcc-msm8916", .data = &rpm_clk_msm8916 },
+ 	{ .compatible = "qcom,rpmcc-msm8974", .data = &rpm_clk_msm8974 },
+ 	{ .compatible = "qcom,rpmcc-msm8996", .data = &rpm_clk_msm8996 },
++	{ .compatible = "qcom,rpmcc-qcs404",  .data = &rpm_clk_qcs404  },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, rpm_smd_clk_match_table);
+diff --git a/include/dt-bindings/clock/qcom,rpmcc.h b/include/dt-bindings/clock/qcom,rpmcc.h
+index c585b82b9c05..3658b0c14966 100644
+--- a/include/dt-bindings/clock/qcom,rpmcc.h
++++ b/include/dt-bindings/clock/qcom,rpmcc.h
+@@ -123,5 +123,9 @@
+ #define RPM_SMD_DIV_A_CLK3			73
+ #define RPM_SMD_LN_BB_CLK			74
+ #define RPM_SMD_LN_BB_A_CLK			75
++#define RPM_SMD_BIMC_GPU_CLK			76
++#define RPM_SMD_BIMC_GPU_A_CLK			77
++#define RPM_SMD_QPIC_CLK			78
++#define RPM_SMD_QPIC_CLK_A			79
+ 
+ #endif
+-- 
+2.18.0
 
-On Fri, Nov 2, 2018 at 6:25 PM Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Quoting Ivan Babrou (2018-10-24 15:27:16)
-> > Before:
-> >
-> > =E2=94=8C=E2=94=80=E2=94=80 Clock driver for SiLabs 544 devices =E2=94=
-=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
-=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
-=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
-=90
-> > =E2=94=82                                                              =
-  =E2=94=82
-> > =E2=94=82 CONFIG_COMMON_CLK_SI544:                                     =
-  =E2=94=82
-> > =E2=94=82                                                              =
-  =E2=94=82
-> > =E2=94=82 ---help---                                                   =
-  =E2=94=82
-> > =E2=94=82   This driver supports the Silicon Labs 544 programmable cloc=
-k =E2=94=82
-> > =E2=94=82   generator.                                                 =
-  =E2=94=82
-> >
-> > After:
-> >
-> > =E2=94=8C=E2=94=80=E2=94=80 Clock driver for SiLabs 544 devices =E2=94=
-=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
-=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
-=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=90
-> > =E2=94=82                                                              =
-=E2=94=82
-> > =E2=94=82 CONFIG_COMMON_CLK_SI544:                                     =
-=E2=94=82
-> > =E2=94=82                                                              =
-=E2=94=82
-> > =E2=94=82 This driver supports the Silicon Labs 544 programmable clock =
-=E2=94=82
-> > =E2=94=82 generator.                                                   =
-=E2=94=82
-> >
-> > Signed-off-by: Ivan Babrou <ivan@cloudflare.com>
->
-> What kconfigurator are you using? From
-> Documentation/kbuild/kconfig-language.txt it says that help and
-> ---help--- are not actually different, so I think you should fix the
-> configurator you're using instead of trying to patch all the triple dash
-> helps out there.
->
