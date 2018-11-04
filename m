@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76301ECDE44
-	for <linux-clk@archiver.kernel.org>; Sun,  4 Nov 2018 18:28:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEA59C32789
+	for <linux-clk@archiver.kernel.org>; Sun,  4 Nov 2018 18:28:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3712B2081D
-	for <linux-clk@archiver.kernel.org>; Sun,  4 Nov 2018 18:28:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3712B2081D
+	by mail.kernel.org (Postfix) with ESMTP id 849AF20854
+	for <linux-clk@archiver.kernel.org>; Sun,  4 Nov 2018 18:28:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 849AF20854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=siol.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387722AbeKEDod (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 4 Nov 2018 22:44:33 -0500
-Received: from mailoutvs21.siol.net ([185.57.226.212]:47745 "EHLO
+        id S2387751AbeKEDoi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 4 Nov 2018 22:44:38 -0500
+Received: from mailoutvs48.siol.net ([185.57.226.239]:47861 "EHLO
         mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2387652AbeKEDoc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 4 Nov 2018 22:44:32 -0500
+        with ESMTP id S2387693AbeKEDoi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 4 Nov 2018 22:44:38 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id 699D2521233;
-        Sun,  4 Nov 2018 19:28:34 +0100 (CET)
+        by mail.siol.net (Postfix) with ESMTP id 1485B5203A5;
+        Sun,  4 Nov 2018 19:28:42 +0100 (CET)
 X-Virus-Scanned: amavisd-new at psrvmta11.zcs-production.pri
 Received: from mail.siol.net ([127.0.0.1])
         by localhost (psrvmta11.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id hcEQx_yLs5GF; Sun,  4 Nov 2018 19:28:33 +0100 (CET)
+        with ESMTP id pcXUveqmIVvk; Sun,  4 Nov 2018 19:28:41 +0100 (CET)
 Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id A984B52128A;
-        Sun,  4 Nov 2018 19:28:33 +0100 (CET)
+        by mail.siol.net (Postfix) with ESMTPS id AAAC952010A;
+        Sun,  4 Nov 2018 19:28:41 +0100 (CET)
 Received: from localhost.localdomain (cpe1-8-82.cable.triera.net [213.161.8.82])
         (Authenticated sender: 031275009)
-        by mail.siol.net (Postfix) with ESMTPSA id 434835212AE;
-        Sun,  4 Nov 2018 19:28:31 +0100 (CET)
+        by mail.siol.net (Postfix) with ESMTPSA id 35A7D5203B5;
+        Sun,  4 Nov 2018 19:28:39 +0100 (CET)
 From:   Jernej Skrabec <jernej.skrabec@siol.net>
 To:     maxime.ripard@bootlin.com, wens@csie.org
 Cc:     robh+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
@@ -42,10 +42,11 @@ Cc:     robh+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
         Laurent.pinchart@ideasonboard.com, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-sunxi@googlegroups.com, jernej.skrabec@siol.net
-Subject: [PATCH v3 23/28] drm/sun4i: Initialize registers in tcon-top driver
-Date:   Sun,  4 Nov 2018 19:27:00 +0100
-Message-Id: <20181104182705.18047-24-jernej.skrabec@siol.net>
+        linux-sunxi@googlegroups.com, jernej.skrabec@siol.net,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v3 26/28] drm: sun4i: add support for H6 TCON TOP
+Date:   Sun,  4 Nov 2018 19:27:03 +0100
+Message-Id: <20181104182705.18047-27-jernej.skrabec@siol.net>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181104182705.18047-1-jernej.skrabec@siol.net>
 References: <20181104182705.18047-1-jernej.skrabec@siol.net>
@@ -56,37 +57,45 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-It turns out that TCON TOP registers in H6 SoC have non-zero reset
-value. This may cause issues if bits are not changed during
-configuration.
+From: Icenowy Zheng <icenowy@aosc.io>
 
-To prevent that, initialize registers to 0.
+The TCON TOP on Allwinner H6 SoC is a cut down version of the R40 TCON
+TOP, which dropped TCON_TV1 and DSI (which do not exist on H6).
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+Add support for it.
+
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 ---
- drivers/gpu/drm/sun4i/sun8i_tcon_top.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/gpu/drm/sun4i/sun8i_tcon_top.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
 diff --git a/drivers/gpu/drm/sun4i/sun8i_tcon_top.c b/drivers/gpu/drm/sun=
 4i/sun8i_tcon_top.c
-index 3040a79f298f..37158548b447 100644
+index e94e3fb1736b..fc36e0c10a37 100644
 --- a/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
 +++ b/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
-@@ -167,6 +167,13 @@ static int sun8i_tcon_top_bind(struct device *dev, s=
-truct device *master,
- 		goto err_assert_reset;
- 	}
+@@ -273,12 +273,20 @@ const struct sun8i_tcon_top_quirks sun8i_r40_tcon_t=
+op_quirks =3D {
+ 	.has_dsi	=3D true,
+ };
 =20
-+	/*
-+	 * At least on H6, some registers have some bits set by default
-+	 * which may cause issues. Clear them here.
-+	 */
-+	writel(0, regs + TCON_TOP_PORT_SEL_REG);
-+	writel(0, regs + TCON_TOP_GATE_SRC_REG);
++const struct sun8i_tcon_top_quirks sun50i_h6_tcon_top_quirks =3D {
++	/* Nothing special */
++};
 +
- 	/*
- 	 * TCON TOP has two muxes, which select parent clock for each TCON TV
- 	 * channel clock. Parent could be either TCON TV or TVE clock. For now
+ /* sun4i_drv uses this list to check if a device node is a TCON TOP */
+ const struct of_device_id sun8i_tcon_top_of_table[] =3D {
+ 	{
+ 		.compatible =3D "allwinner,sun8i-r40-tcon-top",
+ 		.data =3D &sun8i_r40_tcon_top_quirks
+ 	},
++	{
++		.compatible =3D "allwinner,sun50i-h6-tcon-top",
++		.data =3D &sun50i_h6_tcon_top_quirks
++	},
+ 	{ /* sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(of, sun8i_tcon_top_of_table);
 --=20
 2.19.1
 
