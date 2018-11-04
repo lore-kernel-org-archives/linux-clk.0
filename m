@@ -2,83 +2,88 @@ Return-Path: <SRS0=E5Sm=NP=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BFE8C32789
-	for <linux-clk@archiver.kernel.org>; Sun,  4 Nov 2018 08:09:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DDCEC32789
+	for <linux-clk@archiver.kernel.org>; Sun,  4 Nov 2018 11:42:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC42D2082E
-	for <linux-clk@archiver.kernel.org>; Sun,  4 Nov 2018 08:09:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="d2C1Wy2o"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC42D2082E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
+	by mail.kernel.org (Postfix) with ESMTP id D04802082A
+	for <linux-clk@archiver.kernel.org>; Sun,  4 Nov 2018 11:42:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D04802082A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729034AbeKDRXL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 4 Nov 2018 12:23:11 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:33084 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729120AbeKDRXL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 4 Nov 2018 12:23:11 -0500
-Received: by mail-lf1-f65.google.com with SMTP id i26so4010853lfc.0
-        for <linux-clk@vger.kernel.org>; Sun, 04 Nov 2018 01:09:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:references:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=eMTKKcs8nrMK7AG6cdfsc8CnJlHkuKtAqDwO1+eJZ/c=;
-        b=d2C1Wy2ofEyb9BBirnomfMnNPJuLZq6ZhKj7UoJzfG7fo9W+cz/cwtHC2eZjxGU2JS
-         +G59mAaDLsLY9ymeEGQ5UebodBn8DhkZF2H0gb2QStiKeuiV1K1K+vK7je7nxmv4sHrx
-         1T5EWPVAMy5BeO7oRHF0uDWh4FG1Yo2h5JaZWFVJGHH2e+Pm+U5q+CTQW4GLaaWeTS8N
-         skX3d6hBQRi5C/u0QjZ90ET6VnJlfBXi42NzWso+X5PTb6qgJ+MNyqsmY3sgZMC4Ghmg
-         8AAUWzaDuZWRZkPIytaRySdFR3zD+61xVZhUmoL1fvk6k+cyvJOUfyW0fkFaq3Vb5UZU
-         wuTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=eMTKKcs8nrMK7AG6cdfsc8CnJlHkuKtAqDwO1+eJZ/c=;
-        b=MOmWf5qypTshsYZTTri+lmHnGS+3T9MGkLj2becE3Qy13Cwero+yxg/e89KTKRXhMZ
-         ki9IxqkcCz3bn9aoeuDnLOB3olqtSY95wVWnrb1SlDrFLFZVUOq51YsGxxig6y9uC+mw
-         zzRGjpfmZ2QUTOZbUVnVgZFHHJo3sD+cWxYl6aLkSwB5oeOq9n7msTyndItxdZIbN6vg
-         9hF4LaeW5Z/pKAHqdAKbRGL1Iobw+h8cxJlGyGj8V9+6SZYjGI3WZ8yAZoCvxcn5V9hR
-         YuvuQH/YY9i3oh2XLOAAWg6Qur6LmV0gM5Fz8V/OKog5EPkmCOSmwTr797A8J1ISOIZs
-         2U4w==
-X-Gm-Message-State: AGRZ1gJ9np8X4VTmuYnRsypZinR34892uzb7z4uA63IyEuBIDwNyIs9k
-        PHSlsI/G4BPh4tVKXEbmg3bY4G3ZFbI=
-X-Google-Smtp-Source: AJdET5cVpD+ueoafrL3KdzVCL3Dv3Upe5MIGZeruWLdODXppnFm9w6d7lYq0Vql0oK1vwdfDzd7eeg==
-X-Received: by 2002:a19:8d01:: with SMTP id p1mr9604715lfd.149.1541318944463;
-        Sun, 04 Nov 2018 01:09:04 -0700 (PDT)
-Received: from [10.0.0.145] ([94.72.11.11])
-        by smtp.gmail.com with ESMTPSA id a25sm856375lfk.31.2018.11.04.01.09.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 04 Nov 2018 01:09:03 -0700 (PDT)
-Subject: Re: [PATCH] clk: renesas: r8a77970: add RPC clock
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To:     "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
+        id S1729270AbeKDU5J (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 4 Nov 2018 15:57:09 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:39111 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728988AbeKDU5I (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 4 Nov 2018 15:57:08 -0500
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id C152980986; Sun,  4 Nov 2018 12:42:23 +0100 (CET)
+Date:   Sun, 4 Nov 2018 12:41:38 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Lubomir Rintel <lkundrak@v3.sk>
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+        James Cameron <quozl@laptop.org>, linux-input@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org
-References: <5b7895ac-11c1-ac2d-837b-56726bc6226a@cogentembedded.com>
- <5a5c65f1-d446-9445-4e2a-579f57f00abf@cogentembedded.com>
-Message-ID: <53832889-3c47-cd15-4e85-830b5c2620c2@cogentembedded.com>
-Date:   Sun, 4 Nov 2018 11:09:05 +0300
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+Subject: Re: [PATCH v2 1/8] dt-bindings: olpc,ap-sp: add clock
+Message-ID: <20181104114138.GF23864@amd>
+References: <20181010142504.233467-1-lkundrak@v3.sk>
+ <20181010142504.233467-2-lkundrak@v3.sk>
 MIME-Version: 1.0
-In-Reply-To: <5a5c65f1-d446-9445-4e2a-579f57f00abf@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="KJY2Ze80yH5MUxol"
+Content-Disposition: inline
+In-Reply-To: <20181010142504.233467-2-lkundrak@v3.sk>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Oops, the subject should have "clocks", not "clock".
+
+--KJY2Ze80yH5MUxol
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed 2018-10-10 16:24:57, Lubomir Rintel wrote:
+> The clock is necessary for the device operation, hence it's required.
+> Its name, "sp", stands for "Security Processor". It is one of several
+> names that are used for the processor that serves as the keyboard
+> controller on an OLPC and is consistent with the node name.
+>=20
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+
+Acked-by: Pavel Machek <pavel@ucw.cz>
+
+One thing that surprise me... Rob maintains these files, so he should
+apply it?
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--KJY2Ze80yH5MUxol
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlve2vIACgkQMOfwapXb+vKaSwCgoIexpxamGbgtutL4EZb0oKEl
+IT0AnRb2HwFu+BYUxGiX2IgmU0hzm2jK
+=E5QZ
+-----END PGP SIGNATURE-----
+
+--KJY2Ze80yH5MUxol--
