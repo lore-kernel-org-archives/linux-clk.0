@@ -1,182 +1,136 @@
-Return-Path: <SRS0=gl0N=NO=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=E5Sm=NP=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C08EC0044C
-	for <linux-clk@archiver.kernel.org>; Sat,  3 Nov 2018 18:01:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ACE0C0044C
+	for <linux-clk@archiver.kernel.org>; Sun,  4 Nov 2018 02:57:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD6CB20833
-	for <linux-clk@archiver.kernel.org>; Sat,  3 Nov 2018 18:01:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD6CB20833
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
+	by mail.kernel.org (Postfix) with ESMTP id 483AB20847
+	for <linux-clk@archiver.kernel.org>; Sun,  4 Nov 2018 02:57:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UXwj6WU5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 483AB20847
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727537AbeKDDNi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 3 Nov 2018 23:13:38 -0400
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:44231 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727497AbeKDDNi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 3 Nov 2018 23:13:38 -0400
-Received: from [192.168.0.111] (223.167.21.242) by mail-sh2.amlogic.com
- (10.18.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Sun, 4 Nov 2018
- 02:01:39 +0800
-Subject: Re: [PATCH v5 3/3] clk: meson: add sub MMC clock controller driver
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-CC:     Neil Armstrong <narmstrong@baylibre.com>, <yixun.lan@amlogic.com>,
-        <khilman@baylibre.com>, <carlo@caione.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>, <robh@kernel.org>,
-        <miquel.raynal@bootlin.com>, <boris.brezillon@bootlin.com>,
-        <liang.yang@amlogic.com>, <jian.hu@amlogic.com>,
-        <qiufang.dai@amlogic.com>, <hanjie.lin@amlogic.com>,
-        <victor.wan@amlogic.com>, <linux-clk@vger.kernel.org>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1539839245-13793-1-git-send-email-jianxin.pan@amlogic.com>
- <1539839245-13793-4-git-send-email-jianxin.pan@amlogic.com>
- <a8d359208edfdc75cb5c6de378796f76e0572a0f.camel@baylibre.com>
- <eda2faf2-cf06-902d-36ff-48ceafcb4a4b@amlogic.com>
- <f4d239df2f1333b005680f9bfdd2eba93e7f86e5.camel@baylibre.com>
- <CAFBinCCuqUmVNdwUm7WbkHy1eWvOA5oQ5FcOuytbYNbgGcXnRQ@mail.gmail.com>
- <3723695d951e0d30e8a0117d336d8f268269a030.camel@baylibre.com>
-From:   Jianxin Pan <jianxin.pan@amlogic.com>
-Message-ID: <66c2915a-4ecd-8a6e-6493-4318ae7bb620@amlogic.com>
-Date:   Sun, 4 Nov 2018 02:01:32 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <3723695d951e0d30e8a0117d336d8f268269a030.camel@baylibre.com>
+        id S1728915AbeKDMKX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 4 Nov 2018 07:10:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38472 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728909AbeKDMKX (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 4 Nov 2018 07:10:23 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A2DC42082E;
+        Sun,  4 Nov 2018 02:57:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541300226;
+        bh=k06zYY21PgHzPh7dxquOGqh68uBBR2dSSplS016UenU=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=UXwj6WU5lIbStcfpBgGztTQdKdzy/0pb3t7ssHOY9rvA8fOoy5b7N12TxRhRHoQnC
+         zO9UwNEKrqdNI5hIif2CsGsYSySq3qrsRFa8MOniOUOndrzoAZVyhqCLV0UAYCh0Iu
+         KEE592jN312GNhEyO0DNMVcn/xuSmlMyIIYnajp4=
 Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [223.167.21.242]
-X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
- (10.18.11.6)
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+To:     Ivan Babrou <ivan@cloudflare.com>, linux-clk@vger.kernel.org
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <CABWYdi1Bad325ZEUZUuPcQoGJtxzTWtkxuZYH8eCeKK1uMbn9A@mail.gmail.com>
+Cc:     trivial@kernel.org, mike.looijmans@topic.nl, mturquette@linaro.org
+References: <CABWYdi1Bad325ZEUZUuPcQoGJtxzTWtkxuZYH8eCeKK1uMbn9A@mail.gmail.com>
+Message-ID: <154130022584.88331.11328574821722290484@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH] clk: cleanup Kconfig to remove duplicate help tags
+Date:   Sat, 03 Nov 2018 19:57:05 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Jerome,
+Quoting Ivan Babrou (2018-10-24 15:27:16)
+> Before:
+> =
 
-Thanks for the review, we really appreciate your time.
+> =E2=94=8C=E2=94=80=E2=94=80 Clock driver for SiLabs 544 devices =E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=90
+> =E2=94=82                                                                =
+=E2=94=82
+> =E2=94=82 CONFIG_COMMON_CLK_SI544:                                       =
+=E2=94=82
+> =E2=94=82                                                                =
+=E2=94=82
+> =E2=94=82 ---help---                                                     =
+=E2=94=82
+> =E2=94=82   This driver supports the Silicon Labs 544 programmable clock =
+=E2=94=82
+> =E2=94=82   generator.                                                   =
+=E2=94=82
+> =
 
-I'm very sorry maybe I don't catch all your meaning very well. 
+> After:
+> =
 
-Please see my comments below.
+> =E2=94=8C=E2=94=80=E2=94=80 Clock driver for SiLabs 544 devices =E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=90
+> =E2=94=82                                                              =
+=E2=94=82
+> =E2=94=82 CONFIG_COMMON_CLK_SI544:                                     =
+=E2=94=82
+> =E2=94=82                                                              =
+=E2=94=82
+> =E2=94=82 This driver supports the Silicon Labs 544 programmable clock =
+=E2=94=82
+> =E2=94=82 generator.                                                   =
+=E2=94=82
 
-On 2018/10/29 3:16, Jerome Brunet wrote:
-> On Thu, 2018-10-25 at 22:58 +0200, Martin Blumenstingl wrote:
->> Hi Jerome,
->>
->> On Thu, Oct 25, 2018 at 2:54 PM Jerome Brunet <jbrunet@baylibre.com> wrote:
->> [snip]
->>>>>> +static void clk_regmap_div_init(struct clk_hw *hw)
->>>>>> +{
->>>>>> + struct clk_regmap *clk = to_clk_regmap(hw);
->>>>>> + struct clk_regmap_div_data *div = clk_get_regmap_div_data(clk);
->>>>>> + unsigned int val;
->>>>>> + int ret;
->>>>>> +
->>>>>> + ret = regmap_read(clk->map, div->offset, &val);
->>>>>> + if (ret)
->>>>>> +         return;
->>>>>>
->>>>>> + val &= (clk_div_mask(div->width) << div->shift);
->>>>>> + if (!val)
->>>>>> +         regmap_update_bits(clk->map, div->offset,
->>>>>> +                            clk_div_mask(div->width) << div->shift,
->>>>>> +                            clk_div_mask(div->width));
->>>>>
->>>>> This is wrong for several reasons:
->>>>> * You should hard code the initial value in the driver.
->>>>> * If shift is not 0, I doubt this will give the expected result.
->>>>
->>>> The value 0x00 of divider means nand clock off then read/write nand register is forbidden.
->>>
->>> That is not entirely true, you can access the clock register or you'd be in a
->>> chicken and egg situation.
->>>
->>>> Should we set the initial value in nand driver, or in sub emmc clk driver?
->>>
->>> In the nand driver, which is the consumer of the clock. see my previous comments
->>> about it.
->>
->> an old version of this series had the code still in the NAND driver
->> (by writing to the registers directly instead of using the clk API).
->> this looks pretty much like a "sclk-div" to me (as I commented in v3
->> of this series: [0]):
->> - value 0 means disabled
->> - positive divider values
->> - (probably no duty control, but that's optional as far as I
->> understand sclk-div)
->> - uses max divider value when enabling the clock
->>
->> if switching to sclk-div works then we can get rid of some duplicate code
-> 
-> It is possible:
-> There is a couple of things to note though:
-> 
-> * sclk does not 'uses max divider value when enabling the clock': Since this
-> divider can gate, it needs to save the divider value when disabling, since the
-> divider value is no longer stored in the register,
-> On init, this cached value is  saved as it is. If the divider is initially
-> disabled, we have to set the cached value to something that makes sense, in case
-> the clock is enabled without a prior call to clk_set_rate().
->> So in sclk, the clock setting is not changed nor hard coded in init, and this is
-> a very important difference.
->
-I think It's ok for the latest sub mmc clock and nand driver now:
-1. in mmc_clkc_register_clk_with_parent("div", ...) from mmc_clkc_probe():
-   cached_div is set to div_max durning clk register，but is not set to div hw register.
+Ah ok. I was thrown off by the first hunk that didn't need to be
+changed.
 
-2. In meson nand driver v6: 	https://lore.kernel.org/lkml/1541090542-19618-3-git-send-email-jianxin.pan@amlogic.com
-1) In meson_nfc_clk_init() from probe:   get clock handle, then prepare_enable and set default rate.
-   nfc->device_clk = devm_clk_get(nfc->dev, "device");
-   ret = clk_prepare_enable(nfc->device_clk);			//Here div hw register changed from 0 -> cached_div.
-   default_clk_rate = clk_round_rate(nfc->device_clk, 24000000);
-   ret = clk_set_rate(nfc->device_clk, default_clk_rate);	//Then register and cached_div are both updated to the default 24M.
-2) In meson_nfc_select_chip(), set the actual frequency
-  ret = clk_set_rate(nfc->device_clk, meson_chip->clk_rate);	//Here register and cached_div are changed again.
-3) if clk_disable() is called, set div hw register to zero, and cached_div  keep unchagned.
-   if clk_disable() is called again,  cached_div is restored to div hw register.
+> =
 
-When enabling the clock, divider register does not need to be div_max.  
-Any value is OK except ZERO, the cached_div from init or set_rate is ok
->  
-> * Even if sclk zero value means gated, it is still a zero based divider, while
-> eMMC/Nand divider is one based. It this controller was to sclk, then something
-> needs to be done for this.
-Could I add another patch to this patchset for sclk to support CLK_DIVIDER_ONE_BASED ?
-> 
-> * Since sclk caches a value in its data, and there can multiple instance of eMMC
-> /NAND clock controller, some care must be taken when registering the data.
-OK, I will fix it and alloc mmc_clkc_div_data danymicly durning probe.
-Thank you. 
-> 
-> Both the generic divider and sclk could work here ... it's up to you Jianxin.
-> 
-== Why use meson_sclk_div_ops instead of clk_regmap_divider_ops?
-The default divider hw register vaule is 0 when system power on.
-Then there is a WARNING in divider_recalc_rate() durning clk_hw_register():
-[    0.918238] ffe05000.clock-controller#div: Zero divisor and CLK_DIVIDER_ALLOW_ZERO not set
-[    0.925581] WARNING: CPU: 3 PID: 1 at drivers/clk/clk-divider.c:127 divider_recalc_rate+0x88/0x90
-Then I still need to hard code the initual value to nand driver without CLK_DIVIDER_ALLOW_ZERO flags.
->>
->>
->> Regards
->> Martin
->>
->>
->> [0] https://patchwork.kernel.org/patch/10607157/#22238243
-> 
-> 
-> .
-> 
+> Signed-off-by: Ivan Babrou <ivan@cloudflare.com>
+> ---
+>  drivers/clk/Kconfig | 13 ++-----------
+>  1 file changed, 2 insertions(+), 11 deletions(-)
+> =
 
+> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> index 292056bbb30e..8b5993ae30d8 100644
+> --- a/drivers/clk/Kconfig
+> +++ b/drivers/clk/Kconfig
+> @@ -48,7 +48,7 @@ config COMMON_CLK_MAX77686
+>  config COMMON_CLK_MAX9485
+>   tristate "Maxim 9485 Programmable Clock Generator"
+>   depends on I2C
+> - help
+> + ---help---
 
+So this one is not needed?
+
+>     This driver supports Maxim 9485 Programmable Audio Clock Generator
+> =
+
+>  config COMMON_CLK_RK808
+> @@ -157,7 +153,7 @@ config COMMON_CLK_CDCE925
+>  config COMMON_CLK_CS2000_CP
+>   tristate "Clock driver for CS2000 Fractional-N Clock Synthesizer &
+> Clock Multiplier"
+>   depends on I2C
+> - help
+> + ---help---
+
+Same for this one.
+
+>     If you say yes here you get support for the CS2000 clock multiplier.
+> =
+
+>  config COMMON_CLK_GEMINI
