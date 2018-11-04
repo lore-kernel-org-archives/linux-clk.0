@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E6B6ECDE44
-	for <linux-clk@archiver.kernel.org>; Sun,  4 Nov 2018 18:30:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDF31ECDE44
+	for <linux-clk@archiver.kernel.org>; Sun,  4 Nov 2018 18:30:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6558F20854
-	for <linux-clk@archiver.kernel.org>; Sun,  4 Nov 2018 18:30:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6558F20854
+	by mail.kernel.org (Postfix) with ESMTP id 93CEC2081D
+	for <linux-clk@archiver.kernel.org>; Sun,  4 Nov 2018 18:30:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93CEC2081D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=siol.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387542AbeKEDnw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 4 Nov 2018 22:43:52 -0500
-Received: from mailoutvs28.siol.net ([185.57.226.219]:47330 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2387541AbeKEDnv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 4 Nov 2018 22:43:51 -0500
+        id S2387510AbeKEDnq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 4 Nov 2018 22:43:46 -0500
+Received: from mailoutvs3.siol.net ([185.57.226.194]:47250 "EHLO mail.siol.net"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387432AbeKEDnp (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 4 Nov 2018 22:43:45 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id 82628521282;
-        Sun,  4 Nov 2018 19:27:57 +0100 (CET)
+        by mail.siol.net (Postfix) with ESMTP id D7C1D521292;
+        Sun,  4 Nov 2018 19:27:49 +0100 (CET)
 X-Virus-Scanned: amavisd-new at psrvmta11.zcs-production.pri
 Received: from mail.siol.net ([127.0.0.1])
         by localhost (psrvmta11.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id BGMQERPdCfVQ; Sun,  4 Nov 2018 19:27:57 +0100 (CET)
+        with ESMTP id LgzFpO-HX_Tj; Sun,  4 Nov 2018 19:27:49 +0100 (CET)
 Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id 3839A52126A;
-        Sun,  4 Nov 2018 19:27:57 +0100 (CET)
+        by mail.siol.net (Postfix) with ESMTPS id E0D3D52128A;
+        Sun,  4 Nov 2018 19:27:48 +0100 (CET)
 Received: from localhost.localdomain (cpe1-8-82.cable.triera.net [213.161.8.82])
         (Authenticated sender: 031275009)
-        by mail.siol.net (Postfix) with ESMTPSA id C1EBD5212A8;
-        Sun,  4 Nov 2018 19:27:54 +0100 (CET)
+        by mail.siol.net (Postfix) with ESMTPSA id 4F49F521292;
+        Sun,  4 Nov 2018 19:27:46 +0100 (CET)
 From:   Jernej Skrabec <jernej.skrabec@siol.net>
 To:     maxime.ripard@bootlin.com, wens@csie.org
 Cc:     robh+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
@@ -43,9 +43,9 @@ Cc:     robh+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-sunxi@googlegroups.com, jernej.skrabec@siol.net
-Subject: [PATCH v3 10/28] drm/sun4i: Fix DE2 mixer size
-Date:   Sun,  4 Nov 2018 19:26:47 +0100
-Message-Id: <20181104182705.18047-11-jernej.skrabec@siol.net>
+Subject: [PATCH v3 07/28] dt-bindings: display: sun4i-drm: Add H6 display engine compatibles
+Date:   Sun,  4 Nov 2018 19:26:44 +0100
+Message-Id: <20181104182705.18047-8-jernej.skrabec@siol.net>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181104182705.18047-1-jernej.skrabec@siol.net>
 References: <20181104182705.18047-1-jernej.skrabec@siol.net>
@@ -56,45 +56,52 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-DE2 mixer is always 0x6000 bytes in size on all known SoCs.
+This commit adds compatibles used in H6 display pipeline, namely for
+display engine, mixer and TV TCON.
 
-While at it, introduce a macro for that.
+H6 display engine is somewhat similar to R40, just less TCONs and
+mixer support more features.
 
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
 Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- drivers/gpu/drm/sun4i/sun8i_mixer.c | 2 +-
- drivers/gpu/drm/sun4i/sun8i_mixer.h | 2 ++
- 2 files changed, 3 insertions(+), 1 deletion(-)
+ .../devicetree/bindings/display/sunxi/sun4i-drm.txt          | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c b/drivers/gpu/drm/sun4i/=
-sun8i_mixer.c
-index 6129c350f7bd..6769ec08c0d3 100644
---- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
-@@ -460,7 +460,7 @@ static int sun8i_mixer_bind(struct device *dev, struc=
-t device *master,
- 	base =3D sun8i_blender_base(mixer);
+diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.tx=
+t b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+index 7854fff4fc16..62c83b351344 100644
+--- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
++++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+@@ -158,6 +158,7 @@ Required properties:
+    * allwinner,sun9i-a80-tcon-tv
+    * "allwinner,sun50i-a64-tcon-lcd", "allwinner,sun8i-a83t-tcon-lcd"
+    * "allwinner,sun50i-a64-tcon-tv", "allwinner,sun8i-a83t-tcon-tv"
++   * allwinner,sun50i-h6-tcon-tv, allwinner,sun8i-r40-tcon-tv
+  - reg: base address and size of memory-mapped region
+  - interrupts: interrupt associated to this IP
+  - clocks: phandles to the clocks feeding the TCON.
+@@ -381,6 +382,7 @@ Required properties:
+     * allwinner,sun8i-v3s-de2-mixer
+     * allwinner,sun50i-a64-de2-mixer-0
+     * allwinner,sun50i-a64-de2-mixer-1
++    * allwinner,sun50i-h6-de3-mixer-0
+   - reg: base address and size of the memory-mapped region.
+   - clocks: phandles to the clocks feeding the mixer
+     * bus: the mixer interface clock
+@@ -415,9 +417,10 @@ Required properties:
+     * allwinner,sun8i-v3s-display-engine
+     * allwinner,sun9i-a80-display-engine
+     * allwinner,sun50i-a64-display-engine
++    * allwinner,sun50i-h6-display-engine
 =20
- 	/* Reset the registers */
--	for (i =3D 0x0; i < 0x20000; i +=3D 4)
-+	for (i =3D 0; i < DE2_MIXER_UNIT_SIZE; i +=3D 4)
- 		regmap_write(mixer->engine.regs, i, 0);
+   - allwinner,pipelines: list of phandle to the display engine
+-    frontends (DE 1.0) or mixers (DE 2.0) available.
++    frontends (DE 1.0) or mixers (DE 2.0/3.0) available.
 =20
- 	/* Enable the mixer */
-diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.h b/drivers/gpu/drm/sun4i/=
-sun8i_mixer.h
-index 025550a1f539..09e0f4428c1e 100644
---- a/drivers/gpu/drm/sun4i/sun8i_mixer.h
-+++ b/drivers/gpu/drm/sun4i/sun8i_mixer.h
-@@ -29,6 +29,8 @@
+ Example:
 =20
- #define SUN8I_MIXER_GLOBAL_DBUFF_ENABLE		BIT(0)
-=20
-+#define DE2_MIXER_UNIT_SIZE			0x6000
-+
- #define DE2_BLD_BASE				0x1000
- #define DE2_CH_BASE				0x2000
- #define DE2_CH_SIZE				0x1000
 --=20
 2.19.1
 
