@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75C49C32789
-	for <linux-clk@archiver.kernel.org>; Sun,  4 Nov 2018 18:27:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 684E5ECDE46
+	for <linux-clk@archiver.kernel.org>; Sun,  4 Nov 2018 18:27:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 394AC2081D
-	for <linux-clk@archiver.kernel.org>; Sun,  4 Nov 2018 18:27:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 394AC2081D
+	by mail.kernel.org (Postfix) with ESMTP id 3E5672081D
+	for <linux-clk@archiver.kernel.org>; Sun,  4 Nov 2018 18:27:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E5672081D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=siol.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387396AbeKEDn2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 4 Nov 2018 22:43:28 -0500
-Received: from mailoutvs44.siol.net ([185.57.226.235]:47075 "EHLO
+        id S2387527AbeKEDnr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 4 Nov 2018 22:43:47 -0500
+Received: from mailoutvs27.siol.net ([185.57.226.218]:47278 "EHLO
         mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1731585AbeKEDn2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 4 Nov 2018 22:43:28 -0500
+        with ESMTP id S2387509AbeKEDnr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 4 Nov 2018 22:43:47 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id CF77E521257;
-        Sun,  4 Nov 2018 19:27:33 +0100 (CET)
+        by mail.siol.net (Postfix) with ESMTP id 8C26F52128D;
+        Sun,  4 Nov 2018 19:27:52 +0100 (CET)
 X-Virus-Scanned: amavisd-new at psrvmta11.zcs-production.pri
 Received: from mail.siol.net ([127.0.0.1])
         by localhost (psrvmta11.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id THotzTbsSE9D; Sun,  4 Nov 2018 19:27:33 +0100 (CET)
+        with ESMTP id ULfLTLbCnC-6; Sun,  4 Nov 2018 19:27:52 +0100 (CET)
 Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id 7D69B521256;
-        Sun,  4 Nov 2018 19:27:33 +0100 (CET)
+        by mail.siol.net (Postfix) with ESMTPS id 3940352128A;
+        Sun,  4 Nov 2018 19:27:52 +0100 (CET)
 Received: from localhost.localdomain (cpe1-8-82.cable.triera.net [213.161.8.82])
         (Authenticated sender: 031275009)
-        by mail.siol.net (Postfix) with ESMTPSA id E0EE3521257;
-        Sun,  4 Nov 2018 19:27:30 +0100 (CET)
+        by mail.siol.net (Postfix) with ESMTPSA id E816C5212A6;
+        Sun,  4 Nov 2018 19:27:48 +0100 (CET)
 From:   Jernej Skrabec <jernej.skrabec@siol.net>
 To:     maxime.ripard@bootlin.com, wens@csie.org
 Cc:     robh+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
@@ -42,11 +42,10 @@ Cc:     robh+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
         Laurent.pinchart@ideasonboard.com, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-sunxi@googlegroups.com, jernej.skrabec@siol.net,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v3 01/28] dt-bindings: bus: add H6 DE3 bus binding
-Date:   Sun,  4 Nov 2018 19:26:38 +0100
-Message-Id: <20181104182705.18047-2-jernej.skrabec@siol.net>
+        linux-sunxi@googlegroups.com, jernej.skrabec@siol.net
+Subject: [PATCH v3 08/28] drm/sun4i: Add compatible for H6 display engine
+Date:   Sun,  4 Nov 2018 19:26:45 +0100
+Message-Id: <20181104182705.18047-9-jernej.skrabec@siol.net>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181104182705.18047-1-jernej.skrabec@siol.net>
 References: <20181104182705.18047-1-jernej.skrabec@siol.net>
@@ -57,48 +56,27 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Icenowy Zheng <icenowy@aosc.io>
+H6 is first Allwinner SoC which supports 10 bit colors, HDR and AFBC.
 
-The Allwinner H6 DE3 bus is similar to the A64 DE2 one.
-
-Add its compatible string with the A64 string as fallback to the
-binding.
-
-Some description of the binding is modified to make it more generic.
-
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-[Fixed compatible name]
 Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- Documentation/devicetree/bindings/bus/sun50i-de2-bus.txt | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/sun4i/sun4i_drv.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/bus/sun50i-de2-bus.txt b/D=
-ocumentation/devicetree/bindings/bus/sun50i-de2-bus.txt
-index 87dfb33fb3be..b9d533717dff 100644
---- a/Documentation/devicetree/bindings/bus/sun50i-de2-bus.txt
-+++ b/Documentation/devicetree/bindings/bus/sun50i-de2-bus.txt
-@@ -1,11 +1,14 @@
--Device tree bindings for Allwinner A64 DE2 bus
-+Device tree bindings for Allwinner DE2/3 bus
-=20
- The Allwinner A64 DE2 is on a special bus, which needs a SRAM region (SR=
-AM C)
--to be claimed for enabling the access.
-+to be claimed for enabling the access. The DE3 on Allwinner H6 is at the=
- same
-+situation, and the binding also applies.
-=20
- Required properties:
-=20
-- - compatible:		Should contain "allwinner,sun50i-a64-de2"
-+ - compatible:		Should be one of:
-+				- "allwinner,sun50i-a64-de2"
-+				- "allwinner,sun50i-h6-de3", "allwinner,sun50i-a64-de2"
-  - reg:			A resource specifier for the register space
-  - #address-cells:	Must be set to 1
-  - #size-cells:		Must be set to 1
+diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/su=
+n4i_drv.c
+index 1e41c3f5fd6d..1ca7b70cbbfa 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_drv.c
++++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
+@@ -406,6 +406,7 @@ static const struct of_device_id sun4i_drv_of_table[]=
+ =3D {
+ 	{ .compatible =3D "allwinner,sun8i-v3s-display-engine" },
+ 	{ .compatible =3D "allwinner,sun9i-a80-display-engine" },
+ 	{ .compatible =3D "allwinner,sun50i-a64-display-engine" },
++	{ .compatible =3D "allwinner,sun50i-h6-display-engine" },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, sun4i_drv_of_table);
 --=20
 2.19.1
 
