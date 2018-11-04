@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1FF8ECDE44
-	for <linux-clk@archiver.kernel.org>; Sun,  4 Nov 2018 18:28:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA04AC32789
+	for <linux-clk@archiver.kernel.org>; Sun,  4 Nov 2018 18:29:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9631720854
-	for <linux-clk@archiver.kernel.org>; Sun,  4 Nov 2018 18:28:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9631720854
+	by mail.kernel.org (Postfix) with ESMTP id 7EF642081D
+	for <linux-clk@archiver.kernel.org>; Sun,  4 Nov 2018 18:29:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EF642081D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=siol.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387693AbeKEDom (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 4 Nov 2018 22:44:42 -0500
-Received: from mailoutvs36.siol.net ([185.57.226.227]:47913 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2387752AbeKEDol (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 4 Nov 2018 22:44:41 -0500
+        id S2387652AbeKEDoe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 4 Nov 2018 22:44:34 -0500
+Received: from mailoutvs3.siol.net ([185.57.226.194]:47830 "EHLO mail.siol.net"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387693AbeKEDoe (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 4 Nov 2018 22:44:34 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id 01C1E5203B8;
-        Sun,  4 Nov 2018 19:28:47 +0100 (CET)
+        by mail.siol.net (Postfix) with ESMTP id 8B9F352013D;
+        Sun,  4 Nov 2018 19:28:39 +0100 (CET)
 X-Virus-Scanned: amavisd-new at psrvmta11.zcs-production.pri
 Received: from mail.siol.net ([127.0.0.1])
         by localhost (psrvmta11.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id XcxrEkD77cqr; Sun,  4 Nov 2018 19:28:46 +0100 (CET)
+        with ESMTP id hykhBnnH5XGb; Sun,  4 Nov 2018 19:28:39 +0100 (CET)
 Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id A97FB5203BA;
-        Sun,  4 Nov 2018 19:28:46 +0100 (CET)
+        by mail.siol.net (Postfix) with ESMTPS id 2E87A5203B0;
+        Sun,  4 Nov 2018 19:28:39 +0100 (CET)
 Received: from localhost.localdomain (cpe1-8-82.cable.triera.net [213.161.8.82])
         (Authenticated sender: 031275009)
-        by mail.siol.net (Postfix) with ESMTPSA id 4184D5203B8;
-        Sun,  4 Nov 2018 19:28:44 +0100 (CET)
+        by mail.siol.net (Postfix) with ESMTPSA id A084152013D;
+        Sun,  4 Nov 2018 19:28:36 +0100 (CET)
 From:   Jernej Skrabec <jernej.skrabec@siol.net>
 To:     maxime.ripard@bootlin.com, wens@csie.org
 Cc:     robh+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
@@ -42,10 +42,11 @@ Cc:     robh+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
         Laurent.pinchart@ideasonboard.com, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-sunxi@googlegroups.com, jernej.skrabec@siol.net
-Subject: [PATCH v3 28/28] arm64: dts: allwinner: h6: Enable HDMI output on Pine H64 board
-Date:   Sun,  4 Nov 2018 19:27:05 +0100
-Message-Id: <20181104182705.18047-29-jernej.skrabec@siol.net>
+        linux-sunxi@googlegroups.com, jernej.skrabec@siol.net,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v3 25/28] dt-bindings: display: sun4i-drm: document H6 TCON TOP
+Date:   Sun,  4 Nov 2018 19:27:02 +0100
+Message-Id: <20181104182705.18047-26-jernej.skrabec@siol.net>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181104182705.18047-1-jernej.skrabec@siol.net>
 References: <20181104182705.18047-1-jernej.skrabec@siol.net>
@@ -56,57 +57,63 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Pine H64 board has HDMI type A connector.
+From: Icenowy Zheng <icenowy@aosc.io>
 
+Allwinner H6 SoC has a cut down version of TCON TOP.
+
+Add binding documentation for it.
+
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+[expanded description]
 Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- .../boot/dts/allwinner/sun50i-h6-pine-h64.dts | 25 +++++++++++++++++++
- 1 file changed, 25 insertions(+)
+ .../bindings/display/sunxi/sun4i-drm.txt           | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts b/arch/=
-arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
-index 48daec7f78ba..36db21314996 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
-@@ -21,6 +21,17 @@
- 		stdout-path =3D "serial0:115200n8";
- 	};
+diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.tx=
+t b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+index 478b288eebd9..f426bdb42f18 100644
+--- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
++++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+@@ -228,24 +228,26 @@ It allows display pipeline to be configured in very=
+ different ways:
+                  \ [3] TCON-TV1 [1] - TVE1/RGB
 =20
-+	connector {
-+		compatible =3D "hdmi-connector";
-+		type =3D "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint =3D <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+
- 	leds {
- 		compatible =3D "gpio-leds";
+ Note that both TCON TOP references same physical unit. Both mixers can b=
+e
+-connected to any TCON.
++connected to any TCON. Not all TCON TOP variants support all features.
 =20
-@@ -41,6 +52,20 @@
- 	};
- };
+ Required properties:
+   - compatible: value must be one of:
+     * allwinner,sun8i-r40-tcon-top
++    * allwinner,sun50i-h6-tcon-top
+   - reg: base address and size of the memory-mapped region.
+   - clocks: phandle to the clocks feeding the TCON TOP
+     * bus: TCON TOP interface clock
+     * tcon-tv0: TCON TV0 clock
+-    * tve0: TVE0 clock
+-    * tcon-tv1: TCON TV1 clock
+-    * tve1: TVE0 clock
+-    * dsi: MIPI DSI clock
++    * tve0: TVE0 clock (R40 only)
++    * tcon-tv1: TCON TV1 clock (R40 only)
++    * tve1: TVE0 clock (R40 only)
++    * dsi: MIPI DSI clock (R40 only)
+   - clock-names: clock name mentioned above
+   - resets: phandle to the reset line driving the TCON TOP
+   - #clock-cells : must contain 1
+   - clock-output-names: Names of clocks created for TCON TV0 channel clo=
+ck,
+-    TCON TV1 channel clock and DSI channel clock, in that order.
++    TCON TV1 channel clock (R40 only) and DSI channel clock (R40 only), =
+in
++    that order.
 =20
-+&de {
-+	status =3D "okay";
-+};
-+
-+&hdmi {
-+	status =3D "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint =3D <&hdmi_con_in>;
-+	};
-+};
-+
- &mmc0 {
- 	pinctrl-names =3D "default";
- 	pinctrl-0 =3D <&mmc0_pins>;
+ - ports: A ports node with endpoint definitions as defined in
+     Documentation/devicetree/bindings/media/video-interfaces.txt. 6 port=
+s should
 --=20
 2.19.1
 
