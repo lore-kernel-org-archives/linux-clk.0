@@ -2,106 +2,103 @@ Return-Path: <SRS0=E5Sm=NP=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 386E2C32789
-	for <linux-clk@archiver.kernel.org>; Sun,  4 Nov 2018 15:40:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75C49C32789
+	for <linux-clk@archiver.kernel.org>; Sun,  4 Nov 2018 18:27:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EAC442082A
-	for <linux-clk@archiver.kernel.org>; Sun,  4 Nov 2018 15:39:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAC442082A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
+	by mail.kernel.org (Postfix) with ESMTP id 394AC2081D
+	for <linux-clk@archiver.kernel.org>; Sun,  4 Nov 2018 18:27:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 394AC2081D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=siol.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730533AbeKEAzW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 4 Nov 2018 19:55:22 -0500
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:16198 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730531AbeKEAzW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 4 Nov 2018 19:55:22 -0500
-Received: from [192.168.0.111] (223.167.21.242) by mail-sh2.amlogic.com
- (10.18.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Sun, 4 Nov 2018
- 23:39:51 +0800
-Subject: Re: [PATCH v5 2/3] clk: meson: add DT documentation for emmc clock
- controller
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Yixun Lan <dlan@gentoo.org>
-CC:     Neil Armstrong <narmstrong@baylibre.com>,
-        Rob Herring <robh@kernel.org>,
-        Hanjie Lin <hanjie.lin@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Yixun Lan <yixun.lan@amlogic.com>,
-        <linux-kernel@vger.kernel.org>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Liang Yang <liang.yang@amlogic.com>,
-        Jian Hu <jian.hu@amlogic.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Carlo Caione <carlo@caione.org>,
-        <linux-amlogic@lists.infradead.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Qiufang Dai <qiufang.dai@amlogic.com>
-References: <1539839245-13793-1-git-send-email-jianxin.pan@amlogic.com>
- <1539839245-13793-3-git-send-email-jianxin.pan@amlogic.com>
- <ca95948abd58876a23b2eb3e52b96124e9eed793.camel@baylibre.com>
- <20181024145513.GA6647@ofant>
- <154130064120.88331.5081431734592584205@swboyd.mtv.corp.google.com>
-From:   Jianxin Pan <jianxin.pan@amlogic.com>
-Message-ID: <fe4b3d70-12ae-84ae-0451-f5d67aa99fcd@amlogic.com>
-Date:   Sun, 4 Nov 2018 23:39:44 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        id S2387396AbeKEDn2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 4 Nov 2018 22:43:28 -0500
+Received: from mailoutvs44.siol.net ([185.57.226.235]:47075 "EHLO
+        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1731585AbeKEDn2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 4 Nov 2018 22:43:28 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by mail.siol.net (Postfix) with ESMTP id CF77E521257;
+        Sun,  4 Nov 2018 19:27:33 +0100 (CET)
+X-Virus-Scanned: amavisd-new at psrvmta11.zcs-production.pri
+Received: from mail.siol.net ([127.0.0.1])
+        by localhost (psrvmta11.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id THotzTbsSE9D; Sun,  4 Nov 2018 19:27:33 +0100 (CET)
+Received: from mail.siol.net (localhost [127.0.0.1])
+        by mail.siol.net (Postfix) with ESMTPS id 7D69B521256;
+        Sun,  4 Nov 2018 19:27:33 +0100 (CET)
+Received: from localhost.localdomain (cpe1-8-82.cable.triera.net [213.161.8.82])
+        (Authenticated sender: 031275009)
+        by mail.siol.net (Postfix) with ESMTPSA id E0EE3521257;
+        Sun,  4 Nov 2018 19:27:30 +0100 (CET)
+From:   Jernej Skrabec <jernej.skrabec@siol.net>
+To:     maxime.ripard@bootlin.com, wens@csie.org
+Cc:     robh+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        airlied@linux.ie, architt@codeaurora.org, a.hajda@samsung.com,
+        Laurent.pinchart@ideasonboard.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-sunxi@googlegroups.com, jernej.skrabec@siol.net,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH v3 01/28] dt-bindings: bus: add H6 DE3 bus binding
+Date:   Sun,  4 Nov 2018 19:26:38 +0100
+Message-Id: <20181104182705.18047-2-jernej.skrabec@siol.net>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181104182705.18047-1-jernej.skrabec@siol.net>
+References: <20181104182705.18047-1-jernej.skrabec@siol.net>
 MIME-Version: 1.0
-In-Reply-To: <154130064120.88331.5081431734592584205@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [223.167.21.242]
-X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
- (10.18.11.6)
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+From: Icenowy Zheng <icenowy@aosc.io>
 
-Hi Stephen,
+The Allwinner H6 DE3 bus is similar to the A64 DE2 one.
 
-Thank you for the review.
+Add its compatible string with the A64 string as fallback to the
+binding.
 
-On 2018/11/4 11:04, Stephen Boyd wrote:
-> Quoting Yixun Lan (2018-10-25 00:29:15)
->> yes, I think the documentation need to be fixed
->>
->> for the final solution, we decide to make 'mmc-clkc' an independent node
->> instead of being a sub-node of 'mmc', so both of them may exist in parallel..
->>
->> the DT part may like this:
->>
->>                         sd_emmc_c_clkc: clock-controller@7000 {
->>                                 compatible = "amlogic,axg-mmc-clkc", "syscon";
->>                                 reg = <0x0 0x7000 0x0 0x4>;
->>                                 ...
->>                         };
->>
->>                         sd_emmc_c: mmc@7000 {
->>                                 compatible = "amlogic,axg-mmc";
->>                                 reg = <0x0 0x7000 0x0 0x800>;
->>                                 ...
->>                         };
-> 
-> That's improper usage of DT. We don't want two devices at the same
-> register offset.
-sd_emmc_c_clkc is shared by nand and sd_emmc_c controller, and this clock is part of the MMC controller's register space.
- 
-The idea of adding the clock-controller@7000is introduced during the discussion in the NAND driver mainline effort:
-https://lkml.kernel.org/r/20180628090034.0637a062@xps13
-> 
-> .
-> 
+Some description of the binding is modified to make it more generic.
+
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+[Fixed compatible name]
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+---
+ Documentation/devicetree/bindings/bus/sun50i-de2-bus.txt | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/bus/sun50i-de2-bus.txt b/D=
+ocumentation/devicetree/bindings/bus/sun50i-de2-bus.txt
+index 87dfb33fb3be..b9d533717dff 100644
+--- a/Documentation/devicetree/bindings/bus/sun50i-de2-bus.txt
++++ b/Documentation/devicetree/bindings/bus/sun50i-de2-bus.txt
+@@ -1,11 +1,14 @@
+-Device tree bindings for Allwinner A64 DE2 bus
++Device tree bindings for Allwinner DE2/3 bus
+=20
+ The Allwinner A64 DE2 is on a special bus, which needs a SRAM region (SR=
+AM C)
+-to be claimed for enabling the access.
++to be claimed for enabling the access. The DE3 on Allwinner H6 is at the=
+ same
++situation, and the binding also applies.
+=20
+ Required properties:
+=20
+- - compatible:		Should contain "allwinner,sun50i-a64-de2"
++ - compatible:		Should be one of:
++				- "allwinner,sun50i-a64-de2"
++				- "allwinner,sun50i-h6-de3", "allwinner,sun50i-a64-de2"
+  - reg:			A resource specifier for the register space
+  - #address-cells:	Must be set to 1
+  - #size-cells:		Must be set to 1
+--=20
+2.19.1
 
