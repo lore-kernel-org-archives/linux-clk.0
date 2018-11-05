@@ -2,134 +2,67 @@ Return-Path: <SRS0=vj01=NQ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FF89C0044C
-	for <linux-clk@archiver.kernel.org>; Mon,  5 Nov 2018 23:08:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7651EC0044C
+	for <linux-clk@archiver.kernel.org>; Mon,  5 Nov 2018 23:20:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C85F120825
-	for <linux-clk@archiver.kernel.org>; Mon,  5 Nov 2018 23:08:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37A6D20869
+	for <linux-clk@archiver.kernel.org>; Mon,  5 Nov 2018 23:20:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="Ki6Wgy5M"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C85F120825
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="B/Cckkp6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37A6D20869
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725733AbeKFIao (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 6 Nov 2018 03:30:44 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:53422 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725738AbeKFIaj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Nov 2018 03:30:39 -0500
-Received: by mail-wm1-f67.google.com with SMTP id v24-v6so10005422wmh.3
-        for <linux-clk@vger.kernel.org>; Mon, 05 Nov 2018 15:08:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=NR7/4GP7YK0tr2b/JpXE+NH3LWhxmoZ3idljVVirVVg=;
-        b=Ki6Wgy5MUsJFbW+bD7IDqrlaR9LGixvoAG1FKXqxaTf5VL0Tb8aIqKvH48GEm22RWH
-         6kWqnt176VESod/Np250VO6FqAMEXRs+rW6qcGaUTlQQgqInvA7KqsvFun98m44e4mT/
-         E8LpjE50rfLFABBpbtmaT7Gl0h3W8up/cjwd6mPFGV7/ACFJRoESKGKotPFSXufYpa2J
-         QpA2v7fsy14AishKPgqa5KcrsHg6OFUp+9iK3/81ZDI8PVCnoOe5bMXTX/1K63jp9NKq
-         y3TqpRo1KXmPcte7TtGX2pp8TTCGUaG9dFV6IouBNqLmHyiuXGFoKRQsv6xZD4rf9zJ2
-         FIIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=NR7/4GP7YK0tr2b/JpXE+NH3LWhxmoZ3idljVVirVVg=;
-        b=m/53vr3TZtgtbe7HB4ycHQH2/RBBTLnkfVrQ6YBSy9fQC2X6lNl8I9jw3RQeLKeVv2
-         qTfR8z2bv28EwChEumPYXz7dvuHhvtZP5qqvjXb8DXO/AMtNZ1JQT6/gwvVyE+KqRBxx
-         hGDiAOYSfNl6kf8eKeb3iFn/0b5/ISsuvU+HdmwMG8J3sSe6PmRx6T2VeL3BVfL1rv/p
-         MYekk4Mh2L3RChvQatKfRiWxSn8+/FyTHDMyMYJ57PbjadRXgPcvG053uRBrXjnA3XJG
-         zu76Q/DUKuQnGLVeQ9tcKfzoGnyTIZCRym97pPGlhmH/SfNZ2aPP+R/T9lFM0q7PVaiH
-         eZzg==
-X-Gm-Message-State: AGRZ1gKOkefLo5qjm2xCxwZzOt22Ws7vDOLpo/Nuc7q/XtRFEXRUpFcY
-        mnyIYJQpdY1lOg2tUaWBWHJX0Q==
-X-Google-Smtp-Source: AJdET5dmOkm+gjnM53TtOi7MXJqaCDRSXs9rZeFKoLBDE+EeRxqqNesLwCsXkzjtIZ8JIfIcTmUSAQ==
-X-Received: by 2002:a1c:bce:: with SMTP id 197-v6mr75878wml.15.1541459313122;
-        Mon, 05 Nov 2018 15:08:33 -0800 (PST)
-Received: from boomer.lan (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
-        by smtp.googlemail.com with ESMTPSA id k73-v6sm95717wmd.33.2018.11.05.15.08.31
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 05 Nov 2018 15:08:32 -0800 (PST)
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>
-Cc:     Christian Hewitt <christianshewitt@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>
-Subject: [PATCH v2] clk: meson-gxbb: set fclk_div3 as CLK_IS_CRITICAL
-Date:   Tue,  6 Nov 2018 00:08:20 +0100
-Message-Id: <20181105230820.3562-1-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.19.1
+        id S1726774AbeKFImO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 6 Nov 2018 03:42:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52232 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725751AbeKFImO (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 6 Nov 2018 03:42:14 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E582F20825;
+        Mon,  5 Nov 2018 23:20:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541460003;
+        bh=kCVPgts7SJzG8s+kv8odv6oi3jr+XF73N3w0KV6qAek=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=B/Cckkp6WOXP1g577l8Y5SdIAZw0oWMkyL45EE8d1fMOzSWUV2ifaNQTvTA17hiOf
+         li/fkuuqCAIUzN/9P+k/AGkNCcvOMMGzJ2hIGqDUzvJjAVlKihiuFuknHKZYPLYPWp
+         lQjyq86CFJ1Gmi4URL3lSmavMbCAaWPCdQMPKaXw=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+To:     Yuantian Tang <andy.tang@nxp.com>, oss@buserror.net
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20181031065736.32719-2-andy.tang@nxp.com>
+Cc:     mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        Yuantian Tang <andy.tang@nxp.com>
+References: <20181031065736.32719-1-andy.tang@nxp.com>
+ <20181031065736.32719-2-andy.tang@nxp.com>
+Message-ID: <154146000223.88331.842879133964597851@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH 2/2 v3] clk: qoriq: add more compatibles strings
+Date:   Mon, 05 Nov 2018 15:20:02 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Christian Hewitt <christianshewitt@gmail.com>
+Quoting Yuantian Tang (2018-10-30 23:57:36)
+> Add more SoC compatible strings to support more chips.
+> =
 
-On the Khadas VIM2 (GXM) and LePotato (GXL) board there are problems
-with reboot; e.g. a ~60 second delay between issuing reboot and the
-board power cycling (and in some OS configurations reboot will fail
-and require manual power cycling).
+> Signed-off-by: Yuantian Tang <andy.tang@nxp.com>
+> ---
 
-Similar to 'commit c987ac6f1f088663b6dad39281071aeb31d450a8 ("clk:
-meson-gxbb: set fclk_div2 as CLK_IS_CRITICAL")' the SCPI Cortex-M4
-Co-Processor seems to depend on FCLK_DIV3 being operational.
-
-Until commit 05f814402d6174369b3b29832cbb5eb5ed287059 ("clk:
-meson: add fdiv clock gates"), this clock was modeled and left on by
-the bootloader.
-
-We don't have precise documentation about the SCPI Co-Processor and
-its clock requirement so we are learning things the hard way.
-
-Marking this clock as critical solves the problem but it should not
-be viewed as final solution. Ideally, the SCPI driver should claim
-these clocks. We also depends on some clock hand-off mechanism
-making its way to CCF, to make sure the clock stays on between its
-registration and the SCPI driver probe.
-
-Fixes: 05f814402d61 ("clk: meson: add fdiv clock gates")
-Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/meson/gxbb.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index 9309cfaaa464..4ada9668fd49 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -506,6 +506,18 @@ static struct clk_regmap gxbb_fclk_div3 = {
- 		.ops = &clk_regmap_gate_ops,
- 		.parent_names = (const char *[]){ "fclk_div3_div" },
- 		.num_parents = 1,
-+		/*
-+		 * FIXME:
-+		 * This clock, as fdiv2, is used by the SCPI FW and is required
-+		 * by the platform to operate correctly.
-+		 * Until the following condition are met, we need this clock to
-+		 * be marked as critical:
-+		 * a) The SCPI generic driver claims and enable all the clocks
-+		 *    it needs
-+		 * b) CCF has a clock hand-off mechanism to make the sure the
-+		 *    clock stays on until the proper driver comes along
-+		 */
-+		.flags = CLK_IS_CRITICAL,
- 	},
- };
- 
--- 
-2.19.1
+Acked-by: Stephen Boyd <sboyd@kernel.org>
 
