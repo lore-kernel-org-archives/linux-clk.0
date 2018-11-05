@@ -2,245 +2,163 @@ Return-Path: <SRS0=vj01=NQ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F316C0044C
-	for <linux-clk@archiver.kernel.org>; Mon,  5 Nov 2018 09:46:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2315C0044C
+	for <linux-clk@archiver.kernel.org>; Mon,  5 Nov 2018 10:11:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CB9F2082A
-	for <linux-clk@archiver.kernel.org>; Mon,  5 Nov 2018 09:46:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="HL2yqyRO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CB9F2082A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by mail.kernel.org (Postfix) with ESMTP id AE78C20825
+	for <linux-clk@archiver.kernel.org>; Mon,  5 Nov 2018 10:11:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE78C20825
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726186AbeKETFi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 5 Nov 2018 14:05:38 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:55041 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726125AbeKETFd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Nov 2018 14:05:33 -0500
-Received: by mail-wm1-f67.google.com with SMTP id r63-v6so7585241wma.4
-        for <linux-clk@vger.kernel.org>; Mon, 05 Nov 2018 01:46:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=W+jU3ISQdjTakmeCbYjMZy9WEccEjRzxGZFCCng+FrM=;
-        b=HL2yqyROLgAi8GWc4bdvjyXr67fLc6gwr6WCISMjDvWL5gZG6KFUVIAlfGabWJb9MK
-         RT41MZC8YSu4oPbaQGBg5ZUE7Mzsw35pbO0d8kTvUHrxFdhw9xpfMelp8E/WzU6sY0mP
-         l5rORIw80VEUd8QqEjehmrv0VZ+gEwAcLpcxQRvRform6+rEyisOFTXxhR9XQTAzKrLk
-         KSOSkGHY3bSm1nEKViyEjaZR8ITsBJXhK6MvPOE6c5HBBQGesX0evbdbcbmeaYjN48TL
-         IdHNhHkE+cF3IQwadtzzhXWbfF/nTC8Znm9Wkb7ArycqOLWXniyBFeK1BA63tRSM+PNt
-         DY3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=W+jU3ISQdjTakmeCbYjMZy9WEccEjRzxGZFCCng+FrM=;
-        b=Ay7M5qiLGTINgBjq7wHruGq1dY0Vg9H2UXYYOkoMv4tMCagHXgxLYGczR2P4OwgB+2
-         e6XXvYJ6X41XnRrQNk8r2DzijBBA1xC7u/UASQOJ0TMzJvH3Ht0o9FTB3yidxci8eibl
-         K2PUZiiQho8JnoaupOsgUlRP8jdsmnZR3+DmEiHhHmzS+0TiG8HEd9tP5WJusU6W9CX1
-         w6a10bBW94av2o5BcW9WcW+2MTfi5GA13aH+muFcRUZn5ufu//sP2hOY5FTVG3x/mLpP
-         o2iNIOC17GSt1e6vGDIXzghUsLM2BcQNj8L22GZCkXQv3RUFL9/l1LMrFkdqGGx8BKU/
-         P35A==
-X-Gm-Message-State: AGRZ1gJLjCyN26a/NKu9oSF3DJFu6WRo17bk9LUSbXt1mcwYW8e2ABnY
-        gFo3hFdWEecUCVARwGBt/icbJg==
-X-Google-Smtp-Source: AJdET5e20DVRXOakNh7GhbuvsqONCkmnVh5y/BcPK59TkD2mCE3WS+ZUzVdlMu/TJkrHmRUjrE3FKg==
-X-Received: by 2002:a1c:3e84:: with SMTP id l126-v6mr5396890wma.91.1541411198397;
-        Mon, 05 Nov 2018 01:46:38 -0800 (PST)
-Received: from boomer.baylibre.com (uluru.liltaz.com. [163.172.81.188])
-        by smtp.gmail.com with ESMTPSA id s206-v6sm4117053wms.29.2018.11.05.01.46.37
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 05 Nov 2018 01:46:37 -0800 (PST)
-Message-ID: <bba47660e7d48c391caad8214570e81527624662.camel@baylibre.com>
-Subject: Re: [PATCH v5 3/3] clk: meson: add sub MMC clock controller driver
-From:   jbrunet@baylibre.com
-To:     Jianxin Pan <jianxin.pan@amlogic.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc:     Neil Armstrong <narmstrong@baylibre.com>, yixun.lan@amlogic.com,
-        khilman@baylibre.com, carlo@caione.org, mturquette@baylibre.com,
-        sboyd@kernel.org, robh@kernel.org, miquel.raynal@bootlin.com,
-        boris.brezillon@bootlin.com, liang.yang@amlogic.com,
-        jian.hu@amlogic.com, qiufang.dai@amlogic.com,
-        hanjie.lin@amlogic.com, victor.wan@amlogic.com,
-        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Date:   Mon, 05 Nov 2018 10:46:36 +0100
-In-Reply-To: <66c2915a-4ecd-8a6e-6493-4318ae7bb620@amlogic.com>
-References: <1539839245-13793-1-git-send-email-jianxin.pan@amlogic.com>
-         <1539839245-13793-4-git-send-email-jianxin.pan@amlogic.com>
-         <a8d359208edfdc75cb5c6de378796f76e0572a0f.camel@baylibre.com>
-         <eda2faf2-cf06-902d-36ff-48ceafcb4a4b@amlogic.com>
-         <f4d239df2f1333b005680f9bfdd2eba93e7f86e5.camel@baylibre.com>
-         <CAFBinCCuqUmVNdwUm7WbkHy1eWvOA5oQ5FcOuytbYNbgGcXnRQ@mail.gmail.com>
-         <3723695d951e0d30e8a0117d336d8f268269a030.camel@baylibre.com>
-         <66c2915a-4ecd-8a6e-6493-4318ae7bb620@amlogic.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.1 (3.30.1-1.fc29) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1726412AbeKETaK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 5 Nov 2018 14:30:10 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:60203 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726319AbeKETaJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 5 Nov 2018 14:30:09 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id BC027207B0; Mon,  5 Nov 2018 11:11:10 +0100 (CET)
+Received: from localhost (aaubervilliers-681-1-93-44.w90-88.abo.wanadoo.fr [90.88.34.44])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 88E46206D8;
+        Mon,  5 Nov 2018 11:11:10 +0100 (CET)
+Date:   Mon, 5 Nov 2018 11:11:10 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jagan Teki <jagan@openedev.com>
+Cc:     Jagan Teki <jagan@amarulasolutions.com>,
+        Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi@googlegroups.com
+Subject: Re: [linux-sunxi] Re: [PATCH v2 02/15] clk: sunxi-ng: Add check for
+ minimal rate to NKM PLLs
+Message-ID: <20181105101110.agfik3oppd6ck25c@flea>
+References: <20181023155035.9101-1-jagan@amarulasolutions.com>
+ <20181023155035.9101-3-jagan@amarulasolutions.com>
+ <20181024180436.5n3i3z6h2yezc4cv@flea>
+ <CAMty3ZC2wn-DjR+93yc-n-bAmVCHaEqR_=4XPddoo+7LjebTEg@mail.gmail.com>
+ <20181029085843.3bslqwktxbp2ywk2@flea>
+ <e7566001-8933-adbb-4c30-7a3f66ebae4e@openedev.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="24qnld42rl357a2y"
+Content-Disposition: inline
+In-Reply-To: <e7566001-8933-adbb-4c30-7a3f66ebae4e@openedev.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, 2018-11-04 at 02:01 +0800, Jianxin Pan wrote:
-> Hi Jerome,
-> 
-> Thanks for the review, we really appreciate your time.
-> 
-> I'm very sorry maybe I don't catch all your meaning very well. 
-> 
-> Please see my comments below.
-> 
-> On 2018/10/29 3:16, Jerome Brunet wrote:
-> > On Thu, 2018-10-25 at 22:58 +0200, Martin Blumenstingl wrote:
-> > > Hi Jerome,
-> > > 
-> > > On Thu, Oct 25, 2018 at 2:54 PM Jerome Brunet <jbrunet@baylibre.com>
-> > > wrote:
-> > > [snip]
-> > > > > > > +static void clk_regmap_div_init(struct clk_hw *hw)
-> > > > > > > +{
-> > > > > > > + struct clk_regmap *clk = to_clk_regmap(hw);
-> > > > > > > + struct clk_regmap_div_data *div =
-> > > > > > > clk_get_regmap_div_data(clk);
-> > > > > > > + unsigned int val;
-> > > > > > > + int ret;
-> > > > > > > +
-> > > > > > > + ret = regmap_read(clk->map, div->offset, &val);
-> > > > > > > + if (ret)
-> > > > > > > +         return;
-> > > > > > > 
-> > > > > > > + val &= (clk_div_mask(div->width) << div->shift);
-> > > > > > > + if (!val)
-> > > > > > > +         regmap_update_bits(clk->map, div->offset,
-> > > > > > > +                            clk_div_mask(div->width) << div-
-> > > > > > > >shift,
-> > > > > > > +                            clk_div_mask(div->width));
-> > > > > > 
-> > > > > > This is wrong for several reasons:
-> > > > > > * You should hard code the initial value in the driver.
-> > > > > > * If shift is not 0, I doubt this will give the expected result.
-> > > > > 
-> > > > > The value 0x00 of divider means nand clock off then read/write nand
-> > > > > register is forbidden.
-> > > > 
-> > > > That is not entirely true, you can access the clock register or you'd
-> > > > be in a
-> > > > chicken and egg situation.
-> > > > 
-> > > > > Should we set the initial value in nand driver, or in sub emmc clk
-> > > > > driver?
-> > > > 
-> > > > In the nand driver, which is the consumer of the clock. see my
-> > > > previous comments
-> > > > about it.
-> > > 
-> > > an old version of this series had the code still in the NAND driver
-> > > (by writing to the registers directly instead of using the clk API).
-> > > this looks pretty much like a "sclk-div" to me (as I commented in v3
-> > > of this series: [0]):
-> > > - value 0 means disabled
-> > > - positive divider values
-> > > - (probably no duty control, but that's optional as far as I
-> > > understand sclk-div)
-> > > - uses max divider value when enabling the clock
-> > > 
-> > > if switching to sclk-div works then we can get rid of some duplicate
-> > > code
-> > 
-> > It is possible:
-> > There is a couple of things to note though:
-> > 
-> > * sclk does not 'uses max divider value when enabling the clock': Since
-> > this
-> > divider can gate, it needs to save the divider value when disabling, since
-> > the
-> > divider value is no longer stored in the register,
-> > On init, this cached value is  saved as it is. If the divider is initially
-> > disabled, we have to set the cached value to something that makes sense,
-> > in case
-> > the clock is enabled without a prior call to clk_set_rate().
-> > > So in sclk, the clock setting is not changed nor hard coded in init, and
-> > > this is
-> > a very important difference.
-> > 
-> I think It's ok for the latest sub mmc clock and nand driver now:
-> 1. in mmc_clkc_register_clk_with_parent("div", ...) from mmc_clkc_probe():
->    cached_div is set to div_max durning clk register，but is not set to div
-> hw register.
-> 
-> 2. In meson nand driver v6: 	
-> https://lore.kernel.org/lkml/1541090542-19618-3-git-send-email-jianxin.pan@amlogic.com
-> 1) In meson_nfc_clk_init() from probe:   get clock handle, then
-> prepare_enable and set default rate.
->    nfc->device_clk = devm_clk_get(nfc->dev, "device");
->    ret = clk_prepare_enable(nfc->device_clk);			//Here div hw
-> register changed from 0 -> cached_div.
->    default_clk_rate = clk_round_rate(nfc->device_clk, 24000000);
->    ret = clk_set_rate(nfc->device_clk, default_clk_rate);	//Then
-> register and cached_div are both updated to the default 24M.
-> 2) In meson_nfc_select_chip(), set the actual frequency
->   ret = clk_set_rate(nfc->device_clk, meson_chip->clk_rate);	//Here
-> register and cached_div are changed again.
-> 3) if clk_disable() is called, set div hw register to zero, and
-> cached_div  keep unchagned.
->    if clk_disable() is called again,  cached_div is restored to div hw
-> register.
 
-You don't need to do all this in your NAND driver: enable - round - set_rate -
-disable is a waste of time. 
+--24qnld42rl357a2y
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Directly calling set_rate(24000000), with the clock still off, will have the
-same result. Then if your HW needs this clock to be ON to access registers
-(like you told us) you should probably turn it on.
+On Mon, Oct 29, 2018 at 06:10:47PM +0530, Jagan Teki wrote:
+> On 29/10/18 2:28 PM, Maxime Ripard wrote:
+> > On Thu, Oct 25, 2018 at 04:25:59PM +0530, Jagan Teki wrote:
+> > > On Wed, Oct 24, 2018 at 11:34 PM Maxime Ripard
+> > > <maxime.ripard@bootlin.com> wrote:
+> > > >=20
+> > > > On Tue, Oct 23, 2018 at 09:20:22PM +0530, Jagan Teki wrote:
+> > > > > Some NKM PLLs doesn't work well when their output clock rate is s=
+et below
+> > > > > certain rate.
+> > > > >=20
+> > > > > So, add support for minimal rate for relevant PLLs.
+> > > > >=20
+> > > > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > > > > ---
+> > > > > Changes for v2:
+> > > > > - new patch
+> > > > >=20
+> > > > >   drivers/clk/sunxi-ng/ccu_nkm.c | 7 +++++++
+> > > > >   drivers/clk/sunxi-ng/ccu_nkm.h | 1 +
+> > > > >   2 files changed, 8 insertions(+)
+> > > > >=20
+> > > > > diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-n=
+g/ccu_nkm.c
+> > > > > index 841840e35e61..d17539dc88dd 100644
+> > > > > --- a/drivers/clk/sunxi-ng/ccu_nkm.c
+> > > > > +++ b/drivers/clk/sunxi-ng/ccu_nkm.c
+> > > > > @@ -125,6 +125,13 @@ static unsigned long ccu_nkm_round_rate(stru=
+ct ccu_mux_internal *mux,
+> > > > >        if (nkm->common.features & CCU_FEATURE_FIXED_POSTDIV)
+> > > > >                rate *=3D nkm->fixed_post_div;
+> > > > >=20
+> > > > > +     if (rate < nkm->min_rate) {
+> > > > > +             rate =3D nkm->min_rate;
+> > > > > +             if (nkm->common.features & CCU_FEATURE_FIXED_POSTDI=
+V)
+> > > > > +                     rate /=3D nkm->fixed_post_div;
+> > > >=20
+> > > > I'm not sure this is right. Is the post divider taken into account =
+to
+> > > > calculate the minimum, or is the minimum on the rate before the fix=
+ed
+> > > > post divider.
+> > >=20
+> > > Since we are returning from here, we need to take care post div which
+> > > is actually doing at the end of round_rate.
+> >=20
+> > That's not my point though. Does the rate needs to be superior to min
+> > / post_div, or min?
+>=20
+> ie what I'm trying to say, since it's common code min or max should /
+> post_div and PLL_MIPI doesn't use any post_div.
+>=20
+> We need to take care post_div though the current test (PLL_MIPI) in not u=
+sed
+> since it's common code. just like nkmp, nm etc.
+>=20
+> >=20
+> > > >=20
+> > > > How did you test this?
+> > >=20
+> > > I've not used this on PLL_MIPI atleast, so I didn't test this.
+> >=20
+> > If you've never tested this, why are you adding that code?
+>=20
+> Like above, it's common code. otherwise might effect.
 
-> 
-> When enabling the clock, divider register does not need to be div_max.  
-> Any value is OK except ZERO, the cached_div from init or set_rate is ok
-> >  
-> > * Even if sclk zero value means gated, it is still a zero based divider,
-> > while
-> > eMMC/Nand divider is one based. It this controller was to sclk, then
-> > something
-> > needs to be done for this.
-> Could I add another patch to this patchset for sclk to support
-> CLK_DIVIDER_ONE_BASED ?
+Adding untested, unverified and unneeded code is just bloat, nothing
+else.
 
-Yes, you should otherwise the calculation are just wrong for your clock.
+Maxime
 
-> > * Since sclk caches a value in its data, and there can multiple instance
-> > of eMMC
-> > /NAND clock controller, some care must be taken when registering the data.
-> OK, I will fix it and alloc mmc_clkc_div_data danymicly durning probe.
-> Thank you. 
-> > Both the generic divider and sclk could work here ... it's up to you
-> > Jianxin.
-> > 
-> == Why use meson_sclk_div_ops instead of clk_regmap_divider_ops?
-> The default divider hw register vaule is 0 when system power on.
-> Then there is a WARNING in divider_recalc_rate() durning clk_hw_register():
-> [    0.918238] ffe05000.clock-controller#div: Zero divisor and
-> CLK_DIVIDER_ALLOW_ZERO not set
-> [    0.925581] WARNING: CPU: 3 PID: 1 at drivers/clk/clk-divider.c:127
-> divider_recalc_rate+0x88/0x90
-> Then I still need to hard code the initual value to nand driver without
-> CLK_DIVIDER_ALLOW_ZERO flags.
-> > > 
-> > > Regards
-> > > Martin
-> > > 
-> > > 
-> > > [0] https://patchwork.kernel.org/patch/10607157/#22238243
-> > 
-> > .
-> > 
-> 
-> 
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
+--24qnld42rl357a2y
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW+AXPgAKCRDj7w1vZxhR
+xZGZAP9paH3R1hjXBV/78pQJPBNmhdWRfP1ia9/7402ZarjPbgEAhMrhFLZ5XMu9
+d1StSmseaJ/1DULVvnx5QFCiTcr5QQ8=
+=540+
+-----END PGP SIGNATURE-----
+
+--24qnld42rl357a2y--
