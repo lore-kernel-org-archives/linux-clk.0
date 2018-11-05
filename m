@@ -2,80 +2,134 @@ Return-Path: <SRS0=vj01=NQ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2AEDC0044C
-	for <linux-clk@archiver.kernel.org>; Mon,  5 Nov 2018 20:27:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FF89C0044C
+	for <linux-clk@archiver.kernel.org>; Mon,  5 Nov 2018 23:08:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0F5120827
-	for <linux-clk@archiver.kernel.org>; Mon,  5 Nov 2018 20:27:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0F5120827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id C85F120825
+	for <linux-clk@archiver.kernel.org>; Mon,  5 Nov 2018 23:08:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="Ki6Wgy5M"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C85F120825
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726976AbeKFFtM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 6 Nov 2018 00:49:12 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:36438 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726567AbeKFFtM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Nov 2018 00:49:12 -0500
-Received: by mail-oi1-f194.google.com with SMTP id r127-v6so8723041oie.3;
-        Mon, 05 Nov 2018 12:27:47 -0800 (PST)
+        id S1725733AbeKFIao (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 6 Nov 2018 03:30:44 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:53422 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725738AbeKFIaj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Nov 2018 03:30:39 -0500
+Received: by mail-wm1-f67.google.com with SMTP id v24-v6so10005422wmh.3
+        for <linux-clk@vger.kernel.org>; Mon, 05 Nov 2018 15:08:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=NR7/4GP7YK0tr2b/JpXE+NH3LWhxmoZ3idljVVirVVg=;
+        b=Ki6Wgy5MUsJFbW+bD7IDqrlaR9LGixvoAG1FKXqxaTf5VL0Tb8aIqKvH48GEm22RWH
+         6kWqnt176VESod/Np250VO6FqAMEXRs+rW6qcGaUTlQQgqInvA7KqsvFun98m44e4mT/
+         E8LpjE50rfLFABBpbtmaT7Gl0h3W8up/cjwd6mPFGV7/ACFJRoESKGKotPFSXufYpa2J
+         QpA2v7fsy14AishKPgqa5KcrsHg6OFUp+9iK3/81ZDI8PVCnoOe5bMXTX/1K63jp9NKq
+         y3TqpRo1KXmPcte7TtGX2pp8TTCGUaG9dFV6IouBNqLmHyiuXGFoKRQsv6xZD4rf9zJ2
+         FIIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=dwVwoXa1nLilTRsAqCXbVt56WbbEgnkkcw+An0l4VKk=;
-        b=qG2TZGiAKRZKzCBei3FW5HRyhq8qUsrPpAEE52hX826JPi/bhEiA959M5FEZ+0Bk00
-         IOhbATXmFH29NU6XH0DfNtU5R+tHCruab529idUm8rg7wYGoStYhyC0jaHzuOmZuNpBi
-         aPAMjG0iHK6yf37/eWFt8MyXsotFQlHAYlyzag/WmsA8urU2U0r7KR4tF0XDkGp9oJbh
-         7eptHVCpGZ7ZGJqviRO6AmCTH+D3wG1UyHfLxCuRLL+G9ZKta8BZL7iv/In1V+O8UY5L
-         03gB9hf80sfrQPcwLqjdhagXtd1ilIfuxpwkuoQ7ipsCtURL2/VEPaHNNcjAdabs8GXE
-         5Tsw==
-X-Gm-Message-State: AGRZ1gIjfRLy9UUwRAhJLC/qP+TW0NAENsmPhZzMUkMriTAq4kYKAaYt
-        II5OEpT25UUK4O4rd3VzeA==
-X-Google-Smtp-Source: AJdET5cJetAFxzAaO0q5o6bFwQT8iBelOGkbAy6XPUhefDfkJItJ456gh52QcOZICukZOLA29ig57g==
-X-Received: by 2002:aca:4742:: with SMTP id u63-v6mr13051416oia.212.1541449666688;
-        Mon, 05 Nov 2018 12:27:46 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id u128-v6sm964306oig.21.2018.11.05.12.27.45
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=NR7/4GP7YK0tr2b/JpXE+NH3LWhxmoZ3idljVVirVVg=;
+        b=m/53vr3TZtgtbe7HB4ycHQH2/RBBTLnkfVrQ6YBSy9fQC2X6lNl8I9jw3RQeLKeVv2
+         qTfR8z2bv28EwChEumPYXz7dvuHhvtZP5qqvjXb8DXO/AMtNZ1JQT6/gwvVyE+KqRBxx
+         hGDiAOYSfNl6kf8eKeb3iFn/0b5/ISsuvU+HdmwMG8J3sSe6PmRx6T2VeL3BVfL1rv/p
+         MYekk4Mh2L3RChvQatKfRiWxSn8+/FyTHDMyMYJ57PbjadRXgPcvG053uRBrXjnA3XJG
+         zu76Q/DUKuQnGLVeQ9tcKfzoGnyTIZCRym97pPGlhmH/SfNZ2aPP+R/T9lFM0q7PVaiH
+         eZzg==
+X-Gm-Message-State: AGRZ1gKOkefLo5qjm2xCxwZzOt22Ws7vDOLpo/Nuc7q/XtRFEXRUpFcY
+        mnyIYJQpdY1lOg2tUaWBWHJX0Q==
+X-Google-Smtp-Source: AJdET5dmOkm+gjnM53TtOi7MXJqaCDRSXs9rZeFKoLBDE+EeRxqqNesLwCsXkzjtIZ8JIfIcTmUSAQ==
+X-Received: by 2002:a1c:bce:: with SMTP id 197-v6mr75878wml.15.1541459313122;
+        Mon, 05 Nov 2018 15:08:33 -0800 (PST)
+Received: from boomer.lan (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
+        by smtp.googlemail.com with ESMTPSA id k73-v6sm95717wmd.33.2018.11.05.15.08.31
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 05 Nov 2018 12:27:45 -0800 (PST)
-Date:   Mon, 5 Nov 2018 14:27:45 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Yuantian Tang <andy.tang@nxp.com>
-Cc:     oss@buserror.net, mturquette@baylibre.com, sboyd@kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, benh@kernel.crashing.org,
-        paulus@samba.org, mpe@ellerman.id.au, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, Yuantian Tang <andy.tang@nxp.com>
-Subject: Re: [PATCH 2/2 v3] clk: qoriq: add more compatibles strings
-Message-ID: <20181105202745.GA21644@bogus>
-References: <20181031065736.32719-1-andy.tang@nxp.com>
- <20181031065736.32719-2-andy.tang@nxp.com>
+        Mon, 05 Nov 2018 15:08:32 -0800 (PST)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
+        Kevin Hilman <khilman@baylibre.com>
+Cc:     Christian Hewitt <christianshewitt@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>
+Subject: [PATCH v2] clk: meson-gxbb: set fclk_div3 as CLK_IS_CRITICAL
+Date:   Tue,  6 Nov 2018 00:08:20 +0100
+Message-Id: <20181105230820.3562-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181031065736.32719-2-andy.tang@nxp.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 31 Oct 2018 14:57:36 +0800, Yuantian Tang wrote:
-> Add more SoC compatible strings to support more chips.
-> 
-> Signed-off-by: Yuantian Tang <andy.tang@nxp.com>
-> ---
-> v3:
->   - undo deleting old bindings
->   - split the dts and driver to different patchset
-> 
->  .../devicetree/bindings/clock/qoriq-clock.txt      |    6 ++++++
->  1 files changed, 6 insertions(+), 0 deletions(-)
-> 
+From: Christian Hewitt <christianshewitt@gmail.com>
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+On the Khadas VIM2 (GXM) and LePotato (GXL) board there are problems
+with reboot; e.g. a ~60 second delay between issuing reboot and the
+board power cycling (and in some OS configurations reboot will fail
+and require manual power cycling).
+
+Similar to 'commit c987ac6f1f088663b6dad39281071aeb31d450a8 ("clk:
+meson-gxbb: set fclk_div2 as CLK_IS_CRITICAL")' the SCPI Cortex-M4
+Co-Processor seems to depend on FCLK_DIV3 being operational.
+
+Until commit 05f814402d6174369b3b29832cbb5eb5ed287059 ("clk:
+meson: add fdiv clock gates"), this clock was modeled and left on by
+the bootloader.
+
+We don't have precise documentation about the SCPI Co-Processor and
+its clock requirement so we are learning things the hard way.
+
+Marking this clock as critical solves the problem but it should not
+be viewed as final solution. Ideally, the SCPI driver should claim
+these clocks. We also depends on some clock hand-off mechanism
+making its way to CCF, to make sure the clock stays on between its
+registration and the SCPI driver probe.
+
+Fixes: 05f814402d61 ("clk: meson: add fdiv clock gates")
+Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/meson/gxbb.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index 9309cfaaa464..4ada9668fd49 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -506,6 +506,18 @@ static struct clk_regmap gxbb_fclk_div3 = {
+ 		.ops = &clk_regmap_gate_ops,
+ 		.parent_names = (const char *[]){ "fclk_div3_div" },
+ 		.num_parents = 1,
++		/*
++		 * FIXME:
++		 * This clock, as fdiv2, is used by the SCPI FW and is required
++		 * by the platform to operate correctly.
++		 * Until the following condition are met, we need this clock to
++		 * be marked as critical:
++		 * a) The SCPI generic driver claims and enable all the clocks
++		 *    it needs
++		 * b) CCF has a clock hand-off mechanism to make the sure the
++		 *    clock stays on until the proper driver comes along
++		 */
++		.flags = CLK_IS_CRITICAL,
+ 	},
+ };
+ 
+-- 
+2.19.1
+
