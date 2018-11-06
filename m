@@ -2,117 +2,82 @@ Return-Path: <SRS0=mH3q=NR=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 692C2C32789
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Nov 2018 19:11:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8F58C32789
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Nov 2018 20:45:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1781C20827
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Nov 2018 19:11:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64F6C206BA
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Nov 2018 20:45:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="xnEPe17p"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1781C20827
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DdW8oIYp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64F6C206BA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388107AbeKGEhr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 6 Nov 2018 23:37:47 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:40768 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387928AbeKGEhr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Nov 2018 23:37:47 -0500
-Received: by mail-wm1-f65.google.com with SMTP id b203-v6so13375050wme.5
-        for <linux-clk@vger.kernel.org>; Tue, 06 Nov 2018 11:11:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=pcUwBxDc1aUnql2XUzrbkeZwpflQ0RmvIs/O/e0efkU=;
-        b=xnEPe17pHXdMfvDfYmcknFCLkMnh0R4kCPnRnybsTuLwHBS9m96P/04gzYZ9MqVOKF
-         m8raApQFp2vftgAiYpCbfZ8yVqrI9oIci2vNfQCvPXjpdg5OpnKvCK+jaIwyZxF48LVV
-         OR2Gjlz6heIZONWYXvBmTT8iU1d8IIM7/LIamyaTuB7VxFDx+mDyolfOBexXXv6NyqzA
-         Na/+fNI+4vNuTuM8JwG0Oi4kHejaeOmrlTV3ZCp4Nr1V4ubCk/zJ8mzvEEwFvn1ygf7c
-         4pWiD2TuU2yMMifcJ1JZ9qOglVR2JinaeAHIlCllBDxIWKFnBoAhRw16ZnIoomSDHN0j
-         5eew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=pcUwBxDc1aUnql2XUzrbkeZwpflQ0RmvIs/O/e0efkU=;
-        b=UkczbVS/XqXXwh+Ooi/ErCO17nMIa9tx1lTCcw77urqFczgReFI5GLDR6ewKwnxIwN
-         JUv+xmHi/Gvd41s5B5g65zbovnN0GO10b6WwrIajQb1Gxawal3ywXNldX/TgzF+R5Twg
-         o5hxazLfe+Q+vFajD1pMPZM1v+0N1zSn3/Hm7Cdaf8OnH3o+R4gfut4wyxKJANsLYUji
-         lx3kZJbisCwsk/TIKcKRc69ytPkelCBNFeGBJqUbOEKWiKvCUNvX0HwEuD4w1bBYRiOo
-         bJnYYDpX2jkgrEZlWuOAmzWidh+bViRrbPO+oArMTsfUOnSz5QQMZ5UjMHPmqAP2gpFK
-         cFYg==
-X-Gm-Message-State: AGRZ1gKYe2g3RvicUn+U2kDp8K4W2Dn6iQYvWZwyFtm4x/wzY5c/YFkE
-        1cG7PmCrD3K2UtQ5Ssd2cdvq1aveIdA=
-X-Google-Smtp-Source: AJdET5f12r4PEchKVY6ncW232QFAJmiInKP38caB0Rig64Vet0VEFMedV33BoQB071v3aBIy2nOtxw==
-X-Received: by 2002:a1c:95:: with SMTP id 143-v6mr3246281wma.4.1541530165389;
-        Tue, 06 Nov 2018 10:49:25 -0800 (PST)
-Received: from boomer.baylibre.com ([2a01:e34:eeb6:4690:106b:bae3:31ed:7561])
-        by smtp.gmail.com with ESMTPSA id m13-v6sm9473039wrw.14.2018.11.06.10.49.23
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 06 Nov 2018 10:49:24 -0800 (PST)
-Message-ID: <72269086b0ce0be5517c7ffb2bc979c4d17d5cc3.camel@baylibre.com>
-Subject: Re: [PATCH v2] clk: meson-gxbb: set fclk_div3 as CLK_IS_CRITICAL
-From:   jbrunet@baylibre.com
-To:     Stephen Boyd <sboyd@kernel.org>, Carlo Caione <carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-Cc:     Christian Hewitt <christianshewitt@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Tue, 06 Nov 2018 19:49:21 +0100
-In-Reply-To: <154152980131.88331.14307558394241579493@swboyd.mtv.corp.google.com>
-References: <20181105230820.3562-1-jbrunet@baylibre.com>
-         <154152980131.88331.14307558394241579493@swboyd.mtv.corp.google.com>
+        id S1726558AbeKGGMJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Nov 2018 01:12:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48686 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726157AbeKGGMJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 7 Nov 2018 01:12:09 -0500
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CC25C20892;
+        Tue,  6 Nov 2018 20:45:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541537106;
+        bh=Xoirapa1MKGkHouc2tMrbGHwQCok2cUCTd4hAEb4Npk=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=DdW8oIYpYR5olMDAZGaOjIGLnbEQ+LBo5jKN6SwO2PmJO9pJiuhroHNAcyeKTIWHP
+         TuFBqu82INd48eSBzsnJGwIja1u7adAa8te/ayg2nMXsvb4HLsAUBFh+bjk8cv2XmO
+         Mfoe+VURa9ma3X6ejM8IxSHVmJ7k/qjIo1PskR2c=
+Received: by mail-qt1-f170.google.com with SMTP id k12so4266984qtf.7;
+        Tue, 06 Nov 2018 12:45:05 -0800 (PST)
+X-Gm-Message-State: AGRZ1gLnN7ghowXsxSslnsjbJYuUUmk1xqBkfzd/NrVbiH43qDH9kAHW
+        wxxLL+Azq1A/sV6ztIsTc1QdGx9xd2I4QhBvNA==
+X-Google-Smtp-Source: AJdET5dw+CfR2bqwM6ZIRZ32h9oGRpbl1UHEcgcMlzAgl6nFIML32gV06cFqKltejf+4kh6fx3srM17Ln6OAeRMIGOg=
+X-Received: by 2002:ac8:2d35:: with SMTP id n50mr26151215qta.38.1541537104981;
+ Tue, 06 Nov 2018 12:45:04 -0800 (PST)
+MIME-Version: 1.0
+References: <20181106183609.207702-1-sboyd@kernel.org> <20181106183609.207702-2-sboyd@kernel.org>
+In-Reply-To: <20181106183609.207702-2-sboyd@kernel.org>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Tue, 6 Nov 2018 14:44:52 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLvKWcJUYDyWOg3rMeEWv7JV4zw7-YkOUWiL5rfXgVRvQ@mail.gmail.com>
+Message-ID: <CAL_JsqLvKWcJUYDyWOg3rMeEWv7JV4zw7-YkOUWiL5rfXgVRvQ@mail.gmail.com>
+Subject: Re: [PATCH 1/4] of/device: Add a way to probe drivers by match data
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Frank Rowand <frowand.list@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.1 (3.30.1-1.fc29) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 2018-11-06 at 10:43 -0800, Stephen Boyd wrote:
-> Quoting Jerome Brunet (2018-11-05 15:08:20)
-> > From: Christian Hewitt <christianshewitt@gmail.com>
-> > 
-> > On the Khadas VIM2 (GXM) and LePotato (GXL) board there are problems
-> > with reboot; e.g. a ~60 second delay between issuing reboot and the
-> > board power cycling (and in some OS configurations reboot will fail
-> > and require manual power cycling).
-> > 
-> > Similar to 'commit c987ac6f1f088663b6dad39281071aeb31d450a8 ("clk:
-> > meson-gxbb: set fclk_div2 as CLK_IS_CRITICAL")' the SCPI Cortex-M4
-> > Co-Processor seems to depend on FCLK_DIV3 being operational.
-> > 
-> > Until commit 05f814402d6174369b3b29832cbb5eb5ed287059 ("clk:
-> > meson: add fdiv clock gates"), this clock was modeled and left on by
-> > the bootloader.
-> > 
-> > We don't have precise documentation about the SCPI Co-Processor and
-> > its clock requirement so we are learning things the hard way.
-> > 
-> > Marking this clock as critical solves the problem but it should not
-> > be viewed as final solution. Ideally, the SCPI driver should claim
-> > these clocks. We also depends on some clock hand-off mechanism
-> > making its way to CCF, to make sure the clock stays on between its
-> > registration and the SCPI driver probe.
-> > 
-> > Fixes: 05f814402d61 ("clk: meson: add fdiv clock gates")
-> > Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
-> > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> > ---
-> 
-> I can toss this into clk-fixes?
-> 
+On Tue, Nov 6, 2018 at 12:36 PM Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> We have a handful of clk drivers that have a collection of slightly
+> variant device support keyed off of the compatible string. In each of
+> these drivers, we demux the variant and then call the "real" probe
+> function based on whatever is stored in the match data for that
+> compatible string. Let's generalize this function so that it can be
+> re-used as the platform_driver probe function directly.
 
-Sure, it would be great. Thx Stephen.
+This looks really hacky to me. It sounds kind of general, but really
+only works if we have match data that's a single function and we lose
+any type checking on the function. What about things other than
+platform devices?
 
-
+Rob
