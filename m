@@ -7,33 +7,33 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1E83C46464
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Nov 2018 06:43:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EEF2C32789
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Nov 2018 06:43:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 966172081D
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Nov 2018 06:43:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 966172081D
+	by mail.kernel.org (Postfix) with ESMTP id 7171F2081D
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Nov 2018 06:43:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7171F2081D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387954AbeKFQHE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S2387498AbeKFQHE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Tue, 6 Nov 2018 11:07:04 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:41668 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2387622AbeKFQGN (ORCPT
+Received: from mailgw01.mediatek.com ([210.61.82.183]:34954 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2387664AbeKFQGN (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Nov 2018 11:06:13 -0500
-X-UUID: cdd6e2b78add4ef08b712affa9c26ce8-20181106
-X-UUID: cdd6e2b78add4ef08b712affa9c26ce8-20181106
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
+X-UUID: fc6f19e270dc40a194f4aabcabbca711-20181106
+X-UUID: fc6f19e270dc40a194f4aabcabbca711-20181106
+Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw01.mediatek.com
         (envelope-from <weiyi.lu@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1314933585; Tue, 06 Nov 2018 14:42:24 +0800
+        with ESMTP id 151291692; Tue, 06 Nov 2018 14:42:23 +0800
 Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 6 Nov 2018 14:42:23 +0800
+ mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 6 Nov 2018 14:42:22 +0800
 Received: from mtkslt210.mediatek.inc (10.21.14.14) by MTKCAS06.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 6 Nov 2018 14:42:23 +0800
+ Transport; Tue, 6 Nov 2018 14:42:22 +0800
 From:   Weiyi Lu <weiyi.lu@mediatek.com>
 To:     Matthias Brugger <matthias.bgg@gmail.com>,
         Stephen Boyd <sboyd@codeaurora.org>,
@@ -43,10 +43,11 @@ CC:     James Liao <jamesjj.liao@mediatek.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>,
         <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <srv_heupstream@mediatek.com>, Weiyi Lu <weiyi.lu@mediatek.com>
-Subject: [PATCH v1 07/11] clk: mediatek: Add flags support for mtk_gate data
-Date:   Tue, 6 Nov 2018 14:42:02 +0800
-Message-ID: <20181106064206.17535-9-weiyi.lu@mediatek.com>
+        <srv_heupstream@mediatek.com>, Weiyi Lu <weiyi.lu@mediatek.com>,
+        Owen Chen <owen.chen@mediatek.com>
+Subject: [PATCH v1 03/11] clk: mediatek: Disable tuner_en before change PLL rate
+Date:   Tue, 6 Nov 2018 14:41:58 +0800
+Message-ID: <20181106064206.17535-5-weiyi.lu@mediatek.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20181106064206.17535-1-weiyi.lu@mediatek.com>
 References: <20181106064206.17535-1-weiyi.lu@mediatek.com>
@@ -58,81 +59,85 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On some Mediatek platforms, there are critical clocks of
-clock gate type.
-To register clock gate with flags CLK_IS_CRITICAL,
-we need to add the flags field in mtk_gate data and register APIs.
+From: Owen Chen <owen.chen@mediatek.com>
 
-Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+PLLs with tuner_en bit, such as APLL1, need to disable
+tuner_en before apply new frequency settings, or the new frequency
+settings (pcw) will not be applied.
+The tuner_en bit will be disabled during changing PLL rate
+and be restored after new settings applied.
+
+Signed-off-by: Owen Chen <owen.chen@mediatek.com>
 ---
- drivers/clk/mediatek/clk-gate.c | 5 +++--
- drivers/clk/mediatek/clk-gate.h | 3 ++-
- drivers/clk/mediatek/clk-mtk.c  | 3 ++-
- drivers/clk/mediatek/clk-mtk.h  | 1 +
- 4 files changed, 8 insertions(+), 4 deletions(-)
+ drivers/clk/mediatek/clk-pll.c | 33 +++++++++++++++++++++++++++++++--
+ 1 file changed, 31 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/mediatek/clk-gate.c b/drivers/clk/mediatek/clk-gate.c
-index 934bf0e45e26..85daf826619a 100644
---- a/drivers/clk/mediatek/clk-gate.c
-+++ b/drivers/clk/mediatek/clk-gate.c
-@@ -157,7 +157,8 @@ struct clk *mtk_clk_register_gate(
- 		int clr_ofs,
- 		int sta_ofs,
- 		u8 bit,
--		const struct clk_ops *ops)
-+		const struct clk_ops *ops,
-+		unsigned long flags)
+diff --git a/drivers/clk/mediatek/clk-pll.c b/drivers/clk/mediatek/clk-pll.c
+index 0ec2c62d9383..cca9002de91b 100644
+--- a/drivers/clk/mediatek/clk-pll.c
++++ b/drivers/clk/mediatek/clk-pll.c
+@@ -27,7 +27,7 @@
+ #define CON0_BASE_EN		BIT(0)
+ #define CON0_PWR_ON		BIT(0)
+ #define CON0_ISO_EN		BIT(1)
+-#define CON0_PCW_CHG		BIT(31)
++#define CON1_PCW_CHG		BIT(31)
+ 
+ #define AUDPLL_TUNER_EN		BIT(31)
+ 
+@@ -95,9 +95,31 @@ static void mtk_pll_set_rate_regs(struct mtk_clk_pll *pll, u32 pcw,
  {
- 	struct mtk_clk_gate *cg;
- 	struct clk *clk;
-@@ -168,7 +169,7 @@ struct clk *mtk_clk_register_gate(
- 		return ERR_PTR(-ENOMEM);
+ 	u32 con1, val;
+ 	int pll_en;
++	u32 tuner_en = 0;
++	u32 tuner_en_mask;
++	void __iomem *tuner_en_addr = NULL;
  
- 	init.name = name;
--	init.flags = CLK_SET_RATE_PARENT;
-+	init.flags = flags | CLK_SET_RATE_PARENT;
- 	init.parent_names = parent_name ? &parent_name : NULL;
- 	init.num_parents = parent_name ? 1 : 0;
- 	init.ops = ops;
-diff --git a/drivers/clk/mediatek/clk-gate.h b/drivers/clk/mediatek/clk-gate.h
-index 72ef89b3ad7b..9f766dfe1d57 100644
---- a/drivers/clk/mediatek/clk-gate.h
-+++ b/drivers/clk/mediatek/clk-gate.h
-@@ -47,6 +47,7 @@ struct clk *mtk_clk_register_gate(
- 		int clr_ofs,
- 		int sta_ofs,
- 		u8 bit,
--		const struct clk_ops *ops);
-+		const struct clk_ops *ops,
-+		unsigned long flags);
+ 	pll_en = readl(pll->base_addr + REG_CON0) & CON0_BASE_EN;
  
- #endif /* __DRV_CLK_GATE_H */
-diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mtk.c
-index 9c0ae4278a94..35359e5397c7 100644
---- a/drivers/clk/mediatek/clk-mtk.c
-+++ b/drivers/clk/mediatek/clk-mtk.c
-@@ -130,7 +130,8 @@ int mtk_clk_register_gates(struct device_node *node,
- 				gate->regs->set_ofs,
- 				gate->regs->clr_ofs,
- 				gate->regs->sta_ofs,
--				gate->shift, gate->ops);
-+				gate->shift, gate->ops,
-+				gate->flags);
++	/* disable tuner */
++	if (pll->tuner_en_addr) {
++		tuner_en_addr = pll->tuner_en_addr;
++		tuner_en_mask = BIT(pll->data->tuner_en_bit);
++	} else if (pll->tuner_addr) {
++		tuner_en_addr = pll->tuner_addr;
++		tuner_en_mask = AUDPLL_TUNER_EN;
++	}
++
++	if (tuner_en_addr) {
++		val = readl(tuner_en_addr);
++		tuner_en = val & tuner_en_mask;
++
++		if (tuner_en) {
++			val &= ~tuner_en_mask;
++			writel(val, tuner_en_addr);
++		}
++	}
++
+ 	/* set postdiv */
+ 	val = readl(pll->pd_addr);
+ 	val &= ~(POSTDIV_MASK << pll->data->pd_shift);
+@@ -118,12 +140,19 @@ static void mtk_pll_set_rate_regs(struct mtk_clk_pll *pll, u32 pcw,
+ 	con1 = readl(pll->base_addr + REG_CON1);
  
- 		if (IS_ERR(clk)) {
- 			pr_err("Failed to register clk %s: %ld\n",
-diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mtk.h
-index 1882221fe994..64f91beb3aa1 100644
---- a/drivers/clk/mediatek/clk-mtk.h
-+++ b/drivers/clk/mediatek/clk-mtk.h
-@@ -158,6 +158,7 @@ struct mtk_gate {
- 	const struct mtk_gate_regs *regs;
- 	int shift;
- 	const struct clk_ops *ops;
-+	unsigned long flags;
- };
+ 	if (pll_en)
+-		con1 |= CON0_PCW_CHG;
++		con1 |= CON1_PCW_CHG;
  
- int mtk_clk_register_gates(struct device_node *node,
+ 	writel(con1, pll->base_addr + REG_CON1);
+ 	if (pll->tuner_addr)
+ 		writel(con1 + 1, pll->tuner_addr);
+ 
++	/* restore tuner_en */
++	if (tuner_en_addr && tuner_en) {
++		val = readl(tuner_en_addr);
++		val |= tuner_en_mask;
++		writel(val, tuner_en_addr);
++	}
++
+ 	if (pll_en)
+ 		udelay(20);
+ }
 -- 
 2.18.0
 
