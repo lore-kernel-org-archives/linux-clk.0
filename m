@@ -7,35 +7,35 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EB15C32789
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Nov 2018 18:36:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96D98C32789
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Nov 2018 18:36:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23D7620827
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Nov 2018 18:36:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64EFA20827
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Nov 2018 18:36:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="taLWSUCJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23D7620827
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YvlFanP6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64EFA20827
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388724AbeKGEDE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 6 Nov 2018 23:03:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38074 "EHLO mail.kernel.org"
+        id S2388476AbeKGECp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 6 Nov 2018 23:02:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38054 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388472AbeKGECp (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        id S1729642AbeKGECp (ORCPT <rfc822;linux-clk@vger.kernel.org>);
         Tue, 6 Nov 2018 23:02:45 -0500
 Received: from mail.kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C040D20869;
-        Tue,  6 Nov 2018 18:36:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DEE1E2086A;
+        Tue,  6 Nov 2018 18:36:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541529372;
-        bh=m2D/prEYBrhF0OH5OtMLAaYkwsXTQSW4K5o4XvfP7l0=;
+        s=default; t=1541529371;
+        bh=DKKrHcZEDvckhztoXQTQEnrDWU/3m1rqWN3NL85hfTU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=taLWSUCJdbjNfDn6z8uCzZn6o+aEzelkHa1J51ulobd+QXy4/izDsmcfrIdz/4yc1
-         5x6I4v9bpeZ6Xm9gD4T2gn8tps1kZuG307p2VC9fh4jd0ly3/fj30ltEwEXM6VIQqF
-         kJyc/X5S4Aj19uCXSrwQOBEeWO56r3Qu1SB4KKm4=
+        b=YvlFanP6vaGAN6nhlrLV9C/on7L+sJ+of5UEB5QRLkPhIQ5XB27/g28ynEAXbbHG3
+         BXNZ8QfDfRJelJVaoXrD6pVTwgjA3lxCPmmW9K4y0v64jh0f/ugqteJR67h1I4AwjJ
+         3ksKm5x5YOg38CQjU+kyINxXkuhjg7ldCK1MbTUI=
 From:   Stephen Boyd <sboyd@kernel.org>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
@@ -43,10 +43,12 @@ Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org, linux-mediatek@lists.infradead.org,
         devicetree@vger.kernel.org,
         Matthias Brugger <matthias.bgg@gmail.com>,
-        Ryder Lee <ryder.lee@mediatek.com>
-Subject: [PATCH 3/4] clk: mediatek: Drop THIS_MODULE from platform_driver
-Date:   Tue,  6 Nov 2018 10:36:08 -0800
-Message-Id: <20181106183609.207702-4-sboyd@kernel.org>
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>
+Subject: [PATCH 1/4] of/device: Add a way to probe drivers by match data
+Date:   Tue,  6 Nov 2018 10:36:06 -0800
+Message-Id: <20181106183609.207702-2-sboyd@kernel.org>
 X-Mailer: git-send-email 2.19.1.930.g4563a0d9d0-goog
 In-Reply-To: <20181106183609.207702-1-sboyd@kernel.org>
 References: <20181106183609.207702-1-sboyd@kernel.org>
@@ -57,27 +59,76 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This is already set by platform_driver_register(), so we can remove it
-here.
+We have a handful of clk drivers that have a collection of slightly
+variant device support keyed off of the compatible string. In each of
+these drivers, we demux the variant and then call the "real" probe
+function based on whatever is stored in the match data for that
+compatible string. Let's generalize this function so that it can be
+re-used as the platform_driver probe function directly.
 
 Cc: Ryder Lee <ryder.lee@mediatek.com>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Frank Rowand <frowand.list@gmail.com>
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 ---
- drivers/clk/mediatek/clk-mt2712.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/of/device.c       | 31 +++++++++++++++++++++++++++++++
+ include/linux/of_device.h |  1 +
+ 2 files changed, 32 insertions(+)
 
-diff --git a/drivers/clk/mediatek/clk-mt2712.c b/drivers/clk/mediatek/clk-mt2712.c
-index 17c031d110ff..55f81f9bfdb5 100644
---- a/drivers/clk/mediatek/clk-mt2712.c
-+++ b/drivers/clk/mediatek/clk-mt2712.c
-@@ -1445,7 +1445,6 @@ static struct platform_driver clk_mt2712_drv = {
- 	.probe = platform_driver_probe_by_of_match_data,
- 	.driver = {
- 		.name = "clk-mt2712",
--		.owner = THIS_MODULE,
- 		.of_match_table = of_match_clk_mt2712,
- 	},
- };
+diff --git a/drivers/of/device.c b/drivers/of/device.c
+index 0f27fad9fe94..8381f33ed2d8 100644
+--- a/drivers/of/device.c
++++ b/drivers/of/device.c
+@@ -195,6 +195,37 @@ const void *of_device_get_match_data(const struct device *dev)
+ }
+ EXPORT_SYMBOL(of_device_get_match_data);
+ 
++/**
++ * platform_driver_probe_by_of_match_data - Probe a platform device using match data
++ * @pdev: platform device to probe
++ *
++ * For use by device drivers that multiplex their probe function through DT
++ * match data. Drivers can use this function to call their platform
++ * device probe directly without having to implement a wrapper function.
++ *
++ * static const struct of_device_id probe_funcs[] = {
++ *      { .compatible = "compat,foo", .data = foo_probe },
++ *      {}
++ * };
++ *
++ * struct platform_driver foo_driver = {
++ *      .probe = platform_driver_probe_by_of_match_data,
++ *      .driver = {
++ *            of_match_table = probe_funcs,
++ *      },
++ * };
++ *
++ */
++int platform_driver_probe_by_of_match_data(struct platform_device *pdev)
++{
++	int (*probe_func)(struct platform_device *pdev);
++
++	probe_func = of_device_get_match_data(&pdev->dev);
++
++	return probe_func(pdev);
++}
++EXPORT_SYMBOL_GPL(platform_driver_probe_by_of_match_data);
++
+ static ssize_t of_device_get_modalias(struct device *dev, char *str, ssize_t len)
+ {
+ 	const char *compat;
+diff --git a/include/linux/of_device.h b/include/linux/of_device.h
+index 8d31e39dd564..4de84691d1c6 100644
+--- a/include/linux/of_device.h
++++ b/include/linux/of_device.h
+@@ -33,6 +33,7 @@ extern int of_device_add(struct platform_device *pdev);
+ extern int of_device_register(struct platform_device *ofdev);
+ extern void of_device_unregister(struct platform_device *ofdev);
+ 
++extern int platform_driver_probe_by_of_match_data(struct platform_device *pdev);
+ extern const void *of_device_get_match_data(const struct device *dev);
+ 
+ extern ssize_t of_device_modalias(struct device *dev, char *str, ssize_t len);
 -- 
 Sent by a computer through tubes
 
