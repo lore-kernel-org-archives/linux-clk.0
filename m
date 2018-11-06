@@ -2,37 +2,38 @@ Return-Path: <SRS0=mH3q=NR=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52B87C46465
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Nov 2018 06:43:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4B98C46464
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Nov 2018 06:43:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 243152081D
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Nov 2018 06:43:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 243152081D
+	by mail.kernel.org (Postfix) with ESMTP id 9D44D2081D
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Nov 2018 06:43:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D44D2081D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387841AbeKFQGS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 6 Nov 2018 11:06:18 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:3739 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2387660AbeKFQGS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Nov 2018 11:06:18 -0500
-X-UUID: deb5f2e3606f4cf09c9c095f71b314a2-20181106
-X-UUID: deb5f2e3606f4cf09c9c095f71b314a2-20181106
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
+        id S2387719AbeKFQGQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 6 Nov 2018 11:06:16 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:3631 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2387657AbeKFQGQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Nov 2018 11:06:16 -0500
+X-UUID: 48f14d03013f4988a640cfeddd2d675a-20181106
+X-UUID: 48f14d03013f4988a640cfeddd2d675a-20181106
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
         (envelope-from <weiyi.lu@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1220141981; Tue, 06 Nov 2018 14:42:31 +0800
+        with ESMTP id 2026433330; Tue, 06 Nov 2018 14:42:25 +0800
 Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 6 Nov 2018 14:42:22 +0800
+ mtkmbs02n1.mediatek.inc (172.21.101.77) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 6 Nov 2018 14:42:23 +0800
 Received: from mtkslt210.mediatek.inc (10.21.14.14) by MTKCAS06.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 6 Nov 2018 14:42:22 +0800
+ Transport; Tue, 6 Nov 2018 14:42:23 +0800
 From:   Weiyi Lu <weiyi.lu@mediatek.com>
 To:     Matthias Brugger <matthias.bgg@gmail.com>,
         Stephen Boyd <sboyd@codeaurora.org>,
@@ -43,30 +44,46 @@ CC:     James Liao <jamesjj.liao@mediatek.com>,
         <linux-kernel@vger.kernel.org>,
         <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
         <srv_heupstream@mediatek.com>, Weiyi Lu <weiyi.lu@mediatek.com>
-Subject: [PATCH v1 00/11] Mediatek MT8183 clock and scpsys support
-Date:   Tue, 6 Nov 2018 14:41:54 +0800
-Message-ID: <20181106064206.17535-1-weiyi.lu@mediatek.com>
+Subject: [PATCH v1 09/11] dt-bindings: soc: fix typo of MT8173 power dt-bindings
+Date:   Tue, 6 Nov 2018 14:42:04 +0800
+Message-ID: <20181106064206.17535-11-weiyi.lu@mediatek.com>
 X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20181106064206.17535-1-weiyi.lu@mediatek.com>
+References: <20181106064206.17535-1-weiyi.lu@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-TM-SNTS-SMTP: 8C814E288E15400A7F501F40515E9C98D843911A244A9E392A91945A00CFDEFE2000:8
 X-MTK:  N
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This series is based on v4.20-rc1 and most of changes are
-extracted from series below
-(clock/scpsys common changes for both MT8183 & MT6765)
-https://patchwork.kernel.org/patch/10528495/
-(clock support of MT8183)
-https://patchwork.kernel.org/patch/10549891/
+fix incorrect IC name that will affect the MT8183 power dt-bindings
 
-The whole series is composed of
-clock common changes for both MT8183 & MT6765 (PATCH 1-3),
-scpsys common changes for both MT8183 & MT6765 (PATCH 4),
-clock support of MT8183 (PATCH 5-8), and
-scpsys support of MT8183 (PATCH 9-11).
+Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+---
+ include/dt-bindings/power/mt8173-power.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
+diff --git a/include/dt-bindings/power/mt8173-power.h b/include/dt-bindings/power/mt8173-power.h
+index 15d531aa6e78..ef4a7f944848 100644
+--- a/include/dt-bindings/power/mt8173-power.h
++++ b/include/dt-bindings/power/mt8173-power.h
+@@ -1,6 +1,6 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+-#ifndef _DT_BINDINGS_POWER_MT8183_POWER_H
+-#define _DT_BINDINGS_POWER_MT8183_POWER_H
++#ifndef _DT_BINDINGS_POWER_MT8173_POWER_H
++#define _DT_BINDINGS_POWER_MT8173_POWER_H
+ 
+ #define MT8173_POWER_DOMAIN_VDEC	0
+ #define MT8173_POWER_DOMAIN_VENC	1
+@@ -13,4 +13,4 @@
+ #define MT8173_POWER_DOMAIN_MFG_2D	8
+ #define MT8173_POWER_DOMAIN_MFG		9
+ 
+-#endif /* _DT_BINDINGS_POWER_MT8183_POWER_H */
++#endif /* _DT_BINDINGS_POWER_MT8173_POWER_H */
+-- 
+2.18.0
 
