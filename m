@@ -2,94 +2,95 @@ Return-Path: <SRS0=mH3q=NR=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CB71C32789
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Nov 2018 17:20:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DF8CC32789
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Nov 2018 17:24:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57D4D20862
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Nov 2018 17:20:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57D4D20862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=siol.net
+	by mail.kernel.org (Postfix) with ESMTP id EDAE62085B
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Nov 2018 17:24:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="GOhzERav";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="kDc449KX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDAE62085B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389531AbeKGCq5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 6 Nov 2018 21:46:57 -0500
-Received: from mailoutvs30.siol.net ([185.57.226.221]:43055 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2389303AbeKGCq5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Nov 2018 21:46:57 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id E97A052179E;
-        Tue,  6 Nov 2018 18:20:40 +0100 (CET)
-X-Virus-Scanned: amavisd-new at psrvmta10.zcs-production.pri
-Received: from mail.siol.net ([127.0.0.1])
-        by localhost (psrvmta10.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id 2tv5OjgHqL48; Tue,  6 Nov 2018 18:20:40 +0100 (CET)
-Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id 846485216F5;
-        Tue,  6 Nov 2018 18:20:40 +0100 (CET)
-Received: from jernej-laptop.localnet (cpe1-8-82.cable.triera.net [213.161.8.82])
-        (Authenticated sender: 031275009)
-        by mail.siol.net (Postfix) with ESMTPA id 6849052179E;
-        Tue,  6 Nov 2018 18:20:39 +0100 (CET)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     wens@csie.org, robh+dt@kernel.org, mturquette@baylibre.com,
-        sboyd@kernel.org, airlied@linux.ie, architt@codeaurora.org,
-        a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v3 00/28] Allwinner H6 DE3 and HDMI support
-Date:   Tue, 06 Nov 2018 18:20:39 +0100
-Message-ID: <3766119.46PGZN2PQn@jernej-laptop>
-In-Reply-To: <20181105094341.qedt7jvnxooiojki@flea>
-References: <20181104182705.18047-1-jernej.skrabec@siol.net> <20181105094341.qedt7jvnxooiojki@flea>
+        id S2389422AbeKGCuP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 6 Nov 2018 21:50:15 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:48084 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389260AbeKGCuP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Nov 2018 21:50:15 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 565BE601D7; Tue,  6 Nov 2018 17:24:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1541525041;
+        bh=x2FNUB3OdLDs5lX8AsbgykOvtDELNUM6xIPZJ9FKuTQ=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=GOhzERavPPDe5ZG98vlrWjFeIgM0QeAMyN6RdF1OVStAdq3gevPdsCcE1C5LAGi+L
+         NZd/4JPFCP0PxGFUhHhnQGsCYLI8UbP6YSvFhCl5LxuaGYDk4mOom9Qal8egx51M21
+         frpjdkpZS4uj6RrUA0kbNRMH2RPHz8JEVEAgZTxw=
+Received: from [10.79.161.21] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 18B08601DA;
+        Tue,  6 Nov 2018 17:23:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1541525040;
+        bh=x2FNUB3OdLDs5lX8AsbgykOvtDELNUM6xIPZJ9FKuTQ=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=kDc449KXBah3dI9GrJNPod3KQtZCTdKTAfrGkyGQOv7Q0wK1nf+2sCQWeH0hEGiF2
+         e9STeYV5JWiHmWd7plKgAXLZ2YTBliIq7G1t/1wY6bTAVou5FQxogAhJqrLbPcoV7P
+         kUlXoU9Cf74gJA+p+CtqmdbNv3oXVrZf9BldaCLw=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 18B08601DA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+Subject: Re: [PATCH] arm64: dts: sdm845: Add videocc node
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, robh@kernel.org
+References: <1541414117-27864-1-git-send-email-tdas@codeaurora.org>
+ <154146009460.88331.6359450184767946173@swboyd.mtv.corp.google.com>
+From:   Taniya Das <tdas@codeaurora.org>
+Message-ID: <7c1f3b1f-c60c-7bb6-f2c7-cf279c96e4b2@codeaurora.org>
+Date:   Tue, 6 Nov 2018 22:53:52 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <154146009460.88331.6359450184767946173@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Dne ponedeljek, 05. november 2018 ob 10:43:41 CET je Maxime Ripard napisal(a):
-> On Sun, Nov 04, 2018 at 07:26:37PM +0100, Jernej Skrabec wrote:
-> > This series adds support for Display Engine 3.0 and HDMI 2.0a, which
-> > can be found on H6 SoC.
-> > 
-> > Display Engine 3.0 in comparison to 2.0 mostly adds features needed for
-> > displaying and processing 10-bit and AFBC formats, which are not yet
-> > supported by this series.
-> > 
-> > H6 is also the first SoC which supports IOMMU, but support for it is
-> > not yet added.
-> > 
-> > This series is based on linux-next at next-20181102.
-> > 
-> > I suggest all patches go through allwinner tree, except DRM patches,
-> > which should go through drm-misc tree.
+Thanks Stephen for adding Andy.
+
+On 11/6/2018 4:51 AM, Stephen Boyd wrote:
+> Quoting Taniya Das (2018-11-05 02:35:17)
+>> This adds the video clock controller node to sdm845 based on the examples
+>> in the bindings.
+>>
+>> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+>> ---
 > 
-> Applied all patches up to the 26. The two last one however should not
-> use the clk bindings define you added in the first clk patches, since
-> clk and dt patches are going through different tree.
+> Did you mean to send "To:" Andy? Clk tree doesn't take these sorts of
+> dts patches.
+> 
 
-I went over clock defines again, but I don't think I use anything new. New 
-defines are:
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
 
-#define CLK_BUS_ROT            9
-#define CLK_ROT                        10
-#define RST_ROT                3
-
-but none of them are actually used in DT.
-
-Did I miss anything?
-
-Best regards,
-Jernej
-
-
-
+--
