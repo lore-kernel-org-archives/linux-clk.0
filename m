@@ -2,77 +2,94 @@ Return-Path: <SRS0=mH3q=NR=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-0.9 required=3.0 tests=FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B30DEC32789
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Nov 2018 17:16:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CB71C32789
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Nov 2018 17:20:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B5C520862
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Nov 2018 17:16:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LPvCvF/G"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B5C520862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 57D4D20862
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Nov 2018 17:20:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57D4D20862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=siol.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389429AbeKGCmZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 6 Nov 2018 21:42:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34444 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389426AbeKGCmZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 6 Nov 2018 21:42:25 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4A14320862;
-        Tue,  6 Nov 2018 17:16:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541524573;
-        bh=7RRIaf/9LnYYHwmQwIaloGyYebWArkYNu5lG737LAAI=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=LPvCvF/Gha7D+yvnHCvZh6rAx61lWrZ8s40XoO8avS34af+BCWnVZI3WEfkiZFWQp
-         Uxi98XzCM60UmDfMUG3A2dAb7Q7tuKjz12mcCMPzfYH84kAQlDclHvdN0zSWWR5kiB
-         IOhtReEIhtltl3UyRhAl1WSmoHlY7rRnxOm7UUiI=
-Content-Type: text/plain; charset="utf-8"
+        id S2389531AbeKGCq5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 6 Nov 2018 21:46:57 -0500
+Received: from mailoutvs30.siol.net ([185.57.226.221]:43055 "EHLO
+        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2389303AbeKGCq5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Nov 2018 21:46:57 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by mail.siol.net (Postfix) with ESMTP id E97A052179E;
+        Tue,  6 Nov 2018 18:20:40 +0100 (CET)
+X-Virus-Scanned: amavisd-new at psrvmta10.zcs-production.pri
+Received: from mail.siol.net ([127.0.0.1])
+        by localhost (psrvmta10.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id 2tv5OjgHqL48; Tue,  6 Nov 2018 18:20:40 +0100 (CET)
+Received: from mail.siol.net (localhost [127.0.0.1])
+        by mail.siol.net (Postfix) with ESMTPS id 846485216F5;
+        Tue,  6 Nov 2018 18:20:40 +0100 (CET)
+Received: from jernej-laptop.localnet (cpe1-8-82.cable.triera.net [213.161.8.82])
+        (Authenticated sender: 031275009)
+        by mail.siol.net (Postfix) with ESMTPA id 6849052179E;
+        Tue,  6 Nov 2018 18:20:39 +0100 (CET)
+From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     wens@csie.org, robh+dt@kernel.org, mturquette@baylibre.com,
+        sboyd@kernel.org, airlied@linux.ie, architt@codeaurora.org,
+        a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v3 00/28] Allwinner H6 DE3 and HDMI support
+Date:   Tue, 06 Nov 2018 18:20:39 +0100
+Message-ID: <3766119.46PGZN2PQn@jernej-laptop>
+In-Reply-To: <20181105094341.qedt7jvnxooiojki@flea>
+References: <20181104182705.18047-1-jernej.skrabec@siol.net> <20181105094341.qedt7jvnxooiojki@flea>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <8d495713-d601-dcc8-23ee-dc31185e6a7c@codeaurora.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-References: <1540712140-26913-1-git-send-email-tdas@codeaurora.org>
- <1540712140-26913-2-git-send-email-tdas@codeaurora.org>
- <154117671164.88331.752297297364277275@swboyd.mtv.corp.google.com>
- <8d495713-d601-dcc8-23ee-dc31185e6a7c@codeaurora.org>
-Message-ID: <154152457264.88331.5152287370260040686@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v8] clk: qcom: Add lpass clock controller driver for SDM845
-Date:   Tue, 06 Nov 2018 09:16:12 -0800
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Taniya Das (2018-11-02 20:16:20)
-> On 11/2/2018 10:08 PM, Stephen Boyd wrote:
-> > Quoting Taniya Das (2018-10-28 00:35:40)
-> > =
+Dne ponedeljek, 05. november 2018 ob 10:43:41 CET je Maxime Ripard napisal(a):
+> On Sun, Nov 04, 2018 at 07:26:37PM +0100, Jernej Skrabec wrote:
+> > This series adds support for Display Engine 3.0 and HDMI 2.0a, which
+> > can be found on H6 SoC.
+> > 
+> > Display Engine 3.0 in comparison to 2.0 mostly adds features needed for
+> > displaying and processing 10-bit and AFBC formats, which are not yet
+> > supported by this series.
+> > 
+> > H6 is also the first SoC which supports IOMMU, but support for it is
+> > not yet added.
+> > 
+> > This series is based on linux-next at next-20181102.
+> > 
+> > I suggest all patches go through allwinner tree, except DRM patches,
+> > which should go through drm-misc tree.
+> 
+> Applied all patches up to the 26. The two last one however should not
+> use the clk bindings define you added in the first clk patches, since
+> clk and dt patches are going through different tree.
 
-> =
+I went over clock defines again, but I don't think I use anything new. New 
+defines are:
 
-> How about moving the QSPI clocks too under this qcom property? Later =
+#define CLK_BUS_ROT            9
+#define CLK_ROT                        10
+#define RST_ROT                3
 
-> could add the support?
+but none of them are actually used in DT.
 
-Yes the plan would be to have QSPI clks there too. Bjorn has sent the
-patch now.
+Did I miss anything?
 
- https://lkml.kernel.org/r/20181106055013.11271-1-bjorn.andersson@linaro.org
+Best regards,
+Jernej
+
+
+
