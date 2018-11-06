@@ -4,74 +4,72 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5973C0044C
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Nov 2018 01:04:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C85EC0044C
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Nov 2018 01:05:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 708562085B
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Nov 2018 01:04:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 128CE20866
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Nov 2018 01:05:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="BVvjCe/N"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 708562085B
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="LjKpRfuW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 128CE20866
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726567AbeKFK1C (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 6 Nov 2018 05:27:02 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:35269 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726368AbeKFK1C (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Nov 2018 05:27:02 -0500
-Received: by mail-pl1-f194.google.com with SMTP id n4-v6so5323674plp.2
-        for <linux-clk@vger.kernel.org>; Mon, 05 Nov 2018 17:04:30 -0800 (PST)
+        id S1729021AbeKFK1n (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 6 Nov 2018 05:27:43 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:44897 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728983AbeKFK1n (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Nov 2018 05:27:43 -0500
+Received: by mail-pf1-f196.google.com with SMTP id j13-v6so5265865pff.11
+        for <linux-clk@vger.kernel.org>; Mon, 05 Nov 2018 17:05:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=adLlZ16E015OBx2S4OK7jMb995AyuajGJK07XS0H89k=;
-        b=BVvjCe/NoYXYzyfYQn6ZBE41d2GWBpciycWhyVA5RUlWn8HsTREcre1aNtuer/tMh0
-         atxWyayHtcmj7gHZZFckQUfWd4MrjaW8n5/bRhEsgD+QscyhkhJM7i0qa1ZpPfyFCuHi
-         CpXH1mE+TTnzR5Hz9jAnJk9/9TTTVZoFoZjW8=
+        bh=g+snwBo8ag6BDr74ywAd3k5kRlUVBbIn0FaoX6zyQIM=;
+        b=LjKpRfuWxoDRTVy65Jj8FZLGPzdX1tY5vOyiD76Rd/4FDwFDhg29MBA1jGNnRx8JLj
+         urNjr9jkLM+InIC9vFQXnd3VDNVdX+0711bIWkqbBodOWEI8hwtsG8TRKORIxwDJRwXK
+         9ofOuq+ZVlV3f9FrROc68oQAcs/+xbrtumfdA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=adLlZ16E015OBx2S4OK7jMb995AyuajGJK07XS0H89k=;
-        b=XRzfzGYy6O3p5WRnqr6RvyreOF2e0y40KpBA+6n0KrJIMIqIQ2Yb//DZFxTKrSxEuy
-         1ZLr5iCjWCqXkGThAiUA/TRM2/logoyIBPo3RE29K5Bot7OQfIcwJcYd4RGg29sa0UYd
-         xMKEAHSHXJGWff4w5jHE8h4nPkGqpBMLn4ZMIaVpmOta+eY4WPxY8J37eXw+4rRVW8ze
-         AY72d8PuqRXsMJzwbIq+UNcaTgycfmJH7ftky/WjBgeGJbc0fGCTQjY3W/NXIjdruHnB
-         iCY1tz6Espbb8BjrMMw9gxy2drThjQyxSvRj+NaqOVXYHDB48baWat2p6Vx/siM20YOw
-         VFIg==
-X-Gm-Message-State: AGRZ1gKAUrt72guDdb/VNGVQYZLfi0t2v8ZG6eP6WXJc+8WRYHsBes2x
-        e/taBhn4MhxKJ2DtcM1OEb4+bQ==
-X-Google-Smtp-Source: AJdET5ccWTljB5duzD0NfaV+amQTrrQtKRH+s4P8zY1PBZGnJbAEcCNiDN3In4EMOt+TfunaAmAiEg==
-X-Received: by 2002:a17:902:9a07:: with SMTP id v7-v6mr23590299plp.14.1541466269861;
-        Mon, 05 Nov 2018 17:04:29 -0800 (PST)
+        bh=g+snwBo8ag6BDr74ywAd3k5kRlUVBbIn0FaoX6zyQIM=;
+        b=Jttn37hFnxW2GIV98kwSU0PcU2ELs3qGrhpWex2DJuHMX7Xo6/q85tM8xPWLuePU3O
+         CxSJ3BClxr3NcIqMFzfoBIK2jLIsi9t4GjdKA1QTJ3cStf00Xai4vWV1efx8/mizFQJw
+         Wj1BHj+JZilZoxGgqewzDXuJilPNNl3P6nSRNObngi5iXknWAwR8gykKB1QCYRJbsoae
+         RBgHuOZmajyg68TdShhPz21jdUkBNoS3EAt20aTvfTJSyKxve6Ekc2URrk1D/0Xm7zI/
+         +Hy/KqJvew4tzkMwsMqmyZHpyQ0itMjqaclZRqfxeyhQwf+tWI+BmkivzilExLCJb1CE
+         NS7A==
+X-Gm-Message-State: AGRZ1gKyzomhh35/nz/LzVY5Pgznte6CtBE4VzlkRGwn2OikhJKzKVdv
+        28w8p5fv3otgKdN7gFjB96zfHA==
+X-Google-Smtp-Source: AJdET5eab04e60Y7H4S/MGBtBSZ7d2r83CgytSWfNz6auUguaNbwLujZhUQG/51x/lKd08XTMXL+6Q==
+X-Received: by 2002:a63:1765:: with SMTP id 37-v6mr22253058pgx.131.1541466310312;
+        Mon, 05 Nov 2018 17:05:10 -0800 (PST)
 Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id g17-v6sm63674073pfe.37.2018.11.05.17.04.28
+        by smtp.gmail.com with ESMTPSA id d24-v6sm31199826pfe.40.2018.11.05.17.05.09
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 05 Nov 2018 17:04:29 -0800 (PST)
-Date:   Mon, 5 Nov 2018 17:04:26 -0800
+        Mon, 05 Nov 2018 17:05:09 -0800 (PST)
+Date:   Mon, 5 Nov 2018 17:05:07 -0800
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
 To:     Stephen Boyd <swboyd@chromium.org>
 Cc:     Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
         Taniya Das <tdas@codeaurora.org>
-Subject: Re: [PATCH 1/2] dt-bindings: clk: Introduce 'protected-clocks'
- property
-Message-ID: <20181106010426.GX2523@minitux>
+Subject: Re: [PATCH 2/2] clk: qcom: Support 'protected-clocks' property
+Message-ID: <20181106010507.GY2523@minitux>
 References: <20181105194011.43770-1-swboyd@chromium.org>
- <20181105194011.43770-2-swboyd@chromium.org>
+ <20181105194011.43770-3-swboyd@chromium.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181105194011.43770-2-swboyd@chromium.org>
+In-Reply-To: <20181105194011.43770-3-swboyd@chromium.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
@@ -80,55 +78,66 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 On Mon 05 Nov 11:40 PST 2018, Stephen Boyd wrote:
 
-> Add a generic clk property for clks which are not intended to be used by
-> the OS due to security restrictions put in place by firmware. For
-> example, on some Qualcomm firmwares reading or writing certain clk
-> registers causes the entire system to reboot, but on other firmwares
-> reading and writing those same registers is required to make devices
-> like QSPI work. Rather than adding one-off properties each time a new
-> set of clks appears to be protected, let's add a generic clk property to
-> describe any set of clks that shouldn't be touched by the OS. This way
-> we never need to register the clks or use them in certain firmware
-> configurations.
+> Certain firmware configurations "protect" clks and cause the entire
+> system to reboot when a non-secure OS such as Linux tries to read or
+> write protected clk registers. But other firmware configurations allow
+> reading or writing the same registers, and they may actually require
+> that the OS use the otherwise locked down clks. Support the
+> 'protected-clocks' property by never registering these protected clks
+> with the common clk framework. This way, when firmware is protecting
+> these clks we won't have the chance to ever read or write these
+> registers and take down the entire system.
 > 
-> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Taniya Das <tdas@codeaurora.org>
 > Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 
 Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Tested-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
 Regards,
 Bjorn
 
-> Cc: Taniya Das <tdas@codeaurora.org>
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 > ---
->  .../devicetree/bindings/clock/clock-bindings.txt | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
+>  drivers/clk/qcom/common.c | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/clock-bindings.txt b/Documentation/devicetree/bindings/clock/clock-bindings.txt
-> index 2ec489eebe72..b646bbcf7f92 100644
-> --- a/Documentation/devicetree/bindings/clock/clock-bindings.txt
-> +++ b/Documentation/devicetree/bindings/clock/clock-bindings.txt
-> @@ -168,3 +168,19 @@ a shared clock is forbidden.
+> diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+> index db9b2471ac40..0a48ed56833b 100644
+> --- a/drivers/clk/qcom/common.c
+> +++ b/drivers/clk/qcom/common.c
+> @@ -191,6 +191,22 @@ int qcom_cc_register_sleep_clk(struct device *dev)
+>  }
+>  EXPORT_SYMBOL_GPL(qcom_cc_register_sleep_clk);
 >  
->  Configuration of common clocks, which affect multiple consumer devices can
->  be similarly specified in the clock provider node.
+> +/* Drop 'protected-clocks' from the list of clocks to register */
+> +static void qcom_cc_drop_protected(struct device *dev, struct qcom_cc *cc)
+> +{
+> +	struct device_node *np = dev->of_node;
+> +	struct property *prop;
+> +	const __be32 *p;
+> +	u32 i;
 > +
-> +==Protected clocks==
+> +	of_property_for_each_u32(np, "protected-clocks", prop, p, i) {
+> +		if (i >= cc->num_rclks)
+> +			continue;
 > +
-> +Some platforms or firmwares may not fully expose all the clocks to the OS, such
-> +as in situations where those clks are used by drivers running in ARM secure
-> +execution levels. Such a configuration can be specified in device tree with the
-> +protected-clocks property in the form of a clock specifier list. This property should
-> +only be specified in the node that is providing the clocks being protected:
+> +		cc->rclks[i] = NULL;
+> +	}
+> +}
 > +
-> +   clock-controller@a000f000 {
-> +        compatible = "vendor,clk95;
-> +        reg = <0xa000f000 0x1000>
-> +        #clocks-cells = <1>;
-> +        ...
-> +        protected-clocks = <UART3_CLK>, <SPI5_CLK>;
-> +   };
+>  static struct clk_hw *qcom_cc_clk_hw_get(struct of_phandle_args *clkspec,
+>  					 void *data)
+>  {
+> @@ -251,6 +267,8 @@ int qcom_cc_really_probe(struct platform_device *pdev,
+>  	cc->rclks = rclks;
+>  	cc->num_rclks = num_clks;
+>  
+> +	qcom_cc_drop_protected(dev, cc);
+> +
+>  	for (i = 0; i < num_clks; i++) {
+>  		if (!rclks[i])
+>  			continue;
 > -- 
 > Sent by a computer through tubes
 > 
