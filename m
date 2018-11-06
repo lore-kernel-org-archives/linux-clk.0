@@ -6,78 +6,70 @@ X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23BCAC32789
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Nov 2018 17:35:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C020C32789
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Nov 2018 17:41:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D92A92086B
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Nov 2018 17:35:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C8E02086C
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Nov 2018 17:41:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YGXxi+fV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D92A92086B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QCgwCbDv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C8E02086C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389314AbeKGDCI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 6 Nov 2018 22:02:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47608 "EHLO mail.kernel.org"
+        id S1730749AbeKGDH7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 6 Nov 2018 22:07:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49814 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388987AbeKGDCI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 6 Nov 2018 22:02:08 -0500
+        id S1730688AbeKGDH6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 6 Nov 2018 22:07:58 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CDD1E2086A;
-        Tue,  6 Nov 2018 17:35:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 07D912081D;
+        Tue,  6 Nov 2018 17:41:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541525751;
-        bh=7GDQwXVsWNVrGABvJr1R1Q76OLK8+sQa7Idl3lxQtlg=;
+        s=default; t=1541526100;
+        bh=+uqiS88Key1qTjAYVbF2B5tSwsshmQMH6iQGUSfoTi0=;
         h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=YGXxi+fVpXPKcGrh8UkomC4gHRKPzbJ1ccCg1X1PX6cE3sn9VssKE6Aci2aH+jdeZ
-         Y2QzmTrDU1oz8o4gKcyJ58D9g+m4mOaf+37A/cNcMxTa+bIyw18xJ3gXItU/myzw2Z
-         ohvfzHHVuByRBHbsnAzexXUjQp66wUB7fKK7QDK4=
+        b=QCgwCbDvVM4VcK/7uo5qNbRNS06sglEllnTeSv81P0SK/Hw55eYOUTzZlXqnkgpsn
+         yy9GGCU6WNTpUxMFBu/yxs1qhH0ffSL06FyZjDyrAll43SCdQPGXy02KgIYGbk2+/c
+         3yIXIad/d9YsndMkY7EqBjVkbFMRMD8ycQHorjxc=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-To:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Anson Huang <anson.huang@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>
+To:     Chanwoo Choi <cw00.choi@samsung.com>,
+        Julia Lawall <Julia.Lawall@lip6.fr>
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1539910863-2352-1-git-send-email-Anson.Huang@nxp.com>
-Cc:     dl-linux-imx <linux-imx@nxp.com>
-References: <1539910863-2352-1-git-send-email-Anson.Huang@nxp.com>
-Message-ID: <154152575127.88331.11571189328688525045@swboyd.mtv.corp.google.com>
+In-Reply-To: <1540619262-22681-2-git-send-email-Julia.Lawall@lip6.fr>
+Cc:     kernel-janitors@vger.kernel.org,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <1540619262-22681-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1540619262-22681-2-git-send-email-Julia.Lawall@lip6.fr>
+Message-ID: <154152609937.88331.11993895406323284065@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.7
-Subject: Re: [PATCH V2] clk: imx7d: remove UART1 clock setting
-Date:   Tue, 06 Nov 2018 09:35:51 -0800
+Subject: Re: [PATCH 1/8] clk: max77686: constify clk_ops structure
+Date:   Tue, 06 Nov 2018 09:41:39 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Anson Huang (2018-10-18 18:05:36)
-> There are clock assignments in all i.MX7D dtb files for UART1,
-> below is the example in imx7d-sdb.dts, so setting UART1 clock
-> in clock driver is NOT necessary, actually, module clocks setting
-> should be done in module driver.
+Quoting Julia Lawall (2018-10-26 22:47:35)
+> The clk_ops structure is only stored in the ops field of a
+> clk_init_data structure.  This field is const, so the clk_ops
+> structure can be const as well.
 > =
 
-> &uart1 {
->         pinctrl-names =3D "default";
->         pinctrl-0 =3D <&pinctrl_uart1>;
->         assigned-clocks =3D <&clks IMX7D_UART1_ROOT_SRC>;
->         assigned-clock-parents =3D <&clks IMX7D_PLL_SYS_MAIN_240M_CLK>;
->         status =3D "okay";
-> };
+> Identified and transformed using Coccinelle.
 > =
 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> =
+
 > ---
 
 Applied to clk-next
