@@ -2,119 +2,221 @@ Return-Path: <SRS0=mH3q=NR=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08CF8C32789
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Nov 2018 14:57:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DA80C32789
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Nov 2018 14:57:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92AE820685
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Nov 2018 14:57:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1DBE620869
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Nov 2018 14:57:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="RGqN01Ss"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92AE820685
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="xvNFBV/+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DBE620869
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388988AbeKGAXR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 6 Nov 2018 19:23:17 -0500
-Received: from mail-wm1-f49.google.com ([209.85.128.49]:50653 "EHLO
-        mail-wm1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388906AbeKGAXR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Nov 2018 19:23:17 -0500
-Received: by mail-wm1-f49.google.com with SMTP id 124-v6so6573815wmw.0
-        for <linux-clk@vger.kernel.org>; Tue, 06 Nov 2018 06:57:40 -0800 (PST)
+        id S2388976AbeKGAXS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 6 Nov 2018 19:23:18 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:38938 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388932AbeKGAXS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Nov 2018 19:23:18 -0500
+Received: by mail-wr1-f68.google.com with SMTP id r10-v6so13843086wrv.6
+        for <linux-clk@vger.kernel.org>; Tue, 06 Nov 2018 06:57:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=JJNL3Neu3SfVjw1khgrCqtvFkSG2b/5akHq7tkxYu/8=;
-        b=RGqN01SsHX12NyLzsgTiQz0n59uDG3TzYmAINMThRPQ85AQOwMsn48Ar9elt1j87b8
-         N1Z3huYbtjsJYq6A57dT4WxfnCvmH6V1FvExgCWniNvoFymv3NVs6m4oUshbxyfaHA/f
-         ampTCzRomRtHFN/BCG2nFVNODBVD4+Yj/z/iwWAX/AS2DfcEtlDEUQpV0Jxso95IP1V6
-         v9mrcRsRPgdzO2zUbdZJMR6XTruTt7CNhxlbbo2XyiTth7k2U1qrhFUEU77dUo2Z19pD
-         ohTgq6yTD7mtqhhPAuvekbdOdY8kz36ubMJkGjQhKZs/avgLQYnoGT0LCbvejnFNiF8t
-         fhcA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=L0NzcZk0B6yUzOANOH8zHphKYYRmNnkEHy1YNOx1YHw=;
+        b=xvNFBV/+9G4WpB8lvDTLBQwpHX1WWVRyDOKZB87vTTA3X0jOFsmErnfFgUOqtfzKc/
+         lBWu95hoAj4trJF9FD8US1lL8KB2X0ph0utp9bszkVMzYgJV2MTlv1EObT/2tKB2pXke
+         bjn5H5zfS1v5IKM/Ic3v+nnsexFdRz9kKM8rJwgoswA4A7xN/GljFfQ6yW1yel8ELf0P
+         /2CrzRISi2tS6DkD5E3IY7ROKFukg0yrxi+sibxPoJKEJQvUitERFrZizcpf07mvZOZ+
+         HY+dXUCV1rz7PHXUUxkUtINoVd9i6sFNLvvESw165B9QxQ93v0fs8kqLfEDNRLoNiRhU
+         OtLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=JJNL3Neu3SfVjw1khgrCqtvFkSG2b/5akHq7tkxYu/8=;
-        b=kvC7FLRAGfL7eJqHYRqNDTVWzYVba0uSPF6JnYd5pnYrvKxVxTxKLkV3r+Ad6+bzqv
-         x64DpxlaEzU/K9NRpYV7KeOZikwE3nU8ZCeDjJod+O3WLgrhNhpRlQfePKL6l+6HVzF6
-         d7O/CaX1bEFfbVW1C5GD3tK+iVP02vb4X5M1LGrwTkHbrFQ8n6rS3LqsH6wlMbreAjdv
-         evIcZxGOZsIxwbJZjmffpMU86kVPZmoZL7Yk1L/FPjtPmie0ZfcFE0n64BY00Ojx/27N
-         /xGBSgoIoDuGkdfMJc/67gUVtXfqr+fz/BkcFUllXyrKyXYlLOj0wCOjS8QGw5wKgjHB
-         Z9pg==
-X-Gm-Message-State: AGRZ1gK8L2r35XTI6y0ra0G42vZFd5OvI61XQtbYogTsPKMBFwbu3ZqI
-        JZSniVebTvZYcvTu5JYFqSh/h4kPvA8=
-X-Google-Smtp-Source: AJdET5fg0C3uvA9xcG2U7/++bq8gkj06T3bjJaWh7jcyu6FjorilvxtZEMAK45xi+n35DiFOtGVHQg==
-X-Received: by 2002:a1c:6c0f:: with SMTP id h15-v6mr2170552wmc.123.1541516259858;
-        Tue, 06 Nov 2018 06:57:39 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=L0NzcZk0B6yUzOANOH8zHphKYYRmNnkEHy1YNOx1YHw=;
+        b=T/la7kjpk9xQplTOyQDNwgoIZ2oib586domNZlsM9d2kT8ysTOAAeY7Hpxr8nWDjaL
+         vbpRIrwo3NGSaRI4uiaNMf4SrZCq6+Wq63N8KMmAbF8YVQbzvToq844MmVvC2cs/1g7t
+         cyfHAD/EuBiaH3W6kxP22FnbAPgl8Fyz5QSG7UwRmHmCONJfYJxOTHEXa/bCqqTgewKr
+         WjR4+YTbK7BsJXRz6hKqvzwzmi5/CWYMkEuamjAwrYWGR2Iy3m6xBdGt6xKnibHYGGQt
+         iHFRm7HjFc77mrifx55oV77iOQ8G1hlHs0wQTCNcD0VybqCSnoon8oF7bg84Da0pLOKh
+         bIpg==
+X-Gm-Message-State: AGRZ1gJVZCe4NXFIZcEfcXKhjmVRxuwd5yUZHaNwY6FezSs823PO7HQU
+        QevQc6YOYzuGUcK+T9hu2RaL6Q==
+X-Google-Smtp-Source: AJdET5fMEnptL54Pztgx8T3L7ShSvKn6daopFXtnJshYi2LWNjI+qHkaYpODkwA7PbK14PkUe8+N1w==
+X-Received: by 2002:a5d:4e4e:: with SMTP id r14-v6mr24170154wrt.326.1541516260978;
+        Tue, 06 Nov 2018 06:57:40 -0800 (PST)
 Received: from bender.baylibre.local ([90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id y131-v6sm1825375wmc.16.2018.11.06.06.57.38
+        by smtp.gmail.com with ESMTPSA id y131-v6sm1825375wmc.16.2018.11.06.06.57.39
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 06 Nov 2018 06:57:39 -0800 (PST)
+        Tue, 06 Nov 2018 06:57:40 -0800 (PST)
 From:   Neil Armstrong <narmstrong@baylibre.com>
 To:     jbrunet@baylibre.com
 Cc:     Neil Armstrong <narmstrong@baylibre.com>,
         linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 0/4] clk: meson: Add video clocks path
-Date:   Tue,  6 Nov 2018 15:57:33 +0100
-Message-Id: <1541516257-16157-1-git-send-email-narmstrong@baylibre.com>
+Subject: [PATCH v2 1/4] clk: meson: Add vid_pll divider driver
+Date:   Tue,  6 Nov 2018 15:57:34 +0100
+Message-Id: <1541516257-16157-2-git-send-email-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1541516257-16157-1-git-send-email-narmstrong@baylibre.com>
+References: <1541516257-16157-1-git-send-email-narmstrong@baylibre.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This patchset is an attempt to handle the Amlogic Meson GX Video clock
-in the Common Clock Framework in order to move the video pipeline and
-HDMI controller clock management out of the Meson DRM Driver.
+Add support the VID_PLL fully programmable divider used right after the
+HDMI PLL clock source. It is used to achieve complex fractional division
+with a programmble bitfield.
 
-In order :
-- Add support the VID_PLL fully programmable divider used right after the
-  HDMI PLL clock source.
-- Fix the GXL HDMI PLL DCO
-- Add the video clock bindings covering all the video graphics pipeline
-  and the HDMI controller.
-- Add the clocks entries used in the video clock path
-
-The vid_pll programmable divider is introduced in its R/O form right now,
-but will be extended to be R/W in a next iteration.
-
-All dividers are flagged with CLK_GET_RATE_NOCACHE, and all gates are flagged
-with CLK_IGNORE_UNUSED since they are currently directly handled by the
-Meson DRM Driver.
-
-Once the DRM Driver is fully migrated to using the Common Clock Framework
-to handle the video clock tree, the CLK_GET_RATE_NOCACHE and CLK_IGNORE_UNUSED
-will be dropped.
-
-Changes since v1 at [1]:
- - Fixed comments from Martin
- - Fixed GXL HDMI PLL DCO
- - Added the missing HDMI controller clock
- - Moved bindings to a separate patch
- - Updated the commit logs
-
-[1] https://lkml.kernel.org/r/1532079581-978-1-git-send-email-narmstrong@baylibre.com
-
-Neil Armstrong (4):
-  clk: meson: Add vid_pll divider driver
-  clk: meson-gxbb: Fix HDMI PLL for GXL SoCs
-  dt-bindings: clk: meson-gxbb: Add Video clock bindings
-  clk: meson-gxbb: Add video clocks
-
- drivers/clk/meson/Makefile            |   2 +-
- drivers/clk/meson/clkc.h              |   6 +
- drivers/clk/meson/gxbb.c              | 773 +++++++++++++++++++++++++++++++++-
- drivers/clk/meson/gxbb.h              |  26 +-
- drivers/clk/meson/vid-pll-div.c       |  91 ++++
- include/dt-bindings/clock/gxbb-clkc.h |  18 +
- 6 files changed, 911 insertions(+), 5 deletions(-)
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ drivers/clk/meson/Makefile      |  2 +-
+ drivers/clk/meson/clkc.h        |  6 +++
+ drivers/clk/meson/vid-pll-div.c | 91 +++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 98 insertions(+), 1 deletion(-)
  create mode 100644 drivers/clk/meson/vid-pll-div.c
 
+diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
+index 72ec8c4..0234767 100644
+--- a/drivers/clk/meson/Makefile
++++ b/drivers/clk/meson/Makefile
+@@ -2,7 +2,7 @@
+ # Makefile for Meson specific clk
+ #
+ 
+-obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-mpll.o clk-phase.o
++obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-mpll.o clk-phase.o vid-pll-div.o
+ obj-$(CONFIG_COMMON_CLK_AMLOGIC_AUDIO)	+= clk-triphase.o sclk-div.o
+ obj-$(CONFIG_COMMON_CLK_MESON_AO) += meson-aoclk.o
+ obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
+diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
+index 6b96d55..9166605 100644
+--- a/drivers/clk/meson/clkc.h
++++ b/drivers/clk/meson/clkc.h
+@@ -90,6 +90,11 @@ struct meson_clk_phase_data {
+ int meson_clk_degrees_from_val(unsigned int val, unsigned int width);
+ unsigned int meson_clk_degrees_to_val(int degrees, unsigned int width);
+ 
++struct meson_vid_pll_div_data {
++	struct parm val;
++	struct parm sel;
++};
++
+ #define MESON_GATE(_name, _reg, _bit)					\
+ struct clk_regmap _name = {						\
+ 	.data = &(struct clk_regmap_gate_data){				\
+@@ -112,5 +117,6 @@ extern const struct clk_ops meson_clk_cpu_ops;
+ extern const struct clk_ops meson_clk_mpll_ro_ops;
+ extern const struct clk_ops meson_clk_mpll_ops;
+ extern const struct clk_ops meson_clk_phase_ops;
++extern const struct clk_ops meson_vid_pll_div_ro_ops;
+ 
+ #endif /* __CLKC_H */
+diff --git a/drivers/clk/meson/vid-pll-div.c b/drivers/clk/meson/vid-pll-div.c
+new file mode 100644
+index 0000000..b3370ea
+--- /dev/null
++++ b/drivers/clk/meson/vid-pll-div.c
+@@ -0,0 +1,91 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2018 BayLibre, SAS.
++ * Author: Neil Armstrong <narmstrong@baylibre.com>
++ */
++
++#include <linux/clk-provider.h>
++#include "clkc.h"
++
++static inline struct meson_vid_pll_div_data *
++meson_vid_pll_div_data(struct clk_regmap *clk)
++{
++	return (struct meson_vid_pll_div_data *)clk->data;
++}
++
++/*
++ * This vid_pll divided is a fully programmable fractionnal divider to
++ * achieve complex video clock rates.
++ *
++ * Here are provided the commonly used fraction values provided by Amlogic.
++ */
++
++struct vid_pll_div {
++	unsigned int shift_val;
++	unsigned int shift_sel;
++	unsigned int divider;
++	unsigned int multiplier;
++};
++
++#define VID_PLL_DIV(_val, _sel, _ft, _fb)				\
++	{								\
++		.shift_val = (_val),					\
++		.shift_sel = (_sel),					\
++		.divider = (_ft),					\
++		.multiplier = (_fb),					\
++	}
++
++static const struct vid_pll_div vid_pll_div_table[] = {
++	VID_PLL_DIV(0x0aaa, 0, 2, 1),	/* 2/1  => /2 */
++	VID_PLL_DIV(0x5294, 2, 5, 2),	/* 5/2  => /2.5 */
++	VID_PLL_DIV(0x0db6, 0, 3, 1),	/* 3/1  => /3 */
++	VID_PLL_DIV(0x36cc, 1, 7, 2),	/* 7/2  => /3.5 */
++	VID_PLL_DIV(0x6666, 2, 15, 4),	/* 15/4 => /3.75 */
++	VID_PLL_DIV(0x0ccc, 0, 4, 1),	/* 4/1  => /4 */
++	VID_PLL_DIV(0x739c, 2, 5, 1),	/* 5/1  => /5 */
++	VID_PLL_DIV(0x0e38, 0, 6, 1),	/* 6/1  => /6 */
++	VID_PLL_DIV(0x0000, 3, 25, 4),	/* 25/4 => /6.25 */
++	VID_PLL_DIV(0x3c78, 1, 7, 1),	/* 7/1  => /7 */
++	VID_PLL_DIV(0x78f0, 2, 15, 2),	/* 15/2 => /7.5 */
++	VID_PLL_DIV(0x0fc0, 0, 12, 1),	/* 12/1 => /12 */
++	VID_PLL_DIV(0x3f80, 1, 14, 1),	/* 14/1 => /14 */
++	VID_PLL_DIV(0x7f80, 2, 15, 1),	/* 15/1 => /15 */
++};
++
++#define to_meson_vid_pll_div(_hw) \
++	container_of(_hw, struct meson_vid_pll_div, hw)
++
++const struct vid_pll_div *_get_table_val(unsigned int shift_val,
++					 unsigned int shift_sel)
++{
++	int i;
++
++	for (i = 0 ; i < ARRAY_SIZE(vid_pll_div_table) ; ++i) {
++		if (vid_pll_div_table[i].shift_val == shift_val &&
++		    vid_pll_div_table[i].shift_sel == shift_sel)
++			return &vid_pll_div_table[i];
++	}
++
++	return NULL;
++}
++
++static unsigned long meson_vid_pll_div_recalc_rate(struct clk_hw *hw,
++						   unsigned long parent_rate)
++{
++	struct clk_regmap *clk = to_clk_regmap(hw);
++	struct meson_vid_pll_div_data *pll_div = meson_vid_pll_div_data(clk);
++	const struct vid_pll_div *div;
++
++	div = _get_table_val(meson_parm_read(clk->map, &pll_div->val),
++			     meson_parm_read(clk->map, &pll_div->sel));
++	if (!div || !div->divider) {
++		pr_info("%s: Invalid config value for vid_pll_div\n", __func__);
++		return parent_rate;
++	}
++
++	return DIV_ROUND_UP_ULL(parent_rate * div->multiplier, div->divider);
++}
++
++const struct clk_ops meson_vid_pll_div_ro_ops = {
++	.recalc_rate	= meson_vid_pll_div_recalc_rate,
++};
 -- 
 2.7.4
 
