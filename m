@@ -6,59 +6,59 @@ X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACAB5C32789
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Nov 2018 17:42:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32BD5C32789
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Nov 2018 17:42:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77AA620827
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Nov 2018 17:42:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED56220827
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Nov 2018 17:42:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nudw9+lU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77AA620827
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hDQ+W5zR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED56220827
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389800AbeKGDJB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 6 Nov 2018 22:09:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50254 "EHLO mail.kernel.org"
+        id S2389429AbeKGDI4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 6 Nov 2018 22:08:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50152 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389275AbeKGDJB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 6 Nov 2018 22:09:01 -0500
+        id S2389275AbeKGDI4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 6 Nov 2018 22:08:56 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E803220827;
-        Tue,  6 Nov 2018 17:42:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1D2AE2085B;
+        Tue,  6 Nov 2018 17:42:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541526162;
-        bh=fnvCqM58o/YD3n3fgxFm1W/EN2LIWEaJH4lbZ/HCfzM=;
+        s=default; t=1541526157;
+        bh=XOgGZAOFdqS3k3Tez8lni4MGLio6W2YeQhlOrHj8rLI=;
         h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=Nudw9+lULQmmjNnZLb/6azFsAtAQzRVmajMiTb38Uy7VMRH21Q5nccVrtTKhBMBlU
-         i+g14MPDLExmkHxh5MVXb/wbK+MoKFpNhbniJtkIwFSUlnCXosWdZALV5bOaoExB88
-         55kZXEZNgnwdbI5a+4dR+p3t+o/x1JCDAOBfLYgk=
+        b=hDQ+W5zRcguuA1XeQQKVjJ1Me5NNVPXXkRaI+kmY6JthnbJEI0bGCxEUlTMWmo3k8
+         B0+CdpEfkW6MLNXJA3tJA+epUT3hjYzr/VxjyimSgTE7FjVIMQgXgkIxXBKT9BOyIu
+         RN4acC4BDG+DBPCF/fO2+33JyzzLfu7qcAueGE2s=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 To:     Julia Lawall <Julia.Lawall@lip6.fr>,
         Michael Turquette <mturquette@baylibre.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1540619262-22681-6-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1540619262-22681-4-git-send-email-Julia.Lawall@lip6.fr>
 Cc:     kernel-janitors@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org
 References: <1540619262-22681-1-git-send-email-Julia.Lawall@lip6.fr>
- <1540619262-22681-6-git-send-email-Julia.Lawall@lip6.fr>
-Message-ID: <154152616136.88331.3474086159428615762@swboyd.mtv.corp.google.com>
+ <1540619262-22681-4-git-send-email-Julia.Lawall@lip6.fr>
+Message-ID: <154152615653.88331.17161218433869955843@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.7
-Subject: Re: [PATCH 5/8] clk: pxa: constify clk_ops structures
-Date:   Tue, 06 Nov 2018 09:42:41 -0800
+Subject: Re: [PATCH 3/8] clk: palmas: constify clk_ops structure
+Date:   Tue, 06 Nov 2018 09:42:36 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Julia Lawall (2018-10-26 22:47:39)
-> These clk_ops structures are only passed to a call to
-> clk_register_composite where the corresponding parameters
-> are const, so the clk_ops structure can be const as well.
+Quoting Julia Lawall (2018-10-26 22:47:37)
+> The clk_ops structure is only stored in the ops field of clk_init_data
+> structures.  This field is const, so the clk_ops structure can be
+> const as well.
 > =
 
 > Identified and transformed using Coccinelle.
