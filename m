@@ -2,100 +2,145 @@ Return-Path: <SRS0=FPSA=NS=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06F5BC0044C
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Nov 2018 18:51:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31748C0044C
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Nov 2018 19:01:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C578C2081D
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Nov 2018 18:51:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EFD182086C
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Nov 2018 19:01:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="RDN9QYKJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C578C2081D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sNOqtyQj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFD182086C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729732AbeKHEW5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Nov 2018 23:22:57 -0500
-Received: from imap.thunk.org ([74.207.234.97]:50270 "EHLO imap.thunk.org"
+        id S1726541AbeKHEco (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Nov 2018 23:32:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51742 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726892AbeKHEW5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 7 Nov 2018 23:22:57 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
-         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=mDfzcpIVCyAnpr8CEjISU7iQqs+iG34FVggbrJC27uI=; b=RDN9QYKJ0AaLIoVql21liWIsHl
-        YiS1QffjdyIEBtw24vXgANZSvK1eFyJHhvgGfx+cGUXsCoQ375mB4qYcsuW7g4GMdaL2QlRI+KbpK
-        biVrAeEVEXqWzNKqBMPIESHMf5d2av7czTUGKwMV+RSwRuLja1XpTbsyzNaTnPeLYlNo=;
-Received: from root (helo=callcc.thunk.org)
-        by imap.thunk.org with local-esmtp (Exim 4.89)
-        (envelope-from <tytso@thunk.org>)
-        id 1gKSuk-0001ik-Cc; Wed, 07 Nov 2018 18:50:54 +0000
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 6B47A7A7D27; Wed,  7 Nov 2018 13:50:53 -0500 (EST)
-Date:   Wed, 7 Nov 2018 13:50:53 -0500
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Olof Johansson <olof@lixom.net>
-Cc:     ksummit <ksummit-discuss@lists.linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-riscv@lists.infradead.org,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-gpio@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Russell King <rmk@armlinux.org.uk>,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [TECH TOPIC] SoC maintainer group
-Message-ID: <20181107185053.GJ9919@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Olof Johansson <olof@lixom.net>,
-        ksummit <ksummit-discuss@lists.linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-riscv@lists.infradead.org,
-        linux-clk <linux-clk@vger.kernel.org>, linux-gpio@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Russell King <rmk@armlinux.org.uk>,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Kevin Hilman <khilman@kernel.org>, Stephen Boyd <sboyd@kernel.org>
-References: <CAOesGMgVPsK9YsV2nGoBptWwtHYv=3yMytLx2_tF_ujS5c5p3Q@mail.gmail.com>
- <20181107171723.GI9919@thunk.org>
- <CAOesGMheCcvDQCd+7fyh4yOk4BYDfm2QRqsdawqA_fg8s9YYEQ@mail.gmail.com>
+        id S1725727AbeKHEcn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 7 Nov 2018 23:32:43 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 208B420862;
+        Wed,  7 Nov 2018 19:01:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541617263;
+        bh=HY3iJm3Ccw0G4LKGVA8FPkjVKVLj2rK3qzm7WAZOftI=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=sNOqtyQjfit9uionxGXkE5iuD+Lo2caTTT5WM+Slfl6MNlOph7ZYVKZMAbyZlm43B
+         HiqDnQDoqVMIqNF51+KOT15dgkfiP6V13z9NlurkA78VS8Nwn7d+ziRNDdJscmCCo8
+         rITaL9fKdrC0R12jQqhjBv6IDvQ6PNNaXx7ndmds=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOesGMheCcvDQCd+7fyh4yOk4BYDfm2QRqsdawqA_fg8s9YYEQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+Content-Transfer-Encoding: quoted-printable
+To:     Abel Vesa <abel.vesa@nxp.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20181107115444.gscxwud7e57nx3c7@fsr-ub1664-175>
+Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        "A.s. Dong" <aisheng.dong@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Rob Herring <robh@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>, Abel Vesa <abelvesa@linux.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
+References: <1537785597-26499-1-git-send-email-abel.vesa@nxp.com>
+ <1537785597-26499-4-git-send-email-abel.vesa@nxp.com>
+ <153980615257.5275.13866740376184829057@swboyd.mtv.corp.google.com>
+ <20181107115444.gscxwud7e57nx3c7@fsr-ub1664-175>
+Message-ID: <154161726247.88331.15629902810537417880@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v9 3/5] clk: imx: add SCCG PLL type
+Date:   Wed, 07 Nov 2018 11:01:02 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Nov 07, 2018 at 09:35:09AM -0800, Olof Johansson wrote:
-> 
-> Tuesday afternoon looks least conflict-y when I squint at the
-> schedule, or Thursday afternoon (but ideally not overlapping with
-> Daniel's DRM/gitlab session).
+Quoting Abel Vesa (2018-11-07 03:54:45)
+> On Wed, Oct 17, 2018 at 12:55:52PM -0700, Stephen Boyd wrote:
+> > Quoting Abel Vesa (2018-09-24 03:39:55)
+> > > +static unsigned long clk_pll2_recalc_rate(struct clk_hw *hw,
+> > > +                                        unsigned long parent_rate)
+> > > +{
+> > > +       struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
+> > > +       u32 val, ref, divr1, divf1, divr2, divf2;
+> > > +       u64 temp64;
+> > > +
+> > > +       val =3D readl_relaxed(pll->base + PLL_CFG0);
+> > > +       switch (FIELD_GET(PLL_REF_MASK, val)) {
+> > > +       case 0:
+> > > +               ref =3D OSC_25M;
+> > > +               break;
+> > > +       case 1:
+> > > +               ref =3D OSC_27M;
+> > > +               break;
+> > > +       default:
+> > > +               ref =3D OSC_25M;
+> > =
 
-I've posted a draft schedule, so why don't we move the conversation
-about scheduling there.  I see a number of options that might work:
-Tuesday immediately after lunch (2:00pm), or the last session before
-the TAB elections (4:45pm), and on Thursday maybe at 2:45pm?
+> > Does this information not come through 'parent_rate'?
+> > =
 
-    	      		       		- Ted
+> =
+
+> No. So basically both pll1 and pll2 and the divider after it form togethe=
+r this SCCG:
+> =
+
+> https://www.nxp.com/docs/en/reference-manual/IMX8MDQLQRM.pdf#page=3D834
+> =
+
+> See: Figure 5-8. SSCG PLL Block Diagram
+
+Thanks for the link!
+
+> =
+
+> We're basically reading the input of the pll 1 in order to compute the ou=
+tput of the entire SCCG.
+> =
+
+> I know it's a mess. I'm working on cleaning it up, but for now we need th=
+is in in order to boot up.
+
+What's the plan to clean it up?
+
+> =
+
+> > > +               break;
+> > > +       }
+> > > +
+> > > +       val =3D readl_relaxed(pll->base + PLL_CFG2);
+> > > +       divr1 =3D FIELD_GET(PLL_DIVR1_MASK, val);
+> > > +       divr2 =3D FIELD_GET(PLL_DIVR2_MASK, val);
+> > > +       divf1 =3D FIELD_GET(PLL_DIVF1_MASK, val);
+> > > +       divf2 =3D FIELD_GET(PLL_DIVF2_MASK, val);
+> > > +
+> > > +       temp64 =3D ref * 2;
+> > > +       temp64 *=3D (divf1 + 1) * (divf2 + 1);
+> > > +
+> > > +       do_div(temp64, (divr1 + 1) * (divr2 + 1));
+> > =
+
+> > Nitpicks: A comment with the equation may be helpful to newcomers.
+> =
+
+> Since the SCCG is contructed by multiple different types of clocks here, =
+the equation doesn't help
+> since it is spread in all constructing blocks.
+
+Ok.
+
