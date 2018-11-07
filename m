@@ -2,94 +2,100 @@ Return-Path: <SRS0=FPSA=NS=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89C4CC0044C
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Nov 2018 18:50:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06F5BC0044C
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Nov 2018 18:51:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5EF262086C
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Nov 2018 18:50:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EF262086C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i2se.com
+	by mail.kernel.org (Postfix) with ESMTP id C578C2081D
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Nov 2018 18:51:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="RDN9QYKJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C578C2081D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728875AbeKHEWM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Nov 2018 23:22:12 -0500
-Received: from mout.kundenserver.de ([212.227.17.10]:40711 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726892AbeKHEWM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Nov 2018 23:22:12 -0500
-Received: from null ([172.19.246.153]) by mrelayeu.kundenserver.de (mreue106
- [213.165.67.113]) with ESMTPSA (Nemesis) id 1MkYoK-1ffKaU27J8-00m0UW; Wed, 07
- Nov 2018 19:50:08 +0100
-Date:   Wed, 7 Nov 2018 19:50:07 +0100 (CET)
-From:   Stefan Wahren <stefan.wahren@i2se.com>
-To:     Mark Brown <broonie@kernel.org>, Vinod Koul <vkoul@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Chris Boot <bootc@bootc.net>, dmaengine@vger.kernel.org,
-        linux-spi@vger.kernel.org, Martin Sperl <kernel@martin.sperl.org>,
-        Florian Meier <florian.meier@koalo.de>,
-        Eric Anholt <eric@anholt.net>,
-        linux-arm-kernel@lists.infradead.org
-Message-ID: <815844594.141792.1541616607053@email.ionos.de>
-In-Reply-To: <1540292769-5905-1-git-send-email-stefan.wahren@i2se.com>
-References: <1540292769-5905-1-git-send-email-stefan.wahren@i2se.com>
-Subject: Re: [PATCH 0/3] Fix MODULE_LICENSE of bcm2835 drivers
+        id S1729732AbeKHEW5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Nov 2018 23:22:57 -0500
+Received: from imap.thunk.org ([74.207.234.97]:50270 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726892AbeKHEW5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 7 Nov 2018 23:22:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
+         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=mDfzcpIVCyAnpr8CEjISU7iQqs+iG34FVggbrJC27uI=; b=RDN9QYKJ0AaLIoVql21liWIsHl
+        YiS1QffjdyIEBtw24vXgANZSvK1eFyJHhvgGfx+cGUXsCoQ375mB4qYcsuW7g4GMdaL2QlRI+KbpK
+        biVrAeEVEXqWzNKqBMPIESHMf5d2av7czTUGKwMV+RSwRuLja1XpTbsyzNaTnPeLYlNo=;
+Received: from root (helo=callcc.thunk.org)
+        by imap.thunk.org with local-esmtp (Exim 4.89)
+        (envelope-from <tytso@thunk.org>)
+        id 1gKSuk-0001ik-Cc; Wed, 07 Nov 2018 18:50:54 +0000
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 6B47A7A7D27; Wed,  7 Nov 2018 13:50:53 -0500 (EST)
+Date:   Wed, 7 Nov 2018 13:50:53 -0500
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Olof Johansson <olof@lixom.net>
+Cc:     ksummit <ksummit-discuss@lists.linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-riscv@lists.infradead.org,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-gpio@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Russell King <rmk@armlinux.org.uk>,
+        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [TECH TOPIC] SoC maintainer group
+Message-ID: <20181107185053.GJ9919@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Olof Johansson <olof@lixom.net>,
+        ksummit <ksummit-discuss@lists.linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-riscv@lists.infradead.org,
+        linux-clk <linux-clk@vger.kernel.org>, linux-gpio@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Russell King <rmk@armlinux.org.uk>,
+        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Kevin Hilman <khilman@kernel.org>, Stephen Boyd <sboyd@kernel.org>
+References: <CAOesGMgVPsK9YsV2nGoBptWwtHYv=3yMytLx2_tF_ujS5c5p3Q@mail.gmail.com>
+ <20181107171723.GI9919@thunk.org>
+ <CAOesGMheCcvDQCd+7fyh4yOk4BYDfm2QRqsdawqA_fg8s9YYEQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Priority: 3
-Importance: Medium
-X-Mailer: Open-Xchange Mailer v7.8.4-Rev39
-X-Originating-Client: open-xchange-appsuite
-X-Provags-ID: V03:K1:mBTcsUsjJPVaeC4nXfMhweyIbEwlZ6cnMBBTrL8n61cfVNqr3j4
- bfUy1Z++RpPGBcZbrAEP1plQCpe+Pw1M8y8u0i+WyOX40KFSfgTU1c9lyE3nahjnC0dgeVm
- jSawLWj+13iCaGFI1Rw6lYSE2DoFzsIqp8Cw9KsG5NHyw46CPUgALVXTYUeTI8rQUR/Nqcx
- 3WRd4jxMVDYL4Gq4CvAUQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:wvpIYgcAOrY=:AwFcIbhyH9z+8cPNrwJ16R
- R2ePiRyFE9+1gL3Z4D6JY4+K8BvRGINQhqLW+4LAa1fCPKKlIOsWvj80msRWDZdMUPhJu83vG
- PaTdr0bZ2cJR7oT9xZMW8tcpHnj92ha0ieqjGnovPtZjVkexWyE3JKTylqGfb3iA9Jthg/8Hk
- tk1XDaX6Le/A+Gz9PbGsyzL4QNKMgQM1IHn7h6eDYF6EK54JytG5SGaxrGv4Z0ThdhSNbB8Wm
- nLgRWjqSa840utt2nLajSfjG94SOOCzrhuHid1IN3w7rnQ71+ybuCpyxPCSbAnBIQnEo8rLIv
- HCm3SFeRVyurYrR7ibo6XPAk1P3/Z+MjdDUwZGcW+72ohKYrnuRPJmuDxcGCkaG0g6g6fcSlG
- t4vDEm0Irk7A0GVqFXJfXg+/BWFGicgcR/hSrj5BPOXqc70NreQOq7YQODMmXod9NIsWqhpBy
- q7TRJZXo1VLB7QGvekHkjnTZ1Jzd+l3T6K0LYMGjHFNW20q997GLDWJd7qH8iy8PVlpezx4xj
- S4mYFx9mMZX0SAioiJqRnzhiCxJ3/jpBlE9Vsxr89LfcaQlSfeQZg+YSY3fGgNyqbpFmUI5xo
- Zyz4z93BP7JmNJQcQU5zmC8vsXFKSEU89mGUR7DzCFRAKlFQH7zMewRvGDuOD+cTPN84fLo59
- xZW+ZBZJQKHwGU48IMVvh8AzwsV7PAVqLRJMny1jgUBWCd9Jpaa0z4NVnHjyrf++SxWXsZUFi
- BHwI0a39aecGe2SQFTZxicavyRvN1Mg+55RLsQ7ELfMQWcaaHsRBmqHWxthmlwAO1P/BJqeUv
- UMJahqH8TCE8rdcLvJjzKJTZ6EXvtm0UMhiOZIr9FAaOYPaiLg=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOesGMheCcvDQCd+7fyh4yOk4BYDfm2QRqsdawqA_fg8s9YYEQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Mark,
-hi Vinod,
+On Wed, Nov 07, 2018 at 09:35:09AM -0800, Olof Johansson wrote:
+> 
+> Tuesday afternoon looks least conflict-y when I squint at the
+> schedule, or Thursday afternoon (but ideally not overlapping with
+> Daniel's DRM/gitlab session).
 
-> Stefan Wahren <stefan.wahren@i2se.com> hat am 23. Oktober 2018 um 13:06 geschrieben:
-> 
-> 
-> In preparation of a treewide switch of all bcm2835 drivers to SPDX tags,
-> we need to make sure that the license text and MODULE_LICENSE matches.
-> 
-> This series starts sooner than usual to have more time to collect the authors
-> ACK.
-> 
-> Stefan Wahren (3):
->   clk: bcm2835: make license text and module license match
->   dma: bcm2835: make license text and module license match
->   spi: bcm2835: make license text and module license match
-> 
->  drivers/clk/bcm/clk-bcm2835-aux.c | 2 +-
->  drivers/clk/bcm/clk-bcm2835.c     | 2 +-
->  drivers/dma/bcm2835-dma.c         | 2 +-
->  drivers/spi/spi-bcm2835.c         | 2 +-
->  drivers/spi/spi-bcm2835aux.c      | 2 +-
->  5 files changed, 5 insertions(+), 5 deletions(-)
-> 
+I've posted a draft schedule, so why don't we move the conversation
+about scheduling there.  I see a number of options that might work:
+Tuesday immediately after lunch (2:00pm), or the last session before
+the TAB elections (4:45pm), and on Thursday maybe at 2:45pm?
 
-since i didn't receive any objections from the authors, could you please apply or should i resend with Eric's Reviewed-by?
+    	      		       		- Ted
