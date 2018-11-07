@@ -2,167 +2,191 @@ Return-Path: <SRS0=FPSA=NS=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C29CC0044C
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Nov 2018 19:45:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2820C0044C
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Nov 2018 20:26:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 536E520827
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Nov 2018 19:45:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A8168206BA
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Nov 2018 20:26:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P87byO+m"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 536E520827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="Ip/Gs8iV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8168206BA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726244AbeKHFQy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 8 Nov 2018 00:16:54 -0500
-Received: from mail-qk1-f172.google.com ([209.85.222.172]:41249 "EHLO
-        mail-qk1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725746AbeKHFQy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Nov 2018 00:16:54 -0500
-Received: by mail-qk1-f172.google.com with SMTP id 189so22515185qkj.8;
-        Wed, 07 Nov 2018 11:45:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=SGVh1pRpqxTDJUil1PaJY2qjRkU65DCtN64z6kLuIws=;
-        b=P87byO+m9jareZqeHanIfDsaL4RTnXQPC+pKn68FyBiLJuUOq3Bvznoj2vw+dh8KUL
-         xEhEb2GP3pg+cT3mYzDLdlvXKYDhdxO+L6Pz3Ii46AVkNtU4cGhEYsNeP/dukk6o9W8E
-         rj03aGogeh6E0cQvG7474iza601VozTlqscPJk8f0x4Y/OgkqJA5XuKIsrQmwypafB4D
-         j7vtEwHNyGDfNJJXJjXAq59LZi7SSkLGiQMnxqkWBOM4GxGiblpUBDHUc+Q3/MeYr//R
-         gx9tGra+F6mRLuWNTazJJ+Nb1fuyPzFwxRvzmoogaT1Qn3G9+Ib5WRtSspRssUhvohKA
-         sYTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=SGVh1pRpqxTDJUil1PaJY2qjRkU65DCtN64z6kLuIws=;
-        b=j3xppaI6FB2JDfNRywmaj/axDGWpE7B0VrBkQhYuFqHZJ3Y0GAnKbaIDUpX3iQFud4
-         qGO7654x6nJi+ZOBWLZfHXOTzAaLAuD/UEADZU+kUbJrmFpv5jEaF+Z+9h2/ZVrVaM9f
-         NZKQ2WVCqC68gaqF9cRhRz4Q0w2cVlfF5gy85StJGfntysbpBZ0RWV+TCWy6fgvVNra4
-         jYoai14vulB4lUHZpSU3ALenIBAHMgdolMiKs//ZaDPU6sgXKHrAca8UjY9NtgKrJC7B
-         M4dHLYXTqRH75IKUwdDu05Zctf9lZu/mOo9Epua+M4DMe/qxX6/8guaUwZO0LAlMK9up
-         7saA==
-X-Gm-Message-State: AGRZ1gKB/SWVz3Wy8sHYVbaSXPJT3WziI5fhcTiZ5VEcpS+67mYMvig7
-        qtwABHa5MVxH4kdgxy4FAUx10La3Vjvu65dUwQ==
-X-Google-Smtp-Source: AJdET5e+boVKTDngrVwcjXovI+II2oq+n4LGZbqpXn80PMjxFA3CdYwLqP0wCvJ5HS2QV9gHRhVXTv+dJHk3+GdpWFI=
-X-Received: by 2002:ae9:edd8:: with SMTP id c207mr1483539qkg.184.1541619904850;
- Wed, 07 Nov 2018 11:45:04 -0800 (PST)
-MIME-Version: 1.0
-References: <CAOesGMgVPsK9YsV2nGoBptWwtHYv=3yMytLx2_tF_ujS5c5p3Q@mail.gmail.com>
-In-Reply-To: <CAOesGMgVPsK9YsV2nGoBptWwtHYv=3yMytLx2_tF_ujS5c5p3Q@mail.gmail.com>
-From:   Rob Herring <robherring2@gmail.com>
-Date:   Wed, 7 Nov 2018 13:44:53 -0600
-Message-ID: <CAL_Jsq+4d-0_T68r=PWm5ey=NqsCn5j_j1sQ4Kjp1zBz6zgt6A@mail.gmail.com>
-Subject: Re: [Ksummit-discuss] [TECH TOPIC] SoC maintainer group
-To:     Olof Johansson <olof@lixom.net>
-Cc:     ksummit-discuss@lists.linuxfoundation.org,
-        Russell King <rmk@armlinux.org.uk>,
-        Kevin Hilman <khilman@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
+        id S1726733AbeKHF63 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 8 Nov 2018 00:58:29 -0500
+Received: from mail-eopbgr20073.outbound.protection.outlook.com ([40.107.2.73]:4551
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726722AbeKHF62 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 8 Nov 2018 00:58:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XAqhWszIjgIlaqGVYSCpiuhfbFhFlmR/FSiVlA0BfFQ=;
+ b=Ip/Gs8iVsssgn2lBLewf9YdH7E4sYycoFB6R9H5YgCpbaR1hykijr7Spou2zZM3yUiX6uFsBCRnaSviCM5Nj5LhnbMhlRerh4fsBngly/Tt4rMk9TIM52KcHTlXGO5EHA3svHcRIAfQDVnxJ79K2kZWEXxwZNSdNBbAqagj4W8U=
+Received: from AM6PR0402MB3654.eurprd04.prod.outlook.com (52.133.28.145) by
+ AM6PR0402MB3686.eurprd04.prod.outlook.com (52.133.28.153) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1294.20; Wed, 7 Nov 2018 20:26:25 +0000
+Received: from AM6PR0402MB3654.eurprd04.prod.outlook.com
+ ([fe80::5195:5e4c:be83:408b]) by AM6PR0402MB3654.eurprd04.prod.outlook.com
+ ([fe80::5195:5e4c:be83:408b%4]) with mapi id 15.20.1294.034; Wed, 7 Nov 2018
+ 20:26:25 +0000
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+CC:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        "A.s. Dong" <aisheng.dong@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Rob Herring <robh@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>, Abel Vesa <abelvesa@linux.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
         Michael Turquette <mturquette@baylibre.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-riscv@lists.infradead.org,
-        linux-clk <linux-clk@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
         "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v9 3/5] clk: imx: add SCCG PLL type
+Thread-Topic: [PATCH v9 3/5] clk: imx: add SCCG PLL type
+Thread-Index: AQHUU/MOgX3H5GYYv0SLPnYITk0b36Uj/uoAgCB6iACAAHccAIAAF9kA
+Date:   Wed, 7 Nov 2018 20:26:25 +0000
+Message-ID: <20181107202624.oya2runvbbwcilzu@fsr-ub1664-175>
+References: <1537785597-26499-1-git-send-email-abel.vesa@nxp.com>
+ <1537785597-26499-4-git-send-email-abel.vesa@nxp.com>
+ <153980615257.5275.13866740376184829057@swboyd.mtv.corp.google.com>
+ <20181107115444.gscxwud7e57nx3c7@fsr-ub1664-175>
+ <154161726247.88331.15629902810537417880@swboyd.mtv.corp.google.com>
+In-Reply-To: <154161726247.88331.15629902810537417880@swboyd.mtv.corp.google.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=abel.vesa@nxp.com; 
+x-originating-ip: [95.76.156.53]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM6PR0402MB3686;6:S+jjjIr8YfQot2Jy4iQaPWYqecRbfPgvNiYqmNrr9jw8HDTV9AD7yNP7J5HBsoWTBXFo8yYzsmul/qG9AATJ4Af9JsM/jgjj1Tq6ki0fNvKO4AX/AD2jjQfw7VMdfbjBUqDSXTL5tY1auPq3AP+CDt+I6RYS18073wrQYIyb+nTQk9TgWc1cTIGBlLO1dnuXC8l+DRgfmwRwZcHyqxqm4ZpWGNH5/61MoJEWunZSX1D8pNKToTwfHIAF5zxH2Rs2LYVZeCmUg9p2S4542EHspDTI5hwjpu48M/Du99YpIFJsoetsE6AU1MWnMKYHlubnxy2DHb63XqWwFAY4YIwisW31dL2Gx7haEAn0iDjsxTzAXbG/gAfiYM3yRGo/wpbQGLtM6lyL2aZh5Azb6/y3Txn+0SDo6FTmnHE6tVCcc0YVypYcUHoJ6Y6YLyA8zNW8KNWiMINpiaSEZZwCalWAGg==;5:C3BBYutX4Mk+B1b+RXXL7CIqm1+2S/KwSDk4XfqPpFBVt2PG9NL/WJ5LvrPU9UUyfEBzdn9/QUTWzDGuquunR4D8FWC5CHzgOQokC/1VbMFcN6K7qZBHKepLzAUvIwo+WiY6/yPRJ/E7uExtkEXu3cbZgxAU1bzp4i2w08oYKtw=;7:HiuOhy/6+nXdb8IzUap2rQKbSDviff7dlLBWwgoabAtLWPIxUn61+MmzoFmqnNt9/i+PcYAwqKmoA7x23W/u0Dkg6toVzw7HHdA82G6ual6EFpPNIBTUNEK9vlSDm0SuzPNRI3y+DXCS5+O88eH4Wg==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 2a4cee15-fedc-490d-5e26-08d644ef4a38
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM6PR0402MB3686;
+x-ms-traffictypediagnostic: AM6PR0402MB3686:
+x-microsoft-antispam-prvs: <AM6PR0402MB36864A5EACCF846A1F75BA83F6C40@AM6PR0402MB3686.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(264314650089876)(185117386973197);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(3231382)(944501410)(52105095)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:AM6PR0402MB3686;BCL:0;PCL:0;RULEID:;SRVR:AM6PR0402MB3686;
+x-forefront-prvs: 08497C3D99
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(7916004)(346002)(396003)(376002)(136003)(366004)(39860400002)(51914003)(199004)(189003)(8936002)(446003)(305945005)(106356001)(5660300001)(217873002)(14444005)(97736004)(4326008)(6116002)(3846002)(14454004)(2900100001)(6436002)(256004)(1076002)(54906003)(71190400001)(26005)(6306002)(102836004)(68736007)(966005)(6916009)(7736002)(66066001)(71200400001)(316002)(39060400002)(33896004)(6506007)(53936002)(478600001)(9686003)(6246003)(25786009)(476003)(105586002)(2906002)(6486002)(99286004)(186003)(6512007)(7416002)(76176011)(44832011)(93886005)(486006)(11346002)(33716001)(8676002)(229853002)(81156014)(86362001)(81166006);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR0402MB3686;H:AM6PR0402MB3654.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: N8dctvVRWXyjEoLbFUjLUmE+cID5397W1Ip3Q1kABwn1EXT7mvueQvHqJeKfDFNf8Z4j7lrKZ7UIqEFDVxESxQV650A+bqYele+LcBCi8yq5kTKcAZyh36jgZPE1xAld9CxlGqJhibC1l5b+5tO7oGUQAfiTb3NVzEbXJMiPOB3NidpjXnD/HyetsljrEHH83oAOHVp/hlNVs139xtkaTJoN4gr69u3dKxOOJJ0hccmhScHz02TC6VYkYvbWws8Tj8Pea26lDWVlCNOOTdF6knhbNi5D6JyTnsN0BRwUKQMwBoSFniwQ1oTBt5NPdbl/ZN+6pL4F+GJ7uq7+rXYzvo+JBb/aeCc6YHThZYxMbuY=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <FCAE57C999A7924DB0935B16EFA78093@eurprd04.prod.outlook.com>
 Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2a4cee15-fedc-490d-5e26-08d644ef4a38
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Nov 2018 20:26:25.2024
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR0402MB3686
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Nov 6, 2018 at 4:17 PM Olof Johansson <olof@lixom.net> wrote:
->
-> Hi KS organizers (and others),
->
-> This is a late topic proposal, hopefully there is still time on the agend=
-a.
->
-> We=E2=80=99ve recently been discussing some maintainer model changes as
-> described below, and would like a slot to discuss the idea and solicit
-> feedback/comments from the others there.
->
->
-> This started with Arnd and I finally being in one place at the same
-> time, and talking about how we want to evolve arm-soc maintainership
-> moving forward. We've been independently thinking of ways to expand
-> the group and making it more self-service for everybody, but there's a
-> bunch of tooling needed to make it run smoothly beyond the smaller
-> group we have now.
->
-> In the end, we ended up looking at it from a slightly different angle:
-> Right now, when contributors show up with new platform support, the
-> first hill they need to climb is figuring out how they need to carve
-> up their platform among all the various maintainers, how to make sure
-> they're all handshaking on keeping things stable, and get code
-> submitted. It's awkward, not well documented and one of the biggest
-> overheads we have on our side as well.
->
-> When we started talking to other maintainers, we're also realizing
-> that we are currently duplicating a lot of work. In particular, we
-> often all get cc:d on patch series, so we all need to read and filter,
-> and assume that other maintainers spot the right patches, etc.
->
-> We have discussed a few different options, and it seems like pooling
-> more of the contribution flow to a group of co-maintainers is a useful
-> approach. Initially, we're considering the arm-soc platforms, clock
-> drivers and pinctrl drivers, which all tend to be affected by new
-> platform contributions in this way, and often end up cross-cc:d on
-> everything. Additionally, the flow for successfully merging a new
-> platform or SoC needs to be documented and advertised. This is true
-> whether or not we change the way that maintainers coordinate amongst
-> themselves, or whether or not we change the current workflow used by
-> platform contributors today.
->
-> So, we're planning to change things up a bit. We're starting a new
-> group that pools current arm-soc, clk and pinctrl drivers and
-> maintainers into one funnel. We'll set up a new mail alias for the
-> maintainer group, and one shared patchwork to collect contributions.
-> We still expect developers to use existing mailing lists, and we still
-> expect for example ARM platform maintainers to keep their workflow of
-> collecting patches for their platform like they do today. Down the
-> road it might make sense to incorporate other driver subsystems as
-> well.
+On Wed, Nov 07, 2018 at 11:01:02AM -0800, Stephen Boyd wrote:
+> Quoting Abel Vesa (2018-11-07 03:54:45)
+> > On Wed, Oct 17, 2018 at 12:55:52PM -0700, Stephen Boyd wrote:
+> > > Quoting Abel Vesa (2018-09-24 03:39:55)
+> > > > +static unsigned long clk_pll2_recalc_rate(struct clk_hw *hw,
+> > > > +                                        unsigned long parent_rate)
+> > > > +{
+> > > > +       struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
+> > > > +       u32 val, ref, divr1, divf1, divr2, divf2;
+> > > > +       u64 temp64;
+> > > > +
+> > > > +       val =3D readl_relaxed(pll->base + PLL_CFG0);
+> > > > +       switch (FIELD_GET(PLL_REF_MASK, val)) {
+> > > > +       case 0:
+> > > > +               ref =3D OSC_25M;
+> > > > +               break;
+> > > > +       case 1:
+> > > > +               ref =3D OSC_27M;
+> > > > +               break;
+> > > > +       default:
+> > > > +               ref =3D OSC_25M;
+> > >=20
+> > > Does this information not come through 'parent_rate'?
+> > >=20
+> >=20
+> > No. So basically both pll1 and pll2 and the divider after it form toget=
+her this SCCG:
+> >=20
+> > https://www.nxp.com/docs/en/reference-manual/IMX8MDQLQRM.pdf#page=3D834
+> >=20
+> > See: Figure 5-8. SSCG PLL Block Diagram
+>=20
+> Thanks for the link!
+>=20
+> >=20
+> > We're basically reading the input of the pll 1 in order to compute the =
+output of the entire SCCG.
+> >=20
+> > I know it's a mess. I'm working on cleaning it up, but for now we need =
+this in in order to boot up.
+>=20
+> What's the plan to clean it up?
 
-Given that dts files are a large part of what goes into arm-soc, any
-thoughts on changes to the process around them? I think it would be
-good if dts files were a bit more decoupled from kernel code changes.
-Yes, there's the issue with header dependencies to deal with. Ignoring
-that for a moment, keeping the dts files somewhat separate even if
-ultimately in the same tree and the same maintainers would be
-beneficial both for perception and to be able to do validation
-separately. And if we do ever move things out of the kernel tree, then
-it's less of a work-flow change. And I'm happy to help out here in
-whatever way I can.
+So I'm doing this in our internal tree first to make sure I don't break the
+other (newer) socs.
 
-> Beyond this, we're going to keep a close eye on the drm-misc tree,
-> which is exploring a move to gitlab (and working with gitlab on adding
-> the features they need to move over). If they get a broad maintainer
-> model working well in that environment it could be something we reuse
-> for ourselves too.
+I already have a prototype in testing but it's a long way to upstream it.
 
-AIUI for drm-misc, a major goal there is to have more automated checks
-fed back to submitters which doesn't necessarily have anything to do
-with maintainers. That's something I want to get in front of for DT
-schema so we're not fixing things after we've accepted them. So I've
-been experimenting with gitlab CI and integration with patchwork a bit
-recently. I have gitlab CI running some tests on binding patches
-(checkpatch and schema validation), attaching the results to the DT
-patchwork instance, and updating the patch state. Here is an example
-patch[1], my patchwork related scripts are here[2], and the CI job is
-here[3].
+Basically, I'm replacing all of this with a single, more like a composite,
+more complex, clock type that does all the magic inside.
 
-Rob
+One of the problems is the fact that the bypasses can have the same sources
+and in my case, I'm implementing that as a list of parents name, but the
+parent names list doesn't work with duplicates, so I have to find some othe=
+r
+way to do it.
 
-[1] https://patchwork.ozlabs.org/patch/979613/
-[2] https://gitlab.com/robherring/pw-utils
-[3] https://gitlab.com/robherring/linux/-/jobs
+Once I have something clean and tested enough I'll send it upstream.
+
+>=20
+> >=20
+> > > > +               break;
+> > > > +       }
+> > > > +
+> > > > +       val =3D readl_relaxed(pll->base + PLL_CFG2);
+> > > > +       divr1 =3D FIELD_GET(PLL_DIVR1_MASK, val);
+> > > > +       divr2 =3D FIELD_GET(PLL_DIVR2_MASK, val);
+> > > > +       divf1 =3D FIELD_GET(PLL_DIVF1_MASK, val);
+> > > > +       divf2 =3D FIELD_GET(PLL_DIVF2_MASK, val);
+> > > > +
+> > > > +       temp64 =3D ref * 2;
+> > > > +       temp64 *=3D (divf1 + 1) * (divf2 + 1);
+> > > > +
+> > > > +       do_div(temp64, (divr1 + 1) * (divr2 + 1));
+> > >=20
+> > > Nitpicks: A comment with the equation may be helpful to newcomers.
+> >=20
+> > Since the SCCG is contructed by multiple different types of clocks here=
+, the equation doesn't help
+> > since it is spread in all constructing blocks.
+>=20
+> Ok.
+>=20
+
+-- =
