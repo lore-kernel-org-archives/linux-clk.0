@@ -2,79 +2,148 @@ Return-Path: <SRS0=FPSA=NS=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FDFFECDE47
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Nov 2018 17:37:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F622C0044C
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Nov 2018 18:37:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B87D2086C
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Nov 2018 17:37:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B87D2086C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
+	by mail.kernel.org (Postfix) with ESMTP id 1C04720862
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Nov 2018 18:37:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WVw21bB6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C04720862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731468AbeKHDIX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Nov 2018 22:08:23 -0500
-Received: from relmlor3.renesas.com ([210.160.252.173]:58195 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728121AbeKHDIW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Nov 2018 22:08:22 -0500
-Received: from unknown (HELO relmlir4.idc.renesas.com) ([10.200.68.154])
-  by relmlie2.idc.renesas.com with ESMTP; 08 Nov 2018 02:36:55 +0900
-Received: from relmlii2.idc.renesas.com (relmlii2.idc.renesas.com [10.200.68.66])
-        by relmlir4.idc.renesas.com (Postfix) with ESMTP id 3B66C3D896;
-        Thu,  8 Nov 2018 02:36:55 +0900 (JST)
-X-IronPort-AV: E=Sophos;i="5.54,476,1534777200"; 
-   d="scan'208";a="297003245"
-Received: from unknown (HELO rtamta01.rta.renesas.com) ([143.103.48.75])
-  by relmlii2.idc.renesas.com with ESMTP; 08 Nov 2018 02:36:53 +0900
-Received: from ubuntu.localdomain (unknown [143.103.58.108])
-        by rtamta01.rta.renesas.com (Postfix) with ESMTP id 86E9A13C;
-        Wed,  7 Nov 2018 17:36:48 +0000 (UTC)
-From:   Chris Brandt <chris.brandt@renesas.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH 1/3] clk: renesas: r7s9210: Add USB clocks
-Date:   Wed,  7 Nov 2018 12:35:56 -0500
-Message-Id: <20181107173558.54481-2-chris.brandt@renesas.com>
-X-Mailer: git-send-email 2.16.1
-In-Reply-To: <20181107173558.54481-1-chris.brandt@renesas.com>
-References: <20181107173558.54481-1-chris.brandt@renesas.com>
+        id S1727698AbeKHEJJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Nov 2018 23:09:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43982 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726726AbeKHEJJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 7 Nov 2018 23:09:09 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6BEFE20818;
+        Wed,  7 Nov 2018 18:37:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541615852;
+        bh=eu6uLDaEC4qHMh7z0ygUHSxPL7rvOUOusfO7PYlR++Y=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=WVw21bB6lt9iwhAFJAxfI0GcGgf7+Wrss69BrFaiFiyjEom66qUcR4KL2XRLOK8z+
+         Paei2X3S/DNtr4uE2GOwIqtLlXKzgI4/QrWnC4z0TdVXSozHeN8ylLHJAQSzIKjd0L
+         noH1LH4Ug5zl6ml5esdAVlLBqZdrfxUexZaF5UbM=
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+To:     Rob Herring <robh+dt@kernel.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <CAL_JsqLvKWcJUYDyWOg3rMeEWv7JV4zw7-YkOUWiL5rfXgVRvQ@mail.gmail.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Frank Rowand <frowand.list@gmail.com>
+References: <20181106183609.207702-1-sboyd@kernel.org>
+ <20181106183609.207702-2-sboyd@kernel.org>
+ <CAL_JsqLvKWcJUYDyWOg3rMeEWv7JV4zw7-YkOUWiL5rfXgVRvQ@mail.gmail.com>
+Message-ID: <154161585170.88331.1822872519370217248@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH 1/4] of/device: Add a way to probe drivers by match data
+Date:   Wed, 07 Nov 2018 10:37:31 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add USB clocks for RZ/A2
+Quoting Rob Herring (2018-11-06 12:44:52)
+> On Tue, Nov 6, 2018 at 12:36 PM Stephen Boyd <sboyd@kernel.org> wrote:
+> >
+> > We have a handful of clk drivers that have a collection of slightly
+> > variant device support keyed off of the compatible string. In each of
+> > these drivers, we demux the variant and then call the "real" probe
+> > function based on whatever is stored in the match data for that
+> > compatible string. Let's generalize this function so that it can be
+> > re-used as the platform_driver probe function directly.
+> =
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
- drivers/clk/renesas/r7s9210-cpg-mssr.c | 2 ++
- 1 file changed, 2 insertions(+)
+> This looks really hacky to me. It sounds kind of general, but really
+> only works if we have match data that's a single function and we lose
+> any type checking on the function.
 
-diff --git a/drivers/clk/renesas/r7s9210-cpg-mssr.c b/drivers/clk/renesas/r7s9210-cpg-mssr.c
-index 3922967ba811..efbbf56e6766 100644
---- a/drivers/clk/renesas/r7s9210-cpg-mssr.c
-+++ b/drivers/clk/renesas/r7s9210-cpg-mssr.c
-@@ -87,6 +87,8 @@ static const struct mssr_mod_clk r7s9210_mod_clks[] __initconst = {
- 	DEF_MOD_STB("scif1",	 46,	R7S9210_CLK_P1C),
- 	DEF_MOD_STB("scif0",	 47,	R7S9210_CLK_P1C),
- 
-+	DEF_MOD_STB("usb1",	 60,	R7S9210_CLK_B),
-+	DEF_MOD_STB("usb0",	 61,	R7S9210_CLK_B),
- 	DEF_MOD_STB("ether1",	 64,	R7S9210_CLK_B),
- 	DEF_MOD_STB("ether0",	 65,	R7S9210_CLK_B),
- 
--- 
-2.16.1
+I don't know what this means. Are you saying that we lose the ability to
+type check the function pointer stored in the data member? I don't have
+a good answer for this besides it's not any worse than the status quo
+for the mediatek drivers.
+
+One alternative is to add a DT only array to the platform_driver struct
+that has the platform driver probe function type and matches the index
+in the of_device_id table. Then we can add some logic into
+platform_drv_probe() to look for this table being set and find the probe
+function to call. Then we still have match data for anything that wants
+that (maybe it could be passed in to the probe function) at the cost of
+having another array. I don't have a use-case for this right now so I'm
+not sure this is a great idea.
+
+  struct of_platform_driver_probe_func {
+  	int (*probe)(struct platform_device *pdev);
+  };
+
+  struct of_platform_driver_probe_func mtk_probes[] =3D {
+  	mtk_probe1,
+	mtk_probe2,
+	mtk_probe3,
+  };
+
+  struct platform_driver mtk_driver =3D {
+  	.of_probes =3D &mtk_probes;
+  	.driver =3D {
+		.name =3D "mtk-foo";
+		.of_match_table =3D mtk_match_table,
+	},
+  };
+
+> What about things other than
+> platform devices?
+> =
+
+
+I suppose those would need similar functions that take the right struct
+type and match the driver probe function signature. To make the above
+more generic we could try to figure out a way to put the 'of_probes'
+array inside struct device_driver. That would require dropping
+platform_device specifically from the probe functions and having those
+take a plain 'struct device' that those probe functions turn into the
+appropriate structure with to_platform_device() or to_i2c_client()?
+
+So the example would become
+
+  struct of_driver_probe_func {
+  	int (*probe)(struct device *dev);
+  };
+
+  struct of_driver_probe_func mtk_probes[] =3D {
+  	mtk_probe1,
+	mtk_probe2,
+	mtk_probe3,
+  };
+
+  struct platform_driver mtk_driver =3D {
+  	.driver =3D {
+		.name =3D "mtk-foo";
+		.of_match_table =3D mtk_match_table,
+		.of_probes =3D &mtk_probes;
+	},
+  };
+
+And the probe functions might need to container_of() the device pointer
+to get the struct they know they need. The probe function could also be
+added to of_device_id and then we would have to look and see if that
+pointer is populated when the device is matched in generic device code.
 
