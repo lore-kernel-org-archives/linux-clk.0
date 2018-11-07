@@ -2,41 +2,41 @@ Return-Path: <SRS0=FPSA=NS=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UPPERCASE_50_75,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8B81C0044C
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Nov 2018 12:38:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D380C0044C
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Nov 2018 12:38:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D4FF20817
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Nov 2018 12:38:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 011D620817
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Nov 2018 12:38:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="sYlOc0nF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D4FF20817
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="N3ql24AE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 011D620817
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726560AbeKGWIa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Nov 2018 17:08:30 -0500
-Received: from mail-eopbgr00089.outbound.protection.outlook.com ([40.107.0.89]:35217
-        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        id S1726545AbeKGWIp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Nov 2018 17:08:45 -0500
+Received: from mail-eopbgr60057.outbound.protection.outlook.com ([40.107.6.57]:21504
+        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730742AbeKGWI3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        id S1726602AbeKGWI3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
         Wed, 7 Nov 2018 17:08:29 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pUpzIs6/kFrFv30l5bKBymV8FZoqSSmGFlKz7L0/kCg=;
- b=sYlOc0nF3EoJ5BsbU/YszZHQr054p0cn9NB7sJYecO6Egzsa17m8CaoIevxEzHf9JP3sAwjFnJRdhaxqON/vbC3PiLbRrvxRsrBRloHP48UG5VBIjvqPRCk7JPFiy5BSB/ChzUvU2x1KVly8P7Middf+AszFsxQ6C2h5guiUgLE=
+ bh=qZmnwFUaqJLDVMS/hTwjucTd905DYQlzJUDIq/3+b8U=;
+ b=N3ql24AEXdSB3PwehlbdwTjDdWDsE0Ckg/uVEFDtWiP4M3hE+LGZvw91myG0jnlDHk21PaJ6jTQSP0M2PuR0MHZbBjgASmEHhCIrwrtao0PglyOD3eUlb9bleAxaa42Bx0ttcDSl9eRPJ41sv9vWvg0qQUXiK8ns8W+ma4jGT7o=
 Received: from AM6PR0402MB3654.eurprd04.prod.outlook.com (52.133.28.145) by
- AM6PR0402MB3494.eurprd04.prod.outlook.com (52.133.19.143) with Microsoft SMTP
+ AM6PR0402MB3734.eurprd04.prod.outlook.com (52.133.29.13) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1294.26; Wed, 7 Nov 2018 12:38:06 +0000
+ 15.20.1294.26; Wed, 7 Nov 2018 12:38:08 +0000
 Received: from AM6PR0402MB3654.eurprd04.prod.outlook.com
  ([fe80::5195:5e4c:be83:408b]) by AM6PR0402MB3654.eurprd04.prod.outlook.com
  ([fe80::5195:5e4c:be83:408b%4]) with mapi id 15.20.1294.034; Wed, 7 Nov 2018
- 12:38:06 +0000
+ 12:38:08 +0000
 From:   Abel Vesa <abel.vesa@nxp.com>
 To:     Sascha Hauer <kernel@pengutronix.de>,
         Lucas Stach <l.stach@pengutronix.de>,
@@ -53,11 +53,11 @@ CC:     Michael Turquette <mturquette@baylibre.com>,
         "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>,
         Abel Vesa <abelvesa@linux.com>, Abel Vesa <abel.vesa@nxp.com>
-Subject: [PATCH v12 1/5] dt-bindings: add binding for i.MX8MQ CCM
-Thread-Topic: [PATCH v12 1/5] dt-bindings: add binding for i.MX8MQ CCM
-Thread-Index: AQHUdpa702IVwdRH60qEAGucij7oFA==
-Date:   Wed, 7 Nov 2018 12:38:06 +0000
-Message-ID: <1541594266-16712-2-git-send-email-abel.vesa@nxp.com>
+Subject: [PATCH v12 3/5] clk: imx: Add SCCG PLL type
+Thread-Topic: [PATCH v12 3/5] clk: imx: Add SCCG PLL type
+Thread-Index: AQHUdpa84fu8GQFV80S9xvVD5Pfisg==
+Date:   Wed, 7 Nov 2018 12:38:08 +0000
+Message-ID: <1541594266-16712-4-git-send-email-abel.vesa@nxp.com>
 References: <1541594266-16712-1-git-send-email-abel.vesa@nxp.com>
 In-Reply-To: <1541594266-16712-1-git-send-email-abel.vesa@nxp.com>
 Accept-Language: en-US
@@ -72,32 +72,32 @@ authentication-results: spf=none (sender IP is )
  smtp.mailfrom=abel.vesa@nxp.com; 
 x-ms-exchange-messagesentrepresentingtype: 1
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM6PR0402MB3494;6:xIXv3RwOOaJiA7M2zoqca2gJX/4dpHstiJVEdduDHl3LT/kMEeuImhO6z4dvRfo9x++QBFg+GurJ38LS9nRioPv4HL7F9k2OtvuWGtHiNxmIagcpKf2OSqLUHjF++mqJDUz18Ou627wR04dcJYf2O+K8H5txev0DndSOQcl/InKttDtyMQA2H3G/ogHAGRcj9MQjJsG54vDZRDw/xUBSpPA+YPA/Zp/DQg4eisjYoS4dMDavUXVXJe0BWynldM938h+tQgFextMpVSX4DdnjfScEaSbZomviQq22/vzvQFDD/5Raa+mKU12LkFZPaxGeVH+GH6vXdZyILfKiIwkPuOUM/+P4dmIiEJD9pfftADgUO0yL7GiXN61CgozugnBhNjqAdmaO9FMsvX6c1IXou5lMY/volvLyy3JSV95l8OoQH21k5iYDsDVOBp3ceZQ7IGstqr1SGW6JXsvPh5zcDw==;5:Xjp2/rk8QkKijURo24h62SLOF3E16ML2MnqN5TdXprbM0FVsQ/oc+PCxrH/Yxoag/hIhOUt8e6eWMA7P9jRpqZnrwD/rlX12FO2Ap7y0otydyGmsyzv3veRZuyBmhyP5hOxOWDSX+1Qhl7Gld45crAKcZCSDG+z//VGaS188VeY=;7:MlKDiKUq7/6n3V3mI2IR8w9bDlEToKAuF/1RrOOuceON+k+wzDP8Cx4XX1geio8Ig3xRTFr6jyBdaz0oq+HTxlyu1FJBRvkoH7taCWmBY4Y+30NurDUVVgKQ9dQX2EcJR0xCeqZ5/jivaYLLsApk4Q==
-x-ms-office365-filtering-correlation-id: 42777ab6-58eb-462e-4858-08d644adddb9
+x-microsoft-exchange-diagnostics: 1;AM6PR0402MB3734;6:m3ld42p0smf4bEcussFG/3/QapzH6NOUhnwt/OD+lU6tmKyfIdWOWPt2Y9B+/WmYy6eqddHA5/+VL8a7cHRWUqW+Sk0DaTt3ob0FxH8z+od38j6R6Es/UzeoGzkzzTfAKq4hxAWZ0HxkV4lyEYqsA0e0l7yspc+3bpU92I3j6U5M+e2OSZudgSIzpqy22uXSGl8XIvj5hxxVUin478TigyptcZD1ZdWc53XwqGgVnkT3IWNRb6pu1Z7/W8j3E62MgEcTRfsdbcd5fnwpXTDyKjeMZ9gEal78ze1keNMlrrcIsxRzTMzUXU3WTvyoFf4ZaCkWrnWe2sZMVRyGp1o1/BK9YMnEJxR+bouIqeukd13rnGLpGrEGneYmh19FJeal9jpn17TgzqfY9qmXLJy2LGt0aeFaBnWK2yLpci9sIoVS6Dw6b8OTqfROHRM1mGzQ8etHPM+svlH2jwRnjhVbEQ==;5:Ph42ntXfnMCyHUWHgPxxLQHs7DhfvoYsNNNMAe5Qfs9Wzqfq2PGaeaAE3ouOWymmF1fTSx8FwZmEzmw8Rv37aY+/8W8l+ZwKAuTkyvQfrEZhGDC88ISS0ysnfx9aJZO1eCsTi+GeJmRUY9EOX79fGwbWH/VLnsrIOYTrgazh9mk=;7:EYG48+Bp0XiTO45nzgumC820ZlbkQTwnSzIbN35Tgz03Qfqv8cUpdQhz7Ehp2WuX7M4QBUt4/Rv40+eyRdzaugnoV6+9CYvIoqB7F7xZiMul2A6pvmo+KXFyQOe8RynruDdJ78GQCbkGaiI7xkeRAA==
+x-ms-office365-filtering-correlation-id: 77bf78bc-dd02-4c2a-85cc-08d644addefe
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:AM6PR0402MB3494;
-x-ms-traffictypediagnostic: AM6PR0402MB3494:
-x-microsoft-antispam-prvs: <AM6PR0402MB34949952A7351B8BF4A6F1A3F6C40@AM6PR0402MB3494.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(185117386973197);
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:AM6PR0402MB3734;
+x-ms-traffictypediagnostic: AM6PR0402MB3734:
+x-microsoft-antispam-prvs: <AM6PR0402MB3734EFD0A871DE9CB7A65829F6C40@AM6PR0402MB3734.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(264314650089876)(185117386973197);
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(93006095)(93001095)(3231382)(944501410)(52105095)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:AM6PR0402MB3494;BCL:0;PCL:0;RULEID:;SRVR:AM6PR0402MB3494;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231382)(944501410)(52105095)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:AM6PR0402MB3734;BCL:0;PCL:0;RULEID:;SRVR:AM6PR0402MB3734;
 x-forefront-prvs: 08497C3D99
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(366004)(136003)(396003)(346002)(376002)(189003)(199004)(8936002)(2900100001)(4326008)(97736004)(476003)(53936002)(6512007)(2906002)(486006)(256004)(44832011)(7416002)(386003)(6486002)(186003)(6436002)(36756003)(2616005)(25786009)(11346002)(478600001)(446003)(76176011)(6506007)(52116002)(4744004)(102836004)(7736002)(305945005)(71190400001)(71200400001)(3846002)(99286004)(5660300001)(66066001)(316002)(6116002)(26005)(6636002)(86362001)(81156014)(81166006)(110136005)(105586002)(106356001)(54906003)(14454004)(68736007)(8676002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR0402MB3494;H:AM6PR0402MB3654.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(376002)(136003)(366004)(39860400002)(346002)(199004)(189003)(25786009)(6116002)(316002)(6506007)(81166006)(81156014)(52116002)(8676002)(3846002)(105586002)(386003)(54906003)(97736004)(6512007)(6306002)(106356001)(6636002)(7416002)(6436002)(76176011)(6486002)(478600001)(186003)(5660300001)(4326008)(2900100001)(486006)(86362001)(217873002)(110136005)(53936002)(44832011)(26005)(14444005)(66066001)(966005)(68736007)(256004)(8936002)(2906002)(14454004)(71190400001)(305945005)(71200400001)(102836004)(446003)(2616005)(36756003)(476003)(7736002)(99286004)(11346002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR0402MB3734;H:AM6PR0402MB3654.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: wuZc4ymPvseK1nb//QU2c0lNsMqsQOwaqukInCwD9OiD+fVczF6Rlm42X0FO8MMugaoG18rh9iajoWQpxngXFNaaDS2Wi8WX3XEpvMbUxb2W//RyiObLPAk0A4MIa+wP7Q/CPFQJol+IKljdLXNya9bUeHhLRubznSpbtE6iyv4ywXH21XebTacbVDeMTh1FJ+4dhqxp6q0VImjz8rWPPoDlR/rjMt4gRtlms5pqo+36NKgK8781HtRTFaNsg2sjXdqDzyXDtK/XocZo8E9FTQPyQ7opvqnM+hWeLO5rkuoH60OAHQfdD+mLoaizkfvsOKVXfzp93OTgmQibVxWZa/vohaj1hJ74TJt8ErKi4oU=
+x-microsoft-antispam-message-info: 1WBl8RROo9B5+v4sDv92xlnD1JXqKPELYEv/W/9hWRRDDsOt4zAZ22Kd+u4EhicQUS9ZTrkQyWwa5f1sXVNfcGY2GojkeKbP5+4Xs6hBEo4ZnSq0jvTdBXpmwGl9SzYaF+AFc4iA8ukAay+dZa0NzXX08Bh8BIOTaKQAzNrA1r0yeuarHuykYenjRUaCAKACkaVRI4Jm0MVM7IeSAu3gKHPq6cHQoKhg4Au9C9MaIDVGzOvVgWXpVl4tCk+iTWTYTO+5LjQD9byARtJ+SwdqOImPTgtiD4CnHDxgsLmUp8Y36iBcJvP86YwxpgUXAs+Zqo25DMFxHLwD2x4GXuYOwvr+0T2AphaA3ntisKpF5NI=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 42777ab6-58eb-462e-4858-08d644adddb9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Nov 2018 12:38:06.2124
+X-MS-Exchange-CrossTenant-Network-Message-Id: 77bf78bc-dd02-4c2a-85cc-08d644addefe
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Nov 2018 12:38:08.3479
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR0402MB3494
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR0402MB3734
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
@@ -105,451 +105,329 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Lucas Stach <l.stach@pengutronix.de>
 
-This adds the binding for the i.MX8MQ Clock Controller Module.
+The SCCG is a new PLL type introduced on i.MX8.
+
+The description of this SCCG clock can be found here:
+
+https://www.nxp.com/docs/en/reference-manual/IMX8MDQLQRM.pdf#page=3D834
 
 Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
 Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Sascha Hauer <s.hauer@pengutronix.de>
 ---
- .../devicetree/bindings/clock/imx8mq-clock.txt     |  20 ++
- include/dt-bindings/clock/imx8mq-clock.h           | 395 +++++++++++++++++=
+ drivers/clk/imx/Makefile       |   3 +-
+ drivers/clk/imx/clk-sccg-pll.c | 256 +++++++++++++++++++++++++++++++++++++=
 ++++
- 2 files changed, 415 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/imx8mq-clock.tx=
-t
- create mode 100644 include/dt-bindings/clock/imx8mq-clock.h
+ drivers/clk/imx/clk.h          |   9 ++
+ 3 files changed, 267 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/imx/clk-sccg-pll.c
 
-diff --git a/Documentation/devicetree/bindings/clock/imx8mq-clock.txt b/Doc=
-umentation/devicetree/bindings/clock/imx8mq-clock.txt
+diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
+index 4893c1f..b87513c 100644
+--- a/drivers/clk/imx/Makefile
++++ b/drivers/clk/imx/Makefile
+@@ -12,7 +12,8 @@ obj-y +=3D \
+ 	clk-pllv1.o \
+ 	clk-pllv2.o \
+ 	clk-pllv3.o \
+-	clk-pfd.o
++	clk-pfd.o \
++	clk-sccg-pll.o
+=20
+ obj-$(CONFIG_SOC_IMX1)   +=3D clk-imx1.o
+ obj-$(CONFIG_SOC_IMX21)  +=3D clk-imx21.o
+diff --git a/drivers/clk/imx/clk-sccg-pll.c b/drivers/clk/imx/clk-sccg-pll.=
+c
 new file mode 100644
-index 0000000..52de826
+index 0000000..4666b96
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/imx8mq-clock.txt
-@@ -0,0 +1,20 @@
-+* Clock bindings for NXP i.MX8M Quad
-+
-+Required properties:
-+- compatible: Should be "fsl,imx8mq-ccm"
-+- reg: Address and length of the register set
-+- #clock-cells: Should be <1>
-+- clocks: list of clock specifiers, must contain an entry for each require=
-d
-+          entry in clock-names
-+- clock-names: should include the following entries:
-+    - "ckil"
-+    - "osc_25m"
-+    - "osc_27m"
-+    - "clk_ext1"
-+    - "clk_ext2"
-+    - "clk_ext3"
-+    - "clk_ext4"
-+
-+The clock consumer should specify the desired clock by having the clock
-+ID in its "clocks" phandle cell.  See include/dt-bindings/clock/imx8mq-clo=
-ck.h
-+for the full list of i.MX8M Quad clock IDs.
-diff --git a/include/dt-bindings/clock/imx8mq-clock.h b/include/dt-bindings=
-/clock/imx8mq-clock.h
-new file mode 100644
-index 0000000..b53be41
---- /dev/null
-+++ b/include/dt-bindings/clock/imx8mq-clock.h
-@@ -0,0 +1,395 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
++++ b/drivers/clk/imx/clk-sccg-pll.c
+@@ -0,0 +1,256 @@
++// SPDX-License-Identifier: (GPL-2.0 OR MIT)
 +/*
-+ * Copyright 2016 Freescale Semiconductor, Inc.
-+ * Copyright 2017 NXP
++ * Copyright 2018 NXP.
++ *
++ * This driver supports the SCCG plls found in the imx8m SOCs
++ *
++ * Documentation for this SCCG pll can be found at:
++ *   https://www.nxp.com/docs/en/reference-manual/IMX8MDQLQRM.pdf#page=3D8=
+34
 + */
 +
-+#ifndef __DT_BINDINGS_CLOCK_IMX8MQ_H
-+#define __DT_BINDINGS_CLOCK_IMX8MQ_H
++#include <linux/clk-provider.h>
++#include <linux/err.h>
++#include <linux/iopoll.h>
++#include <linux/slab.h>
++#include <linux/bitfield.h>
 +
-+#define IMX8MQ_CLK_DUMMY		0
-+#define IMX8MQ_CLK_32K			1
-+#define IMX8MQ_CLK_25M			2
-+#define IMX8MQ_CLK_27M			3
-+#define IMX8MQ_CLK_EXT1			4
-+#define IMX8MQ_CLK_EXT2			5
-+#define IMX8MQ_CLK_EXT3			6
-+#define IMX8MQ_CLK_EXT4			7
++#include "clk.h"
 +
-+/* ANAMIX PLL clocks */
-+/* FRAC PLLs */
-+/* ARM PLL */
-+#define IMX8MQ_ARM_PLL_REF_SEL		8
-+#define IMX8MQ_ARM_PLL_REF_DIV		9
-+#define IMX8MQ_ARM_PLL			10
-+#define IMX8MQ_ARM_PLL_BYPASS		11
-+#define IMX8MQ_ARM_PLL_OUT		12
++/* PLL CFGs */
++#define PLL_CFG0		0x0
++#define PLL_CFG1		0x4
++#define PLL_CFG2		0x8
 +
-+/* GPU PLL */
-+#define IMX8MQ_GPU_PLL_REF_SEL		13
-+#define IMX8MQ_GPU_PLL_REF_DIV		14
-+#define IMX8MQ_GPU_PLL			15
-+#define IMX8MQ_GPU_PLL_BYPASS		16
-+#define IMX8MQ_GPU_PLL_OUT		17
++#define PLL_DIVF1_MASK		GENMASK(18, 13)
++#define PLL_DIVF2_MASK		GENMASK(12, 7)
++#define PLL_DIVR1_MASK		GENMASK(27, 25)
++#define PLL_DIVR2_MASK		GENMASK(24, 19)
++#define PLL_REF_MASK		GENMASK(2, 0)
 +
-+/* VPU PLL */
-+#define IMX8MQ_VPU_PLL_REF_SEL		18
-+#define IMX8MQ_VPU_PLL_REF_DIV		19
-+#define IMX8MQ_VPU_PLL			20
-+#define IMX8MQ_VPU_PLL_BYPASS		21
-+#define IMX8MQ_VPU_PLL_OUT		22
++#define PLL_LOCK_MASK		BIT(31)
++#define PLL_PD_MASK		BIT(7)
 +
-+/* AUDIO PLL1 */
-+#define IMX8MQ_AUDIO_PLL1_REF_SEL	23
-+#define IMX8MQ_AUDIO_PLL1_REF_DIV	24
-+#define IMX8MQ_AUDIO_PLL1		25
-+#define IMX8MQ_AUDIO_PLL1_BYPASS	26
-+#define IMX8MQ_AUDIO_PLL1_OUT		27
++#define OSC_25M			25000000
++#define OSC_27M			27000000
 +
-+/* AUDIO PLL2 */
-+#define IMX8MQ_AUDIO_PLL2_REF_SEL	28
-+#define IMX8MQ_AUDIO_PLL2_REF_DIV	29
-+#define IMX8MQ_AUDIO_PLL2		30
-+#define IMX8MQ_AUDIO_PLL2_BYPASS	31
-+#define IMX8MQ_AUDIO_PLL2_OUT		32
++#define PLL_SCCG_LOCK_TIMEOUT	70
 +
-+/* VIDEO PLL1 */
-+#define IMX8MQ_VIDEO_PLL1_REF_SEL	33
-+#define IMX8MQ_VIDEO_PLL1_REF_DIV	34
-+#define IMX8MQ_VIDEO_PLL1		35
-+#define IMX8MQ_VIDEO_PLL1_BYPASS	36
-+#define IMX8MQ_VIDEO_PLL1_OUT		37
++struct clk_sccg_pll {
++	struct clk_hw	hw;
++	void __iomem	*base;
++};
 +
-+/* SYS1 PLL */
-+#define IMX8MQ_SYS1_PLL1_REF_SEL	38
-+#define IMX8MQ_SYS1_PLL1_REF_DIV	39
-+#define IMX8MQ_SYS1_PLL1		40
-+#define IMX8MQ_SYS1_PLL1_OUT		41
-+#define IMX8MQ_SYS1_PLL1_OUT_DIV	42
-+#define IMX8MQ_SYS1_PLL2		43
-+#define IMX8MQ_SYS1_PLL2_DIV		44
-+#define IMX8MQ_SYS1_PLL2_OUT		45
++#define to_clk_sccg_pll(_hw) container_of(_hw, struct clk_sccg_pll, hw)
 +
-+/* SYS2 PLL */
-+#define IMX8MQ_SYS2_PLL1_REF_SEL	46
-+#define IMX8MQ_SYS2_PLL1_REF_DIV	47
-+#define IMX8MQ_SYS2_PLL1		48
-+#define IMX8MQ_SYS2_PLL1_OUT		49
-+#define IMX8MQ_SYS2_PLL1_OUT_DIV	50
-+#define IMX8MQ_SYS2_PLL2		51
-+#define IMX8MQ_SYS2_PLL2_DIV		52
-+#define IMX8MQ_SYS2_PLL2_OUT		53
++static int clk_pll_wait_lock(struct clk_sccg_pll *pll)
++{
++	u32 val;
 +
-+/* SYS3 PLL */
-+#define IMX8MQ_SYS3_PLL1_REF_SEL	54
-+#define IMX8MQ_SYS3_PLL1_REF_DIV	55
-+#define IMX8MQ_SYS3_PLL1		56
-+#define IMX8MQ_SYS3_PLL1_OUT		57
-+#define IMX8MQ_SYS3_PLL1_OUT_DIV	58
-+#define IMX8MQ_SYS3_PLL2		59
-+#define IMX8MQ_SYS3_PLL2_DIV		60
-+#define IMX8MQ_SYS3_PLL2_OUT		61
++	return readl_poll_timeout(pll->base, val, val & PLL_LOCK_MASK, 0,
++					PLL_SCCG_LOCK_TIMEOUT);
++}
 +
-+/* DRAM PLL */
-+#define IMX8MQ_DRAM_PLL1_REF_SEL	62
-+#define IMX8MQ_DRAM_PLL1_REF_DIV	63
-+#define IMX8MQ_DRAM_PLL1		64
-+#define IMX8MQ_DRAM_PLL1_OUT		65
-+#define IMX8MQ_DRAM_PLL1_OUT_DIV	66
-+#define IMX8MQ_DRAM_PLL2		67
-+#define IMX8MQ_DRAM_PLL2_DIV		68
-+#define IMX8MQ_DRAM_PLL2_OUT		69
++static int clk_pll1_is_prepared(struct clk_hw *hw)
++{
++	struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
++	u32 val;
 +
-+/* SYS PLL DIV */
-+#define IMX8MQ_SYS1_PLL_40M		70
-+#define IMX8MQ_SYS1_PLL_80M		71
-+#define IMX8MQ_SYS1_PLL_100M		72
-+#define IMX8MQ_SYS1_PLL_133M		73
-+#define IMX8MQ_SYS1_PLL_160M		74
-+#define IMX8MQ_SYS1_PLL_200M		75
-+#define IMX8MQ_SYS1_PLL_266M		76
-+#define IMX8MQ_SYS1_PLL_400M		77
-+#define IMX8MQ_SYS1_PLL_800M		78
++	val =3D readl_relaxed(pll->base + PLL_CFG0);
++	return (val & PLL_PD_MASK) ? 0 : 1;
++}
 +
-+#define IMX8MQ_SYS2_PLL_50M		79
-+#define IMX8MQ_SYS2_PLL_100M		80
-+#define IMX8MQ_SYS2_PLL_125M		81
-+#define IMX8MQ_SYS2_PLL_166M		82
-+#define IMX8MQ_SYS2_PLL_200M		83
-+#define IMX8MQ_SYS2_PLL_250M		84
-+#define IMX8MQ_SYS2_PLL_333M		85
-+#define IMX8MQ_SYS2_PLL_500M		86
-+#define IMX8MQ_SYS2_PLL_1000M		87
++static unsigned long clk_pll1_recalc_rate(struct clk_hw *hw,
++					 unsigned long parent_rate)
++{
++	struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
++	u32 val, divf;
 +
-+/* CCM ROOT clocks */
-+/* A53 */
-+#define IMX8MQ_CLK_A53_SRC		88
-+#define IMX8MQ_CLK_A53_CG		89
-+#define IMX8MQ_CLK_A53_DIV		90
-+/* M4 */
-+#define IMX8MQ_CLK_M4_SRC		91
-+#define IMX8MQ_CLK_M4_CG		92
-+#define IMX8MQ_CLK_M4_DIV		93
-+/* VPU */
-+#define IMX8MQ_CLK_VPU_SRC		94
-+#define IMX8MQ_CLK_VPU_CG		95
-+#define IMX8MQ_CLK_VPU_DIV		96
-+/* GPU CORE */
-+#define IMX8MQ_CLK_GPU_CORE_SRC		97
-+#define IMX8MQ_CLK_GPU_CORE_CG		98
-+#define IMX8MQ_CLK_GPU_CORE_DIV		99
-+/* GPU SHADER */
-+#define IMX8MQ_CLK_GPU_SHADER_SRC	100
-+#define IMX8MQ_CLK_GPU_SHADER_CG	101
-+#define IMX8MQ_CLK_GPU_SHADER_DIV	102
++	val =3D readl_relaxed(pll->base + PLL_CFG2);
++	divf =3D FIELD_GET(PLL_DIVF1_MASK, val);
 +
-+/* BUS TYPE */
-+/* MAIN AXI */
-+#define IMX8MQ_CLK_MAIN_AXI		103
-+/* ENET AXI */
-+#define IMX8MQ_CLK_ENET_AXI		104
-+/* NAND_USDHC_BUS */
-+#define IMX8MQ_CLK_NAND_USDHC_BUS	105
-+/* VPU BUS */
-+#define IMX8MQ_CLK_VPU_BUS		106
-+/* DISP_AXI */
-+#define IMX8MQ_CLK_DISP_AXI		107
-+/* DISP APB */
-+#define IMX8MQ_CLK_DISP_APB		108
-+/* DISP RTRM */
-+#define IMX8MQ_CLK_DISP_RTRM		109
-+/* USB_BUS */
-+#define IMX8MQ_CLK_USB_BUS		110
-+/* GPU_AXI */
-+#define IMX8MQ_CLK_GPU_AXI		111
-+/* GPU_AHB */
-+#define IMX8MQ_CLK_GPU_AHB		112
-+/* NOC */
-+#define IMX8MQ_CLK_NOC			113
-+/* NOC_APB */
-+#define IMX8MQ_CLK_NOC_APB		115
++	return parent_rate * 2 * (divf + 1);
++}
 +
-+/* AHB */
-+#define IMX8MQ_CLK_AHB			116
-+/* AUDIO AHB */
-+#define IMX8MQ_CLK_AUDIO_AHB		117
++static long clk_pll1_round_rate(struct clk_hw *hw, unsigned long rate,
++			       unsigned long *prate)
++{
++	unsigned long parent_rate =3D *prate;
++	u32 div;
 +
-+/* DRAM_ALT */
-+#define IMX8MQ_CLK_DRAM_ALT		118
-+/* DRAM APB */
-+#define IMX8MQ_CLK_DRAM_APB		119
-+/* VPU_G1 */
-+#define IMX8MQ_CLK_VPU_G1		120
-+/* VPU_G2 */
-+#define IMX8MQ_CLK_VPU_G2		121
-+/* DISP_DTRC */
-+#define IMX8MQ_CLK_DISP_DTRC		122
-+/* DISP_DC8000 */
-+#define IMX8MQ_CLK_DISP_DC8000		123
-+/* PCIE_CTRL */
-+#define IMX8MQ_CLK_PCIE1_CTRL		124
-+/* PCIE_PHY */
-+#define IMX8MQ_CLK_PCIE1_PHY		125
-+/* PCIE_AUX */
-+#define IMX8MQ_CLK_PCIE1_AUX		126
-+/* DC_PIXEL */
-+#define IMX8MQ_CLK_DC_PIXEL		127
-+/* LCDIF_PIXEL */
-+#define IMX8MQ_CLK_LCDIF_PIXEL		128
-+/* SAI1~6 */
-+#define IMX8MQ_CLK_SAI1			129
++	if (!parent_rate)
++		return 0;
 +
-+#define IMX8MQ_CLK_SAI2			130
++	div =3D rate / (parent_rate * 2);
 +
-+#define IMX8MQ_CLK_SAI3			131
++	return parent_rate * div * 2;
++}
 +
-+#define IMX8MQ_CLK_SAI4			132
++static int clk_pll1_set_rate(struct clk_hw *hw, unsigned long rate,
++			    unsigned long parent_rate)
++{
++	struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
++	u32 val;
++	u32 divf;
 +
-+#define IMX8MQ_CLK_SAI5			133
++	if (!parent_rate)
++		return -EINVAL;
 +
-+#define IMX8MQ_CLK_SAI6			134
-+/* SPDIF1 */
-+#define IMX8MQ_CLK_SPDIF1		135
-+/* SPDIF2 */
-+#define IMX8MQ_CLK_SPDIF2		136
-+/* ENET_REF */
-+#define IMX8MQ_CLK_ENET_REF		137
-+/* ENET_TIMER */
-+#define IMX8MQ_CLK_ENET_TIMER		138
-+/* ENET_PHY */
-+#define IMX8MQ_CLK_ENET_PHY_REF		139
-+/* NAND */
-+#define IMX8MQ_CLK_NAND			140
-+/* QSPI */
-+#define IMX8MQ_CLK_QSPI			141
-+/* USDHC1 */
-+#define IMX8MQ_CLK_USDHC1		142
-+/* USDHC2 */
-+#define IMX8MQ_CLK_USDHC2		143
-+/* I2C1 */
-+#define IMX8MQ_CLK_I2C1			144
-+/* I2C2 */
-+#define IMX8MQ_CLK_I2C2			145
-+/* I2C3 */
-+#define IMX8MQ_CLK_I2C3			146
-+/* I2C4 */
-+#define IMX8MQ_CLK_I2C4			147
-+/* UART1 */
-+#define IMX8MQ_CLK_UART1		148
-+/* UART2 */
-+#define IMX8MQ_CLK_UART2		149
-+/* UART3 */
-+#define IMX8MQ_CLK_UART3		150
-+/* UART4 */
-+#define IMX8MQ_CLK_UART4		151
-+/* USB_CORE_REF */
-+#define IMX8MQ_CLK_USB_CORE_REF		152
-+/* USB_PHY_REF */
-+#define IMX8MQ_CLK_USB_PHY_REF		163
-+/* ECSPI1 */
-+#define IMX8MQ_CLK_ECSPI1		164
-+/* ECSPI2 */
-+#define IMX8MQ_CLK_ECSPI2		165
-+/* PWM1 */
-+#define IMX8MQ_CLK_PWM1			166
-+/* PWM2 */
-+#define IMX8MQ_CLK_PWM2			167
-+/* PWM3 */
-+#define IMX8MQ_CLK_PWM3			168
-+/* PWM4 */
-+#define IMX8MQ_CLK_PWM4			169
-+/* GPT1 */
-+#define IMX8MQ_CLK_GPT1			170
-+/* WDOG */
-+#define IMX8MQ_CLK_WDOG			171
-+/* WRCLK */
-+#define IMX8MQ_CLK_WRCLK		172
-+/* DSI_CORE */
-+#define IMX8MQ_CLK_DSI_CORE		173
-+/* DSI_PHY */
-+#define IMX8MQ_CLK_DSI_PHY_REF		174
-+/* DSI_DBI */
-+#define IMX8MQ_CLK_DSI_DBI		175
-+/*DSI_ESC */
-+#define IMX8MQ_CLK_DSI_ESC		176
-+/* CSI1_CORE */
-+#define IMX8MQ_CLK_CSI1_CORE		177
-+/* CSI1_PHY */
-+#define IMX8MQ_CLK_CSI1_PHY_REF		178
-+/* CSI_ESC */
-+#define IMX8MQ_CLK_CSI1_ESC		179
-+/* CSI2_CORE */
-+#define IMX8MQ_CLK_CSI2_CORE		170
-+/* CSI2_PHY */
-+#define IMX8MQ_CLK_CSI2_PHY_REF		181
-+/* CSI2_ESC */
-+#define IMX8MQ_CLK_CSI2_ESC		182
-+/* PCIE2_CTRL */
-+#define IMX8MQ_CLK_PCIE2_CTRL		183
-+/* PCIE2_PHY */
-+#define IMX8MQ_CLK_PCIE2_PHY		184
-+/* PCIE2_AUX */
-+#define IMX8MQ_CLK_PCIE2_AUX		185
-+/* ECSPI3 */
-+#define IMX8MQ_CLK_ECSPI3		186
++	divf =3D rate / (parent_rate * 2);
 +
-+/* CCGR clocks */
-+#define IMX8MQ_CLK_A53_ROOT			187
-+#define IMX8MQ_CLK_DRAM_ROOT			188
-+#define IMX8MQ_CLK_ECSPI1_ROOT			189
-+#define IMX8MQ_CLK_ECSPI2_ROOT			180
-+#define IMX8MQ_CLK_ECSPI3_ROOT			181
-+#define IMX8MQ_CLK_ENET1_ROOT			182
-+#define IMX8MQ_CLK_GPT1_ROOT			193
-+#define IMX8MQ_CLK_I2C1_ROOT			194
-+#define IMX8MQ_CLK_I2C2_ROOT			195
-+#define IMX8MQ_CLK_I2C3_ROOT			196
-+#define IMX8MQ_CLK_I2C4_ROOT			197
-+#define IMX8MQ_CLK_M4_ROOT			198
-+#define IMX8MQ_CLK_PCIE1_ROOT			199
-+#define IMX8MQ_CLK_PCIE2_ROOT			200
-+#define IMX8MQ_CLK_PWM1_ROOT			201
-+#define IMX8MQ_CLK_PWM2_ROOT			202
-+#define IMX8MQ_CLK_PWM3_ROOT			203
-+#define IMX8MQ_CLK_PWM4_ROOT			204
-+#define IMX8MQ_CLK_QSPI_ROOT			205
-+#define IMX8MQ_CLK_SAI1_ROOT			206
-+#define IMX8MQ_CLK_SAI2_ROOT			207
-+#define IMX8MQ_CLK_SAI3_ROOT			208
-+#define IMX8MQ_CLK_SAI4_ROOT			209
-+#define IMX8MQ_CLK_SAI5_ROOT			210
-+#define IMX8MQ_CLK_SAI6_ROOT			212
-+#define IMX8MQ_CLK_UART1_ROOT			213
-+#define IMX8MQ_CLK_UART2_ROOT			214
-+#define IMX8MQ_CLK_UART3_ROOT			215
-+#define IMX8MQ_CLK_UART4_ROOT			216
-+#define IMX8MQ_CLK_USB1_CTRL_ROOT		217
-+#define IMX8MQ_CLK_USB2_CTRL_ROOT		218
-+#define IMX8MQ_CLK_USB1_PHY_ROOT		219
-+#define IMX8MQ_CLK_USB2_PHY_ROOT		220
-+#define IMX8MQ_CLK_USDHC1_ROOT			221
-+#define IMX8MQ_CLK_USDHC2_ROOT			222
-+#define IMX8MQ_CLK_WDOG1_ROOT			223
-+#define IMX8MQ_CLK_WDOG2_ROOT			224
-+#define IMX8MQ_CLK_WDOG3_ROOT			225
-+#define IMX8MQ_CLK_GPU_ROOT			226
-+#define IMX8MQ_CLK_HEVC_ROOT			227
-+#define IMX8MQ_CLK_AVC_ROOT			228
-+#define IMX8MQ_CLK_VP9_ROOT			229
-+#define IMX8MQ_CLK_HEVC_INTER_ROOT		230
-+#define IMX8MQ_CLK_DISP_ROOT			231
-+#define IMX8MQ_CLK_HDMI_ROOT			232
-+#define IMX8MQ_CLK_HDMI_PHY_ROOT		233
-+#define IMX8MQ_CLK_VPU_DEC_ROOT			234
-+#define IMX8MQ_CLK_CSI1_ROOT			235
-+#define IMX8MQ_CLK_CSI2_ROOT			236
-+#define IMX8MQ_CLK_RAWNAND_ROOT			237
-+#define IMX8MQ_CLK_SDMA1_ROOT			238
-+#define IMX8MQ_CLK_SDMA2_ROOT			239
-+#define IMX8MQ_CLK_VPU_G1_ROOT			240
-+#define IMX8MQ_CLK_VPU_G2_ROOT			241
++	val =3D readl_relaxed(pll->base + PLL_CFG2);
++	val &=3D ~PLL_DIVF1_MASK;
++	val |=3D FIELD_PREP(PLL_DIVF1_MASK, divf - 1);
++	writel_relaxed(val, pll->base + PLL_CFG2);
 +
-+/* SCCG PLL GATE */
-+#define IMX8MQ_SYS1_PLL_OUT			232
-+#define IMX8MQ_SYS2_PLL_OUT			243
-+#define IMX8MQ_SYS3_PLL_OUT			244
-+#define IMX8MQ_DRAM_PLL_OUT			245
++	return clk_pll_wait_lock(pll);
++}
 +
-+#define IMX8MQ_GPT_3M_CLK			246
++static int clk_pll1_prepare(struct clk_hw *hw)
++{
++	struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
++	u32 val;
 +
-+#define IMX8MQ_CLK_IPG_ROOT			247
-+#define IMX8MQ_CLK_IPG_AUDIO_ROOT		248
-+#define IMX8MQ_CLK_SAI1_IPG			249
-+#define IMX8MQ_CLK_SAI2_IPG			250
-+#define IMX8MQ_CLK_SAI3_IPG			251
-+#define IMX8MQ_CLK_SAI4_IPG			252
-+#define IMX8MQ_CLK_SAI5_IPG			253
-+#define IMX8MQ_CLK_SAI6_IPG			254
++	val =3D readl_relaxed(pll->base + PLL_CFG0);
++	val &=3D ~PLL_PD_MASK;
++	writel_relaxed(val, pll->base + PLL_CFG0);
 +
-+/* DSI AHB/IPG clocks */
-+/* rxesc clock */
-+#define IMX8MQ_CLK_DSI_AHB			255
-+/* txesc clock */
-+#define IMX8MQ_CLK_DSI_IPG_DIV                  256
++	return clk_pll_wait_lock(pll);
++}
 +
-+#define IMX8MQ_CLK_TMU_ROOT			265
++static void clk_pll1_unprepare(struct clk_hw *hw)
++{
++	struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
++	u32 val;
 +
-+/* Display root clocks */
-+#define IMX8MQ_CLK_DISP_AXI_ROOT		266
-+#define IMX8MQ_CLK_DISP_APB_ROOT		267
-+#define IMX8MQ_CLK_DISP_RTRM_ROOT		268
++	val =3D readl_relaxed(pll->base + PLL_CFG0);
++	val |=3D PLL_PD_MASK;
++	writel_relaxed(val, pll->base + PLL_CFG0);
 +
-+#define IMX8MQ_CLK_OCOTP_ROOT			269
++}
 +
-+#define IMX8MQ_CLK_DRAM_ALT_ROOT		270
-+#define IMX8MQ_CLK_DRAM_CORE			271
++static unsigned long clk_pll2_recalc_rate(struct clk_hw *hw,
++					 unsigned long parent_rate)
++{
++	struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
++	u32 val, ref, divr1, divf1, divr2, divf2;
++	u64 temp64;
 +
-+#define IMX8MQ_CLK_MU_ROOT			272
-+#define IMX8MQ_VIDEO2_PLL_OUT			273
++	val =3D readl_relaxed(pll->base + PLL_CFG0);
++	switch (FIELD_GET(PLL_REF_MASK, val)) {
++	case 0:
++		ref =3D OSC_25M;
++		break;
++	case 1:
++		ref =3D OSC_27M;
++		break;
++	default:
++		ref =3D OSC_25M;
++		break;
++	}
 +
-+#define IMX8MQ_CLK_CLKO2			274
++	val =3D readl_relaxed(pll->base + PLL_CFG2);
++	divr1 =3D FIELD_GET(PLL_DIVR1_MASK, val);
++	divr2 =3D FIELD_GET(PLL_DIVR2_MASK, val);
++	divf1 =3D FIELD_GET(PLL_DIVF1_MASK, val);
++	divf2 =3D FIELD_GET(PLL_DIVF2_MASK, val);
 +
-+#define IMX8MQ_CLK_NAND_USDHC_BUS_RAWNAND_CLK	275
++	temp64 =3D ref * 2;
++	temp64 *=3D (divf1 + 1) * (divf2 + 1);
 +
-+#define IMX8MQ_CLK_END				276
-+#endif /* __DT_BINDINGS_CLOCK_IMX8MQ_H */
++	do_div(temp64, (divr1 + 1) * (divr2 + 1));
++
++	return temp64;
++}
++
++static long clk_pll2_round_rate(struct clk_hw *hw, unsigned long rate,
++			       unsigned long *prate)
++{
++	u32 div;
++	unsigned long parent_rate =3D *prate;
++
++	if (!parent_rate)
++		return 0;
++
++	div =3D rate / parent_rate;
++
++	return parent_rate * div;
++}
++
++static int clk_pll2_set_rate(struct clk_hw *hw, unsigned long rate,
++			    unsigned long parent_rate)
++{
++	u32 val;
++	u32 divf;
++	struct clk_sccg_pll *pll =3D to_clk_sccg_pll(hw);
++
++	if (!parent_rate)
++		return -EINVAL;
++
++	divf =3D rate / parent_rate;
++
++	val =3D readl_relaxed(pll->base + PLL_CFG2);
++	val &=3D ~PLL_DIVF2_MASK;
++	val |=3D FIELD_PREP(PLL_DIVF2_MASK, divf - 1);
++	writel_relaxed(val, pll->base + PLL_CFG2);
++
++	return clk_pll_wait_lock(pll);
++}
++
++static const struct clk_ops clk_sccg_pll1_ops =3D {
++	.is_prepared	=3D clk_pll1_is_prepared,
++	.recalc_rate	=3D clk_pll1_recalc_rate,
++	.round_rate	=3D clk_pll1_round_rate,
++	.set_rate	=3D clk_pll1_set_rate,
++};
++
++static const struct clk_ops clk_sccg_pll2_ops =3D {
++	.prepare	=3D clk_pll1_prepare,
++	.unprepare	=3D clk_pll1_unprepare,
++	.recalc_rate	=3D clk_pll2_recalc_rate,
++	.round_rate	=3D clk_pll2_round_rate,
++	.set_rate	=3D clk_pll2_set_rate,
++};
++
++struct clk *imx_clk_sccg_pll(const char *name,
++				const char *parent_name,
++				void __iomem *base,
++				enum imx_sccg_pll_type pll_type)
++{
++	struct clk_sccg_pll *pll;
++	struct clk_init_data init;
++	struct clk_hw *hw;
++	int ret;
++
++	switch (pll_type) {
++	case SCCG_PLL1:
++		init.ops =3D &clk_sccg_pll1_ops;
++		break;
++	case SCCG_PLL2:
++		init.ops =3D &clk_sccg_pll2_ops;
++		break;
++	default:
++		return ERR_PTR(-EINVAL);
++	}
++
++	pll =3D kzalloc(sizeof(*pll), GFP_KERNEL);
++	if (!pll)
++		return ERR_PTR(-ENOMEM);
++
++	init.name =3D name;
++	init.flags =3D 0;
++	init.parent_names =3D &parent_name;
++	init.num_parents =3D 1;
++
++	pll->base =3D base;
++	pll->hw.init =3D &init;
++
++	hw =3D &pll->hw;
++
++	ret =3D clk_hw_register(NULL, hw);
++	if (ret) {
++		kfree(pll);
++		return ERR_CAST(hw);
++	}
++
++	return hw->clk;
++}
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index 44a1f14..864cd8a 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -21,6 +21,11 @@ enum imx_pllv1_type {
+ 	IMX_PLLV1_IMX35,
+ };
+=20
++enum imx_sccg_pll_type {
++	SCCG_PLL1,
++	SCCG_PLL2,
++};
++
+ struct clk *imx_clk_pllv1(enum imx_pllv1_type type, const char *name,
+ 		const char *parent, void __iomem *base);
+=20
+@@ -30,6 +35,10 @@ struct clk *imx_clk_pllv2(const char *name, const char *=
+parent,
+ struct clk *imx_clk_frac_pll(const char *name, const char *parent_name,
+ 			     void __iomem *base);
+=20
++struct clk *imx_clk_sccg_pll(const char *name, const char *parent_name,
++			     void __iomem *base,
++			     enum imx_sccg_pll_type pll_type);
++
+ enum imx_pllv3_type {
+ 	IMX_PLLV3_GENERIC,
+ 	IMX_PLLV3_SYS,
 --=20
 2.7.4
 
