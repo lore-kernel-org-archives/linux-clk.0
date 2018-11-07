@@ -2,148 +2,118 @@ Return-Path: <SRS0=FPSA=NS=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F622C0044C
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Nov 2018 18:37:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAE18C0044C
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Nov 2018 18:47:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C04720862
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Nov 2018 18:37:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 874172081D
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Nov 2018 18:47:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WVw21bB6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C04720862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="dYm9xICH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 874172081D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727698AbeKHEJJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Nov 2018 23:09:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43982 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726726AbeKHEJJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 7 Nov 2018 23:09:09 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6BEFE20818;
-        Wed,  7 Nov 2018 18:37:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541615852;
-        bh=eu6uLDaEC4qHMh7z0ygUHSxPL7rvOUOusfO7PYlR++Y=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=WVw21bB6lt9iwhAFJAxfI0GcGgf7+Wrss69BrFaiFiyjEom66qUcR4KL2XRLOK8z+
-         Paei2X3S/DNtr4uE2GOwIqtLlXKzgI4/QrWnC4z0TdVXSozHeN8ylLHJAQSzIKjd0L
-         noH1LH4Ug5zl6ml5esdAVlLBqZdrfxUexZaF5UbM=
-Content-Type: text/plain; charset="utf-8"
+        id S1728600AbeKHETQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Nov 2018 23:19:16 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:37052 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727006AbeKHETQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Nov 2018 23:19:16 -0500
+Received: by mail-lf1-f68.google.com with SMTP id p17so12242268lfh.4
+        for <linux-clk@vger.kernel.org>; Wed, 07 Nov 2018 10:47:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lixom-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=fdhesnwODR1IUqoa62aCJQitJnka6y/M2DWmc07iOSo=;
+        b=dYm9xICHkHRE5lBCEYV2BPKQ56Y2eKahzBo+6ZIwkVzlt1yB3VUs3+brOiFmTk6dIe
+         IL18AFnwXmewlwwqtu0wD3Im1jp4o2NBEPnhw2pYLNZQbnhgd+hN5UdzJNfoept1rKcg
+         zQ0sdLJUcQfMeVKRyj7FJFcT3WexBQdUgiVtVnSr0scn41hljQropzo6w6+bgwomTAh0
+         FvoW8gC+8xTCnEbFmJfLKCiqAKKJpP0AzwyzHjsDcoO+jALG+2IMlp2Fr3wRuhnfKJ+D
+         HF4zt0IA9/qjf/tOkQaIYl0A8FPIAGwkeMvizjP9NTPoxI8uh6N+V9UDoBFQ2B0ss1HR
+         u2Mw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=fdhesnwODR1IUqoa62aCJQitJnka6y/M2DWmc07iOSo=;
+        b=G6ZBSNGldv7MDexFU/nJ+OXxo33569AzziJqOJx6ZcLA2n8hKrfIOtzSw22yMfRrYt
+         ZQ8jtRgcDdK0smFd+o2EVChI7HDojiL8Ej4RLvhtGe6v7WgMz49YU/EsXSjEjW3AYR9n
+         w1bXkV3Vj4xBE7LwXy28pNhVRAyE9BGTTNHKhGn8y6TtlxOFCgHkmreYogwhr9DTx1LM
+         hmzrr9GH002CUkUuL71eEai/7WzK9olWNSprpOhgwt5Isd7VwJTNQ/yZfm6ZFeucnz5Q
+         xK2FVJL89bf804NW1NByL18o2eS0rxwJ2XLFuuZfc2ASCeTSQIt7WnTrXpPxCtLvAZT4
+         k1Bw==
+X-Gm-Message-State: AGRZ1gLpZQ48NRfH0spi2iurxfgUa1wZCzG9D7tgNSoVzk9qmdNR71Ad
+        hFicVRCCR4eL36nR+OhIVv3eJvDN8iBfYZy8zNv5kA==
+X-Google-Smtp-Source: AJdET5dgEsX+VCUe3E+btA7Zs0MRxvxhzwAPzLR3Sfs6cagOwHfG4mfvPJBb5Rn3w+vGu9/fFrA/0irWawPe158p2qo=
+X-Received: by 2002:a19:1901:: with SMTP id 1mr729485lfz.99.1541616456574;
+ Wed, 07 Nov 2018 10:47:36 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Rob Herring <robh+dt@kernel.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <CAL_JsqLvKWcJUYDyWOg3rMeEWv7JV4zw7-YkOUWiL5rfXgVRvQ@mail.gmail.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
+References: <CAOesGMgVPsK9YsV2nGoBptWwtHYv=3yMytLx2_tF_ujS5c5p3Q@mail.gmail.com>
+ <20181107171723.GI9919@thunk.org> <CAOesGMheCcvDQCd+7fyh4yOk4BYDfm2QRqsdawqA_fg8s9YYEQ@mail.gmail.com>
+In-Reply-To: <CAOesGMheCcvDQCd+7fyh4yOk4BYDfm2QRqsdawqA_fg8s9YYEQ@mail.gmail.com>
+From:   Olof Johansson <olof@lixom.net>
+Date:   Wed, 7 Nov 2018 10:47:24 -0800
+Message-ID: <CAOesGMg+jW7SN2+E_FYbwi8GdNhc8KrEsahB-Nn+AseO6kLGXA@mail.gmail.com>
+Subject: Re: [TECH TOPIC] SoC maintainer group
+To:     Theodore Tso <tytso@mit.edu>,
+        ksummit <ksummit-discuss@lists.linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-riscv@lists.infradead.org,
         linux-clk <linux-clk@vger.kernel.org>,
-        linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        Frank Rowand <frowand.list@gmail.com>
-References: <20181106183609.207702-1-sboyd@kernel.org>
- <20181106183609.207702-2-sboyd@kernel.org>
- <CAL_JsqLvKWcJUYDyWOg3rMeEWv7JV4zw7-YkOUWiL5rfXgVRvQ@mail.gmail.com>
-Message-ID: <154161585170.88331.1822872519370217248@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH 1/4] of/device: Add a way to probe drivers by match data
-Date:   Wed, 07 Nov 2018 10:37:31 -0800
+        linux-gpio@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Russell King <rmk@armlinux.org.uk>,
+        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Rob Herring (2018-11-06 12:44:52)
-> On Tue, Nov 6, 2018 at 12:36 PM Stephen Boyd <sboyd@kernel.org> wrote:
+On Wed, Nov 7, 2018 at 9:35 AM Olof Johansson <olof@lixom.net> wrote:
+>
+> On Wed, Nov 7, 2018 at 9:17 AM Theodore Y. Ts'o <tytso@mit.edu> wrote:
 > >
-> > We have a handful of clk drivers that have a collection of slightly
-> > variant device support keyed off of the compatible string. In each of
-> > these drivers, we demux the variant and then call the "real" probe
-> > function based on whatever is stored in the match data for that
-> > compatible string. Let's generalize this function so that it can be
-> > re-used as the platform_driver probe function directly.
-> =
+> > On Tue, Nov 06, 2018 at 02:16:27PM -0800, Olof Johansson wrote:
+> > >
+> > > Olof Johansson (arm-soc)
+> > > Arnd Bergmann (arm-soc)
+> > > Kevin Hilman (arm-soc)
+> > > Mike Turquette (clk)
+> > > Stephen Boyd (clk)
+> > > Linus Walleij (pinctrl + more)
+> > > Mike Brown (gpio/regmap + more)
+> >
+> > Could the poeple listed on this list please list potential schedule conflicts?
+> >
+> > I'm going to assume we should avoid: Andriod uConf, RISC-V uConf,
+> > Device Tree uConf.  What are other potential conflicts.  I'm going to
+> > guess this might be "interesting" to schedule.  :-)
+>
+> Yeah, apologies for adding a bunch of cross-coordination this late too.
+>
+> It's likely going to be conflict-ridden no matter what we do. RISC-V
+> and DT are the main conflicts, Android probably has a bit less.
+>
+> Tuesday afternoon looks least conflict-y when I squint at the
+> schedule, or Thursday afternoon (but ideally not overlapping with
+> Daniel's DRM/gitlab session).
 
-> This looks really hacky to me. It sounds kind of general, but really
-> only works if we have match data that's a single function and we lose
-> any type checking on the function.
+Ted,
 
-I don't know what this means. Are you saying that we lose the ability to
-type check the function pointer stored in the data member? I don't have
-a good answer for this besides it's not any worse than the status quo
-for the mediatek drivers.
-
-One alternative is to add a DT only array to the platform_driver struct
-that has the platform driver probe function type and matches the index
-in the of_device_id table. Then we can add some logic into
-platform_drv_probe() to look for this table being set and find the probe
-function to call. Then we still have match data for anything that wants
-that (maybe it could be passed in to the probe function) at the cost of
-having another array. I don't have a use-case for this right now so I'm
-not sure this is a great idea.
-
-  struct of_platform_driver_probe_func {
-  	int (*probe)(struct platform_device *pdev);
-  };
-
-  struct of_platform_driver_probe_func mtk_probes[] =3D {
-  	mtk_probe1,
-	mtk_probe2,
-	mtk_probe3,
-  };
-
-  struct platform_driver mtk_driver =3D {
-  	.of_probes =3D &mtk_probes;
-  	.driver =3D {
-		.name =3D "mtk-foo";
-		.of_match_table =3D mtk_match_table,
-	},
-  };
-
-> What about things other than
-> platform devices?
-> =
+Can we have 3pm-3:30pm on Thursday? It seems relatively low on
+embedded-related conflicts and at 3  people would have time to migrate
+from Daniel Vetter's gitlab talk if needed.
 
 
-I suppose those would need similar functions that take the right struct
-type and match the driver probe function signature. To make the above
-more generic we could try to figure out a way to put the 'of_probes'
-array inside struct device_driver. That would require dropping
-platform_device specifically from the probe functions and having those
-take a plain 'struct device' that those probe functions turn into the
-appropriate structure with to_platform_device() or to_i2c_client()?
-
-So the example would become
-
-  struct of_driver_probe_func {
-  	int (*probe)(struct device *dev);
-  };
-
-  struct of_driver_probe_func mtk_probes[] =3D {
-  	mtk_probe1,
-	mtk_probe2,
-	mtk_probe3,
-  };
-
-  struct platform_driver mtk_driver =3D {
-  	.driver =3D {
-		.name =3D "mtk-foo";
-		.of_match_table =3D mtk_match_table,
-		.of_probes =3D &mtk_probes;
-	},
-  };
-
-And the probe functions might need to container_of() the device pointer
-to get the struct they know they need. The probe function could also be
-added to of_device_id and then we would have to look and see if that
-pointer is populated when the device is matched in generic device code.
-
+-Olof
