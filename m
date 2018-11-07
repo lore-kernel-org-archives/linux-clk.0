@@ -2,110 +2,226 @@ Return-Path: <SRS0=FPSA=NS=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1782EC32789
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Nov 2018 03:00:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEAE6C0044C
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Nov 2018 09:11:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C4F42085B
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Nov 2018 03:00:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E2552086C
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Nov 2018 09:11:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="AwsmEJv6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C4F42085B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ha76+mpE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E2552086C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389006AbeKGM3Q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Nov 2018 07:29:16 -0500
-Received: from mail-he1eur01on0064.outbound.protection.outlook.com ([104.47.0.64]:11844
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388308AbeKGM3Q (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 7 Nov 2018 07:29:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fOS7mtIF/kjPyl03Ueti1QaiO+CjjuRXgiLHTHpSj0U=;
- b=AwsmEJv6MyOXZKh0i8ZeSv68BChIVd/DO+Jl6LOjTrzYYLq7wNdBDR0trcQYfqhNPq/8oBsgoLpyHJX2IeOQJgX67nut5Jf3KAmVeRj67z9BApsJ8wq9X7l7NDRxw4dnD9KMWUQLY0DZApt+rL0Uwjbk4RyylhYqMjminjWQqSQ=
-Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.126.21) by
- AM0PR04MB4961.eurprd04.prod.outlook.com (20.176.215.222) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1294.26; Wed, 7 Nov 2018 03:00:48 +0000
-Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
- ([fe80::797a:f972:9281:6d10]) by AM0PR04MB4211.eurprd04.prod.outlook.com
- ([fe80::797a:f972:9281:6d10%2]) with mapi id 15.20.1294.034; Wed, 7 Nov 2018
- 03:00:48 +0000
-From:   "A.s. Dong" <aisheng.dong@nxp.com>
-To:     Leonard Crestez <leonard.crestez@nxp.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>
-CC:     dl-linux-imx <linux-imx@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        Jacky Bai <ping.bai@nxp.com>, Abel Vesa <abel.vesa@nxp.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Anson Huang <anson.huang@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: RE: [PATCH RESEND V4 0/9] clk: add imx7ulp clk support
-Thread-Topic: [PATCH RESEND V4 0/9] clk: add imx7ulp clk support
-Thread-Index: AQHUaT95oCO6Jr50e0qyeeRGaZQa8qUprLpggBlLwPCAAAFpgIAAv5yw
-Date:   Wed, 7 Nov 2018 03:00:47 +0000
-Message-ID: <AM0PR04MB42118A6086D98F84542E954F80C40@AM0PR04MB4211.eurprd04.prod.outlook.com>
-References: <1540127173-21346-1-git-send-email-aisheng.dong@nxp.com>
-         <AM0PR04MB4211576EF2FE906A6B0C3F1680FB0@AM0PR04MB4211.eurprd04.prod.outlook.com>
-         <AM0PR04MB4211280B09B72F637FC5650280CB0@AM0PR04MB4211.eurprd04.prod.outlook.com>
- <7e58f0dcf83a0bd8139e58e27bfa137fc186b4bf.camel@nxp.com>
-In-Reply-To: <7e58f0dcf83a0bd8139e58e27bfa137fc186b4bf.camel@nxp.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=aisheng.dong@nxp.com; 
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM0PR04MB4961;6:lQa0C24+pDaa/Z5sKrRZyPMGgM4NDJwFGiIuyLj0LWQqZjphuk8ZRIw1FKROFRchfJI6EHT0cHw0BCRpPFK5wAMJKAZFrIEQYwDvCjWPI+IFN+aqPlrk1KWHvW5mNZqBzb1FKmW7GPu0694+0ZFF14cjypcuTk3js2PeCCpNQrxVUlFmHrGFZ4VubEzuKXVm7BLc2zJfDCoWqseZ1eZ/wVW5RYKxvnZgCRgvJfKjSIaidv5ymntjiVuqIL+kFa98tfWRJGnkjGSZBhpjUZ8lqu9nB79af565J5KrQeOlbNSIkPiXR15mKv8GQGsOki14tBkoW8FoGB0eNbj+20wxMuIz2DZQqIpp1Ct6MFDbBEmVWPdpAzrxtq/WNTkne8LbNsyQ43fEHTDj2v8b2nI8YrQ6D14s60a9T7YgxAVLSGrENOmRRd3AW+g1rgso9IoTnbFaXEllxHuNBiyg6tcpJg==;5:pLhXLmG8+YeOsaPKkPTdj1k6Ppzz+JG0/gxltn6lv2hddcGwEYp2OFVIvuULoq3D7aPGZim57WB+Ney1I2etIOtX2gdNLFNc90/zjAq9gtKBvp41m1xGlUgCUhJYEgesfv+vnHtOGgOD5//GH7Y219TYoHYIaErZ8jBRMAuj+RY=;7:h7ok5iCS+fVdU19GNGdDIPZtkPtduDDsSz2X89BEsf31Qm2XRgDBxxjJkmvwdHBpfDO/gcMIICkcypWwTUUFwQzNJ85tL8LVFltbRxth+wwKp/CWh68WuZDezZUqeDDQXLWKtRyWHzdqUdS4Y9SR3w==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: de74b03e-97f0-4bb6-d90a-08d6445d37f3
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB4961;
-x-ms-traffictypediagnostic: AM0PR04MB4961:
-x-microsoft-antispam-prvs: <AM0PR04MB49613792A7A67D6C27C2FF5580C40@AM0PR04MB4961.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231382)(944501410)(52105095)(3002001)(10201501046)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:AM0PR04MB4961;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB4961;
-x-forefront-prvs: 08497C3D99
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(366004)(376002)(136003)(39860400002)(396003)(13464003)(189003)(199004)(106356001)(81166006)(81156014)(2900100001)(2501003)(86362001)(316002)(105586002)(33656002)(5660300001)(446003)(11346002)(71200400001)(25786009)(217873002)(186003)(6436002)(110136005)(71190400001)(6246003)(478600001)(8936002)(8676002)(99286004)(74316002)(97736004)(14444005)(6506007)(256004)(6116002)(229853002)(54906003)(93886005)(305945005)(3846002)(68736007)(66066001)(26005)(9686003)(7736002)(102836004)(486006)(14454004)(4326008)(476003)(2906002)(76176011)(55016002)(53936002)(7696005);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4961;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: RwAvJySEXgE7RrYTwDUe4WPZC/16NpQZ4yMFIqycZRW4tszpTu+FDm0Kjsw7CsEEKLHAvpn5lVvUYF8jxXgrc5ItwlUWVdpZbR1fG7L363Bv+jzRrqu2ua4Tig+AoM2Uf50Upo+7FtoNSUedfgjflbV9cZIEFb4uJxxnmHusbcFzsrfPKvDyQho+DyU85X+AHLp55fFha1GZVmfFEXK9tDbu5tjJcRgzMXGZNIUURSlpMy0Kj45YCzVDO6MLyuZAeIXa9kzIXYGsbo88OJ2JEjH95UKSVEiKjYef/0aYV4stymSfNedVo6bvi8HYE+p0f43kumExoR+jzAIeuBjag8SMvaXj5qyMjtdmHD57g4g=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1726161AbeKGSlL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Nov 2018 13:41:11 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:39014 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726097AbeKGSlL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Nov 2018 13:41:11 -0500
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20181107091142euoutp01a36a0ceab2dd8fa06bd4fba1561dab39~kzJKnoP1x1642016420euoutp01t
+        for <linux-clk@vger.kernel.org>; Wed,  7 Nov 2018 09:11:42 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20181107091142euoutp01a36a0ceab2dd8fa06bd4fba1561dab39~kzJKnoP1x1642016420euoutp01t
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1541581902;
+        bh=xhQArIP8M90BiAOzhDQO9q3VCr4IVh2ihHjsdswmKik=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=ha76+mpEugIVDm+PkQD5Ps93d8+lKWaozscdBzjQoQsOuFfxo84hY+bJGGhN3+2bt
+         /VjLd5IZDbdxqJa98ioyTPwbRwu7IIREe7fy0MA3VRON0sM8GtFPrb+VIlDG8OW25R
+         1CCE397Y6Y5+Tn5JP05oiA3kRbk5Nv5T5qYAPaSI=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20181107091141eucas1p17bd43d5d4302d09818122e72e5a080a1~kzJJrxx0_1434314343eucas1p1H;
+        Wed,  7 Nov 2018 09:11:41 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 79.04.04806.D4CA2EB5; Wed,  7
+        Nov 2018 09:11:41 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20181107091140eucas1p10c3728aab8af3ce7b8c739a057dcc59c~kzJId7IzP1434314343eucas1p1E;
+        Wed,  7 Nov 2018 09:11:40 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20181107091140eusmtrp2e72ceea270f09bbb3a8293fb102b918a~kzJIRNuyQ1205312053eusmtrp2r;
+        Wed,  7 Nov 2018 09:11:40 +0000 (GMT)
+X-AuditID: cbfec7f5-367ff700000012c6-97-5be2ac4d9c3e
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 54.5E.04128.C4CA2EB5; Wed,  7
+        Nov 2018 09:11:40 +0000 (GMT)
+Received: from [106.120.43.17] (unknown [106.120.43.17]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20181107091139eusmtip14453795dfd01f9c74430736af8e9703f~kzJHfd0f91038510385eusmtip1V;
+        Wed,  7 Nov 2018 09:11:39 +0000 (GMT)
+Subject: Re: [PATCH v3 17/25] dt-bindings: panel: Add Bananapi S070WV20-CT16
+ ICN6211 MIPI-DSI to RGB bridge
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi@googlegroups.com
+From:   Andrzej Hajda <a.hajda@samsung.com>
+Message-ID: <25c24350-4acd-68b8-ef5d-75a60094f0b6@samsung.com>
+Date:   Wed, 7 Nov 2018 10:11:38 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.2.1
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: de74b03e-97f0-4bb6-d90a-08d6445d37f3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Nov 2018 03:00:48.0208
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4961
+In-Reply-To: <CAMty3ZAWkX8YSRzFs_GS2O4+=pf68e4EuSMym+_XpCe3_4-2yw@mail.gmail.com>
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0iTcRTG+7+3vYrTt2ntoF3XoBupkeAfkm4UvB+K6kuF+1ArXyx0Gpua
+        KZgllqWCJhUOc5VZmYtqmTXTLmt5mWgzy7xQ2rJyhYnMWVZqbq+R337nPOfhOQcOS8rOM8Hs
+        oYQkQZugjlcwvlR1/Vjrqm1GhyrcNj4f57c2ETi7/jPCQ9fyEDZYW2n82j3EYNfl9wQeMRUw
+        +M0PJ4lNHztoPJz3nsbtNSUM/u2ol+Dyt20E7nM+Qdh2PJvCbbYtOLvOKsETHXcpPGZ5SWDn
+        cCO1IYi/NdxL82VjEwRvLDUifqgzW8KXGtP5O45Kmjfr30n42sImhjfdPM3wD0b7aL43t4Hg
+        7109xj/NL6J4l2nBDv9o36gYIf5QiqANW7fP96C5bd7h1oWpT5wGSSbKCj6DfFjgIqD9+w3m
+        DPJlZdwNBF8KyymxGEHgNnQhsXAheDFgpf9ZBj6ck4jCdQQXMqumi0EE4+bn3qlATgMVnWMS
+        DwdxK2G0+Js3hORyGai4e4nwCAy3HMbvdTEelnLrIPO302ugOCW8sDYhD8/h9kBOb+X0zGxo
+        Ku6nPOzD7YTSjoveMJJbCA8GS0iR5dDdbyA8YcDZWZjscDHi3pvhc02tRORA+NpQNc3zYNJs
+        IEQ+BieKX5OiOQdBY9n1afNaeN7QNpXGTiUsh9s1YWJ7I1T01HnbwPlD5+BscQd/OFt9gRTb
+        Usg5KROnF0Nvy31SZDmU291MAVLoZ1ymn3GNfsY1+v+5lxB1E8mFZJ0mVtCtSRCOhOrUGl1y
+        QmzogUSNCU19a/NEg/shevxnvwVxLFL4Se33P6hktDpFd1RjQcCSiiBpfqVDJZPGqI+mCdrE
+        vdrkeEFnQSEspZBL02f1qWRcrDpJiBOEw4L2n0qwPsGZqIRWNn9d+kt56kDuklDqaWKSn41v
+        8eeWRUpV0KnIeHM1NaObuhP3MSDCJ/xPS8+S2xk/Q/KWbVUGFHWHBTZGxay/OGD/pnenFeYH
+        P9uUvlKo2nwia9GGCLMjLbpLbot+NLenLjXO70pkaGQ/q939alfz7pDtE7UOu3TS+Kl6S7tS
+        QekOqlevILU69V/bj25pqQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrJKsWRmVeSWpSXmKPExsVy+t/xu7o+ax5FG/ReZbPoPXeSyaL12DNG
+        i/fLehgt5h85x2px5et7NovPC+8xWXzZNIHN4ur3l8wWmx5fY7X42HOP1eLyrjlsFr8fHWO3
+        WHr9IpPFg5f7GS1ONbayWFw85WrRuvcIu8W/axtZLH4eOs9k8fLjCRYHEY+1H++zeiz++Y/J
+        Y828NYwe72+0snvMW1PtseHRalaPnbPusnvsmXiSzWPTqk42j+3fHrB63O8+zuSxeUm9x4He
+        ySwenzfJBfBF6dkU5ZeWpCpk5BeX2CpFG1oY6RlaWugZmVjqGRqbx1oZmSrp29mkpOZklqUW
+        6dsl6GXsvChTcE6+Yv/L+ewNjM1SXYycHBICJhIvHk5l72Lk4hASWMoo8b9pByNEQlxi9/y3
+        zBC2sMSfa11sEEWvGSWebXsBlhAWyJVYeeMnO4gtIqAt8W3ma7AiZoFeNomNC3qZIToOMUs8
+        PHuSFaSKTUBT4u/mm2wgNq+AnUTD75dg3SwCKhJHj5wEWy0qECFx9uU6RogaQYmTM5+wgNic
+        AoES867NBZvDLKAu8WfeJWYIW15i+9s5ULa4xK0n85kmMArNQtI+C0nLLCQts5C0LGBkWcUo
+        klpanJueW2ykV5yYW1yal66XnJ+7iRGYTLYd+7kFGDTvgg8xCnAwKvHwaux4GC3EmlhWXJl7
+        iFGCg1lJhPd3wqNoId6UxMqq1KL8+KLSnNTiQ4ymQM9NZJYSTc4HJrq8knhDU0NzC0tDc2Nz
+        YzMLJXHe8waVUUIC6YklqdmpqQWpRTB9TBycUg2Mobtvnt0U8NxE+k+fodYdcZ5s68r9p142
+        mTDP3O4pPW/B/WPpx3fOvX9kc5aY7xMRYa2zQfW2+jvyN/tenPbgUaFoje5cz7Dts07sep88
+        dapXsNXj8IlVkaeTOvexFuQ4Mkwv2fjqgj9r2eODD6TexF4O3d6oarhfYc7aU1Kr/l1m/HWf
+        i8vnmxJLcUaioRZzUXEiAGGhe0I8AwAA
+X-CMS-MailID: 20181107091140eucas1p10c3728aab8af3ce7b8c739a057dcc59c
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20181029111305epcas5p2ee0ca644470de4e036762e000afbb71b
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20181029111305epcas5p2ee0ca644470de4e036762e000afbb71b
+References: <20181026144344.27778-1-jagan@amarulasolutions.com>
+        <CGME20181029111305epcas5p2ee0ca644470de4e036762e000afbb71b@epcas5p2.samsung.com>
+        <20181026144344.27778-18-jagan@amarulasolutions.com>
+        <3c4c8a08-8c1e-1ac6-2b53-81389d69c97b@samsung.com>
+        <CAGb2v66ENhmNXPz4PfdRJjNUNdpDNZYX2a3SH8AD6SMe9g2zLA@mail.gmail.com>
+        <bfe28e8d-3786-d35d-a589-abed9ee8e7d5@samsung.com>
+        <CAMty3ZAWkX8YSRzFs_GS2O4+=pf68e4EuSMym+_XpCe3_4-2yw@mail.gmail.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBMZW9uYXJkIENyZXN0ZXoNCj4g
-U2VudDogVHVlc2RheSwgTm92ZW1iZXIgNiwgMjAxOCAxMTozNCBQTQ0KWy4uLl0NCj4gDQo+IE9u
-IFR1ZSwgMjAxOC0xMS0wNiBhdCAxNTozMCArMDAwMCwgQS5zLiBEb25nIHdyb3RlOg0KPiA+IEdl
-bnRseSBQaW5nLi4uDQo+IA0KPiA+IGRyaXZlcnMvY2xrL2lteC9jbGstY29tcG9zaXRlLmMgICAg
-ICAgICAgICAgICAgICAgIHwgIDg1ICsrKysrKysrKw0KPiANCj4gRHVyaW5nIHJldmlldyBmb3Ig
-OG0gY2xvY2tzIGEgc2VwYXJhdGUgYnV0IGRpZmZlcmVudCBjb21wb3NpdGUgY2xrIHdhcyBhZGRl
-ZC4NCj4gSW4gb3JkZXIgdG8gYXZvaWQgY29uZnVzaW9uIHRoYXQgd2FzIG5hbWVkICJjbGstY29t
-cG9zaXRlLThtLmMiLCBpdCB3b3VsZA0KPiBtYWtlIHNlbnNlIHRvIG1vdmUgdGhlIDd1bHAgY29k
-ZSB0byBjbGstY29tcG9zaXRlLTd1bHAuYy4NCj4gDQoNCkkgZ3Vlc3Mgd2UgY2FuIGRvIGl0LCB0
-aGFua3MuDQoNClJlZ2FyZHMNCkRvbmcgQWlzaGVuZw0KDQo+IC0tDQo+IFJlZ2FyZHMsDQo+IExl
-b25hcmQNCg==
+On 06.11.2018 19:08, Jagan Teki wrote:
+> On Wed, Oct 31, 2018 at 2:45 PM Andrzej Hajda <a.hajda@samsung.com> wrote:
+>> On 31.10.2018 09:58, Chen-Yu Tsai wrote:
+>>> On Wed, Oct 31, 2018 at 4:53 PM Andrzej Hajda <a.hajda@samsung.com> wrote:
+>>>> On 26.10.2018 16:43, Jagan Teki wrote:
+>>>>> Bananapi S070WV20-CT16 ICN6211 is 800x480, 4-lane MIPI-DSI to RGB
+>>>>> bridge panel, which is available on same PCB with 24-bit RGB interface.
+>>>>>
+>>>>> So, this patch adds DSI specific binding details on existing
+>>>>> dt-bindings file.
+>>>>>
+>>>>> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+>>>>> ---
+>>>>> Changes for v3:
+>>>>> - Use existing binding doc and update dsi details
+>>>>> Changes for v2:
+>>>>> - none
+>>>>>
+>>>>>  .../display/panel/bananapi,s070wv20-ct16.txt  | 31 +++++++++++++++++--
+>>>>>  1 file changed, 29 insertions(+), 2 deletions(-)
+>>>>>
+>>>>> diff --git a/Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16.txt b/Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16.txt
+>>>>> index 35bc0c839f49..b7855dc7c66f 100644
+>>>>> --- a/Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16.txt
+>>>>> +++ b/Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16.txt
+>>>>> @@ -1,12 +1,39 @@
+>>>>>  Banana Pi 7" (S070WV20-CT16) TFT LCD Panel
+>>>>>
+>>>>> +S070WV20-CT16 is 7" 800x480 panel connected through a 24-bit RGB interface.
+>>>>> +
+>>>>> +Depending on the variant, the PCB attached to the panel module either
+>>>>> +supports DSI, or DSI + 24-bit RGB. DSI is converted to 24-bit RGB via
+>>>>> +an onboard ICN6211 MIPI DSI - RGB bridge chip, then fed to the panel
+>>>>> +itself
+>>>> As I understand this is display board, which contains 'pure' RGB panel
+>>>> S070WV20-CT16 and optionally ICN6211 DSI->RGB bridge.
+>>>> These are separate devices, just connected by vendor to simplify its
+>>>> assembly. Why don't you create then bridge driver for ICN6211 and RGB
+>>>> panel driver for S070WV20-CT16 - it looks more generic.
+>>>> Then you can describe both in dts and voila.
+>>>> Creating drivers for every combo of devices (panel + bridge), just
+>>>> because some vendor sells them together seems incorrect - we have
+>>>> devicetree for it.
+>>> Rob suggested this, and also the opposite: using the same
+>>> "bananapi,s070wv20-ct16"
+>>> compatible string for both types of connections, and have the driver deal with
+>>> detecting the bus type.
+>>>
+>>> The thing about the bridge chip is that there's no available datasheet that
+>>> describes all the parts of the init sequence, in fact none at all. I managed
+>>> to work out some bits, but the others remain a mystery and must be hard-coded
+>>> to match the panel. That would work against having a generic bridge driver.
+>>
+>> But it is common for many chips - 1st version of the driver is developed
+>> on one platform and it supports only one configuration, if next platform
+>> with the same cheap appears the driver is augmented if necessary.
+> At-least few of the commands from panel initialization code, the
+> respective opcode data values are based on panel timings and even
+> clock value is different in DSI. I think it look hard to try bridge
+> driver for these restrictions, do you have any suggestions?
+
+
+Where do you see an issue? Since panel is RGB it should have no
+initialization sequence (beside regulator/gpio power on/off), so the
+only thing to do is to figure out which regulators/gpios belongs to
+which component - with publicly available specs it should be doable.
+
+The whole initialization sequence is for the bridge, so you put it into
+bridge driver, for starters it can be hardcoded.
+
+Then you can:
+
+1. Try to find other users of this ICN6211 chip and compare
+initialization sequences to guess purpose of registers.
+
+2. Try to get specs of the chip (ask vendor, distributor, grep Internet).
+
+3. Do nothing - if there will be other users of the bridge they will do
+this work.
+
+
+Regards
+
+Andrzej
+
+
