@@ -2,182 +2,119 @@ Return-Path: <SRS0=FPSA=NS=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-4.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1D92C46464
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Nov 2018 20:55:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5DDAC0044C
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Nov 2018 23:26:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F2C12086C
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Nov 2018 20:55:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C1CB20883
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Nov 2018 23:26:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="Tr2M3P3y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F2C12086C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iwnUZgM5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C1CB20883
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727343AbeKHG1Q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 8 Nov 2018 01:27:16 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:38741 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727148AbeKHG1Q (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Nov 2018 01:27:16 -0500
-Received: by mail-lj1-f195.google.com with SMTP id q186-v6so16020042ljb.5
-        for <linux-clk@vger.kernel.org>; Wed, 07 Nov 2018 12:55:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=XmMF8/b5JoP7a9YUokcZ6tcxHwbPC2B/uQ+xFUJdiUI=;
-        b=Tr2M3P3yyrNg9lWzA/wEYbzXba584fuumbNUdCjaYuNKg9va9owy5M97gZQehbSpXO
-         FtRPk7wlQm7/LoBb0UgjCOMdb1Ay5ksy8EhbAgjvbodc4tBjpH+iErrRyhpeDgd5T2rs
-         zOByjXHkzKw5Bb2eaoaR7q+rvkJ+LNivAVl5wiAGr8CyRZOFeXx96zRCectOUyS1NENo
-         nKqVcrcPQy4sxeL57vPh8emkb8fE6HRAV6NoMinur/DIZJvxEnyRk+s7bjKIQXq4bY4D
-         u62ZHdaZAjfRfiZRreqkAzuHHWJrdjldeacnZvqK5iBk89gEMMa/fiOJXCvglauQBAh4
-         SUlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=XmMF8/b5JoP7a9YUokcZ6tcxHwbPC2B/uQ+xFUJdiUI=;
-        b=dRJ9BrjwExNjYgoHQ94kpb9v8elka5rv9VEIw0UyK1NLlnIociKYIMkKvxMWRnOOWd
-         VtpZbGnYz5fe6R55/N3ByRFH2Ya7s+9X72Vjjf4FYKOmZLtPM5u7BRmmQQQlVUlN7Rt1
-         DCv7NSlAOO06X4cf3aL6C5y41vbeTYi428ByMFjeB2CDBfknklS0BJ9JwjcwNYa1UVkF
-         uUtI3z8hhtKiMN6jhn90VutNX81ul1eY4WQZ3pUQ8hKfnuyHV3H5AjscwFAjpay/DvP6
-         HRT5/om09rOJUJu2q9tGpNC/bCr/v7/c87lAtbI9tG5u30lMhN1GyC8CIzRvFJY9TsOr
-         GcBw==
-X-Gm-Message-State: AGRZ1gKybp79bUmVp8J0jmALkLv34hfW9fbzi7QvPEvtfcFuhckHkrui
-        dXjfrlMcaQEvgZA9i5tvSwWm2wK/+1QjFRUJxlrA0w==
-X-Google-Smtp-Source: AJdET5dlmzlY8VPOxCAxRp9VVaKqHPgH4vzH5TtRCHLgehXc+zqvXXMvuYjZz2CS8f+2aPDwXg59kxiUREjXmtQd9Ds=
-X-Received: by 2002:a2e:90ca:: with SMTP id o10-v6mr1099736ljg.134.1541624106951;
- Wed, 07 Nov 2018 12:55:06 -0800 (PST)
+        id S1727068AbeKHI7L (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 8 Nov 2018 03:59:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48240 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726982AbeKHI7L (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 8 Nov 2018 03:59:11 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 482A82086C;
+        Wed,  7 Nov 2018 23:26:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541633191;
+        bh=U1g63ixgNDwd1nxsTsKnzcyh7pqfemURLukjBaXsymA=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=iwnUZgM5jVhfEqFAEtUEuwTjOxpN/RZziE0hmkizND/z5qah/PkJqk8wlkMhPdBZm
+         ObgpW8tDiGl60Cni0KzLxVCsRMFVy+XqH3A30m7Tgy9e/6YSOjTz09KB9GAxkAsCK6
+         Tm2L6fbQMlHPvb/ohDDgxAV4vstD/2hLKr0AJyP8=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <CAOesGMgVPsK9YsV2nGoBptWwtHYv=3yMytLx2_tF_ujS5c5p3Q@mail.gmail.com>
- <CAL_Jsq+4d-0_T68r=PWm5ey=NqsCn5j_j1sQ4Kjp1zBz6zgt6A@mail.gmail.com>
-In-Reply-To: <CAL_Jsq+4d-0_T68r=PWm5ey=NqsCn5j_j1sQ4Kjp1zBz6zgt6A@mail.gmail.com>
-From:   Olof Johansson <olof@lixom.net>
-Date:   Wed, 7 Nov 2018 12:54:54 -0800
-Message-ID: <CAOesGMgUc0r=vw30qw98qggV0P8rEPeJK0ospJdFZq_VTBqyGg@mail.gmail.com>
-Subject: Re: [Ksummit-discuss] [TECH TOPIC] SoC maintainer group
-To:     Rob Herring <robherring2@gmail.com>
-Cc:     ksummit <ksummit-discuss@lists.linuxfoundation.org>,
-        Russell King <rmk@armlinux.org.uk>,
-        Kevin Hilman <khilman@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-gpio@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+To:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        Andy Tang <andy.tang@nxp.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <VI1PR04MB433328F4F568ED75019B2091F3C40@VI1PR04MB4333.eurprd04.prod.outlook.com>
+Cc:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20181031074616.24412-1-andy.tang@nxp.com>
+ <154152509666.88331.15573532526011434275@swboyd.mtv.corp.google.com>
+ <VI1PR04MB433328F4F568ED75019B2091F3C40@VI1PR04MB4333.eurprd04.prod.outlook.com>
+Message-ID: <154163319056.88331.16892071193758893138@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: RE: [PATCH v3] clk: qoriq: add more chips support
+Date:   Wed, 07 Nov 2018 15:26:30 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Nov 7, 2018 at 11:45 AM Rob Herring <robherring2@gmail.com> wrote:
->
-> On Tue, Nov 6, 2018 at 4:17 PM Olof Johansson <olof@lixom.net> wrote:
-> >
-> > Hi KS organizers (and others),
-> >
-> > This is a late topic proposal, hopefully there is still time on the age=
-nda.
-> >
-> > We=E2=80=99ve recently been discussing some maintainer model changes as
-> > described below, and would like a slot to discuss the idea and solicit
-> > feedback/comments from the others there.
-> >
-> >
-> > This started with Arnd and I finally being in one place at the same
-> > time, and talking about how we want to evolve arm-soc maintainership
-> > moving forward. We've been independently thinking of ways to expand
-> > the group and making it more self-service for everybody, but there's a
-> > bunch of tooling needed to make it run smoothly beyond the smaller
-> > group we have now.
-> >
-> > In the end, we ended up looking at it from a slightly different angle:
-> > Right now, when contributors show up with new platform support, the
-> > first hill they need to climb is figuring out how they need to carve
-> > up their platform among all the various maintainers, how to make sure
-> > they're all handshaking on keeping things stable, and get code
-> > submitted. It's awkward, not well documented and one of the biggest
-> > overheads we have on our side as well.
-> >
-> > When we started talking to other maintainers, we're also realizing
-> > that we are currently duplicating a lot of work. In particular, we
-> > often all get cc:d on patch series, so we all need to read and filter,
-> > and assume that other maintainers spot the right patches, etc.
-> >
-> > We have discussed a few different options, and it seems like pooling
-> > more of the contribution flow to a group of co-maintainers is a useful
-> > approach. Initially, we're considering the arm-soc platforms, clock
-> > drivers and pinctrl drivers, which all tend to be affected by new
-> > platform contributions in this way, and often end up cross-cc:d on
-> > everything. Additionally, the flow for successfully merging a new
-> > platform or SoC needs to be documented and advertised. This is true
-> > whether or not we change the way that maintainers coordinate amongst
-> > themselves, or whether or not we change the current workflow used by
-> > platform contributors today.
-> >
-> > So, we're planning to change things up a bit. We're starting a new
-> > group that pools current arm-soc, clk and pinctrl drivers and
-> > maintainers into one funnel. We'll set up a new mail alias for the
-> > maintainer group, and one shared patchwork to collect contributions.
-> > We still expect developers to use existing mailing lists, and we still
-> > expect for example ARM platform maintainers to keep their workflow of
-> > collecting patches for their platform like they do today. Down the
-> > road it might make sense to incorporate other driver subsystems as
-> > well.
->
-> Given that dts files are a large part of what goes into arm-soc, any
-> thoughts on changes to the process around them? I think it would be
-> good if dts files were a bit more decoupled from kernel code changes.
-> Yes, there's the issue with header dependencies to deal with. Ignoring
-> that for a moment, keeping the dts files somewhat separate even if
-> ultimately in the same tree and the same maintainers would be
-> beneficial both for perception and to be able to do validation
-> separately. And if we do ever move things out of the kernel tree, then
-> it's less of a work-flow change. And I'm happy to help out here in
-> whatever way I can.
+Quoting Andy Tang (2018-11-06 16:52:19)
+> Hi Stephen,
+> =
 
-Yeah, I think we need to find some good balance here that's not quite
-established. I think there's good use in having some sort of superset
-of DT bindings for a platform in-tree, maybe for a reference board or
-similar that customers often create derivatives from, and then find a
-good place for derivative DT contents out of tree. The same applies to
-defconfigs, where I think the ARM64 approach of a superset of "can
-boot everywhere" is useful, and if someone wants to create more
-limited configs for their use case they would be free to do so.
+> > -----Original Message-----
+> > From: Stephen Boyd <sboyd@kernel.org>
+> > Sent: 2018=E5=B9=B411=E6=9C=887=E6=97=A5 1:25
+> > To: Andy Tang <andy.tang@nxp.com>; mturquette@baylibre.com
+> > Cc: linux-clk@vger.kernel.org; linux-kernel@vger.kernel.org; Andy Tang
+> > <andy.tang@nxp.com>
+> > Subject: Re: [PATCH v3] clk: qoriq: add more chips support
+> > =
 
-> > Beyond this, we're going to keep a close eye on the drm-misc tree,
-> > which is exploring a move to gitlab (and working with gitlab on adding
-> > the features they need to move over). If they get a broad maintainer
-> > model working well in that environment it could be something we reuse
-> > for ourselves too.
->
-> AIUI for drm-misc, a major goal there is to have more automated checks
-> fed back to submitters which doesn't necessarily have anything to do
-> with maintainers. That's something I want to get in front of for DT
-> schema so we're not fixing things after we've accepted them. So I've
-> been experimenting with gitlab CI and integration with patchwork a bit
-> recently. I have gitlab CI running some tests on binding patches
-> (checkpatch and schema validation), attaching the results to the DT
-> patchwork instance, and updating the patch state. Here is an example
-> patch[1], my patchwork related scripts are here[2], and the CI job is
-> here[3].
+> > Quoting Yuantian Tang (2018-10-31 00:46:16)
+> > > diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c index
+> > > 4c30b6e..5baa9e0 100644
+> > > --- a/drivers/clk/clk-qoriq.c
+> > > +++ b/drivers/clk/clk-qoriq.c
+> > > @@ -1418,12 +1418,23 @@ static void __init clockgen_init(struct
+> > > device_node *np)
+> > >
+> > >  CLK_OF_DECLARE(qoriq_clockgen_1, "fsl,qoriq-clockgen-1.0",
+> > > clockgen_init);  CLK_OF_DECLARE(qoriq_clockgen_2,
+> > > "fsl,qoriq-clockgen-2.0", clockgen_init);
+> > > +CLK_OF_DECLARE(qoriq_clockgen_b4420, "fsl,b4420-clockgen",
+> > > +clockgen_init); CLK_OF_DECLARE(qoriq_clockgen_b4860,
+> > > +"fsl,b4860-clockgen", clockgen_init);
+> > >  CLK_OF_DECLARE(qoriq_clockgen_ls1012a, "fsl,ls1012a-clockgen",
+> > > clockgen_init);  CLK_OF_DECLARE(qoriq_clockgen_ls1021a,
+> > > "fsl,ls1021a-clockgen", clockgen_init);
+> > > CLK_OF_DECLARE(qoriq_clockgen_ls1043a, "fsl,ls1043a-clockgen",
+> > > clockgen_init);  CLK_OF_DECLARE(qoriq_clockgen_ls1046a,
+> > > "fsl,ls1046a-clockgen", clockgen_init);
+> > > CLK_OF_DECLARE(qoriq_clockgen_ls1088a, "fsl,ls1088a-clockgen",
+> > > clockgen_init);  CLK_OF_DECLARE(qoriq_clockgen_ls2080a,
+> > > "fsl,ls2080a-clockgen", clockgen_init);
+> > > +CLK_OF_DECLARE(qoriq_clockgen_p2041, "fsl,p2041-clockgen",
+> > > +clockgen_init); CLK_OF_DECLARE(qoriq_clockgen_p3041,
+> > > +"fsl,p3041-clockgen", clockgen_init);
+> > > +CLK_OF_DECLARE(qoriq_clockgen_p4080, "fsl,p4080-clockgen",
+> > > +clockgen_init); CLK_OF_DECLARE(qoriq_clockgen_p5020,
+> > > +"fsl,p5020-clockgen", clockgen_init);
+> > > +CLK_OF_DECLARE(qoriq_clockgen_p5040, "fsl,p5040-clockgen",
+> > > +clockgen_init); CLK_OF_DECLARE(qoriq_clockgen_t1023,
+> > > +"fsl,t1023-clockgen", clockgen_init);
+> > > +CLK_OF_DECLARE(qoriq_clockgen_t1040, "fsl,t1040-clockgen",
+> > > +clockgen_init); CLK_OF_DECLARE(qoriq_clockgen_t2080,
+> > > +"fsl,t2080-clockgen", clockgen_init);
+> > > +CLK_OF_DECLARE(qoriq_clockgen_t4240, "fsl,t4240-clockgen",
+> > > +clockgen_init);
+> > =
 
-That's really cool, thanks for sharing.
-
-Having a place to collect lint/build/test results like this is
-something I've been missing and it seems like patchwork is doing a
-pretty good job there. One of the things that I'm getting excited
-about is to have a shared place to collect all these signals before
-patches are reviewed and applied (or pull requests merged) without
-necessarily adding a lot of potentially noisy email generation.
+> > Some of these compatibles aren't documented. What happened to the
+> > binding patch to add more compatible strings?
+> Nothing happened. Binding patch will be merged to PowerPC tree soon. But =
+it will take time to
+> get to mainline tree or your tree.
+> =
 
 
--Olof
+Ok. So I'll just merge this patch into clk-next then. Thanks!
+
