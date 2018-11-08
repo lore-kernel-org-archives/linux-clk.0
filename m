@@ -3,124 +3,105 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D644C32789
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Nov 2018 06:00:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62470C46465
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Nov 2018 06:44:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F315B20817
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Nov 2018 06:00:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A8422081D
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Nov 2018 06:44:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="n/89vOsj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F315B20817
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="NTan8Eet";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="NztbZo/R"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A8422081D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725953AbeKHPen (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 8 Nov 2018 10:34:43 -0500
-Received: from mail.andi.de1.cc ([85.214.239.24]:46496 "EHLO
-        h2641619.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725724AbeKHPen (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Nov 2018 10:34:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=kemnade.info; s=20180802; h=Content-Type:MIME-Version:References:
-        In-Reply-To:Message-ID:Subject:To:From:Date:Sender:Reply-To:Cc:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=LR4y7gZbT/FkNTTZFnq5lJ8lIM/Ksa5/e2rFob+Aypc=; b=n/89vOsjyE2cSJnvH1jqVCduB
-        PfHBMPpFupthNXnFVqKXP7uojq3uNsR660zzMfd63Q5AjgP2G3MxNU3sM+lgnh3lgVuaa8J7DRkdz
-        kuQ1wFtfqh31aV3ts7sEYoC/ZCaEVVrTRuxsu9X0bPQTS742hXYsobGt2dcJE1n2c5t1c=;
-Received: from hsvpn34.hotsplots.net ([176.74.57.181] helo=localhost)
-        by h2641619.stratoserver.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1gKdMx-0001RE-Jq; Thu, 08 Nov 2018 07:00:43 +0100
-Received: from localhost ([127.0.0.1])
-        by localhost with esmtp (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1gKdMt-0002Ll-0W; Thu, 08 Nov 2018 07:00:39 +0100
-Date:   Thu, 8 Nov 2018 07:00:30 +0100
-From:   Andreas Kemnade <andreas@kemnade.info>
-To:     t-kristo@ti.com, mturquette@baylibre.com, sboyd@kernel.org,
-        linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, bcousson@baylibre.com,
-        paul@pwsan.com, tony@atomide.com, letux-kernel@openphoenux.org
-Subject: Re: [PATCH 0/2] mach-omap2: handle autoidle denial
-Message-ID: <20181108070030.5febd96b@kemnade.info>
-In-Reply-To: <20181004203817.22101-1-andreas@kemnade.info>
-References: <20181004203817.22101-1-andreas@kemnade.info>
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; i686-pc-linux-gnu)
+        id S1726831AbeKHQRy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 8 Nov 2018 11:17:54 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:37712 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725724AbeKHQRv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Nov 2018 11:17:51 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 590A360AD8; Thu,  8 Nov 2018 06:43:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1541659432;
+        bh=3inbthz8hOoH85wJGGAIHX3K/WUArUfXN+jv7SNV4QY=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=NTan8Eetx82HCACzXsvrIpo5AQwvWxsXSnt1yxbZXzpiL43MayvkhZpOhfU1b2O7O
+         NAiUmnbSwGfv+cUJW/BR1vCkZV9tG+Yp96ieNGcoKyVwgsyIZ4Ry+C6Dmmg3oRW/ys
+         Bb9t9vzKn03oNbqrNfeK1YJIBa7eHAtuQgi1EjZc=
+Received: from [10.79.174.12] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id B23A360131;
+        Thu,  8 Nov 2018 06:43:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1541659431;
+        bh=3inbthz8hOoH85wJGGAIHX3K/WUArUfXN+jv7SNV4QY=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=NztbZo/RhxeDVfDYGeXhqnLIC2qsWxrReSPH3ajGDFQoepB0rq+DCHdZvuEbPxsjU
+         KV8YvB1vNGY+sAGKVA2ugk48OsM9o1EHcG56//8mYGe1vkqDEufpLgOgJfMG/10pUH
+         7cKe2jOt4YT0EwPzCwsjNMoSEZ3nDZaChqfIHVEc=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B23A360131
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+Subject: Re: [PATCH v8] clk: qcom: Add lpass clock controller driver for
+ SDM845
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+References: <1540712140-26913-1-git-send-email-tdas@codeaurora.org>
+ <1540712140-26913-2-git-send-email-tdas@codeaurora.org>
+ <154117671164.88331.752297297364277275@swboyd.mtv.corp.google.com>
+ <8d495713-d601-dcc8-23ee-dc31185e6a7c@codeaurora.org>
+ <154152457264.88331.5152287370260040686@swboyd.mtv.corp.google.com>
+From:   Taniya Das <tdas@codeaurora.org>
+Message-ID: <32c2e69a-2070-5b6d-257a-627e2ad063e3@codeaurora.org>
+Date:   Thu, 8 Nov 2018 12:13:43 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/9j=CCNKyjqUyJ.4CB2by9aA"; protocol="application/pgp-signature"
+In-Reply-To: <154152457264.88331.5152287370260040686@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
---Sig_/9j=CCNKyjqUyJ.4CB2by9aA
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Thanks Stephen.
 
-ping.
+On 11/6/2018 10:46 PM, Stephen Boyd wrote:
+> Quoting Taniya Das (2018-11-02 20:16:20)
+>> On 11/2/2018 10:08 PM, Stephen Boyd wrote:
+>>> Quoting Taniya Das (2018-10-28 00:35:40)
+>>>
+>>
+>> How about moving the QSPI clocks too under this qcom property? Later
+>> could add the support?
+> 
+> Yes the plan would be to have QSPI clks there too. Bjorn has sent the
+> patch now.
+> 
+>   https://lkml.kernel.org/r/20181106055013.11271-1-bjorn.andersson@linaro.org
+> 
+Would you be merging the code soon and then I should submit the cleaned 
+up LPASS next series?
 
-..after stumbling again about that problem during testing with 4.20-rc1.
-will retest it there.
+Please suggest.
 
-On Thu,  4 Oct 2018 22:38:15 +0200
-Andreas Kemnade <andreas@kemnade.info> wrote:
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
 
-> On the gta04 with a dm3730 omap_hdq does not work properly when the
-> device enters lower power states. Idling uart1 and 2 is enough
-> to show up that problem, if there are no other things enabled.
-> Further research reveals that hdq iclk must not be turned off during
-> transfers, also according to the TRM. That fact is also correctly describ=
-ed
-> in the flags but the code to handle that is incomplete.
->=20
-> To handle multiple users of a single ick, autoidle is disabled
-> when a user of that ick requires that (has the OCPIF_SWSUP_IDLE))
->=20
-> Changes since the RFC version:
-> - mutex lock for autoidle changes
-> - deny_idle/allow_idle calls moved to clock enable/disable of the
->   individual modules
->=20
-> Andreas Kemnade (2):
->   clk: ti: add a usecount for autoidle
->   arm: omap_hwmod disable ick autoidling when a hwmod requires that
->=20
->  arch/arm/mach-omap2/omap_hwmod.c | 16 ++++++++++++----
->  drivers/clk/ti/autoidle.c        | 32 ++++++++++++++++++++++++--------
->  include/linux/clk/ti.h           |  1 +
->  3 files changed, 37 insertions(+), 12 deletions(-)
->=20
-> --=20
-> 2.11.0
->=20
->=20
-
---Sig_/9j=CCNKyjqUyJ.4CB2by9aA
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEE7sDbhY5mwNpwYgrAfb1qx03ikyQFAlvj0P4ACgkQfb1qx03i
-kySkfA/+PrdYKmkw6xOcY332Q+GNnH+A+p5AD2Sj9R21fJFwPZ8DbRoOWbgV8PPZ
-VdbOGrOeL6cFW18HdyU/N6kd4ZUl3VNylWiT8JYf4ScHqbznjFZvrgUDAOCKBJur
-eSvthilX2XGYNldaWod6BG+cdy62hgO1Zf4r8Q16Y6mgcBIyS4z5hRKgFWcI/QBX
-3s3yOQn5aNGtAnwB2RF5d4U+dH31KZ199WdOB3S5Z4lucVSm5Gk4EtHQ5NoxXgSN
-R97YSebOhgKBi8OyzF3q9NpRsZxBsDCroVfTyYMY2qoTJ6q93LGYt137X0JODQTv
-lEC/n7P+G0nZBfOyWGXGduEEz4GLHScMQEnDG0z4RyKZFbknqjE1fbp2GV+WC/BT
-6dwQQFniE/Dhpb0K5XUkpZQMSGH0cFWUZr5TMuMLM7jt/YtBZqzmNBJ4QhFQSPXp
-81pRffp628MclWGWQSyfdVpRGioVvq6lGytjynotXFO5e3kyCAI0Jzs/rOmNRRnO
-k98qwNpqQRJjh2Fm6hSz7TSsWbh4Zu6sR7wH3yoyZuzi9H2HZClEZb3EHX4a3Y3u
-iG9DbUArU/g/xH5bs6HbL/DzEYdTGjQQDOVjfh7abY5TjK0RBMGihbK1OKHoxfWB
-hqWYkDAa85q2skB/RgUjx1wTW22/YLCMByd31hJ4UNrYbmimf40=
-=qljx
------END PGP SIGNATURE-----
-
---Sig_/9j=CCNKyjqUyJ.4CB2by9aA--
+--
