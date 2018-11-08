@@ -6,108 +6,72 @@ X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F790ECDE47
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Nov 2018 18:12:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B87E8ECDE47
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Nov 2018 18:19:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59AE920840
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Nov 2018 18:12:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 66F7B20827
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Nov 2018 18:19:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="z6Lv2HrU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59AE920840
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hvVRi1by"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66F7B20827
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727032AbeKIDt0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 8 Nov 2018 22:49:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48400 "EHLO mail.kernel.org"
+        id S1726781AbeKID4O (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 8 Nov 2018 22:56:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51468 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726845AbeKIDt0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 8 Nov 2018 22:49:26 -0500
+        id S1726751AbeKID4N (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 8 Nov 2018 22:56:13 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C679020827;
-        Thu,  8 Nov 2018 18:12:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3438720825;
+        Thu,  8 Nov 2018 18:19:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541700763;
-        bh=YKXHM9i/McDOi3XEfwRO6BZU6A0+Z4Dl/9StKtMNfsg=;
+        s=default; t=1541701170;
+        bh=hyuGyPWsjoFKYyWOu9UL+k0JbgP06pF32daBf9nnD20=;
         h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=z6Lv2HrU5QZuAxPALTUJOD4jh85hbjFX6q4rGp0GXKsKWPBgNj+ZWAgbnYcVBK3jH
-         OzZJpmNKh10dtRroH5LJ9J1wOVaVmkQo8l5Tgi+m1BNT7/yrGiBZRaxZTIET3IUikT
-         Dz5dk9hfhctOMHmRwml1k7cek8IuJ3VlOV5c4q1E=
+        b=hvVRi1byTfQYvkp8D+ScGxNZwK0svBIhfeqlMRyshXbg7YsnajjCXTmx8BBDFkd83
+         TnO+96v/Q2rMEr5f4ge3YfBnmcU5d1Pkn65I1kmepxrdCQnBv9pJkx3EMf5Y+XnXej
+         G1/FNbE1Y9u10H02vZf+EvtMZCXrzndWvFhjOmTI=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-To:     Carlo Caione <carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>, jbrunet@baylibre.com
+To:     Yi Wang <wang.yi59@zte.com.cn>, paul.burton@mips.com
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <72269086b0ce0be5517c7ffb2bc979c4d17d5cc3.camel@baylibre.com>
-Cc:     Christian Hewitt <christianshewitt@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20181105230820.3562-1-jbrunet@baylibre.com>
- <154152980131.88331.14307558394241579493@swboyd.mtv.corp.google.com>
- <72269086b0ce0be5517c7ffb2bc979c4d17d5cc3.camel@baylibre.com>
-Message-ID: <154170076313.88331.10224163811765573746@swboyd.mtv.corp.google.com>
+In-Reply-To: <1540971702-3133-2-git-send-email-wang.yi59@zte.com.cn>
+Cc:     mturquette@baylibre.com, linux-mips@linux-mips.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        zhong.weidong@zte.com.cn, Yi Wang <wang.yi59@zte.com.cn>
+References: <1540971702-3133-1-git-send-email-wang.yi59@zte.com.cn>
+ <1540971702-3133-2-git-send-email-wang.yi59@zte.com.cn>
+Message-ID: <154170116960.88331.164103375264551287@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.7
-Subject: Re: [PATCH v2] clk: meson-gxbb: set fclk_div3 as CLK_IS_CRITICAL
-Date:   Thu, 08 Nov 2018 10:12:43 -0800
+Subject: Re: [PATCH v3 1/2] clk: boston: fix possible memory leak in
+ clk_boston_setup()
+Date:   Thu, 08 Nov 2018 10:19:29 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting jbrunet@baylibre.com (2018-11-06 10:49:21)
-> On Tue, 2018-11-06 at 10:43 -0800, Stephen Boyd wrote:
-> > Quoting Jerome Brunet (2018-11-05 15:08:20)
-> > > From: Christian Hewitt <christianshewitt@gmail.com>
-> > > =
-
-> > > On the Khadas VIM2 (GXM) and LePotato (GXL) board there are problems
-> > > with reboot; e.g. a ~60 second delay between issuing reboot and the
-> > > board power cycling (and in some OS configurations reboot will fail
-> > > and require manual power cycling).
-> > > =
-
-> > > Similar to 'commit c987ac6f1f088663b6dad39281071aeb31d450a8 ("clk:
-> > > meson-gxbb: set fclk_div2 as CLK_IS_CRITICAL")' the SCPI Cortex-M4
-> > > Co-Processor seems to depend on FCLK_DIV3 being operational.
-> > > =
-
-> > > Until commit 05f814402d6174369b3b29832cbb5eb5ed287059 ("clk:
-> > > meson: add fdiv clock gates"), this clock was modeled and left on by
-> > > the bootloader.
-> > > =
-
-> > > We don't have precise documentation about the SCPI Co-Processor and
-> > > its clock requirement so we are learning things the hard way.
-> > > =
-
-> > > Marking this clock as critical solves the problem but it should not
-> > > be viewed as final solution. Ideally, the SCPI driver should claim
-> > > these clocks. We also depends on some clock hand-off mechanism
-> > > making its way to CCF, to make sure the clock stays on between its
-> > > registration and the SCPI driver probe.
-> > > =
-
-> > > Fixes: 05f814402d61 ("clk: meson: add fdiv clock gates")
-> > > Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
-> > > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> > > ---
-> > =
-
-> > I can toss this into clk-fixes?
-> > =
-
+Quoting Yi Wang (2018-10-31 00:41:41)
+> Smatch report warnings:
+> drivers/clk/imgtec/clk-boston.c:76 clk_boston_setup() warn: possible memo=
+ry leak of 'onecell'
+> drivers/clk/imgtec/clk-boston.c:83 clk_boston_setup() warn: possible memo=
+ry leak of 'onecell'
+> drivers/clk/imgtec/clk-boston.c:90 clk_boston_setup() warn: possible memo=
+ry leak of 'onecell'
 > =
 
-> Sure, it would be great. Thx Stephen.
+> 'onecell' is malloced in clk_boston_setup(), but not be freed
+> before leaving from the error handling cases.
 > =
 
-> =
+> Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
+> ---
 
-
-Awesome, thanks! Applied to clk-fixes.
+Applied to clk-next
 
