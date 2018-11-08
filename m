@@ -2,105 +2,148 @@ Return-Path: <SRS0=ZQGu=NT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B3E1C0044C
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Nov 2018 00:18:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E455CC32789
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Nov 2018 05:44:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3097420883
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Nov 2018 00:18:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9ED8C20857
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Nov 2018 05:44:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nEroMZfu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3097420883
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="R92vinCB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9ED8C20857
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727861AbeKHJvY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 8 Nov 2018 04:51:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34708 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727859AbeKHJvY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 8 Nov 2018 04:51:24 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C221920857;
-        Thu,  8 Nov 2018 00:18:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541636315;
-        bh=5EcHBJnt2DElKwb4wIMaw0nqYsASQVDi5jteDm87mc4=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=nEroMZfuZSgpoUXwCujGYKuNCrjidcqMdgOzS5vyoXWFJUm+lGzTjNBhUqbH8H82S
-         fYLigVB+kwLW7f/+VB3IIWdSUzYn4wQsoOxPdAbNXO8Ig64LvihzqY56ghGmHOpORN
-         uewn2xci3UCpF4aboNvZlQGnjeuubvj2uJnLCKO0=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Abel Vesa <abel.vesa@nxp.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20181107202624.oya2runvbbwcilzu@fsr-ub1664-175>
-Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Rob Herring <robh@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>, Abel Vesa <abelvesa@linux.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
+        id S1726086AbeKHPSm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 8 Nov 2018 10:18:42 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:44559 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725972AbeKHPSm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Nov 2018 10:18:42 -0500
+Received: by mail-pf1-f196.google.com with SMTP id j13-v6so8793311pff.11
+        for <linux-clk@vger.kernel.org>; Wed, 07 Nov 2018 21:44:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=PipJVY5sFU16Qb6+h/dT5wHv56gIrPYtITAPBUsnwyY=;
+        b=R92vinCBec0veUAkmYgsV3/GSuERVmuaXKcrOjOgvspe6hA91dbk155Xj5Wx43yXfq
+         Z1J56Gsw/+0JRHP27I9egv+ZF39k09rkScTnEgTIxRx9lH0G1s9juFPHAr1DiM3veOzA
+         3EdZj9OCDR7XA35+vYHCWOU5tVmeXUZakDEGY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=PipJVY5sFU16Qb6+h/dT5wHv56gIrPYtITAPBUsnwyY=;
+        b=r8ZegqGvmRXjx/876jDqmpB5jJFKFvbHGPFN4d8pfCzmwFtCK/Rx/ZuhJp2bLQynHj
+         hseWA/emrFF8SAjCXMZQ/7e4XRajL0oKAXYmzmxfBmx8pR1xfipqETBCFLdlFhWJtPKF
+         ChTS5GW7/FVq5Pa3fgI459RgQgee/v1JndDyKUu/YzxSRjh169zDi73lGI+FwDCir4im
+         ztelHOpW3KwSMUagL2vL1BZJlJi5VPajTAtl0QMsEyveIl47dEyvOGQsrnj/VGNWg+hS
+         JFzIaTzNEtMeRNgtg5SH64QeuY/sRAWfgA9RFG5ZIJTm3usLZ2w6+KI/ef8BRQlBye0z
+         ummQ==
+X-Gm-Message-State: AGRZ1gJPuJxy/gcGovL45xSq73hUhuw+HGD5psngzpyXfYb90koce84I
+        +XQB+mkKYeaO4pOBOjkWBM7WFfXy2X0=
+X-Google-Smtp-Source: AJdET5f7IM3DZPEmaY2FffV5uY9Yxub4JKyeMLgK/k1xJ3iiICR9jQ0Hxjg8r7TqTmDD0zu22I7BQA==
+X-Received: by 2002:aa7:8348:: with SMTP id z8-v6mr3228077pfm.81.1541655895681;
+        Wed, 07 Nov 2018 21:44:55 -0800 (PST)
+Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id 3-v6sm3074259pfw.17.2018.11.07.21.44.54
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 07 Nov 2018 21:44:54 -0800 (PST)
+Date:   Wed, 7 Nov 2018 21:44:52 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
-References: <1537785597-26499-1-git-send-email-abel.vesa@nxp.com>
- <1537785597-26499-4-git-send-email-abel.vesa@nxp.com>
- <153980615257.5275.13866740376184829057@swboyd.mtv.corp.google.com>
- <20181107115444.gscxwud7e57nx3c7@fsr-ub1664-175>
- <154161726247.88331.15629902810537417880@swboyd.mtv.corp.google.com>
- <20181107202624.oya2runvbbwcilzu@fsr-ub1664-175>
-Message-ID: <154163631513.88331.1765456171211364913@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v9 3/5] clk: imx: add SCCG PLL type
-Date:   Wed, 07 Nov 2018 16:18:35 -0800
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Taniya Das <tdas@codeaurora.org>
+Subject: Re: [PATCH 1/2] dt-bindings: clk: Introduce 'protected-clocks'
+ property
+Message-ID: <20181108054452.GD2337@tuxbook-pro>
+References: <20181105194011.43770-1-swboyd@chromium.org>
+ <20181105194011.43770-2-swboyd@chromium.org>
+ <20181106010426.GX2523@minitux>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181106010426.GX2523@minitux>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Abel Vesa (2018-11-07 12:26:25)
-> On Wed, Nov 07, 2018 at 11:01:02AM -0800, Stephen Boyd wrote:
-> > =
+On Mon 05 Nov 17:04 PST 2018, Bjorn Andersson wrote:
 
-> > =
+> On Mon 05 Nov 11:40 PST 2018, Stephen Boyd wrote:
+> 
+> > Add a generic clk property for clks which are not intended to be used by
+> > the OS due to security restrictions put in place by firmware. For
+> > example, on some Qualcomm firmwares reading or writing certain clk
+> > registers causes the entire system to reboot, but on other firmwares
+> > reading and writing those same registers is required to make devices
+> > like QSPI work. Rather than adding one-off properties each time a new
+> > set of clks appears to be protected, let's add a generic clk property to
+> > describe any set of clks that shouldn't be touched by the OS. This way
+> > we never need to register the clks or use them in certain firmware
+> > configurations.
+> > 
+> > Cc: Rob Herring <robh+dt@kernel.org>
+> > Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> 
+> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> 
 
-> > What's the plan to clean it up?
-> =
+Gave this some additional thought. The way this is blacklisting
+protected clocks makes it impossible to be backwards compatible with an
+older DT while adding new protected clocks to an existing driver.
 
-> So I'm doing this in our internal tree first to make sure I don't break t=
-he
-> other (newer) socs.
-> =
+I don't have better suggestion for handling this and the problem should
+primarily be isolated to the beginning of the upstream life of a
+platform, so perhaps we can just ignore this issue?
 
-> I already have a prototype in testing but it's a long way to upstream it.
-> =
+Regards,
+Bjorn
 
-> Basically, I'm replacing all of this with a single, more like a composite,
-> more complex, clock type that does all the magic inside.
-> =
-
-> One of the problems is the fact that the bypasses can have the same sourc=
-es
-> and in my case, I'm implementing that as a list of parents name, but the
-> parent names list doesn't work with duplicates, so I have to find some ot=
-her
-> way to do it.
-> =
-
-> Once I have something clean and tested enough I'll send it upstream.
-
-Ok. Thanks for the info.
-
+> Regards,
+> Bjorn
+> 
+> > Cc: Taniya Das <tdas@codeaurora.org>
+> > Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+> > ---
+> >  .../devicetree/bindings/clock/clock-bindings.txt | 16 ++++++++++++++++
+> >  1 file changed, 16 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/clock/clock-bindings.txt b/Documentation/devicetree/bindings/clock/clock-bindings.txt
+> > index 2ec489eebe72..b646bbcf7f92 100644
+> > --- a/Documentation/devicetree/bindings/clock/clock-bindings.txt
+> > +++ b/Documentation/devicetree/bindings/clock/clock-bindings.txt
+> > @@ -168,3 +168,19 @@ a shared clock is forbidden.
+> >  
+> >  Configuration of common clocks, which affect multiple consumer devices can
+> >  be similarly specified in the clock provider node.
+> > +
+> > +==Protected clocks==
+> > +
+> > +Some platforms or firmwares may not fully expose all the clocks to the OS, such
+> > +as in situations where those clks are used by drivers running in ARM secure
+> > +execution levels. Such a configuration can be specified in device tree with the
+> > +protected-clocks property in the form of a clock specifier list. This property should
+> > +only be specified in the node that is providing the clocks being protected:
+> > +
+> > +   clock-controller@a000f000 {
+> > +        compatible = "vendor,clk95;
+> > +        reg = <0xa000f000 0x1000>
+> > +        #clocks-cells = <1>;
+> > +        ...
+> > +        protected-clocks = <UART3_CLK>, <SPI5_CLK>;
+> > +   };
+> > -- 
+> > Sent by a computer through tubes
+> > 
