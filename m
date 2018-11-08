@@ -3,96 +3,136 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFF24ECDE47
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Nov 2018 18:25:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CAA8ECDE47
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Nov 2018 18:37:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABCAB2081C
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Nov 2018 18:25:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 315E120684
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Nov 2018 18:37:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uuK2nKQk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABCAB2081C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BBMbSbtn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 315E120684
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727074AbeKIECE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 8 Nov 2018 23:02:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54096 "EHLO mail.kernel.org"
+        id S1727426AbeKIEOR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 8 Nov 2018 23:14:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57474 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726751AbeKIECE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 8 Nov 2018 23:02:04 -0500
+        id S1727485AbeKIEOR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 8 Nov 2018 23:14:17 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4EEC42081C;
-        Thu,  8 Nov 2018 18:25:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 30CAA2081C;
+        Thu,  8 Nov 2018 18:28:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541701519;
-        bh=zBej8b1EIgM6Z5fGvQ5vBuWgaZp/uFKbFPA+IwXp0EQ=;
+        s=default; t=1541701728;
+        bh=0kvz1cgnIX528UcnUKDxkJ1gsIEwI7ms/33cUKH1/MM=;
         h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=uuK2nKQkuO+3WB3DQwDmYIxggGWiYE8qye63l7Q7qJicq8MHTlKqyKBxJaUUqNSuZ
-         wEOqTilO7p/1dlzfT6TLLCN7Zvnr5pqPb5G5iyII5PMjy4mrsFSwfvO7HxJSmDQRHE
-         E0xKdHArk0/d1A/5ZCErpZ4RGZ+W0KrX4gIPrSSA=
+        b=BBMbSbtnZQTc6iwuXvbv4n3L3xdo+3XqW66UuT/V/DJ3UZZUyT/7N+4Nnm/j/tSEX
+         UVcP+EhOS2pYUrVlkox8kcclENeDCT9QN4wfF8L0pVOiPQ0bqaxr2NRWxOj9Kosgus
+         fhLgAIgAE+iadN97/M9gD/5ywBSdqXFw2hi5zTWg=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>
+To:     Abel Vesa <abel.vesa@nxp.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <32c2e69a-2070-5b6d-257a-627e2ad063e3@codeaurora.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-References: <1540712140-26913-1-git-send-email-tdas@codeaurora.org>
- <1540712140-26913-2-git-send-email-tdas@codeaurora.org>
- <154117671164.88331.752297297364277275@swboyd.mtv.corp.google.com>
- <8d495713-d601-dcc8-23ee-dc31185e6a7c@codeaurora.org>
- <154152457264.88331.5152287370260040686@swboyd.mtv.corp.google.com>
- <32c2e69a-2070-5b6d-257a-627e2ad063e3@codeaurora.org>
-Message-ID: <154170151864.88331.3913955115537863015@swboyd.mtv.corp.google.com>
+In-Reply-To: <20181108122938.mnhu3ttnlztfeyot@fsr-ub1664-175>
+Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        "A.s. Dong" <aisheng.dong@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Rob Herring <robh@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>, Abel Vesa <abelvesa@linux.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
+References: <1537785597-26499-1-git-send-email-abel.vesa@nxp.com>
+ <1537785597-26499-4-git-send-email-abel.vesa@nxp.com>
+ <153980615257.5275.13866740376184829057@swboyd.mtv.corp.google.com>
+ <20181107115444.gscxwud7e57nx3c7@fsr-ub1664-175>
+ <154161726247.88331.15629902810537417880@swboyd.mtv.corp.google.com>
+ <20181107202624.oya2runvbbwcilzu@fsr-ub1664-175>
+ <154163631513.88331.1765456171211364913@swboyd.mtv.corp.google.com>
+ <20181108122938.mnhu3ttnlztfeyot@fsr-ub1664-175>
+Message-ID: <154170172752.88331.2213352243956732809@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.7
-Subject: Re: [PATCH v8] clk: qcom: Add lpass clock controller driver for SDM845
-Date:   Thu, 08 Nov 2018 10:25:18 -0800
+Subject: Re: [PATCH v9 3/5] clk: imx: add SCCG PLL type
+Date:   Thu, 08 Nov 2018 10:28:47 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Taniya Das (2018-11-07 22:43:43)
-> Thanks Stephen.
+Quoting Abel Vesa (2018-11-08 04:29:39)
+> On Wed, Nov 07, 2018 at 04:18:35PM -0800, Stephen Boyd wrote:
+> > Quoting Abel Vesa (2018-11-07 12:26:25)
+> > > On Wed, Nov 07, 2018 at 11:01:02AM -0800, Stephen Boyd wrote:
+> > > > =
+
+> > > > =
+
+> > > > What's the plan to clean it up?
+> > > =
+
+> > > So I'm doing this in our internal tree first to make sure I don't bre=
+ak the
+> > > other (newer) socs.
+> > > =
+
+> > > I already have a prototype in testing but it's a long way to upstream=
+ it.
+> > > =
+
+> > > Basically, I'm replacing all of this with a single, more like a compo=
+site,
+> > > more complex, clock type that does all the magic inside.
+> > > =
+
+> > > One of the problems is the fact that the bypasses can have the same s=
+ources
+> > > and in my case, I'm implementing that as a list of parents name, but =
+the
+> > > parent names list doesn't work with duplicates, so I have to find som=
+e other
+> > > way to do it.
+> > > =
+
+> > > Once I have something clean and tested enough I'll send it upstream.
+> > =
+
+> > Ok. Thanks for the info.
+> > =
+
 > =
 
-> On 11/6/2018 10:46 PM, Stephen Boyd wrote:
-> > Quoting Taniya Das (2018-11-02 20:16:20)
-> >> On 11/2/2018 10:08 PM, Stephen Boyd wrote:
-> >>> Quoting Taniya Das (2018-10-28 00:35:40)
-> >>>
-> >>
-> >> How about moving the QSPI clocks too under this qcom property? Later
-> >> could add the support?
-> > =
+> Just to avoid any kind of confusion.
+> =
 
-> > Yes the plan would be to have QSPI clks there too. Bjorn has sent the
-> > patch now.
-> > =
+> The whole refactoring of the SCCG clock will be done in a separate (later=
+) change
+> and will not be part of this patchset.
+> =
 
-> >   https://lkml.kernel.org/r/20181106055013.11271-1-bjorn.andersson@lina=
-ro.org
-> > =
-
-> Would you be merging the code soon and then I should submit the cleaned =
-
-> up LPASS next series?
+> I already sent the 12th version of this current patch series and I would =
+really
+> like to get this in ASAP so that the booting up of imx8mq will not be del=
+ayed.
 > =
 
 
-Yes, if you want to resubmit on top of that series it would make it
-easier for me to apply these patches. I'm currently waiting for any DT
-review from Rob Herring, and having the patches ready and staged can be
-done regardless of that.
+Ok. Well we're in rc1 right now, and so we're not merging new drivers
+into mainline. I can merge the clk driver into clk-next, but you'll have
+to wait for the stabilization period to end (approximately 6 or 7 weeks)
+before this can get into the next kernel version. It will be in
+linux-next much sooner of course.
 
