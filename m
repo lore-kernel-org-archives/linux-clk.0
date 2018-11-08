@@ -2,133 +2,93 @@ Return-Path: <SRS0=ZQGu=NT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90A11C32789
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Nov 2018 12:35:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF897C32789
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Nov 2018 13:15:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5737C2081D
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Nov 2018 12:35:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5737C2081D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id AB25720827
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Nov 2018 13:15:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB25720827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726585AbeKHWKr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 8 Nov 2018 17:10:47 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:43432 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726541AbeKHWKr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Nov 2018 17:10:47 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id wA8CZKwO043079;
-        Thu, 8 Nov 2018 06:35:20 -0600
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wA8CZKPe101802
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 8 Nov 2018 06:35:20 -0600
-Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 8 Nov
- 2018 06:35:20 -0600
-Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Thu, 8 Nov 2018 06:35:20 -0600
-Received: from [127.0.0.1] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wA8CZG1h017519;
-        Thu, 8 Nov 2018 06:35:17 -0600
-Subject: Re: [PATCH 2/2] arm: omap_hwmod disable ick autoidling when a hwmod
- requires that
-To:     Andreas Kemnade <andreas@kemnade.info>
-CC:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <bcousson@baylibre.com>,
-        <paul@pwsan.com>, <tony@atomide.com>,
-        <letux-kernel@openphoenux.org>
-References: <20181004203817.22101-1-andreas@kemnade.info>
- <20181004203817.22101-3-andreas@kemnade.info>
- <bac125b7-68c5-4c90-ad98-22872db9ccff@ti.com>
- <20181108120847.1ef7ec02@kemnade.info>
-From:   Tero Kristo <t-kristo@ti.com>
-Message-ID: <0976e09f-3f83-d1bc-5bd0-651e2f9c42d4@ti.com>
-Date:   Thu, 8 Nov 2018 14:35:14 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        id S1726417AbeKHWut (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 8 Nov 2018 17:50:49 -0500
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:27678 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726359AbeKHWut (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Nov 2018 17:50:49 -0500
+Received: from droid15-sz.amlogic.com (10.28.8.25) by mail-sh2.amlogic.com
+ (10.18.11.6) with Microsoft SMTP Server id 15.0.1320.4; Thu, 8 Nov 2018
+ 21:15:22 +0800
+From:   Jian Hu <jian.hu@amlogic.com>
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+CC:     Jian Hu <jian.hu@amlogic.com>, Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>, Rob Herring <robh@kernel.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Yixun Lan <yixun.lan@amlogic.com>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH v4 0/2] clk: meson-g12a: Add EE clock controller driver
+Date:   Thu, 8 Nov 2018 21:15:09 +0800
+Message-ID: <1541682912-120480-1-git-send-email-jian.hu@amlogic.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-In-Reply-To: <20181108120847.1ef7ec02@kemnade.info>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain
+X-Originating-IP: [10.28.8.25]
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 08/11/2018 13:08, Andreas Kemnade wrote:
-> Hi,
-> 
-> On Thu, 8 Nov 2018 12:26:08 +0200
-> Tero Kristo <t-kristo@ti.com> wrote:
-> 
->> On 04/10/2018 23:38, Andreas Kemnade wrote:
->>> Deny autoidle for hwmods with the OCPIF_SWSUP_IDLE flag,
->>> that makes hwmods working properly which cannot handle
->>> autoidle properly in lower power states.
->>> Affected is e. g. the omap_hdq.
->>> Since an ick might have mulitple users, autoidle is disabled
->>> when an individual user requires that rather than in
->>> _setup_iclk_autoidle. dss_ick is an example for that.
->>>
->>> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
->>> ---
->>>    arch/arm/mach-omap2/omap_hwmod.c | 16 ++++++++++++----
->>>    1 file changed, 12 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/arch/arm/mach-omap2/omap_hwmod.c b/arch/arm/mach-omap2/omap_hwmod.c
->>> index bb641e6c93d0..0078b0e1d242 100644
->>> --- a/arch/arm/mach-omap2/omap_hwmod.c
->>> +++ b/arch/arm/mach-omap2/omap_hwmod.c
->>> @@ -986,8 +986,10 @@ static int _enable_clocks(struct omap_hwmod *oh)
->>>    		clk_enable(oh->_clk);
->>>    
->>>    	list_for_each_entry(os, &oh->slave_ports, node) {
->>> -		if (os->_clk && (os->flags & OCPIF_SWSUP_IDLE))
->>> +		if (os->_clk && (os->flags & OCPIF_SWSUP_IDLE)) {
->>> +			omap2_clk_deny_idle(os->_clk);
->>
->> I think calling this unconditionally across all platforms / clock types
->> might cause problems. Checking kernel, am33xx seems to have one clock
->> with this flag that is not of omap2 type. Do we have any testing data
->> that this doesn't break things?
->>
-> Somehow I have missed that am33xx clock. I have not tested it on that
-> platform. Concerning am3xxx I have only a beaglebone block but it not
-> am33xx I guess. So I have to recheck I guess.
+Changes since v3 at[4]
+-add fixed clocks clk_regmap definition
 
-Beaglebone black is am33xx based device, so you can use that for testing.
+Changes since v2 at[2]
+-fix fixed clocks's descriptions
+-fix aligment
+-add enable bit for plls base on [3] patches
+-add fixed clock gate bit
 
-> But I think the intention of this flag was to control autoidle
-> vs. sw-controlled idle according to...
-> [...]
->>>    		if (os->flags & OCPIF_SWSUP_IDLE) {
->>> -			/* XXX omap_iclk_deny_idle(c); */
->>> +			/*
-> this comment. So we need a if (clock_is_omap2()) or something like that
-> or remove that flag from any other clocks?
+Changes since v1 at[1]
+-fix typo of 'Everything'.
+-change the word 'AmLogic' to 'Amlogic'
+-squash patch 1 and 2.
+-delete usless message of "Trying obsolete regs".
+-delete the empty line in include/dt-bindings/clock/g12a-clkc.h.
+-rebase on top of the "next/drivers" branch, and add g12a clock patch.
+-add CLK_MUX_ROUND_CLOSEST for g12a_sd_emmc_b_clk0_sel and
+ g12a_sd_emmc_c_clk0_sel.
 
-You could add check within the omap2_clk_deny_idle / allow_idle calls 
-themselves. You can check for presence of flag CLK_IS_BASIC, this is not 
-set for omap clocks.
+[1]https://lkml.kernel.org/r/1531133549-25806-2-git-send-email-jian.hu@amlogic.com
+[2]https://lkml.kernel.org/r/1531728707-192230-2-git-send-email-jian.hu@amlogic.com
+[3]https://lkml.kernel.org/r/20180717095617.12240-1-jbrunet@baylibre.com
+[4]https://lkml.kernel.org/r/1533890858-113020-1-git-send-email-jian.hu@amlogic.com
 
--Tero
+Jian Hu (2):
+  dt-bindings: clk: meson-g12a: Add G12A EE Clock Bindings
+  clk: meson-g12a: Add EE Clock controller driver
 
-> 
-> Regards,
-> Andreas
-> 
+ .../bindings/clock/amlogic,gxbb-clkc.txt           |    1 +
+ drivers/clk/meson/Kconfig                          |   10 +
+ drivers/clk/meson/Makefile                         |    1 +
+ drivers/clk/meson/g12a.c                           | 1134 ++++++++++++++++++++
+ drivers/clk/meson/g12a.h                           |  128 +++
+ include/dt-bindings/clock/g12a-clkc.h              |   93 ++
+ 6 files changed, 1367 insertions(+)
+ create mode 100644 drivers/clk/meson/g12a.c
+ create mode 100644 drivers/clk/meson/g12a.h
+ create mode 100644 include/dt-bindings/clock/g12a-clkc.h
 
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+-- 
+1.9.1
+
