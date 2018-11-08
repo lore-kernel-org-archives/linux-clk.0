@@ -2,172 +2,150 @@ Return-Path: <SRS0=ZQGu=NT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9016ECDE47
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Nov 2018 13:27:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98A39ECDE4B
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Nov 2018 13:34:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 915412081C
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Nov 2018 13:27:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 556D92081C
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Nov 2018 13:34:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="JDjSIy6J"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 915412081C
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="ltY5e1ol"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 556D92081C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726541AbeKHXCc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 8 Nov 2018 18:02:32 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:54216 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726469AbeKHXCc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Nov 2018 18:02:32 -0500
-Received: by mail-wm1-f66.google.com with SMTP id f10-v6so1251328wme.3
-        for <linux-clk@vger.kernel.org>; Thu, 08 Nov 2018 05:27:02 -0800 (PST)
+        id S1726583AbeKHXKM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 8 Nov 2018 18:10:12 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:34159 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726417AbeKHXKL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Nov 2018 18:10:11 -0500
+Received: by mail-wr1-f65.google.com with SMTP id j26-v6so21303311wre.1
+        for <linux-clk@vger.kernel.org>; Thu, 08 Nov 2018 05:34:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:openpgp:autocrypt:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=U7old8aK++kAGhulGpjkuVOMdIcvE/PUtm614UA0/Es=;
-        b=JDjSIy6JO4q57RFlJ5L5BYm62NLJwwhuZAsSAuGuSjN1hDkgeQXsAiALcmhjoElvxp
-         soOGUbDQKVfo4/xuuuzZ29z+JHfyO9nNuh34OtJM4DAuxptx9ZcGVZcvU/PfdNYpA2aH
-         dNNMq2VWLg4hn3X5RldFyR/mM3pErnc07VxAfGJkTUp94a6h7CKX0ezsyPZjyvPIRL+R
-         63zhdJnN/ngIkrLh7IbmK9gB2yDAYs2CboeKhwdVO5wNY4wkuiRyoPAKkthWMPiK+Bzl
-         OsQYn1aKv20cARJMoUfGW2fsA/3emKOWBpSdHSyPXoYNWpEqmob9+WcV5gtw4WDkmSEU
-         P/Eg==
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=YTyI5WSAfJxff7r7dg4IeAfXpnFBXRO9/6Rn6HJHcJ0=;
+        b=ltY5e1olAlPYi1++Gs6S9/X1dwdCA3nfY8ivSqBO7VZ+U2pUpQ/YOH2Mle1HbFyd0m
+         qUhxovP1+DDirvQOLOqCbqIEncLmjhQh4x2O+qtoPGbPmB6LjEuPwnC654EZW5r+Etb0
+         FeurEFI/O47KT2E1ICwiwJ4GyQGgLEWWONmR7DA3/g7IFpd6OyZmB8MWpd2CYjfSYveF
+         +hZZZg4+GVwhqj4bTLu7PxJvbgU2eYla9z0Ur+fvfOJOrGIWsA3B2A8rksBGftfg9Dad
+         5bUTBo3fN1lLWiQSGjipunY4HAee6wBUCKzle6pwxqgq+EG5RcolVbqtpnZ5jBf7rtu4
+         yzPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :organization:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=U7old8aK++kAGhulGpjkuVOMdIcvE/PUtm614UA0/Es=;
-        b=JHVqtbl4B7dhoVpo2fKDmaUshD0NBSFB2g4wlC7YZ5tQOAfCHazTeC3gFpihZ3/it6
-         xJn4/ZFSynlnHEgVwmUbRVvlbvz4Jp8CBEq7TFE9p37W1vfI2HRf5mVUInFEaLTFQphB
-         5Xeqc+yf4kiFDGnQTSDsunRmYOajk8kWQIohdQOJosN85QT1KBYrgffLBfqzWUDWcYSU
-         ln+4BuXrLF2KbekQy2LqHTRSFHObDZ2uInoqD67DgHfTmBv5srL3Ol8zjKxIo3ShLeKO
-         nYer+50XSdWZVApHES2E6b8HZet/7mnBtQXZv/5N7PIdcp8DM42aaPK9D1Jc0eFm2MjN
-         W3LA==
-X-Gm-Message-State: AGRZ1gK3ZOzwGCua1xu52d+eMSVlS+GaQb3Za/opRLTLqBr/04ah8UWE
-        Xj9TFR5kNYNQeRlejTu2bpPl7g==
-X-Google-Smtp-Source: AJdET5crXW5dWNl9vZtRwmF/lmlQZ91muYIxRkcxAY4S5vyauXXavIbPvS4dM+wCN5YzEkbJHT/PJQ==
-X-Received: by 2002:a1c:2b03:: with SMTP id r3-v6mr1256051wmr.131.1541683621263;
-        Thu, 08 Nov 2018 05:27:01 -0800 (PST)
-Received: from [10.1.2.12] ([90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id l5-v6sm4780111wrv.84.2018.11.08.05.27.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 08 Nov 2018 05:27:00 -0800 (PST)
-Subject: Re: [PATCH] clk: meson: axg: mark fdiv2 and fdiv3 as critical
-To:     Jerome Brunet <jbrunet@baylibre.com>,
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=YTyI5WSAfJxff7r7dg4IeAfXpnFBXRO9/6Rn6HJHcJ0=;
+        b=jMysyfU+bMDLQvylihqQh1S3Tcr+O3c+19uPXQFFsOlgSrdJ2Mi9gvUPDIwOPYsyMX
+         5Ocvea0R36A3B1MsjsRFROv/Q3omBczjJepNnhXWAE0NYale6e6Wg5ytsivpRpSMtdZa
+         RqHAegBzA1VCdfhznwqT6d2PyIEhxF8YBhIgQ3MoMxWpgUpdZO+Tz1Nl61Q1QsHEnhd+
+         9Iv5pjEczJ8b1xQ5O423PLGNLRGtR4vD3FT0MI4Ntd/zzqBF/qBTyaq0lOddi1QCGIQW
+         TmR5gZWDXDnobtZU04vme5vgUCACP/sEhwiHynSEs6L6oo4Wo5Tp16J8MuxR5Wh10hJr
+         BGNw==
+X-Gm-Message-State: AGRZ1gIxbvu/MuejdmSiW1Ke+qy2mFDQGsSZxQc/Gtp6yLQ+ysdoTjni
+        EjF47/WpUlxApBefCgxCoQTJAw==
+X-Google-Smtp-Source: AJdET5f9hbZ54zlxzoeLq5GsnkmWpToSkP3qHewQ5CsvqJi82R2MXh8MCe5JmRIclFh0mKd686EWdA==
+X-Received: by 2002:adf:9b84:: with SMTP id d4-v6mr3980710wrc.240.1541684079598;
+        Thu, 08 Nov 2018 05:34:39 -0800 (PST)
+Received: from boomer.baylibre.com ([90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id e7-v6sm3373635wra.10.2018.11.08.05.34.37
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 08 Nov 2018 05:34:38 -0800 (PST)
+Message-ID: <1157f0a9419eea01c099d8dc08d7757593720286.camel@baylibre.com>
+Subject: Re: [PATCH v4 0/2] clk: meson-g12a: Add EE clock controller driver
+From:   jbrunet@baylibre.com
+To:     Jian Hu <jian.hu@amlogic.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+Cc:     Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>, Rob Herring <robh@kernel.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Carlo Caione <carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20181108093123.21498-1-jbrunet@baylibre.com>
-From:   Neil Armstrong <narmstrong@baylibre.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKE5laWwgQXJtc3Ryb25nIDxuYXJtc3Ryb25nQGJheWxpYnJlLmNvbT7CwHsEEwEKACUC
- GyMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheABQJXDO2CAhkBAAoJEBaat7Gkz/iubGIH/iyk
- RqvgB62oKOFlgOTYCMkYpm2aAOZZLf6VKHKc7DoVwuUkjHfIRXdslbrxi4pk5VKU6ZP9AKsN
- NtMZntB8WrBTtkAZfZbTF7850uwd3eU5cN/7N1Q6g0JQihE7w4GlIkEpQ8vwSg5W7hkx3yQ6
- 2YzrUZh/b7QThXbNZ7xOeSEms014QXazx8+txR7jrGF3dYxBsCkotO/8DNtZ1R+aUvRfpKg5
- ZgABTC0LmAQnuUUf2PHcKFAHZo5KrdO+tyfL+LgTUXIXkK+tenkLsAJ0cagz1EZ5gntuheLD
- YJuzS4zN+1Asmb9kVKxhjSQOcIh6g2tw7vaYJgL/OzJtZi6JlIXOwE0ETVkGzwEIALyKDN/O
- GURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYpQTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXM
- coJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hi
- SvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY4yG6xI99NIPEVE9lNBXBKIlewIyVlkOa
- YvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoMMtsyw18YoX9BqMFInxqYQQ3j/HpVgTSv
- mo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUXoUk33HEAEQEAAcLAXwQYAQIACQUCTVkG
- zwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfnM7IbRuiSZS1unlySUVYu3SD6YBYnNi3G
- 5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa33eDIHu/zr1HMKErm+2SD6PO9umRef8V8
- 2o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCSKmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+
- RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJ
- C3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTTQbM0WUIBIcGmq38+OgUsMYu4NzLu7uZF
- Acmp6h8g
-Organization: Baylibre
-Message-ID: <59cda050-988f-20b9-b211-e6a426139665@baylibre.com>
-Date:   Thu, 8 Nov 2018 14:26:59 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20181108093123.21498-1-jbrunet@baylibre.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Yixun Lan <yixun.lan@amlogic.com>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Date:   Thu, 08 Nov 2018 14:34:37 +0100
+In-Reply-To: <1541682912-120480-1-git-send-email-jian.hu@amlogic.com>
+References: <1541682912-120480-1-git-send-email-jian.hu@amlogic.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.2 (3.30.2-2.fc29) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 08/11/2018 10:31, Jerome Brunet wrote:
-> Similar to gxbb and gxl platforms, axg SCPI Cortex-M co-processor
-> uses the fdiv2 and fdiv3 to, among other things, provide the cpu
-> clock.
+On Thu, 2018-11-08 at 21:15 +0800, Jian Hu wrote:
+> Changes since v3 at[4]
+> -add fixed clocks clk_regmap definition
+
+Jian,
+
+When replying to the v1 of your clk_ao patchset : 
+https://patchwork.kernel.org/patch/10562563/#22177627
+
+I have explained that I would like to stop taking clock (such as xtal) from
+nowhere. Clocks (even the xtal) should be properly claimed through DT.
+I have specifically asked this to be taken into account for the EE controller.
+
+If you need an exemple on how to get the input clock from DT to your
+controller, please have look at the axg audio clock controller.
+
+This comment does not appear to be addressed in this version. 
+Please make sure you have addressed all the comments of past reviews before
+reposting
+
+Thx
+
 > 
-> Until clock hand-off mechanism makes its way to CCF and the generic
-> SCPI claims platform specific clocks, these clocks must be marked as
-> critical to make sure they are never disabled when needed by the
-> co-processor.
+> Changes since v2 at[2]
+> -fix fixed clocks's descriptions
+> -fix aligment
+> -add enable bit for plls base on [3] patches
+> -add fixed clock gate bit
 > 
-> Fixes: 05f814402d61 ("clk: meson: add fdiv clock gates")
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
+> Changes since v1 at[1]
+> -fix typo of 'Everything'.
+> -change the word 'AmLogic' to 'Amlogic'
+> -squash patch 1 and 2.
+> -delete usless message of "Trying obsolete regs".
+> -delete the empty line in include/dt-bindings/clock/g12a-clkc.h.
+> -rebase on top of the "next/drivers" branch, and add g12a clock patch.
+> -add CLK_MUX_ROUND_CLOSEST for g12a_sd_emmc_b_clk0_sel and
+>  g12a_sd_emmc_c_clk0_sel.
 > 
-> Hi Stephen,
+> [1]
+> https://lkml.kernel.org/r/1531133549-25806-2-git-send-email-jian.hu@amlogic.com
+> [2]
+> https://lkml.kernel.org/r/1531728707-192230-2-git-send-email-jian.hu@amlogic.com
+> [3]https://lkml.kernel.org/r/20180717095617.12240-1-jbrunet@baylibre.com
+> [4]
+> https://lkml.kernel.org/r/1533890858-113020-1-git-send-email-jian.hu@amlogic.com
 > 
-> If you can put this one in clk-fixes as well, it would be awesome.
-> It is basically the same thing as the change you took this Tuesday.
+> Jian Hu (2):
+>   dt-bindings: clk: meson-g12a: Add G12A EE Clock Bindings
+>   clk: meson-g12a: Add EE Clock controller driver
 > 
-> Since then, we had reports the same problem with SCPI was happening
-> on the axg, calling for the same fixup.
-> 
-> Cheers
-> Jerome
-> 
->  drivers/clk/meson/axg.c | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
-> 
-> diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
-> index c981159b02c0..792735d7e46e 100644
-> --- a/drivers/clk/meson/axg.c
-> +++ b/drivers/clk/meson/axg.c
-> @@ -325,6 +325,7 @@ static struct clk_regmap axg_fclk_div2 = {
->  		.ops = &clk_regmap_gate_ops,
->  		.parent_names = (const char *[]){ "fclk_div2_div" },
->  		.num_parents = 1,
-> +		.flags = CLK_IS_CRITICAL,
->  	},
->  };
->  
-> @@ -349,6 +350,18 @@ static struct clk_regmap axg_fclk_div3 = {
->  		.ops = &clk_regmap_gate_ops,
->  		.parent_names = (const char *[]){ "fclk_div3_div" },
->  		.num_parents = 1,
-> +		/*
-> +		 * FIXME:
-> +		 * This clock, as fdiv2, is used by the SCPI FW and is required
-> +		 * by the platform to operate correctly.
-> +		 * Until the following condition are met, we need this clock to
-> +		 * be marked as critical:
-> +		 * a) The SCPI generic driver claims and enable all the clocks
-> +		 *    it needs
-> +		 * b) CCF has a clock hand-off mechanism to make the sure the
-> +		 *    clock stays on until the proper driver comes along
-> +		 */
-> +		.flags = CLK_IS_CRITICAL,
->  	},
->  };
->  
+>  .../bindings/clock/amlogic,gxbb-clkc.txt           |    1 +
+>  drivers/clk/meson/Kconfig                          |   10 +
+>  drivers/clk/meson/Makefile                         |    1 +
+>  drivers/clk/meson/g12a.c                           | 1134
+> ++++++++++++++++++++
+>  drivers/clk/meson/g12a.h                           |  128 +++
+>  include/dt-bindings/clock/g12a-clkc.h              |   93 ++
+>  6 files changed, 1367 insertions(+)
+>  create mode 100644 drivers/clk/meson/g12a.c
+>  create mode 100644 drivers/clk/meson/g12a.h
+>  create mode 100644 include/dt-bindings/clock/g12a-clkc.h
 > 
 
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+
