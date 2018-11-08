@@ -2,139 +2,132 @@ Return-Path: <SRS0=ZQGu=NT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AF6DC32789
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Nov 2018 09:31:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDB82C46465
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Nov 2018 10:14:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0D5A2086A
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Nov 2018 09:31:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="mdx9CXO/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0D5A2086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by mail.kernel.org (Postfix) with ESMTP id A0E1B20825
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Nov 2018 10:14:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0E1B20825
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726380AbeKHTGU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 8 Nov 2018 14:06:20 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:43101 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726375AbeKHTGT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Nov 2018 14:06:19 -0500
-Received: by mail-wr1-f66.google.com with SMTP id y3-v6so20136204wrh.10
-        for <linux-clk@vger.kernel.org>; Thu, 08 Nov 2018 01:31:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Qv6jxXezPla1EOeS4ig4mwMVMLxc3iGmB0uzoW/DK/k=;
-        b=mdx9CXO/TpiD1KipUPoOtMrz+kColKlRYsgBm6O2nYPqh+8inJomDe1VgG56hL+b+w
-         cQQIlape8z3+vPDINOk2ku8vVusWepOufK/W5GY4eXXNqjc2ISAlcIlCNdmqFJphpfF8
-         0HQiSFognQ0FeqlMh0a5t46/xEcQIjfRRaBwwXGgQHBmmLv9GJDpUhk/5fJvQYoISA0+
-         YVgDsHrQS7czjQqVIjyBOz7Z8ujqbe4d3D06QeZ/wOygSuypvv4a6GIVrvwdtDGp8YTO
-         KJKr73wpx6Nbq8X3DVzDN866vlARFoHZa/I/USuDi2OvvKPsEOz723E0DIM+31rvbTPm
-         LOdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Qv6jxXezPla1EOeS4ig4mwMVMLxc3iGmB0uzoW/DK/k=;
-        b=hdz4xUeypWDJdNOdrrazeoxlExPU2pj9RLIIjVk9kohSRp69BwgQXPMwElpanSv89H
-         eHEya55O4S1tZHLtaeFZz/aD9OCwQxJcUICLebrUWpXdWx1oCt2K84OwT/K4YG+GgEkd
-         QBEAdQDbhdnl3ILXWKA8/ieok74SDTBzXPDiPn3u/92E1/qPJZZ1WEW0QU6ud4nL04Ra
-         cAvmMZ53I5ZCRReHGnpg4Sv/0XDYUBYboa9hCTWUBvLuEo3FkhdBVJbLKfsomJz01A/9
-         sqtceYmcD7gRIf9rq3lop35kSyBXnguejk1+OpxBviUe30w00Hh+FdhuTKLkbCtm0uk+
-         PW4A==
-X-Gm-Message-State: AGRZ1gK3Dse5lzsFHMi830z4R0stORD2jVwKfrKTvkSO9FqTSb2WlAir
-        Lp+wVC2ToH3wtHC6BBN2ZSfnoQ==
-X-Google-Smtp-Source: AJdET5dqOpjmf59tfNDjcWZr2+IVmZju9/yInfCxlo2lrv5Jg1yOLJnFB4Lnr6dXuwiiwO0xe1xSfQ==
-X-Received: by 2002:a5d:6405:: with SMTP id z5-v6mr3206051wru.64.1541669501171;
-        Thu, 08 Nov 2018 01:31:41 -0800 (PST)
-Received: from boomer.local ([90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id m9-v6sm3513691wrn.36.2018.11.08.01.31.40
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 08 Nov 2018 01:31:40 -0800 (PST)
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: meson: axg: mark fdiv2 and fdiv3 as critical
-Date:   Thu,  8 Nov 2018 10:31:23 +0100
-Message-Id: <20181108093123.21498-1-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.19.1
+        id S1727197AbeKHTtJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 8 Nov 2018 14:49:09 -0500
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:39346 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726963AbeKHTtG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Nov 2018 14:49:06 -0500
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+        by mx0a-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wA8A8TZM010849;
+        Thu, 8 Nov 2018 04:14:15 -0600
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from mail1.cirrus.com (mail1.cirrus.com [141.131.3.20])
+        by mx0a-001ae601.pphosted.com with ESMTP id 2nm9308nah-1;
+        Thu, 08 Nov 2018 04:14:15 -0600
+Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
+        by mail1.cirrus.com (Postfix) with ESMTP id 9F164611C8B0;
+        Thu,  8 Nov 2018 04:14:14 -0600 (CST)
+Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
+ (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Thu, 8 Nov 2018
+ 10:14:14 +0000
+Received: from algalon.ad.cirrus.com (algalon.ad.cirrus.com [198.90.251.122])
+        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id wA8AE55r028949; Thu,
+ 8 Nov 2018 10:14:05 GMT
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     <lee.jones@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <broonie@kernel.org>,
+        <linus.walleij@linaro.org>, <robh+dt@kernel.org>
+CC:     <mark.rutland@arm.com>, <lgirdwood@gmail.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <patches@opensource.cirrus.com>, <linux-clk@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>
+Subject: [PATCH v4 0/6] Lochnagar Driver
+Date:   Thu, 8 Nov 2018 10:13:59 +0000
+Message-ID: <20181108101405.14062-1-ckeepax@opensource.cirrus.com>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1807170000
+ definitions=main-1811080089
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Similar to gxbb and gxl platforms, axg SCPI Cortex-M co-processor
-uses the fdiv2 and fdiv3 to, among other things, provide the cpu
-clock.
+Version 4 of this series the big change here is splitting up
+the device tree into having a node for each of the MFD child
+drivers. More detailed change logs are given on each patch.
 
-Until clock hand-off mechanism makes its way to CCF and the generic
-SCPI claims platform specific clocks, these clocks must be marked as
-critical to make sure they are never disabled when needed by the
-co-processor.
+Lee doesn't like the idea of having both mfd_add_devices and
+of_platform_populate in the MFD driver. Stephen had asked on a
+previous spin to move the fixed clocks out of the clock driver
+into device tree and there is a fixed regulator as well that
+is specified through device tree. Those require having the
+of_platform_populate there which left the only solution being
+to move the MFD children into device tree as well.
 
-Fixes: 05f814402d61 ("clk: meson: add fdiv clock gates")
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
+I have moved the relevant DT settings to be attached to their
+respective nodes in DT although I guess another option would
+be to leave all the config on the parent node and just use
+the child nodes for binding in the drivers, but I decided that
+was less consistent with other DT usage. But could switch over
+to it if people prefer.
 
-Hi Stephen,
+Thanks,
+Charles
 
-If you can put this one in clk-fixes as well, it would be awesome.
-It is basically the same thing as the change you took this Tuesday.
+Charles Keepax (6):
+  regulator: lochnagar: Explicitly include register headers
+  regulator: lochnagar: Move driver to binding from DT
+  mfd: lochnagar: Add initial binding documentation
+  mfd: lochnagar: Add support for the Cirrus Logic Lochnagar
+  clk: lochnagar: Add support for the Cirrus Logic Lochnagar
+  pinctrl: lochnagar: Add support for the Cirrus Logic Lochnagar
 
-Since then, we had reports the same problem with SCPI was happening
-on the axg, calling for the same fixup.
+ .../devicetree/bindings/clock/cirrus,lochnagar.txt |   89 ++
+ .../devicetree/bindings/mfd/cirrus,lochnagar.txt   |   70 ++
+ .../bindings/pinctrl/cirrus,lochnagar.txt          |  141 +++
+ .../bindings/regulator/cirrus,lochnagar.txt        |   80 ++
+ MAINTAINERS                                        |   17 +
+ drivers/clk/Kconfig                                |    7 +
+ drivers/clk/Makefile                               |    1 +
+ drivers/clk/clk-lochnagar.c                        |  360 ++++++
+ drivers/mfd/Kconfig                                |    8 +
+ drivers/mfd/Makefile                               |    2 +
+ drivers/mfd/lochnagar-i2c.c                        |  394 +++++++
+ drivers/pinctrl/cirrus/Kconfig                     |   10 +
+ drivers/pinctrl/cirrus/Makefile                    |    2 +
+ drivers/pinctrl/cirrus/pinctrl-lochnagar.c         | 1145 ++++++++++++++++++++
+ drivers/pinctrl/cirrus/pinctrl-lochnagar.h         |  112 ++
+ drivers/regulator/lochnagar-regulator.c            |   10 +-
+ include/dt-bindings/clk/lochnagar.h                |   26 +
+ include/dt-bindings/pinctrl/lochnagar.h            |  132 +++
+ include/linux/mfd/lochnagar.h                      |   55 +
+ include/linux/mfd/lochnagar1_regs.h                |  157 +++
+ include/linux/mfd/lochnagar2_regs.h                |  253 +++++
+ 21 files changed, 3070 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/cirrus,lochnagar.txt
+ create mode 100644 Documentation/devicetree/bindings/mfd/cirrus,lochnagar.txt
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/cirrus,lochnagar.txt
+ create mode 100644 Documentation/devicetree/bindings/regulator/cirrus,lochnagar.txt
+ create mode 100644 drivers/clk/clk-lochnagar.c
+ create mode 100644 drivers/mfd/lochnagar-i2c.c
+ create mode 100644 drivers/pinctrl/cirrus/pinctrl-lochnagar.c
+ create mode 100644 drivers/pinctrl/cirrus/pinctrl-lochnagar.h
+ create mode 100644 include/dt-bindings/clk/lochnagar.h
+ create mode 100644 include/dt-bindings/pinctrl/lochnagar.h
+ create mode 100644 include/linux/mfd/lochnagar.h
+ create mode 100644 include/linux/mfd/lochnagar1_regs.h
+ create mode 100644 include/linux/mfd/lochnagar2_regs.h
 
-Cheers
-Jerome
-
- drivers/clk/meson/axg.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
-
-diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
-index c981159b02c0..792735d7e46e 100644
---- a/drivers/clk/meson/axg.c
-+++ b/drivers/clk/meson/axg.c
-@@ -325,6 +325,7 @@ static struct clk_regmap axg_fclk_div2 = {
- 		.ops = &clk_regmap_gate_ops,
- 		.parent_names = (const char *[]){ "fclk_div2_div" },
- 		.num_parents = 1,
-+		.flags = CLK_IS_CRITICAL,
- 	},
- };
- 
-@@ -349,6 +350,18 @@ static struct clk_regmap axg_fclk_div3 = {
- 		.ops = &clk_regmap_gate_ops,
- 		.parent_names = (const char *[]){ "fclk_div3_div" },
- 		.num_parents = 1,
-+		/*
-+		 * FIXME:
-+		 * This clock, as fdiv2, is used by the SCPI FW and is required
-+		 * by the platform to operate correctly.
-+		 * Until the following condition are met, we need this clock to
-+		 * be marked as critical:
-+		 * a) The SCPI generic driver claims and enable all the clocks
-+		 *    it needs
-+		 * b) CCF has a clock hand-off mechanism to make the sure the
-+		 *    clock stays on until the proper driver comes along
-+		 */
-+		.flags = CLK_IS_CRITICAL,
- 	},
- };
- 
 -- 
-2.19.1
+2.11.0
 
