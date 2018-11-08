@@ -2,59 +2,68 @@ Return-Path: <SRS0=ZQGu=NT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 078CEC32789
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Nov 2018 10:26:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC4D5C32789
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Nov 2018 10:37:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB64720827
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Nov 2018 10:26:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB64720827
+	by mail.kernel.org (Postfix) with ESMTP id B597D20685
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Nov 2018 10:37:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="mJrGY9Lt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B597D20685
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726595AbeKHUBY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 8 Nov 2018 15:01:24 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:53734 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726274AbeKHUBY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Nov 2018 15:01:24 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id wA8AQEll010324;
-        Thu, 8 Nov 2018 04:26:14 -0600
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wA8AQETu058923
+        id S1726758AbeKHULz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 8 Nov 2018 15:11:55 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:52458 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726274AbeKHULz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Nov 2018 15:11:55 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id wA8AagPe025320;
+        Thu, 8 Nov 2018 04:36:42 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1541673402;
+        bh=XuDMRopSgPrsNOHjWn5CvcleVHxhfIg8XLdX4pSoK0g=;
+        h=Subject:To:References:From:Date:In-Reply-To;
+        b=mJrGY9LtmPDZdREiJADKWc2oUdQfbJZEkKuZi3jMOmI1rTaqncM9TvXEBNQCzZ13C
+         K4STfbHaQ8bUSjVlycGX+qVl6QfOPeBoJBmFf+WL99D7+SIhDRhdwz5h7YMa1wPmIA
+         3adHYAPQQvbcbG9Ka+rDQnflEonk9iTDWtnSMLic=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wA8AagP2102591
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 8 Nov 2018 04:26:14 -0600
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+        Thu, 8 Nov 2018 04:36:42 -0600
+Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 8 Nov
- 2018 04:26:13 -0600
-Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_0,
+ 2018 04:36:41 -0600
+Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_0,
  cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Thu, 8 Nov 2018 04:26:13 -0600
+ Thu, 8 Nov 2018 04:36:41 -0600
 Received: from [127.0.0.1] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wA8AQAAt017734;
-        Thu, 8 Nov 2018 04:26:11 -0600
-Subject: Re: [PATCH 2/2] arm: omap_hwmod disable ick autoidling when a hwmod
- requires that
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wA8Aabp0028880;
+        Thu, 8 Nov 2018 04:36:38 -0600
+Subject: Re: [PATCH 1/2] clk: ti: add a usecount for autoidle
 To:     Andreas Kemnade <andreas@kemnade.info>, <mturquette@baylibre.com>,
         <sboyd@kernel.org>, <linux-omap@vger.kernel.org>,
         <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <bcousson@baylibre.com>, <paul@pwsan.com>, <tony@atomide.com>,
         <letux-kernel@openphoenux.org>
 References: <20181004203817.22101-1-andreas@kemnade.info>
- <20181004203817.22101-3-andreas@kemnade.info>
+ <20181004203817.22101-2-andreas@kemnade.info>
 From:   Tero Kristo <t-kristo@ti.com>
-Message-ID: <bac125b7-68c5-4c90-ad98-22872db9ccff@ti.com>
-Date:   Thu, 8 Nov 2018 12:26:08 +0200
+Message-ID: <23cbfc19-20d9-99f0-c086-e782cc36de34@ti.com>
+Date:   Thu, 8 Nov 2018 12:36:35 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181004203817.22101-3-andreas@kemnade.info>
+In-Reply-To: <20181004203817.22101-2-andreas@kemnade.info>
 Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -65,70 +74,114 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On 04/10/2018 23:38, Andreas Kemnade wrote:
-> Deny autoidle for hwmods with the OCPIF_SWSUP_IDLE flag,
-> that makes hwmods working properly which cannot handle
-> autoidle properly in lower power states.
-> Affected is e. g. the omap_hdq.
-> Since an ick might have mulitple users, autoidle is disabled
-> when an individual user requires that rather than in
-> _setup_iclk_autoidle. dss_ick is an example for that.
+> We have the scenario that first autoidle is disabled for all clocks,
+> then it is disabled for selected ones and then enabled for all. So
+> we should have some counting here, also according to the
+> comment in  _setup_iclk_autoidle()
 > 
 > Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
 > ---
->   arch/arm/mach-omap2/omap_hwmod.c | 16 ++++++++++++----
->   1 file changed, 12 insertions(+), 4 deletions(-)
+>   drivers/clk/ti/autoidle.c | 32 ++++++++++++++++++++++++--------
+>   include/linux/clk/ti.h    |  1 +
+>   2 files changed, 25 insertions(+), 8 deletions(-)
 > 
-> diff --git a/arch/arm/mach-omap2/omap_hwmod.c b/arch/arm/mach-omap2/omap_hwmod.c
-> index bb641e6c93d0..0078b0e1d242 100644
-> --- a/arch/arm/mach-omap2/omap_hwmod.c
-> +++ b/arch/arm/mach-omap2/omap_hwmod.c
-> @@ -986,8 +986,10 @@ static int _enable_clocks(struct omap_hwmod *oh)
->   		clk_enable(oh->_clk);
+> diff --git a/drivers/clk/ti/autoidle.c b/drivers/clk/ti/autoidle.c
+> index 7bb9afbe4058..bb6cff168e73 100644
+> --- a/drivers/clk/ti/autoidle.c
+> +++ b/drivers/clk/ti/autoidle.c
+> @@ -37,6 +37,14 @@ struct clk_ti_autoidle {
+>   static LIST_HEAD(autoidle_clks);
+>   static LIST_HEAD(clk_hw_omap_clocks);
 >   
->   	list_for_each_entry(os, &oh->slave_ports, node) {
-> -		if (os->_clk && (os->flags & OCPIF_SWSUP_IDLE))
-> +		if (os->_clk && (os->flags & OCPIF_SWSUP_IDLE)) {
-> +			omap2_clk_deny_idle(os->_clk);
+> +/*
+> + * we have some non-atomic read/write
+> + * operations behind it, so lets
+> + * take one mutex for handling autoidle
+> + * of all clocks
+> + */
+> +static DEFINE_MUTEX(autoidle_mutex);
 
-I think calling this unconditionally across all platforms / clock types 
-might cause problems. Checking kernel, am33xx seems to have one clock 
-with this flag that is not of omap2 type. Do we have any testing data 
-that this doesn't break things?
+Why mutex? This prevents calling the autoidle APIs from atomic context. 
+Did you check the mutex debug kernel configs with this?
+
+This may cause problems with the runtime PM entries to the code at least.
+
+
+> +
+>   /**
+>    * omap2_clk_deny_idle - disable autoidle on an OMAP clock
+>    * @clk: struct clk * to disable autoidle for
+> @@ -48,8 +56,13 @@ int omap2_clk_deny_idle(struct clk *clk)
+>   	struct clk_hw_omap *c;
+>   
+>   	c = to_clk_hw_omap(__clk_get_hw(clk));
+> -	if (c->ops && c->ops->deny_idle)
+> -		c->ops->deny_idle(c);
+> +	if (c->ops && c->ops->deny_idle) {
+> +		mutex_lock(&autoidle_mutex);
+> +		c->autoidle_count--;
+> +		if (c->autoidle_count == -1)
+
+I think you should swap the arithmetics here, all the other usecounters 
+use positive values, here you enter deep to the negative side when 
+autoidle is denied by multiple users, which might be confusing.
 
 -Tero
 
->   			clk_enable(os->_clk);
-> +		}
->   	}
+> +			c->ops->deny_idle(c);
+> +		mutex_unlock(&autoidle_mutex);
+> +	}
+>   	return 0;
+>   }
 >   
->   	/* The opt clocks are controlled by the device driver. */
-> @@ -1039,8 +1041,10 @@ static int _disable_clocks(struct omap_hwmod *oh)
->   		clk_disable(oh->_clk);
+> @@ -64,8 +77,13 @@ int omap2_clk_allow_idle(struct clk *clk)
+>   	struct clk_hw_omap *c;
 >   
->   	list_for_each_entry(os, &oh->slave_ports, node) {
-> -		if (os->_clk && (os->flags & OCPIF_SWSUP_IDLE))
-> +		if (os->_clk && (os->flags & OCPIF_SWSUP_IDLE)) {
->   			clk_disable(os->_clk);
-> +			omap2_clk_allow_idle(os->_clk);
-> +		}
->   	}
+>   	c = to_clk_hw_omap(__clk_get_hw(clk));
+> -	if (c->ops && c->ops->allow_idle)
+> -		c->ops->allow_idle(c);
+> +	if (c->ops && c->ops->allow_idle) {
+> +		mutex_lock(&autoidle_mutex);
+> +		c->autoidle_count++;
+> +		if (c->autoidle_count == 0)
+> +			c->ops->allow_idle(c);
+> +		mutex_unlock(&autoidle_mutex);
+> +	}
+>   	return 0;
+>   }
 >   
->   	if (oh->flags & HWMOD_OPT_CLKS_NEEDED)
-> @@ -2410,9 +2414,13 @@ static void __init _setup_iclk_autoidle(struct omap_hwmod *oh)
->   			continue;
+> @@ -201,8 +219,7 @@ int omap2_clk_enable_autoidle_all(void)
+>   	struct clk_hw_omap *c;
 >   
->   		if (os->flags & OCPIF_SWSUP_IDLE) {
-> -			/* XXX omap_iclk_deny_idle(c); */
-> +			/*
-> +			 * we might have multiple users of one iclk with
-> +			 * different requirements, disable autoidle when
-> +			 * the module is enabled, e.g. dss iclk
-> +			 */
->   		} else {
-> -			/* XXX omap_iclk_allow_idle(c); */
-> +			/* we are enabling autoidle afterwards anyways */
->   			clk_enable(os->_clk);
->   		 >   	}
+>   	list_for_each_entry(c, &clk_hw_omap_clocks, node)
+> -		if (c->ops && c->ops->allow_idle)
+> -			c->ops->allow_idle(c);
+> +		omap2_clk_allow_idle(c->hw.clk);
+>   
+>   	_clk_generic_allow_autoidle_all();
+>   
+> @@ -223,8 +240,7 @@ int omap2_clk_disable_autoidle_all(void)
+>   	struct clk_hw_omap *c;
+>   
+>   	list_for_each_entry(c, &clk_hw_omap_clocks, node)
+> -		if (c->ops && c->ops->deny_idle)
+> -			c->ops->deny_idle(c);
+> +		omap2_clk_deny_idle(c->hw.clk);
+>   
+>   	_clk_generic_deny_autoidle_all();
+>   
+> diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
+> index a8faa38b1ed6..c460355419c0 100644
+> --- a/include/linux/clk/ti.h
+> +++ b/include/linux/clk/ti.h
+> @@ -159,6 +159,7 @@ struct clk_hw_omap {
+>   	const char		*clkdm_name;
+>   	struct clockdomain	*clkdm;
+>   	const struct clk_hw_omap_ops	*ops;
+> +	int autoidle_count;
+>   };
+>   
+>   /*
 > 
 
 --
