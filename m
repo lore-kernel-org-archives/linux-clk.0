@@ -2,81 +2,130 @@ Return-Path: <SRS0=5BjN=NU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8D63C43441
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Nov 2018 09:51:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C503C43441
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Nov 2018 09:56:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91E1720855
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Nov 2018 09:51:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jF274Bpp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91E1720855
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id D179F20855
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Nov 2018 09:56:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D179F20855
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727653AbeKITbd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 9 Nov 2018 14:31:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55958 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727532AbeKITbd (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 9 Nov 2018 14:31:33 -0500
-Received: from localhost.localdomain (unknown [171.76.98.79])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A30C720855;
-        Fri,  9 Nov 2018 09:51:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541757105;
-        bh=1IKjVkwKoT3g7broH+MSlBM9qF+RloeryoopLsLHEPk=;
-        h=From:To:Cc:Subject:Date:From;
-        b=jF274BppQbiEO79/Rhd/LQ8kHeQMKIN9CED8ra00DkwbXoj+BAi4xmaGWzPZ616Pu
-         7APW+q8pWamlGwCivhUo2QM5cpwtPUYamWPe5MWI4zeuRUIRJXafJd4K1IsQ+36jC7
-         Wt/Ol5XjN9ct0M2aPWPZpvA7N2zyKn1smaDcp/N4=
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Vinod Koul <vkoul@kernel.org>, Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: qcom: gcc: Fix board clock node name
-Date:   Fri,  9 Nov 2018 15:20:54 +0530
-Message-Id: <20181109095054.13924-1-vkoul@kernel.org>
-X-Mailer: git-send-email 2.14.4
+        id S1728059AbeKITgG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 9 Nov 2018 14:36:06 -0500
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:42856 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727532AbeKITgF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Nov 2018 14:36:05 -0500
+Received: by mail-vs1-f68.google.com with SMTP id b74so679253vsd.9;
+        Fri, 09 Nov 2018 01:56:15 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=sgR7TvkiA1mnZNGKKfCKW7uzKfmOp1yYkm3LUZfV3yo=;
+        b=jbxKIeHjF/KVRr4QzqyoZfLsXntMOdcu8i/0z/BttbOFhvovPWpO0RoeH4I6cA0qtX
+         sWQDjTS+Z5x8r3AiS0N8gbY4MwjlRz68twEb4FkSsZzDGdrxX2HS89wK/eaIQnoKpfOS
+         EobygkQCJXMXastsjq0lqi3rZM430PXmj0IVzLJk3jeItS2CUsCjaEsKs20btnq2wTgk
+         152X9A7NYDHjjDS4K3ThdfCPQblM+4uXa5eeAJ5ecOqHOiErtxhpn/E0b0KrCifDYetM
+         s7Zd8EbzEaorg68zE1TeNZT328e5L/hMa3buZPqztIWMCYqPyTtYDEKfeWc9HrjJxlxP
+         Iw1w==
+X-Gm-Message-State: AGRZ1gLppnB7e2dYQcBJTC8xdBIFUqulYzkc/bpmP726fb2eu+EypDER
+        q7kVIxDMuT3viXy7jW53j07z/rzFXPyA10qYbnE=
+X-Google-Smtp-Source: AJdET5d41WJkcStufXArkBFec7D+YPkJ4oVxCgtxxDc/mPdo1cd5PKTP0yZmDGxz8Jji+2omjZTbria4kdkxGLKHUp4=
+X-Received: by 2002:a67:f43:: with SMTP id 64mr3575840vsp.166.1541757374523;
+ Fri, 09 Nov 2018 01:56:14 -0800 (PST)
+MIME-Version: 1.0
+References: <20181106183609.207702-1-sboyd@kernel.org> <20181106183609.207702-2-sboyd@kernel.org>
+ <CAL_JsqLvKWcJUYDyWOg3rMeEWv7JV4zw7-YkOUWiL5rfXgVRvQ@mail.gmail.com> <154161585170.88331.1822872519370217248@swboyd.mtv.corp.google.com>
+In-Reply-To: <154161585170.88331.1822872519370217248@swboyd.mtv.corp.google.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 9 Nov 2018 10:56:01 +0100
+Message-ID: <CAMuHMdUTwUTdbKAWCNxH72-tvJuY-LtRO2Dh8izdEOKrFOSwLQ@mail.gmail.com>
+Subject: Re: [PATCH 1/4] of/device: Add a way to probe drivers by match data
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-mediatek@lists.infradead.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        ryder.lee@mediatek.com, Frank Rowand <frowand.list@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Device tree node name are not supposed to have "_" in them so fix the
-node name use of xo_board to xo-board
+Hi Stephen,
 
-Fixes: 652f1813c113 ("clk: qcom: gcc: Add global clock controller driver for QCS404")
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
----
+On Wed, Nov 7, 2018 at 7:37 PM Stephen Boyd <sboyd@kernel.org> wrote:
+> Quoting Rob Herring (2018-11-06 12:44:52)
+> > On Tue, Nov 6, 2018 at 12:36 PM Stephen Boyd <sboyd@kernel.org> wrote:
+> > > We have a handful of clk drivers that have a collection of slightly
+> > > variant device support keyed off of the compatible string. In each of
+> > > these drivers, we demux the variant and then call the "real" probe
+> > > function based on whatever is stored in the match data for that
+> > > compatible string. Let's generalize this function so that it can be
+> > > re-used as the platform_driver probe function directly.
+> >
+> > This looks really hacky to me. It sounds kind of general, but really
+> > only works if we have match data that's a single function and we lose
+> > any type checking on the function.
+>
+> I don't know what this means. Are you saying that we lose the ability to
+> type check the function pointer stored in the data member? I don't have
+> a good answer for this besides it's not any worse than the status quo
+> for the mediatek drivers.
 
-Steve: RobH pointed this on DTS patches, would be great if you can pick this
-as a fix
+The .data field has always been void *, and is used for storing different
+things, depending on the driver.
+It's already up to the driver writer to get that right.
 
- drivers/clk/qcom/gcc-qcs404.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> One alternative is to add a DT only array to the platform_driver struct
+> that has the platform driver probe function type and matches the index
+> in the of_device_id table. Then we can add some logic into
+> platform_drv_probe() to look for this table being set and find the probe
+> function to call. Then we still have match data for anything that wants
+> that (maybe it could be passed in to the probe function) at the cost of
+> having another array. I don't have a use-case for this right now so I'm
+> not sure this is a great idea.
+>
+>   struct of_platform_driver_probe_func {
+>         int (*probe)(struct platform_device *pdev);
+>   };
+>
+>   struct of_platform_driver_probe_func mtk_probes[] = {
+>         mtk_probe1,
+>         mtk_probe2,
+>         mtk_probe3,
+>   };
+>
+>   struct platform_driver mtk_driver = {
+>         .of_probes = &mtk_probes;
+>         .driver = {
+>                 .name = "mtk-foo";
+>                 .of_match_table = mtk_match_table,
+>         },
+>   };
 
-diff --git a/drivers/clk/qcom/gcc-qcs404.c b/drivers/clk/qcom/gcc-qcs404.c
-index e4ca6a45f313..ef1b267cb058 100644
---- a/drivers/clk/qcom/gcc-qcs404.c
-+++ b/drivers/clk/qcom/gcc-qcs404.c
-@@ -265,7 +265,7 @@ static struct clk_fixed_factor cxo = {
- 	.div = 1,
- 	.hw.init = &(struct clk_init_data){
- 		.name = "cxo",
--		.parent_names = (const char *[]){ "xo_board" },
-+		.parent_names = (const char *[]){ "xo-board" },
- 		.num_parents = 1,
- 		.ops = &clk_fixed_factor_ops,
- 	},
+This looks worse to me: people tend to be very good at keeping multiple
+arrays in sync :-(
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.14.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
