@@ -2,126 +2,94 @@ Return-Path: <SRS0=5BjN=NU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0741C43441
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Nov 2018 16:56:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74DA9C43441
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Nov 2018 16:59:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A7D720818
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Nov 2018 16:56:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 35F3D20883
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Nov 2018 16:59:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LnVhkO4m"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A7D720818
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PEZWlYiu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35F3D20883
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728422AbeKJCiH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 9 Nov 2018 21:38:07 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:46791 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727961AbeKJCiG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Nov 2018 21:38:06 -0500
-Received: by mail-pl1-f194.google.com with SMTP id c13-v6so1183557plz.13;
-        Fri, 09 Nov 2018 08:56:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=kt/MckXptzp5EzzhlquAkOFAEyyu8EcQkuFi6KktDh4=;
-        b=LnVhkO4mD6NXEvzZ51OmCKTLFlfVd6xBboSGAFJFNobfxksmNkV3RxAwIflvezf1hn
-         TUeDAssfO9MYBEOTDKcK4WUzSeI7Dh4MsaSUJ7Be3/HIqRJjzHFjZ57U7yEbJ1/YO8cw
-         /FFrriMVuYuJNk7c7zyR/YvjZWTAkI7CJXaqyyrcNTkbXBEmSIpwU5VhlYPq70YWtSjU
-         frbDo6amHaplRlcylC5E7J302D8g4lWEfbf3J/KML0u9IKDkF7qbVaD5LnH3qYK6prM7
-         y4byo5hBNwnREwSN7KJeqip2Ha7eJDwDVoy1g4iFDWFdEGviFRhMAZQZFc+rqO4/AbZN
-         5f/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=kt/MckXptzp5EzzhlquAkOFAEyyu8EcQkuFi6KktDh4=;
-        b=p70pom4GYTVdNrYbCknnyMkfdYmCpF8xRKDorAW0pstRWimpVdbV+GR0BEvNkIUHwl
-         ItyL6qk5ZLGkCiinSbjFym9SH1qZNzyLmtD2Kd7VXTbsl/I6BxMaQaMbUVMDz4clUCTB
-         5N+ucsSo80xcSk0c7Zv62IIEXIE2mpaTuJUBjY37n36t68ZkbbrUod++rhVOrOLuXBnL
-         O9hKMwQ9LJffjJFDIrRN9WpUgT8qXWqeXJ9WAzIsM9nNeZgWksXoPYN10JoZQCkZIHD2
-         iwuQeaLTEKYUGexsvdyOITrjpcz+u0XcoCD9vIQEUlBX5QB//6BLyRJGItT0vRy2tbNa
-         MP3g==
-X-Gm-Message-State: AGRZ1gL/u+aHt9DA1Ry5dES3otkdEApaUliprkn+n7HWfDJP0a3lVJRR
-        bRwzOjNyJRRhhDIRdhGD4ms=
-X-Google-Smtp-Source: AJdET5dzkU0TpPYkG7dZ8owWCMCYzUdn1GqPa8KiUL1gb9w1MlsvcTCNLdaPtp4Vd8KeEmZseaXPFw==
-X-Received: by 2002:a17:902:8f8f:: with SMTP id z15-v6mr9708309plo.257.1541782601843;
-        Fri, 09 Nov 2018 08:56:41 -0800 (PST)
-Received: from [192.168.1.70] (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
-        by smtp.gmail.com with ESMTPSA id d8-v6sm8666567pfj.106.2018.11.09.08.56.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 09 Nov 2018 08:56:41 -0800 (PST)
-Subject: Re: [PATCH 1/4] of/device: Add a way to probe drivers by match data
-To:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
+        id S1727991AbeKJCkj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 9 Nov 2018 21:40:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60894 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728115AbeKJCkj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 9 Nov 2018 21:40:39 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E3FCB20855;
+        Fri,  9 Nov 2018 16:59:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541782754;
+        bh=Z5nDyzdTk6p2V+0QKGguEMnNTJMDmLFvBX3dWwLzzfQ=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=PEZWlYiulFJCjG/TVoYQDg/DD0RdM0H3fvD+Fkt0xRC4Z+gdSkqR9YqzvkLTcCLSC
+         yOVl+uL8GWC7PtrBmlPfPOEElnd7NBGaAMNYQBbZVzXMyJhMLUK7+b8M5NGfhK6BVV
+         PIxUfJtbhFGRrZO8xmoKTFxact5Pgl1AISFB7WZs=
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <CAMuHMdUTwUTdbKAWCNxH72-tvJuY-LtRO2Dh8izdEOKrFOSwLQ@mail.gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>,
         linux-clk <linux-clk@vger.kernel.org>,
         linux-mediatek@lists.infradead.org,
         "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, ryder.lee@mediatek.com,
-        Rob Herring <robh+dt@kernel.org>
+        <devicetree@vger.kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        ryder.lee@mediatek.com, Frank Rowand <frowand.list@gmail.com>
 References: <20181106183609.207702-1-sboyd@kernel.org>
  <20181106183609.207702-2-sboyd@kernel.org>
- <efa13e0b-0daf-3bf3-27ba-ed90f15c7dfe@gmail.com>
- <154169993998.88331.10494065577891939152@swboyd.mtv.corp.google.com>
- <0f2bb386-ba92-544c-e980-c95309944b22@gmail.com>
- <CAMuHMdWm2P8fa6d9vLhYtWHBe0uNPj9jfyL1rtmdLixPEi1rUg@mail.gmail.com>
-From:   Frank Rowand <frowand.list@gmail.com>
-Message-ID: <07ec49cb-e5b7-72bc-f563-2d2d7c2e2c0d@gmail.com>
-Date:   Fri, 9 Nov 2018 08:56:40 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <CAMuHMdWm2P8fa6d9vLhYtWHBe0uNPj9jfyL1rtmdLixPEi1rUg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+ <CAL_JsqLvKWcJUYDyWOg3rMeEWv7JV4zw7-YkOUWiL5rfXgVRvQ@mail.gmail.com>
+ <154161585170.88331.1822872519370217248@swboyd.mtv.corp.google.com>
+ <CAMuHMdUTwUTdbKAWCNxH72-tvJuY-LtRO2Dh8izdEOKrFOSwLQ@mail.gmail.com>
+Message-ID: <154178275324.88331.16237880990995819011@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH 1/4] of/device: Add a way to probe drivers by match data
+Date:   Fri, 09 Nov 2018 08:59:13 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 11/9/18 2:36 AM, Geert Uytterhoeven wrote:
-> Hi Matthias,
-> 
-> On Fri, Nov 9, 2018 at 11:29 AM Matthias Brugger <matthias.bgg@gmail.com> wrote:
->> On 08/11/2018 18:58, Stephen Boyd wrote:
->>> Quoting Matthias Brugger (2018-11-08 00:29:46)
->>>> On 06/11/2018 19:36, Stephen Boyd wrote:
->>>>> +int platform_driver_probe_by_of_match_data(struct platform_device *pdev)
->>>>> +{
->>>>> +     int (*probe_func)(struct platform_device *pdev);
->>>>> +
->>>>> +     probe_func = of_device_get_match_data(&pdev->dev);
->>>>
->>>> Shouldn't we check if probe_func is not NULL?
->>>
->>> Is the oops from the NULL pointer deref insufficient?
->>
->> Do you think we should crash the machine if someone uses the call wrongly? Or
->> should we provide the possibility to error out on the caller side?
-> 
-> I believe that would be a bug in the driver, to be discovered ASAP.
-> So yes, please do crash ;-)
+Quoting Geert Uytterhoeven (2018-11-09 01:56:01)
+> On Wed, Nov 7, 2018 at 7:37 PM Stephen Boyd <sboyd@kernel.org> wrote:
+> > Quoting Rob Herring (2018-11-06 12:44:52)
+> > > On Tue, Nov 6, 2018 at 12:36 PM Stephen Boyd <sboyd@kernel.org> wrote:
+> >         int (*probe)(struct platform_device *pdev);
+> >   };
+> >
+> >   struct of_platform_driver_probe_func mtk_probes[] =3D {
+> >         mtk_probe1,
+> >         mtk_probe2,
+> >         mtk_probe3,
+> >   };
+> >
+> >   struct platform_driver mtk_driver =3D {
+> >         .of_probes =3D &mtk_probes;
+> >         .driver =3D {
+> >                 .name =3D "mtk-foo";
+> >                 .of_match_table =3D mtk_match_table,
+> >         },
+> >   };
+> =
 
-This is one of Linus' pet peeves.  He does not think crashing the
-machine is the proper choice (as a general statement).
+> This looks worse to me: people tend to be very good at keeping multiple
+> arrays in sync :-(
 
--Frank
-
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
+To be _not_ very good? Agreed, and so specifying the probe function as
+another member in struct of_device_id seems to be the way to go.
 
