@@ -2,169 +2,81 @@ Return-Path: <SRS0=5BjN=NU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55A81C43441
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Nov 2018 08:06:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8D63C43441
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Nov 2018 09:51:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F6F120855
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Nov 2018 08:06:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F6F120855
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
+	by mail.kernel.org (Postfix) with ESMTP id 91E1720855
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Nov 2018 09:51:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jF274Bpp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91E1720855
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728158AbeKIRph (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 9 Nov 2018 12:45:37 -0500
-Received: from mail-sz2.amlogic.com ([211.162.65.114]:60099 "EHLO
-        mail-sz2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728149AbeKIRph (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Nov 2018 12:45:37 -0500
-X-Greylist: delayed 912 seconds by postgrey-1.27 at vger.kernel.org; Fri, 09 Nov 2018 12:45:33 EST
-Received: from [10.28.16.26] (10.28.16.26) by mail-sz2.amlogic.com
- (10.28.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Fri, 9 Nov 2018
- 15:51:00 +0800
-Subject: Re: [PATCH v4 0/2] clk: meson-g12a: Add EE clock controller driver
-To:     <jbrunet@baylibre.com>, Neil Armstrong <narmstrong@baylibre.com>
-CC:     Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        "Rob Herring" <robh@kernel.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Yixun Lan <yixun.lan@amlogic.com>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-References: <1541682912-120480-1-git-send-email-jian.hu@amlogic.com>
- <1157f0a9419eea01c099d8dc08d7757593720286.camel@baylibre.com>
-From:   Jian Hu <jian.hu@amlogic.com>
-Message-ID: <dae47e53-2ea2-5cfc-e69c-48585b1c4644@amlogic.com>
-Date:   Fri, 9 Nov 2018 15:51:01 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <1157f0a9419eea01c099d8dc08d7757593720286.camel@baylibre.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.28.16.26]
-X-ClientProxiedBy: mail-sz2.amlogic.com (10.28.11.6) To mail-sz2.amlogic.com
- (10.28.11.6)
+        id S1727653AbeKITbd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 9 Nov 2018 14:31:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55958 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727532AbeKITbd (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 9 Nov 2018 14:31:33 -0500
+Received: from localhost.localdomain (unknown [171.76.98.79])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A30C720855;
+        Fri,  9 Nov 2018 09:51:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541757105;
+        bh=1IKjVkwKoT3g7broH+MSlBM9qF+RloeryoopLsLHEPk=;
+        h=From:To:Cc:Subject:Date:From;
+        b=jF274BppQbiEO79/Rhd/LQ8kHeQMKIN9CED8ra00DkwbXoj+BAi4xmaGWzPZ616Pu
+         7APW+q8pWamlGwCivhUo2QM5cpwtPUYamWPe5MWI4zeuRUIRJXafJd4K1IsQ+36jC7
+         Wt/Ol5XjN9ct0M2aPWPZpvA7N2zyKn1smaDcp/N4=
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Vinod Koul <vkoul@kernel.org>, Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: qcom: gcc: Fix board clock node name
+Date:   Fri,  9 Nov 2018 15:20:54 +0530
+Message-Id: <20181109095054.13924-1-vkoul@kernel.org>
+X-Mailer: git-send-email 2.14.4
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Jerome
+Device tree node name are not supposed to have "_" in them so fix the
+node name use of xo_board to xo-board
 
-On 2018/11/8 21:34, jbrunet@baylibre.com wrote:
-> On Thu, 2018-11-08 at 21:15 +0800, Jian Hu wrote:
->> Changes since v3 at[4]
->> -add fixed clocks clk_regmap definition
-> 
-> Jian,
-> 
-> When replying to the v1 of your clk_ao patchset :
-> https://patchwork.kernel.org/patch/10562563/#22177627
-> 
-> I have explained that I would like to stop taking clock (such as xtal) from
-> nowhere. Clocks (even the xtal) should be properly claimed through DT.
-> I have specifically asked this to be taken into account for the EE controller.
-> 
-> If you need an exemple on how to get the input clock from DT to your
-> controller, please have look at the axg audio clock controller.
-> 
-> This comment does not appear to be addressed in this version.
-> Please make sure you have addressed all the comments of past reviews before
-> reposting
-> 
-> Thx
-> 
+Fixes: 652f1813c113 ("clk: qcom: gcc: Add global clock controller driver for QCS404")
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
+---
 
-Thanks, I will resolve it, I want make sure for it.
+Steve: RobH pointed this on DTS patches, would be great if you can pick this
+as a fix
 
-I should take the "periphs_xtal" clock in ee g12a clock controller 
-driver through DT , And then I can get its clock name "xtal" by property
-of clock-output-names. Is that right?
+ drivers/clk/qcom/gcc-qcs404.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-ee g12a clock dts:
+diff --git a/drivers/clk/qcom/gcc-qcs404.c b/drivers/clk/qcom/gcc-qcs404.c
+index e4ca6a45f313..ef1b267cb058 100644
+--- a/drivers/clk/qcom/gcc-qcs404.c
++++ b/drivers/clk/qcom/gcc-qcs404.c
+@@ -265,7 +265,7 @@ static struct clk_fixed_factor cxo = {
+ 	.div = 1,
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "cxo",
+-		.parent_names = (const char *[]){ "xo_board" },
++		.parent_names = (const char *[]){ "xo-board" },
+ 		.num_parents = 1,
+ 		.ops = &clk_fixed_factor_ops,
+ 	},
+-- 
+2.14.4
 
-		hiubus: bus@ff63c000 {
-			compatible = "simple-bus";
-			reg = <0x0 0xff63c000 0x0 0x1c00>;
-			#address-cells = <2>;
-			#size-cells = <2>;
-			ranges = <0x0 0x0 0x0 0xff63c000 0x0 0x1c00>;
-
-			sysctrl: syscon@0 {
-                                compatible = 
-"amlogic,meson-g12a-hhi-sysctrl", "simple-mfd", "syscon";
-				reg = <0x0 0x0 0x0 0x400>;
-
-				clkc: clock-controller {
-					compatible = "amlogic,g12a-clkc";
-					#clock-cells = <1>;
-					clocks = <&xtal>;
-					clock-name = "periphs_xtal";
-				};
-			};
-		};
-
-
-		xtal: xtal-clk {
-			compatible = "fixed-clock";
-			clock-frequency = <24000000>;
-			clock-output-names = "xtal"; 
- 
-
-			#clock-cells = <0>;
-		};
->>
->> Changes since v2 at[2]
->> -fix fixed clocks's descriptions
->> -fix aligment
->> -add enable bit for plls base on [3] patches
->> -add fixed clock gate bit
->>
->> Changes since v1 at[1]
->> -fix typo of 'Everything'.
->> -change the word 'AmLogic' to 'Amlogic'
->> -squash patch 1 and 2.
->> -delete usless message of "Trying obsolete regs".
->> -delete the empty line in include/dt-bindings/clock/g12a-clkc.h.
->> -rebase on top of the "next/drivers" branch, and add g12a clock patch.
->> -add CLK_MUX_ROUND_CLOSEST for g12a_sd_emmc_b_clk0_sel and
->>   g12a_sd_emmc_c_clk0_sel.
->>
->> [1]
->> https://lkml.kernel.org/r/1531133549-25806-2-git-send-email-jian.hu@amlogic.com
->> [2]
->> https://lkml.kernel.org/r/1531728707-192230-2-git-send-email-jian.hu@amlogic.com
->> [3]https://lkml.kernel.org/r/20180717095617.12240-1-jbrunet@baylibre.com
->> [4]
->> https://lkml.kernel.org/r/1533890858-113020-1-git-send-email-jian.hu@amlogic.com
->>
->> Jian Hu (2):
->>    dt-bindings: clk: meson-g12a: Add G12A EE Clock Bindings
->>    clk: meson-g12a: Add EE Clock controller driver
->>
->>   .../bindings/clock/amlogic,gxbb-clkc.txt           |    1 +
->>   drivers/clk/meson/Kconfig                          |   10 +
->>   drivers/clk/meson/Makefile                         |    1 +
->>   drivers/clk/meson/g12a.c                           | 1134
->> ++++++++++++++++++++
->>   drivers/clk/meson/g12a.h                           |  128 +++
->>   include/dt-bindings/clock/g12a-clkc.h              |   93 ++
->>   6 files changed, 1367 insertions(+)
->>   create mode 100644 drivers/clk/meson/g12a.c
->>   create mode 100644 drivers/clk/meson/g12a.h
->>   create mode 100644 include/dt-bindings/clock/g12a-clkc.h
->>
-> 
-> 
-> .
-> 
