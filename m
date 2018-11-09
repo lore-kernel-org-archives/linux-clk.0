@@ -2,110 +2,122 @@ Return-Path: <SRS0=5BjN=NU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90894C43441
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Nov 2018 19:18:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48E08C43441
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Nov 2018 22:13:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C93320827
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Nov 2018 19:18:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C93320827
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id 0D3B320818
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Nov 2018 22:13:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WKGrRspm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D3B320818
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725752AbeKJFAo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 10 Nov 2018 00:00:44 -0500
-Received: from mail-ua1-f67.google.com ([209.85.222.67]:44699 "EHLO
-        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725740AbeKJFAo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 10 Nov 2018 00:00:44 -0500
-Received: by mail-ua1-f67.google.com with SMTP id d19so1004949uaq.11;
-        Fri, 09 Nov 2018 11:18:47 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XICA14UI71g5WSSzu52+pvjsWPsZjVA4DkvDIrZNcq8=;
-        b=cIu1PmEEndbK5Vw6CksL19DFK3VS4INAAAG4iUSyGbagM0ouAJ5fSE24DqGMH1MWNN
-         3UDFwqRGffnEz20m7pCTZs10StkA7VMUhpYpKkrrOXFw2hTZc3bt55QG2kynhN8gx47p
-         eA0pbLJnyKRmpE0y18vDotxqJVjkBK+83WTp410xwKHVTydVhufNTD0Yq+c+WRWn+sRN
-         m3FqwYUYyzSY/pJM9OFkkYh1CFR/sLtqb4E7ZTdKj8nCo8Xtr1l3tZayZfgjMp054HlB
-         zOfgGNbbSw28G3y1CLpWNgilzTx4j1+8DJSmW0yUvfxmLWE6pYK65hj2AofY4HC9X3HS
-         xZwQ==
-X-Gm-Message-State: AGRZ1gIgnO/LfCAud5Epx/VRkpzga3Smupek9tByMtp1PSWdPe2eHi1f
-        bhkhb1RZcuIRgK9N149A4bwJdhJ/F0XMQvkmwK8=
-X-Google-Smtp-Source: AJdET5ety9RP1kOu/TmLSP5bdi2hQABCKfHYNZ//KjG0M6PZ2jWWwLN6T+cIQ0VnBfx2VdxEKcmsR/kYCr88C5p1iwg=
-X-Received: by 2002:ab0:210e:: with SMTP id d14mr4717819ual.20.1541791126402;
- Fri, 09 Nov 2018 11:18:46 -0800 (PST)
+        id S1727012AbeKJH4R (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 10 Nov 2018 02:56:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48236 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726181AbeKJH4R (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 10 Nov 2018 02:56:17 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3BB4420818;
+        Fri,  9 Nov 2018 22:13:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541801623;
+        bh=++ST7u4ku3mIOY+ZGK2Q3yUOH63WpqXYgYk8sc9TOTU=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=WKGrRspmzKwptXaJAEpuWaxA3tYet5zumdrCTdGUSJ9jD8NJJm5VomjgOUuTgE79k
+         mK79wq1BJTxblU0ocHxBEXyxMV6LYaxU4H72clOohXUGCnIQ+gpSFziLV3fpnTjbIf
+         VPTeHhu4k2uqkVtkBrQD8qwoikPdKxO1lOCitZb0=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20181106183609.207702-1-sboyd@kernel.org> <20181106183609.207702-2-sboyd@kernel.org>
- <CAL_JsqLvKWcJUYDyWOg3rMeEWv7JV4zw7-YkOUWiL5rfXgVRvQ@mail.gmail.com>
- <154161585170.88331.1822872519370217248@swboyd.mtv.corp.google.com>
- <CAMuHMdUTwUTdbKAWCNxH72-tvJuY-LtRO2Dh8izdEOKrFOSwLQ@mail.gmail.com> <154178275324.88331.16237880990995819011@swboyd.mtv.corp.google.com>
-In-Reply-To: <154178275324.88331.16237880990995819011@swboyd.mtv.corp.google.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 9 Nov 2018 20:18:33 +0100
-Message-ID: <CAMuHMdXTTCo6Fsr9eYstT6AFLOQ-_sKkhjw7cP8XdFabVqdJWw@mail.gmail.com>
-Subject: Re: [PATCH 1/4] of/device: Add a way to probe drivers by match data
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-mediatek@lists.infradead.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        ryder.lee@mediatek.com, Frank Rowand <frowand.list@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh@kernel.org>, Vinod Koul <vkoul@kernel.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20181109175105.GW12092@vkoul-mobl>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20181109095054.13924-1-vkoul@kernel.org>
+ <154178353645.88331.795912528906051068@swboyd.mtv.corp.google.com>
+ <20181109174816.GV12092@vkoul-mobl> <20181109175105.GW12092@vkoul-mobl>
+Message-ID: <154180162264.88331.6677984637578512693@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH] clk: qcom: gcc: Fix board clock node name
+Date:   Fri, 09 Nov 2018 14:13:42 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+Quoting Vinod Koul (2018-11-09 09:51:05)
+> On 09-11-18, 23:18, Vinod Koul wrote:
+> > On 09-11-18, 09:12, Stephen Boyd wrote:
+> > > Quoting Vinod Koul (2018-11-09 01:50:54)
+> > > >  drivers/clk/qcom/gcc-qcs404.c | 2 +-
+> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > > =
 
-On Fri, Nov 9, 2018 at 5:59 PM Stephen Boyd <sboyd@kernel.org> wrote:
-> Quoting Geert Uytterhoeven (2018-11-09 01:56:01)
-> > On Wed, Nov 7, 2018 at 7:37 PM Stephen Boyd <sboyd@kernel.org> wrote:
-> > > Quoting Rob Herring (2018-11-06 12:44:52)
-> > > > On Tue, Nov 6, 2018 at 12:36 PM Stephen Boyd <sboyd@kernel.org> wrote:
-> > >         int (*probe)(struct platform_device *pdev);
-> > >   };
-> > >
-> > >   struct of_platform_driver_probe_func mtk_probes[] = {
-> > >         mtk_probe1,
-> > >         mtk_probe2,
-> > >         mtk_probe3,
-> > >   };
-> > >
-> > >   struct platform_driver mtk_driver = {
-> > >         .of_probes = &mtk_probes;
-> > >         .driver = {
-> > >                 .name = "mtk-foo";
-> > >                 .of_match_table = mtk_match_table,
-> > >         },
-> > >   };
-> >
-> > This looks worse to me: people tend to be very good at keeping multiple
-> > arrays in sync :-(
->
-> To be _not_ very good? Agreed, and so specifying the probe function as
-> another member in struct of_device_id seems to be the way to go.
+> > > > diff --git a/drivers/clk/qcom/gcc-qcs404.c b/drivers/clk/qcom/gcc-q=
+cs404.c
+> > > > index e4ca6a45f313..ef1b267cb058 100644
+> > > > --- a/drivers/clk/qcom/gcc-qcs404.c
+> > > > +++ b/drivers/clk/qcom/gcc-qcs404.c
+> > > > @@ -265,7 +265,7 @@ static struct clk_fixed_factor cxo =3D {
+> > > >         .div =3D 1,
+> > > >         .hw.init =3D &(struct clk_init_data){
+> > > >                 .name =3D "cxo",
+> > > > -               .parent_names =3D (const char *[]){ "xo_board" },
+> > > > +               .parent_names =3D (const char *[]){ "xo-board" },
+> > > =
 
-Correct, sometimes sarcasm doesn't arrive well at the other end of the
-electronic tunnel...
+> > > We have xo_board used everywhere else in drivers/clk/qcom/ so this ma=
+kes
+> > > me concerned. Wouldn't a better answer be to add clock-output-names to
+> > > the xo-board DT node and have arm-soc merge that through. I mostly wa=
+nt
+> > > to keep things consistent here so that if we need to inject an xo_boa=
+rd
+> > > clk into the system then we can do so generically instead of making it
+> > > per-platform. Of course, if we're never going to have this problem on
+> > > qcs404 then it will be fine to start differing here. So I'm leaning
+> > > towards merge this patch, just please ack my concern here and tell me=
+ it
+> > > won't be a problem and I'll be happy to merge to clk-fixes.
+> > =
 
-Gr{oetje,eeting}s,
+> > So this is a warning from DT compiler and triggered with W=3D12, I
+> > see tons of examples using "_" in node names. Clearly someone realized
+> > it (Rob ?) added a warning for it.
+> > =
 
-                        Geert
+> > As you rightly thought, qcs404 will be okay as we are starting out and =
+following
+> > few conventions so keeping this saner :)
+> > =
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> > > BTW, can you also specify a 'clocks' property in the GCC node and send
+> > > the xo_board node there? In fact, we should do that for every GCC node
+> > > in the tree. Care to do that and also add sleep_clk to each clock
+> > > controller node that uses it? This is useful to do so that we can more
+> > > easily see where clocks are going between clock controller nodes.
+> > =
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> > I agree that it makes sense to add the property in gcc node. I will add
+> > this in my list and chase if after my current task completes, if that is
+> > fine by you
+> > =
+
+
+Ok. Thanks for checking. Applied to clk-fixes. =
+
+
