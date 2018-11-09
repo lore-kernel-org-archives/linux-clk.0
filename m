@@ -1,93 +1,807 @@
-Return-Path: <SRS0=ZQGu=NT=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=5BjN=NU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4699C43441
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Nov 2018 22:33:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BCD1C43441
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Nov 2018 01:01:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 738FA20844
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Nov 2018 22:33:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 738FA20844
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
+	by mail.kernel.org (Postfix) with ESMTP id 2B6E52086C
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Nov 2018 01:01:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="bDC1tIiH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B6E52086C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728027AbeKIHhW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:37:22 -0500
-Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:48556 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730204AbeKIHhW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Nov 2018 02:37:22 -0500
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-        by mx0b-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wA8LxCK1031744;
-        Thu, 8 Nov 2018 15:59:44 -0600
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from mail1.cirrus.com (mail1.cirrus.com [141.131.3.20])
-        by mx0b-001ae601.pphosted.com with ESMTP id 2nm92chhys-1;
-        Thu, 08 Nov 2018 15:59:43 -0600
-Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
-        by mail1.cirrus.com (Postfix) with ESMTP id 4261C611E122;
-        Thu,  8 Nov 2018 15:59:43 -0600 (CST)
-Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
- (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Thu, 8 Nov 2018
- 21:59:42 +0000
-Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
-        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id wA8Lxfij025214; Thu,
- 8 Nov 2018 21:59:41 GMT
-Date:   Thu, 8 Nov 2018 21:59:41 +0000
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     Mark Brown <broonie@kernel.org>
-CC:     <lee.jones@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <linus.walleij@linaro.org>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <lgirdwood@gmail.com>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>,
-        <linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>
-Subject: Re: [PATCH 2/6] regulator: lochnagar: Move driver to binding from DT
-Message-ID: <20181108215941.GU16508@imbe.wolfsonmicro.main>
-References: <20181108101405.14062-1-ckeepax@opensource.cirrus.com>
- <20181108101405.14062-3-ckeepax@opensource.cirrus.com>
- <20181108121629.GD6675@sirena.org.uk>
+        id S1727447AbeKIKkJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 9 Nov 2018 05:40:09 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:39859 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727307AbeKIKkJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Nov 2018 05:40:09 -0500
+Received: by mail-pl1-f193.google.com with SMTP id b5-v6so106596pla.6
+        for <linux-clk@vger.kernel.org>; Thu, 08 Nov 2018 17:01:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=fwt/7PYgj80cK0VIU+qTkspKQfcX+TbUhN/lu/ZR3R8=;
+        b=bDC1tIiHhs1NokE57AEy/hUGYkZsDtJHEkcMubQDMBLFjARf/Ow4vK3Kz3ZniFDzgK
+         eGk8lhJl7IecInZdA6F70ofwJ8rJGhf6QRXyar3fz8VLQgJ6iL4RC0Xo7a71qYNaaaf8
+         YTFgLDxfWz4/cfDxaAUHwwVuSmmnruoO791HgvN0DtbncIuUOkquISGQOkLAWgYO+b7H
+         g7WCLbjuoZ9fhJFRB3vU/0tHvc08D69TD+4nLQzwBP6OTldARsWEREsgnPxoQbno+iSx
+         jYavpO0NTn8RkRR91jaN8lIf1lBY/w1YBpMVOi/rhWjzYAoCUhCPAPbZOX1vu8EprhN0
+         U+Rw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=fwt/7PYgj80cK0VIU+qTkspKQfcX+TbUhN/lu/ZR3R8=;
+        b=pQuESMmvB8Pi42yYZWeRUJqj2uYN/vaJkbr3FpTBYKyooYFqsQaBkP7rjexZf2Qqg+
+         fJB5jVAonSPgASSz+dowjy8W/AX+6PdN/z7mm7FJsPvqW7igKMOVJo4WLtLUmor5d2Ms
+         X4fu3yazA1hdMb93gK2UsbZMJnmmNi5aN4E8qZ4aOAqGrY7IoYlZukMrYmVgQof+lilE
+         sVBT+1Pv5WL61LOylM4UuZ9SKw2PYJjKMSZcN7/KLk5iJr0jrCMrSq1tt/s9JQClW/UC
+         nBv0i/+4sT2+zYytf5Dl+3Bn71GXFIYk8p1h/GOCvABMvDl4P8q1CbH7TgLZ/q1YmzGO
+         TAoA==
+X-Gm-Message-State: AGRZ1gJut810j/fc+EfAL3BEj0plez+ZenVQhuI6lIGHRRHkxZeVJC57
+        G3dxhYXXfns8Bl46ZPZkwivzJw==
+X-Google-Smtp-Source: AJdET5dscxh68piIw+/Fa4dz8O/khs1QGkeajLpBaUITAi4+TZHfDuTfCbX8opile9pdfgftBVU4ZQ==
+X-Received: by 2002:a17:902:ac8f:: with SMTP id h15-v6mr6694834plr.46.1541725316701;
+        Thu, 08 Nov 2018 17:01:56 -0800 (PST)
+Received: from [10.17.0.26] ([12.206.222.5])
+        by smtp.gmail.com with ESMTPSA id d65-v6sm9795693pfm.100.2018.11.08.17.01.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 08 Nov 2018 17:01:55 -0800 (PST)
+Subject: Re: [PATCH v2 1/3] clk: analogbits: add Wide-Range PLL library
+To:     Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Cc:     Wesley Terpstra <wesley@sifive.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Megan Wachs <megan@sifive.com>, linux-kernel@vger.kernel.org,
+        Paul Walmsley <paul@pwsan.com>
+References: <20181020135024.28573-1-paul.walmsley@sifive.com>
+ <20181020135024.28573-2-paul.walmsley@sifive.com>
+ <154045364470.53599.7774255558661483303@swboyd.mtv.corp.google.com>
+From:   Paul Walmsley <paul.walmsley@sifive.com>
+Message-ID: <c1eff982-c7f3-5095-1a82-2ae9afe20b4c@sifive.com>
+Date:   Thu, 8 Nov 2018 17:01:54 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20181108121629.GD6675@sirena.org.uk>
-User-Agent: Mutt/1.5.20 (2009-12-10)
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1807170000
- definitions=main-1811080185
+In-Reply-To: <154045364470.53599.7774255558661483303@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Nov 08, 2018 at 12:16:29PM +0000, Mark Brown wrote:
-> On Thu, Nov 08, 2018 at 10:14:01AM +0000, Charles Keepax wrote:
-> 
-> > +static const struct of_device_id lochnagar_of_match[] = {
-> > +	{ .compatible = "cirrus,lochnagar-regulator" },
-> > +	{},
-> > +};
-> 
-> This is obviously just dumping the Linux driver model into the DT, the
-> regulators are clearly different.  If you want to explicitly list the
-> regulators in DT it'd be better to reflect the hardware and enumerate
-> the regulators individually - you can use one driver for all the MICVDDs
-> and a separate one for VDDCORE for example.
+Hi Stephen,
 
-Agreed, would be relatively doable for regulators, might be a bit
-verbose for the clock, but I really don't see how to handle
-pinctrl.
 
-I guess I will wait and see what the other maintainers think but
-personally I would really be inclined to keep the binding the
-same as the last version if we can.
+On 10/25/18 12:47 AM, Stephen Boyd wrote:
+> Quoting Paul Walmsley (2018-10-20 06:50:22)
 
-Thanks,
-Charles
+>> Cc: Wesley Terpstra <wesley@sifive.com>
+>> Cc: Palmer Dabbelt <palmer@sifive.com>
+>> Cc: Michael Turquette <mturquette@baylibre.com>
+>> Cc: Stephen Boyd <sboyd@kernel.org>
+>> Cc: Megan Wachs <megan@sifive.com>                                                                                                                    Cc: linux-clk@vger.kernel.org
+> Weird tab ^?
+
+
+Thanks.  I must be getting senile to have missed that.
+
+
+>> Cc: linux-kernel@vger.kernel.org
+>> Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
+>> Signed-off-by: Paul Walmsley <paul@pwsan.com>
+>> diff --git a/drivers/clk/analogbits/wrpll-cln28hpc.c b/drivers/clk/analogbits/wrpll-cln28hpc.c
+>> new file mode 100644
+>> index 000000000000..ebdef859cbf5
+>> --- /dev/null
+>> +++ b/drivers/clk/analogbits/wrpll-cln28hpc.c
+>> @@ -0,0 +1,387 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Copyright (C) 2018 SiFive, Inc.
+>> + * Wesley Terpstra
+>> + * Paul Walmsley
+>> + *
+>> + * This program is free software; you can redistribute it and/or modify
+>> + * it under the terms of the GNU General Public License version 2 as
+>> + * published by the Free Software Foundation.
+>> + *
+>> + * This program is distributed in the hope that it will be useful,
+>> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+>> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>> + * GNU General Public License for more details.
+>> + *
+> Can you drop these two paragraphs? It's duplicated from the SPDX tag.
+
+
+Yep, fixed.
+
+
+>> + * This library supports configuration parsing and reprogramming of
+>> + * the CLN28HPC variant of the Analog Bits Wide Range PLL.  The
+>> + * intention is for this library to be reusable for any device that
+>> + * integrates this PLL; thus the register structure and programming
+>> + * details are expected to be provided by a separate IP block driver.
+>> + *
+>> + * The bulk of this code is primarily useful for clock configurations
+>> + * that must operate at arbitrary rates, as opposed to clock configurations
+>> + * that are restricted by software or manufacturer guidance to a small,
+>> + * pre-determined set of performance points.
+>> + *
+>> + * References:
+>> + * - Analog Bits "Wide Range PLL Datasheet", version 2015.10.01
+>> + * - SiFive FU540-C000 Manual v1p0, Chapter 7 "Clocking and Reset"
+> Any html links?
+
+
+The Analog Bits datasheet is not available on-line, to my knowledge. 
+The comments in this driver are an attempt to document it for software
+developers.
+
+
+The SiFive datasheet is available online; just added a link to the comments.
+
+
+>> + */
+>> +
+>> +#include <linux/bug.h>
+> Is this used?
+
+
+Yes - the library doesn't compile without it:
+
+
+  CC      drivers/clk/analogbits/wrpll-cln28hpc.o
+drivers/clk/analogbits/wrpll-cln28hpc.c: In function
+'__wrpll_calc_filter_range':
+drivers/clk/analogbits/wrpll-cln28hpc.c:83:3: error: implicit
+declaration of function 'WARN' [-Werror=implicit-function-declaration]
+   WARN(1, "%s: post-divider reference freq out of range: %lu",
+   ^~~~
+
+(etc.)
+
+
+>> +#include <linux/err.h>
+>> +#include <linux/log2.h>
+>> +#include <linux/math64.h>
+>> +#include <linux/clk/analogbits-wrpll-cln28hpc.h>
+>> +
+>> +/* MIN_INPUT_FREQ: minimum input clock frequency, in Hz (Fref_min) */
+>> +#define MIN_INPUT_FREQ                 7000000
+>> +
+>> +/* MAX_INPUT_FREQ: maximum input clock frequency, in Hz (Fref_max) */
+>> +#define MAX_INPUT_FREQ                 600000000
+>> +
+>> +/* MIN_POST_DIVIDE_REF_FREQ: minimum post-divider reference frequency, in Hz */
+>> +#define MIN_POST_DIVR_FREQ             7000000
+>> +
+>> +/* MAX_POST_DIVIDE_REF_FREQ: maximum post-divider reference frequency, in Hz */
+>> +#define MAX_POST_DIVR_FREQ             200000000
+>> +
+>> +/* MIN_VCO_FREQ: minimum VCO frequency, in Hz (Fvco_min) */
+>> +#define MIN_VCO_FREQ                   2400000000UL
+>> +
+>> +/* MAX_VCO_FREQ: maximum VCO frequency, in Hz (Fvco_max) */
+>> +#define MAX_VCO_FREQ                   4800000000ULL
+>> +
+>> +/* MAX_DIVQ_DIVISOR: maximum output divisor.  Selected by DIVQ = 6 */
+>> +#define MAX_DIVQ_DIVISOR               64
+>> +
+>> +/* MAX_DIVR_DIVISOR: maximum reference divisor.  Selected by DIVR = 63 */
+>> +#define MAX_DIVR_DIVISOR               64
+>> +
+>> +/* MAX_LOCK_US: maximum PLL lock time, in microseconds (tLOCK_max) */
+>> +#define MAX_LOCK_US                    70
+>> +
+>> +/*
+>> + * ROUND_SHIFT: number of bits to shift to avoid precision loss in the rounding
+>> + *              algorithm
+>> + */
+>> +#define ROUND_SHIFT                    20
+>> +
+>> +/*
+>> + * Private functions
+>> + */
+>> +
+>> +/**
+>> + * __wrpll_calc_filter_range() - determine PLL loop filter bandwidth
+>> + * @post_divr_freq: input clock rate after the R divider
+>> + *
+>> + * Select the value to be presented to the PLL RANGE input signals, based
+>> + * on the input clock frequency after the post-R-divider @post_divr_freq.
+>> + * This code follows the recommendations in the PLL datasheet for filter
+>> + * range selection.
+>> + *
+>> + * Return: The RANGE value to be presented to the PLL configuration inputs,
+>> + *         or -1 upon error.
+>> + */
+>> +static int __wrpll_calc_filter_range(unsigned long post_divr_freq)
+>> +{
+>> +       u8 range;
+>> +
+>> +       if (post_divr_freq < MIN_POST_DIVR_FREQ ||
+>> +           post_divr_freq > MAX_POST_DIVR_FREQ) {
+>> +               WARN(1, "%s: post-divider reference freq out of range: %lu",
+>> +                    __func__, post_divr_freq);
+>> +               return -1;
+>> +       }
+>> +
+>> +       if (post_divr_freq < 11000000)
+>> +               range = 1;
+>> +       else if (post_divr_freq < 18000000)
+>> +               range = 2;
+>> +       else if (post_divr_freq < 30000000)
+>> +               range = 3;
+>> +       else if (post_divr_freq < 50000000)
+>> +               range = 4;
+>> +       else if (post_divr_freq < 80000000)
+>> +               range = 5;
+>> +       else if (post_divr_freq < 130000000)
+>> +               range = 6;
+>> +       else
+>> +               range = 7;
+>> +
+>> +       return range;
+>> +}
+>> +
+>> +/**
+>> + * __wrpll_calc_fbdiv() - return feedback fixed divide value
+>> + * @c: ptr to a struct analogbits_wrpll_cfg record to read from
+>> + *
+>> + * The internal feedback path includes a fixed by-two divider; the
+>> + * external feedback path does not.  Return the appropriate divider
+>> + * value (2 or 1) depending on whether internal or external feedback
+>> + * is enabled.  This code doesn't test for invalid configurations
+>> + * (e.g. both or neither of WRPLL_FLAGS_*_FEEDBACK are set); it relies
+>> + * on the caller to do so.
+>> + *
+>> + * Context: Any context.  Caller must protect the memory pointed to by
+>> + *          @c from simultaneous modification.
+> Would that ever be needed? Presumably the flag isn't changing.
+
+
+It's just another way of writing that the caller needs to lock the data
+pointed to by c against simultaneous modification, freeing, etc. 
+Ideally this would be obvious to callers by virtue of the pointer being
+passed, but figured there was no harm in explicitly stating it.  Let me
+know if you want me to remove the comment.
+
+
+>> + *
+>> + * Return: 2 if internal feedback is enabled or 1 if external feedback
+>> + *         is enabled.
+>> + */
+>> +static u8 __wrpll_calc_fbdiv(struct analogbits_wrpll_cfg *c)
+> const c?
+
+
+Done
+
+
+>> +{
+>> +       return (c->flags & WRPLL_FLAGS_INT_FEEDBACK_MASK) ? 2 : 1;
+>> +}
+>> +
+>> +/**
+>> + * __wrpll_calc_divq() - determine DIVQ based on target PLL output clock rate
+>> + * @target_rate: target PLL output clock rate
+>> + * @vco_rate: pointer to a u64 to store the computed VCO rate into
+>> + *
+>> + * Determine a reasonable value for the PLL Q post-divider, based on the
+>> + * target output rate @target_rate for the PLL.  Along with returning the
+>> + * computed Q divider value as the return value, this function stores the
+>> + * desired target VCO rate into the variable pointed to by @vco_rate.
+>> + *
+>> + * Context: Any context.  Caller must protect the memory pointed to by
+>> + *          @vco_rate from simultaneous access or modification.
+>> + *
+>> + * Return: a positive integer DIVQ value to be programmed into the hardware
+>> + *         upon success, or 0 upon error (since 0 is an invalid DIVQ value)
+>> + */
+>> +static u8 __wrpll_calc_divq(u32 target_rate, u64 *vco_rate)
+> Nitpick: Why so much underscore in this code?
+
+
+The intention was to mark file-local functions from global functions (as
+you recognize below).   Of course, I should have just used one
+underscore: just re-reviewed the C standard and turns out I misrecalled
+the usual way for doing this - one underscore is appropriate.  But, see
+below.
+
+
+>> +{
+>> +       u64 s;
+>> +       u8 divq = 0;
+>> +
+>> +       if (!vco_rate) {
+>> +               WARN_ON(1);
+>> +               goto wcd_out;
+> Just return here, There aren't any locks so no need for goto.
+
+
+(See below)
+
+
+>
+> Also, don't check anything? The caller is bad if this happens, and this
+> is a static function so it can pretty much be found by visual
+> inspection or during development?
+
+
+Agreed this makes sense for the static functions.  Dropped & kerneldoc
+updated.
+
+
+>> +       }
+>> +
+>> +       s = div_u64(MAX_VCO_FREQ, target_rate);
+>> +       if (s <= 1) {
+>> +               divq = 1;
+>> +               *vco_rate = MAX_VCO_FREQ;
+>> +       } else if (s > MAX_DIVQ_DIVISOR) {
+>> +               divq = ilog2(MAX_DIVQ_DIVISOR);
+>> +               *vco_rate = MIN_VCO_FREQ;
+>> +       } else {
+>> +               divq = ilog2(s);
+>> +               *vco_rate = target_rate << divq;
+>> +       }
+>> +
+>> +wcd_out:
+>> +       return divq;
+>> +}
+>> +
+>> +/**
+>> + * __wrpll_update_parent_rate() - update PLL data when parent rate changes
+>> + * @c: ptr to a struct analogbits_wrpll_cfg record to write PLL data to
+>> + * @parent_rate: PLL input refclk rate (pre-R-divider)
+>> + *
+>> + * Pre-compute some data used by the PLL configuration algorithm when
+>> + * the PLL's reference clock rate changes.  The intention is to avoid
+>> + * computation when the parent rate remains constant - expected to be
+>> + * the common case.
+>> + *
+>> + * Returns: 0 upon success or -1 if the reference clock rate is out of range.
+>> + */
+>> +static int __wrpll_update_parent_rate(struct analogbits_wrpll_cfg *c,
+>> +                                     unsigned long parent_rate)
+>> +{
+>> +       u8 max_r_for_parent;
+> Does this need to be a u8? It makes the min_t below required instead of
+> using an unsigned int.
+
+
+I've changed this as you request, and added the (subsequently required)
+type suffix to the macro value, along with an appropriate comment.
+
+
+>> +
+>> +       if (parent_rate > MAX_INPUT_FREQ || parent_rate < MIN_POST_DIVR_FREQ)
+>> +               return -1;
+> Please pick some valid error code instead of -1 (I thought checkpatch
+> complained about this?). 
+
+
+checkpatch isn't complaining here.  Anyway, fixed to return a reasonable
+error code.
+
+
+> Is this case even possible?
+
+
+If analogbits_wrpll_configure_for_rate() is called with a parent_rate
+outside of the PLL's specification range, it seems reasonable to fail --
+or do you see the situation differently?  These parent rate restrictions
+are defined in the PLL datasheet.
+
+
+>  It would be nicer
+> if this function just returned void.
+
+
+ Is it that you'd prefer the rate check to be moved into
+analogbits_wrpll_configure_for_rate()?  Or that you'd prefer that I not
+validate the input parent rate at all?
+
+
+>> +
+>> +       c->_parent_rate = parent_rate;
+>> +       max_r_for_parent = div_u64(parent_rate, MIN_POST_DIVR_FREQ);
+>> +       c->_max_r = min_t(u8, MAX_DIVR_DIVISOR, max_r_for_parent);
+>> +
+>> +       /* Round up */
+>> +       c->_init_r = div_u64(parent_rate + MAX_POST_DIVR_FREQ - 1,
+>> +                            MAX_POST_DIVR_FREQ);
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +/*
+>> + * Public functions
+>> + */
+>> +
+>> +/**
+>> + * analogbits_wrpll_configure() - compute PLL configuration for a target rate
+>> + * @c: ptr to a struct analogbits_wrpll_cfg record to write into
+>> + * @target_rate: target PLL output clock rate (post-Q-divider)
+>> + * @parent_rate: PLL input refclk rate (pre-R-divider)
+>> + *
+>> + * Given a pointer to a PLL context @c, a desired PLL target output
+>> + * rate @target_rate, and a reference clock input rate @parent_rate,
+>> + * compute the appropriate PLL signal configuration values.  PLL
+>> + * reprogramming is not glitchless, so the caller should switch any
+>> + * downstream logic to a different clock source or clock-gate it
+>> + * before presenting these values to the PLL configuration signals.
+>> + *
+>> + * The caller must pass this function a pre-initialized struct
+>> + * analogbits_wrpll_cfg record: either initialized to zero (with the
+>> + * exception of the .name and .flags fields) or read from the PLL.
+>> + *
+>> + * Context: Any context.  Caller must protect the memory pointed to by @c
+>> + *          from simultaneous access or modification.
+>> + *
+>> + * Return: 0 upon success; anything else upon failure.
+>> + */
+>> +int analogbits_wrpll_configure_for_rate(struct analogbits_wrpll_cfg *c,
+>> +                                       u32 target_rate,
+>> +                                       unsigned long parent_rate)
+>> +{
+>> +       unsigned long ratio;
+>> +       u64 target_vco_rate, delta, best_delta, f_pre_div, vco, vco_pre;
+>> +       u32 best_f, f, post_divr_freq, fbcfg;
+>> +       u8 fbdiv, divq, best_r, r;
+>> +
+>> +       if (!c)
+>> +               return -1;
+> -EINVAL? Of course, it's probably better to just not care and blow up if
+> the user of the API passes in NULL.
+
+
+Agreed for statically-scoped functions it's most likely overkill.  But
+for globally-scoped functions like this, it seemed better to catch the
+errors rather than to blow up. The underlying approach was intended to
+be standard precondition-based (paranoia-based?) development.  Seems
+like I often screw up the calling side during development, so figured
+this approach would save human time.  The performance impact seems
+minimal.  That said, if it's your strong preference or requirement for
+these to be dropped, I will of course do it - let me know.
+
+
+In the meantime, have changed the return value to -EINVAL per your comment.
+
+
+>> +
+>> +       if (c->flags == 0) {
+>> +               WARN(1, "%s called with uninitialized PLL config", __func__);
+> Do we really need the stacktrace in this case? Or can this be downgraded
+> to a pr_warn() and return some error value that isn't -1?
+
+
+Since this case should never happen, and indicates either a bug in the
+code or corrupted memory, the intention was to warn loudly so it was
+difficult to be ignore.  So I would prefer to keep it annoying.  But
+again, if it's important, would be OK with changing it - let me know. 
+Usually I try to be more paranoid with the globally-scoped functions
+(like this one) than with the file-local functions.
+
+
+>> +               return -1;
+>> +       }
+>> +
+>> +       fbcfg = WRPLL_FLAGS_INT_FEEDBACK_MASK | WRPLL_FLAGS_EXT_FEEDBACK_MASK;
+>> +       if ((c->flags & fbcfg) == fbcfg) {
+>> +               WARN(1, "%s called with invalid PLL config", __func__);
+>> +               return -1;
+>> +       }
+>> +
+>> +       if (c->flags == WRPLL_FLAGS_EXT_FEEDBACK_MASK) {
+>> +               WARN(1, "%s: external feedback mode not currently supported",
+>> +                    __func__);
+>> +               return -1;
+>> +       }
+> Like a bunch of this stuff, why are we checking things that the caller
+> should know to do itself? I'd prefer we keep things simple and assume
+> the caller knows what they're doing.
+
+
+My thinking was that it's easy to screw up if someone is unfamiliar with
+the library.  Since the preconditions are computationally simple to
+verify, the runtime cost is essentially zero.  Put differently, they are
+intended to trade off a small amount of CPU time to save a larger amount
+of human time.
+
+
+>> +
+>> +       /* Initialize rounding data if it hasn't been initialized already */
+>> +       if (parent_rate != c->_parent_rate) {
+>> +               if (__wrpll_update_parent_rate(c, parent_rate)) {
+>> +                       pr_err("%s: PLL input rate is out of range\n",
+>> +                              __func__);
+>> +                       return -1;
+>> +               }
+>> +       }
+>> +
+>> +       c->flags &= ~WRPLL_FLAGS_RESET_MASK;
+>> +
+>> +       /* Put the PLL into bypass if the user requests the parent clock rate */
+>> +       if (target_rate == parent_rate) {
+>> +               c->flags |= WRPLL_FLAGS_BYPASS_MASK;
+>> +               return 0;
+>> +       }
+>> +       c->flags &= ~WRPLL_FLAGS_BYPASS_MASK;
+>> +
+>> +       /* Calculate the Q shift and target VCO rate */
+>> +       divq = __wrpll_calc_divq(target_rate, &target_vco_rate);
+>> +       if (divq == 0)
+>> +               return -1;
+>> +       c->divq = divq;
+>> +
+>> +       /* Precalculate the pre-Q divider target ratio */
+>> +       ratio = div64_u64((target_vco_rate << ROUND_SHIFT), parent_rate);
+>> +
+>> +       fbdiv = __wrpll_calc_fbdiv(c);
+>> +       best_r = 0;
+>> +       best_f = 0;
+>> +       best_delta = MAX_VCO_FREQ;
+>> +
+>> +       /*
+>> +        * Consider all values for R which land within
+>> +        * [MIN_POST_DIVR_FREQ, MAX_POST_DIVR_FREQ]; prefer smaller R
+>> +        */
+>> +       for (r = c->_init_r; r <= c->_max_r; ++r) {
+>> +               /* What is the best F we can pick in this case? */
+>> +               f_pre_div = ratio * r;
+>> +               f = (f_pre_div + (1 << ROUND_SHIFT)) >> ROUND_SHIFT;
+>> +               f >>= (fbdiv - 1);
+>> +
+>> +               post_divr_freq = div_u64(parent_rate, r);
+>> +               vco_pre = fbdiv * post_divr_freq;
+>> +               vco = vco_pre * f;
+>> +
+>> +               /* Ensure rounding didn't take us out of range */
+>> +               if (vco > target_vco_rate) {
+>> +                       --f;
+>> +                       vco = vco_pre * f;
+>> +               } else if (vco < MIN_VCO_FREQ) {
+>> +                       ++f;
+>> +                       vco = vco_pre * f;
+>> +               }
+>> +
+>> +               delta = abs(target_rate - vco);
+>> +               if (delta < best_delta) {
+>> +                       best_delta = delta;
+>> +                       best_r = r;
+>> +                       best_f = f;
+>> +               }
+>> +       }
+>> +
+>> +       c->divr = best_r - 1;
+>> +       c->divf = best_f - 1;
+>> +
+>> +       post_divr_freq = div_u64(parent_rate, best_r);
+>> +
+>> +       /* Pick the best PLL jitter filter */
+>> +       c->range = __wrpll_calc_filter_range(post_divr_freq);
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +/**
+>> + * analogbits_wrpll_calc_output_rate() - calculate the PLL's target output rate
+>> + * @c: ptr to a struct analogbits_wrpll_cfg record to read from
+>> + * @parent_rate: PLL refclk rate
+>> + *
+>> + * Given a pointer to the PLL's current input configuration @c and the
+>> + * PLL's input reference clock rate @parent_rate (before the R
+>> + * pre-divider), calculate the PLL's output clock rate (after the Q
+>> + * post-divider)
+>> + *
+>> + * Context: Any context.  Caller must protect the memory pointed to by @c
+>> + *          from simultaneous modification.
+>> + *
+>> + * Return: the PLL's output clock rate, in Hz.
+>> + */
+>> +unsigned long analogbits_wrpll_calc_output_rate(struct analogbits_wrpll_cfg *c,
+>> +                                               unsigned long parent_rate)
+>> +{
+>> +       u8 fbdiv;
+>> +       u64 n;
+>> +
+>> +       WARN(c->flags & WRPLL_FLAGS_EXT_FEEDBACK_MASK,
+>> +            "external feedback mode not yet supported");
+>> +
+>> +       fbdiv = __wrpll_calc_fbdiv(c);
+>> +       n = parent_rate * fbdiv * (c->divf + 1);
+>> +       n = div_u64(n, (c->divr + 1));
+>> +       n >>= c->divq;
+>> +
+>> +       return n;
+>> +}
+>> +
+>> +/**
+>> + * analogbits_wrpll_calc_max_lock_us() - return the time for the PLL to lock
+>> + * @c: ptr to a struct analogbits_wrpll_cfg record to read from
+>> + *
+>> + * Return the minimum amount of time (in microseconds) that the caller
+>> + * must wait after reprogramming the PLL to ensure that it is locked
+>> + * to the input frequency and stable.  This is likely to depend on the DIVR
+>> + * value; this is under discussion with the manufacturer.
+>> + *
+>> + * Return: the minimum amount of time the caller must wait for the PLL
+>> + *         to lock (in microseconds)
+>> + */
+>> +unsigned int analogbits_wrpll_calc_max_lock_us(struct analogbits_wrpll_cfg *c)
+> const c?
+
+
+Done
+
+
+>> +{
+>> +       return MAX_LOCK_US;
+> And we're planning to change this in the future?
+
+
+Yes, we're in a discussion with the PLL designer about this, and I
+expect it to change within another merge window.
+
+
+>> +}
+>> diff --git a/include/linux/clk/analogbits-wrpll-cln28hpc.h b/include/linux/clk/analogbits-wrpll-cln28hpc.h
+>> new file mode 100644
+>> index 000000000000..cc4268f16067
+>> --- /dev/null
+>> +++ b/include/linux/clk/analogbits-wrpll-cln28hpc.h
+>> @@ -0,0 +1,99 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +/*
+>> + * Copyright (C) 2018 SiFive, Inc.
+>> + * Wesley Terpstra
+>> + * Paul Walmsley
+>> + *
+>> + * This program is free software; you can redistribute it and/or modify
+>> + * it under the terms of the GNU General Public License version 2 as
+>> + * published by the Free Software Foundation.
+>> + *
+>> + * This program is distributed in the hope that it will be useful,
+>> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+>> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>> + * GNU General Public License for more details.
+>> + */
+>> +
+>> +#ifndef __LINUX_CLK_ANALOGBITS_WRPLL_CLN28HPC_H
+>> +#define __LINUX_CLK_ANALOGBITS_WRPLL_CLN28HPC_H
+>> +
+>> +#include <linux/types.h>
+>> +
+>> +/* DIVQ_VALUES: number of valid DIVQ values */
+>> +#define DIVQ_VALUES                            6
+>> +
+>> +/*
+>> + * Bit definitions for struct analogbits_wrpll_cfg.flags
+>> + *
+>> + * WRPLL_FLAGS_BYPASS_FLAG: if set, the PLL is either in bypass, or should be
+>> + *     programmed to enter bypass
+>> + * WRPLL_FLAGS_RESET_FLAG: if set, the PLL is in reset
+>> + * WRPLL_FLAGS_INT_FEEDBACK_FLAG: if set, the PLL is configured for internal
+>> + *     feedback mode
+>> + * WRPLL_FLAGS_EXT_FEEDBACK_FLAG: if set, the PLL is configured for external
+>> + *     feedback mode (not yet supported by this driver)
+>> + *
+>> + * The flags WRPLL_FLAGS_INT_FEEDBACK_FLAG and WRPLL_FLAGS_EXT_FEEDBACK_FLAG are
+>> + * mutually exclusive.  If both bits are set, or both are zero, the struct
+>> + * analogbits_wrpll_cfg record is uninitialized or corrupt.
+>> + */
+>> +#define WRPLL_FLAGS_BYPASS_SHIFT               0
+>> +#define WRPLL_FLAGS_BYPASS_MASK                BIT(WRPLL_FLAGS_BYPASS_SHIFT)
+>> +#define WRPLL_FLAGS_RESET_SHIFT                1
+>> +#define WRPLL_FLAGS_RESET_MASK         BIT(WRPLL_FLAGS_RESET_SHIFT)
+>> +#define WRPLL_FLAGS_INT_FEEDBACK_SHIFT 2
+>> +#define WRPLL_FLAGS_INT_FEEDBACK_MASK  BIT(WRPLL_FLAGS_INT_FEEDBACK_SHIFT)
+>> +#define WRPLL_FLAGS_EXT_FEEDBACK_SHIFT 3
+>> +#define WRPLL_FLAGS_EXT_FEEDBACK_MASK  BIT(WRPLL_FLAGS_EXT_FEEDBACK_SHIFT)
+>> +
+>> +/**
+>> + * struct analogbits_wrpll_cfg - WRPLL configuration values
+>> + * @divr: reference divider value (6 bits), as presented to the PLL signals.
+>> + * @divf: feedback divider value (9 bits), as presented to the PLL signals.
+>> + * @divq: output divider value (3 bits), as presented to the PLL signals.
+>> + * @flags: PLL configuration flags.  See above for more information.
+>> + * @range: PLL loop filter range.  See below for more information.
+>> + * @_output_rate_cache: cached output rates, swept across DIVQ.
+>> + * @_parent_rate: PLL refclk rate for which values are valid
+>> + * @_max_r: maximum possible R divider value, given @parent_rate
+>> + * @_init_r: initial R divider value to start the search from
+>> + *
+>> + * @divr, @divq, @divq, @range represent what the PLL expects to see
+>> + * on its input signals.  Thus @divr and @divf are the actual divisors
+>> + * minus one.  @divq is a power-of-two divider; for example, 1 =
+>> + * divide-by-2 and 6 = divide-by-64.  0 is an invalid @divq value.
+>> + *
+>> + * When initially passing a struct analogbits_wrpll_cfg record, the
+>> + * record should be zero-initialized with the exception of the @flags
+>> + * field.  The only flag bits that need to be set are either
+>> + * WRPLL_FLAGS_INT_FEEDBACK or WRPLL_FLAGS_EXT_FEEDBACK.
+>> + *
+>> + * Field names beginning with an underscore should be considered
+>> + * private to the wrpll-cln28hpc.c code.
+> Ah ok. Are the functions also done this way for a private/public API
+> split. 
+
+
+Yep.
+
+
+> We don't typically care about this in the kernel, just mark it
+> static if it's private and non-static if it's public for functions.
+
+
+Used to do it this way a long ago, perhaps a bit less incompetently -
+here's an example:
+
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm/mach-omap2/omap_hwmod.c?h=v4.1#n383
+
+
+I personally prefer the explicit indication that the identifier was
+scoped file-local in the calling functions.  But am fine changing it per
+your comments, and have done so.
+
+
+> Underscores just make lines longer. 
+
+
+Hehe.
+
+
+> And for struct members we have
+> kernel doc 'private' tag that can tell users to not do something. Or
+> worst case, an opaque pointer is stored and only defined in the C file.
+
+
+In any case, I've changed the identifier names to align to your comments.
+
+
+>> + */
+>> +struct analogbits_wrpll_cfg {
+>> +       u8 divr;
+>> +       u8 divq;
+>> +       u8 range;
+>> +       u8 flags;
+>> +       u16 divf;
+>> +       u32 _output_rate_cache[DIVQ_VALUES];
+>> +       unsigned long _parent_rate;
+>> +       u8 _max_r;
+>> +       u8 _init_r;
+>> +};
+>> +
+>> +/*
+>> + * Function prototypes
+>> + */
+> Please don't have these types of comments. They don't help.
+
+
+Dropped this one.  Do you want me to nuke the similar comments in
+wrpll-cln28hpc.c, separating the private function section from the
+public functions, for example?
+
+
+Thanks for your review,
+
+
+- Paul
+
