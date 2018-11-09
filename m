@@ -2,131 +2,117 @@ Return-Path: <SRS0=5BjN=NU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34574C43441
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Nov 2018 17:51:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88B32C43441
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Nov 2018 18:48:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB73720818
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Nov 2018 17:51:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 457232089A
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Nov 2018 18:48:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nb5o3L6f"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB73720818
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=koalo-de.20150623.gappssmtp.com header.i=@koalo-de.20150623.gappssmtp.com header.b="TYNZGzVD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 457232089A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=koalo.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728162AbeKJDcw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 9 Nov 2018 22:32:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53446 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727995AbeKJDcw (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 9 Nov 2018 22:32:52 -0500
-Received: from localhost (unknown [171.76.98.79])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9141020818;
-        Fri,  9 Nov 2018 17:51:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541785873;
-        bh=YLTSnJvacEwmM2pKERSgfVhsbVa4Ew3wpB/H5WSWem4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=nb5o3L6fENBzTc9fxhssBQNe8YX81JNrO8yC94wkEMLppu5UjAdRzr7yRaTf+5BUD
-         2ynCP4TFiD8PtZ5/gpun4VZ8Rc39os8hkGuCjxyXgKyA7DJ7P6GOR7T4NVNz0yQYXj
-         PeoVk+zO5kX+IYUp3EvmYLIAbYZXRlUtHqa56598=
-Date:   Fri, 9 Nov 2018 23:21:05 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh@kernel.org>
+        id S1728361AbeKJE35 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 9 Nov 2018 23:29:57 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:40564 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728162AbeKJE35 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Nov 2018 23:29:57 -0500
+Received: by mail-ed1-f65.google.com with SMTP id d3so1957217edx.7
+        for <linux-clk@vger.kernel.org>; Fri, 09 Nov 2018 10:48:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=koalo-de.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=roM9piOpylr6IsQMgnlih5B3O7zG0iJ2MHglJe1pfRU=;
+        b=TYNZGzVDcm29byFmq6ffM/leV/duhznhDSpuI6aIAxejQCsZbstylB+i6+dYa5NyWP
+         CASPeSXSCL/TPa8v8zSV3jEclyAm6yYzx1Hg2PWYl/awrr3Cc1iyxqXg5G9SPi3Aj2Yy
+         2muRX2zSg92m/JjQSoZlOQSw/ffwIM/Mw24dEZAveex2gHmeGfBwPloWxuBCKanQf4h3
+         i4C7/NlQI3fd/f3ZvfCEepxmWlC7nA6gfBLqfz66CePfdvRrkCviiUB4HbyLNqstEppG
+         Qqlu2Ub7rE2cA8sO5OdVKJD+nfhZNdqyzTS55jEvtEUOmR/7gb1On6YjBzJtvqpnJ1Jh
+         0DfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=roM9piOpylr6IsQMgnlih5B3O7zG0iJ2MHglJe1pfRU=;
+        b=MkHWUlsztVuwMlgCB9Rkde9NOBx4pihCdgkL0+51HfosyuLsM7Ii2d0GGKrsqseT4N
+         xLjQ6CY4mFdzvzd0JfPnCC6eB/x8Bz8OEFpT54I3MwwDkEctYDNEMJHqjuUaZu1lskQa
+         SnHkYmnGg0xTidmtB4amsz6g/XemGFqPJe+jCuYvWcjl6VDl3znN85p+I9w52/wmTuhr
+         OixfVrR9R2UMM8Rp4ru5GWVkr2OL6F2WWhRbjQwjxc2X74zQChJJpP4cyWaXpRZbS31t
+         246tUAL2bVIrIdqFC6aOBLebH+LnDs+HSqaw3Fe9cQXynt9O1ktMe8jT+d52+sR2PaUD
+         p+Lw==
+X-Gm-Message-State: AGRZ1gKd+0ZfR00N30yDP6ncuilfAIJ4HwUIVmA6507YtDWHhn/VctBX
+        miyqNz6pIl+NzCKbIrvZ8p/WkRYMKbQjNQ==
+X-Google-Smtp-Source: AJdET5cxgQ3URisTObXYIqB0xHhXOj5gTL0Qscne6axNSAg9lBMsDHG9BGWoESvog7gP06aunKBhnA==
+X-Received: by 2002:a50:8e8c:: with SMTP id w12-v6mr3475772edw.280.1541789285420;
+        Fri, 09 Nov 2018 10:48:05 -0800 (PST)
+Received: from ?IPv6:2001:16b8:66a2:a300:dca4:98c2:96b1:7794? (200116b866a2a300dca498c296b17794.dip.versatel-1u1.de. [2001:16b8:66a2:a300:dca4:98c2:96b1:7794])
+        by smtp.googlemail.com with ESMTPSA id b18-v6sm1123977eju.38.2018.11.09.10.48.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 09 Nov 2018 10:48:04 -0800 (PST)
+Subject: Re: [PATCH 0/3] Fix MODULE_LICENSE of bcm2835 drivers
+To:     Stefan Wahren <stefan.wahren@i2se.com>,
+        Mark Brown <broonie@kernel.org>, Vinod Koul <vkoul@kernel.org>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: gcc: Fix board clock node name
-Message-ID: <20181109175105.GW12092@vkoul-mobl>
-References: <20181109095054.13924-1-vkoul@kernel.org>
- <154178353645.88331.795912528906051068@swboyd.mtv.corp.google.com>
- <20181109174816.GV12092@vkoul-mobl>
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Chris Boot <bootc@bootc.net>, dmaengine@vger.kernel.org,
+        linux-spi@vger.kernel.org, Martin Sperl <kernel@martin.sperl.org>,
+        Florian Meier <florian.meier@koalo.de>,
+        Eric Anholt <eric@anholt.net>,
+        linux-arm-kernel@lists.infradead.org
+References: <1540292769-5905-1-git-send-email-stefan.wahren@i2se.com>
+ <815844594.141792.1541616607053@email.ionos.de>
+From:   Florian Kauer <florian.kauer@koalo.de>
+Message-ID: <26a93a5d-0ed2-b82d-3a0b-ef2888c59af0@koalo.de>
+Date:   Fri, 9 Nov 2018 19:48:02 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181109174816.GV12092@vkoul-mobl>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <815844594.141792.1541616607053@email.ionos.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Sorry for not replying in time. I became father recently ;-)
+So if it is still relevant:
+Acked-by: Florian Kauer <florian.kauer@koalo.de>
 
-Fix Rob's email id... and looping him correctly :)
-
-On 09-11-18, 23:18, Vinod Koul wrote:
-> (Add Rob & Bjorn)
+On 07.11.2018 19:50, Stefan Wahren wrote:
+> Hi Mark,
+> hi Vinod,
 > 
-> Hi Steve,
+>> Stefan Wahren <stefan.wahren@i2se.com> hat am 23. Oktober 2018 um 13:06 geschrieben:
+>>
+>>
+>> In preparation of a treewide switch of all bcm2835 drivers to SPDX tags,
+>> we need to make sure that the license text and MODULE_LICENSE matches.
+>>
+>> This series starts sooner than usual to have more time to collect the authors
+>> ACK.
+>>
+>> Stefan Wahren (3):
+>>    clk: bcm2835: make license text and module license match
+>>    dma: bcm2835: make license text and module license match
+>>    spi: bcm2835: make license text and module license match
+>>
+>>   drivers/clk/bcm/clk-bcm2835-aux.c | 2 +-
+>>   drivers/clk/bcm/clk-bcm2835.c     | 2 +-
+>>   drivers/dma/bcm2835-dma.c         | 2 +-
+>>   drivers/spi/spi-bcm2835.c         | 2 +-
+>>   drivers/spi/spi-bcm2835aux.c      | 2 +-
+>>   5 files changed, 5 insertions(+), 5 deletions(-)
+>>
 > 
-> On 09-11-18, 09:12, Stephen Boyd wrote:
-> > Quoting Vinod Koul (2018-11-09 01:50:54)
-> > > Device tree node name are not supposed to have "_" in them so fix the
-> > > node name use of xo_board to xo-board
-> > > 
-> > > Fixes: 652f1813c113 ("clk: qcom: gcc: Add global clock controller driver for QCS404")
-> > > Signed-off-by: Vinod Koul <vkoul@kernel.org>
-> > > ---
-> > > 
-> > > Steve: RobH pointed this on DTS patches, would be great if you can pick this
-> > > as a fix
-> > 
-> > Ok.
-> > 
-> > > 
-> > >  drivers/clk/qcom/gcc-qcs404.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/clk/qcom/gcc-qcs404.c b/drivers/clk/qcom/gcc-qcs404.c
-> > > index e4ca6a45f313..ef1b267cb058 100644
-> > > --- a/drivers/clk/qcom/gcc-qcs404.c
-> > > +++ b/drivers/clk/qcom/gcc-qcs404.c
-> > > @@ -265,7 +265,7 @@ static struct clk_fixed_factor cxo = {
-> > >         .div = 1,
-> > >         .hw.init = &(struct clk_init_data){
-> > >                 .name = "cxo",
-> > > -               .parent_names = (const char *[]){ "xo_board" },
-> > > +               .parent_names = (const char *[]){ "xo-board" },
-> > 
-> > We have xo_board used everywhere else in drivers/clk/qcom/ so this makes
-> > me concerned. Wouldn't a better answer be to add clock-output-names to
-> > the xo-board DT node and have arm-soc merge that through. I mostly want
-> > to keep things consistent here so that if we need to inject an xo_board
-> > clk into the system then we can do so generically instead of making it
-> > per-platform. Of course, if we're never going to have this problem on
-> > qcs404 then it will be fine to start differing here. So I'm leaning
-> > towards merge this patch, just please ack my concern here and tell me it
-> > won't be a problem and I'll be happy to merge to clk-fixes.
+> since i didn't receive any objections from the authors, could you please apply or should i resend with Eric's Reviewed-by?
 > 
-> So this is a warning from DT compiler and triggered with W=12, I
-> see tons of examples using "_" in node names. Clearly someone realized
-> it (Rob ?) added a warning for it.
-> 
-> As you rightly thought, qcs404 will be okay as we are starting out and following
-> few conventions so keeping this saner :)
-> 
-> > BTW, can you also specify a 'clocks' property in the GCC node and send
-> > the xo_board node there? In fact, we should do that for every GCC node
-> > in the tree. Care to do that and also add sleep_clk to each clock
-> > controller node that uses it? This is useful to do so that we can more
-> > easily see where clocks are going between clock controller nodes.
-> 
-> I agree that it makes sense to add the property in gcc node. I will add
-> this in my list and chase if after my current task completes, if that is
-> fine by you
-> 
-> Thanks
-> -- 
-> ~Vinod
-
--- 
-~Vinod
