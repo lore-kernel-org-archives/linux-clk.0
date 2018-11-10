@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05975C43441
-	for <linux-clk@archiver.kernel.org>; Sat, 10 Nov 2018 14:34:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87145C43441
+	for <linux-clk@archiver.kernel.org>; Sat, 10 Nov 2018 14:34:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE65820817
-	for <linux-clk@archiver.kernel.org>; Sat, 10 Nov 2018 14:34:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 39F1820817
+	for <linux-clk@archiver.kernel.org>; Sat, 10 Nov 2018 14:34:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="FcSqNjvs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE65820817
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="jP7wJkD7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39F1820817
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726422AbeKKATq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 10 Nov 2018 19:19:46 -0500
-Received: from mail-eopbgr40086.outbound.protection.outlook.com ([40.107.4.86]:48608
+        id S1726518AbeKKAT5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 10 Nov 2018 19:19:57 -0500
+Received: from mail-eopbgr40083.outbound.protection.outlook.com ([40.107.4.83]:3671
         "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726334AbeKKATq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 10 Nov 2018 19:19:46 -0500
+        id S1726334AbeKKAT5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 10 Nov 2018 19:19:57 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WyU+rMFcsPtTyoukhBwEe1ULGqpSC4XBpGN0SSGfEz0=;
- b=FcSqNjvsTSJZSbxcYZqMl4s2G6N93y8skBipN2qMWBI8OAmX3nPQu2p52bNA/NpkFmMdTFq7vIMYVw1duuP3/Z9s4puFHgqPRv07PuydnA/E9S/gTfMBOM14fR0ZPxu9YObTM7NE3VAppkrfOe2P4AIY6eYSudpmLc3FszBfmNI=
+ bh=wURNXrBVZe/eiBqtAm264ILqAE3qpwsODccZaYNpUwo=;
+ b=jP7wJkD7/AlmQU+BHdF8wmA2Bg6G1YupVX857atJuuh6uMMCRMobhA1eyQtUFkqVTN+KeI+t4b2aDsv7d0IGC5GPRVKChkKZtTxBtmRYA5tkr5jWZH+rbDXlVYFIgfEt85AhsqiKW865fwg8c3QvNT+aUCHkte3XfsozbY28SPU=
 Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.126.21) by
  AM0PR04MB4402.eurprd04.prod.outlook.com (52.135.148.20) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1294.30; Sat, 10 Nov 2018 14:34:30 +0000
+ 15.20.1294.30; Sat, 10 Nov 2018 14:34:38 +0000
 Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
  ([fe80::797a:f972:9281:6d10]) by AM0PR04MB4211.eurprd04.prod.outlook.com
  ([fe80::797a:f972:9281:6d10%2]) with mapi id 15.20.1294.039; Sat, 10 Nov 2018
- 14:34:30 +0000
+ 14:34:38 +0000
 From:   "A.s. Dong" <aisheng.dong@nxp.com>
 To:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
 CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
@@ -48,12 +48,14 @@ CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Anson Huang <anson.huang@nxp.com>,
         Jacky Bai <ping.bai@nxp.com>, dl-linux-imx <linux-imx@nxp.com>,
         "A.s. Dong" <aisheng.dong@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Stephen Boyd <sboyd@codeaurora.org>
-Subject: [PATCH V5 4/9] clk: imx: add pfdv2 support
-Thread-Topic: [PATCH V5 4/9] clk: imx: add pfdv2 support
-Thread-Index: AQHUeQJ9ueOUK+njeEuBeKpYaoZtGQ==
-Date:   Sat, 10 Nov 2018 14:34:30 +0000
-Message-ID: <1541860165-401-5-git-send-email-aisheng.dong@nxp.com>
+Subject: [PATCH V5 6/9] dt-bindings: clock: add imx7ulp clock binding doc
+Thread-Topic: [PATCH V5 6/9] dt-bindings: clock: add imx7ulp clock binding doc
+Thread-Index: AQHUeQKC2yvPHaNl7U650livqq9u3g==
+Date:   Sat, 10 Nov 2018 14:34:38 +0000
+Message-ID: <1541860165-401-7-git-send-email-aisheng.dong@nxp.com>
 References: <1541860165-401-1-git-send-email-aisheng.dong@nxp.com>
 In-Reply-To: <1541860165-401-1-git-send-email-aisheng.dong@nxp.com>
 Accept-Language: zh-CN, en-US
@@ -69,28 +71,28 @@ authentication-results: spf=none (sender IP is )
 x-ms-exchange-messagesentrepresentingtype: 1
 x-originating-ip: [119.31.174.66]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM0PR04MB4402;6:0/Xla/3jFQTU/JOSdAeUTohjIy0K73CAOwd3qMnKI8O3CpG5UgvxwlWeNnyTW5NUlRnepwz09ZGJWQPUki5VNia6YSCFVEKkNbleYnkLWi0wr1QDBna7jbWFtAZPduwIC1sAYqrjarGmIl2xEF2EMr632eGPbQ/Nk0fTGaWkHMiudXlGfBQxdlAjXYULuppMMtQlU1NlfdaxsTTdE1cvLCBKdNa0IGqapOglYK9tABm+OV3vRsdRzHmQpih39Mc9zYQ8KuKruNBiQe8Vijh1vH/pB3Ky4xAvyBcd8mVauaG3b+xvvlaQJ4AyZY6rFz0R2DH3cErN63NgXFUWNwK9utSMX5P5CkeHb7KFfZcmrjBImk/i93yuTTKI3bSJpFiAW4bV7nh0a1psJCJrliQM/sMGBI0HCmWzA/GUnJEZPhtTebcT/LkE6URERw3000uYCulTBwjMg5POCv3lskkT0w==;5:LG+d3AJcSEqUiWK4+Zszfc01EhRmj8Qnh/UidO9OuAPPdwTS9xUD07Gx7tHednWe2Z8JeHd7z5C0c0g8rQnnIbF4NL3hAEpowNQdLvmg2duv/kVEBPA7H744kIRANraheCSMXuoIBL/QJNgaVZgjHAlsI7KMijBHPe8R5hAwEWM=;7:cO3tBvNhb0czYAm41snGE4jxArAkT9uKSo8POIsylNBcLOKncp40xhXl4wlreJO9LAr6bvu1JyyBAb4SmhOd4qctPXDaeoXgXZ8RDpxvrp5tpQmW1RZjqNacChxP4mU/2c/ak+RQZvqSREySZBRogQ==
-x-ms-office365-filtering-correlation-id: 811bada1-a50b-4f11-5a12-08d647199fc1
+x-microsoft-exchange-diagnostics: 1;AM0PR04MB4402;6:sC721aiRoBOcdYISx5IZo7RcOQ5/iO5AwSB/sdxgs//Ug2GPOcs43MfST5nuBZzf0HIgbZKwkyDbq+HTSjRvILnpDJ6pf5wcy0PjPjZVTGDak6DYphTLthmdCYMELsr+jgTAQDlWKZUwymuQaDjwsnvd5iLcux5O0/d1r+z0JsD/KcGhSooaMeBG5VC8GML/ZYId83abVvTDbygihi9X8MKl1KWd8iNKULt5SaprezIIVw45V2jeX7SAY0SAj4nwTsMPT80IH2ZMUnUqhpvv2+v3E+mDliEdT5bXz7LSBmfQwAmtAEumsa8jYrzZU0TUbOwX92AjljsgnKLYt38Z1oI6Fv6L1H+r3YIecETg4OSvCmeFxNDBxoKLmlBi51yY0hRuiE+C1mwvp+3aPraQTll/vyTR6dASM34A860qpn8E36JK+nLSrvXlxvmoZDjk6geEW9Rw85QaquraQLuR+w==;5:C2+TpjqzZwuP8E9Psl2OU9w7q6GtiZJRuxhQvZud+fhgfeU853WdI9c0sYKjSFVUh07eFzCPdDkHnUSfWzLpjwrv65Ienob86wG9ws9NCDxY2xD/GlUvoHuRIH2JGnSuLrJaAZ91tPLLUcWiKITMN6g61/u7WMbYA3HsfQqVTng=;7:2Fiv9v0ujEMiRa9vVlGi/ptnvy01zxabqJ55hKOPMMsjPONFD000dgrwJWbrLih0CJHTTu9UXbGHg1wfbYy5pCRfumY+6dBt5w2ggQSABjT2kt9swKJfRuCItoWsGT6ZLQmhTN3x8GXge6vHT1mxeA==
+x-ms-office365-filtering-correlation-id: 7f794f7e-0f90-4d6e-a821-08d64719a4d2
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390040)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB4402;
 x-ms-traffictypediagnostic: AM0PR04MB4402:
-x-microsoft-antispam-prvs: <AM0PR04MB4402DBABAD3F6E1FC8B3592980C70@AM0PR04MB4402.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(185117386973197);
+x-microsoft-antispam-prvs: <AM0PR04MB440258BA129765A2C75CB52B80C70@AM0PR04MB4402.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(269456686620040)(180628864354917)(185117386973197);
 x-ms-exchange-senderadcheck: 1
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(3231382)(944501410)(52105095)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(20161123558120)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:AM0PR04MB4402;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB4402;
 x-forefront-prvs: 0852EB6797
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(396003)(366004)(346002)(376002)(136003)(199004)(189003)(54534003)(6512007)(478600001)(102836004)(36756003)(14444005)(4326008)(105586002)(256004)(76176011)(97736004)(71200400001)(71190400001)(106356001)(14454004)(386003)(6506007)(52116002)(2351001)(5660300001)(25786009)(5640700003)(2906002)(81166006)(81156014)(66066001)(6436002)(26005)(186003)(575784001)(6916009)(8676002)(54906003)(8936002)(3846002)(305945005)(486006)(7736002)(6116002)(2900100001)(446003)(11346002)(68736007)(53936002)(476003)(2501003)(99286004)(6486002)(50226002)(2616005)(316002)(86362001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4402;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(396003)(366004)(346002)(376002)(136003)(199004)(189003)(54534003)(6512007)(478600001)(102836004)(36756003)(4326008)(105586002)(256004)(76176011)(97736004)(71200400001)(71190400001)(106356001)(14454004)(386003)(6506007)(52116002)(2351001)(5660300001)(25786009)(5640700003)(2906002)(81166006)(81156014)(66066001)(6436002)(26005)(186003)(6916009)(8676002)(54906003)(8936002)(3846002)(305945005)(486006)(7736002)(6116002)(2900100001)(446003)(11346002)(68736007)(53936002)(476003)(2501003)(99286004)(6486002)(50226002)(2616005)(316002)(86362001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4402;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: mM1wX5MSIT6GWNReXrE/lGV8rGUX8r6tp9Nm9mETumY6mBwjO6p3Su+l8fYdrHAKuad629I69v1A/WlBSa/rszbV/Gvc7TJUlF0ScNRQ4OTL76hz2GcRRQOyOwr+DYF3HtyAvnUR4VL1pyNxQKw2xu7RUoIX4Qck5ZVopCRfJt4W/XQG8/DCaWzc5jtj+v6W/KZ4X2VTnShVHbN6Jy/7LT8LL+ovBKLe0E22SzYE6fpEbEcJGSUo9RJ2A6cNjgkQyTLkILOByXI88JX1zMH8YorXTj5VSVSQCWH2hT5DcldsC967e7xN2qZzzsDkQQQTAKy9pOQRGXtSLeSSxJYGDfnIBaqZXrprBYqmmRV17Dc=
+x-microsoft-antispam-message-info: TrI/i+PF/1xuoMFuPPL0etC9jx6GnduslaJ6LJTCOwtolZrNhVZu29fpDj33mRxbDCX3K08suw/XSWbAETHI/XefKxokSGUVJIQ5OjZQkb0hcdbqZNg6MAUhtl4p9ZIIpYYIbhI18s64Qnx2/Zj3lHvYmUkVMNxIvNFF6sJc5KNqnJVMz1+1EIEhkdgeCsbTAa9zWCV5bagN4lpGJgq+x+P7t/ZOz67w+deCFqv0wwnG0GSzG8v/kMiRH6++lBnZ2hTlML6O3Fxr45Gd3447f+Jj53LXpiK4GQyfEGCFRWYicL05+z2NPq/zN2MT776wUf4QoZWSKcJjOpMaCXbF62j5veErGymyWfm3czHpuXo=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 811bada1-a50b-4f11-5a12-08d647199fc1
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Nov 2018 14:34:30.1858
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7f794f7e-0f90-4d6e-a821-08d64719a4d2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Nov 2018 14:34:38.7019
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
@@ -100,11 +102,15 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The pfdv2 is designed for PLL Fractional Divide (PFD) observed in System
-Clock Generation (SCG) module in IMX ULP SoC series. e.g. i.MX7ULP.
+i.MX7ULP Clock functions are under joint control of the System
+Clock Generation (SCG) modules, Peripheral Clock Control (PCC)
+modules, and Core Mode Controller (CMC)1 blocks
 
-NOTE pfdv2 can only be operated when clk is gated.
+Note IMX7ULP has two clock domains: M4 and A7. This binding doc
+is only for A7 clock domain.
 
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
 Cc: Stephen Boyd <sboyd@codeaurora.org>
 Cc: Michael Turquette <mturquette@baylibre.com>
 Cc: Shawn Guo <shawnguo@kernel.org>
@@ -114,260 +120,252 @@ Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 
 ---
 ChangeLog:
+v4->v5:
+ * fix a typo that clock-name -> clock-names
+ * one compatible string per line
+ * add input clocks for pcc2/3
 v3->v4:
- * no changes
+ * make scg, pcc separate nodes according to Rob's suggestion
 v2->v3:
  * no changes
-v1->v2:
- * change to readl_poll_timeout
- * add pfd lock to protect share reg access between rate and enable/disable
-   operations and multiple pfd instances.
- * use clk_hw_register
+v1->v2: no changes
 ---
- drivers/clk/imx/Makefile    |   3 +-
- drivers/clk/imx/clk-pfdv2.c | 201 ++++++++++++++++++++++++++++++++++++++++=
+ .../devicetree/bindings/clock/imx7ulp-clock.txt    | 104 +++++++++++++++++=
++++
+ include/dt-bindings/clock/imx7ulp-clock.h          | 109 +++++++++++++++++=
 ++++
- drivers/clk/imx/clk.h       |   3 +
- 3 files changed, 206 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/imx/clk-pfdv2.c
+ 2 files changed, 213 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/imx7ulp-clock.t=
+xt
+ create mode 100644 include/dt-bindings/clock/imx7ulp-clock.h
 
-diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
-index bfe31bf..e5b0d42 100644
---- a/drivers/clk/imx/Makefile
-+++ b/drivers/clk/imx/Makefile
-@@ -12,7 +12,8 @@ obj-y +=3D \
- 	clk-pllv2.o \
- 	clk-pllv3.o \
- 	clk-pllv4.o \
--	clk-pfd.o
-+	clk-pfd.o \
-+	clk-pfdv2.o
-=20
- obj-$(CONFIG_SOC_IMX1)   +=3D clk-imx1.o
- obj-$(CONFIG_SOC_IMX21)  +=3D clk-imx21.o
-diff --git a/drivers/clk/imx/clk-pfdv2.c b/drivers/clk/imx/clk-pfdv2.c
+diff --git a/Documentation/devicetree/bindings/clock/imx7ulp-clock.txt b/Do=
+cumentation/devicetree/bindings/clock/imx7ulp-clock.txt
 new file mode 100644
-index 0000000..afb2904
+index 0000000..a4f8cd4
 --- /dev/null
-+++ b/drivers/clk/imx/clk-pfdv2.c
-@@ -0,0 +1,201 @@
-+// SPDX-License-Identifier: GPL-2.0+
++++ b/Documentation/devicetree/bindings/clock/imx7ulp-clock.txt
+@@ -0,0 +1,104 @@
++* Clock bindings for Freescale i.MX7ULP
++
++i.MX7ULP Clock functions are under joint control of the System
++Clock Generation (SCG) modules, Peripheral Clock Control (PCC)
++modules, and Core Mode Controller (CMC)1 blocks
++
++The clocking scheme provides clear separation between M4 domain
++and A7 domain. Except for a few clock sources shared between two
++domains, such as the System Oscillator clock, the Slow IRC (SIRC),
++and and the Fast IRC clock (FIRCLK), clock sources and clock
++management are separated and contained within each domain.
++
++M4 clock management consists of SCG0, PCC0, PCC1, and CMC0 modules.
++A7 clock management consists of SCG1, PCC2, PCC3, and CMC1 modules.
++
++Note: this binding doc is only for A7 clock domain.
++
++System Clock Generation (SCG) modules:
++---------------------------------------------------------------------
++The System Clock Generation (SCG) is responsible for clock generation
++and distribution across this device. Functions performed by the SCG
++include: clock reference selection, generation of clock used to derive
++processor, system, peripheral bus and external memory interface clocks,
++source selection for peripheral clocks and control of power saving
++clock gating mode.
++
++Required properties:
++
++- compatible:	Should be "fsl,imx7ulp-scg1".
++- reg : 	Should contain registers location and length.
++- #clock-cells:	Should be <1>.
++- clocks:	Should contain the fixed input clocks.
++- clock-names:  Should contain the following clock names:
++		"rosc", "sosc", "sirc", "firc", "upll", "mpll".
++
++Peripheral Clock Control (PCC) modules:
++---------------------------------------------------------------------
++The Peripheral Clock Control (PCC) is responsible for clock selection,
++optional division and clock gating mode for peripherals in their
++respected power domain
++
++Required properties:
++- compatible:	Should be one of:
++		  "fsl,imx7ulp-pcc2",
++		  "fsl,imx7ulp-pcc3".
++- reg : 	Should contain registers location and length.
++- #clock-cells:	Should be <1>.
++- clocks:	Should contain the fixed input clocks.
++- clock-names:  Should contain the following clock names:
++		"nic1_bus_clk", "nic1_clk", "ddr_clk", "apll_pfd2",
++		"apll_pfd1", "apll_pfd0", "upll", "sosc_bus_clk",
++		"mpll", "firc_bus_clk", "rosc", "spll_bus_clk";
++
++The clock consumer should specify the desired clock by having the clock
++ID in its "clocks" phandle cell.
++See include/dt-bindings/clock/imx7ulp-clock.h
++for the full list of i.MX7ULP clock IDs of each module.
++
++Examples:
++
++#include <dt-bindings/clock/imx7ulp-clock.h>
++
++scg1: scg1@403e0000 {
++	compatible =3D "fsl,imx7ulp-scg1;
++	reg =3D <0x403e0000 0x10000>;
++	clocks =3D <&rosc>, <&sosc>, <&sirc>,
++		 <&firc>, <&upll>, <&mpll>;
++	clock-names =3D "rosc", "sosc", "sirc",
++		      "firc", "upll", "mpll";
++	#clock-cells =3D <1>;
++};
++
++pcc2: pcc2@403f0000 {
++	compatible =3D "fsl,imx7ulp-pcc2";
++	reg =3D <0x403f0000 0x10000>;
++	#clock-cells =3D <1>;
++	clocks =3D <&scg1 IMX7ULP_CLK_NIC1_BUS_DIV>,
++		 <&scg1 IMX7ULP_CLK_NIC1_DIV>,
++		 <&scg1 IMX7ULP_CLK_DDR_DIV>,
++		 <&scg1 IMX7ULP_CLK_APLL_PFD2>,
++		 <&scg1 IMX7ULP_CLK_APLL_PFD1>,
++		 <&scg1 IMX7ULP_CLK_APLL_PFD0>,
++		 <&scg1 IMX7ULP_CLK_UPLL>,
++		 <&scg1 IMX7ULP_CLK_SOSC_BUS_CLK>,
++		 <&scg1 IMX7ULP_CLK_MIPI_PLL>,
++		 <&scg1 IMX7ULP_CLK_FIRC_BUS_CLK>,
++		 <&scg1 IMX7ULP_CLK_ROSC>,
++		 <&scg1 IMX7ULP_CLK_SPLL_BUS_CLK>;
++	clock-names =3D "nic1_bus_clk", "nic1_clk", "ddr_clk",
++		      "apll_pfd2", "apll_pfd1", "apll_pfd0",
++		      "upll", "sosc_bus_clk", "mpll",
++		      "firc_bus_clk", "rosc", "spll_bus_clk";
++};
++
++usdhc1: usdhc@40380000 {
++	compatible =3D "fsl,imx7ulp-usdhc";
++	reg =3D <0x40380000 0x10000>;
++	interrupts =3D <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
++	clocks =3D <&scg1 IMX7ULP_CLK_NIC1_BUS_DIV>,
++		 <&scg1 IMX7ULP_CLK_NIC1_DIV>,
++		 <&pcc2 IMX7ULP_CLK_USDHC1>;
++	clock-names =3D"ipg", "ahb", "per";
++	bus-width =3D <4>;
++};
+diff --git a/include/dt-bindings/clock/imx7ulp-clock.h b/include/dt-binding=
+s/clock/imx7ulp-clock.h
+new file mode 100644
+index 0000000..008c5ee
+--- /dev/null
++++ b/include/dt-bindings/clock/imx7ulp-clock.h
+@@ -0,0 +1,109 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
 +/*
 + * Copyright (C) 2016 Freescale Semiconductor, Inc.
 + * Copyright 2017~2018 NXP
 + *
-+ * Author: Dong Aisheng <aisheng.dong@nxp.com>
-+ *
 + */
 +
-+#include <linux/clk-provider.h>
-+#include <linux/err.h>
-+#include <linux/iopoll.h>
-+#include <linux/slab.h>
++#ifndef __DT_BINDINGS_CLOCK_IMX7ULP_H
++#define __DT_BINDINGS_CLOCK_IMX7ULP_H
 +
-+/**
-+ * struct clk_pfdv2 - IMX PFD clock
-+ * @clk_hw:	clock source
-+ * @reg:	PFD register address
-+ * @gate_bit:	Gate bit offset
-+ * @vld_bit:	Valid bit offset
-+ * @frac_off:	PLL Fractional Divider offset
-+ */
++/* SCG1 */
 +
-+struct clk_pfdv2 {
-+	struct clk_hw	hw;
-+	void __iomem	*reg;
-+	u8		gate_bit;
-+	u8		vld_bit;
-+	u8		frac_off;
-+};
++#define IMX7ULP_CLK_DUMMY		0
++#define IMX7ULP_CLK_ROSC		1
++#define IMX7ULP_CLK_SOSC		2
++#define IMX7ULP_CLK_FIRC		3
++#define IMX7ULP_CLK_SPLL_PRE_SEL	4
++#define IMX7ULP_CLK_SPLL_PRE_DIV	5
++#define IMX7ULP_CLK_SPLL		6
++#define IMX7ULP_CLK_SPLL_POST_DIV1	7
++#define IMX7ULP_CLK_SPLL_POST_DIV2	8
++#define IMX7ULP_CLK_SPLL_PFD0		9
++#define IMX7ULP_CLK_SPLL_PFD1		10
++#define IMX7ULP_CLK_SPLL_PFD2		11
++#define IMX7ULP_CLK_SPLL_PFD3		12
++#define IMX7ULP_CLK_SPLL_PFD_SEL	13
++#define IMX7ULP_CLK_SPLL_SEL		14
++#define IMX7ULP_CLK_APLL_PRE_SEL	15
++#define IMX7ULP_CLK_APLL_PRE_DIV	16
++#define IMX7ULP_CLK_APLL		17
++#define IMX7ULP_CLK_APLL_POST_DIV1	18
++#define IMX7ULP_CLK_APLL_POST_DIV2	19
++#define IMX7ULP_CLK_APLL_PFD0		20
++#define IMX7ULP_CLK_APLL_PFD1		21
++#define IMX7ULP_CLK_APLL_PFD2		22
++#define IMX7ULP_CLK_APLL_PFD3		23
++#define IMX7ULP_CLK_APLL_PFD_SEL	24
++#define IMX7ULP_CLK_APLL_SEL		25
++#define IMX7ULP_CLK_UPLL		26
++#define IMX7ULP_CLK_SYS_SEL		27
++#define IMX7ULP_CLK_CORE_DIV		28
++#define IMX7ULP_CLK_BUS_DIV		29
++#define IMX7ULP_CLK_PLAT_DIV		30
++#define IMX7ULP_CLK_DDR_SEL		31
++#define IMX7ULP_CLK_DDR_DIV		32
++#define IMX7ULP_CLK_NIC_SEL		33
++#define IMX7ULP_CLK_NIC0_DIV		34
++#define IMX7ULP_CLK_GPU_DIV		35
++#define IMX7ULP_CLK_NIC1_DIV		36
++#define IMX7ULP_CLK_NIC1_BUS_DIV	37
++#define IMX7ULP_CLK_NIC1_EXT_DIV	38
++#define IMX7ULP_CLK_MIPI_PLL		39
++#define IMX7ULP_CLK_SIRC		40
++#define IMX7ULP_CLK_SOSC_BUS_CLK	41
++#define IMX7ULP_CLK_FIRC_BUS_CLK	42
++#define IMX7ULP_CLK_SPLL_BUS_CLK	43
 +
-+#define to_clk_pfdv2(_hw) container_of(_hw, struct clk_pfdv2, hw)
++#define IMX7ULP_CLK_SCG1_END		44
 +
-+#define CLK_PFDV2_FRAC_MASK 0x3f
++/* PCC2 */
++#define IMX7ULP_CLK_DMA1		0
++#define IMX7ULP_CLK_RGPIO2P1		1
++#define IMX7ULP_CLK_FLEXBUS		2
++#define IMX7ULP_CLK_SEMA42_1		3
++#define IMX7ULP_CLK_DMA_MUX1		4
++#define IMX7ULP_CLK_SNVS		5
++#define IMX7ULP_CLK_CAAM		6
++#define IMX7ULP_CLK_LPTPM4		7
++#define IMX7ULP_CLK_LPTPM5		8
++#define IMX7ULP_CLK_LPIT1		9
++#define IMX7ULP_CLK_LPSPI2		10
++#define IMX7ULP_CLK_LPSPI3		11
++#define IMX7ULP_CLK_LPI2C4		12
++#define IMX7ULP_CLK_LPI2C5		13
++#define IMX7ULP_CLK_LPUART4		14
++#define IMX7ULP_CLK_LPUART5		15
++#define IMX7ULP_CLK_FLEXIO1		16
++#define IMX7ULP_CLK_USB0		17
++#define IMX7ULP_CLK_USB1		18
++#define IMX7ULP_CLK_USB_PHY		19
++#define IMX7ULP_CLK_USB_PL301		20
++#define IMX7ULP_CLK_USDHC0		21
++#define IMX7ULP_CLK_USDHC1		22
++#define IMX7ULP_CLK_WDG1		23
++#define IMX7ULP_CLK_WDG2		24
 +
-+#define LOCK_TIMEOUT_US		USEC_PER_MSEC
++#define IMX7ULP_CLK_PCC2_END		25
 +
-+static DEFINE_SPINLOCK(pfd_lock);
++/* PCC3 */
++#define IMX7ULP_CLK_LPTPM6		0
++#define IMX7ULP_CLK_LPTPM7		1
++#define IMX7ULP_CLK_LPI2C6		2
++#define IMX7ULP_CLK_LPI2C7		3
++#define IMX7ULP_CLK_LPUART6		4
++#define IMX7ULP_CLK_LPUART7		5
++#define IMX7ULP_CLK_VIU			6
++#define IMX7ULP_CLK_DSI			7
++#define IMX7ULP_CLK_LCDIF		8
++#define IMX7ULP_CLK_MMDC		9
++#define IMX7ULP_CLK_PCTLC		10
++#define IMX7ULP_CLK_PCTLD		11
++#define IMX7ULP_CLK_PCTLE		12
++#define IMX7ULP_CLK_PCTLF		13
++#define IMX7ULP_CLK_GPU3D		14
++#define IMX7ULP_CLK_GPU2D		15
 +
-+static int clk_pfdv2_wait(struct clk_pfdv2 *pfd)
-+{
-+	u32 val;
++#define IMX7ULP_CLK_PCC3_END		16
 +
-+	return readl_poll_timeout(pfd->reg, val, val & pfd->vld_bit,
-+				  0, LOCK_TIMEOUT_US);
-+}
-+
-+static int clk_pfdv2_enable(struct clk_hw *hw)
-+{
-+	struct clk_pfdv2 *pfd =3D to_clk_pfdv2(hw);
-+	unsigned long flags;
-+	u32 val;
-+
-+	spin_lock_irqsave(&pfd_lock, flags);
-+	val =3D readl_relaxed(pfd->reg);
-+	val &=3D ~pfd->gate_bit;
-+	writel_relaxed(val, pfd->reg);
-+	spin_unlock_irqrestore(&pfd_lock, flags);
-+
-+	return clk_pfdv2_wait(pfd);
-+}
-+
-+static void clk_pfdv2_disable(struct clk_hw *hw)
-+{
-+	struct clk_pfdv2 *pfd =3D to_clk_pfdv2(hw);
-+	unsigned long flags;
-+	u32 val;
-+
-+	spin_lock_irqsave(&pfd_lock, flags);
-+	val =3D readl_relaxed(pfd->reg);
-+	val |=3D pfd->gate_bit;
-+	writel_relaxed(val, pfd->reg);
-+	spin_unlock_irqrestore(&pfd_lock, flags);
-+}
-+
-+static unsigned long clk_pfdv2_recalc_rate(struct clk_hw *hw,
-+					   unsigned long parent_rate)
-+{
-+	struct clk_pfdv2 *pfd =3D to_clk_pfdv2(hw);
-+	u64 tmp =3D parent_rate;
-+	u8 frac;
-+
-+	frac =3D (readl_relaxed(pfd->reg) >> pfd->frac_off)
-+		& CLK_PFDV2_FRAC_MASK;
-+
-+	if (!frac) {
-+		pr_debug("clk_pfdv2: %s invalid pfd frac value 0\n",
-+			 clk_hw_get_name(hw));
-+		return 0;
-+	}
-+
-+	tmp *=3D 18;
-+	do_div(tmp, frac);
-+
-+	return tmp;
-+}
-+
-+static long clk_pfdv2_round_rate(struct clk_hw *hw, unsigned long rate,
-+				 unsigned long *prate)
-+{
-+	u64 tmp =3D *prate;
-+	u8 frac;
-+
-+	tmp =3D tmp * 18 + rate / 2;
-+	do_div(tmp, rate);
-+	frac =3D tmp;
-+
-+	if (frac < 12)
-+		frac =3D 12;
-+	else if (frac > 35)
-+		frac =3D 35;
-+
-+	tmp =3D *prate;
-+	tmp *=3D 18;
-+	do_div(tmp, frac);
-+
-+	return tmp;
-+}
-+
-+static int clk_pfdv2_is_enabled(struct clk_hw *hw)
-+{
-+	struct clk_pfdv2 *pfd =3D to_clk_pfdv2(hw);
-+
-+	if (readl_relaxed(pfd->reg) & pfd->gate_bit)
-+		return 0;
-+
-+	return 1;
-+}
-+
-+static int clk_pfdv2_set_rate(struct clk_hw *hw, unsigned long rate,
-+			      unsigned long parent_rate)
-+{
-+	struct clk_pfdv2 *pfd =3D to_clk_pfdv2(hw);
-+	unsigned long flags;
-+	u64 tmp =3D parent_rate;
-+	u32 val;
-+	u8 frac;
-+
-+	tmp =3D tmp * 18 + rate / 2;
-+	do_div(tmp, rate);
-+	frac =3D tmp;
-+	if (frac < 12)
-+		frac =3D 12;
-+	else if (frac > 35)
-+		frac =3D 35;
-+
-+	spin_lock_irqsave(&pfd_lock, flags);
-+	val =3D readl_relaxed(pfd->reg);
-+	val &=3D ~(CLK_PFDV2_FRAC_MASK << pfd->frac_off);
-+	val |=3D frac << pfd->frac_off;
-+	writel_relaxed(val, pfd->reg);
-+	spin_unlock_irqrestore(&pfd_lock, flags);
-+
-+	return 0;
-+}
-+
-+static const struct clk_ops clk_pfdv2_ops =3D {
-+	.enable		=3D clk_pfdv2_enable,
-+	.disable	=3D clk_pfdv2_disable,
-+	.recalc_rate	=3D clk_pfdv2_recalc_rate,
-+	.round_rate	=3D clk_pfdv2_round_rate,
-+	.set_rate	=3D clk_pfdv2_set_rate,
-+	.is_enabled     =3D clk_pfdv2_is_enabled,
-+};
-+
-+struct clk_hw *imx_clk_pfdv2(const char *name, const char *parent_name,
-+			     void __iomem *reg, u8 idx)
-+{
-+	struct clk_init_data init;
-+	struct clk_pfdv2 *pfd;
-+	struct clk_hw *hw;
-+	int ret;
-+
-+	WARN_ON(idx > 3);
-+
-+	pfd =3D kzalloc(sizeof(*pfd), GFP_KERNEL);
-+	if (!pfd)
-+		return ERR_PTR(-ENOMEM);
-+
-+	pfd->reg =3D reg;
-+	pfd->gate_bit =3D 1 << ((idx + 1) * 8 - 1);
-+	pfd->vld_bit =3D pfd->gate_bit - 1;
-+	pfd->frac_off =3D idx * 8;
-+
-+	init.name =3D name;
-+	init.ops =3D &clk_pfdv2_ops;
-+	init.parent_names =3D &parent_name;
-+	init.num_parents =3D 1;
-+	init.flags =3D CLK_SET_RATE_GATE;
-+
-+	pfd->hw.init =3D &init;
-+
-+	hw =3D &pfd->hw;
-+	ret =3D clk_hw_register(NULL, hw);
-+	if (ret) {
-+		kfree(pfd);
-+		hw =3D ERR_PTR(ret);
-+	}
-+
-+	return hw;
-+}
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index 2fb4f1d..a5a9374 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -60,6 +60,9 @@ struct clk *imx_clk_gate_exclusive(const char *name, cons=
-t char *parent,
- struct clk *imx_clk_pfd(const char *name, const char *parent_name,
- 		void __iomem *reg, u8 idx);
-=20
-+struct clk_hw *imx_clk_pfdv2(const char *name, const char *parent_name,
-+			     void __iomem *reg, u8 idx);
-+
- struct clk *imx_clk_busy_divider(const char *name, const char *parent_name=
-,
- 				 void __iomem *reg, u8 shift, u8 width,
- 				 void __iomem *busy_reg, u8 busy_shift);
++#endif /* __DT_BINDINGS_CLOCK_IMX7ULP_H */
 --=20
 2.7.4
 
