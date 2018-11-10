@@ -2,86 +2,90 @@ Return-Path: <SRS0=kVDh=NV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17B35C43441
-	for <linux-clk@archiver.kernel.org>; Sat, 10 Nov 2018 16:53:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A04BC43441
+	for <linux-clk@archiver.kernel.org>; Sat, 10 Nov 2018 18:04:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D470420858
-	for <linux-clk@archiver.kernel.org>; Sat, 10 Nov 2018 16:53:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D470420858
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=anholt.net
+	by mail.kernel.org (Postfix) with ESMTP id 074DD20840
+	for <linux-clk@archiver.kernel.org>; Sat, 10 Nov 2018 18:04:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lBvSiL5G"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 074DD20840
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726337AbeKKCjP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 10 Nov 2018 21:39:15 -0500
-Received: from anholt.net ([50.246.234.109]:50596 "EHLO anholt.net"
+        id S1726342AbeKKDuP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 10 Nov 2018 22:50:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41036 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726188AbeKKCjP (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 10 Nov 2018 21:39:15 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id 8CAA710A135C;
-        Sat, 10 Nov 2018 08:53:36 -0800 (PST)
-X-Virus-Scanned: Debian amavisd-new at anholt.net
-Received: from anholt.net ([127.0.0.1])
-        by localhost (kingsolver.anholt.net [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id OYMMyF6JM76r; Sat, 10 Nov 2018 08:53:35 -0800 (PST)
-Received: from eliezer.anholt.net (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id 765AE10A130F;
-        Sat, 10 Nov 2018 08:53:35 -0800 (PST)
-Received: by eliezer.anholt.net (Postfix, from userid 1000)
-        id 158D72FE1B8F; Sat, 10 Nov 2018 08:53:35 -0800 (PST)
-From:   Eric Anholt <eric@anholt.net>
-To:     Stefan Wahren <stefan.wahren@i2se.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Simon Arlott <simon@arlott.org>,
-        Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH 04/17] clk: bcm2835: Switch to SPDX identifier
-In-Reply-To: <1541862755-7034-1-git-send-email-stefan.wahren@i2se.com>
-References: <1541862755-7034-1-git-send-email-stefan.wahren@i2se.com>
-User-Agent: Notmuch/0.22.2+1~gb0bcfaa (http://notmuchmail.org) Emacs/25.2.2 (x86_64-pc-linux-gnu)
-Date:   Sat, 10 Nov 2018 08:53:34 -0800
-Message-ID: <87efbszxf5.fsf@anholt.net>
+        id S1726292AbeKKDuO (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 10 Nov 2018 22:50:14 -0500
+Received: from mail.kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DD3FB20840;
+        Sat, 10 Nov 2018 18:04:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541873064;
+        bh=wipdquIStUjiYirMVBw3zYrZVxLBXMe/RB9vSMCGfAs=;
+        h=From:To:Cc:Subject:Date:From;
+        b=lBvSiL5Gmp2DhJ9d1ay00c5un+wlXGTkPalE8hbKWL1RNZKzlZ3wKuSvS3Z5D/PP1
+         j41XOo4JpvNLF501uS0Zn8JRuCLySmFzDbjTsLic57CWgGWFPpdVuXrr74B/JfQit9
+         0FEo2GIQHTbkCQGPHu76nxG2WqWxFVL6o56moQt4=
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] clk fixes for v4.20-rc1
+Date:   Sat, 10 Nov 2018 10:04:23 -0800
+Message-Id: <20181110180423.208899-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.19.1.930.g4563a0d9d0-goog
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
+The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
 
-Stefan Wahren <stefan.wahren@i2se.com> writes:
+  Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
 
-> Adopt the SPDX license identifier headers to ease license compliance
-> management.
+are available in the Git repository at:
 
-Reviewed-by: Eric Anholt <eric@anholt.net>
+  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+for you to fetch changes up to 1aefa98b010e9cc7a07046cbcb1237ddad85b708:
 
------BEGIN PGP SIGNATURE-----
+  clk: qcom: gcc: Fix board clock node name (2018-11-09 14:13:55 -0800)
 
-iQIyBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlvnDQ4ACgkQtdYpNtH8
-nuj+vw/4kJGMoiX3par3Riv/+DLGbm8gbE6fLzhInZLBPBa9E3xpFqmqAABsdL36
-0BzTVOVJfXabFss4IikM6bZP6zXRdjHVNJue4r8DOVN5nlYWFkmJf+sO5YKpSiuG
-E/EoxoKutKsA6dBNjttaDe1OjBeM1VmHlosREtCEnSEiQJeU8Jy/99HxiN0GDivT
-zK2nn2fjlxWLLXMi/4Tb6fj39a1s2PtgwajW80BLMYWOeerNT6MhQ9UlaOiOkL6s
-NcwYeSTddHH9F2oqRl1ObpdvpmEkSxlqA92UqOWJiagyoIai//9E3CoORLhIFIfV
-i0/YsFv2LrdOS1oSNH12cJxgVLE6zPLlyynLYTRnCCJ3kLS8jGsJ/mcv7O/aDUW+
-Cp0VYDyim37VzFhN2TjN8Rhhu067w3cpKy0cOL+eaMwERPa2qcvYsb9ZRKG+uIJh
-MjYeQWaaGxUcI2Qd2xG5sFpgnjP+hSn6+p7grwts1i0FVeZhn7JtQ4xmitAhTrlE
-UevjkaIPCdiZ8U0lZ/tIdEkAFdgcteZ646KpV7+qL2w8bR2vyy+YMmN2DYVrbmYF
-v2+UlOwlhi+IhZ6Tw5xJu3Q75xlY/19Vr+NHyaFFlvHZ/jBPW2eV8LFRD2W9KvdG
-Cd7oem8DonELkGLhxf8uV2OZf8cbeAAZN3i96nVDF+1ehty6gg==
-=M8hO
------END PGP SIGNATURE-----
---=-=-=--
+----------------------------------------------------------------
+A small set of fixes for clk drivers. One to fix a DT refcount
+imbalance, two to mark some Amlogic clks as critical, and one final
+one that fixes a clk name for the Qualcomm driver merged this cycle.
+
+----------------------------------------------------------------
+Christian Hewitt (1):
+      clk: meson-gxbb: set fclk_div3 as CLK_IS_CRITICAL
+
+Jerome Brunet (1):
+      clk: meson: axg: mark fdiv2 and fdiv3 as critical
+
+Ricardo Ribalda Delgado (1):
+      clk: fixed-factor: fix of_node_get-put imbalance
+
+Vinod Koul (1):
+      clk: qcom: gcc: Fix board clock node name
+
+ drivers/clk/clk-fixed-factor.c |  1 +
+ drivers/clk/meson/axg.c        | 13 +++++++++++++
+ drivers/clk/meson/gxbb.c       | 12 ++++++++++++
+ drivers/clk/qcom/gcc-qcs404.c  |  2 +-
+ 4 files changed, 27 insertions(+), 1 deletion(-)
+
+-- 
+Sent by a computer through tubes
