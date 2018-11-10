@@ -2,156 +2,85 @@ Return-Path: <SRS0=kVDh=NV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90385C43441
-	for <linux-clk@archiver.kernel.org>; Sat, 10 Nov 2018 07:53:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 099C9C43441
+	for <linux-clk@archiver.kernel.org>; Sat, 10 Nov 2018 11:37:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57CAA20840
-	for <linux-clk@archiver.kernel.org>; Sat, 10 Nov 2018 07:53:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="jqhn/mJF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57CAA20840
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info
+	by mail.kernel.org (Postfix) with ESMTP id C5DD320883
+	for <linux-clk@archiver.kernel.org>; Sat, 10 Nov 2018 11:37:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5DD320883
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i2se.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728876AbeKJRhc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 10 Nov 2018 12:37:32 -0500
-Received: from mail.andi.de1.cc ([85.214.239.24]:53506 "EHLO
-        h2641619.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728682AbeKJRhb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 10 Nov 2018 12:37:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=kemnade.info; s=20180802; h=Content-Type:MIME-Version:References:
-        In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=G9tr0ALZEuyGTWfbsHV9yfhGwwaWECTn1OaNtMnAyLY=; b=jqhn/mJFcXaDy4wJUJoWJJcz6
-        n54Mj1Dxq8Df/nvxTI/5Q0BGnR8vOHmBdM197JEpWSWhVqDivZPuV++aLsdKQ2v8UXQ9rlirau2Ef
-        coye83Z7c/6zZRz/b9mhmgdDM/vu3Dtpxodx0L+U38v5okm54clA9jeAzCMyAJgiOOLfM=;
-Received: from p200300ccfbfa4e007ee9d3fffe1fa246.dip0.t-ipconnect.de ([2003:cc:fbfa:4e00:7ee9:d3ff:fe1f:a246] helo=localhost)
-        by h2641619.stratoserver.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1gLO52-00076Z-VN; Sat, 10 Nov 2018 08:53:21 +0100
-Received: from [::1] (helo=localhost)
-        by localhost with esmtp (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1gLO51-0003X6-8P; Sat, 10 Nov 2018 08:53:19 +0100
-Date:   Sat, 10 Nov 2018 08:52:43 +0100
-From:   Andreas Kemnade <andreas@kemnade.info>
-To:     Tero Kristo <t-kristo@ti.com>
-Cc:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <bcousson@baylibre.com>,
-        <paul@pwsan.com>, <tony@atomide.com>,
-        <letux-kernel@openphoenux.org>
-Subject: Re: [PATCH 1/2] clk: ti: add a usecount for autoidle
-Message-ID: <20181110085243.7da163b9@kemnade.info>
-In-Reply-To: <23cbfc19-20d9-99f0-c086-e782cc36de34@ti.com>
-References: <20181004203817.22101-1-andreas@kemnade.info>
-        <20181004203817.22101-2-andreas@kemnade.info>
-        <23cbfc19-20d9-99f0-c086-e782cc36de34@ti.com>
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; i686-pc-linux-gnu)
+        id S1728917AbeKJVWX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 10 Nov 2018 16:22:23 -0500
+Received: from mout.kundenserver.de ([212.227.17.10]:57055 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728888AbeKJVWX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 10 Nov 2018 16:22:23 -0500
+Received: from null ([172.19.246.154]) by mrelayeu.kundenserver.de (mreue109
+ [213.165.67.113]) with ESMTPSA (Nemesis) id 1Mr9O4-1fg70U45eI-00oGOE; Sat, 10
+ Nov 2018 12:37:17 +0100
+Date:   Sat, 10 Nov 2018 12:37:15 +0100 (CET)
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+To:     Florian Kauer <florian.kauer@koalo.de>,
+        Mark Brown <broonie@kernel.org>, Vinod Koul <vkoul@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Chris Boot <bootc@bootc.net>, dmaengine@vger.kernel.org,
+        linux-spi@vger.kernel.org, Martin Sperl <kernel@martin.sperl.org>,
+        Eric Anholt <eric@anholt.net>,
+        linux-arm-kernel@lists.infradead.org
+Message-ID: <1682361655.172416.1541849835591@email.ionos.de>
+In-Reply-To: <26a93a5d-0ed2-b82d-3a0b-ef2888c59af0@koalo.de>
+References: <1540292769-5905-1-git-send-email-stefan.wahren@i2se.com>
+ <815844594.141792.1541616607053@email.ionos.de>
+ <26a93a5d-0ed2-b82d-3a0b-ef2888c59af0@koalo.de>
+Subject: Re: [PATCH 0/3] Fix MODULE_LICENSE of bcm2835 drivers
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/g7+_xUFQiCBMaTFikRMVVkp"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Medium
+X-Mailer: Open-Xchange Mailer v7.8.4-Rev39
+X-Originating-Client: open-xchange-appsuite
+X-Provags-ID: V03:K1:cv6kBMFdJTeT6z4ZVnStkFa/MDMXj8GCzGIoUCY4YG6vyjbqxIm
+ Bx2aqT1o2Y6pva7FSZgKjewtPF/lRHaAX7nAp3AkKWz41aURB6K0ng5ihboJ7Hn0SUTBwld
+ XH58qbxvD5y2dn86LcyRamPlxGhq5uxlsvvEdiojy88vft1nM0VPSKwrX/ftdo5Xq8zvVnM
+ Ul996gSz5tKxI/+vbn1ag==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:IP+hUfPNAZc=:UcdC+0M6PXfpFqhIFz+Pnr
+ aAclWIbfdHkGuVumXsvwUSWTIB4r/qGa8T30MP884Q3hqnvpUXsoHvgCeNGxHYNSp7khYh5u6
+ wlBwZHdmpN3zE7kCCsgcDuzNg4G9g3y4fIiCJncUU1349rZPxbmQtwTn1jkZt0W+w45GApLXg
+ SqG2Z3R7iA7EQ31YCFb0GfzPBKdf+aTWq5Cm1fZzKu5pCurlg1DOrdO0GPidzuruJ/7WbZY0f
+ fcDTV1DqzKYpy6IY/WbyuYmxtxOiRHiMY+mfzcOzEQ1NBpernUNHJ1nefmHyQ2JG0MONypQQq
+ FeGgBKBotmxrqxAv5dpf/Xh37ZDas2Zx4QaJpT277c4c+4tmSr6odP4MXwo68TA1/ml8xO2yB
+ 3e7roKUwlXTb7HBsH61i04o6i3fdfr1z+bbLLCwS8OcCpb3CzaRIkX8L7+XR3ppOZcCFl+GL7
+ wJSUdSpQRxxYL36XU6i/iQ1q0x4p9bBPKf58Jw73wt5YAakV3qT9lswNk8b9xXCwDezp3NcxE
+ OaYPYiMBJazmOw+hLwYqCEPovdtb4dB33vy9aLefRzTzJxCTE0/LwZv33zuRU5DxU+RkxXnPn
+ 9UwvhOueiYAhEfkIrCxyyv1f5PyinTkhM3MmaP+XLE6/cREILhZXsgtqtlfDYcfcZiw0a3sTf
+ g8P9VORSeBIwUjrkpscKDpMGI4o0Jc+mqyk2cfDafFVt8lUgPEFvqPafwOsxAGfCbMHm0BvMT
+ oSYcyY5K4OBuuXIy1BdH+ar3ZsRz3kjrxwXHHNG0Dbbp7B8hK04QxCXd3nhLoStlFdUUWE01Z
+ UqmRt/j5qNDUIyYBKa+S2E9CvHuIaCUIdijAX2+QNOD4/8Sq/c=
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
---Sig_/g7+_xUFQiCBMaTFikRMVVkp
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Florian,
 
-On Thu, 8 Nov 2018 12:36:35 +0200
-Tero Kristo <t-kristo@ti.com> wrote:
+> Florian Kauer <florian.kauer@koalo.de> hat am 9. November 2018 um 19:48 geschrieben:
+> 
+> 
+> Sorry for not replying in time. I became father recently ;-)
 
-> On 04/10/2018 23:38, Andreas Kemnade wrote:
-> > We have the scenario that first autoidle is disabled for all clocks,
-> > then it is disabled for selected ones and then enabled for all. So
-> > we should have some counting here, also according to the
-> > comment in  _setup_iclk_autoidle()
-> >=20
-> > Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-> > ---
-> >   drivers/clk/ti/autoidle.c | 32 ++++++++++++++++++++++++--------
-> >   include/linux/clk/ti.h    |  1 +
-> >   2 files changed, 25 insertions(+), 8 deletions(-)
-> >=20
-> > diff --git a/drivers/clk/ti/autoidle.c b/drivers/clk/ti/autoidle.c
-> > index 7bb9afbe4058..bb6cff168e73 100644
-> > --- a/drivers/clk/ti/autoidle.c
-> > +++ b/drivers/clk/ti/autoidle.c
-> > @@ -37,6 +37,14 @@ struct clk_ti_autoidle {
-> >   static LIST_HEAD(autoidle_clks);
-> >   static LIST_HEAD(clk_hw_omap_clocks);
-> >  =20
-> > +/*
-> > + * we have some non-atomic read/write
-> > + * operations behind it, so lets
-> > + * take one mutex for handling autoidle
-> > + * of all clocks
-> > + */
-> > +static DEFINE_MUTEX(autoidle_mutex); =20
->=20
-> Why mutex? This prevents calling the autoidle APIs from atomic context.=20
-> Did you check the mutex debug kernel configs with this?
->=20
-Oops, I thought they were on, but they were not. OK,
-I am preparing a v2 of this thing.
+no problem and congratulation.
 
+> So if it is still relevant:
+> Acked-by: Florian Kauer <florian.kauer@koalo.de>
 
-> This may cause problems with the runtime PM entries to the code at least.
->=20
->=20
-> > +
-> >   /**
-> >    * omap2_clk_deny_idle - disable autoidle on an OMAP clock
-> >    * @clk: struct clk * to disable autoidle for
-> > @@ -48,8 +56,13 @@ int omap2_clk_deny_idle(struct clk *clk)
-> >   	struct clk_hw_omap *c;
-> >  =20
-> >   	c =3D to_clk_hw_omap(__clk_get_hw(clk));
-> > -	if (c->ops && c->ops->deny_idle)
-> > -		c->ops->deny_idle(c);
-> > +	if (c->ops && c->ops->deny_idle) {
-> > +		mutex_lock(&autoidle_mutex);
-> > +		c->autoidle_count--;
-> > +		if (c->autoidle_count =3D=3D -1) =20
->=20
-> I think you should swap the arithmetics here, all the other usecounters=20
-> use positive values, here you enter deep to the negative side when=20
-> autoidle is denied by multiple users, which might be confusing.
->=20
-agreed.
+Yes, thanks. I wasn't aware of your name change.
 
-Regards,
-Andreas
-
---Sig_/g7+_xUFQiCBMaTFikRMVVkp
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEE7sDbhY5mwNpwYgrAfb1qx03ikyQFAlvmjksACgkQfb1qx03i
-kyTa/w/9Em6bQXMvZfpW/9iK4GXuM2on18lYod2wZn6xWUzESe0L3uDK+0oQMtd6
-QWyxhNfqZ81q3sgZokwWOEspnyr6Naa1a0u8JLFbSMZwY1ajxp3aCsmcmVuAqhAO
-HBWH5VCb8MbA3eXJwUsDU9zyx4Zlxyu7hVB7ku05+HMsxaGPdZFOLjI7RJPU7/ok
-6LCo3qUaa+RrNdU+2mZXKEA16s4J7rtjjyqmXqVyRPI0d+o3jx/1ByVrJeGrkeoF
-dD2SqibJQmdVgEWLav5qZoymY4MhY6Q3SGQttA+3U8IileC/m6BlOwd47X0ETVgD
-wQ6HQ218JUElIW4SPWFdi7QdV2EPOuinnjpUiVON4f6e0GxYgR4626/tz7Edaiin
-zy99XHSSiWozSmuhUEJwXcS9niI01fLDVonh4wh8aTtZ2tSIjBmi9FJrFBlJV0EN
-v+F8kJWiclDSjwIhvD/1Z9TWzp1MsLJctJJlEa9GwfZ2uZPqFiFIt9Xl1KFR85AD
-MmYN1Et49aPF1nFTzuW2O+yVZCkVjjGLn6UrYxrWkVTBat50pedRT5WzWfzjWWA0
-aKACN9dXO3ZE+GBXT/HzaDUBo7uQ7sk/YznN94g0wi6FNAeh6Rg+Wt9QNidCNUCy
-V2ZEFjjtAXTd9PoXZGO9Al7Kto4TsnkNtgE26wc0ik+3oPdsYEo=
-=BL1u
------END PGP SIGNATURE-----
-
---Sig_/g7+_xUFQiCBMaTFikRMVVkp--
+Stefan
