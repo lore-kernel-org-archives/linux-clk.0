@@ -2,184 +2,156 @@ Return-Path: <SRS0=kVDh=NV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D775C43610
-	for <linux-clk@archiver.kernel.org>; Sat, 10 Nov 2018 07:32:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90385C43441
+	for <linux-clk@archiver.kernel.org>; Sat, 10 Nov 2018 07:53:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34B2E20825
-	for <linux-clk@archiver.kernel.org>; Sat, 10 Nov 2018 07:32:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 57CAA20840
+	for <linux-clk@archiver.kernel.org>; Sat, 10 Nov 2018 07:53:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="l+5QGUR4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34B2E20825
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="jqhn/mJF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57CAA20840
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728888AbeKJRQQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 10 Nov 2018 12:16:16 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:41830 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728791AbeKJRQQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 10 Nov 2018 12:16:16 -0500
-Received: by mail-io1-f65.google.com with SMTP id r6-v6so160610ioj.8
-        for <linux-clk@vger.kernel.org>; Fri, 09 Nov 2018 23:32:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fjPWVgfXA2VNnFZcsEwQFthBj/hbHn8dIrVvMnZhsGo=;
-        b=l+5QGUR4NyOW8xKcGgZtrjGC8EcErxUcnCN5N0ksCHg7ad4/jrtRXThKa3LCd42l3n
-         1TB18YAw9fs8+R20zVDPWH9HyMyvyY8RH6x1zRHn/5bMMzQCe0WE0r3aBgqAB9hXrdkQ
-         JVKzbdQz0+F+Hw2JH78NyDick9b4Wf8CnII8k=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fjPWVgfXA2VNnFZcsEwQFthBj/hbHn8dIrVvMnZhsGo=;
-        b=mwedNHmqveNfEXBjri7lYXhBXRat61iPFs5zAzaflphUxvYjYWsyigjIMRX2Htpatt
-         FS7F+gAs3IIZuEYy0n3VgNFz5bei+Vg8yMeOvlXdBlzD++pBjCtj3R92iNkemmNhr4Vw
-         0pN0Cp5euJy3BxsBGzsNH+nH6xxpASAKliqmQw1jYDTVvGH51ZS5c92XeMAK1UpqYvWU
-         C4+OtqM5+4cZ/7iB7BFXzgWkxM0gobBE5AG6p5q3bnuO5XoKgsOlBuFWyZSWOG+Tk7XF
-         nNh//hLpdl9IeIvDrJrQCxURc8BIMjY2O9RTprj3zmkeLDjkBXJlL84EDjDcj+aYiZnG
-         6TjA==
-X-Gm-Message-State: AGRZ1gL2X32du3Dl793j8cDDQbWa3s/d9NiA+u+s/RZd41ThpsfGuN0T
-        LGlJZYfCtQLoCSuNf4yXu6V3uqYiidXXH9Uds+PLUw==
-X-Google-Smtp-Source: AJdET5cJfT7wCaJqmw/LCOaKUuBMeHrAu2ZRU5RJ/T33PjDV3E7adLSJ6nsV8s195snTbNg4VJAA9xbNMPh26kcueTU=
-X-Received: by 2002:a6b:918b:: with SMTP id t133-v6mr9648726iod.267.1541835133443;
- Fri, 09 Nov 2018 23:32:13 -0800 (PST)
+        id S1728876AbeKJRhc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 10 Nov 2018 12:37:32 -0500
+Received: from mail.andi.de1.cc ([85.214.239.24]:53506 "EHLO
+        h2641619.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728682AbeKJRhb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 10 Nov 2018 12:37:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=kemnade.info; s=20180802; h=Content-Type:MIME-Version:References:
+        In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=G9tr0ALZEuyGTWfbsHV9yfhGwwaWECTn1OaNtMnAyLY=; b=jqhn/mJFcXaDy4wJUJoWJJcz6
+        n54Mj1Dxq8Df/nvxTI/5Q0BGnR8vOHmBdM197JEpWSWhVqDivZPuV++aLsdKQ2v8UXQ9rlirau2Ef
+        coye83Z7c/6zZRz/b9mhmgdDM/vu3Dtpxodx0L+U38v5okm54clA9jeAzCMyAJgiOOLfM=;
+Received: from p200300ccfbfa4e007ee9d3fffe1fa246.dip0.t-ipconnect.de ([2003:cc:fbfa:4e00:7ee9:d3ff:fe1f:a246] helo=localhost)
+        by h2641619.stratoserver.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1gLO52-00076Z-VN; Sat, 10 Nov 2018 08:53:21 +0100
+Received: from [::1] (helo=localhost)
+        by localhost with esmtp (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1gLO51-0003X6-8P; Sat, 10 Nov 2018 08:53:19 +0100
+Date:   Sat, 10 Nov 2018 08:52:43 +0100
+From:   Andreas Kemnade <andreas@kemnade.info>
+To:     Tero Kristo <t-kristo@ti.com>
+Cc:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <bcousson@baylibre.com>,
+        <paul@pwsan.com>, <tony@atomide.com>,
+        <letux-kernel@openphoenux.org>
+Subject: Re: [PATCH 1/2] clk: ti: add a usecount for autoidle
+Message-ID: <20181110085243.7da163b9@kemnade.info>
+In-Reply-To: <23cbfc19-20d9-99f0-c086-e782cc36de34@ti.com>
+References: <20181004203817.22101-1-andreas@kemnade.info>
+        <20181004203817.22101-2-andreas@kemnade.info>
+        <23cbfc19-20d9-99f0-c086-e782cc36de34@ti.com>
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; i686-pc-linux-gnu)
 MIME-Version: 1.0
-References: <20181026144344.27778-1-jagan@amarulasolutions.com>
- <CGME20181029111305epcas5p2ee0ca644470de4e036762e000afbb71b@epcas5p2.samsung.com>
- <20181026144344.27778-18-jagan@amarulasolutions.com> <3c4c8a08-8c1e-1ac6-2b53-81389d69c97b@samsung.com>
- <CAGb2v66ENhmNXPz4PfdRJjNUNdpDNZYX2a3SH8AD6SMe9g2zLA@mail.gmail.com>
- <bfe28e8d-3786-d35d-a589-abed9ee8e7d5@samsung.com> <CAMty3ZAWkX8YSRzFs_GS2O4+=pf68e4EuSMym+_XpCe3_4-2yw@mail.gmail.com>
- <25c24350-4acd-68b8-ef5d-75a60094f0b6@samsung.com>
-In-Reply-To: <25c24350-4acd-68b8-ef5d-75a60094f0b6@samsung.com>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Sat, 10 Nov 2018 13:02:01 +0530
-Message-ID: <CAMty3ZDTAiW=Lx2H4WvdsdJRYsVe1CpCJx7D0f7yANx7Lx25PA@mail.gmail.com>
-Subject: Re: [PATCH v3 17/25] dt-bindings: panel: Add Bananapi S070WV20-CT16
- ICN6211 MIPI-DSI to RGB bridge
-To:     a.hajda@samsung.com
-Cc:     Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/g7+_xUFQiCBMaTFikRMVVkp"; protocol="application/pgp-signature"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Nov 7, 2018 at 2:41 PM Andrzej Hajda <a.hajda@samsung.com> wrote:
->
-> On 06.11.2018 19:08, Jagan Teki wrote:
-> > On Wed, Oct 31, 2018 at 2:45 PM Andrzej Hajda <a.hajda@samsung.com> wrote:
-> >> On 31.10.2018 09:58, Chen-Yu Tsai wrote:
-> >>> On Wed, Oct 31, 2018 at 4:53 PM Andrzej Hajda <a.hajda@samsung.com> wrote:
-> >>>> On 26.10.2018 16:43, Jagan Teki wrote:
-> >>>>> Bananapi S070WV20-CT16 ICN6211 is 800x480, 4-lane MIPI-DSI to RGB
-> >>>>> bridge panel, which is available on same PCB with 24-bit RGB interface.
-> >>>>>
-> >>>>> So, this patch adds DSI specific binding details on existing
-> >>>>> dt-bindings file.
-> >>>>>
-> >>>>> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> >>>>> ---
-> >>>>> Changes for v3:
-> >>>>> - Use existing binding doc and update dsi details
-> >>>>> Changes for v2:
-> >>>>> - none
-> >>>>>
-> >>>>>  .../display/panel/bananapi,s070wv20-ct16.txt  | 31 +++++++++++++++++--
-> >>>>>  1 file changed, 29 insertions(+), 2 deletions(-)
-> >>>>>
-> >>>>> diff --git a/Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16.txt b/Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16.txt
-> >>>>> index 35bc0c839f49..b7855dc7c66f 100644
-> >>>>> --- a/Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16.txt
-> >>>>> +++ b/Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16.txt
-> >>>>> @@ -1,12 +1,39 @@
-> >>>>>  Banana Pi 7" (S070WV20-CT16) TFT LCD Panel
-> >>>>>
-> >>>>> +S070WV20-CT16 is 7" 800x480 panel connected through a 24-bit RGB interface.
-> >>>>> +
-> >>>>> +Depending on the variant, the PCB attached to the panel module either
-> >>>>> +supports DSI, or DSI + 24-bit RGB. DSI is converted to 24-bit RGB via
-> >>>>> +an onboard ICN6211 MIPI DSI - RGB bridge chip, then fed to the panel
-> >>>>> +itself
-> >>>> As I understand this is display board, which contains 'pure' RGB panel
-> >>>> S070WV20-CT16 and optionally ICN6211 DSI->RGB bridge.
-> >>>> These are separate devices, just connected by vendor to simplify its
-> >>>> assembly. Why don't you create then bridge driver for ICN6211 and RGB
-> >>>> panel driver for S070WV20-CT16 - it looks more generic.
-> >>>> Then you can describe both in dts and voila.
-> >>>> Creating drivers for every combo of devices (panel + bridge), just
-> >>>> because some vendor sells them together seems incorrect - we have
-> >>>> devicetree for it.
-> >>> Rob suggested this, and also the opposite: using the same
-> >>> "bananapi,s070wv20-ct16"
-> >>> compatible string for both types of connections, and have the driver deal with
-> >>> detecting the bus type.
-> >>>
-> >>> The thing about the bridge chip is that there's no available datasheet that
-> >>> describes all the parts of the init sequence, in fact none at all. I managed
-> >>> to work out some bits, but the others remain a mystery and must be hard-coded
-> >>> to match the panel. That would work against having a generic bridge driver.
-> >>
-> >> But it is common for many chips - 1st version of the driver is developed
-> >> on one platform and it supports only one configuration, if next platform
-> >> with the same cheap appears the driver is augmented if necessary.
-> > At-least few of the commands from panel initialization code, the
-> > respective opcode data values are based on panel timings and even
-> > clock value is different in DSI. I think it look hard to try bridge
-> > driver for these restrictions, do you have any suggestions?
->
->
-> Where do you see an issue? Since panel is RGB it should have no
-> initialization sequence (beside regulator/gpio power on/off), so the
-> only thing to do is to figure out which regulators/gpios belongs to
-> which component - with publicly available specs it should be doable.
->
-> The whole initialization sequence is for the bridge, so you put it into
-> bridge driver, for starters it can be hardcoded.
+--Sig_/g7+_xUFQiCBMaTFikRMVVkp
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Yes, I understand we can move regulators/gpio setup separately and
-though we hardcode the init sequence there is difference  in clock for
-DSI(which I mentioned in previous mail). DSI panel can't work with
-clock used by RGB panel-simple.
+On Thu, 8 Nov 2018 12:36:35 +0200
+Tero Kristo <t-kristo@ti.com> wrote:
 
->
-> Then you can:
->
-> 1. Try to find other users of this ICN6211 chip and compare
-> initialization sequences to guess purpose of registers.
->
-> 2. Try to get specs of the chip (ask vendor, distributor, grep Internet).
+> On 04/10/2018 23:38, Andreas Kemnade wrote:
+> > We have the scenario that first autoidle is disabled for all clocks,
+> > then it is disabled for selected ones and then enabled for all. So
+> > we should have some counting here, also according to the
+> > comment in  _setup_iclk_autoidle()
+> >=20
+> > Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> > ---
+> >   drivers/clk/ti/autoidle.c | 32 ++++++++++++++++++++++++--------
+> >   include/linux/clk/ti.h    |  1 +
+> >   2 files changed, 25 insertions(+), 8 deletions(-)
+> >=20
+> > diff --git a/drivers/clk/ti/autoidle.c b/drivers/clk/ti/autoidle.c
+> > index 7bb9afbe4058..bb6cff168e73 100644
+> > --- a/drivers/clk/ti/autoidle.c
+> > +++ b/drivers/clk/ti/autoidle.c
+> > @@ -37,6 +37,14 @@ struct clk_ti_autoidle {
+> >   static LIST_HEAD(autoidle_clks);
+> >   static LIST_HEAD(clk_hw_omap_clocks);
+> >  =20
+> > +/*
+> > + * we have some non-atomic read/write
+> > + * operations behind it, so lets
+> > + * take one mutex for handling autoidle
+> > + * of all clocks
+> > + */
+> > +static DEFINE_MUTEX(autoidle_mutex); =20
+>=20
+> Why mutex? This prevents calling the autoidle APIs from atomic context.=20
+> Did you check the mutex debug kernel configs with this?
+>=20
+Oops, I thought they were on, but they were not. OK,
+I am preparing a v2 of this thing.
 
-As we mentioned (even Chen-Yu), we are unable to find the proper spec
-for this panel, all we taken reference from AW BSP code.
 
->
-> 3. Do nothing - if there will be other users of the bridge they will do
-> this work.
+> This may cause problems with the runtime PM entries to the code at least.
+>=20
+>=20
+> > +
+> >   /**
+> >    * omap2_clk_deny_idle - disable autoidle on an OMAP clock
+> >    * @clk: struct clk * to disable autoidle for
+> > @@ -48,8 +56,13 @@ int omap2_clk_deny_idle(struct clk *clk)
+> >   	struct clk_hw_omap *c;
+> >  =20
+> >   	c =3D to_clk_hw_omap(__clk_get_hw(clk));
+> > -	if (c->ops && c->ops->deny_idle)
+> > -		c->ops->deny_idle(c);
+> > +	if (c->ops && c->ops->deny_idle) {
+> > +		mutex_lock(&autoidle_mutex);
+> > +		c->autoidle_count--;
+> > +		if (c->autoidle_count =3D=3D -1) =20
+>=20
+> I think you should swap the arithmetics here, all the other usecounters=20
+> use positive values, here you enter deep to the negative side when=20
+> autoidle is denied by multiple users, which might be confusing.
+>=20
+agreed.
 
-Don't know how we can go with generic bridge driver irrespective of
-these particular wrinkles, let me know if you have any suggestions.
+Regards,
+Andreas
+
+--Sig_/g7+_xUFQiCBMaTFikRMVVkp
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEE7sDbhY5mwNpwYgrAfb1qx03ikyQFAlvmjksACgkQfb1qx03i
+kyTa/w/9Em6bQXMvZfpW/9iK4GXuM2on18lYod2wZn6xWUzESe0L3uDK+0oQMtd6
+QWyxhNfqZ81q3sgZokwWOEspnyr6Naa1a0u8JLFbSMZwY1ajxp3aCsmcmVuAqhAO
+HBWH5VCb8MbA3eXJwUsDU9zyx4Zlxyu7hVB7ku05+HMsxaGPdZFOLjI7RJPU7/ok
+6LCo3qUaa+RrNdU+2mZXKEA16s4J7rtjjyqmXqVyRPI0d+o3jx/1ByVrJeGrkeoF
+dD2SqibJQmdVgEWLav5qZoymY4MhY6Q3SGQttA+3U8IileC/m6BlOwd47X0ETVgD
+wQ6HQ218JUElIW4SPWFdi7QdV2EPOuinnjpUiVON4f6e0GxYgR4626/tz7Edaiin
+zy99XHSSiWozSmuhUEJwXcS9niI01fLDVonh4wh8aTtZ2tSIjBmi9FJrFBlJV0EN
+v+F8kJWiclDSjwIhvD/1Z9TWzp1MsLJctJJlEa9GwfZ2uZPqFiFIt9Xl1KFR85AD
+MmYN1Et49aPF1nFTzuW2O+yVZCkVjjGLn6UrYxrWkVTBat50pedRT5WzWfzjWWA0
+aKACN9dXO3ZE+GBXT/HzaDUBo7uQ7sk/YznN94g0wi6FNAeh6Rg+Wt9QNidCNUCy
+V2ZEFjjtAXTd9PoXZGO9Al7Kto4TsnkNtgE26wc0ik+3oPdsYEo=
+=BL1u
+-----END PGP SIGNATURE-----
+
+--Sig_/g7+_xUFQiCBMaTFikRMVVkp--
