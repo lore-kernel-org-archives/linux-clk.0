@@ -3,40 +3,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C06C9C43441
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Nov 2018 02:31:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B1CEC43441
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Nov 2018 02:31:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9251B20871
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Nov 2018 02:31:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9251B20871
+	by mail.kernel.org (Postfix) with ESMTP id F1BFC20871
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Nov 2018 02:31:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1BFC20871
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=v3.sk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729768AbeKLMWE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 12 Nov 2018 07:22:04 -0500
-Received: from shell.v3.sk ([90.176.6.54]:59301 "EHLO shell.v3.sk"
+        id S1730203AbeKLMVp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 12 Nov 2018 07:21:45 -0500
+Received: from shell.v3.sk ([90.176.6.54]:59286 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729612AbeKLMVr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 12 Nov 2018 07:21:47 -0500
+        id S1730030AbeKLMVp (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 12 Nov 2018 07:21:45 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 45AFDC6A0E;
-        Mon, 12 Nov 2018 03:30:47 +0100 (CET)
+        by zimbra.v3.sk (Postfix) with ESMTP id 24F59C6A19;
+        Mon, 12 Nov 2018 03:30:44 +0100 (CET)
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id wCcGuYsnm58j; Mon, 12 Nov 2018 03:30:37 +0100 (CET)
+        with ESMTP id Z8VYd48kR-Sj; Mon, 12 Nov 2018 03:30:36 +0100 (CET)
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 721AEC6A0C;
-        Mon, 12 Nov 2018 03:30:37 +0100 (CET)
+        by zimbra.v3.sk (Postfix) with ESMTP id AD1EEC6A11;
+        Mon, 12 Nov 2018 03:30:35 +0100 (CET)
 X-Virus-Scanned: amavisd-new at zimbra.v3.sk
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id IcLWvtXw60nt; Mon, 12 Nov 2018 03:30:35 +0100 (CET)
+        with ESMTP id MF7io-FFTiw1; Mon, 12 Nov 2018 03:30:34 +0100 (CET)
 Received: from belphegor.lan (ip-89-102-31-34.net.upcbroadband.cz [89.102.31.34])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 48533C6A0F;
-        Mon, 12 Nov 2018 03:30:35 +0100 (CET)
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 90821C6A0B;
+        Mon, 12 Nov 2018 03:30:34 +0100 (CET)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -45,9 +45,9 @@ Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH v2 3/6] clk: mmp2: add SP clock
-Date:   Mon, 12 Nov 2018 03:30:26 +0100
-Message-Id: <20181112023029.648408-4-lkundrak@v3.sk>
+Subject: [PATCH v2 1/6] dt-bindings: olpc,ap-sp: add clock
+Date:   Mon, 12 Nov 2018 03:30:24 +0100
+Message-Id: <20181112023029.648408-2-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181112023029.648408-1-lkundrak@v3.sk>
 References: <20181112023029.648408-1-lkundrak@v3.sk>
@@ -58,62 +58,38 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The "security processor", sometimes referred to as "wireless trusted
-module" or "generic encrypt unit" is a low-power core present on MMP2,
-that has nothing to do with security, wireless, trust or encryption.
-
-On an OLPC machine it runs CForth and serves as a keyboard controller:
-http://dev.laptop.org/git/users/wmb/cforth/tree/src/app/arm-xo-1.75/ps2.f=
-th
-
-The register address was obtained from the OLPC kernel, since the
-datasheet seems to be the Marvell's most important business secret.
+The clock is necessary for the device operation, hence it's required.
+Its name, "sp", stands for "Security Processor". It is one of several
+names that are used for the processor that serves as the keyboard
+controller on an OLPC and is consistent with the node name.
 
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
 Acked-by: Pavel Machek <pavel@ucw.cz>
 ---
- drivers/clk/mmp/clk-of-mmp2.c | 4 ++++
+ Documentation/devicetree/bindings/serio/olpc,ap-sp.txt | 4 ++++
  1 file changed, 4 insertions(+)
 
-diff --git a/drivers/clk/mmp/clk-of-mmp2.c b/drivers/clk/mmp/clk-of-mmp2.=
-c
-index d083b860f083..61fefc046ec5 100644
---- a/drivers/clk/mmp/clk-of-mmp2.c
-+++ b/drivers/clk/mmp/clk-of-mmp2.c
-@@ -53,6 +53,7 @@
- #define APMU_DISP1	0x110
- #define APMU_CCIC0	0x50
- #define APMU_CCIC1	0xf4
-+#define APMU_SP		0x68
- #define MPMU_UART_PLL	0x14
+diff --git a/Documentation/devicetree/bindings/serio/olpc,ap-sp.txt b/Doc=
+umentation/devicetree/bindings/serio/olpc,ap-sp.txt
+index 0e72183f52bc..36603419d6f8 100644
+--- a/Documentation/devicetree/bindings/serio/olpc,ap-sp.txt
++++ b/Documentation/devicetree/bindings/serio/olpc,ap-sp.txt
+@@ -4,10 +4,14 @@ Required properties:
+ - compatible : "olpc,ap-sp"
+ - reg : base address and length of SoC's WTM registers
+ - interrupts : SP-AP interrupt
++- clocks : phandle + clock-specifier for the clock that drives the WTM
++- clock-names:  should be "sp"
 =20
- struct mmp2_clk_unit {
-@@ -209,6 +210,8 @@ static struct mmp_clk_mix_config ccic1_mix_config =3D=
- {
- 	.reg_info =3D DEFINE_MIX_REG_INFO(4, 16, 2, 6, 32),
- };
-=20
-+static DEFINE_SPINLOCK(sp_lock);
-+
- static struct mmp_param_mux_clk apmu_mux_clks[] =3D {
- 	{MMP2_CLK_DISP0_MUX, "disp0_mux", disp_parent_names, ARRAY_SIZE(disp_pa=
-rent_names), CLK_SET_RATE_PARENT, APMU_DISP0, 6, 2, 0, &disp0_lock},
- 	{MMP2_CLK_DISP1_MUX, "disp1_mux", disp_parent_names, ARRAY_SIZE(disp_pa=
-rent_names), CLK_SET_RATE_PARENT, APMU_DISP1, 6, 2, 0, &disp1_lock},
-@@ -239,6 +242,7 @@ static struct mmp_param_gate_clk apmu_gate_clks[] =3D=
- {
- 	{MMP2_CLK_CCIC1, "ccic1_clk", "ccic1_mix_clk", CLK_SET_RATE_PARENT, APM=
-U_CCIC1, 0x1b, 0x1b, 0x0, 0, &ccic1_lock},
- 	{MMP2_CLK_CCIC1_PHY, "ccic1_phy_clk", "ccic1_mix_clk", CLK_SET_RATE_PAR=
-ENT, APMU_CCIC1, 0x24, 0x24, 0x0, 0, &ccic1_lock},
- 	{MMP2_CLK_CCIC1_SPHY, "ccic1_sphy_clk", "ccic1_sphy_div", CLK_SET_RATE_=
-PARENT, APMU_CCIC1, 0x300, 0x300, 0x0, 0, &ccic1_lock},
-+	{MMP2_CLK_SP, "sp_clk", NULL, CLK_SET_RATE_PARENT, APMU_SP, 0x1b, 0x1b,=
- 0x0, 0, &sp_lock},
- };
-=20
- static void mmp2_axi_periph_clk_init(struct mmp2_clk_unit *pxa_unit)
+ Example:
+ 	ap-sp@d4290000 {
+ 		compatible =3D "olpc,ap-sp";
+ 		reg =3D <0xd4290000 0x1000>;
+ 		interrupts =3D <40>;
++		clocks =3D <&soc_clocks MMP2_CLK_SP>;
++		clock-names =3D "sp";
+ 	}
 --=20
 2.19.1
 
