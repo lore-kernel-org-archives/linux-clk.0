@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1360AC0044C
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Nov 2018 02:31:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C06C9C43441
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Nov 2018 02:31:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8206214DB
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Nov 2018 02:31:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8206214DB
+	by mail.kernel.org (Postfix) with ESMTP id 9251B20871
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Nov 2018 02:31:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9251B20871
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=v3.sk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730270AbeKLMVr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 12 Nov 2018 07:21:47 -0500
-Received: from shell.v3.sk ([90.176.6.54]:59291 "EHLO shell.v3.sk"
+        id S1729768AbeKLMWE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 12 Nov 2018 07:22:04 -0500
+Received: from shell.v3.sk ([90.176.6.54]:59301 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727492AbeKLMVq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 12 Nov 2018 07:21:46 -0500
+        id S1729612AbeKLMVr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 12 Nov 2018 07:21:47 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id B486EC6A0B;
-        Mon, 12 Nov 2018 03:30:45 +0100 (CET)
+        by zimbra.v3.sk (Postfix) with ESMTP id 45AFDC6A0E;
+        Mon, 12 Nov 2018 03:30:47 +0100 (CET)
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id ZpYhbe4TjvBD; Mon, 12 Nov 2018 03:30:38 +0100 (CET)
+        with ESMTP id wCcGuYsnm58j; Mon, 12 Nov 2018 03:30:37 +0100 (CET)
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id E2D97C6A0F;
+        by zimbra.v3.sk (Postfix) with ESMTP id 721AEC6A0C;
         Mon, 12 Nov 2018 03:30:37 +0100 (CET)
 X-Virus-Scanned: amavisd-new at zimbra.v3.sk
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id Zr5tf_9SJ69F; Mon, 12 Nov 2018 03:30:36 +0100 (CET)
+        with ESMTP id IcLWvtXw60nt; Mon, 12 Nov 2018 03:30:35 +0100 (CET)
 Received: from belphegor.lan (ip-89-102-31-34.net.upcbroadband.cz [89.102.31.34])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id EA132C6A10;
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 48533C6A0F;
         Mon, 12 Nov 2018 03:30:35 +0100 (CET)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
@@ -45,9 +45,9 @@ Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH v2 5/6] Input: olpc_apsp: check FIFO status on open(), not probe()
-Date:   Mon, 12 Nov 2018 03:30:28 +0100
-Message-Id: <20181112023029.648408-6-lkundrak@v3.sk>
+Subject: [PATCH v2 3/6] clk: mmp2: add SP clock
+Date:   Mon, 12 Nov 2018 03:30:26 +0100
+Message-Id: <20181112023029.648408-4-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181112023029.648408-1-lkundrak@v3.sk>
 References: <20181112023029.648408-1-lkundrak@v3.sk>
@@ -58,61 +58,62 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Let's defer the FIFO status checking until open().
+The "security processor", sometimes referred to as "wireless trusted
+module" or "generic encrypt unit" is a low-power core present on MMP2,
+that has nothing to do with security, wireless, trust or encryption.
 
-When we'll get a clk handle, this will allow us to defer clock enablement
-until the device is actually used.
+On an OLPC machine it runs CForth and serves as a keyboard controller:
+http://dev.laptop.org/git/users/wmb/cforth/tree/src/app/arm-xo-1.75/ps2.f=
+th
+
+The register address was obtained from the OLPC kernel, since the
+datasheet seems to be the Marvell's most important business secret.
 
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+Acked-by: Stephen Boyd <sboyd@kernel.org>
+Acked-by: Pavel Machek <pavel@ucw.cz>
 ---
- drivers/input/serio/olpc_apsp.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ drivers/clk/mmp/clk-of-mmp2.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/input/serio/olpc_apsp.c b/drivers/input/serio/olpc_a=
-psp.c
-index 8e9a4209fcad..8b19a47dfa46 100644
---- a/drivers/input/serio/olpc_apsp.c
-+++ b/drivers/input/serio/olpc_apsp.c
-@@ -145,8 +145,15 @@ static int olpc_apsp_open(struct serio *port)
+diff --git a/drivers/clk/mmp/clk-of-mmp2.c b/drivers/clk/mmp/clk-of-mmp2.=
+c
+index d083b860f083..61fefc046ec5 100644
+--- a/drivers/clk/mmp/clk-of-mmp2.c
++++ b/drivers/clk/mmp/clk-of-mmp2.c
+@@ -53,6 +53,7 @@
+ #define APMU_DISP1	0x110
+ #define APMU_CCIC0	0x50
+ #define APMU_CCIC1	0xf4
++#define APMU_SP		0x68
+ #define MPMU_UART_PLL	0x14
+=20
+ struct mmp2_clk_unit {
+@@ -209,6 +210,8 @@ static struct mmp_clk_mix_config ccic1_mix_config =3D=
  {
- 	struct olpc_apsp *priv =3D port->port_data;
- 	unsigned int tmp;
-+	unsigned long l;
+ 	.reg_info =3D DEFINE_MIX_REG_INFO(4, 16, 2, 6, 32),
+ };
 =20
- 	if (priv->open_count++ =3D=3D 0) {
-+		l =3D readl(priv->base + COMMAND_FIFO_STATUS);
-+		if (!(l & CMD_STS_MASK)) {
-+			dev_err(priv->dev, "SP cannot accept commands.\n");
-+			return -EIO;
-+		}
++static DEFINE_SPINLOCK(sp_lock);
 +
- 		/* Enable interrupt 0 by clearing its bit */
- 		tmp =3D readl(priv->base + PJ_INTERRUPT_MASK);
- 		writel(tmp & ~INT_0, priv->base + PJ_INTERRUPT_MASK);
-@@ -173,7 +180,6 @@ static int olpc_apsp_probe(struct platform_device *pd=
-ev)
- 	struct olpc_apsp *priv;
- 	struct resource *res;
- 	struct device_node *np;
--	unsigned long l;
- 	int error;
+ static struct mmp_param_mux_clk apmu_mux_clks[] =3D {
+ 	{MMP2_CLK_DISP0_MUX, "disp0_mux", disp_parent_names, ARRAY_SIZE(disp_pa=
+rent_names), CLK_SET_RATE_PARENT, APMU_DISP0, 6, 2, 0, &disp0_lock},
+ 	{MMP2_CLK_DISP1_MUX, "disp1_mux", disp_parent_names, ARRAY_SIZE(disp_pa=
+rent_names), CLK_SET_RATE_PARENT, APMU_DISP1, 6, 2, 0, &disp1_lock},
+@@ -239,6 +242,7 @@ static struct mmp_param_gate_clk apmu_gate_clks[] =3D=
+ {
+ 	{MMP2_CLK_CCIC1, "ccic1_clk", "ccic1_mix_clk", CLK_SET_RATE_PARENT, APM=
+U_CCIC1, 0x1b, 0x1b, 0x0, 0, &ccic1_lock},
+ 	{MMP2_CLK_CCIC1_PHY, "ccic1_phy_clk", "ccic1_mix_clk", CLK_SET_RATE_PAR=
+ENT, APMU_CCIC1, 0x24, 0x24, 0x0, 0, &ccic1_lock},
+ 	{MMP2_CLK_CCIC1_SPHY, "ccic1_sphy_clk", "ccic1_sphy_div", CLK_SET_RATE_=
+PARENT, APMU_CCIC1, 0x300, 0x300, 0x0, 0, &ccic1_lock},
++	{MMP2_CLK_SP, "sp_clk", NULL, CLK_SET_RATE_PARENT, APMU_SP, 0x1b, 0x1b,=
+ 0x0, 0, &sp_lock},
+ };
 =20
- 	priv =3D devm_kzalloc(&pdev->dev, sizeof(struct olpc_apsp), GFP_KERNEL)=
-;
-@@ -192,12 +198,6 @@ static int olpc_apsp_probe(struct platform_device *p=
-dev)
- 	if (priv->irq < 0)
- 		return priv->irq;
-=20
--	l =3D readl(priv->base + COMMAND_FIFO_STATUS);
--	if (!(l & CMD_STS_MASK)) {
--		dev_err(&pdev->dev, "SP cannot accept commands.\n");
--		return -EIO;
--	}
--
- 	/* KEYBOARD */
- 	kb_serio =3D kzalloc(sizeof(struct serio), GFP_KERNEL);
- 	if (!kb_serio)
+ static void mmp2_axi_periph_clk_init(struct mmp2_clk_unit *pxa_unit)
 --=20
 2.19.1
 
