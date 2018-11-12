@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B1CEC43441
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Nov 2018 02:31:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAFE0C43441
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Nov 2018 02:31:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1BFC20871
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Nov 2018 02:31:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1BFC20871
+	by mail.kernel.org (Postfix) with ESMTP id B297C20871
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Nov 2018 02:31:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B297C20871
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=v3.sk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730203AbeKLMVp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 12 Nov 2018 07:21:45 -0500
-Received: from shell.v3.sk ([90.176.6.54]:59286 "EHLO shell.v3.sk"
+        id S1730114AbeKLMVo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 12 Nov 2018 07:21:44 -0500
+Received: from shell.v3.sk ([90.176.6.54]:59277 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730030AbeKLMVp (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 12 Nov 2018 07:21:45 -0500
+        id S1729612AbeKLMVn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 12 Nov 2018 07:21:43 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 24F59C6A19;
-        Mon, 12 Nov 2018 03:30:44 +0100 (CET)
+        by zimbra.v3.sk (Postfix) with ESMTP id 81C81C6A16;
+        Mon, 12 Nov 2018 03:30:42 +0100 (CET)
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id Z8VYd48kR-Sj; Mon, 12 Nov 2018 03:30:36 +0100 (CET)
+        with ESMTP id p7slc0alCFBa; Mon, 12 Nov 2018 03:30:37 +0100 (CET)
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id AD1EEC6A11;
-        Mon, 12 Nov 2018 03:30:35 +0100 (CET)
+        by zimbra.v3.sk (Postfix) with ESMTP id A2958C6A0E;
+        Mon, 12 Nov 2018 03:30:36 +0100 (CET)
 X-Virus-Scanned: amavisd-new at zimbra.v3.sk
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id MF7io-FFTiw1; Mon, 12 Nov 2018 03:30:34 +0100 (CET)
+        with ESMTP id dxBOCzpjfh8N; Mon, 12 Nov 2018 03:30:35 +0100 (CET)
 Received: from belphegor.lan (ip-89-102-31-34.net.upcbroadband.cz [89.102.31.34])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 90821C6A0B;
+        by zimbra.v3.sk (Postfix) with ESMTPSA id E33FCC6A0C;
         Mon, 12 Nov 2018 03:30:34 +0100 (CET)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
@@ -45,9 +45,9 @@ Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH v2 1/6] dt-bindings: olpc,ap-sp: add clock
-Date:   Mon, 12 Nov 2018 03:30:24 +0100
-Message-Id: <20181112023029.648408-2-lkundrak@v3.sk>
+Subject: [PATCH v2 2/6] dt-bindings: marvell,mmp2: Add clock id for the SP clock
+Date:   Mon, 12 Nov 2018 03:30:25 +0100
+Message-Id: <20181112023029.648408-3-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181112023029.648408-1-lkundrak@v3.sk>
 References: <20181112023029.648408-1-lkundrak@v3.sk>
@@ -58,38 +58,29 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The clock is necessary for the device operation, hence it's required.
-Its name, "sp", stands for "Security Processor". It is one of several
-names that are used for the processor that serves as the keyboard
-controller on an OLPC and is consistent with the node name.
+This is the clock for the "security processor" core.
 
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Stephen Boyd <sboyd@kernel.org>
 Acked-by: Pavel Machek <pavel@ucw.cz>
 ---
- Documentation/devicetree/bindings/serio/olpc,ap-sp.txt | 4 ++++
- 1 file changed, 4 insertions(+)
+ include/dt-bindings/clock/marvell,mmp2.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/serio/olpc,ap-sp.txt b/Doc=
-umentation/devicetree/bindings/serio/olpc,ap-sp.txt
-index 0e72183f52bc..36603419d6f8 100644
---- a/Documentation/devicetree/bindings/serio/olpc,ap-sp.txt
-+++ b/Documentation/devicetree/bindings/serio/olpc,ap-sp.txt
-@@ -4,10 +4,14 @@ Required properties:
- - compatible : "olpc,ap-sp"
- - reg : base address and length of SoC's WTM registers
- - interrupts : SP-AP interrupt
-+- clocks : phandle + clock-specifier for the clock that drives the WTM
-+- clock-names:  should be "sp"
+diff --git a/include/dt-bindings/clock/marvell,mmp2.h b/include/dt-bindin=
+gs/clock/marvell,mmp2.h
+index 228a5e234af0..7b24fc791146 100644
+--- a/include/dt-bindings/clock/marvell,mmp2.h
++++ b/include/dt-bindings/clock/marvell,mmp2.h
+@@ -71,6 +71,7 @@
+ #define MMP2_CLK_CCIC1_MIX		117
+ #define MMP2_CLK_CCIC1_PHY		118
+ #define MMP2_CLK_CCIC1_SPHY		119
++#define MMP2_CLK_SP			120
 =20
- Example:
- 	ap-sp@d4290000 {
- 		compatible =3D "olpc,ap-sp";
- 		reg =3D <0xd4290000 0x1000>;
- 		interrupts =3D <40>;
-+		clocks =3D <&soc_clocks MMP2_CLK_SP>;
-+		clock-names =3D "sp";
- 	}
+ #define MMP2_NR_CLKS			200
+ #endif
 --=20
 2.19.1
 
