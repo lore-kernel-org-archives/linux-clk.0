@@ -2,170 +2,166 @@ Return-Path: <SRS0=nRqW=NY=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FFAEC43610
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Nov 2018 09:52:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD0B2C43441
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Nov 2018 11:16:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F3A6214F1
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Nov 2018 09:52:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F3A6214F1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 73DE8223D0
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Nov 2018 11:16:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="QQXN1x0p"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73DE8223D0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731624AbeKMTt5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Nov 2018 14:49:57 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:54371 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731961AbeKMTt5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Nov 2018 14:49:57 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gMVMj-0007Vp-Vh; Tue, 13 Nov 2018 10:52:13 +0100
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gMVMg-0002fM-Q5; Tue, 13 Nov 2018 10:52:10 +0100
-Date:   Tue, 13 Nov 2018 10:52:10 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Ryder Lee <ryder.lee@mediatek.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-pwm@vger.kernel.org,
-        Weijie Gao <weijie.gao@mediatek.com>,
-        Roy Luo <cheng-hao.luo@mediatek.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        John Crispin <john@phrozen.org>, kernel@pengutronix.de,
-        linux-clk@vger.kernel.org,
+        id S1732421AbeKMVO3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Nov 2018 16:14:29 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:33552 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732392AbeKMVO3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Nov 2018 16:14:29 -0500
+Received: by mail-pl1-f194.google.com with SMTP id w22-v6so5864603plk.0
+        for <linux-clk@vger.kernel.org>; Tue, 13 Nov 2018 03:16:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=VJB0n3gQwy6xHbCkGXRBikQwutdPB9G3sVatWmPhcwE=;
+        b=QQXN1x0pHxd0DKDX86dDy+3J2kBLwJdiihOqfqb52iuFl/iAjSqVNuK1/f86qdltat
+         zP4LXnKL2RF/xIB/u1Pewx1tAVMNJ2wCjBpvjP+YbSEWPg6Dt0T0Ky8s3GX8e1H0JCZ4
+         QqUK99sF4LID8nq9iwz9I3JA5VVSnj+hb/ZD8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=VJB0n3gQwy6xHbCkGXRBikQwutdPB9G3sVatWmPhcwE=;
+        b=SGRHBFeQq61JPaePG/+/GWqpGIB9d8jwLQVuIZalDLVbWm0fP6XXpLakNXSSsciVpJ
+         TmFmrF9QLAUdh511Ir/mV70KS2EtlICl/sqdSfiPzTKEnoQwmMnEtbPVNGtuRFOrF1bX
+         sN62fIYMijlV74mXAbp9L2c0+GlwQk/L6x9VLaK9j2sg0WMKPP53IOjq/Z/IBEdXDjXR
+         h647VpFjVZm4atEYEkymzMON2+vNh5UEtW/cT0xHf3I+fYRKD1AkrCXiee6k2C8pTdLH
+         tfYtp2NE/Adyo4pPBRiCzEnxl4bWmWGYxQsBhi+mHtHunel3oAZZPw7lprFAAKnf4go9
+         5xaw==
+X-Gm-Message-State: AGRZ1gKar76df6MUFAiKzkcwZJ379AlgVkuKRNPXixa1a3WmSyj++2Jp
+        NafyoFyM/Pqi5ntCdTlwVvItEQ==
+X-Google-Smtp-Source: AJdET5fU+wulaC0lWBLUxvpvq0Do/hWbaa70sc3XBpxP0z+4W49I93CADkHUiM0c2YCH2wRRdTDMqg==
+X-Received: by 2002:a17:902:9681:: with SMTP id n1-v6mr4655542plp.126.1542107810372;
+        Tue, 13 Nov 2018 03:16:50 -0800 (PST)
+Received: from localhost.localdomain ([2401:4900:3670:3f11:bc71:2ef7:4a39:e260])
+        by smtp.gmail.com with ESMTPSA id 27-v6sm28531377pfm.36.2018.11.13.03.16.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 13 Nov 2018 03:16:49 -0800 (PST)
+From:   Jagan Teki <jagan@amarulasolutions.com>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [resend PATCH 1/3] pwm: mediatek: drop flag 'has_clks'
-Message-ID: <20181113095210.mh3iy5tcsu6w6tem@pengutronix.de>
-References: <4c9044427b1aab373acd6ac76f0c905e2be79784.1542074855.git.ryder.lee@mediatek.com>
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+        linux-amarula@amarulasolutions.com
+Cc:     Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH v4 00/26] drm/sun4i: Allwinner A64 MIPI-DSI support 
+Date:   Tue, 13 Nov 2018 16:46:07 +0530
+Message-Id: <20181113111633.20189-1-jagan@amarulasolutions.com>
+X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <4c9044427b1aab373acd6ac76f0c905e2be79784.1542074855.git.ryder.lee@mediatek.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello,
+This series fixed the issues related to work DSI on 2-lane panel
+which is reported on previous version[1].
 
-On Tue, Nov 13, 2018 at 10:08:22AM +0800, Ryder Lee wrote:
-> The flag 'has_clks' and related checks are superfluous as the CCF
-> subsystem does this for you.
+This supposed to be a clean series, where it support Allwinner A64 MIPI-DSI
+support for 4-lane, 2-lane DSI panels.
 
-I'd write instead:
+This series fixed all previous series comments along with checkpatch
+warnings/error.
 
-	Handle optional clocks by using NULL as clk instead of a
-	separate bool field in the device's platform data.
+Changes for v4:
+- droppoed untested CCU_FEATURE_FIXED_POSTDIV check code in
+  nkm min, max rate patches
+- create two patches for "Add Allwinner A64 MIPI DSI support"
+  one for has_mod_clk quirk and other one for A64 support
+- use existing driver code construct for hblk computation
+- dropped "Increase hfp packet overhead" patch [2], though BSP added
+  this but we have no issues as of now.
+  (no issues on panel side w/o this change)
+- create separate function for vblk computation 
+- enable vcc-dsi regulator in dsi_runtime_resume
+- collect Rob, Acked-by
+- update MAINTAINERS file for panel drivers
+- cleanup commit messages
+- fixed checkpatch warnings/errors
 
-There is a semantic difference this patch introduces (i.e. if on mt2712
-there are no provided clocks, the driver now successfully binds while
-before it failed with -ENOENT. And for mt7628 it's the other way round). 
-IMHO this should be noted in the commit log, too. Otherwise it sounds as
-if this patch was just an optimisation without side effects.
+[2] https://patchwork.kernel.org/patch/10657541/
+[1] https://patchwork.kernel.org/patch/10657619/
 
-> ---
->  drivers/pwm/pwm-mediatek.c | 20 +++++---------------
->  1 file changed, 5 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/pwm/pwm-mediatek.c b/drivers/pwm/pwm-mediatek.c
-> index eb6674c..9400c41 100644
-> --- a/drivers/pwm/pwm-mediatek.c
-> +++ b/drivers/pwm/pwm-mediatek.c
-> @@ -57,7 +57,6 @@ enum {
->  struct mtk_pwm_platform_data {
->  	unsigned int num_pwms;
->  	bool pwm45_fixup;
-> -	bool has_clks;
->  };
->  
->  /**
-> @@ -87,9 +86,6 @@ static int mtk_pwm_clk_enable(struct pwm_chip *chip, struct pwm_device *pwm)
->  	struct mtk_pwm_chip *pc = to_mtk_pwm_chip(chip);
->  	int ret;
->  
-> -	if (!pc->soc->has_clks)
-> -		return 0;
-> -
->  	ret = clk_prepare_enable(pc->clks[MTK_CLK_TOP]);
->  	if (ret < 0)
->  		return ret;
-> @@ -116,9 +112,6 @@ static void mtk_pwm_clk_disable(struct pwm_chip *chip, struct pwm_device *pwm)
->  {
->  	struct mtk_pwm_chip *pc = to_mtk_pwm_chip(chip);
->  
-> -	if (!pc->soc->has_clks)
-> -		return;
-> -
->  	clk_disable_unprepare(pc->clks[MTK_CLK_PWM1 + pwm->hwpwm]);
->  	clk_disable_unprepare(pc->clks[MTK_CLK_MAIN]);
->  	clk_disable_unprepare(pc->clks[MTK_CLK_TOP]);
-> @@ -246,12 +239,13 @@ static int mtk_pwm_probe(struct platform_device *pdev)
->  	if (IS_ERR(pc->regs))
->  		return PTR_ERR(pc->regs);
->  
-> -	for (i = 0; i < data->num_pwms + 2 && pc->soc->has_clks; i++) {
-> +	for (i = 0; i < data->num_pwms + 2; i++) {
->  		pc->clks[i] = devm_clk_get(&pdev->dev, mtk_pwm_clk_name[i]);
->  		if (IS_ERR(pc->clks[i])) {
-> -			dev_err(&pdev->dev, "clock: %s fail: %ld\n",
-> -				mtk_pwm_clk_name[i], PTR_ERR(pc->clks[i]));
-> -			return PTR_ERR(pc->clks[i]);
-> +			if (PTR_ERR(pc->clks[i]) == -EPROBE_DEFER)
-> +				return -EPROBE_DEFER;
-> +
-> +			pc->clks[i] = NULL;
+Jagan Teki (26):
+  clk: sunxi-ng: a64: Fix gate bit of DSI DPHY
+  clk: sunxi-ng: Add check for minimal rate to NKM PLLs
+  clk: sunxi-ng: Add check for maximum rate to NKM PLLs
+  drm/sun4i: sun6i_mipi_dsi: Add has_mod_clk quirk
+  drm/sun4i: sun6i_mipi_dsi: Add Allwinner A64 MIPI DSI support
+  dt-bindings: sun6i-dsi: Add compatible for A64 MIPI DSI
+  drm/sun4i: sun6i_mipi_dsi: Add DSI Generic short write 2 param
+    transfer
+  drm/sun4i: sun6i_mipi_dsi: Fix VBP size calculation
+  drm/sun4i: sun6i_mipi_dsi: Fix TCON DRQ set bits
+  drm/sun4i: sun6i_mipi_dsi: Refactor vertical video start delay
+  drm/sun4i: sun6i_mipi_dsi: Fix DSI hbp timing value
+  drm/sun4i: sun6i_mipi_dsi: Fix DSI hblk timing calculation
+  drm/sun4i: sun6i_mipi_dsi: Add DSI hblk packet overhead
+  drm/sun4i: sun6i_mipi_dsi: Fix DSI hfp timing value
+  drm/sun4i: sun6i_mipi_dsi: Set proper vblk timing calculation
+  drm/sun4i: sun6i_mipi_dsi: Add support for VCC-DSI voltage regulator
+  dt-bindings: sun6i-dsi: Add VCC-DSI supply property
+  dt-bindings: panel: Add Bananapi S070WV20-CT16 ICN6211 MIPI-DSI to RGB
+    bridge
+  drm/panel: Add Bananapi S070WV20-CT16 ICN6211 MIPI-DSI to RGB bridge
+  dt-bindings: panel: Add Techstar TS8550B MIPI-DSI panel
+  drm/panel: Add Techstar TS8550B MIPI-DSI LCD panel
+  clk: sunxi-ng: a64: Add min and max rate for PLL_MIPI
+  dt-bindings: sun6i-dsi: Add compatible for A64 DPHY
+  arm64: dts: allwinner: a64: Add DSI pipeline
+  [DO NOT MERGE] arm64: dts: allwinner: bananapi-m64: Bananapi S070WV20-CT16 DSI panel
+  arm64: dts: allwinner: a64-amarula-relic: Enable Techstar TS8550B
+    MIPI-DSI panel
 
-I'd prefer the following instead:
-
-	pc->clks[i] = devm_clk_get(&pdev->dev, mtk_pwm_clk_name[i]);
-	if (IS_ERR(pc->clks[i])) {
-		if (PTR_ERR(pc->clks[i]) == -ENODEV) {
-			pc->clks[i] = NULL;
-		} else {
-			if (PTR_ERR(pc->clks[i]) == -EPROBE_DEFER)
-				dev_err(...);
-			return PTR_ERR(pc->clks[i]);
-		}
-
-This way you only handle "There is no such clock" and are not ignoring
-say an IO error.
-
-I wonder if it would make sense to introduce functions like:
-
-	struct clk *clk_get_optional(struct device *dev, const char *id)
-
-that return NULL instead of ERR_PTR(-ENODEV).
-
-Then the above would simplify to:
-
-	pc->clks[i] = devm_clk_get_optional(&pdev->dev, mtk_pwm_clk_name[i]);
-	if (IS_ERR(pc->clks[i]) {
-		if (PTR_ERR(pc->clks[i]) == -EPROBE_DEFER)
-			dev_err(...);
-		return PTR_ERR(pc->clks[i]);
-	}
-
-(added the clk people to Cc for this question).
-
-Best regards
-Uwe
+ .../display/panel/bananapi,s070wv20-ct16.txt  |  31 +-
+ .../display/panel/techstar,ts8550b.txt        |  22 ++
+ .../bindings/display/sunxi/sun6i-dsi.txt      |   5 +
+ MAINTAINERS                                   |  12 +
+ .../allwinner/sun50i-a64-amarula-relic.dts    |  46 +++
+ .../dts/allwinner/sun50i-a64-bananapi-m64.dts |  42 +++
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi |  45 +++
+ drivers/clk/sunxi-ng/ccu-sun50i-a64.c         |   4 +-
+ drivers/clk/sunxi-ng/ccu_nkm.c                |   6 +
+ drivers/clk/sunxi-ng/ccu_nkm.h                |   2 +
+ drivers/gpu/drm/panel/Kconfig                 |  18 +
+ drivers/gpu/drm/panel/Makefile                |   2 +
+ .../panel/panel-bananapi-s070wv20-icn6211.c   | 298 ++++++++++++++++
+ .../gpu/drm/panel/panel-techstar-ts8550b.c    | 324 ++++++++++++++++++
+ drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c        | 125 +++++--
+ drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h        |   8 +
+ 16 files changed, 961 insertions(+), 29 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/techstar,ts8550b.txt
+ create mode 100644 drivers/gpu/drm/panel/panel-bananapi-s070wv20-icn6211.c
+ create mode 100644 drivers/gpu/drm/panel/panel-techstar-ts8550b.c
 
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+2.18.0.321.gffc6fa0e3
+
