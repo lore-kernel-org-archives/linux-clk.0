@@ -7,53 +7,53 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A5C7C0044C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A97B0C43610
 	for <linux-clk@archiver.kernel.org>; Tue, 13 Nov 2018 11:18:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3665022507
+	by mail.kernel.org (Postfix) with ESMTP id 6CBC92250F
 	for <linux-clk@archiver.kernel.org>; Tue, 13 Nov 2018 11:18:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="Rs6xvWDN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3665022507
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="oqoD/W7v"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CBC92250F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732454AbeKMVQQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Nov 2018 16:16:16 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:34858 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732517AbeKMVQQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Nov 2018 16:16:16 -0500
-Received: by mail-pl1-f195.google.com with SMTP id n4-v6so5859275plp.2
-        for <linux-clk@vger.kernel.org>; Tue, 13 Nov 2018 03:18:37 -0800 (PST)
+        id S1732456AbeKMVQE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Nov 2018 16:16:04 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:42911 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732430AbeKMVQD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Nov 2018 16:16:03 -0500
+Received: by mail-pg1-f193.google.com with SMTP id d72so2099706pga.9
+        for <linux-clk@vger.kernel.org>; Tue, 13 Nov 2018 03:18:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=zfLa7sOo1lPPoVacUZ5Wanit4VpAlBcSuHBOx71Xco4=;
-        b=Rs6xvWDNKx/2kr5ZDh/eLGXdZ7x8iZcX497FqxPOSjkZHI2He0DEYAQvKpMvFtUAtN
-         fpLnj8F8Z/d9WA98jr2PexIoAjJnOtD8X2AHodTeaBwXsaMtZL8bQUaLGdCN7Qc/teVJ
-         zzNd/g19/v6JVTnR97ln19D553AyUdmslsDMA=
+        bh=KiNNAL5FNd2IGkoW7kve11vnz/CEWnCQcGVfDy5CmDU=;
+        b=oqoD/W7vMonGUOH7jryCGWFxxLuL2hJXGRp68F8je6O2iyl8WOX187F0TSWv86bOvy
+         HMvMWNDDjMuEgEEQS1iI5wIuQjlITCzQH1SMVGHzL3IHM+3ABfjqh5P4/6bxOx3H+eRu
+         nZJn+pyvQSLQntbqnY51w32jkD9zGvo06EVIc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=zfLa7sOo1lPPoVacUZ5Wanit4VpAlBcSuHBOx71Xco4=;
-        b=MPdyqA6J+PAwyUfNNQyEUGuC7fj8R25inzgHh4pDqgMseJQHhzkaVSd3eltZ0MgdI8
-         ckAQM6MdJqmmcuSwY2Y+sHKfS1ZMVU9wBPn5iZe8BYc0TVoBbwgjRyZgW4xdITSgMKDH
-         TU5202I044J+1yfzRD8Hm/GyKe01jDxcEL4lSsZAtOxed2UYlmIwzDXc2eASfPa93fN9
-         jSYGXiHAuFhidDuKKWdSSaB00+QHVPqERb27k2DURp3n8hq43rqOljbyHh51P9i1zB93
-         fWBV1PQjM8OAttTiBm6e32iGsLEFwu2DyEBi2+2JwTwkAykyWDxo2jnKymi2D/KnCSXu
-         snXg==
-X-Gm-Message-State: AGRZ1gLTcaS6hc8RpTdshh9gZtHSIp5CS6RVLVQW+5O3qMsrxJVCksMZ
-        tvMJ5HmRNGqZ5y2wnbD7z0/V7g==
-X-Google-Smtp-Source: AJdET5fWCIG/PUktT+gP9Mmm+M3x5yd8MyWqp6NN4xZFCdugq5/WFQYO+nejiwyaDMX4n3VL12WXyw==
-X-Received: by 2002:a17:902:7d89:: with SMTP id a9mr4191221plm.242.1542107917482;
-        Tue, 13 Nov 2018 03:18:37 -0800 (PST)
+        bh=KiNNAL5FNd2IGkoW7kve11vnz/CEWnCQcGVfDy5CmDU=;
+        b=V42eUP0MgROdU79xmFo8JJ7heKyc+9yksXub+Nb28HEIt22wMTzhuBX49F6nmKTkB8
+         pUialDGS9iKcDzZ1QsttRpTpRgIhbyMs6NJsF/3jzJ48MrV7CRiZYOlpRAbyEpks6hqq
+         faszKNRR72Xd0wRnru28EiUamWbF6ck8MsMqeiTJItxDJkfi2V4lxj4fenG9btEg+ZWC
+         4nvCpE42PWH4iWg8P83xLjahqaBJeZ/Ef3piZfJ2SYye2w8dUk0yIHfvdHBYDCMUCLf+
+         Toxv2BVkczBM73WgLMe3rWtqPijOwex65mfLH2sCpdKl2OWiwv6E0OWWiNNKHFtw5J9S
+         1RIQ==
+X-Gm-Message-State: AGRZ1gKSr0Xrd4nnR/Wl4pA7D5A84UKMctj7bXr0rVcox7PkNdQlH43j
+        K7x5Bfo8m+QBDD94W1UZ09jjmg==
+X-Google-Smtp-Source: AJdET5fxwmbnpRiHRLvlzdbDPt8wJDBKu18uNDB5dVMb8m8vNdS/K2Bz+hxnyOIAB/e0lbZCxnAjaQ==
+X-Received: by 2002:a62:8647:: with SMTP id x68-v6mr4951565pfd.252.1542107904617;
+        Tue, 13 Nov 2018 03:18:24 -0800 (PST)
 Received: from localhost.localdomain ([2401:4900:3670:3f11:bc71:2ef7:4a39:e260])
-        by smtp.gmail.com with ESMTPSA id 27-v6sm28531377pfm.36.2018.11.13.03.18.31
+        by smtp.gmail.com with ESMTPSA id 27-v6sm28531377pfm.36.2018.11.13.03.18.18
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 13 Nov 2018 03:18:36 -0800 (PST)
+        Tue, 13 Nov 2018 03:18:24 -0800 (PST)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
@@ -72,9 +72,9 @@ To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
         linux-amarula@amarulasolutions.com
 Cc:     Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v4 17/26] dt-bindings: sun6i-dsi: Add VCC-DSI supply property
-Date:   Tue, 13 Nov 2018 16:46:24 +0530
-Message-Id: <20181113111633.20189-18-jagan@amarulasolutions.com>
+Subject: [PATCH v4 15/26] drm/sun4i: sun6i_mipi_dsi: Set proper vblk timing calculation
+Date:   Tue, 13 Nov 2018 16:46:22 +0530
+Message-Id: <20181113111633.20189-16-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 In-Reply-To: <20181113111633.20189-1-jagan@amarulasolutions.com>
 References: <20181113111633.20189-1-jagan@amarulasolutions.com>
@@ -85,32 +85,75 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Most of the Allwinner MIPI DSI controllers are supply with
-VCC-DSI pin. which need to supply for some of the boards to
-trigger the power.
+Unlike hblk, the vblk timings should follow an equation to compute
+the desired value for lane 4 devices and rest of devices it would be 0.
 
-So, document the supply property so-that the required board
-can eable it via device tree.
+BSP code from BPI-M64-bsp is computing vblk as for 4-lane devices
+(from linux-sunxi
+drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c)
+
+tmp = (ht*dsi_pixel_bits[format]/8)*vt-(4+dsi_hblk+2);
+dsi_vblk = (lane-tmp%lane);
+
+So, update the vblk timing calculation accordingly.
+
+Tested on 2-lane, 4-lane MIPI-DSI LCD panels.
 
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
- Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 32 ++++++++++++++++++++------
+ 1 file changed, 25 insertions(+), 7 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt b/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
-index 9fa6e7a758ad..adc7cdf129dd 100644
---- a/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
-+++ b/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
-@@ -28,6 +28,9 @@ Required properties:
-     first port should be the input endpoint, usually coming from the
-     associated TCON.
+diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+index 63b924b89bd7..703722f7c81b 100644
+--- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
++++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+@@ -355,6 +355,30 @@ static void sun6i_dsi_inst_init(struct sun6i_dsi *dsi,
+ 		     SUN6I_DSI_INST_JUMP_CFG_NUM(1));
+ };
  
-+Optional properties:
-+  - vcc-dsi-supply: the VCC-DSI power supply of the DSI encoder
++static u16 sun6i_dsi_get_timings_vblk(struct sun6i_dsi *dsi,
++				      struct drm_display_mode *mode, u16 hblk)
++{
++	struct mipi_dsi_device *device = dsi->device;
++	u16 vblk = 0;
 +
- Any MIPI-DSI device attached to this should be described according to
- the bindings defined in ../mipi-dsi-bus.txt
++	/*
++	 * The vertical blank is set using a blanking packet (4 bytes +
++	 * payload + 2 bytes). Its minimal size is therefore 6 bytes
++	 */
++#define VBLK_PACKET_OVERHEAD	6
++	if (device->lanes == 4) {
++		unsigned int Bpp;
++		int tmp;
++
++		Bpp = mipi_dsi_pixel_format_to_bpp(device->format) / 8;
++		tmp = (mode->htotal * Bpp) * mode->vtotal -
++		      (hblk + VBLK_PACKET_OVERHEAD);
++		vblk = (device->lanes - tmp % device->lanes);
++	}
++
++	return vblk;
++}
++
+ static u16 sun6i_dsi_get_video_start_delay(struct sun6i_dsi *dsi,
+ 					   struct drm_display_mode *mode)
+ {
+@@ -503,13 +527,7 @@ static void sun6i_dsi_setup_timings(struct sun6i_dsi *dsi,
+ 		   (mode->htotal - (mode->hsync_end - mode->hsync_start)) *
+ 		   Bpp - HBLK_PACKET_OVERHEAD);
  
+-	/*
+-	 * And I'm not entirely sure what vblk is about. The driver in
+-	 * Allwinner BSP is using a rather convoluted calculation
+-	 * there only for 4 lanes. However, using 0 (the !4 lanes
+-	 * case) even with a 4 lanes screen seems to work...
+-	 */
+-	vblk = 0;
++	vblk = sun6i_dsi_get_timings_vblk(dsi, mode, hblk);
+ 
+ 	/* How many bytes do we need to send all payloads? */
+ 	bytes = max_t(size_t, max(max(hfp, hblk), max(hsa, hbp)), vblk);
 -- 
 2.18.0.321.gffc6fa0e3
 
