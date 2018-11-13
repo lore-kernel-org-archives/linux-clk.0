@@ -2,189 +2,173 @@ Return-Path: <SRS0=nRqW=NY=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90980C43441
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Nov 2018 11:19:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24C16C43441
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Nov 2018 11:55:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56E1720685
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Nov 2018 11:19:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="Dv16mTKb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56E1720685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	by mail.kernel.org (Postfix) with ESMTP id DF776223DD
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Nov 2018 11:55:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF776223DD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731910AbeKMVRM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Nov 2018 16:17:12 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:34874 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732506AbeKMVRM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Nov 2018 16:17:12 -0500
-Received: by mail-pf1-f195.google.com with SMTP id v9-v6so5888528pff.2
-        for <linux-clk@vger.kernel.org>; Tue, 13 Nov 2018 03:19:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=SYvsDZFatZNo8KTo2brjgveRTySLcBTtFJwHL/yY9k0=;
-        b=Dv16mTKbMxtpErNDUmEh+zfhaf3fKwqMnSIW9RBbJh6fKgooYqRs/noey6KlP+ujEu
-         Zjr0YO40cstJc0BEZlVbBMgp4ARAr38G0s8mCeYN+LL8odW40qCxKLRpX/fRzin26oOM
-         QbxIw32B7AfZdDcNC1+L5IUiTrUtSreh99huQ=
+        id S1726833AbeKMVwt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Nov 2018 16:52:49 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:33391 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726659AbeKMVws (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Nov 2018 16:52:48 -0500
+Received: by mail-lf1-f67.google.com with SMTP id i26so8604897lfc.0;
+        Tue, 13 Nov 2018 03:54:59 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=SYvsDZFatZNo8KTo2brjgveRTySLcBTtFJwHL/yY9k0=;
-        b=kF5DOxajuwNZ+/33qtjOZfkbXAK5jO4xBiJ3KvMCgRSmHSwSLlwLvZLiCV/ttkDQq5
-         B3Ah9Oghxl9q8JUtCo9QNweMIC35Tedg0GVP6G97a5XhEzDRHHqJ8RPyW7iX+fPkVaex
-         GuDQCElIC+of3NwkOCsVAjEcpKboILFLE+eg0EA0LYJO40PMLPlrEaV204sc9aPV5MPt
-         cgYdb8GoZZ90nVhXx/sK/Keg+p952a+kRfEEvVvQqHkgRegNDWwuFV0LGExzBF+qcCNh
-         4NlHrACsLOaRcdqWzJ6zIwi6lT5UPN2OfUiy6VaOxrIsCtd99e8WiiSKLANE7/DDcXUd
-         1JgQ==
-X-Gm-Message-State: AGRZ1gIpUTPi0VN3WUs3Itr1HLb2WK/rsc/gsmwNZ7ruIoJNW4SwqKlO
-        uXXOZmd4NEat9j1AWkX8wNr1+g==
-X-Google-Smtp-Source: AJdET5dhef3zHWl6a/7x7lhsAttAAaHHpP3FIb9XZmOXPQBl1Ydz+eFHawtisZ7Dno7t6QaYZeKkng==
-X-Received: by 2002:a63:af18:: with SMTP id w24mr4397635pge.385.1542107973054;
-        Tue, 13 Nov 2018 03:19:33 -0800 (PST)
-Received: from localhost.localdomain ([2401:4900:3670:3f11:bc71:2ef7:4a39:e260])
-        by smtp.gmail.com with ESMTPSA id 27-v6sm28531377pfm.36.2018.11.13.03.19.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 13 Nov 2018 03:19:32 -0800 (PST)
-From:   Jagan Teki <jagan@amarulasolutions.com>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=bOFHv/3c0GNoHkJbBBBaRUpNSxnB5JpuxdTZIm5ceDA=;
+        b=Y79gH0fi8KN9aTt3TDurnX3/lHiztX451eBRlwpQepDO+a2/H/6eUyGFBB//3Hyp8W
+         6qplxuNHtoGQM2S/G36acs2btAXDV7AzuZAxIugbzw4OBfN98q+wYqjmpoL+Blmg8tVx
+         9yuDd3z5AaHiivIYhRJEisKK5fjkUxrhMNcNx4M5AQJhu4HKSNSYwpL9fc1Td2aE2e73
+         hoPQLFZdoScKlf1QroHHpyM8gZ/PLN/HKQ21zON5SlFvjohONAhuKDh0innvZXVv/CMe
+         6wiNsWkpZ2Xo0PtK3wuP/msSaxO/021cSF9TzpaJj7R88bwjcppndAf1iSzSNECXqt55
+         y3xg==
+X-Gm-Message-State: AGRZ1gKUYsSdg8VPONByVwOagnvsma9k9N2LRLFfbBsj5+C4nNCtWLDW
+        aRvyhAYhQ+TbopSPbtWREvI=
+X-Google-Smtp-Source: AJdET5dYHSCeSosjptwTLJYJUE1VV1G3T4MwBaisndIsMJoRSWnO0igwRIYZzp0QFkMO+bEI5zJHOg==
+X-Received: by 2002:a19:2b54:: with SMTP id r81mr2928543lfr.34.1542110098569;
+        Tue, 13 Nov 2018 03:54:58 -0800 (PST)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id q8-v6sm1943292lji.69.2018.11.13.03.54.56
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 13 Nov 2018 03:54:57 -0800 (PST)
+Date:   Tue, 13 Nov 2018 13:54:48 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     mazziesaccount@gmail.com
+Cc:     Jonathan Corbet <corbet@lwn.net>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-        linux-amarula@amarulasolutions.com
-Cc:     Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v4 26/26] arm64: dts: allwinner: a64-amarula-relic: Enable Techstar TS8550B MIPI-DSI panel
-Date:   Tue, 13 Nov 2018 16:46:33 +0530
-Message-Id: <20181113111633.20189-27-jagan@amarulasolutions.com>
-X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
-In-Reply-To: <20181113111633.20189-1-jagan@amarulasolutions.com>
-References: <20181113111633.20189-1-jagan@amarulasolutions.com>
+        Stephen Boyd <sboyd@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Rob Herring <robh@kernel.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Huang Shijie <sjhuang@iluvatar.ai>,
+        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        Daniel Kurtz <djkurtz@chromium.org>,
+        Akshu Agrawal <akshu.agrawal@amd.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
+Subject: [PATCH v4 0/8] clk: clkdev: managed clk lookup and provider
+ registrations
+Message-ID: <cover.1542107769.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Amarula A64-Relic board by default bound with Techstar TS8550B
-MIPI-DSI panel, add support for it.
+Series add bd71837/bd71837 PMIC clock support + managed interfaces
 
-DSI panel connected via board DSI port with,
-- DC1SW as AVDD supply
-- DCDC2 as DVDD supply
-- DCDC1 as VCC-DSI supply
-- PD24 gpio for reset pin
-- PD23 gpio for backlight enable pin
+Few clk drivers appear to be leaking clkdev lookup registrations at
+driver remove. The patch series adds devm versions of lookup
+registrations and cleans up few drivers. Driver clean-up patches have
+not been tested as I lack the HW. All testing and comments if
+driver/device removal is even possible for changed drivers is highly
+appreciated. If removal is not possible I will gladly drop the patches
+from series - although leaking lookups may serve as bad example for new
+developers =)
 
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+Patch 8 adds support for clock gate in ROHM bd71837 and bd71847 PMICs.
+This change is included in the series because it depends on new managed
+interfaces introduced in this series.
+
+bd718x7 driver and devm interfaces are tested on BeagleBoneBlack and 
+bd71837 break-out board. Clk area register interface of bd71847 is
+identical to bd71837.
+
+Changed drivers are:
+clk-max77686, clk-st, clk-hi655x, rk808, clk-twl6040
+and apcs-msm8916. New driver is clk-bd718x7
+
+This series has been discussed for a while now. For those who want to
+see whole discussion:
+
+The bd71837 driver was originally proposed here
+https://lore.kernel.org/lkml/d99c8762b0fbbcb18ec4f4d104191364c0ea798c.1528117485.git.matti.vaittinen@fi.rohmeurope.com/
+
+clk portion was separated from that series and devm variants were
+proposed here
+https://lore.kernel.org/linux-clk/cover.1535630942.git.matti.vaittinen@fi.rohmeurope.com/
+
+Cleanup to other drivers was initiated in this series while waiting for
+MFD portions of bd718x7 to be applied. And now when MFD dependencies are in-tree
+his version (4) combines bd718x7 driver back to this series.
+
+Changelog (for this series) v4
+- Add support for ROHM bd718x7 PMIC clock gate. Included in this patch
+  series because it depends on managed interfaces added in patch 1.
+
+Changelog (for this series) v3
+Address issues spotted by Krzysztof Kozlowski
+- Drop patch 3 for clk-s3c2410-dclk as this device can never be removed
+- Fix indentiation for clk-max77686
+- Rest  of the patches are unchanged.
+
+Changelog (for this series) v2
+Issue spotted by 0-Day test suite
+- Add a stub function 'devm_of_clk_add_parent_hw_provider' for no OF config.
+- patches 2-8 are unchanged.
+
+This patch series is based on clk-next
+
 ---
- .../allwinner/sun50i-a64-amarula-relic.dts    | 46 +++++++++++++++++++
- 1 file changed, 46 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
-index 6cb2b7f0c817..ecc0d8094815 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
-@@ -9,6 +9,7 @@
- #include "sun50i-a64.dtsi"
- 
- #include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/pwm/pwm.h>
- 
- / {
- 	model = "Amarula A64-Relic";
-@@ -18,6 +19,14 @@
- 		serial0 = &uart0;
- 	};
- 
-+	backlight: backlight {
-+		compatible = "pwm-backlight";
-+		pwms = <&pwm 0 50000 PWM_POLARITY_INVERTED>;
-+		brightness-levels = <1 2 4 8 16 32 64 128 512>;
-+		default-brightness-level = <2>;
-+		enable-gpios = <&pio 3 23 GPIO_ACTIVE_HIGH>; /* LCD-BL-EN: PD23 */
-+	};
-+
- 	chosen {
- 		stdout-path = "serial0:115200n8";
- 	};
-@@ -30,6 +39,28 @@
- 	};
- };
- 
-+&de {
-+	status = "okay";
-+};
-+
-+&dphy {
-+	status = "okay";
-+};
-+
-+&dsi {
-+	vcc-dsi-supply = <&reg_dldo1>;
-+	status = "okay";
-+
-+	panel@0 {
-+		compatible = "techstar,ts8550b";
-+		reg = <0>;
-+		avdd-supply = <&reg_dc1sw>;
-+		dvdd-supply = <&reg_dldo2>;
-+		reset-gpios = <&pio 3 24 GPIO_ACTIVE_HIGH>; /* LCD-RST: PD24 */
-+		backlight = <&backlight>;
-+	};
-+};
-+
- &ehci0 {
- 	status = "okay";
- };
-@@ -72,6 +103,12 @@
- 	status = "okay";
- };
- 
-+&pwm {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pwm_pin>;
-+	status = "okay";
-+};
-+
- &r_rsb {
- 	status = "okay";
- 
-@@ -107,6 +144,15 @@
- 	regulator-name = "vcc-pll-avcc";
- };
- 
-+&reg_dc1sw {
-+	/*
-+	 * This regulator also indirectly drives the PD pingroup GPIOs,
-+	 * which also controls the power LED.
-+	 */
-+	regulator-always-on;
-+	regulator-name = "vcc-phy";
-+};
-+
- &reg_dcdc1 {
- 	regulator-always-on;
- 	regulator-min-microvolt = <3300000>;
+Matti Vaittinen (8):
+  clk: clkdev/of_clk - add managed lookup and provider registrations
+  clk: clk-max77686: Clean clkdev lookup leak and use devm
+  clk: clk-st: avoid clkdev lookup leak at remove
+  clk: clk-hi655x: Free of_provider at remove
+  clk: rk808: use managed version of of_provider registration
+  clk: clk-twl6040: Free of_provider at remove
+  clk: apcs-msm8916: simplify probe cleanup by using devm
+  clk: bd718x7: Initial support for ROHM bd71837/bd71847 PMIC clock
+
+ Documentation/driver-model/devres.txt |   3 +
+ drivers/clk/Kconfig                   |   7 ++
+ drivers/clk/Makefile                  |   1 +
+ drivers/clk/clk-bd718x7.c             | 131 ++++++++++++++++++++++++++++++++++
+ drivers/clk/clk-hi655x.c              |   4 +-
+ drivers/clk/clk-max77686.c            |  29 ++------
+ drivers/clk/clk-rk808.c               |  15 +---
+ drivers/clk/clk-twl6040.c             |   5 +-
+ drivers/clk/clk.c                     |  28 ++++++--
+ drivers/clk/clkdev.c                  | 122 ++++++++++++++++++++++++-------
+ drivers/clk/qcom/apcs-msm8916.c       |   5 +-
+ drivers/clk/x86/clk-st.c              |   3 +-
+ include/linux/clk-provider.h          |  11 +++
+ include/linux/clkdev.h                |   4 ++
+ 14 files changed, 292 insertions(+), 76 deletions(-)
+ create mode 100644 drivers/clk/clk-bd718x7.c
+
 -- 
-2.18.0.321.gffc6fa0e3
+2.14.3
 
+
+-- 
+Matti Vaittinen
+ROHM Semiconductors
+
+~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
