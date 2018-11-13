@@ -2,174 +2,117 @@ Return-Path: <SRS0=nRqW=NY=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07CDBC43441
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Nov 2018 19:44:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B9D7C43441
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Nov 2018 22:37:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B55E3223C8
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Nov 2018 19:44:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B991121780
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Nov 2018 22:37:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1m0dV1f6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B55E3223C8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="fLcUBSmq";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="erRqk2vm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B991121780
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726418AbeKNFo1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Nov 2018 00:44:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34212 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725794AbeKNFo1 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 14 Nov 2018 00:44:27 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726531AbeKNIiO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Nov 2018 03:38:14 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:46398 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726022AbeKNIiN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Nov 2018 03:38:13 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 4A9FE6074C; Tue, 13 Nov 2018 22:37:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1542148676;
+        bh=3iPQZJuwU5ZCDcsIS6ZTbcOiJK0aAH0/Vm4pfiRgX0g=;
+        h=To:Cc:From:Subject:Date:From;
+        b=fLcUBSmqkmmqmlPweiHNI3giYvnge/ZKtUP7NEIVxZod9RBk6iB3OmnkWTmYvxkXi
+         L3MA/qScuy0at+a2KZFvzSVN8KVUScOx+8SqrBXdZZ91/3nrhMrjlID9J5YcK8oBIL
+         Q6y0rVDx5HzjFvvbXMjTrtUh6+ZWyDpuV3dH90RQ=
+Received: from [10.226.60.81] (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 101E1216FD;
-        Tue, 13 Nov 2018 19:44:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542138291;
-        bh=p7CX0gDvZdAxNLwNYAGh6FphTMIN1RSTmFJLR5AkL90=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=1m0dV1f61NWqw3r4Bji21Bsg6CIyU1WASApLpj5OzGbNx88Oaxj/PB3HjYI8/WmQT
-         O/SYfpZssRYaF47/uQeTYnvtZyasOtsrhwebg8UlmcHpTdpFCe+AmAYXEzMYLw093P
-         kAN0s/oMIXoWjx/YyqgpkWqoD3P5WLrm2Hup/Hq0=
-Content-Type: text/plain; charset="utf-8"
+        (Authenticated sender: jhugo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5AD4960312;
+        Tue, 13 Nov 2018 22:37:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1542148675;
+        bh=3iPQZJuwU5ZCDcsIS6ZTbcOiJK0aAH0/Vm4pfiRgX0g=;
+        h=To:Cc:From:Subject:Date:From;
+        b=erRqk2vmSWiKjjpRPBSozLBRiLd1Sz3Qti4naqXGsqyjsqtlJI0o2gUJupqtV/Pst
+         weR6xHOtVXdZ96/d/L7BLAp1y2apMiaYhDuQ9vHji1Z0TbDrMQ9CiXEQrTk9i0O1RF
+         ZQMa3huawmE4MYby8AlJTQk6v+Os8T36XCNoA3oE=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5AD4960312
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
+To:     jbrunet@baylibre.com, mturquette@baylibre.com, sboyd@kernel.org
+Cc:     linux-clk@vger.kernel.org
+From:   Jeffrey Hugo <jhugo@codeaurora.org>
+Subject: Does clk_core_round_rate_nolock() really do the right thing?
+Message-ID: <c9984aa1-4c87-d97d-eec8-4adbe9bb243e@codeaurora.org>
+Date:   Tue, 13 Nov 2018 15:37:54 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Russell King <linux@armlinux.org.uk>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <TY1PR01MB1769B2978D73DBC2EADC6B8DF50C0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms@verge.net.au>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-References: <1535724443-21150-1-git-send-email-phil.edworthy@renesas.com>
- <1535724443-21150-2-git-send-email-phil.edworthy@renesas.com>
- <153576994987.19113.11376893046599589648@swboyd.mtv.corp.google.com>
- <TY1PR01MB1769CBB6FC715E94B10815BFF50C0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
- <TY1PR01MB1769B2978D73DBC2EADC6B8DF50C0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-Message-ID: <154213829039.88331.14286655280073748584@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: RE: [PATCH v5 1/2] clk: Add of_clk_get_by_name_optional() function
-Date:   Tue, 13 Nov 2018 11:44:50 -0800
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Phil Edworthy (2018-09-03 06:21:02)
-> Hi Stephen,
-> =
+"clk: rework calls to round and determine rate callbacks" [1] added 
+clk_core_round_rate_nolock().
 
-> On 03 September 2018 10:33 Phil Edworthy wrote:
-> > On 01 September 2018 03:46, Stephen Boyd wrote:
-> > > Quoting Phil Edworthy (2018-08-31 07:07:22)
-> > > > diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c index
-> > > > 9ab3db8..4adb99e 100644
-> > > > --- a/drivers/clk/clkdev.c
-> > > > +++ b/drivers/clk/clkdev.c
-> > > > @@ -54,30 +54,29 @@ EXPORT_SYMBOL(of_clk_get);
-> > > >
-> > > >  static struct clk *__of_clk_get_by_name(struct device_node *np,
-> > > >                                         const char *dev_id,
-> > > > -                                       const char *name)
-> > > > +                                       const char *name,
-> > > > +                                       bool optional)
-> > > >  {
-> > > >         struct clk *clk =3D ERR_PTR(-ENOENT);
-> > > > +       struct device_node *child =3D np;
-> > > > +       int index =3D 0;
-> > > >
-> > > >         /* Walk up the tree of devices looking for a clock that mat=
-ches */
-> > > >         while (np) {
-> > > > -               int index =3D 0;
-> > > >
-> > > >                 /*
-> > > >                  * For named clocks, first look up the name in the
-> > > >                  * "clock-names" property.  If it cannot be found, =
-then
-> > > > -                * index will be an error code, and of_clk_get() wi=
-ll fail.
-> > > > +                * index will be an error code.
-> > > >                  */
-> > > >                 if (name)
-> > > >                         index =3D of_property_match_string(np, "clo=
-ck-names",
-> > name);
-> > > > -               clk =3D __of_clk_get(np, index, dev_id, name);
-> > > > -               if (!IS_ERR(clk)) {
-> > > > -                       break;
-> > > > -               } else if (name && index >=3D 0) {
-> > > > -                       if (PTR_ERR(clk) !=3D -EPROBE_DEFER)
-> > > > -                               pr_err("ERROR: could not get clock =
-%pOF:%s(%i)\n",
-> > > > -                                       np, name ? name : "", index=
-);
-> > > > +               if (index >=3D 0)
-> > > > +                       clk =3D __of_clk_get(np, index, dev_id, nam=
-e);
-> > > > +               if (!IS_ERR(clk))
-> > >
-> > > Was this change necessary? It looks like we can leave it all alone an=
-d keep
-> > > passing a negative number to __of_clk_get() and have that return an e=
-rror
-> > > pointer which we then return immediately as an error. But, if the clo=
-ck is
-> > > optional and we've passed a name here, shouldn't we treat an error fr=
-om
-> > > of_property_match_string() as success too? This is all looking pretty=
- fragile
-> > so
-> > > maybe it can be better commented and also more explicit instead of re=
-lying
-> > > on the reader to jump through all the function calls to figure out wh=
-at the
-> > > return value is in some cases.
-> > If we call __of_clk_get, with index < 0, we will not be able to differe=
-ntiate
-> > between clock provider not present and other errors with the passed dat=
-a,
-> > as it will just return -EINVAL.
-> > =
+I question that it does the right thing in a specific scenario.
 
-> > of_property_match_string() will return -EINVAL if the "clock-names"
-> > property
-> > is missing, or -ENODATA if the specified clock name in the "clock-names"
-> > property is missing. That is why I have changed the code to conditional=
-ly
-> > call __of_clk_get, so the code will correctly treat optional clocks tha=
-t are not
-> > present.
-> When getting named optional clocks, if the node has a "clock-names" prope=
-rty,
-> but no clock matching the name we want, I think the function should stop =
-there
-> and *not* walk up the tree of devices looking for a matching clock. In th=
-is case,
-> the code determines that the optional clock is not present.
-> =
+Lets assume we have a clock that is currently running at 5Mhz, but we 
+want to have it run at 400Khz, and the clock supports both rates. 
+Perhaps the clock is for a hardware block, where in to switch 
+operational modes, the clock frequency is expected to run at the lower 
+frequency.
 
-> If there isn=E2=80=99t a "clock-names" property in the current node, the =
-function should
-> walk up the tree of devices looking for a matching optional clock. If the=
-re are no
-> parent nodes left and we haven't found a matching optional clock, we dete=
-rmine
-> that the clock isn=E2=80=99t there.
-> =
+The driver may call clk_set_rate() to do so, resulting in the following 
+call flow (based on 4.20-rc2)-
 
-> Is that how this should work?
-> =
+clk_set_rate()
+clk_core_set_rate_nolock()
+clk_core_req_round_rate_nolock()
+clk_core_round_rate_nolock()
+
+In clk_core_round_rate_nolock(), lets assume the conditionals do not 
+apply (clk core cannot round, and set rate parent flag isn't set).  In 
+that case, the requested rate is modified by this line -
+
+req->rate = core->rate;
+
+This transforms the request from 400Khz to 5Mhz (the current clock rate).
+
+What will then end up happening is we return from 
+clk_core_round_rate_nolock(), through clk_core_req_round_rate_nolock() 
+back to clk_core_set_rate_nolock() where we check to see if the rate 
+returned from the "rounding" is the same as the current clock rate (5Mhz 
+== 5Mhz).  Thus we conclude there is nothing to be done, and we return 
+success back up to the caller having not actually touched the clock or 
+set the requested rate.
+
+On the face of it, this seems incorrect to me, although I am a neophyte 
+to the clock framework.  Is this really the expected behavior, to leave 
+the clock at the current rate even though the requested rate is 
+different?  If so, why?
 
 
-Yes that sounds right.
+[1] - 
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=0f6cc2b8e94da5400528c0ba7fd910392ec598a2
 
+-- 
+Jeffrey Hugo
+Qualcomm Datacenter Technologies as an affiliate of Qualcomm 
+Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
