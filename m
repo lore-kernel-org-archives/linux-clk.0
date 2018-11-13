@@ -3,47 +3,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6119C43441
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Nov 2018 11:57:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 483C9C43441
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Nov 2018 11:59:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7900420815
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Nov 2018 11:57:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7900420815
+	by mail.kernel.org (Postfix) with ESMTP id 177E120818
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Nov 2018 11:59:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 177E120818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732874AbeKMVzY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Nov 2018 16:55:24 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:43965 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732834AbeKMVzX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Nov 2018 16:55:23 -0500
-Received: by mail-lj1-f196.google.com with SMTP id g26-v6so10539801lja.10;
-        Tue, 13 Nov 2018 03:57:34 -0800 (PST)
+        id S1729768AbeKMV52 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Nov 2018 16:57:28 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:39218 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726934AbeKMV52 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Nov 2018 16:57:28 -0500
+Received: by mail-lf1-f65.google.com with SMTP id n18so8609861lfh.6;
+        Tue, 13 Nov 2018 03:59:38 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=fJ06/MEsQS8wIywHorlvQqUqrYoodnmIZrcXjxSdJq0=;
-        b=JAlNJUxw7dZuzyCnLK0SNN04kvc3ETj/705MU21SoeLVRr1rCcvmKJ8iYYLzrTcsuy
-         35Q7lAScOVkLZq+2nYqcze+P9LJS0f8OHxk0QFvRtJeWlPDnNr610P3FkeBAAxbivI57
-         lbpwxFZBg+CSP7UGH+Gkwf7LeIxiTi4MxrRz2P2ETjiXeKOYYZfJSXOsbwtmlISIyy29
-         8NA2SqUzg/NvJaNJU8nTBfqamh7kj/uJFcCWFJRTy8zAJmFfsVPZJnbx9Zua7hm7mPMR
-         JcQ+KkYh+duOBLRiqWCSMZ+ujUxfO1XvrSFIRhQJjuOHBeQgkhTeUzHXZwm0AD4WW9Ri
-         audg==
-X-Gm-Message-State: AGRZ1gJ0v0p0zmARQZ6vmW7J6Arj6U+4Ad8h8ER7/oPTqHLHkT7uzY7o
-        Kp5sb01siYeWg8f0Mk2p0SM=
-X-Google-Smtp-Source: AJdET5dPbccSJIhU4ykGo/7sZ/6SWA6kO+vJeerN5LGWL5sFshLw+a7sE+sfVQzxYkAhfiqGWuVZ6Q==
-X-Received: by 2002:a2e:8099:: with SMTP id i25-v6mr3224659ljg.174.1542110253613;
-        Tue, 13 Nov 2018 03:57:33 -0800 (PST)
+        bh=4fWmEQHDymzQumdk/aytbyrz8Sfb7MJtwS0fcAz0+8Q=;
+        b=CEsl4JUt9lMKdBRXIvm4iyxlwdxdlSrsivsTOHoFyMa8/64W0U63SVdRd9JnGH2MTg
+         DtkeV8Q1NpFJfGS2ZzpFugP3cHCEngBMkKlsXG8V5kEOmLFfZXxtbUpE/arsUFj1lTfY
+         GbvyCbwY+ww6/2QTdylmJOGKq41xmlDfFuotyrbgmpb/zbN4kGgntQ9jpxBXX7FmXhNo
+         FljoL2MGmbJ+dgU0j3gzhlNVX8R+bd3TkFggU40C2lhVM9S9eSo+QNA96vsPZ8YHmixU
+         4FjawTRmZm/FXGxgbs3ra1TDN3hSn5dDCpZ/4rdZqb4jJyC816mU67U4ljS2f6YfgVNN
+         HK5g==
+X-Gm-Message-State: AGRZ1gKdo96M3Pt4tvVQqP2rnEmJiv0GvrPYwFvgTeEeOqq66OdD6gJw
+        nSlgsfY2Wu2rZfha72hSl6U=
+X-Google-Smtp-Source: AJdET5eY5Y8Z+Wd+y8qQgdrwaMKb79bzHHDnnpRZ/qJOEzRVVyE3QH6UbsC9cFbqs3Ab3FvcXvg1Fg==
+X-Received: by 2002:a19:d5:: with SMTP id 204mr2618716lfa.116.1542110377098;
+        Tue, 13 Nov 2018 03:59:37 -0800 (PST)
 Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id f18-v6sm3745263ljf.36.2018.11.13.03.57.32
+        by smtp.gmail.com with ESMTPSA id g73-v6sm3518209lje.24.2018.11.13.03.59.35
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 13 Nov 2018 03:57:33 -0800 (PST)
-Date:   Tue, 13 Nov 2018 13:57:17 +0200
+        Tue, 13 Nov 2018 03:59:36 -0800 (PST)
+Date:   Tue, 13 Nov 2018 13:59:27 +0200
 From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 To:     mazziesaccount@gmail.com
 Cc:     Jonathan Corbet <corbet@lwn.net>,
@@ -68,9 +68,8 @@ Cc:     Jonathan Corbet <corbet@lwn.net>,
         linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
-Subject: [PATCH v4 2/8] clk: clk-max77686: Clean clkdev lookup leak and use
- devm
-Message-ID: <cf0e38cddcb5643f3a796cf7e73332c12e3c250e.1542107769.git.matti.vaittinen@fi.rohmeurope.com>
+Subject: [PATCH v4 3/8] clk: clk-st: avoid clkdev lookup leak at remove
+Message-ID: <c2c140f03695488cf42c8af38ee9205d410a8907.1542107769.git.matti.vaittinen@fi.rohmeurope.com>
 References: <cover.1542107769.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -82,82 +81,28 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-clk-max77686 never clean clkdev lookup at remove. This can cause
-oops if clk-max77686 is removed and inserted again. Fix leak by
-using new devm clkdev lookup registration. Simplify also error
-path by using new devm_of_clk_add_parent_hw_provider.
+Use devm based clkdev lookup registration to avoid leaking lookup
+structures.
 
 Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/clk/clk-max77686.c | 29 +++++++----------------------
- 1 file changed, 7 insertions(+), 22 deletions(-)
+ drivers/clk/x86/clk-st.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/clk-max77686.c b/drivers/clk/clk-max77686.c
-index 22c937644c93..e65925d5e412 100644
---- a/drivers/clk/clk-max77686.c
-+++ b/drivers/clk/clk-max77686.c
-@@ -235,8 +235,9 @@ static int max77686_clk_probe(struct platform_device *pdev)
- 			return ret;
- 		}
+diff --git a/drivers/clk/x86/clk-st.c b/drivers/clk/x86/clk-st.c
+index 3a0996f2d556..25d4b97aff9b 100644
+--- a/drivers/clk/x86/clk-st.c
++++ b/drivers/clk/x86/clk-st.c
+@@ -52,7 +52,8 @@ static int st_clk_probe(struct platform_device *pdev)
+ 		0, st_data->base + MISCCLKCNTL1, OSCCLKENB,
+ 		CLK_GATE_SET_TO_DISABLE, NULL);
  
--		ret = clk_hw_register_clkdev(&max_clk_data->hw,
--					     max_clk_data->clk_idata.name, NULL);
-+		ret = devm_clk_hw_register_clkdev(dev, &max_clk_data->hw,
-+						  max_clk_data->clk_idata.name,
-+						  NULL);
- 		if (ret < 0) {
- 			dev_err(dev, "Failed to clkdev register: %d\n", ret);
- 			return ret;
-@@ -244,8 +245,9 @@ static int max77686_clk_probe(struct platform_device *pdev)
- 	}
- 
- 	if (parent->of_node) {
--		ret = of_clk_add_hw_provider(parent->of_node, of_clk_max77686_get,
--					     drv_data);
-+		ret = devm_of_clk_add_parent_hw_provider(dev,
-+							 of_clk_max77686_get,
-+							 drv_data);
- 
- 		if (ret < 0) {
- 			dev_err(dev, "Failed to register OF clock provider: %d\n",
-@@ -261,27 +263,11 @@ static int max77686_clk_probe(struct platform_device *pdev)
- 					 1 << MAX77802_CLOCK_LOW_JITTER_SHIFT);
- 		if (ret < 0) {
- 			dev_err(dev, "Failed to config low-jitter: %d\n", ret);
--			goto remove_of_clk_provider;
-+			return ret;
- 		}
- 	}
+-	clk_hw_register_clkdev(hws[ST_CLK_GATE], "oscout1", NULL);
++	devm_clk_hw_register_clkdev(&pdev->dev, hws[ST_CLK_GATE], "oscout1",
++				    NULL);
  
  	return 0;
--
--remove_of_clk_provider:
--	if (parent->of_node)
--		of_clk_del_provider(parent->of_node);
--
--	return ret;
--}
--
--static int max77686_clk_remove(struct platform_device *pdev)
--{
--	struct device *parent = pdev->dev.parent;
--
--	if (parent->of_node)
--		of_clk_del_provider(parent->of_node);
--
--	return 0;
  }
- 
- static const struct platform_device_id max77686_clk_id[] = {
-@@ -297,7 +283,6 @@ static struct platform_driver max77686_clk_driver = {
- 		.name  = "max77686-clk",
- 	},
- 	.probe = max77686_clk_probe,
--	.remove = max77686_clk_remove,
- 	.id_table = max77686_clk_id,
- };
- 
 -- 
 2.14.3
 
