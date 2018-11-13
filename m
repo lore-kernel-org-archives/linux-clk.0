@@ -4,49 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B09F9C43441
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Nov 2018 05:53:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B57FC43441
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Nov 2018 05:54:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70DD4223CB
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Nov 2018 05:53:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 59C64223CB
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Nov 2018 05:54:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="eRHtY8+q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70DD4223CB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="C15DC3hr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59C64223CB
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733236AbeKMPt2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Nov 2018 10:49:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36906 "EHLO mail.kernel.org"
+        id S1733081AbeKMPtR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Nov 2018 10:49:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36464 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733211AbeKMPt2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 13 Nov 2018 10:49:28 -0500
+        id S1733072AbeKMPtR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 13 Nov 2018 10:49:17 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5FFEE22520;
-        Tue, 13 Nov 2018 05:53:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 81E5F2251F;
+        Tue, 13 Nov 2018 05:52:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542088380;
-        bh=F9FQMuao1bxLBnZS0+J0k20LGmA9ceZrVwqQo3iSTWs=;
+        s=default; t=1542088369;
+        bh=DLPe9Dy06+31l9Qrtr4FZwSQyGyZG538zVS3pIPqCS8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eRHtY8+qcszsn4K9le8H33+9bDZKmlQa29xrJQrEpbr5Za5n35V8+k87RFVn6Dzp2
-         tI6+sNNaVXlzEr1lZBZ5CAqQmb9eYJ7oopytih7bB1BiU6Ufj9zzJCKnx47mDx5D3f
-         V/PgHx921hyrf99KfTBAUhr8HvCGBB/IPblqNkH4=
+        b=C15DC3hrruizEAQh9T7y2KIuge/+lfUFZ/usQJXB5NpU4D8xw8MUfqUObjcbuNGdS
+         tmUIJd3eqtGr+XwM9UduPIe0k70hznXa4wEIYWtDhJ7myv6dVZC4cIvgNebAGTDwvx
+         b3zhyWUXtQLDFfT4R95G+moFWhbA6HVxwhE2vX5o=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Sylwester Nawrocki <snawrocki@kernel.org>,
         Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 3.18 7/9] clk: samsung: exynos5420: Enable PERIS clocks for suspend
-Date:   Tue, 13 Nov 2018 00:52:50 -0500
-Message-Id: <20181113055252.79406-7-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 07/11] clk: samsung: exynos5420: Enable PERIS clocks for suspend
+Date:   Tue, 13 Nov 2018 00:52:38 -0500
+Message-Id: <20181113055242.79261-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181113055252.79406-1-sashal@kernel.org>
-References: <20181113055252.79406-1-sashal@kernel.org>
+In-Reply-To: <20181113055242.79261-1-sashal@kernel.org>
+References: <20181113055242.79261-1-sashal@kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
@@ -69,11 +68,11 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+)
 
 diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index 848d602efc06..c810b3be6b48 100644
+index 389af3c15ec4..bde71b07f15e 100644
 --- a/drivers/clk/samsung/clk-exynos5420.c
 +++ b/drivers/clk/samsung/clk-exynos5420.c
 @@ -273,6 +273,7 @@ static const struct samsung_clk_reg_dump exynos5420_set_clksrc[] = {
- 	{ .offset = SRC_MASK_ISP,		.value = 0x11111000, },
+ 	{ .offset = GATE_BUS_TOP,		.value = 0xffffffff, },
  	{ .offset = GATE_BUS_DISP1,		.value = 0xffffffff, },
  	{ .offset = GATE_IP_PERIC,		.value = 0xffffffff, },
 +	{ .offset = GATE_IP_PERIS,		.value = 0xffffffff, },
