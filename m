@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40760C43441
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Nov 2018 05:55:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C574C43441
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Nov 2018 05:57:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEE5A223CB
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Nov 2018 05:55:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B9D5223CB
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Nov 2018 05:57:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BaKSkjyc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEE5A223CB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="eMWhUnKT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B9D5223CB
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731083AbeKMPvu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Nov 2018 10:51:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35986 "EHLO mail.kernel.org"
+        id S1732693AbeKMPsj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Nov 2018 10:48:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35224 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732922AbeKMPtE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 13 Nov 2018 10:49:04 -0500
+        id S1732690AbeKMPsj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 13 Nov 2018 10:48:39 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 50676223CB;
-        Tue, 13 Nov 2018 05:52:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 850CB2251E;
+        Tue, 13 Nov 2018 05:52:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542088357;
-        bh=MZPzIKtSlQIDoclI68HqfxgOuKXoS58H5WNqj6Bvf+Y=;
+        s=default; t=1542088331;
+        bh=tNXc48GvDdhx8zxUMQBaxoGIvFOFCM5ACrDGB1MelxQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BaKSkjycQgvgSjdE3apx/PSzaeRLRJ6F0VevDACsIFEcXl3yOb+GHGEyLbWMYO2Ox
-         Hwtktggx0Fb4iEe0oOym/Gta0aObJpVGo9MZj8t+QUfnfY5KPwggDB5AWyFfHJiMGO
-         Qc01eZSniOtYAsrTim6Crm6x4ciy7fhShD07wlWc=
+        b=eMWhUnKTSk8MsQeIEw/OLF6W1GOkZMYKV6MVeT8XMPtZxDdauvMuayB6GdGGs+5+v
+         L69Qgfhywht1qMB0W6uYSgecyM0y0ad+LgsdFZvt/Aeo4Yn3dB6c2LzWmKZpnwFbee
+         4CCpozTenbWUkGeBgVnB1MvFr4NAO3Dwws6pT59I=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Sylwester Nawrocki <snawrocki@kernel.org>,
         Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 12/17] clk: samsung: exynos5420: Enable PERIS clocks for suspend
-Date:   Tue, 13 Nov 2018 00:52:18 -0500
-Message-Id: <20181113055223.79060-12-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 18/26] clk: samsung: exynos5420: Enable PERIS clocks for suspend
+Date:   Tue, 13 Nov 2018 00:51:42 -0500
+Message-Id: <20181113055150.78773-18-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181113055223.79060-1-sashal@kernel.org>
-References: <20181113055223.79060-1-sashal@kernel.org>
+In-Reply-To: <20181113055150.78773-1-sashal@kernel.org>
+References: <20181113055150.78773-1-sashal@kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
@@ -69,7 +69,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+)
 
 diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index 07fb667e258f..13c09a740840 100644
+index 25601967d1cd..500a55415e90 100644
 --- a/drivers/clk/samsung/clk-exynos5420.c
 +++ b/drivers/clk/samsung/clk-exynos5420.c
 @@ -280,6 +280,7 @@ static const struct samsung_clk_reg_dump exynos5420_set_clksrc[] = {
