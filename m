@@ -4,46 +4,44 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C574C43441
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Nov 2018 05:57:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 448FFC43441
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Nov 2018 05:57:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B9D5223CB
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Nov 2018 05:57:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 00872223CB
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Nov 2018 05:57:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="eMWhUnKT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B9D5223CB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sQrPWO55"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00872223CB
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732693AbeKMPsj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Nov 2018 10:48:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35224 "EHLO mail.kernel.org"
+        id S1732622AbeKMPsh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Nov 2018 10:48:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35130 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732690AbeKMPsj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 13 Nov 2018 10:48:39 -0500
+        id S1732651AbeKMPsg (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 13 Nov 2018 10:48:36 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 850CB2251E;
-        Tue, 13 Nov 2018 05:52:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0192C22511;
+        Tue, 13 Nov 2018 05:52:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542088331;
-        bh=tNXc48GvDdhx8zxUMQBaxoGIvFOFCM5ACrDGB1MelxQ=;
+        s=default; t=1542088329;
+        bh=mKTDncJN5Vv58uIazmiZKQ2OpBIakVsP2G19l4JQJmg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eMWhUnKTSk8MsQeIEw/OLF6W1GOkZMYKV6MVeT8XMPtZxDdauvMuayB6GdGGs+5+v
-         L69Qgfhywht1qMB0W6uYSgecyM0y0ad+LgsdFZvt/Aeo4Yn3dB6c2LzWmKZpnwFbee
-         4CCpozTenbWUkGeBgVnB1MvFr4NAO3Dwws6pT59I=
+        b=sQrPWO55JAKn1xU1UZR4wnCEEoknjSJY+ZFgAPH55SrwhoDRVEk20XG56atrllPdJ
+         mnwSIrNHvrLhuxQ2rVoQF1kSaFz9CbW1Xn+NBVtuodUDb16NdD158jWHiGNqBwdi+1
+         dv8M/XCKc1fLHdbpMNtZULfZKJ8XLmo1UFMdZ/Lw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
+Cc:     Alan Tull <atull@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 18/26] clk: samsung: exynos5420: Enable PERIS clocks for suspend
-Date:   Tue, 13 Nov 2018 00:51:42 -0500
-Message-Id: <20181113055150.78773-18-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 15/26] clk: fixed-rate: fix of_node_get-put imbalance
+Date:   Tue, 13 Nov 2018 00:51:39 -0500
+Message-Id: <20181113055150.78773-15-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181113055150.78773-1-sashal@kernel.org>
 References: <20181113055150.78773-1-sashal@kernel.org>
@@ -52,34 +50,35 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Marek Szyprowski <m.szyprowski@samsung.com>
+From: Alan Tull <atull@kernel.org>
 
-[ Upstream commit b33228029d842269e17bba591609e83ed422005d ]
+[ Upstream commit 52091c256bdcad0d01e2852a63f19cd2cce6af96 ]
 
-Ensure that clocks for core SoC modules (including TZPC0..9 modules)
-are enabled for suspend/resume cycle. This fixes suspend/resume
-support on Exynos5422-based Odroid XU3/XU4 boards.
+When the fixed rate clock is created by devicetree,
+of_clk_add_provider is called.  Add a call to
+of_clk_del_provider in the remove function to balance
+it out.
 
-Suggested-by: Joonyoung Shim <jy0922.shim@samsung.com>
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Sylwester Nawrocki <snawrocki@kernel.org>
+Signed-off-by: Alan Tull <atull@kernel.org>
+Fixes: 435779fe1336 ("clk: fixed-rate: Convert into a module platform driver")
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/samsung/clk-exynos5420.c | 1 +
+ drivers/clk/clk-fixed-rate.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index 25601967d1cd..500a55415e90 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -280,6 +280,7 @@ static const struct samsung_clk_reg_dump exynos5420_set_clksrc[] = {
- 	{ .offset = GATE_BUS_TOP,		.value = 0xffffffff, },
- 	{ .offset = GATE_BUS_DISP1,		.value = 0xffffffff, },
- 	{ .offset = GATE_IP_PERIC,		.value = 0xffffffff, },
-+	{ .offset = GATE_IP_PERIS,		.value = 0xffffffff, },
- };
+diff --git a/drivers/clk/clk-fixed-rate.c b/drivers/clk/clk-fixed-rate.c
+index b5c46b3f8764..6d6475c32ee5 100644
+--- a/drivers/clk/clk-fixed-rate.c
++++ b/drivers/clk/clk-fixed-rate.c
+@@ -200,6 +200,7 @@ static int of_fixed_clk_remove(struct platform_device *pdev)
+ {
+ 	struct clk *clk = platform_get_drvdata(pdev);
  
- static int exynos5420_clk_suspend(void)
++	of_clk_del_provider(pdev->dev.of_node);
+ 	clk_unregister_fixed_rate(clk);
+ 
+ 	return 0;
 -- 
 2.17.1
 
