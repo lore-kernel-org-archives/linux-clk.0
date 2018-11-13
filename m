@@ -2,347 +2,174 @@ Return-Path: <SRS0=nRqW=NY=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60C4CC43441
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Nov 2018 19:35:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07CDBC43441
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Nov 2018 19:44:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D14821582
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Nov 2018 19:35:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B55E3223C8
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Nov 2018 19:44:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="n2/ypjwF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D14821582
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1m0dV1f6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B55E3223C8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728305AbeKNFfW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Nov 2018 00:35:22 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:40347 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726291AbeKNFfQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Nov 2018 00:35:16 -0500
-Received: by mail-pf1-f195.google.com with SMTP id x2-v6so6565699pfm.7
-        for <linux-clk@vger.kernel.org>; Tue, 13 Nov 2018 11:35:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=158Uwnv8slvUqvmkKS6E4lhBncGugyc39GQmVzLaRT4=;
-        b=n2/ypjwFerhEmwFgxB26s/4DZz6DWlBW5vi4ss365FW6CFslRWtiGj/3A09p73JMxX
-         XUp4dpCG9IqtFwWDC0gX0ylpZ0o8xQm55pHKhJYDwYvb5tL7pZwQa0c8pKq7CvgXjZgQ
-         udHXGg0G92ByXzuzrl92pjjAV8AOkLT7zzrJo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=158Uwnv8slvUqvmkKS6E4lhBncGugyc39GQmVzLaRT4=;
-        b=mEMtnnw4xFo79lgaXTGwXxxDt+8IX2MOXTWE04uKNSWK+pAJCokYs2HUzHsvuVs8ee
-         rNuaiOoevofwBhBLKTWrqpJrCkzFOxcCrJu1o9J5BGZRQx7zPP4Cem8kQx1EXkaEa4oY
-         QOeOte5eAKs4QnBC3ezh/IDAR3UefFrhPergjSHCL45B+kijBz8lXhJq4SyUbtGwi/W5
-         yXgDqWZQZ7MXyIYsjIOsZpOe0GbMOCsf3Ji7wLV0Dyu121tuKe4NfsZvH7rDhth7j77D
-         XRrsAUxkP3hbFCDJ7HsUVAC779Rs97uAgDlt8aOqLNJ/XK0n9zyzkfnWWFlFbihGG65g
-         MT6Q==
-X-Gm-Message-State: AGRZ1gIGt8fKVUnrMy1MUv/sc1eUFjjp9svJy9+AQSVbyfRt4Q61WeB5
-        /9L166hpXRmlZGByyYjkB9sHCkxZ8YrLJkenh72aaA==
-X-Google-Smtp-Source: AJdET5coV5c6ekljgMYbaT0oN6dkEOFM8E9UV1yaiZPCn7sskVXvRfmzWF7t3nt/3jy7mSuZG1rs40vp8LLzTvorP8I=
-X-Received: by 2002:a65:4646:: with SMTP id k6mr5821631pgr.153.1542137741971;
- Tue, 13 Nov 2018 11:35:41 -0800 (PST)
+        id S1726418AbeKNFo1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Nov 2018 00:44:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34212 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725794AbeKNFo1 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 14 Nov 2018 00:44:27 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 101E1216FD;
+        Tue, 13 Nov 2018 19:44:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542138291;
+        bh=p7CX0gDvZdAxNLwNYAGh6FphTMIN1RSTmFJLR5AkL90=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=1m0dV1f61NWqw3r4Bji21Bsg6CIyU1WASApLpj5OzGbNx88Oaxj/PB3HjYI8/WmQT
+         O/SYfpZssRYaF47/uQeTYnvtZyasOtsrhwebg8UlmcHpTdpFCe+AmAYXEzMYLw093P
+         kAN0s/oMIXoWjx/YyqgpkWqoD3P5WLrm2Hup/Hq0=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20181106064206.17535-1-weiyi.lu@mediatek.com> <20181106064206.17535-13-weiyi.lu@mediatek.com>
-In-Reply-To: <20181106064206.17535-13-weiyi.lu@mediatek.com>
-From:   Nicolas Boichat <drinkcat@chromium.org>
-Date:   Tue, 13 Nov 2018 11:35:30 -0800
-Message-ID: <CANMq1KBoCScwixLoB0oEtbavLW8b_NjufAjbPKJLcLgj=vHC9A@mail.gmail.com>
-Subject: Re: [PATCH v1 11/11] soc: mediatek: Add MT8183 scpsys support
-To:     Weiyi Lu <weiyi.lu@mediatek.com>
-Cc:     Matthias Brugger <matthias.bgg@gmail.com>, sboyd@codeaurora.org,
-        Rob Herring <robh@kernel.org>, jamesjj.liao@mediatek.com,
-        Fan Chen <fan.chen@mediatek.com>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-        srv_heupstream@mediatek.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Russell King <linux@armlinux.org.uk>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <TY1PR01MB1769B2978D73DBC2EADC6B8DF50C0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Simon Horman <horms@verge.net.au>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+References: <1535724443-21150-1-git-send-email-phil.edworthy@renesas.com>
+ <1535724443-21150-2-git-send-email-phil.edworthy@renesas.com>
+ <153576994987.19113.11376893046599589648@swboyd.mtv.corp.google.com>
+ <TY1PR01MB1769CBB6FC715E94B10815BFF50C0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+ <TY1PR01MB1769B2978D73DBC2EADC6B8DF50C0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+Message-ID: <154213829039.88331.14286655280073748584@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: RE: [PATCH v5 1/2] clk: Add of_clk_get_by_name_optional() function
+Date:   Tue, 13 Nov 2018 11:44:50 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Nov 5, 2018 at 10:43 PM Weiyi Lu <weiyi.lu@mediatek.com> wrote:
->
-> Add scpsys driver for MT8183
->
-> Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
-> ---
->  drivers/soc/mediatek/mtk-scpsys.c | 226 ++++++++++++++++++++++++++++++
->  1 file changed, 226 insertions(+)
->
-> diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
-> index 80be2e05e4e0..57b9f04a69de 100644
-> --- a/drivers/soc/mediatek/mtk-scpsys.c
-> +++ b/drivers/soc/mediatek/mtk-scpsys.c
-> @@ -29,6 +29,7 @@
->  #include <dt-bindings/power/mt7622-power.h>
->  #include <dt-bindings/power/mt7623a-power.h>
->  #include <dt-bindings/power/mt8173-power.h>
-> +#include <dt-bindings/power/mt8183-power.h>
->
->  #define MTK_POLL_DELAY_US   10
->  #define MTK_POLL_TIMEOUT    (jiffies_to_usecs(HZ))
-> @@ -1179,6 +1180,217 @@ static const struct scp_subdomain scp_subdomain_mt8173[] = {
->         {MT8173_POWER_DOMAIN_MFG_2D, MT8173_POWER_DOMAIN_MFG},
->  };
->
-> +/*
-> + * MT8183 power domain support
-> + */
-> +
-> +static const struct scp_domain_data scp_domain_data_mt8183[] = {
-> +       [MT8183_POWER_DOMAIN_AUDIO] = {
-> +               .name = "audio",
-> +               .sta_mask = PWR_STATUS_AUDIO,
-> +               .ctl_offs = 0x0314,
-> +               .sram_pdn_bits = GENMASK(11, 8),
-> +               .sram_pdn_ack_bits = GENMASK(15, 12),
-> +               .basic_clk_name = {"audio"},
-> +       },
-> +       [MT8183_POWER_DOMAIN_CONN] = {
-> +               .name = "conn",
-> +               .sta_mask = PWR_STATUS_CONN,
-> +               .ctl_offs = 0x032c,
-> +               .sram_pdn_bits = 0,
-> +               .sram_pdn_ack_bits = 0,
-> +               .bp_table = {
-> +                       [0] = BUS_PROT(IFR_TYPE, 0x2a0, 0x2a4, 0, 0x228,
-> +                               BIT(13) | BIT(14), BIT(13) | BIT(14)),
-> +               },
-> +       },
-> +       [MT8183_POWER_DOMAIN_MFG_ASYNC] = {
-> +               .name = "mfg_async",
-> +               .sta_mask = PWR_STATUS_MFG_ASYNC,
-> +               .ctl_offs = 0x0334,
-> +               .sram_pdn_bits = 0,
-> +               .sram_pdn_ack_bits = 0,
-> +               .basic_clk_name = {"mfg"},
-> +       },
-> +       [MT8183_POWER_DOMAIN_MFG] = {
-> +               .name = "mfg",
-> +               .sta_mask = PWR_STATUS_MFG,
-> +               .ctl_offs = 0x0338,
-> +               .sram_pdn_bits = GENMASK(8, 8),
-> +               .sram_pdn_ack_bits = GENMASK(12, 12),
-> +       },
-> +       [MT8183_POWER_DOMAIN_MFG_CORE0] = {
-> +               .name = "mfg_core0",
-> +               .sta_mask = BIT(7),
-> +               .ctl_offs = 0x034c,
-> +               .sram_pdn_bits = GENMASK(8, 8),
-> +               .sram_pdn_ack_bits = GENMASK(12, 12),
-> +       },
-> +       [MT8183_POWER_DOMAIN_MFG_CORE1] = {
-> +               .name = "mfg_core1",
-> +               .sta_mask = BIT(20),
-> +               .ctl_offs = 0x0310,
-> +               .sram_pdn_bits = GENMASK(8, 8),
-> +               .sram_pdn_ack_bits = GENMASK(12, 12),
-> +       },
-> +       [MT8183_POWER_DOMAIN_MFG_2D] = {
-> +               .name = "mfg_2d",
-> +               .sta_mask = PWR_STATUS_MFG_2D,
-> +               .ctl_offs = 0x0348,
-> +               .sram_pdn_bits = GENMASK(8, 8),
-> +               .sram_pdn_ack_bits = GENMASK(12, 12),
-> +               .bp_table = {
-> +                       [0] = BUS_PROT(IFR_TYPE, 0x2a8, 0x2ac, 0, 0x258,
-> +                               BIT(19) | BIT(20) | BIT(21),
-> +                               BIT(19) | BIT(20) | BIT(21)),
-> +                       [1] = BUS_PROT(IFR_TYPE, 0x2a0, 0x2a4, 0, 0x228,
-> +                               BIT(21) | BIT(22), BIT(21) | BIT(22)),
-> +               },
-> +       },
-> +       [MT8183_POWER_DOMAIN_DISP] = {
-> +               .name = "disp",
-> +               .sta_mask = PWR_STATUS_DISP,
-> +               .ctl_offs = 0x030c,
-> +               .sram_pdn_bits = GENMASK(8, 8),
-> +               .sram_pdn_ack_bits = GENMASK(12, 12),
-> +               .basic_clk_name = {"mm"},
-> +               .subsys_clk_prefix = "mm",
-> +               .bp_table = {
-> +                       [0] = BUS_PROT(IFR_TYPE, 0x2a8, 0x2ac, 0, 0x258,
-> +                               BIT(16) | BIT(17), BIT(16) | BIT(17)),
-> +                       [1] = BUS_PROT(IFR_TYPE, 0x2a0, 0x2a4, 0, 0x228,
-> +                               BIT(10) | BIT(11), BIT(10) | BIT(11)),
-> +                       [2] = BUS_PROT(SMI_TYPE, 0x3c4, 0x3c8, 0, 0x3c0,
-> +                               GENMASK(7, 0), GENMASK(7, 0)),
-> +               },
-> +       },
-> +       [MT8183_POWER_DOMAIN_CAM] = {
-> +               .name = "cam",
-> +               .sta_mask = BIT(25),
-> +               .ctl_offs = 0x0344,
-> +               .sram_pdn_bits = GENMASK(9, 8),
-> +               .sram_pdn_ack_bits = GENMASK(13, 12),
-> +               .basic_clk_name = {"cam"},
-> +               .subsys_clk_prefix = "cam",
-> +               .bp_table = {
-> +                       [0] = BUS_PROT(IFR_TYPE, 0x2d4, 0x2d8, 0, 0x2ec,
-> +                               BIT(4) | BIT(5) | BIT(9) | BIT(13),
-> +                               BIT(4) | BIT(5) | BIT(9) | BIT(13)),
-> +                       [1] = BUS_PROT(IFR_TYPE, 0x2a0, 0x2a4, 0, 0x228,
-> +                               BIT(28), BIT(28)),
-> +                       [2] = BUS_PROT(IFR_TYPE, 0x2d4, 0x2d8, 0, 0x2ec,
-> +                               BIT(11), 0),
-> +                       [3] = BUS_PROT(SMI_TYPE, 0x3c4, 0x3c8, 0, 0x3c0,
-> +                               BIT(3) | BIT(4), BIT(3) | BIT(4)),
+Quoting Phil Edworthy (2018-09-03 06:21:02)
+> Hi Stephen,
+> =
 
-Why do you need to specify the indexes ([0], [1], ...)? Can you just
-use automatic indexes? (especially considering that your code assumes
-there is no gap in the bp_table entries.
+> On 03 September 2018 10:33 Phil Edworthy wrote:
+> > On 01 September 2018 03:46, Stephen Boyd wrote:
+> > > Quoting Phil Edworthy (2018-08-31 07:07:22)
+> > > > diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c index
+> > > > 9ab3db8..4adb99e 100644
+> > > > --- a/drivers/clk/clkdev.c
+> > > > +++ b/drivers/clk/clkdev.c
+> > > > @@ -54,30 +54,29 @@ EXPORT_SYMBOL(of_clk_get);
+> > > >
+> > > >  static struct clk *__of_clk_get_by_name(struct device_node *np,
+> > > >                                         const char *dev_id,
+> > > > -                                       const char *name)
+> > > > +                                       const char *name,
+> > > > +                                       bool optional)
+> > > >  {
+> > > >         struct clk *clk =3D ERR_PTR(-ENOENT);
+> > > > +       struct device_node *child =3D np;
+> > > > +       int index =3D 0;
+> > > >
+> > > >         /* Walk up the tree of devices looking for a clock that mat=
+ches */
+> > > >         while (np) {
+> > > > -               int index =3D 0;
+> > > >
+> > > >                 /*
+> > > >                  * For named clocks, first look up the name in the
+> > > >                  * "clock-names" property.  If it cannot be found, =
+then
+> > > > -                * index will be an error code, and of_clk_get() wi=
+ll fail.
+> > > > +                * index will be an error code.
+> > > >                  */
+> > > >                 if (name)
+> > > >                         index =3D of_property_match_string(np, "clo=
+ck-names",
+> > name);
+> > > > -               clk =3D __of_clk_get(np, index, dev_id, name);
+> > > > -               if (!IS_ERR(clk)) {
+> > > > -                       break;
+> > > > -               } else if (name && index >=3D 0) {
+> > > > -                       if (PTR_ERR(clk) !=3D -EPROBE_DEFER)
+> > > > -                               pr_err("ERROR: could not get clock =
+%pOF:%s(%i)\n",
+> > > > -                                       np, name ? name : "", index=
+);
+> > > > +               if (index >=3D 0)
+> > > > +                       clk =3D __of_clk_get(np, index, dev_id, nam=
+e);
+> > > > +               if (!IS_ERR(clk))
+> > >
+> > > Was this change necessary? It looks like we can leave it all alone an=
+d keep
+> > > passing a negative number to __of_clk_get() and have that return an e=
+rror
+> > > pointer which we then return immediately as an error. But, if the clo=
+ck is
+> > > optional and we've passed a name here, shouldn't we treat an error fr=
+om
+> > > of_property_match_string() as success too? This is all looking pretty=
+ fragile
+> > so
+> > > maybe it can be better commented and also more explicit instead of re=
+lying
+> > > on the reader to jump through all the function calls to figure out wh=
+at the
+> > > return value is in some cases.
+> > If we call __of_clk_get, with index < 0, we will not be able to differe=
+ntiate
+> > between clock provider not present and other errors with the passed dat=
+a,
+> > as it will just return -EINVAL.
+> > =
 
-> +               },
-> +       },
-> +       [MT8183_POWER_DOMAIN_ISP] = {
-> +               .name = "isp",
-> +               .sta_mask = PWR_STATUS_ISP,
-> +               .ctl_offs = 0x0308,
-> +               .sram_pdn_bits = GENMASK(9, 8),
-> +               .sram_pdn_ack_bits = GENMASK(13, 12),
-> +               .basic_clk_name = {"isp"},
-> +               .subsys_clk_prefix = "isp",
-> +               .bp_table = {
-> +                       [0] = BUS_PROT(IFR_TYPE, 0x2d4, 0x2d8, 0, 0x2ec,
-> +                               BIT(3) | BIT(8), BIT(3) | BIT(8)),
-> +                       [1] = BUS_PROT(IFR_TYPE, 0x2d4, 0x2d8, 0, 0x2ec,
-> +                               BIT(10), 0),
-> +                       [2] = BUS_PROT(SMI_TYPE, 0x3c4, 0x3c8, 0, 0x3c0,
-> +                               BIT(2), BIT(2)),
-> +               },
-> +       },
-> +       [MT8183_POWER_DOMAIN_VDEC] = {
-> +               .name = "vdec",
-> +               .sta_mask = BIT(31),
-> +               .ctl_offs = 0x0300,
-> +               .sram_pdn_bits = GENMASK(8, 8),
-> +               .sram_pdn_ack_bits = GENMASK(12, 12),
-> +               .bp_table = {
-> +                       [0] = BUS_PROT(SMI_TYPE, 0x3c4, 0x3c8, 0, 0x3c0,
-> +                               BIT(7), BIT(7)),
-> +               },
-> +       },
-> +       [MT8183_POWER_DOMAIN_VENC] = {
-> +               .name = "venc",
-> +               .sta_mask = PWR_STATUS_VENC,
-> +               .ctl_offs = 0x0304,
-> +               .sram_pdn_bits = GENMASK(11, 8),
-> +               .sram_pdn_ack_bits = GENMASK(15, 12),
-> +               .bp_table = {
-> +                       [0] = BUS_PROT(SMI_TYPE, 0x3c4, 0x3c8, 0, 0x3c0,
-> +                               BIT(1), BIT(1)),
-> +               },
-> +       },
-> +       [MT8183_POWER_DOMAIN_VPU_TOP] = {
-> +               .name = "vpu_top",
-> +               .sta_mask = BIT(26),
-> +               .ctl_offs = 0x0324,
-> +               .sram_pdn_bits = GENMASK(8, 8),
-> +               .sram_pdn_ack_bits = GENMASK(12, 12),
-> +               .basic_clk_name = {"vpu", "vpu1"},
-> +               .subsys_clk_prefix = "vpu",
-> +               .bp_table = {
-> +                       [0] = BUS_PROT(IFR_TYPE, 0x2d4, 0x2d8, 0, 0x2ec,
-> +                               GENMASK(9, 6) | BIT(12),
-> +                               GENMASK(9, 6) | BIT(12)),
-> +                       [1] = BUS_PROT(IFR_TYPE, 0x2a0, 0x2a4, 0, 0x228,
-> +                               BIT(27), BIT(27)),
-> +                       [2] = BUS_PROT(IFR_TYPE, 0x2d4, 0x2d8, 0, 0x2ec,
-> +                               BIT(10) | BIT(11), BIT(10) | BIT(11)),
-> +                       [3] = BUS_PROT(SMI_TYPE, 0x3c4, 0x3c8, 0, 0x3c0,
-> +                               BIT(5) | BIT(6), BIT(5) | BIT(6)),
-> +               },
-> +       },
-> +       [MT8183_POWER_DOMAIN_VPU_CORE0] = {
-> +               .name = "vpu_core0",
-> +               .sta_mask = BIT(27),
-> +               .ctl_offs = 0x33c,
-> +               .sram_iso_ctrl = true,
-> +               .sram_pdn_bits = GENMASK(11, 8),
-> +               .sram_pdn_ack_bits = GENMASK(13, 12),
-> +               .basic_clk_name = {"vpu2"},
-> +               .bp_table = {
-> +                       [0] = BUS_PROT(IFR_TYPE, 0x2c4, 0x2c8, 0, 0x2e4,
-> +                               BIT(6), BIT(6)),
-> +                       [1] = BUS_PROT(IFR_TYPE, 0x2c4, 0x2c8, 0, 0x2e4,
-> +                               BIT(0) | BIT(2) | BIT(4),
-> +                               BIT(0) | BIT(2) | BIT(4)),
-> +               },
-> +       },
-> +       [MT8183_POWER_DOMAIN_VPU_CORE1] = {
-> +               .name = "vpu_core1",
-> +               .sta_mask = BIT(28),
-> +               .ctl_offs = 0x0340,
-> +               .sram_iso_ctrl = true,
-> +               .sram_pdn_bits = GENMASK(11, 8),
-> +               .sram_pdn_ack_bits = GENMASK(13, 12),
-> +               .basic_clk_name = {"vpu3"},
-> +               .bp_table = {
-> +                       [0] = BUS_PROT(IFR_TYPE, 0x2c4, 0x2c8, 0, 0x2e4,
-> +                               BIT(7), BIT(7)),
-> +                       [1] = BUS_PROT(IFR_TYPE, 0x2c4, 0x2c8, 0, 0x2e4,
-> +                               BIT(1) | BIT(3) | BIT(5),
-> +                               BIT(1) | BIT(3) | BIT(5)),
-> +               },
-> +       },
-> +};
-> +
-> +static const struct scp_subdomain scp_subdomain_mt8183[] = {
-> +       {MT8183_POWER_DOMAIN_MFG_ASYNC, MT8183_POWER_DOMAIN_MFG},
-> +       {MT8183_POWER_DOMAIN_MFG, MT8183_POWER_DOMAIN_MFG_2D},
-> +       {MT8183_POWER_DOMAIN_MFG, MT8183_POWER_DOMAIN_MFG_CORE0},
-> +       {MT8183_POWER_DOMAIN_MFG, MT8183_POWER_DOMAIN_MFG_CORE1},
-> +       {MT8183_POWER_DOMAIN_DISP, MT8183_POWER_DOMAIN_CAM},
-> +       {MT8183_POWER_DOMAIN_DISP, MT8183_POWER_DOMAIN_ISP},
-> +       {MT8183_POWER_DOMAIN_DISP, MT8183_POWER_DOMAIN_VDEC},
-> +       {MT8183_POWER_DOMAIN_DISP, MT8183_POWER_DOMAIN_VENC},
-> +       {MT8183_POWER_DOMAIN_DISP, MT8183_POWER_DOMAIN_VPU_TOP},
-> +       {MT8183_POWER_DOMAIN_VPU_TOP, MT8183_POWER_DOMAIN_VPU_CORE0},
-> +       {MT8183_POWER_DOMAIN_VPU_TOP, MT8183_POWER_DOMAIN_VPU_CORE1},
-> +};
-> +
->  static const struct scp_soc_data mt2701_data = {
->         .domains = scp_domain_data_mt2701,
->         .num_domains = ARRAY_SIZE(scp_domain_data_mt2701),
-> @@ -1245,6 +1457,17 @@ static const struct scp_soc_data mt8173_data = {
->         .bus_prot_reg_update = true,
->  };
->
-> +static const struct scp_soc_data mt8183_data = {
-> +       .domains = scp_domain_data_mt8183,
-> +       .num_domains = ARRAY_SIZE(scp_domain_data_mt8183),
-> +       .subdomains = scp_subdomain_mt8183,
-> +       .num_subdomains = ARRAY_SIZE(scp_subdomain_mt8183),
-> +       .regs = {
-> +               .pwr_sta_offs = 0x0180,
-> +               .pwr_sta2nd_offs = 0x0184
-> +       }
-> +};
-> +
->  /*
->   * scpsys driver init
->   */
-> @@ -1268,6 +1491,9 @@ static const struct of_device_id of_scpsys_match_tbl[] = {
->         }, {
->                 .compatible = "mediatek,mt8173-scpsys",
->                 .data = &mt8173_data,
-> +       }, {
-> +               .compatible = "mediatek,mt8183-scpsys",
-> +               .data = &mt8183_data,
->         }, {
->                 /* sentinel */
->         }
-> --
-> 2.18.0
->
+> > of_property_match_string() will return -EINVAL if the "clock-names"
+> > property
+> > is missing, or -ENODATA if the specified clock name in the "clock-names"
+> > property is missing. That is why I have changed the code to conditional=
+ly
+> > call __of_clk_get, so the code will correctly treat optional clocks tha=
+t are not
+> > present.
+> When getting named optional clocks, if the node has a "clock-names" prope=
+rty,
+> but no clock matching the name we want, I think the function should stop =
+there
+> and *not* walk up the tree of devices looking for a matching clock. In th=
+is case,
+> the code determines that the optional clock is not present.
+> =
+
+> If there isn=E2=80=99t a "clock-names" property in the current node, the =
+function should
+> walk up the tree of devices looking for a matching optional clock. If the=
+re are no
+> parent nodes left and we haven't found a matching optional clock, we dete=
+rmine
+> that the clock isn=E2=80=99t there.
+> =
+
+> Is that how this should work?
+> =
+
+
+Yes that sounds right.
+
