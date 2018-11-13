@@ -4,56 +4,56 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4083BC43441
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Nov 2018 12:15:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 192CFC43441
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Nov 2018 12:16:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B81D3224E0
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Nov 2018 12:15:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D20CC22360
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Nov 2018 12:16:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="lnXEP2gP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B81D3224E0
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="p7huWozS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D20CC22360
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732766AbeKMWNp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Nov 2018 17:13:45 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:41915 "EHLO
+        id S1732908AbeKMWNy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Nov 2018 17:13:54 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:44207 "EHLO
         mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732675AbeKMWNp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Nov 2018 17:13:45 -0500
-Received: by mail-pl1-f195.google.com with SMTP id p16-v6so5916653plr.8
-        for <linux-clk@vger.kernel.org>; Tue, 13 Nov 2018 04:15:53 -0800 (PST)
+        with ESMTP id S1732750AbeKMWNy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Nov 2018 17:13:54 -0500
+Received: by mail-pl1-f195.google.com with SMTP id s5-v6so5919462plq.11
+        for <linux-clk@vger.kernel.org>; Tue, 13 Nov 2018 04:16:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=S3DG26x2ZzBe5sEydH2iew8fE0iU1Xab92LGdzXFxh8=;
-        b=lnXEP2gPlf5x7Ayqp7+PcrjUV3IuWTgquiLNWfMlkeLYytIe7a/ZFj13sepwHTCI6d
-         ajuIXvNfCjzhhDAZ0Tz3oFyCyrvx4hlUxADkFqjpZABKp3juw11NbDqCaDObP0Exs8QU
-         d41nlaT2jfLphXjP1Rry2aeWe7QzNZcuPpCXA=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=SUgDlnUAaJL306eODgf+h9EXG9jD+4haGZANNglyJ1U=;
+        b=p7huWozS8Zz34RdGWN1yuH2asWWBeyteLOh164AH1wnqmVC9/PPjBpB0KMAZPkJmVk
+         PrWetah3XCnCqSZFwVEpk46ry7IWL6hhbdwnsWsuQ6pwlJhIdrxIg19lFiTu5M0kJEXd
+         /1qosAABW0q0LCJtgzcBcOR2wmy3UhK5c4CDA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=S3DG26x2ZzBe5sEydH2iew8fE0iU1Xab92LGdzXFxh8=;
-        b=LduSnULCH4/d4dR0WR4D+IVNTb/XMvWyYfcxaRynKEdmRr5DdXMaXzVFGEXgdccnoa
-         fV7E06aCg70kCDBM6/VxcLwSg/9y0w8UAalBAWNUETd48T7l1MIboc0iDQPYWiGhNiZe
-         zD2THvlZu8cfErn20pkQu6VXWKO38VQ7ORYveKC1C7mycN4agnm3C+x8ADYgKAepvsjN
-         Oa+8oQDHg6lVvMb2rP9EfJKQ9Sq2C2GZ8PXV48kHIprS8T8IVzkpqypPXqMQJuXMxHIb
-         jY6gj/CAW60aoACBVCQ74HigY/2Fsk3ujmD9RjaXUKUieJT+dHU6uGSImvcFMbQ9Tl5k
-         ksvA==
-X-Gm-Message-State: AGRZ1gJ5ZRLwGSUgUQK47XihbIP5Qpw+30BLr0nxX75OFKdWfviM1Sf1
-        GVkNWnt7wQBwMkxaKF2bSwiWtA==
-X-Google-Smtp-Source: AJdET5d6Jeix63qVc1m1vM2Vm+VgMztjxybqE61XkEhpipUpd3rh+6NfKzaZPOPRLd7quDrlw9qKeQ==
-X-Received: by 2002:a17:902:4623:: with SMTP id o32-v6mr4849659pld.187.1542111352633;
-        Tue, 13 Nov 2018 04:15:52 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=SUgDlnUAaJL306eODgf+h9EXG9jD+4haGZANNglyJ1U=;
+        b=HsXssF7lGIQqWsTGFbsv5VowXQISmOF8NoiQVeYDBZrXtL0gtIOFzWv3sJorNPdxkS
+         ZdsJcTMUS/XoYti3tRXGAwuBAmrv7iVAGoF9rfFrZ4p3wkK1FmZzrWas1evt2zIKLwjP
+         nRbAQ90em83DfZ98LbSAy66Jl//rRBC5WrkFvqPdlTD+SS5zI4HNM5vJJ+WjDEvJoXCS
+         5p+tr1mpUNvJxWVxF525h+0g6IlME4/nr5dU+jRAdXGhu+dDH9xfZCXUWHSZ+LGbuIWY
+         jfO0RawhH7IvADeY8hRXTlKmAOq85G5ZOFSSm2IyfbVWp2g1uMtHoZ/YOxSEVXjPuzCm
+         ce3A==
+X-Gm-Message-State: AGRZ1gIj8qjNP+4kmaGrhNFukfDdjoIdoGpN+JYiLbxZM/vtx0inOs8E
+        Zzr+5H3kDZRwn3pqkwL480jKqg==
+X-Google-Smtp-Source: AJdET5dXyzEW6S/jir8OfYO3MY6LuxP0HrVvEH8dAc9+9jwsV4ebVMosH2S3S0AhCL5oErusgrUO/Q==
+X-Received: by 2002:a17:902:768b:: with SMTP id m11mr2593881pll.80.1542111361597;
+        Tue, 13 Nov 2018 04:16:01 -0800 (PST)
 Received: from localhost.localdomain ([2401:4900:3670:3f11:bc71:2ef7:4a39:e260])
-        by smtp.gmail.com with ESMTPSA id g65sm14312614pfa.63.2018.11.13.04.15.43
+        by smtp.gmail.com with ESMTPSA id g65sm14312614pfa.63.2018.11.13.04.15.53
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 13 Nov 2018 04:15:52 -0800 (PST)
+        Tue, 13 Nov 2018 04:16:01 -0800 (PST)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Maxime Ripard <maxime.ripard@free-electrons.com>,
         Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
@@ -71,10 +71,12 @@ To:     Maxime Ripard <maxime.ripard@free-electrons.com>,
         linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
         linux-amarula@amarulasolutions.com
 Cc:     Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v6 1/4] clk: sunxi-ng: Enable DE2_CCU for SUN8I and SUN50I
-Date:   Tue, 13 Nov 2018 17:45:32 +0530
-Message-Id: <20181113121535.24137-1-jagan@amarulasolutions.com>
+Subject: [PATCH v6 2/4] arm64: defconfig: Enable DRM_SUN8I_MIXER
+Date:   Tue, 13 Nov 2018 17:45:33 +0530
+Message-Id: <20181113121535.24137-2-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
+In-Reply-To: <20181113121535.24137-1-jagan@amarulasolutions.com>
+References: <20181113121535.24137-1-jagan@amarulasolutions.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
@@ -82,35 +84,35 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Allwinner SoC like SUN8I and SUN50I has DE2 CCU so enable them
-as default.
+Allwinner Display Engine 2.0 Mixer is need for ARM64
+Allwinner SoC's, build it as module.
 
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
 Changes for v6:
-- droped "depends on" since the CCU select based on MACH defined. 
+- none
 Changes for v5:
-- remove DRM dependency
+- Enable it on defconfig
 Changes for v4, v3:
 - none
 Changes for v2:
-- Enable for MACH_SUN8I
+- Enable for SUN8I
 
- drivers/clk/sunxi-ng/Kconfig | 1 +
+ arch/arm64/configs/defconfig | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
-index 826674d090fd..abbd518833b5 100644
---- a/drivers/clk/sunxi-ng/Kconfig
-+++ b/drivers/clk/sunxi-ng/Kconfig
-@@ -63,6 +63,7 @@ config SUN8I_V3S_CCU
- 
- config SUN8I_DE2_CCU
- 	bool "Support for the Allwinner SoCs DE2 CCU"
-+	default MACH_SUN8I || (ARM64 && ARCH_SUNXI)
- 
- config SUN8I_R40_CCU
- 	bool "Support for the Allwinner R40 CCU"
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 4b3844480a77..7f271178d421 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -446,6 +446,7 @@ CONFIG_DRM_EXYNOS_HDMI=y
+ CONFIG_DRM_EXYNOS_MIC=y
+ CONFIG_DRM_ROCKCHIP=m
+ CONFIG_DRM_SUN4I=m
++CONFIG_DRM_SUN8I_MIXER=m
+ CONFIG_ROCKCHIP_ANALOGIX_DP=y
+ CONFIG_ROCKCHIP_CDN_DP=y
+ CONFIG_ROCKCHIP_DW_HDMI=y
 -- 
 2.18.0.321.gffc6fa0e3
 
