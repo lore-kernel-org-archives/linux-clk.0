@@ -2,189 +2,139 @@ Return-Path: <SRS0=nRqW=NY=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2374C43441
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Nov 2018 12:22:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6237C43441
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Nov 2018 12:28:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90ABE208E7
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Nov 2018 12:22:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90ABE208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 785772243E
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Nov 2018 12:28:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 785772243E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732675AbeKMWUF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Nov 2018 17:20:05 -0500
-Received: from foss.arm.com ([217.140.101.70]:54254 "EHLO foss.arm.com"
+        id S1732845AbeKMWZz convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Nov 2018 17:25:55 -0500
+Received: from hermes.aosc.io ([199.195.250.187]:37216 "EHLO hermes.aosc.io"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731123AbeKMWUF (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 13 Nov 2018 17:20:05 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 766B9EBD;
-        Tue, 13 Nov 2018 04:22:11 -0800 (PST)
-Received: from donnerap.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 14EC03F5CF;
-        Tue, 13 Nov 2018 04:22:07 -0800 (PST)
-Date:   Tue, 13 Nov 2018 12:22:04 +0000
-From:   Andre Przywara <andre.przywara@arm.com>
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-        linux-amarula@amarulasolutions.com
-Subject: Re: [PATCH v4 25/26] [DO NOT MERGE] arm64: dts: allwinner:
- bananapi-m64: Bananapi S070WV20-CT16 DSI panel
-Message-ID: <20181113122204.337db8b1@donnerap.cambridge.arm.com>
-In-Reply-To: <20181113111633.20189-26-jagan@amarulasolutions.com>
-References: <20181113111633.20189-1-jagan@amarulasolutions.com>
-        <20181113111633.20189-26-jagan@amarulasolutions.com>
-Organization: ARM
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
+        id S1732743AbeKMWZz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 13 Nov 2018 17:25:55 -0500
+Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
+        by hermes.aosc.io (Postfix) with ESMTPSA id 67033A2847;
+        Tue, 13 Nov 2018 12:27:56 +0000 (UTC)
+Date:   Tue, 13 Nov 2018 20:27:50 +0800
+In-Reply-To: <20181113055053.78352-31-sashal@kernel.org>
+References: <20181113055053.78352-1-sashal@kernel.org> <20181113055053.78352-31-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Subject: Re: [PATCH AUTOSEL 4.18 31/39] clk: sunxi-ng: sun50i: h6: Add 2x fixed post-divider to MMC module clocks
+To:     Sasha Levin <sashal@kernel.org>, stable@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+CC:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        linux-clk@vger.kernel.org
+From:   Icenowy Zheng <icenowy@aosc.io>
+Message-ID: <19C4C784-F94E-49D0-883C-12C49EF2676A@aosc.io>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 13 Nov 2018 16:46:32 +0530
-Jagan Teki <jagan@amarulasolutions.com> wrote:
 
-Hi,
 
-> This patch add support for Bananapi S070WV20-CT16 DSI panel to
-> BPI-M64 board.
+于 2018年11月13日 GMT+08:00 下午1:50:45, Sasha Levin <sashal@kernel.org> 写到:
+>From: Icenowy Zheng <icenowy@aosc.io>
+>
+>[ Upstream commit c2ff8383cc33c2d9c169e4daf1e37a434c3bb420 ]
+>
+>On the H6, the MMC module clocks are fixed in the new timing mode,
+>i.e. they do not have a bit to select the mode. These clocks have
+>a 2x divider somewhere between the clock and the MMC module.
+>
+>To be consistent with other SoCs supporting the new timing mode,
+>we model the 2x divider as a fixed post-divider on the MMC module
+>clocks.
+>
+>This patch adds the post-dividers to the MMC clocks, following the
+>approach on A64.
+>
+>Fixes: 524353ea480b ("clk: sunxi-ng: add support for the Allwinner H6
+>CCU")
+>Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+>Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+>Signed-off-by: Sasha Levin <sashal@kernel.org>
+
+Please don't select this, it needs some fixes in MMC driver.
+
+>---
+> drivers/clk/sunxi-ng/ccu-sun50i-h6.c | 43 +++++++++++++++-------------
+> 1 file changed, 23 insertions(+), 20 deletions(-)
+>
+>diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
+>b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
+>index bdbfe78fe133..3d60f7978506 100644
+>--- a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
+>+++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
+>@@ -408,26 +408,29 @@ static SUNXI_CCU_GATE(bus_nand_clk, "bus-nand",
+>"ahb3", 0x82c, BIT(0), 0);
 > 
-> DSI panel connected via board DSI port with,
-> - DC1SW as AVDD supply
-
-Are you sure of that? I don't see anything in the schematic to support
-this. The only power lines that go to the DSI connector are DCDC1 and
-PS. DC1SW is only connected to PortD on the SoC and to the Ethernet PHY.
-Is there anything I miss?
-
-> - DCDC1 as DVDD supply
-
-That seems right, but doesn't match with what you write below.
-
-> - PD6 gpio for reset pin
-> - PD5 gpio for backlight enable pin
-> - PD7 gpio for backlight vdd supply
+>static const char * const mmc_parents[] = { "osc24M", "pll-periph0-2x",
+> 					    "pll-periph1-2x" };
+>-static SUNXI_CCU_MP_WITH_MUX_GATE(mmc0_clk, "mmc0", mmc_parents,
+>0x830,
+>-					0, 4,	/* M */
+>-					8, 2,	/* N */
+>-					24, 3,	/* mux */
+>-					BIT(31),/* gate */
+>-					0);
+>-
+>-static SUNXI_CCU_MP_WITH_MUX_GATE(mmc1_clk, "mmc1", mmc_parents,
+>0x834,
+>-					0, 4,	/* M */
+>-					8, 2,	/* N */
+>-					24, 3,	/* mux */
+>-					BIT(31),/* gate */
+>-					0);
+>-
+>-static SUNXI_CCU_MP_WITH_MUX_GATE(mmc2_clk, "mmc2", mmc_parents,
+>0x838,
+>-					0, 4,	/* M */
+>-					8, 2,	/* N */
+>-					24, 3,	/* mux */
+>-					BIT(31),/* gate */
+>-					0);
+>+static SUNXI_CCU_MP_WITH_MUX_GATE_POSTDIV(mmc0_clk, "mmc0",
+>mmc_parents, 0x830,
+>+					  0, 4,		/* M */
+>+					  8, 2,		/* N */
+>+					  24, 3,	/* mux */
+>+					  BIT(31),	/* gate */
+>+					  2,		/* post-div */
+>+					  0);
+>+
+>+static SUNXI_CCU_MP_WITH_MUX_GATE_POSTDIV(mmc1_clk, "mmc1",
+>mmc_parents, 0x834,
+>+					  0, 4,		/* M */
+>+					  8, 2,		/* N */
+>+					  24, 3,	/* mux */
+>+					  BIT(31),	/* gate */
+>+					  2,		/* post-div */
+>+					  0);
+>+
+>+static SUNXI_CCU_MP_WITH_MUX_GATE_POSTDIV(mmc2_clk, "mmc2",
+>mmc_parents, 0x838,
+>+					  0, 4,		/* M */
+>+					  8, 2,		/* N */
+>+					  24, 3,	/* mux */
+>+					  BIT(31),	/* gate */
+>+					  2,		/* post-div */
+>+					  0);
 > 
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> ---
->  .../dts/allwinner/sun50i-a64-bananapi-m64.dts | 42
-> +++++++++++++++++++ 1 file changed, 42 insertions(+)
-> 
-> diff --git
-> a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
-> b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts index
-> ef1c90401bb2..6cb010e3bbd9 100644 ---
-> a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts +++
-> b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts @@ -45,6
-> +45,7 @@ #include "sun50i-a64.dtsi" 
->  #include <dt-bindings/gpio/gpio.h>
-> +#include <dt-bindings/pwm/pwm.h>
->  
->  / {
->  	model = "BananaPi-M64";
-> @@ -56,6 +57,15 @@
->  		serial1 = &uart1;
->  	};
->  
-> +	backlight: backlight {
-> +		compatible = "pwm-backlight";
-> +		pwms = <&r_pwm 0 50000 PWM_POLARITY_INVERTED>;
-> +		brightness-levels = <1 2 4 8 16 32 64 128 512>;
-> +		default-brightness-level = <2>;
-> +		enable-gpios = <&pio 3 5 GPIO_ACTIVE_HIGH>; /*
-> LCD-BL-EN: PD5 */
-> +		power-supply = <&reg_vdd_backlight>;
-> +	};
-> +
->  	chosen {
->  		stdout-path = "serial0:115200n8";
->  	};
-> @@ -91,6 +101,15 @@
->  		};
->  	};
->  
-> +	reg_vdd_backlight: vdd-backlight {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "vdd-backlight";
-> +		regulator-min-microvolt = <3300000>;
-> +		regulator-max-microvolt = <3300000>;
-> +		gpio = <&pio 3 7 GPIO_ACTIVE_HIGH>; /* LCD-PWR-EN:
-> PD7 */
-> +		enable-active-high;
-> +	};
-> +
->  	wifi_pwrseq: wifi_pwrseq {
->  		compatible = "mmc-pwrseq-simple";
->  		reset-gpios = <&r_pio 0 2 GPIO_ACTIVE_LOW>; /* PL2 */
-> @@ -101,6 +120,23 @@
->  	status = "okay";
->  };
->  
-> +&dphy {
-> +	status = "okay";
-> +};
-> +
-> +&dsi {
-> +	status = "okay";
-> +
-> +	panel@0 {
-> +		compatible = "bananapi,s070wv20-ct16-icn6211";
-> +		reg = <0>;
-> +		avdd-supply = <&reg_dc1sw>;
-
-As mentioned above, I don't see this on the DSI connector.
-
-> +		dvdd-supply = <&reg_dldo1>;
-
-Mmh, this line is connected to the *SoC*, to drive the DSI data lines
-or the DPHY, presumably. So I wouldn't expect it in the panel node, but
-rather in the DPHY or DSI node. Although I can't find a power-supply
-property in those bindings.
-
-Cheers,
-Andre.
-
-> +		reset-gpios = <&pio 3 6 GPIO_ACTIVE_HIGH>; /*
-> LCD-RST: PD6 */
-> +		backlight = <&backlight>;
-> +	};
-> +};
-> +
->  &ehci0 {
->  	status = "okay";
->  };
-> @@ -193,6 +229,12 @@
->  	status = "okay";
->  };
->  
-> +&r_pwm {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&r_pwm_pin>;
-> +	status = "okay";
-> +};
-> +
->  &r_rsb {
->  	status = "okay";
->  
-
+>static SUNXI_CCU_GATE(bus_mmc0_clk, "bus-mmc0", "ahb3", 0x84c, BIT(0),
+>0);
+>static SUNXI_CCU_GATE(bus_mmc1_clk, "bus-mmc1", "ahb3", 0x84c, BIT(1),
+>0);
