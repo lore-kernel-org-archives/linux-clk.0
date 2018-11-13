@@ -4,33 +4,34 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28BACC43441
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Nov 2018 13:08:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E367C43610
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Nov 2018 13:08:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC6372243E
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Nov 2018 13:08:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC6372243E
+	by mail.kernel.org (Postfix) with ESMTP id EC21E2243E
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Nov 2018 13:08:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC21E2243E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733228AbeKMXGX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Nov 2018 18:06:23 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:51580 "EHLO mail.bootlin.com"
+        id S2387463AbeKMXHB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Nov 2018 18:07:01 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:51702 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732728AbeKMXGX (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 13 Nov 2018 18:06:23 -0500
+        id S1732728AbeKMXHA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 13 Nov 2018 18:07:00 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id CB84D22512; Tue, 13 Nov 2018 14:08:17 +0100 (CET)
+        id DA008224F6; Tue, 13 Nov 2018 14:08:54 +0100 (CET)
 Received: from localhost (aaubervilliers-681-1-30-49.w90-88.abo.wanadoo.fr [90.88.15.49])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 1B9E0224E1;
-        Tue, 13 Nov 2018 14:07:36 +0100 (CET)
-Date:   Tue, 13 Nov 2018 14:07:36 +0100
+        by mail.bootlin.com (Postfix) with ESMTPSA id 8D9AB22511;
+        Tue, 13 Nov 2018 14:08:17 +0100 (CET)
+Date:   Tue, 13 Nov 2018 14:08:17 +0100
 From:   Maxime Ripard <maxime.ripard@bootlin.com>
 To:     Jagan Teki <jagan@amarulasolutions.com>
 Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
         Jernej Skrabec <jernej.skrabec@siol.net>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
@@ -43,15 +44,15 @@ Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
         linux-amarula@amarulasolutions.com
-Subject: Re: [PATCH v6 4/4] arm64: defconfig: Enable PWM_SUN4I
-Message-ID: <20181113130736.hckezxs6daen3e7d@flea>
-References: <20181113121535.24137-1-jagan@amarulasolutions.com>
- <20181113121535.24137-4-jagan@amarulasolutions.com>
+Subject: Re: [PATCH v4 01/26] clk: sunxi-ng: a64: Fix gate bit of DSI DPHY
+Message-ID: <20181113130817.nols3red37yj3yit@flea>
+References: <20181113111633.20189-1-jagan@amarulasolutions.com>
+ <20181113111633.20189-2-jagan@amarulasolutions.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ipbellgz27pocypc"
+        protocol="application/pgp-signature"; boundary="2ivucfeamb4z5i5b"
 Content-Disposition: inline
-In-Reply-To: <20181113121535.24137-4-jagan@amarulasolutions.com>
+In-Reply-To: <20181113111633.20189-2-jagan@amarulasolutions.com>
 User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
@@ -59,18 +60,19 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---ipbellgz27pocypc
+--2ivucfeamb4z5i5b
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 13, 2018 at 05:45:35PM +0530, Jagan Teki wrote:
-> Allwinner PWM support need for ARM64 Allwinner SoC's
-> which used pwms, builds it as module.
+On Tue, Nov 13, 2018 at 04:46:08PM +0530, Jagan Teki wrote:
+> DSI DPHY gate bit on MIPI DSI clock register is bit 15
+> not bit 30.
 >=20
 > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
 
-Applied all 4 patches, thanks!
+Applied, thanks!
 Maxime
 
 --=20
@@ -78,15 +80,15 @@ Maxime Ripard, Bootlin
 Embedded Linux and Kernel engineering
 https://bootlin.com
 
---ipbellgz27pocypc
+--2ivucfeamb4z5i5b
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW+rMmAAKCRDj7w1vZxhR
-xeU1AP4n4DJ/KQZ5FJqyC0E8T48yCyvxE3nJORad+vXY1lwT2QD/TY/TO76gQNys
-ttfN/d8yc+PRLVlkWMkH1W1yP3WnggU=
-=BjAf
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW+rMwQAKCRDj7w1vZxhR
+xcc0APwLRoOPTJMLfdwGx+5z11VZfudQywuR0oxtG/CqOQUSlQEA0RiX2HXapp7Y
+N2Uh+XbiciusSCCpre2WN6KfrauotA4=
+=06dP
 -----END PGP SIGNATURE-----
 
---ipbellgz27pocypc--
+--2ivucfeamb4z5i5b--
