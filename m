@@ -2,116 +2,128 @@ Return-Path: <SRS0=4aIB=NZ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D989DC43441
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Nov 2018 22:50:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D342C43441
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Nov 2018 22:57:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A27812145D
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Nov 2018 22:50:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB7D92175B
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Nov 2018 22:57:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="YCC1kISI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A27812145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="fl3hMS5D"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB7D92175B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=googlemail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728521AbeKOIzn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 15 Nov 2018 03:55:43 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:38748 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727274AbeKOIzm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Nov 2018 03:55:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=F8RtN3HoQPny4cTPFpRqfEsApn+Tsu34i3IPAozZvH0=; b=YCC1kISI5P1tjHa1OhEjv6/JT
-        I44S8zJBNMb97WHIFZSkDkUDaj5P7CNkF/A/3CQIcM3KHpXopwo91uJuYnwZIYF/23bja5t/m6upq
-        5YcDw63W4xfFvb/qqAJuK+xICjrbnisvq2WdD1dLgpTq5hqdthgv2HCHQxNt/Q6DvJeLE=;
-Received: from [64.114.255.97] (helo=finisterre.ee.mobilebroadband)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gN3YD-0004aF-Bw; Wed, 14 Nov 2018 22:22:21 +0000
-Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 501D1440078; Wed, 14 Nov 2018 22:22:15 +0000 (GMT)
-Date:   Wed, 14 Nov 2018 14:22:15 -0800
-From:   Mark Brown <broonie@kernel.org>
-To:     Tony Xie <tony.xie@rock-chips.com>
-Cc:     heiko@sntech.de, lee.jones@linaro.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
-        xsf@rock-chips.com, zhangqing@rock-chips.com,
-        huangtao@rock-chips.com
-Subject: Re: [PATCH v6 1/6] regmap: add a new macro:REGMAP_IRQ_REG_LINE(_id,
- _reg_bits)
-Message-ID: <20181114222215.GD2089@sirena.org.uk>
-References: <1540894081-31270-1-git-send-email-tony.xie@rock-chips.com>
- <1540894081-31270-2-git-send-email-tony.xie@rock-chips.com>
+        id S1727325AbeKOJDI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 15 Nov 2018 04:03:08 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:35576 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727118AbeKOJDH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Nov 2018 04:03:07 -0500
+Received: by mail-wm1-f65.google.com with SMTP id t15-v6so16294795wmt.0;
+        Wed, 14 Nov 2018 14:57:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=4+/Hf7JsCBuVFCzuyYowMXG14ZwLezEzin4Fj9FD7+Y=;
+        b=fl3hMS5DXZJKuKCmTl7flStFHW6obyR1q+8M9em0Cyq3Ht6dVS5np+lS732pKLacZR
+         Ox1RkxwDL7zR732ujX1wO5NyMp5jmKWGKYRHDAY6NW3dn6pNCxS08G1I8UrHYwdYp4Aq
+         feddQ+IXb7RNTEM+pHGGqtOx+O1+ajIOQiipU/AQRd7JExjzIFi2YjwC7GyuprNn2V+W
+         DMqZvS7MPCXmEEjcwdMDTQtrmwkmSASsjbcNAN0WASSY3fUiieCTwrAai0sgKUnlBc5V
+         Hir9xNBofSJhPDyia1VcHNKfQfV5uIavBJnO9B1MOkQCb2d27MIBHr5NxJMlI8mNyFdR
+         eF2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=4+/Hf7JsCBuVFCzuyYowMXG14ZwLezEzin4Fj9FD7+Y=;
+        b=Lb+6cQVwPghQpWzi3XBcfuYmFYLiy5J++Zh6qz+KeBjMfuxp378AllFdR2FI38NSKl
+         JLlvxQmOBXHc3AL12A+Evh/qIjhDV2uZnogTp2hKLgHkwHwTz5kpHI+LC4iEuHsRAVWs
+         8Gm9mdVoPx4qKFJlTfTaqzGE2epExrdjmai0xsnZnQmW/7o+s1RdC2xkj/YRNcoGh+kA
+         NcnM17fHWz0U3K2mKLR/qfuPnEYN6vlVHTtStu0ER7qlo+3nQIGkO6jEH2Ie/HnvkjUY
+         BtVAZlvA0V/COXrUYdh6gN8Bu1zjf6d9W1VvHn3xX1jYDbojuoGqHG0U+/8tLCd06Utc
+         OKIQ==
+X-Gm-Message-State: AGRZ1gJ+wlXQLM0Q6VNCl7ZJz9xu25pUMXeq70zdRIA/FKfFkvuv0EfH
+        7SBX4mxSq0SvAgRg66auMPk=
+X-Google-Smtp-Source: AJdET5crq9BB6HY4nUhLIqOpPWHXkDWwgo1fhSAvnEFbBQ75RtrRmUqur4fD+VedwDybx2XjKNSnJw==
+X-Received: by 2002:a1c:2ecf:: with SMTP id u198-v6mr3546573wmu.77.1542236270641;
+        Wed, 14 Nov 2018 14:57:50 -0800 (PST)
+Received: from blackbox.darklights.net (p200300DCD717A100301AB549B11D5ACB.dip0.t-ipconnect.de. [2003:dc:d717:a100:301a:b549:b11d:5acb])
+        by smtp.googlemail.com with ESMTPSA id n7-v6sm18987784wrt.60.2018.11.14.14.57.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 14 Nov 2018 14:57:49 -0800 (PST)
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To:     linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        jbrunet@baylibre.com, narmstrong@baylibre.com
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [RFC v1 0/7] Meson8b: make the CPU clock mutable
+Date:   Wed, 14 Nov 2018 23:57:18 +0100
+Message-Id: <20181114225725.2821-1-martin.blumenstingl@googlemail.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="zokm/imjT5TjLIDZ"
-Content-Disposition: inline
-In-Reply-To: <1540894081-31270-2-git-send-email-tony.xie@rock-chips.com>
-X-Cookie: No Canadian coins.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+This allows changing the CPU clock on the 32-bit Amlogic Meson SoCs
+(Meson8, Meson8b and Meson8m2).
+CPU frequency scaling will be enabled with a separate series by adding
+the CPU clock and the OPP tables to meson8.dtsi and meson8b.dtsi.
 
---zokm/imjT5TjLIDZ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+While changing the CPU frequency (sys_pll or any of it's post-dividers)
+we need to run the CPU clock off the XTAL clock. Otherwise the system
+will lock up because we need to disable the sys_pll to change it's
+rate.
 
-On Tue, Oct 30, 2018 at 06:07:56PM +0800, Tony Xie wrote:
-> if there are lots of irqs for a device and the register addresses for these
-> irqs is continuous, we can use this macro to initialize regmap_irq value.
+This also makes the clk-pll's .enable hook a no-op if the clock is
+already enabled. Otherwise we're getting lockups when calling the
+first clk_{prepare_}enable on the sys_pll or any of it's children (as
+the CCF propagates the enable event up to the sys_pll). This is because
+the .enable hook unconditionally disables and enables the clock.
+However, we can't disable that clock (not even temporarily) if the CPU
+is running off sys_pll.
 
-The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
+Additionally this adds support for more M/N combinations in sys_pll to
+achieve all of the OPPs on Meson8b and all OPPs <= 1608 MHz on Meson8
+and Meson8m2.
 
-  Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
+Compared to Amlogic's 3.10 kernel there's one notable difference: we
+are actually allowing changes to the sys_pll. Amlogic's kernel sets
+sys_pll to a fixed rate during boot and then uses a timer generate a
+"virtual clock rate" by toggling between various dividers (for example:
+sys_pll is set to 1536MHz. to achieve 1008MHz they are toggling every
+2500us between 1536MHZ and 768MHz so the average over <period, for
+example one second> is 1008MHz).
+I could reproduce any situation where changing sys_pll failed (for
+example due to high temperature). To prove that I ran "stress --cpu 4"
+for multiple hours and then cycled through all available CPU
+frequencies (while keeping "stress" running in the background). This
+worked fine on my Meson8b Odroid-C1 and EC-100 boards as well as my
+Meson8m2 board.
 
-are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git tags/regmap-irq-line
+Martin Blumenstingl (7):
+  clk: meson: meson8b: run from the XTAL when changing the CPU frequency
+  clk: meson: meson8b: do not use cpu_div3 for cpu_scale_out_sel
+  clk: meson: clk-pll: check if the clock is already enabled
+  clk: meson: clk-pll: add the is_enabled function in the clk_ops
+  clk: meson: meson8b: mark the CPU clock as CLK_IS_CRITICAL
+  clk: meson: meson8b: add support for more M/N values in sys_pll
+  clk: meson: meson8b: allow changing the CPU clock tree
 
-for you to fetch changes up to 43fac3238c1d9363b2a93d8d56c2be0c29c64e6c:
+ drivers/clk/meson/clk-pll.c | 23 +++++++++
+ drivers/clk/meson/meson8b.c | 94 +++++++++++++++++++++++++++++++++----
+ 2 files changed, 108 insertions(+), 9 deletions(-)
 
-  regmap: add a new macro:REGMAP_IRQ_REG_LINE(_id, _reg_bits) (2018-11-14 14:20:45 -0800)
+-- 
+2.19.1
 
-----------------------------------------------------------------
-regmap: Add an IRQ_LINE macro to help defining regmap-irq tables
-
-----------------------------------------------------------------
-Tony Xie (1):
-      regmap: add a new macro:REGMAP_IRQ_REG_LINE(_id, _reg_bits)
-
- include/linux/regmap.h | 6 ++++++
- 1 file changed, 6 insertions(+)
-
---zokm/imjT5TjLIDZ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlvsoBYACgkQJNaLcl1U
-h9AohQf8DKOpuLYQeprG6Yd0xJvtsXz1Ktv2508YsUJgX45xIZTt1Svw88D8+xhB
-9t2feqe8HSskGnQ2PU9ecDAGYMcUqzfaAp+3EvVynZme+tENOZRT5oAJpQjOw3mI
-6rZadavHxlGyLoVuCXJC3hdpu1dsjoclMWX0aYVLTGun631DCHya8ubJSX7Qu+4Y
-5AZNvT4GPCEUaHNmEi6Dr8eZH4oxlIec2NqmV1CsHUTsOf+XCKwpIVlzP7eEKNj0
-WPZ4ZYO0TVbqfXgXlV2/hajafjF3q3GabrJwreD8T/+ZbnrwuHGqSsXGblK37IGp
-Qm8ZZIpLs4N3BxadCAl/7jMJYHsQMw==
-=KajA
------END PGP SIGNATURE-----
-
---zokm/imjT5TjLIDZ--
