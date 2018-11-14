@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC1FFC43441
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Nov 2018 13:02:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9650C43610
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Nov 2018 13:02:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B82022360
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Nov 2018 13:02:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5EB7222360
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Nov 2018 13:02:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="Gbq5VLA/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B82022360
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="vEba+FWD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EB7222360
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733030AbeKNXFN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Nov 2018 18:05:13 -0500
-Received: from mail-eopbgr130084.outbound.protection.outlook.com ([40.107.13.84]:16800
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        id S2387485AbeKNXF0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Nov 2018 18:05:26 -0500
+Received: from mail-eopbgr40053.outbound.protection.outlook.com ([40.107.4.53]:57728
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1733021AbeKNXFN (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 14 Nov 2018 18:05:13 -0500
+        id S1733004AbeKNXFZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 14 Nov 2018 18:05:25 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tg/1rh4wBmVDadNyvr1KevifY1vHFXdP1rgVWZDG3Zo=;
- b=Gbq5VLA/jjuf2fe2xFqxt5+BN2lXKqv6YgY11Sq7VnF+lUInPnav6FSQIFOuSEw7R8J/zpNqebLY+PxLnKSbZMxo8cSP6XBTsyzVAQgYNimB0N4B1zrC45ZkGZzJ2X1DhzXkP3zBo5zR6JeeIA6tg4OqHCUxS+N1Ld2Xq0SPatc=
+ bh=p11sQb8OtFWFbvMzPfNrTRxmUTIktvZ/J3VxNFHEVJY=;
+ b=vEba+FWDEBid6SJFVfgjtx71iMaVdmAs5l6/yOi8yJBq83vyyJWd/fPUqcs7m0u9hd3GiwATqW+LVxTDHMyAtlkIosCLdOfeHh2dOdeaxTWbzwnmZJNs5nUIBzTBYdgKNw1AUk49t1dB7vPQiafoOmCQjn2BLNz/DANFH3I2ixM=
 Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.126.21) by
- AM0PR04MB5985.eurprd04.prod.outlook.com (20.178.114.11) with Microsoft SMTP
+ AM0PR04MB4931.eurprd04.prod.outlook.com (20.176.215.216) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1294.20; Wed, 14 Nov 2018 13:02:00 +0000
+ 15.20.1294.31; Wed, 14 Nov 2018 13:02:08 +0000
 Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
  ([fe80::797a:f972:9281:6d10]) by AM0PR04MB4211.eurprd04.prod.outlook.com
  ([fe80::797a:f972:9281:6d10%2]) with mapi id 15.20.1294.045; Wed, 14 Nov 2018
- 13:02:00 +0000
+ 13:02:08 +0000
 From:   "A.s. Dong" <aisheng.dong@nxp.com>
 To:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
 CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
@@ -49,11 +49,11 @@ CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Jacky Bai <ping.bai@nxp.com>, dl-linux-imx <linux-imx@nxp.com>,
         "A.s. Dong" <aisheng.dong@nxp.com>,
         Stephen Boyd <sboyd@codeaurora.org>
-Subject: [PATCH V6 7/9] clk: imx: make mux parent strings const
-Thread-Topic: [PATCH V6 7/9] clk: imx: make mux parent strings const
-Thread-Index: AQHUfBo7I6cYLtI/ckmZJ0WKpHh1wA==
-Date:   Wed, 14 Nov 2018 13:02:00 +0000
-Message-ID: <1542200198-3017-8-git-send-email-aisheng.dong@nxp.com>
+Subject: [PATCH V6 9/9] clk: imx: add imx7ulp clk driver
+Thread-Topic: [PATCH V6 9/9] clk: imx: add imx7ulp clk driver
+Thread-Index: AQHUfBo/EdMn2RjnOkepQ5a3S64SEg==
+Date:   Wed, 14 Nov 2018 13:02:08 +0000
+Message-ID: <1542200198-3017-10-git-send-email-aisheng.dong@nxp.com>
 References: <1542200198-3017-1-git-send-email-aisheng.dong@nxp.com>
 In-Reply-To: <1542200198-3017-1-git-send-email-aisheng.dong@nxp.com>
 Accept-Language: zh-CN, en-US
@@ -69,170 +69,410 @@ authentication-results: spf=none (sender IP is )
 x-ms-exchange-messagesentrepresentingtype: 1
 x-originating-ip: [119.31.174.66]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM0PR04MB5985;6:bcXZ0/yMvxInZ98eqfYQjOZRA0cMw/953KZF/f6JImKmklknIbe3zamHzWYFCggA3ytpGo/QPlDanZCj39Kt1pXCZi8/Vo4QF4QFkkYMv7v4eViFUNr5NUjMJ5dgMmCX1mXH9e3sAGpKR73KuXs5Sqc+rbKe9BUQoeu605YtsxxA0KeBe37OAdAimKIq+uFkomfE6ypJ7wPtNod+ka4nw6UAYAoo4Qcoow2FjfBnLpM84W4HS+l8Yv6eG7wiIdXKYeV/k9vkBaLvq4vlua1apo+c+w9XxPcC8hZIZ7CtcT/ci7Z1BInU8gf3a8CAgipobtwGQfuwrbx/ZBn80HlH344y+5/D5EprYs9dlzX4grWu0IITFfd/7wEKGd44D6Fpn+bP8vuLNck2w1I1Bm4SfjSVycK1qpBSID9MaApEIx9BD4D5dXnRBgkelvTNYH5SxAVaec/aB/xekOBxNGkDhQ==;5:sVImCZ/voCjpQs/xgRdoPF4buLn4Zh9Tvg758HtQtTWvomLB+g+inY3EpqD7Wpw6+6meoZr7LVj99v2yZqgTibd7PG706pFfW3/uKp285WA0rJ/OoPS9dueOV5dx0tWghshw4bE4JbkVuhkyElD4PIWln3+eEqpzTQELobo3Jdc=;7:7QUYlDoJFt8vZmFZSqge2pO4Esz21X01BYHYXcE9Pagzi1TbGUfw308YiSRNqeSyaw0aCXX9c0RrUuzmm0058qTDolkpIimk3uJ0MUwvA9fK+lLQdqNWxwjEAvNo0vPFt/jHQsBojpI6ymiS+mLzbg==
-x-ms-office365-filtering-correlation-id: 3eb220ec-509f-44df-c3fa-08d64a315d65
+x-microsoft-exchange-diagnostics: 1;AM0PR04MB4931;6:EzAB12UDKPp3VtVdrynrzHZMh5U7kBwNNmsJrrYX9/O2VEsrUrODtgdPRorZNgL09JsT1Amwdk4ML8nMFdw3EB4cpPcB/fQW5/UwVq1kGJJb8XuU1JeUjVTFLWr3LmUTuKTNQKRvWWdefkzUi8/PAwe4f7jHMYWyZY4/uHnqpAACtNf+G4g+AkjzMY7heJ/vqoIj6NVNKJk9Zf/fK5GtQhsWMKG7WAu+Q6VEFgNfV7s7r5utmQLlDPFc216Q8lAH0I8x7k63dnfLeN1ZrXSkzsntiNM/GPjc8Fv398rG+EF09rKiPmMszX2meIsQoz9+7TAcDOlz3bDDC2/ghgVk+nqywL0CSeBqWrqLaEaSp0S0xjpzffZ3jnE2fgXecNZl7qE83RneoxRDUdUHU3C1QwvLjummoynUy/x53ARsWtM2gKq4UV7HYxjsFGrLYEOm3DbUF5r295VaRTWk1/dVaA==;5:987kPzifBdhUuER+zf0N5FedehRNuaDYu4lsgx0nbS8kKzC+IWD90SEMuVjF+HpmSxYKDVPBnGT2KcxHbg3pfXRy9xEy3OrCp4N6jTMwyQ5nn/zElxCsFyUfeI+BzCzD0Y/pDfsjvsXt+e7mkAQxZwYK7gEl+2Lc867rDu7Orn4=;7:SLvcbPLUVddv/yFfPD1/jT8ta0pUaEWXAZe7TZkDGp05O0HMy0WnT+PCb6bzSH9K0EbOI0lztnTURrDXWNWX8D5wpUn2a5jFeOFh7tup95cytSJkXfoMqY0IBmENaUVkDqulHf8e8jiC0BwxZbH5vg==
+x-ms-office365-filtering-correlation-id: b8d0bcbe-375f-4766-3446-08d64a316208
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB5985;
-x-ms-traffictypediagnostic: AM0PR04MB5985:
-x-microsoft-antispam-prvs: <AM0PR04MB59852D13ED02B6927BB5C6BE80C30@AM0PR04MB5985.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(185117386973197);
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB4931;
+x-ms-traffictypediagnostic: AM0PR04MB4931:
+x-microsoft-antispam-prvs: <AM0PR04MB4931F27EA61F75854483E08580C30@AM0PR04MB4931.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(269456686620040)(185117386973197);
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231382)(944501410)(52105112)(3002001)(10201501046)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:AM0PR04MB5985;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB5985;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231382)(944501410)(52105112)(3002001)(10201501046)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:AM0PR04MB4931;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB4931;
 x-forefront-prvs: 085634EFF4
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(346002)(396003)(366004)(39860400002)(376002)(54534003)(189003)(199004)(6916009)(305945005)(316002)(446003)(54906003)(476003)(14454004)(2616005)(68736007)(5660300001)(11346002)(53936002)(14444005)(8676002)(486006)(105586002)(7736002)(256004)(186003)(25786009)(4326008)(2906002)(99286004)(6512007)(6116002)(52116002)(81156014)(66066001)(81166006)(3846002)(76176011)(5640700003)(50226002)(386003)(6506007)(102836004)(71200400001)(71190400001)(26005)(86362001)(106356001)(2351001)(2900100001)(2501003)(6436002)(6486002)(97736004)(8936002)(36756003)(478600001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5985;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(136003)(39860400002)(346002)(366004)(376002)(54534003)(199004)(189003)(26005)(2351001)(106356001)(186003)(478600001)(2906002)(76176011)(316002)(2900100001)(86362001)(105586002)(14454004)(54906003)(5660300001)(386003)(52116002)(6506007)(50226002)(97736004)(2501003)(36756003)(102836004)(99286004)(8936002)(256004)(14444005)(8676002)(68736007)(81166006)(81156014)(25786009)(11346002)(446003)(2616005)(476003)(486006)(3846002)(6116002)(4744004)(71190400001)(71200400001)(7736002)(6486002)(6916009)(305945005)(66066001)(6512007)(4326008)(5640700003)(53936002)(6436002)(53946003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4931;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:3;
 received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: 5O5d5ARx/sEhnZYOQblweJARtN09PX9L7sc3GgjhpJ0hi0VvqZvt9mauJPrQzWRJGDVgkiqBTGMVvGP1UJ7MDlKno1j69dPo4lL/JJTJW913dder0OuEobnQ1FkIeud63k4iJ/vHNKDCEo8az8yzjPTcKNOKvwLJ/OCx6bO0hKLQmTuEO8HAthNvXZfNzH9eAD5D2M6/rx4U7B3oFqar959KosIziW1o+zZQcYxzzBcWLk6NEF9lVI5L15yAeXWZD1n+nH+42J2uCgCzK908OXZqVP48yluCblrRb4nPiFgpNewB7BKfAP4oqXZGS3rpkt1EvFvNK1Qg5Y/mpPX21iH8KvaobCgT501SsUOC+yg=
+x-microsoft-antispam-message-info: Zis6QEVjfkAB96UyD1DdpJiGHJH2/4QEUdGdEsLNikTJgpRGohwHYRgcYAF4FtiJ+2eHbDzI9Lmm/jeWdMVd4563Fl9GKSVtxOQ0Fv2X4VHW/5BzMGLH/hEXRQJ6TB/oH3O5uVvHkX/Lc5jT/8pb5wQXiUJqiE9P0no/8R+PKKqdi/7lY/b0bDNY48WgAUKRZ/abfKHGglO3rM+1lKAoo5yie2/sVHhnJBY/nFttGvptZsac1TF45rJBrBbKnyvcW5/1dD4QCWx7oDR6iuu4n5u95tJ0lxdlEwjwA5f6AU/x2U+q1C75w8I0GiWohZ9Ex43SIXcEpp+6+/luqZprx1nbwDEolznTNVs8voy7ctg=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3eb220ec-509f-44df-c3fa-08d64a315d65
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Nov 2018 13:02:00.2999
+X-MS-Exchange-CrossTenant-Network-Message-Id: b8d0bcbe-375f-4766-3446-08d64a316208
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Nov 2018 13:02:08.0893
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5985
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4931
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-As the commit 2893c379461a ("clk: make strings in parent name arrays
-const"), let's make the parent strings const, otherwise we may meet
-the following warning when compiling:
+i.MX7ULP Clock functions are under joint control of the System
+Clock Generation (SCG) modules, Peripheral Clock Control (PCC)
+modules, and Core Mode Controller (CMC)1 blocks
 
-drivers/clk/imx/clk-imx7ulp.c: In function 'imx7ulp_clocks_init':
-drivers/clk/imx/clk-imx7ulp.c:73:35: warning: passing argument 5 of
-	'imx_clk_mux_flags' discards 'const' qualifier from pointer target type
+The clocking scheme provides clear separation between M4 domain
+and A7 domain. Except for a few clock sources shared between two
+domains, such as the System Oscillator clock, the Slow IRC (SIRC),
+and and the Fast IRC clock (FIRCLK), clock sources and clock
+management are separated and contained within each domain.
 
-  clks[IMX7ULP_CLK_APLL_PRE_SEL] =3D imx_clk_mux_flags("apll_pre_sel", base=
- + 0x508, 0,
-	1, pll_pre_sels, ARRAY_SIZE(pll_pre_sels), CLK_SET_PARENT_GATE);
-                                   ^
-In file included from drivers/clk/imx/clk-imx7ulp.c:23:0:
-drivers/clk/imx/clk.h:200:27: note: expected 'const char **' but argument i=
-s
- of type 'const char * const*'
-...
+M4 clock management consists of SCG0, PCC0, PCC1, and CMC0 modules.
+A7 clock management consists of SCG1, PCC2, PCC3, and CMC1 modules.
+
+This driver only adds clock support in A7 domain.
+
+Note that most clocks required to be operated when gated, e.g. pll,
+pfd, pcc. And more special cases that scs/ddr/nic mux selecting
+different clock source requires that clock to be enabled first,
+then we need set CLK_OPS_PARENT_ENABLE flag for them properly.
 
 Cc: Stephen Boyd <sboyd@codeaurora.org>
 Cc: Michael Turquette <mturquette@baylibre.com>
 Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Anson Huang <Anson.Huang@nxp.com>
+Cc: Bai Ping <ping.bai@nxp.com>
 Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 
 ---
 ChangeLog:
-v1->v4: no changes
+v5->v6:
+ * sosc/firc/dpll/ddr clock should use divider table as they're not 1:1
+v4->v5:
+ * clk-composite API name changed accordingly
+v3->v4:
+ * update after changing scg and pcc into separete nodes according to
+   Rob's suggestion
+v2->v3:
+ * no changes
+v1->v2:
+ * use of_clk_add_hw_provider instead
+ * split the clocks register process into two parts: early part for possibl=
+e
+   timers clocks registered by CLK_OF_DECLARE_DRIVER and the later part for
+   the left normal peripheral clocks registered by a platform driver.
 ---
- drivers/clk/imx/clk-busy.c      |  2 +-
- drivers/clk/imx/clk-fixup-mux.c |  2 +-
- drivers/clk/imx/clk.h           | 18 +++++++++++-------
- 3 files changed, 13 insertions(+), 9 deletions(-)
+ drivers/clk/imx/Makefile      |   1 +
+ drivers/clk/imx/clk-imx7ulp.c | 220 ++++++++++++++++++++++++++++++++++++++=
+++++
+ 2 files changed, 221 insertions(+)
+ create mode 100644 drivers/clk/imx/clk-imx7ulp.c
 
-diff --git a/drivers/clk/imx/clk-busy.c b/drivers/clk/imx/clk-busy.c
-index 9903652..e695622 100644
---- a/drivers/clk/imx/clk-busy.c
-+++ b/drivers/clk/imx/clk-busy.c
-@@ -154,7 +154,7 @@ static const struct clk_ops clk_busy_mux_ops =3D {
-=20
- struct clk *imx_clk_busy_mux(const char *name, void __iomem *reg, u8 shift=
-,
- 			     u8 width, void __iomem *busy_reg, u8 busy_shift,
--			     const char **parent_names, int num_parents)
-+			     const char * const *parent_names, int num_parents)
- {
- 	struct clk_busy_mux *busy;
- 	struct clk *clk;
-diff --git a/drivers/clk/imx/clk-fixup-mux.c b/drivers/clk/imx/clk-fixup-mu=
-x.c
-index c9b327e..44817c1 100644
---- a/drivers/clk/imx/clk-fixup-mux.c
-+++ b/drivers/clk/imx/clk-fixup-mux.c
-@@ -70,7 +70,7 @@ static const struct clk_ops clk_fixup_mux_ops =3D {
- };
-=20
- struct clk *imx_clk_fixup_mux(const char *name, void __iomem *reg,
--			      u8 shift, u8 width, const char **parents,
-+			      u8 shift, u8 width, const char * const *parents,
- 			      int num_parents, void (*fixup)(u32 *val))
- {
- 	struct clk_fixup_mux *fixup_mux;
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index 2e3bcfa..3886979 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -69,7 +69,7 @@ struct clk *imx_clk_busy_divider(const char *name, const =
-char *parent_name,
-=20
- struct clk *imx_clk_busy_mux(const char *name, void __iomem *reg, u8 shift=
-,
- 			     u8 width, void __iomem *busy_reg, u8 busy_shift,
--			     const char **parent_names, int num_parents);
-+			     const char * const *parent_names, int num_parents);
-=20
- struct clk_hw *imx7ulp_clk_composite(const char *name,
- 				     const char * const *parent_names,
-@@ -82,7 +82,7 @@ struct clk *imx_clk_fixup_divider(const char *name, const=
- char *parent,
- 				  void (*fixup)(u32 *val));
-=20
- struct clk *imx_clk_fixup_mux(const char *name, void __iomem *reg,
--			      u8 shift, u8 width, const char **parents,
-+			      u8 shift, u8 width, const char * const *parents,
- 			      int num_parents, void (*fixup)(u32 *val));
-=20
- static inline struct clk *imx_clk_fixed(const char *name, int rate)
-@@ -91,7 +91,8 @@ static inline struct clk *imx_clk_fixed(const char *name,=
- int rate)
- }
-=20
- static inline struct clk *imx_clk_mux_ldb(const char *name, void __iomem *=
-reg,
--		u8 shift, u8 width, const char **parents, int num_parents)
-+			u8 shift, u8 width, const char * const *parents,
-+			int num_parents)
- {
- 	return clk_register_mux(NULL, name, parents, num_parents,
- 			CLK_SET_RATE_NO_REPARENT | CLK_SET_RATE_PARENT, reg,
-@@ -204,7 +205,8 @@ static inline struct clk *imx_clk_gate4(const char *nam=
-e, const char *parent,
- }
-=20
- static inline struct clk *imx_clk_mux(const char *name, void __iomem *reg,
--		u8 shift, u8 width, const char **parents, int num_parents)
-+			u8 shift, u8 width, const char * const *parents,
-+			int num_parents)
- {
- 	return clk_register_mux(NULL, name, parents, num_parents,
- 			CLK_SET_RATE_NO_REPARENT, reg, shift,
-@@ -212,7 +214,8 @@ static inline struct clk *imx_clk_mux(const char *name,=
- void __iomem *reg,
- }
-=20
- static inline struct clk *imx_clk_mux2(const char *name, void __iomem *reg=
-,
--		u8 shift, u8 width, const char **parents, int num_parents)
-+			u8 shift, u8 width, const char * const *parents,
-+			int num_parents)
- {
- 	return clk_register_mux(NULL, name, parents, num_parents,
- 			CLK_SET_RATE_NO_REPARENT | CLK_OPS_PARENT_ENABLE,
-@@ -220,8 +223,9 @@ static inline struct clk *imx_clk_mux2(const char *name=
-, void __iomem *reg,
- }
-=20
- static inline struct clk *imx_clk_mux_flags(const char *name,
--		void __iomem *reg, u8 shift, u8 width, const char **parents,
--		int num_parents, unsigned long flags)
-+			void __iomem *reg, u8 shift, u8 width,
-+			const char * const *parents, int num_parents,
-+			unsigned long flags)
- {
- 	return clk_register_mux(NULL, name, parents, num_parents,
- 			flags | CLK_SET_RATE_NO_REPARENT, reg, shift, width, 0,
+diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
+index a5cab3e..615b413 100644
+--- a/drivers/clk/imx/Makefile
++++ b/drivers/clk/imx/Makefile
+@@ -30,4 +30,5 @@ obj-$(CONFIG_SOC_IMX6SLL) +=3D clk-imx6sll.o
+ obj-$(CONFIG_SOC_IMX6SX) +=3D clk-imx6sx.o
+ obj-$(CONFIG_SOC_IMX6UL) +=3D clk-imx6ul.o
+ obj-$(CONFIG_SOC_IMX7D)  +=3D clk-imx7d.o
++obj-$(CONFIG_SOC_IMX7ULP) +=3D clk-imx7ulp.o
+ obj-$(CONFIG_SOC_VF610)  +=3D clk-vf610.o
+diff --git a/drivers/clk/imx/clk-imx7ulp.c b/drivers/clk/imx/clk-imx7ulp.c
+new file mode 100644
+index 0000000..3b7507f
+--- /dev/null
++++ b/drivers/clk/imx/clk-imx7ulp.c
+@@ -0,0 +1,220 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Copyright (C) 2016 Freescale Semiconductor, Inc.
++ * Copyright 2017~2018 NXP
++ *
++ * Author: Dong Aisheng <aisheng.dong@nxp.com>
++ *
++ */
++
++#include <dt-bindings/clock/imx7ulp-clock.h>
++#include <linux/clk.h>
++#include <linux/err.h>
++#include <linux/init.h>
++#include <linux/io.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/platform_device.h>
++#include <linux/slab.h>
++
++#include "clk.h"
++
++static const char * const pll_pre_sels[]	=3D { "sosc", "firc", };
++static const char * const spll_pfd_sels[]	=3D { "spll_pfd0", "spll_pfd1", =
+"spll_pfd2", "spll_pfd3", };
++static const char * const spll_sels[]		=3D { "spll", "spll_pfd_sel", };
++static const char * const apll_pfd_sels[]	=3D { "apll_pfd0", "apll_pfd1", =
+"apll_pfd2", "apll_pfd3", };
++static const char * const apll_sels[]		=3D { "apll", "apll_pfd_sel", };
++static const char * const scs_sels[]		=3D { "dummy", "sosc", "sirc", "firc=
+", "dummy", "apll_sel", "spll_sel", "upll", };
++static const char * const ddr_sels[]		=3D { "apll_pfd_sel", "upll", };
++static const char * const nic_sels[]		=3D { "firc", "ddr_clk", };
++static const char * const periph_plat_sels[]	=3D { "dummy", "nic1_bus_clk"=
+, "nic1_clk", "ddr_clk", "apll_pfd2", "apll_pfd1", "apll_pfd0", "upll", };
++static const char * const periph_bus_sels[]	=3D { "dummy", "sosc_bus_clk",=
+ "mpll", "firc_bus_clk", "rosc", "nic1_bus_clk", "nic1_clk", "spll_bus_clk"=
+, };
++
++/* used by sosc/sirc/firc/ddr/spll/apll dividers */
++static const struct clk_div_table ulp_div_table[] =3D {
++	{ .val =3D 1, .div =3D 1, },
++	{ .val =3D 2, .div =3D 2, },
++	{ .val =3D 3, .div =3D 4, },
++	{ .val =3D 4, .div =3D 8, },
++	{ .val =3D 5, .div =3D 16, },
++	{ .val =3D 6, .div =3D 32, },
++	{ .val =3D 7, .div =3D 64, },
++};
++
++static void __init imx7ulp_clk_scg1_init(struct device_node *np)
++{
++	struct clk_hw_onecell_data *clk_data;
++	struct clk_hw **clks;
++	void __iomem *base;
++
++	clk_data =3D kzalloc(sizeof(*clk_data) + sizeof(*clk_data->hws) *
++			   IMX7ULP_CLK_SCG1_END, GFP_KERNEL);
++	if (!clk_data)
++		return;
++
++	clk_data->num =3D IMX7ULP_CLK_SCG1_END;
++	clks =3D clk_data->hws;
++
++	clks[IMX7ULP_CLK_DUMMY]		=3D imx_clk_hw_fixed("dummy", 0);
++
++	clks[IMX7ULP_CLK_ROSC]		=3D imx_obtain_fixed_clk_hw(np, "rosc");
++	clks[IMX7ULP_CLK_SOSC]		=3D imx_obtain_fixed_clk_hw(np, "sosc");
++	clks[IMX7ULP_CLK_SIRC]		=3D imx_obtain_fixed_clk_hw(np, "sirc");
++	clks[IMX7ULP_CLK_FIRC]		=3D imx_obtain_fixed_clk_hw(np, "firc");
++	clks[IMX7ULP_CLK_MIPI_PLL]	=3D imx_obtain_fixed_clk_hw(np, "mpll");
++	clks[IMX7ULP_CLK_UPLL]		=3D imx_obtain_fixed_clk_hw(np, "upll");
++
++	/* SCG1 */
++	base =3D of_iomap(np, 0);
++	WARN_ON(!base);
++
++	/* NOTE: xPLL config can't be changed when xPLL is enabled */
++	clks[IMX7ULP_CLK_APLL_PRE_SEL]	=3D imx_clk_hw_mux_flags("apll_pre_sel", b=
+ase + 0x508, 0, 1, pll_pre_sels, ARRAY_SIZE(pll_pre_sels), CLK_SET_PARENT_G=
+ATE);
++	clks[IMX7ULP_CLK_SPLL_PRE_SEL]	=3D imx_clk_hw_mux_flags("spll_pre_sel", b=
+ase + 0x608, 0, 1, pll_pre_sels, ARRAY_SIZE(pll_pre_sels), CLK_SET_PARENT_G=
+ATE);
++
++	/*							   name		    parent_name	   reg			shift	width	flags */
++	clks[IMX7ULP_CLK_APLL_PRE_DIV]	=3D imx_clk_hw_divider_flags("apll_pre_div=
+", "apll_pre_sel", base + 0x508,	8,	3,	CLK_SET_RATE_GATE);
++	clks[IMX7ULP_CLK_SPLL_PRE_DIV]	=3D imx_clk_hw_divider_flags("spll_pre_div=
+", "spll_pre_sel", base + 0x608,	8,	3,	CLK_SET_RATE_GATE);
++
++	/*						name	 parent_name	 base */
++	clks[IMX7ULP_CLK_APLL]		=3D imx_clk_pllv4("apll",  "apll_pre_div", base +=
+ 0x500);
++	clks[IMX7ULP_CLK_SPLL]		=3D imx_clk_pllv4("spll",  "spll_pre_div", base +=
+ 0x600);
++
++	/* APLL PFDs */
++	clks[IMX7ULP_CLK_APLL_PFD0]	=3D imx_clk_pfdv2("apll_pfd0", "apll", base +=
+ 0x50c, 0);
++	clks[IMX7ULP_CLK_APLL_PFD1]	=3D imx_clk_pfdv2("apll_pfd1", "apll", base +=
+ 0x50c, 1);
++	clks[IMX7ULP_CLK_APLL_PFD2]	=3D imx_clk_pfdv2("apll_pfd2", "apll", base +=
+ 0x50c, 2);
++	clks[IMX7ULP_CLK_APLL_PFD3]	=3D imx_clk_pfdv2("apll_pfd3", "apll", base +=
+ 0x50c, 3);
++
++	/* SPLL PFDs */
++	clks[IMX7ULP_CLK_SPLL_PFD0]	=3D imx_clk_pfdv2("spll_pfd0", "spll", base +=
+ 0x60C, 0);
++	clks[IMX7ULP_CLK_SPLL_PFD1]	=3D imx_clk_pfdv2("spll_pfd1", "spll", base +=
+ 0x60C, 1);
++	clks[IMX7ULP_CLK_SPLL_PFD2]	=3D imx_clk_pfdv2("spll_pfd2", "spll", base +=
+ 0x60C, 2);
++	clks[IMX7ULP_CLK_SPLL_PFD3]	=3D imx_clk_pfdv2("spll_pfd3", "spll", base +=
+ 0x60C, 3);
++
++	/* PLL Mux */
++	clks[IMX7ULP_CLK_APLL_PFD_SEL]	=3D imx_clk_hw_mux_flags("apll_pfd_sel", b=
+ase + 0x508, 14, 2, apll_pfd_sels, ARRAY_SIZE(apll_pfd_sels), CLK_SET_RATE_=
+PARENT | CLK_SET_PARENT_GATE);
++	clks[IMX7ULP_CLK_SPLL_PFD_SEL]	=3D imx_clk_hw_mux_flags("spll_pfd_sel", b=
+ase + 0x608, 14, 2, spll_pfd_sels, ARRAY_SIZE(spll_pfd_sels), CLK_SET_RATE_=
+PARENT | CLK_SET_PARENT_GATE);
++	clks[IMX7ULP_CLK_APLL_SEL]	=3D imx_clk_hw_mux_flags("apll_sel", base + 0x=
+508, 1, 1, apll_sels, ARRAY_SIZE(apll_sels), CLK_SET_RATE_PARENT | CLK_SET_=
+PARENT_GATE);
++	clks[IMX7ULP_CLK_SPLL_SEL]	=3D imx_clk_hw_mux_flags("spll_sel", base + 0x=
+608, 1, 1, spll_sels, ARRAY_SIZE(spll_sels), CLK_SET_RATE_PARENT | CLK_SET_=
+PARENT_GATE);
++
++	clks[IMX7ULP_CLK_SPLL_BUS_CLK]	=3D imx_clk_divider_gate("spll_bus_clk", "=
+spll_sel", CLK_SET_RATE_GATE, base + 0x604, 8, 3, 0, ulp_div_table, &imx_cc=
+m_lock);
++
++	/* scs/ddr/nic select different clock source requires that clock to be en=
+abled first */
++	clks[IMX7ULP_CLK_SYS_SEL]	=3D imx_clk_hw_mux2("scs_sel", base + 0x14, 24,=
+ 4, scs_sels, ARRAY_SIZE(scs_sels));
++	clks[IMX7ULP_CLK_NIC_SEL]	=3D imx_clk_hw_mux2("nic_sel", base + 0x40, 28,=
+ 1, nic_sels, ARRAY_SIZE(nic_sels));
++	clks[IMX7ULP_CLK_DDR_SEL]	=3D imx_clk_hw_mux_flags("ddr_sel", base + 0x30=
+, 24, 1, ddr_sels, ARRAY_SIZE(ddr_sels), CLK_SET_RATE_PARENT | CLK_OPS_PARE=
+NT_ENABLE);
++
++	clks[IMX7ULP_CLK_CORE_DIV]	=3D imx_clk_hw_divider_flags("divcore",	"scs_s=
+el",  base + 0x14, 16, 4, CLK_SET_RATE_PARENT | CLK_IS_CRITICAL);
++
++	clks[IMX7ULP_CLK_DDR_DIV]	=3D imx_clk_divider_gate("ddr_clk", "ddr_sel", =
+CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, base + 0x30, 0, 3,
++							       0, ulp_div_table, &imx_ccm_lock);
++
++	clks[IMX7ULP_CLK_NIC0_DIV]	=3D imx_clk_hw_divider_flags("nic0_clk",		"nic=
+_sel",  base + 0x40, 24, 4, CLK_SET_RATE_PARENT | CLK_IS_CRITICAL);
++	clks[IMX7ULP_CLK_NIC1_DIV]	=3D imx_clk_hw_divider_flags("nic1_clk",		"nic=
+0_clk", base + 0x40, 16, 4, CLK_SET_RATE_PARENT | CLK_IS_CRITICAL);
++	clks[IMX7ULP_CLK_NIC1_BUS_DIV]	=3D imx_clk_hw_divider_flags("nic1_bus_clk=
+",	"nic1_clk", base + 0x40, 4,  4, CLK_SET_RATE_PARENT | CLK_IS_CRITICAL);
++
++	clks[IMX7ULP_CLK_GPU_DIV]	=3D imx_clk_hw_divider("gpu_clk", "nic0_clk", b=
+ase + 0x40, 20, 4);
++
++	clks[IMX7ULP_CLK_SOSC_BUS_CLK]	=3D imx_clk_divider_gate("sosc_bus_clk", "=
+sosc", 0, base + 0x104, 8, 3,
++							       CLK_DIVIDER_READ_ONLY, ulp_div_table, &imx_ccm_lock);
++	clks[IMX7ULP_CLK_FIRC_BUS_CLK]	=3D imx_clk_divider_gate("firc_bus_clk", "=
+firc", 0, base + 0x304, 8, 3,
++							       CLK_DIVIDER_READ_ONLY, ulp_div_table, &imx_ccm_lock);
++
++	imx_check_clk_hws(clks, clk_data->num);
++
++	of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_data);
++}
++CLK_OF_DECLARE(imx7ulp_clk_scg1, "fsl,imx7ulp-scg1", imx7ulp_clk_scg1_init=
+);
++
++static void __init imx7ulp_clk_pcc2_init(struct device_node *np)
++{
++	struct clk_hw_onecell_data *clk_data;
++	struct clk_hw **clks;
++	void __iomem *base;
++
++	clk_data =3D kzalloc(sizeof(*clk_data) + sizeof(*clk_data->hws) *
++			   IMX7ULP_CLK_PCC2_END, GFP_KERNEL);
++	if (!clk_data)
++		return;
++
++	clk_data->num =3D IMX7ULP_CLK_PCC2_END;
++	clks =3D clk_data->hws;
++
++	/* PCC2 */
++	base =3D of_iomap(np, 0);
++	WARN_ON(!base);
++
++	clks[IMX7ULP_CLK_DMA1]		=3D imx_clk_hw_gate("dma1", "nic1_clk", base + 0x=
+20, 30);
++	clks[IMX7ULP_CLK_RGPIO2P1]	=3D imx_clk_hw_gate("rgpio2p1", "nic1_bus_clk"=
+, base + 0x3c, 30);
++	clks[IMX7ULP_CLK_DMA_MUX1]	=3D imx_clk_hw_gate("dma_mux1", "nic1_bus_clk"=
+, base + 0x84, 30);
++	clks[IMX7ULP_CLK_SNVS]		=3D imx_clk_hw_gate("snvs", "nic1_bus_clk", base =
++ 0x8c, 30);
++	clks[IMX7ULP_CLK_CAAM]		=3D imx_clk_hw_gate("caam", "nic1_clk", base + 0x=
+90, 30);
++	clks[IMX7ULP_CLK_LPTPM4]	=3D imx7ulp_clk_composite("lptpm4",  periph_bus_=
+sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0x94);
++	clks[IMX7ULP_CLK_LPTPM5]	=3D imx7ulp_clk_composite("lptpm5",  periph_bus_=
+sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0x98);
++	clks[IMX7ULP_CLK_LPIT1]		=3D imx7ulp_clk_composite("lpit1",   periph_bus_=
+sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0x9c);
++	clks[IMX7ULP_CLK_LPSPI2]	=3D imx7ulp_clk_composite("lpspi2",  periph_bus_=
+sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0xa4);
++	clks[IMX7ULP_CLK_LPSPI3]	=3D imx7ulp_clk_composite("lpspi3",  periph_bus_=
+sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0xa8);
++	clks[IMX7ULP_CLK_LPI2C4]	=3D imx7ulp_clk_composite("lpi2c4",  periph_bus_=
+sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0xac);
++	clks[IMX7ULP_CLK_LPI2C5]	=3D imx7ulp_clk_composite("lpi2c5",  periph_bus_=
+sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0xb0);
++	clks[IMX7ULP_CLK_LPUART4]	=3D imx7ulp_clk_composite("lpuart4", periph_bus=
+_sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0xb4);
++	clks[IMX7ULP_CLK_LPUART5]	=3D imx7ulp_clk_composite("lpuart5", periph_bus=
+_sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0xb8);
++	clks[IMX7ULP_CLK_FLEXIO1]	=3D imx7ulp_clk_composite("flexio1", periph_bus=
+_sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0xc4);
++	clks[IMX7ULP_CLK_USB0]		=3D imx7ulp_clk_composite("usb0",    periph_plat_=
+sels, ARRAY_SIZE(periph_plat_sels), true, true,  true, base + 0xcc);
++	clks[IMX7ULP_CLK_USB1]		=3D imx7ulp_clk_composite("usb1",    periph_plat_=
+sels, ARRAY_SIZE(periph_plat_sels), true, true,  true, base + 0xd0);
++	clks[IMX7ULP_CLK_USB_PHY]	=3D imx_clk_hw_gate("usb_phy", "nic1_bus_clk", =
+base + 0xd4, 30);
++	clks[IMX7ULP_CLK_USDHC0]	=3D imx7ulp_clk_composite("usdhc0",  periph_plat=
+_sels, ARRAY_SIZE(periph_plat_sels), true, true,  true, base + 0xdc);
++	clks[IMX7ULP_CLK_USDHC1]	=3D imx7ulp_clk_composite("usdhc1",  periph_plat=
+_sels, ARRAY_SIZE(periph_plat_sels), true, true,  true, base + 0xe0);
++	clks[IMX7ULP_CLK_WDG1]		=3D imx7ulp_clk_composite("wdg1",    periph_bus_s=
+els, ARRAY_SIZE(periph_bus_sels), true, true,  true, base + 0xf4);
++	clks[IMX7ULP_CLK_WDG2]		=3D imx7ulp_clk_composite("sdg2",    periph_bus_s=
+els, ARRAY_SIZE(periph_bus_sels), true, true,  true, base + 0x10c);
++
++	imx_check_clk_hws(clks, clk_data->num);
++
++	of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_data);
++}
++CLK_OF_DECLARE(imx7ulp_clk_pcc2, "fsl,imx7ulp-pcc2", imx7ulp_clk_pcc2_init=
+);
++
++static void __init imx7ulp_clk_pcc3_init(struct device_node *np)
++{
++	struct clk_hw_onecell_data *clk_data;
++	struct clk_hw **clks;
++	void __iomem *base;
++
++	clk_data =3D kzalloc(sizeof(*clk_data) + sizeof(*clk_data->hws) *
++			   IMX7ULP_CLK_PCC3_END, GFP_KERNEL);
++	if (!clk_data)
++		return;
++
++	clk_data->num =3D IMX7ULP_CLK_PCC3_END;
++	clks =3D clk_data->hws;
++
++	/* PCC3 */
++	base =3D of_iomap(np, 0);
++	WARN_ON(!base);
++
++	clks[IMX7ULP_CLK_LPTPM6]	=3D imx7ulp_clk_composite("lptpm6",  periph_bus_=
+sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0x84);
++	clks[IMX7ULP_CLK_LPTPM7]	=3D imx7ulp_clk_composite("lptpm7",  periph_bus_=
+sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0x88);
++
++	clks[IMX7ULP_CLK_MMDC]		=3D clk_hw_register_gate(NULL, "mmdc", "nic1_clk"=
+, CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
++							       base + 0xac, 30, 0, &imx_ccm_lock);
++	clks[IMX7ULP_CLK_LPI2C6]	=3D imx7ulp_clk_composite("lpi2c6",  periph_bus_=
+sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0x90);
++	clks[IMX7ULP_CLK_LPI2C7]	=3D imx7ulp_clk_composite("lpi2c7",  periph_bus_=
+sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0x94);
++	clks[IMX7ULP_CLK_LPUART6]	=3D imx7ulp_clk_composite("lpuart6", periph_bus=
+_sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0x98);
++	clks[IMX7ULP_CLK_LPUART7]	=3D imx7ulp_clk_composite("lpuart7", periph_bus=
+_sels, ARRAY_SIZE(periph_bus_sels), true, false, true, base + 0x9c);
++	clks[IMX7ULP_CLK_DSI]		=3D imx7ulp_clk_composite("dsi",     periph_bus_se=
+ls, ARRAY_SIZE(periph_bus_sels), true, true,  true, base + 0xa4);
++	clks[IMX7ULP_CLK_LCDIF]		=3D imx7ulp_clk_composite("lcdif",   periph_plat=
+_sels, ARRAY_SIZE(periph_plat_sels), true, true,  true, base + 0xa8);
++
++	clks[IMX7ULP_CLK_VIU]		=3D imx_clk_hw_gate("viu",   "nic1_clk",	   base +=
+ 0xa0, 30);
++	clks[IMX7ULP_CLK_PCTLC]		=3D imx_clk_hw_gate("pctlc", "nic1_bus_clk", bas=
+e + 0xb8, 30);
++	clks[IMX7ULP_CLK_PCTLD]		=3D imx_clk_hw_gate("pctld", "nic1_bus_clk", bas=
+e + 0xbc, 30);
++	clks[IMX7ULP_CLK_PCTLE]		=3D imx_clk_hw_gate("pctle", "nic1_bus_clk", bas=
+e + 0xc0, 30);
++	clks[IMX7ULP_CLK_PCTLF]		=3D imx_clk_hw_gate("pctlf", "nic1_bus_clk", bas=
+e + 0xc4, 30);
++
++	clks[IMX7ULP_CLK_GPU3D]		=3D imx7ulp_clk_composite("gpu3d",   periph_plat=
+_sels, ARRAY_SIZE(periph_plat_sels), true, false, true, base + 0x140);
++	clks[IMX7ULP_CLK_GPU2D]		=3D imx7ulp_clk_composite("gpu2d",   periph_plat=
+_sels, ARRAY_SIZE(periph_plat_sels), true, false, true, base + 0x144);
++
++	imx_check_clk_hws(clks, clk_data->num);
++
++	of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_data);
++}
++CLK_OF_DECLARE(imx7ulp_clk_pcc3, "fsl,imx7ulp-pcc3", imx7ulp_clk_pcc3_init=
+);
 --=20
 2.7.4
 
