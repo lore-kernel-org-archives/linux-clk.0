@@ -2,193 +2,167 @@ Return-Path: <SRS0=4aIB=NZ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E7A2C43441
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Nov 2018 13:02:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43D0AC43441
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Nov 2018 13:02:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B8F722360
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Nov 2018 13:02:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F351A22419
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Nov 2018 13:02:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="hYqou105"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B8F722360
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="kyaYnRFj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F351A22419
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733244AbeKNXEx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Nov 2018 18:04:53 -0500
-Received: from mail-eopbgr130083.outbound.protection.outlook.com ([40.107.13.83]:45216
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        id S1732946AbeKNXGB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Nov 2018 18:06:01 -0500
+Received: from mail-eopbgr1410098.outbound.protection.outlook.com ([40.107.141.98]:35866
+        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728203AbeKNXEw (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 14 Nov 2018 18:04:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+        id S1732932AbeKNXGA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 14 Nov 2018 18:06:00 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=keQeZnA12ucPSlee+fWKuypU6DmryFB6Qug2eeyJuM4=;
- b=hYqou105ddfbhoDUtHJE70jLZB+efJjYs8xSsfv/4TzcVHMT8/yUKJFZ8ctYdA1lo0kpnlye1mnEFx9hi2txnlh7bNyYoum8E3o44N6nfLci8IsYDAoctci2iWOW4c1axXBw47/eZQ1PRzaMoKqsDwU01s+M86Co0yVF36Y7o7I=
-Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.126.21) by
- AM0PR04MB4291.eurprd04.prod.outlook.com (52.134.126.146) with Microsoft SMTP
+ bh=aZKLiiYi3+Ton8LJoAymwkk11uNyxqljlahkEvogCH4=;
+ b=kyaYnRFjumPdj5aEtRuz64LJ8GzQjMzzJwE8bdaHkupmuOgSZYdQsXAl3t1NutJjpQSMz/ViuGdDJcf9B8KpSXszglTr0IFSArXaOjYhfBYbp4URF3cOj1q1u+OlYZ016xL+ER0OaJsPQJA7ThNtEYstQqW7Dg0m60MYqMQQ3WE=
+Received: from OSAPR01MB1553.jpnprd01.prod.outlook.com (52.134.230.20) by
+ OSAPR01MB3585.jpnprd01.prod.outlook.com (20.178.101.208) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1294.28; Wed, 14 Nov 2018 13:01:39 +0000
-Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
- ([fe80::797a:f972:9281:6d10]) by AM0PR04MB4211.eurprd04.prod.outlook.com
- ([fe80::797a:f972:9281:6d10%2]) with mapi id 15.20.1294.045; Wed, 14 Nov 2018
- 13:01:39 +0000
-From:   "A.s. Dong" <aisheng.dong@nxp.com>
-To:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Anson Huang <anson.huang@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>, dl-linux-imx <linux-imx@nxp.com>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Subject: [PATCH V6 2/9] clk: fractional-divider: add
- CLK_FRAC_DIVIDER_ZERO_BASED flag support
-Thread-Topic: [PATCH V6 2/9] clk: fractional-divider: add
- CLK_FRAC_DIVIDER_ZERO_BASED flag support
-Thread-Index: AQHUfBouVmVtXn9prk2+fZptUJvH+g==
-Date:   Wed, 14 Nov 2018 13:01:39 +0000
-Message-ID: <1542200198-3017-3-git-send-email-aisheng.dong@nxp.com>
-References: <1542200198-3017-1-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1542200198-3017-1-git-send-email-aisheng.dong@nxp.com>
-Accept-Language: zh-CN, en-US
+ 15.20.1294.25; Wed, 14 Nov 2018 13:02:43 +0000
+Received: from OSAPR01MB1553.jpnprd01.prod.outlook.com
+ ([fe80::487c:e15e:88df:f04d]) by OSAPR01MB1553.jpnprd01.prod.outlook.com
+ ([fe80::487c:e15e:88df:f04d%2]) with mapi id 15.20.1294.045; Wed, 14 Nov 2018
+ 13:02:42 +0000
+From:   Chris Brandt <Chris.Brandt@renesas.com>
+To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+CC:     "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: RE: [PATCH 2/3] phy: renesas: rcar-gen3-usb2: Add support for R7S9210
+Thread-Topic: [PATCH 2/3] phy: renesas: rcar-gen3-usb2: Add support for
+ R7S9210
+Thread-Index: AQHUdsB7qg8ABCzTikOe1KM5ASkq46VPIjAAgAAFLfCAABUXgIAABASA
+Date:   Wed, 14 Nov 2018 13:02:42 +0000
+Message-ID: <OSAPR01MB15533265A0BEE499122EC95A8AC30@OSAPR01MB1553.jpnprd01.prod.outlook.com>
+References: <20181107173558.54481-1-chris.brandt@renesas.com>
+ <20181107173558.54481-3-chris.brandt@renesas.com>
+ <OSBPR01MB2293D01ACA9E7294DD803938D8C30@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+ <OSAPR01MB15539BF29A15A03FFC890B848AC30@OSAPR01MB1553.jpnprd01.prod.outlook.com>
+ <OSBPR01MB2293489B7D5C98CB73CFE101D8C30@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+In-Reply-To: <OSBPR01MB2293489B7D5C98CB73CFE101D8C30@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-mailer: git-send-email 2.7.4
-x-clientproxiedby: HK0PR01CA0057.apcprd01.prod.exchangelabs.com
- (2603:1096:203:a6::21) To AM0PR04MB4211.eurprd04.prod.outlook.com
- (2603:10a6:208:66::21)
 authentication-results: spf=none (sender IP is )
- smtp.mailfrom=aisheng.dong@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [119.31.174.66]
+ smtp.mailfrom=Chris.Brandt@renesas.com; 
+x-originating-ip: [75.60.247.61]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM0PR04MB4291;6:sQ/wRgLDLcCzNEl1G5J1Ihu0h0vsmR7GW2Fc6g3JyMuWyIFM2Jyk1JmyP/WRBFuxbjhji38+Qpn94Yv1Mey8eUn5ua8mdaJ86BEkknBa1JfcXW8ktO+JiHHhEeX8eI89XktPOE0JgNT/00cZnzMfKNuwcF4v9tZMjhrFGQJh+hiSyWCeb8FlWOp/ml6EP2EE5o62Up2nZwId6Q2n316RuN3utI5MLgjTvy7tlZeLLE0DWzUnvN481lc6oJTl2Zfic7TNVjdWdgBBnRoMJSCZvS+6e73qJcjlUezKp5iF6uCxmG+f3q9p0l1KihcWPcR4DiUnmKP6vNBOq3BtEQ0vj4nLHNWh+gMdiJ96RVdK76UBlUOTjdfCFuwDQ+xfnbyUmNNla2TQE3Fq2BqnBuS5tFzsG28kxTglj+wUQPbxKBvLzh+tNm544eybhEvsaU9mBlItohcba3Ge+O5fSdiNNQ==;5:mDK9FkSNUIuBAvr+hgtNQdtnUIfOcu1FNSRaXR7C9p9tFrtnz8F7ZyggxK/K7XxLwEzqwpttwLdRktDhiYIgA6jqXLxDXq3jaGAab1Xi/khPrw60H21U9n/f0cc/JRcCnScxJ0u5W8wu8mqtwmxORpTJNSxlSRYdyyAejz1Xn+c=;7:c91m60UjtiJ/ssyG7fhLT1I1b6bu7Ef6cNimEGOHA18p9l9XImKmEQnhNpXjAWJIEci5WqhOLscpOYUVCCZki/okF0+LUHBswCxTu1y9o0STWn6AsiWBv/k70kXH02ILpGxD19h1tg5MLPwsoNrZOQ==
-x-ms-office365-filtering-correlation-id: a9e202ec-70ee-49be-7702-08d64a3150e1
+x-microsoft-exchange-diagnostics: 1;OSAPR01MB3585;20:VLrXvUyGvFQG0p4xem5PGqNszODj91Y5JbCgILY8OYQFjLwT2nHGI/bG4VtgI5vsg7fQ7aNimSwquUEcbhIyj1x8c7xmr+8Bmq3feHS0f00mF5TpopI5Vw8fC21yY+3O4gAzR41eHK3o66EzVX1QtygbuH6e64I3bmzFxIF7BAM=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10019020)(136003)(376002)(346002)(396003)(366004)(39860400002)(189003)(199004)(14454004)(25786009)(106356001)(486006)(6116002)(476003)(229853002)(105586002)(86362001)(76176011)(72206003)(478600001)(6506007)(446003)(3846002)(11346002)(7696005)(2906002)(4326008)(55016002)(74316002)(93886005)(7736002)(14444005)(316002)(256004)(71190400001)(305945005)(68736007)(186003)(97736004)(102836004)(81156014)(8676002)(9686003)(53936002)(99286004)(6246003)(66066001)(2900100001)(33656002)(26005)(81166006)(71200400001)(54906003)(6436002)(5660300001)(110136005)(8936002);DIR:OUT;SFP:1102;SCL:1;SRVR:OSAPR01MB3585;H:OSAPR01MB1553.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-ms-office365-filtering-correlation-id: ba6d5bf8-8240-406f-bfb6-08d64a3176d6
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB4291;
-x-ms-traffictypediagnostic: AM0PR04MB4291:
-x-microsoft-antispam-prvs: <AM0PR04MB4291DC446E91888E98D267BC80C30@AM0PR04MB4291.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(185117386973197);
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:OSAPR01MB3585;
+x-ms-traffictypediagnostic: OSAPR01MB3585:
+x-microsoft-antispam-prvs: <OSAPR01MB35857FC190A7C75EA9D6F2A38AC30@OSAPR01MB3585.jpnprd01.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3002001)(3231410)(944501410)(52105112)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:AM0PR04MB4291;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB4291;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231410)(944501410)(52105112)(10201501046)(3002001)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:OSAPR01MB3585;BCL:0;PCL:0;RULEID:;SRVR:OSAPR01MB3585;
 x-forefront-prvs: 085634EFF4
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(366004)(136003)(376002)(346002)(39860400002)(199004)(189003)(54534003)(476003)(2616005)(11346002)(2906002)(53936002)(486006)(446003)(386003)(52116002)(5640700003)(6512007)(6436002)(2351001)(6486002)(105586002)(305945005)(7736002)(316002)(6506007)(54906003)(106356001)(6116002)(102836004)(99286004)(76176011)(3846002)(81156014)(26005)(5660300001)(186003)(25786009)(86362001)(8936002)(97736004)(478600001)(2501003)(66066001)(256004)(71200400001)(71190400001)(81166006)(8676002)(14454004)(6916009)(4326008)(2900100001)(50226002)(36756003)(14444005)(68736007);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4291;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
+received-spf: None (protection.outlook.com: renesas.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: IGdfaLWgiGcUhyl05LvI6/yYA0fJt0aFmbLfhrzXT/GmbYhOgl1ihs/pJ/cA1V3knXYHffGBZwCACYXAaa/O2v8EDV8xKP8gggJC0XB9TtriL8s/Lw0Gq5ZcBeY4mZ4rwlcMiffwjIkPeVlAXOhlbwzx4/5Fjd55TSMMKJt/+bb+kjWylBwJB8WtXp+6r664Lj0vK/7C73mKaweWYxXAoqxUhRl8Y4DnkpJYhekaJVigFXKgn0cGr9PRBwxYz1eYjL5vNzFrW+7L4isRsmeEzJkAhAGR1MjoUDlIvrv/zxQPvH6uJgklhG3Ms2QIYuqHh6mm0mTqgnnG1w6ulVvLN7TTr4zKj6nSpqALok73dXM=
+x-microsoft-antispam-message-info: aac6Rz95Ah+mMwF/xHyHjwb+91zXbNwNU0BfXEmtBXR7D8di1czU+4kqchkzbvxqE2pMOFpR9ahQqHyEi/pp66WXj72J4+HQp0+5ePAdjxB9dwbL67kc57DkC/WibV1K2MPsb9ZBL5/3t9pOlx6HhFDy0bGfsNW2bmyvKm5SwIY+9xALpljqy/TOQ5eFZ/pyAWQAtcSWyA2VMAuY0+SJfto78aaMNf46RFpGQzd/HNQUDxxRHqftDggqT6VxPnNVxoRC3u9gxmoJ2UoWHi58/ZanO1mY3VDrm87IMhZWn48I1g7pGrcZVQzHNK/9KVtli5stgpwYjlKFTevZ213ynJqf5lQ0wuqtXinI0KlPNZU=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a9e202ec-70ee-49be-7702-08d64a3150e1
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Nov 2018 13:01:39.3532
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ba6d5bf8-8240-406f-bfb6-08d64a3176d6
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Nov 2018 13:02:42.4640
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4291
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSAPR01MB3585
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Adding CLK_FRAC_DIVIDER_ZERO_BASED flag to indicate the numerator and
-denominator value in register are start from 0.
+Hi Shimoda-san,
 
-This can be used to support frac dividers like below:
-Divider output clock =3D Divider input clock x [(frac +1) / (div +1)]
-where frac/div in register is:
-000b - Divide by 1.
-001b - Divide by 2.
-010b - Divide by 3.
+> From: Yoshihiro Shimoda
+> Sent: Wednesday, November 14, 2018 7:24 AM
+> > > >  config PHY_RCAR_GEN3_USB2
+> > > >  	tristate "Renesas R-Car generation 3 USB 2.0 PHY driver"
+> > > >  	depends on ARCH_RENESAS
+> > > > -	depends on EXTCON
+> > > > +	depends on EXTCON || ARCH_R7S9210
+> > >
+> > > Does this mean that you don't want to use EXTCON if ARCH_R7S9210=3Dy?
+> >
+> > EXTCON is not required for RZ/A2. So, I want to be able to leave EXTCON
+> > un-selected (save flash space).
+>=20
+> I got it.
+> I added the depend on EXTCON, but R-Car Gen3 environment can build
+> EXTCON=3Dn.
+> However, I realized that build error happens if EXTCON=3Dm.
+> So, I think we have to revise this line as following at first:
+>=20
+>  "depends on EXTCON || !EXTCON # if EXTCON=3Dm, this cannot be built-in"
+> like drivers/phy/qualcomm/Kconfig.
 
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+OK. I will change it.
 
----
-ChangeLog:
-v3->v4:
- * no changes
-v2->v3:
- * no changes
-v1->v2:
- * improve comments suggested by Stephen
----
- drivers/clk/clk-fractional-divider.c | 10 ++++++++++
- include/linux/clk-provider.h         |  8 ++++++++
- 2 files changed, 18 insertions(+)
+   (should this be a separate patch?)
 
-diff --git a/drivers/clk/clk-fractional-divider.c b/drivers/clk/clk-fractio=
-nal-divider.c
-index fdf625f..7ccde6b 100644
---- a/drivers/clk/clk-fractional-divider.c
-+++ b/drivers/clk/clk-fractional-divider.c
-@@ -40,6 +40,11 @@ static unsigned long clk_fd_recalc_rate(struct clk_hw *h=
-w,
- 	m =3D (val & fd->mmask) >> fd->mshift;
- 	n =3D (val & fd->nmask) >> fd->nshift;
-=20
-+	if (fd->flags & CLK_FRAC_DIVIDER_ZERO_BASED) {
-+		m++;
-+		n++;
-+	}
-+
- 	if (!n || !m)
- 		return parent_rate;
-=20
-@@ -103,6 +108,11 @@ static int clk_fd_set_rate(struct clk_hw *hw, unsigned=
- long rate,
- 			GENMASK(fd->mwidth - 1, 0), GENMASK(fd->nwidth - 1, 0),
- 			&m, &n);
-=20
-+	if (fd->flags & CLK_FRAC_DIVIDER_ZERO_BASED) {
-+		m--;
-+		n--;
-+	}
-+
- 	if (fd->lock)
- 		spin_lock_irqsave(fd->lock, flags);
- 	else
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 08b1aa7..bee6453 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -594,6 +594,12 @@ void clk_hw_unregister_fixed_factor(struct clk_hw *hw)=
-;
-  * @lock:	register lock
-  *
-  * Clock with adjustable fractional divider affecting its output frequency=
-.
-+ *
-+ * Flags:
-+ * CLK_FRAC_DIVIDER_ZERO_BASED - by default the numerator and denominator
-+ *	is the value read from the register. If CLK_FRAC_DIVIDER_ZERO_BASED
-+ *	is set then the numerator and denominator are both the value read
-+ *	plus one.
-  */
- struct clk_fractional_divider {
- 	struct clk_hw	hw;
-@@ -613,6 +619,8 @@ struct clk_fractional_divider {
-=20
- #define to_clk_fd(_hw) container_of(_hw, struct clk_fractional_divider, hw=
-)
-=20
-+#define CLK_FRAC_DIVIDER_ZERO_BASED		BIT(0)
-+
- extern const struct clk_ops clk_fractional_divider_ops;
- struct clk *clk_register_fractional_divider(struct device *dev,
- 		const char *name, const char *parent_name, unsigned long flags,
---=20
-2.7.4
+
+> > Without this code, RZ/A2 will not work.
+>=20
+> I'd like to clarify this. Does this mean RZ/A2 will not work as host mode=
+?
+
+Correct. If I remove 'else' code, RZ/A2 host mode does not work.
+I just tested again now.
+
+Host works:
+	else
+		/* No otg, so default to host mode */
+		writel(0x00000000, usb2_base + USB2_COMMCTRL);
+
+Host does NOT work:
+	//else
+	//	/* No otg, so default to host mode */
+	//	writel(0x00000000, usb2_base + USB2_COMMCTRL);
+
+
+> (In other words, if we use the port as peripheral with the reset value
+> 0x80000000, does it work?)
+
+We have not been able to get USB peripheral working on RZ/A2 yet.
+For peripheral, RZ/A2 has HS-USB.
+After plugging into the PC, HS-USB goes to Suspended state (DVSQ =3D "0110"=
+).
+It should go to Configured state (DVSQ =3D "0011")
+
+
+According to the RZ/A2 Hardware Manual, COMMCTRL should be 0x80000000 when
+using HS-USB.
+
+There are 2 channels of USB on RZ/A2 (host x 2, HS_USB x 2)
+
+Chris
 
