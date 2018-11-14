@@ -3,118 +3,114 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 218E7C43441
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Nov 2018 23:21:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88BABC43441
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Nov 2018 23:23:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D932722419
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Nov 2018 23:21:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50C3E2243E
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Nov 2018 23:23:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="AZHiGOp/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D932722419
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BZO1jd8M"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50C3E2243E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725952AbeKOJ0j (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 15 Nov 2018 04:26:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58032 "EHLO mail.kernel.org"
+        id S1726371AbeKOJ3I (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 15 Nov 2018 04:29:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58326 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725895AbeKOJ0j (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 15 Nov 2018 04:26:39 -0500
+        id S1725895AbeKOJ3I (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 15 Nov 2018 04:29:08 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 533442175B;
-        Wed, 14 Nov 2018 23:21:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 657AB22419;
+        Wed, 14 Nov 2018 23:23:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542237678;
-        bh=EfdzHbBl9CB+iIL9Uckj7soO3uTegmMavQ1UX8zqiIA=;
+        s=default; t=1542237827;
+        bh=ooUEXaLVnD5hzNH/LUy3hiuptwtrRjMGeIyrdrKT55c=;
         h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=AZHiGOp/3nFmtBZop1VlB6XN3q5bVtT/f6pDYXStdAA9p00NTxyjJHAGapCd9S0+i
-         T3NM/KdlKuwNn2HGsEQq6NOTnCBvEM64vfKj75fSq3TB9cm/7PYSMzOBd8cOOOPw6J
-         LqA/nLA3v5fQcac/nUU3l2qiqXXt7ynuMSH/do+k=
+        b=BZO1jd8MwSRaWzxtlkb1COL9BzMS+xLC3n6c92a1hgoPjCF/IPrra+FVllif6dewe
+         uZijYi2+nXlE1P8KtY7Q/RtOFptPlbxHU8tfU6sU27CZiBIOnRLyHTgjQrdTfY+8UO
+         uTlAgoWxEZ+Byk8cpd5uG5IaL/2CabHA970LJY8k=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-To:     "A.s. Dong" <aisheng.dong@nxp.com>, Shawn Guo <shawnguo@kernel.org>
+To:     "A.s. Dong" <aisheng.dong@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20181113142533.GA4557@dragon>
-Cc:     Abel Vesa <abel.vesa@nxp.com>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Rob Herring <robh@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>, Abel Vesa <abelvesa@linux.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+In-Reply-To: <AM0PR04MB42115A499619B6D650C9728480C70@AM0PR04MB4211.eurprd04.prod.outlook.com>
+Cc:     "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
-References: <1537785597-26499-1-git-send-email-abel.vesa@nxp.com>
- <153980615257.5275.13866740376184829057@swboyd.mtv.corp.google.com>
- <20181107115444.gscxwud7e57nx3c7@fsr-ub1664-175>
- <154161726247.88331.15629902810537417880@swboyd.mtv.corp.google.com>
- <20181107202624.oya2runvbbwcilzu@fsr-ub1664-175>
- <154163631513.88331.1765456171211364913@swboyd.mtv.corp.google.com>
- <20181108122938.mnhu3ttnlztfeyot@fsr-ub1664-175>
- <154170172752.88331.2213352243956732809@swboyd.mtv.corp.google.com>
- <AM0PR04MB42118C6960C39387051B57F280C70@AM0PR04MB4211.eurprd04.prod.outlook.com>
- <20181113142533.GA4557@dragon>
-Message-ID: <154223767765.88331.8896059926353279805@swboyd.mtv.corp.google.com>
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>
+References: <1539881347-20871-1-git-send-email-aisheng.dong@nxp.com>
+ <1539881347-20871-10-git-send-email-aisheng.dong@nxp.com>
+ <153988429912.5275.13469659599335212731@swboyd.mtv.corp.google.com>
+ <AM0PR04MB42112CB1324B0994A26AB15D80F80@AM0PR04MB4211.eurprd04.prod.outlook.com>
+ <153989556955.53599.9032716427049619310@swboyd.mtv.corp.google.com>
+ <AM0PR04MB42112BEEF4DB939F13D6AF1680F90@AM0PR04MB4211.eurprd04.prod.outlook.com>
+ <AM0PR04MB42115A499619B6D650C9728480C70@AM0PR04MB4211.eurprd04.prod.outlook.com>
+Message-ID: <154223782682.88331.13160210691831603996@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.7
-Subject: Re: [PATCH v9 3/5] clk: imx: add SCCG PLL type
-Date:   Wed, 14 Nov 2018 15:21:17 -0800
+Subject: RE: [PATCH V5 9/9] clk: imx: add imx8qxp clk driver
+Date:   Wed, 14 Nov 2018 15:23:46 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Shawn Guo (2018-11-13 06:25:36)
-> On Sat, Nov 10, 2018 at 04:05:44PM +0000, A.s. Dong wrote:
-> > Hi Stephen,
-> > =
+Quoting A.s. Dong (2018-11-10 07:58:00)
+> Hi Stephen,
+> =
 
-> > [...]
-> > > > I already sent the 12th version of this current patch series and I
-> > > > would really like to get this in ASAP so that the booting up of imx=
-8mq will
-> > > not be delayed.
+> [...]
+> > > > > Where's the DT binding for this device?
 > > > >
-> > > =
-
-> > > Ok. Well we're in rc1 right now, and so we're not merging new drivers=
- into
-> > > mainline. I can merge the clk driver into clk-next, but you'll have t=
-o wait for the
-> > > stabilization period to end (approximately 6 or 7 weeks) before this =
-can get
-> > > into the next kernel version. It will be in linux-next much sooner of=
- course.
+> > > > Sorry for missed to mention this.
+> > > > It's been merged into scu binding doc per Rob's request which has
+> > > > already been in Shawn's tree.
+> > > >
+> > > > Please take a look at here:
+> > [...]
+> > >
+> > > Ok I ask because it's odd to hardcode physical addresses in a clk
+> > > driver when those should come from DT in reg properties. Was Rob aware
+> > > that this clk node was combining I/O memory and message passing?
 > > =
 
-> > That would be great if you can help that.
-> > We're now working with SUSE to enable i.MX8 support.
-> > Their criteria is only backporting patches which must be at least in ma=
-intainer's
-> > next tree already. So either picked up by you or Shawn would help a lot=
- on it.
+> > Yes, I agree with you. That seems like a special to i.MX case.
+> > The problem is not all clocks having a LPCG gate. And those LPCGs are a=
+lso not
+> > continuous and may be shared by many clocks which make things more
+> > complicated.
+> > I'm not sure parsing from device tree could be better way to do it.
+> > Probably need huge changes.
 > > =
 
-> > BTW, one simple question is that because MX8MQ DTS patches depends on
-> > this clock driver series. How would you suggest this series to go throu=
-gh
-> > your tree or Shawn's tree?
 > =
 
-> Once Stephen has a topic branch for the patches, I can pull it into my
-> tree to resolve the DT dependency.
+> I reorganized the driver a lot to address this issue.
+> See:
+> https://patchwork.kernel.org/cover/10677275/
+> We now have a new LPCG clock type and retrieve the LPCG physical
+> address from device tree.
+> =
+
+> Besides that, as LPCG is moved out from the original SCU gate clocks,
+> We have a chance to merge all three type of SCU clocks (divider/gate/mux)
+> together into a general SCU clock. (new API introduced imx_clk_scu()).
+> Thus, the consumer driver is also simplied a lot which looks better than =
+before.
+> Hopefully this can make you happy.
+> Please help review that new version.
 > =
 
 
-Sounds like a plan. Expect something next week.
+Ok I'll take a look at the new patch series.
 
