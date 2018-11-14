@@ -2,223 +2,171 @@ Return-Path: <SRS0=4aIB=NZ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15DB4C43441
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Nov 2018 06:58:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61293C43610
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Nov 2018 07:47:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA5AB2087A
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Nov 2018 06:58:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA5AB2087A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id 1F2CC21780
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Nov 2018 07:47:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="uifMQXkv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F2CC21780
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727966AbeKNRAY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Nov 2018 12:00:24 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:38981 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726927AbeKNRAX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Nov 2018 12:00:23 -0500
-Received: by mail-ed1-f65.google.com with SMTP id b14so10152494edt.6;
-        Tue, 13 Nov 2018 22:58:26 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=IFgmvrn1Uc4t3y/os32mrfJIYufUIc2ZFQ1ZVHConhQ=;
-        b=iTthEFgehMl5/4yRdYIQQhEjoLXCXMrYwwgH9GNiPvG2I2cB67TIgXWlD3D1Nr77UT
-         w7Vy1lE+pcwQDAStTZgvTleiZE2h3JPw3g72neKU2MBYdZb0WkNDKOTovjj8gaJlbSxb
-         bFFf5Btm5mQVJ81EaqNslpnGeAygekvHYl2kyDAMQ8mOF38lT2yaW7F6s3gvaZRXga0l
-         vTUiGG7jBPbnIRSl+nSmhj7hLucQB8JNgarAFrRSt7LIS/DroraGSfJrdEqbsruI2Jb/
-         i4xEcFn6aoJ9puL58NC4AF8IZTp/C8aY/ZVpgaEOF+exLSuTC1359LehIpSwifRQN0PG
-         ZTnQ==
-X-Gm-Message-State: AGRZ1gJwfkTd0FSTZSvWaTVgdteWlRZ07X2VVNsUEPcQcZJYvB3DzWYx
-        E81UdOLxDLLTsyPRcgSIrx/ysy2egPg=
-X-Google-Smtp-Source: AJdET5fWn10v5YhoLAaLitAe75OHbOXcQi+JMQtFIC91BdU047K1GRZhEu6fx9SKLUba7F9FzYq10g==
-X-Received: by 2002:a17:906:12d3:: with SMTP id l19-v6mr904845ejb.74.1542178706038;
-        Tue, 13 Nov 2018 22:58:26 -0800 (PST)
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com. [209.85.128.45])
-        by smtp.gmail.com with ESMTPSA id r8-v6sm3386440ejb.52.2018.11.13.22.58.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 13 Nov 2018 22:58:24 -0800 (PST)
-Received: by mail-wm1-f45.google.com with SMTP id p2-v6so13593360wmc.2;
-        Tue, 13 Nov 2018 22:58:24 -0800 (PST)
-X-Received: by 2002:a1c:f008:: with SMTP id a8-v6mr711154wmb.5.1542178703511;
- Tue, 13 Nov 2018 22:58:23 -0800 (PST)
+        id S1730764AbeKNRtb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Nov 2018 12:49:31 -0500
+Received: from mail-eopbgr680042.outbound.protection.outlook.com ([40.107.68.42]:46880
+        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728406AbeKNRtV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 14 Nov 2018 12:49:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qbOXjsaKlZQB8HbQ7aQEZbS3DcYQ9Fs/SAfITmUba6w=;
+ b=uifMQXkvMg57itvR6GlBTq3frU/QW1sTdbl5R4GfCEtyr2E31xJbpjPusPwv0VZYmWfRn8/PQfTnVvyinINUIQ2A1NMW09q+HwPdhxnskK4bn+hngfXf3GZ8kGcFnPvVj2QT+8j/kZlI0XMAae6jM7Gnl6G7HPA1p7MP9okGCiY=
+Received: from BN7PR02CA0017.namprd02.prod.outlook.com (2603:10b6:408:20::30)
+ by SN4PR0201MB3519.namprd02.prod.outlook.com (2603:10b6:803:44::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1294.30; Wed, 14 Nov
+ 2018 07:47:13 +0000
+Received: from SN1NAM02FT019.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e44::205) by BN7PR02CA0017.outlook.office365.com
+ (2603:10b6:408:20::30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1294.25 via Frontend
+ Transport; Wed, 14 Nov 2018 07:47:12 +0000
+Authentication-Results: spf=pass (sender IP is 149.199.60.83)
+ smtp.mailfrom=xilinx.com; lists.infradead.org; dkim=none (message not signed)
+ header.d=none;lists.infradead.org; dmarc=bestguesspass action=none
+ header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
+Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
+ SN1NAM02FT019.mail.protection.outlook.com (10.152.72.130) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1339.15
+ via Frontend Transport; Wed, 14 Nov 2018 07:47:12 +0000
+Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
+        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
+        (envelope-from <rajan.vaja@xilinx.com>)
+        id 1gMptH-0000Jk-Rv; Tue, 13 Nov 2018 23:47:11 -0800
+Received: from [127.0.0.1] (helo=localhost)
+        by xsj-pvapsmtp01 with smtp (Exim 4.63)
+        (envelope-from <rajan.vaja@xilinx.com>)
+        id 1gMptC-0003uq-Oq; Tue, 13 Nov 2018 23:47:06 -0800
+Received: from xsj-pvapsmtp01 (smtp2.xilinx.com [149.199.38.66])
+        by xsj-smtp-dlp2.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id wAE7kvDU024772;
+        Tue, 13 Nov 2018 23:46:57 -0800
+Received: from [172.19.2.152] (helo=xsjsatishna40.xilinx.com)
+        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
+        (envelope-from <rajan.vaja@xilinx.com>)
+        id 1gMpt3-0003sd-E2; Tue, 13 Nov 2018 23:46:57 -0800
+From:   Rajan Vaja <rajan.vaja@xilinx.com>
+To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <michals@xilinx.com>, <olof@lixom.net>, <shubhraj@xilinx.com>
+CC:     <JOLLYS@xilinx.com>, <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Rajan Vaja <rajan.vaja@xilinx.com>
+Subject: [PATCH v2] clk: zynqmp: handle fixed factor param query error
+Date:   Tue, 13 Nov 2018 23:46:49 -0800
+Message-ID: <1542181609-12189-1-git-send-email-rajan.vaja@xilinx.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1539762392-12512-1-git-send-email-rajan.vaja@xilinx.com>
+References: <1539762392-12512-1-git-send-email-rajan.vaja@xilinx.com>
+X-RCIS-Action: ALLOW
+X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
+X-TM-AS-User-Approved-Sender: Yes;Yes
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(376002)(136003)(346002)(39860400002)(396003)(2980300002)(438002)(199004)(189003)(6636002)(8936002)(106002)(14444005)(44832011)(77096007)(26005)(2906002)(186003)(8676002)(16586007)(476003)(575784001)(81166006)(50466002)(63266004)(81156014)(478600001)(446003)(486006)(5660300001)(336012)(54906003)(76176011)(316002)(2616005)(126002)(11346002)(426003)(110136005)(9786002)(72206003)(50226002)(7696005)(51416003)(305945005)(47776003)(2201001)(106466001)(36386004)(36756003)(356004)(6666004)(48376002)(4326008)(107886003)(107986001);DIR:OUT;SFP:1101;SCL:1;SRVR:SN4PR0201MB3519;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: 1;SN1NAM02FT019;1:ihmNlgphRYodUYHnWyzMIQ8OJZW9k8ZXwojscry1rinhekOxHPfziST1WgDd9rOyjSepBP1VBAtL5bYEpkxqw1GZYKTHZv3ptmT9mqZ18hgvrNlFD7dMcxC6WHNOFldv
 MIME-Version: 1.0
-References: <20181113111633.20189-1-jagan@amarulasolutions.com>
- <20181113111633.20189-26-jagan@amarulasolutions.com> <20181113122204.337db8b1@donnerap.cambridge.arm.com>
- <CAMty3ZBQXcnU=490KREa=F-qctMtRep9-rrhrPd1UZStnV=hqw@mail.gmail.com>
-In-Reply-To: <CAMty3ZBQXcnU=490KREa=F-qctMtRep9-rrhrPd1UZStnV=hqw@mail.gmail.com>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Wed, 14 Nov 2018 14:58:11 +0800
-X-Gmail-Original-Message-ID: <CAGb2v669dkf2qaUDaosJEKSRKpPRVKWszb6BLL2NrAjWwp3t2Q@mail.gmail.com>
-Message-ID: <CAGb2v669dkf2qaUDaosJEKSRKpPRVKWszb6BLL2NrAjWwp3t2Q@mail.gmail.com>
-Subject: Re: [PATCH v4 25/26] [DO NOT MERGE] arm64: dts: allwinner:
- bananapi-m64: Bananapi S070WV20-CT16 DSI panel
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     =?UTF-8?Q?Andr=C3=A9_Przywara?= <andre.przywara@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi@googlegroups.com, linux-amarula@amarulasolutions.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: d4e5f960-39ae-418e-7839-08d64a056387
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4608076)(2017052603328)(7153060);SRVR:SN4PR0201MB3519;
+X-Microsoft-Exchange-Diagnostics: 1;SN4PR0201MB3519;3:f7vteZQqkvd2TPHjPmzbYw55dusj/vQPNtk5vEqrYPPTF6FQKWisRkoAnFe4QUrNoAuArojGmh295MQo8n0cYvvzhdgKVsnLgGNllC70M+mdF8eVyv/oOm7nlPBceP29pTP46f6v8KVKoiLBBC7NrIGyKBnKf8/BQtCae95cuIhG2Z5xrDnrF5V++ORyoq/bcsM1A1IuvyTlUkYsz5xwFUgJ2RTut5y4yZnM2exN3X/EdiCxBiM95SetbOU1P7cLdZMzWKrVzUk1VGns6pFN7awSJqhpm6fLEMthGMWy9DE+1L30hPMGpFnc2Ld46/tBC0ZzL/PkcKFErz8qRJrGTRoJ1bpVXOmk3ln2Yf+9rTw=;25:J5fIeR96s3ShTWHsfpatWAGRfkAJIqk6q4gv0SiwZMPyIfk9sbl7LkRdvPIR3MbuwTQNBPjRygYmhGv74R2X7Ngi3vEzaOkerSByDVMR3L9kEF4oEgqw+t7lUBWFgLVrr01JDjuR0Nsac5FECCD0D1IN8xeQ8iDyfFycQ+fbC1tZuP6J8jgwSammL+3pdh0e9BHFs/6PLYDGvNVZ1v8BDCP6e8D+jmvga++y6tY4s1ERHbKrDfinjNm6In71mw4CPeCQ67nwNnoYW0IsGhqPuFz0by+MEvknhgSlRv7xpdNpvtAp2SMZXk3M+Sa7umJ5V81x8ufHbQ/PSS9sQHPm2A==
+X-MS-TrafficTypeDiagnostic: SN4PR0201MB3519:
+X-Microsoft-Exchange-Diagnostics: 1;SN4PR0201MB3519;31:jrHR/alr3RyawlB3wuM46iZ3xxH/FF+mrvFRcwZrNALe11sLnqMYVQ34zBHsF4jxcSl09axEVWKGS6rbhKOH7D/uTdF0Bno3vsHe/yQBrsAKzNgbK4f/d6K2lyvuZDxOvQecv5upCVlgaJJvHV/SuYVQoU9jxb68e3ITQfPEvCOFMUre+i3yAxYZ5RDzMtew9ngPMHp0jvl6v/jkvNWSTPNXy+SXVFdUKIaVA5N5x9I=;20:Y4FlnP/3nsjOKBGfuJVu9izVIt0Rp0PD5yug/jzFBWDyE9H1oelajCnL6dWZVS3dS9SCZM8vQOG3vCqzESuAySQ6tjeLWHPAFEJWtWJYc/+NEoYzidKzIqrJvE+wUSiWYhFgZh98dls/IE+vLXnMZCqdo+BciE9AlJYwn8QWIsqazkbYNdiCxu+LHsfyRu5ngDf8icNUWVdynhFlsgkmSRFx8RgOixqFKWY0rabdahkZT4HQlQ0BhN9Wemg02egIVR/WALOSV9p6GRsrYVVbIZIWjo7jN4lePBj7HRRT0mJ7djh3C05byvla03WRpKt/AFXqaZ2bw2ne/ATfPj+vN8uOdp8E+acF0z/zgZzNCsXkwbdTVzaxZYzSYW8qr5hgmRfCtsejVQ8t4S99F/0kC/mihiA3VzQoY+d5gXz68wbADVAJe1NmQBUz18K9P3D++hcuXZmBioP2+sBoJ1VItvvvjw4g/qrMa/S+s7g9m5GalG4Q3SB3p+HeobW7B8sU
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-Microsoft-Antispam-PRVS: <SN4PR0201MB35190CBDB3F1027D83494174B7C30@SN4PR0201MB3519.namprd02.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(192813158149592);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93004095)(3231410)(944501410)(52105112)(3002001)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:SN4PR0201MB3519;BCL:0;PCL:0;RULEID:;SRVR:SN4PR0201MB3519;
+X-Microsoft-Exchange-Diagnostics: 1;SN4PR0201MB3519;4:NH/CuYR94ZWTPRm9mbsKIamjlONnevpmZOZMglPT8XkLGKBAPl8pNbhcEf+SJCKxrz9xx9BJ4LQX6NjkBCxVeErq+WzLgCBLjfjXa/jesqBd2cDcLgHeAbvf51Wt+LgHLeZYvMCmozeZUm9HTjmDg6V3q4nGYCu00K2D+otRpzuWJyE73dVu4n/CbYRPs5CR8o5li0IQxRtxnIko5Wat7/hOtfPcFVWb894+W2JPqob0QEUAfg61/Pl6NE0u+SZ8O8lU8D9nEQXDQ5gmx+wcWXB8Q0pGoVR18vtySJl2Cr512gmF83xrAgMar1hdjAhd
+X-Forefront-PRVS: 085634EFF4
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN4PR0201MB3519;23:QzA2hdnW/WT3IPOb9hBVv5uzydgZ4X8V83T/JIN?=
+ =?us-ascii?Q?3Qq5I46B9Vn1lE/RAC2isMRArlfpDw+CZWQXzyHvYsiQ1qYPDNnRLleLa7YC?=
+ =?us-ascii?Q?N8kO4WeKUqGb2u7euB/Eg5LZVx2Hzu55GF9MzuFlV1CnowvmqLBaM1calq/3?=
+ =?us-ascii?Q?rKMIVO4L0qbsWRCuWmxAUgYJtP6IOgRp/In3+wQ2mpaMQWrgC5/9JAnZhLXk?=
+ =?us-ascii?Q?GxaJwPohXhVWJ9PVCwiqLfnTKox6E2Jvy9yI8J2s4tcCOVGP3BmjhjxrSTSf?=
+ =?us-ascii?Q?nUwik7Tok24QO+0I7zxkHU/zfjui1VciaL68Rc7iP+rnN1qJhVbEFhy+fD7V?=
+ =?us-ascii?Q?f44U46Wn7j78LaSFN2f07apYoivYZAnHUozGKm1+78kMVsK85FBiCd7uCrbX?=
+ =?us-ascii?Q?D5oBcyFiscEVRemGmnnvCvtkiC53o+ihOt98iXsUR1TSlGreAKlCSZmUzUXs?=
+ =?us-ascii?Q?tdIjOAwskdve8FaAmScLvfQa23KwcmAQmEnHyYuEnwAvo3C3qGgdhb2+/DOe?=
+ =?us-ascii?Q?fVgLWO4TNa607ig8bDNrmCnp9JhpRJS7de9E0GTC6mTKCvTbwX/L4xk91iqS?=
+ =?us-ascii?Q?24jtYmKNN3gQGK1vBfu/LMpoEUa1Ig6xC68xaM11czzdwaYj73HQ5LbTmkzs?=
+ =?us-ascii?Q?OTobwC/6ZcmXqr+XOwZapL8VwBdS8TAjZb2cPvwyF0BpW38gvBTeRiI9T2gq?=
+ =?us-ascii?Q?ErMKGprmnZhenM1bmAo2nVW4B9plW0tM5UsWZfksdbSxVsflem4g/cKs7tBC?=
+ =?us-ascii?Q?ZQuMspyY2KrrFwiLEkTNlFFhEFC1IUjFSK6UFfCivKdKWPwrQknWomUO5hcQ?=
+ =?us-ascii?Q?6uMt0YKlilipGlsz2WbLrylOt9R+7kGRSj57iFt7bayO1m4dpUPM0JINhShc?=
+ =?us-ascii?Q?oU6Hp6RfAZpugi/4xLBwDqrpRlfN6Dn3PRRfIQNOThQhXJSQe+s2VSLsUsFf?=
+ =?us-ascii?Q?qCfIFpLr6vrbCKWCxOUym/EZHstxOVY0ajF5eUtxalY2wC8Dp6V6kLCik7az?=
+ =?us-ascii?Q?SdfP6iYd/C4y24kuxPBK/DpI/x/BqyuMVbo9kf21Zqthn4zr0EJkZ7WBaomW?=
+ =?us-ascii?Q?1ME/0RnD9kpPCh+biGonNKizor2FdH6YngYbmspmMphXShPYv1EoiI6L4Hn9?=
+ =?us-ascii?Q?FSyGmSmGRp0NLraJHR9rNFjXqRhyVmoexuQyPAw6XgiKqo99Rwwkk+iegPeI?=
+ =?us-ascii?Q?Q+d2xmjHhszAxzB0BdC5VaHFCW1zxB8Soc8fJWCMGzXl9kWSIH3+CWT3keg?=
+ =?us-ascii?Q?=3D=3D?=
+X-Microsoft-Antispam-Message-Info: yEYtqYS4mtVKZo3qCWEHxad/LH/1cTf1EKcKmnhUs0roqVuq9XtvBEbilZnu9XxkwmQf6a+pSEUp8Qruq6ia4wlM/zM9Yc+I3v5glcVppvMoWABF5mhS+sRGt7SSLgN4OZJn6QgqdaTibEmcP1glIcQ3S7XW5hFkewJpKSNOGUdn/SxvGO8VIzpqxOhB+kvgm+sXZRdYIYSjY0qOdLex0OHm13MGeCfnY20vSX+GFn8+/jq7ym6CzJ0kpAbwXZ0h/oSrOWlT38w3zhEwmZO74PxBDp8B88hWkLc/TFNsA+9NabaQoJqq298+JQixPzozCO4/oWsI41EESfV541qpFqKLkDieRYAR3W3Xq1KetjU=
+X-Microsoft-Exchange-Diagnostics: 1;SN4PR0201MB3519;6:hcsEkvxtmjKkrRV5atos53bJZBQLfsOx4DQYlJgv2yj8LZ91eMVL+2P3hxxwKI1EwG/5i3ZRzMgmahtv+NSHn0msOACNdF+y1vjZO0MKDm/5vAYFhlrCeGxTn5ZRooudr638T2bIua9OKuuMvqqoBdfD/J2PcWubYHGohtWKFmo92ZUzlQxd3rh0RttzLK+3UfIzclY4P4evVVJ6dY2iw7w/bG3WtGYKh++BOtQ8mBw+OgXgGWRQZDLKRkscwlvcRSklfH7KnGuy8AUHL/1Q+xq9WpK2d4CNRAF/Tlzkc0RLUnuTvj3Z28QFUzYniWZ2uWFAEkHRorKw72yJ3OTFkT3M5XgEhoLNUBZVVlAg7ade8LQGQT8lXJgovwcOXMQVltM+7+8LfbmzTMIfkxvR6RlDgMRW+y4B+l8d95Tk4DjphNgM7sErvsHD29Gjdbgsxl7uhAChSb0jx8fYOQtdbw==;5:ngKHlw2nnbLbEIBAkWcf2vJv+EkO9O50nWkRPN5ypv/SERqVXORlsoJCl2rng/39/040gQgf1y77gM8qBrB4UD985lFDNJYbWDgfLCRtP2eOI7ATVZC6g+Br0F6AcVl0bMVlbYRDxnZq67tbwnO9JuKxRVnFG8USJL26oz8HzrQ=;7:JGWiy5e/0SGEF/Kf2uBc4t7i3Xx8ZaSf/rPmlAqPFnlUHL8poStj+1cTDyMfB4NkWQjIks8rQ9ZDOgMm1Ms/YTrd9D3i7lzV8SY8wqUVUIR2iVNxk5sLobagwJc+wtkbNGYHXUPPLFvw7cjJx1Dg+Q==
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Nov 2018 07:47:12.2274
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d4e5f960-39ae-418e-7839-08d64a056387
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN4PR0201MB3519
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Nov 14, 2018 at 2:31 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
->
-> On Tue, Nov 13, 2018 at 5:52 PM Andre Przywara <andre.przywara@arm.com> wrote:
-> >
-> > On Tue, 13 Nov 2018 16:46:32 +0530
-> > Jagan Teki <jagan@amarulasolutions.com> wrote:
-> >
-> > Hi,
-> >
-> > > This patch add support for Bananapi S070WV20-CT16 DSI panel to
-> > > BPI-M64 board.
-> > >
-> > > DSI panel connected via board DSI port with,
-> > > - DC1SW as AVDD supply
-> >
-> > Are you sure of that? I don't see anything in the schematic to support
-> > this. The only power lines that go to the DSI connector are DCDC1 and
-> > PS. DC1SW is only connected to PortD on the SoC and to the Ethernet PHY.
-> > Is there anything I miss?
->
-> Thanks for the comment, yes dc1sw is connected in ephy. I have reused
-> dc1, BSP is attached lcd_power1 to axp81x_dc1sw [1]. I just looking
-> for someone to comment, may be we can skip this regulator attachment.
+Return proper error code in case query for fixed factor
+parameter fails. This also fixes build warning for set
+but not used variable 'ret'.
 
-That seems sketchy. The schematics show the connector has feeds from both
-the unregulated output IPSOUT (PS) and DCDC1. For designs with RGB LCD
-panels, we only see the PS feed. Since the LCD panel can be used in either
-RGB or MIPI DSI mode, I highly suspect the DCDC1 supply feeds the bridge
-IC.
+Signed-off-by: Rajan Vaja <rajan.vaja@xilinx.com>
+Fixes: 3fde0e16d016 ("drivers: clk: Add ZynqMP clock driver")
+Acked-by: Stephen Boyd <sboyd@kernel.org>
+---
+Changes in v2:
+  * Add Fixes tag
+---
+ drivers/clk/zynqmp/clkc.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-As for DC1SW, this is likely referenced because it provides power to the
-GPIO lines that are used to control the LCD panel. If you don't provide
-power, you can't pull them up.
+diff --git a/drivers/clk/zynqmp/clkc.c b/drivers/clk/zynqmp/clkc.c
+index 9d7d297..297f16a 100644
+--- a/drivers/clk/zynqmp/clkc.c
++++ b/drivers/clk/zynqmp/clkc.c
+@@ -279,6 +279,9 @@ struct clk_hw *zynqmp_clk_register_fixed_factor(const char *name, u32 clk_id,
+ 	qdata.arg1 = clk_id;
+ 
+ 	ret = eemi_ops->query_data(qdata, ret_payload);
++	if (ret)
++		return ERR_PTR(ret);
++
+ 	mult = ret_payload[1];
+ 	div = ret_payload[2];
+ 
+-- 
+2.7.4
 
-While many of us dislike FEX and the new FEX-derived device tree, they
-do provide some information, such as regulator usage. Note that each
-regulator output has multiple names, which likely denote specific
-usages.
-
-I've asked BPI for schematics on the bridge board. Hopefully we'll
-have something in more detail. In the meantime, I suggest leaving
-this panel out of your next submission, and focus on getting the bulk
-of the dsi driver and dts changes in first.
-
-ChenYu
-
->
-> >
-> > > - DCDC1 as DVDD supply
-> >
-> > That seems right, but doesn't match with what you write below.
->
-> Commit need to fix s/DCDC1/DLDO1
->
-> >
-> > > - PD6 gpio for reset pin
-> > > - PD5 gpio for backlight enable pin
-> > > - PD7 gpio for backlight vdd supply
-> > >
-> > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> > > ---
-> > >  .../dts/allwinner/sun50i-a64-bananapi-m64.dts | 42
-> > > +++++++++++++++++++ 1 file changed, 42 insertions(+)
-> > >
-> > > diff --git
-> > > a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
-> > > b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts index
-> > > ef1c90401bb2..6cb010e3bbd9 100644 ---
-> > > a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts +++
-> > > b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts @@ -45,6
-> > > +45,7 @@ #include "sun50i-a64.dtsi"
-> > >  #include <dt-bindings/gpio/gpio.h>
-> > > +#include <dt-bindings/pwm/pwm.h>
-> > >
-> > >  / {
-> > >       model = "BananaPi-M64";
-> > > @@ -56,6 +57,15 @@
-> > >               serial1 = &uart1;
-> > >       };
-> > >
-> > > +     backlight: backlight {
-> > > +             compatible = "pwm-backlight";
-> > > +             pwms = <&r_pwm 0 50000 PWM_POLARITY_INVERTED>;
-> > > +             brightness-levels = <1 2 4 8 16 32 64 128 512>;
-> > > +             default-brightness-level = <2>;
-> > > +             enable-gpios = <&pio 3 5 GPIO_ACTIVE_HIGH>; /*
-> > > LCD-BL-EN: PD5 */
-> > > +             power-supply = <&reg_vdd_backlight>;
-> > > +     };
-> > > +
-> > >       chosen {
-> > >               stdout-path = "serial0:115200n8";
-> > >       };
-> > > @@ -91,6 +101,15 @@
-> > >               };
-> > >       };
-> > >
-> > > +     reg_vdd_backlight: vdd-backlight {
-> > > +             compatible = "regulator-fixed";
-> > > +             regulator-name = "vdd-backlight";
-> > > +             regulator-min-microvolt = <3300000>;
-> > > +             regulator-max-microvolt = <3300000>;
-> > > +             gpio = <&pio 3 7 GPIO_ACTIVE_HIGH>; /* LCD-PWR-EN:
-> > > PD7 */
-> > > +             enable-active-high;
-> > > +     };
-> > > +
-> > >       wifi_pwrseq: wifi_pwrseq {
-> > >               compatible = "mmc-pwrseq-simple";
-> > >               reset-gpios = <&r_pio 0 2 GPIO_ACTIVE_LOW>; /* PL2 */
-> > > @@ -101,6 +120,23 @@
-> > >       status = "okay";
-> > >  };
-> > >
-> > > +&dphy {
-> > > +     status = "okay";
-> > > +};
-> > > +
-> > > +&dsi {
-> > > +     status = "okay";
-> > > +
-> > > +     panel@0 {
-> > > +             compatible = "bananapi,s070wv20-ct16-icn6211";
-> > > +             reg = <0>;
-> > > +             avdd-supply = <&reg_dc1sw>;
-> >
-> > As mentioned above, I don't see this on the DSI connector.
-> >
-> > > +             dvdd-supply = <&reg_dldo1>;
-> >
-> > Mmh, this line is connected to the *SoC*, to drive the DSI data lines
-> > or the DPHY, presumably. So I wouldn't expect it in the panel node, but
-> > rather in the DPHY or DSI node. Although I can't find a power-supply
-> > property in those bindings.
->
-> Got it, this has to attach via vcc-dsi-supply.
->
-> [1] https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/bootloader/blobs/bpi-m64-lcd7.dts#L2266
