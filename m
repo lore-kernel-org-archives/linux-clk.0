@@ -2,173 +2,129 @@ Return-Path: <SRS0=4aIB=NZ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8686C43441
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Nov 2018 11:18:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B6E2C43441
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Nov 2018 11:29:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 697B22243E
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Nov 2018 11:18:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46DA22243E
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Nov 2018 11:29:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="jq/Uxu3P"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 697B22243E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="PS5WBY5J"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46DA22243E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732037AbeKNVVm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Nov 2018 16:21:42 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:53539 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727700AbeKNVVm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Nov 2018 16:21:42 -0500
-Received: by mail-it1-f196.google.com with SMTP id r12-v6so23281357ita.3
-        for <linux-clk@vger.kernel.org>; Wed, 14 Nov 2018 03:18:52 -0800 (PST)
+        id S1728015AbeKNVcJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Nov 2018 16:32:09 -0500
+Received: from mail-eopbgr1400098.outbound.protection.outlook.com ([40.107.140.98]:16672
+        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727598AbeKNVcJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 14 Nov 2018 16:32:09 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fKgs0JqXb8sv6bIrcsuIIocfK3TGT0xahSp84ZAnsNs=;
-        b=jq/Uxu3PGYcEby2vwoBQuY3UV8Rppl4BwPdBUQNjDHKo/cg2IDEvHQd0h43PEZJZdr
-         dsA71KOZScY5I+0ZLYEffMMzeQioQzsIJHA/cogf9bEWgdEMc/cgXZwQ+toOpNH+nlSX
-         5Te8iC8mtBOxuyXoDgk82sadq1ns5bf+3ZyFg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fKgs0JqXb8sv6bIrcsuIIocfK3TGT0xahSp84ZAnsNs=;
-        b=OJTOJc/diAWMTUz+dVG6lHt6zx1OAZjsnyk9DdakCKDLm6yzedFKOWkbMFIrJ/t7gy
-         9/wLJUxRoiT6+4wKfd9PzyRn1qgQ6HvRzPSos7UDh2FlEmdJOYb1dZIVktx2C0QZJHOB
-         Ob6OvOoDXabtAJF9C4AE1VkSV3YYXCuJ8YIToma9dvtNngJRYOPl8zOJ3tctggy44PoH
-         qLYlTQtoiq64H03RaWLps03Uzb1XZCd4x1LYaB51nQM54GpK37dUYSG1e2YLgt879uNW
-         ROmKMB9xxo5t5UnjsfUvUY8JVDpeMZisjnc6ElbNsHXKtso1ff9IrPzgcwo9M9bdVqev
-         2w0g==
-X-Gm-Message-State: AGRZ1gIR1i3wOjrktAyI9I9t1+/8hdBmyqdVBtWF+2YzUI5rJpoK21Ng
-        AjCyybqimuE1P50KWHcZmAbVDAVmFAxiSs3Tc3QsPQ==
-X-Google-Smtp-Source: AJdET5fh0njZr6k1CGFidzy2nTou641I70nXqoFmpbDd5YUZgkkQI5mvqWFXe8XZeEknnEf0wYlHQ0H1q6/A/e5585k=
-X-Received: by 2002:a05:660c:ac1:: with SMTP id k1mr1583937itl.173.1542194331584;
- Wed, 14 Nov 2018 03:18:51 -0800 (PST)
-MIME-Version: 1.0
-References: <20181113111633.20189-1-jagan@amarulasolutions.com>
- <20181113111633.20189-26-jagan@amarulasolutions.com> <20181113122204.337db8b1@donnerap.cambridge.arm.com>
- <CAMty3ZBQXcnU=490KREa=F-qctMtRep9-rrhrPd1UZStnV=hqw@mail.gmail.com>
- <CAGb2v669dkf2qaUDaosJEKSRKpPRVKWszb6BLL2NrAjWwp3t2Q@mail.gmail.com> <CAGb2v64YOV48UwHc8-=jDt2Bp_4mNb3iuyEzj0d+GOQE_oT-Xg@mail.gmail.com>
-In-Reply-To: <CAGb2v64YOV48UwHc8-=jDt2Bp_4mNb3iuyEzj0d+GOQE_oT-Xg@mail.gmail.com>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Wed, 14 Nov 2018 16:48:39 +0530
-Message-ID: <CAMty3ZAa97_zHTyxfbV+8d7fUMaEuvB_Kg-SYLY42kMEoiJLyA@mail.gmail.com>
-Subject: Re: [PATCH v4 25/26] [DO NOT MERGE] arm64: dts: allwinner:
- bananapi-m64: Bananapi S070WV20-CT16 DSI panel
-To:     Chen-Yu Tsai <wens@csie.org>
-Cc:     Andre Przywara <andre.przywara@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
+ d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=PQb0TDflO8WI9G02wh4l7bthV90lc74wBB4sGlhVrdo=;
+ b=PS5WBY5JaumDmcv9IC4VD5WJbyywjoDDnSYip9I37N1TwIlJ3VX25s2Ddfl4zf41vSpar2fs/oqZ7ELsXHxN9O94mvU/9lqFIRPrXH7b8nYtfckNm8CHVk/yCkxkAFjkQy4NWdIamrtUShUcoYc2gjIotYz5Ln8GWD4EROU5aPU=
+Received: from OSAPR01MB1553.jpnprd01.prod.outlook.com (52.134.230.20) by
+ OSAPR01MB1475.jpnprd01.prod.outlook.com (52.134.229.16) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1339.21; Wed, 14 Nov 2018 11:29:13 +0000
+Received: from OSAPR01MB1553.jpnprd01.prod.outlook.com
+ ([fe80::487c:e15e:88df:f04d]) by OSAPR01MB1553.jpnprd01.prod.outlook.com
+ ([fe80::487c:e15e:88df:f04d%2]) with mapi id 15.20.1294.045; Wed, 14 Nov 2018
+ 11:29:12 +0000
+From:   Chris Brandt <Chris.Brandt@renesas.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+CC:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi@googlegroups.com, linux-amarula@amarulasolutions.com
-Content-Type: text/plain; charset="UTF-8"
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, linux-clk <linux-clk@vger.kernel.org>
+Subject: RE: [PATCH 3/3] dt-bindings: rcar-gen3-phy-usb2: Add r7s9210 support
+Thread-Topic: [PATCH 3/3] dt-bindings: rcar-gen3-phy-usb2: Add r7s9210 support
+Thread-Index: AQHUdsB8Gg9e2S+tzkm3Ee2mYi39PaVPJZMAgAAGBjA=
+Date:   Wed, 14 Nov 2018 11:29:12 +0000
+Message-ID: <OSAPR01MB155309C400BF3C256635DD168AC30@OSAPR01MB1553.jpnprd01.prod.outlook.com>
+References: <20181107173558.54481-1-chris.brandt@renesas.com>
+ <20181107173558.54481-4-chris.brandt@renesas.com>
+ <CAMuHMdX7_bk4b7WTmxDuLPR=-WZYdbt=7P2e-gs4ZOT=-EzL-g@mail.gmail.com>
+In-Reply-To: <CAMuHMdX7_bk4b7WTmxDuLPR=-WZYdbt=7P2e-gs4ZOT=-EzL-g@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Chris.Brandt@renesas.com; 
+x-originating-ip: [75.60.247.61]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;OSAPR01MB1475;20:Fi5I2WGe3SlQ6Xgqud3N2gWczW/nrzaiDHyjKOXwcKJfqOhVGc7Q/aqufKj1sne9JTgCz5QwbBE4rMQX72/TIYWzEqgckkP6cWNoUXZFQQKBl1pzs2ThroIfu8Qcuw1zE0dPGjz0RHtAbbddcsOhxaaVQEiap6JsjZK5dYDrmmc=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10019020)(346002)(396003)(39860400002)(376002)(366004)(136003)(189003)(199004)(86362001)(486006)(74316002)(14444005)(305945005)(8676002)(186003)(6916009)(7736002)(97736004)(256004)(102836004)(54906003)(316002)(105586002)(55016002)(25786009)(476003)(81166006)(81156014)(106356001)(11346002)(66066001)(2900100001)(446003)(9686003)(26005)(229853002)(6506007)(4326008)(2906002)(53936002)(76176011)(6436002)(8936002)(6246003)(72206003)(478600001)(33656002)(7696005)(99286004)(71200400001)(68736007)(7416002)(5660300001)(14454004)(71190400001)(3846002)(6116002);DIR:OUT;SFP:1102;SCL:1;SRVR:OSAPR01MB1475;H:OSAPR01MB1553.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-ms-office365-filtering-correlation-id: 99fe3c8d-84e6-4fb2-abfc-08d64a2466ea
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:OSAPR01MB1475;
+x-ms-traffictypediagnostic: OSAPR01MB1475:
+x-microsoft-antispam-prvs: <OSAPR01MB147557C83CE207C8AFC9C2928AC30@OSAPR01MB1475.jpnprd01.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231382)(944501410)(52105112)(3002001)(10201501046)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:OSAPR01MB1475;BCL:0;PCL:0;RULEID:;SRVR:OSAPR01MB1475;
+x-forefront-prvs: 085634EFF4
+received-spf: None (protection.outlook.com: renesas.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: LBSt18AxF+Wjapdv5nbwmEoCT21d3rbB7McyZz1UqGp9Uq6qmDITPSIPF0LYQZY+Rv46Ov3Qdmtq8LvA0M+voNTOxRkGfyPiiAlP2b3neBKAXHsw0zzJJNHLhufsdiCcR1YPt2UJo2atVeTfXIu2LFNaSomkqolaXpt14mdEkPbZfApCyCqx70RPyIsKjTO8+F35CFCyUu3SHLZV3gLjWNNRsXculWOW5CjxgW8pRnxWCX+/9/vcEH3TdP3ngshAmoNcfz2ldXV7IjRmVC6K07nP0NPoZQv56+qpuOSwqUoY1L+uZJr22eb0u+GaKttPvNigiKtKwsd4ugzHr+0BJfsPFTR6NDMrjeEO3nBylHQ=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 99fe3c8d-84e6-4fb2-abfc-08d64a2466ea
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Nov 2018 11:29:12.3786
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSAPR01MB1475
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Nov 14, 2018 at 2:52 PM Chen-Yu Tsai <wens@csie.org> wrote:
->
-> On Wed, Nov 14, 2018 at 2:58 PM Chen-Yu Tsai <wens@csie.org> wrote:
-> >
-> > On Wed, Nov 14, 2018 at 2:31 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
-> > >
-> > > On Tue, Nov 13, 2018 at 5:52 PM Andre Przywara <andre.przywara@arm.com> wrote:
-> > > >
-> > > > On Tue, 13 Nov 2018 16:46:32 +0530
-> > > > Jagan Teki <jagan@amarulasolutions.com> wrote:
-> > > >
-> > > > Hi,
-> > > >
-> > > > > This patch add support for Bananapi S070WV20-CT16 DSI panel to
-> > > > > BPI-M64 board.
-> > > > >
-> > > > > DSI panel connected via board DSI port with,
-> > > > > - DC1SW as AVDD supply
-> > > >
-> > > > Are you sure of that? I don't see anything in the schematic to support
-> > > > this. The only power lines that go to the DSI connector are DCDC1 and
-> > > > PS. DC1SW is only connected to PortD on the SoC and to the Ethernet PHY.
-> > > > Is there anything I miss?
-> > >
-> > > Thanks for the comment, yes dc1sw is connected in ephy. I have reused
-> > > dc1, BSP is attached lcd_power1 to axp81x_dc1sw [1]. I just looking
-> > > for someone to comment, may be we can skip this regulator attachment.
-> >
-> > That seems sketchy. The schematics show the connector has feeds from both
-> > the unregulated output IPSOUT (PS) and DCDC1. For designs with RGB LCD
-> > panels, we only see the PS feed. Since the LCD panel can be used in either
-> > RGB or MIPI DSI mode, I highly suspect the DCDC1 supply feeds the bridge
-> > IC.
-> >
-> > As for DC1SW, this is likely referenced because it provides power to the
-> > GPIO lines that are used to control the LCD panel. If you don't provide
-> > power, you can't pull them up.
-> >
-> > While many of us dislike FEX and the new FEX-derived device tree, they
-> > do provide some information, such as regulator usage. Note that each
-> > regulator output has multiple names, which likely denote specific
-> > usages.
-> >
-> > I've asked BPI for schematics on the bridge board. Hopefully we'll
-> > have something in more detail. In the meantime, I suggest leaving
-> > this panel out of your next submission, and focus on getting the bulk
-> > of the dsi driver and dts changes in first.
->
-> I got the schematics, but unfortunately I can't share them publicly.
->
-> It looks like VCC-MIPI on the connector is not connected to anything.
-> All power is provided from IPSOUT, first through a current limiter IC
-> turned on and off by LCD_PWR_EN, and then through some voltage regulators
-> to provide the voltages for various parts of the panel, including LCD,
-> capacitive touch, and the MIPI-DSI bridge. There's even an onboard EEPROM,
-> though I'm not sure what that's for.
-
-So there is no concern supply regulators on panel side, only VCC-DSI.
-
->
-> > >
-> > > >
-> > > > > - DCDC1 as DVDD supply
-> > > >
-> > > > That seems right, but doesn't match with what you write below.
-> > >
-> > > Commit need to fix s/DCDC1/DLDO1
-> > >
-> > > >
-> > > > > - PD6 gpio for reset pin
->
-> This toggles reset for both the panel itself and for the MIPI-DSI bridge.
->
-> > > > > - PD5 gpio for backlight enable pin
->
-> This enables the backlight's regulator.
->
-> > > > > - PD7 gpio for backlight vdd supply
->
-> This enables power to the whole panel module.
->
-> Then you also have the two GPIOs for the capacitive touch controller.
-> And also the I2C bus for the controller, and the EEPROM.
-
-Thanks, for the details. I have verified w/ vcc-dsi-supply attached to
-dldo1 and the panel with reset w/o any supply regulators.
+SGkgR2VlcnQsDQoNCk9uIFdlZG5lc2RheSwgTm92ZW1iZXIgMTQsIDIwMTgsIEdlZXJ0IFV5dHRl
+cmhvZXZlbiB3cm90ZToNCj4gPiAgUmVxdWlyZWQgcHJvcGVydGllczoNCj4gPiAtLSBjb21wYXRp
+YmxlOiAicmVuZXNhcyx1c2IyLXBoeS1yOGE3NzRhMSIgaWYgdGhlIGRldmljZSBpcyBhIHBhcnQg
+b2YgYW4NCj4gUjhBNzc0QTENCj4gPiArLSBjb21wYXRpYmxlOiAicmVuZXNhcyx1c2IyLXBoeS1y
+N3M5MjEwIiBpZiB0aGUgZGV2aWNlIGlzIGEgcGFydCBvZiBhbg0KPiBSN1M5MjEwDQo+ID4gKyAg
+ICAgICAgICAgICBTb0MuDQo+ID4gKyAgICAgICAgICAgICAicmVuZXNhcyx1c2IyLXBoeS1yOGE3
+NzRhMSIgaWYgdGhlIGRldmljZSBpcyBhIHBhcnQgb2YgYW4NCj4gUjhBNzc0QTENCj4gPiAgICAg
+ICAgICAgICAgIFNvQy4NCj4gPiAgICAgICAgICAgICAgICJyZW5lc2FzLHVzYjItcGh5LXI4YTc3
+OTUiIGlmIHRoZSBkZXZpY2UgaXMgYSBwYXJ0IG9mIGFuDQo+IFI4QTc3OTUNCj4gPiAgICAgICAg
+ICAgICAgIFNvQy4NCj4gPiBAQCAtMTYsOCArMTgsOCBAQCBSZXF1aXJlZCBwcm9wZXJ0aWVzOg0K
+PiA+ICAgICAgICAgICAgICAgUjhBNzc5OTAgU29DLg0KPiA+ICAgICAgICAgICAgICAgInJlbmVz
+YXMsdXNiMi1waHktcjhhNzc5OTUiIGlmIHRoZSBkZXZpY2UgaXMgYSBwYXJ0IG9mIGFuDQo+ID4g
+ICAgICAgICAgICAgICBSOEE3Nzk5NSBTb0MuDQo+ID4gLSAgICAgICAgICAgICAicmVuZXNhcyxy
+Y2FyLWdlbjMtdXNiMi1waHkiIGZvciBhIGdlbmVyaWMgUi1DYXIgR2VuMyBvcg0KPiBSWi9HMg0K
+PiA+IC0gICAgICAgICAgICAgY29tcGF0aWJsZSBkZXZpY2UuDQo+ID4gKyAgICAgICAgICAgICAi
+cmVuZXNhcyxyY2FyLWdlbjMtdXNiMi1waHkiIGZvciBhIGdlbmVyaWMgUi1DYXIgR2VuMywNCj4g
+UlovRzIgb3INCj4gPiArICAgICAgICAgICAgIFJaL0EyIGNvbXBhdGlibGUgZGV2aWNlLg0KPiAN
+Cj4gSXMgaXQgYSBnb29kIGlkZWEgdG8gZGVjbGFyZSBSWi9BMiBjb21wYXRpYmxlIHRvIFItQ2Fy
+IEdlbjM/DQo+IFVzdWFsbHkgd2UgZG9uJ3QgZG8gdGhhdCBmb3IgUmVuZXNhcyBJUCBjb3JlcyB1
+c2VkIGluIGRpZmZlcmVudA0KPiBmYW1pbGllc1sqXS4NCj4gT2YgY291cnNlLCBJIGtub3cgeW91
+IGRvIGhhdmUgYSBnb29kIHJlbGF0aW9uc2hpcCB3aXRoIHRoZSBhY3R1YWwgUlovQTINCj4gaGFy
+ZHdhcmUgZGVzaWduZXJzIDstKQ0KPiANCj4gSW4gbGlnaHQgb2YgU2hpbW9kYS1zYW4ncyBjb21t
+ZW50IHcuci50LiBSLUNhciBIMyBVU0IgcG9ydDEgaW4gdGhlIGRyaXZlcg0KPiBjb2RlLCBwZXJo
+YXBzICJyZW5lc2FzLHJjYXItZ2VuMy11c2IyLXBoeSIgc2hvdWxkIG5vdCBiZSB1c2VkPw0KDQpX
+ZWxsLCBJIHRoaW5rIHRoZSBJUCBibG9jayBzZWVtcyB0aGUgc2FtZS4uLi5ob3dldmVyLi4uDQpJ
+IGRpZCBwb2ludCBvdXQgdGhhdCB0aGUgQ09NTUNUUkwgcmVnaXN0ZXIgZGVmYXVsdHMgdG8gYSBk
+aWZmZXJlbnQgDQp2YWx1ZS4gTm8gaWRlYSB3aHkgdGhhdCBpcy4gSG9uZXN0bHksIEkgZGlkIG5v
+dCBnbyBhbmQgY2hlY2sgYWxsIHRoZSBvdGhlciANCnJlZ2lzdGVycyBiaXRzLiBTbyBJIGd1ZXNz
+IEkgd29uZGVyIHdoYXQgImNvbXBhdGlibGUiIHJlYWxseSBtZWFuczoNCg0KIkNvbXBhdGlibGU6
+IERpZmZlcmVudCwgYnV0IGNsb3NlIGVub3VnaCB0aGF0IGl0IHdpbGwgd29yayIgPz8/DQoNCkNo
+cmlzDQo=
