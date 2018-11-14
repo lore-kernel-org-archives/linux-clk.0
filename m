@@ -2,247 +2,211 @@ Return-Path: <SRS0=4aIB=NZ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D10BDC43610
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Nov 2018 09:22:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A1B2C43441
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Nov 2018 10:50:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88124223DD
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Nov 2018 09:22:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88124223DD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id 98256214F1
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Nov 2018 10:50:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="IU6RROBL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98256214F1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727595AbeKNTZS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Nov 2018 14:25:18 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:37103 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732392AbeKNTZS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Nov 2018 14:25:18 -0500
-Received: by mail-ed1-f68.google.com with SMTP id h15so8213734edb.4;
-        Wed, 14 Nov 2018 01:22:49 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VwB50JaiTaC2TDsw26YwsMiCnS6Ys+BF1RfBUcmBexg=;
-        b=Z5u6gN9R07T7cBMfZB145VfAI1DZestx9ynVidxWafVgXQvariv/vEsoXJa7ZIrGHt
-         OL2RnCVnJ4shDLZWL4Lpt7wn3J35Ib1UsIhjP89zknRMUHYXXiVNmx1E6zcKBK2+qhZI
-         EGkOmcWAATJPclyvDDhXgVaVxn4zUKfJi/pg2/ZDXn6io9ZQVeUkd5D/axXwS+sayREg
-         o86UEIP5Srm2x4Osk6kbdnW3x4V2o25J16oJKGSnrNjWiYcXMLfW+Ar3S3YvmDLdWG+W
-         k493Fl2i1uy7jgBIlXPp2DNr8VGxE/L8uQHHCX8LoxDMHK7Qg64/mSqacex31J/81Ddv
-         V6sA==
-X-Gm-Message-State: AGRZ1gJu5D7p/+HQZgzyHyF4fLwxPlKzMt5F/au1V6c3o/XzOqYFuToV
-        SDdLQ6Wi05qkdcTWM83z9vj5bwr6i3Y=
-X-Google-Smtp-Source: AJdET5eUuvbBtExUlFLpZ0f8f3fIXDD+OBY7y+5N3rPcfy7a3Y1r075pV6Ir1c7WmsbzfxClL4ehlw==
-X-Received: by 2002:a50:a4c8:: with SMTP id x8-v6mr1422164edb.210.1542187368383;
-        Wed, 14 Nov 2018 01:22:48 -0800 (PST)
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com. [209.85.221.49])
-        by smtp.gmail.com with ESMTPSA id z50sm1117938edz.1.2018.11.14.01.22.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 14 Nov 2018 01:22:48 -0800 (PST)
-Received: by mail-wr1-f49.google.com with SMTP id z13-v6so16423412wrs.3;
-        Wed, 14 Nov 2018 01:22:47 -0800 (PST)
-X-Received: by 2002:adf:e308:: with SMTP id b8-v6mr1129222wrj.91.1542187366940;
- Wed, 14 Nov 2018 01:22:46 -0800 (PST)
-MIME-Version: 1.0
-References: <20181113111633.20189-1-jagan@amarulasolutions.com>
- <20181113111633.20189-26-jagan@amarulasolutions.com> <20181113122204.337db8b1@donnerap.cambridge.arm.com>
- <CAMty3ZBQXcnU=490KREa=F-qctMtRep9-rrhrPd1UZStnV=hqw@mail.gmail.com> <CAGb2v669dkf2qaUDaosJEKSRKpPRVKWszb6BLL2NrAjWwp3t2Q@mail.gmail.com>
-In-Reply-To: <CAGb2v669dkf2qaUDaosJEKSRKpPRVKWszb6BLL2NrAjWwp3t2Q@mail.gmail.com>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Wed, 14 Nov 2018 17:22:33 +0800
-X-Gmail-Original-Message-ID: <CAGb2v64YOV48UwHc8-=jDt2Bp_4mNb3iuyEzj0d+GOQE_oT-Xg@mail.gmail.com>
-Message-ID: <CAGb2v64YOV48UwHc8-=jDt2Bp_4mNb3iuyEzj0d+GOQE_oT-Xg@mail.gmail.com>
-Subject: Re: [PATCH v4 25/26] [DO NOT MERGE] arm64: dts: allwinner:
- bananapi-m64: Bananapi S070WV20-CT16 DSI panel
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     =?UTF-8?Q?Andr=C3=A9_Przywara?= <andre.przywara@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
+        id S1728203AbeKNUxP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Nov 2018 15:53:15 -0500
+Received: from mail-eopbgr1400125.outbound.protection.outlook.com ([40.107.140.125]:36192
+        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726823AbeKNUxP (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 14 Nov 2018 15:53:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Kd0qX7uW+FFZfkJ3ssRkZEC+KEwxnChPQ7ePSKC6QAE=;
+ b=IU6RROBLASiTbK/ZdosOV5v8Oe4ojeLM2C67yhGysgnYvN9rNncs8YXXpHsBL6kTipBg+sjwpf8dIsv7kHOD7lnfetg/Y8psqpdR2EI/KSEBTdhheylUQ6f1Q1lFXY/Q62mdRg/m36dOb/kulct2QCWpGQk6vouMAi3GvaokYvs=
+Received: from OSBPR01MB2293.jpnprd01.prod.outlook.com (52.134.243.14) by
+ OSBPR01MB1863.jpnprd01.prod.outlook.com (52.134.225.16) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1294.26; Wed, 14 Nov 2018 10:50:25 +0000
+Received: from OSBPR01MB2293.jpnprd01.prod.outlook.com
+ ([fe80::70b9:d472:b61f:6130]) by OSBPR01MB2293.jpnprd01.prod.outlook.com
+ ([fe80::70b9:d472:b61f:6130%2]) with mapi id 15.20.1294.045; Wed, 14 Nov 2018
+ 10:50:24 +0000
+From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To:     Chris Brandt <Chris.Brandt@renesas.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi@googlegroups.com, linux-amarula@amarulasolutions.com
-Content-Type: text/plain; charset="UTF-8"
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+CC:     "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        Chris Brandt <Chris.Brandt@renesas.com>
+Subject: RE: [PATCH 2/3] phy: renesas: rcar-gen3-usb2: Add support for R7S9210
+Thread-Topic: [PATCH 2/3] phy: renesas: rcar-gen3-usb2: Add support for
+ R7S9210
+Thread-Index: AQHUdsB7Gubstzkg+U+v4TwD1Y24U6VPFiwg
+Date:   Wed, 14 Nov 2018 10:50:24 +0000
+Message-ID: <OSBPR01MB2293D01ACA9E7294DD803938D8C30@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+References: <20181107173558.54481-1-chris.brandt@renesas.com>
+ <20181107173558.54481-3-chris.brandt@renesas.com>
+In-Reply-To: <20181107173558.54481-3-chris.brandt@renesas.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=yoshihiro.shimoda.uh@renesas.com; 
+x-originating-ip: [211.11.155.131]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;OSBPR01MB1863;20:qIkZe3WcGgz0RftPtSwodSBwztmi9+fVb6tIipSl2j66qM+aLgsKCgeIGnZOPTGJQqjtDZchd88s/CABH1Oqqx2D1znbQWRpXxQmtFPQfjp+/+ryIujn0qUTQd7tRIUSAYZn2aiDWYz05y8l1+UJ5/Mt/vQgR5DRwBnNxaO1AOc=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10019020)(39860400002)(366004)(396003)(376002)(346002)(136003)(199004)(189003)(105586002)(8936002)(106356001)(71200400001)(71190400001)(25786009)(9686003)(66066001)(4326008)(478600001)(68736007)(6436002)(53936002)(86362001)(2906002)(6246003)(97736004)(81156014)(55016002)(81166006)(107886003)(575784001)(8676002)(33656002)(110136005)(54906003)(7696005)(6506007)(76176011)(345774005)(316002)(5660300001)(14454004)(26005)(102836004)(3846002)(6116002)(446003)(11346002)(186003)(476003)(2900100001)(486006)(229853002)(14444005)(256004)(99286004)(7736002)(305945005)(74316002);DIR:OUT;SFP:1102;SCL:1;SRVR:OSBPR01MB1863;H:OSBPR01MB2293.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-ms-office365-filtering-correlation-id: 28b842f6-cba5-47d6-70e9-08d64a1efb43
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:OSBPR01MB1863;
+x-ms-traffictypediagnostic: OSBPR01MB1863:
+x-microsoft-antispam-prvs: <OSBPR01MB1863DC9814781D803C57FC71D8C30@OSBPR01MB1863.jpnprd01.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(10201501046)(3231410)(944501410)(52105112)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:OSBPR01MB1863;BCL:0;PCL:0;RULEID:;SRVR:OSBPR01MB1863;
+x-forefront-prvs: 085634EFF4
+received-spf: None (protection.outlook.com: renesas.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: Kwy7i1uoQDhDpsq+zAdppj8lAPiaQfzXb4qcB7/hoCxjrsISXsxcl7+WZk+AYNxzwqSI6cNYlyHuJ/bFuLisQxmbhw8Yjq9+FHq2vITfJymYXXmulFxm8oZz2mp7d2AOGiE+4LS3ifqHy2yW2wa+lAFh2o2IzYf7g/730cnxbILW/obInYJlPeOJe2bnK7ZQgUI6ZXoJMFwEuXxVYbUedaBfBiPu6YuETkL97tKO1hQJUrpAxbRe0zcXFda145p1KmPDJkEzI/aXXCLX4yJgW2g4e46AVC18vY4oKe7HZxdXnk43frZmVQ+sD94RDbz9pX0UL9Etp0QP9KkgA4lM9N6aVoJRChCJ4F8eZiukNXI=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 28b842f6-cba5-47d6-70e9-08d64a1efb43
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Nov 2018 10:50:24.2437
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSBPR01MB1863
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Nov 14, 2018 at 2:58 PM Chen-Yu Tsai <wens@csie.org> wrote:
->
-> On Wed, Nov 14, 2018 at 2:31 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
-> >
-> > On Tue, Nov 13, 2018 at 5:52 PM Andre Przywara <andre.przywara@arm.com> wrote:
-> > >
-> > > On Tue, 13 Nov 2018 16:46:32 +0530
-> > > Jagan Teki <jagan@amarulasolutions.com> wrote:
-> > >
-> > > Hi,
-> > >
-> > > > This patch add support for Bananapi S070WV20-CT16 DSI panel to
-> > > > BPI-M64 board.
-> > > >
-> > > > DSI panel connected via board DSI port with,
-> > > > - DC1SW as AVDD supply
-> > >
-> > > Are you sure of that? I don't see anything in the schematic to support
-> > > this. The only power lines that go to the DSI connector are DCDC1 and
-> > > PS. DC1SW is only connected to PortD on the SoC and to the Ethernet PHY.
-> > > Is there anything I miss?
-> >
-> > Thanks for the comment, yes dc1sw is connected in ephy. I have reused
-> > dc1, BSP is attached lcd_power1 to axp81x_dc1sw [1]. I just looking
-> > for someone to comment, may be we can skip this regulator attachment.
->
-> That seems sketchy. The schematics show the connector has feeds from both
-> the unregulated output IPSOUT (PS) and DCDC1. For designs with RGB LCD
-> panels, we only see the PS feed. Since the LCD panel can be used in either
-> RGB or MIPI DSI mode, I highly suspect the DCDC1 supply feeds the bridge
-> IC.
->
-> As for DC1SW, this is likely referenced because it provides power to the
-> GPIO lines that are used to control the LCD panel. If you don't provide
-> power, you can't pull them up.
->
-> While many of us dislike FEX and the new FEX-derived device tree, they
-> do provide some information, such as regulator usage. Note that each
-> regulator output has multiple names, which likely denote specific
-> usages.
->
-> I've asked BPI for schematics on the bridge board. Hopefully we'll
-> have something in more detail. In the meantime, I suggest leaving
-> this panel out of your next submission, and focus on getting the bulk
-> of the dsi driver and dts changes in first.
+Hi Chris-san,
 
-I got the schematics, but unfortunately I can't share them publicly.
+Thank you for the patch!
 
-It looks like VCC-MIPI on the connector is not connected to anything.
-All power is provided from IPSOUT, first through a current limiter IC
-turned on and off by LCD_PWR_EN, and then through some voltage regulators
-to provide the voltages for various parts of the panel, including LCD,
-capacitive touch, and the MIPI-DSI bridge. There's even an onboard EEPROM,
-though I'm not sure what that's for.
+> From: Chris Brandt, Sent: Thursday, November 8, 2018 2:36 AM
+>=20
+> The RZ/A2 has the same USB2 host controller as R-Car Gen3 with only some
+> minor differences.
+>=20
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+> ---
+>  drivers/phy/renesas/Kconfig              |  2 +-
+>  drivers/phy/renesas/phy-rcar-gen3-usb2.c | 12 ++++++++++++
+>  2 files changed, 13 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/phy/renesas/Kconfig b/drivers/phy/renesas/Kconfig
+> index e340a925bbb1..beebeba31e84 100644
+> --- a/drivers/phy/renesas/Kconfig
+> +++ b/drivers/phy/renesas/Kconfig
+> @@ -19,7 +19,7 @@ config PHY_RCAR_GEN3_PCIE
+>  config PHY_RCAR_GEN3_USB2
+>  	tristate "Renesas R-Car generation 3 USB 2.0 PHY driver"
+>  	depends on ARCH_RENESAS
+> -	depends on EXTCON
+> +	depends on EXTCON || ARCH_R7S9210
 
-> >
-> > >
-> > > > - DCDC1 as DVDD supply
-> > >
-> > > That seems right, but doesn't match with what you write below.
-> >
-> > Commit need to fix s/DCDC1/DLDO1
-> >
-> > >
-> > > > - PD6 gpio for reset pin
+Does this mean that you don't want to use EXTCON if ARCH_R7S9210=3Dy?
 
-This toggles reset for both the panel itself and for the MIPI-DSI bridge.
+>  	depends on USB_SUPPORT
+>  	select GENERIC_PHY
+>  	select USB_COMMON
+> diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renes=
+as/phy-rcar-gen3-usb2.c
+> index d0f412c25981..96ac75ba40ea 100644
+> --- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+> +++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+> @@ -34,6 +34,7 @@
+>  #define USB2_VBCTRL		0x60c
+>  #define USB2_LINECTRL1		0x610
+>  #define USB2_ADPCTRL		0x630
+> +#define USB2_PHYCLK_CTRL	0x644
+>=20
+>  /* INT_ENABLE */
+>  #define USB2_INT_ENABLE_UCOM_INTEN	BIT(3)
+> @@ -88,6 +89,7 @@ struct rcar_gen3_chan {
+>  	bool extcon_host;
+>  	bool is_otg_channel;
+>  	bool uses_otg_pins;
+> +	bool uses_usb_x1;
+>  };
+>=20
+>  /*
+> @@ -326,6 +328,9 @@ static int rcar_gen3_phy_usb2_init(struct phy *p)
+>  	struct rcar_gen3_chan *channel =3D phy_get_drvdata(p);
+>  	void __iomem *usb2_base =3D channel->base;
+>=20
+> +	if (channel->uses_usb_x1)
+> +		writel(0x00000001, usb2_base + USB2_PHYCLK_CTRL);
+> +
+>  	/* Initialize USB2 part */
+>  	writel(USB2_INT_ENABLE_INIT, usb2_base + USB2_INT_ENABLE);
+>  	writel(USB2_SPD_RSM_TIMSET_INIT, usb2_base + USB2_SPD_RSM_TIMSET);
+> @@ -334,6 +339,9 @@ static int rcar_gen3_phy_usb2_init(struct phy *p)
+>  	/* Initialize otg part */
+>  	if (channel->is_otg_channel)
+>  		rcar_gen3_init_otg(channel);
+> +	else
+> +		/* No otg, so default to host mode */
+> +		writel(0x00000000, usb2_base + USB2_COMMCTRL);
 
-> > > > - PD5 gpio for backlight enable pin
+This "else" code will run on R-Car H3 USB port1(host only) for instance.
+I think adding this code is possible, but I'd like to separate patch from
+this adding R7S9210 support. What do you think?
 
-This enables the backlight's regulator.
+>  	return 0;
+>  }
+> @@ -406,6 +414,7 @@ static irqreturn_t rcar_gen3_phy_usb2_irq(int irq, vo=
+id *_ch)
+>  }
+>=20
+>  static const struct of_device_id rcar_gen3_phy_usb2_match_table[] =3D {
+> +	{ .compatible =3D "renesas,usb2-phy-r7s9210" },
 
-> > > > - PD7 gpio for backlight vdd supply
+According to the PATCH 3/3, R7S9210 will use "renesas,rcar-gen3-usb2-phy".
+So, you can remove this line.
 
-This enables power to the whole panel module.
+>  	{ .compatible =3D "renesas,usb2-phy-r8a7795" },
+>  	{ .compatible =3D "renesas,usb2-phy-r8a7796" },
+>  	{ .compatible =3D "renesas,usb2-phy-r8a77965" },
+> @@ -471,6 +480,9 @@ static int rcar_gen3_phy_usb2_probe(struct platform_d=
+evice *pdev)
+>  		}
+>  	}
+>=20
+> +	if (of_property_read_bool(dev->of_node, "renesas,uses_usb_x1"))
+> +		channel->uses_usb_x1 =3D true;
+> +
 
-Then you also have the two GPIOs for the capacitive touch controller.
-And also the I2C bus for the controller, and the EEPROM.
+I'll reply the PATCH 3/3 though, we have to describe the new property into =
+the dt-bindings doc.
 
+Best regards,
+Yoshihiro Shimoda
 
-ChenYu
+>  	/*
+>  	 * devm_phy_create() will call pm_runtime_enable(&phy->dev);
+>  	 * And then, phy-core will manage runtime pm for this device.
+> --
+> 2.16.1
 
-> > > >
-> > > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> > > > ---
-> > > >  .../dts/allwinner/sun50i-a64-bananapi-m64.dts | 42
-> > > > +++++++++++++++++++ 1 file changed, 42 insertions(+)
-> > > >
-> > > > diff --git
-> > > > a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
-> > > > b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts index
-> > > > ef1c90401bb2..6cb010e3bbd9 100644 ---
-> > > > a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts +++
-> > > > b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts @@ -45,6
-> > > > +45,7 @@ #include "sun50i-a64.dtsi"
-> > > >  #include <dt-bindings/gpio/gpio.h>
-> > > > +#include <dt-bindings/pwm/pwm.h>
-> > > >
-> > > >  / {
-> > > >       model = "BananaPi-M64";
-> > > > @@ -56,6 +57,15 @@
-> > > >               serial1 = &uart1;
-> > > >       };
-> > > >
-> > > > +     backlight: backlight {
-> > > > +             compatible = "pwm-backlight";
-> > > > +             pwms = <&r_pwm 0 50000 PWM_POLARITY_INVERTED>;
-> > > > +             brightness-levels = <1 2 4 8 16 32 64 128 512>;
-> > > > +             default-brightness-level = <2>;
-> > > > +             enable-gpios = <&pio 3 5 GPIO_ACTIVE_HIGH>; /*
-> > > > LCD-BL-EN: PD5 */
-> > > > +             power-supply = <&reg_vdd_backlight>;
-> > > > +     };
-> > > > +
-> > > >       chosen {
-> > > >               stdout-path = "serial0:115200n8";
-> > > >       };
-> > > > @@ -91,6 +101,15 @@
-> > > >               };
-> > > >       };
-> > > >
-> > > > +     reg_vdd_backlight: vdd-backlight {
-> > > > +             compatible = "regulator-fixed";
-> > > > +             regulator-name = "vdd-backlight";
-> > > > +             regulator-min-microvolt = <3300000>;
-> > > > +             regulator-max-microvolt = <3300000>;
-> > > > +             gpio = <&pio 3 7 GPIO_ACTIVE_HIGH>; /* LCD-PWR-EN:
-> > > > PD7 */
-> > > > +             enable-active-high;
-> > > > +     };
-> > > > +
-> > > >       wifi_pwrseq: wifi_pwrseq {
-> > > >               compatible = "mmc-pwrseq-simple";
-> > > >               reset-gpios = <&r_pio 0 2 GPIO_ACTIVE_LOW>; /* PL2 */
-> > > > @@ -101,6 +120,23 @@
-> > > >       status = "okay";
-> > > >  };
-> > > >
-> > > > +&dphy {
-> > > > +     status = "okay";
-> > > > +};
-> > > > +
-> > > > +&dsi {
-> > > > +     status = "okay";
-> > > > +
-> > > > +     panel@0 {
-> > > > +             compatible = "bananapi,s070wv20-ct16-icn6211";
-> > > > +             reg = <0>;
-> > > > +             avdd-supply = <&reg_dc1sw>;
-> > >
-> > > As mentioned above, I don't see this on the DSI connector.
-> > >
-> > > > +             dvdd-supply = <&reg_dldo1>;
-> > >
-> > > Mmh, this line is connected to the *SoC*, to drive the DSI data lines
-> > > or the DPHY, presumably. So I wouldn't expect it in the panel node, but
-> > > rather in the DPHY or DSI node. Although I can't find a power-supply
-> > > property in those bindings.
-> >
-> > Got it, this has to attach via vcc-dsi-supply.
-> >
-> > [1] https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/bootloader/blobs/bpi-m64-lcd7.dts#L2266
