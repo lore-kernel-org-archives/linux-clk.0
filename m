@@ -1,228 +1,209 @@
-Return-Path: <SRS0=4aIB=NZ=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=YASP=N2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66512C43441
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Nov 2018 23:28:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A591C43441
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Nov 2018 01:28:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BE262243E
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Nov 2018 23:28:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9F412089F
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Nov 2018 01:28:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OZVU9cgt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BE262243E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="cTF6nAce"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9F412089F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726269AbeKOJeD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 15 Nov 2018 04:34:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33708 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725952AbeKOJeD (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 15 Nov 2018 04:34:03 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 33F2522419;
-        Wed, 14 Nov 2018 23:28:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542238120;
-        bh=jtaOr80xGgRzEQltue4ejhPbC/TLGnFw3uzy8IZ4REg=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=OZVU9cgtXBoJQsmkvSwj0s0OTNkKPmV8bqoo7kYBAZKv4vXJlnrh2bdr08ZVw6kgY
-         ALT/Cthlx+C2oYqMw4/2rth/8+4z6seR6YiTC+IzZY4WdjhNd+P1vReD/a7xGbMyLt
-         gwC/r+EckdaKRVr2m+rioN7ChOCY0u3FOEiXXflc=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     "A.s. Dong" <aisheng.dong@nxp.com>,
+        id S1727310AbeKOLdw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 15 Nov 2018 06:33:52 -0500
+Received: from mail-eopbgr140044.outbound.protection.outlook.com ([40.107.14.44]:6214
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725895AbeKOLdw (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 15 Nov 2018 06:33:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=utgLNScSFKVnPPvObcn4uG54LH3vZ718hR8NMjKWM0Y=;
+ b=cTF6nAceimQZfml5pkXsoW4KXft60BmwXsVpzYplUXsKpoImlt0m4T47EBCpUARFteFW/vYVuwvvfk1P4ur3TauYfTYpQIrcw1mxYhPdycQzyEzQSw0N0wkW/6APYCjWpV4w/7LnimRtEF72Q6/o9nOYd8ud7qfR6NWoOf3DH84=
+Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.126.21) by
+ AM0PR04MB5923.eurprd04.prod.outlook.com (20.178.117.12) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1294.20; Thu, 15 Nov 2018 01:28:06 +0000
+Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
+ ([fe80::797a:f972:9281:6d10]) by AM0PR04MB4211.eurprd04.prod.outlook.com
+ ([fe80::797a:f972:9281:6d10%2]) with mapi id 15.20.1294.045; Thu, 15 Nov 2018
+ 01:28:05 +0000
+From:   "A.s. Dong" <aisheng.dong@nxp.com>
+To:     Stephen Boyd <sboyd@kernel.org>,
         "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1541862894-8209-7-git-send-email-aisheng.dong@nxp.com>
-Cc:     "linux-arm-kernel@lists.infradead.org" 
+CC:     "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>,
         "mturquette@baylibre.com" <mturquette@baylibre.com>,
         "shawnguo@kernel.org" <shawnguo@kernel.org>,
         Fabio Estevam <fabio.estevam@nxp.com>,
         dl-linux-imx <linux-imx@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "A.s. Dong" <aisheng.dong@nxp.com>
+        "kernel@pengutronix.de" <kernel@pengutronix.de>
+Subject: RE: [PATCH V6 6/6] clk: imx: add imx8qxp lpcg driver
+Thread-Topic: [PATCH V6 6/6] clk: imx: add imx8qxp lpcg driver
+Thread-Index: AQHUeQjdj127rR5nB0C+9Z8nazMcu6VP8XmAgAAcG7A=
+Date:   Thu, 15 Nov 2018 01:28:05 +0000
+Message-ID: <AM0PR04MB4211A7CA91D6188AB81BA6EA80DC0@AM0PR04MB4211.eurprd04.prod.outlook.com>
 References: <1541862894-8209-1-git-send-email-aisheng.dong@nxp.com>
  <1541862894-8209-7-git-send-email-aisheng.dong@nxp.com>
-Message-ID: <154223811948.88331.8860718270277533070@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH V6 6/6] clk: imx: add imx8qxp lpcg driver
-Date:   Wed, 14 Nov 2018 15:28:39 -0800
+ <154223811948.88331.8860718270277533070@swboyd.mtv.corp.google.com>
+In-Reply-To: <154223811948.88331.8860718270277533070@swboyd.mtv.corp.google.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=aisheng.dong@nxp.com; 
+x-originating-ip: [101.93.238.110]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM0PR04MB5923;6:pN75VPJYffLAb91PSibviBSetUTc5uV4ZJe/6qw5cIVc4g08xZ9jNCQ7lLP3i8vrQHmF8eHDoHnCWJA+WuLryPd20k+Gr7WkyAc3huprZ+EBK+HfS5FzHny3D4iZqR5KdE/5V3bVpSNo9xohxGEdlyuQQFymZbsMyBSRXl9Ywoq6MluB3V8PGc301Kb6oakUfSE2LMAfDA9hzFyhp5U/7ReeIh1GW3tyCiSTKvwnWt8LRoDvYT1C7IlIM+iz9kOUS8hnxQXAxoirOcjSGa3xnfhOB37Af/LstdD/6DoxDiEnXbUlORkXdk66U3pKC857lXRRz9K0c7HXWU0hf+2gZTZ3LmUsF5HYC8hzTH0V8gdPHsrMDDI5MB0ldcrfMcBJ7yvrQ3JJr0Rz3n2ef33usaUz1IiXd6fLltqsCkZMMEgDugUCDGfD7Lt6qnodFYFq8OfNjLMopCcg7aiA0R/7CA==;5:ZYSehC8X0BUi3OU9BEHZ4D7ZoC/qRy0AqrLq6lN+51FAuj32cZPmVEB6x0yGIP12KsMXumzYgSWTETxSiWApzhul1m2bUouWMkC3Wlse/f200HgUyg9jrQLf+ww5fMKQYFFBZVfkYWRcvQ2rJO9XHa3jAIS6+avk5kPWl8aQMaU=;7:4OnoI0Ed4jqObuAjTPw7KSOlMPIcVjIOsrtBSo9BKDYeEcBCz2paOXwDOZ7JfLBdP86NPBl0MX8cCYcgnjq7XSOKwpnGRbfYEsCcwXfx3mAstf/vPRD1f2Oz+RM609MffvoFclYyrE/APlz7qY8QBQ==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 46f060c8-f249-4c4e-025d-08d64a9997f5
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB5923;
+x-ms-traffictypediagnostic: AM0PR04MB5923:
+x-microsoft-antispam-prvs: <AM0PR04MB592378910DAEBF91D12E9D5380DC0@AM0PR04MB5923.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(185117386973197);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3231415)(944501410)(52105112)(3002001)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:AM0PR04MB5923;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB5923;
+x-forefront-prvs: 08572BD77F
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(346002)(39860400002)(376002)(136003)(396003)(189003)(51914003)(13464003)(199004)(11346002)(5660300001)(81166006)(81156014)(4001150100001)(53936002)(99286004)(86362001)(256004)(486006)(14444005)(8676002)(2501003)(9686003)(4326008)(6436002)(55016002)(71190400001)(71200400001)(97736004)(6246003)(14454004)(8936002)(110136005)(476003)(6506007)(25786009)(102836004)(446003)(305945005)(26005)(7736002)(105586002)(106356001)(478600001)(7696005)(2906002)(74316002)(54906003)(33656002)(186003)(76176011)(68736007)(66066001)(2900100001)(316002)(3846002)(6116002)(229853002)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5923;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: LZ14MuClsjZJ6aRzRqwNjzycnFjH6K+fCBreCSSCsYAqjglkESjVwfIGZfikslqVMIGT3b3X2xBVIeq6TAOlV2rPndhbOuMHdbvepSnyyGZfUw6gE6mPIMp1JF9k0Uub/7nLdUM/pekjVD2mgfe786t4sPb0bKgSeayq01TqFfdfqjuRhoRZeSMmXcz2d5JcaEO5k/yn3sK9nkxKRD9YC7K9cbRWaRktkSGFiKDFNuVl2teLMOcTvuzFvKWga9+xbHYhqeQM1tA159hfg1W+haFNRsgTXicWo+nVpkTCOOIUVZyMM9PxZaYJG6GL4XfN0dF6cft6mSZqoDrk8MqdJ/YeMERwHxCmOhTw+I00dek=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 46f060c8-f249-4c4e-025d-08d64a9997f5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Nov 2018 01:28:05.8151
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5923
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting A.s. Dong (2018-11-10 07:20:08)
-> Add imx8qxp lpcg driver support
-> =
-
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: Sascha Hauer <kernel@pengutronix.de>
-> Cc: Fabio Estevam <fabio.estevam@nxp.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-
-I like it!
-
-> diff --git a/drivers/clk/imx/clk-imx8qxp-lpcg.c b/drivers/clk/imx/clk-imx=
-8qxp-lpcg.c
-> new file mode 100644
-> index 0000000..7b318d7
-> --- /dev/null
-> +++ b/drivers/clk/imx/clk-imx8qxp-lpcg.c
-> @@ -0,0 +1,198 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * Copyright 2018 NXP
-> + *     Dong Aisheng <aisheng.dong@nxp.com>
-> + */
-> +
-> +#include <dt-bindings/clock/imx8qxp-clock.h>
-
-Include this after <linux/*> and before locals please.
-
-> +#include <linux/clk-provider.h>
-> +#include <linux/err.h>
-> +#include <linux/io.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/of_device.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/slab.h>
-> +
-> +#include "clk-scu.h"
-> +#include "clk-imx8qxp-lpcg.h"
-> +
-> +struct imx8qxp_lpcg_data {
-> +       int id;
-> +       char *name;
-> +       char *parent;
-> +       unsigned long flags;
-> +       u32 offset;
-> +       u8 bit_idx;
-> +       bool hw_gate;
-> +};
-> +
-> +struct imx8qxp_ss_lpcg {
-> +       const struct imx8qxp_lpcg_data *lpcg;
-> +       u8 num_lpcg;
-> +       u8 num_max;
-> +};
-
-Any chance we can get kernel-doc on these structs and members of the
-structs?
-
-> +
-> +static const struct imx8qxp_lpcg_data imx8qxp_lpcg_adma[] =3D {
-> +       { IMX8QXP_ADMA_LPCG_UART0_IPG_CLK, "uart0_lpcg_ipg_clk", "dma_ipg=
-_clk_root", 0, ADMA_LPUART_0_LPCG, 16, 0, },
-> +       { IMX8QXP_ADMA_LPCG_UART0_BAUD_CLK, "uart0_lpcg_baud_clk", "uart0=
-_clk", 0, ADMA_LPUART_0_LPCG, 0, 0, },
-> +       { IMX8QXP_ADMA_LPCG_UART1_IPG_CLK, "uart1_lpcg_ipg_clk", "dma_ipg=
-_clk_root", 0, ADMA_LPUART_1_LPCG, 16, 0, },
-> +       { IMX8QXP_ADMA_LPCG_UART1_BAUD_CLK, "uart1_lpcg_baud_clk", "uart1=
-_clk", 0, ADMA_LPUART_1_LPCG, 0, 0, },
-[...]
-> +
-> +static int imx8qxp_lpcg_clk_probe(struct platform_device *pdev)
-> +{
-> +       struct device *dev =3D &pdev->dev;
-> +       struct device_node *np =3D dev->of_node;
-> +       struct clk_hw_onecell_data *clk_data;
-> +       const struct imx8qxp_ss_lpcg *ss_lpcg;
-> +       const struct imx8qxp_lpcg_data *lpcg;
-> +       struct resource *res;
-> +       struct clk_hw **clks;
-> +       void __iomem *base;
-> +       int i;
-
-That's a good amount of local variables!
-
-> +
-> +       ss_lpcg =3D of_device_get_match_data(dev);
-> +       if (!ss_lpcg)
-> +               return -ENODEV;
-> +
-> +       res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +       base =3D devm_ioremap(dev, res->start, resource_size(res));
-
-Why not devm_ioremap_resource()?
-
-> +       if (!base)
-> +               return -ENOMEM;
-
-And then return the error code out of it?
-
-> +
-> +       clk_data =3D devm_kzalloc(&pdev->dev, sizeof(*clk_data) +
-> +                               sizeof(*clk_data->hws) * ss_lpcg->num_max,
-
-Can you use struct_size() here?
-
-> +                               GFP_KERNEL);
-> +       if (!clk_data)
-> +               return -ENOMEM;
-> +
-> +       clk_data->num =3D ss_lpcg->num_max;
-> +       clks =3D clk_data->hws;
-> +
-> +       for (i =3D 0; i < ss_lpcg->num_lpcg; i++) {
-> +               lpcg =3D ss_lpcg->lpcg + i;
-> +               clks[lpcg->id] =3D imx_clk_lpcg_scu(lpcg->name, lpcg->par=
-ent,
-> +                                                 lpcg->flags, base + lpc=
-g->offset,
-> +                                                 lpcg->bit_idx, lpcg->hw=
-_gate);
-> +       }
-> +
-> +       for (i =3D 0; i < clk_data->num; i++) {
-> +               if (IS_ERR(clks[i]))
-> +                       pr_err("i.MX clk %u: register failed with %ld\n",
-> +                               i, PTR_ERR(clks[i]));
-
-But we're OK to continue? Alright...
-
-> +       }
-> +
-> +       return of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_data=
-);
-
-Why not use devm_? Or can the driver never be unbound from sysfs?
-
-> +}
-> +
-> +static const struct of_device_id imx8qxp_lpcg_match[] =3D {
-> +       { .compatible =3D "fsl,imx8qxp-lpcg-adma", &imx8qxp_ss_adma, },
-> +       { .compatible =3D "fsl,imx8qxp-lpcg-conn", &imx8qxp_ss_conn, },
-> +       { .compatible =3D "fsl,imx8qxp-lpcg-lsio", &imx8qxp_ss_lsio, },
-> +       { /* sentinel */ }
-> +};
-> +
-> +static struct platform_driver imx8qxp_lpcg_clk_driver =3D {
-> +       .driver =3D {
-> +               .name =3D "imx8qxp-lpcg-clk",
-> +               .of_match_table =3D imx8qxp_lpcg_match,
-> +       },
-> +       .probe =3D imx8qxp_lpcg_clk_probe,
-> +};
-> +
-> +builtin_platform_driver(imx8qxp_lpcg_clk_driver);
-> +
-> +MODULE_AUTHOR("Dong Aisheng <aisheng.dong@nxp.com>");
-> +MODULE_DESCRIPTION("IMX8QXP LPCG Clock driver");
-> +MODULE_LICENSE("GPL v2");
-
-If the module is builtin all the time because of
-builtin_platform_driver() I think we don't need these MODULE_ macros.
-
+SGkgU3RlcGhlbiwNCg0KVGhhbmtzIGZvciB0aGUgcXVpY2sgcmV2aWV3ISA6KQ0KDQo+IC0tLS0t
+T3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IFN0ZXBoZW4gQm95ZCBbbWFpbHRvOnNib3lk
+QGtlcm5lbC5vcmddDQo+IFNlbnQ6IFRodXJzZGF5LCBOb3ZlbWJlciAxNSwgMjAxOCA3OjI5IEFN
+DQpbLi4uXQ0KPiANCj4gUXVvdGluZyBBLnMuIERvbmcgKDIwMTgtMTEtMTAgMDc6MjA6MDgpDQo+
+ID4gQWRkIGlteDhxeHAgbHBjZyBkcml2ZXIgc3VwcG9ydA0KPiA+DQo+ID4gQ2M6IFN0ZXBoZW4g
+Qm95ZCA8c2JveWRAa2VybmVsLm9yZz4NCj4gPiBDYzogU2hhd24gR3VvIDxzaGF3bmd1b0BrZXJu
+ZWwub3JnPg0KPiA+IENjOiBTYXNjaGEgSGF1ZXIgPGtlcm5lbEBwZW5ndXRyb25peC5kZT4NCj4g
+PiBDYzogRmFiaW8gRXN0ZXZhbSA8ZmFiaW8uZXN0ZXZhbUBueHAuY29tPg0KPiA+IENjOiBNaWNo
+YWVsIFR1cnF1ZXR0ZSA8bXR1cnF1ZXR0ZUBiYXlsaWJyZS5jb20+DQo+ID4gU2lnbmVkLW9mZi1i
+eTogRG9uZyBBaXNoZW5nIDxhaXNoZW5nLmRvbmdAbnhwLmNvbT4NCj4gDQo+IEkgbGlrZSBpdCEN
+Cj4gDQoNCkdyZWF0IHRvIGtub3cgdGhhdC4NCg0KPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2Ns
+ay9pbXgvY2xrLWlteDhxeHAtbHBjZy5jDQo+ID4gYi9kcml2ZXJzL2Nsay9pbXgvY2xrLWlteDhx
+eHAtbHBjZy5jDQo+ID4gbmV3IGZpbGUgbW9kZSAxMDA2NDQNCj4gPiBpbmRleCAwMDAwMDAwLi43
+YjMxOGQ3DQo+ID4gLS0tIC9kZXYvbnVsbA0KPiA+ICsrKyBiL2RyaXZlcnMvY2xrL2lteC9jbGst
+aW14OHF4cC1scGNnLmMNCj4gPiBAQCAtMCwwICsxLDE5OCBAQA0KPiA+ICsvLyBTUERYLUxpY2Vu
+c2UtSWRlbnRpZmllcjogR1BMLTIuMCsNCj4gPiArLyoNCj4gPiArICogQ29weXJpZ2h0IDIwMTgg
+TlhQDQo+ID4gKyAqICAgICBEb25nIEFpc2hlbmcgPGFpc2hlbmcuZG9uZ0BueHAuY29tPg0KPiA+
+ICsgKi8NCj4gPiArDQo+ID4gKyNpbmNsdWRlIDxkdC1iaW5kaW5ncy9jbG9jay9pbXg4cXhwLWNs
+b2NrLmg+DQo+IA0KPiBJbmNsdWRlIHRoaXMgYWZ0ZXIgPGxpbnV4Lyo+IGFuZCBiZWZvcmUgbG9j
+YWxzIHBsZWFzZS4NCj4gDQoNCkdvdCBpdC4NCg0KPiA+ICsjaW5jbHVkZSA8bGludXgvY2xrLXBy
+b3ZpZGVyLmg+DQo+ID4gKyNpbmNsdWRlIDxsaW51eC9lcnIuaD4NCj4gPiArI2luY2x1ZGUgPGxp
+bnV4L2lvLmg+DQo+ID4gKyNpbmNsdWRlIDxsaW51eC9tb2R1bGUuaD4NCj4gPiArI2luY2x1ZGUg
+PGxpbnV4L29mLmg+DQo+ID4gKyNpbmNsdWRlIDxsaW51eC9vZl9kZXZpY2UuaD4NCj4gPiArI2lu
+Y2x1ZGUgPGxpbnV4L3BsYXRmb3JtX2RldmljZS5oPg0KPiA+ICsjaW5jbHVkZSA8bGludXgvc2xh
+Yi5oPg0KPiA+ICsNCj4gPiArI2luY2x1ZGUgImNsay1zY3UuaCINCj4gPiArI2luY2x1ZGUgImNs
+ay1pbXg4cXhwLWxwY2cuaCINCj4gPiArDQo+ID4gK3N0cnVjdCBpbXg4cXhwX2xwY2dfZGF0YSB7
+DQo+ID4gKyAgICAgICBpbnQgaWQ7DQo+ID4gKyAgICAgICBjaGFyICpuYW1lOw0KPiA+ICsgICAg
+ICAgY2hhciAqcGFyZW50Ow0KPiA+ICsgICAgICAgdW5zaWduZWQgbG9uZyBmbGFnczsNCj4gPiAr
+ICAgICAgIHUzMiBvZmZzZXQ7DQo+ID4gKyAgICAgICB1OCBiaXRfaWR4Ow0KPiA+ICsgICAgICAg
+Ym9vbCBod19nYXRlOw0KPiA+ICt9Ow0KPiA+ICsNCj4gPiArc3RydWN0IGlteDhxeHBfc3NfbHBj
+ZyB7DQo+ID4gKyAgICAgICBjb25zdCBzdHJ1Y3QgaW14OHF4cF9scGNnX2RhdGEgKmxwY2c7DQo+
+ID4gKyAgICAgICB1OCBudW1fbHBjZzsNCj4gPiArICAgICAgIHU4IG51bV9tYXg7DQo+ID4gK307
+DQo+IA0KPiBBbnkgY2hhbmNlIHdlIGNhbiBnZXQga2VybmVsLWRvYyBvbiB0aGVzZSBzdHJ1Y3Rz
+IGFuZCBtZW1iZXJzIG9mIHRoZQ0KPiBzdHJ1Y3RzPw0KPiANCg0KSSBjYW4gYWRkIGl0Lg0KDQo+
+ID4gKw0KPiA+ICtzdGF0aWMgY29uc3Qgc3RydWN0IGlteDhxeHBfbHBjZ19kYXRhIGlteDhxeHBf
+bHBjZ19hZG1hW10gPSB7DQo+ID4gKyAgICAgICB7IElNWDhRWFBfQURNQV9MUENHX1VBUlQwX0lQ
+R19DTEssICJ1YXJ0MF9scGNnX2lwZ19jbGsiLA0KPiAiZG1hX2lwZ19jbGtfcm9vdCIsIDAsIEFE
+TUFfTFBVQVJUXzBfTFBDRywgMTYsIDAsIH0sDQo+ID4gKyAgICAgICB7IElNWDhRWFBfQURNQV9M
+UENHX1VBUlQwX0JBVURfQ0xLLA0KPiAidWFydDBfbHBjZ19iYXVkX2NsayIsICJ1YXJ0MF9jbGsi
+LCAwLCBBRE1BX0xQVUFSVF8wX0xQQ0csIDAsIDAsIH0sDQo+ID4gKyAgICAgICB7IElNWDhRWFBf
+QURNQV9MUENHX1VBUlQxX0lQR19DTEssICJ1YXJ0MV9scGNnX2lwZ19jbGsiLA0KPiAiZG1hX2lw
+Z19jbGtfcm9vdCIsIDAsIEFETUFfTFBVQVJUXzFfTFBDRywgMTYsIDAsIH0sDQo+ID4gKyAgICAg
+ICB7IElNWDhRWFBfQURNQV9MUENHX1VBUlQxX0JBVURfQ0xLLA0KPiAidWFydDFfbHBjZ19iYXVk
+X2NsayIsDQo+ID4gKyJ1YXJ0MV9jbGsiLCAwLCBBRE1BX0xQVUFSVF8xX0xQQ0csIDAsIDAsIH0s
+DQo+IFsuLi5dDQo+ID4gKw0KPiA+ICtzdGF0aWMgaW50IGlteDhxeHBfbHBjZ19jbGtfcHJvYmUo
+c3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikgew0KPiA+ICsgICAgICAgc3RydWN0IGRldmlj
+ZSAqZGV2ID0gJnBkZXYtPmRldjsNCj4gPiArICAgICAgIHN0cnVjdCBkZXZpY2Vfbm9kZSAqbnAg
+PSBkZXYtPm9mX25vZGU7DQo+ID4gKyAgICAgICBzdHJ1Y3QgY2xrX2h3X29uZWNlbGxfZGF0YSAq
+Y2xrX2RhdGE7DQo+ID4gKyAgICAgICBjb25zdCBzdHJ1Y3QgaW14OHF4cF9zc19scGNnICpzc19s
+cGNnOw0KPiA+ICsgICAgICAgY29uc3Qgc3RydWN0IGlteDhxeHBfbHBjZ19kYXRhICpscGNnOw0K
+PiA+ICsgICAgICAgc3RydWN0IHJlc291cmNlICpyZXM7DQo+ID4gKyAgICAgICBzdHJ1Y3QgY2xr
+X2h3ICoqY2xrczsNCj4gPiArICAgICAgIHZvaWQgX19pb21lbSAqYmFzZTsNCj4gPiArICAgICAg
+IGludCBpOw0KPiANCj4gVGhhdCdzIGEgZ29vZCBhbW91bnQgb2YgbG9jYWwgdmFyaWFibGVzIQ0K
+DQpZZXMsIHNlZW1zIHdlIG5lZWQgdGhlbS4NClBsZWFzZSBsZXQgbWUga25vdyBpZiB5b3UgaGF2
+ZSBhIGJldHRlciBpZGVhLg0KDQo+IA0KPiA+ICsNCj4gPiArICAgICAgIHNzX2xwY2cgPSBvZl9k
+ZXZpY2VfZ2V0X21hdGNoX2RhdGEoZGV2KTsNCj4gPiArICAgICAgIGlmICghc3NfbHBjZykNCj4g
+PiArICAgICAgICAgICAgICAgcmV0dXJuIC1FTk9ERVY7DQo+ID4gKw0KPiA+ICsgICAgICAgcmVz
+ID0gcGxhdGZvcm1fZ2V0X3Jlc291cmNlKHBkZXYsIElPUkVTT1VSQ0VfTUVNLCAwKTsNCj4gPiAr
+ICAgICAgIGJhc2UgPSBkZXZtX2lvcmVtYXAoZGV2LCByZXMtPnN0YXJ0LCByZXNvdXJjZV9zaXpl
+KHJlcykpOw0KPiANCj4gV2h5IG5vdCBkZXZtX2lvcmVtYXBfcmVzb3VyY2UoKT8NCg0KQmVjYXVz
+ZSBMUENHcyBhcmUgZGlzdHJpYnV0ZWQgaW4gdmFyaW91cyBzdWJzeXN0ZW0gbWVtb3J5IHNwYWNl
+IHdoaWNoDQptYXkgYmUgb3ZlcmxhcHBlZCB3aXRoIHNvbWUgSVAgbW9kdWxlcy4gU28gd2UgY2Fu
+J3QgdXNlIGRldm1faW9yZW1hcF9yZXNvdXJjZQ0Kd2hpY2ggaGFzIGEgcmVxdWVzdF9tZW1fcmVn
+aW9uKCkgaW4gaXQuDQpJdCdzIHNvbWV0aGluZyBsaWtlIHdoYXQgd2UndmUgZG9uZSBmb3IgZHJp
+dmVycy9tZmQvc3lzY29uLmMuDQoNCj4gDQo+ID4gKyAgICAgICBpZiAoIWJhc2UpDQo+ID4gKyAg
+ICAgICAgICAgICAgIHJldHVybiAtRU5PTUVNOw0KPiANCj4gQW5kIHRoZW4gcmV0dXJuIHRoZSBl
+cnJvciBjb2RlIG91dCBvZiBpdD8NCj4gDQoNClNlZSBhYm92ZS4NCg0KPiA+ICsNCj4gPiArICAg
+ICAgIGNsa19kYXRhID0gZGV2bV9remFsbG9jKCZwZGV2LT5kZXYsIHNpemVvZigqY2xrX2RhdGEp
+ICsNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHNpemVvZigqY2xrX2RhdGEt
+Pmh3cykgKg0KPiA+ICsgc3NfbHBjZy0+bnVtX21heCwNCj4gDQo+IENhbiB5b3UgdXNlIHN0cnVj
+dF9zaXplKCkgaGVyZT8NCj4gDQoNCkdvdCBpdCwgdGhhbmtzIGZvciBwb2ludGluZyB0byB0aGlz
+IG5ldyBhcGkuDQoNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIEdGUF9LRVJO
+RUwpOw0KPiA+ICsgICAgICAgaWYgKCFjbGtfZGF0YSkNCj4gPiArICAgICAgICAgICAgICAgcmV0
+dXJuIC1FTk9NRU07DQo+ID4gKw0KPiA+ICsgICAgICAgY2xrX2RhdGEtPm51bSA9IHNzX2xwY2ct
+Pm51bV9tYXg7DQo+ID4gKyAgICAgICBjbGtzID0gY2xrX2RhdGEtPmh3czsNCj4gPiArDQo+ID4g
+KyAgICAgICBmb3IgKGkgPSAwOyBpIDwgc3NfbHBjZy0+bnVtX2xwY2c7IGkrKykgew0KPiA+ICsg
+ICAgICAgICAgICAgICBscGNnID0gc3NfbHBjZy0+bHBjZyArIGk7DQo+ID4gKyAgICAgICAgICAg
+ICAgIGNsa3NbbHBjZy0+aWRdID0gaW14X2Nsa19scGNnX3NjdShscGNnLT5uYW1lLA0KPiBscGNn
+LT5wYXJlbnQsDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICBscGNnLT5mbGFncywgYmFzZSArDQo+IGxwY2ctPm9mZnNldCwNCj4gPiArICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGxwY2ctPmJpdF9pZHgs
+DQo+IGxwY2ctPmh3X2dhdGUpOw0KPiA+ICsgICAgICAgfQ0KPiA+ICsNCj4gPiArICAgICAgIGZv
+ciAoaSA9IDA7IGkgPCBjbGtfZGF0YS0+bnVtOyBpKyspIHsNCj4gPiArICAgICAgICAgICAgICAg
+aWYgKElTX0VSUihjbGtzW2ldKSkNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICBwcl9lcnIo
+ImkuTVggY2xrICV1OiByZWdpc3RlciBmYWlsZWQgd2l0aCAlbGRcbiIsDQo+ID4gKyAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICBpLCBQVFJfRVJSKGNsa3NbaV0pKTsNCj4gDQo+IEJ1dCB3
+ZSdyZSBPSyB0byBjb250aW51ZT8gQWxyaWdodC4uLg0KPiANCg0KWWVzLCBwcm9iYWJseSBiZXR0
+ZXIgdG8gdXNlIHByX3dhcm4oKT8NCg0KPiA+ICsgICAgICAgfQ0KPiA+ICsNCj4gPiArICAgICAg
+IHJldHVybiBvZl9jbGtfYWRkX2h3X3Byb3ZpZGVyKG5wLCBvZl9jbGtfaHdfb25lY2VsbF9nZXQs
+DQo+ID4gKyBjbGtfZGF0YSk7DQo+IA0KPiBXaHkgbm90IHVzZSBkZXZtXz8gT3IgY2FuIHRoZSBk
+cml2ZXIgbmV2ZXIgYmUgdW5ib3VuZCBmcm9tIHN5c2ZzPw0KPiANCg0KV2UgZXhwZWN0IHRoZSBk
+cml2ZXIgdG8gYmUgbmV2ZXIgdW5ib3VuZCBmcm9tIHN5c2ZzLg0KUHJvYmFibHkgd2UnZCBiZXR0
+ZXIgYWRkIC5zdXBwcmVzc19iaW5kX2F0dHJzLg0KDQo+ID4gK30NCj4gPiArDQo+ID4gK3N0YXRp
+YyBjb25zdCBzdHJ1Y3Qgb2ZfZGV2aWNlX2lkIGlteDhxeHBfbHBjZ19tYXRjaFtdID0gew0KPiA+
+ICsgICAgICAgeyAuY29tcGF0aWJsZSA9ICJmc2wsaW14OHF4cC1scGNnLWFkbWEiLCAmaW14OHF4
+cF9zc19hZG1hLCB9LA0KPiA+ICsgICAgICAgeyAuY29tcGF0aWJsZSA9ICJmc2wsaW14OHF4cC1s
+cGNnLWNvbm4iLCAmaW14OHF4cF9zc19jb25uLCB9LA0KPiA+ICsgICAgICAgeyAuY29tcGF0aWJs
+ZSA9ICJmc2wsaW14OHF4cC1scGNnLWxzaW8iLCAmaW14OHF4cF9zc19sc2lvLCB9LA0KPiA+ICsg
+ICAgICAgeyAvKiBzZW50aW5lbCAqLyB9DQo+ID4gK307DQo+ID4gKw0KPiA+ICtzdGF0aWMgc3Ry
+dWN0IHBsYXRmb3JtX2RyaXZlciBpbXg4cXhwX2xwY2dfY2xrX2RyaXZlciA9IHsNCj4gPiArICAg
+ICAgIC5kcml2ZXIgPSB7DQo+ID4gKyAgICAgICAgICAgICAgIC5uYW1lID0gImlteDhxeHAtbHBj
+Zy1jbGsiLA0KPiA+ICsgICAgICAgICAgICAgICAub2ZfbWF0Y2hfdGFibGUgPSBpbXg4cXhwX2xw
+Y2dfbWF0Y2gsDQo+ID4gKyAgICAgICB9LA0KPiA+ICsgICAgICAgLnByb2JlID0gaW14OHF4cF9s
+cGNnX2Nsa19wcm9iZSwgfTsNCj4gPiArDQo+ID4gK2J1aWx0aW5fcGxhdGZvcm1fZHJpdmVyKGlt
+eDhxeHBfbHBjZ19jbGtfZHJpdmVyKTsNCj4gPiArDQo+ID4gK01PRFVMRV9BVVRIT1IoIkRvbmcg
+QWlzaGVuZyA8YWlzaGVuZy5kb25nQG54cC5jb20+Iik7DQo+ID4gK01PRFVMRV9ERVNDUklQVElP
+TigiSU1YOFFYUCBMUENHIENsb2NrIGRyaXZlciIpOw0KPiBNT0RVTEVfTElDRU5TRSgiR1BMDQo+
+ID4gK3YyIik7DQo+IA0KPiBJZiB0aGUgbW9kdWxlIGlzIGJ1aWx0aW4gYWxsIHRoZSB0aW1lIGJl
+Y2F1c2Ugb2YNCj4gYnVpbHRpbl9wbGF0Zm9ybV9kcml2ZXIoKSBJIHRoaW5rIHdlIGRvbid0IG5l
+ZWQgdGhlc2UgTU9EVUxFXyBtYWNyb3MuDQoNCk9rYXksIEkgY2FuIHJlbW92ZSB0aGVtLg0KDQpS
+ZWdhcmRzDQpEb25nIEFpc2hlbmcNCg==
