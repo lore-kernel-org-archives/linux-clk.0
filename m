@@ -2,114 +2,74 @@ Return-Path: <SRS0=YASP=N2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CFD7C43441
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Nov 2018 10:55:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C62CC43441
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Nov 2018 11:27:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 464602081C
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Nov 2018 10:55:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dM2C4Gd8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 464602081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 2486C223CB
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Nov 2018 11:27:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2486C223CB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387924AbeKOVCW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 15 Nov 2018 16:02:22 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:43906 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387687AbeKOVCV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Nov 2018 16:02:21 -0500
-Received: by mail-lj1-f193.google.com with SMTP id g26-v6so16862146lja.10
-        for <linux-clk@vger.kernel.org>; Thu, 15 Nov 2018 02:55:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=KnvV7j/+nTg+LDaNboxyDZ6ldnjoYJ8B97EViposZH4=;
-        b=dM2C4Gd8bjmcVA+aNDUQs940Ok0/FDgGKh1YiJAVWY69sXbZbDxIF5mSKLRHSVRGfM
-         qS7aV3hF8AXCVf6o1HQZoIhn8vEEDkmzQBB2abQlsx/ndKbinQ54R6oV6xrkABbb3XRG
-         8u/BbxhEVfCyN99E+XUUzDJJ/MnPb79xqqVdI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KnvV7j/+nTg+LDaNboxyDZ6ldnjoYJ8B97EViposZH4=;
-        b=RxgcEbbzwM3GAZwbo3CD8TtFVkAVCE28k1+fS/yevBX+41jLmYKxEhdle+9G6bRHfM
-         cdTNYJ2ph0hgpjkMRZ8FFAGq25SV7+jLRu1IVNw2MaKcWYMdTDi1g6BHxWj+vWYUrLBa
-         X8uA4qmAKn2UES1G/xaihQubl5in1ny/ueBk6ChTailn+rcMpBmNS3P/o0I5v0g/8PI4
-         EJKHb0umUUMfbfBr3tu+ZIuqZ183ivKqYeekpjijWs+9yH4YS/SKW4mARZASxvQ8HU7o
-         IN0YFZO+RDPU317KYCG1mUM1ENCClOvrvk7+Ko3ZdABqikjUWnAVJ9lhHt8Ydc2r1F9X
-         a45Q==
-X-Gm-Message-State: AGRZ1gLwAAC6iA+bnXce9IFr7D+U9OuIz7PztDTHT+y8HrJfSdf5Mp5e
-        ZDNQn5rSUOEEa8dKYd9sMxRDC4gF5IwZKxxxuygRIw==
-X-Google-Smtp-Source: AJdET5da+y1SGDuZQ/Zx6RK4UQtEjmIanlPADfQPdNS+Q0/qBMJ4OXTt1lWiGSCf5gUEOqlT8u1lV5MqIS+1YdlSjGQ=
-X-Received: by 2002:a2e:7403:: with SMTP id p3-v6mr3346731ljc.97.1542279300290;
- Thu, 15 Nov 2018 02:55:00 -0800 (PST)
-MIME-Version: 1.0
-References: <20181108101405.14062-1-ckeepax@opensource.cirrus.com> <20181108101405.14062-7-ckeepax@opensource.cirrus.com>
-In-Reply-To: <20181108101405.14062-7-ckeepax@opensource.cirrus.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 15 Nov 2018 11:54:48 +0100
-Message-ID: <CACRpkdZCUDsSZA3xAH05ZFuNP8dyHFapX7MJTVnD3A-ts1Y7yA@mail.gmail.com>
-Subject: Re: [PATCH v4 6/6] pinctrl: lochnagar: Add support for the Cirrus
- Logic Lochnagar
-To:     Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc:     Lee Jones <lee.jones@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        id S1729115AbeKOVex (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 15 Nov 2018 16:34:53 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:14672 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729024AbeKOVex (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 15 Nov 2018 16:34:53 -0500
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 441C5E64BC654;
+        Thu, 15 Nov 2018 19:27:12 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
+ 14.3.408.0; Thu, 15 Nov 2018 19:27:07 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        patches@opensource.cirrus.com,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        "Alexandre Torgue" <alexandre.torgue@st.com>
+CC:     YueHaibing <yuehaibing@huawei.com>, <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <kernel-janitors@vger.kernel.org>
+Subject: [PATCH -next] clk: stm32mp1: drop pointless static qualifier in stm32_register_hw_clk()
+Date:   Thu, 15 Nov 2018 11:36:28 +0000
+Message-ID: <1542281788-129746-1-git-send-email-yuehaibing@huawei.com>
+X-Mailer: git-send-email 1.8.3.1
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Nov 8, 2018 at 11:14 AM Charles Keepax
-<ckeepax@opensource.cirrus.com> wrote:
+There is no need to have the 'struct clk_hw **hws' variable static
+since new value always be assigned before use it.
 
-> Lochnagar is an evaluation and development board for Cirrus
-> Logic Smart CODEC and Amp devices. It allows the connection of
-> most Cirrus Logic devices on mini-cards, as well as allowing
-> connection of various application processor systems to provide a
-> full evaluation platform. This driver supports the board
-> controller chip on the Lochnagar board.
->
-> Lochnagar provides many pins which can generally be used for an
-> audio function such as an AIF or a PDM interface, but also as
-> GPIOs.
->
-> Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/clk/clk-stm32mp1.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This v4 version looks very good to me!
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+diff --git a/drivers/clk/clk-stm32mp1.c b/drivers/clk/clk-stm32mp1.c
+index 4f48342..6a31f7f 100644
+--- a/drivers/clk/clk-stm32mp1.c
++++ b/drivers/clk/clk-stm32mp1.c
+@@ -2015,7 +2015,7 @@ static int stm32_register_hw_clk(struct device *dev,
+ 				 void __iomem *base, spinlock_t *lock,
+ 				 const struct clock_config *cfg)
+ {
+-	static struct clk_hw **hws;
++	struct clk_hw **hws;
+ 	struct clk_hw *hw = ERR_PTR(-ENOENT);
+ 
+ 	hws = clk_data->hws;
 
-Nitpicks (fix or not, my review tag stands):
 
->  drivers/pinctrl/cirrus/pinctrl-lochnagar.c | 1145 ++++++++++++++++++++++++++++
->  drivers/pinctrl/cirrus/pinctrl-lochnagar.h |  112 +++
 
-Why don't you just include that header file in the C file.
-112 lines +/- on a 1145 line file doesn't matter.
-
-> +       priv->gpio_chip = template_chip;
-
-I would just skip the template and just assign struct members
-directly.
-
-Bonus if you set ->label to something instance-unique as well.
-
-Yours,
-Linus Walleij
