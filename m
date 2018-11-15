@@ -2,71 +2,89 @@ Return-Path: <SRS0=YASP=N2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12E44C43441
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Nov 2018 14:38:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F3AFC43441
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Nov 2018 15:18:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B45A52086B
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Nov 2018 14:38:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B45A52086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sntech.de
+	by mail.kernel.org (Postfix) with ESMTP id 3381F2086A
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Nov 2018 15:18:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3381F2086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387833AbeKPAqh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 15 Nov 2018 19:46:37 -0500
-Received: from gloria.sntech.de ([185.11.138.130]:42586 "EHLO gloria.sntech.de"
+        id S2388198AbeKPB0a (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 15 Nov 2018 20:26:30 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:46082 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729034AbeKPAqh (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 15 Nov 2018 19:46:37 -0500
-Received: from we0660.dip.tu-dresden.de ([141.76.178.148] helo=phil.dip.tu-dresden.de)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1gNImi-0004z9-53; Thu, 15 Nov 2018 15:38:20 +0100
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     linux-clk@vger.kernel.org
-Cc:     linux-rockchip@lists.infradead.org, mturquette@baylibre.com,
-        sboyd@kernel.org, Mark Yao <mark.yao@rock-chips.com>,
-        Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH] clk: rockchip: make rk3188 hclk_vio_bus critical
-Date:   Thu, 15 Nov 2018 15:38:15 +0100
-Message-Id: <20181115143815.23717-1-heiko@sntech.de>
-X-Mailer: git-send-email 2.18.0
+        id S1726432AbeKPB0a (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 15 Nov 2018 20:26:30 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 5AE5920893; Thu, 15 Nov 2018 16:18:13 +0100 (CET)
+Received: from localhost (aaubervilliers-681-1-13-146.w90-88.abo.wanadoo.fr [90.88.134.146])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 2E83620379;
+        Thu, 15 Nov 2018 16:18:13 +0100 (CET)
+Date:   Thu, 15 Nov 2018 16:18:13 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     hao_zhang <hao5781286@gmail.com>
+Cc:     robh+dt@kernel.org, wens@csie.org, icenowy@aosc.io,
+        linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v0 0/2] Initial Allwinner T3 support.
+Message-ID: <20181115151813.a27uov3zmgzjcerf@flea>
+References: <20181114082033.GA20712@arx-s1>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="mvncl5mqd6ujkb6d"
+Content-Disposition: inline
+In-Reply-To: <20181114082033.GA20712@arx-s1>
+User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Mark Yao <mark.yao@rock-chips.com>
 
-Vop register access request hclk_vio_bus.
+--mvncl5mqd6ujkb6d
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Mark Yao <mark.yao@rock-chips.com>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
-Picked from the vendor kernel and already applied, as I also
-needed that to make my rk3188 tablet's display work.
+Hi!
 
- drivers/clk/rockchip/clk-rk3188.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+On Wed, Nov 14, 2018 at 04:20:33PM +0800, hao_zhang wrote:
+> Initial Allwinner T3 support.
+>=20
+> Allwinner T3 (sun8i) SoC features a Quad-Core Cortex-A7 ARM CPU, and a
+> Mali400 MP2 GPU from ARM. It is a not-pin-compatible quad core sucessor
+> of the A20). It's also known as the Allwinner R40 for In-Car
+> Entertainment usage.
 
-diff --git a/drivers/clk/rockchip/clk-rk3188.c b/drivers/clk/rockchip/clk-rk3188.c
-index 7c6af8e25b0c..7ea20341e870 100644
---- a/drivers/clk/rockchip/clk-rk3188.c
-+++ b/drivers/clk/rockchip/clk-rk3188.c
-@@ -757,7 +757,8 @@ static const char *const rk3188_critical_clocks[] __initconst = {
- 	"hclk_peri",
- 	"pclk_cpu",
- 	"pclk_peri",
--	"hclk_cpubus"
-+	"hclk_cpubus",
-+	"hclk_vio_bus",
- };
- 
- static struct rockchip_clk_provider *__init rk3188_common_clk_init(struct device_node *np)
--- 
-2.18.0
+That series looks good, thanks!  The only thing that would need to be
+reworked is your Signed-off-by name, which (I guess?) should be
+written the same way than in your Copyright info.
 
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--mvncl5mqd6ujkb6d
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW+2ONAAKCRDj7w1vZxhR
+xQdUAQCoTnk08hPOnNMruKvlcsB2v+Ne12xovty1crHmW1lKtAEAv3DNySkDqyXG
+UgiSFeMoSZUkSvOM/q0adyh/uaMs1gU=
+=/VB7
+-----END PGP SIGNATURE-----
+
+--mvncl5mqd6ujkb6d--
