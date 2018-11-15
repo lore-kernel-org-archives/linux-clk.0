@@ -7,69 +7,69 @@ X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82047C04EBF
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Nov 2018 09:42:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE164C43441
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Nov 2018 09:42:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 495AB22511
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Nov 2018 09:42:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B5E0920825
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Nov 2018 09:42:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="cnfgSvba"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 495AB22511
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="QeJKHaxk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5E0920825
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728609AbeKOTtF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 15 Nov 2018 14:49:05 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:32926 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728757AbeKOTtE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Nov 2018 14:49:04 -0500
-Received: by mail-wm1-f67.google.com with SMTP id f19-v6so15446797wmb.0
-        for <linux-clk@vger.kernel.org>; Thu, 15 Nov 2018 01:41:58 -0800 (PST)
+        id S1732702AbeKOTtu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 15 Nov 2018 14:49:50 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:43784 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729010AbeKOTtu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Nov 2018 14:49:50 -0500
+Received: by mail-wr1-f67.google.com with SMTP id r10so2898002wrs.10
+        for <linux-clk@vger.kernel.org>; Thu, 15 Nov 2018 01:42:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=message-id:subject:from:to:cc:date:in-reply-to:references
          :user-agent:mime-version:content-transfer-encoding;
-        bh=iZdZ1tbxZ2jgm+Fw5ofbviFGs4w9c8ZCB3/+iX/YKWs=;
-        b=cnfgSvbatP24qb0t5HWnSa1D1mgJ2Xbizaw+L2In7Z3NxpJ/+HM3ERzY5dS7Cz6k+E
-         KQdB4fPBogauGnzN3fxQ5SuyJ2DYFe8PVOAYsYsDQy6jgDGvs39v1fJYoQIVUSYpqb9Y
-         /79qNBtX5yRfHPz9PigApwvST1U9caZm3GGVg1/11kpx4z5i6mFpzqGNbiL3ce7qABZV
-         QtDW1bpy/nD/3b6jPnIARCMquxHY6b6V8TiXTxrA7EN662hkFbMzwNr3lXWyWPbvVISF
-         ObdRZHzOKeqc1YByU3aGEU0ek1JtD4me7vcwWrVy3x6TKfLpcSrzp9lPcivOcV5r5nlM
-         Vp0Q==
+        bh=POhP/2g1i9rdpO17mce+yjFjane/wH9yZG5D1QvoQzs=;
+        b=QeJKHaxkDM2j9UvyVuxtcoN3+zMzUmmCtzjhgPB8m1bpCo2gUWYaf5z+9vHiPftvZH
+         43Ga+6CcGS+vUSFpBpkwxU8IMh25sSZ6hsYN4UPtjAm52S5bWzQ4t/NBhuptlk96/Lyl
+         XaCFYOfZADzYhE/VSBMoVEMaj6A7SBSVzMfh/iqxcqKUsRlJUsmFQTAXNbS/zXsdiS+B
+         NfvSvbs+qFebSbkIvq/hnSo7gT4Yg1k7tKum/3qcTGYtzKk/mMJjvWuJb5PcPlj/60N8
+         x9uMwYfTRwztGpBEtrb/qlrV+qXaka+8MjJQgBph+HdQyyVWvP2OT4ggoMSJCoektRGg
+         Aljw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
          :references:user-agent:mime-version:content-transfer-encoding;
-        bh=iZdZ1tbxZ2jgm+Fw5ofbviFGs4w9c8ZCB3/+iX/YKWs=;
-        b=mCaOzs8Wkriyr9dMKOUf2ixSkB+vHrmzXQR1/633vsCyxblbD1LK7ydSzSs0u8dl5N
-         uUyQP6I8n4Jx94jMHz1rHGNfdiEZEexVrTkLMYe8HbEO2aiFvkAy3H8l7GgsLFmd4k3M
-         AA+MAHD3a0pazAHN08RVolBQDRfht+tdrPD+R6UnTFatnyH/0kLyCwo9Mrh+9NtM9V72
-         zFHdm21byv2wA9ugxry7bXJsD2BSdF8fCo43DeMFvmhaQYiwk8AWqRKt7GmQTp+tccWF
-         AszPp7R+jJRLSO/M5vOtBNQlkwaAaAv6/nxmBDEQtXjGlLgL4YFSc4fm0ruz1sdZLNKb
-         4QOg==
-X-Gm-Message-State: AGRZ1gLLZOcxF2M3dXwDqm47usL9C/pX2wR3qmysCPkiD2X4gSYdyie+
-        fub2z+TmGuHP6MuhMLpKPQ2dhg==
-X-Google-Smtp-Source: AJdET5fzQvns4AKdOpXfOPwdJnMeflKLURXsDhAAeOR7qzQfQhqyzviRRlkRlLisUCu/gad8lG3L4A==
-X-Received: by 2002:a1c:e03:: with SMTP id 3-v6mr4604164wmo.13.1542274918064;
-        Thu, 15 Nov 2018 01:41:58 -0800 (PST)
+        bh=POhP/2g1i9rdpO17mce+yjFjane/wH9yZG5D1QvoQzs=;
+        b=ms2hrZftrylHqF6vXw/X2xwKdjLPeeP+qaJi22IsrnaYWjadbjqNzntMWOTl3sPxJ0
+         Jhr5+kmRjEpzAaj5qjkJ4r/YarefnlW3sDRbVScx+7AN4hiP3kiyIMCNCbiq19nf0tlM
+         lwopls/QrVaEZce0NExQHgd0bV2KdMy6g92OQkFqgFWOHjInj6xj6T1tfJSGJu42U3Sn
+         JTPeKYUGG1rQCEO9fd4dzD5FbbmlUh/ulsb4mLH/nXlgy3LU2Nm67ahvv+KppDBoUB4M
+         /E158vlrJvdqnR77CarEfhklrJK+cZwpoy967P9s5j8WxIbO2pN3lYsKXB0LiBqS2eg1
+         WmzA==
+X-Gm-Message-State: AGRZ1gLdc1+5tFoWlLNtayyVDrMdHOIfSly4FI4rqud95ZF6UavP63Fa
+        ZXJs0G4NUee6jNM7cXgcbQog3w==
+X-Google-Smtp-Source: AJdET5c7EgXrYZ39Vt/lhl8cQCmRxXueE29oZE+zDr9GEFbbmAXBvgHEgY1Su8q9qnW+bVa6+V/M/w==
+X-Received: by 2002:a05:6000:11cb:: with SMTP id i11mr5040888wrx.234.1542274964761;
+        Thu, 15 Nov 2018 01:42:44 -0800 (PST)
 Received: from boomer.baylibre.com ([2a01:e34:eeb6:4690:106b:bae3:31ed:7561])
-        by smtp.gmail.com with ESMTPSA id x8-v6sm60737870wrd.54.2018.11.15.01.41.56
+        by smtp.gmail.com with ESMTPSA id m13-v6sm28745104wrw.14.2018.11.15.01.42.43
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 15 Nov 2018 01:41:57 -0800 (PST)
-Message-ID: <4afb7269e3dbb6ac376643a70719736e336ad739.camel@baylibre.com>
-Subject: Re: [RFC v1 6/7] clk: meson: meson8b: add support for more M/N
- values in sys_pll
+        Thu, 15 Nov 2018 01:42:44 -0800 (PST)
+Message-ID: <3f1c522adc74bbc9debd9830a694038c437f54bd.camel@baylibre.com>
+Subject: Re: [RFC v1 2/7] clk: meson: meson8b: do not use cpu_div3 for
+ cpu_scale_out_sel
 From:   Jerome Brunet <jbrunet@baylibre.com>
 To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
         linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
         narmstrong@baylibre.com
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         mturquette@baylibre.com, sboyd@kernel.org
-Date:   Thu, 15 Nov 2018 10:41:55 +0100
-In-Reply-To: <20181114225725.2821-7-martin.blumenstingl@googlemail.com>
+Date:   Thu, 15 Nov 2018 10:42:42 +0100
+In-Reply-To: <20181114225725.2821-3-martin.blumenstingl@googlemail.com>
 References: <20181114225725.2821-1-martin.blumenstingl@googlemail.com>
-         <20181114225725.2821-7-martin.blumenstingl@googlemail.com>
+         <20181114225725.2821-3-martin.blumenstingl@googlemail.com>
 Content-Type: text/plain; charset="UTF-8"
 User-Agent: Evolution 3.30.2 (3.30.2-2.fc29) 
 Mime-Version: 1.0
@@ -80,63 +80,56 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On Wed, 2018-11-14 at 23:57 +0100, Martin Blumenstingl wrote:
-> The sys_pll on the EC-100 board is configured to 1584MHz at boot
-> (either by u-boot, firmware or chip defaults). This is achieved by using
-> M = 66, N = 1 (24MHz * 66 / 1).
-> At boot the CPU clock is running off sys_pll divided by 2 which results
-> in 792MHz. Thus M = 66 is considered to be a "safe" value for Meson8b.
+> The cpu_div3 clock (cpu_in divided by 3) generates a signal with a duty
+> cycle of 33%. The CPU clock however requires a clock signal with a duty
+> cycle of 50% to run stable.
+> cpu_div3 was observed to be problematic when cycling through all
+> available CPU frequencies (with additional patches on top of this one)
+> while running "stress --cpu 4" in the background. This caused sporadic
+> hangs where the whole system would fully lock up.
 > 
-> To achieve 1608MHz (one of the CPU OPPs on Meson8 and Meson8m2) we need
-> M = 67, N = 1. I ran "stress --cpu 4" while infinitely cycling through
-> all available frequencies on my Meson8m2 board and could not spot any
-> issues with this setting (after ~12 hours of running this).
-> 
-> On Meson8, Meson8b and Meson8m2 we also want to be able to use 408MHz
-> and 816MHz CPU frequencies. These can be achieved by dividing sys_pll by
-> 4 (for 408MHz) or 2 (for 816MHz). That means that sys_pll has to run at
-> 1632MHz which can be generated using M = 68, N = 1.
-> Similarily we also want to be able to use 1008MHz as CPU frequency. This
-> means that sys_pll has to run either at 1008MHz or 2016MHz. The former
-> would result in an M value of 42, which is lower than the smallest value
-> used by the 3.10 GPL kernel sources from Amlogic (50 is the lower limit
-> there). Thus we need to run sys_pll at 2016MHz which can ge generated
-> using M = 84, N = 1.
-> I tested M = 68 and M = 84 on my Meson8b Odroid-C1 and my Meson8m2 board
-> by running "stress --cpu 4" while infinitely cycling thorugh all
-> available frequencies. I could not spot any issues after ~12 hours of
-> running this.
-> 
-> Amlogic's 3.10 GPL kernel sources have more M/N combinations. I did not
-> add them yet because M = 74 (to achieve close to 1800MHz on Meson8) and
-> M = 82 (to achieve close to 1992MHz on Meson8 as well) caused my
-> Meson8m2 board to hang randomly. It's not clear why this is (for example
-> because the board's voltage regulator design is bad, some missing bits
-> for these values in our clk-pll driver, etc.). Thus the following M
-> values from the Amlogic 3.10 GPL kernel sources are skipped as of now:
-> 69, 70, 71, 72, 73, 74, 76, 78, 80, 82, 84, 86, 88, 90, 92, 94, 96, 98
+> Amlogic's 3.10 kernel code also does not use the cpu_div3 clock either
+> when changing the CPU clock.
 > 
 > Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 > ---
->  drivers/clk/meson/meson8b.c | 5 +++++
->  1 file changed, 5 insertions(+)
+>  drivers/clk/meson/meson8b.c | 11 +++++++++--
+>  1 file changed, 9 insertions(+), 2 deletions(-)
 > 
 > diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-> index d566dd5bc567..c06a1a7faa4c 100644
+> index 40e77fe4ba7c..8a3c346e110d 100644
 > --- a/drivers/clk/meson/meson8b.c
 > +++ b/drivers/clk/meson/meson8b.c
-> @@ -43,6 +43,11 @@ static const struct pll_params_table
-> sys_pll_params_table[] = {
->  	PLL_PARAMS(62, 1),
->  	PLL_PARAMS(63, 1),
->  	PLL_PARAMS(64, 1),
-> +	PLL_PARAMS(65, 1),
-> +	PLL_PARAMS(66, 1),
-> +	PLL_PARAMS(67, 1),
-> +	PLL_PARAMS(68, 1),
-> +	PLL_PARAMS(84, 1),
->  	{ /* sentinel */ },
+> @@ -608,20 +608,27 @@ static struct clk_regmap meson8b_cpu_scale_div = {
+>  	},
 >  };
 >  
+> +static u32 mux_table_cpu_scale_out_sel[] = { 0, 1, 3 };
+>  static struct clk_regmap meson8b_cpu_scale_out_sel = {
+>  	.data = &(struct clk_regmap_mux_data){
+>  		.offset = HHI_SYS_CPU_CLK_CNTL0,
+>  		.mask = 0x3,
+>  		.shift = 2,
+> +		.table = mux_table_cpu_scale_out_sel,
+>  	},
+>  	.hw.init = &(struct clk_init_data){
+>  		.name = "cpu_scale_out_sel",
+>  		.ops = &clk_regmap_mux_ro_ops,
+> +		/*
+> +		 * NOTE: We are skipping the parent with value 0x2 (which is
+> +		 * "cpu_div3") because it results in a duty cycle of 33% which
+> +		 * makes the system unstable and can result in a lockup of the
+> +		 * whole system.
+> +		 */
+>  		.parent_names = (const char *[]) { "cpu_in_sel",
+>  						   "cpu_div2",
+> -						   "cpu_div3",
+>  						   "cpu_scale_div" },
+> -		.num_parents = 4,
+> +		.num_parents = 3,
+>  		.flags = CLK_SET_RATE_PARENT,
+>  	},
+>  };
 
-Acked-by: Jerome Brunet <jbrunet@baylibre.com>
+Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
 
