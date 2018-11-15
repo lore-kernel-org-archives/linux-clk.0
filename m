@@ -2,133 +2,92 @@ Return-Path: <SRS0=YASP=N2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B395C43441
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Nov 2018 15:21:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F7CBC43441
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Nov 2018 15:31:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C30E2086A
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Nov 2018 15:21:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="bfHJo6ID"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C30E2086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	by mail.kernel.org (Postfix) with ESMTP id 4298D223CB
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Nov 2018 15:31:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4298D223CB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388294AbeKPB3d (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 15 Nov 2018 20:29:33 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:51887 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387922AbeKPB3d (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Nov 2018 20:29:33 -0500
-Received: by mail-it1-f194.google.com with SMTP id f84-v6so8611787ita.1
-        for <linux-clk@vger.kernel.org>; Thu, 15 Nov 2018 07:21:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pE11ItvWla61LlLEoseGZsG5FAoPnWFt98hSwfzdvOw=;
-        b=bfHJo6IDTUv8lk713t6YWzyd+fyjAd8C2vWLd2cEpy/r802dZli+Z/5aRIzZ2fYJEu
-         tK7i9HlrbDZ7wc7/HXqkByoqomJNPR/Dnu+o4dbtq5QMj5FcZE7gcrabtQGuQL/IFBx7
-         YfbEq854L596BY+ocfbkgOhC1jIw2YfWAUnM4=
+        id S2388329AbeKPBjy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 15 Nov 2018 20:39:54 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:36607 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387922AbeKPBjy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Nov 2018 20:39:54 -0500
+Received: by mail-ed1-f67.google.com with SMTP id f23so7830201edb.3;
+        Thu, 15 Nov 2018 07:31:35 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=pE11ItvWla61LlLEoseGZsG5FAoPnWFt98hSwfzdvOw=;
-        b=SkyQkiDMl1YW/LA8nlZjlvBu1F8rdEkn/fwsrDTRACSHxb4iotwNEgSGg8B7qN0Y/I
-         UV4jq0pRTFmBXSMP7I1VluOr9Iqvwb4PMozS6DftuV5Iv8ox8ovL+EEq3eLnINMRpgfO
-         /GWxdGR7kjIecRpJSX4awGkL+kXtTnOFc+vSHx0G6oPbSMKjkaOyQkQuTyFINEP/F+pp
-         kze8DJNb1X0ZHBAihbySLAz+Lhz1Vu5inZryALyofDRmE9kz1Ao9V4FNZZrSEwzZv70u
-         Q9OxVeiQ67P1/YyhX88tscdRZv4esivNhQfAPrTNUY2l/RszdI8rEr/XfdHJEcPO6dhB
-         ZAqA==
-X-Gm-Message-State: AGRZ1gLrtvr5nkkzOfn1/VC9XQlXwZhlQjd+WClqjvwGMsioZyFBiyeF
-        B9BLPpRkoiZdZvh5vwLGKZiNUKclf1+r8ghLF0/ciA==
-X-Google-Smtp-Source: AJdET5cy8lL9cnKuw1fnNu2KICFiv7z7uHODf5XoV4h1liaV7d3VVDS1khqF7hmD/VuxhJlqbkkzor60FS6sbR1dh+s=
-X-Received: by 2002:a02:94d:: with SMTP id f74-v6mr6282123jad.85.1542295276455;
- Thu, 15 Nov 2018 07:21:16 -0800 (PST)
+        bh=r23vuUYSkm+xrOBFBpa4pm48aNe/ztVki6Hbye5Iaws=;
+        b=H39/8Jv84e0KZAMULioLz8PQY2+LPC/K27/xxkxFNdWWW0GEVSj+VH6ZPISiKexuo+
+         Nv+JuwEzFxUH3Uy+OL424gMo25mwOU7RQTN5YxcB0aaveKeIsgwa1qAIEbSBC4z7yzAU
+         2F18/kJHs06500pui5WkG2ZiKz8wer/99aApBhBaXjP+zfN1XWX9mIFLqH+ley10Kh9P
+         Ydk1AF8GHIlDX+scZraTokPFfEnDNlMMTA5P3A89EwBAz/+QGs/55qjUQqSgFUpiyB/I
+         +O11uk8SJdZHVI9NMWqjJ9bWqzs9pRqTNQ5psGAHRi08OiMtkT8kEpEqE+jv+cnaf2Ps
+         YBQQ==
+X-Gm-Message-State: AGRZ1gImKIglsje3COBpXDGENtqytvPdeh6GtXsHLxyOasJhtnocGuV3
+        isd9j32Kc9FwHPYsAELyQLZyspVAqHU=
+X-Google-Smtp-Source: AJdET5fWcFzJCrCkdUD8+mYKjeMwMz+YNdl3cyJwIVz//ACs7J2Ja25bBBBD2S5bKUiaU45O70RzVQ==
+X-Received: by 2002:aa7:d597:: with SMTP id r23mr6126168edq.51.1542295894204;
+        Thu, 15 Nov 2018 07:31:34 -0800 (PST)
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com. [209.85.221.50])
+        by smtp.gmail.com with ESMTPSA id e53sm5635296ede.90.2018.11.15.07.31.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 15 Nov 2018 07:31:33 -0800 (PST)
+Received: by mail-wr1-f50.google.com with SMTP id z13-v6so21674322wrs.3;
+        Thu, 15 Nov 2018 07:31:33 -0800 (PST)
+X-Received: by 2002:adf:a599:: with SMTP id g25-v6mr6478270wrc.188.1542295893242;
+ Thu, 15 Nov 2018 07:31:33 -0800 (PST)
 MIME-Version: 1.0
-References: <20181113111633.20189-1-jagan@amarulasolutions.com>
- <20181113111633.20189-4-jagan@amarulasolutions.com> <20181113132658.niwy6bqdqzaeqpv2@flea>
-In-Reply-To: <20181113132658.niwy6bqdqzaeqpv2@flea>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Thu, 15 Nov 2018 20:51:04 +0530
-Message-ID: <CAMty3ZBTaeMBFYwyJ+8HqHBDAfEOPEYBt01jho1H4c3SBKbvEw@mail.gmail.com>
-Subject: Re: [PATCH v4 03/26] clk: sunxi-ng: Add check for maximum rate to NKM PLLs
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
+References: <20181114082033.GA20712@arx-s1> <20181115151813.a27uov3zmgzjcerf@flea>
+In-Reply-To: <20181115151813.a27uov3zmgzjcerf@flea>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Thu, 15 Nov 2018 23:31:23 +0800
+X-Gmail-Original-Message-ID: <CAGb2v65V82YFjOp5K9tZSrBW8epiPE+t0qU8o_v1CsOU1GM08Q@mail.gmail.com>
+Message-ID: <CAGb2v65V82YFjOp5K9tZSrBW8epiPE+t0qU8o_v1CsOU1GM08Q@mail.gmail.com>
+Subject: Re: [PATCH v0 0/2] Initial Allwinner T3 support.
+To:     Hao Zhang <hao5781286@gmail.com>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
         linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
         linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi@googlegroups.com, linux-amarula@amarulasolutions.com
+        devicetree <devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Nov 13, 2018 at 6:57 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+On Thu, Nov 15, 2018 at 11:18 PM Maxime Ripard
+<maxime.ripard@bootlin.com> wrote:
 >
-> On Tue, Nov 13, 2018 at 04:46:10PM +0530, Jagan Teki wrote:
-> > Some NKM PLLs, frequency can be set above PLL working range.
-> >
-> > Add a constraint for maximum supported rate. This way, drivers can
-> > specify which is maximum allowed rate for PLL.
-> >
-> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> > Acked-by: Stephen Boyd <sboyd@kernel.org>
+> Hi!
 >
-> As Vasily reported on a previous version, this should be squashed with
-> the patch 2.
-
-Sorry, I missed it.
-
->
-> > ---
-> >  drivers/clk/sunxi-ng/ccu_nkm.c | 3 +++
-> >  drivers/clk/sunxi-ng/ccu_nkm.h | 1 +
-> >  2 files changed, 4 insertions(+)
+> On Wed, Nov 14, 2018 at 04:20:33PM +0800, hao_zhang wrote:
+> > Initial Allwinner T3 support.
 > >
-> > diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_nkm.c
-> > index 6b5ad990f802..b8b66cdd30bf 100644
-> > --- a/drivers/clk/sunxi-ng/ccu_nkm.c
-> > +++ b/drivers/clk/sunxi-ng/ccu_nkm.c
-> > @@ -128,6 +128,9 @@ static unsigned long ccu_nkm_round_rate(struct ccu_mux_internal *mux,
-> >       if (rate < nkm->min_rate)
-> >               return nkm->min_rate;
-> >
-> > +     if (nkm->max_rate && rate > nkm->max_rate)
-> > +             return nkm->max_rate;
-> > +
+> > Allwinner T3 (sun8i) SoC features a Quad-Core Cortex-A7 ARM CPU, and a
+> > Mali400 MP2 GPU from ARM. It is a not-pin-compatible quad core sucessor
+> > of the A20). It's also known as the Allwinner R40 for In-Car
+> > Entertainment usage.
 >
-> I would expect the test to be the same for the minimum and maximum cases.
+> That series looks good, thanks!  The only thing that would need to be
+> reworked is your Signed-off-by name, which (I guess?) should be
+> written the same way than in your Copyright info.
 
-I don't have proper use-case for max rate test, I do verify by using
-higher the rate on dclock, but nor sure.  May be I can skip the
-max_rate patch?
+And also the author name of your git commits.
 
-Apart from this, any idea about this issue where SUN4I_TCON0_DCLK_REG
-will only work with div upto 6 on A64 DSI panels[1], did you find the
-same issue on A33?
-
-With parent rate 330MHz, the resulting tcon divider for 30MHz [2]
-clock is 11 and for the same for 55MHz [3] clock is 6.
-
-[3] https://paste.ubuntu.com/p/drvzfHFMtY/
-[2] https://paste.ubuntu.com/p/hz29CTJY2J/
-[1] https://elixir.bootlin.com/linux/v4.20-rc2/source/drivers/gpu/drm/sun4i/sun4i_dotclock.c#L125
+Thanks
