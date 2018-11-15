@@ -2,142 +2,97 @@ Return-Path: <SRS0=YASP=N2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCA56C43441
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Nov 2018 17:50:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C2AEC43441
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Nov 2018 19:15:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C6FE2245E
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Nov 2018 17:50:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 12F2A20883
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Nov 2018 19:15:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="mGSg0o5a"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C6FE2245E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OnPnKqKb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12F2A20883
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388265AbeKPD6y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 15 Nov 2018 22:58:54 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:34019 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726746AbeKPD6y (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Nov 2018 22:58:54 -0500
-Received: by mail-it1-f195.google.com with SMTP id x124so3558202itd.1
-        for <linux-clk@vger.kernel.org>; Thu, 15 Nov 2018 09:50:06 -0800 (PST)
+        id S1725915AbeKPFYi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 16 Nov 2018 00:24:38 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:45890 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725856AbeKPFYi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Nov 2018 00:24:38 -0500
+Received: by mail-pf1-f196.google.com with SMTP id g62so6886482pfd.12;
+        Thu, 15 Nov 2018 11:15:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lzVf+6UowpPA9Enjuej5OPcuMEiQrM4vJQfW6U0CiU4=;
-        b=mGSg0o5aQMIhhzY0VxyLE3f/+E+Nd8rvUUuD0Qg8BI34+4chnQFNB8H3k4cpMKAsc6
-         zlXi0SG0Pg+YcZ/azKZT0+c007D5F9jPuEtE1nhYhCdRlm+etRY08Kii/+UCGOHhEq3/
-         ft6Nx5vbk9rofCTUlnVi/ATvDuqO5EnZ99+5w=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=54j0MAv3f2rtKQSRqMZj+h314ucHlBOPriiq0U5wUWo=;
+        b=OnPnKqKbQGI9umy6ucsClu117fupf9ku76CvsbLvK8Y0SIJAqnGxOTLqShv+32k56Y
+         SO+f3Gk8QnDxZ7yKyjZSaYjiySnhLhUcuqTqj2KQEHVif1n03R7jXfekDtS4AFVL4ieH
+         IvcdtwAW+5f/R7oSkU+dkg3yHlNfmjOPiQJRh0LLGPMdR1ufEmO9Pi/FC5xPwhjvHy+s
+         cEn2M53m92xLFOTHNpn4cUFQmkqpZHeksKfRlRJ0rxyMr0rK1Sfzf+DMrcD6GhX0N1pH
+         LRkzG3IlxBe5SJGBDGxBmHNsPgZyqGA+VkCiOemvhcxPXXPIkUOfDqj5plUqhEYyXQkG
+         drMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lzVf+6UowpPA9Enjuej5OPcuMEiQrM4vJQfW6U0CiU4=;
-        b=FRvZscLyKVS2O5bzRPpFuBpXsaYpmJe1rT31uxQiTnp5tloq5EgU1fZFz+2cSYiiXj
-         9SSqt4kg7eo5tbUwUU0WpFf5H/0eRC1Enkj2KMnFTp5PhL8YA6Stri4puUmtEG4ZJ3ER
-         VjhgQSOA2zyWhQFgVxDoeeGxs29biU8ZHetj67z4ob4ylpc3+IBxjPbk2HNf/bsZF/nq
-         kzq3NZyXZ0zhSyu3G6rxlY5r3/D3rWuYf1qVvKUfGy2r2fUE3ApHrye9XmQi58tHCeeW
-         YV96VkBjUX2dOfqDHHA4MH+w/fOVVx7/frM5Z5GjrAfmOP92Tv2beJcjoQtOjAZwhKuT
-         i0nA==
-X-Gm-Message-State: AGRZ1gLGN7UE73ORVNN80by8BlmPPgMhvev8cY3WuLtBrOebhE1lL1MB
-        xuk/0Xn0gP/GNd8AWWtU7lP5AR8XMjaJ5XWMC+nkIA==
-X-Google-Smtp-Source: AJdET5cSlq6XyW86fAADkApH1dqU4qeMgUIsKox0mC02DlJLz2KDC9sn/zAzUB75Ls8+gQwtVGWCKUdk+pqRv6ITojE=
-X-Received: by 2002:a05:660c:ac1:: with SMTP id k1mr6983496itl.173.1542304205538;
- Thu, 15 Nov 2018 09:50:05 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=54j0MAv3f2rtKQSRqMZj+h314ucHlBOPriiq0U5wUWo=;
+        b=qA+IK8NSBfaoJB9xn8Ur1vVit+euxdQ0MZjE5Ma5AxaJmH4gUAE2bJPExPKzkQMyEA
+         GN93NYfy8tvbnMleWK3CkHKTVdY2BMnhrT9qP0p8Su67aJk8HtDic5N4F1++CeQJ3uLl
+         Hlq0SNSOC+5AJUPZl0fDVkuNX3J17wk95fQQxIxR9LukiIM88ls4cbJ6VubL7jk988/H
+         OvmhyguONxADy+HogSSLvhXMl6u96Od0coGJqBvT+gvHnoOPosPaTj8/Lj4TV1U5E/ox
+         phf3ZcsFxcKGQGn6c8Nk1/1XqROMwLcX5zV9ESlNjTjnomsx8x0b0KT1DuHgcqDNzd1F
+         CnAg==
+X-Gm-Message-State: AGRZ1gI8Ma8GpfOxJJLRIyjIZFAr6EUJGjJd8MwIU13WN8N7GvY0q8UF
+        atuPfe/5USoz8ThQmgAbikM=
+X-Google-Smtp-Source: AJdET5dUmRvsolSv9SfPVB+cfhBPJHX1NmnU03Z+FJ255ZN8dARqTRxAO9Q2L+HDsvEF2cGlHfjnig==
+X-Received: by 2002:a63:a16:: with SMTP id 22mr6982130pgk.318.1542309334091;
+        Thu, 15 Nov 2018 11:15:34 -0800 (PST)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id v185-v6sm30372972pfv.48.2018.11.15.11.15.32
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 15 Nov 2018 11:15:33 -0800 (PST)
+Date:   Thu, 15 Nov 2018 11:15:30 -0800
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Lubomir Rintel <lkundrak@v3.sk>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH v2 0/6] OLPC 1.75 Keyboard/Touchpad fixes
+Message-ID: <20181115191530.GB212221@dtor-ws>
+References: <20181112023029.648408-1-lkundrak@v3.sk>
 MIME-Version: 1.0
-References: <20181113111633.20189-1-jagan@amarulasolutions.com>
- <20181113111633.20189-9-jagan@amarulasolutions.com> <20181115095551.uctdkfmuwlnzhjnn@flea>
-In-Reply-To: <20181115095551.uctdkfmuwlnzhjnn@flea>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Thu, 15 Nov 2018 23:19:53 +0530
-Message-ID: <CAMty3ZAEHiovm6OF6JvJVQR4aqpG1Q3ML5YqxJkF2ntwRkUO=A@mail.gmail.com>
-Subject: Re: [PATCH v4 08/26] drm/sun4i: sun6i_mipi_dsi: Fix VBP size calculation
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi@googlegroups.com, linux-amarula@amarulasolutions.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181112023029.648408-1-lkundrak@v3.sk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Nov 15, 2018 at 3:26 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
->
-> Hi,
->
-> On Tue, Nov 13, 2018 at 04:46:15PM +0530, Jagan Teki wrote:
-> > The horizontal and vertical back porch calculation in BSP
-> > code is simply following the Linux drm comment diagram, in
-> > include/drm/drm_modes.h which is
-> >
-> > [hv]back porch = [hv]total - [hv]sync_end
-> >
-> > BSP code form BPI-M64-bsp is calculating vertical back porch as
-> > (from linux-sunxi/drivers/video/sunxi/disp2/disp/de/disp_lcd.c)
-> >
-> > timmings->ver_sync_time= panel_info->lcd_vspw;
-> > timmings->ver_back_porch= panel_info->lcd_vbp-panel_info->lcd_vspw;
-> >
-> > vbp = panel->lcd_vbp;
-> > vspw = panel->lcd_vspw;
-> > dsi_dev[sel]->dsi_basic_size0.bits.vbp = vbp-vspw;
-> > dsi_dev[sel]->dsi_basic_size0.bits.vbp = panel->lcd_vbp - panel->lcd_vspw;
-> > =>  timmings->ver_back_porch + panel_info->lcd_vspw - panel_info->lcd_vspw
-> > =>  timmings->ver_back_porch
-> > =>  mode->vtotal - mode->end
-> >
-> > Which evatually same as mode->vtotal - mode->vsync_end so update the
-> > same in SUN6I_DSI_BASIC_SIZE0_VBP
-> >
-> > On the information note, existing SUN6I_DSI_BASIC_SIZE0_VSA is proper
-> > value.
-> >
-> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
->
-> I've tested your changes on my A33 board, and this commit will break
-> it.
->
-> It creates vblank timeouts, and visual artifacts at the bottom of the
-> display.
+On Mon, Nov 12, 2018 at 03:30:23AM +0100, Lubomir Rintel wrote:
+> This makes keyboard/touchpad work on a DT MMP2 platform.
+> 
+> Changes since v1:
+> - Collected Acks
+> - Replaced "Input: olpc_apsp: depend on CONFIG_OF" patch with "Input:
+>   olpc_apsp: drop CONFIG_OLPC dependency", since it was correctly
+>   pointed out that the driver doesn't actually depend on OF.
+> - Dropped "Input: olpc_apsp: allocate the GPIOs used" and "dt-bindings:
+>   olpc,ap-sp: add GPIO lines" since at the moment they are not useful
+>   for much more than documenting the lines the SP uses and actually
+>   claiming them was deemed not to be a good idea.
+> - Fixed error handling in the "enable the SP clock" patch.
 
-Strange, VBP is earlier gives front porch which is anyway wrong.
+Applied the series, thank you.
 
->
-> Later commits seem to fix the issue, but will create some blanking on
-> the upper third of the display.
->
-> Since the documentation is quite sparse, and a MIPI-DSI analyzer is
-> way too expensive, I'd really like to have at least what each of these
-> commits are actually fixing, and what symptoms each of these were
-> causing, and not just "the BSP does it".
-
-W/o this 2-lane panel is breaking, same vblank timeout and visual
-artifacts at the bottom of the panel. though the commits may reference
-BSP, I have at-least tested on 3 different panels for us to prove its
-working.
-
->
-> Having some datasheet for the panels you had working would help too.
-
-Unfortunately datasheet doesn't have any required information what we
-actually looking for.
+-- 
+Dmitry
