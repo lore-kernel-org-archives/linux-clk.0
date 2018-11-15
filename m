@@ -2,84 +2,142 @@ Return-Path: <SRS0=YASP=N2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02C00C43441
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Nov 2018 17:39:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCA56C43441
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Nov 2018 17:50:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BED1D223DD
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Nov 2018 17:39:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C6FE2245E
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Nov 2018 17:50:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1ExdV+ZK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BED1D223DD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="mGSg0o5a"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C6FE2245E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388427AbeKPDsE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 15 Nov 2018 22:48:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43536 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388329AbeKPDsE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 15 Nov 2018 22:48:04 -0500
-Received: from localhost (unknown [64.114.255.97])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 96DE42089D;
-        Thu, 15 Nov 2018 17:39:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542303558;
-        bh=pzA7bgHJEyME3FlChOZsjMkaGXvp3uVNLHqMXAMmkmk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=1ExdV+ZKV2Nzhn3u3he3FYuRSdhaoU1LQQJDv+VH5vslFa8tV1GIUmClmP9WPKdV5
-         ekRQbJrQ792b8sZWuLmhmKd49V5Ddi0UyGVq6tXtuUKBBB/3/cRGGnP3hWAIV3wuly
-         dO3iEZrEMhPMpO0jvHeuZPAVqA1a7cDgVSQmid2Q=
-Date:   Thu, 15 Nov 2018 12:39:18 -0500
-From:   Sasha Levin <sashal@kernel.org>
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     stable@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Carlo Caione <carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: meson: axg: mark fdiv2 and fdiv3 as critical
-Message-ID: <20181115173918.GI95254@sasha-vm>
-References: <20181108093123.21498-1-jbrunet@baylibre.com>
- <5BEAFF2D.9080105@baylibre.com>
+        id S2388265AbeKPD6y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 15 Nov 2018 22:58:54 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:34019 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726746AbeKPD6y (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Nov 2018 22:58:54 -0500
+Received: by mail-it1-f195.google.com with SMTP id x124so3558202itd.1
+        for <linux-clk@vger.kernel.org>; Thu, 15 Nov 2018 09:50:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lzVf+6UowpPA9Enjuej5OPcuMEiQrM4vJQfW6U0CiU4=;
+        b=mGSg0o5aQMIhhzY0VxyLE3f/+E+Nd8rvUUuD0Qg8BI34+4chnQFNB8H3k4cpMKAsc6
+         zlXi0SG0Pg+YcZ/azKZT0+c007D5F9jPuEtE1nhYhCdRlm+etRY08Kii/+UCGOHhEq3/
+         ft6Nx5vbk9rofCTUlnVi/ATvDuqO5EnZ99+5w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lzVf+6UowpPA9Enjuej5OPcuMEiQrM4vJQfW6U0CiU4=;
+        b=FRvZscLyKVS2O5bzRPpFuBpXsaYpmJe1rT31uxQiTnp5tloq5EgU1fZFz+2cSYiiXj
+         9SSqt4kg7eo5tbUwUU0WpFf5H/0eRC1Enkj2KMnFTp5PhL8YA6Stri4puUmtEG4ZJ3ER
+         VjhgQSOA2zyWhQFgVxDoeeGxs29biU8ZHetj67z4ob4ylpc3+IBxjPbk2HNf/bsZF/nq
+         kzq3NZyXZ0zhSyu3G6rxlY5r3/D3rWuYf1qVvKUfGy2r2fUE3ApHrye9XmQi58tHCeeW
+         YV96VkBjUX2dOfqDHHA4MH+w/fOVVx7/frM5Z5GjrAfmOP92Tv2beJcjoQtOjAZwhKuT
+         i0nA==
+X-Gm-Message-State: AGRZ1gLGN7UE73ORVNN80by8BlmPPgMhvev8cY3WuLtBrOebhE1lL1MB
+        xuk/0Xn0gP/GNd8AWWtU7lP5AR8XMjaJ5XWMC+nkIA==
+X-Google-Smtp-Source: AJdET5cSlq6XyW86fAADkApH1dqU4qeMgUIsKox0mC02DlJLz2KDC9sn/zAzUB75Ls8+gQwtVGWCKUdk+pqRv6ITojE=
+X-Received: by 2002:a05:660c:ac1:: with SMTP id k1mr6983496itl.173.1542304205538;
+ Thu, 15 Nov 2018 09:50:05 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5BEAFF2D.9080105@baylibre.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20181113111633.20189-1-jagan@amarulasolutions.com>
+ <20181113111633.20189-9-jagan@amarulasolutions.com> <20181115095551.uctdkfmuwlnzhjnn@flea>
+In-Reply-To: <20181115095551.uctdkfmuwlnzhjnn@flea>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Thu, 15 Nov 2018 23:19:53 +0530
+Message-ID: <CAMty3ZAEHiovm6OF6JvJVQR4aqpG1Q3ML5YqxJkF2ntwRkUO=A@mail.gmail.com>
+Subject: Re: [PATCH v4 08/26] drm/sun4i: sun6i_mipi_dsi: Fix VBP size calculation
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi@googlegroups.com, linux-amarula@amarulasolutions.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Nov 13, 2018 at 05:43:25PM +0100, Neil Armstrong wrote:
->Hi Stable team,
+On Thu, Nov 15, 2018 at 3:26 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
 >
->Le 08/11/2018 10:31, Jerome Brunet a écrit :
->> Similar to gxbb and gxl platforms, axg SCPI Cortex-M co-processor
->> uses the fdiv2 and fdiv3 to, among other things, provide the cpu
->> clock.
->>
->> Until clock hand-off mechanism makes its way to CCF and the generic
->> SCPI claims platform specific clocks, these clocks must be marked as
->> critical to make sure they are never disabled when needed by the
->> co-processor.
->>
->> Fixes: 05f814402d61 ("clk: meson: add fdiv clock gates")
->> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> Hi,
 >
->Could this fix go into the next 4.18 and 4.19 stable releases since it hit linus master with commit id d6ee1e7e9004d3d246cdfa14196989e0a9466c16 ?
+> On Tue, Nov 13, 2018 at 04:46:15PM +0530, Jagan Teki wrote:
+> > The horizontal and vertical back porch calculation in BSP
+> > code is simply following the Linux drm comment diagram, in
+> > include/drm/drm_modes.h which is
+> >
+> > [hv]back porch = [hv]total - [hv]sync_end
+> >
+> > BSP code form BPI-M64-bsp is calculating vertical back porch as
+> > (from linux-sunxi/drivers/video/sunxi/disp2/disp/de/disp_lcd.c)
+> >
+> > timmings->ver_sync_time= panel_info->lcd_vspw;
+> > timmings->ver_back_porch= panel_info->lcd_vbp-panel_info->lcd_vspw;
+> >
+> > vbp = panel->lcd_vbp;
+> > vspw = panel->lcd_vspw;
+> > dsi_dev[sel]->dsi_basic_size0.bits.vbp = vbp-vspw;
+> > dsi_dev[sel]->dsi_basic_size0.bits.vbp = panel->lcd_vbp - panel->lcd_vspw;
+> > =>  timmings->ver_back_porch + panel_info->lcd_vspw - panel_info->lcd_vspw
+> > =>  timmings->ver_back_porch
+> > =>  mode->vtotal - mode->end
+> >
+> > Which evatually same as mode->vtotal - mode->vsync_end so update the
+> > same in SUN6I_DSI_BASIC_SIZE0_VBP
+> >
+> > On the information note, existing SUN6I_DSI_BASIC_SIZE0_VSA is proper
+> > value.
+> >
+> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+>
+> I've tested your changes on my A33 board, and this commit will break
+> it.
+>
+> It creates vblank timeouts, and visual artifacts at the bottom of the
+> display.
 
-Queued for 4.19 and 4.18, thank you.
+Strange, VBP is earlier gives front porch which is anyway wrong.
 
---
-Thanks,
-Sasha
+>
+> Later commits seem to fix the issue, but will create some blanking on
+> the upper third of the display.
+>
+> Since the documentation is quite sparse, and a MIPI-DSI analyzer is
+> way too expensive, I'd really like to have at least what each of these
+> commits are actually fixing, and what symptoms each of these were
+> causing, and not just "the BSP does it".
+
+W/o this 2-lane panel is breaking, same vblank timeout and visual
+artifacts at the bottom of the panel. though the commits may reference
+BSP, I have at-least tested on 3 different panels for us to prove its
+working.
+
+>
+> Having some datasheet for the panels you had working would help too.
+
+Unfortunately datasheet doesn't have any required information what we
+actually looking for.
