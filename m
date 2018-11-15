@@ -2,118 +2,128 @@ Return-Path: <SRS0=YASP=N2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DFB7C43441
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Nov 2018 11:53:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85DF2C43441
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Nov 2018 12:18:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10B252146D
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Nov 2018 11:53:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10B252146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
+	by mail.kernel.org (Postfix) with ESMTP id 52556223DD
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Nov 2018 12:18:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52556223DD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388123AbeKOWBU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 15 Nov 2018 17:01:20 -0500
-Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:54570 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2387548AbeKOWBS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Nov 2018 17:01:18 -0500
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-        by mx0b-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wAFBo0bs016551;
-        Thu, 15 Nov 2018 05:53:37 -0600
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from mail1.cirrus.com (mail1.cirrus.com [141.131.3.20])
-        by mx0b-001ae601.pphosted.com with ESMTP id 2nrp6njhk8-1;
-        Thu, 15 Nov 2018 05:53:37 -0600
-Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
-        by mail1.cirrus.com (Postfix) with ESMTP id B4DE7611E128;
-        Thu, 15 Nov 2018 05:53:36 -0600 (CST)
-Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
- (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Thu, 15 Nov 2018
- 11:53:36 +0000
-Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
-        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id wAFBrZX6011137; Thu,
- 15 Nov 2018 11:53:35 GMT
-Date:   Thu, 15 Nov 2018 11:53:35 +0000
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-CC:     Lee Jones <lee.jones@linaro.org>,
+        id S1733254AbeKOW02 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 15 Nov 2018 17:26:28 -0500
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:23175 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728950AbeKOW02 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Nov 2018 17:26:28 -0500
+Received: from localhost.localdomain (10.18.11.217) by mail-sh2.amlogic.com
+ (10.18.11.6) with Microsoft SMTP Server id 15.0.1320.4; Thu, 15 Nov 2018
+ 20:18:49 +0800
+From:   Jianxin Pan <jianxin.pan@amlogic.com>
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+CC:     Jianxin Pan <jianxin.pan@amlogic.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        <patches@opensource.cirrus.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Subject: Re: [PATCH v4 6/6] pinctrl: lochnagar: Add support for the Cirrus
- Logic Lochnagar
-Message-ID: <20181115115335.GA16508@imbe.wolfsonmicro.main>
-References: <20181108101405.14062-1-ckeepax@opensource.cirrus.com>
- <20181108101405.14062-7-ckeepax@opensource.cirrus.com>
- <CACRpkdZCUDsSZA3xAH05ZFuNP8dyHFapX7MJTVnD3A-ts1Y7yA@mail.gmail.com>
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Yixun Lan <yixun.lan@amlogic.com>,
+        Liang Yang <liang.yang@amlogic.com>,
+        Jian Hu <jian.hu@amlogic.com>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH v7 0/4] clk: meson: add a sub EMMC clock controller support
+Date:   Thu, 15 Nov 2018 20:18:28 +0800
+Message-ID: <1542284312-55418-1-git-send-email-jianxin.pan@amlogic.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZCUDsSZA3xAH05ZFuNP8dyHFapX7MJTVnD3A-ts1Y7yA@mail.gmail.com>
-User-Agent: Mutt/1.5.20 (2009-12-10)
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1811150108
+Content-Type: text/plain
+X-Originating-IP: [10.18.11.217]
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Nov 15, 2018 at 11:54:48AM +0100, Linus Walleij wrote:
-> On Thu, Nov 8, 2018 at 11:14 AM Charles Keepax
-> <ckeepax@opensource.cirrus.com> wrote:
-> 
-> > Lochnagar is an evaluation and development board for Cirrus
-> > Logic Smart CODEC and Amp devices. It allows the connection of
-> > most Cirrus Logic devices on mini-cards, as well as allowing
-> > connection of various application processor systems to provide a
-> > full evaluation platform. This driver supports the board
-> > controller chip on the Lochnagar board.
-> >
-> > Lochnagar provides many pins which can generally be used for an
-> > audio function such as an AIF or a PDM interface, but also as
-> > GPIOs.
-> >
-> > Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-> 
-> This v4 version looks very good to me!
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> 
-> Nitpicks (fix or not, my review tag stands):
-> 
-> >  drivers/pinctrl/cirrus/pinctrl-lochnagar.c | 1145 ++++++++++++++++++++++++++++
-> >  drivers/pinctrl/cirrus/pinctrl-lochnagar.h |  112 +++
-> 
-> Why don't you just include that header file in the C file.
-> 112 lines +/- on a 1145 line file doesn't matter.
-> 
-> > +       priv->gpio_chip = template_chip;
-> 
-> I would just skip the template and just assign struct members
-> directly.
-> 
-> Bonus if you set ->label to something instance-unique as well.
-> 
+This driver will add a MMC clock controller driver support.
+The original idea about adding a clock controller is during the
+discussion in the NAND driver mainline effort[1].
 
-No objection to any of those need to respin for Mark's comments
-on the regulators anyway, so will wrap these in and add your
-reviewed by.
+This driver is tested in the S400 board (AXG platform) with NAND driver.
 
-Thanks,
-Charles
+Changes since v6 [7]:
+ - add one based support for sclk divier
+ - alloc sclk in probe for multiple instance
+ - fix coding styles
+
+Changes since v5 [6]:
+ - remove divider ops with .init and use sclk_div instead
+ - drop CLK_DIVIDER_ROUND_CLOSEST in mux and div
+ - drop the useless type cast 
+
+Changes since v4 [5]:
+ - use struct parm in phase delay driver
+ - remove 0 delay releted part in phase delay driver
+ - don't rebuild the parent name once again
+ - add divider ops with .init
+
+Changes since v3 [4]:
+ - separate clk-phase-delay driver
+ - replace clk_get_rate() with clk_hw_get_rate()
+ - collect Rob's R-Y
+ - drop 'meson-' prefix from compatible string
+
+ Changes since v2 [3]:
+ - squash dt-binding clock-id patch
+ - update license
+ - fix alignment
+ - construct a clk register helper() function
+
+Changes since v1 [2]:
+ - implement phase clock
+ - update compatible name
+ - adjust file name
+ - divider probe() into small functions, and re-use them
+
+[1] https://lkml.kernel.org/r/20180628090034.0637a062@xps13
+[2] https://lkml.kernel.org/r/20180703145716.31860-1-yixun.lan@amlogic.com
+[3] https://lkml.kernel.org/r/20180710163658.6175-1-yixun.lan@amlogic.com
+[4] https://lkml.kernel.org/r/20180712211244.11428-1-yixun.lan@amlogic.com
+[5] https://lkml.kernel.org/r/20180809070724.11935-4-yixun.lan@amlogic.com
+[6] https://lkml.kernel.org/r/1539839245-13793-1-git-send-email-jianxin.pan@amlogic.com
+[7] https://lkml.kernel.org/r/1541089855-19356-1-git-send-email-jianxin.pan@amlogic.com
+Yixun Lan (3):
+  clk: meson: add emmc sub clock phase delay driver
+  clk: meson: add DT documentation for emmc clock controller
+  clk: meson: add sub MMC clock controller driver
+  clk: meson: add one based divider support for sclk divider
+
+ .../devicetree/bindings/clock/amlogic,mmc-clkc.txt |  39 +++
+ drivers/clk/meson/Kconfig                          |  10 +
+ drivers/clk/meson/Makefile                         |   3 +-
+ drivers/clk/meson/clk-phase-delay.c                |  64 +++++
+ drivers/clk/meson/clkc-audio.h                     |   1 +
+ drivers/clk/meson/clkc.h                           |  13 +
+ drivers/clk/meson/mmc-clkc.c                       | 313 +++++++++++++++++++++
+ drivers/clk/meson/sclk-div.c                       |  28 +-
+ include/dt-bindings/clock/amlogic,mmc-clkc.h       |  17 ++
+ 9 files changed, 477 insertions(+), 11 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
+ create mode 100644 drivers/clk/meson/clk-phase-delay.c
+ create mode 100644 drivers/clk/meson/mmc-clkc.c
+ create mode 100644 include/dt-bindings/clock/amlogic,mmc-clkc.h
+
+-- 
+1.9.1
+
