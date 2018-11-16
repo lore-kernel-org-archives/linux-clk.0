@@ -2,160 +2,96 @@ Return-Path: <SRS0=Wnie=N3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 295C2C43441
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Nov 2018 12:56:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30E25C43441
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Nov 2018 15:04:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E81662089D
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Nov 2018 12:56:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dYpdYAGR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E81662089D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 0554E2087A
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Nov 2018 15:04:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0554E2087A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389741AbeKPXHy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 16 Nov 2018 18:07:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33442 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727965AbeKPXHy (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 16 Nov 2018 18:07:54 -0500
-Received: from ziggy.de (unknown [93.176.133.217])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 66F2520989;
-        Fri, 16 Nov 2018 12:55:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542372936;
-        bh=YWa3oRPVlT/S63uQvThApqIKb9DzRSCSP+OAynmBwf8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dYpdYAGREL8rC/98+2atoSVHhmJBzkuuyZym5BrQ+pp92C8+ukAY045+yTqhYkGek
-         oqBXxhgzlRS2e3pV1G7S673+hUKXsaXhMzhLOpEvwvPUIJyKisoCYplQciqqX2Dc7v
-         zV5Sxq2+QlEWFW4funxYFx8SyS/FaNYAU3lLwk2s=
-From:   matthias.bgg@kernel.org
-To:     robh+dt@kernel.org, mark.rutland@arm.com, ck.hu@mediatek.com,
-        p.zabel@pengutronix.de, airlied@linux.ie, mturquette@baylibre.com,
-        sboyd@codeaurora.org, ulrich.hecht+renesas@gmail.com,
-        laurent.pinchart@ideasonboard.com, matthias.bgg@gmail.com
-Cc:     sean.wang@mediatek.com, sean.wang@kernel.org,
-        rdunlap@infradead.org, wens@csie.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, Matthias Brugger <mbrugger@suse.com>
-Subject: [PATCH v5 02/12] clk: mediatek: mt2701-mmsys: switch to platform device probing
-Date:   Fri, 16 Nov 2018 13:54:39 +0100
-Message-Id: <20181116125449.23581-3-matthias.bgg@kernel.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181116125449.23581-1-matthias.bgg@kernel.org>
-References: <20181116125449.23581-1-matthias.bgg@kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1728124AbeKQBRi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 16 Nov 2018 20:17:38 -0500
+Received: from relmlor2.renesas.com ([210.160.252.172]:45999 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728169AbeKQBRi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Nov 2018 20:17:38 -0500
+Received: from unknown (HELO relmlir3.idc.renesas.com) ([10.200.68.153])
+  by relmlie6.idc.renesas.com with ESMTP; 16 Nov 2018 23:59:50 +0900
+Received: from relmlii2.idc.renesas.com (relmlii2.idc.renesas.com [10.200.68.66])
+        by relmlir3.idc.renesas.com (Postfix) with ESMTP id B6F9C10021F;
+        Fri, 16 Nov 2018 23:59:50 +0900 (JST)
+X-IronPort-AV: E=Sophos;i="5.56,240,1539615600"; 
+   d="scan'208";a="297674423"
+Received: from unknown (HELO vbox.ree.adwin.renesas.com) ([10.226.37.67])
+  by relmlii2.idc.renesas.com with ESMTP; 16 Nov 2018 23:59:45 +0900
+From:   Phil Edworthy <phil.edworthy@renesas.com>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Jiaxun Yang <jiaxun.yang@flygoat.com>,
+        Huacai Chen <chenhc@lemote.com>, Guan Xuetao <gxt@pku.edu.cn>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, linux-m68k@lists.linux-m68k.org,
+        linux-mips@linux-mips.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v6 0/6] clk: Add functions to get optional clocks
+Date:   Fri, 16 Nov 2018 14:59:31 +0000
+Message-Id: <20181116145937.27660-1-phil.edworthy@renesas.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Matthias Brugger <mbrugger@suse.com>
+Quite a few drivers get an optional clock, e.g. a bus clock required to 
+access peripheral's registers that is always enabled on some devices. This
+series adds of_clk_get_by_name_optional(), clk_get_optional() and
+devm_clk_get_optional() functions for this purpose.
 
-Switch probing for the MMSYS to support invocation to a plain
-paltform device. The driver will be probed by the DRM subsystem.
+The functions behave the same as of_clk_get_by_name(), clk_get() and
+devm_clk_get() except that they will return NULL instead of -ENOENT. This
+allows for simpler error handling in the callers.
 
-Signed-off-by: Matthias Brugger <mbrugger@suse.com>
----
- drivers/clk/mediatek/clk-mt2701-mm.c | 42 ++++++++++++++++++++--------
- 1 file changed, 30 insertions(+), 12 deletions(-)
+*Note*
+This changes the return values for of_clk_get_by_name() in some cases, see
+[PATCH 1/6] clk: Add of_clk_get_by_name_optional() function.
 
-diff --git a/drivers/clk/mediatek/clk-mt2701-mm.c b/drivers/clk/mediatek/clk-mt2701-mm.c
-index fe1f85072fc5..200b1842b94b 100644
---- a/drivers/clk/mediatek/clk-mt2701-mm.c
-+++ b/drivers/clk/mediatek/clk-mt2701-mm.c
-@@ -12,14 +12,20 @@
-  * GNU General Public License for more details.
-  */
- 
-+#include <linux/module.h>
- #include <linux/clk-provider.h>
- #include <linux/platform_device.h>
-+#include <linux/slab.h>
- 
- #include "clk-mtk.h"
- #include "clk-gate.h"
- 
- #include <dt-bindings/clock/mt2701-clk.h>
- 
-+struct clk_mt2701_mm_priv {
-+	struct clk_onecell_data *clk_data;
-+};
-+
- static const struct mtk_gate_regs disp0_cg_regs = {
- 	.set_ofs = 0x0104,
- 	.clr_ofs = 0x0108,
-@@ -87,23 +93,25 @@ static const struct mtk_gate mm_clks[] = {
- 	GATE_DISP1(CLK_MM_TVE_FMM, "mm_tve_fmm", "mm_sel", 14),
- };
- 
--static const struct of_device_id of_match_clk_mt2701_mm[] = {
--	{ .compatible = "mediatek,mt2701-mmsys", },
--	{}
--};
--
- static int clk_mt2701_mm_probe(struct platform_device *pdev)
- {
--	struct clk_onecell_data *clk_data;
- 	int r;
--	struct device_node *node = pdev->dev.of_node;
-+	struct device_node *node = pdev->dev.parent->of_node;
-+	struct clk_mt2701_mm_priv *private;
-+
-+	private = devm_kzalloc(&pdev->dev, sizeof(*private), GFP_KERNEL);
-+	if (!private)
-+		return -ENOMEM;
- 
--	clk_data = mtk_alloc_clk_data(CLK_MM_NR);
-+	private->clk_data = mtk_alloc_clk_data(CLK_MM_NR);
-+
-+	platform_set_drvdata(pdev, private);
- 
- 	mtk_clk_register_gates(node, mm_clks, ARRAY_SIZE(mm_clks),
--						clk_data);
-+					private->clk_data);
- 
--	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
-+	r = of_clk_add_provider(node, of_clk_src_onecell_get,
-+					private->clk_data);
- 	if (r)
- 		dev_err(&pdev->dev,
- 			"could not register clock provider: %s: %d\n",
-@@ -112,12 +120,22 @@ static int clk_mt2701_mm_probe(struct platform_device *pdev)
- 	return r;
- }
- 
-+static int clk_mt2701_mm_remove(struct platform_device *pdev)
-+{
-+	struct clk_mt2701_mm_priv *private = platform_get_drvdata(pdev);
-+
-+	kfree(private->clk_data);
-+	kfree(private);
-+
-+	return 0;
-+}
-+
- static struct platform_driver clk_mt2701_mm_drv = {
- 	.probe = clk_mt2701_mm_probe,
-+	.remove = clk_mt2701_mm_remove,
- 	.driver = {
- 		.name = "clk-mt2701-mm",
--		.of_match_table = of_match_clk_mt2701_mm,
- 	},
- };
- 
--builtin_platform_driver(clk_mt2701_mm_drv);
-+module_platform_driver(clk_mt2701_mm_drv);
+v6:
+ - Rework the __of_clk_get_by_name() logic so as to avoid duplicate tests.
+ - Add doxygen style comment for devm_clk_get_optional() args
+ - Add clk_get_optional() to archs that don't use the commom clk framework.
+
+Phil Edworthy (6):
+  clk: Add of_clk_get_by_name_optional() function
+  clk: Add functions to get optional clocks
+  m68k: coldfire: Add clk_get_optional() function
+  MIPS: AR7: Add clk_get_optional() function
+  MIPS: Loongson 2F: Add clk_get_optional() function
+  arch/unicore32/kernel/clock.c: Add clk_get_optional() function
+
+ arch/m68k/coldfire/clk.c               | 11 ++++
+ arch/mips/ar7/clock.c                  | 11 ++++
+ arch/mips/loongson64/lemote-2f/clock.c | 11 ++++
+ arch/unicore32/kernel/clock.c          | 11 ++++
+ drivers/clk/clk-devres.c               | 18 ++++-
+ drivers/clk/clkdev.c                   | 91 ++++++++++++++++++++++----
+ include/linux/clk.h                    | 38 +++++++++++
+ 7 files changed, 175 insertions(+), 16 deletions(-)
+
 -- 
-2.19.1
+2.17.1
 
