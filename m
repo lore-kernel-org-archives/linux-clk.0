@@ -4,38 +4,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18F24C43441
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Nov 2018 12:56:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61A83C43441
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Nov 2018 12:56:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9B2B2251C
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Nov 2018 12:56:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27932208A3
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Nov 2018 12:56:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="n04Pgmrb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9B2B2251C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cEETgNew"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27932208A3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389987AbeKPXI2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 16 Nov 2018 18:08:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34282 "EHLO mail.kernel.org"
+        id S1727973AbeKPXIg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 16 Nov 2018 18:08:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34470 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727965AbeKPXI1 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 16 Nov 2018 18:08:27 -0500
+        id S1727965AbeKPXIg (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 16 Nov 2018 18:08:36 -0500
 Received: from ziggy.de (unknown [93.176.133.217])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B651122513;
-        Fri, 16 Nov 2018 12:56:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4A35E2251C;
+        Fri, 16 Nov 2018 12:56:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542372970;
-        bh=zcIYayK/x2veA+f/cfKszd/YU1GREEj9WyGnLQtE2/I=;
+        s=default; t=1542372979;
+        bh=d2YNHJQkRM6b3oaOr9H1mN3fDwnnlCcgnMLMxrEcyyM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=n04Pgmrbi90U5qIQr3eTt5qf9U6nhjBKPy1MzAm5BKF6latwnLvkfBQs8cgQ+B23A
-         Y1jWA3JCZb1qo8QZ/3a5ZzNB0NV4Zbm1Vg7C5WXJrbe0MoBFb3YfqgnqPIaPqrOnrx
-         /ys+eOxEGCcpWmeJrNt0LQs193Iquaa7EXZQYLys=
+        b=cEETgNewVlKfK4+9X5V+MXYsS4cnuCdlJWX1dx6UgbMN7spTQoF9LWZfPxi1fzl47
+         PC22/86FcQfHJIs2QuQnT/ndA+qho5lNGYZ67f6eBClRpGgHBUffY7xZCNoVsmmWmE
+         Bmtm7RbOMaqKgryTGWNGMbUizoP2hlYJUGoOpZs0=
 From:   matthias.bgg@kernel.org
 To:     robh+dt@kernel.org, mark.rutland@arm.com, ck.hu@mediatek.com,
         p.zabel@pengutronix.de, airlied@linux.ie, mturquette@baylibre.com,
@@ -47,9 +47,9 @@ Cc:     sean.wang@mediatek.com, sean.wang@kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, Matthias Brugger <mbrugger@suse.com>
-Subject: [PATCH v5 10/12] arm64: dts: mt6797: Use the new mmsys clock compatible
-Date:   Fri, 16 Nov 2018 13:54:47 +0100
-Message-Id: <20181116125449.23581-11-matthias.bgg@kernel.org>
+Subject: [PATCH v5 12/12] clk: mediatek: mt6797: Probe with new compatible
+Date:   Fri, 16 Nov 2018 13:54:49 +0100
+Message-Id: <20181116125449.23581-13-matthias.bgg@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181116125449.23581-1-matthias.bgg@kernel.org>
 References: <20181116125449.23581-1-matthias.bgg@kernel.org>
@@ -62,33 +62,47 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Matthias Brugger <mbrugger@suse.com>
 
-Move the clock part of mmsys in a child node.
+The clock node is now a child of the mmsys node.
+Update the driver to support this and thenew compatible
+in the driver.
 
 Signed-off-by: Matthias Brugger <mbrugger@suse.com>
 ---
- arch/arm64/boot/dts/mediatek/mt6797.dtsi | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/clk/mediatek/clk-mt6797-mm.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt6797.dtsi b/arch/arm64/boot/dts/mediatek/mt6797.dtsi
-index 4beaa71107d7..3ca635c81de1 100644
---- a/arch/arm64/boot/dts/mediatek/mt6797.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt6797.dtsi
-@@ -206,9 +206,13 @@
- 	};
+diff --git a/drivers/clk/mediatek/clk-mt6797-mm.c b/drivers/clk/mediatek/clk-mt6797-mm.c
+index c57d3eed270d..051bab99d10f 100644
+--- a/drivers/clk/mediatek/clk-mt6797-mm.c
++++ b/drivers/clk/mediatek/clk-mt6797-mm.c
+@@ -101,7 +101,7 @@ static const struct mtk_gate mm_clks[] = {
+ };
  
- 	mmsys: mmsys_config@14000000 {
--		compatible = "mediatek,mt6797-mmsys", "syscon";
-+		compatible = "mediatek,mt6797-mmsys", "syscon", "simple-mfd";
- 		reg = <0 0x14000000 0 0x1000>;
--		#clock-cells = <1>;
-+
-+		mmsys_clk: clock-controller@14000000 {
-+			compatible = "mediatek,mt6797-mmsys-clk";
-+			#clock-cells = <1>;
-+		};
- 	};
+ static const struct of_device_id of_match_clk_mt6797_mm[] = {
+-	{ .compatible = "mediatek,mt6797-mmsys", },
++	{ .compatible = "mediatek,mt6797-mmsys-clk", },
+ 	{}
+ };
  
- 	imgsys: imgsys_config@15000000  {
+@@ -109,14 +109,15 @@ static int clk_mt6797_mm_probe(struct platform_device *pdev)
+ {
+ 	struct clk_onecell_data *clk_data;
+ 	int r;
+-	struct device_node *node = pdev->dev.of_node;
++	struct device *parent = pdev->dev.parent;
+ 
+ 	clk_data = mtk_alloc_clk_data(CLK_MM_NR);
+ 
+-	mtk_clk_register_gates(node, mm_clks, ARRAY_SIZE(mm_clks),
++	mtk_clk_register_gates(parent->of_node, mm_clks, ARRAY_SIZE(mm_clks),
+ 			       clk_data);
+ 
+-	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
++	r = of_clk_add_provider(parent->of_node, of_clk_src_onecell_get,
++			clk_data);
+ 	if (r)
+ 		dev_err(&pdev->dev,
+ 			"could not register clock provider: %s: %d\n",
 -- 
 2.19.1
 
