@@ -2,187 +2,142 @@ Return-Path: <SRS0=Wnie=N3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CDFDC43441
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Nov 2018 08:49:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D1C9C43441
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Nov 2018 12:55:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DE2C2089D
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Nov 2018 08:49:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2184A208A3
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Nov 2018 12:55:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="tGw/rRPG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DE2C2089D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NiGYyAOl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2184A208A3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727398AbeKPTAo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 16 Nov 2018 14:00:44 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:45068 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727577AbeKPTAn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Nov 2018 14:00:43 -0500
-Received: by mail-wr1-f68.google.com with SMTP id v6so2125157wrr.12
-        for <linux-clk@vger.kernel.org>; Fri, 16 Nov 2018 00:49:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:openpgp:autocrypt:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=QdrWVf6FcxdcftgCc422+j0b5Of9lkH7Efo3onWpM8A=;
-        b=tGw/rRPG9BTngGd2DZE3aU6o9MjREJhqc6CPC5+4eJ6Nqb+InyBmx+zQZbvDgLDNvJ
-         VdMUP0OIpU/dttpXd3EsxGFlV3gf3Oma/+i4OPGIGwNY5l+fSC1sQcylxvqAYbvW3v4x
-         AVQ0woU2lQWsRGSx5Wi8aL+NL4blBpbUzJOn+jvBftKWFWQZZRNBJcyKdQdV2zHIUiU9
-         +17BIEDHLwSIz2YnUgrxK5xFT/8LoMxxsCVd8rRSZHKPU1dKthvcNPox/WDyhBemIuz6
-         cZqW/KjvgVRIaiKaz8cMMWJZUoJLvocqnG2uBpaAT/YHSpq0AsYdVTMQpt2+Dgv7D8Iy
-         m7lw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :organization:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=QdrWVf6FcxdcftgCc422+j0b5Of9lkH7Efo3onWpM8A=;
-        b=P+P0Qj/btb26Vw30knr/plKzEoqz7hMNHfZ61JesVqSOQAYXpaiI+tEmHf4QKy+7qp
-         PgUPVWPBYVW4jHtW+yDp2Ft+zahcyCwzf9l19v8+g41PmB+cr9XapwgoYg67f7o4GyKa
-         lV0k9qzgYGMIwbpYWaAosEq/bMmtpdF0CEuP2CXgJmcBa/wwWebqs282psuqkq2zBCMS
-         At49mt65asFFcCwfy1Ogs9rzPbjiRK/8bje0tKGk/HKX+CMo0JE6mEevtcyE59J5qfXA
-         ZeQyDZ2CM2krn+8vy2gaBS+2d/z7qEw7xlew0AkhBDB2RyDBGR/yxw2UsuzQO90gHOx2
-         2XGQ==
-X-Gm-Message-State: AGRZ1gK23q7FC+1I8Ggdn4HE+F2xDerISIrl+SbqzZ05GQ+BhVy7PnvC
-        swThFeDATiJm8q+CpwsW4hzcUg==
-X-Google-Smtp-Source: AJdET5e6ruidOm9tbmGltFQGJmF4YmbITV8R2KevNlRphZkIVCN8EwvuNsKEv214ETsyQgJoslARsQ==
-X-Received: by 2002:a5d:6050:: with SMTP id j16-v6mr8624370wrt.301.1542358159331;
-        Fri, 16 Nov 2018 00:49:19 -0800 (PST)
-Received: from [10.1.2.12] ([90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id j199sm2239524wmf.13.2018.11.16.00.49.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 16 Nov 2018 00:49:18 -0800 (PST)
-Subject: Re: [PATCH v2 0/6] Meson8b: make the CPU clock mutable
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        jbrunet@baylibre.com
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org
-References: <20181115224048.13511-1-martin.blumenstingl@googlemail.com>
-From:   Neil Armstrong <narmstrong@baylibre.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKE5laWwgQXJtc3Ryb25nIDxuYXJtc3Ryb25nQGJheWxpYnJlLmNvbT7CwHsEEwEKACUC
- GyMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheABQJXDO2CAhkBAAoJEBaat7Gkz/iubGIH/iyk
- RqvgB62oKOFlgOTYCMkYpm2aAOZZLf6VKHKc7DoVwuUkjHfIRXdslbrxi4pk5VKU6ZP9AKsN
- NtMZntB8WrBTtkAZfZbTF7850uwd3eU5cN/7N1Q6g0JQihE7w4GlIkEpQ8vwSg5W7hkx3yQ6
- 2YzrUZh/b7QThXbNZ7xOeSEms014QXazx8+txR7jrGF3dYxBsCkotO/8DNtZ1R+aUvRfpKg5
- ZgABTC0LmAQnuUUf2PHcKFAHZo5KrdO+tyfL+LgTUXIXkK+tenkLsAJ0cagz1EZ5gntuheLD
- YJuzS4zN+1Asmb9kVKxhjSQOcIh6g2tw7vaYJgL/OzJtZi6JlIXOwE0ETVkGzwEIALyKDN/O
- GURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYpQTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXM
- coJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hi
- SvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY4yG6xI99NIPEVE9lNBXBKIlewIyVlkOa
- YvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoMMtsyw18YoX9BqMFInxqYQQ3j/HpVgTSv
- mo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUXoUk33HEAEQEAAcLAXwQYAQIACQUCTVkG
- zwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfnM7IbRuiSZS1unlySUVYu3SD6YBYnNi3G
- 5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa33eDIHu/zr1HMKErm+2SD6PO9umRef8V8
- 2o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCSKmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+
- RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJ
- C3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTTQbM0WUIBIcGmq38+OgUsMYu4NzLu7uZF
- Acmp6h8g
-Organization: Baylibre
-Message-ID: <a942be34-9a17-13b1-5ceb-19777bebe335@baylibre.com>
-Date:   Fri, 16 Nov 2018 09:49:18 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        id S1727977AbeKPXHp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 16 Nov 2018 18:07:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33256 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727965AbeKPXHp (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 16 Nov 2018 18:07:45 -0500
+Received: from ziggy.de (unknown [93.176.133.217])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CBCDF2087A;
+        Fri, 16 Nov 2018 12:55:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542372927;
+        bh=MsX0D2nv4gCScRREhhc4JH4ktBsXjxNVzTehDsWc9p4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=NiGYyAOlHZgoofKiCrzy8MkWtGtR6lfUFnyI2rc6tywHBzLUvnBkWcDl6YtiYxSYN
+         J2QdIE7AjdvAw+ApR0PtmjnErIXSIOCFxggeKq7+1yRrYVpM19Kq/wj5lTmxh+Hl/j
+         UYmIuKO5CB50sIhpy9gu4kof684kLUMV9dHcpeT8=
+From:   matthias.bgg@kernel.org
+To:     robh+dt@kernel.org, mark.rutland@arm.com, ck.hu@mediatek.com,
+        p.zabel@pengutronix.de, airlied@linux.ie, mturquette@baylibre.com,
+        sboyd@codeaurora.org, ulrich.hecht+renesas@gmail.com,
+        laurent.pinchart@ideasonboard.com, matthias.bgg@gmail.com
+Cc:     sean.wang@mediatek.com, sean.wang@kernel.org,
+        rdunlap@infradead.org, wens@csie.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, Matthias Brugger <mbrugger@suse.com>
+Subject: [PATCH v5 00/12] arm/arm64: mediatek: Fix mmsys device probing
+Date:   Fri, 16 Nov 2018 13:54:37 +0100
+Message-Id: <20181116125449.23581-1-matthias.bgg@kernel.org>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-In-Reply-To: <20181115224048.13511-1-martin.blumenstingl@googlemail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 15/11/2018 23:40, Martin Blumenstingl wrote:
-> This allows changing the CPU clock on the 32-bit Amlogic Meson SoCs
-> (Meson8, Meson8b and Meson8m2).
-> CPU frequency scaling will be enabled with a separate series by adding
-> the CPU clock and the OPP tables to meson8.dtsi and meson8b.dtsi.
-> 
-> While changing the CPU frequency (sys_pll or any of it's post-dividers)
-> we need to run the CPU clock off the XTAL clock. Otherwise the system
-> will lock up because we need to disable the sys_pll to change it's
-> rate.
-> 
-> This also makes the clk-pll's .enable hook a no-op if the clock is
-> already enabled. Otherwise we're getting lockups when calling the
-> first clk_{prepare_}enable on the sys_pll or any of it's children (as
-> the CCF propagates the enable event up to the sys_pll). This is because
-> the .enable hook unconditionally disables and enables the clock.
-> However, we can't disable that clock (not even temporarily) if the CPU
-> is running off sys_pll.
-> 
-> Additionally this adds support for more M/N combinations in sys_pll to
-> achieve all of the OPPs on Meson8b and all OPPs <= 1608 MHz on Meson8
-> and Meson8m2.
-> 
-> Compared to Amlogic's 3.10 kernel there's one notable difference: we
-> are actually allowing changes to the sys_pll. Amlogic's kernel sets
-> sys_pll to a fixed rate during boot and then uses a timer generate a
-> "virtual clock rate" by toggling between various dividers (for example:
-> sys_pll is set to 1536MHz. to achieve 1008MHz they are toggling every
-> 2500us between 1536MHZ and 768MHz so the average over <period, for
-> example one second> is 1008MHz).
-> I could reproduce any situation where changing sys_pll failed (for
-> example due to high temperature). To prove that I ran "stress --cpu 4"
-> for multiple hours and then cycled through all available CPU
-> frequencies (while keeping "stress" running in the background). This
-> worked fine on my Meson8b Odroid-C1 and EC-100 boards as well as my
-> Meson8m2 board.
-> 
-> 
-> Dependencies:
-> This series is built on top of the latest clk-meson.git tree and the
-> patches from my other series [1] "Meson8b: fixes for the cpu_scale_div
-> clock".
-> 
-> 
-> Changes since v1 at [0]:
-> - re-ordered patches as suggested by Jerome: keep all fixes first, then
->   the new "features"
-> - squashed patches "clk-pll: check if the clock is already enabled" and
->   "clk-pll: add the is_enabled function in the clk_ops". This also
->   allows calling clk_hw_is_enabled() from meson_clk_pll_enable()
->   instead of calling meson_clk_pll_is_enabled() directly (this matches
->   the implementation of sclk-div.c)
-> - documented the dependencies of this series in the cover-letter
-> - dropped "RFC" prefix
-> - collected Jerome's Acked-/Reviewed-by's (thanks for the quick
->   response!)
-> 
-> 
-> [0] https://patchwork.kernel.org/cover/10683317/
-> [1] https://patchwork.kernel.org/cover/10617617/
-> 
-> 
-> Martin Blumenstingl (6):
->   clk: meson: clk-pll: check if the clock is already enabled
->   clk: meson: meson8b: do not use cpu_div3 for cpu_scale_out_sel
->   clk: meson: meson8b: mark the CPU clock as CLK_IS_CRITICAL
->   clk: meson: meson8b: add support for more M/N values in sys_pll
->   clk: meson: meson8b: run from the XTAL when changing the CPU frequency
->   clk: meson: meson8b: allow changing the CPU clock tree
-> 
->  drivers/clk/meson/clk-pll.c | 19 ++++++++
->  drivers/clk/meson/meson8b.c | 94 +++++++++++++++++++++++++++++++++----
->  2 files changed, 104 insertions(+), 9 deletions(-)
-> 
+From: Matthias Brugger <mbrugger@suse.com>
 
-Applied to next/drivers !
+This is version four of the series. The biggest change are the last
+four patches which introduce how this should be handled in the future.
+Instead of creating the platform device in the DRM driver the device
+tree has in the mmsys memory range a child node to probe the clock
+part. That breaks backwards compatibility, so I only introduce that for
+SoCs which are not available to the general public (mt2712e) or only
+have the mmsys clock driver part implemented (mt6797).
 
-Thanks for your work on meson8* SoCs !
 
-Neil
+Changes since v4:
+- fix missing regmap accessors in drm diver (patch 1)
+- omit probe deffered warning on all drivers (patch 5)
+- update drm and clk bindings (patch 6 and 7)
+- put mmsys clock part in dts child node of mmsys. Only done
+for HW where no dts backport compatible breakage is expected 
+(either DRM driver not yet implemented or no HW available to
+the public) (patch 9 to 12)
+
+Changes since v3:
+- use platform device to probe clock driver
+- add Acked-by CK Hu for the probe deferred patch
+
+Changes since v2:
+- fix kconfig typo (shame on me)
+- delete __initconst from mm_clocks as converted to a platform driver
+  
+Changes since v1:
+- add binding documentation
+- ddp: use regmap_update_bits
+- ddp: ignore EPROBE_DEFER on clock probing
+- mfd: delete mmsys_private
+- add Reviewed-by and Acked-by tags
+ 
+MMSYS in Mediatek SoCs has some registers to control clock gates (which is 
+used in the clk driver) and some registers to set the routing and enable
+the differnet blocks of the display subsystem.
+
+Up to now both drivers, clock and drm are probed with the same device tree
+compatible. But only the first driver get probed, which in effect breaks
+graphics on mt8173 and mt2701.
+
+This patch uses a platform device registration in the DRM driver, which
+will trigger the probe of the corresponding clock driver. It was tested on the
+bananapi-r2 and the Acer R13 Chromebook.
+
+
+Matthias Brugger (12):
+  drm/mediatek: Use regmap for register access
+  clk: mediatek: mt2701-mmsys: switch to platform device probing
+  clk: mediatek: mt8173: switch mmsys to platform device probing
+  drm/mediatek: Add support for mmsys through a pdev
+  drm: mediatek: Omit warning on probe defers
+  drm/mediatek: update dt-bindings
+  dt-bindings: clock: mediatek: delete mmsys clocks
+  dt-bindings: mediatek: Change the binding for mmsys clocks
+  arm64: dts: mt2712e: Use the new mmsys clock compatible
+  arm64: dts: mt6797: Use the new mmsys clock compatible
+  clk: mediatek: mt2712e: Probe with new compatible
+  clk: mediatek: mt6797: Probe with new compatible
+
+ .../bindings/arm/mediatek/mediatek,mmsys.txt  | 24 +++++----
+ .../display/mediatek/mediatek,disp.txt        | 34 +++++++-----
+ arch/arm64/boot/dts/mediatek/mt2712e.dtsi     |  8 ++-
+ arch/arm64/boot/dts/mediatek/mt6797.dtsi      |  8 ++-
+ drivers/clk/mediatek/clk-mt2701-mm.c          | 42 ++++++++++-----
+ drivers/clk/mediatek/clk-mt2712-mm.c          |  9 ++--
+ drivers/clk/mediatek/clk-mt6797-mm.c          |  9 ++--
+ drivers/clk/mediatek/clk-mt8173.c             | 51 +++++++++++++++---
+ drivers/gpu/drm/mediatek/mtk_disp_color.c     |  4 +-
+ drivers/gpu/drm/mediatek/mtk_disp_ovl.c       |  4 +-
+ drivers/gpu/drm/mediatek/mtk_disp_rdma.c      |  4 +-
+ drivers/gpu/drm/mediatek/mtk_drm_crtc.c       |  4 +-
+ drivers/gpu/drm/mediatek/mtk_drm_ddp.c        | 53 ++++++++-----------
+ drivers/gpu/drm/mediatek/mtk_drm_ddp.h        |  4 +-
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c        | 34 +++++++++---
+ drivers/gpu/drm/mediatek/mtk_drm_drv.h        |  4 +-
+ drivers/gpu/drm/mediatek/mtk_dsi.c            |  6 ++-
+ 17 files changed, 200 insertions(+), 102 deletions(-)
+
+-- 
+2.19.1
+
