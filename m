@@ -2,214 +2,203 @@ Return-Path: <SRS0=9y30=N5=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEB15C43441
-	for <linux-clk@archiver.kernel.org>; Sun, 18 Nov 2018 17:12:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1354BC43441
+	for <linux-clk@archiver.kernel.org>; Sun, 18 Nov 2018 18:21:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B3B02075B
-	for <linux-clk@archiver.kernel.org>; Sun, 18 Nov 2018 17:12:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C729C20817
+	for <linux-clk@archiver.kernel.org>; Sun, 18 Nov 2018 18:21:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ohUHFAYs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B3B02075B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="LfhG+Bqj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C729C20817
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726814AbeKSDdI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 18 Nov 2018 22:33:08 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:40010 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726523AbeKSDdI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 18 Nov 2018 22:33:08 -0500
-Received: by mail-wr1-f67.google.com with SMTP id p4so20401736wrt.7;
-        Sun, 18 Nov 2018 09:12:18 -0800 (PST)
+        id S1726523AbeKSElz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 18 Nov 2018 23:41:55 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:55024 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726746AbeKSElz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 18 Nov 2018 23:41:55 -0500
+Received: by mail-it1-f196.google.com with SMTP id a205-v6so5001056itd.4
+        for <linux-clk@vger.kernel.org>; Sun, 18 Nov 2018 10:20:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language;
-        bh=2BD3/j8J2JXNFkqU5V15pU3i6cW+TibHL6sS29BDPZM=;
-        b=ohUHFAYs5vJqdQ+WQtV0wsktVdOYZGf1c8Zvp5Vsx4PtTz6nTZsuxneyZJtIS1QQ4T
-         vMqKzNC80ZTQuDbJoxgBQF6VCYiHST4afWQNT1VHwMhBnQABGHUpQ0KRF/7tNqIdRpiU
-         yo6FVUED2+vnIyJB5ohB5RxGu70Q9LxtNQnLtE24f1z66eMgeOLKbaPrF3B72dMfhOsa
-         gK8HqM0AtzqYj4Hvd18tKehoHVpH5f56zsk7NqrS3nc72GIWrpUsdQwiskCX9SfQgYOH
-         9LIIKIJ+V3bXj2lrD3qvOfgkldnZP90eYyAtW5avOB2t32zKJRfWu9tv9xSyWZ0x/7NP
-         xK3A==
+        d=amarulasolutions.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6hyxNNRHZAQk2YKmGWiMDL3h9FJqTwTHuD1bXW1J0LI=;
+        b=LfhG+BqjQQosGHy+3I2BryDZ47H2LwTlkUWV20Piubw94dOEhwHXhAwcxsHd1RobtU
+         RRuUIKxbE95SoVWmwCnClbi+p2cUtRKNTCsQj8m70DF6ND9ryp/Xv9EuENjE9d6AO7SN
+         kNCb1YPZnuDQDUkrtPNR7HFj+q8f5CSrySZ38=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language;
-        bh=2BD3/j8J2JXNFkqU5V15pU3i6cW+TibHL6sS29BDPZM=;
-        b=lgTVWJ5ZEi3LUwNz4vVKx58OvkpuM/BM1mv/OtqowIQhxpiQ/3afKrJ3g/tc9k3ZNS
-         N4o+XfmSAKn3Hpq43VMB6y/ojDe3riIexSoDSqYwWPRVDCrPg6M+DQvi50Un5NNIAL7c
-         8b/zbOWZBXf7Ej3ubLaLKUffPEoqqmlEqtAq6lVIBws5UAvhwJDrK9tajqVsyYdkRqEH
-         iej2cqn8d/4VIQpPyB7kmSsmTUemLaI+XC4BkhIrxaBUQjjVQUYRK+lv9FA6w49mSs3A
-         IkfkhpIwWLfYzXnMAuVmcUp4EG7qh1Xfit6HxOhD04jiKKPgMaOW9U/f8m5uSHg8YpjX
-         rRJg==
-X-Gm-Message-State: AGRZ1gI0FhapEerx6FR9HYW14Fda/j2J3Dgii5Ss4UVNxo8Cv0j6PcHL
-        mrpll1kuph5FelNkNrQkCK4=
-X-Google-Smtp-Source: AJdET5c1jGhI0ABkrcuOwMiLm2o0kbLgPmKfSdOxo3pzRqMwWaKKWbmwxfAtFjxPuaaE1IboHgbxlg==
-X-Received: by 2002:adf:fb47:: with SMTP id c7-v6mr15260855wrs.200.1542561137888;
-        Sun, 18 Nov 2018 09:12:17 -0800 (PST)
-Received: from linux-gy6r.site ([93.176.147.153])
-        by smtp.gmail.com with ESMTPSA id q2sm15763171wru.56.2018.11.18.09.12.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 18 Nov 2018 09:12:17 -0800 (PST)
-Subject: Re: [PATCH v5 08/12] dt-bindings: mediatek: Change the binding for
- mmsys clocks
-To:     Rob Herring <robh@kernel.org>, matthias.bgg@kernel.org
-Cc:     mark.rutland@arm.com, ck.hu@mediatek.com, p.zabel@pengutronix.de,
-        airlied@linux.ie, mturquette@baylibre.com, sboyd@codeaurora.org,
-        ulrich.hecht+renesas@gmail.com, laurent.pinchart@ideasonboard.com,
-        sean.wang@mediatek.com, sean.wang@kernel.org,
-        rdunlap@infradead.org, wens@csie.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, Matthias Brugger <mbrugger@suse.com>
-References: <20181116125449.23581-1-matthias.bgg@kernel.org>
- <20181116125449.23581-9-matthias.bgg@kernel.org>
- <20181116231522.GA18006@bogus>
-From:   Matthias Brugger <matthias.bgg@gmail.com>
-Message-ID: <2a23e407-4cd4-2e2b-97a5-4e2bb96846e0@gmail.com>
-Date:   Sun, 18 Nov 2018 18:12:15 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6hyxNNRHZAQk2YKmGWiMDL3h9FJqTwTHuD1bXW1J0LI=;
+        b=BlJQI6SweOi52+JumKKXJUBSn/vRkbt4RND1Xw/8iQJlX1ikRQO2wEqwBQRlGR+/cH
+         kl/O0/7g39Xl5+/WuHupnweg3BAm0/dmBTCtGZQJ/emizL/Lzrb9/wIYwzp/LJdLlsue
+         RS6yuSZN5hyp2EMxymIazOHNQcLNHg+QfUjjvgc8yoOWtsFuPjmr1gDcfZyQynS0zHnW
+         IepXG57P9pqaQYa9OaVJXt9vHon/dDiql33ksSP1W+eWGJMakS1x/ANwImzrKIA9mIRE
+         oT1zS46gQV56mRZG5KqDqle8ArontjwEyWbBVzx64PBcCGUfvSYOXaDjboOeDt+DrTXm
+         CA+Q==
+X-Gm-Message-State: AGRZ1gJcLQwvoCyef6ZKVTNl0yyAEpBJTrVJ70LS+d+FdWEo7czofnDF
+        1wzFcHuvkd4/UDMYeMEzNF8awl09Xhgqm9u2N8u/SA==
+X-Google-Smtp-Source: AJdET5fHhUlslK/5UrXl/CwQOFXJqaRuJ38Z+sdRzmOqrl74secu+k/zmvi5BPg5DtOB6z5oSan7mwhTXXhu7lO7TqE=
+X-Received: by 2002:a24:2710:: with SMTP id g16-v6mr5864130ita.107.1542565256573;
+ Sun, 18 Nov 2018 10:20:56 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181116231522.GA18006@bogus>
-Content-Type: multipart/mixed;
- boundary="------------DE07BBB8F39CF4FD41CA126C"
-Content-Language: en-US
+References: <20181026144344.27778-1-jagan@amarulasolutions.com>
+ <CGME20181029111305epcas5p2ee0ca644470de4e036762e000afbb71b@epcas5p2.samsung.com>
+ <20181026144344.27778-18-jagan@amarulasolutions.com> <3c4c8a08-8c1e-1ac6-2b53-81389d69c97b@samsung.com>
+ <CAGb2v66ENhmNXPz4PfdRJjNUNdpDNZYX2a3SH8AD6SMe9g2zLA@mail.gmail.com>
+ <bfe28e8d-3786-d35d-a589-abed9ee8e7d5@samsung.com> <CAMty3ZAWkX8YSRzFs_GS2O4+=pf68e4EuSMym+_XpCe3_4-2yw@mail.gmail.com>
+ <25c24350-4acd-68b8-ef5d-75a60094f0b6@samsung.com> <CAMty3ZDTAiW=Lx2H4WvdsdJRYsVe1CpCJx7D0f7yANx7Lx25PA@mail.gmail.com>
+ <eb23f0f8-0270-d4fa-2cac-5b65ee4af42c@samsung.com>
+In-Reply-To: <eb23f0f8-0270-d4fa-2cac-5b65ee4af42c@samsung.com>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Sun, 18 Nov 2018 23:50:45 +0530
+Message-ID: <CAMty3ZD8wOyKJ32-itxshXmNbPs-_yf-S4_AmKcV4YuVX_gHGQ@mail.gmail.com>
+Subject: Re: [PATCH v3 17/25] dt-bindings: panel: Add Bananapi S070WV20-CT16
+ ICN6211 MIPI-DSI to RGB bridge
+To:     a.hajda@samsung.com
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------DE07BBB8F39CF4FD41CA126C
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+On Tue, Nov 13, 2018 at 1:26 PM Andrzej Hajda <a.hajda@samsung.com> wrote:
+>
+> On 10.11.2018 08:32, Jagan Teki wrote:
+> > On Wed, Nov 7, 2018 at 2:41 PM Andrzej Hajda <a.hajda@samsung.com> wrote:
+> >> On 06.11.2018 19:08, Jagan Teki wrote:
+> >>> On Wed, Oct 31, 2018 at 2:45 PM Andrzej Hajda <a.hajda@samsung.com> wrote:
+> >>>> On 31.10.2018 09:58, Chen-Yu Tsai wrote:
+> >>>>> On Wed, Oct 31, 2018 at 4:53 PM Andrzej Hajda <a.hajda@samsung.com> wrote:
+> >>>>>> On 26.10.2018 16:43, Jagan Teki wrote:
+> >>>>>>> Bananapi S070WV20-CT16 ICN6211 is 800x480, 4-lane MIPI-DSI to RGB
+> >>>>>>> bridge panel, which is available on same PCB with 24-bit RGB interface.
+> >>>>>>>
+> >>>>>>> So, this patch adds DSI specific binding details on existing
+> >>>>>>> dt-bindings file.
+> >>>>>>>
+> >>>>>>> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> >>>>>>> ---
+> >>>>>>> Changes for v3:
+> >>>>>>> - Use existing binding doc and update dsi details
+> >>>>>>> Changes for v2:
+> >>>>>>> - none
+> >>>>>>>
+> >>>>>>>  .../display/panel/bananapi,s070wv20-ct16.txt  | 31 +++++++++++++++++--
+> >>>>>>>  1 file changed, 29 insertions(+), 2 deletions(-)
+> >>>>>>>
+> >>>>>>> diff --git a/Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16.txt b/Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16.txt
+> >>>>>>> index 35bc0c839f49..b7855dc7c66f 100644
+> >>>>>>> --- a/Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16.txt
+> >>>>>>> +++ b/Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16.txt
+> >>>>>>> @@ -1,12 +1,39 @@
+> >>>>>>>  Banana Pi 7" (S070WV20-CT16) TFT LCD Panel
+> >>>>>>>
+> >>>>>>> +S070WV20-CT16 is 7" 800x480 panel connected through a 24-bit RGB interface.
+> >>>>>>> +
+> >>>>>>> +Depending on the variant, the PCB attached to the panel module either
+> >>>>>>> +supports DSI, or DSI + 24-bit RGB. DSI is converted to 24-bit RGB via
+> >>>>>>> +an onboard ICN6211 MIPI DSI - RGB bridge chip, then fed to the panel
+> >>>>>>> +itself
+> >>>>>> As I understand this is display board, which contains 'pure' RGB panel
+> >>>>>> S070WV20-CT16 and optionally ICN6211 DSI->RGB bridge.
+> >>>>>> These are separate devices, just connected by vendor to simplify its
+> >>>>>> assembly. Why don't you create then bridge driver for ICN6211 and RGB
+> >>>>>> panel driver for S070WV20-CT16 - it looks more generic.
+> >>>>>> Then you can describe both in dts and voila.
+> >>>>>> Creating drivers for every combo of devices (panel + bridge), just
+> >>>>>> because some vendor sells them together seems incorrect - we have
+> >>>>>> devicetree for it.
+> >>>>> Rob suggested this, and also the opposite: using the same
+> >>>>> "bananapi,s070wv20-ct16"
+> >>>>> compatible string for both types of connections, and have the driver deal with
+> >>>>> detecting the bus type.
+> >>>>>
+> >>>>> The thing about the bridge chip is that there's no available datasheet that
+> >>>>> describes all the parts of the init sequence, in fact none at all. I managed
+> >>>>> to work out some bits, but the others remain a mystery and must be hard-coded
+> >>>>> to match the panel. That would work against having a generic bridge driver.
+> >>>> But it is common for many chips - 1st version of the driver is developed
+> >>>> on one platform and it supports only one configuration, if next platform
+> >>>> with the same cheap appears the driver is augmented if necessary.
+> >>> At-least few of the commands from panel initialization code, the
+> >>> respective opcode data values are based on panel timings and even
+> >>> clock value is different in DSI. I think it look hard to try bridge
+> >>> driver for these restrictions, do you have any suggestions?
+> >>
+> >> Where do you see an issue? Since panel is RGB it should have no
+> >> initialization sequence (beside regulator/gpio power on/off), so the
+> >> only thing to do is to figure out which regulators/gpios belongs to
+> >> which component - with publicly available specs it should be doable.
+> >>
+> >> The whole initialization sequence is for the bridge, so you put it into
+> >> bridge driver, for starters it can be hardcoded.
+> > Yes, I understand we can move regulators/gpio setup separately and
+> > though we hardcode the init sequence there is difference  in clock for
+> > DSI(which I mentioned in previous mail). DSI panel can't work with
+> > clock used by RGB panel-simple.
+>
+>
+> If you mean pixel clock from timings in next patch it seems incorrect.
+> Pixel clock should be always
+>
+> htotal * vtotal * vrefresh, in case of drm_display_mode result should be
+> divided by 1000 (as .clock is in kHz).
+>
+> With timings provided there you have: 928*525*60 = 29232000
+>
+> So pixel clock should be 29232, if other timings are correct. DSI clock
+> is a different thing and it is private thing of DSI bridge/panel it
+> should not be exposed via drm_display_mode.
 
+I understand your point, but in Allwinner case DSI clock which is
+named in tcon block can be computed using clock value from
+drm_display_mode from panel driver.
 
+DE -> Mixer -> tcon-> MIPI <--> panel
 
-On 11/17/18 12:15 AM, Rob Herring wrote:
-> On Fri, Nov 16, 2018 at 01:54:45PM +0100, matthias.bgg@kernel.org wrote=
-:
->> From: Matthias Brugger <mbrugger@suse.com>
->>
->> On SoCs with no publical available HW or no working graphic stack
->> we change the devicetree binding for the mmsys clock part. This
->> way we don't need to register a platform device explicitly in the
->> drm driver. Instead we can create a mmsys child which invokes the
->> clock driver.
->>
->> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
->> ---
->>  .../bindings/arm/mediatek/mediatek,mmsys.txt  | 21 ++++++++++++------=
--
->>  .../display/mediatek/mediatek,disp.txt        |  4 ++++
->>  2 files changed, 18 insertions(+), 7 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,m=
-msys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.=
-txt
->> index 4468345f8b1a..d4e205981363 100644
->> --- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.tx=
-t
->> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.tx=
-t
->> @@ -1,4 +1,4 @@
->> -Mediatek mmsys controller
->> +Mediatek mmsys clock controller
->>  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
->> =20
->>  The Mediatek mmsys controller provides various clocks to the system.
->> @@ -6,18 +6,25 @@ The Mediatek mmsys controller provides various clock=
-s to the system.
->>  Required Properties:
->> =20
->>  - compatible: Should be one of:
->> -	- "mediatek,mt2712-mmsys", "syscon"
->> -	- "mediatek,mt6797-mmsys", "syscon"
->> +	- "mediatek,mt2712-mmsys-clk", "syscon"
->> +	- "mediatek,mt6797-mmsys-clk", "syscon"
->=20
-> Doesn't match the example.>
->>  - #clock-cells: Must be 1
->> =20
->> -The mmsys controller uses the common clk binding from
->> +The mmsys clock controller uses the common clk binding from
->>  Documentation/devicetree/bindings/clock/clock-bindings.txt
->>  The available clocks are defined in dt-bindings/clock/mt*-clk.h.
->> +It is a child of the mmsys block, see binding at:
->> +Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
->> =20
->>  Example:
->> =20
->> -mmsys: clock-controller@14000000 {
->> -	compatible =3D "mediatek,mt8173-mmsys", "syscon";
->> +mmsys: syscon@14000000 {
->> +	compatible =3D "mediatek,mt2712-mmsys", "syscon", "simple-mfd";
->>  	reg =3D <0 0x14000000 0 0x1000>;
->> -	#clock-cells =3D <1>;
->> +
->> +	mmsys_clk: clock-controller@14000000 {
->> +		compatible =3D "mediatek,mt2712-mmsys-clk";
->> +		#clock-cells =3D <1>;
->=20
-> This goes against the general direction of not defining separate nodes =
+So, for the value
+- 55MHz panel clock the computed divider for DSI clock in tcon [1] is
+6 which is proper and working divider
+- 30MHz panel clock the computed divider for DSI clock in tcon [2] is
+11 which can't work for this specific panel.
 
-> for providers with no resources.
->=20
-> Why do you need this and what does it buy if you have to continue to=20
-> support the existing chips?
->=20
+I have verified other panels, the divider value work similar to this
+computation and those panels work accordingly.  but this panel case
+the divider computation look weird, so we have used working and know
+clock. I'm thinking since this panel is of DSI to RGB bridge, so it
+may require some higher frequency to work but I've no document to
+confirm the same.
 
-It would show explicitly that the mmsys block is used to probe two
-drivers, one for the gpu and one for the clocks. Otherwise that is
-hidden in the drm driver code. I think it is cleaner to describe that in
-the device tree.
+Hope this information help, let me know if you have any inputs.
 
---------------DE07BBB8F39CF4FD41CA126C
-Content-Type: application/pgp-keys;
- name="pEpkey.asc"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: attachment;
- filename="pEpkey.asc"
-
------BEGIN PGP PUBLIC KEY BLOCK-----
-
-mQENBFuECLIBCADD/t6l9ZYo+koZfGSuIrxbdrI1wR3iCxem+yKPz6cTUtRE6HNe
-fRKM83CjBt5iPFFwBkofXFoTGS/9zKcoPAWM9QK2f6ibkmUIYH4mNZfYmYbVWg/e
-nWQru5SLl8LzNKIQm3adJKL+PiLMiDuoSJ7Z6sD8dhxxjZgCn12ulKzJuzjTp9+v
-AlByTWs0U4UibjZyJrcGN5ZL3lbYDqHxAVLeN5os+VezXYXa6GglscmSv8QdVMui
-XY37mNkhBGr7MD81JckqXn/95Z+nWpRE3upHSxGtUNfkoW4PNpBOa8jPO1TBA4f0
-0xZtDB7bFNzZYtdsJ2LnyXqsrwWoxPQiRoQFABEBAAG0KU1hdHRoaWFzIEJydWdn
-ZXIgPG1hdHRoaWFzLmJnZ0BnbWFpbC5jb20+iQFUBBMBCAA+FiEEhdxoJL7wYu3O
-B7UPj8JuPkuXuCkFAluECLMCGwMFCQHhM4AFCwkIBwIGFQoJCAsCBBYCAwECHgEC
-F4AACgkQj8JuPkuXuCk3IwgAkW6Q3folu6SMcIVa47KQIms7K3qUgXoi4nt8HbET
-T1wm83ZmHXyI2S3ibzR+9yhbrqZZ7d6mHMjwvEnS3RVGw1dUGs9DgliREeyErC/5
-SHTXYm2EvsPVCUd9yEe0VabhtTdLk5saQC1SncMnjorIWCWHyuBbIEIzSYmiVZlw
-VbcD9kDYSKHmi/RSv0EeyedKW6aanbkB9j+M0NaRbCPbsmDrfJY31T8Jf66bLH7h
-WfI6HURtQuvhSRzYWypp9yO6ndizoMmv1NQk/OO40j7QCVzaOmqJxc41FAxz57cg
-6fN4ic/o7KNf6ZXoTuicb0Ft9gpUNtSj72dQymhdaXGFcbkBDQRbhAizAQgAv1Bs
-N6c451tfbXWM754NxHhXVwhR/JKKD+PpHsYh1BSSvE7wwu4dW1Uu60GPeRM0jq7g
-pfu5BB2X6V2qL2mO8FdVf83Xp4h6nsEl220Ep1dq8zXBajX9cZVkzbkEXRs751xx
-o4HzOP6sTjimQLG1ALWdAZtE4HSyIafh4GWs0uPFYYSie7w1no4pXzLBTAcQ1PB7
-hMw9pHBu3Lx7FsgWU4k3riBGSklr1AEbJl0Z3wEuV7wC6BLUAqvQ/lmkf6Dg7URa
-aKzlgkDh4g/L5k3VeznJBLITTMprbN97zV13mvss9FCKduRY+YcAXpTVtOlLeIPD
-L/0AATCO2Y/WiAndgQARAQABiQE8BBgBCAAmFiEEhdxoJL7wYu3OB7UPj8JuPkuX
-uCkFAluECLMCGwwFCQHhM4AACgkQj8JuPkuXuCk1TQf/es2YD5q3GFce9wxGsm0j
-pPo8xuP1KKeORIMPXieHqVphlRgZp/ppWnSU3ZwgG8y65+8nW2iFJGmNyRxtgDiY
-J9Ji33ulefz66oDlC7YNZhA4MKFVW7A2pjvQSEkXmadk3N0RNBZQ6LKAY0+/2EbF
-atb6Cm46qahc/AkXegmLWaP/frb3p7peT6KCu59m94m6sj8yPre0USp6CiqkZK4G
-wF7sUgU1BwTveTZFwlnV1LySmZVBE7Ro7de/24HDO/1U2iUfvatlfkT2OrrkA7O4
-zBJY75tooUAUNcYczF+WAtHKBNyJwHo1ZXyRCUgddw9JosmapYAwOkZgYlVzSWxS
-Ww=3D=3D
-=3DapZK
------END PGP PUBLIC KEY BLOCK-----
-
---------------DE07BBB8F39CF4FD41CA126C--
+[1] https://paste.ubuntu.com/p/drvzfHFMtY/
+[2] https://paste.ubuntu.com/p/hz29CTJY2J/
