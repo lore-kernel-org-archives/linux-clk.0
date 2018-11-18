@@ -8,55 +8,55 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72126C43441
-	for <linux-clk@archiver.kernel.org>; Sun, 18 Nov 2018 14:18:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E349C43610
+	for <linux-clk@archiver.kernel.org>; Sun, 18 Nov 2018 14:18:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39CB920815
-	for <linux-clk@archiver.kernel.org>; Sun, 18 Nov 2018 14:18:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DFEF120869
+	for <linux-clk@archiver.kernel.org>; Sun, 18 Nov 2018 14:18:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sElgiw+h"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39CB920815
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NS0Rr0W+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFEF120869
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727842AbeKSAi7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 18 Nov 2018 19:38:59 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:37218 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727551AbeKSAi6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 18 Nov 2018 19:38:58 -0500
-Received: by mail-wr1-f67.google.com with SMTP id j10so15080725wru.4;
-        Sun, 18 Nov 2018 06:18:30 -0800 (PST)
+        id S1728004AbeKSAjI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 18 Nov 2018 19:39:08 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:41213 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727551AbeKSAjG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 18 Nov 2018 19:39:06 -0500
+Received: by mail-wr1-f65.google.com with SMTP id x10so645885wrs.8;
+        Sun, 18 Nov 2018 06:18:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=oGuO4g5d4BywTnSWFeiSH0OPNxp/zYl7PCyVPQHD8Yk=;
-        b=sElgiw+hYJBO0PQjhcVYNlAGxyhgXBSR7WiYFdMLsvlqK58H/fJpY8jKVD6U5SqR88
-         IkPgmL/m9qXuwAhdPa2E8wkHH2pM/QffmRJvkV8nP1bq+BPG/gN41gVeNz4wNnM6q/EE
-         9v5h2xtaaJizv9S8qOrTe5TpYwOy8gNfWFIs8V9MpGAphLWnJbtAF9dNmfE6K80GJmW/
-         Ac4oyuxJk1x11ksjB/j14WDZzdSiIF8NannGCgRRZhfRNi52QvMwyIbm7R/NRxgEO21g
-         QJ1P3Eyjs/UAD0M5PkMwjtBbMmfrEf7PsCaLqXfRSlXfgnweX6LpYGxXe0IDmPPGe6GW
-         WQYA==
+        bh=+3/Jfkz3Nmnk0j0SXb3AchXufio2viB0S4jlUlisOK8=;
+        b=NS0Rr0W+ZXwyhOPXqRf11YL2t5Qtc6hKriuJAOIdC7xn3JwT1+oebA/TewRb9+0Lqr
+         8kWEBxvJB2Zg63YmGFDgIivgnceUMTsTxjK6z35nlr2FGV/UdE9Rb3QDfvCrwNdF7G6T
+         jW1d8/RTBh9L+9uw+I3g3mwUr2VDB0iZ0WztvxGMHSN+hu2j7EEjjVYX5jmncCM8cHPF
+         8H3+bIGmsIo8/pOi0vt/BYBlXmSs+iXa8EjI5PTxqXBO/tQHIQ+QTHSP2VIMo6JeCtAj
+         n2FfX9atGylgWlgGp3iZjRYIvIUHyJgN6bWGcGUt1h2UxWLh/y19NgMICE0N9Kr7NUCd
+         L4tg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=oGuO4g5d4BywTnSWFeiSH0OPNxp/zYl7PCyVPQHD8Yk=;
-        b=QXvGAobcxppQvTuy6xn+wJbwtvJMUn6aMI2mOxgb3mbv3hb7jRGgOrH52WqVLtg52h
-         womXGEstKsBNnFJUJCZzOjoThp6p12TSoaxdFByI0SVuw8MS8Ae8rt6oA4d8rmyCBfyO
-         fb9wnGoM61UcQJSZBHZiOydAAw6ket6jLRaNeQDdT+aF0+hi9tJMShyJsaW4CfGadPTH
-         u3MNPcEKM8NtOziEdx0stih9s9MV1L5KXXMwySqjtDb0r3Jci+TKkXw0rlcfAq7t8wag
-         WU0KeFo1qMToF+GqS4DoNUdlgI98iPxThAAoSBLa4ccOXxvNrSYl27tdvQgKNwC5dJvk
-         2IKg==
-X-Gm-Message-State: AA+aEWZwVr56y4PVWb7SuY1G7vsYeuRYYaignxR9RyPB85U5Qbqu26Uq
-        tFmjt4e6qDOOXm0k4HwgeLwr4qrwfgk=
-X-Google-Smtp-Source: AFSGD/UiZb28HJFBCaBxFmvxj87YRZJRXFPZ2ob5bOSngZaTCMSzkM6/d/ZiAXMYnhXwTt+McL2dkw==
-X-Received: by 2002:adf:fe11:: with SMTP id n17mr12730881wrr.329.1542550709892;
-        Sun, 18 Nov 2018 06:18:29 -0800 (PST)
+        bh=+3/Jfkz3Nmnk0j0SXb3AchXufio2viB0S4jlUlisOK8=;
+        b=hXZXrATj3iixoDfrcn1lvwX75VQYRXQ6Cni+FV2FYdKuJDTyoSK6w033YooVFzuMFD
+         kTfiu5RS+9Gv/n/9RNlp7jJDyVpynALR8ocNlJikfkWOzoHHO9Iys39uETc90zAwcSSU
+         D9B9xhbH/A0KBoYiRuXlRTycNzHq2iHbDpfdmgjOICXACW6SoElDN1M5ZOc8AWTQHwlB
+         /BQdHvX/Yd9/DOMX1V4kpoNn0EU0jpbwgpeO9w9QeBDkMBSV3+ha/Oh1jYh5CXGPHiVS
+         Af+yRVGbVEv2zyXHpepwqrtGg/PYBRzD0h7yAk/XTrfViRl+C6pl51hH+PiPbGAqtjWM
+         fNUg==
+X-Gm-Message-State: AA+aEWYM9kUNUHmfYm9fIvy/D2CMO8CJ9TuSzlMTXI6TjPV9GV4Zo23S
+        pG5iwSkCK/vL4qz1fUE6RcTJEry4phM=
+X-Google-Smtp-Source: AFSGD/WC8Ze3lU4VK+e5rT0eYsaXE3poeZb1WtaGABm1/2Q9/g4ZRz8QWn/ibosZ5Trke58F6Dz6PQ==
+X-Received: by 2002:adf:fe11:: with SMTP id n17mr12731174wrr.329.1542550718043;
+        Sun, 18 Nov 2018 06:18:38 -0800 (PST)
 Received: from ThinkPad.home ([185.219.176.209])
-        by smtp.gmail.com with ESMTPSA id d4sm29814412wrp.89.2018.11.18.06.18.28
+        by smtp.gmail.com with ESMTPSA id d4sm29814412wrp.89.2018.11.18.06.18.35
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sun, 18 Nov 2018 06:18:29 -0800 (PST)
+        Sun, 18 Nov 2018 06:18:37 -0800 (PST)
 From:   Mesih Kilinc <mesihkilinc@gmail.com>
 To:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
@@ -71,9 +71,9 @@ Cc:     Mesih Kilinc <mesihkilinc@gmail.com>,
         Icenowy Zheng <icenowy@aosc.io>,
         Rob Herring <robh+dt@kernel.org>,
         Julian Calaby <julian.calaby@gmail.com>
-Subject: [RFC PATCH v2 07/14] clocksource: sun4i: add a compatible for suniv
-Date:   Sun, 18 Nov 2018 17:17:06 +0300
-Message-Id: <9edf969f763ecb7433a9d56adfc36cf8a0ec998d.1542546735.git.mesihkilinc@gmail.com>
+Subject: [RFC PATCH v2 11/14] dt-bindings: clock: Add Allwinner suniv F1C100s CCU
+Date:   Sun, 18 Nov 2018 17:17:10 +0300
+Message-Id: <5f0322d5e37726f0c597b919f59e121f0b2855c3.1542546735.git.mesihkilinc@gmail.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1542546735.git.mesihkilinc@gmail.com>
 References: <cover.1542546735.git.mesihkilinc@gmail.com>
@@ -82,28 +82,148 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The suniv (new F-series) chip has a timer with less functionality than
-the A10 timer, e.g. it has only 3 channels.
+Add compatiple string for Allwinner suniv F1C100s CCU.
+Add clock and reset definitions.
 
-Add a new compatible for it. As we didn't use the extra channels on A10
-either now, the code needn't to be changed.
-
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 Signed-off-by: Mesih Kilinc <mesihkilinc@gmail.com>
 ---
- drivers/clocksource/sun4i_timer.c | 2 ++
- 1 file changed, 2 insertions(+)
+ .../devicetree/bindings/clock/sunxi-ccu.txt        |  1 +
+ include/dt-bindings/clock/suniv-ccu-f1c100s.h      | 69 ++++++++++++++++++++++
+ include/dt-bindings/reset/suniv-ccu-f1c100s.h      | 37 ++++++++++++
+ 3 files changed, 107 insertions(+)
+ create mode 100644 include/dt-bindings/clock/suniv-ccu-f1c100s.h
+ create mode 100644 include/dt-bindings/reset/suniv-ccu-f1c100s.h
 
-diff --git a/drivers/clocksource/sun4i_timer.c b/drivers/clocksource/sun4i_timer.c
-index 6e0180a..6b57187 100644
---- a/drivers/clocksource/sun4i_timer.c
-+++ b/drivers/clocksource/sun4i_timer.c
-@@ -218,3 +218,5 @@ static int __init sun4i_timer_init(struct device_node *node)
- }
- TIMER_OF_DECLARE(sun4i, "allwinner,sun4i-a10-timer",
- 		       sun4i_timer_init);
-+TIMER_OF_DECLARE(suniv, "allwinner,suniv-f1c100s-timer",
-+		       sun4i_timer_init);
+diff --git a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
+index 47d2e90..92c16eb 100644
+--- a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
++++ b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
+@@ -3,6 +3,7 @@ Allwinner Clock Control Unit Binding
+ 
+ Required properties :
+ - compatible: must contain one of the following compatibles:
++		- "allwinner,suniv-f1c100s-ccu"
+ 		- "allwinner,sun4i-a10-ccu"
+ 		- "allwinner,sun5i-a10s-ccu"
+ 		- "allwinner,sun5i-a13-ccu"
+diff --git a/include/dt-bindings/clock/suniv-ccu-f1c100s.h b/include/dt-bindings/clock/suniv-ccu-f1c100s.h
+new file mode 100644
+index 0000000..56f6d0d
+--- /dev/null
++++ b/include/dt-bindings/clock/suniv-ccu-f1c100s.h
+@@ -0,0 +1,69 @@
++/*
++ * Copyright (c) 2018 Icenowy Zheng <icenowy@aosc.xyz>
++ *
++ * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++ */
++
++#ifndef _DT_BINDINGS_CLK_SUNIV_F1C100S_H_
++#define _DT_BINDINGS_CLK_SUNIV_F1C100S_H_
++
++#define CLK_CPU			11
++
++#define CLK_BUS_MMC0		14
++#define CLK_BUS_MMC1		15
++#define CLK_BUS_DRAM		16
++#define CLK_BUS_SPI0		17
++#define CLK_BUS_SPI1		18
++#define CLK_BUS_OTG		19
++#define CLK_BUS_VE		20
++#define CLK_BUS_LCD		21
++#define CLK_BUS_DEINTERLACE	22
++#define CLK_BUS_CSI		23
++#define CLK_BUS_TVD		24
++#define CLK_BUS_TVE		25
++#define CLK_BUS_DE_BE		26
++#define CLK_BUS_DE_FE		27
++#define CLK_BUS_CODEC		28
++#define CLK_BUS_SPDIF		29
++#define CLK_BUS_IR		30
++#define CLK_BUS_RSB		31
++#define CLK_BUS_I2S0		32
++#define CLK_BUS_I2C0		33
++#define CLK_BUS_I2C1		34
++#define CLK_BUS_I2C2		35
++#define CLK_BUS_PIO		36
++#define CLK_BUS_UART0		37
++#define CLK_BUS_UART1		38
++#define CLK_BUS_UART2		39
++
++#define CLK_MMC0		40
++#define CLK_MMC0_SAMPLE		41
++#define CLK_MMC0_OUTPUT		42
++#define CLK_MMC1		43
++#define CLK_MMC1_SAMPLE		44
++#define CLK_MMC1_OUTPUT		45
++#define CLK_I2S			46
++#define CLK_SPDIF		47
++
++#define CLK_USB_PHY0		48
++
++#define CLK_DRAM_VE		49
++#define CLK_DRAM_CSI		50
++#define CLK_DRAM_DEINTERLACE	51
++#define CLK_DRAM_TVD		52
++#define CLK_DRAM_DE_FE		53
++#define CLK_DRAM_DE_BE		54
++
++#define CLK_DE_BE		55
++#define CLK_DE_FE		56
++#define CLK_TCON		57
++#define CLK_DEINTERLACE		58
++#define CLK_TVE2_CLK		59
++#define CLK_TVE1_CLK		60
++#define CLK_TVD			61
++#define CLK_CSI			62
++#define CLK_VE			63
++#define CLK_CODEC		64
++#define CLK_AVS			65
++
++#endif
+diff --git a/include/dt-bindings/reset/suniv-ccu-f1c100s.h b/include/dt-bindings/reset/suniv-ccu-f1c100s.h
+new file mode 100644
+index 0000000..95f1ed0
+--- /dev/null
++++ b/include/dt-bindings/reset/suniv-ccu-f1c100s.h
+@@ -0,0 +1,37 @@
++/*
++ * Copyright (C) 2018 Icenowy Zheng <icenowy@aosc.xyz>
++ *
++ * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++ */
++
++#ifndef _DT_BINDINGS_RST_SUNIV_F1C100S_H_
++#define _DT_BINDINGS_RST_SUNIV_F1C100S_H_
++
++#define RST_USB_PHY0		0
++#define RST_BUS_MMC0		1
++#define RST_BUS_MMC1		2
++#define RST_BUS_DRAM		3
++#define RST_BUS_SPI0		4
++#define RST_BUS_SPI1		5
++#define RST_BUS_OTG		6
++#define RST_BUS_VE		7
++#define RST_BUS_LCD		8
++#define RST_BUS_DEINTERLACE		9
++#define RST_BUS_CSI		10
++#define RST_BUS_TVD		11
++#define RST_BUS_TVE		12
++#define RST_BUS_DE_BE		13
++#define RST_BUS_DE_FE		14
++#define RST_BUS_CODEC		15
++#define RST_BUS_SPDIF		16
++#define RST_BUS_IR		17
++#define RST_BUS_RSB		18
++#define RST_BUS_I2S0		19
++#define RST_BUS_I2C0		20
++#define RST_BUS_I2C1		21
++#define RST_BUS_I2C2		22
++#define RST_BUS_UART0		23
++#define RST_BUS_UART1		24
++#define RST_BUS_UART2		25
++
++#endif /* _DT_BINDINGS_RST_SUNIV_F1C100S_H_ */
 -- 
 2.7.4
 
