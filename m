@@ -2,133 +2,161 @@ Return-Path: <SRS0=X/us=N6=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 366C8C43441
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Nov 2018 18:45:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D5A9C43441
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Nov 2018 19:15:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F19652075B
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Nov 2018 18:45:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6461620870
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Nov 2018 19:15:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="QDm/VFiU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F19652075B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fM07Lq44"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6461620870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726594AbeKTFKE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 20 Nov 2018 00:10:04 -0500
-Received: from mail-eopbgr1410130.outbound.protection.outlook.com ([40.107.141.130]:1632
-        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726522AbeKTFKD (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 20 Nov 2018 00:10:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MauGU6h0pAy8lZYh59eQed7WLBJZW3CumPAvziW+F0Y=;
- b=QDm/VFiUp8KuqaceT4zLrQj+QLAqk4NZafKUN2XKxArmXoRO7e+ynvGBxyftH+NU40pfqok0c3QaYZK23IK9SEC0AauYSJyAYOG8Z59AaGXBvgXlDuXwV3DYGSIqZkTopbbwNLOo3UngSJVJMLfphQMEA4aVeF003yGnjVZgDPY=
-Received: from OSAPR01MB1553.jpnprd01.prod.outlook.com (52.134.230.20) by
- OSAPR01MB2180.jpnprd01.prod.outlook.com (52.134.237.16) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1294.24; Mon, 19 Nov 2018 18:45:09 +0000
-Received: from OSAPR01MB1553.jpnprd01.prod.outlook.com
- ([fe80::487c:e15e:88df:f04d]) by OSAPR01MB1553.jpnprd01.prod.outlook.com
- ([fe80::487c:e15e:88df:f04d%2]) with mapi id 15.20.1294.045; Mon, 19 Nov 2018
- 18:45:06 +0000
-From:   Chris Brandt <Chris.Brandt@renesas.com>
-To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-CC:     "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: RE: [PATCH 2/3] phy: renesas: rcar-gen3-usb2: Add support for R7S9210
-Thread-Topic: [PATCH 2/3] phy: renesas: rcar-gen3-usb2: Add support for
- R7S9210
-Thread-Index: AQHUdsB7qg8ABCzTikOe1KM5ASkq46VPIjAAgAAFLfCAABUXgIAABASAgAFayYCAADKnsIAGEHaAgACgRbA=
-Date:   Mon, 19 Nov 2018 18:45:06 +0000
-Message-ID: <OSAPR01MB1553577EA2508275D59810808AD80@OSAPR01MB1553.jpnprd01.prod.outlook.com>
-References: <20181107173558.54481-1-chris.brandt@renesas.com>
- <20181107173558.54481-3-chris.brandt@renesas.com>
- <OSBPR01MB2293D01ACA9E7294DD803938D8C30@OSBPR01MB2293.jpnprd01.prod.outlook.com>
- <OSAPR01MB15539BF29A15A03FFC890B848AC30@OSAPR01MB1553.jpnprd01.prod.outlook.com>
- <OSBPR01MB2293489B7D5C98CB73CFE101D8C30@OSBPR01MB2293.jpnprd01.prod.outlook.com>
- <OSAPR01MB15533265A0BEE499122EC95A8AC30@OSAPR01MB1553.jpnprd01.prod.outlook.com>
- <OSBPR01MB2293DBE98E32D8621E5A6551D8DC0@OSBPR01MB2293.jpnprd01.prod.outlook.com>
- <OSAPR01MB155323BF2746B075DA3E8F7D8ADC0@OSAPR01MB1553.jpnprd01.prod.outlook.com>
- <OSBPR01MB2293302E77DDCC330ABE3927D8D80@OSBPR01MB2293.jpnprd01.prod.outlook.com>
-In-Reply-To: <OSBPR01MB2293302E77DDCC330ABE3927D8D80@OSBPR01MB2293.jpnprd01.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Chris.Brandt@renesas.com; 
-x-originating-ip: [75.60.247.61]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;OSAPR01MB2180;20:98RWT94XZOmPBMFGpYaG3CaUur7gchY+TpdmPL0UNOKl6/a7c8tSXQS+snnhqpcqn/+uBoJtqdZP1JiHMv+OnR4vozXe1XUyGSE3eeQ/vxfF384cgtPp92OuCuJCrsvDDU9GbVme5b1KKEfzM69pTaPxA0bXvSSiSgzQuFfy67U=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10019020)(39860400002)(366004)(396003)(136003)(376002)(346002)(189003)(199004)(54094003)(53936002)(14444005)(256004)(14454004)(6246003)(6436002)(4326008)(71200400001)(71190400001)(66066001)(486006)(97736004)(6116002)(11346002)(3846002)(476003)(446003)(86362001)(8936002)(186003)(106356001)(316002)(6506007)(81166006)(102836004)(93886005)(54906003)(81156014)(229853002)(25786009)(2900100001)(26005)(478600001)(74316002)(9686003)(55016002)(68736007)(76176011)(305945005)(72206003)(2906002)(99286004)(110136005)(33656002)(8676002)(5660300001)(7696005)(105586002)(7736002);DIR:OUT;SFP:1102;SCL:1;SRVR:OSAPR01MB2180;H:OSAPR01MB1553.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-ms-office365-filtering-correlation-id: 5c890e9d-5d24-4bd0-7926-08d64e4f2024
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:OSAPR01MB2180;
-x-ms-traffictypediagnostic: OSAPR01MB2180:
-x-microsoft-antispam-prvs: <OSAPR01MB2180D59FA07476C3D3C286EC8AD80@OSAPR01MB2180.jpnprd01.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231415)(944501410)(52105112)(3002001)(10201501046)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:OSAPR01MB2180;BCL:0;PCL:0;RULEID:;SRVR:OSAPR01MB2180;
-x-forefront-prvs: 08617F610C
-received-spf: None (protection.outlook.com: renesas.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: s9avo2u71s5rGcyM9Zoref50rrAXvR47enBs56Pa+I+jnhiIIVku7en7DrqyemHB/F+flBLMMNeLz4LhNbb/Iah/taEJ7WmsbKxRChdqTepMEU8kk085v2KvnMuQr7//AbjjrNDoCffLXkuibEktMw11GQ+wp3s3a8NxkE4PYaEeiINymltwBOy3GAfm9yapZyMZ+QrRmfruqXOttD5PXRexCxRld5cCGzmaSWgIo7EoT1jOvjZW5NUjdWKOK9XqHeYFIRkCVrycE2VwR+8z8AgzFZk3lysGom9QvpIzM9mR9b48VboNKQoW6MAIAeiPI5ZBAjkuOnQ+jlVSGUY+FY7Xa8mj9o7SNpbYe/Ch7Qk=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: quoted-printable
+        id S1726201AbeKTFk3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 20 Nov 2018 00:40:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43320 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725843AbeKTFk2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 20 Nov 2018 00:40:28 -0500
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CE4892089F;
+        Mon, 19 Nov 2018 19:15:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542654929;
+        bh=0YcczH95Cr676bLuFMfcj7NNTQwiE9T+i7tUoRWs+H4=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=fM07Lq445opDmecIcuWclSZ5brU+75p0RdYISyzV9SLPN/hq9790VQHAciSdHUINN
+         d0z6M98/w/jhlHPM6JvLdIJTzW9xs0Wylx6Cq3AQWx94rNzaU6w6VoiWEgxa6jjGmK
+         IWDBKen9g5ZM5opwDGoBoVhFEjfyHHBf5NpFnwDM=
+Received: by mail-qk1-f181.google.com with SMTP id o125so50509027qkf.3;
+        Mon, 19 Nov 2018 11:15:28 -0800 (PST)
+X-Gm-Message-State: AGRZ1gIKsI1mcnQtEDg+Sdxd2IO1U/zKmihpz7ITqcLs6cs0/FAOWp61
+        wSSWq7lJI7CFWNX/J//3jD5PT1eJXC+gLc8dkA==
+X-Google-Smtp-Source: AJdET5fV4nv90b2reqgvtn5FuaXbY4wGLH6fypiJsAe9WrXmWcZS1McBtOdZdQlF8CDZCQ/oIJ7c2/UJuo8hO9kswMs=
+X-Received: by 2002:ac8:173d:: with SMTP id w58mr21817850qtj.76.1542654928026;
+ Mon, 19 Nov 2018 11:15:28 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5c890e9d-5d24-4bd0-7926-08d64e4f2024
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Nov 2018 18:45:06.5856
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSAPR01MB2180
+References: <20181116125449.23581-1-matthias.bgg@kernel.org>
+ <20181116125449.23581-9-matthias.bgg@kernel.org> <20181116231522.GA18006@bogus>
+ <2a23e407-4cd4-2e2b-97a5-4e2bb96846e0@gmail.com>
+In-Reply-To: <2a23e407-4cd4-2e2b-97a5-4e2bb96846e0@gmail.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Mon, 19 Nov 2018 13:15:16 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKJQwfDJbpmwW+oCxiDkSp5+6mG-uoURmCQVEMP_jFOEg@mail.gmail.com>
+Message-ID: <CAL_JsqKJQwfDJbpmwW+oCxiDkSp5+6mG-uoURmCQVEMP_jFOEg@mail.gmail.com>
+Subject: Re: [PATCH v5 08/12] dt-bindings: mediatek: Change the binding for
+ mmsys clocks
+To:     Matthias Brugger <matthias.bgg@gmail.com>
+Cc:     matthias.bgg@kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        CK Hu <ck.hu@mediatek.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        David Airlie <airlied@linux.ie>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Sean Wang <sean.wang@kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-mediatek@lists.infradead.org,
+        linux-clk <linux-clk@vger.kernel.org>,
+        devicetree@vger.kernel.org, Matthias Brugger <mbrugger@suse.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Shimoda=1B$B$5$s=1B(B
+On Sun, Nov 18, 2018 at 11:12 AM Matthias Brugger
+<matthias.bgg@gmail.com> wrote:
+>
+>
+>
+> On 11/17/18 12:15 AM, Rob Herring wrote:
+> > On Fri, Nov 16, 2018 at 01:54:45PM +0100, matthias.bgg@kernel.org wrote:
+> >> From: Matthias Brugger <mbrugger@suse.com>
+> >>
+> >> On SoCs with no publical available HW or no working graphic stack
+> >> we change the devicetree binding for the mmsys clock part. This
+> >> way we don't need to register a platform device explicitly in the
+> >> drm driver. Instead we can create a mmsys child which invokes the
+> >> clock driver.
+> >>
+> >> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+> >> ---
+> >>  .../bindings/arm/mediatek/mediatek,mmsys.txt  | 21 ++++++++++++-------
+> >>  .../display/mediatek/mediatek,disp.txt        |  4 ++++
+> >>  2 files changed, 18 insertions(+), 7 deletions(-)
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
+> >> index 4468345f8b1a..d4e205981363 100644
+> >> --- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
+> >> +++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
+> >> @@ -1,4 +1,4 @@
+> >> -Mediatek mmsys controller
+> >> +Mediatek mmsys clock controller
+> >>  ============================
+> >>
+> >>  The Mediatek mmsys controller provides various clocks to the system.
+> >> @@ -6,18 +6,25 @@ The Mediatek mmsys controller provides various clocks to the system.
+> >>  Required Properties:
+> >>
+> >>  - compatible: Should be one of:
+> >> -    - "mediatek,mt2712-mmsys", "syscon"
+> >> -    - "mediatek,mt6797-mmsys", "syscon"
+> >> +    - "mediatek,mt2712-mmsys-clk", "syscon"
+> >> +    - "mediatek,mt6797-mmsys-clk", "syscon"
+> >
+> > Doesn't match the example.>
+> >>  - #clock-cells: Must be 1
+> >>
+> >> -The mmsys controller uses the common clk binding from
+> >> +The mmsys clock controller uses the common clk binding from
+> >>  Documentation/devicetree/bindings/clock/clock-bindings.txt
+> >>  The available clocks are defined in dt-bindings/clock/mt*-clk.h.
+> >> +It is a child of the mmsys block, see binding at:
+> >> +Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
+> >>
+> >>  Example:
+> >>
+> >> -mmsys: clock-controller@14000000 {
+> >> -    compatible = "mediatek,mt8173-mmsys", "syscon";
+> >> +mmsys: syscon@14000000 {
+> >> +    compatible = "mediatek,mt2712-mmsys", "syscon", "simple-mfd";
+> >>      reg = <0 0x14000000 0 0x1000>;
+> >> -    #clock-cells = <1>;
+> >> +
+> >> +    mmsys_clk: clock-controller@14000000 {
+> >> +            compatible = "mediatek,mt2712-mmsys-clk";
+> >> +            #clock-cells = <1>;
+> >
+> > This goes against the general direction of not defining separate nodes
+> > for providers with no resources.
+> >
+> > Why do you need this and what does it buy if you have to continue to
+> > support the existing chips?
+> >
+>
+> It would show explicitly that the mmsys block is used to probe two
+> drivers, one for the gpu and one for the clocks. Otherwise that is
+> hidden in the drm driver code. I think it is cleaner to describe that in
+> the device tree.
 
-From: Yoshihiro Shimoda
-Sent: Monday, November 19, 2018 3:58 AM
-> And I read Figure 32.1 of the RZ/A2 documentation and I wonder if we need
-> to release
-> USBCTR.PLL_RST even if we use USB peripheral mode.
+No, that's maybe cleaner for the driver implementation in the Linux
+kernel. What about other OS's or when Linux drivers and subsystems
+needs change? Cleaner for DT is design bindings that reflect the h/w.
+Hardware is sometimes just messy.
 
-I will ask the RZ/A2 design team to confirm.
-
-If this setting is required, I think we should use your suggestion:
-
-From: Yoshihiro Shimoda
-Sent: Thursday, November 15, 2018 4:20 AM
-> So, I have an idea to set the default mode by using "dr_mode" property,
-> instead of hardcoded. Since the driver already has such a function,
-> we can reuse rcar_gen3_device_recognition() to set the default value.
-> To achieve that, we need to modify the following though.
->  - Don't enable "is_otg_channel".
->  - Don't call rcar_gen3_enable_vbus_ctrl() to avoid ADPCTRL register
->    because RZ/A2 doesn't have it.
->  - Don't need to call rcar_gen3_set_linectrl to avoid LINECTRL1 register
->    because RZ/A2 doesn't seem to need the setting on host mode.
-
-
-Chris
-
+Rob
