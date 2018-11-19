@@ -1,204 +1,168 @@
-Return-Path: <SRS0=9y30=N5=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=X/us=N6=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1354BC43441
-	for <linux-clk@archiver.kernel.org>; Sun, 18 Nov 2018 18:21:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AF8AC43441
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Nov 2018 01:00:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C729C20817
-	for <linux-clk@archiver.kernel.org>; Sun, 18 Nov 2018 18:21:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="LfhG+Bqj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C729C20817
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	by mail.kernel.org (Postfix) with ESMTP id E2FDE2080F
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Nov 2018 01:00:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2FDE2080F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726523AbeKSElz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 18 Nov 2018 23:41:55 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:55024 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726746AbeKSElz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 18 Nov 2018 23:41:55 -0500
-Received: by mail-it1-f196.google.com with SMTP id a205-v6so5001056itd.4
-        for <linux-clk@vger.kernel.org>; Sun, 18 Nov 2018 10:20:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6hyxNNRHZAQk2YKmGWiMDL3h9FJqTwTHuD1bXW1J0LI=;
-        b=LfhG+BqjQQosGHy+3I2BryDZ47H2LwTlkUWV20Piubw94dOEhwHXhAwcxsHd1RobtU
-         RRuUIKxbE95SoVWmwCnClbi+p2cUtRKNTCsQj8m70DF6ND9ryp/Xv9EuENjE9d6AO7SN
-         kNCb1YPZnuDQDUkrtPNR7HFj+q8f5CSrySZ38=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6hyxNNRHZAQk2YKmGWiMDL3h9FJqTwTHuD1bXW1J0LI=;
-        b=BlJQI6SweOi52+JumKKXJUBSn/vRkbt4RND1Xw/8iQJlX1ikRQO2wEqwBQRlGR+/cH
-         kl/O0/7g39Xl5+/WuHupnweg3BAm0/dmBTCtGZQJ/emizL/Lzrb9/wIYwzp/LJdLlsue
-         RS6yuSZN5hyp2EMxymIazOHNQcLNHg+QfUjjvgc8yoOWtsFuPjmr1gDcfZyQynS0zHnW
-         IepXG57P9pqaQYa9OaVJXt9vHon/dDiql33ksSP1W+eWGJMakS1x/ANwImzrKIA9mIRE
-         oT1zS46gQV56mRZG5KqDqle8ArontjwEyWbBVzx64PBcCGUfvSYOXaDjboOeDt+DrTXm
-         CA+Q==
-X-Gm-Message-State: AGRZ1gJcLQwvoCyef6ZKVTNl0yyAEpBJTrVJ70LS+d+FdWEo7czofnDF
-        1wzFcHuvkd4/UDMYeMEzNF8awl09Xhgqm9u2N8u/SA==
-X-Google-Smtp-Source: AJdET5fHhUlslK/5UrXl/CwQOFXJqaRuJ38Z+sdRzmOqrl74secu+k/zmvi5BPg5DtOB6z5oSan7mwhTXXhu7lO7TqE=
-X-Received: by 2002:a24:2710:: with SMTP id g16-v6mr5864130ita.107.1542565256573;
- Sun, 18 Nov 2018 10:20:56 -0800 (PST)
-MIME-Version: 1.0
-References: <20181026144344.27778-1-jagan@amarulasolutions.com>
- <CGME20181029111305epcas5p2ee0ca644470de4e036762e000afbb71b@epcas5p2.samsung.com>
- <20181026144344.27778-18-jagan@amarulasolutions.com> <3c4c8a08-8c1e-1ac6-2b53-81389d69c97b@samsung.com>
- <CAGb2v66ENhmNXPz4PfdRJjNUNdpDNZYX2a3SH8AD6SMe9g2zLA@mail.gmail.com>
- <bfe28e8d-3786-d35d-a589-abed9ee8e7d5@samsung.com> <CAMty3ZAWkX8YSRzFs_GS2O4+=pf68e4EuSMym+_XpCe3_4-2yw@mail.gmail.com>
- <25c24350-4acd-68b8-ef5d-75a60094f0b6@samsung.com> <CAMty3ZDTAiW=Lx2H4WvdsdJRYsVe1CpCJx7D0f7yANx7Lx25PA@mail.gmail.com>
- <eb23f0f8-0270-d4fa-2cac-5b65ee4af42c@samsung.com>
-In-Reply-To: <eb23f0f8-0270-d4fa-2cac-5b65ee4af42c@samsung.com>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Sun, 18 Nov 2018 23:50:45 +0530
-Message-ID: <CAMty3ZD8wOyKJ32-itxshXmNbPs-_yf-S4_AmKcV4YuVX_gHGQ@mail.gmail.com>
-Subject: Re: [PATCH v3 17/25] dt-bindings: panel: Add Bananapi S070WV20-CT16
- ICN6211 MIPI-DSI to RGB bridge
-To:     a.hajda@samsung.com
-Cc:     Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
+        id S1726322AbeKSLWC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 19 Nov 2018 06:22:02 -0500
+Received: from mx.socionext.com ([202.248.49.38]:40639 "EHLO mx.socionext.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725919AbeKSLWC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 19 Nov 2018 06:22:02 -0500
+Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
+  by mx.socionext.com with ESMTP; 19 Nov 2018 10:00:06 +0900
+Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
+        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id 9885B180111;
+        Mon, 19 Nov 2018 10:00:06 +0900 (JST)
+Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Mon, 19 Nov 2018 10:00:06 +0900
+Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
+        by iyokan.css.socionext.com (Postfix) with ESMTP id 1B8B3403AB;
+        Mon, 19 Nov 2018 10:00:06 +0900 (JST)
+Received: from M20VSDK.e01.socionext.com (unknown [10.213.118.34])
+        by yuzu.css.socionext.com (Postfix) with ESMTP id E13E5120455;
+        Mon, 19 Nov 2018 10:00:05 +0900 (JST)
+From:   Sugaya Taichi <sugaya.taichi@socionext.com>
+To:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-serial@vger.kernel.org
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Jiri Slaby <jslaby@suse.com>,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Sugaya Taichi <sugaya.taichi@socionext.com>
+Subject: [PATCH 00/14] Add basic support for Socionext Milbeaut M10V SoCs
+Date:   Mon, 19 Nov 2018 10:01:05 +0900
+Message-Id: <1542589274-13878-1-git-send-email-sugaya.taichi@socionext.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Nov 13, 2018 at 1:26 PM Andrzej Hajda <a.hajda@samsung.com> wrote:
->
-> On 10.11.2018 08:32, Jagan Teki wrote:
-> > On Wed, Nov 7, 2018 at 2:41 PM Andrzej Hajda <a.hajda@samsung.com> wrote:
-> >> On 06.11.2018 19:08, Jagan Teki wrote:
-> >>> On Wed, Oct 31, 2018 at 2:45 PM Andrzej Hajda <a.hajda@samsung.com> wrote:
-> >>>> On 31.10.2018 09:58, Chen-Yu Tsai wrote:
-> >>>>> On Wed, Oct 31, 2018 at 4:53 PM Andrzej Hajda <a.hajda@samsung.com> wrote:
-> >>>>>> On 26.10.2018 16:43, Jagan Teki wrote:
-> >>>>>>> Bananapi S070WV20-CT16 ICN6211 is 800x480, 4-lane MIPI-DSI to RGB
-> >>>>>>> bridge panel, which is available on same PCB with 24-bit RGB interface.
-> >>>>>>>
-> >>>>>>> So, this patch adds DSI specific binding details on existing
-> >>>>>>> dt-bindings file.
-> >>>>>>>
-> >>>>>>> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> >>>>>>> ---
-> >>>>>>> Changes for v3:
-> >>>>>>> - Use existing binding doc and update dsi details
-> >>>>>>> Changes for v2:
-> >>>>>>> - none
-> >>>>>>>
-> >>>>>>>  .../display/panel/bananapi,s070wv20-ct16.txt  | 31 +++++++++++++++++--
-> >>>>>>>  1 file changed, 29 insertions(+), 2 deletions(-)
-> >>>>>>>
-> >>>>>>> diff --git a/Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16.txt b/Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16.txt
-> >>>>>>> index 35bc0c839f49..b7855dc7c66f 100644
-> >>>>>>> --- a/Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16.txt
-> >>>>>>> +++ b/Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16.txt
-> >>>>>>> @@ -1,12 +1,39 @@
-> >>>>>>>  Banana Pi 7" (S070WV20-CT16) TFT LCD Panel
-> >>>>>>>
-> >>>>>>> +S070WV20-CT16 is 7" 800x480 panel connected through a 24-bit RGB interface.
-> >>>>>>> +
-> >>>>>>> +Depending on the variant, the PCB attached to the panel module either
-> >>>>>>> +supports DSI, or DSI + 24-bit RGB. DSI is converted to 24-bit RGB via
-> >>>>>>> +an onboard ICN6211 MIPI DSI - RGB bridge chip, then fed to the panel
-> >>>>>>> +itself
-> >>>>>> As I understand this is display board, which contains 'pure' RGB panel
-> >>>>>> S070WV20-CT16 and optionally ICN6211 DSI->RGB bridge.
-> >>>>>> These are separate devices, just connected by vendor to simplify its
-> >>>>>> assembly. Why don't you create then bridge driver for ICN6211 and RGB
-> >>>>>> panel driver for S070WV20-CT16 - it looks more generic.
-> >>>>>> Then you can describe both in dts and voila.
-> >>>>>> Creating drivers for every combo of devices (panel + bridge), just
-> >>>>>> because some vendor sells them together seems incorrect - we have
-> >>>>>> devicetree for it.
-> >>>>> Rob suggested this, and also the opposite: using the same
-> >>>>> "bananapi,s070wv20-ct16"
-> >>>>> compatible string for both types of connections, and have the driver deal with
-> >>>>> detecting the bus type.
-> >>>>>
-> >>>>> The thing about the bridge chip is that there's no available datasheet that
-> >>>>> describes all the parts of the init sequence, in fact none at all. I managed
-> >>>>> to work out some bits, but the others remain a mystery and must be hard-coded
-> >>>>> to match the panel. That would work against having a generic bridge driver.
-> >>>> But it is common for many chips - 1st version of the driver is developed
-> >>>> on one platform and it supports only one configuration, if next platform
-> >>>> with the same cheap appears the driver is augmented if necessary.
-> >>> At-least few of the commands from panel initialization code, the
-> >>> respective opcode data values are based on panel timings and even
-> >>> clock value is different in DSI. I think it look hard to try bridge
-> >>> driver for these restrictions, do you have any suggestions?
-> >>
-> >> Where do you see an issue? Since panel is RGB it should have no
-> >> initialization sequence (beside regulator/gpio power on/off), so the
-> >> only thing to do is to figure out which regulators/gpios belongs to
-> >> which component - with publicly available specs it should be doable.
-> >>
-> >> The whole initialization sequence is for the bridge, so you put it into
-> >> bridge driver, for starters it can be hardcoded.
-> > Yes, I understand we can move regulators/gpio setup separately and
-> > though we hardcode the init sequence there is difference  in clock for
-> > DSI(which I mentioned in previous mail). DSI panel can't work with
-> > clock used by RGB panel-simple.
->
->
-> If you mean pixel clock from timings in next patch it seems incorrect.
-> Pixel clock should be always
->
-> htotal * vtotal * vrefresh, in case of drm_display_mode result should be
-> divided by 1000 (as .clock is in kHz).
->
-> With timings provided there you have: 928*525*60 = 29232000
->
-> So pixel clock should be 29232, if other timings are correct. DSI clock
-> is a different thing and it is private thing of DSI bridge/panel it
-> should not be exposed via drm_display_mode.
+Hi,
 
-I understand your point, but in Allwinner case DSI clock which is
-named in tcon block can be computed using clock value from
-drm_display_mode from panel driver.
+Here is the series of patches the initial support for SC2000(M10V) of
+Milbeaut SoCs. "M10V" is the internal name of SC2000, so commonly used in
+source code.
 
-DE -> Mixer -> tcon-> MIPI <--> panel
+SC2000 is a SoC of the Milbeaut series. equipped with a DSP optimized for
+computer vision. It also features advanced functionalities such as 360-degree,
+real-time spherical stitching with multi cameras, image stabilization for
+without mechanical gimbals, and rolling shutter correction. More detail is
+below:
+https://www.socionext.com/en/products/assp/milbeaut/SC2000.html
 
-So, for the value
-- 55MHz panel clock the computed divider for DSI clock in tcon [1] is
-6 which is proper and working divider
-- 30MHz panel clock the computed divider for DSI clock in tcon [2] is
-11 which can't work for this specific panel.
+Specifications for developers are below:
+ - Quad-core 32bit Cortex-A7 on ARMv7-A architecture
+ - NEON support
+ - DSP
+ - GPU
+ - MAX 3GB DDR3
+ - Cortex-M0 for power control
+ - NAND Flash Interface
+ - SD UHS-I
+ - SD UHS-II
+ - SDIO
+ - USB2.0 HOST / Device
+ - USB3.0 HOST / Device
+ - PCI express Gen2
+ - Ethernet Engine
+ - I2C
+ - UART
+ - SPI
+ - PWM
 
-I have verified other panels, the divider value work similar to this
-computation and those panels work accordingly.  but this panel case
-the divider computation look weird, so we have used working and know
-clock. I'm thinking since this panel is of DSI to RGB bridge, so it
-may require some higher frequency to work but I've no document to
-confirm the same.
+Support is quite minimal for now, since it only includes timer, clock,
+pictrl and serial controller drivers, so we can only boot to userspace
+through initramfs. Support for the other peripherals  will come eventually.
 
-Hope this information help, let me know if you have any inputs.
 
-[1] https://paste.ubuntu.com/p/drvzfHFMtY/
-[2] https://paste.ubuntu.com/p/hz29CTJY2J/
+Sugaya Taichi (14):
+  ARM: milbeaut: Add basic support for Milbeaut m10v SoC
+  dt-bindings: soc: milbeaut: Add Milbeaut trampoline description
+  ARM: milbeaut: Add Milbeaut M10V early printk
+  dt-bindings: timer: Add Milbeaut M10V timer description
+  clocksource/drivers/timer-milbeaut: Add Milbeaut M10V timer
+  dt-bindings: clock: milbeaut: add Milbeaut clock description
+  clock: milbeaut: Add Milbeaut M10V clock control
+  dt-bindings: serial: Add Milbeaut M10V serial description
+  serial: Add Milbeaut M10V serial control
+  dt-bindings: pinctrl: milbeaut: Add Milbeaut M10V pinctrl description
+  pinctrl: milbeaut: Add Milbeaut M10V pinctrl
+  ARM: dts: milbeaut: Add device tree set for the Milbeaut M10V board
+  ARM: configs: Add Milbeaut M10V defconfig
+  MAINTAINERS: Add entry to MAINTAINERS for Milbeaut
+
+ .../devicetree/bindings/clock/milbeaut-clock.txt   |  93 +++
+ .../pinctrl/socionext,milbeaut-pinctrl.txt         |  33 +
+ .../devicetree/bindings/serial/milbeaut-uart.txt   |  23 +
+ .../bindings/soc/socionext/socionext,m10v.txt      |  12 +
+ .../bindings/timer/socionext,milbeaut-timer.txt    |  17 +
+ MAINTAINERS                                        |   9 +
+ arch/arm/Kconfig                                   |   2 +
+ arch/arm/Kconfig.debug                             |  12 +-
+ arch/arm/Makefile                                  |   1 +
+ arch/arm/boot/dts/Makefile                         |   1 +
+ arch/arm/boot/dts/milbeaut-m10v-evb.dts            |  35 +
+ arch/arm/boot/dts/milbeaut-m10v-evb.dtsi           |  17 +
+ arch/arm/boot/dts/milbeaut-m10v.dtsi               | 510 ++++++++++++++
+ arch/arm/configs/milbeaut_m10v_defconfig           | 364 ++++++++++
+ arch/arm/include/debug/milbeaut.S                  |  25 +
+ arch/arm/mach-milbeaut/Kconfig                     |  28 +
+ arch/arm/mach-milbeaut/Makefile                    |   3 +
+ arch/arm/mach-milbeaut/m10v_evb.c                  |  31 +
+ arch/arm/mach-milbeaut/platsmp.c                   | 157 +++++
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/clk-m10v.c                             | 671 ++++++++++++++++++
+ drivers/clocksource/Kconfig                        |   8 +
+ drivers/clocksource/Makefile                       |   1 +
+ drivers/clocksource/timer-m10v.c                   | 146 ++++
+ drivers/pinctrl/Kconfig                            |   9 +
+ drivers/pinctrl/Makefile                           |   1 +
+ drivers/pinctrl/pinctrl-m10v.c                     | 765 +++++++++++++++++++++
+ drivers/tty/serial/Kconfig                         |  24 +
+ drivers/tty/serial/Makefile                        |   1 +
+ drivers/tty/serial/m10v_usio.c                     | 605 ++++++++++++++++
+ include/uapi/linux/serial_core.h                   |   3 +
+ 31 files changed, 3606 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/milbeaut-clock.txt
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/socionext,milbeaut-pinctrl.txt
+ create mode 100644 Documentation/devicetree/bindings/serial/milbeaut-uart.txt
+ create mode 100644 Documentation/devicetree/bindings/soc/socionext/socionext,m10v.txt
+ create mode 100644 Documentation/devicetree/bindings/timer/socionext,milbeaut-timer.txt
+ create mode 100644 arch/arm/boot/dts/milbeaut-m10v-evb.dts
+ create mode 100644 arch/arm/boot/dts/milbeaut-m10v-evb.dtsi
+ create mode 100644 arch/arm/boot/dts/milbeaut-m10v.dtsi
+ create mode 100644 arch/arm/configs/milbeaut_m10v_defconfig
+ create mode 100644 arch/arm/include/debug/milbeaut.S
+ create mode 100644 arch/arm/mach-milbeaut/Kconfig
+ create mode 100644 arch/arm/mach-milbeaut/Makefile
+ create mode 100644 arch/arm/mach-milbeaut/m10v_evb.c
+ create mode 100644 arch/arm/mach-milbeaut/platsmp.c
+ create mode 100644 drivers/clk/clk-m10v.c
+ create mode 100644 drivers/clocksource/timer-m10v.c
+ create mode 100644 drivers/pinctrl/pinctrl-m10v.c
+ create mode 100644 drivers/tty/serial/m10v_usio.c
+
+-- 
+1.9.1
+
