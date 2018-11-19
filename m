@@ -2,203 +2,262 @@ Return-Path: <SRS0=X/us=N6=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A3ADC43441
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Nov 2018 08:57:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7DD9C43441
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Nov 2018 09:27:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B398D20823
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Nov 2018 08:57:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6DEE9206BA
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Nov 2018 09:27:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="Mf26HcsH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B398D20823
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V+dsZPC4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DEE9206BA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726914AbeKSTUz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 19 Nov 2018 14:20:55 -0500
-Received: from mail-eopbgr1410139.outbound.protection.outlook.com ([40.107.141.139]:9394
-        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726289AbeKSTUy (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 19 Nov 2018 14:20:54 -0500
+        id S1727416AbeKSTuB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 19 Nov 2018 14:50:01 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:44953 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727306AbeKSTuB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Nov 2018 14:50:01 -0500
+Received: by mail-pl1-f195.google.com with SMTP id s5-v6so14289907plq.11;
+        Mon, 19 Nov 2018 01:26:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=yKhc06QfRqCbXIzHAaD7KIqBoRt94NUpUAyNCTjIQoo=;
- b=Mf26HcsHRnGBAEPWXmq+9nHZ/7DguYlBDi+P+0e/ekYPV7kvUa4nrNZEVdZ+lbSXikn8lF0MamdeZQ8mUwnQfOjtq4ieFcBe736094nmzQO5fMdfGSk2h4bZNTbCmUK1GgIN00J8DWaXv8p4dr2PuMJp8qQM9Khh4R0GOMDK0oE=
-Received: from OSBPR01MB2293.jpnprd01.prod.outlook.com (52.134.243.14) by
- OSBPR01MB2328.jpnprd01.prod.outlook.com (52.134.252.141) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1294.26; Mon, 19 Nov 2018 08:57:48 +0000
-Received: from OSBPR01MB2293.jpnprd01.prod.outlook.com
- ([fe80::70b9:d472:b61f:6130]) by OSBPR01MB2293.jpnprd01.prod.outlook.com
- ([fe80::70b9:d472:b61f:6130%2]) with mapi id 15.20.1294.048; Mon, 19 Nov 2018
- 08:57:45 +0000
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     Chris Brandt <Chris.Brandt@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-CC:     "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: RE: [PATCH 2/3] phy: renesas: rcar-gen3-usb2: Add support for R7S9210
-Thread-Topic: [PATCH 2/3] phy: renesas: rcar-gen3-usb2: Add support for
- R7S9210
-Thread-Index: AQHUdsB7Gubstzkg+U+v4TwD1Y24U6VPFiwggAATsACAAA2fQIAAD6sAgAFK9ACAAD9hAIAGBD7Q
-Date:   Mon, 19 Nov 2018 08:57:45 +0000
-Message-ID: <OSBPR01MB2293302E77DDCC330ABE3927D8D80@OSBPR01MB2293.jpnprd01.prod.outlook.com>
-References: <20181107173558.54481-1-chris.brandt@renesas.com>
- <20181107173558.54481-3-chris.brandt@renesas.com>
- <OSBPR01MB2293D01ACA9E7294DD803938D8C30@OSBPR01MB2293.jpnprd01.prod.outlook.com>
- <OSAPR01MB15539BF29A15A03FFC890B848AC30@OSAPR01MB1553.jpnprd01.prod.outlook.com>
- <OSBPR01MB2293489B7D5C98CB73CFE101D8C30@OSBPR01MB2293.jpnprd01.prod.outlook.com>
- <OSAPR01MB15533265A0BEE499122EC95A8AC30@OSAPR01MB1553.jpnprd01.prod.outlook.com>
- <OSBPR01MB2293DBE98E32D8621E5A6551D8DC0@OSBPR01MB2293.jpnprd01.prod.outlook.com>
- <OSAPR01MB155323BF2746B075DA3E8F7D8ADC0@OSAPR01MB1553.jpnprd01.prod.outlook.com>
-In-Reply-To: <OSAPR01MB155323BF2746B075DA3E8F7D8ADC0@OSAPR01MB1553.jpnprd01.prod.outlook.com>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=yoshihiro.shimoda.uh@renesas.com; 
-x-originating-ip: [211.11.155.131]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;OSBPR01MB2328;20:tAd00poQm2LD/pjUAgZrjhpJ6GECJzrxztJmMmndoK4p+6PE8oPQ3qVMJ48ak4xNGVTjz1R3Vw8rOQ7GbWHvixI8pdwwMiGaRreEdcWEQOtLK0BGKC4Vo0eYRQCmo87AcpMhEEdMxZ6flxhd3mKQZg0FwWqVuAXbTCeo8ynHqnI=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10019020)(366004)(396003)(346002)(136003)(376002)(39860400002)(54094003)(199004)(189003)(71200400001)(71190400001)(106356001)(256004)(110136005)(14444005)(105586002)(11346002)(486006)(476003)(6436002)(2900100001)(81156014)(9686003)(86362001)(99286004)(6306002)(97736004)(316002)(93886005)(446003)(55016002)(54906003)(186003)(53936002)(6246003)(102836004)(66066001)(25786009)(33656002)(966005)(5660300001)(14454004)(7696005)(478600001)(26005)(6116002)(2906002)(4326008)(8936002)(7736002)(229853002)(68736007)(3846002)(305945005)(8676002)(74316002)(6506007)(81166006)(76176011);DIR:OUT;SFP:1102;SCL:1;SRVR:OSBPR01MB2328;H:OSBPR01MB2293.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-ms-office365-filtering-correlation-id: 32f69778-3e33-4c0c-6e83-08d64dfd12ec
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:OSBPR01MB2328;
-x-ms-traffictypediagnostic: OSBPR01MB2328:
-x-microsoft-antispam-prvs: <OSBPR01MB23284D118305538F8BC60CEDD8D80@OSBPR01MB2328.jpnprd01.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3002001)(3231415)(944501410)(52105112)(6055026)(148016)(149066)(150057)(6041310)(20161123564045)(20161123562045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:OSBPR01MB2328;BCL:0;PCL:0;RULEID:;SRVR:OSBPR01MB2328;
-x-forefront-prvs: 08617F610C
-received-spf: None (protection.outlook.com: renesas.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: kFrevsL35fT5JuKkF+Q6TUvpcoKQD7nprxEpJ+WyDEBH48bJ4i5azoTnTOwvuvTgykvM8ZasmDGciC4vVNaJu9CfUEhEkvsShdJQatjSDN5vWKcnDckR6uQW2I6t6WbNJ1LUidcoW4upPWQk2XDRXTAG/DEqZ9IMua6yPvrfK5nhJSPsgoJ2Kfm3c2lsrLyV7j724mwEmAQYXvxXtFS9hxqswpBY6nrhNyw66OjGBAeQfA9X3zjGSQ4gJZrpwtvvtckvSqhaBk8fOC3mQhd/jhviHOfxhtyoFLfr3vHmH12e6SN1JWPhX4Eh1XxXfMsdDoWAgeYFPrn1b5NbkIaKLOmEfmdQlQEFsIS/1P3L0O8=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: quoted-printable
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=nHgLj3H6aplFrMy9lAcygR0tn1NgIPoUeUueftYeCIA=;
+        b=V+dsZPC47gYFTvBGhAyO3f39A1nYjQvaI35+YbLge3YSzSzH6P7zOl7BKisWAV6Iuo
+         4oL5ylwzsbuUd3wn076uS1F1t6o7vIR3rBY8fL1P02igy3ionki0aUCXDvU7kj/DqTJ8
+         +6RiQf3Jop6gZq7+A46MromUwG5RG/pQ+GveRvjZUoKDbn5LqtmeT6mAL6vAonYR9rgs
+         JFsIPT+ZCyfxVG2FzaF2L41EaDITTxKe9sn0YnxUj+OFYXkl6Qc5ZhI2eTRNSIbBzzyr
+         eWPvHXWs2dRZSjP26cusBI7gH8gd5/Quax5EcI25nFowRieBYlnQ/0QPnEym3Uj2r/L1
+         tC2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=nHgLj3H6aplFrMy9lAcygR0tn1NgIPoUeUueftYeCIA=;
+        b=SOQAbMPnnrqCV7CscumO71LsjcrNbQoEUbt1rj1DBkpbjSPek+XhpLz65Uwtcdk2H5
+         wgO3mXh6Ws6hLb762oujgCqXYOBVgUhWzcAYAYBzf93VxM6fg6mogKvHvbPeAPGjFcuO
+         gC13Ib/Ts9hs7HoQAhZW+iScAplz/te25ZyqvCmIF7+y0FfONA/t24D72N9zaPuidomf
+         73CwWLQQO8pW1ytm41+mny5/WTJj8ShklA2dyXzZtVGHgDXEFNBqFGCLwwck9DByEjmz
+         knkk20s6Vt0NHgXREnl18lxC/0JOjq65553ImlsDKL7qOr2ghWlK0nGhEZHEkAj5nFxT
+         jZYQ==
+X-Gm-Message-State: AA+aEWY2qIhtGRyBEcm+pUm+7l67AU69TDR0gb9KOymULlQbBbNTeBwU
+        tMC+pTxUNPMjajTHX87g7H4=
+X-Google-Smtp-Source: AFSGD/WCrMqJiOWTSm2LlcaJexhQRdhZyqIEP88mHOQfR2jiXOn/0RI4IlGqEh1YWpiMtmjZPK90fA==
+X-Received: by 2002:a17:902:8d8f:: with SMTP id v15-v6mr7853645plo.98.1542619617479;
+        Mon, 19 Nov 2018 01:26:57 -0800 (PST)
+Received: from ziggy.stardust ([37.223.147.230])
+        by smtp.gmail.com with ESMTPSA id z127-v6sm55437060pfz.135.2018.11.19.01.26.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 19 Nov 2018 01:26:56 -0800 (PST)
+Subject: Re: [PATCH v5 05/12] drm: mediatek: Omit warning on probe defers
+To:     CK Hu <ck.hu@mediatek.com>, matthias.bgg@kernel.org
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, p.zabel@pengutronix.de,
+        airlied@linux.ie, mturquette@baylibre.com, sboyd@codeaurora.org,
+        ulrich.hecht+renesas@gmail.com, laurent.pinchart@ideasonboard.com,
+        sean.wang@mediatek.com, sean.wang@kernel.org,
+        rdunlap@infradead.org, wens@csie.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, Matthias Brugger <mbrugger@suse.com>
+References: <20181116125449.23581-1-matthias.bgg@kernel.org>
+ <20181116125449.23581-6-matthias.bgg@kernel.org>
+ <1542605939.32082.12.camel@mtksdaap41>
+From:   Matthias Brugger <matthias.bgg@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ UXI+r2JwH1CJjrHWeQEI2ucSKsNa8FllDmG/fQ==
+Message-ID: <0a02edf9-78da-dde9-4b69-38c4719b711b@gmail.com>
+Date:   Mon, 19 Nov 2018 10:26:48 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 32f69778-3e33-4c0c-6e83-08d64dfd12ec
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Nov 2018 08:57:45.7432
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSBPR01MB2328
+In-Reply-To: <1542605939.32082.12.camel@mtksdaap41>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Chris-san,
 
-> From: Chris Brandt, Sent: Thursday, November 15, 2018 9:34 PM
->=20
-> Hi Shimoda=1B$B$5$s=1B(B
->=20
-> > From: Yoshihiro Shimoda
-> > Sent: Thursday, November 15, 2018 4:20 AM
->=20
-> > > Host does NOT work:
-> > > 	//else
-> > > 	//	/* No otg, so default to host mode */
-> > > 	//	writel(0x00000000, usb2_base + USB2_COMMCTRL);
-> >
-> > I got it. However, I have a concern how to set the mode to peripheral o=
-n
-> > RZ/A2
-> > if we applied this code. If someone would like to use the USB as
-> > peripheral
-> > on his board, this code is not suitable.
->=20
-> But USB peripheral is a different driver. So, this code will not run. So
-> USB2_COMMCTRL will keep the default value 0x80000000.
->=20
-> Correct?
 
-Ah, this is you're correct. R-Car Gen3 code (drivers/usb/renesas_usbhs/rcar=
-3.c) doesn't
-have phy control for now.
+On 19/11/2018 06:38, CK Hu wrote:
+> Hi, Matthias:
+> 
+> On Fri, 2018-11-16 at 13:54 +0100, matthias.bgg@kernel.org wrote:
+>> From: Matthias Brugger <mbrugger@suse.com>
+>>
+>> It can happen that the mmsys clock drivers aren't probed before the
+>> platform driver gets invoked. The platform driver used to print a warning
+>> that the driver failed to get the clocks. Omit this error on
+>> the defered probe path.
+> 
+> This patch looks good to me, but you have not modified the sub driver in
+> HDMI path. We could let HDMI path print the warning and someone send
+> another patch later, or you modify for HDMI path in this patch.
 
-> > So, I have an idea to set the default mode by using "dr_mode" property,
-> > instead of hardcoded. Since the driver already has such a function,
-> > we can reuse rcar_gen3_device_recognition() to set the default value.
-> > To achieve that, we need to modify the following though.
-> >  - Don't enable "is_otg_channel".
-> >  - Don't call rcar_gen3_enable_vbus_ctrl() to avoid ADPCTRL register
-> >    because RZ/A2 doesn't have it.
-> >  - Don't need to call rcar_gen3_set_linectrl to avoid LINECTRL1 registe=
-r
-> >    because RZ/A2 doesn't seem to need the setting on host mode.
-> >
-> > What do you think?
->=20
-> If a board is designed for USB peripheral, why would they enable a EHCI
-> host driver for the same USB channel?
-> I am confused.
+Sure, I'll add this in v6. After inspecting the code, I think we will need to
+also check for not initialized clocks in mtk_mdp_comp_init, as the driver for
+now does not even check if the clocks are present. What do you think?
 
-I meant that USB peripheral of RZ/A2 need the phy driver, not a EHCI host d=
-river.
-And I read Figure 32.1 of the RZ/A2 documentation and I wonder if we need t=
-o release
-USBCTR.PLL_RST even if we use USB peripheral mode.
+I'll address the coding style issue you metioned below as well.
 
-# Since the documentations doesn't mention the PHY area exactly, it's confu=
-sable for us though.
-# But, the phy driver assumed the driver handled "AHB Bridge", "Core" and "=
-UCOM" registers.
+Regards,
+Matthias
 
-> > > > (In other words, if we use the port as peripheral with the reset va=
-lue
-> > > > 0x80000000, does it work?)
-> > >
-> > > We have not been able to get USB peripheral working on RZ/A2 yet.
-> > > For peripheral, RZ/A2 has HS-USB.
-> > > After plugging into the PC, HS-USB goes to Suspended state (DVSQ =3D
-> > "0110").
-> > > It should go to Configured state (DVSQ =3D "0011")
-> >
-> > I guess we need to modify ./drivers/usb/renesas_usbhs/rza.c for RZ/A2
-> > because RZ/A2's HS-USB has SYSCFG.CNEN, but doesn't have SYSCFG.UPLLE?
->=20
-> Today for RZ/A1, we tell people to use USB0 first in their board design,
-> then use USB1 if they need a second USB channel. USB pins are dedicated
-> (no other function) so there should be no design conflicts.
->=20
-> If only USB1 is used, USB0 must also be enabled in DT as a dummy driver
-> (so SYSCFG.UPLLE can get set for USB1).
-
-Oh, I heard RZ/G1C also has such a hardware register [1].
-
-[1] https://patchwork.kernel.org/patch/10655855/
-RZ/G1C channel 0 only has UGCTRL register, but need to set for channel 1.
-
-Best regards,
-Yoshihiro Shimoda
-
-> > > According to the RZ/A2 Hardware Manual, COMMCTRL should be 0x80000000
-> > when
-> > > using HS-USB.
-> > >
-> > > There are 2 channels of USB on RZ/A2 (host x 2, HS_USB x 2)
-> >
-> > I got it. So, I guess someone wants to use 1 host and 1 peripheral :)
->=20
-> Yes.
->=20
-> Chris
-
+>>
+>> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+>> ---
+>>  drivers/gpu/drm/mediatek/mtk_disp_color.c | 4 +++-
+>>  drivers/gpu/drm/mediatek/mtk_disp_ovl.c   | 4 +++-
+>>  drivers/gpu/drm/mediatek/mtk_disp_rdma.c  | 4 +++-
+>>  drivers/gpu/drm/mediatek/mtk_drm_ddp.c    | 3 ++-
+>>  drivers/gpu/drm/mediatek/mtk_dsi.c        | 6 ++++--
+>>  5 files changed, 15 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/mediatek/mtk_disp_color.c b/drivers/gpu/drm/mediatek/mtk_disp_color.c
+>> index f609b62b8be6..1ea3178d4c18 100644
+>> --- a/drivers/gpu/drm/mediatek/mtk_disp_color.c
+>> +++ b/drivers/gpu/drm/mediatek/mtk_disp_color.c
+>> @@ -126,7 +126,9 @@ static int mtk_disp_color_probe(struct platform_device *pdev)
+>>  	ret = mtk_ddp_comp_init(dev, dev->of_node, &priv->ddp_comp, comp_id,
+>>  				&mtk_disp_color_funcs);
+>>  	if (ret) {
+>> -		dev_err(dev, "Failed to initialize component: %d\n", ret);
+>> +		if (ret != -EPROBE_DEFER)
+>> +			dev_err(dev, "Failed to initialize component: %d\n",
+>> +					ret);
+> 
+> I would like one more blank line here.
+> 
+>>  		return ret;
+>>  	}
+>>  
+>> diff --git a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
+>> index 28d191192945..5ebbcaa4e70e 100644
+>> --- a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
+>> +++ b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
+>> @@ -293,7 +293,9 @@ static int mtk_disp_ovl_probe(struct platform_device *pdev)
+>>  	ret = mtk_ddp_comp_init(dev, dev->of_node, &priv->ddp_comp, comp_id,
+>>  				&mtk_disp_ovl_funcs);
+>>  	if (ret) {
+>> -		dev_err(dev, "Failed to initialize component: %d\n", ret);
+>> +		if (ret != -EPROBE_DEFER)
+>> +			dev_err(dev, "Failed to initialize component: %d\n",
+>> +					ret);
+> 
+> I would like to align to the right of '('.
+> 
+> Regards,
+> CK
+> 
+>>  		return ret;
+>>  	}
+>>  
+>> diff --git a/drivers/gpu/drm/mediatek/mtk_disp_rdma.c b/drivers/gpu/drm/mediatek/mtk_disp_rdma.c
+>> index b0a5cffe345a..59a08ed5fea5 100644
+>> --- a/drivers/gpu/drm/mediatek/mtk_disp_rdma.c
+>> +++ b/drivers/gpu/drm/mediatek/mtk_disp_rdma.c
+>> @@ -295,7 +295,9 @@ static int mtk_disp_rdma_probe(struct platform_device *pdev)
+>>  	ret = mtk_ddp_comp_init(dev, dev->of_node, &priv->ddp_comp, comp_id,
+>>  				&mtk_disp_rdma_funcs);
+>>  	if (ret) {
+>> -		dev_err(dev, "Failed to initialize component: %d\n", ret);
+>> +		if (ret != -EPROBE_DEFER)
+>> +			dev_err(dev, "Failed to initialize component: %d\n",
+>> +					ret);
+>>  		return ret;
+>>  	}
+>>  
+>> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+>> index b06cd9d4b525..b76a2d071a97 100644
+>> --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+>> +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+>> @@ -566,7 +566,8 @@ static int mtk_ddp_probe(struct platform_device *pdev)
+>>  
+>>  	ddp->clk = devm_clk_get(dev, NULL);
+>>  	if (IS_ERR(ddp->clk)) {
+>> -		dev_err(dev, "Failed to get clock\n");
+>> +		if (PTR_ERR(ddp->clk) != -EPROBE_DEFER)
+>> +			dev_err(dev, "Failed to get clock\n");
+>>  		return PTR_ERR(ddp->clk);
+>>  	}
+>>  
+>> diff --git a/drivers/gpu/drm/mediatek/mtk_dsi.c b/drivers/gpu/drm/mediatek/mtk_dsi.c
+>> index 90109a0d6fff..cc6de75636c3 100644
+>> --- a/drivers/gpu/drm/mediatek/mtk_dsi.c
+>> +++ b/drivers/gpu/drm/mediatek/mtk_dsi.c
+>> @@ -1103,14 +1103,16 @@ static int mtk_dsi_probe(struct platform_device *pdev)
+>>  	dsi->engine_clk = devm_clk_get(dev, "engine");
+>>  	if (IS_ERR(dsi->engine_clk)) {
+>>  		ret = PTR_ERR(dsi->engine_clk);
+>> -		dev_err(dev, "Failed to get engine clock: %d\n", ret);
+>> +		if (ret != -EPROBE_DEFER)
+>> +			dev_err(dev, "Failed to get engine clock: %d\n", ret);
+>>  		return ret;
+>>  	}
+>>  
+>>  	dsi->digital_clk = devm_clk_get(dev, "digital");
+>>  	if (IS_ERR(dsi->digital_clk)) {
+>>  		ret = PTR_ERR(dsi->digital_clk);
+>> -		dev_err(dev, "Failed to get digital clock: %d\n", ret);
+>> +		if (ret != -EPROBE_DEFER)
+>> +			dev_err(dev, "Failed to get digital clock: %d\n", ret);
+>>  		return ret;
+>>  	}
+>>  
+> 
+> 
