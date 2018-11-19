@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E646CC43441
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Nov 2018 01:01:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29FB8C43441
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Nov 2018 01:01:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9895D2080F
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Nov 2018 01:01:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9895D2080F
+	by mail.kernel.org (Postfix) with ESMTP id E1D0E2080F
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Nov 2018 01:01:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1D0E2080F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728173AbeKSLWz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 19 Nov 2018 06:22:55 -0500
-Received: from mx.socionext.com ([202.248.49.38]:40720 "EHLO mx.socionext.com"
+        id S1728005AbeKSLWf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 19 Nov 2018 06:22:35 -0500
+Received: from mx.socionext.com ([202.248.49.38]:40685 "EHLO mx.socionext.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728140AbeKSLWy (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 19 Nov 2018 06:22:54 -0500
+        id S1726520AbeKSLWf (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 19 Nov 2018 06:22:35 -0500
 Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
-  by mx.socionext.com with ESMTP; 19 Nov 2018 10:00:57 +0900
-Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
-        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id A7383180111;
-        Mon, 19 Nov 2018 10:00:57 +0900 (JST)
-Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Mon, 19 Nov 2018 10:00:57 +0900
+  by mx.socionext.com with ESMTP; 19 Nov 2018 10:00:38 +0900
+Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
+        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id E7888180111;
+        Mon, 19 Nov 2018 10:00:37 +0900 (JST)
+Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Mon, 19 Nov 2018 10:00:37 +0900
 Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
-        by iyokan.css.socionext.com (Postfix) with ESMTP id 624B340387;
-        Mon, 19 Nov 2018 10:00:57 +0900 (JST)
+        by iyokan.css.socionext.com (Postfix) with ESMTP id 8232240387;
+        Mon, 19 Nov 2018 10:00:37 +0900 (JST)
 Received: from M20VSDK.e01.socionext.com (unknown [10.213.118.34])
-        by yuzu.css.socionext.com (Postfix) with ESMTP id 4098C120455;
-        Mon, 19 Nov 2018 10:00:57 +0900 (JST)
+        by yuzu.css.socionext.com (Postfix) with ESMTP id 63A2A120455;
+        Mon, 19 Nov 2018 10:00:37 +0900 (JST)
 From:   Sugaya Taichi <sugaya.taichi@socionext.com>
 To:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
@@ -49,832 +49,715 @@ Cc:     Michael Turquette <mturquette@baylibre.com>,
         Masami Hiramatsu <masami.hiramatsu@linaro.org>,
         Jassi Brar <jaswinder.singh@linaro.org>,
         Sugaya Taichi <sugaya.taichi@socionext.com>
-Subject: [PATCH 11/14] pinctrl: milbeaut: Add Milbeaut M10V pinctrl
-Date:   Mon, 19 Nov 2018 10:02:13 +0900
-Message-Id: <1542589336-13925-2-git-send-email-sugaya.taichi@socionext.com>
+Subject: [PATCH 07/14] clock: milbeaut: Add Milbeaut M10V clock control
+Date:   Mon, 19 Nov 2018 10:01:12 +0900
+Message-Id: <1542589274-13878-8-git-send-email-sugaya.taichi@socionext.com>
 X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1542589336-13925-1-git-send-email-sugaya.taichi@socionext.com>
-References: <1542589336-13925-1-git-send-email-sugaya.taichi@socionext.com>
+In-Reply-To: <1542589274-13878-1-git-send-email-sugaya.taichi@socionext.com>
+References: <1542589274-13878-1-git-send-email-sugaya.taichi@socionext.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add Milbeaut M10V pinctrl.
-The M10V has the pins that can be used GPIOs or take multiple other
-functions.
+Add Milbeaut M10V clock ( including PLL ) control.
 
 Signed-off-by: Sugaya Taichi <sugaya.taichi@socionext.com>
 ---
- drivers/pinctrl/Kconfig        |   9 +
- drivers/pinctrl/Makefile       |   1 +
- drivers/pinctrl/pinctrl-m10v.c | 765 +++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 775 insertions(+)
- create mode 100644 drivers/pinctrl/pinctrl-m10v.c
+ drivers/clk/Makefile   |   1 +
+ drivers/clk/clk-m10v.c | 671 +++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 672 insertions(+)
+ create mode 100644 drivers/clk/clk-m10v.c
 
-diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
-index 4d8c00e..b9f17e0 100644
---- a/drivers/pinctrl/Kconfig
-+++ b/drivers/pinctrl/Kconfig
-@@ -177,6 +177,15 @@ config PINCTRL_OXNAS
- 	select GPIOLIB_IRQCHIP
- 	select MFD_SYSCON
- 
-+config PINCTRL_M10V
-+	bool
-+	select PINMUX
-+	select PINCONF
-+	select GENERIC_PINCONF
-+	select OF_GPIO
-+	select REGMAP_MMIO
-+	select GPIOLIB_IRQCHIP
-+
- config PINCTRL_ROCKCHIP
- 	bool
- 	select PINMUX
-diff --git a/drivers/pinctrl/Makefile b/drivers/pinctrl/Makefile
-index 18a13c1..1a4a2b2 100644
---- a/drivers/pinctrl/Makefile
-+++ b/drivers/pinctrl/Makefile
-@@ -21,6 +21,7 @@ obj-$(CONFIG_PINCTRL_GEMINI)	+= pinctrl-gemini.o
- obj-$(CONFIG_PINCTRL_MAX77620)	+= pinctrl-max77620.o
- obj-$(CONFIG_PINCTRL_MCP23S08)	+= pinctrl-mcp23s08.o
- obj-$(CONFIG_PINCTRL_MESON)	+= meson/
-+obj-$(CONFIG_PINCTRL_M10V)	+= pinctrl-m10v.o
- obj-$(CONFIG_PINCTRL_OXNAS)	+= pinctrl-oxnas.o
- obj-$(CONFIG_PINCTRL_PALMAS)	+= pinctrl-palmas.o
- obj-$(CONFIG_PINCTRL_PIC32)	+= pinctrl-pic32.o
-diff --git a/drivers/pinctrl/pinctrl-m10v.c b/drivers/pinctrl/pinctrl-m10v.c
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index 72be7a3..da5b282 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -30,6 +30,7 @@ obj-$(CONFIG_COMMON_CLK_GEMINI)		+= clk-gemini.o
+ obj-$(CONFIG_COMMON_CLK_ASPEED)		+= clk-aspeed.o
+ obj-$(CONFIG_ARCH_HIGHBANK)		+= clk-highbank.o
+ obj-$(CONFIG_CLK_HSDK)			+= clk-hsdk-pll.o
++obj-$(CONFIG_ARCH_MILBEAUT_M10V)	+= clk-m10v.o
+ obj-$(CONFIG_COMMON_CLK_MAX77686)	+= clk-max77686.o
+ obj-$(CONFIG_COMMON_CLK_MAX9485)	+= clk-max9485.o
+ obj-$(CONFIG_ARCH_MOXART)		+= clk-moxart.o
+diff --git a/drivers/clk/clk-m10v.c b/drivers/clk/clk-m10v.c
 new file mode 100644
-index 0000000..d4ca713
+index 0000000..aa92a69
 --- /dev/null
-+++ b/drivers/pinctrl/pinctrl-m10v.c
-@@ -0,0 +1,765 @@
++++ b/drivers/clk/clk-m10v.c
+@@ -0,0 +1,671 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * Copyright (C) 2018 Socionext Ltd.
-+ * Copyright (C) 2015 Linaro Ltd.
-+ * Author: Jassi Brar <jaswinder.singh@linaro.org>
++ * Copyright (C) 2018 Socionext Inc.
++ * Copyright (C) 2016 Linaro Ltd.
++ *
 + */
 +
-+#include <linux/gpio.h>
-+#include <linux/interrupt.h>
++#include <linux/clk-provider.h>
++#include <linux/clkdev.h>
++#include <linux/delay.h>
++#include <linux/err.h>
 +#include <linux/io.h>
++#include <linux/of_address.h>
 +#include <linux/of.h>
-+#include <linux/of_device.h>
-+#include <linux/of_irq.h>
-+#include <linux/pinctrl/machine.h>
-+#include <linux/pinctrl/pinctrl.h>
-+#include <linux/pinctrl/pinmux.h>
-+#include <linux/pinctrl/pinconf.h>
-+#include <linux/pinctrl/pinconf-generic.h>
-+#include <linux/platform_device.h>
 +#include <linux/spinlock.h>
 +
-+#include "pinctrl-utils.h"
++#define CLKSEL1		0x0
++#define CLKSEL(n)	(((n) - 1) * 4 + CLKSEL1)
 +
-+#define EIMASK		0x0
-+#define EISRCSEL	0x4
-+#define EIREQSTA	0x8
-+#define EIRAWREQSTA	0xc
-+#define EIREQCLR	0x10
-+#define EILVL		0x14
-+#define EIEDG		0x18
-+#define EISIR		0x1c
++#define PLLCNT1		0x30
++#define PLLCNT(n)	(((n) - 1) * 4 + PLLCNT1)
 +
-+#define PDR		0x0
-+#define PDR_S		0x50
-+#define PDR_C		0xa0
-+#define DDR		0x100
-+#define EPCR		0x200
-+#define PUDER		0x300
-+#define PUDCR		0x400
++#define CLKSTOP1	0x54
++#define CLKSTOP(n)	(((n) - 1) * 4 + CLKSTOP1)
 +
-+#define M10V_BANKS	26
-+#define PINS_PER_BANK	8
-+#define M10V_TOTAL_PINS	(M10V_BANKS * PINS_PER_BANK)
-+#define PINS_PER_REG	16
++#define CRSWR		0x8c
++#define CRRRS		0x90
++#define CRRSM		0x94
 +
-+struct pin_irq_map {
-+	int pin; /* offset of pin in the managed range */
-+	int irq; /* virq of the pin as fpint */
-+	int type;
-+	char irqname[8];
-+};
++#define to_m10v_mux(_hw)	container_of(_hw, struct m10v_mux, hw)
++#define to_m10v_gate(_hw)	container_of(_hw, struct m10v_gate, hw)
++#define to_m10v_div(_hw)	container_of(_hw, struct m10v_div, hw)
++#define to_m10v_pll(_hw)	container_of(_hw, struct m10v_pll, hw)
 +
-+struct m10v_pinctrl {
-+	void __iomem *base;
-+	void __iomem *exiu;
-+	struct gpio_chip gc;
-+	struct pinctrl_desc pd;
-+	char pin_names[4 * M10V_TOTAL_PINS];
-+	struct pinctrl_pin_desc pins[M10V_TOTAL_PINS];
-+	unsigned int gpins[M10V_TOTAL_PINS][1]; /* 1 pin-per-group */
-+	struct irq_domain *irqdom;
-+	spinlock_t irq_lock, lock;
-+	int extints;
-+	struct pin_irq_map fpint[]; /* keep at end */
-+};
++static void __iomem *clk_base;
++static struct device_node *np_top;
++static DEFINE_SPINLOCK(crglock);
 +
-+struct milbeaut_function {
-+	const char		*name;
-+	const char * const	*groups;
-+	unsigned int		ngroups;
-+};
-+
-+static const char m10v_bank_name[] = {'0', '1', '2', '3', '4', '5', '6', '7',
-+				 '8', '9', 'A', 'B', 'C', 'D', 'E', 'F',
-+				 'G', 'H', 'W', 'J', 'K', 'L', 'M', 'N',
-+				 'Y', 'P'};
-+static const char * const usio0_m10v_grps[] = {"PE2", "PE3", "PF0"};
-+static const char * const usio1_m10v_grps[] = {"PE4", "PE5", "PF1"};
-+static const char * const usio2_m10v_grps[] = {"PE0", "PE1"};
-+static const char * const usio3_m10v_grps[] = {"PY0", "PY1", "PY2"};
-+static const char * const usio4_m10v_grps[] = {"PP0", "PP1", "PP2"};
-+static const char * const usio5_m10v_grps[] = {"PM0", "PM1", "PM3"};
-+static const char * const usio6_m10v_grps[] = {"PN0", "PN1", "PN3"};
-+static const char * const usio7_m10v_grps[] = {"PY3", "PY5", "PY6"};
-+static const char *gpio_m10v_grps[M10V_TOTAL_PINS];
-+
-+static const struct milbeaut_function m10v_functions[] = {
-+#define FUNC_M10V(fname)					\
-+	{						\
-+		.name = #fname,				\
-+		.groups = fname##_m10v_grps,		\
-+		.ngroups = ARRAY_SIZE(fname##_m10v_grps),	\
-+	}
-+	FUNC_M10V(gpio), /* GPIO always at index 0 */
-+	FUNC_M10V(usio0),
-+	FUNC_M10V(usio1),
-+	FUNC_M10V(usio2),
-+	FUNC_M10V(usio3),
-+	FUNC_M10V(usio4),
-+	FUNC_M10V(usio5),
-+	FUNC_M10V(usio6),
-+	FUNC_M10V(usio7),
-+};
-+
-+static const char *bank_name;
-+static const struct milbeaut_function *milbeaut_functions;
-+
-+static int m10v_pconf_group_set(struct pinctrl_dev *pctldev,
-+				 unsigned int group,
-+				 unsigned long *configs,
-+				 unsigned int num_configs)
++static __init void __iomem *m10v_clk_iomap(void)
 +{
-+	struct m10v_pinctrl *pctl = pinctrl_dev_get_drvdata(pctldev);
-+	u32 pin, val, reg, offset;
-+	unsigned long flags;
++	if (clk_base)
++		return clk_base;
++
++	np_top = of_find_compatible_node(NULL, NULL,
++			"socionext,milbeaut-m10v-clk-regs");
++	if (!np_top) {
++		pr_err("%s: CLK iomap failed!\n", __func__);
++		return NULL;
++	}
++
++	clk_base = of_iomap(np_top, 0);
++	of_node_put(np_top);
++
++	return clk_base;
++}
++
++struct m10v_mux {
++	struct clk_hw hw;
++	const char *cname;
++	u32 parent;
++};
++
++static u8 m10v_mux_get_parent(struct clk_hw *hw)
++{
++	struct m10v_mux *mcm = to_m10v_mux(hw);
++	struct clk_hw *parent;
 +	int i;
 +
-+	pin = pctl->gpins[group][0];
-+	reg = pin / PINS_PER_REG * 4;
-+	offset = pin % PINS_PER_REG;
-+
-+	spin_lock_irqsave(&pctl->lock, flags);
-+
-+	for (i = 0; i < num_configs; i++) {
-+		switch (pinconf_to_config_param(configs[i])) {
-+		case PIN_CONFIG_BIAS_PULL_UP:
-+			/* enable Pull-Up/Down resistance */
-+			val = readl_relaxed(pctl->base + PUDER + reg);
-+			val |= BIT(offset);
-+			writel_relaxed(val, pctl->base + PUDER + reg);
-+			/* enable Pull-Up */
-+			val = readl_relaxed(pctl->base + PUDCR + reg);
-+			val |= BIT(offset);
-+			writel_relaxed(val, pctl->base + PUDCR + reg);
++	i = clk_hw_get_num_parents(hw);
++	while (i--) {
++		parent = clk_hw_get_parent_by_index(hw, i);
++		if (clk_hw_get_rate(parent))
 +			break;
-+		case PIN_CONFIG_BIAS_PULL_DOWN:
-+			/* enable Pull-Up/Down resistance */
-+			val = readl_relaxed(pctl->base + PUDER + reg);
-+			val |= BIT(offset);
-+			writel_relaxed(val, pctl->base + PUDER + reg);
-+			/* enable Pull-Down */
-+			val = readl_relaxed(pctl->base + PUDCR + reg);
-+			val &= ~BIT(offset);
-+			writel_relaxed(val, pctl->base + PUDCR + reg);
-+			break;
-+		case PIN_CONFIG_BIAS_DISABLE:
-+			val = readl_relaxed(pctl->base + PUDER + reg);
-+			val &= ~BIT(offset);
-+			writel_relaxed(val, pctl->base + PUDER + reg);
-+			break;
-+		default:
-+			break;
-+		}
 +	}
 +
-+	spin_unlock_irqrestore(&pctl->lock, flags);
++	if (i < 0) {
++		pr_info("%s:%s no parent?!\n",
++			__func__, mcm->cname);
++		i = 0;
++	}
 +
++	return i;
++}
++
++static int m10v_mux_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct m10v_mux *mcm = to_m10v_mux(hw);
++
++	mcm->parent = index;
 +	return 0;
 +}
 +
-+static const struct pinconf_ops m10v_pconf_ops = {
-+	.pin_config_group_set	= m10v_pconf_group_set,
++static const struct clk_ops m10v_mux_ops = {
++	.get_parent = m10v_mux_get_parent,
++	.set_parent = m10v_mux_set_parent,
++	.determine_rate = __clk_mux_determine_rate,
 +};
 +
-+static int m10v_pctrl_get_groups_count(struct pinctrl_dev *pctldev)
++void __init m10v_clk_mux_setup(struct device_node *node)
 +{
-+	return M10V_TOTAL_PINS;
++	const char *clk_name = node->name;
++	struct clk_init_data init;
++	const char **parent_names;
++	struct m10v_mux *mcm;
++	struct clk *clk;
++	int i, parents;
++
++	if (!m10v_clk_iomap())
++		return;
++
++	of_property_read_string(node, "clock-output-names", &clk_name);
++
++	parents = of_clk_get_parent_count(node);
++	if (parents < 2) {
++		pr_err("%s: not a mux\n", clk_name);
++		return;
++	}
++
++	parent_names = kzalloc((sizeof(char *) * parents), GFP_KERNEL);
++	if (!parent_names)
++		return;
++
++	for (i = 0; i < parents; i++)
++		parent_names[i] = of_clk_get_parent_name(node, i);
++
++	mcm = kzalloc(sizeof(*mcm), GFP_KERNEL);
++	if (!mcm)
++		goto err_mcm;
++
++	init.name = clk_name;
++	init.ops = &m10v_mux_ops;
++	init.flags = CLK_IS_BASIC | CLK_SET_RATE_PARENT;
++	init.num_parents = parents;
++	init.parent_names = parent_names;
++
++	mcm->cname = clk_name;
++	mcm->parent = 0;
++	mcm->hw.init = &init;
++
++	clk = clk_register(NULL, &mcm->hw);
++	if (IS_ERR(clk))
++		goto err_clk;
++
++	of_clk_add_provider(node, of_clk_src_simple_get, clk);
++	return;
++
++err_clk:
++	kfree(mcm);
++err_mcm:
++	kfree(parent_names);
 +}
++CLK_OF_DECLARE(m10v_clk_mux, "socionext,milbeaut-m10v-clk-mux",
++			m10v_clk_mux_setup);
 +
-+static const char *m10v_pctrl_get_group_name(struct pinctrl_dev *pctldev,
-+					      unsigned int pin)
-+{
-+	struct m10v_pinctrl *pctl = pinctrl_dev_get_drvdata(pctldev);
-+
-+	return &pctl->pin_names[4 * pin];
-+}
-+
-+static int m10v_pctrl_get_group_pins(struct pinctrl_dev *pctldev,
-+				      unsigned int group,
-+				      const unsigned int **pins,
-+				      unsigned int *num_pins)
-+{
-+	struct m10v_pinctrl *pctl = pinctrl_dev_get_drvdata(pctldev);
-+
-+	*pins = pctl->gpins[group];
-+	*num_pins = 1;
-+	return 0;
-+}
-+
-+static const struct pinctrl_ops m10v_pctrl_ops = {
-+	.get_groups_count	= m10v_pctrl_get_groups_count,
-+	.get_group_name		= m10v_pctrl_get_group_name,
-+	.get_group_pins		= m10v_pctrl_get_group_pins,
-+	.dt_node_to_map		= pinconf_generic_dt_node_to_map_group,
-+	.dt_free_map		= pinctrl_utils_free_map,
++struct m10v_pll {
++	struct clk_hw hw;
++	const char *cname;
++	const struct clk_ops ops;
++	u32 offset;
++	u32 div, mult;
++	bool ro;
 +};
 +
-+static int m10v_pmx_get_funcs_cnt(struct pinctrl_dev *pctldev)
-+{
-+	return ARRAY_SIZE(m10v_functions);
-+}
++#define ST	1
++#define SEL	2
 +
-+static const char *m10v_pmx_get_func_name(struct pinctrl_dev *pctldev,
-+					   unsigned int function)
++static void _mpg_enable(struct clk_hw *hw, unsigned int enable)
 +{
-+	return milbeaut_functions[function].name;
-+}
-+
-+static int m10v_pmx_get_func_groups(struct pinctrl_dev *pctldev,
-+				     unsigned int function,
-+				     const char * const **groups,
-+				     unsigned * const num_groups)
-+{
-+	*groups = milbeaut_functions[function].groups;
-+	*num_groups = milbeaut_functions[function].ngroups;
-+	return 0;
-+}
-+
-+static void _set_mux(struct m10v_pinctrl *pctl, unsigned int pin, bool gpio)
-+{
-+	u32 val, reg, offset;
++	struct m10v_pll *mpg = to_m10v_pll(hw);
 +	unsigned long flags;
++	u32 val;
 +
-+	reg = pin / PINS_PER_REG * 4;
-+	offset = pin % PINS_PER_REG;
++	if (mpg->ro) {
++		pr_debug("%s:%d %s: read-only\n",
++			 __func__, __LINE__, mpg->cname);
++		return;
++	}
 +
-+	reg += EPCR;
++	spin_lock_irqsave(&crglock, flags);
 +
-+	spin_lock_irqsave(&pctl->lock, flags);
-+
-+	val = readl_relaxed(pctl->base + reg);
-+
-+	if (gpio)
-+		val &= ~BIT(offset);
++	val = readl(clk_base + PLLCNT(SEL));
++	if (enable)
++		val |= BIT(mpg->offset);
 +	else
-+		val |= BIT(offset);
++		val &= ~BIT(mpg->offset);
++	writel(val, clk_base + PLLCNT(SEL));
 +
-+	writel_relaxed(val, pctl->base + reg);
-+
-+	spin_unlock_irqrestore(&pctl->lock, flags);
++	spin_unlock_irqrestore(&crglock, flags);
 +}
 +
-+static int m10v_pmx_set_mux(struct pinctrl_dev *pctldev,
-+			     unsigned int function,
-+			     unsigned int group)
++static int mpg_enable(struct clk_hw *hw)
 +{
-+	struct m10v_pinctrl *pctl = pinctrl_dev_get_drvdata(pctldev);
-+	u32 pin = pctl->gpins[group][0]; /* each group has exactly 1 pin */
-+
-+	_set_mux(pctl, pin, !function);
-+
++	_mpg_enable(hw, 1);
 +	return 0;
 +}
 +
-+static int _set_direction(struct m10v_pinctrl *pctl,
-+			unsigned int pin, bool input)
++static void mpg_disable(struct clk_hw *hw)
 +{
-+	u32 val, reg, offset;
++	_mpg_enable(hw, 0);
++}
++
++static int mpg_is_enabled(struct clk_hw *hw)
++{
++	struct m10v_pll *mpg = to_m10v_pll(hw);
++
++	return readl(clk_base + PLLCNT(SEL)) & (1 << mpg->offset);
++}
++
++static void _mpg_prepare(struct clk_hw *hw, unsigned int on)
++{
++	struct m10v_pll *mpg = to_m10v_pll(hw);
 +	unsigned long flags;
++	u32 val;
 +
-+	reg = pin / PINS_PER_REG * 4;
-+	offset = pin % PINS_PER_REG;
++	if (mpg->ro) {
++		pr_debug("%s:%d %s: read-only\n",
++			 __func__, __LINE__, mpg->cname);
++		return;
++	}
 +
-+	reg += DDR;
++	val = readl(clk_base + PLLCNT(ST));
++	if (!on == !(val & BIT(mpg->offset)))
++		return;
 +
-+	spin_lock_irqsave(&pctl->lock, flags);
++	/* disable */
++	mpg_disable(hw);
 +
-+	val = readl_relaxed(pctl->base + reg);
++	spin_lock_irqsave(&crglock, flags);
 +
-+	if (input)
-+		val &= ~BIT(offset);
++	val = readl(clk_base + PLLCNT(ST));
++	if (on)
++		val |= BIT(mpg->offset);
 +	else
-+		val |= BIT(offset);
++		val &= ~BIT(mpg->offset);
++	writel(val, clk_base + PLLCNT(ST));
 +
-+	writel_relaxed(val, pctl->base + reg);
++	spin_unlock_irqrestore(&crglock, flags);
 +
-+	spin_unlock_irqrestore(&pctl->lock, flags);
++	udelay(on ? 200 : 10);
++}
 +
++static int mpg_prepare(struct clk_hw *hw)
++{
++	_mpg_prepare(hw, 1);
 +	return 0;
 +}
 +
-+static int
-+m10v_pmx_gpio_set_direction(struct pinctrl_dev *pctldev,
-+			struct pinctrl_gpio_range *range,
-+			unsigned int pin, bool input)
++static void mpg_unprepare(struct clk_hw *hw)
 +{
-+	struct m10v_pinctrl *pctl = pinctrl_dev_get_drvdata(pctldev);
-+
-+	return _set_direction(pctl, pin, input);
++	_mpg_prepare(hw, 0);
 +}
 +
-+static int
-+m10v_pmx_gpio_request_enable(struct pinctrl_dev *pctldev,
-+			    struct pinctrl_gpio_range *range,
-+			    unsigned int pin)
++static int mpg_set_rate(struct clk_hw *hw, unsigned long rate,
++				unsigned long prate)
 +{
-+	struct m10v_pinctrl *pctl = pinctrl_dev_get_drvdata(pctldev);
-+
-+	_set_mux(pctl, pin, true);
 +	return 0;
 +}
 +
-+static const struct pinmux_ops m10v_pmx_ops = {
-+	.get_functions_count	= m10v_pmx_get_funcs_cnt,
-+	.get_function_name	= m10v_pmx_get_func_name,
-+	.get_function_groups	= m10v_pmx_get_func_groups,
-+	.set_mux		= m10v_pmx_set_mux,
-+	.gpio_set_direction	= m10v_pmx_gpio_set_direction,
-+	.gpio_request_enable	= m10v_pmx_gpio_request_enable,
++static unsigned long mpg_recalc_rate(struct clk_hw *hw,
++		unsigned long prate)
++{
++	struct m10v_pll *mpg = to_m10v_pll(hw);
++	unsigned long long rate = prate;
++
++	if (mpg_is_enabled(hw)) {
++		rate = (unsigned long long)prate * mpg->mult;
++		do_div(rate, mpg->div);
++	}
++
++	return (unsigned long)rate;
++}
++
++static long mpg_round_rate(struct clk_hw *hw, unsigned long rate,
++				unsigned long *prate)
++{
++	struct m10v_pll *mpg = to_m10v_pll(hw);
++	unsigned long long temp_rate = (unsigned long long)*prate * mpg->mult;
++
++	if (mpg->ro)
++		return mpg_recalc_rate(hw, *prate);
++
++	return do_div(temp_rate, mpg->div);
++}
++
++static const struct clk_ops m10v_pll_ops = {
++	.prepare = mpg_prepare,
++	.enable = mpg_enable,
++	.is_enabled = mpg_is_enabled,
++	.disable = mpg_disable,
++	.unprepare = mpg_unprepare,
++	.round_rate = mpg_round_rate,
++	.set_rate = mpg_set_rate,
++	.recalc_rate = mpg_recalc_rate,
 +};
 +
-+static int m10v_gpio_get(struct gpio_chip *gc, unsigned int group)
++void __init m10v_pll_setup(struct device_node *node)
 +{
-+	struct m10v_pinctrl *pctl =
-+		container_of(gc, struct m10v_pinctrl, gc);
-+	u32 pin, val, reg, offset;
-+
-+	pin = pctl->gpins[group][0];
-+	reg = PDR + pin / PINS_PER_REG * 4;
-+	offset = pin % PINS_PER_REG;
-+	val = readl_relaxed(pctl->base + reg);
-+
-+	return !!(val & BIT(offset));
-+}
-+
-+static void m10v_gpio_set(struct gpio_chip *gc, unsigned int group, int set)
-+{
-+	struct m10v_pinctrl *pctl =
-+		container_of(gc, struct m10v_pinctrl, gc);
-+	u32 pin, reg, offset, val;
-+
-+	pin = pctl->gpins[group][0];
-+	reg = PDR + pin / PINS_PER_REG * 4;
-+	offset = pin % PINS_PER_REG;
-+
-+	val = BIT(offset + 16);
-+	if (set)
-+		val |= BIT(offset);
-+
-+	writel_relaxed(val, pctl->base + reg);
-+}
-+
-+static void (*gpio_set)(struct gpio_chip *, unsigned int, int);
-+
-+static int m10v_gpio_direction_input(struct gpio_chip *gc,
-+		unsigned int offset)
-+{
-+	return pinctrl_gpio_direction_input(gc->base + offset);
-+}
-+
-+static int m10v_gpio_direction_output(struct gpio_chip *gc,
-+		unsigned int offset, int value)
-+{
++	const char *clk_name = node->name;
++	struct clk_init_data init;
++	const char *parent_name;
++	u32 offset, div, mult;
++	struct m10v_pll *mpg;
++	struct clk *clk;
 +	int ret;
 +
-+	ret = pinctrl_gpio_direction_output(gc->base + offset);
-+	if (!ret)
-+		gpio_set(gc, offset, value);
++	if (!m10v_clk_iomap())
++		return;
 +
-+	return ret;
++	of_property_read_string(node, "clock-output-names", &clk_name);
++
++	ret = of_property_read_u32(node, "offset", &offset);
++	if (ret) {
++		pr_err("%s: missing 'offset' property\n", clk_name);
++		return;
++	}
++
++	div = mult = 1;
++	of_property_read_u32(node, "clock-div", &div);
++	of_property_read_u32(node, "clock-mult", &mult);
++
++	parent_name = of_clk_get_parent_name(node, 0);
++
++	mpg = kzalloc(sizeof(*mpg), GFP_KERNEL);
++	if (!mpg)
++		return;
++
++	init.name = clk_name;
++	init.ops = &m10v_pll_ops;
++	init.flags = CLK_IS_BASIC | CLK_SET_RATE_GATE;
++	init.parent_names = &parent_name;
++	init.num_parents = 1;
++
++	mpg->cname = clk_name;
++	mpg->offset = offset;
++	mpg->div = div;
++	mpg->mult = mult;
++	mpg->hw.init = &init;
++	if (of_get_property(node, "read-only", NULL))
++		mpg->ro = true;
++
++	clk = clk_register(NULL, &mpg->hw);
++	if (IS_ERR(clk))
++		kfree(mpg);
++	else
++		of_clk_add_provider(node, of_clk_src_simple_get, clk);
++}
++CLK_OF_DECLARE(m10v_clk_pll_gate, "socionext,milbeaut-m10v-pll-fixed-factor",
++		m10v_pll_setup);
++
++struct m10v_div {
++	struct clk_hw hw;
++	const char *cname;
++	bool waitdchreq;
++	u32 offset;
++	u32 mask;
++	u32 *table;
++	u32 tlen;
++	bool ro;
++};
++
++static void mdc_set_div(struct m10v_div *mdc, u32 div)
++{
++	u32 off, shift, val;
++
++	off = mdc->offset / 32 * 4;
++	shift = mdc->offset % 32;
++
++	val = readl(clk_base + CLKSEL1 + off);
++	val &= ~(mdc->mask << shift);
++	val |= (div << shift);
++	writel(val, clk_base + CLKSEL1 + off);
++
++	if (mdc->waitdchreq) {
++		unsigned int count = 250;
++
++		writel(1, clk_base + CLKSEL(11));
++
++		do {
++			udelay(1);
++		} while (--count && readl(clk_base + CLKSEL(11)) & 1);
++
++		if (!count)
++			pr_err("%s:%s CLK(%d) couldn't stabilize\n",
++				__func__, mdc->cname, mdc->offset);
++	}
 +}
 +
-+static int m10v_gpio_to_irq(struct gpio_chip *gc, unsigned int offset)
++static u32 mdc_get_div(struct m10v_div *mdc)
 +{
-+	struct m10v_pinctrl *pctl =
-+		container_of(gc, struct m10v_pinctrl, gc);
++	u32 off, shift, div;
 +
-+	return irq_linear_revmap(pctl->irqdom, offset);
++	off = mdc->offset / 32 * 4;
++	shift = mdc->offset % 32;
++
++	div = readl(clk_base + CLKSEL1 + off);
++	div >>= shift;
++	div &= mdc->mask;
++
++	return div;
 +}
 +
-+static struct lock_class_key gpio_lock_class;
-+static struct lock_class_key gpio_request_class;
-+
-+static int pin_to_extint(struct m10v_pinctrl *pctl, int pin)
++static int mdc_div_set_rate(struct clk_hw *hw, unsigned long rate,
++				unsigned long prate)
 +{
-+	int extint;
++	struct m10v_div *mdc = to_m10v_div(hw);
++	u64 pr;
++	int i;
 +
-+	for (extint = 0; extint < pctl->extints; extint++)
-+		if (pctl->fpint[extint].pin == pin)
++	if (mdc->ro) {
++		pr_debug("%s:%d %s: read-only\n",
++			 __func__, __LINE__, mdc->cname);
++		return 0;
++	}
++
++	/* divisors are already in descending order in DT */
++	for (i = mdc->tlen - 2; i >= 0; i -= 2) {
++		pr = prate;
++		do_div(pr, mdc->table[i]);
++
++		if (rate >= pr)
 +			break;
-+
-+	if (extint == pctl->extints)
-+		return -1;
-+
-+	return extint;
-+}
-+
-+static void update_trigger(struct m10v_pinctrl *pctl, int extint)
-+{
-+	int type = pctl->fpint[extint].type;
-+	int pin = pctl->fpint[extint].pin;
-+	u32 masked, val, eilvl, eiedg;
-+	int lvl;
-+	u32 reg, offset;
-+
-+	reg = pin / PINS_PER_REG * 4;
-+	offset = pin % PINS_PER_REG;
-+
-+	/* sense gpio */
-+	val = readl_relaxed(pctl->base + PDR + reg);
-+	lvl = (val >> offset) & 1;
-+
-+	eilvl = readl_relaxed(pctl->exiu + EILVL);
-+	eiedg = readl_relaxed(pctl->exiu + EIEDG);
-+
-+	if (type == IRQ_TYPE_LEVEL_LOW ||
-+			(lvl && (type & IRQ_TYPE_LEVEL_LOW))) {
-+		eilvl &= ~BIT(extint);
-+		eiedg &= ~BIT(extint);
 +	}
++	if (i < 0)
++		i = 0;
 +
-+	if (type == IRQ_TYPE_EDGE_FALLING ||
-+			(lvl && (type & IRQ_TYPE_EDGE_FALLING))) {
-+		eilvl &= ~BIT(extint);
-+		eiedg |= BIT(extint);
-+	}
-+
-+	if (type == IRQ_TYPE_LEVEL_HIGH ||
-+			(!lvl && (type & IRQ_TYPE_LEVEL_HIGH))) {
-+		eilvl |= BIT(extint);
-+		eiedg &= ~BIT(extint);
-+	}
-+
-+	if (type == IRQ_TYPE_EDGE_RISING ||
-+			(!lvl && (type & IRQ_TYPE_EDGE_RISING))) {
-+		eilvl |= BIT(extint);
-+		eiedg |= BIT(extint);
-+	}
-+
-+	/* Mask the interrupt */
-+	val = readl_relaxed(pctl->exiu + EIMASK);
-+	masked = val & BIT(extint); /* save status */
-+	val |= BIT(extint);
-+	writel_relaxed(val, pctl->exiu + EIMASK);
-+
-+	/* Program trigger */
-+	writel_relaxed(eilvl, pctl->exiu + EILVL);
-+	writel_relaxed(eiedg, pctl->exiu + EIEDG);
-+
-+	if (masked)
-+		return;
-+
-+	/* UnMask the interrupt */
-+	val = readl_relaxed(pctl->exiu + EIMASK);
-+	val &= ~BIT(extint);
-+	writel_relaxed(val, pctl->exiu + EIMASK);
-+}
-+
-+static irqreturn_t m10v_gpio_irq_handler(int irq, void *data)
-+{
-+	struct m10v_pinctrl *pctl = data;
-+	int i, pin;
-+	u32 val;
-+
-+	for (i = 0; i < pctl->extints; i++)
-+		if (pctl->fpint[i].irq == irq)
-+			break;
-+	if (i == pctl->extints) {
-+		pr_err("%s:%d IRQ(%d)!\n", __func__, __LINE__, irq);
-+		return IRQ_NONE;
-+	}
-+
-+	if (!pctl->exiu)
-+		return IRQ_NONE;
-+
-+	val = readl_relaxed(pctl->exiu + EIREQSTA);
-+	if (!(val & BIT(i))) {
-+		pr_err("%s:%d i=%d EIREQSTA=0x%x IRQ(%d)!\n",
-+				__func__, __LINE__, i, val, irq);
-+		return IRQ_NONE;
-+	}
-+
-+	pin = pctl->fpint[i].pin;
-+	generic_handle_irq(irq_linear_revmap(pctl->irqdom, pin));
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static void m10v_gpio_irq_enable(struct irq_data *data)
-+{
-+	struct m10v_pinctrl *pctl = irq_data_get_irq_chip_data(data);
-+	int extint = pin_to_extint(pctl, irqd_to_hwirq(data));
-+	unsigned long flags;
-+	u32 val;
-+
-+	if (extint < 0 || !pctl->exiu)
-+		return;
-+
-+	_set_mux(pctl, irqd_to_hwirq(data), true);
-+	_set_direction(pctl, irqd_to_hwirq(data), true);
-+
-+	spin_lock_irqsave(&pctl->irq_lock, flags);
-+
-+	/* Clear before enabling */
-+	writel_relaxed(BIT(extint), pctl->exiu + EIREQCLR);
-+
-+	/* UnMask the interrupt */
-+	val = readl_relaxed(pctl->exiu + EIMASK);
-+	val &= ~BIT(extint);
-+	writel_relaxed(val, pctl->exiu + EIMASK);
-+
-+	spin_unlock_irqrestore(&pctl->irq_lock, flags);
-+}
-+
-+static void m10v_gpio_irq_disable(struct irq_data *data)
-+{
-+	struct m10v_pinctrl *pctl = irq_data_get_irq_chip_data(data);
-+	int extint = pin_to_extint(pctl, irqd_to_hwirq(data));
-+	unsigned long flags;
-+	u32 val;
-+
-+	if (extint < 0 || !pctl->exiu)
-+		return;
-+
-+	spin_lock_irqsave(&pctl->irq_lock, flags);
-+
-+	/* Mask the interrupt */
-+	val = readl_relaxed(pctl->exiu + EIMASK);
-+	val |= BIT(extint);
-+	writel_relaxed(val, pctl->exiu + EIMASK);
-+
-+	spin_unlock_irqrestore(&pctl->irq_lock, flags);
-+}
-+
-+static int m10v_gpio_irq_set_type(struct irq_data *data, unsigned int type)
-+{
-+	struct m10v_pinctrl *pctl = irq_data_get_irq_chip_data(data);
-+	int extint = pin_to_extint(pctl, irqd_to_hwirq(data));
-+	unsigned long flags;
-+
-+	if (extint < 0 || !pctl->exiu)
-+		return -EINVAL;
-+
-+	spin_lock_irqsave(&pctl->irq_lock, flags);
-+
-+	pctl->fpint[extint].type = type;
-+	update_trigger(pctl, extint);
-+
-+	spin_unlock_irqrestore(&pctl->irq_lock, flags);
++	mdc_set_div(mdc, mdc->table[i + 1]);
 +
 +	return 0;
 +}
 +
-+void m10v_gpio_irq_ack(struct irq_data *data)
++static unsigned long mdc_div_recalc_rate(struct clk_hw *hw,
++		unsigned long prate)
 +{
-+	struct m10v_pinctrl *pctl = irq_data_get_irq_chip_data(data);
-+	int extint = pin_to_extint(pctl, irqd_to_hwirq(data));
++	struct m10v_div *mdc = to_m10v_div(hw);
++	u64 prate64 = prate;
++	u32 div;
++	int i;
 +
-+	if (extint < 0 || !pctl->exiu)
-+		return;
++	div = mdc_get_div(mdc);
 +
-+	writel_relaxed(BIT(extint), pctl->exiu + EIREQCLR);
++	for (i = 1; i < mdc->tlen && div != mdc->table[i]; i += 2)
++		if (div == (mdc->table[i] & mdc->mask))
++			break; /* the MSB is already read back as 0 */
++
++	if (i > mdc->tlen) /* some other is enabled in the mux */
++		prate64 = 0;
++	else
++		do_div(prate64, mdc->table[i - 1]);
++
++	return (unsigned long)prate64;
 +}
 +
-+void m10v_gpio_irq_mask(struct irq_data *data)
++static long mdc_div_round_rate(struct clk_hw *hw, unsigned long rate,
++				unsigned long *parent)
 +{
-+	struct m10v_pinctrl *pctl = irq_data_get_irq_chip_data(data);
-+	int extint = pin_to_extint(pctl, irqd_to_hwirq(data));
-+	unsigned long flags;
-+	u32 val;
++	struct m10v_div *mdc = to_m10v_div(hw);
++	u64 prate;
++	int i;
 +
-+	if (extint < 0 || !pctl->exiu)
-+		return;
++	if (mdc->ro)
++		return mdc_div_recalc_rate(hw, *parent);
 +
-+	spin_lock_irqsave(&pctl->irq_lock, flags);
++	/* divisors are already in descending order in DT */
++	for (i = mdc->tlen - 2; i >= 0; i -= 2) {
++		prate = *parent;
++		do_div(prate, mdc->table[i]);
 +
-+	val = readl_relaxed(pctl->exiu + EIMASK);
-+	val |= BIT(extint);
-+	writel_relaxed(val, pctl->exiu + EIMASK);
++		if (rate >= prate)
++			break;
++	}
 +
-+	spin_unlock_irqrestore(&pctl->irq_lock, flags);
++	return (unsigned long)prate;
 +}
 +
-+void m10v_gpio_irq_unmask(struct irq_data *data)
-+{
-+	struct m10v_pinctrl *pctl = irq_data_get_irq_chip_data(data);
-+	int extint = pin_to_extint(pctl, irqd_to_hwirq(data));
-+	unsigned long flags;
-+	u32 val;
-+
-+	if (extint < 0 || !pctl->exiu)
-+		return;
-+
-+	spin_lock_irqsave(&pctl->irq_lock, flags);
-+
-+	update_trigger(pctl, extint);
-+
-+	val = readl_relaxed(pctl->exiu + EIMASK);
-+	val &= ~BIT(extint);
-+	writel_relaxed(val, pctl->exiu + EIMASK);
-+
-+	spin_unlock_irqrestore(&pctl->irq_lock, flags);
-+}
-+
-+static struct irq_chip m10v_gpio_irq_chip = {
-+	.name = "m10v-pin-irq",
-+	.irq_enable = m10v_gpio_irq_enable,
-+	.irq_disable = m10v_gpio_irq_disable,
-+	.irq_set_type = m10v_gpio_irq_set_type,
-+	.irq_mask = m10v_gpio_irq_mask,
-+	.irq_unmask = m10v_gpio_irq_unmask,
-+	.irq_ack = m10v_gpio_irq_ack,
++static const struct clk_ops m10v_div_ops = {
++	.round_rate = mdc_div_round_rate,
++	.set_rate = mdc_div_set_rate,
++	.recalc_rate = mdc_div_recalc_rate,
 +};
 +
-+static const struct of_device_id m10v_pmatch[] = {
-+	{ .compatible = "socionext,milbeaut-m10v-pinctrl" },
-+	{},
++void __init m10v_clk_div_setup(struct device_node *node)
++{
++	const char *clk_name = node->name;
++	struct clk_init_data init;
++	const char *parent_name;
++	struct m10v_div *mdc;
++	struct clk *clk;
++	u32 *table, mask;
++	u32 offset;
++	int count, ret;
++
++	if (!m10v_clk_iomap())
++		return;
++
++	of_property_read_string(node, "clock-output-names", &clk_name);
++
++	parent_name = of_clk_get_parent_name(node, 0);
++	if (!parent_name) {
++		pr_err("%s: no parent specified\n", clk_name);
++		return;
++	}
++
++	ret = of_property_read_u32(node, "offset", &offset);
++	if (ret) {
++		pr_err("%s: missing 'offset' property\n", clk_name);
++		return;
++	}
++
++	ret = of_property_read_u32(node, "mask", &mask);
++	if (ret) {
++		pr_err("%s: missing 'mask' property\n", clk_name);
++		return;
++	}
++
++	count = of_property_count_u32_elems(node, "ratios");
++	if (count < 2 || count%2) {
++		pr_err("%s: invalid 'ratios' property\n", clk_name);
++		return;
++	}
++
++	table = kzalloc(sizeof(*table) * count, GFP_KERNEL);
++	if (!table)
++		return;
++
++	/*
++	 * The 'ratios' must be in descending order, we park at
++	 * first ratio (biggest divider) when disabled.
++	 */
++	ret = of_property_read_u32_array(node, "ratios", table, count);
++	if (ret) {
++		pr_err("%s: 'ratios' property read fail\n", clk_name);
++		goto err_mdc;
++	}
++
++	mdc = kzalloc(sizeof(*mdc), GFP_KERNEL);
++	if (!mdc)
++		goto err_mdc;
++
++	if (of_get_property(node, "wait-on-dchreq", NULL))
++		mdc->waitdchreq = true;
++
++	init.name = clk_name;
++	init.ops = &m10v_div_ops;
++	init.flags = CLK_IS_BASIC;
++	init.parent_names = &parent_name;
++	init.num_parents = 1;
++
++	mdc->cname = clk_name;
++	mdc->offset = offset;
++	mdc->mask = mask;
++	mdc->table = table;
++	mdc->tlen = count;
++	mdc->hw.init = &init;
++	if (of_get_property(node, "read-only", NULL))
++		mdc->ro = true;
++
++	clk = clk_register(NULL, &mdc->hw);
++	if (IS_ERR(clk))
++		goto err_clk;
++
++	of_clk_add_provider(node, of_clk_src_simple_get, clk);
++	return;
++
++err_clk:
++	kfree(mdc);
++err_mdc:
++	kfree(table);
++}
++CLK_OF_DECLARE(m10v_clk_div, "socionext,milbeaut-m10v-clk-div",
++			m10v_clk_div_setup);
++
++struct m10v_gate {
++	struct clk_hw hw;
++	const char *cname;
++	u32 offset;
++	bool ro;
 +};
 +
-+static int m10v_pinctrl_probe(struct platform_device *pdev)
++static void _mgc_enable(struct clk_hw *hw, bool en)
 +{
-+	struct device_node *np = pdev->dev.of_node;
-+	struct pinctrl_dev *pctl_dev;
-+	struct pin_irq_map fpint[32];
-+	struct m10v_pinctrl *pctl;
-+	struct pinctrl_desc *pd;
-+	struct gpio_chip *gc;
-+	struct resource *res;
-+	int idx, i, ret, extints, tpins;
++	struct m10v_gate *mgc = to_m10v_gate(hw);
++	u32 off, mask;
 +
-+	extints = of_irq_count(np);
-+
-+	pctl = devm_kzalloc(&pdev->dev,	sizeof(*pctl) +
-+				sizeof(struct pin_irq_map) * extints,
-+				GFP_KERNEL);
-+	if (!pctl)
-+		return -ENOMEM;
-+
-+	gpio_set = m10v_gpio_set;
-+	bank_name = m10v_bank_name;
-+	milbeaut_functions = m10v_functions;
-+	tpins = M10V_TOTAL_PINS;
-+
-+	pd = &pctl->pd;
-+	gc = &pctl->gc;
-+	spin_lock_init(&pctl->lock);
-+	spin_lock_init(&pctl->irq_lock);
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "pinctrl");
-+	pctl->base = devm_ioremap_resource(&pdev->dev, res);
-+	if (!pctl->base)
-+		return -EINVAL;
-+
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "exiu");
-+	if (res)
-+		pctl->exiu = devm_ioremap_resource(&pdev->dev, res);
-+	if (res && !IS_ERR(pctl->exiu)) {
-+		writel_relaxed(~0, pctl->exiu + EIMASK); /* mask all */
-+		writel_relaxed(~0, pctl->exiu + EIREQCLR); /* eoi all */
-+		writel_relaxed(0, pctl->exiu + EISRCSEL); /* all fpint */
-+		writel_relaxed(~0, pctl->exiu + EILVL); /* rising edge type*/
-+		writel_relaxed(~0, pctl->exiu + EIEDG);
-+	} else {
-+		dev_info(&pdev->dev, "continuing without EXIU support\n");
-+		pctl->exiu = NULL;
++	if (mgc->ro) {
++		pr_debug("%s:%d %s: read-only\n",
++			 __func__, __LINE__, mgc->cname);
++		return;
 +	}
 +
-+	for (i = 0; i < tpins; i++) {
-+		pctl->pins[i].number = i;
-+		pctl->pins[i].name = &pctl->pin_names[4 * i];
-+		snprintf(&pctl->pin_names[4 * i], 4, "P%c%d",
-+			bank_name[i / PINS_PER_BANK], i % PINS_PER_BANK);
-+		gpio_m10v_grps[i] = &pctl->pin_names[4 * i];
-+		pctl->gpins[i][0] = i;
-+	}
-+	/* absent or incomplete entries allow all access */
-+	pd->name = dev_name(&pdev->dev);
-+	pd->pins = pctl->pins;
-+	pd->npins = tpins;
-+	pd->pctlops = &m10v_pctrl_ops;
-+	pd->pmxops = &m10v_pmx_ops;
-+	pd->confops = &m10v_pconf_ops;
-+	pd->owner = THIS_MODULE;
-+	pctl_dev = pinctrl_register(pd, &pdev->dev, pctl);
-+	if (!pctl_dev) {
-+		dev_err(&pdev->dev, "couldn't register pinctrl driver\n");
-+		return -EINVAL;
-+	}
++	off = CLKSTOP1 + (mgc->offset / 32) * 4;
 +
-+	pctl->extints = extints;
++	mask = (en ? 2 : 3) << (mgc->offset % 32);
 +
-+	pctl->irqdom = irq_domain_add_linear(np, tpins,
-+						&irq_domain_simple_ops, pctl);
-+	idx = 0;
-+	for (i = 0; i < tpins && idx < pctl->extints; i++) {
-+		int irq;
++	writel(mask, clk_base + off);
++}
 +
-+		snprintf(fpint[idx].irqname, 8, "pin-%d", i);
-+		irq = platform_get_irq_byname(pdev, fpint[idx].irqname);
-+		if (irq < 0)
-+			continue;
-+		fpint[idx].irq = irq;
-+		fpint[idx].pin = i;
-+		idx++;
-+	}
-+
-+	for (idx = 0, i = 0; i < pctl->extints; i++) {
-+		int j = 0, irq = platform_get_irq(pdev, i);
-+
-+		while (fpint[j].irq != irq)
-+			j++;
-+
-+		snprintf(pctl->fpint[idx].irqname, 8, "pin-%d", fpint[j].pin);
-+		pctl->fpint[idx].irq = fpint[j].irq;
-+		pctl->fpint[idx].pin = fpint[j].pin;
-+		idx++;
-+	}
-+
-+	for (i = 0; i < pctl->extints; i++) {
-+		int irq, err = devm_request_irq(&pdev->dev, pctl->fpint[i].irq,
-+					m10v_gpio_irq_handler, IRQF_SHARED,
-+					pctl->fpint[i].irqname, pctl);
-+		if (err)
-+			continue;
-+
-+		irq = irq_create_mapping(pctl->irqdom, pctl->fpint[i].pin);
-+		irq_set_lockdep_class(irq, &gpio_lock_class,
-+			&gpio_request_class);
-+		irq_set_chip_and_handler(irq, &m10v_gpio_irq_chip,
-+					 handle_level_irq);
-+		irq_set_chip_data(irq, pctl);
-+	}
-+
-+	gc->base = -1;
-+	gc->ngpio = tpins;
-+	gc->label = dev_name(&pdev->dev);
-+	gc->owner = THIS_MODULE;
-+	gc->of_node = np;
-+	gc->direction_input = m10v_gpio_direction_input;
-+	gc->direction_output = m10v_gpio_direction_output;
-+	gc->get = m10v_gpio_get;
-+	gc->set = gpio_set;
-+	gc->to_irq = m10v_gpio_to_irq;
-+	gc->request = gpiochip_generic_request;
-+	gc->free = gpiochip_generic_free;
-+	ret = gpiochip_add(gc);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Failed register gpiochip\n");
-+		return ret;
-+	}
-+
-+	ret = gpiochip_add_pin_range(gc, dev_name(&pdev->dev),
-+					0, 0, tpins);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Failed to add pin range\n");
-+		gpiochip_remove(gc);
-+		return ret;
-+	}
-+
++static int mgc_enable(struct clk_hw *hw)
++{
++	_mgc_enable(hw, true);
 +	return 0;
 +}
 +
-+static struct platform_driver m10v_pinctrl_driver = {
-+	.probe	= m10v_pinctrl_probe,
-+	.driver	= {
-+		.name		= "m10v-pinctrl",
-+		.of_match_table	= m10v_pmatch,
-+	},
++static void mgc_disable(struct clk_hw *hw)
++{
++	_mgc_enable(hw, false);
++}
++
++static int mgc_is_enabled(struct clk_hw *hw)
++{
++	struct m10v_gate *mgc = to_m10v_gate(hw);
++	u32 off, val, mask = 1 << (mgc->offset % 32);
++
++	off = CLKSTOP1 + (mgc->offset / 32) * 4;
++	val = readl(clk_base + off);
++
++	return !(val & mask);
++}
++
++static const struct clk_ops m10v_gate_ops = {
++	.enable = mgc_enable,
++	.disable = mgc_disable,
++	.is_enabled = mgc_is_enabled,
 +};
 +
-+static int __init m10v_pinctrl_init(void)
++void __init m10v_clk_gate_setup(struct device_node *node)
 +{
-+	return platform_driver_register(&m10v_pinctrl_driver);
-+}
-+arch_initcall(m10v_pinctrl_init);
++	const char *clk_name = node->name;
++	struct clk_init_data init;
++	const char *parent_name;
++	struct m10v_gate *mgc;
++	struct clk *clk;
++	u32 offset;
++	int ret;
 +
++	if (!m10v_clk_iomap())
++		return;
++
++	of_property_read_string(node, "clock-output-names", &clk_name);
++
++	ret = of_property_read_u32(node, "offset", &offset);
++	if (ret) {
++		pr_err("%s: missing 'offset' property\n", clk_name);
++		return;
++	}
++
++	parent_name = of_clk_get_parent_name(node, 0);
++
++	mgc = kzalloc(sizeof(*mgc), GFP_KERNEL);
++	if (!mgc)
++		return;
++
++	init.name = clk_name;
++	init.ops = &m10v_gate_ops;
++	init.flags = CLK_IS_BASIC | CLK_SET_RATE_PARENT;
++	init.parent_names = &parent_name;
++	init.num_parents = 1;
++
++	mgc->cname = clk_name;
++	mgc->offset = offset;
++	mgc->hw.init = &init;
++	if (of_get_property(node, "read-only", NULL))
++		mgc->ro = true;
++
++	clk = clk_register(NULL, &mgc->hw);
++	if (IS_ERR(clk))
++		kfree(mgc);
++	else
++		of_clk_add_provider(node, of_clk_src_simple_get, clk);
++}
++CLK_OF_DECLARE(m10v_clk_gate, "socionext,milbeaut-m10v-clk-gate",
++		m10v_clk_gate_setup);
 -- 
 1.9.1
 
