@@ -2,350 +2,340 @@ Return-Path: <SRS0=X/us=N6=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E95AAC43441
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Nov 2018 01:01:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E75CC43441
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Nov 2018 03:59:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2C9B2080F
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Nov 2018 01:01:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2C9B2080F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 0E60720823
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Nov 2018 03:59:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E60720823
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726512AbeKSLWZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 19 Nov 2018 06:22:25 -0500
-Received: from mx.socionext.com ([202.248.49.38]:40664 "EHLO mx.socionext.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725881AbeKSLWZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 19 Nov 2018 06:22:25 -0500
-Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
-  by mx.socionext.com with ESMTP; 19 Nov 2018 10:00:29 +0900
-Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
-        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id 8570F60062;
-        Mon, 19 Nov 2018 10:00:29 +0900 (JST)
-Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Mon, 19 Nov 2018 10:00:29 +0900
-Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
-        by iyokan.css.socionext.com (Postfix) with ESMTP id 1743D40387;
-        Mon, 19 Nov 2018 10:00:29 +0900 (JST)
-Received: from M20VSDK.e01.socionext.com (unknown [10.213.118.34])
-        by yuzu.css.socionext.com (Postfix) with ESMTP id EAC35120455;
-        Mon, 19 Nov 2018 10:00:28 +0900 (JST)
-From:   Sugaya Taichi <sugaya.taichi@socionext.com>
-To:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-serial@vger.kernel.org
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Jiri Slaby <jslaby@suse.com>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Sugaya Taichi <sugaya.taichi@socionext.com>
-Subject: [PATCH 01/14] ARM: milbeaut: Add basic support for Milbeaut m10v SoC
-Date:   Mon, 19 Nov 2018 10:01:06 +0900
-Message-Id: <1542589274-13878-2-git-send-email-sugaya.taichi@socionext.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1542589274-13878-1-git-send-email-sugaya.taichi@socionext.com>
-References: <1542589274-13878-1-git-send-email-sugaya.taichi@socionext.com>
+        id S1727642AbeKSOVh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 19 Nov 2018 09:21:37 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:31184 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727123AbeKSOVh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Nov 2018 09:21:37 -0500
+X-UUID: 9aec0b29179548d4893180fdde1497b8-20181119
+X-UUID: 9aec0b29179548d4893180fdde1497b8-20181119
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
+        (envelope-from <weiyi.lu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 355430312; Mon, 19 Nov 2018 11:59:00 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Mon, 19 Nov 2018 11:59:00 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Mon, 19 Nov 2018 11:59:00 +0800
+Message-ID: <1542599940.688.1.camel@mtksdaap41>
+Subject: Re: [PATCH v1 11/11] soc: mediatek: Add MT8183 scpsys support
+From:   Weiyi Lu <weiyi.lu@mediatek.com>
+To:     Nicolas Boichat <drinkcat@chromium.org>
+CC:     Matthias Brugger <matthias.bgg@gmail.com>, <sboyd@codeaurora.org>,
+        "Rob Herring" <robh@kernel.org>, <jamesjj.liao@mediatek.com>,
+        Fan Chen <fan.chen@mediatek.com>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <srv_heupstream@mediatek.com>
+Date:   Mon, 19 Nov 2018 11:59:00 +0800
+In-Reply-To: <CANMq1KBoCScwixLoB0oEtbavLW8b_NjufAjbPKJLcLgj=vHC9A@mail.gmail.com>
+References: <20181106064206.17535-1-weiyi.lu@mediatek.com>
+         <20181106064206.17535-13-weiyi.lu@mediatek.com>
+         <CANMq1KBoCScwixLoB0oEtbavLW8b_NjufAjbPKJLcLgj=vHC9A@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This adds the basic M10V SoC support under arch/arm.
-Since all cores are activated in the custom bootloader before booting
-linux, it is necessary to wait for sub-cores using the trampoline area.
+On Tue, 2018-11-13 at 11:35 -0800, Nicolas Boichat wrote:
+> On Mon, Nov 5, 2018 at 10:43 PM Weiyi Lu <weiyi.lu@mediatek.com> wrote:
+> >
+> > Add scpsys driver for MT8183
+> >
+> > Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+> > ---
+> >  drivers/soc/mediatek/mtk-scpsys.c | 226 ++++++++++++++++++++++++++++++
+> >  1 file changed, 226 insertions(+)
+> >
+> > diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
+> > index 80be2e05e4e0..57b9f04a69de 100644
+> > --- a/drivers/soc/mediatek/mtk-scpsys.c
+> > +++ b/drivers/soc/mediatek/mtk-scpsys.c
+> > @@ -29,6 +29,7 @@
+> >  #include <dt-bindings/power/mt7622-power.h>
+> >  #include <dt-bindings/power/mt7623a-power.h>
+> >  #include <dt-bindings/power/mt8173-power.h>
+> > +#include <dt-bindings/power/mt8183-power.h>
+> >
+> >  #define MTK_POLL_DELAY_US   10
+> >  #define MTK_POLL_TIMEOUT    (jiffies_to_usecs(HZ))
+> > @@ -1179,6 +1180,217 @@ static const struct scp_subdomain scp_subdomain_mt8173[] = {
+> >         {MT8173_POWER_DOMAIN_MFG_2D, MT8173_POWER_DOMAIN_MFG},
+> >  };
+> >
+> > +/*
+> > + * MT8183 power domain support
+> > + */
+> > +
+> > +static const struct scp_domain_data scp_domain_data_mt8183[] = {
+> > +       [MT8183_POWER_DOMAIN_AUDIO] = {
+> > +               .name = "audio",
+> > +               .sta_mask = PWR_STATUS_AUDIO,
+> > +               .ctl_offs = 0x0314,
+> > +               .sram_pdn_bits = GENMASK(11, 8),
+> > +               .sram_pdn_ack_bits = GENMASK(15, 12),
+> > +               .basic_clk_name = {"audio"},
+> > +       },
+> > +       [MT8183_POWER_DOMAIN_CONN] = {
+> > +               .name = "conn",
+> > +               .sta_mask = PWR_STATUS_CONN,
+> > +               .ctl_offs = 0x032c,
+> > +               .sram_pdn_bits = 0,
+> > +               .sram_pdn_ack_bits = 0,
+> > +               .bp_table = {
+> > +                       [0] = BUS_PROT(IFR_TYPE, 0x2a0, 0x2a4, 0, 0x228,
+> > +                               BIT(13) | BIT(14), BIT(13) | BIT(14)),
+> > +               },
+> > +       },
+> > +       [MT8183_POWER_DOMAIN_MFG_ASYNC] = {
+> > +               .name = "mfg_async",
+> > +               .sta_mask = PWR_STATUS_MFG_ASYNC,
+> > +               .ctl_offs = 0x0334,
+> > +               .sram_pdn_bits = 0,
+> > +               .sram_pdn_ack_bits = 0,
+> > +               .basic_clk_name = {"mfg"},
+> > +       },
+> > +       [MT8183_POWER_DOMAIN_MFG] = {
+> > +               .name = "mfg",
+> > +               .sta_mask = PWR_STATUS_MFG,
+> > +               .ctl_offs = 0x0338,
+> > +               .sram_pdn_bits = GENMASK(8, 8),
+> > +               .sram_pdn_ack_bits = GENMASK(12, 12),
+> > +       },
+> > +       [MT8183_POWER_DOMAIN_MFG_CORE0] = {
+> > +               .name = "mfg_core0",
+> > +               .sta_mask = BIT(7),
+> > +               .ctl_offs = 0x034c,
+> > +               .sram_pdn_bits = GENMASK(8, 8),
+> > +               .sram_pdn_ack_bits = GENMASK(12, 12),
+> > +       },
+> > +       [MT8183_POWER_DOMAIN_MFG_CORE1] = {
+> > +               .name = "mfg_core1",
+> > +               .sta_mask = BIT(20),
+> > +               .ctl_offs = 0x0310,
+> > +               .sram_pdn_bits = GENMASK(8, 8),
+> > +               .sram_pdn_ack_bits = GENMASK(12, 12),
+> > +       },
+> > +       [MT8183_POWER_DOMAIN_MFG_2D] = {
+> > +               .name = "mfg_2d",
+> > +               .sta_mask = PWR_STATUS_MFG_2D,
+> > +               .ctl_offs = 0x0348,
+> > +               .sram_pdn_bits = GENMASK(8, 8),
+> > +               .sram_pdn_ack_bits = GENMASK(12, 12),
+> > +               .bp_table = {
+> > +                       [0] = BUS_PROT(IFR_TYPE, 0x2a8, 0x2ac, 0, 0x258,
+> > +                               BIT(19) | BIT(20) | BIT(21),
+> > +                               BIT(19) | BIT(20) | BIT(21)),
+> > +                       [1] = BUS_PROT(IFR_TYPE, 0x2a0, 0x2a4, 0, 0x228,
+> > +                               BIT(21) | BIT(22), BIT(21) | BIT(22)),
+> > +               },
+> > +       },
+> > +       [MT8183_POWER_DOMAIN_DISP] = {
+> > +               .name = "disp",
+> > +               .sta_mask = PWR_STATUS_DISP,
+> > +               .ctl_offs = 0x030c,
+> > +               .sram_pdn_bits = GENMASK(8, 8),
+> > +               .sram_pdn_ack_bits = GENMASK(12, 12),
+> > +               .basic_clk_name = {"mm"},
+> > +               .subsys_clk_prefix = "mm",
+> > +               .bp_table = {
+> > +                       [0] = BUS_PROT(IFR_TYPE, 0x2a8, 0x2ac, 0, 0x258,
+> > +                               BIT(16) | BIT(17), BIT(16) | BIT(17)),
+> > +                       [1] = BUS_PROT(IFR_TYPE, 0x2a0, 0x2a4, 0, 0x228,
+> > +                               BIT(10) | BIT(11), BIT(10) | BIT(11)),
+> > +                       [2] = BUS_PROT(SMI_TYPE, 0x3c4, 0x3c8, 0, 0x3c0,
+> > +                               GENMASK(7, 0), GENMASK(7, 0)),
+> > +               },
+> > +       },
+> > +       [MT8183_POWER_DOMAIN_CAM] = {
+> > +               .name = "cam",
+> > +               .sta_mask = BIT(25),
+> > +               .ctl_offs = 0x0344,
+> > +               .sram_pdn_bits = GENMASK(9, 8),
+> > +               .sram_pdn_ack_bits = GENMASK(13, 12),
+> > +               .basic_clk_name = {"cam"},
+> > +               .subsys_clk_prefix = "cam",
+> > +               .bp_table = {
+> > +                       [0] = BUS_PROT(IFR_TYPE, 0x2d4, 0x2d8, 0, 0x2ec,
+> > +                               BIT(4) | BIT(5) | BIT(9) | BIT(13),
+> > +                               BIT(4) | BIT(5) | BIT(9) | BIT(13)),
+> > +                       [1] = BUS_PROT(IFR_TYPE, 0x2a0, 0x2a4, 0, 0x228,
+> > +                               BIT(28), BIT(28)),
+> > +                       [2] = BUS_PROT(IFR_TYPE, 0x2d4, 0x2d8, 0, 0x2ec,
+> > +                               BIT(11), 0),
+> > +                       [3] = BUS_PROT(SMI_TYPE, 0x3c4, 0x3c8, 0, 0x3c0,
+> > +                               BIT(3) | BIT(4), BIT(3) | BIT(4)),
+> 
+> Why do you need to specify the indexes ([0], [1], ...)? Can you just
+> use automatic indexes? (especially considering that your code assumes
+> there is no gap in the bp_table entries.
+> 
+Indeed, there's no gap in the bp_table. I'll fix it up in next version
+and resend. Thanks.
+> > +               },
+> > +       },
+> > +       [MT8183_POWER_DOMAIN_ISP] = {
+> > +               .name = "isp",
+> > +               .sta_mask = PWR_STATUS_ISP,
+> > +               .ctl_offs = 0x0308,
+> > +               .sram_pdn_bits = GENMASK(9, 8),
+> > +               .sram_pdn_ack_bits = GENMASK(13, 12),
+> > +               .basic_clk_name = {"isp"},
+> > +               .subsys_clk_prefix = "isp",
+> > +               .bp_table = {
+> > +                       [0] = BUS_PROT(IFR_TYPE, 0x2d4, 0x2d8, 0, 0x2ec,
+> > +                               BIT(3) | BIT(8), BIT(3) | BIT(8)),
+> > +                       [1] = BUS_PROT(IFR_TYPE, 0x2d4, 0x2d8, 0, 0x2ec,
+> > +                               BIT(10), 0),
+> > +                       [2] = BUS_PROT(SMI_TYPE, 0x3c4, 0x3c8, 0, 0x3c0,
+> > +                               BIT(2), BIT(2)),
+> > +               },
+> > +       },
+> > +       [MT8183_POWER_DOMAIN_VDEC] = {
+> > +               .name = "vdec",
+> > +               .sta_mask = BIT(31),
+> > +               .ctl_offs = 0x0300,
+> > +               .sram_pdn_bits = GENMASK(8, 8),
+> > +               .sram_pdn_ack_bits = GENMASK(12, 12),
+> > +               .bp_table = {
+> > +                       [0] = BUS_PROT(SMI_TYPE, 0x3c4, 0x3c8, 0, 0x3c0,
+> > +                               BIT(7), BIT(7)),
+> > +               },
+> > +       },
+> > +       [MT8183_POWER_DOMAIN_VENC] = {
+> > +               .name = "venc",
+> > +               .sta_mask = PWR_STATUS_VENC,
+> > +               .ctl_offs = 0x0304,
+> > +               .sram_pdn_bits = GENMASK(11, 8),
+> > +               .sram_pdn_ack_bits = GENMASK(15, 12),
+> > +               .bp_table = {
+> > +                       [0] = BUS_PROT(SMI_TYPE, 0x3c4, 0x3c8, 0, 0x3c0,
+> > +                               BIT(1), BIT(1)),
+> > +               },
+> > +       },
+> > +       [MT8183_POWER_DOMAIN_VPU_TOP] = {
+> > +               .name = "vpu_top",
+> > +               .sta_mask = BIT(26),
+> > +               .ctl_offs = 0x0324,
+> > +               .sram_pdn_bits = GENMASK(8, 8),
+> > +               .sram_pdn_ack_bits = GENMASK(12, 12),
+> > +               .basic_clk_name = {"vpu", "vpu1"},
+> > +               .subsys_clk_prefix = "vpu",
+> > +               .bp_table = {
+> > +                       [0] = BUS_PROT(IFR_TYPE, 0x2d4, 0x2d8, 0, 0x2ec,
+> > +                               GENMASK(9, 6) | BIT(12),
+> > +                               GENMASK(9, 6) | BIT(12)),
+> > +                       [1] = BUS_PROT(IFR_TYPE, 0x2a0, 0x2a4, 0, 0x228,
+> > +                               BIT(27), BIT(27)),
+> > +                       [2] = BUS_PROT(IFR_TYPE, 0x2d4, 0x2d8, 0, 0x2ec,
+> > +                               BIT(10) | BIT(11), BIT(10) | BIT(11)),
+> > +                       [3] = BUS_PROT(SMI_TYPE, 0x3c4, 0x3c8, 0, 0x3c0,
+> > +                               BIT(5) | BIT(6), BIT(5) | BIT(6)),
+> > +               },
+> > +       },
+> > +       [MT8183_POWER_DOMAIN_VPU_CORE0] = {
+> > +               .name = "vpu_core0",
+> > +               .sta_mask = BIT(27),
+> > +               .ctl_offs = 0x33c,
+> > +               .sram_iso_ctrl = true,
+> > +               .sram_pdn_bits = GENMASK(11, 8),
+> > +               .sram_pdn_ack_bits = GENMASK(13, 12),
+> > +               .basic_clk_name = {"vpu2"},
+> > +               .bp_table = {
+> > +                       [0] = BUS_PROT(IFR_TYPE, 0x2c4, 0x2c8, 0, 0x2e4,
+> > +                               BIT(6), BIT(6)),
+> > +                       [1] = BUS_PROT(IFR_TYPE, 0x2c4, 0x2c8, 0, 0x2e4,
+> > +                               BIT(0) | BIT(2) | BIT(4),
+> > +                               BIT(0) | BIT(2) | BIT(4)),
+> > +               },
+> > +       },
+> > +       [MT8183_POWER_DOMAIN_VPU_CORE1] = {
+> > +               .name = "vpu_core1",
+> > +               .sta_mask = BIT(28),
+> > +               .ctl_offs = 0x0340,
+> > +               .sram_iso_ctrl = true,
+> > +               .sram_pdn_bits = GENMASK(11, 8),
+> > +               .sram_pdn_ack_bits = GENMASK(13, 12),
+> > +               .basic_clk_name = {"vpu3"},
+> > +               .bp_table = {
+> > +                       [0] = BUS_PROT(IFR_TYPE, 0x2c4, 0x2c8, 0, 0x2e4,
+> > +                               BIT(7), BIT(7)),
+> > +                       [1] = BUS_PROT(IFR_TYPE, 0x2c4, 0x2c8, 0, 0x2e4,
+> > +                               BIT(1) | BIT(3) | BIT(5),
+> > +                               BIT(1) | BIT(3) | BIT(5)),
+> > +               },
+> > +       },
+> > +};
+> > +
+> > +static const struct scp_subdomain scp_subdomain_mt8183[] = {
+> > +       {MT8183_POWER_DOMAIN_MFG_ASYNC, MT8183_POWER_DOMAIN_MFG},
+> > +       {MT8183_POWER_DOMAIN_MFG, MT8183_POWER_DOMAIN_MFG_2D},
+> > +       {MT8183_POWER_DOMAIN_MFG, MT8183_POWER_DOMAIN_MFG_CORE0},
+> > +       {MT8183_POWER_DOMAIN_MFG, MT8183_POWER_DOMAIN_MFG_CORE1},
+> > +       {MT8183_POWER_DOMAIN_DISP, MT8183_POWER_DOMAIN_CAM},
+> > +       {MT8183_POWER_DOMAIN_DISP, MT8183_POWER_DOMAIN_ISP},
+> > +       {MT8183_POWER_DOMAIN_DISP, MT8183_POWER_DOMAIN_VDEC},
+> > +       {MT8183_POWER_DOMAIN_DISP, MT8183_POWER_DOMAIN_VENC},
+> > +       {MT8183_POWER_DOMAIN_DISP, MT8183_POWER_DOMAIN_VPU_TOP},
+> > +       {MT8183_POWER_DOMAIN_VPU_TOP, MT8183_POWER_DOMAIN_VPU_CORE0},
+> > +       {MT8183_POWER_DOMAIN_VPU_TOP, MT8183_POWER_DOMAIN_VPU_CORE1},
+> > +};
+> > +
+> >  static const struct scp_soc_data mt2701_data = {
+> >         .domains = scp_domain_data_mt2701,
+> >         .num_domains = ARRAY_SIZE(scp_domain_data_mt2701),
+> > @@ -1245,6 +1457,17 @@ static const struct scp_soc_data mt8173_data = {
+> >         .bus_prot_reg_update = true,
+> >  };
+> >
+> > +static const struct scp_soc_data mt8183_data = {
+> > +       .domains = scp_domain_data_mt8183,
+> > +       .num_domains = ARRAY_SIZE(scp_domain_data_mt8183),
+> > +       .subdomains = scp_subdomain_mt8183,
+> > +       .num_subdomains = ARRAY_SIZE(scp_subdomain_mt8183),
+> > +       .regs = {
+> > +               .pwr_sta_offs = 0x0180,
+> > +               .pwr_sta2nd_offs = 0x0184
+> > +       }
+> > +};
+> > +
+> >  /*
+> >   * scpsys driver init
+> >   */
+> > @@ -1268,6 +1491,9 @@ static const struct of_device_id of_scpsys_match_tbl[] = {
+> >         }, {
+> >                 .compatible = "mediatek,mt8173-scpsys",
+> >                 .data = &mt8173_data,
+> > +       }, {
+> > +               .compatible = "mediatek,mt8183-scpsys",
+> > +               .data = &mt8183_data,
+> >         }, {
+> >                 /* sentinel */
+> >         }
+> > --
+> > 2.18.0
+> >
 
-Signed-off-by: Sugaya Taichi <sugaya.taichi@socionext.com>
----
- arch/arm/Kconfig                  |   2 +
- arch/arm/Makefile                 |   1 +
- arch/arm/mach-milbeaut/Kconfig    |  28 +++++++
- arch/arm/mach-milbeaut/Makefile   |   3 +
- arch/arm/mach-milbeaut/m10v_evb.c |  31 ++++++++
- arch/arm/mach-milbeaut/platsmp.c  | 157 ++++++++++++++++++++++++++++++++++++++
- 6 files changed, 222 insertions(+)
- create mode 100644 arch/arm/mach-milbeaut/Kconfig
- create mode 100644 arch/arm/mach-milbeaut/Makefile
- create mode 100644 arch/arm/mach-milbeaut/m10v_evb.c
- create mode 100644 arch/arm/mach-milbeaut/platsmp.c
-
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 91be74d..0b8a1af 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -767,6 +767,8 @@ source "arch/arm/mach-mediatek/Kconfig"
- 
- source "arch/arm/mach-meson/Kconfig"
- 
-+source "arch/arm/mach-milbeaut/Kconfig"
-+
- source "arch/arm/mach-mmp/Kconfig"
- 
- source "arch/arm/mach-moxart/Kconfig"
-diff --git a/arch/arm/Makefile b/arch/arm/Makefile
-index 05a91d8..627853c 100644
---- a/arch/arm/Makefile
-+++ b/arch/arm/Makefile
-@@ -190,6 +190,7 @@ machine-$(CONFIG_ARCH_MV78XX0)		+= mv78xx0
- machine-$(CONFIG_ARCH_MVEBU)		+= mvebu
- machine-$(CONFIG_ARCH_MXC)		+= imx
- machine-$(CONFIG_ARCH_MEDIATEK)		+= mediatek
-+machine-$(CONFIG_ARCH_MILBEAUT)		+= milbeaut
- machine-$(CONFIG_ARCH_MXS)		+= mxs
- machine-$(CONFIG_ARCH_NETX)		+= netx
- machine-$(CONFIG_ARCH_NOMADIK)		+= nomadik
-diff --git a/arch/arm/mach-milbeaut/Kconfig b/arch/arm/mach-milbeaut/Kconfig
-new file mode 100644
-index 0000000..63b6f69
---- /dev/null
-+++ b/arch/arm/mach-milbeaut/Kconfig
-@@ -0,0 +1,28 @@
-+# SPDX-License-Identifier: GPL-2.0
-+menuconfig ARCH_MILBEAUT
-+	bool "Socionext Milbeaut SoCs"
-+	depends on ARCH_MULTI_V7
-+	select ARM_GIC
-+	select CLKDEV_LOOKUP
-+	select GENERIC_CLOCKEVENTS
-+	select CLKSRC_MMIO
-+	select ZONE_DMA
-+	help
-+		This enables support for Socionext Milbeaut SoCs
-+
-+if ARCH_MILBEAUT
-+
-+config ARCH_MILBEAUT_M10V
-+	bool "Milbeaut SC2000/M10V platform"
-+	select ARM_ARCH_TIMER
-+	select M10V_TIMER
-+	select PINCTRL
-+	select PINCTRL_M10V
-+	help
-+	  Support for Socionext's MILBEAUT M10V based systems
-+
-+config MACH_M10V_EVB
-+	bool "Support for Milbeaut Evaluation boards"
-+	default y
-+
-+endif
-diff --git a/arch/arm/mach-milbeaut/Makefile b/arch/arm/mach-milbeaut/Makefile
-new file mode 100644
-index 0000000..64f6f52
---- /dev/null
-+++ b/arch/arm/mach-milbeaut/Makefile
-@@ -0,0 +1,3 @@
-+obj-$(CONFIG_SMP) += platsmp.o
-+obj-$(CONFIG_MACH_M10V_EVB) += m10v_evb.o
-+
-diff --git a/arch/arm/mach-milbeaut/m10v_evb.c b/arch/arm/mach-milbeaut/m10v_evb.c
-new file mode 100644
-index 0000000..a1fa7c3
---- /dev/null
-+++ b/arch/arm/mach-milbeaut/m10v_evb.c
-@@ -0,0 +1,31 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2018 Socionext Inc.
-+ * Copyright:   (C) 2015 Linaro Ltd.
-+ */
-+
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+
-+#include <asm/mach/arch.h>
-+#include <asm/mach/map.h>
-+
-+static struct map_desc m10v_io_desc[] __initdata = {
-+};
-+
-+void __init m10v_map_io(void)
-+{
-+	debug_ll_io_init();
-+	iotable_init(m10v_io_desc, ARRAY_SIZE(m10v_io_desc));
-+}
-+
-+static const char * const m10v_compat[] = {
-+	"socionext,milbeaut-m10v-evb",
-+	NULL,
-+};
-+
-+DT_MACHINE_START(M10V_REB, "Socionext Milbeaut")
-+	.dt_compat	= m10v_compat,
-+	.l2c_aux_mask	= 0xffffffff,
-+	.map_io		= m10v_map_io,
-+MACHINE_END
-diff --git a/arch/arm/mach-milbeaut/platsmp.c b/arch/arm/mach-milbeaut/platsmp.c
-new file mode 100644
-index 0000000..b706851
---- /dev/null
-+++ b/arch/arm/mach-milbeaut/platsmp.c
-@@ -0,0 +1,157 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2018 Socionext Inc.
-+ * Copyright:	(C) 2015 Linaro Ltd.
-+ */
-+
-+#include <linux/cpu_pm.h>
-+#include <linux/irqchip/arm-gic.h>
-+#include <linux/of_device.h>
-+#include <linux/of_address.h>
-+#include <linux/platform_device.h>
-+#include <linux/suspend.h>
-+
-+#include <asm/cacheflush.h>
-+#include <asm/cp15.h>
-+#include <asm/idmap.h>
-+#include <asm/smp_plat.h>
-+#include <asm/suspend.h>
-+
-+#define M10V_MAX_CPU	4
-+
-+#define KERNEL_UNBOOT_FLAG	0x12345678
-+#define CPU_FINISH_SUSPEND_FLAG 0x56784321
-+
-+static void __iomem *trampoline;
-+
-+static int m10v_boot_secondary(unsigned int l_cpu, struct task_struct *idle)
-+{
-+	unsigned int mpidr, cpu, cluster;
-+
-+	mpidr = cpu_logical_map(l_cpu);
-+	cpu = MPIDR_AFFINITY_LEVEL(mpidr, 0);
-+	cluster = MPIDR_AFFINITY_LEVEL(mpidr, 1);
-+
-+	if (cpu >= M10V_MAX_CPU)
-+		return -EINVAL;
-+
-+	pr_debug("%s: cpu %u cluster %u\n", __func__, cpu, cluster);
-+
-+	writel(virt_to_phys(secondary_startup), trampoline + cpu * 4);
-+	arch_send_wakeup_ipi_mask(cpumask_of(l_cpu));
-+
-+	return 0;
-+}
-+
-+static void m10v_cpu_die(unsigned int l_cpu)
-+{
-+	gic_cpu_if_down(0);
-+
-+	v7_exit_coherency_flush(louis);
-+
-+	/* Now we are prepared for power-down, do it: */
-+	wfi();
-+}
-+
-+static int m10v_cpu_kill(unsigned int l_cpu)
-+{
-+	unsigned int mpidr, cpu;
-+
-+	mpidr = cpu_logical_map(l_cpu);
-+	cpu = MPIDR_AFFINITY_LEVEL(mpidr, 0);
-+
-+	writel(KERNEL_UNBOOT_FLAG, trampoline + cpu * 4);
-+
-+	return 1;
-+}
-+
-+static struct smp_operations m10v_smp_ops __initdata = {
-+	.smp_boot_secondary	= m10v_boot_secondary,
-+	.cpu_die		= m10v_cpu_die,
-+	.cpu_kill		= m10v_cpu_kill,
-+};
-+
-+static int __init m10v_smp_init(void)
-+{
-+	unsigned int mpidr, cpu, cluster;
-+	struct device_node *np;
-+
-+	np = of_find_compatible_node(NULL, NULL, "socionext,milbeaut-m10v-evb");
-+	if (!np || !of_device_is_available(np))
-+		return -ENODEV;
-+	of_node_put(np);
-+
-+	np = of_find_compatible_node(NULL, NULL, "socionext,smp-trampoline");
-+	if (!np)
-+		return -ENODEV;
-+
-+	trampoline = of_iomap(np, 0);
-+	if (!trampoline)
-+		return -ENODEV;
-+	of_node_put(np);
-+
-+	mpidr = read_cpuid_mpidr();
-+	cpu = MPIDR_AFFINITY_LEVEL(mpidr, 0);
-+	cluster = MPIDR_AFFINITY_LEVEL(mpidr, 1);
-+
-+	pr_info("MCPM boot on cpu_%u cluster_%u\n", cpu, cluster);
-+
-+	for (cpu = 0; cpu < M10V_MAX_CPU; cpu++)
-+		writel(KERNEL_UNBOOT_FLAG, trampoline + cpu * 4);
-+
-+	smp_set_ops(&m10v_smp_ops);
-+
-+	return 0;
-+}
-+early_initcall(m10v_smp_init);
-+
-+static int m10v_pm_valid(suspend_state_t state)
-+{
-+	return (state == PM_SUSPEND_STANDBY) || (state == PM_SUSPEND_MEM);
-+}
-+
-+typedef void (*phys_reset_t)(unsigned long);
-+static phys_reset_t phys_reset;
-+
-+static int m10v_die(unsigned long arg)
-+{
-+	setup_mm_for_reboot();
-+	asm("wfi");
-+	/* Boot just like a secondary */
-+	phys_reset = (phys_reset_t)(unsigned long)virt_to_phys(cpu_reset);
-+	phys_reset(virt_to_phys(cpu_resume));
-+
-+	return 0;
-+}
-+
-+static int m10v_pm_enter(suspend_state_t state)
-+{
-+	switch (state) {
-+	case PM_SUSPEND_STANDBY:
-+		pr_err("STANDBY\n");
-+		asm("wfi");
-+		break;
-+	case PM_SUSPEND_MEM:
-+		pr_err("SUSPEND\n");
-+		cpu_pm_enter();
-+		cpu_suspend(0, m10v_die);
-+		cpu_pm_exit();
-+		break;
-+	}
-+	return 0;
-+}
-+
-+static const struct platform_suspend_ops m10v_pm_ops = {
-+	.valid		= m10v_pm_valid,
-+	.enter		= m10v_pm_enter,
-+};
-+
-+struct clk *m10v_clclk_register(struct device *cpu_dev);
-+
-+static int __init m10v_pm_init(void)
-+{
-+	suspend_set_ops(&m10v_pm_ops);
-+
-+	return 0;
-+}
-+late_initcall(m10v_pm_init);
--- 
-1.9.1
 
