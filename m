@@ -2,158 +2,85 @@ Return-Path: <SRS0=X/us=N6=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AC3DC43441
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Nov 2018 14:13:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6149C43441
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Nov 2018 15:21:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57EF220851
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Nov 2018 14:13:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57EF220851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
+	by mail.kernel.org (Postfix) with ESMTP id 8DFF020870
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Nov 2018 15:21:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bsvKeZOy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DFF020870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729456AbeKTAgy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 19 Nov 2018 19:36:54 -0500
-Received: from relmlor1.renesas.com ([210.160.252.171]:45976 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729331AbeKTAgy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Nov 2018 19:36:54 -0500
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 19 Nov 2018 23:13:07 +0900
-Received: from vbox.ree.adwin.renesas.com (unknown [10.226.37.67])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 5B929401BF07;
-        Mon, 19 Nov 2018 23:13:03 +0900 (JST)
-From:   Phil Edworthy <phil.edworthy@renesas.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
+        id S1729660AbeKTBpc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 19 Nov 2018 20:45:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53440 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729483AbeKTBpc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 19 Nov 2018 20:45:32 -0500
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0099E20989;
+        Mon, 19 Nov 2018 15:21:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542640897;
+        bh=xQ25fvpoTXUHNNp0PteSHaC1N4hn/+Yec2ykpa6QZeU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=bsvKeZOydSAL2vMnz/k24ENaz1QDYxoBnUGXrdnPQtKPbMRzfSh+zSTQYjeK9Nkoh
+         fi9Agx+ti3jdFx0QcptkSwixtl8fsN3ayp5qdM1SHPL81kxaL2S89QSA+I+gPV+9Or
+         VshPjTFWdulP632aTVT49zzmhJiuCSxs+Rw91BkE=
+Received: by mail-qk1-f177.google.com with SMTP id 131so49098761qkd.4;
+        Mon, 19 Nov 2018 07:21:36 -0800 (PST)
+X-Gm-Message-State: AGRZ1gJJfwhWiCjcvdTTp0iwvu1aBfH4K3BWe0qZOfLnOJhgntazoxDC
+        dZW+JaptzZSWJODRDlxdLBoP+/uSoEYXVpMzWA==
+X-Google-Smtp-Source: AJdET5d8Re3M7Mwm6i+I4vI/j95JKYEjc/Tsu1nrg9Bkya6tHLJaolDioMpJSnrIIprxSjkWkGHqON0vjlakKNDWeVc=
+X-Received: by 2002:ac8:6b18:: with SMTP id w24mr21813202qts.144.1542640896211;
+ Mon, 19 Nov 2018 07:21:36 -0800 (PST)
+MIME-Version: 1.0
+References: <1542589274-13878-1-git-send-email-sugaya.taichi@socionext.com> <1542589274-13878-4-git-send-email-sugaya.taichi@socionext.com>
+In-Reply-To: <1542589274-13878-4-git-send-email-sugaya.taichi@socionext.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Mon, 19 Nov 2018 09:21:24 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKMK7nMUxZLu9eV8tpnCXsAr2F4j=xTO8UL0g8V30kYZg@mail.gmail.com>
+Message-ID: <CAL_JsqKMK7nMUxZLu9eV8tpnCXsAr2F4j=xTO8UL0g8V30kYZg@mail.gmail.com>
+Subject: Re: [PATCH 03/14] ARM: milbeaut: Add Milbeaut M10V early printk
+To:     sugaya.taichi@socionext.com
+Cc:     linux-clk <linux-clk@vger.kernel.org>, devicetree@vger.kernel.org,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Russell King <linux@armlinux.org.uk>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Jiaxun Yang <jiaxun.yang@flygoat.com>,
-        Huacai Chen <chenhc@lemote.com>, Guan Xuetao <gxt@pku.edu.cn>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, linux-m68k@lists.linux-m68k.org,
-        linux-mips@linux-mips.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] clk: Add (devm_)clk_get_optional() functions
-Date:   Mon, 19 Nov 2018 14:12:59 +0000
-Message-Id: <20181119141259.11992-1-phil.edworthy@renesas.com>
-X-Mailer: git-send-email 2.17.1
+        Stephen Boyd <sboyd@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Jiri Slaby <jslaby@suse.com>,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This adds clk_get_optional() and devm_clk_get_optional() functions to get
-optional clocks.
-They behave the same as (devm_)clk_get except where there is no clock
-producer. In this case, instead of returning -ENOENT, the function
-returns NULL. This makes error checking simpler and allows
-clk_prepare_enable, etc to be called on the returned reference
-without additional checks.
+On Sun, Nov 18, 2018 at 7:00 PM Sugaya Taichi
+<sugaya.taichi@socionext.com> wrote:
+>
+> Add Milbeaut M10V earlyprintk.
 
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
----
-v7:
- - Instead of messing with the core functions, simply wrap them for the
-   _optional() versions. By putting clk_get_optional() inline in the header
-   file, we can get rid of the arch specific patches as well.
-v6:
- - Add doxygen style comment for devm_clk_get_optional() args
-v5:
- - No changes.
-v4:
- - No changes.
-v3:
- - No changes.
----
- drivers/clk/clk-devres.c | 11 +++++++++++
- include/linux/clk.h      | 27 +++++++++++++++++++++++++++
- 2 files changed, 38 insertions(+)
+Do you really need earlyprintk? earlycon is preferred instead. It's
+not quite as early, but doesn't require rebuilding the kernel and
+supports more than 1 fixed device. If you crash before earlycon is
+enabled, that pretty much means either a bad dtb memory node or just
+flaky memory.
 
-diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
-index 12c87457eca1..f0033d937c39 100644
---- a/drivers/clk/clk-devres.c
-+++ b/drivers/clk/clk-devres.c
-@@ -34,6 +34,17 @@ struct clk *devm_clk_get(struct device *dev, const char *id)
- }
- EXPORT_SYMBOL(devm_clk_get);
- 
-+struct clk *devm_clk_get_optional(struct device *dev, const char *id)
-+{
-+	struct clk *clk = devm_clk_get(dev, id);
-+
-+	if (clk == ERR_PTR(-ENOENT))
-+		return NULL;
-+	else
-+		return clk;
-+}
-+EXPORT_SYMBOL(devm_clk_get_optional);
-+
- struct clk_bulk_devres {
- 	struct clk_bulk_data *clks;
- 	int num_clks;
-diff --git a/include/linux/clk.h b/include/linux/clk.h
-index a7773b5c0b9f..c7bbb0678057 100644
---- a/include/linux/clk.h
-+++ b/include/linux/clk.h
-@@ -383,6 +383,17 @@ int __must_check devm_clk_bulk_get_all(struct device *dev,
-  */
- struct clk *devm_clk_get(struct device *dev, const char *id);
- 
-+/**
-+ * devm_clk_get_optional - lookup and obtain a managed reference to an optional
-+ *			   clock producer.
-+ * @dev: device for clock "consumer"
-+ * @id: clock consumer ID
-+ *
-+ * Behaves the same as devm_clk_get except where there is no clock producer. In
-+ * this case, instead of returning -ENOENT, the function returns NULL.
-+ */
-+struct clk *devm_clk_get_optional(struct device *dev, const char *id);
-+
- /**
-  * devm_get_clk_from_child - lookup and obtain a managed reference to a
-  *			     clock producer from child node.
-@@ -718,6 +729,12 @@ static inline struct clk *devm_clk_get(struct device *dev, const char *id)
- 	return NULL;
- }
- 
-+static inline struct clk *devm_clk_get_optional(struct device *dev,
-+						const char *id)
-+{
-+	return NULL;
-+}
-+
- static inline int __must_check devm_clk_bulk_get(struct device *dev, int num_clks,
- 						 struct clk_bulk_data *clks)
- {
-@@ -862,6 +879,16 @@ static inline void clk_bulk_disable_unprepare(int num_clks,
- 	clk_bulk_unprepare(num_clks, clks);
- }
- 
-+static inline struct clk *clk_get_optional(struct device *dev, const char *id)
-+{
-+	struct clk *clk = clk_get(dev, id);
-+
-+	if (clk == ERR_PTR(-ENOENT))
-+		return NULL;
-+	else
-+		return clk;
-+}
-+
- #if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK)
- struct clk *of_clk_get(struct device_node *np, int index);
- struct clk *of_clk_get_by_name(struct device_node *np, const char *name);
--- 
-2.17.1
-
+Rob
