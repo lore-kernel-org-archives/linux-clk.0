@@ -2,81 +2,79 @@ Return-Path: <SRS0=sCFe=N7=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA399C43610
-	for <linux-clk@archiver.kernel.org>; Tue, 20 Nov 2018 10:14:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0236C43441
+	for <linux-clk@archiver.kernel.org>; Tue, 20 Nov 2018 10:19:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 879B2208E3
-	for <linux-clk@archiver.kernel.org>; Tue, 20 Nov 2018 10:14:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9FB1020671
+	for <linux-clk@archiver.kernel.org>; Tue, 20 Nov 2018 10:19:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M/0Rtvva"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 879B2208E3
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YAq0YMJq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FB1020671
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726456AbeKTUmg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 20 Nov 2018 15:42:36 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:43775 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726253AbeKTUmf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Nov 2018 15:42:35 -0500
-Received: by mail-pl1-f193.google.com with SMTP id gn14so769279plb.10;
-        Tue, 20 Nov 2018 02:14:14 -0800 (PST)
+        id S1727839AbeKTUr2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 20 Nov 2018 15:47:28 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:33220 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726177AbeKTUr1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Nov 2018 15:47:27 -0500
+Received: by mail-ed1-f67.google.com with SMTP id r27so1446044eda.0;
+        Tue, 20 Nov 2018 02:19:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=G8gUHWaI/D5L40j0h+nm7ftschIgRm7IX/CcJ3A7U5E=;
-        b=M/0RtvvaPGNrHL9vJIrvwwGrU3nEqlh8PN1SRVszBCU3J6uyN3bxs76Ion4XUwRULb
-         GGpmMZfrfLUPyTXJ2UwsCIEF6VC84jWXHr9iUBVJCIeYuBPBWcGW4ZP94q55oEqEyY0M
-         K0raWMAtWa1WgB5YVxmhiAnqPIreOFuR1xdOMru70/GoOQDDjskA2A+tsIplNkKYWWVa
-         5Pfe2fOrQwfeG8fS3l4vHWWfbBWz5iyvWEjuAme7ERVUCs0YSfOGETiphFiP15V+4NBI
-         KxlTllPJbNqK0SVgn4ETT3xmjrpJj+Y57U95g7JDrfeyCZAvpoLNBSnJN07St0fZNTkS
-         a3Uw==
+        bh=q9extQQX2l+qVyozJE80R9sZWYftKswR06FON0tN78c=;
+        b=YAq0YMJqW4MVq9btG0AWWaUr+v1HtdqoHivhpLmMA8KQTdIiFG9tUhj8inWXo80wqP
+         QUSC7/ylk8UJeYEBy3ywnnX7bY69uhF3IW6ouXdhb0xncBsZVPx34O2fW9IrljhLMqwR
+         B+dZUJ4WuP1tu1IQePcznCRl6M6IIZPB63ufx9FJGSWj+Vp1Oe6OQCWhG64/5v9DcsUL
+         cGRPKGLFD1UYeUAnAyAtKs79UJyg/n6uJTo7unQrIucCCA6vbbFL4QPye4/IY2pI4MlF
+         YPWrLNxzHHu3EJnMROz3GtEX/whkGB9bF9AWd6SIEvwFG0xHZ7ue1Sza9PR5up5R9yPX
+         gMdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=G8gUHWaI/D5L40j0h+nm7ftschIgRm7IX/CcJ3A7U5E=;
-        b=fTx3BiVsUzraUEcYsPJTo4/F9pXG59ZXCAeOpbWPpeumQA/3DnQCtu1NREGA7gvGqt
-         mQyWvB3GoNUFZbnyFCdCng3DOAp1wIeX+q2ssP0tLY7juv6rI7Kp2HSPHu1WV85WxxPn
-         TcuNqvKZD1PdCN/eY38oB/ZG/2YB60HXgSFea62FcAvSf6PA+9wTCr8BAyJs3RkDHb+w
-         I1nj29iGHEBqx4D18LygEeXS5+O0FA8BEOWrQTmrakmfzbpZtVWeVPWeCRcTDJsvw+Mg
-         oEDYvajFQYWCXOCxHQTnJCuw+qXSCcJQTg2bbgu2jZ+Rsnnkt4OxoWky6rwZd3d+dwc9
-         WWLQ==
-X-Gm-Message-State: AA+aEWYMNLZrSBjap3odY0bQT+DcWagtUGGPOgZ2MhTvd/RXkFVAaRYh
-        l7G6fcjP4NFXxVQ4FIkL064=
-X-Google-Smtp-Source: AFSGD/UuR6xznqyq7VLOmbc5mUv/wNv8kHdBd1oxwKKcheXG9hzy+cgm/wUswG3YEnU7o06KfyzkFA==
-X-Received: by 2002:a17:902:8c91:: with SMTP id t17mr1522838plo.119.1542708853515;
-        Tue, 20 Nov 2018 02:14:13 -0800 (PST)
+        bh=q9extQQX2l+qVyozJE80R9sZWYftKswR06FON0tN78c=;
+        b=qv3u039qnNSoMj562IM8xDHEPCfaGeOkwA2StkifKLORbNhaiaFaYVKaOWyA6C5bAk
+         HZaQY3PmM8fuEbNy5Hy9EU/niWnYTKJC5/U9wY2tnd2SO7cptGdtHv6JW5auVPHeuwPF
+         Kq8go1OB/rTMKoUgyFTC3Mp1pes234d5qPGF0fEaCj0+WcLuF22VWHUn40nBANCMrinn
+         mDCTUE5HkZrwjrMybZYFd+Yyo1nY/1+zqZEKjw0ntJh4pbl4NMxJ1rl3QHwa99sqndQQ
+         qhvlCJcbXyJk6HFd1xJwzMW3ZvoSMJY2CQ0ua5M24gUS7o3nOH8YxKWss2eSYVudwZOA
+         fShg==
+X-Gm-Message-State: AA+aEWasYb5dkvPaSdV2LZzSnQeIER3KnfiA84gReZ8llMb8UCOM7LiS
+        L8u9Tod4YTaUJGkXwS235AQ=
+X-Google-Smtp-Source: AFSGD/XhuUf6Ohs8qNEFbPx+EAxrACcf/FBl/Pz0RWP+1N4ZGzyX6I9h3pkjnlRqcNiKblBFxsyUIQ==
+X-Received: by 2002:a50:b222:: with SMTP id o31-v6mr1834215edd.11.1542709142453;
+        Tue, 20 Nov 2018 02:19:02 -0800 (PST)
 Received: from ziggy.stardust ([37.223.147.230])
-        by smtp.gmail.com with ESMTPSA id p9-v6sm43418350pfa.22.2018.11.20.02.14.08
+        by smtp.gmail.com with ESMTPSA id w56sm2160548edb.72.2018.11.20.02.19.00
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 20 Nov 2018 02:14:12 -0800 (PST)
-Subject: Re: Aw: Re: [PATCH v5 05/12] drm: mediatek
-To:     Frank Wunderlich <frank-w@public-files.de>,
-        CK Hu <ck.hu@mediatek.com>
-Cc:     mark.rutland@arm.com, devicetree@vger.kernel.org,
-        sean.wang@kernel.org, Matthias Brugger <mbrugger@suse.com>,
-        airlied@linux.ie, mturquette@baylibre.com, sean.wang@mediatek.com,
-        sboyd@codeaurora.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, wens@csie.org, robh+dt@kernel.org,
-        rdunlap@infradead.org, laurent.pinchart@ideasonboard.com,
-        p.zabel@pengutronix.de, matthias.bgg@kernel.org,
-        ulrich.hecht+renesas@gmail.com, linux-mediatek@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+        Tue, 20 Nov 2018 02:19:01 -0800 (PST)
+Subject: Re: [PATCH v5 05/12] drm: mediatek: Omit warning on probe defers
+To:     CK Hu <ck.hu@mediatek.com>
+Cc:     matthias.bgg@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        p.zabel@pengutronix.de, airlied@linux.ie, mturquette@baylibre.com,
+        sboyd@codeaurora.org, ulrich.hecht+renesas@gmail.com,
+        laurent.pinchart@ideasonboard.com, sean.wang@mediatek.com,
+        sean.wang@kernel.org, rdunlap@infradead.org, wens@csie.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, Matthias Brugger <mbrugger@suse.com>
 References: <20181116125449.23581-1-matthias.bgg@kernel.org>
  <20181116125449.23581-6-matthias.bgg@kernel.org>
  <1542605939.32082.12.camel@mtksdaap41>
  <0a02edf9-78da-dde9-4b69-38c4719b711b@gmail.com>
- <1542686700.9073.15.camel@mtksdaap41> <1542686982.26483.1.camel@mtksdaap41>
- <trinity-8f0fde8e-5ef3-4272-b009-49e180c934eb-1542702383860@3c-app-gmx-bs39>
+ <1542686700.9073.15.camel@mtksdaap41>
 From:   Matthias Brugger <matthias.bgg@gmail.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
@@ -122,12 +120,12 @@ Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
  XM8DY1aFdU79pac005PuhxCWkKTJz3gCmznnoat4GCnL5gy/m0Qk45l4PFqwWXVLo9AQg2Kp
  3mlIFZ6fsEKIAN5hxlbNvNb9V2Zo5bFZjPWPFTxOteM0omUAS+QopwU0yPLLGJVf2iCmItHc
  UXI+r2JwH1CJjrHWeQEI2ucSKsNa8FllDmG/fQ==
-Message-ID: <1192d203-fcd1-47b0-00bc-9d513e5ffc3e@gmail.com>
-Date:   Tue, 20 Nov 2018 11:14:06 +0100
+Message-ID: <9a445746-b07d-73e1-68c9-10eb9d5bf771@gmail.com>
+Date:   Tue, 20 Nov 2018 11:19:00 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.3.0
 MIME-Version: 1.0
-In-Reply-To: <trinity-8f0fde8e-5ef3-4272-b009-49e180c934eb-1542702383860@3c-app-gmx-bs39>
+In-Reply-To: <1542686700.9073.15.camel@mtksdaap41>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -138,30 +136,44 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 
 
-On 20/11/2018 09:26, Frank Wunderlich wrote:
-> Hi,
+On 20/11/2018 05:05, CK Hu wrote:
+> Hi, Matthias:
 > 
-> i got v5-patches working on bpi-r2 (mt7623) with a Patch from Ryder.lee and 2 from Bibby Hsieh on 4.19-rc1
+> On Mon, 2018-11-19 at 10:26 +0100, Matthias Brugger wrote:
+>>
+>> On 19/11/2018 06:38, CK Hu wrote:
+>>> Hi, Matthias:
+>>>
+>>> On Fri, 2018-11-16 at 13:54 +0100, matthias.bgg@kernel.org wrote:
+>>>> From: Matthias Brugger <mbrugger@suse.com>
+>>>>
+>>>> It can happen that the mmsys clock drivers aren't probed before the
+>>>> platform driver gets invoked. The platform driver used to print a warning
+>>>> that the driver failed to get the clocks. Omit this error on
+>>>> the defered probe path.
+>>>
+>>> This patch looks good to me, but you have not modified the sub driver in
+>>> HDMI path. We could let HDMI path print the warning and someone send
+>>> another patch later, or you modify for HDMI path in this patch.
+>>
+>> Sure, I'll add this in v6. After inspecting the code, I think we will need to
+>> also check for not initialized clocks in mtk_mdp_comp_init, as the driver for
+>> now does not even check if the clocks are present. What do you think?
 > 
-> https://github.com/frank-w/BPI-R2-4.14/commits/4.19-hdmiv5
+> Yes, we do really need to consider mdp driver because mmsys clock
+> include mdp clock. You remind me that mmsys control 4 major function:
+> drm routing, drm clock, mdp routing, and mdp clock. Your design let the
+> mmsys device as drm device (control drm routing) and create a sub device
+> as clock device (control drm clock, mdp clock). If one day mdp device
+> (may need control drm routing) need to control the register of mdp
+> routing, would mdp device be a sub device? Or we need not to consider
+> this because it need not to access mmsys register now?
 > 
 
-I don't see the patches applied to this tree. Apart from that this tree has a
-lot of other patches applied. It differs greatly from mainline, so nothing we
-should discuss on this mailinglist.
+I think we should for now concentrate to fix the clock probing issue. If in the
+future we will need to access drm routing from the mdp device, we can have a
+look into this.
 
+Sounds good?
 Regards,
 Matthias
-
-> but after i tried to include them on 4.19.2, i got a strange behaviour (stretched and pink font instead of white/grey)
-> 
-> see here for detailed info:
-> 
-> http://forum.banana-pi.org/t/kernel-4-19-rc1-for-testers/6618/75
-> 
-> there are some patches between rc1 and final which i tried to revert, but no luck till now (cannot revert, no effect on the issue or no output). Had informed Bibby Hsieh...
-> 
-> is there any idea, why this happen?
-> 
-> regards Frank
-> 
