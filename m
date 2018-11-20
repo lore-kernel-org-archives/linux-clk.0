@@ -2,151 +2,151 @@ Return-Path: <SRS0=sCFe=N7=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00758C32789
-	for <linux-clk@archiver.kernel.org>; Tue, 20 Nov 2018 16:25:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 357D1C4161D
+	for <linux-clk@archiver.kernel.org>; Tue, 20 Nov 2018 18:56:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B10D0206BB
-	for <linux-clk@archiver.kernel.org>; Tue, 20 Nov 2018 16:25:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E2E020C01
+	for <linux-clk@archiver.kernel.org>; Tue, 20 Nov 2018 18:55:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="Rgcc9pYn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B10D0206BB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qOpF5QYp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E2E020C01
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726372AbeKUCzw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 20 Nov 2018 21:55:52 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:53137 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727592AbeKUCzw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Nov 2018 21:55:52 -0500
-Received: by mail-it1-f193.google.com with SMTP id i7so4215492iti.2
-        for <linux-clk@vger.kernel.org>; Tue, 20 Nov 2018 08:25:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Fk4EEjIrrf8xUv7sP/UR7/oZ3RraEnGj9VOA8OqaJWw=;
-        b=Rgcc9pYnFZP/SzS6EKcfIs0y51pVcviGdcDicMIwbGj/s5RU9UZpjHubtyio6mtGiL
-         jejRWIcmjVncW4co+PC6ZFZYLArO+cX/I1aO4Co3M5qIbxDfskAnEmnx80u8+AmF0C28
-         cDfOzdYLhdVxV/IXjjoGLGcCbghzD5Z7v46Bs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Fk4EEjIrrf8xUv7sP/UR7/oZ3RraEnGj9VOA8OqaJWw=;
-        b=kCHzthoLcQDR0dpijf13l2OXFjhsMlv66GZgT2XQGBLGtWcajjS1XKRVrovtxk+Rqc
-         pEsCNbVNa1jeLx9f59TBA6htfSovicu0Goq3n5cNnKBGZZ979O+pb7lMTvdCm5h1RQFe
-         GHpVS9JFh20/2MCrHlIqbVDl3U3ljsb3ODp8IcToldmeUSY8aebMcwjlLYVNyA13SWAi
-         OZOn8dBxPJmYrxO8wpCbnffRULaJRwNX3kl+y8erKRnkrMxJKDthFHhfDgV9eL/RsioC
-         CYl/nxRx/XLAD9b1GRtTsANbJp/IGFkaUhO3Ebz6egp67jJ5A89bQWcERPqzEs+4wsSa
-         uChA==
-X-Gm-Message-State: AA+aEWbn4nHKIN+uHsmGcXgMjG0dpTVv7OOA14MP/3FVgWBIt+MkXYkE
-        FmHiyWO8xW1BJNi5VU1XjagF277Jn6wW891AJY2OFO3m9Ms=
-X-Google-Smtp-Source: AFSGD/U3NU/9KihC8YvJR7BAqODRxqCgrTuRerOfVESYRacO68Fmnz76RkdhyrcslDqUDh7sQN1gbDxb/2+M2oyCFgA=
-X-Received: by 2002:a02:6242:: with SMTP id d63-v6mr2179584jac.103.1542731153662;
- Tue, 20 Nov 2018 08:25:53 -0800 (PST)
+        id S1726165AbeKUF0Z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 21 Nov 2018 00:26:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44954 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725885AbeKUF0Z (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 21 Nov 2018 00:26:25 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 58724208E3;
+        Tue, 20 Nov 2018 18:55:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542740146;
+        bh=RrZdkWARXKtFjZ88OLDXItSfGGtmQRe0JeouciasiLQ=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=qOpF5QYpKvQ5+lHnQb0Q7mMgkO3sn/9bdQkmjWxJe1CTMpKZHv/islZOf03MmFf6g
+         XyUSPMduDnn0op4dTjgg9no80BCs+f2yD2EoIwfjrX4RaISRutYudQHRSYWCnJwmAj
+         tO2/iDVBxWHUF3MO/MudWQl/GFe6Gte5AMpKQtrs=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20181113111633.20189-1-jagan@amarulasolutions.com>
- <20181113111633.20189-9-jagan@amarulasolutions.com> <20181115095551.uctdkfmuwlnzhjnn@flea>
- <CAMty3ZAEHiovm6OF6JvJVQR4aqpG1Q3ML5YqxJkF2ntwRkUO=A@mail.gmail.com> <20181120155715.andrjp5kg6ugcv72@flea>
-In-Reply-To: <20181120155715.andrjp5kg6ugcv72@flea>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Tue, 20 Nov 2018 21:55:42 +0530
-Message-ID: <CAMty3ZCUOJmvekupOwh281g5HaazTpBbukWQY2Pv2OYypAwciw@mail.gmail.com>
-Subject: Re: [PATCH v4 08/26] drm/sun4i: sun6i_mipi_dsi: Fix VBP size calculation
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi@googlegroups.com, linux-amarula@amarulasolutions.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+To:     "A.s. Dong" <aisheng.dong@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <AM0PR04MB4211A7CA91D6188AB81BA6EA80DC0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+Cc:     "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>
+References: <1541862894-8209-1-git-send-email-aisheng.dong@nxp.com>
+ <1541862894-8209-7-git-send-email-aisheng.dong@nxp.com>
+ <154223811948.88331.8860718270277533070@swboyd.mtv.corp.google.com>
+ <AM0PR04MB4211A7CA91D6188AB81BA6EA80DC0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+Message-ID: <154274014557.88331.17188709471206009766@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: RE: [PATCH V6 6/6] clk: imx: add imx8qxp lpcg driver
+Date:   Tue, 20 Nov 2018 10:55:45 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Nov 20, 2018 at 9:27 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
->
-> On Thu, Nov 15, 2018 at 11:19:53PM +0530, Jagan Teki wrote:
-> > On Thu, Nov 15, 2018 at 3:26 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-> > >
-> > > Hi,
-> > >
-> > > On Tue, Nov 13, 2018 at 04:46:15PM +0530, Jagan Teki wrote:
-> > > > The horizontal and vertical back porch calculation in BSP
-> > > > code is simply following the Linux drm comment diagram, in
-> > > > include/drm/drm_modes.h which is
-> > > >
-> > > > [hv]back porch = [hv]total - [hv]sync_end
-> > > >
-> > > > BSP code form BPI-M64-bsp is calculating vertical back porch as
-> > > > (from linux-sunxi/drivers/video/sunxi/disp2/disp/de/disp_lcd.c)
-> > > >
-> > > > timmings->ver_sync_time= panel_info->lcd_vspw;
-> > > > timmings->ver_back_porch= panel_info->lcd_vbp-panel_info->lcd_vspw;
-> > > >
-> > > > vbp = panel->lcd_vbp;
-> > > > vspw = panel->lcd_vspw;
-> > > > dsi_dev[sel]->dsi_basic_size0.bits.vbp = vbp-vspw;
-> > > > dsi_dev[sel]->dsi_basic_size0.bits.vbp = panel->lcd_vbp - panel->lcd_vspw;
-> > > > =>  timmings->ver_back_porch + panel_info->lcd_vspw - panel_info->lcd_vspw
-> > > > =>  timmings->ver_back_porch
-> > > > =>  mode->vtotal - mode->end
-> > > >
-> > > > Which evatually same as mode->vtotal - mode->vsync_end so update the
-> > > > same in SUN6I_DSI_BASIC_SIZE0_VBP
-> > > >
-> > > > On the information note, existing SUN6I_DSI_BASIC_SIZE0_VSA is proper
-> > > > value.
-> > > >
-> > > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> > >
-> > > I've tested your changes on my A33 board, and this commit will break
-> > > it.
-> > >
-> > > It creates vblank timeouts, and visual artifacts at the bottom of the
-> > > display.
-> >
-> > Strange, VBP is earlier gives front porch which is anyway wrong.
-> >
-> > >
-> > > Later commits seem to fix the issue, but will create some blanking on
-> > > the upper third of the display.
-> > >
-> > > Since the documentation is quite sparse, and a MIPI-DSI analyzer is
-> > > way too expensive, I'd really like to have at least what each of these
-> > > commits are actually fixing, and what symptoms each of these were
-> > > causing, and not just "the BSP does it".
-> >
-> > W/o this 2-lane panel is breaking, same vblank timeout and visual
-> > artifacts at the bottom of the panel. though the commits may reference
-> > BSP, I have at-least tested on 3 different panels for us to prove its
-> > working.
-> >
-> > > Having some datasheet for the panels you had working would help too.
-> >
-> > Unfortunately datasheet doesn't have any required information what we
-> > actually looking for.
->
-> Not even the timings? How did you get that information then?
+Quoting A.s. Dong (2018-11-14 17:28:05)
+> > -----Original Message-----
+> > From: Stephen Boyd [mailto:sboyd@kernel.org]
+> =
 
-datasheet has timing values, but this changes need controller
-information about VBP register that I don't have. But again existing
-VBP is not back porch for real, it's front porch.
+> > =
+
+> > > +
+> > > +       ss_lpcg =3D of_device_get_match_data(dev);
+> > > +       if (!ss_lpcg)
+> > > +               return -ENODEV;
+> > > +
+> > > +       res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> > > +       base =3D devm_ioremap(dev, res->start, resource_size(res));
+> > =
+
+> > Why not devm_ioremap_resource()?
+> =
+
+> Because LPCGs are distributed in various subsystem memory space which
+> may be overlapped with some IP modules. So we can't use devm_ioremap_reso=
+urce
+> which has a request_mem_region() in it.
+> It's something like what we've done for drivers/mfd/syscon.c.
+
+Ok. Any chance that the various subsystems that are combined with the
+clk controller can be split up so that we can use
+devm_ioremap_resource() here? It may be better to carve up the I/O space
+of this SoC into device nodes that map to the hardware IP blocks, and
+then have those device drivers generate sub-devices for the various
+logical subsystems that the hardware IP spans. Or it could be a big
+driver that registers with multiple subsytems/frameworks from one device
+driver. This way, the logical structure of the linux kernel device
+driver design doesn't leak into the DT description of the SoC.
+
+> =
+
+> > > +                               GFP_KERNEL);
+> > > +       if (!clk_data)
+> > > +               return -ENOMEM;
+> > > +
+> > > +       clk_data->num =3D ss_lpcg->num_max;
+> > > +       clks =3D clk_data->hws;
+> > > +
+> > > +       for (i =3D 0; i < ss_lpcg->num_lpcg; i++) {
+> > > +               lpcg =3D ss_lpcg->lpcg + i;
+> > > +               clks[lpcg->id] =3D imx_clk_lpcg_scu(lpcg->name,
+> > lpcg->parent,
+> > > +                                                 lpcg->flags, base +
+> > lpcg->offset,
+> > > +                                                 lpcg->bit_idx,
+> > lpcg->hw_gate);
+> > > +       }
+> > > +
+> > > +       for (i =3D 0; i < clk_data->num; i++) {
+> > > +               if (IS_ERR(clks[i]))
+> > > +                       pr_err("i.MX clk %u: register failed with %ld=
+\n",
+> > > +                               i, PTR_ERR(clks[i]));
+> > =
+
+> > But we're OK to continue? Alright...
+> > =
+
+> =
+
+> Yes, probably better to use pr_warn()?
+
+Yes.
+
+> =
+
+> > > +       }
+> > > +
+> > > +       return of_clk_add_hw_provider(np, of_clk_hw_onecell_get,
+> > > + clk_data);
+> > =
+
+> > Why not use devm_? Or can the driver never be unbound from sysfs?
+> > =
+
+> =
+
+> We expect the driver to be never unbound from sysfs.
+> Probably we'd better add .suppress_bind_attrs.
+
+Ok. Please add it.
+
