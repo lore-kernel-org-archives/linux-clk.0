@@ -2,117 +2,94 @@ Return-Path: <SRS0=sCFe=N7=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66770C18E01
-	for <linux-clk@archiver.kernel.org>; Tue, 20 Nov 2018 11:12:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B03EC18E01
+	for <linux-clk@archiver.kernel.org>; Tue, 20 Nov 2018 11:15:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35C0A208E4
-	for <linux-clk@archiver.kernel.org>; Tue, 20 Nov 2018 11:12:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35C0A208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 0F90F2087E
+	for <linux-clk@archiver.kernel.org>; Tue, 20 Nov 2018 11:15:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ae03QBU+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F90F2087E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728269AbeKTVlc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 20 Nov 2018 16:41:32 -0500
-Received: from mga12.intel.com ([192.55.52.136]:15322 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728222AbeKTVlc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 20 Nov 2018 16:41:32 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2018 03:12:56 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,256,1539673200"; 
-   d="scan'208";a="275426798"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
-  by orsmga005.jf.intel.com with ESMTP; 20 Nov 2018 03:12:50 -0800
-Received: from andy by smile with local (Exim 4.91)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1gP3xY-0001Gy-Nw; Tue, 20 Nov 2018 13:12:48 +0200
-Date:   Tue, 20 Nov 2018 13:12:48 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Phil Edworthy <phil.edworthy@renesas.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Russell King <linux@armlinux.org.uk>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Jiaxun Yang <jiaxun.yang@flygoat.com>,
-        Huacai Chen <chenhc@lemote.com>, Guan Xuetao <gxt@pku.edu.cn>,
-        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        "linux-m68k@lists.linux-m68k.org" <linux-m68k@lists.linux-m68k.org>,
-        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] clk: Add (devm_)clk_get_optional() functions
-Message-ID: <20181120111248.GW10650@smile.fi.intel.com>
-References: <20181119141259.11992-1-phil.edworthy@renesas.com>
- <20181120103832.GV10650@smile.fi.intel.com>
- <TY1PR01MB176982D5E11A665D0DCC9E31F5D90@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <TY1PR01MB176982D5E11A665D0DCC9E31F5D90@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1728352AbeKTVnh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 20 Nov 2018 16:43:37 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:35397 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728268AbeKTVnh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Nov 2018 16:43:37 -0500
+Received: by mail-wr1-f65.google.com with SMTP id 96so1537207wrb.2
+        for <linux-clk@vger.kernel.org>; Tue, 20 Nov 2018 03:14:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=xZcEPIfg4frvh5Hs0xnUDMuN5+SH2Ev3SNI6h8iKwZs=;
+        b=Ae03QBU+GQwGkbonnlUfPhiDmDATEFd1gAYOd4U2kdIAyJm9PBnC1bHoA9+6S49AR7
+         Q8yVGJz378/f/s4vsSKJHKkNUFJgP/g0k5XUo1fDiQqT7berX0kJk9hBZ61Q6zA5XfJz
+         wXyyWSodb4lKnyZDznTUVXYmIKTWwjDyK1UGI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=xZcEPIfg4frvh5Hs0xnUDMuN5+SH2Ev3SNI6h8iKwZs=;
+        b=khHjghtxcrRa9NSTy3kbCb6vkbiymxIg/Tdy5EurWRmzuJ0sZxW1n0TlzCivrCduGW
+         2z/Np4d7vDV/QHloghRZAveBxwGyQwYvNEFBthmg82RwBXBCtc6tDqDT/LU/Bvf1Mdf7
+         CtTmDuHYg+sRlqbqac1cuOce8o1wuf0J7rCi0YoBlaGvXJ1fbo2WDFFcEvs2nNixhIhV
+         2/SgOYXQmtTiUfH3hyxtnuR/cyjBIkS7w/tA7fffqUaGlETq/Op+MhQKe0hIrWXm1QnR
+         4oRJ5u4cq3KtlYj/JvXRAr3fiXl3f13HXcdh8zTdmyMYMuStUFlFC2/S27vJgTnRxFir
+         lxxA==
+X-Gm-Message-State: AA+aEWbx7XytW1D1NcZ3LBTcbUl5DAkQXsefFegG39TIgotsxc3cwMkr
+        yDETXC7KbJFVXg0XzLBYYNiM4w==
+X-Google-Smtp-Source: AFSGD/XsuVJggo55LijR7qufmSMxF5Q3FGGwHYqc1iKTd0dBb513iuPT7I/mhknsz2bjIrAqDI/XIQ==
+X-Received: by 2002:adf:ae41:: with SMTP id u1mr1510793wrd.20.1542712498693;
+        Tue, 20 Nov 2018 03:14:58 -0800 (PST)
+Received: from lpoulain-ThinkPad-T470p.home (atoulouse-654-1-394-222.w90-55.abo.wanadoo.fr. [90.55.193.222])
+        by smtp.gmail.com with ESMTPSA id q3sm13222795wrn.84.2018.11.20.03.14.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 20 Nov 2018 03:14:57 -0800 (PST)
+From:   Loic Poulain <loic.poulain@linaro.org>
+To:     andy.gross@linaro.org, david.brown@linaro.org
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        Loic Poulain <loic.poulain@linaro.org>
+Subject: [PATCH] clk: qcom: msm8916: Additional clock rates for spi
+Date:   Tue, 20 Nov 2018 12:14:56 +0100
+Message-Id: <1542712496-24941-1-git-send-email-loic.poulain@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Nov 20, 2018 at 10:53:33AM +0000, Phil Edworthy wrote:
-> On 20 November 2018 10:39 Andy Shevchenko wrote:
-> > On Mon, Nov 19, 2018 at 02:12:59PM +0000, Phil Edworthy wrote:
-> > > This adds clk_get_optional() and devm_clk_get_optional() functions to
-> > > get optional clocks.
-> > > They behave the same as (devm_)clk_get except where there is no clock
-> > > producer. In this case, instead of returning -ENOENT, the function
-> > > returns NULL. This makes error checking simpler and allows
-> > > clk_prepare_enable, etc to be called on the returned reference without
-> > > additional checks.
+Add SPI friendly clock rates to the spi freq table.
+Today it's not possible to use SPI at lower than 960Khz.
+This patch adds 100/250/500/1000 khz configs to the table.
 
-> > >  - Instead of messing with the core functions, simply wrap them for the
-> > >    _optional() versions. By putting clk_get_optional() inline in the header
-> > >    file, we can get rid of the arch specific patches as well.
+Signed-off-by: Loic Poulain <loic.poulain@linaro.org>
+---
+ drivers/clk/qcom/gcc-msm8916.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-> > Fine if it would have no surprises with error handling.
-> There shouldn't be any surprises. My earlier attempts at implementing this
-> were hampered by the fact that of_clk_get_by_name() can return -EINVAL
-> in some circumstances. By directly wrapping the (devm_)clk_get() functions
-> that problem goes away.
-
-Good!
-
-After my comments being addressed,
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-
-
-> > > +	if (ERR_PTR(-ENOENT))
-> Huh? That wasn't the code I sent...
-
-Yup, it's my wrong editing flow. Anyway, you got the idea.
-
-> > > +		return NULL;
-> > > +	else
-> > > +		return clk;
-
-> > return clk == ERR_PTR(-ENOENT) ? NULL : clk;
-
+diff --git a/drivers/clk/qcom/gcc-msm8916.c b/drivers/clk/qcom/gcc-msm8916.c
+index ac2b0aa..7d9647c 100644
+--- a/drivers/clk/qcom/gcc-msm8916.c
++++ b/drivers/clk/qcom/gcc-msm8916.c
+@@ -544,7 +544,11 @@ static struct clk_rcg2 blsp1_qup1_i2c_apps_clk_src = {
+ };
+ 
+ static const struct freq_tbl ftbl_gcc_blsp1_qup1_6_spi_apps_clk[] = {
++	F(100000, P_XO, 16, 2, 24),
++	F(250000, P_XO, 16, 5, 24),
++	F(500000, P_XO, 8, 5, 24),
+ 	F(960000, P_XO, 10, 1, 2),
++	F(1000000, P_XO, 4, 5, 24),
+ 	F(4800000, P_XO, 4, 0, 0),
+ 	F(9600000, P_XO, 2, 0, 0),
+ 	F(16000000, P_GPLL0, 10, 1, 5),
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.7.4
 
