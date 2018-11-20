@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F85FC32788
-	for <linux-clk@archiver.kernel.org>; Tue, 20 Nov 2018 14:18:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7189AC41536
+	for <linux-clk@archiver.kernel.org>; Tue, 20 Nov 2018 14:18:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91BA12087E
-	for <linux-clk@archiver.kernel.org>; Tue, 20 Nov 2018 14:17:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91BA12087E
+	by mail.kernel.org (Postfix) with ESMTP id 0E8F820831
+	for <linux-clk@archiver.kernel.org>; Tue, 20 Nov 2018 14:17:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E8F820831
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727133AbeKUAqF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 20 Nov 2018 19:46:05 -0500
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:37862 "EHLO
+        id S1726941AbeKUArB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 20 Nov 2018 19:47:01 -0500
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:37864 "EHLO
         mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726339AbeKUAqE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Nov 2018 19:46:04 -0500
+        by vger.kernel.org with ESMTP id S1726485AbeKUAqF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Nov 2018 19:46:05 -0500
 Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-        by mx0a-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wAKEEHBj030453;
-        Tue, 20 Nov 2018 08:16:36 -0600
+        by mx0a-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wAKEEnTL030925;
+        Tue, 20 Nov 2018 08:16:34 -0600
 Authentication-Results: ppops.net;
         spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
 Received: from mail1.cirrus.com (mail1.cirrus.com [141.131.3.20])
-        by mx0a-001ae601.pphosted.com with ESMTP id 2nth984dqp-1;
-        Tue, 20 Nov 2018 08:16:35 -0600
+        by mx0a-001ae601.pphosted.com with ESMTP id 2nth984dqj-1;
+        Tue, 20 Nov 2018 08:16:34 -0600
 Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
-        by mail1.cirrus.com (Postfix) with ESMTP id AB975611E121;
-        Tue, 20 Nov 2018 08:16:34 -0600 (CST)
+        by mail1.cirrus.com (Postfix) with ESMTP id 75527611E124;
+        Tue, 20 Nov 2018 08:16:33 -0600 (CST)
 Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
  (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Tue, 20 Nov 2018
  14:16:32 +0000
 Received: from algalon.ad.cirrus.com (algalon.ad.cirrus.com [198.90.251.122])
-        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id wAKEGVr0000703; Tue,
+        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id wAKEGVqw000703; Tue,
  20 Nov 2018 14:16:32 GMT
 From:   Charles Keepax <ckeepax@opensource.cirrus.com>
 To:     <lee.jones@linaro.org>, <mturquette@baylibre.com>,
@@ -46,9 +46,9 @@ CC:     <mark.rutland@arm.com>, <lgirdwood@gmail.com>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <patches@opensource.cirrus.com>, <linux-clk@vger.kernel.org>,
         <linux-gpio@vger.kernel.org>
-Subject: [PATCH v5 5/8] regulator: lochnagar: Add initial binding documentation
-Date:   Tue, 20 Nov 2018 14:16:28 +0000
-Message-ID: <20181120141631.18949-5-ckeepax@opensource.cirrus.com>
+Subject: [PATCH v5 3/8] clk: lochnagar: Add initial binding documentation
+Date:   Tue, 20 Nov 2018 14:16:26 +0000
+Message-ID: <20181120141631.18949-3-ckeepax@opensource.cirrus.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20181120141631.18949-1-ckeepax@opensource.cirrus.com>
 References: <20181120141631.18949-1-ckeepax@opensource.cirrus.com>
@@ -73,16 +73,16 @@ controller chip on the Lochnagar board.
 
 Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 ---
- .../bindings/regulator/cirrus,lochnagar.txt        | 82 ++++++++++++++++++++++
- 1 file changed, 82 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/regulator/cirrus,lochnagar.txt
+ .../devicetree/bindings/clock/cirrus,lochnagar.txt | 89 ++++++++++++++++++++++
+ 1 file changed, 89 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/cirrus,lochnagar.txt
 
-diff --git a/Documentation/devicetree/bindings/regulator/cirrus,lochnagar.txt b/Documentation/devicetree/bindings/regulator/cirrus,lochnagar.txt
+diff --git a/Documentation/devicetree/bindings/clock/cirrus,lochnagar.txt b/Documentation/devicetree/bindings/clock/cirrus,lochnagar.txt
 new file mode 100644
-index 000000000000..91974e6ee251
+index 000000000000..c1b5478d5432
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/regulator/cirrus,lochnagar.txt
-@@ -0,0 +1,82 @@
++++ b/Documentation/devicetree/bindings/clock/cirrus,lochnagar.txt
+@@ -0,0 +1,89 @@
 +Cirrus Logic Lochnagar Audio Development Board
 +
 +Lochnagar is an evaluation and development board for Cirrus Logic
@@ -93,78 +93,85 @@ index 000000000000..91974e6ee251
 +controlled through the Lochnagar, allowing the device under test
 +to be used in a variety of possible use cases.
 +
-+This binding document describes the binding for the regulator portion
-+of the driver.
++This binding document describes the binding for the clock portion of
++the driver.
 +
 +Also see these documents for generic binding information:
-+  [1] Regulator: ../regulator/regulator.txt
++  [1] Clock : ../clock/clock-bindings.txt
++
++And these for relevant defines:
++  [2] include/dt-bindings/clock/lochnagar.h
 +
 +This binding must be part of the Lochnagar MFD binding:
-+  [2] ../mfd/cirrus,lochnagar.txt
++  [3] ../mfd/cirrus,lochnagar.txt
++
++Required properties:
++
++  - compatible : One of the following strings:
++                 "cirrus,lochnagar1-clk"
++                 "cirrus,lochnagar2-clk"
++
++  - #clock-cells : Must be 1. The first cell indicates the clock
++    number, see [2] for available clocks and [1].
++
++Optional properties:
++
++  - clocks : Must contain an entry for each clock in clock-names.
++  - clock-names : May contain entries for each of the following
++    clocks:
++     - ln-cdc-clkout : Output clock from CODEC card.
++     - ln-dsp-clkout : Output clock from DSP card.
++     - ln-gf-mclk1,ln-gf-mclk2,ln-gf-mclk3,ln-gf-mclk4 : Optional
++       input audio clocks from host system.
++     - ln-psia1-mclk, ln-psia2-mclk : Optional input audio clocks from
++       external connector.
++     - ln-spdif-clkout : Optional input audio clock from SPDIF.
++     - ln-adat-clkout : Optional input audio clock from ADAT.
++     - ln-pmic-32k : On board fixed regulator.
++     - ln-clk-12m : On board fixed regulator.
++     - ln-clk-11m : On board fixed regulator.
++     - ln-clk-24m : On board fixed regulator.
++     - ln-clk-22m : On board fixed regulator.
++     - ln-usb-clk-24m : On board fixed regulator.
++     - ln-usb-clk-12m : On board fixed regulator.
++
++  - assigned-clocks : A list of Lochnagar clocks to be reparented, see
++    [2] for available clocks.
++  - assigned-clock-parents : Parents to be assigned to the clocks
++    listed in "assigned-clocks".
 +
 +Optional sub-nodes:
 +
-+  - VDDCORE : Initialisation data for the VDDCORE regulator, which
-+    supplies the CODECs digital core if it has no build regulator for that
-+    purpose.
-+      Required Properties:
-+      - compatible : One of the following strings:
-+                     "cirrus,lochnagar2-vddcore"
-+      - SYSVDD-supply: Primary power supply for the Lochnagar.
-+
-+  - MICVDD : Initialisation data for the MICVDD regulator, which
-+    supplies the CODECs MICVDD.
-+      Required Properties:
-+      - compatible : One of the following strings:
-+                     "cirrus,lochnagar2-micvdd"
-+      - SYSVDD-supply: Primary power supply for the Lochnagar.
-+
-+  - MIC1VDD, MIC2VDD : Initialisation data for the MICxVDD supplies.
-+      Required Properties:
-+      - compatible : One of the following strings:
-+                     "cirrus,lochnagar2-mic1vdd", "cirrus,lochnagar2-mic2vdd"
-+      Optional Properties:
-+      - cirrus,micbias-input : A property selecting which of the CODEC
-+        minicard micbias outputs should be used, valid values are 1 - 4.
-+      - MICBIAS1-supply, MICBIAS2-supply: Regulator supplies for the
-+        MICxVDD outputs, supplying the digital microphones, normally
-+        supplied from the attached CODEC.
-+
-+  - VDD1V8 : Recommended fixed regulator for the VDD1V8 regulator, which supplies the
-+    CODECs analog and 1.8V digital supplies.
-+      Required Properties:
-+      - compatible : Should be set to "regulator-fixed"
-+      - regulator-min-microvolt : Should be set to 1.8V
-+      - regulator-max-microvolt : Should be set to 1.8V
-+      - regulator-boot-on
-+      - regulator-always-on
-+      - vin-supply : Should be set to same supply as SYSVDD
++  - fixed-clock nodes may be registered for the following on board clocks:
++     - ln-pmic-32k : 32768 kHz
++     - ln-clk-12m : 12288000 kHz
++     - ln-clk-11m : 11298600 kHz
++     - ln-clk-24m : 24576000 kHz
++     - ln-clk-22m : 22579200 kHz
++     - ln-usb-clk-24m : 24576000 kHz
++     - ln-usb-clk-12m : 12288000 kHz
 +
 +Example:
 +
-+lochnagar {
-+	lochnagar-micvdd: MICVDD {
-+		compatible = "cirrus,lochnagar2-micvdd";
++lochnagar-clk {
++	compatible = "cirrus,lochnagar2-clk";
 +
-+		SYSVDD-supply = <&wallvdd>;
++	#clock-cells = <1>;
 +
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+	};
++	clocks = <&clk-audio>, <&clk_pmic>;
++	clock-names = "ln-gf-mclk2", "ln-pmic-32k";
 +
-+	lochnagar-vdd1v8: VDD1V8 {
-+		compatible = "regulator-fixed";
++	assigned-clocks = <&lochnagar-clk LOCHNAGAR_CDC_MCLK1>,
++			  <&lochnagar-clk LOCHNAGAR_CDC_MCLK2>;
++	assigned-clock-parents = <&clk-audio>,
++				 <&clk-pmic>;
 +
-+		regulator-name = "VDD1V8";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+
-+		vin-supply = <&wallvdd>;
++	clk-pmic: clk-pmic {
++		compatible = "fixed-clock";
++		clock-cells = <0>;
++		clock-frequency = <32768>;
 +	};
 +};
-+
 -- 
 2.11.0
 
