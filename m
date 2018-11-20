@@ -2,157 +2,132 @@ Return-Path: <SRS0=sCFe=N7=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E64EC46463
-	for <linux-clk@archiver.kernel.org>; Tue, 20 Nov 2018 20:15:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E4A3C32789
+	for <linux-clk@archiver.kernel.org>; Tue, 20 Nov 2018 23:37:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05D03214E0
-	for <linux-clk@archiver.kernel.org>; Tue, 20 Nov 2018 20:14:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VeOyRuad"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05D03214E0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 0B7632147A
+	for <linux-clk@archiver.kernel.org>; Tue, 20 Nov 2018 23:37:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B7632147A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727638AbeKUGpo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 21 Nov 2018 01:45:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44080 "EHLO mail.kernel.org"
+        id S1726119AbeKUKIm convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 21 Nov 2018 05:08:42 -0500
+Received: from hermes.aosc.io ([199.195.250.187]:44848 "EHLO hermes.aosc.io"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725937AbeKUGpo (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 21 Nov 2018 01:45:44 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 177FA2147A;
-        Tue, 20 Nov 2018 20:14:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542744889;
-        bh=zbgtTpi+xG1TUoRttnEsA5vIqHvmqyrdAitiUwYHSHo=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=VeOyRuadKy6SxiYjwGOO+y+Srxf7sRR6TxSHCjQO6w5x5GqNuYbngNAGSMw94L71G
-         S7OylahO496Gov8DxqIUHQgweh6kwEDWZps6nkJk3u5oRyVlQmPDrSM8Gt5DFtM+6J
-         VDTuuvaFjijKfVWmBFb4QGP4IoGZRtT3G1NSQwJc=
-Content-Type: text/plain; charset="utf-8"
+        id S1725946AbeKUKIm (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 21 Nov 2018 05:08:42 -0500
+Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
+        by hermes.aosc.io (Postfix) with ESMTPSA id 0B298A3063;
+        Tue, 20 Nov 2018 23:36:51 +0000 (UTC)
+Date:   Wed, 21 Nov 2018 07:36:38 +0800
+In-Reply-To: <20181120084245.bnjdaf647e6tdlku@flea>
+References: <cover.1542546735.git.mesihkilinc@gmail.com> <8f07fac854eaaea63e199fe0e80cf20004dffbdf.1542546735.git.mesihkilinc@gmail.com> <20181120084245.bnjdaf647e6tdlku@flea>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     "A.s. Dong" <aisheng.dong@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1541862894-8209-6-git-send-email-aisheng.dong@nxp.com>
-Cc:     "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "A.s. Dong" <aisheng.dong@nxp.com>
-References: <1541862894-8209-1-git-send-email-aisheng.dong@nxp.com>
- <1541862894-8209-6-git-send-email-aisheng.dong@nxp.com>
-Message-ID: <154274488829.88331.14073987677874819400@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH V6 5/6] clk: imx: add lpcg clock support
-Date:   Tue, 20 Nov 2018 12:14:48 -0800
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Subject: Re: [RFC PATCH v2 03/14] ARM: sunxi: add Allwinner ARMv5 SoCs
+To:     linux-arm-kernel@lists.infradead.org,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Mesih Kilinc <mesihkilinc@gmail.com>
+CC:     devicetree@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>,
+        Julian Calaby <julian.calaby@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-kernel@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
+        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        linux-clk@vger.kernel.org
+From:   Icenowy Zheng <icenowy@aosc.io>
+Message-ID: <464C921F-1AA7-4475-9085-25D03D21AFE2@aosc.io>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting A.s. Dong (2018-11-10 07:20:04)
-> diff --git a/drivers/clk/imx/clk-lpcg-scu.c b/drivers/clk/imx/clk-lpcg-sc=
-u.c
-> new file mode 100644
-> index 0000000..54a1cb3
-> --- /dev/null
-> +++ b/drivers/clk/imx/clk-lpcg-scu.c
-> @@ -0,0 +1,108 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * Copyright 2018 NXP
-> + *     Dong Aisheng <aisheng.dong@nxp.com>
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/err.h>
-> +#include <linux/io.h>
-> +#include <linux/slab.h>
-> +#include <linux/spinlock.h>
-> +
-> +static DEFINE_SPINLOCK(imx_lpcg_scu_lock);
-> +
-> +#define CLK_GATE_SCU_LPCG_MASK         0x3
-> +#define CLK_GATE_SCU_LPCG_HW_SEL       BIT(0)
-> +#define CLK_GATE_SCU_LPCG_SW_SEL       BIT(1)
-> +
-> +struct clk_lpcg_scu {
-> +       struct clk_hw hw;
-> +       void __iomem *reg;
-> +       u8 bit_idx;
-> +       bool hw_gate;
 
-What does hw_gate mean? Can you add kernel-doc to this structure?
 
-> +};
-> +
-> +#define to_clk_lpcg_scu(_hw) container_of(_hw, struct clk_lpcg_scu, hw)
-> +
-> +/* Write to the LPCG bits. */
+于 2018年11月20日 GMT+08:00 下午4:42:45, Maxime Ripard <maxime.ripard@bootlin.com> 写到:
+>On Sun, Nov 18, 2018 at 05:17:02PM +0300, Mesih Kilinc wrote:
+>> Add option for Allwinner ARMv5 SoCs and SoC F1C100s (which has a die
+>> used for many new F-series products, including F1C100A, F1C100s,
+>F1C200s,
+>> F1C500, F1C600).
+>> 
+>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+>> Signed-off-by: Mesih Kilinc <mesihkilinc@gmail.com>
+>> ---
+>>  arch/arm/mach-sunxi/Kconfig    | 14 +++++++++++++-
+>>  arch/arm/mach-sunxi/Makefile   |  1 +
+>>  arch/arm/mach-sunxi/sunxi_v5.c | 22 ++++++++++++++++++++++
+>>  3 files changed, 36 insertions(+), 1 deletion(-)
+>>  create mode 100644 arch/arm/mach-sunxi/sunxi_v5.c
+>> 
+>> diff --git a/arch/arm/mach-sunxi/Kconfig
+>b/arch/arm/mach-sunxi/Kconfig
+>> index 5db17ec..066644c 100644
+>> --- a/arch/arm/mach-sunxi/Kconfig
+>> +++ b/arch/arm/mach-sunxi/Kconfig
+>> @@ -1,6 +1,6 @@
+>>  menuconfig ARCH_SUNXI
+>>  	bool "Allwinner SoCs"
+>> -	depends on ARCH_MULTI_V7
+>> +	depends on ARCH_MULTI_V5 || ARCH_MULTI_V7
+>>  	select ARCH_HAS_RESET_CONTROLLER
+>>  	select CLKSRC_MMIO
+>>  	select GENERIC_IRQ_CHIP
+>> @@ -64,4 +64,16 @@ config ARCH_SUNXI_MC_SMP
+>>  
+>>  endif
+>>  
+>> +if ARCH_MULTI_V5
+>> +
+>> +config ARCH_SUNXI_V5
+>> +	bool
+>> +	select SUN4I_TIMER
+>
+>If SUN4I_TIMER is needed both by the armv5 and armv7 cores, why did we
+>need to move it out of ARCH_SUNXI?
+>
+>> +config MACH_SUNIV
+>> +	bool "Allwinner new F-series (suniv) SoCs support"
+>
+>I would drop the "new" here.
 
-Please remove this useless comment.
+Sorry, but old F-series SoCs are not suniv. They are sunii or sun3i.
 
-> +static int clk_lpcg_scu_enable(struct clk_hw *hw)
-> +{
-> +       struct clk_lpcg_scu *clk =3D to_clk_lpcg_scu(hw);
-> +       unsigned long flags =3D 0;
-
-Don't initialize flags here.
-
-> +       u32 reg;
-> +
-> +       spin_lock_irqsave(&imx_lpcg_scu_lock, flags);
-> +
-> +       if (clk->reg) {
-> +               reg =3D readl(clk->reg);
-> +               reg &=3D ~(CLK_GATE_SCU_LPCG_MASK << clk->bit_idx);
-> +               if (clk->hw_gate)
-> +                       reg |=3D (CLK_GATE_SCU_LPCG_HW_SEL |
-> +                               CLK_GATE_SCU_LPCG_SW_SEL) << clk->bit_idx;
-> +               else
-> +                       reg |=3D (CLK_GATE_SCU_LPCG_SW_SEL << clk->bit_id=
-x);
-> +               writel(reg, clk->reg);
-> +       }
-> +
-> +       spin_unlock_irqrestore(&imx_lpcg_scu_lock, flags);
-> +
-> +       return 0;
-> +}
-> +
-> +static void clk_lpcg_scu_disable(struct clk_hw *hw)
-> +{
-> +       struct clk_lpcg_scu *clk =3D to_clk_lpcg_scu(hw);
-> +       unsigned long flags =3D 0;
-
-Same comment.
-
-> +       u32 reg;
-> +
-> +       spin_lock_irqsave(&imx_lpcg_scu_lock, flags);
-> +
-> +       if (clk->reg) {
-
-Why do we even call this function if there isn't a clk->reg value?
-Can't we just not assign the clk_ops in that case?
-
-> +               reg =3D readl(clk->reg);
-> +               reg &=3D ~(CLK_GATE_SCU_LPCG_MASK << clk->bit_idx);
-> +               writel(reg, clk->reg);
-> +       }
-> +
-> +       spin_unlock_irqrestore(&imx_lpcg_scu_lock, flags);
-> +}
-> +
+>
+>> +++ b/arch/arm/mach-sunxi/sunxi_v5.c
+>> @@ -0,0 +1,22 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Device Tree support for Allwinner F series SoCs
+>> + *
+>> + * Copyright (C) 2017 Icenowy Zheng <icenowy@aosc.io>
+>> + * Copyright (C) 2018 Mesih Kilinc <mesihkilinc@gmail.com>
+>> + *
+>> + * This file is licensed under the terms of the GNU General Public
+>> + * License version 2.  This program is licensed "as is" without any
+>> + * warranty of any kind, whether express or implied.
+>> + */
+>> +
+>> +#include <asm/mach/arch.h>
+>> +
+>> +static const char * const suniv_board_dt_compat[] = {
+>> +	"allwinner,suniv-f1c100s",
+>> +	NULL,
+>> +};
+>> +
+>> +DT_MACHINE_START(SUNXI_DT, "Allwinner suniv Family")
+>> +	.dt_compat	= suniv_board_dt_compat,
+>> +MACHINE_END
+>
+>Do we really need a separate file for that?
+>
+>Maxime
