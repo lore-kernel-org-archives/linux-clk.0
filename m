@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A14A3C43610
-	for <linux-clk@archiver.kernel.org>; Tue, 20 Nov 2018 08:45:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 822DDC04EBB
+	for <linux-clk@archiver.kernel.org>; Tue, 20 Nov 2018 08:49:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FA7720C01
-	for <linux-clk@archiver.kernel.org>; Tue, 20 Nov 2018 08:44:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FA7720C01
+	by mail.kernel.org (Postfix) with ESMTP id 6FBB5208E4
+	for <linux-clk@archiver.kernel.org>; Tue, 20 Nov 2018 08:48:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FBB5208E4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725995AbeKTTMK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 20 Nov 2018 14:12:10 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:50057 "EHLO mail.bootlin.com"
+        id S1725851AbeKTTQ0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 20 Nov 2018 14:16:26 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:50164 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725843AbeKTTMK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 20 Nov 2018 14:12:10 -0500
+        id S1725898AbeKTTQ0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 20 Nov 2018 14:16:26 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 6F23D2074F; Tue, 20 Nov 2018 09:44:10 +0100 (CET)
+        id 7212C20D29; Tue, 20 Nov 2018 09:48:25 +0100 (CET)
 Received: from localhost (aaubervilliers-681-1-13-146.w90-88.abo.wanadoo.fr [90.88.134.146])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 3CD7120745;
-        Tue, 20 Nov 2018 09:44:00 +0100 (CET)
-Date:   Tue, 20 Nov 2018 09:44:00 +0100
+        by mail.bootlin.com (Postfix) with ESMTPSA id 38F0020D29;
+        Tue, 20 Nov 2018 09:48:15 +0100 (CET)
+Date:   Tue, 20 Nov 2018 09:48:15 +0100
 From:   Maxime Ripard <maxime.ripard@bootlin.com>
 To:     Mesih Kilinc <mesihkilinc@gmail.com>
 Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
@@ -40,16 +40,16 @@ Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Icenowy Zheng <icenowy@aosc.io>,
         Rob Herring <robh+dt@kernel.org>,
         Julian Calaby <julian.calaby@gmail.com>
-Subject: Re: [RFC PATCH v2 04/14] dt-bindings: interrupt-controller: Add
- suniv interrupt-controller
-Message-ID: <20181120084400.sn64fdxbpztaw26h@flea>
+Subject: Re: [RFC PATCH v2 05/14] irqchip/sun4i: add support for suniv
+ interrupt controller
+Message-ID: <20181120084815.rvh63cvvhxj6sbs2@flea>
 References: <cover.1542546735.git.mesihkilinc@gmail.com>
- <e51824832fac0b981cf886f25efc25056d573da4.1542546735.git.mesihkilinc@gmail.com>
+ <d693414b1693a9018956bcc589a9048e88fbc8f6.1542546735.git.mesihkilinc@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="agvmzaobxgm2oakk"
+        protocol="application/pgp-signature"; boundary="7nbopu3lgekzonta"
 Content-Disposition: inline
-In-Reply-To: <e51824832fac0b981cf886f25efc25056d573da4.1542546735.git.mesihkilinc@gmail.com>
+In-Reply-To: <d693414b1693a9018956bcc589a9048e88fbc8f6.1542546735.git.mesihkilinc@gmail.com>
 User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
@@ -57,42 +57,50 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---agvmzaobxgm2oakk
+--7nbopu3lgekzonta
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi,
 
-On Sun, Nov 18, 2018 at 05:17:03PM +0300, Mesih Kilinc wrote:
-> Add compatible string for Alwinner suniv F1C100s SoC interrupt
-> controller which is stripped version of sun4i
+On Sun, Nov 18, 2018 at 05:17:04PM +0300, Mesih Kilinc wrote:
+> The new F-series SoCs (suniv) from Allwinner use an stripped version of
+> the interrupt controller in A10/A13.
 >=20
+> Add support for it in irq-sun4i driver.
+>=20
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 > Signed-off-by: Mesih Kilinc <mesihkilinc@gmail.com>
 > ---
->  .../devicetree/bindings/interrupt-controller/allwinner,sun4i-ic.txt  | 5=
- ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
+>  drivers/irqchip/irq-sun4i.c | 47 +++++++++++++++++++++++++++++++++++++++=
++-----
+>  1 file changed, 42 insertions(+), 5 deletions(-)
 >=20
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/allwi=
-nner,sun4i-ic.txt b/Documentation/devicetree/bindings/interrupt-controller/=
-allwinner,sun4i-ic.txt
-> index b290ca1..e04ddb4 100644
-> --- a/Documentation/devicetree/bindings/interrupt-controller/allwinner,su=
-n4i-ic.txt
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/allwinner,su=
-n4i-ic.txt
-> @@ -2,7 +2,10 @@ Allwinner Sunxi Interrupt Controller
+> diff --git a/drivers/irqchip/irq-sun4i.c b/drivers/irqchip/irq-sun4i.c
+> index e3e5b91..2abf662 100644
+> --- a/drivers/irqchip/irq-sun4i.c
+> +++ b/drivers/irqchip/irq-sun4i.c
+> @@ -23,13 +23,26 @@
 > =20
->  Required properties:
+>  #include <asm/exception.h>
 > =20
-> -- compatible : should be "allwinner,sun4i-a10-ic"
-> +- compatible: should be "allwinner,<soc-familiy>-<soc-name>-ic" to ident=
-ify
+> +enum sun4i_irq_type {
+> +	sun4i_ic,
+> +	suniv_ic
+> +};
+> +
+> +static enum sun4i_irq_type sun4i_irq_type;
 
-There's no need to define the pattern, just list the compatibles
-supported. Otherwise, you give the idea that all the combinations are
-supported, and they aren't.
+You don't really need that type. It's completely redundant with the
+compatible.
+
+> +static int sun4i_irq_enable_reg_offset;
+> +static int sun4i_irq_mask_reg_offset;
+
+Ideally, this should be a structure so that we can easily extend it
+without adding more and more global variables. And the type shouldn't
+be signed.
 
 Maxime
 
@@ -101,15 +109,15 @@ Maxime Ripard, Bootlin
 Embedded Linux and Kernel engineering
 https://bootlin.com
 
---agvmzaobxgm2oakk
+--7nbopu3lgekzonta
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW/PJUAAKCRDj7w1vZxhR
-xYy1AP9t6baRTZppEHnHo3CNEkUWw0bn0lRDUU1SoXn1EA5YRgEA391BzYi+M0ZM
-7i066sImaE+EFjYnQtd5+hySOGA64g8=
-=/Ogu
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW/PKTwAKCRDj7w1vZxhR
+xX31AP9cLbpcCqphd/eOd4ob256OaUp7pz46X9v96mDinDTYdgD+N8eX9d44CrCn
+pEFKZp41gVJDnK0vUBTp/MAc0VWTrAs=
+=PEAx
 -----END PGP SIGNATURE-----
 
---agvmzaobxgm2oakk--
+--7nbopu3lgekzonta--
