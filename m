@@ -2,31 +2,31 @@ Return-Path: <SRS0=sCFe=N7=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 822DDC04EBB
-	for <linux-clk@archiver.kernel.org>; Tue, 20 Nov 2018 08:49:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4F02C43610
+	for <linux-clk@archiver.kernel.org>; Tue, 20 Nov 2018 08:50:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FBB5208E4
-	for <linux-clk@archiver.kernel.org>; Tue, 20 Nov 2018 08:48:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FBB5208E4
+	by mail.kernel.org (Postfix) with ESMTP id 209C12075B
+	for <linux-clk@archiver.kernel.org>; Tue, 20 Nov 2018 08:49:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 209C12075B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725851AbeKTTQ0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 20 Nov 2018 14:16:26 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:50164 "EHLO mail.bootlin.com"
+        id S1725898AbeKTTRO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 20 Nov 2018 14:17:14 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:50212 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725898AbeKTTQ0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 20 Nov 2018 14:16:26 -0500
+        id S1725866AbeKTTRO (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 20 Nov 2018 14:17:14 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 7212C20D29; Tue, 20 Nov 2018 09:48:25 +0100 (CET)
+        id 88F73207B0; Tue, 20 Nov 2018 09:49:13 +0100 (CET)
 Received: from localhost (aaubervilliers-681-1-13-146.w90-88.abo.wanadoo.fr [90.88.134.146])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 38F0020D29;
-        Tue, 20 Nov 2018 09:48:15 +0100 (CET)
-Date:   Tue, 20 Nov 2018 09:48:15 +0100
+        by mail.bootlin.com (Postfix) with ESMTPSA id 5A861206D8;
+        Tue, 20 Nov 2018 09:49:03 +0100 (CET)
+Date:   Tue, 20 Nov 2018 09:49:03 +0100
 From:   Maxime Ripard <maxime.ripard@bootlin.com>
 To:     Mesih Kilinc <mesihkilinc@gmail.com>
 Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
@@ -40,16 +40,16 @@ Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Icenowy Zheng <icenowy@aosc.io>,
         Rob Herring <robh+dt@kernel.org>,
         Julian Calaby <julian.calaby@gmail.com>
-Subject: Re: [RFC PATCH v2 05/14] irqchip/sun4i: add support for suniv
- interrupt controller
-Message-ID: <20181120084815.rvh63cvvhxj6sbs2@flea>
+Subject: Re: [RFC PATCH v2 08/14] clocksource/drivers/sun4i: register as
+ sched_clock on suniv
+Message-ID: <20181120084903.v6v2m2sdiwdo34bd@flea>
 References: <cover.1542546735.git.mesihkilinc@gmail.com>
- <d693414b1693a9018956bcc589a9048e88fbc8f6.1542546735.git.mesihkilinc@gmail.com>
+ <6f4773bdef8979bff71e958c9ca2c832c68ada0d.1542546735.git.mesihkilinc@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="7nbopu3lgekzonta"
+        protocol="application/pgp-signature"; boundary="6ccq6ihtnj6zd225"
 Content-Disposition: inline
-In-Reply-To: <d693414b1693a9018956bcc589a9048e88fbc8f6.1542546735.git.mesihkilinc@gmail.com>
+In-Reply-To: <6f4773bdef8979bff71e958c9ca2c832c68ada0d.1542546735.git.mesihkilinc@gmail.com>
 User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
@@ -57,50 +57,21 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---7nbopu3lgekzonta
+--6ccq6ihtnj6zd225
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
-
-On Sun, Nov 18, 2018 at 05:17:04PM +0300, Mesih Kilinc wrote:
-> The new F-series SoCs (suniv) from Allwinner use an stripped version of
-> the interrupt controller in A10/A13.
+On Sun, Nov 18, 2018 at 05:17:07PM +0300, Mesih Kilinc wrote:
+> The suniv chip (newer F-series Allwinner SoCs) is based on ARM926EJ-S
+> CPU, thus it has no architecture timer.
 >=20
-> Add support for it in irq-sun4i driver.
+> Register sun4i_timer as sched_clock on it.
 >=20
 > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 > Signed-off-by: Mesih Kilinc <mesihkilinc@gmail.com>
-> ---
->  drivers/irqchip/irq-sun4i.c | 47 +++++++++++++++++++++++++++++++++++++++=
-+-----
->  1 file changed, 42 insertions(+), 5 deletions(-)
->=20
-> diff --git a/drivers/irqchip/irq-sun4i.c b/drivers/irqchip/irq-sun4i.c
-> index e3e5b91..2abf662 100644
-> --- a/drivers/irqchip/irq-sun4i.c
-> +++ b/drivers/irqchip/irq-sun4i.c
-> @@ -23,13 +23,26 @@
-> =20
->  #include <asm/exception.h>
-> =20
-> +enum sun4i_irq_type {
-> +	sun4i_ic,
-> +	suniv_ic
-> +};
-> +
-> +static enum sun4i_irq_type sun4i_irq_type;
 
-You don't really need that type. It's completely redundant with the
-compatible.
-
-> +static int sun4i_irq_enable_reg_offset;
-> +static int sun4i_irq_mask_reg_offset;
-
-Ideally, this should be a structure so that we can easily extend it
-without adding more and more global variables. And the type shouldn't
-be signed.
+This one should be squashed in the previous patch.
 
 Maxime
 
@@ -109,15 +80,15 @@ Maxime Ripard, Bootlin
 Embedded Linux and Kernel engineering
 https://bootlin.com
 
---7nbopu3lgekzonta
+--6ccq6ihtnj6zd225
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW/PKTwAKCRDj7w1vZxhR
-xX31AP9cLbpcCqphd/eOd4ob256OaUp7pz46X9v96mDinDTYdgD+N8eX9d44CrCn
-pEFKZp41gVJDnK0vUBTp/MAc0VWTrAs=
-=PEAx
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW/PKfwAKCRDj7w1vZxhR
+xZs0AQC4o/OwTC3dp3No5ATagHb5YFUOuLUiwQ1qsxZ3wxmTiAD/fXQc5gaCxWxs
+gqepN/pnBIA/oNPIjuIgsprcrCM+Bw0=
+=B8bk
 -----END PGP SIGNATURE-----
 
---7nbopu3lgekzonta--
+--6ccq6ihtnj6zd225--
