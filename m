@@ -2,111 +2,565 @@ Return-Path: <SRS0=sCFe=N7=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1100C43441
-	for <linux-clk@archiver.kernel.org>; Tue, 20 Nov 2018 04:30:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CEB5C43441
+	for <linux-clk@archiver.kernel.org>; Tue, 20 Nov 2018 06:35:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7AE3B20870
-	for <linux-clk@archiver.kernel.org>; Tue, 20 Nov 2018 04:30:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="OvAV9bWS";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="a3OfIgnR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AE3B20870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 1C54D20685
+	for <linux-clk@archiver.kernel.org>; Tue, 20 Nov 2018 06:35:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C54D20685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730328AbeKTO5a (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 20 Nov 2018 09:57:30 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:33430 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727880AbeKTO5a (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Nov 2018 09:57:30 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 56CBA60B73; Tue, 20 Nov 2018 04:30:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1542688223;
-        bh=vNF32HzawJqjzC2ybK6qbF28xr1LbG9yi2n21e7305s=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=OvAV9bWS6sVt6DiDw11O6WyaRkj3NFTElYz1B1ZSO3KZKuT2cE9GEQ27mAhzuxzNg
-         8uvY38fdcLi+fm3BXfnDY8Rc1W3NvZp+h66BR5pQ6SRgQfjMBmT10/EpK0RE0etikX
-         6rqEBulI5CZR83bL2X1FY0/Ke8c33wxnWWOXvhgc=
-Received: from [10.79.128.175] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: rnayak@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id A86ED60588;
-        Tue, 20 Nov 2018 04:30:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1542688222;
-        bh=vNF32HzawJqjzC2ybK6qbF28xr1LbG9yi2n21e7305s=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=a3OfIgnRTgfDen1AUlW6H6mu2nV8vlPYmeAh5FVk1iC6+7vktbe/5wf+lRUHBF1GQ
-         Jelvn/ES/BLBiORtUIy1Los8bpSDuJU1K78pAAkr17u9JsQG4DyWQadxTpl+8jC5KQ
-         CcS//Z2Asno7XkeBSO4bMOGvNZPWVp8TIch4IqjM=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A86ED60588
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
-Subject: Re: [PATCH 2/4] clk: qcom: gdsc: Don't override existing gdsc pd
- functions
-To:     Jordan Crouse <jcrouse@codeaurora.org>, sboyd@kernel.org,
-        mturquette@baylibre.com
-Cc:     andy.gross@linaro.org, david.brown@linaro.org,
-        okukatla@codeaurora.org, tdas@codeaurora.org,
-        linux-arm-msm@vger.kernel.orgi, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, robdclark@gmail.com,
-        freedreno@lists.freedesktop.org
-References: <20181119234706.5821-1-jcrouse@codeaurora.org>
- <20181119234706.5821-3-jcrouse@codeaurora.org>
-From:   Rajendra Nayak <rnayak@codeaurora.org>
-Message-ID: <2a3d0b09-7335-3120-47b5-d3b06c294770@codeaurora.org>
-Date:   Tue, 20 Nov 2018 10:00:17 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        id S1731012AbeKTRCh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 20 Nov 2018 12:02:37 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:64291 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726979AbeKTRCh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Nov 2018 12:02:37 -0500
+X-UUID: b45b2d7710a94ef6b9542dbbb10b03ba-20181120
+X-UUID: b45b2d7710a94ef6b9542dbbb10b03ba-20181120
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
+        (envelope-from <weiyi.lu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1220410853; Tue, 20 Nov 2018 14:34:59 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 20 Nov 2018 14:34:57 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 20 Nov 2018 14:34:57 +0800
+Message-ID: <1542695697.5132.24.camel@mtksdaap41>
+Subject: Re: [PATCH v1 01/11] clk: mediatek: add new clkmux register API
+From:   Weiyi Lu <weiyi.lu@mediatek.com>
+To:     Nicolas Boichat <drinkcat@chromium.org>
+CC:     Rob Herring <robh@kernel.org>, <srv_heupstream@mediatek.com>,
+        <jamesjj.liao@mediatek.com>, <sboyd@codeaurora.org>,
+        lkml <linux-kernel@vger.kernel.org>, <fan.chen@mediatek.com>,
+        <linux-mediatek@lists.infradead.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <owen.chen@mediatek.com>, <linux-clk@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>
+Date:   Tue, 20 Nov 2018 14:34:57 +0800
+In-Reply-To: <CANMq1KDEg-9WzfaRB-n4Ab0PxjqfZL_aeTAXD336N6VzX8oFhQ@mail.gmail.com>
+References: <20181106064206.17535-1-weiyi.lu@mediatek.com>
+         <20181106064206.17535-3-weiyi.lu@mediatek.com>
+         <CANMq1KDEg-9WzfaRB-n4Ab0PxjqfZL_aeTAXD336N6VzX8oFhQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-In-Reply-To: <20181119234706.5821-3-jcrouse@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-
-On 11/20/2018 5:17 AM, Jordan Crouse wrote:
-> In very extreme cases an individual gdsc may wish to override the
-> power domain enable or disable callback functions for their own
-> purposes. Only set the generic gdsc callback if the function pointers
-> are not already set.
+On Tue, 2018-11-13 at 08:00 -0800, Nicolas Boichat wrote:
+> On Mon, Nov 5, 2018 at 10:42 PM Weiyi Lu <weiyi.lu@mediatek.com> wrote:
+> >
+> > From: Owen Chen <owen.chen@mediatek.com>
+> >
+> > On both MT8183 & MT6765, there add "set/clr" register for
+> > each clkmux setting, and one update register to trigger value change.
+> > It is designed to prevent read-modify-write racing issue.
+> > The sw design need to add a new API to handle this hw change with
+> > a new mtk_clk_mux/mtk_mux struct in new file "clk-mux.c", "clk-mux.h".
+> >
+> > Signed-off-by: Owen Chen <owen.chen@mediatek.com>
+> > Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+> > ---
+> >  drivers/clk/mediatek/Makefile  |   2 +-
+> >  drivers/clk/mediatek/clk-mux.c | 252 +++++++++++++++++++++++++++++++++
+> >  drivers/clk/mediatek/clk-mux.h | 101 +++++++++++++
+> >  3 files changed, 354 insertions(+), 1 deletion(-)
+> >  create mode 100644 drivers/clk/mediatek/clk-mux.c
+> >  create mode 100644 drivers/clk/mediatek/clk-mux.h
+> >
+> > diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
+> > index 844b55d2770d..b97980dbb738 100644
+> > --- a/drivers/clk/mediatek/Makefile
+> > +++ b/drivers/clk/mediatek/Makefile
+> > @@ -1,5 +1,5 @@
+> >  # SPDX-License-Identifier: GPL-2.0
+> > -obj-$(CONFIG_COMMON_CLK_MEDIATEK) += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o clk-cpumux.o reset.o
+> > +obj-$(CONFIG_COMMON_CLK_MEDIATEK) += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o clk-cpumux.o reset.o clk-mux.o
+> >  obj-$(CONFIG_COMMON_CLK_MT6797) += clk-mt6797.o
+> >  obj-$(CONFIG_COMMON_CLK_MT6797_IMGSYS) += clk-mt6797-img.o
+> >  obj-$(CONFIG_COMMON_CLK_MT6797_MMSYS) += clk-mt6797-mm.o
+> > diff --git a/drivers/clk/mediatek/clk-mux.c b/drivers/clk/mediatek/clk-mux.c
+> > new file mode 100644
+> > index 000000000000..18bc9a146be0
+> > --- /dev/null
+> > +++ b/drivers/clk/mediatek/clk-mux.c
+> > @@ -0,0 +1,252 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Copyright (c) 2018 MediaTek Inc.
+> > + * Author: Owen Chen <owen.chen@mediatek.com>
+> > + */
+> > +
+> > +#include <linux/of.h>
+> > +#include <linux/of_address.h>
+> > +#include <linux/slab.h>
+> > +#include <linux/mfd/syscon.h>
+> > +
+> > +#include "clk-mtk.h"
+> > +#include "clk-mux.h"
+> > +
+> > +static inline struct mtk_clk_mux
+> > +       *to_mtk_clk_mux(struct clk_hw *hw)
+> > +{
+> > +       return container_of(hw, struct mtk_clk_mux, hw);
+> > +}
+> > +
+> > +static int mtk_clk_mux_enable(struct clk_hw *hw)
+> > +{
+> > +       struct mtk_clk_mux *mux = to_mtk_clk_mux(hw);
+> > +       u32 mask = BIT(mux->gate_shift);
+> > +
+> > +       regmap_update_bits(mux->regmap, mux->mux_ofs, mask, 0);
+> > +
+> > +       return 0;
 > 
-> Signed-off-by: Jordan Crouse <jcrouse@codeaurora.org>
-
-Looks good to me,
-Acked-by: Rajendra Nayak <rnayak@codeaurora.org>
-
-> ---
->   drivers/clk/qcom/gdsc.c | 6 ++++--
->   1 file changed, 4 insertions(+), 2 deletions(-)
+> Might as well return regmap_update_bits(...).
 > 
-> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-> index b6adca1f3918..7b55368b9a9c 100644
-> --- a/drivers/clk/qcom/gdsc.c
-> +++ b/drivers/clk/qcom/gdsc.c
-> @@ -394,8 +394,10 @@ static int gdsc_init(struct gdsc *sc)
->   	else
->   		gdsc_clear_mem_on(sc);
->   
-> -	sc->pd.power_off = gdsc_disable;
-> -	sc->pd.power_on = gdsc_enable;
-> +	if (!sc->pd.power_off)
-> +		sc->pd.power_off = gdsc_disable;
-> +	if (!sc->pd.power_on)
-> +		sc->pd.power_on = gdsc_enable;
->   	pm_genpd_init(&sc->pd, NULL, !on);
->   
->   	return 0;
+
+OK, will fix in next version
+
+> > +}
+> > +
+> > +static void mtk_clk_mux_disable(struct clk_hw *hw)
+> > +{
+> > +       struct mtk_clk_mux *mux = to_mtk_clk_mux(hw);
+> > +       u32 mask = BIT(mux->gate_shift);
+> > +
+> > +       regmap_update_bits(mux->regmap, mux->mux_ofs, mask, mask);
+> > +}
+> > +
+> > +static int mtk_clk_mux_enable_setclr(struct clk_hw *hw)
+> > +{
+> > +       struct mtk_clk_mux *mux = to_mtk_clk_mux(hw);
+> > +       u32 val;
+> > +
+> > +       val = BIT(mux->gate_shift);
+> > +       regmap_write(mux->regmap, mux->mux_clr_ofs, val);
+> > +
+> > +       return 0;
 > 
+> ditto: return regmap_write(...) .
+> 
+
+will fix in next version
+
+> > +}
+> > +
+> > +static void mtk_clk_mux_disable_setclr(struct clk_hw *hw)
+> > +{
+> > +       struct mtk_clk_mux *mux = to_mtk_clk_mux(hw);
+> > +       u32 val;
+> > +
+> > +       val = BIT(mux->gate_shift);
+> > +       regmap_write(mux->regmap, mux->mux_set_ofs, val);
+> > +}
+> > +
+> > +static int mtk_clk_mux_is_enabled(struct clk_hw *hw)
+> > +{
+> > +       struct mtk_clk_mux *mux = to_mtk_clk_mux(hw);
+> > +       u32 val = 0;
+> 
+> No need to init to 0.
+> 
+
+will fix in next version
+
+> > +
+> > +       regmap_read(mux->regmap, mux->mux_ofs, &val);
+> > +
+> > +       return ((val & BIT(mux->gate_shift)) == 0) ? 1 : 0;
+> 
+> Just (val & BIT(mux->gate_shift)) != 0. Or more simply val &
+> BIT(mux->gate_shift).
+> 
+
+will fix in next version
+
+> > +}
+> > +
+> > +static u8 mtk_clk_mux_get_parent(struct clk_hw *hw)
+> > +{
+> > +       struct mtk_clk_mux *mux = to_mtk_clk_mux(hw);
+> > +       int num_parents = clk_hw_get_num_parents(hw);
+> > +       u32 mask = GENMASK(mux->mux_width - 1, 0);
+> > +       u32 val;
+> > +
+> > +       regmap_read(mux->regmap, mux->mux_ofs, &val);
+> > +       val = (val >> mux->mux_shift) & mask;
+> > +
+> > +       if (val >= num_parents || val >= U8_MAX)
+> 
+> val > U8_MAX, technically.
+> 
+> > +               return -ERANGE;
+> 
+> This looks wrong, -34 will be cast to an u8 and appear to be valid...
+> 
+
+will fix in next version
+
+> > +
+> > +       return val;
+> > +}
+> > +
+> > +static int mtk_clk_mux_set_parent_lock(struct clk_hw *hw, u8 index)
+> > +{
+> > +       struct mtk_clk_mux *mux = to_mtk_clk_mux(hw);
+> > +       u32 mask = GENMASK(mux->mux_width - 1, 0);
+> > +       u32 val;
+> > +       unsigned long flags = 0;
+> 
+> No need to init to 0.
+> 
+
+will fix in next version.
+
+> > +
+> > +       if (mux->lock)
+> > +               spin_lock_irqsave(mux->lock, flags);
+> > +       else
+> > +               __acquire(mux->lock);
+> > +
+> > +       regmap_read(mux->regmap, mux->mux_ofs, &val);
+> > +       val = (val & mask) >> mux->mux_shift;
+> > +
+> > +       if (val != index) {
+> > +               val = index << mux->mux_shift;
+> > +               regmap_update_bits(mux->regmap, mux->mux_ofs, mask, val);
+> > +       }
+> 
+> What's the point of doing read/compare/update? Are there side effects
+> if you just write the value unconditionally?
+> 
+
+Actually writing the value directly has no side effects. We just want to
+reduce unnecessary operations if the target parent of mux is already
+selected.
+
+> > +
+> > +       if (mux->lock)
+> > +               spin_unlock_irqrestore(mux->lock, flags);
+> > +       else
+> > +               __release(mux->lock);
+> > +
+> > +       return 0;
+> > +}
+> > +
+> > +static int mtk_clk_mux_set_parent_setclr_lock(struct clk_hw *hw, u8 index)
+> > +{
+> > +       struct mtk_clk_mux *mux = to_mtk_clk_mux(hw);
+> > +       u32 mask = GENMASK(mux->mux_width - 1, 0);
+> > +       u32 val, orig;
+> > +       unsigned long flags = 0;
+> > +
+> > +       if (mux->lock)
+> > +               spin_lock_irqsave(mux->lock, flags);
+> > +       else
+> > +               __acquire(mux->lock);
+> > +
+> > +       regmap_read(mux->regmap, mux->mux_ofs, &val);
+> > +       orig = val;
+> 
+> Just read into &orig above.
+> 
+
+will fix in next version
+
+> > +       val &= ~(mask << mux->mux_shift);
+> > +       val |= index << mux->mux_shift;
+> 
+> Maybe this is more readable?
+> val = orig &  ~(mask << mux->mux_shift) | (index << mux->mux_shift)
+> 
+
+will fix in next version
+
+> > +
+> > +       if (val != orig) {
+> > +               val = (mask << mux->mux_shift);
+> > +               regmap_write(mux->regmap, mux->mux_clr_ofs, val);
+> 
+> I'd just regmap_write(..., mask << mux->mux_shift), instead if overriding val.
+> 
+
+will fix in next version
+
+> > +               val = (index << mux->mux_shift);
+> > +               regmap_write(mux->regmap, mux->mux_set_ofs, val);
+> > +
+> > +               if (mux->upd_shift >= 0)
+> > +                       regmap_write(mux->regmap, mux->upd_ofs,
+> > +                                    BIT(mux->upd_shift));
+> > +       }
+> > +
+> > +       if (mux->lock)
+> > +               spin_unlock_irqrestore(mux->lock, flags);
+> > +       else
+> > +               __release(mux->lock);
+> > +
+> > +       return 0;
+> > +}
+> > +
+> > +const struct clk_ops mtk_mux_ops = {
+> > +       .get_parent = mtk_clk_mux_get_parent,
+> > +       .set_parent = mtk_clk_mux_set_parent_lock,
+> > +};
+> > +
+> > +const struct clk_ops mtk_mux_clr_set_upd_ops = {
+> > +       .get_parent = mtk_clk_mux_get_parent,
+> > +       .set_parent = mtk_clk_mux_set_parent_setclr_lock,
+> > +};
+> > +
+> > +const struct clk_ops mtk_mux_gate_ops = {
+> > +       .enable = mtk_clk_mux_enable,
+> > +       .disable = mtk_clk_mux_disable,
+> > +       .is_enabled = mtk_clk_mux_is_enabled,
+> > +       .get_parent = mtk_clk_mux_get_parent,
+> > +       .set_parent = mtk_clk_mux_set_parent_lock,
+> > +};
+> > +
+> > +const struct clk_ops mtk_mux_gate_clr_set_upd_ops = {
+> > +       .enable = mtk_clk_mux_enable_setclr,
+> > +       .disable = mtk_clk_mux_disable_setclr,
+> > +       .is_enabled = mtk_clk_mux_is_enabled,
+> > +       .get_parent = mtk_clk_mux_get_parent,
+> > +       .set_parent = mtk_clk_mux_set_parent_setclr_lock,
+> > +};
+> > +
+> > +struct clk *mtk_clk_register_mux(const struct mtk_mux *mux,
+> > +                                struct regmap *regmap,
+> > +                                spinlock_t *lock)
+> > +{
+> > +       struct mtk_clk_mux *mtk_mux = NULL;
+> 
+> Not necessary to init to NULL.
+> 
+
+will fix in next version
+
+> > +       struct clk_init_data init;
+> > +       struct clk *clk;
+> > +
+> > +       mtk_mux = kzalloc(sizeof(*mtk_mux), GFP_KERNEL);
+> > +       if (!mtk_mux)
+> > +               return ERR_PTR(-ENOMEM);
+> > +
+> > +       init.name = mux->name;
+> > +       init.flags = (mux->flags) | CLK_SET_RATE_PARENT;
+> 
+> mux->flags | CLK_SET_RATE_PARENT
+> 
+
+will fix in next version
+
+> > +       init.parent_names = mux->parent_names;
+> > +       init.num_parents = mux->num_parents;
+> > +       init.ops = mux->ops;
+> > +
+> > +       mtk_mux->regmap = regmap;
+> > +       mtk_mux->name = mux->name;
+> > +       mtk_mux->mux_ofs = mux->mux_ofs;
+> > +       mtk_mux->mux_set_ofs = mux->set_ofs;
+> > +       mtk_mux->mux_clr_ofs = mux->clr_ofs;
+> > +       mtk_mux->upd_ofs = mux->upd_ofs;
+> > +       mtk_mux->mux_shift = mux->mux_shift;
+> > +       mtk_mux->mux_width = mux->mux_width;
+> > +       mtk_mux->gate_shift = mux->gate_shift;
+> > +       mtk_mux->upd_shift = mux->upd_shift;
+> > +
+> > +       mtk_mux->lock = lock;
+> > +       mtk_mux->hw.init = &init;
+> > +
+> > +       clk = clk_register(NULL, &mtk_mux->hw);
+> > +       if (IS_ERR(clk)) {
+> > +               kfree(mtk_mux);
+> > +               return clk;
+> > +       }
+> > +
+> > +       return clk;
+> > +}
+> > +
+> > +int mtk_clk_register_muxes(const struct mtk_mux *muxes,
+> > +                          int num, struct device_node *node,
+> > +                          spinlock_t *lock,
+> > +                          struct clk_onecell_data *clk_data)
+> > +{
+> > +       struct regmap *regmap;
+> > +       struct clk *clk;
+> > +       int i;
+> > +
+> > +       if (!clk_data)
+> > +               return -ENOMEM;
+> 
+> Is this check necessary? After all you know who the callers are and
+> maybe you need to be careful not to call this with NULL clk_data?
+> 
+
+You're right. it's unnecessary. will fix in next version
+
+> > +
+> > +       regmap = syscon_node_to_regmap(node);
+> > +       if (IS_ERR(regmap)) {
+> > +               pr_err("Cannot find regmap for %pOF: %ld\n", node,
+> > +                      PTR_ERR(regmap));
+> > +               return PTR_ERR(regmap);
+> > +       }
+> > +
+> > +       for (i = 0; i < num; i++) {
+> > +               const struct mtk_mux *mux = &muxes[i];
+> > +
+> > +               if (IS_ERR_OR_NULL(clk_data->clks[mux->id])) {
+> 
+> A NULL check seems enough, as you'll never assign a PTR_ERR(..) value
+> into clk_data->clks[mux->id].
+> 
+> > +                       clk = mtk_clk_register_mux(mux, regmap, lock);
+> > +
+> > +                       if (IS_ERR(clk)) {
+> > +                               pr_err("Failed to register clk %s: %ld\n",
+> > +                                      mux->name, PTR_ERR(clk));
+> > +                               continue;
+> 
+> Are we ok with returning 0 even though some of these calls failed?
+> 
+
+We'd like to skip the failed one first and keep registering the
+remainings.
+
+> > +                       }
+> > +
+> > +                       clk_data->clks[mux->id] = clk;
+> > +               }
+> > +       }
+> > +
+> > +       return 0;
+> > +}
+> > diff --git a/drivers/clk/mediatek/clk-mux.h b/drivers/clk/mediatek/clk-mux.h
+> > new file mode 100644
+> > index 000000000000..ff0276bb771c
+> > --- /dev/null
+> > +++ b/drivers/clk/mediatek/clk-mux.h
+> > @@ -0,0 +1,101 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 */
+> > +/*
+> > + * Copyright (c) 2018 MediaTek Inc.
+> > + * Author: Owen Chen <owen.chen@mediatek.com>
+> > + */
+> > +
+> > +#ifndef __DRV_CLK_MUX_H
+> > +#define __DRV_CLK_MUX_H
+> > +
+> > +#include <linux/clk-provider.h>
+> > +
+> > +struct mtk_clk_mux {
+> > +       struct clk_hw hw;
+> > +       struct regmap *regmap;
+> > +
+> > +       const char *name;
+> > +
+> > +       u32 mux_set_ofs;
+> > +       u32 mux_clr_ofs;
+> > +       u32 mux_ofs;
+> > +       u32 upd_ofs;
+> > +
+> > +       u8 mux_shift;
+> > +       u8 mux_width;
+> > +       u8 gate_shift;
+> > +       u8 upd_shift;
+> > +
+> > +       spinlock_t *lock;
+> > +};
+> > +
+> > +struct mtk_mux {
+> > +       int id;
+> > +       const char *name;
+> > +       const char * const *parent_names;
+> > +       unsigned int flags;
+> > +
+> > +       u32 mux_ofs;
+> > +       u32 set_ofs;
+> > +       u32 clr_ofs;
+> > +       u32 upd_ofs;
+> > +
+> > +       u8 mux_shift;
+> > +       u8 mux_width;
+> > +       u8 gate_shift;
+> > +       u8 upd_shift;
+> > +
+> > +       const struct clk_ops *ops;
+> > +
+> > +       signed char num_parents;
+> > +};
+> > +
+> > +extern const struct clk_ops mtk_mux_ops;
+> > +extern const struct clk_ops mtk_mux_clr_set_upd_ops;
+> > +extern const struct clk_ops mtk_mux_gate_ops;
+> > +extern const struct clk_ops mtk_mux_gate_clr_set_upd_ops;
+> > +
+> > +#define GATE_CLR_SET_UPD_FLAGS(_id, _name, _parents, _mux_ofs,         \
+> > +                       _mux_set_ofs, _mux_clr_ofs, _shift, _width,     \
+> > +                       _gate, _upd_ofs, _upd, _flags, _ops) {          \
+> > +               .id = _id,                                              \
+> > +               .name = _name,                                          \
+> > +               .mux_ofs = _mux_ofs,                                    \
+> > +               .set_ofs = _mux_set_ofs,                                \
+> > +               .clr_ofs = _mux_clr_ofs,                                \
+> > +               .upd_ofs = _upd_ofs,                                    \
+> > +               .mux_shift = _shift,                                    \
+> > +               .mux_width = _width,                                    \
+> > +               .gate_shift = _gate,                                    \
+> > +               .upd_shift = _upd,                                      \
+> > +               .parent_names = _parents,                               \
+> > +               .num_parents = ARRAY_SIZE(_parents),                    \
+> > +               .flags = _flags,                                        \
+> > +               .ops = &_ops,                                           \
+> > +       }
+> > +
+> > +#define MUX_GATE_CLR_SET_UPD_FLAGS(_id, _name, _parents, _mux_ofs,     \
+> > +                       _mux_set_ofs, _mux_clr_ofs, _shift, _width,     \
+> > +                       _gate, _upd_ofs, _upd, _flags)                  \
+> > +               GATE_CLR_SET_UPD_FLAGS(_id, _name, _parents, _mux_ofs,  \
+> > +                       _mux_set_ofs, _mux_clr_ofs, _shift, _width,     \
+> > +                       _gate, _upd_ofs, _upd, _flags,                  \
+> > +                       mtk_mux_gate_clr_set_upd_ops)
+> > +
+> > +#define MUX_GATE_CLR_SET_UPD(_id, _name, _parents, _mux_ofs,           \
+> > +                       _mux_set_ofs, _mux_clr_ofs, _shift, _width,     \
+> > +                       _gate, _upd_ofs, _upd)                          \
+> > +               MUX_GATE_CLR_SET_UPD_FLAGS(_id, _name, _parents,        \
+> > +                       _mux_ofs, _mux_set_ofs, _mux_clr_ofs, _shift,   \
+> > +                       _width, _gate, _upd_ofs, _upd,                  \
+> > +                       CLK_SET_RATE_PARENT)
+> > +
+> > +struct clk *mtk_clk_register_mux(const struct mtk_mux *mux,
+> > +                                struct regmap *regmap,
+> > +                                spinlock_t *lock);
+> > +
+> > +int mtk_clk_register_muxes(const struct mtk_mux *muxes,
+> > +                          int num, struct device_node *node,
+> > +                          spinlock_t *lock,
+> > +                          struct clk_onecell_data *clk_data);
+> > +
+> > +#endif /* __DRV_CLK_MUX_H */
+> > --
+> > 2.18.0
+> >
+> 
+> _______________________________________________
+> Linux-mediatek mailing list
+> Linux-mediatek@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-mediatek
+
+
