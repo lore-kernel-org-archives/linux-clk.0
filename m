@@ -2,224 +2,111 @@ Return-Path: <SRS0=sCFe=N7=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A983EC43441
-	for <linux-clk@archiver.kernel.org>; Tue, 20 Nov 2018 04:10:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1100C43441
+	for <linux-clk@archiver.kernel.org>; Tue, 20 Nov 2018 04:30:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61A8E208E3
-	for <linux-clk@archiver.kernel.org>; Tue, 20 Nov 2018 04:10:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61A8E208E3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 7AE3B20870
+	for <linux-clk@archiver.kernel.org>; Tue, 20 Nov 2018 04:30:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="OvAV9bWS";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="a3OfIgnR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AE3B20870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730180AbeKTOhE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 20 Nov 2018 09:37:04 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:35911 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727880AbeKTOhE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Nov 2018 09:37:04 -0500
-X-UUID: 4ca6aa6169574b08a57506ee4e294684-20181120
-X-UUID: 4ca6aa6169574b08a57506ee4e294684-20181120
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 203659341; Tue, 20 Nov 2018 12:09:50 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 20 Nov 2018 12:09:49 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by mtkcas08.mediatek.inc
- (172.21.101.126) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 20 Nov
- 2018 12:09:48 +0800
-Received: from [172.21.77.4] (172.21.77.4) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 20 Nov 2018 12:09:42 +0800
-Message-ID: <1542686982.26483.1.camel@mtksdaap41>
-Subject: Re: [PATCH v5 05/12] drm: mediatek: Omit warning on probe defers
-From:   CK Hu <ck.hu@mediatek.com>
-To:     Matthias Brugger <matthias.bgg@gmail.com>
-CC:     <matthias.bgg@kernel.org>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <p.zabel@pengutronix.de>,
-        <airlied@linux.ie>, <mturquette@baylibre.com>,
-        <sboyd@codeaurora.org>, <ulrich.hecht+renesas@gmail.com>,
-        <laurent.pinchart@ideasonboard.com>, <sean.wang@mediatek.com>,
-        <sean.wang@kernel.org>, <rdunlap@infradead.org>, <wens@csie.org>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, Matthias Brugger <mbrugger@suse.com>
-Date:   Tue, 20 Nov 2018 12:09:42 +0800
-In-Reply-To: <1542686700.9073.15.camel@mtksdaap41>
-References: <20181116125449.23581-1-matthias.bgg@kernel.org>
-         <20181116125449.23581-6-matthias.bgg@kernel.org>
-         <1542605939.32082.12.camel@mtksdaap41>
-         <0a02edf9-78da-dde9-4b69-38c4719b711b@gmail.com>
-         <1542686700.9073.15.camel@mtksdaap41>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        id S1730328AbeKTO5a (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 20 Nov 2018 09:57:30 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:33430 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727880AbeKTO5a (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Nov 2018 09:57:30 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 56CBA60B73; Tue, 20 Nov 2018 04:30:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1542688223;
+        bh=vNF32HzawJqjzC2ybK6qbF28xr1LbG9yi2n21e7305s=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=OvAV9bWS6sVt6DiDw11O6WyaRkj3NFTElYz1B1ZSO3KZKuT2cE9GEQ27mAhzuxzNg
+         8uvY38fdcLi+fm3BXfnDY8Rc1W3NvZp+h66BR5pQ6SRgQfjMBmT10/EpK0RE0etikX
+         6rqEBulI5CZR83bL2X1FY0/Ke8c33wxnWWOXvhgc=
+Received: from [10.79.128.175] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: rnayak@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id A86ED60588;
+        Tue, 20 Nov 2018 04:30:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1542688222;
+        bh=vNF32HzawJqjzC2ybK6qbF28xr1LbG9yi2n21e7305s=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=a3OfIgnRTgfDen1AUlW6H6mu2nV8vlPYmeAh5FVk1iC6+7vktbe/5wf+lRUHBF1GQ
+         Jelvn/ES/BLBiORtUIy1Los8bpSDuJU1K78pAAkr17u9JsQG4DyWQadxTpl+8jC5KQ
+         CcS//Z2Asno7XkeBSO4bMOGvNZPWVp8TIch4IqjM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A86ED60588
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
+Subject: Re: [PATCH 2/4] clk: qcom: gdsc: Don't override existing gdsc pd
+ functions
+To:     Jordan Crouse <jcrouse@codeaurora.org>, sboyd@kernel.org,
+        mturquette@baylibre.com
+Cc:     andy.gross@linaro.org, david.brown@linaro.org,
+        okukatla@codeaurora.org, tdas@codeaurora.org,
+        linux-arm-msm@vger.kernel.orgi, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, robdclark@gmail.com,
+        freedreno@lists.freedesktop.org
+References: <20181119234706.5821-1-jcrouse@codeaurora.org>
+ <20181119234706.5821-3-jcrouse@codeaurora.org>
+From:   Rajendra Nayak <rnayak@codeaurora.org>
+Message-ID: <2a3d0b09-7335-3120-47b5-d3b06c294770@codeaurora.org>
+Date:   Tue, 20 Nov 2018 10:00:17 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
+In-Reply-To: <20181119234706.5821-3-jcrouse@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-MTK:  N
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
 
-On Tue, 2018-11-20 at 12:05 +0800, CK Hu wrote:
-> Hi, Matthias:
+
+On 11/20/2018 5:17 AM, Jordan Crouse wrote:
+> In very extreme cases an individual gdsc may wish to override the
+> power domain enable or disable callback functions for their own
+> purposes. Only set the generic gdsc callback if the function pointers
+> are not already set.
 > 
-> On Mon, 2018-11-19 at 10:26 +0100, Matthias Brugger wrote:
-> > 
-> > On 19/11/2018 06:38, CK Hu wrote:
-> > > Hi, Matthias:
-> > > 
-> > > On Fri, 2018-11-16 at 13:54 +0100, matthias.bgg@kernel.org wrote:
-> > >> From: Matthias Brugger <mbrugger@suse.com>
-> > >>
-> > >> It can happen that the mmsys clock drivers aren't probed before the
-> > >> platform driver gets invoked. The platform driver used to print a warning
-> > >> that the driver failed to get the clocks. Omit this error on
-> > >> the defered probe path.
-> > > 
-> > > This patch looks good to me, but you have not modified the sub driver in
-> > > HDMI path. We could let HDMI path print the warning and someone send
-> > > another patch later, or you modify for HDMI path in this patch.
-> > 
-> > Sure, I'll add this in v6. After inspecting the code, I think we will need to
-> > also check for not initialized clocks in mtk_mdp_comp_init, as the driver for
-> > now does not even check if the clocks are present. What do you think?
+> Signed-off-by: Jordan Crouse <jcrouse@codeaurora.org>
+
+Looks good to me,
+Acked-by: Rajendra Nayak <rnayak@codeaurora.org>
+
+> ---
+>   drivers/clk/qcom/gdsc.c | 6 ++++--
+>   1 file changed, 4 insertions(+), 2 deletions(-)
 > 
-> Yes, we do really need to consider mdp driver because mmsys clock
-> include mdp clock. You remind me that mmsys control 4 major function:
-> drm routing, drm clock, mdp routing, and mdp clock. Your design let the
-> mmsys device as drm device (control drm routing) and create a sub device
-> as clock device (control drm clock, mdp clock). If one day mdp device
-> (may need control drm routing) need to control the register of mdp
-
-Sorry for typo: 'mdp device (may need control mdp routing)'
-
-Regards,
-CK
-
-> routing, would mdp device be a sub device? Or we need not to consider
-> this because it need not to access mmsys register now?
+> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+> index b6adca1f3918..7b55368b9a9c 100644
+> --- a/drivers/clk/qcom/gdsc.c
+> +++ b/drivers/clk/qcom/gdsc.c
+> @@ -394,8 +394,10 @@ static int gdsc_init(struct gdsc *sc)
+>   	else
+>   		gdsc_clear_mem_on(sc);
+>   
+> -	sc->pd.power_off = gdsc_disable;
+> -	sc->pd.power_on = gdsc_enable;
+> +	if (!sc->pd.power_off)
+> +		sc->pd.power_off = gdsc_disable;
+> +	if (!sc->pd.power_on)
+> +		sc->pd.power_on = gdsc_enable;
+>   	pm_genpd_init(&sc->pd, NULL, !on);
+>   
+>   	return 0;
 > 
-> Regards,
-> CK
-> 
-> > 
-> > I'll address the coding style issue you metioned below as well.
-> > 
-> > Regards,
-> > Matthias
-> > 
-> > >>
-> > >> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
-> > >> ---
-> > >>  drivers/gpu/drm/mediatek/mtk_disp_color.c | 4 +++-
-> > >>  drivers/gpu/drm/mediatek/mtk_disp_ovl.c   | 4 +++-
-> > >>  drivers/gpu/drm/mediatek/mtk_disp_rdma.c  | 4 +++-
-> > >>  drivers/gpu/drm/mediatek/mtk_drm_ddp.c    | 3 ++-
-> > >>  drivers/gpu/drm/mediatek/mtk_dsi.c        | 6 ++++--
-> > >>  5 files changed, 15 insertions(+), 6 deletions(-)
-> > >>
-> > >> diff --git a/drivers/gpu/drm/mediatek/mtk_disp_color.c b/drivers/gpu/drm/mediatek/mtk_disp_color.c
-> > >> index f609b62b8be6..1ea3178d4c18 100644
-> > >> --- a/drivers/gpu/drm/mediatek/mtk_disp_color.c
-> > >> +++ b/drivers/gpu/drm/mediatek/mtk_disp_color.c
-> > >> @@ -126,7 +126,9 @@ static int mtk_disp_color_probe(struct platform_device *pdev)
-> > >>  	ret = mtk_ddp_comp_init(dev, dev->of_node, &priv->ddp_comp, comp_id,
-> > >>  				&mtk_disp_color_funcs);
-> > >>  	if (ret) {
-> > >> -		dev_err(dev, "Failed to initialize component: %d\n", ret);
-> > >> +		if (ret != -EPROBE_DEFER)
-> > >> +			dev_err(dev, "Failed to initialize component: %d\n",
-> > >> +					ret);
-> > > 
-> > > I would like one more blank line here.
-> > > 
-> > >>  		return ret;
-> > >>  	}
-> > >>  
-> > >> diff --git a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-> > >> index 28d191192945..5ebbcaa4e70e 100644
-> > >> --- a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-> > >> +++ b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-> > >> @@ -293,7 +293,9 @@ static int mtk_disp_ovl_probe(struct platform_device *pdev)
-> > >>  	ret = mtk_ddp_comp_init(dev, dev->of_node, &priv->ddp_comp, comp_id,
-> > >>  				&mtk_disp_ovl_funcs);
-> > >>  	if (ret) {
-> > >> -		dev_err(dev, "Failed to initialize component: %d\n", ret);
-> > >> +		if (ret != -EPROBE_DEFER)
-> > >> +			dev_err(dev, "Failed to initialize component: %d\n",
-> > >> +					ret);
-> > > 
-> > > I would like to align to the right of '('.
-> > > 
-> > > Regards,
-> > > CK
-> > > 
-> > >>  		return ret;
-> > >>  	}
-> > >>  
-> > >> diff --git a/drivers/gpu/drm/mediatek/mtk_disp_rdma.c b/drivers/gpu/drm/mediatek/mtk_disp_rdma.c
-> > >> index b0a5cffe345a..59a08ed5fea5 100644
-> > >> --- a/drivers/gpu/drm/mediatek/mtk_disp_rdma.c
-> > >> +++ b/drivers/gpu/drm/mediatek/mtk_disp_rdma.c
-> > >> @@ -295,7 +295,9 @@ static int mtk_disp_rdma_probe(struct platform_device *pdev)
-> > >>  	ret = mtk_ddp_comp_init(dev, dev->of_node, &priv->ddp_comp, comp_id,
-> > >>  				&mtk_disp_rdma_funcs);
-> > >>  	if (ret) {
-> > >> -		dev_err(dev, "Failed to initialize component: %d\n", ret);
-> > >> +		if (ret != -EPROBE_DEFER)
-> > >> +			dev_err(dev, "Failed to initialize component: %d\n",
-> > >> +					ret);
-> > >>  		return ret;
-> > >>  	}
-> > >>  
-> > >> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-> > >> index b06cd9d4b525..b76a2d071a97 100644
-> > >> --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-> > >> +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-> > >> @@ -566,7 +566,8 @@ static int mtk_ddp_probe(struct platform_device *pdev)
-> > >>  
-> > >>  	ddp->clk = devm_clk_get(dev, NULL);
-> > >>  	if (IS_ERR(ddp->clk)) {
-> > >> -		dev_err(dev, "Failed to get clock\n");
-> > >> +		if (PTR_ERR(ddp->clk) != -EPROBE_DEFER)
-> > >> +			dev_err(dev, "Failed to get clock\n");
-> > >>  		return PTR_ERR(ddp->clk);
-> > >>  	}
-> > >>  
-> > >> diff --git a/drivers/gpu/drm/mediatek/mtk_dsi.c b/drivers/gpu/drm/mediatek/mtk_dsi.c
-> > >> index 90109a0d6fff..cc6de75636c3 100644
-> > >> --- a/drivers/gpu/drm/mediatek/mtk_dsi.c
-> > >> +++ b/drivers/gpu/drm/mediatek/mtk_dsi.c
-> > >> @@ -1103,14 +1103,16 @@ static int mtk_dsi_probe(struct platform_device *pdev)
-> > >>  	dsi->engine_clk = devm_clk_get(dev, "engine");
-> > >>  	if (IS_ERR(dsi->engine_clk)) {
-> > >>  		ret = PTR_ERR(dsi->engine_clk);
-> > >> -		dev_err(dev, "Failed to get engine clock: %d\n", ret);
-> > >> +		if (ret != -EPROBE_DEFER)
-> > >> +			dev_err(dev, "Failed to get engine clock: %d\n", ret);
-> > >>  		return ret;
-> > >>  	}
-> > >>  
-> > >>  	dsi->digital_clk = devm_clk_get(dev, "digital");
-> > >>  	if (IS_ERR(dsi->digital_clk)) {
-> > >>  		ret = PTR_ERR(dsi->digital_clk);
-> > >> -		dev_err(dev, "Failed to get digital clock: %d\n", ret);
-> > >> +		if (ret != -EPROBE_DEFER)
-> > >> +			dev_err(dev, "Failed to get digital clock: %d\n", ret);
-> > >>  		return ret;
-> > >>  	}
-> > >>  
-> > > 
-> > > 
-> 
-
-
