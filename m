@@ -2,176 +2,156 @@ Return-Path: <SRS0=sCFe=N7=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7189AC41536
-	for <linux-clk@archiver.kernel.org>; Tue, 20 Nov 2018 14:18:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64409C32789
+	for <linux-clk@archiver.kernel.org>; Tue, 20 Nov 2018 15:57:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E8F820831
-	for <linux-clk@archiver.kernel.org>; Tue, 20 Nov 2018 14:17:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E8F820831
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
+	by mail.kernel.org (Postfix) with ESMTP id 2A91A206BA
+	for <linux-clk@archiver.kernel.org>; Tue, 20 Nov 2018 15:57:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A91A206BA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726941AbeKUArB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 20 Nov 2018 19:47:01 -0500
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:37864 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726485AbeKUAqF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Nov 2018 19:46:05 -0500
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-        by mx0a-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wAKEEnTL030925;
-        Tue, 20 Nov 2018 08:16:34 -0600
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from mail1.cirrus.com (mail1.cirrus.com [141.131.3.20])
-        by mx0a-001ae601.pphosted.com with ESMTP id 2nth984dqj-1;
-        Tue, 20 Nov 2018 08:16:34 -0600
-Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
-        by mail1.cirrus.com (Postfix) with ESMTP id 75527611E124;
-        Tue, 20 Nov 2018 08:16:33 -0600 (CST)
-Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
- (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Tue, 20 Nov 2018
- 14:16:32 +0000
-Received: from algalon.ad.cirrus.com (algalon.ad.cirrus.com [198.90.251.122])
-        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id wAKEGVqw000703; Tue,
- 20 Nov 2018 14:16:32 GMT
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     <lee.jones@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <broonie@kernel.org>,
-        <linus.walleij@linaro.org>, <robh+dt@kernel.org>
-CC:     <mark.rutland@arm.com>, <lgirdwood@gmail.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <patches@opensource.cirrus.com>, <linux-clk@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>
-Subject: [PATCH v5 3/8] clk: lochnagar: Add initial binding documentation
-Date:   Tue, 20 Nov 2018 14:16:26 +0000
-Message-ID: <20181120141631.18949-3-ckeepax@opensource.cirrus.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20181120141631.18949-1-ckeepax@opensource.cirrus.com>
-References: <20181120141631.18949-1-ckeepax@opensource.cirrus.com>
+        id S1728384AbeKUC1H (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 20 Nov 2018 21:27:07 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:33741 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725925AbeKUC1G (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 20 Nov 2018 21:27:06 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id ADFCB2074F; Tue, 20 Nov 2018 16:57:15 +0100 (CET)
+Received: from localhost (aaubervilliers-681-1-13-146.w90-88.abo.wanadoo.fr [90.88.134.146])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 5F37E206A1;
+        Tue, 20 Nov 2018 16:57:15 +0100 (CET)
+Date:   Tue, 20 Nov 2018 16:57:15 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi@googlegroups.com, linux-amarula@amarulasolutions.com
+Subject: Re: [PATCH v4 08/26] drm/sun4i: sun6i_mipi_dsi: Fix VBP size
+ calculation
+Message-ID: <20181120155715.andrjp5kg6ugcv72@flea>
+References: <20181113111633.20189-1-jagan@amarulasolutions.com>
+ <20181113111633.20189-9-jagan@amarulasolutions.com>
+ <20181115095551.uctdkfmuwlnzhjnn@flea>
+ <CAMty3ZAEHiovm6OF6JvJVQR4aqpG1Q3ML5YqxJkF2ntwRkUO=A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1811200128
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="rozt26x7vcumdji5"
+Content-Disposition: inline
+In-Reply-To: <CAMty3ZAEHiovm6OF6JvJVQR4aqpG1Q3ML5YqxJkF2ntwRkUO=A@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Lochnagar is an evaluation and development board for Cirrus
-Logic Smart CODEC and Amp devices. It allows the connection of
-most Cirrus Logic devices on mini-cards, as well as allowing
-connection of various application processor systems to provide a
-full evaluation platform. This driver supports the board
-controller chip on the Lochnagar board.
 
-Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
----
- .../devicetree/bindings/clock/cirrus,lochnagar.txt | 89 ++++++++++++++++++++++
- 1 file changed, 89 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/cirrus,lochnagar.txt
+--rozt26x7vcumdji5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/Documentation/devicetree/bindings/clock/cirrus,lochnagar.txt b/Documentation/devicetree/bindings/clock/cirrus,lochnagar.txt
-new file mode 100644
-index 000000000000..c1b5478d5432
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/cirrus,lochnagar.txt
-@@ -0,0 +1,89 @@
-+Cirrus Logic Lochnagar Audio Development Board
-+
-+Lochnagar is an evaluation and development board for Cirrus Logic
-+Smart CODEC and Amp devices. It allows the connection of most Cirrus
-+Logic devices on mini-cards, as well as allowing connection of
-+various application processor systems to provide a full evaluation
-+platform.  Audio system topology, clocking and power can all be
-+controlled through the Lochnagar, allowing the device under test
-+to be used in a variety of possible use cases.
-+
-+This binding document describes the binding for the clock portion of
-+the driver.
-+
-+Also see these documents for generic binding information:
-+  [1] Clock : ../clock/clock-bindings.txt
-+
-+And these for relevant defines:
-+  [2] include/dt-bindings/clock/lochnagar.h
-+
-+This binding must be part of the Lochnagar MFD binding:
-+  [3] ../mfd/cirrus,lochnagar.txt
-+
-+Required properties:
-+
-+  - compatible : One of the following strings:
-+                 "cirrus,lochnagar1-clk"
-+                 "cirrus,lochnagar2-clk"
-+
-+  - #clock-cells : Must be 1. The first cell indicates the clock
-+    number, see [2] for available clocks and [1].
-+
-+Optional properties:
-+
-+  - clocks : Must contain an entry for each clock in clock-names.
-+  - clock-names : May contain entries for each of the following
-+    clocks:
-+     - ln-cdc-clkout : Output clock from CODEC card.
-+     - ln-dsp-clkout : Output clock from DSP card.
-+     - ln-gf-mclk1,ln-gf-mclk2,ln-gf-mclk3,ln-gf-mclk4 : Optional
-+       input audio clocks from host system.
-+     - ln-psia1-mclk, ln-psia2-mclk : Optional input audio clocks from
-+       external connector.
-+     - ln-spdif-clkout : Optional input audio clock from SPDIF.
-+     - ln-adat-clkout : Optional input audio clock from ADAT.
-+     - ln-pmic-32k : On board fixed regulator.
-+     - ln-clk-12m : On board fixed regulator.
-+     - ln-clk-11m : On board fixed regulator.
-+     - ln-clk-24m : On board fixed regulator.
-+     - ln-clk-22m : On board fixed regulator.
-+     - ln-usb-clk-24m : On board fixed regulator.
-+     - ln-usb-clk-12m : On board fixed regulator.
-+
-+  - assigned-clocks : A list of Lochnagar clocks to be reparented, see
-+    [2] for available clocks.
-+  - assigned-clock-parents : Parents to be assigned to the clocks
-+    listed in "assigned-clocks".
-+
-+Optional sub-nodes:
-+
-+  - fixed-clock nodes may be registered for the following on board clocks:
-+     - ln-pmic-32k : 32768 kHz
-+     - ln-clk-12m : 12288000 kHz
-+     - ln-clk-11m : 11298600 kHz
-+     - ln-clk-24m : 24576000 kHz
-+     - ln-clk-22m : 22579200 kHz
-+     - ln-usb-clk-24m : 24576000 kHz
-+     - ln-usb-clk-12m : 12288000 kHz
-+
-+Example:
-+
-+lochnagar-clk {
-+	compatible = "cirrus,lochnagar2-clk";
-+
-+	#clock-cells = <1>;
-+
-+	clocks = <&clk-audio>, <&clk_pmic>;
-+	clock-names = "ln-gf-mclk2", "ln-pmic-32k";
-+
-+	assigned-clocks = <&lochnagar-clk LOCHNAGAR_CDC_MCLK1>,
-+			  <&lochnagar-clk LOCHNAGAR_CDC_MCLK2>;
-+	assigned-clock-parents = <&clk-audio>,
-+				 <&clk-pmic>;
-+
-+	clk-pmic: clk-pmic {
-+		compatible = "fixed-clock";
-+		clock-cells = <0>;
-+		clock-frequency = <32768>;
-+	};
-+};
--- 
-2.11.0
+On Thu, Nov 15, 2018 at 11:19:53PM +0530, Jagan Teki wrote:
+> On Thu, Nov 15, 2018 at 3:26 PM Maxime Ripard <maxime.ripard@bootlin.com>=
+ wrote:
+> >
+> > Hi,
+> >
+> > On Tue, Nov 13, 2018 at 04:46:15PM +0530, Jagan Teki wrote:
+> > > The horizontal and vertical back porch calculation in BSP
+> > > code is simply following the Linux drm comment diagram, in
+> > > include/drm/drm_modes.h which is
+> > >
+> > > [hv]back porch =3D [hv]total - [hv]sync_end
+> > >
+> > > BSP code form BPI-M64-bsp is calculating vertical back porch as
+> > > (from linux-sunxi/drivers/video/sunxi/disp2/disp/de/disp_lcd.c)
+> > >
+> > > timmings->ver_sync_time=3D panel_info->lcd_vspw;
+> > > timmings->ver_back_porch=3D panel_info->lcd_vbp-panel_info->lcd_vspw;
+> > >
+> > > vbp =3D panel->lcd_vbp;
+> > > vspw =3D panel->lcd_vspw;
+> > > dsi_dev[sel]->dsi_basic_size0.bits.vbp =3D vbp-vspw;
+> > > dsi_dev[sel]->dsi_basic_size0.bits.vbp =3D panel->lcd_vbp - panel->lc=
+d_vspw;
+> > > =3D>  timmings->ver_back_porch + panel_info->lcd_vspw - panel_info->l=
+cd_vspw
+> > > =3D>  timmings->ver_back_porch
+> > > =3D>  mode->vtotal - mode->end
+> > >
+> > > Which evatually same as mode->vtotal - mode->vsync_end so update the
+> > > same in SUN6I_DSI_BASIC_SIZE0_VBP
+> > >
+> > > On the information note, existing SUN6I_DSI_BASIC_SIZE0_VSA is proper
+> > > value.
+> > >
+> > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> >
+> > I've tested your changes on my A33 board, and this commit will break
+> > it.
+> >
+> > It creates vblank timeouts, and visual artifacts at the bottom of the
+> > display.
+>=20
+> Strange, VBP is earlier gives front porch which is anyway wrong.
+>=20
+> >
+> > Later commits seem to fix the issue, but will create some blanking on
+> > the upper third of the display.
+> >
+> > Since the documentation is quite sparse, and a MIPI-DSI analyzer is
+> > way too expensive, I'd really like to have at least what each of these
+> > commits are actually fixing, and what symptoms each of these were
+> > causing, and not just "the BSP does it".
+>=20
+> W/o this 2-lane panel is breaking, same vblank timeout and visual
+> artifacts at the bottom of the panel. though the commits may reference
+> BSP, I have at-least tested on 3 different panels for us to prove its
+> working.
+>=20
+> > Having some datasheet for the panels you had working would help too.
+>=20
+> Unfortunately datasheet doesn't have any required information what we
+> actually looking for.
 
+Not even the timings? How did you get that information then?
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--rozt26x7vcumdji5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW/Qu2wAKCRDj7w1vZxhR
+xd14AP0bxtEeWSMiAB+I3XkIFKxBM+MVNUKhVbfjDgjN+iouAwEAnI16TT36Gqfi
+EXi6pfCij66MdxW67uJ5sxTskukyJwA=
+=Vlls
+-----END PGP SIGNATURE-----
+
+--rozt26x7vcumdji5--
