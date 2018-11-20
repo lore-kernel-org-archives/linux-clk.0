@@ -2,33 +2,63 @@ Return-Path: <SRS0=sCFe=N7=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64409C32789
-	for <linux-clk@archiver.kernel.org>; Tue, 20 Nov 2018 15:57:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00758C32789
+	for <linux-clk@archiver.kernel.org>; Tue, 20 Nov 2018 16:25:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A91A206BA
-	for <linux-clk@archiver.kernel.org>; Tue, 20 Nov 2018 15:57:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A91A206BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id B10D0206BB
+	for <linux-clk@archiver.kernel.org>; Tue, 20 Nov 2018 16:25:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="Rgcc9pYn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B10D0206BB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728384AbeKUC1H (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 20 Nov 2018 21:27:07 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:33741 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725925AbeKUC1G (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 20 Nov 2018 21:27:06 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id ADFCB2074F; Tue, 20 Nov 2018 16:57:15 +0100 (CET)
-Received: from localhost (aaubervilliers-681-1-13-146.w90-88.abo.wanadoo.fr [90.88.134.146])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 5F37E206A1;
-        Tue, 20 Nov 2018 16:57:15 +0100 (CET)
-Date:   Tue, 20 Nov 2018 16:57:15 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Jagan Teki <jagan@amarulasolutions.com>
+        id S1726372AbeKUCzw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 20 Nov 2018 21:55:52 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:53137 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727592AbeKUCzw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Nov 2018 21:55:52 -0500
+Received: by mail-it1-f193.google.com with SMTP id i7so4215492iti.2
+        for <linux-clk@vger.kernel.org>; Tue, 20 Nov 2018 08:25:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Fk4EEjIrrf8xUv7sP/UR7/oZ3RraEnGj9VOA8OqaJWw=;
+        b=Rgcc9pYnFZP/SzS6EKcfIs0y51pVcviGdcDicMIwbGj/s5RU9UZpjHubtyio6mtGiL
+         jejRWIcmjVncW4co+PC6ZFZYLArO+cX/I1aO4Co3M5qIbxDfskAnEmnx80u8+AmF0C28
+         cDfOzdYLhdVxV/IXjjoGLGcCbghzD5Z7v46Bs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Fk4EEjIrrf8xUv7sP/UR7/oZ3RraEnGj9VOA8OqaJWw=;
+        b=kCHzthoLcQDR0dpijf13l2OXFjhsMlv66GZgT2XQGBLGtWcajjS1XKRVrovtxk+Rqc
+         pEsCNbVNa1jeLx9f59TBA6htfSovicu0Goq3n5cNnKBGZZ979O+pb7lMTvdCm5h1RQFe
+         GHpVS9JFh20/2MCrHlIqbVDl3U3ljsb3ODp8IcToldmeUSY8aebMcwjlLYVNyA13SWAi
+         OZOn8dBxPJmYrxO8wpCbnffRULaJRwNX3kl+y8erKRnkrMxJKDthFHhfDgV9eL/RsioC
+         CYl/nxRx/XLAD9b1GRtTsANbJp/IGFkaUhO3Ebz6egp67jJ5A89bQWcERPqzEs+4wsSa
+         uChA==
+X-Gm-Message-State: AA+aEWbn4nHKIN+uHsmGcXgMjG0dpTVv7OOA14MP/3FVgWBIt+MkXYkE
+        FmHiyWO8xW1BJNi5VU1XjagF277Jn6wW891AJY2OFO3m9Ms=
+X-Google-Smtp-Source: AFSGD/U3NU/9KihC8YvJR7BAqODRxqCgrTuRerOfVESYRacO68Fmnz76RkdhyrcslDqUDh7sQN1gbDxb/2+M2oyCFgA=
+X-Received: by 2002:a02:6242:: with SMTP id d63-v6mr2179584jac.103.1542731153662;
+ Tue, 20 Nov 2018 08:25:53 -0800 (PST)
+MIME-Version: 1.0
+References: <20181113111633.20189-1-jagan@amarulasolutions.com>
+ <20181113111633.20189-9-jagan@amarulasolutions.com> <20181115095551.uctdkfmuwlnzhjnn@flea>
+ <CAMty3ZAEHiovm6OF6JvJVQR4aqpG1Q3ML5YqxJkF2ntwRkUO=A@mail.gmail.com> <20181120155715.andrjp5kg6ugcv72@flea>
+In-Reply-To: <20181120155715.andrjp5kg6ugcv72@flea>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Tue, 20 Nov 2018 21:55:42 +0530
+Message-ID: <CAMty3ZCUOJmvekupOwh281g5HaazTpBbukWQY2Pv2OYypAwciw@mail.gmail.com>
+Subject: Re: [PATCH v4 08/26] drm/sun4i: sun6i_mipi_dsi: Fix VBP size calculation
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
 Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
         Jernej Skrabec <jernej.skrabec@siol.net>,
         Vasily Khoruzhick <anarsoul@gmail.com>,
@@ -46,112 +76,77 @@ Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
         devicetree <devicetree@vger.kernel.org>,
         linux-kernel <linux-kernel@vger.kernel.org>,
         linux-sunxi@googlegroups.com, linux-amarula@amarulasolutions.com
-Subject: Re: [PATCH v4 08/26] drm/sun4i: sun6i_mipi_dsi: Fix VBP size
- calculation
-Message-ID: <20181120155715.andrjp5kg6ugcv72@flea>
-References: <20181113111633.20189-1-jagan@amarulasolutions.com>
- <20181113111633.20189-9-jagan@amarulasolutions.com>
- <20181115095551.uctdkfmuwlnzhjnn@flea>
- <CAMty3ZAEHiovm6OF6JvJVQR4aqpG1Q3ML5YqxJkF2ntwRkUO=A@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="rozt26x7vcumdji5"
-Content-Disposition: inline
-In-Reply-To: <CAMty3ZAEHiovm6OF6JvJVQR4aqpG1Q3ML5YqxJkF2ntwRkUO=A@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
---rozt26x7vcumdji5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Nov 15, 2018 at 11:19:53PM +0530, Jagan Teki wrote:
-> On Thu, Nov 15, 2018 at 3:26 PM Maxime Ripard <maxime.ripard@bootlin.com>=
- wrote:
+On Tue, Nov 20, 2018 at 9:27 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+>
+> On Thu, Nov 15, 2018 at 11:19:53PM +0530, Jagan Teki wrote:
+> > On Thu, Nov 15, 2018 at 3:26 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+> > >
+> > > Hi,
+> > >
+> > > On Tue, Nov 13, 2018 at 04:46:15PM +0530, Jagan Teki wrote:
+> > > > The horizontal and vertical back porch calculation in BSP
+> > > > code is simply following the Linux drm comment diagram, in
+> > > > include/drm/drm_modes.h which is
+> > > >
+> > > > [hv]back porch = [hv]total - [hv]sync_end
+> > > >
+> > > > BSP code form BPI-M64-bsp is calculating vertical back porch as
+> > > > (from linux-sunxi/drivers/video/sunxi/disp2/disp/de/disp_lcd.c)
+> > > >
+> > > > timmings->ver_sync_time= panel_info->lcd_vspw;
+> > > > timmings->ver_back_porch= panel_info->lcd_vbp-panel_info->lcd_vspw;
+> > > >
+> > > > vbp = panel->lcd_vbp;
+> > > > vspw = panel->lcd_vspw;
+> > > > dsi_dev[sel]->dsi_basic_size0.bits.vbp = vbp-vspw;
+> > > > dsi_dev[sel]->dsi_basic_size0.bits.vbp = panel->lcd_vbp - panel->lcd_vspw;
+> > > > =>  timmings->ver_back_porch + panel_info->lcd_vspw - panel_info->lcd_vspw
+> > > > =>  timmings->ver_back_porch
+> > > > =>  mode->vtotal - mode->end
+> > > >
+> > > > Which evatually same as mode->vtotal - mode->vsync_end so update the
+> > > > same in SUN6I_DSI_BASIC_SIZE0_VBP
+> > > >
+> > > > On the information note, existing SUN6I_DSI_BASIC_SIZE0_VSA is proper
+> > > > value.
+> > > >
+> > > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > >
+> > > I've tested your changes on my A33 board, and this commit will break
+> > > it.
+> > >
+> > > It creates vblank timeouts, and visual artifacts at the bottom of the
+> > > display.
 > >
-> > Hi,
+> > Strange, VBP is earlier gives front porch which is anyway wrong.
 > >
-> > On Tue, Nov 13, 2018 at 04:46:15PM +0530, Jagan Teki wrote:
-> > > The horizontal and vertical back porch calculation in BSP
-> > > code is simply following the Linux drm comment diagram, in
-> > > include/drm/drm_modes.h which is
 > > >
-> > > [hv]back porch =3D [hv]total - [hv]sync_end
+> > > Later commits seem to fix the issue, but will create some blanking on
+> > > the upper third of the display.
 > > >
-> > > BSP code form BPI-M64-bsp is calculating vertical back porch as
-> > > (from linux-sunxi/drivers/video/sunxi/disp2/disp/de/disp_lcd.c)
-> > >
-> > > timmings->ver_sync_time=3D panel_info->lcd_vspw;
-> > > timmings->ver_back_porch=3D panel_info->lcd_vbp-panel_info->lcd_vspw;
-> > >
-> > > vbp =3D panel->lcd_vbp;
-> > > vspw =3D panel->lcd_vspw;
-> > > dsi_dev[sel]->dsi_basic_size0.bits.vbp =3D vbp-vspw;
-> > > dsi_dev[sel]->dsi_basic_size0.bits.vbp =3D panel->lcd_vbp - panel->lc=
-d_vspw;
-> > > =3D>  timmings->ver_back_porch + panel_info->lcd_vspw - panel_info->l=
-cd_vspw
-> > > =3D>  timmings->ver_back_porch
-> > > =3D>  mode->vtotal - mode->end
-> > >
-> > > Which evatually same as mode->vtotal - mode->vsync_end so update the
-> > > same in SUN6I_DSI_BASIC_SIZE0_VBP
-> > >
-> > > On the information note, existing SUN6I_DSI_BASIC_SIZE0_VSA is proper
-> > > value.
-> > >
-> > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > > Since the documentation is quite sparse, and a MIPI-DSI analyzer is
+> > > way too expensive, I'd really like to have at least what each of these
+> > > commits are actually fixing, and what symptoms each of these were
+> > > causing, and not just "the BSP does it".
 > >
-> > I've tested your changes on my A33 board, and this commit will break
-> > it.
+> > W/o this 2-lane panel is breaking, same vblank timeout and visual
+> > artifacts at the bottom of the panel. though the commits may reference
+> > BSP, I have at-least tested on 3 different panels for us to prove its
+> > working.
 > >
-> > It creates vblank timeouts, and visual artifacts at the bottom of the
-> > display.
->=20
-> Strange, VBP is earlier gives front porch which is anyway wrong.
->=20
+> > > Having some datasheet for the panels you had working would help too.
 > >
-> > Later commits seem to fix the issue, but will create some blanking on
-> > the upper third of the display.
-> >
-> > Since the documentation is quite sparse, and a MIPI-DSI analyzer is
-> > way too expensive, I'd really like to have at least what each of these
-> > commits are actually fixing, and what symptoms each of these were
-> > causing, and not just "the BSP does it".
->=20
-> W/o this 2-lane panel is breaking, same vblank timeout and visual
-> artifacts at the bottom of the panel. though the commits may reference
-> BSP, I have at-least tested on 3 different panels for us to prove its
-> working.
->=20
-> > Having some datasheet for the panels you had working would help too.
->=20
-> Unfortunately datasheet doesn't have any required information what we
-> actually looking for.
+> > Unfortunately datasheet doesn't have any required information what we
+> > actually looking for.
+>
+> Not even the timings? How did you get that information then?
 
-Not even the timings? How did you get that information then?
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---rozt26x7vcumdji5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW/Qu2wAKCRDj7w1vZxhR
-xd14AP0bxtEeWSMiAB+I3XkIFKxBM+MVNUKhVbfjDgjN+iouAwEAnI16TT36Gqfi
-EXi6pfCij66MdxW67uJ5sxTskukyJwA=
-=Vlls
------END PGP SIGNATURE-----
-
---rozt26x7vcumdji5--
+datasheet has timing values, but this changes need controller
+information about VBP register that I don't have. But again existing
+VBP is not back porch for real, it's front porch.
