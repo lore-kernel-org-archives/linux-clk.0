@@ -2,97 +2,149 @@ Return-Path: <SRS0=GqaR=OA=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E14BDC43441
-	for <linux-clk@archiver.kernel.org>; Wed, 21 Nov 2018 17:40:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3B14C43441
+	for <linux-clk@archiver.kernel.org>; Wed, 21 Nov 2018 17:48:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9A01214DA
-	for <linux-clk@archiver.kernel.org>; Wed, 21 Nov 2018 17:40:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MXtBlAOB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9A01214DA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id A5A63214F1
+	for <linux-clk@archiver.kernel.org>; Wed, 21 Nov 2018 17:48:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5A63214F1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726671AbeKVEQE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 21 Nov 2018 23:16:04 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:38017 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732451AbeKVEQE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Nov 2018 23:16:04 -0500
-Received: by mail-wm1-f67.google.com with SMTP id k198so6640754wmd.3
-        for <linux-clk@vger.kernel.org>; Wed, 21 Nov 2018 09:40:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=26rsxk07e0CFhgI82v6hb8K404IJKdY8wrKvJcP4P44=;
-        b=MXtBlAOB1ImNQHfcMOYaARoBHVjlOegcaaOPX1lht0wsgxwzR6eyfSkrdUedLuLrYq
-         5dDbubqncYD/voSZozkwu+Cr7J3edLqEgqEk9IJAw5KaMUElSYs/kF0CGCy0SxviF6sQ
-         EZEca8Zv3HnBz7osAYh7AxkjosUYHmPMFyrvI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=26rsxk07e0CFhgI82v6hb8K404IJKdY8wrKvJcP4P44=;
-        b=GCAuuV9OUtfUTuK9fV1aOTFzTcYDLFBft/9SKhmE3l2VQAz+zHau9ZzB/aa4Xf+Tlk
-         hzEkAZm0RNHVkqaJ9uoDkYm1PrTXjXdWNbY0Qn/R+GQN8ifY5o5Ci3H4wRTgX9e+k3qd
-         pvDxU1kNmqK7r2v8cQhfRYcv4jsXKP7uhg6TF3PzVY7QEp5EEZm1YvFm2z7mTSrINJ/c
-         +xYquJYJD/yGx8v5IsYXFoY3bvDwIA9B1AmOdEj8TfZQ/sg8pfTGH1WOagAhRY3NqZb4
-         qbCjH2SA2kgVv9rTPyso+sRBxspZMGtOG8Z6wve9xb+HKZ1WC1Ja997nbohfiwbxIFfn
-         uj3g==
-X-Gm-Message-State: AGRZ1gLR/55Q93HcGchDLML1b1Ar7C71SD6g/QoaKbVCykTdmUPy6byY
-        8adU0yhBQmnYigZg4a7uIFgZlA==
-X-Google-Smtp-Source: AFSGD/X5AyligLM2ldRv5BaTcOLe+9ndBncv+O37g6eQPV2L8Fk9kwHM1SiQkVeqbH3RoQc4VgJErQ==
-X-Received: by 2002:a1c:a4c5:: with SMTP id n188-v6mr6697374wme.149.1542822043271;
-        Wed, 21 Nov 2018 09:40:43 -0800 (PST)
-Received: from lpoulain-ThinkPad-T470p.home (atoulouse-654-1-394-222.w90-55.abo.wanadoo.fr. [90.55.193.222])
-        by smtp.gmail.com with ESMTPSA id w2-v6sm11821005wrr.78.2018.11.21.09.40.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 21 Nov 2018 09:40:42 -0800 (PST)
-From:   Loic Poulain <loic.poulain@linaro.org>
-To:     andy.gross@linaro.org, david.brown@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        Loic Poulain <loic.poulain@linaro.org>
-Subject: [PATCH v2] clk: qcom: msm8916: Additional clock rates for spi
-Date:   Wed, 21 Nov 2018 18:40:41 +0100
-Message-Id: <1542822041-9675-1-git-send-email-loic.poulain@linaro.org>
-X-Mailer: git-send-email 2.7.4
+        id S1729280AbeKVEYB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 21 Nov 2018 23:24:01 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:56250 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726074AbeKVEYB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 21 Nov 2018 23:24:01 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 62B2B3617;
+        Wed, 21 Nov 2018 09:48:40 -0800 (PST)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 31F683F5AF;
+        Wed, 21 Nov 2018 09:48:40 -0800 (PST)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id EDED11AE100A; Wed, 21 Nov 2018 17:48:55 +0000 (GMT)
+Date:   Wed, 21 Nov 2018 17:48:55 +0000
+From:   Will Deacon <will.deacon@arm.com>
+To:     thor.thayer@linux.intel.com
+Cc:     dinguyen@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        robin.murphy@arm.com, joro@8bytes.org, aisheng.dong@nxp.com,
+        sboyd@kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        vivek.gautam@codeaurora.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCHv4 2/2] iommu/arm-smmu: Get clock config from device tree
+Message-ID: <20181121174843.GD9801@arm.com>
+References: <1538773020-27784-1-git-send-email-thor.thayer@linux.intel.com>
+ <1538773020-27784-3-git-send-email-thor.thayer@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1538773020-27784-3-git-send-email-thor.thayer@linux.intel.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add SPI friendly clock rates to the spi freq table.
-Today it's not possible to use SPI at lower than 960Khz.
-This patch adds 100/250/500/1000 kHz configs to the table.
+Hi Thor,
 
-Signed-off-by: Loic Poulain <loic.poulain@linaro.org>
----
- v2: reword: s/khz/KHz
+On Fri, Oct 05, 2018 at 03:57:00PM -0500, thor.thayer@linux.intel.com wrote:
+> From: Thor Thayer <thor.thayer@linux.intel.com>
+> 
+> Currently the clocks are specified in a structure as well as
+> in the device tree. Since all the information about clocks can be
+> pulled from the device tree, parse the device tree for the clock
+> information if specified.
+> 
+> This patch is dependent upon the following patch series that
+> adds clocks to the driver.
+> "[v16,0/5] iommu/arm-smmu: Add runtime pm/sleep support"
+> https://patchwork.kernel.org/cover/10581891/
+> 
+> particularly this patch which adds the clocks:
+> "[v16,1/5] iommu/arm-smmu: Add pm_runtime/sleep ops"
+> https://patchwork.kernel.org/patch/10581899/
+> 
+> Request testing on different platforms for verification.
+> This patch was tested on a Stratix10 SOCFPGA.
+> 
+> Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
+> ---
+> v4  Change dependency on pending patch series that adds clocks.
+>     Add code for parsing device tree for the clocks.
+> v3  Change dependency on device tree bulk clock patches.
+> v2  Add structure for SOCFPGA and add dependency on clock patch.
+> ---
+>  drivers/iommu/arm-smmu.c | 30 +++++++++++++++++++++++++++---
+>  1 file changed, 27 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
+> index d315ca637097..3dd10663b09c 100644
+> --- a/drivers/iommu/arm-smmu.c
+> +++ b/drivers/iommu/arm-smmu.c
+> @@ -44,6 +44,7 @@
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+>  #include <linux/of_address.h>
+> +#include <linux/of_clk.h>
+>  #include <linux/of_device.h>
+>  #include <linux/of_iommu.h>
+>  #include <linux/pci.h>
+> @@ -2139,6 +2140,7 @@ static int arm_smmu_device_dt_probe(struct platform_device *pdev,
+>  	const struct arm_smmu_match_data *data;
+>  	struct device *dev = &pdev->dev;
+>  	bool legacy_binding;
+> +	const char **parent_names;
+>  
+>  	if (of_property_read_u32(dev->of_node, "#global-interrupts",
+>  				 &smmu->num_global_irqs)) {
+> @@ -2149,9 +2151,25 @@ static int arm_smmu_device_dt_probe(struct platform_device *pdev,
+>  	data = of_device_get_match_data(dev);
+>  	smmu->version = data->version;
+>  	smmu->model = data->model;
+> -	smmu->num_clks = data->num_clks;
+> -
+> -	arm_smmu_fill_clk_data(smmu, data->clks);
+> +	smmu->num_clks = of_clk_get_parent_count(dev->of_node);
+> +	/* check to see if clocks were specified in DT */
+> +	if (smmu->num_clks) {
+> +		unsigned int i;
+> +
+> +		parent_names = kmalloc_array(smmu->num_clks,
+> +					     sizeof(*parent_names),
+> +					     GFP_KERNEL);
+> +		if (!parent_names)
+> +			goto fail_clk_name;
+> +
+> +		for (i = 0; i < smmu->num_clks; i++) {
+> +			if (of_property_read_string_index(dev->of_node,
+> +							  "clock-names", i,
+> +							  &parent_names[i]))
+> +				goto fail_clk_name;
+> +		}
+> +		arm_smmu_fill_clk_data(smmu, parent_names);
+> +	}
+>  
+>  	parse_driver_options(smmu);
+>  
+> @@ -2171,6 +2189,12 @@ static int arm_smmu_device_dt_probe(struct platform_device *pdev,
+>  		smmu->features |= ARM_SMMU_FEAT_COHERENT_WALK;
+>  
+>  	return 0;
+> +
+> +fail_clk_name:
+> +	kfree(parent_names);
+> +	/* clock-names required for clocks in devm_clk_bulk_get() */
+> +	dev_err(dev, "Error: clock-name required in device tree\n");
 
- drivers/clk/qcom/gcc-msm8916.c | 4 ++++
- 1 file changed, 4 insertions(+)
+I think you can drop the "Error: " prefix here, but the rest of the patch
+looks sensible to me. We just need to work out how this co-exists with
+Vivek's approach of using match_data (see the other thread).
 
-diff --git a/drivers/clk/qcom/gcc-msm8916.c b/drivers/clk/qcom/gcc-msm8916.c
-index ac2b0aa..7d9647c 100644
---- a/drivers/clk/qcom/gcc-msm8916.c
-+++ b/drivers/clk/qcom/gcc-msm8916.c
-@@ -544,7 +544,11 @@ static struct clk_rcg2 blsp1_qup1_i2c_apps_clk_src = {
- };
- 
- static const struct freq_tbl ftbl_gcc_blsp1_qup1_6_spi_apps_clk[] = {
-+	F(100000, P_XO, 16, 2, 24),
-+	F(250000, P_XO, 16, 5, 24),
-+	F(500000, P_XO, 8, 5, 24),
- 	F(960000, P_XO, 10, 1, 2),
-+	F(1000000, P_XO, 4, 5, 24),
- 	F(4800000, P_XO, 4, 0, 0),
- 	F(9600000, P_XO, 2, 0, 0),
- 	F(16000000, P_GPLL0, 10, 1, 5),
--- 
-2.7.4
-
+Will
