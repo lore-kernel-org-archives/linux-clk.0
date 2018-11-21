@@ -2,116 +2,180 @@ Return-Path: <SRS0=GqaR=OA=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19D85C43441
-	for <linux-clk@archiver.kernel.org>; Wed, 21 Nov 2018 18:44:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C329C43441
+	for <linux-clk@archiver.kernel.org>; Wed, 21 Nov 2018 19:17:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2BCE214DA
-	for <linux-clk@archiver.kernel.org>; Wed, 21 Nov 2018 18:44:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C907F206BB
+	for <linux-clk@archiver.kernel.org>; Wed, 21 Nov 2018 19:17:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q0JT7sD5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2BCE214DA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sMM4TgbB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C907F206BB
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730892AbeKVFTw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 22 Nov 2018 00:19:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59482 "EHLO mail.kernel.org"
+        id S2387912AbeKVFnL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 22 Nov 2018 00:43:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37846 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730242AbeKVFTw (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 22 Nov 2018 00:19:52 -0500
+        id S2387767AbeKVFnL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 22 Nov 2018 00:43:11 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9E259214DA;
-        Wed, 21 Nov 2018 18:44:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9A683206BB;
+        Wed, 21 Nov 2018 19:07:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542825862;
-        bh=CtmBtoXKU87im2w2OEdRGFSjnD1tb256DkxrLKk/lmE=;
+        s=default; t=1542827257;
+        bh=64ADs1xhzE1G4KDKq+8Ze7BVKXcIBJbu7a+tA+x6Swg=;
         h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=Q0JT7sD5ybop7jPUWo/3anJ7XcgoUt8RXUPEaEDMc1kePsXrRwA/HNSrmTebBssi9
-         RZpUkVYllh/Qk4MFDGBjan0ihxmtoE+mYJe3zB32Aoeg0aheIlJk1fwowuIwc8GsiB
-         pvklDct35Ymf0DtONHacPpxAxoy3uVLyThO1gCjs=
+        b=sMM4TgbBQa0ItcZPX+S4ZWb/hGldm5ZEmiYUcWF9udPFX0yLnzhHf3kCxe5mHTlfk
+         4dWDg8TYrhhR2FUiwElG0PJooc9uDPw9h9MIzijiUVET8iqVEvL8DtG7zG54kscf3V
+         TFJj2DzWeKipH2pinGsCeJS1o4g4+k+mypsJt3jU=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-To:     Loic Poulain <loic.poulain@linaro.org>,
+To:     Michael Turquette <mturquette@baylibre.com>,
         Taniya Das <tdas@codeaurora.org>
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <CAMZdPi-NkqRiUqvszbbK+BRc1Zd1PBFDp3bo5PLSNVscQVebDw@mail.gmail.com>
+In-Reply-To: <1541814256-23254-3-git-send-email-tdas@codeaurora.org>
 Cc:     Andy Gross <andy.gross@linaro.org>,
         David Brown <david.brown@linaro.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        linux-clk@vger.kernel.org
-References: <1542712496-24941-1-git-send-email-loic.poulain@linaro.org>
- <154281836688.88331.15272268636530295586@swboyd.mtv.corp.google.com>
- <CAMZdPi-NkqRiUqvszbbK+BRc1Zd1PBFDp3bo5PLSNVscQVebDw@mail.gmail.com>
-Message-ID: <154282586191.88331.17676691162656481597@swboyd.mtv.corp.google.com>
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, robh@kernel.org,
+        Taniya Das <tdas@codeaurora.org>
+References: <1541814256-23254-1-git-send-email-tdas@codeaurora.org>
+ <1541814256-23254-3-git-send-email-tdas@codeaurora.org>
+Message-ID: <154282725690.88331.797718066164707366@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.7
-Subject: Re: [PATCH] clk: qcom: msm8916: Additional clock rates for spi
-Date:   Wed, 21 Nov 2018 10:44:21 -0800
+Subject: Re: [PATCH v9 2/2] clk: qcom: Add lpass clock controller driver for SDM845
+Date:   Wed, 21 Nov 2018 11:07:36 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Loic Poulain (2018-11-21 09:36:05)
-> Hi Stephen,
+Quoting Taniya Das (2018-11-09 17:44:16)
+> diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
+> index f133b7f..ba8ff99 100644
+> --- a/drivers/clk/qcom/gcc-sdm845.c
+> +++ b/drivers/clk/qcom/gcc-sdm845.c
+> @@ -3153,6 +3153,34 @@ enum {
+>         },
+>  };
 > =
 
-> On Wed, 21 Nov 2018 at 17:39, Stephen Boyd <sboyd@kernel.org> wrote:
+> +static struct clk_branch gcc_lpass_q6_axi_clk =3D {
+> +       .halt_reg =3D 0x47000,
+> +       .halt_check =3D BRANCH_HALT,
+> +       .clkr =3D {
+> +               .enable_reg =3D 0x47000,
+> +               .enable_mask =3D BIT(0),
+> +               .hw.init =3D &(struct clk_init_data){
+> +                       .name =3D "gcc_lpass_q6_axi_clk",
+> +                       .flags =3D CLK_IS_CRITICAL,
+> +                       .ops =3D &clk_branch2_ops,
+> +               },
+> +       },
+> +};
+> +
+> +static struct clk_branch gcc_lpass_sway_clk =3D {
+> +       .halt_reg =3D 0x47008,
+> +       .halt_check =3D BRANCH_HALT,
+> +       .clkr =3D {
+> +               .enable_reg =3D 0x47008,
+> +               .enable_mask =3D BIT(0),
+> +               .hw.init =3D &(struct clk_init_data){
+> +                       .name =3D "gcc_lpass_sway_clk",
+> +                       .flags =3D CLK_IS_CRITICAL,
+> +                       .ops =3D &clk_branch2_ops,
+> +               },
+> +       },
+> +};
+> +
+>  static struct gdsc pcie_0_gdsc =3D {
+>         .gdscr =3D 0x6b004,
+>         .pd =3D {
+> @@ -3453,6 +3481,8 @@ enum {
+>         [GCC_QSPI_CORE_CLK_SRC] =3D &gcc_qspi_core_clk_src.clkr,
+>         [GCC_QSPI_CORE_CLK] =3D &gcc_qspi_core_clk.clkr,
+>         [GCC_QSPI_CNOC_PERIPH_AHB_CLK] =3D &gcc_qspi_cnoc_periph_ahb_clk.=
+clkr,
+> +       [GCC_LPASS_Q6_AXI_CLK] =3D &gcc_lpass_q6_axi_clk.clkr,
+> +       [GCC_LPASS_SWAY_CLK] =3D &gcc_lpass_sway_clk.clkr,
+
+Sigh, more coordination with sdm845 mtp problems here due to the
+clks being protected by firmware. I guess I can just merge this and the
+mtp dts bits will land in Andy's tree during the same merge window? Or I
+may need to take the dts bits for this into clk tree so that the broken
+time is only between two commits.
+
+>  };
 > =
 
->     Quoting Loic Poulain (2018-11-20 03:14:56)
->     > Add SPI friendly clock rates to the spi freq table.
->     > Today it's not possible to use SPI at lower than 960Khz.
->     > This patch adds 100/250/500/1000 khz configs to the table.
-> =
+>  static const struct qcom_reset_map gcc_sdm845_resets[] =3D {
+> diff --git a/drivers/clk/qcom/lpasscc-sdm845.c b/drivers/clk/qcom/lpasscc=
+-sdm845.c
+> new file mode 100644
+> index 0000000..2ef7f2a
+> --- /dev/null
+> +++ b/drivers/clk/qcom/lpasscc-sdm845.c
+> @@ -0,0 +1,192 @@
+[...]
+> +
+> +static const struct of_device_id lpass_cc_sdm845_match_table[] =3D {
+> +       { .compatible =3D "qcom,sdm845-lpasscc" },
+> +       { }
+> +};
+> +MODULE_DEVICE_TABLE(of, lpass_cc_sdm845_match_table);
 
->     s/khz/kHz/
-> =
+Move this down to the before the driver structure please.
 
->     >
->     > Signed-off-by: Loic Poulain <loic.poulain@linaro.org>
->     > ---
->     >=C2=A0 drivers/clk/qcom/gcc-msm8916.c | 4 ++++
->     >=C2=A0 1 file changed, 4 insertions(+)
->     >
->     > diff --git a/drivers/clk/qcom/gcc-msm8916.c b/drivers/clk/qcom/
->     gcc-msm8916.c
->     > index ac2b0aa..7d9647c 100644
->     > --- a/drivers/clk/qcom/gcc-msm8916.c
->     > +++ b/drivers/clk/qcom/gcc-msm8916.c
->     > @@ -544,7 +544,11 @@ static struct clk_rcg2 blsp1_qup1_i2c_apps_clk=
-_src =3D
->     {
->     >=C2=A0 };
->     >=C2=A0
->     >=C2=A0 static const struct freq_tbl ftbl_gcc_blsp1_qup1_6_spi_apps_c=
-lk[] =3D {
->     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0F(100000, P_XO, 16, 2, 24),
->     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0F(250000, P_XO, 16, 5, 24),
->     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0F(500000, P_XO, 8, 5, 24),
->     >=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0F(960000, P_XO, 10, 1, 2),
->     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0F(1000000, P_XO, 4, 5, 24),
-> =
+> +
+> +static int lpass_cc_sdm845_probe(struct platform_device *pdev)
+> +{
+> +       const struct qcom_cc_desc *desc;
+> +       int ret;
+> +
+> +       lpass_regmap_config.name =3D "cc";
+> +       desc =3D &lpass_cc_sdm845_desc;
+> +
+> +       ret =3D lpass_clocks_sdm845_probe(pdev, 0, desc);
+> +       if (ret)
+> +               return ret;
+> +
+> +       lpass_regmap_config.name =3D "qdsp6ss";
+> +       desc =3D &lpass_qdsp6ss_sdm845_desc;
+> +
+> +       return lpass_clocks_sdm845_probe(pdev, 1, desc);
+> +}
+> +
+> +static struct platform_driver lpass_cc_sdm845_driver =3D {
+> +       .probe          =3D lpass_cc_sdm845_probe,
+> +       .driver         =3D {
+> +               .name   =3D "sdm845-lpasscc",
+> +               .of_match_table =3D lpass_cc_sdm845_match_table,
+> +       },
+> +};
+> +
+> +static int __init lpass_cc_sdm845_init(void)
+> +{
+> +       return platform_driver_register(&lpass_cc_sdm845_driver);
+> +}
+> +subsys_initcall(lpass_cc_sdm845_init);
+> +
+> +static void __exit lpass_cc_sdm845_exit(void)
+> +{
+> +       platform_driver_unregister(&lpass_cc_sdm845_driver);
+> +}
+> +module_exit(lpass_cc_sdm845_exit);
+> +
+> +MODULE_LICENSE("GPL v2");
 
->     Does Qualcomm have information on these rates? Have they been tested?
->     And did you measure these frequencies? The math checks out, but I won=
-der
->     if the hardware can actually do it.
-> =
-
-> =
-
-> No info from QCOM, I just tested this on a Dragonboard-410C/APQ8016 and
-> measured SPI clk with a Logic Analyzer.
-> Frequencies match expected values.
-> =
-
-
-Ok. Taniya, can you help here and add a Reviewed-by?
+MODULE_DESCRIPTION?
 
