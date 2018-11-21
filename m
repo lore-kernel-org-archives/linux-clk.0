@@ -2,96 +2,88 @@ Return-Path: <SRS0=GqaR=OA=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FAABC43441
-	for <linux-clk@archiver.kernel.org>; Wed, 21 Nov 2018 09:00:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DD06C43441
+	for <linux-clk@archiver.kernel.org>; Wed, 21 Nov 2018 09:21:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56FAD2146F
-	for <linux-clk@archiver.kernel.org>; Wed, 21 Nov 2018 09:00:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mih/Kt7K"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56FAD2146F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 185B82145D
+	for <linux-clk@archiver.kernel.org>; Wed, 21 Nov 2018 09:21:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 185B82145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729066AbeKUTeE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 21 Nov 2018 14:34:04 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:42688 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728149AbeKUTeE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Nov 2018 14:34:04 -0500
-Received: by mail-pl1-f195.google.com with SMTP id x21-v6so4552347pln.9
-        for <linux-clk@vger.kernel.org>; Wed, 21 Nov 2018 01:00:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
-         :references:message-id:user-agent:subject:date;
-        bh=cn2lF0gcvQR+FONqyJl9n6t4LCo6bGltvXw6TDhEVk0=;
-        b=mih/Kt7KIhqH375rhgTGlRfhgIpqIRajJ8jJwWIfMZeBsKYz2l99cL4bMMzwVP2U9g
-         17YMLQohoWo5vmtDVSYfvAYDq4ten8xMohJZXCMgxSj/jPrGM0zu+++uCPVwS17husGY
-         rxxEZVNmz7eUEth+FO+RB8FLBlfYH79j+iagI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
-         :in-reply-to:cc:references:message-id:user-agent:subject:date;
-        bh=cn2lF0gcvQR+FONqyJl9n6t4LCo6bGltvXw6TDhEVk0=;
-        b=GE2M0RSMIpMo4DOIkaLkrrZ4pEpK7JJHkv4fIPor+6dxZCsvWczXblUmdbn7unlf8A
-         5wQdvL2r0hpUCZ0JiX1rTQkPHbHXVqAblusOY2GgRR1jyIpG36KDuVv5Y+RnzklD4Skz
-         7PBaHMTxrx4YRDgByZ67b98WMz7N4+j2H9JGg6BAysf1GgPtfUaRirsl5WszbziZIPFO
-         CfGt5Eck4oIMVb+7DpWb389Li96Hq8qRmxIFU2VNYrVMlXKkD8Ca72xnmgKCu1wmBlPt
-         NsD4LJjqGHoiAHkIwwSaDylzwOV8NIWqbU1R4YzUybrPIJEEsMDtAnxBOczFVCfzrIX7
-         D5Ww==
-X-Gm-Message-State: AA+aEWbflOODWFw9PfUGCZWNpL7nJybU+TqLSZ7wnSxObS+IGwA7JJ1K
-        cdL+7k/2VG2tq8At9qi/Pn3pHg==
-X-Google-Smtp-Source: AFSGD/VmDy/zL5F+8wV5aiicGtHlA3+VkGGanxVWPEeO/tPP3Pp1AiccSHBy25IYZXRtOU72AXTXHA==
-X-Received: by 2002:a63:1321:: with SMTP id i33mr5260427pgl.380.1542790824960;
-        Wed, 21 Nov 2018 01:00:24 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:fed3:9637:a13a:6c15])
-        by smtp.gmail.com with ESMTPSA id p62-v6sm53418272pfp.111.2018.11.21.01.00.24
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 21 Nov 2018 01:00:24 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+        id S1729201AbeKUTy7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 21 Nov 2018 14:54:59 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:63206 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726665AbeKUTy7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Nov 2018 14:54:59 -0500
+X-UUID: 9a5647383f5e4047b85d4ba513ba9ead-20181121
+X-UUID: 9a5647383f5e4047b85d4ba513ba9ead-20181121
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
+        (envelope-from <weiyi.lu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1117219631; Wed, 21 Nov 2018 17:21:06 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 21 Nov 2018 17:21:04 +0800
+Received: from [172.21.77.4] (172.21.77.4) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 21 Nov 2018 17:21:04 +0800
+Message-ID: <1542792064.20593.2.camel@mtksdaap41>
+Subject: Re: [PATCH v1 04/11] soc: mediatek: add new flow for mtcmos power.
+From:   Weiyi Lu <weiyi.lu@mediatek.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+CC:     Nicolas Boichat <drinkcat@chromium.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <sboyd@codeaurora.org>, Rob Herring <robh@kernel.org>,
+        <jamesjj.liao@mediatek.com>, <fan.chen@mediatek.com>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <srv_heupstream@mediatek.com>, <owen.chen@mediatek.com>,
+        <mars.cheng@mediatek.com>
+Date:   Wed, 21 Nov 2018 17:21:04 +0800
+In-Reply-To: <154278766192.88331.16232130563413450456@swboyd.mtv.corp.google.com>
+References: <20181106064206.17535-1-weiyi.lu@mediatek.com>
+         <20181106064206.17535-6-weiyi.lu@mediatek.com>
+         <CANMq1KDbauouMDvsZS3KsNJrNs1gGg7mDjsKRw=zTcuQXSTa0Q@mail.gmail.com>
+         <1542681454.5132.9.camel@mtksdaap41>
+         <154278766192.88331.16232130563413450456@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-From:   Stephen Boyd <swboyd@chromium.org>
-In-Reply-To: <20181105194011.43770-3-swboyd@chromium.org>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        Taniya Das <tdas@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-References: <20181105194011.43770-1-swboyd@chromium.org>
- <20181105194011.43770-3-swboyd@chromium.org>
-Message-ID: <154279082358.88331.12065362627893713159@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH 2/2] clk: qcom: Support 'protected-clocks' property
-Date:   Wed, 21 Nov 2018 01:00:23 -0800
+Content-Transfer-Encoding: 7bit
+X-TM-SNTS-SMTP: 8C68A4B578B6415AF37CD1230BEF4E76EDA0F59254B6F4314F58C520F9EDEEAB2000:8
+X-MTK:  N
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Stephen Boyd (2018-11-05 11:40:11)
-> Certain firmware configurations "protect" clks and cause the entire
-> system to reboot when a non-secure OS such as Linux tries to read or
-> write protected clk registers. But other firmware configurations allow
-> reading or writing the same registers, and they may actually require
-> that the OS use the otherwise locked down clks. Support the
-> 'protected-clocks' property by never registering these protected clks
-> with the common clk framework. This way, when firmware is protecting
-> these clks we won't have the chance to ever read or write these
-> registers and take down the entire system.
-> =
+On Wed, 2018-11-21 at 00:07 -0800, Stephen Boyd wrote:
+> Quoting Weiyi Lu (2018-11-19 18:37:34)
+> > On Tue, 2018-11-13 at 11:31 -0800, Nicolas Boichat wrote:
+> > > On Mon, Nov 5, 2018 at 10:42 PM Weiyi Lu <weiyi.lu@mediatek.com> wrote:
+> 
+> > > > @@ -226,6 +397,7 @@ static int scpsys_power_on(struct generic_pm_domain *genpd)
+> > > >         if (ret < 0)
+> > > >                 goto err_pwr_ack;
+> > > >
+> > > > +
+> > > 
+> > > Drop this.
+> > Why do we try to drop this? Once the power-on step fail, the following
+> > steps should not be permitted.
+> 
+> I just see a whitespace addition that doesn't do anything. I suspect
+> it's a style nitpick and common practice to not include spurious diffs
+> in the patch. So remove this hunk?
+> 
+Oops! I missed the extra whitespace. I will remove it. Many thanks.
 
-> Cc: Taniya Das <tdas@codeaurora.org>
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-> ---
 
-Applied to clk-next
 
