@@ -2,136 +2,163 @@ Return-Path: <SRS0=o4d4=OB=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EEAFC43441
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Nov 2018 13:23:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB054C43441
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Nov 2018 15:02:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8587206B2
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Nov 2018 13:23:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C7C5206B2
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Nov 2018 15:02:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MZPqD6Gp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8587206B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AI+joUyk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C7C5206B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436802AbeKWADG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 22 Nov 2018 19:03:06 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:36145 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729623AbeKWADG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Nov 2018 19:03:06 -0500
-Received: by mail-wm1-f68.google.com with SMTP id s11so9150524wmh.1
-        for <linux-clk@vger.kernel.org>; Thu, 22 Nov 2018 05:23:45 -0800 (PST)
+        id S2403968AbeKWBls (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 22 Nov 2018 20:41:48 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:42517 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731038AbeKWBls (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Nov 2018 20:41:48 -0500
+Received: by mail-wr1-f68.google.com with SMTP id q18so9548539wrx.9;
+        Thu, 22 Nov 2018 07:02:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=4w0MIK4419v8QaqU3k3Um9A+0am0yvH61l+/nftgpcY=;
-        b=MZPqD6Gp8Y5+2NvcXP8TLr/LWIW5nSzKvkb+ljA0P2Qg5vq0ym5P6snUQVCllfjqsM
-         /6ulI+WZQIOhvGs61/mTurJf6i2h0h3sYEULf+eSy5uoFjeOVaavOhrNxHWNrvb+6lvU
-         X/1K36zTbhq45+DyDX5/wa1UP4jEoRrtgMtLk=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=kVZ4aa1WWSiBf0BScwmwCPIOPM1Z1WJtDKh3NCGY4Uc=;
+        b=AI+joUykO7Y/1xau52rOO/p1Q88lH7Ac4dymFzop7bXXa7yvcn4R4r2IZBEai19Ffz
+         ClNLsxHQu3cUtkmihQBMrHKJlCV4KpV2cr+VRygj5VNGdaHKYzQKd0ztwVXftH5czuQg
+         uRG8C2bIzB+mZEedPRizbK+5RVF/6me2xdDSvJxCW0y4naCTmFBm4CGUN0eESlJORr3y
+         tBIZt5HHMstQU+j9wmQ7amyJOVTxYm/4WQnM9vAVDvYJvmSIiedrMPy0qwO3XQKn8jfv
+         OyAtQijzOqZLBj7BIE99wjyPoFBCbFaVbAJ6YADk1Q9PQdlUqpwW10Hvb4NO2+KVyLxW
+         l6jg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=4w0MIK4419v8QaqU3k3Um9A+0am0yvH61l+/nftgpcY=;
-        b=GSWeu64XTZ+20oxWaIZehSh7QujCfzk1HppD9fgdrMKAi2JvN2BObBuKE3U02x1bsK
-         9M6M6eeMmkPdU+hlFp0nixoTGtYzAAVj8lQls07EdH+zqsILSAtraIzygc5NZFaU2x9s
-         sYLPZjsp8OXN9qHV5qCyACWTPpU76wbIucvPz4umeI9Y0XLEFeqXLcJSif0TavM4bN8/
-         +WsRCJ3+lj8lxcIBNfheP5DWd9E+05FXTv73l67rG5mQV25lqvr+3800bQ4GPmvxlccY
-         opKx5LWWDeZ0NLvO6DFixUhM+fPTjQYJQCwmHcv08gukJg8DKvFoDqnatLPOSDNBbJn5
-         AIPQ==
-X-Gm-Message-State: AGRZ1gKh5MMaIhWXZVK4d8dKaBR3clrDz4ukf9w8AZi9UUpz6nHf83XF
-        9+qRxUKwl4JEnxyzhtjPmoJn2Q==
-X-Google-Smtp-Source: AJdET5efw2jP3yCuEX3araxDIGMpqJwUZO2onQ/qLt/X4b6NJvv5aAXRdkgyWi7ytZQxcMHXT+tZiA==
-X-Received: by 2002:a1c:4108:: with SMTP id o8mr9283584wma.91.1542893024427;
-        Thu, 22 Nov 2018 05:23:44 -0800 (PST)
-Received: from [192.168.0.40] (189.35.136.77.rev.sfr.net. [77.136.35.189])
-        by smtp.googlemail.com with ESMTPSA id 134-v6sm5450488wmp.6.2018.11.22.05.23.42
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=kVZ4aa1WWSiBf0BScwmwCPIOPM1Z1WJtDKh3NCGY4Uc=;
+        b=BpWTM+1sShIxlrqxticvvIrtcMMH8gYEfBUHAOBZvpAdhAhp9yX3DcLzF3sCnIjRaA
+         N4I9vnArpQF8hL/Cwz6AnoSPEXTmgyeV77Gl4cUHvSbmRdNsPEWbJJDGlo8bSbgyJKDZ
+         UfNogwG5WB4dbZ/iAdsKWv52VCxhJnR9CI+i02e0qMYGesRiGGW9oa4aDKUvIUbis+UQ
+         rJ6d2T3IvapXziAXnxrzjG0AZWPgOsNgrprQWadt/HLSrR8QIm+WNhnx03yFoni7QnGl
+         3SQ8kUcurLz/NcoUBVJ9EPEOjoSoLoy73Ac/yfh9lImcnwuLnVtTedzixSrXfmwUzzlo
+         Gnlw==
+X-Gm-Message-State: AA+aEWauUEUKMupCSrc5VQ9BKL7XqU7fgKPVeT5oNpXjE3TER+LtSMoN
+        3pDY562F6IoTJim5v4NNVvU=
+X-Google-Smtp-Source: AFSGD/XWQc8NjPngr3F51dZoRDupiyT7Ez4njC8iWauzmT+nCboEgp++2nd/YhyOtp6Fem/XwSCI/g==
+X-Received: by 2002:adf:f28d:: with SMTP id k13mr10480127wro.78.1542898922518;
+        Thu, 22 Nov 2018 07:02:02 -0800 (PST)
+Received: from localhost ([185.219.177.229])
+        by smtp.gmail.com with ESMTPSA id j6sm13795500wrw.30.2018.11.22.07.02.01
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 22 Nov 2018 05:23:43 -0800 (PST)
-Subject: Re: [RFC PATCH v3 07/17] clocksource: sun4i: add a compatible for
- suniv
-To:     Mesih Kilinc <mesihkilinc@gmail.com>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Cc:     Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Thu, 22 Nov 2018 07:02:01 -0800 (PST)
+Date:   Thu, 22 Nov 2018 18:02:00 +0300
+From:   Mesih Kilinc <mesihkilinc@gmail.com>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
         Chen-Yu Tsai <wens@csie.org>,
         Russell King <linux@armlinux.org.uk>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
         Marc Zyngier <marc.zyngier@arm.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Icenowy Zheng <icenowy@aosc.io>,
         Rob Herring <robh+dt@kernel.org>,
         Julian Calaby <julian.calaby@gmail.com>
+Subject: Re: [RFC PATCH v3 05/17] irqchip/sun4i: add support for suniv
+ interrupt controller
+Message-ID: <20181122150200.p6e22sp3v4npb42w@ThinkPad>
 References: <cover.1542824904.git.mesihkilinc@gmail.com>
- <60bc70fc43743f664de76abf3ab0a01cd7924458.1542824904.git.mesihkilinc@gmail.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <a732f908-c70e-ce30-ad18-ddbb6879995f@linaro.org>
-Date:   Thu, 22 Nov 2018 14:23:41 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+ <08b40429e46626f4caf8e4d2287b5c4d354e3b7f.1542824904.git.mesihkilinc@gmail.com>
+ <20181122083547.srnopylueqx6p2qj@flea>
 MIME-Version: 1.0
-In-Reply-To: <60bc70fc43743f664de76abf3ab0a01cd7924458.1542824904.git.mesihkilinc@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181122083547.srnopylueqx6p2qj@flea>
+User-Agent: NeoMutt/20180716-631-34bcda
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 21/11/2018 19:30, Mesih Kilinc wrote:
-> The suniv (new F-series) chip has a timer with less functionality than
-> the A10 timer, e.g. it has only 3 channels.
+On 18/11/22 09:35, Maxime Ripard wrote:
+> Hi Mesih,
 > 
-> Add a new compatible for it. As we didn't use the extra channels on A10
-> either now, the code needn't to be changed.
+Hi!
+> On Wed, Nov 21, 2018 at 09:30:38PM +0300, Mesih Kilinc wrote:
+> > The new F-series SoCs (suniv) from Allwinner use an stripped version of
+> > the interrupt controller in A10/A13
+> > 
+> > Add support for it in irq-sun4i driver.
+> > 
+> > Signed-off-by: Mesih Kilinc <mesihkilinc@gmail.com>
+> > ---
+> >  drivers/irqchip/irq-sun4i.c | 104 +++++++++++++++++++++++++++++++-------------
+> >  1 file changed, 74 insertions(+), 30 deletions(-)
+> > 
+> > diff --git a/drivers/irqchip/irq-sun4i.c b/drivers/irqchip/irq-sun4i.c
+> > index e3e5b91..7ca4a4d 100644
+> > --- a/drivers/irqchip/irq-sun4i.c
+> > +++ b/drivers/irqchip/irq-sun4i.c
+> > @@ -28,11 +28,21 @@
+> >  #define SUN4I_IRQ_NMI_CTRL_REG		0x0c
+> >  #define SUN4I_IRQ_PENDING_REG(x)	(0x10 + 0x4 * x)
+> >  #define SUN4I_IRQ_FIQ_PENDING_REG(x)	(0x20 + 0x4 * x)
+> > -#define SUN4I_IRQ_ENABLE_REG(x)		(0x40 + 0x4 * x)
+> > -#define SUN4I_IRQ_MASK_REG(x)		(0x50 + 0x4 * x)
+> > +#define SUN4I_IRQ_ENABLE_REG(x)		(irq_ic_data->enable_req_offset + 0x4 * x)
+> > +#define SUN4I_IRQ_MASK_REG(x)		(irq_ic_data->mask_req_offset + 0x4 * x)
 > 
-> The suniv chip is based on ARM926EJ-S CPU, thus it has no architecture timer.
+> You shouldn't have all the values you use passed as argument, so
+> irq_ic_data should be one of them here.
 > 
-> Register sun4i_timer as sched_clock on it.
+Could you elaborate it a little bit?
+> > +#define SUN4I_IRQ_ENABLE_REG_OFFSET	0x40
+> > +#define SUN4I_IRQ_MASK_REG_OFFSET	0x50
+> > +#define SUNIV_IRQ_ENABLE_REG_OFFSET	0x20
+> > +#define SUNIV_IRQ_MASK_REG_OFFSET	0x30
+> > +
+> > +struct sunxi_irq_chip_data{
+>                              ^ a space here
 > 
-> Signed-off-by: Mesih Kilinc <mesihkilinc@gmail.com>
-
-Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-
-> ---
->  drivers/clocksource/sun4i_timer.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
+> > +	void __iomem *irq_base;
+> > +	struct irq_domain *irq_domain;
+> > +	u32 enable_req_offset;
+> > +	u32 mask_req_offset;
 > 
-> diff --git a/drivers/clocksource/sun4i_timer.c b/drivers/clocksource/sun4i_timer.c
-> index 6e0180a..65f38f6 100644
-> --- a/drivers/clocksource/sun4i_timer.c
-> +++ b/drivers/clocksource/sun4i_timer.c
-> @@ -186,7 +186,8 @@ static int __init sun4i_timer_init(struct device_node *node)
->  	 */
->  	if (of_machine_is_compatible("allwinner,sun4i-a10") ||
->  	    of_machine_is_compatible("allwinner,sun5i-a13") ||
-> -	    of_machine_is_compatible("allwinner,sun5i-a10s"))
-> +	    of_machine_is_compatible("allwinner,sun5i-a10s") ||
-> +	    of_machine_is_compatible("allwinner,suniv-f1c100s"))
->  		sched_clock_register(sun4i_timer_sched_read, 32,
->  				     timer_of_rate(&to));
->  
-> @@ -218,3 +219,5 @@ static int __init sun4i_timer_init(struct device_node *node)
->  }
->  TIMER_OF_DECLARE(sun4i, "allwinner,sun4i-a10-timer",
->  		       sun4i_timer_init);
-> +TIMER_OF_DECLARE(suniv, "allwinner,suniv-f1c100s-timer",
-> +		       sun4i_timer_init);
+> s/req/reg/ ?
 > 
+Oops sorry
 
+...
+> > +
+> > +static int __init suniv_ic_of_init(struct device_node *node,
+> > +				   struct device_node *parent)
+> > +{
+> > +	irq_ic_data = kzalloc(sizeof(struct sunxi_irq_chip_data), GFP_KERNEL);
+> > +	if (!irq_ic_data) {
+> > +		pr_err("kzalloc failed!\n");
+> > +		return -ENOMEM;
+> > +	}
+> > +
+> > +	irq_ic_data->enable_req_offset = SUNIV_IRQ_ENABLE_REG_OFFSET;
+> > +	irq_ic_data->mask_req_offset = SUNIV_IRQ_MASK_REG_OFFSET;
+> > +
+> > +	return sun4i_of_init(node, parent);
+> > +}
+> > +
+> > +IRQCHIP_DECLARE(allwinner_sunvi_ic, "allwinner,suniv-f1c100s-ic", suniv_ic_of_init);
+> 
+> You can even split that addition to a new patch as well.
 
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+OK. I will do 3 patches. First one will add a struct that holds only
+base and domain. Second one will add register offsets to that struct. 
+Third one will add f1c100s support. Is that ok?
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+Mesih
