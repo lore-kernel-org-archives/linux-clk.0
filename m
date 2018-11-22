@@ -2,126 +2,136 @@ Return-Path: <SRS0=o4d4=OB=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A156C04EBB
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Nov 2018 09:05:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EEAFC43441
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Nov 2018 13:23:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 211B820870
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Nov 2018 09:05:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8587206B2
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Nov 2018 13:23:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="h3Gam3Iv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 211B820870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MZPqD6Gp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8587206B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405130AbeKVTo0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 22 Nov 2018 14:44:26 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:35067 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405129AbeKVTo0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Nov 2018 14:44:26 -0500
-Received: by mail-wr1-f66.google.com with SMTP id 96so8454568wrb.2
-        for <linux-clk@vger.kernel.org>; Thu, 22 Nov 2018 01:05:51 -0800 (PST)
+        id S2436802AbeKWADG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 22 Nov 2018 19:03:06 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:36145 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729623AbeKWADG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Nov 2018 19:03:06 -0500
+Received: by mail-wm1-f68.google.com with SMTP id s11so9150524wmh.1
+        for <linux-clk@vger.kernel.org>; Thu, 22 Nov 2018 05:23:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=/7Hi7w9d6cPQqqUvo11EA2xELq04YMXS0Q9lUj+4pz0=;
-        b=h3Gam3Iv6TmQlPJzMubn39Ioj4dsFJJx5idXNLKSIpvXHOIVN7MRRedway6xsvyxgO
-         UzzmxoPbcNeqOUjfllL9YaA0Tr4HUdu7KJAFuEbsKcXNmCU1awhPwvykk2TvKx4fIWIs
-         pokNsR1BVKidM4NzBUh3JMJlOfowFlwyoDxPC3rPW3/FXuTKHKgfsc7yIvb6mLqTTph0
-         t8A6x1RsjVER8nhQPf+H4qtXbKJnGzSMm7pAIGusGkhCykcMrzbuAENpJHW/LY6CDUEi
-         Gy6liKXrfRlsGSUCSlSmwHoXaIYawzvelWX+Vj3vUv+3FclF/7qM7jf+oqtpj6PEo+T8
-         3uNw==
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=4w0MIK4419v8QaqU3k3Um9A+0am0yvH61l+/nftgpcY=;
+        b=MZPqD6Gp8Y5+2NvcXP8TLr/LWIW5nSzKvkb+ljA0P2Qg5vq0ym5P6snUQVCllfjqsM
+         /6ulI+WZQIOhvGs61/mTurJf6i2h0h3sYEULf+eSy5uoFjeOVaavOhrNxHWNrvb+6lvU
+         X/1K36zTbhq45+DyDX5/wa1UP4jEoRrtgMtLk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=/7Hi7w9d6cPQqqUvo11EA2xELq04YMXS0Q9lUj+4pz0=;
-        b=MhKDgA26Ta/pZxjQmFB4sewoF1lR+EUD9VKzMaAdVa8wPYOHCG756rRcAauUtdAryD
-         8Oqmwa8VF73L2BjmC/V1qTyKGWKMsKNNVNpJNkUVgIXZYwZD0mR6frvPtdDxmFR0Gj7a
-         amUBZLo4AKjl0e36qun/e93U4D6CQVnQUgeNM4W0e4T6usiFFUeYUOrNJ0O3IIbj3n2j
-         UWMBlK7bwkB+ttF/nqKOqPzuUafOLWIWClSMvw/H4mYG+YkLTEihOogmc/1HD2EDzXVS
-         6cqB5Ql6zaohdWfmsxR4tFprS6Byhvr4ydGw70yWKZpwy2S0wof6iTx/+UW94JHNsc8M
-         8bJw==
-X-Gm-Message-State: AA+aEWbLlC0jTynMTSHj3ZV2m4WJFNiM/pTYuRIzuAlHR+E7J/Ouwpxn
-        uLTfy2F+9S43j3Bi9ixryYSkmA==
-X-Google-Smtp-Source: AFSGD/X853mP/Muo2A4bXKcQIgqCjikSpldHueUKs3Tk69n3VC/YKLWokVf3mi8A65sfXUjijCTN3g==
-X-Received: by 2002:adf:c189:: with SMTP id x9-v6mr9200065wre.233.1542877550550;
-        Thu, 22 Nov 2018 01:05:50 -0800 (PST)
-Received: from boomer.lan (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
-        by smtp.gmail.com with ESMTPSA id j16sm4379967wrr.97.2018.11.22.01.05.49
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 22 Nov 2018 01:05:49 -0800 (PST)
-Message-ID: <59801d61ba4e5d5fc8f0df1adffad1f9c7afb45c.camel@baylibre.com>
-Subject: Re: [PATCH 0/3] Meson8b: add the CPU clock post-dividers
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-amlogic@lists.infradead.org, narmstrong@baylibre.com
-Cc:     mturquette@baylibre.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Date:   Thu, 22 Nov 2018 10:05:48 +0100
-In-Reply-To: <20181116205303.6354-1-martin.blumenstingl@googlemail.com>
-References: <20181116205303.6354-1-martin.blumenstingl@googlemail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.2 (3.30.2-2.fc29) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=4w0MIK4419v8QaqU3k3Um9A+0am0yvH61l+/nftgpcY=;
+        b=GSWeu64XTZ+20oxWaIZehSh7QujCfzk1HppD9fgdrMKAi2JvN2BObBuKE3U02x1bsK
+         9M6M6eeMmkPdU+hlFp0nixoTGtYzAAVj8lQls07EdH+zqsILSAtraIzygc5NZFaU2x9s
+         sYLPZjsp8OXN9qHV5qCyACWTPpU76wbIucvPz4umeI9Y0XLEFeqXLcJSif0TavM4bN8/
+         +WsRCJ3+lj8lxcIBNfheP5DWd9E+05FXTv73l67rG5mQV25lqvr+3800bQ4GPmvxlccY
+         opKx5LWWDeZ0NLvO6DFixUhM+fPTjQYJQCwmHcv08gukJg8DKvFoDqnatLPOSDNBbJn5
+         AIPQ==
+X-Gm-Message-State: AGRZ1gKh5MMaIhWXZVK4d8dKaBR3clrDz4ukf9w8AZi9UUpz6nHf83XF
+        9+qRxUKwl4JEnxyzhtjPmoJn2Q==
+X-Google-Smtp-Source: AJdET5efw2jP3yCuEX3araxDIGMpqJwUZO2onQ/qLt/X4b6NJvv5aAXRdkgyWi7ytZQxcMHXT+tZiA==
+X-Received: by 2002:a1c:4108:: with SMTP id o8mr9283584wma.91.1542893024427;
+        Thu, 22 Nov 2018 05:23:44 -0800 (PST)
+Received: from [192.168.0.40] (189.35.136.77.rev.sfr.net. [77.136.35.189])
+        by smtp.googlemail.com with ESMTPSA id 134-v6sm5450488wmp.6.2018.11.22.05.23.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 22 Nov 2018 05:23:43 -0800 (PST)
+Subject: Re: [RFC PATCH v3 07/17] clocksource: sun4i: add a compatible for
+ suniv
+To:     Mesih Kilinc <mesihkilinc@gmail.com>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Cc:     Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Rob Herring <robh+dt@kernel.org>,
+        Julian Calaby <julian.calaby@gmail.com>
+References: <cover.1542824904.git.mesihkilinc@gmail.com>
+ <60bc70fc43743f664de76abf3ab0a01cd7924458.1542824904.git.mesihkilinc@gmail.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <a732f908-c70e-ce30-ad18-ddbb6879995f@linaro.org>
+Date:   Thu, 22 Nov 2018 14:23:41 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <60bc70fc43743f664de76abf3ab0a01cd7924458.1542824904.git.mesihkilinc@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 2018-11-16 at 21:53 +0100, Martin Blumenstingl wrote:
-> This is the successor to my previous series "meson8b: add the CPU_DIV16
-> clock for the ARM TWD" from [0]. I decided to not send this as v2 of
-> the original series because the PERIPH clock is not the CPU_DIV16 clock.
-> It's not clear whether a CPU_DIV16 clock exists.
+On 21/11/2018 19:30, Mesih Kilinc wrote:
+> The suniv (new F-series) chip has a timer with less functionality than
+> the A10 timer, e.g. it has only 3 channels.
 > 
-> With this series we get all the CPU_CLK post-dividers as listed in the
-> public S805 datasheet [1] on pages 31 and 32:
-> - ABP
-> - PERIPH (used as input for the ARM global timer and ARM TWD timer)
-> - AXI
-> - L2 DRAM
+> Add a new compatible for it. As we didn't use the extra channels on A10
+> either now, the code needn't to be changed.
 > 
-> Each of these clocks has a register called "..._CLK_DIS" which is
-> documented as a "just in case" bit:
-> "Set to 1 to manually disable the [...] clock when changing the mux
-> selection. Typically this bit is set to 0 since the clock muxes can
-> switch without glitches."
-> Since we're not supposed to touch that register we're setting
-> CLK_IS_CRITICAL for these clocks in the driver.
+> The suniv chip is based on ARM926EJ-S CPU, thus it has no architecture timer.
+> 
+> Register sun4i_timer as sched_clock on it.
+> 
+> Signed-off-by: Mesih Kilinc <mesihkilinc@gmail.com>
 
-If we are not supposed to touch the register, I'd prefer if you used RO ops
-instead of using CLK_IS_CRITICAL.
+Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 
+> ---
+>  drivers/clocksource/sun4i_timer.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
 > 
-> The result of this is that we can use the PERIPH clock which clocks
-> the ARM TWD timer. I will send a separate series to add the TWD timer.
-> 
-> 
-> [0] http://lists.infradead.org/pipermail/linux-amlogic/2018-July/007890.html
-> [1] 
-> https://dn.odroid.com/S805/Datasheet/S805_Datasheet%20V0.8%2020150126.pdf
-> 
-> Martin Blumenstingl (3):
->   dt-bindings: clock: meson8b: export the CPU post dividers
->   clk: meson: meson8b: rename cpu_div2/cpu_div3 to
->     cpu_in_div2/cpu_in_div3
->   clk: meson: meson8b: add the CPU clock post divider clocks
-> 
->  drivers/clk/meson/meson8b.c              | 268 ++++++++++++++++++++++-
->  drivers/clk/meson/meson8b.h              |  17 +-
->  include/dt-bindings/clock/meson8b-clkc.h |   4 +
->  3 files changed, 276 insertions(+), 13 deletions(-)
+> diff --git a/drivers/clocksource/sun4i_timer.c b/drivers/clocksource/sun4i_timer.c
+> index 6e0180a..65f38f6 100644
+> --- a/drivers/clocksource/sun4i_timer.c
+> +++ b/drivers/clocksource/sun4i_timer.c
+> @@ -186,7 +186,8 @@ static int __init sun4i_timer_init(struct device_node *node)
+>  	 */
+>  	if (of_machine_is_compatible("allwinner,sun4i-a10") ||
+>  	    of_machine_is_compatible("allwinner,sun5i-a13") ||
+> -	    of_machine_is_compatible("allwinner,sun5i-a10s"))
+> +	    of_machine_is_compatible("allwinner,sun5i-a10s") ||
+> +	    of_machine_is_compatible("allwinner,suniv-f1c100s"))
+>  		sched_clock_register(sun4i_timer_sched_read, 32,
+>  				     timer_of_rate(&to));
+>  
+> @@ -218,3 +219,5 @@ static int __init sun4i_timer_init(struct device_node *node)
+>  }
+>  TIMER_OF_DECLARE(sun4i, "allwinner,sun4i-a10-timer",
+>  		       sun4i_timer_init);
+> +TIMER_OF_DECLARE(suniv, "allwinner,suniv-f1c100s-timer",
+> +		       sun4i_timer_init);
 > 
 
-With CLK_IS_CRITICAL removed, looks good to me:
 
-Acked-by: Jerome Brunet <jbrunet@baylibre.com>
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
