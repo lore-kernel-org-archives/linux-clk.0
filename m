@@ -2,329 +2,102 @@ Return-Path: <SRS0=o4d4=OB=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68DF1C43441
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Nov 2018 02:24:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D64BC43441
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Nov 2018 07:06:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F5A3206B2
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Nov 2018 02:24:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F5A3206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id D1D8A20864
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Nov 2018 07:06:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1D8A20864
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mentor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732823AbeKVNBI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 22 Nov 2018 08:01:08 -0500
-Received: from mx.socionext.com ([202.248.49.38]:26315 "EHLO mx.socionext.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732781AbeKVNBI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 22 Nov 2018 08:01:08 -0500
-Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
-  by mx.socionext.com with ESMTP; 22 Nov 2018 11:23:56 +0900
-Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
-        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id 97CDE60062;
-        Thu, 22 Nov 2018 11:23:56 +0900 (JST)
-Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Thu, 22 Nov 2018 11:23:56 +0900
-Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
-        by iyokan.css.socionext.com (Postfix) with ESMTP id E650E40361;
-        Thu, 22 Nov 2018 11:23:55 +0900 (JST)
-Received: from [127.0.0.1] (unknown [10.213.119.83])
-        by yuzu.css.socionext.com (Postfix) with ESMTP id C271B120304;
-        Thu, 22 Nov 2018 11:23:55 +0900 (JST)
-Subject: Re: [PATCH 05/14] clocksource/drivers/timer-milbeaut: Add Milbeaut
- M10V timer
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-serial@vger.kernel.org
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Jiri Slaby <jslaby@suse.com>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>
-References: <1542589274-13878-1-git-send-email-sugaya.taichi@socionext.com>
- <1542589274-13878-6-git-send-email-sugaya.taichi@socionext.com>
- <c6b7ddb0-064a-8f09-bbb4-9754f3d63ecb@linaro.org>
-From:   "Sugaya, Taichi" <sugaya.taichi@socionext.com>
-Message-ID: <07d26609-e10c-70f1-1360-63ed0e214d7e@socionext.com>
-Date:   Thu, 22 Nov 2018 11:23:54 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        id S2404940AbeKVRo3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 22 Nov 2018 12:44:29 -0500
+Received: from relay1.mentorg.com ([192.94.38.131]:40452 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730054AbeKVRo3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Nov 2018 12:44:29 -0500
+Received: from svr-orw-mbx-03.mgc.mentorg.com ([147.34.90.203])
+        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
+        id 1gPj43-00022d-Uz from Jiada_Wang@mentor.com ; Wed, 21 Nov 2018 23:06:15 -0800
+Received: from [172.30.112.131] (147.34.91.1) by
+ svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203) with Microsoft SMTP Server
+ (TLS) id 15.0.1320.4; Wed, 21 Nov 2018 23:06:12 -0800
+Subject: Re: [PATCH linux-next v1 2/4] clk: renesas: Add binding document for
+ AVB Counter Clock
+To:     Stephen Boyd <sboyd@kernel.org>, <geert+renesas@glider.be>,
+        <horms@verge.net.au>, <magnus.damm@gmail.com>,
+        <mark.rutland@arm.com>, <mturquette@baylibre.com>,
+        <robh+dt@kernel.org>
+CC:     <linux-kernel@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <kuninori.morimoto.gx@renesas.com>
+References: <20181025072349.15173-1-jiada_wang@mentor.com>
+ <20181025072349.15173-3-jiada_wang@mentor.com>
+ <154083775062.98144.11157403961171783929@swboyd.mtv.corp.google.com>
+ <9f9fbf3a-4455-bdf3-0438-b39b9cdda112@mentor.com>
+ <154130125117.88331.5969014008610987799@swboyd.mtv.corp.google.com>
+From:   Jiada Wang <jiada_wang@mentor.com>
+Message-ID: <7f8827a5-c65d-0e1e-a0f9-23b31305d26a@mentor.com>
+Date:   Thu, 22 Nov 2018 16:06:10 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <c6b7ddb0-064a-8f09-bbb4-9754f3d63ecb@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <154130125117.88331.5969014008610987799@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 Content-Language: en-US
+X-ClientProxiedBy: SVR-ORW-MBX-07.mgc.mentorg.com (147.34.90.207) To
+ svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Daniel
-
-Thank you for your comments.
-
-On 2018/11/21 19:08, Daniel Lezcano wrote:
-> Hi Sugaya,
->
->
-> On 19/11/2018 02:01, Sugaya Taichi wrote:
->> Add Milbeaut M10V timer using 32bit timer in peripheral.
-> Give a better description of the timer as it is new timer introduced.
-
-I got it. Add more description.
+Hi Stephen
 
 
->> Signed-off-by: Sugaya Taichi <sugaya.taichi@socionext.com>
->> ---
->>   drivers/clocksource/Kconfig      |   8 +++
->>   drivers/clocksource/Makefile     |   1 +
->>   drivers/clocksource/timer-m10v.c | 146 +++++++++++++++++++++++++++++++++++++++
->>   3 files changed, 155 insertions(+)
->>   create mode 100644 drivers/clocksource/timer-m10v.c
+On 2018/11/04 12:14, Stephen Boyd wrote:
+> Quoting Jiada Wang (2018-10-31 05:00:49)
+>> On 2018/10/30 3:29, Stephen Boyd wrote:
+>>> Quoting jiada_wang@mentor.com (2018-10-25 00:23:47)
+>>>> +Required Properties:
+>>>> +  - compatible: Must be "renesas,clk-avb"
+>>>> +  - reg: Base address and length of the memory resource used by the AVB
+>>>> +  - #clock-cells: Must be 1
+>>>> +
+>>>> +Example
+>>>> +-------
+>>>> +
+>>>> +       clk_avb: avb-clock@ec5a011c {
+>>>> +               compatible = "renesas,clk-avb";
+>>>> +               reg = <0 0xec5a011c 0 0x24>;
+>>> This is an odd register offset. Is this just one clk inside of a larger
+>>> clk controller?
+>>>
+>> Yes, avb_counter clock is part of Audio Clock Generator reg: <0
+>> 0xec5a0000 0 0x140>,
+>> but "adg" has already been declared in R-Car GEN2/GEN3 SoC .dtsi file,
+>> with reg: <0 0xec5a0000 0 0x100>,
+>> which leaves <0 0xec5a0100 0 0x140> currently not used by any module.
 >>
->> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
->> index 55c77e4..a278d72 100644
->> --- a/drivers/clocksource/Kconfig
->> +++ b/drivers/clocksource/Kconfig
->> @@ -638,4 +638,12 @@ config GX6605S_TIMER
->>   	help
->>   	  This option enables support for gx6605s SOC's timer.
->>   
->> +config M10V_TIMER
->> +	bool "Milbeaut M10V timer driver" if COMPILE_TEST
->> +	depends on OF
->> +	depends on ARM
->> +	select TIMER_OF
->> +	help
->> +	  Enables the support for Milbeaut M10V timer driver.
->> +
->>   endmenu
->> diff --git a/drivers/clocksource/Makefile b/drivers/clocksource/Makefile
->> index dd91381..8e908b4 100644
->> --- a/drivers/clocksource/Makefile
->> +++ b/drivers/clocksource/Makefile
->> @@ -55,6 +55,7 @@ obj-$(CONFIG_CLKSRC_TI_32K)	+= timer-ti-32k.o
->>   obj-$(CONFIG_CLKSRC_NPS)	+= timer-nps.o
->>   obj-$(CONFIG_OXNAS_RPS_TIMER)	+= timer-oxnas-rps.o
->>   obj-$(CONFIG_OWL_TIMER)		+= timer-owl.o
->> +obj-$(CONFIG_M10V_TIMER)	+= timer-m10v.o
->>   obj-$(CONFIG_SPRD_TIMER)	+= timer-sprd.o
->>   obj-$(CONFIG_NPCM7XX_TIMER)	+= timer-npcm7xx.o
->>   
->> diff --git a/drivers/clocksource/timer-m10v.c b/drivers/clocksource/timer-m10v.c
->> new file mode 100644
->> index 0000000..ff97c23
->> --- /dev/null
->> +++ b/drivers/clocksource/timer-m10v.c
->> @@ -0,0 +1,146 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Copyright (C) 2018 Socionext Inc.
->> + */
->> +
->> +#include <linux/clk.h>
-> ------->
->
->> +#include <linux/clockchips.h>
-> It is included from timer-of.h
->
-> <-------
-
-OK. Remove it.
+> So why can't we expand the register size in the dts file and update the
+> audio clock generator driver to register this avb clock too? Presumably
+> the mapping is large enough to cover the clk registers already so it is
+> more of a formality to expand the register size than a requirement.
+I am working on ver2 to expend register size to cover <0 0xec5a0100 0 0x140>
+in audio clock generator (ADG) driver, but as provider of newly added 
+"AVB_COUNTER" clock,
+ADG driver also uses these clocks if necessary, so it keeps itself BUSY,
+and cause ADG driver can't be unloaded.
+my question is, is such use case allowed? (clock provider is also client 
+of clocks).
 
 
->
->> +#include <linux/interrupt.h>
->> +#include <linux/irq.h>
->> +#include <linux/irqreturn.h>
-> ------->
->
->> +#include <linux/of.h>
->> +#include <linux/of_address.h>
->> +#include <linux/of_irq.h>
->> +#include <linux/slab.h>
-> Those are not needed IMO.
->
-> <---------
-
-OK, remove these.
-
-
->
->
->> +#include "timer-of.h"
->> +
->> +#define FSL_TMR_TMCSR_OFS	0x0
->> +#define FSL_TMR_TMR_OFS		0x4
->> +#define FSL_TMR_TMRLR1_OFS	0x8
->> +#define FSL_TMR_TMRLR2_OFS	0xc
->> +#define FSL_RMT_REGSZPCH	0x10
->> +
->> +#define FSL_TMR_TMCSR_OUTL	BIT(5)
->> +#define FSL_TMR_TMCSR_RELD	BIT(4)
->> +#define FSL_TMR_TMCSR_INTE	BIT(3)
->> +#define FSL_TMR_TMCSR_UF	BIT(2)
->> +#define FSL_TMR_TMCSR_CNTE	BIT(1)
->> +#define FSL_TMR_TMCSR_TRG	BIT(0)
->> +
->> +#define FSL_TMR_TMCSR_CSL_DIV2	0
->> +#define FSL_TMR_TMCSR_CSL	BIT(10)
->> +
->> +#define M10V_TIMER_RATING	500
->> +
->> +static irqreturn_t m10v_timer_interrupt(int irq, void *dev_id)
->> +{
->> +	struct clock_event_device *clk = dev_id;
->> +	struct timer_of *to = to_timer_of(clk);
->> +	u32 val;
->> +
->> +	val = readl_relaxed(timer_of_base(to) + FSL_TMR_TMCSR_OFS);
->> +	val &= ~FSL_TMR_TMCSR_UF;
->> +	writel_relaxed(val, timer_of_base(to) + FSL_TMR_TMCSR_OFS);
->> +
->> +	clk->event_handler(clk);
->> +
->> +	return IRQ_HANDLED;
->> +}
->> +
->> +static int m10v_set_state_periodic(struct clock_event_device *clk)
->> +{
->> +	struct timer_of *to = to_timer_of(clk);
->> +	u32 val = (FSL_TMR_TMCSR_CSL_DIV2 * FSL_TMR_TMCSR_CSL);
-> 	FSL_TMR_TMCSR_CSL_DIV2 is zero, so val is always zero.
-Ah, yes.
-The FSL_TMR_TMCSR is the 10th bit field of the register, so it would be 
-better
-to bit-shift.
-I will use it as simply 0.
-
-> 	
->> +	writel_relaxed(val, timer_of_base(to) + FSL_TMR_TMCSR_OFS);
->> +
->> +	writel_relaxed(to->of_clk.period, timer_of_base(to) +
->> +				FSL_TMR_TMRLR1_OFS);
->> +	val |= FSL_TMR_TMCSR_RELD | FSL_TMR_TMCSR_CNTE |
->> +		FSL_TMR_TMCSR_TRG | FSL_TMR_TMCSR_INTE;
->> +	writel_relaxed(val, timer_of_base(to) + FSL_TMR_TMCSR_OFS);
->> +	return 0;
->> +}
->> +
->> +static int m10v_set_state_oneshot(struct clock_event_device *clk)
->> +{
->> +	struct timer_of *to = to_timer_of(clk);
->> +	u32 val = (FSL_TMR_TMCSR_CSL_DIV2 * FSL_TMR_TMCSR_CSL);
->> +
->> +	writel_relaxed(val, timer_of_base(to) + FSL_TMR_TMCSR_OFS);
->> +	return 0;
->> +}
->> +
->> +static int m10v_clkevt_next_event(unsigned long event,
->> +				   struct clock_event_device *clk)
->> +{
->> +	struct timer_of *to = to_timer_of(clk);
->> +
->> +	writel_relaxed(event, timer_of_base(to) + FSL_TMR_TMRLR1_OFS);
->> +	writel_relaxed((FSL_TMR_TMCSR_CSL_DIV2 * FSL_TMR_TMCSR_CSL) |
-> Same comment here.
-
-I got it.
-
-
->> +			FSL_TMR_TMCSR_CNTE | FSL_TMR_TMCSR_INTE |
->> +			FSL_TMR_TMCSR_TRG, timer_of_base(to) +
->> +			FSL_TMR_TMCSR_OFS);
->> +	return 0;
->> +}
->> +
->> +static int m10v_config_clock_source(struct timer_of *to)
->> +{
->> +	writel_relaxed(0, timer_of_base(to) + FSL_TMR_TMCSR_OFS);
->> +	writel_relaxed(~0, timer_of_base(to) + FSL_TMR_TMR_OFS);
->> +	writel_relaxed(~0, timer_of_base(to) + FSL_TMR_TMRLR1_OFS);
->> +	writel_relaxed(~0, timer_of_base(to) + FSL_TMR_TMRLR2_OFS);
->> +	writel_relaxed(BIT(4) | BIT(1) | BIT(0), timer_of_base(to) +
->> +		FSL_TMR_TMCSR_OFS);
->> +	return 0;
->> +}
->> +
->> +static int m10v_config_clock_event(struct timer_of *to)
->> +{
->> +	writel_relaxed(0, timer_of_base(to) + FSL_TMR_TMCSR_OFS);
->> +	return 0;
->> +}
->> +
->> +static struct timer_of to = {
->> +	.flags = TIMER_OF_IRQ | TIMER_OF_BASE | TIMER_OF_CLOCK,
->> +
->> +	.clkevt = {
->> +		.name = "m10v-clkevt",
->> +		.rating = M10V_TIMER_RATING,
->> +		.cpumask = cpu_possible_mask,
->> +	},
->> +
->> +	.of_irq = {
->> +		.flags = IRQF_TIMER | IRQF_IRQPOLL,
->> +	},
->> +};
->> +
->> +static int __init m10v_timer_init(struct device_node *node)
->> +{
->> +	int ret;
->> +
->> +	to.clkevt.features = CLOCK_EVT_FEAT_DYNIRQ | CLOCK_EVT_FEAT_ONESHOT;
->> +	to.clkevt.set_state_oneshot = m10v_set_state_oneshot;
->> +	to.clkevt.set_state_periodic = m10v_set_state_periodic;
->> +	to.clkevt.set_next_event = m10v_clkevt_next_event;
->> +	to.of_irq.handler = m10v_timer_interrupt;
-> Move the initialization in the timer_of structure above.
-
-Okay.
-
-
->
->> +	ret = timer_of_init(node, &to);
->> +	if (ret)
->> +		goto err;
-> You should return directly, rollback is done in the timer_of_init().
-
-OK.
-
-
->
->> +
->> +	m10v_config_clock_source(&to);
->> +	clocksource_mmio_init(timer_of_base(&to) + FSL_TMR_TMR_OFS,
->> +		node->name, timer_of_rate(&to), M10V_TIMER_RATING, 32,
->> +		clocksource_mmio_readl_down);
-> May be you can add the sched_clock also ?
-
-OK. Add it and confirm.
-
-
-Thanks
-Sugaya Taichi
-
-
->
->> +	m10v_config_clock_event(&to);
->> +	clockevents_config_and_register(&to.clkevt, timer_of_rate(&to),
->> +				15, 0xffffffff);
->> +
->> +	return 0;
->> +err:
->> +	timer_of_cleanup(&to);
->> +	return ret;
->> +}
->> +TIMER_OF_DECLARE(m10v_peritimer, "socionext,milbeaut-m10v-timer",
->> +		m10v_timer_init);
->>
->
+Thanks,
+Jiada
 
