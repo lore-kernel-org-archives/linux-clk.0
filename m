@@ -6,58 +6,58 @@ X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C62CEC43441
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Nov 2018 18:39:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A9BEC43441
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Nov 2018 18:41:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DE9920824
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Nov 2018 18:39:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 44DAC20824
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Nov 2018 18:41:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="aPijYIih"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DE9920824
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="Vi15tN1z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44DAC20824
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729400AbeKWFUW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 23 Nov 2018 00:20:22 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:38567 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729652AbeKWFUW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Nov 2018 00:20:22 -0500
-Received: by mail-lf1-f66.google.com with SMTP id p86so7150164lfg.5
-        for <linux-clk@vger.kernel.org>; Thu, 22 Nov 2018 10:39:45 -0800 (PST)
+        id S1729237AbeKWFWe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 23 Nov 2018 00:22:34 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:36385 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729652AbeKWFWe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Nov 2018 00:22:34 -0500
+Received: by mail-lf1-f65.google.com with SMTP id a16so7137595lfg.3
+        for <linux-clk@vger.kernel.org>; Thu, 22 Nov 2018 10:41:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
         h=subject:from:to:references:organization:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=KG0pP74NvsqMG6H+tGCfruA/yxmbUS9d4iBkyYnv338=;
-        b=aPijYIih+hHyuRLbkc7/bT+XR5Z/15Vj8e1UEbLdweNQAi8Sn4THiHZsYKcqoZvPK7
-         tZfpNqcWHntx5wiyQ41hOzLPYISPKa270G9ui14lwFN52n+BbzL/HAJHBSVhUQxWiZcR
-         XKyhcSh8AOPNBm5aXdOXjEDToNRY7eHE6newTFOIvDMhXiyHVSImWuc3B1A3SRxDexNm
-         2Z+8D2hFtWDxWYk2eiv1VfMqL9DEL5R72xDgloqAMhV5d2aXt1QtpWbuwib4Qx7/138L
-         dmHhJwYrl5HbX/7sm3mBMJvQAKUPlIbdkI009kkjCyBnj0znvTiqqpECYwkALYFHDer/
-         QBOA==
+        bh=ocOAVnsg5OG7IopN4hagdptj2GRehmLrdQj00Gve9jg=;
+        b=Vi15tN1ziWiVxfQKgYJ1UnrbQH5/93DtmIeZtAlxEPQ4UVvVuaM7ZQpTh8PQZoP9kY
+         cXhHu1bJNLsdT1kaW8/JGd6mX7QEFCjrcwKkhtGl/UK0+G3UuT1IPWwazcBCxmHnBm7b
+         cdu2AZZhAEOdWoLJACHf9bmMeSGfOItlHm3eG+a15xILo4kVRDiKyA/gojh0Xr66fzEU
+         uAEw+mhIS9huAvlL1EMsnhfwxL7mOmUlsT0Q8p2y0ZrG2U7JCe5CQDQiRbUui9orx2tN
+         QpS0IVbZNU/UshYygxpUYh7+1PYkNksQFnY3vCgsvmCDJQiJep3yI1ZzqDmuygsTK+x+
+         U5Dg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:from:to:references:organization
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=KG0pP74NvsqMG6H+tGCfruA/yxmbUS9d4iBkyYnv338=;
-        b=IJdGPsqvySs0AHWizoCcKeFfq0c+vy0tzrBWnHh/e4uQaUYbdC/qfdRLY/i9Aih33E
-         JCv/X29kOxZ2dXL4o0R4HJFJJ+fun3JfiB7Uin3hMxsXyV+OAEsyTCQFidAMYvXhDEN6
-         +LEEQFiAZMaLFqFf0jsSNN4xe3xRre+xIlr3yu2lUFhLrlHcG5fOyQ8XkuETpCO9KOJc
-         NHSvZjJiNjO/dx4jxhTxAFZggVJPbDrb4HinttwgFvZN+xYyEE+P0UX3hPfyrEUkCs/1
-         yUax8QNMG08DZ7Iiu1fbdaCApYeTB6QwafT7OxL1G5LsNdb2C0/VP/q+LuxEl+5ZzIFm
-         n9nQ==
-X-Gm-Message-State: AGRZ1gLioparUoj0YITMWgZAYs7uS+UjbAfTYt+77FwcFGfDR6/78YAr
-        RVwk8+hnhrFN9D9BB/YmnLGbxbakaAw=
-X-Google-Smtp-Source: AJdET5eu5S9qsDaJcyttRilaA1aU9IhBMcXIC6coh9AKU21kJzkiGDzBrn5O6nXAkJwoOpSE+l7e1w==
-X-Received: by 2002:a19:9904:: with SMTP id b4mr6917604lfe.95.1542911984418;
-        Thu, 22 Nov 2018 10:39:44 -0800 (PST)
+        bh=ocOAVnsg5OG7IopN4hagdptj2GRehmLrdQj00Gve9jg=;
+        b=sb6BCCaM5El7DO09/z0mU/HQSfxk+WUjhTRCOtk/jyRASaOjrB+LOMWsWC2MkjghUL
+         91keJBM6lMMyfM2Af76zwOfHYgxvBqRC0k7mAtp9rRpOiN+XK74syYy3ENtBg85b4DlI
+         Mg9cyVjzWc3PIr6VDMxnudn9gO7fMyEYdRI4He3B+0XbzhEgI4zVZ3/AQsxDwjLqQPFh
+         2Phx4HZd6UUOcgdls8xjj0NSKBPub9dwsGPHcNgGma7O1Qqy6FmsoWJNdkgWb0URcpTH
+         QD1IVhMNYQGcCdVFsNGU3k4P7FekdlsT+J1hBOMhtduQqzuHifnVBC2r1/WV+Z+MJsM0
+         kiiw==
+X-Gm-Message-State: AGRZ1gLU5aHEioafy/SCY6WLgYDD9SISYq+0Zc3G5tJihE8Vh3TStzM3
+        ozX3fVqslkZ/zSPraXPMOxDbZX9vzSM=
+X-Google-Smtp-Source: AJdET5dR10L7SYBKISYnM9x6XmoSK7FiD0FCAiAyfAdCZAVdr5DZLEJh/6foagQPrCVtYg7aUOCqYA==
+X-Received: by 2002:a19:2c92:: with SMTP id s140mr6913802lfs.42.1542912115715;
+        Thu, 22 Nov 2018 10:41:55 -0800 (PST)
 Received: from wasted.cogentembedded.com ([31.173.85.10])
-        by smtp.gmail.com with ESMTPSA id f20-v6sm4294792ljk.33.2018.11.22.10.39.43
+        by smtp.gmail.com with ESMTPSA id 15-v6sm3431890lje.18.2018.11.22.10.41.54
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 22 Nov 2018 10:39:43 -0800 (PST)
-Subject: [PATCH 1/4] clk: renesas: rcar-gen3-cpg: factor out cpg_reg_modify()
+        Thu, 22 Nov 2018 10:41:55 -0800 (PST)
+Subject: [PATCH 2/4] clk: renesas: rcar-gen3-cpg: add RPC clock
 From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 To:     linux-renesas-soc@vger.kernel.org,
         Michael Turquette <mturquette@baylibre.com>,
@@ -66,8 +66,8 @@ To:     linux-renesas-soc@vger.kernel.org,
         linux-clk@vger.kernel.org
 References: <c79d3733-437a-55dc-d946-99521b79ec20@cogentembedded.com>
 Organization: Cogent Embedded
-Message-ID: <8cca22f7-dbd7-2da0-2f58-e490982d2f6c@cogentembedded.com>
-Date:   Thu, 22 Nov 2018 21:39:42 +0300
+Message-ID: <5aa01cae-28ff-efb5-bf4d-1994760ecb79@cogentembedded.com>
+Date:   Thu, 22 Nov 2018 21:41:54 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.2.1
 MIME-Version: 1.0
@@ -80,110 +80,169 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-There's quite often repeated sequence of a CPG register read-modify-write,
-so it seems worth factoring it out into a function -- this saves 68 bytes
-of the object code already (AArch64 gcc 4.8.5) and will save more with the
-next patches...
+Add the RPC clock for the R-Car gen3 SoCs -- this clock is controlled by
+the RPCCKCR register on all the R-Car gen3 SoCs except V3M (R8A77970).
 
 Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
 ---
- drivers/clk/renesas/rcar-gen3-cpg.c |   37 ++++++++++++++++++------------------
- 1 file changed, 19 insertions(+), 18 deletions(-)
+ drivers/clk/renesas/rcar-gen3-cpg.c |  118 ++++++++++++++++++++++++++++++++++++
+ drivers/clk/renesas/rcar-gen3-cpg.h |    2 
+ 2 files changed, 120 insertions(+)
 
 Index: renesas-drivers/drivers/clk/renesas/rcar-gen3-cpg.c
 ===================================================================
 --- renesas-drivers.orig/drivers/clk/renesas/rcar-gen3-cpg.c
 +++ renesas-drivers/drivers/clk/renesas/rcar-gen3-cpg.c
-@@ -30,6 +30,15 @@
+@@ -409,6 +409,121 @@ free_clock:
+ 	return clk;
+ }
  
- #define CPG_RCKCR_CKSEL	BIT(15)	/* RCLK Clock Source Select */
- 
-+static void cpg_reg_modify(void __iomem *reg, u32 clear, u32 set)
-+{
-+	u32 val = readl(reg);
++#define CPG_RPC_CKSTP2		BIT(9)
++#define CPG_RPC_CKSTP		BIT(8)
++#define CPG_RPC_DIV_4_3_MASK	GENMASK(4, 3)
++#define CPG_RPC_DIV_2_0_MASK	GENMASK(2, 0)
 +
-+	val &= ~clear;
-+	val |= set;
-+	writel(val, reg);
++struct rpc_clock {
++	struct clk_hw hw;
++	void __iomem *reg;
 +};
 +
- struct cpg_simple_notifier {
- 	struct notifier_block nb;
- 	void __iomem *reg;
-@@ -118,7 +127,6 @@ static int cpg_z_clk_set_rate(struct clk
- 	struct cpg_z_clk *zclk = to_z_clk(hw);
- 	unsigned int mult;
- 	unsigned int i;
--	u32 val, kick;
++#define to_rpc_clock(_hw) container_of(_hw, struct rpc_clock, hw)
++
++static int cpg_rpc_clock_enable(struct clk_hw *hw)
++{
++	struct rpc_clock *clock = to_rpc_clock(hw);
++
++	cpg_reg_modify(clock->reg, CPG_RPC_CKSTP, 0);
++
++	return 0;
++}
++
++static void cpg_rpc_clock_disable(struct clk_hw *hw)
++{
++	struct rpc_clock *clock = to_rpc_clock(hw);
++
++	cpg_reg_modify(clock->reg, 0, CPG_RPC_CKSTP);
++}
++
++static int cpg_rpc_clock_is_enabled(struct clk_hw *hw)
++{
++	struct rpc_clock *clock = to_rpc_clock(hw);
++
++	return !(readl(clock->reg) & CPG_RPC_CKSTP);
++}
++
++static unsigned long cpg_rpc_clock_recalc_rate(struct clk_hw *hw,
++					       unsigned long parent_rate)
++{
++	struct rpc_clock *clock = to_rpc_clock(hw);
++	u32 div = (readl(clock->reg) & CPG_RPC_DIV_2_0_MASK) + 1;
++
++	return DIV_ROUND_CLOSEST(parent_rate, div);
++}
++
++static unsigned int cpg_rpc_clock_calc_div(struct rpc_clock *clock,
++					   unsigned long rate,
++					   unsigned long parent_rate)
++{
++	unsigned int div;
++
++	if (!rate)
++		rate = 1;
++
++	div = ALIGN(DIV_ROUND_CLOSEST(parent_rate, rate), 2);
++
++	return clamp_t(unsigned int, div, 2, 8);
++}
++
++static long cpg_rpc_clock_round_rate(struct clk_hw *hw, unsigned long rate,
++				     unsigned long *parent_rate)
++{
++	struct rpc_clock *clock = to_rpc_clock(hw);
++	unsigned int div = cpg_rpc_clock_calc_div(clock, rate, *parent_rate);
++
++	return DIV_ROUND_CLOSEST(*parent_rate, div);
++}
++
++static int cpg_rpc_clock_set_rate(struct clk_hw *hw, unsigned long rate,
++				  unsigned long parent_rate)
++{
++	struct rpc_clock *clock = to_rpc_clock(hw);
++	unsigned int div = cpg_rpc_clock_calc_div(clock, rate, parent_rate);
++
++	cpg_reg_modify(clock->reg, CPG_RPC_DIV_2_0_MASK, div - 1);
++
++	return 0;
++}
++
++static const struct clk_ops cpg_rpc_clock_ops = {
++	.enable = cpg_rpc_clock_enable,
++	.disable = cpg_rpc_clock_disable,
++	.is_enabled = cpg_rpc_clock_is_enabled,
++	.recalc_rate = cpg_rpc_clock_recalc_rate,
++	.round_rate = cpg_rpc_clock_round_rate,
++	.set_rate = cpg_rpc_clock_set_rate,
++};
++
++static struct clk * __init cpg_rpc_clk_register(const struct cpg_core_clk *core,
++						void __iomem *base,
++						const char *parent_name)
++{
++	struct clk_init_data init;
++	struct rpc_clock *clock;
++	struct clk *clk;
++
++	clock = kzalloc(sizeof(*clock), GFP_KERNEL);
++	if (!clock)
++		return ERR_PTR(-ENOMEM);
++
++	init.name = core->name;
++	init.ops = &cpg_rpc_clock_ops;
++	init.flags = CLK_IS_BASIC | CLK_SET_RATE_PARENT;
++	init.parent_names = &parent_name;
++	init.num_parents = 1;
++
++	clock->reg = base + CPG_RPCCKCR;
++	clock->hw.init = &init;
++
++	clk = clk_register(NULL, &clock->hw);
++	if (IS_ERR(clk))
++		kfree(clock);
++
++	return clk;
++}
++
  
- 	/* Factor of 2 is for fixed divider */
- 	mult = DIV_ROUND_CLOSEST_ULL(rate * 32ULL * 2, parent_rate);
-@@ -127,17 +135,14 @@ static int cpg_z_clk_set_rate(struct clk
- 	if (readl(zclk->kick_reg) & CPG_FRQCRB_KICK)
- 		return -EBUSY;
+ static const struct rcar_gen3_cpg_pll_config *cpg_pll_config __initdata;
+ static unsigned int cpg_clk_extalr __initdata;
+@@ -583,6 +698,9 @@ struct clk * __init rcar_gen3_cpg_clk_re
+ 		}
+ 		break;
  
--	val = readl(zclk->reg) & ~zclk->mask;
--	val |= ((32 - mult) << __ffs(zclk->mask)) & zclk->mask;
--	writel(val, zclk->reg);
-+	cpg_reg_modify(zclk->reg, zclk->mask,
-+		       ((32 - mult) << __ffs(zclk->mask)) & zclk->mask);
++	case CLK_TYPE_GEN3_RPC:
++		return cpg_rpc_clk_register(core, base, __clk_get_name(parent));
++
+ 	default:
+ 		return ERR_PTR(-EINVAL);
+ 	}
+Index: renesas-drivers/drivers/clk/renesas/rcar-gen3-cpg.h
+===================================================================
+--- renesas-drivers.orig/drivers/clk/renesas/rcar-gen3-cpg.h
++++ renesas-drivers/drivers/clk/renesas/rcar-gen3-cpg.h
+@@ -23,6 +23,7 @@ enum rcar_gen3_clk_types {
+ 	CLK_TYPE_GEN3_Z2,
+ 	CLK_TYPE_GEN3_OSC,	/* OSC EXTAL predivider and fixed divider */
+ 	CLK_TYPE_GEN3_RCKSEL,	/* Select parent/divider using RCKCR.CKSEL */
++	CLK_TYPE_GEN3_RPC,
  
- 	/*
- 	 * Set KICK bit in FRQCRB to update hardware setting and wait for
- 	 * clock change completion.
- 	 */
--	kick = readl(zclk->kick_reg);
--	kick |= CPG_FRQCRB_KICK;
--	writel(kick, zclk->kick_reg);
-+	cpg_reg_modify(zclk->kick_reg, 0, CPG_FRQCRB_KICK);
+ 	/* SoC specific definitions start here */
+ 	CLK_TYPE_GEN3_SOC_BASE,
+@@ -57,6 +58,7 @@ struct rcar_gen3_cpg_pll_config {
+ 	u8 osc_prediv;
+ };
  
- 	/*
- 	 * Note: There is no HW information about the worst case latency.
-@@ -262,12 +267,10 @@ static const struct sd_div_table cpg_sd_
- static int cpg_sd_clock_enable(struct clk_hw *hw)
- {
- 	struct sd_clock *clock = to_sd_clock(hw);
--	u32 val = readl(clock->csn.reg);
--
--	val &= ~(CPG_SD_STP_MASK);
--	val |= clock->div_table[clock->cur_div_idx].val & CPG_SD_STP_MASK;
++#define CPG_RPCCKCR	0x238
+ #define CPG_RCKCR	0x240
  
--	writel(val, clock->csn.reg);
-+	cpg_reg_modify(clock->csn.reg, CPG_SD_STP_MASK,
-+		       clock->div_table[clock->cur_div_idx].val &
-+		       CPG_SD_STP_MASK);
- 
- 	return 0;
- }
-@@ -276,7 +279,7 @@ static void cpg_sd_clock_disable(struct
- {
- 	struct sd_clock *clock = to_sd_clock(hw);
- 
--	writel(readl(clock->csn.reg) | CPG_SD_STP_MASK, clock->csn.reg);
-+	cpg_reg_modify(clock->csn.reg, 0, CPG_SD_STP_MASK);
- }
- 
- static int cpg_sd_clock_is_enabled(struct clk_hw *hw)
-@@ -323,7 +326,6 @@ static int cpg_sd_clock_set_rate(struct
- {
- 	struct sd_clock *clock = to_sd_clock(hw);
- 	unsigned int div = cpg_sd_clock_calc_div(clock, rate, parent_rate);
--	u32 val;
- 	unsigned int i;
- 
- 	for (i = 0; i < clock->div_num; i++)
-@@ -335,10 +337,9 @@ static int cpg_sd_clock_set_rate(struct
- 
- 	clock->cur_div_idx = i;
- 
--	val = readl(clock->csn.reg);
--	val &= ~(CPG_SD_STP_MASK | CPG_SD_FC_MASK);
--	val |= clock->div_table[i].val & (CPG_SD_STP_MASK | CPG_SD_FC_MASK);
--	writel(val, clock->csn.reg);
-+	cpg_reg_modify(clock->csn.reg, CPG_SD_STP_MASK | CPG_SD_FC_MASK,
-+		       clock->div_table[i].val &
-+		       (CPG_SD_STP_MASK | CPG_SD_FC_MASK));
- 
- 	return 0;
- }
+ struct clk *rcar_gen3_cpg_clk_register(struct device *dev,
