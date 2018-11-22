@@ -2,31 +2,31 @@ Return-Path: <SRS0=o4d4=OB=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 574B0C43441
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Nov 2018 15:57:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ABC6C43441
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Nov 2018 16:00:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F7DF20684
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Nov 2018 15:57:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F7DF20684
+	by mail.kernel.org (Postfix) with ESMTP id DCB6520684
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Nov 2018 16:00:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCB6520684
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732436AbeKWChM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 22 Nov 2018 21:37:12 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:33307 "EHLO mail.bootlin.com"
+        id S2438028AbeKWCjx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 22 Nov 2018 21:39:53 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:33448 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732326AbeKWChM (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 22 Nov 2018 21:37:12 -0500
+        id S2438023AbeKWCjx (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 22 Nov 2018 21:39:53 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 73AFD2072F; Thu, 22 Nov 2018 16:57:13 +0100 (CET)
+        id 7001820DC6; Thu, 22 Nov 2018 16:59:54 +0100 (CET)
 Received: from localhost (aaubervilliers-681-1-94-205.w90-88.abo.wanadoo.fr [90.88.35.205])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 4A2DF20712;
-        Thu, 22 Nov 2018 16:57:03 +0100 (CET)
-Date:   Thu, 22 Nov 2018 16:57:03 +0100
+        by mail.bootlin.com (Postfix) with ESMTPSA id 4287B20712;
+        Thu, 22 Nov 2018 16:59:44 +0100 (CET)
+Date:   Thu, 22 Nov 2018 16:59:44 +0100
 From:   Maxime Ripard <maxime.ripard@bootlin.com>
 To:     Mesih Kilinc <mesihkilinc@gmail.com>
 Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
@@ -40,18 +40,18 @@ Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Icenowy Zheng <icenowy@aosc.io>,
         Rob Herring <robh+dt@kernel.org>,
         Julian Calaby <julian.calaby@gmail.com>
-Subject: Re: [RFC PATCH v3 01/17] ARM: add CONFIG_ARCH_SUNXI_V7 for
- differentiate ARMv5/v7 Allwinner SoCs
-Message-ID: <20181122155703.wsziwzybqwcmn25w@flea>
+Subject: Re: [RFC PATCH v3 05/17] irqchip/sun4i: add support for suniv
+ interrupt controller
+Message-ID: <20181122155944.vkx2u4iwwedheor2@flea>
 References: <cover.1542824904.git.mesihkilinc@gmail.com>
- <267ffcf3b91930a82f20d93e1fad1fceaf8b9b0e.1542824904.git.mesihkilinc@gmail.com>
- <20181122082635.br5n33owxxpenv62@flea>
- <20181122150751.n26pvywmvnuglly5@ThinkPad>
+ <08b40429e46626f4caf8e4d2287b5c4d354e3b7f.1542824904.git.mesihkilinc@gmail.com>
+ <20181122083547.srnopylueqx6p2qj@flea>
+ <20181122150200.p6e22sp3v4npb42w@ThinkPad>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="flmo5uucax4cgdii"
+        protocol="application/pgp-signature"; boundary="h2z3qr6y2agvh63m"
 Content-Disposition: inline
-In-Reply-To: <20181122150751.n26pvywmvnuglly5@ThinkPad>
+In-Reply-To: <20181122150200.p6e22sp3v4npb42w@ThinkPad>
 User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
@@ -59,60 +59,68 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---flmo5uucax4cgdii
+--h2z3qr6y2agvh63m
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 22, 2018 at 06:07:51PM +0300, Mesih Kilinc wrote:
-> On 18/11/22 09:26, Maxime Ripard wrote:
-> > On Wed, Nov 21, 2018 at 09:30:34PM +0300, Mesih Kilinc wrote:
-> > > Allwinner also has some ARMv5 SoCs.
-> > >=20
-> > > In order to add support for them, add a CONFIG_ARCH_SUNXI_V7 bool con=
-fig
-> > > which is selected when a ARMv7 soc is selected, and make CONFIG_ARCH_=
-SUNXI
-> > > a common option which is selected by both V7 and V5 sunxi option.
-> > >=20
-> > > Signed-off-by: Mesih Kilinc <mesihkilinc@gmail.com>
-> > > ---
-> > >  arch/arm/mach-sunxi/Kconfig | 23 ++++++++++++++++-------
-> > >  1 file changed, 16 insertions(+), 7 deletions(-)
-> > >=20
-> > > diff --git a/arch/arm/mach-sunxi/Kconfig b/arch/arm/mach-sunxi/Kconfig
-> > > index d9c8ecf..7e5f173 100644
-> > > --- a/arch/arm/mach-sunxi/Kconfig
-> > > +++ b/arch/arm/mach-sunxi/Kconfig
-> > > @@ -6,31 +6,38 @@ menuconfig ARCH_SUNXI
-> > >  	select GENERIC_IRQ_CHIP
-> > >  	select GPIOLIB
-> > >  	select PINCTRL
-> > > -	select PM_OPP
-> > >  	select SUN4I_TIMER
-> > >  	select RESET_CONTROLLER
-> > > +	help
-> > > +	  Support for Allwinner ARM-based family of processors
-> > > =20
-> > >  if ARCH_SUNXI
-> > > =20
-> > > +if ARCH_MULTI_V7
-> > > +
-> > > +config ARCH_SUNXI_V7
-> > > +	bool
-> > > +	select PM_OPP
-> > > +
+On Thu, Nov 22, 2018 at 06:02:00PM +0300, Mesih Kilinc wrote:
+> > > diff --git a/drivers/irqchip/irq-sun4i.c b/drivers/irqchip/irq-sun4i.c
+> > > index e3e5b91..7ca4a4d 100644
+> > > --- a/drivers/irqchip/irq-sun4i.c
+> > > +++ b/drivers/irqchip/irq-sun4i.c
+> > > @@ -28,11 +28,21 @@
+> > >  #define SUN4I_IRQ_NMI_CTRL_REG		0x0c
+> > >  #define SUN4I_IRQ_PENDING_REG(x)	(0x10 + 0x4 * x)
+> > >  #define SUN4I_IRQ_FIQ_PENDING_REG(x)	(0x20 + 0x4 * x)
+> > > -#define SUN4I_IRQ_ENABLE_REG(x)		(0x40 + 0x4 * x)
+> > > -#define SUN4I_IRQ_MASK_REG(x)		(0x50 + 0x4 * x)
+> > > +#define SUN4I_IRQ_ENABLE_REG(x)		(irq_ic_data->enable_req_offset + 0=
+x4 * x)
+> > > +#define SUN4I_IRQ_MASK_REG(x)		(irq_ic_data->mask_req_offset + 0x4 *=
+ x)
 > >=20
-> > Actually, thinking more about this, I don't see why the PM_OPP config
-> > option should be made specific to the ARMv7 sunxi SoCs, you will have
-> > things cpufreq enabled at some point as well on the armv5 support.
-> >=20
-> OK. I was basing this code to the first patch series.=20
-> So there will be no need for ARCH_SUNXI_VX configs. Should I drop them
-> and differantiate IC's by only ARCH_MULTI_VX?
+> > You shouldn't have all the values you use passed as argument, so
+> > irq_ic_data should be one of them here.
+> >
+>
+> Could you elaborate it a little bit?
 
-Yeah, that's probably enough for now, and we can always merge some
-patch along those lines if we ever need it later.
+You should change your macro to something like:
+
+SUN4I_IRQ_ENABLE_REG(data, x) ((data)->enable_req_offset + 0x4 * x)
+
+That way, you are transparent about the parameters that the macro
+expects, and don't rely on some unwritten rule about the variable
+name.
+
+> > > +
+> > > +static int __init suniv_ic_of_init(struct device_node *node,
+> > > +				   struct device_node *parent)
+> > > +{
+> > > +	irq_ic_data =3D kzalloc(sizeof(struct sunxi_irq_chip_data), GFP_KER=
+NEL);
+> > > +	if (!irq_ic_data) {
+> > > +		pr_err("kzalloc failed!\n");
+> > > +		return -ENOMEM;
+> > > +	}
+> > > +
+> > > +	irq_ic_data->enable_req_offset =3D SUNIV_IRQ_ENABLE_REG_OFFSET;
+> > > +	irq_ic_data->mask_req_offset =3D SUNIV_IRQ_MASK_REG_OFFSET;
+> > > +
+> > > +	return sun4i_of_init(node, parent);
+> > > +}
+> > > +
+> > > +IRQCHIP_DECLARE(allwinner_sunvi_ic, "allwinner,suniv-f1c100s-ic", su=
+niv_ic_of_init);
+> >=20
+> > You can even split that addition to a new patch as well.
+>=20
+> OK. I will do 3 patches. First one will add a struct that holds only
+> base and domain. Second one will add register offsets to that struct.=20
+> Third one will add f1c100s support. Is that ok?
+
+Sounds perfect :)
 
 Thanks!
 Maxime
@@ -122,15 +130,15 @@ Maxime Ripard, Bootlin
 Embedded Linux and Kernel engineering
 https://bootlin.com
 
---flmo5uucax4cgdii
+--h2z3qr6y2agvh63m
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW/bRzwAKCRDj7w1vZxhR
-xQIQAQDIbdeo2bMJcBp7aRe7q+1h7ETMBDGYXYKr+sBSJygGWQD/Y329IDLTYSzP
-jCyMWo01jtQefNDk69lMkGXlZuuOOAQ=
-=FveE
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW/bScAAKCRDj7w1vZxhR
+xeTNAQCVVvFSY83AwPAdDSiPgA7y2KdvvK38YF4s6yokph6yXgEAh+yXGenXIuaz
+Bx6K/lyvdgkoeZ2bStF5yFF56RD8HwQ=
+=FloS
 -----END PGP SIGNATURE-----
 
---flmo5uucax4cgdii--
+--h2z3qr6y2agvh63m--
