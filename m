@@ -1,94 +1,330 @@
-Return-Path: <SRS0=GqaR=OA=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=o4d4=OB=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EAC4C43441
-	for <linux-clk@archiver.kernel.org>; Wed, 21 Nov 2018 21:54:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68DF1C43441
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Nov 2018 02:24:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20C8C206B2
-	for <linux-clk@archiver.kernel.org>; Wed, 21 Nov 2018 21:54:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="YvwW0EAz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20C8C206B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=googlemail.com
+	by mail.kernel.org (Postfix) with ESMTP id 2F5A3206B2
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Nov 2018 02:24:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F5A3206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389928AbeKVIaT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 22 Nov 2018 03:30:19 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:34943 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389918AbeKVIaS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Nov 2018 03:30:18 -0500
-Received: by mail-ot1-f68.google.com with SMTP id 81so6355281otj.2;
-        Wed, 21 Nov 2018 13:54:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1eeKDWvqEXgxNxauuoVjDt70U4UcxevhZeNHNGyqj/E=;
-        b=YvwW0EAzXa/Bqab2rnUPt7AQ8ny8Bznz/dN1ljz3+fBD4SYIehZjL1f5lIDPcEu9V2
-         llNeQOFpl1t8v9oj8ELyWjoI35dgKoahRmedB7XUbpH5DJXY/rXGbkcsKvEfDqPW+E6k
-         BEaumCHFUgDY05SihQh8J1Ve4F8JbZi8mwJz9GTeJ1e53H6G/Yz1vGJYi8A01wGL1QIT
-         U/A8l6o4uq4KAcNUXiuMY7Mvw6/+9FJvY66WfCvSoRYap27Rojr6bex0s5aXGa4xILSG
-         +fq9ERncQJ4uD+d3fbFr8JlsoYm/qkznrNlgcIC0OA+rDCOuhPXFfKXn53iFWwIiwNNK
-         I/PA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1eeKDWvqEXgxNxauuoVjDt70U4UcxevhZeNHNGyqj/E=;
-        b=CVIrromvaHpn3XouBmtVWp5EOy1HjF042s3EqnpNHwbUdBbxSU4vZj0SjESf0CfaYP
-         xIqlayB3Vc7fdU15D2jSEzLHA953oguR+srVN6b1RjIB02sb6yRTlO9ROZBHqyM8d6Eo
-         SiQ7Z8NdjbsJAlLwnjWRQhSGW+oJpyZ5X7Hfp6JFkO0jEAxYzkR2wyHLSTbIv85umbnq
-         01uQdHx+bhr36RvDpV/ODeKdn+1cE81jF37Se5atOeyajywnRLN5UV9wB9ur3mrO+jkf
-         yIxst2N6Nfg2gU+JuhAX26f+2+P8N0hPbSelD+P9dndQ75YGy3SU3AtjvD3WIS3NG6oB
-         sUTw==
-X-Gm-Message-State: AA+aEWZl4FPjPx17LttJvZvpwdHhKdj/hLiWwjNfCJPlYtwAA0C2uekY
-        O3+JccYLC4RdqfgpKcxPKgaat+AMkB499RhU/Dg=
-X-Google-Smtp-Source: AFSGD/UBuoeOkTRwG4BEAPzt/Nm4AUVCTQXGYQhW92pdx+wynk1WbmupT3Mks3+jVOsk42r0VwjKsndFvYe1x/7F8IQ=
-X-Received: by 2002:a9d:3408:: with SMTP id v8mr5116851otb.237.1542837248414;
- Wed, 21 Nov 2018 13:54:08 -0800 (PST)
+        id S1732823AbeKVNBI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 22 Nov 2018 08:01:08 -0500
+Received: from mx.socionext.com ([202.248.49.38]:26315 "EHLO mx.socionext.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732781AbeKVNBI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 22 Nov 2018 08:01:08 -0500
+Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
+  by mx.socionext.com with ESMTP; 22 Nov 2018 11:23:56 +0900
+Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
+        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id 97CDE60062;
+        Thu, 22 Nov 2018 11:23:56 +0900 (JST)
+Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Thu, 22 Nov 2018 11:23:56 +0900
+Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
+        by iyokan.css.socionext.com (Postfix) with ESMTP id E650E40361;
+        Thu, 22 Nov 2018 11:23:55 +0900 (JST)
+Received: from [127.0.0.1] (unknown [10.213.119.83])
+        by yuzu.css.socionext.com (Postfix) with ESMTP id C271B120304;
+        Thu, 22 Nov 2018 11:23:55 +0900 (JST)
+Subject: Re: [PATCH 05/14] clocksource/drivers/timer-milbeaut: Add Milbeaut
+ M10V timer
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-serial@vger.kernel.org
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Jiri Slaby <jslaby@suse.com>,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>
+References: <1542589274-13878-1-git-send-email-sugaya.taichi@socionext.com>
+ <1542589274-13878-6-git-send-email-sugaya.taichi@socionext.com>
+ <c6b7ddb0-064a-8f09-bbb4-9754f3d63ecb@linaro.org>
+From:   "Sugaya, Taichi" <sugaya.taichi@socionext.com>
+Message-ID: <07d26609-e10c-70f1-1360-63ed0e214d7e@socionext.com>
+Date:   Thu, 22 Nov 2018 11:23:54 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-References: <20181121111922.1277-1-narmstrong@baylibre.com>
-In-Reply-To: <20181121111922.1277-1-narmstrong@baylibre.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Wed, 21 Nov 2018 22:53:57 +0100
-Message-ID: <CAFBinCDkXYH9bCf_aaVptqcgZabreuZxLoAW3-o2qBHgcbm8Xw@mail.gmail.com>
-Subject: Re: [PATCH] clk: meson: Fix GXL HDMI PLL fractional bits width
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     jbrunet@baylibre.com, linux-amlogic@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <c6b7ddb0-064a-8f09-bbb4-9754f3d63ecb@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Neil,
+Hi Daniel
 
-On Wed, Nov 21, 2018 at 12:19 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
+Thank you for your comments.
+
+On 2018/11/21 19:08, Daniel Lezcano wrote:
+> Hi Sugaya,
 >
-> The GXL Documentation specifies 12 bits for the Fractional bit field,
-> bit the last bits have a different purpose that we cannot handle right
-> now, so update the bitwidth to have correct fractional calculations.
-I assume you have more accurate documentation than what's available publicly:
-- the S805 datasheet doesn't have any documentation for this register at all
-- the S905 datasheet states that HHI_HDMI_PLL_CNTL2[11:0] are DIV_FRAC
-- the S905X and S912 datasheets state that SDMNC_POWER is at
-HHI_HDMI_PLL_CNTL2[6:0], SDMNC_ULMS is at HHI_HDMI_PLL_CNTL2[9:7] and
-SSC_DEP_SEL is at HHI_HDMI_PLL_CNTL2[13:10]
-- the S905X and S912 datasheets state that HHI_HDMI_PLL_CNTL1[11:0] are DIV_FRAC
+>
+> On 19/11/2018 02:01, Sugaya Taichi wrote:
+>> Add Milbeaut M10V timer using 32bit timer in peripheral.
+> Give a better description of the timer as it is new timer introduced.
 
-can you confirm that the public S905X and S912 documentation is wrong
-and that the .frac field is really part of HHI_HDMI_PLL_CNTL2 instead
-of HHI_HDMI_PLL_CNTL1?
+I got it. Add more description.
 
 
-Regards
-Martin
+>> Signed-off-by: Sugaya Taichi <sugaya.taichi@socionext.com>
+>> ---
+>>   drivers/clocksource/Kconfig      |   8 +++
+>>   drivers/clocksource/Makefile     |   1 +
+>>   drivers/clocksource/timer-m10v.c | 146 +++++++++++++++++++++++++++++++++++++++
+>>   3 files changed, 155 insertions(+)
+>>   create mode 100644 drivers/clocksource/timer-m10v.c
+>>
+>> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+>> index 55c77e4..a278d72 100644
+>> --- a/drivers/clocksource/Kconfig
+>> +++ b/drivers/clocksource/Kconfig
+>> @@ -638,4 +638,12 @@ config GX6605S_TIMER
+>>   	help
+>>   	  This option enables support for gx6605s SOC's timer.
+>>   
+>> +config M10V_TIMER
+>> +	bool "Milbeaut M10V timer driver" if COMPILE_TEST
+>> +	depends on OF
+>> +	depends on ARM
+>> +	select TIMER_OF
+>> +	help
+>> +	  Enables the support for Milbeaut M10V timer driver.
+>> +
+>>   endmenu
+>> diff --git a/drivers/clocksource/Makefile b/drivers/clocksource/Makefile
+>> index dd91381..8e908b4 100644
+>> --- a/drivers/clocksource/Makefile
+>> +++ b/drivers/clocksource/Makefile
+>> @@ -55,6 +55,7 @@ obj-$(CONFIG_CLKSRC_TI_32K)	+= timer-ti-32k.o
+>>   obj-$(CONFIG_CLKSRC_NPS)	+= timer-nps.o
+>>   obj-$(CONFIG_OXNAS_RPS_TIMER)	+= timer-oxnas-rps.o
+>>   obj-$(CONFIG_OWL_TIMER)		+= timer-owl.o
+>> +obj-$(CONFIG_M10V_TIMER)	+= timer-m10v.o
+>>   obj-$(CONFIG_SPRD_TIMER)	+= timer-sprd.o
+>>   obj-$(CONFIG_NPCM7XX_TIMER)	+= timer-npcm7xx.o
+>>   
+>> diff --git a/drivers/clocksource/timer-m10v.c b/drivers/clocksource/timer-m10v.c
+>> new file mode 100644
+>> index 0000000..ff97c23
+>> --- /dev/null
+>> +++ b/drivers/clocksource/timer-m10v.c
+>> @@ -0,0 +1,146 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Copyright (C) 2018 Socionext Inc.
+>> + */
+>> +
+>> +#include <linux/clk.h>
+> ------->
+>
+>> +#include <linux/clockchips.h>
+> It is included from timer-of.h
+>
+> <-------
+
+OK. Remove it.
+
+
+>
+>> +#include <linux/interrupt.h>
+>> +#include <linux/irq.h>
+>> +#include <linux/irqreturn.h>
+> ------->
+>
+>> +#include <linux/of.h>
+>> +#include <linux/of_address.h>
+>> +#include <linux/of_irq.h>
+>> +#include <linux/slab.h>
+> Those are not needed IMO.
+>
+> <---------
+
+OK, remove these.
+
+
+>
+>
+>> +#include "timer-of.h"
+>> +
+>> +#define FSL_TMR_TMCSR_OFS	0x0
+>> +#define FSL_TMR_TMR_OFS		0x4
+>> +#define FSL_TMR_TMRLR1_OFS	0x8
+>> +#define FSL_TMR_TMRLR2_OFS	0xc
+>> +#define FSL_RMT_REGSZPCH	0x10
+>> +
+>> +#define FSL_TMR_TMCSR_OUTL	BIT(5)
+>> +#define FSL_TMR_TMCSR_RELD	BIT(4)
+>> +#define FSL_TMR_TMCSR_INTE	BIT(3)
+>> +#define FSL_TMR_TMCSR_UF	BIT(2)
+>> +#define FSL_TMR_TMCSR_CNTE	BIT(1)
+>> +#define FSL_TMR_TMCSR_TRG	BIT(0)
+>> +
+>> +#define FSL_TMR_TMCSR_CSL_DIV2	0
+>> +#define FSL_TMR_TMCSR_CSL	BIT(10)
+>> +
+>> +#define M10V_TIMER_RATING	500
+>> +
+>> +static irqreturn_t m10v_timer_interrupt(int irq, void *dev_id)
+>> +{
+>> +	struct clock_event_device *clk = dev_id;
+>> +	struct timer_of *to = to_timer_of(clk);
+>> +	u32 val;
+>> +
+>> +	val = readl_relaxed(timer_of_base(to) + FSL_TMR_TMCSR_OFS);
+>> +	val &= ~FSL_TMR_TMCSR_UF;
+>> +	writel_relaxed(val, timer_of_base(to) + FSL_TMR_TMCSR_OFS);
+>> +
+>> +	clk->event_handler(clk);
+>> +
+>> +	return IRQ_HANDLED;
+>> +}
+>> +
+>> +static int m10v_set_state_periodic(struct clock_event_device *clk)
+>> +{
+>> +	struct timer_of *to = to_timer_of(clk);
+>> +	u32 val = (FSL_TMR_TMCSR_CSL_DIV2 * FSL_TMR_TMCSR_CSL);
+> 	FSL_TMR_TMCSR_CSL_DIV2 is zero, so val is always zero.
+Ah, yes.
+The FSL_TMR_TMCSR is the 10th bit field of the register, so it would be 
+better
+to bit-shift.
+I will use it as simply 0.
+
+> 	
+>> +	writel_relaxed(val, timer_of_base(to) + FSL_TMR_TMCSR_OFS);
+>> +
+>> +	writel_relaxed(to->of_clk.period, timer_of_base(to) +
+>> +				FSL_TMR_TMRLR1_OFS);
+>> +	val |= FSL_TMR_TMCSR_RELD | FSL_TMR_TMCSR_CNTE |
+>> +		FSL_TMR_TMCSR_TRG | FSL_TMR_TMCSR_INTE;
+>> +	writel_relaxed(val, timer_of_base(to) + FSL_TMR_TMCSR_OFS);
+>> +	return 0;
+>> +}
+>> +
+>> +static int m10v_set_state_oneshot(struct clock_event_device *clk)
+>> +{
+>> +	struct timer_of *to = to_timer_of(clk);
+>> +	u32 val = (FSL_TMR_TMCSR_CSL_DIV2 * FSL_TMR_TMCSR_CSL);
+>> +
+>> +	writel_relaxed(val, timer_of_base(to) + FSL_TMR_TMCSR_OFS);
+>> +	return 0;
+>> +}
+>> +
+>> +static int m10v_clkevt_next_event(unsigned long event,
+>> +				   struct clock_event_device *clk)
+>> +{
+>> +	struct timer_of *to = to_timer_of(clk);
+>> +
+>> +	writel_relaxed(event, timer_of_base(to) + FSL_TMR_TMRLR1_OFS);
+>> +	writel_relaxed((FSL_TMR_TMCSR_CSL_DIV2 * FSL_TMR_TMCSR_CSL) |
+> Same comment here.
+
+I got it.
+
+
+>> +			FSL_TMR_TMCSR_CNTE | FSL_TMR_TMCSR_INTE |
+>> +			FSL_TMR_TMCSR_TRG, timer_of_base(to) +
+>> +			FSL_TMR_TMCSR_OFS);
+>> +	return 0;
+>> +}
+>> +
+>> +static int m10v_config_clock_source(struct timer_of *to)
+>> +{
+>> +	writel_relaxed(0, timer_of_base(to) + FSL_TMR_TMCSR_OFS);
+>> +	writel_relaxed(~0, timer_of_base(to) + FSL_TMR_TMR_OFS);
+>> +	writel_relaxed(~0, timer_of_base(to) + FSL_TMR_TMRLR1_OFS);
+>> +	writel_relaxed(~0, timer_of_base(to) + FSL_TMR_TMRLR2_OFS);
+>> +	writel_relaxed(BIT(4) | BIT(1) | BIT(0), timer_of_base(to) +
+>> +		FSL_TMR_TMCSR_OFS);
+>> +	return 0;
+>> +}
+>> +
+>> +static int m10v_config_clock_event(struct timer_of *to)
+>> +{
+>> +	writel_relaxed(0, timer_of_base(to) + FSL_TMR_TMCSR_OFS);
+>> +	return 0;
+>> +}
+>> +
+>> +static struct timer_of to = {
+>> +	.flags = TIMER_OF_IRQ | TIMER_OF_BASE | TIMER_OF_CLOCK,
+>> +
+>> +	.clkevt = {
+>> +		.name = "m10v-clkevt",
+>> +		.rating = M10V_TIMER_RATING,
+>> +		.cpumask = cpu_possible_mask,
+>> +	},
+>> +
+>> +	.of_irq = {
+>> +		.flags = IRQF_TIMER | IRQF_IRQPOLL,
+>> +	},
+>> +};
+>> +
+>> +static int __init m10v_timer_init(struct device_node *node)
+>> +{
+>> +	int ret;
+>> +
+>> +	to.clkevt.features = CLOCK_EVT_FEAT_DYNIRQ | CLOCK_EVT_FEAT_ONESHOT;
+>> +	to.clkevt.set_state_oneshot = m10v_set_state_oneshot;
+>> +	to.clkevt.set_state_periodic = m10v_set_state_periodic;
+>> +	to.clkevt.set_next_event = m10v_clkevt_next_event;
+>> +	to.of_irq.handler = m10v_timer_interrupt;
+> Move the initialization in the timer_of structure above.
+
+Okay.
+
+
+>
+>> +	ret = timer_of_init(node, &to);
+>> +	if (ret)
+>> +		goto err;
+> You should return directly, rollback is done in the timer_of_init().
+
+OK.
+
+
+>
+>> +
+>> +	m10v_config_clock_source(&to);
+>> +	clocksource_mmio_init(timer_of_base(&to) + FSL_TMR_TMR_OFS,
+>> +		node->name, timer_of_rate(&to), M10V_TIMER_RATING, 32,
+>> +		clocksource_mmio_readl_down);
+> May be you can add the sched_clock also ?
+
+OK. Add it and confirm.
+
+
+Thanks
+Sugaya Taichi
+
+
+>
+>> +	m10v_config_clock_event(&to);
+>> +	clockevents_config_and_register(&to.clkevt, timer_of_rate(&to),
+>> +				15, 0xffffffff);
+>> +
+>> +	return 0;
+>> +err:
+>> +	timer_of_cleanup(&to);
+>> +	return ret;
+>> +}
+>> +TIMER_OF_DECLARE(m10v_peritimer, "socionext,milbeaut-m10v-timer",
+>> +		m10v_timer_init);
+>>
+>
+
