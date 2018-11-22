@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E17CC43441
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Nov 2018 08:37:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3E1AC43441
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Nov 2018 08:37:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FA4C20831
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Nov 2018 08:37:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FA4C20831
+	by mail.kernel.org (Postfix) with ESMTP id C651A20831
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Nov 2018 08:37:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C651A20831
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726280AbeKVTPi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 22 Nov 2018 14:15:38 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:46212 "EHLO mail.bootlin.com"
+        id S2393102AbeKVTP6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 22 Nov 2018 14:15:58 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:46273 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728601AbeKVTPh (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 22 Nov 2018 14:15:37 -0500
+        id S1728601AbeKVTP5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 22 Nov 2018 14:15:57 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 9F3B920DBF; Thu, 22 Nov 2018 09:37:09 +0100 (CET)
+        id 6773320F8D; Thu, 22 Nov 2018 09:37:29 +0100 (CET)
 Received: from localhost (aaubervilliers-681-1-94-205.w90-88.abo.wanadoo.fr [90.88.35.205])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 08A1A2072F;
-        Thu, 22 Nov 2018 09:36:30 +0100 (CET)
-Date:   Thu, 22 Nov 2018 09:36:29 +0100
+        by mail.bootlin.com (Postfix) with ESMTPSA id 3A10B20DD1;
+        Thu, 22 Nov 2018 09:36:59 +0100 (CET)
+Date:   Thu, 22 Nov 2018 09:36:59 +0100
 From:   Maxime Ripard <maxime.ripard@bootlin.com>
 To:     Mesih Kilinc <mesihkilinc@gmail.com>
 Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
@@ -40,16 +40,16 @@ Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Icenowy Zheng <icenowy@aosc.io>,
         Rob Herring <robh+dt@kernel.org>,
         Julian Calaby <julian.calaby@gmail.com>
-Subject: Re: [RFC PATCH v3 08/17] dt-bindings: pinctrl: Add Allwinner suniv
- F1C100s pinctrl
-Message-ID: <20181122083629.dyjidbak4prwsj3l@flea>
+Subject: Re: [RFC PATCH v3 09/17] pinctrl: sunxi: add support for suniv
+ F1C100s (newer F-series SoCs)
+Message-ID: <20181122083659.qajcd4w3azcdpn5y@flea>
 References: <cover.1542824904.git.mesihkilinc@gmail.com>
- <70ac024bf3b6623dc41021ac4893c37adb85a97d.1542824904.git.mesihkilinc@gmail.com>
+ <fc20d96f5531d7d1eb5ce3d5cf920c8bf59cad58.1542824904.git.mesihkilinc@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="hzi7oo4tcysagbcb"
+        protocol="application/pgp-signature"; boundary="hpm4q25bdgcwew2c"
 Content-Disposition: inline
-In-Reply-To: <70ac024bf3b6623dc41021ac4893c37adb85a97d.1542824904.git.mesihkilinc@gmail.com>
+In-Reply-To: <fc20d96f5531d7d1eb5ce3d5cf920c8bf59cad58.1542824904.git.mesihkilinc@gmail.com>
 User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
@@ -57,13 +57,17 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---hzi7oo4tcysagbcb
+--hpm4q25bdgcwew2c
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 21, 2018 at 09:30:41PM +0300, Mesih Kilinc wrote:
-> Add compatible string for Allwinner suniv F1C100s SoC's pinctrl.
+On Wed, Nov 21, 2018 at 09:30:42PM +0300, Mesih Kilinc wrote:
+> The suniv F1C100s chip (several new F-series SoCs) of Allwinner has a
+> pin
+> controller like other SoCs from Allwinner.
+>=20
+> Add support for it.
 >=20
 > Signed-off-by: Mesih Kilinc <mesihkilinc@gmail.com>
 
@@ -76,15 +80,15 @@ Maxime Ripard, Bootlin
 Embedded Linux and Kernel engineering
 https://bootlin.com
 
---hzi7oo4tcysagbcb
+--hpm4q25bdgcwew2c
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW/ZqjQAKCRDj7w1vZxhR
-xdi5AQD3FfqYQm63rDPgI0pfERkx0sAqBv3I9FvRjCvak7YS+wD8CwpPH/Gf52Z0
-I7cMSOqsmGZnQQ6JRiGjGU0YIa66rgg=
-=Oa5M
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW/ZqqwAKCRDj7w1vZxhR
+xSIfAP9xXLhNdoLlPQOH4gYEtizpIVsI+3mtOk2EYWgVlv/a/gD+PH52Yb08p/5K
+JGel1LxBWeOwyGw7Tft9FDg56pQcjgs=
+=b61W
 -----END PGP SIGNATURE-----
 
---hzi7oo4tcysagbcb--
+--hpm4q25bdgcwew2c--
