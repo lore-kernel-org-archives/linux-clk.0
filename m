@@ -2,360 +2,122 @@ Return-Path: <SRS0=o4d4=OB=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-11.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B33EC43441
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Nov 2018 07:54:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70182C43441
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Nov 2018 08:19:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F07A320831
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Nov 2018 07:54:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="jAVwynDr";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="eHu6Nx3i"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F07A320831
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 424FB20820
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Nov 2018 08:19:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 424FB20820
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728297AbeKVSch (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 22 Nov 2018 13:32:37 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:49174 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726954AbeKVScg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Nov 2018 13:32:36 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 39B7460A98; Thu, 22 Nov 2018 07:54:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1542873259;
-        bh=9QuWEXaEYW62G0J1TR560WBzVBBvJr3zqypFMpw8/fE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jAVwynDrDkNORR15QM6Vez7bxVgj7lBWg4eiXNNfzktHbecr3XdnKGG9eBB4k+RH2
-         sCi30yr3c7SYG5HPrXRqOIUEZblJPqHEVP+xOGDX1JCZrdeCtZ5eMd78iEp0miEoSG
-         1S7Khoz/YgORHa2cXV+2UxH2GUoVbAJBkyajmhOM=
-Received: from tdas-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id DE49860A98;
-        Thu, 22 Nov 2018 07:54:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1542873256;
-        bh=9QuWEXaEYW62G0J1TR560WBzVBBvJr3zqypFMpw8/fE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eHu6Nx3ipLfU9jaNhWX9v0//bGQkSjfz5GjQE2+ORz48NdmbChfZdhYvdjzpxtWD3
-         4bvthL7o6wcmIdYUJ+UwW4sGH0zJHOsSvp/ya8bi4y0bY2VMDJsCFHLrJPDlkLZCx5
-         q+nxyb/jkSVQzc/qVlvZfkeIgxmk3W0BP8mwjUqM=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DE49860A98
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-From:   Taniya Das <tdas@codeaurora.org>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, robh@kernel.org,
-        Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH v10 3/3] clk: qcom: Add lpass clock controller driver for SDM845
-Date:   Thu, 22 Nov 2018 13:23:41 +0530
-Message-Id: <1542873221-13693-4-git-send-email-tdas@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1542873221-13693-1-git-send-email-tdas@codeaurora.org>
-References: <1542873221-13693-1-git-send-email-tdas@codeaurora.org>
+        id S2389834AbeKVS5n (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 22 Nov 2018 13:57:43 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:44947 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727486AbeKVS5n (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 22 Nov 2018 13:57:43 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id D595220DA7; Thu, 22 Nov 2018 09:19:19 +0100 (CET)
+Received: from localhost (aaubervilliers-681-1-94-205.w90-88.abo.wanadoo.fr [90.88.35.205])
+        by mail.bootlin.com (Postfix) with ESMTPSA id A5CBC20510;
+        Thu, 22 Nov 2018 09:19:09 +0100 (CET)
+Date:   Thu, 22 Nov 2018 09:19:09 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Hao Zhang <hao5781286@gmail.com>
+Cc:     robh+dt@kernel.org, wens@csie.org, icenowy@aosc.io,
+        linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v1 1/2] ARM: dts: sun8i: Add board dts file for
+ t3-cqa3t-bv3.
+Message-ID: <20181122081909.2u3kt3ih5ma2dl2y@flea>
+References: <20181121154356.GA4359@arx-s1>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="twq3molfx3dmoi2t"
+Content-Disposition: inline
+In-Reply-To: <20181121154356.GA4359@arx-s1>
+User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add support for the lpass clock controller found on SDM845 based devices.
-This would allow lpass peripheral loader drivers to control the clocks to
-bring the subsystem out of reset.
-LPASS clocks present on the global clock controller would be registered
-with the clock framework based on the protected-clock flag. Also do not
-gate these clocks if they are left unused, as the lpass clocks require
-the global clock controller lpass clocks to be enabled before they are
-accessed. Mark the GCC lpass clocks as CRITICAL, for the LPASS clock
-access.
 
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
----
- drivers/clk/qcom/Kconfig          |   9 ++
- drivers/clk/qcom/Makefile         |   1 +
- drivers/clk/qcom/gcc-sdm845.c     |  30 +++++++
- drivers/clk/qcom/lpasscc-sdm845.c | 179 ++++++++++++++++++++++++++++++++++++++
- 4 files changed, 219 insertions(+)
- create mode 100644 drivers/clk/qcom/lpasscc-sdm845.c
+--twq3molfx3dmoi2t
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index a611531..23adc4c 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -293,6 +293,15 @@ config SDM_DISPCC_845
- 	  Say Y if you want to support display devices and functionality such as
- 	  splash screen.
+On Wed, Nov 21, 2018 at 11:43:57PM +0800, Hao Zhang wrote:
+> The T3/R40/V40 using the same sdk and config file in allwinner
+> sdk, it seem they are the same SOC just with different name, so
+> compatible with R40.
+>=20
+> The t3-cqa3t-bv3 based on Allwinner T3 SoC, it has various connectors,
+> leds, buttons, and sell on:
+> https://item.taobao.com/item.htm?spm=3D2013.1.w4023-4203040713.25.62704cc=
+e7UCgLS&id=3D557154455330
+>=20
+> It features:
+>  - X-Powers AXP221s PMIC connected to i2c0
+>  - 1/2 GB DDR3 DRAM
+>  - 8 GB eMMC
+>  - 2x USB 2.0 hosts
+>  - 1x USB 2.0 OTG
+>  - 2 LVDS connectors
+>  - 24 bit RGB LCD connector
+>  - HDMI output
+>  - DVP camera interface (support 500w cmos camera)
+>  - GPIO connectors
+>  - 5 TTL uarts and 2 RS232 uarts
+>  - 1 RS485 connector
+>  - support i2c capacitive tp and usb infrared tp
+>  - boot control, reset and user buttons
+>  - 3.5mm headphone and 3.5mm mic jack
+>  - 100M RJ45
+>  - micro SD card slot
+>  - DC power jack
+>  - RCT power slot
+>  - 1 CVBS TVIN
+>  - 1 CVBS TVOUT
+>  - 2 customer leds
+>  - 1 buzzer
+>  - 1 minipcie
+>  - I2C output
+>  - SPI output
+>  - PCM output
+>  - wifi and bt connector reserved.
+>=20
+> Board info can find here:
+> https://github.com/Axl-zhang/Allwinner-V40-T3-R40-manual
+>=20
+> Signed-off-by: Hao Zhang <hao5781286@gmail.com>
 
-+config SDM_LPASSCC_845
-+	tristate "SDM845 Low Power Audio Subsystem (LPAAS) Clock Controller"
-+	depends on COMMON_CLK_QCOM
-+	select SDM_GCC_845
-+	help
-+	  Support for the LPASS clock controller on SDM845 devices.
-+	  Say Y if you want to use the LPASS branch clocks of the LPASS clock
-+	  controller to reset the LPASS subsystem.
-+
- config SPMI_PMIC_CLKDIV
- 	tristate "SPMI PMIC clkdiv Support"
- 	depends on (COMMON_CLK_QCOM && SPMI) || COMPILE_TEST
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index 981882e..3d530b1 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -46,6 +46,7 @@ obj-$(CONFIG_SDM_CAMCC_845) += camcc-sdm845.o
- obj-$(CONFIG_SDM_DISPCC_845) += dispcc-sdm845.o
- obj-$(CONFIG_SDM_GCC_660) += gcc-sdm660.o
- obj-$(CONFIG_SDM_GCC_845) += gcc-sdm845.o
-+obj-$(CONFIG_SDM_LPASSCC_845) += lpasscc-sdm845.o
- obj-$(CONFIG_SDM_VIDEOCC_845) += videocc-sdm845.o
- obj-$(CONFIG_SPMI_PMIC_CLKDIV) += clk-spmi-pmic-div.o
- obj-$(CONFIG_KPSS_XCC) += kpss-xcc.o
-diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
-index f133b7f..ba8ff99 100644
---- a/drivers/clk/qcom/gcc-sdm845.c
-+++ b/drivers/clk/qcom/gcc-sdm845.c
-@@ -3153,6 +3153,34 @@ enum {
- 	},
- };
+Applied both patches, thanks!
+Maxime
 
-+static struct clk_branch gcc_lpass_q6_axi_clk = {
-+	.halt_reg = 0x47000,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x47000,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_lpass_q6_axi_clk",
-+			.flags = CLK_IS_CRITICAL,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gcc_lpass_sway_clk = {
-+	.halt_reg = 0x47008,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x47008,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_lpass_sway_clk",
-+			.flags = CLK_IS_CRITICAL,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
- static struct gdsc pcie_0_gdsc = {
- 	.gdscr = 0x6b004,
- 	.pd = {
-@@ -3453,6 +3481,8 @@ enum {
- 	[GCC_QSPI_CORE_CLK_SRC] = &gcc_qspi_core_clk_src.clkr,
- 	[GCC_QSPI_CORE_CLK] = &gcc_qspi_core_clk.clkr,
- 	[GCC_QSPI_CNOC_PERIPH_AHB_CLK] = &gcc_qspi_cnoc_periph_ahb_clk.clkr,
-+	[GCC_LPASS_Q6_AXI_CLK] = &gcc_lpass_q6_axi_clk.clkr,
-+	[GCC_LPASS_SWAY_CLK] = &gcc_lpass_sway_clk.clkr,
- };
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
- static const struct qcom_reset_map gcc_sdm845_resets[] = {
-diff --git a/drivers/clk/qcom/lpasscc-sdm845.c b/drivers/clk/qcom/lpasscc-sdm845.c
-new file mode 100644
-index 0000000..9c63542
---- /dev/null
-+++ b/drivers/clk/qcom/lpasscc-sdm845.c
-@@ -0,0 +1,179 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+ */
-+
-+#include <linux/platform_device.h>
-+#include <linux/module.h>
-+#include <linux/of_address.h>
-+#include <linux/regmap.h>
-+
-+#include <dt-bindings/clock/qcom,lpass-sdm845.h>
-+
-+#include "clk-regmap.h"
-+#include "clk-branch.h"
-+#include "common.h"
-+
-+static struct clk_branch lpass_q6ss_ahbm_aon_clk = {
-+	.halt_reg = 0x12000,
-+	.halt_check = BRANCH_VOTED,
-+	.clkr = {
-+		.enable_reg = 0x12000,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "lpass_q6ss_ahbm_aon_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch lpass_q6ss_ahbs_aon_clk = {
-+	.halt_reg = 0x1f000,
-+	.halt_check = BRANCH_VOTED,
-+	.clkr = {
-+		.enable_reg = 0x1f000,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "lpass_q6ss_ahbs_aon_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch lpass_qdsp6ss_core_clk = {
-+	.halt_reg = 0x20,
-+	/* CLK_OFF would not toggle until LPASS is not out of reset */
-+	.halt_check = BRANCH_HALT_SKIP,
-+	.clkr = {
-+		.enable_reg = 0x20,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "lpass_qdsp6ss_core_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch lpass_qdsp6ss_xo_clk = {
-+	.halt_reg = 0x38,
-+	/* CLK_OFF would not toggle until LPASS is not out of reset */
-+	.halt_check = BRANCH_HALT_SKIP,
-+	.clkr = {
-+		.enable_reg = 0x38,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "lpass_qdsp6ss_xo_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch lpass_qdsp6ss_sleep_clk = {
-+	.halt_reg = 0x3c,
-+	/* CLK_OFF would not toggle until LPASS is not out of reset */
-+	.halt_check = BRANCH_HALT_SKIP,
-+	.clkr = {
-+		.enable_reg = 0x3c,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "lpass_qdsp6ss_sleep_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct regmap_config lpass_regmap_config = {
-+	.reg_bits	= 32,
-+	.reg_stride	= 4,
-+	.val_bits	= 32,
-+	.fast_io	= true,
-+};
-+
-+static struct clk_regmap *lpass_cc_sdm845_clocks[] = {
-+	[LPASS_Q6SS_AHBM_AON_CLK] = &lpass_q6ss_ahbm_aon_clk.clkr,
-+	[LPASS_Q6SS_AHBS_AON_CLK] = &lpass_q6ss_ahbs_aon_clk.clkr,
-+};
-+
-+static const struct qcom_cc_desc lpass_cc_sdm845_desc = {
-+	.config = &lpass_regmap_config,
-+	.clks = lpass_cc_sdm845_clocks,
-+	.num_clks = ARRAY_SIZE(lpass_cc_sdm845_clocks),
-+};
-+
-+static struct clk_regmap *lpass_qdsp6ss_sdm845_clocks[] = {
-+	[LPASS_QDSP6SS_XO_CLK] = &lpass_qdsp6ss_xo_clk.clkr,
-+	[LPASS_QDSP6SS_SLEEP_CLK] = &lpass_qdsp6ss_sleep_clk.clkr,
-+	[LPASS_QDSP6SS_CORE_CLK] = &lpass_qdsp6ss_core_clk.clkr,
-+};
-+
-+static const struct qcom_cc_desc lpass_qdsp6ss_sdm845_desc = {
-+	.config = &lpass_regmap_config,
-+	.clks = lpass_qdsp6ss_sdm845_clocks,
-+	.num_clks = ARRAY_SIZE(lpass_qdsp6ss_sdm845_clocks),
-+};
-+
-+static int lpass_clocks_sdm845_probe(struct platform_device *pdev, int index,
-+				     const struct qcom_cc_desc *desc)
-+{
-+	struct regmap *regmap;
-+	struct resource *res;
-+	void __iomem *base;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, index);
-+	base = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	regmap = devm_regmap_init_mmio(&pdev->dev, base, desc->config);
-+	if (IS_ERR(regmap))
-+		return PTR_ERR(regmap);
-+
-+	return qcom_cc_really_probe(pdev, desc, regmap);
-+}
-+
-+static int lpass_cc_sdm845_probe(struct platform_device *pdev)
-+{
-+	const struct qcom_cc_desc *desc;
-+	int ret;
-+
-+	lpass_regmap_config.name = "cc";
-+	desc = &lpass_cc_sdm845_desc;
-+
-+	ret = lpass_clocks_sdm845_probe(pdev, 0, desc);
-+	if (ret)
-+		return ret;
-+
-+	lpass_regmap_config.name = "qdsp6ss";
-+	desc = &lpass_qdsp6ss_sdm845_desc;
-+
-+	return lpass_clocks_sdm845_probe(pdev, 1, desc);
-+}
-+
-+static const struct of_device_id lpass_cc_sdm845_match_table[] = {
-+	{ .compatible = "qcom,sdm845-lpasscc" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, lpass_cc_sdm845_match_table);
-+
-+static struct platform_driver lpass_cc_sdm845_driver = {
-+	.probe		= lpass_cc_sdm845_probe,
-+	.driver		= {
-+		.name	= "sdm845-lpasscc",
-+		.of_match_table = lpass_cc_sdm845_match_table,
-+	},
-+};
-+
-+static int __init lpass_cc_sdm845_init(void)
-+{
-+	return platform_driver_register(&lpass_cc_sdm845_driver);
-+}
-+subsys_initcall(lpass_cc_sdm845_init);
-+
-+static void __exit lpass_cc_sdm845_exit(void)
-+{
-+	platform_driver_unregister(&lpass_cc_sdm845_driver);
-+}
-+module_exit(lpass_cc_sdm845_exit);
-+
-+MODULE_DESCRIPTION("QTI LPASS_CC SDM845 Driver");
-+MODULE_LICENSE("GPL v2");
---
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
+--twq3molfx3dmoi2t
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW/ZmfQAKCRDj7w1vZxhR
+xa6DAP4sp8sY/XXSN4qWLdHs41eBFO/p3gmW3bsc8NYx/ruhVAD+NUtOtxWkL4D/
+hwyorMZuxpCFUm/1eC7+RbngPPNzzg4=
+=4bRA
+-----END PGP SIGNATURE-----
+
+--twq3molfx3dmoi2t--
