@@ -2,143 +2,89 @@ Return-Path: <SRS0=o4d4=OB=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ABC6C43441
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Nov 2018 16:00:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA692C04EBB
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Nov 2018 18:37:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCB6520684
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Nov 2018 16:00:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCB6520684
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 7134C20645
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Nov 2018 18:37:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="AY6wLTcd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7134C20645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438028AbeKWCjx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 22 Nov 2018 21:39:53 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:33448 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2438023AbeKWCjx (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 22 Nov 2018 21:39:53 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 7001820DC6; Thu, 22 Nov 2018 16:59:54 +0100 (CET)
-Received: from localhost (aaubervilliers-681-1-94-205.w90-88.abo.wanadoo.fr [90.88.35.205])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 4287B20712;
-        Thu, 22 Nov 2018 16:59:44 +0100 (CET)
-Date:   Thu, 22 Nov 2018 16:59:44 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Mesih Kilinc <mesihkilinc@gmail.com>
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Chen-Yu Tsai <wens@csie.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Rob Herring <robh+dt@kernel.org>,
-        Julian Calaby <julian.calaby@gmail.com>
-Subject: Re: [RFC PATCH v3 05/17] irqchip/sun4i: add support for suniv
- interrupt controller
-Message-ID: <20181122155944.vkx2u4iwwedheor2@flea>
-References: <cover.1542824904.git.mesihkilinc@gmail.com>
- <08b40429e46626f4caf8e4d2287b5c4d354e3b7f.1542824904.git.mesihkilinc@gmail.com>
- <20181122083547.srnopylueqx6p2qj@flea>
- <20181122150200.p6e22sp3v4npb42w@ThinkPad>
+        id S1729121AbeKWFSN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 23 Nov 2018 00:18:13 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:37378 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729400AbeKWFSN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Nov 2018 00:18:13 -0500
+Received: by mail-lj1-f195.google.com with SMTP id e5-v6so8721533lja.4
+        for <linux-clk@vger.kernel.org>; Thu, 22 Nov 2018 10:37:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=from:subject:to:organization:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=V07pLkQM5iKysed9WcGD7nXPTQ4ys4j1fuoExhui2e4=;
+        b=AY6wLTcdsfHGVEZ2pUFmkvgX56cIvr8Da0zPxZew0hyPCCCuF3/bXBoUq5Lvo+P2ki
+         Xxq8R2CmrD5dH5Wqbw+xIERpQE10EJFCCiyl6dlFFeaKzaCOHBA26eHKZOxKXHBC8UhC
+         o8s9ei9JkEk1ynEjFOwrGvKYQSif4jHyXRYpvniytGFxa6CaPuy8z2dGG00iLhiBhrhw
+         QmDSoCUlQVrffINCC5bINrzfCdzO4hRiuBmA1LdDjuO6ps4ibGmtfb1huxxx/x1FE2z3
+         VH9egmgKsVnhwTq4De6PxC+ISb2A480c21I+x5xv/QsZfOxtg3nslAnM6WfR1IdFtuGq
+         FX0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:subject:to:organization:message-id:date
+         :user-agent:mime-version:content-language:content-transfer-encoding;
+        bh=V07pLkQM5iKysed9WcGD7nXPTQ4ys4j1fuoExhui2e4=;
+        b=loPtmwcw2c6ONliUtzpX7gK1onZlfYlaEgdjViN5oaTiRQeoTBQ6czz7sAyQDoK1na
+         q3c/M1jG8HteywkS04alcxQGXoYcfLH1tKT7rQCAIeYQz+FdZvQIIugOenCt/hA1PS3h
+         vwMzKkQiFf58LyLQUOr1K+QSl1JYYk8DZQDZwP6/HSkcuBVjc4kAznX5GGHsR13zFfZV
+         hTbnHO8r0acYPpQOGz0F4WPXrTun9tVxWr+roWAFWOPW2qhNPbnZOp/Ar8W+4hW8eNqK
+         FixnLTKmMbcoBhL4T7LBhaunLkvQ4yV+W6ealLBlOC73zqBQJTt7vn62RPN6d8pN28Nw
+         o89w==
+X-Gm-Message-State: AGRZ1gIy9ADOqrKxz5vVAD3kLq1qoKdCmaMSed/4zriRD9P8kSi9ZqGm
+        gdhfnNcovH5SHtK4Ou64aDybbAGpVwk=
+X-Google-Smtp-Source: AFSGD/UqV7q5b/BE+qPufflMFZLvXH34uGi2QehGnKHLOEz/SgAUv0G9aq3iNByehk6A2v1112HaOQ==
+X-Received: by 2002:a2e:3218:: with SMTP id y24-v6mr8453555ljy.157.1542911855829;
+        Thu, 22 Nov 2018 10:37:35 -0800 (PST)
+Received: from wasted.cogentembedded.com ([31.173.85.10])
+        by smtp.gmail.com with ESMTPSA id u79-v6sm2480352lje.36.2018.11.22.10.37.34
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 22 Nov 2018 10:37:35 -0800 (PST)
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: [PATCH 0/4] Renesas R8A77980 CPG/MSSR RPC clock support
+To:     linux-renesas-soc@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-clk@vger.kernel.org
+Organization: Cogent Embedded
+Message-ID: <c79d3733-437a-55dc-d946-99521b79ec20@cogentembedded.com>
+Date:   Thu, 22 Nov 2018 21:37:33 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="h2z3qr6y2agvh63m"
-Content-Disposition: inline
-In-Reply-To: <20181122150200.p6e22sp3v4npb42w@ThinkPad>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hello!
 
---h2z3qr6y2agvh63m
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Here's the set of 4 patches against the 'clk-renesas' branch of Geert Uytterhoeven's
+'renesas-drivers.git' repo. We're adding support for the RPC clocks...
 
-On Thu, Nov 22, 2018 at 06:02:00PM +0300, Mesih Kilinc wrote:
-> > > diff --git a/drivers/irqchip/irq-sun4i.c b/drivers/irqchip/irq-sun4i.c
-> > > index e3e5b91..7ca4a4d 100644
-> > > --- a/drivers/irqchip/irq-sun4i.c
-> > > +++ b/drivers/irqchip/irq-sun4i.c
-> > > @@ -28,11 +28,21 @@
-> > >  #define SUN4I_IRQ_NMI_CTRL_REG		0x0c
-> > >  #define SUN4I_IRQ_PENDING_REG(x)	(0x10 + 0x4 * x)
-> > >  #define SUN4I_IRQ_FIQ_PENDING_REG(x)	(0x20 + 0x4 * x)
-> > > -#define SUN4I_IRQ_ENABLE_REG(x)		(0x40 + 0x4 * x)
-> > > -#define SUN4I_IRQ_MASK_REG(x)		(0x50 + 0x4 * x)
-> > > +#define SUN4I_IRQ_ENABLE_REG(x)		(irq_ic_data->enable_req_offset + 0=
-x4 * x)
-> > > +#define SUN4I_IRQ_MASK_REG(x)		(irq_ic_data->mask_req_offset + 0x4 *=
- x)
-> >=20
-> > You shouldn't have all the values you use passed as argument, so
-> > irq_ic_data should be one of them here.
-> >
->
-> Could you elaborate it a little bit?
+[1/4] clk: renesas: rcar-gen3-cpg: factor out cpg_reg_modify()
+[2/4] clk: renesas: rcar-gen3-cpg: add RPC clock
+[3/4] clk: renesas: rcar-gen3-cpg: add RPCD2 clock
+[4/4] clk: renesas: r8a77980-cpg-mssr: add RPC clocks
 
-You should change your macro to something like:
-
-SUN4I_IRQ_ENABLE_REG(data, x) ((data)->enable_req_offset + 0x4 * x)
-
-That way, you are transparent about the parameters that the macro
-expects, and don't rely on some unwritten rule about the variable
-name.
-
-> > > +
-> > > +static int __init suniv_ic_of_init(struct device_node *node,
-> > > +				   struct device_node *parent)
-> > > +{
-> > > +	irq_ic_data =3D kzalloc(sizeof(struct sunxi_irq_chip_data), GFP_KER=
-NEL);
-> > > +	if (!irq_ic_data) {
-> > > +		pr_err("kzalloc failed!\n");
-> > > +		return -ENOMEM;
-> > > +	}
-> > > +
-> > > +	irq_ic_data->enable_req_offset =3D SUNIV_IRQ_ENABLE_REG_OFFSET;
-> > > +	irq_ic_data->mask_req_offset =3D SUNIV_IRQ_MASK_REG_OFFSET;
-> > > +
-> > > +	return sun4i_of_init(node, parent);
-> > > +}
-> > > +
-> > > +IRQCHIP_DECLARE(allwinner_sunvi_ic, "allwinner,suniv-f1c100s-ic", su=
-niv_ic_of_init);
-> >=20
-> > You can even split that addition to a new patch as well.
->=20
-> OK. I will do 3 patches. First one will add a struct that holds only
-> base and domain. Second one will add register offsets to that struct.=20
-> Third one will add f1c100s support. Is that ok?
-
-Sounds perfect :)
-
-Thanks!
-Maxime
-
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---h2z3qr6y2agvh63m
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW/bScAAKCRDj7w1vZxhR
-xeTNAQCVVvFSY83AwPAdDSiPgA7y2KdvvK38YF4s6yokph6yXgEAh+yXGenXIuaz
-Bx6K/lyvdgkoeZ2bStF5yFF56RD8HwQ=
-=FloS
------END PGP SIGNATURE-----
-
---h2z3qr6y2agvh63m--
+MBR, Sergei
