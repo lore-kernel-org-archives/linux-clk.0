@@ -2,71 +2,69 @@ Return-Path: <SRS0=uK82=OC=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21560C43441
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Nov 2018 14:07:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2F99C43441
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Nov 2018 14:40:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD84120685
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Nov 2018 14:06:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A8DD20685
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Nov 2018 14:40:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="q1bEPuk3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD84120685
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="KQDheVde"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A8DD20685
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731522AbeKXAvS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 23 Nov 2018 19:51:18 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:50338 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726671AbeKXAvS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Nov 2018 19:51:18 -0500
-Received: by mail-wm1-f67.google.com with SMTP id 125so12086957wmh.0
-        for <linux-clk@vger.kernel.org>; Fri, 23 Nov 2018 06:06:56 -0800 (PST)
+        id S2391382AbeKXBZY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 23 Nov 2018 20:25:24 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:45518 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391336AbeKXBZY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Nov 2018 20:25:24 -0500
+Received: by mail-wr1-f67.google.com with SMTP id v6so12556591wrr.12
+        for <linux-clk@vger.kernel.org>; Fri, 23 Nov 2018 06:40:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:openpgp:autocrypt:organization
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=LLnyaHVW8COYgd0/8u6dpwIxIqSqz7iUPZozQJatSyI=;
-        b=q1bEPuk3wwUl1E8u/nErOCdMUqGI2Wmz1R/kg7dqwZrsvh7sJKkL1gyIB3TE8XNjMJ
-         N1Zefb+vpwP6h5uy+5riK980whzqNcsCWoO7Nqk7HTR+oZSK+f97lxMpFPhaJMaFNfEI
-         2m3fH969b/tdaoaGxlE7xVroJKSinv9HVwqwbbL95DGqB0ZxIn+OkWN6byHRI36Ste8g
-         1OHAExDFRH7yNbxEwe9HCRNTWPx4iXiCIx/QSZ7ySDQBQd7zEQnqkncAY7iAzTriZ8kr
-         BbvKS9Fw+YDSkbdTH3VR5rl06/2BaqGCWWUDj/73eNF6KfQIWQsliUqhdfXuLoEWGBDr
-         sYNg==
+        bh=jWnIdsDrWcxWTq1j213GdVFWnMbnWtL0+OC4UsptE/A=;
+        b=KQDheVdeC2XZ2Jy/v9GFGKxtJk2ry38wY9pJa/HEqfoGTPMepVPoHRhY8AKpY36Tag
+         4uUzKRsjmhtS/OReIS/+S5DNOKIXB4gvPHBDNZFTHAfaOoPLA7Nk9AhKHKDV3FrtuN3K
+         TlktYdIyK0ZP2TbYhTwGSUl5+F+91feuXK5e2OJSVxrToIPGzZks2+n66R0PY6s6mjyD
+         7tecJs1UA4o+Q8JZYDC3j1LgiMjn3OFD+2FnSuHqs9rC8XQmZRkxnGbZmYrelS7o03hp
+         ctdmwcmILHMVDE8LdmKo7a5lYGqlTmLRBYK4LOwQFZtTSpDDgod7LNYTbLo5AnRAhXxF
+         xfnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :organization:message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=LLnyaHVW8COYgd0/8u6dpwIxIqSqz7iUPZozQJatSyI=;
-        b=OKZYd8Siv8sXQ/a51Oo6Qml8AWIVHZDc55JUbRbeuhh0Q1LogwTSOMTrwWXfBIWIrw
-         O6qvRbEKWFkChEGOwrjisBbQmis2wOsTm4M54g7V3KO1U4kRBo8OGVaDWAScWl5WOvwq
-         cgbSbLgDT7yeelLtKKxRtgfiUUQbmT3ZM9jnzI47hFXh0MmMFJrnkSmieZs+qyW1Kpmh
-         QLHyzDfjV/dDGCmSCXP8uqBB8ifCJbmNXoxs4WB7TctzGwSd+9O41ucBU/BXWO0V9mEj
-         SNZROWfhoSXhlkaRO55zLfUTjXlnRDa3Dv0UscHOSb+ty4g6son9sD/V/oAIIbsSprLj
-         WDgA==
-X-Gm-Message-State: AA+aEWZ8YXu8ADq9i0oi1FWmvMB3700SDG9rgYvyLB8H12RwhN+pPQxy
-        3XxLKCaFfqsH0Tv0xA9qruPXwA==
-X-Google-Smtp-Source: AFSGD/V6B+r8wHV1gvV3eleG/jkaTyIM3B4NxhiR9pfjya+S5M+WWBPpY1R+0CEMhU5ck0JDcQ94fA==
-X-Received: by 2002:a1c:48c1:: with SMTP id v184-v6mr3399768wma.26.1542982015457;
-        Fri, 23 Nov 2018 06:06:55 -0800 (PST)
+        bh=jWnIdsDrWcxWTq1j213GdVFWnMbnWtL0+OC4UsptE/A=;
+        b=o6qoj8ldJk2Y9bnSBZTX8g8+ia0aODiiHdykZSLtmaCESMgw5dLuZ69SMnU9UHCMai
+         TJStU9g3A5YAk9CCONQPQTJ9m2E97AjTAixgJuiD2c7NJJmMr2hruFtNbf0oXp23DTB/
+         IGEXmskba8XiRkgQFVGTUozpgxhVgWeOE8E3vpVMgJP0EZ++kuOaYu7eNL+38q9iHcUH
+         gDGfTXsFB0SP1oM7bxFev1exy9Vco0oa6gh8KCuZRDzJWaDq1R2Dni46LvD6Uk5F2x50
+         pBBeYEv8sd0OIij0ysv3mbfV0tdfWj4tC3CIvwafsJ0oBeQHR0w/EHyqbXYCieak3lyD
+         HY2A==
+X-Gm-Message-State: AA+aEWacEVLNo2k8wAbYeFRZs7+pD4kK3pU8yb3yWWm4pJtqSLSxk1kJ
+        IL/a4L0WqOhCsJ9I9N9abp61Fg==
+X-Google-Smtp-Source: AFSGD/VSK01VEwGhFg+aAgTrkBkpPB8x/CYYkzpm9VUmFrL3oRQuWHcr55eSxKfu7dTfZZHXrI9CFg==
+X-Received: by 2002:adf:8464:: with SMTP id 91mr14926193wrf.251.1542984056412;
+        Fri, 23 Nov 2018 06:40:56 -0800 (PST)
 Received: from [10.1.2.12] (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id n5sm25185648wrr.94.2018.11.23.06.06.54
+        by smtp.gmail.com with ESMTPSA id t131sm6055850wmt.1.2018.11.23.06.40.55
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 23 Nov 2018 06:06:54 -0800 (PST)
-Subject: Re: [PATCH v2 2/4] clk: meson: clk-regmap: add read-only gate ops
+        Fri, 23 Nov 2018 06:40:55 -0800 (PST)
+Subject: Re: [PATCH v2 0/4] Meson8b: add the CPU clock post-dividers
 To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
         linux-amlogic@lists.infradead.org, jbrunet@baylibre.com
 Cc:     mturquette@baylibre.com, sboyd@kernel.org,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
 References: <20181122214017.25643-1-martin.blumenstingl@googlemail.com>
- <20181122214017.25643-3-martin.blumenstingl@googlemail.com>
 From:   Neil Armstrong <narmstrong@baylibre.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
@@ -94,12 +92,12 @@ Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
  C3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTTQbM0WUIBIcGmq38+OgUsMYu4NzLu7uZF
  Acmp6h8g
 Organization: Baylibre
-Message-ID: <46911a32-43bc-4fd8-b4bd-92fe934cecf8@baylibre.com>
-Date:   Fri, 23 Nov 2018 15:06:53 +0100
+Message-ID: <4859b354-ade4-8172-eeb5-7a4a42045589@baylibre.com>
+Date:   Fri, 23 Nov 2018 15:40:55 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181122214017.25643-3-martin.blumenstingl@googlemail.com>
+In-Reply-To: <20181122214017.25643-1-martin.blumenstingl@googlemail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -109,53 +107,58 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On 22/11/2018 22:40, Martin Blumenstingl wrote:
-> Some of the gate clocks are described as "just in case" bits in the
-> datasheet. Examples are the ABP, PERIPH, AXI and L2 DRAM clocks on
-> Meson8b.
-> The datasheet suggests that these bits are not touched. The full
-> explanation is:
+> This is the successor to my previous series "meson8b: add the CPU_DIV16
+> clock for the ARM TWD" from [0]. I decided to not send this as v2 of
+> the original series because the PERIPH clock is not the CPU_DIV16 clock.
+> It's not clear whether a CPU_DIV16 clock exists.
+> 
+> With this series we get all the CPU_CLK post-dividers as listed in the
+> public S805 datasheet [1] on pages 31 and 32:
+> - ABP
+> - PERIPH (used as input for the ARM global timer and ARM TWD timer)
+> - AXI
+> - L2 DRAM
+> 
+> Each of these clocks has a register called "..._CLK_DIS" which is
+> documented as a "just in case" bit:
 > "Set to 1 to manually disable the [...] clock when changing the mux
 > selection. Typically this bit is set to 0 since the clock muxes can
-> switch without glitches.".
+> switch without glitches."
+> Since we're not supposed to touch that register we're using the new
+> read-only gate clk_ops to ensure that nothing accidentally modifies
+> these bits.
 > 
-> This adds new read-only ops for gate clocks so we can describe these
-> clocks in our clock controller drivers while ensuring that we can't
-> accidentally modify the registers.
+> The result of this is that we can use the PERIPH clock which clocks
+> the ARM TWD timer. I will send a separate series to add the TWD timer.
 > 
-> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> ---
->  drivers/clk/meson/clk-regmap.c | 5 +++++
->  drivers/clk/meson/clk-regmap.h | 1 +
->  2 files changed, 6 insertions(+)
 > 
-> diff --git a/drivers/clk/meson/clk-regmap.c b/drivers/clk/meson/clk-regmap.c
-> index 305ee307c003..c515f67322a3 100644
-> --- a/drivers/clk/meson/clk-regmap.c
-> +++ b/drivers/clk/meson/clk-regmap.c
-> @@ -50,6 +50,11 @@ const struct clk_ops clk_regmap_gate_ops = {
->  };
->  EXPORT_SYMBOL_GPL(clk_regmap_gate_ops);
->  
-> +const struct clk_ops clk_regmap_gate_ro_ops = {
-> +	.is_enabled = clk_regmap_gate_is_enabled,
-> +};
-> +EXPORT_SYMBOL_GPL(clk_regmap_gate_ro_ops);
-> +
->  static unsigned long clk_regmap_div_recalc_rate(struct clk_hw *hw,
->  						unsigned long prate)
->  {
-> diff --git a/drivers/clk/meson/clk-regmap.h b/drivers/clk/meson/clk-regmap.h
-> index ed2d4348dbe2..e9c5728d40eb 100644
-> --- a/drivers/clk/meson/clk-regmap.h
-> +++ b/drivers/clk/meson/clk-regmap.h
-> @@ -51,6 +51,7 @@ clk_get_regmap_gate_data(struct clk_regmap *clk)
->  }
->  
->  extern const struct clk_ops clk_regmap_gate_ops;
-> +extern const struct clk_ops clk_regmap_gate_ro_ops;
->  
->  /**
->   * struct clk_regmap_div_data - regmap backed adjustable divider specific data
+> changes since v1 at [2]:
+> - added new patch 2 "clk: meson: clk-regmap: add read-only gate ops"
+> - switched from CLK_IS_CRITICAL to the new clk_regmap_gate_ro_ops
+>   so we're consistent with all other read-only clocks
+> - collected Jerome's Acked-by tags (thanks!)
 > 
+> 
+> [0] http://lists.infradead.org/pipermail/linux-amlogic/2018-July/007890.html
+> [1] https://dn.odroid.com/S805/Datasheet/S805_Datasheet%20V0.8%2020150126.pdf
+> [2] https://patchwork.kernel.org/cover/10687023/
+> 
+> 
+> Martin Blumenstingl (4):
+>   dt-bindings: clock: meson8b: export the CPU post dividers
+>   clk: meson: clk-regmap: add read-only gate ops
+>   clk: meson: meson8b: rename cpu_div2/cpu_div3 to
+>     cpu_in_div2/cpu_in_div3
+>   clk: meson: meson8b: add the CPU clock post divider clocks
+> 
+>  drivers/clk/meson/clk-regmap.c           |   5 +
+>  drivers/clk/meson/clk-regmap.h           |   1 +
+>  drivers/clk/meson/meson8b.c              | 264 ++++++++++++++++++++++-
+>  drivers/clk/meson/meson8b.h              |  17 +-
+>  include/dt-bindings/clock/meson8b-clkc.h |   4 +
+>  5 files changed, 278 insertions(+), 13 deletions(-)
 
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+
+Applied, with the bindings on next/headers
+
+Neil
