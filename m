@@ -2,138 +2,160 @@ Return-Path: <SRS0=uK82=OC=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 183E5C43441
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Nov 2018 13:00:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21560C43441
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Nov 2018 14:07:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D775D206B2
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Nov 2018 13:00:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D775D206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id CD84120685
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Nov 2018 14:06:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="q1bEPuk3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD84120685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394774AbeKWXoL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 23 Nov 2018 18:44:11 -0500
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:35073 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731971AbeKWXoL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Nov 2018 18:44:11 -0500
-Received: by mail-ua1-f66.google.com with SMTP id d2so4078272ual.2;
-        Fri, 23 Nov 2018 05:00:05 -0800 (PST)
+        id S1731522AbeKXAvS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 23 Nov 2018 19:51:18 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:50338 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726671AbeKXAvS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Nov 2018 19:51:18 -0500
+Received: by mail-wm1-f67.google.com with SMTP id 125so12086957wmh.0
+        for <linux-clk@vger.kernel.org>; Fri, 23 Nov 2018 06:06:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:openpgp:autocrypt:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=LLnyaHVW8COYgd0/8u6dpwIxIqSqz7iUPZozQJatSyI=;
+        b=q1bEPuk3wwUl1E8u/nErOCdMUqGI2Wmz1R/kg7dqwZrsvh7sJKkL1gyIB3TE8XNjMJ
+         N1Zefb+vpwP6h5uy+5riK980whzqNcsCWoO7Nqk7HTR+oZSK+f97lxMpFPhaJMaFNfEI
+         2m3fH969b/tdaoaGxlE7xVroJKSinv9HVwqwbbL95DGqB0ZxIn+OkWN6byHRI36Ste8g
+         1OHAExDFRH7yNbxEwe9HCRNTWPx4iXiCIx/QSZ7ySDQBQd7zEQnqkncAY7iAzTriZ8kr
+         BbvKS9Fw+YDSkbdTH3VR5rl06/2BaqGCWWUDj/73eNF6KfQIWQsliUqhdfXuLoEWGBDr
+         sYNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=BEcsmH44FvN/opBTDUsgZ+tIPxYr/sDbW4ia5c5nM/8=;
-        b=h9GQ7TjgkqtgRe7at8jpwBLz8oCjdIgeBiTaQcikHPMlcEkzvKolSmt4WXJmbydcsd
-         RMGvNcqXyB1p7G0/LJbJvKsy4wYlP66SlawTW7G9VP1g/gW9aOFRvQlJXl/vdPeMEURr
-         +Ub+3leDFEzgMYIUUA9PL/4DXqr8K2Upnbmqq9icET6NiHTLDOQ3pbjDiH9K0OWp2xaA
-         beME/XhHV2ZA4HZM1MlT+RlGvTZTSA4FI/ZobGuSmHtlkYFPvF5XiVmlaihCHAJUsgmg
-         q0KNf+TGkMPfej+aKlrqslpHmMejuC24gFRpELdwFAd5Kjp/FfHoHEb07p3gvVU4xD0O
-         JNiA==
-X-Gm-Message-State: AA+aEWaDssjWwTRKBf/rJ7nMQewDaCKr4n18QV66ACo0QlgkAZJdwRxK
-        UjX9EowuxkWOROwI7I2tnAuwzWjNDg6T0vK+ZHg=
-X-Google-Smtp-Source: AFSGD/Vpn5AeNQD6RC8glhmKwr7ih5oi/3d4xqOdzt4Y/Ozes9M1odWfaoKNF8Zc9kJ8g9kFZLEES9O3QyEyefoQYgI=
-X-Received: by 2002:ab0:210e:: with SMTP id d14mr6594605ual.20.1542978004911;
- Fri, 23 Nov 2018 05:00:04 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :organization:message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=LLnyaHVW8COYgd0/8u6dpwIxIqSqz7iUPZozQJatSyI=;
+        b=OKZYd8Siv8sXQ/a51Oo6Qml8AWIVHZDc55JUbRbeuhh0Q1LogwTSOMTrwWXfBIWIrw
+         O6qvRbEKWFkChEGOwrjisBbQmis2wOsTm4M54g7V3KO1U4kRBo8OGVaDWAScWl5WOvwq
+         cgbSbLgDT7yeelLtKKxRtgfiUUQbmT3ZM9jnzI47hFXh0MmMFJrnkSmieZs+qyW1Kpmh
+         QLHyzDfjV/dDGCmSCXP8uqBB8ifCJbmNXoxs4WB7TctzGwSd+9O41ucBU/BXWO0V9mEj
+         SNZROWfhoSXhlkaRO55zLfUTjXlnRDa3Dv0UscHOSb+ty4g6son9sD/V/oAIIbsSprLj
+         WDgA==
+X-Gm-Message-State: AA+aEWZ8YXu8ADq9i0oi1FWmvMB3700SDG9rgYvyLB8H12RwhN+pPQxy
+        3XxLKCaFfqsH0Tv0xA9qruPXwA==
+X-Google-Smtp-Source: AFSGD/V6B+r8wHV1gvV3eleG/jkaTyIM3B4NxhiR9pfjya+S5M+WWBPpY1R+0CEMhU5ck0JDcQ94fA==
+X-Received: by 2002:a1c:48c1:: with SMTP id v184-v6mr3399768wma.26.1542982015457;
+        Fri, 23 Nov 2018 06:06:55 -0800 (PST)
+Received: from [10.1.2.12] (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id n5sm25185648wrr.94.2018.11.23.06.06.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 23 Nov 2018 06:06:54 -0800 (PST)
+Subject: Re: [PATCH v2 2/4] clk: meson: clk-regmap: add read-only gate ops
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-amlogic@lists.infradead.org, jbrunet@baylibre.com
+Cc:     mturquette@baylibre.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+References: <20181122214017.25643-1-martin.blumenstingl@googlemail.com>
+ <20181122214017.25643-3-martin.blumenstingl@googlemail.com>
+From:   Neil Armstrong <narmstrong@baylibre.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKE5laWwgQXJtc3Ryb25nIDxuYXJtc3Ryb25nQGJheWxpYnJlLmNvbT7CwHsEEwEKACUC
+ GyMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheABQJXDO2CAhkBAAoJEBaat7Gkz/iubGIH/iyk
+ RqvgB62oKOFlgOTYCMkYpm2aAOZZLf6VKHKc7DoVwuUkjHfIRXdslbrxi4pk5VKU6ZP9AKsN
+ NtMZntB8WrBTtkAZfZbTF7850uwd3eU5cN/7N1Q6g0JQihE7w4GlIkEpQ8vwSg5W7hkx3yQ6
+ 2YzrUZh/b7QThXbNZ7xOeSEms014QXazx8+txR7jrGF3dYxBsCkotO/8DNtZ1R+aUvRfpKg5
+ ZgABTC0LmAQnuUUf2PHcKFAHZo5KrdO+tyfL+LgTUXIXkK+tenkLsAJ0cagz1EZ5gntuheLD
+ YJuzS4zN+1Asmb9kVKxhjSQOcIh6g2tw7vaYJgL/OzJtZi6JlIXOwE0ETVkGzwEIALyKDN/O
+ GURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYpQTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXM
+ coJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hi
+ SvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY4yG6xI99NIPEVE9lNBXBKIlewIyVlkOa
+ YvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoMMtsyw18YoX9BqMFInxqYQQ3j/HpVgTSv
+ mo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUXoUk33HEAEQEAAcLAXwQYAQIACQUCTVkG
+ zwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfnM7IbRuiSZS1unlySUVYu3SD6YBYnNi3G
+ 5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa33eDIHu/zr1HMKErm+2SD6PO9umRef8V8
+ 2o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCSKmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+
+ RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJ
+ C3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTTQbM0WUIBIcGmq38+OgUsMYu4NzLu7uZF
+ Acmp6h8g
+Organization: Baylibre
+Message-ID: <46911a32-43bc-4fd8-b4bd-92fe934cecf8@baylibre.com>
+Date:   Fri, 23 Nov 2018 15:06:53 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <c79d3733-437a-55dc-d946-99521b79ec20@cogentembedded.com> <0e51165d-65cb-1522-3174-b63818180070@cogentembedded.com>
-In-Reply-To: <0e51165d-65cb-1522-3174-b63818180070@cogentembedded.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 23 Nov 2018 13:59:52 +0100
-Message-ID: <CAMuHMdX6n860T9oOgYiqxiF0QpNyKqEtQW9yEksAv_A02Z9qRw@mail.gmail.com>
-Subject: Re: [PATCH 4/4] clk: renesas: r8a77980-cpg-mssr: add RPC clocks
-To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181122214017.25643-3-martin.blumenstingl@googlemail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Sergei,
-
-Thanks for your patch!
-
-On Thu, Nov 22, 2018 at 7:45 PM Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> Add the RPCSRC internal clock on R-Car V3H (R8A77980) -- it's controlled
-> by the RPCCKCR.DIV[4:3] on all the R-Car gen3 SoCs except V3M (R8A77970)
-> but the encoding of this field is different between SoCs.
-
-Given the tables and encoding are the same on H3, M3-W, M3-N, and V3H,
-I think it makes sense to move the common support to rcar-gen3-cpg.c.
-
-Heck, you could even just select a different table on D3/E3 using
-soc_device_match(), if only one encoding would not select a different parent
-clock :-(
-
-> Add the RPC[D2] clocks (derived from this internal clock) and the RPC-IF
-> module clock as well...
->
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-
-> --- renesas-drivers.orig/drivers/clk/renesas/r8a77980-cpg-mssr.c
-> +++ renesas-drivers/drivers/clk/renesas/r8a77980-cpg-mssr.c
-
-> @@ -21,6 +22,10 @@
->  #include "renesas-cpg-mssr.h"
->  #include "rcar-gen3-cpg.h"
->
-> +enum r8a77980_clk_types {
-> +       CLK_TYPE_R8A77980_RPCSRC = CLK_TYPE_GEN3_SOC_BASE,
-
-Rename and move to rcar_gen3_clk_types?
-
-> @@ -215,6 +232,27 @@ static int __init r8a77980_cpg_mssr_init
->         return rcar_gen3_cpg_init(cpg_pll_config, CLK_EXTALR, cpg_mode);
+On 22/11/2018 22:40, Martin Blumenstingl wrote:
+> Some of the gate clocks are described as "just in case" bits in the
+> datasheet. Examples are the ABP, PERIPH, AXI and L2 DRAM clocks on
+> Meson8b.
+> The datasheet suggests that these bits are not touched. The full
+> explanation is:
+> "Set to 1 to manually disable the [...] clock when changing the mux
+> selection. Typically this bit is set to 0 since the clock muxes can
+> switch without glitches.".
+> 
+> This adds new read-only ops for gate clocks so we can describe these
+> clocks in our clock controller drivers while ensuring that we can't
+> accidentally modify the registers.
+> 
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> ---
+>  drivers/clk/meson/clk-regmap.c | 5 +++++
+>  drivers/clk/meson/clk-regmap.h | 1 +
+>  2 files changed, 6 insertions(+)
+> 
+> diff --git a/drivers/clk/meson/clk-regmap.c b/drivers/clk/meson/clk-regmap.c
+> index 305ee307c003..c515f67322a3 100644
+> --- a/drivers/clk/meson/clk-regmap.c
+> +++ b/drivers/clk/meson/clk-regmap.c
+> @@ -50,6 +50,11 @@ const struct clk_ops clk_regmap_gate_ops = {
+>  };
+>  EXPORT_SYMBOL_GPL(clk_regmap_gate_ops);
+>  
+> +const struct clk_ops clk_regmap_gate_ro_ops = {
+> +	.is_enabled = clk_regmap_gate_is_enabled,
+> +};
+> +EXPORT_SYMBOL_GPL(clk_regmap_gate_ro_ops);
+> +
+>  static unsigned long clk_regmap_div_recalc_rate(struct clk_hw *hw,
+>  						unsigned long prate)
+>  {
+> diff --git a/drivers/clk/meson/clk-regmap.h b/drivers/clk/meson/clk-regmap.h
+> index ed2d4348dbe2..e9c5728d40eb 100644
+> --- a/drivers/clk/meson/clk-regmap.h
+> +++ b/drivers/clk/meson/clk-regmap.h
+> @@ -51,6 +51,7 @@ clk_get_regmap_gate_data(struct clk_regmap *clk)
 >  }
->
-> +static struct clk * __init r8a77980_cpg_clk_register(struct device *dev,
-> +       const struct cpg_core_clk *core, const struct cpg_mssr_info *info,
-> +       struct clk **clks, void __iomem *base,
-> +       struct raw_notifier_head *notifiers)
-> +{
-> +       if (core->type == CLK_TYPE_R8A77980_RPCSRC) {
+>  
+>  extern const struct clk_ops clk_regmap_gate_ops;
+> +extern const struct clk_ops clk_regmap_gate_ro_ops;
+>  
+>  /**
+>   * struct clk_regmap_div_data - regmap backed adjustable divider specific data
+> 
 
-I'd use a switch() statement here, for consistency with other drivers.
-
-> +               const struct clk *parent = clks[core->parent];
-> +
-> +               if (IS_ERR(parent))
-> +                       return ERR_CAST(parent);
-> +
-> +               return clk_register_divider_table(NULL, core->name,
-> +                                                 __clk_get_name(parent), 0,
-> +                                                 base + CPG_RPCCKCR, 3, 2, 0,
-> +                                                 cpg_rpcsrc_div_table, NULL);
-
-Don't you need a spinlock (last parameter, currently NULL)?
-This needs to be synchronized with controlling the RPCD2 and RPC clocks,
-as they operate on the same register.
-
-However, that would deadlock, as enabling e.g. RPC-IF will enable
-all parent clocks?
-
-> +       } else  {
-> +               return rcar_gen3_cpg_clk_register(dev, core, info, clks, base,
-> +                                                 notifiers);
-> +       }
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
