@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06444C43441
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Nov 2018 12:55:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96AEAC43441
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Nov 2018 12:58:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB15F206B2
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Nov 2018 12:55:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB15F206B2
+	by mail.kernel.org (Postfix) with ESMTP id 668F0206B2
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Nov 2018 12:58:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 668F0206B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436528AbeKWXjv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 23 Nov 2018 18:39:51 -0500
-Received: from mail-vk1-f195.google.com ([209.85.221.195]:34962 "EHLO
-        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436515AbeKWXju (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Nov 2018 18:39:50 -0500
-Received: by mail-vk1-f195.google.com with SMTP id b18so2642490vke.2;
-        Fri, 23 Nov 2018 04:55:45 -0800 (PST)
+        id S2387910AbeKWXm7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 23 Nov 2018 18:42:59 -0500
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:42917 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731971AbeKWXm7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Nov 2018 18:42:59 -0500
+Received: by mail-vs1-f68.google.com with SMTP id b74so7106470vsd.9;
+        Fri, 23 Nov 2018 04:58:53 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=u1rzCPvd/U4x3h8jC6T7uFnQ894ZMGeGr5NlJU/F798=;
-        b=GwnFTKygMBYLaVJoDimwfAKRb6a77CXRyfZ9jVChbHyB+HBNyvidu6YPQQRkS+MJlx
-         B5TElMvrBp4KHkmkcfKJSux+yK1I+WEIH12Qmu/MPH7m9T0laLFmcLIz7ggRiDn74otW
-         QaSMImUp0vIi7JzrKisG/yb9YTxoPhOslPrTE5+8usSaexQ+Ln2gKJltgA2JM+I/1HPX
-         udveX88KFuQNp+CiiYid3OfjvZ1c0bMDVuU2AJinY43xxf7D0gLtIgk5q5IPnh4gQbwm
-         76TX5sidyBRbU6nS69MJmmnu5mvjTVubWOgc9Ft1R43TFPIsKmhEnpDI7QTpbpDpa5cN
-         4E/Q==
-X-Gm-Message-State: AA+aEWZd2YFWgY1ieyNOMAvAUkZ2JO2XePhJcZGI+fyv492vQiZqqHP4
-        mXdHUS2GhBckQBvJB7lghVnmnSoYmEwo26Bs5W/2Ei57D2M=
-X-Google-Smtp-Source: AFSGD/WKn4jDFBJ+QwINJyV2EwVpwxov/jUS9atSJK9a68zWiXDgCRBtdD44mOLpDSKQDE39AK9W2R5NGTj9rX1GVD8=
-X-Received: by 2002:a1f:2145:: with SMTP id h66mr6403094vkh.65.1542977744834;
- Fri, 23 Nov 2018 04:55:44 -0800 (PST)
+        bh=W0Pov1+qPr/5hXeoB3wtQKBf6rMJwy+/6lOz2WhJZmM=;
+        b=duuBgnoAiAJPuujEjkVqUElbcEM9XuAnuJd5AJbiKkLv8Kd1hoHsdXB50ZWlWCU775
+         evdQsrXP3MoNF3RF2bbS4k75J3GfP1p/GYkcBHfnU3VP/wLqoCHSAeGNkpAsBh7ISUQj
+         wEJJwqczRATJLQI+EviVADLj4qZxyPVJ0Rxlt/4ImRa/LcFgUsHCJ1DSVcPRj/9LK2L8
+         s7sBnbfSY1bD5Gme9v2tbIXND5hC3or0N+CmcWLmwUwDoW1xjXP3y5WPQjZxrLRLvYQ5
+         weE+bSdcYSmaTfksb0fCUSTVqiv65wDIGvIo0PkslDRJtJYFSVzsAE1X/bks9ER6JNZh
+         30Hw==
+X-Gm-Message-State: AGRZ1gL7UxH3PsSTTpAkbrILapPLULr4Hrx6ovJigAZo4trh3RVp68xX
+        4UFqox5gBoIz2IKVyfORZQqgPfCdgHownote9XM=
+X-Google-Smtp-Source: AJdET5f47H8RL800jj7reMhRn1UguQHpaUjen6pn6Fna2h1XloQVltbgrwSrkArAN4Dc9c78QOllRQmbjjJcnYOBACA=
+X-Received: by 2002:a67:b60d:: with SMTP id d13mr6698745vsm.152.1542977932257;
+ Fri, 23 Nov 2018 04:58:52 -0800 (PST)
 MIME-Version: 1.0
-References: <c79d3733-437a-55dc-d946-99521b79ec20@cogentembedded.com> <5aa01cae-28ff-efb5-bf4d-1994760ecb79@cogentembedded.com>
-In-Reply-To: <5aa01cae-28ff-efb5-bf4d-1994760ecb79@cogentembedded.com>
+References: <c79d3733-437a-55dc-d946-99521b79ec20@cogentembedded.com> <71808cdc-c95b-8ba2-10aa-01f6a6af7cf1@cogentembedded.com>
+In-Reply-To: <71808cdc-c95b-8ba2-10aa-01f6a6af7cf1@cogentembedded.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 23 Nov 2018 13:55:32 +0100
-Message-ID: <CAMuHMdX4cDC1ML8Wp8oT45YkjHux+uk5NMYX2BAvs=nNgm_oAw@mail.gmail.com>
-Subject: Re: [PATCH 2/4] clk: renesas: rcar-gen3-cpg: add RPC clock
+Date:   Fri, 23 Nov 2018 13:58:40 +0100
+Message-ID: <CAMuHMdXiUomHV_3+DFuD64dFFjD5fABZVDOi3RXqZzw9YH5caw@mail.gmail.com>
+Subject: Re: [PATCH 3/4] clk: renesas: rcar-gen3-cpg: add RPCD2 clock
 To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -60,10 +60,11 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 Hi Sergei,
 
-On Thu, Nov 22, 2018 at 7:41 PM Sergei Shtylyov
+On Thu, Nov 22, 2018 at 7:43 PM Sergei Shtylyov
 <sergei.shtylyov@cogentembedded.com> wrote:
-> Add the RPC clock for the R-Car gen3 SoCs -- this clock is controlled by
-> the RPCCKCR register on all the R-Car gen3 SoCs except V3M (R8A77970).
+> Add the RPCD2 clock for the R-Car gen3 SoCs -- this clock is en/disabled
+> via the RPCCKCR register on all the R-Car gen3 SoCs except V3M (R8A77970)
+> and has a fixed divisor of 2 (applied to the RPC clock).
 >
 > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
@@ -71,48 +72,48 @@ Thanks for your patch!
 
 > --- renesas-drivers.orig/drivers/clk/renesas/rcar-gen3-cpg.c
 > +++ renesas-drivers/drivers/clk/renesas/rcar-gen3-cpg.c
-> @@ -409,6 +409,121 @@ free_clock:
+> @@ -524,6 +524,89 @@ static struct clk * __init cpg_rpc_clk_r
 >         return clk;
 >  }
 >
-> +#define CPG_RPC_CKSTP2         BIT(9)
-
-This bit is for RPCD2, so technically it should be part of patch 3/4.
-Perhaps you can merge both patches, and absorb the non-SoC-specific
-parts from patch 4/4?
-
-> +#define CPG_RPC_CKSTP          BIT(8)
-> +#define CPG_RPC_DIV_4_3_MASK   GENMASK(4, 3)
-
-Unused
-
-> +#define CPG_RPC_DIV_2_0_MASK   GENMASK(2, 0)
-> +
-> +struct rpc_clock {
-> +       struct clk_hw hw;
-> +       void __iomem *reg;
-
-As this register should be saved/restore during system suspend/resume,
-you should add
-
-    struct cpg_simple_notifier csn;
-
-> +};
-
-> +static long cpg_rpc_clock_round_rate(struct clk_hw *hw, unsigned long rate,
-> +                                    unsigned long *parent_rate)
+> +static int cpg_rpcd2_clock_enable(struct clk_hw *hw)
 > +{
 > +       struct rpc_clock *clock = to_rpc_clock(hw);
-> +       unsigned int div = cpg_rpc_clock_calc_div(clock, rate, *parent_rate);
 > +
-> +       return DIV_ROUND_CLOSEST(*parent_rate, div);
+> +       cpg_reg_modify(clock->reg, CPG_RPC_CKSTP2, 0);
+> +
+> +       return 0;
+> +}
+> +
+> +static void cpg_rpcd2_clock_disable(struct clk_hw *hw)
+> +{
+> +       struct rpc_clock *clock = to_rpc_clock(hw);
+> +
+> +       cpg_reg_modify(clock->reg, 0, CPG_RPC_CKSTP2);
+> +}
+> +
+> +static int cpg_rpcd2_clock_is_enabled(struct clk_hw *hw)
+> +{
+> +       struct rpc_clock *clock = to_rpc_clock(hw);
+> +
+> +       return !(readl(clock->reg) & CPG_RPC_CKSTP2);
+> +}
+
+As the above 3 functions are identical to their rpc_*() counterparts,
+except for the bit touched, would it make sense to share them, e.g. by
+storing the bit number in struct rpc_clock?
+
+> +static long cpg_rpcd2_round_rate(struct clk_hw *hw, unsigned long rate,
+> +                                unsigned long *parent_rate)
+> +{
+> +       return *parent_rate / 2;
 
 Given you set CLK_SET_RATE_PARENT, shouldn't you propagate up,
 cfr. drivers/clk/clk-fixed-factor.c:clk_factor_round_rate()?
 
 > +}
 
-> +static struct clk * __init cpg_rpc_clk_register(const struct cpg_core_clk *core,
+> +static struct clk * __init cpg_rpcd2_clk_register(const struct cpg_core_clk *core,
 > +                                               void __iomem *base,
 > +                                               const char *parent_name)
 > +{
@@ -125,53 +126,21 @@ cfr. drivers/clk/clk-fixed-factor.c:clk_factor_round_rate()?
 > +               return ERR_PTR(-ENOMEM);
 > +
 > +       init.name = core->name;
-> +       init.ops = &cpg_rpc_clock_ops;
+> +       init.ops = &cpg_rpcd2_clock_ops;
 > +       init.flags = CLK_IS_BASIC | CLK_SET_RATE_PARENT;
 
 I don't think CLK_IS_BASIC is appropriate?
 
 #define CLK_IS_BASIC            BIT(5) /* Basic clk, can't do a to_clk_foo() */
 
-> +       init.parent_names = &parent_name;
-> +       init.num_parents = 1;
-> +
-> +       clock->reg = base + CPG_RPCCKCR;
-> +       clock->hw.init = &init;
-> +
-> +       clk = clk_register(NULL, &clock->hw);
-> +       if (IS_ERR(clk))
-> +               kfree(clock);
-> +
-
-For save/restore during system suspend/resume:
-
-    cpg_simple_notifier_register(notifiers, &clock->csn);
-
-Hmm, looks like I missed that during review of commit 381081ffc2948e1e
-("clk: renesas: r8a77970: Add SD0H/SD0 clocks for SDHI"), too.
-
-> +       return clk;
-> +}
-> +
->
->  static const struct rcar_gen3_cpg_pll_config *cpg_pll_config __initdata;
->  static unsigned int cpg_clk_extalr __initdata;
-> @@ -583,6 +698,9 @@ struct clk * __init rcar_gen3_cpg_clk_re
->                 }
->                 break;
->
-> +       case CLK_TYPE_GEN3_RPC:
-> +               return cpg_rpc_clk_register(core, base, __clk_get_name(parent));
-> +
->         default:
->                 return ERR_PTR(-EINVAL);
->         }
+Given RPCD2 is the combination of a gate and fixed-divider clock, would
+it make sense to use clk_composite?
 
 Gr{oetje,eeting}s,
 
                         Geert
 
---
+-- 
 Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
 In personal conversations with technical people, I call myself a hacker. But
