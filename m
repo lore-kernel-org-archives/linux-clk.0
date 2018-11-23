@@ -2,97 +2,111 @@ Return-Path: <SRS0=uK82=OC=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE0A5C43441
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Nov 2018 15:02:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63183C43441
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Nov 2018 15:06:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 885CA20664
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Nov 2018 15:02:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 885CA20664
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 290F020664
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Nov 2018 15:06:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mFRwRuCP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 290F020664
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394968AbeKXBr3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 23 Nov 2018 20:47:29 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:36251 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732166AbeKXBr3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 23 Nov 2018 20:47:29 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 9160D20D72; Fri, 23 Nov 2018 16:02:56 +0100 (CET)
-Received: from localhost (87-231-134-186.rev.numericable.fr [87.231.134.186])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 6242D20742;
-        Fri, 23 Nov 2018 16:02:56 +0100 (CET)
-From:   Gregory CLEMENT <gregory.clement@bootlin.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        =?utf-8?Q?Miqu=C3=A8l?= Raynal <miquel.raynal@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>
-Subject: Re: [PATCH 6/6] arm64: dts: marvell: Add cpu clock node on Armada 7K/8K
-References: <20180922181709.13007-1-gregory.clement@bootlin.com>
-        <20180922181709.13007-7-gregory.clement@bootlin.com>
-        <153936613666.5275.6122138233361141260@swboyd.mtv.corp.google.com>
-Date:   Fri, 23 Nov 2018 16:02:56 +0100
-In-Reply-To: <153936613666.5275.6122138233361141260@swboyd.mtv.corp.google.com>
-        (Stephen Boyd's message of "Fri, 12 Oct 2018 10:42:16 -0700")
-Message-ID: <87a7lzq1jz.fsf@bootlin.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
+        id S2504733AbeKXBue (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 23 Nov 2018 20:50:34 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:43542 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732166AbeKXBue (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Nov 2018 20:50:34 -0500
+Received: by mail-pl1-f193.google.com with SMTP id gn14so10766973plb.10;
+        Fri, 23 Nov 2018 07:06:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=o93J3BNmQ1ja0KQUj6SiJX6FygDGjFCA6M1dZJot1uE=;
+        b=mFRwRuCPqjoymA4JuaqepvwJHuV1PDSoKmqcgFOKuswVOTcfSBWBaKCSUCnEt5YBtX
+         fwEMM/EVakz5gk4LrX2s8c1ysRJa8qF2cjK4LDRGYHLYPwzuVGZDJ5Y4wEi+kiTiz4EA
+         q3Lz0uMYioJCVy0phEuJvICLf3r3Q4c8R1fVICYcNbH/0XU3xAVk8owuuef608PDr82m
+         mMxDRLbMc5nP5yv6jNw5UX/jGdfDDu6EuCyvdqNSwxGikV4XfPSOT3dfNyIwXl7GiTzm
+         oAX4ZXyU5cGJSVa87Nb6YT8TXxNocp29ySApVipt59dZSAK7oLfSmJ7as5ri6tRLr68X
+         Vlfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=o93J3BNmQ1ja0KQUj6SiJX6FygDGjFCA6M1dZJot1uE=;
+        b=dzCd4u0P2qI64vAZCWwA1CNXtsKo1AAVSzVSnVJcn5CT6iPmmZglyZOJ/NYr3afO9j
+         FEZU4Uj614tPnFvIq9pEWqiYa0ujAASuE1vQZ6Q7Ip7KKWLesT8YhKgStAMy0nOtRQJZ
+         QCbjTubauNj359AM+66pEhoW+YfA4yiqBJ0IJkbuxHM7GCiR3jD5wu8c4RfEUSNqtIJj
+         R/18dTJdKj1e2A/lCAAcRYHxa6aWLGOO/q98V7iT43TlY4cdM4SZ48PL1V9njfkTg0VX
+         qackLIk/AY2aXIr5DadK17YqUgKOJcYiln7ZCBFX6Q69jsjjI8v/vb+lg7DGwTRzFGXy
+         L/NA==
+X-Gm-Message-State: AA+aEWYME7s6KwopuRlQ92AKoD7LGqNB2EiTbVTl9Cd2MAeQ+LvMS+VF
+        Z/oZXkvSYgy190x1HJ8Z8/E=
+X-Google-Smtp-Source: AFSGD/UTuZcoUTgvcKZD8g8ZJhdVgVKkGwCPqTfRkk2QrIYj6gUJ0dlZymb2tUE69mD85Dnk1vdRsw==
+X-Received: by 2002:a17:902:12b:: with SMTP id 40mr1893146plb.72.1542985563210;
+        Fri, 23 Nov 2018 07:06:03 -0800 (PST)
+Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
+        by smtp.gmail.com with ESMTPSA id u127-v6sm62690898pfb.47.2018.11.23.07.06.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 23 Nov 2018 07:06:02 -0800 (PST)
+From:   Yangtao Li <tiny.windzz@gmail.com>
+To:     linus.walleij@linaro.org, mturquette@baylibre.com, sboyd@kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH] clk: nomadik: Change to use DEFINE_SHOW_ATTRIBUTE macro
+Date:   Fri, 23 Nov 2018 10:06:00 -0500
+Message-Id: <20181123150600.27445-1-tiny.windzz@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+Use macro to simplify the code.
+
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+---
+ drivers/clk/clk-nomadik.c | 14 ++------------
+ 1 file changed, 2 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/clk/clk-nomadik.c b/drivers/clk/clk-nomadik.c
+index 84a24875c629..e331634d34df 100644
+--- a/drivers/clk/clk-nomadik.c
++++ b/drivers/clk/clk-nomadik.c
+@@ -479,17 +479,7 @@ static int nomadik_src_clk_show(struct seq_file *s, void *what)
+ 	return 0;
+ }
  
- On ven., oct. 12 2018, Stephen Boyd <sboyd@kernel.org> wrote:
-
-> +Rob
->
-> Quoting Gregory CLEMENT (2018-09-22 11:17:09)
->> diff --git a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
->> index 4a65e4e830aa..27c840e91abe 100644
->> --- a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
->> +++ b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
->> @@ -280,6 +280,12 @@
->>                                 #address-cells = <1>;
->>                                 #size-cells = <1>;
->>  
->> +                               cpu_clk: clock-cpu {
->> +                                       compatible = "marvell,ap806-cpu-clock";
->> +                                       clocks = <&ap_clk 0>, <&ap_clk 1>;
->> +                                       #clock-cells = <1>;
->> +                               };
->
-> This looks like the wrong place because there isn't a reg property. It
-
-There is no reg property because we are inside a syscon node where the
-registers are shared between multiple IPs.
-
-> should go to the root of the tree. And then it looks like we're adding
-> something to DT to get a driver to probe, which is improper DT design.
-
-There is nothing related to the driver, this subnode describes the way
-the hardware is designed. Under the system controller node there are
-several IPs , like the CPU clocks, but also the GPIO or the pinctrl.
-
-Gregory
-
->
-
+-static int nomadik_src_clk_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, nomadik_src_clk_show, NULL);
+-}
+-
+-static const struct file_operations nomadik_src_clk_debugfs_ops = {
+-	.open           = nomadik_src_clk_open,
+-	.read           = seq_read,
+-        .llseek         = seq_lseek,
+-	.release        = single_release,
+-};
++DEFINE_SHOW_ATTRIBUTE(nomadik_src_clk_debugfs);
+ 
+ static int __init nomadik_src_clk_init_debugfs(void)
+ {
+@@ -499,7 +489,7 @@ static int __init nomadik_src_clk_init_debugfs(void)
+ 	src_pcksr0_boot = readl(src_base + SRC_PCKSR0);
+ 	src_pcksr1_boot = readl(src_base + SRC_PCKSR1);
+ 	debugfs_create_file("nomadik-src-clk", S_IFREG | S_IRUGO,
+-			    NULL, NULL, &nomadik_src_clk_debugfs_ops);
++			    NULL, NULL, &nomadik_src_clk_debugfs_fops);
+ 	return 0;
+ }
+ device_initcall(nomadik_src_clk_init_debugfs);
 -- 
-Gregory Clement, Bootlin
-Embedded Linux and Kernel engineering
-http://bootlin.com
+2.17.0
+
