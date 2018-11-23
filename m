@@ -2,163 +2,79 @@ Return-Path: <SRS0=uK82=OC=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2F99C43441
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Nov 2018 14:40:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48197C43441
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Nov 2018 14:42:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A8DD20685
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Nov 2018 14:40:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="KQDheVde"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A8DD20685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by mail.kernel.org (Postfix) with ESMTP id 1A4BA20685
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Nov 2018 14:42:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A4BA20685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391382AbeKXBZY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 23 Nov 2018 20:25:24 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:45518 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391336AbeKXBZY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Nov 2018 20:25:24 -0500
-Received: by mail-wr1-f67.google.com with SMTP id v6so12556591wrr.12
-        for <linux-clk@vger.kernel.org>; Fri, 23 Nov 2018 06:40:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:openpgp:autocrypt:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=jWnIdsDrWcxWTq1j213GdVFWnMbnWtL0+OC4UsptE/A=;
-        b=KQDheVdeC2XZ2Jy/v9GFGKxtJk2ry38wY9pJa/HEqfoGTPMepVPoHRhY8AKpY36Tag
-         4uUzKRsjmhtS/OReIS/+S5DNOKIXB4gvPHBDNZFTHAfaOoPLA7Nk9AhKHKDV3FrtuN3K
-         TlktYdIyK0ZP2TbYhTwGSUl5+F+91feuXK5e2OJSVxrToIPGzZks2+n66R0PY6s6mjyD
-         7tecJs1UA4o+Q8JZYDC3j1LgiMjn3OFD+2FnSuHqs9rC8XQmZRkxnGbZmYrelS7o03hp
-         ctdmwcmILHMVDE8LdmKo7a5lYGqlTmLRBYK4LOwQFZtTSpDDgod7LNYTbLo5AnRAhXxF
-         xfnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :organization:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=jWnIdsDrWcxWTq1j213GdVFWnMbnWtL0+OC4UsptE/A=;
-        b=o6qoj8ldJk2Y9bnSBZTX8g8+ia0aODiiHdykZSLtmaCESMgw5dLuZ69SMnU9UHCMai
-         TJStU9g3A5YAk9CCONQPQTJ9m2E97AjTAixgJuiD2c7NJJmMr2hruFtNbf0oXp23DTB/
-         IGEXmskba8XiRkgQFVGTUozpgxhVgWeOE8E3vpVMgJP0EZ++kuOaYu7eNL+38q9iHcUH
-         gDGfTXsFB0SP1oM7bxFev1exy9Vco0oa6gh8KCuZRDzJWaDq1R2Dni46LvD6Uk5F2x50
-         pBBeYEv8sd0OIij0ysv3mbfV0tdfWj4tC3CIvwafsJ0oBeQHR0w/EHyqbXYCieak3lyD
-         HY2A==
-X-Gm-Message-State: AA+aEWacEVLNo2k8wAbYeFRZs7+pD4kK3pU8yb3yWWm4pJtqSLSxk1kJ
-        IL/a4L0WqOhCsJ9I9N9abp61Fg==
-X-Google-Smtp-Source: AFSGD/VSK01VEwGhFg+aAgTrkBkpPB8x/CYYkzpm9VUmFrL3oRQuWHcr55eSxKfu7dTfZZHXrI9CFg==
-X-Received: by 2002:adf:8464:: with SMTP id 91mr14926193wrf.251.1542984056412;
-        Fri, 23 Nov 2018 06:40:56 -0800 (PST)
-Received: from [10.1.2.12] (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id t131sm6055850wmt.1.2018.11.23.06.40.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 23 Nov 2018 06:40:55 -0800 (PST)
-Subject: Re: [PATCH v2 0/4] Meson8b: add the CPU clock post-dividers
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-amlogic@lists.infradead.org, jbrunet@baylibre.com
-Cc:     mturquette@baylibre.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-References: <20181122214017.25643-1-martin.blumenstingl@googlemail.com>
-From:   Neil Armstrong <narmstrong@baylibre.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKE5laWwgQXJtc3Ryb25nIDxuYXJtc3Ryb25nQGJheWxpYnJlLmNvbT7CwHsEEwEKACUC
- GyMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheABQJXDO2CAhkBAAoJEBaat7Gkz/iubGIH/iyk
- RqvgB62oKOFlgOTYCMkYpm2aAOZZLf6VKHKc7DoVwuUkjHfIRXdslbrxi4pk5VKU6ZP9AKsN
- NtMZntB8WrBTtkAZfZbTF7850uwd3eU5cN/7N1Q6g0JQihE7w4GlIkEpQ8vwSg5W7hkx3yQ6
- 2YzrUZh/b7QThXbNZ7xOeSEms014QXazx8+txR7jrGF3dYxBsCkotO/8DNtZ1R+aUvRfpKg5
- ZgABTC0LmAQnuUUf2PHcKFAHZo5KrdO+tyfL+LgTUXIXkK+tenkLsAJ0cagz1EZ5gntuheLD
- YJuzS4zN+1Asmb9kVKxhjSQOcIh6g2tw7vaYJgL/OzJtZi6JlIXOwE0ETVkGzwEIALyKDN/O
- GURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYpQTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXM
- coJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hi
- SvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY4yG6xI99NIPEVE9lNBXBKIlewIyVlkOa
- YvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoMMtsyw18YoX9BqMFInxqYQQ3j/HpVgTSv
- mo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUXoUk33HEAEQEAAcLAXwQYAQIACQUCTVkG
- zwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfnM7IbRuiSZS1unlySUVYu3SD6YBYnNi3G
- 5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa33eDIHu/zr1HMKErm+2SD6PO9umRef8V8
- 2o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCSKmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+
- RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJ
- C3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTTQbM0WUIBIcGmq38+OgUsMYu4NzLu7uZF
- Acmp6h8g
-Organization: Baylibre
-Message-ID: <4859b354-ade4-8172-eeb5-7a4a42045589@baylibre.com>
-Date:   Fri, 23 Nov 2018 15:40:55 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        id S2388712AbeKXB1C (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 23 Nov 2018 20:27:02 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:35503 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388198AbeKXB1C (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 23 Nov 2018 20:27:02 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 63DDD20D29; Fri, 23 Nov 2018 15:42:34 +0100 (CET)
+Received: from localhost (87-231-134-186.rev.numericable.fr [87.231.134.186])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 32DC520712;
+        Fri, 23 Nov 2018 15:42:24 +0100 (CET)
+From:   Gregory CLEMENT <gregory.clement@bootlin.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        =?utf-8?Q?Miqu=C3=A8l?= Raynal <miquel.raynal@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>
+Subject: Re: [PATCH 4/6] clk: mvebu: ap806: Fix clock name for the cluster
+References: <20180922181709.13007-1-gregory.clement@bootlin.com>
+        <20180922181709.13007-5-gregory.clement@bootlin.com>
+        <153980091588.5275.2414842812770832337@swboyd.mtv.corp.google.com>
+Date:   Fri, 23 Nov 2018 15:42:24 +0100
+In-Reply-To: <153980091588.5275.2414842812770832337@swboyd.mtv.corp.google.com>
+        (Stephen Boyd's message of "Wed, 17 Oct 2018 11:28:35 -0700")
+Message-ID: <87efbbq2i7.fsf@bootlin.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20181122214017.25643-1-martin.blumenstingl@googlemail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 22/11/2018 22:40, Martin Blumenstingl wrote:
-> This is the successor to my previous series "meson8b: add the CPU_DIV16
-> clock for the ARM TWD" from [0]. I decided to not send this as v2 of
-> the original series because the PERIPH clock is not the CPU_DIV16 clock.
-> It's not clear whether a CPU_DIV16 clock exists.
-> 
-> With this series we get all the CPU_CLK post-dividers as listed in the
-> public S805 datasheet [1] on pages 31 and 32:
-> - ABP
-> - PERIPH (used as input for the ARM global timer and ARM TWD timer)
-> - AXI
-> - L2 DRAM
-> 
-> Each of these clocks has a register called "..._CLK_DIS" which is
-> documented as a "just in case" bit:
-> "Set to 1 to manually disable the [...] clock when changing the mux
-> selection. Typically this bit is set to 0 since the clock muxes can
-> switch without glitches."
-> Since we're not supposed to touch that register we're using the new
-> read-only gate clk_ops to ensure that nothing accidentally modifies
-> these bits.
-> 
-> The result of this is that we can use the PERIPH clock which clocks
-> the ARM TWD timer. I will send a separate series to add the TWD timer.
-> 
-> 
-> changes since v1 at [2]:
-> - added new patch 2 "clk: meson: clk-regmap: add read-only gate ops"
-> - switched from CLK_IS_CRITICAL to the new clk_regmap_gate_ro_ops
->   so we're consistent with all other read-only clocks
-> - collected Jerome's Acked-by tags (thanks!)
-> 
-> 
-> [0] http://lists.infradead.org/pipermail/linux-amlogic/2018-July/007890.html
-> [1] https://dn.odroid.com/S805/Datasheet/S805_Datasheet%20V0.8%2020150126.pdf
-> [2] https://patchwork.kernel.org/cover/10687023/
-> 
-> 
-> Martin Blumenstingl (4):
->   dt-bindings: clock: meson8b: export the CPU post dividers
->   clk: meson: clk-regmap: add read-only gate ops
->   clk: meson: meson8b: rename cpu_div2/cpu_div3 to
->     cpu_in_div2/cpu_in_div3
->   clk: meson: meson8b: add the CPU clock post divider clocks
-> 
->  drivers/clk/meson/clk-regmap.c           |   5 +
->  drivers/clk/meson/clk-regmap.h           |   1 +
->  drivers/clk/meson/meson8b.c              | 264 ++++++++++++++++++++++-
->  drivers/clk/meson/meson8b.h              |  17 +-
->  include/dt-bindings/clock/meson8b-clkc.h |   4 +
->  5 files changed, 278 insertions(+), 13 deletions(-)
+Hi Stephen,
+ 
+ On mer., oct. 17 2018, Stephen Boyd <sboyd@kernel.org> wrote:
 
+> Quoting Gregory CLEMENT (2018-09-22 11:17:07)
+>> Actually, the clocks exposed for the cluster are not the CPU clocks, but
+>> the PLL clock used as entry clock for the CPU clocks. The CPU clock will
+>> be managed by a driver submitting in the following patches.
+>> 
+>> Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+>
+> Does this need a fixes tag?
 
-Applied, with the bindings on next/headers
+It doesn't fix a regression so I don't thing it needs a fixes tag.
 
-Neil
+Gregory
+
+>
+
+-- 
+Gregory Clement, Bootlin
+Embedded Linux and Kernel engineering
+http://bootlin.com
