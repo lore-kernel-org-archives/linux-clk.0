@@ -3,47 +3,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62CFEC43441
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Nov 2018 18:59:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E71A0C43441
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Nov 2018 18:59:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2FC5420873
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Nov 2018 18:59:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FC5420873
+	by mail.kernel.org (Postfix) with ESMTP id B71A420865
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Nov 2018 18:59:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B71A420865
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727016AbeK0Fxy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 27 Nov 2018 00:53:54 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:45780 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726875AbeK0Fxw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Nov 2018 00:53:52 -0500
-Received: by mail-ot1-f67.google.com with SMTP id 32so17629317ota.12;
-        Mon, 26 Nov 2018 10:58:50 -0800 (PST)
+        id S1727207AbeK0FyU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 27 Nov 2018 00:54:20 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:38169 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726451AbeK0FyU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Nov 2018 00:54:20 -0500
+Received: by mail-ot1-f68.google.com with SMTP id e12so13359875otl.5;
+        Mon, 26 Nov 2018 10:59:19 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=t8f6S9I1BuJkxO9QEyeI2RVkWM5DKRaf0svOTyuKTDc=;
-        b=IczNff/B9iwHPGuByhVVZ87RJ1wRx0VLbCV4InmRQEVdYTEd1n5nqnfbYybUbz0OkS
-         slYhdidznri+lTZB6WXpL6pYfOkR8negPPZcVd2Bw1tjVRzxQ25QenN7V5YQdpk4uUVS
-         msA+oEWz/wQKRn/2dl/O6k0mHRTSaiJKO6vmhaOqT46MiqBoE1pdRIHBgRFVhs/90xBB
-         JzmhDn3+HXZ+ZUgaeomf+7F2hSnMr6tn+9svs4LwOOpCiRAfTMc79J0WX6ww/Cqcgrae
-         JJmBiFSvI4790nXX1toAQwTANpQkeBSyear7fE+oLpQ9sUvqwzIr5KGJmf06clrrKBC0
-         1Hgw==
-X-Gm-Message-State: AA+aEWYPWFeFDE3MtDuanimB79MxNwhaMVbzI8iSlP7xCQay1t36vU3u
-        cLsIetT0bRRrTdMAVtbCog==
-X-Google-Smtp-Source: AFSGD/Vk2GQaAgZ5yCNEYt7kh+IzwZ6q/vIfazWms65FHxNwnDgBZhd+nlnxCOxaEz3IG4bEpK7qPw==
-X-Received: by 2002:a9d:52a0:: with SMTP id f32mr13209806oth.6.1543258729960;
-        Mon, 26 Nov 2018 10:58:49 -0800 (PST)
+        bh=6J17CH7Q0U69gYiowTVTS39wHDWi+KRq1GVcp3Y2Wys=;
+        b=FXwxAq62hlvQ/L7kCJg+B3/KsXZCn6TUVoD93eOYEj+NZK+XYw1uzsLAKJXPjFAVaX
+         tz68dfETmTkYIRvxOxmE/qnTKP+sdrLbEBIJSdiOOgRh5QTR7tW1zdwKWW9z43gFxrZ0
+         +PH19Sl3OCc1wdxF88KWqH+zDio8OrSrgawNVrXLuuSzW92IsVIhsoGd+GfaCBs/mpU2
+         Tf6YfWjcSWu1tyYjvBgIYOjGL7ai3a9jXAIENQhkSmZwhImR7z/NuPcDc9xz0ZLguEVB
+         nFyFWtM85d+QXhNaJOwhfisfuCELHDi9bc/xsKXfYJiJCRdL3f1aKiB85wz6ZkJqRfdO
+         LNVA==
+X-Gm-Message-State: AA+aEWYWl715cSItO2TgV0BCd4brj9LGo8zXOEVco1gaqZjh5lnAn5No
+        dPNpE9nWSh+uBtwMo8C4Wg==
+X-Google-Smtp-Source: AFSGD/U4YctDoNx8MPrBy+tySECFgoIEUWkUNw5Fq0+Qb25mxAzb/Vt9s1cfIQ6Ctk4mbRDGQ0W6vQ==
+X-Received: by 2002:a9d:4618:: with SMTP id y24mr15452904ote.154.1543258758859;
+        Mon, 26 Nov 2018 10:59:18 -0800 (PST)
 Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id t8sm1228543otp.69.2018.11.26.10.58.48
+        by smtp.gmail.com with ESMTPSA id g18sm846404oic.9.2018.11.26.10.59.18
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 26 Nov 2018 10:58:49 -0800 (PST)
-Date:   Mon, 26 Nov 2018 12:58:48 -0600
+        Mon, 26 Nov 2018 10:59:18 -0800 (PST)
+Date:   Mon, 26 Nov 2018 12:59:17 -0600
 From:   Rob Herring <robh@kernel.org>
 To:     Taniya Das <tdas@codeaurora.org>
 Cc:     Stephen Boyd <sboyd@kernel.org>,
@@ -55,29 +55,34 @@ Cc:     Stephen Boyd <sboyd@kernel.org>,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, robh@kernel.org,
         Taniya Das <tdas@codeaurora.org>
-Subject: Re: [PATCH v10 1/3] dt-bindings: clock: Update GCC bindings for
- protected-clocks
-Message-ID: <20181126185848.GA4853@bogus>
+Subject: Re: [PATCH v10 2/3] dt-bindings: clock: Introduce QCOM LPASS clock
+ bindings
+Message-ID: <20181126185917.GA5802@bogus>
 References: <1542873221-13693-1-git-send-email-tdas@codeaurora.org>
- <1542873221-13693-2-git-send-email-tdas@codeaurora.org>
+ <1542873221-13693-3-git-send-email-tdas@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1542873221-13693-2-git-send-email-tdas@codeaurora.org>
+In-Reply-To: <1542873221-13693-3-git-send-email-tdas@codeaurora.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 22 Nov 2018 13:23:39 +0530, Taniya Das wrote:
-> Add protected-clocks list which could used to specify the clocks to be
-> bypassed on certain devices.
+On Thu, 22 Nov 2018 13:23:40 +0530, Taniya Das wrote:
+> Add device tree bindings for Low Power Audio subsystem clock controller for
+> Qualcomm Technology Inc's SDM845 SoCs.
 > 
 > Signed-off-by: Taniya Das <tdas@codeaurora.org>
 > ---
->  Documentation/devicetree/bindings/clock/qcom,gcc.txt | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
+>  .../devicetree/bindings/clock/qcom,gcc.txt         |  4 +++-
+>  .../devicetree/bindings/clock/qcom,lpasscc.txt     | 26 ++++++++++++++++++++++
+>  include/dt-bindings/clock/qcom,gcc-sdm845.h        |  2 ++
+>  include/dt-bindings/clock/qcom,lpass-sdm845.h      | 15 +++++++++++++
+>  4 files changed, 46 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,lpasscc.txt
+>  create mode 100644 include/dt-bindings/clock/qcom,lpass-sdm845.h
 > 
 
 Reviewed-by: Rob Herring <robh@kernel.org>
