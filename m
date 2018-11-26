@@ -3,47 +3,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF6E0C43441
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Nov 2018 22:48:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 655B3C43441
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Nov 2018 22:49:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A716208E4
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Nov 2018 22:48:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A716208E4
+	by mail.kernel.org (Postfix) with ESMTP id 3647E2133F
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Nov 2018 22:49:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3647E2133F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726888AbeK0Joc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 27 Nov 2018 04:44:32 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:36356 "EHLO
+        id S1727534AbeK0JpC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 27 Nov 2018 04:45:02 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:38364 "EHLO
         mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726448AbeK0Joc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Nov 2018 04:44:32 -0500
-Received: by mail-ot1-f66.google.com with SMTP id k98so18306522otk.3;
-        Mon, 26 Nov 2018 14:48:51 -0800 (PST)
+        with ESMTP id S1727517AbeK0JpB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Nov 2018 04:45:01 -0500
+Received: by mail-ot1-f66.google.com with SMTP id e12so14002061otl.5;
+        Mon, 26 Nov 2018 14:49:20 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=cZy2dtfPoYshwbSZ6o3z3QET+L8GuMeMSGzM+RhFCEc=;
-        b=M6LOm1jFQBeE1P/kzlppbgtlcM7L0hmEQGl2KzN0Z79SFdnFK8DTFZTKjIPb7xdd2M
-         5orlGQ47jzETSIFK0MsPJ7d/GAwdsElqTFSVYks8vqp+qFUgk3BMcaWihyM3nK547lpr
-         kOAkzKvYYNMSXZT2PwXyhUU/EUiLglZW8AJCWoFPcq/uOjgeGGSp4pVJw2OU07H7JNCV
-         r0fa7OaCytB3EvVtQ3r/NphGCY6+AZPYq4Ng7LkfG4UEugiZT9HqyKoZiROTx2H+h12n
-         B//4hmuIjhr32G3fppS6iwK3EPyjg0ZMc0BmLq2BqqZfWe4BG/uh2eEygd2yifS0n5yK
-         pGTg==
-X-Gm-Message-State: AA+aEWY6a3T+2yC/3sNJ6En29FRd1zzlfzCYj/UOD+NpF8tb4imCelaf
-        NqkAVI3xpUeDRwi9IVux/g==
-X-Google-Smtp-Source: AFSGD/VIraYEmLb0+gQRC+W96F9MfeaA1I+lenkDbUjFUqujF+Ht7zIt1R33h16GZ9psSpRKvVwhVw==
-X-Received: by 2002:a9d:348:: with SMTP id 66mr15617584otv.300.1543272531085;
-        Mon, 26 Nov 2018 14:48:51 -0800 (PST)
+        bh=zOugLrPivIxbV5Szw69IxstaVGK45UquH2hVk8XlWDc=;
+        b=LDfOXUT21wMI+ykCe3//gjFF6aI9SWhDTHsVCsv3wB/oGZb85jARAC/QvoeC5MYp6g
+         5Mr1J7d5TGo3Eq60MiXCj/edls0QfgRViwrPZB7V40FtRoc4+qQbE0ob8zTiUi6lHB7B
+         Q1i66nNlv8PPHASi0f1vWVJLQJ2lohZ4YErGMIFjSaSRMieh8LY2WzTO8OHSJDP8YGF1
+         h5HDe5QrB2enYRxtS0kBOLdrGby7T8hTS/E/tixl/Ao+Dpf/WkTjGbyks/jloZm3LaXJ
+         dYufBnBvfNlLDbQg+rO9IqISgEjGBIDZ+h2dQvkyvHjSj+Bgpuw3uMXy1m7YIXkB3MVW
+         ah4w==
+X-Gm-Message-State: AA+aEWY3ktf/5f6ywS/npZnYB2Mg6QSX+V6dWNucNsBfWWjBpyKviJsV
+        iUZk1/fBy63NjKEA31hLazNiTmw=
+X-Google-Smtp-Source: AFSGD/VBhKHYi+8iWTMtFNePd2IQXgjVXtpFKaour2r1lD3sywFO8HtRBGG6r1PvHmW1drfjgIhteA==
+X-Received: by 2002:a9d:75da:: with SMTP id c26mr17850258otl.39.1543272560359;
+        Mon, 26 Nov 2018 14:49:20 -0800 (PST)
 Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id 52sm2421964oti.30.2018.11.26.14.48.50
+        by smtp.gmail.com with ESMTPSA id 187sm2236592oic.12.2018.11.26.14.49.19
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 26 Nov 2018 14:48:50 -0800 (PST)
-Date:   Mon, 26 Nov 2018 16:48:49 -0600
+        Mon, 26 Nov 2018 14:49:19 -0800 (PST)
+Date:   Mon, 26 Nov 2018 16:49:19 -0600
 From:   Rob Herring <robh@kernel.org>
 To:     Mesih Kilinc <mesihkilinc@gmail.com>
 Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
@@ -58,29 +58,30 @@ Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Linus Walleij <linus.walleij@linaro.org>,
         Icenowy Zheng <icenowy@aosc.io>,
         Julian Calaby <julian.calaby@gmail.com>
-Subject: Re: [RFC PATCH v4 02/17] dt-bindings: arm: Add new Allwinner ARMv5
- F1C100s SoC
-Message-ID: <20181126224849.GA10671@bogus>
+Subject: Re: [RFC PATCH v4 04/17] dt-bindings: interrupt-controller: Add
+ suniv interrupt-controller
+Message-ID: <20181126224919.GA11610@bogus>
 References: <cover.1543131714.git.mesihkilinc@gmail.com>
- <a038c5ba853cc2534a8ee9b51de3cab5539726cd.1543131714.git.mesihkilinc@gmail.com>
+ <ea00e2cc4dadb4a661e694dd022d8ca06470d3e8.1543131714.git.mesihkilinc@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a038c5ba853cc2534a8ee9b51de3cab5539726cd.1543131714.git.mesihkilinc@gmail.com>
+In-Reply-To: <ea00e2cc4dadb4a661e694dd022d8ca06470d3e8.1543131714.git.mesihkilinc@gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, 25 Nov 2018 10:43:05 +0300, Mesih Kilinc wrote:
-> Add new Allwinner ARMv5 F1C100s SoC's compatible string
+On Sun, 25 Nov 2018 10:43:07 +0300, Mesih Kilinc wrote:
+> Add compatible string for Alwinner suniv F1C100s SoC interrupt
+> controller which is stripped version of sun4i
 > 
 > Signed-off-by: Mesih Kilinc <mesihkilinc@gmail.com>
 > Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
 > ---
->  Documentation/devicetree/bindings/arm/sunxi.txt | 1 +
->  1 file changed, 1 insertion(+)
+>  .../devicetree/bindings/interrupt-controller/allwinner,sun4i-ic.txt   | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 > 
 
 Reviewed-by: Rob Herring <robh@kernel.org>
