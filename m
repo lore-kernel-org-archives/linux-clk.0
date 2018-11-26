@@ -2,124 +2,82 @@ Return-Path: <SRS0=+J6A=OF=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CC51C43441
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Nov 2018 17:20:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62CFEC43441
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Nov 2018 18:59:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23F5B2086E
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Nov 2018 17:20:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="XGE+M5b5";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="jS9BK03U"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23F5B2086E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 2FC5420873
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Nov 2018 18:59:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FC5420873
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726705AbeK0EPY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 26 Nov 2018 23:15:24 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:57456 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726253AbeK0EPY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Nov 2018 23:15:24 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 95E8560722; Mon, 26 Nov 2018 17:20:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1543252838;
-        bh=OjMRv6pXcTLlNXk8skoToltceq1fM+BRv+33qnwp1gQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XGE+M5b50eBMRVaPyvxseiG6Fh+L1cbrAM/a3YEngk8i7iWa6LKe4U+o12zMfu+WR
-         NzxFZ9HtK3OkRHVC8Tw6XxFaFvEsvoD5XNff+3lcdkwlgjn7Wsc4wscowEIQm8IP9A
-         Vy2lC6vzBVFnIITlur99EL2CXG9E0PKldFwHtxY0=
-Received: from jcrouse-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: jcrouse@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id E903C60392;
-        Mon, 26 Nov 2018 17:20:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1543252837;
-        bh=OjMRv6pXcTLlNXk8skoToltceq1fM+BRv+33qnwp1gQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jS9BK03Un5/8s1spz+u7esEDANtLheWcIL4JZ+qL0m8wfYd9kQzhk1Vi3pTOJxNNW
-         Lh91uRepT/epMYCBUER5B0RHRa3PM9wwwvaT9scPZzEaekzfQgCMfOFJCa5P6+IMOC
-         zAPbOho0fn85qBQN+06oGcHy3shlahjATZEV0Gpo=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E903C60392
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jcrouse@codeaurora.org
-From:   Jordan Crouse <jcrouse@codeaurora.org>
-To:     sboyd@kernel.org, mturquette@baylibre.com
-Cc:     andy.gross@linaro.org, david.brown@linaro.org,
-        rnayak@codeaurora.org, okukatla@codeaurora.org,
-        tdas@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH 2/2] clk: qcom: Add a dummy enable function for GX gdsc
-Date:   Mon, 26 Nov 2018 10:20:32 -0700
-Message-Id: <20181126172032.11567-3-jcrouse@codeaurora.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20181126172032.11567-1-jcrouse@codeaurora.org>
-References: <20181126172032.11567-1-jcrouse@codeaurora.org>
+        id S1727016AbeK0Fxy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 27 Nov 2018 00:53:54 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:45780 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726875AbeK0Fxw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Nov 2018 00:53:52 -0500
+Received: by mail-ot1-f67.google.com with SMTP id 32so17629317ota.12;
+        Mon, 26 Nov 2018 10:58:50 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=t8f6S9I1BuJkxO9QEyeI2RVkWM5DKRaf0svOTyuKTDc=;
+        b=IczNff/B9iwHPGuByhVVZ87RJ1wRx0VLbCV4InmRQEVdYTEd1n5nqnfbYybUbz0OkS
+         slYhdidznri+lTZB6WXpL6pYfOkR8negPPZcVd2Bw1tjVRzxQ25QenN7V5YQdpk4uUVS
+         msA+oEWz/wQKRn/2dl/O6k0mHRTSaiJKO6vmhaOqT46MiqBoE1pdRIHBgRFVhs/90xBB
+         JzmhDn3+HXZ+ZUgaeomf+7F2hSnMr6tn+9svs4LwOOpCiRAfTMc79J0WX6ww/Cqcgrae
+         JJmBiFSvI4790nXX1toAQwTANpQkeBSyear7fE+oLpQ9sUvqwzIr5KGJmf06clrrKBC0
+         1Hgw==
+X-Gm-Message-State: AA+aEWYPWFeFDE3MtDuanimB79MxNwhaMVbzI8iSlP7xCQay1t36vU3u
+        cLsIetT0bRRrTdMAVtbCog==
+X-Google-Smtp-Source: AFSGD/Vk2GQaAgZ5yCNEYt7kh+IzwZ6q/vIfazWms65FHxNwnDgBZhd+nlnxCOxaEz3IG4bEpK7qPw==
+X-Received: by 2002:a9d:52a0:: with SMTP id f32mr13209806oth.6.1543258729960;
+        Mon, 26 Nov 2018 10:58:49 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id t8sm1228543otp.69.2018.11.26.10.58.48
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 26 Nov 2018 10:58:49 -0800 (PST)
+Date:   Mon, 26 Nov 2018 12:58:48 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Taniya Das <tdas@codeaurora.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, robh@kernel.org,
+        Taniya Das <tdas@codeaurora.org>
+Subject: Re: [PATCH v10 1/3] dt-bindings: clock: Update GCC bindings for
+ protected-clocks
+Message-ID: <20181126185848.GA4853@bogus>
+References: <1542873221-13693-1-git-send-email-tdas@codeaurora.org>
+ <1542873221-13693-2-git-send-email-tdas@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1542873221-13693-2-git-send-email-tdas@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Most of the time the CPU should not be touching the GX
-domain on the GPU except for a very special use case when
-the CPU needs to force the GX headswitch off. Add a
-dummy enable function for the GX gdsc to simulate success
-so that the pm_runtime reference counting is correct.
+On Thu, 22 Nov 2018 13:23:39 +0530, Taniya Das wrote:
+> Add protected-clocks list which could used to specify the clocks to be
+> bypassed on certain devices.
+> 
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> ---
+>  Documentation/devicetree/bindings/clock/qcom,gcc.txt | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+> 
 
-Signed-off-by: Jordan Crouse <jcrouse@codeaurora.org>
----
- drivers/clk/qcom/gpucc-sdm845.c | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
-
-diff --git a/drivers/clk/qcom/gpucc-sdm845.c b/drivers/clk/qcom/gpucc-sdm845.c
-index 11222f487a65..7266e9a1d77e 100644
---- a/drivers/clk/qcom/gpucc-sdm845.c
-+++ b/drivers/clk/qcom/gpucc-sdm845.c
-@@ -131,11 +131,37 @@ static struct gdsc gpu_cx_gdsc = {
- 	.flags = VOTABLE,
- };
- 
-+/*
-+ * On SDM845 the GPU GX domain is *almost* entirely controlled by the GMU
-+ * running in the CX domain so the CPU doesn't need to know anything about the
-+ * GX domain EXCEPT....
-+ *
-+ * Hardware constraints dictate that the GX be powered down before the CX. If
-+ * the GMU crashes it could leave the GX on. In order to successfully bring back
-+ * the device the CPU needs to disable the GX headswitch. There being no sane
-+ * way to reach in and touch that register from deep inside the GPU driver we
-+ * need to set up the infrastructure to be able to ensure that the GPU can
-+ * ensure that the GX is off during this super special case. We do this by
-+ * defining a GX gdsc with a dummy enable function and a "default" disable
-+ * function.
-+ *
-+ * This allows us to attach with genpd_dev_pm_attach_by_name() in the GPU
-+ * driver. During power up, nothing will happen from the CPU (and the GMU will
-+ * power up normally but during power down this will ensure that the GX domain
-+ * is *really* off - this gives us a semi standard way of doing what we need.
-+ */
-+static int gx_gdsc_enable(struct generic_pm_domain *domain)
-+{
-+	/* Do nothing but give genpd the impression that we were successful */
-+	return 0;
-+}
-+
- static struct gdsc gpu_gx_gdsc = {
- 	.gdscr = 0x100c,
- 	.clamp_io_ctrl = 0x1508,
- 	.pd = {
- 		.name = "gpu_gx_gdsc",
-+		.power_on = gx_gdsc_enable,
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
- 	.flags = CLAMP_IO | AON_RESET | POLL_CFG_GDSCR,
--- 
-2.18.0
-
+Reviewed-by: Rob Herring <robh@kernel.org>
