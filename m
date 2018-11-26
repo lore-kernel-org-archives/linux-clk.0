@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 328B1C04EB8
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDEC8C4161B
 	for <linux-clk@archiver.kernel.org>; Mon, 26 Nov 2018 16:54:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E714F20862
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Nov 2018 16:54:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 850FA20865
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Nov 2018 16:54:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="fFn0lwyv";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="iOIEQ0CT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E714F20862
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="KB4/0fga";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="WPAGTV3u"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 850FA20865
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727031AbeK0DtG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 26 Nov 2018 22:49:06 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:55472 "EHLO
+        id S1727071AbeK0DtI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 26 Nov 2018 22:49:08 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:55612 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726255AbeK0DtF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Nov 2018 22:49:05 -0500
+        with ESMTP id S1726588AbeK0DtH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Nov 2018 22:49:07 -0500
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 2C54860B7E; Mon, 26 Nov 2018 16:54:23 +0000 (UTC)
+        id 6772060D88; Mon, 26 Nov 2018 16:54:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1543251264;
-        bh=sNHrz636DwiLAa2C7ZPYCdzFQeRm1zRm3s/CeEwbKrw=;
+        s=default; t=1543251265;
+        bh=OjMRv6pXcTLlNXk8skoToltceq1fM+BRv+33qnwp1gQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fFn0lwyvbx+XblZEk6AJg0d2fY4lbVzb7/gmpyXZQ4HjUm8bhnFzfBLyHxG2NHwDb
-         0ceaIdkRDg+dJCXJ2dnTbfXLofzuDCsJGJfIsayRXbtr2uoCF33RlC9U0UamAfAiSd
-         5VuJay5vEx6aKl/DscJwcVf4jL7hbGXCZ0aO9XJ8=
+        b=KB4/0fga1bK/pqAGKWqHOPaOD/XuoRefhllDkteVO9J+WPM76uksRZv8dOnBQUtmz
+         6eWb6DK35Fyt7GtxbVhCoTPSzfn8mNQ3qQ6WvZweQBWB38lgN9b2tTj4TDADJM8fAP
+         rLtFQX4fi0/MvErkgX1K2DVE5bceb/D5xc3QwDbI=
 Received: from jcrouse-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: jcrouse@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5B77760AD8;
-        Mon, 26 Nov 2018 16:54:22 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 7705360B7F;
+        Mon, 26 Nov 2018 16:54:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1543251263;
-        bh=sNHrz636DwiLAa2C7ZPYCdzFQeRm1zRm3s/CeEwbKrw=;
+        s=default; t=1543251264;
+        bh=OjMRv6pXcTLlNXk8skoToltceq1fM+BRv+33qnwp1gQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iOIEQ0CT6fKJBnqAwRnC9DtteXRoaDfe1Ww5QsmVERRNR0HlxSxZOyvsygxx3gVsT
-         tJjgf0Bm172rwb/3ToljHHrlQScibesETtULvJ8na+O6s7dBIke/nFkJrsp56vJwkS
-         1pmED51jZZBjQVdvT3j600XdSicZtgXZepbPElyY=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5B77760AD8
+        b=WPAGTV3ujRaUeZJrK5mHRBvMrRou2Nyo2tMhABo2tKeN2vvCfN4sGvL3Vc3h7wuLl
+         LaTTjNB+Ii2pCtDRWRNv+Ry8fD1zZ3vP3+kGvCOGJmSTEjsaM7M+5C9m4+ZW9q70nh
+         ux1WIUwZq5f4bcFd0THnPCkqXsvISsoe8Oa3RUQk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7705360B7F
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jcrouse@codeaurora.org
 From:   Jordan Crouse <jcrouse@codeaurora.org>
@@ -56,9 +56,9 @@ Cc:     andy.gross@linaro.org, david.brown@linaro.org,
         rnayak@codeaurora.org, okukatla@codeaurora.org,
         tdas@codeaurora.org, linux-arm-msm@vger.kernel.org,
         linux-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH 1/2] clk: qcom: gdsc: Don't override existing gdsc pd functions
-Date:   Mon, 26 Nov 2018 09:54:15 -0700
-Message-Id: <20181126165416.32519-2-jcrouse@codeaurora.org>
+Subject: [PATCH 2/2] clk: qcom: Add a dummy enable function for GX gdsc
+Date:   Mon, 26 Nov 2018 09:54:16 -0700
+Message-Id: <20181126165416.32519-3-jcrouse@codeaurora.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20181126165416.32519-1-jcrouse@codeaurora.org>
 References: <20181126165416.32519-1-jcrouse@codeaurora.org>
@@ -67,34 +67,59 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-In extreme cases an individual gdsc may wish to override the
-power domain enable or disable callback functions for their own
-purposes. Only set the generic gdsc callback if the function pointers
-are not already set.
+Most of the time the CPU should not be touching the GX
+domain on the GPU except for a very special use case when
+the CPU needs to force the GX headswitch off. Add a
+dummy enable function for the GX gdsc to simulate success
+so that the pm_runtime reference counting is correct.
 
-Acked-by: Rajendra Nayak <rnayak@codeaurora.org>
 Signed-off-by: Jordan Crouse <jcrouse@codeaurora.org>
 ---
- drivers/clk/qcom/gdsc.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/clk/qcom/gpucc-sdm845.c | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-index a077133c7ce3..dd63aa36b092 100644
---- a/drivers/clk/qcom/gdsc.c
-+++ b/drivers/clk/qcom/gdsc.c
-@@ -350,8 +350,10 @@ static int gdsc_init(struct gdsc *sc)
- 	else
- 		gdsc_clear_mem_on(sc);
+diff --git a/drivers/clk/qcom/gpucc-sdm845.c b/drivers/clk/qcom/gpucc-sdm845.c
+index 11222f487a65..7266e9a1d77e 100644
+--- a/drivers/clk/qcom/gpucc-sdm845.c
++++ b/drivers/clk/qcom/gpucc-sdm845.c
+@@ -131,11 +131,37 @@ static struct gdsc gpu_cx_gdsc = {
+ 	.flags = VOTABLE,
+ };
  
--	sc->pd.power_off = gdsc_disable;
--	sc->pd.power_on = gdsc_enable;
-+	if (!sc->pd.power_off)
-+		sc->pd.power_off = gdsc_disable;
-+	if (!sc->pd.power_on)
-+		sc->pd.power_on = gdsc_enable;
- 	pm_genpd_init(&sc->pd, NULL, !on);
- 
- 	return 0;
++/*
++ * On SDM845 the GPU GX domain is *almost* entirely controlled by the GMU
++ * running in the CX domain so the CPU doesn't need to know anything about the
++ * GX domain EXCEPT....
++ *
++ * Hardware constraints dictate that the GX be powered down before the CX. If
++ * the GMU crashes it could leave the GX on. In order to successfully bring back
++ * the device the CPU needs to disable the GX headswitch. There being no sane
++ * way to reach in and touch that register from deep inside the GPU driver we
++ * need to set up the infrastructure to be able to ensure that the GPU can
++ * ensure that the GX is off during this super special case. We do this by
++ * defining a GX gdsc with a dummy enable function and a "default" disable
++ * function.
++ *
++ * This allows us to attach with genpd_dev_pm_attach_by_name() in the GPU
++ * driver. During power up, nothing will happen from the CPU (and the GMU will
++ * power up normally but during power down this will ensure that the GX domain
++ * is *really* off - this gives us a semi standard way of doing what we need.
++ */
++static int gx_gdsc_enable(struct generic_pm_domain *domain)
++{
++	/* Do nothing but give genpd the impression that we were successful */
++	return 0;
++}
++
+ static struct gdsc gpu_gx_gdsc = {
+ 	.gdscr = 0x100c,
+ 	.clamp_io_ctrl = 0x1508,
+ 	.pd = {
+ 		.name = "gpu_gx_gdsc",
++		.power_on = gx_gdsc_enable,
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
+ 	.flags = CLAMP_IO | AON_RESET | POLL_CFG_GDSCR,
 -- 
 2.18.0
 
