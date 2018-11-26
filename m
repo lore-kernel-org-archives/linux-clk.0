@@ -2,620 +2,276 @@ Return-Path: <SRS0=+J6A=OF=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E5FDC43441
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Nov 2018 01:23:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2A32C43610
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Nov 2018 07:38:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B23E20865
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Nov 2018 01:23:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B23E20865
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=buserror.net
+	by mail.kernel.org (Postfix) with ESMTP id 6FC8620663
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Nov 2018 07:38:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="R/Rycfh7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FC8620663
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726145AbeKZMQI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 26 Nov 2018 07:16:08 -0500
-Received: from baldur.buserror.net ([165.227.176.147]:48430 "EHLO
-        baldur.buserror.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726079AbeKZMQI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Nov 2018 07:16:08 -0500
-Received: from [2601:449:8400:7293:12bf:48ff:fe84:c9a0]
-        by baldur.buserror.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <oss@buserror.net>)
-        id 1gR5YF-0000Bq-AS; Sun, 25 Nov 2018 19:19:04 -0600
-Message-ID: <09ee2f91765add47e628e0ab03776d468cec0914.camel@buserror.net>
-From:   Scott Wood <oss@buserror.net>
-To:     Yuantian Tang <andy.tang@nxp.com>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, benh@kernel.crashing.org, paulus@samba.org,
-        mpe@ellerman.id.au, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Date:   Sun, 25 Nov 2018 19:19:00 -0600
-In-Reply-To: <20181031065736.32719-1-andy.tang@nxp.com>
-References: <20181031065736.32719-1-andy.tang@nxp.com>
-Organization: Red Hat
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2601:449:8400:7293:12bf:48ff:fe84:c9a0
-X-SA-Exim-Rcpt-To: andy.tang@nxp.com, mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-X-SA-Exim-Mail-From: oss@buserror.net
-Subject: Re: [PATCH 1/2 v3] powerpc/fsl: Use new clockgen binding
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on baldur.buserror.net)
+        id S1726252AbeKZSbR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 26 Nov 2018 13:31:17 -0500
+Received: from mailout4.samsung.com ([203.254.224.34]:63442 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726147AbeKZSbR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Nov 2018 13:31:17 -0500
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20181126073759epoutp04b53180970a677b1b9dc8932e2caba8df~qnHxHehr70903009030epoutp04G;
+        Mon, 26 Nov 2018 07:37:59 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20181126073759epoutp04b53180970a677b1b9dc8932e2caba8df~qnHxHehr70903009030epoutp04G
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1543217879;
+        bh=kQqn7kUgaulY8m32byPmtQ8k1GH0CBpMSOWho6lYeH4=;
+        h=Date:From:To:Cc:Subject:In-reply-to:References:From;
+        b=R/Rycfh7FE2TOB7Gr8JDIMvFFMC2zYM/YJd7Tj4YL4AYSGFS2tFYChIwm+toGoZt6
+         UIkoZAXcT01t4c67OLZjctAqur543Cf4SInlmMBU5zTr2Hk1b0zEK7L0FheeGlK10l
+         YQVqUBLai2/aVV9u6+6Chj7BUMQLLiob9vQDWZng=
+Received: from epsmges1p1.samsung.com (unknown [182.195.40.154]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20181126073756epcas1p1811bc8647d76da184295671622542ff9~qnHtkXkQK2325923259epcas1p1a;
+        Mon, 26 Nov 2018 07:37:56 +0000 (GMT)
+Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
+        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        A7.0B.04058.2D2ABFB5; Mon, 26 Nov 2018 16:37:54 +0900 (KST)
+Received: from epsmgms2p1new.samsung.com (unknown [182.195.42.142]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20181126073753epcas1p374e6690302db8378534419029a3f9eab~qnHrgW94L0940309403epcas1p30;
+        Mon, 26 Nov 2018 07:37:53 +0000 (GMT)
+X-AuditID: b6c32a35-e1fff70000000fda-1c-5bfba2d2e892
+Received: from epmmp2 ( [203.254.227.17]) by epsmgms2p1new.samsung.com
+        (Symantec Messaging Gateway) with SMTP id F6.0F.03601.1D2ABFB5; Mon, 26 Nov
+        2018 16:37:53 +0900 (KST)
+MIME-version: 1.0
+Content-transfer-encoding: 8BIT
+Content-type: text/plain; charset="UTF-8"
+Received: from [10.113.63.77] by mmp2.samsung.com (Oracle Communications
+        Messaging Server 7.0.5.31.0 64bit (built May  5 2014)) with ESMTPA id
+        <0PIS00IPYIJ5U140@mmp2.samsung.com>; Mon, 26 Nov 2018 16:37:53 +0900 (KST)
+Message-id: <5BFBA2D1.8090409@samsung.com>
+Date:   Mon, 26 Nov 2018 16:37:53 +0900
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
+        Thunderbird/31.6.0
+To:     Anand Moon <linux.amoon@gmail.com>, Kukjin Kim <kgene@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCH 3/3] ARM: dts: Add g3d bus nodes using VDD_INT for
+ Exynos542x SoC
+In-reply-to: <20181123094413.1108-3-linux.amoon@gmail.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sb0gTcRjH++22u2mtrpX1y6jmgaCCtUtnV2gUWhxkIfpCyRfzmsdmbrex
+        m5G9qMjMMrFphmGFGoa2F/6ZJlr4B51OExwtEymNwpLMyIZWZhHdeUW++zxfvs/v+fN7lIi6
+        Ag1V5nAO1s4xZgINlrf3R+6J9t//makdGcOoas+ogroxPYdQPl8zRrmnxxVUoOS1gnr++C5K
+        3fZ1y6jGlpcY9ezpEaqwy4NR/Z+KFNTv8RY55Xr8CxxS0fMThRjdWTWF0W7XNZRurbtAl7a5
+        AL3g3pmCnsyNN7FMNmvXsJzBmp3DGROIY2n6RL0uTktGk/upfYSGYyxsApGUnBJ9NMcs9Elo
+        zjDmPEFKYXie2HMw3m7Nc7Aak5V3JBCsLdts22/bzTMWPo8z7jZYLQdIrXavTjBm5Zra62pR
+        W0HY2alffuwi+AKLQZAS4rHw2e1JrBgEK9V4B4ADpQWoFHwHsKHIKwTKFde7VwYxQY03Azju
+        jBdZhW+ESzdfy0ULgu+CHn+uKCN4JHz0pOnvm1MAenyXFZI/CvraBuUiy/FwOOPvBiKjgt7z
+        YQIVeQMeBl8sTa/oIXgG7Kz+hom8GZ8FsDKASgUCANY0nBZ5E54OWx8GZCIH4QfgwqVBRBqs
+        CINNvgyJk+DAVS8m8Sb40duGSWNth/6BBLFPwQ7g4ocChRQ4AfzytFUmJcTAmdpimVR4Pfz8
+        tUQhJavg1StqyULDnmv1fwfuEgae6ZM5wY6qVTuq+r+jqlU7qgGIC2xhbbzFyPKkjVz9d26w
+        cpFRug5QMZrcB3AlINapnMvLmWoFc4bPt/QBqESIzSpH0c9MtSqbyT/H2q16e56Z5fuATlhx
+        GRIaYrAK98059KRub0xMDBVLxulIktiqehd6L1ONGxkHm8uyNtb+L0+mDAq9CO5ExEWODTV6
+        W0o8wxHJ5Wsm515OZl1PDboUuFX/ZjCNmzg+UmmIPtF9PpE+bGnRE2M/6oaXio/XNN8ErYUj
+        0P3EG1E9P1s6tO1t+lycpXl9ahi4P/ux8sE9+7GyJGd4Lz9Ka12178lhUy/VbmwI0aQv6vlU
+        VfnailgfV3aqkJDzJoaMQuw88wcGTD1vpwMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpgkeLIzCtJLcpLzFFi42I5/e+xoO7FRb+jDc4e0rOYf+Qcq0X/49fM
+        FufPb2C32PT4GqvFx557rBaXd81hs5hxfh+TxbqNt9gtLp5ytWjde4Td4vCbdlaLf9c2slis
+        2vWH0YHX4/2NVnaPnbPusntsWtXJ5rF5Sb1H35ZVjB6fN8kFsEVx2aSk5mSWpRbp2yVwZWxb
+        spCtoFmx4u6fS+wNjB8kuhg5OCQETCSe3E7uYuTiEBJYxyhx7tZdpi5GTg5eAUGJH5PvsYDU
+        MAvISxy5lA0SZhZQl5g0bxEzRP19RolTV3+yQNRrSZzfcgzMZhFQlXh2aR8jiM0GFN//4gYb
+        iM0voChx9cdjRpCZogIREt0nKkHmiAi8ZJSY9+Q7O4jDLPCRUeLgikdgDcIC4RKbV35kgti2
+        F+i6NZ/BNnAKWEl8bjrGPIFRYBaSY2chHDsLybELGJlXMUqmFhTnpucWGxUY5qWW6xUn5haX
+        5qXrJefnbmIExsu2w1p9OxjvL4k/xCjAwajEw/viz69oIdbEsuLK3EOMEhzMSiK8Je2/o4V4
+        UxIrq1KL8uOLSnNSiw8xSnOwKInz3s47FikkkJ5YkpqdmlqQWgSTZeLglGpg1FE7fz7Qcfm2
+        nS9kDQ791bzf9evhLqcIpjlZe4ImvJeZduwcO0NPb2nBDefm3jn928XmT2beIVl4fOE8Dvt9
+        Z15pL5HKMPf7JTWF/Y2xC8/D5wFnojdKKXz5oTv9/rp5bx/8N9zsLPPXnnHeBzspubWapxZv
+        iA3XTHiuednZ/KPzX07tiGsT9ymxFGckGmoxFxUnAgDeYkbAkwIAAA==
+X-CMS-MailID: 20181126073753epcas1p374e6690302db8378534419029a3f9eab
+X-Msg-Generator: CA
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20181123094508epcas5p4b7958b812bf0f64ca47006ced9fda279
+References: <20181123094413.1108-1-linux.amoon@gmail.com>
+        <CGME20181123094508epcas5p4b7958b812bf0f64ca47006ced9fda279@epcas5p4.samsung.com>
+        <20181123094413.1108-3-linux.amoon@gmail.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 2018-10-31 at 14:57 +0800, Yuantian Tang wrote:
-> From: Scott Wood <oss@buserror.net>
+Hi Anand,
+
+CLK_DOUT_ACLK_G3D is the clock for GPU h/w and it requires the buck4_reg("vdd_g3d").
+
+bus_wcore uses the buck3_reg("vdd_int"). bus_wcore and bus_g3d don't share the 
+same voltage line. It is wrong to make 'bus_g3d' as the child of 'bus_wcore'
+because of using the different regulator.
+
+CLK_DOUT_ACLK_G3D and buck4_reg should be controlled from MALI driver 
+with DEVFREQ framework. Unfortunately, MALI driver is not posted to mainline.
+
+
+On 2018년 11월 23일 18:44, Anand Moon wrote:
+> Add missing Netwwork on chip for g3d bus node using VDD_INI
+> for Exynos542x SoC.
 > 
-> The driver retains compatibility with old device trees, but we don't
-> want the old nodes lying around to be copied, or used as a reference
-> (some of the mux options are incorrect), or even just being clutter.
+> - CLK_DOUT_ACLK_G3D for G3D's AXI
 > 
-> Signed-off-by: Scott Wood <oss@buserror.net>
-> Signed-off-by: Tang Yuantian <andy.tang@nxp.com>
+> Cc: Chanwoo Choi <cw00.choi@samsung.com>
+> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
 > ---
-> v3:
->   - update the commit message
->   - split the dts and driver to different patchset
+>  arch/arm/boot/dts/exynos5420.dtsi             | 57 +++++++++++++++++--
+>  arch/arm/boot/dts/exynos5422-odroid-core.dtsi |  5 ++
+>  2 files changed, 56 insertions(+), 6 deletions(-)
 > 
->  arch/powerpc/boot/dts/fsl/b4420si-pre.dtsi     |    4 +-
->  arch/powerpc/boot/dts/fsl/b4860si-pre.dtsi     |    8 ++--
->  arch/powerpc/boot/dts/fsl/b4si-post.dtsi       |   15 -----
->  arch/powerpc/boot/dts/fsl/p2041si-post.dtsi    |   18 ------
->  arch/powerpc/boot/dts/fsl/p2041si-pre.dtsi     |    8 ++--
->  arch/powerpc/boot/dts/fsl/p3041si-post.dtsi    |   18 ------
->  arch/powerpc/boot/dts/fsl/p3041si-pre.dtsi     |    8 ++--
->  arch/powerpc/boot/dts/fsl/p4080si-post.dtsi    |   70 -------------------
-> -----
->  arch/powerpc/boot/dts/fsl/p4080si-pre.dtsi     |   16 +++---
->  arch/powerpc/boot/dts/fsl/p5020si-pre.dtsi     |    4 +-
->  arch/powerpc/boot/dts/fsl/p5040si-post.dtsi    |   18 ------
->  arch/powerpc/boot/dts/fsl/p5040si-pre.dtsi     |    8 ++--
->  arch/powerpc/boot/dts/fsl/qoriq-clockgen1.dtsi |   55 +++----------------
->  arch/powerpc/boot/dts/fsl/qoriq-clockgen2.dtsi |   38 +++----------
->  arch/powerpc/boot/dts/fsl/t1023si-post.dtsi    |   16 ------
->  arch/powerpc/boot/dts/fsl/t102xsi-pre.dtsi     |    4 +-
->  arch/powerpc/boot/dts/fsl/t1040si-post.dtsi    |   44 ---------------
->  arch/powerpc/boot/dts/fsl/t104xsi-pre.dtsi     |    8 ++--
->  arch/powerpc/boot/dts/fsl/t2081si-post.dtsi    |   22 --------
->  arch/powerpc/boot/dts/fsl/t208xsi-pre.dtsi     |    8 ++--
->  arch/powerpc/boot/dts/fsl/t4240si-post.dtsi    |   61 ---------------------
->  arch/powerpc/boot/dts/fsl/t4240si-pre.dtsi     |   24 ++++----
->  22 files changed, 66 insertions(+), 409 deletions(-)
-> 
-> diff --git a/arch/powerpc/boot/dts/fsl/b4420si-pre.dtsi
-> b/arch/powerpc/boot/dts/fsl/b4420si-pre.dtsi
-> index 88d8423..bb7b9b9 100644
-> --- a/arch/powerpc/boot/dts/fsl/b4420si-pre.dtsi
-> +++ b/arch/powerpc/boot/dts/fsl/b4420si-pre.dtsi
-> @@ -70,14 +70,14 @@
->  		cpu0: PowerPC,e6500@0 {
->  			device_type = "cpu";
->  			reg = <0 1>;
-> -			clocks = <&mux0>;
-> +			clocks = <&clockgen 1 0>;
->  			next-level-cache = <&L2_1>;
->  			fsl,portid-mapping = <0x80000000>;
+> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+> index aaff15880761..bc7203bb1282 100644
+> --- a/arch/arm/boot/dts/exynos5420.dtsi
+> +++ b/arch/arm/boot/dts/exynos5420.dtsi
+> @@ -1047,6 +1047,14 @@
+>  			status = "disabled";
 >  		};
->  		cpu1: PowerPC,e6500@2 {
->  			device_type = "cpu";
->  			reg = <2 3>;
-> -			clocks = <&mux0>;
-> +			clocks = <&clockgen 1 0>;
->  			next-level-cache = <&L2_1>;
->  			fsl,portid-mapping = <0x80000000>;
+>  
+> +		bus_g3d: bus_g3d {
+> +			compatible = "samsung,exynos-bus";
+> +			clocks = <&clock CLK_DOUT_ACLK_G3D>;
+> +			clock-names = "bus";
+> +			operating-points-v2 = <&bus_g3d_opp_table>;
+> +			status = "disabled";
+> +		};
+> +
+>  		bus_jpeg: bus_jpeg {
+>  			compatible = "samsung,exynos-bus";
+>  			clocks = <&clock CLK_DOUT_ACLK300_JPEG>;
+> @@ -1245,7 +1253,44 @@
+>  			};
 >  		};
-> diff --git a/arch/powerpc/boot/dts/fsl/b4860si-pre.dtsi
-> b/arch/powerpc/boot/dts/fsl/b4860si-pre.dtsi
-> index f3f968c..388ba1b 100644
-> --- a/arch/powerpc/boot/dts/fsl/b4860si-pre.dtsi
-> +++ b/arch/powerpc/boot/dts/fsl/b4860si-pre.dtsi
-> @@ -75,28 +75,28 @@
->  		cpu0: PowerPC,e6500@0 {
->  			device_type = "cpu";
->  			reg = <0 1>;
-> -			clocks = <&mux0>;
-> +			clocks = <&clockgen 1 0>;
->  			next-level-cache = <&L2_1>;
->  			fsl,portid-mapping = <0x80000000>;
+>  
+> -		bus_jpeg_opp_table: opp_table11 {
+> +		bus_g3d_opp_table: opp_table11 {
+> +			compatible = "operating-points-v2";
+> +
+> +			opp@600000000 {
+> +				opp-hz = /bits/ 64 <600000000>;
+> +				opp-microvolt = <1025000>;
+> +			};
+> +			opp@543000000 {
+> +				opp-hz = /bits/ 64 <543000000>;
+> +				opp-microvolt = <987500>;
+> +			};
+> +			opp@480000000 {
+> +				opp-hz = /bits/ 64 <480000000>;
+> +				opp-microvolt = <950000>;
+> +			};
+> +			opp@420000000 {
+> +				opp-hz = /bits/ 64 <420000000>;
+> +				opp-microvolt = <937500>;
+> +			};
+> +			opp@350000000 {
+> +				opp-hz = /bits/ 64 <350000000>;
+> +				opp-microvolt = <900000>;
+> +			};
+> +			opp@266000000 {
+> +				opp-hz = /bits/ 64 <266000000>;
+> +				opp-microvolt = <862500>;
+> +			};
+> +			opp@177000000 {
+> +				opp-hz = /bits/ 64 <177000000>;
+> +				opp-microvolt = <862500>;
+> +			};
+> +			opp@100000000 {
+> +				opp-hz = /bits/ 64 <100000000>;
+> +				opp-microvolt = <862500>;
+> +			};
+> +		};
+> +
+> +		bus_jpeg_opp_table: opp_table12 {
+>  			compatible = "operating-points-v2";
+>  
+>  			opp00 {
+> @@ -1262,7 +1307,7 @@
+>  			};
 >  		};
->  		cpu1: PowerPC,e6500@2 {
->  			device_type = "cpu";
->  			reg = <2 3>;
-> -			clocks = <&mux0>;
-> +			clocks = <&clockgen 1 0>;
->  			next-level-cache = <&L2_1>;
->  			fsl,portid-mapping = <0x80000000>;
+>  
+> -		bus_jpeg_apb_opp_table: opp_table12 {
+> +		bus_jpeg_apb_opp_table: opp_table13 {
+>  			compatible = "operating-points-v2";
+>  
+>  			opp00 {
+> @@ -1279,7 +1324,7 @@
+>  			};
 >  		};
->  		cpu2: PowerPC,e6500@4 {
->  			device_type = "cpu";
->  			reg = <4 5>;
-> -			clocks = <&mux0>;
-> +			clocks = <&clockgen 1 0>;
->  			next-level-cache = <&L2_1>;
->  			fsl,portid-mapping = <0x80000000>;
+>  
+> -		bus_disp1_fimd_opp_table: opp_table13 {
+> +		bus_disp1_fimd_opp_table: opp_table14 {
+>  			compatible = "operating-points-v2";
+>  
+>  			opp00 {
+> @@ -1290,7 +1335,7 @@
+>  			};
 >  		};
->  		cpu3: PowerPC,e6500@6 {
->  			device_type = "cpu";
->  			reg = <6 7>;
-> -			clocks = <&mux0>;
-> +			clocks = <&clockgen 1 0>;
->  			next-level-cache = <&L2_1>;
->  			fsl,portid-mapping = <0x80000000>;
+>  
+> -		bus_disp1_opp_table: opp_table14 {
+> +		bus_disp1_opp_table: opp_table15 {
+>  			compatible = "operating-points-v2";
+>  
+>  			opp00 {
+> @@ -1304,7 +1349,7 @@
+>  			};
 >  		};
-> diff --git a/arch/powerpc/boot/dts/fsl/b4si-post.dtsi
-> b/arch/powerpc/boot/dts/fsl/b4si-post.dtsi
-> index 1b33f51..4f044b4 100644
-> --- a/arch/powerpc/boot/dts/fsl/b4si-post.dtsi
-> +++ b/arch/powerpc/boot/dts/fsl/b4si-post.dtsi
-> @@ -398,21 +398,6 @@
->  	};
 >  
->  /include/ "qoriq-clockgen2.dtsi"
-> -	clockgen: global-utilities@e1000 {
-> -		compatible = "fsl,b4-clockgen", "fsl,qoriq-clockgen-2.0";
-> -		reg = <0xe1000 0x1000>;
-> -
-> -		mux0: mux0@0 {
-> -			#clock-cells = <0>;
-> -			reg = <0x0 0x4>;
-> -			compatible = "fsl,qoriq-core-mux-2.0";
-> -			clocks = <&pll0 0>, <&pll0 1>, <&pll0 2>,
-> -				<&pll1 0>, <&pll1 1>, <&pll1 2>;
-> -			clock-names = "pll0", "pll0-div2", "pll0-div4",
-> -				"pll1", "pll1-div2", "pll1-div4";
-> -			clock-output-names = "cmux0";
-> -		};
-> -	};
+> -		bus_gscl_opp_table: opp_table15 {
+> +		bus_gscl_opp_table: opp_table16 {
+>  			compatible = "operating-points-v2";
 >  
->  	rcpm: global-utilities@e2000 {
->  		compatible = "fsl,b4-rcpm", "fsl,qoriq-rcpm-2.0";
-> diff --git a/arch/powerpc/boot/dts/fsl/p2041si-post.dtsi
-> b/arch/powerpc/boot/dts/fsl/p2041si-post.dtsi
-> index 51e975d..872e448 100644
-> --- a/arch/powerpc/boot/dts/fsl/p2041si-post.dtsi
-> +++ b/arch/powerpc/boot/dts/fsl/p2041si-post.dtsi
-> @@ -327,24 +327,6 @@
->  /include/ "qoriq-clockgen1.dtsi"
->  	global-utilities@e1000 {
->  		compatible = "fsl,p2041-clockgen", "fsl,qoriq-clockgen-1.0";
-> -
-> -		mux2: mux2@40 {
-> -			#clock-cells = <0>;
-> -			reg = <0x40 0x4>;
-> -			compatible = "fsl,qoriq-core-mux-1.0";
-> -			clocks = <&pll0 0>, <&pll0 1>, <&pll1 0>, <&pll1 1>;
-> -			clock-names = "pll0", "pll0-div2", "pll1", "pll1-
-> div2";
-> -			clock-output-names = "cmux2";
-> -		};
-> -
-> -		mux3: mux3@60 {
-> -			#clock-cells = <0>;
-> -			reg = <0x60 0x4>;
-> -			compatible = "fsl,qoriq-core-mux-1.0";
-> -			clocks = <&pll0 0>, <&pll0 1>, <&pll1 0>, <&pll1 1>;
-> -			clock-names = "pll0", "pll0-div2", "pll1", "pll1-
-> div2";
-> -			clock-output-names = "cmux3";
-> -		};
->  	};
+>  			opp00 {
+> @@ -1318,7 +1363,7 @@
+>  			};
+>  		};
 >  
->  	rcpm: global-utilities@e2000 {
-> diff --git a/arch/powerpc/boot/dts/fsl/p2041si-pre.dtsi
-> b/arch/powerpc/boot/dts/fsl/p2041si-pre.dtsi
-> index 941274c..6318962 100644
-> --- a/arch/powerpc/boot/dts/fsl/p2041si-pre.dtsi
-> +++ b/arch/powerpc/boot/dts/fsl/p2041si-pre.dtsi
-> @@ -89,7 +89,7 @@
->  		cpu0: PowerPC,e500mc@0 {
->  			device_type = "cpu";
->  			reg = <0>;
-> -			clocks = <&mux0>;
-> +			clocks = <&clockgen 1 0>;
->  			next-level-cache = <&L2_0>;
->  			fsl,portid-mapping = <0x80000000>;
->  			L2_0: l2-cache {
-> @@ -99,7 +99,7 @@
->  		cpu1: PowerPC,e500mc@1 {
->  			device_type = "cpu";
->  			reg = <1>;
-> -			clocks = <&mux1>;
-> +			clocks = <&clockgen 1 1>;
->  			next-level-cache = <&L2_1>;
->  			fsl,portid-mapping = <0x40000000>;
->  			L2_1: l2-cache {
-> @@ -109,7 +109,7 @@
->  		cpu2: PowerPC,e500mc@2 {
->  			device_type = "cpu";
->  			reg = <2>;
-> -			clocks = <&mux2>;
-> +			clocks = <&clockgen 1 2>;
->  			next-level-cache = <&L2_2>;
->  			fsl,portid-mapping = <0x20000000>;
->  			L2_2: l2-cache {
-> @@ -119,7 +119,7 @@
->  		cpu3: PowerPC,e500mc@3 {
->  			device_type = "cpu";
->  			reg = <3>;
-> -			clocks = <&mux3>;
-> +			clocks = <&clockgen 1 3>;
->  			next-level-cache = <&L2_3>;
->  			fsl,portid-mapping = <0x10000000>;
->  			L2_3: l2-cache {
-> diff --git a/arch/powerpc/boot/dts/fsl/p3041si-post.dtsi
-> b/arch/powerpc/boot/dts/fsl/p3041si-post.dtsi
-> index 187676f..81bc75a 100644
-> --- a/arch/powerpc/boot/dts/fsl/p3041si-post.dtsi
-> +++ b/arch/powerpc/boot/dts/fsl/p3041si-post.dtsi
-> @@ -354,24 +354,6 @@
->  /include/ "qoriq-clockgen1.dtsi"
->  	global-utilities@e1000 {
->  		compatible = "fsl,p3041-clockgen", "fsl,qoriq-clockgen-1.0";
-> -
-> -		mux2: mux2@40 {
-> -			#clock-cells = <0>;
-> -			reg = <0x40 0x4>;
-> -			compatible = "fsl,qoriq-core-mux-1.0";
-> -			clocks = <&pll0 0>, <&pll0 1>, <&pll1 0>, <&pll1 1>;
-> -			clock-names = "pll0", "pll0-div2", "pll1", "pll1-
-> div2";
-> -			clock-output-names = "cmux2";
-> -		};
-> -
-> -		mux3: mux3@60 {
-> -			#clock-cells = <0>;
-> -			reg = <0x60 0x4>;
-> -			compatible = "fsl,qoriq-core-mux-1.0";
-> -			clocks = <&pll0 0>, <&pll0 1>, <&pll1 0>, <&pll1 1>;
-> -			clock-names = "pll0", "pll0-div2", "pll1", "pll1-
-> div2";
-> -			clock-output-names = "cmux3";
-> -		};
->  	};
+> -		bus_mscl_opp_table: opp_table16 {
+> +		bus_mscl_opp_table: opp_table17 {
+>  			compatible = "operating-points-v2";
 >  
->  	rcpm: global-utilities@e2000 {
-> diff --git a/arch/powerpc/boot/dts/fsl/p3041si-pre.dtsi
-> b/arch/powerpc/boot/dts/fsl/p3041si-pre.dtsi
-> index 50b73e8..db92f11 100644
-> --- a/arch/powerpc/boot/dts/fsl/p3041si-pre.dtsi
-> +++ b/arch/powerpc/boot/dts/fsl/p3041si-pre.dtsi
-> @@ -90,7 +90,7 @@
->  		cpu0: PowerPC,e500mc@0 {
->  			device_type = "cpu";
->  			reg = <0>;
-> -			clocks = <&mux0>;
-> +			clocks = <&clockgen 1 0>;
->  			next-level-cache = <&L2_0>;
->  			fsl,portid-mapping = <0x80000000>;
->  			L2_0: l2-cache {
-> @@ -100,7 +100,7 @@
->  		cpu1: PowerPC,e500mc@1 {
->  			device_type = "cpu";
->  			reg = <1>;
-> -			clocks = <&mux1>;
-> +			clocks = <&clockgen 1 1>;
->  			next-level-cache = <&L2_1>;
->  			fsl,portid-mapping = <0x40000000>;
->  			L2_1: l2-cache {
-> @@ -110,7 +110,7 @@
->  		cpu2: PowerPC,e500mc@2 {
->  			device_type = "cpu";
->  			reg = <2>;
-> -			clocks = <&mux2>;
-> +			clocks = <&clockgen 1 2>;
->  			next-level-cache = <&L2_2>;
->  			fsl,portid-mapping = <0x20000000>;
->  			L2_2: l2-cache {
-> @@ -120,7 +120,7 @@
->  		cpu3: PowerPC,e500mc@3 {
->  			device_type = "cpu";
->  			reg = <3>;
-> -			clocks = <&mux3>;
-> +			clocks = <&clockgen 1 3>;
->  			next-level-cache = <&L2_3>;
->  			fsl,portid-mapping = <0x10000000>;
->  			L2_3: l2-cache {
-> diff --git a/arch/powerpc/boot/dts/fsl/p4080si-post.dtsi
-> b/arch/powerpc/boot/dts/fsl/p4080si-post.dtsi
-> index a025208..4da49b6 100644
-> --- a/arch/powerpc/boot/dts/fsl/p4080si-post.dtsi
-> +++ b/arch/powerpc/boot/dts/fsl/p4080si-post.dtsi
-> @@ -374,76 +374,6 @@
->  /include/ "qoriq-clockgen1.dtsi"
->  	global-utilities@e1000 {
->  		compatible = "fsl,p4080-clockgen", "fsl,qoriq-clockgen-1.0";
-> -
-> -		pll2: pll2@840 {
-> -			#clock-cells = <1>;
-> -			reg = <0x840 0x4>;
-> -			compatible = "fsl,qoriq-core-pll-1.0";
-> -			clocks = <&sysclk>;
-> -			clock-output-names = "pll2", "pll2-div2";
-> -		};
-> -
-> -		pll3: pll3@860 {
-> -			#clock-cells = <1>;
-> -			reg = <0x860 0x4>;
-> -			compatible = "fsl,qoriq-core-pll-1.0";
-> -			clocks = <&sysclk>;
-> -			clock-output-names = "pll3", "pll3-div2";
-> -		};
-> -
-> -		mux2: mux2@40 {
-> -			#clock-cells = <0>;
-> -			reg = <0x40 0x4>;
-> -			compatible = "fsl,qoriq-core-mux-1.0";
-> -			clocks = <&pll0 0>, <&pll0 1>, <&pll1 0>, <&pll1 1>;
-> -			clock-names = "pll0", "pll0-div2", "pll1", "pll1-
-> div2";
-> -			clock-output-names = "cmux2";
-> -		};
-> -
-> -		mux3: mux3@60 {
-> -			#clock-cells = <0>;
-> -			reg = <0x60 0x4>;
-> -			compatible = "fsl,qoriq-core-mux-1.0";
-> -			clocks = <&pll0 0>, <&pll0 1>, <&pll1 0>, <&pll1 1>;
-> -			clock-names = "pll0", "pll0-div2", "pll1", "pll1-
-> div2";
-> -			clock-output-names = "cmux3";
-> -		};
-> -
-> -		mux4: mux4@80 {
-> -			#clock-cells = <0>;
-> -			reg = <0x80 0x4>;
-> -			compatible = "fsl,qoriq-core-mux-1.0";
-> -			clocks = <&pll2 0>, <&pll2 1>, <&pll3 0>, <&pll3 1>;
-> -			clock-names = "pll2", "pll2-div2", "pll3", "pll3-
-> div2";
-> -			clock-output-names = "cmux4";
-> -		};
-> -
-> -		mux5: mux5@a0 {
-> -			#clock-cells = <0>;
-> -			reg = <0xa0 0x4>;
-> -			compatible = "fsl,qoriq-core-mux-1.0";
-> -			clocks = <&pll2 0>, <&pll2 1>, <&pll3 0>, <&pll3 1>;
-> -			clock-names = "pll2", "pll2-div2", "pll3", "pll3-
-> div2";
-> -			clock-output-names = "cmux5";
-> -		};
-> -
-> -		mux6: mux6@c0 {
-> -			#clock-cells = <0>;
-> -			reg = <0xc0 0x4>;
-> -			compatible = "fsl,qoriq-core-mux-1.0";
-> -			clocks = <&pll2 0>, <&pll2 1>, <&pll3 0>, <&pll3 1>;
-> -			clock-names = "pll2", "pll2-div2", "pll3", "pll3-
-> div2";
-> -			clock-output-names = "cmux6";
-> -		};
-> -
-> -		mux7: mux7@e0 {
-> -			#clock-cells = <0>;
-> -			reg = <0xe0 0x4>;
-> -			compatible = "fsl,qoriq-core-mux-1.0";
-> -			clocks = <&pll2 0>, <&pll2 1>, <&pll3 0>, <&pll3 1>;
-> -			clock-names = "pll2", "pll2-div2", "pll3", "pll3-
-> div2";
-> -			clock-output-names = "cmux7";
-> -		};
->  	};
+>  			opp00 {
+> diff --git a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
+> index 2fac4baf1eb4..6e39e4594502 100644
+> --- a/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
+> +++ b/arch/arm/boot/dts/exynos5422-odroid-core.dtsi
+> @@ -89,6 +89,11 @@
+>  	status = "okay";
+>  };
 >  
->  	rcpm: global-utilities@e2000 {
-> diff --git a/arch/powerpc/boot/dts/fsl/p4080si-pre.dtsi
-> b/arch/powerpc/boot/dts/fsl/p4080si-pre.dtsi
-> index d56a546..0a7c65a 100644
-> --- a/arch/powerpc/boot/dts/fsl/p4080si-pre.dtsi
-> +++ b/arch/powerpc/boot/dts/fsl/p4080si-pre.dtsi
-> @@ -94,7 +94,7 @@
->  		cpu0: PowerPC,e500mc@0 {
->  			device_type = "cpu";
->  			reg = <0>;
-> -			clocks = <&mux0>;
-> +			clocks = <&clockgen 1 0>;
->  			next-level-cache = <&L2_0>;
->  			fsl,portid-mapping = <0x80000000>;
->  			L2_0: l2-cache {
-> @@ -104,7 +104,7 @@
->  		cpu1: PowerPC,e500mc@1 {
->  			device_type = "cpu";
->  			reg = <1>;
-> -			clocks = <&mux1>;
-> +			clocks = <&clockgen 1 1>;
->  			next-level-cache = <&L2_1>;
->  			fsl,portid-mapping = <0x40000000>;
->  			L2_1: l2-cache {
-> @@ -114,7 +114,7 @@
->  		cpu2: PowerPC,e500mc@2 {
->  			device_type = "cpu";
->  			reg = <2>;
-> -			clocks = <&mux2>;
-> +			clocks = <&clockgen 1 2>;
->  			next-level-cache = <&L2_2>;
->  			fsl,portid-mapping = <0x20000000>;
->  			L2_2: l2-cache {
-> @@ -124,7 +124,7 @@
->  		cpu3: PowerPC,e500mc@3 {
->  			device_type = "cpu";
->  			reg = <3>;
-> -			clocks = <&mux3>;
-> +			clocks = <&clockgen 1 3>;
->  			next-level-cache = <&L2_3>;
->  			fsl,portid-mapping = <0x10000000>;
->  			L2_3: l2-cache {
-> @@ -134,7 +134,7 @@
->  		cpu4: PowerPC,e500mc@4 {
->  			device_type = "cpu";
->  			reg = <4>;
-> -			clocks = <&mux4>;
-> +			clocks = <&clockgen 1 4>;
->  			next-level-cache = <&L2_4>;
->  			fsl,portid-mapping = <0x08000000>;
->  			L2_4: l2-cache {
-> @@ -144,7 +144,7 @@
->  		cpu5: PowerPC,e500mc@5 {
->  			device_type = "cpu";
->  			reg = <5>;
-> -			clocks = <&mux5>;
-> +			clocks = <&clockgen 1 5>;
->  			next-level-cache = <&L2_5>;
->  			fsl,portid-mapping = <0x04000000>;
->  			L2_5: l2-cache {
-> @@ -154,7 +154,7 @@
->  		cpu6: PowerPC,e500mc@6 {
->  			device_type = "cpu";
->  			reg = <6>;
-> -			clocks = <&mux6>;
-> +			clocks = <&clockgen 1 6>;
->  			next-level-cache = <&L2_6>;
->  			fsl,portid-mapping = <0x02000000>;
->  			L2_6: l2-cache {
-> @@ -164,7 +164,7 @@
->  		cpu7: PowerPC,e500mc@7 {
->  			device_type = "cpu";
->  			reg = <7>;
-> -			clocks = <&mux7>;
-> +			clocks = <&clockgen 1 7>;
->  			next-level-cache = <&L2_7>;
->  			fsl,portid-mapping = <0x01000000>;
->  			L2_7: l2-cache {
-> diff --git a/arch/powerpc/boot/dts/fsl/p5020si-pre.dtsi
-> b/arch/powerpc/boot/dts/fsl/p5020si-pre.dtsi
-> index bfba0b4..2d74ea8 100644
-> --- a/arch/powerpc/boot/dts/fsl/p5020si-pre.dtsi
-> +++ b/arch/powerpc/boot/dts/fsl/p5020si-pre.dtsi
-> @@ -96,7 +96,7 @@
->  		cpu0: PowerPC,e5500@0 {
->  			device_type = "cpu";
->  			reg = <0>;
-> -			clocks = <&mux0>;
-> +			clocks = <&clockgen 1 0>;
->  			next-level-cache = <&L2_0>;
->  			fsl,portid-mapping = <0x80000000>;
->  			L2_0: l2-cache {
-> @@ -106,7 +106,7 @@
->  		cpu1: PowerPC,e5500@1 {
->  			device_type = "cpu";
->  			reg = <1>;
-> -			clocks = <&mux1>;
-> +			clocks = <&clockgen 1 1>;
->  			next-level-cache = <&L2_1>;
->  			fsl,portid-mapping = <0x40000000>;
->  			L2_1: l2-cache {
-> diff --git a/arch/powerpc/boot/dts/fsl/p5040si-post.dtsi
-> b/arch/powerpc/boot/dts/fsl/p5040si-post.dtsi
-> index e2bd931..16b454b 100644
-> --- a/arch/powerpc/boot/dts/fsl/p5040si-post.dtsi
-> +++ b/arch/powerpc/boot/dts/fsl/p5040si-post.dtsi
-> @@ -319,24 +319,6 @@
->  /include/ "qoriq-clockgen1.dtsi"
->  	global-utilities@e1000 {
->  		compatible = "fsl,p5040-clockgen", "fsl,qoriq-clockgen-1.0";
-> -
-> -		mux2: mux2@40 {
-> -			#clock-cells = <0>;
-> -			reg = <0x40 0x4>;
-> -			compatible = "fsl,qoriq-core-mux-1.0";
-> -			clocks = <&pll0 0>, <&pll0 1>, <&pll1 0>, <&pll1 1>;
-> -			clock-names = "pll0", "pll0-div2", "pll1", "pll1-
-> div2";
-> -			clock-output-names = "cmux2";
-> -		};
-> -
-> -		mux3: mux3@60 {
-> -			#clock-cells = <0>;
-> -			reg = <0x60 0x4>;
-> -			compatible = "fsl,qoriq-core-mux-1.0";
-> -			clocks = <&pll0 0>, <&pll0 1>, <&pll1 0>, <&pll1 1>;
-> -			clock-names = "pll0", "pll0-div2", "pll1", "pll1-
-> div2";
-> -			clock-output-names = "cmux3";
-> -		};
->  	};
->  
->  	rcpm: global-utilities@e2000 {
-> diff --git a/arch/powerpc/boot/dts/fsl/p5040si-pre.dtsi
-> b/arch/powerpc/boot/dts/fsl/p5040si-pre.dtsi
-> index dbd5775..ed89dbb 100644
-> --- a/arch/powerpc/boot/dts/fsl/p5040si-pre.dtsi
-> +++ b/arch/powerpc/boot/dts/fsl/p5040si-pre.dtsi
-> @@ -102,7 +102,7 @@
->  		cpu0: PowerPC,e5500@0 {
->  			device_type = "cpu";
->  			reg = <0>;
-> -			clocks = <&mux0>;
-> +			clocks = <&clockgen 1 0>;
->  			next-level-cache = <&L2_0>;
->  			fsl,portid-mapping = <0x80000000>;
->  			L2_0: l2-cache {
-> @@ -112,7 +112,7 @@
->  		cpu1: PowerPC,e5500@1 {
->  			device_type = "cpu";
->  			reg = <1>;
-> -			clocks = <&mux1>;
-> +			clocks = <&clockgen 1 1>;
->  			next-level-cache = <&L2_1>;
->  			fsl,portid-mapping = <0x40000000>;
->  			L2_1: l2-cache {
-> @@ -122,7 +122,7 @@
->  		cpu2: PowerPC,e5500@2 {
->  			device_type = "cpu";
->  			reg = <2>;
-> -			clocks = <&mux2>;
-> +			clocks = <&clockgen 1 2>;
->  			next-level-cache = <&L2_2>;
->  			fsl,portid-mapping = <0x20000000>;
->  			L2_2: l2-cache {
-> @@ -132,7 +132,7 @@
->  		cpu3: PowerPC,e5500@3 {
->  			device_type = "cpu";
->  			reg = <3>;
-> -			clocks = <&mux3>;
-> +			clocks = <&clockgen 1 3>;
->  			next-level-cache = <&L2_3>;
->  			fsl,portid-mapping = <0x10000000>;
->  			L2_3: l2-cache {
-> diff --git a/arch/powerpc/boot/dts/fsl/qoriq-clockgen1.dtsi
-> b/arch/powerpc/boot/dts/fsl/qoriq-clockgen1.dtsi
-> index 88cd70d..5c89cfa 100644
-> --- a/arch/powerpc/boot/dts/fsl/qoriq-clockgen1.dtsi
-> +++ b/arch/powerpc/boot/dts/fsl/qoriq-clockgen1.dtsi
-> @@ -32,55 +32,16 @@
->   * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
->   */
->  
-> +sysclk: sysclk {
-> +	compatible = "fixed-clock";
-> +	#clock-cells = <0>;
-> +	clock-frequency = <100000000>;
-> +	clock-output-names = "sysclk";
+> +&bus_g3d {
+> +	devfreq = <&bus_wcore>;
+> +	status = "okay";
 > +};
 > +
->  clockgen: global-utilities@e1000 {
-
-The U-Boot fixup won't work with this.  U-Boot patches the frequency directly
-into the clockgen node (BTW, this is another reason to preserve the generic
-1.0/2.0 compatible string).  The new binding does not require an input clock
-node when it is provided as clock-frequency directly in the clockgen node --
-and the sysclk node was not in my original patch (nor did you note that you
-made changes from that original).  Why did you add it?
-
-I would just remove it when applying, but I'm concerned that this indicates a
-lack of testing (and I don't have the hardware access to test it myself,
-except on t4240) -- unless the 100 MHz sysclk just happened to be correct on
-the machines you tested (which would also be a test coverage problem)?
-
--Scott
+>  &bus_jpeg {
+>  	devfreq = <&bus_wcore>;
+>  	status = "okay";
+> 
 
 
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
