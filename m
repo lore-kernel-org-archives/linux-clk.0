@@ -2,420 +2,144 @@ Return-Path: <SRS0=WhJS=OG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24FD2C43441
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Nov 2018 02:55:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B62BC43441
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Nov 2018 03:43:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA4BF2086B
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Nov 2018 02:55:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="SNgzGez1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA4BF2086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
+	by mail.kernel.org (Postfix) with ESMTP id 075162086B
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Nov 2018 03:43:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 075162086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728346AbeK0NwF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 27 Nov 2018 08:52:05 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:33248 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728395AbeK0NwA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Nov 2018 08:52:00 -0500
-Received: by mail-pl1-f195.google.com with SMTP id z23so14858704plo.0
-        for <linux-clk@vger.kernel.org>; Mon, 26 Nov 2018 18:55:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=from:date:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=FXn97Xd9QZ/KofzDNTMzXHxeGjf33A8xHubYefu7hKQ=;
-        b=SNgzGez1XdQBDyVwfD3IBC8VqBfhw7Bp2ErR6V+/LSM4/I4w5JEoFgQD5ySmCkWXTh
-         nSURb43Q1TDB+Yltj70jSu5vXpDSgbhr1k/FSYyIno9nADgh7wdxL5om70cmxGJo5URn
-         qTuLvpHDgoduWQltoTlAq+RW7Bf8FLCWcQPJq2FYcIe34ybptWMs4ajUgU6kEy2hiipG
-         Rw3bgpLpwE10pgP/KyrSLFV3kDiwJkql+uF64WLitTBf7s1VNVLeYdGB4h9lXL9JlNtL
-         bpRq+iVaqEh3wuJpbuuHsqXZjd0y4VNEHD97K/t3AmuCJQuJragMtOBgednLJboYCYfy
-         kxpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=FXn97Xd9QZ/KofzDNTMzXHxeGjf33A8xHubYefu7hKQ=;
-        b=JHiW4XDzQahfttTNZcaHV1MY0aw29RORkrTaaDCr3Gy7tojB6Mqxs/eS/4t55raU/q
-         LjU++vgxAeYk6dda/I5FigqGMMrSnV6Rt3Hm55KqlNdt+6qVsLAIls/NC5B8WPeGYUS8
-         bAYjrOKH/5maNTy4efmy+47u3yBKoi0LgmsSPgIfcfw9gymOi3ELLFu4R9JS/5ms2XIW
-         YKDalNvpLhnm4EisxGftnJWEEImlfZmXVid8YBwNr7IZZK/9t6uFK99lNq0UKq+g7Zut
-         xW6L9x+wwF3VfhI22Cszq3nC7SkeDnIE6pL45SAcgj9izgWXvWIl8P1fsaOszhTV4Ip4
-         IA9Q==
-X-Gm-Message-State: AA+aEWYbSeczaM/D8hWUZ0QJ5bCyzuB0iDLE6Yb4S+EfT+y+BUA+jm7F
-        BUGufDTvR4HIjO04Z7OU6UyP3w==
-X-Google-Smtp-Source: AFSGD/W+7kSs6vi2hn0VXdF07Orz3beuw7oQv7OuRCuiEyeJ+a6RYEUdGD4ktSiytMCgfVAFt4x3WQ==
-X-Received: by 2002:a17:902:3341:: with SMTP id a59-v6mr30192151plc.220.1543287339391;
-        Mon, 26 Nov 2018 18:55:39 -0800 (PST)
-Received: from localhost (97-120-243-143.ptld.qwest.net. [97.120.243.143])
-        by smtp.gmail.com with ESMTPSA id m85sm2495874pfj.171.2018.11.26.18.55.38
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 26 Nov 2018 18:55:38 -0800 (PST)
-From:   Paul Walmsley <paul.walmsley@sifive.com>
-X-Google-Original-From: Paul Walmsley <paulw@sifive.com>
-Date:   Mon, 26 Nov 2018 18:55:37 -0800 (PST)
-To:     Stephen Boyd <sboyd@kernel.org>
-cc:     Paul Walmsley <paul.walmsley@sifive.com>,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        Wesley Terpstra <wesley@sifive.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Megan Wachs <megan@sifive.com>, linux-kernel@vger.kernel.org,
-        Paul Walmsley <paul@pwsan.com>
-Subject: Re: [PATCH v2 1/3] clk: analogbits: add Wide-Range PLL library
-In-Reply-To: <154278980575.88331.16504895003109700312@swboyd.mtv.corp.google.com>
-Message-ID: <alpine.DEB.2.21.9999.1811261726030.16271@viisi.sifive.com>
-References: <20181020135024.28573-1-paul.walmsley@sifive.com> <20181020135024.28573-2-paul.walmsley@sifive.com> <154045364470.53599.7774255558661483303@swboyd.mtv.corp.google.com> <c1eff982-c7f3-5095-1a82-2ae9afe20b4c@sifive.com>
- <154278980575.88331.16504895003109700312@swboyd.mtv.corp.google.com>
-User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
+        id S1728248AbeK0Oju (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 27 Nov 2018 09:39:50 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:32095 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727571AbeK0Oju (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Nov 2018 09:39:50 -0500
+X-UUID: ecb06997c79d4610bda36922577510f3-20181127
+X-UUID: ecb06997c79d4610bda36922577510f3-20181127
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
+        (envelope-from <weiyi.lu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 654770675; Tue, 27 Nov 2018 11:43:04 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs02n2.mediatek.inc (172.21.101.101) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 27 Nov 2018 11:43:01 +0800
+Received: from mtkslt210.mediatek.inc (10.21.14.14) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 27 Nov 2018 11:43:01 +0800
+From:   Weiyi Lu <weiyi.lu@mediatek.com>
+To:     Nicolas Boichat <drinkcat@chromium.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh@kernel.org>
+CC:     James Liao <jamesjj.liao@mediatek.com>,
+        Fan Chen <fan.chen@mediatek.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <srv_heupstream@mediatek.com>, Weiyi Lu <weiyi.lu@mediatek.com>,
+        Owen Chen <owen.chen@mediatek.com>
+Subject: [PATCH v2 02/11] clk: mediatek: add new member to mtk_pll_data
+Date:   Tue, 27 Nov 2018 11:42:45 +0800
+Message-ID: <20181127034254.24721-4-weiyi.lu@mediatek.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20181127034254.24721-1-weiyi.lu@mediatek.com>
+References: <20181127034254.24721-1-weiyi.lu@mediatek.com>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-1043048292-1543287337=:16271"
+Content-Type: text/plain
+X-TM-SNTS-SMTP: 9FAAF7E71535DCF803CDCA98407C255470C814B54773BE1AD5EA70EC2AF929182000:8
+X-MTK:  N
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+From: Owen Chen <owen.chen@mediatek.com>
 
---8323329-1043048292-1543287337=:16271
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+1. pcwibits: The integer bits of pcw for plls is extend to 8 bits,
+   add a variable to indicate this change and
+   backward-compatible.
+2. fmin: The pll freqency lower-bound is vary from 1GMhz to
+   1.5Ghz, add a variable to indicate platform-dependent.
 
-On Wed, 21 Nov 2018, Stephen Boyd wrote:
-> Quoting Paul Walmsley (2018-11-08 17:01:54)
-> > On 10/25/18 12:47 AM, Stephen Boyd wrote:
-> > > Quoting Paul Walmsley (2018-10-20 06:50:22)
-> > >> diff --git a/drivers/clk/analogbits/wrpll-cln28hpc.c b/drivers/clk/a=
-nalogbits/wrpll-cln28hpc.c
-> > >> new file mode 100644
-> > >> index 000000000000..ebdef859cbf5
-> > >> --- /dev/null
-> > >> +++ b/drivers/clk/analogbits/wrpll-cln28hpc.c
+Signed-off-by: Owen Chen <owen.chen@mediatek.com>
+Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+---
+ drivers/clk/mediatek/clk-mtk.h |  2 ++
+ drivers/clk/mediatek/clk-pll.c | 12 +++++++++---
+ 2 files changed, 11 insertions(+), 3 deletions(-)
 
-[...]
+diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mtk.h
+index f83c2bbb677e..11b5517903d0 100644
+--- a/drivers/clk/mediatek/clk-mtk.h
++++ b/drivers/clk/mediatek/clk-mtk.h
+@@ -214,8 +214,10 @@ struct mtk_pll_data {
+ 	unsigned int flags;
+ 	const struct clk_ops *ops;
+ 	u32 rst_bar_mask;
++	unsigned long fmin;
+ 	unsigned long fmax;
+ 	int pcwbits;
++	int pcwibits;
+ 	uint32_t pcw_reg;
+ 	int pcw_shift;
+ 	const struct mtk_pll_div_table *div_table;
+diff --git a/drivers/clk/mediatek/clk-pll.c b/drivers/clk/mediatek/clk-pll.c
+index f54e4015b0b1..1db161aced31 100644
+--- a/drivers/clk/mediatek/clk-pll.c
++++ b/drivers/clk/mediatek/clk-pll.c
+@@ -32,6 +32,8 @@
+ #define AUDPLL_TUNER_EN		BIT(31)
+ 
+ #define POSTDIV_MASK		0x7
++
++/* default 7 bits integer, can be overridden with pcwibits. */
+ #define INTEGER_BITS		7
+ 
+ /*
+@@ -69,11 +71,13 @@ static unsigned long __mtk_pll_recalc_rate(struct mtk_clk_pll *pll, u32 fin,
+ {
+ 	int pcwbits = pll->data->pcwbits;
+ 	int pcwfbits;
++	int ibits;
+ 	u64 vco;
+ 	u8 c = 0;
+ 
+ 	/* The fractional part of the PLL divider. */
+-	pcwfbits = pcwbits > INTEGER_BITS ? pcwbits - INTEGER_BITS : 0;
++	ibits = pll->data->pcwibits ? pll->data->pcwibits : INTEGER_BITS;
++	pcwfbits = pcwbits > ibits ? pcwbits - ibits : 0;
+ 
+ 	vco = (u64)fin * pcw;
+ 
+@@ -138,9 +142,10 @@ static void mtk_pll_set_rate_regs(struct mtk_clk_pll *pll, u32 pcw,
+ static void mtk_pll_calc_values(struct mtk_clk_pll *pll, u32 *pcw, u32 *postdiv,
+ 		u32 freq, u32 fin)
+ {
+-	unsigned long fmin = 1000 * MHZ;
++	unsigned long fmin = pll->data->fmin ? pll->data->fmin : (1000 * MHZ);
+ 	const struct mtk_pll_div_table *div_table = pll->data->div_table;
+ 	u64 _pcw;
++	int ibits;
+ 	u32 val;
+ 
+ 	if (freq > pll->data->fmax)
+@@ -164,7 +169,8 @@ static void mtk_pll_calc_values(struct mtk_clk_pll *pll, u32 *pcw, u32 *postdiv,
+ 	}
+ 
+ 	/* _pcw = freq * postdiv / fin * 2^pcwfbits */
+-	_pcw = ((u64)freq << val) << (pll->data->pcwbits - INTEGER_BITS);
++	ibits = pll->data->pcwibits ? pll->data->pcwibits : INTEGER_BITS;
++	_pcw = ((u64)freq << val) << (pll->data->pcwbits - ibits);
+ 	do_div(_pcw, fin);
+ 
+ 	*pcw = (u32)_pcw;
+-- 
+2.18.0
 
-> > >> +/**
-> > >> + * __wrpll_update_parent_rate() - update PLL data when parent rate =
-changes
-> > >> + * @c: ptr to a struct analogbits_wrpll_cfg record to write PLL dat=
-a to
-> > >> + * @parent_rate: PLL input refclk rate (pre-R-divider)
-> > >> + *
-> > >> + * Pre-compute some data used by the PLL configuration algorithm wh=
-en
-> > >> + * the PLL's reference clock rate changes.  The intention is to avo=
-id
-> > >> + * computation when the parent rate remains constant - expected to =
-be
-> > >> + * the common case.
-> > >> + *
-> > >> + * Returns: 0 upon success or -1 if the reference clock rate is out=
- of range.
-> > >> + */
-> > >> +static int __wrpll_update_parent_rate(struct analogbits_wrpll_cfg *=
-c,
-> > >> +                                     unsigned long parent_rate)
-> > >> +{
-> > >> +       u8 max_r_for_parent;
-
-[...]
-
-> > >> +
-> > >> +       if (parent_rate > MAX_INPUT_FREQ || parent_rate < MIN_POST_D=
-IVR_FREQ)
-> > >> +               return -1;
-
-[...]
-
-> >=20
-> > > Is this case even possible?
-> >=20
-> > If analogbits_wrpll_configure_for_rate() is called with a parent_rate
-> > outside of the PLL's specification range, it seems reasonable to fail -=
--
-> > or do you see the situation differently?=C2=A0 These parent rate restri=
-ctions
-> > are defined in the PLL datasheet.
->=20
-> I've been pushing driver writers to use clk_hw_set_rate_range() so that
-> the core framework will clamp the frequency to what is supported. Can
-> you somehow use that for these clks?
-
-Although the code in this patch is related to a hardware clock source (the=
-=20
-WRPLL), this code isn't dependent on the Linux clock framework.  It's just=
-=20
-a library that implements algorithms that are specific to this PLL. =20
-
-Patch 3 ("clk: sifive: add a driver for the SiFive FU540 PRCI IP block")=20
-adds drivers/clk/sifive/fu540-prci.c, which integrates the library with=20
-the CCF.
-
-We could also make the code in this patch dependent on the Linux clock=20
-framework.  My thought was that CCF dependencies weren't really needed in=
-=20
-this file, and that the algorithms would be easier to read and analyze=20
-without them.
-
-So if it's all right with you, I'd propose that we keep clock=20
-framework-dependent functions localized into=20
-drivers/clk/sifive/fu540-prci.c.
-
-Let me know what you'd like.
-
-> > >  It would be nicer
-> > > if this function just returned void.
-> >=20
-> >=20
-> > =C2=A0Is it that you'd prefer the rate check to be moved into
-> > analogbits_wrpll_configure_for_rate()?=C2=A0 Or that you'd prefer that =
-I not
-> > validate the input parent rate at all?
->=20
-> I lost the context! But I think I'm just saying that if the clamping is
-> done in the core framework with limits then this function can just
-> return void because there aren't errors to be had.
-
-OK.  The outcome here seems connected with the discussion outcome on=20
-the above comment, since this code is written to avoid adding clock=20
-framework dependencies.  So will wait for your thoughts on that before=20
-taking action here.
-
-> > >> +/*
-> > >> + * Public functions
-> > >> + */
-> > >> +
-> > >> +/**
-> > >> + * analogbits_wrpll_configure() - compute PLL configuration for a t=
-arget rate
-> > >> + * @c: ptr to a struct analogbits_wrpll_cfg record to write into
-> > >> + * @target_rate: target PLL output clock rate (post-Q-divider)
-> > >> + * @parent_rate: PLL input refclk rate (pre-R-divider)
-> > >> + *
-> > >> + * Given a pointer to a PLL context @c, a desired PLL target output
-> > >> + * rate @target_rate, and a reference clock input rate @parent_rate=
-,
-> > >> + * compute the appropriate PLL signal configuration values.  PLL
-> > >> + * reprogramming is not glitchless, so the caller should switch any
-> > >> + * downstream logic to a different clock source or clock-gate it
-> > >> + * before presenting these values to the PLL configuration signals.
-> > >> + *
-> > >> + * The caller must pass this function a pre-initialized struct
-> > >> + * analogbits_wrpll_cfg record: either initialized to zero (with th=
-e
-> > >> + * exception of the .name and .flags fields) or read from the PLL.
-> > >> + *
-> > >> + * Context: Any context.  Caller must protect the memory pointed to=
- by @c
-> > >> + *          from simultaneous access or modification.
-> > >> + *
-> > >> + * Return: 0 upon success; anything else upon failure.
-> > >> + */
-> > >> +int analogbits_wrpll_configure_for_rate(struct analogbits_wrpll_cfg=
- *c,
-> > >> +                                       u32 target_rate,
-> > >> +                                       unsigned long parent_rate)
-> > >> +{
-> > >> +       unsigned long ratio;
-> > >> +       u64 target_vco_rate, delta, best_delta, f_pre_div, vco, vco_=
-pre;
-> > >> +       u32 best_f, f, post_divr_freq, fbcfg;
-> > >> +       u8 fbdiv, divq, best_r, r;
-> > >> +
-> > >> +       if (!c)
-> > >> +               return -1;
-> > > -EINVAL? Of course, it's probably better to just not care and blow up=
- if
-> > > the user of the API passes in NULL.
-> >=20
-> >=20
-> > Agreed for statically-scoped functions it's most likely overkill.=C2=A0=
- But
-> > for globally-scoped functions like this, it seemed better to catch the
-> > errors rather than to blow up. The underlying approach was intended to
-> > be standard precondition-based (paranoia-based?) development.=C2=A0 See=
-ms
-> > like I often screw up the calling side during development, so figured
-> > this approach would save human time.=C2=A0 The performance impact seems
-> > minimal.=C2=A0 That said, if it's your strong preference or requirement=
- for
-> > these to be dropped, I will of course do it - let me know.
->=20
-> I would still prefer to remove it. It's a semi-global API that's really
-> only used and exported by clk providers. We should expect an oops and
-> big callstack/crash if some driver author is using the API improperly.
-> Hopefully those developers are testing their code, and they see that
-> it's experiencing problems here. So the calling side screwing up during
-> development will very quickly realize they're doing something wrong vs.
-> noticing later that some clk is not there.
-
-OK - dropped the null pointer check.
-
-> > >> +               return -1;
-> > >> +       }
-> > >> +
-> > >> +       fbcfg =3D WRPLL_FLAGS_INT_FEEDBACK_MASK | WRPLL_FLAGS_EXT_FE=
-EDBACK_MASK;
-> > >> +       if ((c->flags & fbcfg) =3D=3D fbcfg) {
-> > >> +               WARN(1, "%s called with invalid PLL config", __func_=
-_);
-> > >> +               return -1;
-> > >> +       }
-> > >> +
-> > >> +       if (c->flags =3D=3D WRPLL_FLAGS_EXT_FEEDBACK_MASK) {
-> > >> +               WARN(1, "%s: external feedback mode not currently su=
-pported",
-> > >> +                    __func__);
-> > >> +               return -1;
-> > >> +       }
-> > > Like a bunch of this stuff, why are we checking things that the calle=
-r
-> > > should know to do itself? I'd prefer we keep things simple and assume
-> > > the caller knows what they're doing.
-> >=20
-> > My thinking was that it's easy to screw up if someone is unfamiliar wit=
-h
-> > the library.=C2=A0 Since the preconditions are computationally simple t=
-o
-> > verify, the runtime cost is essentially zero.=C2=A0 Put differently, th=
-ey are
-> > intended to trade off a small amount of CPU time to save a larger amoun=
-t
-> > of human time.
->=20
-> Can we move the checks to build time with some macro that defines the
-> configuration structure and has BUILD_BUG_ON() checks?=20
-
-In the short term, I agree that it's unlikely that PLLs will be=20
-instantiated with this library using anything other than static C=20
-structure records.  In the future, these PLLs may be instantiated=20
-completely dynamically from data not available at build time, at which=20
-point the static checks won't catch problems there.
-
-> Sure it doesn't have much runtime overhead, but it has a codesize=20
-> overhead and mental logic overhead for something that would be better=20
-> served with some static check or documentation/comments and code review.=
-=20
-> Put another way, it's not like this configuration is coming from random=
-=20
-> user input and so we need to validate the input to make sure it's sane.=
-=20
-> We can validate the input when merging the code or when building the=20
-> code and avoid this all.
-
-Seems like we have similar goals in mind; just different ways of viewing=20
-the problem.  I personally rest easier knowing that the preconditions are=
-=20
-always satisfied before entering the function.  That way there's no need=20
-to worry about whether a given library user (which may not be the Linux=20
-clock framework) really is careful about what's being passed in.  Another=
-=20
-nice side effect about verifying parameter domains at runtime is that it=20
-can reduce the amount of anguish involved in debugging runtime memory=20
-corruption bugs, since the preconditions can catch corruption closer to=20
-when it actually happens.
-
-In any case - I will post a revision with them implemented statically, as=
-=20
-you request.
-
-> > >> +}
-> > >> diff --git a/include/linux/clk/analogbits-wrpll-cln28hpc.h b/include=
-/linux/clk/analogbits-wrpll-cln28hpc.h
-> > >> new file mode 100644
-> > >> index 000000000000..cc4268f16067
-> > >> --- /dev/null
-> > >> +++ b/include/linux/clk/analogbits-wrpll-cln28hpc.h
-> > >> +
-> > >> +/**
-> > >> + * struct analogbits_wrpll_cfg - WRPLL configuration values
-> > >> + * @divr: reference divider value (6 bits), as presented to the PLL=
- signals.
-> > >> + * @divf: feedback divider value (9 bits), as presented to the PLL =
-signals.
-> > >> + * @divq: output divider value (3 bits), as presented to the PLL si=
-gnals.
-> > >> + * @flags: PLL configuration flags.  See above for more information=
-=2E
-> > >> + * @range: PLL loop filter range.  See below for more information.
-> > >> + * @_output_rate_cache: cached output rates, swept across DIVQ.
->=20
-> Drop the full-stops on here too please.
-
-Done, thanks.
-
-> > > We don't typically care about this in the kernel, just mark it
-> > > static if it's private and non-static if it's public for functions.
-> >=20
-> > Used to do it this way a long ago, perhaps a bit less incompetently -
-> > here's an example:
-> >=20
-> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
-/arch/arm/mach-omap2/omap_hwmod.c?h=3Dv4.1#n383
-> >=20
-> > I personally prefer the explicit indication that the identifier was
-> > scoped file-local in the calling functions.=C2=A0 But am fine changing =
-it per
-> > your comments, and have done so.
->=20
-> Ok. I haven't really seen the underscores, except for in the cases when
-> some framework API needs to be split into some backend multi-plexing
-> function to handle different options while keeping the original function
-> signature around. Put another way, it's not a kernel idiom for driver
-> code, but I'm not too worried about it, so go with your own style if it
-> makes you happy.
-
-They've been dropped already from this patch based on our earlier=20
-discussion, so will just keep them dropped.
-
-> > > And for struct members we have
-> > > kernel doc 'private' tag that can tell users to not do something. Or
-> > > worst case, an opaque pointer is stored and only defined in the C fil=
-e.
-> >=20
-> >=20
-> > In any case, I've changed the identifier names to align to your comment=
-s.
->=20
-> Ok. Please also use the private tag to indicate that these are internal
-> things that shouldn't be used.
-
-Done.
-
-> > >> + */
-> > >> +struct analogbits_wrpll_cfg {
-> > >> +       u8 divr;
-> > >> +       u8 divq;
-> > >> +       u8 range;
-> > >> +       u8 flags;
-> > >> +       u16 divf;
-> > >> +       u32 _output_rate_cache[DIVQ_VALUES];
-> > >> +       unsigned long _parent_rate;
-> > >> +       u8 _max_r;
-> > >> +       u8 _init_r;
-> > >> +};
-> > >> +
-> > >> +/*
-> > >> + * Function prototypes
-> > >> + */
-> > > Please don't have these types of comments. They don't help.
-> >=20
-> > Dropped this one.=C2=A0 Do you want me to nuke the similar comments in
-> > wrpll-cln28hpc.c, separating the private function section from the
-> > public functions, for example?
->=20
-> Yes.
-
-Done.
-
-Thanks for the review,
-
-- Paul
---8323329-1043048292-1543287337=:16271--
