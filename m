@@ -2,127 +2,92 @@ Return-Path: <SRS0=WhJS=OG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE91FC43441
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Nov 2018 09:34:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EAB8C43441
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Nov 2018 09:48:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C03682086B
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Nov 2018 09:34:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C03682086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
+	by mail.kernel.org (Postfix) with ESMTP id 054FD20817
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Nov 2018 09:48:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 054FD20817
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729869AbeK0Ubw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 27 Nov 2018 15:31:52 -0500
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:38068 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728266AbeK0Ubv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Nov 2018 15:31:51 -0500
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-        by mx0a-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wAR9YRKp014197;
-        Tue, 27 Nov 2018 03:34:27 -0600
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from mail1.cirrus.com (mail1.cirrus.com [141.131.3.20])
-        by mx0a-001ae601.pphosted.com with ESMTP id 2ny4x63ug0-1;
-        Tue, 27 Nov 2018 03:34:26 -0600
-Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
-        by mail1.cirrus.com (Postfix) with ESMTP id F390B611C8B6;
-        Tue, 27 Nov 2018 03:34:25 -0600 (CST)
-Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
- (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Tue, 27 Nov 2018
- 09:34:25 +0000
-Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
-        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id wAR9YOqS006890; Tue,
- 27 Nov 2018 09:34:24 GMT
-Date:   Tue, 27 Nov 2018 09:34:24 +0000
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     Rob Herring <robh@kernel.org>
-CC:     <lee.jones@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <broonie@kernel.org>,
-        <linus.walleij@linaro.org>, <mark.rutland@arm.com>,
-        <lgirdwood@gmail.com>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>,
-        <linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>
-Subject: Re: [PATCH v5 3/8] clk: lochnagar: Add initial binding documentation
-Message-ID: <20181127093424.GR16508@imbe.wolfsonmicro.main>
-References: <20181120141631.18949-1-ckeepax@opensource.cirrus.com>
- <20181120141631.18949-3-ckeepax@opensource.cirrus.com>
- <20181126201645.GA2094@bogus>
+        id S1729387AbeK0UqD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 27 Nov 2018 15:46:03 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:32904 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726807AbeK0UqD (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 27 Nov 2018 15:46:03 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 95A34206A1; Tue, 27 Nov 2018 10:48:41 +0100 (CET)
+Received: from localhost (aaubervilliers-681-1-94-205.w90-88.abo.wanadoo.fr [90.88.35.205])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 152D720736;
+        Tue, 27 Nov 2018 10:48:14 +0100 (CET)
+Date:   Tue, 27 Nov 2018 10:48:14 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Mesih Kilinc <mesihkilinc@gmail.com>
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Chen-Yu Tsai <wens@csie.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Rob Herring <robh+dt@kernel.org>,
+        Julian Calaby <julian.calaby@gmail.com>
+Subject: Re: [RFC PATCH v4 05/17] irqchip/sun4i: Add a struct to hold global
+ variables
+Message-ID: <20181127094814.zxv5ovgw2xhfe5vh@flea>
+References: <cover.1543131714.git.mesihkilinc@gmail.com>
+ <2904a51d360af76765eccfb3b963a867a06a14ee.1543131714.git.mesihkilinc@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="c5zxhz2sc4rhe6ig"
 Content-Disposition: inline
-In-Reply-To: <20181126201645.GA2094@bogus>
-User-Agent: Mutt/1.5.20 (2009-12-10)
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1811270085
+In-Reply-To: <2904a51d360af76765eccfb3b963a867a06a14ee.1543131714.git.mesihkilinc@gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Nov 26, 2018 at 02:16:45PM -0600, Rob Herring wrote:
-> On Tue, Nov 20, 2018 at 02:16:26PM +0000, Charles Keepax wrote:
-> > Lochnagar is an evaluation and development board for Cirrus
-> > Logic Smart CODEC and Amp devices. It allows the connection of
-> > most Cirrus Logic devices on mini-cards, as well as allowing
-> > connection of various application processor systems to provide a
-> > full evaluation platform. This driver supports the board
-> > controller chip on the Lochnagar board.
-> > 
-> > Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-> > ---
-> > +  - compatible : One of the following strings:
-> > +                 "cirrus,lochnagar1-clk"
-> > +                 "cirrus,lochnagar2-clk"
-> 
-> What's the 1 vs. 2?
-> 
 
-There are two versions of the device, we need to be able to
-differenciate between them in the driver.
+--c5zxhz2sc4rhe6ig
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > +     - ln-pmic-32k : On board fixed regulator.
-> 
-> regulator?
+On Sun, Nov 25, 2018 at 10:43:08AM +0300, Mesih Kilinc wrote:
+> In order to support different chips, IC specific data should be hold in
+> a struct. This patch moves irq_base and irq_domain global variables to
+> struct.
+>=20
+> Signed-off-by: Mesih Kilinc <mesihkilinc@gmail.com>
 
-Well that is a spectacular copy and paste oversight sorry about
-that will get it fixed up.
+Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
 
-> 
-> > +     - ln-clk-12m : On board fixed regulator.
-> > +     - ln-clk-11m : On board fixed regulator.
-> > +     - ln-clk-24m : On board fixed regulator.
-> > +     - ln-clk-22m : On board fixed regulator.
-> > +     - ln-usb-clk-24m : On board fixed regulator.
-> > +     - ln-usb-clk-12m : On board fixed regulator.
+Thanks!
+Maxime
 
-> > +lochnagar-clk {
-> > +	compatible = "cirrus,lochnagar2-clk";
-> > +
-> > +	#clock-cells = <1>;
-> > +
-> > +	clocks = <&clk-audio>, <&clk_pmic>;
-> > +	clock-names = "ln-gf-mclk2", "ln-pmic-32k";
-> > +
-> > +	assigned-clocks = <&lochnagar-clk LOCHNAGAR_CDC_MCLK1>,
-> > +			  <&lochnagar-clk LOCHNAGAR_CDC_MCLK2>;
-> > +	assigned-clock-parents = <&clk-audio>,
-> > +				 <&clk-pmic>;
-> > +
-> > +	clk-pmic: clk-pmic {
-> 
-> This isn't really any relationship to the parent and I think shouldn't 
-> be a sub-node.
-> 
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-Yeah sorry that is a good point will move it out.
+--c5zxhz2sc4rhe6ig
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thanks,
-Charles
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW/0S3gAKCRDj7w1vZxhR
+xcQ5AP9ZKQ/9AvJ0cxjVyLMnFmUDRZzammg9uY11ThjRPGy64wD/fR4xVPtiQK+L
+uQ2Tbo3utBvooJHXC9VtNjClp6zcnwM=
+=Sy4T
+-----END PGP SIGNATURE-----
+
+--c5zxhz2sc4rhe6ig--
