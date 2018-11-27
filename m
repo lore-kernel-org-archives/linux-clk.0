@@ -2,173 +2,106 @@ Return-Path: <SRS0=WhJS=OG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9937CC43441
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Nov 2018 20:37:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81DD5C43441
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Nov 2018 21:59:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E57D208E4
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Nov 2018 20:37:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4558121104
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Nov 2018 21:59:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1mCvwkEL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E57D208E4
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="W+MZ0VPz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4558121104
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726611AbeK1HgT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 28 Nov 2018 02:36:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34654 "EHLO mail.kernel.org"
+        id S1726616AbeK1I6k (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 28 Nov 2018 03:58:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60498 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726507AbeK1HgT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 28 Nov 2018 02:36:19 -0500
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726288AbeK1I6k (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 28 Nov 2018 03:58:40 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 722FB2145D;
-        Tue, 27 Nov 2018 20:37:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BE179208E4;
+        Tue, 27 Nov 2018 21:59:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543351032;
-        bh=v0wvMtxOqqdNvl02rRFzgB6Sf07+8yRqZxK6nOIUG3E=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=1mCvwkELX895UFs2b/2bVNJt0gaZ5bOnVyvIJXOTnkVoZ2zJOKOLFQMjn9I6x4mh8
-         KfwiE/g2XHy7483iFI206nNJdoJ6ZhHW7DCzQ7+Mmf/aBT0pAaCPUdQ3r2+uAEzz9P
-         /JTJlW1oHNDQ989+TRIMsZwEl1LFphZf11qw2PT8=
-Received: by mail-wr1-f48.google.com with SMTP id t3so24087724wrr.3;
-        Tue, 27 Nov 2018 12:37:12 -0800 (PST)
-X-Gm-Message-State: AA+aEWbshFSK/LP7neZ11mw+OETkq92hIfN7BOkMTQE++96rIGeeADnx
-        LG6RRlzoRgEM1Tr3C2YKBqT7LN/cl/7Qjz5+u4o=
-X-Google-Smtp-Source: AFSGD/WYUfyCSPnSNBUnPTK58DrZUZCFCavoCLZHE3y2blcxU2C8gY9xJ9zW3DLBtqwc0HDArYd+QFNO/ZSW7uikPMM=
-X-Received: by 2002:adf:f28d:: with SMTP id k13mr30136289wro.78.1543351030926;
- Tue, 27 Nov 2018 12:37:10 -0800 (PST)
+        s=default; t=1543355961;
+        bh=aB3GKJCS0wLgzklBiPm/F5IwrrQR5d479F7S2r+OEdk=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=W+MZ0VPziIi238vVkIhrZHIhcN4kAMmNLZGuZnvC9sALbUsSc2xwgkuwcVzJSI9lR
+         Qibzl6GQBVsekaMtDp5J+vqOKZxm3TNUv2cgfw8ZSqtb8Rk0cUhADnG4uvIUMoWgr3
+         /1QEarbqqOAnJk+raVfVZdTcOiUNrYeZ7RJ56Saw=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20181127034254.24721-1-weiyi.lu@mediatek.com> <20181127034254.24721-5-weiyi.lu@mediatek.com>
-In-Reply-To: <20181127034254.24721-5-weiyi.lu@mediatek.com>
-From:   Sean Wang <sean.wang@kernel.org>
-Date:   Tue, 27 Nov 2018 12:36:58 -0800
-X-Gmail-Original-Message-ID: <CAGp9Lzro5YHCYqzOWFJJa4g75odf6yK52cean_aS3p2STOtJYg@mail.gmail.com>
-Message-ID: <CAGp9Lzro5YHCYqzOWFJJa4g75odf6yK52cean_aS3p2STOtJYg@mail.gmail.com>
-Subject: Re: [PATCH v2 03/11] clk: mediatek: Disable tuner_en before change
- PLL rate
-To:     weiyi.lu@mediatek.com
-Cc:     drinkcat@chromium.org, Matthias Brugger <matthias.bgg@gmail.com>,
-        sboyd@codeaurora.org, robh@kernel.org, jamesjj.liao@mediatek.com,
-        srv_heupstream@mediatek.com, linux-kernel@vger.kernel.org,
-        fan.chen@mediatek.com, linux-mediatek@lists.infradead.org,
-        owen.chen@mediatek.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+To:     Jiada Wang <jiada_wang@mentor.com>, geert+renesas@glider.be,
+        horms@verge.net.au, magnus.damm@gmail.com, mark.rutland@arm.com,
+        mturquette@baylibre.com, robh+dt@kernel.org
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <7f8827a5-c65d-0e1e-a0f9-23b31305d26a@mentor.com>
+Cc:     linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, kuninori.morimoto.gx@renesas.com
+References: <20181025072349.15173-1-jiada_wang@mentor.com>
+ <20181025072349.15173-3-jiada_wang@mentor.com>
+ <154083775062.98144.11157403961171783929@swboyd.mtv.corp.google.com>
+ <9f9fbf3a-4455-bdf3-0438-b39b9cdda112@mentor.com>
+ <154130125117.88331.5969014008610987799@swboyd.mtv.corp.google.com>
+ <7f8827a5-c65d-0e1e-a0f9-23b31305d26a@mentor.com>
+Message-ID: <154335596100.88331.410483221336228399@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH linux-next v1 2/4] clk: renesas: Add binding document for AVB
+ Counter Clock
+Date:   Tue, 27 Nov 2018 13:59:21 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Weiyi Lu <weiyi.lu@mediatek.com> =E6=96=BC 2018=E5=B9=B411=E6=9C=8826=E6=97=
-=A5 =E9=80=B1=E4=B8=80 =E4=B8=8B=E5=8D=887:45=E5=AF=AB=E9=81=93=EF=BC=9A
->
-> From: Owen Chen <owen.chen@mediatek.com>
->
-> PLLs with tuner_en bit, such as APLL1, need to disable
-> tuner_en before apply new frequency settings, or the new frequency
-> settings (pcw) will not be applied.
-> The tuner_en bit will be disabled during changing PLL rate
-> and be restored after new settings applied.
+Quoting Jiada Wang (2018-11-21 23:06:10)
+> On 2018/11/04 12:14, Stephen Boyd wrote:
+> > Quoting Jiada Wang (2018-10-31 05:00:49)
+> >> On 2018/10/30 3:29, Stephen Boyd wrote:
+> >>> Quoting jiada_wang@mentor.com (2018-10-25 00:23:47)
+> >>>> +Required Properties:
+> >>>> +  - compatible: Must be "renesas,clk-avb"
+> >>>> +  - reg: Base address and length of the memory resource used by the=
+ AVB
+> >>>> +  - #clock-cells: Must be 1
+> >>>> +
+> >>>> +Example
+> >>>> +-------
+> >>>> +
+> >>>> +       clk_avb: avb-clock@ec5a011c {
+> >>>> +               compatible =3D "renesas,clk-avb";
+> >>>> +               reg =3D <0 0xec5a011c 0 0x24>;
+> >>> This is an odd register offset. Is this just one clk inside of a larg=
+er
+> >>> clk controller?
+> >>>
+> >> Yes, avb_counter clock is part of Audio Clock Generator reg: <0
+> >> 0xec5a0000 0 0x140>,
+> >> but "adg" has already been declared in R-Car GEN2/GEN3 SoC .dtsi file,
+> >> with reg: <0 0xec5a0000 0 0x100>,
+> >> which leaves <0 0xec5a0100 0 0x140> currently not used by any module.
+> >>
+> > So why can't we expand the register size in the dts file and update the
+> > audio clock generator driver to register this avb clock too? Presumably
+> > the mapping is large enough to cover the clk registers already so it is
+> > more of a formality to expand the register size than a requirement.
+> I am working on ver2 to expend register size to cover <0 0xec5a0100 0 0x1=
+40>
+> in audio clock generator (ADG) driver, but as provider of newly added =
 
-It looks like a bug fix. If so, you should add a fixes tag and even cc
-stable tree
+> "AVB_COUNTER" clock,
+> ADG driver also uses these clocks if necessary, so it keeps itself BUSY,
+> and cause ADG driver can't be unloaded.
+> my question is, is such use case allowed? (clock provider is also client =
 
->
-> Signed-off-by: Owen Chen <owen.chen@mediatek.com>
-> ---
->  drivers/clk/mediatek/clk-pll.c | 33 +++++++++++++++++++++++++++++++--
->  1 file changed, 31 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/clk/mediatek/clk-pll.c b/drivers/clk/mediatek/clk-pl=
-l.c
-> index 1db161aced31..81400601f107 100644
-> --- a/drivers/clk/mediatek/clk-pll.c
-> +++ b/drivers/clk/mediatek/clk-pll.c
-> @@ -27,7 +27,7 @@
->  #define CON0_BASE_EN           BIT(0)
->  #define CON0_PWR_ON            BIT(0)
->  #define CON0_ISO_EN            BIT(1)
-> -#define CON0_PCW_CHG           BIT(31)
-> +#define CON1_PCW_CHG           BIT(31)
+> of clocks).
 
-it seems like an unnecessary change
+Yes, a clock provider can also be a client of clocks.
 
->
->  #define AUDPLL_TUNER_EN                BIT(31)
->
-> @@ -97,9 +97,31 @@ static void mtk_pll_set_rate_regs(struct mtk_clk_pll *=
-pll, u32 pcw,
->  {
->         u32 con1, val;
->         int pll_en;
-> +       u32 tuner_en =3D 0;
-> +       u32 tuner_en_mask;
-> +       void __iomem *tuner_en_addr =3D NULL;
->
->         pll_en =3D readl(pll->base_addr + REG_CON0) & CON0_BASE_EN;
->
-> +       /* disable tuner */
-
-similar code pieces are ready on mtk_pll_[un]prepare. maybe we can add
-common tuner operations for them to reuse.
-
-> +       if (pll->tuner_en_addr) {
-> +               tuner_en_addr =3D pll->tuner_en_addr;
-> +               tuner_en_mask =3D BIT(pll->data->tuner_en_bit);
-> +       } else if (pll->tuner_addr) {
-> +               tuner_en_addr =3D pll->tuner_addr;
-> +               tuner_en_mask =3D AUDPLL_TUNER_EN;
-> +       }
-> +
-> +       if (tuner_en_addr) {
-> +               val =3D readl(tuner_en_addr);
-> +               tuner_en =3D val & tuner_en_mask;
-> +
-> +               if (tuner_en) {
-> +                       val &=3D ~tuner_en_mask;
-> +                       writel(val, tuner_en_addr);
-> +               }
-> +       }
-> +
->         /* set postdiv */
->         val =3D readl(pll->pd_addr);
->         val &=3D ~(POSTDIV_MASK << pll->data->pd_shift);
-> @@ -120,12 +142,19 @@ static void mtk_pll_set_rate_regs(struct mtk_clk_pl=
-l *pll, u32 pcw,
->         con1 =3D readl(pll->base_addr + REG_CON1);
->
->         if (pll_en)
-> -               con1 |=3D CON0_PCW_CHG;
-> +               con1 |=3D CON1_PCW_CHG;
->
->         writel(con1, pll->base_addr + REG_CON1);
->         if (pll->tuner_addr)
->                 writel(con1 + 1, pll->tuner_addr);
->
-> +       /* restore tuner_en */
-> +       if (tuner_en_addr && tuner_en) {
-
-if (tuner_en) is sufficient
-
-> +               val =3D readl(tuner_en_addr);
-> +               val |=3D tuner_en_mask;
-> +               writel(val, tuner_en_addr);
-> +       }
-> +
->         if (pll_en)
->                 udelay(20);
->  }
-> --
-> 2.18.0
->
->
-> _______________________________________________
-> Linux-mediatek mailing list
-> Linux-mediatek@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-mediatek
