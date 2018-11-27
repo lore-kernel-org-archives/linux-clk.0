@@ -2,493 +2,180 @@ Return-Path: <SRS0=WhJS=OG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08373C43441
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Nov 2018 10:13:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39E00C04EBA
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Nov 2018 10:25:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F59B208E4
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Nov 2018 10:13:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ms4NlmS7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F59B208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 0B1F720817
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Nov 2018 10:25:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B1F720817
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730329AbeK0VLL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 27 Nov 2018 16:11:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59184 "EHLO mail.kernel.org"
+        id S1730821AbeK0VWh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 27 Nov 2018 16:22:37 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:34777 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730295AbeK0VLK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 27 Nov 2018 16:11:10 -0500
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 901E1208E4;
-        Tue, 27 Nov 2018 10:13:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543313625;
-        bh=/SbckQH1vgSNT6q2LyWeBCSIEfdsxmfF5Ra2OQo8BVE=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=ms4NlmS7spDqrn+w08AF72/zGg/JS+bXl3dBD2UV75FSu+BOPbhMq+p9UU0mDUhIO
-         /Z2S9rKJtDm8bthPMCRQiZPiEvWx0G5+8G/Ldr0tguEcVeE+Qwxxs1AngpA6t+UmOL
-         IYPAwlYKa99QAiLkfaIeKbWR3uzbvD3kUoGqZhoc=
-Received: by mail-wm1-f46.google.com with SMTP id k198so21615195wmd.3;
-        Tue, 27 Nov 2018 02:13:45 -0800 (PST)
-X-Gm-Message-State: AA+aEWbkBXGFaBoch72WvAIKDtVy43PW2N4NZjVULnRf/B201smlds9E
-        CCo377fyBWIwdrXxUqdq6TCEJUjVDycjvF0drQk=
-X-Google-Smtp-Source: AFSGD/UCM5e5du/B8uyIf9jQlK9Qj00+8aY1B3lOxG179P9lfmP4Bu3/eMKyBX3bp7Y2Cvl3EqjNTibnqZCkLvJ9bgM=
-X-Received: by 2002:a1c:b406:: with SMTP id d6mr5115290wmf.129.1543313623970;
- Tue, 27 Nov 2018 02:13:43 -0800 (PST)
+        id S1726416AbeK0VWg (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 27 Nov 2018 16:22:36 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 388B220DF3; Tue, 27 Nov 2018 11:25:08 +0100 (CET)
+Received: from localhost (aaubervilliers-681-1-94-205.w90-88.abo.wanadoo.fr [90.88.35.205])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 96DA120DD6;
+        Tue, 27 Nov 2018 11:24:50 +0100 (CET)
+Date:   Tue, 27 Nov 2018 11:24:50 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi@googlegroups.com, linux-amarula@amarulasolutions.com
+Subject: Re: [PATCH v4 08/26] drm/sun4i: sun6i_mipi_dsi: Fix VBP size
+ calculation
+Message-ID: <20181127102450.b65jzhrdpxn5rxmk@flea>
+References: <20181113111633.20189-1-jagan@amarulasolutions.com>
+ <20181113111633.20189-9-jagan@amarulasolutions.com>
+ <20181115095551.uctdkfmuwlnzhjnn@flea>
+ <CAMty3ZAEHiovm6OF6JvJVQR4aqpG1Q3ML5YqxJkF2ntwRkUO=A@mail.gmail.com>
+ <20181120155715.andrjp5kg6ugcv72@flea>
+ <CAMty3ZCUOJmvekupOwh281g5HaazTpBbukWQY2Pv2OYypAwciw@mail.gmail.com>
 MIME-Version: 1.0
-References: <20181127034254.24721-1-weiyi.lu@mediatek.com> <20181127034254.24721-3-weiyi.lu@mediatek.com>
-In-Reply-To: <20181127034254.24721-3-weiyi.lu@mediatek.com>
-From:   Sean Wang <sean.wang@kernel.org>
-Date:   Tue, 27 Nov 2018 02:13:33 -0800
-X-Gmail-Original-Message-ID: <CAGp9LzpxF8haQVVVM00xHX_vXc-ddtBZzZJ9AJCx13CrJqGs5A@mail.gmail.com>
-Message-ID: <CAGp9LzpxF8haQVVVM00xHX_vXc-ddtBZzZJ9AJCx13CrJqGs5A@mail.gmail.com>
-Subject: Re: [PATCH v2 01/11] clk: mediatek: add new clkmux register API
-To:     weiyi.lu@mediatek.com
-Cc:     drinkcat@chromium.org, Matthias Brugger <matthias.bgg@gmail.com>,
-        sboyd@codeaurora.org, robh@kernel.org, jamesjj.liao@mediatek.com,
-        srv_heupstream@mediatek.com, linux-kernel@vger.kernel.org,
-        fan.chen@mediatek.com, linux-mediatek@lists.infradead.org,
-        owen.chen@mediatek.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="pf6ls3yybuynq446"
+Content-Disposition: inline
+In-Reply-To: <CAMty3ZCUOJmvekupOwh281g5HaazTpBbukWQY2Pv2OYypAwciw@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
- >
-> From: Owen Chen <owen.chen@mediatek.com>
->
-> On both MT8183 & MT6765, there add "set/clr" register for
-> each clkmux setting, and one update register to trigger value change.
-> It is designed to prevent read-modify-write racing issue.
-> The sw design need to add a new API to handle this hw change with
-> a new mtk_clk_mux/mtk_mux struct in new file "clk-mux.c", "clk-mux.h".
->
-> Signed-off-by: Owen Chen <owen.chen@mediatek.com>
-> Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
-> ---
->  drivers/clk/mediatek/Makefile  |   2 +-
->  drivers/clk/mediatek/clk-mux.c | 240 +++++++++++++++++++++++++++++++++
->  drivers/clk/mediatek/clk-mux.h | 101 ++++++++++++++
->  3 files changed, 342 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/clk/mediatek/clk-mux.c
->  create mode 100644 drivers/clk/mediatek/clk-mux.h
->
-> diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
-> index 844b55d2770d..b97980dbb738 100644
-> --- a/drivers/clk/mediatek/Makefile
-> +++ b/drivers/clk/mediatek/Makefile
-> @@ -1,5 +1,5 @@
->  # SPDX-License-Identifier: GPL-2.0
-> -obj-$(CONFIG_COMMON_CLK_MEDIATEK) += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o clk-cpumux.o reset.o
-> +obj-$(CONFIG_COMMON_CLK_MEDIATEK) += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o clk-cpumux.o reset.o clk-mux.o
 
-add a proper words wrap?
+--pf6ls3yybuynq446
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->  obj-$(CONFIG_COMMON_CLK_MT6797) += clk-mt6797.o
->  obj-$(CONFIG_COMMON_CLK_MT6797_IMGSYS) += clk-mt6797-img.o
->  obj-$(CONFIG_COMMON_CLK_MT6797_MMSYS) += clk-mt6797-mm.o
-> diff --git a/drivers/clk/mediatek/clk-mux.c b/drivers/clk/mediatek/clk-mux.c
-> new file mode 100644
-> index 000000000000..8618e5fa2b30
-> --- /dev/null
-> +++ b/drivers/clk/mediatek/clk-mux.c
-> @@ -0,0 +1,240 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2018 MediaTek Inc.
-> + * Author: Owen Chen <owen.chen@mediatek.com>
-> + */
-> +
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +#include <linux/slab.h>
-> +#include <linux/mfd/syscon.h>
-> +
-> +#include "clk-mtk.h"
-> +#include "clk-mux.h"
-> +
-> +static inline struct mtk_clk_mux
-> +       *to_mtk_clk_mux(struct clk_hw *hw)
-> +{
-> +       return container_of(hw, struct mtk_clk_mux, hw);
-> +}
-> +
-> +static int mtk_clk_mux_enable(struct clk_hw *hw)
-> +{
-> +       struct mtk_clk_mux *mux = to_mtk_clk_mux(hw);
-> +       u32 mask = BIT(mux->gate_shift);
-> +
-> +       return regmap_update_bits(mux->regmap, mux->mux_ofs, mask, 0);
+On Tue, Nov 20, 2018 at 09:55:42PM +0530, Jagan Teki wrote:
+> On Tue, Nov 20, 2018 at 9:27 PM Maxime Ripard <maxime.ripard@bootlin.com>=
+ wrote:
+> >
+> > On Thu, Nov 15, 2018 at 11:19:53PM +0530, Jagan Teki wrote:
+> > > On Thu, Nov 15, 2018 at 3:26 PM Maxime Ripard <maxime.ripard@bootlin.=
+com> wrote:
+> > > >
+> > > > Hi,
+> > > >
+> > > > On Tue, Nov 13, 2018 at 04:46:15PM +0530, Jagan Teki wrote:
+> > > > > The horizontal and vertical back porch calculation in BSP
+> > > > > code is simply following the Linux drm comment diagram, in
+> > > > > include/drm/drm_modes.h which is
+> > > > >
+> > > > > [hv]back porch =3D [hv]total - [hv]sync_end
+> > > > >
+> > > > > BSP code form BPI-M64-bsp is calculating vertical back porch as
+> > > > > (from linux-sunxi/drivers/video/sunxi/disp2/disp/de/disp_lcd.c)
+> > > > >
+> > > > > timmings->ver_sync_time=3D panel_info->lcd_vspw;
+> > > > > timmings->ver_back_porch=3D panel_info->lcd_vbp-panel_info->lcd_v=
+spw;
+> > > > >
+> > > > > vbp =3D panel->lcd_vbp;
+> > > > > vspw =3D panel->lcd_vspw;
+> > > > > dsi_dev[sel]->dsi_basic_size0.bits.vbp =3D vbp-vspw;
+> > > > > dsi_dev[sel]->dsi_basic_size0.bits.vbp =3D panel->lcd_vbp - panel=
+->lcd_vspw;
+> > > > > =3D>  timmings->ver_back_porch + panel_info->lcd_vspw - panel_inf=
+o->lcd_vspw
+> > > > > =3D>  timmings->ver_back_porch
+> > > > > =3D>  mode->vtotal - mode->end
+> > > > >
+> > > > > Which evatually same as mode->vtotal - mode->vsync_end so update =
+the
+> > > > > same in SUN6I_DSI_BASIC_SIZE0_VBP
+> > > > >
+> > > > > On the information note, existing SUN6I_DSI_BASIC_SIZE0_VSA is pr=
+oper
+> > > > > value.
+> > > > >
+> > > > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > > >
+> > > > I've tested your changes on my A33 board, and this commit will break
+> > > > it.
+> > > >
+> > > > It creates vblank timeouts, and visual artifacts at the bottom of t=
+he
+> > > > display.
+> > >
+> > > Strange, VBP is earlier gives front porch which is anyway wrong.
+> > >
+> > > >
+> > > > Later commits seem to fix the issue, but will create some blanking =
+on
+> > > > the upper third of the display.
+> > > >
+> > > > Since the documentation is quite sparse, and a MIPI-DSI analyzer is
+> > > > way too expensive, I'd really like to have at least what each of th=
+ese
+> > > > commits are actually fixing, and what symptoms each of these were
+> > > > causing, and not just "the BSP does it".
+> > >
+> > > W/o this 2-lane panel is breaking, same vblank timeout and visual
+> > > artifacts at the bottom of the panel. though the commits may reference
+> > > BSP, I have at-least tested on 3 different panels for us to prove its
+> > > working.
+> > >
+> > > > Having some datasheet for the panels you had working would help too.
+> > >
+> > > Unfortunately datasheet doesn't have any required information what we
+> > > actually looking for.
+> >
+> > Not even the timings? How did you get that information then?
+>=20
+> datasheet has timing values, but this changes need controller
+> information about VBP register that I don't have. But again existing
+> VBP is not back porch for real, it's front porch.
 
-prefer to
-return regmap_update_bits(mux->regmap, mux->mux_ofs, mask, ~mask);
-just to align with mtk_clk_mux_disable
+Yet, this breaks the existing setup. So again:
 
-> +}
-> +
-> +static void mtk_clk_mux_disable(struct clk_hw *hw)
-> +{
-> +       struct mtk_clk_mux *mux = to_mtk_clk_mux(hw);
-> +       u32 mask = BIT(mux->gate_shift);
-> +
-> +       regmap_update_bits(mux->regmap, mux->mux_ofs, mask, mask);
-> +}
-> +
-> +static int mtk_clk_mux_enable_setclr(struct clk_hw *hw)
-> +{
-> +       struct mtk_clk_mux *mux = to_mtk_clk_mux(hw);
-> +       u32 val;
-> +
-> +       val = BIT(mux->gate_shift);
-> +
-> +       return regmap_write(mux->regmap, mux->mux_clr_ofs, val);
+> > > > Since the documentation is quite sparse, and a MIPI-DSI analyzer is
+> > > > way too expensive, I'd really like to have at least what each of th=
+ese
+> > > > commits are actually fixing, and what symptoms each of these were
+> > > > causing, and not just "the BSP does it".
 
-prefer to
-return regmap_write(mux->regmap, mux->mux_clr_ofs, BIT(mux->gate_shift));
-and drop u32 val declaration
+Maxime
 
-> +}
-> +
-> +static void mtk_clk_mux_disable_setclr(struct clk_hw *hw)
-> +{
-> +       struct mtk_clk_mux *mux = to_mtk_clk_mux(hw);
-> +       u32 val;
-> +
-> +       val = BIT(mux->gate_shift);
-> +       regmap_write(mux->regmap, mux->mux_set_ofs, val);
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-perfer to
-regmap_write(mux->regmap, mux->mux_set_ofs, BIT(mux->gate_shift));
-and drop u32 val
+--pf6ls3yybuynq446
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> +}
-> +
-> +static int mtk_clk_mux_is_enabled(struct clk_hw *hw)
-> +{
-> +       struct mtk_clk_mux *mux = to_mtk_clk_mux(hw);
-> +       u32 val;
-> +
-> +       regmap_read(mux->regmap, mux->mux_ofs, &val);
-> +
-> +       return (val & BIT(mux->gate_shift)) == 0;
-> +}
-> +
-> +static u8 mtk_clk_mux_get_parent(struct clk_hw *hw)
-> +{
-> +       struct mtk_clk_mux *mux = to_mtk_clk_mux(hw);
-> +       u32 mask = GENMASK(mux->mux_width - 1, 0);
-> +       u32 val;
-> +
-> +       regmap_read(mux->regmap, mux->mux_ofs, &val);
-> +       val = (val >> mux->mux_shift) & mask;
-> +
-> +       return val;
+-----BEGIN PGP SIGNATURE-----
 
-an u32 to u8 happens here
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW/0bcgAKCRDj7w1vZxhR
+xSVqAP45MYHeU4Nou/QUNUTtN0u7DZwdzn1v2m7HkRHZgpg4rAEAipVCANPIyJCi
+n3aM6uwb+fnPFSbu+9uMYN5pPPZzXAA=
+=pUXC
+-----END PGP SIGNATURE-----
 
-> +}
-> +
-> +static int mtk_clk_mux_set_parent_lock(struct clk_hw *hw, u8 index)
-> +{
-> +       struct mtk_clk_mux *mux = to_mtk_clk_mux(hw);
-> +       u32 mask = GENMASK(mux->mux_width - 1, 0);
-> +       u32 val;
-> +       unsigned long flags = 0;
-
-zero init is unnecessary
-
-> +
-> +       if (mux->lock)
-> +               spin_lock_irqsave(mux->lock, flags);
-> +       else
-> +               __acquire(mux->lock);
-> +
-> +       regmap_read(mux->regmap, mux->mux_ofs, &val);
-> +       val = (val & mask) >> mux->mux_shift;
-> +
-> +       if (val != index) {
-> +               val = index << mux->mux_shift;
-> +               regmap_update_bits(mux->regmap, mux->mux_ofs, mask, val);
-> +       }
-
-regmap_update_bits(mux->regmap, mux->mux_ofs, mask, index << mux->mux_shift);
-appears to be sufficient. regmap_update_bits would check whether the
-register write is necessary.
-
-> +
-> +       if (mux->lock)
-> +               spin_unlock_irqrestore(mux->lock, flags);
-> +       else
-> +               __release(mux->lock);
-> +
-> +       return 0;
-> +}
-> +
-> +static int mtk_clk_mux_set_parent_setclr_lock(struct clk_hw *hw, u8 index)
-> +{
-> +       struct mtk_clk_mux *mux = to_mtk_clk_mux(hw);
-> +       u32 mask = GENMASK(mux->mux_width - 1, 0);
-> +       u32 val, orig;
-> +       unsigned long flags = 0;
-
-zero init is unnecessary
-
-> +
-> +       if (mux->lock)
-> +               spin_lock_irqsave(mux->lock, flags);
-> +       else
-> +               __acquire(mux->lock);
-> +
-> +       regmap_read(mux->regmap, mux->mux_ofs, &orig);
-> +       val = (orig & ~(mask << mux->mux_shift)) | (index << mux->mux_shift);
-> +
-> +       if (val != orig) {
-> +               regmap_write(mux->regmap, mux->mux_clr_ofs,
-> +                               mask << mux->mux_shift);
-> +               regmap_write(mux->regmap, mux->mux_set_ofs,
-> +                               index << mux->mux_shift);
-> +
-> +               if (mux->upd_shift >= 0)
-
-upd_shift is an u8
-
-> +                       regmap_write(mux->regmap, mux->upd_ofs,
-> +                                       BIT(mux->upd_shift));
-> +       }
-> +
-> +       if (mux->lock)
-> +               spin_unlock_irqrestore(mux->lock, flags);
-> +       else
-> +               __release(mux->lock);
-> +
-> +       return 0;
-> +}
-> +
-> +const struct clk_ops mtk_mux_ops = {
-> +       .get_parent = mtk_clk_mux_get_parent,
-> +       .set_parent = mtk_clk_mux_set_parent_lock,
-> +};
-> +
-> +const struct clk_ops mtk_mux_clr_set_upd_ops = {
-> +       .get_parent = mtk_clk_mux_get_parent,
-> +       .set_parent = mtk_clk_mux_set_parent_setclr_lock,
-> +};
-> +
-> +const struct clk_ops mtk_mux_gate_ops = {
-> +       .enable = mtk_clk_mux_enable,
-> +       .disable = mtk_clk_mux_disable,
-> +       .is_enabled = mtk_clk_mux_is_enabled,
-> +       .get_parent = mtk_clk_mux_get_parent,
-> +       .set_parent = mtk_clk_mux_set_parent_lock,
-> +};
-> +
-> +const struct clk_ops mtk_mux_gate_clr_set_upd_ops = {
-> +       .enable = mtk_clk_mux_enable_setclr,
-> +       .disable = mtk_clk_mux_disable_setclr,
-> +       .is_enabled = mtk_clk_mux_is_enabled,
-> +       .get_parent = mtk_clk_mux_get_parent,
-> +       .set_parent = mtk_clk_mux_set_parent_setclr_lock,
-> +};
-> +
-> +struct clk *mtk_clk_register_mux(const struct mtk_mux *mux,
-> +                                struct regmap *regmap,
-> +                                spinlock_t *lock)
-> +{
-> +       struct mtk_clk_mux *mtk_mux;
-> +       struct clk_init_data init;
-> +       struct clk *clk;
-> +
-> +       mtk_mux = kzalloc(sizeof(*mtk_mux), GFP_KERNEL);
-> +       if (!mtk_mux)
-> +               return ERR_PTR(-ENOMEM);
-> +
-> +       init.name = mux->name;
-> +       init.flags = mux->flags | CLK_SET_RATE_PARENT;
-> +       init.parent_names = mux->parent_names;
-> +       init.num_parents = mux->num_parents;
-> +       init.ops = mux->ops;
-> +
-> +       mtk_mux->regmap = regmap;
-> +       mtk_mux->name = mux->name;
-> +       mtk_mux->mux_ofs = mux->mux_ofs;
-> +       mtk_mux->mux_set_ofs = mux->set_ofs;
-> +       mtk_mux->mux_clr_ofs = mux->clr_ofs;
-> +       mtk_mux->upd_ofs = mux->upd_ofs;
-> +       mtk_mux->mux_shift = mux->mux_shift;
-> +       mtk_mux->mux_width = mux->mux_width;
-> +       mtk_mux->gate_shift = mux->gate_shift;
-> +       mtk_mux->upd_shift = mux->upd_shift;
-> +
-> +       mtk_mux->lock = lock;
-> +       mtk_mux->hw.init = &init;
-> +
-> +       clk = clk_register(NULL, &mtk_mux->hw);
-> +       if (IS_ERR(clk)) {
-> +               kfree(mtk_mux);
-> +               return clk;
-> +       }
-> +
-> +       return clk;
-> +}
-> +
-> +int mtk_clk_register_muxes(const struct mtk_mux *muxes,
-> +                          int num, struct device_node *node,
-> +                          spinlock_t *lock,
-> +                          struct clk_onecell_data *clk_data)
-> +{
-> +       struct regmap *regmap;
-> +       struct clk *clk;
-> +       int i;
-> +
-> +       regmap = syscon_node_to_regmap(node);
-> +       if (IS_ERR(regmap)) {
-> +               pr_err("Cannot find regmap for %pOF: %ld\n", node,
-> +                      PTR_ERR(regmap));
-> +               return PTR_ERR(regmap);
-> +       }
-> +
-> +       for (i = 0; i < num; i++) {
-> +               const struct mtk_mux *mux = &muxes[i];
-> +
-> +               if (IS_ERR_OR_NULL(clk_data->clks[mux->id])) {
-> +                       clk = mtk_clk_register_mux(mux, regmap, lock);
-> +
-> +                       if (IS_ERR(clk)) {
-> +                               pr_err("Failed to register clk %s: %ld\n",
-> +                                      mux->name, PTR_ERR(clk));
-> +                               continue;
-> +                       }
-> +
-> +                       clk_data->clks[mux->id] = clk;
-> +               }
-> +       }
-> +
-> +       return 0;
-> +}
-> diff --git a/drivers/clk/mediatek/clk-mux.h b/drivers/clk/mediatek/clk-mux.h
-> new file mode 100644
-> index 000000000000..ff0276bb771c
-> --- /dev/null
-> +++ b/drivers/clk/mediatek/clk-mux.h
-> @@ -0,0 +1,101 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Copyright (c) 2018 MediaTek Inc.
-> + * Author: Owen Chen <owen.chen@mediatek.com>
-> + */
-> +
-> +#ifndef __DRV_CLK_MUX_H
-> +#define __DRV_CLK_MUX_H
-
-how about adding a mtk specific prefix?
-
-> +
-> +#include <linux/clk-provider.h>
-> +
-> +struct mtk_clk_mux {
-> +       struct clk_hw hw;
-> +       struct regmap *regmap;
-> +
-> +       const char *name;
-> +
-> +       u32 mux_set_ofs;
-> +       u32 mux_clr_ofs;
-> +       u32 mux_ofs;
-> +       u32 upd_ofs;
-> +
-> +       u8 mux_shift;
-> +       u8 mux_width;
-> +       u8 gate_shift;
-> +       u8 upd_shift;
-> +
-> +       spinlock_t *lock;
-> +};
-> +
-> +struct mtk_mux {
-> +       int id;
-> +       const char *name;
-> +       const char * const *parent_names;
-> +       unsigned int flags;
-> +
-> +       u32 mux_ofs;
-> +       u32 set_ofs;
-> +       u32 clr_ofs;
-> +       u32 upd_ofs;
-> +
-> +       u8 mux_shift;
-> +       u8 mux_width;
-> +       u8 gate_shift;
-> +       u8 upd_shift;
-> +
-> +       const struct clk_ops *ops;
-> +
-> +       signed char num_parents;
-> +};
-> +
-> +extern const struct clk_ops mtk_mux_ops;
-> +extern const struct clk_ops mtk_mux_clr_set_upd_ops;
-> +extern const struct clk_ops mtk_mux_gate_ops;
-> +extern const struct clk_ops mtk_mux_gate_clr_set_upd_ops;
-> +
-> +#define GATE_CLR_SET_UPD_FLAGS(_id, _name, _parents, _mux_ofs,         \
-> +                       _mux_set_ofs, _mux_clr_ofs, _shift, _width,     \
-> +                       _gate, _upd_ofs, _upd, _flags, _ops) {          \
-> +               .id = _id,                                              \
-> +               .name = _name,                                          \
-> +               .mux_ofs = _mux_ofs,                                    \
-> +               .set_ofs = _mux_set_ofs,                                \
-> +               .clr_ofs = _mux_clr_ofs,                                \
-> +               .upd_ofs = _upd_ofs,                                    \
-> +               .mux_shift = _shift,                                    \
-> +               .mux_width = _width,                                    \
-> +               .gate_shift = _gate,                                    \
-> +               .upd_shift = _upd,                                      \
-> +               .parent_names = _parents,                               \
-> +               .num_parents = ARRAY_SIZE(_parents),                    \
-> +               .flags = _flags,                                        \
-> +               .ops = &_ops,                                           \
-> +       }
-> +
-> +#define MUX_GATE_CLR_SET_UPD_FLAGS(_id, _name, _parents, _mux_ofs,     \
-> +                       _mux_set_ofs, _mux_clr_ofs, _shift, _width,     \
-> +                       _gate, _upd_ofs, _upd, _flags)                  \
-> +               GATE_CLR_SET_UPD_FLAGS(_id, _name, _parents, _mux_ofs,  \
-> +                       _mux_set_ofs, _mux_clr_ofs, _shift, _width,     \
-> +                       _gate, _upd_ofs, _upd, _flags,                  \
-> +                       mtk_mux_gate_clr_set_upd_ops)
-> +
-> +#define MUX_GATE_CLR_SET_UPD(_id, _name, _parents, _mux_ofs,           \
-> +                       _mux_set_ofs, _mux_clr_ofs, _shift, _width,     \
-> +                       _gate, _upd_ofs, _upd)                          \
-> +               MUX_GATE_CLR_SET_UPD_FLAGS(_id, _name, _parents,        \
-> +                       _mux_ofs, _mux_set_ofs, _mux_clr_ofs, _shift,   \
-> +                       _width, _gate, _upd_ofs, _upd,                  \
-> +                       CLK_SET_RATE_PARENT)
-> +
-> +struct clk *mtk_clk_register_mux(const struct mtk_mux *mux,
-> +                                struct regmap *regmap,
-> +                                spinlock_t *lock);
-> +
-> +int mtk_clk_register_muxes(const struct mtk_mux *muxes,
-> +                          int num, struct device_node *node,
-> +                          spinlock_t *lock,
-> +                          struct clk_onecell_data *clk_data);
-> +
-> +#endif /* __DRV_CLK_MUX_H */
-> --
-> 2.18.0
->
->
-> _______________________________________________
-> Linux-mediatek mailing list
-> Linux-mediatek@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-mediatek
+--pf6ls3yybuynq446--
