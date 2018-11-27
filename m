@@ -2,196 +2,197 @@ Return-Path: <SRS0=WhJS=OG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CD10C43441
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Nov 2018 12:39:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C1B2C43441
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Nov 2018 15:39:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61353208E4
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Nov 2018 12:39:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61353208E4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 5F6902133F
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Nov 2018 15:39:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="XxweuVfx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F6902133F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726405AbeK0XhA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 27 Nov 2018 18:37:00 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:39451 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726421AbeK0Xg7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 27 Nov 2018 18:36:59 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 0327C20D2E; Tue, 27 Nov 2018 13:39:09 +0100 (CET)
-Received: from localhost (aaubervilliers-681-1-94-205.w90-88.abo.wanadoo.fr [90.88.35.205])
-        by mail.bootlin.com (Postfix) with ESMTPSA id BCF23207BB;
-        Tue, 27 Nov 2018 13:38:58 +0100 (CET)
-Date:   Tue, 27 Nov 2018 13:38:58 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        linux-kernel@vger.kernel.org,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 2/2] clk: core: link consumer with clock driver
-Message-ID: <20181127123858.3v344nonsuyqskrt@flea>
-References: <20181122212212.16039-1-miquel.raynal@bootlin.com>
- <20181122212212.16039-3-miquel.raynal@bootlin.com>
+        id S1729099AbeK1Chd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 27 Nov 2018 21:37:33 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:34248 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730120AbeK1Chc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Nov 2018 21:37:32 -0500
+Received: by mail-lf1-f67.google.com with SMTP id p6so16802016lfc.1
+        for <linux-clk@vger.kernel.org>; Tue, 27 Nov 2018 07:39:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=from:subject:to:cc:references:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Bm7/ttwhlc9vs3EeWVEmhn3HiiHgs9Du8LbJvQSdhLc=;
+        b=XxweuVfxgQbyJcXSfz4RL3mqIJr52nOILzT9px6VkzRX04eLVlNILzikkGBa//2XLw
+         V6+EKQbNAVBKOACYtBPnWckUNUpwOZko6DhmLKmzHjbGZLOeCxz0VotZN1IrlmCArIeH
+         6GhDI4HMc8GbUlcDzGAq2xe0kUS83QpizXofcubzyGU8K4I1AGUYTTrijhY60xe8wkF9
+         3hY45sS54zxazL1FJM1wKAee8aS0zP1OKNw1KEwTRHB2COJa5fYaS62QQVdgYfgmmCPX
+         r2gXWq5XUkN8/7FvLyytItNflNU7DWGE4dHrNQzRCXm/wxRCMbjb4flCh2fKGUJo+Ek2
+         RJHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:subject:to:cc:references:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=Bm7/ttwhlc9vs3EeWVEmhn3HiiHgs9Du8LbJvQSdhLc=;
+        b=fyG5uimjC/g4/zMtE8sG6qxecXpfUWU2iDtSL6QnS2uXVZnP9BvFj+MOuXkcFO5PFt
+         NJ8esK5MLj3z+Hmy2qcu1MkSduI73YLSrTBY6uJiVLELpYJzTo3VGG5BA5W+ySb3YtgM
+         +YQD62o404wy7p8rka7GMzHuRVoAoHk5HQgqtr9tuKCig6bgTLkK+Ti9xilgIjRh3WYX
+         ukCPcULUJGAXM7tXSIT+4WvXWhqVg3ZK6GcJKU1JSkODmUC/jemQ8L56mSnGAGjAWp1Y
+         UVcbb5Sz8ZJZ5x2BjYn32RXyzzBm1Z9RVWFSdb9IUhLqFooZm1IIwu9c2taUHjNQBN24
+         jdyw==
+X-Gm-Message-State: AGRZ1gJVJQLsCg//50WSDTgIBrf93x5HAvclf/aMJCMf1h18WucLgigZ
+        gqG+8zR51v0suSZWL4LG12r37vSL9Qo=
+X-Google-Smtp-Source: AJdET5cSzcvKVqwv+DlvzGVHXRXzSVaSjTMAoT5em6tNftImt6B6b1aCPPFku2gosPh8WsE/iQWGfg==
+X-Received: by 2002:a19:8096:: with SMTP id b144mr20475988lfd.8.1543333153311;
+        Tue, 27 Nov 2018 07:39:13 -0800 (PST)
+Received: from wasted.cogentembedded.com ([31.173.81.52])
+        by smtp.gmail.com with ESMTPSA id 4-v6sm597705ljw.84.2018.11.27.07.38.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 27 Nov 2018 07:38:58 -0800 (PST)
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH 2/4] clk: renesas: rcar-gen3-cpg: add RPC clock
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-clk <linux-clk@vger.kernel.org>
+References: <c79d3733-437a-55dc-d946-99521b79ec20@cogentembedded.com>
+ <5aa01cae-28ff-efb5-bf4d-1994760ecb79@cogentembedded.com>
+ <CAMuHMdX4cDC1ML8Wp8oT45YkjHux+uk5NMYX2BAvs=nNgm_oAw@mail.gmail.com>
+Organization: Cogent Embedded
+Message-ID: <64072661-0f85-9354-7792-fca7214cb450@cogentembedded.com>
+Date:   Tue, 27 Nov 2018 18:38:49 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="fxek645th6uycxir"
-Content-Disposition: inline
-In-Reply-To: <20181122212212.16039-3-miquel.raynal@bootlin.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <CAMuHMdX4cDC1ML8Wp8oT45YkjHux+uk5NMYX2BAvs=nNgm_oAw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 11/23/2018 03:55 PM, Geert Uytterhoeven wrote:
 
---fxek645th6uycxir
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+>> Add the RPC clock for the R-Car gen3 SoCs -- this clock is controlled by
+>> the RPCCKCR register on all the R-Car gen3 SoCs except V3M (R8A77970).
+>>
+>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> 
+> Thanks for your patch!
+> 
+>> --- renesas-drivers.orig/drivers/clk/renesas/rcar-gen3-cpg.c
+>> +++ renesas-drivers/drivers/clk/renesas/rcar-gen3-cpg.c
+>> @@ -409,6 +409,121 @@ free_clock:
+>>         return clk;
+>>  }
+>>
+>> +#define CPG_RPC_CKSTP2         BIT(9)
+> 
+> This bit is for RPCD2, so technically it should be part of patch 3/4.
+> Perhaps you can merge both patches, and absorb the non-SoC-specific
+> parts from patch 4/4?
 
-Hi Miquel,
+   Done!
 
-On Thu, Nov 22, 2018 at 10:22:12PM +0100, Miquel Raynal wrote:
-> One major concern when, for instance, suspending/resuming a platform
-> is to never access registers before the underlying clock has been
-> resumed, otherwise most of the time the kernel will just crash. One
-> solution is to use syscore operations when registering clock drivers
-> suspend/resume callbacks. One problem of using syscore_ops is that the
-> suspend/resume scheduling will depend on the order of the
-> registrations, which brings (unacceptable) randomness in the process.
->=20
-> A feature called device links has been introduced to handle such
-> situation. It creates dependencies between consumers and providers,
-> enforcing e.g. the suspend/resume order when needed. Such feature is
-> already in use for regulators.
->=20
-> Add device links support in the clock subsystem by creating/deleting
-> the links at get/put time.
->=20
-> Example of a boot (ESPRESSObin, A3700 SoC) with devices linked to clocks:
-> ahci-mvebu d00e0000.sata: Linked as a consumer to d0013000.nb-periph-clk
-> mvneta d0030000.ethernet: Linked as a consumer to d0018000.sb-periph-clk
-> xhci-hcd d0058000.usb: Linked as a consumer to d0018000.sb-periph-clk
-> xenon-sdhci d00d0000.sdhci: Linked as a consumer to d0013000.nb-periph-clk
-> xenon-sdhci d00d0000.sdhci: Dropping the link to d0013000.nb-periph-clk
-> advk-pcie d0070000.pcie: Linked as a consumer to d0018000.sb-periph-clk
-> xenon-sdhci d00d0000.sdhci: Linked as a consumer to d0013000.nb-periph-clk
-> xenon-sdhci d00d0000.sdhci: Linked as a consumer to regulator.1
-> cpu cpu0: Linked as a consumer to d0013000.nb-periph-clk
-> cpu cpu0: Dropping the link to d0013000.nb-periph-clk
-> cpu cpu0: Linked as a consumer to d0013000.nb-periph-clk
->=20
-> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> ---
->  drivers/clk/clk.c            | 20 ++++++++++++++++++++
->  drivers/clk/clkdev.c         | 13 ++++++++++---
->  include/linux/clk-provider.h |  2 ++
->  3 files changed, 32 insertions(+), 3 deletions(-)
->=20
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index b799347c5fd6..33a0f2b0533a 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -90,6 +90,7 @@ struct clk {
->  	unsigned long max_rate;
->  	unsigned int exclusive_count;
->  	struct hlist_node clks_node;
-> +	struct device_link *link;
->  };
-> =20
->  /***           runtime pm          ***/
-> @@ -262,6 +263,25 @@ struct clk_hw *__clk_get_hw(struct clk *clk)
->  }
->  EXPORT_SYMBOL_GPL(__clk_get_hw);
-> =20
-> +void __clk_device_link(struct device *consumer, struct clk *clk)
-> +{
-> +	if (!consumer || !clk || !clk->core)
-> +		return;
-> +
-> +	clk->link =3D device_link_add(consumer, clk->core->dev,
-> +				    DL_FLAG_STATELESS);
-> +}
-> +EXPORT_SYMBOL_GPL(__clk_device_link);
-> +
-> +void __clk_device_unlink(struct clk *clk)
-> +{
-> +	if (!clk || !clk->link)
-> +		return;
-> +
-> +	device_link_del(clk->link);
-> +}
-> +EXPORT_SYMBOL_GPL(__clk_device_unlink);
-> +
->  unsigned int clk_hw_get_num_parents(const struct clk_hw *hw)
->  {
->  	return hw->core->num_parents;
-> diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
-> index 9ab3db8b3988..fccfd4c01457 100644
-> --- a/drivers/clk/clkdev.c
-> +++ b/drivers/clk/clkdev.c
-> @@ -194,20 +194,27 @@ EXPORT_SYMBOL(clk_get_sys);
->  struct clk *clk_get(struct device *dev, const char *con_id)
->  {
->  	const char *dev_id =3D dev ? dev_name(dev) : NULL;
-> -	struct clk *clk;
-> +	struct clk *clk =3D NULL;
-> =20
->  	if (dev && dev->of_node) {
->  		clk =3D __of_clk_get_by_name(dev->of_node, dev_id, con_id);
-> -		if (!IS_ERR(clk) || PTR_ERR(clk) =3D=3D -EPROBE_DEFER)
-> +		if (PTR_ERR(clk) =3D=3D -EPROBE_DEFER)
->  			return clk;
->  	}
-> =20
-> -	return clk_get_sys(dev_id, con_id);
-> +	if (IS_ERR_OR_NULL(clk))
-> +		clk =3D clk_get_sys(dev_id, con_id);
-> +
-> +	if (!IS_ERR(clk))
-> +		__clk_device_link(dev, clk);
-> +
-> +	return clk;
+>> +#define CPG_RPC_CKSTP          BIT(8)
+>> +#define CPG_RPC_DIV_4_3_MASK   GENMASK(4, 3)
+> 
+> Unused
 
-I think this doesn't address all the cases. In your case, where you
-have one consumer that is not a clock, and one provider that is a
-clock, it works just fine.
+   I'd like to keep it for the sake of completeness...
 
-However, if you have clocks providers chained, for example with one
-oscillator, a clock controller, and a device, the link will be created
-between the device and the controller, but there will be no link
-between the controller and the oscillator.
+>> +#define CPG_RPC_DIV_2_0_MASK   GENMASK(2, 0)
+>> +
+>> +struct rpc_clock {
+>> +       struct clk_hw hw;
+>> +       void __iomem *reg;
+> 
+> As this register should be saved/restore during system suspend/resume,
+> you should add
+> 
+>     struct cpg_simple_notifier csn;
 
-Adding a link in __clk_init_parent looks like it would address that
-case.
+   Done.
 
-Maxime
+>> +};
+> 
+>> +static long cpg_rpc_clock_round_rate(struct clk_hw *hw, unsigned long rate,
+>> +                                    unsigned long *parent_rate)
+>> +{
+>> +       struct rpc_clock *clock = to_rpc_clock(hw);
+>> +       unsigned int div = cpg_rpc_clock_calc_div(clock, rate, *parent_rate);
+>> +
+>> +       return DIV_ROUND_CLOSEST(*parent_rate, div);
+> 
+> Given you set CLK_SET_RATE_PARENT, shouldn't you propagate up,
+> cfr. drivers/clk/clk-fixed-factor.c:clk_factor_round_rate()?
 
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+   Frankly speaking, I'm not sure when I should set that flag...
 
---fxek645th6uycxir
-Content-Type: application/pgp-signature; name="signature.asc"
+[...]
+>> +static struct clk * __init cpg_rpc_clk_register(const struct cpg_core_clk *core,
+>> +                                               void __iomem *base,
+>> +                                               const char *parent_name)
+>> +{
+>> +       struct clk_init_data init;
+>> +       struct rpc_clock *clock;
+>> +       struct clk *clk;
+>> +
+>> +       clock = kzalloc(sizeof(*clock), GFP_KERNEL);
+>> +       if (!clock)
+>> +               return ERR_PTR(-ENOMEM);
+>> +
+>> +       init.name = core->name;
+>> +       init.ops = &cpg_rpc_clock_ops;
+>> +       init.flags = CLK_IS_BASIC | CLK_SET_RATE_PARENT;
+> 
+> I don't think CLK_IS_BASIC is appropriate?
+> 
+> #define CLK_IS_BASIC            BIT(5) /* Basic clk, can't do a to_clk_foo() */
 
------BEGIN PGP SIGNATURE-----
+   I still haven't found where this bit is tested... and I got an impression everybody
+just blindly copy&pastes it...
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW/064gAKCRDj7w1vZxhR
-xW7iAQC3xzuT+qhFxNGL9GMTKHyCSb2w/0OnQ2S/u08nBc6NIQEAikxcV0zjBEkM
-+4bqiE+IMeX9A8unypgBnSDkegm1VQM=
-=Sl7T
------END PGP SIGNATURE-----
+> 
+>> +       init.parent_names = &parent_name;
+>> +       init.num_parents = 1;
+>> +
+>> +       clock->reg = base + CPG_RPCCKCR;
+>> +       clock->hw.init = &init;
+>> +
+>> +       clk = clk_register(NULL, &clock->hw);
+>> +       if (IS_ERR(clk))
+>> +               kfree(clock);
+>> +
+> 
+> For save/restore during system suspend/resume:
+> 
+>     cpg_simple_notifier_register(notifiers, &clock->csn);
 
---fxek645th6uycxir--
+   Done.
+
+> Hmm, looks like I missed that during review of commit 381081ffc2948e1e
+> ("clk: renesas: r8a77970: Add SD0H/SD0 clocks for SDHI"), too.
+
+   Want me to fix this?
+
+[...]
+
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+
+MBR, Sergei
