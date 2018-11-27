@@ -2,163 +2,196 @@ Return-Path: <SRS0=WhJS=OG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86A26C43441
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Nov 2018 11:04:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CD10C43441
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Nov 2018 12:39:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 307672086B
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Nov 2018 11:04:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="GqRWFHvo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 307672086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	by mail.kernel.org (Postfix) with ESMTP id 61353208E4
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Nov 2018 12:39:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61353208E4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731002AbeK0WCV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 27 Nov 2018 17:02:21 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:34966 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729311AbeK0WCV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Nov 2018 17:02:21 -0500
-Received: by mail-io1-f68.google.com with SMTP id u19so16624924ioc.2
-        for <linux-clk@vger.kernel.org>; Tue, 27 Nov 2018 03:04:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+OluvinTkxBd6efBhqFBdlf/J00hDCF/s7aWnqnG3hk=;
-        b=GqRWFHvoykVnegDZ5aV42cc7jEhE6UlyETky+USkVSXSpe51ObB9TOr8IF5gIEI8ma
-         FMOJILDY+4Ls8CYxt6pNQ0nuJVUcM3NA6dd5WLODROwBjVgpx2BUoTIVjjcWfXWz9s8z
-         6Pa1HkyjOg9huv9R2veOQsRtEOqz9bfIZAKGE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+OluvinTkxBd6efBhqFBdlf/J00hDCF/s7aWnqnG3hk=;
-        b=soGAApYgGojYIWR1JfGmsw/yDZIR6qkw/Ln3eRQFnABzfWdmsFGeGG9AqhOzafxSZl
-         Qv/louw+MOZwvI8OvM+o2IoSFFCUtXvGrUyF1zYFpleAGzKgoltLwNBUamcll+umG3vN
-         aQtW+6UPUbZeZizi/YaIUyVPm+9K7VDd173j4rsJF5a2qlgN4OjPlJVSaTjKN2MTmGR9
-         2wV4sFx186OkuC5t5OVonigOZEvbE8U7pNaS7wm7CJ1iPf7zSa/n4S8aKfVVg8zXc8Dm
-         Dae9FSY5J4Nr+0AqHpWDLob1cHvZem/5cYL0sT5ahUnU8s4wA4vf9CUPhLi8Jk6wy7bh
-         dyPw==
-X-Gm-Message-State: AA+aEWbyS6tsXTri6AD2J85XPPKfE8xXKWgGeypMDhElE4E/p9wWKTot
-        75Z9SDR/pLfoZc/aIJFAVMwRWKbby3EVBk0yjDwlIQ==
-X-Google-Smtp-Source: AFSGD/V2+F6u6etUCY8GvPIvZwxK6L+YkRbvMcKP4Fu184czccyJZibYCrey7holT0Qd2fyxBaMmkGGWUm5LUzwo9q0=
-X-Received: by 2002:a6b:e50d:: with SMTP id y13mr22855148ioc.114.1543316688219;
- Tue, 27 Nov 2018 03:04:48 -0800 (PST)
-MIME-Version: 1.0
-References: <20181113111633.20189-1-jagan@amarulasolutions.com>
- <20181113111633.20189-9-jagan@amarulasolutions.com> <20181115095551.uctdkfmuwlnzhjnn@flea>
- <CAMty3ZAEHiovm6OF6JvJVQR4aqpG1Q3ML5YqxJkF2ntwRkUO=A@mail.gmail.com>
- <20181120155715.andrjp5kg6ugcv72@flea> <CAMty3ZCUOJmvekupOwh281g5HaazTpBbukWQY2Pv2OYypAwciw@mail.gmail.com>
- <20181127102450.b65jzhrdpxn5rxmk@flea>
-In-Reply-To: <20181127102450.b65jzhrdpxn5rxmk@flea>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Tue, 27 Nov 2018 16:34:35 +0530
-Message-ID: <CAMty3ZDTvn4VF_oOvEi2jCw9Rw5WPd1LQT3SZ5X1K0fJAFg2cQ@mail.gmail.com>
-Subject: Re: [linux-sunxi] Re: [PATCH v4 08/26] drm/sun4i: sun6i_mipi_dsi: Fix
- VBP size calculation
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        id S1726405AbeK0XhA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 27 Nov 2018 18:37:00 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:39451 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726421AbeK0Xg7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 27 Nov 2018 18:36:59 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 0327C20D2E; Tue, 27 Nov 2018 13:39:09 +0100 (CET)
+Received: from localhost (aaubervilliers-681-1-94-205.w90-88.abo.wanadoo.fr [90.88.35.205])
+        by mail.bootlin.com (Postfix) with ESMTPSA id BCF23207BB;
+        Tue, 27 Nov 2018 13:38:58 +0100 (CET)
+Date:   Tue, 27 Nov 2018 13:38:58 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi@googlegroups.com, linux-amarula@amarulasolutions.com
-Content-Type: text/plain; charset="UTF-8"
+        Russell King <linux@armlinux.org.uk>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        linux-kernel@vger.kernel.org,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Nadav Haklai <nadavh@marvell.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 2/2] clk: core: link consumer with clock driver
+Message-ID: <20181127123858.3v344nonsuyqskrt@flea>
+References: <20181122212212.16039-1-miquel.raynal@bootlin.com>
+ <20181122212212.16039-3-miquel.raynal@bootlin.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="fxek645th6uycxir"
+Content-Disposition: inline
+In-Reply-To: <20181122212212.16039-3-miquel.raynal@bootlin.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Nov 27, 2018 at 3:55 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
->
-> On Tue, Nov 20, 2018 at 09:55:42PM +0530, Jagan Teki wrote:
-> > On Tue, Nov 20, 2018 at 9:27 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-> > >
-> > > On Thu, Nov 15, 2018 at 11:19:53PM +0530, Jagan Teki wrote:
-> > > > On Thu, Nov 15, 2018 at 3:26 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-> > > > >
-> > > > > Hi,
-> > > > >
-> > > > > On Tue, Nov 13, 2018 at 04:46:15PM +0530, Jagan Teki wrote:
-> > > > > > The horizontal and vertical back porch calculation in BSP
-> > > > > > code is simply following the Linux drm comment diagram, in
-> > > > > > include/drm/drm_modes.h which is
-> > > > > >
-> > > > > > [hv]back porch = [hv]total - [hv]sync_end
-> > > > > >
-> > > > > > BSP code form BPI-M64-bsp is calculating vertical back porch as
-> > > > > > (from linux-sunxi/drivers/video/sunxi/disp2/disp/de/disp_lcd.c)
-> > > > > >
-> > > > > > timmings->ver_sync_time= panel_info->lcd_vspw;
-> > > > > > timmings->ver_back_porch= panel_info->lcd_vbp-panel_info->lcd_vspw;
-> > > > > >
-> > > > > > vbp = panel->lcd_vbp;
-> > > > > > vspw = panel->lcd_vspw;
-> > > > > > dsi_dev[sel]->dsi_basic_size0.bits.vbp = vbp-vspw;
-> > > > > > dsi_dev[sel]->dsi_basic_size0.bits.vbp = panel->lcd_vbp - panel->lcd_vspw;
-> > > > > > =>  timmings->ver_back_porch + panel_info->lcd_vspw - panel_info->lcd_vspw
-> > > > > > =>  timmings->ver_back_porch
-> > > > > > =>  mode->vtotal - mode->end
-> > > > > >
-> > > > > > Which evatually same as mode->vtotal - mode->vsync_end so update the
-> > > > > > same in SUN6I_DSI_BASIC_SIZE0_VBP
-> > > > > >
-> > > > > > On the information note, existing SUN6I_DSI_BASIC_SIZE0_VSA is proper
-> > > > > > value.
-> > > > > >
-> > > > > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> > > > >
-> > > > > I've tested your changes on my A33 board, and this commit will break
-> > > > > it.
-> > > > >
-> > > > > It creates vblank timeouts, and visual artifacts at the bottom of the
-> > > > > display.
-> > > >
-> > > > Strange, VBP is earlier gives front porch which is anyway wrong.
-> > > >
-> > > > >
-> > > > > Later commits seem to fix the issue, but will create some blanking on
-> > > > > the upper third of the display.
-> > > > >
-> > > > > Since the documentation is quite sparse, and a MIPI-DSI analyzer is
-> > > > > way too expensive, I'd really like to have at least what each of these
-> > > > > commits are actually fixing, and what symptoms each of these were
-> > > > > causing, and not just "the BSP does it".
-> > > >
-> > > > W/o this 2-lane panel is breaking, same vblank timeout and visual
-> > > > artifacts at the bottom of the panel. though the commits may reference
-> > > > BSP, I have at-least tested on 3 different panels for us to prove its
-> > > > working.
-> > > >
-> > > > > Having some datasheet for the panels you had working would help too.
-> > > >
-> > > > Unfortunately datasheet doesn't have any required information what we
-> > > > actually looking for.
-> > >
-> > > Not even the timings? How did you get that information then?
-> >
-> > datasheet has timing values, but this changes need controller
-> > information about VBP register that I don't have. But again existing
-> > VBP is not back porch for real, it's front porch.
->
-> Yet, this breaks the existing setup. So again:
 
-Was it with 4-lane or 2-lane panel? can you test it with 2-lane panel?
-I can see the issue on 2-lane but the 4-lane working fine with this
-patch even.
+--fxek645th6uycxir
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Miquel,
+
+On Thu, Nov 22, 2018 at 10:22:12PM +0100, Miquel Raynal wrote:
+> One major concern when, for instance, suspending/resuming a platform
+> is to never access registers before the underlying clock has been
+> resumed, otherwise most of the time the kernel will just crash. One
+> solution is to use syscore operations when registering clock drivers
+> suspend/resume callbacks. One problem of using syscore_ops is that the
+> suspend/resume scheduling will depend on the order of the
+> registrations, which brings (unacceptable) randomness in the process.
+>=20
+> A feature called device links has been introduced to handle such
+> situation. It creates dependencies between consumers and providers,
+> enforcing e.g. the suspend/resume order when needed. Such feature is
+> already in use for regulators.
+>=20
+> Add device links support in the clock subsystem by creating/deleting
+> the links at get/put time.
+>=20
+> Example of a boot (ESPRESSObin, A3700 SoC) with devices linked to clocks:
+> ahci-mvebu d00e0000.sata: Linked as a consumer to d0013000.nb-periph-clk
+> mvneta d0030000.ethernet: Linked as a consumer to d0018000.sb-periph-clk
+> xhci-hcd d0058000.usb: Linked as a consumer to d0018000.sb-periph-clk
+> xenon-sdhci d00d0000.sdhci: Linked as a consumer to d0013000.nb-periph-clk
+> xenon-sdhci d00d0000.sdhci: Dropping the link to d0013000.nb-periph-clk
+> advk-pcie d0070000.pcie: Linked as a consumer to d0018000.sb-periph-clk
+> xenon-sdhci d00d0000.sdhci: Linked as a consumer to d0013000.nb-periph-clk
+> xenon-sdhci d00d0000.sdhci: Linked as a consumer to regulator.1
+> cpu cpu0: Linked as a consumer to d0013000.nb-periph-clk
+> cpu cpu0: Dropping the link to d0013000.nb-periph-clk
+> cpu cpu0: Linked as a consumer to d0013000.nb-periph-clk
+>=20
+> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+> ---
+>  drivers/clk/clk.c            | 20 ++++++++++++++++++++
+>  drivers/clk/clkdev.c         | 13 ++++++++++---
+>  include/linux/clk-provider.h |  2 ++
+>  3 files changed, 32 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index b799347c5fd6..33a0f2b0533a 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -90,6 +90,7 @@ struct clk {
+>  	unsigned long max_rate;
+>  	unsigned int exclusive_count;
+>  	struct hlist_node clks_node;
+> +	struct device_link *link;
+>  };
+> =20
+>  /***           runtime pm          ***/
+> @@ -262,6 +263,25 @@ struct clk_hw *__clk_get_hw(struct clk *clk)
+>  }
+>  EXPORT_SYMBOL_GPL(__clk_get_hw);
+> =20
+> +void __clk_device_link(struct device *consumer, struct clk *clk)
+> +{
+> +	if (!consumer || !clk || !clk->core)
+> +		return;
+> +
+> +	clk->link =3D device_link_add(consumer, clk->core->dev,
+> +				    DL_FLAG_STATELESS);
+> +}
+> +EXPORT_SYMBOL_GPL(__clk_device_link);
+> +
+> +void __clk_device_unlink(struct clk *clk)
+> +{
+> +	if (!clk || !clk->link)
+> +		return;
+> +
+> +	device_link_del(clk->link);
+> +}
+> +EXPORT_SYMBOL_GPL(__clk_device_unlink);
+> +
+>  unsigned int clk_hw_get_num_parents(const struct clk_hw *hw)
+>  {
+>  	return hw->core->num_parents;
+> diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
+> index 9ab3db8b3988..fccfd4c01457 100644
+> --- a/drivers/clk/clkdev.c
+> +++ b/drivers/clk/clkdev.c
+> @@ -194,20 +194,27 @@ EXPORT_SYMBOL(clk_get_sys);
+>  struct clk *clk_get(struct device *dev, const char *con_id)
+>  {
+>  	const char *dev_id =3D dev ? dev_name(dev) : NULL;
+> -	struct clk *clk;
+> +	struct clk *clk =3D NULL;
+> =20
+>  	if (dev && dev->of_node) {
+>  		clk =3D __of_clk_get_by_name(dev->of_node, dev_id, con_id);
+> -		if (!IS_ERR(clk) || PTR_ERR(clk) =3D=3D -EPROBE_DEFER)
+> +		if (PTR_ERR(clk) =3D=3D -EPROBE_DEFER)
+>  			return clk;
+>  	}
+> =20
+> -	return clk_get_sys(dev_id, con_id);
+> +	if (IS_ERR_OR_NULL(clk))
+> +		clk =3D clk_get_sys(dev_id, con_id);
+> +
+> +	if (!IS_ERR(clk))
+> +		__clk_device_link(dev, clk);
+> +
+> +	return clk;
+
+I think this doesn't address all the cases. In your case, where you
+have one consumer that is not a clock, and one provider that is a
+clock, it works just fine.
+
+However, if you have clocks providers chained, for example with one
+oscillator, a clock controller, and a device, the link will be created
+between the device and the controller, but there will be no link
+between the controller and the oscillator.
+
+Adding a link in __clk_init_parent looks like it would address that
+case.
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--fxek645th6uycxir
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW/064gAKCRDj7w1vZxhR
+xW7iAQC3xzuT+qhFxNGL9GMTKHyCSb2w/0OnQ2S/u08nBc6NIQEAikxcV0zjBEkM
++4bqiE+IMeX9A8unypgBnSDkegm1VQM=
+=Sl7T
+-----END PGP SIGNATURE-----
+
+--fxek645th6uycxir--
