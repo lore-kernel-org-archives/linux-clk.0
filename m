@@ -2,111 +2,117 @@ Return-Path: <SRS0=WhJS=OG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4070AC43441
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Nov 2018 17:51:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6108FC43441
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Nov 2018 19:24:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B826205C9
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Nov 2018 17:51:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B826205C9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id 22C2520645
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Nov 2018 19:24:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="W4Xnc0SA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22C2520645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731845AbeK1EuU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 27 Nov 2018 23:50:20 -0500
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:42013 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726943AbeK1EuU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Nov 2018 23:50:20 -0500
-Received: by mail-ua1-f66.google.com with SMTP id d21so7905206uap.9;
-        Tue, 27 Nov 2018 09:51:39 -0800 (PST)
+        id S1726401AbeK1GXr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 28 Nov 2018 01:23:47 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:33545 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726381AbeK1GXr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Nov 2018 01:23:47 -0500
+Received: by mail-pl1-f193.google.com with SMTP id z23so16095090plo.0
+        for <linux-clk@vger.kernel.org>; Tue, 27 Nov 2018 11:24:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=g/OwqtmgRAMd4U0V7CJeRYYW1Xv+UBnENuWIkRgDFsI=;
+        b=W4Xnc0SALXHsz9j4ByrOWWy847eCAQ6Wd2A84EDRsWc7ccN1/IT4QDaNoKSMM0TDJa
+         R+Mg65g8yCPFXcGXoa6IlbEwhL4/q7NUCCY2vfgBJZAl+rRoGp59qH6KwlDM28gUYEHK
+         gwApdT7YOjXtHZ3iCv75nd+PnNU8xhwDwErA4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WIkgvh9dn6Z1lrl7t09lDYPO3Sr9pulPAhCeVLGGrs8=;
-        b=KQBfYlKnJlCwHsWeh/LO8tVtKjGrd2HEaQjMcUaiNOpS7GoMUojBKJF0bwZikESWz7
-         ypu5srd4ixCX3sDTSmVnLpPrAHdHq5Pwbqawe5tggx8KTtS0POkmdDhBVzQLHf34kUc9
-         K+cOsnF9RZTOorv6oCAjj38celzVbTMKsKlWgiZhRrwAlORE1UTHpOVRhOOefCNVq4Tu
-         NqYjxWKab5DfbwqEcyM8twX4spWQPN4GxdQ0aOMk6Zmr89vGGi8BwYzvqajACj2KRhsa
-         JJe3ZirX4xO6xDqctR655v6h1raM1CFDLqL/rsnjJmiwdrPcx0zAXWfiqqFM3E2rP/MK
-         uTug==
-X-Gm-Message-State: AA+aEWZpjd3ZKGXvlMOiedfLEQzs7Y3pthCsmOlyL/SLJbhw2ZjFGC8B
-        rtsuXmOKgL0eB6aaZgKY8jz7lRNELXEx9/iBBnO4NA==
-X-Google-Smtp-Source: AFSGD/UH5G1OpGal2hxhY8B8Slw98oUklW4opqFxAG1g5kgduyZYwf25Kza7Iwz64fcNOKQ/Qcr97xYgJku82twiuzw=
-X-Received: by 2002:a9f:364a:: with SMTP id s10mr12818003uad.78.1543341098515;
- Tue, 27 Nov 2018 09:51:38 -0800 (PST)
-MIME-Version: 1.0
-References: <c79d3733-437a-55dc-d946-99521b79ec20@cogentembedded.com>
- <0e51165d-65cb-1522-3174-b63818180070@cogentembedded.com> <CAMuHMdX6n860T9oOgYiqxiF0QpNyKqEtQW9yEksAv_A02Z9qRw@mail.gmail.com>
- <5cb1471a-db86-e074-6585-10d625738d5a@cogentembedded.com>
-In-Reply-To: <5cb1471a-db86-e074-6585-10d625738d5a@cogentembedded.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 27 Nov 2018 18:51:24 +0100
-Message-ID: <CAMuHMdXfsXgOFxbfdbqmMNOfZS2mYYOEyBKhFbV29VmCVkEn0A@mail.gmail.com>
-Subject: Re: [PATCH 4/4] clk: renesas: r8a77980-cpg-mssr: add RPC clocks
-To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=g/OwqtmgRAMd4U0V7CJeRYYW1Xv+UBnENuWIkRgDFsI=;
+        b=G+Q+nZPnJAgiBNZgIQZHEA63P/BecfG++udEPx8lggRrSlvA7K5JmmcKn60/EoaY6s
+         MMpGwBDs4eT3aJYwEQKQe4CVd6ayy+0IVCazdKUZygWGGj4gm3mCbbrYMfwg1VTmP20r
+         ZjyHKHyYU1XagQeZBJHM1trqlQ4I6xUskj8SE4iz5UV+kNQyGg82YXFRB5PC1KUlG7+8
+         IntWOiE7u7L/aa63RtOdDhON8LUztN4tYEz9Q7xP6dIfT91cCVhuuETqbp5oGN0bnIbY
+         hRRirtEJGhzkiYIRo8//UgQZQjDQJ+49OWW6KraXThxwvCRH+IAYyY51M1i1wqv4h7oP
+         JucA==
+X-Gm-Message-State: AA+aEWa0VX1h0cWrRRN5CF/sFp5rVvaHJhkEz1ZrVTnwnoiBWhLYS2QQ
+        enJ5ztMZcJD66Q2ZQ5tKGqlA6A==
+X-Google-Smtp-Source: AFSGD/Xjp/XKfkBczfxJMIw5g2S8f8QQZtyqrvf/+O9/QAWxHFzXJV+OGoclwbuglCmki3KhqcR6Ow==
+X-Received: by 2002:a17:902:b701:: with SMTP id d1-v6mr32075209pls.29.1543346692646;
+        Tue, 27 Nov 2018 11:24:52 -0800 (PST)
+Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:c8e0:70d7:4be7:a36])
+        by smtp.gmail.com with ESMTPSA id i189-v6sm5543091pfc.16.2018.11.27.11.24.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 27 Nov 2018 11:24:51 -0800 (PST)
+From:   Douglas Anderson <dianders@chromium.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org, Taniya Das <tdas@codeaurora.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        devicetree@vger.kernel.org,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org
+Subject: [PATCH] dt-bindings: clock: Require #reset-cells in sdm845-videocc
+Date:   Tue, 27 Nov 2018 11:24:43 -0800
+Message-Id: <20181127192443.136158-1-dianders@chromium.org>
+X-Mailer: git-send-email 2.20.0.rc0.387.gc7a69e6b6c-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Sergei,
+The #reset-cells was listed as optional in the bindings for
+qcom,sdm845-videocc.  There's no reason for it to be optional.  As per
+Stephen [1]:
 
-On Tue, Nov 27, 2018 at 6:45 PM Sergei Shtylyov
-<sergei.shtylyov@cogentembedded.com> wrote:
-> On 11/23/2018 03:59 PM, Geert Uytterhoeven wrote:
-> >> Add the RPCSRC internal clock on R-Car V3H (R8A77980) -- it's controlled
-> >> by the RPCCKCR.DIV[4:3] on all the R-Car gen3 SoCs except V3M (R8A77970)
-> >> but the encoding of this field is different between SoCs.
+> We should update the binding to make it a required property. It
+> doesn't make any sense why that property would be optional given
+> that the hardware either has support for resets or it doesn't.
 
-> >> --- renesas-drivers.orig/drivers/clk/renesas/r8a77980-cpg-mssr.c
-> >> +++ renesas-drivers/drivers/clk/renesas/r8a77980-cpg-mssr.c
-> [...]
-> >> +               const struct clk *parent = clks[core->parent];
-> >> +
-> >> +               if (IS_ERR(parent))
-> >> +                       return ERR_CAST(parent);
-> >> +
-> >> +               return clk_register_divider_table(NULL, core->name,
-> >> +                                                 __clk_get_name(parent), 0,
-> >> +                                                 base + CPG_RPCCKCR, 3, 2, 0,
-> >> +                                                 cpg_rpcsrc_div_table, NULL);
-> >
-> > Don't you need a spinlock (last parameter, currently NULL)?
-> > This needs to be synchronized with controlling the RPCD2 and RPC clocks,
-> > as they operate on the same register.
->
->    Indeed. How about the RMW accesses to the other register? I'd like to place
-> the lock/unlock right in cpg_reg_modify()...
+sdm845 support is still in its infancy so we shouldn't be affecting
+any real device trees by modifying the bindings here.
 
-Yes, RMW, too.
+[1] https://lkml.kernel.org/r/154330186815.88331.12720647562079303842@swboyd.mtv.corp.google.com
 
-> > However, that would deadlock, as enabling e.g. RPC-IF will enable
-> > all parent clocks?
->
->   Could toy please elaborate?
+Fixes: 84b66b211603 ("dt-bindings: clock: Introduce QCOM Video clock bindings")
+Suggested-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+---
 
-Sorry, I incorrectly assumed it would hold the lock while calling into the
-parent, which would deadlock if using the same lock.
-But as it only holds the lock for register access, it's fine.
+ Documentation/devicetree/bindings/clock/qcom,videocc.txt | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/Documentation/devicetree/bindings/clock/qcom,videocc.txt b/Documentation/devicetree/bindings/clock/qcom,videocc.txt
+index e7c035afa778..8a8622c65c5a 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,videocc.txt
++++ b/Documentation/devicetree/bindings/clock/qcom,videocc.txt
+@@ -6,8 +6,6 @@ Required properties :
+ - reg : shall contain base register location and length
+ - #clock-cells : from common clock binding, shall contain 1.
+ - #power-domain-cells : from generic power domain binding, shall contain 1.
+-
+-Optional properties :
+ - #reset-cells : from common reset binding, shall contain 1.
+ 
+ Example:
+@@ -16,4 +14,5 @@ Example:
+ 		reg = <0xab00000 0x10000>;
+ 		#clock-cells = <1>;
+ 		#power-domain-cells = <1>;
++		#reset-cells = <1>;
+ 	};
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.20.0.rc0.387.gc7a69e6b6c-goog
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
