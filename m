@@ -2,108 +2,106 @@ Return-Path: <SRS0=WhJS=OG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CE1EC43441
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Nov 2018 19:26:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9064C43441
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Nov 2018 19:40:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5AB6208E4
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Nov 2018 19:26:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E5DA2082F
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Nov 2018 19:40:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="irsWlRL2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5AB6208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T5Yq8SvZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E5DA2082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726510AbeK1GZk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 28 Nov 2018 01:25:40 -0500
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:40724 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726411AbeK1GZj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Nov 2018 01:25:39 -0500
-Received: by mail-ua1-f68.google.com with SMTP id n7so8022073uao.7
-        for <linux-clk@vger.kernel.org>; Tue, 27 Nov 2018 11:26:44 -0800 (PST)
+        id S1725764AbeK1GjJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 28 Nov 2018 01:39:09 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:35762 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725758AbeK1GjJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Nov 2018 01:39:09 -0500
+Received: by mail-lj1-f193.google.com with SMTP id x85-v6so21175332ljb.2;
+        Tue, 27 Nov 2018 11:40:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fT92pSQBkH2Kacv5dZWsTSHpUZMrE0kewaDsRcZSiu8=;
-        b=irsWlRL2tt7r8w+QiQ/VULh6PG9bDa7DSELPb7rfeihLiX6Cywt/HEk//FQ+gOFSm1
-         K/qbYwH2jJr3OrzGalalVksxUtn8xlBCUh3+S6II5x+h9FX+kV/zqvcc5I8rzm9ZtUlV
-         xfHRhq1mrPBsCrv7VePEgRetKTXZBywy10USg=
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=iouK7MCZWqMyAkyI3JN3bIC6orROKWtH3fkJSktxfYA=;
+        b=T5Yq8SvZkun/JGNMbe/GBaEKX/XbUI5BM7/jfB2nyLn7mo517/DKvd+Og+wfvotPT0
+         89hAS9CcMTcK03UGVEqNRnEYHgFPO8ZSC7d0Yys5thfpnBPUe+sR/+5FPcvytSNwyHiG
+         KAaUogmzwa3r74DcWeTkmJEk94Ge7yqTzFunLYmYnuc6Tb6XI9Diu/uWVYv/1Su5SDZH
+         5mPmE38WKLXLVQpcqcDzum01+fHjDgzBTrNgyimLNhLqffJeXCjPJVBu64vvEo6Lqg0S
+         pWCel1aMcbx+DtHBvHeXfcB8/e9ogebRp9CZZiNixyNpVjU5PXCImZE/rZfcwDnQxzm0
+         RRPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fT92pSQBkH2Kacv5dZWsTSHpUZMrE0kewaDsRcZSiu8=;
-        b=uOZQ+apMYXeq58UXJ4wi0KnrBSCwfXreH39K/8HgcLbZnOhS6F+Eufs0Z9M8dNoFgf
-         XI/khxipjI/Fje5fRLdS5Ohhdp2r9eK7q1e6bnZs4lFqdgPg0CW/+b6kRBR+MYQ5LWP0
-         IcWuWJs6xwDuG/g56OUS/lAe5DiCeaJU3uF/Rrjpf47DFWjLJOHTz75p0zhYdYAz05P6
-         VR18+xn/r/Z1zxSspVLH4Hyix6/vETnIpkDxv8M9CriEOEM0z4ocahax92fSQ6pRJh0P
-         lSYj5U/DtAFy2u8OfyvP7GT3ytPSx4Liy7bgHqnBRG7xvW7bZlVuCOmyPGC2j3w7k3OR
-         m1ew==
-X-Gm-Message-State: AA+aEWb49IVb3ZZaVEPaSAgaJEIO+imJ2Go2UbwuzpiDzlAzsIuTopTV
-        m+fCuu6WOTIWm9NVVoc8tTofFYk8o0M=
-X-Google-Smtp-Source: AFSGD/VOSIUpwQnIY71uWT9eFzUKZ+8QeQfxVAt0XYATsf5W3xk2eUdBN38EhF+kXTwyRLGkexi4Pg==
-X-Received: by 2002:ab0:5b9b:: with SMTP id y27mr14237342uae.30.1543346803175;
-        Tue, 27 Nov 2018 11:26:43 -0800 (PST)
-Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com. [209.85.222.48])
-        by smtp.gmail.com with ESMTPSA id g14sm1584398uah.10.2018.11.27.11.26.42
-        for <linux-clk@vger.kernel.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=iouK7MCZWqMyAkyI3JN3bIC6orROKWtH3fkJSktxfYA=;
+        b=dSO4Jc+zmFYLCX7algLN10F7icM2oTNYdHK8pKtXZAR8AuCD/vwKvXjDPFgO51MO5a
+         7hIb3ztJ2s8NhOvtdMDf3nKWAAAHU+Tiw7ldQXy/4Fgom59fd14VLne4dcVBpIs3B34F
+         Uy9rpbBVyXqoaXYZPyqcZjYYAg1725ZBQhKCJ9WLHctfh4zPIBvLN/ezkEnaHe/WnGTs
+         OUejLVXr3IZMqMtL9iaBPnjn+AoAfDSG4Hhi4GHAXU8yz6khYGtFnCteYaNCk5gBkASd
+         0vStH61rSqHw6kZNuDvOF1QqVhpJZoQsHF9BBKbAPOYyerf1EgcRa7eWNfKDxcq0J9ZS
+         Z4FA==
+X-Gm-Message-State: AA+aEWYAdZpaw7Waw+82fzmyFeRQUhr9cVklXlod8/jPBdG1bbLF3kFL
+        8lJqVFN12PHoDa+1hRzm2nXcZUwe
+X-Google-Smtp-Source: AFSGD/WmyM7/6/PrPlsEv/oIJb9D39+dVCkXiyZZlIbroCO7MP3yo0Uq2dzSmIBF1x6yfFsoFcNxjg==
+X-Received: by 2002:a2e:449c:: with SMTP id b28-v6mr20263211ljf.47.1543347610615;
+        Tue, 27 Nov 2018 11:40:10 -0800 (PST)
+Received: from [192.168.2.145] (ppp91-79-165-221.pppoe.mtu-net.ru. [91.79.165.221])
+        by smtp.googlemail.com with ESMTPSA id b22sm803281lfg.32.2018.11.27.11.40.09
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 27 Nov 2018 11:26:42 -0800 (PST)
-Received: by mail-ua1-f48.google.com with SMTP id j3so8031186uap.3
-        for <linux-clk@vger.kernel.org>; Tue, 27 Nov 2018 11:26:42 -0800 (PST)
-X-Received: by 2002:a9f:2bc6:: with SMTP id f6mr13743866uaj.52.1543346801602;
- Tue, 27 Nov 2018 11:26:41 -0800 (PST)
-MIME-Version: 1.0
-References: <1541414117-27864-1-git-send-email-tdas@codeaurora.org>
- <CAD=FV=X3C=oKep1kPWjasLDZdFKfhCs0JMWTOensgYDj=apvuQ@mail.gmail.com> <154330186815.88331.12720647562079303842@swboyd.mtv.corp.google.com>
-In-Reply-To: <154330186815.88331.12720647562079303842@swboyd.mtv.corp.google.com>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Tue, 27 Nov 2018 11:26:30 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=XoriDM2Dmj0bYwbqZ+ej6Ybf_XX5DOTSW1_X3eGRkohQ@mail.gmail.com>
-Message-ID: <CAD=FV=XoriDM2Dmj0bYwbqZ+ej6Ybf_XX5DOTSW1_X3eGRkohQ@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: sdm845: Add videocc node
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        Taniya Das <tdas@codeaurora.org>,
+        Tue, 27 Nov 2018 11:40:09 -0800 (PST)
+Subject: Re: [PATCH V2] clk: tegra: Return the exact clock rate from
+ clk_round_rate
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Robert Yang <decatf@gmail.com>
+Cc:     Prashant Gaikwad <pgaikwad@nvidia.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org,
-        Rob Herring <robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180925214940.15188-1-decatf@gmail.com>
+ <153973003125.5275.211113451006447179@swboyd.mtv.corp.google.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <00e78319-7d97-e57e-9450-7e3ab7707ed8@gmail.com>
+Date:   Tue, 27 Nov 2018 22:40:08 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
+MIME-Version: 1.0
+In-Reply-To: <153973003125.5275.211113451006447179@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+On 17.10.2018 1:47, Stephen Boyd wrote:
+> Quoting Robert Yang (2018-09-25 14:49:40)
+>> The current behavior is that clk_round_rate would return the same clock
+>> rate passed to it for valid PLL configurations. This change will return
+>> the exact rate the PLL will provide in accordance with clk API.
+>>
+>> Signed-off-by: Robert Yang <decatf@gmail.com>
+>> ---
+> 
+> I'm waiting for someone from Nvidia/Tegra background to review this
+> change.
+> 
 
-On Mon, Nov 26, 2018 at 10:57 PM Stephen Boyd <sboyd@kernel.org> wrote:
->
-> > > +               videocc: clock-controller@ab00000 {
-> > > +                       compatible = "qcom,sdm845-videocc";
-> > > +                       reg = <0xab00000 0x10000>;
-> > > +                       #clock-cells = <1>;
-> > > +                       #power-domain-cells = <1>;
-> >
-> > Any reason not to include "#reset-cells = <1>;" here?  The bindings
-> > list it as optional but I see no reason why we should leave it off.
-> > The file "include/dt-bindings/clock/qcom,videocc-sdm845.h" seems to
-> > include some #defines for resets.  Even though the driver doesn't seem
-> > like it supports it yet, it still should be fine to list it here.
->
-> We should update the binding to make it a required property. It doesn't
-> make any sense why that property would be optional given that the
-> hardware either has support for resets or it doesn't.
+Apparently Peter is taking a pause. I think Thierry's ACK to V1 should be still valid here.
 
-Patch sent for the bindings change.
+Also, if this helps:
 
-https://lkml.kernel.org/r/20181127192443.136158-1-dianders@chromium.org
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+Tested-by: Dmitry Osipenko <digetx@gmail.com>
