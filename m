@@ -6,23 +6,23 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCA1EC169D4
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Nov 2018 09:37:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4E65C07E85
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Nov 2018 09:37:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF2A120989
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Nov 2018 09:37:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF2A120989
+	by mail.kernel.org (Postfix) with ESMTP id 7788B20989
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Nov 2018 09:37:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7788B20989
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728221AbeK1Uij (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 28 Nov 2018 15:38:39 -0500
-Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:49540 "EHLO
+        id S1728225AbeK1Uik (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 28 Nov 2018 15:38:40 -0500
+Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:49550 "EHLO
         wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728154AbeK1Uij (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        id S1728151AbeK1Uij (ORCPT <rfc822;linux-clk@vger.kernel.org>);
         Wed, 28 Nov 2018 15:38:39 -0500
 Received: by wens.csie.org (Postfix, from userid 1000)
-        id B287B60560; Wed, 28 Nov 2018 17:30:28 +0800 (CST)
+        id 518515FF73; Wed, 28 Nov 2018 17:30:28 +0800 (CST)
 From:   Chen-Yu Tsai <wens@csie.org>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Alexandre Belloni <alexandre.belloni@bootlin.com>,
@@ -35,9 +35,9 @@ Cc:     Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org,
         linux-rtc@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-sunxi@googlegroups.com
-Subject: [PATCH 15/15] arm64: dts: allwinner: a64: Fix up RTC device node and clock references
-Date:   Wed, 28 Nov 2018 17:30:13 +0800
-Message-Id: <20181128093013.24442-17-wens@csie.org>
+Subject: [PATCH 05/15] rtc: sun6i: Add default clock name for LOSC
+Date:   Wed, 28 Nov 2018 17:30:02 +0800
+Message-Id: <20181128093013.24442-6-wens@csie.org>
 X-Mailer: git-send-email 2.20.0.rc1
 In-Reply-To: <20181128093013.24442-1-wens@csie.org>
 References: <20181128093013.24442-1-wens@csie.org>
@@ -48,77 +48,30 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The RTC module on the A64 was claimed to be the same as on the A31, when
-in fact it is not. It is actually compatible to the H3's RTC. The A64's
-RTC has some extra crypto-related registers which the H3's does not, but
-the exact function of these is not clear.
+The RTC's main clock, used internally and exported to the rest of the
+SoC, is called "LOSC" (low speed oscillator) through the hardware
+documentation.
 
-This patch fixes the compatible string and clock properties to conform
-to the updated bindings. The device node for the internal oscillator is
-removed, as it is internalized into the RTC device. Clock references to
-the IOSC and LOSC are also fixed.
+This patch adds a default name for this clock, in case the device tree
+does not provide one. This shouldn't happen, but lets play it safe.
 
 Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 22 ++++++-------------
- 1 file changed, 7 insertions(+), 15 deletions(-)
+ drivers/rtc/rtc-sun6i.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-index 384c417cb7a2..a729dcc63038 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-@@ -139,15 +139,7 @@
- 		#clock-cells = <0>;
- 		compatible = "fixed-clock";
- 		clock-frequency = <32768>;
--		clock-output-names = "osc32k";
--	};
--
--	iosc: internal-osc-clk {
--		#clock-cells = <0>;
--		compatible = "fixed-clock";
--		clock-frequency = <16000000>;
--		clock-accuracy = <300000000>;
--		clock-output-names = "iosc";
-+		clock-output-names = "ext-osc32k";
+diff --git a/drivers/rtc/rtc-sun6i.c b/drivers/rtc/rtc-sun6i.c
+index fe07310952df..8edd9e1ec007 100644
+--- a/drivers/rtc/rtc-sun6i.c
++++ b/drivers/rtc/rtc-sun6i.c
+@@ -191,6 +191,7 @@ static void __init sun6i_rtc_clk_init(struct device_node *node)
+ 	struct sun6i_rtc_dev *rtc;
+ 	struct clk_init_data init = {
+ 		.ops		= &sun6i_rtc_osc_ops,
++		.name		= "losc",
  	};
- 
- 	psci {
-@@ -514,7 +506,7 @@
- 		ccu: clock@1c20000 {
- 			compatible = "allwinner,sun50i-a64-ccu";
- 			reg = <0x01c20000 0x400>;
--			clocks = <&osc24M>, <&osc32k>;
-+			clocks = <&osc24M>, <&rtc 0>;
- 			clock-names = "hosc", "losc";
- 			#clock-cells = <1>;
- 			#reset-cells = <1>;
-@@ -944,11 +936,12 @@
- 		};
- 
- 		rtc: rtc@1f00000 {
--			compatible = "allwinner,sun6i-a31-rtc";
--			reg = <0x01f00000 0x54>;
-+			compatible = "allwinner,sun50i-a64-rtc",
-+				     "allwinner,sun8i-h3-rtc";
-+			reg = <0x01f00000 0x400>;
- 			interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
--			clock-output-names = "rtc-osc32k", "rtc-osc32k-out";
-+			clock-output-names = "osc32k", "osc32k-out", "iosc";
- 			clocks = <&osc32k>;
- 			#clock-cells = <1>;
- 		};
-@@ -965,8 +958,7 @@
- 		r_ccu: clock@1f01400 {
- 			compatible = "allwinner,sun50i-a64-r-ccu";
- 			reg = <0x01f01400 0x100>;
--			clocks = <&osc24M>, <&osc32k>, <&iosc>,
--				 <&ccu 11>;
-+			clocks = <&osc24M>, <&rtc 0>, <&rtc 2>, <&ccu 11>;
- 			clock-names = "hosc", "losc", "iosc", "pll-periph";
- 			#clock-cells = <1>;
- 			#reset-cells = <1>;
+ 	const char *clkout_name = "osc32k-out";
+ 	const char *parents[2];
 -- 
 2.20.0.rc1
 
