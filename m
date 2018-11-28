@@ -2,146 +2,93 @@ Return-Path: <SRS0=nz6M=OH=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F09FBC43441
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Nov 2018 10:33:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B784C43610
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Nov 2018 11:16:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C126120832
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Nov 2018 10:33:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C126120832
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 6CCB221019
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Nov 2018 11:16:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CCB221019
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727858AbeK1Veb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 28 Nov 2018 16:34:31 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:48350 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727413AbeK1Vea (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 28 Nov 2018 16:34:30 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 2F61720743; Wed, 28 Nov 2018 11:33:17 +0100 (CET)
-Received: from localhost (aaubervilliers-681-1-94-205.w90-88.abo.wanadoo.fr [90.88.35.205])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 1BB44207AD;
-        Wed, 28 Nov 2018 11:33:02 +0100 (CET)
-Date:   Wed, 28 Nov 2018 11:33:02 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Chen-Yu Tsai <wens@csie.org>
-Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        id S1728020AbeK1WR3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 28 Nov 2018 17:17:29 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:45320 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727519AbeK1WR3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Nov 2018 17:17:29 -0500
+Received: by mail-ed1-f66.google.com with SMTP id d39so21711263edb.12;
+        Wed, 28 Nov 2018 03:16:10 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=JTHy/GTrL8+EFKw7Tj7vAWj8WWnTu1OL6FxHt5d5/v0=;
+        b=PP1sPltEbcQxV53+pwg0h5nB9z7Ii6U0dJViCoJIHQokSmIj3l3A4moHj4azVsxLs3
+         sLeO566BIOWn1/dhDCnvpQIvWecFG7Zor5OkymzJtDKP/NrdwFfoFprEhxQSWQsijGNM
+         JlAdE+PZ8tkf+a1i7ONICqOrDqMzndG02IJtdrPtI5d10SogoKh2JvlTRJII9MCPa/hu
+         PhFtokx5QcTXGUh79S0CPtIZmbmGoGgtMow1CPIThHzxfJBwUzVmgyo1v92B7F1FpsmH
+         C3q0H+qfHIEFYEt4MCrcRO3d+wtIbZ6numLGrbBpqOKG4EU6ageeTfuY/hG2wPynUMrq
+         VtDw==
+X-Gm-Message-State: AA+aEWbTOF/uI1m/A+xHz+vwnhWYqxAoceyuCRRL02txOqPjo58th3qm
+        pXK7Vlu4lChWBT/GK7dHLCGCnmVbfHA=
+X-Google-Smtp-Source: AFSGD/WqaB9rSaBEwXc3NGhsqr9BlJcikCoB9y8/wtMk4g0nbLOdPIAi69631/cVcSv18dEZCj7jiw==
+X-Received: by 2002:a50:8d8c:: with SMTP id r12mr29419060edh.105.1543403769718;
+        Wed, 28 Nov 2018 03:16:09 -0800 (PST)
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com. [209.85.128.46])
+        by smtp.gmail.com with ESMTPSA id p36sm1712745edc.78.2018.11.28.03.16.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 28 Nov 2018 03:16:09 -0800 (PST)
+Received: by mail-wm1-f46.google.com with SMTP id y1so2172477wmi.3;
+        Wed, 28 Nov 2018 03:16:09 -0800 (PST)
+X-Received: by 2002:a1c:2304:: with SMTP id j4mr2320634wmj.14.1543403768741;
+ Wed, 28 Nov 2018 03:16:08 -0800 (PST)
+MIME-Version: 1.0
+References: <20181128093013.24442-1-wens@csie.org> <20181128093013.24442-4-wens@csie.org>
+ <20181128102015.jfzqgdlstkjmdfwl@flea>
+In-Reply-To: <20181128102015.jfzqgdlstkjmdfwl@flea>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Wed, 28 Nov 2018 19:15:57 +0800
+X-Gmail-Original-Message-ID: <CAGb2v64wWWHkyt90oZZnHn+1_mPLbL-A_P-igCaOjjOKajxhjw@mail.gmail.com>
+Message-ID: <CAGb2v64wWWHkyt90oZZnHn+1_mPLbL-A_P-igCaOjjOKajxhjw@mail.gmail.com>
+Subject: Re: [PATCH 03/15] dt-bindings: rtc: sun6i-rtc: Deprecate external
+ clock output for A31
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     alexandre.belloni@bootlin.com,
         Alessandro Zummo <a.zummo@towertech.it>,
-        Michael Turquette <mturquette@baylibre.com>,
+        Mike Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 08/15] rtc: sun6i: Expose internal oscillator through
- device tree
-Message-ID: <20181128103302.n7abjuf4ixjafth6@flea>
-References: <20181128093013.24442-1-wens@csie.org>
- <20181128093013.24442-10-wens@csie.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="4vh5seys36kdunea"
-Content-Disposition: inline
-In-Reply-To: <20181128093013.24442-10-wens@csie.org>
-User-Agent: NeoMutt/20180716
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-rtc@vger.kernel.org, linux-clk <linux-clk@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Wed, Nov 28, 2018 at 6:20 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+>
+> On Wed, Nov 28, 2018 at 05:30:00PM +0800, Chen-Yu Tsai wrote:
+> > The A31 does not have an external clock output directly from the RTC.
+> > Instead, it has four muxable clock outputs: three (A, B, C) are
+> > controlled from the CCU, and the last (D) is controlled from the PRCM.
+> >
+> > Deprecate the usage of the external clock output for the A31 compatible.
+> >
+> > Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+>
+> Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+>
+> I guess we should add a warning in the code as well if one tries to
+> use it.
 
---4vh5seys36kdunea
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-65;5402;1c
-On Wed, Nov 28, 2018 at 05:30:06PM +0800, Chen-Yu Tsai wrote:
-> The bindings have been updated to expose the RTC's internal oscillator,
-> for some SoCs that have it directly feeding the PRCM block. The changes
-> include the index 2 for the clock outputs, as well as the clock output
-> names.
->=20
-> This patch adds the internal oscillator to the list of clocks exposed
-> through of_clk_add_hw_provider(), and also have the driver optionally
-> fetch the name of the clock from the device tree if it's available.
->=20
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> ---
->  drivers/rtc/rtc-sun6i.c | 10 +++++++---
->  1 file changed, 7 insertions(+), 3 deletions(-)
->=20
-> diff --git a/drivers/rtc/rtc-sun6i.c b/drivers/rtc/rtc-sun6i.c
-> index 62ed9ce53d8c..273ab7fbbbe3 100644
-> --- a/drivers/rtc/rtc-sun6i.c
-> +++ b/drivers/rtc/rtc-sun6i.c
-> @@ -220,6 +220,7 @@ static void __init sun6i_rtc_clk_init(struct device_n=
-ode *node,
->  		.ops		=3D &sun6i_rtc_osc_ops,
->  		.name		=3D "losc",
->  	};
-> +	const char *iosc_name =3D "rtc-int-osc";
->  	const char *clkout_name =3D "osc32k-out";
->  	const char *parents[2];
-> =20
-> @@ -228,7 +229,7 @@ static void __init sun6i_rtc_clk_init(struct device_n=
-ode *node,
->  		return;
-> =20
->  	rtc->data =3D data;
-> -	clk_data =3D kzalloc(struct_size(clk_data, hws, 2), GFP_KERNEL);
-> +	clk_data =3D kzalloc(struct_size(clk_data, hws, 3), GFP_KERNEL);
->  	if (!clk_data) {
->  		kfree(rtc);
->  		return;
-> @@ -253,8 +254,10 @@ static void __init sun6i_rtc_clk_init(struct device_=
-node *node,
->  	if (!of_get_property(node, "clocks", NULL))
->  		goto err;
-> =20
-> +	of_property_read_string_index(node, "clock-output-names", 2,
-> +				      &iosc_name);
->  	rtc->int_osc =3D clk_hw_register_fixed_rate_with_accuracy(NULL,
-> -								"rtc-int-osc",
-> +								iosc_name,
->  								NULL, 0,
->  								rtc->data->rc_osc_rate,
->  								300000000);
-> @@ -290,9 +293,10 @@ static void __init sun6i_rtc_clk_init(struct device_=
-node *node,
->  		return;
->  	}
-> =20
-> -	clk_data->num =3D 2;
-> +	clk_data->num =3D 3;
->  	clk_data->hws[0] =3D &rtc->hw;
->  	clk_data->hws[1] =3D __clk_get_hw(rtc->ext_losc);
-> +	clk_data->hws[2] =3D rtc->int_osc;
-
-Shouldn't we add a check on either the compatible on the number of
-clock-output-names?
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---4vh5seys36kdunea
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW/5u3gAKCRDj7w1vZxhR
-xdgBAP0TS5jYj43RhJUZaBpvilPR8NCcJn0ROpWAHbuAwipcrwEAys09f2igBsbo
-NqXxEBFIQT32qOacr+yaLZwpCXZWJQQ=
-=MIEY
------END PGP SIGNATURE-----
-
---4vh5seys36kdunea--
+That's on the TODO list. :)
