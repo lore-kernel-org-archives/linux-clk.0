@@ -6,24 +6,23 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BE82C04EBF
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Nov 2018 09:37:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1043AC04EB8
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Nov 2018 09:37:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E80922147D
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Nov 2018 09:37:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E80922147D
+	by mail.kernel.org (Postfix) with ESMTP id CF91E20989
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Nov 2018 09:37:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF91E20989
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728136AbeK1Uig (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S1728147AbeK1Uig (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Wed, 28 Nov 2018 15:38:36 -0500
-Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:49474 "EHLO
+Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:49476 "EHLO
         wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728117AbeK1Uig (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        id S1727541AbeK1Uig (ORCPT <rfc822;linux-clk@vger.kernel.org>);
         Wed, 28 Nov 2018 15:38:36 -0500
-X-Greylist: delayed 423 seconds by postgrey-1.27 at vger.kernel.org; Wed, 28 Nov 2018 15:38:34 EST
 Received: by wens.csie.org (Postfix, from userid 1000)
-        id 7B39A6035A; Wed, 28 Nov 2018 17:30:28 +0800 (CST)
+        id 75ACC60339; Wed, 28 Nov 2018 17:30:28 +0800 (CST)
 From:   Chen-Yu Tsai <wens@csie.org>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Alexandre Belloni <alexandre.belloni@bootlin.com>,
@@ -36,9 +35,9 @@ Cc:     Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org,
         linux-rtc@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-sunxi@googlegroups.com
-Subject: [PATCH 09/15] clk: sunxi-ng: r40: Force LOSC parent to RTC LOSC output
-Date:   Wed, 28 Nov 2018 17:30:07 +0800
-Message-Id: <20181128093013.24442-11-wens@csie.org>
+Subject: [PATCH 08/15] rtc: sun6i: Expose internal oscillator through device tree
+Date:   Wed, 28 Nov 2018 17:30:06 +0800
+Message-Id: <20181128093013.24442-10-wens@csie.org>
 X-Mailer: git-send-email 2.20.0.rc1
 In-Reply-To: <20181128093013.24442-1-wens@csie.org>
 References: <20181128093013.24442-1-wens@csie.org>
@@ -49,53 +48,65 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On the R40, in addition to a mux between the RTC's own RC oscillator and
-an external 32768 Hz crystal, which are muxed inside the RTC module, the
-CCU also has its own RC oscillator, which runs at around 2 MHz, and can
-be muxed with the LOSC output from the RTC. This muxed output is called
-"SYS 32K" in the module clock diagram, but otherwise referred to as the
-LOSC throughout the CCU documentation.
+The bindings have been updated to expose the RTC's internal oscillator,
+for some SoCs that have it directly feeding the PRCM block. The changes
+include the index 2 for the clock outputs, as well as the clock output
+names.
 
-The RC oscillator is not very accurate, even though it has an undocumented
-calibration function. We really want a precise clock at 32768 Hz,
-instead of something at around 32 KHz. This patch forces the SYS 32K
-clock to use the RTC output as its parent, and doesn't bother
-registering the internal oscillator nor a clock mux.
+This patch adds the internal oscillator to the list of clocks exposed
+through of_clk_add_hw_provider(), and also have the driver optionally
+fetch the name of the clock from the device tree if it's available.
 
 Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- drivers/clk/sunxi-ng/ccu-sun8i-r40.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/rtc/rtc-sun6i.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
-index 582ebd41d20d..a22d11aa38ba 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
-@@ -1284,6 +1284,9 @@ static struct regmap_config sun8i_r40_ccu_regmap_config = {
- 	.writeable_reg	= sun8i_r40_ccu_regmap_accessible_reg,
- };
+diff --git a/drivers/rtc/rtc-sun6i.c b/drivers/rtc/rtc-sun6i.c
+index 62ed9ce53d8c..273ab7fbbbe3 100644
+--- a/drivers/rtc/rtc-sun6i.c
++++ b/drivers/rtc/rtc-sun6i.c
+@@ -220,6 +220,7 @@ static void __init sun6i_rtc_clk_init(struct device_node *node,
+ 		.ops		= &sun6i_rtc_osc_ops,
+ 		.name		= "losc",
+ 	};
++	const char *iosc_name = "rtc-int-osc";
+ 	const char *clkout_name = "osc32k-out";
+ 	const char *parents[2];
  
-+#define SUN8I_R40_SYS_32K_CLK_REG 0x310
-+#define SUN8I_R40_SYS_32K_CLK_KEY (0x16AA << 16)
-+
- static int sun8i_r40_ccu_probe(struct platform_device *pdev)
- {
- 	struct resource *res;
-@@ -1312,6 +1315,14 @@ static int sun8i_r40_ccu_probe(struct platform_device *pdev)
- 	val &= ~GENMASK(25, 20);
- 	writel(val, reg + SUN8I_R40_USB_CLK_REG);
+@@ -228,7 +229,7 @@ static void __init sun6i_rtc_clk_init(struct device_node *node,
+ 		return;
  
-+	/*
-+	 * Force SYS 32k (otherwise known as LOSC throughout the CCU)
-+	 * clock parent to LOSC output from RTC module instead of the
-+	 * CCU's internal RC oscillator divided output.
-+	 */
-+	writel(SUN8I_R40_SYS_32K_CLK_KEY | BIT(8),
-+	       reg + SUN8I_R40_SYS_32K_CLK_REG);
-+
- 	regmap = devm_regmap_init_mmio(&pdev->dev, reg,
- 				       &sun8i_r40_ccu_regmap_config);
- 	if (IS_ERR(regmap))
+ 	rtc->data = data;
+-	clk_data = kzalloc(struct_size(clk_data, hws, 2), GFP_KERNEL);
++	clk_data = kzalloc(struct_size(clk_data, hws, 3), GFP_KERNEL);
+ 	if (!clk_data) {
+ 		kfree(rtc);
+ 		return;
+@@ -253,8 +254,10 @@ static void __init sun6i_rtc_clk_init(struct device_node *node,
+ 	if (!of_get_property(node, "clocks", NULL))
+ 		goto err;
+ 
++	of_property_read_string_index(node, "clock-output-names", 2,
++				      &iosc_name);
+ 	rtc->int_osc = clk_hw_register_fixed_rate_with_accuracy(NULL,
+-								"rtc-int-osc",
++								iosc_name,
+ 								NULL, 0,
+ 								rtc->data->rc_osc_rate,
+ 								300000000);
+@@ -290,9 +293,10 @@ static void __init sun6i_rtc_clk_init(struct device_node *node,
+ 		return;
+ 	}
+ 
+-	clk_data->num = 2;
++	clk_data->num = 3;
+ 	clk_data->hws[0] = &rtc->hw;
+ 	clk_data->hws[1] = __clk_get_hw(rtc->ext_losc);
++	clk_data->hws[2] = rtc->int_osc;
+ 	of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
+ 	return;
+ 
 -- 
 2.20.0.rc1
 
