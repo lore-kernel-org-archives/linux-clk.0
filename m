@@ -2,113 +2,70 @@ Return-Path: <SRS0=nz6M=OH=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFF2AC43441
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Nov 2018 00:49:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B50BC43441
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Nov 2018 00:54:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B15B22082F
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Nov 2018 00:49:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 53F482082F
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Nov 2018 00:54:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="biwk9QR9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B15B22082F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HBCs0n7Q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53F482082F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726783AbeK1LtU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 28 Nov 2018 06:49:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47888 "EHLO mail.kernel.org"
+        id S1726980AbeK1Lx7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 28 Nov 2018 06:53:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49176 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726418AbeK1LtU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 28 Nov 2018 06:49:20 -0500
+        id S1726418AbeK1Lx7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 28 Nov 2018 06:53:59 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1C7062082F;
-        Wed, 28 Nov 2018 00:49:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1F30D2082F;
+        Wed, 28 Nov 2018 00:54:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543366178;
-        bh=UaD0brctcEnL5zd+h4X7MSMe9H+tTxDEDtpXtltCwmI=;
+        s=default; t=1543366457;
+        bh=CAUbcwqrQg6E6zU1ASieDtmWw1mGl0zVf3VlUnob9Tk=;
         h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=biwk9QR9FKOugd8LZ7gn661CfRCVF282oNjS+EaCZH43i6WqiLjkR3y9xjZGg+YBX
-         JVh8fUWxu0nsR3tZCew1+spC0S4cCphFqLiryZXyqotViwcWMoANp7J+mpdVnghWPa
-         EpIQO4sSbmRjWVAke+U8RXCa8H/sp9WVBixSRvV4=
+        b=HBCs0n7Q/DfZ/d1mcjKGs2Y7lCOlujx7PtHaGVN+M5Lixc93+fFqzaYyBLc6VcyOT
+         M8UBR61NyWpG0P5xWPqvZdHoMM/6AX6FBTQCqTXtSkIwOJR4LpLq0I1hMC/aFeO/g/
+         0PTIVE3tw3yh58JNsQjARQ7hbNVtlABWXxkfzUr8=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>
+To:     Jordan Crouse <jcrouse@codeaurora.org>, mturquette@baylibre.com
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1543120569-14444-2-git-send-email-tdas@codeaurora.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, robh@kernel.org,
-        Amit Nischal <anischal@codeaurora.org>
-References: <1543120569-14444-1-git-send-email-tdas@codeaurora.org>
- <1543120569-14444-2-git-send-email-tdas@codeaurora.org>
-Message-ID: <154336617743.88331.11824624815680965054@swboyd.mtv.corp.google.com>
+In-Reply-To: <20181126172032.11567-2-jcrouse@codeaurora.org>
+Cc:     andy.gross@linaro.org, david.brown@linaro.org,
+        rnayak@codeaurora.org, okukatla@codeaurora.org,
+        tdas@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20181126172032.11567-1-jcrouse@codeaurora.org>
+ <20181126172032.11567-2-jcrouse@codeaurora.org>
+Message-ID: <154336645634.88331.4345415167269404612@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.7
-Subject: Re: [PATCH v4 1/2] dt-bindings: clock: Introduce QCOM Graphics clock bindings
-Date:   Tue, 27 Nov 2018 16:49:37 -0800
+Subject: Re: [PATCH 1/2] clk: qcom: gdsc: Don't override existing gdsc pd functions
+Date:   Tue, 27 Nov 2018 16:54:16 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Taniya Das (2018-11-24 20:36:07)
-> From: Amit Nischal <anischal@codeaurora.org>
+Quoting Jordan Crouse (2018-11-26 09:20:31)
+> In extreme cases an individual gdsc may wish to override the
+> power domain enable or disable callback functions for their own
+> purposes. Only set the generic gdsc callback if the function pointers
+> are not already set.
 > =
 
-> Add device tree bindings for graphics clock controller for
-> Qualcomm Technology Inc's SDM845 SoCs.
-> =
-
-> Signed-off-by: Amit Nischal <anischal@codeaurora.org>
-
-You could have added your sign off here, but I don't think this is
-really different from the original posting that's on the list so it's
-OK.
-
+> Acked-by: Rajendra Nayak <rnayak@codeaurora.org>
+> Signed-off-by: Jordan Crouse <jcrouse@codeaurora.org>
 > ---
->  .../devicetree/bindings/clock/qcom,gpucc.txt       | 18 ++++++++++++++++
->  include/dt-bindings/clock/qcom,gpucc-sdm845.h      | 24 ++++++++++++++++=
-++++++
->  2 files changed, 42 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gpucc.txt
->  create mode 100644 include/dt-bindings/clock/qcom,gpucc-sdm845.h
-> =
 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,gpucc.txt b/Doc=
-umentation/devicetree/bindings/clock/qcom,gpucc.txt
-> new file mode 100644
-> index 0000000..93752db
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,gpucc.txt
-> @@ -0,0 +1,18 @@
-> +Qualcomm Graphics Clock & Reset Controller Binding
-> +--------------------------------------------------
-> +
-> +Required properties :
-> +- compatible : shall contain "qcom,sdm845-gpucc".
-> +- reg : shall contain base register location and length.
-> +- #clock-cells : from common clock binding, shall contain 1.
-> +- #reset-cells : from common reset binding, shall contain 1.
-> +- #power-domain-cells : from generic power domain binding, shall contain=
- 1.
-> +
-> +Example:
-> +       gpucc: clock-controller@5090000 {
-> +               compatible =3D "qcom,sdm845-gpucc";
-> +               reg =3D <0x5090000 0x9000>;
-> +               #clock-cells =3D <1>;
-> +               #reset-cells =3D <1>;
-> +               #power-domain-cells =3D <1>;
-
-I would expect to see the xo clk here as a clocks and clock-names
-property. I added it myself and applied to clk-next.
+Applied to clk-next
 
