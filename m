@@ -8,55 +8,55 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8C1FC43441
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Nov 2018 22:35:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36187C43441
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Nov 2018 22:35:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9444620832
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Nov 2018 22:35:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EEA1420832
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Nov 2018 22:35:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ga3BkypM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9444620832
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Oyrriys4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEA1420832
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727303AbeK2Jhx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 29 Nov 2018 04:37:53 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:46722 "EHLO
+        id S1726836AbeK2JiU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 29 Nov 2018 04:38:20 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:46725 "EHLO
         mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727166AbeK2Jhw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Nov 2018 04:37:52 -0500
-Received: by mail-wr1-f65.google.com with SMTP id l9so27906140wrt.13;
-        Wed, 28 Nov 2018 14:34:40 -0800 (PST)
+        with ESMTP id S1727196AbeK2Jhx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Nov 2018 04:37:53 -0500
+Received: by mail-wr1-f65.google.com with SMTP id l9so27906200wrt.13;
+        Wed, 28 Nov 2018 14:34:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=9WG2eU/ejG4wAWToKoueA27/6ygzN1rLZLWAo8LIhNE=;
-        b=ga3BkypMafnIrlIbTkOz7SkxXzmYMDMUlEcgr2JTXWZhpvI+aG8kd83AUIFgVSjeXA
-         ellD4QPs7Ssv/URymLaizJqg+caslTJ8a7wDtWL5pbC75wv49SytulWzkmWTD2JN6BwS
-         Jj1ZIz/up5rwjkXLQnfxtSUcqRruoFS0VJDBbd3RclYdNySiPSjQsQ24TBrLo5AQQspg
-         4hE4CH7vvSeL0aIgcqY1OpEczZaIg/jffchAUGeVnMVHq5mcgrE7IQcYtPfXG1ktPKZ8
-         YBgLeM902M7dW1KzzXL5V5doK9FibPz49T/TAQ+idiMBnnoQNx73yUv7vT2uSt8+GQyP
-         x4gg==
+        bh=VkawJcjcjc12DBJtCZ++/73BzJMuRi7b2X8pVhsSCeI=;
+        b=Oyrriys4rQM2qdpSCl1tTkvP/Bly613Qg7GKQoqDATUEHBY8frBenNn6oY6QjQbHJ+
+         MBqksQGQHupvZGH6/xEORU6/KemExYUbJCLswVQVDMkzRrPWzIUt6GRIA4MKgSxf4Nus
+         dDblImO3mvbNl3EkkTFEM9gtcy3YSeHJJ9M/d/OZzhkrbL325Ghno9dDzjP9DQNCrbF7
+         +Rorg/CvfI7Y7ULB3D9yBH/ys+NoWLOUp7bJr9Uenft0iR1zoa1TGcCv/dpRkUZiqD5p
+         qYlKzx4qqS3tfYBCSSyKTiFhrveLQqp4fhCEb/1mBDAqS9sgWIuyJPZMWGCkdSWcEVIu
+         3Jrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=9WG2eU/ejG4wAWToKoueA27/6ygzN1rLZLWAo8LIhNE=;
-        b=VyAAX6BYvr2ya9czUV3OmXXAfce32XbbMGQqsypV8++qXt0M/e2LCSDp6mFMDKA3k2
-         KRyvi8QyowfeQWiMkrmjNVH9rMwHYti0+ZKPQQiPtjlIj1p6Vm9GWNtxUR3zJ5+zCpei
-         i+wE0agKQRfXeehrEcTowoB9z/lqUkr2Kt3kae4YjXbMe9w5LmX1UYJ2sTIUJEinqfwC
-         GXhCFUV+4dhb0T4XWJ5BwyOgGlqB/C3fk3JZ6SScRPSrbXb9Kd8HieZhveiFmX/P7ZiK
-         d4AfFTT1Dx//ur96HY4w/1asT1Vh1paJKp7Jj8NdtqLdc6P23AsQGjsh7Kskx0ZKA7Up
-         EweQ==
-X-Gm-Message-State: AA+aEWbIrDDwOeX9u/TTeJyhxIe/1Xw1LLJMdmg8rdeO5jr5xcTr7l7e
-        UPPyxfL4IoHFrB9QVdzSzjkVVjt+0u8=
-X-Google-Smtp-Source: AFSGD/U/J4HMWDVg4+d+ZUM3QbF6zHFGbTdN0nSG8bSWCDEn/WhRA4iJDCl8HzEe0AbLc1HMjELSyg==
-X-Received: by 2002:adf:f1c2:: with SMTP id z2mr34191114wro.218.1543444479105;
-        Wed, 28 Nov 2018 14:34:39 -0800 (PST)
+        bh=VkawJcjcjc12DBJtCZ++/73BzJMuRi7b2X8pVhsSCeI=;
+        b=h9W4sCbr2d+EIlMIyVVVQ7SFY9Tpv8WhviYYUJOxmLehoRZQ6xHUbjCNGDzzbpA4Nn
+         wXAJJe1ls+py0ZppPv7vUiPDgGImifylRD0Is6MlnwdaF+YcT+jZgnRreZ5A+0FjjOfR
+         ik0pO2E35a/CxvbxF1hk4Ta8fkGwH8pL0WqZR4bNGmU8v71LKkVah3/5eeF70ya11IH3
+         mIgR/1ZXUmYQdSKpzYtnnnj5/arSpWkf4ZBuA9Uah6cd+FBm3xi7th4cnTsMh1iuq2FB
+         u9Nsh5O/eSicW5QZPq/OV5MIcfeX3DQxQn0jVX7QdMVEBu4FtaaDCcC/c3hQRVuHrkMJ
+         eeQA==
+X-Gm-Message-State: AA+aEWauZ7aKVf7Da8YDsj3iiN5GS24QksNRivy90CSjlgQ61uB12May
+        d3BIljCBSU6yMn2mZqsaM3KzVKRPD4w=
+X-Google-Smtp-Source: AFSGD/Uxsu+Y0EMsKrB6JTECxsPrsZdGjz+3V2e3l7ZIrHxnePDCnUeJlI9i6PzUfHrUastuRGRiZg==
+X-Received: by 2002:adf:f449:: with SMTP id f9mr33586513wrp.40.1543444480846;
+        Wed, 28 Nov 2018 14:34:40 -0800 (PST)
 Received: from ThinkPad.home ([185.219.177.239])
-        by smtp.gmail.com with ESMTPSA id g198sm180244wmd.23.2018.11.28.14.34.37
+        by smtp.gmail.com with ESMTPSA id g198sm180244wmd.23.2018.11.28.14.34.39
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 28 Nov 2018 14:34:38 -0800 (PST)
+        Wed, 28 Nov 2018 14:34:40 -0800 (PST)
 From:   Mesih Kilinc <mesihkilinc@gmail.com>
 To:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
@@ -71,9 +71,9 @@ Cc:     Mesih Kilinc <mesihkilinc@gmail.com>,
         Icenowy Zheng <icenowy@aosc.io>,
         Rob Herring <robh+dt@kernel.org>,
         Julian Calaby <julian.calaby@gmail.com>
-Subject: [PATCH v5 16/17] ARM: dts: suniv: add initial DTSI file for F1C100s
-Date:   Thu, 29 Nov 2018 01:33:26 +0300
-Message-Id: <ad582610c3df538ad192fbec4231a634c6aab583.1543443475.git.mesihkilinc@gmail.com>
+Subject: [PATCH v5 17/17] ARM: suniv: f1c100s: add device tree for Lichee Pi Nano
+Date:   Thu, 29 Nov 2018 01:33:27 +0300
+Message-Id: <d7d83183c481102f30dfde7fadb9ce3db8ac43e2.1543443475.git.mesihkilinc@gmail.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1543443475.git.mesihkilinc@gmail.com>
 References: <cover.1543443475.git.mesihkilinc@gmail.com>
@@ -82,168 +82,62 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-F1C100s is one product with the suniv die, which has a 32MiB co-packaged
-DDR1 DRAM chip. As we have the support for suniv pin controller and CCU now, add a
-initial DTSI for it.
+Lichee Pi Nano is a F1C100s board by Lichee Pi.
 
+Add initial device tree for it.
+
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 Signed-off-by: Mesih Kilinc <mesihkilinc@gmail.com>
 ---
- arch/arm/boot/dts/suniv-f1c100s.dtsi | 147 +++++++++++++++++++++++++++++++++++
- 1 file changed, 147 insertions(+)
- create mode 100644 arch/arm/boot/dts/suniv-f1c100s.dtsi
+ arch/arm/boot/dts/Makefile                        |  2 ++
+ arch/arm/boot/dts/suniv-f1c100s-licheepi-nano.dts | 26 +++++++++++++++++++++++
+ 2 files changed, 28 insertions(+)
+ create mode 100644 arch/arm/boot/dts/suniv-f1c100s-licheepi-nano.dts
 
-diff --git a/arch/arm/boot/dts/suniv-f1c100s.dtsi b/arch/arm/boot/dts/suniv-f1c100s.dtsi
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index b0e966d..2b96a5b 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -1066,6 +1066,8 @@ dtb-$(CONFIG_MACH_SUN8I) += \
+ dtb-$(CONFIG_MACH_SUN9I) += \
+ 	sun9i-a80-optimus.dtb \
+ 	sun9i-a80-cubieboard4.dtb
++dtb-$(CONFIG_MACH_SUNIV) += \
++	suniv-f1c100s-licheepi-nano.dtb
+ dtb-$(CONFIG_ARCH_TANGO) += \
+ 	tango4-vantage-1172.dtb
+ dtb-$(CONFIG_ARCH_TEGRA_2x_SOC) += \
+diff --git a/arch/arm/boot/dts/suniv-f1c100s-licheepi-nano.dts b/arch/arm/boot/dts/suniv-f1c100s-licheepi-nano.dts
 new file mode 100644
-index 0000000..aff5f90
+index 0000000..a1154e6
 --- /dev/null
-+++ b/arch/arm/boot/dts/suniv-f1c100s.dtsi
-@@ -0,0 +1,147 @@
++++ b/arch/arm/boot/dts/suniv-f1c100s-licheepi-nano.dts
+@@ -0,0 +1,26 @@
 +// SPDX-License-Identifier: (GPL-2.0+ OR X11)
 +/*
 + * Copyright 2018 Icenowy Zheng <icenowy@aosc.io>
-+ * Copyright 2018 Mesih Kilinc <mesihkilinc@gmail.com>
 + */
 +
-+#include <dt-bindings/clock/suniv-ccu-f1c100s.h>
-+#include <dt-bindings/reset/suniv-ccu-f1c100s.h>
++/dts-v1/;
++#include "suniv-f1c100s.dtsi"
 +
 +/ {
-+	#address-cells = <1>;
-+	#size-cells = <1>;
-+	interrupt-parent = <&intc>;
++	model = "Lichee Pi Nano";
++	compatible = "licheepi,licheepi-nano", "allwinner,suniv-f1c100s";
 +
-+	clocks {
-+		osc24M: clk-24M {
-+			#clock-cells = <0>;
-+			compatible = "fixed-clock";
-+			clock-frequency = <24000000>;
-+			clock-output-names = "osc24M";
-+		};
-+
-+		osc32k: clk-32k {
-+			#clock-cells = <0>;
-+			compatible = "fixed-clock";
-+			clock-frequency = <32768>;
-+			clock-output-names = "osc32k";
-+		};
++	aliases {
++		serial0 = &uart0;
 +	};
 +
-+	cpus {
-+		cpu {
-+			compatible = "arm,arm926ej-s";
-+			device_type = "cpu";
-+		};
++	chosen {
++		stdout-path = "serial0:115200n8";
 +	};
++};
 +
-+	soc {
-+		compatible = "simple-bus";
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		sram-controller@1c00000 {
-+			compatible = "allwinner,suniv-f1c100s-system-control",
-+				     "allwinner,sun4i-a10-system-control";
-+			reg = <0x01c00000 0x30>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges;
-+
-+			sram_d: sram@10000 {
-+				compatible = "mmio-sram";
-+				reg = <0x00010000 0x1000>;
-+				#address-cells = <1>;
-+				#size-cells = <1>;
-+				ranges = <0 0x00010000 0x1000>;
-+
-+				otg_sram: sram-section@0 {
-+					compatible = "allwinner,suniv-f1c100s-sram-d",
-+						     "allwinner,sun4i-a10-sram-d";
-+					reg = <0x0000 0x1000>;
-+					status = "disabled";
-+				};
-+			};
-+		};
-+
-+		ccu: clock@1c20000 {
-+			compatible = "allwinner,suniv-f1c100s-ccu";
-+			reg = <0x01c20000 0x400>;
-+			clocks = <&osc24M>, <&osc32k>;
-+			clock-names = "hosc", "losc";
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+		};
-+
-+		intc: interrupt-controller@1c20400 {
-+			compatible = "allwinner,suniv-f1c100s-ic";
-+			reg = <0x01c20400 0x400>;
-+			interrupt-controller;
-+			#interrupt-cells = <1>;
-+		};
-+
-+		pio: pinctrl@1c20800 {
-+			compatible = "allwinner,suniv-f1c100s-pinctrl";
-+			reg = <0x01c20800 0x400>;
-+			interrupts = <38>, <39>, <40>;
-+			clocks = <&ccu 37>, <&osc24M>, <&osc32k>;
-+			clock-names = "apb", "hosc", "losc";
-+			gpio-controller;
-+			interrupt-controller;
-+			#interrupt-cells = <3>;
-+			#gpio-cells = <3>;
-+
-+			uart0_pe_pins: uart0-pe-pins {
-+				pins = "PE0", "PE1";
-+				function = "uart0";
-+			};
-+		};
-+
-+		timer@1c20c00 {
-+			compatible = "allwinner,suniv-f1c100s-timer";
-+			reg = <0x01c20c00 0x90>;
-+			interrupts = <13>;
-+			clocks = <&osc24M>;
-+		};
-+
-+		wdt: watchdog@1c20ca0 {
-+			compatible = "allwinner,suniv-f1c100s-wdt",
-+				     "allwinner,sun4i-a10-wdt";
-+			reg = <0x01c20ca0 0x20>;
-+		};
-+
-+		uart0: serial@1c25000 {
-+			compatible = "snps,dw-apb-uart";
-+			reg = <0x01c25000 0x400>;
-+			interrupts = <1>;
-+			reg-shift = <2>;
-+			reg-io-width = <4>;
-+			clocks = <&ccu 38>;
-+			resets = <&ccu 24>;
-+			status = "disabled";
-+		};
-+
-+		uart1: serial@1c25400 {
-+			compatible = "snps,dw-apb-uart";
-+			reg = <0x01c25400 0x400>;
-+			interrupts = <2>;
-+			reg-shift = <2>;
-+			reg-io-width = <4>;
-+			clocks = <&ccu 39>;
-+			resets = <&ccu 25>;
-+			status = "disabled";
-+		};
-+
-+		uart2: serial@1c25800 {
-+			compatible = "snps,dw-apb-uart";
-+			reg = <0x01c25800 0x400>;
-+			interrupts = <3>;
-+			reg-shift = <2>;
-+			reg-io-width = <4>;
-+			clocks = <&ccu 40>;
-+			resets = <&ccu 26>;
-+			status = "disabled";
-+		};
-+	};
++&uart0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart0_pe_pins>;
++	status = "okay";
 +};
 -- 
 2.7.4
