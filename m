@@ -2,89 +2,94 @@ Return-Path: <SRS0=nz6M=OH=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 870C4C43441
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Nov 2018 09:44:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1670C43610
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Nov 2018 10:18:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 531B620832
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Nov 2018 09:44:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 531B620832
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id 95D88208E7
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Nov 2018 10:18:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95D88208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728001AbeK1Up3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 28 Nov 2018 15:45:29 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:37012 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727382AbeK1Up3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Nov 2018 15:45:29 -0500
-Received: by mail-ed1-f67.google.com with SMTP id h15so21522357edb.4;
-        Wed, 28 Nov 2018 01:44:26 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=B8L73hWa2Rbe1pct5sx5N8Rgy222BMSrNaMLd1w8jBk=;
-        b=azPpBDV0WOgrPdMJalgrNPv+9bN+OAMAaop0ejEgvt6qZuSNuv8mb6n5/VXYkjj0Pa
-         ULmO8o8gwsUOMBohhxJKJreafT/Ojg3ghv9S4LwMXLU393vTfAEuo1LB9ClSu7Ssxn4K
-         WwJYolvk1urR6LRO/qj/IDQyFL67X5YuVZitQLg+sg3R5DFxMfgGX8ZzMfNzCAXAAkcX
-         P7qdr5S+tj2X5T7TEt92+MzPDQNtUL4sNMaHALY4C0V6t3JHPa1Lg9X1e2qabPSlu5b5
-         z8zJMlDJA6YIsUsYpY1z4vECd6gRcWS2jWMQ1c1XZn3urLEkGovQyKTKAgAC4QeW+hhY
-         kalQ==
-X-Gm-Message-State: AGRZ1gI7AUDCSLtXQ8PIPFS1aBGhSmEfjuOg/udjFbBJnKV/Y1jJ6mPx
-        +yMuEV++Z9n5Meae7UB0hbZEuzyCMZo=
-X-Google-Smtp-Source: AJdET5eoXI+TAD2glE4h8i7pchjrx+iQlmInYtXngob9j4ILhM0IlpemgDbTrHagvNnp4Kyzc8R5VQ==
-X-Received: by 2002:a17:906:7a9c:: with SMTP id f28-v6mr26267704ejo.135.1543398264810;
-        Wed, 28 Nov 2018 01:44:24 -0800 (PST)
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com. [209.85.128.44])
-        by smtp.gmail.com with ESMTPSA id p16-v6sm978743eju.73.2018.11.28.01.44.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 28 Nov 2018 01:44:24 -0800 (PST)
-Received: by mail-wm1-f44.google.com with SMTP id g67so1851479wmd.2;
-        Wed, 28 Nov 2018 01:44:24 -0800 (PST)
-X-Received: by 2002:a1c:f611:: with SMTP id w17mr2145389wmc.116.1543398263655;
- Wed, 28 Nov 2018 01:44:23 -0800 (PST)
-MIME-Version: 1.0
-References: <20181128093013.24442-1-wens@csie.org> <20181128093013.24442-9-wens@csie.org>
-In-Reply-To: <20181128093013.24442-9-wens@csie.org>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Wed, 28 Nov 2018 17:44:10 +0800
-X-Gmail-Original-Message-ID: <CAGb2v669CSQLq+jQPkzn0MH3Avt2tf0vEA4E29epeXrQA4=yww@mail.gmail.com>
-Message-ID: <CAGb2v669CSQLq+jQPkzn0MH3Avt2tf0vEA4E29epeXrQA4=yww@mail.gmail.com>
-Subject: Re: [linux-sunxi] [PATCH 07/15] rtc: sun6i: Add support for all known variants
-To:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        alexandre.belloni@bootlin.com,
+        id S1728431AbeK1VTJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 28 Nov 2018 16:19:09 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:46821 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727667AbeK1VTI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 28 Nov 2018 16:19:08 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 0B317207BD; Wed, 28 Nov 2018 11:17:58 +0100 (CET)
+Received: from localhost (aaubervilliers-681-1-94-205.w90-88.abo.wanadoo.fr [90.88.35.205])
+        by mail.bootlin.com (Postfix) with ESMTPSA id CA3EF2039F;
+        Wed, 28 Nov 2018 11:17:47 +0100 (CET)
+Date:   Wed, 28 Nov 2018 11:17:47 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Chen-Yu Tsai <wens@csie.org>
+Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Alessandro Zummo <a.zummo@towertech.it>,
-        Mike Turquette <mturquette@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-rtc@vger.kernel.org, linux-clk <linux-clk@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 01/15] dt-bindings: rtc: sun6i-rtc: Rewrite clock outputs
+ as a list
+Message-ID: <20181128101747.t2lcgesulh2rkwyi@flea>
+References: <20181128093013.24442-1-wens@csie.org>
+ <20181128093013.24442-2-wens@csie.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="yoj3yp3ufe5a5hnf"
+Content-Disposition: inline
+In-Reply-To: <20181128093013.24442-2-wens@csie.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Nov 28, 2018 at 5:30 PM Chen-Yu Tsai <wens@csie.org> wrote:
->
-> There are different variants to the RTC hardware first seen on sun6i
-> (A31). The differences we care about in this driver are the clock rate
-> for the internal oscillator, prescalers, and the presence of an external
-> clock output.
->
-> This patch adds support for all the known base compatibles using the
-> variants data structure previously introduced.
->
+
+--yoj3yp3ufe5a5hnf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Nov 28, 2018 at 05:29:58PM +0800, Chen-Yu Tsai wrote:
+> The clock output section for this binding describes the two outputs in
+> the descriptions for both the #clock-cells and clock-output-names
+> properties.
+>=20
+> Instead of overlapping information that is hard to read, rewrite the
+> clock outputs as a list of indices and descriptions. The properies
+> can reference this list instead. This will also make it easier to
+> add notes or conditions to the clocks, and also for adding new outputs.
+>=20
 > Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 
-This one was from a prior WiP version. Please ignore it.
+Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
 
-ChenYu
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--yoj3yp3ufe5a5hnf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW/5rSwAKCRDj7w1vZxhR
+xZ7zAP0Xipdixelu2rfeHGJBzFQXj02XPccPDU0s4Nw0RiSvgAEA6LkGzhdNZzIY
+IjV1yDK7QYzG0V309oRx5rzucmqsJQo=
+=jVFD
+-----END PGP SIGNATURE-----
+
+--yoj3yp3ufe5a5hnf--
