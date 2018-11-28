@@ -3,117 +3,76 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C80DEC43441
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Nov 2018 21:10:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CBF6C43441
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Nov 2018 21:24:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D4492081B
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Nov 2018 21:10:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DCC782081B
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Nov 2018 21:24:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uqfG+/x4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D4492081B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ol0nviXX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCC782081B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726414AbeK2INk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 29 Nov 2018 03:13:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37986 "EHLO mail.kernel.org"
+        id S1726283AbeK2I1m (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 29 Nov 2018 03:27:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41038 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725996AbeK2INk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 29 Nov 2018 03:13:40 -0500
+        id S1726239AbeK2I1m (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 29 Nov 2018 03:27:42 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8CA312081B;
-        Wed, 28 Nov 2018 21:10:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 931E32081B;
+        Wed, 28 Nov 2018 21:24:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543439442;
-        bh=hPz0MuQsL6ngE5d1VybNAPmLE5CinKVECbADTQlgvvE=;
+        s=default; t=1543440282;
+        bh=4Igdg2EppaVjbzQms+X9136MlgdNKZfcnpLTs3gmAvc=;
         h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=uqfG+/x4h39PvsF8MAWg1g8uzDz8bH7wqhE3YfVxvgojbxClj7ZE+V3RKP3o8Anwv
-         3naVQTFKZB4Vr1LsnZxp5VWEOz2e3oLYJl1sndklHUd+4BcyiwrQeafjK/MdjACPOK
-         q66MO43PA3zOC0Zo4TkyMUTdlwb0xh8E25v8md4E=
+        b=Ol0nviXXr4IYGlCeutgq1lKf1C5NQp8i87J/QGlUB4zTyK1t9/Y8XiADQZAT2p+sI
+         UATD9JeyPJ9OF73SukXNOtrVPUjQqTaAGbRqDlI39HeDGIbNFDmX7FzjeYmxHfHYXX
+         tcsyE7cKhfBaPxzPUxbTc9HwA77D1Qx/xqGdZCTY=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>
+To:     Douglas Anderson <dianders@chromium.org>
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1542873221-13693-4-git-send-email-tdas@codeaurora.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
+In-Reply-To: <20181128184859.70476-1-dianders@chromium.org>
+Cc:     Taniya Das <tdas@codeaurora.org>,
+        "Kristian H . Kristensen" <hoegsberg@chromium.org>,
+        Jordan Crouse <jcrouse@codeaurora.org>,
+        Amit Nischal <anischal@codeaurora.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andy Gross <andy.gross@linaro.org>,
         David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, robh@kernel.org,
-        Taniya Das <tdas@codeaurora.org>
-References: <1542873221-13693-1-git-send-email-tdas@codeaurora.org>
- <1542873221-13693-4-git-send-email-tdas@codeaurora.org>
-Message-ID: <154343944180.88331.8662440760190505722@swboyd.mtv.corp.google.com>
+        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20181128184859.70476-1-dianders@chromium.org>
+Message-ID: <154344028193.88331.7749727366219598152@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.7
-Subject: Re: [PATCH v10 3/3] clk: qcom: Add lpass clock controller driver for SDM845
-Date:   Wed, 28 Nov 2018 13:10:41 -0800
+Subject: Re: [PATCH] clk: qcom: gpu_cc_gmu_clk_src has 5 parents, not 6
+Date:   Wed, 28 Nov 2018 13:24:41 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Taniya Das (2018-11-21 23:53:41)
-> diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
-> index f133b7f..ba8ff99 100644
-> --- a/drivers/clk/qcom/gcc-sdm845.c
-> +++ b/drivers/clk/qcom/gcc-sdm845.c
-> @@ -3153,6 +3153,34 @@ enum {
->         },
->  };
+Quoting Douglas Anderson (2018-11-28 10:48:59)
+> In an earlier version of commit 453361cdd757 ("clk: qcom: Add graphics
+> clock controller driver for SDM845") there were 6 listed parents for
+> "gpu_cc_gmu_clk_src".  In the version that landed there were 5.
+> ...but "num_parents" was still left at 6.  On my system this goes boom
+> at bootup.
 > =
 
-> +static struct clk_branch gcc_lpass_q6_axi_clk =3D {
-> +       .halt_reg =3D 0x47000,
-> +       .halt_check =3D BRANCH_HALT,
-> +       .clkr =3D {
-> +               .enable_reg =3D 0x47000,
-> +               .enable_mask =3D BIT(0),
-> +               .hw.init =3D &(struct clk_init_data){
-> +                       .name =3D "gcc_lpass_q6_axi_clk",
-> +                       .flags =3D CLK_IS_CRITICAL,
-> +                       .ops =3D &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_branch gcc_lpass_sway_clk =3D {
-> +       .halt_reg =3D 0x47008,
-> +       .halt_check =3D BRANCH_HALT,
-> +       .clkr =3D {
-> +               .enable_reg =3D 0x47008,
-> +               .enable_mask =3D BIT(0),
-> +               .hw.init =3D &(struct clk_init_data){
-> +                       .name =3D "gcc_lpass_sway_clk",
-> +                       .flags =3D CLK_IS_CRITICAL,
-> +                       .ops =3D &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
->  static struct gdsc pcie_0_gdsc =3D {
->         .gdscr =3D 0x6b004,
->         .pd =3D {
-> @@ -3453,6 +3481,8 @@ enum {
->         [GCC_QSPI_CORE_CLK_SRC] =3D &gcc_qspi_core_clk_src.clkr,
->         [GCC_QSPI_CORE_CLK] =3D &gcc_qspi_core_clk.clkr,
->         [GCC_QSPI_CNOC_PERIPH_AHB_CLK] =3D &gcc_qspi_cnoc_periph_ahb_clk.=
-clkr,
-> +       [GCC_LPASS_Q6_AXI_CLK] =3D &gcc_lpass_q6_axi_clk.clkr,
-> +       [GCC_LPASS_SWAY_CLK] =3D &gcc_lpass_sway_clk.clkr,
+> Fixes: 453361cdd757 ("clk: qcom: Add graphics clock controller driver for=
+ SDM845")
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> ---
 
-I have one single idea to avoid the integration nightmare with dts
-needing another update for this on platforms where these can't be
-touched. It's not perfect, but we can throw these clks and usage of the
-clks behind an #ifdef CONFIG_SDM_LPASSCC_845 and then let the dts parts
-match up with the clk driver parts in linux-next. After everything is
-merged together, someone can turn on the knobs for LPASS clk controller
-and make sure they have the right dts bits to mark them as protected.
+Applied to clk-next
 
