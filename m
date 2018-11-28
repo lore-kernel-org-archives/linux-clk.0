@@ -2,86 +2,119 @@ Return-Path: <SRS0=nz6M=OH=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEE52C43441
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Nov 2018 22:12:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47C55C43441
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Nov 2018 22:34:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F2D620863
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Nov 2018 22:12:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 066D92133F
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Nov 2018 22:34:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NRJtzBpm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F2D620863
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HDqLdd/L"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 066D92133F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726368AbeK2JP6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 29 Nov 2018 04:15:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56624 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726335AbeK2JP6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 29 Nov 2018 04:15:58 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7F8692081B;
-        Wed, 28 Nov 2018 22:12:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543443171;
-        bh=Ob/DPWxZd1w5vD9jytaAxFaCAlCL6bRTZa7PztH0qys=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=NRJtzBpmSIebDT7BT6gpK2MzRcUguYpcUAfYmq9Bdsu2AlXrprtX5njxjxCsDefEn
-         0dTZvbF8Dg8rVWQiG8/DtTFDPWEvt7JXVNxFrGztwiFaXC+B9j+qc0Ofu4qgBt0OTU
-         nlhNyZwN9+0gHHenfhmcXS+vKJhJEnCSCKzwholc=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Yangtao Li <tiny.windzz@gmail.com>, linus.walleij@linaro.org,
-        mturquette@baylibre.com
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <154344291239.88331.14159206270303255502@swboyd.mtv.corp.google.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
-References: <20181123150600.27445-1-tiny.windzz@gmail.com>
- <154344291239.88331.14159206270303255502@swboyd.mtv.corp.google.com>
-Message-ID: <154344317086.88331.8296424241716107824@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH] clk: nomadik: Change to use DEFINE_SHOW_ATTRIBUTE macro
-Date:   Wed, 28 Nov 2018 14:12:50 -0800
+        id S1726492AbeK2JhZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 29 Nov 2018 04:37:25 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:45246 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726414AbeK2JhZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Nov 2018 04:37:25 -0500
+Received: by mail-wr1-f68.google.com with SMTP id v6so27918560wrr.12;
+        Wed, 28 Nov 2018 14:34:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=VF0eXPvxEQ8eg24ufuqCwYbc3OHuCombUgJA5hM0DFE=;
+        b=HDqLdd/LfOi92fQe/MYXetnFACTuNHI6W54QmiV1l5i8Lvb6EjZFFPo4+ybqTz7yq5
+         YpM4bVp8OZlLOZYWlYxRE1Fe7XPglXfYQmFP1IWhcc+5ka4v4qgOEzr/9zGzQpju3uXP
+         QSw7jtfEKu6ZMdAxPE1nudDefojJ6w80C1wUD0xquMNzjOx7/IKSB8KpFexT0h2Ie7R9
+         Cb2aM/RbcCiW11yS1xJQwq0c0FEHnJenzXPoLsWdqoIKln+ZE5fbgStPFDEXI2l+T2KM
+         eCJUdhP7s4iRq9Hx7fxljaltHg7jC2v3kCpUy0O1Zhky5CvBLxHtPoJPFNPHycRUBh4e
+         lejg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=VF0eXPvxEQ8eg24ufuqCwYbc3OHuCombUgJA5hM0DFE=;
+        b=BZyVKg1IzoQihvuD6h7oAtQhBXTqCj7OfVDRmiDIuo9IbnV2AYs0bIp+qt9e1lwqja
+         0TsUbZMf25MJ0R0jh57h+cudpcIgmPxlN4Ek0tfF8tNjel10er0m/q9w8giAx09180HX
+         rhVLVhLqE3vQgdb9BaZxrXGWZsXNXcIhpa9U/dnMTH4LEBC+zryrwwtuu4hg+gWnqvfS
+         bt9lIBL4WmT8CacZ7HaBK4RyC97y2LX92dSeaiurKm7XQZnQPyfBS7WhxU1ZdTHVP6hU
+         haaIUlHf8yOS0DkvDUNpaaDsD1Z864hvZnfgsbOUsUNbcCCUFptWX5crK+DeqbFIzulE
+         J8Kg==
+X-Gm-Message-State: AA+aEWY+oRHZnvKi/pfSzMiwBHOGWdTUUWLGWdb24JBVZGPtnu3Jjsag
+        tU38kRvLtkTFx+ZE5LF8wp/CEGzERDI=
+X-Google-Smtp-Source: AFSGD/VaHZQBF8qSIVQB0pcf/SHXoj1jPif7iT75vvSv3z9QBK5WJXp9Ze0cIBq55cewBUmPQlkTTg==
+X-Received: by 2002:adf:f449:: with SMTP id f9mr33585678wrp.40.1543444452948;
+        Wed, 28 Nov 2018 14:34:12 -0800 (PST)
+Received: from ThinkPad.home ([185.219.177.239])
+        by smtp.gmail.com with ESMTPSA id g198sm180244wmd.23.2018.11.28.14.34.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 28 Nov 2018 14:34:12 -0800 (PST)
+From:   Mesih Kilinc <mesihkilinc@gmail.com>
+To:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
+Cc:     Mesih Kilinc <mesihkilinc@gmail.com>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Rob Herring <robh+dt@kernel.org>,
+        Julian Calaby <julian.calaby@gmail.com>
+Subject: [PATCH v5 01/17] ARM: Check ARCH_MULTI_V7 to differentiate ARMv5/v7 Allwinner SoCs
+Date:   Thu, 29 Nov 2018 01:33:11 +0300
+Message-Id: <ec9d798e883d45d5dc0e01617e4bf217bc9a6be7.1543443475.git.mesihkilinc@gmail.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <cover.1543443475.git.mesihkilinc@gmail.com>
+References: <cover.1543443475.git.mesihkilinc@gmail.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Stephen Boyd (2018-11-28 14:08:32)
-> Quoting Yangtao Li (2018-11-23 07:06:00)
-> > Use macro to simplify the code.
-> > =
+Allwinner also has some ARMv5 SoCs.
 
-> > Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-> > ---
-> =
+In order to add support for them, check ARM_MULTI_V7 before enabling
+ARMv7 SoC's. Add help text for ARCH_SUNXI menuconfig.
 
-> Applied to clk-next
-> =
+Signed-off-by: Mesih Kilinc <mesihkilinc@gmail.com>
+---
+ arch/arm/mach-sunxi/Kconfig | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
+diff --git a/arch/arm/mach-sunxi/Kconfig b/arch/arm/mach-sunxi/Kconfig
+index d9c8ecf..185c573 100644
+--- a/arch/arm/mach-sunxi/Kconfig
++++ b/arch/arm/mach-sunxi/Kconfig
+@@ -9,9 +9,13 @@ menuconfig ARCH_SUNXI
+ 	select PM_OPP
+ 	select SUN4I_TIMER
+ 	select RESET_CONTROLLER
++	help
++	  Support for Allwinner ARM-based family of processors
+ 
+ if ARCH_SUNXI
+ 
++if ARCH_MULTI_V7
++
+ config MACH_SUN4I
+ 	bool "Allwinner A10 (sun4i) SoCs support"
+ 	default ARCH_SUNXI
+@@ -56,3 +60,5 @@ config ARCH_SUNXI_MC_SMP
+ 	select ARM_CPU_SUSPEND
+ 
+ endif
++
++endif
+-- 
+2.7.4
 
-Except this doesn't compile. I fixed it, but please actually compile
-your patches before sending next time.
-
-diff --git a/drivers/clk/clk-nomadik.c b/drivers/clk/clk-nomadik.c
-index e331634d34df..a95aa96f4a68 100644
---- a/drivers/clk/clk-nomadik.c
-+++ b/drivers/clk/clk-nomadik.c
-@@ -455,7 +455,7 @@ static const char * const src_clk_names[] =3D {
- 	"RNGCCLK   ",
- };
- =
-
--static int nomadik_src_clk_show(struct seq_file *s, void *what)
-+static int nomadik_src_clk_debugfs_show(struct seq_file *s, void *what)
- {
- 	int i;
- 	u32 src_pcksr0 =3D readl(src_base + SRC_PCKSR0);
