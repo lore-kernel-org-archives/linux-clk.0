@@ -1,193 +1,114 @@
-Return-Path: <SRS0=WhJS=OG=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=nz6M=OH=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D43B9C43441
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Nov 2018 23:54:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFF2AC43441
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Nov 2018 00:49:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E3A620645
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Nov 2018 23:54:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B15B22082F
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Nov 2018 00:49:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="O+P3S3jQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E3A620645
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="biwk9QR9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B15B22082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726615AbeK1Kxq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 28 Nov 2018 05:53:46 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:45499 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726567AbeK1Kxq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Nov 2018 05:53:46 -0500
-Received: by mail-pg1-f196.google.com with SMTP id y4so8591009pgc.12
-        for <linux-clk@vger.kernel.org>; Tue, 27 Nov 2018 15:54:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=TO4sExyxv6acTTPZL3vzEWLckjCWVxWXgD9YGLjR0cE=;
-        b=O+P3S3jQTX49LUFvNhedEOyCBgVXTg7htYNET1JxN74PfUyzqIlaJUcGCzsHlJi346
-         4h8KfTKaSLyPQTYXIC7VmFjgik5qpAlxhgHVlLAbyZ4hbTq60AYnKpT1rRAJulmszkDn
-         0hfrIOAq3ho0hsWXJe6PSCLDSONBII7V+j1Yw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=TO4sExyxv6acTTPZL3vzEWLckjCWVxWXgD9YGLjR0cE=;
-        b=oQtlt6DgTbiVj8hW6sAnYpZsmJZuIcOjGS2eezrm5juUdAqafkwRNlDSSbCYYDbfAH
-         fLhtMR4AQJ5dC1oUgPQSOvKnt49M8gXRKeii0vfyYcN0zVXM4JiqK5JCqLxG5tVqw1oC
-         ElxFyhNeTNNkaE8kCcsXNSD+UZS6rEDv5VvDwgnzm3A9fLP7qDnb1CEjLFmJw5xNpukr
-         GFiwVzWs7s2hwkg+zHxZbJ9e/KqYZ4WhT+BIfi0cejr+khugZlJ/hPCjyHByjQulogVK
-         CFp1xd1of6U/zqP+PZwuwCRvcW2Neh8g83q9pTNiO+Z6Y5EuKA30CTKDhhokGrkrLsE8
-         LIsg==
-X-Gm-Message-State: AGRZ1gLgy5TVv40awWvomVGGljJmleVcLQtN3Hz/e5+h9IoHFP45NJiz
-        3fBlOjmZEawAWIH1yaw2zgTVph4+H9+CiALnDmbrHw==
-X-Google-Smtp-Source: AJdET5cs+Hq7Cv7rFTZ33b0+huaAGZldfhHxbhUcVEJVPZd3m5zVfjqVC7qHBqKc88bbGVxwGaRpjPReqdxsN0Kh4ZI=
-X-Received: by 2002:a62:938f:: with SMTP id r15mr34967910pfk.27.1543362851560;
- Tue, 27 Nov 2018 15:54:11 -0800 (PST)
+        id S1726783AbeK1LtU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 28 Nov 2018 06:49:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47888 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726418AbeK1LtU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 28 Nov 2018 06:49:20 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1C7062082F;
+        Wed, 28 Nov 2018 00:49:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543366178;
+        bh=UaD0brctcEnL5zd+h4X7MSMe9H+tTxDEDtpXtltCwmI=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=biwk9QR9FKOugd8LZ7gn661CfRCVF282oNjS+EaCZH43i6WqiLjkR3y9xjZGg+YBX
+         JVh8fUWxu0nsR3tZCew1+spC0S4cCphFqLiryZXyqotViwcWMoANp7J+mpdVnghWPa
+         EpIQO4sSbmRjWVAke+U8RXCa8H/sp9WVBixSRvV4=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20181127034254.24721-1-weiyi.lu@mediatek.com> <20181127034254.24721-5-weiyi.lu@mediatek.com>
- <CAGp9Lzro5YHCYqzOWFJJa4g75odf6yK52cean_aS3p2STOtJYg@mail.gmail.com>
-In-Reply-To: <CAGp9Lzro5YHCYqzOWFJJa4g75odf6yK52cean_aS3p2STOtJYg@mail.gmail.com>
-From:   Nicolas Boichat <drinkcat@chromium.org>
-Date:   Wed, 28 Nov 2018 07:54:00 +0800
-Message-ID: <CANMq1KB4tt9jdmE+LJXfji=QXC9-6wuhXWjJPkpNfo6hEMXH=A@mail.gmail.com>
-Subject: Re: [PATCH v2 03/11] clk: mediatek: Disable tuner_en before change
- PLL rate
-To:     sean.wang@kernel.org
-Cc:     Weiyi Lu <weiyi.lu@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        sboyd@codeaurora.org, Rob Herring <robh@kernel.org>,
-        jamesjj.liao@mediatek.com, srv_heupstream@mediatek.com,
-        lkml <linux-kernel@vger.kernel.org>,
-        Fan Chen <fan.chen@mediatek.com>,
-        linux-mediatek@lists.infradead.org, owen.chen@mediatek.com,
-        linux-clk@vger.kernel.org,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <tdas@codeaurora.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1543120569-14444-2-git-send-email-tdas@codeaurora.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, robh@kernel.org,
+        Amit Nischal <anischal@codeaurora.org>
+References: <1543120569-14444-1-git-send-email-tdas@codeaurora.org>
+ <1543120569-14444-2-git-send-email-tdas@codeaurora.org>
+Message-ID: <154336617743.88331.11824624815680965054@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v4 1/2] dt-bindings: clock: Introduce QCOM Graphics clock bindings
+Date:   Tue, 27 Nov 2018 16:49:37 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Nov 28, 2018 at 4:37 AM Sean Wang <sean.wang@kernel.org> wrote:
->
-> Weiyi Lu <weiyi.lu@mediatek.com> =E6=96=BC 2018=E5=B9=B411=E6=9C=8826=E6=
-=97=A5 =E9=80=B1=E4=B8=80 =E4=B8=8B=E5=8D=887:45=E5=AF=AB=E9=81=93=EF=BC=9A
-> >
-> > From: Owen Chen <owen.chen@mediatek.com>
-> >
-> > PLLs with tuner_en bit, such as APLL1, need to disable
-> > tuner_en before apply new frequency settings, or the new frequency
-> > settings (pcw) will not be applied.
-> > The tuner_en bit will be disabled during changing PLL rate
-> > and be restored after new settings applied.
->
-> It looks like a bug fix. If so, you should add a fixes tag and even cc
-> stable tree
->
-> >
-> > Signed-off-by: Owen Chen <owen.chen@mediatek.com>
-> > ---
-> >  drivers/clk/mediatek/clk-pll.c | 33 +++++++++++++++++++++++++++++++--
-> >  1 file changed, 31 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/clk/mediatek/clk-pll.c b/drivers/clk/mediatek/clk-=
-pll.c
-> > index 1db161aced31..81400601f107 100644
-> > --- a/drivers/clk/mediatek/clk-pll.c
-> > +++ b/drivers/clk/mediatek/clk-pll.c
-> > @@ -27,7 +27,7 @@
-> >  #define CON0_BASE_EN           BIT(0)
-> >  #define CON0_PWR_ON            BIT(0)
-> >  #define CON0_ISO_EN            BIT(1)
-> > -#define CON0_PCW_CHG           BIT(31)
-> > +#define CON1_PCW_CHG           BIT(31)
->
-> it seems like an unnecessary change
+Quoting Taniya Das (2018-11-24 20:36:07)
+> From: Amit Nischal <anischal@codeaurora.org>
+> =
 
-Below, you have:
-con1 |=3D CON1_PCW_CHG;
+> Add device tree bindings for graphics clock controller for
+> Qualcomm Technology Inc's SDM845 SoCs.
+> =
 
-Presumably PCW_CHG is on BIT(31) of CON1(?), so I think this is a good
-change. Maybe this needs to be a separate patch, though?
+> Signed-off-by: Amit Nischal <anischal@codeaurora.org>
 
-> >
-> >  #define AUDPLL_TUNER_EN                BIT(31)
-> >
-> > @@ -97,9 +97,31 @@ static void mtk_pll_set_rate_regs(struct mtk_clk_pll=
- *pll, u32 pcw,
-> >  {
-> >         u32 con1, val;
-> >         int pll_en;
-> > +       u32 tuner_en =3D 0;
-> > +       u32 tuner_en_mask;
-> > +       void __iomem *tuner_en_addr =3D NULL;
-> >
-> >         pll_en =3D readl(pll->base_addr + REG_CON0) & CON0_BASE_EN;
-> >
-> > +       /* disable tuner */
->
-> similar code pieces are ready on mtk_pll_[un]prepare. maybe we can add
-> common tuner operations for them to reuse.
->
-> > +       if (pll->tuner_en_addr) {
-> > +               tuner_en_addr =3D pll->tuner_en_addr;
-> > +               tuner_en_mask =3D BIT(pll->data->tuner_en_bit);
-> > +       } else if (pll->tuner_addr) {
-> > +               tuner_en_addr =3D pll->tuner_addr;
-> > +               tuner_en_mask =3D AUDPLL_TUNER_EN;
-> > +       }
-> > +
-> > +       if (tuner_en_addr) {
-> > +               val =3D readl(tuner_en_addr);
-> > +               tuner_en =3D val & tuner_en_mask;
-> > +
-> > +               if (tuner_en) {
-> > +                       val &=3D ~tuner_en_mask;
-> > +                       writel(val, tuner_en_addr);
-> > +               }
-> > +       }
-> > +
-> >         /* set postdiv */
-> >         val =3D readl(pll->pd_addr);
-> >         val &=3D ~(POSTDIV_MASK << pll->data->pd_shift);
-> > @@ -120,12 +142,19 @@ static void mtk_pll_set_rate_regs(struct mtk_clk_=
-pll *pll, u32 pcw,
-> >         con1 =3D readl(pll->base_addr + REG_CON1);
-> >
-> >         if (pll_en)
-> > -               con1 |=3D CON0_PCW_CHG;
-> > +               con1 |=3D CON1_PCW_CHG;
-> >
-> >         writel(con1, pll->base_addr + REG_CON1);
-> >         if (pll->tuner_addr)
-> >                 writel(con1 + 1, pll->tuner_addr);
-> >
-> > +       /* restore tuner_en */
-> > +       if (tuner_en_addr && tuner_en) {
->
-> if (tuner_en) is sufficient
->
-> > +               val =3D readl(tuner_en_addr);
-> > +               val |=3D tuner_en_mask;
-> > +               writel(val, tuner_en_addr);
-> > +       }
-> > +
-> >         if (pll_en)
-> >                 udelay(20);
-> >  }
-> > --
-> > 2.18.0
-> >
-> >
-> > _______________________________________________
-> > Linux-mediatek mailing list
-> > Linux-mediatek@lists.infradead.org
-> > http://lists.infradead.org/mailman/listinfo/linux-mediatek
+You could have added your sign off here, but I don't think this is
+really different from the original posting that's on the list so it's
+OK.
+
+> ---
+>  .../devicetree/bindings/clock/qcom,gpucc.txt       | 18 ++++++++++++++++
+>  include/dt-bindings/clock/qcom,gpucc-sdm845.h      | 24 ++++++++++++++++=
+++++++
+>  2 files changed, 42 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gpucc.txt
+>  create mode 100644 include/dt-bindings/clock/qcom,gpucc-sdm845.h
+> =
+
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,gpucc.txt b/Doc=
+umentation/devicetree/bindings/clock/qcom,gpucc.txt
+> new file mode 100644
+> index 0000000..93752db
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/qcom,gpucc.txt
+> @@ -0,0 +1,18 @@
+> +Qualcomm Graphics Clock & Reset Controller Binding
+> +--------------------------------------------------
+> +
+> +Required properties :
+> +- compatible : shall contain "qcom,sdm845-gpucc".
+> +- reg : shall contain base register location and length.
+> +- #clock-cells : from common clock binding, shall contain 1.
+> +- #reset-cells : from common reset binding, shall contain 1.
+> +- #power-domain-cells : from generic power domain binding, shall contain=
+ 1.
+> +
+> +Example:
+> +       gpucc: clock-controller@5090000 {
+> +               compatible =3D "qcom,sdm845-gpucc";
+> +               reg =3D <0x5090000 0x9000>;
+> +               #clock-cells =3D <1>;
+> +               #reset-cells =3D <1>;
+> +               #power-domain-cells =3D <1>;
+
+I would expect to see the xo clk here as a clocks and clock-names
+property. I added it myself and applied to clk-next.
+
