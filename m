@@ -6,144 +6,97 @@ X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E28CBC43441
-	for <linux-clk@archiver.kernel.org>; Thu, 29 Nov 2018 00:41:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F71EC43441
+	for <linux-clk@archiver.kernel.org>; Thu, 29 Nov 2018 00:47:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D63220863
-	for <linux-clk@archiver.kernel.org>; Thu, 29 Nov 2018 00:41:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4EA7320832
+	for <linux-clk@archiver.kernel.org>; Thu, 29 Nov 2018 00:47:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lTvpvEqD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D63220863
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="htVvF+WT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EA7320832
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726565AbeK2LpU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 29 Nov 2018 06:45:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51472 "EHLO mail.kernel.org"
+        id S1726565AbeK2Lur (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 29 Nov 2018 06:50:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52002 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726485AbeK2LpU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 29 Nov 2018 06:45:20 -0500
+        id S1726492AbeK2Lur (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 29 Nov 2018 06:50:47 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1BBFD20832;
-        Thu, 29 Nov 2018 00:41:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C07732081C;
+        Thu, 29 Nov 2018 00:47:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543452110;
-        bh=mNn4j0DrF7UFW+rjHZiqbyYTmZ6HMSXM5VWr/goC1/w=;
+        s=default; t=1543452436;
+        bh=3bmjfX+IssBus0ETq95xNW2VUL6kwvDTe0Zd4cVleF4=;
         h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=lTvpvEqD9hcF+SeYn77z3LqaL8ZfNhW2j4S4mFy4sVyXKH5Rbc96h7yanB/7rYq72
-         DYVsNQWCRXkIpqSQHaTpz+T1sFNEcYpuTK6/5YUB4XGjUlO6XeLNPyPd1oeijCzNwP
-         ZgA6ON7zbnhG7LQZR8imkJ8dP+D5ssuJuvVo78yQ=
+        b=htVvF+WT/LuQ9d5V2GsQnAsEzdsFfduyWKL8UQqwX5cu0cO4+TorRa01/a1eflnj5
+         qoFHhFcaSDwOuAxsO0NtFtn9AyNQMcycEItI3yBdb6xUo+sQtnEIxMS5ApWO2QoUJZ
+         ND+KGyWkBcUngtarLVHcv0j0cQMjIQgwsBvOBXKw=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-To:     "A.s. Dong" <aisheng.dong@nxp.com>, Abel Vesa <abel.vesa@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>
+To:     Mesih Kilinc <mesihkilinc@gmail.com>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1542125975-8448-1-git-send-email-abel.vesa@nxp.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Abel Vesa <abelvesa@linux.com>, Abel Vesa <abel.vesa@nxp.com>
-References: <1542125975-8448-1-git-send-email-abel.vesa@nxp.com>
-Message-ID: <154345210894.88331.8277410833858111600@swboyd.mtv.corp.google.com>
+In-Reply-To: <cc1357c9272628b4d89af007cead83117d9ba6e9.1543443475.git.mesihkilinc@gmail.com>
+Cc:     Mesih Kilinc <mesihkilinc@gmail.com>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Rob Herring <robh+dt@kernel.org>,
+        Julian Calaby <julian.calaby@gmail.com>
+References: <cover.1543443475.git.mesihkilinc@gmail.com>
+ <cc1357c9272628b4d89af007cead83117d9ba6e9.1543443475.git.mesihkilinc@gmail.com>
+Message-ID: <154345243603.88331.17915868280143383591@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.7
-Subject: Re: [PATCH v13 0/5] Add i.MX8MQ clock driver
-Date:   Wed, 28 Nov 2018 16:41:48 -0800
+Subject: Re: [PATCH v5 13/17] clk: sunxi-ng: add support for suniv F1C100s SoC
+Date:   Wed, 28 Nov 2018 16:47:16 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Abel Vesa (2018-11-13 08:19:56)
-> Here is a link to the 12th version:
-> https://lkml.org/lkml/2018/11/7/642
-> =
+Quoting Mesih Kilinc (2018-11-28 14:33:23)
+> diff --git a/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c b/drivers/clk/sunxi=
+-ng/ccu-suniv-f1c100s.c
+> new file mode 100644
+> index 0000000..d4bc1b8
+> --- /dev/null
+> +++ b/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c
+> @@ -0,0 +1,541 @@
+> +/*
+> + * Copyright (c) 2016 Icenowy Zheng <icenowy@aosc.io>
+> + *
+> + * SPDX-License-Identifier: GPL-2.0
 
-> Changes since v12:
->  * replaced the division in clk_pll_recalc_rate in clk-frac
->    with do_div as suggested by Stephen
-> =
+Please fix this location.
 
-> Abel Vesa (2):
->   clk: imx: Add imx composite clock
->   clk: imx: Add clock driver for i.MX8MQ CCM
-> =
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/of_address.h>
+> diff --git a/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.h b/drivers/clk/sunxi=
+-ng/ccu-suniv-f1c100s.h
+> new file mode 100644
+> index 0000000..1da687a
+> --- /dev/null
+> +++ b/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.h
+> @@ -0,0 +1,34 @@
+> +/*
+> + * Copyright 2017 Icenowy Zheng <icenowy@aosc.io>
+> + *
+> + * SPDX-License-Identifier: GPL-2.0+
 
-> Lucas Stach (3):
->   dt-bindings: add binding for i.MX8MQ CCM
->   clk: imx: add fractional PLL output clock
->   clk: imx: Add SCCG PLL type
-> =
+Ditto.
 
-
-I had to apply this set of fixes to silence sparse and smatch warnings
-about things that are not right. Please take a look over things and see
-if it's sane.
-
-diff --git a/drivers/clk/imx/clk-composite-8m.c b/drivers/clk/imx/clk-compo=
-site-8m.c
-index bcd31d889584..6d9d3714b4df 100644
---- a/drivers/clk/imx/clk-composite-8m.c
-+++ b/drivers/clk/imx/clk-composite-8m.c
-@@ -127,8 +127,8 @@ struct clk *imx8m_clk_composite_flags(const char *name,
- 					int num_parents, void __iomem *reg,
- 					unsigned long flags)
- {
--	struct clk_hw *hw =3D NULL, *mux_hw =3D NULL;
--	struct clk_hw *div_hw =3D NULL, *gate_hw =3D NULL;
-+	struct clk_hw *hw =3D ERR_PTR(-ENOMEM), *mux_hw;
-+	struct clk_hw *div_hw, *gate_hw;
- 	struct clk_divider *div =3D NULL;
- 	struct clk_gate *gate =3D NULL;
- 	struct clk_mux *mux =3D NULL;
-diff --git a/drivers/clk/imx/clk-frac-pll.c b/drivers/clk/imx/clk-frac-pll.c
-index a3732be5ad7f..98726206f3c4 100644
---- a/drivers/clk/imx/clk-frac-pll.c
-+++ b/drivers/clk/imx/clk-frac-pll.c
-@@ -14,6 +14,8 @@
- #include <linux/slab.h>
- #include <linux/bitfield.h>
- =
-
-+#include "clk.h"
-+
- #define PLL_CFG0		0x0
- #define PLL_CFG1		0x4
- =
-
-@@ -214,7 +216,7 @@ struct clk *imx_clk_frac_pll(const char *name, const ch=
-ar *parent_name,
- 	ret =3D clk_hw_register(NULL, hw);
- 	if (ret) {
- 		kfree(pll);
--		return ERR_CAST(hw);
-+		return ERR_PTR(ret);
- 	}
- =
-
- 	return hw->clk;
-diff --git a/drivers/clk/imx/clk-sccg-pll.c b/drivers/clk/imx/clk-sccg-pll.c
-index 4666b96bdb3f..ee7752bace89 100644
---- a/drivers/clk/imx/clk-sccg-pll.c
-+++ b/drivers/clk/imx/clk-sccg-pll.c
-@@ -249,7 +249,7 @@ struct clk *imx_clk_sccg_pll(const char *name,
- 	ret =3D clk_hw_register(NULL, hw);
- 	if (ret) {
- 		kfree(pll);
--		return ERR_CAST(hw);
-+		return ERR_PTR(ret);
- 	}
- =
-
- 	return hw->clk;
+> + */
+> +
