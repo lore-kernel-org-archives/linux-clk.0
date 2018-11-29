@@ -6,64 +6,74 @@ X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9C03C04EB9
-	for <linux-clk@archiver.kernel.org>; Thu, 29 Nov 2018 23:43:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E041C04EB9
+	for <linux-clk@archiver.kernel.org>; Thu, 29 Nov 2018 23:45:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BFF42146F
-	for <linux-clk@archiver.kernel.org>; Thu, 29 Nov 2018 23:43:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF10C2146D
+	for <linux-clk@archiver.kernel.org>; Thu, 29 Nov 2018 23:45:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0x9xiFeC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BFF42146F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1T4GyXw/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF10C2146D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726915AbeK3Kus (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Nov 2018 05:50:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60708 "EHLO mail.kernel.org"
+        id S1726470AbeK3Kwj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Nov 2018 05:52:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60914 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726406AbeK3Kus (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 30 Nov 2018 05:50:48 -0500
+        id S1726406AbeK3Kwj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 30 Nov 2018 05:52:39 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3B2A72146D;
-        Thu, 29 Nov 2018 23:43:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C35C02145D;
+        Thu, 29 Nov 2018 23:45:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543535013;
-        bh=rU9Fpv+NCpQmEQW5TZp99eXiZ6dxE7ErSgJa+PijsiM=;
+        s=default; t=1543535123;
+        bh=49zSS3k4eVEOrNLBfQTbyTe+luG824xEl9+CeksydJY=;
         h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=0x9xiFeCJJR9PAxh/KVbfGVjd695fOBweA1xE01R26BaAkLWsgEyv4a7ZtQ43Hw7Z
-         tnGdzwzg20Y2i71J4vlupBU9735zuySvqlUq97PPs0lALUv/ousCTjz0/5l7dJCIdV
-         fbc73vGi52vrV/xsvv//7yBEMPqCmKXrsZ7rC0S8=
+        b=1T4GyXw/zxaLfcGQJ4aE0ByvOhGtC2wi3rJibQdfCUuLt1xB7ManGeFtJg+SYj8qR
+         J26vRrAyay0YiMf4XJATTUkabb/Ao7rLBI7nuym4oFhnsT0z+eV6ts5sH+ZzQVjlqo
+         v/AVxXIhbY5qjVZVDVDiTGl+4GwFdg7B1+vAAmZ0=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-To:     Carlo Caione <carlo@caione.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Nicholas Mc Guire <hofrat@osadl.org>
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20181129164524.18670-2-jbrunet@baylibre.com>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20181129164524.18670-1-jbrunet@baylibre.com>
- <20181129164524.18670-2-jbrunet@baylibre.com>
-Message-ID: <154353501265.88331.14514779271643690989@swboyd.mtv.corp.google.com>
+In-Reply-To: <1542803310-32673-1-git-send-email-hofrat@osadl.org>
+Cc:     Michal Simek <michal.simek@xilinx.com>,
+        Rob Herring <robh@kernel.org>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Nicholas Mc Guire <hofrat@osadl.org>
+References: <1542803310-32673-1-git-send-email-hofrat@osadl.org>
+Message-ID: <154353512315.88331.4548631955021366823@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.7
-Subject: Re: [PATCH 1/3] dt-bindings: clk: meson: add ao controller clock inputs
-Date:   Thu, 29 Nov 2018 15:43:32 -0800
+Subject: Re: [PATCH V2] clk: zynq: do not allow kmalloc failure
+Date:   Thu, 29 Nov 2018 15:45:23 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jerome Brunet (2018-11-29 08:45:22)
-> Add the clock inputs of amlogic AO clock controller
+Quoting Nicholas Mc Guire (2018-11-21 04:28:30)
+> The kmalloc here is small (< 16 bytes) and occurs during initialization
+> during system startup here (can not be built as module) thus if this
+> kmalloc failed it is an indication of something more serious going on
+> and it is fine to hang the system here rather than cause some harder
+> to understand error by dereferencing NULL.
 > =
 
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> Explicitly checking would not make that much sense here as the only
+> possible reaction would be would BUG() here anyway.
+> =
+
+> Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+> Fixes: 0ee52b157b8e ("clk: zynq: Add clock controller driver")
+> Acked-by: Michal Simek <michal.simek@xilinx.com>
 > ---
 
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+Nak. We don't have any __GFP_NOFAIL in drivers/clk and I don't see a
+reason why we would want it here either. Just handle the failure, or
+don't care if this is so critical to system boot.
 
