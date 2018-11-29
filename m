@@ -4,114 +4,116 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A74C4C43441
-	for <linux-clk@archiver.kernel.org>; Thu, 29 Nov 2018 12:10:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2BEFC43441
+	for <linux-clk@archiver.kernel.org>; Thu, 29 Nov 2018 12:25:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E943206B6
-	for <linux-clk@archiver.kernel.org>; Thu, 29 Nov 2018 12:10:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E943206B6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id 931FD205C9
+	for <linux-clk@archiver.kernel.org>; Thu, 29 Nov 2018 12:25:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 931FD205C9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727480AbeK2XPd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 29 Nov 2018 18:15:33 -0500
-Received: from icp-osb-irony-out3.external.iinet.net.au ([203.59.1.153]:11413
-        "EHLO icp-osb-irony-out3.external.iinet.net.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726683AbeK2XPd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Nov 2018 18:15:33 -0500
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2AEAABX1v9b/zXSMGcNWBoBAQEBAQI?=
- =?us-ascii?q?BAQEBBwIBAQEBgVIEAQEBAQsBgmmBKYN5lGwBAQEBAQEGgQgtfIgiiS2Ed4F?=
- =?us-ascii?q?6MIRJAoNTNQgNAQMBAQEBAQECgQmFSQEBAQMjFUEQCw0LAgImAgJXBgEMBgI?=
- =?us-ascii?q?BAYMdAYF0HKUjcIEvGoQTAYEShGgFgQuBc4kveIEHgREngjY1iAWCVwKPapA?=
- =?us-ascii?q?5CAGGfoouHol8A4cdLIhMhF+MPQOCCDMaCCgIgyeLHIVRYI4/AQE?=
-X-IPAS-Result: =?us-ascii?q?A2AEAABX1v9b/zXSMGcNWBoBAQEBAQIBAQEBBwIBAQEBg?=
- =?us-ascii?q?VIEAQEBAQsBgmmBKYN5lGwBAQEBAQEGgQgtfIgiiS2Ed4F6MIRJAoNTNQgNA?=
- =?us-ascii?q?QMBAQEBAQECgQmFSQEBAQMjFUEQCw0LAgImAgJXBgEMBgIBAYMdAYF0HKUjc?=
- =?us-ascii?q?IEvGoQTAYEShGgFgQuBc4kveIEHgREngjY1iAWCVwKPapA5CAGGfoouHol8A?=
- =?us-ascii?q?4cdLIhMhF+MPQOCCDMaCCgIgyeLHIVRYI4/AQE?=
-X-IronPort-AV: E=Sophos;i="5.56,294,1539619200"; 
-   d="scan'208";a="129484610"
-Received: from unknown (HELO [10.44.0.192]) ([103.48.210.53])
-  by icp-osb-irony-out3.iinet.net.au with ESMTP; 29 Nov 2018 20:10:21 +0800
-Subject: Re: [PATCH v6 3/6] m68k: coldfire: Add clk_get_optional() function
-To:     Phil Edworthy <phil.edworthy@renesas.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-m68k@lists.linux-m68k.org" <linux-m68k@lists.linux-m68k.org>
-References: <20181116145937.27660-1-phil.edworthy@renesas.com>
- <20181116145937.27660-4-phil.edworthy@renesas.com>
- <bcb0278b-a4f5-068b-324f-7be3ca963102@linux-m68k.org>
- <TY1PR01MB1769821858C257F94E9470BAF5D20@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-From:   Greg Ungerer <gerg@linux-m68k.org>
-Message-ID: <c1fe6ac5-b1f0-b11b-68c8-6178eca55123@linux-m68k.org>
-Date:   Thu, 29 Nov 2018 22:10:19 +1000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        id S1728007AbeK2XaH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 29 Nov 2018 18:30:07 -0500
+Received: from mx.socionext.com ([202.248.49.38]:7312 "EHLO mx.socionext.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726955AbeK2XaG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 29 Nov 2018 18:30:06 -0500
+Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
+  by mx.socionext.com with ESMTP; 29 Nov 2018 21:24:53 +0900
+Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
+        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id 592BA180BCB;
+        Thu, 29 Nov 2018 21:24:53 +0900 (JST)
+Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Thu, 29 Nov 2018 21:24:53 +0900
+Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
+        by iyokan.css.socionext.com (Postfix) with ESMTP id C211940377;
+        Thu, 29 Nov 2018 21:24:52 +0900 (JST)
+Received: from [127.0.0.1] (unknown [10.213.119.83])
+        by yuzu.css.socionext.com (Postfix) with ESMTP id A1DB9120455;
+        Thu, 29 Nov 2018 21:24:52 +0900 (JST)
+From:   "Sugaya, Taichi" <sugaya.taichi@socionext.com>
+Subject: Re: [PATCH 02/14] dt-bindings: soc: milbeaut: Add Milbeaut trampoline
+ description
+To:     Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Jiri Slaby <jslaby@suse.com>,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>
+References: <1542589274-13878-1-git-send-email-sugaya.taichi@socionext.com>
+ <1542589274-13878-3-git-send-email-sugaya.taichi@socionext.com>
+ <154337047410.88331.9696178601340675631@swboyd.mtv.corp.google.com>
+Message-ID: <c746a3de-a9e3-9f25-ecb9-703ceb7e62d0@socionext.com>
+Date:   Thu, 29 Nov 2018 21:24:51 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-In-Reply-To: <TY1PR01MB1769821858C257F94E9470BAF5D20@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+In-Reply-To: <154337047410.88331.9696178601340675631@swboyd.mtv.corp.google.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Phil,
+Hi,
 
-On 29/11/18 10:02 pm, Phil Edworthy wrote:
-> On 29 November 2018 11:55, Greg Ungerer wrote:
->> On 17/11/18 12:59 am, Phil Edworthy wrote:
->>> clk_get_optional() returns NULL if not found instead of -ENOENT,
->>> otherwise the behaviour is the same as clk_get().
->>>
->>> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+Thank you for your comments.
+
+On 2018/11/28 11:01, Stephen Boyd wrote:
+> Quoting Sugaya Taichi (2018-11-18 17:01:07)
+>> Add DT bindings document for Milbeaut trampoline.
 >>
->> Acked-by: Greg Ungerer <gerg@@linux-m68k.org>
+>> Signed-off-by: Sugaya Taichi<sugaya.taichi@socionext.com>
+>> ---
+>>   .../devicetree/bindings/soc/socionext/socionext,m10v.txt     | 12 ++++++++++++
+>>   1 file changed, 12 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/soc/socionext/socionext,m10v.txt
 >>
->> Looks good. Do you want me to take this in the m68knommu git tree?
->> Or is the whole series going through some other tree?
-> This patch is no longer needed as I found a better way to implement this:
-> [PATCH v8] clk: Add (devm_)clk_get_optional() functions
-> https://patchwork.kernel.org/patch/10690437/
-> 
-> Apologies for any confusion,
+>> diff --git a/Documentation/devicetree/bindings/soc/socionext/socionext,m10v.txt b/Documentation/devicetree/bindings/soc/socionext/socionext,m10v.txt
+>> new file mode 100644
+>> index 0000000..f5d906c
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/soc/socionext/socionext,m10v.txt
+>> @@ -0,0 +1,12 @@
+>> +Socionext M10V SMP trampoline driver binding
+>> +
+>> +This is a driver to wait for sub-cores while boot process.
+>> +
+>> +- compatible: should be "socionext,smp-trampoline"
+>> +- reg: should be <0x4C000100 0x100>
+>> +
+>> +EXAMPLE
+>> +       trampoline: trampoline@0x4C000100 {
+> Drop the 0x part of unit addresses.
 
-No problem, I'll just drop it then.
-
-Regards
-Greg
+Okay.
 
 
->>> ---
->>>    arch/m68k/coldfire/clk.c | 11 +++++++++++
->>>    1 file changed, 11 insertions(+)
->>>
->>> diff --git a/arch/m68k/coldfire/clk.c b/arch/m68k/coldfire/clk.c index
->>> 7bc666e482eb..b221cabc7f54 100644
->>> --- a/arch/m68k/coldfire/clk.c
->>> +++ b/arch/m68k/coldfire/clk.c
->>> @@ -87,6 +87,17 @@ struct clk *clk_get(struct device *dev, const char *id)
->>>    }
->>>    EXPORT_SYMBOL(clk_get);
->>>
->>> +struct clk *clk_get_optional(struct device *dev, const char *id) {
->>> +	struct clk *clk = clk_get(dev, id);
->>> +
->>> +	if (clk == ERR_PTR(-ENOENT))
->>> +		clk = NULL;
->>> +
->>> +	return clk;
->>> +}
->>> +EXPORT_SYMBOL(clk_get_optional);
->>> +
->>>    int clk_enable(struct clk *clk)
->>>    {
->>>    	unsigned long flags;
->>>
+>> +               compatible = "socionext,smp-trampoline";
+>> +               reg = <0x4C000100 0x100>;
+> Looks like a software construct, which we wouldn't want to put into DT
+> this way. DT doesn't describe drivers.
+We would like to use this node only getting the address of the 
+trampoline area
+in which sub-cores wait.  (They have finished to go to this area in previous
+bootloader process.)
+
+So should we embed the constant value in source codes instead of getting 
+from
+DT because the address is constant at the moment? Or is there other 
+approach?
+
+Thanks
+Sugaya Taichi
+
