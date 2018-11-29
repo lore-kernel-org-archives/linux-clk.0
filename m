@@ -2,77 +2,137 @@ Return-Path: <SRS0=q0iC=OI=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C59BFC43441
-	for <linux-clk@archiver.kernel.org>; Thu, 29 Nov 2018 00:47:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1300C43441
+	for <linux-clk@archiver.kernel.org>; Thu, 29 Nov 2018 01:48:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B19420832
-	for <linux-clk@archiver.kernel.org>; Thu, 29 Nov 2018 00:47:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ujgDzGAd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B19420832
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 765F1206B2
+	for <linux-clk@archiver.kernel.org>; Thu, 29 Nov 2018 01:48:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 765F1206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726929AbeK2LvF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 29 Nov 2018 06:51:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52128 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726492AbeK2LvE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 29 Nov 2018 06:51:04 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 646962081C;
-        Thu, 29 Nov 2018 00:47:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543452454;
-        bh=lAgU7MYjvOByAzOhN+W2fwbbF8Ar0s4uVP3R243QB/c=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=ujgDzGAdPaQsC/ZuPUhWB79O7IpnxRWbCWZQIHFMjL9gliwah0SNpx4293p6g8Fuz
-         Ubr/KzGL7A95aoRgCX1/HcwEOLIMLedBw4h61P1BBzuQGjH6QNRftXPpMW9XUnzlpL
-         ssZceq6y9/Z5uRWW6d+wfesvtb2OgzU2yQmnbi2M=
-Content-Type: text/plain; charset="utf-8"
+        id S1726929AbeK2Mvr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 29 Nov 2018 07:51:47 -0500
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:35025 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726893AbeK2Mvr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Nov 2018 07:51:47 -0500
+Received: from [10.18.29.194] (10.18.29.194) by mail-sh2.amlogic.com
+ (10.18.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Thu, 29 Nov
+ 2018 09:48:20 +0800
+Subject: Re: [PATCH v7 0/4] clk: meson: add a sub EMMC clock controller
+ support
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+CC:     Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Yixun Lan <yixun.lan@amlogic.com>,
+        Liang Yang <liang.yang@amlogic.com>,
+        Jian Hu <jian.hu@amlogic.com>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+References: <1542284312-55418-1-git-send-email-jianxin.pan@amlogic.com>
+From:   Jianxin Pan <jianxin.pan@amlogic.com>
+Message-ID: <aa21f2d6-507d-a672-9e9b-0896df011307@amlogic.com>
+Date:   Thu, 29 Nov 2018 09:48:19 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Mesih Kilinc <mesihkilinc@gmail.com>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <47d0f466155e3d678d3383655856c1e15e975870.1543443475.git.mesihkilinc@gmail.com>
-Cc:     Mesih Kilinc <mesihkilinc@gmail.com>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Rob Herring <robh+dt@kernel.org>,
-        Julian Calaby <julian.calaby@gmail.com>
-References: <cover.1543443475.git.mesihkilinc@gmail.com>
- <47d0f466155e3d678d3383655856c1e15e975870.1543443475.git.mesihkilinc@gmail.com>
-Message-ID: <154345245385.88331.8344308999294645427@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v5 12/17] dt-bindings: clock: Add Allwinner suniv F1C100s CCU
-Date:   Wed, 28 Nov 2018 16:47:33 -0800
+In-Reply-To: <1542284312-55418-1-git-send-email-jianxin.pan@amlogic.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.18.29.194]
+X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
+ (10.18.11.6)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Mesih Kilinc (2018-11-28 14:33:22)
-> Add compatiple string for Allwinner suniv F1C100s CCU.
-> Add clock and reset definitions.
-> =
+Hi Jerome,
 
-> Signed-off-by: Mesih Kilinc <mesihkilinc@gmail.com>
-> Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
-> ---
+I made some modifications as you suggested， could you please take a look?
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+On 2018/11/15 20:18, Jianxin Pan wrote:
+> This driver will add a MMC clock controller driver support.
+> The original idea about adding a clock controller is during the
+> discussion in the NAND driver mainline effort[1].
+> 
+> This driver is tested in the S400 board (AXG platform) with NAND driver.
+> 
+> Changes since v6 [7]:
+>  - add one based support for sclk divier
+>  - alloc sclk in probe for multiple instance
+>  - fix coding styles
+> 
+> Changes since v5 [6]:
+>  - remove divider ops with .init and use sclk_div instead
+>  - drop CLK_DIVIDER_ROUND_CLOSEST in mux and div
+>  - drop the useless type cast 
+> 
+> Changes since v4 [5]:
+>  - use struct parm in phase delay driver
+>  - remove 0 delay releted part in phase delay driver
+>  - don't rebuild the parent name once again
+>  - add divider ops with .init
+> 
+> Changes since v3 [4]:
+>  - separate clk-phase-delay driver
+>  - replace clk_get_rate() with clk_hw_get_rate()
+>  - collect Rob's R-Y
+>  - drop 'meson-' prefix from compatible string
+> 
+>  Changes since v2 [3]:
+>  - squash dt-binding clock-id patch
+>  - update license
+>  - fix alignment
+>  - construct a clk register helper() function
+> 
+> Changes since v1 [2]:
+>  - implement phase clock
+>  - update compatible name
+>  - adjust file name
+>  - divider probe() into small functions, and re-use them
+> 
+> [1] https://lkml.kernel.org/r/20180628090034.0637a062@xps13
+> [2] https://lkml.kernel.org/r/20180703145716.31860-1-yixun.lan@amlogic.com
+> [3] https://lkml.kernel.org/r/20180710163658.6175-1-yixun.lan@amlogic.com
+> [4] https://lkml.kernel.org/r/20180712211244.11428-1-yixun.lan@amlogic.com
+> [5] https://lkml.kernel.org/r/20180809070724.11935-4-yixun.lan@amlogic.com
+> [6] https://lkml.kernel.org/r/1539839245-13793-1-git-send-email-jianxin.pan@amlogic.com
+> [7] https://lkml.kernel.org/r/1541089855-19356-1-git-send-email-jianxin.pan@amlogic.com
+> Yixun Lan (3):
+>   clk: meson: add emmc sub clock phase delay driver
+>   clk: meson: add DT documentation for emmc clock controller
+>   clk: meson: add sub MMC clock controller driver
+>   clk: meson: add one based divider support for sclk divider
+> 
+>  .../devicetree/bindings/clock/amlogic,mmc-clkc.txt |  39 +++
+>  drivers/clk/meson/Kconfig                          |  10 +
+>  drivers/clk/meson/Makefile                         |   3 +-
+>  drivers/clk/meson/clk-phase-delay.c                |  64 +++++
+>  drivers/clk/meson/clkc-audio.h                     |   1 +
+>  drivers/clk/meson/clkc.h                           |  13 +
+>  drivers/clk/meson/mmc-clkc.c                       | 313 +++++++++++++++++++++
+>  drivers/clk/meson/sclk-div.c                       |  28 +-
+>  include/dt-bindings/clock/amlogic,mmc-clkc.h       |  17 ++
+>  9 files changed, 477 insertions(+), 11 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
+>  create mode 100644 drivers/clk/meson/clk-phase-delay.c
+>  create mode 100644 drivers/clk/meson/mmc-clkc.c
+>  create mode 100644 include/dt-bindings/clock/amlogic,mmc-clkc.h
+> 
 
