@@ -2,198 +2,83 @@ Return-Path: <SRS0=q0iC=OI=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.7 required=3.0 tests=DKIM_ADSP_ALL,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83BA5C04EB9
-	for <linux-clk@archiver.kernel.org>; Thu, 29 Nov 2018 21:47:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80D4DC04EB9
+	for <linux-clk@archiver.kernel.org>; Thu, 29 Nov 2018 21:49:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3197B20673
-	for <linux-clk@archiver.kernel.org>; Thu, 29 Nov 2018 21:47:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 262562145D
+	for <linux-clk@archiver.kernel.org>; Thu, 29 Nov 2018 21:49:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=plaes.org header.i=@plaes.org header.b="NrB4WiXp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3197B20673
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=plaes.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1YCHG+R1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 262562145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726374AbeK3IyZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Nov 2018 03:54:25 -0500
-Received: from plaes.org ([188.166.43.21]:37392 "EHLO plaes.org"
+        id S1726389AbeK3I4a (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Nov 2018 03:56:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37580 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726310AbeK3IyZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 30 Nov 2018 03:54:25 -0500
-Received: from plaes.org (localhost [127.0.0.1])
-        by plaes.org (Postfix) with ESMTPSA id 40D4F4042D;
-        Thu, 29 Nov 2018 21:47:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=plaes.org; s=mail;
-        t=1543528051; bh=YugYUEbYk2J4yPNunrN9ZeTwNBdjIy/Tome+foZX4Fk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=NrB4WiXpwvqxbx7uHbz8g8FatQMnh61Rrgc/1KrWFwmk2t8S0JEWERsYzi36klF5l
-         WfIGMQGaY5JO3H04HpIW2pOyDI+Ur8M3dIXL63uWLKfNykWt6jwvIKkgHRiw6iSM0W
-         Ea+wJO+Og3MVDqHMDxx68IScGAXfA6nye8mUb7pMntCG5xiQe+jV8NIyrFFcwUVGsB
-         oGV/zSrvLpPW8sM2ENL7qTGPVX4z7fiauxHkBffrOBOLhXDuoZnaLDwYOTUX04onNB
-         J8uaEtWGFS/fRlOhLJLnvachkW8OEQoKx+pVJz4Sv93MF+vouwD0MTr4XYtDjaRXbR
-         f1Yf1950nrVtw==
-Date:   Thu, 29 Nov 2018 21:47:30 +0000
-From:   Priit Laes <plaes@plaes.org>
-To:     Mesih Kilinc <mesihkilinc@gmail.com>
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Rob Herring <robh+dt@kernel.org>,
-        Julian Calaby <julian.calaby@gmail.com>
-Subject: Re: [linux-sunxi] [PATCH v5 00/17] initial support for "suniv"
- Allwinner new ARM9 SoC
-Message-ID: <20181129214730.6d6aju4jurai6rmv@plaes.org>
-References: <cover.1543443475.git.mesihkilinc@gmail.com>
+        id S1726310AbeK3I4a (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 30 Nov 2018 03:56:30 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E76ED20673;
+        Thu, 29 Nov 2018 21:49:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543528179;
+        bh=uzOy9kYDm/af7K1AUzzEbhUAvctbA7K01zhKRlOUCq4=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=1YCHG+R1LhULj+6rdRAHtO4pYk8hJPCePh2FQCdd2Bl4TszErwtjrOIrc0OBGF2/x
+         PzTMD8Bga4qIIN1aPHHWPVQAPxff1lDVeJIzaESRp7+567tz50lwdx2N5T32uJpY0Z
+         FfnlthFLh2GAGQGa35xaC9h/RiHhkgkKO7XeaJd4=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1543443475.git.mesihkilinc@gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: quoted-printable
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Michael Turquette <mturquette@baylibre.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20181129105008.10239-1-geert+renesas@glider.be>
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+References: <20181129105008.10239-1-geert+renesas@glider.be>
+Message-ID: <154352817823.88331.1370701337973571144@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH 00/13] clk: renesas: Miscellaneous fixes
+Date:   Thu, 29 Nov 2018 13:49:38 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 01:33:10AM +0300, Mesih Kilinc wrote:
-> This is the fifth version of patchset for Allwinner ARMv5 F1C100s
-> SoC. Addressed comments from Maxime Ripard and Rob Herring, added signatures.
+Quoting Geert Uytterhoeven (2018-11-29 02:49:55)
+>         Hi Mike, Stephen, Laurent, Kieran,
+> =
 
-IIRC, the original author of these patches was Icenowy, what happened to this?
-> 
-> Changes since v4:
-> - Patch "dt-bindings: pinctrl: Add Allwinner suniv F1C100s pinctrl"
->   - This patch applied for 4.21.
-> - Patch "pinctrl: sunxi: add support for suniv F1C100s (newer F-series SoCs)"
->   - This patch applied for 4.21.
-> - Patch "dt-bindings: clock: Add Allwinner suniv F1C100s CCU"
->   - Fixed license identifier position
->   - Added DMA fields.
-> - Patch "clk: sunxi-ng: add support for suniv F1C100s SoC"
->   - Added DMA reset and clock support.
-> - Patch "ARM: dts: suniv: add initial DTSI file for F1C100s"
->   - Remove dt-binding headers. 
->   - Fix uart0 pin label.
-> - Patch "ARM: suniv: f1c100s: add device tree for Lichee Pi Nano"
->   - Fix uart0 pin label.
-> 
-> Changes since v3:
-> - Patch "ARM: Check ARCH_MULTI_V7 to differentiate ARMv5/v7 Allwinner SoCs"
->   - Remove CONFIG_ARCH_SUNXI_Vx. Use ARCH_MULTI_Vx to differentiate SoC's
->   - Change KConfig ARCH_SUNXI selection: 'select' to 'default'. 
-> - Patch "irqchip/sun4i: Add a struct to hold global variables"
->   - Split irq_sun4i.c changes to 3 patch.
-> - Patch "pinctrl: sunxi: add support for suniv F1C100s (newer F-series SoCs)"
->   - pinctrl-suniv-f1c100s: remove: disable_strict_mode = true
-> - Patch "ARM: dts: suniv: add initial DTSI file for F1C100s"
->   - suniv-f1c100s.dtsi: remove unnecessary componenets.
->   - Instead of patching drivers, add original compatible string with 
-> f1c100s compatibles.
->   - Add Acked-by signatures.
-> 
-> Changes since v2:
-> - Patch "ARM: sunxi: add Allwinner ARMv5 SoCs"
->   - Move SUN4I_TIMER option to ARCH_SUNXI
->   - Added help text for MACH_SUNIV
-> - Patch "irqchip/sun4i: add support for suniv interrupt controller"
->   - Defined sunxi_irq_chip_data struct and used it to differentiate
->     registers between different chips.
-> - Patch " ARM: dts: suniv: add initial DTSI file for F1C100s"
->   - Removed unnecessary fake clock.
->   - Fixed compatible strings.
-> 
-> Changes since v1:
-> - Patch "ARM: add CONFIG_ARCH_SUNXI_V7 for differentiate ARMv5/v7
->   Allwinner SoCs"
->   - Instead of using a common bool config use a common menuconfig. 
->   - Use ARCH_MULTI_V7 to differentiate V7 SoCs.
->   - Addressed comment from Julian Calaby
-> - Patch "ARM: sunxi: add Allwinner ARMv5 SoCs"
->   - Use ARCH_MULTI_V5 to differentiate V5 SoCs.
->   - removed "allwinner,suniv" board compatible string
->   - Added dt-bindings
-> - Patch "irqchip/sun4i: add support for suniv interrupt controller"
->   - Added dt-bindings
->   - Changed "allwinner,suniv-ic" to "allwinner,suniv-f1c100s-ic"
-> - Patch "clocksource: sun4i: add a compatible for suniv"
->   - Added dt-bindings
->   - Changed "allwinner,suniv-timer" to "allwinner,suniv-f1c100s-timer"
-> - Patch "pinctrl: sunxi: add support for suniv F1C100s (newer F-series SoCs)"
->   - Added dt-bindings
->   - Renamed suniv-pinctrl to suniv-f1c100s-pinctrl
-> - Patch "clk: sunxi-ng: add support for suniv F1C100s SoC"
->   - Added dt-bindings
->   - Renamed suniv-ccu to suniv-f1c100s-ccu
-> - Patch "ARM: suniv: f1c100s: add device tree for Lichee Pi Nano"
->   - Addressed comment from Rask Ingemann Lambertsen
-> 
-> Thanks!
-> 
-> Mesih Kilinc (17):
->   ARM: Check ARCH_MULTI_V7 to differentiate ARMv5/v7 Allwinner SoCs
->   dt-bindings: arm: Add new Allwinner ARMv5 F1C100s SoC
->   ARM: sunxi: add Allwinner ARMv5 SoCs
->   dt-bindings: interrupt-controller: Add suniv interrupt-controller
->   irqchip/sun4i: Add a struct to hold global variables
->   irqchip/sun4i: Move IC specific register offsets to struct
->   irqchip/sun4i: Add support for Allwinner ARMv5 F1C100s
->   dt-bindings: timer: Add Allwinner suniv timer
->   clocksource: sun4i: add a compatible for suniv
->   dt-bindings: pinctrl: Add Allwinner suniv F1C100s pinctrl
->   pinctrl: sunxi: add support for suniv F1C100s (newer F-series SoCs)
->   dt-bindings: clock: Add Allwinner suniv F1C100s CCU
->   clk: sunxi-ng: add support for suniv F1C100s SoC
->   dt-bindings: sram: Add Allwinner suniv F1C100s
->   dt-bindings: watchdog: Add Allwinner ARMv5 F1C100s wdt
->   ARM: dts: suniv: add initial DTSI file for F1C100s
->   ARM: suniv: f1c100s: add device tree for Lichee Pi Nano
-> 
->  Documentation/devicetree/bindings/arm/sunxi.txt    |   1 +
->  .../devicetree/bindings/clock/sunxi-ccu.txt        |   1 +
->  .../interrupt-controller/allwinner,sun4i-ic.txt    |   4 +-
->  .../bindings/pinctrl/allwinner,sunxi-pinctrl.txt   |   1 +
->  .../devicetree/bindings/sram/sunxi-sram.txt        |   4 +
->  .../bindings/timer/allwinner,sun4i-timer.txt       |   4 +-
->  .../devicetree/bindings/watchdog/sunxi-wdt.txt     |   1 +
->  arch/arm/boot/dts/Makefile                         |   2 +
->  arch/arm/boot/dts/suniv-f1c100s-licheepi-nano.dts  |  26 +
->  arch/arm/boot/dts/suniv-f1c100s.dtsi               | 147 ++++++
->  arch/arm/mach-sunxi/Kconfig                        |  19 +-
->  arch/arm/mach-sunxi/sunxi.c                        |  10 +
->  drivers/clk/sunxi-ng/Kconfig                       |   5 +
->  drivers/clk/sunxi-ng/Makefile                      |   1 +
->  drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c           | 541 +++++++++++++++++++++
->  drivers/clk/sunxi-ng/ccu-suniv-f1c100s.h           |  34 ++
->  drivers/clocksource/sun4i_timer.c                  |   5 +-
->  drivers/irqchip/irq-sun4i.c                        | 106 ++--
->  drivers/pinctrl/sunxi/Kconfig                      |   4 +
->  drivers/pinctrl/sunxi/Makefile                     |   1 +
->  drivers/pinctrl/sunxi/pinctrl-suniv-f1c100s.c      | 416 ++++++++++++++++
->  include/dt-bindings/clock/suniv-ccu-f1c100s.h      |  70 +++
->  include/dt-bindings/reset/suniv-ccu-f1c100s.h      |  38 ++
->  23 files changed, 1408 insertions(+), 33 deletions(-)
->  create mode 100644 arch/arm/boot/dts/suniv-f1c100s-licheepi-nano.dts
->  create mode 100644 arch/arm/boot/dts/suniv-f1c100s.dtsi
->  create mode 100644 drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c
->  create mode 100644 drivers/clk/sunxi-ng/ccu-suniv-f1c100s.h
->  create mode 100644 drivers/pinctrl/sunxi/pinctrl-suniv-f1c100s.c
->  create mode 100644 include/dt-bindings/clock/suniv-ccu-f1c100s.h
->  create mode 100644 include/dt-bindings/reset/suniv-ccu-f1c100s.h
-> 
-> -- 
-> 2.7.4
-> 
-> -- 
-> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
-> For more options, visit https://groups.google.com/d/optout.
+> This patch series contains several fixes for the Renesas Clock drivers
+> and DT bindings, and a small simplification:
+>   - Removal of non-existent clocks,
+>   - Addition of the CPEX clocks, which can be used a source for a timer
+>     (CMT1),
+>   - Correction of DU parent clocks.
+> Most of these have been found by skimming the Hardware Manual Errata.
+> =
+
+> This has been boot-tested on Salvator-X(S) (R-Car H3, M3-W, M3-N), Eagle
+> (R-Car V3M), and Draak (R-Car D3), except for the DU parts.
+> Testing of the DU on R-Car D3 and E3 would be appreciated, as the DU
+> driver may have a workaround for the incorrect parent clock rates.
+> =
+
+> I intend to queue this in clk-renesas-for-v4.21.
+> =
+
+
+Ok. For the whole series:
+
+Acked-by: Stephen Boyd <sboyd@kernel.org>
