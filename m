@@ -2,78 +2,97 @@ Return-Path: <SRS0=q0iC=OI=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E58C9C43441
-	for <linux-clk@archiver.kernel.org>; Thu, 29 Nov 2018 16:33:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3134AC43441
+	for <linux-clk@archiver.kernel.org>; Thu, 29 Nov 2018 16:45:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD33820863
-	for <linux-clk@archiver.kernel.org>; Thu, 29 Nov 2018 16:33:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 535D520989
+	for <linux-clk@archiver.kernel.org>; Thu, 29 Nov 2018 16:45:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JQaCmV4q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD33820863
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="rogHK7K0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 535D520989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729283AbeK3Di5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 29 Nov 2018 22:38:57 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:56640 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728136AbeK3Di5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Nov 2018 22:38:57 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=K6S8T1/ozDfgvj/IZZYEdp1msRrLxjSOc1DfsDdupEQ=; b=JQaCmV4qZuS4WCUvjaMI/tffl
-        PzHymh5/4olRWtMgWiiOyUBTAj5fSqQLz+P+tr+ghbE0MOyeHz8N6zllvpYKfK7FwQyxKghye5XBk
-        cv3IUUQDSFpgeZT6K5o6NpXLHPWvSTVgw7EtFZ9hL1ImElZAZJy9QCvNNuptLeUUqN0Ojrfjc1xed
-        M32g9SibhQ5ZMyx3Dnq8TCGxfwkaEBvE6cbnsVGp1eVWgHNuWs0LX+mFSE3/4HjemxctZ/7gM+0KC
-        ua34NyGNqIxi4JBSdY38/hs5cAJmPuxAkmZAVBp3So60tNEMkrPtGU22KqlMkq6EyVSa8jrj+zRTU
-        cRWX+5yEA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gSPFL-0000z0-7S; Thu, 29 Nov 2018 16:32:59 +0000
-Date:   Thu, 29 Nov 2018 08:32:58 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Greg Ungerer <gerg@linux-m68k.org>
-Cc:     Phil Edworthy <phil.edworthy@renesas.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-m68k@lists.linux-m68k.org
-Subject: Re: [PATCH v6 3/6] m68k: coldfire: Add clk_get_optional() function
-Message-ID: <20181129163258.GA26511@infradead.org>
-References: <20181116145937.27660-1-phil.edworthy@renesas.com>
- <20181116145937.27660-4-phil.edworthy@renesas.com>
- <bcb0278b-a4f5-068b-324f-7be3ca963102@linux-m68k.org>
+        id S1729407AbeK3Dvb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 29 Nov 2018 22:51:31 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:43065 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729323AbeK3Dvb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Nov 2018 22:51:31 -0500
+Received: by mail-wr1-f67.google.com with SMTP id r10so2572661wrs.10
+        for <linux-clk@vger.kernel.org>; Thu, 29 Nov 2018 08:45:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Me0Lfu5BhBpqT9CdhSlWzYxuoOF7cdOkh9x6AmuvvVc=;
+        b=rogHK7K0kH++y0ednXP5cVWtEAOsfL2jgfyiecbhwdJCPuUVTYZF99Zg8xq9DUY+Hc
+         wX6oOpFbaHEf70oUzyFV5mKcUBEFSV21S6GP1w4FqUrn3tRW+/FlndxpCuwXk3E3SC9q
+         pgdLvhuRsNwWP6ip0QiMl1bN/Xved5y+9OLW8S77vr2tpdgQ8Ckqb+O15ncQZY37RkmO
+         RFLxXVj8exSgsJDFHFTff8s/IRalyhdYSX3KmUWJ480i1cyjSsaXc0LWx7sgdmbsMIQP
+         vR5usXsclWAJjQumh3BIIUQ1dfGVfQ1lqpUQydWFsYPyWPOQvk/flXyCiQvC1YysaFL/
+         MX8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Me0Lfu5BhBpqT9CdhSlWzYxuoOF7cdOkh9x6AmuvvVc=;
+        b=IPdndqqqzQAWvtZs1VfFv5tggzU/3Y8LYdvzAebyseq+IaAAeLQ5Uzlcl8SikHgUTc
+         vc3xp5zm5qLXAm5BjRcXBiVVrF7j0u/ld4Ju36x5FjEKyNNQ/p6w9t580DnsKiT9Pzg4
+         /OOiPqPmMJ9/qHyEL9szuQ64ru61GrBNhZEWqgTCjvkzCBg71RO2J0hhmWop5kV2WxPo
+         9DGSWHOuamxbO6l25kF9RqkfDO+cBjaP+uqjESFJOLFWGvrTZSKn5RR/C6NAoPzNV71+
+         sZbEQPnRm4aRSqTu9P2PoZa6irWcVk95sAfBT2NAqCAOD18kr55vBVyjouuRWJPz8d/1
+         /5zQ==
+X-Gm-Message-State: AA+aEWZgTquuLnJJcS0QUcDKs08HroQDpbb0yMVxFFZh+1pipxLYihAk
+        AG6L4xQNdxrp/g5WuDL1z8uiMQ==
+X-Google-Smtp-Source: AFSGD/XyqyRkcAFp5kKA+MdFtQ28BEmg6t3MEjW6UemCTXoCMSbYGhlrVpJdoLkehKWq33qeKJAP0A==
+X-Received: by 2002:adf:edc1:: with SMTP id v1mr2135687wro.105.1543509931333;
+        Thu, 29 Nov 2018 08:45:31 -0800 (PST)
+Received: from boomer.lan (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
+        by smtp.googlemail.com with ESMTPSA id d4sm2721909wrp.89.2018.11.29.08.45.29
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 29 Nov 2018 08:45:30 -0800 (PST)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
+        Kevin Hilman <khilman@baylibre.com>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] arm64: dts: meson: add clock controllers input clocks
+Date:   Thu, 29 Nov 2018 17:45:21 +0100
+Message-Id: <20181129164524.18670-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bcb0278b-a4f5-068b-324f-7be3ca963102@linux-m68k.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 09:54:37PM +1000, Greg Ungerer wrote:
-> Hi Phil,
-> 
-> On 17/11/18 12:59 am, Phil Edworthy wrote:
-> > clk_get_optional() returns NULL if not found instead of -ENOENT,
-> > otherwise the behaviour is the same as clk_get().
-> > 
-> > Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-> 
-> Acked-by: Greg Ungerer <gerg@@linux-m68k.org>
-> 
-> Looks good. Do you want me to take this in the m68knommu git tree?
-> Or is the whole series going through some other tree?
+This patchset is the first step that needs to be done so the
+amlogic clock controllers properly claim their input clocks
+through instead of relying on fixed names.
 
-Any chance we could just get coldfire moved over to the common clock
-framework?
+I'll be waiting for this hit mainline before sending the related
+driver changes.
+
+Jerome Brunet (3):
+  dt-bindings: clk: meson: add ao controller clock inputs
+  dt-bindings: clk: meson: add main controller clock input
+  arm64: dts: meson: add clock controller clock inputs
+
+ .../devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt     | 8 +++++++-
+ .../devicetree/bindings/clock/amlogic,gxbb-clkc.txt       | 3 +++
+ arch/arm64/boot/dts/amlogic/meson-axg.dtsi                | 3 +++
+ arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi               | 3 +++
+ arch/arm64/boot/dts/amlogic/meson-gxl.dtsi                | 3 +++
+ 5 files changed, 19 insertions(+), 1 deletion(-)
+
+-- 
+2.19.1
+
