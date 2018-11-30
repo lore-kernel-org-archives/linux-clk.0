@@ -2,104 +2,132 @@ Return-Path: <SRS0=1K30=OJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75689C65BAE
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Nov 2018 07:27:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5347C64EB4
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Nov 2018 07:36:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B32420863
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Nov 2018 07:27:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8ACC42146F
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Nov 2018 07:36:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FHtThs6U"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B32420863
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="bg/Dr6KC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8ACC42146F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726788AbeK3Sfv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Nov 2018 13:35:51 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:43921 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726582AbeK3Sfv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Nov 2018 13:35:51 -0500
-Received: by mail-pf1-f195.google.com with SMTP id w73so2352442pfk.10
-        for <linux-clk@vger.kernel.org>; Thu, 29 Nov 2018 23:27:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=6czgDvtOK84cQiH27gj58EcxjHCyIgKR400QoIHUptw=;
-        b=FHtThs6UpCZbBKJ/ExPsF7EqkZMjHKczQyqT7U7YG2kia5CN8tvZ9DzQeia6y8L3Is
-         xovFphAWiCZGw8+odr6RdGMLHv4HYTHarYmbNJAzOKSG5oU2J7LsExWPhF2ojo5AmStP
-         tfdGn1NChoLEn/rRn4rFN5yCyhNuCuRTqTwEM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=6czgDvtOK84cQiH27gj58EcxjHCyIgKR400QoIHUptw=;
-        b=GLJr/VRCMp6FxoHsXzkPkKsp0lstUk1+NEK8Ne2Ez122HSrjiQlSbqKNAiqdmloMUS
-         +0h8uCPljFi0fVxs8FpR0/MGBf6pzBpPzdZLAYJVdBzQ6geoawf/JIrlSgiPXyiU7e8F
-         kRtUJKORWSYsm0ZQ4yTRqzrg7cMZ0I85t4WJXOAVfKKY1ziij/ctPMgr9kQ7LdzQn4Bi
-         9TglmoH+oQYVAYglJKJ1z1I9S5jyyLp0gJ2IZO3mJq2H6XgxXLIS6wa/R1l/FrZkryWe
-         khKA86P6KU+QwFE51UbCaIYAJBuvK/k1LPBRvNLazSZPA9MKQYuzFGiGeWzCxnZv9oo3
-         wjAQ==
-X-Gm-Message-State: AA+aEWYd0aJltE3D1E+EdrAHacZNpXSXk6p48IwpoEKdo15d4Rg25Kwp
-        MQCDgs/N6ybPAlwuk/GAIVkNTQ==
-X-Google-Smtp-Source: AFSGD/VtmeqXwejpd/jSmZwn1a6DZlBSXlyrjlndOrmS7Sp566bbI/Ugk+vywZP0OYTsSfmwYkAscg==
-X-Received: by 2002:a63:4b25:: with SMTP id y37mr4076905pga.181.1543562849166;
-        Thu, 29 Nov 2018 23:27:29 -0800 (PST)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id b10sm8897824pfj.183.2018.11.29.23.27.27
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 29 Nov 2018 23:27:28 -0800 (PST)
-Date:   Thu, 29 Nov 2018 23:27:25 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+        id S1726970AbeK3Sob (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Nov 2018 13:44:31 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:37032 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726386AbeK3Sob (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Nov 2018 13:44:31 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id wAU7Zocw114723;
+        Fri, 30 Nov 2018 01:35:50 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1543563350;
+        bh=Wmx+MeFv4MMaM8bbmPVvczNYR9YYoG1JpCOSe0pw5a8=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=bg/Dr6KCWYJyNQiajuvAowtjZWFbRh5W3DLJXbbw8TQUiFqTU+KnHhfLJwnIqjcru
+         esaSDygvyHcIGVcR58U95EPDt9YaZ4Y/e4stKtIUIFZZaLn81O60QY244/wAK0BR4V
+         Q4OfL7HCXqHh7wIyJP0fNxNb2bCG4qtPSK035HtI=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wAU7Zo1L060728
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 30 Nov 2018 01:35:50 -0600
+Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Fri, 30
+ Nov 2018 01:35:49 -0600
+Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Fri, 30 Nov 2018 01:35:49 -0600
+Received: from [127.0.0.1] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wAU7ZjSe018132;
+        Fri, 30 Nov 2018 01:35:46 -0600
+Subject: Re: [PATCH v2 2/3] clk: ti: check clock type before doing autoidle
+ ops
 To:     Stephen Boyd <sboyd@kernel.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Marc Gonzalez <marc.w.gonzalez@free.fr>,
-        Amit Kucheria <amit.kucheria@linaro.org>
-Subject: Re: [PATCH 2/3] clk: qcom: gcc-msm8998: Disable halt check of UFS
- clocks
-Message-ID: <20181130072725.GH5278@tuxbook-pro>
-References: <20181130065259.26497-1-bjorn.andersson@linaro.org>
- <20181130065259.26497-3-bjorn.andersson@linaro.org>
- <154356160607.88331.15203631970252933137@swboyd.mtv.corp.google.com>
+        Andreas Kemnade <andreas@kemnade.info>
+CC:     <bcousson@baylibre.com>, <letux-kernel@openphoenux.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>, <mturquette@baylibre.com>,
+        <paul@pwsan.com>, <tony@atomide.com>
+References: <20181110203115.13335-1-andreas@kemnade.info>
+ <20181110203115.13335-3-andreas@kemnade.info>
+ <154353750560.88331.11814738542436183126@swboyd.mtv.corp.google.com>
+ <20181130071534.0a6cd455@kemnade.info>
+ <154356242517.88331.8496814814468751012@swboyd.mtv.corp.google.com>
+From:   Tero Kristo <t-kristo@ti.com>
+Message-ID: <9eb7b090-4803-d389-4112-3bf058385b2e@ti.com>
+Date:   Fri, 30 Nov 2018 09:35:35 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <154356160607.88331.15203631970252933137@swboyd.mtv.corp.google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <154356242517.88331.8496814814468751012@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu 29 Nov 23:06 PST 2018, Stephen Boyd wrote:
-
-> Quoting Bjorn Andersson (2018-11-29 22:52:58)
-> > Drop the halt check of the UFS symbol clocks, in accordance with other
-> > platforms. This makes clk_disable_unused() happy and makes it possible
-> > to turn the clocks on again without an error.
-> > 
-> > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+On 30/11/2018 09:20, Stephen Boyd wrote:
+> Quoting Andreas Kemnade (2018-11-29 22:15:34)
+>> Hi Stephen,
+>>
+>> On Thu, 29 Nov 2018 16:25:05 -0800
+>> Stephen Boyd <sboyd@kernel.org> wrote:
+>>
+>>> Quoting Andreas Kemnade (2018-11-10 12:31:14)
+>>>> Code might use autoidle api with clocks not being omap2 clocks,
+>>>> so check if clock type is not basic
+>>>>
+>>>> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+>>>> ---
+>>>> New in v2
+>>>> ---
+>>>>   drivers/clk/ti/autoidle.c | 12 ++++++++++--
+>>>>   1 file changed, 10 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/drivers/clk/ti/autoidle.c b/drivers/clk/ti/autoidle.c
+>>>> index 161f67850393..5bdae5552d38 100644
+>>>> --- a/drivers/clk/ti/autoidle.c
+>>>> +++ b/drivers/clk/ti/autoidle.c
+>>>> @@ -54,8 +54,12 @@ static DEFINE_SPINLOCK(autoidle_spinlock);
+>>>>   int omap2_clk_deny_idle(struct clk *clk)
+>>>>   {
+>>>>          struct clk_hw_omap *c;
+>>>> +       struct clk_hw *hw = __clk_get_hw(clk);
+>>>>   
+>>>> -       c = to_clk_hw_omap(__clk_get_hw(clk));
+>>>> +       if (clk_hw_get_flags(hw) & CLK_IS_BASIC)
+>>>
+>>> Please try to avoid using CLK_IS_BASIC if at all possible. Can you?
+>>> Maybe add some flag in clk_hw_omap() instead?
+>>>
+>> hmm, Tero suggested that.
+>> But to check flags in clk_hw_omap I first need to know that there is a
+>> clk_hw_omap behind clk_hw. And for that I either need to check flags in
+>> clk_hw or do more changes in the omap_hwmod code.
 > 
-> Someone was supposed to figure out why we needed to SKIP here instead of
-> doing things in the proper order. Is anyone attempting to figure that
-> out?
-> 
+> Can you do it? The omap code is the only user of CLK_IS_BASIC. All the
+> other users are marking clks with this but there is no reason to do so.
+> I'll go make another pass over the tree and nuke those ones from orbit.
 
-I'm not aware of any such efforts, but looping in Vivek here.
+The reason for using this flag is because OMAP uses two clock types 
+around, the basic clocks like fixed-factor-clock/fixed-clock, and then 
+all the omap derivatives, which can be cast to clk_hw_omap. If we want 
+to avoid usage of CLK_IS_BASIC, we need to copy paste the remaining 
+basic code under drivers/clk/ti/ and convert them to use clk_hw_omap as 
+internal datatype. Is this preferred?
 
-I would be happy to revert this change in 8996, 8998 and 845 once such
-fix arrives. But as this is needed to make progress on getting UFS up on
-8998 it would be nice to get it merged for now...
-
-Regards,
-Bjorn
+-Tero
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
