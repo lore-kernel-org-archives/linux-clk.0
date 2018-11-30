@@ -2,87 +2,208 @@ Return-Path: <SRS0=1K30=OJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F62AC04EB8
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Nov 2018 09:26:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97029C04EB8
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Nov 2018 10:04:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D5C72146D
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Nov 2018 09:26:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F374206B7
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Nov 2018 10:04:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CtRVKonJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D5C72146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="i7HSBBUj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F374206B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726499AbeK3UfB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Nov 2018 15:35:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51486 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726467AbeK3UfB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 30 Nov 2018 15:35:01 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E61A020863;
-        Fri, 30 Nov 2018 09:26:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543569981;
-        bh=wMvXu0Zt5EsV5KTkoYdcXeI3wIa9DPhJCb1R+p4sVY4=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=CtRVKonJw/sfkGo8tZMWHp/DdNUWXK8uYnW2SVewv/woSr/pQ8iEZZYcqQw+4M1uR
-         wgj8cTXh/jlmF05QKHhiShS0x19q+LZUIdW8vSI9vmOW8132SRRFgW99i8TLEEKhDn
-         q5REh32Ts5SdFC435ZznFVRZtZnEvn4WXX3FzXCc=
-Content-Type: text/plain; charset="utf-8"
+        id S1726512AbeK3VNa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Nov 2018 16:13:30 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:38927 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726521AbeK3VNa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Nov 2018 16:13:30 -0500
+Received: by mail-wr1-f66.google.com with SMTP id t27so4678641wra.6
+        for <linux-clk@vger.kernel.org>; Fri, 30 Nov 2018 02:04:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:from:to:cc:references:openpgp:autocrypt:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=xwKVXHxqfLgOfGqZ6JVPGFUXZRlWbmAIJci1sZiElF0=;
+        b=i7HSBBUjQIQnq5emjYwAnEb4QZcQJeZ8fKtfa+DLarmLZ9Q4fyk+h2MWoRc7TcGr+5
+         Gcm33CtSlgKL3BI0dHOeEpfueG7DcIF6dcuCsQ9YH1d4qKfDemubUUUGu81WKGW1IYbf
+         vl7lWep/tbWC5p0BOQW0cigUU0sCRoGoIfCeuRjqNvpZY5oDLhg3x4DeK0HL4Ng8O5ok
+         p/EDxw/1jPRWQGTrGxpVupC5OVnr4c1XoAeSZEllWDdZ4STSdY8RXWnnlQkmqAXW4785
+         UqdoqDq4xlYfAggMVuaRoMScB5O5IsysWpOi7zPsg02D7zIxyHCetDcMmDVHh58s4FfW
+         5J8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:openpgp:autocrypt
+         :organization:message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=xwKVXHxqfLgOfGqZ6JVPGFUXZRlWbmAIJci1sZiElF0=;
+        b=hcv7S3yDaqT7k829kSh6xJYnaE9uDpfgfXgm+AybOBHLHIq2W2hFrcsaqahAHgdMoV
+         1MN8P19k0XZ/BzN0Y2JxuCrODzBEmxYvOk01F4xCn28v90VH+hyqOnFxzbFnQjMYHuUq
+         a35yCPzGjU3upKr32iGZCajQMddFIbKdqdv/GepZq9PHSxyxDtSYwhX2ZtwhKdIa+YS/
+         m0GDgfhDRKRSkSHDChNvHNEGOTFWa5AH8zRQdtTQt0/Gjz2zZ5CNzGT+DbCtyZGh1JkA
+         Ao3t97M4fFk2TavKw1VbDBlyT7kx3Z0+OQBS4vZ9XcjxIT1oAgiP2wn2zNkQMbhpPDQJ
+         eqvg==
+X-Gm-Message-State: AA+aEWa2aIBpKR4gC5GUaM8HJuTZVAn3kv5Bc8Q4p8u1qpHdqEYa5Ddm
+        RGzbsBy95zWvd3SbsVd5F+eoS5+Hf5892Q==
+X-Google-Smtp-Source: AFSGD/WMbA6Zt8Vv5cTuttYwlbxaNkuFY5mdmJcHRDRe+5eZmdhv7qI5v3SZwgQxkYRO46QFrdfnpg==
+X-Received: by 2002:a05:6000:104b:: with SMTP id c11mr4455540wrx.303.1543572281768;
+        Fri, 30 Nov 2018 02:04:41 -0800 (PST)
+Received: from [10.1.2.12] (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id x79sm10970601wmd.42.2018.11.30.02.04.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 30 Nov 2018 02:04:41 -0800 (PST)
+Subject: Re: [PATCH v2 0/3] Meson8/Meson8b: introduce a HHI syscon node
+From:   Neil Armstrong <narmstrong@baylibre.com>
+To:     Chen-Yu Tsai <wens@csie.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc:     Rob Herring <robh@kernel.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Carlo Caione <carlo@caione.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>
+References: <20181028120859.5735-1-martin.blumenstingl@googlemail.com>
+ <20181030221310.GA22640@bogus>
+ <CAFBinCDnB5GiX530eLR5fa6JEZP9GtYDhJq6S7sKMXEtMP5FHQ@mail.gmail.com>
+ <CAGb2v65L4Sq1Fxqyffq16Zpamv=WosgvCaXdVYH6ooLLmHW0SQ@mail.gmail.com>
+ <5440e173-3bd1-9ce2-ea9e-cc95b909d4a8@baylibre.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKE5laWwgQXJtc3Ryb25nIDxuYXJtc3Ryb25nQGJheWxpYnJlLmNvbT7CwHsEEwEKACUC
+ GyMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheABQJXDO2CAhkBAAoJEBaat7Gkz/iubGIH/iyk
+ RqvgB62oKOFlgOTYCMkYpm2aAOZZLf6VKHKc7DoVwuUkjHfIRXdslbrxi4pk5VKU6ZP9AKsN
+ NtMZntB8WrBTtkAZfZbTF7850uwd3eU5cN/7N1Q6g0JQihE7w4GlIkEpQ8vwSg5W7hkx3yQ6
+ 2YzrUZh/b7QThXbNZ7xOeSEms014QXazx8+txR7jrGF3dYxBsCkotO/8DNtZ1R+aUvRfpKg5
+ ZgABTC0LmAQnuUUf2PHcKFAHZo5KrdO+tyfL+LgTUXIXkK+tenkLsAJ0cagz1EZ5gntuheLD
+ YJuzS4zN+1Asmb9kVKxhjSQOcIh6g2tw7vaYJgL/OzJtZi6JlIXOwE0ETVkGzwEIALyKDN/O
+ GURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYpQTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXM
+ coJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hi
+ SvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY4yG6xI99NIPEVE9lNBXBKIlewIyVlkOa
+ YvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoMMtsyw18YoX9BqMFInxqYQQ3j/HpVgTSv
+ mo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUXoUk33HEAEQEAAcLAXwQYAQIACQUCTVkG
+ zwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfnM7IbRuiSZS1unlySUVYu3SD6YBYnNi3G
+ 5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa33eDIHu/zr1HMKErm+2SD6PO9umRef8V8
+ 2o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCSKmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+
+ RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJ
+ C3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTTQbM0WUIBIcGmq38+OgUsMYu4NzLu7uZF
+ Acmp6h8g
+Organization: Baylibre
+Message-ID: <4121c572-e30e-60ad-9d35-f323b5119abb@baylibre.com>
+Date:   Fri, 30 Nov 2018 11:04:40 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        kbuild test robot <lkp@intel.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20181123101132.6be3829c@xps13>
-Cc:     kbuild-all@01.org, Michael Turquette <mturquette@baylibre.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>
-References: <20181122212212.16039-3-miquel.raynal@bootlin.com>
- <201811231627.H7ojlKLL%fengguang.wu@intel.com>
- <20181123101132.6be3829c@xps13>
-Message-ID: <154356998033.88331.4426431020982838779@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH 2/2] clk: core: link consumer with clock driver
-Date:   Fri, 30 Nov 2018 01:26:20 -0800
+In-Reply-To: <5440e173-3bd1-9ce2-ea9e-cc95b909d4a8@baylibre.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Miquel Raynal (2018-11-23 01:11:32)
-> Would you agree with me adding dummy functions in the #else section
-> like:
-> =
+On 08/11/2018 15:42, Neil Armstrong wrote:
+> On 01/11/2018 11:20, Chen-Yu Tsai wrote:
+>> On Thu, Nov 1, 2018 at 6:10 PM Martin Blumenstingl
+>> <martin.blumenstingl@googlemail.com> wrote:
+>>>
+>>> Hi Rob,
+>>>
+>>> On Tue, Oct 30, 2018 at 11:13 PM Rob Herring <robh@kernel.org> wrote:
+>>>>
+>>>> On Sun, Oct 28, 2018 at 01:08:56PM +0100, Martin Blumenstingl wrote:
+>>>>> The Meson8/Meson8b/Meson8m2 SoCs are suffering from a similar problem
+>>>>> as the GXBB/GXL/GXM SoCs (see the GX series from Jerome: [0]):
+>>>>> There is a register area called "HHI" which is used for multiple IP
+>>>>> blocks of the SoC:
+>>>>> - the system clock controller
+>>>>> - a few reset lines (there is a separate reset controller, these reset
+>>>>>   lines are not part of the other reset controller). this reset
+>>>>>   controller is currently implemented in the clock controller driver
+>>>>> - a HDMI controller
+>>>>
+>>>> Does this have it's own clocks, resets or other resources?
+> 
+> [...]
+> 
+>>>>>
+>>>>> The first three could be implemented with a single node (either in one
+>>>>> big driver, or using a MFD driver which would register function-
+>>>>> specific drivers).
+>>>>> However, the TSC data is a big problem, because the ADC has it's own
+>>>>> set of registers but needs to write one bit in the HHI register area.
+>>>>
+>>>> Generally, that would be solved with a phandle to the HHI and maybe an
+>>>> offset cell in the ADC node. I don't see why that's a big problem.
+>>> this is what I'm trying to do, see my dt-bindings patch for the SAR
+>>> ADC (which is used to read the temperature sensor): [0]
+>>> my understanding was that I should go through syscon to avoid double
+>>> ioremap() of the same register set (the clock controller and SAR ADC
+>>> would have to do it).
+>>> which APIs (other than syscon) would you suggest for this case?
+>>
+>> I would suggest avoiding the syscon API when you have other drivers going
+>> through the same register space. You can do a syscon like approach by
+>> having the HHI driver register one or multiple regmaps, with appropriate
+>> access controls, which other drivers can fetch using dev_get_regmap() (via
+>> a phandle to the HHI device). I don't know much about simple-mfd though.
+>> If the registers are neatly grouped together by function it would be easier
+>> to deal with. Or you could just have one device node with appropriate cell
+>> properties and have a big driver register all the functions. That driver
+>> would likely live under drivers/soc/.
+> 
+> Well, it's the role of simple-mfd, when you only have plaform-tied sub drivers,
+> and it's over-engineered to write an MFD driver for this.
+> 
+> At some point, we should move forward with this since it's a "system controller"
+> specific mapping, and "syscon" was designed specifically to solve this kind
+> of mapping in DT.
+> 
+> The other SoCs (GX, AXG and G12A) uses this exact DT architecture to solve this
+> issue, and we should use this same schema for other Amlogic SoCs even if it's
+> not the most perfect way to solve it.
 
-> static inline void __clk_device_link(struct device *consumer, struct clk =
-*clk)
-> {
->        return;
-> }
-> =
+Considering the "syscon" and "simple-mfd" bindings documentation not marked
+deprecated, and that the whole Amlogic architecture (and new SoCs support)
+is already using this design, I don't see any reason not aligning the
+Meson8 & Meson8b clk support on the ARM64 variants scheme.
 
-> static inline void __clk_device_unlink(struct clk *clk)
-> {
->        return;
-> }
-> =
+I do act we will need to avoid syscon for *new* driver and DT designs.
 
-> Do you want me to also declare these functions in the #if section
-> (with the external keyword) to balance the above declarations?
+Applied on next/drivers for 4.21
 
-Why can't we do the linking in __clk_get() and __clk_put()?
+Neil
+
+> 
+> Neil
+> 
+>>
+>> ChenYu
+>>
+>>>
+>>> Regards
+>>> Martin
+>>>
+>>>
+>>> [0] https://patchwork.kernel.org/patch/10658557/
+>>> [1] https://github.com/endlessm/linux-meson/blob/3a749cb45a381fb977bae0bee36c6c1cbee32ac1/arch/arm/mach-meson8b/hdmi_tx_hw/hdmi_tx_hw.c
+>>> [2] https://github.com/endlessm/linux-meson/blob/3a749cb45a381fb977bae0bee36c6c1cbee32ac1/arch/arm/mach-meson8b/hdmi_tx_hw/hdmi_tx_reg.c
+>>> [3] https://github.com/endlessm/linux-meson/blob/3a749cb45a381fb977bae0bee36c6c1cbee32ac1/arch/arm/mach-meson8b/include/mach/register.h
+> 
 
