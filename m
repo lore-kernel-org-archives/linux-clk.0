@@ -2,237 +2,110 @@ Return-Path: <SRS0=1K30=OJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 580F2C04EB8
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Nov 2018 10:50:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA097C64EB4
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Nov 2018 10:56:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1354720863
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Nov 2018 10:50:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1354720863
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
+	by mail.kernel.org (Postfix) with ESMTP id 7B2ED20863
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Nov 2018 10:56:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B2ED20863
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=free.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726557AbeK3V71 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Nov 2018 16:59:27 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:42289 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726527AbeK3V71 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Nov 2018 16:59:27 -0500
-Received: by mail-lj1-f196.google.com with SMTP id l15-v6so4572926lja.9;
-        Fri, 30 Nov 2018 02:50:32 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=daG1XJ3xEPZRYjxjHEIMiZ2KfFhva5k8E7JnZvAC+Oo=;
-        b=t1vOHbKtA6GzLMRWcFKBWXm+ZWfE5Fuc/MjmLs9WMrlcGqH6QALguVNktXYq6AXKwM
-         vK9VHmDH8+SK2xZntDQv+42sawvOzn3x92xjXDwz0T/BkORvQ1U9EQ7IKuaMVAaq3NN0
-         2rXYzPVgx3zvA+rD6Nihz1K2qI+PsVg+LVXvKIIBbWfzpkCpYINJTXVvSdEemiYiNEYv
-         ZK3rb2ETNvvM5lrNS61q/nTW3yWdscjRkw4At6X64V6oIoHQ89mj+m3mbs6vGuI+cXI7
-         7Vch2QSI25+imi2Ko1AmFy6PxgEPdx+G+nNNF+LItfHRWtuh79q5M64tOB6qONTEvzWc
-         E2Vg==
-X-Gm-Message-State: AA+aEWYKg7ykht0n1B7NpK6hWD0Uvp0HsuNlZTflXwgY7pPBz+cM5BHZ
-        XuEtCIyxJxr+WHqVHh+r1wE=
-X-Google-Smtp-Source: AFSGD/XFPJ1MMWBlTqXBpTiP9WCmLCT4QKpGGG+olHyyiMLUAlROfdFfvehxLuxm1UY3PtnHFDGMbQ==
-X-Received: by 2002:a2e:2281:: with SMTP id i123-v6mr3117217lji.154.1543575031301;
-        Fri, 30 Nov 2018 02:50:31 -0800 (PST)
-Received: from localhost.localdomain (84-253-205-125.bb.dnainternet.fi. [84.253.205.125])
-        by smtp.gmail.com with ESMTPSA id s127sm753225lfe.8.2018.11.30.02.50.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 30 Nov 2018 02:50:30 -0800 (PST)
-Date:   Fri, 30 Nov 2018 12:50:22 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     mazziesaccount@gmail.com, Jonathan Corbet <corbet@lwn.net>,
+        id S1726933AbeK3WFG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Nov 2018 17:05:06 -0500
+Received: from smtp3-g21.free.fr ([212.27.42.3]:5471 "EHLO smtp3-g21.free.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726546AbeK3WFG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 30 Nov 2018 17:05:06 -0500
+Received: from [192.168.108.68] (unknown [213.36.7.13])
+        (Authenticated sender: marc.w.gonzalez)
+        by smtp3-g21.free.fr (Postfix) with ESMTPSA id CA0F313F8CF;
+        Fri, 30 Nov 2018 11:55:49 +0100 (CET)
+Subject: Re: [PATCH 2/3] clk: qcom: gcc-msm8998: Disable halt check of UFS
+ clocks
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Andy Gross <andy.gross@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
         David Brown <david.brown@linaro.org>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Rob Herring <robh@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Huang Shijie <sjhuang@iluvatar.ai>,
-        Daniel Kurtz <djkurtz@chromium.org>,
-        Akshu Agrawal <akshu.agrawal@amd.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
-Subject: Re: [PATCH v4 1/8] clk: clkdev/of_clk - add managed lookup and
- provider registrations
-Message-ID: <20181130105022.GA15388@localhost.localdomain>
-References: <cover.1542107769.git.matti.vaittinen@fi.rohmeurope.com>
- <ec0d6ee7ea79f0e05041ed3e564b0aadb297ef5f.1542107769.git.matti.vaittinen@fi.rohmeurope.com>
- <154356805035.88331.16867826308376667832@swboyd.mtv.corp.google.com>
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Amit Kucheria <amit.kucheria@linaro.org>
+References: <20181130065259.26497-1-bjorn.andersson@linaro.org>
+ <20181130065259.26497-3-bjorn.andersson@linaro.org>
+From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
+Message-ID: <273c0544-bf33-fe66-ac42-ad17ea3038d1@free.fr>
+Date:   Fri, 30 Nov 2018 11:55:49 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <154356805035.88331.16867826308376667832@swboyd.mtv.corp.google.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20181130065259.26497-3-bjorn.andersson@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello Stephen,
+On 30/11/2018 07:52, Bjorn Andersson wrote:
 
-Thanks a bunch for taking the time and reviewing this!
-
-On Fri, Nov 30, 2018 at 12:54:10AM -0800, Stephen Boyd wrote:
-> Quoting Matti Vaittinen (2018-11-13 03:55:58)
-> > With MFD devices the clk properties may be contained in MFD (parent) DT
-> > node. Current devm_of_clk_add_hw_provider assumes the clk is bound to MFD
-> > subdevice not to MFD device (parent). Add
-> > devm_of_clk_add_hw_provider_parent to tackle this issue.
-> > 
-> > Also clkdev registration lacks of managed registration functions and it
-> > seems few drivers do not drop clkdev lookups at exit. Add
-> > devm_clk_hw_register_clkdev and devm_clk_release_clkdev to ease lookup
-> > releasing at exit.
+> Drop the halt check of the UFS symbol clocks, in accordance with other
+> platforms. This makes clk_disable_unused() happy and makes it possible
+> to turn the clocks on again without an error.
 > 
-> Please split this into clkdev and non-clkdev devm functionality.
-Allright. I'll split this to two patches.
-
-> > --- a/Documentation/driver-model/devres.txt
-> > +++ b/Documentation/driver-model/devres.txt
-> > @@ -238,6 +238,9 @@ CLOCK
-> >    devm_clk_put()
-> >    devm_clk_hw_register()
-> >    devm_of_clk_add_hw_provider()
-> > +  devm_of_clk_add_parent_hw_provider()
-> > +  devm_clk_hw_register_clkdev()
-> > +  devm_clk_release_clkdev()
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
+>  drivers/clk/qcom/gcc-msm8998.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> The 'release' or non-common functions shouldn't be documented here.
-So I will drop the line mentioning devm_clk_release_clkdev()
+> diff --git a/drivers/clk/qcom/gcc-msm8998.c b/drivers/clk/qcom/gcc-msm8998.c
+> index d89f8e7c2a59..3d232d266d72 100644
+> --- a/drivers/clk/qcom/gcc-msm8998.c
+> +++ b/drivers/clk/qcom/gcc-msm8998.c
+> @@ -2403,7 +2403,7 @@ static struct clk_branch gcc_ufs_phy_aux_clk = {
+>  
+>  static struct clk_branch gcc_ufs_rx_symbol_0_clk = {
+>  	.halt_reg = 0x75014,
+> -	.halt_check = BRANCH_HALT,
+> +	.halt_check = BRANCH_HALT_SKIP,
+>  	.clkr = {
+>  		.enable_reg = 0x75014,
+>  		.enable_mask = BIT(0),
+> @@ -2416,7 +2416,7 @@ static struct clk_branch gcc_ufs_rx_symbol_0_clk = {
+>  
+>  static struct clk_branch gcc_ufs_rx_symbol_1_clk = {
+>  	.halt_reg = 0x7605c,
+> -	.halt_check = BRANCH_HALT,
+> +	.halt_check = BRANCH_HALT_SKIP,
+>  	.clkr = {
+>  		.enable_reg = 0x7605c,
+>  		.enable_mask = BIT(0),
+> @@ -2429,7 +2429,7 @@ static struct clk_branch gcc_ufs_rx_symbol_1_clk = {
+>  
+>  static struct clk_branch gcc_ufs_tx_symbol_0_clk = {
+>  	.halt_reg = 0x75010,
+> -	.halt_check = BRANCH_HALT,
+> +	.halt_check = BRANCH_HALT_SKIP,
+>  	.clkr = {
+>  		.enable_reg = 0x75010,
+>  		.enable_mask = BIT(0),
 
-> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > index af011974d4ec..9bb921eb90f6 100644
-> > --- a/drivers/clk/clk.c
-> > +++ b/drivers/clk/clk.c
-> > @@ -3893,12 +3893,12 @@ static void devm_of_clk_release_provider(struct device *dev, void *res)
-> >         of_clk_del_provider(*(struct device_node **)res);
-> >  }
-> >  
-> > -int devm_of_clk_add_hw_provider(struct device *dev,
-> > +static int __devm_of_clk_add_hw_provider(struct device *dev,
-> >                         struct clk_hw *(*get)(struct of_phandle_args *clkspec,
-> >                                               void *data),
-> > -                       void *data)
-> > +                       struct device_node *of_node, void *data)
-> >  {
-> > -       struct device_node **ptr, *np;
-> > +       struct device_node **ptr;
-> >         int ret;
-> >  
-> >         ptr = devres_alloc(devm_of_clk_release_provider, sizeof(*ptr),
-> > @@ -3906,10 +3906,9 @@ int devm_of_clk_add_hw_provider(struct device *dev,
-> >         if (!ptr)
-> >                 return -ENOMEM;
-> >  
-> > -       np = dev->of_node;
-> > -       ret = of_clk_add_hw_provider(np, get, data);
-> > +       *ptr = of_node;
-> > +       ret = of_clk_add_hw_provider(of_node, get, data);
-> >         if (!ret) {
-> > -               *ptr = np;
-> 
-> Why is this moved outside of the if condition?
-I completely removed the local variable np and just unconditionally set
-the allocated devres to point at the node (if allocation succeeded). We
-could of course only do this if the provider registration succeeded and
-save one assignment - but I guess I intended to remove the curly braces
-and thus decided to go for one liner after if. But apparently I didn't
-remove the braces O_o. Well, I can put the assignment inside the
-condition if you prefer that.
+FWIW, before applying your patch, the kernel printed the following
+warnings at boot:
 
-> In fact, why isn't just
-> the first line in this hunk deleted and passed to this function as
-> struct device_node *np?
+[    1.820756] gcc_ufs_rx_symbol_1_clk status stuck at 'on'
+[    1.992977] gcc_ufs_rx_symbol_0_clk status stuck at 'on'
+[    2.165113] gcc_gpu_bimc_gfx_clk status stuck at 'on'
 
-I am sorry but I don't quite follow your suggestion here. Do you mean we
-could just pass the struct device_node *np in devres_add()? I thought
-the pointer passed to devress_add() should be allocated using
-devres_alloc. Can you please elaborate what you mean?
+https://lore.kernel.org/linux-clk/f4271471-b60a-f056-b453-1cfa593a0fc4@free.fr/
 
-> 
-> >                 devres_add(dev, ptr);
-> >         } else {
-> >                 devres_free(ptr);
-> > @@ -3917,8 +3916,25 @@ int devm_of_clk_add_hw_provider(struct device *dev,
-> >  
-> >         return ret;
-> >  }
-> 
-> Nitpick: Add a newline here.
+(NB: gcc_ufs_tx_symbol_0_clk not mentioned)
 
-Will do.
+Your patch makes the two ufs_rx warnings go away.
 
-> 
-> > +int devm_of_clk_add_hw_provider(struct device *dev,
-> > +                       struct clk_hw *(*get)(struct of_phandle_args *clkspec,
-> > +                                             void *data),
-> > +                       void *data)
-> > +{
-> > +       return __devm_of_clk_add_hw_provider(dev, get, dev->of_node, data);
-> > +}
-> >  EXPORT_SYMBOL_GPL(devm_of_clk_add_hw_provider);
-> >  
-> > +int devm_of_clk_add_parent_hw_provider(struct device *dev,
-> > +                       struct clk_hw *(*get)(struct of_phandle_args *clkspec,
-> > +                                             void *data),
-> > +                       void *data)
-> > +{
-> > +       return __devm_of_clk_add_hw_provider(dev, get, dev->parent->of_node,
-> 
-> I'm wondering if we can somehow auto-detect this in
-> devm_of_clk_add_hw_provider() by looking for #clock-cells in the node.
-> If it isn't there, then we go to the parent node and look for a
-> #clock-cells property there in the DT node for that device. Does that
-> make sense? Then there isn't any new API and we can attach the lifetime
-> of the devm registration to the presence of the property indicating this
-> is a clk controller or not.
-
-Huh. I don't know why but building this kind of logic in core is a bit
-scary to me. I guess I can try implementing something like this - but I
-am not really a fan of this. (Accidentally) omit the #clock-cells from
-node and we go to parent node - I am a novice on this area but this
-sounds like a potential hazard to me. I believe the driver should know
-if it's properties should be in own or parent node - and if they are
-not, then there should be no guessing but error. The lifetime is topic
-where I would like to get information from you who know the kernel
-better than I do =) But I guess the parent node is there at least as
-long as the child device is alive. So for me the life time of
-get-callback is more crucial - but as I said, I don't understand the
-kernel in details so you probably know it better than me. But please let
-me know your final take on this and I will follow the guidance =)
-
-> 
-> > +                                            data);
-> > +}
-> > +EXPORT_SYMBOL_GPL(devm_of_clk_add_parent_hw_provider);
-> 
-> Can we get some kernel doc on these functions?
-Sure. I will add the doc. Reason why I didn't do it is that the current
-devm_of_clk_add_hw_provider() did not have doc. But I'll add that in
-next patch.
-
-> > +       rval = devres_release(dev, devm_clkdev_release,
-> > +                             &devm_clk_match_clkdev, cl);
-> 
-> Nitpick: Drop & on functions taken as pointers.
-Ok. Will do.
-
--- 
-Matti Vaittinen
-ROHM Semiconductors
-
-~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
+Regards.
