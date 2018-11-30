@@ -2,338 +2,129 @@ Return-Path: <SRS0=1K30=OJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 327F6C64EB4
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Nov 2018 07:54:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5525CC64EB4
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Nov 2018 07:57:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D86192082F
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Nov 2018 07:53:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C17F2146D
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Nov 2018 07:57:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0SEodlb0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D86192082F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HydGg5va"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C17F2146D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726648AbeK3TCT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Nov 2018 14:02:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35032 "EHLO mail.kernel.org"
+        id S1726891AbeK3TFk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Nov 2018 14:05:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35860 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726551AbeK3TCT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 30 Nov 2018 14:02:19 -0500
+        id S1726551AbeK3TFk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 30 Nov 2018 14:05:40 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EB5412082F;
-        Fri, 30 Nov 2018 07:53:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 918C72082F;
+        Fri, 30 Nov 2018 07:57:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543564433;
-        bh=+vui8ga/aFkPZGJaJz40XKMgo3VfUbGRVNNPJ/ExkOs=;
+        s=default; t=1543564633;
+        bh=45XbyJDAV+rjS6BURMjquRfCzLZ7P2sZjr9xmYBgirw=;
         h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=0SEodlb021Lf/zejlhgGxLMs87KPJgKdvZflM+t5HgHgqWdPlTSpzGbcGjj/IUfqk
-         NbyetrueJZRPl6YunntJp59p47XeKq0XxizRfrTfng2DKb3QbmsAMt2QQ6BzWfHeiS
-         LqCVMPQxQhvIe0oHguJBD66CLpdx4Efy3y4CdR4s=
+        b=HydGg5valyBGLSi2BK5BMf6tt6P6RM7pAp+QXfLeqsezvo3DpddeF/zbrzovCHof6
+         bYasXbs6SspbsxfwfE9lEoWlqK1nriWKzrbfpOiCPHbav3I7agiIUIccUovg7XPJJH
+         kcK1ylDd47XlAzNVVySGLi+8G2OGI0VMLtjCRlOI=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-To:     Charles Keepax <ckeepax@opensource.cirrus.com>, broonie@kernel.org,
-        lee.jones@linaro.org, linus.walleij@linaro.org,
-        mturquette@baylibre.com, robh+dt@kernel.org
+To:     Andreas Kemnade <andreas@kemnade.info>,
+        Tero Kristo <t-kristo@ti.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20181120141631.18949-7-ckeepax@opensource.cirrus.com>
-Cc:     mark.rutland@arm.com, lgirdwood@gmail.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        patches@opensource.cirrus.com, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org
-References: <20181120141631.18949-1-ckeepax@opensource.cirrus.com>
- <20181120141631.18949-7-ckeepax@opensource.cirrus.com>
-Message-ID: <154356443157.88331.15749597863624143993@swboyd.mtv.corp.google.com>
+In-Reply-To: <9eb7b090-4803-d389-4112-3bf058385b2e@ti.com>
+Cc:     bcousson@baylibre.com, letux-kernel@openphoenux.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, mturquette@baylibre.com,
+        paul@pwsan.com, tony@atomide.com
+References: <20181110203115.13335-1-andreas@kemnade.info>
+ <20181110203115.13335-3-andreas@kemnade.info>
+ <154353750560.88331.11814738542436183126@swboyd.mtv.corp.google.com>
+ <20181130071534.0a6cd455@kemnade.info>
+ <154356242517.88331.8496814814468751012@swboyd.mtv.corp.google.com>
+ <9eb7b090-4803-d389-4112-3bf058385b2e@ti.com>
+Message-ID: <154356463284.88331.13323307899580657085@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.7
-Subject: Re: [PATCH v5 7/8] clk: lochnagar: Add support for the Cirrus Logic Lochnagar
-Date:   Thu, 29 Nov 2018 23:53:51 -0800
+Subject: Re: [PATCH v2 2/3] clk: ti: check clock type before doing autoidle ops
+Date:   Thu, 29 Nov 2018 23:57:12 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Charles Keepax (2018-11-20 06:16:30)
-> diff --git a/drivers/clk/clk-lochnagar.c b/drivers/clk/clk-lochnagar.c
-> new file mode 100644
-> index 000000000000..8b2a78689715
-> --- /dev/null
-> +++ b/drivers/clk/clk-lochnagar.c
-> @@ -0,0 +1,360 @@
-[...]
-> +
-> +static int lochnagar_regmap_set_parent(struct clk_hw *hw, u8 index)
-> +{
-> +       struct lochnagar_clk *lclk =3D lochnagar_hw_to_lclk(hw);
-> +       struct lochnagar_clk_priv *priv =3D lclk->priv;
-> +       struct regmap *regmap =3D priv->regmap;
-> +       int ret;
-> +
-> +       /*
-> +        * Some clocks on Lochnagar can either generate a clock themselves
-> +        * or accept an external clock, these default to generating the c=
-lock
-> +        * themselves. If we set a parent however we should update the di=
-r_mask
-> +        * to indicate to the hardware that this clock will now be receiv=
-ing an
-> +        * external clock.
+Quoting Tero Kristo (2018-11-29 23:35:35)
+> On 30/11/2018 09:20, Stephen Boyd wrote:
+> > Quoting Andreas Kemnade (2018-11-29 22:15:34)
+> >> Hi Stephen,
+> >>
+> >> On Thu, 29 Nov 2018 16:25:05 -0800
+> >> Stephen Boyd <sboyd@kernel.org> wrote:
+> >>
+> >>> Quoting Andreas Kemnade (2018-11-10 12:31:14)
+> >>>> Code might use autoidle api with clocks not being omap2 clocks,
+> >>>> so check if clock type is not basic
+> >>>>
+> >>>> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> >>>> ---
+> >>>> New in v2
+> >>>> ---
+> >>>>   drivers/clk/ti/autoidle.c | 12 ++++++++++--
+> >>>>   1 file changed, 10 insertions(+), 2 deletions(-)
+> >>>>
+> >>>> diff --git a/drivers/clk/ti/autoidle.c b/drivers/clk/ti/autoidle.c
+> >>>> index 161f67850393..5bdae5552d38 100644
+> >>>> --- a/drivers/clk/ti/autoidle.c
+> >>>> +++ b/drivers/clk/ti/autoidle.c
+> >>>> @@ -54,8 +54,12 @@ static DEFINE_SPINLOCK(autoidle_spinlock);
+> >>>>   int omap2_clk_deny_idle(struct clk *clk)
+> >>>>   {
+> >>>>          struct clk_hw_omap *c;
+> >>>> +       struct clk_hw *hw =3D __clk_get_hw(clk);
+> >>>>   =
 
-Hmm ok. So the plan is to configure parents in DT or from driver code if
-the configuration is to accept an external clk? I guess this works.
+> >>>> -       c =3D to_clk_hw_omap(__clk_get_hw(clk));
+> >>>> +       if (clk_hw_get_flags(hw) & CLK_IS_BASIC)
+> >>>
+> >>> Please try to avoid using CLK_IS_BASIC if at all possible. Can you?
+> >>> Maybe add some flag in clk_hw_omap() instead?
+> >>>
+> >> hmm, Tero suggested that.
+> >> But to check flags in clk_hw_omap I first need to know that there is a
+> >> clk_hw_omap behind clk_hw. And for that I either need to check flags in
+> >> clk_hw or do more changes in the omap_hwmod code.
+> > =
 
-> +        */
-> +       if (lclk->dir_mask) {
-> +               ret =3D regmap_update_bits(regmap, lclk->cfg_reg,
-> +                                        lclk->dir_mask, lclk->dir_mask);
-> +               if (ret < 0) {
-> +                       dev_err(priv->dev, "Failed to set %s direction: %=
-d\n",
-> +                               lclk->name, ret);
-> +                       return ret;
-> +               }
-> +       }
-> +
-> +       ret =3D regmap_update_bits(regmap, lclk->src_reg, lclk->src_mask,=
- index);
-> +       if (ret < 0)
-> +               dev_err(priv->dev, "Failed to reparent %s: %d\n",
-> +                       lclk->name, ret);
-> +
-> +       return ret;
-> +}
-> +
-> +static u8 lochnagar_regmap_get_parent(struct clk_hw *hw)
-> +{
-> +       struct lochnagar_clk *lclk =3D lochnagar_hw_to_lclk(hw);
-> +       struct lochnagar_clk_priv *priv =3D lclk->priv;
-> +       struct regmap *regmap =3D priv->regmap;
-> +       unsigned int val;
-> +       int ret;
-> +
-> +       ret =3D regmap_read(regmap, lclk->src_reg, &val);
-> +       if (ret < 0) {
-> +               dev_err(priv->dev, "Failed to read parent of %s: %d\n",
-> +                       lclk->name, ret);
+> > Can you do it? The omap code is the only user of CLK_IS_BASIC. All the
+> > other users are marking clks with this but there is no reason to do so.
+> > I'll go make another pass over the tree and nuke those ones from orbit.
+> =
 
-The error messages in the above functions could be spammy. Just let
-drivers who fail when using these clks ops print errors and maybe
-downgrade these to debug? If you don't agree with this it's fine, I'll
-just hope to never see these prints change to debug in the future.
+> The reason for using this flag is because OMAP uses two clock types =
 
-> +               return priv->nparents;
-> +       }
-> +
-> +       val &=3D lclk->src_mask;
-> +
-> +       return val;
-> +}
-> +
-> +static const struct clk_ops lochnagar_clk_regmap_ops =3D {
-> +       .prepare =3D lochnagar_regmap_prepare,
-> +       .unprepare =3D lochnagar_regmap_unprepare,
-> +       .set_parent =3D lochnagar_regmap_set_parent,
-> +       .get_parent =3D lochnagar_regmap_get_parent,
+> around, the basic clocks like fixed-factor-clock/fixed-clock, and then =
 
-Is regmap important to have in the name of these functions and struct?
-I'd prefer it was just clk instead of regmap.
+> all the omap derivatives, which can be cast to clk_hw_omap. If we want =
 
-> +};
-> +
-> +static int lochnagar_init_parents(struct lochnagar_clk_priv *priv)
-> +{
-> +       struct device_node *np =3D priv->dev->of_node;
-> +       int i, j;
-> +
-> +       switch (priv->type) {
-> +       case LOCHNAGAR1:
-> +               memcpy(priv->lclks, lochnagar1_clks, sizeof(lochnagar1_cl=
-ks));
-> +
-> +               priv->nparents =3D ARRAY_SIZE(lochnagar1_clk_parents);
-> +               priv->parents =3D devm_kmemdup(priv->dev, lochnagar1_clk_=
-parents,
-> +                                            sizeof(lochnagar1_clk_parent=
-s),
-> +                                            GFP_KERNEL);
-> +               break;
-> +       case LOCHNAGAR2:
-> +               memcpy(priv->lclks, lochnagar2_clks, sizeof(lochnagar2_cl=
-ks));
-> +
-> +               priv->nparents =3D ARRAY_SIZE(lochnagar2_clk_parents);
-> +               priv->parents =3D devm_kmemdup(priv->dev, lochnagar2_clk_=
-parents,
-> +                                            sizeof(lochnagar2_clk_parent=
-s),
-> +                                            GFP_KERNEL);
+> to avoid usage of CLK_IS_BASIC, we need to copy paste the remaining =
 
-Why do we need to kmemdup it? The clk framework already deep copies
-everything from clk_init structure.
+> basic code under drivers/clk/ti/ and convert them to use clk_hw_omap as =
 
-> +               break;
-> +       default:
-> +               dev_err(priv->dev, "Unknown Lochnagar type: %d\n", priv->=
-type);
-> +               return -EINVAL;
-> +       }
-> +
-> +       if (!priv->parents)
-> +               return -ENOMEM;
-> +
-> +       for (i =3D 0; i < priv->nparents; i++) {
-> +               j =3D of_property_match_string(np, "clock-names",
-> +                                            priv->parents[i]);
-> +               if (j >=3D 0)
-> +                       priv->parents[i] =3D of_clk_get_parent_name(np, j=
-);
+> internal datatype. Is this preferred?
+> =
 
-Isn't this of_clk_parent_fill()? But there are holes or something?
 
-> +       }
-> +
-> +       return 0;
-> +}
-> +
-> +static int lochnagar_init_clks(struct lochnagar_clk_priv *priv)
-> +{
-> +       struct clk_init_data clk_init =3D {
-> +               .ops =3D &lochnagar_clk_regmap_ops,
-> +               .parent_names =3D priv->parents,
-> +               .num_parents =3D priv->nparents,
-> +       };
-> +       struct lochnagar_clk *lclk;
-> +       int ret, i;
-> +
-> +       for (i =3D 0; i < ARRAY_SIZE(priv->lclks); i++) {
-
-We already have an array of clks.
-
-> +               lclk =3D &priv->lclks[i];
-> +
-> +               if (!lclk->name)
-> +                       continue;
-> +
-> +               clk_init.name =3D lclk->name;
-> +
-> +               lclk->priv =3D priv;
-> +               lclk->hw.init =3D &clk_init;
-> +
-> +               ret =3D devm_clk_hw_register(priv->dev, &lclk->hw);
-> +               if (ret) {
-> +                       dev_err(priv->dev, "Failed to register %s: %d\n",
-> +                               lclk->name, ret);
-> +                       return ret;
-> +               }
-> +
-> +               priv->clk_data->hws[i] =3D &lclk->hw;
-
-But then we copy the pointers into here to use of_clk_hw_onecell_get().
-Can you just roll your own function to use your own array of clk
-structures? I know it's sort of sad, but it avoids a copy.
-
-> +       }
-> +
-> +       priv->clk_data->num =3D ARRAY_SIZE(priv->lclks);
-> +
-> +       ret =3D devm_of_clk_add_hw_provider(priv->dev, of_clk_hw_onecell_=
-get,
-> +                                         priv->clk_data);
-> +       if (ret < 0) {
-> +               dev_err(priv->dev, "Failed to register provider: %d\n", r=
-et);
-> +               return ret;
-> +       }
-> +
-> +       return 0;
-
-Simplify this to
-
-	if (ret < 0)
-		dev_err(...)
-
-	return ret;
-
-> +}
-> +
-> +static const struct of_device_id lochnagar_of_match[] =3D {
-> +       { .compatible =3D "cirrus,lochnagar1-clk", .data =3D (void *)LOCH=
-NAGAR1 },
-> +       { .compatible =3D "cirrus,lochnagar2-clk", .data =3D (void *)LOCH=
-NAGAR2 },
-> +       {},
-
-Nitpick: Drop the comma, it's the sentinel so nothing should come after.
-
-> +};
-
-Any MODULE_DEVICE_TABLE?
-
-> +
-> +static int lochnagar_clk_probe(struct platform_device *pdev)
-> +{
-> +       struct device *dev =3D &pdev->dev;
-> +       struct lochnagar_clk_priv *priv;
-> +       const struct of_device_id *of_id;
-> +       int ret;
-> +
-> +       of_id =3D of_match_device(lochnagar_of_match, dev);
-> +       if (!of_id)
-> +               return -EINVAL;
-> +
-> +       priv =3D devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> +       if (!priv)
-> +               return -ENOMEM;
-> +
-> +       priv->clk_data =3D devm_kzalloc(dev, struct_size(priv->clk_data, =
-hws,
-> +                                                      ARRAY_SIZE(priv->l=
-clks)),
-> +                                     GFP_KERNEL);
-> +       if (!priv->clk_data)
-> +               return -ENOMEM;
-> +
-> +       priv->dev =3D dev;
-> +       priv->regmap =3D dev_get_regmap(dev->parent, NULL);
-> +       priv->type =3D (enum lochnagar_type)of_id->data;
-> +
-> +       ret =3D lochnagar_init_parents(priv);
-> +       if (ret)
-> +               return ret;
-> +
-> +       ret =3D lochnagar_init_clks(priv);
-> +       if (ret)
-> +               return ret;
-> +
-> +       return 0;
-> +}
-> +
-> +static struct platform_driver lochnagar_clk_driver =3D {
-> +       .driver =3D {
-> +               .name =3D "lochnagar-clk",
-> +               .of_match_table =3D of_match_ptr(lochnagar_of_match),
-
-I suspect of_match_ptr() makes the build complain about unused match
-table when CONFIG_OF=3DN. Can you try building it that way?
-
-> +       },
-> +
-
-Nitpick: Why the extra newline?
-
-> +       .probe =3D lochnagar_clk_probe,
-> +};
-> +module_platform_driver(lochnagar_clk_driver);
-> +
-> +MODULE_AUTHOR("Charles Keepax <ckeepax@opensource.cirrus.com>");
-> +MODULE_DESCRIPTION("Clock driver for Cirrus Logic Lochnagar Board");
-> +MODULE_LICENSE("GPL v2");
-> +MODULE_ALIAS("platform:lochnagar-clk");
-
-I think MODULE_ALIAS is not needed if it's this simple?
+No that is not preferred. Can the omap2_clk_deny_idle() function be
+integrated closer into the clk framework in some way that allows it to
+be part of the clk_ops structure? And then have that take a clk_hw
+structure instead of a struct clk? I haven't looked at this in any
+detail whatsoever so I may be way off right now.
 
