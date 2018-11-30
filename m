@@ -1,205 +1,340 @@
-Return-Path: <SRS0=q0iC=OI=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=1K30=OJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51065C64EB4
-	for <linux-clk@archiver.kernel.org>; Thu, 29 Nov 2018 23:46:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBB29C04EB9
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Nov 2018 00:23:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F51E2145D
-	for <linux-clk@archiver.kernel.org>; Thu, 29 Nov 2018 23:46:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F51E2145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
+	by mail.kernel.org (Postfix) with ESMTP id 8397120989
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Nov 2018 00:23:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dV6LAhZD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8397120989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726549AbeK3Kxe convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Nov 2018 05:53:34 -0500
-Received: from hermes.aosc.io ([199.195.250.187]:52358 "EHLO hermes.aosc.io"
+        id S1726446AbeK3LbT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Nov 2018 06:31:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40508 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726406AbeK3Kxe (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 30 Nov 2018 05:53:34 -0500
-Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
-        by hermes.aosc.io (Postfix) with ESMTPSA id C1AD611EC13;
-        Thu, 29 Nov 2018 23:46:09 +0000 (UTC)
-Date:   Fri, 30 Nov 2018 07:45:34 +0800
-In-Reply-To: <20181129214730.6d6aju4jurai6rmv@plaes.org>
-References: <cover.1543443475.git.mesihkilinc@gmail.com> <20181129214730.6d6aju4jurai6rmv@plaes.org>
+        id S1726393AbeK3LbT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 30 Nov 2018 06:31:19 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 42F6820834;
+        Fri, 30 Nov 2018 00:23:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543537436;
+        bh=yqFUDKxdhkCSdoOfGf067LjqLpeskD0HSr6L5zeDJfM=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=dV6LAhZDIyJyrOkjlnQiGvXRjslhitcnHMh2uwwiHVuG8gU8OYmlrfTAMjf9XwQJL
+         tTW5d14SoMOgxMCs3LAGra8dm29zs4yl9f7IrsB/PwW7nqC631E8fYNgmlzkrN/0QD
+         p45JtECm476vcRdf++duOP8d2ipnizwykBQiniSI=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: [linux-sunxi] [PATCH v5 00/17] initial support for "suniv" Allwinner new ARM9 SoC
-To:     plaes@plaes.org, Priit Laes <plaes@plaes.org>,
-        Mesih Kilinc <mesihkilinc@gmail.com>
-CC:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Julian Calaby <julian.calaby@gmail.com>
-From:   Icenowy Zheng <icenowy@aosc.io>
-Message-ID: <3CE89E4F-BDE2-4715-8B15-B0167273C613@aosc.io>
+Content-Transfer-Encoding: quoted-printable
+To:     avifishman70@gmail.com, brendanhiggins@google.com,
+        linux@armlinux.org.uk, mark.rutland@arm.com,
+        mturquette@baylibre.com, raltherr@google.com, robh+dt@kernel.org,
+        sboyd@codeaurora.org, tali.perry1@gmail.com, tmaimon77@gmail.com
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20181111134712.318321-2-tali.perry1@gmail.com>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, openbmc@lists.ozlabs.org,
+        linux-clk@vger.kernel.org, Tali Perry <tali.perry1@gmail.com>,
+        Wei Yongjun <weiyongjun1@huawei.com>
+References: <20181111134712.318321-1-tali.perry1@gmail.com>
+ <20181111134712.318321-2-tali.perry1@gmail.com>
+Message-ID: <154353743563.88331.13076671872913666949@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v1 1/1] clk: npcm7xx: get fixed clocks from DT
+Date:   Thu, 29 Nov 2018 16:23:55 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Quoting tali.perry1@gmail.com (2018-11-11 05:47:12)
+> From: Tali Perry <tali.perry1@gmail.com>
+> =
+
+> Nuvoton NPCM7XX Clock Controller
+> fix base address and of_clk_get_by_name error handling.
+>     Also update error messages to be more informative.
+>     =
+
+>     In case clk_base allocation is erronoeous the return value is null.
+>     Also fix handling of of_clk_get_by_name returns an error. =
+
+>     Print a better error message pointing to the dt-binding documention.
+> =
+
+> This patch is re-submitted since it was already pushed to main =
+
+> (just the diff, without the full driver which is already in =
+
+> master branch.)
+> =
+
+> =
+
+> Signed-off-by: Tali Perry <tali.perry1@gmail.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> =
 
 
-于 2018年11月30日 GMT+08:00 上午5:47:30, Priit Laes <plaes@plaes.org> 写到:
->On Thu, Nov 29, 2018 at 01:33:10AM +0300, Mesih Kilinc wrote:
->> This is the fifth version of patchset for Allwinner ARMv5 F1C100s
->> SoC. Addressed comments from Maxime Ripard and Rob Herring, added
->signatures.
->
->IIRC, the original author of these patches was Icenowy, what happened
->to this?
+I don't know what's going on with this patch. Is it something new? Can
+you break it up into logical changes and submit them with proper commit
+text? The signoff chain is also odd. Can you follow
+Documentation/process/submitting-patches.rst?
 
-I lost interest on maintaining this.
+> ---
+>  drivers/clk/clk-npcm7xx.c | 99 +++++++++++++++++++++++++++++++++++------=
+------
+>  1 file changed, 75 insertions(+), 24 deletions(-)
+> =
 
->> 
->> Changes since v4:
->> - Patch "dt-bindings: pinctrl: Add Allwinner suniv F1C100s pinctrl"
->>   - This patch applied for 4.21.
->> - Patch "pinctrl: sunxi: add support for suniv F1C100s (newer
->F-series SoCs)"
->>   - This patch applied for 4.21.
->> - Patch "dt-bindings: clock: Add Allwinner suniv F1C100s CCU"
->>   - Fixed license identifier position
->>   - Added DMA fields.
->> - Patch "clk: sunxi-ng: add support for suniv F1C100s SoC"
->>   - Added DMA reset and clock support.
->> - Patch "ARM: dts: suniv: add initial DTSI file for F1C100s"
->>   - Remove dt-binding headers. 
->>   - Fix uart0 pin label.
->> - Patch "ARM: suniv: f1c100s: add device tree for Lichee Pi Nano"
->>   - Fix uart0 pin label.
->> 
->> Changes since v3:
->> - Patch "ARM: Check ARCH_MULTI_V7 to differentiate ARMv5/v7 Allwinner
->SoCs"
->>   - Remove CONFIG_ARCH_SUNXI_Vx. Use ARCH_MULTI_Vx to differentiate
->SoC's
->>   - Change KConfig ARCH_SUNXI selection: 'select' to 'default'. 
->> - Patch "irqchip/sun4i: Add a struct to hold global variables"
->>   - Split irq_sun4i.c changes to 3 patch.
->> - Patch "pinctrl: sunxi: add support for suniv F1C100s (newer
->F-series SoCs)"
->>   - pinctrl-suniv-f1c100s: remove: disable_strict_mode = true
->> - Patch "ARM: dts: suniv: add initial DTSI file for F1C100s"
->>   - suniv-f1c100s.dtsi: remove unnecessary componenets.
->>   - Instead of patching drivers, add original compatible string with 
->> f1c100s compatibles.
->>   - Add Acked-by signatures.
->> 
->> Changes since v2:
->> - Patch "ARM: sunxi: add Allwinner ARMv5 SoCs"
->>   - Move SUN4I_TIMER option to ARCH_SUNXI
->>   - Added help text for MACH_SUNIV
->> - Patch "irqchip/sun4i: add support for suniv interrupt controller"
->>   - Defined sunxi_irq_chip_data struct and used it to differentiate
->>     registers between different chips.
->> - Patch " ARM: dts: suniv: add initial DTSI file for F1C100s"
->>   - Removed unnecessary fake clock.
->>   - Fixed compatible strings.
->> 
->> Changes since v1:
->> - Patch "ARM: add CONFIG_ARCH_SUNXI_V7 for differentiate ARMv5/v7
->>   Allwinner SoCs"
->>   - Instead of using a common bool config use a common menuconfig. 
->>   - Use ARCH_MULTI_V7 to differentiate V7 SoCs.
->>   - Addressed comment from Julian Calaby
->> - Patch "ARM: sunxi: add Allwinner ARMv5 SoCs"
->>   - Use ARCH_MULTI_V5 to differentiate V5 SoCs.
->>   - removed "allwinner,suniv" board compatible string
->>   - Added dt-bindings
->> - Patch "irqchip/sun4i: add support for suniv interrupt controller"
->>   - Added dt-bindings
->>   - Changed "allwinner,suniv-ic" to "allwinner,suniv-f1c100s-ic"
->> - Patch "clocksource: sun4i: add a compatible for suniv"
->>   - Added dt-bindings
->>   - Changed "allwinner,suniv-timer" to
->"allwinner,suniv-f1c100s-timer"
->> - Patch "pinctrl: sunxi: add support for suniv F1C100s (newer
->F-series SoCs)"
->>   - Added dt-bindings
->>   - Renamed suniv-pinctrl to suniv-f1c100s-pinctrl
->> - Patch "clk: sunxi-ng: add support for suniv F1C100s SoC"
->>   - Added dt-bindings
->>   - Renamed suniv-ccu to suniv-f1c100s-ccu
->> - Patch "ARM: suniv: f1c100s: add device tree for Lichee Pi Nano"
->>   - Addressed comment from Rask Ingemann Lambertsen
->> 
->> Thanks!
->> 
->> Mesih Kilinc (17):
->>   ARM: Check ARCH_MULTI_V7 to differentiate ARMv5/v7 Allwinner SoCs
->>   dt-bindings: arm: Add new Allwinner ARMv5 F1C100s SoC
->>   ARM: sunxi: add Allwinner ARMv5 SoCs
->>   dt-bindings: interrupt-controller: Add suniv interrupt-controller
->>   irqchip/sun4i: Add a struct to hold global variables
->>   irqchip/sun4i: Move IC specific register offsets to struct
->>   irqchip/sun4i: Add support for Allwinner ARMv5 F1C100s
->>   dt-bindings: timer: Add Allwinner suniv timer
->>   clocksource: sun4i: add a compatible for suniv
->>   dt-bindings: pinctrl: Add Allwinner suniv F1C100s pinctrl
->>   pinctrl: sunxi: add support for suniv F1C100s (newer F-series SoCs)
->>   dt-bindings: clock: Add Allwinner suniv F1C100s CCU
->>   clk: sunxi-ng: add support for suniv F1C100s SoC
->>   dt-bindings: sram: Add Allwinner suniv F1C100s
->>   dt-bindings: watchdog: Add Allwinner ARMv5 F1C100s wdt
->>   ARM: dts: suniv: add initial DTSI file for F1C100s
->>   ARM: suniv: f1c100s: add device tree for Lichee Pi Nano
->> 
->>  Documentation/devicetree/bindings/arm/sunxi.txt    |   1 +
->>  .../devicetree/bindings/clock/sunxi-ccu.txt        |   1 +
->>  .../interrupt-controller/allwinner,sun4i-ic.txt    |   4 +-
->>  .../bindings/pinctrl/allwinner,sunxi-pinctrl.txt   |   1 +
->>  .../devicetree/bindings/sram/sunxi-sram.txt        |   4 +
->>  .../bindings/timer/allwinner,sun4i-timer.txt       |   4 +-
->>  .../devicetree/bindings/watchdog/sunxi-wdt.txt     |   1 +
->>  arch/arm/boot/dts/Makefile                         |   2 +
->>  arch/arm/boot/dts/suniv-f1c100s-licheepi-nano.dts  |  26 +
->>  arch/arm/boot/dts/suniv-f1c100s.dtsi               | 147 ++++++
->>  arch/arm/mach-sunxi/Kconfig                        |  19 +-
->>  arch/arm/mach-sunxi/sunxi.c                        |  10 +
->>  drivers/clk/sunxi-ng/Kconfig                       |   5 +
->>  drivers/clk/sunxi-ng/Makefile                      |   1 +
->>  drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c           | 541
->+++++++++++++++++++++
->>  drivers/clk/sunxi-ng/ccu-suniv-f1c100s.h           |  34 ++
->>  drivers/clocksource/sun4i_timer.c                  |   5 +-
->>  drivers/irqchip/irq-sun4i.c                        | 106 ++--
->>  drivers/pinctrl/sunxi/Kconfig                      |   4 +
->>  drivers/pinctrl/sunxi/Makefile                     |   1 +
->>  drivers/pinctrl/sunxi/pinctrl-suniv-f1c100s.c      | 416
->++++++++++++++++
->>  include/dt-bindings/clock/suniv-ccu-f1c100s.h      |  70 +++
->>  include/dt-bindings/reset/suniv-ccu-f1c100s.h      |  38 ++
->>  23 files changed, 1408 insertions(+), 33 deletions(-)
->>  create mode 100644 arch/arm/boot/dts/suniv-f1c100s-licheepi-nano.dts
->>  create mode 100644 arch/arm/boot/dts/suniv-f1c100s.dtsi
->>  create mode 100644 drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c
->>  create mode 100644 drivers/clk/sunxi-ng/ccu-suniv-f1c100s.h
->>  create mode 100644 drivers/pinctrl/sunxi/pinctrl-suniv-f1c100s.c
->>  create mode 100644 include/dt-bindings/clock/suniv-ccu-f1c100s.h
->>  create mode 100644 include/dt-bindings/reset/suniv-ccu-f1c100s.h
->> 
->> -- 
->> 2.7.4
->> 
->> -- 
->> You received this message because you are subscribed to the Google
->Groups "linux-sunxi" group.
->> To unsubscribe from this group and stop receiving emails from it,
->send an email to linux-sunxi+unsubscribe@googlegroups.com.
->> For more options, visit https://groups.google.com/d/optout.
+> diff --git a/drivers/clk/clk-npcm7xx.c b/drivers/clk/clk-npcm7xx.c
+> index 740af90a9508..91a937720f4e 100644
+> --- a/drivers/clk/clk-npcm7xx.c
+> +++ b/drivers/clk/clk-npcm7xx.c
+> @@ -7,17 +7,26 @@
+>   * Copyright (C) 2018 Nuvoton Technologies tali.perry@nuvoton.com
+>   */
+>  =
+
+> -#include <linux/module.h>
+> -#include <linux/clk-provider.h>
+> -#include <linux/io.h>
+> -#include <linux/kernel.h>
+> -#include <linux/of.h>
+> -#include <linux/of_address.h>
+> -#include <linux/slab.h>
+> -#include <linux/err.h>
+> -#include <linux/bitfield.h>
+> -
+> -#include <dt-bindings/clock/nuvoton,npcm7xx-clock.h>
+> +
+> +
+> +
+> + #include <linux/module.h>
+> + #include <linux/clk.h>
+> + #include <linux/clk-provider.h>
+> + #include <linux/device.h>
+> + #include <linux/io.h>
+> + #include <linux/kernel.h>
+> + #include <linux/of.h>
+> + #include <linux/of_device.h>
+> + #include <linux/of_platform.h>
+> + #include <linux/of_address.h>
+> + #include <linux/platform_device.h>
+> + #include <linux/slab.h>
+> + #include <linux/err.h>
+> + #include <linux/rational.h>
+> + #include <linux/bitfield.h>
+> + #include <dt-bindings/clock/nuvoton,npcm7xx-clock.h>
+
+Is any of this hunk necessary or relevant to the subject of this patch?
+
+> +
+>  =
+
+>  struct npcm7xx_clk_pll {
+> @@ -44,7 +56,8 @@ static unsigned long npcm7xx_clk_pll_recalc_rate(struct=
+ clk_hw *hw,
+>         u64 ret;
+>  =
+
+>         if (parent_rate =3D=3D 0) {
+> -               pr_err("%s: parent rate is zero", __func__);
+> +               pr_err("%s: parent rate is zero. reg=3D%x\n", __func__,
+> +                       (u32)(pll->pllcon));
+
+Maybe you should print clk name instead of register?
+
+>                 return 0;
+>         }
+>  =
+
+> @@ -61,13 +74,12 @@ static unsigned long npcm7xx_clk_pll_recalc_rate(stru=
+ct clk_hw *hw,
+>         return ret;
+>  }
+>  =
+
+> -static const struct clk_ops npcm7xx_clk_pll_ops =3D {
+> +const struct clk_ops npcm7xx_clk_pll_ops =3D {
+
+Why?
+
+>         .recalc_rate =3D npcm7xx_clk_pll_recalc_rate,
+>  };
+>  =
+
+> -static struct clk_hw *
+> -npcm7xx_clk_register_pll(void __iomem *pllcon, const char *name,
+> -                        const char *parent_name, unsigned long flags)
+> +static struct clk_hw *npcm7xx_clk_register_pll(void __iomem *pllcon,
+> +               const char *name, const char *parent_name, unsigned long =
+flags)
+>  {
+>         struct npcm7xx_clk_pll *pll;
+>         struct clk_init_data init;
+> @@ -78,7 +90,8 @@ npcm7xx_clk_register_pll(void __iomem *pllcon, const ch=
+ar *name,
+>         if (!pll)
+>                 return ERR_PTR(-ENOMEM);
+>  =
+
+> -       pr_debug("%s reg, name=3D%s, p=3D%s\n", __func__, name, parent_na=
+me);
+> +       pr_debug("%s reg, reg=3D0x%x, name=3D%s, p=3D%s\n",
+> +               __func__, (unsigned int)pllcon, name, parent_name);
+
+What's going on here? Why cast?
+
+>  =
+
+>         init.name =3D name;
+>         init.ops =3D &npcm7xx_clk_pll_ops;
+> @@ -544,9 +557,11 @@ static void __init npcm7xx_clk_init(struct device_no=
+de *clk_np)
+>         void __iomem *clk_base;
+>         struct resource res;
+>         struct clk_hw *hw;
+> +       struct clk *clk;
+>         int ret;
+>         int i;
+>  =
+
+> +       clk_base =3D NULL;
+
+Why?
+
+>         ret =3D of_address_to_resource(clk_np, 0, &res);
+>         if (ret) {
+>                 pr_err("%s: failed to get resource, ret %d\n", clk_np->na=
+me,
+> @@ -560,14 +575,44 @@ static void __init npcm7xx_clk_init(struct device_n=
+ode *clk_np)
+>  =
+
+>         npcm7xx_clk_data =3D kzalloc(sizeof(*npcm7xx_clk_data->hws) *
+>                 NPCM7XX_NUM_CLOCKS + sizeof(npcm7xx_clk_data), GFP_KERNEL=
+);
+> -       if (!npcm7xx_clk_data)
+> +
+> +       npcm7xx_clk_data->num =3D 0;
+
+kzalloc already does that initialization to 0 for you.
+
+> +
+> +       if (!npcm7xx_clk_data->hws) {
+> +               pr_err("Can't alloc npcm7xx_clk_data\n");
+
+We don't need allocation error messages.
+
+>                 goto npcm7xx_init_np_err;
+> +       }
+>  =
+
+>         npcm7xx_clk_data->num =3D NPCM7XX_NUM_CLOCKS;
+>  =
+
+>         for (i =3D 0; i < NPCM7XX_NUM_CLOCKS; i++)
+>                 npcm7xx_clk_data->hws[i] =3D ERR_PTR(-EPROBE_DEFER);
+>  =
+
+> +       /* Read fixed clocks. These 3 clocks must be defined in DT */
+> +       clk =3D of_clk_get_by_name(clk_np, NPCM7XX_CLK_S_REFCLK);
+> +       if (IS_ERR(clk)) {
+> +               pr_err("failed to find external REFCLK on device tree, er=
+r=3D%ld\n",
+> +                       PTR_ERR(clk));
+> +               clk_put(clk);
+> +               goto npcm7xx_init_fail_no_clk_on_dt;
+> +       }
+> +
+> +       clk =3D of_clk_get_by_name(clk_np, NPCM7XX_CLK_S_SYSBYPCK);
+> +       if (IS_ERR(clk)) {
+> +               pr_err("failed to find external SYSBYPCK on device tree, =
+err=3D%ld\n",
+> +                       PTR_ERR(clk));
+> +               clk_put(clk);
+> +               goto npcm7xx_init_fail_no_clk_on_dt;
+> +       }
+> +
+> +       clk =3D of_clk_get_by_name(clk_np, NPCM7XX_CLK_S_MCBYPCK);
+> +       if (IS_ERR(clk)) {
+> +               pr_err("failed to find external MCBYPCK on device tree, e=
+rr=3D%ld\n",
+> +                       PTR_ERR(clk));
+> +               clk_put(clk);
+> +               goto npcm7xx_init_fail_no_clk_on_dt;
+> +       }
+
+I assume the DTS is not shipped?
+
+> +
+>         /* Register plls */
+>         for (i =3D 0; i < ARRAY_SIZE(npcm7xx_plls); i++) {
+>                 const struct npcm7xx_clk_pll_data *pll_data =3D &npcm7xx_=
+plls[i];
+> @@ -584,16 +629,16 @@ static void __init npcm7xx_clk_init(struct device_n=
+ode *clk_np)
+>         }
+>  =
+
+>         /* Register fixed dividers */
+> -       hw =3D clk_hw_register_fixed_factor(NULL, NPCM7XX_CLK_S_PLL1_DIV2,
+> +       clk =3D clk_register_fixed_factor(NULL, NPCM7XX_CLK_S_PLL1_DIV2,
+
+This is going backwards. Please use clk_hw APIs.
+
+>                         NPCM7XX_CLK_S_PLL1, 0, 1, 2);
+> -       if (IS_ERR(hw)) {
+> +       if (IS_ERR(clk)) {
+>                 pr_err("npcm7xx_clk: Can't register fixed div\n");
+>                 goto npcm7xx_init_fail;
+>         }
+>  =
+
+> -       hw =3D clk_hw_register_fixed_factor(NULL, NPCM7XX_CLK_S_PLL2_DIV2,
+> +       clk =3D clk_register_fixed_factor(NULL, NPCM7XX_CLK_S_PLL2_DIV2,
+>                         NPCM7XX_CLK_S_PLL2, 0, 1, 2);
+> -       if (IS_ERR(hw)) {
+> +       if (IS_ERR(clk)) {
+>                 pr_err("npcm7xx_clk: Can't register div2\n");
+>                 goto npcm7xx_init_fail;
+>         }
+> @@ -646,11 +691,17 @@ static void __init npcm7xx_clk_init(struct device_n=
+ode *clk_np)
+>  =
+
+>         return;
+>  =
+
+> +npcm7xx_init_fail_no_clk_on_dt:
+> +       pr_err("see Documentation/devicetree/bindings/clock/");
+> +       pr_err("nuvoton,npcm750-clk.txt  for details\n");
+>  npcm7xx_init_fail:
+> -       kfree(npcm7xx_clk_data->hws);
+> +       if (npcm7xx_clk_data->num)
+> +               kfree(npcm7xx_clk_data->hws);
+>  npcm7xx_init_np_err:
+> -       iounmap(clk_base);
+> +       if (clk_base !=3D NULL)
+> +               iounmap(clk_base);
+>  npcm7xx_init_error:
+>         of_node_put(clk_np);
+> +       pr_err("clk setup fail\n");
+
+Is this hunk of changes related to the subject of this patch? I don't
+think it is, so it just leads to more confusion.
+
