@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B7D6C04EB8
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Nov 2018 15:32:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32769C64EB4
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Nov 2018 15:33:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DFE620868
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Nov 2018 15:32:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DFE620868
+	by mail.kernel.org (Postfix) with ESMTP id 07C6920868
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Nov 2018 15:33:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07C6920868
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727472AbeLACm2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Nov 2018 21:42:28 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:57818 "EHLO mail.bootlin.com"
+        id S1726572AbeLACmT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Nov 2018 21:42:19 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:57801 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726593AbeLACm1 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 30 Nov 2018 21:42:27 -0500
+        id S1726593AbeLACmS (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 30 Nov 2018 21:42:18 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id EA78D20CFA; Fri, 30 Nov 2018 16:32:43 +0100 (CET)
+        id 5325820714; Fri, 30 Nov 2018 16:32:35 +0100 (CET)
 Received: from localhost.localdomain (unknown [91.224.148.103])
-        by mail.bootlin.com (Postfix) with ESMTPSA id BBC4C20CFB;
-        Fri, 30 Nov 2018 16:32:26 +0100 (CET)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 96AAB20743;
+        Fri, 30 Nov 2018 16:32:24 +0100 (CET)
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -38,9 +38,9 @@ Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         Gregory Clement <gregory.clement@bootlin.com>,
         Nadav Haklai <nadavh@marvell.com>,
         Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH v2 4/4] clk: mvebu: armada-37xx-xtal: fill the device entry when registering the clock
-Date:   Fri, 30 Nov 2018 16:32:14 +0100
-Message-Id: <20181130153214.9058-5-miquel.raynal@bootlin.com>
+Subject: [PATCH v2 1/4] clk: core: clarify the check for runtime PM
+Date:   Fri, 30 Nov 2018 16:32:11 +0100
+Message-Id: <20181130153214.9058-2-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181130153214.9058-1-miquel.raynal@bootlin.com>
 References: <20181130153214.9058-1-miquel.raynal@bootlin.com>
@@ -51,37 +51,72 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-So far the clk_hw_register_fixed_factor() call was not providing any
-device structure. While doing so is harmless for regular use, the
-missing device structure may be a problem for suspend to RAM support.
+Currently, the core->dev entry is populated only if runtime PM is
+enabled. Doing so prevents accessing the device structure in any
+case.
 
-Since, device links have been added to clocks, links created during
-probe will enforce the suspend/resume orders. When the device is
-missing during the registration, no link can be established, hence the
-order between parent and child clocks are not enforced.
+Keep the same logic but instead of using the presence of core->dev as
+the only condition, also check the status of
+pm_runtime_enabled(). Then, we can set the core->dev pointer at any
+time as long as a device structure is available.
 
-Adding the device structure here will create a link between the XTAL
-clock (this one) and the four TBG clocks that are derived from it.
+This change will help supporting device links in the clock subsystem.
 
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 ---
- drivers/clk/mvebu/armada-37xx-xtal.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/clk/clk.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/clk/mvebu/armada-37xx-xtal.c b/drivers/clk/mvebu/armada-37xx-xtal.c
-index e9e306d4e9af..0e74bcd83d1a 100644
---- a/drivers/clk/mvebu/armada-37xx-xtal.c
-+++ b/drivers/clk/mvebu/armada-37xx-xtal.c
-@@ -57,7 +57,8 @@ static int armada_3700_xtal_clock_probe(struct platform_device *pdev)
- 		rate = 25000000;
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index af011974d4ec..b799347c5fd6 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -97,7 +97,7 @@ static int clk_pm_runtime_get(struct clk_core *core)
+ {
+ 	int ret = 0;
  
- 	of_property_read_string_index(np, "clock-output-names", 0, &xtal_name);
--	xtal_hw = clk_hw_register_fixed_rate(NULL, xtal_name, NULL, 0, rate);
-+	xtal_hw = clk_hw_register_fixed_rate(&pdev->dev, xtal_name, NULL, 0,
-+					     rate);
- 	if (IS_ERR(xtal_hw))
- 		return PTR_ERR(xtal_hw);
- 	ret = of_clk_add_hw_provider(np, of_clk_hw_simple_get, xtal_hw);
+-	if (!core->dev)
++	if (!core->dev || !pm_runtime_enabled(core->dev))
+ 		return 0;
+ 
+ 	ret = pm_runtime_get_sync(core->dev);
+@@ -106,7 +106,7 @@ static int clk_pm_runtime_get(struct clk_core *core)
+ 
+ static void clk_pm_runtime_put(struct clk_core *core)
+ {
+-	if (!core->dev)
++	if (!core->dev || !pm_runtime_enabled(core->dev))
+ 		return;
+ 
+ 	pm_runtime_put_sync(core->dev);
+@@ -226,7 +226,7 @@ static bool clk_core_is_enabled(struct clk_core *core)
+ 	 * taking enable spinlock, but the below check is needed if one tries
+ 	 * to call it from other places.
+ 	 */
+-	if (core->dev) {
++	if (core->dev && pm_runtime_enabled(core->dev)) {
+ 		pm_runtime_get_noresume(core->dev);
+ 		if (!pm_runtime_active(core->dev)) {
+ 			ret = false;
+@@ -236,7 +236,7 @@ static bool clk_core_is_enabled(struct clk_core *core)
+ 
+ 	ret = core->ops->is_enabled(core->hw);
+ done:
+-	if (core->dev)
++	if (core->dev && pm_runtime_enabled(core->dev))
+ 		pm_runtime_put(core->dev);
+ 
+ 	return ret;
+@@ -3272,8 +3272,7 @@ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
+ 	}
+ 	core->ops = hw->init->ops;
+ 
+-	if (dev && pm_runtime_enabled(dev))
+-		core->dev = dev;
++	core->dev = dev;
+ 	if (dev && dev->driver)
+ 		core->owner = dev->driver->owner;
+ 	core->hw = hw;
 -- 
 2.19.1
 
