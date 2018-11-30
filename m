@@ -2,177 +2,130 @@ Return-Path: <SRS0=1K30=OJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D52A8C04EB8
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Nov 2018 12:17:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DFF4C04EB8
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Nov 2018 12:59:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9396B20863
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Nov 2018 12:17:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="gUJYeuxW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9396B20863
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info
+	by mail.kernel.org (Postfix) with ESMTP id F270320863
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Nov 2018 12:59:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F270320863
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726549AbeK3X1A (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Nov 2018 18:27:00 -0500
-Received: from mail.andi.de1.cc ([85.214.239.24]:32990 "EHLO
-        h2641619.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726512AbeK3X1A (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Nov 2018 18:27:00 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=kemnade.info; s=20180802; h=Content-Type:MIME-Version:References:
-        In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=nn18inWIyXWpyuQb/El/4/4mPT5UZqePsO9l2W0ywEI=; b=gUJYeuxWsmU8yEQfWE47zuEPI
-        OtNR9tykHWRVmuLNQ0ARLmBfhJueFLdl3A8aqvKsm7UuVVomTj4FrJ6QUmW+m9JXGal4WioSaWrKH
-        314u8tQfiSGBqwxPAutRKPbf56EstxheKiJoFFres5/lagdal0LsvDqyigt1z46nJ5EM0=;
-Received: from [2a02:790:ff:919:7ee9:d3ff:fe1f:a246] (helo=localhost)
-        by h2641619.stratoserver.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1gShju-0007LQ-5d; Fri, 30 Nov 2018 13:17:46 +0100
-Received: from [::1] (helo=localhost)
-        by localhost with esmtp (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1gShjr-0003G8-GI; Fri, 30 Nov 2018 13:17:43 +0100
-Date:   Fri, 30 Nov 2018 13:17:35 +0100
-From:   Andreas Kemnade <andreas@kemnade.info>
-To:     Tero Kristo <t-kristo@ti.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>, <bcousson@baylibre.com>,
-        <letux-kernel@openphoenux.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <mturquette@baylibre.com>, <paul@pwsan.com>, <tony@atomide.com>
-Subject: Re: [PATCH v2 2/3] clk: ti: check clock type before doing autoidle
- ops
-Message-ID: <20181130131605.3cfea95d@kemnade.info>
-In-Reply-To: <eca27a46-2ca3-1a02-c0c8-c1c00b3b2f46@ti.com>
-References: <20181110203115.13335-1-andreas@kemnade.info>
-        <20181110203115.13335-3-andreas@kemnade.info>
-        <154353750560.88331.11814738542436183126@swboyd.mtv.corp.google.com>
-        <20181130071534.0a6cd455@kemnade.info>
-        <154356242517.88331.8496814814468751012@swboyd.mtv.corp.google.com>
-        <9eb7b090-4803-d389-4112-3bf058385b2e@ti.com>
-        <154356463284.88331.13323307899580657085@swboyd.mtv.corp.google.com>
-        <eca27a46-2ca3-1a02-c0c8-c1c00b3b2f46@ti.com>
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; i686-pc-linux-gnu)
+        id S1726489AbeLAAIY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Nov 2018 19:08:24 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:45395 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726127AbeLAAIY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Nov 2018 19:08:24 -0500
+Received: by mail-lf1-f66.google.com with SMTP id b20so4013126lfa.12;
+        Fri, 30 Nov 2018 04:59:09 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=3PBES0o25j0R3KuNWiCqbV0Pcf3QS+yZgteXEsuSXZ8=;
+        b=mpcOqmBeVdN2sQoSuf/8w69Y/WxUsj3gBa/dVdvs2cOBAzzMYd3w8vKYWZ27WnVCMp
+         +dwoy0UJvK9wTD7r+8rrTT5lRTejk5GC7vQPfIBpEfWqhqMYoG5AnIoIYL0aePN/biXY
+         pQp6FtNkeCPlcRDkFJB5+7sgWcHU96oarfJdS1D12Nxcl9fFBgwATB06RNcL/8ahC9kY
+         riLpTiINvlp5e8y0DaMsym4ODgrXifjzi0UZXYHDTI0eE5P3PbRGxDPV1mwIN0B3TERP
+         Ce/fxGkNEs77p0dXq50zFLSgSXWc3ZZFOOvGrO6qX4thq54wS/zeoX/7aGvmpoXvkiQN
+         EtRw==
+X-Gm-Message-State: AA+aEWbC96qcxigmXjp4IyKg5o+ieHqLHtJ2mWwXnmkUL/SevQahqv2k
+        MQYx/vZZplFNRdYhrBuTRSw=
+X-Google-Smtp-Source: AFSGD/XUiaAMpzZfguwDPiwPS9jtMBxEXbXIneh2pJooWUG0IcYe98IX/NgzNHlX+gA7em5dYlAcRA==
+X-Received: by 2002:a19:518d:: with SMTP id g13mr3492997lfl.143.1543582748224;
+        Fri, 30 Nov 2018 04:59:08 -0800 (PST)
+Received: from localhost.localdomain (84-253-205-125.bb.dnainternet.fi. [84.253.205.125])
+        by smtp.gmail.com with ESMTPSA id m77sm805038lfg.3.2018.11.30.04.59.06
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 30 Nov 2018 04:59:07 -0800 (PST)
+Date:   Fri, 30 Nov 2018 14:59:04 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc:     Stephen Boyd <sboyd@kernel.org>, mazziesaccount@gmail.com,
+        Jonathan Corbet <corbet@lwn.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Rob Herring <robh@kernel.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Huang Shijie <sjhuang@iluvatar.ai>,
+        Daniel Kurtz <djkurtz@chromium.org>,
+        Akshu Agrawal <akshu.agrawal@amd.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
+Subject: Re: [PATCH v4 1/8] clk: clkdev/of_clk - add managed lookup and
+ provider registrations
+Message-ID: <20181130125904.GB15388@localhost.localdomain>
+References: <cover.1542107769.git.matti.vaittinen@fi.rohmeurope.com>
+ <ec0d6ee7ea79f0e05041ed3e564b0aadb297ef5f.1542107769.git.matti.vaittinen@fi.rohmeurope.com>
+ <154356805035.88331.16867826308376667832@swboyd.mtv.corp.google.com>
+ <20181130105022.GA15388@localhost.localdomain>
+ <20181130110653.GF30658@n2100.armlinux.org.uk>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/JKSN_9Gh0a7D/smCt=_oENr"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181130110653.GF30658@n2100.armlinux.org.uk>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
---Sig_/JKSN_9Gh0a7D/smCt=_oENr
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, Nov 30, 2018 at 11:06:53AM +0000, Russell King - ARM Linux wrote:
+> On Fri, Nov 30, 2018 at 12:50:22PM +0200, Matti Vaittinen wrote:
+> > Hello Stephen,
+> > 
+> > Thanks a bunch for taking the time and reviewing this!
+> > 
+> > On Fri, Nov 30, 2018 at 12:54:10AM -0800, Stephen Boyd wrote:
+> > > Quoting Matti Vaittinen (2018-11-13 03:55:58)
+> > > > With MFD devices the clk properties may be contained in MFD (parent) DT
+> > > > node. Current devm_of_clk_add_hw_provider assumes the clk is bound to MFD
+> > > > subdevice not to MFD device (parent). Add
+> > > > devm_of_clk_add_hw_provider_parent to tackle this issue.
+> > > > 
+> > > > Also clkdev registration lacks of managed registration functions and it
+> > > > seems few drivers do not drop clkdev lookups at exit. Add
+> > > > devm_clk_hw_register_clkdev and devm_clk_release_clkdev to ease lookup
+> > > > releasing at exit.
+> > > 
+> > > Please split this into clkdev and non-clkdev devm functionality.
+> > Allright. I'll split this to two patches.
+> 
+> Definitely, please note that clkdev is separate from the common
+> clk stuff, and is actually maintained by a different person (me)
+> although I currently defer much of the review to the common clk
+> guys.
 
-Hi Tero,
+Right. This clarifies how clkdev is maintained. Thanks for letting me
+know. Is it still Ok to do these changes through linux-clk tree or is
+there some other tree where the devm portion should be submitted? If so,
+how should the dependencies be handled?
 
-On Fri, 30 Nov 2018 11:20:49 +0200
-Tero Kristo <t-kristo@ti.com> wrote:
+Br,
+	Matti Vaittinen
 
-> On 30/11/2018 09:57, Stephen Boyd wrote:
-> > Quoting Tero Kristo (2018-11-29 23:35:35) =20
-> >> On 30/11/2018 09:20, Stephen Boyd wrote: =20
-> >>> Quoting Andreas Kemnade (2018-11-29 22:15:34) =20
-> >>>> Hi Stephen,
-> >>>>
-> >>>> On Thu, 29 Nov 2018 16:25:05 -0800
-> >>>> Stephen Boyd <sboyd@kernel.org> wrote:
-> >>>> =20
-> >>>>> Quoting Andreas Kemnade (2018-11-10 12:31:14) =20
-> >>>>>> Code might use autoidle api with clocks not being omap2 clocks,
-> >>>>>> so check if clock type is not basic
-> >>>>>>
-> >>>>>> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-> >>>>>> ---
-> >>>>>> New in v2
-> >>>>>> ---
-> >>>>>>    drivers/clk/ti/autoidle.c | 12 ++++++++++--
-> >>>>>>    1 file changed, 10 insertions(+), 2 deletions(-)
-> >>>>>>
-> >>>>>> diff --git a/drivers/clk/ti/autoidle.c b/drivers/clk/ti/autoidle.c
-> >>>>>> index 161f67850393..5bdae5552d38 100644
-> >>>>>> --- a/drivers/clk/ti/autoidle.c
-> >>>>>> +++ b/drivers/clk/ti/autoidle.c
-> >>>>>> @@ -54,8 +54,12 @@ static DEFINE_SPINLOCK(autoidle_spinlock);
-> >>>>>>    int omap2_clk_deny_idle(struct clk *clk)
-> >>>>>>    {
-> >>>>>>           struct clk_hw_omap *c;
-> >>>>>> +       struct clk_hw *hw =3D __clk_get_hw(clk);
-> >>>>>>   =20
-> >>>>>> -       c =3D to_clk_hw_omap(__clk_get_hw(clk));
-> >>>>>> +       if (clk_hw_get_flags(hw) & CLK_IS_BASIC) =20
-> >>>>>
-> >>>>> Please try to avoid using CLK_IS_BASIC if at all possible. Can you?
-> >>>>> Maybe add some flag in clk_hw_omap() instead?
-> >>>>> =20
-> >>>> hmm, Tero suggested that.
-> >>>> But to check flags in clk_hw_omap I first need to know that there is=
- a
-> >>>> clk_hw_omap behind clk_hw. And for that I either need to check flags=
- in
-> >>>> clk_hw or do more changes in the omap_hwmod code. =20
-> >>>
-> >>> Can you do it? The omap code is the only user of CLK_IS_BASIC. All the
-> >>> other users are marking clks with this but there is no reason to do s=
-o.
-> >>> I'll go make another pass over the tree and nuke those ones from orbi=
-t. =20
-> >>
-> >> The reason for using this flag is because OMAP uses two clock types
-> >> around, the basic clocks like fixed-factor-clock/fixed-clock, and then
-> >> all the omap derivatives, which can be cast to clk_hw_omap. If we want
-> >> to avoid usage of CLK_IS_BASIC, we need to copy paste the remaining
-> >> basic code under drivers/clk/ti/ and convert them to use clk_hw_omap as
-> >> internal datatype. Is this preferred?
-> >> =20
-> >=20
-> > No that is not preferred. Can the omap2_clk_deny_idle() function be
-> > integrated closer into the clk framework in some way that allows it to
-> > be part of the clk_ops structure? And then have that take a clk_hw
-> > structure instead of a struct clk? I haven't looked at this in any
-> > detail whatsoever so I may be way off right now. =20
->=20
-> It could be added under the main clk_ops struct, however this would=20
-> introduce two new func pointers to it which are not used by anything=20
-> else but OMAP. Are you aware of any other platforms requiring similar=20
-> feature?
+> 
+> -- 
+> RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+> FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+> According to speedtest.net: 11.9Mbps down 500kbps up
 
-The question here is also how we organize the procedure here. One patchset
-fixing nasty problems and another mainly reorganize things? Where do we draw
-the line between these two? If we have the autoidle code in main clk_ops,
-we could also think whether other autoidle code should go into main code.
+-- 
+Matti Vaittinen
+ROHM Semiconductors
 
-Regards,
-Andreas
-
---Sig_/JKSN_9Gh0a7D/smCt=_oENr
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEE7sDbhY5mwNpwYgrAfb1qx03ikyQFAlwBKmAACgkQfb1qx03i
-kyTFZQ/+LYhOeqMel2/sNR00lIM0IYRz/c8g1rgfQUwGXeZ7p1OR88GDdYPlt3Ts
-7Uhi3oZvmCLVWrcfTR42Yfao/o/NsKRXm4IwDvi65dZYPn0IsY69OWwAx8BLtSs7
-TU4AWmKA6J6ODc4Rsu5KMnmDuLEVE8RxUtwa5jOCZvR0Dbk8Wm0yQBVEUGHhEskq
-8h+Vn50lipd9cKZmWNoDFeGNroC7UtRSjS7kodOE0EfzbXlsBb9pBg/wz3Y+WTwl
-a2W75OZklZRhKP7Q/wtHyL6cFeIDDzKuMYfgTm123ClfX9DKmx3RqqppzV0MY1VS
-I2NkCsHjNu/V2jU1rItuBP0qQeq7T7AQ47Nwn3Xr09EF1L8W2scrjzm/DCuWufdh
-xMt5mCyZJLeQfP2vZJzoo3yfLZL6ErP1Nn2aEPpXXgTsXpN7Q0i3YEHISXifi49b
-tq0uk3QHdMsslhTX1/zeq5WNoHgTtG9uud5lWFHhP+pu6NYN6kNNeG7Dh06bTBUF
-PL196EXXvdva1g6GMD2ButQVP0NfO0cvlkLh70cL33yQnloV8xlR93BjMtzkHsIK
-8N5CGu9df9EK6/o97sFlMpZYT9qKvskipS0uvnWXRRvNvIJGlwJWOso6IVsoC3SJ
-u6lharSA3uOWKJXDKiRrME/W5Erfa/9hb0GTXy/SQ/KX3Wu3nek=
-=2g9z
------END PGP SIGNATURE-----
-
---Sig_/JKSN_9Gh0a7D/smCt=_oENr--
+~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
