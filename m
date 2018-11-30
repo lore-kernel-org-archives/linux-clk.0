@@ -2,74 +2,85 @@ Return-Path: <SRS0=1K30=OJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8422AC04EB8
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Nov 2018 06:50:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9990EC04EB8
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Nov 2018 06:55:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47D342146D
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Nov 2018 06:50:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 49A582146F
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Nov 2018 06:55:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KaXYtILW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47D342146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z3LyYkJ3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49A582146F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726572AbeK3R6a (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Nov 2018 12:58:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45498 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726472AbeK3R6a (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 30 Nov 2018 12:58:30 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D637F2145D;
-        Fri, 30 Nov 2018 06:50:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543560614;
-        bh=uvbD7ONAjHKZogEDPFuxmFpPduuGqYSxQpj8/l1hj6E=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=KaXYtILWKLJlvg4M64ESm9twD/iL7ft2+f77A/JTtdsjUUhQaUlSPWP1uQKBCt5wJ
-         umGVb6YQHL8vw717L5fPU8wBmzJj/eFYsbQUNAdzriUx1Eox4FyXQ8Fzfo6Yic0Hgz
-         mLx2SaCXcqZerWX0XObZFA0C049rf/jph/TuEOG4=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     matthias.bgg@gmail.com, matthias.bgg@kernel.org,
-        mturquette@baylibre.com
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20181116180901.17737-3-matthias.bgg@kernel.org>
-Cc:     jasu@njomotys.info, sean.wang@kernel.org,
+        id S1726629AbeK3SD0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Nov 2018 13:03:26 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:44352 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726616AbeK3SD0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Nov 2018 13:03:26 -0500
+Received: by mail-pg1-f193.google.com with SMTP id t13so2068754pgr.11
+        for <linux-clk@vger.kernel.org>; Thu, 29 Nov 2018 22:55:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=W2WRzoA1lng3HhEM9HJNkyXzf+k3zuNVW/6U4xRIx3s=;
+        b=Z3LyYkJ3U/V79arrEveQ3i/soQa4xMItd8mBx2QpriSmb8gqmOFaU1OMBFyoNw03GD
+         uoYIKAm6kPFKDebF9mitSaC9I/mPxlJfnfRsBFyvLiklzeFGeabiZ//0qAEvTaqIzZCa
+         Fi1cWcbou8TQDvC9W8st0XeIBBY08DSOt7BQk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=W2WRzoA1lng3HhEM9HJNkyXzf+k3zuNVW/6U4xRIx3s=;
+        b=e4WDpyOqw+g2TbcQ13HR0gNxxFWXQze752pOYxblxC2QJVxKzvTG/qYUwt8H+7rCMg
+         hio3dUxngCOetwiQtm544T0p2+0PVCmKTNufWlqk/b/3EKXqhTKp7UlrGYfSvKEJyaXS
+         xN192EcBpvgRf/FGHyr/Buidb5F9NHS4aG5v7q3g7BHIaNH2x4xF/v3PmnNzAXPeq3gY
+         dIJ1jG6cU22syFeCAhx1s6uVlCIjEGXJSqIRTlHg1+FGzszz2TkCRW/QX6xkor/cpt5J
+         UeHPT9zJzim+camN4wAtVI3iGF+XnG6LmQpcf6vAqDq4D8z4bNc02eYTCwllBIcVpSY/
+         VUYA==
+X-Gm-Message-State: AA+aEWaifDEwbTpl2TzVvKeoMYj02by/i1uHXo/DHZUAnI0EuYmCToJq
+        HJrNhV083Dm59JfFHAtRcSxH8A==
+X-Google-Smtp-Source: AFSGD/V4RDLdsNKV6Te6Z6OjotT3lwvrpAYrJheSinqBEBBquvzE8CgXsbMPhYp09xbk3FimwnMt+A==
+X-Received: by 2002:a63:1321:: with SMTP id i33mr3957739pgl.380.1543560908783;
+        Thu, 29 Nov 2018 22:55:08 -0800 (PST)
+Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id w128sm5859175pfw.79.2018.11.29.22.55.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 29 Nov 2018 22:55:08 -0800 (PST)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-References: <20181116180901.17737-1-matthias.bgg@kernel.org>
- <20181116180901.17737-3-matthias.bgg@kernel.org>
-Message-ID: <154356061291.88331.179492557229227536@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v2 2/3] clk: mediatek: Add flags to mtk_gate
-Date:   Thu, 29 Nov 2018 22:50:12 -0800
+        Marc Gonzalez <marc.w.gonzalez@free.fr>,
+        Amit Kucheria <amit.kucheria@linaro.org>
+Subject: [PATCH 0/3] clk: qcom: gcc-msm8998: Fixes and clkref clocks
+Date:   Thu, 29 Nov 2018 22:52:56 -0800
+Message-Id: <20181130065259.26497-1-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting matthias.bgg@kernel.org (2018-11-16 10:09:00)
-> From: Jasper Mattsson <jasu@njomotys.info>
-> =
+Mark critical clocks critical, don't halt-check UFS clocks and add clkref
+branches.
 
-> This is required to mark gates as CLK_IS_CRITICAL.
-> =
+Bjorn Andersson (3):
+  clk: qcom: gcc-msm8998: Mark hmss_dvm and lpass_at critical
+  clk: qcom: gcc-msm8998: Disable halt check of UFS clocks
+  clk: qcom: gcc-msm8998: Add clkref clocks
 
-> Fixes: 96596aa06628 ("clk: mediatek: add clk support for MT6797")
-> Signed-off-by: Jasper Mattsson <jasu@njomotys.info>
-> Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
-> ---
+ drivers/clk/qcom/gcc-msm8998.c               | 83 +++++++++++++++++++-
+ include/dt-bindings/clock/qcom,gcc-msm8998.h |  5 ++
+ 2 files changed, 85 insertions(+), 3 deletions(-)
 
-These other two look ok to me. I'll apply them to the clk tree and wait
-to merge to clk-next in case someone from Mediatek wants to review these
-changes.
+-- 
+2.18.0
 
