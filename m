@@ -2,353 +2,177 @@ Return-Path: <SRS0=1K30=OJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 428ECC04EB8
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Nov 2018 12:00:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D52A8C04EB8
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Nov 2018 12:17:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE2ED20868
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Nov 2018 12:00:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE2ED20868
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 9396B20863
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Nov 2018 12:17:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="gUJYeuxW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9396B20863
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726521AbeK3XKB convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Nov 2018 18:10:01 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:50697 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726473AbeK3XKB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 30 Nov 2018 18:10:01 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 6012C207BC; Fri, 30 Nov 2018 13:00:54 +0100 (CET)
-Received: from xps13 (aaubervilliers-681-1-63-158.w90-88.abo.wanadoo.fr [90.88.18.158])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 0706E2037D;
-        Fri, 30 Nov 2018 13:00:54 +0100 (CET)
-Date:   Fri, 30 Nov 2018 13:00:53 +0100
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: Re: [PATCH 0/2] Link consumer with clock driver
-Message-ID: <20181130130053.4f944b3b@xps13>
-In-Reply-To: <154356989722.88331.10134203618475749179@swboyd.mtv.corp.google.com>
-References: <20181122212212.16039-1-miquel.raynal@bootlin.com>
-        <154356989722.88331.10134203618475749179@swboyd.mtv.corp.google.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726549AbeK3X1A (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Nov 2018 18:27:00 -0500
+Received: from mail.andi.de1.cc ([85.214.239.24]:32990 "EHLO
+        h2641619.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726512AbeK3X1A (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Nov 2018 18:27:00 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=kemnade.info; s=20180802; h=Content-Type:MIME-Version:References:
+        In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=nn18inWIyXWpyuQb/El/4/4mPT5UZqePsO9l2W0ywEI=; b=gUJYeuxWsmU8yEQfWE47zuEPI
+        OtNR9tykHWRVmuLNQ0ARLmBfhJueFLdl3A8aqvKsm7UuVVomTj4FrJ6QUmW+m9JXGal4WioSaWrKH
+        314u8tQfiSGBqwxPAutRKPbf56EstxheKiJoFFres5/lagdal0LsvDqyigt1z46nJ5EM0=;
+Received: from [2a02:790:ff:919:7ee9:d3ff:fe1f:a246] (helo=localhost)
+        by h2641619.stratoserver.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1gShju-0007LQ-5d; Fri, 30 Nov 2018 13:17:46 +0100
+Received: from [::1] (helo=localhost)
+        by localhost with esmtp (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1gShjr-0003G8-GI; Fri, 30 Nov 2018 13:17:43 +0100
+Date:   Fri, 30 Nov 2018 13:17:35 +0100
+From:   Andreas Kemnade <andreas@kemnade.info>
+To:     Tero Kristo <t-kristo@ti.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>, <bcousson@baylibre.com>,
+        <letux-kernel@openphoenux.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <mturquette@baylibre.com>, <paul@pwsan.com>, <tony@atomide.com>
+Subject: Re: [PATCH v2 2/3] clk: ti: check clock type before doing autoidle
+ ops
+Message-ID: <20181130131605.3cfea95d@kemnade.info>
+In-Reply-To: <eca27a46-2ca3-1a02-c0c8-c1c00b3b2f46@ti.com>
+References: <20181110203115.13335-1-andreas@kemnade.info>
+        <20181110203115.13335-3-andreas@kemnade.info>
+        <154353750560.88331.11814738542436183126@swboyd.mtv.corp.google.com>
+        <20181130071534.0a6cd455@kemnade.info>
+        <154356242517.88331.8496814814468751012@swboyd.mtv.corp.google.com>
+        <9eb7b090-4803-d389-4112-3bf058385b2e@ti.com>
+        <154356463284.88331.13323307899580657085@swboyd.mtv.corp.google.com>
+        <eca27a46-2ca3-1a02-c0c8-c1c00b3b2f46@ti.com>
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; i686-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/JKSN_9Gh0a7D/smCt=_oENr"; protocol="application/pgp-signature"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+--Sig_/JKSN_9Gh0a7D/smCt=_oENr
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-+Maxime
+Hi Tero,
 
-Stephen Boyd <sboyd@kernel.org> wrote on Fri, 30 Nov 2018 01:24:57
--0800:
+On Fri, 30 Nov 2018 11:20:49 +0200
+Tero Kristo <t-kristo@ti.com> wrote:
 
-> Quoting Miquel Raynal (2018-11-22 13:22:10)
-> > Hello,
-> > 
-> > While working on suspend to RAM feature, I ran into troubles multiple
-> > times when clocks where not suspending/resuming at the desired time. I
-> > had a look at the core and I think the same logic as in the
-> > regulator's core may be applied here to (very easily) fix this issue:
-> > using device links.  
-> 
-> Thanks! I've wanted to add device links to the clk framework for a while
-> now but haven't gotten around to it. Can you expand on the scenario that
-> you've run into where you need this?
+> On 30/11/2018 09:57, Stephen Boyd wrote:
+> > Quoting Tero Kristo (2018-11-29 23:35:35) =20
+> >> On 30/11/2018 09:20, Stephen Boyd wrote: =20
+> >>> Quoting Andreas Kemnade (2018-11-29 22:15:34) =20
+> >>>> Hi Stephen,
+> >>>>
+> >>>> On Thu, 29 Nov 2018 16:25:05 -0800
+> >>>> Stephen Boyd <sboyd@kernel.org> wrote:
+> >>>> =20
+> >>>>> Quoting Andreas Kemnade (2018-11-10 12:31:14) =20
+> >>>>>> Code might use autoidle api with clocks not being omap2 clocks,
+> >>>>>> so check if clock type is not basic
+> >>>>>>
+> >>>>>> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> >>>>>> ---
+> >>>>>> New in v2
+> >>>>>> ---
+> >>>>>>    drivers/clk/ti/autoidle.c | 12 ++++++++++--
+> >>>>>>    1 file changed, 10 insertions(+), 2 deletions(-)
+> >>>>>>
+> >>>>>> diff --git a/drivers/clk/ti/autoidle.c b/drivers/clk/ti/autoidle.c
+> >>>>>> index 161f67850393..5bdae5552d38 100644
+> >>>>>> --- a/drivers/clk/ti/autoidle.c
+> >>>>>> +++ b/drivers/clk/ti/autoidle.c
+> >>>>>> @@ -54,8 +54,12 @@ static DEFINE_SPINLOCK(autoidle_spinlock);
+> >>>>>>    int omap2_clk_deny_idle(struct clk *clk)
+> >>>>>>    {
+> >>>>>>           struct clk_hw_omap *c;
+> >>>>>> +       struct clk_hw *hw =3D __clk_get_hw(clk);
+> >>>>>>   =20
+> >>>>>> -       c =3D to_clk_hw_omap(__clk_get_hw(clk));
+> >>>>>> +       if (clk_hw_get_flags(hw) & CLK_IS_BASIC) =20
+> >>>>>
+> >>>>> Please try to avoid using CLK_IS_BASIC if at all possible. Can you?
+> >>>>> Maybe add some flag in clk_hw_omap() instead?
+> >>>>> =20
+> >>>> hmm, Tero suggested that.
+> >>>> But to check flags in clk_hw_omap I first need to know that there is=
+ a
+> >>>> clk_hw_omap behind clk_hw. And for that I either need to check flags=
+ in
+> >>>> clk_hw or do more changes in the omap_hwmod code. =20
+> >>>
+> >>> Can you do it? The omap code is the only user of CLK_IS_BASIC. All the
+> >>> other users are marking clks with this but there is no reason to do s=
+o.
+> >>> I'll go make another pass over the tree and nuke those ones from orbi=
+t. =20
+> >>
+> >> The reason for using this flag is because OMAP uses two clock types
+> >> around, the basic clocks like fixed-factor-clock/fixed-clock, and then
+> >> all the omap derivatives, which can be cast to clk_hw_omap. If we want
+> >> to avoid usage of CLK_IS_BASIC, we need to copy paste the remaining
+> >> basic code under drivers/clk/ti/ and convert them to use clk_hw_omap as
+> >> internal datatype. Is this preferred?
+> >> =20
+> >=20
+> > No that is not preferred. Can the omap2_clk_deny_idle() function be
+> > integrated closer into the clk framework in some way that allows it to
+> > be part of the clk_ops structure? And then have that take a clk_hw
+> > structure instead of a struct clk? I haven't looked at this in any
+> > detail whatsoever so I may be way off right now. =20
+>=20
+> It could be added under the main clk_ops struct, however this would=20
+> introduce two new func pointers to it which are not used by anything=20
+> else but OMAP. Are you aware of any other platforms requiring similar=20
+> feature?
 
-Well, it happened that when working on suspend support on an
-ESPRESSObin, the peripheral clock driver (armada_37xx_periph.c) was not
-suspended after/resumed before all the drivers depending on it.
+The question here is also how we organize the procedure here. One patchset
+fixing nasty problems and another mainly reorganize things? Where do we draw
+the line between these two? If we have the autoidle code in main clk_ops,
+we could also think whether other autoidle code should go into main code.
 
-> 
-> > 
-> > The only additional change I had to do was to always (when available)
-> > populate the device entry of the core clock structure so that it could
-> > be used later. This is the purpose of patch 1. Patch 2 actually adds
-> > support for device links.  
-> 
-> That's fine. We should do it into clk_core all the time for other
-> reasons too.
-> 
-> > 
-> > As I am not used to hack into the clock subsystem I might have missed
-> > something big preventing such change but so far I could not see
-> > anything wrong with it. As this touches core code, I am of course
-> > entirely open to suggestions.
-> >   
-> 
-> Two questions:
-> 
->  1) Do device links work if we make a loop between devices? I'm thinking
->  of the case where we have two clock controllers that provide clks to
->  each other and could potentially register some clks and then clk_get()
->  the ones they depend on. I suspect loops don't work and so we need to
->  be aware of this and somehow prevent it.
+Regards,
+Andreas
 
-For what I understand, when requesting the creation of a link there is
-a check with "device_is_dependent()" that prevents reverse
-dependencies, see [1].
+--Sig_/JKSN_9Gh0a7D/smCt=_oENr
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-Could you please share a situation where there is a loop between clocks
-or between a device and its clock source? I don't see any.
+-----BEGIN PGP SIGNATURE-----
 
-[1] https://elixir.bootlin.com/linux/latest/source/drivers/base/core.c#L214
+iQIzBAEBCAAdFiEE7sDbhY5mwNpwYgrAfb1qx03ikyQFAlwBKmAACgkQfb1qx03i
+kyTFZQ/+LYhOeqMel2/sNR00lIM0IYRz/c8g1rgfQUwGXeZ7p1OR88GDdYPlt3Ts
+7Uhi3oZvmCLVWrcfTR42Yfao/o/NsKRXm4IwDvi65dZYPn0IsY69OWwAx8BLtSs7
+TU4AWmKA6J6ODc4Rsu5KMnmDuLEVE8RxUtwa5jOCZvR0Dbk8Wm0yQBVEUGHhEskq
+8h+Vn50lipd9cKZmWNoDFeGNroC7UtRSjS7kodOE0EfzbXlsBb9pBg/wz3Y+WTwl
+a2W75OZklZRhKP7Q/wtHyL6cFeIDDzKuMYfgTm123ClfX9DKmx3RqqppzV0MY1VS
+I2NkCsHjNu/V2jU1rItuBP0qQeq7T7AQ47Nwn3Xr09EF1L8W2scrjzm/DCuWufdh
+xMt5mCyZJLeQfP2vZJzoo3yfLZL6ErP1Nn2aEPpXXgTsXpN7Q0i3YEHISXifi49b
+tq0uk3QHdMsslhTX1/zeq5WNoHgTtG9uud5lWFHhP+pu6NYN6kNNeG7Dh06bTBUF
+PL196EXXvdva1g6GMD2ButQVP0NfO0cvlkLh70cL33yQnloV8xlR93BjMtzkHsIK
+8N5CGu9df9EK6/o97sFlMpZYT9qKvskipS0uvnWXRRvNvIJGlwJWOso6IVsoC3SJ
+u6lharSA3uOWKJXDKiRrME/W5Erfa/9hb0GTXy/SQ/KX3Wu3nek=
+=2g9z
+-----END PGP SIGNATURE-----
 
-> 
->  2) Do we need to link clk consumers to anything besides the device
->  providing the clk they get from clk_get()? Put another way, do we need
->  to make links through the clk tree and any potential parent clks of
->  whatever the device is using at the time. Would clk tree changing
->  topology because some new parent is chosen need to affect
->  suspend/resume ordering? Or would that all need to be handled by clk
->  framework figuring out the ordering of the tree at suspend/resume time
->  and suspending clock controller drivers in the right order?
-> 
-
-In the v2 (coming) I followed Maxime Ripard suggestion and what you
-describe above is handled automatically, let me explain the scenario.
-
-
-The order of probe has no importance because the framework already
-handles orphaned clocks so let's be simple and say there are two root
-clocks, not depending on anything, that are probed first: xtal0 and
-xtal1. None of these clocks have a parent, there is no device link in
-the game, yet.
-
-   +----------------+            +----------------+
-   |                |            |                |
-   |                |            |                |
-   |   xtal0 core   |            |   xtal1 core   |
-   |                |            |                |
-   |                |            |                |
-   +-------^^-------+            +-------^^-------+
-           ||                            ||
-           ||                            ||
-   +----------------+            +----------------+
-   |                |            |                |
-   |   xtal0 clk    |            |   xtal1 clk    |
-   |                |            |                |
-   +----------------+            +----------------+
- 
-Then, a peripheral clock periph0 is probed. His parent is xtal1. The
-clock_register_*() call will run __clk_init_parent() and a link between
-periph0's core and xtal1's core will be created and stored in
-periph0's core->parent_clk_link entry.
-
-   +----------------+            +----------------+
-   |                |            |                |
-   |                |            |                |
-   |   xtal0 core   |            |   xtal1 core   |
-   |                |            |                |
-   |                |            |                |
-   +-------^^-------+            +-------^^-------+
-           ||                            ||
-           ||                            ||
-   +----------------+            +----------------+
-   |                |            |                |
-   |   xtal0 clk    |            |   xtal1 clk    |
-   |                |            |                |
-   +----------------+            +-------^--------+
-                                         |
-                                         |
-                          +--------------+
-                          |   ->parent_clk_link
-                          |
-                  +----------------+
-                  |                |
-                  |                |
-                  |  periph0 core  |
-                  |                |
-                  |                |
-                  +-------^^-------+
-                          ||
-                          ||
-                  +----------------+
-                  |                |
-                  |  periph0 clk 0 |
-                  |                |
-                  +----------------+
-
-Then, device0 is probed and "get" the periph0 clock. clk_get() will be
-called and a struct clk will be instantiated for device0 (called in
-the figure clk 1). A link between device0 and the new clk 1 instance of
-periph0 will be created and stored in the clk->consumer_link entry.
-
-   +----------------+            +----------------+
-   |                |            |                |
-   |                |            |                |
-   |   xtal0 core   |            |   xtal1 core   |
-   |                |            |                |
-   |                |            |                |
-   +-------^^-------+            +-------^^-------+
-           ||                            ||
-           ||                            ||
-   +----------------+            +----------------+
-   |                |            |                |
-   |   xtal0 clk    |            |   xtal1 clk    |
-   |                |            |                |
-   +----------------+            +-------^--------+
-                                         |
-                                         |
-                          +--------------+
-                          |   ->parent_clk_link
-                          |
-                  +----------------+
-                  |                |
-                  |                |
-                  |  periph0 core  |
-                  |                <-------------+
-                  |                <-------------|
-                  +-------^^-------+            ||
-                          ||                    ||
-                          ||                    ||
-                  +----------------+    +----------------+
-                  |                |    |                |
-                  |  periph0 clk 0 |    |  periph0 clk 1 |
-                  |                |    |                |
-                  +----------------+    +----------------+
-                                                |
-                                                | ->consumer_link
-                                                |
-                                                |
-                                                |
-                                        +-------v--------+
-                                        |    device0     |
-                                        +----------------+
-
-Right now, device0 is linked to periph0, itself linked to xtal1 so
-everything is fine.
-
-Now let's get some fun: the new parent of periph0 is xtal1. The process
-will call clk_reparent(), periph0's core->parent_clk_link will be
-destroyed and a new link to xtal1 will be setup and stored. The
-situation is now that device0 is linked to periph0 and periph0 is
-linked to xtal1, so the dependency between device0 and xtal1 is still
-clear.
-
-   +----------------+            +----------------+
-   |                |            |                |
-   |                |            |                |
-   |   xtal0 core   |            |   xtal1 core   |
-   |                |            |                |
-   |                |            |                |
-   +-------^^-------+            +-------^^-------+
-           ||                            ||
-           ||                            ||
-   +----------------+            +----------------+
-   |                |            |                |
-   |   xtal0 clk    |            |   xtal1 clk    |
-   |                |            |                |
-   +-------^--------+            +----------------+
-           |
-           |                           \ /
-           +----------------------------x
-      ->parent_clk_link   |            / \
-                          |
-                  +----------------+
-                  |                |
-                  |                |
-                  |  periph0 core  |
-                  |                <-------------+
-                  |                <-------------|
-                  +-------^^-------+            ||
-                          ||                    ||
-                          ||                    ||
-                  +----------------+    +----------------+
-                  |                |    |                |
-                  |  periph0 clk 0 |    |  periph0 clk 1 |
-                  |                |    |                |
-                  +----------------+    +----------------+
-                                                |
-                                                | ->consumer_link
-                                                |
-                                                |
-                                                |
-                                        +-------v--------+
-                                        |    device0     |
-                                        +----------------+
-
-I assume periph0 cannot be removed while there are devices using it,
-same for xtal0.
-
-What can happen is that device0 'put' the clock periph0. The relevant
-link is deleted and the clk instance dropped.
-
-   +----------------+            +----------------+
-   |                |            |                |
-   |                |            |                |
-   |   xtal0 core   |            |   xtal1 core   |
-   |                |            |                |
-   |                |            |                |
-   +-------^^-------+            +-------^^-------+
-           ||                            ||
-           ||                            ||
-   +----------------+            +----------------+
-   |                |            |                |
-   |   xtal0 clk    |            |   xtal1 clk    |
-   |                |            |                |
-   +-------^--------+            +----------------+
-           |
-           |                           \ /
-           +----------------------------x
-      ->parent_clk_link   |            / \
-                          |
-                  +----------------+
-                  |                |
-                  |                |
-                  |  periph0 core  |
-                  |                |
-                  |                |
-                  +-------^^-------+
-                          ||
-                          ||
-                  +----------------+
-                  |                |
-                  |  periph0 clk 0 |
-                  |                |
-                  +----------------+
-
-Now we can unregister periph0: link with the parent will be destroyed
-and the clock may be safely removed. 
-
-   +----------------+            +----------------+
-   |                |            |                |
-   |                |            |                |
-   |   xtal0 core   |            |   xtal1 core   |
-   |                |            |                |
-   |                |            |                |
-   +-------^^-------+            +-------^^-------+
-           ||                            ||
-           ||                            ||
-   +----------------+            +----------------+
-   |                |            |                |
-   |   xtal0 clk    |            |   xtal1 clk    |
-   |                |            |                |
-   +----------------+            +----------------+
-
-
-This is my understanding of the common clock framework and how links
-can be added to it. I hope this was clear enough :)
-
-
-Thanks,
-Miquèl
+--Sig_/JKSN_9Gh0a7D/smCt=_oENr--
