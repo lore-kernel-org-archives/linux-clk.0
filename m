@@ -3,98 +3,105 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4255C04EB9
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Nov 2018 00:38:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81F2CC64EB4
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Nov 2018 01:02:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70F4020989
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Nov 2018 00:38:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45D5520868
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Nov 2018 01:02:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BW2drP41"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70F4020989
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xzKkLNSm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45D5520868
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726609AbeK3LpX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Nov 2018 06:45:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49570 "EHLO mail.kernel.org"
+        id S1726939AbeK3MJf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Nov 2018 07:09:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58138 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726532AbeK3LpX (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 30 Nov 2018 06:45:23 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726451AbeK3MJf (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 30 Nov 2018 07:09:35 -0500
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 45C332080A;
-        Fri, 30 Nov 2018 00:37:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6809A2146F;
+        Fri, 30 Nov 2018 01:02:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543538279;
-        bh=568ELVJZXgRRJoWRdh5pi0oDx8fs1gM/Uq9xmsa/89M=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=BW2drP41UNtagKJTC7SWjnMfueEj7UTLUJ8hQL7G7AqTwfQkHqsVaKzPNr592zfqu
-         lAtAyzzGEfy4CEQTRLGLfXvP1XI5hftwxWBA7z+HTbSiI7laN+7sRpDbnEIYH7NcAm
-         V/0ZckqeWOBN4dEnPzd0H4ATenZVU9Epfm9xsW4E=
-Content-Type: text/plain; charset="utf-8"
+        s=default; t=1543539727;
+        bh=KK5k0pzTObpUzakdBmfER3QGnjqssQrfk33KN4O3inQ=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=xzKkLNSmukAla+88rHZKmE9E9a5zQjmrR8tYLKMW5kZ/7MED1cPChm2mVFe2vSJKP
+         KSBR5L9uZQAYSa+7myQwmEsG4pxKpRNRdNkbVBIJ/QzH04S+nvus99Ghmptzs8zuVf
+         10UVArGMwCbWI7Rh83mOt2jFJpbEh34pZBw+DYrU=
+Received: by mail-qt1-f171.google.com with SMTP id t13so4255188qtn.3;
+        Thu, 29 Nov 2018 17:02:07 -0800 (PST)
+X-Gm-Message-State: AA+aEWZXiRAcEy2xbBPMxbwXnlD4gKmjxkByQBH1g5z8wclnAVAwhEic
+        lKm9aEO5hpqaYwMa+XGtFhDJrUvMMR5m/AF11g==
+X-Google-Smtp-Source: AFSGD/W4VOgcKPF/a6OCA+UTYMqM4yLrPXG5MeJ/ZLol2DMMUoCzh2YzzYeIybG+ZCUNMgCpofrw+HdO5X8RLw6T/+8=
+X-Received: by 2002:a0c:8c8a:: with SMTP id p10mr3723310qvb.218.1543539726606;
+ Thu, 29 Nov 2018 17:02:06 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20181123094444.27956-3-miquel.raynal@bootlin.com>
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-References: <20181123094444.27956-1-miquel.raynal@bootlin.com>
- <20181123094444.27956-3-miquel.raynal@bootlin.com>
-Message-ID: <154353827849.88331.12767996548874447262@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH 2/4] clk: mvebu: armada-37xx-periph: change suspend/resume time
-Date:   Thu, 29 Nov 2018 16:37:58 -0800
+References: <20181106183609.207702-1-sboyd@kernel.org> <20181106183609.207702-2-sboyd@kernel.org>
+ <CAL_JsqLvKWcJUYDyWOg3rMeEWv7JV4zw7-YkOUWiL5rfXgVRvQ@mail.gmail.com>
+ <154161585170.88331.1822872519370217248@swboyd.mtv.corp.google.com> <154353772392.88331.16937191244549721858@swboyd.mtv.corp.google.com>
+In-Reply-To: <154353772392.88331.16937191244549721858@swboyd.mtv.corp.google.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Thu, 29 Nov 2018 19:01:54 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJuZAr7ndznrUu0cuM7DpB5A7ixjJ+vZ97s5G4xz0sVow@mail.gmail.com>
+Message-ID: <CAL_JsqJuZAr7ndznrUu0cuM7DpB5A7ixjJ+vZ97s5G4xz0sVow@mail.gmail.com>
+Subject: Re: [PATCH 1/4] of/device: Add a way to probe drivers by match data
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Frank Rowand <frowand.list@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Miquel Raynal (2018-11-23 01:44:41)
-> Armada 3700 PCIe IP relies on the PCIe clock managed by this
-> driver. For reasons related to the PCI core's organization when
-> suspending/resuming, PCI host controller drivers must reconfigure
-> their register at suspend_noirq()/resume_noirq() which happens after
-> suspend()/suspend_late() and before resume_early()/resume().
-> =
+On Thu, Nov 29, 2018 at 6:28 PM Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> Quoting Stephen Boyd (2018-11-07 10:37:31)
+> > appropriate structure with to_platform_device() or to_i2c_client()?
+> >
+> > So the example would become
+> >
+> >   struct of_driver_probe_func {
+> >         int (*probe)(struct device *dev);
+> >   };
+> >
+> >   struct of_driver_probe_func mtk_probes[] = {
+> >         mtk_probe1,
+> >         mtk_probe2,
+> >         mtk_probe3,
+> >   };
+> >
+> >   struct platform_driver mtk_driver = {
+> >         .driver = {
+> >                 .name = "mtk-foo";
+> >                 .of_match_table = mtk_match_table,
+> >                 .of_probes = &mtk_probes;
+> >         },
+> >   };
+> >
+> > And the probe functions might need to container_of() the device pointer
+> > to get the struct they know they need. The probe function could also be
+> > added to of_device_id and then we would have to look and see if that
+> > pointer is populated when the device is matched in generic device code.
+> >
+>
+> I guess I'll go down the path of extending the of_device_id structure?
 
-> Device link support in the clock framework enforce that the clock
-> driver's resume() callback will be called before the PCIe
-> driver's. But, any resume_noirq() callback will be called before all
-> the registered resume() callbacks.
+Unfortunately, I don't think you can change of_device_id as it's part
+of the kernel ABI.
 
-I thought any device driver that provides something to another device
-driver will implicitly be probed before the driver that consumes said
-resources. And we actually reorder the dpm list on probe defer so that
-the order of devices is correct. Is it more that we want to parallelize
-suspend/resume of the PCIe chip so we need to have device links so that
-we know the dependency of the PCIe driver on the clock driver?
-
-> =
-
-> The solution to support PCIe resume operation is to change the
-> "priority" of this clock driver PM callbacks to "_noirq()".
-
-This seems sad that the PM core can't "priority boost" any
-suspend/resume callbacks of a device that doesn't have noirq callbacks
-when a device that depends on it from the device link perspective does
-have noirq callbacks. And why does the PCIe device need to use noirq
-callbacks in general?
-
-I'm just saying this seems like a more fundamental problem with ordering
-of provider and consumer suspend/resume functions that isn't being
-solved in this patch. In fact, it's quite the opposite, this is working
-around the problem.
-
+Rob
