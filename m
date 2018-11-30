@@ -2,110 +2,145 @@ Return-Path: <SRS0=1K30=OJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA097C64EB4
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Nov 2018 10:56:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF9D7C04EB8
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Nov 2018 10:58:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B2ED20863
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Nov 2018 10:56:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B2ED20863
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=free.fr
+	by mail.kernel.org (Postfix) with ESMTP id B195120834
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Nov 2018 10:58:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B195120834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726933AbeK3WFG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Nov 2018 17:05:06 -0500
-Received: from smtp3-g21.free.fr ([212.27.42.3]:5471 "EHLO smtp3-g21.free.fr"
+        id S1726558AbeK3WH2 convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Nov 2018 17:07:28 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:49656 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726546AbeK3WFG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 30 Nov 2018 17:05:06 -0500
-Received: from [192.168.108.68] (unknown [213.36.7.13])
-        (Authenticated sender: marc.w.gonzalez)
-        by smtp3-g21.free.fr (Postfix) with ESMTPSA id CA0F313F8CF;
-        Fri, 30 Nov 2018 11:55:49 +0100 (CET)
-Subject: Re: [PATCH 2/3] clk: qcom: gcc-msm8998: Disable halt check of UFS
- clocks
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        id S1726546AbeK3WH2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 30 Nov 2018 17:07:28 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 7F3D1209AB; Fri, 30 Nov 2018 11:58:32 +0100 (CET)
+Received: from xps13 (aaubervilliers-681-1-63-158.w90-88.abo.wanadoo.fr [90.88.18.158])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 205DD207B0;
+        Fri, 30 Nov 2018 11:58:22 +0100 (CET)
+Date:   Fri, 30 Nov 2018 11:58:21 +0100
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Amit Kucheria <amit.kucheria@linaro.org>
-References: <20181130065259.26497-1-bjorn.andersson@linaro.org>
- <20181130065259.26497-3-bjorn.andersson@linaro.org>
-From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
-Message-ID: <273c0544-bf33-fe66-ac42-ad17ea3038d1@free.fr>
-Date:   Fri, 30 Nov 2018 11:55:49 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Nadav Haklai <nadavh@marvell.com>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: [PATCH 2/4] clk: mvebu: armada-37xx-periph: change
+ suspend/resume time
+Message-ID: <20181130115821.255394d4@xps13>
+In-Reply-To: <154353827849.88331.12767996548874447262@swboyd.mtv.corp.google.com>
+References: <20181123094444.27956-1-miquel.raynal@bootlin.com>
+        <20181123094444.27956-3-miquel.raynal@bootlin.com>
+        <154353827849.88331.12767996548874447262@swboyd.mtv.corp.google.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20181130065259.26497-3-bjorn.andersson@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 30/11/2018 07:52, Bjorn Andersson wrote:
+Hi Stephen,
 
-> Drop the halt check of the UFS symbol clocks, in accordance with other
-> platforms. This makes clk_disable_unused() happy and makes it possible
-> to turn the clocks on again without an error.
++ Bjorn to help us on PCI suspend/resume questions.
+
+Stephen Boyd <sboyd@kernel.org> wrote on Thu, 29 Nov 2018 16:37:58
+-0800:
+
+> Quoting Miquel Raynal (2018-11-23 01:44:41)
+> > Armada 3700 PCIe IP relies on the PCIe clock managed by this
+> > driver. For reasons related to the PCI core's organization when
+> > suspending/resuming, PCI host controller drivers must reconfigure
+> > their register at suspend_noirq()/resume_noirq() which happens after
+> > suspend()/suspend_late() and before resume_early()/resume().
+> > 
+> > Device link support in the clock framework enforce that the clock
+> > driver's resume() callback will be called before the PCIe
+> > driver's. But, any resume_noirq() callback will be called before all
+> > the registered resume() callbacks.  
 > 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
->  drivers/clk/qcom/gcc-msm8998.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+> I thought any device driver that provides something to another device
+> driver will implicitly be probed before the driver that consumes said
+> resources. And we actually reorder the dpm list on probe defer so that
+> the order of devices is correct. Is it more that we want to parallelize
+> suspend/resume of the PCIe chip so we need to have device links so that
+> we know the dependency of the PCIe driver on the clock driver?
+
+I had the same idea of device links before testing. I hope I did
+not make any mistake leading me to wrong observations, but indeed
+this is what I think is happening:
+* PM core call all suspend() callbacks
+* then all suspend_late()
+* then all suspend_noirq()
+For me, the PM core does not care if a suspend_noirq() depends on the
+suspend() of another driver.
+
+I hope I did not miss anything.
+
 > 
-> diff --git a/drivers/clk/qcom/gcc-msm8998.c b/drivers/clk/qcom/gcc-msm8998.c
-> index d89f8e7c2a59..3d232d266d72 100644
-> --- a/drivers/clk/qcom/gcc-msm8998.c
-> +++ b/drivers/clk/qcom/gcc-msm8998.c
-> @@ -2403,7 +2403,7 @@ static struct clk_branch gcc_ufs_phy_aux_clk = {
->  
->  static struct clk_branch gcc_ufs_rx_symbol_0_clk = {
->  	.halt_reg = 0x75014,
-> -	.halt_check = BRANCH_HALT,
-> +	.halt_check = BRANCH_HALT_SKIP,
->  	.clkr = {
->  		.enable_reg = 0x75014,
->  		.enable_mask = BIT(0),
-> @@ -2416,7 +2416,7 @@ static struct clk_branch gcc_ufs_rx_symbol_0_clk = {
->  
->  static struct clk_branch gcc_ufs_rx_symbol_1_clk = {
->  	.halt_reg = 0x7605c,
-> -	.halt_check = BRANCH_HALT,
-> +	.halt_check = BRANCH_HALT_SKIP,
->  	.clkr = {
->  		.enable_reg = 0x7605c,
->  		.enable_mask = BIT(0),
-> @@ -2429,7 +2429,7 @@ static struct clk_branch gcc_ufs_rx_symbol_1_clk = {
->  
->  static struct clk_branch gcc_ufs_tx_symbol_0_clk = {
->  	.halt_reg = 0x75010,
-> -	.halt_check = BRANCH_HALT,
-> +	.halt_check = BRANCH_HALT_SKIP,
->  	.clkr = {
->  		.enable_reg = 0x75010,
->  		.enable_mask = BIT(0),
+> > 
+> > The solution to support PCIe resume operation is to change the
+> > "priority" of this clock driver PM callbacks to "_noirq()".  
+> 
+> This seems sad that the PM core can't "priority boost" any
+> suspend/resume callbacks of a device that doesn't have noirq callbacks
+> when a device that depends on it from the device link perspective does
+> have noirq callbacks.
 
-FWIW, before applying your patch, the kernel printed the following
-warnings at boot:
+I do agree on this but I'm not sure it would work. I suppose the
+"noirq" state is a global state and thus code in regular suspend()
+callbacks could probably fail to run in a "noirq" context?
 
-[    1.820756] gcc_ufs_rx_symbol_1_clk status stuck at 'on'
-[    1.992977] gcc_ufs_rx_symbol_0_clk status stuck at 'on'
-[    2.165113] gcc_gpu_bimc_gfx_clk status stuck at 'on'
+> And why does the PCIe device need to use noirq callbacks in general?
 
-https://lore.kernel.org/linux-clk/f4271471-b60a-f056-b453-1cfa593a0fc4@free.fr/
+I would like Bjorn to confirm this, but there is this commit that could
+explain the situation:
 
-(NB: gcc_ufs_tx_symbol_0_clk not mentioned)
+commit ab14d45ea58eae67c739e4ba01871cae7b6c4586
+Author: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Date:   Tue Mar 17 15:55:45 2015 +0100
 
-Your patch makes the two ufs_rx warnings go away.
+    PCI: mvebu: Add suspend/resume support
+    
+    Add suspend/resume support for the mvebu PCIe host driver.  Without this
+    commit, the system will panic at resume time when PCIe devices are
+    connected.
+    
+    Note that we have to use the ->suspend_noirq() and ->resume_noirq() hooks,
+    because at resume time, the PCI fixups are done at ->resume_noirq() time,
+    so the PCIe controller has to be ready at this point.
+    
+    Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+    Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+    Acked-by: Jason Cooper <jason@lakedaemon.net>
 
-Regards.
+> 
+> I'm just saying this seems like a more fundamental problem with ordering
+> of provider and consumer suspend/resume functions that isn't being
+> solved in this patch. In fact, it's quite the opposite, this is working
+> around the problem.
+> 
+
+I do agree with your point, but I would not be confident tweaking the PM
+core's scheduling "alone" :)
+
+
+Thanks,
+Miquèl
