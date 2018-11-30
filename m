@@ -2,130 +2,113 @@ Return-Path: <SRS0=1K30=OJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DFF4C04EB8
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Nov 2018 12:59:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0082BC04EB8
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Nov 2018 13:09:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F270320863
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Nov 2018 12:59:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F270320863
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
+	by mail.kernel.org (Postfix) with ESMTP id C570620867
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Nov 2018 13:09:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C570620867
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=free.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726489AbeLAAIY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Nov 2018 19:08:24 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:45395 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726127AbeLAAIY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Nov 2018 19:08:24 -0500
-Received: by mail-lf1-f66.google.com with SMTP id b20so4013126lfa.12;
-        Fri, 30 Nov 2018 04:59:09 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3PBES0o25j0R3KuNWiCqbV0Pcf3QS+yZgteXEsuSXZ8=;
-        b=mpcOqmBeVdN2sQoSuf/8w69Y/WxUsj3gBa/dVdvs2cOBAzzMYd3w8vKYWZ27WnVCMp
-         +dwoy0UJvK9wTD7r+8rrTT5lRTejk5GC7vQPfIBpEfWqhqMYoG5AnIoIYL0aePN/biXY
-         pQp6FtNkeCPlcRDkFJB5+7sgWcHU96oarfJdS1D12Nxcl9fFBgwATB06RNcL/8ahC9kY
-         riLpTiINvlp5e8y0DaMsym4ODgrXifjzi0UZXYHDTI0eE5P3PbRGxDPV1mwIN0B3TERP
-         Ce/fxGkNEs77p0dXq50zFLSgSXWc3ZZFOOvGrO6qX4thq54wS/zeoX/7aGvmpoXvkiQN
-         EtRw==
-X-Gm-Message-State: AA+aEWbC96qcxigmXjp4IyKg5o+ieHqLHtJ2mWwXnmkUL/SevQahqv2k
-        MQYx/vZZplFNRdYhrBuTRSw=
-X-Google-Smtp-Source: AFSGD/XUiaAMpzZfguwDPiwPS9jtMBxEXbXIneh2pJooWUG0IcYe98IX/NgzNHlX+gA7em5dYlAcRA==
-X-Received: by 2002:a19:518d:: with SMTP id g13mr3492997lfl.143.1543582748224;
-        Fri, 30 Nov 2018 04:59:08 -0800 (PST)
-Received: from localhost.localdomain (84-253-205-125.bb.dnainternet.fi. [84.253.205.125])
-        by smtp.gmail.com with ESMTPSA id m77sm805038lfg.3.2018.11.30.04.59.06
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 30 Nov 2018 04:59:07 -0800 (PST)
-Date:   Fri, 30 Nov 2018 14:59:04 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc:     Stephen Boyd <sboyd@kernel.org>, mazziesaccount@gmail.com,
-        Jonathan Corbet <corbet@lwn.net>,
+        id S1726380AbeLAASR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Nov 2018 19:18:17 -0500
+Received: from smtp3-g21.free.fr ([212.27.42.3]:22609 "EHLO smtp3-g21.free.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725928AbeLAASQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 30 Nov 2018 19:18:16 -0500
+Received: from [192.168.108.68] (unknown [213.36.7.13])
+        (Authenticated sender: marc.w.gonzalez)
+        by smtp3-g21.free.fr (Postfix) with ESMTPSA id 4A9F913F866;
+        Fri, 30 Nov 2018 14:08:38 +0100 (CET)
+Subject: Re: [PATCH 2/3] clk: qcom: gcc-msm8998: Disable halt check of UFS
+ clocks
+From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Andy Gross <andy.gross@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
         David Brown <david.brown@linaro.org>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Rob Herring <robh@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Huang Shijie <sjhuang@iluvatar.ai>,
-        Daniel Kurtz <djkurtz@chromium.org>,
-        Akshu Agrawal <akshu.agrawal@amd.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
-Subject: Re: [PATCH v4 1/8] clk: clkdev/of_clk - add managed lookup and
- provider registrations
-Message-ID: <20181130125904.GB15388@localhost.localdomain>
-References: <cover.1542107769.git.matti.vaittinen@fi.rohmeurope.com>
- <ec0d6ee7ea79f0e05041ed3e564b0aadb297ef5f.1542107769.git.matti.vaittinen@fi.rohmeurope.com>
- <154356805035.88331.16867826308376667832@swboyd.mtv.corp.google.com>
- <20181130105022.GA15388@localhost.localdomain>
- <20181130110653.GF30658@n2100.armlinux.org.uk>
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Amit Kucheria <amit.kucheria@linaro.org>
+References: <20181130065259.26497-1-bjorn.andersson@linaro.org>
+ <20181130065259.26497-3-bjorn.andersson@linaro.org>
+ <273c0544-bf33-fe66-ac42-ad17ea3038d1@free.fr>
+Message-ID: <e78881f5-1ea3-e828-7683-6e2a7acf5c50@free.fr>
+Date:   Fri, 30 Nov 2018 14:08:38 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181130110653.GF30658@n2100.armlinux.org.uk>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <273c0544-bf33-fe66-ac42-ad17ea3038d1@free.fr>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Nov 30, 2018 at 11:06:53AM +0000, Russell King - ARM Linux wrote:
-> On Fri, Nov 30, 2018 at 12:50:22PM +0200, Matti Vaittinen wrote:
-> > Hello Stephen,
-> > 
-> > Thanks a bunch for taking the time and reviewing this!
-> > 
-> > On Fri, Nov 30, 2018 at 12:54:10AM -0800, Stephen Boyd wrote:
-> > > Quoting Matti Vaittinen (2018-11-13 03:55:58)
-> > > > With MFD devices the clk properties may be contained in MFD (parent) DT
-> > > > node. Current devm_of_clk_add_hw_provider assumes the clk is bound to MFD
-> > > > subdevice not to MFD device (parent). Add
-> > > > devm_of_clk_add_hw_provider_parent to tackle this issue.
-> > > > 
-> > > > Also clkdev registration lacks of managed registration functions and it
-> > > > seems few drivers do not drop clkdev lookups at exit. Add
-> > > > devm_clk_hw_register_clkdev and devm_clk_release_clkdev to ease lookup
-> > > > releasing at exit.
-> > > 
-> > > Please split this into clkdev and non-clkdev devm functionality.
-> > Allright. I'll split this to two patches.
+On 30/11/2018 11:55, Marc Gonzalez wrote:
+
+> On 30/11/2018 07:52, Bjorn Andersson wrote:
 > 
-> Definitely, please note that clkdev is separate from the common
-> clk stuff, and is actually maintained by a different person (me)
-> although I currently defer much of the review to the common clk
-> guys.
-
-Right. This clarifies how clkdev is maintained. Thanks for letting me
-know. Is it still Ok to do these changes through linux-clk tree or is
-there some other tree where the devm portion should be submitted? If so,
-how should the dependencies be handled?
-
-Br,
-	Matti Vaittinen
-
+>> Drop the halt check of the UFS symbol clocks, in accordance with other
+>> platforms. This makes clk_disable_unused() happy and makes it possible
+>> to turn the clocks on again without an error.
+>>
+>> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+>> ---
+>>  drivers/clk/qcom/gcc-msm8998.c | 6 +++---
+>>  1 file changed, 3 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/clk/qcom/gcc-msm8998.c b/drivers/clk/qcom/gcc-msm8998.c
+>> index d89f8e7c2a59..3d232d266d72 100644
+>> --- a/drivers/clk/qcom/gcc-msm8998.c
+>> +++ b/drivers/clk/qcom/gcc-msm8998.c
+>> @@ -2403,7 +2403,7 @@ static struct clk_branch gcc_ufs_phy_aux_clk = {
+>>  
+>>  static struct clk_branch gcc_ufs_rx_symbol_0_clk = {
+>>  	.halt_reg = 0x75014,
+>> -	.halt_check = BRANCH_HALT,
+>> +	.halt_check = BRANCH_HALT_SKIP,
+>>  	.clkr = {
+>>  		.enable_reg = 0x75014,
+>>  		.enable_mask = BIT(0),
+>> @@ -2416,7 +2416,7 @@ static struct clk_branch gcc_ufs_rx_symbol_0_clk = {
+>>  
+>>  static struct clk_branch gcc_ufs_rx_symbol_1_clk = {
+>>  	.halt_reg = 0x7605c,
+>> -	.halt_check = BRANCH_HALT,
+>> +	.halt_check = BRANCH_HALT_SKIP,
+>>  	.clkr = {
+>>  		.enable_reg = 0x7605c,
+>>  		.enable_mask = BIT(0),
+>> @@ -2429,7 +2429,7 @@ static struct clk_branch gcc_ufs_rx_symbol_1_clk = {
+>>  
+>>  static struct clk_branch gcc_ufs_tx_symbol_0_clk = {
+>>  	.halt_reg = 0x75010,
+>> -	.halt_check = BRANCH_HALT,
+>> +	.halt_check = BRANCH_HALT_SKIP,
+>>  	.clkr = {
+>>  		.enable_reg = 0x75010,
+>>  		.enable_mask = BIT(0),
 > 
-> -- 
-> RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-> FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-> According to speedtest.net: 11.9Mbps down 500kbps up
+> FWIW, before applying your patch, the kernel printed the following
+> warnings at boot:
+> 
+> [    1.820756] gcc_ufs_rx_symbol_1_clk status stuck at 'on'
+> [    1.992977] gcc_ufs_rx_symbol_0_clk status stuck at 'on'
+> [    2.165113] gcc_gpu_bimc_gfx_clk status stuck at 'on'
+> 
+> https://lore.kernel.org/linux-clk/f4271471-b60a-f056-b453-1cfa593a0fc4@free.fr/
 
--- 
-Matti Vaittinen
-ROHM Semiconductors
+As far as gcc_gpu_bimc_gfx_clk is concerned, downstream flags it as
+"no_halt_check_on_disable", and sets CLKFLAG_RETAIN_MEM.
 
-~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
+Regards.
