@@ -1,555 +1,173 @@
-Return-Path: <SRS0=3vtO=OK=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=5I9o=OL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UPPERCASE_50_75 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F858C64EB4
-	for <linux-clk@archiver.kernel.org>; Sat,  1 Dec 2018 10:55:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F2D5C04EB8
+	for <linux-clk@archiver.kernel.org>; Sun,  2 Dec 2018 12:25:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C07AF20868
-	for <linux-clk@archiver.kernel.org>; Sat,  1 Dec 2018 10:55:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="OAvaewIy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C07AF20868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id 565922081C
+	for <linux-clk@archiver.kernel.org>; Sun,  2 Dec 2018 12:25:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 565922081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726568AbeLAWHh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 1 Dec 2018 17:07:37 -0500
-Received: from mail-eopbgr30062.outbound.protection.outlook.com ([40.107.3.62]:53856
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726424AbeLAWHh (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 1 Dec 2018 17:07:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pUpzIs6/kFrFv30l5bKBymV8FZoqSSmGFlKz7L0/kCg=;
- b=OAvaewIyzIWCvS0JjKw8WHarV3bk02+TUKcTqaM0Vx/4Swpme81eadvYlQas5AeqMpcBF7FiaaS/eKXWwzGHJNKaKMAtjQcRORyxy26AxwL1CEmFZtQ2O7TRGlBMhhP0J7wpW5I+8xNYYgvSnvA4Ia1OP9kyetuN5uQ0zARo35Y=
-Received: from AM6PR0402MB3654.eurprd04.prod.outlook.com (52.133.28.145) by
- AM6PR0402MB3622.eurprd04.prod.outlook.com (52.133.20.23) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1361.20; Sat, 1 Dec 2018 10:52:10 +0000
-Received: from AM6PR0402MB3654.eurprd04.prod.outlook.com
- ([fe80::c46b:915c:7a03:123d]) by AM6PR0402MB3654.eurprd04.prod.outlook.com
- ([fe80::c46b:915c:7a03:123d%3]) with mapi id 15.20.1339.036; Sat, 1 Dec 2018
- 10:52:10 +0000
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Sascha Hauer <kernel@pengutronix.de>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Aisheng DONG <aisheng.dong@nxp.com>,
-        Stephen Boyd <sboyd@kernel.org>
-CC:     Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Abel Vesa <abelvesa@linux.com>, Abel Vesa <abel.vesa@nxp.com>
-Subject: [PATCH v15 1/5] dt-bindings: Add binding for i.MX8MQ CCM
-Thread-Topic: [PATCH v15 1/5] dt-bindings: Add binding for i.MX8MQ CCM
-Thread-Index: AQHUiWPph+cdSvkdTU24CKTgYbb7Vw==
-Date:   Sat, 1 Dec 2018 10:52:10 +0000
-Message-ID: <1543661502-18573-2-git-send-email-abel.vesa@nxp.com>
-References: <1543661502-18573-1-git-send-email-abel.vesa@nxp.com>
-In-Reply-To: <1543661502-18573-1-git-send-email-abel.vesa@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM6PR0402CA0017.eurprd04.prod.outlook.com
- (2603:10a6:209::30) To AM6PR0402MB3654.eurprd04.prod.outlook.com
- (2603:10a6:209:19::17)
-x-originating-ip: [95.76.156.53]
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=abel.vesa@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM6PR0402MB3622;6:VpgEpZF6avqVoeeKux5W3sHMbtd1uxiIod8zpVzxoEqVGH9Pnhb/ivgpDwsAfvCMhrHO627W0T8t5zl3lFedYqvagylHCp0c1BbDXJbXu5j8Aho55DKiS2Jl1vcW9xBsEMF0glDxOndylAJjJIfOqwD4OcwUCJK76ryOxQR89CUgiM2ahWpHfqwZyh6FkV+xmlaJreqM9VcNF6XKRTqoUuNnhDQwoAaW990sDtVeTbanAfc3//3go+Ht2bzvQ4V0oRsA6U7oi4a8N6OqHu2LiAUXoiQDY/r+TpARanXDrEKbxL8KmF+Qd4x1AEDYJ7sTggziiW0gdip/ts3E3JE/QDIpFLJWiyXCgwPOyu5WsnCwFin/JMF4ixZlt/VAmhNFc325ZytW5KhYTkhX+dVaMiR1iXA+A9TVRuhaEm+XQO4SqYRPP91HT9HPC6KeAHw8v217hKxSpSjBsN1R4YPkHA==;5:RIRQJFCA1dCgarUwUXYQwigttWEk+lX3psBIbhRj2P5Gt81f9/pHD1LVfpViRkFD6tPXD49nT+2aEMs78xASBVatNBYHPeRUgVX1AFzsATnRqL2WeZOPeUQIqB61byk+rXVwD3wUT5hSMfcFg1ZxVH8MDvhFedCxW3IIQ7m9/AQ=;7:ufzxpe7XXRmnnyVkNQpJQktAhFLyzi99lg/roWp11I5yqSXEkVQG3Iw1or1xJTbLKu6wiiQHELgTQq9BW2WCOHfDGYmLKvrIrk9NVLrxGZr5qTZdm2YBJmJ2+3yWjccV/h9Cu+QAY+AzMnnHxO7vfw==
-x-ms-office365-filtering-correlation-id: 973d9bc8-acbc-4279-9ffb-08d6577b0b45
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:AM6PR0402MB3622;
-x-ms-traffictypediagnostic: AM6PR0402MB3622:
-x-microsoft-antispam-prvs: <AM6PR0402MB3622065BF9B19768B1D9A008F6AC0@AM6PR0402MB3622.eurprd04.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231454)(999002)(944501410)(52105112)(93006095)(93001095)(10201501046)(3002001)(6055026)(148016)(149066)(150057)(6041310)(20161123560045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:AM6PR0402MB3622;BCL:0;PCL:0;RULEID:;SRVR:AM6PR0402MB3622;
-x-forefront-prvs: 087396016C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(39860400002)(136003)(396003)(346002)(376002)(189003)(199004)(305945005)(76176011)(53936002)(316002)(52116002)(99286004)(54906003)(3846002)(6116002)(86362001)(6512007)(106356001)(110136005)(81156014)(81166006)(8676002)(2906002)(14454004)(476003)(11346002)(2616005)(446003)(105586002)(256004)(8936002)(478600001)(4744004)(66066001)(71200400001)(44832011)(486006)(97736004)(6486002)(6436002)(26005)(186003)(102836004)(7416002)(5660300001)(71190400001)(4326008)(36756003)(68736007)(7736002)(386003)(6506007)(25786009);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR0402MB3622;H:AM6PR0402MB3654.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: bDislpLH+zMK7vwGmLj1PjhXY5BDevwt+zLtQ3pEGvU2vdwpTOGbbLt6NOUrn92jxu+V6YUCG39wByHAuK55TXRjANSGH0CTGYVoNF/QlsM/zs/jfsQcBetrFnIpKr508LZHdMiFd3SdpISJgBWwFAGVIzhpMhDKOMLthqxdpT5w6CwiV6nlurmmS9b6TTvbLUaSEo3Q1/Y9XxLyhUC2IaA3mM1mmff7XwAVJrMQWtwzLaCpNw3oz1GOvviK7Lv9QK1/FoJfGW5fp3DaIrUwEvZtcgjQUJgku3TbRlGfaXWvJywTmkoL2Wc+Kr4Apfm8yO/5jAPoTyYpaEzR40P13RqyWEGVnlt2Ykbom0AM2qA=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S1725776AbeLBMZg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 2 Dec 2018 07:25:36 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:33633 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725821AbeLBMZg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 2 Dec 2018 07:25:36 -0500
+Received: by mail-wm1-f66.google.com with SMTP id r24so4927586wmh.0
+        for <linux-clk@vger.kernel.org>; Sun, 02 Dec 2018 04:25:31 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=z/rcIo0VlNcTpCi1nNOj3vKciFxUK8im07qbOJ3nXHU=;
+        b=IlwZaB3HTK+9tjxRSDf3t/I7sYF9YiLEXPIQVTDUfWIdl4gvkcH84oDXClAlMUDnt7
+         KrDxyefvYt9NIIxk++EeZL/D2Dr7EaWZpNexq4MO5lAG6bPEuncooEAEp3O6vMY2nlnS
+         VuKDt2GXkqDsR3cP83cX8NR8c5AZkqsj5kk7SOPT7tchl7glc7zZInEyKh2T9pEX94fQ
+         nIPxjBO8V9UyR/MAqerr6rfRHZoyjHCTPVF/gAA9kK4uX9mpas72trNlzqy8IGayssjr
+         5Ifr4ymIxotclK5jzVmEQm3MBfRem+fO7GlTCWUwqOj0IMwvX1dmHlgwh5TKUevYa3GE
+         AAvg==
+X-Gm-Message-State: AA+aEWZ2oTVGeMBfBzvDd+L568V/SdzaPQgRIl479aeyr8XKeyGybcPd
+        4J3p7pnMldx8hrSzGExf6hO3EQ==
+X-Google-Smtp-Source: AFSGD/UpJdUYlOLypz1bInuRmjTDj6gtuoVCD6vhqQNAkt91eBtp1WwDmF5zLPwgLex2IGCymB5dfg==
+X-Received: by 2002:a1c:a485:: with SMTP id n127mr1484505wme.15.1543753531176;
+        Sun, 02 Dec 2018 04:25:31 -0800 (PST)
+Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id l2sm11886162wma.33.2018.12.02.04.25.29
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 02 Dec 2018 04:25:30 -0800 (PST)
+Subject: Re: Regression found (Stop-marking-clocks-as-CLK_IS_CRITICAL)
+To:     Mogens Jensen <mogens-jensen@protonmail.com>
+Cc:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Dean Wallace <duffydack73@gmail.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Stable <stable@vger.kernel.org>,
+        Johannes Stezenbach <js@sig21.net>,
+        Carlo Caione <carlo@endlessm.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20181025232517.ywnw54qibemosjws@picard>
+ <20181030143836.feo7zcxiestylxoo@picard>
+ <2d429c87-24c5-4075-683e-b0d12c3eb1c2@linux.intel.com>
+ <d00df762-e4fc-06c5-701e-d5100bfd0e35@redhat.com>
+ <e48696f0-aa3e-e20e-d038-9d8dda9cbfce@redhat.com>
+ <BaxBOBmUCld7THAnRIDXUpKq8uQ2oJ49EaNlq0mZ11gFjA5JjhbfhVouLZGc1q74PrQC6uGfddKklIP059D_DtQwBqK-sn9rd4xEPhW9E6s=@protonmail.com>
+ <d53738e1-4ba5-640e-7ef7-1705ab205061@redhat.com>
+ <kAuINEBUUnlS5_uJafGtvryMEJVkDO4pb_yLfClwMcTS1h3sB1gYPcXBvg9X3RINfp5Uch7kLXuhTRX_JtouTYxoS6xNr77_b46e-mugl3k=@protonmail.com>
+ <b8849ae1-5a38-e7a1-da14-dc7f9d164825@redhat.com>
+ <3iO9ehQbZm_haTV0IuZ0qhsVHR0QLUbTgRJT8ZenGuRsnz2_uBvO93f0bHVYnsApibUT16JsJ0dgphLhUBd-u0t-lDBNsbvvlKWTgq8XOlw=@protonmail.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <3e12e051-b874-187d-d4f5-e146f59c659b@redhat.com>
+Date:   Sun, 2 Dec 2018 13:25:29 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 973d9bc8-acbc-4279-9ffb-08d6577b0b45
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Dec 2018 10:52:10.7772
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR0402MB3622
+In-Reply-To: <3iO9ehQbZm_haTV0IuZ0qhsVHR0QLUbTgRJT8ZenGuRsnz2_uBvO93f0bHVYnsApibUT16JsJ0dgphLhUBd-u0t-lDBNsbvvlKWTgq8XOlw=@protonmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Lucas Stach <l.stach@pengutronix.de>
+Hi,
 
-This adds the binding for the i.MX8MQ Clock Controller Module.
+On 01-11-18 07:55, Mogens Jensen wrote:
+> ‐‐‐‐‐‐‐ Original Message ‐‐‐‐‐‐‐
+> On Wednesday, October 31, 2018 9:29 AM, Hans de Goede <hdegoede@redhat.com> wrote:
+> 
+>> Hi,
+>>
+>> On 31-10-18 07:02, Mogens Jensen wrote:
+>>
+>>> ‐‐‐‐‐‐‐ Original Message ‐‐‐‐‐‐‐
+>>> On Tuesday, October 30, 2018 7:10 PM, Hans de Goede hdegoede@redhat.com wrote:
+>>>
+>>>> Hi,
+>>>> On 30-10-18 19:56, Mogens Jensen wrote:
+>>>>
+>>>>> ‐‐‐‐‐‐‐ Original Message ‐‐‐‐‐‐‐
+>>>>> On Tuesday, October 30, 2018 4:04 PM, Hans de Goede hdegoede@redhat.com wrote:
+>>>>>
+>>>>>> Hi,
+>>>>>> On 30-10-18 16:46, Hans de Goede wrote:
+>>>>>>
+>>>>>>> Hi,
+>>>>>>> On 30-10-18 16:04, Pierre-Louis Bossart wrote:
+>>>>>>>
+>>>>>>>> In addition I am not aware of any baytrail device using plt_clk_0, so moving a common machine driver such a cht_bsw_max98090_ti to use plt_clk0 only would break other devices (e.g. Rambi/Orco). Asking for both clocks to be on might work though,
+>>>>>>>
+>>>>>>> Ok, so we need to have a DMI based quirk for the Swanky and maybe also
+>>>>>>> the clapper to use plt_clk_0 there. Asking for 2 clks if we only need
+>>>>>>> one does not seem like a good plan.
+>>>>>>
+>>>>>> Dean, Mogens,
+>>>>>> To write a proper patch for this I'm going to need DMI strings
+>>>>>> from your devices.
+>>>>>> Can you please run (as normal user):
+>>>>>> grep . /sys/class/dmi/id/* 2> /dev/null
+>>>>>> And reply with the output of this command?
+>>>>>> I have attached the output from a coreboot seabios based clapper.
+>>>>
+>>>> Thank you.
+>>>>
+>>>>> Should I still test 0001-ASoC-intel-cht_bsw_max98090_ti-Use-pmc_plt_clk_0-ins.patch with SND_SOC_INTEL_CHT_BSW_MAX98090_TI_MACH and asoundrc from Dean? There seems to have been some development in the case since that request was made.
+>>>>
+>>>> Yes please test that, I expect that to also fix things for the
+>>>> Clapper, but I need to have that confirmed before submitting a
+>>>> patch upstream adding a quirk for the Clapper to use pmc_plt_clk_0
+>>>> instead of pmc_plt_clk_3.
+>>>> Regards,
+>>>> Hans
+>>>
+>>> Unfortunately I only have access to longterm kernel 4.14 for building/running on this system, and 0001-ASoC-intel-cht_bsw_max98090_ti-Use-pmc_plt_clk_0-ins.patch does not patch against 4.14.78. Can a test patch for 4.14 be created?
+>>
+>> Can you run (as root):
+>>
+>> for i in /sys/kernel/debug/clk/pmc_plt_clk_?; do echo -n "$i: "; cat $i/clk_flags; echo; done
+>>
+>> When running a kernel with working audio?
+>>
+>> Then I can confirm that the Clapper is also using pmc_plt_clk_0, so that I can
+>> fix this for the clapper for 4.18+
+>>
+>> I've just checked the 4.14 sources and in 4.14 the SND_SOC_INTEL_CHT_BSW_MAX98090_TI_MACH
+>> driver does not support mclk control yet, so for the 4.14 kernel the only way to
+>> fix this is to revert the 648e921888ad ("clk: x86: Stop marking clocks as CLK_IS_CRITICAL")
+>> commit.
+>>
+>> Regards,
+>>
+>> Hans
+>>
+> Here is the output from the Clapper with 4.14.78 and working sound:
+> 
+> /sys/kernel/debug/clk/pmc_plt_clk_0: 0x00000800
+> /sys/kernel/debug/clk/pmc_plt_clk_1: 0x00000000
+> /sys/kernel/debug/clk/pmc_plt_clk_2: 0x00000000
+> /sys/kernel/debug/clk/pmc_plt_clk_3: 0x00000000
+> /sys/kernel/debug/clk/pmc_plt_clk_4: 0x00000000
+> /sys/kernel/debug/clk/pmc_plt_clk_5: 0x00000000
 
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- .../devicetree/bindings/clock/imx8mq-clock.txt     |  20 ++
- include/dt-bindings/clock/imx8mq-clock.h           | 395 +++++++++++++++++=
-++++
- 2 files changed, 415 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/imx8mq-clock.tx=
-t
- create mode 100644 include/dt-bindings/clock/imx8mq-clock.h
+Ok, so your Clapper model indeed is also using clk 0 and not clk 3 as
+expected. I've just submitted a patch upstream adding a quirk for this.
 
-diff --git a/Documentation/devicetree/bindings/clock/imx8mq-clock.txt b/Doc=
-umentation/devicetree/bindings/clock/imx8mq-clock.txt
-new file mode 100644
-index 0000000..52de826
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/imx8mq-clock.txt
-@@ -0,0 +1,20 @@
-+* Clock bindings for NXP i.MX8M Quad
-+
-+Required properties:
-+- compatible: Should be "fsl,imx8mq-ccm"
-+- reg: Address and length of the register set
-+- #clock-cells: Should be <1>
-+- clocks: list of clock specifiers, must contain an entry for each require=
-d
-+          entry in clock-names
-+- clock-names: should include the following entries:
-+    - "ckil"
-+    - "osc_25m"
-+    - "osc_27m"
-+    - "clk_ext1"
-+    - "clk_ext2"
-+    - "clk_ext3"
-+    - "clk_ext4"
-+
-+The clock consumer should specify the desired clock by having the clock
-+ID in its "clocks" phandle cell.  See include/dt-bindings/clock/imx8mq-clo=
-ck.h
-+for the full list of i.MX8M Quad clock IDs.
-diff --git a/include/dt-bindings/clock/imx8mq-clock.h b/include/dt-bindings=
-/clock/imx8mq-clock.h
-new file mode 100644
-index 0000000..b53be41
---- /dev/null
-+++ b/include/dt-bindings/clock/imx8mq-clock.h
-@@ -0,0 +1,395 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright 2016 Freescale Semiconductor, Inc.
-+ * Copyright 2017 NXP
-+ */
-+
-+#ifndef __DT_BINDINGS_CLOCK_IMX8MQ_H
-+#define __DT_BINDINGS_CLOCK_IMX8MQ_H
-+
-+#define IMX8MQ_CLK_DUMMY		0
-+#define IMX8MQ_CLK_32K			1
-+#define IMX8MQ_CLK_25M			2
-+#define IMX8MQ_CLK_27M			3
-+#define IMX8MQ_CLK_EXT1			4
-+#define IMX8MQ_CLK_EXT2			5
-+#define IMX8MQ_CLK_EXT3			6
-+#define IMX8MQ_CLK_EXT4			7
-+
-+/* ANAMIX PLL clocks */
-+/* FRAC PLLs */
-+/* ARM PLL */
-+#define IMX8MQ_ARM_PLL_REF_SEL		8
-+#define IMX8MQ_ARM_PLL_REF_DIV		9
-+#define IMX8MQ_ARM_PLL			10
-+#define IMX8MQ_ARM_PLL_BYPASS		11
-+#define IMX8MQ_ARM_PLL_OUT		12
-+
-+/* GPU PLL */
-+#define IMX8MQ_GPU_PLL_REF_SEL		13
-+#define IMX8MQ_GPU_PLL_REF_DIV		14
-+#define IMX8MQ_GPU_PLL			15
-+#define IMX8MQ_GPU_PLL_BYPASS		16
-+#define IMX8MQ_GPU_PLL_OUT		17
-+
-+/* VPU PLL */
-+#define IMX8MQ_VPU_PLL_REF_SEL		18
-+#define IMX8MQ_VPU_PLL_REF_DIV		19
-+#define IMX8MQ_VPU_PLL			20
-+#define IMX8MQ_VPU_PLL_BYPASS		21
-+#define IMX8MQ_VPU_PLL_OUT		22
-+
-+/* AUDIO PLL1 */
-+#define IMX8MQ_AUDIO_PLL1_REF_SEL	23
-+#define IMX8MQ_AUDIO_PLL1_REF_DIV	24
-+#define IMX8MQ_AUDIO_PLL1		25
-+#define IMX8MQ_AUDIO_PLL1_BYPASS	26
-+#define IMX8MQ_AUDIO_PLL1_OUT		27
-+
-+/* AUDIO PLL2 */
-+#define IMX8MQ_AUDIO_PLL2_REF_SEL	28
-+#define IMX8MQ_AUDIO_PLL2_REF_DIV	29
-+#define IMX8MQ_AUDIO_PLL2		30
-+#define IMX8MQ_AUDIO_PLL2_BYPASS	31
-+#define IMX8MQ_AUDIO_PLL2_OUT		32
-+
-+/* VIDEO PLL1 */
-+#define IMX8MQ_VIDEO_PLL1_REF_SEL	33
-+#define IMX8MQ_VIDEO_PLL1_REF_DIV	34
-+#define IMX8MQ_VIDEO_PLL1		35
-+#define IMX8MQ_VIDEO_PLL1_BYPASS	36
-+#define IMX8MQ_VIDEO_PLL1_OUT		37
-+
-+/* SYS1 PLL */
-+#define IMX8MQ_SYS1_PLL1_REF_SEL	38
-+#define IMX8MQ_SYS1_PLL1_REF_DIV	39
-+#define IMX8MQ_SYS1_PLL1		40
-+#define IMX8MQ_SYS1_PLL1_OUT		41
-+#define IMX8MQ_SYS1_PLL1_OUT_DIV	42
-+#define IMX8MQ_SYS1_PLL2		43
-+#define IMX8MQ_SYS1_PLL2_DIV		44
-+#define IMX8MQ_SYS1_PLL2_OUT		45
-+
-+/* SYS2 PLL */
-+#define IMX8MQ_SYS2_PLL1_REF_SEL	46
-+#define IMX8MQ_SYS2_PLL1_REF_DIV	47
-+#define IMX8MQ_SYS2_PLL1		48
-+#define IMX8MQ_SYS2_PLL1_OUT		49
-+#define IMX8MQ_SYS2_PLL1_OUT_DIV	50
-+#define IMX8MQ_SYS2_PLL2		51
-+#define IMX8MQ_SYS2_PLL2_DIV		52
-+#define IMX8MQ_SYS2_PLL2_OUT		53
-+
-+/* SYS3 PLL */
-+#define IMX8MQ_SYS3_PLL1_REF_SEL	54
-+#define IMX8MQ_SYS3_PLL1_REF_DIV	55
-+#define IMX8MQ_SYS3_PLL1		56
-+#define IMX8MQ_SYS3_PLL1_OUT		57
-+#define IMX8MQ_SYS3_PLL1_OUT_DIV	58
-+#define IMX8MQ_SYS3_PLL2		59
-+#define IMX8MQ_SYS3_PLL2_DIV		60
-+#define IMX8MQ_SYS3_PLL2_OUT		61
-+
-+/* DRAM PLL */
-+#define IMX8MQ_DRAM_PLL1_REF_SEL	62
-+#define IMX8MQ_DRAM_PLL1_REF_DIV	63
-+#define IMX8MQ_DRAM_PLL1		64
-+#define IMX8MQ_DRAM_PLL1_OUT		65
-+#define IMX8MQ_DRAM_PLL1_OUT_DIV	66
-+#define IMX8MQ_DRAM_PLL2		67
-+#define IMX8MQ_DRAM_PLL2_DIV		68
-+#define IMX8MQ_DRAM_PLL2_OUT		69
-+
-+/* SYS PLL DIV */
-+#define IMX8MQ_SYS1_PLL_40M		70
-+#define IMX8MQ_SYS1_PLL_80M		71
-+#define IMX8MQ_SYS1_PLL_100M		72
-+#define IMX8MQ_SYS1_PLL_133M		73
-+#define IMX8MQ_SYS1_PLL_160M		74
-+#define IMX8MQ_SYS1_PLL_200M		75
-+#define IMX8MQ_SYS1_PLL_266M		76
-+#define IMX8MQ_SYS1_PLL_400M		77
-+#define IMX8MQ_SYS1_PLL_800M		78
-+
-+#define IMX8MQ_SYS2_PLL_50M		79
-+#define IMX8MQ_SYS2_PLL_100M		80
-+#define IMX8MQ_SYS2_PLL_125M		81
-+#define IMX8MQ_SYS2_PLL_166M		82
-+#define IMX8MQ_SYS2_PLL_200M		83
-+#define IMX8MQ_SYS2_PLL_250M		84
-+#define IMX8MQ_SYS2_PLL_333M		85
-+#define IMX8MQ_SYS2_PLL_500M		86
-+#define IMX8MQ_SYS2_PLL_1000M		87
-+
-+/* CCM ROOT clocks */
-+/* A53 */
-+#define IMX8MQ_CLK_A53_SRC		88
-+#define IMX8MQ_CLK_A53_CG		89
-+#define IMX8MQ_CLK_A53_DIV		90
-+/* M4 */
-+#define IMX8MQ_CLK_M4_SRC		91
-+#define IMX8MQ_CLK_M4_CG		92
-+#define IMX8MQ_CLK_M4_DIV		93
-+/* VPU */
-+#define IMX8MQ_CLK_VPU_SRC		94
-+#define IMX8MQ_CLK_VPU_CG		95
-+#define IMX8MQ_CLK_VPU_DIV		96
-+/* GPU CORE */
-+#define IMX8MQ_CLK_GPU_CORE_SRC		97
-+#define IMX8MQ_CLK_GPU_CORE_CG		98
-+#define IMX8MQ_CLK_GPU_CORE_DIV		99
-+/* GPU SHADER */
-+#define IMX8MQ_CLK_GPU_SHADER_SRC	100
-+#define IMX8MQ_CLK_GPU_SHADER_CG	101
-+#define IMX8MQ_CLK_GPU_SHADER_DIV	102
-+
-+/* BUS TYPE */
-+/* MAIN AXI */
-+#define IMX8MQ_CLK_MAIN_AXI		103
-+/* ENET AXI */
-+#define IMX8MQ_CLK_ENET_AXI		104
-+/* NAND_USDHC_BUS */
-+#define IMX8MQ_CLK_NAND_USDHC_BUS	105
-+/* VPU BUS */
-+#define IMX8MQ_CLK_VPU_BUS		106
-+/* DISP_AXI */
-+#define IMX8MQ_CLK_DISP_AXI		107
-+/* DISP APB */
-+#define IMX8MQ_CLK_DISP_APB		108
-+/* DISP RTRM */
-+#define IMX8MQ_CLK_DISP_RTRM		109
-+/* USB_BUS */
-+#define IMX8MQ_CLK_USB_BUS		110
-+/* GPU_AXI */
-+#define IMX8MQ_CLK_GPU_AXI		111
-+/* GPU_AHB */
-+#define IMX8MQ_CLK_GPU_AHB		112
-+/* NOC */
-+#define IMX8MQ_CLK_NOC			113
-+/* NOC_APB */
-+#define IMX8MQ_CLK_NOC_APB		115
-+
-+/* AHB */
-+#define IMX8MQ_CLK_AHB			116
-+/* AUDIO AHB */
-+#define IMX8MQ_CLK_AUDIO_AHB		117
-+
-+/* DRAM_ALT */
-+#define IMX8MQ_CLK_DRAM_ALT		118
-+/* DRAM APB */
-+#define IMX8MQ_CLK_DRAM_APB		119
-+/* VPU_G1 */
-+#define IMX8MQ_CLK_VPU_G1		120
-+/* VPU_G2 */
-+#define IMX8MQ_CLK_VPU_G2		121
-+/* DISP_DTRC */
-+#define IMX8MQ_CLK_DISP_DTRC		122
-+/* DISP_DC8000 */
-+#define IMX8MQ_CLK_DISP_DC8000		123
-+/* PCIE_CTRL */
-+#define IMX8MQ_CLK_PCIE1_CTRL		124
-+/* PCIE_PHY */
-+#define IMX8MQ_CLK_PCIE1_PHY		125
-+/* PCIE_AUX */
-+#define IMX8MQ_CLK_PCIE1_AUX		126
-+/* DC_PIXEL */
-+#define IMX8MQ_CLK_DC_PIXEL		127
-+/* LCDIF_PIXEL */
-+#define IMX8MQ_CLK_LCDIF_PIXEL		128
-+/* SAI1~6 */
-+#define IMX8MQ_CLK_SAI1			129
-+
-+#define IMX8MQ_CLK_SAI2			130
-+
-+#define IMX8MQ_CLK_SAI3			131
-+
-+#define IMX8MQ_CLK_SAI4			132
-+
-+#define IMX8MQ_CLK_SAI5			133
-+
-+#define IMX8MQ_CLK_SAI6			134
-+/* SPDIF1 */
-+#define IMX8MQ_CLK_SPDIF1		135
-+/* SPDIF2 */
-+#define IMX8MQ_CLK_SPDIF2		136
-+/* ENET_REF */
-+#define IMX8MQ_CLK_ENET_REF		137
-+/* ENET_TIMER */
-+#define IMX8MQ_CLK_ENET_TIMER		138
-+/* ENET_PHY */
-+#define IMX8MQ_CLK_ENET_PHY_REF		139
-+/* NAND */
-+#define IMX8MQ_CLK_NAND			140
-+/* QSPI */
-+#define IMX8MQ_CLK_QSPI			141
-+/* USDHC1 */
-+#define IMX8MQ_CLK_USDHC1		142
-+/* USDHC2 */
-+#define IMX8MQ_CLK_USDHC2		143
-+/* I2C1 */
-+#define IMX8MQ_CLK_I2C1			144
-+/* I2C2 */
-+#define IMX8MQ_CLK_I2C2			145
-+/* I2C3 */
-+#define IMX8MQ_CLK_I2C3			146
-+/* I2C4 */
-+#define IMX8MQ_CLK_I2C4			147
-+/* UART1 */
-+#define IMX8MQ_CLK_UART1		148
-+/* UART2 */
-+#define IMX8MQ_CLK_UART2		149
-+/* UART3 */
-+#define IMX8MQ_CLK_UART3		150
-+/* UART4 */
-+#define IMX8MQ_CLK_UART4		151
-+/* USB_CORE_REF */
-+#define IMX8MQ_CLK_USB_CORE_REF		152
-+/* USB_PHY_REF */
-+#define IMX8MQ_CLK_USB_PHY_REF		163
-+/* ECSPI1 */
-+#define IMX8MQ_CLK_ECSPI1		164
-+/* ECSPI2 */
-+#define IMX8MQ_CLK_ECSPI2		165
-+/* PWM1 */
-+#define IMX8MQ_CLK_PWM1			166
-+/* PWM2 */
-+#define IMX8MQ_CLK_PWM2			167
-+/* PWM3 */
-+#define IMX8MQ_CLK_PWM3			168
-+/* PWM4 */
-+#define IMX8MQ_CLK_PWM4			169
-+/* GPT1 */
-+#define IMX8MQ_CLK_GPT1			170
-+/* WDOG */
-+#define IMX8MQ_CLK_WDOG			171
-+/* WRCLK */
-+#define IMX8MQ_CLK_WRCLK		172
-+/* DSI_CORE */
-+#define IMX8MQ_CLK_DSI_CORE		173
-+/* DSI_PHY */
-+#define IMX8MQ_CLK_DSI_PHY_REF		174
-+/* DSI_DBI */
-+#define IMX8MQ_CLK_DSI_DBI		175
-+/*DSI_ESC */
-+#define IMX8MQ_CLK_DSI_ESC		176
-+/* CSI1_CORE */
-+#define IMX8MQ_CLK_CSI1_CORE		177
-+/* CSI1_PHY */
-+#define IMX8MQ_CLK_CSI1_PHY_REF		178
-+/* CSI_ESC */
-+#define IMX8MQ_CLK_CSI1_ESC		179
-+/* CSI2_CORE */
-+#define IMX8MQ_CLK_CSI2_CORE		170
-+/* CSI2_PHY */
-+#define IMX8MQ_CLK_CSI2_PHY_REF		181
-+/* CSI2_ESC */
-+#define IMX8MQ_CLK_CSI2_ESC		182
-+/* PCIE2_CTRL */
-+#define IMX8MQ_CLK_PCIE2_CTRL		183
-+/* PCIE2_PHY */
-+#define IMX8MQ_CLK_PCIE2_PHY		184
-+/* PCIE2_AUX */
-+#define IMX8MQ_CLK_PCIE2_AUX		185
-+/* ECSPI3 */
-+#define IMX8MQ_CLK_ECSPI3		186
-+
-+/* CCGR clocks */
-+#define IMX8MQ_CLK_A53_ROOT			187
-+#define IMX8MQ_CLK_DRAM_ROOT			188
-+#define IMX8MQ_CLK_ECSPI1_ROOT			189
-+#define IMX8MQ_CLK_ECSPI2_ROOT			180
-+#define IMX8MQ_CLK_ECSPI3_ROOT			181
-+#define IMX8MQ_CLK_ENET1_ROOT			182
-+#define IMX8MQ_CLK_GPT1_ROOT			193
-+#define IMX8MQ_CLK_I2C1_ROOT			194
-+#define IMX8MQ_CLK_I2C2_ROOT			195
-+#define IMX8MQ_CLK_I2C3_ROOT			196
-+#define IMX8MQ_CLK_I2C4_ROOT			197
-+#define IMX8MQ_CLK_M4_ROOT			198
-+#define IMX8MQ_CLK_PCIE1_ROOT			199
-+#define IMX8MQ_CLK_PCIE2_ROOT			200
-+#define IMX8MQ_CLK_PWM1_ROOT			201
-+#define IMX8MQ_CLK_PWM2_ROOT			202
-+#define IMX8MQ_CLK_PWM3_ROOT			203
-+#define IMX8MQ_CLK_PWM4_ROOT			204
-+#define IMX8MQ_CLK_QSPI_ROOT			205
-+#define IMX8MQ_CLK_SAI1_ROOT			206
-+#define IMX8MQ_CLK_SAI2_ROOT			207
-+#define IMX8MQ_CLK_SAI3_ROOT			208
-+#define IMX8MQ_CLK_SAI4_ROOT			209
-+#define IMX8MQ_CLK_SAI5_ROOT			210
-+#define IMX8MQ_CLK_SAI6_ROOT			212
-+#define IMX8MQ_CLK_UART1_ROOT			213
-+#define IMX8MQ_CLK_UART2_ROOT			214
-+#define IMX8MQ_CLK_UART3_ROOT			215
-+#define IMX8MQ_CLK_UART4_ROOT			216
-+#define IMX8MQ_CLK_USB1_CTRL_ROOT		217
-+#define IMX8MQ_CLK_USB2_CTRL_ROOT		218
-+#define IMX8MQ_CLK_USB1_PHY_ROOT		219
-+#define IMX8MQ_CLK_USB2_PHY_ROOT		220
-+#define IMX8MQ_CLK_USDHC1_ROOT			221
-+#define IMX8MQ_CLK_USDHC2_ROOT			222
-+#define IMX8MQ_CLK_WDOG1_ROOT			223
-+#define IMX8MQ_CLK_WDOG2_ROOT			224
-+#define IMX8MQ_CLK_WDOG3_ROOT			225
-+#define IMX8MQ_CLK_GPU_ROOT			226
-+#define IMX8MQ_CLK_HEVC_ROOT			227
-+#define IMX8MQ_CLK_AVC_ROOT			228
-+#define IMX8MQ_CLK_VP9_ROOT			229
-+#define IMX8MQ_CLK_HEVC_INTER_ROOT		230
-+#define IMX8MQ_CLK_DISP_ROOT			231
-+#define IMX8MQ_CLK_HDMI_ROOT			232
-+#define IMX8MQ_CLK_HDMI_PHY_ROOT		233
-+#define IMX8MQ_CLK_VPU_DEC_ROOT			234
-+#define IMX8MQ_CLK_CSI1_ROOT			235
-+#define IMX8MQ_CLK_CSI2_ROOT			236
-+#define IMX8MQ_CLK_RAWNAND_ROOT			237
-+#define IMX8MQ_CLK_SDMA1_ROOT			238
-+#define IMX8MQ_CLK_SDMA2_ROOT			239
-+#define IMX8MQ_CLK_VPU_G1_ROOT			240
-+#define IMX8MQ_CLK_VPU_G2_ROOT			241
-+
-+/* SCCG PLL GATE */
-+#define IMX8MQ_SYS1_PLL_OUT			232
-+#define IMX8MQ_SYS2_PLL_OUT			243
-+#define IMX8MQ_SYS3_PLL_OUT			244
-+#define IMX8MQ_DRAM_PLL_OUT			245
-+
-+#define IMX8MQ_GPT_3M_CLK			246
-+
-+#define IMX8MQ_CLK_IPG_ROOT			247
-+#define IMX8MQ_CLK_IPG_AUDIO_ROOT		248
-+#define IMX8MQ_CLK_SAI1_IPG			249
-+#define IMX8MQ_CLK_SAI2_IPG			250
-+#define IMX8MQ_CLK_SAI3_IPG			251
-+#define IMX8MQ_CLK_SAI4_IPG			252
-+#define IMX8MQ_CLK_SAI5_IPG			253
-+#define IMX8MQ_CLK_SAI6_IPG			254
-+
-+/* DSI AHB/IPG clocks */
-+/* rxesc clock */
-+#define IMX8MQ_CLK_DSI_AHB			255
-+/* txesc clock */
-+#define IMX8MQ_CLK_DSI_IPG_DIV                  256
-+
-+#define IMX8MQ_CLK_TMU_ROOT			265
-+
-+/* Display root clocks */
-+#define IMX8MQ_CLK_DISP_AXI_ROOT		266
-+#define IMX8MQ_CLK_DISP_APB_ROOT		267
-+#define IMX8MQ_CLK_DISP_RTRM_ROOT		268
-+
-+#define IMX8MQ_CLK_OCOTP_ROOT			269
-+
-+#define IMX8MQ_CLK_DRAM_ALT_ROOT		270
-+#define IMX8MQ_CLK_DRAM_CORE			271
-+
-+#define IMX8MQ_CLK_MU_ROOT			272
-+#define IMX8MQ_VIDEO2_PLL_OUT			273
-+
-+#define IMX8MQ_CLK_CLKO2			274
-+
-+#define IMX8MQ_CLK_NAND_USDHC_BUS_RAWNAND_CLK	275
-+
-+#define IMX8MQ_CLK_END				276
-+#endif /* __DT_BINDINGS_CLOCK_IMX8MQ_H */
---=20
-2.7.4
+As for what the plan is with 4.14, I don't know. I believe that
+reverting the commit causing the issue there is fine.
+
+Regards,
+
+Hans
+
 
