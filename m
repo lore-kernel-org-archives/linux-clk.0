@@ -6,120 +6,95 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07423C04EB9
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Dec 2018 19:20:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4816BC04EB9
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Dec 2018 19:31:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD1982146D
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Dec 2018 19:20:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 06728208A3
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Dec 2018 19:31:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="H5faTbEa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD1982146D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BGpOFkpv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06728208A3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725987AbeLCTUf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 3 Dec 2018 14:20:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43524 "EHLO mail.kernel.org"
+        id S1725891AbeLCTbu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 3 Dec 2018 14:31:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48856 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725920AbeLCTUf (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 3 Dec 2018 14:20:35 -0500
+        id S1725890AbeLCTbu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 3 Dec 2018 14:31:50 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9B5D8208A3;
-        Mon,  3 Dec 2018 19:20:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A6BC32081C;
+        Mon,  3 Dec 2018 19:31:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543864831;
-        bh=H6S6MvFSSvsPpGH6+RWcgg9meLreOiqbH96RVPwsrgw=;
+        s=default; t=1543865503;
+        bh=EpU8ahTAcUeE0VWeJAlpdwbWBlwtxLz63+h9P4QqtRw=;
         h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=H5faTbEaDiuyorLuM7U+i/E6gKaz1LpKEldlqeqqL3PuBk4fHHKpgtCAZF86+zmrO
-         HxZ/HEE6+cVO3F1emfUXw38UoD++Svm/+1DEEfyHXnUGM51q+1RcZ9Tb3IJ+FyN2EG
-         QG91u70kQG2IA63iZOBApiBtRPK8oDsYMzpw502Y=
+        b=BGpOFkpvaybDGugOuPseg/zA7VCP9gSuVHrGZQaEtbKd2UUOG98BgLiiv74c/qd+U
+         WpRtiiAIioC6K74jKqQeLWNUuTegtEfu4Lnq2DU6IGpwv2nH/5Qw8dNozRqOu/TwqZ
+         ejX3DvMhBhbOW7BDgKQsLyE8XOGAmHYGsCW4QOUI=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
+To:     "A.s. Dong" <aisheng.dong@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20181130112052.73d943ec@xps13>
-Cc:     kbuild test robot <lkp@intel.com>, kbuild-all@01.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>
-References: <20181122212212.16039-3-miquel.raynal@bootlin.com>
- <201811231627.H7ojlKLL%fengguang.wu@intel.com>
- <20181123101132.6be3829c@xps13>
- <154356998033.88331.4426431020982838779@swboyd.mtv.corp.google.com>
- <20181130112052.73d943ec@xps13>
-Message-ID: <154386483105.88331.13970025193347328031@swboyd.mtv.corp.google.com>
+In-Reply-To: <1542200198-3017-1-git-send-email-aisheng.dong@nxp.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Anson Huang <anson.huang@nxp.com>,
+        Jacky Bai <ping.bai@nxp.com>, dl-linux-imx <linux-imx@nxp.com>,
+        "A.s. Dong" <aisheng.dong@nxp.com>
+References: <1542200198-3017-1-git-send-email-aisheng.dong@nxp.com>
+Message-ID: <154386550302.88331.785218354920872757@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.7
-Subject: Re: [PATCH 2/2] clk: core: link consumer with clock driver
-Date:   Mon, 03 Dec 2018 11:20:31 -0800
+Subject: Re: [PATCH V6 0/9] clk: add imx7ulp clk support
+Date:   Mon, 03 Dec 2018 11:31:43 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Miquel Raynal (2018-11-30 02:20:52)
-> Hi Stephen,
+Quoting A.s. Dong (2018-11-14 05:01:31)
+> This patch series intends to add imx7ulp clk support.
 > =
 
-> Stephen Boyd <sboyd@kernel.org> wrote on Fri, 30 Nov 2018 01:26:20
-> -0800:
+> i.MX7ULP Clock functions are under joint control of the System
+> Clock Generation (SCG) modules, Peripheral Clock Control (PCC)
+> modules, and Core Mode Controller (CMC)1 blocks
 > =
 
-> > Quoting Miquel Raynal (2018-11-23 01:11:32)
-> > > Would you agree with me adding dummy functions in the #else section
-> > > like:
-> > > =
-
-> > > static inline void __clk_device_link(struct device *consumer, struct =
-clk *clk)
-> > > {
-> > >        return;
-> > > }
-> > > =
-
-> > > static inline void __clk_device_unlink(struct clk *clk)
-> > > {
-> > >        return;
-> > > }
-> > > =
-
-> > > Do you want me to also declare these functions in the #if section
-> > > (with the external keyword) to balance the above declarations?  =
-
-> > =
-
-> > Why can't we do the linking in __clk_get() and __clk_put()?
-> > =
-
+> The clocking scheme provides clear separation between M4 domain
+> and A7 domain. Except for a few clock sources shared between two
+> domains, such as the System Oscillator clock, the Slow IRC (SIRC),
+> and and the Fast IRC clock (FIRCLK), clock sources and clock
+> management are separated and contained within each domain.
 > =
 
-> Because we need the caller's 'struct device' to make the link and
-> this is not available in __clk_get(). I tried to ad it as parameter but
-> I don't think it is possible to retrieve a 'struct device' from the
-> device name. The functions where this is problematic are:
-> * clk.c:__of_clk_get_from_provider()
-> * clkdev.c:clk_get_sys()
+> M4 clock management consists of SCG0, PCC0, PCC1, and CMC0 modules.
+> A7 clock management consists of SCG1, PCC2, PCC3, and CMC1 modules.
 > =
 
-> By the way in my new version I called the helpers:
-> * clk_{link,unlink}_hierarchy()
-> * clk_{link,unlink}_consumer()
-> =
-
-> I will send a new version with these helpers, but if you have anything
-> in mind to help me achieve the above request, I will welcome the idea.
+> Note: this series only adds A7 clock domain support as M4 clock
+> domain will be handled by M4 seperately.
 > =
 
 
-We can do the linking in __clk_get() and __clk_put() if we poke into the
-struct clk -> struct clk_core and bury the struct device into each
-clk_core structure.
+I got:
+
+drivers/clk/imx/clk-pllv4.c:152:15: warning: symbol 'imx_clk_pllv4' was not=
+ declared. Should it be static?
+drivers/clk/imx/clk-pfdv2.c:166:15: warning: symbol 'imx_clk_pfdv2' was not=
+ declared. Should it be static?
+drivers/clk/imx/clk-divider-gate.c:174:15: warning: symbol 'imx_clk_divider=
+_gate' was not declared. Should it be static?
+drivers/clk/imx/clk-composite-7ulp.c:22:15: warning: symbol 'imx7ulp_clk_co=
+mposite' was not declared. Should it be static?
+
+which I can fix easily by throwing in clk.h into each file.
 
