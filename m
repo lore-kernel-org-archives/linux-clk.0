@@ -2,117 +2,102 @@ Return-Path: <SRS0=uslk=OM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C72CDC04EBF
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Dec 2018 12:56:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6E2AC07E85
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Dec 2018 13:19:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C2D220834
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Dec 2018 12:56:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 78571214DB
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Dec 2018 13:19:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="PlVZZo3c"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C2D220834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="vtsq5oFh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78571214DB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726591AbeLCM5N (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 3 Dec 2018 07:57:13 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:37157 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726567AbeLCM5M (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Dec 2018 07:57:12 -0500
-Received: by mail-wr1-f67.google.com with SMTP id j10so12044187wru.4
-        for <linux-clk@vger.kernel.org>; Mon, 03 Dec 2018 04:56:14 -0800 (PST)
+        id S1725830AbeLCNUC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 3 Dec 2018 08:20:02 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:45264 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725855AbeLCNUB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Dec 2018 08:20:01 -0500
+Received: by mail-wr1-f68.google.com with SMTP id v6so12098301wrr.12
+        for <linux-clk@vger.kernel.org>; Mon, 03 Dec 2018 05:19:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=9KBrBoOrO+XfJILgtl4j7qnaWuKkBcCyWQk1f6mH+Ns=;
-        b=PlVZZo3c2gO9uLCfUZVVJpr16CniYdmelENBbOOWAlPNiC+/UN/G4hRbnNrnAedrZS
-         1PImzadWgPPbLyxc/EpgdqP8AlagbZpOyK8c3Huzt8wv3X4BYVgVwMspZ4UQu6tbP3CB
-         jisR0EmVStHYJUr1BfUmWN6FYjDWBLg3qt8Vo=
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=dDYWcGw/WcqQiCks78l9uhvporxrTWQBg5cG5YlzJMs=;
+        b=vtsq5oFhnv3QDDJDm6k9H9hwhp7LnKzGVO/zNsUWhrEkD4wQt1KYCoy+BymPHXiCQZ
+         ODKEAEIQxaiye8SXsKGVTSoVlFAVqAS4HQXsfxo4bmJs6BA8Xe9i6hOfsyvBunLZ/s/5
+         ZNNGIU+oe7acy4ZhT+YWU+PBPGGiOVOnWmorYVNDHGOmnH6Pg2W5cEYCZWp+Stt0//gy
+         Dz/IxHCqkFuN8eTqFbARI9qAZH5fAb2MQZb0MgnQGYnhSiL5eI36e03OWgj5EE031rm4
+         wblbVKQaGhh3kcUFXCSIA2et63ilR50K4EDe/HfO+0h2WSxpENnyr0Q0bG2X6X3I0cgV
+         Qz6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=9KBrBoOrO+XfJILgtl4j7qnaWuKkBcCyWQk1f6mH+Ns=;
-        b=ovB4s9yGI8EobrEFXHhRIKAvH9JkAutC87/1Y1p3gmO0fJzMAbPOOkRRctDkcyRuRz
-         HxjE+zuxxu0yn4erYFSnvM1/k6NnD2rDKktJLhKgJk9WO8q0U6dZSqLJRaHCzgKMFajH
-         lFrRqXCxOI6FT2UGKu61nfti58zz0uh5Yo2KNGda2ySsFTc/8wTjlqFe46myN0khq96P
-         Nma5FrIevxhDsdlc4rXMm9jEk1dNyuhkmkCsYmKVMNvAzxOOZ/qK++uWPS3TXSeYjTD2
-         t3JZ3l+DjPz8ZWO7ftTKfO6+wC4m3Sg7A6sQ4EOze/xWUBHcqKT6Lou98fMHASFl5z1K
-         QdUA==
-X-Gm-Message-State: AA+aEWbfuSO8ZV/Qe54/bM6sHa0ECHmOv+quf8dhhP9yfrH7970oPhmj
-        oxRFc8/BkOWbsbu4RzP1S2Yl7g==
-X-Google-Smtp-Source: AFSGD/Uq6JtGohyQ33oJfLxSqhdxAMWAtzz5RfNgfzCyq4KUoPhWt7h9nG/xmPBcWDabsL90f8d69g==
-X-Received: by 2002:a05:6000:10d1:: with SMTP id b17mr13881949wrx.306.1543841773676;
-        Mon, 03 Dec 2018 04:56:13 -0800 (PST)
-Received: from dell ([2.31.167.218])
-        by smtp.gmail.com with ESMTPSA id c10sm9814882wrw.49.2018.12.03.04.56.12
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=dDYWcGw/WcqQiCks78l9uhvporxrTWQBg5cG5YlzJMs=;
+        b=Ki9+09PBxIgQrp7oKww+z7YJURSQSmgbo6+HmlJ3egZVp/PV/yUlNcSERq1gSO1Sew
+         bZmS+WRgg1eeu39sgKEBNKpNByVCwFD/0E8MRU42tXcMNLpyQtM4sVoEi18wXTqGQPE5
+         H4qZ3C4dVUuBlBik4qrz9HF510HKi+96O5+D8T2zEqjM6DPRgrTAzM7nU5CvtRtDJQXD
+         SEzFd1JNn90riEUYSMt2BwawpfL+HZZtxkrJSJRF0UF+sIhHAW3TjPPJD8XeP9wnjTgY
+         Cz9AzTlDbT92AYGB7NHlYb5aIpAG+ivAeH73W5BnkFDMPu3YHgHW2nfbYYg9Ven1Ds2n
+         RBzg==
+X-Gm-Message-State: AA+aEWZlEd6Rh4OeVg3noVT5uQ49GITWG6HtgG7DlAERDpnJbcwNDz1O
+        eUhwsz4LbYMqitafEac9Uyb/+w==
+X-Google-Smtp-Source: AFSGD/WMzOvJuYZbJ+eVbN6i3kOLdbpS+y7D8KK91Vq79ZJQ1zydvhB6h67gWMBnKRZjBbrymliHUg==
+X-Received: by 2002:a5d:6a42:: with SMTP id t2mr15162979wrw.50.1543843140373;
+        Mon, 03 Dec 2018 05:19:00 -0800 (PST)
+Received: from boomer.local ([2a01:e34:eeb6:4690:106b:bae3:31ed:7561])
+        by smtp.googlemail.com with ESMTPSA id n19sm6371063wmh.26.2018.12.03.05.18.58
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 03 Dec 2018 04:56:12 -0800 (PST)
-Date:   Mon, 3 Dec 2018 12:56:11 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     mazziesaccount@gmail.com, mturquette@baylibre.com,
-        sboyd@kernel.org, cw00.choi@samsung.com, krzk@kernel.org,
-        b.zolnierkie@samsung.com, linux@armlinux.org.uk,
-        andy.gross@linaro.org, david.brown@linaro.org, pavel@ucw.cz,
-        andrew.smirnov@gmail.com, pombredanne@nexb.com,
-        sjhuang@iluvatar.ai, akshu.agrawal@amd.com, djkurtz@chromium.org,
-        rafael.j.wysocki@intel.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v5 0/9] clk: clkdev: managed clk lookup and provider
- registrations
-Message-ID: <20181203125611.GQ26661@dell>
-References: <cover.1543837442.git.matti.vaittinen@fi.rohmeurope.com>
- <20181203121951.GP26661@dell>
- <20181203123558.GD15388@localhost.localdomain>
+        Mon, 03 Dec 2018 05:18:59 -0800 (PST)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
+        Kevin Hilman <khilman@baylibre.com>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/3] arm64: dts: meson: add clock controllers input clocks
+Date:   Mon,  3 Dec 2018 14:18:47 +0100
+Message-Id: <20181203131850.31388-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181203123558.GD15388@localhost.localdomain>
-User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 03 Dec 2018, Matti Vaittinen wrote:
+This patchset is the first step that needs to be done so the
+amlogic clock controllers properly claim their input clocks
+through DT instead of relying on fixed names.
 
-> 
-> Hi de Ho Lee,
-> 
-> On Mon, Dec 03, 2018 at 12:19:51PM +0000, Lee Jones wrote:
-> > > Series add bd71837/bd71837 PMIC clock support + managed interfaces
-> > 
-> > You've send me a cover letter and no patches.
-> > 
-> I am afraid the patches may be still on their way... I added recipients
-> to git format-patch via command-line so you are probably included also
-> in patch mails :(
+I'll be waiting for this hit mainline before sending the related
+driver changes.
 
-Ah I see.  Yes, I see that they have started to come through.
+Changes since v1: [0]
+- add clock-names for the main clock controller
 
-> > I suggest that I should not be on the addressee list at all for this.
-> 
-> I'm terribly sorry for spamming! I must've done some mistake with the
-> get_maintainer.pl as I copied the recipients from that output. I may
-> have accidentally included some old patch to maintainer query.
+[0]: https://lkml.kernel.org/r/20181129164524.18670-1-jbrunet@baylibre.com
 
-No problem.  If you could remove me from future mails though, that
-would be appreciated.  The torrent it fierce enough without receiving
-correspondence that is not relevant to me.  Thanks.
+Jerome Brunet (3):
+  dt-bindings: clk: meson: add ao controller clock inputs
+  dt-bindings: clk: meson: add main controller clock input
+  arm64: dts: meson: add clock controller clock inputs
+
+ .../devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt     | 8 +++++++-
+ .../devicetree/bindings/clock/amlogic,gxbb-clkc.txt       | 5 +++++
+ arch/arm64/boot/dts/amlogic/meson-axg.dtsi                | 4 ++++
+ arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi               | 4 ++++
+ arch/arm64/boot/dts/amlogic/meson-gxl.dtsi                | 4 ++++
+ 5 files changed, 24 insertions(+), 1 deletion(-)
 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.19.1
+
