@@ -2,98 +2,89 @@ Return-Path: <SRS0=uslk=OM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 250A2C04EB9
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Dec 2018 22:45:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78713C04EB9
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Dec 2018 23:06:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC8EB2145D
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Dec 2018 22:45:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="N5duhuq8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC8EB2145D
+	by mail.kernel.org (Postfix) with ESMTP id 4B9362087F
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Dec 2018 23:06:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B9362087F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725909AbeLCWpf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 3 Dec 2018 17:45:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53056 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725858AbeLCWpf (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 3 Dec 2018 17:45:35 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 62BD820864;
-        Mon,  3 Dec 2018 22:45:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543877134;
-        bh=Tv5xntpOFZLjgLVDbFFAyXgVlC5/NfqIbqNPTujsV6s=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=N5duhuq8ug/rks25GN9PUAoJdOlqrnzTa+pX1SIe/aqRJS0NZTFEnc4EA7MHs8lph
-         FrYw7DT3kBUrXltShu+tqZbY0NSRwu0Em5TGTFkzSVpkAdl94GMvciZLU13NuyHxp5
-         GGPymSABAW/MEs37wqnu/pX9HIviK+vUgWinA9aQ=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1542284312-55418-3-git-send-email-jianxin.pan@amlogic.com>
-Cc:     Yixun Lan <yixun.lan@amlogic.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
+        id S1725910AbeLCXGr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 3 Dec 2018 18:06:47 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:41817 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725880AbeLCXGr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Dec 2018 18:06:47 -0500
+Received: by mail-oi1-f196.google.com with SMTP id j21so12564126oii.8;
+        Mon, 03 Dec 2018 15:06:47 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=fykzt9+oasdrpA731GUHJsxFDYJLbtBr6RBAlsGsPoY=;
+        b=ksymMWWP314R2AynJEtJQbh7APJAQj3cQ0iMAklAOZmk9mTza+GTyYEMKyeB9bA8b0
+         CIKYmiyGQn37xhIPNisZUyFafT6k5T+AnXDW45ES4vFvwcH9I+p4Tkly9qcV5mckVFH7
+         MqaGBnGmU16NRWheCfiqk0iBuS56sbMv4D4CIAM8NNddkQnAtkvyUMQd6/bLzahfd6b3
+         AgD9JYQsE+5osK9sbdz0BsUdVOklb6DujeZ23yZ0gZ9+FbsDIft05hP7xUAE0O7ElBxW
+         muHfZ6H/ImNpqBZXIryZOviUnP7FFYwrjw/K67eTTlp2UgJeLR/wWIyWaFCphdose+PJ
+         GEgQ==
+X-Gm-Message-State: AA+aEWZfVYWbomuQKsyqju+DNUurD5Wky2yrb88BsbiJI+2wK7z+dIYT
+        t2X7y7DqHtHSk4IbmecqtA==
+X-Google-Smtp-Source: AFSGD/Wa8PXjS5kg5/8uFA3PzaV0srzzLgfPcv/Y9iSFoT7SOgtkrEbBZAr+IyyudAvT3L+T2hr7Lg==
+X-Received: by 2002:aca:3644:: with SMTP id d65mr11462277oia.336.1543878406800;
+        Mon, 03 Dec 2018 15:06:46 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id u18sm5614304otk.1.2018.12.03.15.06.45
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 03 Dec 2018 15:06:45 -0800 (PST)
+Date:   Mon, 3 Dec 2018 17:06:45 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Jian Hu <jian.hu@amlogic.com>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
         Kevin Hilman <khilman@baylibre.com>,
         Carlo Caione <carlo@caione.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
         Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Liang Yang <liang.yang@amlogic.com>,
-        Jian Hu <jian.hu@amlogic.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Yixun Lan <yixun.lan@amlogic.com>,
         Qiufang Dai <qiufang.dai@amlogic.com>,
-        Hanjie Lin <hanjie.lin@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>, linux-clk@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <1542284312-55418-1-git-send-email-jianxin.pan@amlogic.com>
- <1542284312-55418-3-git-send-email-jianxin.pan@amlogic.com>
-Message-ID: <154387713374.88331.16436869339024592009@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v7 2/4] clk: meson: add DT documentation for emmc clock controller
-Date:   Mon, 03 Dec 2018 14:45:33 -0800
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v5 1/2] dt-bindings: clk: meson-g12a: Add G12A EE Clock
+ Bindings
+Message-ID: <20181203230645.GA14522@bogus>
+References: <1543498917-98605-1-git-send-email-jian.hu@amlogic.com>
+ <1543498917-98605-2-git-send-email-jian.hu@amlogic.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1543498917-98605-2-git-send-email-jian.hu@amlogic.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jianxin Pan (2018-11-15 04:18:30)
-> diff --git a/include/dt-bindings/clock/amlogic,mmc-clkc.h b/include/dt-bi=
-ndings/clock/amlogic,mmc-clkc.h
-> new file mode 100644
-> index 0000000..162b949
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/amlogic,mmc-clkc.h
-> @@ -0,0 +1,17 @@
-> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
-> +/*
-> + * Meson MMC sub clock tree IDs
-> + *
-> + * Copyright (c) 2018 Amlogic, Inc. All rights reserved.
-> + * Author: Yixun Lan <yixun.lan@amlogic.com>
-> + */
-> +
-> +#ifndef __MMC_CLKC_H
-> +#define __MMC_CLKC_H
-> +
-> +#define CLKID_MMC_DIV                          1
+On Thu, Nov 29, 2018 at 09:41:56PM +0800, Jian Hu wrote:
+> Add new clock controller compatible and dt-bingdings headers
+> for the Everything-Else domain of the g12a SoC
+> 
+> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
+> ---
+>  .../bindings/clock/amlogic,gxbb-clkc.txt           |  1 +
+>  include/dt-bindings/clock/g12a-clkc.h              | 93 ++++++++++++++++++++++
+>  2 files changed, 94 insertions(+)
+>  create mode 100644 include/dt-bindings/clock/g12a-clkc.h
 
-Why does the define numbering start with 1 instead of 0?
+Please add acks/reviewed-bys when posting new versions.
 
-> +#define CLKID_MMC_PHASE_CORE                   2
-> +#define CLKID_MMC_PHASE_TX                     3
-> +#define CLKID_MMC_PHASE_RX                     4
-> +
+Rob
