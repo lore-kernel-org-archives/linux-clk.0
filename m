@@ -2,129 +2,125 @@ Return-Path: <SRS0=uslk=OM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02EACC04EB9
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Dec 2018 15:35:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8B4DC04EB9
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Dec 2018 15:39:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B090A20850
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Dec 2018 15:35:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="RukWt6JX";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="lwaSzwnb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B090A20850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 7C73420850
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Dec 2018 15:39:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C73420850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726612AbeLCPfT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 3 Dec 2018 10:35:19 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:59220 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726560AbeLCPfT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Dec 2018 10:35:19 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 980D260246; Mon,  3 Dec 2018 15:35:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1543851314;
-        bh=6XJQSVpsjPMZ+YVQkAGC8l4Vwe9V+Eqo7n4zjnXMDic=;
-        h=From:To:Cc:Subject:Date:From;
-        b=RukWt6JXIjVsUid84bgtaHSZ2zOidXlRHElRF/Y+eprulQ1wPIMSdkDon7Xx86+Ec
-         1C/VxnFfqk4dy2shSqkZaDwOSqEvCikj09Fpg8SMhXM1mOia3nnnkjIURcQjwAA3CY
-         bsXVmvZtEoVGjBhJkOaFaz8JEJjLfun55SQg4iGM=
-Received: from jhugo-perf-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: jhugo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 266F3601C4;
-        Mon,  3 Dec 2018 15:35:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1543851313;
-        bh=6XJQSVpsjPMZ+YVQkAGC8l4Vwe9V+Eqo7n4zjnXMDic=;
-        h=From:To:Cc:Subject:Date:From;
-        b=lwaSzwnbC57FfinUiMbZxmo7HLKyzXIJsdR85hhedqxfKrNmOFyb3WJ3rO1FStT32
-         jUmEmWuM7zK2g0QFOEQfdoxBhj/0u+4I2t3BpvoLsg38WXC7fko3TsZWCH/BZ81pWY
-         cYumZZf/R7y/6jY8GsrbyhECoFlyE6N6aB417Ybk=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 266F3601C4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
-From:   Jeffrey Hugo <jhugo@codeaurora.org>
-To:     andy.gross@linaro.org, david.brown@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org
-Cc:     bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jeffrey Hugo <jhugo@codeaurora.org>
-Subject: [PATCH] clk: qcom: Fix MSM8998 resets
-Date:   Mon,  3 Dec 2018 08:34:58 -0700
-Message-Id: <1543851298-32320-1-git-send-email-jhugo@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        id S1726699AbeLCPjW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 3 Dec 2018 10:39:22 -0500
+Received: from muru.com ([72.249.23.125]:56134 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726560AbeLCPjW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 3 Dec 2018 10:39:22 -0500
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id E041880BF;
+        Mon,  3 Dec 2018 15:39:19 +0000 (UTC)
+Date:   Mon, 3 Dec 2018 07:39:10 -0800
+From:   Tony Lindgren <tony@atomide.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Tero Kristo <t-kristo@ti.com>,
+        Andreas Kemnade <andreas@kemnade.info>, bcousson@baylibre.com,
+        letux-kernel@openphoenux.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        mturquette@baylibre.com, paul@pwsan.com
+Subject: Re: [PATCH v2 2/3] clk: ti: check clock type before doing autoidle
+ ops
+Message-ID: <20181203153910.GA6707@atomide.com>
+References: <20181110203115.13335-1-andreas@kemnade.info>
+ <20181110203115.13335-3-andreas@kemnade.info>
+ <154353750560.88331.11814738542436183126@swboyd.mtv.corp.google.com>
+ <20181130071534.0a6cd455@kemnade.info>
+ <154356242517.88331.8496814814468751012@swboyd.mtv.corp.google.com>
+ <9eb7b090-4803-d389-4112-3bf058385b2e@ti.com>
+ <154356463284.88331.13323307899580657085@swboyd.mtv.corp.google.com>
+ <eca27a46-2ca3-1a02-c0c8-c1c00b3b2f46@ti.com>
+ <20181130153729.GG53235@atomide.com>
+ <154362191595.88331.15503578806026771935@swboyd.mtv.corp.google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <154362191595.88331.15503578806026771935@swboyd.mtv.corp.google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The offsets for the defined BCR reset registers does not match the hardware
-documentation.  Update the values to match the hardware documentation.
+* Stephen Boyd <sboyd@kernel.org> [181130 23:52]:
+> Quoting Tony Lindgren (2018-11-30 07:37:29)
+> > Hi,
+> > 
+> > * Tero Kristo <t-kristo@ti.com> [181130 09:21]:
+> > > On 30/11/2018 09:57, Stephen Boyd wrote:
+> > > > No that is not preferred. Can the omap2_clk_deny_idle() function be
+> > > > integrated closer into the clk framework in some way that allows it to
+> > > > be part of the clk_ops structure? And then have that take a clk_hw
+> > > > structure instead of a struct clk? I haven't looked at this in any
+> > > > detail whatsoever so I may be way off right now.
+> > > 
+> > > It could be added under the main clk_ops struct, however this would
+> > > introduce two new func pointers to it which are not used by anything else
+> > > but OMAP. Are you aware of any other platforms requiring similar feature?
+> > 
+> > From consumer usage point of view, I'm still wondering about
+> > the relationship of clk_deny_idle() and clkdm_deny_idle().
+> > 
+> > It seems that we need to allow reset control drivers call
+> > clk_deny_idle() for the duration of reset. And it seems the
+> > clk_deny_idle() should propagate to also up to the related
+> > clock domain driver to do clkdm_deny_idle().
+> > 
+> > So maybe clk_deny_idle() is could just be something like:
+> > 
+> > dev = clk_get_device(clk);
+> > ...
+> > error = pm_runtime_get(dev);
+> > ...
+> > pm_runtime_put(dev);
+> > ...
+> > 
+> > And that way it would just propagate to the parent clock
+> > domain driver and the clock framework does not need to know
+> > about clockdomains. A clockdomain could be just a genpd
+> > domain.
+> > 
+> > Or do you guys have better ideas?
+> > 
+> 
+> Wouldn't the device link in clk framework patches do this for you if we
+> had the RUNTIME_PM flag passed in. If this is about keeping the clock
+> controller active when a consumer device is using it then I think it may
+> work.
 
-Fixes: b5f5f525c547 (clk: qcom: Add MSM8998 Global Clock Control (GCC) driver)
-Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
----
- drivers/clk/qcom/gcc-msm8998.c | 38 +++++++++++++++++++-------------------
- 1 file changed, 19 insertions(+), 19 deletions(-)
+The consumer device stays active just fine with PM runtime
+calls. So yes, the problem is keeping a clock controller forced
+active for the period of consumer device reset. Other than
+that typically autoidle can be just kept enabled.
 
-diff --git a/drivers/clk/qcom/gcc-msm8998.c b/drivers/clk/qcom/gcc-msm8998.c
-index 9f0ae40..01cc555 100644
---- a/drivers/clk/qcom/gcc-msm8998.c
-+++ b/drivers/clk/qcom/gcc-msm8998.c
-@@ -2742,25 +2742,25 @@ enum {
- };
- 
- static const struct qcom_reset_map gcc_msm8998_resets[] = {
--	[GCC_BLSP1_QUP1_BCR] = { 0x102400 },
--	[GCC_BLSP1_QUP2_BCR] = { 0x110592 },
--	[GCC_BLSP1_QUP3_BCR] = { 0x118784 },
--	[GCC_BLSP1_QUP4_BCR] = { 0x126976 },
--	[GCC_BLSP1_QUP5_BCR] = { 0x135168 },
--	[GCC_BLSP1_QUP6_BCR] = { 0x143360 },
--	[GCC_BLSP2_QUP1_BCR] = { 0x155648 },
--	[GCC_BLSP2_QUP2_BCR] = { 0x163840 },
--	[GCC_BLSP2_QUP3_BCR] = { 0x172032 },
--	[GCC_BLSP2_QUP4_BCR] = { 0x180224 },
--	[GCC_BLSP2_QUP5_BCR] = { 0x188416 },
--	[GCC_BLSP2_QUP6_BCR] = { 0x196608 },
--	[GCC_PCIE_0_BCR] = { 0x438272 },
--	[GCC_PDM_BCR] = { 0x208896 },
--	[GCC_SDCC2_BCR] = { 0x81920 },
--	[GCC_SDCC4_BCR] = { 0x90112 },
--	[GCC_TSIF_BCR] = { 0x221184 },
--	[GCC_UFS_BCR] = { 0x479232 },
--	[GCC_USB_30_BCR] = { 0x61440 },
-+	[GCC_BLSP1_QUP1_BCR] = { 0x19000 },
-+	[GCC_BLSP1_QUP2_BCR] = { 0x1b000 },
-+	[GCC_BLSP1_QUP3_BCR] = { 0x1d000 },
-+	[GCC_BLSP1_QUP4_BCR] = { 0x1f000 },
-+	[GCC_BLSP1_QUP5_BCR] = { 0x21000 },
-+	[GCC_BLSP1_QUP6_BCR] = { 0x23000 },
-+	[GCC_BLSP2_QUP1_BCR] = { 0x26000 },
-+	[GCC_BLSP2_QUP2_BCR] = { 0x28000 },
-+	[GCC_BLSP2_QUP3_BCR] = { 0x2a000 },
-+	[GCC_BLSP2_QUP4_BCR] = { 0x2c000 },
-+	[GCC_BLSP2_QUP5_BCR] = { 0x2e000 },
-+	[GCC_BLSP2_QUP6_BCR] = { 0x30000 },
-+	[GCC_PCIE_0_BCR] = { 0x6c01c },
-+	[GCC_PDM_BCR] = { 0x33000 },
-+	[GCC_SDCC2_BCR] = { 0x14000 },
-+	[GCC_SDCC4_BCR] = { 0x16000 },
-+	[GCC_TSIF_BCR] = { 0x36000 },
-+	[GCC_UFS_BCR] = { 0x75000 },
-+	[GCC_USB_30_BCR] = { 0xf000 },
- };
- 
- static const struct regmap_config gcc_msm8998_regmap_config = {
--- 
-Qualcomm Datacenter Technologies as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+Below is a clarified suggested example usage if we wanted to
+use PM runtime on a clock controller device from a consumer
+device reset driver:
 
+error = pm_runtime_get_dev()
+...
+cdev = clk_get_device(clk);
+...
+error = pm_runtime_get(cdev);
+...
+/* Do the consumer device reset here */
+...
+pm_runtime_put(cdev);
+pm_runtime_put(dev);
+
+Regards,
+
+Tony
