@@ -2,92 +2,116 @@ Return-Path: <SRS0=uslk=OM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 194EEC04EB9
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Dec 2018 09:42:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 950B4C04EB9
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Dec 2018 10:29:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3C2020666
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Dec 2018 09:42:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5DB2C20851
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Dec 2018 10:29:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="E9hm9DQK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3C2020666
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="JFLYTlis"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DB2C20851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726063AbeLCJnE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 3 Dec 2018 04:43:04 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:37416 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725928AbeLCJnE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Dec 2018 04:43:04 -0500
-Received: by mail-wm1-f65.google.com with SMTP id g67so4891762wmd.2
-        for <linux-clk@vger.kernel.org>; Mon, 03 Dec 2018 01:42:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=ZZvre/H46WpeUXFq0et7nHwNI50jgdXDNyFmlD+6BSQ=;
-        b=E9hm9DQKx48tCmOd36diBiaMaW0azrsRN3JZYKkoXScI7xO7td1QnW0sDRZdVktSwF
-         94DTMFFdKqzY/d7GJSeIXis13a87YQ2EtrULTUuMVWlTFd9dOF6rM12eWSKkJ+Xm7voF
-         G4wTM8jdRUw8nLAuGCZD1kyyB6R0W/jpiOk0ArxTW4npj7I5xae8+CFb4jMLPsmnOMwL
-         xABjDPpK7GkArSxTEAhrrbWAwkIJLUsq3eQyPnjZUbm4MQVL/gUeBfrGIXl1NSgdni2s
-         UkBZgvANZAaBCjobyTMQj+hb/5uReHsL6BtBoDq77M4mGFuZNoCkdc1c94P6A9GvKc8X
-         BLvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=ZZvre/H46WpeUXFq0et7nHwNI50jgdXDNyFmlD+6BSQ=;
-        b=BzGM5yyaDfdZnz2kNm4qgbHiq40+vssny38ykAJpsg3ePW1Pke7jlTItV9tAl04OpJ
-         IYuN6lPjZfGgD269itiPggv1mDs2SHzUj4U0/WZt+RQGE34w6M9YFocMzfP0rFuXjmc5
-         Ag8kYRDhV4mM6izW8h2fqkhWScsEorCld8/rfs6YK7Qqs/rPkT4eMLi2q2XnPEHDzh77
-         mfsatFa2Rd2Pn7W945x6SQKXsxI3EWQd9MFcq59LmD2X4kG/fSkLgrFqFIF7m8OyBIxU
-         GnFajkXoiT+lT1McMeJGpGWWXgGZSJL5QWaiFavsHyAF/pQB/SAnov/Mwc5uxDW59cQU
-         PvGw==
-X-Gm-Message-State: AA+aEWYPHBvttxRbJl0E4Cd5gRSQN/if6vbyRHxpg4dq+lXIgVs8pDgT
-        wOkQlt9tfHeknE1dC2V9eLO7XQ==
-X-Google-Smtp-Source: AFSGD/XnTMiELjUeNxWjC6swx2wr5MBqPiwu0fqjZNBs0w9jtRK92Ex2AgowB4oVGbrXkbQAmd1RWQ==
-X-Received: by 2002:a1c:e513:: with SMTP id c19mr8004574wmh.101.1543830166448;
-        Mon, 03 Dec 2018 01:42:46 -0800 (PST)
-Received: from boomer.baylibre.com ([2a01:e34:eeb6:4690:106b:bae3:31ed:7561])
-        by smtp.gmail.com with ESMTPSA id h12sm20248605wma.48.2018.12.03.01.42.45
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 03 Dec 2018 01:42:45 -0800 (PST)
-Message-ID: <d52679a197a46fa19fb44c446c52fd286ad639f2.camel@baylibre.com>
-Subject: Re: [PATCH 0/3] - clk: meson8b: add the (read-only) video clock
- trees
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-amlogic@lists.infradead.org, narmstrong@baylibre.com
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, sboyd@kernel.org,
-        mturquette@baylibre.com
-Date:   Mon, 03 Dec 2018 10:42:44 +0100
-In-Reply-To: <20181202214220.7715-1-martin.blumenstingl@googlemail.com>
-References: <20181202214220.7715-1-martin.blumenstingl@googlemail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.2 (3.30.2-2.fc29) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1726052AbeLCK3Z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 3 Dec 2018 05:29:25 -0500
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:12055 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725983AbeLCK3Y (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Dec 2018 05:29:24 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c0505690000>; Mon, 03 Dec 2018 02:28:57 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 03 Dec 2018 02:28:57 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 03 Dec 2018 02:28:57 -0800
+Received: from HQMAIL102.nvidia.com (172.18.146.10) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 3 Dec
+ 2018 10:28:57 +0000
+Received: from HQMAIL102.nvidia.com (172.18.146.10) by HQMAIL102.nvidia.com
+ (172.18.146.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 3 Dec
+ 2018 10:28:56 +0000
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL102.nvidia.com
+ (172.18.146.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
+ Transport; Mon, 3 Dec 2018 10:28:56 +0000
+Received: from moonraker.nvidia.com (Not Verified[10.26.11.194]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5c0505660000>; Mon, 03 Dec 2018 02:28:56 -0800
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Stephen Boyd" <sboyd@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        "Jonathan Hunter" <jonathanh@nvidia.com>
+CC:     <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [RESEND PATCH 2/2] clk: tegra30: Use Tegra CPU powergate helper function
+Date:   Mon, 3 Dec 2018 10:28:41 +0000
+Message-ID: <1543832921-11661-2-git-send-email-jonathanh@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1543832921-11661-1-git-send-email-jonathanh@nvidia.com>
+References: <1543832921-11661-1-git-send-email-jonathanh@nvidia.com>
+X-NVConfidentiality: public
+MIME-Version: 1.0
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1543832937; bh=Nf8TdHPJznc3Bv0GPyY2wAgrS6nktrQG6QPsnThAx/0=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
+         Content-Type;
+        b=JFLYTlisa/TJ7bX8fEa7gJG6rFHrG7cHCTTbvPoU7tYjVMc5vdn6L7sTGfvtA9oyl
+         Wn3KoAb/tkS0OAVMcLSLrl8/1YXcPGk+Y+ssdBnMYXc06dJ7n8HTUVeeaBrqjX5lKj
+         5eqDw3l0e1oAbnZ34Q61vpTRP3ElVi0PxB6kuKPBY2WeZHgIzJobpAQy3QHvSV62H7
+         q6t9wEJAv6U4dcuXlFbpKGKcQLRgzWGYG1hr8qUm8+8jqJvh5Lhel/UNwkEom26UBY
+         f5ybp1bQfrA/dlXez9pD7s4dhVmu3vu/OfW7dwUeeDRFkBDXMR5ZA6hrDPl/OtBP9d
+         2n5OcBwG89qzQ==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, 2018-12-02 at 22:42 +0100, Martin Blumenstingl wrote:
-> Martin Blumenstingl (3):
->   - clk: meson: meson8b: fix the offset of -- vid_pll_dco's N value
->   - clk: meson: meson8b: add the fractional divider for -- vid_pll_dco
->   - clk: meson: meson8b: add the read-only video clock trees
-> 
->  drivers/clk/meson/meson8b.c | 746 +++++++++++++++++++++++++++++++++++-
->  drivers/clk/meson/meson8b.h |  54 ++-
->  2 files changed, 789 insertions(+), 11 deletions(-)
+Rather than using the tegra_powergate_is_powered() function for
+determining if a CPU is powered, use the tegra_pmc_cpu_is_powered()
+instead which was created to get the CPU power status. Internally
+tegra_pmc_cpu_is_powered() calls tegra_powergate_is_powered() and so
+is equivalent.
 
-Looks good to me
+The Tegra30 clock driver is the only public user of
+tegra_powergate_is_powered() and so by updating the Tegra30 clock
+driver to use tegra_pmc_cpu_is_powered(), we can then make
+tegra_powergate_is_powered() a non-public function.
 
-Acked-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
+---
+Resending with Thierry's ACK and CC'ing clock maintainers.
+
+drivers/clk/tegra/clk-tegra30.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+index e0aaecd98fbf..fa8d573ac626 100644
+--- a/drivers/clk/tegra/clk-tegra30.c
++++ b/drivers/clk/tegra/clk-tegra30.c
+@@ -1148,9 +1148,9 @@ static bool tegra30_cpu_rail_off_ready(void)
+ 
+ 	cpu_rst_status = readl(clk_base +
+ 				TEGRA30_CLK_RST_CONTROLLER_CPU_CMPLX_STATUS);
+-	cpu_pwr_status = tegra_powergate_is_powered(TEGRA_POWERGATE_CPU1) ||
+-			 tegra_powergate_is_powered(TEGRA_POWERGATE_CPU2) ||
+-			 tegra_powergate_is_powered(TEGRA_POWERGATE_CPU3);
++	cpu_pwr_status = tegra_pmc_cpu_is_powered(1) ||
++			 tegra_pmc_cpu_is_powered(2) ||
++			 tegra_pmc_cpu_is_powered(3);
+ 
+ 	if (((cpu_rst_status & 0xE) != 0xE) || cpu_pwr_status)
+ 		return false;
+-- 
+2.7.4
 
