@@ -2,124 +2,99 @@ Return-Path: <SRS0=uslk=OM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 541DBC04EBF
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Dec 2018 12:20:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 579B6C04EB9
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Dec 2018 12:20:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A81120848
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Dec 2018 12:20:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ea8Zh87J"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A81120848
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 28A7720848
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Dec 2018 12:20:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28A7720848
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726451AbeLCMUo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 3 Dec 2018 07:20:44 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:39805 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726511AbeLCMUo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Dec 2018 07:20:44 -0500
-Received: by mail-wm1-f65.google.com with SMTP id f81so3031790wmd.4
-        for <linux-clk@vger.kernel.org>; Mon, 03 Dec 2018 04:19:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=OzA+3GaaikIL6wv3q3MdMGfegRkRGor8XZDTMohQWx4=;
-        b=ea8Zh87Jym6k2fqcstUYxCuciNIPimhX8g4B0MElxgMAq3stT+z+LCki2UbBChwBRE
-         jhbJU9TlZ24RkzlDgN/hMVGbXNrD1gPH/b4SEfG0u7m7j3saX+YsU6XsDp6059agy9fg
-         l7s7eBx85YiNUHP2mOuJRkA1KwFAQ3A0eU928=
+        id S1726208AbeLCMV2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 3 Dec 2018 07:21:28 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:43622 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726163AbeLCMV2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Dec 2018 07:21:28 -0500
+Received: by mail-lf1-f66.google.com with SMTP id u18so8941357lff.10;
+        Mon, 03 Dec 2018 04:20:37 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=OzA+3GaaikIL6wv3q3MdMGfegRkRGor8XZDTMohQWx4=;
-        b=XOhu3xKbTDdUwkWECmKw4EpniYrruOabH1hdVCX/CJ3cYnVL33OnpPMaGKkbMV+Ofx
-         CAZ3a2UTx+l20am6s8Zk6LnCFGJBkJdprQ8fl6AFEDjWQhVbtYOrSVWfwUEk2Ia7gSsm
-         dNHBYehg4ewJzC9dILUYRtOEDq6foxvewvWY0r14I1kP5AnohgR0zYNBJkhtd1vqSWNp
-         O4LruAoC89poXw346UaV+F36tN3f45O8TysGblkGcDMRyMoy84J6f0/OmowcSfmjtBiw
-         O6UaoKns7SPjgE1ls3SFayKfzpwNULjxCv3WfZHq0GK+BIGJdW+E61m4jvTgH4sgALQV
-         S/cA==
-X-Gm-Message-State: AA+aEWa/OzLP/CHq14bsL8iVwK2mRYrzxVqF5AjXbGKZGmsvwv9a+C+a
-        CM247JaZtmeAjngmM5vNUBLKEg==
-X-Google-Smtp-Source: AFSGD/Ubj58mbWiG4F1lV87M8767muODU3LyeDsnIxQw+fiLFQL9Bm6raOAL8E1O+SGccTwNxz9Bug==
-X-Received: by 2002:a1c:c7cd:: with SMTP id x196mr8015596wmf.12.1543839593878;
-        Mon, 03 Dec 2018 04:19:53 -0800 (PST)
-Received: from dell ([2.31.167.218])
-        by smtp.gmail.com with ESMTPSA id 129sm6454794wmd.18.2018.12.03.04.19.52
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=4fWmEQHDymzQumdk/aytbyrz8Sfb7MJtwS0fcAz0+8Q=;
+        b=ZPqKjIihVeguJsHqyfIR4tdwpxSM0EkTuWsOFwj3tfV2bG2PnulLx8lbMSqS3ru58h
+         uatqIL4XaK6cllQ6LhnpL5XBhqMcf8p/jR/RmCWdP/tManqW/ydC5NJ96dG1EEJgUcg0
+         iMlUgSq6ADMibikvvB7lSxObfNyw+OFQkRyKOAkIB8MtuhsvQb5woLaIhiEXZLGMsj+j
+         78pbtDG97OA5dta4F3bAnarcZShjFWX7kNl5O3qStMYhviw7+nCJAY3JQwMof2fyf7hq
+         EUabBBWieELsrlVA3YrmFpKy7783V1f/MHpAH1/67HZlmROhpqnFDi6UUSNnMnaIr8df
+         8fAw==
+X-Gm-Message-State: AA+aEWY+3g9JhZcSvFaMzo3+Jb6tuHml3rWBxiFbbrrBNacDe7oGSbv6
+        7pbiw2z+/6XyDjR2OXAQ7vM=
+X-Google-Smtp-Source: AFSGD/WUn+TU8jWSv6p2bow14ZEV4fNB+5lLXo3ld62urHnH5WLQdIkJ6KONpT1VZAHYGoeTi5pofw==
+X-Received: by 2002:ac2:4215:: with SMTP id y21mr6230009lfh.6.1543839637235;
+        Mon, 03 Dec 2018 04:20:37 -0800 (PST)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id z15-v6sm2688556ljb.9.2018.12.03.04.20.35
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 03 Dec 2018 04:19:53 -0800 (PST)
-Date:   Mon, 3 Dec 2018 12:19:51 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     mazziesaccount@gmail.com, mturquette@baylibre.com,
-        sboyd@kernel.org, cw00.choi@samsung.com, krzk@kernel.org,
-        b.zolnierkie@samsung.com, linux@armlinux.org.uk,
+        Mon, 03 Dec 2018 04:20:36 -0800 (PST)
+Date:   Mon, 3 Dec 2018 14:20:23 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     mazziesaccount@gmail.com, matti.vaittinen@fi.rohmeurope.com
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, cw00.choi@samsung.com,
+        krzk@kernel.org, b.zolnierkie@samsung.com, linux@armlinux.org.uk,
         andy.gross@linaro.org, david.brown@linaro.org, pavel@ucw.cz,
-        andrew.smirnov@gmail.com, pombredanne@nexb.com,
-        sjhuang@iluvatar.ai, akshu.agrawal@amd.com, djkurtz@chromium.org,
-        rafael.j.wysocki@intel.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v5 0/9] clk: clkdev: managed clk lookup and provider
- registrations
-Message-ID: <20181203121951.GP26661@dell>
+        andrew.smirnov@gmail.com, lee.jones@linaro.org,
+        pombredanne@nexb.com, sjhuang@iluvatar.ai, akshu.agrawal@amd.com,
+        djkurtz@chromium.org, rafael.j.wysocki@intel.com,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v5 4/9] clk: clk-st: avoid clkdev lookup leak at remove
+Message-ID: <397a0da87031430a4c50958f99f0b1e35cb01e85.1543837442.git.matti.vaittinen@fi.rohmeurope.com>
 References: <cover.1543837442.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
 In-Reply-To: <cover.1543837442.git.matti.vaittinen@fi.rohmeurope.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-> Series add bd71837/bd71837 PMIC clock support + managed interfaces
+Use devm based clkdev lookup registration to avoid leaking lookup
+structures.
 
-[...]
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+---
+ drivers/clk/x86/clk-st.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-> Matti Vaittinen (9):
->   clkdev: add managed clkdev lookup registration
->   clk: of_clk - add managed provider registrations
->   clk: clk-max77686: Clean clkdev lookup leak and use devm
->   clk: clk-st: avoid clkdev lookup leak at remove
->   clk: clk-hi655x: Free of_provider at remove
->   clk: rk808: use managed version of of_provider registration
->   clk: clk-twl6040: Free of_provider at remove
->   clk: apcs-msm8916: simplify probe cleanup by using devm
->   clk: bd718x7: Initial support for ROHM bd71837/bd71847 PMIC clock
-> 
->  Documentation/driver-model/devres.txt |   2 +
->  drivers/clk/Kconfig                   |   7 ++
->  drivers/clk/Makefile                  |   1 +
->  drivers/clk/clk-bd718x7.c             | 131 ++++++++++++++++++++++++++++++++++
->  drivers/clk/clk-hi655x.c              |   4 +-
->  drivers/clk/clk-max77686.c            |  29 ++------
->  drivers/clk/clk-rk808.c               |  15 +---
->  drivers/clk/clk-twl6040.c             |   5 +-
->  drivers/clk/clk.c                     |  65 ++++++++++++++---
->  drivers/clk/clkdev.c                  | 122 ++++++++++++++++++++++++-------
->  drivers/clk/qcom/apcs-msm8916.c       |   5 +-
->  drivers/clk/x86/clk-st.c              |   3 +-
->  include/linux/clk-provider.h          |  11 +++
->  include/linux/clkdev.h                |   4 ++
->  14 files changed, 325 insertions(+), 79 deletions(-)
->  create mode 100644 drivers/clk/clk-bd718x7.c
+diff --git a/drivers/clk/x86/clk-st.c b/drivers/clk/x86/clk-st.c
+index 3a0996f2d556..25d4b97aff9b 100644
+--- a/drivers/clk/x86/clk-st.c
++++ b/drivers/clk/x86/clk-st.c
+@@ -52,7 +52,8 @@ static int st_clk_probe(struct platform_device *pdev)
+ 		0, st_data->base + MISCCLKCNTL1, OSCCLKENB,
+ 		CLK_GATE_SET_TO_DISABLE, NULL);
+ 
+-	clk_hw_register_clkdev(hws[ST_CLK_GATE], "oscout1", NULL);
++	devm_clk_hw_register_clkdev(&pdev->dev, hws[ST_CLK_GATE], "oscout1",
++				    NULL);
+ 
+ 	return 0;
+ }
+-- 
+2.14.3
 
-You've send me a cover letter and no patches.
-
-I suggest that I should not be on the addressee list at all for this.
 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Matti Vaittinen
+ROHM Semiconductors
+
+~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
