@@ -2,158 +2,114 @@ Return-Path: <SRS0=uslk=OM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40830C04EB9
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Dec 2018 18:55:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4207C04EB9
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Dec 2018 19:08:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 062F3214C1
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Dec 2018 18:55:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 73C1D20672
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Dec 2018 19:08:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sr2JLzEY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 062F3214C1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rZdFlTXW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73C1D20672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726080AbeLCSzi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 3 Dec 2018 13:55:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33496 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725987AbeLCSzi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 3 Dec 2018 13:55:38 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 795B4208A3;
-        Mon,  3 Dec 2018 18:55:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543863335;
-        bh=e1HS1dfwn1OAMmZAaiTUcAcuQiSS0bRtNxOfrQ40UsI=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=sr2JLzEY3d+bOJPIsrZ/nBZpxB/NuclcRIWotToXOUzm1iyWehhLMV5qSifie62SC
-         nELJnIF7OD8wE8kRKcsrHQJiRl5117wjMK6AWBYr2qg/C/tavxGq6twkpC8laGzpcr
-         FqhPtnPhw6nqZ4r2es5Tf3wu4PfsE7AvaTdiO7c0=
-Content-Type: text/plain; charset="utf-8"
+        id S1726044AbeLCTIb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 3 Dec 2018 14:08:31 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:33182 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726019AbeLCTIb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Dec 2018 14:08:31 -0500
+Received: by mail-wr1-f67.google.com with SMTP id c14so13385803wrr.0;
+        Mon, 03 Dec 2018 11:08:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=CytzOKiCHdHUl8JgtAdUEWHOwsuMVACHkaAxlaVQGck=;
+        b=rZdFlTXWTFSWkxAETb14J3bHUJDuirxg6NkZw/84g5xh1kEtL5yvlhLwceLd9GbVYc
+         zWNl7TGsNy7YuBmeOFRw4saQ0oDgcTI2fVW+CzD6WERZ+e5M2nDZgwhnIxB1UVnm/5mk
+         mZh4LLXo74uBj097eE9JJ3veeUjzhdMq7fkuSy9wjAp9n5iB/uU2AZZ3E+mL2qofS1Qs
+         pArXLmQuOkuCvtqCIkF+6rKr/1EcKxrO5xv2B7bXP6O07zy8NfzdXWDrHB6ZJE4rIRib
+         HCsNr4LReAQgfZm1AEz3Iq4wR532CVyeAHiZUquVFUWxeKtj1O2di1AUxZ4UWxMHSfsp
+         48hQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=CytzOKiCHdHUl8JgtAdUEWHOwsuMVACHkaAxlaVQGck=;
+        b=JRlj/hpw32OOKxShEkWNWoojuZ2pcHtHApXVdhFS3rhVZUl59qkapDxBx6l/Loj1HC
+         4gywjqGjqgBsHjoJU3pS5Dc1I8gy/UkWpi4j1020OuwdTXwhdOMfqN/SAONNRYfwKpL3
+         nYbt+DJEFsbOuLuKw2zx11F5Tex7pS+lc2jljIcggVYOeQ7j5HvH/f7wgnK9DNd0/x5t
+         mALPZhMFVd5GguwG/O67BkUyCZ64HEBlMC4aK7AJbIWJKR+aIG1Q7QFeryos2sDF71cu
+         U6TizjUR7h/T0GU4eMQOghNfatywh1EkOVUw9RmJEPtJSe1xwn7IYWcGVxJbkRbPrH7y
+         M7tQ==
+X-Gm-Message-State: AA+aEWamm2izfFm+bHfqO4jDtDVI+qdkCh9FaVZALZXsGmj/fwY3W9ea
+        KbOwYXhUQfgJ0lYyzDy3f+k=
+X-Google-Smtp-Source: AFSGD/WjStCFr26vctCzUlqlds53he+VgetjQHiSJ60h7DBFdo/3P65LTVYVr8IQ4lGI36PxuNMHyQ==
+X-Received: by 2002:adf:ee06:: with SMTP id y6mr15767752wrn.261.1543864104522;
+        Mon, 03 Dec 2018 11:08:24 -0800 (PST)
+Received: from localhost ([185.219.177.226])
+        by smtp.gmail.com with ESMTPSA id c14sm3807910wme.13.2018.12.03.11.08.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 03 Dec 2018 11:08:23 -0800 (PST)
+Date:   Mon, 3 Dec 2018 22:08:22 +0300
+From:   Mesih Kilinc <mesihkilinc@gmail.com>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Chen-Yu Tsai <wens@csie.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Rob Herring <robh+dt@kernel.org>,
+        Julian Calaby <julian.calaby@gmail.com>
+Subject: Re: [PATCH v6 13/17] clk: sunxi-ng: add support for suniv F1C100s SoC
+Message-ID: <20181203190822.jt7sieazcapm722w@ThinkPad>
+References: <cover.1543781680.git.mesihkilinc@gmail.com>
+ <b3d266d9f5f0f7504701c3bbec819acde6d19257.1543781680.git.mesihkilinc@gmail.com>
+ <20181203085531.exlmkfs6b4ejv5dr@flea>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Aisheng DONG <aisheng.dong@nxp.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <AM0PR04MB4211E36F9553E16A196C101C80DA0@AM0PR04MB4211.eurprd04.prod.outlook.com>
-Cc:     "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>
-References: <1541862894-8209-1-git-send-email-aisheng.dong@nxp.com>
- <1541862894-8209-7-git-send-email-aisheng.dong@nxp.com>
- <154223811948.88331.8860718270277533070@swboyd.mtv.corp.google.com>
- <AM0PR04MB4211A7CA91D6188AB81BA6EA80DC0@AM0PR04MB4211.eurprd04.prod.outlook.com>
- <154274014557.88331.17188709471206009766@swboyd.mtv.corp.google.com>
- <AM0PR04MB4211E36F9553E16A196C101C80DA0@AM0PR04MB4211.eurprd04.prod.outlook.com>
-Message-ID: <154386333481.88331.9590400147413133304@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: RE: [PATCH V6 6/6] clk: imx: add imx8qxp lpcg driver
-Date:   Mon, 03 Dec 2018 10:55:34 -0800
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181203085531.exlmkfs6b4ejv5dr@flea>
+User-Agent: NeoMutt/20180716-631-34bcda
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Aisheng DONG (2018-11-20 17:50:47)
-> > -----Original Message-----
-> > From: Stephen Boyd [mailto:sboyd@kernel.org]
-> [...]
-> > > > > +
-> > > > > +       ss_lpcg =3D of_device_get_match_data(dev);
-> > > > > +       if (!ss_lpcg)
-> > > > > +               return -ENODEV;
-> > > > > +
-> > > > > +       res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> > > > > +       base =3D devm_ioremap(dev, res->start, resource_size(res)=
-);
-> > > >
-> > > > Why not devm_ioremap_resource()?
-> > >
-> > > Because LPCGs are distributed in various subsystem memory space which
-> > > may be overlapped with some IP modules. So we can't use
-> > > devm_ioremap_resource which has a request_mem_region() in it.
-> > > It's something like what we've done for drivers/mfd/syscon.c.
-> > =
+On 18/12/03 09:55, Maxime Ripard wrote:
+> On Sun, Dec 02, 2018 at 11:23:47PM +0300, Mesih Kilinc wrote:
+> > diff --git a/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c b/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c
+> > new file mode 100644
+> > index 0000000..ea335a6
+> > --- /dev/null
+> > +++ b/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c
+> > @@ -0,0 +1,541 @@
+> > +/* SPDX-License-Identifier: GPL-2.0
+> 
+> This isn't the proper SPDX format, and this is reported by
+> checkpatch. I've fixed it while applying, but please make sure to run
+> checkpatch.
 
-> > Ok. Any chance that the various subsystems that are combined with the c=
-lk
-> > controller can be split up so that we can use
-> > devm_ioremap_resource() here? =
+Thanks Maxime, I will be more carefull next time. I actually saw that
+warning, but I couldn't find what to do. I have looked to [1] and saw that
+its spelled correctly. Now I think problem is, the licencse identifier
+should be separate comment like:
+// SPDX-...
 
-> =
+Thanks!
 
-> We can achieve that by describing each LPCGS node in devicetree, but that=
- would
-> bloat the Devicetree seriously as we have hundreds of LPCGS.
-> =
+Mesih
 
-> This is similar as what we did for legacy SoCs, e.g MX7D.
-> The difference is that on MX7D LPCGS are continuous.
-> e.g.
-> Table 5-19. CCGR Mapping Table
-> Gating Register LPCG Enable Offset
-> CCM_CCGR4 sim_main 0x4040
-> CCM_CCGR5 sim_display 0x4050
-> ...
-> CCM_CCGR168 iomux 0x4A80
-> CCM_CCGR169 iomux_lpsr 0x4A90
-> CCM_CCGR170 kpp 0x4AA0
-> =
-
-> But on MX8QXP/QM, they're not continuous anymore and distributed in each =
-SS.
-> And we probably want to push our IC designer to re-orgnize them into a co=
-ntinuous
-> memory map again for new chips in the future.
-> =
-
-> So do you think we can start with this way for MX8 as well?
-> Then we won't block MX8QXP booting up too long or probably could improve =
-it
-> Later.
-
-Ok, I don't really understand the memory map of this SoC. I wouldn't
-push the IC designer to reorganize everything. I'd push the designer to
-make clock controller hw blocks, maybe even one per subsystem is OK, and
-then have that build on basic clk types that the clock controller
-drivers could use to implement the clk support.
-
-Either way, this hardware must already exist so I think we're done here.
-I'm OK with whatever works at this point.
-
-> =
-
-> > It may be better to carve up the I/O space of
-> > this SoC into device nodes that map to the hardware IP blocks, and then=
- have
-> > those device drivers generate sub-devices for the various logical subsy=
-stems
-> > that the hardware IP spans. Or it could be a big driver that registers =
-with
-> > multiple subsytems/frameworks from one device driver. This way, the log=
-ical
-> > structure of the linux kernel device driver design doesn't leak into th=
-e DT
-> > description of the SoC.
-> > =
-
-> =
-
-> Yes, we currently already describe them with each subsystems in Devicetre=
-e.
-> https://patchwork.kernel.org/patch/10677311/
-> =
-
-
-Ok.
-
+[1] =
+https://spdx.org/sites/cpstandard/files/pages/files/using_spdx_license_list_short_identifiers.pdf
