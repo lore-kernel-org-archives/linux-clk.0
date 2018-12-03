@@ -2,147 +2,146 @@ Return-Path: <SRS0=uslk=OM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D148BC04EBF
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Dec 2018 15:49:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F12E4C04EBF
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Dec 2018 15:55:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 991F420661
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Dec 2018 15:49:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB26620848
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Dec 2018 15:55:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qQtvVvuq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 991F420661
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gXbvTPaF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB26620848
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726637AbeLCPto (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 3 Dec 2018 10:49:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44532 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726634AbeLCPto (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 3 Dec 2018 10:49:44 -0500
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4DD44214D9;
-        Mon,  3 Dec 2018 15:49:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543852181;
-        bh=pN3h6zRzeTbZdA+F+ILK+NrhH5etsg5R8T3a6yNT9J0=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=qQtvVvuq4G319BAMalYpRBu4O4mDIbG0mfb4ByxjvUtyC60D2GNrAeKlBRSM8dKZT
-         W8B8ESfb3Cmh9g4j1/OKNCxtot5silr3tuAz5MLW1BF6iiYssaYGJW6R3f1kggDZlB
-         yTNUfCxP9+lJBOVXXQOleynqI8rYP9wmUiO36dFk=
-Received: by mail-qk1-f174.google.com with SMTP id o89so7613481qko.0;
-        Mon, 03 Dec 2018 07:49:41 -0800 (PST)
-X-Gm-Message-State: AA+aEWZShbGd2kZ5Ph75JHdjHk6yFeX8rx5SBLLYDoe0QHDJ/6eaDuRb
-        h52G+048sYEmLy2kHXtAA5jZQmc7eBocIITBFg==
-X-Google-Smtp-Source: AFSGD/WYph9gLXfZcLl1K4BXPdpETtX1EUB57VQti7f5ViXIcMxMmpiz31TH63qvElH/gTIBXMldVDgE9okz0vCwU4c=
-X-Received: by 2002:a37:7682:: with SMTP id r124mr15416720qkc.79.1543852180470;
- Mon, 03 Dec 2018 07:49:40 -0800 (PST)
+        id S1726654AbeLCPz5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 3 Dec 2018 10:55:57 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:39928 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726560AbeLCPz5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Dec 2018 10:55:57 -0500
+Received: by mail-pl1-f194.google.com with SMTP id 101so6671817pld.6
+        for <linux-clk@vger.kernel.org>; Mon, 03 Dec 2018 07:55:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=hvPt/xVlGWX+uMrv7boCKzd2w9RNx+Xk0MMS9Ja4/hA=;
+        b=gXbvTPaFM3HwrOj480Ybjbq5a5D2jqySmh65SKazntlOVnHNCj/SH7/QWeJR0VKT1/
+         5r2MFo4QIy5br7G4xo/iU+KP4ilFlvH+lJmLc4DJttv5pD6x/XKdicUnR4ZIGlNvV3yW
+         58rMWjbme9LjAmjzuNUxCj1YgE9HkpI/XInPk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=hvPt/xVlGWX+uMrv7boCKzd2w9RNx+Xk0MMS9Ja4/hA=;
+        b=NljgiLCFJhxkviX1qqkzB39dx5akeQSXK+/iO35c4W3z3O3FmHItm1nzp3UE9Bniss
+         KvWMcpj4QBucRCFsM3cKQw8flNjoqUR9D0I0Ep/J3FZoU3JdS+ZQK/OHov6y2jOLX8/8
+         SbtNeyPmyA2ozEBMmDmLNfaSKBLw5ahgvI5vxy3JAj1aQOJXjHvoEcX5rJfvVBxiKSQU
+         6gOIiOJvTzTENZ4+CKUwOnnDMbXdueO/SvD/IS5DbCPvo3Z5/4Zrjyd/UBliugQV+/Km
+         W188kYAGg5JMqOPWpQLo4dl31Rdio2XwaV29xQWa/1Edv0vMuSrNOGeeFuBmhdovXYEU
+         2WZA==
+X-Gm-Message-State: AA+aEWa9IFQ3HhMHTK3KHuHYfEPSMLKNlweySD7H2BD6vL6AMIYNgiSh
+        +NSs/BzObXq9+VzLAJcpYc8Qmw==
+X-Google-Smtp-Source: AFSGD/VGNvCO5MaFvKvTHWs7JoDP3aEtICzteHkFhU6i96ejLzccvE6HkTvXMLMKxwnUjeDsjVMxIg==
+X-Received: by 2002:a17:902:365:: with SMTP id 92mr15626894pld.327.1543852553309;
+        Mon, 03 Dec 2018 07:55:53 -0800 (PST)
+Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id l3sm23050411pga.92.2018.12.03.07.55.49
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 03 Dec 2018 07:55:52 -0800 (PST)
+Date:   Mon, 3 Dec 2018 07:55:38 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Jeffrey Hugo <jhugo@codeaurora.org>
+Cc:     andy.gross@linaro.org, david.brown@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: Fix MSM8998 resets
+Message-ID: <20181203155538.GQ2225@minitux>
+References: <1543851298-32320-1-git-send-email-jhugo@codeaurora.org>
 MIME-Version: 1.0
-References: <1542589274-13878-1-git-send-email-sugaya.taichi@socionext.com>
- <1542589274-13878-3-git-send-email-sugaya.taichi@socionext.com>
- <154337047410.88331.9696178601340675631@swboyd.mtv.corp.google.com>
- <c746a3de-a9e3-9f25-ecb9-703ceb7e62d0@socionext.com> <154356579701.88331.5043467509900444879@swboyd.mtv.corp.google.com>
- <f5917f71-f15b-a92d-649c-e3f5f5f10698@socionext.com>
-In-Reply-To: <f5917f71-f15b-a92d-649c-e3f5f5f10698@socionext.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Mon, 3 Dec 2018 09:49:29 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+dnKht3TwCh1qB1H4pYFhQJmSN0nAayU+=PJLAvq0bbQ@mail.gmail.com>
-Message-ID: <CAL_Jsq+dnKht3TwCh1qB1H4pYFhQJmSN0nAayU+=PJLAvq0bbQ@mail.gmail.com>
-Subject: Re: [PATCH 02/14] dt-bindings: soc: milbeaut: Add Milbeaut trampoline description
-To:     sugaya.taichi@socionext.com
-Cc:     Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Jiri Slaby <jslaby@suse.com>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1543851298-32320-1-git-send-email-jhugo@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Dec 3, 2018 at 1:42 AM Sugaya, Taichi
-<sugaya.taichi@socionext.com> wrote:
->
-> Hi,
->
-> On 2018/11/30 17:16, Stephen Boyd wrote:
-> > Quoting Sugaya, Taichi (2018-11-29 04:24:51)
-> >> On 2018/11/28 11:01, Stephen Boyd wrote:
-> >>> Quoting Sugaya Taichi (2018-11-18 17:01:07)
-> >>>>    create mode 100644 Documentation/devicetree/bindings/soc/socionext/socionext,m10v.txt
-> >>>>
-> >>>> diff --git a/Documentation/devicetree/bindings/soc/socionext/socionext,m10v.txt b/Documentation/devicetree/bindings/soc/socionext/socionext,m10v.txt
-> >>>> new file mode 100644
-> >>>> index 0000000..f5d906c
-> >>>> --- /dev/null
-> >>>> +++ b/Documentation/devicetree/bindings/soc/socionext/socionext,m10v.txt
-> >>>> @@ -0,0 +1,12 @@
-> >>>> +Socionext M10V SMP trampoline driver binding
-> >>>> +
-> >>>> +This is a driver to wait for sub-cores while boot process.
-> >>>> +
-> >>>> +- compatible: should be "socionext,smp-trampoline"
-> >>>> +- reg: should be <0x4C000100 0x100>
-> >>>> +
-> >>>> +EXAMPLE
-> >>>> +       trampoline: trampoline@0x4C000100 {
-> >>> Drop the 0x part of unit addresses.
-> >>
-> >> Okay.
-> >>
-> >>
-> >>>> +               compatible = "socionext,smp-trampoline";
-> >>>> +               reg = <0x4C000100 0x100>;
-> >>> Looks like a software construct, which we wouldn't want to put into DT
-> >>> this way. DT doesn't describe drivers.
-> >> We would like to use this node only getting the address of the
-> >> trampoline area
-> >> in which sub-cores wait.  (They have finished to go to this area in previous
-> >> bootloader process.)
-> >
-> > Is this area part of memory, or a special SRAM? If it's part of memory,
-> > I would expect this node to be under the reserved-memory node and
-> > pointed to by some other node that uses this region. Could even be the
-> > CPU nodes.
->
-> Yes, 0x4C000100 is a part of memory under the reserved-memory node. So
-> we would like to use the SRAM ( allocated 0x00000000 ) area instead.
-> BTW, sorry, the trampoline address of this example is simply wrong.  We
-> were going to use a part of the SRAM from the beginning.
->
-> >
-> >>
-> >> So should we embed the constant value in source codes instead of getting
-> >> from
-> >> DT because the address is constant at the moment? Or is there other
-> >> approach?
-> >>
-> >
-> > If it's constant then that also works. Why does it need to come from DT
-> > at all then?
->
-> We think it is not good to embed constant value in driver codes and do
-> not have another way...
-> Are there better ways?
+On Mon 03 Dec 07:34 PST 2018, Jeffrey Hugo wrote:
 
-If this is just memory, can you use the standard spin-table binding in
-the DT spec? There are some requirements like 64-bit values even on
-32-bit machines (though this gets violated).
+> The offsets for the defined BCR reset registers does not match the hardware
+> documentation.  Update the values to match the hardware documentation.
+> 
 
-Rob
+Sorry for not spotting this before.
+
+> Fixes: b5f5f525c547 (clk: qcom: Add MSM8998 Global Clock Control (GCC) driver)
+> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
+> ---
+>  drivers/clk/qcom/gcc-msm8998.c | 38 +++++++++++++++++++-------------------
+>  1 file changed, 19 insertions(+), 19 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/gcc-msm8998.c b/drivers/clk/qcom/gcc-msm8998.c
+> index 9f0ae40..01cc555 100644
+> --- a/drivers/clk/qcom/gcc-msm8998.c
+> +++ b/drivers/clk/qcom/gcc-msm8998.c
+> @@ -2742,25 +2742,25 @@ enum {
+>  };
+>  
+>  static const struct qcom_reset_map gcc_msm8998_resets[] = {
+> -	[GCC_BLSP1_QUP1_BCR] = { 0x102400 },
+> -	[GCC_BLSP1_QUP2_BCR] = { 0x110592 },
+> -	[GCC_BLSP1_QUP3_BCR] = { 0x118784 },
+> -	[GCC_BLSP1_QUP4_BCR] = { 0x126976 },
+> -	[GCC_BLSP1_QUP5_BCR] = { 0x135168 },
+> -	[GCC_BLSP1_QUP6_BCR] = { 0x143360 },
+> -	[GCC_BLSP2_QUP1_BCR] = { 0x155648 },
+> -	[GCC_BLSP2_QUP2_BCR] = { 0x163840 },
+> -	[GCC_BLSP2_QUP3_BCR] = { 0x172032 },
+> -	[GCC_BLSP2_QUP4_BCR] = { 0x180224 },
+> -	[GCC_BLSP2_QUP5_BCR] = { 0x188416 },
+> -	[GCC_BLSP2_QUP6_BCR] = { 0x196608 },
+> -	[GCC_PCIE_0_BCR] = { 0x438272 },
+> -	[GCC_PDM_BCR] = { 0x208896 },
+> -	[GCC_SDCC2_BCR] = { 0x81920 },
+> -	[GCC_SDCC4_BCR] = { 0x90112 },
+> -	[GCC_TSIF_BCR] = { 0x221184 },
+> -	[GCC_UFS_BCR] = { 0x479232 },
+> -	[GCC_USB_30_BCR] = { 0x61440 },
+> +	[GCC_BLSP1_QUP1_BCR] = { 0x19000 },
+> +	[GCC_BLSP1_QUP2_BCR] = { 0x1b000 },
+> +	[GCC_BLSP1_QUP3_BCR] = { 0x1d000 },
+> +	[GCC_BLSP1_QUP4_BCR] = { 0x1f000 },
+> +	[GCC_BLSP1_QUP5_BCR] = { 0x21000 },
+> +	[GCC_BLSP1_QUP6_BCR] = { 0x23000 },
+> +	[GCC_BLSP2_QUP1_BCR] = { 0x26000 },
+> +	[GCC_BLSP2_QUP2_BCR] = { 0x28000 },
+> +	[GCC_BLSP2_QUP3_BCR] = { 0x2a000 },
+> +	[GCC_BLSP2_QUP4_BCR] = { 0x2c000 },
+> +	[GCC_BLSP2_QUP5_BCR] = { 0x2e000 },
+> +	[GCC_BLSP2_QUP6_BCR] = { 0x30000 },
+> +	[GCC_PCIE_0_BCR] = { 0x6c01c },
+
+I find GCC_PCIE_0_BCR at 0x6b000 and then GCC_PCIE_0_PHY_BCR at 0x6c01c.
+
+> +	[GCC_PDM_BCR] = { 0x33000 },
+> +	[GCC_SDCC2_BCR] = { 0x14000 },
+> +	[GCC_SDCC4_BCR] = { 0x16000 },
+> +	[GCC_TSIF_BCR] = { 0x36000 },
+> +	[GCC_UFS_BCR] = { 0x75000 },
+> +	[GCC_USB_30_BCR] = { 0xf000 },
+>  };
+
+With this updated, you have my
+
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+Regards,
+Bjorn
