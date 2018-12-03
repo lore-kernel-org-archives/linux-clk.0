@@ -2,38 +2,38 @@ Return-Path: <SRS0=uslk=OM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48A11C65BAE
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Dec 2018 07:43:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88882C04EB9
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Dec 2018 08:08:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16FFB20848
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Dec 2018 07:43:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16FFB20848
+	by mail.kernel.org (Postfix) with ESMTP id 58DC02082F
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Dec 2018 08:08:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58DC02082F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725842AbeLCHnC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 3 Dec 2018 02:43:02 -0500
-Received: from mx.socionext.com ([202.248.49.38]:48441 "EHLO mx.socionext.com"
+        id S1725842AbeLCIIW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 3 Dec 2018 03:08:22 -0500
+Received: from mx.socionext.com ([202.248.49.38]:48892 "EHLO mx.socionext.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725829AbeLCHnB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 3 Dec 2018 02:43:01 -0500
+        id S1725830AbeLCIIW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 3 Dec 2018 03:08:22 -0500
 Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
-  by mx.socionext.com with ESMTP; 03 Dec 2018 16:42:57 +0900
-Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
-        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id 3DC5A60062;
-        Mon,  3 Dec 2018 16:42:57 +0900 (JST)
-Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Mon, 3 Dec 2018 16:42:57 +0900
+  by mx.socionext.com with ESMTP; 03 Dec 2018 17:08:17 +0900
+Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
+        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id EB98160062;
+        Mon,  3 Dec 2018 17:08:16 +0900 (JST)
+Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Mon, 3 Dec 2018 17:08:16 +0900
 Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
-        by iyokan.css.socionext.com (Postfix) with ESMTP id B222240394;
-        Mon,  3 Dec 2018 16:42:56 +0900 (JST)
+        by iyokan.css.socionext.com (Postfix) with ESMTP id 4522940394;
+        Mon,  3 Dec 2018 17:08:16 +0900 (JST)
 Received: from [127.0.0.1] (unknown [10.213.119.83])
-        by yuzu.css.socionext.com (Postfix) with ESMTP id 91700120304;
-        Mon,  3 Dec 2018 16:42:56 +0900 (JST)
-Subject: Re: [PATCH 02/14] dt-bindings: soc: milbeaut: Add Milbeaut trampoline
+        by yuzu.css.socionext.com (Postfix) with ESMTP id 24EAB120455;
+        Mon,  3 Dec 2018 17:08:16 +0900 (JST)
+Subject: Re: [PATCH 06/14] dt-bindings: clock: milbeaut: add Milbeaut clock
  description
 To:     Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
@@ -49,20 +49,18 @@ Cc:     Michael Turquette <mturquette@baylibre.com>,
         Masami Hiramatsu <masami.hiramatsu@linaro.org>,
         Jassi Brar <jaswinder.singh@linaro.org>
 References: <1542589274-13878-1-git-send-email-sugaya.taichi@socionext.com>
- <1542589274-13878-3-git-send-email-sugaya.taichi@socionext.com>
- <154337047410.88331.9696178601340675631@swboyd.mtv.corp.google.com>
- <c746a3de-a9e3-9f25-ecb9-703ceb7e62d0@socionext.com>
- <154356579701.88331.5043467509900444879@swboyd.mtv.corp.google.com>
+ <1542589274-13878-7-git-send-email-sugaya.taichi@socionext.com>
+ <154356596981.88331.14415961625410424962@swboyd.mtv.corp.google.com>
 From:   "Sugaya, Taichi" <sugaya.taichi@socionext.com>
-Message-ID: <f5917f71-f15b-a92d-649c-e3f5f5f10698@socionext.com>
-Date:   Mon, 3 Dec 2018 16:42:56 +0900
+Message-ID: <15178a7c-7d12-7c10-6093-192754827b5a@socionext.com>
+Date:   Mon, 3 Dec 2018 17:08:15 +0900
 User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:60.0) Gecko/20100101
  Thunderbird/60.3.1
 MIME-Version: 1.0
-In-Reply-To: <154356579701.88331.5043467509900444879@swboyd.mtv.corp.google.com>
+In-Reply-To: <154356596981.88331.14415961625410424962@swboyd.mtv.corp.google.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
@@ -70,67 +68,106 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 Hi,
 
-On 2018/11/30 17:16, Stephen Boyd wrote:
-> Quoting Sugaya, Taichi (2018-11-29 04:24:51)
->> On 2018/11/28 11:01, Stephen Boyd wrote:
->>> Quoting Sugaya Taichi (2018-11-18 17:01:07)
->>>>    create mode 100644 Documentation/devicetree/bindings/soc/socionext/socionext,m10v.txt
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/soc/socionext/socionext,m10v.txt b/Documentation/devicetree/bindings/soc/socionext/socionext,m10v.txt
->>>> new file mode 100644
->>>> index 0000000..f5d906c
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/soc/socionext/socionext,m10v.txt
->>>> @@ -0,0 +1,12 @@
->>>> +Socionext M10V SMP trampoline driver binding
->>>> +
->>>> +This is a driver to wait for sub-cores while boot process.
->>>> +
->>>> +- compatible: should be "socionext,smp-trampoline"
->>>> +- reg: should be <0x4C000100 0x100>
->>>> +
->>>> +EXAMPLE
->>>> +       trampoline: trampoline@0x4C000100 {
->>> Drop the 0x part of unit addresses.
+Thank you for your comments.
+
+On 2018/11/30 17:19, Stephen Boyd wrote:
+> Quoting Sugaya Taichi (2018-11-18 17:01:11)
+>> Add DT bindings document for Milbeaut clock.
 >>
->> Okay.
+>> Signed-off-by: Sugaya Taichi <sugaya.taichi@socionext.com>
+>> ---
+>>   .../devicetree/bindings/clock/milbeaut-clock.txt   | 93 ++++++++++++++++++++++
+>>   1 file changed, 93 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/clock/milbeaut-clock.txt
 >>
->>
->>>> +               compatible = "socionext,smp-trampoline";
->>>> +               reg = <0x4C000100 0x100>;
->>> Looks like a software construct, which we wouldn't want to put into DT
->>> this way. DT doesn't describe drivers.
->> We would like to use this node only getting the address of the
->> trampoline area
->> in which sub-cores wait.  (They have finished to go to this area in previous
->> bootloader process.)
+>> diff --git a/Documentation/devicetree/bindings/clock/milbeaut-clock.txt b/Documentation/devicetree/bindings/clock/milbeaut-clock.txt
+>> new file mode 100644
+>> index 0000000..5c093c8
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/milbeaut-clock.txt
+>> @@ -0,0 +1,93 @@
+>> +Milbeaut M10V Clock Controller Binding
+>> +----------------------------------------
+>> +Milbeaut clock controller is consists of few oscillators, PLL, multiplexer
+>> +and few divider modules
+>> +
+>> +This binding uses common clock bindings
+>> +[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
+>> +
+>> +Required properties:
+>> +- compatible: shall be "socionext,milbeaut-m10v-clk-regs"
+>> +- reg: shall contain base address and length of clock registers
+>> +- #clock-cells: shall be 0
+>> +
+>> +Example:
+>> +       m10v-clk-tree@ {
+>> +               compatible = "socionext,milbeaut-m10v-clk-regs";
+>> +               reg = <0x1d021000 0x4000>;
+>> +
+>> +               clocks {
+>> +                       #address-cells = <0>;
+>> +                       #size-cells = <0>;
+>> +
+>> +                       uclk40xi: uclk40xi {
+>> +                               compatible = "fixed-clock";
+>> +                               #clock-cells = <0>;
+>> +                               clock-frequency = <40000000>;
+>> +                       };
+>> +               };
 > 
-> Is this area part of memory, or a special SRAM? If it's part of memory,
-> I would expect this node to be under the reserved-memory node and
-> pointed to by some other node that uses this region. Could even be the
-> CPU nodes.
+> This style of binding is highly discouraged. We don't describe each and
+> every clk in DT, we describe clk controllers and their outputs and
+> inputs in DT. The driver is the place where the clock controller
+> describes the internal clk topology of that controller. Also, fixed
+> frequency clks are typically oscillators and those would come from the
+> board dts file, but otherwise I wouldn't expect to see fixed frequency
+> clks in DT.
 
-Yes, 0x4C000100 is a part of memory under the reserved-memory node. So 
-we would like to use the SRAM ( allocated 0x00000000 ) area instead.
-BTW, sorry, the trampoline address of this example is simply wrong.  We 
-were going to use a part of the SRAM from the beginning.
+I understand. Received the similar comment from Rob in the DT part also.
 
 > 
->>
->> So should we embed the constant value in source codes instead of getting
->> from
->> DT because the address is constant at the moment? Or is there other
->> approach?
->>
+>> +       }
+>> +
+>> +The clock consumer shall specify the desired clock-output of the clock
+>> +controller (as defined in [2]) by specifying output-id in its "clock"
+>> +phandle cell
+>> +[2] arch/arm/boot/dts/milbeaut-m10v-clk.h
+>> +
+> [...]
+>> +
+>> +Example
+>> +       piclk_mux_0: spiclk_mux_0 {
+>> +               compatible = "socionext,m10v-clk-div";
+>> +               #clock-cells = <0>;
+>> +               clocks = <&pll10_div_1_2>;
+>> +               offset = <bSPICLK>;
+>> +               mask = <0x3>;
+>> +               ratios = <4 0x5 2 0x4>;
+>> +       };
+>> +
+>> +       pll10: pll10 {
+>> +               compatible = "socionext,m10v-pll-fixed-factor";
+>> +               #clock-cells = <0>;
+>> +               clocks = <&uclk40xi>;
+>> +               offset = <10>;
+>> +               clock-div = <5>;
+>> +               clock-mult = <108>;
+>> +       };
+>> +
+>> +       emmcclk: emmcclk {
+>> +               compatible = "socionext,m10v-clk-div";
+>> +               #clock-cells = <0>;
+>> +               clocks = <&pll11>;
+>> +               offset = <bEMMCCLK>;
+>> +               mask = <0x3>;
+>> +               ratios = <15 0x7 10 0x6 9 0x5 8 0x4>;
 > 
-> If it's constant then that also works. Why does it need to come from DT
-> at all then?
+> Yeah, please no. This whole binding needs a rewrite to not have one node
+> per clk.
 
-We think it is not good to embed constant value in driver codes and do 
-not have another way...
-Are there better ways?
+OK, I will renew the binding.
 
-Thanks
+Thanks.
 Sugaya Taichi
 
 > 
