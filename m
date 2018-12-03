@@ -2,146 +2,81 @@ Return-Path: <SRS0=uslk=OM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F12E4C04EBF
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Dec 2018 15:55:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0EBDC04EB9
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Dec 2018 15:56:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB26620848
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Dec 2018 15:55:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gXbvTPaF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB26620848
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id C2C9A20848
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Dec 2018 15:56:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2C9A20848
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726654AbeLCPz5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 3 Dec 2018 10:55:57 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:39928 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726560AbeLCPz5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Dec 2018 10:55:57 -0500
-Received: by mail-pl1-f194.google.com with SMTP id 101so6671817pld.6
-        for <linux-clk@vger.kernel.org>; Mon, 03 Dec 2018 07:55:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=hvPt/xVlGWX+uMrv7boCKzd2w9RNx+Xk0MMS9Ja4/hA=;
-        b=gXbvTPaFM3HwrOj480Ybjbq5a5D2jqySmh65SKazntlOVnHNCj/SH7/QWeJR0VKT1/
-         5r2MFo4QIy5br7G4xo/iU+KP4ilFlvH+lJmLc4DJttv5pD6x/XKdicUnR4ZIGlNvV3yW
-         58rMWjbme9LjAmjzuNUxCj1YgE9HkpI/XInPk=
+        id S1726736AbeLCP4G (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 3 Dec 2018 10:56:06 -0500
+Received: from mail-ed1-f51.google.com ([209.85.208.51]:41614 "EHLO
+        mail-ed1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726586AbeLCP4G (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Dec 2018 10:56:06 -0500
+Received: by mail-ed1-f51.google.com with SMTP id z28so11163991edi.8
+        for <linux-clk@vger.kernel.org>; Mon, 03 Dec 2018 07:56:02 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=hvPt/xVlGWX+uMrv7boCKzd2w9RNx+Xk0MMS9Ja4/hA=;
-        b=NljgiLCFJhxkviX1qqkzB39dx5akeQSXK+/iO35c4W3z3O3FmHItm1nzp3UE9Bniss
-         KvWMcpj4QBucRCFsM3cKQw8flNjoqUR9D0I0Ep/J3FZoU3JdS+ZQK/OHov6y2jOLX8/8
-         SbtNeyPmyA2ozEBMmDmLNfaSKBLw5ahgvI5vxy3JAj1aQOJXjHvoEcX5rJfvVBxiKSQU
-         6gOIiOJvTzTENZ4+CKUwOnnDMbXdueO/SvD/IS5DbCPvo3Z5/4Zrjyd/UBliugQV+/Km
-         W188kYAGg5JMqOPWpQLo4dl31Rdio2XwaV29xQWa/1Edv0vMuSrNOGeeFuBmhdovXYEU
-         2WZA==
-X-Gm-Message-State: AA+aEWa9IFQ3HhMHTK3KHuHYfEPSMLKNlweySD7H2BD6vL6AMIYNgiSh
-        +NSs/BzObXq9+VzLAJcpYc8Qmw==
-X-Google-Smtp-Source: AFSGD/VGNvCO5MaFvKvTHWs7JoDP3aEtICzteHkFhU6i96ejLzccvE6HkTvXMLMKxwnUjeDsjVMxIg==
-X-Received: by 2002:a17:902:365:: with SMTP id 92mr15626894pld.327.1543852553309;
-        Mon, 03 Dec 2018 07:55:53 -0800 (PST)
-Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id l3sm23050411pga.92.2018.12.03.07.55.49
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 03 Dec 2018 07:55:52 -0800 (PST)
-Date:   Mon, 3 Dec 2018 07:55:38 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Jeffrey Hugo <jhugo@codeaurora.org>
-Cc:     andy.gross@linaro.org, david.brown@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: Fix MSM8998 resets
-Message-ID: <20181203155538.GQ2225@minitux>
-References: <1543851298-32320-1-git-send-email-jhugo@codeaurora.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OAnxLB+TJ6bHatdarlSwB2K3TfkjfM4vuOINtj6TAao=;
+        b=Hv87fxZVBCjzGnM1tXUUVYv14FLBCqZMg799GYGD9cF0eDqwdv0Elm8/pvNHMJamG6
+         R95JaLiNdKjPwgWILaTb40j04Ff9eFt2QOBMAmnMCmZs7pHkaaDZ/0YrPpITeh8aoMrm
+         EvfCsSh6XQXkWyhLDR1WKLkp2GDN5wnwUVKOjQ3JvQwaHSF9NgEoLKeMfjclmUJZ7RfY
+         wOoH9TC3yDd8DICVrKIdWnOETfKZy31rb1/4u7f06aRFZZEiPHChZPkQoWYEwMs2zUtE
+         HJIfMTa0WkQjO9UGCqu2AZ8Y55XE3wNzINDJNJxUJICwZ0fIqFVhefmLpyggLgKD1nTk
+         kZ5w==
+X-Gm-Message-State: AA+aEWZXhljoVP7+lJ9/Pn37PngQkB0KpUwRyUgk9lP9xP4BXcp/kTN+
+        iJT5rBTrPSAiYXJ8HYf99B8GiUC5rGhKbQ==
+X-Google-Smtp-Source: AFSGD/XmehTSJgzD232A0VnecxrMjUpW7z+eYinnQOZohFQb9SOldpr6S/jRw9/sgTiv0+A75btSgA==
+X-Received: by 2002:a50:9724:: with SMTP id c33mr15219721edb.288.1543852561306;
+        Mon, 03 Dec 2018 07:56:01 -0800 (PST)
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com. [209.85.128.53])
+        by smtp.gmail.com with ESMTPSA id t21-v6sm2280092ejk.33.2018.12.03.07.56.00
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 03 Dec 2018 07:56:01 -0800 (PST)
+Received: by mail-wm1-f53.google.com with SMTP id s14so6428274wmh.1
+        for <linux-clk@vger.kernel.org>; Mon, 03 Dec 2018 07:56:00 -0800 (PST)
+X-Received: by 2002:a1c:2382:: with SMTP id j124mr8653160wmj.14.1543852560391;
+ Mon, 03 Dec 2018 07:56:00 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1543851298-32320-1-git-send-email-jhugo@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181130053328.24183-1-wens@csie.org> <154356169535.88331.6559008649310425840@swboyd.mtv.corp.google.com>
+In-Reply-To: <154356169535.88331.6559008649310425840@swboyd.mtv.corp.google.com>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Mon, 3 Dec 2018 23:55:49 +0800
+X-Gmail-Original-Message-ID: <CAGb2v6507htA6HGn2HXgSHyWLp-Ny+XZiGQ1XFHU_CYyHhNYYw@mail.gmail.com>
+Message-ID: <CAGb2v6507htA6HGn2HXgSHyWLp-Ny+XZiGQ1XFHU_CYyHhNYYw@mail.gmail.com>
+Subject: Re: [PATCH] clk: sunxi-ng: h3/h5: Fix CSI_MCLK parent
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Mike Turquette <mturquette@baylibre.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon 03 Dec 07:34 PST 2018, Jeffrey Hugo wrote:
+On Fri, Nov 30, 2018 at 3:08 PM Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> Quoting Chen-Yu Tsai (2018-11-29 21:33:28)
+> > The third parent of CSI_MCLK is PLL_PERIPH1, not PLL_PERIPH0.
+> > Fix it.
+> >
+> > Fixes: 0577e4853bfb ("clk: sunxi-ng: Add H3 clocks")
+> > Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> > ---
+>
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
 
-> The offsets for the defined BCR reset registers does not match the hardware
-> documentation.  Update the values to match the hardware documentation.
-> 
-
-Sorry for not spotting this before.
-
-> Fixes: b5f5f525c547 (clk: qcom: Add MSM8998 Global Clock Control (GCC) driver)
-> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
-> ---
->  drivers/clk/qcom/gcc-msm8998.c | 38 +++++++++++++++++++-------------------
->  1 file changed, 19 insertions(+), 19 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/gcc-msm8998.c b/drivers/clk/qcom/gcc-msm8998.c
-> index 9f0ae40..01cc555 100644
-> --- a/drivers/clk/qcom/gcc-msm8998.c
-> +++ b/drivers/clk/qcom/gcc-msm8998.c
-> @@ -2742,25 +2742,25 @@ enum {
->  };
->  
->  static const struct qcom_reset_map gcc_msm8998_resets[] = {
-> -	[GCC_BLSP1_QUP1_BCR] = { 0x102400 },
-> -	[GCC_BLSP1_QUP2_BCR] = { 0x110592 },
-> -	[GCC_BLSP1_QUP3_BCR] = { 0x118784 },
-> -	[GCC_BLSP1_QUP4_BCR] = { 0x126976 },
-> -	[GCC_BLSP1_QUP5_BCR] = { 0x135168 },
-> -	[GCC_BLSP1_QUP6_BCR] = { 0x143360 },
-> -	[GCC_BLSP2_QUP1_BCR] = { 0x155648 },
-> -	[GCC_BLSP2_QUP2_BCR] = { 0x163840 },
-> -	[GCC_BLSP2_QUP3_BCR] = { 0x172032 },
-> -	[GCC_BLSP2_QUP4_BCR] = { 0x180224 },
-> -	[GCC_BLSP2_QUP5_BCR] = { 0x188416 },
-> -	[GCC_BLSP2_QUP6_BCR] = { 0x196608 },
-> -	[GCC_PCIE_0_BCR] = { 0x438272 },
-> -	[GCC_PDM_BCR] = { 0x208896 },
-> -	[GCC_SDCC2_BCR] = { 0x81920 },
-> -	[GCC_SDCC4_BCR] = { 0x90112 },
-> -	[GCC_TSIF_BCR] = { 0x221184 },
-> -	[GCC_UFS_BCR] = { 0x479232 },
-> -	[GCC_USB_30_BCR] = { 0x61440 },
-> +	[GCC_BLSP1_QUP1_BCR] = { 0x19000 },
-> +	[GCC_BLSP1_QUP2_BCR] = { 0x1b000 },
-> +	[GCC_BLSP1_QUP3_BCR] = { 0x1d000 },
-> +	[GCC_BLSP1_QUP4_BCR] = { 0x1f000 },
-> +	[GCC_BLSP1_QUP5_BCR] = { 0x21000 },
-> +	[GCC_BLSP1_QUP6_BCR] = { 0x23000 },
-> +	[GCC_BLSP2_QUP1_BCR] = { 0x26000 },
-> +	[GCC_BLSP2_QUP2_BCR] = { 0x28000 },
-> +	[GCC_BLSP2_QUP3_BCR] = { 0x2a000 },
-> +	[GCC_BLSP2_QUP4_BCR] = { 0x2c000 },
-> +	[GCC_BLSP2_QUP5_BCR] = { 0x2e000 },
-> +	[GCC_BLSP2_QUP6_BCR] = { 0x30000 },
-> +	[GCC_PCIE_0_BCR] = { 0x6c01c },
-
-I find GCC_PCIE_0_BCR at 0x6b000 and then GCC_PCIE_0_PHY_BCR at 0x6c01c.
-
-> +	[GCC_PDM_BCR] = { 0x33000 },
-> +	[GCC_SDCC2_BCR] = { 0x14000 },
-> +	[GCC_SDCC4_BCR] = { 0x16000 },
-> +	[GCC_TSIF_BCR] = { 0x36000 },
-> +	[GCC_UFS_BCR] = { 0x75000 },
-> +	[GCC_USB_30_BCR] = { 0xf000 },
->  };
-
-With this updated, you have my
-
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-Regards,
-Bjorn
+Merged for 4.21. Thanks.
