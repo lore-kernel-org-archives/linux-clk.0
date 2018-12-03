@@ -2,86 +2,81 @@ Return-Path: <SRS0=uslk=OM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5F41C04EB9
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Dec 2018 18:09:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A71F4C04EBF
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Dec 2018 18:17:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83B9420850
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Dec 2018 18:09:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83B9420850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=siol.net
+	by mail.kernel.org (Postfix) with ESMTP id 7400B208A3
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Dec 2018 18:17:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lTjU/FGn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7400B208A3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726833AbeLCSKC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 3 Dec 2018 13:10:02 -0500
-Received: from mailoutvs6.siol.net ([185.57.226.197]:60321 "EHLO mail.siol.net"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726221AbeLCSKB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 3 Dec 2018 13:10:01 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id 2B3F8520937;
-        Mon,  3 Dec 2018 19:09:55 +0100 (CET)
-X-Virus-Scanned: amavisd-new at psrvmta11.zcs-production.pri
-Received: from mail.siol.net ([127.0.0.1])
-        by localhost (psrvmta11.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id b2sP2dUmjOpo; Mon,  3 Dec 2018 19:09:54 +0100 (CET)
-Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id BFBE852093D;
-        Mon,  3 Dec 2018 19:09:54 +0100 (CET)
-Received: from jernej-laptop.localnet (cpe1-8-82.cable.triera.net [213.161.8.82])
-        (Authenticated sender: 031275009)
-        by mail.siol.net (Postfix) with ESMTPA id 78DCA52091C;
-        Mon,  3 Dec 2018 19:09:51 +0100 (CET)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     wens@csie.org, robh+dt@kernel.org, mturquette@baylibre.com,
-        sboyd@kernel.org, airlied@linux.ie, architt@codeaurora.org,
-        a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v3 00/28] Allwinner H6 DE3 and HDMI support
-Date:   Mon, 03 Dec 2018 19:09:50 +0100
-Message-ID: <14295738.m69morCfDC@jernej-laptop>
-In-Reply-To: <20181105094341.qedt7jvnxooiojki@flea>
-References: <20181104182705.18047-1-jernej.skrabec@siol.net> <20181105094341.qedt7jvnxooiojki@flea>
+        id S1726745AbeLCSRS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 3 Dec 2018 13:17:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46836 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726394AbeLCSRR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 3 Dec 2018 13:17:17 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 40CB920850;
+        Mon,  3 Dec 2018 18:17:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543861033;
+        bh=ajgUZD92b+ch3w55pfZ0R2fecM+83e/WCZe50Lt23hg=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=lTjU/FGnBYqnUSv/ZK4n/WfTEeHMhN5uI71d/MTmrueQg+T3ZOPTT9UfjZVqD3oRB
+         mJmd+b7gLE4zZlOAZN10yUNEvJE/06J2C1PGOdyy7FLnGsDzSFqkzgXRBvJfozzu06
+         CxQcbRXVeFKfL3hTvjLvqs+wLWn91GnCZsZxeiTg=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+To:     Abel Vesa <abel.vesa@nxp.com>, Aisheng DONG <aisheng.dong@nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Sascha Hauer <kernel@pengutronix.de>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1543661502-18573-2-git-send-email-abel.vesa@nxp.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Abel Vesa <abelvesa@linux.com>, Abel Vesa <abel.vesa@nxp.com>
+References: <1543661502-18573-1-git-send-email-abel.vesa@nxp.com>
+ <1543661502-18573-2-git-send-email-abel.vesa@nxp.com>
+Message-ID: <154386103244.88331.15633232004889732875@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v15 1/5] dt-bindings: Add binding for i.MX8MQ CCM
+Date:   Mon, 03 Dec 2018 10:17:12 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Dne ponedeljek, 05. november 2018 ob 10:43:41 CET je Maxime Ripard napisal(a):
-> On Sun, Nov 04, 2018 at 07:26:37PM +0100, Jernej Skrabec wrote:
-> > This series adds support for Display Engine 3.0 and HDMI 2.0a, which
-> > can be found on H6 SoC.
-> > 
-> > Display Engine 3.0 in comparison to 2.0 mostly adds features needed for
-> > displaying and processing 10-bit and AFBC formats, which are not yet
-> > supported by this series.
-> > 
-> > H6 is also the first SoC which supports IOMMU, but support for it is
-> > not yet added.
-> > 
-> > This series is based on linux-next at next-20181102.
-> > 
-> > I suggest all patches go through allwinner tree, except DRM patches,
-> > which should go through drm-misc tree.
-> 
-> Applied all patches up to the 26. The two last one however should not
-> use the clk bindings define you added in the first clk patches, since
-> clk and dt patches are going through different tree.
+Quoting Abel Vesa (2018-12-01 02:52:10)
+> From: Lucas Stach <l.stach@pengutronix.de>
+> =
 
-I think you forgot to merge patch "drm/sun4i: Add compatible for H6 display 
-engine". At least it is not in linux-next.
+> This adds the binding for the i.MX8MQ Clock Controller Module.
+> =
 
-Best regards,
-Jernej
+> Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> ---
 
-
+Applied to clk-next
 
