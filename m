@@ -2,301 +2,168 @@ Return-Path: <SRS0=3Y/e=ON=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 774A8C07E85
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 03:50:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1AC9C04EB8
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 06:17:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34A7F20850
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 03:50:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C9AC2087F
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 06:17:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="fP+A7b2C";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Zeq5Wc+S"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34A7F20850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="Q+2MUYa5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C9AC2087F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726031AbeLDDuo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 3 Dec 2018 22:50:44 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:35408 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725962AbeLDDuo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Dec 2018 22:50:44 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 2884660312; Tue,  4 Dec 2018 03:50:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1543895443;
-        bh=tagvpmTwwEx+maLqLjA/n6hfBXkdR3dMCKFwz9JGzTY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fP+A7b2C6CTs1hGeEPknTq2j/L2AdPlFDPiJYFXmTtbTisYazCePz4jXSm+EPCKKm
-         dI4EThLoA12pOvoxVSp8lwdJ9sAW2heIEAU3UZv4zvXpStiDLUi4hPAOVjemV/DKIs
-         0gL0Wn4OpIBvsoHJYDaGXyEAXvYZunmzeC3BJtPU=
-Received: from davidai-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: daidavid1@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id A6C3160224;
-        Tue,  4 Dec 2018 03:50:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1543895442;
-        bh=tagvpmTwwEx+maLqLjA/n6hfBXkdR3dMCKFwz9JGzTY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Zeq5Wc+SSxgG3xPGnkUvD6OJulXE/NfqsfATreTfMmQ8oQipZltqhlECJt+rVeplj
-         BU9rCFjK5DyXcpWjYUXugLOID8ZqLEj6WaPALus5+vh2NY3cXxIJ6Sec5/OjWBSxWO
-         ZX3jWywA/EfNoxUCVhdwUYjHD0jyAW2cre3rckg8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A6C3160224
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=daidavid1@codeaurora.org
-From:   David Dai <daidavid1@codeaurora.org>
-To:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-Cc:     David Dai <daidavid1@codeaurora.org>, georgi.djakov@linaro.org,
-        bjorn.andersson@linaro.org, evgreen@google.com,
-        tdas@codeaurora.org, elder@linaro.org
-Subject: [RFC PATCH] clk: qcom: clk-rpmh: Add IPA clock support
-Date:   Mon,  3 Dec 2018 19:50:13 -0800
-Message-Id: <1543895413-1553-2-git-send-email-daidavid1@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1543895413-1553-1-git-send-email-daidavid1@codeaurora.org>
-References: <1543895413-1553-1-git-send-email-daidavid1@codeaurora.org>
+        id S1725995AbeLDGRh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 4 Dec 2018 01:17:37 -0500
+Received: from mail.andi.de1.cc ([85.214.239.24]:43986 "EHLO
+        h2641619.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725988AbeLDGRg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Dec 2018 01:17:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=kemnade.info; s=20180802; h=Content-Type:MIME-Version:References:
+        In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=vU3JYL/AF0Tm2ddYUZ66F/fVe3M4RxxE3gBW3GR/D1s=; b=Q+2MUYa5yLOW92I+RHVx1udTo
+        ovk/VTF/Xh+kPq05WsbMLq1YIo4OsZc9S5v7INYmrx4VtMPM6KnIXTcymQROn71CcJk3wxv5rG9wV
+        2IIGmlfYM0x4yd5z/wffx8NkED1A8qhXbVImnK6fxdVKHaZFCqMUQBaWm5rMHh9EkXJ7I=;
+Received: from [77.247.85.71] (helo=localhost)
+        by h2641619.stratoserver.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1gU41L-0005tC-Ls; Tue, 04 Dec 2018 07:17:23 +0100
+Received: from [::1] (helo=localhost)
+        by eeepc with esmtp (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1gTqzu-0004iH-OO; Mon, 03 Dec 2018 17:23:02 +0100
+Date:   Mon, 3 Dec 2018 17:22:46 +0100
+From:   Andreas Kemnade <andreas@kemnade.info>
+To:     Tony Lindgren <tony@atomide.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>, Tero Kristo <t-kristo@ti.com>,
+        bcousson@baylibre.com, letux-kernel@openphoenux.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, mturquette@baylibre.com, paul@pwsan.com
+Subject: Re: [PATCH v2 2/3] clk: ti: check clock type before doing autoidle
+ ops
+Message-ID: <20181203172246.0e767a16@kemnade.info>
+In-Reply-To: <20181203153910.GA6707@atomide.com>
+References: <20181110203115.13335-1-andreas@kemnade.info>
+        <20181110203115.13335-3-andreas@kemnade.info>
+        <154353750560.88331.11814738542436183126@swboyd.mtv.corp.google.com>
+        <20181130071534.0a6cd455@kemnade.info>
+        <154356242517.88331.8496814814468751012@swboyd.mtv.corp.google.com>
+        <9eb7b090-4803-d389-4112-3bf058385b2e@ti.com>
+        <154356463284.88331.13323307899580657085@swboyd.mtv.corp.google.com>
+        <eca27a46-2ca3-1a02-c0c8-c1c00b3b2f46@ti.com>
+        <20181130153729.GG53235@atomide.com>
+        <154362191595.88331.15503578806026771935@swboyd.mtv.corp.google.com>
+        <20181203153910.GA6707@atomide.com>
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; i686-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/MhEEXM=lh9cLcZUfXC+oZzA"; protocol="application/pgp-signature"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add IPA clock support by extending the current clk rpmh driver to support
-clocks that are managed by a different type of RPMh resource known as
-Bus Clock Manager(BCM).
+--Sig_/MhEEXM=lh9cLcZUfXC+oZzA
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: David Dai <daidavid1@codeaurora.org>
----
- drivers/clk/qcom/clk-rpmh.c           | 142 ++++++++++++++++++++++++++++++++++
- include/dt-bindings/clock/qcom,rpmh.h |   1 +
- 2 files changed, 143 insertions(+)
+On Mon, 3 Dec 2018 07:39:10 -0800
+Tony Lindgren <tony@atomide.com> wrote:
 
-diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
-index 9f4fc77..42e2cd2 100644
---- a/drivers/clk/qcom/clk-rpmh.c
-+++ b/drivers/clk/qcom/clk-rpmh.c
-@@ -18,6 +18,32 @@
- #define CLK_RPMH_ARC_EN_OFFSET		0
- #define CLK_RPMH_VRM_EN_OFFSET		4
- 
-+#define BCM_TCS_CMD_COMMIT_MASK		0x40000000
-+#define BCM_TCS_CMD_VALID_SHIFT		29
-+#define BCM_TCS_CMD_VOTE_MASK		0x3fff
-+#define BCM_TCS_CMD_VOTE_SHIFT		0
-+
-+#define BCM_TCS_CMD(valid, vote) \
-+	(BCM_TCS_CMD_COMMIT_MASK |\
-+	((valid) << BCM_TCS_CMD_VALID_SHIFT) |\
-+	((cpu_to_le32(vote) &\
-+	BCM_TCS_CMD_VOTE_MASK) << BCM_TCS_CMD_VOTE_SHIFT))
-+
-+/**
-+ * struct bcm_db - Auxiliary data pertaining to each Bus Clock Manager(BCM)
-+ * @unit: divisor used to convert Hz value to an RPMh msg
-+ * @width: multiplier used to convert Hz value to an RPMh msg
-+ * @vcd: virtual clock domain that this bcm belongs to
-+ * @reserved: reserved to pad the struct
-+ */
-+
-+struct bcm_db {
-+	u32 unit;
-+	u16 width;
-+	u8 vcd;
-+	u8 reserved;
-+};
-+
- /**
-  * struct clk_rpmh - individual rpmh clock data structure
-  * @hw:			handle between common and hardware-specific interfaces
-@@ -29,6 +55,7 @@
-  * @aggr_state:		rpmh clock aggregated state
-  * @last_sent_aggr_state: rpmh clock last aggr state sent to RPMh
-  * @valid_state_mask:	mask to determine the state of the rpmh clock
-+ * @aux_data:		data specific to the bcm rpmh resource
-  * @dev:		device to which it is attached
-  * @peer:		pointer to the clock rpmh sibling
-  */
-@@ -42,6 +69,7 @@ struct clk_rpmh {
- 	u32 aggr_state;
- 	u32 last_sent_aggr_state;
- 	u32 valid_state_mask;
-+	struct bcm_db aux_data;
- 	struct device *dev;
- 	struct clk_rpmh *peer;
- };
-@@ -98,6 +126,17 @@ struct clk_rpmh_desc {
- 	__DEFINE_CLK_RPMH(_platform, _name, _name_active, _res_name,	\
- 			  CLK_RPMH_VRM_EN_OFFSET, 1, _div)
- 
-+#define DEFINE_CLK_RPMH_BCM(_platform, _name, _res_name)		\
-+	static struct clk_rpmh _platform##_##_name = {			\
-+		.res_name = _res_name,					\
-+		.valid_state_mask = BIT(RPMH_ACTIVE_ONLY_STATE),	\
-+		.div = 1,						\
-+		.hw.init = &(struct clk_init_data){			\
-+			.ops = &clk_rpmh_bcm_ops,			\
-+			.name = #_name,					\
-+		},							\
-+	}
-+
- static inline struct clk_rpmh *to_clk_rpmh(struct clk_hw *_hw)
- {
- 	return container_of(_hw, struct clk_rpmh, hw);
-@@ -210,6 +249,91 @@ static unsigned long clk_rpmh_recalc_rate(struct clk_hw *hw,
- 	.recalc_rate	= clk_rpmh_recalc_rate,
- };
- 
-+static int clk_rpmh_bcm_send_cmd(struct clk_rpmh *c, bool enable)
-+{
-+	struct tcs_cmd cmd = { 0 };
-+	u32 cmd_state;
-+	int ret;
-+
-+	cmd_state = enable ? (c->aggr_state ? c->aggr_state : 1) : 0;
-+
-+	if (c->last_sent_aggr_state == cmd_state)
-+		return 0;
-+
-+	cmd.addr = c->res_addr;
-+	cmd.data = BCM_TCS_CMD(enable, cmd_state);
-+
-+	ret = rpmh_write_async(c->dev, RPMH_ACTIVE_ONLY_STATE, &cmd, 1);
-+	if (ret) {
-+		dev_err(c->dev, "set active state of %s failed: (%d)\n",
-+			c->res_name, ret);
-+		return ret;
-+	}
-+
-+	c->last_sent_aggr_state = cmd_state;
-+
-+	return 0;
-+}
-+
-+static int clk_rpmh_bcm_prepare(struct clk_hw *hw)
-+{
-+	struct clk_rpmh *c = to_clk_rpmh(hw);
-+	int ret = 0;
-+
-+	mutex_lock(&rpmh_clk_lock);
-+	ret = clk_rpmh_bcm_send_cmd(c, true);
-+	mutex_unlock(&rpmh_clk_lock);
-+
-+	return ret;
-+};
-+
-+static void clk_rpmh_bcm_unprepare(struct clk_hw *hw)
-+{
-+	struct clk_rpmh *c = to_clk_rpmh(hw);
-+
-+	mutex_lock(&rpmh_clk_lock);
-+	clk_rpmh_bcm_send_cmd(c, false);
-+	mutex_unlock(&rpmh_clk_lock);
-+};
-+
-+static int clk_rpmh_bcm_set_rate(struct clk_hw *hw, unsigned long rate,
-+				 unsigned long parent_rate)
-+{
-+	struct clk_rpmh *c = to_clk_rpmh(hw);
-+
-+	c->aggr_state = rate / (c->aux_data.unit * 1000);
-+
-+	if (clk_hw_is_prepared(hw)) {
-+		mutex_lock(&rpmh_clk_lock);
-+		clk_rpmh_bcm_send_cmd(c, true);
-+		mutex_unlock(&rpmh_clk_lock);
-+	}
-+
-+	return 0;
-+};
-+
-+static long clk_rpmh_round_rate(struct clk_hw *hw, unsigned long rate,
-+				unsigned long *parent_rate)
-+{
-+	return rate;
-+}
-+
-+static unsigned long clk_rpmh_bcm_recalc_rate(struct clk_hw *hw,
-+					unsigned long prate)
-+{
-+	struct clk_rpmh *c = to_clk_rpmh(hw);
-+
-+	return c->aggr_state * c->aux_data.unit * 1000;
-+}
-+
-+static const struct clk_ops clk_rpmh_bcm_ops = {
-+	.prepare	= clk_rpmh_bcm_prepare,
-+	.unprepare	= clk_rpmh_bcm_unprepare,
-+	.set_rate	= clk_rpmh_bcm_set_rate,
-+	.round_rate	= clk_rpmh_round_rate,
-+	.recalc_rate	= clk_rpmh_bcm_recalc_rate,
-+};
-+
- /* Resource name must match resource id present in cmd-db. */
- DEFINE_CLK_RPMH_ARC(sdm845, bi_tcxo, bi_tcxo_ao, "xo.lvl", 0x3, 2);
- DEFINE_CLK_RPMH_VRM(sdm845, ln_bb_clk2, ln_bb_clk2_ao, "lnbclka2", 2);
-@@ -217,6 +341,7 @@ static unsigned long clk_rpmh_recalc_rate(struct clk_hw *hw,
- DEFINE_CLK_RPMH_VRM(sdm845, rf_clk1, rf_clk1_ao, "rfclka1", 1);
- DEFINE_CLK_RPMH_VRM(sdm845, rf_clk2, rf_clk2_ao, "rfclka2", 1);
- DEFINE_CLK_RPMH_VRM(sdm845, rf_clk3, rf_clk3_ao, "rfclka3", 1);
-+DEFINE_CLK_RPMH_BCM(sdm845, ipa, "IP0");
- 
- static struct clk_hw *sdm845_rpmh_clocks[] = {
- 	[RPMH_CXO_CLK]		= &sdm845_bi_tcxo.hw,
-@@ -231,6 +356,7 @@ static unsigned long clk_rpmh_recalc_rate(struct clk_hw *hw,
- 	[RPMH_RF_CLK2_A]	= &sdm845_rf_clk2_ao.hw,
- 	[RPMH_RF_CLK3]		= &sdm845_rf_clk3.hw,
- 	[RPMH_RF_CLK3_A]	= &sdm845_rf_clk3_ao.hw,
-+	[RPMH_IPA_CLK]		= &sdm845_ipa.hw,
- };
- 
- static const struct clk_rpmh_desc clk_rpmh_sdm845 = {
-@@ -267,6 +393,7 @@ static int clk_rpmh_probe(struct platform_device *pdev)
- 
- 	for (i = 0; i < desc->num_clks; i++) {
- 		u32 res_addr;
-+		u32 aux_data_len;
- 
- 		rpmh_clk = to_clk_rpmh(hw_clks[i]);
- 		res_addr = cmd_db_read_addr(rpmh_clk->res_name);
-@@ -275,6 +402,21 @@ static int clk_rpmh_probe(struct platform_device *pdev)
- 				rpmh_clk->res_name);
- 			return -ENODEV;
- 		}
-+		aux_data_len = cmd_db_read_aux_data_len(rpmh_clk->res_name);
-+		if (aux_data_len == sizeof(struct bcm_db)) {
-+			ret = cmd_db_read_aux_data(rpmh_clk->res_name,
-+						   (u8 *)&rpmh_clk->aux_data,
-+						   sizeof(struct bcm_db));
-+			if (ret < 0) {
-+				dev_err(&pdev->dev, "aux data read failure for %s (%d)\n",
-+				rpmh_clk->res_name, ret);
-+				return ret;
-+			}
-+			rpmh_clk->aux_data.unit =
-+					le32_to_cpu(rpmh_clk->aux_data.unit);
-+			rpmh_clk->aux_data.width =
-+					le16_to_cpu(rpmh_clk->aux_data.width);
-+		}
- 		rpmh_clk->res_addr += res_addr;
- 		rpmh_clk->dev = &pdev->dev;
- 
-diff --git a/include/dt-bindings/clock/qcom,rpmh.h b/include/dt-bindings/clock/qcom,rpmh.h
-index f48fbd6..edcab3f 100644
---- a/include/dt-bindings/clock/qcom,rpmh.h
-+++ b/include/dt-bindings/clock/qcom,rpmh.h
-@@ -18,5 +18,6 @@
- #define RPMH_RF_CLK2_A				9
- #define RPMH_RF_CLK3				10
- #define RPMH_RF_CLK3_A				11
-+#define RPMH_IPA_CLK				12
- 
- #endif
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+> * Stephen Boyd <sboyd@kernel.org> [181130 23:52]:
+> > Quoting Tony Lindgren (2018-11-30 07:37:29) =20
+> > > Hi,
+> > >=20
+> > > * Tero Kristo <t-kristo@ti.com> [181130 09:21]: =20
+> > > > On 30/11/2018 09:57, Stephen Boyd wrote: =20
+> > > > > No that is not preferred. Can the omap2_clk_deny_idle() function =
+be
+> > > > > integrated closer into the clk framework in some way that allows =
+it to
+> > > > > be part of the clk_ops structure? And then have that take a clk_hw
+> > > > > structure instead of a struct clk? I haven't looked at this in any
+> > > > > detail whatsoever so I may be way off right now. =20
+> > > >=20
+> > > > It could be added under the main clk_ops struct, however this would
+> > > > introduce two new func pointers to it which are not used by anythin=
+g else
+> > > > but OMAP. Are you aware of any other platforms requiring similar fe=
+ature? =20
+> > >=20
+> > > From consumer usage point of view, I'm still wondering about
+> > > the relationship of clk_deny_idle() and clkdm_deny_idle().
+> > >=20
+> > > It seems that we need to allow reset control drivers call
+> > > clk_deny_idle() for the duration of reset. And it seems the
+> > > clk_deny_idle() should propagate to also up to the related
+> > > clock domain driver to do clkdm_deny_idle().
+> > >=20
+> > > So maybe clk_deny_idle() is could just be something like:
+> > >=20
+> > > dev =3D clk_get_device(clk);
+> > > ...
+> > > error =3D pm_runtime_get(dev);
+> > > ...
+> > > pm_runtime_put(dev);
+> > > ...
+> > >=20
+> > > And that way it would just propagate to the parent clock
+> > > domain driver and the clock framework does not need to know
+> > > about clockdomains. A clockdomain could be just a genpd
+> > > domain.
+> > >=20
+> > > Or do you guys have better ideas?
+> > >  =20
+> >=20
+> > Wouldn't the device link in clk framework patches do this for you if we
+> > had the RUNTIME_PM flag passed in. If this is about keeping the clock
+> > controller active when a consumer device is using it then I think it may
+> > work. =20
+>=20
+> The consumer device stays active just fine with PM runtime
+> calls. So yes, the problem is keeping a clock controller forced
+> active for the period of consumer device reset. Other than
+> that typically autoidle can be just kept enabled.
+>=20
+Are we still talking about the same problem? Maybe I am losing track
+here. Just to make sure.=20
+The patch series was about disabling autoidle for devices which cannot
+work with it during normal operation. Not during reset or something
+like that.=20
+Or is the keep-clock-active-during-reset just a requirement for bigger
+restructuring ideas?
 
+Regards,
+Andreas
+
+--Sig_/MhEEXM=lh9cLcZUfXC+oZzA
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEE7sDbhY5mwNpwYgrAfb1qx03ikyQFAlwFWFcACgkQfb1qx03i
+kySk6g/+POdYvoVVKYBjrqm8GKTLWubPUYY+oelza7BS0AKMJzYPTvpbv57Qn7Tt
+Nq2uUJXp12CCJ5jVw6j1M3m3A0vuySx0ILwawNiNdTpkj4x7ugwOp1N6OCepojrn
+FDyw+9xHfofNKWnk/bs67PxTIS0upsQLBUg1pBB9bi8zMBn4kkAtHkVgnnqVEF8Y
+/v7BWbpr63hLNv3aVys9cQ5iP0bC0wfJ5/lPAH9g33ROdqVlzrBKUHkkVmahyW+e
+wNbNLTgLPSnZFiPqF2NTT+lITgWdC8ca95biJAid83W/3aNIkRdhI0zW/bgZwz/x
+z2SHVnMwuGwxC/JcR1S6k6Y1plReLMMJRShcverR+CtnYNsLnyUahBd2Kq+IdeIP
+x/CMwUHDOnEf9euNJXTTC0rYJeBKrWK6kMrOV1kGHuPpLkXLS+eryuHxDOT3PDcZ
+BUwDpm5DNdtPM0s6vnrHRM8AlGEOo/zUZyuhy3Haq9fXDzmBqr5jdWLodb8xQxdQ
+ioZHavWlLlOyiIHm1bfrRXBjr4c0ZFnWtS4a46CoGZad1py6UqKNcpZFe4dT4qXe
+rbteKFT+DKqPlOleMLkXwmFhZXwbbkSOGQFUt0QBUIvj9tulM2tP1NpC+lYvAFci
++DukCT1on+3G6v6YakpnToswR6xza9kW+mdAwhXkZPtyGS6m/o0=
+=FLW9
+-----END PGP SIGNATURE-----
+
+--Sig_/MhEEXM=lh9cLcZUfXC+oZzA--
