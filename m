@@ -2,85 +2,106 @@ Return-Path: <SRS0=uslk=OM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96AD4C07E85
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Dec 2018 17:15:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A974C04EBF
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Dec 2018 17:16:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 570F82087F
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Dec 2018 17:15:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B974B20848
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Dec 2018 17:16:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZHpQVXsa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 570F82087F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="ksU7eEGj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B974B20848
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726794AbeLCRPm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 3 Dec 2018 12:15:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45792 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726657AbeLCRPm (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 3 Dec 2018 12:15:42 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8313E20848;
-        Mon,  3 Dec 2018 17:15:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543857340;
-        bh=ysPNaHS1PxY9ROXZfZNrYWzk2JgfBqchDmUPIGrH2yA=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=ZHpQVXsafzEmQSns22ljQoCHhONhB1GiQdn9cJqH5o03UbvW3GZSxu82WKCQgLDle
-         E4AYFkNHh8C9bAtFxOiWXRxCkGwNFrqmmwO/8Cbzeg6A1ur6z3V2bfHWCAk/EQ3jq7
-         8/YHENf3+1RezGr/6p0OPQV/qxa5un4ucmtMetNg=
-Content-Type: text/plain; charset="utf-8"
+        id S1726769AbeLCRQ7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 3 Dec 2018 12:16:59 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:37662 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726715AbeLCRQ7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Dec 2018 12:16:59 -0500
+Received: by mail-wm1-f66.google.com with SMTP id g67so6505676wmd.2
+        for <linux-clk@vger.kernel.org>; Mon, 03 Dec 2018 09:16:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=XZ+dFdmZ920KJ6td8EU0wjLOULXN2OwWoR7RRNraTBU=;
+        b=ksU7eEGj9F54kVOlTPj5JfnrnrE8Cj0BFGftVr5u0YkZ4Vsldi/ja5RKJ5WEvgfR9f
+         RJUfkgtXFsDig/MSH4ngs0UO7nUpF3yinkzDBK1pzYiQa0MM2t35U2h2hTXD1Wx3iK5y
+         LBNe8HzYxn9JPExwCYbxH3aaQArwHbgi2tSD2nHHSsuDRV2tWeTduPx59e015kwbNVDg
+         iYedwUOGg85tWPTDUhgUH9A2tUWm4cc8N3Th4fDW+jZ6uxhcIJe3Zgkz1z9yy72HVZvO
+         /7GXNKzUm913DR+Y3pPRbm36IJf8PF/sMspB0R1rlMf7gsBnDARTJSivAVi+PBcZqvQ0
+         iWdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=XZ+dFdmZ920KJ6td8EU0wjLOULXN2OwWoR7RRNraTBU=;
+        b=QiPNmXu8F6fl8bFALhF0KVNGyAv8cJFKf7B5vIFh/X/croLx2LLw5kJ8O1tg5R+3Oo
+         iy1fr7YHSlOuiUxYXuxKvfM/W1qL4jJunGWvsqxsZS66uSRVzJXWtDvf4AJoHfJXiO4n
+         b6Iu00Ovd2ohq4Di7DSLbVvn3CGAmxACeNjm2eDPrrTOmtIpzvLsqSWEZrZ+PB8my/+R
+         nM88UgPQefsj2/UfQ0aDebmRu17mDYEwKkj6yfJuRyfbJEGV7jZPnX2OhqJ1oNeOP57M
+         06yE1UltOLj90dhtSElIZEsfibjq18XcH6+vPkBKrfr+icak6tCjzwenHekkBQ3FuA6O
+         wnDQ==
+X-Gm-Message-State: AA+aEWZH64eEVyOO5pcuwaF9tb1b7PMFmyoYATdWJWNoPlr0bWr6YkXs
+        nfJXNwPpI0WM+BTKIFJHxER3ng==
+X-Google-Smtp-Source: AFSGD/XmUwpnJmmwRVcRFLbLGUxdmI3PfK3cf9zrSLDk+MhUMKvxQ3kvhYGILCEGZX6k/UHziNN+/A==
+X-Received: by 2002:a1c:7706:: with SMTP id t6mr8599633wmi.57.1543857415551;
+        Mon, 03 Dec 2018 09:16:55 -0800 (PST)
+Received: from boomer.local ([2a01:e34:eeb6:4690:106b:bae3:31ed:7561])
+        by smtp.googlemail.com with ESMTPSA id h203sm22494889wma.19.2018.12.03.09.16.54
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 03 Dec 2018 09:16:55 -0800 (PST)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
+        Kevin Hilman <khilman@baylibre.com>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/3] dts: meson: add clock controllers input clocks
+Date:   Mon,  3 Dec 2018 18:16:37 +0100
+Message-Id: <20181203171640.12110-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Lucas Stach <l.stach@pengutronix.de>,
-        kbuild test robot <lkp@intel.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <201812010931.vrPHNqVZ%fengguang.wu@intel.com>
-Cc:     kbuild-all@01.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Abel Vesa <abel.vesa@nxp.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>
-References: <201812010931.vrPHNqVZ%fengguang.wu@intel.com>
-Message-ID: <154385733975.88331.517929167531670456@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [clk:clk-imx8mq 2/5] clk-frac-pll.c:undefined reference to
- `__aeabi_uldivmod'
-Date:   Mon, 03 Dec 2018 09:15:39 -0800
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting kbuild test robot (2018-11-30 17:08:33)
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk=
--imx8mq
-> head:   de9cffdeeef50f513954ae83e91e1a465906ace5
-> commit: 9fd680d0fafd4cfef36088cf866c98ecb028ac34 [2/5] clk: imx: add frac=
-tional PLL output clock
-> config: arm-defconfig (attached as .config)
-> compiler: arm-linux-gnueabi-gcc (Debian 7.2.0-11) 7.2.0
-> reproduce:
->         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbi=
-n/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         git checkout 9fd680d0fafd4cfef36088cf866c98ecb028ac34
->         # save the attached .config to linux build tree
->         GCC_VERSION=3D7.2.0 make.cross ARCH=3Darm =
+This patchset is the first step that needs to be done so the
+amlogic clock controllers properly claim their input clocks
+through DT instead of relying on fixed names.
 
-> =
+I'll be waiting for this hit mainline before sending the related
+driver changes.
 
-> All errors (new ones prefixed by >>):
-> =
+Changes since v1: [0]
+- add clock-names for the main clock controller
 
->    drivers/clk/imx/clk-frac-pll.o: In function `clk_pll_round_rate':
-> >> clk-frac-pll.c:(.text+0x50): undefined reference to `__aeabi_uldivmod'
+Changes since v2: [1]
+- add more inputs for the gx family external 32k references
 
-Oops. I forgot to drop this branch from the clk tree. Thanks for the
-reminder.
+[0]: https://lkml.kernel.org/r/20181129164524.18670-1-jbrunet@baylibre.com
+[1]: https://lkml.kernel.org/r/20181203131850.31388-1-jbrunet@baylibre.com
+
+Jerome Brunet (3):
+  dt-bindings: clk: meson: add ao controller clock inputs
+  dt-bindings: clk: meson: add main controller clock input
+  arm64: dts: meson: add clock controller clock inputs
+
+ .../devicetree/bindings/clock/amlogic,gxbb-aoclkc.txt  | 10 +++++++++-
+ .../devicetree/bindings/clock/amlogic,gxbb-clkc.txt    |  5 +++++
+ arch/arm64/boot/dts/amlogic/meson-axg.dtsi             |  4 ++++
+ arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi            |  4 ++++
+ arch/arm64/boot/dts/amlogic/meson-gxl.dtsi             |  4 ++++
+ 5 files changed, 26 insertions(+), 1 deletion(-)
+
+-- 
+2.19.1
 
