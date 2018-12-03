@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEBBFC04EBF
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Dec 2018 18:17:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20E9AC04EB9
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Dec 2018 18:17:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FC962145D
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Dec 2018 18:17:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E2C2C208A3
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Dec 2018 18:17:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OsJVf7/X"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FC962145D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dFp1kJES"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2C2C208A3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726925AbeLCSRb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 3 Dec 2018 13:17:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47080 "EHLO mail.kernel.org"
+        id S1726870AbeLCSRV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 3 Dec 2018 13:17:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46912 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726394AbeLCSRa (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 3 Dec 2018 13:17:30 -0500
+        id S1726394AbeLCSRV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 3 Dec 2018 13:17:21 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E343820850;
-        Mon,  3 Dec 2018 18:17:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 386C7208A3;
+        Mon,  3 Dec 2018 18:17:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543861046;
-        bh=YnOjGSvLXCeei0dcW42MP4HfdOHLN/mKKN6KOu3TLzI=;
+        s=default; t=1543861037;
+        bh=5RQLaRV1qHuWhzIXnnTlJ+6vTCGgCCmraY9Qk+7bDq8=;
         h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=OsJVf7/XgdkU7bX6RW7q+NOeIX/lHfenDx0ODCs594A0yVO89YfDUA7QeKUPA72nm
-         Q796KIZnAYd1ISbC3pGf8EGhb9dFXkOEvr1PGSNqaSoK8pFLAzUHevSB+VHWaNgugK
-         GOVn76ZaXeH1mQ4VyULj13GUppgPFiPFtLyR7CJM=
+        b=dFp1kJESh176MoKtg5mVkeQuSzW7Jvig/eYzA6YBblD1uohx+HKkk2UiSqcXmbjIg
+         cmKumGUKkYdfuVj8AWh/C0kjBkJK1avtke44xh+qRPnA5YhZ97aIMb2On51LVtxdEK
+         ARZUkwA1uXNQjyohq/GLQc9SgOz2s3jMyCLC0X7k=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -42,7 +42,7 @@ To:     Abel Vesa <abel.vesa@nxp.com>, Aisheng DONG <aisheng.dong@nxp.com>,
         Lucas Stach <l.stach@pengutronix.de>,
         Sascha Hauer <kernel@pengutronix.de>
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1543661502-18573-5-git-send-email-abel.vesa@nxp.com>
+In-Reply-To: <1543661502-18573-3-git-send-email-abel.vesa@nxp.com>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
         Rob Herring <robh@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -56,27 +56,31 @@ Cc:     Michael Turquette <mturquette@baylibre.com>,
         <linux-arm-kernel@lists.infradead.org>,
         Abel Vesa <abelvesa@linux.com>, Abel Vesa <abel.vesa@nxp.com>
 References: <1543661502-18573-1-git-send-email-abel.vesa@nxp.com>
- <1543661502-18573-5-git-send-email-abel.vesa@nxp.com>
-Message-ID: <154386104535.88331.10447848499014532461@swboyd.mtv.corp.google.com>
+ <1543661502-18573-3-git-send-email-abel.vesa@nxp.com>
+Message-ID: <154386103670.88331.8658319817515727072@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.7
-Subject: Re: [PATCH v15 4/5] clk: imx: Add imx composite clock
-Date:   Mon, 03 Dec 2018 10:17:25 -0800
+Subject: Re: [PATCH v15 2/5] clk: imx: Add fractional PLL output clock
+Date:   Mon, 03 Dec 2018 10:17:16 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Abel Vesa (2018-12-01 02:52:14)
-> Since a lot of clocks on imx8m are formed by a mux, gate, predivider and
-> divider, the idea here is to combine all of those into one composite cloc=
-k,
-> but we need to deal with both predivider and divider at the same time and
-> therefore we add the imx8m_clk_composite_divider_ops and register
-> the composite clock with those.
+Quoting Abel Vesa (2018-12-01 02:52:11)
+> From: Lucas Stach <l.stach@pengutronix.de>
 > =
 
+> This is a new fractional clock type introduced on i.MX8.
+> =
+
+> The description of this fractional clock can be found here:
+> =
+
+> https://www.nxp.com/docs/en/reference-manual/IMX8MDQLQRM.pdf#page=3D834
+> =
+
+> Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
 > Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-> Suggested-by: Sascha Hauer <s.hauer@pengutronix.de>
 > Reviewed-by: Sascha Hauer <s.hauer@pengutronix.de>
 > ---
 
