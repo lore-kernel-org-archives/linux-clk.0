@@ -2,151 +2,119 @@ Return-Path: <SRS0=uslk=OM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E6C4C04EB9
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Dec 2018 21:54:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FAB5C04EBF
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Dec 2018 22:17:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14ECA20850
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Dec 2018 21:54:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GNVs5ODp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14ECA20850
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 256EA20864
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Dec 2018 22:17:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 256EA20864
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725969AbeLCVyS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 3 Dec 2018 16:54:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56756 "EHLO mail.kernel.org"
+        id S1725946AbeLCWRN convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 3 Dec 2018 17:17:13 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:34333 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726156AbeLCVyR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 3 Dec 2018 16:54:17 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4E08B20864;
-        Mon,  3 Dec 2018 21:54:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543874056;
-        bh=2Wp/1VZ19iUdG965GD+O05IBYwAn8sHWLKyP+buAeI8=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=GNVs5ODpLxJrCOoWU07LeldxQuzX0J2t+M3qTzXdnZAizgYx+d6G6BPeDlYiDeVS4
-         dp28eWLQqSlWKymFYSSgfjFq61o6GKxCkwr77MbP5ufHwxDB+GJDMq/rpOQD3gYtka
-         LsCZpdAWhsibgfDlaygpTEugpZLbN2IY01xlvvbE=
-Content-Type: text/plain; charset="utf-8"
+        id S1725848AbeLCWRL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 3 Dec 2018 17:17:11 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id A9141207AD; Mon,  3 Dec 2018 23:17:09 +0100 (CET)
+Received: from xps13 (unknown [91.224.148.103])
+        by mail.bootlin.com (Postfix) with ESMTPSA id A78A220379;
+        Mon,  3 Dec 2018 23:16:56 +0100 (CET)
+Date:   Mon, 3 Dec 2018 23:16:55 +0100
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     kbuild test robot <lkp@intel.com>, kbuild-all@01.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Nadav Haklai <nadavh@marvell.com>
+Subject: Re: [PATCH 2/2] clk: core: link consumer with clock driver
+Message-ID: <20181203231655.4e7dc330@xps13>
+In-Reply-To: <154386483105.88331.13970025193347328031@swboyd.mtv.corp.google.com>
+References: <20181122212212.16039-3-miquel.raynal@bootlin.com>
+        <201811231627.H7ojlKLL%fengguang.wu@intel.com>
+        <20181123101132.6be3829c@xps13>
+        <154356998033.88331.4426431020982838779@swboyd.mtv.corp.google.com>
+        <20181130112052.73d943ec@xps13>
+        <154386483105.88331.13970025193347328031@swboyd.mtv.corp.google.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Neil Armstrong <narmstrong@baylibre.com>, mturquette@baylibre.com
-From:   Stephen Boyd <sboyd@kernel.org>
-X-Patchwork-Hint: ignore
-In-Reply-To: <8b905b7b-d72a-010f-bb2c-3cadeca603ed@baylibre.com>
-Cc:     linux-clk@vger.kernel.org,
-        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>
-References: <8b905b7b-d72a-010f-bb2c-3cadeca603ed@baylibre.com>
-Message-ID: <154387405554.88331.5413259014915237358@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [GIT PULL] clk: meson: updates for v4.21
-Date:   Mon, 03 Dec 2018 13:54:15 -0800
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Neil Armstrong (2018-11-23 07:23:33)
-> Dear clock maintainers,
-> =
+Hi Stephen,
 
-> Below is a request to pull updates for Amlogic clocks.
-> =
+Stephen Boyd <sboyd@kernel.org> wrote on Mon, 03 Dec 2018 11:20:31
+-0800:
 
-> It covers essentially Meson GX Video clocks, Meson8b CPU clocks
-> and 2 bindings changes.
+> Quoting Miquel Raynal (2018-11-30 02:20:52)
+> > Hi Stephen,
+> > 
+> > Stephen Boyd <sboyd@kernel.org> wrote on Fri, 30 Nov 2018 01:26:20
+> > -0800:
+> >   
+> > > Quoting Miquel Raynal (2018-11-23 01:11:32)  
+> > > > Would you agree with me adding dummy functions in the #else section
+> > > > like:
+> > > > 
+> > > > static inline void __clk_device_link(struct device *consumer, struct clk *clk)
+> > > > {
+> > > >        return;
+> > > > }
+> > > > 
+> > > > static inline void __clk_device_unlink(struct clk *clk)
+> > > > {
+> > > >        return;
+> > > > }
+> > > > 
+> > > > Do you want me to also declare these functions in the #if section
+> > > > (with the external keyword) to balance the above declarations?    
+> > > 
+> > > Why can't we do the linking in __clk_get() and __clk_put()?
+> > >   
+> > 
+> > Because we need the caller's 'struct device' to make the link and
+> > this is not available in __clk_get(). I tried to ad it as parameter but
+> > I don't think it is possible to retrieve a 'struct device' from the
+> > device name. The functions where this is problematic are:
+> > * clk.c:__of_clk_get_from_provider()
+> > * clkdev.c:clk_get_sys()
+> > 
+> > By the way in my new version I called the helpers:
+> > * clk_{link,unlink}_hierarchy()
+> > * clk_{link,unlink}_consumer()
+> > 
+> > I will send a new version with these helpers, but if you have anything
+> > in mind to help me achieve the above request, I will welcome the idea.
+> >   
+> 
+> We can do the linking in __clk_get() and __clk_put() if we poke into the
+> struct clk -> struct clk_core and bury the struct device into each
+> clk_core structure.
+> 
 
-Pulled into clk-next now.
-
-I got this when testing:
-
-drivers/clk/meson/vid-pll-div.c:58:26: warning: symbol '_get_table_val' was=
- not declared. Should it be static?
-drivers/clk/meson/gxbb.c:1585:12: warning: symbol 'gxbb_vid_pll_parent_name=
-s' was not declared. Should it be static?
-drivers/clk/meson/gxbb.c:1620:12: warning: symbol 'gxbb_vclk_parent_names' =
-was not declared. Should it be static?
-drivers/clk/meson/gxbb.c:1980:12: warning: symbol 'gxbb_cts_parent_names' w=
-as not declared. Should it be static?
-drivers/clk/meson/gxbb.c:2036:12: warning: symbol 'gxbb_cts_hdmi_tx_parent_=
-names' was not declared. Should it be static?
-
-which looks like nice sparse noise to silence.
-
-It would also be nice to make that table of mux selectors const, is that
-possible?
-
----8<----
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index 30fbf8f1f190..b92df222f553 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -1582,7 +1582,7 @@ static struct clk_regmap gxbb_vid_pll_div =3D {
- 	},
- };
- =
-
--const char *gxbb_vid_pll_parent_names[] =3D { "vid_pll_div", "hdmi_pll" };
-+static const char * const gxbb_vid_pll_parent_names[] =3D { "vid_pll_div",=
- "hdmi_pll" };
- =
-
- static struct clk_regmap gxbb_vid_pll_sel =3D {
- 	.data =3D &(struct clk_regmap_mux_data){
-@@ -1617,7 +1617,7 @@ static struct clk_regmap gxbb_vid_pll =3D {
- 	},
- };
- =
-
--const char *gxbb_vclk_parent_names[] =3D {
-+static const char * const gxbb_vclk_parent_names[] =3D {
- 	"vid_pll", "fclk_div4", "fclk_div3", "fclk_div5", "vid_pll",
- 	"fclk_div7", "mpll1",
- };
-@@ -1977,7 +1977,7 @@ static struct clk_fixed_factor gxbb_vclk2_div12 =3D {
- };
- =
-
- static u32 mux_table_cts_sel[] =3D { 0, 1, 2, 3, 4, 8, 9, 10, 11, 12 };
--const char *gxbb_cts_parent_names[] =3D {
-+static const char * const gxbb_cts_parent_names[] =3D {
- 	"vclk_div1", "vclk_div2", "vclk_div4", "vclk_div6",
- 	"vclk_div12", "vclk2_div1", "vclk2_div2", "vclk2_div4",
- 	"vclk2_div6", "vclk2_div12"
-@@ -2033,7 +2033,7 @@ static struct clk_regmap gxbb_cts_vdac_sel =3D {
- =
-
- /* TOFIX: add support for cts_tcon */
- static u32 mux_table_hdmi_tx_sel[] =3D { 0, 1, 2, 3, 4, 8, 9, 10, 11, 12 };
--const char *gxbb_cts_hdmi_tx_parent_names[] =3D {
-+static const char * const gxbb_cts_hdmi_tx_parent_names[] =3D {
- 	"vclk_div1", "vclk_div2", "vclk_div4", "vclk_div6",
- 	"vclk_div12", "vclk2_div1", "vclk2_div2", "vclk2_div4",
- 	"vclk2_div6", "vclk2_div12"
-diff --git a/drivers/clk/meson/vid-pll-div.c b/drivers/clk/meson/vid-pll-di=
-v.c
-index b3370ea7beac..88af0e282ea0 100644
---- a/drivers/clk/meson/vid-pll-div.c
-+++ b/drivers/clk/meson/vid-pll-div.c
-@@ -55,8 +55,8 @@ static const struct vid_pll_div vid_pll_div_table[] =3D {
- #define to_meson_vid_pll_div(_hw) \
- 	container_of(_hw, struct meson_vid_pll_div, hw)
- =
-
--const struct vid_pll_div *_get_table_val(unsigned int shift_val,
--					 unsigned int shift_sel)
-+static const struct vid_pll_div *_get_table_val(unsigned int shift_val,
-+						unsigned int shift_sel)
- {
- 	int i;
- =
+I meant the consumer device's structure. Yes, from a struct clk, the
+first change in patch 1/2 let's us do clk->core->dev to get the clock
+device. But for linking I need both the clock device and the consumer
+device; and the latter will be missing in __clk_get().
 
 
+Thanks,
+Miquèl
