@@ -2,128 +2,146 @@ Return-Path: <SRS0=3Y/e=ON=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8313C04EBF
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 20:05:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACF86C04EB8
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 20:25:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89ED6206B7
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 20:05:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7420D2082B
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 20:25:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="hKoN2aik"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89ED6206B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="aHB4LJBC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7420D2082B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725797AbeLDUFL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 4 Dec 2018 15:05:11 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:35853 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725866AbeLDUFG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Dec 2018 15:05:06 -0500
-Received: by mail-wr1-f68.google.com with SMTP id u3so17280837wrs.3
-        for <linux-clk@vger.kernel.org>; Tue, 04 Dec 2018 12:05:05 -0800 (PST)
+        id S1725925AbeLDUZq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 4 Dec 2018 15:25:46 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:44015 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725855AbeLDUZp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Dec 2018 15:25:45 -0500
+Received: by mail-pl1-f196.google.com with SMTP id gn14so8841767plb.10
+        for <linux-clk@vger.kernel.org>; Tue, 04 Dec 2018 12:25:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=7WH9JoQsx+LrhFCXwbF/NWnFA3rwkd4OelYwW8l6xp0=;
-        b=hKoN2aikVpRjyNb8oSh9ixndigMRZl11ufnqkBhIKtXGsPtQSh0U3b0wrni/fAD7tv
-         VRrxL8Y+eudzYumkgwcrihWXC6ucmsHEiK76WZB6k6i59cu3JXMKFvnttOgC40fKbszZ
-         lmIz+pHtX+cH9+4tHqU6a4+vDz1CgpCQcWKq/0uGqYTw8mvwMwPeP/Pxf71aXOY1wPUD
-         ODnPOinYQwUuL1CblksbONRkNXYbsJv6VM4j5RuYNhor7LQj+Hg7LT0sNIw2B1McDblm
-         E/KU+O7P4zWj+39GbV/Sp5ba0WmljrN8Wvb342HOo/WQZSnbbJr/TNivFWPHu0OrQjAL
-         bRtQ==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=/ZDhp0fgRT3pNh2H3Gm3zTA8garSUC7ThywMfgEQGUc=;
+        b=aHB4LJBCh3YdEf3qLl5TElyJty8vPXnzRjE7npThJLPCmI1qW+ttiCax7wFQa3eZJu
+         ed9+4t7etEnHVKH/Kc2ghcGiX5rsvwbe9hz7dbEUDXXoRBomiK00ZCBq6tQYo4l0DYxE
+         c039jrVsYUvvHF4YLd6e3vEqOYKMF2JEaEyB4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=7WH9JoQsx+LrhFCXwbF/NWnFA3rwkd4OelYwW8l6xp0=;
-        b=cVZ0nYg6aRK/NBvnRs8ObxVqs514Lzh0v18cngjJQ8skkn2up+qEBEirokfb3vQHn+
-         3R6ifW+ZwKnUPIqgumXkooFtuOtEUym/kpI3Hq/EvIRW9A8BtlLAKPpz6tQ+TA6DFqiQ
-         iYEAQUH6/I3/JDOe627Lkj/R8qv90Tlzf+hZNOptf2p6e8HRSgdJP6odMt5JpAnj2snK
-         vJR1grzNMQyphmH7UCogyLe4e1y8PH/sp1Fq8IwAsjbHGCWbHSgHs8DICo8aYvrHVWJr
-         KrZOVOuIY2joFrtC9sKcetMckeI09vgwkz0+kfmeBoYLjeO1JlBmiCG2iv8lBbqdx0tN
-         MPWQ==
-X-Gm-Message-State: AA+aEWZ17D6RKmwVHeMBj2736lWjTke1jpN841HWNCpSCzVaDEcCa0Ma
-        VA2f/7gUErLEWfQ5UhUGp1mopg==
-X-Google-Smtp-Source: AFSGD/WAu9R1GRTlJrL0Zb50WTZLNjbk8WFhs2XnaX/wrvCXD4dnHMBMkFJm2nZJOC0MlQf3y5LaBw==
-X-Received: by 2002:adf:fe43:: with SMTP id m3mr18768268wrs.290.1543953904416;
-        Tue, 04 Dec 2018 12:05:04 -0800 (PST)
-Received: from boomer.baylibre.com (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
-        by smtp.gmail.com with ESMTPSA id c12sm12055655wrs.82.2018.12.04.12.05.03
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=/ZDhp0fgRT3pNh2H3Gm3zTA8garSUC7ThywMfgEQGUc=;
+        b=BhckUDxTpcSBOmnkkicpFdOFywYKrkiFlPrEa+d+6WUc9KxTPWrrvyidLiGfc/rZcs
+         QAvAdiZxS3Em80Fc5R4Io2sSGNzxGGnCJeuy7FpP+iB2Qqt6hlBBUKKcTzL8uMzseOPQ
+         QMcqMTm+fXGyeQhmdrvaSg3aM0+ytZZnhoUM0cIJcMbSK2CrQUW/vG6L1QYhbW11AkBS
+         zQpnhBGFzVCypicwXL45RHoMAMFwlZD3D+5VIsvNRQZ8pxKivWzWCVUYjEjxCj/Ib8xT
+         zRS+VkEsqGovYJebFSDc7+DeQcWSCRl96Tt34pKsyX47Y0wAUqTsikACLAk3ZzyVJlLW
+         XpfQ==
+X-Gm-Message-State: AA+aEWaqY38Xgdiirv028lEkTNNSzgkdr1A57cybfWTI0rmjgarPMeln
+        Dd7lmZSIwXiiLUIFv84fGdKg2w==
+X-Google-Smtp-Source: AFSGD/WQrRqU6wc9MRVODF5QUOa/QFdiHqJRCUqVSaMwDdNON+EuG+hrB+r2iR8p9NJU9DIg4yLFcg==
+X-Received: by 2002:a17:902:7b88:: with SMTP id w8mr21173964pll.320.1543955144987;
+        Tue, 04 Dec 2018 12:25:44 -0800 (PST)
+Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id h8sm26511537pfo.162.2018.12.04.12.25.43
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 04 Dec 2018 12:05:03 -0800 (PST)
-Message-ID: <2341ec89691f6221bab6a9696ed0c05c3d3de663.camel@baylibre.com>
-Subject: Re: [PATCH] clk: meson-gxbb: switch video clocks mux tables to
- static
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Date:   Tue, 04 Dec 2018 21:05:02 +0100
-In-Reply-To: <5C06D686.50108@baylibre.com>
-References: <20181204125839.14505-1-narmstrong@baylibre.com>
-         <154394543049.88331.11854270462393390489@swboyd.mtv.corp.google.com>
-         <5C06D686.50108@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.2 (3.30.2-2.fc29) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Tue, 04 Dec 2018 12:25:43 -0800 (PST)
+Date:   Tue, 4 Dec 2018 12:25:41 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Marc Gonzalez <marc.w.gonzalez@free.fr>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Amit Kucheria <amit.kucheria@linaro.org>
+Subject: Re: [PATCH v2 1/3] clk: qcom: gcc-msm8998: Drop hmss_dvm and lpass_at
+Message-ID: <20181204202541.GC12886@minitux>
+References: <20181203183330.2073-1-bjorn.andersson@linaro.org>
+ <20181203183330.2073-2-bjorn.andersson@linaro.org>
+ <2f21e657-76f1-a05b-7861-11d7a5f1ea5d@free.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2f21e657-76f1-a05b-7861-11d7a5f1ea5d@free.fr>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 2018-12-04 at 20:33 +0100, Neil Armstrong wrote:
-> Hi Stephen,
+On Tue 04 Dec 06:37 PST 2018, Marc Gonzalez wrote:
+
+> On 03/12/2018 19:33, Bjorn Andersson wrote:
 > 
-> Le 04/12/2018 18:43, Stephen Boyd a écrit :
-> > Quoting Neil Armstrong (2018-12-04 04:58:39)
-> > > Makes the following sparse warnings silent:
-> > > drivers/clk/meson/vid-pll-div.c:58:26: warning: symbol '_get_table_val'
-> > > was not declared. Should it be static?
-> > > drivers/clk/meson/gxbb.c:1585:12: warning: symbol
-> > > 'gxbb_vid_pll_parent_names' was not declared. Should it be static?
-> > > drivers/clk/meson/gxbb.c:1620:12: warning: symbol
-> > > 'gxbb_vclk_parent_names' was not declared. Should it be static?
-> > > drivers/clk/meson/gxbb.c:1980:12: warning: symbol
-> > > 'gxbb_cts_parent_names' was not declared. Should it be static?
-> > > drivers/clk/meson/gxbb.c:2036:12: warning: symbol
-> > > 'gxbb_cts_hdmi_tx_parent_names' was not declared. Should it be static?
+> > Disabling gcc_hmss_dvm_bus_clk and gcc_lpass_at_clk causes the board to
+> > lock up, and by that preventing the kernel to boot without
+> > clk_ignore_unused.
 > > 
-> > I fixed all of these already in the patch I sent you.
+> > gcc_hmss_dvm_bus_clk is marked always-on downstream, but not referenced,
+> > and gcc_lpass_at_clk isn't mentioned. So let's remove them until they
+> > are needed by some client.
 > 
-> Sorry I misunderstood...
+> Hello Bjorn,
+> 
+> What about gcc_gpu_bimc_gfx_clk?
+> 
+
+The ufs clocks was updated because the ufs driver would fail to enable
+them and by that fail. But I have yet to research what the appropriate
+solution for this this particular clock is.
+
+> AFAICT, it doesn't lock the system up, but the kernel warns:
+> 
+
+Right, so it seems to only be an annoyance for now. Let's revisit this.
+
+Regards,
+Bjorn
+
+> [    2.171148] ------------[ cut here ]------------
+> [    2.173740] gcc_gpu_bimc_gfx_clk status stuck at 'on'
+> [    2.173996] WARNING: CPU: 3 PID: 1 at drivers/clk/qcom/clk-branch.c:92 clk_branch_toggle+0x190/0x1b0
+> [    2.183475] Modules linked in:
+> [    2.192554] CPU: 3 PID: 1 Comm: swapper/0 Tainted: G S                4.20.0-rc4 #23
+> [    2.195509] Hardware name: Qualcomm Technologies, Inc. MSM8998 v1 MTP (DT)
+> [    2.203389] pstate: 60000085 (nZCv daIf -PAN -UAO)
+> [    2.210016] pc : clk_branch_toggle+0x190/0x1b0
+> [    2.214781] lr : clk_branch_toggle+0x190/0x1b0
+> [    2.219213] sp : ffff00000807bcf0
+> [    2.223609] x29: ffff00000807bcf0 x28: 0000000000000008 
+> [    2.227041] x27: ffff0000089db070 x26: ffff000008961378 
+> [    2.232425] x25: ffff0000088da4b8 x24: 0000000000000000 
+> [    2.237721] x23: ffff000009138a08 x22: ffff000008414990 
+> [    2.243016] x21: 0000000000000000 x20: 0000000000000000 
+> [    2.248312] x19: ffff0000090e9000 x18: ffffffffffffffff 
+> [    2.253608] x17: 0000000000000000 x16: 0000000000000000 
+> [    2.258902] x15: ffff0000090e9648 x14: ffff000089193187 
+> [    2.264197] x13: ffff000009193195 x12: ffff0000090fb000 
+> [    2.269493] x11: ffff00000807bcf0 x10: ffff00000807bcf0 
+> [    2.274789] x9 : ffff00000807bcf0 x8 : 6e6f27207461206b 
+> [    2.280084] x7 : 6375747320737574 x6 : ffff000009192c89 
+> [    2.285380] x5 : 0000000000000000 x4 : 0000000000000000 
+> [    2.290676] x3 : ffffffffffffffff x2 : 00008000f5251000 
+> [    2.295971] x1 : e0dbf26541ede800 x0 : 0000000000000000 
+> [    2.301272] Call trace:
+> [    2.306491]  clk_branch_toggle+0x190/0x1b0
+> [    2.308705]  clk_branch2_disable+0x18/0x20
+> [    2.312890]  clk_disable_unused_subtree+0xc4/0xe0
+> [    2.316960]  clk_disable_unused+0x3c/0x130
+> [    2.321736]  do_one_initcall+0x5c/0x180
+> [    2.325745]  kernel_init_freeable+0x198/0x244
+> [    2.329469]  kernel_init+0x10/0x110
+> [    2.333942]  ret_from_fork+0x10/0x20
+> [    2.337257] ---[ end trace 57f62b628c127ef8 ]---
 > 
 > 
-> > > @@ -1983,7 +1983,7 @@ static struct clk_fixed_factor gxbb_vclk2_div12 =
-> > > {
-> > >  };
-> > >  
-> > >  static u32 mux_table_cts_sel[] = { 0, 1, 2, 3, 4, 8, 9, 10, 11, 12 };
-> > 
-> > I was talking about this mux_table_cts_sel array. Can this be const?
-> > 
-> 
-> Other mux tables aren't const, Jerome so you see a reason why they aren't
-> const ?
-
-I'm surpised we missed that. The PLL params tables of amlogic are all 'static
-const' but all the mux tables are just 'static' , humm
-
-[...] 5 min later [...]
-
-Actually the table field of clk_mux is not const, so giving it a const table
-would produce a warning about discarding const qualifier
-
-I guess there should no problem adding const to the table field of struct
-clk_mux. What do you think Stephen  ?
-
-> 
-> Neil
-
-
+> Regards.
