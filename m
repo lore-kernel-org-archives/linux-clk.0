@@ -3,111 +3,162 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2871C04EB8
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 11:22:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3CF6C04EB8
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 11:24:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8837C214C1
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 11:22:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA6E920851
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 11:24:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dvfmLVQN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8837C214C1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="bDY/6r5o"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA6E920851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726985AbeLDLWh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:22:37 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:39072 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726506AbeLDLWh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Dec 2018 06:22:37 -0500
-Received: by mail-it1-f195.google.com with SMTP id a6so13786556itl.4;
-        Tue, 04 Dec 2018 03:22:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=3P1d5DDIqUFxdjGVz7UNRAh88NVQDvbfKe5TEQrIqh8=;
-        b=dvfmLVQNGi2t8nbRsNtKEl8bqDkR/wLUQ2uht/NtAmjXnR9i8CTpi2hmJUl7m5w2Kn
-         F34Ly9d8zgXQoKFs2KavJkGPvWo5OhMSjqBVp/8WAhNrrqihjXeQdR0n14DLpNjv6Hy0
-         Tdas0YeLMwEzBeQplvT/8ek+jqavbt6IC9NGar7jFpewzRO7VRSOBry4gNg2B+BE7kl4
-         jEbZQQh6mJGKQ967alF42vGBDDvY/9Blp7qDfgK4F2IESIKopY7p4mLIrRCCnSWgLgCn
-         ZhCxsAtOxfqej2dmgp3vAZj0g7VzVShLnjibSCMgcYXAvWt/1+RXhjFNdvrAwFTtox63
-         m1+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=3P1d5DDIqUFxdjGVz7UNRAh88NVQDvbfKe5TEQrIqh8=;
-        b=BgRKGEsTROnUlOEYMLPzWaZMZG9YozLhu6LP44wpwkV8ZKPKKCwv2OReR0KQfXmUJX
-         6an91q0/qC31zad99WyHmDEDQNeFF/+cE2bykIgVF5WqftNyC9P+j3NpQXky8w6CbTXf
-         wvzGBkPqG0Ofm5obAUrFUtIXS1JaSsZ3IcNw40XWJiDgBAR6EmiwKhgjXSCZ7+Sa4d2M
-         xBEpgvu1IeZvihAMEH9CI0cff83rqHbjVoFnjUMazljMHF1u8Ydn0eZS3Of4KK+DwcHi
-         nshv3mFvosd0Z8i5v9X+mY1WeGHgGrkXhDy/w/45MLngSS9pT3CMedFAAmgeJonGmG/d
-         ny9A==
-X-Gm-Message-State: AA+aEWY0kP7CUgkYfM9lKh9cxFDncUvI++S9tYae45LqzzyK/+yoFioz
-        qupLrjPN6cCKkGRvhopTwP7IliJe
-X-Google-Smtp-Source: AFSGD/XCM6bm8sojSMqOSC2M/56CoNhESJbEO1G5zRYIpkHn3FDr0TDb2qMsZ95SLxLp2r0t5v97iw==
-X-Received: by 2002:a02:89dd:: with SMTP id e29mr18658617jak.21.1543922556160;
-        Tue, 04 Dec 2018 03:22:36 -0800 (PST)
-Received: from [192.168.2.145] (ppp91-79-165-221.pppoe.mtu-net.ru. [91.79.165.221])
-        by smtp.googlemail.com with ESMTPSA id r11sm6631108iog.46.2018.12.04.03.22.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Dec 2018 03:22:35 -0800 (PST)
-Subject: Re: [PATCH 12/19] cpufreq: tegra124: extend to support Tegra210
-To:     Joseph Lo <josephl@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-        linux-clk@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>,
-        linux-pm@vger.kernel.org
-References: <20181204092548.3038-1-josephl@nvidia.com>
- <20181204092548.3038-13-josephl@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <c4f34e85-052b-f3a3-a6ea-715d1971335c@gmail.com>
-Date:   Tue, 4 Dec 2018 14:22:26 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        id S1727549AbeLDLYU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 4 Dec 2018 06:24:20 -0500
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:44157 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726991AbeLDLYT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Dec 2018 06:24:19 -0500
+X-Greylist: delayed 1177 seconds by postgrey-1.27 at vger.kernel.org; Tue, 04 Dec 2018 06:24:17 EST
+Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44]) (authenticated)
+        by conssluserg-04.nifty.com with ESMTP id wB4BOEtV020593;
+        Tue, 4 Dec 2018 20:24:15 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com wB4BOEtV020593
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1543922655;
+        bh=FlpS0XJ3z9z0ek44Gl7gERWZOMn7xf3fsoCpTAa2s0M=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=bDY/6r5odPfRiVoJw4MrN9wl+3t+EDn8Xax/qxq7h1MVJIS+5bLlrucrtPAbAePJo
+         dDJET3uiy0tNJl5XvWxUuf8zQecd6yEfDDA65hUfWEIMtOARm/upcgdAdcAeY68ArM
+         8kwrq6IJlGdMd8r+XzGLoxtA5xRFWMyskujrRcnAltZQ9isT9g4XbA29CaeXE7Fac5
+         tyTBFO2SRKSeLWdKTLQMDOeMKTIYifFFBuwwyINe+0npcQjMjksoiQlOIlkY/aGrBI
+         q/KbCJkoE8rtm9uXxx02Mfmt54gGj3jE6mBMu8U3xxl2QOkWYXSUkfZeoaAaVU0NgL
+         RhiKjNhqlaHuw==
+X-Nifty-SrcIP: [209.85.217.44]
+Received: by mail-vs1-f44.google.com with SMTP id p74so9578137vsc.0;
+        Tue, 04 Dec 2018 03:24:15 -0800 (PST)
+X-Gm-Message-State: AA+aEWYnt48IdtNsRWBnNFQG/zjpnZHajloBVEWZvIj5YNWxD63cr9h5
+        dkeGb0SXaylhHX1xRcwpO+tqS4VaDfC4/0tXIl0=
+X-Google-Smtp-Source: AFSGD/VqyZrnTs2ct8snVogSYKalfHnqVVXxUVHGSn/iKlzkXmXur/pANgXaQDNsEI2sseGB0zWEAUtH73pJh6GFu5I=
+X-Received: by 2002:a67:f1d6:: with SMTP id v22mr8494079vsm.181.1543922654170;
+ Tue, 04 Dec 2018 03:24:14 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181204092548.3038-13-josephl@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <1542589336-13925-1-git-send-email-sugaya.taichi@socionext.com> <1542589336-13925-2-git-send-email-sugaya.taichi@socionext.com>
+In-Reply-To: <1542589336-13925-2-git-send-email-sugaya.taichi@socionext.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Tue, 4 Dec 2018 20:23:38 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASnBobLm51VL=EVt+97-KBX3vEqXGjTH-L-q1Qn8_GUQA@mail.gmail.com>
+Message-ID: <CAK7LNASnBobLm51VL=EVt+97-KBX3vEqXGjTH-L-q1Qn8_GUQA@mail.gmail.com>
+Subject: Re: [PATCH 11/14] pinctrl: milbeaut: Add Milbeaut M10V pinctrl
+To:     sugaya.taichi@socionext.com
+Cc:     linux-clk <linux-clk@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-serial@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Jiri Slaby <jslaby@suse.com>,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 04.12.2018 12:25, Joseph Lo wrote:
-> Tegra210 uses the same methodology as Tegra124 for CPUFreq controlling
-> that based on DFLL clock. So extending this driver to support Tegra210.
-> 
-> Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> Cc: linux-pm@vger.kernel.org
-> Signed-off-by: Joseph Lo <josephl@nvidia.com>
-> ---
->  drivers/cpufreq/tegra124-cpufreq.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
-> index 448d00763d00..1af955fb715c 100644
-> --- a/drivers/cpufreq/tegra124-cpufreq.c
-> +++ b/drivers/cpufreq/tegra124-cpufreq.c
-> @@ -159,7 +159,8 @@ static int __init tegra_cpufreq_init(void)
->  	int ret;
->  	struct platform_device *pdev;
->  
-> -	if (!of_machine_is_compatible("nvidia,tegra124"))
-> +	if (!(of_machine_is_compatible("nvidia,tegra124") ||
-> +		of_machine_is_compatible("nvidia,tegra210")))
->  		return -ENODEV;
->  
->  	/*
-> 
+Hi Sugaya-san
 
-Seems that's not enough, you also need to blacklist "nvidia,tegra210" in the drivers/cpufreq/cpufreq-dt-platdev.c
+On Mon, Nov 19, 2018 at 10:01 AM Sugaya Taichi
+<sugaya.taichi@socionext.com> wrote:
+>
+> Add Milbeaut M10V pinctrl.
+> The M10V has the pins that can be used GPIOs or take multiple other
+> functions.
+>
+> Signed-off-by: Sugaya Taichi <sugaya.taichi@socionext.com>
+
+
+This patch was sent to:
+
+linux-clk@vger.kernel.org,
+devicetree@vger.kernel.org,
+linux-arm-kernel@lists.infradead.org,
+linux-kernel@vger.kernel.org,
+linux-serial@vger.kernel.org
+
+
+
+
+Unfortunately, the most important ML
+
+  linux-gpio@vger.kernel.org
+
+was not addressed.
+
+
+The pinctrl maintainer may not notice this patch.
+
+
+
+
+
+
+
+> diff --git a/drivers/pinctrl/pinctrl-m10v.c b/drivers/pinctrl/pinctrl-m10v.c
+> new file mode 100644
+> index 0000000..d4ca713
+> --- /dev/null
+> +++ b/drivers/pinctrl/pinctrl-m10v.c
+> @@ -0,0 +1,765 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2018 Socionext Ltd.
+> + * Copyright (C) 2015 Linaro Ltd.
+> + * Author: Jassi Brar <jaswinder.singh@linaro.org>
+
+
+My company name is "Socionext Inc." instead of "Socionext Ltd."
+
+
+
+
+
+
+
+> +static struct platform_driver m10v_pinctrl_driver = {
+> +       .probe  = m10v_pinctrl_probe,
+> +       .driver = {
+> +               .name           = "m10v-pinctrl",
+> +               .of_match_table = m10v_pmatch,
+> +       },
+> +};
+> +
+> +static int __init m10v_pinctrl_init(void)
+> +{
+> +       return platform_driver_register(&m10v_pinctrl_driver);
+> +}
+> +arch_initcall(m10v_pinctrl_init);
+
+
+Can't it be builtin_platform_driver()?
+
+Which device requires this to be arch_initcall()?
+
+
+
+
+
+--
+Best Regards
+Masahiro Yamada
