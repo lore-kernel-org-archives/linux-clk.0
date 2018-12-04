@@ -7,38 +7,41 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE6B9C04EBF
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 09:26:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8863C04EBF
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 09:26:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C63C20878
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 09:26:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5AF8A20851
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 09:26:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="ItgtNHa1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C63C20878
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="L9vlxOku"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AF8A20851
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725955AbeLDJ0u (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 4 Dec 2018 04:26:50 -0500
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:19027 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725613AbeLDJ0u (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Dec 2018 04:26:50 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c0648580000>; Tue, 04 Dec 2018 01:26:48 -0800
+        id S1725902AbeLDJ0y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 4 Dec 2018 04:26:54 -0500
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:3711 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725613AbeLDJ0x (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Dec 2018 04:26:53 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c06485a0000>; Tue, 04 Dec 2018 01:26:50 -0800
 Received: from hqmail.nvidia.com ([172.20.161.6])
   by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 04 Dec 2018 01:26:48 -0800
+  Tue, 04 Dec 2018 01:26:51 -0800
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 04 Dec 2018 01:26:48 -0800
-Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 4 Dec
- 2018 09:26:48 +0000
+        by hqpgpgate101.nvidia.com on Tue, 04 Dec 2018 01:26:51 -0800
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL103.nvidia.com
+ (172.20.187.11) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 4 Dec
+ 2018 09:26:51 +0000
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 4 Dec
+ 2018 09:26:50 +0000
 Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL105.nvidia.com
  (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
- Transport; Tue, 4 Dec 2018 09:26:48 +0000
+ Transport; Tue, 4 Dec 2018 09:26:50 +0000
 Received: from josephl-linux.nvidia.com (Not Verified[10.19.108.132]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5c0648570000>; Tue, 04 Dec 2018 01:26:48 -0800
+        id <B5c0648590002>; Tue, 04 Dec 2018 01:26:50 -0800
 From:   Joseph Lo <josephl@nvidia.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Peter De Schrijver <pdeschrijver@nvidia.com>,
@@ -46,9 +49,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
 CC:     <linux-arm-kernel@lists.infradead.org>,
         <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
         Joseph Lo <josephl@nvidia.com>
-Subject: [PATCH 06/19] clk: tegra: dfll: CVB calculation alignment with the regulator
-Date:   Tue, 4 Dec 2018 17:25:35 +0800
-Message-ID: <20181204092548.3038-7-josephl@nvidia.com>
+Subject: [PATCH 07/19] clk: tegra: dfll: support PWM regulator control
+Date:   Tue, 4 Dec 2018 17:25:36 +0800
+Message-ID: <20181204092548.3038-8-josephl@nvidia.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204092548.3038-1-josephl@nvidia.com>
 References: <20181204092548.3038-1-josephl@nvidia.com>
@@ -57,267 +60,677 @@ X-NVConfidentiality: public
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1543915608; bh=+XcDnjn2X0MQX5PdnSMI4QdykdpfPcxcaejusl4gSmA=;
+        t=1543915610; bh=iWxR/nHONSVgEB5XNYnmDTnYUzAYU2I31qQw63bW12c=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:MIME-Version:X-NVConfidentiality:
          Content-Transfer-Encoding:Content-Type;
-        b=ItgtNHa183FzHlT47ji8sSAFeueDt4NKhf9BG/VB7PWajWoDw2CsMpDOlrM6wyuzT
-         oEU43wj3SBpBF53V5LtOlRAnDqRUCqLahYb+64NDuq6+fv0adEoyeBmgandcpr9p9J
-         CIJLM7mNxAkKDk+wcsmWBA+d7asK8T5Lfrs+dnqyEnKL6DHVOt0Tn8L4rmqnIHIoCc
-         91dHVSGZRb/f1YPHimvsQ7gFWYq1MqcPkifcLmRm8XjF5Qc6xtNkr72rviFqovRCMO
-         /AeiHKSnPCTTQTjt84vS8yZqieA7/+GhXKEbwxDeS7rv1wMUfCzb2GGg1kVTkC+47i
-         SYjkYqVi68iHg==
+        b=L9vlxOkujMtnPqZg00gtzPjkfiuCyCy+Je+KIbEtmgYVuLT7U2Ty2H7eo0ZYSkPDL
+         KKfwdOk3aKyScGxgLKbj1n4Pw9gA8El509AdXc6RrdL7up4NlyNdALTTCsYCusPmh7
+         0cwdMwL1C32VozrM4x0mX+UV3HvoP6tPmnyodmz+pZk5YZj/OMOotR2iR6CuilH4Ko
+         YakHWjhSNNFqCCxkDMw1Scb2HUp6xW6QxJYY7CaAzRIIduNRd2PdqRvr+TlOo2x35V
+         Yd+tY8p6ho8Jucv1amZHD8KN8rv94Bznxjb/1WYtg3knZNXpl2S8eP3+C4i12apjSZ
+         0m5VWHswfDSRQ==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The CVB table contains calibration data for the CPU DFLL based on
-process charaterization. The regulator step and offset parameters depend
-on the regulator supplying vdd-cpu , not on the specific Tegra SKU.
+The DFLL hardware supports two modes (I2C and PWM) for voltage control
+when requesting a frequency. In this patch, we introduce PWM mode support.
 
-When using a PWM controlled regulator, the voltage step and offset are
-determined by the regulator type in use. This is specified in DT. When
-using an I2C controlled regulator, we can retrieve them from CPU regulator
-or DT (if specified). Then pass this information to the CVB table
-calculation function.
+To support that, we re-organize the LUT for unifying the table for both
+cases of I2C and PWM mode. And generate that based on regulator info.
+For the PWM-based regulator, we get this info from DT. And do the same as
+the case of I2C LUT, which can help to map the PMIC voltage ID and voltages
+that the regulator supported.
 
-Based on the work done of "Peter De Schrijver <pdeschrijver@nvidia.com>"
-and "Alex Frid <afrid@nvidia.com>".
+The other parts are the support code for initializing the DFLL hardware
+to support PWM mode. Also, the register debugfs file is slightly
+reworked to only show the i2c registers when I2C mode is in use.
+
+Based on the work of Peter De Schrijver <pdeschrijver@nvidia.com>.
 
 Signed-off-by: Joseph Lo <josephl@nvidia.com>
 ---
- drivers/clk/tegra/clk-dfll.h               |  6 +-
- drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 65 ++++++++++++++++++++--
- drivers/clk/tegra/cvb.c                    | 12 ++--
- drivers/clk/tegra/cvb.h                    |  6 +-
- 4 files changed, 75 insertions(+), 14 deletions(-)
+ drivers/clk/tegra/clk-dfll.c | 431 ++++++++++++++++++++++++++++++-----
+ 1 file changed, 368 insertions(+), 63 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-dfll.h b/drivers/clk/tegra/clk-dfll.h
-index 83352c8078f2..ecc43cb9b6f1 100644
---- a/drivers/clk/tegra/clk-dfll.h
-+++ b/drivers/clk/tegra/clk-dfll.h
-@@ -1,6 +1,6 @@
+diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
+index 609e363dabf8..c294a2989f31 100644
+--- a/drivers/clk/tegra/clk-dfll.c
++++ b/drivers/clk/tegra/clk-dfll.c
+@@ -1,7 +1,7 @@
  /*
-  * clk-dfll.h - prototypes and macros for the Tegra DFLL clocksource drive=
-r
-- * Copyright (C) 2013 NVIDIA Corporation.  All rights reserved.
-+ * Copyright (C) 2013-2018 NVIDIA Corporation.  All rights reserved.
+  * clk-dfll.c - Tegra DFLL clock source common code
+  *
+- * Copyright (C) 2012-2014 NVIDIA Corporation. All rights reserved.
++ * Copyright (C) 2012-2018 NVIDIA Corporation. All rights reserved.
   *
   * Aleksandr Frid <afrid@nvidia.com>
   * Paul Walmsley <pwalmsley@nvidia.com>
-@@ -22,11 +22,14 @@
- #include <linux/reset.h>
- #include <linux/types.h>
-=20
-+#include "cvb.h"
-+
- /**
-  * struct tegra_dfll_soc_data - SoC-specific hooks/integration for the DFL=
-L driver
-  * @dev: struct device * that holds the OPP table for the DFLL
-  * @max_freq: maximum frequency supported on this SoC
-  * @cvb: CPU frequency table for this SoC
-+ * @alignment: parameters of the regulator step and offset
-  * @init_clock_trimmers: callback to initialize clock trimmers
-  * @set_clock_trimmers_high: callback to tune clock trimmers for high volt=
-age
-  * @set_clock_trimmers_low: callback to tune clock trimmers for low voltag=
-e
-@@ -35,6 +38,7 @@ struct tegra_dfll_soc_data {
- 	struct device *dev;
- 	unsigned long max_freq;
- 	const struct cvb_table *cvb;
-+	struct rail_alignment alignment;
-=20
- 	void (*init_clock_trimmers)(void);
- 	void (*set_clock_trimmers_high)(void);
-diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra=
-/clk-tegra124-dfll-fcpu.c
-index 1a2cc113e5c8..071a5c674832 100644
---- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-+++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-@@ -23,6 +23,7 @@
- #include <linux/init.h>
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
-+#include <linux/regulator/consumer.h>
- #include <soc/tegra/fuse.h>
-=20
- #include "clk.h"
-@@ -50,9 +51,6 @@ static const struct cvb_table tegra124_cpu_cvb_tables[] =
-=3D {
- 		.process_id =3D -1,
- 		.min_millivolts =3D 900,
- 		.max_millivolts =3D 1260,
--		.alignment =3D {
--			.step_uv =3D 10000, /* 10mV */
--		},
- 		.speedo_scale =3D 100,
- 		.voltage_scale =3D 1000,
- 		.entries =3D {
-@@ -105,11 +103,43 @@ static const struct of_device_id tegra124_dfll_fcpu_o=
-f_match[] =3D {
- 	{ },
+@@ -47,6 +47,7 @@
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
++#include <linux/pinctrl/consumer.h>
+ #include <linux/pm_opp.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/regmap.h>
+@@ -243,6 +244,12 @@ enum dfll_tune_range {
+ 	DFLL_TUNE_LOW =3D 1,
  };
 =20
-+static void get_alignment_from_dt(struct device *dev,
-+				  struct rail_alignment *align)
++
++enum tegra_dfll_pmu_if {
++	TEGRA_DFLL_PMU_I2C =3D 0,
++	TEGRA_DFLL_PMU_PWM =3D 1,
++};
++
+ /**
+  * struct dfll_rate_req - target DFLL rate request data
+  * @rate: target frequency, after the postscaling
+@@ -294,16 +301,25 @@ struct tegra_dfll {
+ 	u32				ci;
+ 	u32				cg;
+ 	bool				cg_scale;
++	u32				reg_init_uV;
+=20
+ 	/* I2C interface parameters */
+ 	u32				i2c_fs_rate;
+ 	u32				i2c_reg;
+ 	u32				i2c_slave_addr;
+=20
+-	/* i2c_lut array entries are regulator framework selectors */
+-	unsigned			i2c_lut[MAX_DFLL_VOLTAGES];
+-	int				i2c_lut_size;
+-	u8				lut_min, lut_max, lut_safe;
++	/* lut array entries are regulator framework selectors or PWM values*/
++	unsigned			lut[MAX_DFLL_VOLTAGES];
++	unsigned			lut_uv[MAX_DFLL_VOLTAGES];
++	int				lut_size;
++	u8				lut_bottom, lut_min, lut_max, lut_safe;
++
++	/* PWM interface */
++	enum tegra_dfll_pmu_if		pmu_if;
++	unsigned long			pwm_rate;
++	struct pinctrl			*pwm_pin;
++	struct pinctrl_state		*pwm_enable_state;
++	struct pinctrl_state		*pwm_disable_state;
+ };
+=20
+ #define clk_hw_to_dfll(_hw) container_of(_hw, struct tegra_dfll, dfll_clk_=
+hw)
+@@ -489,6 +505,34 @@ static void dfll_set_mode(struct tegra_dfll *td,
+ 	dfll_wmb(td);
+ }
+=20
++/*
++ * DVCO rate control
++ */
++
++static unsigned long get_dvco_rate_below(struct tegra_dfll *td, u8 out_min=
+)
 +{
-+	align->step_uv =3D 0;
-+	align->offset_uv =3D 0;
++	struct dev_pm_opp *opp;
++	unsigned long rate, prev_rate;
++	int uv, min_uv;
 +
-+	if (of_property_read_u32(dev->of_node, "nvidia,align-step-uv",
-+				  &align->step_uv))
-+		align->step_uv =3D 0;
++	min_uv =3D td->lut_uv[out_min];
++	for (rate =3D 0, prev_rate =3D 0; ; rate++) {
++		opp =3D dev_pm_opp_find_freq_ceil(td->soc->dev, &rate);
++		if (IS_ERR(opp))
++			break;
 +
-+	if (of_property_read_u32(dev->of_node,
-+				"nvidia,align-offset-uv", &align->offset_uv))
-+		align->offset_uv =3D 0;
++		uv =3D dev_pm_opp_get_voltage(opp);
++		dev_pm_opp_put(opp);
++
++		if (uv && uv > min_uv)
++			return prev_rate;
++
++		prev_rate =3D rate;
++	}
++
++	return prev_rate;
 +}
 +
-+static int get_alignment_from_regulator(struct device *dev,
-+					 struct rail_alignment *align)
+ /*
+  * DFLL-to-I2C controller interface
+  */
+@@ -518,6 +562,118 @@ static int dfll_i2c_set_output_enabled(struct tegra_d=
+fll *td, bool enable)
+ 	return 0;
+ }
+=20
++
++/*
++ * DFLL-to-PWM controller interface
++ */
++
++/**
++ * dfll_pwm_set_output_enabled - enable/disable PWM voltage requests
++ * @td: DFLL instance
++ * @enable: whether to enable or disable the PWM voltage requests
++ *
++ * Set the master enable control for PWM control value updates. If disable=
+d,
++ * then the PWM signal is not driven. Also configure the PWM output pad
++ * to the appropriate state.
++ */
++static int dfll_pwm_set_output_enabled(struct tegra_dfll *td, bool enable)
 +{
-+	struct regulator *reg =3D devm_regulator_get(dev, "vdd-cpu");
++	int ret;
++	u32 val, div;
 +
-+	if (IS_ERR(reg))
-+		return PTR_ERR(reg);
++	if (enable) {
++		ret =3D pinctrl_select_state(td->pwm_pin, td->pwm_enable_state);
++		if (ret < 0) {
++			dev_err(td->dev, "setting enable state failed\n");
++			return -EINVAL;
++		}
++		val =3D dfll_readl(td, DFLL_OUTPUT_CFG);
++		val &=3D ~DFLL_OUTPUT_CFG_PWM_DIV_MASK;
++		div =3D DIV_ROUND_UP(td->ref_rate, td->pwm_rate);
++		val |=3D (div << DFLL_OUTPUT_CFG_PWM_DIV_SHIFT)
++				& DFLL_OUTPUT_CFG_PWM_DIV_MASK;
++		dfll_writel(td, val, DFLL_OUTPUT_CFG);
++		dfll_wmb(td);
 +
-+	align->offset_uv =3D regulator_list_voltage(reg, 0);
-+	align->step_uv =3D regulator_get_linear_step(reg);
++		val |=3D DFLL_OUTPUT_CFG_PWM_ENABLE;
++		dfll_writel(td, val, DFLL_OUTPUT_CFG);
++		dfll_wmb(td);
++	} else {
++		ret =3D pinctrl_select_state(td->pwm_pin, td->pwm_disable_state);
++		if (ret < 0)
++			dev_warn(td->dev, "setting disable state failed\n");
 +
-+	devm_regulator_put(reg);
++		val =3D dfll_readl(td, DFLL_OUTPUT_CFG);
++		val &=3D ~DFLL_OUTPUT_CFG_PWM_ENABLE;
++		dfll_writel(td, val, DFLL_OUTPUT_CFG);
++		dfll_wmb(td);
++	}
 +
 +	return 0;
 +}
 +
- static int tegra124_dfll_fcpu_probe(struct platform_device *pdev)
- {
- 	int process_id, speedo_id, speedo_value, err;
- 	struct tegra_dfll_soc_data *soc;
- 	const struct dfll_fcpu_data *fcpu_data;
-+	struct rail_alignment align;
++/**
++ * dfll_set_force_output_value - set fixed value for force output
++ * @td: DFLL instance
++ * @out_val: value to force output
++ *
++ * Set the fixed value for force output, DFLL will output this value when
++ * force output is enabled.
++ */
++static u32 dfll_set_force_output_value(struct tegra_dfll *td, u8 out_val)
++{
++	u32 val =3D dfll_readl(td, DFLL_OUTPUT_FORCE);
++
++	val =3D (val & DFLL_OUTPUT_FORCE_ENABLE) | (out_val & OUT_MASK);
++	dfll_writel(td, val, DFLL_OUTPUT_FORCE);
++	dfll_wmb(td);
++
++	return dfll_readl(td, DFLL_OUTPUT_FORCE);
++}
++
++/**
++ * dfll_set_force_output_enabled - enable/disable force output
++ * @td: DFLL instance
++ * @enable: whether to enable or disable the force output
++ *
++ * Set the enable control for fouce output with fixed value.
++ */
++static void dfll_set_force_output_enabled(struct tegra_dfll *td, bool enab=
+le)
++{
++	u32 val =3D dfll_readl(td, DFLL_OUTPUT_FORCE);
++
++	if (enable)
++		val |=3D DFLL_OUTPUT_FORCE_ENABLE;
++	else
++		val &=3D ~DFLL_OUTPUT_FORCE_ENABLE;
++
++	dfll_writel(td, val, DFLL_OUTPUT_FORCE);
++	dfll_wmb(td);
++}
++
++/**
++ * dfll_force_output - force output a fixed value
++ * @td: DFLL instance
++ * @out_sel: value to force output
++ *
++ * Set the fixed value for force output, DFLL will output this value.
++ */
++static int dfll_force_output(struct tegra_dfll *td, unsigned int out_sel)
++{
++	u32 val;
++
++	if (out_sel > OUT_MASK)
++		return -EINVAL;
++
++	val =3D dfll_set_force_output_value(td, out_sel);
++	if ((td->mode < DFLL_CLOSED_LOOP) &&
++	    !(val & DFLL_OUTPUT_FORCE_ENABLE)) {
++		dfll_set_force_output_enabled(td, true);
++	}
++
++	return 0;
++}
++
+ /**
+  * dfll_load_lut - load the voltage lookup table
+  * @td: struct tegra_dfll *
+@@ -539,7 +695,7 @@ static void dfll_load_i2c_lut(struct tegra_dfll *td)
+ 			lut_index =3D i;
 =20
- 	fcpu_data =3D of_device_get_match_data(&pdev->dev);
- 	if (!fcpu_data)
-@@ -135,12 +165,37 @@ static int tegra124_dfll_fcpu_probe(struct platform_d=
-evice *pdev)
- 		return -ENODEV;
+ 		val =3D regulator_list_hardware_vsel(td->vdd_reg,
+-						     td->i2c_lut[lut_index]);
++						     td->lut[lut_index]);
+ 		__raw_writel(val, td->lut_base + i * 4);
  	}
 =20
-+	get_alignment_from_dt(&pdev->dev, &align);
-+	if (of_property_read_bool(pdev->dev.of_node, "nvidia,pwm-to-pmic")
-+		 && (!align.step_uv || !align.offset_uv)) {
-+		dev_info(&pdev->dev, "Missing required align data in DT");
-+		return -EINVAL;
-+	} else {
-+		if (!align.step_uv) {
-+			dev_info(&pdev->dev,
-+				 "no align data in DT, try from vdd-cpu\n");
-+			err =3D get_alignment_from_regulator(&pdev->dev, &align);
-+			if (err =3D=3D -EPROBE_DEFER) {
-+				dev_info(&pdev->dev,
-+					 "defer probe to get vdd-cpu\n");
-+				return -EPROBE_DEFER;
-+			}
-+		}
-+	}
-+
-+	if (!align.step_uv) {
-+		dev_err(&pdev->dev, "missing step uv\n");
-+		return -EINVAL;
-+	}
-+
- 	soc->max_freq =3D fcpu_data->cpu_max_freq_table[speedo_id];
+@@ -594,24 +750,41 @@ static void dfll_init_out_if(struct tegra_dfll *td)
+ {
+ 	u32 val;
 =20
- 	soc->cvb =3D tegra_cvb_add_opp_table(soc->dev, fcpu_data->cpu_cvb_tables,
- 					   fcpu_data->cpu_cvb_tables_size,
--					   process_id, speedo_id, speedo_value,
--					   soc->max_freq);
-+					   &align, process_id, speedo_id,
-+					   speedo_value, soc->max_freq);
-+	soc->alignment =3D align;
+-	td->lut_min =3D 0;
+-	td->lut_max =3D td->i2c_lut_size - 1;
+-	td->lut_safe =3D td->lut_min + 1;
++	td->lut_min =3D td->lut_bottom;
++	td->lut_max =3D td->lut_size - 1;
++	td->lut_safe =3D td->lut_min + (td->lut_min < td->lut_max ? 1 : 0);
 +
- 	if (IS_ERR(soc->cvb)) {
- 		dev_err(&pdev->dev, "couldn't add OPP table: %ld\n",
- 			PTR_ERR(soc->cvb));
-diff --git a/drivers/clk/tegra/cvb.c b/drivers/clk/tegra/cvb.c
-index da9e8e7b5ce5..81dcb97a9e0a 100644
---- a/drivers/clk/tegra/cvb.c
-+++ b/drivers/clk/tegra/cvb.c
-@@ -1,7 +1,7 @@
- /*
-  * Utility functions for parsing Tegra CVB voltage tables
-  *
-- * Copyright (C) 2012-2014 NVIDIA Corporation.  All rights reserved.
-+ * Copyright (C) 2012-2018 NVIDIA Corporation.  All rights reserved.
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 2 as
-@@ -62,9 +62,9 @@ static int round_voltage(int mv, const struct rail_alignm=
-ent *align, int up)
++	/* clear DFLL_OUTPUT_CFG before setting new value */
++	dfll_writel(td, 0, DFLL_OUTPUT_CFG);
++	dfll_wmb(td);
+=20
+-	dfll_i2c_writel(td, 0, DFLL_OUTPUT_CFG);
+ 	val =3D (td->lut_safe << DFLL_OUTPUT_CFG_SAFE_SHIFT) |
+-		(td->lut_max << DFLL_OUTPUT_CFG_MAX_SHIFT) |
+-		(td->lut_min << DFLL_OUTPUT_CFG_MIN_SHIFT);
+-	dfll_i2c_writel(td, val, DFLL_OUTPUT_CFG);
+-	dfll_i2c_wmb(td);
++	      (td->lut_max << DFLL_OUTPUT_CFG_MAX_SHIFT) |
++	      (td->lut_min << DFLL_OUTPUT_CFG_MIN_SHIFT);
++	dfll_writel(td, val, DFLL_OUTPUT_CFG);
++	dfll_wmb(td);
+=20
+ 	dfll_writel(td, 0, DFLL_OUTPUT_FORCE);
+ 	dfll_i2c_writel(td, 0, DFLL_INTR_EN);
+ 	dfll_i2c_writel(td, DFLL_INTR_MAX_MASK | DFLL_INTR_MIN_MASK,
+ 			DFLL_INTR_STS);
+=20
+-	dfll_load_i2c_lut(td);
+-	dfll_init_i2c_if(td);
++	if (td->pmu_if =3D=3D TEGRA_DFLL_PMU_PWM) {
++		int vinit =3D td->reg_init_uV;
++		int vstep =3D td->soc->alignment.step_uv;
++		int vmin =3D td->lut_uv[0];
++
++		/* set initial voltage */
++		if ((vinit >=3D vmin) && vstep) {
++			unsigned int vsel;
++
++			vsel =3D DIV_ROUND_UP((vinit - vmin), vstep);
++			dfll_force_output(td, vsel);
++		}
++	} else {
++		dfll_load_i2c_lut(td);
++		dfll_init_i2c_if(td);
++	}
  }
 =20
- static int build_opp_table(struct device *dev, const struct cvb_table *tab=
-le,
-+			   struct rail_alignment *align,
- 			   int speedo_value, unsigned long max_freq)
- {
--	const struct rail_alignment *align =3D &table->alignment;
- 	int i, ret, dfll_mv, min_mv, max_mv;
+ /*
+@@ -640,8 +813,8 @@ static int find_lut_index_for_rate(struct tegra_dfll *t=
+d, unsigned long rate)
+ 	uv =3D dev_pm_opp_get_voltage(opp);
+ 	dev_pm_opp_put(opp);
 =20
- 	min_mv =3D round_voltage(table->min_millivolts, align, UP);
-@@ -109,8 +109,9 @@ static int build_opp_table(struct device *dev, const st=
-ruct cvb_table *table,
-  */
- const struct cvb_table *
- tegra_cvb_add_opp_table(struct device *dev, const struct cvb_table *tables=
-,
--			size_t count, int process_id, int speedo_id,
--			int speedo_value, unsigned long max_freq)
-+			size_t count, struct rail_alignment *align,
-+			int process_id, int speedo_id, int speedo_value,
-+			unsigned long max_freq)
- {
- 	size_t i;
- 	int ret;
-@@ -124,7 +125,8 @@ tegra_cvb_add_opp_table(struct device *dev, const struc=
-t cvb_table *tables,
- 		if (table->process_id !=3D -1 && table->process_id !=3D process_id)
- 			continue;
-=20
--		ret =3D build_opp_table(dev, table, speedo_value, max_freq);
-+		ret =3D build_opp_table(dev, table, align, speedo_value,
-+				      max_freq);
- 		return ret ? ERR_PTR(ret) : table;
+-	for (i =3D 0; i < td->i2c_lut_size; i++) {
+-		if (regulator_list_voltage(td->vdd_reg, td->i2c_lut[i]) =3D=3D uv)
++	for (i =3D td->lut_bottom; i < td->lut_size; i++) {
++		if (regulator_list_voltage(td->vdd_reg, td->lut[i]) =3D=3D uv)
+ 			return i;
  	}
 =20
-diff --git a/drivers/clk/tegra/cvb.h b/drivers/clk/tegra/cvb.h
-index c1f077993b2a..bcf15a089b93 100644
---- a/drivers/clk/tegra/cvb.h
-+++ b/drivers/clk/tegra/cvb.h
-@@ -49,7 +49,6 @@ struct cvb_table {
+@@ -863,9 +1036,14 @@ static int dfll_lock(struct tegra_dfll *td)
+ 			return -EINVAL;
+ 		}
 =20
- 	int min_millivolts;
- 	int max_millivolts;
--	struct rail_alignment alignment;
+-		dfll_i2c_set_output_enabled(td, true);
++		if (td->pmu_if =3D=3D TEGRA_DFLL_PMU_PWM)
++			dfll_pwm_set_output_enabled(td, true);
++		else
++			dfll_i2c_set_output_enabled(td, true);
++
+ 		dfll_set_mode(td, DFLL_CLOSED_LOOP);
+ 		dfll_set_frequency_request(td, req);
++		dfll_set_force_output_enabled(td, false);
+ 		return 0;
 =20
- 	int speedo_scale;
- 	int voltage_scale;
-@@ -59,8 +58,9 @@ struct cvb_table {
+ 	default:
+@@ -889,7 +1067,10 @@ static int dfll_unlock(struct tegra_dfll *td)
+ 	case DFLL_CLOSED_LOOP:
+ 		dfll_set_open_loop_config(td);
+ 		dfll_set_mode(td, DFLL_OPEN_LOOP);
+-		dfll_i2c_set_output_enabled(td, false);
++		if (td->pmu_if =3D=3D TEGRA_DFLL_PMU_PWM)
++			dfll_pwm_set_output_enabled(td, false);
++		else
++			dfll_i2c_set_output_enabled(td, false);
+ 		return 0;
 =20
- const struct cvb_table *
- tegra_cvb_add_opp_table(struct device *dev, const struct cvb_table *cvb_ta=
-bles,
--			size_t count, int process_id, int speedo_id,
--			int speedo_value, unsigned long max_freq);
-+			size_t count, struct rail_alignment *align,
-+			int process_id, int speedo_id, int speedo_value,
-+			unsigned long max_freq);
- void tegra_cvb_remove_opp_table(struct device *dev,
- 				const struct cvb_table *table,
- 				unsigned long max_freq);
+ 	case DFLL_OPEN_LOOP:
+@@ -1171,15 +1352,17 @@ static int attr_registers_show(struct seq_file *s, =
+void *data)
+ 		seq_printf(s, "[0x%02x] =3D 0x%08x\n", offs,
+ 			   dfll_i2c_readl(td, offs));
+=20
+-	seq_puts(s, "\nINTEGRATED I2C CONTROLLER REGISTERS:\n");
+-	offs =3D DFLL_I2C_CLK_DIVISOR;
+-	seq_printf(s, "[0x%02x] =3D 0x%08x\n", offs,
+-		   __raw_readl(td->i2c_controller_base + offs));
+-
+-	seq_puts(s, "\nLUT:\n");
+-	for (offs =3D 0; offs <  4 * MAX_DFLL_VOLTAGES; offs +=3D 4)
++	if (td->pmu_if =3D=3D TEGRA_DFLL_PMU_I2C) {
++		seq_puts(s, "\nINTEGRATED I2C CONTROLLER REGISTERS:\n");
++		offs =3D DFLL_I2C_CLK_DIVISOR;
+ 		seq_printf(s, "[0x%02x] =3D 0x%08x\n", offs,
+-			   __raw_readl(td->lut_base + offs));
++			   __raw_readl(td->i2c_controller_base + offs));
++
++		seq_puts(s, "\nLUT:\n");
++		for (offs =3D 0; offs <  4 * MAX_DFLL_VOLTAGES; offs +=3D 4)
++			seq_printf(s, "[0x%02x] =3D 0x%08x\n", offs,
++				   __raw_readl(td->lut_base + offs));
++	}
+=20
+ 	return 0;
+ }
+@@ -1387,9 +1570,61 @@ static int find_vdd_map_entry_min(struct tegra_dfll =
+*td, int uV)
+ 	return -EINVAL;
+ }
+=20
++/*
++ * dfll_build_pwm_lut - build the PWM regulator lookup table
++ * @td: DFLL instance
++ * @v_max: Vmax from OPP table
++ *
++ * Look-up table in h/w is ignored when PWM is used as DFLL interface to P=
+MIC.
++ * In this case closed loop output is controlling duty cycle directly. The=
+ s/w
++ * look-up that maps PWM duty cycle to voltage is still built by this func=
+tion.
++ */
++static int dfll_build_pwm_lut(struct tegra_dfll *td, int v_max)
++{
++	int i, reg_volt;
++	unsigned long rate;
++	u8 lut_bottom =3D MAX_DFLL_VOLTAGES;
++	int v_min =3D td->soc->cvb->min_millivolts * 1000;
++
++	for (i =3D 0; i < MAX_DFLL_VOLTAGES; i++) {
++		reg_volt =3D td->lut_uv[i];
++
++		/* since opp voltage is exact mv */
++		reg_volt =3D (reg_volt / 1000) * 1000;
++		if (reg_volt > v_max)
++			break;
++
++		td->lut[i] =3D i;
++		if ((lut_bottom =3D=3D MAX_DFLL_VOLTAGES) && (reg_volt >=3D v_min))
++			lut_bottom =3D i;
++	}
++
++	/* determine voltage boundaries */
++	td->lut_size =3D i;
++	if ((lut_bottom =3D=3D MAX_DFLL_VOLTAGES) ||
++	    (lut_bottom + 1 >=3D td->lut_size)) {
++		dev_err(td->dev, "no voltage above DFLL minimum %d mV\n",
++			td->soc->cvb->min_millivolts);
++		return -EINVAL;
++	}
++	td->lut_bottom =3D lut_bottom;
++
++	/* determine rate boundaries */
++	rate =3D get_dvco_rate_below(td, td->lut_bottom);
++	if (!rate) {
++		dev_err(td->dev, "no opp below DFLL minimum voltage %d mV\n",
++			td->soc->cvb->min_millivolts);
++		return -EINVAL;
++	}
++	td->dvco_rate_min =3D rate;
++
++	return 0;
++}
++
+ /**
+  * dfll_build_i2c_lut - build the I2C voltage register lookup table
+  * @td: DFLL instance
++ * @v_max: Vmax from OPP table
+  *
+  * The DFLL hardware has 33 bytes of look-up table RAM that must be filled=
+ with
+  * PMIC voltage register values that span the entire DFLL operating range.
+@@ -1397,33 +1632,26 @@ static int find_vdd_map_entry_min(struct tegra_dfll=
+ *td, int uV)
+  * the soc-specific platform driver (td->soc->opp_dev) and the PMIC
+  * register-to-voltage mapping queried from the regulator framework.
+  *
+- * On success, fills in td->i2c_lut and returns 0, or -err on failure.
++ * On success, fills in td->lut and returns 0, or -err on failure.
+  */
+-static int dfll_build_i2c_lut(struct tegra_dfll *td)
++static int dfll_build_i2c_lut(struct tegra_dfll *td, int v_max)
+ {
++	unsigned long rate;
+ 	int ret =3D -EINVAL;
+-	int j, v, v_max, v_opp;
++	int j, v, v_opp;
+ 	int selector;
+-	unsigned long rate;
+-	struct dev_pm_opp *opp;
+ 	int lut;
+=20
+-	rate =3D ULONG_MAX;
+-	opp =3D dev_pm_opp_find_freq_floor(td->soc->dev, &rate);
+-	if (IS_ERR(opp)) {
+-		dev_err(td->dev, "couldn't get vmax opp, empty opp table?\n");
+-		goto out;
+-	}
+-	v_max =3D dev_pm_opp_get_voltage(opp);
+-	dev_pm_opp_put(opp);
+-
+ 	v =3D td->soc->cvb->min_millivolts * 1000;
+ 	lut =3D find_vdd_map_entry_exact(td, v);
+ 	if (lut < 0)
+ 		goto out;
+-	td->i2c_lut[0] =3D lut;
++	td->lut[0] =3D lut;
++	td->lut_bottom =3D 0;
+=20
+ 	for (j =3D 1, rate =3D 0; ; rate++) {
++		struct dev_pm_opp *opp;
++
+ 		opp =3D dev_pm_opp_find_freq_ceil(td->soc->dev, &rate);
+ 		if (IS_ERR(opp))
+ 			break;
+@@ -1442,32 +1670,58 @@ static int dfll_build_i2c_lut(struct tegra_dfll *td=
+)
+ 			selector =3D find_vdd_map_entry_min(td, v);
+ 			if (selector < 0)
+ 				goto out;
+-			if (selector !=3D td->i2c_lut[j - 1])
+-				td->i2c_lut[j++] =3D selector;
++			if (selector !=3D td->lut[j - 1])
++				td->lut[j++] =3D selector;
+ 		}
+=20
+ 		v =3D (j =3D=3D MAX_DFLL_VOLTAGES - 1) ? v_max : v_opp;
+ 		selector =3D find_vdd_map_entry_exact(td, v);
+ 		if (selector < 0)
+ 			goto out;
+-		if (selector !=3D td->i2c_lut[j - 1])
+-			td->i2c_lut[j++] =3D selector;
++		if (selector !=3D td->lut[j - 1])
++			td->lut[j++] =3D selector;
+=20
+ 		if (v >=3D v_max)
+ 			break;
+ 	}
+-	td->i2c_lut_size =3D j;
++	td->lut_size =3D j;
+=20
+ 	if (!td->dvco_rate_min)
+ 		dev_err(td->dev, "no opp above DFLL minimum voltage %d mV\n",
+ 			td->soc->cvb->min_millivolts);
+-	else
++	else {
+ 		ret =3D 0;
++		for (j =3D 0; j < td->lut_size; j++)
++			td->lut_uv[j] =3D
++				regulator_list_voltage(td->vdd_reg,
++						       td->lut[j]);
++	}
+=20
+ out:
+ 	return ret;
+ }
+=20
++static int dfll_build_lut(struct tegra_dfll *td)
++{
++	unsigned long rate;
++	struct dev_pm_opp *opp;
++	int v_max;
++
++	rate =3D ULONG_MAX;
++	opp =3D dev_pm_opp_find_freq_floor(td->soc->dev, &rate);
++	if (IS_ERR(opp)) {
++		dev_err(td->dev, "couldn't get vmax opp, empty opp table?\n");
++		return -EINVAL;
++	}
++	v_max =3D dev_pm_opp_get_voltage(opp);
++	dev_pm_opp_put(opp);
++
++	if (td->pmu_if =3D=3D TEGRA_DFLL_PMU_PWM)
++		return dfll_build_pwm_lut(td, v_max);
++	else
++		return dfll_build_i2c_lut(td, v_max);
++}
++
+ /**
+  * read_dt_param - helper function for reading required parameters from th=
+e DT
+  * @td: DFLL instance
+@@ -1526,11 +1780,55 @@ static int dfll_fetch_i2c_params(struct tegra_dfll =
+*td)
+ 	}
+ 	td->i2c_reg =3D vsel_reg;
+=20
+-	ret =3D dfll_build_i2c_lut(td);
+-	if (ret) {
+-		dev_err(td->dev, "couldn't build I2C LUT\n");
++	return 0;
++}
++
++static int dfll_fetch_pwm_params(struct tegra_dfll *td)
++{
++	int ret, i;
++	u32 pwm_period;
++
++	if (!td->soc->alignment.step_uv || !td->soc->alignment.offset_uv) {
++		dev_err(td->dev,
++			"Missing step or alignment info for PWM regulator");
++		return -EINVAL;
++	}
++	for (i =3D 0; i < MAX_DFLL_VOLTAGES; i++)
++		td->lut_uv[i] =3D td->soc->alignment.offset_uv +
++				i * td->soc->alignment.step_uv;
++
++	ret =3D read_dt_param(td, "nvidia,init-uv", &td->reg_init_uV);
++	if (!ret) {
++		dev_err(td->dev, "couldn't get initialized voltage\n");
++		return ret;
++	}
++
++	ret =3D read_dt_param(td, "nvidia,pwm-period", &pwm_period);
++	if (!ret) {
++		dev_err(td->dev, "couldn't get PWM period\n");
+ 		return ret;
+ 	}
++	td->pwm_rate =3D (NSEC_PER_SEC / pwm_period) * (MAX_DFLL_VOLTAGES - 1);
++
++	td->pwm_pin =3D devm_pinctrl_get(td->dev);
++	if (IS_ERR(td->pwm_pin)) {
++		dev_err(td->dev, "DT: missing pinctrl device\n");
++		return PTR_ERR(td->pwm_pin);
++	}
++
++	td->pwm_enable_state =3D pinctrl_lookup_state(td->pwm_pin,
++						    "dvfs_pwm_enable");
++	if (IS_ERR(td->pwm_enable_state)) {
++		dev_err(td->dev, "DT: missing pwm enabled state\n");
++		return PTR_ERR(td->pwm_enable_state);
++	}
++
++	td->pwm_disable_state =3D pinctrl_lookup_state(td->pwm_pin,
++						     "dvfs_pwm_disable");
++	if (IS_ERR(td->pwm_disable_state)) {
++		dev_err(td->dev, "DT: missing pwm disabled state\n");
++		return PTR_ERR(td->pwm_disable_state);
++	}
+=20
+ 	return 0;
+ }
+@@ -1597,16 +1895,6 @@ int tegra_dfll_register(struct platform_device *pdev=
+,
+=20
+ 	td->soc =3D soc;
+=20
+-	td->vdd_reg =3D devm_regulator_get(td->dev, "vdd-cpu");
+-	if (IS_ERR(td->vdd_reg)) {
+-		ret =3D PTR_ERR(td->vdd_reg);
+-		if (ret !=3D -EPROBE_DEFER)
+-			dev_err(td->dev, "couldn't get vdd_cpu regulator: %d\n",
+-				ret);
+-
+-		return ret;
+-	}
+-
+ 	td->dvco_rst =3D devm_reset_control_get(td->dev, "dvco");
+ 	if (IS_ERR(td->dvco_rst)) {
+ 		dev_err(td->dev, "couldn't get dvco reset\n");
+@@ -1619,10 +1907,27 @@ int tegra_dfll_register(struct platform_device *pde=
+v,
+ 		return ret;
+ 	}
+=20
+-	ret =3D dfll_fetch_i2c_params(td);
++	if (of_property_read_bool(td->dev->of_node, "nvidia,pwm-to-pmic")) {
++		td->pmu_if =3D TEGRA_DFLL_PMU_PWM;
++		ret =3D dfll_fetch_pwm_params(td);
++	} else  {
++		td->vdd_reg =3D devm_regulator_get(td->dev, "vdd-cpu");
++		if (IS_ERR(td->vdd_reg)) {
++			dev_err(td->dev, "couldn't get vdd_cpu regulator\n");
++			return PTR_ERR(td->vdd_reg);
++		}
++		td->pmu_if =3D TEGRA_DFLL_PMU_I2C;
++		ret =3D dfll_fetch_i2c_params(td);
++	}
+ 	if (ret)
+ 		return ret;
+=20
++	ret =3D dfll_build_lut(td);
++	if (ret) {
++		dev_err(td->dev, "couldn't build LUT\n");
++		return ret;
++	}
++
+ 	mem =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	if (!mem) {
+ 		dev_err(td->dev, "no control register resource\n");
 --=20
 2.19.2
 
