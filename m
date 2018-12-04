@@ -2,81 +2,107 @@ Return-Path: <SRS0=3Y/e=ON=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2892BC04EB8
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 07:44:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AAECC04EBF
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 08:03:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC65A20850
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 07:44:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC65A20850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 2C7F320850
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 08:03:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C7F320850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726005AbeLDHoS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 4 Dec 2018 02:44:18 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:44927 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725994AbeLDHoS (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 4 Dec 2018 02:44:18 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 3D448207B0; Tue,  4 Dec 2018 08:44:16 +0100 (CET)
-Received: from localhost (aaubervilliers-681-1-63-158.w90-88.abo.wanadoo.fr [90.88.18.158])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 0BEBD2073D;
-        Tue,  4 Dec 2018 08:44:16 +0100 (CET)
-Date:   Tue, 4 Dec 2018 08:44:16 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Jernej Skrabec <jernej.skrabec@siol.net>
-Cc:     wens@csie.org, mturquette@baylibre.com, sboyd@kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH] clk: sunxi-ng: h3: Allow parent change for ve clock
-Message-ID: <20181204074416.77gakt3d2xfntqks@flea>
-References: <20181203195856.1886-1-jernej.skrabec@siol.net>
+        id S1725994AbeLDIDq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 4 Dec 2018 03:03:46 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:41915 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725983AbeLDIDq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Dec 2018 03:03:46 -0500
+Received: by mail-lj1-f196.google.com with SMTP id z80-v6so13976925ljb.8;
+        Tue, 04 Dec 2018 00:03:43 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=fgPj/u/cz0JV2Wgf14qUC+gVFxhWVypKSVSkLhduCpo=;
+        b=B0jWIo/Rp+QLGShIQrW/gLhQkySAyK2GYCHQLtJ3YP3M72V2COC5klR/8tr9D+jS11
+         vVzs7ic4IJqPgjsmGRSjsO6Z1K4k+jSPYbNKBAI2rjbXblcu7KrBWSKw4scgz3NH2Usg
+         Lcv/jurdnWe39/WNhcx+07FVLsTM7iHmIWd8iJJ7tg2Jh6DxtZSsXln8Ruw5WCc/zynn
+         al+PpuTURKKGK8MUyvfvdgpzvHhKZObtZHW5LVSJBTREO7P1KlKax7pMpjFBlV6DybOa
+         ztdrJLQI2BZyl7fV9DhoJaeVLeOOEbQsqj/MiMnmsgDl8u0iofPDXlYpSehPFm7jZYgh
+         YLYQ==
+X-Gm-Message-State: AA+aEWZ6WLiUODKR95WOoVY8/12t675tpGlrqhBpjvIkH+SaysPZ8ig2
+        rdhhIHxEZdDAaCw5STYON6E=
+X-Google-Smtp-Source: AFSGD/XzR8al4PJv1hjBQ6E90ofwrr0mxzqNq5Rj8cjmq74JEG21KXDsbLsLtgg7X1mpy6ks0z5cRw==
+X-Received: by 2002:a2e:9715:: with SMTP id r21-v6mr12121391lji.30.1543910621825;
+        Tue, 04 Dec 2018 00:03:41 -0800 (PST)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id c22sm2808778lfd.88.2018.12.04.00.03.40
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 04 Dec 2018 00:03:41 -0800 (PST)
+Date:   Tue, 4 Dec 2018 10:03:38 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc:     mazziesaccount@gmail.com, mturquette@baylibre.com,
+        sboyd@kernel.org, cw00.choi@samsung.com, krzk@kernel.org,
+        b.zolnierkie@samsung.com, andy.gross@linaro.org,
+        david.brown@linaro.org, pavel@ucw.cz, andrew.smirnov@gmail.com,
+        pombredanne@nexb.com, sjhuang@iluvatar.ai, akshu.agrawal@amd.com,
+        djkurtz@chromium.org, rafael.j.wysocki@intel.com,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v5 1/9] clkdev: add managed clkdev lookup registration
+Message-ID: <20181204080338.GB31204@localhost.localdomain>
+References: <cover.1543837442.git.matti.vaittinen@fi.rohmeurope.com>
+ <b6c5c110c482ff6a6b2378ab3518bd31c6233872.1543837442.git.matti.vaittinen@fi.rohmeurope.com>
+ <20181203180612.GM30658@n2100.armlinux.org.uk>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="huei76pv43qff4of"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181203195856.1886-1-jernej.skrabec@siol.net>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20181203180612.GM30658@n2100.armlinux.org.uk>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hello Russell,
 
---huei76pv43qff4of
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks for the review. I do appreciate this. I'll send out v6 where I'll
+have these fixed =)
 
-On Mon, Dec 03, 2018 at 08:58:56PM +0100, Jernej Skrabec wrote:
-> Cedrus driver wants to set VE clock higher than it's possible without
-> changing parent rate.
->=20
-> In order to correct that, allow changing parent rate for VE clock.
->=20
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+On Mon, Dec 03, 2018 at 06:06:12PM +0000, Russell King - ARM Linux wrote:
+> > +static int devm_clk_match_clkdev(struct device *dev, void *res, void *data)
+> > +{
+> > +	struct clk_lookup **l = res;
+> > +
+> > +	if (!l || !*l) {
+> > +		WARN_ON(!l || !*l);
+> 
+> How can "l" be NULL here?  How can *l be NULL?
 
-Applied, thanks!
-Maxime
+I really don't know if there is any "sane" way to end up having the
+devres data NULLed. I admit I looked an example on how others had
+implemented the match. These checks were present in devm_clk_match
+and devm_regmap_irq_chip_match so I assumed there is a way to end up
+having NULL there. Thus I played safe. OTOH it seems that for example
+devm_hwmon_match does omit these checks and I really don't see right
+away why the dr->data would be NULL. So I'll remove the check.
 
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Br,
+	Matti Vaittinen
 
---huei76pv43qff4of
-Content-Type: application/pgp-signature; name="signature.asc"
+> 
+> -- 
+> RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+> FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+> According to speedtest.net: 11.9Mbps down 500kbps up
 
------BEGIN PGP SIGNATURE-----
+-- 
+Matti Vaittinen
+ROHM Semiconductors
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXAYwUAAKCRDj7w1vZxhR
-xUg8AP9CB1pqK5e1nR/oAO/OqFYD4pHu7oG5J7FBGE24ygkgZQEAzfqcMfZwS8yD
-LtrqkcaZIIkjCbByLU7e8zwABmlWHgk=
-=abea
------END PGP SIGNATURE-----
-
---huei76pv43qff4of--
+~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
