@@ -2,92 +2,89 @@ Return-Path: <SRS0=3Y/e=ON=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D6A9C04EB8
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 18:43:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B493C04EB8
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 18:46:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E537A206B7
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 18:43:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="T3RzuVhZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E537A206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 2C7CA20834
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 18:46:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C7CA20834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725895AbeLDSnU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 4 Dec 2018 13:43:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49058 "EHLO mail.kernel.org"
+        id S1725895AbeLDSqq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 4 Dec 2018 13:46:46 -0500
+Received: from mga09.intel.com ([134.134.136.24]:47823 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725880AbeLDSnU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 4 Dec 2018 13:43:20 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A7045206B7;
-        Tue,  4 Dec 2018 18:43:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543948999;
-        bh=BmJ2Wy2RklIjViSxlyIadstKkbH8qI/+X2Vn6hRroX4=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=T3RzuVhZgEu17ob5PHGc5IKppmwMfV88phmkrcLNIZGwRxfQOTaARujPGAiVT36so
-         Feb97jG3KifjLq5OKQcWsm+QzyaYnY3YrtwOogcxeaL2ZOYLBNK+AMK79UrWRsgRPv
-         fgoszVuLSp0WHN+TPHDVQBEgvpdokVER0NlDMsnw=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Jerome Brunet <jbrunet@baylibre.com>,
+        id S1725797AbeLDSqq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 4 Dec 2018 13:46:46 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Dec 2018 10:41:43 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,315,1539673200"; 
+   d="scan'208";a="106960764"
+Received: from yoojae-mobl1.amr.corp.intel.com (HELO [10.122.128.138]) ([10.122.128.138])
+  by fmsmga008.fm.intel.com with ESMTP; 04 Dec 2018 10:41:42 -0800
+Subject: Re: [PATCH] clk: aspeed: Mark lclk (LPC) and espiclk (eSPI) as
+ critical
+To:     Stephen Boyd <sboyd@kernel.org>, Andrew Jeffery <andrew@aj.id.au>,
+        Joel Stanley <joel@jms.id.au>,
         Michael Turquette <mturquette@baylibre.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20181204163403.32321-1-jbrunet@baylibre.com>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20181204163403.32321-1-jbrunet@baylibre.com>
-Message-ID: <154394899913.88331.6973889205055781649@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH] clk: fix clk_mux_val_to_index() error value
-Date:   Tue, 04 Dec 2018 10:43:19 -0800
+Cc:     linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org,
+        Samuel Jiang <chyishian.jiang@gmail.com>,
+        stable@vger.kernel.org, linux-clk@vger.kernel.org,
+        Vijay Khemka <vijaykhemka@fb.com>,
+        linux-arm-kernel@lists.infradead.org
+References: <20181204172357.23665-1-jae.hyun.yoo@linux.intel.com>
+ <154394694584.88331.12700815292714558990@swboyd.mtv.corp.google.com>
+From:   Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+Message-ID: <823c0ad5-a03c-86ea-f089-556420e9878a@linux.intel.com>
+Date:   Tue, 4 Dec 2018 12:41:38 -0600
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <154394694584.88331.12700815292714558990@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jerome Brunet (2018-12-04 08:34:03)
-> clk_mux_val_to_index() is meant to be used by .get_parent(), which
-> returns a u8, so when the value provided does not map to any valid index,
-> it is not a good idea to return a negative error value.
-> =
+On 12/4/2018 12:09 PM, Stephen Boyd wrote:
+> Quoting Jae Hyun Yoo (2018-12-04 09:23:57)
+>> diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
+>> index 596136793fc4..01633ad85683 100644
+>> --- a/drivers/clk/clk-aspeed.c
+>> +++ b/drivers/clk/clk-aspeed.c
+>> @@ -95,7 +95,7 @@ static const struct aspeed_gate_data aspeed_gates[] = {
+>>          [ASPEED_CLK_GATE_DCLK] =        {  5, -1, "dclk-gate",          NULL,   CLK_IS_CRITICAL }, /* DAC */
+>>          [ASPEED_CLK_GATE_REFCLK] =      {  6, -1, "refclk-gate",        "clkin", CLK_IS_CRITICAL },
+>>          [ASPEED_CLK_GATE_USBPORT2CLK] = {  7,  3, "usb-port2-gate",     NULL,   0 }, /* USB2.0 Host port 2 */
+>> -       [ASPEED_CLK_GATE_LCLK] =        {  8,  5, "lclk-gate",          NULL,   0 }, /* LPC */
+>> +       [ASPEED_CLK_GATE_LCLK] =        {  8,  5, "lclk-gate",          NULL,   CLK_IS_CRITICAL }, /* LPC */
+>>          [ASPEED_CLK_GATE_USBUHCICLK] =  {  9, 15, "usb-uhci-gate",      NULL,   0 }, /* USB1.1 (requires port 2 enabled) */
+>>          [ASPEED_CLK_GATE_D1CLK] =       { 10, 13, "d1clk-gate",         NULL,   0 }, /* GFX CRT */
+>>          [ASPEED_CLK_GATE_YCLK] =        { 13,  4, "yclk-gate",          NULL,   0 }, /* HAC */
+>> @@ -103,7 +103,7 @@ static const struct aspeed_gate_data aspeed_gates[] = {
+>>          [ASPEED_CLK_GATE_UART1CLK] =    { 15, -1, "uart1clk-gate",      "uart", 0 }, /* UART1 */
+>>          [ASPEED_CLK_GATE_UART2CLK] =    { 16, -1, "uart2clk-gate",      "uart", 0 }, /* UART2 */
+>>          [ASPEED_CLK_GATE_UART5CLK] =    { 17, -1, "uart5clk-gate",      "uart", 0 }, /* UART5 */
+>> -       [ASPEED_CLK_GATE_ESPICLK] =     { 19, -1, "espiclk-gate",       NULL,   0 }, /* eSPI */
+>> +       [ASPEED_CLK_GATE_ESPICLK] =     { 19, -1, "espiclk-gate",       NULL,   CLK_IS_CRITICAL }, /* eSPI */
+> 
+> Can you please add a comment in the code as well so that we can easily
+> recall why such clks are marked critical a year from now without having
+> to do git archaeology.
+> 
 
-> Instead, return num_parents which we know is an invalid index and let
-> CCF deal with it.
-> =
+Okay, I'll add a comment.
 
-> Fixes: 77deb66d262f ("clk: mux: add helper function for index/value trans=
-lation")
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
-
-Thanks!
-
-> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-> index 60c51871b04b..fc20886ef069 100644
-> --- a/include/linux/clk-provider.h
-> +++ b/include/linux/clk-provider.h
-> @@ -550,8 +550,8 @@ struct clk_hw *clk_hw_register_mux_table(struct devic=
-e *dev, const char *name,
->                 void __iomem *reg, u8 shift, u32 mask,
->                 u8 clk_mux_flags, u32 *table, spinlock_t *lock);
->  =
-
-> -int clk_mux_val_to_index(struct clk_hw *hw, u32 *table, unsigned int fla=
-gs,
-> -                        unsigned int val);
-> +u8 clk_mux_val_to_index(struct clk_hw *hw, u32 *table, unsigned int flag=
-s,
-
-I wonder if we should just make this unsigned int? Does it hurt at all
-to have it be a wider type even though it doesn't match the CCF decision
-to make this a u8 for the parent index number space?
-
+Thanks,
+Jae
