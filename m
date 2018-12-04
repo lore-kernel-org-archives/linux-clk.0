@@ -2,104 +2,286 @@ Return-Path: <SRS0=3Y/e=ON=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F92DC04EB8
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 20:54:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06A9DC04EB8
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 21:41:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0030520834
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 20:54:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B604420672
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 21:41:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GqQqRW0T"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0030520834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="TnQJtvTi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B604420672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725867AbeLDUyg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 4 Dec 2018 15:54:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42814 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726263AbeLDUyg (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 4 Dec 2018 15:54:36 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2BA0E2081B;
-        Tue,  4 Dec 2018 20:54:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543956875;
-        bh=SrFbdyxYsYVyjA57irTwtVbQ8ELhrcpR5swTOS87yXQ=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=GqQqRW0TR/RZUMEKXPH8zmW5M46WjiCKCLAO/3fn66SG9MyNMhXV/QlFlKH0YCTkn
-         VDzL0X4u4165uqj5ZHjxShYJUtU1ssdpeOc6c0ppg6OgVYLYHKOMo318OkYqF7MrL9
-         qCK19HYYZEdHUaHJsKRBGtPKMurzJ70PTGbYUpqw=
-Content-Type: text/plain; charset="utf-8"
+        id S1725975AbeLDVlv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 4 Dec 2018 16:41:51 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:43950 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725904AbeLDVlv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Dec 2018 16:41:51 -0500
+Received: by mail-oi1-f195.google.com with SMTP id u18so15669795oie.10
+        for <linux-clk@vger.kernel.org>; Tue, 04 Dec 2018 13:41:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=h/yIvXNygN2qOUzK4IHRGbbks0fPHhysMhBDT+oPC6I=;
+        b=TnQJtvTi4JAllcMCQncwal1hkGzVvsn2hBaD3DZ2vT4P6nWXF+JTU9nhpeTT2XCLrh
+         mT8+AN561sfkmi7K2OrA1MUB+DGxeXCCamUeV31xM1aKX2605hqYkvM6Kv5QjVtIpaKH
+         gTO/COg0p3EXYjWkReXvMP135zdCGevxz4xw0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=h/yIvXNygN2qOUzK4IHRGbbks0fPHhysMhBDT+oPC6I=;
+        b=eESLd2fcV6PHRB45BSKLpKa68GtnB5mhPhK7aVVBW/ZtjwId1eOsdix6qeH5R14iFm
+         PxHuxcX5Uv5UmlZfhlj8WAcGk4WHVykYbmOtCU9KIGkoQZ8D44HsXefsuZtyziGWa5vI
+         GGq3ttPcRhvTFIe+q8u5XvCbGKEA9Ko+eo0o3I6b/DbAlBpIGkD7WG1c4QYg0Zbloncn
+         E8J4YPv9JaloWDZRPMyf50dyiZlLi2chGuI92PHUkjdNesmUi2Zvir8agQb+xhNwf2LT
+         2WrIvL9Lm9AeXbWMnmKLX+hxipqpDWcqDWbgHPg6MUMLbqSMbL4SQHnObgMykwrwLUxN
+         OoMg==
+X-Gm-Message-State: AA+aEWY50rGlzaSlIThFbBNKrAJI/W/W92fWPHLHkMweDUQ5vzf51/Ie
+        BnC9XKV3zb52EIOYd2tamOwZGg==
+X-Google-Smtp-Source: AFSGD/XyYPpIDtinLCr9z9lIU3LoY4RU1er9A1kZFbcKiDFA6MadfFhIVDDXjWm0twx5Fav/hlLnSA==
+X-Received: by 2002:aca:33c2:: with SMTP id z185mr13820066oiz.4.1543959709649;
+        Tue, 04 Dec 2018 13:41:49 -0800 (PST)
+Received: from [172.22.22.26] (c-71-195-29-92.hsd1.mn.comcast.net. [71.195.29.92])
+        by smtp.googlemail.com with ESMTPSA id 187sm15104411oic.12.2018.12.04.13.41.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 04 Dec 2018 13:41:48 -0800 (PST)
+Subject: Re: [RFC PATCH] clk: qcom: clk-rpmh: Add IPA clock support
+To:     Stephen Boyd <sboyd@kernel.org>,
+        David Dai <daidavid1@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     georgi.djakov@linaro.org, bjorn.andersson@linaro.org,
+        evgreen@google.com, tdas@codeaurora.org
+References: <1543895413-1553-1-git-send-email-daidavid1@codeaurora.org>
+ <1543895413-1553-2-git-send-email-daidavid1@codeaurora.org>
+ <154395145491.88331.1174781210192403998@swboyd.mtv.corp.google.com>
+From:   Alex Elder <elder@linaro.org>
+Message-ID: <8dafe631-4b16-94cd-392e-84728f2bb382@linaro.org>
+Date:   Tue, 4 Dec 2018 15:41:47 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>,
-        Joel Stanley <joel@jms.id.au>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <CACPK8XcwMMoxG6vhDhUU8RYGABx7rtBoxJvp2yDhHeD-PemdqA@mail.gmail.com>
-Cc:     Andrew Jeffery <andrew@aj.id.au>,
-        Michael Turquette <mturquette@baylibre.com>,
-        vijaykhemka@fb.com, chyishian.jiang@gmail.com,
-        linux-clk@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-aspeed@lists.ozlabs.org,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        "# 3.4.x" <stable@vger.kernel.org>
-References: <20181204185054.24053-1-jae.hyun.yoo@linux.intel.com>
- <CACPK8XcwMMoxG6vhDhUU8RYGABx7rtBoxJvp2yDhHeD-PemdqA@mail.gmail.com>
-Message-ID: <154395687459.88331.13570416457347078441@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v2] clk: aspeed: Mark lclk (LPC) and espiclk (eSPI) as critical
-Date:   Tue, 04 Dec 2018 12:54:34 -0800
+In-Reply-To: <154395145491.88331.1174781210192403998@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Joel Stanley (2018-12-04 12:51:43)
-> Hi Jae,
-> =
+On 12/4/18 1:24 PM, Stephen Boyd wrote:
+> Quoting David Dai (2018-12-03 19:50:13)
+>> Add IPA clock support by extending the current clk rpmh driver to support
+>> clocks that are managed by a different type of RPMh resource known as
+>> Bus Clock Manager(BCM).
+> 
+> Yes, but why? Does the IPA driver need to set clk rates and that somehow
+> doesn't work as a bandwidth request?
 
-> On Wed, 5 Dec 2018 at 05:20, Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com> =
-wrote:
-> >
-> > These interfaces are used by host to talk to BMC, and the clock
-> > source is from the host, usually from PCH. So this commit marks
-> > the lclk as critical to make it able to be enabled. Also, it marks
-> > espiclk too because eSPI is sharing the same interface with LPC.
-> =
+The IPA core clock is a *clock*, not a bus.  Representing it as if
+it were a bus, abusing the interconnect interface--pretending a bandwidth
+request is really a clock rate request--is kind of kludgy.  I think Bjorn
+and David (and maybe Georgi? I don't know) decided a long time ago that
+exposing this as a clock is the right way to do it.  I agree with that.
 
-> While this is true on the platform you have in mind, on other
-> platforms this is not the case. They do not use eSPI, and LCLK is
-> enabled by the driver that is used to configure LPC
-> (drivers/misc/aspeed-lpc-ctrl.c):
-> =
+					-Alex
 
->  lpc_ctrl: lpc-ctrl@0 {
->      compatible =3D "aspeed,ast2400-lpc-ctrl";
->      reg =3D <0x0 0x80>;
->      clocks =3D <&syscon ASPEED_CLK_GATE_LCLK>;
->  }
-> =
-
-> I wonder if we need a device tree binding to describe which clocks are cr=
-itical.
-
-A binding to describe critical clks has been rejected in the past. I
-don't think we need to have it here either? More information on why
-things are being marked critical will be helpful to see if we need to
-re-open that discussion again.
-
-> =
-
-> Stephen, please don't merge this patch yet.
-> =
-
-
-Sure.
+>> Signed-off-by: David Dai <daidavid1@codeaurora.org>
+>> ---
+>> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
+>> index 9f4fc77..42e2cd2 100644
+>> --- a/drivers/clk/qcom/clk-rpmh.c
+>> +++ b/drivers/clk/qcom/clk-rpmh.c
+>> @@ -18,6 +18,32 @@
+>>  #define CLK_RPMH_ARC_EN_OFFSET         0
+>>  #define CLK_RPMH_VRM_EN_OFFSET         4
+>>  
+>> +#define BCM_TCS_CMD_COMMIT_MASK                0x40000000
+>> +#define BCM_TCS_CMD_VALID_SHIFT                29
+>> +#define BCM_TCS_CMD_VOTE_MASK          0x3fff
+>> +#define BCM_TCS_CMD_VOTE_SHIFT         0
+>> +
+>> +#define BCM_TCS_CMD(valid, vote) \
+>> +       (BCM_TCS_CMD_COMMIT_MASK |\
+> 
+> Nitpick: Add space before the \ and align them all up on the right side
+> of the page.
+> 
+>> +       ((valid) << BCM_TCS_CMD_VALID_SHIFT) |\
+>> +       ((cpu_to_le32(vote) &\
+>> +       BCM_TCS_CMD_VOTE_MASK) << BCM_TCS_CMD_VOTE_SHIFT))
+>> +
+>> +/**
+>> + * struct bcm_db - Auxiliary data pertaining to each Bus Clock Manager(BCM)
+>> + * @unit: divisor used to convert Hz value to an RPMh msg
+>> + * @width: multiplier used to convert Hz value to an RPMh msg
+>> + * @vcd: virtual clock domain that this bcm belongs to
+>> + * @reserved: reserved to pad the struct
+>> + */
+>> +
+> 
+> Nitpick: Please remove the newline between comment and struct.
+> 
+>> +struct bcm_db {
+>> +       u32 unit;
+>> +       u16 width;
+>> +       u8 vcd;
+>> +       u8 reserved;
+> 
+> These would need __le32 and __le16 for the byte swap.
+> 
+>> +};
+>> +
+>>  /**
+>>   * struct clk_rpmh - individual rpmh clock data structure
+>>   * @hw:                        handle between common and hardware-specific interfaces
+>> @@ -210,6 +249,91 @@ static unsigned long clk_rpmh_recalc_rate(struct clk_hw *hw,
+>>         .recalc_rate    = clk_rpmh_recalc_rate,
+>>  };
+>>  
+>> +static int clk_rpmh_bcm_send_cmd(struct clk_rpmh *c, bool enable)
+>> +{
+>> +       struct tcs_cmd cmd = { 0 };
+>> +       u32 cmd_state;
+>> +       int ret;
+>> +
+>> +       cmd_state = enable ? (c->aggr_state ? c->aggr_state : 1) : 0;
+>> +
+>> +       if (c->last_sent_aggr_state == cmd_state)
+>> +               return 0;
+>> +
+>> +       cmd.addr = c->res_addr;
+>> +       cmd.data = BCM_TCS_CMD(enable, cmd_state);
+>> +
+>> +       ret = rpmh_write_async(c->dev, RPMH_ACTIVE_ONLY_STATE, &cmd, 1);
+>> +       if (ret) {
+>> +               dev_err(c->dev, "set active state of %s failed: (%d)\n",
+>> +                       c->res_name, ret);
+>> +               return ret;
+>> +       }
+>> +
+>> +       c->last_sent_aggr_state = cmd_state;
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static int clk_rpmh_bcm_prepare(struct clk_hw *hw)
+>> +{
+>> +       struct clk_rpmh *c = to_clk_rpmh(hw);
+>> +       int ret = 0;
+> 
+> Don't initialize variables and then reassign them right after.
+> 
+>> +
+>> +       mutex_lock(&rpmh_clk_lock);
+>> +       ret = clk_rpmh_bcm_send_cmd(c, true);
+>> +       mutex_unlock(&rpmh_clk_lock);
+>> +
+>> +       return ret;
+>> +};
+>> +
+>> +static void clk_rpmh_bcm_unprepare(struct clk_hw *hw)
+>> +{
+>> +       struct clk_rpmh *c = to_clk_rpmh(hw);
+>> +
+>> +       mutex_lock(&rpmh_clk_lock);
+>> +       clk_rpmh_bcm_send_cmd(c, false);
+>> +       mutex_unlock(&rpmh_clk_lock);
+>> +};
+>> +
+>> +static int clk_rpmh_bcm_set_rate(struct clk_hw *hw, unsigned long rate,
+>> +                                unsigned long parent_rate)
+>> +{
+>> +       struct clk_rpmh *c = to_clk_rpmh(hw);
+>> +
+>> +       c->aggr_state = rate / (c->aux_data.unit * 1000);
+>> +
+>> +       if (clk_hw_is_prepared(hw)) {
+> 
+> Why do we need to check is_prepared? Add a comment indicating we can't
+> send the request when the clk is disabled?
+> 
+>> +               mutex_lock(&rpmh_clk_lock);
+>> +               clk_rpmh_bcm_send_cmd(c, true);
+> 
+> This function is always inside mutex_lock()/unlock() pair, so push the
+> lock into the function?
+> 
+>> +               mutex_unlock(&rpmh_clk_lock);
+>> +       }
+>> +
+>> +       return 0;
+>> +};
+>> +
+>> +static long clk_rpmh_round_rate(struct clk_hw *hw, unsigned long rate,
+>> +                               unsigned long *parent_rate)
+>> +{
+>> +       return rate;
+>> +}
+>> +
+>> +static unsigned long clk_rpmh_bcm_recalc_rate(struct clk_hw *hw,
+>> +                                       unsigned long prate)
+>> +{
+>> +       struct clk_rpmh *c = to_clk_rpmh(hw);
+>> +
+>> +       return c->aggr_state * c->aux_data.unit * 1000;
+> 
+> What is 1000 for?
+> 
+>> +}
+>> +
+>> +static const struct clk_ops clk_rpmh_bcm_ops = {
+>> +       .prepare        = clk_rpmh_bcm_prepare,
+>> +       .unprepare      = clk_rpmh_bcm_unprepare,
+>> +       .set_rate       = clk_rpmh_bcm_set_rate,
+>> +       .round_rate     = clk_rpmh_round_rate,
+>> +       .recalc_rate    = clk_rpmh_bcm_recalc_rate,
+>> +};
+>> +
+>>  /* Resource name must match resource id present in cmd-db. */
+>>  DEFINE_CLK_RPMH_ARC(sdm845, bi_tcxo, bi_tcxo_ao, "xo.lvl", 0x3, 2);
+>>  DEFINE_CLK_RPMH_VRM(sdm845, ln_bb_clk2, ln_bb_clk2_ao, "lnbclka2", 2);
+>> @@ -275,6 +402,21 @@ static int clk_rpmh_probe(struct platform_device *pdev)
+>>                                 rpmh_clk->res_name);
+>>                         return -ENODEV;
+>>                 }
+> 
+> Nitpick: Please add newline here.
+> 
+>> +               aux_data_len = cmd_db_read_aux_data_len(rpmh_clk->res_name);
+>> +               if (aux_data_len == sizeof(struct bcm_db)) {
+>> +                       ret = cmd_db_read_aux_data(rpmh_clk->res_name,
+>> +                                                  (u8 *)&rpmh_clk->aux_data,
+> 
+> Is the cast necessary? And I would just pick out the data you need from
+> the aux_data instead of storing it forever (with the padding) in the
+> rpmh_clk structure.
+> 
+>> +                                                  sizeof(struct bcm_db));
+>> +                       if (ret < 0) {
+>> +                               dev_err(&pdev->dev, "aux data read failure for %s (%d)\n",
+>> +                               rpmh_clk->res_name, ret);
+>> +                               return ret;
+>> +                       }
+>> +                       rpmh_clk->aux_data.unit =
+>> +                                       le32_to_cpu(rpmh_clk->aux_data.unit);
+>> +                       rpmh_clk->aux_data.width =
+>> +                                       le16_to_cpu(rpmh_clk->aux_data.width);
+>> +               }
+> 
+> Nitpick: Newline here too.
+> 
+>>                 rpmh_clk->res_addr += res_addr;
+>>                 rpmh_clk->dev = &pdev->dev;
+>>  
 
