@@ -3,100 +3,129 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E351C04EBF
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 18:09:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C737C04EBF
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 18:14:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DAD8B2082B
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 18:09:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 65FFF2082B
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 18:14:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pUckvOOR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAD8B2082B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ApGrVQj1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65FFF2082B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725880AbeLDSJH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 4 Dec 2018 13:09:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37814 "EHLO mail.kernel.org"
+        id S1725866AbeLDSOK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 4 Dec 2018 13:14:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38820 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725839AbeLDSJH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 4 Dec 2018 13:09:07 -0500
+        id S1725839AbeLDSOK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 4 Dec 2018 13:14:10 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8A3972081C;
-        Tue,  4 Dec 2018 18:09:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9121C2081C;
+        Tue,  4 Dec 2018 18:14:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543946946;
-        bh=P4eXm/PXBfRIU2x7u2O188XXFONqF2ec5UpaXxGS6As=;
+        s=default; t=1543947249;
+        bh=6bTTxQJOrUPlJgQrN8eLS03HzfWoHwHNP21kd4F5NXs=;
         h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=pUckvOORWwDidKythEbvwv43ukHDrULRKlQPeAr0BXAi+fQ/Nz4HSQE8fmeG9APft
-         kHd16555MHVjtO7kJn6rTHkv9uVMMD7dnGzCus6v48G2mg11yE621lii55nFyObiEi
-         bHM3SHiy9HbisEDCHiE5pSt9bPoje1fPnenC5hec=
+        b=ApGrVQj19o5go1VatVaZHvHZ8c6OP2QZOvvGRFrQn4nWKn2+ZBCZ6DwHN4szytjco
+         3IH08Y7CXpiWJbWmRgFu9RziSNn+674YJETm0flCilQnDUyTNVvGpEe73pg/iHLAcA
+         pmalRRzLg+IBiD+OWxDVXbQA6cF9wqsWopobKUQE=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-To:     Andrew Jeffery <andrew@aj.id.au>,
-        Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Michael Turquette <mturquette@baylibre.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20181204172357.23665-1-jae.hyun.yoo@linux.intel.com>
-Cc:     Vijay Khemka <vijaykhemka@fb.com>,
-        Samuel Jiang <chyishian.jiang@gmail.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org,
-        Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>,
-        stable@vger.kernel.org
-References: <20181204172357.23665-1-jae.hyun.yoo@linux.intel.com>
-Message-ID: <154394694584.88331.12700815292714558990@swboyd.mtv.corp.google.com>
+In-Reply-To: <CAK7LNAQEeLo=PW=DygyVxVHyn5jgRP18nb0cK+u1wGNd4BUh7Q@mail.gmail.com>
+Cc:     sugaya.taichi@socionext.com, DTML <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-serial@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Jiri Slaby <jslaby@suse.com>,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>
+References: <1542589274-13878-1-git-send-email-sugaya.taichi@socionext.com>
+ <1542589274-13878-8-git-send-email-sugaya.taichi@socionext.com>
+ <154356669840.88331.4455990896653868594@swboyd.mtv.corp.google.com>
+ <CAK7LNAQEeLo=PW=DygyVxVHyn5jgRP18nb0cK+u1wGNd4BUh7Q@mail.gmail.com>
+Message-ID: <154394724886.88331.4940706362054124931@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.7
-Subject: Re: [PATCH] clk: aspeed: Mark lclk (LPC) and espiclk (eSPI) as critical
-Date:   Tue, 04 Dec 2018 10:09:05 -0800
+Subject: Re: [PATCH 07/14] clock: milbeaut: Add Milbeaut M10V clock control
+Date:   Tue, 04 Dec 2018 10:14:08 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jae Hyun Yoo (2018-12-04 09:23:57)
-> diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
-> index 596136793fc4..01633ad85683 100644
-> --- a/drivers/clk/clk-aspeed.c
-> +++ b/drivers/clk/clk-aspeed.c
-> @@ -95,7 +95,7 @@ static const struct aspeed_gate_data aspeed_gates[] =3D=
- {
->         [ASPEED_CLK_GATE_DCLK] =3D        {  5, -1, "dclk-gate",         =
- NULL,   CLK_IS_CRITICAL }, /* DAC */
->         [ASPEED_CLK_GATE_REFCLK] =3D      {  6, -1, "refclk-gate",       =
- "clkin", CLK_IS_CRITICAL },
->         [ASPEED_CLK_GATE_USBPORT2CLK] =3D {  7,  3, "usb-port2-gate",    =
- NULL,   0 }, /* USB2.0 Host port 2 */
-> -       [ASPEED_CLK_GATE_LCLK] =3D        {  8,  5, "lclk-gate",         =
- NULL,   0 }, /* LPC */
-> +       [ASPEED_CLK_GATE_LCLK] =3D        {  8,  5, "lclk-gate",         =
- NULL,   CLK_IS_CRITICAL }, /* LPC */
->         [ASPEED_CLK_GATE_USBUHCICLK] =3D  {  9, 15, "usb-uhci-gate",     =
- NULL,   0 }, /* USB1.1 (requires port 2 enabled) */
->         [ASPEED_CLK_GATE_D1CLK] =3D       { 10, 13, "d1clk-gate",        =
- NULL,   0 }, /* GFX CRT */
->         [ASPEED_CLK_GATE_YCLK] =3D        { 13,  4, "yclk-gate",         =
- NULL,   0 }, /* HAC */
-> @@ -103,7 +103,7 @@ static const struct aspeed_gate_data aspeed_gates[] =
-=3D {
->         [ASPEED_CLK_GATE_UART1CLK] =3D    { 15, -1, "uart1clk-gate",     =
- "uart", 0 }, /* UART1 */
->         [ASPEED_CLK_GATE_UART2CLK] =3D    { 16, -1, "uart2clk-gate",     =
- "uart", 0 }, /* UART2 */
->         [ASPEED_CLK_GATE_UART5CLK] =3D    { 17, -1, "uart5clk-gate",     =
- "uart", 0 }, /* UART5 */
-> -       [ASPEED_CLK_GATE_ESPICLK] =3D     { 19, -1, "espiclk-gate",      =
- NULL,   0 }, /* eSPI */
-> +       [ASPEED_CLK_GATE_ESPICLK] =3D     { 19, -1, "espiclk-gate",      =
- NULL,   CLK_IS_CRITICAL }, /* eSPI */
+Quoting Masahiro Yamada (2018-12-04 03:03:53)
+> Hi Stephen,
+> =
 
-Can you please add a comment in the code as well so that we can easily
-recall why such clks are marked critical a year from now without having
-to do git archaeology.
+> =
+
+> On Fri, Nov 30, 2018 at 5:31 PM Stephen Boyd <sboyd@kernel.org> wrote:
+> >
+> > Quoting Sugaya Taichi (2018-11-18 17:01:12)
+> > > Add Milbeaut M10V clock ( including PLL ) control.
+> >
+> > Please give some more details here.
+> >
+> > >
+> > > Signed-off-by: Sugaya Taichi <sugaya.taichi@socionext.com>
+> > > ---
+> > >  drivers/clk/Makefile   |   1 +
+> > >  drivers/clk/clk-m10v.c | 671 +++++++++++++++++++++++++++++++++++++++=
+++++++++++
+> >
+> > And this is different from Uniphier? Maybe we need a socionext
+> > directory under drivers/clk/.
+> =
+
+> =
+
+> =
+
+> This is always a difficult question,
+> and I do not have a strong opinion.
+> =
+
+> =
+
+> I am fine with moving the files to drivers/clk/socionext
+> although no file would be shared.
+> =
+
+> =
+
+> FYI
+> =
+
+> UniPhier and Milbeaut are completely different platforms
+> developed/maintained by different teams.
+> =
+
+> They happen to live in the same company now
+> just because Socionext merged the LSI business from Panasonic and Fujitsu.
+> =
+
+> UniPhier originates in Panasonic, while Milbeaut in Fujitsu.
+> =
+
+
+Thanks for the background info. I'd prefer to defer to however the dts
+files are getting split up into directories. If they're all put under
+arch/arm64/boot/dts/socionext/ then I would say combine the two clk
+drivers into a socionext directory. Otherwise, keep them split out.
 
