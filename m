@@ -2,132 +2,119 @@ Return-Path: <SRS0=3Y/e=ON=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B583FC04EBF
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 19:52:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCB43C04EBF
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 19:55:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A6522082B
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 19:52:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A37762082B
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 19:55:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="MvFEvWx8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A6522082B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="fc7Ahpkr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A37762082B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725878AbeLDTwq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 4 Dec 2018 14:52:46 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:34766 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725880AbeLDTwp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Dec 2018 14:52:45 -0500
-Received: by mail-lf1-f68.google.com with SMTP id p6so12913615lfc.1
-        for <linux-clk@vger.kernel.org>; Tue, 04 Dec 2018 11:52:44 -0800 (PST)
+        id S1726406AbeLDTzP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 4 Dec 2018 14:55:15 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:38403 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726181AbeLDTzO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Dec 2018 14:55:14 -0500
+Received: by mail-wm1-f68.google.com with SMTP id m22so10629456wml.3
+        for <linux-clk@vger.kernel.org>; Tue, 04 Dec 2018 11:55:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:references:organization:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=clxCSVOoVrDQ6qklc+2R2m+J9+4S5VWMRbJpGgKyiPk=;
-        b=MvFEvWx8sjwC0FvUXh5GQmoBMLPKgImsEHqD9C+YdK8Br0wXbvjCMp+uzdotzx+ihB
-         rensIZlEUdaxIMhoQumQkTKB4Zhfo/k/MOTOOmPiIq5rtRq0TIrKZnXlrZ1ZsgUqiKNc
-         G8CT8hPEoso2S77fgdYdiu0FZIruoDpQYxOoizklcu0rBHMA+VuKEteKapm27OrVxjbf
-         SbRJT1LjOEXeb06eRZuwfjYBs2KnCpIhmUGoRGsCfIWo2OZdWhFbHAU8LE/dQA/U+Ebt
-         ztnZ4r35EPDveKFS/2jN0g/IavLEMuv0Jo2vj6/6Y+vwZIqydyROAJ9CCEdKIwvN1zoO
-         gO4A==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=JCd78kTlXEdX9E5erBY0ilUCW6utRcMvi/ZMHwzOC4M=;
+        b=fc7Ahpkr6Q4IuGJdnnWvEgSzucyIFImnF5Hq20JY2aXgcDaD3yemmAVSkgK0fXKQFu
+         Rz5WSBuIvu8Qvx0/DIeR91ZZW7BaVouvxzLgWWkMy3fYYvsdHvcMQMoM/1MNoVS7/agR
+         RtMlyzAkKa4N866c6RuL7sVNNQdiGjh9NMWSxJ8RCvja5Na4yMaqMYjyDvarDNA5KgNE
+         SM8cUzOOYf/1rIiFTbp1hqatyMVDS5AHXwo4+GnLbL6z5mzIbIuKWuzBCya+yHn992Fd
+         sGTQHNWGW8DRTp5CaWZdOmtGygWIwCGSEgEx/HmV9O9nQ0CW12Ii555lFCC+NjLjuyg5
+         M2vQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:references:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=clxCSVOoVrDQ6qklc+2R2m+J9+4S5VWMRbJpGgKyiPk=;
-        b=VspA7Flj0m58Osx+l39kL3C6KsR1OPdzPjWOMe6ZCU2++Rzr7oSjEhJ2hdcEp0FCPs
-         9eVBgTMakn1NdleM3MxuHaCx3nFFXH/uuakYMU4WWljvm+qOUU8z9/DLW6qz0waEkLOy
-         35BKQw8tYBjt/+1CKI3Fwf6tCtLwYQjCkWV5RalYfIGafwoasYGdS/BN7pBQXK6I+ISa
-         uMMGosoxjbfGdyWczOpVB8EJ02PizyC5Un5VNFBrnVElE+HikS32su/POTKZ0cSyssPc
-         9DsecIEydf9i4dCTdjhHG580ON1BfMvT5D4YQU5qV/OiWc2M88QlEHmu4kRHK7FaziF9
-         KWCw==
-X-Gm-Message-State: AA+aEWZLzfTCTaZ4Z/oXTUTUlCNIVBHMB22gQKn48hYx+go6qROf2jJv
-        YMuKB49i9mHRS7Mlqjvft7XAGQVaVRE=
-X-Google-Smtp-Source: AFSGD/VM30q90y5ngsyXhBLDUPsRmUeIwknWyokVYB5iFfXZpkRzJrJJqE4eha4yH5gwX8vRpuoe9w==
-X-Received: by 2002:a19:d242:: with SMTP id j63mr13502219lfg.26.1543953163368;
-        Tue, 04 Dec 2018 11:52:43 -0800 (PST)
-Received: from wasted.cogentembedded.com ([31.173.84.250])
-        by smtp.gmail.com with ESMTPSA id g70-v6sm3374047ljg.92.2018.12.04.11.52.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Dec 2018 11:52:42 -0800 (PST)
-Subject: [PATCH v2 4/4] clk: renesas: r8a77980-cpg-mssr: add RPC clocks
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To:     linux-renesas-soc@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-clk@vger.kernel.org
-References: <cfd91d1f-3b1e-c6c4-0975-7aac09383fdf@cogentembedded.com>
-Organization: Cogent Embedded
-Message-ID: <c4921d75-3e1a-80a5-10ce-12671bffddd5@cogentembedded.com>
-Date:   Tue, 4 Dec 2018 22:52:41 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
-MIME-Version: 1.0
-In-Reply-To: <cfd91d1f-3b1e-c6c4-0975-7aac09383fdf@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=JCd78kTlXEdX9E5erBY0ilUCW6utRcMvi/ZMHwzOC4M=;
+        b=s9JbnoOr8mwETd1C2Zzi5NHCgmpJAaVKJXQBkW/pCUOq5H7iUgzZVDf4WTcwaH8sUJ
+         wMNk3pQTGq2Oe7pimO7DGBML7fL5NYaRJnSUxq52ZTVj66erRY2qcccO9t15jnllRexS
+         hDx8Ygn3o1uxT4ZwWj4AGVBI7+476wOrhZ8Dk7yJvFYfZ/ED5I1FlhBO1BD7HU/x6lYT
+         1vQZD/dRCbCICEirsBl6JKEPHi38o7A5NLyCvoNsA64FukyaCB7nVQz1Khhi3t1f3p1n
+         xy3O33qacRygDpHq5TJ2Zkh6n6Kv7ed2koU1NqRJfrlZWX9S0TYhnAz3YcPG3hwSDrPi
+         T7bQ==
+X-Gm-Message-State: AA+aEWb723GzGbH0CRMMTMieTqMzBHcTAmKxLGGqZMnDX48h9p3vHMbU
+        qFbAVWBycA5S1ZrxeMRwd19fbw==
+X-Google-Smtp-Source: AFSGD/WO2y0DeFxRHpvMnpLLNtu/eTV7pXSpHoIWuT/q4V/VtQO2VTW2DDt3G/0lRUfd+lNa//57ng==
+X-Received: by 2002:a1c:4e08:: with SMTP id g8mr13194764wmh.46.1543953312911;
+        Tue, 04 Dec 2018 11:55:12 -0800 (PST)
+Received: from boomer.baylibre.com (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
+        by smtp.gmail.com with ESMTPSA id e130sm26384574wmf.25.2018.12.04.11.55.11
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 04 Dec 2018 11:55:12 -0800 (PST)
+Message-ID: <38e17678c713c2bde0967ac34349436fffe033dd.camel@baylibre.com>
+Subject: Re: [PATCH] clk: fix clk_mux_val_to_index() error value
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Tue, 04 Dec 2018 20:55:10 +0100
+In-Reply-To: <154394899913.88331.6973889205055781649@swboyd.mtv.corp.google.com>
+References: <20181204163403.32321-1-jbrunet@baylibre.com>
+         <154394899913.88331.6973889205055781649@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.2 (3.30.2-2.fc29) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Describe the RPCSRC internal clock and the RPC[D2] clocks derived from it,
-as well as the RPC-IF module clock, in the R-Car V3H (R8A77980) CPG/MSSR
-driver.
+On Tue, 2018-12-04 at 10:43 -0800, Stephen Boyd wrote:
+> Quoting Jerome Brunet (2018-12-04 08:34:03)
+> > clk_mux_val_to_index() is meant to be used by .get_parent(), which
+> > returns a u8, so when the value provided does not map to any valid index,
+> > it is not a good idea to return a negative error value.
+> > 
+> > Instead, return num_parents which we know is an invalid index and let
+> > CCF deal with it.
+> > 
+> > Fixes: 77deb66d262f ("clk: mux: add helper function for index/value
+> > translation")
+> > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> > ---
+> 
+> Thanks!
+> 
+> > diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+> > index 60c51871b04b..fc20886ef069 100644
+> > --- a/include/linux/clk-provider.h
+> > +++ b/include/linux/clk-provider.h
+> > @@ -550,8 +550,8 @@ struct clk_hw *clk_hw_register_mux_table(struct device
+> > *dev, const char *name,
+> >                 void __iomem *reg, u8 shift, u32 mask,
+> >                 u8 clk_mux_flags, u32 *table, spinlock_t *lock);
+> >  
+> > -int clk_mux_val_to_index(struct clk_hw *hw, u32 *table, unsigned int
+> > flags,
+> > -                        unsigned int val);
+> > +u8 clk_mux_val_to_index(struct clk_hw *hw, u32 *table, unsigned int
+> > flags,
+> 
+> I wonder if we should just make this unsigned int? Does it hurt at all
+> to have it be a wider type even though it doesn't match the CCF decision
+> to make this a u8 for the parent index number space?
+> 
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+I also wondered about this but since the target is get_parent(), I just
+aligned the two.
 
----
-Changes in version 2:
-- moved the RPCSRC clock support to the R-Car gen3 CPG patch adding the RPC
-  clocks;
-- rewrote the patch description.
-
- drivers/clk/renesas/r8a77980-cpg-mssr.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
-
-Index: renesas-drivers/drivers/clk/renesas/r8a77980-cpg-mssr.c
-===================================================================
---- renesas-drivers.orig/drivers/clk/renesas/r8a77980-cpg-mssr.c
-+++ renesas-drivers/drivers/clk/renesas/r8a77980-cpg-mssr.c
-@@ -41,6 +41,7 @@ enum clk_ids {
- 	CLK_S2,
- 	CLK_S3,
- 	CLK_SDSRC,
-+	CLK_RPCSRC,
- 	CLK_OCO,
- 
- 	/* Module Clocks */
-@@ -65,8 +66,14 @@ static const struct cpg_core_clk r8a7798
- 	DEF_FIXED(".s2",	CLK_S2,		   CLK_PLL1_DIV2,  4, 1),
- 	DEF_FIXED(".s3",	CLK_S3,		   CLK_PLL1_DIV2,  6, 1),
- 	DEF_FIXED(".sdsrc",	CLK_SDSRC,	   CLK_PLL1_DIV2,  2, 1),
-+	DEF_BASE(".rpcsrc",	CLK_RPCSRC, CLK_TYPE_GEN3_RPCSRC, CLK_PLL1),
- 	DEF_RATE(".oco",	CLK_OCO,           32768),
- 
-+	DEF_BASE("rpc",		R8A77980_CLK_RPC, CLK_TYPE_GEN3_RPC,
-+		 CLK_RPCSRC),
-+	DEF_BASE("rpcd2",	R8A77980_CLK_RPCD2, CLK_TYPE_GEN3_RPCD2,
-+		 R8A77980_CLK_RPC),
-+
- 	/* Core Clock Outputs */
- 	DEF_FIXED("ztr",	R8A77980_CLK_ZTR,   CLK_PLL1_DIV2,  6, 1),
- 	DEF_FIXED("ztrd2",	R8A77980_CLK_ZTRD2, CLK_PLL1_DIV2, 12, 1),
-@@ -164,6 +171,7 @@ static const struct mssr_mod_clk r8a7798
- 	DEF_MOD("gpio1",		 911,	R8A77980_CLK_CP),
- 	DEF_MOD("gpio0",		 912,	R8A77980_CLK_CP),
- 	DEF_MOD("can-fd",		 914,	R8A77980_CLK_S3D2),
-+	DEF_MOD("rpc-if",		 917,	R8A77980_CLK_RPC),
- 	DEF_MOD("i2c4",			 927,	R8A77980_CLK_S0D6),
- 	DEF_MOD("i2c3",			 928,	R8A77980_CLK_S0D6),
- 	DEF_MOD("i2c2",			 929,	R8A77980_CLK_S3D2),
+In the end, I don't really care, as you prefer. Just let me know if you would
+like a v2 with this change
 
