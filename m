@@ -2,103 +2,141 @@ Return-Path: <SRS0=3Y/e=ON=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42E19C04EB8
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 19:33:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09787C04EB8
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 19:34:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0915B206B7
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 19:33:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BEF26206B7
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 19:34:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="JUy7xZ1y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0915B206B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VPrrXgTW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEF26206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726048AbeLDTda (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 4 Dec 2018 14:33:30 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:33679 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725874AbeLDTda (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Dec 2018 14:33:30 -0500
-Received: by mail-wr1-f65.google.com with SMTP id c14so17223386wrr.0
-        for <linux-clk@vger.kernel.org>; Tue, 04 Dec 2018 11:33:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:from:user-agent:mime-version:to:cc:subject
-         :references:in-reply-to:content-transfer-encoding;
-        bh=U1ZYP6oYAAntHDYYsujvmJKRg1jgOj9qNI/7yXapawo=;
-        b=JUy7xZ1y+ZHjNaY0AH8j9gg20kS6LbUmskvJBrXKCzG+yEqOH20s+A3rbBaoDFf3sI
-         QcNN5/ify7QgiMjC1CSNSqpCoX21B0qwZLyQAXE/LwUXkv2OiGocZ2owihJBOtD5d11P
-         UDs35/bUhcrsK6pKE+ubYJayEPTOoHM21HJXiJtfsMA1p0RX634H0ygbfKbHC8v8BwTA
-         ztTlRagwwjr36ER4swjGaRRpelwQJM+UPMTAem7zv/lqigCDvR2MCoTQqBa+uNZo9atM
-         OQHwB9XpQzr1f3eF2UgJyLC8TepoLU3HkLqtMUXeYTDLmUvrBrSCmLM3U7IN3jefW4hq
-         0Rcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:from:user-agent:mime-version:to
-         :cc:subject:references:in-reply-to:content-transfer-encoding;
-        bh=U1ZYP6oYAAntHDYYsujvmJKRg1jgOj9qNI/7yXapawo=;
-        b=b6BWKv/B65gw1yXOlFkqBlKjV9IMPq9tpUINDw37G09afVXD2ULYC6cYEAH9fER8NJ
-         fXguXZRKmtZjvE6Nk9og9ky+wNjAkiEt/lWLCvDNTpn6v6SINaDLebmftrAOBJn1U3E8
-         bYtViqoZDH13J5u5bogY8XGXSqnfYCi7oBqrSkiKgjmmME0xTsDhpgdZNBtSUbIZifxC
-         rzxpxZcsPSaDOx9YDDy69gjytByt1peTy1jWzoJ+dZ2MRtU82hSgIycqPvChMbrpocNO
-         0Cf686LSmn0qH+YX0ZcRYFwZ1QsHOjxCj5TyFuXxHB58MY12Yqw58y/j5GQCgp9VeQJN
-         Nzvg==
-X-Gm-Message-State: AA+aEWZKc7zpOm/RJBNgx6wC0G/vhj2Fnc+pzI9YZP1nCMa4+KJwrHrd
-        tjM3AgIgEGV89VOQkK7jtFK3jA==
-X-Google-Smtp-Source: AFSGD/X7r16gWudQW2YVxqV2zTsyBJntvrarll+US+93cB8FRkbTvOLXkx+FFZAWkdJo+Ni5nyeP/A==
-X-Received: by 2002:a5d:4ccb:: with SMTP id c11mr4659731wrt.241.1543952007805;
-        Tue, 04 Dec 2018 11:33:27 -0800 (PST)
-Received: from Armstrongs-MacBook-Pro.local ([2a01:cb1d:4ce:ea00:457b:c7f4:7108:f8c4])
-        by smtp.gmail.com with ESMTPSA id z17sm15702072wrv.2.2018.12.04.11.33.26
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 04 Dec 2018 11:33:27 -0800 (PST)
-Message-ID: <5C06D686.50108@baylibre.com>
-Date:   Tue, 04 Dec 2018 20:33:26 +0100
-From:   Neil Armstrong <narmstrong@baylibre.com>
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:24.0) Gecko/20100101 Thunderbird/24.6.0
+        id S1725909AbeLDTeT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 4 Dec 2018 14:34:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40326 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725831AbeLDTeT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 4 Dec 2018 14:34:19 -0500
+Received: from mail.kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 83BCD206B7;
+        Tue,  4 Dec 2018 19:34:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543952057;
+        bh=GI77F+Yj+CEQQ3UgN11HA7GBZePy0yGn6BNz68Zo7O4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=VPrrXgTWS648gwpq7Vew3dqhn0RZdXAsqMhbV5cTgxv983/5IjYLth71NpdQar0W/
+         KzoGCQgcoMPcOa+DCjjPAGYc/9/WlYX6mMN93TBPaYfDIRhL1Qp6OYsOly+QKGVrB1
+         YkvJElnKfpAEzPV36PK4g87hM3ablB7xMVvsZFco=
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     Jerome Brunet <jbrunet@baylibre.com>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Dinh Nguyen <dinguyen@opensource.altera.com>
+Subject: [PATCH] clk: socfpga: Don't have get_parent for single parent ops
+Date:   Tue,  4 Dec 2018 11:34:16 -0800
+Message-Id: <20181204193416.24661-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.20.0.rc1.387.gf8505762e3-goog
+In-Reply-To: <20181204163257.32085-1-jbrunet@baylibre.com>
+References: <20181204163257.32085-1-jbrunet@baylibre.com>
 MIME-Version: 1.0
-To:     Stephen Boyd <sboyd@kernel.org>, jbrunet@baylibre.com
-CC:     linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: meson-gxbb: switch video clocks mux tables to static
-References: <20181204125839.14505-1-narmstrong@baylibre.com> <154394543049.88331.11854270462393390489@swboyd.mtv.corp.google.com>
-In-Reply-To: <154394543049.88331.11854270462393390489@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+This driver creates a gate clk with the possibility to have multiple
+parents. That can cause problems if the common clk framework tries to
+call the get_parent() op and gets back a number that's larger than the
+number of parents the clk says it supports in
+clk_init_data::num_parents. Let's duplicate the clk_ops structure each
+time this function is called and drop the get/set parent ops when there
+is only one parent. This allows the framework to consider a number
+larger than clk_init_data::num_parents as an error condition of the
+get_parent() clk op, clearing the way for proper code.
 
-Le 04/12/2018 18:43, Stephen Boyd a écrit :
-> Quoting Neil Armstrong (2018-12-04 04:58:39)
->> Makes the following sparse warnings silent:
->> drivers/clk/meson/vid-pll-div.c:58:26: warning: symbol '_get_table_val' was not declared. Should it be static?
->> drivers/clk/meson/gxbb.c:1585:12: warning: symbol 'gxbb_vid_pll_parent_names' was not declared. Should it be static?
->> drivers/clk/meson/gxbb.c:1620:12: warning: symbol 'gxbb_vclk_parent_names' was not declared. Should it be static?
->> drivers/clk/meson/gxbb.c:1980:12: warning: symbol 'gxbb_cts_parent_names' was not declared. Should it be static?
->> drivers/clk/meson/gxbb.c:2036:12: warning: symbol 'gxbb_cts_hdmi_tx_parent_names' was not declared. Should it be static?
-> 
-> I fixed all of these already in the patch I sent you.
+Cc: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Dinh Nguyen <dinguyen@opensource.altera.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+---
+ drivers/clk/socfpga/clk-gate.c | 22 +++++++++++++---------
+ 1 file changed, 13 insertions(+), 9 deletions(-)
 
-Sorry I misunderstood...
+diff --git a/drivers/clk/socfpga/clk-gate.c b/drivers/clk/socfpga/clk-gate.c
+index aa7a6e6a15b6..73e03328d5c5 100644
+--- a/drivers/clk/socfpga/clk-gate.c
++++ b/drivers/clk/socfpga/clk-gate.c
+@@ -176,8 +176,7 @@ static struct clk_ops gateclk_ops = {
+ 	.set_parent = socfpga_clk_set_parent,
+ };
+ 
+-static void __init __socfpga_gate_init(struct device_node *node,
+-	const struct clk_ops *ops)
++void __init socfpga_gate_init(struct device_node *node)
+ {
+ 	u32 clk_gate[2];
+ 	u32 div_reg[3];
+@@ -188,12 +187,17 @@ static void __init __socfpga_gate_init(struct device_node *node,
+ 	const char *clk_name = node->name;
+ 	const char *parent_name[SOCFPGA_MAX_PARENTS];
+ 	struct clk_init_data init;
++	struct clk_ops *ops;
+ 	int rc;
+ 
+ 	socfpga_clk = kzalloc(sizeof(*socfpga_clk), GFP_KERNEL);
+ 	if (WARN_ON(!socfpga_clk))
+ 		return;
+ 
++	ops = kmemdup(&gateclk_ops, sizeof(gateclk_ops), GFP_KERNEL);
++	if (WARN_ON(!ops))
++		return;
++
+ 	rc = of_property_read_u32_array(node, "clk-gate", clk_gate, 2);
+ 	if (rc)
+ 		clk_gate[0] = 0;
+@@ -202,8 +206,8 @@ static void __init __socfpga_gate_init(struct device_node *node,
+ 		socfpga_clk->hw.reg = clk_mgr_base_addr + clk_gate[0];
+ 		socfpga_clk->hw.bit_idx = clk_gate[1];
+ 
+-		gateclk_ops.enable = clk_gate_ops.enable;
+-		gateclk_ops.disable = clk_gate_ops.disable;
++		ops->enable = clk_gate_ops.enable;
++		ops->disable = clk_gate_ops.disable;
+ 	}
+ 
+ 	rc = of_property_read_u32(node, "fixed-divider", &fixed_div);
+@@ -234,6 +238,11 @@ static void __init __socfpga_gate_init(struct device_node *node,
+ 	init.flags = 0;
+ 
+ 	init.num_parents = of_clk_parent_fill(node, parent_name, SOCFPGA_MAX_PARENTS);
++	if (init.num_parents < 2) {
++		ops->get_parent = NULL;
++		ops->set_parent = NULL;
++	}
++
+ 	init.parent_names = parent_name;
+ 	socfpga_clk->hw.hw.init = &init;
+ 
+@@ -246,8 +255,3 @@ static void __init __socfpga_gate_init(struct device_node *node,
+ 	if (WARN_ON(rc))
+ 		return;
+ }
+-
+-void __init socfpga_gate_init(struct device_node *node)
+-{
+-	__socfpga_gate_init(node, &gateclk_ops);
+-}
+-- 
+Sent by a computer through tubes
 
-
-> 
->> @@ -1983,7 +1983,7 @@ static struct clk_fixed_factor gxbb_vclk2_div12 = {
->>  };
->>  
->>  static u32 mux_table_cts_sel[] = { 0, 1, 2, 3, 4, 8, 9, 10, 11, 12 };
-> 
-> I was talking about this mux_table_cts_sel array. Can this be const?
-> 
-
-Other mux tables aren't const, Jerome so you see a reason why they aren't const ?
-
-Neil
