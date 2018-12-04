@@ -2,50 +2,50 @@ Return-Path: <SRS0=3Y/e=ON=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FC85C04EB8
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 11:39:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B25D9C04EB8
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 11:45:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D13042087F
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 11:39:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D13042087F
+	by mail.kernel.org (Postfix) with ESMTP id 7FDF92087F
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 11:45:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FDF92087F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726152AbeLDLjz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 4 Dec 2018 06:39:55 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:45125 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726201AbeLDLjz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Dec 2018 06:39:55 -0500
-Received: by mail-lj1-f194.google.com with SMTP id s5-v6so14562551ljd.12;
-        Tue, 04 Dec 2018 03:39:52 -0800 (PST)
+        id S1725863AbeLDLpf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 4 Dec 2018 06:45:35 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:44881 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725764AbeLDLpe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Dec 2018 06:45:34 -0500
+Received: by mail-lj1-f196.google.com with SMTP id k19-v6so14566673lji.11;
+        Tue, 04 Dec 2018 03:45:31 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Ai2EXp5GxvS/XTr9/6JJwFxk1UDo6UDucvIq5Od3QTc=;
-        b=Blm2PgfypJuaticdd54Dc5vus2QCT9Cmyz2abSAHQTQNyr+R+kR5fDNSWzWww4dc5y
-         161Nf/bVFatf4G1nWvSWPGqhJm+Lj3MC5zBVJRLyql7xBFv4JmAI2ud6hU1LTW62xo5d
-         +I7gz842i0CIyejfNb1cr0hBXSKk2is2NtEGmH1iounRi5BeURv7bQsvwOdjIFQvW1fA
-         xIWDsaB/qFBGwt4soGXHyLsJwN3jmH4YIXbFMypYsqN+WbkF5Ms9o2vhOKpjAsIhhCv3
-         c5Way93nIdJ0DauUsi2f3hmTRtrwDGtp0TjrSP6oBhsdUS/vIp+UmE2vE1ELVKug/WXG
-         bLhw==
-X-Gm-Message-State: AA+aEWY11gyvSdBywgeoFKrCld17P9gHAi3t6gNalXCZmatq9uCamd+Z
-        E9Q84iFMZmm2X9TrEkLo7FTz1UOonrA=
-X-Google-Smtp-Source: AFSGD/XNqB9kMhc+OeBl5seLM3c21DGqtktYvKxNK4gpoRJTvcrNOYA6RtLflBjI9sCeYZCx3Xh8mg==
-X-Received: by 2002:a2e:3012:: with SMTP id w18-v6mr12533153ljw.75.1543923591387;
-        Tue, 04 Dec 2018 03:39:51 -0800 (PST)
+        bh=9lyH6tyDnPML3RDDJuGI/lJe2+4NHy67zfhOq9Tt+Hc=;
+        b=V0/doGAa/mXxksjgKFpHh47Bgydjbn4pqFrIWfqNtwlw1w0IwGYYGt8fIYMHQVBoN5
+         i9dhnJajE1ONw8DM+ByyOcoXiy15ATkmytg6glXrmL96a+vWIFsKPfqKwoVuiHdf+JOD
+         2X5WAYAD4CFHQZRXEvZUIhmDizVB26aFLFKfx5T/H5sijEGvMZi0x6JoD57ej0ZhL+9K
+         J5ni/7S9NCxbocyKSklpKfyo2qTb8taLX7mq52j+hdHXXVxKT07394TtK9Rr9n2n5b23
+         Ugfa4c1QtYK/oZ/Ba3E8GLv7nbdpmzdJZShkQr6RUjAmXbGJ+jMtv5pQm4wIanByRP/R
+         yHEA==
+X-Gm-Message-State: AA+aEWZJxXoN5yZF+a6st0iWlD6ZlcaDfMGz/DhKW/EVydOATrfGVtam
+        6uIiEolkrndWBgoKKI2RPvg=
+X-Google-Smtp-Source: AFSGD/XASlqggDkini/davVrrJ/kWhZDrlA7co2DQulhti4C5FWny9V3epSYvazwOutGQt9IM3FicA==
+X-Received: by 2002:a2e:55d3:: with SMTP id g80-v6mr13915624lje.78.1543923930534;
+        Tue, 04 Dec 2018 03:45:30 -0800 (PST)
 Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id b20sm2873339lfj.61.2018.12.04.03.39.49
+        by smtp.gmail.com with ESMTPSA id e14-v6sm3011099ljb.31.2018.12.04.03.45.29
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 04 Dec 2018 03:39:50 -0800 (PST)
-Date:   Tue, 4 Dec 2018 13:39:38 +0200
+        Tue, 04 Dec 2018 03:45:29 -0800 (PST)
+Date:   Tue, 4 Dec 2018 13:45:27 +0200
 From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     mazziesaccount@gmail.com, matti.vaittinen@fi.rohmeurope.com
+To:     mazziesaccount@gmail.com
 Cc:     mturquette@baylibre.com, sboyd@kernel.org, cw00.choi@samsung.com,
         krzk@kernel.org, b.zolnierkie@samsung.com, linux@armlinux.org.uk,
         andy.gross@linaro.org, david.brown@linaro.org, pavel@ucw.cz,
@@ -54,9 +54,9 @@ Cc:     mturquette@baylibre.com, sboyd@kernel.org, cw00.choi@samsung.com,
         rafael.j.wysocki@intel.com, linux-doc@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v6 10/10] clk: bd718x7: Initial support for ROHM
- bd71837/bd71847 PMIC clock
-Message-ID: <b1a7aa06389ccd46f60db3e63bdf1e9ce9781d49.1543922403.git.matti.vaittinen@fi.rohmeurope.com>
+Subject: Re: [PATCH v6 00/10] clk: clkdev/of_clk - add managed lookup and
+ provider registrations
+Message-ID: <20181204114527.GC31204@localhost.localdomain>
 References: <cover.1543922403.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -68,184 +68,27 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-ROHM bd71837 and bd71847 contain 32768Hz clock gate. Support the clock
-using generic clock framework. Note, only bd71837 is tested but bd71847
-should be identical what comes to clk parts.
+On Tue, Dec 04, 2018 at 01:31:43PM +0200, Matti Vaittinen wrote:
+> Series add bd71837/bd71837 PMIC clock support + managed interfaces
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
----
- drivers/clk/Kconfig       |   7 +++
- drivers/clk/Makefile      |   1 +
- drivers/clk/clk-bd718x7.c | 131 ++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 139 insertions(+)
- create mode 100644 drivers/clk/clk-bd718x7.c
-
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 81cdb4eaca07..2dc12bf75b1b 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -283,6 +283,13 @@ config COMMON_CLK_STM32H7
- 	---help---
- 	  Support for stm32h7 SoC family clocks
+> Changed drivers are:
+> clk-max77686, clk-st, clk-hi655x, rk808, clk-twl6040
+> and apcs-msm8916. New driver is clk-bd718x7
+> 
+> Changelog (for this series) v6
+> - Drop 'devm_of_clk_add_parent_hw_provider'. Change
+>   'devm_of_clk_add_hw_provider' to look the parent device node for
+>   provider information if device's own node does not contain
+>   #clock-cells - property.
  
-+config COMMON_CLK_BD718XX
-+	tristate "Clock driver for ROHM BD718x7 PMIC"
-+	depends on MFD_ROHM_BD718XX
-+	help
-+	  This driver supports ROHM BD71837 and ROHM BD71847
-+	  PMICs clock gates.
-+
- source "drivers/clk/actions/Kconfig"
- source "drivers/clk/bcm/Kconfig"
- source "drivers/clk/hisilicon/Kconfig"
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index 72be7a38cff1..a47430b387db 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -21,6 +21,7 @@ endif
- obj-$(CONFIG_MACH_ASM9260)		+= clk-asm9260.o
- obj-$(CONFIG_COMMON_CLK_AXI_CLKGEN)	+= clk-axi-clkgen.o
- obj-$(CONFIG_ARCH_AXXIA)		+= clk-axm5516.o
-+obj-$(CONFIG_COMMON_CLK_BD718XX)	+= clk-bd718x7.o
- obj-$(CONFIG_COMMON_CLK_CDCE706)	+= clk-cdce706.o
- obj-$(CONFIG_COMMON_CLK_CDCE925)	+= clk-cdce925.o
- obj-$(CONFIG_ARCH_CLPS711X)		+= clk-clps711x.o
-diff --git a/drivers/clk/clk-bd718x7.c b/drivers/clk/clk-bd718x7.c
-new file mode 100644
-index 000000000000..d486859526ed
---- /dev/null
-+++ b/drivers/clk/clk-bd718x7.c
-@@ -0,0 +1,131 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (C) 2018 ROHM Semiconductors
-+// bd71837.c  -- ROHM BD71837MWV clock driver
-+
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/init.h>
-+#include <linux/err.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+#include <linux/mfd/rohm-bd718x7.h>
-+#include <linux/clk-provider.h>
-+#include <linux/clkdev.h>
-+#include <linux/regmap.h>
-+
-+struct bd718xx_clk {
-+	struct clk_hw hw;
-+	u8 reg;
-+	u8 mask;
-+	struct platform_device *pdev;
-+	struct bd718xx *mfd;
-+};
-+
-+static int bd71837_clk_set(struct clk_hw *hw, int status)
-+{
-+	struct bd718xx_clk *c = container_of(hw, struct bd718xx_clk, hw);
-+
-+	return regmap_update_bits(c->mfd->regmap, c->reg, c->mask, status);
-+}
-+
-+static void bd71837_clk_disable(struct clk_hw *hw)
-+{
-+	int rv;
-+	struct bd718xx_clk *c = container_of(hw, struct bd718xx_clk, hw);
-+
-+	rv = bd71837_clk_set(hw, 0);
-+	if (rv)
-+		dev_dbg(&c->pdev->dev, "Failed to disable 32K clk (%d)\n", rv);
-+}
-+
-+static int bd71837_clk_enable(struct clk_hw *hw)
-+{
-+	return bd71837_clk_set(hw, 1);
-+}
-+
-+static int bd71837_clk_is_enabled(struct clk_hw *hw)
-+{
-+	int enabled;
-+	int rval;
-+	struct bd718xx_clk *c = container_of(hw, struct bd718xx_clk, hw);
-+
-+	rval = regmap_read(c->mfd->regmap, c->reg, &enabled);
-+
-+	if (rval)
-+		return rval;
-+
-+	return enabled & c->mask;
-+}
-+
-+static const struct clk_ops bd71837_clk_ops = {
-+	.prepare = &bd71837_clk_enable,
-+	.unprepare = &bd71837_clk_disable,
-+	.is_prepared = &bd71837_clk_is_enabled,
-+};
-+
-+static int bd71837_clk_probe(struct platform_device *pdev)
-+{
-+	struct bd718xx_clk *c;
-+	int rval = -ENOMEM;
-+	const char *parent_clk;
-+	struct device *parent = pdev->dev.parent;
-+	struct bd718xx *mfd = dev_get_drvdata(parent);
-+	struct clk_init_data init = {
-+		.name = "bd718xx-32k-out",
-+		.ops = &bd71837_clk_ops,
-+	};
-+
-+	c = devm_kzalloc(&pdev->dev, sizeof(*c), GFP_KERNEL);
-+	if (!c)
-+		return -ENOMEM;
-+
-+	init.num_parents = 1;
-+	parent_clk = of_clk_get_parent_name(parent->of_node, 0);
-+
-+	init.parent_names = &parent_clk;
-+	if (!parent_clk) {
-+		dev_err(&pdev->dev, "No parent clk found\n");
-+		return -EINVAL;
-+	}
-+
-+	c->reg = BD718XX_REG_OUT32K;
-+	c->mask = BD718XX_OUT32K_EN;
-+	c->mfd = mfd;
-+	c->pdev = pdev;
-+	c->hw.init = &init;
-+
-+	of_property_read_string_index(parent->of_node,
-+				      "clock-output-names", 0, &init.name);
-+
-+	rval = devm_clk_hw_register(&pdev->dev, &c->hw);
-+	if (!rval) {
-+		rval = devm_clk_hw_register_clkdev(&pdev->dev,
-+						   &c->hw, init.name, NULL);
-+		if (rval)
-+			dev_warn(&pdev->dev, "Failed to register clkdev\n");
-+		if (parent->of_node) {
-+			rval = devm_of_clk_add_hw_provider(&pdev->dev,
-+					     of_clk_hw_simple_get, &c->hw);
-+			if (rval)
-+				dev_err(&pdev->dev,
-+					"adding clk provider failed\n");
-+		}
-+	} else {
-+		dev_err(&pdev->dev, "failed to register 32K clk");
-+	}
-+
-+	return rval;
-+}
-+
-+static struct platform_driver bd71837_clk = {
-+	.driver = {
-+		.name = "bd718xx-clk",
-+	},
-+	.probe = bd71837_clk_probe,
-+};
-+
-+module_platform_driver(bd71837_clk);
-+
-+MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
-+MODULE_DESCRIPTION("BD71837 chip clk driver");
-+MODULE_LICENSE("GPL");
--- 
-2.14.3
+Forgot to mention the obvious - I did also convert the call to
+devm_of_clk_add_parent_hw_provider to call to devm_of_clk_add_hw_provider
+from all drivers where I had this new call added.
+
+I kept Reviewed-by and Acked-by tags from Peter Ujfalusi and Krzysztof
+Kozlowski as the devm_of_clk_add_hw_provider should now do same thing
+as devm_of_clk_add_parent_hw_provider did. Please let me know if this
+is not Ok.
+
+Br,
+	Matti Vaittinen
