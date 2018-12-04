@@ -2,139 +2,78 @@ Return-Path: <SRS0=3Y/e=ON=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EEA7C04EB8
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 16:34:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4D46C04EBF
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 16:46:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB43B20661
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 16:34:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="bZlFbFs+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB43B20661
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by mail.kernel.org (Postfix) with ESMTP id 969B0206B7
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 16:46:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 969B0206B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726421AbeLDQeM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 4 Dec 2018 11:34:12 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:54705 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726420AbeLDQeM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Dec 2018 11:34:12 -0500
-Received: by mail-wm1-f67.google.com with SMTP id z18so10314895wmc.4
-        for <linux-clk@vger.kernel.org>; Tue, 04 Dec 2018 08:34:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=KPLi5PSQm0wZ5w0jVFRD2zaX5ehve+yaUgJvEMdE2d8=;
-        b=bZlFbFs+lIC+cfNlxMCjI9WMSWaT72J+TKgmmJlm6NUjYdIeUe00UM++FjLTw1ioYc
-         sPkvvNKNATgwinQ3gf91BCzEpnjqhVDgyj6+XLD2BjRszO4HzigEi1KovmbLcs5bNGN+
-         sFwlYVhny0ncAeNdCc11Wf3y/gTgVrhiHC+YNuZsDL9iz7IAgPcaAoo7c2zQX77t/pxG
-         LUTL1aY8nP9i3cBIcXcrV7Y9Ao+N+Ds12QyVZJ50CexL8ZEfrWDVj6t1Wy7cCBOZEXdO
-         nWxZN/kSd59W0/++GD7mXjUtkXsfdZfRMZBTQGWNBSJH73EASNmYwBSnZqmFAobQyzO1
-         K7IQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=KPLi5PSQm0wZ5w0jVFRD2zaX5ehve+yaUgJvEMdE2d8=;
-        b=DtrBEmVAsKjPk8iGCYYpizyiYaYEPly1+Vdb5JCa1+Ebs0LC+Ipclb3nXSsKn0xjXZ
-         FFkeLQY3kHhnyUPr6SrFEzBrdvBgNBxoxp9JSwBtdL/Do1f1i1w/bAHD8A59nt5KtTJ/
-         i3XZ9pHDAmuOWKKrzPBchOGbck8vuT0BXlq4sXJ9SUUIYwpvH6FrE5sde1s/1/FM0xB9
-         CjnhtxbVLHcmKS8ZeCnGAKeTzc1aivZXB62A4eDhE/RpD4ZGTclHEYno28cd3NFX+V6/
-         htnPgVe41ZYX/XS3PBPxyehyZ5aplpjKl8f9qD16wA2ERBH+32aTSOSFHWDb4hOzVUwl
-         ufjQ==
-X-Gm-Message-State: AA+aEWa5RsIKzWMhoQkXPSD+oN9Ph45/WQZ1ThC+BAoet5RKTYjTvM4a
-        QGLiwx4q9Ey0m3N4I4GBwXqx1g==
-X-Google-Smtp-Source: AFSGD/WrXMVj09oObLij4EPkxv6JW6jGoJTVPT6nc/KqktUmd/hkrQR4iyvIRI+f8701vdzAPN6pJw==
-X-Received: by 2002:a1c:3489:: with SMTP id b131mr12768188wma.44.1543941250775;
-        Tue, 04 Dec 2018 08:34:10 -0800 (PST)
-Received: from boomer.local ([2a01:e34:eeb6:4690:106b:bae3:31ed:7561])
-        by smtp.googlemail.com with ESMTPSA id t76sm22174826wme.33.2018.12.04.08.34.08
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 04 Dec 2018 08:34:10 -0800 (PST)
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: fix clk_mux_val_to_index() error value
-Date:   Tue,  4 Dec 2018 17:34:03 +0100
-Message-Id: <20181204163403.32321-1-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.19.1
+        id S1727024AbeLDQqC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 4 Dec 2018 11:46:02 -0500
+Received: from muru.com ([72.249.23.125]:56392 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726367AbeLDQqB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 4 Dec 2018 11:46:01 -0500
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 3F47580FA;
+        Tue,  4 Dec 2018 16:46:03 +0000 (UTC)
+Date:   Tue, 4 Dec 2018 08:45:57 -0800
+From:   Tony Lindgren <tony@atomide.com>
+To:     Andreas Kemnade <andreas@kemnade.info>
+Cc:     Stephen Boyd <sboyd@kernel.org>, Tero Kristo <t-kristo@ti.com>,
+        bcousson@baylibre.com, letux-kernel@openphoenux.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, mturquette@baylibre.com, paul@pwsan.com
+Subject: Re: [PATCH v2 2/3] clk: ti: check clock type before doing autoidle
+ ops
+Message-ID: <20181204164556.GB6707@atomide.com>
+References: <154353750560.88331.11814738542436183126@swboyd.mtv.corp.google.com>
+ <20181130071534.0a6cd455@kemnade.info>
+ <154356242517.88331.8496814814468751012@swboyd.mtv.corp.google.com>
+ <9eb7b090-4803-d389-4112-3bf058385b2e@ti.com>
+ <154356463284.88331.13323307899580657085@swboyd.mtv.corp.google.com>
+ <eca27a46-2ca3-1a02-c0c8-c1c00b3b2f46@ti.com>
+ <20181130153729.GG53235@atomide.com>
+ <154362191595.88331.15503578806026771935@swboyd.mtv.corp.google.com>
+ <20181203153910.GA6707@atomide.com>
+ <20181203172246.0e767a16@kemnade.info>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181203172246.0e767a16@kemnade.info>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-clk_mux_val_to_index() is meant to be used by .get_parent(), which
-returns a u8, so when the value provided does not map to any valid index,
-it is not a good idea to return a negative error value.
+* Andreas Kemnade <andreas@kemnade.info> [181204 06:17]:
+> On Mon, 3 Dec 2018 07:39:10 -0800
+> Tony Lindgren <tony@atomide.com> wrote:
+> > The consumer device stays active just fine with PM runtime
+> > calls. So yes, the problem is keeping a clock controller forced
+> > active for the period of consumer device reset. Other than
+> > that typically autoidle can be just kept enabled.
+> > 
+> Are we still talking about the same problem? Maybe I am losing track
+> here. Just to make sure. 
+> The patch series was about disabling autoidle for devices which cannot
+> work with it during normal operation. Not during reset or something
+> like that. 
+> Or is the keep-clock-active-during-reset just a requirement for bigger
+> restructuring ideas?
 
-Instead, return num_parents which we know is an invalid index and let
-CCF deal with it.
+Yeah there are two issues: The fix needed for the issue you brought up,
+and also how to let a reset driver to block autoidle for reset.
 
-Fixes: 77deb66d262f ("clk: mux: add helper function for index/value translation")
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/clk-mux.c        | 8 ++++----
- include/linux/clk-provider.h | 4 ++--
- 2 files changed, 6 insertions(+), 6 deletions(-)
+Regards,
 
-diff --git a/drivers/clk/clk-mux.c b/drivers/clk/clk-mux.c
-index 1628b93655ed..b64e475802cc 100644
---- a/drivers/clk/clk-mux.c
-+++ b/drivers/clk/clk-mux.c
-@@ -26,8 +26,8 @@
-  * parent - parent is adjustable through clk_set_parent
-  */
- 
--int clk_mux_val_to_index(struct clk_hw *hw, u32 *table, unsigned int flags,
--			 unsigned int val)
-+u8 clk_mux_val_to_index(struct clk_hw *hw, u32 *table, unsigned int flags,
-+			unsigned int val)
- {
- 	int num_parents = clk_hw_get_num_parents(hw);
- 
-@@ -37,7 +37,7 @@ int clk_mux_val_to_index(struct clk_hw *hw, u32 *table, unsigned int flags,
- 		for (i = 0; i < num_parents; i++)
- 			if (table[i] == val)
- 				return i;
--		return -EINVAL;
-+		return num_parents;
- 	}
- 
- 	if (val && (flags & CLK_MUX_INDEX_BIT))
-@@ -47,7 +47,7 @@ int clk_mux_val_to_index(struct clk_hw *hw, u32 *table, unsigned int flags,
- 		val--;
- 
- 	if (val >= num_parents)
--		return -EINVAL;
-+		return num_parents;
- 
- 	return val;
- }
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 60c51871b04b..fc20886ef069 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -550,8 +550,8 @@ struct clk_hw *clk_hw_register_mux_table(struct device *dev, const char *name,
- 		void __iomem *reg, u8 shift, u32 mask,
- 		u8 clk_mux_flags, u32 *table, spinlock_t *lock);
- 
--int clk_mux_val_to_index(struct clk_hw *hw, u32 *table, unsigned int flags,
--			 unsigned int val);
-+u8 clk_mux_val_to_index(struct clk_hw *hw, u32 *table, unsigned int flags,
-+			unsigned int val);
- unsigned int clk_mux_index_to_val(u32 *table, unsigned int flags, u8 index);
- 
- void clk_unregister_mux(struct clk *clk);
--- 
-2.19.1
+Tony
 
