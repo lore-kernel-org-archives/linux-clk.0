@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68B0AC04EBF
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 09:27:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BDA6C04EBF
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 09:27:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 300DB20851
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 09:27:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 531C820851
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 09:27:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="VAMOz7eq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 300DB20851
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Uc/V1bHX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 531C820851
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726017AbeLDJ1P (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 4 Dec 2018 04:27:15 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:3738 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725898AbeLDJ1O (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Dec 2018 04:27:14 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c0648710000>; Tue, 04 Dec 2018 01:27:13 -0800
+        id S1726020AbeLDJ1R (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 4 Dec 2018 04:27:17 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:4090 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725871AbeLDJ1Q (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Dec 2018 04:27:16 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c0648760000>; Tue, 04 Dec 2018 01:27:18 -0800
 Received: from hqmail.nvidia.com ([172.20.161.6])
   by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 04 Dec 2018 01:27:14 -0800
+  Tue, 04 Dec 2018 01:27:16 -0800
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 04 Dec 2018 01:27:14 -0800
-Received: from HQMAIL106.nvidia.com (172.18.146.12) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 4 Dec
- 2018 09:27:13 +0000
+        by hqpgpgate101.nvidia.com on Tue, 04 Dec 2018 01:27:16 -0800
+Received: from HQMAIL106.nvidia.com (172.18.146.12) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 4 Dec
+ 2018 09:27:15 +0000
 Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL106.nvidia.com
  (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
- Transport; Tue, 4 Dec 2018 09:27:13 +0000
+ Transport; Tue, 4 Dec 2018 09:27:15 +0000
 Received: from josephl-linux.nvidia.com (Not Verified[10.19.108.132]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5c0648700003>; Tue, 04 Dec 2018 01:27:13 -0800
+        id <B5c0648720001>; Tue, 04 Dec 2018 01:27:15 -0800
 From:   Joseph Lo <josephl@nvidia.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Peter De Schrijver <pdeschrijver@nvidia.com>,
@@ -46,9 +46,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
 CC:     <linux-arm-kernel@lists.infradead.org>,
         <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
         Joseph Lo <josephl@nvidia.com>
-Subject: [PATCH 17/19] arm64: dts: tegra210-smaug: add CPU power rail regulator
-Date:   Tue, 4 Dec 2018 17:25:46 +0800
-Message-ID: <20181204092548.3038-18-josephl@nvidia.com>
+Subject: [PATCH 18/19] arm64: dts: tegra210-smaug: enable DFLL clock
+Date:   Tue, 4 Dec 2018 17:25:47 +0800
+Message-ID: <20181204092548.3038-19-josephl@nvidia.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204092548.3038-1-josephl@nvidia.com>
 References: <20181204092548.3038-1-josephl@nvidia.com>
@@ -57,59 +57,52 @@ X-NVConfidentiality: public
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1543915633; bh=37UJgg+Sk0f+mVmsOgZriZGkBps4DIlrQrAyeAWRxnA=;
+        t=1543915638; bh=rJyx7zXRuTxfbnU7n2PuC6aW6kvPz9uE39dkSEuq+7Y=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:MIME-Version:X-NVConfidentiality:
          Content-Transfer-Encoding:Content-Type;
-        b=VAMOz7eqaxBxVKYW4FR83jA0Pf+HUF5ZA3pRbroxCgLQItANrtsNdkGAbTImJ05ik
-         UW4PkEzMXdEsxnwtuG4rFfy/yMJJ0fgadJulUFNRSFzCWwSdEpcaPhk3MpMahbjhsp
-         t9+wN3BynMGEGdk+zhBx/86RESeOdrNMduM2hb24DFYb5/AwCsJqm9pJh38twRwM3a
-         XMb5Ox6bRpAS4kRwPnfo0mYIZ7SIIUX7K6tW8XcGFWZ/S1rzODETeE1g9bJDAoe/qy
-         Ln9y35IabNzdxLBDN5Oblz1pEbHM4X9kdzHncWNmi1/I8PYrMC8ujuSr1z1tZ96U75
-         iEgY2Yz27U7sA==
+        b=Uc/V1bHXazMNlld1T8Iasz+oXxBWIQO/tf8Mvzc5no5GZhUviu9D6y5GaiEfjHfjF
+         Qtx2+poKe2KR+52zaCljgavwlECJJSAVi6GJCRK6ESzvADGmfVL0JpXYJdnYwbsUQY
+         rJzikITvJYC55UwsWs8oj13peNJOsKuYFJMkozq0wSi6qg/njvKLCV5az3a1mTXuq7
+         GH0VKslbIFE6iUoz9EZiO1cvXiP8krwLpm/rI+9hfxZIan21+ZVLask+HYJKr2bind
+         jdRPbKniz7aXzNHTDaCCYBGt3F0V+/6FKHJqNdcLoLy5TB0+Nrz1g7lybLWXK2v1mj
+         ZjxYTlJzWwMcQ==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add CPU power rail regulator for Smaug board.
+Enable DFLL clock for Smaug board.
 
 Signed-off-by: Joseph Lo <josephl@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra210-smaug.dts | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ arch/arm64/boot/dts/nvidia/tegra210-smaug.dts | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts b/arch/arm64/boo=
 t/dts/nvidia/tegra210-smaug.dts
-index 43cae4798870..b3930a9dd139 100644
+index b3930a9dd139..beac7b0bf436 100644
 --- a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
 +++ b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-@@ -1340,6 +1340,25 @@
+@@ -1698,6 +1698,18 @@
  		status =3D "okay";
- 		clock-frequency =3D <1000000>;
+ 	};
 =20
-+		max77621_cpu: max77621@1b {
-+			compatible =3D "maxim,max77621";
-+			reg =3D <0x1b>;
-+			interrupt-parent =3D <&gpio>;
-+			interrupts =3D <TEGRA_GPIO(Y, 1) IRQ_TYPE_LEVEL_LOW>;
-+			regulator-name =3D "PPVAR_CPU";
-+			regulator-min-microvolt =3D <800000>;
-+			regulator-max-microvolt =3D <1231250>;
-+			regulator-ramp-delay =3D <12500>;
-+			regulator-boot-on;
-+			regulator-always-on;
-+			maxim,dvs-default-state =3D <1>;
-+			maxim,enable-active-discharge;
-+			maxim,enable-bias-control;
-+			maxim,enable-etr;
-+			maxim,enable-gpio =3D <&max77620 5 0>;
-+			maxim,externally-enable;
-+		};
++	clock@70110000 {
++		status =3D "okay";
++		nvidia,sample-rate =3D <12500>;
++		nvidia,droop-ctrl =3D <0x00000f00>;
++		nvidia,force-mode =3D <1>;
++		nvidia,cf =3D <6>;
++		nvidia,ci =3D <0>;
++		nvidia,cg =3D <2>;
++		nvidia,i2c-fs-rate =3D <400000>;
++		vdd-cpu-supply =3D <&max77621_cpu>;
++	};
 +
- 		max77620: max77620@3c {
- 			compatible =3D "maxim,max77620";
- 			reg =3D <0x3c>;
+ 	aconnect@702c0000 {
+ 		status =3D "okay";
+=20
 --=20
 2.19.2
 
