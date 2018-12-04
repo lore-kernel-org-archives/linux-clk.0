@@ -4,58 +4,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22FC9C07E85
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 16:54:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAC4EC04EB8
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 16:58:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD4B020659
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 16:54:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9035820659
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 16:58:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="aKSGKmWM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD4B020659
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="srdIzaFG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9035820659
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727016AbeLDQxS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 4 Dec 2018 11:53:18 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:38126 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726459AbeLDQxR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Dec 2018 11:53:17 -0500
-Received: by mail-wr1-f65.google.com with SMTP id v13so16696558wrw.5
-        for <linux-clk@vger.kernel.org>; Tue, 04 Dec 2018 08:53:16 -0800 (PST)
+        id S1726909AbeLDQ6a (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 4 Dec 2018 11:58:30 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:34193 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726487AbeLDQ63 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Dec 2018 11:58:29 -0500
+Received: by mail-wm1-f67.google.com with SMTP id y185so9854437wmd.1
+        for <linux-clk@vger.kernel.org>; Tue, 04 Dec 2018 08:58:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=R3lu1O3dzevjwf1kiOi6nnvjRZAndn2B6xOh4odokpA=;
-        b=aKSGKmWM8td3reog3gZJIfKDs07EBcHOCuCLVlvinTdBPUNsU6lkv3yhZave9icP91
-         YBC4na8hj2iyTj3c+9rkxteLCChZ457hZIG3r22LfghWpyT/DuacUQV+RmAGJIniwa5G
-         e8T/YEPTxbEc5v0xYen/HBZZribpWxuJJgOEl0YCtTsIdlSk+091C/eZL8oUJNjhBvrW
-         9nts0Ix7e3NPZKTMQGM+YMjQjrn28ngecRB1abZWpoX9Ir/askXlpRqlTWpsHoQnYOhI
-         x6pcz4v6ltm2g2JpaFkygU00ny7/VR8RWWJrUzrbxsOLxIjsHiLzH9jIQm+Wyp09p/Ul
-         OzwA==
+        bh=GFaj5nnpznOUas4Nk4RvpF7kGZOF4xLLF5UsFHMGNEI=;
+        b=srdIzaFGu3pA59qfVe5+NL05RLSR+ZodpzQ++pFEEkF3SBMNpKKtM7l7GFFF8VS/UM
+         VQaZeDZUN5nyGUTeC1C0o5TFbKcPahJLRJkQj5xZRKE9pfqMZJng4JoUsvlOpx/vEGt/
+         OlhC8pJQ2smI52uqwc0RYykhwuYn974zr7BLL7MVMNrRIUl2P8g8DYJAhZYxLZMQXAmC
+         cQJg0lMep4Pwxly25zgaIhKYz+C82j0lNJigI6sT4X6L9a7wi0FWBJPT+Do+evnSzBal
+         CsNuCthevRzzU/IQuN9NulW2+uIOXoNWk51Qj490eUKcUcoAlnGTSPzMyyB16DQlvUWg
+         5nGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=R3lu1O3dzevjwf1kiOi6nnvjRZAndn2B6xOh4odokpA=;
-        b=CPBKSuQpvFbU9x3N4oeOG3Eg4Fby/YHgQxgPhLWf/R7XqUkXWu0DACi2ugEd4lYPup
-         74LVu92PQJSPWpiev7eqA7w8/Wufli3EQAAZRexK8ImkLTN7b+MTkRi8e/hYpyfC6Wxj
-         VhOH13qU+UZVR6HyyYjeaINuJzZYMX4Wdcx/CulCxOcFL0gtkuThd2QDYjgsv58e4v3c
-         /TDnW8gBV8E1CduwsuE4jGETf9Eh4LzI5rWjbK9KxYrOy48kKsd7N+eZoB0leLx0L/lE
-         ctRB8AM2XViG6GuZ+zao65ruIRg/kRUBqRmkCuaOpJlyAHcjG1Evu35amvmtSqgcTeuZ
-         /i7Q==
-X-Gm-Message-State: AA+aEWZDBgmEkHidfByLxqFMWUE0/V8QfxZtaobIIkrrW2UCSK1qsLv2
-        mwKzvox58RH4JkPT+uIHVCHRBg==
-X-Google-Smtp-Source: AFSGD/WTlf/YYHhc3QbpNCj8zrSV4Lrqsmr2YgfWNABBTkDANhfVDao/uept4NdNhVCcdYo9Q5XzAQ==
-X-Received: by 2002:adf:8464:: with SMTP id 91mr19884579wrf.251.1543942395942;
-        Tue, 04 Dec 2018 08:53:15 -0800 (PST)
+        bh=GFaj5nnpznOUas4Nk4RvpF7kGZOF4xLLF5UsFHMGNEI=;
+        b=KGUHu1uUGCOd8iZnq4iwEaNxHccfLqIedalyn/PPIRMKtuxqZS+Ifs7N/Ec4vgR69p
+         qClwXidH6mlm2ZSHY++M1LIkiYsgOEjQvQMN2bwWlR3CZxoVigPyoS+oPVSCBEX0VydT
+         sO2b+E+AXkyEABp3999AZvohinv7GreynJxC1mntLY5fiLPWFk1tMNfH8OX778VDU4RP
+         CQ8zbU2BoLK/sktifzM1LMa8vXB4CQ9HJbpCIFQ7yJruUx30fJx4GcgcRGQ8Y1UhE2cQ
+         Ki2cHboD0WfwTxVSV35m/EOqhc57iZm0/ysyHOAKF2eVj+U3wvwaRJ0d+10X/GQ7xpMo
+         nyRQ==
+X-Gm-Message-State: AA+aEWaOTLX6UWV99retdKjjqJUh0CFUNtHDW07hb/opnIsDH15onTZL
+        10SmvH8hr2LSVpFRYwqrm3K5Vw==
+X-Google-Smtp-Source: AFSGD/VnCwtapXZIu6I7LJY17J2Dek32xY3jzoyAR14FToy4ExZQhq3sSRtzaLkb8aGKlbbkb0n8lA==
+X-Received: by 2002:a7b:c5cc:: with SMTP id n12mr12923646wmk.149.1543942708347;
+        Tue, 04 Dec 2018 08:58:28 -0800 (PST)
 Received: from boomer.local ([2a01:e34:eeb6:4690:106b:bae3:31ed:7561])
-        by smtp.googlemail.com with ESMTPSA id s66sm11581633wmf.34.2018.12.04.08.53.14
+        by smtp.googlemail.com with ESMTPSA id x81sm10152521wmg.17.2018.12.04.08.58.26
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 04 Dec 2018 08:53:15 -0800 (PST)
+        Tue, 04 Dec 2018 08:58:27 -0800 (PST)
 From:   Jerome Brunet <jbrunet@baylibre.com>
 To:     Neil Armstrong <narmstrong@baylibre.com>,
         Kevin Hilman <khilman@baylibre.com>,
@@ -63,9 +63,9 @@ To:     Neil Armstrong <narmstrong@baylibre.com>,
 Cc:     Jerome Brunet <jbrunet@baylibre.com>, linux-clk@vger.kernel.org,
         linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org
-Subject: [PATCH 0/5] clk: meson: axg: add 32k clock generation
-Date:   Tue,  4 Dec 2018 17:53:05 +0100
-Message-Id: <20181204165310.20806-1-jbrunet@baylibre.com>
+Subject: [PATCH 0/2] clk: meson: add clk-input helper
+Date:   Tue,  4 Dec 2018 17:58:17 +0100
+Message-Id: <20181204165819.21541-1-jbrunet@baylibre.com>
 X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -74,39 +74,20 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The goal of this patchset is to add the internal generation of the
-32768Hz clock within the axg AO clock controller.
+When the related bindings get merged, we will add more input clocks
+to the different amlogic clock controllers. Instead of copying this
+code around, lets create an helper function and use it.
 
-This was initially added has the CEC clock on gxbb. To properly
-integrate it on the axg, a simpler 'dual divider' driver is added.
-Then gxbb AO clock controller is reworked to use it. Finally the 32k
-clock tree is added to the AXG.
+Jerome Brunet (2):
+  clk: meson: add clk-input helper function
+  clk: meson: axg-audio: use the clk input helper function
 
-This patchset requires depends on this CCF change [0]
-
-[0]: https://lkml.kernel.org/r/20181204163257.32085-1-jbrunet@baylibre.com
-
-Jerome Brunet (5):
-  dt-bindings: clk: meson: add ao slow clock path ids
-  clk: meson: clean-up clock registration
-  clk: meson: add dual divider clock driver
-  clk: meson: gxbb-ao: replace cec-32k with the dual divider
-  clk: meson: axg-ao: add 32k generation subtree
-
- drivers/clk/meson/Makefile              |   3 +-
- drivers/clk/meson/axg-aoclk.c           | 175 +++++++++++++++--
- drivers/clk/meson/axg-aoclk.h           |  13 +-
- drivers/clk/meson/clk-dualdiv.c         | 130 +++++++++++++
- drivers/clk/meson/clkc.h                |  19 ++
- drivers/clk/meson/gxbb-aoclk-32k.c      | 193 -------------------
- drivers/clk/meson/gxbb-aoclk.c          | 238 +++++++++++++++++++-----
- drivers/clk/meson/gxbb-aoclk.h          |  20 +-
- drivers/clk/meson/meson-aoclk.c         |  15 +-
- include/dt-bindings/clock/axg-aoclkc.h  |   7 +-
- include/dt-bindings/clock/gxbb-aoclkc.h |   7 +
- 11 files changed, 527 insertions(+), 293 deletions(-)
- create mode 100644 drivers/clk/meson/clk-dualdiv.c
- delete mode 100644 drivers/clk/meson/gxbb-aoclk-32k.c
+ drivers/clk/meson/Makefile    |  2 +-
+ drivers/clk/meson/axg-audio.c | 83 ++++++++++-------------------------
+ drivers/clk/meson/clk-input.c | 44 +++++++++++++++++++
+ drivers/clk/meson/clkc.h      |  5 +++
+ 4 files changed, 74 insertions(+), 60 deletions(-)
+ create mode 100644 drivers/clk/meson/clk-input.c
 
 -- 
 2.19.1
