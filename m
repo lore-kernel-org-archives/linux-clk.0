@@ -4,123 +4,154 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5BCEC04EBF
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 19:49:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D457C04EB8
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 19:51:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A61A20834
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 19:49:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A525620834
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 19:51:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="MJLJckbO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A61A20834
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="c+pdL9xs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A525620834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725874AbeLDTtt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 4 Dec 2018 14:49:49 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:37890 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725866AbeLDTts (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Dec 2018 14:49:48 -0500
-Received: by mail-lj1-f194.google.com with SMTP id c19-v6so16082304lja.5
-        for <linux-clk@vger.kernel.org>; Tue, 04 Dec 2018 11:49:46 -0800 (PST)
+        id S1725886AbeLDTvW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 4 Dec 2018 14:51:22 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:46599 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725855AbeLDTvW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Dec 2018 14:51:22 -0500
+Received: by mail-wr1-f66.google.com with SMTP id l9so17247727wrt.13
+        for <linux-clk@vger.kernel.org>; Tue, 04 Dec 2018 11:51:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:references:organization:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=/o6KHpko38zQTER6xvHRq4G5yD/Y25AI3XjjTxYj3I8=;
-        b=MJLJckbOE/BwkB6no2+Ogvp5ZYGIUHOKgIbkiYauUESlq7UgcIyEuTCqL/BNs16OqN
-         ekLUuCzqlkmFdfVXzir0rwzPKV97+z7bgbg9JdIhAVcftDadOiU8nt+YzD512ZkrTT/h
-         IOcDICt9NgpZgD0Ui5pO9E1DZJc3u6TtQa9GvX8LlFRZV+bnyZ5PrM5I90+iGzE0sYJN
-         mrxXXG4nWwy6DQHe8y6pJIRXh9Eu3dUxkHQQU7hDuJ1tGhbioMxNdJWXG8sm17ArJGmK
-         MlNhW7H9NXAxLV5GzQ3h2N7ZJUxkVVxnBoVrpjbh4il5JQSmEN9kNG0gUFC31an9gK2N
-         1w6Q==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=5qjZ/kmbzHf7y987gu7eWk15FAWnG/grsI5l9lVQpJQ=;
+        b=c+pdL9xshdGTHH5KLO0CDytstujw5+P+jTX7TXx1eTw6tDGdb84dLB8Nz8bd6pNhq1
+         mewgF36KMwAt0js7y0zsPYxrQp6vnJW7J0MX0CdeqjLRLPpfC0+3I8POoPmOKjSDOwSj
+         ryKzrEH3ID1qhTPMxZUEx7JtPOQYAkIzCcl+xbJJiIcxAorOkj5FIpCprrF9yRZM9xC9
+         EmJ2351YM+iYMlrd1/9u7UTxm1JD5no/MfbvjS19EZaWgCqT5qkKjXWWm5oEoTh8WMjZ
+         IUY+z4u1S1yZZGGo0K/GXIrQCpvd1AV0IUAGRgiAHuD6PaXOX+pEf0Pa331FGmz+dh2N
+         ydNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:references:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=/o6KHpko38zQTER6xvHRq4G5yD/Y25AI3XjjTxYj3I8=;
-        b=RAfwmgjkbGFP8VbKu4uODkmCGTxnBGe5k+emhYVbGNsp/U08ey/UpNoXIl1Z9SwoWJ
-         MNU3wvDfGsWydjgDZtuTq8khrD1Pvfb3fcuRZIb9WWX+uI92pG2KzSwAkS8Nt4n1pToK
-         rWwHnS6sfCdFYTwciU/oNLy1yiqttfgA5xgH8koGxO3yTwrGtQz+kcIuZ1KjLen1c2QH
-         YcqBeBumGdJMG3iXSRFHNEHiGP2g351+i8afOECAJqZRDqB4LMyTyW/NuUkIbhq1fRSz
-         Cw99O3oPYcJ5k+t2e7ypX+ZbkpGH2C7WKHyHnU57zzRkD3zntuw8AkbHCzkWsPj5vRyx
-         FKpQ==
-X-Gm-Message-State: AA+aEWYNm4BwXgq363Ln0zddm3DmkcvID6B9QSjF964BzawNtvmUKQba
-        FMBQpsJi4Fm4ALBooiQLuZy++23uJ9Q=
-X-Google-Smtp-Source: AFSGD/WoQ7Ts7DxWCHlO5ORta/V8fiLPVGzt+oDAghXpZ/KSCn2iXJACVUqSqI0BXu83olfpzTKB7Q==
-X-Received: by 2002:a2e:80d3:: with SMTP id r19-v6mr13824436ljg.151.1543952985753;
-        Tue, 04 Dec 2018 11:49:45 -0800 (PST)
-Received: from wasted.cogentembedded.com ([31.173.84.250])
-        by smtp.gmail.com with ESMTPSA id p21sm539276lfj.10.2018.12.04.11.49.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Dec 2018 11:49:45 -0800 (PST)
-Subject: [PATCH v2 2/4] clk: renesas: rcar-gen3-cpg: add spinlock
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-To:     linux-renesas-soc@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-clk@vger.kernel.org
-References: <cfd91d1f-3b1e-c6c4-0975-7aac09383fdf@cogentembedded.com>
-Organization: Cogent Embedded
-Message-ID: <eef5ee23-311a-4367-43b5-b793357f06ef@cogentembedded.com>
-Date:   Tue, 4 Dec 2018 22:49:44 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
-MIME-Version: 1.0
-In-Reply-To: <cfd91d1f-3b1e-c6c4-0975-7aac09383fdf@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=5qjZ/kmbzHf7y987gu7eWk15FAWnG/grsI5l9lVQpJQ=;
+        b=AkAOV3bZuYJAFmOP4WcrFEHoEwoyhWsppMWajFv44TpXaD+3O9wsuwrjVaZaQ/vFQK
+         YwyMX8U2s1itH9IbxCoYeSNxQ+nbFy4BtctxKQckkhvFGpE2UoMQixfQDKW9O/kS6VQq
+         z7Mf1zFBP2RZ1s3GPbg7tEpY5wzQJKyYM4MwOjdMuya8OLkP0lK54ISL2BgdlCTEECzg
+         GTTDjNJWw8BR0GOdJ+ixD03sE9n87DrjaolG7gmsnn/xyo/z72DPDEZ4VA8mF9W9uNwT
+         RznSSY7uaa/aJTRYIni18KjX8Gyf9dF6OeiVx/y05DM/QENBzm4aRp6/WiRhEeIygaXQ
+         Tu4g==
+X-Gm-Message-State: AA+aEWY3LIijAN9pUYXQ+p/rcLhI5BD4zfiqjRtpcOHaNoKsElE3E7a7
+        UoVMzFaxaIYkQV/M2SX52OJEBg==
+X-Google-Smtp-Source: AFSGD/WTtk05Pe/Hq0A5oQ06JeYUhmtTz9Knb8t3RC1nbNotMqdQioRkRqEKNskXleimzWQATX027g==
+X-Received: by 2002:a5d:6549:: with SMTP id z9mr18582849wrv.116.1543953080031;
+        Tue, 04 Dec 2018 11:51:20 -0800 (PST)
+Received: from boomer.baylibre.com (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
+        by smtp.gmail.com with ESMTPSA id 125-v6sm14667527wmr.22.2018.12.04.11.51.18
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 04 Dec 2018 11:51:19 -0800 (PST)
+Message-ID: <807f2924b67239f61c6d93de7f7b124f8a1f195a.camel@baylibre.com>
+Subject: Re: [PATCH] Revert "clk: fix __clk_init_parent() for single parent
+ clocks"
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Tue, 04 Dec 2018 20:51:17 +0100
+In-Reply-To: <154394675320.88331.12449582989130694425@swboyd.mtv.corp.google.com>
+References: <20181204163257.32085-1-jbrunet@baylibre.com>
+         <154394675320.88331.12449582989130694425@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.2 (3.30.2-2.fc29) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Protect the CPG register read-modify-write sequence with a spinlock.
+On Tue, 2018-12-04 at 10:05 -0800, Stephen Boyd wrote:
+> Quoting Jerome Brunet (2018-12-04 08:32:57)
+> > This reverts commit 2430a94d1e719b7b4af2a65b781a4c036eb22e64.
+> > 
+> > From the original commit message:
+> >   It turned out a problem because there are some single-parent clocks
+> >   that implement .get_parent() callback and return non-zero index.
+> >   The SOCFPGA clock is the case; the commit broke the SOCFPGA boards.
+> > 
+> > It is wrong for a clock to return an index >= num_parents. CCF checks
+> > for this condition in clk_core_get_parent_by_index(). This function sets
+> > the parent to NULL if index is incoherent, which seems like the only
+> > sane choice.
+> > 
+> > commit 2430a94d1e71 ("clk: fix __clk_init_parent() for single parent
+> > clocks")
+> > appears to be a work around installed in the core framework for a problem
+> > that is platform specific, and should probably be fixed in the platform
+> > code.
+> 
+> Ouch. I see that I even pointed that out in 2016 but never got a reply
+> or a fix patch[1].
+> 
+> > Further more, it introduces a problem in a corner case of the mux clock.
+> > Take mux with multiple parents, but only one is known, the rest being
+> > undocumented. The register reset has one of unknown parent set.
+> > 
+> > Before commit 2430a94d1e71 ("clk: fix __clk_init_parent() for single
+> > parent clocks"):
+> >  * get_parent() is called, register is read and give an unknown index.
+> >    -> the mux is orphaned.
+> >  * a call to set_rate() will reparent the mux to the only known parent.
+> > 
+> > With commit 2430a94d1e71 ("clk: fix __clk_init_parent() for single parent
+> > clocks"):
+> >  * the register is never read.
+> >  * parent is wrongly assumed to be the only known one.
+> >    As a consequence, all the calculation deriving from the mux will be
+> >    wrong
+> >  * Since we believe the only know parent to be set, set_parent() won't
+> >    ever be called and the register won't be set with the correct value.
+> 
+> Isn't this the broken bad case all over again? Why register a clk as a
+> mux and then only say it has one parent?
 
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+I understand it is a bit odd but as I explained it is a corner case.
 
----
-Changes in version 2:
-- new patch.
+We are really trying to drive a mux here, applying a values will change the
+clock signal we get. Documentation being what it is, we only know one the
+parent. The other parent could anything or maybe not connected at all, who
+know. That is not the important part actually
 
- drivers/clk/renesas/rcar-gen3-cpg.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+If such mux was already set to the known entry by default, it would be OK to
+ignore it. But if it is not, then we CCF to realise that and change the
+setting accordingly.
 
-Index: renesas-drivers/drivers/clk/renesas/rcar-gen3-cpg.c
-===================================================================
---- renesas-drivers.orig/drivers/clk/renesas/rcar-gen3-cpg.c
-+++ renesas-drivers/drivers/clk/renesas/rcar-gen3-cpg.c
-@@ -30,14 +30,19 @@
- 
- #define CPG_RCKCR_CKSEL	BIT(15)	/* RCLK Clock Source Select */
- 
-+static spinlock_t cpg_lock;
-+
- static void cpg_reg_modify(void __iomem *reg, u32 clear, u32 set)
- {
-+	unsigned long flags;
- 	u32 val;
- 
-+	spin_lock_irqsave(&cpg_lock, flags);
- 	val = readl(reg);
- 	val &= ~clear;
- 	val |= set;
- 	writel(val, reg);
-+	spin_unlock_irqrestore(&cpg_lock, flags);
- };
- 
- struct cpg_simple_notifier {
-@@ -604,5 +609,8 @@ int __init rcar_gen3_cpg_init(const stru
- 	if (attr)
- 		cpg_quirks = (uintptr_t)attr->data;
- 	pr_debug("%s: mode = 0x%x quirks = 0x%x\n", __func__, mode, cpg_quirks);
-+
-+	spin_lock_init(&cpg_lock);
-+
- 	return 0;
- }
+This the case of the 'ao_cts_cec' clock in the following patch:
+https://lore.kernel.org/patchwork/patch/1021028/
+
+by default the value in the register is 0, but the only one that makes sense
+for us is 1.
+
+> 
+> > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> > ---
+> 
+> Is this related to the other patch you sent? Can you send series for
+> related patches please?
+> 
+> [1] https://lkml.kernel.org/r/20160209181833.GA24167@codeaurora.org
+
+Actually I was intially doing a series, and stopped when my cover letter
+started with "those are two unrelated patches ..." ;)
+
+I found these things while debugging the same thing but there is no deps
+between them.
+
+
