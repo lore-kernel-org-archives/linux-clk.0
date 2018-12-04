@@ -2,61 +2,60 @@ Return-Path: <SRS0=3Y/e=ON=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDB31C04EB8
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 16:54:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22FC9C07E85
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 16:54:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B311620850
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 16:54:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD4B020659
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 16:54:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="Ndm7bn0j"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B311620850
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="aKSGKmWM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD4B020659
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727219AbeLDQxz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 4 Dec 2018 11:53:55 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:36546 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727157AbeLDQxT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Dec 2018 11:53:19 -0500
-Received: by mail-wr1-f68.google.com with SMTP id u3so16703628wrs.3
-        for <linux-clk@vger.kernel.org>; Tue, 04 Dec 2018 08:53:18 -0800 (PST)
+        id S1727016AbeLDQxS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 4 Dec 2018 11:53:18 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:38126 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726459AbeLDQxR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Dec 2018 11:53:17 -0500
+Received: by mail-wr1-f65.google.com with SMTP id v13so16696558wrw.5
+        for <linux-clk@vger.kernel.org>; Tue, 04 Dec 2018 08:53:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=uovFhiZzGyaBQW3XHTv2xNNKBWvDbg0VR5INejAlggg=;
-        b=Ndm7bn0jZb94xI58zz+oX0/gfaHf3niAB40+7cua4CjbFYIZxjCQZNEI5svNuA4n7E
-         EnYSOXOXGvHCCMM0ptOoZfUn7+fWYdL1xn/1fytJXrcaBA/vn8M4sdTYZLfm9ww3Mww+
-         j2JAnHJPEX1TzMwceR+QCW4QRiHMoG/UgRaJ3nNGN+tgXu66PFhoCLetTSUjsEYNpxaX
-         m2Pvmz0su43yt7h+YPk0ImrMtauSDXw8X7WEpXEc0sfUFA+oA/9U9VLI03Yab7CKnQMv
-         xzu+UmvdeK4uME9LoHz14ctE843hLf4poLi1Tke4S2GV6P+I8BUcEnVy1K37ZsOkAoX+
-         TGXA==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=R3lu1O3dzevjwf1kiOi6nnvjRZAndn2B6xOh4odokpA=;
+        b=aKSGKmWM8td3reog3gZJIfKDs07EBcHOCuCLVlvinTdBPUNsU6lkv3yhZave9icP91
+         YBC4na8hj2iyTj3c+9rkxteLCChZ457hZIG3r22LfghWpyT/DuacUQV+RmAGJIniwa5G
+         e8T/YEPTxbEc5v0xYen/HBZZribpWxuJJgOEl0YCtTsIdlSk+091C/eZL8oUJNjhBvrW
+         9nts0Ix7e3NPZKTMQGM+YMjQjrn28ngecRB1abZWpoX9Ir/askXlpRqlTWpsHoQnYOhI
+         x6pcz4v6ltm2g2JpaFkygU00ny7/VR8RWWJrUzrbxsOLxIjsHiLzH9jIQm+Wyp09p/Ul
+         OzwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=uovFhiZzGyaBQW3XHTv2xNNKBWvDbg0VR5INejAlggg=;
-        b=hVhYKst5q1K5nijVh/DjtSRSLpwML74f2IwItxn98Lshcm4r8TP5mt6xB+BcxSrdg3
-         Ev+fFEE9BC0q+sQvn0ENTOY+ddgxVLZ3vShfS8yXlJbpE9NnfZNb7uhVCxsoxG1x+qao
-         iEZ812sTRLdmIe6ll+lDKN5NwJUypv2Pxqj7kDNyA+1hhHoNiSqG3oKfUCTj95SW+Pgc
-         aGYKoesjHtgOvmo+lvOOVkpLBeYvroN5xH5c0saf4b0ebEjmnv3j0mTgolk/rNJ7BQOs
-         vapLU/bb+l0owLgkid+LKKwU264JbNLmMqy4xdXSCVnxS3gpio6QVWJNojmGGn2WDxUD
-         Cklg==
-X-Gm-Message-State: AA+aEWYGDF7sjmwbLNgtFlCgVj2HcOqpLE0cY3tXEvUkEbWRyyDAhVKi
-        f6N8UUEO5h/xfC7d9enUjthYRw==
-X-Google-Smtp-Source: AFSGD/XDdbF2gsvv4ETlkHHO+i8RPcr3Pz6l/cELoKLZ7YPov+Rz1qjN1aKrFHTPfGX1n8/T3KlUag==
-X-Received: by 2002:adf:d0c9:: with SMTP id z9mr18031940wrh.317.1543942397582;
-        Tue, 04 Dec 2018 08:53:17 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=R3lu1O3dzevjwf1kiOi6nnvjRZAndn2B6xOh4odokpA=;
+        b=CPBKSuQpvFbU9x3N4oeOG3Eg4Fby/YHgQxgPhLWf/R7XqUkXWu0DACi2ugEd4lYPup
+         74LVu92PQJSPWpiev7eqA7w8/Wufli3EQAAZRexK8ImkLTN7b+MTkRi8e/hYpyfC6Wxj
+         VhOH13qU+UZVR6HyyYjeaINuJzZYMX4Wdcx/CulCxOcFL0gtkuThd2QDYjgsv58e4v3c
+         /TDnW8gBV8E1CduwsuE4jGETf9Eh4LzI5rWjbK9KxYrOy48kKsd7N+eZoB0leLx0L/lE
+         ctRB8AM2XViG6GuZ+zao65ruIRg/kRUBqRmkCuaOpJlyAHcjG1Evu35amvmtSqgcTeuZ
+         /i7Q==
+X-Gm-Message-State: AA+aEWZDBgmEkHidfByLxqFMWUE0/V8QfxZtaobIIkrrW2UCSK1qsLv2
+        mwKzvox58RH4JkPT+uIHVCHRBg==
+X-Google-Smtp-Source: AFSGD/WTlf/YYHhc3QbpNCj8zrSV4Lrqsmr2YgfWNABBTkDANhfVDao/uept4NdNhVCcdYo9Q5XzAQ==
+X-Received: by 2002:adf:8464:: with SMTP id 91mr19884579wrf.251.1543942395942;
+        Tue, 04 Dec 2018 08:53:15 -0800 (PST)
 Received: from boomer.local ([2a01:e34:eeb6:4690:106b:bae3:31ed:7561])
-        by smtp.googlemail.com with ESMTPSA id s66sm11581633wmf.34.2018.12.04.08.53.16
+        by smtp.googlemail.com with ESMTPSA id s66sm11581633wmf.34.2018.12.04.08.53.14
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 04 Dec 2018 08:53:16 -0800 (PST)
+        Tue, 04 Dec 2018 08:53:15 -0800 (PST)
 From:   Jerome Brunet <jbrunet@baylibre.com>
 To:     Neil Armstrong <narmstrong@baylibre.com>,
         Kevin Hilman <khilman@baylibre.com>,
@@ -64,12 +63,10 @@ To:     Neil Armstrong <narmstrong@baylibre.com>,
 Cc:     Jerome Brunet <jbrunet@baylibre.com>, linux-clk@vger.kernel.org,
         linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org
-Subject: [PATCH 1/5] dt-bindings: clk: meson: add ao slow clock path ids
-Date:   Tue,  4 Dec 2018 17:53:06 +0100
-Message-Id: <20181204165310.20806-2-jbrunet@baylibre.com>
+Subject: [PATCH 0/5] clk: meson: axg: add 32k clock generation
+Date:   Tue,  4 Dec 2018 17:53:05 +0100
+Message-Id: <20181204165310.20806-1-jbrunet@baylibre.com>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181204165310.20806-1-jbrunet@baylibre.com>
-References: <20181204165310.20806-1-jbrunet@baylibre.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
@@ -77,48 +74,40 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add the CLKIDs for the slow clock generation path
+The goal of this patchset is to add the internal generation of the
+32768Hz clock within the axg AO clock controller.
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- include/dt-bindings/clock/axg-aoclkc.h  | 7 ++++++-
- include/dt-bindings/clock/gxbb-aoclkc.h | 7 +++++++
- 2 files changed, 13 insertions(+), 1 deletion(-)
+This was initially added has the CEC clock on gxbb. To properly
+integrate it on the axg, a simpler 'dual divider' driver is added.
+Then gxbb AO clock controller is reworked to use it. Finally the 32k
+clock tree is added to the AXG.
 
-diff --git a/include/dt-bindings/clock/axg-aoclkc.h b/include/dt-bindings/clock/axg-aoclkc.h
-index 61955016a55b..8ec4a269c7a6 100644
---- a/include/dt-bindings/clock/axg-aoclkc.h
-+++ b/include/dt-bindings/clock/axg-aoclkc.h
-@@ -21,6 +21,11 @@
- #define CLKID_AO_SAR_ADC_SEL	8
- #define CLKID_AO_SAR_ADC_DIV	9
- #define CLKID_AO_SAR_ADC_CLK	10
--#define CLKID_AO_ALT_XTAL	11
-+#define CLKID_AO_CTS_OSCIN	11
-+#define CLKID_AO_32K_PRE	12
-+#define CLKID_AO_32K_DIV	13
-+#define CLKID_AO_32K_SEL	14
-+#define CLKID_AO_32K		15
-+#define CLKID_AO_CTS_RTC_OSCIN	16
- 
- #endif
-diff --git a/include/dt-bindings/clock/gxbb-aoclkc.h b/include/dt-bindings/clock/gxbb-aoclkc.h
-index 9d15e2221fdb..ec3b26319fc4 100644
---- a/include/dt-bindings/clock/gxbb-aoclkc.h
-+++ b/include/dt-bindings/clock/gxbb-aoclkc.h
-@@ -63,5 +63,12 @@
- #define CLKID_AO_UART2		4
- #define CLKID_AO_IR_BLASTER	5
- #define CLKID_AO_CEC_32K	6
-+#define CLKID_AO_CTS_OSCIN	7
-+#define CLKID_AO_32K_PRE	8
-+#define CLKID_AO_32K_DIV	9
-+#define CLKID_AO_32K_SEL	10
-+#define CLKID_AO_32K		11
-+#define CLKID_AO_CTS_RTC_OSCIN	12
-+#define CLKID_AO_CLK81		13
- 
- #endif
+This patchset requires depends on this CCF change [0]
+
+[0]: https://lkml.kernel.org/r/20181204163257.32085-1-jbrunet@baylibre.com
+
+Jerome Brunet (5):
+  dt-bindings: clk: meson: add ao slow clock path ids
+  clk: meson: clean-up clock registration
+  clk: meson: add dual divider clock driver
+  clk: meson: gxbb-ao: replace cec-32k with the dual divider
+  clk: meson: axg-ao: add 32k generation subtree
+
+ drivers/clk/meson/Makefile              |   3 +-
+ drivers/clk/meson/axg-aoclk.c           | 175 +++++++++++++++--
+ drivers/clk/meson/axg-aoclk.h           |  13 +-
+ drivers/clk/meson/clk-dualdiv.c         | 130 +++++++++++++
+ drivers/clk/meson/clkc.h                |  19 ++
+ drivers/clk/meson/gxbb-aoclk-32k.c      | 193 -------------------
+ drivers/clk/meson/gxbb-aoclk.c          | 238 +++++++++++++++++++-----
+ drivers/clk/meson/gxbb-aoclk.h          |  20 +-
+ drivers/clk/meson/meson-aoclk.c         |  15 +-
+ include/dt-bindings/clock/axg-aoclkc.h  |   7 +-
+ include/dt-bindings/clock/gxbb-aoclkc.h |   7 +
+ 11 files changed, 527 insertions(+), 293 deletions(-)
+ create mode 100644 drivers/clk/meson/clk-dualdiv.c
+ delete mode 100644 drivers/clk/meson/gxbb-aoclk-32k.c
+
 -- 
 2.19.1
 
