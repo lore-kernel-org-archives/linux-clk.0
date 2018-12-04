@@ -2,165 +2,106 @@ Return-Path: <SRS0=3Y/e=ON=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C012C04EB8
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 13:33:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB930C04EB8
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 14:38:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51CD12081C
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 13:33:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kpmubcok"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51CD12081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id BACA920851
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 14:38:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BACA920851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=free.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726385AbeLDNcy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 4 Dec 2018 08:32:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40018 "EHLO mail.kernel.org"
+        id S1726152AbeLDOiG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 4 Dec 2018 09:38:06 -0500
+Received: from smtp3-g21.free.fr ([212.27.42.3]:32438 "EHLO smtp3-g21.free.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726151AbeLDNcy (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 4 Dec 2018 08:32:54 -0500
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5056B20851;
-        Tue,  4 Dec 2018 13:32:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543930373;
-        bh=sBFcr+Jb62B48Hwe1h8iPAD26K2EHQzJ9SUJepkarjA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=kpmubcokEvNZiAPDAgfqFP6gCoI+6KbzxfoQ4SwiZvNwM0q5aLMmDW2g0ZAq1Vt42
-         6hGAnaYHK3D1zjQCtNqzm5jUsYG4amSrI30bt2jvB/9GRqXIswScvvb82o6eKPPZLt
-         SvMAq4HzzlqjYXjmBOwt5FjVuxYAQrQlrBLYnWis=
-Received: by mail-qk1-f175.google.com with SMTP id m5so9545546qka.9;
-        Tue, 04 Dec 2018 05:32:53 -0800 (PST)
-X-Gm-Message-State: AA+aEWYb/+Zs5ati2G93m1pm93Vc8IHVaLnbCWmwcuGR34lMMaNtTJUE
-        NnnF27OnT71Rqc+F2vTEwzaSi2D6H4C1ByVgOA==
-X-Google-Smtp-Source: AFSGD/VMrJg6doU0xFmV7V+hms34CTpTPhPJPLZU6kGzHVDcmsr4VzsC++J9376JDB1j2bVVFVMqPXZls0uYhEkqGcg=
-X-Received: by 2002:ae9:ef14:: with SMTP id d20mr18998224qkg.147.1543930372509;
- Tue, 04 Dec 2018 05:32:52 -0800 (PST)
-MIME-Version: 1.0
-References: <1542589274-13878-1-git-send-email-sugaya.taichi@socionext.com>
- <1542589274-13878-3-git-send-email-sugaya.taichi@socionext.com>
- <154337047410.88331.9696178601340675631@swboyd.mtv.corp.google.com>
- <c746a3de-a9e3-9f25-ecb9-703ceb7e62d0@socionext.com> <154356579701.88331.5043467509900444879@swboyd.mtv.corp.google.com>
- <f5917f71-f15b-a92d-649c-e3f5f5f10698@socionext.com> <CAL_Jsq+dnKht3TwCh1qB1H4pYFhQJmSN0nAayU+=PJLAvq0bbQ@mail.gmail.com>
- <90b00858-6e9e-8f7c-f6d4-b35e5daa6eee@socionext.com>
-In-Reply-To: <90b00858-6e9e-8f7c-f6d4-b35e5daa6eee@socionext.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Tue, 4 Dec 2018 07:32:41 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJ=FRfzVFiOJ0wvoV5iZV+Gx3ft9pGyhb-GoKnOAQgPtQ@mail.gmail.com>
-Message-ID: <CAL_JsqJ=FRfzVFiOJ0wvoV5iZV+Gx3ft9pGyhb-GoKnOAQgPtQ@mail.gmail.com>
-Subject: Re: [PATCH 02/14] dt-bindings: soc: milbeaut: Add Milbeaut trampoline description
-To:     sugaya.taichi@socionext.com
-Cc:     Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        id S1725955AbeLDOiG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 4 Dec 2018 09:38:06 -0500
+Received: from [192.168.108.68] (unknown [213.36.7.13])
+        (Authenticated sender: marc.w.gonzalez)
+        by smtp3-g21.free.fr (Postfix) with ESMTPSA id 9E92D13F7E2;
+        Tue,  4 Dec 2018 15:37:43 +0100 (CET)
+Subject: Re: [PATCH v2 1/3] clk: qcom: gcc-msm8998: Drop hmss_dvm and lpass_at
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Jiri Slaby <jslaby@suse.com>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Amit Kucheria <amit.kucheria@linaro.org>
+References: <20181203183330.2073-1-bjorn.andersson@linaro.org>
+ <20181203183330.2073-2-bjorn.andersson@linaro.org>
+From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
+Message-ID: <2f21e657-76f1-a05b-7861-11d7a5f1ea5d@free.fr>
+Date:   Tue, 4 Dec 2018 15:37:43 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <20181203183330.2073-2-bjorn.andersson@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Dec 4, 2018 at 5:30 AM Sugaya, Taichi
-<sugaya.taichi@socionext.com> wrote:
->
-> Hi
->
-> On 2018/12/04 0:49, Rob Herring wrote:
-> > On Mon, Dec 3, 2018 at 1:42 AM Sugaya, Taichi
-> > <sugaya.taichi@socionext.com> wrote:
-> >>
-> >> Hi,
-> >>
-> >> On 2018/11/30 17:16, Stephen Boyd wrote:
-> >>> Quoting Sugaya, Taichi (2018-11-29 04:24:51)
-> >>>> On 2018/11/28 11:01, Stephen Boyd wrote:
-> >>>>> Quoting Sugaya Taichi (2018-11-18 17:01:07)
-> >>>>>>     create mode 100644 Documentation/devicetree/bindings/soc/socionext/socionext,m10v.txt
-> >>>>>>
-> >>>>>> diff --git a/Documentation/devicetree/bindings/soc/socionext/socionext,m10v.txt b/Documentation/devicetree/bindings/soc/socionext/socionext,m10v.txt
-> >>>>>> new file mode 100644
-> >>>>>> index 0000000..f5d906c
-> >>>>>> --- /dev/null
-> >>>>>> +++ b/Documentation/devicetree/bindings/soc/socionext/socionext,m10v.txt
-> >>>>>> @@ -0,0 +1,12 @@
-> >>>>>> +Socionext M10V SMP trampoline driver binding
-> >>>>>> +
-> >>>>>> +This is a driver to wait for sub-cores while boot process.
-> >>>>>> +
-> >>>>>> +- compatible: should be "socionext,smp-trampoline"
-> >>>>>> +- reg: should be <0x4C000100 0x100>
-> >>>>>> +
-> >>>>>> +EXAMPLE
-> >>>>>> +       trampoline: trampoline@0x4C000100 {
-> >>>>> Drop the 0x part of unit addresses.
-> >>>>
-> >>>> Okay.
-> >>>>
-> >>>>
-> >>>>>> +               compatible = "socionext,smp-trampoline";
-> >>>>>> +               reg = <0x4C000100 0x100>;
-> >>>>> Looks like a software construct, which we wouldn't want to put into DT
-> >>>>> this way. DT doesn't describe drivers.
-> >>>> We would like to use this node only getting the address of the
-> >>>> trampoline area
-> >>>> in which sub-cores wait.  (They have finished to go to this area in previous
-> >>>> bootloader process.)
-> >>>
-> >>> Is this area part of memory, or a special SRAM? If it's part of memory,
-> >>> I would expect this node to be under the reserved-memory node and
-> >>> pointed to by some other node that uses this region. Could even be the
-> >>> CPU nodes.
-> >>
-> >> Yes, 0x4C000100 is a part of memory under the reserved-memory node. So
-> >> we would like to use the SRAM ( allocated 0x00000000 ) area instead.
-> >> BTW, sorry, the trampoline address of this example is simply wrong.  We
-> >> were going to use a part of the SRAM from the beginning.
-> >>
-> >>>
-> >>>>
-> >>>> So should we embed the constant value in source codes instead of getting
-> >>>> from
-> >>>> DT because the address is constant at the moment? Or is there other
-> >>>> approach?
-> >>>>
-> >>>
-> >>> If it's constant then that also works. Why does it need to come from DT
-> >>> at all then?
-> >>
-> >> We think it is not good to embed constant value in driver codes and do
-> >> not have another way...
-> >> Are there better ways?
-> >
-> > If this is just memory, can you use the standard spin-table binding in
-> > the DT spec? There are some requirements like 64-bit values even on
-> > 32-bit machines (though this gets violated).
->
-> The spin-table seems to be used on only 64-bit arch. Have it ever worked
-> on 32-bit machine?
+On 03/12/2018 19:33, Bjorn Andersson wrote:
 
-Yes.
+> Disabling gcc_hmss_dvm_bus_clk and gcc_lpass_at_clk causes the board to
+> lock up, and by that preventing the kernel to boot without
+> clk_ignore_unused.
+> 
+> gcc_hmss_dvm_bus_clk is marked always-on downstream, but not referenced,
+> and gcc_lpass_at_clk isn't mentioned. So let's remove them until they
+> are needed by some client.
 
-> And I would like not to use it because avoid violation.
+Hello Bjorn,
 
-The issue now that I remember is cpu-release-addr is defined to always
-be a 64-bit value while some platforms made it a 32-bit value.
-'cpu-release-addr' is also used for some other enable-methods.
+What about gcc_gpu_bimc_gfx_clk?
 
-Rob
+AFAICT, it doesn't lock the system up, but the kernel warns:
+
+[    2.171148] ------------[ cut here ]------------
+[    2.173740] gcc_gpu_bimc_gfx_clk status stuck at 'on'
+[    2.173996] WARNING: CPU: 3 PID: 1 at drivers/clk/qcom/clk-branch.c:92 clk_branch_toggle+0x190/0x1b0
+[    2.183475] Modules linked in:
+[    2.192554] CPU: 3 PID: 1 Comm: swapper/0 Tainted: G S                4.20.0-rc4 #23
+[    2.195509] Hardware name: Qualcomm Technologies, Inc. MSM8998 v1 MTP (DT)
+[    2.203389] pstate: 60000085 (nZCv daIf -PAN -UAO)
+[    2.210016] pc : clk_branch_toggle+0x190/0x1b0
+[    2.214781] lr : clk_branch_toggle+0x190/0x1b0
+[    2.219213] sp : ffff00000807bcf0
+[    2.223609] x29: ffff00000807bcf0 x28: 0000000000000008 
+[    2.227041] x27: ffff0000089db070 x26: ffff000008961378 
+[    2.232425] x25: ffff0000088da4b8 x24: 0000000000000000 
+[    2.237721] x23: ffff000009138a08 x22: ffff000008414990 
+[    2.243016] x21: 0000000000000000 x20: 0000000000000000 
+[    2.248312] x19: ffff0000090e9000 x18: ffffffffffffffff 
+[    2.253608] x17: 0000000000000000 x16: 0000000000000000 
+[    2.258902] x15: ffff0000090e9648 x14: ffff000089193187 
+[    2.264197] x13: ffff000009193195 x12: ffff0000090fb000 
+[    2.269493] x11: ffff00000807bcf0 x10: ffff00000807bcf0 
+[    2.274789] x9 : ffff00000807bcf0 x8 : 6e6f27207461206b 
+[    2.280084] x7 : 6375747320737574 x6 : ffff000009192c89 
+[    2.285380] x5 : 0000000000000000 x4 : 0000000000000000 
+[    2.290676] x3 : ffffffffffffffff x2 : 00008000f5251000 
+[    2.295971] x1 : e0dbf26541ede800 x0 : 0000000000000000 
+[    2.301272] Call trace:
+[    2.306491]  clk_branch_toggle+0x190/0x1b0
+[    2.308705]  clk_branch2_disable+0x18/0x20
+[    2.312890]  clk_disable_unused_subtree+0xc4/0xe0
+[    2.316960]  clk_disable_unused+0x3c/0x130
+[    2.321736]  do_one_initcall+0x5c/0x180
+[    2.325745]  kernel_init_freeable+0x198/0x244
+[    2.329469]  kernel_init+0x10/0x110
+[    2.333942]  ret_from_fork+0x10/0x20
+[    2.337257] ---[ end trace 57f62b628c127ef8 ]---
+
+
+Regards.
