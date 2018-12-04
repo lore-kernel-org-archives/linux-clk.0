@@ -2,276 +2,155 @@ Return-Path: <SRS0=3Y/e=ON=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD150C04EB8
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 16:53:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BE2CC65BB0
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 16:53:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CFA220659
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 16:53:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 589FA2082B
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 16:53:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="P+3DBHCO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CFA220659
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="KE8A6lLu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 589FA2082B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=partner.samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726941AbeLDQxt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 4 Dec 2018 11:53:49 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:34167 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727219AbeLDQxX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Dec 2018 11:53:23 -0500
-Received: by mail-wr1-f68.google.com with SMTP id j2so16734430wrw.1
-        for <linux-clk@vger.kernel.org>; Tue, 04 Dec 2018 08:53:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=lnH7FGlTJZWQDJwQ11hjHMkzzktlzgcwoQuJlMU3p6M=;
-        b=P+3DBHCONdq2PYFwQ6qBx6u8gRgZPKfTQCXqtnRdol1bQGHFbtIhAS2LrHb/rw4H+z
-         RhvY9VxULVQAUguIETvix8k5QO1LLVDCXbvD9EJntPRvNy3xqhvF4nQFEYfknQu5xdCg
-         BxeYib5Ic5I2wyxXr0JzrzJzmuvJPsbC34yO6GgbJQsyEjkYuMiwChvX1qir41wKUuVn
-         tE7wUXWPdPN45x9M+c25OxcI5pVZyCPJpiGfcqkqkyYuZ63vsC0yQr2WWyKV8uq86pJC
-         HIR9TOrBpMjD2lIxT9h6A5rg1v14stCRpzGyeIC0vPEZtQ2X5yiHTYvxP/a9BwQSi7c6
-         w+UQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=lnH7FGlTJZWQDJwQ11hjHMkzzktlzgcwoQuJlMU3p6M=;
-        b=VGBeIyxH3VMgVlJkiS2bIFyRPsXMkHb67LCtz1Loi0YqZmDFpyZfNSWN4xoXcF5uq/
-         DaktmzeLI4WJlncTvD5figruYNC4x9EFNDUiOy4JxSQ0DRtWMSr63EmKPIUURyxGLrsg
-         oNq2OS3vVQBv0a221hD+qBKpKEi1SDrHjXsQHz0QPTg0mfZvNp6ZmHgrmRjHSF+AblS8
-         3PIt+l++vXssYcA2Qyya+toYT4CTnBZxRE7TXSMUX4Vy3dWd4aEcIO/RoC2949H/rhcY
-         eFsM8KalO/XhIj+vjMY0cx7cJDOeerGi9MYquipFEfV0MnL4KqM9/HeVrohWpecIfB/J
-         OgYg==
-X-Gm-Message-State: AA+aEWYQCRGRG3OE+cFoTOyh4esReRHr99jI93LpvuaFPS8inFv1ZcSg
-        6XPn08zxuOy9yJfDB7oqY0gItA==
-X-Google-Smtp-Source: AFSGD/UvZJMwiQVM9StVye9RvkgyXmq+yJcfzcpk+5dWRcX5UZ9VVYdxL3Lk65x8mSB5oB0ptvla1g==
-X-Received: by 2002:adf:f550:: with SMTP id j16mr18360084wrp.258.1543942401528;
-        Tue, 04 Dec 2018 08:53:21 -0800 (PST)
-Received: from boomer.local ([2a01:e34:eeb6:4690:106b:bae3:31ed:7561])
-        by smtp.googlemail.com with ESMTPSA id s66sm11581633wmf.34.2018.12.04.08.53.19
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 04 Dec 2018 08:53:20 -0800 (PST)
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>, linux-clk@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH 3/5] clk: meson: add dual divider clock driver
-Date:   Tue,  4 Dec 2018 17:53:08 +0100
-Message-Id: <20181204165310.20806-4-jbrunet@baylibre.com>
+        id S1727212AbeLDQxW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 4 Dec 2018 11:53:22 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:37324 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727193AbeLDQxW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Dec 2018 11:53:22 -0500
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20181204165318euoutp022a6a7f89c99c2188e261a7cb4d7fd02d~tL25VaSP82212722127euoutp02i
+        for <linux-clk@vger.kernel.org>; Tue,  4 Dec 2018 16:53:18 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20181204165318euoutp022a6a7f89c99c2188e261a7cb4d7fd02d~tL25VaSP82212722127euoutp02i
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1543942398;
+        bh=uS4i7uCjTEDvPajx514u8TksjmHmSKJ8edNnyMV3KnU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=KE8A6lLuh465yYWM7SYOF2cmoPpDryo3cKqWFDx5jWNK9/NqY2uDqCyXAR31MP5kN
+         CpMN42aU7peeNxW2/2g9p1bdyi2xX8vk0Rm3bRnyb4BFVj4wB9zzO251VR4MVV8SVT
+         V9JgBDgaTfyNxtPUUeYBwKjO5z1SN6DVb/3wEsXM=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20181204165317eucas1p2cef4742bfd7e00bf8635552fa24d8e43~tL24th8lz2034220342eucas1p2C;
+        Tue,  4 Dec 2018 16:53:17 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 0E.7F.04294.DF0B60C5; Tue,  4
+        Dec 2018 16:53:17 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20181204165316eucas1p2ba063b96e83d2d2be93ca067d32d7926~tL230ymOk3220732207eucas1p2C;
+        Tue,  4 Dec 2018 16:53:16 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20181204165316eusmtrp1a5aa9f227dfad9e95a6c11c4985fbc64~tL23lng9n1425714257eusmtrp1D;
+        Tue,  4 Dec 2018 16:53:16 +0000 (GMT)
+X-AuditID: cbfec7f4-835ff700000010c6-46-5c06b0fd9a49
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 73.48.04284.CF0B60C5; Tue,  4
+        Dec 2018 16:53:16 +0000 (GMT)
+Received: from AMDC3218.DIGITAL.local (unknown [106.120.51.18]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20181204165315eusmtip102d29d2348bd95536d66a20258d1b34a~tL23Eq9Gk2005320053eusmtip18;
+        Tue,  4 Dec 2018 16:53:15 +0000 (GMT)
+From:   Kamil Konieczny <k.konieczny@partner.samsung.com>
+To:     k.konieczny@partner.samsung.com, linux-samsung-soc@vger.kernel.org
+Cc:     linux-clk@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>,
+        devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH v3 2/5] clk: samsung: exynos5433: fix name typo in sssx
+Date:   Tue,  4 Dec 2018 17:52:45 +0100
+Message-Id: <20181204165248.17572-3-k.konieczny@partner.samsung.com>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181204165310.20806-1-jbrunet@baylibre.com>
-References: <20181204165310.20806-1-jbrunet@baylibre.com>
+In-Reply-To: <20181204165248.17572-1-k.konieczny@partner.samsung.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0hTYRju29nZjtPJcUp7U7EcJWioFUKHCknQOhBU9EtKyJUn71N2vE0j
+        RxfNIWpN8EZWhpXmderUeQEvZeZy+Usju6hp5o3E/Sgy17azzH/P+1x43vfjIzBJN+5JxCvS
+        GKVCniQTiPj6V79MgX9aBFGH3hoEVGt5M05Nmr/h1MPhcZwq6rcgqnhuGaNMphYhtV74CafK
+        Tf08qnH4o5CqnZzgUXf6hoXU0Eo+ftKFbqhuQLSuvkBAD6z18uii9npEb+h8zuMXRSdimKT4
+        DEYZHBotiptbfIFSK1yy7nVOCdXIJNIgJwLIEFi5O45pkIiQkM8RFJeU4NxgRqBefOMYNhA0
+        /Z7EtyM/DXxOeIagt6pOsB0xvuvDbC4BeRRmO408G/YgT0GRtspuwsg8DOarNHbBnTwNPX3f
+        7QE+eQCaZ6rtFWIyHFqfrGJc3V5QG9qENuxERoCuZAtxHjcYrfjKt2HM6rnVUWW/Aki9EAaM
+        zXwuHA6b6lXEYXdYGmkXctgbxrSFDk8m9HQsCLnwbQQPtDU8TjgOQyMT1o0Ia4M/NBuCOToM
+        9KU3MRsNpCtMrbpxO7jCfX2ZgxbD3TwJ5w6EaovR8XJeoLE0OTAN74cGsBLkW7njmsod11T+
+        732EsHokZdLZ5FiGPaJgMoNYeTKbrogNupqSrEPWDzW2NWLuQobNK4OIJJDMRQylgigJLs9g
+        VcmDCAhM5iGe9rNS4hi5KptRplxWpicx7CDyIvgyqThn15dLEjJWnsYkMkwqo/yn8ggnTzWi
+        cqZn0ifxoq461dzmhWVzC33DF8sHt7lajA2J0b507Wo7GJwQET3jHVqDOrvnE2fJutHHeesr
+        ZSNMwL6FSK30R0KT6XXbHmx3d5qf/wfLtYLIMNOQ1Pnc9fa1Th3hFB7pQ4at7c9SnWksLF3q
+        yCbHPzek0k/P5uY6q44l6GR8Nk5+OABTsvK/l1mrUUwDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrOIsWRmVeSWpSXmKPExsVy+t/xu7p/NrDFGOw5zm+xccZ6VovrX56z
+        Wsw/co7Vom/ff0aL/sevmS3On9/AbvGx5x6rxYzz+5gs1h65y26x9PpFJovWvUfYLQ6/aWd1
+        4PFYM28No8emVZ1sHgff7WHy6NuyitHj8ya5ANYoPZui/NKSVIWM/OISW6VoQwsjPUNLCz0j
+        E0s9Q2PzWCsjUyV9O5uU1JzMstQifbsEvYzHL1YzFszkqZi4/QZ7A+N5ri5GTg4JAROJNz92
+        sXQxcnEICSxllDhxfjsbREJaovH0aiYIW1jiz7UuNoiiT4wSE9cfYQFJsAmYSzzafgasSETA
+        Q2LGxMWsIEXMAn3MEp8PnmcHSQgLuEvs3vuSGcRmEVCVWP9wHiuIzSvgIrFx8VtmiA3yEg27
+        NoPVcwq4Smya8I8RxBYCqpkzrZcZol5Q4uTMJ2CLmYHqm7fOZp7AKDALSWoWktQCRqZVjCKp
+        pcW56bnFhnrFibnFpXnpesn5uZsYgZG07djPzTsYL20MPsQowMGoxMMrOYUtRog1say4MvcQ
+        owQHs5II7x01oBBvSmJlVWpRfnxRaU5q8SFGU6AnJjJLiSbnA6M8ryTe0NTQ3MLS0NzY3NjM
+        Qkmc97xBZZSQQHpiSWp2ampBahFMHxMHp1QDo+eyKQyHrwkH/wp25Wyd0vOsvKQigP2j9kl1
+        GzEd5yilitIKrpltrm5K8xwDj62fHSsgu1Ng8Yw58g/eqRnukM37w7LxYIdJwzQ14Yyza7N7
+        pq8NdV2qvEze5Epwd5VCa1zD+hc+909zuh2bYHgwb8N1zymVO00Ej4n6sQmnXvhuGMUbPzlP
+        iaU4I9FQi7moOBEAjMhtQroCAAA=
+X-CMS-MailID: 20181204165316eucas1p2ba063b96e83d2d2be93ca067d32d7926
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20181204165316eucas1p2ba063b96e83d2d2be93ca067d32d7926
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20181204165316eucas1p2ba063b96e83d2d2be93ca067d32d7926
+References: <20181204165248.17572-1-k.konieczny@partner.samsung.com>
+        <CGME20181204165316eucas1p2ba063b96e83d2d2be93ca067d32d7926@eucas1p2.samsung.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add the dual divider driver. This special divider make a weighted
-average between 2 dividers to reach fractional divider values.
+Fix typo in sssx name, there should be three letters 's'.
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
 ---
- drivers/clk/meson/Makefile      |   1 +
- drivers/clk/meson/clk-dualdiv.c | 130 ++++++++++++++++++++++++++++++++
- drivers/clk/meson/clkc.h        |  19 +++++
- 3 files changed, 150 insertions(+)
- create mode 100644 drivers/clk/meson/clk-dualdiv.c
+ drivers/clk/samsung/clk-exynos5433.c   | 2 +-
+ include/dt-bindings/clock/exynos5433.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
-index 0234767f6cfc..ae3fa2a127d5 100644
---- a/drivers/clk/meson/Makefile
-+++ b/drivers/clk/meson/Makefile
-@@ -3,6 +3,7 @@
- #
- 
- obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-mpll.o clk-phase.o vid-pll-div.o
-+obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-dualdiv.o
- obj-$(CONFIG_COMMON_CLK_AMLOGIC_AUDIO)	+= clk-triphase.o sclk-div.o
- obj-$(CONFIG_COMMON_CLK_MESON_AO) += meson-aoclk.o
- obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
-diff --git a/drivers/clk/meson/clk-dualdiv.c b/drivers/clk/meson/clk-dualdiv.c
-new file mode 100644
-index 000000000000..4d9e161de627
---- /dev/null
-+++ b/drivers/clk/meson/clk-dualdiv.c
-@@ -0,0 +1,130 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2017 BayLibre, SAS
-+ * Author: Neil Armstrong <narmstrong@baylibre.com>
-+ * Author: Jerome Brunet <jbrunet@baylibre.com>
-+ */
-+
-+/*
-+ * The AO Domain embeds a dual/divider to generate a more precise
-+ * 32,768KHz clock for low-power suspend mode and CEC.
-+ *     ______   ______
-+ *    |      | |      |
-+ *    | Div1 |-| Cnt1 |
-+ *   /|______| |______|\
-+ * -|  ______   ______  X--> Out
-+ *   \|      | |      |/
-+ *    | Div2 |-| Cnt2 |
-+ *    |______| |______|
-+ *
-+ * The dividing can be switched to single or dual, with a counter
-+ * for each divider to set when the switching is done.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include "clkc.h"
-+
-+static inline struct meson_clk_dualdiv_data *
-+meson_clk_dualdiv_data(struct clk_regmap *clk)
-+{
-+	return (struct meson_clk_dualdiv_data *)clk->data;
-+}
-+
-+static unsigned long
-+__dualdiv_param_to_rate(unsigned long parent_rate,
-+			const struct meson_clk_dualdiv_param *p)
-+{
-+	if (!p->dual)
-+		return DIV_ROUND_CLOSEST(parent_rate, p->n1);
-+
-+	return DIV_ROUND_CLOSEST(parent_rate * (p->m1 + p->m2),
-+				 p->n1 * p->m1 + p->n2 * p->m2);
-+}
-+
-+static unsigned long meson_clk_dualdiv_recalc_rate(struct clk_hw *hw,
-+						   unsigned long parent_rate)
-+{
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct meson_clk_dualdiv_data *dualdiv = meson_clk_dualdiv_data(clk);
-+	struct meson_clk_dualdiv_param setting;
-+
-+	setting.dual = meson_parm_read(clk->map, &dualdiv->dual);
-+	setting.n1 = meson_parm_read(clk->map, &dualdiv->n1) + 1;
-+	setting.m1 = meson_parm_read(clk->map, &dualdiv->m1) + 1;
-+	setting.n2 = meson_parm_read(clk->map, &dualdiv->n2) + 1;
-+	setting.m2 = meson_parm_read(clk->map, &dualdiv->m2) + 1;
-+
-+	return __dualdiv_param_to_rate(parent_rate, &setting);
-+}
-+
-+static const struct meson_clk_dualdiv_param *
-+__dualdiv_get_setting(unsigned long rate, unsigned long parent_rate,
-+		      struct meson_clk_dualdiv_data *dualdiv)
-+{
-+	const struct meson_clk_dualdiv_param *table = dualdiv->table;
-+	unsigned long best = 0, now = 0;
-+	unsigned int i, best_i = 0;
-+
-+	if (!table)
-+		return NULL;
-+
-+	for (i = 0; table[i].n1; i++) {
-+		now = __dualdiv_param_to_rate(parent_rate, &table[i]);
-+
-+		/* If we get an exact match, don't bother any further */
-+		if (now == rate) {
-+			return &table[i];
-+		} else if (abs(now - rate) < abs(best - rate)) {
-+			best = now;
-+			best_i = i;
-+		}
-+	}
-+
-+	return (struct meson_clk_dualdiv_param *)&table[best_i];
-+}
-+
-+static long meson_clk_dualdiv_round_rate(struct clk_hw *hw, unsigned long rate,
-+					 unsigned long *parent_rate)
-+{
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct meson_clk_dualdiv_data *dualdiv = meson_clk_dualdiv_data(clk);
-+	const struct meson_clk_dualdiv_param *setting =
-+		__dualdiv_get_setting(rate, *parent_rate, dualdiv);
-+
-+	if (!setting)
-+		return meson_clk_dualdiv_recalc_rate(hw, *parent_rate);
-+
-+	return __dualdiv_param_to_rate(*parent_rate, setting);
-+}
-+
-+static int meson_clk_dualdiv_set_rate(struct clk_hw *hw, unsigned long rate,
-+				      unsigned long parent_rate)
-+{
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct meson_clk_dualdiv_data *dualdiv = meson_clk_dualdiv_data(clk);
-+	const struct meson_clk_dualdiv_param *setting =
-+		__dualdiv_get_setting(rate, parent_rate, dualdiv);
-+
-+	if (!setting)
-+		return -EINVAL;
-+
-+	meson_parm_write(clk->map, &dualdiv->dual, setting->dual);
-+	meson_parm_write(clk->map, &dualdiv->n1, setting->n1 - 1);
-+	meson_parm_write(clk->map, &dualdiv->m1, setting->m1 - 1);
-+	meson_parm_write(clk->map, &dualdiv->n2, setting->n2 - 1);
-+	meson_parm_write(clk->map, &dualdiv->m2, setting->m2 - 1);
-+
-+	return 0;
-+}
-+
-+const struct clk_ops meson_clk_dualdiv_ops = {
-+	.recalc_rate	= meson_clk_dualdiv_recalc_rate,
-+	.round_rate	= meson_clk_dualdiv_round_rate,
-+	.set_rate	= meson_clk_dualdiv_set_rate,
-+};
-+EXPORT_SYMBOL_GPL(meson_clk_dualdiv_ops);
-+
-+const struct clk_ops meson_clk_dualdiv_ro_ops = {
-+	.recalc_rate	= meson_clk_dualdiv_recalc_rate,
-+};
-+EXPORT_SYMBOL_GPL(meson_clk_dualdiv_ro_ops);
-diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
-index 91666055c75a..1efa6be9cfe4 100644
---- a/drivers/clk/meson/clkc.h
-+++ b/drivers/clk/meson/clkc.h
-@@ -110,6 +110,23 @@ struct clk_regmap _name = {						\
- 	},								\
- };
- 
-+struct meson_clk_dualdiv_param {
-+	unsigned int n1;
-+	unsigned int n2;
-+	unsigned int m1;
-+	unsigned int m2;
-+	unsigned int dual;
-+};
-+
-+struct meson_clk_dualdiv_data {
-+	struct parm n1;
-+	struct parm n2;
-+	struct parm m1;
-+	struct parm m2;
-+	struct parm dual;
-+	const struct meson_clk_dualdiv_param *table;
-+};
-+
- /* clk_ops */
- extern const struct clk_ops meson_clk_pll_ro_ops;
- extern const struct clk_ops meson_clk_pll_ops;
-@@ -118,5 +135,7 @@ extern const struct clk_ops meson_clk_mpll_ro_ops;
- extern const struct clk_ops meson_clk_mpll_ops;
- extern const struct clk_ops meson_clk_phase_ops;
- extern const struct clk_ops meson_vid_pll_div_ro_ops;
-+extern const struct clk_ops meson_clk_dualdiv_ops;
-+extern const struct clk_ops meson_clk_dualdiv_ro_ops;
- 
- #endif /* __CLKC_H */
+diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+index ea47f49abc7f..24c3360db65b 100644
+--- a/drivers/clk/samsung/clk-exynos5433.c
++++ b/drivers/clk/samsung/clk-exynos5433.c
+@@ -559,7 +559,7 @@ static const struct samsung_gate_clock top_gate_clks[] __initconst = {
+ 	/* ENABLE_ACLK_TOP */
+ 	GATE(CLK_ACLK_G3D_400, "aclk_g3d_400", "div_aclk_g3d_400",
+ 			ENABLE_ACLK_TOP, 30, CLK_IS_CRITICAL, 0),
+-	GATE(CLK_ACLK_IMEM_SSX_266, "aclk_imem_ssx_266",
++	GATE(CLK_ACLK_IMEM_SSSX_266, "aclk_imem_sssx_266",
+ 			"div_aclk_imem_sssx_266", ENABLE_ACLK_TOP,
+ 			29, CLK_IGNORE_UNUSED, 0),
+ 	GATE(CLK_ACLK_BUS0_400, "aclk_bus0_400", "div_aclk_bus0_400",
+diff --git a/include/dt-bindings/clock/exynos5433.h b/include/dt-bindings/clock/exynos5433.h
+index 98bd85ce1e45..87bb2b017143 100644
+--- a/include/dt-bindings/clock/exynos5433.h
++++ b/include/dt-bindings/clock/exynos5433.h
+@@ -156,7 +156,7 @@
+ #define CLK_ACLK_G2D_266		220
+ #define CLK_ACLK_G2D_400		221
+ #define CLK_ACLK_G3D_400		222
+-#define CLK_ACLK_IMEM_SSX_266		223
++#define CLK_ACLK_IMEM_SSSX_266		223
+ #define CLK_ACLK_BUS0_400		224
+ #define CLK_ACLK_BUS1_400		225
+ #define CLK_ACLK_IMEM_200		226
 -- 
 2.19.1
 
