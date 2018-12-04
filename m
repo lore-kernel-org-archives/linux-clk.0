@@ -2,41 +2,41 @@ Return-Path: <SRS0=3Y/e=ON=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UPPERCASE_50_75,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30257C04EB8
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 14:39:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DDC2C04EBF
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 14:39:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFA0520672
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 14:39:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 06E2120672
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 14:39:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="S/XJOTZY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFA0520672
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="KDoOl8e3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06E2120672
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726400AbeLDOjj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 4 Dec 2018 09:39:39 -0500
+        id S1726461AbeLDOjo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 4 Dec 2018 09:39:44 -0500
 Received: from mail-eopbgr80048.outbound.protection.outlook.com ([40.107.8.48]:62432
         "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725955AbeLDOjj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 4 Dec 2018 09:39:39 -0500
+        id S1725955AbeLDOjo (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 4 Dec 2018 09:39:44 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=V18/oO+5K/k9ivhjiRcTDQ2R5+K1MdjC0f/+1Inv7rk=;
- b=S/XJOTZYceyrFR/TeBdD41QRAYtcxP4PA9l8bhA0VXjnP/C7gW6nPK69knFNlqQXuhL/1lpwgiNLx8ybJyWOBj8MxZ0svoHby//QiciG/Nvv8BUx1zrb4AcUO6WC6m4a/Kl9i25UiMD0Z6Wf6WDEExeIDDQL3qOXNXy5BMeCbw0=
+ bh=rnsyR2gZLfiqXPerQn0bSYXZOve/UTcVR7+tyYKC0Pk=;
+ b=KDoOl8e3NI2zfb+RYmpPZmjHIaZA+pwKq0oi2hNqRBiWBol1Vy30R+na8QQuPQ+YbQl51vHirazWL/Y65rER5coPXSdQwqDrnsE8/XewCaYOD63iTstLpz4qlNKjmNCNOv82E6BcYg7yyjJVcfDBhmNWArfGPrNXKLffqubBC+0=
 Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.126.21) by
  AM0PR04MB4546.eurprd04.prod.outlook.com (52.135.148.160) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1382.22; Tue, 4 Dec 2018 14:39:29 +0000
+ 15.20.1382.22; Tue, 4 Dec 2018 14:39:34 +0000
 Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
  ([fe80::31e3:2aa6:8d93:9927]) by AM0PR04MB4211.eurprd04.prod.outlook.com
  ([fe80::31e3:2aa6:8d93:9927%2]) with mapi id 15.20.1382.023; Tue, 4 Dec 2018
- 14:39:29 +0000
+ 14:39:34 +0000
 From:   Aisheng DONG <aisheng.dong@nxp.com>
 To:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
 CC:     "linux-arm-kernel@lists.infradead.org" 
@@ -47,13 +47,12 @@ CC:     "linux-arm-kernel@lists.infradead.org"
         Fabio Estevam <fabio.estevam@nxp.com>,
         dl-linux-imx <linux-imx@nxp.com>,
         "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Aisheng DONG <aisheng.dong@nxp.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: [PATCH V9 3/7] dt-bindings: clock: imx8qxp: add SCU clock IDs
-Thread-Topic: [PATCH V9 3/7] dt-bindings: clock: imx8qxp: add SCU clock IDs
-Thread-Index: AQHUi98pFWnjxoezlUGzfCstNxU7fw==
-Date:   Tue, 4 Dec 2018 14:39:29 +0000
-Message-ID: <1543934041-12572-4-git-send-email-aisheng.dong@nxp.com>
+        Aisheng DONG <aisheng.dong@nxp.com>
+Subject: [PATCH V9 4/7] clk: imx: add imx8qxp clk driver
+Thread-Topic: [PATCH V9 4/7] clk: imx: add imx8qxp clk driver
+Thread-Index: AQHUi98sTmuzyLUooEGGzpCzAaiXUA==
+Date:   Tue, 4 Dec 2018 14:39:33 +0000
+Message-ID: <1543934041-12572-5-git-send-email-aisheng.dong@nxp.com>
 References: <1543934041-12572-1-git-send-email-aisheng.dong@nxp.com>
 In-Reply-To: <1543934041-12572-1-git-send-email-aisheng.dong@nxp.com>
 Accept-Language: zh-CN, en-US
@@ -69,27 +68,27 @@ authentication-results: spf=none (sender IP is )
 x-ms-exchange-messagesentrepresentingtype: 1
 x-originating-ip: [119.31.174.67]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM0PR04MB4546;6:+fVK1ODpkBrSOvbCucHfjAmobHBvIBwiJi0g0DSpaobX7bLSku0+mU2cT56/XQIDtxX3Y45gM6+4kmI/WjpEy8vkZrSX9dVzE8uxR8KC9ijQpxQhRNKS4ro99VMrtTY1vsDZ0mQrHiErG5VRlu1MQVvpJuokhnRlvDAVKkmn1NksgDybj9mBOq1HOFrywuKyjACNc6Z+DQsxtZ/8s8Hjs+jlJoM7+wvaMjtT07644HSWj0OXR9gmYKdgSVVD6w36ULK4GHCuac8knnExXtVJTVxojrdLOEaSI4+zZHDLEEj/bEc7QSWJ6Z+2YFLzQMHf59O52sgsU817RlQGpKR+mlkpg0SDG9g5EBO2ufYPUdDnk/y68QuVzu6DVKuzzW4itXU4hs5TBzdjKPpPP5Q7a4jST5AJjW2+Yyopg4wzCpQbsC8DPobTxvDWqAxxPoIxCVWWsYf3oGrImAB9XCg+Yg==;5:YP4hecoKoCfaOozSGFfpeqM5zP9ShFzmXWVsbT54Q9EVUAWj31sgEmhKHchoVeSb2HOcAySWhXSq8Y9ck3tvmNJ4PPH6HUPtdMTaHR5LOqabGG014aVcMut8EQNNizs9bg++790SNhyYtkqrF+3dC5CcxCNWzD7lrYFnJT1iNi0=;7:ZBoq8Vb6/ljC16smBSNOnOCrn2ClEY7rrW1R1U5CvXt1l8RdFb21m8xOLtepRWDUBvbpLCafwNBmvFG2qnbZrrytg9aNuFvFWxTXJvsstq6ZnkoxVuiyIp6vfX1qaq3ZuSoiFyOaJrxwJLL+fxxbpg==
-x-ms-office365-filtering-correlation-id: 9b92c132-c6e8-46e9-8b16-08d659f64c2f
+x-microsoft-exchange-diagnostics: 1;AM0PR04MB4546;6:xjxxI7jXKhD4gjLgzPjJzPGAHXBjAXf5+a6YjXICj3Wah/3i6hXjeY+zfXMtV06cBVSGCQ2vw9RmbQsBYz7zr8KhyTwpjLV8AqWIHRak6/oNLmQJXUQPoPjmYUYx1pUaPzTCe22yNnBxgLKYCUYoLuv/kMgDkAwX8uxBOaqJ8RMdI/HKm80v7VCQBL8XAtU3Id5yKKgVqCpAtb53xv2tbBd1uc7HzDmJNey8o2/z4QzvY0uetaWaeEQ2+snMpvkfZihwK+nhG3VweuopTV8npPMuhnwYem5GXfZuzwvgKK/iVOgKcVBs9j98eeKPnjOgr5K2q5D+fk2b5VFPCZiX9fjrNcCQFOYTNdjHnYPpOxbfK1L6L0gqW4YRs0m4KKym82BRn6Z8D69BJXs9T83wyXmNRd9u9+i4Al1nCRghJdqj0ZPrpi1ZfUDbRHTkr23l57IGvqi1P0CbfQreN1oehQ==;5:2ts+I1jL/lixWSAllT/FrMSSdmU+6oKh2zP3ux4YYfJT2Z042Ve75DKebOb0LWJrn8lztw0eY1QTf+FYk0WqcUgyd5KaoIRuLCMQLZ35s8sFDhEk4ioB5tu+SO8wvOVxoK3mJyDg0S47cK8ycpaNAJj3gh9QwBKx6pEaJ1ACedI=;7:j0VmDpaWo2PHyAIg5MZ/xe6N8kAXgC1rdds42TRyoddtQyE21E7Yz+ftdEk/BKZ5KZ0l9S+ySkfN4ZfekbKfxAEd4mjvQnvt5cVt8NANDnV0vEBh5u96u6hZDqW45v9I4U/t06zC3dzjfNCqm2m10A==
+x-ms-office365-filtering-correlation-id: 70a56ad0-5d60-4d34-8082-08d659f64e73
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB4546;
 x-ms-traffictypediagnostic: AM0PR04MB4546:
-x-microsoft-antispam-prvs: <AM0PR04MB4546AD3EA77B3E36A5B3BB5680AF0@AM0PR04MB4546.eurprd04.prod.outlook.com>
+x-microsoft-antispam-prvs: <AM0PR04MB4546160B12F312E11C3333B580AF0@AM0PR04MB4546.eurprd04.prod.outlook.com>
 x-ms-exchange-senderadcheck: 1
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(3231455)(999002)(944501493)(52105112)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:AM0PR04MB4546;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB4546;
 x-forefront-prvs: 0876988AF0
 x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(136003)(396003)(39860400002)(346002)(366004)(189003)(199004)(68736007)(36756003)(66066001)(316002)(2501003)(6486002)(6916009)(97736004)(71200400001)(71190400001)(81156014)(50226002)(81166006)(5660300001)(8936002)(8676002)(4326008)(3846002)(6512007)(386003)(6116002)(26005)(186003)(102836004)(2351001)(2906002)(99286004)(52116002)(6506007)(76176011)(106356001)(53936002)(305945005)(105586002)(5640700003)(256004)(2616005)(86362001)(478600001)(486006)(476003)(25786009)(7736002)(446003)(6436002)(54906003)(11346002)(14454004)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4546;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: j93fD/y1Voq51x+qPkbpVIk952/5dOFFRQ15mco7/vlM5aSXoansGzXZpDm6sxWaaxWKqXgeyEQqpH+nCRzzLx4mVs8oOkreve1vZFgEoq/2+NbgbashYAxNNCqFkUKI0LTGUXnxAl8Sozn0S5Sxg09fWASU78ZerEP0kg8FbboN/rfHpn/2UxVV0jOwAxllongJuhG7XCy1IQuJPgn1oJL+Lk6dRP858CuPiEpqHEJYJa1z9th5hsg47QYhtiWRFQSUQKej8dkA/gBLqPAznoY/oGJ2J+8e4rHOX1LgDdzV4ELwwevJsMT045B1XqOeIYyT+L5ddNX0c18iHXomUvB/D3viillbXjDVLK121IM=
+x-microsoft-antispam-message-info: qa0L1l7iLWQcjppkNWufBhHNcs9WPR4yX+cvXT2n+2Z3wg8XjHRyFjhCh9ln4vZpo+fAFJUPSBBhAHPRwKPONbTzf24idZ7d7vJgKQOtG+mIm6inDccrMElQ8m7l9NAJRVYN/dMapQHnpSuwZ7ugA4D4Cntcugfkp/RsYrrQXOg1+K0tZVRnE/7cQtYm39qaIMtCjBZ9fxvn/c4b1N72UKHApiPMPWru1Qezo1kdgMLzO3FRWuly/YxIMaJ19toO26AoNkqD/vD3RsB0TycTtPMcw9qX41YjCG9lFKTlfBejN76q/nclvX55qyHzYC9VsEdPZLGGD2frxodLuppJ0oOJruo4z9NKPTpfrqv+53o=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9b92c132-c6e8-46e9-8b16-08d659f64c2f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Dec 2018 14:39:29.7056
+X-MS-Exchange-CrossTenant-Network-Message-Id: 70a56ad0-5d60-4d34-8082-08d659f64e73
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Dec 2018 14:39:33.8747
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
@@ -99,164 +98,264 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add IMX8QXP SCU clock IDs.
+Add imx8qxp clk driver which is based on SCU firmware clock service.
 
-Cc: Stephen Boyd <sboyd@kernel.org>
 Cc: Shawn Guo <shawnguo@kernel.org>
 Cc: Sascha Hauer <kernel@pengutronix.de>
-Cc: devicetree@vger.kernel.org
-Cc: linux-clk@vger.kernel.org
-Reviewed-by: Rob Herring <robh@kernel.org>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
 Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 ---
- include/dt-bindings/clock/imx8qxp-clock.h | 136 ++++++++++++++++++++++++++=
+ drivers/clk/imx/Makefile      |   2 +
+ drivers/clk/imx/clk-imx8qxp.c | 153 ++++++++++++++++++++++++++++++++++++++=
 ++++
- 1 file changed, 136 insertions(+)
- create mode 100644 include/dt-bindings/clock/imx8qxp-clock.h
+ 2 files changed, 155 insertions(+)
+ create mode 100644 drivers/clk/imx/clk-imx8qxp.c
 
-diff --git a/include/dt-bindings/clock/imx8qxp-clock.h b/include/dt-binding=
-s/clock/imx8qxp-clock.h
+diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
+index 4abed37..75312fb 100644
+--- a/drivers/clk/imx/Makefile
++++ b/drivers/clk/imx/Makefile
+@@ -39,3 +39,5 @@ obj-$(CONFIG_SOC_IMX7D)  +=3D clk-imx7d.o
+ obj-$(CONFIG_SOC_IMX7ULP) +=3D clk-imx7ulp.o
+ obj-$(CONFIG_SOC_IMX8MQ) +=3D clk-imx8mq.o
+ obj-$(CONFIG_SOC_VF610)  +=3D clk-vf610.o
++
++obj-$(CONFIG_SOC_IMX8QXP)	+=3D clk-imx8qxp.o
+diff --git a/drivers/clk/imx/clk-imx8qxp.c b/drivers/clk/imx/clk-imx8qxp.c
 new file mode 100644
-index 0000000..d72a39c
+index 0000000..a957704
 --- /dev/null
-+++ b/include/dt-bindings/clock/imx8qxp-clock.h
-@@ -0,0 +1,136 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
++++ b/drivers/clk/imx/clk-imx8qxp.c
+@@ -0,0 +1,153 @@
++// SPDX-License-Identifier: GPL-2.0+
 +/*
 + * Copyright 2018 NXP
-+ *   Dong Aisheng <aisheng.dong@nxp.com>
++ *	Dong Aisheng <aisheng.dong@nxp.com>
 + */
 +
-+#ifndef __DT_BINDINGS_CLOCK_IMX8QXP_H
-+#define __DT_BINDINGS_CLOCK_IMX8QXP_H
++#include <linux/clk-provider.h>
++#include <linux/err.h>
++#include <linux/io.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/slab.h>
 +
-+/* SCU Clocks */
++#include "clk-scu.h"
 +
-+#define IMX8QXP_CLK_DUMMY				0
++#include <dt-bindings/clock/imx8qxp-clock.h>
++#include <dt-bindings/firmware/imx/rsrc.h>
 +
-+/* CPU */
-+#define IMX8QXP_A35_CLK					1
++static int imx8qxp_clk_probe(struct platform_device *pdev)
++{
++	struct device_node *ccm_node =3D pdev->dev.of_node;
++	struct clk_hw_onecell_data *clk_data;
++	struct clk_hw **clks;
++	int ret, i;
 +
-+/* LSIO SS */
-+#define IMX8QXP_LSIO_MEM_CLK				2
-+#define IMX8QXP_LSIO_BUS_CLK				3
-+#define IMX8QXP_LSIO_PWM0_CLK				10
-+#define IMX8QXP_LSIO_PWM1_CLK				11
-+#define IMX8QXP_LSIO_PWM2_CLK				12
-+#define IMX8QXP_LSIO_PWM3_CLK				13
-+#define IMX8QXP_LSIO_PWM4_CLK				14
-+#define IMX8QXP_LSIO_PWM5_CLK				15
-+#define IMX8QXP_LSIO_PWM6_CLK				16
-+#define IMX8QXP_LSIO_PWM7_CLK				17
-+#define IMX8QXP_LSIO_GPT0_CLK				18
-+#define IMX8QXP_LSIO_GPT1_CLK				19
-+#define IMX8QXP_LSIO_GPT2_CLK				20
-+#define IMX8QXP_LSIO_GPT3_CLK				21
-+#define IMX8QXP_LSIO_GPT4_CLK				22
-+#define IMX8QXP_LSIO_FSPI0_CLK				23
-+#define IMX8QXP_LSIO_FSPI1_CLK				24
++	ret =3D imx_clk_scu_init();
++	if (ret)
++		return ret;
 +
-+/* Connectivity SS */
-+#define IMX8QXP_CONN_AXI_CLK_ROOT			30
-+#define IMX8QXP_CONN_AHB_CLK_ROOT			31
-+#define IMX8QXP_CONN_IPG_CLK_ROOT			32
-+#define IMX8QXP_CONN_SDHC0_CLK				40
-+#define IMX8QXP_CONN_SDHC1_CLK				41
-+#define IMX8QXP_CONN_SDHC2_CLK				42
-+#define IMX8QXP_CONN_ENET0_ROOT_CLK			43
-+#define IMX8QXP_CONN_ENET0_BYPASS_CLK			44
-+#define IMX8QXP_CONN_ENET0_RGMII_CLK			45
-+#define IMX8QXP_CONN_ENET1_ROOT_CLK			46
-+#define IMX8QXP_CONN_ENET1_BYPASS_CLK			47
-+#define IMX8QXP_CONN_ENET1_RGMII_CLK			48
-+#define IMX8QXP_CONN_GPMI_BCH_IO_CLK			49
-+#define IMX8QXP_CONN_GPMI_BCH_CLK			50
-+#define IMX8QXP_CONN_USB2_ACLK				51
-+#define IMX8QXP_CONN_USB2_BUS_CLK			52
-+#define IMX8QXP_CONN_USB2_LPM_CLK			53
++	clk_data =3D devm_kzalloc(&pdev->dev, struct_size(clk_data, hws,
++				IMX8QXP_SCU_CLK_END), GFP_KERNEL);
++	if (!clk_data)
++		return -ENOMEM;
 +
-+/* HSIO SS */
-+#define IMX8QXP_HSIO_AXI_CLK				60
-+#define IMX8QXP_HSIO_PER_CLK				61
++	clk_data->num =3D IMX8QXP_SCU_CLK_END;
++	clks =3D clk_data->hws;
 +
-+/* Display controller SS */
-+#define IMX8QXP_DC_AXI_EXT_CLK				70
-+#define IMX8QXP_DC_AXI_INT_CLK				71
-+#define IMX8QXP_DC_CFG_CLK				72
-+#define IMX8QXP_DC0_PLL0_CLK				80
-+#define IMX8QXP_DC0_PLL1_CLK				81
-+#define IMX8QXP_DC0_DISP0_CLK				82
-+#define IMX8QXP_DC0_DISP1_CLK				83
++	/* Fixed clocks */
++	clks[IMX8QXP_CLK_DUMMY]			=3D clk_hw_register_fixed_rate(NULL, "dummy", N=
+ULL, 0, 0);
++	clks[IMX8QXP_ADMA_IPG_CLK_ROOT] 	=3D clk_hw_register_fixed_rate(NULL, "dm=
+a_ipg_clk_root", NULL, 0, 120000000);
++	clks[IMX8QXP_CONN_AXI_CLK_ROOT]		=3D clk_hw_register_fixed_rate(NULL, "co=
+nn_axi_clk_root", NULL, 0, 333333333);
++	clks[IMX8QXP_CONN_AHB_CLK_ROOT]		=3D clk_hw_register_fixed_rate(NULL, "co=
+nn_ahb_clk_root", NULL, 0, 166666666);
++	clks[IMX8QXP_CONN_IPG_CLK_ROOT]		=3D clk_hw_register_fixed_rate(NULL, "co=
+nn_ipg_clk_root", NULL, 0, 83333333);
++	clks[IMX8QXP_DC_AXI_EXT_CLK]		=3D clk_hw_register_fixed_rate(NULL, "dc_ax=
+i_ext_clk_root", NULL, 0, 800000000);
++	clks[IMX8QXP_DC_AXI_INT_CLK]		=3D clk_hw_register_fixed_rate(NULL, "dc_ax=
+i_int_clk_root", NULL, 0, 400000000);
++	clks[IMX8QXP_DC_CFG_CLK]		=3D clk_hw_register_fixed_rate(NULL, "dc_cfg_cl=
+k_root", NULL, 0, 100000000);
++	clks[IMX8QXP_MIPI_IPG_CLK]		=3D clk_hw_register_fixed_rate(NULL, "mipi_ip=
+g_clk_root", NULL, 0, 120000000);
++	clks[IMX8QXP_IMG_AXI_CLK]		=3D clk_hw_register_fixed_rate(NULL, "img_axi_=
+clk_root", NULL, 0, 400000000);
++	clks[IMX8QXP_IMG_IPG_CLK]		=3D clk_hw_register_fixed_rate(NULL, "img_ipg_=
+clk_root", NULL, 0, 200000000);
++	clks[IMX8QXP_IMG_PXL_CLK]		=3D clk_hw_register_fixed_rate(NULL, "img_pxl_=
+clk_root", NULL, 0, 600000000);
++	clks[IMX8QXP_HSIO_AXI_CLK]		=3D clk_hw_register_fixed_rate(NULL, "hsio_ax=
+i_clk_root", NULL, 0, 400000000);
++	clks[IMX8QXP_HSIO_PER_CLK]		=3D clk_hw_register_fixed_rate(NULL, "hsio_pe=
+r_clk_root", NULL, 0, 133333333);
++	clks[IMX8QXP_LSIO_MEM_CLK]		=3D clk_hw_register_fixed_rate(NULL, "lsio_me=
+m_clk_root", NULL, 0, 100000000);
++	clks[IMX8QXP_LSIO_BUS_CLK]		=3D clk_hw_register_fixed_rate(NULL, "lsio_bu=
+s_clk_root", NULL, 0, 200000000);
 +
-+/* MIPI-LVDS SS */
-+#define IMX8QXP_MIPI_IPG_CLK				90
-+#define IMX8QXP_MIPI0_PIXEL_CLK				100
-+#define IMX8QXP_MIPI0_BYPASS_CLK			101
-+#define IMX8QXP_MIPI0_LVDS_PIXEL_CLK			102
-+#define IMX8QXP_MIPI0_LVDS_BYPASS_CLK			103
-+#define IMX8QXP_MIPI0_LVDS_PHY_CLK			104
-+#define IMX8QXP_MIPI0_I2C0_CLK				105
-+#define IMX8QXP_MIPI0_I2C1_CLK				106
-+#define IMX8QXP_MIPI0_PWM0_CLK				107
-+#define IMX8QXP_MIPI1_PIXEL_CLK				108
-+#define IMX8QXP_MIPI1_BYPASS_CLK			109
-+#define IMX8QXP_MIPI1_LVDS_PIXEL_CLK			110
-+#define IMX8QXP_MIPI1_LVDS_BYPASS_CLK			111
-+#define IMX8QXP_MIPI1_LVDS_PHY_CLK			112
-+#define IMX8QXP_MIPI1_I2C0_CLK				113
-+#define IMX8QXP_MIPI1_I2C1_CLK				114
-+#define IMX8QXP_MIPI1_PWM0_CLK				115
++	/* ARM core */
++	clks[IMX8QXP_A35_CLK]			=3D imx_clk_scu("a35_clk", IMX_SC_R_A35, IMX_SC_P=
+M_CLK_CPU);
 +
-+/* IMG SS */
-+#define IMX8QXP_IMG_AXI_CLK				120
-+#define IMX8QXP_IMG_IPG_CLK				121
-+#define IMX8QXP_IMG_PXL_CLK				122
++	/* LSIO SS */
++	clks[IMX8QXP_LSIO_PWM0_CLK]		=3D imx_clk_scu("pwm0_clk", IMX_SC_R_PWM_0, =
+IMX_SC_PM_CLK_PER);
++	clks[IMX8QXP_LSIO_PWM1_CLK]		=3D imx_clk_scu("pwm1_clk", IMX_SC_R_PWM_1, =
+IMX_SC_PM_CLK_PER);
++	clks[IMX8QXP_LSIO_PWM2_CLK]		=3D imx_clk_scu("pwm2_clk", IMX_SC_R_PWM_2, =
+IMX_SC_PM_CLK_PER);
++	clks[IMX8QXP_LSIO_PWM3_CLK]		=3D imx_clk_scu("pwm3_clk", IMX_SC_R_PWM_3, =
+IMX_SC_PM_CLK_PER);
++	clks[IMX8QXP_LSIO_PWM4_CLK]		=3D imx_clk_scu("pwm4_clk", IMX_SC_R_PWM_4, =
+IMX_SC_PM_CLK_PER);
++	clks[IMX8QXP_LSIO_PWM5_CLK]		=3D imx_clk_scu("pwm5_clk", IMX_SC_R_PWM_5, =
+IMX_SC_PM_CLK_PER);
++	clks[IMX8QXP_LSIO_PWM6_CLK]		=3D imx_clk_scu("pwm6_clk", IMX_SC_R_PWM_6, =
+IMX_SC_PM_CLK_PER);
++	clks[IMX8QXP_LSIO_PWM7_CLK]		=3D imx_clk_scu("pwm7_clk", IMX_SC_R_PWM_7, =
+IMX_SC_PM_CLK_PER);
++	clks[IMX8QXP_LSIO_GPT0_CLK]		=3D imx_clk_scu("gpt0_clk", IMX_SC_R_GPT_0, =
+IMX_SC_PM_CLK_PER);
++	clks[IMX8QXP_LSIO_GPT1_CLK]		=3D imx_clk_scu("gpt1_clk", IMX_SC_R_GPT_1, =
+IMX_SC_PM_CLK_PER);
++	clks[IMX8QXP_LSIO_GPT2_CLK]		=3D imx_clk_scu("gpt2_clk", IMX_SC_R_GPT_2, =
+IMX_SC_PM_CLK_PER);
++	clks[IMX8QXP_LSIO_GPT3_CLK]		=3D imx_clk_scu("gpt3_clk", IMX_SC_R_GPT_3, =
+IMX_SC_PM_CLK_PER);
++	clks[IMX8QXP_LSIO_GPT4_CLK]		=3D imx_clk_scu("gpt4_clk", IMX_SC_R_GPT_4, =
+IMX_SC_PM_CLK_PER);
++	clks[IMX8QXP_LSIO_FSPI0_CLK]		=3D imx_clk_scu("fspi0_clk", IMX_SC_R_FSPI_=
+0, IMX_SC_PM_CLK_PER);
++	clks[IMX8QXP_LSIO_FSPI1_CLK]		=3D imx_clk_scu("fspi1_clk", IMX_SC_R_FSPI_=
+1, IMX_SC_PM_CLK_PER);
 +
-+/* MIPI-CSI SS */
-+#define IMX8QXP_CSI0_CORE_CLK				130
-+#define IMX8QXP_CSI0_ESC_CLK				131
-+#define IMX8QXP_CSI0_PWM0_CLK				132
-+#define IMX8QXP_CSI0_I2C0_CLK				133
++	/* ADMA SS */
++	clks[IMX8QXP_ADMA_UART0_CLK]		=3D imx_clk_scu("uart0_clk", IMX_SC_R_UART_=
+0, IMX_SC_PM_CLK_PER);
++	clks[IMX8QXP_ADMA_UART1_CLK]		=3D imx_clk_scu("uart1_clk", IMX_SC_R_UART_=
+1, IMX_SC_PM_CLK_PER);
++	clks[IMX8QXP_ADMA_UART2_CLK]		=3D imx_clk_scu("uart2_clk", IMX_SC_R_UART_=
+2, IMX_SC_PM_CLK_PER);
++	clks[IMX8QXP_ADMA_UART3_CLK]		=3D imx_clk_scu("uart3_clk", IMX_SC_R_UART_=
+3, IMX_SC_PM_CLK_PER);
++	clks[IMX8QXP_ADMA_SPI0_CLK]		=3D imx_clk_scu("spi0_clk",  IMX_SC_R_SPI_0,=
+ IMX_SC_PM_CLK_PER);
++	clks[IMX8QXP_ADMA_SPI1_CLK]		=3D imx_clk_scu("spi1_clk",  IMX_SC_R_SPI_2,=
+ IMX_SC_PM_CLK_PER);
++	clks[IMX8QXP_ADMA_SPI2_CLK]		=3D imx_clk_scu("spi2_clk",  IMX_SC_R_SPI_2,=
+ IMX_SC_PM_CLK_PER);
++	clks[IMX8QXP_ADMA_SPI3_CLK]		=3D imx_clk_scu("spi3_clk",  IMX_SC_R_SPI_3,=
+ IMX_SC_PM_CLK_PER);
++	clks[IMX8QXP_ADMA_CAN0_CLK]		=3D imx_clk_scu("can0_clk",  IMX_SC_R_CAN_0,=
+ IMX_SC_PM_CLK_PER);
++	clks[IMX8QXP_ADMA_I2C0_CLK]		=3D imx_clk_scu("i2c0_clk",  IMX_SC_R_I2C_0,=
+ IMX_SC_PM_CLK_PER);
++	clks[IMX8QXP_ADMA_I2C1_CLK]		=3D imx_clk_scu("i2c1_clk",  IMX_SC_R_I2C_1,=
+ IMX_SC_PM_CLK_PER);
++	clks[IMX8QXP_ADMA_I2C2_CLK]		=3D imx_clk_scu("i2c2_clk",  IMX_SC_R_I2C_2,=
+ IMX_SC_PM_CLK_PER);
++	clks[IMX8QXP_ADMA_I2C3_CLK]		=3D imx_clk_scu("i2c3_clk",  IMX_SC_R_I2C_3,=
+ IMX_SC_PM_CLK_PER);
++	clks[IMX8QXP_ADMA_FTM0_CLK]		=3D imx_clk_scu("ftm0_clk",  IMX_SC_R_FTM_0,=
+ IMX_SC_PM_CLK_PER);
++	clks[IMX8QXP_ADMA_FTM1_CLK]		=3D imx_clk_scu("ftm1_clk",  IMX_SC_R_FTM_1,=
+ IMX_SC_PM_CLK_PER);
++	clks[IMX8QXP_ADMA_ADC0_CLK]		=3D imx_clk_scu("adc0_clk",  IMX_SC_R_ADC_0,=
+ IMX_SC_PM_CLK_PER);
++	clks[IMX8QXP_ADMA_PWM_CLK]		=3D imx_clk_scu("pwm_clk",   IMX_SC_R_LCD_0_P=
+WM_0, IMX_SC_PM_CLK_PER);
++	clks[IMX8QXP_ADMA_LCD_CLK]		=3D imx_clk_scu("lcd_clk",   IMX_SC_R_LCD_0, =
+IMX_SC_PM_CLK_PER);
 +
-+/* PARALLER CSI SS */
-+#define IMX8QXP_PARALLEL_CSI_DPLL_CLK			140
-+#define IMX8QXP_PARALLEL_CSI_PIXEL_CLK			141
-+#define IMX8QXP_PARALLEL_CSI_MCLK_CLK			142
++	/* Connectivity */
++	clks[IMX8QXP_CONN_SDHC0_CLK]		=3D imx_clk_scu("sdhc0_clk", IMX_SC_R_SDHC_=
+0, IMX_SC_PM_CLK_PER);
++	clks[IMX8QXP_CONN_SDHC1_CLK]		=3D imx_clk_scu("sdhc1_clk", IMX_SC_R_SDHC_=
+1, IMX_SC_PM_CLK_PER);
++	clks[IMX8QXP_CONN_SDHC2_CLK]		=3D imx_clk_scu("sdhc2_clk", IMX_SC_R_SDHC_=
+2, IMX_SC_PM_CLK_PER);
++	clks[IMX8QXP_CONN_ENET0_ROOT_CLK]	=3D imx_clk_scu("enet0_clk", IMX_SC_R_E=
+NET_0, IMX_SC_PM_CLK_PER);
++	clks[IMX8QXP_CONN_ENET0_BYPASS_CLK]	=3D imx_clk_scu("enet0_bypass_clk", I=
+MX_SC_R_ENET_0, IMX_SC_PM_CLK_BYPASS);
++	clks[IMX8QXP_CONN_ENET0_RGMII_CLK]	=3D imx_clk_scu("enet0_rgmii_clk", IMX=
+_SC_R_ENET_0, IMX_SC_PM_CLK_MISC0);
++	clks[IMX8QXP_CONN_ENET1_ROOT_CLK]	=3D imx_clk_scu("enet1_clk", IMX_SC_R_E=
+NET_1, IMX_SC_PM_CLK_PER);
++	clks[IMX8QXP_CONN_ENET1_BYPASS_CLK]	=3D imx_clk_scu("enet1_bypass_clk", I=
+MX_SC_R_ENET_1, IMX_SC_PM_CLK_BYPASS);
++	clks[IMX8QXP_CONN_ENET1_RGMII_CLK]	=3D imx_clk_scu("enet1_rgmii_clk", IMX=
+_SC_R_ENET_1, IMX_SC_PM_CLK_MISC0);
++	clks[IMX8QXP_CONN_GPMI_BCH_IO_CLK]	=3D imx_clk_scu("gpmi_io_clk", IMX_SC_=
+R_NAND, IMX_SC_PM_CLK_MST_BUS);
++	clks[IMX8QXP_CONN_GPMI_BCH_CLK]		=3D imx_clk_scu("gpmi_bch_clk", IMX_SC_R=
+_NAND, IMX_SC_PM_CLK_PER);
++	clks[IMX8QXP_CONN_USB2_ACLK]		=3D imx_clk_scu("usb3_aclk_div", IMX_SC_R_U=
+SB_2, IMX_SC_PM_CLK_PER);
++	clks[IMX8QXP_CONN_USB2_BUS_CLK]		=3D imx_clk_scu("usb3_bus_div", IMX_SC_R=
+_USB_2, IMX_SC_PM_CLK_MST_BUS);
++	clks[IMX8QXP_CONN_USB2_LPM_CLK]		=3D imx_clk_scu("usb3_lpm_div", IMX_SC_R=
+_USB_2, IMX_SC_PM_CLK_MISC);
 +
-+/* VPU SS */
-+#define IMX8QXP_VPU_ENC_CLK				150
-+#define IMX8QXP_VPU_DEC_CLK				151
++	/* Display controller SS */
++	clks[IMX8QXP_DC0_DISP0_CLK]		=3D imx_clk_scu("dc0_disp0_clk", IMX_SC_R_DC=
+_0, IMX_SC_PM_CLK_MISC0);
++	clks[IMX8QXP_DC0_DISP1_CLK]		=3D imx_clk_scu("dc0_disp1_clk", IMX_SC_R_DC=
+_0, IMX_SC_PM_CLK_MISC1);
 +
-+/* GPU SS */
-+#define IMX8QXP_GPU0_CORE_CLK				160
-+#define IMX8QXP_GPU0_SHADER_CLK				161
++	/* MIPI-LVDS SS */
++	clks[IMX8QXP_MIPI0_I2C0_CLK]		=3D imx_clk_scu("mipi0_i2c0_clk", IMX_SC_R_=
+MIPI_0_I2C_0, IMX_SC_PM_CLK_MISC2);
++	clks[IMX8QXP_MIPI0_I2C1_CLK]		=3D imx_clk_scu("mipi0_i2c1_clk", IMX_SC_R_=
+MIPI_0_I2C_1, IMX_SC_PM_CLK_MISC2);
 +
-+/* ADMA SS */
-+#define IMX8QXP_ADMA_IPG_CLK_ROOT			165
-+#define IMX8QXP_ADMA_UART0_CLK				170
-+#define IMX8QXP_ADMA_UART1_CLK				171
-+#define IMX8QXP_ADMA_UART2_CLK				172
-+#define IMX8QXP_ADMA_UART3_CLK				173
-+#define IMX8QXP_ADMA_SPI0_CLK				174
-+#define IMX8QXP_ADMA_SPI1_CLK				175
-+#define IMX8QXP_ADMA_SPI2_CLK				176
-+#define IMX8QXP_ADMA_SPI3_CLK				177
-+#define IMX8QXP_ADMA_CAN0_CLK				178
-+#define IMX8QXP_ADMA_CAN1_CLK				179
-+#define IMX8QXP_ADMA_CAN2_CLK				180
-+#define IMX8QXP_ADMA_I2C0_CLK				181
-+#define IMX8QXP_ADMA_I2C1_CLK				182
-+#define IMX8QXP_ADMA_I2C2_CLK				183
-+#define IMX8QXP_ADMA_I2C3_CLK				184
-+#define IMX8QXP_ADMA_FTM0_CLK				185
-+#define IMX8QXP_ADMA_FTM1_CLK				186
-+#define IMX8QXP_ADMA_ADC0_CLK				187
-+#define IMX8QXP_ADMA_PWM_CLK				188
-+#define IMX8QXP_ADMA_LCD_CLK				189
++	/* MIPI CSI SS */
++	clks[IMX8QXP_CSI0_CORE_CLK]		=3D imx_clk_scu("mipi_csi0_core_clk", IMX_SC=
+_R_CSI_0, IMX_SC_PM_CLK_PER);
++	clks[IMX8QXP_CSI0_ESC_CLK]		=3D imx_clk_scu("mipi_csi0_esc_clk",  IMX_SC_=
+R_CSI_0, IMX_SC_PM_CLK_MISC);
++	clks[IMX8QXP_CSI0_I2C0_CLK]		=3D imx_clk_scu("mipi_csi0_i2c0_clk", IMX_SC=
+_R_CSI_0_I2C_0, IMX_SC_PM_CLK_PER);
++	clks[IMX8QXP_CSI0_PWM0_CLK]		=3D imx_clk_scu("mipi_csi0_pwm0_clk", IMX_SC=
+_R_CSI_0_PWM_0, IMX_SC_PM_CLK_PER);
 +
-+#define IMX8QXP_SCU_CLK_END				190
++	/* GPU SS */
++	clks[IMX8QXP_GPU0_CORE_CLK]		=3D imx_clk_scu("gpu_core0_clk",	 IMX_SC_R_G=
+PU_0_PID0, IMX_SC_PM_CLK_PER);
++	clks[IMX8QXP_GPU0_SHADER_CLK]		=3D imx_clk_scu("gpu_shader0_clk", IMX_SC_=
+R_GPU_0_PID0, IMX_SC_PM_CLK_MISC);
 +
-+#endif /* __DT_BINDINGS_CLOCK_IMX8QXP_H */
++	for (i =3D 0; i < clk_data->num; i++) {
++		if (IS_ERR(clks[i]))
++			pr_warn("i.MX clk %u: register failed with %ld\n",
++				i, PTR_ERR(clks[i]));
++	}
++
++	return of_clk_add_hw_provider(ccm_node, of_clk_hw_onecell_get, clk_data);
++}
++
++static const struct of_device_id imx8qxp_match[] =3D {
++	{ .compatible =3D "fsl,imx8qxp-clk", },
++	{ /* sentinel */ }
++};
++
++static struct platform_driver imx8qxp_clk_driver =3D {
++	.driver =3D {
++		.name =3D "imx8qxp-clk",
++		.of_match_table =3D imx8qxp_match,
++		.suppress_bind_attrs =3D true,
++	},
++	.probe =3D imx8qxp_clk_probe,
++};
++builtin_platform_driver(imx8qxp_clk_driver);
 --=20
 2.7.4
 
