@@ -2,176 +2,333 @@ Return-Path: <SRS0=3Y/e=ON=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-6.2 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CC51C04EB8
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 16:53:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED2ABC04EB8
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 16:53:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC6B42082B
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 16:53:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A7F0320659
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 16:53:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Kg9Q5+IG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC6B42082B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=partner.samsung.com
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="WoHlFZNV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7F0320659
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727220AbeLDQxW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 4 Dec 2018 11:53:22 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:37325 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727189AbeLDQxV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Dec 2018 11:53:21 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20181204165318euoutp024f3a5099a641eebab21387acc105c794~tL26EEMSD2212722127euoutp02j
-        for <linux-clk@vger.kernel.org>; Tue,  4 Dec 2018 16:53:18 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20181204165318euoutp024f3a5099a641eebab21387acc105c794~tL26EEMSD2212722127euoutp02j
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1543942399;
-        bh=GPa2JE3HFr5rdstyWjxdMgU2tSngpsXZpX3djZ/WFi8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Kg9Q5+IGEG7M9eSTXQHejQqGS+cj6NSw4GCAptP70KRq/2YtlZb84XR6OvQbnuS8i
-         nlRWIQ1jP4+jO6sIlRhSXZ9ZrLQXctR2T4FI0ABNlEVrUQCGxxGwdgR+FAyi9WG/Cc
-         rHuFKIlNzOHZP2+CN88vkELH4KFsPm8aq8NHVps8=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20181204165318eucas1p1281e6eb7a581e4d84060b516039b55cf~tL25T7dfR2847328473eucas1p1x;
-        Tue,  4 Dec 2018 16:53:18 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id F0.61.04806.DF0B60C5; Tue,  4
-        Dec 2018 16:53:17 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20181204165317eucas1p10bef0207ee57a9420911410ed2a22453~tL24VvL1I1618116181eucas1p1t;
-        Tue,  4 Dec 2018 16:53:17 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20181204165316eusmtrp22e30c0d7519a5c5c7c1cf652a1e8ce56~tL24GsoaN2531625316eusmtrp2H;
-        Tue,  4 Dec 2018 16:53:16 +0000 (GMT)
-X-AuditID: cbfec7f5-34dff700000012c6-56-5c06b0fde83a
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 39.6D.04128.CF0B60C5; Tue,  4
-        Dec 2018 16:53:16 +0000 (GMT)
-Received: from AMDC3218.DIGITAL.local (unknown [106.120.51.18]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20181204165316eusmtip184acd29add7ccc35203ac4e2ee73fa7d~tL23kMgml1979419794eusmtip1M;
-        Tue,  4 Dec 2018 16:53:16 +0000 (GMT)
-From:   Kamil Konieczny <k.konieczny@partner.samsung.com>
-To:     k.konieczny@partner.samsung.com, linux-samsung-soc@vger.kernel.org
-Cc:     linux-clk@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>,
-        devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v3 3/5] dt-bindings: clk: exynos5433: document imem clock
-Date:   Tue,  4 Dec 2018 17:52:46 +0100
-Message-Id: <20181204165248.17572-4-k.konieczny@partner.samsung.com>
+        id S1726972AbeLDQxg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 4 Dec 2018 11:53:36 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:46784 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727301AbeLDQx3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Dec 2018 11:53:29 -0500
+Received: by mail-wr1-f65.google.com with SMTP id l9so16709361wrt.13
+        for <linux-clk@vger.kernel.org>; Tue, 04 Dec 2018 08:53:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=QCM3RFYsWLjUZObZsaZJYw0tcQdErTU1Tp3H4V4iqCo=;
+        b=WoHlFZNVuHVfp4QGP7GPJFMTlvqX12F7KCCwPhv4Wkh2T+nb7Qmf+KjWBVKgQ/5v0s
+         ZBSRY+B94GL4xlHD9AEBEysnxO4IHvSWghYdhs8ntST7h4dAGmCXeUO8c76jtDEgJIOO
+         GtwCxB2gW/dZMhYUG5aOsk8pudFGQcPVN06akG3MQeP4F8MolfLlrvie8uo9WgX653GY
+         QepR7BM5WkRzmhLRNnDvj0n2Yk72/s0fAU6CODNYQLySqqpdpnOavRA4AZzmuq1ee8NQ
+         muoZjZmAKo6AmimfJed/q9atSGHniNwrZ9YrOlEVgyAJ9zCbybcKuTeXHuGUp0uqcXAg
+         Z68Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=QCM3RFYsWLjUZObZsaZJYw0tcQdErTU1Tp3H4V4iqCo=;
+        b=jfUC6IPrKJlWBbeWtSMsREdL8jy+QFWzqzAKDpXWNrI3AFzEtKrCf/e9WYe3u1jF1t
+         W75Z7cg4rvBnigboHj/I8jhycyHOG7WXixRmgZGW7l1bQRvwZ/B6mGXh052AZQhJks8r
+         1Yl0fSPiXOmVBPK8asCoxx9Px0yOKDDbU+KVDsajR1MY0NRN7qItZToczSvXxhnIuc9X
+         i4/Yr/cYhrTEq13LfAtvV66w4sbJ7LYh8f8yq7P40oclgxSoynt8703ARMa0RvLpY1xY
+         CrEbSD+GcyKiD+02PP9g+e8vbkGte4YzxdcvatP6Z48lJhYXv/mmCyQuNBDOKP6OEhXP
+         kmrQ==
+X-Gm-Message-State: AA+aEWZN6OgXVL74q5f7KM34x6Orx4zP3Uy3E/Ax7H6ZX57Vk82R5tmZ
+        VnRkL23FvCWSUYiqLb+yA+vo+w==
+X-Google-Smtp-Source: AFSGD/UKoxfPSbaMWGvaEsVCJjKZ+3IoPtxRXNc5qRQ0U8Ymv5AQyflcnbpbRsrJDEtP/T5iZ+AP7Q==
+X-Received: by 2002:a5d:488f:: with SMTP id g15mr18802323wrq.15.1543942407261;
+        Tue, 04 Dec 2018 08:53:27 -0800 (PST)
+Received: from boomer.local ([2a01:e34:eeb6:4690:106b:bae3:31ed:7561])
+        by smtp.googlemail.com with ESMTPSA id s66sm11581633wmf.34.2018.12.04.08.53.25
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 04 Dec 2018 08:53:26 -0800 (PST)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>, linux-clk@vger.kernel.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH 5/5] clk: meson: axg-ao: add 32k generation subtree
+Date:   Tue,  4 Dec 2018 17:53:10 +0100
+Message-Id: <20181204165310.20806-6-jbrunet@baylibre.com>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181204165248.17572-1-k.konieczny@partner.samsung.com>
+In-Reply-To: <20181204165310.20806-1-jbrunet@baylibre.com>
+References: <20181204165310.20806-1-jbrunet@baylibre.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrOKsWRmVeSWpSXmKPExsWy7djP87p/N7DFGBw8YmixccZ6VovrX56z
-        Wsw/co7Vom/ff0aL/sevmS3On9/AbvGx5x6rxYzz+5gs1h65y26x9PpFJovWvUfYLQ6/aWd1
-        4PFYM28No8emVZ1sHgff7WHy6NuyitHj8ya5ANYoLpuU1JzMstQifbsEroyPvYfZChYLVNxs
-        nsrcwLiet4uRk0NCwERi+d+bbF2MXBxCAisYJZae3csCkhAS+MIo8fmiJETiM6PE/ZlnWWE6
-        7rxZwghRtJxRYsdsqCKghmtf+sG62QTMJR5tP8MEYosIuEn0TZ4NtoJZoI1Z4unsLrCEsICn
-        xLUZF9lBbBYBVYm/p66BTeUVcJE4sWwnM8Q2eYmGXZvBajgFXCU2TfgHVSMocXLmE7BlzEA1
-        zVtnM4MskBDYxC6xbdknqGYXib6ld1ggbGGJV8e3sEPYMhL/d85ngrDLJXZvfcYO0dzCKDF3
-        8iKohLXE4eMXgX7mANqgKbF+lz5E2FFi5rouZpCwhACfxI23ghA38ElM2jYdKswr0dEmBFGt
-        KzHv/xlowElLdP1fB2V7SLzdvottAqPiLCTfzELyzSyEvQsYmVcxiqeWFuempxYb56WW6xUn
-        5haX5qXrJefnbmIEJqfT/45/3cG470/SIUYBDkYlHl6JKWwxQqyJZcWVuYcYJTiYlUR476gB
-        hXhTEiurUovy44tKc1KLDzFKc7AoifNWMzyIFhJITyxJzU5NLUgtgskycXBKNTCq+hZefng4
-        5PyjsgmPHjvs6IvavbpUPG1LB6NZD6OL8gaNqX+52lcEsf5i8b8tIcqS8kLl18KFZ9Q7uUJ3
-        XC+fdtD982TfqA/bWPNm+vQ/cMyY+Tig27W0QC5N7uaJmbefhj3e0Wutm5MTI7I2fm/evCbp
-        B5mf1bwOy8xrenRCzZi3fvYHDUklluKMREMt5qLiRAAF5ukqSgMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrOIsWRmVeSWpSXmKPExsVy+t/xu7p/NrDFGCxtMrDYOGM9q8X1L89Z
-        LeYfOcdq0bfvP6NF/+PXzBbnz29gt/jYc4/VYsb5fUwWa4/cZbdYev0ik0Xr3iPsFofftLM6
-        8HismbeG0WPTqk42j4Pv9jB59G1ZxejxeZNcAGuUnk1RfmlJqkJGfnGJrVK0oYWRnqGlhZ6R
-        iaWeobF5rJWRqZK+nU1Kak5mWWqRvl2CXsbH3sNsBYsFKm42T2VuYFzP28XIySEhYCJx580S
-        xi5GLg4hgaWMEgu3P2CCSEhLNJ5eDWULS/y51sUGUfSJUeLwsjeMIAk2AXOJR9vPgBWJCHhI
-        zJi4mBWkiFmgj1ni88Hz7CAJYQFPiWszLoLZLAKqEn9PXQNr5hVwkTixbCczxAZ5iYZdm8Fq
-        OAVcJTZN+AdWIwRUM2daLzNEvaDEyZlPWEBsZqD65q2zmScwCsxCkpqFJLWAkWkVo0hqaXFu
-        em6xkV5xYm5xaV66XnJ+7iZGYCRtO/Zzyw7GrnfBhxgFOBiVeHglprDFCLEmlhVX5h5ilOBg
-        VhLhvaMGFOJNSaysSi3Kjy8qzUktPsRoCvTERGYp0eR8YJTnlcQbmhqaW1gamhubG5tZKInz
-        njeojBISSE8sSc1OTS1ILYLpY+LglGpgtFujcWbCgYJIC80djr8T3TIKzpQzXwlQT1jIVG7y
-        Xy+TkS0m1StANl7DL/Jfxqv11b+OG/buXTd3wnH21LfXNvfLLVhvNDf9a4/pvbAHN3xjf4Sw
-        F9g9mtPmPM/bSfp2QFJfz/t3TKvbT19QjD+YfCOkRsfXOevlzLYphhE+ydbXc9febu5QYinO
-        SDTUYi4qTgQAAJABmroCAAA=
-X-CMS-MailID: 20181204165317eucas1p10bef0207ee57a9420911410ed2a22453
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20181204165317eucas1p10bef0207ee57a9420911410ed2a22453
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20181204165317eucas1p10bef0207ee57a9420911410ed2a22453
-References: <20181204165248.17572-1-k.konieczny@partner.samsung.com>
-        <CGME20181204165317eucas1p10bef0207ee57a9420911410ed2a22453@eucas1p1.samsung.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Document DT bindings for imem clock of the Samsung Exynos5433 SSS (Security
-SubSystem) and SlimSSS IPs.
+Add the clock subtree generating the 32k clock in amlogic axg ao block.
 
-Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- .../bindings/clock/exynos5433-clock.txt       | 23 +++++++++++++++++++
- 1 file changed, 23 insertions(+)
+ drivers/clk/meson/axg-aoclk.c | 175 +++++++++++++++++++++++++++++++---
+ drivers/clk/meson/axg-aoclk.h |  13 +--
+ 2 files changed, 163 insertions(+), 25 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/exynos5433-clock.txt b/Documentation/devicetree/bindings/clock/exynos5433-clock.txt
-index 50d5897c9849..183c327a7d6b 100644
---- a/Documentation/devicetree/bindings/clock/exynos5433-clock.txt
-+++ b/Documentation/devicetree/bindings/clock/exynos5433-clock.txt
-@@ -50,6 +50,8 @@ Required Properties:
-     IPs.
-   - "samsung,exynos5433-cmu-cam1" - clock controller compatible for CMU_CAM1
-     which generates clocks for Cortex-A5/MIPI_CSIS2/FIMC-LITE_C/FIMC-FD IPs.
-+  - "samsung,exynos5433-cmu-imem"   - clock controller compatible for CMU_IMEM
-+    which generates clocks for SSS (Security SubSystem) and SlimSSS IPs.
+diff --git a/drivers/clk/meson/axg-aoclk.c b/drivers/clk/meson/axg-aoclk.c
+index 29e088542387..5f518be144ce 100644
+--- a/drivers/clk/meson/axg-aoclk.c
++++ b/drivers/clk/meson/axg-aoclk.c
+@@ -12,10 +12,23 @@
+ #include <linux/platform_device.h>
+ #include <linux/reset-controller.h>
+ #include <linux/mfd/syscon.h>
+-#include "clk-regmap.h"
++#include "clkc.h"
+ #include "meson-aoclk.h"
+ #include "axg-aoclk.h"
  
- - reg: physical base address of the controller and length of memory mapped
-   region.
-@@ -168,6 +170,12 @@ Required Properties:
- 		- aclk_cam1_400
- 		- aclk_cam1_552
- 
-+	Input clocks for imem clock controller:
-+		- oscclk
-+		- aclk_imem_sssx_266
-+		- aclk_imem_266
-+		- aclk_imem_200
++/*
++ * AO Configuration Clock registers offsets
++ * Register offsets from the data sheet must be multiplied by 4.
++ */
++#define AO_RTI_PWR_CNTL_REG1	0x0C
++#define AO_RTI_PWR_CNTL_REG0	0x10
++#define AO_RTI_GEN_CNTL_REG0	0x40
++#define AO_OSCIN_CNTL		0x58
++#define AO_CRT_CLK_CNTL1	0x68
++#define AO_SAR_CLK		0x90
++#define AO_RTC_ALT_CLK_CNTL0	0x94
++#define AO_RTC_ALT_CLK_CNTL1	0x98
 +
- Optional properties:
-   - power-domains: a phandle to respective power domain node as described by
- 	generic PM domain bindings (see power/power_domain.txt for more
-@@ -469,6 +477,21 @@ Example 2: Examples of clock controller nodes are listed below.
- 		power-domains = <&pd_cam1>;
- 	};
+ #define AXG_AO_GATE(_name, _bit)					\
+ static struct clk_regmap axg_aoclk_##_name = {				\
+ 	.data = &(struct clk_regmap_gate_data) {			\
+@@ -39,17 +52,141 @@ AXG_AO_GATE(uart2, 5);
+ AXG_AO_GATE(ir_blaster, 6);
+ AXG_AO_GATE(saradc, 7);
  
-+	cmu_imem: clock-controller@11060000 {
-+		compatible = "samsung,exynos5433-cmu-imem";
-+		reg = <0x11060000 0x1000>;
-+		#clock-cells = <1>;
++static struct clk_regmap axg_aoclk_cts_oscin = {
++	.data = &(struct clk_regmap_gate_data){
++		.offset = AO_RTI_PWR_CNTL_REG0,
++		.bit_idx = 14,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "cts_oscin",
++		.ops = &clk_regmap_gate_ro_ops,
++		.parent_names = (const char *[]){ "xtal" },
++		.num_parents = 1,
++	},
++};
 +
-+		clock-names = "oscclk",
-+			"aclk_imem_sssx_266",
-+			"aclk_imem_266",
-+			"aclk_imem_200";
-+		clocks = <&xxti>,
-+			<&cmu_top CLK_DIV_ACLK_IMEM_SSSX_266>,
-+			<&cmu_top CLK_DIV_ACLK_IMEM_266>,
-+			<&cmu_top CLK_DIV_ACLK_IMEM_200>;
-+	};
++static struct clk_regmap axg_aoclk_32k_pre = {
++	.data = &(struct clk_regmap_gate_data){
++		.offset = AO_RTC_ALT_CLK_CNTL0,
++		.bit_idx = 31,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "axg_ao_32k_pre",
++		.ops = &clk_regmap_gate_ops,
++		.parent_names = (const char *[]){ "cts_oscin" },
++		.num_parents = 1,
++	},
++};
 +
- Example 3: UART controller node that consumes the clock generated by the clock
- 	   controller.
++static const struct meson_clk_dualdiv_param axg_32k_div_table[] = {
++	{
++		.dual	= 1,
++		.n1	= 733,
++		.m1	= 8,
++		.n2	= 732,
++		.m2	= 11,
++	}, {}
++};
++
++static struct clk_regmap axg_aoclk_32k_div = {
++	.data = &(struct meson_clk_dualdiv_data){
++		.n1 = {
++			.reg_off = AO_RTC_ALT_CLK_CNTL0,
++			.shift   = 0,
++			.width   = 12,
++		},
++		.n2 = {
++			.reg_off = AO_RTC_ALT_CLK_CNTL0,
++			.shift   = 12,
++			.width   = 12,
++		},
++		.m1 = {
++			.reg_off = AO_RTC_ALT_CLK_CNTL1,
++			.shift   = 0,
++			.width   = 12,
++		},
++		.m2 = {
++			.reg_off = AO_RTC_ALT_CLK_CNTL1,
++			.shift   = 12,
++			.width   = 12,
++		},
++		.dual = {
++			.reg_off = AO_RTC_ALT_CLK_CNTL0,
++			.shift   = 28,
++			.width   = 1,
++		},
++		.table = axg_32k_div_table,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "axg_ao_32k_div",
++		.ops = &meson_clk_dualdiv_ops,
++		.parent_names = (const char *[]){ "axg_ao_32k_pre" },
++		.num_parents = 1,
++	},
++};
++
++static struct clk_regmap axg_aoclk_32k_sel = {
++	.data = &(struct clk_regmap_mux_data) {
++		.offset = AO_RTC_ALT_CLK_CNTL1,
++		.mask = 0x1,
++		.shift = 24,
++		.flags = CLK_MUX_ROUND_CLOSEST,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "axg_ao_32k_sel",
++		.ops = &clk_regmap_mux_ops,
++		.parent_names = (const char *[]){ "axg_ao_32k_div",
++						  "axg_ao_32k_pre" },
++		.num_parents = 2,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_regmap axg_aoclk_32k = {
++	.data = &(struct clk_regmap_gate_data){
++		.offset = AO_RTC_ALT_CLK_CNTL0,
++		.bit_idx = 30,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "axg_ao_32k",
++		.ops = &clk_regmap_gate_ops,
++		.parent_names = (const char *[]){ "axg_ao_32k_sel" },
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_regmap axg_aoclk_cts_rtc_oscin = {
++	.data = &(struct clk_regmap_mux_data) {
++		.offset = AO_RTI_PWR_CNTL_REG0,
++		.mask = 0x1,
++		.shift = 10,
++		.flags = CLK_MUX_ROUND_CLOSEST,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "axg_ao_cts_rtc_oscin",
++		.ops = &clk_regmap_mux_ops,
++		.parent_names = (const char *[]){ "axg_ao_32k",
++						  "axg_ext_32k" },
++		.num_parents = 2,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
+ static struct clk_regmap axg_aoclk_clk81 = {
+ 	.data = &(struct clk_regmap_mux_data) {
+ 		.offset = AO_RTI_PWR_CNTL_REG0,
+ 		.mask = 0x1,
+ 		.shift = 8,
++		.flags = CLK_MUX_ROUND_CLOSEST,
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "axg_ao_clk81",
+ 		.ops = &clk_regmap_mux_ro_ops,
+-		.parent_names = (const char *[]){ "clk81", "ao_alt_xtal"},
++		.parent_names = (const char *[]){ "clk81",
++						  "axg_ao_cts_rtc_oscin"},
+ 		.num_parents = 2,
++		.flags = CLK_SET_RATE_PARENT,
+ 	},
+ };
  
+@@ -106,17 +243,23 @@ static const unsigned int axg_aoclk_reset[] = {
+ };
+ 
+ static struct clk_regmap *axg_aoclk_regmap[] = {
+-	[CLKID_AO_REMOTE]	= &axg_aoclk_remote,
+-	[CLKID_AO_I2C_MASTER]	= &axg_aoclk_i2c_master,
+-	[CLKID_AO_I2C_SLAVE]	= &axg_aoclk_i2c_slave,
+-	[CLKID_AO_UART1]	= &axg_aoclk_uart1,
+-	[CLKID_AO_UART2]	= &axg_aoclk_uart2,
+-	[CLKID_AO_IR_BLASTER]	= &axg_aoclk_ir_blaster,
+-	[CLKID_AO_SAR_ADC]	= &axg_aoclk_saradc,
+-	[CLKID_AO_CLK81]	= &axg_aoclk_clk81,
+-	[CLKID_AO_SAR_ADC_SEL]	= &axg_aoclk_saradc_mux,
+-	[CLKID_AO_SAR_ADC_DIV]	= &axg_aoclk_saradc_div,
+-	[CLKID_AO_SAR_ADC_CLK]	= &axg_aoclk_saradc_gate,
++	&axg_aoclk_remote,
++	&axg_aoclk_i2c_master,
++	&axg_aoclk_i2c_slave,
++	&axg_aoclk_uart1,
++	&axg_aoclk_uart2,
++	&axg_aoclk_ir_blaster,
++	&axg_aoclk_saradc,
++	&axg_aoclk_cts_oscin,
++	&axg_aoclk_32k_pre,
++	&axg_aoclk_32k_div,
++	&axg_aoclk_32k_sel,
++	&axg_aoclk_32k,
++	&axg_aoclk_cts_rtc_oscin,
++	&axg_aoclk_clk81,
++	&axg_aoclk_saradc_mux,
++	&axg_aoclk_saradc_div,
++	&axg_aoclk_saradc_gate,
+ };
+ 
+ static const struct clk_hw_onecell_data axg_aoclk_onecell_data = {
+@@ -132,6 +275,12 @@ static const struct clk_hw_onecell_data axg_aoclk_onecell_data = {
+ 		[CLKID_AO_SAR_ADC_SEL]	= &axg_aoclk_saradc_mux.hw,
+ 		[CLKID_AO_SAR_ADC_DIV]	= &axg_aoclk_saradc_div.hw,
+ 		[CLKID_AO_SAR_ADC_CLK]	= &axg_aoclk_saradc_gate.hw,
++		[CLKID_AO_CTS_OSCIN]	= &axg_aoclk_cts_oscin.hw,
++		[CLKID_AO_32K_PRE]	= &axg_aoclk_32k_pre.hw,
++		[CLKID_AO_32K_DIV]	= &axg_aoclk_32k_div.hw,
++		[CLKID_AO_32K_SEL]	= &axg_aoclk_32k_sel.hw,
++		[CLKID_AO_32K]		= &axg_aoclk_32k.hw,
++		[CLKID_AO_CTS_RTC_OSCIN] = &axg_aoclk_cts_rtc_oscin.hw,
+ 	},
+ 	.num = NR_CLKS,
+ };
+diff --git a/drivers/clk/meson/axg-aoclk.h b/drivers/clk/meson/axg-aoclk.h
+index 91384d8dd844..3cc27e85170f 100644
+--- a/drivers/clk/meson/axg-aoclk.h
++++ b/drivers/clk/meson/axg-aoclk.h
+@@ -10,18 +10,7 @@
+ #ifndef __AXG_AOCLKC_H
+ #define __AXG_AOCLKC_H
+ 
+-#define NR_CLKS	11
+-/* AO Configuration Clock registers offsets
+- * Register offsets from the data sheet must be multiplied by 4.
+- */
+-#define AO_RTI_PWR_CNTL_REG1	0x0C
+-#define AO_RTI_PWR_CNTL_REG0	0x10
+-#define AO_RTI_GEN_CNTL_REG0	0x40
+-#define AO_OSCIN_CNTL		0x58
+-#define AO_CRT_CLK_CNTL1	0x68
+-#define AO_SAR_CLK		0x90
+-#define AO_RTC_ALT_CLK_CNTL0	0x94
+-#define AO_RTC_ALT_CLK_CNTL1	0x98
++#define NR_CLKS	17
+ 
+ #include <dt-bindings/clock/axg-aoclkc.h>
+ #include <dt-bindings/reset/axg-aoclkc.h>
 -- 
 2.19.1
 
