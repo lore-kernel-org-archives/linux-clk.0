@@ -2,106 +2,240 @@ Return-Path: <SRS0=3Y/e=ON=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB930C04EB8
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 14:38:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1045EC04EB8
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 14:39:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BACA920851
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 14:38:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BACA920851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=free.fr
+	by mail.kernel.org (Postfix) with ESMTP id B642E20672
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 14:39:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="w5DxtiWH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B642E20672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726152AbeLDOiG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 4 Dec 2018 09:38:06 -0500
-Received: from smtp3-g21.free.fr ([212.27.42.3]:32438 "EHLO smtp3-g21.free.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725955AbeLDOiG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 4 Dec 2018 09:38:06 -0500
-Received: from [192.168.108.68] (unknown [213.36.7.13])
-        (Authenticated sender: marc.w.gonzalez)
-        by smtp3-g21.free.fr (Postfix) with ESMTPSA id 9E92D13F7E2;
-        Tue,  4 Dec 2018 15:37:43 +0100 (CET)
-Subject: Re: [PATCH v2 1/3] clk: qcom: gcc-msm8998: Drop hmss_dvm and lpass_at
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Amit Kucheria <amit.kucheria@linaro.org>
-References: <20181203183330.2073-1-bjorn.andersson@linaro.org>
- <20181203183330.2073-2-bjorn.andersson@linaro.org>
-From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
-Message-ID: <2f21e657-76f1-a05b-7861-11d7a5f1ea5d@free.fr>
-Date:   Tue, 4 Dec 2018 15:37:43 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20181203183330.2073-2-bjorn.andersson@linaro.org>
-Content-Type: text/plain; charset=utf-8
+        id S1726151AbeLDOj3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 4 Dec 2018 09:39:29 -0500
+Received: from mail-eopbgr10060.outbound.protection.outlook.com ([40.107.1.60]:7776
+        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726064AbeLDOj3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 4 Dec 2018 09:39:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mY1s2WjvTWYBmLcg60w2n1wXtmarG1YmrCjKLUsKrO0=;
+ b=w5DxtiWHbj4+M0ZtemPLjga0ClfCOJQQxqHgEhc3FkJbBX5XZ1KYAxq7jJJzuVK0bODLWS74OIvrvEvSa6Ps+R7M0vvgpH64QSqk7FE3ggVdikDw/G/wFmRUH4BPQ/pbkCuQr2/q9M4E8jqGRYUyJJzHZCFLFd0G0VsqE1HahJQ=
+Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.126.21) by
+ AM0PR04MB5763.eurprd04.prod.outlook.com (20.178.202.18) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1382.21; Tue, 4 Dec 2018 14:39:22 +0000
+Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
+ ([fe80::31e3:2aa6:8d93:9927]) by AM0PR04MB4211.eurprd04.prod.outlook.com
+ ([fe80::31e3:2aa6:8d93:9927%2]) with mapi id 15.20.1382.023; Tue, 4 Dec 2018
+ 14:39:22 +0000
+From:   Aisheng DONG <aisheng.dong@nxp.com>
+To:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+CC:     "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        Aisheng DONG <aisheng.dong@nxp.com>
+Subject: [PATCH V9 1/7] clk: imx: add configuration option for mmio clks
+Thread-Topic: [PATCH V9 1/7] clk: imx: add configuration option for mmio clks
+Thread-Index: AQHUi98lQ6o73Estskm1k5h96wz2og==
+Date:   Tue, 4 Dec 2018 14:39:22 +0000
+Message-ID: <1543934041-12572-2-git-send-email-aisheng.dong@nxp.com>
+References: <1543934041-12572-1-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1543934041-12572-1-git-send-email-aisheng.dong@nxp.com>
+Accept-Language: zh-CN, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.7.4
+x-clientproxiedby: HK0PR01CA0015.apcprd01.prod.exchangelabs.com
+ (2603:1096:203:92::27) To AM0PR04MB4211.eurprd04.prod.outlook.com
+ (2603:10a6:208:66::21)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=aisheng.dong@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [119.31.174.67]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM0PR04MB5763;6:eu4KIusBXKmokaOdst3vLUIxeGpibWOjwp5n1psUjNN9rAJW/Nq+wfhwEEKzz6ne2VTDEXemmVkwAQPf9Y9lRT/cgqp8oktvfVu22MEnLXRb2BlbxyTlv2FkLGxvCVCmmGDla1KrvmK/uYfjowQbAtgJlXoeFbK6K/ao88KtlmCbjx/ruCkbIRNkvSRUu+uM6C0kb9Y5QKC45JS3BZT0FAeccbFTPErMHe2B0F++rX1m9Z1U9EmbhIfo4GBgSJq4t1G4taX/WML9Rh5ZrYNmxiNQxEWQS24rHR9fOMDc1xr3B9A3WUvbWujc50sm5gmZkGcYF4BsAc0AJVI7pxlcpeYQOaJlIeFpnqoycy70hY7VuPhhl8ZN9FSlCwo4pRPB0OBmWo6pXQO+bZr22hHZ0DgCMjv3DaFeHH8dZA0enKpiBEYFqp1f7/UxADaIDWSHX9KC2jxpGFSkdxt+PiJHYg==;5:DryZlZ2L41XSvObdoflMZS/M7H0pqS8NwhHPqEKzA/wPBrQ3CRxHNeizDwIL1XGtWssjtSbs0bRl0esxmN29XcrC4njXcj9kNATwcO4N/Ge/PFi4ate1pThtTuTZjxUbXJorKxI9SM7sp3/zgxYpzLAnRIBtbowrg3G5QHzC/OE=;7:tPK0XwqBvShWyLsnfZIS8ZksHk3w5QNdjGGnC6HWgSgDAfNoVGeZ6HpdI/jHTKfqFmaAoyqJpaQVXzFfOmBpl7v0EcuRQVg3UpRWKt6ntAnYY2BcFbMa1kS+fMKdT1IkKgxfBjzBIzhjp/c4pIesag==
+x-ms-office365-filtering-correlation-id: 72c8a71e-6cfa-446c-88ed-08d659f647b3
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB5763;
+x-ms-traffictypediagnostic: AM0PR04MB5763:
+x-microsoft-antispam-prvs: <AM0PR04MB5763F272028B52E63C12546480AF0@AM0PR04MB5763.eurprd04.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3231455)(999002)(944501493)(52105112)(3002001)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(20161123560045)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:AM0PR04MB5763;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB5763;
+x-forefront-prvs: 0876988AF0
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(366004)(136003)(396003)(346002)(39860400002)(189003)(199004)(305945005)(386003)(14444005)(102836004)(25786009)(97736004)(52116002)(186003)(36756003)(76176011)(478600001)(256004)(6116002)(2501003)(8936002)(86362001)(26005)(81166006)(3846002)(6506007)(8676002)(81156014)(4326008)(50226002)(316002)(486006)(53936002)(2616005)(476003)(106356001)(99286004)(2906002)(5660300001)(6512007)(7736002)(11346002)(6486002)(446003)(6436002)(2351001)(6916009)(68736007)(105586002)(575784001)(14454004)(54906003)(5640700003)(66066001)(71200400001)(71190400001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5763;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: In4wad0Ym9pBXrZJQyJt4gn4xo4m+5YdCXxOKHCMLFGeUKKOdaFyJuSeRS/C6iu+ZfQk8YzcWk4DLIIEqPkRoHeQck3ppZ9qCZwl/gRI7ILNAa2xTSjB1DLMfLcJxdMtHdJJ8+pSCCulVrwl3vgw3HKJ78Sx2Z+fpyja4Dxz5lwk/w8XtgXbhXLpX2M07RUfEXcXim2B4GO29GtwpQJ8rItbaap8NZYjUYlLnJkT5coEAvDtq7cdob70sakW10VKMEK7pJ/qfAG/99XnVywBJfp9CmLssMNHLETNm9FEOk9EDCCvcPPEt0qA+hOR+5tMVp1FjVHraaJuWX7K0fYEiECZoSilcGSZHSCJx8D/GYY=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 72c8a71e-6cfa-446c-88ed-08d659f647b3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Dec 2018 14:39:22.3392
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5763
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 03/12/2018 19:33, Bjorn Andersson wrote:
+The patch introduces CONFIG_MXC_CLK option for legacy MMIO clocks,
+this is required to compile legacy MMIO clock conditionally when adding
+SCU based clocks for MX8 platforms later.
 
-> Disabling gcc_hmss_dvm_bus_clk and gcc_lpass_at_clk causes the board to
-> lock up, and by that preventing the kernel to boot without
-> clk_ignore_unused.
-> 
-> gcc_hmss_dvm_bus_clk is marked always-on downstream, but not referenced,
-> and gcc_lpass_at_clk isn't mentioned. So let's remove them until they
-> are needed by some client.
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Sascha Hauer <kernel@pengutronix.de>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+---
+ arch/arm/mach-imx/Kconfig | 11 +++++++++++
+ drivers/clk/Kconfig       |  1 +
+ drivers/clk/imx/Kconfig   |  5 +++++
+ drivers/clk/imx/Makefile  |  2 +-
+ 4 files changed, 18 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/imx/Kconfig
 
-Hello Bjorn,
+diff --git a/arch/arm/mach-imx/Kconfig b/arch/arm/mach-imx/Kconfig
+index c12a05c..303082c 100644
+--- a/arch/arm/mach-imx/Kconfig
++++ b/arch/arm/mach-imx/Kconfig
+@@ -57,23 +57,27 @@ config SOC_IMX21
+ 	select CPU_ARM926T
+ 	select IMX_HAVE_IOMUX_V1
+ 	select MXC_AVIC
++	select MXC_CLK
+=20
+ config SOC_IMX27
+ 	bool
+ 	select CPU_ARM926T
+ 	select IMX_HAVE_IOMUX_V1
+ 	select MXC_AVIC
++	select MXC_CLK
+ 	select PINCTRL_IMX27
+=20
+ config SOC_IMX31
+ 	bool
+ 	select CPU_V6
+ 	select MXC_AVIC
++	select MXC_CLK
+=20
+ config SOC_IMX35
+ 	bool
+ 	select ARCH_MXC_IOMUX_V3
+ 	select MXC_AVIC
++	select MXC_CLK
+ 	select PINCTRL_IMX35
+=20
+ if ARCH_MULTI_V5
+@@ -417,6 +421,7 @@ config SOC_IMX1
+ 	bool "i.MX1 support"
+ 	select CPU_ARM920T
+ 	select MXC_AVIC
++	select MXC_CLK
+ 	select PINCTRL_IMX1
+ 	help
+ 	  This enables support for Freescale i.MX1 processor
+@@ -430,6 +435,7 @@ config SOC_IMX25
+ 	select ARCH_MXC_IOMUX_V3
+ 	select CPU_ARM926T
+ 	select MXC_AVIC
++	select MXC_CLK
+ 	select PINCTRL_IMX25
+ 	help
+ 	  This enables support for Freescale i.MX25 processor
+@@ -442,6 +448,7 @@ comment "Cortex-A platforms"
+ config SOC_IMX5
+ 	bool
+ 	select HAVE_IMX_SRC
++	select MXC_CLK
+ 	select MXC_TZIC
+=20
+ config	SOC_IMX50
+@@ -478,6 +485,7 @@ config SOC_IMX6
+ 	select HAVE_IMX_MMDC
+ 	select HAVE_IMX_SRC
+ 	select MFD_SYSCON
++	select MXC_CLK
+ 	select PL310_ERRATA_769419 if CACHE_L2X0
+=20
+ config SOC_IMX6Q
+@@ -545,10 +553,12 @@ config SOC_IMX7D_CA7
+ 	select HAVE_IMX_MMDC
+ 	select HAVE_IMX_SRC
+ 	select IMX_GPCV2
++	select MXC_CLK
+=20
+ config SOC_IMX7D_CM4
+ 	bool
+ 	select ARMV7M_SYSTICK
++	select MXC_CLK
+=20
+ config SOC_IMX7D
+ 	bool "i.MX7 Dual support"
+@@ -570,6 +580,7 @@ config SOC_IMX7ULP
+ config SOC_VF610
+ 	bool "Vybrid Family VF610 support"
+ 	select ARM_GIC if ARCH_MULTI_V7
++	select MXC_CLK
+ 	select PINCTRL_VF610
+=20
+ 	help
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 81cdb4e..1dbfcc2 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -287,6 +287,7 @@ source "drivers/clk/actions/Kconfig"
+ source "drivers/clk/bcm/Kconfig"
+ source "drivers/clk/hisilicon/Kconfig"
+ source "drivers/clk/imgtec/Kconfig"
++source "drivers/clk/imx/Kconfig"
+ source "drivers/clk/ingenic/Kconfig"
+ source "drivers/clk/keystone/Kconfig"
+ source "drivers/clk/mediatek/Kconfig"
+diff --git a/drivers/clk/imx/Kconfig b/drivers/clk/imx/Kconfig
+new file mode 100644
+index 0000000..43a3ecc
+--- /dev/null
++++ b/drivers/clk/imx/Kconfig
+@@ -0,0 +1,5 @@
++# SPDX-License-Identifier: GPL-2.0
++# common clock support for NXP i.MX SoC family.
++config MXC_CLK
++	bool
++	depends on ARCH_MXC
+diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
+index 5c0b11e..f850424 100644
+--- a/drivers/clk/imx/Makefile
++++ b/drivers/clk/imx/Makefile
+@@ -1,6 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0
+=20
+-obj-y +=3D \
++obj-$(CONFIG_MXC_CLK) +=3D \
+ 	clk.o \
+ 	clk-busy.o \
+ 	clk-composite-8m.o \
+--=20
+2.7.4
 
-What about gcc_gpu_bimc_gfx_clk?
-
-AFAICT, it doesn't lock the system up, but the kernel warns:
-
-[    2.171148] ------------[ cut here ]------------
-[    2.173740] gcc_gpu_bimc_gfx_clk status stuck at 'on'
-[    2.173996] WARNING: CPU: 3 PID: 1 at drivers/clk/qcom/clk-branch.c:92 clk_branch_toggle+0x190/0x1b0
-[    2.183475] Modules linked in:
-[    2.192554] CPU: 3 PID: 1 Comm: swapper/0 Tainted: G S                4.20.0-rc4 #23
-[    2.195509] Hardware name: Qualcomm Technologies, Inc. MSM8998 v1 MTP (DT)
-[    2.203389] pstate: 60000085 (nZCv daIf -PAN -UAO)
-[    2.210016] pc : clk_branch_toggle+0x190/0x1b0
-[    2.214781] lr : clk_branch_toggle+0x190/0x1b0
-[    2.219213] sp : ffff00000807bcf0
-[    2.223609] x29: ffff00000807bcf0 x28: 0000000000000008 
-[    2.227041] x27: ffff0000089db070 x26: ffff000008961378 
-[    2.232425] x25: ffff0000088da4b8 x24: 0000000000000000 
-[    2.237721] x23: ffff000009138a08 x22: ffff000008414990 
-[    2.243016] x21: 0000000000000000 x20: 0000000000000000 
-[    2.248312] x19: ffff0000090e9000 x18: ffffffffffffffff 
-[    2.253608] x17: 0000000000000000 x16: 0000000000000000 
-[    2.258902] x15: ffff0000090e9648 x14: ffff000089193187 
-[    2.264197] x13: ffff000009193195 x12: ffff0000090fb000 
-[    2.269493] x11: ffff00000807bcf0 x10: ffff00000807bcf0 
-[    2.274789] x9 : ffff00000807bcf0 x8 : 6e6f27207461206b 
-[    2.280084] x7 : 6375747320737574 x6 : ffff000009192c89 
-[    2.285380] x5 : 0000000000000000 x4 : 0000000000000000 
-[    2.290676] x3 : ffffffffffffffff x2 : 00008000f5251000 
-[    2.295971] x1 : e0dbf26541ede800 x0 : 0000000000000000 
-[    2.301272] Call trace:
-[    2.306491]  clk_branch_toggle+0x190/0x1b0
-[    2.308705]  clk_branch2_disable+0x18/0x20
-[    2.312890]  clk_disable_unused_subtree+0xc4/0xe0
-[    2.316960]  clk_disable_unused+0x3c/0x130
-[    2.321736]  do_one_initcall+0x5c/0x180
-[    2.325745]  kernel_init_freeable+0x198/0x244
-[    2.329469]  kernel_init+0x10/0x110
-[    2.333942]  ret_from_fork+0x10/0x20
-[    2.337257] ---[ end trace 57f62b628c127ef8 ]---
-
-
-Regards.
