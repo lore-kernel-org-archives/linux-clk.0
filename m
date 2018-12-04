@@ -2,73 +2,92 @@ Return-Path: <SRS0=3Y/e=ON=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96BD4C04EBF
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 18:41:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D6A9C04EB8
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 18:43:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 614E020850
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 18:41:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E537A206B7
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 18:43:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1WIgm+my"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 614E020850
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="T3RzuVhZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E537A206B7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725875AbeLDSlJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 4 Dec 2018 13:41:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48200 "EHLO mail.kernel.org"
+        id S1725895AbeLDSnU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 4 Dec 2018 13:43:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49058 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725797AbeLDSlI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 4 Dec 2018 13:41:08 -0500
+        id S1725880AbeLDSnU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 4 Dec 2018 13:43:20 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2190E20672;
-        Tue,  4 Dec 2018 18:41:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A7045206B7;
+        Tue,  4 Dec 2018 18:43:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543948868;
-        bh=tbHQ6dzeXeqSCDV1A1EfWIAPIRjZMIcLL7d1mcVrSmw=;
+        s=default; t=1543948999;
+        bh=BmJ2Wy2RklIjViSxlyIadstKkbH8qI/+X2Vn6hRroX4=;
         h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=1WIgm+myrWqA5hfIH9F+dP3bCRdVeuN+DOHeopBV0mU/+GsOg6FOhvW8BJbEJsJyR
-         staYkKwp67BhPDS7HLWKlm25+VDcaEqB+3JlVxtbpSQh6zmJfGw/e56OoSDPirs+rs
-         PtsQliCzqSx5PTy6hVNz1KImpXQdpqAls6+cPr1M=
+        b=T3RzuVhZgEu17ob5PHGc5IKppmwMfV88phmkrcLNIZGwRxfQOTaARujPGAiVT36so
+         Feb97jG3KifjLq5OKQcWsm+QzyaYnY3YrtwOogcxeaL2ZOYLBNK+AMK79UrWRsgRPv
+         fgoszVuLSp0WHN+TPHDVQBEgvpdokVER0NlDMsnw=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-To:     k.konieczny@partner.samsung.com, linux-samsung-soc@vger.kernel.org
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20181204165248.17572-4-k.konieczny@partner.samsung.com>
-Cc:     linux-clk@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>,
-        devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-References: <20181204165248.17572-1-k.konieczny@partner.samsung.com>
- <CGME20181204165317eucas1p10bef0207ee57a9420911410ed2a22453@eucas1p1.samsung.com>
- <20181204165248.17572-4-k.konieczny@partner.samsung.com>
-Message-ID: <154394886754.88331.4490485856492665936@swboyd.mtv.corp.google.com>
+In-Reply-To: <20181204163403.32321-1-jbrunet@baylibre.com>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20181204163403.32321-1-jbrunet@baylibre.com>
+Message-ID: <154394899913.88331.6973889205055781649@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.7
-Subject: Re: [PATCH v3 3/5] dt-bindings: clk: exynos5433: document imem clock
-Date:   Tue, 04 Dec 2018 10:41:07 -0800
+Subject: Re: [PATCH] clk: fix clk_mux_val_to_index() error value
+Date:   Tue, 04 Dec 2018 10:43:19 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Kamil Konieczny (2018-12-04 08:52:46)
-> Document DT bindings for imem clock of the Samsung Exynos5433 SSS (Securi=
-ty
-> SubSystem) and SlimSSS IPs.
+Quoting Jerome Brunet (2018-12-04 08:34:03)
+> clk_mux_val_to_index() is meant to be used by .get_parent(), which
+> returns a u8, so when the value provided does not map to any valid index,
+> it is not a good idea to return a negative error value.
 > =
 
-> Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
+> Instead, return num_parents which we know is an invalid index and let
+> CCF deal with it.
+> =
+
+> Fixes: 77deb66d262f ("clk: mux: add helper function for index/value trans=
+lation")
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 > ---
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+Thanks!
+
+> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+> index 60c51871b04b..fc20886ef069 100644
+> --- a/include/linux/clk-provider.h
+> +++ b/include/linux/clk-provider.h
+> @@ -550,8 +550,8 @@ struct clk_hw *clk_hw_register_mux_table(struct devic=
+e *dev, const char *name,
+>                 void __iomem *reg, u8 shift, u32 mask,
+>                 u8 clk_mux_flags, u32 *table, spinlock_t *lock);
+>  =
+
+> -int clk_mux_val_to_index(struct clk_hw *hw, u32 *table, unsigned int fla=
+gs,
+> -                        unsigned int val);
+> +u8 clk_mux_val_to_index(struct clk_hw *hw, u32 *table, unsigned int flag=
+s,
+
+I wonder if we should just make this unsigned int? Does it hurt at all
+to have it be a wider type even though it doesn't match the CCF decision
+to make this a u8 for the parent index number space?
 
