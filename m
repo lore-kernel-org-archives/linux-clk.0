@@ -2,110 +2,267 @@ Return-Path: <SRS0=3Y/e=ON=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D77D9C04EB8
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 19:14:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C26D6C04EB8
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 19:24:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A941E2082B
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 19:14:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A941E2082B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
+	by mail.kernel.org (Postfix) with ESMTP id 7F6822082B
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 19:24:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UAOH3jzm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F6822082B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725887AbeLDTOb convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 4 Dec 2018 14:14:31 -0500
-Received: from mailgate1.rohmeurope.com ([178.15.145.194]:48448 "EHLO
-        mailgate1.rohmeurope.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725864AbeLDTOb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Dec 2018 14:14:31 -0500
-X-Greylist: delayed 901 seconds by postgrey-1.27 at vger.kernel.org; Tue, 04 Dec 2018 14:14:29 EST
-X-AuditID: c0a8fbf4-519ff700000014c1-75-5c06ce8ef48f
-Received: from smtp.reu.rohmeu.com (will-cas001.reu.rohmeu.com [192.168.251.177])
-        by mailgate1.rohmeurope.com (Symantec Messaging Gateway) with SMTP id FA.57.05313.E8EC60C5; Tue,  4 Dec 2018 19:59:26 +0100 (CET)
-Received: from WILL-MAIL001.REu.RohmEu.com ([fe80::2915:304f:d22c:c6ba]) by
- WILL-CAS001.REu.RohmEu.com ([fe80::d57e:33d0:7a5d:f0a6%16]) with mapi id
- 14.03.0415.000; Tue, 4 Dec 2018 19:59:25 +0100
-From:   "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-CC:     "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        "Bartlomiej Zolnierkiewicz" <b.zolnierkie@samsung.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
-        "Guenter Roeck" <linux@roeck-us.net>,
-        Rob Herring <robh@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Huang Shijie <sjhuang@iluvatar.ai>,
-        Daniel Kurtz <djkurtz@chromium.org>,
-        Akshu Agrawal <akshu.agrawal@amd.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-        "linux-soc@vger.kernel.org" <linux-soc@vger.kernel.org>
-Subject: RE: [PATCH v4 1/8] clk: clkdev/of_clk - add managed lookup and
- provider registrations
-Thread-Topic: [PATCH v4 1/8] clk: clkdev/of_clk - add managed lookup and
- provider registrations
-Thread-Index: AQHUe0fdW8Mz1FW0uUqQ8Q7xdFN+k6VoDTEAgAW97maAATqoh4AACBHE
-Date:   Tue, 4 Dec 2018 18:59:24 +0000
-Message-ID: <042F8805D2046347BB8420BEAE397A4066F2E07D@WILL-MAIL001.REu.RohmEu.com>
-References: <cover.1542107769.git.matti.vaittinen@fi.rohmeurope.com>
- <ec0d6ee7ea79f0e05041ed3e564b0aadb297ef5f.1542107769.git.matti.vaittinen@fi.rohmeurope.com>
- <154356805035.88331.16867826308376667832@swboyd.mtv.corp.google.com>
- <20181130105022.GA15388@localhost.localdomain>
- <154388011043.88331.6461709079501929390@swboyd.mtv.corp.google.com>
- <20181204071315.GA31204@localhost.localdomain>,<154394767367.88331.17679291261207728780@swboyd.mtv.corp.google.com>
-In-Reply-To: <154394767367.88331.17679291261207728780@swboyd.mtv.corp.google.com>
-Accept-Language: en-US, de-DE
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [109.240.170.137]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1725859AbeLDTYR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 4 Dec 2018 14:24:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37366 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725855AbeLDTYR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 4 Dec 2018 14:24:17 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 96B93206B7;
+        Tue,  4 Dec 2018 19:24:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543951455;
+        bh=5GODkIgf96KMCm6VJGzqZOn84X+97gZoRudYSmei+Q4=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=UAOH3jzmhHt7ow5pygSESO5Y0BpXxm2vdJDtjkK8Kzbyu2kgf9OYe1olnEXGGS+Vw
+         Ze8eB7tpzRxqU5/3K/4U5YOYdOb2HOwUgILCB0jNUSyfCgB5zamg/vCeGikJ0boNT+
+         sGOEf782euxfACXKBOI1GAzpJqYg+z0me0eGiX7k=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA02TbUxTVxzGPfe9wDWXCukR3Uwq2QdRNoMxJ44t+zJyF7dkaswWQgKX9UIJ
-        bSH3tip+mEVljGYyFHxZQaEKBEkmtBoD2EUsRoWCiMQqikrSZlvBlzgxmBVk9/ZO5dN5znnO
-        73nuSf6XwfV/U2lMic0uSjbBYqQSiP6OmHdD7U0q75PLnkw0dNBPowM/f4YWB7OQ90QXiSL9
-        1QDdnf2LRDMthwCqPNFMotHRbhr5wiESHb48QqMXvzwikeenVgKN9zVRaLo9DFDg6B8ARTzD
-        GGpqu0GgsaEvUbjjKY0W/T00ehPyEmiirhFHwUv2LyBfdXuB4sdDYzj//F4VzTc6xwi+1/2Q
-        5kfablP8GX8U432dNRQ/GfJT/PnWffyZ2nqS751z0nzthU7Av/R9+O3y3MTsQsG+a0dJse3j
-        zwsSzdfcDVT5ILHnVVOUdoJbuAvoGMhtgi/65jEXSGD03B0Au38P4trmOoBTZ88pDsNQXDZ0
-        TdAqkMKthVdOheMAzgUZeDPWQKjGCq4AnvXPYNolAfpmD+GazoGxriOkqgkuHQ50Xo0Hsdx2
-        eO9pG6WVhXA4dL8+fknHbYOTlU/iQYD7ANY4n8U1zhng/Ugzpn02B1v9o/8/IRVGw29ITa+F
-        c9VaAc6thy2X/qE0nQHbPTO4VpwMB3+LEHUg1b0k1r0EcS9B3EuQFkB0AmgVSizFgl3cmCmJ
-        jkypzGxVlh/KrD6gTc9sD1gMfBUAHAOMSSwdpPL0pLBLrrAGwEoGM6ay3R8pR8sLy0wVZkE2
-        50sOiygHAGRwYwo7qXqsSajYK0plb61VDGE0sLmj/+bqObW5VBTLRemtu5phjJC1DStgsiQW
-        i3uKSiz29zbG6NTwhLQUWbSZRElw2M356mDky8pkqFaS0qsfUXvlcsGqnGroEFiZZmDn3WSe
-        nlMNs8P2LnYaGJTXrWB3qliS8vu8o6aVQEwJtFzA1EC78N5KcwKmeoovXb2s4cHX/RMu57qc
-        K4EH9TrPAN31aODP01PfN3sfe9dkXa/aqoude57xzYbsyv1inWH4Rr0j9unV6d7oWPBx8dyW
-        4e8eNjrlI1v7jkdNletf5/568mC6Cx4uivBVC019NZHNCyeR6eLLVcd25+xlYwM/iu6Za6WF
-        R/OL2rONhGwWNq7DJVn4DzunlFH7AwAA
+Content-Transfer-Encoding: quoted-printable
+To:     David Dai <daidavid1@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1543895413-1553-2-git-send-email-daidavid1@codeaurora.org>
+Cc:     David Dai <daidavid1@codeaurora.org>, georgi.djakov@linaro.org,
+        bjorn.andersson@linaro.org, evgreen@google.com,
+        tdas@codeaurora.org, elder@linaro.org
+References: <1543895413-1553-1-git-send-email-daidavid1@codeaurora.org>
+ <1543895413-1553-2-git-send-email-daidavid1@codeaurora.org>
+Message-ID: <154395145491.88331.1174781210192403998@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [RFC PATCH] clk: qcom: clk-rpmh: Add IPA clock support
+Date:   Tue, 04 Dec 2018 11:24:14 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello Stephen,
-.
-> > I think we should use parent device's node, not the paren node in DT,
-> > right? But I agree, we should only look "one level up in the chain".
+Quoting David Dai (2018-12-03 19:50:13)
+> Add IPA clock support by extending the current clk rpmh driver to support
+> clocks that are managed by a different type of RPMh resource known as
+> Bus Clock Manager(BCM).
 
-> Are these two things different? I'm suggesting looking at
-> device_node::parent and trying to find a #clock-cells property.
+Yes, but why? Does the IPA driver need to set clk rates and that somehow
+doesn't work as a bandwidth request?
 
-I thought that MFD sub-devices may completely lack the DT node but I will verify this tomorrow. BTW, I already did the patch version 6 which checks the dev->parent->of_node if #clock-cells is not found from device's own node or if own node is NULL.
+> =
 
-Br. Matti Vaittinen 
+> Signed-off-by: David Dai <daidavid1@codeaurora.org>
+> ---
+> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
+> index 9f4fc77..42e2cd2 100644
+> --- a/drivers/clk/qcom/clk-rpmh.c
+> +++ b/drivers/clk/qcom/clk-rpmh.c
+> @@ -18,6 +18,32 @@
+>  #define CLK_RPMH_ARC_EN_OFFSET         0
+>  #define CLK_RPMH_VRM_EN_OFFSET         4
+>  =
+
+> +#define BCM_TCS_CMD_COMMIT_MASK                0x40000000
+> +#define BCM_TCS_CMD_VALID_SHIFT                29
+> +#define BCM_TCS_CMD_VOTE_MASK          0x3fff
+> +#define BCM_TCS_CMD_VOTE_SHIFT         0
+> +
+> +#define BCM_TCS_CMD(valid, vote) \
+> +       (BCM_TCS_CMD_COMMIT_MASK |\
+
+Nitpick: Add space before the \ and align them all up on the right side
+of the page.
+
+> +       ((valid) << BCM_TCS_CMD_VALID_SHIFT) |\
+> +       ((cpu_to_le32(vote) &\
+> +       BCM_TCS_CMD_VOTE_MASK) << BCM_TCS_CMD_VOTE_SHIFT))
+> +
+> +/**
+> + * struct bcm_db - Auxiliary data pertaining to each Bus Clock Manager(B=
+CM)
+> + * @unit: divisor used to convert Hz value to an RPMh msg
+> + * @width: multiplier used to convert Hz value to an RPMh msg
+> + * @vcd: virtual clock domain that this bcm belongs to
+> + * @reserved: reserved to pad the struct
+> + */
+> +
+
+Nitpick: Please remove the newline between comment and struct.
+
+> +struct bcm_db {
+> +       u32 unit;
+> +       u16 width;
+> +       u8 vcd;
+> +       u8 reserved;
+
+These would need __le32 and __le16 for the byte swap.
+
+> +};
+> +
+>  /**
+>   * struct clk_rpmh - individual rpmh clock data structure
+>   * @hw:                        handle between common and hardware-specif=
+ic interfaces
+> @@ -210,6 +249,91 @@ static unsigned long clk_rpmh_recalc_rate(struct clk=
+_hw *hw,
+>         .recalc_rate    =3D clk_rpmh_recalc_rate,
+>  };
+>  =
+
+> +static int clk_rpmh_bcm_send_cmd(struct clk_rpmh *c, bool enable)
+> +{
+> +       struct tcs_cmd cmd =3D { 0 };
+> +       u32 cmd_state;
+> +       int ret;
+> +
+> +       cmd_state =3D enable ? (c->aggr_state ? c->aggr_state : 1) : 0;
+> +
+> +       if (c->last_sent_aggr_state =3D=3D cmd_state)
+> +               return 0;
+> +
+> +       cmd.addr =3D c->res_addr;
+> +       cmd.data =3D BCM_TCS_CMD(enable, cmd_state);
+> +
+> +       ret =3D rpmh_write_async(c->dev, RPMH_ACTIVE_ONLY_STATE, &cmd, 1);
+> +       if (ret) {
+> +               dev_err(c->dev, "set active state of %s failed: (%d)\n",
+> +                       c->res_name, ret);
+> +               return ret;
+> +       }
+> +
+> +       c->last_sent_aggr_state =3D cmd_state;
+> +
+> +       return 0;
+> +}
+> +
+> +static int clk_rpmh_bcm_prepare(struct clk_hw *hw)
+> +{
+> +       struct clk_rpmh *c =3D to_clk_rpmh(hw);
+> +       int ret =3D 0;
+
+Don't initialize variables and then reassign them right after.
+
+> +
+> +       mutex_lock(&rpmh_clk_lock);
+> +       ret =3D clk_rpmh_bcm_send_cmd(c, true);
+> +       mutex_unlock(&rpmh_clk_lock);
+> +
+> +       return ret;
+> +};
+> +
+> +static void clk_rpmh_bcm_unprepare(struct clk_hw *hw)
+> +{
+> +       struct clk_rpmh *c =3D to_clk_rpmh(hw);
+> +
+> +       mutex_lock(&rpmh_clk_lock);
+> +       clk_rpmh_bcm_send_cmd(c, false);
+> +       mutex_unlock(&rpmh_clk_lock);
+> +};
+> +
+> +static int clk_rpmh_bcm_set_rate(struct clk_hw *hw, unsigned long rate,
+> +                                unsigned long parent_rate)
+> +{
+> +       struct clk_rpmh *c =3D to_clk_rpmh(hw);
+> +
+> +       c->aggr_state =3D rate / (c->aux_data.unit * 1000);
+> +
+> +       if (clk_hw_is_prepared(hw)) {
+
+Why do we need to check is_prepared? Add a comment indicating we can't
+send the request when the clk is disabled?
+
+> +               mutex_lock(&rpmh_clk_lock);
+> +               clk_rpmh_bcm_send_cmd(c, true);
+
+This function is always inside mutex_lock()/unlock() pair, so push the
+lock into the function?
+
+> +               mutex_unlock(&rpmh_clk_lock);
+> +       }
+> +
+> +       return 0;
+> +};
+> +
+> +static long clk_rpmh_round_rate(struct clk_hw *hw, unsigned long rate,
+> +                               unsigned long *parent_rate)
+> +{
+> +       return rate;
+> +}
+> +
+> +static unsigned long clk_rpmh_bcm_recalc_rate(struct clk_hw *hw,
+> +                                       unsigned long prate)
+> +{
+> +       struct clk_rpmh *c =3D to_clk_rpmh(hw);
+> +
+> +       return c->aggr_state * c->aux_data.unit * 1000;
+
+What is 1000 for?
+
+> +}
+> +
+> +static const struct clk_ops clk_rpmh_bcm_ops =3D {
+> +       .prepare        =3D clk_rpmh_bcm_prepare,
+> +       .unprepare      =3D clk_rpmh_bcm_unprepare,
+> +       .set_rate       =3D clk_rpmh_bcm_set_rate,
+> +       .round_rate     =3D clk_rpmh_round_rate,
+> +       .recalc_rate    =3D clk_rpmh_bcm_recalc_rate,
+> +};
+> +
+>  /* Resource name must match resource id present in cmd-db. */
+>  DEFINE_CLK_RPMH_ARC(sdm845, bi_tcxo, bi_tcxo_ao, "xo.lvl", 0x3, 2);
+>  DEFINE_CLK_RPMH_VRM(sdm845, ln_bb_clk2, ln_bb_clk2_ao, "lnbclka2", 2);
+> @@ -275,6 +402,21 @@ static int clk_rpmh_probe(struct platform_device *pd=
+ev)
+>                                 rpmh_clk->res_name);
+>                         return -ENODEV;
+>                 }
+
+Nitpick: Please add newline here.
+
+> +               aux_data_len =3D cmd_db_read_aux_data_len(rpmh_clk->res_n=
+ame);
+> +               if (aux_data_len =3D=3D sizeof(struct bcm_db)) {
+> +                       ret =3D cmd_db_read_aux_data(rpmh_clk->res_name,
+> +                                                  (u8 *)&rpmh_clk->aux_d=
+ata,
+
+Is the cast necessary? And I would just pick out the data you need from
+the aux_data instead of storing it forever (with the padding) in the
+rpmh_clk structure.
+
+> +                                                  sizeof(struct bcm_db));
+> +                       if (ret < 0) {
+> +                               dev_err(&pdev->dev, "aux data read failur=
+e for %s (%d)\n",
+> +                               rpmh_clk->res_name, ret);
+> +                               return ret;
+> +                       }
+> +                       rpmh_clk->aux_data.unit =3D
+> +                                       le32_to_cpu(rpmh_clk->aux_data.un=
+it);
+> +                       rpmh_clk->aux_data.width =3D
+> +                                       le16_to_cpu(rpmh_clk->aux_data.wi=
+dth);
+> +               }
+
+Nitpick: Newline here too.
+
+>                 rpmh_clk->res_addr +=3D res_addr;
+>                 rpmh_clk->dev =3D &pdev->dev;
+> =20
