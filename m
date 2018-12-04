@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62CD9C04EB8
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 09:27:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68B0AC04EBF
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 09:27:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 294E820851
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 09:27:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 300DB20851
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 09:27:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="L/M/Sj8y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 294E820851
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="VAMOz7eq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 300DB20851
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726005AbeLDJ1N (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 4 Dec 2018 04:27:13 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:3734 "EHLO
+        id S1726017AbeLDJ1P (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 4 Dec 2018 04:27:15 -0500
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:3738 "EHLO
         hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725898AbeLDJ1M (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Dec 2018 04:27:12 -0500
+        with ESMTP id S1725898AbeLDJ1O (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Dec 2018 04:27:14 -0500
 Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c06486f0000>; Tue, 04 Dec 2018 01:27:11 -0800
+        id <B5c0648710000>; Tue, 04 Dec 2018 01:27:13 -0800
 Received: from hqmail.nvidia.com ([172.20.161.6])
   by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 04 Dec 2018 01:27:12 -0800
+  Tue, 04 Dec 2018 01:27:14 -0800
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 04 Dec 2018 01:27:12 -0800
-Received: from HQMAIL102.nvidia.com (172.18.146.10) by HQMAIL104.nvidia.com
- (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 4 Dec
- 2018 09:27:11 +0000
-Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL102.nvidia.com
- (172.18.146.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
- Transport; Tue, 4 Dec 2018 09:27:11 +0000
+        by hqpgpgate101.nvidia.com on Tue, 04 Dec 2018 01:27:14 -0800
+Received: from HQMAIL106.nvidia.com (172.18.146.12) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 4 Dec
+ 2018 09:27:13 +0000
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL106.nvidia.com
+ (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
+ Transport; Tue, 4 Dec 2018 09:27:13 +0000
 Received: from josephl-linux.nvidia.com (Not Verified[10.19.108.132]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5c06486e0004>; Tue, 04 Dec 2018 01:27:11 -0800
+        id <B5c0648700003>; Tue, 04 Dec 2018 01:27:13 -0800
 From:   Joseph Lo <josephl@nvidia.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Peter De Schrijver <pdeschrijver@nvidia.com>,
@@ -46,9 +46,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
 CC:     <linux-arm-kernel@lists.infradead.org>,
         <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
         Joseph Lo <josephl@nvidia.com>
-Subject: [PATCH 16/19] arm64: dts: tegra210-p2371-2180: enable DFLL clock
-Date:   Tue, 4 Dec 2018 17:25:45 +0800
-Message-ID: <20181204092548.3038-17-josephl@nvidia.com>
+Subject: [PATCH 17/19] arm64: dts: tegra210-smaug: add CPU power rail regulator
+Date:   Tue, 4 Dec 2018 17:25:46 +0800
+Message-ID: <20181204092548.3038-18-josephl@nvidia.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181204092548.3038-1-josephl@nvidia.com>
 References: <20181204092548.3038-1-josephl@nvidia.com>
@@ -57,58 +57,59 @@ X-NVConfidentiality: public
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1543915631; bh=kpTaO/fqNYDNOAC7geVVmnzlQpoAANJs9ytAihdlyS8=;
+        t=1543915633; bh=37UJgg+Sk0f+mVmsOgZriZGkBps4DIlrQrAyeAWRxnA=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:MIME-Version:X-NVConfidentiality:
          Content-Transfer-Encoding:Content-Type;
-        b=L/M/Sj8ynTEjWxtRYYC+DvSLPLqJIwVBR/+z2+5YgHvDfCie3hWgOP5s9hG9bSAKF
-         DMsO1Z/OlMGKiFT0KmdaIyXdDeQd5Oef0UgfT/UVn13djqTfIvgKXRIUbrPEFV4U9o
-         YMULr8dWNgvVpj6WP8m5emlQn6mCyg7KTySmVmmfj3XxFWdPMAJob3dBrz4jqI27j8
-         L8cTyLoFwwaSgyeSuMpOIi/b1dxJfACPjl/CRwfCFG/iAfUYpJlExn4Xnrtr3TqeLz
-         5FT+QafRII6Mfg4Cne34+oc2wldACI4JTZvh5WddXmfnbt4n6nXdZLejOulqGw7tia
-         pYnJoak+8bVVA==
+        b=VAMOz7eqaxBxVKYW4FR83jA0Pf+HUF5ZA3pRbroxCgLQItANrtsNdkGAbTImJ05ik
+         UW4PkEzMXdEsxnwtuG4rFfy/yMJJ0fgadJulUFNRSFzCWwSdEpcaPhk3MpMahbjhsp
+         t9+wN3BynMGEGdk+zhBx/86RESeOdrNMduM2hb24DFYb5/AwCsJqm9pJh38twRwM3a
+         XMb5Ox6bRpAS4kRwPnfo0mYIZ7SIIUX7K6tW8XcGFWZ/S1rzODETeE1g9bJDAoe/qy
+         Ln9y35IabNzdxLBDN5Oblz1pEbHM4X9kdzHncWNmi1/I8PYrMC8ujuSr1z1tZ96U75
+         iEgY2Yz27U7sA==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Enable DFLL clock for Jetson TX1 platform.
+Add CPU power rail regulator for Smaug board.
 
 Signed-off-by: Joseph Lo <josephl@nvidia.com>
 ---
- .../boot/dts/nvidia/tegra210-p2371-2180.dts   | 20 +++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ arch/arm64/boot/dts/nvidia/tegra210-smaug.dts | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts b/arch/arm6=
-4/boot/dts/nvidia/tegra210-p2371-2180.dts
-index 37e3c46e753f..53f497c2b3ff 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
-@@ -78,4 +78,24 @@
- 			};
- 		};
- 	};
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts b/arch/arm64/boo=
+t/dts/nvidia/tegra210-smaug.dts
+index 43cae4798870..b3930a9dd139 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+@@ -1340,6 +1340,25 @@
+ 		status =3D "okay";
+ 		clock-frequency =3D <1000000>;
+=20
++		max77621_cpu: max77621@1b {
++			compatible =3D "maxim,max77621";
++			reg =3D <0x1b>;
++			interrupt-parent =3D <&gpio>;
++			interrupts =3D <TEGRA_GPIO(Y, 1) IRQ_TYPE_LEVEL_LOW>;
++			regulator-name =3D "PPVAR_CPU";
++			regulator-min-microvolt =3D <800000>;
++			regulator-max-microvolt =3D <1231250>;
++			regulator-ramp-delay =3D <12500>;
++			regulator-boot-on;
++			regulator-always-on;
++			maxim,dvs-default-state =3D <1>;
++			maxim,enable-active-discharge;
++			maxim,enable-bias-control;
++			maxim,enable-etr;
++			maxim,enable-gpio =3D <&max77620 5 0>;
++			maxim,externally-enable;
++		};
 +
-+	clock@70110000 {
-+		status =3D "okay";
-+		nvidia,pwm-to-pmic;
-+		nvidia,init-uv =3D <1000000>;
-+		nvidia,align-offset-uv =3D <708000>;
-+		nvidia,align-step-uv =3D <19200>;
-+		nvidia,sample-rate =3D <25000>;
-+		nvidia,droop-ctrl =3D <0x00000f00>;
-+		nvidia,force-mode =3D <1>;
-+		nvidia,cf =3D <6>;
-+		nvidia,ci =3D <0>;
-+		nvidia,cg =3D <2>;
-+		nvidia,idle-override;
-+		nvidia,one-shot-calibrate;
-+		nvidia,pwm-period =3D <2500>; /* 2.5us */
-+		pinctrl-names =3D "dvfs_pwm_enable", "dvfs_pwm_disable";
-+		pinctrl-0 =3D <&dvfs_pwm_active_state>;
-+		pinctrl-1 =3D <&dvfs_pwm_inactive_state>;
-+	};
- };
+ 		max77620: max77620@3c {
+ 			compatible =3D "maxim,max77620";
+ 			reg =3D <0x3c>;
 --=20
 2.19.2
 
