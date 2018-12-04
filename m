@@ -2,103 +2,80 @@ Return-Path: <SRS0=3Y/e=ON=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5105C04EB9
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 02:39:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2AADC04EBF
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 03:50:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A13A52081C
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 02:39:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A13A52081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
+	by mail.kernel.org (Postfix) with ESMTP id A953120850
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 03:50:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="HA2WTpto";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="GTjnLMMs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A953120850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725953AbeLDCj2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 3 Dec 2018 21:39:28 -0500
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:42408 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725937AbeLDCj2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Dec 2018 21:39:28 -0500
-Received: from [10.18.29.207] (10.18.29.207) by mail-sh2.amlogic.com
- (10.18.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Tue, 4 Dec 2018
- 10:39:34 +0800
-Subject: Re: [PATCH v7 2/4] clk: meson: add DT documentation for emmc clock
- controller
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-CC:     Yixun Lan <yixun.lan@amlogic.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Liang Yang <liang.yang@amlogic.com>,
-        Jian Hu <jian.hu@amlogic.com>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Hanjie Lin <hanjie.lin@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1542284312-55418-1-git-send-email-jianxin.pan@amlogic.com>
- <1542284312-55418-3-git-send-email-jianxin.pan@amlogic.com>
- <154387713374.88331.16436869339024592009@swboyd.mtv.corp.google.com>
-From:   Jianxin Pan <jianxin.pan@amlogic.com>
-Message-ID: <b401f5bc-32e7-1693-0839-87ffa3dd5767@amlogic.com>
-Date:   Tue, 4 Dec 2018 10:39:34 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.2
-MIME-Version: 1.0
-In-Reply-To: <154387713374.88331.16436869339024592009@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.18.29.207]
-X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
- (10.18.11.6)
+        id S1725977AbeLDDui (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 3 Dec 2018 22:50:38 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:35268 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725962AbeLDDui (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Dec 2018 22:50:38 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 16A4C606FA; Tue,  4 Dec 2018 03:50:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1543895437;
+        bh=Piv1dxtL5r8CQuZmB4FFCKVnhS+8aMckNPd7B/Db6i0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=HA2WTpto+kkTrA8djV0nMBvPt5o57nZclJ/NHfDJY/EgyofFgJYsDkIXD+85FTbaN
+         YtjqWVoM44VMqWKh5w39MIV64r66QbV69V1+mStVlf9m0fl7LNk7wnCqQDleORkqvd
+         0KmTM/a850IiHE1yhFV3OZirwmoiac4ogfSJ6ohM=
+Received: from davidai-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: daidavid1@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 462736019F;
+        Tue,  4 Dec 2018 03:50:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1543895436;
+        bh=Piv1dxtL5r8CQuZmB4FFCKVnhS+8aMckNPd7B/Db6i0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=GTjnLMMsu+whq+sASwbduiU3MfEpryzrFbkp1cVCw5769TKpp9mW4EiWs5h9jzPZw
+         jDkBG/Por+O0yZtLjuOLR8YlT3r9IqvXb4cbmX2Q4P/xcL+0W6cMHC3E/4plMOg2pZ
+         v0oT+5gJ1ivbn+CvK41GTEItG6kJzX0bgcd8in/U=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 462736019F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=daidavid1@codeaurora.org
+From:   David Dai <daidavid1@codeaurora.org>
+To:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+Cc:     David Dai <daidavid1@codeaurora.org>, georgi.djakov@linaro.org,
+        bjorn.andersson@linaro.org, evgreen@google.com,
+        tdas@codeaurora.org, elder@linaro.org
+Subject: [RFC PATCH] Add IPA clock support for clk-rpmh
+Date:   Mon,  3 Dec 2018 19:50:12 -0800
+Message-Id: <1543895413-1553-1-git-send-email-daidavid1@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+This patch extends the existing clk-rpmh driver to support a different
+type of RPMh resource known as Bus Clock Manager(BCM) in order to scale
+performance for the Qualcomm IP Accelerator(IPA) core clock.
 
-On 2018/12/4 6:45, Stephen Boyd wrote:
-> Quoting Jianxin Pan (2018-11-15 04:18:30)
->> diff --git a/include/dt-bindings/clock/amlogic,mmc-clkc.h b/include/dt-bindings/clock/amlogic,mmc-clkc.h
->> new file mode 100644
->> index 0000000..162b949
->> --- /dev/null
->> +++ b/include/dt-bindings/clock/amlogic,mmc-clkc.h
->> @@ -0,0 +1,17 @@
->> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
->> +/*
->> + * Meson MMC sub clock tree IDs
->> + *
->> + * Copyright (c) 2018 Amlogic, Inc. All rights reserved.
->> + * Author: Yixun Lan <yixun.lan@amlogic.com>
->> + */
->> +
->> +#ifndef __MMC_CLKC_H
->> +#define __MMC_CLKC_H
->> +
->> +#define CLKID_MMC_DIV                          1
-> 
-> Why does the define numbering start with 1 instead of 0?
->
-The Clock ID 0 is used by  CLKID_MMC_MUX.
-CLKID_MMC_MUX is an internal clock which defined in drivers/clk/meson/mmc-clkc.c, and it's the parent of CLKID_MMC_DIV.
- 
->> +#define CLKID_MMC_PHASE_CORE                   2
->> +#define CLKID_MMC_PHASE_TX                     3
->> +#define CLKID_MMC_PHASE_RX                     4
->> +
-> 
-> .
-> 
+David Dai (1):
+  clk: qcom: clk-rpmh: Add IPA clock support
+
+ drivers/clk/qcom/clk-rpmh.c           | 142 ++++++++++++++++++++++++++++++++++
+ include/dt-bindings/clock/qcom,rpmh.h |   1 +
+ 2 files changed, 143 insertions(+)
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
