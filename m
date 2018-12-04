@@ -4,98 +4,105 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2C27C04EB8
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 09:27:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F472C04EB8
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 09:30:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86A8820851
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 09:27:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D1D222146D
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 09:30:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="qktwJkGq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86A8820851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XtQx1dAx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1D222146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726024AbeLDJ1T (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 4 Dec 2018 04:27:19 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:3742 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725871AbeLDJ1T (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Dec 2018 04:27:19 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c0648750000>; Tue, 04 Dec 2018 01:27:17 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 04 Dec 2018 01:27:18 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 04 Dec 2018 01:27:18 -0800
-Received: from HQMAIL112.nvidia.com (172.18.146.18) by HQMAIL106.nvidia.com
- (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 4 Dec
- 2018 09:27:18 +0000
-Received: from HQMAIL108.nvidia.com (172.18.146.13) by HQMAIL112.nvidia.com
- (172.18.146.18) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 4 Dec
- 2018 09:27:17 +0000
-Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL108.nvidia.com
- (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
- Transport; Tue, 4 Dec 2018 09:27:17 +0000
-Received: from josephl-linux.nvidia.com (Not Verified[10.19.108.132]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5c0648740000>; Tue, 04 Dec 2018 01:27:17 -0800
-From:   Joseph Lo <josephl@nvidia.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
+        id S1725863AbeLDJa5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 4 Dec 2018 04:30:57 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:40637 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725797AbeLDJa5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Dec 2018 04:30:57 -0500
+Received: by mail-pf1-f196.google.com with SMTP id i12so7915397pfo.7
+        for <linux-clk@vger.kernel.org>; Tue, 04 Dec 2018 01:30:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ksi5DC9S8xu/2FKg8Dsc/QBQ4RCmaSIIb9GmFJwD2uk=;
+        b=XtQx1dAxxGzhscT5ugYeXJtp/kPnmkAJ7U+IXdF5omPTrIoeFkXSQnLgdc/hx+Wzh2
+         Fzzp2x+9BM1auERkemo5Df0RkiKHMZ93v81D1MKTkn2AB71fAM5BCl2mOGdeqgqO/hFt
+         9BBUMEI6+hzjqyir+PGUpldDKGTHfv9wjnLcc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ksi5DC9S8xu/2FKg8Dsc/QBQ4RCmaSIIb9GmFJwD2uk=;
+        b=nlhqYAV9YacTpnzFyg1qde+X08K1iSphptvugRg02kQI5vtA+eKUuhtvsT3NqXCufB
+         vytcs9gQ4bcRjbi/BsF7TXtdAq61tsJXKmgUsus+MZOm1oIYI5FJJZDPZKpmQ4zNenMc
+         eyvbQMg5X4vxlOIlk+Is8rwGfAqQnxhvPhBlFol2up/PTIMgP3OgadZcWXzhWsCsacjm
+         nZm7NibNbmouoUxvX5782HfeQxSCTHCeIH9xVU5mPq58UKHrxAJwEnvcSOY23gumxhvW
+         OvbdA8CdrSmemtZkfry+x+giHqUVv0+C/SgpRTYam8vJuZhvTTb6t5OkJOPMRbp1ChdK
+         kpcA==
+X-Gm-Message-State: AA+aEWZ1OzD7nv3CtnaCPWS5PNBh64S+oUlWt/+yCpQNSTFixprWu6ia
+        ztUB3QQ4bjiSLPgzJQzq4ylfnw==
+X-Google-Smtp-Source: AFSGD/UjIGxS4RgL4ty2Fua3NNl/cYDltdXjjG8/2kTv2PpqTnioIiCm5yaPtBIgZH3l8RasI4cSOA==
+X-Received: by 2002:a63:db02:: with SMTP id e2mr16298362pgg.419.1543915856388;
+        Tue, 04 Dec 2018 01:30:56 -0800 (PST)
+Received: from localhost ([122.172.23.29])
+        by smtp.gmail.com with ESMTPSA id z127sm26914124pfb.80.2018.12.04.01.30.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 04 Dec 2018 01:30:55 -0800 (PST)
+Date:   Tue, 4 Dec 2018 15:00:53 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Joseph Lo <josephl@nvidia.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        Joseph Lo <josephl@nvidia.com>
-Subject: [PATCH 19/19] arm64: defconfig: Enable MAX8973 regulator
-Date:   Tue, 4 Dec 2018 17:25:48 +0800
-Message-ID: <20181204092548.3038-20-josephl@nvidia.com>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181204092548.3038-1-josephl@nvidia.com>
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH 12/19] cpufreq: tegra124: extend to support Tegra210
+Message-ID: <20181204093053.pkwv5yeyjezbw5ay@vireshk-i7>
 References: <20181204092548.3038-1-josephl@nvidia.com>
+ <20181204092548.3038-13-josephl@nvidia.com>
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1543915637; bh=Jw2G9SmrFUt26WmWgjXCnnyrPuOPmpOMPrT1wFjPAQ0=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:MIME-Version:X-NVConfidentiality:
-         Content-Transfer-Encoding:Content-Type;
-        b=qktwJkGqZWXwYOLEWycGsoqyfWyctpI8vhvy65nU2lsHUuHRQv5GfkrmVANudIzjH
-         DSEWYukcwwfa9gymy3hVJJrqZv4oKmhMED4mX3efiz+yr5bll+Lfz7hAFZU0k6K03j
-         Ku7wHzIWg6z0SgG9U1f7S3rsDC7LUc6ZM97CeqabFI8REEVNgFnvzgjpHbZCOZ+uM4
-         dKqE+iN/lUfh6ZTzl9oW5wHP83D/IACzr3ooEG9dhIdl65usJ2atw9KHMAiURrvYvg
-         j1Qtp9xSvoPX+blYvN30+RBMEnThT7927CsooUQX3h1g+sR98RUAv1RXs8JQqK8X6k
-         LQmC5r4gT4Dsw==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181204092548.3038-13-josephl@nvidia.com>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The Tegra210 Smaug board uses MAX77621 for both CPU & GPU rail. Note
-that max8973 and max77621 share the same driver. So enable this driver
-for the PMIC.
+On 04-12-18, 17:25, Joseph Lo wrote:
+> Tegra210 uses the same methodology as Tegra124 for CPUFreq controlling
+> that based on DFLL clock. So extending this driver to support Tegra210.
+> 
+> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> Cc: linux-pm@vger.kernel.org
+> Signed-off-by: Joseph Lo <josephl@nvidia.com>
+> ---
+>  drivers/cpufreq/tegra124-cpufreq.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
+> index 448d00763d00..1af955fb715c 100644
+> --- a/drivers/cpufreq/tegra124-cpufreq.c
+> +++ b/drivers/cpufreq/tegra124-cpufreq.c
+> @@ -159,7 +159,8 @@ static int __init tegra_cpufreq_init(void)
+>  	int ret;
+>  	struct platform_device *pdev;
+>  
+> -	if (!of_machine_is_compatible("nvidia,tegra124"))
+> +	if (!(of_machine_is_compatible("nvidia,tegra124") ||
+> +		of_machine_is_compatible("nvidia,tegra210")))
+>  		return -ENODEV;
+>  
+>  	/*
 
-Signed-off-by: Joseph Lo <josephl@nvidia.com>
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 5c2b1f6842f8..8dab129395a1 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -420,6 +420,7 @@ CONFIG_REGULATOR_GPIO=3Dy
- CONFIG_REGULATOR_HI6421V530=3Dy
- CONFIG_REGULATOR_HI655X=3Dy
- CONFIG_REGULATOR_MAX77620=3Dy
-+CONFIG_REGULATOR_MAX8973=3Dy
- CONFIG_REGULATOR_PWM=3Dy
- CONFIG_REGULATOR_QCOM_RPMH=3Dy
- CONFIG_REGULATOR_QCOM_SMD_RPM=3Dy
---=20
-2.19.2
-
+-- 
+viresh
