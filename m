@@ -2,141 +2,132 @@ Return-Path: <SRS0=3Y/e=ON=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09787C04EB8
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 19:34:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6245CC04EB8
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 19:38:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEF26206B7
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 19:34:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2447B20834
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 19:38:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VPrrXgTW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEF26206B7
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GiVJ17XP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2447B20834
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725909AbeLDTeT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 4 Dec 2018 14:34:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40326 "EHLO mail.kernel.org"
+        id S1725882AbeLDTiT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 4 Dec 2018 14:38:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42376 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725831AbeLDTeT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 4 Dec 2018 14:34:19 -0500
-Received: from mail.kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1725855AbeLDTiT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 4 Dec 2018 14:38:19 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 83BCD206B7;
-        Tue,  4 Dec 2018 19:34:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F009A2081C;
+        Tue,  4 Dec 2018 19:38:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543952057;
-        bh=GI77F+Yj+CEQQ3UgN11HA7GBZePy0yGn6BNz68Zo7O4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VPrrXgTWS648gwpq7Vew3dqhn0RZdXAsqMhbV5cTgxv983/5IjYLth71NpdQar0W/
-         KzoGCQgcoMPcOa+DCjjPAGYc/9/WlYX6mMN93TBPaYfDIRhL1Qp6OYsOly+QKGVrB1
-         YkvJElnKfpAEzPV36PK4g87hM3ablB7xMVvsZFco=
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Dinh Nguyen <dinguyen@opensource.altera.com>
-Subject: [PATCH] clk: socfpga: Don't have get_parent for single parent ops
-Date:   Tue,  4 Dec 2018 11:34:16 -0800
-Message-Id: <20181204193416.24661-1-sboyd@kernel.org>
-X-Mailer: git-send-email 2.20.0.rc1.387.gf8505762e3-goog
-In-Reply-To: <20181204163257.32085-1-jbrunet@baylibre.com>
-References: <20181204163257.32085-1-jbrunet@baylibre.com>
+        s=default; t=1543952298;
+        bh=cngnxl+fU+ayv84S7RyWF15Ik1K/InQVU3DcM+FUCIo=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=GiVJ17XPmwirSW3mJ0E2FkVcefeNrshizET7NcDG5jnG7MaXqI0k5osnMaoe5bl93
+         N0qcwqGPHLoThI7bvvwW7BEyh5aqaCz7dfGbCTMTXf8GwCM4yC0mxMeuaDcfx1/NgI
+         a7rHJUjnXT+FztrZ9FswBU/UCMObuhTN+6XwjK+A=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <a40442ad1a2f1d13798ba535eca371845bae9248.1543922403.git.matti.vaittinen@fi.rohmeurope.com>
+Cc:     mturquette@baylibre.com, cw00.choi@samsung.com, krzk@kernel.org,
+        b.zolnierkie@samsung.com, linux@armlinux.org.uk,
+        andy.gross@linaro.org, david.brown@linaro.org, pavel@ucw.cz,
+        andrew.smirnov@gmail.com, pombredanne@nexb.com,
+        sjhuang@iluvatar.ai, akshu.agrawal@amd.com, djkurtz@chromium.org,
+        rafael.j.wysocki@intel.com, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <cover.1543922403.git.matti.vaittinen@fi.rohmeurope.com>
+ <a40442ad1a2f1d13798ba535eca371845bae9248.1543922403.git.matti.vaittinen@fi.rohmeurope.com>
+Message-ID: <154395229720.88331.16585219136189943316@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v6 03/10] clk: of-provider: look at parent if registered device
+ has no provider info
+Date:   Tue, 04 Dec 2018 11:38:17 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This driver creates a gate clk with the possibility to have multiple
-parents. That can cause problems if the common clk framework tries to
-call the get_parent() op and gets back a number that's larger than the
-number of parents the clk says it supports in
-clk_init_data::num_parents. Let's duplicate the clk_ops structure each
-time this function is called and drop the get/set parent ops when there
-is only one parent. This allows the framework to consider a number
-larger than clk_init_data::num_parents as an error condition of the
-get_parent() clk op, clearing the way for proper code.
+Quoting Matti Vaittinen (2018-12-04 03:34:53)
+> It seems to be usual for MFD devices that the created 'clock sub-device'
+> do not have own DT node. The clock provider information is usually in the
+> main device node which is owned by the MFD device. Change the devm variant
+> of clk of-provider registration to check the parent device node if given
+> device has no own node or if the node does not contain the #clock-cells
+> property. In such case use the parent node if it contains the #clock-cell=
+s.
+> =
 
-Cc: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Dinh Nguyen <dinguyen@opensource.altera.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
----
- drivers/clk/socfpga/clk-gate.c | 22 +++++++++++++---------
- 1 file changed, 13 insertions(+), 9 deletions(-)
+> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> ---
+>  drivers/clk/clk.c | 27 +++++++++++++++++++++++----
+>  1 file changed, 23 insertions(+), 4 deletions(-)
+> =
 
-diff --git a/drivers/clk/socfpga/clk-gate.c b/drivers/clk/socfpga/clk-gate.c
-index aa7a6e6a15b6..73e03328d5c5 100644
---- a/drivers/clk/socfpga/clk-gate.c
-+++ b/drivers/clk/socfpga/clk-gate.c
-@@ -176,8 +176,7 @@ static struct clk_ops gateclk_ops = {
- 	.set_parent = socfpga_clk_set_parent,
- };
- 
--static void __init __socfpga_gate_init(struct device_node *node,
--	const struct clk_ops *ops)
-+void __init socfpga_gate_init(struct device_node *node)
- {
- 	u32 clk_gate[2];
- 	u32 div_reg[3];
-@@ -188,12 +187,17 @@ static void __init __socfpga_gate_init(struct device_node *node,
- 	const char *clk_name = node->name;
- 	const char *parent_name[SOCFPGA_MAX_PARENTS];
- 	struct clk_init_data init;
-+	struct clk_ops *ops;
- 	int rc;
- 
- 	socfpga_clk = kzalloc(sizeof(*socfpga_clk), GFP_KERNEL);
- 	if (WARN_ON(!socfpga_clk))
- 		return;
- 
-+	ops = kmemdup(&gateclk_ops, sizeof(gateclk_ops), GFP_KERNEL);
-+	if (WARN_ON(!ops))
-+		return;
-+
- 	rc = of_property_read_u32_array(node, "clk-gate", clk_gate, 2);
- 	if (rc)
- 		clk_gate[0] = 0;
-@@ -202,8 +206,8 @@ static void __init __socfpga_gate_init(struct device_node *node,
- 		socfpga_clk->hw.reg = clk_mgr_base_addr + clk_gate[0];
- 		socfpga_clk->hw.bit_idx = clk_gate[1];
- 
--		gateclk_ops.enable = clk_gate_ops.enable;
--		gateclk_ops.disable = clk_gate_ops.disable;
-+		ops->enable = clk_gate_ops.enable;
-+		ops->disable = clk_gate_ops.disable;
- 	}
- 
- 	rc = of_property_read_u32(node, "fixed-divider", &fixed_div);
-@@ -234,6 +238,11 @@ static void __init __socfpga_gate_init(struct device_node *node,
- 	init.flags = 0;
- 
- 	init.num_parents = of_clk_parent_fill(node, parent_name, SOCFPGA_MAX_PARENTS);
-+	if (init.num_parents < 2) {
-+		ops->get_parent = NULL;
-+		ops->set_parent = NULL;
-+	}
-+
- 	init.parent_names = parent_name;
- 	socfpga_clk->hw.hw.init = &init;
- 
-@@ -246,8 +255,3 @@ static void __init __socfpga_gate_init(struct device_node *node,
- 	if (WARN_ON(rc))
- 		return;
- }
--
--void __init socfpga_gate_init(struct device_node *node)
--{
--	__socfpga_gate_init(node, &gateclk_ops);
--}
--- 
-Sent by a computer through tubes
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 78c90913f987..66dc7c1483d7 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -3893,6 +3893,11 @@ static void devm_of_clk_release_provider(struct de=
+vice *dev, void *res)
+>         of_clk_del_provider(*(struct device_node **)res);
+>  }
+>  =
+
+> +static int of_is_clk_provider(struct device_node *np)
+> +{
+> +       return !!of_find_property(np, "#clock-cells", NULL);
+> +}
+> +
+>  /**
+>   * devm_of_clk_add_hw_provider() - Managed clk provider node registration
+>   * @dev: Device acting as the clock provider. Used for DT node and lifet=
+ime.
+> @@ -3901,8 +3906,11 @@ static void devm_of_clk_release_provider(struct de=
+vice *dev, void *res)
+>   *
+>   * Returns 0 on success or an errno on failure.
+>   *
+> - * Registers clock provider for given device's node. Provider is automat=
+ically
+> - * released at device exit.
+> + * Registers clock provider for given device's node. If the device has n=
+o DT
+> + * node or if the device node lacks of clock provider information (#cloc=
+k-cells)
+> + * then the parent device's node is scanned for this information. If par=
+ent node
+> + * has the #clock-cells then it is used in registration. Provider is
+> + * automatically released at device exit.
+>   */
+>  int devm_of_clk_add_hw_provider(struct device *dev,
+>                         struct clk_hw *(*get)(struct of_phandle_args *clk=
+spec,
+> @@ -3912,12 +3920,17 @@ int devm_of_clk_add_hw_provider(struct device *de=
+v,
+>         struct device_node **ptr, *np;
+>         int ret;
+>  =
+
+> +       np =3D dev->of_node;
+> +
+> +       if (!of_is_clk_provider(dev->of_node))
+> +               if (of_is_clk_provider(dev->parent->of_node))
+> +                       np =3D dev->parent->of_node;
+
+As said on v5, let's just modify of_clk_add_provider() to do the parent
+search.
 
