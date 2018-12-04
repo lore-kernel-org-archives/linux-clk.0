@@ -2,119 +2,128 @@ Return-Path: <SRS0=3Y/e=ON=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCB43C04EBF
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 19:55:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8313C04EBF
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 20:05:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A37762082B
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 19:55:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 89ED6206B7
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Dec 2018 20:05:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="fc7Ahpkr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A37762082B
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="hKoN2aik"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89ED6206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726406AbeLDTzP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 4 Dec 2018 14:55:15 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:38403 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726181AbeLDTzO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Dec 2018 14:55:14 -0500
-Received: by mail-wm1-f68.google.com with SMTP id m22so10629456wml.3
-        for <linux-clk@vger.kernel.org>; Tue, 04 Dec 2018 11:55:13 -0800 (PST)
+        id S1725797AbeLDUFL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 4 Dec 2018 15:05:11 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:35853 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725866AbeLDUFG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Dec 2018 15:05:06 -0500
+Received: by mail-wr1-f68.google.com with SMTP id u3so17280837wrs.3
+        for <linux-clk@vger.kernel.org>; Tue, 04 Dec 2018 12:05:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=message-id:subject:from:to:cc:date:in-reply-to:references
          :user-agent:mime-version:content-transfer-encoding;
-        bh=JCd78kTlXEdX9E5erBY0ilUCW6utRcMvi/ZMHwzOC4M=;
-        b=fc7Ahpkr6Q4IuGJdnnWvEgSzucyIFImnF5Hq20JY2aXgcDaD3yemmAVSkgK0fXKQFu
-         Rz5WSBuIvu8Qvx0/DIeR91ZZW7BaVouvxzLgWWkMy3fYYvsdHvcMQMoM/1MNoVS7/agR
-         RtMlyzAkKa4N866c6RuL7sVNNQdiGjh9NMWSxJ8RCvja5Na4yMaqMYjyDvarDNA5KgNE
-         SM8cUzOOYf/1rIiFTbp1hqatyMVDS5AHXwo4+GnLbL6z5mzIbIuKWuzBCya+yHn992Fd
-         sGTQHNWGW8DRTp5CaWZdOmtGygWIwCGSEgEx/HmV9O9nQ0CW12Ii555lFCC+NjLjuyg5
-         M2vQ==
+        bh=7WH9JoQsx+LrhFCXwbF/NWnFA3rwkd4OelYwW8l6xp0=;
+        b=hKoN2aikVpRjyNb8oSh9ixndigMRZl11ufnqkBhIKtXGsPtQSh0U3b0wrni/fAD7tv
+         VRrxL8Y+eudzYumkgwcrihWXC6ucmsHEiK76WZB6k6i59cu3JXMKFvnttOgC40fKbszZ
+         lmIz+pHtX+cH9+4tHqU6a4+vDz1CgpCQcWKq/0uGqYTw8mvwMwPeP/Pxf71aXOY1wPUD
+         ODnPOinYQwUuL1CblksbONRkNXYbsJv6VM4j5RuYNhor7LQj+Hg7LT0sNIw2B1McDblm
+         E/KU+O7P4zWj+39GbV/Sp5ba0WmljrN8Wvb342HOo/WQZSnbbJr/TNivFWPHu0OrQjAL
+         bRtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
          :references:user-agent:mime-version:content-transfer-encoding;
-        bh=JCd78kTlXEdX9E5erBY0ilUCW6utRcMvi/ZMHwzOC4M=;
-        b=s9JbnoOr8mwETd1C2Zzi5NHCgmpJAaVKJXQBkW/pCUOq5H7iUgzZVDf4WTcwaH8sUJ
-         wMNk3pQTGq2Oe7pimO7DGBML7fL5NYaRJnSUxq52ZTVj66erRY2qcccO9t15jnllRexS
-         hDx8Ygn3o1uxT4ZwWj4AGVBI7+476wOrhZ8Dk7yJvFYfZ/ED5I1FlhBO1BD7HU/x6lYT
-         1vQZD/dRCbCICEirsBl6JKEPHi38o7A5NLyCvoNsA64FukyaCB7nVQz1Khhi3t1f3p1n
-         xy3O33qacRygDpHq5TJ2Zkh6n6Kv7ed2koU1NqRJfrlZWX9S0TYhnAz3YcPG3hwSDrPi
-         T7bQ==
-X-Gm-Message-State: AA+aEWb723GzGbH0CRMMTMieTqMzBHcTAmKxLGGqZMnDX48h9p3vHMbU
-        qFbAVWBycA5S1ZrxeMRwd19fbw==
-X-Google-Smtp-Source: AFSGD/WO2y0DeFxRHpvMnpLLNtu/eTV7pXSpHoIWuT/q4V/VtQO2VTW2DDt3G/0lRUfd+lNa//57ng==
-X-Received: by 2002:a1c:4e08:: with SMTP id g8mr13194764wmh.46.1543953312911;
-        Tue, 04 Dec 2018 11:55:12 -0800 (PST)
+        bh=7WH9JoQsx+LrhFCXwbF/NWnFA3rwkd4OelYwW8l6xp0=;
+        b=cVZ0nYg6aRK/NBvnRs8ObxVqs514Lzh0v18cngjJQ8skkn2up+qEBEirokfb3vQHn+
+         3R6ifW+ZwKnUPIqgumXkooFtuOtEUym/kpI3Hq/EvIRW9A8BtlLAKPpz6tQ+TA6DFqiQ
+         iYEAQUH6/I3/JDOe627Lkj/R8qv90Tlzf+hZNOptf2p6e8HRSgdJP6odMt5JpAnj2snK
+         vJR1grzNMQyphmH7UCogyLe4e1y8PH/sp1Fq8IwAsjbHGCWbHSgHs8DICo8aYvrHVWJr
+         KrZOVOuIY2joFrtC9sKcetMckeI09vgwkz0+kfmeBoYLjeO1JlBmiCG2iv8lBbqdx0tN
+         MPWQ==
+X-Gm-Message-State: AA+aEWZ17D6RKmwVHeMBj2736lWjTke1jpN841HWNCpSCzVaDEcCa0Ma
+        VA2f/7gUErLEWfQ5UhUGp1mopg==
+X-Google-Smtp-Source: AFSGD/WAu9R1GRTlJrL0Zb50WTZLNjbk8WFhs2XnaX/wrvCXD4dnHMBMkFJm2nZJOC0MlQf3y5LaBw==
+X-Received: by 2002:adf:fe43:: with SMTP id m3mr18768268wrs.290.1543953904416;
+        Tue, 04 Dec 2018 12:05:04 -0800 (PST)
 Received: from boomer.baylibre.com (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
-        by smtp.gmail.com with ESMTPSA id e130sm26384574wmf.25.2018.12.04.11.55.11
+        by smtp.gmail.com with ESMTPSA id c12sm12055655wrs.82.2018.12.04.12.05.03
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 04 Dec 2018 11:55:12 -0800 (PST)
-Message-ID: <38e17678c713c2bde0967ac34349436fffe033dd.camel@baylibre.com>
-Subject: Re: [PATCH] clk: fix clk_mux_val_to_index() error value
+        Tue, 04 Dec 2018 12:05:03 -0800 (PST)
+Message-ID: <2341ec89691f6221bab6a9696ed0c05c3d3de663.camel@baylibre.com>
+Subject: Re: [PATCH] clk: meson-gxbb: switch video clocks mux tables to
+ static
 From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Tue, 04 Dec 2018 20:55:10 +0100
-In-Reply-To: <154394899913.88331.6973889205055781649@swboyd.mtv.corp.google.com>
-References: <20181204163403.32321-1-jbrunet@baylibre.com>
-         <154394899913.88331.6973889205055781649@swboyd.mtv.corp.google.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Date:   Tue, 04 Dec 2018 21:05:02 +0100
+In-Reply-To: <5C06D686.50108@baylibre.com>
+References: <20181204125839.14505-1-narmstrong@baylibre.com>
+         <154394543049.88331.11854270462393390489@swboyd.mtv.corp.google.com>
+         <5C06D686.50108@baylibre.com>
 Content-Type: text/plain; charset="UTF-8"
 User-Agent: Evolution 3.30.2 (3.30.2-2.fc29) 
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 2018-12-04 at 10:43 -0800, Stephen Boyd wrote:
-> Quoting Jerome Brunet (2018-12-04 08:34:03)
-> > clk_mux_val_to_index() is meant to be used by .get_parent(), which
-> > returns a u8, so when the value provided does not map to any valid index,
-> > it is not a good idea to return a negative error value.
+On Tue, 2018-12-04 at 20:33 +0100, Neil Armstrong wrote:
+> Hi Stephen,
+> 
+> Le 04/12/2018 18:43, Stephen Boyd a écrit :
+> > Quoting Neil Armstrong (2018-12-04 04:58:39)
+> > > Makes the following sparse warnings silent:
+> > > drivers/clk/meson/vid-pll-div.c:58:26: warning: symbol '_get_table_val'
+> > > was not declared. Should it be static?
+> > > drivers/clk/meson/gxbb.c:1585:12: warning: symbol
+> > > 'gxbb_vid_pll_parent_names' was not declared. Should it be static?
+> > > drivers/clk/meson/gxbb.c:1620:12: warning: symbol
+> > > 'gxbb_vclk_parent_names' was not declared. Should it be static?
+> > > drivers/clk/meson/gxbb.c:1980:12: warning: symbol
+> > > 'gxbb_cts_parent_names' was not declared. Should it be static?
+> > > drivers/clk/meson/gxbb.c:2036:12: warning: symbol
+> > > 'gxbb_cts_hdmi_tx_parent_names' was not declared. Should it be static?
 > > 
-> > Instead, return num_parents which we know is an invalid index and let
-> > CCF deal with it.
+> > I fixed all of these already in the patch I sent you.
+> 
+> Sorry I misunderstood...
+> 
+> 
+> > > @@ -1983,7 +1983,7 @@ static struct clk_fixed_factor gxbb_vclk2_div12 =
+> > > {
+> > >  };
+> > >  
+> > >  static u32 mux_table_cts_sel[] = { 0, 1, 2, 3, 4, 8, 9, 10, 11, 12 };
 > > 
-> > Fixes: 77deb66d262f ("clk: mux: add helper function for index/value
-> > translation")
-> > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> > ---
+> > I was talking about this mux_table_cts_sel array. Can this be const?
+> > 
 > 
-> Thanks!
-> 
-> > diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-> > index 60c51871b04b..fc20886ef069 100644
-> > --- a/include/linux/clk-provider.h
-> > +++ b/include/linux/clk-provider.h
-> > @@ -550,8 +550,8 @@ struct clk_hw *clk_hw_register_mux_table(struct device
-> > *dev, const char *name,
-> >                 void __iomem *reg, u8 shift, u32 mask,
-> >                 u8 clk_mux_flags, u32 *table, spinlock_t *lock);
-> >  
-> > -int clk_mux_val_to_index(struct clk_hw *hw, u32 *table, unsigned int
-> > flags,
-> > -                        unsigned int val);
-> > +u8 clk_mux_val_to_index(struct clk_hw *hw, u32 *table, unsigned int
-> > flags,
-> 
-> I wonder if we should just make this unsigned int? Does it hurt at all
-> to have it be a wider type even though it doesn't match the CCF decision
-> to make this a u8 for the parent index number space?
-> 
+> Other mux tables aren't const, Jerome so you see a reason why they aren't
+> const ?
 
-I also wondered about this but since the target is get_parent(), I just
-aligned the two.
+I'm surpised we missed that. The PLL params tables of amlogic are all 'static
+const' but all the mux tables are just 'static' , humm
 
-In the end, I don't really care, as you prefer. Just let me know if you would
-like a v2 with this change
+[...] 5 min later [...]
+
+Actually the table field of clk_mux is not const, so giving it a const table
+would produce a warning about discarding const qualifier
+
+I guess there should no problem adding const to the table field of struct
+clk_mux. What do you think Stephen  ?
+
+> 
+> Neil
+
 
