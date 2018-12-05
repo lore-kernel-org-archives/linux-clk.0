@@ -2,163 +2,172 @@ Return-Path: <SRS0=HA4W=OO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B9BEC04EB9
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Dec 2018 06:57:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28572C04EB9
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Dec 2018 07:00:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 334492084C
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Dec 2018 06:57:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="aMBqqgMo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 334492084C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id DFA462084C
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Dec 2018 07:00:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFA462084C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726820AbeLEG5C (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 5 Dec 2018 01:57:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48818 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725975AbeLEG5C (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 5 Dec 2018 01:57:02 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 825DE2082B;
-        Wed,  5 Dec 2018 06:57:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543993021;
-        bh=MXVtmHQq94SWCQYLefz10K5B8VAwOS1nSQUhUkkghzQ=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=aMBqqgMo2okdua5jyGp1OTVc0xbZa9oZyVyyE1FOao0zQyDbbk0D0jN6XPTZ6dJMS
-         O93LRhyYlNR1rSURs1ns6JnnZVC7VE1gnIBcIbD2R7QRzBTK1yMNiaIhIyp7oxG+7S
-         gxmhCzGXmV2xCsZSsYKDEJPrXOa+ckQb8YjwKU1Y=
-Content-Type: text/plain; charset="utf-8"
+        id S1726695AbeLEHAx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 5 Dec 2018 02:00:53 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:38068 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726102AbeLEHAx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Dec 2018 02:00:53 -0500
+Received: by mail-lj1-f196.google.com with SMTP id c19-v6so17301570lja.5;
+        Tue, 04 Dec 2018 23:00:50 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=27B9qMspjDD1AgXG4zXqfQyvg5Itc4l3gB9owMvrM3Q=;
+        b=X8r4j3cumJPUoM42jCpaX1QVOZBC5fHMtE2okmGlcCQSjfLtudFiSQUdab7fpek8oe
+         Aug0gKiHdqV+PdO0paIEmETccbcxvcwAUBXPzd1bsZZePNRAi0SAt4XW6moZYLM6i75f
+         ApHxVI+444+ebEoCh+0J9qdqOWyNhqrBIDtK6fNiBLJ/a84+fZKWwcCPPycNhF3Pk8/9
+         2j1+8cED07Pb4VWqEUHTTO8JTohkAPlMO5RaX4gt+7i96yDkgUcqefFFtFl+RhXh4HPR
+         Y7HFBZvFbekO7Ll/+1lgt6GHXa/2wlLAce0iuI3e1sjyYi/wpoyVz9bjF/L8BG76rI3Y
+         ATDA==
+X-Gm-Message-State: AA+aEWafRu1xXnZo/ZqcAUHDhfQeNG/h9wRcrQGg+bpigrh1mSuQGIHY
+        DKQq4NwFsQ/Rag+HhUhxM0k=
+X-Google-Smtp-Source: AFSGD/WiwQEFwql3iiSwej26/LOJHQCZfhdkkv48Wrxs4/02xOu2RhZf3qo3aFV6UA4/3LLifIZWHw==
+X-Received: by 2002:a2e:449c:: with SMTP id b28-v6mr14439032ljf.47.1543993249678;
+        Tue, 04 Dec 2018 23:00:49 -0800 (PST)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id q127-v6sm3917951ljq.45.2018.12.04.23.00.48
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 04 Dec 2018 23:00:49 -0800 (PST)
+Date:   Wed, 5 Dec 2018 09:00:46 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     mazziesaccount@gmail.com, mturquette@baylibre.com,
+        cw00.choi@samsung.com, krzk@kernel.org, b.zolnierkie@samsung.com,
+        linux@armlinux.org.uk, andy.gross@linaro.org,
+        david.brown@linaro.org, pavel@ucw.cz, andrew.smirnov@gmail.com,
+        pombredanne@nexb.com, sjhuang@iluvatar.ai, akshu.agrawal@amd.com,
+        djkurtz@chromium.org, rafael.j.wysocki@intel.com,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v6 03/10] clk: of-provider: look at parent if registered
+ device has no provider info
+Message-ID: <20181205070046.GD31204@localhost.localdomain>
+References: <cover.1543922403.git.matti.vaittinen@fi.rohmeurope.com>
+ <a40442ad1a2f1d13798ba535eca371845bae9248.1543922403.git.matti.vaittinen@fi.rohmeurope.com>
+ <154395229720.88331.16585219136189943316@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <CAK7LNARwq7Qc527L8P8_=taApi-UE3knHceKBUosi5Yx97+row@mail.gmail.com>
-Cc:     sugaya.taichi@socionext.com, DTML <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-serial@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Jiri Slaby <jslaby@suse.com>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>
-References: <1542589274-13878-1-git-send-email-sugaya.taichi@socionext.com>
- <1542589274-13878-8-git-send-email-sugaya.taichi@socionext.com>
- <154356669840.88331.4455990896653868594@swboyd.mtv.corp.google.com>
- <CAK7LNAQEeLo=PW=DygyVxVHyn5jgRP18nb0cK+u1wGNd4BUh7Q@mail.gmail.com>
- <154394724886.88331.4940706362054124931@swboyd.mtv.corp.google.com>
- <CAK7LNARwq7Qc527L8P8_=taApi-UE3knHceKBUosi5Yx97+row@mail.gmail.com>
-Message-ID: <154399302077.88331.14221169169421246205@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH 07/14] clock: milbeaut: Add Milbeaut M10V clock control
-Date:   Tue, 04 Dec 2018 22:57:00 -0800
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <154395229720.88331.16585219136189943316@swboyd.mtv.corp.google.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Masahiro Yamada (2018-12-04 20:26:06)
-> On Wed, Dec 5, 2018 at 3:14 AM Stephen Boyd <sboyd@kernel.org> wrote:
-> >
-> > Quoting Masahiro Yamada (2018-12-04 03:03:53)
-> > > Hi Stephen,
-> > >
-> > >
-> > > On Fri, Nov 30, 2018 at 5:31 PM Stephen Boyd <sboyd@kernel.org> wrote:
-> > > >
-> > > > Quoting Sugaya Taichi (2018-11-18 17:01:12)
-> > > > > Add Milbeaut M10V clock ( including PLL ) control.
-> > > >
-> > > > Please give some more details here.
-> > > >
-> > > > >
-> > > > > Signed-off-by: Sugaya Taichi <sugaya.taichi@socionext.com>
-> > > > > ---
-> > > > >  drivers/clk/Makefile   |   1 +
-> > > > >  drivers/clk/clk-m10v.c | 671 +++++++++++++++++++++++++++++++++++=
-++++++++++++++
-> > > >
-> > > > And this is different from Uniphier? Maybe we need a socionext
-> > > > directory under drivers/clk/.
-> > >
-> > >
-> > >
-> > > This is always a difficult question,
-> > > and I do not have a strong opinion.
-> > >
-> > >
-> > > I am fine with moving the files to drivers/clk/socionext
-> > > although no file would be shared.
-> > >
-> > >
-> > > FYI
-> > >
-> > > UniPhier and Milbeaut are completely different platforms
-> > > developed/maintained by different teams.
-> > >
-> > > They happen to live in the same company now
-> > > just because Socionext merged the LSI business from Panasonic and Fuj=
-itsu.
-> > >
-> > > UniPhier originates in Panasonic, while Milbeaut in Fujitsu.
-> > >
-> >
-> > Thanks for the background info. I'd prefer to defer to however the dts
-> > files are getting split up into directories. If they're all put under
-> > arch/arm64/boot/dts/socionext/ then I would say combine the two clk
-> > drivers into a socionext directory. Otherwise, keep them split out.
-> =
+Hello Stephen,
 
-> =
+I copied some parts of the v4 discussion here as well. Let's continue
+them under this one email thread. (and yep, this is my bad we now have
+multiple email threads - I did these new patches without waiting for
+the final conclusion. I should try to be more patient in the future...)
 
-> If you want to align with the DT directory structure,
-> the answer is clear.
-> =
+> > > I think we should use parent device's node, not the paren node in DT,        
+> > > right? But I agree, we should only look "one level up in the chain".         
+                                                                                 
+> > Are these two things different? I'm suggesting looking at                      
+> > device_node::parent and trying to find a #clock-cells property.                
+                                                                                 
+> I thought that MFD sub-devices may completely lack the DT node but I
+> will verify this tomorrow.
 
-> =
+So yep. It appears that the DT node for MFD sub-device is left NULL.
+This is quite logical as there really is no clk sub-node in MFD (pmic)
+node. The option to "hack around" this would be setting the of_node to
+parent node in driver code. But this feels wrong. Drivers should not
+mess with the "dt node ownership" - and it also feels a bit odd when
+many devices use same DT node. I think we may hit in problems when
+obtaining resources or doing reference counting. Hence I think we should
+keep the of_node NULL for sub-device if the sub-device does not have own
+node inside the main devie node. And I think Rob was not a fan of having
+own nodes for sub-devices inside the MFD node (AFAIR my first driver
+draft for this device had it but Rob and you thought that was not correct).
 
-> Milbeaut DT files will be put together with UniPhier ones
-> into socionext directory.
-> =
+On Tue, Dec 04, 2018 at 11:38:17AM -0800, Stephen Boyd wrote:
+> Quoting Matti Vaittinen (2018-12-04 03:34:53)
+> > It seems to be usual for MFD devices that the created 'clock sub-device'
+> > do not have own DT node. The clock provider information is usually in the
+> > main device node which is owned by the MFD device. Change the devm variant
+> > of clk of-provider registration to check the parent device node if given
+> > device has no own node or if the node does not contain the #clock-cells
+> > property. In such case use the parent node if it contains the #clock-cells.
+> > 
+> > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> > ---
+> >  drivers/clk/clk.c | 27 +++++++++++++++++++++++----
+> >  1 file changed, 23 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> > index 78c90913f987..66dc7c1483d7 100644
+> > --- a/drivers/clk/clk.c
+> > +++ b/drivers/clk/clk.c
+> > @@ -3893,6 +3893,11 @@ static void devm_of_clk_release_provider(struct device *dev, void *res)
+> >         of_clk_del_provider(*(struct device_node **)res);
+> >  }
+> >  
+> > +static int of_is_clk_provider(struct device_node *np)
+> > +{
+> > +       return !!of_find_property(np, "#clock-cells", NULL);
+> > +}
+> > +
+> >  /**
+> >   * devm_of_clk_add_hw_provider() - Managed clk provider node registration
+> >   * @dev: Device acting as the clock provider. Used for DT node and lifetime.
+> > @@ -3901,8 +3906,11 @@ static void devm_of_clk_release_provider(struct device *dev, void *res)
+> >   *
+> >   * Returns 0 on success or an errno on failure.
+> >   *
+> > - * Registers clock provider for given device's node. Provider is automatically
+> > - * released at device exit.
+> > + * Registers clock provider for given device's node. If the device has no DT
+> > + * node or if the device node lacks of clock provider information (#clock-cells)
+> > + * then the parent device's node is scanned for this information. If parent node
+> > + * has the #clock-cells then it is used in registration. Provider is
+> > + * automatically released at device exit.
+> >   */
+> >  int devm_of_clk_add_hw_provider(struct device *dev,
+> >                         struct clk_hw *(*get)(struct of_phandle_args *clkspec,
+> > @@ -3912,12 +3920,17 @@ int devm_of_clk_add_hw_provider(struct device *dev,
+> >         struct device_node **ptr, *np;
+> >         int ret;
+> >  
+> > +       np = dev->of_node;
+> > +
+> > +       if (!of_is_clk_provider(dev->of_node))
+> > +               if (of_is_clk_provider(dev->parent->of_node))
+> > +                       np = dev->parent->of_node;
+> 
+> As said on v5, let's just modify of_clk_add_provider() to do the parent
+> search.
 
-> =
+But that won't solve the issue if we don't do "dirty hacks" in driver.
+The devm interface still only gets the device-pointer, not the DT node
+as argument. And if DT node for device is NULL (like in MFD cases) -
+then there is no parent node, only parent device with a node. For plain
+of_clk_add_provider() the driver can just give the parent's node pointer
+in cases where it knows it is the parent who has the provider data in
+DT. But our original problem is in devm interfaces.
 
-> For arm64, DT directories are already sorted out by vendors.
-> =
+Br,
+	Matti Vaittinen
 
-> Even 32-bit ARM is going to that way.
-> =
+-- 
+Matti Vaittinen
+ROHM Semiconductors
 
-> Rob Herring just posted a python script
-> to move all DT files in arch/arm/boot/dts/
-> into vendor subdirectories.
-> =
-
-> =
-
-> Please let me know if you want me to
-> move drivers/clk/uniphier/* to drivers/clk/socionext/*.
-> =
-
-
-Maybe the dts needs to be split up instead? Looks like the gpio drivers
-are in a uniphier directory and there is some precedence to keep the
-"taken over" company name when vendors are merged into other vendors.
-Maybe that's how things have happened here? It would be nice to be
-consistent, but I leave the decision up to you to figure out if that
-really matters to you. I'll be fine either way.
-
+~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
