@@ -2,121 +2,153 @@ Return-Path: <SRS0=HA4W=OO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45885C04EB8
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Dec 2018 03:25:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14C8EC04EBF
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Dec 2018 04:27:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2F072084C
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Dec 2018 03:25:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC51F20661
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Dec 2018 04:27:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="iINiaOVc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2F072084C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="21aPeBg7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC51F20661
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725878AbeLEDZs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 4 Dec 2018 22:25:48 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:15135 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725865AbeLEDZs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Dec 2018 22:25:48 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c07453a0000>; Tue, 04 Dec 2018 19:25:46 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 04 Dec 2018 19:25:47 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 04 Dec 2018 19:25:47 -0800
-Received: from [10.19.108.132] (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 5 Dec
- 2018 03:25:45 +0000
-Subject: Re: [PATCH 12/19] cpufreq: tegra124: extend to support Tegra210
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        <linux-pm@vger.kernel.org>
-References: <20181204092548.3038-1-josephl@nvidia.com>
- <20181204092548.3038-13-josephl@nvidia.com>
- <c4f34e85-052b-f3a3-a6ea-715d1971335c@gmail.com>
-From:   Joseph Lo <josephl@nvidia.com>
-Message-ID: <58e13709-79e6-66cc-2858-a51b393da05a@nvidia.com>
-Date:   Wed, 5 Dec 2018 11:25:43 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        id S1726037AbeLEE0z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 4 Dec 2018 23:26:55 -0500
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:40744 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725865AbeLEE0y (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Dec 2018 23:26:54 -0500
+Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com [209.85.222.54]) (authenticated)
+        by conssluserg-04.nifty.com with ESMTP id wB54Qhop005439;
+        Wed, 5 Dec 2018 13:26:43 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com wB54Qhop005439
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1543984004;
+        bh=bjrC8SIQ9Wql171658JORppkFGAKHljcN7ccyt7AwBQ=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=21aPeBg7px8xMsiWQzLanwJVQXrp+U4zUe2Fd90WWCYukQIchiQ5eXHRdZI4JB9Le
+         oifQhnt/awZbKMX+9LJUNxcavSf8Iy/JrdMFiZeDFSnrGZMGEgFr9caET3lNEjdVJp
+         PseiOvWn3+Imp5GSJLEZAeikyz2Utinz6Iau/Cr4I/Fopy3tAvSTBhv+G18OiFou8n
+         kd67y4Ou4plC1MKSpDb1cgIoiWxBbefxKU7WtsctlBm/8xpOvd1W560exKLZKsxqUH
+         IqKcTgN++3xrAKPtK0wvoRPVYRoE6tDbyFjz4u4hcwoXPUzZoyTpoMjezAdgr3muNQ
+         MfjajEtbZb4pA==
+X-Nifty-SrcIP: [209.85.222.54]
+Received: by mail-ua1-f54.google.com with SMTP id u19so6638909uae.4;
+        Tue, 04 Dec 2018 20:26:43 -0800 (PST)
+X-Gm-Message-State: AA+aEWZx7YNKEnuXB7oFl0tLXE6fbjDgRgKEOZGTKgNshRZ+nvm5JRCT
+        HNRojbv0Wq55SIhrYzhq65WLNNxAsm4haeie+1s=
+X-Google-Smtp-Source: AFSGD/U7L09EmqlP4nFCW429bLOC9WG8gDY+Gjv2srOpTTlT6dhYmbTXIX5XRkmQBMbYKbIljHGEmnh9dAnee7Dgp/s=
+X-Received: by 2002:a9f:3193:: with SMTP id v19mr10487783uad.55.1543984002635;
+ Tue, 04 Dec 2018 20:26:42 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <c4f34e85-052b-f3a3-a6ea-715d1971335c@gmail.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1543980346; bh=Zu/iOZ55KNBSOn8UjTX4Y5yu+c+BGbMZ2a/Y0Y1AXs8=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=iINiaOVcWjGz2J766u3HCfb4Xwx3Dc1FYzCdMZZFTlVtQ7m/tl/J0HU1mDl31MKem
-         3tUo6EVKj0Z+qQAABV3IP4IfVGusA+DgN8x5Sy8y0BI6bK5z7InoTKjlqHH2OvSdqn
-         OF0oC3Qkb7jf2dZxsiin3hSxnH22E9moZXMR+jOk21/71JXTnX0xQrrWnLuj2P1fDW
-         ILVisrklQedm1p4kq2q5i02EJcpxiaSDFpgh4J861e4tA77gB68b6T2/0bHkqRDNhJ
-         gblOQdrDVGzkT56qmRJ/PFb8saX3ZayytMzHx6TNzJCkhc9+xasvpWzy9UUfzKDZ5y
-         QXk3gLCwjMgOA==
+References: <1542589274-13878-1-git-send-email-sugaya.taichi@socionext.com>
+ <1542589274-13878-8-git-send-email-sugaya.taichi@socionext.com>
+ <154356669840.88331.4455990896653868594@swboyd.mtv.corp.google.com>
+ <CAK7LNAQEeLo=PW=DygyVxVHyn5jgRP18nb0cK+u1wGNd4BUh7Q@mail.gmail.com> <154394724886.88331.4940706362054124931@swboyd.mtv.corp.google.com>
+In-Reply-To: <154394724886.88331.4940706362054124931@swboyd.mtv.corp.google.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Wed, 5 Dec 2018 13:26:06 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARwq7Qc527L8P8_=taApi-UE3knHceKBUosi5Yx97+row@mail.gmail.com>
+Message-ID: <CAK7LNARwq7Qc527L8P8_=taApi-UE3knHceKBUosi5Yx97+row@mail.gmail.com>
+Subject: Re: [PATCH 07/14] clock: milbeaut: Add Milbeaut M10V clock control
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     sugaya.taichi@socionext.com, DTML <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-serial@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Jiri Slaby <jslaby@suse.com>,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 12/4/18 7:22 PM, Dmitry Osipenko wrote:
-> On 04.12.2018 12:25, Joseph Lo wrote:
->> Tegra210 uses the same methodology as Tegra124 for CPUFreq controlling
->> that based on DFLL clock. So extending this driver to support Tegra210.
->>
->> Cc: Viresh Kumar <viresh.kumar@linaro.org>
->> Cc: linux-pm@vger.kernel.org
->> Signed-off-by: Joseph Lo <josephl@nvidia.com>
->> ---
->>   drivers/cpufreq/tegra124-cpufreq.c | 3 ++-
->>   1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
->> index 448d00763d00..1af955fb715c 100644
->> --- a/drivers/cpufreq/tegra124-cpufreq.c
->> +++ b/drivers/cpufreq/tegra124-cpufreq.c
->> @@ -159,7 +159,8 @@ static int __init tegra_cpufreq_init(void)
->>   	int ret;
->>   	struct platform_device *pdev;
->>   
->> -	if (!of_machine_is_compatible("nvidia,tegra124"))
->> +	if (!(of_machine_is_compatible("nvidia,tegra124") ||
->> +		of_machine_is_compatible("nvidia,tegra210")))
->>   		return -ENODEV;
->>   
->>   	/*
->>
-> 
-> Seems that's not enough, you also need to blacklist "nvidia,tegra210" in the drivers/cpufreq/cpufreq-dt-platdev.c
+On Wed, Dec 5, 2018 at 3:14 AM Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> Quoting Masahiro Yamada (2018-12-04 03:03:53)
+> > Hi Stephen,
+> >
+> >
+> > On Fri, Nov 30, 2018 at 5:31 PM Stephen Boyd <sboyd@kernel.org> wrote:
+> > >
+> > > Quoting Sugaya Taichi (2018-11-18 17:01:12)
+> > > > Add Milbeaut M10V clock ( including PLL ) control.
+> > >
+> > > Please give some more details here.
+> > >
+> > > >
+> > > > Signed-off-by: Sugaya Taichi <sugaya.taichi@socionext.com>
+> > > > ---
+> > > >  drivers/clk/Makefile   |   1 +
+> > > >  drivers/clk/clk-m10v.c | 671 +++++++++++++++++++++++++++++++++++++++++++++++++
+> > >
+> > > And this is different from Uniphier? Maybe we need a socionext
+> > > directory under drivers/clk/.
+> >
+> >
+> >
+> > This is always a difficult question,
+> > and I do not have a strong opinion.
+> >
+> >
+> > I am fine with moving the files to drivers/clk/socionext
+> > although no file would be shared.
+> >
+> >
+> > FYI
+> >
+> > UniPhier and Milbeaut are completely different platforms
+> > developed/maintained by different teams.
+> >
+> > They happen to live in the same company now
+> > just because Socionext merged the LSI business from Panasonic and Fujitsu.
+> >
+> > UniPhier originates in Panasonic, while Milbeaut in Fujitsu.
+> >
+>
+> Thanks for the background info. I'd prefer to defer to however the dts
+> files are getting split up into directories. If they're all put under
+> arch/arm64/boot/dts/socionext/ then I would say combine the two clk
+> drivers into a socionext directory. Otherwise, keep them split out.
 
-Hi Dmitry,
 
-Thanks for reviewing. Actually it's "just" enough, I did check that 
-driver for creating device data for cpufreq-dt driver. It needs to have 
-both OPP v2 property and blacklist to create device data.
+If you want to align with the DT directory structure,
+the answer is clear.
 
-Because we don't use OPP v2, it will never be true. So it will "just" 
-work in this case.
 
-But you are right, add that to blacklist is more clear. I can add one 
-more patch for that in next series.
+Milbeaut DT files will be put together with UniPhier ones
+into socionext directory.
 
-Thanks,
-Joseph
+
+For arm64, DT directories are already sorted out by vendors.
+
+Even 32-bit ARM is going to that way.
+
+Rob Herring just posted a python script
+to move all DT files in arch/arm/boot/dts/
+into vendor subdirectories.
+
+
+Please let me know if you want me to
+move drivers/clk/uniphier/* to drivers/clk/socionext/*.
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
