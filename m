@@ -3,101 +3,123 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3BEFC04EBF
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Dec 2018 19:35:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E680C04EB9
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Dec 2018 19:41:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A843C20989
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Dec 2018 19:35:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 03BCD208E7
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Dec 2018 19:41:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544038525;
-	bh=UQcEC3lOYxzmO7G3948nOyr4EYkWEM4aL5QnY6s0R+w=;
+	s=default; t=1544038864;
+	bh=c06hqMnM00NOPeTCT27KnLTKJd29CYg7xBJXvl/L2lE=;
 	h=To:From:In-Reply-To:Cc:References:Subject:Date:List-ID:From;
-	b=rYUSsryGVAI0y48fdFZ+rWGxPxe60HvljT6K0JH0fnrbSlBr4aeFoVG/lyLmhYegz
-	 61dfU+J3EJdzJg9H9no/L9PnsDoP6zFWL0pIm4b+fzLr+sygAxTdbWp2P9rtFZz4o3
-	 7O7WmNU8xsZrt08de76R5HjDuMrzNDUGgqoaRILo=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A843C20989
+	b=xU20ZJYbuAuDD5ML2J5dSBGcoXb5KuPP2Vi5Dx4iAv4dduOiRQWfTzT5tok5+h80O
+	 TGSWFZ2G1mi5GEcVkUHZdb/WixSyDi+3MwROKRFIz3KnHXY9p50ZA1E4QiHQLJtdxg
+	 qv7zzEtEnJjO+0mpXqdqTJVBt/Rcimk69SM/KUW0=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03BCD208E7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727679AbeLETfU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 5 Dec 2018 14:35:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52022 "EHLO mail.kernel.org"
+        id S1728341AbeLETlD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 5 Dec 2018 14:41:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53396 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727349AbeLETfU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 5 Dec 2018 14:35:20 -0500
+        id S1727523AbeLETlD (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 5 Dec 2018 14:41:03 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1827120892;
-        Wed,  5 Dec 2018 19:35:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B219220892;
+        Wed,  5 Dec 2018 19:41:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544038519;
-        bh=UQcEC3lOYxzmO7G3948nOyr4EYkWEM4aL5QnY6s0R+w=;
+        s=default; t=1544038862;
+        bh=c06hqMnM00NOPeTCT27KnLTKJd29CYg7xBJXvl/L2lE=;
         h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=FGhavkkRZhVmFhwBh/loWWnIPWRHGIt2+CZuPSXjxfUWkdCKZS2e2sl4gumnEiZj4
-         k78K635v1p//Ov67xqqjZ02PhIypJ4QMFU6yk6UXr7yx61E+URmcW2zKe/LjK5dFIl
-         aGRvF7Q1dMzN3RLnwcWC4hVTRDPCE/C+IwnUjfw8=
+        b=OGo1uSUsl+FQCjMfP6uueQvHzEFP2KH3k0mwdEURqihz+w3PKZXjW21X5wWIcmKDY
+         yfjzL+KOupCXFQKVxBfR3YGZsTCFp/O1XoGG6mQv2bIKyCctIuwdc8fhJ7UfQN/kLT
+         Tl9Q1nDuA20eeTCi6i+dLSc3TdOow8Fm0Mx5L4XA=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        Aisheng DONG <aisheng.dong@nxp.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20181205182058.GF31204@localhost.localdomain>
-Cc:     mazziesaccount@gmail.com, mturquette@baylibre.com,
-        cw00.choi@samsung.com, krzk@kernel.org, b.zolnierkie@samsung.com,
-        linux@armlinux.org.uk, andy.gross@linaro.org,
-        david.brown@linaro.org, pavel@ucw.cz, andrew.smirnov@gmail.com,
-        pombredanne@nexb.com, sjhuang@iluvatar.ai, akshu.agrawal@amd.com,
-        djkurtz@chromium.org, rafael.j.wysocki@intel.com,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <cover.1543922403.git.matti.vaittinen@fi.rohmeurope.com>
- <a40442ad1a2f1d13798ba535eca371845bae9248.1543922403.git.matti.vaittinen@fi.rohmeurope.com>
- <154395229720.88331.16585219136189943316@swboyd.mtv.corp.google.com>
- <20181205070046.GD31204@localhost.localdomain>
- <154403037317.88331.9382087418367713867@swboyd.mtv.corp.google.com>
- <20181205182058.GF31204@localhost.localdomain>
-Message-ID: <154403851843.88331.12634260159268245703@swboyd.mtv.corp.google.com>
+In-Reply-To: <AM0PR04MB42111FFF525D6EC5D785692380AF0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Anson Huang <anson.huang@nxp.com>,
+        Jacky Bai <ping.bai@nxp.com>, dl-linux-imx <linux-imx@nxp.com>
+References: <1542200198-3017-1-git-send-email-aisheng.dong@nxp.com>
+ <154386550302.88331.785218354920872757@swboyd.mtv.corp.google.com>
+ <AM0PR04MB42111FFF525D6EC5D785692380AF0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+Message-ID: <154403886196.88331.15597466595875847820@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.7
-Subject: Re: [PATCH v6 03/10] clk: of-provider: look at parent if registered device
- has no provider info
-Date:   Wed, 05 Dec 2018 11:35:18 -0800
+Subject: RE: [PATCH V6 0/9] clk: add imx7ulp clk support
+Date:   Wed, 05 Dec 2018 11:41:01 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Matti Vaittinen (2018-12-05 10:20:58)
-> On Wed, Dec 05, 2018 at 09:19:33AM -0800, Stephen Boyd wrote:
-> > Quoting Matti Vaittinen (2018-12-04 23:00:46)
-> > > But that won't solve the issue if we don't do "dirty hacks" in driver.
-> > > The devm interface still only gets the device-pointer, not the DT node
-> > > as argument. And if DT node for device is NULL (like in MFD cases) -
-> > > then there is no parent node, only parent device with a node. For pla=
-in
-> > > of_clk_add_provider() the driver can just give the parent's node poin=
-ter
-> > > in cases where it knows it is the parent who has the provider data in
-> > > DT. But our original problem is in devm interfaces.
-> > > =
-
+Quoting Aisheng DONG (2018-12-03 17:29:29)
+> > -----Original Message-----
+> > From: Stephen Boyd [mailto:sboyd@kernel.org]
+> > Sent: Tuesday, December 4, 2018 3:32 AM
+> > To: Aisheng DONG <aisheng.dong@nxp.com>; linux-clk@vger.kernel.org
+> > Cc: linux-kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
+> > mturquette@baylibre.com; shawnguo@kernel.org; Anson Huang
+> > <anson.huang@nxp.com>; Jacky Bai <ping.bai@nxp.com>; dl-linux-imx
+> > <linux-imx@nxp.com>; Aisheng DONG <aisheng.dong@nxp.com>
+> > Subject: Re: [PATCH V6 0/9] clk: add imx7ulp clk support
 > > =
 
-> > I was misunderstanding the MFD design. Should still work though, so I
-> > squashed this into the patch to clean things up a bit. Does this work
-> > for you?
+> > Quoting A.s. Dong (2018-11-14 05:01:31)
+> > > This patch series intends to add imx7ulp clk support.
+> > >
+> > > i.MX7ULP Clock functions are under joint control of the System Clock
+> > > Generation (SCG) modules, Peripheral Clock Control (PCC) modules, and
+> > > Core Mode Controller (CMC)1 blocks
+> > >
+> > > The clocking scheme provides clear separation between M4 domain and A7
+> > > domain. Except for a few clock sources shared between two domains,
+> > > such as the System Oscillator clock, the Slow IRC (SIRC), and and the
+> > > Fast IRC clock (FIRCLK), clock sources and clock management are
+> > > separated and contained within each domain.
+> > >
+> > > M4 clock management consists of SCG0, PCC0, PCC1, and CMC0 modules.
+> > > A7 clock management consists of SCG1, PCC2, PCC3, and CMC1 modules.
+> > >
+> > > Note: this series only adds A7 clock domain support as M4 clock domain
+> > > will be handled by M4 seperately.
+> > >
+> > =
+
+> > I got:
+> > =
+
+> > drivers/clk/imx/clk-pllv4.c:152:15: warning: symbol 'imx_clk_pllv4' was=
+ not
+> > declared. Should it be static?
+> > drivers/clk/imx/clk-pfdv2.c:166:15: warning: symbol 'imx_clk_pfdv2' was=
+ not
+> > declared. Should it be static?
+> > drivers/clk/imx/clk-divider-gate.c:174:15: warning: symbol
+> > 'imx_clk_divider_gate' was not declared. Should it be static?
+> > drivers/clk/imx/clk-composite-7ulp.c:22:15: warning: symbol
+> > 'imx7ulp_clk_composite' was not declared. Should it be static?
+> > =
+
+> > which I can fix easily by throwing in clk.h into each file.
 > =
 
-> This looks good to me. Especially changing the of_is_clk_provider to
-> get_clk_provider_node which allows to remove some repetition. If you
-> apply this then I will drop my patch from the series. Just please let me
-> know. I will cook version 7 of the series at Friday - tomorrow is the
-> independence day in Finland and I'll be offline =3D)
+> Thanks, I will double check it when I back to office.
 > =
 
 
-Ok, I applied it this patch with the squash to clk-next.
+No worries, I fixed it up and merged to clk-next.
 
