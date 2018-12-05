@@ -2,117 +2,160 @@ Return-Path: <SRS0=HA4W=OO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4533C04EB9
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Dec 2018 07:15:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 514A9C04EB9
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Dec 2018 07:17:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77A7520850
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Dec 2018 07:15:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0FE0020851
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Dec 2018 07:17:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VZsfnPMJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77A7520850
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SuvnwFu+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FE0020851
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726695AbeLEHPv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 5 Dec 2018 02:15:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54576 "EHLO mail.kernel.org"
+        id S1726866AbeLEHR6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 5 Dec 2018 02:17:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54864 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726351AbeLEHPv (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 5 Dec 2018 02:15:51 -0500
+        id S1726820AbeLEHR6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 5 Dec 2018 02:17:58 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 61D0A206B7;
-        Wed,  5 Dec 2018 07:15:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A94F8206B7;
+        Wed,  5 Dec 2018 07:17:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1543994149;
-        bh=QA2f4A6WaubtcLivsxrypjR7/T1YXiEXXTZDJwOlun0=;
+        s=default; t=1543994277;
+        bh=0IvXpJeJXu00HIXTSp7TLtsxyalDAfaE1CTqqwJAClI=;
         h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=VZsfnPMJwL4ZldvpMVkT3ooBr17j75HxVOr+fTtPljxBhmppTfwr2qlAST8zaydSu
-         BJh7CWfpWX4TftwiPIWBOzDUVz9a66RL0A6uSLi/SMtRxbmxe2zEtmakRk2Zy3QDjo
-         zFB/CtDzOsUhqpSMY9U4VzMnLxFp9bhzKzH8UN/4=
+        b=SuvnwFu+33tIF6EMqfOWZ09Bn5zPP617pnLZmbYEBdwhpwiTR0i7IfuqfVqetzs0d
+         ZOOweqAARe4nwgntMDHh6ZFyiRSNCzocNwjbD3oYf+hHETHvJ7z9J/pXXon+oy965x
+         5Hdyc0Vek7HafgnrqoA5eWjDcj6qRdW5pyMl6z4o=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-To:     Alex Elder <elder@linaro.org>,
-        David Dai <daidavid1@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Dinh Nguyen <dinguyen@kernel.org>
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <edeebce5-24a2-b844-6bff-781017949e2d@codeaurora.org>
-Cc:     georgi.djakov@linaro.org, bjorn.andersson@linaro.org,
-        evgreen@google.com, tdas@codeaurora.org
-References: <1543895413-1553-1-git-send-email-daidavid1@codeaurora.org>
- <1543895413-1553-2-git-send-email-daidavid1@codeaurora.org>
- <154395145491.88331.1174781210192403998@swboyd.mtv.corp.google.com>
- <8dafe631-4b16-94cd-392e-84728f2bb382@linaro.org>
- <154396284056.88331.12279283832884556349@swboyd.mtv.corp.google.com>
- <edeebce5-24a2-b844-6bff-781017949e2d@codeaurora.org>
-Message-ID: <154399414865.88331.2447825064224349951@swboyd.mtv.corp.google.com>
+In-Reply-To: <20181204193416.24661-1-sboyd@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+References: <20181204163257.32085-1-jbrunet@baylibre.com>
+ <20181204193416.24661-1-sboyd@kernel.org>
+Message-ID: <154399427706.88331.4744072908182655454@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.7
-Subject: Re: [RFC PATCH] clk: qcom: clk-rpmh: Add IPA clock support
-Date:   Tue, 04 Dec 2018 23:15:48 -0800
+Subject: Re: [PATCH] clk: socfpga: Don't have get_parent for single parent ops
+Date:   Tue, 04 Dec 2018 23:17:57 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting David Dai (2018-12-04 17:14:10)
+(Adding Dinh's korg email)
+
+I also wonder if this driver is even used anymore or maybe we can delete
+it?
+
+Quoting Stephen Boyd (2018-12-04 11:34:16)
+> This driver creates a gate clk with the possibility to have multiple
+> parents. That can cause problems if the common clk framework tries to
+> call the get_parent() op and gets back a number that's larger than the
+> number of parents the clk says it supports in
+> clk_init_data::num_parents. Let's duplicate the clk_ops structure each
+> time this function is called and drop the get/set parent ops when there
+> is only one parent. This allows the framework to consider a number
+> larger than clk_init_data::num_parents as an error condition of the
+> get_parent() clk op, clearing the way for proper code.
 > =
 
-> On 12/4/2018 2:34 PM, Stephen Boyd wrote:
-> > Quoting Alex Elder (2018-12-04 13:41:47)
-> >> On 12/4/18 1:24 PM, Stephen Boyd wrote:
-> >>> Quoting David Dai (2018-12-03 19:50:13)
-> >>>> Add IPA clock support by extending the current clk rpmh driver to su=
-pport
-> >>>> clocks that are managed by a different type of RPMh resource known as
-> >>>> Bus Clock Manager(BCM).
-> >>> Yes, but why? Does the IPA driver need to set clk rates and that some=
-how
-> >>> doesn't work as a bandwidth request?
-> >> The IPA core clock is a *clock*, not a bus.  Representing it as if
-> >> it were a bus, abusing the interconnect interface--pretending a bandwi=
-dth
-> >> request is really a clock rate request--is kind of kludgy.  I think Bj=
-orn
-> >> and David (and maybe Georgi? I don't know) decided a long time ago that
-> >> exposing this as a clock is the right way to do it.  I agree with that.
-> >>
-> > But then we translate that clock rate into a bandwidth request to the
-> > BCM hardware? Seems really weird because it's doing the opposite of what
-> > you say is abusive. What does the IPA driver plan to do with this clk?
-> > Calculate a frequency by knowing that it really boils down to some
-> > bandwidth that then gets converted back into some clock frequency? Do we
-> > have the user somewhere that can be pointed to?
-> The clock rate is translated into a unitless threshold value sent as =
+> Cc: Jerome Brunet <jbrunet@baylibre.com>
+> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Cc: Dinh Nguyen <dinguyen@opensource.altera.com>
+> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+> ---
+>  drivers/clk/socfpga/clk-gate.c | 22 +++++++++++++---------
+>  1 file changed, 13 insertions(+), 9 deletions(-)
+> =
 
-> part of the rpmh msg
-> that BCM takes to select a performance. In this case, the unit =
+> diff --git a/drivers/clk/socfpga/clk-gate.c b/drivers/clk/socfpga/clk-gat=
+e.c
+> index aa7a6e6a15b6..73e03328d5c5 100644
+> --- a/drivers/clk/socfpga/clk-gate.c
+> +++ b/drivers/clk/socfpga/clk-gate.c
+> @@ -176,8 +176,7 @@ static struct clk_ops gateclk_ops =3D {
+>         .set_parent =3D socfpga_clk_set_parent,
+>  };
+>  =
 
-> conversion is based on
-> the unit value read from the aux data which is in Khz. I understand that =
+> -static void __init __socfpga_gate_init(struct device_node *node,
+> -       const struct clk_ops *ops)
+> +void __init socfpga_gate_init(struct device_node *node)
+>  {
+>         u32 clk_gate[2];
+>         u32 div_reg[3];
+> @@ -188,12 +187,17 @@ static void __init __socfpga_gate_init(struct devic=
+e_node *node,
+>         const char *clk_name =3D node->name;
+>         const char *parent_name[SOCFPGA_MAX_PARENTS];
+>         struct clk_init_data init;
+> +       struct clk_ops *ops;
+>         int rc;
+>  =
 
-> this wasn't
-> explicitly mentioned anywhere and I'll improve on that next patch. =
+>         socfpga_clk =3D kzalloc(sizeof(*socfpga_clk), GFP_KERNEL);
+>         if (WARN_ON(!socfpga_clk))
+>                 return;
+>  =
 
+> +       ops =3D kmemdup(&gateclk_ops, sizeof(gateclk_ops), GFP_KERNEL);
+> +       if (WARN_ON(!ops))
+> +               return;
+> +
+>         rc =3D of_property_read_u32_array(node, "clk-gate", clk_gate, 2);
+>         if (rc)
+>                 clk_gate[0] =3D 0;
+> @@ -202,8 +206,8 @@ static void __init __socfpga_gate_init(struct device_=
+node *node,
+>                 socfpga_clk->hw.reg =3D clk_mgr_base_addr + clk_gate[0];
+>                 socfpga_clk->hw.bit_idx =3D clk_gate[1];
+>  =
 
-How is this different from bus bandwidth requests? In those cases the
-bandwidth is calculated in bits per second or something like that, and
-written to the hardware so it can convert that bandwidth into kHz and
-set a bus clk frequency in the clock controller? So in the IPA case
-we've skipped the bps to kHz conversion step and gone straight to the
-clk frequency setting part? Is a BCM able to aggregate units of
-bandwidth or kHz depending on how it's configured and this BCM is
-configured for kHz?
+> -               gateclk_ops.enable =3D clk_gate_ops.enable;
+> -               gateclk_ops.disable =3D clk_gate_ops.disable;
+> +               ops->enable =3D clk_gate_ops.enable;
+> +               ops->disable =3D clk_gate_ops.disable;
+>         }
+>  =
 
-> Here's a link to
-> the IPA driver implementation: https://lkml.org/lkml/2018/11/7/220
+>         rc =3D of_property_read_u32(node, "fixed-divider", &fixed_div);
+> @@ -234,6 +238,11 @@ static void __init __socfpga_gate_init(struct device=
+_node *node,
+>         init.flags =3D 0;
+>  =
 
-Thanks for the link. It looks like the IPA driver hard codes a rate of
-75 MHz.
+>         init.num_parents =3D of_clk_parent_fill(node, parent_name, SOCFPG=
+A_MAX_PARENTS);
+> +       if (init.num_parents < 2) {
+> +               ops->get_parent =3D NULL;
+> +               ops->set_parent =3D NULL;
+> +       }
+> +
+>         init.parent_names =3D parent_name;
+>         socfpga_clk->hw.hw.init =3D &init;
+>  =
 
+> @@ -246,8 +255,3 @@ static void __init __socfpga_gate_init(struct device_=
+node *node,
+>         if (WARN_ON(rc))
+>                 return;
+>  }
+> -
+> -void __init socfpga_gate_init(struct device_node *node)
+> -{
+> -       __socfpga_gate_init(node, &gateclk_ops);
+> -}
