@@ -2,214 +2,162 @@ Return-Path: <SRS0=HA4W=OO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A68EBC04EBF
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Dec 2018 09:30:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EED1EC04EB9
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Dec 2018 09:51:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DB34206B7
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Dec 2018 09:30:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A95002082B
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Dec 2018 09:51:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="BG6mdKLh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DB34206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="u3YUik7j"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A95002082B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726861AbeLEJaf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 5 Dec 2018 04:30:35 -0500
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:2115 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726102AbeLEJae (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Dec 2018 04:30:34 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c079ab90000>; Wed, 05 Dec 2018 01:30:33 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 05 Dec 2018 01:30:32 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 05 Dec 2018 01:30:32 -0800
-Received: from [10.19.108.132] (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 5 Dec
- 2018 09:30:30 +0000
-Subject: Re: [PATCH 08/19] clk: tegra: dfll: round down voltages based on
- alignment
-To:     Peter De Schrijver <pdeschrijver@nvidia.com>
-CC:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
-References: <20181204092548.3038-1-josephl@nvidia.com>
- <20181204092548.3038-9-josephl@nvidia.com>
- <20181204154618.GC26056@pdeschrijver-desktop.Nvidia.com>
- <1cbe2662-1b5e-8261-f0c1-04a760cb08c1@nvidia.com>
- <7f90eae3-42fe-e771-b2f0-421c617db11e@nvidia.com>
- <20181205091114.GF26056@pdeschrijver-desktop.Nvidia.com>
-From:   Joseph Lo <josephl@nvidia.com>
-Message-ID: <19fcd20b-74b0-f784-350d-4c4d0646265c@nvidia.com>
-Date:   Wed, 5 Dec 2018 17:30:28 +0800
+        id S1728305AbeLEJvm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 5 Dec 2018 04:51:42 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:53224 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727877AbeLEJvl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Dec 2018 04:51:41 -0500
+Received: by mail-wm1-f68.google.com with SMTP id r11-v6so12466148wmb.2
+        for <linux-clk@vger.kernel.org>; Wed, 05 Dec 2018 01:51:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:from:to:cc:references:openpgp:autocrypt:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=AsJlj7TTdyb72m1SKwkKkmtm6HVwnxQK4+r+hq0uuDA=;
+        b=u3YUik7j5JhEtKfoLDIHcsx6lrjBru8JtcUSxmIld+yn3Tyr8g5L+uX1tXim42MvGd
+         53qbnfLfxH6HZedUbtBgmD9nzbmYy59E2rtMLUGs/RJztqyGUvRineaJMvC7ujdJni18
+         aNyUAb+Y1ADwdggOWxTys964IqNHNUlSamwtj57c3CeqS8iGBZl4FUR3lXTrOng39uyR
+         XnpiwBKXj5WuLBWABHPUJyG8yj0ZuPFhipxFg0YS2quphoj0vbZgEwNRWnSGejjTHH7F
+         ZiM5gIwApNofnAuDBLoAWnm0KhdRVUHwrswwfzD0WYSwUYPwe9JZY226lzZpRIdMx51g
+         EdlQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:openpgp:autocrypt
+         :organization:message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=AsJlj7TTdyb72m1SKwkKkmtm6HVwnxQK4+r+hq0uuDA=;
+        b=ICixSI9QH+Ux1xHYdBFbI3DO6lAVAZkMU+0vwrp0kq8kRDNgynuwhJ9m3bPn71lUBE
+         6T4qAWrzlYSL1rhpewUpEaAMmT96d8CdSaZ3o+MyaCDPU2VR4waqevLZU9Ec+L0fhhHv
+         TSaxziePwTtsAj57/W80YOAKk+26yVW6lnkVh0x/xx+I+GOlJTzXdP+2YO5an9DFSXdz
+         5vRUCeFDb5Yk2KKAk5RXdJFb8XMUq2F7PiP4NZhM7SklpQRSXZm2gIVyRWlsuwRcOBhJ
+         XpTwLUdttZ9e5ThUPszjz7yL2hVJMwF2CGkQxmVQ/NY2tuwmqfKSA+DRwqkzRI+1Foyf
+         98yA==
+X-Gm-Message-State: AA+aEWZZJ2OnJta9LOv1ctD736UOINipc9slojd7awLtmhEBVKovK92F
+        dKRZDSpY7mlLmuc++prq3gGdIQ==
+X-Google-Smtp-Source: AFSGD/VhdQyuxXg13sBUAyRXmrIUvmgyWpwT4LequVvKOVPvH1qwGhumZEvQ99umm4SLhHGxzB0HYQ==
+X-Received: by 2002:a1c:cec1:: with SMTP id e184mr15934500wmg.75.1544003499502;
+        Wed, 05 Dec 2018 01:51:39 -0800 (PST)
+Received: from ?IPv6:2a01:cb1d:4ce:ea00:819f:4d34:9af9:e67? ([2a01:cb1d:4ce:ea00:819f:4d34:9af9:e67])
+        by smtp.gmail.com with ESMTPSA id y34sm49302614wrd.68.2018.12.05.01.51.38
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Dec 2018 01:51:38 -0800 (PST)
+Subject: Re: [PATCH 0/5] clk: meson: axg: add 32k clock generation
+From:   Neil Armstrong <narmstrong@baylibre.com>
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>
+Cc:     linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20181204165310.20806-1-jbrunet@baylibre.com>
+ <8e7ae6ab-a38b-d2ef-ecfc-58d198821b9c@baylibre.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKE5laWwgQXJtc3Ryb25nIDxuYXJtc3Ryb25nQGJheWxpYnJlLmNvbT7CwHsEEwEKACUC
+ GyMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheABQJXDO2CAhkBAAoJEBaat7Gkz/iubGIH/iyk
+ RqvgB62oKOFlgOTYCMkYpm2aAOZZLf6VKHKc7DoVwuUkjHfIRXdslbrxi4pk5VKU6ZP9AKsN
+ NtMZntB8WrBTtkAZfZbTF7850uwd3eU5cN/7N1Q6g0JQihE7w4GlIkEpQ8vwSg5W7hkx3yQ6
+ 2YzrUZh/b7QThXbNZ7xOeSEms014QXazx8+txR7jrGF3dYxBsCkotO/8DNtZ1R+aUvRfpKg5
+ ZgABTC0LmAQnuUUf2PHcKFAHZo5KrdO+tyfL+LgTUXIXkK+tenkLsAJ0cagz1EZ5gntuheLD
+ YJuzS4zN+1Asmb9kVKxhjSQOcIh6g2tw7vaYJgL/OzJtZi6JlIXOwE0ETVkGzwEIALyKDN/O
+ GURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYpQTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXM
+ coJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hi
+ SvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY4yG6xI99NIPEVE9lNBXBKIlewIyVlkOa
+ YvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoMMtsyw18YoX9BqMFInxqYQQ3j/HpVgTSv
+ mo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUXoUk33HEAEQEAAcLAXwQYAQIACQUCTVkG
+ zwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfnM7IbRuiSZS1unlySUVYu3SD6YBYnNi3G
+ 5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa33eDIHu/zr1HMKErm+2SD6PO9umRef8V8
+ 2o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCSKmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+
+ RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJ
+ C3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTTQbM0WUIBIcGmq38+OgUsMYu4NzLu7uZF
+ Acmp6h8g
+Organization: Baylibre
+Message-ID: <e94b0970-a9ae-c273-0c59-fd8fc99d63d1@baylibre.com>
+Date:   Wed, 5 Dec 2018 10:51:23 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181205091114.GF26056@pdeschrijver-desktop.Nvidia.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL108.nvidia.com (172.18.146.13) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <8e7ae6ab-a38b-d2ef-ecfc-58d198821b9c@baylibre.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1544002234; bh=kokaDane0y4QplccuTpfIIlds6uE+D//VfcGEhujjF0=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=BG6mdKLhI/SH0qCXQkCJO0PKJgkcTBiuucz1+52ynVHEHS2b3zmk4RD5MH6IxMAdx
-         OjLWD1IojVL6rJMi0u6zpoYjqxYJjqQN2NpQsiMorx24f5NyxQTzR+nqMtQgTEw/RW
-         UWCF39m2rQejuGo93AfaW1oS3yk8Ew/01XTAo2bHwnM5IpaHQS/OSLeuESJdABD1s+
-         WSWCSYeVZIuuV0ij1dKsemRDDi+yHukTVxzAsW8qEHrX+zYdpaUcrRD/bZq0pHuTT7
-         CqZpsmgGBE8/K88uUi19s00Uz0FDZUhnUBzAQFA0LH8GcXSNRNtu/DtwwwnSKXeqvX
-         Kn+RXiUYzjHiw==
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-
-On 12/5/18 5:11 PM, Peter De Schrijver wrote:
-> On Wed, Dec 05, 2018 at 02:51:07PM +0800, Joseph Lo wrote:
->> On 12/5/18 2:20 PM, Joseph Lo wrote:
->>> On 12/4/18 11:46 PM, Peter De Schrijver wrote:
->>>> On Tue, Dec 04, 2018 at 05:25:37PM +0800, Joseph Lo wrote:
->>>>> When generating the OPP table, the voltages are round down with the
->>>>> alignment from the regulator. The alignment should be applied for
->>>>> voltages look up as well.
->>>>>
->>>>> Based on the work of Penny Chiu <pchiu@nvidia.com>.
->>>>>
->>>>> Signed-off-by: Joseph Lo <josephl@nvidia.com>
->>>>> ---
->>>>>  =C2=A0 drivers/clk/tegra/clk-dfll.c | 26 +++++++++++++++-----------
->>>>>  =C2=A0 1 file changed, 15 insertions(+), 11 deletions(-)
->>>>>
->>>>> diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfl=
-l.c
->>>>> index c294a2989f31..4a943c136d4d 100644
->>>>> --- a/drivers/clk/tegra/clk-dfll.c
->>>>> +++ b/drivers/clk/tegra/clk-dfll.c
->>>>> @@ -804,17 +804,17 @@ static void dfll_init_out_if(struct
->>>>> tegra_dfll *td)
->>>>>  =C2=A0 static int find_lut_index_for_rate(struct tegra_dfll *td,
->>>>> unsigned long rate)
->>>>>  =C2=A0 {
->>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct dev_pm_opp *opp;
->>>>> -=C2=A0=C2=A0=C2=A0 int i, uv;
->>>>> +=C2=A0=C2=A0=C2=A0 int i, align_volt;
->>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 opp =3D dev_pm_opp_find_freq_ceil(td-=
->soc->dev, &rate);
->>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (IS_ERR(opp))
->>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return PTR_ER=
-R(opp);
->>>>> -=C2=A0=C2=A0=C2=A0 uv =3D dev_pm_opp_get_voltage(opp);
->>>>> +=C2=A0=C2=A0=C2=A0 align_volt =3D dev_pm_opp_get_voltage(opp) /
->>>>> td->soc->alignment.step_uv;
->>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_pm_opp_put(opp);
->>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 for (i =3D td->lut_bottom; i < td->lu=
-t_size; i++) {
->>>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (regulator_list_voltag=
-e(td->vdd_reg, td->lut[i]) =3D=3D uv)
->>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if ((td->lut_uv[i] / td->=
-soc->alignment.step_uv) >=3D align_volt)
->>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 return i;
->>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->>>>> @@ -1532,15 +1532,17 @@ static int dfll_init(struct tegra_dfll *td)
->>>>>  =C2=A0=C2=A0 */
->>>>
->>>> These 2 functions are only valid for I2C mode. We should probably add =
-a
->>>> WARN_ON() in case they are called when PWM mode is used and return
->>>> -EINVAL.
->>>>
->>>
->>> Okay, will add that.
->>>
->> Peter,
+On 05/12/2018 10:50, Neil Armstrong wrote:
+> On 04/12/2018 17:53, Jerome Brunet wrote:
+>> The goal of this patchset is to add the internal generation of the
+>> 32768Hz clock within the axg AO clock controller.
 >>
->> Sorry, just double check again. These 2 functions are used for generatin=
-g
->> LUT table for DFLL-I2C mode. They are only used in "dfll_build_i2c_lut"
->> function. So I think it's fine. The WARN_ON for protection from PWM mode=
- is
->> not necessary.
+>> This was initially added has the CEC clock on gxbb. To properly
+>> integrate it on the axg, a simpler 'dual divider' driver is added.
+>> Then gxbb AO clock controller is reworked to use it. Finally the 32k
+>> clock tree is added to the AXG.
 >>
->=20
-> They are indeed not used today, but to prevent them from being used in
-> the future I was thinking it makes sense to add some form of protection
-> here.
-
-Okay, will add one more patch for that. Thanks.
-
->=20
-> Peter.
->=20
+>> This patchset requires depends on this CCF change [0]
 >>
->>>
->>>>>  =C2=A0 static int find_vdd_map_entry_exact(struct tegra_dfll *td, in=
-t uV)
->>>>>  =C2=A0 {
->>>>> -=C2=A0=C2=A0=C2=A0 int i, n_voltages, reg_uV;
->>>>> +=C2=A0=C2=A0=C2=A0 int i, n_voltages, reg_volt, align_volt;
->>>>> +=C2=A0=C2=A0=C2=A0 align_volt =3D uV / td->soc->alignment.step_uv;
->>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 n_voltages =3D regulator_count_voltag=
-es(td->vdd_reg);
->>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 for (i =3D 0; i < n_voltages; i++) {
->>>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 reg_uV =3D regulator_list=
-_voltage(td->vdd_reg, i);
->>>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (reg_uV < 0)
->>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 reg_volt =3D regulator_li=
-st_voltage(td->vdd_reg, i) /
->>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 td->soc->alignment.step_uv;
->>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (reg_volt < 0)
->>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 break;
->>>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (uV =3D=3D reg_uV)
->>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (align_volt =3D=3D reg=
-_volt)
->>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 return i;
->>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->>>>> @@ -1554,15 +1556,17 @@ static int
->>>>> find_vdd_map_entry_exact(struct tegra_dfll *td, int uV)
->>>>>  =C2=A0=C2=A0 * */
->>>>>  =C2=A0 static int find_vdd_map_entry_min(struct tegra_dfll *td, int =
-uV)
->>>>>  =C2=A0 {
->>>>> -=C2=A0=C2=A0=C2=A0 int i, n_voltages, reg_uV;
->>>>> +=C2=A0=C2=A0=C2=A0 int i, n_voltages, reg_volt, align_volt;
->>>>> +=C2=A0=C2=A0=C2=A0 align_volt =3D uV / td->soc->alignment.step_uv;
->>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 n_voltages =3D regulator_count_voltag=
-es(td->vdd_reg);
->>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 for (i =3D 0; i < n_voltages; i++) {
->>>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 reg_uV =3D regulator_list=
-_voltage(td->vdd_reg, i);
->>>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (reg_uV < 0)
->>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 reg_volt =3D regulator_li=
-st_voltage(td->vdd_reg, i) /
->>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 td->soc->alignment.step_uv;
->>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (reg_volt < 0)
->>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 break;
->>>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (uV <=3D reg_uV)
->>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (align_volt <=3D reg_v=
-olt)
->>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 return i;
->>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->>>>> --=20
->>>>> 2.19.2
->>>>>
+>> [0]: https://lkml.kernel.org/r/20181204163257.32085-1-jbrunet@baylibre.com
+>>
+>> Jerome Brunet (5):
+>>   dt-bindings: clk: meson: add ao slow clock path ids
+>>   clk: meson: clean-up clock registration
+>>   clk: meson: add dual divider clock driver
+>>   clk: meson: gxbb-ao: replace cec-32k with the dual divider
+>>   clk: meson: axg-ao: add 32k generation subtree
+>>
+>>  drivers/clk/meson/Makefile              |   3 +-
+>>  drivers/clk/meson/axg-aoclk.c           | 175 +++++++++++++++--
+>>  drivers/clk/meson/axg-aoclk.h           |  13 +-
+>>  drivers/clk/meson/clk-dualdiv.c         | 130 +++++++++++++
+>>  drivers/clk/meson/clkc.h                |  19 ++
+>>  drivers/clk/meson/gxbb-aoclk-32k.c      | 193 -------------------
+>>  drivers/clk/meson/gxbb-aoclk.c          | 238 +++++++++++++++++++-----
+>>  drivers/clk/meson/gxbb-aoclk.h          |  20 +-
+>>  drivers/clk/meson/meson-aoclk.c         |  15 +-
+>>  include/dt-bindings/clock/axg-aoclkc.h  |   7 +-
+>>  include/dt-bindings/clock/gxbb-aoclkc.h |   7 +
+>>  11 files changed, 527 insertions(+), 293 deletions(-)
+>>  create mode 100644 drivers/clk/meson/clk-dualdiv.c
+>>  delete mode 100644 drivers/clk/meson/gxbb-aoclk-32k.c
+>>
+> 
+> Good move, it's good to have a common driver to enable USB device support for
+> GX and AXg families since they depends on the slow_clk path.
+> 
+> Tested-by: Neil Armstrong <narmstrong@baylibre.com>
+> 
+> and
+> 
+> Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+> 
+> And applied on next/drivers
+> 
+> Neil
+> 
+
+In fact, I'll wait until the CCF change at [1] is applied on clk-next.
+
+Neil
