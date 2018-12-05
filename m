@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7084DC04EBF
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Dec 2018 18:21:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BD43C04EB9
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Dec 2018 18:24:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4420620645
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Dec 2018 18:21:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4420620645
+	by mail.kernel.org (Postfix) with ESMTP id CEB5B20892
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Dec 2018 18:24:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEB5B20892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727796AbeLESVG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 5 Dec 2018 13:21:06 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:45097 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727660AbeLESVG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Dec 2018 13:21:06 -0500
-Received: by mail-lj1-f196.google.com with SMTP id s5-v6so19219843ljd.12;
-        Wed, 05 Dec 2018 10:21:04 -0800 (PST)
+        id S1727349AbeLESYh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 5 Dec 2018 13:24:37 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:46866 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727257AbeLESYh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Dec 2018 13:24:37 -0500
+Received: by mail-lj1-f193.google.com with SMTP id v15-v6so19224530ljh.13;
+        Wed, 05 Dec 2018 10:24:35 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=4154P4SeFkHg5lRonBhn1yP7c3OfbebgZCOeZYCgayo=;
-        b=k5r1pnND38Y32hGkl0nO8QZF84YmSmmKmpfwZMyNe6todesLeUzTGkVxiGGQHucS1+
-         fok17e9ReAK+SsZzPQ6tE8MEhCuti6CU00x2YlDsZCz1M1pbkAPPeGU0ukhGr5emdyNJ
-         q3m17DD8B+aaNmXsLs2vhlqdHbMvCHObpE3pnJl7mxMKLfRFwC/AEPf4blNafPzoLYtQ
-         BIq/i2necwLnhSrGTBHgAckkBvFAzr6ou/cxzNgxWe+GkSQUtJDz2OiPDPUBcTQQXkFh
-         Howg2hebW9jHp/USQ6vidTTZ+h/MokTx9jovg1zi5+kAyvePjrRJRFB0qX1PRhNK1lAC
-         bPAQ==
-X-Gm-Message-State: AA+aEWaLCRJlztuas6qMYjQb5tf2TMHJO5e1k0Dgbv+V/EnMKnyiMAvh
-        6glqnXXRt4/TeLBhzDzENSA=
-X-Google-Smtp-Source: AFSGD/WANUvT+PdsYCMdb7t9W6H3FQKUHEcDkyfIdMqDF1+Wwhh5XYSFkXddgEIYris5VMh04xMMEA==
-X-Received: by 2002:a2e:2f15:: with SMTP id v21-v6mr6875126ljv.56.1544034063702;
-        Wed, 05 Dec 2018 10:21:03 -0800 (PST)
+        bh=LEpiSlqrR7Ad0w48eDX/Xp8zFO8FXef8bg6emoIDpa8=;
+        b=lnheG1kBLy3c6f1YbQRGp32feLqH1KM1FQmjXHBietEk4jCDM5BeqEUl1Kpls9THvh
+         Ust51j4VU1ISufOKspcsO0AsSVNy3wq+4EwrSLkeyUfGcfUDhgzw3zzHU8pH/hsYyiN5
+         HJvlZYfLbl9FdOVa7Q9x3q5iteu3crb293zUzoxi7VVmZ4YfJF3VpMBjZWv9eTmlzx5i
+         OJfcVMHIecUpNZ133wsvT49Q+PczqZ6Qn34SmM9WquwTvJqTe37+dgNJHcFYuGzqeoQI
+         UsaGgPhvC7u2czGJXgWWkadVzdnVTMDkAfZS5XEp2TM8RSCs/7LE1MXzc0nK5DvVi8My
+         TcBQ==
+X-Gm-Message-State: AA+aEWbNM6q2AB52pyK+4znH37eoW2SHnd1dSHErg2qWCwvXMrMtPtJi
+        urgYC3iGw8yQGt6Wy3SO/zY=
+X-Google-Smtp-Source: AFSGD/UeriZm3dGS9tCBzpYxA7rpbmXrfQX1F0JOK2nh+CYjH42tAqUmnMIrE7uZXc1Fi7e+azPNoQ==
+X-Received: by 2002:a2e:4218:: with SMTP id p24-v6mr16364333lja.58.1544034274785;
+        Wed, 05 Dec 2018 10:24:34 -0800 (PST)
 Received: from localhost.localdomain (84-253-205-125.bb.dnainternet.fi. [84.253.205.125])
-        by smtp.gmail.com with ESMTPSA id y1-v6sm3889220ljh.39.2018.12.05.10.21.00
+        by smtp.gmail.com with ESMTPSA id l21-v6sm3877851ljj.48.2018.12.05.10.24.32
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 05 Dec 2018 10:21:01 -0800 (PST)
-Date:   Wed, 5 Dec 2018 20:20:58 +0200
+        Wed, 05 Dec 2018 10:24:34 -0800 (PST)
+Date:   Wed, 5 Dec 2018 20:24:30 +0200
 From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 To:     Stephen Boyd <sboyd@kernel.org>
 Cc:     mazziesaccount@gmail.com, mturquette@baylibre.com,
@@ -54,115 +54,110 @@ Cc:     mazziesaccount@gmail.com, mturquette@baylibre.com,
         djkurtz@chromium.org, rafael.j.wysocki@intel.com,
         linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v6 03/10] clk: of-provider: look at parent if registered
- device has no provider info
-Message-ID: <20181205182058.GF31204@localhost.localdomain>
+Subject: Re: [PATCH v6 10/10] clk: bd718x7: Initial support for ROHM
+ bd71837/bd71847 PMIC clock
+Message-ID: <20181205182430.GG31204@localhost.localdomain>
 References: <cover.1543922403.git.matti.vaittinen@fi.rohmeurope.com>
- <a40442ad1a2f1d13798ba535eca371845bae9248.1543922403.git.matti.vaittinen@fi.rohmeurope.com>
- <154395229720.88331.16585219136189943316@swboyd.mtv.corp.google.com>
- <20181205070046.GD31204@localhost.localdomain>
- <154403037317.88331.9382087418367713867@swboyd.mtv.corp.google.com>
+ <b1a7aa06389ccd46f60db3e63bdf1e9ce9781d49.1543922403.git.matti.vaittinen@fi.rohmeurope.com>
+ <154403090130.88331.18352581261422337586@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <154403037317.88331.9382087418367713867@swboyd.mtv.corp.google.com>
+In-Reply-To: <154403090130.88331.18352581261422337586@swboyd.mtv.corp.google.com>
 User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Dec 05, 2018 at 09:19:33AM -0800, Stephen Boyd wrote:
-> Quoting Matti Vaittinen (2018-12-04 23:00:46)
-> > But that won't solve the issue if we don't do "dirty hacks" in driver.
-> > The devm interface still only gets the device-pointer, not the DT node
-> > as argument. And if DT node for device is NULL (like in MFD cases) -
-> > then there is no parent node, only parent device with a node. For plain
-> > of_clk_add_provider() the driver can just give the parent's node pointer
-> > in cases where it knows it is the parent who has the provider data in
-> > DT. But our original problem is in devm interfaces.
-> > 
+Thanks again Stephen.
+
+On Wed, Dec 05, 2018 at 09:28:21AM -0800, Stephen Boyd wrote:
+> Quoting Matti Vaittinen (2018-12-04 03:39:38)
+> > diff --git a/drivers/clk/clk-bd718x7.c b/drivers/clk/clk-bd718x7.c
+> > new file mode 100644
+> > index 000000000000..d486859526ed
+> > --- /dev/null
+> > +++ b/drivers/clk/clk-bd718x7.c
+> > @@ -0,0 +1,131 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +// Copyright (C) 2018 ROHM Semiconductors
+> > +// bd71837.c  -- ROHM BD71837MWV clock driver
 > 
-> I was misunderstanding the MFD design. Should still work though, so I
-> squashed this into the patch to clean things up a bit. Does this work
-> for you?
+> This isn't even the name of the file. Please remove. Also, only the SPDX
+> tag is supposed to have // on it and the other things should be normal
+> /* */ comment style.
 
-This looks good to me. Especially changing the of_is_clk_provider to
-get_clk_provider_node which allows to remove some repetition. If you
-apply this then I will drop my patch from the series. Just please let me
-know. I will cook version 7 of the series at Friday - tomorrow is the
-independence day in Finland and I'll be offline =)
-
-Thanks!
+I'll drop this name.
 
 > 
-> ------8<-----
+> > +
+> > +#include <linux/kernel.h>
+> > +#include <linux/module.h>
+> > +#include <linux/init.h>
+> > +#include <linux/err.h>
+> > +#include <linux/platform_device.h>
+> > +#include <linux/slab.h>
+> > +#include <linux/mfd/rohm-bd718x7.h>
+> > +#include <linux/clk-provider.h>
+> > +#include <linux/clkdev.h>
+> > +#include <linux/regmap.h>
+> [....]
+> > +
+> > +static int bd71837_clk_probe(struct platform_device *pdev)
+> > +{
+> > +       struct bd718xx_clk *c;
+> > +       int rval = -ENOMEM;
+> > +       const char *parent_clk;
+> > +       struct device *parent = pdev->dev.parent;
+> > +       struct bd718xx *mfd = dev_get_drvdata(parent);
+> > +       struct clk_init_data init = {
+> > +               .name = "bd718xx-32k-out",
+> > +               .ops = &bd71837_clk_ops,
+> > +       };
+> > +
+> > +       c = devm_kzalloc(&pdev->dev, sizeof(*c), GFP_KERNEL);
+> > +       if (!c)
+> > +               return -ENOMEM;
+> > +
+> > +       init.num_parents = 1;
+> > +       parent_clk = of_clk_get_parent_name(parent->of_node, 0);
+> > +
+> > +       init.parent_names = &parent_clk;
+> > +       if (!parent_clk) {
+> > +               dev_err(&pdev->dev, "No parent clk found\n");
+> > +               return -EINVAL;
+> > +       }
+> > +
+> > +       c->reg = BD718XX_REG_OUT32K;
+> > +       c->mask = BD718XX_OUT32K_EN;
+> > +       c->mfd = mfd;
+> > +       c->pdev = pdev;
+> > +       c->hw.init = &init;
+> > +
+> > +       of_property_read_string_index(parent->of_node,
+> > +                                     "clock-output-names", 0, &init.name);
+> > +
+> > +       rval = devm_clk_hw_register(&pdev->dev, &c->hw);
+> > +       if (!rval) {
+> > +               rval = devm_clk_hw_register_clkdev(&pdev->dev,
+> > +                                                  &c->hw, init.name, NULL);
 > 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index bb689161f0f5..6ff852bda892 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -3893,9 +3893,23 @@ static void devm_of_clk_release_provider(struct device *dev, void *res)
->  	of_clk_del_provider(*(struct device_node **)res);
->  }
->  
-> -static int of_is_clk_provider(struct device_node *np)
-> +/*
-> + * We allow a child device to use its parent device as the clock provider node
-> + * for cases like MFD sub-devices where the child device driver wants to use
-> + * devm_*() APIs but not list the device in DT as a sub-node.
-> + */
-> +static struct device_node *get_clk_provider_node(struct device *dev)
->  {
-> -	return !!of_find_property(np, "#clock-cells", NULL);
-> +	struct device_node *np, *parent_np;
-> +
-> +	np = dev->of_node;
-> +	parent_np = dev->parent ? dev->parent->of_node : NULL;
-> +
-> +	if (!of_find_property(np, "#clock-cells", NULL))
-> +		if (of_find_property(parent_np, "#clock-cells", NULL))
-> +			np = parent_np;
-> +
-> +	return np;
->  }
->  
->  /**
-> @@ -3920,17 +3934,12 @@ int devm_of_clk_add_hw_provider(struct device *dev,
->  	struct device_node **ptr, *np;
->  	int ret;
->  
-> -	np = dev->of_node;
-> -
-> -	if (!of_is_clk_provider(dev->of_node))
-> -		if (of_is_clk_provider(dev->parent->of_node))
-> -			np = dev->parent->of_node;
-> -
->  	ptr = devres_alloc(devm_of_clk_release_provider, sizeof(*ptr),
->  			   GFP_KERNEL);
->  	if (!ptr)
->  		return -ENOMEM;
->  
-> +	np = get_clk_provider_node(dev);
->  	ret = of_clk_add_hw_provider(np, get, data);
->  	if (!ret) {
->  		*ptr = np;
-> @@ -3981,13 +3990,8 @@ static int devm_clk_provider_match(struct device *dev, void *res, void *data)
->  void devm_of_clk_del_provider(struct device *dev)
->  {
->  	int ret;
-> -	struct device_node *np;
-> -
-> -	np = dev->of_node;
-> +	struct device_node *np = get_clk_provider_node(dev);
->  
-> -	if (!of_is_clk_provider(dev->of_node))
-> -		if (of_is_clk_provider(dev->parent->of_node))
-> -			np = dev->parent->of_node;
->  	ret = devres_release(dev, devm_of_clk_release_provider,
->  			     devm_clk_provider_match, np);
->  
-> 
+> Do you plan to use the clkdev lookup? This driver looks fairly DT
+> dependent, so I would prefer to remove the clkdev part and only add it
+> later if anyone needs it.
+
+Right. We depend heavily on DT so I guess I can drop the clkdev portion.
+
+> > +               if (rval)
+> > +                       dev_warn(&pdev->dev, "Failed to register clkdev\n");
+> > +               if (parent->of_node) {
+> > +                       rval = devm_of_clk_add_hw_provider(&pdev->dev,
+> > +                                            of_clk_hw_simple_get, &c->hw);
+> > +                       if (rval)
+> > +                               dev_err(&pdev->dev,
+> > +                                       "adding clk provider failed\n");
+> > +               }
 
 -- 
 Matti Vaittinen
