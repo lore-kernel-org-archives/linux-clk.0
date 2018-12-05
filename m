@@ -2,129 +2,132 @@ Return-Path: <SRS0=HA4W=OO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 868FFC07E85
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Dec 2018 10:12:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49AE0C04EB9
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Dec 2018 10:16:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 572B1206B7
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Dec 2018 10:12:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 572B1206B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id 0D11C20659
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Dec 2018 10:16:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="kXUqrqaF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D11C20659
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727645AbeLEKMO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 5 Dec 2018 05:12:14 -0500
-Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:51430 "EHLO
-        wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728027AbeLEKL5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 5 Dec 2018 05:11:57 -0500
-Received: by wens.csie.org (Postfix, from userid 1000)
-        id 586DE5F863; Wed,  5 Dec 2018 18:11:53 +0800 (CST)
-From:   Chen-Yu Tsai <wens@csie.org>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: [PATCH 1/3] clk: sunxi-ng: a33: Use sigma-delta modulation for audio PLL
-Date:   Wed,  5 Dec 2018 18:11:50 +0800
-Message-Id: <20181205101152.22983-2-wens@csie.org>
-X-Mailer: git-send-email 2.20.0.rc1
-In-Reply-To: <20181205101152.22983-1-wens@csie.org>
-References: <20181205101152.22983-1-wens@csie.org>
+        id S1727444AbeLEKQZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 5 Dec 2018 05:16:25 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:40693 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727376AbeLEKQZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Dec 2018 05:16:25 -0500
+Received: by mail-wr1-f65.google.com with SMTP id p4so19025951wrt.7
+        for <linux-clk@vger.kernel.org>; Wed, 05 Dec 2018 02:16:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:openpgp:autocrypt:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=57eaKVrJbAST+zjqvbxYBPsqC3bXOx38CPtaP3zRr+g=;
+        b=kXUqrqaF6tgvM7tDXH9HLiqW1Tl6HFA8j2f/gpkFU0tBJuK0aRmVx6gFLOuHzHi3Ed
+         9CsjKbM79h+P/NoE1+tKXuN4L3zPuo86WvgO+fxGWDRZOH3LnBNx7cuvXfYliRVaa2Q2
+         5e08Tx8Mx1rxVT5D6R/qaXZfEdDRFtkMTMTWQVsyitujGSyPwAsxkdXpUYReP+TEQlrr
+         NHMiPyoDC9G9a98y8trEPUMvv8DHEOK7ViFDDuKFFdJEMSItTP3t2JUsbS2tIpPLJIni
+         MAM8H+iRtZpOy0dYexCI8vykJ86O98g3uHLdIFW+ye/iz/N6zPuotRbl4ywdefhA+bHE
+         tsQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :organization:message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=57eaKVrJbAST+zjqvbxYBPsqC3bXOx38CPtaP3zRr+g=;
+        b=G+mGIn6C0QnNPDxDaObClNYr8Nsp87JjSvCmMwEKziKtaj1sDgzgDzBRCeM5lcWj6i
+         XEYp55dLTqJW8rUydtFvufuCrcYvZENYTP9bPHGAuKO8HIGPWCnA2czLynxiMZZYeZz6
+         6PVI/4zwgWBBdRkddIzwmGeaZS4BiHQE26pVQeYk1SBEH9HQHMZ8Q9GBcJMh8hosdTyI
+         e8sNFtcsGxcC0JatV+sWU/i7/hd4yDXhQaC4XLMf3JllhOtJdeLKf5iKmO4si8glZg76
+         srUEXVh1En01+Cdonn32wO62vpNRRxZYr5I7qNbjqO+y0A3cTy8tDbLjNGHVeYaoq7h5
+         g8ug==
+X-Gm-Message-State: AA+aEWY5+8VHOH9qaEAyE/Aubw5uoICOVGo/L39bTLYwXjBMOsgx+/Ja
+        NM5kUkST0yiYbvVRZVg4tI7Dw4y2oDaphA==
+X-Google-Smtp-Source: AFSGD/WfsWqmd2BEV+5i8FbN8V8ID2e2fj3AN3J3DmByLADqxI5d7Q8dIVJm3kFom3Cv7baZS/A9Sg==
+X-Received: by 2002:adf:a4d9:: with SMTP id h25mr19840891wrb.167.1544004983158;
+        Wed, 05 Dec 2018 02:16:23 -0800 (PST)
+Received: from ?IPv6:2a01:cb1d:4ce:ea00:819f:4d34:9af9:e67? ([2a01:cb1d:4ce:ea00:819f:4d34:9af9:e67])
+        by smtp.gmail.com with ESMTPSA id t5sm11297413wmg.43.2018.12.05.02.16.22
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Dec 2018 02:16:22 -0800 (PST)
+Subject: Re: [PATCH 0/2] clk: meson: add clk-input helper
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>
+Cc:     linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20181204165819.21541-1-jbrunet@baylibre.com>
+From:   Neil Armstrong <narmstrong@baylibre.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKE5laWwgQXJtc3Ryb25nIDxuYXJtc3Ryb25nQGJheWxpYnJlLmNvbT7CwHsEEwEKACUC
+ GyMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheABQJXDO2CAhkBAAoJEBaat7Gkz/iubGIH/iyk
+ RqvgB62oKOFlgOTYCMkYpm2aAOZZLf6VKHKc7DoVwuUkjHfIRXdslbrxi4pk5VKU6ZP9AKsN
+ NtMZntB8WrBTtkAZfZbTF7850uwd3eU5cN/7N1Q6g0JQihE7w4GlIkEpQ8vwSg5W7hkx3yQ6
+ 2YzrUZh/b7QThXbNZ7xOeSEms014QXazx8+txR7jrGF3dYxBsCkotO/8DNtZ1R+aUvRfpKg5
+ ZgABTC0LmAQnuUUf2PHcKFAHZo5KrdO+tyfL+LgTUXIXkK+tenkLsAJ0cagz1EZ5gntuheLD
+ YJuzS4zN+1Asmb9kVKxhjSQOcIh6g2tw7vaYJgL/OzJtZi6JlIXOwE0ETVkGzwEIALyKDN/O
+ GURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYpQTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXM
+ coJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hi
+ SvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY4yG6xI99NIPEVE9lNBXBKIlewIyVlkOa
+ YvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoMMtsyw18YoX9BqMFInxqYQQ3j/HpVgTSv
+ mo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUXoUk33HEAEQEAAcLAXwQYAQIACQUCTVkG
+ zwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfnM7IbRuiSZS1unlySUVYu3SD6YBYnNi3G
+ 5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa33eDIHu/zr1HMKErm+2SD6PO9umRef8V8
+ 2o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCSKmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+
+ RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJ
+ C3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTTQbM0WUIBIcGmq38+OgUsMYu4NzLu7uZF
+ Acmp6h8g
+Organization: Baylibre
+Message-ID: <88cc4a9c-d51d-ee34-3e38-36645e53bb13@baylibre.com>
+Date:   Wed, 5 Dec 2018 11:16:21 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181204165819.21541-1-jbrunet@baylibre.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The audio blocks require specific clock rates. Until now we were using
-the closest clock rate possible with integer N-M factors. This resulted
-in audio playback being slightly slower than it should be.
+On 04/12/2018 17:58, Jerome Brunet wrote:
+> When the related bindings get merged, we will add more input clocks
+> to the different amlogic clock controllers. Instead of copying this
+> code around, lets create an helper function and use it.
+> 
+> Jerome Brunet (2):
+>   clk: meson: add clk-input helper function
+>   clk: meson: axg-audio: use the clk input helper function
+> 
+>  drivers/clk/meson/Makefile    |  2 +-
+>  drivers/clk/meson/axg-audio.c | 83 ++++++++++-------------------------
+>  drivers/clk/meson/clk-input.c | 44 +++++++++++++++++++
+>  drivers/clk/meson/clkc.h      |  5 +++
+>  4 files changed, 74 insertions(+), 60 deletions(-)
+>  create mode 100644 drivers/clk/meson/clk-input.c
+> 
 
-The vendor kernel gets around this (for newer SoCs) by using sigma-delta
-modulation to generate a fractional-N factor. As the PLL hardware is
-identical in most chips, we can back port the settings from the newer
-SoC, in this case the H3, onto the A33.
+Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- drivers/clk/sunxi-ng/ccu-sun8i-a33.c | 37 ++++++++++++++++++----------
- 1 file changed, 24 insertions(+), 13 deletions(-)
+Will be useful for the next cycle to take in account the controller input clocks
+defined in the DT.
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
-index 13eb5b23c5e7..f763648a5f20 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
-@@ -51,18 +51,29 @@ static struct ccu_nkmp pll_cpux_clk = {
-  * the base (2x, 4x and 8x), and one variable divider (the one true
-  * pll audio).
-  *
-- * We don't have any need for the variable divider for now, so we just
-- * hardcode it to match with the clock names
-+ * With sigma-delta modulation for fractional-N on the audio PLL,
-+ * we have to use specific dividers. This means the variable divider
-+ * can no longer be used, as the audio codec requests the exact clock
-+ * rates we support through this mechanism. So we now hard code the
-+ * variable divider to 1. This means the clock rates will no longer
-+ * match the clock names.
-  */
- #define SUN8I_A33_PLL_AUDIO_REG	0x008
- 
--static SUNXI_CCU_NM_WITH_GATE_LOCK(pll_audio_base_clk, "pll-audio-base",
--				   "osc24M", 0x008,
--				   8, 7,		/* N */
--				   0, 5,		/* M */
--				   BIT(31),		/* gate */
--				   BIT(28),		/* lock */
--				   CLK_SET_RATE_UNGATE);
-+static struct ccu_sdm_setting pll_audio_sdm_table[] = {
-+	{ .rate = 22579200, .pattern = 0xc0010d84, .m = 8, .n = 7 },
-+	{ .rate = 24576000, .pattern = 0xc000ac02, .m = 14, .n = 14 },
-+};
-+
-+static SUNXI_CCU_NM_WITH_SDM_GATE_LOCK(pll_audio_base_clk, "pll-audio-base",
-+				       "osc24M", 0x008,
-+				       8, 7,	/* N */
-+				       0, 5,	/* M */
-+				       pll_audio_sdm_table, BIT(24),
-+				       0x284, BIT(31),
-+				       BIT(31),	/* gate */
-+				       BIT(28),	/* lock */
-+				       CLK_SET_RATE_UNGATE);
- 
- static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_video_clk, "pll-video",
- 					"osc24M", 0x010,
-@@ -576,9 +587,9 @@ static struct ccu_common *sun8i_a33_ccu_clks[] = {
- 	&ats_clk.common,
- };
- 
--/* We hardcode the divider to 4 for now */
-+/* We hardcode the divider to 1 for now */
- static CLK_FIXED_FACTOR(pll_audio_clk, "pll-audio",
--			"pll-audio-base", 4, 1, CLK_SET_RATE_PARENT);
-+			"pll-audio-base", 1, 1, CLK_SET_RATE_PARENT);
- static CLK_FIXED_FACTOR(pll_audio_2x_clk, "pll-audio-2x",
- 			"pll-audio-base", 2, 1, CLK_SET_RATE_PARENT);
- static CLK_FIXED_FACTOR(pll_audio_4x_clk, "pll-audio-4x",
-@@ -781,10 +792,10 @@ static void __init sun8i_a33_ccu_setup(struct device_node *node)
- 		return;
- 	}
- 
--	/* Force the PLL-Audio-1x divider to 4 */
-+	/* Force the PLL-Audio-1x divider to 1 */
- 	val = readl(reg + SUN8I_A33_PLL_AUDIO_REG);
- 	val &= ~GENMASK(19, 16);
--	writel(val | (3 << 16), reg + SUN8I_A33_PLL_AUDIO_REG);
-+	writel(val | (0 << 16), reg + SUN8I_A33_PLL_AUDIO_REG);
- 
- 	/* Force PLL-MIPI to MIPI mode */
- 	val = readl(reg + SUN8I_A33_PLL_MIPI_REG);
--- 
-2.20.0.rc1
+Applied on next/drivers
 
+Neil
