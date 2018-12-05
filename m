@@ -2,259 +2,76 @@ Return-Path: <SRS0=HA4W=OO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05B70C04EB9
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Dec 2018 17:20:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75DCDC04EB9
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Dec 2018 17:25:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE5C620878
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Dec 2018 17:20:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="OPeT1ZD7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE5C620878
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by mail.kernel.org (Postfix) with ESMTP id 38D7620879
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Dec 2018 17:25:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544030712;
+	bh=1xZHk5U/u8j6lAwFyyDkz4h5vtVcooAHfDHY8mf/cJc=;
+	h=To:From:In-Reply-To:Cc:References:Subject:Date:List-ID:From;
+	b=AvUO0qEmb7HyVXtilj5meXnCix9I+AVoJBRRVa4/pBL6a8uNGAb9+Z3A/aD4QLhVg
+	 n6dgUTlAR/2Dkj79Slr5IThEKh6t7o3vSk/cRQ6FHGOnuIpyb1g4vkFXM96+WXS/LR
+	 vhmQfP9hcKjPWb/HfzHuQrVUN6+TC44RFiFmg3J4=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38D7620879
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727475AbeLERUQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 5 Dec 2018 12:20:16 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:37016 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727242AbeLERUQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Dec 2018 12:20:16 -0500
-Received: by mail-wm1-f65.google.com with SMTP id g67so13680894wmd.2
-        for <linux-clk@vger.kernel.org>; Wed, 05 Dec 2018 09:20:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=kSDKmnuhTvRq15iHCVs7D1Z4an+N9JmJDABs89PeBu0=;
-        b=OPeT1ZD7Wfrq8uB5ruEt0+gE8Q/0XQphweib66ELpYQYcakvHYo2cxE0y1O5SmYfN9
-         Wlf4kUJSeLj1mISESsiCxTqb3D70+z+uJGAkg1qj1aHcAU9hhO06X+hPbobLzUhvyzEd
-         /2fvJMqUCspAqDY+kDJcIbj02Ad+npnBnr8sBikjGhP6FOK9RA9e0oU2/gTUiQjXuZpT
-         wkcNDjNQ5RwJeB7uqTu5ZIIc+fZ7FM/0eZ2KAprjEcRUO5ZvDShoggAuS3/PCXEyYuRj
-         RusswkbzFWBmCCe+yC5aQvSvmObBSYO9wmjdAZJ+2LmmZCsfVSdSy1dCRcwKkZQ2qDNz
-         DsMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=kSDKmnuhTvRq15iHCVs7D1Z4an+N9JmJDABs89PeBu0=;
-        b=TqgnIXJUTO2liFXKbTEpTbCncl11lrZFv0PRscwzeI48YYW6p/rnbixYsXJI0wpkOK
-         /skuySmlj00lZ3uO2QRFcQGtd7fwsI/+932CV+uuqnP3ATblehKNpMtmN0esHkdZflht
-         KTKd9QnA8UE7Otiheyq3BXu6OZ7yXZ558bpqXtnKp/XF5SbkonGo6yleyuNHDKtUhqOL
-         EZTFNyiw2j6g1VqLcxGHx5hqyGVBM7l+q3z6BdUhG80K/3wmK8ZhEhIfwInIq+LT48Dj
-         nZkQA9PTje22IBeyeIg77vEoMTGnlrpFcrbg5xukI2ZSL/OD5lFVqZ1zvgG/MfwwHolM
-         pI5A==
-X-Gm-Message-State: AA+aEWbjsMBT0SWgw5u+pnsyH9367YFyRBKmzvdPsM5eKW2nCTSDyGvf
-        HxZrg0xlqBGn78Gm2re6+nEnNw==
-X-Google-Smtp-Source: AFSGD/UD2Rk8ipYPEVCk4wqIqNQfcjTgWQ6XB61aEEiuZS5suxdahOB00fUsZPnoxvtSssBrBXIVNA==
-X-Received: by 2002:a1c:c10f:: with SMTP id r15mr10272020wmf.27.1544030413621;
-        Wed, 05 Dec 2018 09:20:13 -0800 (PST)
-Received: from boomer.baylibre.com ([2a01:e34:eeb6:4690:106b:bae3:31ed:7561])
-        by smtp.gmail.com with ESMTPSA id y185sm10107903wmg.34.2018.12.05.09.20.11
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 05 Dec 2018 09:20:12 -0800 (PST)
-Message-ID: <98e430d7a96fa6b4f0225e57820a4a677108a052.camel@baylibre.com>
-Subject: Re: [PATCH] Revert "clk: fix __clk_init_parent() for single parent
- clocks"
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Wed, 05 Dec 2018 18:20:09 +0100
-In-Reply-To: <154399647605.88331.115722031910044874@swboyd.mtv.corp.google.com>
-References: <20181204163257.32085-1-jbrunet@baylibre.com>
-         <154394675320.88331.12449582989130694425@swboyd.mtv.corp.google.com>
-         <807f2924b67239f61c6d93de7f7b124f8a1f195a.camel@baylibre.com>
-         <154399647605.88331.115722031910044874@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.2 (3.30.2-2.fc29) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1727889AbeLERZL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 5 Dec 2018 12:25:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48776 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727839AbeLERZL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 5 Dec 2018 12:25:11 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CDA2A20878;
+        Wed,  5 Dec 2018 17:25:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544030710;
+        bh=1xZHk5U/u8j6lAwFyyDkz4h5vtVcooAHfDHY8mf/cJc=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=YBuVnp8wqbmwcRpe5EJjESQvF/928Cyg4+MP7nUw6MR+1hQk+vTg+OCDUgW4M43yY
+         Dr4m129doVz6QpIV7sV+UopY+wgITwxM18uIlVyOEyw6O42ydMGOCbEso9TMkdfSqz
+         Y8+f6iWzchDt6GE72mwMqbs9vLEfLYYCWv1lrcL8=
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <90cd96112ca1ade6bff3b58989e290ae3def59e2.1543922403.git.matti.vaittinen@fi.rohmeurope.com>
+Cc:     mturquette@baylibre.com, cw00.choi@samsung.com, krzk@kernel.org,
+        b.zolnierkie@samsung.com, linux@armlinux.org.uk,
+        andy.gross@linaro.org, david.brown@linaro.org, pavel@ucw.cz,
+        andrew.smirnov@gmail.com, pombredanne@nexb.com,
+        sjhuang@iluvatar.ai, akshu.agrawal@amd.com, djkurtz@chromium.org,
+        rafael.j.wysocki@intel.com, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <cover.1543922403.git.matti.vaittinen@fi.rohmeurope.com>
+ <90cd96112ca1ade6bff3b58989e290ae3def59e2.1543922403.git.matti.vaittinen@fi.rohmeurope.com>
+Message-ID: <154403071006.88331.16284741533378833854@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v6 06/10] clk: clk-hi655x: Free of_provider at remove
+Date:   Wed, 05 Dec 2018 09:25:10 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 2018-12-04 at 23:54 -0800, Stephen Boyd wrote:
-> Quoting Jerome Brunet (2018-12-04 11:51:17)
-> > On Tue, 2018-12-04 at 10:05 -0800, Stephen Boyd wrote:
-> > > Quoting Jerome Brunet (2018-12-04 08:32:57)
-> > > > This reverts commit 2430a94d1e719b7b4af2a65b781a4c036eb22e64.
-> > > > 
-> > > > From the original commit message:
-> > > >   It turned out a problem because there are some single-parent clocks
-> > > >   that implement .get_parent() callback and return non-zero index.
-> > > >   The SOCFPGA clock is the case; the commit broke the SOCFPGA boards.
-> > > > 
-> > > > It is wrong for a clock to return an index >= num_parents. CCF checks
-> > > > for this condition in clk_core_get_parent_by_index(). This function
-> > > > sets
-> > > > the parent to NULL if index is incoherent, which seems like the only
-> > > > sane choice.
-> > > > 
-> > > > commit 2430a94d1e71 ("clk: fix __clk_init_parent() for single parent
-> > > > clocks")
-> > > > appears to be a work around installed in the core framework for a
-> > > > problem
-> > > > that is platform specific, and should probably be fixed in the
-> > > > platform
-> > > > code.
-> > > 
-> > > Ouch. I see that I even pointed that out in 2016 but never got a reply
-> > > or a fix patch[1].
-> > > 
-> > > > Further more, it introduces a problem in a corner case of the mux
-> > > > clock.
-> > > > Take mux with multiple parents, but only one is known, the rest being
-> > > > undocumented. The register reset has one of unknown parent set.
-> > > > 
-> > > > Before commit 2430a94d1e71 ("clk: fix __clk_init_parent() for single
-> > > > parent clocks"):
-> > > >  * get_parent() is called, register is read and give an unknown index.
-> > > >    -> the mux is orphaned.
-> > > >  * a call to set_rate() will reparent the mux to the only known
-> > > > parent.
-> > > > 
-> > > > With commit 2430a94d1e71 ("clk: fix __clk_init_parent() for single
-> > > > parent
-> > > > clocks"):
-> > > >  * the register is never read.
-> > > >  * parent is wrongly assumed to be the only known one.
-> > > >    As a consequence, all the calculation deriving from the mux will be
-> > > >    wrong
-> > > >  * Since we believe the only know parent to be set, set_parent() won't
-> > > >    ever be called and the register won't be set with the correct
-> > > > value.
-> > > 
-> > > Isn't this the broken bad case all over again? Why register a clk as a
-> > > mux and then only say it has one parent?
-> > 
-> > I understand it is a bit odd but as I explained it is a corner case.
-> > 
-> > We are really trying to drive a mux here, applying a values will change
-> > the
-> > clock signal we get. Documentation being what it is, we only know one the
-> > parent. The other parent could anything or maybe not connected at all, who
-> > know. That is not the important part actually
-> > 
-> > If such mux was already set to the known entry by default, it would be OK
-> > to
-> > ignore it. But if it is not, then we CCF to realise that and change the
-> > setting accordingly.
-> > 
-> > This the case of the 'ao_cts_cec' clock in the following patch:
-> > https://lore.kernel.org/patchwork/patch/1021028/
-> > 
-> > by default the value in the register is 0, but the only one that makes
-> > sense
-> > for us is 1.
-> 
-> Ok. Thanks for the explanation. What do you do to fix this problem in
-> the 'ao_cts_cec' clk implementation?
+Quoting Matti Vaittinen (2018-12-04 03:37:29)
+> use devm variant for of_provider registration so provider is freed
+> at exit.
+> =
 
-IMO, there is nothing to fix, the implementation is correct. 
+> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> ---
 
->  Sounds like you just rely on
-> clk_set_rate() to fix this all up for you when the consumer changes the
-> rate?
-
-To setup the rate as the customer expect, yes.
-
-> 
-> If we have something that is default parented to something we're not
-> telling the framework about for some reason then one solution would be
-> to have some init code reparent the clk in hardware before registering
-> it with the framework. Basically "fix up" the clk tree in hardware to be
-> consistent with what software can reason about. 
-
-Should we really ? Something the framework does not know about is not
-necessarily something wrong.
-
-It would best if we could model the tree completly, but most of the time, we
-just approximate it the best we can.
-
-The framework just knows how to setup rates, it has no idea what rate needs to
-be set or when - And I think it is best if does not make any assumption about
-that.
-
-Pushing it a bit, this unknown parent might important to the boot sequence.
-How would you know when it is safe to change the setting ?
-What would change it to ? It Seems obvious when there is only one known
-parent, but what if there two ? which one do you pick ? Is it really the role
-of CCF to make this kind of choice ? 
-
-> 
-> This also reminds me of some audio clks I've seen before where the
-> default parent is some external pin and it can be reparented to an
-> internal clk with clk_set_rate/parent. In that case, I think we forced
-> the parent over to the internal clk before registering so that it would
-> always get parented properly in the framework. Right now, this is going
-> to cause problems for plans to probe defer clk_get() on orphan clks.
-
-clk_get() on orphaned clock should probably return an error if it is not the
-case already ? or 0 maybe ?
-
-> 
-> Maybe this could work better if we allowed
-> 'assigned-clock-parents/rates' to reparent clks regardless of orphan
-> status and/or had some flag that could be set on clks to indicate that
-> we're OK if clk_get() is called on it when it's an orphan because this
-> isn't a problem?
-
-Not sure I understand your point here.
-
-> 
-> Or we can make the defer on orphan code only defer if the clk has a
-> single parent and it's an orphan and return the clk if there is at least
-> one parent of the clk that has been registered and isn't marked as an
-> orphan. That would need to be recursively applied, so I guess we would
-> update our orphan marking code to indicate that clk_get() on the clk
-> should probe defer or not instead of indicating the clk's orphan status.
-> Doing this would also side-step the problem Rockchip was having where
-> certain parents never appeared but the clk was parented to it in
-> hardware, essentially blocking the clk from ever being touched by
-> consumers.
-
-... and now you lost me completly :)
-
-> 
-> On the other hand, not having the clk there causes us to do a global
-> search of the clk name space each time we look for parents by the
-> "unknown" index, which in the Rockchip case was quite often because the
-> clk was changing between two other parents with a third one that never
-> got registered. So it may be better to just register an "unknown" clk as
-> a root clk with a rate of 0 that you can then hook everything up to that
-> is hardware reset to this unknown input. That way nothing is orphaned
-> and everyone is happy. We could do this for the audio case I talked
-> about earlier too so when the external pin is left unconnected we could
-> register some 'unconnected' clk and parent the audio clk to it.
-
-We have sometimes a few orphans in the amlogic clock tree, it does not seems
-to a problem.
-
-I don't really understand the benefit of having a fake clock that would adopt
-all the orphan ? You guess there is problem I'm not aware of ...
-
-> 
-> > > > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> > > > ---
-> > > 
-> > > Is this related to the other patch you sent? Can you send series for
-> > > related patches please?
-> > > 
-> > > [1] https://lkml.kernel.org/r/20160209181833.GA24167@codeaurora.org
-> > 
-> > Actually I was intially doing a series, and stopped when my cover letter
-> > started with "those are two unrelated patches ..." ;)
-> > 
-> > I found these things while debugging the same thing but there is no deps
-> > between them.
-> > 
-> 
-> Ok.
-
+Applied to clk-next
 
