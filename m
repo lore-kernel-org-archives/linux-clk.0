@@ -2,103 +2,72 @@ Return-Path: <SRS0=HA4W=OO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49AE0C04EB9
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Dec 2018 10:16:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89AD9C04EBF
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Dec 2018 10:30:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D11C20659
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Dec 2018 10:16:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="kXUqrqaF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D11C20659
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by mail.kernel.org (Postfix) with ESMTP id 447B62064D
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Dec 2018 10:30:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 447B62064D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727444AbeLEKQZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 5 Dec 2018 05:16:25 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:40693 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727376AbeLEKQZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Dec 2018 05:16:25 -0500
-Received: by mail-wr1-f65.google.com with SMTP id p4so19025951wrt.7
-        for <linux-clk@vger.kernel.org>; Wed, 05 Dec 2018 02:16:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:openpgp:autocrypt:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=57eaKVrJbAST+zjqvbxYBPsqC3bXOx38CPtaP3zRr+g=;
-        b=kXUqrqaF6tgvM7tDXH9HLiqW1Tl6HFA8j2f/gpkFU0tBJuK0aRmVx6gFLOuHzHi3Ed
-         9CsjKbM79h+P/NoE1+tKXuN4L3zPuo86WvgO+fxGWDRZOH3LnBNx7cuvXfYliRVaa2Q2
-         5e08Tx8Mx1rxVT5D6R/qaXZfEdDRFtkMTMTWQVsyitujGSyPwAsxkdXpUYReP+TEQlrr
-         NHMiPyoDC9G9a98y8trEPUMvv8DHEOK7ViFDDuKFFdJEMSItTP3t2JUsbS2tIpPLJIni
-         MAM8H+iRtZpOy0dYexCI8vykJ86O98g3uHLdIFW+ye/iz/N6zPuotRbl4ywdefhA+bHE
-         tsQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :organization:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=57eaKVrJbAST+zjqvbxYBPsqC3bXOx38CPtaP3zRr+g=;
-        b=G+mGIn6C0QnNPDxDaObClNYr8Nsp87JjSvCmMwEKziKtaj1sDgzgDzBRCeM5lcWj6i
-         XEYp55dLTqJW8rUydtFvufuCrcYvZENYTP9bPHGAuKO8HIGPWCnA2czLynxiMZZYeZz6
-         6PVI/4zwgWBBdRkddIzwmGeaZS4BiHQE26pVQeYk1SBEH9HQHMZ8Q9GBcJMh8hosdTyI
-         e8sNFtcsGxcC0JatV+sWU/i7/hd4yDXhQaC4XLMf3JllhOtJdeLKf5iKmO4si8glZg76
-         srUEXVh1En01+Cdonn32wO62vpNRRxZYr5I7qNbjqO+y0A3cTy8tDbLjNGHVeYaoq7h5
-         g8ug==
-X-Gm-Message-State: AA+aEWY5+8VHOH9qaEAyE/Aubw5uoICOVGo/L39bTLYwXjBMOsgx+/Ja
-        NM5kUkST0yiYbvVRZVg4tI7Dw4y2oDaphA==
-X-Google-Smtp-Source: AFSGD/WfsWqmd2BEV+5i8FbN8V8ID2e2fj3AN3J3DmByLADqxI5d7Q8dIVJm3kFom3Cv7baZS/A9Sg==
-X-Received: by 2002:adf:a4d9:: with SMTP id h25mr19840891wrb.167.1544004983158;
-        Wed, 05 Dec 2018 02:16:23 -0800 (PST)
-Received: from ?IPv6:2a01:cb1d:4ce:ea00:819f:4d34:9af9:e67? ([2a01:cb1d:4ce:ea00:819f:4d34:9af9:e67])
-        by smtp.gmail.com with ESMTPSA id t5sm11297413wmg.43.2018.12.05.02.16.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Dec 2018 02:16:22 -0800 (PST)
-Subject: Re: [PATCH 0/2] clk: meson: add clk-input helper
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>
-Cc:     linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20181204165819.21541-1-jbrunet@baylibre.com>
-From:   Neil Armstrong <narmstrong@baylibre.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKE5laWwgQXJtc3Ryb25nIDxuYXJtc3Ryb25nQGJheWxpYnJlLmNvbT7CwHsEEwEKACUC
- GyMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheABQJXDO2CAhkBAAoJEBaat7Gkz/iubGIH/iyk
- RqvgB62oKOFlgOTYCMkYpm2aAOZZLf6VKHKc7DoVwuUkjHfIRXdslbrxi4pk5VKU6ZP9AKsN
- NtMZntB8WrBTtkAZfZbTF7850uwd3eU5cN/7N1Q6g0JQihE7w4GlIkEpQ8vwSg5W7hkx3yQ6
- 2YzrUZh/b7QThXbNZ7xOeSEms014QXazx8+txR7jrGF3dYxBsCkotO/8DNtZ1R+aUvRfpKg5
- ZgABTC0LmAQnuUUf2PHcKFAHZo5KrdO+tyfL+LgTUXIXkK+tenkLsAJ0cagz1EZ5gntuheLD
- YJuzS4zN+1Asmb9kVKxhjSQOcIh6g2tw7vaYJgL/OzJtZi6JlIXOwE0ETVkGzwEIALyKDN/O
- GURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYpQTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXM
- coJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hi
- SvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY4yG6xI99NIPEVE9lNBXBKIlewIyVlkOa
- YvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoMMtsyw18YoX9BqMFInxqYQQ3j/HpVgTSv
- mo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUXoUk33HEAEQEAAcLAXwQYAQIACQUCTVkG
- zwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfnM7IbRuiSZS1unlySUVYu3SD6YBYnNi3G
- 5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa33eDIHu/zr1HMKErm+2SD6PO9umRef8V8
- 2o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCSKmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+
- RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJ
- C3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTTQbM0WUIBIcGmq38+OgUsMYu4NzLu7uZF
- Acmp6h8g
-Organization: Baylibre
-Message-ID: <88cc4a9c-d51d-ee34-3e38-36645e53bb13@baylibre.com>
-Date:   Wed, 5 Dec 2018 11:16:21 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        id S1727389AbeLEKan (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 5 Dec 2018 05:30:43 -0500
+Received: from mx.socionext.com ([202.248.49.38]:21311 "EHLO mx.socionext.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727025AbeLEKan (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 5 Dec 2018 05:30:43 -0500
+Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
+  by mx.socionext.com with ESMTP; 05 Dec 2018 19:30:41 +0900
+Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
+        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id 36E5960062;
+        Wed,  5 Dec 2018 19:30:41 +0900 (JST)
+Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Wed, 5 Dec 2018 19:30:41 +0900
+Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
+        by iyokan.css.socionext.com (Postfix) with ESMTP id 8DD9440377;
+        Wed,  5 Dec 2018 19:30:40 +0900 (JST)
+Received: from [127.0.0.1] (unknown [10.213.119.83])
+        by yuzu.css.socionext.com (Postfix) with ESMTP id 670C4120304;
+        Wed,  5 Dec 2018 19:30:40 +0900 (JST)
+Subject: Re: [PATCH 02/14] dt-bindings: soc: milbeaut: Add Milbeaut trampoline
+ description
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Jiri Slaby <jslaby@suse.com>,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>
+References: <1542589274-13878-1-git-send-email-sugaya.taichi@socionext.com>
+ <1542589274-13878-3-git-send-email-sugaya.taichi@socionext.com>
+ <154337047410.88331.9696178601340675631@swboyd.mtv.corp.google.com>
+ <c746a3de-a9e3-9f25-ecb9-703ceb7e62d0@socionext.com>
+ <154356579701.88331.5043467509900444879@swboyd.mtv.corp.google.com>
+ <f5917f71-f15b-a92d-649c-e3f5f5f10698@socionext.com>
+ <CAL_Jsq+dnKht3TwCh1qB1H4pYFhQJmSN0nAayU+=PJLAvq0bbQ@mail.gmail.com>
+ <90b00858-6e9e-8f7c-f6d4-b35e5daa6eee@socionext.com>
+ <CAL_JsqJ=FRfzVFiOJ0wvoV5iZV+Gx3ft9pGyhb-GoKnOAQgPtQ@mail.gmail.com>
+From:   "Sugaya, Taichi" <sugaya.taichi@socionext.com>
+Message-ID: <60f13d51-51e6-33f9-5393-e9425883c528@socionext.com>
+Date:   Wed, 5 Dec 2018 19:30:39 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.2
 MIME-Version: 1.0
-In-Reply-To: <20181204165819.21541-1-jbrunet@baylibre.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <CAL_JsqJ=FRfzVFiOJ0wvoV5iZV+Gx3ft9pGyhb-GoKnOAQgPtQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
@@ -106,28 +75,102 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 04/12/2018 17:58, Jerome Brunet wrote:
-> When the related bindings get merged, we will add more input clocks
-> to the different amlogic clock controllers. Instead of copying this
-> code around, lets create an helper function and use it.
+Hi,
+
+On 2018/12/04 22:32, Rob Herring wrote:
+> On Tue, Dec 4, 2018 at 5:30 AM Sugaya, Taichi
+> <sugaya.taichi@socionext.com> wrote:
+>>
+>> Hi
+>>
+>> On 2018/12/04 0:49, Rob Herring wrote:
+>>> On Mon, Dec 3, 2018 at 1:42 AM Sugaya, Taichi
+>>> <sugaya.taichi@socionext.com> wrote:
+>>>>
+>>>> Hi,
+>>>>
+>>>> On 2018/11/30 17:16, Stephen Boyd wrote:
+>>>>> Quoting Sugaya, Taichi (2018-11-29 04:24:51)
+>>>>>> On 2018/11/28 11:01, Stephen Boyd wrote:
+>>>>>>> Quoting Sugaya Taichi (2018-11-18 17:01:07)
+>>>>>>>>      create mode 100644 Documentation/devicetree/bindings/soc/socionext/socionext,m10v.txt
+>>>>>>>>
+>>>>>>>> diff --git a/Documentation/devicetree/bindings/soc/socionext/socionext,m10v.txt b/Documentation/devicetree/bindings/soc/socionext/socionext,m10v.txt
+>>>>>>>> new file mode 100644
+>>>>>>>> index 0000000..f5d906c
+>>>>>>>> --- /dev/null
+>>>>>>>> +++ b/Documentation/devicetree/bindings/soc/socionext/socionext,m10v.txt
+>>>>>>>> @@ -0,0 +1,12 @@
+>>>>>>>> +Socionext M10V SMP trampoline driver binding
+>>>>>>>> +
+>>>>>>>> +This is a driver to wait for sub-cores while boot process.
+>>>>>>>> +
+>>>>>>>> +- compatible: should be "socionext,smp-trampoline"
+>>>>>>>> +- reg: should be <0x4C000100 0x100>
+>>>>>>>> +
+>>>>>>>> +EXAMPLE
+>>>>>>>> +       trampoline: trampoline@0x4C000100 {
+>>>>>>> Drop the 0x part of unit addresses.
+>>>>>>
+>>>>>> Okay.
+>>>>>>
+>>>>>>
+>>>>>>>> +               compatible = "socionext,smp-trampoline";
+>>>>>>>> +               reg = <0x4C000100 0x100>;
+>>>>>>> Looks like a software construct, which we wouldn't want to put into DT
+>>>>>>> this way. DT doesn't describe drivers.
+>>>>>> We would like to use this node only getting the address of the
+>>>>>> trampoline area
+>>>>>> in which sub-cores wait.  (They have finished to go to this area in previous
+>>>>>> bootloader process.)
+>>>>>
+>>>>> Is this area part of memory, or a special SRAM? If it's part of memory,
+>>>>> I would expect this node to be under the reserved-memory node and
+>>>>> pointed to by some other node that uses this region. Could even be the
+>>>>> CPU nodes.
+>>>>
+>>>> Yes, 0x4C000100 is a part of memory under the reserved-memory node. So
+>>>> we would like to use the SRAM ( allocated 0x00000000 ) area instead.
+>>>> BTW, sorry, the trampoline address of this example is simply wrong.  We
+>>>> were going to use a part of the SRAM from the beginning.
+>>>>
+>>>>>
+>>>>>>
+>>>>>> So should we embed the constant value in source codes instead of getting
+>>>>>> from
+>>>>>> DT because the address is constant at the moment? Or is there other
+>>>>>> approach?
+>>>>>>
+>>>>>
+>>>>> If it's constant then that also works. Why does it need to come from DT
+>>>>> at all then?
+>>>>
+>>>> We think it is not good to embed constant value in driver codes and do
+>>>> not have another way...
+>>>> Are there better ways?
+>>>
+>>> If this is just memory, can you use the standard spin-table binding in
+>>> the DT spec? There are some requirements like 64-bit values even on
+>>> 32-bit machines (though this gets violated).
+>>
+>> The spin-table seems to be used on only 64-bit arch. Have it ever worked
+>> on 32-bit machine?
 > 
-> Jerome Brunet (2):
->   clk: meson: add clk-input helper function
->   clk: meson: axg-audio: use the clk input helper function
+> Yes.
 > 
->  drivers/clk/meson/Makefile    |  2 +-
->  drivers/clk/meson/axg-audio.c | 83 ++++++++++-------------------------
->  drivers/clk/meson/clk-input.c | 44 +++++++++++++++++++
->  drivers/clk/meson/clkc.h      |  5 +++
->  4 files changed, 74 insertions(+), 60 deletions(-)
->  create mode 100644 drivers/clk/meson/clk-input.c
+>> And I would like not to use it because avoid violation.
+> 
+> The issue now that I remember is cpu-release-addr is defined to always
+> be a 64-bit value while some platforms made it a 32-bit value.
+> 'cpu-release-addr' is also used for some other enable-methods.
+
+Thanks.
+OK, try to use the spin-table.
+
+Best Regards,
+Sugaya Taichi
+
+> 
+> Rob
 > 
 
-Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
-
-Will be useful for the next cycle to take in account the controller input clocks
-defined in the DT.
-
-Applied on next/drivers
-
-Neil
