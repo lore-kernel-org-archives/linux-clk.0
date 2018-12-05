@@ -2,172 +2,117 @@ Return-Path: <SRS0=HA4W=OO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28572C04EB9
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Dec 2018 07:00:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4533C04EB9
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Dec 2018 07:15:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFA462084C
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Dec 2018 07:00:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFA462084C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
+	by mail.kernel.org (Postfix) with ESMTP id 77A7520850
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Dec 2018 07:15:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VZsfnPMJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77A7520850
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726695AbeLEHAx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 5 Dec 2018 02:00:53 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:38068 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726102AbeLEHAx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Dec 2018 02:00:53 -0500
-Received: by mail-lj1-f196.google.com with SMTP id c19-v6so17301570lja.5;
-        Tue, 04 Dec 2018 23:00:50 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=27B9qMspjDD1AgXG4zXqfQyvg5Itc4l3gB9owMvrM3Q=;
-        b=X8r4j3cumJPUoM42jCpaX1QVOZBC5fHMtE2okmGlcCQSjfLtudFiSQUdab7fpek8oe
-         Aug0gKiHdqV+PdO0paIEmETccbcxvcwAUBXPzd1bsZZePNRAi0SAt4XW6moZYLM6i75f
-         ApHxVI+444+ebEoCh+0J9qdqOWyNhqrBIDtK6fNiBLJ/a84+fZKWwcCPPycNhF3Pk8/9
-         2j1+8cED07Pb4VWqEUHTTO8JTohkAPlMO5RaX4gt+7i96yDkgUcqefFFtFl+RhXh4HPR
-         Y7HFBZvFbekO7Ll/+1lgt6GHXa/2wlLAce0iuI3e1sjyYi/wpoyVz9bjF/L8BG76rI3Y
-         ATDA==
-X-Gm-Message-State: AA+aEWafRu1xXnZo/ZqcAUHDhfQeNG/h9wRcrQGg+bpigrh1mSuQGIHY
-        DKQq4NwFsQ/Rag+HhUhxM0k=
-X-Google-Smtp-Source: AFSGD/WiwQEFwql3iiSwej26/LOJHQCZfhdkkv48Wrxs4/02xOu2RhZf3qo3aFV6UA4/3LLifIZWHw==
-X-Received: by 2002:a2e:449c:: with SMTP id b28-v6mr14439032ljf.47.1543993249678;
-        Tue, 04 Dec 2018 23:00:49 -0800 (PST)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id q127-v6sm3917951ljq.45.2018.12.04.23.00.48
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 04 Dec 2018 23:00:49 -0800 (PST)
-Date:   Wed, 5 Dec 2018 09:00:46 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     mazziesaccount@gmail.com, mturquette@baylibre.com,
-        cw00.choi@samsung.com, krzk@kernel.org, b.zolnierkie@samsung.com,
-        linux@armlinux.org.uk, andy.gross@linaro.org,
-        david.brown@linaro.org, pavel@ucw.cz, andrew.smirnov@gmail.com,
-        pombredanne@nexb.com, sjhuang@iluvatar.ai, akshu.agrawal@amd.com,
-        djkurtz@chromium.org, rafael.j.wysocki@intel.com,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v6 03/10] clk: of-provider: look at parent if registered
- device has no provider info
-Message-ID: <20181205070046.GD31204@localhost.localdomain>
-References: <cover.1543922403.git.matti.vaittinen@fi.rohmeurope.com>
- <a40442ad1a2f1d13798ba535eca371845bae9248.1543922403.git.matti.vaittinen@fi.rohmeurope.com>
- <154395229720.88331.16585219136189943316@swboyd.mtv.corp.google.com>
+        id S1726695AbeLEHPv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 5 Dec 2018 02:15:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54576 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726351AbeLEHPv (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 5 Dec 2018 02:15:51 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 61D0A206B7;
+        Wed,  5 Dec 2018 07:15:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543994149;
+        bh=QA2f4A6WaubtcLivsxrypjR7/T1YXiEXXTZDJwOlun0=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=VZsfnPMJwL4ZldvpMVkT3ooBr17j75HxVOr+fTtPljxBhmppTfwr2qlAST8zaydSu
+         BJh7CWfpWX4TftwiPIWBOzDUVz9a66RL0A6uSLi/SMtRxbmxe2zEtmakRk2Zy3QDjo
+         zFB/CtDzOsUhqpSMY9U4VzMnLxFp9bhzKzH8UN/4=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <154395229720.88331.16585219136189943316@swboyd.mtv.corp.google.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Transfer-Encoding: quoted-printable
+To:     Alex Elder <elder@linaro.org>,
+        David Dai <daidavid1@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <edeebce5-24a2-b844-6bff-781017949e2d@codeaurora.org>
+Cc:     georgi.djakov@linaro.org, bjorn.andersson@linaro.org,
+        evgreen@google.com, tdas@codeaurora.org
+References: <1543895413-1553-1-git-send-email-daidavid1@codeaurora.org>
+ <1543895413-1553-2-git-send-email-daidavid1@codeaurora.org>
+ <154395145491.88331.1174781210192403998@swboyd.mtv.corp.google.com>
+ <8dafe631-4b16-94cd-392e-84728f2bb382@linaro.org>
+ <154396284056.88331.12279283832884556349@swboyd.mtv.corp.google.com>
+ <edeebce5-24a2-b844-6bff-781017949e2d@codeaurora.org>
+Message-ID: <154399414865.88331.2447825064224349951@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [RFC PATCH] clk: qcom: clk-rpmh: Add IPA clock support
+Date:   Tue, 04 Dec 2018 23:15:48 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello Stephen,
+Quoting David Dai (2018-12-04 17:14:10)
+> =
 
-I copied some parts of the v4 discussion here as well. Let's continue
-them under this one email thread. (and yep, this is my bad we now have
-multiple email threads - I did these new patches without waiting for
-the final conclusion. I should try to be more patient in the future...)
+> On 12/4/2018 2:34 PM, Stephen Boyd wrote:
+> > Quoting Alex Elder (2018-12-04 13:41:47)
+> >> On 12/4/18 1:24 PM, Stephen Boyd wrote:
+> >>> Quoting David Dai (2018-12-03 19:50:13)
+> >>>> Add IPA clock support by extending the current clk rpmh driver to su=
+pport
+> >>>> clocks that are managed by a different type of RPMh resource known as
+> >>>> Bus Clock Manager(BCM).
+> >>> Yes, but why? Does the IPA driver need to set clk rates and that some=
+how
+> >>> doesn't work as a bandwidth request?
+> >> The IPA core clock is a *clock*, not a bus.  Representing it as if
+> >> it were a bus, abusing the interconnect interface--pretending a bandwi=
+dth
+> >> request is really a clock rate request--is kind of kludgy.  I think Bj=
+orn
+> >> and David (and maybe Georgi? I don't know) decided a long time ago that
+> >> exposing this as a clock is the right way to do it.  I agree with that.
+> >>
+> > But then we translate that clock rate into a bandwidth request to the
+> > BCM hardware? Seems really weird because it's doing the opposite of what
+> > you say is abusive. What does the IPA driver plan to do with this clk?
+> > Calculate a frequency by knowing that it really boils down to some
+> > bandwidth that then gets converted back into some clock frequency? Do we
+> > have the user somewhere that can be pointed to?
+> The clock rate is translated into a unitless threshold value sent as =
 
-> > > I think we should use parent device's node, not the paren node in DT,        
-> > > right? But I agree, we should only look "one level up in the chain".         
-                                                                                 
-> > Are these two things different? I'm suggesting looking at                      
-> > device_node::parent and trying to find a #clock-cells property.                
-                                                                                 
-> I thought that MFD sub-devices may completely lack the DT node but I
-> will verify this tomorrow.
+> part of the rpmh msg
+> that BCM takes to select a performance. In this case, the unit =
 
-So yep. It appears that the DT node for MFD sub-device is left NULL.
-This is quite logical as there really is no clk sub-node in MFD (pmic)
-node. The option to "hack around" this would be setting the of_node to
-parent node in driver code. But this feels wrong. Drivers should not
-mess with the "dt node ownership" - and it also feels a bit odd when
-many devices use same DT node. I think we may hit in problems when
-obtaining resources or doing reference counting. Hence I think we should
-keep the of_node NULL for sub-device if the sub-device does not have own
-node inside the main devie node. And I think Rob was not a fan of having
-own nodes for sub-devices inside the MFD node (AFAIR my first driver
-draft for this device had it but Rob and you thought that was not correct).
+> conversion is based on
+> the unit value read from the aux data which is in Khz. I understand that =
 
-On Tue, Dec 04, 2018 at 11:38:17AM -0800, Stephen Boyd wrote:
-> Quoting Matti Vaittinen (2018-12-04 03:34:53)
-> > It seems to be usual for MFD devices that the created 'clock sub-device'
-> > do not have own DT node. The clock provider information is usually in the
-> > main device node which is owned by the MFD device. Change the devm variant
-> > of clk of-provider registration to check the parent device node if given
-> > device has no own node or if the node does not contain the #clock-cells
-> > property. In such case use the parent node if it contains the #clock-cells.
-> > 
-> > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> > ---
-> >  drivers/clk/clk.c | 27 +++++++++++++++++++++++----
-> >  1 file changed, 23 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > index 78c90913f987..66dc7c1483d7 100644
-> > --- a/drivers/clk/clk.c
-> > +++ b/drivers/clk/clk.c
-> > @@ -3893,6 +3893,11 @@ static void devm_of_clk_release_provider(struct device *dev, void *res)
-> >         of_clk_del_provider(*(struct device_node **)res);
-> >  }
-> >  
-> > +static int of_is_clk_provider(struct device_node *np)
-> > +{
-> > +       return !!of_find_property(np, "#clock-cells", NULL);
-> > +}
-> > +
-> >  /**
-> >   * devm_of_clk_add_hw_provider() - Managed clk provider node registration
-> >   * @dev: Device acting as the clock provider. Used for DT node and lifetime.
-> > @@ -3901,8 +3906,11 @@ static void devm_of_clk_release_provider(struct device *dev, void *res)
-> >   *
-> >   * Returns 0 on success or an errno on failure.
-> >   *
-> > - * Registers clock provider for given device's node. Provider is automatically
-> > - * released at device exit.
-> > + * Registers clock provider for given device's node. If the device has no DT
-> > + * node or if the device node lacks of clock provider information (#clock-cells)
-> > + * then the parent device's node is scanned for this information. If parent node
-> > + * has the #clock-cells then it is used in registration. Provider is
-> > + * automatically released at device exit.
-> >   */
-> >  int devm_of_clk_add_hw_provider(struct device *dev,
-> >                         struct clk_hw *(*get)(struct of_phandle_args *clkspec,
-> > @@ -3912,12 +3920,17 @@ int devm_of_clk_add_hw_provider(struct device *dev,
-> >         struct device_node **ptr, *np;
-> >         int ret;
-> >  
-> > +       np = dev->of_node;
-> > +
-> > +       if (!of_is_clk_provider(dev->of_node))
-> > +               if (of_is_clk_provider(dev->parent->of_node))
-> > +                       np = dev->parent->of_node;
-> 
-> As said on v5, let's just modify of_clk_add_provider() to do the parent
-> search.
+> this wasn't
+> explicitly mentioned anywhere and I'll improve on that next patch. =
 
-But that won't solve the issue if we don't do "dirty hacks" in driver.
-The devm interface still only gets the device-pointer, not the DT node
-as argument. And if DT node for device is NULL (like in MFD cases) -
-then there is no parent node, only parent device with a node. For plain
-of_clk_add_provider() the driver can just give the parent's node pointer
-in cases where it knows it is the parent who has the provider data in
-DT. But our original problem is in devm interfaces.
 
-Br,
-	Matti Vaittinen
+How is this different from bus bandwidth requests? In those cases the
+bandwidth is calculated in bits per second or something like that, and
+written to the hardware so it can convert that bandwidth into kHz and
+set a bus clk frequency in the clock controller? So in the IPA case
+we've skipped the bps to kHz conversion step and gone straight to the
+clk frequency setting part? Is a BCM able to aggregate units of
+bandwidth or kHz depending on how it's configured and this BCM is
+configured for kHz?
 
--- 
-Matti Vaittinen
-ROHM Semiconductors
+> Here's a link to
+> the IPA driver implementation: https://lkml.org/lkml/2018/11/7/220
 
-~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
+Thanks for the link. It looks like the IPA driver hard codes a rate of
+75 MHz.
+
