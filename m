@@ -2,104 +2,110 @@ Return-Path: <SRS0=HA4W=OO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E3A1C04EB9
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Dec 2018 11:09:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C241DC04EBF
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Dec 2018 11:42:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 013032082B
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Dec 2018 11:09:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 013032082B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 90F30206B7
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Dec 2018 11:42:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90F30206B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726866AbeLELJ5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 5 Dec 2018 06:09:57 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:48724 "EHLO mail.bootlin.com"
+        id S1727006AbeLELmo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 5 Dec 2018 06:42:44 -0500
+Received: from mx.socionext.com ([202.248.49.38]:22046 "EHLO mx.socionext.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726171AbeLELJ5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 5 Dec 2018 06:09:57 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 3FD9620C18; Wed,  5 Dec 2018 12:09:55 +0100 (CET)
-Received: from localhost (aaubervilliers-681-1-79-44.w90-88.abo.wanadoo.fr [90.88.21.44])
-        by mail.bootlin.com (Postfix) with ESMTPSA id EB28920745;
-        Wed,  5 Dec 2018 12:09:38 +0100 (CET)
-Date:   Wed, 5 Dec 2018 12:09:39 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Chen-Yu Tsai <wens@csie.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        id S1726918AbeLELmo (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 5 Dec 2018 06:42:44 -0500
+Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
+  by mx.socionext.com with ESMTP; 05 Dec 2018 20:42:42 +0900
+Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
+        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id 8160F180B3E;
+        Wed,  5 Dec 2018 20:42:42 +0900 (JST)
+Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Wed, 5 Dec 2018 20:42:42 +0900
+Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
+        by iyokan.css.socionext.com (Postfix) with ESMTP id 55CDA40377;
+        Wed,  5 Dec 2018 20:42:42 +0900 (JST)
+Received: from [127.0.0.1] (unknown [10.213.119.83])
+        by yuzu.css.socionext.com (Postfix) with ESMTP id 38B13120455;
+        Wed,  5 Dec 2018 20:42:42 +0900 (JST)
+Subject: Re: [PATCH 07/14] clock: milbeaut: Add Milbeaut M10V clock control
+To:     Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 0/3] ARM: sun8i: a33: Audio codec improvements
-Message-ID: <20181205110939.w4sbagsah5heo4ye@flea>
-References: <20181205101152.22983-1-wens@csie.org>
+        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Jiri Slaby <jslaby@suse.com>,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>
+References: <1542589274-13878-1-git-send-email-sugaya.taichi@socionext.com>
+ <1542589274-13878-8-git-send-email-sugaya.taichi@socionext.com>
+ <154356669840.88331.4455990896653868594@swboyd.mtv.corp.google.com>
+ <298cd5a5-66cf-0936-405e-59bcc7c396ed@socionext.com>
+ <154394734173.88331.18352656286616172689@swboyd.mtv.corp.google.com>
+From:   "Sugaya, Taichi" <sugaya.taichi@socionext.com>
+Message-ID: <c0b37449-1221-9849-8014-13b3eeb43382@socionext.com>
+Date:   Wed, 5 Dec 2018 20:42:41 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="djerp4ndjffky3di"
-Content-Disposition: inline
-In-Reply-To: <20181205101152.22983-1-wens@csie.org>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <154394734173.88331.18352656286616172689@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi
 
---djerp4ndjffky3di
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 2018/12/05 3:15, Stephen Boyd wrote:
+> Quoting Sugaya, Taichi (2018-12-04 00:26:16)
+>> On 2018/11/30 17:31, Stephen Boyd wrote:
+>>> Quoting Sugaya Taichi (2018-11-18 17:01:12)
+>>>> +void __init m10v_clk_mux_setup(struct device_node *node)
+>>>> +{
+>>>> +       const char *clk_name = node->name;
+>>>> +       struct clk_init_data init;
+>>>> +       const char **parent_names;
+>>>> +       struct m10v_mux *mcm;
+>>>> +       struct clk *clk;
+>>>> +       int i, parents;
+>>>> +
+>>>> +       if (!m10v_clk_iomap())
+>>>> +               return;
+>>>> +
+>>>> +       of_property_read_string(node, "clock-output-names", &clk_name);
+>>>> +
+>>>> +       parents = of_clk_get_parent_count(node);
+>>>> +       if (parents < 2) {
+>>>> +               pr_err("%s: not a mux\n", clk_name);
+>>>
+>>> How is this possible?
+>>
+>> When the node has more than 1 clks...
+>> Or I am misunderstanding your question?
+> 
+> This looks like code that's checking DT for correctness. We don't
+> typically do that in the kernel because the kernel isn't a DT validator.
+> That's all I'm saying. I think this comment is not useful if the driver
+> design is done to specify parent linkages in C code instead of DT, so
+> don't worry about this too much.
 
-On Wed, Dec 05, 2018 at 06:11:49PM +0800, Chen-Yu Tsai wrote:
-> Hi everyone,
->=20
-> This series improves audio support on the A33. Like other Allwinner
-> SoCs, the A33 requires the use of a sigma-delta modulation fractional-N
-> PLL to generate the correct clock used for audio playback. Otherwise the
-> pitch would be slightly off.
->=20
-> Patch 1 enables sigma-delta modulation for the audio PLL on the A33.
->=20
-> Patch 2 is only slightly related. It sets the CLK_SET_RATE_PARENT flag
-> for all audio-related module clocks
->=20
-> Patch 3 lowers the audio codec's oversampling rate, so that it can
-> play back audio sampled at beyond 48 KHz.
->=20
-> This is the same as what has recently been done for the A64, which
-> shares the same audio codec hardware design.
->=20
-> However, on the A33 it seems the PLL doesn't always immediately lock on
-> to the new clock frequency when there is a rate change. Also since the
-> codec is only put in standby instead of turned off, runtime PM never
-> kicks in, and the audio related clocks never get turned off. I'm still
-> looking into this.
->=20
-> On an unrelated note, if you get pops when playing back audio on sunxi,
-> it might be related to cpufreq. Try setting the governor to performance
-> and see if that removes the pops.
+I understand.
+Thank you for additional information.
 
-Applied all 3 patches, thanks!
-Maxime
+Sugaya Taichi
 
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+> 
 
---djerp4ndjffky3di
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXAex8wAKCRDj7w1vZxhR
-xYe4AP9cjPfghU+vltMG2R6qzW6a9kKvBwIUP+KU0Pd0i3GGAAEA+MeRdE7pdiDC
-/DWn8hpg4iY6XXGOPSTzcv32BcCqvQs=
-=jpF3
------END PGP SIGNATURE-----
-
---djerp4ndjffky3di--
