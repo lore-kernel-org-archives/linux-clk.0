@@ -6,23 +6,23 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 525DBC04EB9
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Dec 2018 10:12:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBE44C04EB9
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Dec 2018 10:12:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FF66206B7
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Dec 2018 10:12:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FF66206B7
+	by mail.kernel.org (Postfix) with ESMTP id 83CAA21508
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Dec 2018 10:12:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83CAA21508
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728025AbeLEKL5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S1727719AbeLEKL5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Wed, 5 Dec 2018 05:11:57 -0500
-Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:51450 "EHLO
+Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:51460 "EHLO
         wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728021AbeLEKL4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        id S1727815AbeLEKL4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
         Wed, 5 Dec 2018 05:11:56 -0500
 Received: by wens.csie.org (Postfix, from userid 1000)
-        id 621865FD54; Wed,  5 Dec 2018 18:11:53 +0800 (CST)
+        id 677E45FD43; Wed,  5 Dec 2018 18:11:53 +0800 (CST)
 From:   Chen-Yu Tsai <wens@csie.org>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -30,9 +30,9 @@ To:     Maxime Ripard <maxime.ripard@bootlin.com>,
 Cc:     Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: [PATCH 2/3] clk: sunxi-ng: a33: Set CLK_SET_RATE_PARENT for all audio module clocks
-Date:   Wed,  5 Dec 2018 18:11:51 +0800
-Message-Id: <20181205101152.22983-3-wens@csie.org>
+Subject: [PATCH 3/3] ARM: dts: sun8i: a33: Drop audio codec oversampling rate to 128 fs
+Date:   Wed,  5 Dec 2018 18:11:52 +0800
+Message-Id: <20181205101152.22983-4-wens@csie.org>
 X-Mailer: git-send-email 2.20.0.rc1
 In-Reply-To: <20181205101152.22983-1-wens@csie.org>
 References: <20181205101152.22983-1-wens@csie.org>
@@ -43,47 +43,36 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-All the audio interfaces on Allwinner SoCs need to change their module
-clocks during operation, to switch between support for 44.1 kHz and 48
-kHz family sample rates. The clock rate for the module clocks is
-governed by their upstream audio PLL. The module clocks themselves only
-have a gate, and sometimes a divider or mux. Thus any rate changes need
-to be propagated upstream.
+The current oversampling rate of 512 means that for 48 kHz 16 bit
+stereo, the MCLK is running at the same rate as the module clock,
+so there is no head room to support higher sampling rates. The codec
+however supports up to 192 kHz for playback.
 
-Set the CLK_SET_RATE_PARENT flag for all audio module clocks to achieve
-this.
+This patch drops the oversampling rate from 512 to 128, so that 192 kHz
+audio can be played back directly without downsampling. Ideally we
+should be using different oversampling rates for different sampling
+rates, but that's not possible without a platform-specific machine
+driver.
 
+Fixes: 870f1bd1f5e9 ("ARM: dts: sun8i: Add audio codec, dai and card for A33")
 Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- drivers/clk/sunxi-ng/ccu-sun8i-a33.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/sun8i-a33.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
-index f763648a5f20..c7bf814dfd2b 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
-@@ -377,10 +377,10 @@ static SUNXI_CCU_MP_WITH_MUX_GATE(spi1_clk, "spi1", mod0_default_parents, 0x0a4,
- static const char * const i2s_parents[] = { "pll-audio-8x", "pll-audio-4x",
- 					    "pll-audio-2x", "pll-audio" };
- static SUNXI_CCU_MUX_WITH_GATE(i2s0_clk, "i2s0", i2s_parents,
--			       0x0b0, 16, 2, BIT(31), 0);
-+			       0x0b0, 16, 2, BIT(31), CLK_SET_RATE_PARENT);
- 
- static SUNXI_CCU_MUX_WITH_GATE(i2s1_clk, "i2s1", i2s_parents,
--			       0x0b4, 16, 2, BIT(31), 0);
-+			       0x0b4, 16, 2, BIT(31), CLK_SET_RATE_PARENT);
- 
- /* TODO: the parent for most of the USB clocks is not known */
- static SUNXI_CCU_GATE(usb_phy0_clk,	"usb-phy0",	"osc24M",
-@@ -457,7 +457,7 @@ static SUNXI_CCU_M_WITH_GATE(ve_clk, "ve", "pll-ve",
- static SUNXI_CCU_GATE(ac_dig_clk,	"ac-dig",	"pll-audio",
- 		      0x140, BIT(31), CLK_SET_RATE_PARENT);
- static SUNXI_CCU_GATE(ac_dig_4x_clk,	"ac-dig-4x",	"pll-audio-4x",
--		      0x140, BIT(30), 0);
-+		      0x140, BIT(30), CLK_SET_RATE_PARENT);
- static SUNXI_CCU_GATE(avs_clk,		"avs",		"osc24M",
- 		      0x144, BIT(31), 0);
- 
+diff --git a/arch/arm/boot/dts/sun8i-a33.dtsi b/arch/arm/boot/dts/sun8i-a33.dtsi
+index c2c10cd4a210..11f58893678d 100644
+--- a/arch/arm/boot/dts/sun8i-a33.dtsi
++++ b/arch/arm/boot/dts/sun8i-a33.dtsi
+@@ -207,7 +207,7 @@
+ 		simple-audio-card,format = "i2s";
+ 		simple-audio-card,frame-master = <&link_codec>;
+ 		simple-audio-card,bitclock-master = <&link_codec>;
+-		simple-audio-card,mclk-fs = <512>;
++		simple-audio-card,mclk-fs = <128>;
+ 		simple-audio-card,aux-devs = <&codec_analog>;
+ 		simple-audio-card,routing =
+ 			"Left DAC", "AIF1 Slot 0 Left",
 -- 
 2.20.0.rc1
 
