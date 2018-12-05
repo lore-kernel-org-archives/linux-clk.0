@@ -2,187 +2,167 @@ Return-Path: <SRS0=HA4W=OO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A896C04EBF
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Dec 2018 19:48:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23A62C04EBF
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Dec 2018 19:54:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F371220892
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Dec 2018 19:48:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F371220892
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id DC76D20850
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Dec 2018 19:54:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544039644;
+	bh=oNqG+UnI4PcR4d88PxqYvYJCYc1RgxUQMivrVyd8o2Y=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=FUEQ5YfhC3WPBb/inB7UTcvjwK/kn4D+kHmLoeAhliIAdDUcornvnfRVNGcTsAsKo
+	 QsvRW7FsFpThyFhuhYKlXxAINbQv3bPGAyifRfwg4RHoSE5di0Sr1mIU+a9jFVKBQv
+	 V6Yx4QO2+9ZRchRwJy2zHeSgf20nU57/sgahzRko=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC76D20850
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728144AbeLETsN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 5 Dec 2018 14:48:13 -0500
-Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:55911 "EHLO
-        herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728653AbeLETru (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Dec 2018 14:47:50 -0500
-Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
-        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id wB5JHVXm013011;
-        Wed, 5 Dec 2018 21:17:31 +0200
-Received: by taln60.nuvoton.co.il (Postfix, from userid 20088)
-        id 5C5F162DA6; Wed,  5 Dec 2018 21:47:29 +0200 (IST)
-From:   Tali Perry <tali.perry1@gmail.com>
-To:     avifishman70@gmail.com, tmaimon77@gmail.com, venture@google.com,
-        yuenn@google.com, brendanhiggins@google.com,
-        mturquette@baylibre.com, sboyd@kernel.org
-Cc:     openbmc@lists.ozlabs.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Tali Perry <tali.perry1@gmail.com>
-Subject: [PATCH v1 1/1] clk: npcm: get fixed input clks from DT
-Date:   Wed,  5 Dec 2018 21:47:02 +0200
-Message-Id: <20181205194702.257430-3-tali.perry1@gmail.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20181205194702.257430-1-tali.perry1@gmail.com>
-References: <20181205194702.257430-1-tali.perry1@gmail.com>
+        id S1728580AbeLETxv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 5 Dec 2018 14:53:51 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:37584 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728601AbeLETu5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Dec 2018 14:50:57 -0500
+Received: by mail-ot1-f65.google.com with SMTP id 40so19801522oth.4;
+        Wed, 05 Dec 2018 11:50:57 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qMf/8b8HPdVUaDDlxlxbmj1xfhA6XtWizfCJKwehYSU=;
+        b=T6uCCHPpvMBGqcCT76BgHw9dl6mLANprobfA8VHQmQJnYbNDgm8SbbYckGskBpaZLa
+         /ETqUtLTY115Vr6tKXMAsadLBaNsgjqzJNTn/vHSFvl5mf85J/9O0e49MXq7HtbJHVbr
+         PsJBX+ztUZ2krj6ko8TJ5Bukv0AGv+dbekyzz6WUa289kGs+eEZNr1jsw24N5QG3aF5z
+         P93URXiNNceQXQ86DWO3/lqiY7haTP96YuGhramfxrR6QFE2K1OyMQNL6a1qqoTNJWlp
+         5oZlJXmNUYOM9ZNnybCbz5c3QeyENgFp7/nV2vc9gJ51oJ8BqT6tqkCnAo3S/z/8K8X2
+         VIUg==
+X-Gm-Message-State: AA+aEWZvqEwMJ+3DkOe3b7c3q+Ea/QBtQCUL8aMhHh2FSXvbzBIGREZ8
+        s+XagDdnPxkd+9e7ywYnLvnl9Qo=
+X-Google-Smtp-Source: AFSGD/Uto0OjqNOmEsHFK57ZDUo6dZJqoQDrNSvkN0UuQUlPmALMlrnVcywX5kxxgjKsaDeXw7i4cg==
+X-Received: by 2002:a9d:5e0b:: with SMTP id d11mr15115452oti.145.1544039456498;
+        Wed, 05 Dec 2018 11:50:56 -0800 (PST)
+Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.googlemail.com with ESMTPSA id k13sm25759879otj.19.2018.12.05.11.50.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Dec 2018 11:50:55 -0800 (PST)
+From:   Rob Herring <robh@kernel.org>
+To:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Tero Kristo <t-kristo@ti.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] clk: Use of_node_name_eq for node name comparisons
+Date:   Wed,  5 Dec 2018 13:50:21 -0600
+Message-Id: <20181205195050.4759-5-robh@kernel.org>
+X-Mailer: git-send-email 2.19.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
----
- drivers/clk/clk-npcm7xx.c | 64 +++++++++++++++++++++++++++++++++++++++--------
- 1 file changed, 53 insertions(+), 11 deletions(-)
+Convert string compares of DT node names to use of_node_name_eq helper
+instead. This removes direct access to the node name pointer.
 
-diff --git a/drivers/clk/clk-npcm7xx.c b/drivers/clk/clk-npcm7xx.c
-index 27a86b7a34db..25f8ccaa3d2f 100644
---- a/drivers/clk/clk-npcm7xx.c
-+++ b/drivers/clk/clk-npcm7xx.c
-@@ -8,17 +8,23 @@
-  */
+For instances using of_node_cmp, this has the side effect of now using
+case sensitive comparisons. This should not matter for any FDT based
+system which all of these are.
+
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Tero Kristo <t-kristo@ti.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-renesas-soc@vger.kernel.org
+Cc: linux-clk@vger.kernel.org
+Cc: linux-omap@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Signed-off-by: Rob Herring <robh@kernel.org>
+---
+ drivers/clk/renesas/clk-mstp.c   |  2 +-
+ drivers/clk/ti/clkctrl.c         |  2 +-
+ drivers/clk/ti/dpll.c            |  2 +-
+ drivers/clk/ux500/u8500_of_clk.c | 10 +++++-----
+ 4 files changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
+index 1c1768c2cc82..765175d1148a 100644
+--- a/drivers/clk/renesas/clk-mstp.c
++++ b/drivers/clk/renesas/clk-mstp.c
+@@ -280,7 +280,7 @@ int cpg_mstp_attach_dev(struct generic_pm_domain *unused, struct device *dev)
+ 			goto found;
  
- #include <linux/module.h>
-+#include <linux/clk.h>
- #include <linux/clk-provider.h>
-+#include <linux/device.h>
- #include <linux/io.h>
- #include <linux/kernel.h>
- #include <linux/of.h>
-+#include <linux/of_device.h>
-+#include <linux/of_platform.h>
- #include <linux/of_address.h>
-+#include <linux/platform_device.h>
- #include <linux/slab.h>
- #include <linux/err.h>
-+#include <linux/rational.h>
- #include <linux/bitfield.h>
--
- #include <dt-bindings/clock/nuvoton,npcm7xx-clock.h>
+ 		/* BSC on r8a73a4/sh73a0 uses zb_clk instead of an mstp clock */
+-		if (!strcmp(clkspec.np->name, "zb_clk"))
++		if (of_node_name_eq(clkspec.np, "zb_clk"))
+ 			goto found;
  
-+
- struct npcm7xx_clk_pll {
- 	struct clk_hw	hw;
- 	void __iomem	*pllcon;
-@@ -44,7 +50,8 @@ static unsigned long npcm7xx_clk_pll_recalc_rate(struct clk_hw *hw,
- 	u64 ret;
+ 		of_node_put(clkspec.np);
+diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
+index 469f560ae1cf..40630eb950fc 100644
+--- a/drivers/clk/ti/clkctrl.c
++++ b/drivers/clk/ti/clkctrl.c
+@@ -448,7 +448,7 @@ static void __init _ti_omap4_clkctrl_setup(struct device_node *node)
+ 	char *c;
  
- 	if (parent_rate == 0) {
--		pr_err("%s: parent rate is zero", __func__);
-+		pr_err("%s: parent rate is zero. reg=%s\n", __func__,
-+		       hw->init->name);
- 		return 0;
+ 	if (!(ti_clk_get_features()->flags & TI_CLK_CLKCTRL_COMPAT) &&
+-	    !strcmp(node->name, "clk"))
++	    of_node_name_eq(node, "clk"))
+ 		ti_clk_features.flags |= TI_CLK_CLKCTRL_COMPAT;
+ 
+ 	addrp = of_get_address(node, 0, NULL, NULL);
+diff --git a/drivers/clk/ti/dpll.c b/drivers/clk/ti/dpll.c
+index 92e28af7afba..6c3329bc116f 100644
+--- a/drivers/clk/ti/dpll.c
++++ b/drivers/clk/ti/dpll.c
+@@ -410,7 +410,7 @@ static void __init of_ti_omap3_dpll_setup(struct device_node *node)
+ 
+ 	if ((of_machine_is_compatible("ti,omap3630") ||
+ 	     of_machine_is_compatible("ti,omap36xx")) &&
+-	    !strcmp(node->name, "dpll5_ck"))
++	     of_node_name_eq(node, "dpll5_ck"))
+ 		of_ti_dpll_setup(node, &omap3_dpll5_ck_ops, &dd);
+ 	else
+ 		of_ti_dpll_setup(node, &omap3_dpll_ck_ops, &dd);
+diff --git a/drivers/clk/ux500/u8500_of_clk.c b/drivers/clk/ux500/u8500_of_clk.c
+index d5888591e1a9..18a3c4522831 100644
+--- a/drivers/clk/ux500/u8500_of_clk.c
++++ b/drivers/clk/ux500/u8500_of_clk.c
+@@ -545,21 +545,21 @@ static void u8500_clk_init(struct device_node *np)
+ 	for_each_child_of_node(np, child) {
+ 		static struct clk_onecell_data clk_data;
+ 
+-		if (!of_node_cmp(child->name, "prcmu-clock")) {
++		if (of_node_name_eq(child, "prcmu-clock")) {
+ 			clk_data.clks = prcmu_clk;
+ 			clk_data.clk_num = ARRAY_SIZE(prcmu_clk);
+ 			of_clk_add_provider(child, of_clk_src_onecell_get, &clk_data);
+ 		}
+-		if (!of_node_cmp(child->name, "prcc-periph-clock"))
++		if (of_node_name_eq(child, "prcc-periph-clock"))
+ 			of_clk_add_provider(child, ux500_twocell_get, prcc_pclk);
+ 
+-		if (!of_node_cmp(child->name, "prcc-kernel-clock"))
++		if (of_node_name_eq(child, "prcc-kernel-clock"))
+ 			of_clk_add_provider(child, ux500_twocell_get, prcc_kclk);
+ 
+-		if (!of_node_cmp(child->name, "rtc32k-clock"))
++		if (of_node_name_eq(child, "rtc32k-clock"))
+ 			of_clk_add_provider(child, of_clk_src_simple_get, rtc_clk);
+ 
+-		if (!of_node_cmp(child->name, "smp-twd-clock"))
++		if (of_node_name_eq(child, "smp-twd-clock"))
+ 			of_clk_add_provider(child, of_clk_src_simple_get, twd_clk);
  	}
- 
-@@ -65,9 +72,10 @@ static const struct clk_ops npcm7xx_clk_pll_ops = {
- 	.recalc_rate = npcm7xx_clk_pll_recalc_rate,
- };
- 
--static struct clk_hw *
--npcm7xx_clk_register_pll(void __iomem *pllcon, const char *name,
--			 const char *parent_name, unsigned long flags)
-+static struct clk_hw *npcm7xx_clk_register_pll(void __iomem *pllcon,
-+					       const char *name,
-+					       const char *parent_name,
-+					       unsigned long flags)
- {
- 	struct npcm7xx_clk_pll *pll;
- 	struct clk_init_data init;
-@@ -544,12 +552,14 @@ static void __init npcm7xx_clk_init(struct device_node *clk_np)
- 	void __iomem *clk_base;
- 	struct resource res;
- 	struct clk_hw *hw;
-+	struct clk *clk;
- 	int ret;
- 	int i;
- 
-+	clk_base = NULL;
- 	ret = of_address_to_resource(clk_np, 0, &res);
- 	if (ret) {
--		pr_err("%pOFn: failed to get resource, ret %d\n", clk_np,
-+		pr_err("%s: failed to get resource, ret %d\n", clk_np->name,
- 			ret);
- 		return;
- 	}
-@@ -558,9 +568,10 @@ static void __init npcm7xx_clk_init(struct device_node *clk_np)
- 	if (!clk_base)
- 		goto npcm7xx_init_error;
- 
--	npcm7xx_clk_data = kzalloc(struct_size(npcm7xx_clk_data, hws,
--				   NPCM7XX_NUM_CLOCKS), GFP_KERNEL);
--	if (!npcm7xx_clk_data)
-+	npcm7xx_clk_data = kzalloc(sizeof(*npcm7xx_clk_data->hws) *
-+		NPCM7XX_NUM_CLOCKS + sizeof(npcm7xx_clk_data), GFP_KERNEL);
-+
-+	if (!npcm7xx_clk_data->hws)
- 		goto npcm7xx_init_np_err;
- 
- 	npcm7xx_clk_data->num = NPCM7XX_NUM_CLOCKS;
-@@ -568,6 +579,31 @@ static void __init npcm7xx_clk_init(struct device_node *clk_np)
- 	for (i = 0; i < NPCM7XX_NUM_CLOCKS; i++)
- 		npcm7xx_clk_data->hws[i] = ERR_PTR(-EPROBE_DEFER);
- 
-+	/* Read fixed clocks. These 3 clocks must be defined in DT */
-+	clk = of_clk_get_by_name(clk_np, NPCM7XX_CLK_S_REFCLK);
-+	if (IS_ERR(clk)) {
-+		pr_err("failed to find external REFCLK on device tree, err=%ld\n",
-+			PTR_ERR(clk));
-+		clk_put(clk);
-+		goto npcm7xx_init_fail_no_clk_on_dt;
-+	}
-+
-+	clk = of_clk_get_by_name(clk_np, NPCM7XX_CLK_S_SYSBYPCK);
-+	if (IS_ERR(clk)) {
-+		pr_err("failed to find external SYSBYPCK on device tree, err=%ld\n",
-+			PTR_ERR(clk));
-+		clk_put(clk);
-+		goto npcm7xx_init_fail_no_clk_on_dt;
-+	}
-+
-+	clk = of_clk_get_by_name(clk_np, NPCM7XX_CLK_S_MCBYPCK);
-+	if (IS_ERR(clk)) {
-+		pr_err("failed to find external MCBYPCK on device tree, err=%ld\n",
-+			PTR_ERR(clk));
-+		clk_put(clk);
-+		goto npcm7xx_init_fail_no_clk_on_dt;
-+	}
-+
- 	/* Register plls */
- 	for (i = 0; i < ARRAY_SIZE(npcm7xx_plls); i++) {
- 		const struct npcm7xx_clk_pll_data *pll_data = &npcm7xx_plls[i];
-@@ -646,11 +682,17 @@ static void __init npcm7xx_clk_init(struct device_node *clk_np)
- 
- 	return;
- 
-+npcm7xx_init_fail_no_clk_on_dt:
-+	pr_err("see Documentation/devicetree/bindings/clock/");
-+	pr_err("nuvoton,npcm750-clk.txt  for details\n");
- npcm7xx_init_fail:
--	kfree(npcm7xx_clk_data->hws);
-+	if (npcm7xx_clk_data->num)
-+		kfree(npcm7xx_clk_data->hws);
- npcm7xx_init_np_err:
--	iounmap(clk_base);
-+	if (clk_base != NULL)
-+		iounmap(clk_base);
- npcm7xx_init_error:
- 	of_node_put(clk_np);
-+	pr_err("clk setup fail\n");
  }
- CLK_OF_DECLARE(npcm7xx_clk_init, "nuvoton,npcm750-clk", npcm7xx_clk_init);
 -- 
-2.14.1
+2.19.1
 
