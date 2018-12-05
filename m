@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75DCDC04EB9
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Dec 2018 17:25:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 442E8C04EB9
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Dec 2018 17:25:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38D7620879
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Dec 2018 17:25:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E068208E7
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Dec 2018 17:25:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544030712;
-	bh=1xZHk5U/u8j6lAwFyyDkz4h5vtVcooAHfDHY8mf/cJc=;
+	s=default; t=1544030719;
+	bh=2/hqaMZuBaQYW4QNk9bDPA++7Z/NdhVU7dAbfmW2ry0=;
 	h=To:From:In-Reply-To:Cc:References:Subject:Date:List-ID:From;
-	b=AvUO0qEmb7HyVXtilj5meXnCix9I+AVoJBRRVa4/pBL6a8uNGAb9+Z3A/aD4QLhVg
-	 n6dgUTlAR/2Dkj79Slr5IThEKh6t7o3vSk/cRQ6FHGOnuIpyb1g4vkFXM96+WXS/LR
-	 vhmQfP9hcKjPWb/HfzHuQrVUN6+TC44RFiFmg3J4=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38D7620879
+	b=2vdJU8a4pvdS1MF5uCwrwA7x/eegoLoa6OdDdMd/G+9zt+8Ccoq/10NADt59n/USz
+	 ZsWljMpKS1lssr6Xdy+e9iuFYbi0JGRBQ5SSf/REzRu4fmXi0sCpARRbMw6WGDU4wY
+	 D11cUwplkSWAo9YdMHrbx5Jt9k+HeNhvt2Hy9j5A=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E068208E7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727889AbeLERZL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 5 Dec 2018 12:25:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48776 "EHLO mail.kernel.org"
+        id S1728341AbeLERZS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 5 Dec 2018 12:25:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48946 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727839AbeLERZL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 5 Dec 2018 12:25:11 -0500
+        id S1728305AbeLERZQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 5 Dec 2018 12:25:16 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CDA2A20878;
-        Wed,  5 Dec 2018 17:25:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E7D7420879;
+        Wed,  5 Dec 2018 17:25:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544030710;
-        bh=1xZHk5U/u8j6lAwFyyDkz4h5vtVcooAHfDHY8mf/cJc=;
+        s=default; t=1544030716;
+        bh=2/hqaMZuBaQYW4QNk9bDPA++7Z/NdhVU7dAbfmW2ry0=;
         h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=YBuVnp8wqbmwcRpe5EJjESQvF/928Cyg4+MP7nUw6MR+1hQk+vTg+OCDUgW4M43yY
-         Dr4m129doVz6QpIV7sV+UopY+wgITwxM18uIlVyOEyw6O42ydMGOCbEso9TMkdfSqz
-         Y8+f6iWzchDt6GE72mwMqbs9vLEfLYYCWv1lrcL8=
+        b=Nnn1g+lHXQ2uvNFWs9jiVY5p9SM++5+XjEm6ndpYaMfQXo4qRjR/XzGfhJn6aM6T8
+         9jW2YI6DwlppNi8sLP5/DaQeFRLd9E9StWPP/6+2WdOjB+BN2nzA+0tls4/KY/OCQX
+         /ydbbwq1ES8ybmvZm9b4MaRHvV2GcH4ZIG7XtDQA=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <90cd96112ca1ade6bff3b58989e290ae3def59e2.1543922403.git.matti.vaittinen@fi.rohmeurope.com>
+In-Reply-To: <e00097fb5b52f1d4002c8febdb3887736e84acd0.1543922403.git.matti.vaittinen@fi.rohmeurope.com>
 Cc:     mturquette@baylibre.com, cw00.choi@samsung.com, krzk@kernel.org,
         b.zolnierkie@samsung.com, linux@armlinux.org.uk,
         andy.gross@linaro.org, david.brown@linaro.org, pavel@ucw.cz,
@@ -55,22 +55,23 @@ Cc:     mturquette@baylibre.com, cw00.choi@samsung.com, krzk@kernel.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
 References: <cover.1543922403.git.matti.vaittinen@fi.rohmeurope.com>
- <90cd96112ca1ade6bff3b58989e290ae3def59e2.1543922403.git.matti.vaittinen@fi.rohmeurope.com>
-Message-ID: <154403071006.88331.16284741533378833854@swboyd.mtv.corp.google.com>
+ <e00097fb5b52f1d4002c8febdb3887736e84acd0.1543922403.git.matti.vaittinen@fi.rohmeurope.com>
+Message-ID: <154403071537.88331.3953967329517258880@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.7
-Subject: Re: [PATCH v6 06/10] clk: clk-hi655x: Free of_provider at remove
-Date:   Wed, 05 Dec 2018 09:25:10 -0800
+Subject: Re: [PATCH v6 08/10] clk: clk-twl6040: Free of_provider at remove
+Date:   Wed, 05 Dec 2018 09:25:15 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Matti Vaittinen (2018-12-04 03:37:29)
+Quoting Matti Vaittinen (2018-12-04 03:38:32)
 > use devm variant for of_provider registration so provider is freed
 > at exit.
 > =
 
 > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> Acked-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
 > ---
 
 Applied to clk-next
