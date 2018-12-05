@@ -2,175 +2,104 @@ Return-Path: <SRS0=HA4W=OO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89AD9C04EBF
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Dec 2018 10:30:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E3A1C04EB9
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Dec 2018 11:09:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 447B62064D
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Dec 2018 10:30:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 447B62064D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 013032082B
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Dec 2018 11:09:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 013032082B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727389AbeLEKan (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 5 Dec 2018 05:30:43 -0500
-Received: from mx.socionext.com ([202.248.49.38]:21311 "EHLO mx.socionext.com"
+        id S1726866AbeLELJ5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 5 Dec 2018 06:09:57 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:48724 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727025AbeLEKan (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 5 Dec 2018 05:30:43 -0500
-Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
-  by mx.socionext.com with ESMTP; 05 Dec 2018 19:30:41 +0900
-Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
-        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id 36E5960062;
-        Wed,  5 Dec 2018 19:30:41 +0900 (JST)
-Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Wed, 5 Dec 2018 19:30:41 +0900
-Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
-        by iyokan.css.socionext.com (Postfix) with ESMTP id 8DD9440377;
-        Wed,  5 Dec 2018 19:30:40 +0900 (JST)
-Received: from [127.0.0.1] (unknown [10.213.119.83])
-        by yuzu.css.socionext.com (Postfix) with ESMTP id 670C4120304;
-        Wed,  5 Dec 2018 19:30:40 +0900 (JST)
-Subject: Re: [PATCH 02/14] dt-bindings: soc: milbeaut: Add Milbeaut trampoline
- description
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Jiri Slaby <jslaby@suse.com>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>
-References: <1542589274-13878-1-git-send-email-sugaya.taichi@socionext.com>
- <1542589274-13878-3-git-send-email-sugaya.taichi@socionext.com>
- <154337047410.88331.9696178601340675631@swboyd.mtv.corp.google.com>
- <c746a3de-a9e3-9f25-ecb9-703ceb7e62d0@socionext.com>
- <154356579701.88331.5043467509900444879@swboyd.mtv.corp.google.com>
- <f5917f71-f15b-a92d-649c-e3f5f5f10698@socionext.com>
- <CAL_Jsq+dnKht3TwCh1qB1H4pYFhQJmSN0nAayU+=PJLAvq0bbQ@mail.gmail.com>
- <90b00858-6e9e-8f7c-f6d4-b35e5daa6eee@socionext.com>
- <CAL_JsqJ=FRfzVFiOJ0wvoV5iZV+Gx3ft9pGyhb-GoKnOAQgPtQ@mail.gmail.com>
-From:   "Sugaya, Taichi" <sugaya.taichi@socionext.com>
-Message-ID: <60f13d51-51e6-33f9-5393-e9425883c528@socionext.com>
-Date:   Wed, 5 Dec 2018 19:30:39 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:60.0) Gecko/20100101
- Thunderbird/60.3.2
+        id S1726171AbeLELJ5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 5 Dec 2018 06:09:57 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 3FD9620C18; Wed,  5 Dec 2018 12:09:55 +0100 (CET)
+Received: from localhost (aaubervilliers-681-1-79-44.w90-88.abo.wanadoo.fr [90.88.21.44])
+        by mail.bootlin.com (Postfix) with ESMTPSA id EB28920745;
+        Wed,  5 Dec 2018 12:09:38 +0100 (CET)
+Date:   Wed, 5 Dec 2018 12:09:39 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Chen-Yu Tsai <wens@csie.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 0/3] ARM: sun8i: a33: Audio codec improvements
+Message-ID: <20181205110939.w4sbagsah5heo4ye@flea>
+References: <20181205101152.22983-1-wens@csie.org>
 MIME-Version: 1.0
-In-Reply-To: <CAL_JsqJ=FRfzVFiOJ0wvoV5iZV+Gx3ft9pGyhb-GoKnOAQgPtQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="djerp4ndjffky3di"
+Content-Disposition: inline
+In-Reply-To: <20181205101152.22983-1-wens@csie.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
 
-On 2018/12/04 22:32, Rob Herring wrote:
-> On Tue, Dec 4, 2018 at 5:30 AM Sugaya, Taichi
-> <sugaya.taichi@socionext.com> wrote:
->>
->> Hi
->>
->> On 2018/12/04 0:49, Rob Herring wrote:
->>> On Mon, Dec 3, 2018 at 1:42 AM Sugaya, Taichi
->>> <sugaya.taichi@socionext.com> wrote:
->>>>
->>>> Hi,
->>>>
->>>> On 2018/11/30 17:16, Stephen Boyd wrote:
->>>>> Quoting Sugaya, Taichi (2018-11-29 04:24:51)
->>>>>> On 2018/11/28 11:01, Stephen Boyd wrote:
->>>>>>> Quoting Sugaya Taichi (2018-11-18 17:01:07)
->>>>>>>>      create mode 100644 Documentation/devicetree/bindings/soc/socionext/socionext,m10v.txt
->>>>>>>>
->>>>>>>> diff --git a/Documentation/devicetree/bindings/soc/socionext/socionext,m10v.txt b/Documentation/devicetree/bindings/soc/socionext/socionext,m10v.txt
->>>>>>>> new file mode 100644
->>>>>>>> index 0000000..f5d906c
->>>>>>>> --- /dev/null
->>>>>>>> +++ b/Documentation/devicetree/bindings/soc/socionext/socionext,m10v.txt
->>>>>>>> @@ -0,0 +1,12 @@
->>>>>>>> +Socionext M10V SMP trampoline driver binding
->>>>>>>> +
->>>>>>>> +This is a driver to wait for sub-cores while boot process.
->>>>>>>> +
->>>>>>>> +- compatible: should be "socionext,smp-trampoline"
->>>>>>>> +- reg: should be <0x4C000100 0x100>
->>>>>>>> +
->>>>>>>> +EXAMPLE
->>>>>>>> +       trampoline: trampoline@0x4C000100 {
->>>>>>> Drop the 0x part of unit addresses.
->>>>>>
->>>>>> Okay.
->>>>>>
->>>>>>
->>>>>>>> +               compatible = "socionext,smp-trampoline";
->>>>>>>> +               reg = <0x4C000100 0x100>;
->>>>>>> Looks like a software construct, which we wouldn't want to put into DT
->>>>>>> this way. DT doesn't describe drivers.
->>>>>> We would like to use this node only getting the address of the
->>>>>> trampoline area
->>>>>> in which sub-cores wait.  (They have finished to go to this area in previous
->>>>>> bootloader process.)
->>>>>
->>>>> Is this area part of memory, or a special SRAM? If it's part of memory,
->>>>> I would expect this node to be under the reserved-memory node and
->>>>> pointed to by some other node that uses this region. Could even be the
->>>>> CPU nodes.
->>>>
->>>> Yes, 0x4C000100 is a part of memory under the reserved-memory node. So
->>>> we would like to use the SRAM ( allocated 0x00000000 ) area instead.
->>>> BTW, sorry, the trampoline address of this example is simply wrong.  We
->>>> were going to use a part of the SRAM from the beginning.
->>>>
->>>>>
->>>>>>
->>>>>> So should we embed the constant value in source codes instead of getting
->>>>>> from
->>>>>> DT because the address is constant at the moment? Or is there other
->>>>>> approach?
->>>>>>
->>>>>
->>>>> If it's constant then that also works. Why does it need to come from DT
->>>>> at all then?
->>>>
->>>> We think it is not good to embed constant value in driver codes and do
->>>> not have another way...
->>>> Are there better ways?
->>>
->>> If this is just memory, can you use the standard spin-table binding in
->>> the DT spec? There are some requirements like 64-bit values even on
->>> 32-bit machines (though this gets violated).
->>
->> The spin-table seems to be used on only 64-bit arch. Have it ever worked
->> on 32-bit machine?
-> 
-> Yes.
-> 
->> And I would like not to use it because avoid violation.
-> 
-> The issue now that I remember is cpu-release-addr is defined to always
-> be a 64-bit value while some platforms made it a 32-bit value.
-> 'cpu-release-addr' is also used for some other enable-methods.
+--djerp4ndjffky3di
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks.
-OK, try to use the spin-table.
+On Wed, Dec 05, 2018 at 06:11:49PM +0800, Chen-Yu Tsai wrote:
+> Hi everyone,
+>=20
+> This series improves audio support on the A33. Like other Allwinner
+> SoCs, the A33 requires the use of a sigma-delta modulation fractional-N
+> PLL to generate the correct clock used for audio playback. Otherwise the
+> pitch would be slightly off.
+>=20
+> Patch 1 enables sigma-delta modulation for the audio PLL on the A33.
+>=20
+> Patch 2 is only slightly related. It sets the CLK_SET_RATE_PARENT flag
+> for all audio-related module clocks
+>=20
+> Patch 3 lowers the audio codec's oversampling rate, so that it can
+> play back audio sampled at beyond 48 KHz.
+>=20
+> This is the same as what has recently been done for the A64, which
+> shares the same audio codec hardware design.
+>=20
+> However, on the A33 it seems the PLL doesn't always immediately lock on
+> to the new clock frequency when there is a rate change. Also since the
+> codec is only put in standby instead of turned off, runtime PM never
+> kicks in, and the audio related clocks never get turned off. I'm still
+> looking into this.
+>=20
+> On an unrelated note, if you get pops when playing back audio on sunxi,
+> it might be related to cpufreq. Try setting the governor to performance
+> and see if that removes the pops.
 
-Best Regards,
-Sugaya Taichi
+Applied all 3 patches, thanks!
+Maxime
 
-> 
-> Rob
-> 
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
+--djerp4ndjffky3di
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXAex8wAKCRDj7w1vZxhR
+xYe4AP9cjPfghU+vltMG2R6qzW6a9kKvBwIUP+KU0Pd0i3GGAAEA+MeRdE7pdiDC
+/DWn8hpg4iY6XXGOPSTzcv32BcCqvQs=
+=jpF3
+-----END PGP SIGNATURE-----
+
+--djerp4ndjffky3di--
