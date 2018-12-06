@@ -2,138 +2,174 @@ Return-Path: <SRS0=15nu=OP=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56BADC04EB9
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Dec 2018 01:24:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC69BC04EB8
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Dec 2018 05:49:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1929B20892
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Dec 2018 01:24:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="dUFg9wcd";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="atW9KhNP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1929B20892
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id A16402146D
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Dec 2018 05:49:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A16402146D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727620AbeLFBYa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 5 Dec 2018 20:24:30 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:48394 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727514AbeLFBYa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Dec 2018 20:24:30 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 840D4607B5; Thu,  6 Dec 2018 01:24:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1544059469;
-        bh=uPuVvwmlovBcz43fkaEatKqEB1zRkymirZeAXk5lStI=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=dUFg9wcdY9EJix4x+saoUWNTV9ELxoMekYLtHR3w9LM6ItydfEnVdTwevq4RRK7+x
-         9ZltX5oAZR6iVUhU2vk6dxoE0EpD2oT5amGSfTg1nZwpEqAAm0wAQaMul4JE2sdcd5
-         QuvQ22CAKTT6SPh5hTxWCxCNgDb9KHUbnRy5vrFI=
-Received: from [10.46.162.234] (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: daidavid1@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0099260397;
-        Thu,  6 Dec 2018 01:24:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1544059459;
-        bh=uPuVvwmlovBcz43fkaEatKqEB1zRkymirZeAXk5lStI=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=atW9KhNPgnH/SzcdygqTHtUuPAoD/7bUBdhGsB4iryiEjLEKahMlfr0JtkzjF/Xax
-         FvYj3NITqMy/7ddMw2yr5OwjVDptbFK6dvcWs3BGQaE/HgFovFgIcpKg5NuxWvZx6A
-         eUhGuvt2PoFZOhg5rYOJlic0v3KrDJ8eUvJrMVZE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0099260397
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=daidavid1@codeaurora.org
-Subject: Re: [RFC PATCH] clk: qcom: clk-rpmh: Add IPA clock support
-To:     Stephen Boyd <sboyd@kernel.org>, Alex Elder <elder@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     georgi.djakov@linaro.org, bjorn.andersson@linaro.org,
-        evgreen@google.com, tdas@codeaurora.org
-References: <1543895413-1553-1-git-send-email-daidavid1@codeaurora.org>
- <1543895413-1553-2-git-send-email-daidavid1@codeaurora.org>
- <154395145491.88331.1174781210192403998@swboyd.mtv.corp.google.com>
- <8dafe631-4b16-94cd-392e-84728f2bb382@linaro.org>
- <154396284056.88331.12279283832884556349@swboyd.mtv.corp.google.com>
- <edeebce5-24a2-b844-6bff-781017949e2d@codeaurora.org>
- <154399414865.88331.2447825064224349951@swboyd.mtv.corp.google.com>
-From:   David Dai <daidavid1@codeaurora.org>
-Message-ID: <6ffdf6ca-51b5-a968-bb4e-c4d6d46f63aa@codeaurora.org>
-Date:   Wed, 5 Dec 2018 17:24:18 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1728791AbeLFFt1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 6 Dec 2018 00:49:27 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:40506 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728648AbeLFFt1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Dec 2018 00:49:27 -0500
+Received: by mail-ed1-f67.google.com with SMTP id d3so19032322edx.7;
+        Wed, 05 Dec 2018 21:49:24 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=d6PNw/h9KlBN0w0kHSPz8pJtvfB9D034KTZ05omJ/0U=;
+        b=TdJkfrxIynfslAJsKme4PvF3hTfJFKvHFpG2VcrkKusUNxXVxvGxXJi2Mc/3wCmEdu
+         OCc36aZpf6aZesfSc6sV/+l55KoKnOW5p0TpyTXsYfrViMbpDv6uetvj+QVKrLgqxRwu
+         DF053TkSgZ7VzosFgT9nwR5fUimknJcxOGyJjSLUWj2iVM4ipmi3giDieA2iaW/LpGAW
+         IC0TNF3kSpdHUMKhTm5hh80lIiCDeHej2f4ie6sM/IOTi6HRFSaEyb6KcVgjDipfqHTr
+         +JSAYHxKMFEMWXctbluIKV+1FGj58bzti7t9uDwWWeuNAYBwdgZjA79cxBYe3YbfbW5d
+         mJWw==
+X-Gm-Message-State: AA+aEWaiAn/IyxhGzDuGHS5tde8Jk9IB3Zv1UyIpzi4qpkCUfNSISDx6
+        6gfM2CRKy4geOBO28nRv/Ghy3Fo0iak=
+X-Google-Smtp-Source: AFSGD/VpDQ7oA8Cr2gFP8nQZyQsZ2mQBH5S3GZ9CicZJKq7Swxd+J45So8GlgpDjGy9SeyomRHbOmg==
+X-Received: by 2002:a50:b487:: with SMTP id w7mr9482464edd.72.1544075363879;
+        Wed, 05 Dec 2018 21:49:23 -0800 (PST)
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com. [209.85.128.48])
+        by smtp.gmail.com with ESMTPSA id f35sm6329455edd.80.2018.12.05.21.49.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Dec 2018 21:49:23 -0800 (PST)
+Received: by mail-wm1-f48.google.com with SMTP id f81so12675883wmd.4;
+        Wed, 05 Dec 2018 21:49:23 -0800 (PST)
+X-Received: by 2002:a1c:c008:: with SMTP id q8mr16583620wmf.99.1544075363170;
+ Wed, 05 Dec 2018 21:49:23 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <154399414865.88331.2447825064224349951@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+References: <20181203145825.20511-1-wens@csie.org>
+In-Reply-To: <20181203145825.20511-1-wens@csie.org>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Thu, 6 Dec 2018 13:49:10 +0800
+X-Gmail-Original-Message-ID: <CAGb2v65GwzEHZnRJysp=qE4HjrTa+TzCeyQ_j_Q=RrwtnC617g@mail.gmail.com>
+Message-ID: <CAGb2v65GwzEHZnRJysp=qE4HjrTa+TzCeyQ_j_Q=RrwtnC617g@mail.gmail.com>
+Subject: Re: [PATCH v2 00/14] rtc: sun6i: clock rework and pre-H6 SoC support
+To:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        alexandre.belloni@bootlin.com,
+        Alessandro Zummo <a.zummo@towertech.it>
+Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-rtc@vger.kernel.org, linux-clk <linux-clk@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi,
 
-
-On 12/4/2018 11:15 PM, Stephen Boyd wrote:
-> Quoting David Dai (2018-12-04 17:14:10)
->> On 12/4/2018 2:34 PM, Stephen Boyd wrote:
->>> Quoting Alex Elder (2018-12-04 13:41:47)
->>>> On 12/4/18 1:24 PM, Stephen Boyd wrote:
->>>>> Quoting David Dai (2018-12-03 19:50:13)
->>>>>> Add IPA clock support by extending the current clk rpmh driver to support
->>>>>> clocks that are managed by a different type of RPMh resource known as
->>>>>> Bus Clock Manager(BCM).
->>>>> Yes, but why? Does the IPA driver need to set clk rates and that somehow
->>>>> doesn't work as a bandwidth request?
->>>> The IPA core clock is a *clock*, not a bus.  Representing it as if
->>>> it were a bus, abusing the interconnect interface--pretending a bandwidth
->>>> request is really a clock rate request--is kind of kludgy.  I think Bjorn
->>>> and David (and maybe Georgi? I don't know) decided a long time ago that
->>>> exposing this as a clock is the right way to do it.  I agree with that.
->>>>
->>> But then we translate that clock rate into a bandwidth request to the
->>> BCM hardware? Seems really weird because it's doing the opposite of what
->>> you say is abusive. What does the IPA driver plan to do with this clk?
->>> Calculate a frequency by knowing that it really boils down to some
->>> bandwidth that then gets converted back into some clock frequency? Do we
->>> have the user somewhere that can be pointed to?
->> The clock rate is translated into a unitless threshold value sent as
->> part of the rpmh msg
->> that BCM takes to select a performance. In this case, the unit
->> conversion is based on
->> the unit value read from the aux data which is in Khz. I understand that
->> this wasn't
->> explicitly mentioned anywhere and I'll improve on that next patch.
-> How is this different from bus bandwidth requests? In those cases the
-> bandwidth is calculated in bits per second or something like that, and
-> written to the hardware so it can convert that bandwidth into kHz and
-> set a bus clk frequency in the clock controller? So in the IPA case
-> we've skipped the bps to kHz conversion step and gone straight to the
-> clk frequency setting part? Is a BCM able to aggregate units of
-> bandwidth or kHz depending on how it's configured and this BCM is
-> configured for kHz?
-
-The data written to the hardware is just a 14bit scalar value that it 
-takes to select a performance/frequency from a preset table. It's not 
-really doing any sort of conversion in hardware in this case, instead 
-the value is computed by software based on the aux data given. Think of 
-it as a generic aggregator as opposed to being strictly bandwidth and 
-the aggregator itself does not care what type of value it is(be it Khz 
-or BW/s).
-
+On Mon, Dec 3, 2018 at 10:58 PM Chen-Yu Tsai <wens@csie.org> wrote:
 >
->> Here's a link to
->> the IPA driver implementation: https://lkml.org/lkml/2018/11/7/220
-> Thanks for the link. It looks like the IPA driver hard codes a rate of
-> 75 MHz.
+> Hi everyone,
 >
+> This is v2 of my rtc-sun6i clean-up series.
+>
+> Changes since v1:
+>
+>   - Collected tags
+>   - Dropped patch "clk: sunxi-ng: r40: Force LOSC parent to RTC LOSC
+>     output"; already merged
+>   - Removed H6 compatible CLK_OF_DECLARE_DRIVER entry that wasn't
+>     overlooked
+>   - Only export IOSC clock for A64/H3/H5
+>
+> Original cover letter, with patch numbers corrected, follows:
+>
+> This series was started as part of enabling Bluetooth on various
+> Allwinner SBCs. The bluetooth controller requires a precise 32.768 kHz
+> clock fed to it to correctly detect the frequency of its main oscillator.
+> This clock signal is provided by the RTC, either directly from a special
+> pin on the SoC, or some clock output function from the clock controllers.
+> I found that the clock-related properties of the RTC on later SoCs were
+> incorrect or missing.
+>
+> This series reworks the compatible strings and clock parts of the device
+> tree bindings for sun6i-rtc. Currently we assume most Allwinner SoCs use
+> the same sun6i-rtc variant, when in fact they do not. The differences
+> that matter with regards to clocks are a) the A31 does not have an extra
+> external output for the RTC 32K clock, while most of the others do;
+> b) the clock frequency of the internal RC oscillator is different on
+> some SoCs; c) on the H6 the RTC also handles the 24 MHz DCXO, which
+> feeds the system HOSC. The last difference, and by extension the H6, are
+> not covered in this series.
+>
+> Patch 1 cleans up the clock-related section of the RTC device tree
+> binding. This would make it easier to read and easier to add additional
+> clocks.
+>
+> Patch 2 adds compatible strings for all identified variants introduced
+> prior to the H6.
+>
+> Patch 3 deprecates the external clock output for the A31. The A31 does
+> not have this output, so it's introduction and usage was an error.
+>
+> Patch 4 adds a clock output for the RTC's internal oscillator to the
+> device tree binding. This feeds the PRCM in some SoCs.
+>
+> Patch 5 adds a default clock name for the LOSC to the RTC driver.
+>
+> Patch 6 adds support for different hardware variants to the RTC driver.
+>
+> Patch 7 adds support for all known pre-H6 variants.
+>
+> Patch 8 exposes the RTC's internal oscillator through the device tree.
+>
+> Patch 9 through 14 adds an RTC node or fixes up the RTC device node
+> address ranges, clock properties, names of existing clocks, and adds
+> accuracy properties for the external fixed oscillators.
+>
+> The clock names require fixing because the sunxi clock driver implicitly
+> depends on the HOSC and LOSC being named "osc24M" and "osc32k". The
+> "fixes" to the clock hierarchy introduced in this series means the names
+> must also be shuffled around or the in kernel representation would be
+> incorrect. This has been the case since the sunxi-ng drivers were
+> introduced. There are plans to address this, but the code is still in its
+> early stages.
+>
+> Please have a look.
+>
+> Thanks
+> ChenYu
+>
+> Chen-Yu Tsai (14):
+>   dt-bindings: rtc: sun6i-rtc: Rewrite clock outputs as a list
+>   dt-bindings: rtc: sun6i-rtc: Add compatible strings for pre-H6
+>     variants
+>   dt-bindings: rtc: sun6i-rtc: Deprecate external clock output for A31
+>   dt-bindings: rtc: sun6i-rtc: Export internal RC oscillator
+>   rtc: sun6i: Add default clock name for LOSC
+>   rtc: sun6i: Add support for different variants
+>   rtc: sun6i: Add support for all known pre-H6 variants
+>   rtc: sun6i: Expose internal oscillator through device tree
+>   ARM: dts: sun8i: a23/a33: Fix up RTC device node
+>   ARM: dts: sunxi: h3/h5: Add clock accuracy for external oscillators
+>   ARM: dts: sunxi: h3/h5: Fix up RTC device node and clock references
+>   ARM: dts: sun8i: r40: Add clock accuracy for external oscillators
+>   ARM: dts: sun8i: r40: Add RTC device node
+>   arm64: dts: allwinner: a64: Fix up RTC device node and clock
+>     references
 
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+I merged patches 10 and 12 for now. These don't depend on any driver changes.
 
+If Alex manages to get the driver bits merged for 4.21, I suppose we could do
+a late PR for the dts bits? It would be nice to have both in the same release,
+though I don't think anything would break if the dts bits are delayed.
+
+ChenYu
