@@ -2,133 +2,150 @@ Return-Path: <SRS0=15nu=OP=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_RHS_DOB,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BFD6C04EB8
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Dec 2018 18:49:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85E46C04EB8
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Dec 2018 20:34:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EAE412146D
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Dec 2018 18:49:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544122181;
-	bh=c2FkfkWDfo0X+sfR3Y93kLhJbaEGXTN6njPigIWWPDQ=;
-	h=To:From:In-Reply-To:Cc:References:Subject:Date:List-ID:From;
-	b=jxoD6VLYMzxoA240gXHxGlcyzcdHfR43h2fFGH1K9DY47GhofgYQ5XvSPQBSj6/YU
-	 NxfnNsBRmNWhNYimNTD8h6PjrnYR9BTl6h98H5ARHdM70rcBoe7ca+5cHpgzN0zWTu
-	 tOOb49J4McX6tTDPWr1CJQZakYfk3NAibQPax2QY=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAE412146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 5044F20892
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Dec 2018 20:34:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5044F20892
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726008AbeLFStk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 6 Dec 2018 13:49:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49120 "EHLO mail.kernel.org"
+        id S1725949AbeLFUeW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 6 Dec 2018 15:34:22 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:58104 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725908AbeLFStk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 6 Dec 2018 13:49:40 -0500
-Received: from localhost (unknown [104.132.1.77])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8F1B420892;
-        Thu,  6 Dec 2018 18:49:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544122179;
-        bh=c2FkfkWDfo0X+sfR3Y93kLhJbaEGXTN6njPigIWWPDQ=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=JAl5s94VPqFfFbh1gWNiJu22dLzK2B9x/9fi1g7vGsbe1XKX9J73zVYtm5oP7Hnmw
-         +nmxhmFCaaPBVR/LboMYG8rqFj3cIL2t1o1zYTFVTWCriYMypAhig8b0WDICIE0Dd/
-         tXE9tKIrf8pOz9Qk43YsWf6TepH45S+M18pvYAgA=
-Content-Type: text/plain; charset="utf-8"
+        id S1725916AbeLFUeV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 6 Dec 2018 15:34:21 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id A4A3920731; Thu,  6 Dec 2018 21:34:19 +0100 (CET)
+Received: from localhost (unknown [88.191.26.124])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 486C220510;
+        Thu,  6 Dec 2018 21:34:19 +0100 (CET)
+Date:   Thu, 6 Dec 2018 21:34:19 +0100
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Chen-Yu Tsai <wens@csie.org>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-rtc@vger.kernel.org, linux-clk <linux-clk@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH v2 00/14] rtc: sun6i: clock rework and pre-H6 SoC support
+Message-ID: <20181206203419.GD8952@piout.net>
+References: <20181203145825.20511-1-wens@csie.org>
+ <CAGb2v65GwzEHZnRJysp=qE4HjrTa+TzCeyQ_j_Q=RrwtnC617g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Tali Perry <tali.perry1@gmail.com>, avifishman70@gmail.com,
-        brendanhiggins@google.com, mturquette@baylibre.com,
-        tmaimon77@gmail.com, venture@google.com, yuenn@google.com
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20181206084431.315559-1-tali.perry1@gmail.com>
-Cc:     openbmc@lists.ozlabs.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Tali Perry <tali.perry1@gmail.com>,
-        Wei Yongjun <weiyongjun1@huawei.com>
-References: <20181206084431.315559-1-tali.perry1@gmail.com>
-Message-ID: <154412217893.88331.5801113240812610558@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v2] clk: npcm7xx: get fixed clocks from DT
-Date:   Thu, 06 Dec 2018 10:49:38 -0800
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGb2v65GwzEHZnRJysp=qE4HjrTa+TzCeyQ_j_Q=RrwtnC617g@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Tali Perry (2018-12-06 00:44:31)
-> diff --git a/drivers/clk/clk-npcm7xx.c b/drivers/clk/clk-npcm7xx.c
-> index 27a86b7a34db..4bd2e40997d4 100644
-> --- a/drivers/clk/clk-npcm7xx.c
-> +++ b/drivers/clk/clk-npcm7xx.c
-> @@ -8,13 +8,19 @@
->   */
->  =
+On 06/12/2018 13:49:10+0800, Chen-Yu Tsai wrote:
+> Hi,
+> 
+> On Mon, Dec 3, 2018 at 10:58 PM Chen-Yu Tsai <wens@csie.org> wrote:
+> >
+> > Hi everyone,
+> >
+> > This is v2 of my rtc-sun6i clean-up series.
+> >
+> > Changes since v1:
+> >
+> >   - Collected tags
+> >   - Dropped patch "clk: sunxi-ng: r40: Force LOSC parent to RTC LOSC
+> >     output"; already merged
+> >   - Removed H6 compatible CLK_OF_DECLARE_DRIVER entry that wasn't
+> >     overlooked
+> >   - Only export IOSC clock for A64/H3/H5
+> >
+> > Original cover letter, with patch numbers corrected, follows:
+> >
+> > This series was started as part of enabling Bluetooth on various
+> > Allwinner SBCs. The bluetooth controller requires a precise 32.768 kHz
+> > clock fed to it to correctly detect the frequency of its main oscillator.
+> > This clock signal is provided by the RTC, either directly from a special
+> > pin on the SoC, or some clock output function from the clock controllers.
+> > I found that the clock-related properties of the RTC on later SoCs were
+> > incorrect or missing.
+> >
+> > This series reworks the compatible strings and clock parts of the device
+> > tree bindings for sun6i-rtc. Currently we assume most Allwinner SoCs use
+> > the same sun6i-rtc variant, when in fact they do not. The differences
+> > that matter with regards to clocks are a) the A31 does not have an extra
+> > external output for the RTC 32K clock, while most of the others do;
+> > b) the clock frequency of the internal RC oscillator is different on
+> > some SoCs; c) on the H6 the RTC also handles the 24 MHz DCXO, which
+> > feeds the system HOSC. The last difference, and by extension the H6, are
+> > not covered in this series.
+> >
+> > Patch 1 cleans up the clock-related section of the RTC device tree
+> > binding. This would make it easier to read and easier to add additional
+> > clocks.
+> >
+> > Patch 2 adds compatible strings for all identified variants introduced
+> > prior to the H6.
+> >
+> > Patch 3 deprecates the external clock output for the A31. The A31 does
+> > not have this output, so it's introduction and usage was an error.
+> >
+> > Patch 4 adds a clock output for the RTC's internal oscillator to the
+> > device tree binding. This feeds the PRCM in some SoCs.
+> >
+> > Patch 5 adds a default clock name for the LOSC to the RTC driver.
+> >
+> > Patch 6 adds support for different hardware variants to the RTC driver.
+> >
+> > Patch 7 adds support for all known pre-H6 variants.
+> >
+> > Patch 8 exposes the RTC's internal oscillator through the device tree.
+> >
+> > Patch 9 through 14 adds an RTC node or fixes up the RTC device node
+> > address ranges, clock properties, names of existing clocks, and adds
+> > accuracy properties for the external fixed oscillators.
+> >
+> > The clock names require fixing because the sunxi clock driver implicitly
+> > depends on the HOSC and LOSC being named "osc24M" and "osc32k". The
+> > "fixes" to the clock hierarchy introduced in this series means the names
+> > must also be shuffled around or the in kernel representation would be
+> > incorrect. This has been the case since the sunxi-ng drivers were
+> > introduced. There are plans to address this, but the code is still in its
+> > early stages.
+> >
+> > Please have a look.
+> >
+> > Thanks
+> > ChenYu
+> >
+> > Chen-Yu Tsai (14):
+> >   dt-bindings: rtc: sun6i-rtc: Rewrite clock outputs as a list
+> >   dt-bindings: rtc: sun6i-rtc: Add compatible strings for pre-H6
+> >     variants
+> >   dt-bindings: rtc: sun6i-rtc: Deprecate external clock output for A31
+> >   dt-bindings: rtc: sun6i-rtc: Export internal RC oscillator
+> >   rtc: sun6i: Add default clock name for LOSC
+> >   rtc: sun6i: Add support for different variants
+> >   rtc: sun6i: Add support for all known pre-H6 variants
+> >   rtc: sun6i: Expose internal oscillator through device tree
 
->  #include <linux/module.h>
-> +#include <linux/clk.h>
->  #include <linux/clk-provider.h>
-> +#include <linux/device.h>
->  #include <linux/io.h>
->  #include <linux/kernel.h>
->  #include <linux/of.h>
-> +#include <linux/of_device.h>
-> +#include <linux/of_platform.h>
->  #include <linux/of_address.h>
-> +#include <linux/platform_device.h>
->  #include <linux/slab.h>
->  #include <linux/err.h>
-> +#include <linux/rational.h>
+I've applied the above patches. However, for whatever reason, patch 3
+didn't apply without some fuzz, please check.
 
-Why?
 
->  #include <linux/bitfield.h>
->  =
-
->  #include <dt-bindings/clock/nuvoton,npcm7xx-clock.h>
-> @@ -568,6 +575,31 @@ static void __init npcm7xx_clk_init(struct device_no=
-de *clk_np)
->         for (i =3D 0; i < NPCM7XX_NUM_CLOCKS; i++)
->                 npcm7xx_clk_data->hws[i] =3D ERR_PTR(-EPROBE_DEFER);
->  =
-
-> +       /* Read fixed clocks. These 3 clocks must be defined in DT */
-> +       clk =3D of_clk_get_by_name(clk_np, NPCM7XX_CLK_S_REFCLK);
-> +       if (IS_ERR(clk)) {
-> +               pr_err("failed to find external REFCLK on device tree, er=
-r=3D%ld\n",
-> +                       PTR_ERR(clk));
-> +               clk_put(clk);
-> +               goto npcm7xx_init_fail_no_clk_on_dt;
-> +       }
-> +
-> +       clk =3D of_clk_get_by_name(clk_np, NPCM7XX_CLK_S_SYSBYPCK);
-> +       if (IS_ERR(clk)) {
-> +               pr_err("failed to find external SYSBYPCK on device tree, =
-err=3D%ld\n",
-> +                       PTR_ERR(clk));
-> +               clk_put(clk);
-> +               goto npcm7xx_init_fail_no_clk_on_dt;
-> +       }
-> +
-> +       clk =3D of_clk_get_by_name(clk_np, NPCM7XX_CLK_S_MCBYPCK);
-> +       if (IS_ERR(clk)) {
-> +               pr_err("failed to find external MCBYPCK on device tree, e=
-rr=3D%ld\n",
-> +                       PTR_ERR(clk));
-> +               clk_put(clk);
-> +               goto npcm7xx_init_fail_no_clk_on_dt;
-> +       }
-
-Now this looks like a DT validator in the kernel. DT folks are working
-on a schema and validator, which should be able to make sure that the
-DTS file has the proper set of clks specified for this drivers' node so
-that we don't need to check in the kernel.
-
-So it looks like nothing needs to change here?
-
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
