@@ -2,174 +2,135 @@ Return-Path: <SRS0=15nu=OP=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC69BC04EB8
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Dec 2018 05:49:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51C8EC04EB8
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Dec 2018 07:33:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A16402146D
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Dec 2018 05:49:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A16402146D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id 1718220989
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Dec 2018 07:33:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="hoZr2plO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1718220989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728791AbeLFFt1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 6 Dec 2018 00:49:27 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:40506 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728648AbeLFFt1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Dec 2018 00:49:27 -0500
-Received: by mail-ed1-f67.google.com with SMTP id d3so19032322edx.7;
-        Wed, 05 Dec 2018 21:49:24 -0800 (PST)
+        id S1729289AbeLFHdJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 6 Dec 2018 02:33:09 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:40415 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727620AbeLFHdI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Dec 2018 02:33:08 -0500
+Received: by mail-pl1-f196.google.com with SMTP id u18so11375687plq.7
+        for <linux-clk@vger.kernel.org>; Wed, 05 Dec 2018 23:33:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=1Py1o7PoXLk0zLclLjaf6U24aMMRxPgBlX4EsDDipLw=;
+        b=hoZr2plOPuxeaxDOwX/82KyNCsezxbKlCZmlj+fGmiOro2P388n7hYFMl9TC5gGEzH
+         fgK2xoQoHMoNY9DRnEf4knK7/+NBs4J6D8+sp+WO3IVQR/7v4IiVAZEpcsC/weKDnizx
+         IVKHT8sdqIKHBSc3fAPNQOE189DFe1/qLZDqw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=d6PNw/h9KlBN0w0kHSPz8pJtvfB9D034KTZ05omJ/0U=;
-        b=TdJkfrxIynfslAJsKme4PvF3hTfJFKvHFpG2VcrkKusUNxXVxvGxXJi2Mc/3wCmEdu
-         OCc36aZpf6aZesfSc6sV/+l55KoKnOW5p0TpyTXsYfrViMbpDv6uetvj+QVKrLgqxRwu
-         DF053TkSgZ7VzosFgT9nwR5fUimknJcxOGyJjSLUWj2iVM4ipmi3giDieA2iaW/LpGAW
-         IC0TNF3kSpdHUMKhTm5hh80lIiCDeHej2f4ie6sM/IOTi6HRFSaEyb6KcVgjDipfqHTr
-         +JSAYHxKMFEMWXctbluIKV+1FGj58bzti7t9uDwWWeuNAYBwdgZjA79cxBYe3YbfbW5d
-         mJWw==
-X-Gm-Message-State: AA+aEWaiAn/IyxhGzDuGHS5tde8Jk9IB3Zv1UyIpzi4qpkCUfNSISDx6
-        6gfM2CRKy4geOBO28nRv/Ghy3Fo0iak=
-X-Google-Smtp-Source: AFSGD/VpDQ7oA8Cr2gFP8nQZyQsZ2mQBH5S3GZ9CicZJKq7Swxd+J45So8GlgpDjGy9SeyomRHbOmg==
-X-Received: by 2002:a50:b487:: with SMTP id w7mr9482464edd.72.1544075363879;
-        Wed, 05 Dec 2018 21:49:23 -0800 (PST)
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com. [209.85.128.48])
-        by smtp.gmail.com with ESMTPSA id f35sm6329455edd.80.2018.12.05.21.49.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Dec 2018 21:49:23 -0800 (PST)
-Received: by mail-wm1-f48.google.com with SMTP id f81so12675883wmd.4;
-        Wed, 05 Dec 2018 21:49:23 -0800 (PST)
-X-Received: by 2002:a1c:c008:: with SMTP id q8mr16583620wmf.99.1544075363170;
- Wed, 05 Dec 2018 21:49:23 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=1Py1o7PoXLk0zLclLjaf6U24aMMRxPgBlX4EsDDipLw=;
+        b=EFR7cH0NQ11CaAehQLENUwXvhh57CrUFqPouiznSVUSx1MMx3Xze7HQYjAM27pnaop
+         cdV8UQ94xHQsx5cw+VyGIaqQK0k+Ze4wWRgsFg3K8SIU8mtAaKymB+DbwhGRfOhJlZLe
+         5o9PCy4n8wgxuXbc43LJoQjohHqtuJPxDTEZXfHosNG5PHr++zWosOKQfttuZnvzv4IB
+         uVgj4/PvS34jeuoppalCI8LTVzapzCFeTu6S93AiF5QhybCoUTmswnKu2s7CeAdet05r
+         zYH+y5WCCd7I1GIXjdscPIIABL4AgoLw2f52CaVC8R8ruKCO5sYJfG/7qA79bHqIaaVE
+         KArw==
+X-Gm-Message-State: AA+aEWbuhnNCNSE8nu8LoVMJKQZaixZMjZbEd+W/wxPC9QLRNH1SF1Q2
+        Of7PLD8EdsHbaLaVHTIFPnE5/w==
+X-Google-Smtp-Source: AFSGD/UQtJ4xW4HzmKoW+CFcP78zvDeUZ7GHgwiur6JRVpvHIn5glFTbzxgRYkn3meozL1V7dt8FZw==
+X-Received: by 2002:a17:902:d806:: with SMTP id a6mr26165686plz.172.1544081587396;
+        Wed, 05 Dec 2018 23:33:07 -0800 (PST)
+Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id h69sm30075331pge.4.2018.12.05.23.33.06
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 05 Dec 2018 23:33:06 -0800 (PST)
+Date:   Wed, 5 Dec 2018 23:33:04 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Alex Elder <elder@linaro.org>,
+        David Dai <daidavid1@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, georgi.djakov@linaro.org,
+        evgreen@google.com, tdas@codeaurora.org
+Subject: Re: [RFC PATCH] clk: qcom: clk-rpmh: Add IPA clock support
+Message-ID: <20181206073304.GB5232@tuxbook-pro>
+References: <1543895413-1553-1-git-send-email-daidavid1@codeaurora.org>
+ <1543895413-1553-2-git-send-email-daidavid1@codeaurora.org>
+ <154395145491.88331.1174781210192403998@swboyd.mtv.corp.google.com>
+ <8dafe631-4b16-94cd-392e-84728f2bb382@linaro.org>
+ <154396284056.88331.12279283832884556349@swboyd.mtv.corp.google.com>
+ <edeebce5-24a2-b844-6bff-781017949e2d@codeaurora.org>
+ <154399414865.88331.2447825064224349951@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-References: <20181203145825.20511-1-wens@csie.org>
-In-Reply-To: <20181203145825.20511-1-wens@csie.org>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Thu, 6 Dec 2018 13:49:10 +0800
-X-Gmail-Original-Message-ID: <CAGb2v65GwzEHZnRJysp=qE4HjrTa+TzCeyQ_j_Q=RrwtnC617g@mail.gmail.com>
-Message-ID: <CAGb2v65GwzEHZnRJysp=qE4HjrTa+TzCeyQ_j_Q=RrwtnC617g@mail.gmail.com>
-Subject: Re: [PATCH v2 00/14] rtc: sun6i: clock rework and pre-H6 SoC support
-To:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        alexandre.belloni@bootlin.com,
-        Alessandro Zummo <a.zummo@towertech.it>
-Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-rtc@vger.kernel.org, linux-clk <linux-clk@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <154399414865.88331.2447825064224349951@swboyd.mtv.corp.google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+On Tue 04 Dec 23:15 PST 2018, Stephen Boyd wrote:
 
-On Mon, Dec 3, 2018 at 10:58 PM Chen-Yu Tsai <wens@csie.org> wrote:
->
-> Hi everyone,
->
-> This is v2 of my rtc-sun6i clean-up series.
->
-> Changes since v1:
->
->   - Collected tags
->   - Dropped patch "clk: sunxi-ng: r40: Force LOSC parent to RTC LOSC
->     output"; already merged
->   - Removed H6 compatible CLK_OF_DECLARE_DRIVER entry that wasn't
->     overlooked
->   - Only export IOSC clock for A64/H3/H5
->
-> Original cover letter, with patch numbers corrected, follows:
->
-> This series was started as part of enabling Bluetooth on various
-> Allwinner SBCs. The bluetooth controller requires a precise 32.768 kHz
-> clock fed to it to correctly detect the frequency of its main oscillator.
-> This clock signal is provided by the RTC, either directly from a special
-> pin on the SoC, or some clock output function from the clock controllers.
-> I found that the clock-related properties of the RTC on later SoCs were
-> incorrect or missing.
->
-> This series reworks the compatible strings and clock parts of the device
-> tree bindings for sun6i-rtc. Currently we assume most Allwinner SoCs use
-> the same sun6i-rtc variant, when in fact they do not. The differences
-> that matter with regards to clocks are a) the A31 does not have an extra
-> external output for the RTC 32K clock, while most of the others do;
-> b) the clock frequency of the internal RC oscillator is different on
-> some SoCs; c) on the H6 the RTC also handles the 24 MHz DCXO, which
-> feeds the system HOSC. The last difference, and by extension the H6, are
-> not covered in this series.
->
-> Patch 1 cleans up the clock-related section of the RTC device tree
-> binding. This would make it easier to read and easier to add additional
-> clocks.
->
-> Patch 2 adds compatible strings for all identified variants introduced
-> prior to the H6.
->
-> Patch 3 deprecates the external clock output for the A31. The A31 does
-> not have this output, so it's introduction and usage was an error.
->
-> Patch 4 adds a clock output for the RTC's internal oscillator to the
-> device tree binding. This feeds the PRCM in some SoCs.
->
-> Patch 5 adds a default clock name for the LOSC to the RTC driver.
->
-> Patch 6 adds support for different hardware variants to the RTC driver.
->
-> Patch 7 adds support for all known pre-H6 variants.
->
-> Patch 8 exposes the RTC's internal oscillator through the device tree.
->
-> Patch 9 through 14 adds an RTC node or fixes up the RTC device node
-> address ranges, clock properties, names of existing clocks, and adds
-> accuracy properties for the external fixed oscillators.
->
-> The clock names require fixing because the sunxi clock driver implicitly
-> depends on the HOSC and LOSC being named "osc24M" and "osc32k". The
-> "fixes" to the clock hierarchy introduced in this series means the names
-> must also be shuffled around or the in kernel representation would be
-> incorrect. This has been the case since the sunxi-ng drivers were
-> introduced. There are plans to address this, but the code is still in its
-> early stages.
->
-> Please have a look.
->
-> Thanks
-> ChenYu
->
-> Chen-Yu Tsai (14):
->   dt-bindings: rtc: sun6i-rtc: Rewrite clock outputs as a list
->   dt-bindings: rtc: sun6i-rtc: Add compatible strings for pre-H6
->     variants
->   dt-bindings: rtc: sun6i-rtc: Deprecate external clock output for A31
->   dt-bindings: rtc: sun6i-rtc: Export internal RC oscillator
->   rtc: sun6i: Add default clock name for LOSC
->   rtc: sun6i: Add support for different variants
->   rtc: sun6i: Add support for all known pre-H6 variants
->   rtc: sun6i: Expose internal oscillator through device tree
->   ARM: dts: sun8i: a23/a33: Fix up RTC device node
->   ARM: dts: sunxi: h3/h5: Add clock accuracy for external oscillators
->   ARM: dts: sunxi: h3/h5: Fix up RTC device node and clock references
->   ARM: dts: sun8i: r40: Add clock accuracy for external oscillators
->   ARM: dts: sun8i: r40: Add RTC device node
->   arm64: dts: allwinner: a64: Fix up RTC device node and clock
->     references
+> Quoting David Dai (2018-12-04 17:14:10)
+> > 
+> > On 12/4/2018 2:34 PM, Stephen Boyd wrote:
+> > > Quoting Alex Elder (2018-12-04 13:41:47)
+> > >> On 12/4/18 1:24 PM, Stephen Boyd wrote:
+> > >>> Quoting David Dai (2018-12-03 19:50:13)
+> > >>>> Add IPA clock support by extending the current clk rpmh driver to support
+> > >>>> clocks that are managed by a different type of RPMh resource known as
+> > >>>> Bus Clock Manager(BCM).
+> > >>> Yes, but why? Does the IPA driver need to set clk rates and that somehow
+> > >>> doesn't work as a bandwidth request?
+> > >> The IPA core clock is a *clock*, not a bus.  Representing it as if
+> > >> it were a bus, abusing the interconnect interface--pretending a bandwidth
+> > >> request is really a clock rate request--is kind of kludgy.  I think Bjorn
+> > >> and David (and maybe Georgi? I don't know) decided a long time ago that
+> > >> exposing this as a clock is the right way to do it.  I agree with that.
+> > >>
+> > > But then we translate that clock rate into a bandwidth request to the
+> > > BCM hardware? Seems really weird because it's doing the opposite of what
+> > > you say is abusive. What does the IPA driver plan to do with this clk?
+> > > Calculate a frequency by knowing that it really boils down to some
+> > > bandwidth that then gets converted back into some clock frequency? Do we
+> > > have the user somewhere that can be pointed to?
+> > The clock rate is translated into a unitless threshold value sent as 
+> > part of the rpmh msg
+> > that BCM takes to select a performance. In this case, the unit 
+> > conversion is based on
+> > the unit value read from the aux data which is in Khz. I understand that 
+> > this wasn't
+> > explicitly mentioned anywhere and I'll improve on that next patch. 
+> 
+> How is this different from bus bandwidth requests? In those cases the
+> bandwidth is calculated in bits per second or something like that, and
+> written to the hardware so it can convert that bandwidth into kHz and
+> set a bus clk frequency in the clock controller? So in the IPA case
+> we've skipped the bps to kHz conversion step and gone straight to the
+> clk frequency setting part? Is a BCM able to aggregate units of
+> bandwidth or kHz depending on how it's configured and this BCM is
+> configured for kHz?
+> 
 
-I merged patches 10 and 12 for now. These don't depend on any driver changes.
+My objection to the use of msm_bus vs clock framework is not related to
+how the actual interface of configuring the hardware looks like. It's
+simply a matter of how this is represented in software, between some
+provider and the IPA driver.
 
-If Alex manages to get the driver bits merged for 4.21, I suppose we could do
-a late PR for the dts bits? It would be nice to have both in the same release,
-though I don't think anything would break if the dts bits are delayed.
+The IPA driver wants the IPA block to tick at 75MHz and I do not think
+it's appropriate to achieve that by requesting a path between IPA Core
+and IPA Core of 75000000 Kbytes/s.
 
-ChenYu
+Regards,
+Bjorn
