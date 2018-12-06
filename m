@@ -2,144 +2,146 @@ Return-Path: <SRS0=15nu=OP=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D4DFC04EB8
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Dec 2018 08:29:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EB93C04EB8
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Dec 2018 08:45:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E2D4214C1
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Dec 2018 08:29:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E2D4214C1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id DEB6D20850
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Dec 2018 08:45:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEB6D20850
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728842AbeLFI3t (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 6 Dec 2018 03:29:49 -0500
-Received: from mx.socionext.com ([202.248.49.38]:34072 "EHLO mx.socionext.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727575AbeLFI3t (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 6 Dec 2018 03:29:49 -0500
-Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
-  by mx.socionext.com with ESMTP; 06 Dec 2018 17:29:44 +0900
-Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
-        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id 008B860062;
-        Thu,  6 Dec 2018 17:29:44 +0900 (JST)
-Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Thu, 6 Dec 2018 17:29:44 +0900
-Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
-        by iyokan.css.socionext.com (Postfix) with ESMTP id 518C240304;
-        Thu,  6 Dec 2018 17:29:44 +0900 (JST)
-Received: from [127.0.0.1] (unknown [10.213.119.83])
-        by yuzu.css.socionext.com (Postfix) with ESMTP id 2475A120304;
-        Thu,  6 Dec 2018 17:29:44 +0900 (JST)
-Subject: Re: [PATCH 10/14] dt-bindings: pinctrl: milbeaut: Add Milbeaut M10V
- pinctrl description
-To:     Rob Herring <robh@kernel.org>
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-serial@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Jiri Slaby <jslaby@suse.com>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>
-References: <1542589336-13925-1-git-send-email-sugaya.taichi@socionext.com>
- <20181204231131.GA7366@bogus>
-From:   "Sugaya, Taichi" <sugaya.taichi@socionext.com>
-Message-ID: <c71e44af-3a17-884c-78b4-686be8b293b1@socionext.com>
-Date:   Thu, 6 Dec 2018 17:29:43 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:60.0) Gecko/20100101
- Thunderbird/60.3.2
-MIME-Version: 1.0
-In-Reply-To: <20181204231131.GA7366@bogus>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1727804AbeLFIpW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 6 Dec 2018 03:45:22 -0500
+Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:55954 "EHLO
+        herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727763AbeLFIpW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Dec 2018 03:45:22 -0500
+Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
+        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id wB68EgB9028134;
+        Thu, 6 Dec 2018 10:14:43 +0200
+Received: by taln60.nuvoton.co.il (Postfix, from userid 20088)
+        id F3BE362DA6; Thu,  6 Dec 2018 10:44:40 +0200 (IST)
+From:   Tali Perry <tali.perry1@gmail.com>
+To:     avifishman70@gmail.com, tmaimon77@gmail.com, venture@google.com,
+        yuenn@google.com, brendanhiggins@google.com,
+        mturquette@baylibre.com, sboyd@kernel.org
+Cc:     openbmc@lists.ozlabs.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Tali Perry <tali.perry1@gmail.com>,
+        Wei Yongjun <weiyongjun1@huawei.com>
+Subject: [PATCH v2] clk: npcm7xx: get fixed clocks from DT
+Date:   Thu,  6 Dec 2018 10:44:31 +0200
+Message-Id: <20181206084431.315559-1-tali.perry1@gmail.com>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+The npcm7xx clock module includes 4 PLLs and then a tree of muxes and dividers.
+All muxes and dividers are preset before Linux boots. The presetting can change
+according to the board.
+Linux drivers need to know what the frequencies are, but they cannot change it,
+so this whole driver is intended as read only mechanism for clocks.
 
-Thank you for your comments.
+Before this change PLLs input clk value was defined inside the driver.
+With this fix clock will be on the DT.
 
-On 2018/12/05 8:11, Rob Herring wrote:
-> On Mon, Nov 19, 2018 at 10:02:12AM +0900, Sugaya Taichi wrote:
->> Add DT bindings document for Milbeaut M10V pinctrl.
->>
->> Signed-off-by: Sugaya Taichi <sugaya.taichi@socionext.com>
->> ---
->>   .../pinctrl/socionext,milbeaut-pinctrl.txt         | 33 ++++++++++++++++++++++
->>   1 file changed, 33 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/pinctrl/socionext,milbeaut-pinctrl.txt
->>
->> diff --git a/Documentation/devicetree/bindings/pinctrl/socionext,milbeaut-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/socionext,milbeaut-pinctrl.txt
->> new file mode 100644
->> index 0000000..7469189
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/pinctrl/socionext,milbeaut-pinctrl.txt
->> @@ -0,0 +1,33 @@
->> +Milbeaut SoCs pin controller
->> +
->> +Required properties:
->> +- compatible: should be one of the following:
->> +    "socionext,milbeaut-m10v-pinctrl"  - for m10v SoC
->> +- reg: offset and length of the register set.
->> +- reg-names: should be "pinctrl", "exiu".
->> +- gpio-cells; should be 2.
-> 
-> #gpio-cells
-> 
-> gpio-controller?
+Signed-off-by: Tali Perry <tali.perry1@gmail.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 
-Ah yes. I forgot to add it.
-Add it.
+---
 
-> 
->> +- interrupt-cells: should be 2.
-> 
-> #interrupt-cells
-> 
-> interrupt-controller?
+ drivers/clk/clk-npcm7xx.c | 39 ++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 38 insertions(+), 1 deletion(-)
 
-Add it also.
-
-Thanks,
-Sugaya Taichi
-
-> 
->> +- clocks: phandle to the input clock.
->> +- interrupts: three interrupts specifer.
->> +- interrupt-names: corresponds "interrupts" factor.
->> +
->> +Example:
->> +	pinctrl: pinctrl@1d022000 {
->> +		compatible = "socionext,milbeaut-m10v-pinctrl";
->> +		reg = <0x1d022000 0x1000>,
->> +			<0x1c26f000 0x1000>;
->> +		reg-names = "pinctrl", "exiu";
->> +		gpio-controller;
->> +		#gpio-cells = <2>;
->> +		interrupt-controller;
->> +		#interrupt-cells = <2>;
->> +		clocks = <&dummy_clk>;
->> +		interrupts = <0 54 4>, <0 55 4>, <0 56 4>, <0 57 4>,
->> +				<0 58 4>, <0 59 4>, <0 60 4>, <0 61 4>,
->> +				<0 62 4>, <0 63 4>, <0 64 4>, <0 65 4>,
->> +				<0 66 4>, <0 67 4>, <0 68 4>, <0 69 4>;
->> +		interrupt-names = "pin-48", "pin-49", "pin-50", "pin-51",
->> +				"pin-52", "pin-53", "pin-54", "pin-55",
->> +				"pin-56", "pin-57", "pin-58", "pin-59",
->> +				"pin-60", "pin-61", "pin-62", "pin-63";
->> +	}
->> -- 
->> 1.9.1
->>
+diff --git a/drivers/clk/clk-npcm7xx.c b/drivers/clk/clk-npcm7xx.c
+index 27a86b7a34db..4bd2e40997d4 100644
+--- a/drivers/clk/clk-npcm7xx.c
++++ b/drivers/clk/clk-npcm7xx.c
+@@ -8,13 +8,19 @@
+  */
+ 
+ #include <linux/module.h>
++#include <linux/clk.h>
+ #include <linux/clk-provider.h>
++#include <linux/device.h>
+ #include <linux/io.h>
+ #include <linux/kernel.h>
+ #include <linux/of.h>
++#include <linux/of_device.h>
++#include <linux/of_platform.h>
+ #include <linux/of_address.h>
++#include <linux/platform_device.h>
+ #include <linux/slab.h>
+ #include <linux/err.h>
++#include <linux/rational.h>
+ #include <linux/bitfield.h>
+ 
+ #include <dt-bindings/clock/nuvoton,npcm7xx-clock.h>
+@@ -544,6 +550,7 @@ static void __init npcm7xx_clk_init(struct device_node *clk_np)
+ 	void __iomem *clk_base;
+ 	struct resource res;
+ 	struct clk_hw *hw;
++	struct clk *clk;
+ 	int ret;
+ 	int i;
+ 
+@@ -568,6 +575,31 @@ static void __init npcm7xx_clk_init(struct device_node *clk_np)
+ 	for (i = 0; i < NPCM7XX_NUM_CLOCKS; i++)
+ 		npcm7xx_clk_data->hws[i] = ERR_PTR(-EPROBE_DEFER);
+ 
++	/* Read fixed clocks. These 3 clocks must be defined in DT */
++	clk = of_clk_get_by_name(clk_np, NPCM7XX_CLK_S_REFCLK);
++	if (IS_ERR(clk)) {
++		pr_err("failed to find external REFCLK on device tree, err=%ld\n",
++			PTR_ERR(clk));
++		clk_put(clk);
++		goto npcm7xx_init_fail_no_clk_on_dt;
++	}
++
++	clk = of_clk_get_by_name(clk_np, NPCM7XX_CLK_S_SYSBYPCK);
++	if (IS_ERR(clk)) {
++		pr_err("failed to find external SYSBYPCK on device tree, err=%ld\n",
++			PTR_ERR(clk));
++		clk_put(clk);
++		goto npcm7xx_init_fail_no_clk_on_dt;
++	}
++
++	clk = of_clk_get_by_name(clk_np, NPCM7XX_CLK_S_MCBYPCK);
++	if (IS_ERR(clk)) {
++		pr_err("failed to find external MCBYPCK on device tree, err=%ld\n",
++			PTR_ERR(clk));
++		clk_put(clk);
++		goto npcm7xx_init_fail_no_clk_on_dt;
++	}
++
+ 	/* Register plls */
+ 	for (i = 0; i < ARRAY_SIZE(npcm7xx_plls); i++) {
+ 		const struct npcm7xx_clk_pll_data *pll_data = &npcm7xx_plls[i];
+@@ -646,11 +678,16 @@ static void __init npcm7xx_clk_init(struct device_node *clk_np)
+ 
+ 	return;
+ 
++npcm7xx_init_fail_no_clk_on_dt:
++	pr_err("see Documentation/devicetree/bindings/clock/");
++	pr_err("nuvoton,npcm750-clk.txt  for details\n");
+ npcm7xx_init_fail:
+-	kfree(npcm7xx_clk_data->hws);
++	if (npcm7xx_clk_data->num)
++		kfree(npcm7xx_clk_data->hws);
+ npcm7xx_init_np_err:
+ 	iounmap(clk_base);
+ npcm7xx_init_error:
+ 	of_node_put(clk_np);
++	pr_err("clk setup fail\n");
+ }
+ CLK_OF_DECLARE(npcm7xx_clk_init, "nuvoton,npcm750-clk", npcm7xx_clk_init);
+-- 
+2.14.1
 
