@@ -2,150 +2,187 @@ Return-Path: <SRS0=15nu=OP=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_RHS_DOB,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85E46C04EB8
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Dec 2018 20:34:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45C93C64EB1
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Dec 2018 21:11:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5044F20892
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Dec 2018 20:34:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5044F20892
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id F26FF20892
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Dec 2018 21:11:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Q3JIwRZc";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="TXW55RvL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F26FF20892
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725949AbeLFUeW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 6 Dec 2018 15:34:22 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:58104 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725916AbeLFUeV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 6 Dec 2018 15:34:21 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id A4A3920731; Thu,  6 Dec 2018 21:34:19 +0100 (CET)
-Received: from localhost (unknown [88.191.26.124])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 486C220510;
-        Thu,  6 Dec 2018 21:34:19 +0100 (CET)
-Date:   Thu, 6 Dec 2018 21:34:19 +0100
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Chen-Yu Tsai <wens@csie.org>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-rtc@vger.kernel.org, linux-clk <linux-clk@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v2 00/14] rtc: sun6i: clock rework and pre-H6 SoC support
-Message-ID: <20181206203419.GD8952@piout.net>
-References: <20181203145825.20511-1-wens@csie.org>
- <CAGb2v65GwzEHZnRJysp=qE4HjrTa+TzCeyQ_j_Q=RrwtnC617g@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGb2v65GwzEHZnRJysp=qE4HjrTa+TzCeyQ_j_Q=RrwtnC617g@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1725929AbeLFVL1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 6 Dec 2018 16:11:27 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:41402 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725928AbeLFVL1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Dec 2018 16:11:27 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 4701860B1E; Thu,  6 Dec 2018 21:11:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1544130685;
+        bh=arrHo+qE6CuCckvmg0mryZ3XBQGbKEFJkQpzz52sh6g=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Q3JIwRZcWEFRYvbe4kYW0gpiBm2zHMIbwiJWfqd+8paGWlXZyMx/NT99I0gQlTOjU
+         edZZZcMo8cE1fkODBpnWWmGwXYDckVcM3upXdTQI+eD4tq9jkkt7sdpdlly6tdqRye
+         RcnjFboliEjHUZbFg/arIF7KBQBhKuHzw5I9+OcY=
+Received: from jhugo-perf-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jhugo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 293E860792;
+        Thu,  6 Dec 2018 21:11:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1544130684;
+        bh=arrHo+qE6CuCckvmg0mryZ3XBQGbKEFJkQpzz52sh6g=;
+        h=From:To:Cc:Subject:Date:From;
+        b=TXW55RvLYI4bXdy1DO5Oy3RASjKtUwxUv2jOq0A89B26JiJMM87WmW/WOzxQtNdt/
+         jPBIAcJj2JymbRjigvGNegqys/Km3RnSDqnPdQiITBcsbUyVDjtVW/KDhUSRiZs8MN
+         XVT47t4+i9Du4V4xKCM+O6MWTSnfHw/CwbcwuZBI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 293E860792
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
+From:   Jeffrey Hugo <jhugo@codeaurora.org>
+To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc:     bjorn.andersson@linaro.org, marc.w.gonzalez@free.fr,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jeffrey Hugo <jhugo@codeaurora.org>
+Subject: [PATCH] clk: qcom: smd: Add support for MSM8998 rpm clocks
+Date:   Thu,  6 Dec 2018 14:11:06 -0700
+Message-Id: <1544130666-32252-1-git-send-email-jhugo@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 06/12/2018 13:49:10+0800, Chen-Yu Tsai wrote:
-> Hi,
-> 
-> On Mon, Dec 3, 2018 at 10:58 PM Chen-Yu Tsai <wens@csie.org> wrote:
-> >
-> > Hi everyone,
-> >
-> > This is v2 of my rtc-sun6i clean-up series.
-> >
-> > Changes since v1:
-> >
-> >   - Collected tags
-> >   - Dropped patch "clk: sunxi-ng: r40: Force LOSC parent to RTC LOSC
-> >     output"; already merged
-> >   - Removed H6 compatible CLK_OF_DECLARE_DRIVER entry that wasn't
-> >     overlooked
-> >   - Only export IOSC clock for A64/H3/H5
-> >
-> > Original cover letter, with patch numbers corrected, follows:
-> >
-> > This series was started as part of enabling Bluetooth on various
-> > Allwinner SBCs. The bluetooth controller requires a precise 32.768 kHz
-> > clock fed to it to correctly detect the frequency of its main oscillator.
-> > This clock signal is provided by the RTC, either directly from a special
-> > pin on the SoC, or some clock output function from the clock controllers.
-> > I found that the clock-related properties of the RTC on later SoCs were
-> > incorrect or missing.
-> >
-> > This series reworks the compatible strings and clock parts of the device
-> > tree bindings for sun6i-rtc. Currently we assume most Allwinner SoCs use
-> > the same sun6i-rtc variant, when in fact they do not. The differences
-> > that matter with regards to clocks are a) the A31 does not have an extra
-> > external output for the RTC 32K clock, while most of the others do;
-> > b) the clock frequency of the internal RC oscillator is different on
-> > some SoCs; c) on the H6 the RTC also handles the 24 MHz DCXO, which
-> > feeds the system HOSC. The last difference, and by extension the H6, are
-> > not covered in this series.
-> >
-> > Patch 1 cleans up the clock-related section of the RTC device tree
-> > binding. This would make it easier to read and easier to add additional
-> > clocks.
-> >
-> > Patch 2 adds compatible strings for all identified variants introduced
-> > prior to the H6.
-> >
-> > Patch 3 deprecates the external clock output for the A31. The A31 does
-> > not have this output, so it's introduction and usage was an error.
-> >
-> > Patch 4 adds a clock output for the RTC's internal oscillator to the
-> > device tree binding. This feeds the PRCM in some SoCs.
-> >
-> > Patch 5 adds a default clock name for the LOSC to the RTC driver.
-> >
-> > Patch 6 adds support for different hardware variants to the RTC driver.
-> >
-> > Patch 7 adds support for all known pre-H6 variants.
-> >
-> > Patch 8 exposes the RTC's internal oscillator through the device tree.
-> >
-> > Patch 9 through 14 adds an RTC node or fixes up the RTC device node
-> > address ranges, clock properties, names of existing clocks, and adds
-> > accuracy properties for the external fixed oscillators.
-> >
-> > The clock names require fixing because the sunxi clock driver implicitly
-> > depends on the HOSC and LOSC being named "osc24M" and "osc32k". The
-> > "fixes" to the clock hierarchy introduced in this series means the names
-> > must also be shuffled around or the in kernel representation would be
-> > incorrect. This has been the case since the sunxi-ng drivers were
-> > introduced. There are plans to address this, but the code is still in its
-> > early stages.
-> >
-> > Please have a look.
-> >
-> > Thanks
-> > ChenYu
-> >
-> > Chen-Yu Tsai (14):
-> >   dt-bindings: rtc: sun6i-rtc: Rewrite clock outputs as a list
-> >   dt-bindings: rtc: sun6i-rtc: Add compatible strings for pre-H6
-> >     variants
-> >   dt-bindings: rtc: sun6i-rtc: Deprecate external clock output for A31
-> >   dt-bindings: rtc: sun6i-rtc: Export internal RC oscillator
-> >   rtc: sun6i: Add default clock name for LOSC
-> >   rtc: sun6i: Add support for different variants
-> >   rtc: sun6i: Add support for all known pre-H6 variants
-> >   rtc: sun6i: Expose internal oscillator through device tree
+Add rpm smd clocks, PMIC and bus clocks which are required on MSM8998
+for clients to vote on.
 
-I've applied the above patches. However, for whatever reason, patch 3
-didn't apply without some fuzz, please check.
+Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
+---
+ .../devicetree/bindings/clock/qcom,rpmcc.txt       |  1 +
+ drivers/clk/qcom/clk-smd-rpm.c                     | 62 ++++++++++++++++++++++
+ include/dt-bindings/clock/qcom,rpmcc.h             |  6 +++
+ 3 files changed, 69 insertions(+)
 
-
+diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
+index 87b4949..16c4293 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
++++ b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
+@@ -17,6 +17,7 @@ Required properties :
+ 			"qcom,rpmcc-apq8064", "qcom,rpmcc"
+ 			"qcom,rpmcc-msm8996", "qcom,rpmcc"
+ 			"qcom,rpmcc-qcs404", "qcom,rpmcc"
++			"qcom,rpmcc-msm8998", "qcom,rpmcc"
+ 
+ - #clock-cells : shall contain 1
+ 
+diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
+index d3aadae..269304e 100644
+--- a/drivers/clk/qcom/clk-smd-rpm.c
++++ b/drivers/clk/qcom/clk-smd-rpm.c
+@@ -655,11 +655,73 @@ static int clk_smd_rpm_enable_scaling(struct qcom_smd_rpm *rpm)
+ 	.num_clks = ARRAY_SIZE(qcs404_clks),
+ };
+ 
++/* msm8998 */
++DEFINE_CLK_SMD_RPM(msm8998, snoc_clk, snoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 1);
++DEFINE_CLK_SMD_RPM(msm8998, cnoc_clk, cnoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 2);
++DEFINE_CLK_SMD_RPM(msm8998, ce1_clk, ce1_a_clk, QCOM_SMD_RPM_CE_CLK, 0);
++DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, div_clk1, div_clk1_a, 0xb);
++DEFINE_CLK_SMD_RPM(msm8998, ipa_clk, ipa_a_clk, QCOM_SMD_RPM_IPA_CLK, 0);
++DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, bb_clk1, bb_clk1_a, 1);
++DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, bb_clk2, bb_clk2_a, 2);
++DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8998, bb_clk3_pin, bb_clk3_a_pin, 3);
++DEFINE_CLK_SMD_RPM(msm8998, mmssnoc_axi_rpm_clk, mmssnoc_axi_rpm_a_clk,
++		   QCOM_SMD_RPM_MMAXI_CLK, 0);
++DEFINE_CLK_SMD_RPM(msm8998, aggre1_noc_clk, aggre1_noc_a_clk,
++		   QCOM_SMD_RPM_AGGR_CLK, 1);
++DEFINE_CLK_SMD_RPM(msm8998, aggre2_noc_clk, aggre2_noc_a_clk,
++		   QCOM_SMD_RPM_AGGR_CLK, 2);
++DEFINE_CLK_SMD_RPM_QDSS(msm8998, qdss_clk, qdss_a_clk,
++			QCOM_SMD_RPM_MISC_CLK, 1);
++DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, rf_clk1, rf_clk1_a, 4);
++DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8998, rf_clk2_pin, rf_clk2_a_pin, 5);
++DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, rf_clk3, rf_clk3_a, 6);
++DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8998, rf_clk3_pin, rf_clk3_a_pin, 6);
++static struct clk_smd_rpm *msm8998_clks[] = {
++	[RPM_SMD_SNOC_CLK] = &msm8998_snoc_clk,
++	[RPM_SMD_SNOC_A_CLK] = &msm8998_snoc_a_clk,
++	[RPM_SMD_CNOC_CLK] = &msm8998_cnoc_clk,
++	[RPM_SMD_CNOC_A_CLK] = &msm8998_cnoc_a_clk,
++	[RPM_SMD_CE1_CLK] = &msm8998_ce1_clk,
++	[RPM_SMD_CE1_A_CLK] = &msm8998_ce1_a_clk,
++	[RPM_SMD_DIV_CLK1] = &msm8998_div_clk1,
++	[RPM_SMD_DIV_A_CLK1] = &msm8998_div_clk1_a,
++	[RPM_SMD_IPA_CLK] = &msm8998_ipa_clk,
++	[RPM_SMD_IPA_A_CLK] = &msm8998_ipa_a_clk,
++	[RPM_SMD_BB_CLK1] = &msm8998_bb_clk1,
++	[RPM_SMD_BB_CLK1_A] = &msm8998_bb_clk1_a,
++	[RPM_SMD_BB_CLK2] = &msm8998_bb_clk2,
++	[RPM_SMD_BB_CLK2_A] = &msm8998_bb_clk2_a,
++	[RPM_SMD_BB_CLK3_PIN] = &msm8998_bb_clk3_pin,
++	[RPM_SMD_BB_CLK3_A_PIN] = &msm8998_bb_clk3_a_pin,
++	[RPM_SMD_MMAXI_CLK] = &msm8998_mmssnoc_axi_rpm_clk,
++	[RPM_SMD_MMAXI_A_CLK] = &msm8998_mmssnoc_axi_rpm_a_clk,
++	[RPM_SMD_AGGR1_NOC_CLK] = &msm8998_aggre1_noc_clk,
++	[RPM_SMD_AGGR1_NOC_A_CLK] = &msm8998_aggre1_noc_a_clk,
++	[RPM_SMD_AGGR2_NOC_CLK] = &msm8998_aggre2_noc_clk,
++	[RPM_SMD_AGGR2_NOC_A_CLK] = &msm8998_aggre2_noc_a_clk,
++	[RPM_SMD_QDSS_CLK] = &msm8998_qdss_clk,
++	[RPM_SMD_QDSS_A_CLK] = &msm8998_qdss_a_clk,
++	[RPM_SMD_RF_CLK1] = &msm8998_rf_clk1,
++	[RPM_SMD_RF_CLK1_A] = &msm8998_rf_clk1_a,
++	[RPM_SMD_RF_CLK2_PIN] = &msm8998_rf_clk2_pin,
++	[RPM_SMD_RF_CLK2_A_PIN] = &msm8998_rf_clk2_a_pin,
++	[RPM_SMD_RF_CLK3] = &msm8998_rf_clk3,
++	[RPM_SMD_RF_CLK3_A] = &msm8998_rf_clk3_a,
++	[RPM_SMD_RF_CLK3_PIN] = &msm8998_rf_clk3_pin,
++	[RPM_SMD_RF_CLK3_A_PIN] = &msm8998_rf_clk3_a_pin,
++};
++
++static const struct rpm_smd_clk_desc rpm_clk_msm8998 = {
++	.clks = msm8998_clks,
++	.num_clks = ARRAY_SIZE(msm8998_clks),
++};
++
+ static const struct of_device_id rpm_smd_clk_match_table[] = {
+ 	{ .compatible = "qcom,rpmcc-msm8916", .data = &rpm_clk_msm8916 },
+ 	{ .compatible = "qcom,rpmcc-msm8974", .data = &rpm_clk_msm8974 },
+ 	{ .compatible = "qcom,rpmcc-msm8996", .data = &rpm_clk_msm8996 },
+ 	{ .compatible = "qcom,rpmcc-qcs404",  .data = &rpm_clk_qcs404  },
++	{ .compatible = "qcom,rpmcc-msm8998", .data = &rpm_clk_msm8998 },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, rpm_smd_clk_match_table);
+diff --git a/include/dt-bindings/clock/qcom,rpmcc.h b/include/dt-bindings/clock/qcom,rpmcc.h
+index 3658b0c..81dbd1f 100644
+--- a/include/dt-bindings/clock/qcom,rpmcc.h
++++ b/include/dt-bindings/clock/qcom,rpmcc.h
+@@ -127,5 +127,11 @@
+ #define RPM_SMD_BIMC_GPU_A_CLK			77
+ #define RPM_SMD_QPIC_CLK			78
+ #define RPM_SMD_QPIC_CLK_A			79
++#define RPM_SMD_BB_CLK3_PIN			80
++#define RPM_SMD_BB_CLK3_A_PIN			81
++#define RPM_SMD_RF_CLK3				82
++#define RPM_SMD_RF_CLK3_A			83
++#define RPM_SMD_RF_CLK3_PIN			84
++#define RPM_SMD_RF_CLK3_A_PIN			85
+ 
+ #endif
 -- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Qualcomm Datacenter Technologies as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
+
