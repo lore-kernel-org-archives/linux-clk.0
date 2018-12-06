@@ -2,120 +2,83 @@ Return-Path: <SRS0=15nu=OP=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20ECEC04EB8
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Dec 2018 22:00:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE1AFC04EB8
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Dec 2018 22:03:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9F2C214C1
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Dec 2018 22:00:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544133601;
-	bh=/mfoHx2kZTaQp8c5THvg+QbIVA2pPhgvvCcvtuZt20Y=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=2L8lxMPNfStiW5g81pAmW/2c/cAWXOu9Bcw1X7eqhdnx6jwxljc2KgJN8VclLn0ut
-	 1VLBHEr90L78XOePEkj83cgl5gj2M3F2xAXaBrezMfCHEFcVvWHZLpBFsxCBaBnXIx
-	 7NlP+yzE+Pdu+YnBY512Q5yftYWmlJl4uiUEWRoU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9F2C214C1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id A78AC214DB
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Dec 2018 22:03:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bvKrU2mr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A78AC214DB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726213AbeLFV7y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 6 Dec 2018 16:59:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60060 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726083AbeLFV7A (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 6 Dec 2018 16:59:00 -0500
-Received: from mail.kernel.org (unknown [104.132.1.77])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DBD2B214DB;
-        Thu,  6 Dec 2018 21:58:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544133540;
-        bh=/mfoHx2kZTaQp8c5THvg+QbIVA2pPhgvvCcvtuZt20Y=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=W+cUFUxT6Z3LZ1EHE2mtMsEOA0SwifB9vYqaET1kUAQ61Sxov22A8ZYQLEHlfYdzR
-         g3tlF7gMvqkl4TE/D1tbzuSSXtTRiavUzPki0cse6Q3YnSd2YqSRYzt99jowM9BDTO
-         phx4YjzlAMJN0AkjfXranRD0KOzLOS7OEp+8dRXM=
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH 2/8] clk: st: Remove usage of CLK_IS_BASIC
-Date:   Thu,  6 Dec 2018 13:58:52 -0800
-Message-Id: <20181206215858.3880-3-sboyd@kernel.org>
-X-Mailer: git-send-email 2.20.0.rc2.403.gdbc3b29805-goog
-In-Reply-To: <20181206215858.3880-1-sboyd@kernel.org>
-References: <20181206215858.3880-1-sboyd@kernel.org>
+        id S1725944AbeLFWDe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 6 Dec 2018 17:03:34 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:42046 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725935AbeLFWDe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Dec 2018 17:03:34 -0500
+Received: by mail-lf1-f65.google.com with SMTP id l10so1536470lfh.9
+        for <linux-clk@vger.kernel.org>; Thu, 06 Dec 2018 14:03:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lIVn1IANWXQA5i6a6TSAERV9VhpsMsPWC04vE2MleWU=;
+        b=bvKrU2mr+3sRGHREOdPQcAuDLSNkyu8hih2dUQRLQRqzRmoLvd40U2oq5yraQv7uHD
+         wswgJGVmtlsBdlPJ58CFW8w8eGluyz5VBPtzxagMp7yIdIhiDUy+yWuyqMWFulABIqoO
+         xSoButaovYJIMCF428wwMhPPzOapqAF3D/ZzA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lIVn1IANWXQA5i6a6TSAERV9VhpsMsPWC04vE2MleWU=;
+        b=XWpAeZuonR+LWyaKrffvnF+KBUa92BZXHk8r5wLXE2whzC2cwGzNrpsw+D4GwNUeRA
+         6Ftl6pLWOAappSG7vlIf2bMb3Eb74x3624MMt4UeN9fqn7OoMTgc8hrlB5eIZT0ox3qU
+         J2DA6AUpaCrdOYEad6qAIn9kic2WgcrZAG3lJL23pAZ+aaSD1oRiXvEjm4YiX0cpK8Cq
+         Df969yRwW+ftvZlEJ7t7xncFg/jcJUi+fsZ5AJd2WymZpSKxnLRrNSzI5DzUHEi1qZ13
+         BNXxq/FYrwxZF4Y2g6yxEpElVbJTd8kLKEmSP6eGcbVRYE8bSFtpVaUjim57bvUy+b8o
+         FlxA==
+X-Gm-Message-State: AA+aEWYvCieHiZ0V6rr9T8pzWN4iLGHc2xIZcleqtKlEhVkFNY8k2dO3
+        g/KIgbkg6rkp5SXYW9bRCLR0hZDZVC/D56HqAfNldg==
+X-Google-Smtp-Source: AFSGD/Xf+QXl6BKq/IG/hxCeoUvPyGIDXH0BdyMXT9TfLY11cWOQM/WZRCHIXPM6BofaMo3UaW/2PbplLi+LptSWQYA=
+X-Received: by 2002:a19:5154:: with SMTP id f81mr18901095lfb.96.1544133811837;
+ Thu, 06 Dec 2018 14:03:31 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20181206215858.3880-1-sboyd@kernel.org> <20181206215858.3880-7-sboyd@kernel.org>
+In-Reply-To: <20181206215858.3880-7-sboyd@kernel.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 6 Dec 2018 23:03:19 +0100
+Message-ID: <CACRpkdbNs81HKTdtmVpo6swQj8Nc1dSutbyaDeJ1GsuDWzQToA@mail.gmail.com>
+Subject: Re: [PATCH 6/8] clk: versatile: sp810: Remove usage of CLK_IS_BASIC
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This flag doesn't look to be used by any code, just set in various clk
-init structures and then never tested again. Remove it from these
-drivers as it doesn't provide any benefit.
+On Thu, Dec 6, 2018 at 10:59 PM Stephen Boyd <sboyd@kernel.org> wrote:
 
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
----
- drivers/clk/st/clk-flexgen.c | 2 +-
- drivers/clk/st/clkgen-fsyn.c | 4 ++--
- drivers/clk/st/clkgen-pll.c  | 2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
+> This flag doesn't look to be used by any code, just set in the clk init
+> structure and then never tested again. Remove it from this driver as it
+> doesn't provide any benefit.
+>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 
-diff --git a/drivers/clk/st/clk-flexgen.c b/drivers/clk/st/clk-flexgen.c
-index 918ba3164da9..ca8d5350f94e 100644
---- a/drivers/clk/st/clk-flexgen.c
-+++ b/drivers/clk/st/clk-flexgen.c
-@@ -210,7 +210,7 @@ static struct clk *clk_register_flexgen(const char *name,
- 
- 	init.name = name;
- 	init.ops = &flexgen_ops;
--	init.flags = CLK_IS_BASIC | CLK_GET_RATE_NOCACHE | flexgen_flags;
-+	init.flags = CLK_GET_RATE_NOCACHE | flexgen_flags;
- 	init.parent_names = parent_names;
- 	init.num_parents = num_parents;
- 
-diff --git a/drivers/clk/st/clkgen-fsyn.c b/drivers/clk/st/clkgen-fsyn.c
-index cfa000007622..946ceb14dbf7 100644
---- a/drivers/clk/st/clkgen-fsyn.c
-+++ b/drivers/clk/st/clkgen-fsyn.c
-@@ -404,7 +404,7 @@ static struct clk * __init st_clk_register_quadfs_pll(
- 
- 	init.name = name;
- 	init.ops = quadfs->pll_ops;
--	init.flags = CLK_IS_BASIC | CLK_GET_RATE_NOCACHE;
-+	init.flags = CLK_GET_RATE_NOCACHE;
- 	init.parent_names = &parent_name;
- 	init.num_parents = 1;
- 
-@@ -843,7 +843,7 @@ static struct clk * __init st_clk_register_quadfs_fsynth(
- 
- 	init.name = name;
- 	init.ops = &st_quadfs_ops;
--	init.flags = flags | CLK_GET_RATE_NOCACHE | CLK_IS_BASIC;
-+	init.flags = flags | CLK_GET_RATE_NOCACHE;
- 	init.parent_names = &parent_name;
- 	init.num_parents = 1;
- 
-diff --git a/drivers/clk/st/clkgen-pll.c b/drivers/clk/st/clkgen-pll.c
-index 7a7106dc80bf..6930348ce843 100644
---- a/drivers/clk/st/clkgen-pll.c
-+++ b/drivers/clk/st/clkgen-pll.c
-@@ -613,7 +613,7 @@ static struct clk * __init clkgen_pll_register(const char *parent_name,
- 	init.name = clk_name;
- 	init.ops = pll_data->ops;
- 
--	init.flags = pll_flags | CLK_IS_BASIC | CLK_GET_RATE_NOCACHE;
-+	init.flags = pll_flags | CLK_GET_RATE_NOCACHE;
- 	init.parent_names = &parent_name;
- 	init.num_parents  = 1;
- 
--- 
-Sent by a computer through tubes
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
+Can't help but wonder what semantic it was supposed to have.
+It seems a bit vague now.
+
+Yours,
+Linus Walleij
