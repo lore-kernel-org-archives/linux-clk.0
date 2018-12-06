@@ -2,146 +2,133 @@ Return-Path: <SRS0=15nu=OP=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74D7CC04EB8
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Dec 2018 12:30:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E14D4C04EB8
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Dec 2018 15:16:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B3B220838
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Dec 2018 12:30:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="mutwC5rZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B3B220838
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
+	by mail.kernel.org (Postfix) with ESMTP id 9EABE20700
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Dec 2018 15:16:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544109410;
+	bh=6ACUB3LPbYU95L4qQsMVA+ixJc1sfXJampAj/m61ta4=;
+	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
+	b=um98vGpBmkpqZFUenml312LO+z/HZSfJ1Pxom+8kd0ZoCumIaDNMnvHPEOkhS8Gzr
+	 V3OTN/THnHm/KQhp3AVLXxwlSviNfV1Zbyb8cv03/zgN3lpe1TQW+j2rf67XO8UbbP
+	 /SWgbaKdTxZtBhGBJOW0ECjyshWixCs6WdpQfLwg=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EABE20700
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729464AbeLFMa6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 6 Dec 2018 07:30:58 -0500
-Received: from mail-eopbgr1400090.outbound.protection.outlook.com ([40.107.140.90]:33216
-        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727996AbeLFMa6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 6 Dec 2018 07:30:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BCeQ1DMNjeaKJnC+fsKDsP194IybAkkg/awb6d+lxK0=;
- b=mutwC5rZN5qknUG1g0OOZBAKZx3u6uQujJYQezpcqYYar30Vsxf+5TRhtSehGquqYenmtDZlOeJETll+EB7js2S8ITXFt4GUoo9jQK9u2wayvdM9kG0K7gZdERbJfsNi2/eMbN5MUH5mLlaWAXVY4ldZp3+Nm0sqOmkaynxVI0s=
-Received: from TY1PR01MB1769.jpnprd01.prod.outlook.com (52.133.163.146) by
- TY1PR01MB1561.jpnprd01.prod.outlook.com (52.133.162.17) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1404.17; Thu, 6 Dec 2018 12:30:53 +0000
-Received: from TY1PR01MB1769.jpnprd01.prod.outlook.com
- ([fe80::9dd3:2789:8699:7885]) by TY1PR01MB1769.jpnprd01.prod.outlook.com
- ([fe80::9dd3:2789:8699:7885%4]) with mapi id 15.20.1382.023; Thu, 6 Dec 2018
- 12:30:52 +0000
-From:   Phil Edworthy <phil.edworthy@renesas.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-CC:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        =?iso-8859-1?Q?Uwe_Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH v9 1/2] clk: Add comment about __of_clk_get_by_name()
- error values
-Thread-Topic: [PATCH v9 1/2] clk: Add comment about __of_clk_get_by_name()
- error values
-Thread-Index: AQHUivk3i4Y+f5/feUuqUWNTx+pZGqVtAtEAgASlWYA=
-Date:   Thu, 6 Dec 2018 12:30:52 +0000
-Message-ID: <TY1PR01MB1769B12A216ED3E76A40A6B7F5A90@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-References: <20181203111309.3709-1-phil.edworthy@renesas.com>
- <20181203111309.3709-2-phil.edworthy@renesas.com>
- <20181203133040.GN10650@smile.fi.intel.com>
-In-Reply-To: <20181203133040.GN10650@smile.fi.intel.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=phil.edworthy@renesas.com; 
-x-originating-ip: [193.141.220.21]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;TY1PR01MB1561;20:xB/9pCi7ydiHEkR9cfr1q1Hszy7CoWdXxjN0Yltn7rdRWD8g1NkxGGxOkImaqGCG2ftGwQRQy3W3Ue5FK+yoxsT1YPVoXqLwPGJJW5KoANQVZaCpo7DoyHu+Sc4LzhibM+V1p6k/v5G3rB3ExPFNYs+SmYwZdu4vPDHRdp73o/M=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: fcaf1fb9-b9ce-4dc4-6a7e-08d65b76a9a2
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:TY1PR01MB1561;
-x-ms-traffictypediagnostic: TY1PR01MB1561:
-x-microsoft-antispam-prvs: <TY1PR01MB1561CC62211FAD8A861F1BF5F5A90@TY1PR01MB1561.jpnprd01.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(93006095)(93001095)(3231455)(999002)(944501520)(52105112)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:TY1PR01MB1561;BCL:0;PCL:0;RULEID:;SRVR:TY1PR01MB1561;
-x-forefront-prvs: 087894CD3C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(376002)(346002)(39860400002)(366004)(136003)(199004)(189003)(51914003)(478600001)(229853002)(74316002)(102836004)(6506007)(53546011)(76176011)(71190400001)(71200400001)(81166006)(81156014)(53936002)(55016002)(105586002)(14444005)(256004)(106356001)(9686003)(2906002)(8676002)(186003)(97736004)(6916009)(33656002)(6116002)(3846002)(54906003)(316002)(7736002)(305945005)(14454004)(446003)(26005)(476003)(11346002)(44832011)(25786009)(6436002)(5660300001)(86362001)(68736007)(486006)(8936002)(66066001)(6246003)(7696005)(4326008)(99286004);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB1561;H:TY1PR01MB1769.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: renesas.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: /zGu961oHRsGeLLGQQa1VH1XV9LgAkEoF3zPvF6y77iEUsdka5h9YtO59eKi++h2lLkVFOz6O42n2EKh7gFPc23OvHWXaJfJpsRRFNf2ft3Rci8htR5lxe4GJFxg4o22mzt+7i5Svb26Xnvg7OtyT08y5oaYfp9FwO8CCjFD21Q0F7HALRViJ2CRmVw7P024I/iNXqjqOKYG0IjEYiqWl6D9QaDosDeDQVS+Mcc/jJofv7qos0/NRO08CBYtF1A0SE3MJtgyMBkvpE09xQT3qu1MkOzIcTgkm1RrWyxoOsGXrXwNk2YgmSNfS/iVPx16onpNISpJaDg4mqQw7bIH0DR/695HbMqVYwvjVakbDiU=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S1725879AbeLFPQu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 6 Dec 2018 10:16:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36458 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725871AbeLFPQt (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 6 Dec 2018 10:16:49 -0500
+Received: from [192.168.1.19] (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 872FD20700;
+        Thu,  6 Dec 2018 15:16:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544109409;
+        bh=6ACUB3LPbYU95L4qQsMVA+ixJc1sfXJampAj/m61ta4=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=DMP/h7L8uL4WvOCqpE4/aRQa7RZg4AVDhxt2RnBSCpAL1MYJVnT+qdmlmWnr79ISh
+         qIfg02QCh4In6MpefzmIVSfEaB49vvd9L4k8cpVDM4QdIAFKAzAMpmITmRdx6u/jVx
+         7EOvl1vm/++JAj9ar4vmb5iAHQuo1rLMAMaZnszU=
+Subject: Re: [PATCH] clk: socfpga: Don't have get_parent for single parent ops
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Jerome Brunet <jbrunet@baylibre.com>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+References: <20181204163257.32085-1-jbrunet@baylibre.com>
+ <20181204193416.24661-1-sboyd@kernel.org>
+ <154399427706.88331.4744072908182655454@swboyd.mtv.corp.google.com>
+ <266a0a5d-5dfe-0e1c-276f-65163f1cef1b@kernel.org>
+ <154402531604.88331.12202256691796911096@swboyd.mtv.corp.google.com>
+From:   Dinh Nguyen <dinguyen@kernel.org>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dinguyen@kernel.org; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <9af950b2-036c-6afd-e31d-7eb2799e56c9@kernel.org>
+Date:   Thu, 6 Dec 2018 09:16:47 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fcaf1fb9-b9ce-4dc4-6a7e-08d65b76a9a2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Dec 2018 12:30:52.8047
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1561
+In-Reply-To: <154402531604.88331.12202256691796911096@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Andy,
 
-On 03 December 2018 13:31 Andy Shevchenko wrote:
-> On Mon, Dec 03, 2018 at 11:13:08AM +0000, Phil Edworthy wrote:
-> > It's not immediately obvious from the code that failure to get a clock
-> > provider can return either -ENOENT or -EINVAL. Therefore, add a
-> > comment to highlight this.
->=20
-> > +/*
-> > + * Beware the return values when np is valid, but no clock provider is
-> found.
-> > + * If name =3D NULL, the function returns -ENOENT.
-> > + * If name !=3D NULL, the function returns -EINVAL. This is because
-> > +__of_clk_get()
->=20
-> I would start new sentence from new line (this will emphasize the possibl=
-e
-> variants)
->=20
->  * This is ...
-I disagree, the explanation is specifically related to the case where the f=
-unction
-returns -EINVAL. Though this is a nit, so I'm not really bothered either wa=
-y.
 
-Thanks for the review!
-Phil
+On 12/5/18 9:55 AM, Stephen Boyd wrote:
+> Quoting Dinh Nguyen (2018-12-05 07:17:41)
+>> Hi Stephen,
+>>
+>> On 12/5/18 1:17 AM, Stephen Boyd wrote:
+>>> (Adding Dinh's korg email)
+>>>
+>>> I also wonder if this driver is even used anymore or maybe we can delete
+>>> it?
+>>>
+>>
+>> The armv7 SoCFPGA platforms are using this driver.
+>>
+> 
+> Ok and those platforms are booting in kernelci.org as
+> https://kernelci.org/boot/socfpga_cyclone5_de0_sockit/ perhaps?
+> 
 
->  Otherwise looks good to me:
->=20
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
->=20
-> > + * is called even if of_property_match_string() returns an error.
-> > + */
-> >  static struct clk *__of_clk_get_by_name(struct device_node *np,
-> >  					const char *dev_id,
-> >  					const char *name)
-> > --
-> > 2.17.1
-> >
->=20
-> --
-> With Best Regards,
-> Andy Shevchenko
->=20
+Yes that's right.
 
+Dinh
