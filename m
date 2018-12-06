@@ -2,187 +2,192 @@ Return-Path: <SRS0=15nu=OP=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45C93C64EB1
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Dec 2018 21:11:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2262C64EB1
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Dec 2018 21:55:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F26FF20892
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Dec 2018 21:11:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Q3JIwRZc";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="TXW55RvL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F26FF20892
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 70ED421479
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Dec 2018 21:55:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544133319;
+	bh=58o7wj7mBWhPeIdyXdGX6xBxzVrsyTDPdXl18Bzxd+I=;
+	h=To:From:In-Reply-To:Cc:References:Subject:Date:List-ID:From;
+	b=Z1VQNENW11ExD4FeP0H/AnublUm2PDFYo2dM0XytT/hgFRuFIaRMJK7DeD0SdFSGr
+	 i1Rv+AyzAKP42Dp805UVAIvU8Cr9hP1VUZnFyx7BexnFGsn3v6npqynmDMAGW/FzjN
+	 /ISziHh6bTo0VrABsdf3XkwrDY9xTcNsTYrYybD8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70ED421479
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725929AbeLFVL1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 6 Dec 2018 16:11:27 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:41402 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725928AbeLFVL1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Dec 2018 16:11:27 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 4701860B1E; Thu,  6 Dec 2018 21:11:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1544130685;
-        bh=arrHo+qE6CuCckvmg0mryZ3XBQGbKEFJkQpzz52sh6g=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Q3JIwRZcWEFRYvbe4kYW0gpiBm2zHMIbwiJWfqd+8paGWlXZyMx/NT99I0gQlTOjU
-         edZZZcMo8cE1fkODBpnWWmGwXYDckVcM3upXdTQI+eD4tq9jkkt7sdpdlly6tdqRye
-         RcnjFboliEjHUZbFg/arIF7KBQBhKuHzw5I9+OcY=
-Received: from jhugo-perf-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        id S1725999AbeLFVzS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 6 Dec 2018 16:55:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59244 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725972AbeLFVzS (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 6 Dec 2018 16:55:18 -0500
+Received: from localhost (unknown [104.132.1.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: jhugo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 293E860792;
-        Thu,  6 Dec 2018 21:11:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1544130684;
-        bh=arrHo+qE6CuCckvmg0mryZ3XBQGbKEFJkQpzz52sh6g=;
-        h=From:To:Cc:Subject:Date:From;
-        b=TXW55RvLYI4bXdy1DO5Oy3RASjKtUwxUv2jOq0A89B26JiJMM87WmW/WOzxQtNdt/
-         jPBIAcJj2JymbRjigvGNegqys/Km3RnSDqnPdQiITBcsbUyVDjtVW/KDhUSRiZs8MN
-         XVT47t4+i9Du4V4xKCM+O6MWTSnfHw/CwbcwuZBI=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 293E860792
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
-From:   Jeffrey Hugo <jhugo@codeaurora.org>
-To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com
+        by mail.kernel.org (Postfix) with ESMTPSA id 81E012081C;
+        Thu,  6 Dec 2018 21:55:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544133317;
+        bh=58o7wj7mBWhPeIdyXdGX6xBxzVrsyTDPdXl18Bzxd+I=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=nU+loz+iD+acKlaHlzZsOvQ3FsI24j2XyUKAhFSDKwWHNGo3s9Dn6LJCnTQeglyob
+         Qt1EXKJQB8QOTT8wD4rWIp8Rdev9+Zyn2wFVOdWwOnbp+FaTz9FOB2dzxIWzdX56qL
+         dkbrg0B+0L4VrrIMBHMKs6ifyHXNMeq5rPORf/uw=
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+To:     Jeffrey Hugo <jhugo@codeaurora.org>, mark.rutland@arm.com,
+        mturquette@baylibre.com, robh+dt@kernel.org
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1544130666-32252-1-git-send-email-jhugo@codeaurora.org>
 Cc:     bjorn.andersson@linaro.org, marc.w.gonzalez@free.fr,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
         Jeffrey Hugo <jhugo@codeaurora.org>
-Subject: [PATCH] clk: qcom: smd: Add support for MSM8998 rpm clocks
-Date:   Thu,  6 Dec 2018 14:11:06 -0700
-Message-Id: <1544130666-32252-1-git-send-email-jhugo@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+References: <1544130666-32252-1-git-send-email-jhugo@codeaurora.org>
+Message-ID: <154413331679.88331.15909045605070653326@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH] clk: qcom: smd: Add support for MSM8998 rpm clocks
+Date:   Thu, 06 Dec 2018 13:55:16 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add rpm smd clocks, PMIC and bus clocks which are required on MSM8998
-for clients to vote on.
+Quoting Jeffrey Hugo (2018-12-06 13:11:06)
+> Add rpm smd clocks, PMIC and bus clocks which are required on MSM8998
+> for clients to vote on.
+> =
 
-Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
----
- .../devicetree/bindings/clock/qcom,rpmcc.txt       |  1 +
- drivers/clk/qcom/clk-smd-rpm.c                     | 62 ++++++++++++++++++++++
- include/dt-bindings/clock/qcom,rpmcc.h             |  6 +++
- 3 files changed, 69 insertions(+)
+> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
+> ---
+>  .../devicetree/bindings/clock/qcom,rpmcc.txt       |  1 +
+>  drivers/clk/qcom/clk-smd-rpm.c                     | 62 ++++++++++++++++=
+++++++
+>  include/dt-bindings/clock/qcom,rpmcc.h             |  6 +++
+>  3 files changed, 69 insertions(+)
+> =
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-index 87b4949..16c4293 100644
---- a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-+++ b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-@@ -17,6 +17,7 @@ Required properties :
- 			"qcom,rpmcc-apq8064", "qcom,rpmcc"
- 			"qcom,rpmcc-msm8996", "qcom,rpmcc"
- 			"qcom,rpmcc-qcs404", "qcom,rpmcc"
-+			"qcom,rpmcc-msm8998", "qcom,rpmcc"
- 
- - #clock-cells : shall contain 1
- 
-diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
-index d3aadae..269304e 100644
---- a/drivers/clk/qcom/clk-smd-rpm.c
-+++ b/drivers/clk/qcom/clk-smd-rpm.c
-@@ -655,11 +655,73 @@ static int clk_smd_rpm_enable_scaling(struct qcom_smd_rpm *rpm)
- 	.num_clks = ARRAY_SIZE(qcs404_clks),
- };
- 
-+/* msm8998 */
-+DEFINE_CLK_SMD_RPM(msm8998, snoc_clk, snoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 1);
-+DEFINE_CLK_SMD_RPM(msm8998, cnoc_clk, cnoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 2);
-+DEFINE_CLK_SMD_RPM(msm8998, ce1_clk, ce1_a_clk, QCOM_SMD_RPM_CE_CLK, 0);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, div_clk1, div_clk1_a, 0xb);
-+DEFINE_CLK_SMD_RPM(msm8998, ipa_clk, ipa_a_clk, QCOM_SMD_RPM_IPA_CLK, 0);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, bb_clk1, bb_clk1_a, 1);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, bb_clk2, bb_clk2_a, 2);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8998, bb_clk3_pin, bb_clk3_a_pin, 3);
-+DEFINE_CLK_SMD_RPM(msm8998, mmssnoc_axi_rpm_clk, mmssnoc_axi_rpm_a_clk,
-+		   QCOM_SMD_RPM_MMAXI_CLK, 0);
-+DEFINE_CLK_SMD_RPM(msm8998, aggre1_noc_clk, aggre1_noc_a_clk,
-+		   QCOM_SMD_RPM_AGGR_CLK, 1);
-+DEFINE_CLK_SMD_RPM(msm8998, aggre2_noc_clk, aggre2_noc_a_clk,
-+		   QCOM_SMD_RPM_AGGR_CLK, 2);
-+DEFINE_CLK_SMD_RPM_QDSS(msm8998, qdss_clk, qdss_a_clk,
-+			QCOM_SMD_RPM_MISC_CLK, 1);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, rf_clk1, rf_clk1_a, 4);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8998, rf_clk2_pin, rf_clk2_a_pin, 5);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, rf_clk3, rf_clk3_a, 6);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8998, rf_clk3_pin, rf_clk3_a_pin, 6);
-+static struct clk_smd_rpm *msm8998_clks[] = {
-+	[RPM_SMD_SNOC_CLK] = &msm8998_snoc_clk,
-+	[RPM_SMD_SNOC_A_CLK] = &msm8998_snoc_a_clk,
-+	[RPM_SMD_CNOC_CLK] = &msm8998_cnoc_clk,
-+	[RPM_SMD_CNOC_A_CLK] = &msm8998_cnoc_a_clk,
-+	[RPM_SMD_CE1_CLK] = &msm8998_ce1_clk,
-+	[RPM_SMD_CE1_A_CLK] = &msm8998_ce1_a_clk,
-+	[RPM_SMD_DIV_CLK1] = &msm8998_div_clk1,
-+	[RPM_SMD_DIV_A_CLK1] = &msm8998_div_clk1_a,
-+	[RPM_SMD_IPA_CLK] = &msm8998_ipa_clk,
-+	[RPM_SMD_IPA_A_CLK] = &msm8998_ipa_a_clk,
-+	[RPM_SMD_BB_CLK1] = &msm8998_bb_clk1,
-+	[RPM_SMD_BB_CLK1_A] = &msm8998_bb_clk1_a,
-+	[RPM_SMD_BB_CLK2] = &msm8998_bb_clk2,
-+	[RPM_SMD_BB_CLK2_A] = &msm8998_bb_clk2_a,
-+	[RPM_SMD_BB_CLK3_PIN] = &msm8998_bb_clk3_pin,
-+	[RPM_SMD_BB_CLK3_A_PIN] = &msm8998_bb_clk3_a_pin,
-+	[RPM_SMD_MMAXI_CLK] = &msm8998_mmssnoc_axi_rpm_clk,
-+	[RPM_SMD_MMAXI_A_CLK] = &msm8998_mmssnoc_axi_rpm_a_clk,
-+	[RPM_SMD_AGGR1_NOC_CLK] = &msm8998_aggre1_noc_clk,
-+	[RPM_SMD_AGGR1_NOC_A_CLK] = &msm8998_aggre1_noc_a_clk,
-+	[RPM_SMD_AGGR2_NOC_CLK] = &msm8998_aggre2_noc_clk,
-+	[RPM_SMD_AGGR2_NOC_A_CLK] = &msm8998_aggre2_noc_a_clk,
-+	[RPM_SMD_QDSS_CLK] = &msm8998_qdss_clk,
-+	[RPM_SMD_QDSS_A_CLK] = &msm8998_qdss_a_clk,
-+	[RPM_SMD_RF_CLK1] = &msm8998_rf_clk1,
-+	[RPM_SMD_RF_CLK1_A] = &msm8998_rf_clk1_a,
-+	[RPM_SMD_RF_CLK2_PIN] = &msm8998_rf_clk2_pin,
-+	[RPM_SMD_RF_CLK2_A_PIN] = &msm8998_rf_clk2_a_pin,
-+	[RPM_SMD_RF_CLK3] = &msm8998_rf_clk3,
-+	[RPM_SMD_RF_CLK3_A] = &msm8998_rf_clk3_a,
-+	[RPM_SMD_RF_CLK3_PIN] = &msm8998_rf_clk3_pin,
-+	[RPM_SMD_RF_CLK3_A_PIN] = &msm8998_rf_clk3_a_pin,
-+};
-+
-+static const struct rpm_smd_clk_desc rpm_clk_msm8998 = {
-+	.clks = msm8998_clks,
-+	.num_clks = ARRAY_SIZE(msm8998_clks),
-+};
-+
- static const struct of_device_id rpm_smd_clk_match_table[] = {
- 	{ .compatible = "qcom,rpmcc-msm8916", .data = &rpm_clk_msm8916 },
- 	{ .compatible = "qcom,rpmcc-msm8974", .data = &rpm_clk_msm8974 },
- 	{ .compatible = "qcom,rpmcc-msm8996", .data = &rpm_clk_msm8996 },
- 	{ .compatible = "qcom,rpmcc-qcs404",  .data = &rpm_clk_qcs404  },
-+	{ .compatible = "qcom,rpmcc-msm8998", .data = &rpm_clk_msm8998 },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, rpm_smd_clk_match_table);
-diff --git a/include/dt-bindings/clock/qcom,rpmcc.h b/include/dt-bindings/clock/qcom,rpmcc.h
-index 3658b0c..81dbd1f 100644
---- a/include/dt-bindings/clock/qcom,rpmcc.h
-+++ b/include/dt-bindings/clock/qcom,rpmcc.h
-@@ -127,5 +127,11 @@
- #define RPM_SMD_BIMC_GPU_A_CLK			77
- #define RPM_SMD_QPIC_CLK			78
- #define RPM_SMD_QPIC_CLK_A			79
-+#define RPM_SMD_BB_CLK3_PIN			80
-+#define RPM_SMD_BB_CLK3_A_PIN			81
-+#define RPM_SMD_RF_CLK3				82
-+#define RPM_SMD_RF_CLK3_A			83
-+#define RPM_SMD_RF_CLK3_PIN			84
-+#define RPM_SMD_RF_CLK3_A_PIN			85
- 
- #endif
--- 
-Qualcomm Datacenter Technologies as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt b/Doc=
+umentation/devicetree/bindings/clock/qcom,rpmcc.txt
+> index 87b4949..16c4293 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
+> +++ b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
+> @@ -17,6 +17,7 @@ Required properties :
+>                         "qcom,rpmcc-apq8064", "qcom,rpmcc"
+>                         "qcom,rpmcc-msm8996", "qcom,rpmcc"
+>                         "qcom,rpmcc-qcs404", "qcom,rpmcc"
+> +                       "qcom,rpmcc-msm8998", "qcom,rpmcc"
 
+Can you keep this sorted on the first compatible?
+
+>  =
+
+>  - #clock-cells : shall contain 1
+>  =
+
+
+Rob may prefer this file is split from the driver part into a different
+patch.
+
+> diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rp=
+m.c
+> index d3aadae..269304e 100644
+> --- a/drivers/clk/qcom/clk-smd-rpm.c
+> +++ b/drivers/clk/qcom/clk-smd-rpm.c
+> @@ -655,11 +655,73 @@ static int clk_smd_rpm_enable_scaling(struct qcom_s=
+md_rpm *rpm)
+>         .num_clks =3D ARRAY_SIZE(qcs404_clks),
+>  };
+>  =
+
+> +/* msm8998 */
+> +DEFINE_CLK_SMD_RPM(msm8998, snoc_clk, snoc_a_clk, QCOM_SMD_RPM_BUS_CLK, =
+1);
+> +DEFINE_CLK_SMD_RPM(msm8998, cnoc_clk, cnoc_a_clk, QCOM_SMD_RPM_BUS_CLK, =
+2);
+> +DEFINE_CLK_SMD_RPM(msm8998, ce1_clk, ce1_a_clk, QCOM_SMD_RPM_CE_CLK, 0);
+> +DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, div_clk1, div_clk1_a, 0xb);
+> +DEFINE_CLK_SMD_RPM(msm8998, ipa_clk, ipa_a_clk, QCOM_SMD_RPM_IPA_CLK, 0);
+> +DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, bb_clk1, bb_clk1_a, 1);
+> +DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, bb_clk2, bb_clk2_a, 2);
+> +DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8998, bb_clk3_pin, bb_clk3_a_pin=
+, 3);
+> +DEFINE_CLK_SMD_RPM(msm8998, mmssnoc_axi_rpm_clk, mmssnoc_axi_rpm_a_clk,
+> +                  QCOM_SMD_RPM_MMAXI_CLK, 0);
+> +DEFINE_CLK_SMD_RPM(msm8998, aggre1_noc_clk, aggre1_noc_a_clk,
+> +                  QCOM_SMD_RPM_AGGR_CLK, 1);
+> +DEFINE_CLK_SMD_RPM(msm8998, aggre2_noc_clk, aggre2_noc_a_clk,
+> +                  QCOM_SMD_RPM_AGGR_CLK, 2);
+> +DEFINE_CLK_SMD_RPM_QDSS(msm8998, qdss_clk, qdss_a_clk,
+> +                       QCOM_SMD_RPM_MISC_CLK, 1);
+> +DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, rf_clk1, rf_clk1_a, 4);
+> +DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8998, rf_clk2_pin, rf_clk2_a_pin=
+, 5);
+> +DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, rf_clk3, rf_clk3_a, 6);
+> +DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8998, rf_clk3_pin, rf_clk3_a_pin=
+, 6);
+> +static struct clk_smd_rpm *msm8998_clks[] =3D {
+> +       [RPM_SMD_SNOC_CLK] =3D &msm8998_snoc_clk,
+> +       [RPM_SMD_SNOC_A_CLK] =3D &msm8998_snoc_a_clk,
+> +       [RPM_SMD_CNOC_CLK] =3D &msm8998_cnoc_clk,
+> +       [RPM_SMD_CNOC_A_CLK] =3D &msm8998_cnoc_a_clk,
+> +       [RPM_SMD_CE1_CLK] =3D &msm8998_ce1_clk,
+> +       [RPM_SMD_CE1_A_CLK] =3D &msm8998_ce1_a_clk,
+> +       [RPM_SMD_DIV_CLK1] =3D &msm8998_div_clk1,
+> +       [RPM_SMD_DIV_A_CLK1] =3D &msm8998_div_clk1_a,
+> +       [RPM_SMD_IPA_CLK] =3D &msm8998_ipa_clk,
+> +       [RPM_SMD_IPA_A_CLK] =3D &msm8998_ipa_a_clk,
+> +       [RPM_SMD_BB_CLK1] =3D &msm8998_bb_clk1,
+> +       [RPM_SMD_BB_CLK1_A] =3D &msm8998_bb_clk1_a,
+> +       [RPM_SMD_BB_CLK2] =3D &msm8998_bb_clk2,
+> +       [RPM_SMD_BB_CLK2_A] =3D &msm8998_bb_clk2_a,
+> +       [RPM_SMD_BB_CLK3_PIN] =3D &msm8998_bb_clk3_pin,
+> +       [RPM_SMD_BB_CLK3_A_PIN] =3D &msm8998_bb_clk3_a_pin,
+> +       [RPM_SMD_MMAXI_CLK] =3D &msm8998_mmssnoc_axi_rpm_clk,
+> +       [RPM_SMD_MMAXI_A_CLK] =3D &msm8998_mmssnoc_axi_rpm_a_clk,
+> +       [RPM_SMD_AGGR1_NOC_CLK] =3D &msm8998_aggre1_noc_clk,
+> +       [RPM_SMD_AGGR1_NOC_A_CLK] =3D &msm8998_aggre1_noc_a_clk,
+> +       [RPM_SMD_AGGR2_NOC_CLK] =3D &msm8998_aggre2_noc_clk,
+> +       [RPM_SMD_AGGR2_NOC_A_CLK] =3D &msm8998_aggre2_noc_a_clk,
+> +       [RPM_SMD_QDSS_CLK] =3D &msm8998_qdss_clk,
+> +       [RPM_SMD_QDSS_A_CLK] =3D &msm8998_qdss_a_clk,
+> +       [RPM_SMD_RF_CLK1] =3D &msm8998_rf_clk1,
+> +       [RPM_SMD_RF_CLK1_A] =3D &msm8998_rf_clk1_a,
+> +       [RPM_SMD_RF_CLK2_PIN] =3D &msm8998_rf_clk2_pin,
+> +       [RPM_SMD_RF_CLK2_A_PIN] =3D &msm8998_rf_clk2_a_pin,
+> +       [RPM_SMD_RF_CLK3] =3D &msm8998_rf_clk3,
+> +       [RPM_SMD_RF_CLK3_A] =3D &msm8998_rf_clk3_a,
+> +       [RPM_SMD_RF_CLK3_PIN] =3D &msm8998_rf_clk3_pin,
+> +       [RPM_SMD_RF_CLK3_A_PIN] =3D &msm8998_rf_clk3_a_pin,
+> +};
+> +
+> +static const struct rpm_smd_clk_desc rpm_clk_msm8998 =3D {
+> +       .clks =3D msm8998_clks,
+> +       .num_clks =3D ARRAY_SIZE(msm8998_clks),
+> +};
+> +
+>  static const struct of_device_id rpm_smd_clk_match_table[] =3D {
+>         { .compatible =3D "qcom,rpmcc-msm8916", .data =3D &rpm_clk_msm891=
+6 },
+>         { .compatible =3D "qcom,rpmcc-msm8974", .data =3D &rpm_clk_msm897=
+4 },
+>         { .compatible =3D "qcom,rpmcc-msm8996", .data =3D &rpm_clk_msm899=
+6 },
+>         { .compatible =3D "qcom,rpmcc-qcs404",  .data =3D &rpm_clk_qcs404=
+  },
+> +       { .compatible =3D "qcom,rpmcc-msm8998", .data =3D &rpm_clk_msm899=
+8 },
+
+And this sorted too.
+
+>         { }
+>  };
+>  MODULE_DEVICE_TABLE(of, rpm_smd_clk_match_table);
