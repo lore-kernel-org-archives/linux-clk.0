@@ -2,135 +2,125 @@ Return-Path: <SRS0=15nu=OP=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51C8EC04EB8
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Dec 2018 07:33:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BCADC04EBF
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Dec 2018 07:42:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1718220989
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Dec 2018 07:33:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="hoZr2plO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1718220989
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id C446D20892
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Dec 2018 07:42:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C446D20892
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729289AbeLFHdJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 6 Dec 2018 02:33:09 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:40415 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727620AbeLFHdI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Dec 2018 02:33:08 -0500
-Received: by mail-pl1-f196.google.com with SMTP id u18so11375687plq.7
-        for <linux-clk@vger.kernel.org>; Wed, 05 Dec 2018 23:33:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=1Py1o7PoXLk0zLclLjaf6U24aMMRxPgBlX4EsDDipLw=;
-        b=hoZr2plOPuxeaxDOwX/82KyNCsezxbKlCZmlj+fGmiOro2P388n7hYFMl9TC5gGEzH
-         fgK2xoQoHMoNY9DRnEf4knK7/+NBs4J6D8+sp+WO3IVQR/7v4IiVAZEpcsC/weKDnizx
-         IVKHT8sdqIKHBSc3fAPNQOE189DFe1/qLZDqw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=1Py1o7PoXLk0zLclLjaf6U24aMMRxPgBlX4EsDDipLw=;
-        b=EFR7cH0NQ11CaAehQLENUwXvhh57CrUFqPouiznSVUSx1MMx3Xze7HQYjAM27pnaop
-         cdV8UQ94xHQsx5cw+VyGIaqQK0k+Ze4wWRgsFg3K8SIU8mtAaKymB+DbwhGRfOhJlZLe
-         5o9PCy4n8wgxuXbc43LJoQjohHqtuJPxDTEZXfHosNG5PHr++zWosOKQfttuZnvzv4IB
-         uVgj4/PvS34jeuoppalCI8LTVzapzCFeTu6S93AiF5QhybCoUTmswnKu2s7CeAdet05r
-         zYH+y5WCCd7I1GIXjdscPIIABL4AgoLw2f52CaVC8R8ruKCO5sYJfG/7qA79bHqIaaVE
-         KArw==
-X-Gm-Message-State: AA+aEWbuhnNCNSE8nu8LoVMJKQZaixZMjZbEd+W/wxPC9QLRNH1SF1Q2
-        Of7PLD8EdsHbaLaVHTIFPnE5/w==
-X-Google-Smtp-Source: AFSGD/UQtJ4xW4HzmKoW+CFcP78zvDeUZ7GHgwiur6JRVpvHIn5glFTbzxgRYkn3meozL1V7dt8FZw==
-X-Received: by 2002:a17:902:d806:: with SMTP id a6mr26165686plz.172.1544081587396;
-        Wed, 05 Dec 2018 23:33:07 -0800 (PST)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id h69sm30075331pge.4.2018.12.05.23.33.06
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 05 Dec 2018 23:33:06 -0800 (PST)
-Date:   Wed, 5 Dec 2018 23:33:04 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Alex Elder <elder@linaro.org>,
-        David Dai <daidavid1@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, georgi.djakov@linaro.org,
-        evgreen@google.com, tdas@codeaurora.org
-Subject: Re: [RFC PATCH] clk: qcom: clk-rpmh: Add IPA clock support
-Message-ID: <20181206073304.GB5232@tuxbook-pro>
-References: <1543895413-1553-1-git-send-email-daidavid1@codeaurora.org>
- <1543895413-1553-2-git-send-email-daidavid1@codeaurora.org>
- <154395145491.88331.1174781210192403998@swboyd.mtv.corp.google.com>
- <8dafe631-4b16-94cd-392e-84728f2bb382@linaro.org>
- <154396284056.88331.12279283832884556349@swboyd.mtv.corp.google.com>
- <edeebce5-24a2-b844-6bff-781017949e2d@codeaurora.org>
- <154399414865.88331.2447825064224349951@swboyd.mtv.corp.google.com>
+        id S1729062AbeLFHmH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 6 Dec 2018 02:42:07 -0500
+Received: from mx.socionext.com ([202.248.49.38]:33393 "EHLO mx.socionext.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728294AbeLFHmH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 6 Dec 2018 02:42:07 -0500
+Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
+  by mx.socionext.com with ESMTP; 06 Dec 2018 16:42:05 +0900
+Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
+        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id 9231760062;
+        Thu,  6 Dec 2018 16:42:05 +0900 (JST)
+Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Thu, 6 Dec 2018 16:42:05 +0900
+Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
+        by iyokan.css.socionext.com (Postfix) with ESMTP id 5D715403E6;
+        Thu,  6 Dec 2018 16:42:05 +0900 (JST)
+Received: from [127.0.0.1] (unknown [10.213.119.83])
+        by yuzu.css.socionext.com (Postfix) with ESMTP id 40696120304;
+        Thu,  6 Dec 2018 16:42:05 +0900 (JST)
+Subject: Re: [PATCH 04/14] dt-bindings: timer: Add Milbeaut M10V timer
+ description
+To:     Rob Herring <robh@kernel.org>
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-serial@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Jiri Slaby <jslaby@suse.com>,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>
+References: <1542589274-13878-1-git-send-email-sugaya.taichi@socionext.com>
+ <1542589274-13878-5-git-send-email-sugaya.taichi@socionext.com>
+ <20181204230354.GA26204@bogus>
+From:   "Sugaya, Taichi" <sugaya.taichi@socionext.com>
+Message-ID: <230f9c6d-afc1-7e24-eb26-0bc7d1fee333@socionext.com>
+Date:   Thu, 6 Dec 2018 16:42:04 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <154399414865.88331.2447825064224349951@swboyd.mtv.corp.google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181204230354.GA26204@bogus>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue 04 Dec 23:15 PST 2018, Stephen Boyd wrote:
+Hi,
 
-> Quoting David Dai (2018-12-04 17:14:10)
-> > 
-> > On 12/4/2018 2:34 PM, Stephen Boyd wrote:
-> > > Quoting Alex Elder (2018-12-04 13:41:47)
-> > >> On 12/4/18 1:24 PM, Stephen Boyd wrote:
-> > >>> Quoting David Dai (2018-12-03 19:50:13)
-> > >>>> Add IPA clock support by extending the current clk rpmh driver to support
-> > >>>> clocks that are managed by a different type of RPMh resource known as
-> > >>>> Bus Clock Manager(BCM).
-> > >>> Yes, but why? Does the IPA driver need to set clk rates and that somehow
-> > >>> doesn't work as a bandwidth request?
-> > >> The IPA core clock is a *clock*, not a bus.  Representing it as if
-> > >> it were a bus, abusing the interconnect interface--pretending a bandwidth
-> > >> request is really a clock rate request--is kind of kludgy.  I think Bjorn
-> > >> and David (and maybe Georgi? I don't know) decided a long time ago that
-> > >> exposing this as a clock is the right way to do it.  I agree with that.
-> > >>
-> > > But then we translate that clock rate into a bandwidth request to the
-> > > BCM hardware? Seems really weird because it's doing the opposite of what
-> > > you say is abusive. What does the IPA driver plan to do with this clk?
-> > > Calculate a frequency by knowing that it really boils down to some
-> > > bandwidth that then gets converted back into some clock frequency? Do we
-> > > have the user somewhere that can be pointed to?
-> > The clock rate is translated into a unitless threshold value sent as 
-> > part of the rpmh msg
-> > that BCM takes to select a performance. In this case, the unit 
-> > conversion is based on
-> > the unit value read from the aux data which is in Khz. I understand that 
-> > this wasn't
-> > explicitly mentioned anywhere and I'll improve on that next patch. 
+Thank you for your comments.
+
+On 2018/12/05 8:03, Rob Herring wrote:
+> On Mon, Nov 19, 2018 at 10:01:09AM +0900, Sugaya Taichi wrote:
+>> Add DT bindings document for Milbeaut M10V timer.
+>>
+>> Signed-off-by: Sugaya Taichi <sugaya.taichi@socionext.com>
+>> ---
+>>   .../bindings/timer/socionext,milbeaut-timer.txt         | 17 +++++++++++++++++
+>>   1 file changed, 17 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/timer/socionext,milbeaut-timer.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/timer/socionext,milbeaut-timer.txt b/Documentation/devicetree/bindings/timer/socionext,milbeaut-timer.txt
+>> new file mode 100644
+>> index 0000000..ddb1b31
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/timer/socionext,milbeaut-timer.txt
+>> @@ -0,0 +1,17 @@
+>> +Milbeaut SoCs Timer Controller
+>> +
+>> +Required properties:
+>> +
+>> +- compatible : should be "socionext,milbeaut-m10v-timer"
+>> +- reg : Specifies base physical address and size of the registers.
 > 
-> How is this different from bus bandwidth requests? In those cases the
-> bandwidth is calculated in bits per second or something like that, and
-> written to the hardware so it can convert that bandwidth into kHz and
-> set a bus clk frequency in the clock controller? So in the IPA case
-> we've skipped the bps to kHz conversion step and gone straight to the
-> clk frequency setting part? Is a BCM able to aggregate units of
-> bandwidth or kHz depending on how it's configured and this BCM is
-> configured for kHz?
+> How many register ranges? Looks like 2.
+
+Yes, has two ranges.
+So add the description about it.
+
 > 
+>> +- interrupts : The interrupt of the first timer
+>> +- clocks: should be "rclk"
+>> +
+>> +Example:
+>> +
+>> +timer {
+> 
+> timer@1e000050
 
-My objection to the use of msm_bus vs clock framework is not related to
-how the actual interface of configuring the hardware looks like. It's
-simply a matter of how this is represented in software, between some
-provider and the IPA driver.
+Okay.
 
-The IPA driver wants the IPA block to tick at 75MHz and I do not think
-it's appropriate to achieve that by requesting a path between IPA Core
-and IPA Core of 75000000 Kbytes/s.
+Thanks
+Sugaya Taichi
 
-Regards,
-Bjorn
+> 
+>> +	compatible = "socionext,milbeaut-m10v-timer";
+>> +	reg = <0x1e000050 0x10>, <0x1e000060 0x10>;
+>> +	interrupts = <0 91 4>;
+>> +	clocks = <&rclk>;
+>> +};
+>> -- 
+>> 1.9.1
+>>
+
