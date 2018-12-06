@@ -2,100 +2,123 @@ Return-Path: <SRS0=15nu=OP=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3F0CC04EB8
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Dec 2018 17:16:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23A51C04EB8
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Dec 2018 18:02:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8350820878
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Dec 2018 17:16:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8350820878
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id E090620878
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Dec 2018 18:02:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544119348;
+	bh=VbqyMpy65wsMnbzE71zc5MW+SoNBLt+LnHDvNOTzt9c=;
+	h=To:From:In-Reply-To:Cc:References:Subject:Date:List-ID:From;
+	b=ZmHaxza6Dy1E60N4dV7K4FEDBhWEr9QVN8xlZZyiBJZZ4WMipQDabg55COF2iH72Y
+	 Iak07Joj6uG5fk7feq4zI2qc8El9gqQ1q+PujetiE/Zbev4DUBuNtTJiUPPRV4PFUu
+	 Q02HQeYzfKi4mbcKq+uFQ5t1Tqw0DlPefiKqe6+s=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E090620878
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725929AbeLFRQF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 6 Dec 2018 12:16:05 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:51690 "EHLO mail.bootlin.com"
+        id S1725916AbeLFSCW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 6 Dec 2018 13:02:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35850 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725896AbeLFRQF (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 6 Dec 2018 12:16:05 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 89B7320752; Thu,  6 Dec 2018 18:16:02 +0100 (CET)
-Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 5FC71206FF;
-        Thu,  6 Dec 2018 18:16:02 +0100 (CET)
-From:   Gregory CLEMENT <gregory.clement@bootlin.com>
-To:     Stephen Boyd <sboyd@codeaurora.org>,
-        Mike Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        =?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>
-Subject: [PATCH v2 0/5] Add CPU clock support for Armada 7K/8K
-Date:   Thu,  6 Dec 2018 18:15:11 +0100
-Message-Id: <20181206171516.15891-1-gregory.clement@bootlin.com>
-X-Mailer: git-send-email 2.19.2
+        id S1725950AbeLFSCV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 6 Dec 2018 13:02:21 -0500
+Received: from localhost (unknown [104.132.1.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D326D20878;
+        Thu,  6 Dec 2018 18:02:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544119340;
+        bh=VbqyMpy65wsMnbzE71zc5MW+SoNBLt+LnHDvNOTzt9c=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=kuLlbkDbjs8KPiWwDCDuYYYvxJhVAs7CwEmOQw38DEJ94DfKhiHIvjA/vHrq2mR1e
+         S5wfwDMiJqzW+sAfPAkepxIDkHa9eIY11xL575OGXjTNQcizzOXP+hTgMQY7ldwTFR
+         e9cOPvwIdxb+x4m8pikX1ABhQodMUntNjWrghc4A=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+To:     Alex Elder <elder@linaro.org>,
+        David Dai <daidavid1@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <6ffdf6ca-51b5-a968-bb4e-c4d6d46f63aa@codeaurora.org>
+Cc:     georgi.djakov@linaro.org, bjorn.andersson@linaro.org,
+        evgreen@google.com, tdas@codeaurora.org
+References: <1543895413-1553-1-git-send-email-daidavid1@codeaurora.org>
+ <1543895413-1553-2-git-send-email-daidavid1@codeaurora.org>
+ <154395145491.88331.1174781210192403998@swboyd.mtv.corp.google.com>
+ <8dafe631-4b16-94cd-392e-84728f2bb382@linaro.org>
+ <154396284056.88331.12279283832884556349@swboyd.mtv.corp.google.com>
+ <edeebce5-24a2-b844-6bff-781017949e2d@codeaurora.org>
+ <154399414865.88331.2447825064224349951@swboyd.mtv.corp.google.com>
+ <6ffdf6ca-51b5-a968-bb4e-c4d6d46f63aa@codeaurora.org>
+Message-ID: <154411934006.88331.2149751521264448532@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [RFC PATCH] clk: qcom: clk-rpmh: Add IPA clock support
+Date:   Thu, 06 Dec 2018 10:02:20 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello,
+Quoting David Dai (2018-12-05 17:24:18)
+> =
 
-This is the second version of a series allowing to manage the cpu
-clock for Armada 7K/8K. For these SoCs, the CPUs share the same clock
-by cluster, so actually the clock management is done at cluster level.
+> =
 
-As for the other Armada 7K/8K clocks it is possible to have multiple
-AP so here again we need to have unique name: the purpose of the second
-patch is to share a common code which will be used in 3 drivers.
+> On 12/4/2018 11:15 PM, Stephen Boyd wrote:
+> > Quoting David Dai (2018-12-04 17:14:10)
+> >> On 12/4/2018 2:34 PM, Stephen Boyd wrote:
+> >>> Quoting Alex Elder (2018-12-04 13:41:47)
+> >>>>
+> >>> But then we translate that clock rate into a bandwidth request to the
+> >>> BCM hardware? Seems really weird because it's doing the opposite of w=
+hat
+> >>> you say is abusive. What does the IPA driver plan to do with this clk?
+> >>> Calculate a frequency by knowing that it really boils down to some
+> >>> bandwidth that then gets converted back into some clock frequency? Do=
+ we
+> >>> have the user somewhere that can be pointed to?
+> >> The clock rate is translated into a unitless threshold value sent as
+> >> part of the rpmh msg
+> >> that BCM takes to select a performance. In this case, the unit
+> >> conversion is based on
+> >> the unit value read from the aux data which is in Khz. I understand th=
+at
+> >> this wasn't
+> >> explicitly mentioned anywhere and I'll improve on that next patch.
+> > How is this different from bus bandwidth requests? In those cases the
+> > bandwidth is calculated in bits per second or something like that, and
+> > written to the hardware so it can convert that bandwidth into kHz and
+> > set a bus clk frequency in the clock controller? So in the IPA case
+> > we've skipped the bps to kHz conversion step and gone straight to the
+> > clk frequency setting part? Is a BCM able to aggregate units of
+> > bandwidth or kHz depending on how it's configured and this BCM is
+> > configured for kHz?
+> =
 
-The last 2 patch enable the driver at dt and platform level and will
-be applied through the mvebu subsystem.
+> The data written to the hardware is just a 14bit scalar value that it =
 
-Changelog v1->v2:
- - Header cleanup
- - Use unsigned int instead of it for cluster member of the ap_cpu_clk struct
- - Use clk_hw instead of clk
- - Use regmap_read_poll_timeout
- - Use for_each_of_cpu_node
- - Remove unnecessary WARN_ON()
- - Remove headers from armada_ap_cp_helper.h
- - Few other minor cleanup
+> takes to select a performance/frequency from a preset table. It's not =
 
-Gregory CLEMENT (5):
-  clk: mvebu: add helper file for Armada AP and CP clocks
-  clk: mvebu: add CPU clock driver for Armada 7K/8K
-  clk: mvebu: ap806: Fix clock name for the cluster
-  arm64: marvell: enable the  Armada 7K/8K CPU clk driver
-  arm64: dts: marvell: Add cpu clock node on Armada 7K/8K
+> really doing any sort of conversion in hardware in this case, instead =
 
- arch/arm64/Kconfig.platforms                  |   1 +
- .../boot/dts/marvell/armada-ap806-quad.dtsi   |   4 +
- arch/arm64/boot/dts/marvell/armada-ap806.dtsi |   6 +
- drivers/clk/mvebu/Kconfig                     |   8 +
- drivers/clk/mvebu/Makefile                    |   2 +
- drivers/clk/mvebu/ap-cpu-clk.c                | 259 ++++++++++++++++++
- drivers/clk/mvebu/ap806-system-controller.c   |  24 +-
- drivers/clk/mvebu/armada_ap_cp_helper.c       |  30 ++
- drivers/clk/mvebu/armada_ap_cp_helper.h       |  11 +
- drivers/clk/mvebu/cp110-system-controller.c   |  32 +--
- 10 files changed, 335 insertions(+), 42 deletions(-)
- create mode 100644 drivers/clk/mvebu/ap-cpu-clk.c
- create mode 100644 drivers/clk/mvebu/armada_ap_cp_helper.c
- create mode 100644 drivers/clk/mvebu/armada_ap_cp_helper.h
+> the value is computed by software based on the aux data given. Think of =
 
--- 
-2.19.2
+> it as a generic aggregator as opposed to being strictly bandwidth and =
+
+> the aggregator itself does not care what type of value it is(be it Khz =
+
+> or BW/s).
+> =
+
+
+Got it. Thanks!
 
