@@ -7,49 +7,48 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A15CDC07E85
-	for <linux-clk@archiver.kernel.org>; Fri,  7 Dec 2018 14:55:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B427C07E85
+	for <linux-clk@archiver.kernel.org>; Fri,  7 Dec 2018 14:58:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 647572081C
-	for <linux-clk@archiver.kernel.org>; Fri,  7 Dec 2018 14:55:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C13BA20892
+	for <linux-clk@archiver.kernel.org>; Fri,  7 Dec 2018 14:57:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="kAYGhslp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 647572081C
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="R0c+7fnv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C13BA20892
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726054AbeLGOzh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 7 Dec 2018 09:55:37 -0500
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:16035 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725998AbeLGOzh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Dec 2018 09:55:37 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c0a89e70001>; Fri, 07 Dec 2018 06:55:35 -0800
+        id S1726034AbeLGO57 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 7 Dec 2018 09:57:59 -0500
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:4451 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725998AbeLGO57 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Dec 2018 09:57:59 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c0a8a740000>; Fri, 07 Dec 2018 06:57:56 -0800
 Received: from hqmail.nvidia.com ([172.20.161.6])
   by hqpgpgate101.nvidia.com (PGP Universal service);
-  Fri, 07 Dec 2018 06:55:36 -0800
+  Fri, 07 Dec 2018 06:57:58 -0800
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Fri, 07 Dec 2018 06:55:36 -0800
+        by hqpgpgate101.nvidia.com on Fri, 07 Dec 2018 06:57:58 -0800
 Received: from [10.21.132.148] (10.124.1.5) by HQMAIL101.nvidia.com
  (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 7 Dec
- 2018 14:55:34 +0000
-Subject: Re: [PATCH 15/19] arm64: dts: tegra210-p2597: add pinmux for
- PWM-based DFLL support
+ 2018 14:57:56 +0000
+Subject: Re: [PATCH 16/19] arm64: dts: tegra210-p2371-2180: enable DFLL clock
 To:     Joseph Lo <josephl@nvidia.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Peter De Schrijver <pdeschrijver@nvidia.com>
 CC:     <linux-arm-kernel@lists.infradead.org>,
         <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
 References: <20181204092548.3038-1-josephl@nvidia.com>
- <20181204092548.3038-16-josephl@nvidia.com>
+ <20181204092548.3038-17-josephl@nvidia.com>
 From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <42aa5b73-cd1f-5a2f-249f-589bb1319fc0@nvidia.com>
-Date:   Fri, 7 Dec 2018 14:55:33 +0000
+Message-ID: <827e05c8-13b9-fb5e-7bca-1a34b81763b1@nvidia.com>
+Date:   Fri, 7 Dec 2018 14:57:55 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181204092548.3038-16-josephl@nvidia.com>
+In-Reply-To: <20181204092548.3038-17-josephl@nvidia.com>
 X-Originating-IP: [10.124.1.5]
 X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
  HQMAIL101.nvidia.com (172.20.187.10)
@@ -57,17 +56,17 @@ Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1544194536; bh=a1QclYpHK8Ge4XDuB5UtBQksdbhLVdRoWZFyc7FRLtw=;
+        t=1544194676; bh=TNEe3kQ464dHXwoDAnrfkKikSkHe9SI3XZd3DG+gh1M=;
         h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
          User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
          X-ClientProxiedBy:Content-Type:Content-Language:
          Content-Transfer-Encoding;
-        b=kAYGhslpAL4DfDzG/yWp9virSCQIJP0+qGGyIvtA0voFL5u/uYBKIZzB5nYcJJHhW
-         q622fWvvyiC5nBSqikVlsa/B3S1vWb/YoY/BqxljP+tbWvze5Qq2yl3bR8qwVHAr27
-         t9zaMch8L0RrpnCe3t9bx2pQRhCbeAq5TE9jowXdnscb1aF/0/8GOsHEZWrdxp+Qu7
-         qqQD6hJn31v37V/8DaPQmURLFUfZsMvgcIAJKGtBG32+IF4olEWrK7lAJ7TYJKBO5G
-         TbC0RmVfgkH4ChS1ZI4jeLjjzLLAlizakxdUccwqZQgO6GkO1yGQi2R2tpo8bv9uCX
-         kvaN9eIsOTN8w==
+        b=R0c+7fnvs48nrGLhoACMAvWze2YNieLqqlxVKQ9eKj0/LnWgN01e2Zy82g+lHv5wi
+         VvIVM8BqFCa6AGunnOAAoWuDDg8g/z+d0hwmiavc6n4d++hZw3qRHloZ9HWfC7nanG
+         y9bXJRYriOIAgN7bK5qsl2J5ooZaDHZUT08HR4Z5A9iHFKlYpsanVXB0cSVQL5rydj
+         SElUtzggs9fQtnRAr+TKLfyV1p59Pb0FggpedX3ItsrKFrqvRCkrldt9u4Lhb7FDMR
+         AZgBanoLIQP3Ax5Rkty1F8AseEOWVvbKlNWF0KtRwre36nDstYRXfgSvsYe0UrwgbK
+         3Vw4rY1uVmSGw==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
@@ -75,43 +74,39 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 
 On 04/12/2018 09:25, Joseph Lo wrote:
-> Add pinmux for PWM-based DFLL support.
+> Enable DFLL clock for Jetson TX1 platform.
 > 
 > Signed-off-by: Joseph Lo <josephl@nvidia.com>
 > ---
->  arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
+>  .../boot/dts/nvidia/tegra210-p2371-2180.dts   | 20 +++++++++++++++++++
+>  1 file changed, 20 insertions(+)
 > 
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-> index 365726ddd418..db5dc0ad466d 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-> +++ b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-> @@ -1278,6 +1278,20 @@
->  				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts b/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
+> index 37e3c46e753f..53f497c2b3ff 100644
+> --- a/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
+> +++ b/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
+> @@ -78,4 +78,24 @@
 >  			};
 >  		};
-> +
-> +		dvfs_pwm_active_state: dvfs_pwm_active {
-> +			dvfs_pwm_pbb1 {
-> +				nvidia,pins = "dvfs_pwm_pbb1";
-> +				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-> +			};
-> +		};
-> +
-> +		dvfs_pwm_inactive_state: dvfs_pwm_inactive {
-> +			dvfs_pwm_pbb1 {
-> +				nvidia,pins = "dvfs_pwm_pbb1";
-> +				nvidia,tristate = <TEGRA_PIN_ENABLE>;
-> +			};
-> +		};
 >  	};
->  
->  	pwm@7000a000 {
-> 
+> +
+> +	clock@70110000 {
+> +		status = "okay";
+> +		nvidia,pwm-to-pmic;
+> +		nvidia,init-uv = <1000000>;
+> +		nvidia,align-offset-uv = <708000>;
+> +		nvidia,align-step-uv = <19200>;
+> +		nvidia,sample-rate = <25000>;
+> +		nvidia,droop-ctrl = <0x00000f00>;
+> +		nvidia,force-mode = <1>;
+> +		nvidia,cf = <6>;
+> +		nvidia,ci = <0>;
+> +		nvidia,cg = <2>;
+> +		nvidia,idle-override;
+> +		nvidia,one-shot-calibrate;
 
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
+I don't see any Documentation for or usage of the above two properties.
 
-Cheers
 Jon
 
 -- 
