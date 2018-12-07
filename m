@@ -2,93 +2,121 @@ Return-Path: <SRS0=jGkl=OQ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7797EC07E85
-	for <linux-clk@archiver.kernel.org>; Fri,  7 Dec 2018 11:11:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25A68C07E85
+	for <linux-clk@archiver.kernel.org>; Fri,  7 Dec 2018 12:22:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C89220868
-	for <linux-clk@archiver.kernel.org>; Fri,  7 Dec 2018 11:11:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C89220868
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
+	by mail.kernel.org (Postfix) with ESMTP id E57AA20892
+	for <linux-clk@archiver.kernel.org>; Fri,  7 Dec 2018 12:22:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E57AA20892
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725999AbeLGLLC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 7 Dec 2018 06:11:02 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:35614 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725988AbeLGLLB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Dec 2018 06:11:01 -0500
-Received: by mail-lj1-f193.google.com with SMTP id x85-v6so3222915ljb.2;
-        Fri, 07 Dec 2018 03:11:00 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=IPaANYg+BKvew3Ns6tmkF9qat1yGp0JhQQkX999AOmA=;
-        b=Cemqz9Yv00lY99V8NnAPDcwfS/meoGP21xJiqIFI3VIaQ25u6eZmslJvURKXCz6zJi
-         0QbeyEfrRMm/18OGZwFO+yUTLxCpplQEZd+RRA0lPWTP4hDXPp+OIE+KJB2u+mCLxvfD
-         WjCVMwezji3jN2xlAuB5tLuSPyuk4sGwnBy+EEV7Mn2LC8IZr23Q6xr0LOL62Ow72njD
-         mnfXHJXbBHdnfHgAepXCnlfKMylYAcAImdIEMKOfymcUHrwTjmAtwlOwd60ODQuNa+Iw
-         bHa/Erp/sVfaadygiaDo1qWG/wnXY04o0s8cGSv+uNRvEyFX2QbKad96MQGOdfMQI+QY
-         YC+w==
-X-Gm-Message-State: AA+aEWYWuH3vW+Dz1w2qwv0SjX6mOMBY/LLWvOjvarY2W+zXmr0Bk1Kw
-        HUEweDRP6Wx9kHIYsJ1lH+E=
-X-Google-Smtp-Source: AFSGD/XfomwTlfwAe22p+SJG0lO7BIYoQtcGAA7ynED9gQVIJ8DPFu04mYExY5/4RW93QAjgp7daSg==
-X-Received: by 2002:a2e:197:: with SMTP id f23-v6mr1095815lji.144.1544181059423;
-        Fri, 07 Dec 2018 03:10:59 -0800 (PST)
-Received: from localhost.localdomain (84-253-205-125.bb.dnainternet.fi. [84.253.205.125])
-        by smtp.gmail.com with ESMTPSA id q127-v6sm571001ljq.45.2018.12.07.03.10.57
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 07 Dec 2018 03:10:58 -0800 (PST)
-Date:   Fri, 7 Dec 2018 13:10:51 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com,
-        corbet@lwn.net, cw00.choi@samsung.com, krzk@kernel.org,
-        b.zolnierkie@samsung.com, mturquette@baylibre.com,
-        sboyd@kernel.org, linux@armlinux.org.uk, pombredanne@nexb.com,
-        sre@kernel.org, vkoul@kernel.org, linux@roeck-us.net, pavel@ucw.cz,
-        sjhuang@iluvatar.ai, andrew.smirnov@gmail.com,
-        djkurtz@chromium.org, akshu.agrawal@amd.com,
-        rafael.j.wysocki@intel.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v7 3/3] clk: clk-st: avoid clkdev lookup leak at remove
-Message-ID: <f40c69fc858cc7ec3cc722c6664d933ea6558fb9.1544177090.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1544177090.git.matti.vaittinen@fi.rohmeurope.com>
+        id S1726013AbeLGMWJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 7 Dec 2018 07:22:09 -0500
+Received: from michel.telenet-ops.be ([195.130.137.88]:35938 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726005AbeLGMWJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Dec 2018 07:22:09 -0500
+Received: from ramsan ([84.194.111.163])
+        by michel.telenet-ops.be with bizsmtp
+        id 90N71z00W3XaVaC060N711; Fri, 07 Dec 2018 13:22:07 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1gVF8x-0004V1-MJ; Fri, 07 Dec 2018 13:22:07 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1gVF8x-00005X-Kk; Fri, 07 Dec 2018 13:22:07 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [git pull] clk: renesas: Updates for v4.21 (take two)
+Date:   Fri,  7 Dec 2018 13:22:03 +0100
+Message-Id: <20181207122203.32763-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1544177090.git.matti.vaittinen@fi.rohmeurope.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Use devm based clkdev lookup registration to avoid leaking lookup
-structures.
+	Hi Mike, Stephen,
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
----
- drivers/clk/x86/clk-st.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+The following changes since commit eb38c119dd91c61de26f67050671a84064554f7d:
 
-diff --git a/drivers/clk/x86/clk-st.c b/drivers/clk/x86/clk-st.c
-index 3a0996f2d556..25d4b97aff9b 100644
---- a/drivers/clk/x86/clk-st.c
-+++ b/drivers/clk/x86/clk-st.c
-@@ -52,7 +52,8 @@ static int st_clk_probe(struct platform_device *pdev)
- 		0, st_data->base + MISCCLKCNTL1, OSCCLKENB,
- 		CLK_GATE_SET_TO_DISABLE, NULL);
- 
--	clk_hw_register_clkdev(hws[ST_CLK_GATE], "oscout1", NULL);
-+	devm_clk_hw_register_clkdev(&pdev->dev, hws[ST_CLK_GATE], "oscout1",
-+				    NULL);
- 
- 	return 0;
- }
--- 
-2.14.3
+  clk: renesas: r7s9210: Add USB clocks (2018-11-13 09:58:51 +0100)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.21-tag2
+
+for you to fetch changes up to 36c4da4f552a126bb29a95dc5c9608795491e32a:
+
+  clk: renesas: rcar-gen3: Add HS400 quirk for SD clock (2018-12-07 11:45:06 +0100)
+
+----------------------------------------------------------------
+clk: renesas: Updates for v4.21 (take two)
+
+  - Add support for CPEX (timer) clocks on various R-Car Gen3 and RZ/G2
+    SoCs,
+  - Add support for SDHI HS400 clocks on early revisions of R-Car H3 and
+    M3-W,
+  - Miscellaneous fixes based on the Hardware Manual Errata.
+
+Thanks for pulling!
+
+----------------------------------------------------------------
+Geert Uytterhoeven (12):
+      dt-bindings: clock: r8a7795: Remove CSIREF clock
+      dt-bindings: clock: r8a7796: Remove CSIREF clock
+      clk: renesas: r8a774a1: Add CPEX clock
+      clk: renesas: r8a7795: Add CPEX clock
+      clk: renesas: r8a7796: Add CPEX clock
+      clk: renesas: r8a77965: Add CPEX clock
+      clk: renesas: r8a77970: Add CPEX clock
+      clk: renesas: r8a77995: Correct parent clock of DU
+      clk: renesas: r8a77995: Remove non-existent VIN5-7 module clocks
+      clk: renesas: r8a77995: Remove non-existent SSP clocks
+      clk: renesas: r8a77995: Add missing CPEX clock
+      clk: renesas: r8a77995: Simplify PLL3 multiplier/divider
+
+Niklas Söderlund (3):
+      clk: renesas: rcar-gen3: Set state when registering SD clocks
+      clk: renesas: rcar-gen3: Add documentation for SD clocks
+      clk: renesas: rcar-gen3: Add HS400 quirk for SD clock
+
+Takeshi Kihara (1):
+      clk: renesas: r8a77990: Correct parent clock of DU
+
+ drivers/clk/renesas/r8a774a1-cpg-mssr.c       |  1 +
+ drivers/clk/renesas/r8a7795-cpg-mssr.c        |  1 +
+ drivers/clk/renesas/r8a7796-cpg-mssr.c        |  1 +
+ drivers/clk/renesas/r8a77965-cpg-mssr.c       |  1 +
+ drivers/clk/renesas/r8a77970-cpg-mssr.c       |  1 +
+ drivers/clk/renesas/r8a77990-cpg-mssr.c       |  4 +-
+ drivers/clk/renesas/r8a77995-cpg-mssr.c       | 15 +++-----
+ drivers/clk/renesas/rcar-gen3-cpg.c           | 55 ++++++++++++++++-----------
+ include/dt-bindings/clock/r8a7795-cpg-mssr.h  |  2 +-
+ include/dt-bindings/clock/r8a7796-cpg-mssr.h  |  2 +-
+ include/dt-bindings/clock/r8a77995-cpg-mssr.h |  5 ++-
+ 11 files changed, 51 insertions(+), 37 deletions(-)
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
