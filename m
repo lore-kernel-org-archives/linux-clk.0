@@ -2,121 +2,195 @@ Return-Path: <SRS0=jGkl=OQ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25A68C07E85
-	for <linux-clk@archiver.kernel.org>; Fri,  7 Dec 2018 12:22:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFDD1C07E85
+	for <linux-clk@archiver.kernel.org>; Fri,  7 Dec 2018 13:21:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E57AA20892
-	for <linux-clk@archiver.kernel.org>; Fri,  7 Dec 2018 12:22:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E57AA20892
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+	by mail.kernel.org (Postfix) with ESMTP id 93D9D20837
+	for <linux-clk@archiver.kernel.org>; Fri,  7 Dec 2018 13:21:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93D9D20837
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726013AbeLGMWJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 7 Dec 2018 07:22:09 -0500
-Received: from michel.telenet-ops.be ([195.130.137.88]:35938 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726005AbeLGMWJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Dec 2018 07:22:09 -0500
-Received: from ramsan ([84.194.111.163])
-        by michel.telenet-ops.be with bizsmtp
-        id 90N71z00W3XaVaC060N711; Fri, 07 Dec 2018 13:22:07 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1gVF8x-0004V1-MJ; Fri, 07 Dec 2018 13:22:07 +0100
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1gVF8x-00005X-Kk; Fri, 07 Dec 2018 13:22:07 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [git pull] clk: renesas: Updates for v4.21 (take two)
-Date:   Fri,  7 Dec 2018 13:22:03 +0100
-Message-Id: <20181207122203.32763-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
+        id S1726019AbeLGNVt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 7 Dec 2018 08:21:49 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:57231 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725997AbeLGNVt (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 7 Dec 2018 08:21:49 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 227CD20510; Fri,  7 Dec 2018 14:21:46 +0100 (CET)
+Received: from localhost (aaubervilliers-681-1-79-44.w90-88.abo.wanadoo.fr [90.88.21.44])
+        by mail.bootlin.com (Postfix) with ESMTPSA id DDDDA20510;
+        Fri,  7 Dec 2018 14:21:35 +0100 (CET)
+Date:   Fri, 7 Dec 2018 14:21:36 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi@googlegroups.com, linux-amarula@amarulasolutions.com
+Subject: Re: [linux-sunxi] Re: [PATCH v4 08/26] drm/sun4i: sun6i_mipi_dsi:
+ Fix VBP size calculation
+Message-ID: <20181207132136.oa4nzpczytzxhl2d@flea>
+References: <20181113111633.20189-1-jagan@amarulasolutions.com>
+ <20181113111633.20189-9-jagan@amarulasolutions.com>
+ <20181115095551.uctdkfmuwlnzhjnn@flea>
+ <CAMty3ZAEHiovm6OF6JvJVQR4aqpG1Q3ML5YqxJkF2ntwRkUO=A@mail.gmail.com>
+ <20181120155715.andrjp5kg6ugcv72@flea>
+ <CAMty3ZCUOJmvekupOwh281g5HaazTpBbukWQY2Pv2OYypAwciw@mail.gmail.com>
+ <20181127102450.b65jzhrdpxn5rxmk@flea>
+ <CAMty3ZDTvn4VF_oOvEi2jCw9Rw5WPd1LQT3SZ5X1K0fJAFg2cQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="q7v7wduxjlqssxwi"
+Content-Disposition: inline
+In-Reply-To: <CAMty3ZDTvn4VF_oOvEi2jCw9Rw5WPd1LQT3SZ5X1K0fJAFg2cQ@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-	Hi Mike, Stephen,
 
-The following changes since commit eb38c119dd91c61de26f67050671a84064554f7d:
+--q7v7wduxjlqssxwi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-  clk: renesas: r7s9210: Add USB clocks (2018-11-13 09:58:51 +0100)
+On Tue, Nov 27, 2018 at 04:34:35PM +0530, Jagan Teki wrote:
+> On Tue, Nov 27, 2018 at 3:55 PM Maxime Ripard <maxime.ripard@bootlin.com>=
+ wrote:
+> >
+> > On Tue, Nov 20, 2018 at 09:55:42PM +0530, Jagan Teki wrote:
+> > > On Tue, Nov 20, 2018 at 9:27 PM Maxime Ripard <maxime.ripard@bootlin.=
+com> wrote:
+> > > >
+> > > > On Thu, Nov 15, 2018 at 11:19:53PM +0530, Jagan Teki wrote:
+> > > > > On Thu, Nov 15, 2018 at 3:26 PM Maxime Ripard <maxime.ripard@boot=
+lin.com> wrote:
+> > > > > >
+> > > > > > Hi,
+> > > > > >
+> > > > > > On Tue, Nov 13, 2018 at 04:46:15PM +0530, Jagan Teki wrote:
+> > > > > > > The horizontal and vertical back porch calculation in BSP
+> > > > > > > code is simply following the Linux drm comment diagram, in
+> > > > > > > include/drm/drm_modes.h which is
+> > > > > > >
+> > > > > > > [hv]back porch =3D [hv]total - [hv]sync_end
+> > > > > > >
+> > > > > > > BSP code form BPI-M64-bsp is calculating vertical back porch =
+as
+> > > > > > > (from linux-sunxi/drivers/video/sunxi/disp2/disp/de/disp_lcd.=
+c)
+> > > > > > >
+> > > > > > > timmings->ver_sync_time=3D panel_info->lcd_vspw;
+> > > > > > > timmings->ver_back_porch=3D panel_info->lcd_vbp-panel_info->l=
+cd_vspw;
+> > > > > > >
+> > > > > > > vbp =3D panel->lcd_vbp;
+> > > > > > > vspw =3D panel->lcd_vspw;
+> > > > > > > dsi_dev[sel]->dsi_basic_size0.bits.vbp =3D vbp-vspw;
+> > > > > > > dsi_dev[sel]->dsi_basic_size0.bits.vbp =3D panel->lcd_vbp - p=
+anel->lcd_vspw;
+> > > > > > > =3D>  timmings->ver_back_porch + panel_info->lcd_vspw - panel=
+_info->lcd_vspw
+> > > > > > > =3D>  timmings->ver_back_porch
+> > > > > > > =3D>  mode->vtotal - mode->end
+> > > > > > >
+> > > > > > > Which evatually same as mode->vtotal - mode->vsync_end so upd=
+ate the
+> > > > > > > same in SUN6I_DSI_BASIC_SIZE0_VBP
+> > > > > > >
+> > > > > > > On the information note, existing SUN6I_DSI_BASIC_SIZE0_VSA i=
+s proper
+> > > > > > > value.
+> > > > > > >
+> > > > > > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > > > > >
+> > > > > > I've tested your changes on my A33 board, and this commit will =
+break
+> > > > > > it.
+> > > > > >
+> > > > > > It creates vblank timeouts, and visual artifacts at the bottom =
+of the
+> > > > > > display.
+> > > > >
+> > > > > Strange, VBP is earlier gives front porch which is anyway wrong.
+> > > > >
+> > > > > >
+> > > > > > Later commits seem to fix the issue, but will create some blank=
+ing on
+> > > > > > the upper third of the display.
+> > > > > >
+> > > > > > Since the documentation is quite sparse, and a MIPI-DSI analyze=
+r is
+> > > > > > way too expensive, I'd really like to have at least what each o=
+f these
+> > > > > > commits are actually fixing, and what symptoms each of these we=
+re
+> > > > > > causing, and not just "the BSP does it".
+> > > > >
+> > > > > W/o this 2-lane panel is breaking, same vblank timeout and visual
+> > > > > artifacts at the bottom of the panel. though the commits may refe=
+rence
+> > > > > BSP, I have at-least tested on 3 different panels for us to prove=
+ its
+> > > > > working.
+> > > > >
+> > > > > > Having some datasheet for the panels you had working would help=
+ too.
+> > > > >
+> > > > > Unfortunately datasheet doesn't have any required information wha=
+t we
+> > > > > actually looking for.
+> > > >
+> > > > Not even the timings? How did you get that information then?
+> > >
+> > > datasheet has timing values, but this changes need controller
+> > > information about VBP register that I don't have. But again existing
+> > > VBP is not back porch for real, it's front porch.
+> >
+> > Yet, this breaks the existing setup. So again:
+>=20
+> Was it with 4-lane or 2-lane panel? can you test it with 2-lane panel?
+> I can see the issue on 2-lane but the 4-lane working fine with this
+> patch even.
 
-are available in the Git repository at:
+It's a 4 lane display.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v4.21-tag2
+Maxime
 
-for you to fetch changes up to 36c4da4f552a126bb29a95dc5c9608795491e32a:
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-  clk: renesas: rcar-gen3: Add HS400 quirk for SD clock (2018-12-07 11:45:06 +0100)
+--q7v7wduxjlqssxwi
+Content-Type: application/pgp-signature; name="signature.asc"
 
-----------------------------------------------------------------
-clk: renesas: Updates for v4.21 (take two)
+-----BEGIN PGP SIGNATURE-----
 
-  - Add support for CPEX (timer) clocks on various R-Car Gen3 and RZ/G2
-    SoCs,
-  - Add support for SDHI HS400 clocks on early revisions of R-Car H3 and
-    M3-W,
-  - Miscellaneous fixes based on the Hardware Manual Errata.
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXApz4AAKCRDj7w1vZxhR
+xa0MAQDINJywpBXTxw8UvHmXF3KPlaX6XTjqzx6fQVp5X/DPwwD/Z0QEHXJAd3EB
+dstdAPzyyxSR2BO86DpjKjX5ORODjwo=
+=pJW2
+-----END PGP SIGNATURE-----
 
-Thanks for pulling!
-
-----------------------------------------------------------------
-Geert Uytterhoeven (12):
-      dt-bindings: clock: r8a7795: Remove CSIREF clock
-      dt-bindings: clock: r8a7796: Remove CSIREF clock
-      clk: renesas: r8a774a1: Add CPEX clock
-      clk: renesas: r8a7795: Add CPEX clock
-      clk: renesas: r8a7796: Add CPEX clock
-      clk: renesas: r8a77965: Add CPEX clock
-      clk: renesas: r8a77970: Add CPEX clock
-      clk: renesas: r8a77995: Correct parent clock of DU
-      clk: renesas: r8a77995: Remove non-existent VIN5-7 module clocks
-      clk: renesas: r8a77995: Remove non-existent SSP clocks
-      clk: renesas: r8a77995: Add missing CPEX clock
-      clk: renesas: r8a77995: Simplify PLL3 multiplier/divider
-
-Niklas Söderlund (3):
-      clk: renesas: rcar-gen3: Set state when registering SD clocks
-      clk: renesas: rcar-gen3: Add documentation for SD clocks
-      clk: renesas: rcar-gen3: Add HS400 quirk for SD clock
-
-Takeshi Kihara (1):
-      clk: renesas: r8a77990: Correct parent clock of DU
-
- drivers/clk/renesas/r8a774a1-cpg-mssr.c       |  1 +
- drivers/clk/renesas/r8a7795-cpg-mssr.c        |  1 +
- drivers/clk/renesas/r8a7796-cpg-mssr.c        |  1 +
- drivers/clk/renesas/r8a77965-cpg-mssr.c       |  1 +
- drivers/clk/renesas/r8a77970-cpg-mssr.c       |  1 +
- drivers/clk/renesas/r8a77990-cpg-mssr.c       |  4 +-
- drivers/clk/renesas/r8a77995-cpg-mssr.c       | 15 +++-----
- drivers/clk/renesas/rcar-gen3-cpg.c           | 55 ++++++++++++++++-----------
- include/dt-bindings/clock/r8a7795-cpg-mssr.h  |  2 +-
- include/dt-bindings/clock/r8a7796-cpg-mssr.h  |  2 +-
- include/dt-bindings/clock/r8a77995-cpg-mssr.h |  5 ++-
- 11 files changed, 51 insertions(+), 37 deletions(-)
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+--q7v7wduxjlqssxwi--
