@@ -2,286 +2,341 @@ Return-Path: <SRS0=jGkl=OQ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C93EDC07E85
-	for <linux-clk@archiver.kernel.org>; Fri,  7 Dec 2018 10:01:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B11F6C65BAF
+	for <linux-clk@archiver.kernel.org>; Fri,  7 Dec 2018 10:03:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E1DA20645
-	for <linux-clk@archiver.kernel.org>; Fri,  7 Dec 2018 10:01:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E1DA20645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
+	by mail.kernel.org (Postfix) with ESMTP id 6DCBF20989
+	for <linux-clk@archiver.kernel.org>; Fri,  7 Dec 2018 10:03:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="WJJzIuWU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DCBF20989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725985AbeLGKB5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 7 Dec 2018 05:01:57 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:39799 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725976AbeLGKB4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Dec 2018 05:01:56 -0500
-Received: by mail-lf1-f68.google.com with SMTP id n18so2585124lfh.6;
-        Fri, 07 Dec 2018 02:01:54 -0800 (PST)
+        id S1726054AbeLGKD0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 7 Dec 2018 05:03:26 -0500
+Received: from mail-wm1-f43.google.com ([209.85.128.43]:38214 "EHLO
+        mail-wm1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725986AbeLGKDZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Dec 2018 05:03:25 -0500
+Received: by mail-wm1-f43.google.com with SMTP id m22so3916675wml.3
+        for <linux-clk@vger.kernel.org>; Fri, 07 Dec 2018 02:03:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=nHNYQeLpY0qOYTNp/VMpeg2iFoPwz6wcmLBfe+S215E=;
+        b=WJJzIuWU2Y2cY+Ij+e+3SnTzm/tTY9kwfvN/eFHh7WXEYHNg6HpweP7vZfdUDZTRQm
+         atQcd9o7fS/5vXOZzbVHhK+sGbHGq2Hh7KvrlkiungiWfBWFUEHg9Y2reMDnqBEXoABV
+         1e3BXc9oP2OUfKfO+uFiDy+9DQbR6YT/HXAHAq2gU4CSic3yHukWvD4Y/qPYhQ8L/S9M
+         W5k4kUahjRx91E5OU9pyLuhRlZkVPvOrYhMcfWUtrmCwhJsht7XcfKiyc5GTRZCsCBiB
+         RliszBFhsih6jN9ywSeWoxQUSSBThfETeCUWizDh50rtNh6WPpDhei0GGYLCyllWVPwR
+         nmYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=o8k2273110BnODQykBaLlzXPM5poh1m/c+9LrfSR9gE=;
-        b=A4FIp9OEGCfNlSHCHY2IiAoEV2w5lJHW3pGsJxJmKjtZ38h9iiWXMmdQHZdU/6BWP/
-         xpT5J132gqKhLwaAalykXbCV4dqI6L1W/2hTTTCNEFHMHPXaTeyR+GebjQxgq/9tzWyE
-         nt7TQjE8WMAIW127SFNTBzzgsTjwbCElBlmQD1/HUxdSin11buM8w+5ijaueIOPiL+13
-         1LWFyNgHtICS8gnJSF4S7h5ab6oBqXhv5xxoArZ02iNIg2wqvPLlEEq9SoKAbOkN6qM1
-         jxmF7eUrfACUOUoZSaqiouy42zEkm2tppv7oUvKFq2dZ7Mk4onzP5+/G+rsqbUaI0vQ3
-         5WcA==
-X-Gm-Message-State: AA+aEWYVL61oWlit20Ohz+uWsdKvcvYpenj2Mvu8Y8vX+kyUdu+qPDMA
-        sMfeH6rrW4WOb4bmbEciXmU=
-X-Google-Smtp-Source: AFSGD/VTx01TJSSUwqGrVCigO7kAUDBjrUMEZxGq8/itfgfEJeufOKZWL+FwlNQrk98PwaxHzte2TQ==
-X-Received: by 2002:a19:2755:: with SMTP id n82mr881359lfn.94.1544176913879;
-        Fri, 07 Dec 2018 02:01:53 -0800 (PST)
-Received: from localhost.localdomain (84-253-205-125.bb.dnainternet.fi. [84.253.205.125])
-        by smtp.gmail.com with ESMTPSA id p10-v6sm489589ljh.59.2018.12.07.02.01.52
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=nHNYQeLpY0qOYTNp/VMpeg2iFoPwz6wcmLBfe+S215E=;
+        b=aYCZC26VjunQDyZ6P5KwUS7UzX27r6rRDKkF+OCsplkhGI6VzCAOrEAEbkEm5yoXWK
+         GaaevNbK0P1TCJ+wQIVWPwJLRcn8oQGlEanx8FJ8KpFO0R65R33vRXuNNbMPkhgh1yBs
+         tCEkvrzuWwEO097pBmrlBLqd3U4Al2ZX6jNT0XOsXAX+wYeaG23LaGFJGbnRIpnU0Mr2
+         UNLfYEuDuC9mt4Hqq1AC5q0bqTSLYrj+dl0wQiM/n4ihWZ8sTzHzkDtiG8iahI7cNm2c
+         jzE87MeYGzmC5188cUGMmxcl6Q6RFRNIv4G0wEs0XquEBtFFJIunJQz4QY68Y5UHHBrz
+         SrOA==
+X-Gm-Message-State: AA+aEWYD0kpCmJAIFXDUZvmjB29zR7fZP2LbatNOlqYe0g+dCb3gi/DP
+        IQd2lMmWyoUCuGKwN/eJ/EQSAw==
+X-Google-Smtp-Source: AFSGD/Um7l0nOeW+kTFY6N1jVwzaSfabArQJiAquZRu/VNSYO0lHnU/qI35EdKAq8kkS733mk1P7bQ==
+X-Received: by 2002:a1c:1286:: with SMTP id 128mr1725188wms.70.1544177002332;
+        Fri, 07 Dec 2018 02:03:22 -0800 (PST)
+Received: from boomer.baylibre.com ([2a01:e34:eeb6:4690:106b:bae3:31ed:7561])
+        by smtp.gmail.com with ESMTPSA id o15sm2216037wrp.12.2018.12.07.02.03.20
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 07 Dec 2018 02:01:53 -0800 (PST)
-Date:   Fri, 7 Dec 2018 12:01:44 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
-Cc:     mturquette@baylibre.com, sboyd@kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH v7] clk: bd718x7: Initial support for ROHM bd71837/bd71847
- PMIC clock
-Message-ID: <20181207100144.GA21411@localhost.localdomain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Fri, 07 Dec 2018 02:03:21 -0800 (PST)
+Message-ID: <63f9b6f613cab0db91c8363635aa673a11f75fba.camel@baylibre.com>
+Subject: Re: [PATCH] Revert "clk: fix __clk_init_parent() for single parent
+ clocks"
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Fri, 07 Dec 2018 11:03:19 +0100
+In-Reply-To: <154413410087.88331.10879623310968389005@swboyd.mtv.corp.google.com>
+References: <20181204163257.32085-1-jbrunet@baylibre.com>
+         <154394675320.88331.12449582989130694425@swboyd.mtv.corp.google.com>
+         <807f2924b67239f61c6d93de7f7b124f8a1f195a.camel@baylibre.com>
+         <154399647605.88331.115722031910044874@swboyd.mtv.corp.google.com>
+         <98e430d7a96fa6b4f0225e57820a4a677108a052.camel@baylibre.com>
+         <154413410087.88331.10879623310968389005@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.2 (3.30.2-2.fc29) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-ROHM bd71837 and bd71847 contain 32768Hz clock gate. Support the clock
-using generic clock framework. Note, only bd71837 is tested but bd71847
-should be identical what comes to clk parts.
+On Thu, 2018-12-06 at 14:08 -0800, Stephen Boyd wrote:
+> Sorry this email is long.
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
----
+I tried reply the best I could to your use cases
 
-This is a split from series
-https://lore.kernel.org/linux-clk/20181204114527.GC31204@localhost.localdomain/T/#t
+> 
+> TL;DR is that I don't think we need to revert the patch as you suggest.
+> Instead, we should fix the driver to indicate NULL as the parent name of
+> the index it tells the framework about.
 
-Change history:
+The driver, can't indicate NULL, it just provides the index of the parent.
+What we are saying is not very far apart.
 
-v7: (kept the series version number)
- - Patches 2, 3, 6, 7, 8 and 9 from v6 were already applied.
- - Patches 1, 4, and 5 will be provided as own series touching only clkdev
-   lookups.
- - the (already obsoleted) file name was removed from clk-bd718x7 driver
- - clkdev lookup registration was removed from clk-bd718x7 driver
+Drivers implementing get_parent() must have way to tell the framework "I have
+no idea what I'm connected to ATM"
 
-Changelog (for the whole series) v6
-- Drop 'devm_of_clk_add_parent_hw_provider'. Change
-  'devm_of_clk_add_hw_provider' to look the parent device node for
-  provider information if device's own node does not contain
-  #clock-cells - property.
-- Add kerneldoc in own patch.
-- Remove NULL checks from devres match function for clkdev releasing
-- Clean styling issues from clkdev.c
+Since get_parent() return a u8, the only way to signal a problem like this is
+to return an out of bound value, which the framework already safely understand
+and maps to NULL, as you request
 
-Changelog (for the whole series) v5
-- Split v4 patch 1. Place clkdev stuff to patch 1 and clk provider to patch 2
-- Remove devm_clk_release_clkdev from devres.txt
-- Added kerneldoc for managed provider registrations.
-- Cleaned styling issues.
+This is done in the other patch I sent (... and now they are related ;) ...)
+by returning num_parents in the clk_mux code
 
-Changelog (for whole series) v4
-- Add support for ROHM bd718x7 PMIC clock gate. Included in this patch
-  series because it depends on managed interfaces added in patch 1.
+This is an important case, whatever the number of parent. I think it makes no
+sense that a clock with 2 known parents can return this error, a one with only
+one known parent can't.
 
-Changelog (for whole series) v3
-Address issues spotted by Krzysztof Kozlowski
-- Drop patch 3 for clk-s3c2410-dclk as this device can never be removed
-- Fix indentiation for clk-max77686
-- Rest  of the patches are unchanged.
+This why I still think the change should be reverted.
 
-Changelog (for whole series) v2
-Issue spotted by 0-Day test suite
-- Add a stub function 'devm_of_clk_add_parent_hw_provider' for no OF config.
-- patches 2-8 are unchanged.
+If you really insist on keeping it, there should at least be a warning when
+registering a clock with 'get_parent != NULL' and 'num_parents == 1', to let
+the user know that whatever is implemented there will be ignored ... instead
+of silently ignoring it. I think it would be a mistake, but at least there
+would be no suprise.
 
-This patch series is based on clk-next
+Earlier, you mention having a special parent that would adopt the the orphan.
+Actually, it already exists, it is the framework itself. If, instead of
+returning 0, it returned a special value to let us know we reached the root
+and there actually no signal, we would be easy to make sure the orphan (with
+no signal) are never accidently used.
 
- drivers/clk/Kconfig       |   7 +++
- drivers/clk/Makefile      |   1 +
- drivers/clk/clk-bd718x7.c | 123 ++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 131 insertions(+)
- create mode 100644 drivers/clk/clk-bd718x7.c
+> 
+> Quoting Jerome Brunet (2018-12-05 09:20:09)
+> > On Tue, 2018-12-04 at 23:54 -0800, Stephen Boyd wrote:
+> > > Ok. Thanks for the explanation. What do you do to fix this problem in
+> > > the 'ao_cts_cec' clk implementation?
+> > 
+> > IMO, there is nothing to fix, the implementation is correct. 
+> > 
+> > >  Sounds like you just rely on
+> > > clk_set_rate() to fix this all up for you when the consumer changes the
+> > > rate?
+> > 
+> > To setup the rate as the customer expect, yes.
+> 
+> Ok.
+> 
+> > > If we have something that is default parented to something we're not
+> > > telling the framework about for some reason then one solution would be
+> > > to have some init code reparent the clk in hardware before registering
+> > > it with the framework. Basically "fix up" the clk tree in hardware to be
+> > > consistent with what software can reason about. 
+> > 
+> > Should we really ? Something the framework does not know about is not
+> > necessarily something wrong.
+> > 
+> > It would best if we could model the tree completly, but most of the time,
+> > we
+> > just approximate it the best we can.
+> > 
+> > The framework just knows how to setup rates, it has no idea what rate
+> > needs to
+> > be set or when - And I think it is best if does not make any assumption
+> > about
+> > that.
+> > 
+> > Pushing it a bit, this unknown parent might important to the boot
+> > sequence.
+> > How would you know when it is safe to change the setting ?
+> > What would change it to ? It Seems obvious when there is only one known
+> > parent, but what if there two ? which one do you pick ? Is it really the
+> > role
+> > of CCF to make this kind of choice ? 
+> 
+> Agreed. We can't mandate this requirement because of what you say. There
+> are pitfalls such as not always knowing if it's safe to change the clk
+> tree before clks are registered.
+> 
+> > > This also reminds me of some audio clks I've seen before where the
+> > > default parent is some external pin and it can be reparented to an
+> > > internal clk with clk_set_rate/parent. In that case, I think we forced
+> > > the parent over to the internal clk before registering so that it would
+> > > always get parented properly in the framework. Right now, this is going
+> > > to cause problems for plans to probe defer clk_get() on orphan clks.
+> > 
+> > clk_get() on orphaned clock should probably return an error if it is not
+> > the
+> > case already ? or 0 maybe ?
+> 
+> I'd prefer that it return EPROBE_DEFER if the clk is an orphan, except
+> that it causes problems for this case where muxes move away from
+> something unknown to something known.
+> 
+> > > Maybe this could work better if we allowed
+> > > 'assigned-clock-parents/rates' to reparent clks regardless of orphan
+> > > status and/or had some flag that could be set on clks to indicate that
+> > > we're OK if clk_get() is called on it when it's an orphan because this
+> > > isn't a problem?
+> > 
+> > Not sure I understand your point here.
+> 
+> There is a problem with assigned-clock DT properties and orphan clks and
+> making orphan clks defer driver probes.
+> 
+> > > Or we can make the defer on orphan code only defer if the clk has a
+> > > single parent and it's an orphan and return the clk if there is at least
+> > > one parent of the clk that has been registered and isn't marked as an
+> > > orphan. That would need to be recursively applied, so I guess we would
+> > > update our orphan marking code to indicate that clk_get() on the clk
+> > > should probe defer or not instead of indicating the clk's orphan status.
+> > > Doing this would also side-step the problem Rockchip was having where
+> > > certain parents never appeared but the clk was parented to it in
+> > > hardware, essentially blocking the clk from ever being touched by
+> > > consumers.
+> > 
+> > ... and now you lost me completly :)
+> 
+> Hmm alright.
+> 
+> > > On the other hand, not having the clk there causes us to do a global
+> > > search of the clk name space each time we look for parents by the
+> > > "unknown" index, which in the Rockchip case was quite often because the
+> > > clk was changing between two other parents with a third one that never
+> > > got registered. So it may be better to just register an "unknown" clk as
+> > > a root clk with a rate of 0 that you can then hook everything up to that
+> > > is hardware reset to this unknown input. That way nothing is orphaned
+> > > and everyone is happy. We could do this for the audio case I talked
+> > > about earlier too so when the external pin is left unconnected we could
+> > > register some 'unconnected' clk and parent the audio clk to it.
+> > 
+> > We have sometimes a few orphans in the amlogic clock tree, it does not
+> > seems
+> > to a problem.
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 81cdb4eaca07..2dc12bf75b1b 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -283,6 +283,13 @@ config COMMON_CLK_STM32H7
- 	---help---
- 	  Support for stm32h7 SoC family clocks
- 
-+config COMMON_CLK_BD718XX
-+	tristate "Clock driver for ROHM BD718x7 PMIC"
-+	depends on MFD_ROHM_BD718XX
-+	help
-+	  This driver supports ROHM BD71837 and ROHM BD71847
-+	  PMICs clock gates.
-+
- source "drivers/clk/actions/Kconfig"
- source "drivers/clk/bcm/Kconfig"
- source "drivers/clk/hisilicon/Kconfig"
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index 72be7a38cff1..a47430b387db 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -21,6 +21,7 @@ endif
- obj-$(CONFIG_MACH_ASM9260)		+= clk-asm9260.o
- obj-$(CONFIG_COMMON_CLK_AXI_CLKGEN)	+= clk-axi-clkgen.o
- obj-$(CONFIG_ARCH_AXXIA)		+= clk-axm5516.o
-+obj-$(CONFIG_COMMON_CLK_BD718XX)	+= clk-bd718x7.o
- obj-$(CONFIG_COMMON_CLK_CDCE706)	+= clk-cdce706.o
- obj-$(CONFIG_COMMON_CLK_CDCE925)	+= clk-cdce925.o
- obj-$(CONFIG_ARCH_CLPS711X)		+= clk-clps711x.o
-diff --git a/drivers/clk/clk-bd718x7.c b/drivers/clk/clk-bd718x7.c
-new file mode 100644
-index 000000000000..60422c72d142
---- /dev/null
-+++ b/drivers/clk/clk-bd718x7.c
-@@ -0,0 +1,123 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (C) 2018 ROHM Semiconductors
-+
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/init.h>
-+#include <linux/err.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+#include <linux/mfd/rohm-bd718x7.h>
-+#include <linux/clk-provider.h>
-+#include <linux/clkdev.h>
-+#include <linux/regmap.h>
-+
-+struct bd718xx_clk {
-+	struct clk_hw hw;
-+	u8 reg;
-+	u8 mask;
-+	struct platform_device *pdev;
-+	struct bd718xx *mfd;
-+};
-+
-+static int bd71837_clk_set(struct clk_hw *hw, int status)
-+{
-+	struct bd718xx_clk *c = container_of(hw, struct bd718xx_clk, hw);
-+
-+	return regmap_update_bits(c->mfd->regmap, c->reg, c->mask, status);
-+}
-+
-+static void bd71837_clk_disable(struct clk_hw *hw)
-+{
-+	int rv;
-+	struct bd718xx_clk *c = container_of(hw, struct bd718xx_clk, hw);
-+
-+	rv = bd71837_clk_set(hw, 0);
-+	if (rv)
-+		dev_dbg(&c->pdev->dev, "Failed to disable 32K clk (%d)\n", rv);
-+}
-+
-+static int bd71837_clk_enable(struct clk_hw *hw)
-+{
-+	return bd71837_clk_set(hw, 1);
-+}
-+
-+static int bd71837_clk_is_enabled(struct clk_hw *hw)
-+{
-+	int enabled;
-+	int rval;
-+	struct bd718xx_clk *c = container_of(hw, struct bd718xx_clk, hw);
-+
-+	rval = regmap_read(c->mfd->regmap, c->reg, &enabled);
-+
-+	if (rval)
-+		return rval;
-+
-+	return enabled & c->mask;
-+}
-+
-+static const struct clk_ops bd71837_clk_ops = {
-+	.prepare = &bd71837_clk_enable,
-+	.unprepare = &bd71837_clk_disable,
-+	.is_prepared = &bd71837_clk_is_enabled,
-+};
-+
-+static int bd71837_clk_probe(struct platform_device *pdev)
-+{
-+	struct bd718xx_clk *c;
-+	int rval = -ENOMEM;
-+	const char *parent_clk;
-+	struct device *parent = pdev->dev.parent;
-+	struct bd718xx *mfd = dev_get_drvdata(parent);
-+	struct clk_init_data init = {
-+		.name = "bd718xx-32k-out",
-+		.ops = &bd71837_clk_ops,
-+	};
-+
-+	c = devm_kzalloc(&pdev->dev, sizeof(*c), GFP_KERNEL);
-+	if (!c)
-+		return -ENOMEM;
-+
-+	init.num_parents = 1;
-+	parent_clk = of_clk_get_parent_name(parent->of_node, 0);
-+
-+	init.parent_names = &parent_clk;
-+	if (!parent_clk) {
-+		dev_err(&pdev->dev, "No parent clk found\n");
-+		return -EINVAL;
-+	}
-+
-+	c->reg = BD718XX_REG_OUT32K;
-+	c->mask = BD718XX_OUT32K_EN;
-+	c->mfd = mfd;
-+	c->pdev = pdev;
-+	c->hw.init = &init;
-+
-+	of_property_read_string_index(parent->of_node,
-+				      "clock-output-names", 0, &init.name);
-+
-+	rval = devm_clk_hw_register(&pdev->dev, &c->hw);
-+	if (rval) {
-+		dev_err(&pdev->dev, "failed to register 32K clk");
-+		return rval;
-+	}
-+	rval = devm_of_clk_add_hw_provider(&pdev->dev, of_clk_hw_simple_get,
-+					   &c->hw);
-+	if (rval)
-+		dev_err(&pdev->dev, "adding clk provider failed\n");
-+
-+	return rval;
-+}
-+
-+static struct platform_driver bd71837_clk = {
-+	.driver = {
-+		.name = "bd718xx-clk",
-+	},
-+	.probe = bd71837_clk_probe,
-+};
-+
-+module_platform_driver(bd71837_clk);
-+
-+MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
-+MODULE_DESCRIPTION("BD71837 chip clk driver");
-+MODULE_LICENSE("GPL");
--- 
-2.14.3
+To the best of my knowledge, there will always be orphan in the tree. The root
+clock (usually an xtal) being a special case of this. 
+
+It seems to me that the problem is we can't differentiate between this special
+orphan and the rest because none will return an error when calling get_rate()
+
+xtal will provide something to round_rate() while other clock which are
+supposed to be orphaned will defer to the framework which gives a 0 rate.
+
+I think this is your real issue with orphan in the framework. The framework
+does not distinguish between a signal with rate == 0 and an error (no signal)
+> 
+> I suppose drivers aren't calling clk_set_rate() on the orphaned clks and
+> experiencing problems? There are problems around clk rates that could
+> happen if there aren't any proper parents of a mux.
+> 
+> > I don't really understand the benefit of having a fake clock that would
+> > adopt
+> > all the orphan ? You guess there is problem I'm not aware of ...
+> 
+> I see three cases that can go wrong if we make orphan clks probe defer
+> clk_get():
+> 
+>   1) NULL as the parent name for some parent index that the hardware
+>      indicates is the current parent of the clk when the clk is registered.
+
+I don't think you can have NULL has a parent_name
+
+> 
+> In this case, we need to make clk_get() succeed and not return
+> -EPROBE_DEFER, so I think we need to make a special "unknown" clk in the
+> framework so that clks aren't orphaned when the hardware is indicating
+> the parent is something we don't (and won't) know anything about.
+
+I think DEFER is returned when clock is unknown, not when it is orphaned.
+
+> 
+>   2) get_parent/set_parent on a clk with num_parents == 1
+> 
+> This seems to be how ao_cts_cec is implemented. This hides the fact that
+> get_parent may return some number above the number of parents
+
+The index returned will be either 0, to indicate the only known parent, or
+num_parents (1) to indicate an invalid parent to framework. This is the topic
+of the other patch I sent you
+
+You must have way for a driver to tell you that it is not connected to
+anything it knows. That's a very basic error case and this is not specific to
+num_parents == 1. 
+
+With any number of num_parent, there is still a possibility that a driver ends
+up in configuration where it cannot tell what it is his parent. (invalid
+combination, reserved values, crappy doc ...)
+
+This is why is important to call get_parent() (if available) even when
+num_parent == 1. The driver might tell if it is connected as expected - or not
+
+> and then
+> has that quietly make the parent of the clk NULL during registration so
+> that it's orphaned. Then we rely on set_rate() or set_parent() being
+> called to fix the parent chain at a later time.
+> 
+> That is complicated and non-obvious. I'd rather that we specify NULL as
+> a parent in the parent_names array if we're going to return that index
+> to the framework and then have the framework go to case #1. This makes
+> it easier for the framework to assume that [0, num_parents) is the valid
+> range of indices returned from the get_parent() op and a number outside
+> that range is an error, clearing the way for errors to be returned from
+> get_parent() if it somehow fails.
+
+The fix I sent is quite simple.
+
+The above would require that:
+1) the framework accept NULL in the list of parent (which it forbids ATM
+AFAIK)
+2) Have all drivers account for this a create this fake parent
+
+This seems to be putting more work on the drivers with no real gain for the
+framework, none that I can see at least.
+
+> 
+>   3) A string as the parent name for some parent index that the hardware
+>      indicates is the current parent of the clk when the clk is registered,
+>      but that parent clk may never be registered with the framework.
+> 
+> I imagine this can happen with an external gpio clk that feeds some SoC
+> internal clk. That gpio could be supplied by some clk signal that the
+> board designer decides to send there, and it could also just "magically
+> appear" by applying some DT overlay. Due to our use of global strings
+> for parent linking, we don't have a good way to figure out that nothing
+> is connected to some clock input signal, making this quite a nightmare
+> to figure out a runtime!
+> 
+> One solution is to replace the parent name with NULL and ignore the
+> runtime update case. This will work and bring us back to case #1. The
+> problem is that if it is connected to something like a GPIO and it
+> defaults to that pin instead of some internal clk we're stuck with an
+> "orphan" clk that we can't clk_get(). I suppose the driver could read DT
+> and see if this pin is not connected and then mark this input parent
+> name as NULL. We can punt on solving the DT overlay problem until later,
+> because we would need some way to dynamically resolve a new parent of a
+> clk and update the tree when the DT node is modified to use a new GPIO.
+
+I don't understand what is the problem here.
+In Amlogic we have a lot of this cases, with optional input clocks of the axg-
+audio clock controller. Many muxes have parent names of clock that don't
+exists.
+
+CCF will return a 0 rate for these inputs.
+It works well as it is, but as said above, I think it would be better if we
+could distinguish between a signal with 0 rate and no signal at all (error)
+
+> 
 
 
--- 
-Matti Vaittinen
-ROHM Semiconductors
-
-~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
