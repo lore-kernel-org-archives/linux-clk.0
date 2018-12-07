@@ -2,195 +2,146 @@ Return-Path: <SRS0=jGkl=OQ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFDD1C07E85
-	for <linux-clk@archiver.kernel.org>; Fri,  7 Dec 2018 13:21:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4765AC64EB1
+	for <linux-clk@archiver.kernel.org>; Fri,  7 Dec 2018 13:42:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93D9D20837
-	for <linux-clk@archiver.kernel.org>; Fri,  7 Dec 2018 13:21:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93D9D20837
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 0E09A208E7
+	for <linux-clk@archiver.kernel.org>; Fri,  7 Dec 2018 13:42:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="ZxKX5Hq4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E09A208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726019AbeLGNVt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 7 Dec 2018 08:21:49 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:57231 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725997AbeLGNVt (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 7 Dec 2018 08:21:49 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 227CD20510; Fri,  7 Dec 2018 14:21:46 +0100 (CET)
-Received: from localhost (aaubervilliers-681-1-79-44.w90-88.abo.wanadoo.fr [90.88.21.44])
-        by mail.bootlin.com (Postfix) with ESMTPSA id DDDDA20510;
-        Fri,  7 Dec 2018 14:21:35 +0100 (CET)
-Date:   Fri, 7 Dec 2018 14:21:36 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi@googlegroups.com, linux-amarula@amarulasolutions.com
-Subject: Re: [linux-sunxi] Re: [PATCH v4 08/26] drm/sun4i: sun6i_mipi_dsi:
- Fix VBP size calculation
-Message-ID: <20181207132136.oa4nzpczytzxhl2d@flea>
-References: <20181113111633.20189-1-jagan@amarulasolutions.com>
- <20181113111633.20189-9-jagan@amarulasolutions.com>
- <20181115095551.uctdkfmuwlnzhjnn@flea>
- <CAMty3ZAEHiovm6OF6JvJVQR4aqpG1Q3ML5YqxJkF2ntwRkUO=A@mail.gmail.com>
- <20181120155715.andrjp5kg6ugcv72@flea>
- <CAMty3ZCUOJmvekupOwh281g5HaazTpBbukWQY2Pv2OYypAwciw@mail.gmail.com>
- <20181127102450.b65jzhrdpxn5rxmk@flea>
- <CAMty3ZDTvn4VF_oOvEi2jCw9Rw5WPd1LQT3SZ5X1K0fJAFg2cQ@mail.gmail.com>
+        id S1726072AbeLGNmD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 7 Dec 2018 08:42:03 -0500
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:11006 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725989AbeLGNmD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Dec 2018 08:42:03 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c0a789d0000>; Fri, 07 Dec 2018 05:41:50 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Fri, 07 Dec 2018 05:42:02 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Fri, 07 Dec 2018 05:42:02 -0800
+Received: from [10.21.132.148] (172.20.13.39) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 7 Dec
+ 2018 13:41:59 +0000
+Subject: Re: [PATCH 01/19] dt-bindings: clock: tegra124-dfll: Update DFLL
+ binding for PWM regulator
+To:     Joseph Lo <josephl@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+References: <20181204092548.3038-1-josephl@nvidia.com>
+ <20181204092548.3038-2-josephl@nvidia.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <af1211f0-dda0-bdde-f320-03e54f82d7e1@nvidia.com>
+Date:   Fri, 7 Dec 2018 13:41:57 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="q7v7wduxjlqssxwi"
-Content-Disposition: inline
-In-Reply-To: <CAMty3ZDTvn4VF_oOvEi2jCw9Rw5WPd1LQT3SZ5X1K0fJAFg2cQ@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20181204092548.3038-2-josephl@nvidia.com>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL103.nvidia.com (172.20.187.11) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1544190110; bh=NOVIbH0JVcvaIKImHh2L8OnSBgGMegCkNALg40qunM4=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=ZxKX5Hq42YPRESlNZYHuMvTuVyVXKG+K2LKmDIUwCshyW1UkgajxLEGU56N4VpGZR
+         5bvA/iBm1N7pLZ4jJ4cW3Lkj6XGKsqzUDLcAvv5TVLKBLCB54AVua8W79huLjn+Ahd
+         LhR172tDLWA4MNhMCj5z923KNzP9B9YQJy4m0EXSpLuZWep56YJJvosg4PG5g0S5SJ
+         9wdmD4/EYhVZJarrIABn3U9Qphk6BmIyultDYhZO8Nh6QOJXRW4+1wEO9mL9xNd4ag
+         BfMEmHMVSSQVBokhYUIUV0wWffzX27UMabCepzbHzYLe1PsSFUzZeC/gM2dQi3lmny
+         g8JKGNYhIOY7g==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---q7v7wduxjlqssxwi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 04/12/2018 09:25, Joseph Lo wrote:
+> From: Peter De Schrijver <pdeschrijver@nvidia.com>
+> 
+> Add new properties to configure the DFLL PWM regulator support. Also
+> add an example and make the I2C clock only required when I2C support is
+> used.
+> 
+> Cc: devicetree@vger.kernel.org
+> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> Signed-off-by: Joseph Lo <josephl@nvidia.com>
+> ---
+>  .../bindings/clock/nvidia,tegra124-dfll.txt   | 73 ++++++++++++++++++-
+>  1 file changed, 71 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
+> index dff236f524a7..8c97600d2bad 100644
+> --- a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
+> +++ b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
+> @@ -8,7 +8,6 @@ the fast CPU cluster. It consists of a free-running voltage controlled
+>  oscillator connected to the CPU voltage rail (VDD_CPU), and a closed loop
+>  control module that will automatically adjust the VDD_CPU voltage by
+>  communicating with an off-chip PMIC either via an I2C bus or via PWM signals.
+> -Currently only the I2C mode is supported by these bindings.
+>  
+>  Required properties:
+>  - compatible : should be "nvidia,tegra124-dfll"
+> @@ -45,10 +44,28 @@ Required properties for the control loop parameters:
+>  Optional properties for the control loop parameters:
+>  - nvidia,cg-scale: Boolean value, see the field DFLL_PARAMS_CG_SCALE in the TRM.
+>  
+> +Optional properties for mode selection:
+> +- nvidia,pwm-to-pmic: Use PWM to control regulator rather then I2C.
+> +
+>  Required properties for I2C mode:
+>  - nvidia,i2c-fs-rate: I2C transfer rate, if using full speed mode.
+>  
+> -Example:
+> +Required properties for PWM mode:
+> +- nvidia,pwm-period: period of PWM square wave in microseconds.
+> +- nvidia,init-uv: Regulator voltage in micro volts when PWM control is disabled.
 
-On Tue, Nov 27, 2018 at 04:34:35PM +0530, Jagan Teki wrote:
-> On Tue, Nov 27, 2018 at 3:55 PM Maxime Ripard <maxime.ripard@bootlin.com>=
- wrote:
-> >
-> > On Tue, Nov 20, 2018 at 09:55:42PM +0530, Jagan Teki wrote:
-> > > On Tue, Nov 20, 2018 at 9:27 PM Maxime Ripard <maxime.ripard@bootlin.=
-com> wrote:
-> > > >
-> > > > On Thu, Nov 15, 2018 at 11:19:53PM +0530, Jagan Teki wrote:
-> > > > > On Thu, Nov 15, 2018 at 3:26 PM Maxime Ripard <maxime.ripard@boot=
-lin.com> wrote:
-> > > > > >
-> > > > > > Hi,
-> > > > > >
-> > > > > > On Tue, Nov 13, 2018 at 04:46:15PM +0530, Jagan Teki wrote:
-> > > > > > > The horizontal and vertical back porch calculation in BSP
-> > > > > > > code is simply following the Linux drm comment diagram, in
-> > > > > > > include/drm/drm_modes.h which is
-> > > > > > >
-> > > > > > > [hv]back porch =3D [hv]total - [hv]sync_end
-> > > > > > >
-> > > > > > > BSP code form BPI-M64-bsp is calculating vertical back porch =
-as
-> > > > > > > (from linux-sunxi/drivers/video/sunxi/disp2/disp/de/disp_lcd.=
-c)
-> > > > > > >
-> > > > > > > timmings->ver_sync_time=3D panel_info->lcd_vspw;
-> > > > > > > timmings->ver_back_porch=3D panel_info->lcd_vbp-panel_info->l=
-cd_vspw;
-> > > > > > >
-> > > > > > > vbp =3D panel->lcd_vbp;
-> > > > > > > vspw =3D panel->lcd_vspw;
-> > > > > > > dsi_dev[sel]->dsi_basic_size0.bits.vbp =3D vbp-vspw;
-> > > > > > > dsi_dev[sel]->dsi_basic_size0.bits.vbp =3D panel->lcd_vbp - p=
-anel->lcd_vspw;
-> > > > > > > =3D>  timmings->ver_back_porch + panel_info->lcd_vspw - panel=
-_info->lcd_vspw
-> > > > > > > =3D>  timmings->ver_back_porch
-> > > > > > > =3D>  mode->vtotal - mode->end
-> > > > > > >
-> > > > > > > Which evatually same as mode->vtotal - mode->vsync_end so upd=
-ate the
-> > > > > > > same in SUN6I_DSI_BASIC_SIZE0_VBP
-> > > > > > >
-> > > > > > > On the information note, existing SUN6I_DSI_BASIC_SIZE0_VSA i=
-s proper
-> > > > > > > value.
-> > > > > > >
-> > > > > > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> > > > > >
-> > > > > > I've tested your changes on my A33 board, and this commit will =
-break
-> > > > > > it.
-> > > > > >
-> > > > > > It creates vblank timeouts, and visual artifacts at the bottom =
-of the
-> > > > > > display.
-> > > > >
-> > > > > Strange, VBP is earlier gives front porch which is anyway wrong.
-> > > > >
-> > > > > >
-> > > > > > Later commits seem to fix the issue, but will create some blank=
-ing on
-> > > > > > the upper third of the display.
-> > > > > >
-> > > > > > Since the documentation is quite sparse, and a MIPI-DSI analyze=
-r is
-> > > > > > way too expensive, I'd really like to have at least what each o=
-f these
-> > > > > > commits are actually fixing, and what symptoms each of these we=
-re
-> > > > > > causing, and not just "the BSP does it".
-> > > > >
-> > > > > W/o this 2-lane panel is breaking, same vblank timeout and visual
-> > > > > artifacts at the bottom of the panel. though the commits may refe=
-rence
-> > > > > BSP, I have at-least tested on 3 different panels for us to prove=
- its
-> > > > > working.
-> > > > >
-> > > > > > Having some datasheet for the panels you had working would help=
- too.
-> > > > >
-> > > > > Unfortunately datasheet doesn't have any required information wha=
-t we
-> > > > > actually looking for.
-> > > >
-> > > > Not even the timings? How did you get that information then?
-> > >
-> > > datasheet has timing values, but this changes need controller
-> > > information about VBP register that I don't have. But again existing
-> > > VBP is not back porch for real, it's front porch.
-> >
-> > Yet, this breaks the existing setup. So again:
->=20
-> Was it with 4-lane or 2-lane panel? can you test it with 2-lane panel?
-> I can see the issue on 2-lane but the 4-lane working fine with this
-> patch even.
+Maybe consider 'pwm-inactive-voltage-microvolt'.
 
-It's a 4 lane display.
+> +- nvidia,align-offset-uv: Regulator voltage in micro volts when PWM control is
+> +			  enabled and PWM output is low.
 
-Maxime
+Would this be considered the minimum pwm active voltage?
 
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+> +- nvidia,align-step-uv: Voltage increase in micro volts corresponding to a
+> +			1/33th increase in duty cycle. Eg the voltage for 2/33th
+> +			duty cycle would be:
 
---q7v7wduxjlqssxwi
-Content-Type: application/pgp-signature; name="signature.asc"
+Maybe consider 'pwm-voltage-step-microvolt'.
 
------BEGIN PGP SIGNATURE-----
+> +			nvidia,align-offset-uv + nvidia,align-step-uv * 2.
+> +- pinctrl-0: I/O pad configuration when PWM control is enabled.
+> +- pinctrl-1: I/O pad configuration when PWM control is disabled.
+> +- pinctrl-names: must include the following entries:
+> +  - dvfs_pwm_enable: I/O pad configuration when PWM control is enabled.
+> +  - dvfs_pwm_disable: I/O pad configuration when PWM control is disabled.
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXApz4AAKCRDj7w1vZxhR
-xa0MAQDINJywpBXTxw8UvHmXF3KPlaX6XTjqzx6fQVp5X/DPwwD/Z0QEHXJAd3EB
-dstdAPzyyxSR2BO86DpjKjX5ORODjwo=
-=pJW2
------END PGP SIGNATURE-----
+Please see Rob's feedback on the above [0].
 
---q7v7wduxjlqssxwi--
+Cheers
+Jon
+
+[0] https://lore.kernel.org/patchwork/patch/885328/
+
+-- 
+nvpublic
