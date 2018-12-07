@@ -4,50 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71B23C07E85
-	for <linux-clk@archiver.kernel.org>; Fri,  7 Dec 2018 13:55:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A71FC07E85
+	for <linux-clk@archiver.kernel.org>; Fri,  7 Dec 2018 14:10:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33DDA20837
-	for <linux-clk@archiver.kernel.org>; Fri,  7 Dec 2018 13:55:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 25655208E7
+	for <linux-clk@archiver.kernel.org>; Fri,  7 Dec 2018 14:10:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="gDGPUByz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33DDA20837
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="rbyV7/Cf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25655208E7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726015AbeLGNze (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 7 Dec 2018 08:55:34 -0500
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:13122 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726010AbeLGNze (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Dec 2018 08:55:34 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c0a7bd40000>; Fri, 07 Dec 2018 05:55:32 -0800
+        id S1725998AbeLGOKw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 7 Dec 2018 09:10:52 -0500
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:2057 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725997AbeLGOKw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Dec 2018 09:10:52 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c0a7f680000>; Fri, 07 Dec 2018 06:10:48 -0800
 Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Fri, 07 Dec 2018 05:55:33 -0800
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Fri, 07 Dec 2018 06:10:50 -0800
 X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Fri, 07 Dec 2018 05:55:33 -0800
+        by hqpgpgate101.nvidia.com on Fri, 07 Dec 2018 06:10:50 -0800
 Received: from [10.21.132.148] (10.124.1.5) by HQMAIL101.nvidia.com
  (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 7 Dec
- 2018 13:55:31 +0000
-Subject: Re: [PATCH 05/19] clk: tegra: dfll: registration for multiple SoCs
+ 2018 14:10:48 +0000
+Subject: Re: [PATCH 06/19] clk: tegra: dfll: CVB calculation alignment with
+ the regulator
 To:     Joseph Lo <josephl@nvidia.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Peter De Schrijver <pdeschrijver@nvidia.com>
 CC:     <linux-arm-kernel@lists.infradead.org>,
         <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
 References: <20181204092548.3038-1-josephl@nvidia.com>
- <20181204092548.3038-6-josephl@nvidia.com>
+ <20181204092548.3038-7-josephl@nvidia.com>
 From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <23a72c57-cbb2-5c4e-eebb-1ad4ba7e2dc8@nvidia.com>
-Date:   Fri, 7 Dec 2018 13:55:29 +0000
+Message-ID: <8496868e-8e11-708a-8233-fefee59a79cd@nvidia.com>
+Date:   Fri, 7 Dec 2018 14:10:46 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181204092548.3038-6-josephl@nvidia.com>
+In-Reply-To: <20181204092548.3038-7-josephl@nvidia.com>
 X-Originating-IP: [10.124.1.5]
 X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
  HQMAIL101.nvidia.com (172.20.187.10)
@@ -55,17 +57,17 @@ Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1544190932; bh=AxG+CNpAk3aWS/K2YEG/RX+VzW8Sw1XPjEuwWtNIrJo=;
+        t=1544191848; bh=LQtuZyDaxriPPEkMQVrxfElL0P2teY2rrmoGdq9giVM=;
         h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
          User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
          X-ClientProxiedBy:Content-Type:Content-Language:
          Content-Transfer-Encoding;
-        b=gDGPUByzuvDIkw5QavU53nmrYyuWwf49Xp9uMILdhKXV7WawTBrgXKl54SLFwfPZv
-         ReGhrzVgHw/mKTF86fow3v4cPa7hyaoEgbB6EjQDF3/4IG/meGEcsl1JDALcqrp61s
-         OD2P7BobUqu62zBqQPHqn0Vg9NDYuP5B1096GqgWZlsNLSTad9VhmQNqFeNS+VVWtg
-         WbcHsMWpbYA2McO87mEPjH7TMsZSgpFras5uO3s/WrZ/9Y4cn5aH2QrJFhwsAzzUIt
-         upPOS8d6Ei5w/hWo9D2i4KxqHyKXLLRVVr5y4Q/VhOrJevP+PQdu6+0Q/kVpIsk7xt
-         RcfcqH68zR/pQ==
+        b=rbyV7/Cfp6q2YwO0iOIj/NLJTP0hdkG77dfzBqa+ROnm6OzrOjth+beIbxOnDEt++
+         pOdzHO5pXWS1QE05K44a3FIx/Zb0PoLbnPprjXUenE4irH03ZXJ3EiUbLR3V0XFP3Y
+         ql4qZdqJKwLis6Pby7Z5iahMH8tthGvPARZLn4fTa3+qNcn5ITb2qaIVO4R39oKWjr
+         ctCEe3Rzm7f+tsFTThbaq0CrZubtdinOqhYH7iTTtHC8NHw4MykQXI74VGjSjUknf+
+         MsIsoCw9K/uP96TeSWZylQyiXpWhpbExKaqdVuTWua2Fmyc2QUoeK5/Xp3zsMfiVhE
+         JwA/uwYayyd/A==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
@@ -73,126 +75,251 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 
 On 04/12/2018 09:25, Joseph Lo wrote:
-> From: Peter De Schrijver <pdeschrijver@nvidia.com>
+> The CVB table contains calibration data for the CPU DFLL based on
+> process charaterization. The regulator step and offset parameters depend
+> on the regulator supplying vdd-cpu , not on the specific Tegra SKU.
 > 
-> In a future patch, support for the DFLL in Tegra210 will be introduced.
-> This requires support for more than 1 set of CVB and CPU max frequency
-> tables.
+> When using a PWM controlled regulator, the voltage step and offset are
+> determined by the regulator type in use. This is specified in DT. When
+> using an I2C controlled regulator, we can retrieve them from CPU regulator
+> or DT (if specified). Then pass this information to the CVB table
+> calculation function.
 > 
-> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> Based on the work done of "Peter De Schrijver <pdeschrijver@nvidia.com>"
+> and "Alex Frid <afrid@nvidia.com>".
+> 
 > Signed-off-by: Joseph Lo <josephl@nvidia.com>
 > ---
->  drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 45 ++++++++++++++++------
->  1 file changed, 34 insertions(+), 11 deletions(-)
+>  drivers/clk/tegra/clk-dfll.h               |  6 +-
+>  drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 65 ++++++++++++++++++++--
+>  drivers/clk/tegra/cvb.c                    | 12 ++--
+>  drivers/clk/tegra/cvb.h                    |  6 +-
+>  4 files changed, 75 insertions(+), 14 deletions(-)
 > 
-> diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-> index 269d3595758b..1a2cc113e5c8 100644
-> --- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-> +++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-> @@ -1,7 +1,7 @@
+> diff --git a/drivers/clk/tegra/clk-dfll.h b/drivers/clk/tegra/clk-dfll.h
+> index 83352c8078f2..ecc43cb9b6f1 100644
+> --- a/drivers/clk/tegra/clk-dfll.h
+> +++ b/drivers/clk/tegra/clk-dfll.h
+> @@ -1,6 +1,6 @@
 >  /*
->   * Tegra124 DFLL FCPU clock source driver
->   *
-> - * Copyright (C) 2012-2014 NVIDIA Corporation.  All rights reserved.
-> + * Copyright (C) 2012-2018 NVIDIA Corporation.  All rights reserved.
+>   * clk-dfll.h - prototypes and macros for the Tegra DFLL clocksource driver
+> - * Copyright (C) 2013 NVIDIA Corporation.  All rights reserved.
+> + * Copyright (C) 2013-2018 NVIDIA Corporation.  All rights reserved.
 >   *
 >   * Aleksandr Frid <afrid@nvidia.com>
 >   * Paul Walmsley <pwalmsley@nvidia.com>
-> @@ -21,6 +21,7 @@
->  #include <linux/err.h>
->  #include <linux/kernel.h>
+> @@ -22,11 +22,14 @@
+>  #include <linux/reset.h>
+>  #include <linux/types.h>
+>  
+> +#include "cvb.h"
+> +
+>  /**
+>   * struct tegra_dfll_soc_data - SoC-specific hooks/integration for the DFLL driver
+>   * @dev: struct device * that holds the OPP table for the DFLL
+>   * @max_freq: maximum frequency supported on this SoC
+>   * @cvb: CPU frequency table for this SoC
+> + * @alignment: parameters of the regulator step and offset
+>   * @init_clock_trimmers: callback to initialize clock trimmers
+>   * @set_clock_trimmers_high: callback to tune clock trimmers for high voltage
+>   * @set_clock_trimmers_low: callback to tune clock trimmers for low voltage
+> @@ -35,6 +38,7 @@ struct tegra_dfll_soc_data {
+>  	struct device *dev;
+>  	unsigned long max_freq;
+>  	const struct cvb_table *cvb;
+> +	struct rail_alignment alignment;
+>  
+>  	void (*init_clock_trimmers)(void);
+>  	void (*set_clock_trimmers_high)(void);
+> diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+> index 1a2cc113e5c8..071a5c674832 100644
+> --- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+> +++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+> @@ -23,6 +23,7 @@
 >  #include <linux/init.h>
-> +#include <linux/of_device.h>
+>  #include <linux/of_device.h>
 >  #include <linux/platform_device.h>
+> +#include <linux/regulator/consumer.h>
 >  #include <soc/tegra/fuse.h>
 >  
-> @@ -28,8 +29,15 @@
->  #include "clk-dfll.h"
->  #include "cvb.h"
->  
-> +struct dfll_fcpu_data {
-> +	const unsigned long *cpu_max_freq_table;
-> +	unsigned int cpu_max_freq_table_size;
-> +	const struct cvb_table *cpu_cvb_tables;
-> +	unsigned int cpu_cvb_tables_size;
-> +};
-> +
->  /* Maximum CPU frequency, indexed by CPU speedo id */
-> -static const unsigned long cpu_max_freq_table[] = {
-> +static const unsigned long tegra124_cpu_max_freq_table[] = {
->  	[0] = 2014500000UL,
->  	[1] = 2320500000UL,
->  	[2] = 2116500000UL,
-> @@ -82,16 +90,36 @@ static const struct cvb_table tegra124_cpu_cvb_tables[] = {
->  	},
+>  #include "clk.h"
+> @@ -50,9 +51,6 @@ static const struct cvb_table tegra124_cpu_cvb_tables[] = {
+>  		.process_id = -1,
+>  		.min_millivolts = 900,
+>  		.max_millivolts = 1260,
+> -		.alignment = {
+> -			.step_uv = 10000, /* 10mV */
+> -		},
+
+What happens for tegra124-jetson-tk1 when we remove this?
+
+>  		.speedo_scale = 100,
+>  		.voltage_scale = 1000,
+>  		.entries = {
+> @@ -105,11 +103,43 @@ static const struct of_device_id tegra124_dfll_fcpu_of_match[] = {
+>  	{ },
 >  };
 >  
-> +static const struct dfll_fcpu_data tegra124_dfll_fcpu_data = {
-> +	.cpu_max_freq_table = tegra124_cpu_max_freq_table,
-> +	.cpu_max_freq_table_size = ARRAY_SIZE(tegra124_cpu_max_freq_table),
-> +	.cpu_cvb_tables = tegra124_cpu_cvb_tables,
-> +	.cpu_cvb_tables_size = ARRAY_SIZE(tegra124_cpu_cvb_tables)
-> +};
+> +static void get_alignment_from_dt(struct device *dev,
+> +				  struct rail_alignment *align)
+> +{
+> +	align->step_uv = 0;
+> +	align->offset_uv = 0;
 > +
-> +static const struct of_device_id tegra124_dfll_fcpu_of_match[] = {
-> +	{
-> +		.compatible = "nvidia,tegra124-dfll",
-> +		.data = &tegra124_dfll_fcpu_data,
-> +	},
-> +	{ },
-> +};
+> +	if (of_property_read_u32(dev->of_node, "nvidia,align-step-uv",
+> +				  &align->step_uv))
+> +		align->step_uv = 0;
+> +
+> +	if (of_property_read_u32(dev->of_node,
+> +				"nvidia,align-offset-uv", &align->offset_uv))
+> +		align->offset_uv = 0;
+> +}
+> +
+> +static int get_alignment_from_regulator(struct device *dev,
+> +					 struct rail_alignment *align)
+> +{
+> +	struct regulator *reg = devm_regulator_get(dev, "vdd-cpu");
+> +
+> +	if (IS_ERR(reg))
+> +		return PTR_ERR(reg);
+> +
+> +	align->offset_uv = regulator_list_voltage(reg, 0);
+> +	align->step_uv = regulator_get_linear_step(reg);
+> +
+> +	devm_regulator_put(reg);
+> +
+> +	return 0;
+> +}
 > +
 >  static int tegra124_dfll_fcpu_probe(struct platform_device *pdev)
 >  {
 >  	int process_id, speedo_id, speedo_value, err;
 >  	struct tegra_dfll_soc_data *soc;
-> +	const struct dfll_fcpu_data *fcpu_data;
-> +
-> +	fcpu_data = of_device_get_match_data(&pdev->dev);
-> +	if (!fcpu_data)
-> +		return -ENODEV;
+>  	const struct dfll_fcpu_data *fcpu_data;
+> +	struct rail_alignment align;
 >  
->  	process_id = tegra_sku_info.cpu_process_id;
->  	speedo_id = tegra_sku_info.cpu_speedo_id;
->  	speedo_value = tegra_sku_info.cpu_speedo_value;
->  
-> -	if (speedo_id >= ARRAY_SIZE(cpu_max_freq_table)) {
-> +	if (speedo_id >= fcpu_data->cpu_max_freq_table_size) {
->  		dev_err(&pdev->dev, "unknown max CPU freq for speedo_id=%d\n",
->  			speedo_id);
->  		return -ENODEV;
-> @@ -107,10 +135,10 @@ static int tegra124_dfll_fcpu_probe(struct platform_device *pdev)
+>  	fcpu_data = of_device_get_match_data(&pdev->dev);
+>  	if (!fcpu_data)
+> @@ -135,12 +165,37 @@ static int tegra124_dfll_fcpu_probe(struct platform_device *pdev)
 >  		return -ENODEV;
 >  	}
 >  
-> -	soc->max_freq = cpu_max_freq_table[speedo_id];
-> +	soc->max_freq = fcpu_data->cpu_max_freq_table[speedo_id];
+> +	get_alignment_from_dt(&pdev->dev, &align);
+> +	if (of_property_read_bool(pdev->dev.of_node, "nvidia,pwm-to-pmic")
+> +		 && (!align.step_uv || !align.offset_uv)) {
+> +		dev_info(&pdev->dev, "Missing required align data in DT");
+> +		return -EINVAL;
+> +	} else {
+
+This 'else' clause is not necessary.
+
+> +		if (!align.step_uv) {
+> +			dev_info(&pdev->dev,
+> +				 "no align data in DT, try from vdd-cpu\n");
+> +			err = get_alignment_from_regulator(&pdev->dev, &align);
+
+dev_warn
+
+> +			if (err == -EPROBE_DEFER) {
+> +				dev_info(&pdev->dev,
+> +					 "defer probe to get vdd-cpu\n");
+
+This dev_info is not necessary.
+
+> +				return -EPROBE_DEFER;
+> +			}
+> +		}
+> +	}
+> +
+> +	if (!align.step_uv) {
+> +		dev_err(&pdev->dev, "missing step uv\n");
+> +		return -EINVAL;
+> +	}
+> +
+>  	soc->max_freq = fcpu_data->cpu_max_freq_table[speedo_id];
 >  
-> -	soc->cvb = tegra_cvb_add_opp_table(soc->dev, tegra124_cpu_cvb_tables,
-> -					   ARRAY_SIZE(tegra124_cpu_cvb_tables),
-> +	soc->cvb = tegra_cvb_add_opp_table(soc->dev, fcpu_data->cpu_cvb_tables,
-> +					   fcpu_data->cpu_cvb_tables_size,
->  					   process_id, speedo_id, speedo_value,
->  					   soc->max_freq);
+>  	soc->cvb = tegra_cvb_add_opp_table(soc->dev, fcpu_data->cpu_cvb_tables,
+>  					   fcpu_data->cpu_cvb_tables_size,
+> -					   process_id, speedo_id, speedo_value,
+> -					   soc->max_freq);
+> +					   &align, process_id, speedo_id,
+> +					   speedo_value, soc->max_freq);
+> +	soc->alignment = align;
+> +
 >  	if (IS_ERR(soc->cvb)) {
-> @@ -142,11 +170,6 @@ static int tegra124_dfll_fcpu_remove(struct platform_device *pdev)
->  	return 0;
+>  		dev_err(&pdev->dev, "couldn't add OPP table: %ld\n",
+>  			PTR_ERR(soc->cvb));
+> diff --git a/drivers/clk/tegra/cvb.c b/drivers/clk/tegra/cvb.c
+> index da9e8e7b5ce5..81dcb97a9e0a 100644
+> --- a/drivers/clk/tegra/cvb.c
+> +++ b/drivers/clk/tegra/cvb.c
+> @@ -1,7 +1,7 @@
+>  /*
+>   * Utility functions for parsing Tegra CVB voltage tables
+>   *
+> - * Copyright (C) 2012-2014 NVIDIA Corporation.  All rights reserved.
+> + * Copyright (C) 2012-2018 NVIDIA Corporation.  All rights reserved.
+>   *
+>   * This program is free software; you can redistribute it and/or modify
+>   * it under the terms of the GNU General Public License version 2 as
+> @@ -62,9 +62,9 @@ static int round_voltage(int mv, const struct rail_alignment *align, int up)
 >  }
 >  
-> -static const struct of_device_id tegra124_dfll_fcpu_of_match[] = {
-> -	{ .compatible = "nvidia,tegra124-dfll", },
-> -	{ },
-> -};
-> -
->  static const struct dev_pm_ops tegra124_dfll_pm_ops = {
->  	SET_RUNTIME_PM_OPS(tegra_dfll_runtime_suspend,
->  			   tegra_dfll_runtime_resume, NULL)
+>  static int build_opp_table(struct device *dev, const struct cvb_table *table,
+> +			   struct rail_alignment *align,
+>  			   int speedo_value, unsigned long max_freq)
+>  {
+> -	const struct rail_alignment *align = &table->alignment;
+>  	int i, ret, dfll_mv, min_mv, max_mv;
+>  
+>  	min_mv = round_voltage(table->min_millivolts, align, UP);
+> @@ -109,8 +109,9 @@ static int build_opp_table(struct device *dev, const struct cvb_table *table,
+>   */
+>  const struct cvb_table *
+>  tegra_cvb_add_opp_table(struct device *dev, const struct cvb_table *tables,
+> -			size_t count, int process_id, int speedo_id,
+> -			int speedo_value, unsigned long max_freq)
+> +			size_t count, struct rail_alignment *align,
+> +			int process_id, int speedo_id, int speedo_value,
+> +			unsigned long max_freq)
+>  {
+>  	size_t i;
+>  	int ret;
+> @@ -124,7 +125,8 @@ tegra_cvb_add_opp_table(struct device *dev, const struct cvb_table *tables,
+>  		if (table->process_id != -1 && table->process_id != process_id)
+>  			continue;
+>  
+> -		ret = build_opp_table(dev, table, speedo_value, max_freq);
+> +		ret = build_opp_table(dev, table, align, speedo_value,
+> +				      max_freq);
+>  		return ret ? ERR_PTR(ret) : table;
+>  	}
+>  
+> diff --git a/drivers/clk/tegra/cvb.h b/drivers/clk/tegra/cvb.h
+> index c1f077993b2a..bcf15a089b93 100644
+> --- a/drivers/clk/tegra/cvb.h
+> +++ b/drivers/clk/tegra/cvb.h
+> @@ -49,7 +49,6 @@ struct cvb_table {
+>  
+>  	int min_millivolts;
+>  	int max_millivolts;
+> -	struct rail_alignment alignment;
+>  
+>  	int speedo_scale;
+>  	int voltage_scale;
+> @@ -59,8 +58,9 @@ struct cvb_table {
+>  
+>  const struct cvb_table *
+>  tegra_cvb_add_opp_table(struct device *dev, const struct cvb_table *cvb_tables,
+> -			size_t count, int process_id, int speedo_id,
+> -			int speedo_value, unsigned long max_freq);
+> +			size_t count, struct rail_alignment *align,
+> +			int process_id, int speedo_id, int speedo_value,
+> +			unsigned long max_freq);
+>  void tegra_cvb_remove_opp_table(struct device *dev,
+>  				const struct cvb_table *table,
+>  				unsigned long max_freq);
 > 
-
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
-
-Cheers
-Jon
 
 -- 
 nvpublic
