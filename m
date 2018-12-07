@@ -2,233 +2,137 @@ Return-Path: <SRS0=jGkl=OQ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 119A8C07E85
-	for <linux-clk@archiver.kernel.org>; Fri,  7 Dec 2018 10:30:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EBBEC07E85
+	for <linux-clk@archiver.kernel.org>; Fri,  7 Dec 2018 11:09:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD6462064D
-	for <linux-clk@archiver.kernel.org>; Fri,  7 Dec 2018 10:30:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD6462064D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=free.fr
+	by mail.kernel.org (Postfix) with ESMTP id 5AA702083D
+	for <linux-clk@archiver.kernel.org>; Fri,  7 Dec 2018 11:09:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AA702083D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725986AbeLGKau (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 7 Dec 2018 05:30:50 -0500
-Received: from smtp3-g21.free.fr ([212.27.42.3]:16191 "EHLO smtp3-g21.free.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725985AbeLGKau (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 7 Dec 2018 05:30:50 -0500
-Received: from [192.168.108.68] (unknown [213.36.7.13])
-        (Authenticated sender: marc.w.gonzalez)
-        by smtp3-g21.free.fr (Postfix) with ESMTPSA id 77AA813F8D4;
-        Fri,  7 Dec 2018 11:30:27 +0100 (CET)
-Subject: Re: [PATCH v2] clk: qcom: smd: Add support for MSM8998 rpm clocks
-To:     Jeffrey Hugo <jhugo@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <1544134310-10227-1-git-send-email-jhugo@codeaurora.org>
-From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
-Message-ID: <be08a9ca-9782-6d10-7c44-523c9e8c56f5@free.fr>
-Date:   Fri, 7 Dec 2018 11:30:27 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        id S1725997AbeLGLJU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 7 Dec 2018 06:09:20 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:36952 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725987AbeLGLJU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Dec 2018 06:09:20 -0500
+Received: by mail-lj1-f195.google.com with SMTP id e5-v6so3213156lja.4;
+        Fri, 07 Dec 2018 03:09:19 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=5n7FOSEyksrh57PJHjGDlxFPGVAgAQo+DVFsEwiRMpk=;
+        b=lhyyjoErkSm8rjS3OUThBXc+/cqiVblm1tQ8PfiR/wA0RA9RLKUjqFdrOr+alTixz7
+         LrU7tpOhGCC/8B0tLk/7x4S6Ga0mF7voTvt7KW7BTzSSTJJPxV18tTi9wTdD5ILJRkyU
+         8Dky5P8EEgfq77gcYYEKZ7qENT+5e+J+GhbCop6nErojvXfMCeJce8Ft6mKGjSo8FXkR
+         AqRWCiBBuKmwn9B99YO4NEDiaXwVcmajPVcXe3KWZ9pK0wRB1L53FbnQdlFtwbh8jAYR
+         ldwl2fdqh8SI+aogLpmU9UE8/JN5iTclBzCFSEyKANc1QEZB1n/lf4J8ER8P1mt/QhQd
+         LZUg==
+X-Gm-Message-State: AA+aEWZPB/z83ak52hnfi/91dmS0+WxTgCUb+yUcTTJcvs2YtLi3eIpc
+        4NhmWVBV1BjiIQgASZR6gdY=
+X-Google-Smtp-Source: AFSGD/Ufo7GqJGm42DR6pVbm7eD6mEnCYjdnJZH/Y4hw9wPEYTprrMmrEseKHgmyetwRmPz6iTCGmg==
+X-Received: by 2002:a2e:974a:: with SMTP id f10-v6mr1211286ljj.61.1544180958271;
+        Fri, 07 Dec 2018 03:09:18 -0800 (PST)
+Received: from localhost.localdomain (84-253-205-125.bb.dnainternet.fi. [84.253.205.125])
+        by smtp.gmail.com with ESMTPSA id x18-v6sm552608lji.27.2018.12.07.03.09.16
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 07 Dec 2018 03:09:17 -0800 (PST)
+Date:   Fri, 7 Dec 2018 13:09:00 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com,
+        corbet@lwn.net, cw00.choi@samsung.com, krzk@kernel.org,
+        b.zolnierkie@samsung.com, mturquette@baylibre.com,
+        sboyd@kernel.org, linux@armlinux.org.uk, pombredanne@nexb.com,
+        sre@kernel.org, vkoul@kernel.org, linux@roeck-us.net, pavel@ucw.cz,
+        sjhuang@iluvatar.ai, andrew.smirnov@gmail.com,
+        djkurtz@chromium.org, akshu.agrawal@amd.com,
+        rafael.j.wysocki@intel.com, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v7 0/3] clk: clkdev add managed lookup registrations
+Message-ID: <cover.1544177090.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
-In-Reply-To: <1544134310-10227-1-git-send-email-jhugo@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 06/12/2018 23:11, Jeffrey Hugo wrote:
+Series adds managed clkdev lookup interfaces and cleans few drivers
 
-> Add rpm smd clocks, PMIC and bus clocks which are required on MSM8998
-> for clients to vote on.
-> 
-> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
-> ---
-> v2
-> -fix compatible ordering nits per Stephen
-> 
->  .../devicetree/bindings/clock/qcom,rpmcc.txt       |  1 +
->  drivers/clk/qcom/clk-smd-rpm.c                     | 62 ++++++++++++++++++++++
->  include/dt-bindings/clock/qcom,rpmcc.h             |  6 +++
->  3 files changed, 69 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-> index 87b4949..944719b 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-> +++ b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-> @@ -16,6 +16,7 @@ Required properties :
->  			"qcom,rpmcc-msm8974", "qcom,rpmcc"
->  			"qcom,rpmcc-apq8064", "qcom,rpmcc"
->  			"qcom,rpmcc-msm8996", "qcom,rpmcc"
-> +			"qcom,rpmcc-msm8998", "qcom,rpmcc"
->  			"qcom,rpmcc-qcs404", "qcom,rpmcc"
->  
->  - #clock-cells : shall contain 1
-> diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
-> index d3aadae..b1f95a9 100644
-> --- a/drivers/clk/qcom/clk-smd-rpm.c
-> +++ b/drivers/clk/qcom/clk-smd-rpm.c
-> @@ -655,10 +655,72 @@ static int clk_smd_rpm_enable_scaling(struct qcom_smd_rpm *rpm)
->  	.num_clks = ARRAY_SIZE(qcs404_clks),
->  };
->  
-> +/* msm8998 */
-> +DEFINE_CLK_SMD_RPM(msm8998, snoc_clk, snoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 1);
-> +DEFINE_CLK_SMD_RPM(msm8998, cnoc_clk, cnoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 2);
-> +DEFINE_CLK_SMD_RPM(msm8998, ce1_clk, ce1_a_clk, QCOM_SMD_RPM_CE_CLK, 0);
-> +DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, div_clk1, div_clk1_a, 0xb);
-> +DEFINE_CLK_SMD_RPM(msm8998, ipa_clk, ipa_a_clk, QCOM_SMD_RPM_IPA_CLK, 0);
-> +DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, bb_clk1, bb_clk1_a, 1);
-> +DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, bb_clk2, bb_clk2_a, 2);
-> +DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8998, bb_clk3_pin, bb_clk3_a_pin, 3);
-> +DEFINE_CLK_SMD_RPM(msm8998, mmssnoc_axi_rpm_clk, mmssnoc_axi_rpm_a_clk,
-> +		   QCOM_SMD_RPM_MMAXI_CLK, 0);
-> +DEFINE_CLK_SMD_RPM(msm8998, aggre1_noc_clk, aggre1_noc_a_clk,
-> +		   QCOM_SMD_RPM_AGGR_CLK, 1);
-> +DEFINE_CLK_SMD_RPM(msm8998, aggre2_noc_clk, aggre2_noc_a_clk,
-> +		   QCOM_SMD_RPM_AGGR_CLK, 2);
-> +DEFINE_CLK_SMD_RPM_QDSS(msm8998, qdss_clk, qdss_a_clk,
-> +			QCOM_SMD_RPM_MISC_CLK, 1);
-> +DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, rf_clk1, rf_clk1_a, 4);
-> +DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8998, rf_clk2_pin, rf_clk2_a_pin, 5);
-> +DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, rf_clk3, rf_clk3_a, 6);
-> +DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8998, rf_clk3_pin, rf_clk3_a_pin, 6);
-> +static struct clk_smd_rpm *msm8998_clks[] = {
-> +	[RPM_SMD_SNOC_CLK] = &msm8998_snoc_clk,
-> +	[RPM_SMD_SNOC_A_CLK] = &msm8998_snoc_a_clk,
-> +	[RPM_SMD_CNOC_CLK] = &msm8998_cnoc_clk,
-> +	[RPM_SMD_CNOC_A_CLK] = &msm8998_cnoc_a_clk,
-> +	[RPM_SMD_CE1_CLK] = &msm8998_ce1_clk,
-> +	[RPM_SMD_CE1_A_CLK] = &msm8998_ce1_a_clk,
-> +	[RPM_SMD_DIV_CLK1] = &msm8998_div_clk1,
-> +	[RPM_SMD_DIV_A_CLK1] = &msm8998_div_clk1_a,
-> +	[RPM_SMD_IPA_CLK] = &msm8998_ipa_clk,
-> +	[RPM_SMD_IPA_A_CLK] = &msm8998_ipa_a_clk,
-> +	[RPM_SMD_BB_CLK1] = &msm8998_bb_clk1,
-> +	[RPM_SMD_BB_CLK1_A] = &msm8998_bb_clk1_a,
-> +	[RPM_SMD_BB_CLK2] = &msm8998_bb_clk2,
-> +	[RPM_SMD_BB_CLK2_A] = &msm8998_bb_clk2_a,
-> +	[RPM_SMD_BB_CLK3_PIN] = &msm8998_bb_clk3_pin,
-> +	[RPM_SMD_BB_CLK3_A_PIN] = &msm8998_bb_clk3_a_pin,
-> +	[RPM_SMD_MMAXI_CLK] = &msm8998_mmssnoc_axi_rpm_clk,
-> +	[RPM_SMD_MMAXI_A_CLK] = &msm8998_mmssnoc_axi_rpm_a_clk,
-> +	[RPM_SMD_AGGR1_NOC_CLK] = &msm8998_aggre1_noc_clk,
-> +	[RPM_SMD_AGGR1_NOC_A_CLK] = &msm8998_aggre1_noc_a_clk,
-> +	[RPM_SMD_AGGR2_NOC_CLK] = &msm8998_aggre2_noc_clk,
-> +	[RPM_SMD_AGGR2_NOC_A_CLK] = &msm8998_aggre2_noc_a_clk,
-> +	[RPM_SMD_QDSS_CLK] = &msm8998_qdss_clk,
-> +	[RPM_SMD_QDSS_A_CLK] = &msm8998_qdss_a_clk,
-> +	[RPM_SMD_RF_CLK1] = &msm8998_rf_clk1,
-> +	[RPM_SMD_RF_CLK1_A] = &msm8998_rf_clk1_a,
-> +	[RPM_SMD_RF_CLK2_PIN] = &msm8998_rf_clk2_pin,
-> +	[RPM_SMD_RF_CLK2_A_PIN] = &msm8998_rf_clk2_a_pin,
-> +	[RPM_SMD_RF_CLK3] = &msm8998_rf_clk3,
-> +	[RPM_SMD_RF_CLK3_A] = &msm8998_rf_clk3_a,
-> +	[RPM_SMD_RF_CLK3_PIN] = &msm8998_rf_clk3_pin,
-> +	[RPM_SMD_RF_CLK3_A_PIN] = &msm8998_rf_clk3_a_pin,
-> +};
-> +
-> +static const struct rpm_smd_clk_desc rpm_clk_msm8998 = {
-> +	.clks = msm8998_clks,
-> +	.num_clks = ARRAY_SIZE(msm8998_clks),
-> +};
-> +
->  static const struct of_device_id rpm_smd_clk_match_table[] = {
->  	{ .compatible = "qcom,rpmcc-msm8916", .data = &rpm_clk_msm8916 },
->  	{ .compatible = "qcom,rpmcc-msm8974", .data = &rpm_clk_msm8974 },
->  	{ .compatible = "qcom,rpmcc-msm8996", .data = &rpm_clk_msm8996 },
-> +	{ .compatible = "qcom,rpmcc-msm8998", .data = &rpm_clk_msm8998 },
->  	{ .compatible = "qcom,rpmcc-qcs404",  .data = &rpm_clk_qcs404  },
->  	{ }
->  };
-> diff --git a/include/dt-bindings/clock/qcom,rpmcc.h b/include/dt-bindings/clock/qcom,rpmcc.h
-> index 3658b0c..81dbd1f 100644
-> --- a/include/dt-bindings/clock/qcom,rpmcc.h
-> +++ b/include/dt-bindings/clock/qcom,rpmcc.h
-> @@ -127,5 +127,11 @@
->  #define RPM_SMD_BIMC_GPU_A_CLK			77
->  #define RPM_SMD_QPIC_CLK			78
->  #define RPM_SMD_QPIC_CLK_A			79
-> +#define RPM_SMD_BB_CLK3_PIN			80
-> +#define RPM_SMD_BB_CLK3_A_PIN			81
-> +#define RPM_SMD_RF_CLK3				82
-> +#define RPM_SMD_RF_CLK3_A			83
-> +#define RPM_SMD_RF_CLK3_PIN			84
-> +#define RPM_SMD_RF_CLK3_A_PIN			85
->  
->  #endif
-> 
+Few clk drivers appear to be leaking clkdev lookup registrations at
+driver remove. The patch series adds devm versions of lookup
+registrations and cleans up few drivers. Driver clean-up patches have
+not been tested as I lack the HW. All testing and comments if
+driver/device removal is even possible for changed drivers is highly
+appreciated. If removal is not possible I will gladly drop the patches
+from series - although leaking lookups may serve as bad example for new
+developers =)
 
-What's the difference between RPM_SMD_LN_BB_CLK and RPM_SMD_BB_CLK1?
+Changed drivers are:
+clk-max77686 and clk-st
 
-$ git grep RPM_SMD_LN_BB_CLK
-arch/arm64/boot/dts/qcom/msm8996.dtsi:                  clocks = <&rpmcc RPM_SMD_LN_BB_CLK>,
-arch/arm64/boot/dts/qcom/msm8996.dtsi:                          <&rpmcc RPM_SMD_LN_BB_CLK>,
-drivers/clk/qcom/clk-smd-rpm.c: [RPM_SMD_LN_BB_CLK] = &msm8996_ln_bb_clk,
-drivers/clk/qcom/clk-smd-rpm.c: [RPM_SMD_LN_BB_CLK] = &qcs404_ln_bb_clk,
-include/dt-bindings/clock/qcom,rpmcc.h:#define RPM_SMD_LN_BB_CLK                        74
+Please note that the patch #2 requires this change to work correctly:
+https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/commit/?h=clk-next&id=05502bf9eb7a7297f5fa6f1d17b169b3d5b53570
 
+Changelog v7:
+- rewmoved already applied of_provider patches and
+  now independent bd718x7 patch from the series.
+- No functional changes.
 
-$ git grep 'RPM_SMD_BB_CLK1\>'
-Documentation/devicetree/bindings/sound/qcom,wcd9335.txt:                <&rpmcc RPM_SMD_BB_CLK1>;
-drivers/clk/qcom/clk-smd-rpm.c: [RPM_SMD_BB_CLK1]               = &msm8916_bb_clk1,
-drivers/clk/qcom/clk-smd-rpm.c: [RPM_SMD_BB_CLK1] = &msm8996_bb_clk1,
-drivers/clk/qcom/clk-smd-rpm.c: [RPM_SMD_BB_CLK1] = &msm8998_bb_clk1,
-include/dt-bindings/clock/qcom,rpmcc.h:#define RPM_SMD_BB_CLK1                          10
+Changelog v6
+- Drop 'devm_of_clk_add_parent_hw_provider'. Change
+  'devm_of_clk_add_hw_provider' to look the parent device node for
+  provider information if device's own node does not contain
+  #clock-cells - property.
+- Add kerneldoc in own patch.
+- Remove NULL checks from devres match function for clkdev releasing
+- Clean styling issues from clkdev.c
 
+Changelog v5
+- Split v4 patch 1. Place clkdev stuff to patch 1 and clk provider to patch 2
+- Remove devm_clk_release_clkdev from devres.txt
+- Added kerneldoc for managed provider registrations.
+- Cleaned styling issues.
 
-Because the downstream kernel defines:
+Changelog v4
+- Add support for ROHM bd718x7 PMIC clock gate. Included in this patch
+  series because it depends on managed interfaces added in patch 1.
 
-DEFINE_CLK_RPM_SMD_XO_BUFFER(ln_bb_clk1, ln_bb_clk1_ao, LN_BB_CLK1_ID);
-DEFINE_CLK_RPM_SMD_XO_BUFFER_PINCTRL(ln_bb_clk1_pin, ln_bb_clk1_pin_ao,
-				     LN_BB_CLK1_PIN_ID);
-DEFINE_CLK_RPM_SMD_XO_BUFFER(ln_bb_clk2, ln_bb_clk2_ao, LN_BB_CLK2_ID);
-DEFINE_CLK_RPM_SMD_XO_BUFFER_PINCTRL(ln_bb_clk2_pin, ln_bb_clk2_pin_ao,
-				     LN_BB_CLK2_PIN_ID);
-DEFINE_CLK_RPM_SMD_XO_BUFFER(ln_bb_clk3, ln_bb_clk3_ao, LN_BB_CLK3_ID);
-DEFINE_CLK_RPM_SMD_XO_BUFFER_PINCTRL(ln_bb_clk3_pin, ln_bb_clk3_pin_ao,
-				     LN_BB_CLK3_PIN_ID);
+Changelog v3
+Address issues spotted by Krzysztof Kozlowski
+- Drop patch 3 for clk-s3c2410-dclk as this device can never be removed
+- Fix indentiation for clk-max77686
+- Rest  of the patches are unchanged.
 
-	CLK_LIST(ln_bb_clk1),
-	CLK_LIST(ln_bb_clk1_ao),
-	CLK_LIST(ln_bb_clk1_pin),
-	CLK_LIST(ln_bb_clk1_pin_ao),
-	CLK_LIST(ln_bb_clk2),
-	CLK_LIST(ln_bb_clk2_ao),
-	CLK_LIST(ln_bb_clk2_pin),
-	CLK_LIST(ln_bb_clk2_pin_ao),
-	CLK_LIST(ln_bb_clk3),
-	CLK_LIST(ln_bb_clk3_ao),
-	CLK_LIST(ln_bb_clk3_pin),
-	CLK_LIST(ln_bb_clk3_pin_ao),
+Changelog v2
+Issue spotted by 0-Day test suite
+- Add a stub function 'devm_of_clk_add_parent_hw_provider' for no OF config.
+- patches 2-8 are unchanged.
 
+This patch series is based on clk-next
 
-While your patch defines
+---
 
-DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, bb_clk1, bb_clk1_a, 1);
-DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, bb_clk2, bb_clk2_a, 2);
-DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8998, bb_clk3_pin, bb_clk3_a_pin, 3);
+Matti Vaittinen (3):
+  clkdev: add managed clkdev lookup registration
+  clk: clk-max77686: Clean clkdev lookup leak and use devm
+  clk: clk-st: avoid clkdev lookup leak at remove
 
-	[RPM_SMD_BB_CLK1] = &msm8998_bb_clk1,
-	[RPM_SMD_BB_CLK1_A] = &msm8998_bb_clk1_a,
-	[RPM_SMD_BB_CLK2] = &msm8998_bb_clk2,
-	[RPM_SMD_BB_CLK2_A] = &msm8998_bb_clk2_a,
-	[RPM_SMD_BB_CLK3_PIN] = &msm8998_bb_clk3_pin,
-	[RPM_SMD_BB_CLK3_A_PIN] = &msm8998_bb_clk3_a_pin,
+ Documentation/driver-model/devres.txt |   1 +
+ drivers/clk/clk-max77686.c            |  28 ++-------
+ drivers/clk/clkdev.c                  | 111 +++++++++++++++++++++++++++-------
+ drivers/clk/x86/clk-st.c              |   3 +-
+ include/linux/clkdev.h                |   4 ++
+ 5 files changed, 101 insertions(+), 46 deletions(-)
 
-
-Regards.
+-- 
+2.14.3
