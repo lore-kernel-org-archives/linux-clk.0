@@ -7,34 +7,34 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59D7FC07E85
-	for <linux-clk@archiver.kernel.org>; Fri,  7 Dec 2018 14:49:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE389C64EB1
+	for <linux-clk@archiver.kernel.org>; Fri,  7 Dec 2018 14:50:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 124D620882
-	for <linux-clk@archiver.kernel.org>; Fri,  7 Dec 2018 14:49:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 708E820882
+	for <linux-clk@archiver.kernel.org>; Fri,  7 Dec 2018 14:50:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="B7lEwn49"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 124D620882
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="IIpMGqKR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 708E820882
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726113AbeLGOtp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 7 Dec 2018 09:49:45 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:3952 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726085AbeLGOtp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Dec 2018 09:49:45 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c0a88850000>; Fri, 07 Dec 2018 06:49:41 -0800
+        id S1726146AbeLGOuG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 7 Dec 2018 09:50:06 -0500
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:14039 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726074AbeLGOuF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Dec 2018 09:50:05 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c0a88900003>; Fri, 07 Dec 2018 06:49:53 -0800
 Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Fri, 07 Dec 2018 06:49:43 -0800
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Fri, 07 Dec 2018 06:50:05 -0800
 X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Fri, 07 Dec 2018 06:49:43 -0800
+        by hqpgpgate101.nvidia.com on Fri, 07 Dec 2018 06:50:05 -0800
 Received: from [10.21.132.148] (10.124.1.5) by HQMAIL101.nvidia.com
  (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 7 Dec
- 2018 14:49:41 +0000
-Subject: Re: [PATCH 11/19] cpufreq: tegra124: do not handle the CPU rail
+ 2018 14:50:02 +0000
+Subject: Re: [PATCH 12/19] cpufreq: tegra124: extend to support Tegra210
 To:     Joseph Lo <josephl@nvidia.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Peter De Schrijver <pdeschrijver@nvidia.com>
@@ -43,14 +43,14 @@ CC:     <linux-arm-kernel@lists.infradead.org>,
         Viresh Kumar <viresh.kumar@linaro.org>,
         <linux-pm@vger.kernel.org>
 References: <20181204092548.3038-1-josephl@nvidia.com>
- <20181204092548.3038-12-josephl@nvidia.com>
+ <20181204092548.3038-13-josephl@nvidia.com>
 From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <71da59ef-fbac-fdce-7348-6a6e23f077e3@nvidia.com>
-Date:   Fri, 7 Dec 2018 14:49:39 +0000
+Message-ID: <6c4618de-e37d-bb53-9480-53395e9bc444@nvidia.com>
+Date:   Fri, 7 Dec 2018 14:50:01 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181204092548.3038-12-josephl@nvidia.com>
+In-Reply-To: <20181204092548.3038-13-josephl@nvidia.com>
 X-Originating-IP: [10.124.1.5]
 X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
  HQMAIL101.nvidia.com (172.20.187.10)
@@ -58,17 +58,17 @@ Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1544194181; bh=+tL8AiT6HRAf1zFonY+kltLKK1HeFjWi5PySaf7+cQw=;
+        t=1544194193; bh=c6mrB6nFh1/+ns+IGUhnFtJN6vEJn2GNZP+XVD+pHJ8=;
         h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
          User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
          X-ClientProxiedBy:Content-Type:Content-Language:
          Content-Transfer-Encoding;
-        b=B7lEwn493TRNz7MkQJN1t1OX81pshpJGMGLmWJQP3c85Ci8A4JEjNhnaVpCHOsVkB
-         b4W3MyoPDNj0pNpO7BWs/81zgcXwCq5O1+oo6boOIVuZmkD9zRJE2YyNIzdoju1dqi
-         cS68GyBpFpTAzMo0JQ3nsdiEnr/jUuNQAOVjDNxpTCKEo8rtHakYxxSXReYoulgthp
-         NB6YQcx3h0Tx75bpk2wO3Vu20efz0Q2OkLtlizEhNO/C3EPTMRV7Av91sIGRS1agu4
-         UUotRIOBwnLZarj6vXiIV0FJ7Jj3Yeq+ryuDW0GCeCQqh7NQxlGm5i5+SA1Wvu8+Ys
-         x4Y1o3qmhvt7Q==
+        b=IIpMGqKRrukPbL2UWVheeTp7NBdLRthEnVAAn0KsxmBj0dEKzsY5XU2QVQrC+zO1V
+         s02dzfWDI8nfLA9KsugBNgFqsbALC1DG6Y1galddSNbIi+vV7uL+yANQujoBlh0sJ/
+         iPQ9KJK1OZJACPykDM7qam4zsYdIJ2XDdZRIJNeF+jwvxufAcdGO6KkxIqV3eL1EO9
+         sVQoEViql7q1L3PqRUMI5Mi2Pnu7WzLjFObTSUh4KnVq5RE988mlTx7XAElSo0u1YV
+         Xpz0q1KE6NF35hJD7V/ik7Xoj227NuXoIqP8Lbxlao9O9MCs4km3F6goNqkzLiRrzn
+         C0+MmpCP4Y11A==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
@@ -76,129 +76,32 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 
 On 04/12/2018 09:25, Joseph Lo wrote:
-> The Tegra124 cpufreq driver has no information to handle the Vdd-CPU
-> rail. So the driver shouldn't handle for the CPU clock switching from
-> DFLL to other PLL clocks. It was designed to work on DFLL clock only,
-> which handle the frequency/voltage scaling in the background. This
-> patch removes the driver dependency of the CPU rail.
+> Tegra210 uses the same methodology as Tegra124 for CPUFreq controlling
+> that based on DFLL clock. So extending this driver to support Tegra210.
 > 
 > Cc: Viresh Kumar <viresh.kumar@linaro.org>
 > Cc: linux-pm@vger.kernel.org
 > Signed-off-by: Joseph Lo <josephl@nvidia.com>
 > ---
->  drivers/cpufreq/Kconfig.arm        |  2 +-
->  drivers/cpufreq/tegra124-cpufreq.c | 26 ++------------------------
->  2 files changed, 3 insertions(+), 25 deletions(-)
+>  drivers/cpufreq/tegra124-cpufreq.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-> index 4e1131ef85ae..a609f8820c47 100644
-> --- a/drivers/cpufreq/Kconfig.arm
-> +++ b/drivers/cpufreq/Kconfig.arm
-> @@ -262,7 +262,7 @@ config ARM_TEGRA20_CPUFREQ
->  
->  config ARM_TEGRA124_CPUFREQ
->  	tristate "Tegra124 CPUFreq support"
-> -	depends on ARCH_TEGRA && CPUFREQ_DT && REGULATOR
-> +	depends on ARCH_TEGRA && CPUFREQ_DT
->  	default y
->  	help
->  	  This adds the CPUFreq driver support for Tegra124 SOCs.
 > diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
-> index 43530254201a..448d00763d00 100644
+> index 448d00763d00..1af955fb715c 100644
 > --- a/drivers/cpufreq/tegra124-cpufreq.c
 > +++ b/drivers/cpufreq/tegra124-cpufreq.c
-> @@ -22,11 +22,9 @@
->  #include <linux/of.h>
->  #include <linux/platform_device.h>
->  #include <linux/pm_opp.h>
-> -#include <linux/regulator/consumer.h>
->  #include <linux/types.h>
+> @@ -159,7 +159,8 @@ static int __init tegra_cpufreq_init(void)
+>  	int ret;
+>  	struct platform_device *pdev;
 >  
->  struct tegra124_cpufreq_priv {
-> -	struct regulator *vdd_cpu_reg;
->  	struct clk *cpu_clk;
->  	struct clk *pllp_clk;
->  	struct clk *pllx_clk;
-> @@ -60,14 +58,6 @@ static int tegra124_cpu_switch_to_dfll(struct tegra124_cpufreq_priv *priv)
->  	return ret;
->  }
->  
-> -static void tegra124_cpu_switch_to_pllx(struct tegra124_cpufreq_priv *priv)
-> -{
-> -	clk_set_parent(priv->cpu_clk, priv->pllp_clk);
-> -	clk_disable_unprepare(priv->dfll_clk);
-> -	regulator_sync_voltage(priv->vdd_cpu_reg);
-> -	clk_set_parent(priv->cpu_clk, priv->pllx_clk);
-> -}
-> -
->  static int tegra124_cpufreq_probe(struct platform_device *pdev)
->  {
->  	struct tegra124_cpufreq_priv *priv;
-> @@ -88,16 +78,10 @@ static int tegra124_cpufreq_probe(struct platform_device *pdev)
->  	if (!np)
+> -	if (!of_machine_is_compatible("nvidia,tegra124"))
+> +	if (!(of_machine_is_compatible("nvidia,tegra124") ||
+> +		of_machine_is_compatible("nvidia,tegra210")))
 >  		return -ENODEV;
 >  
-> -	priv->vdd_cpu_reg = regulator_get(cpu_dev, "vdd-cpu");
-> -	if (IS_ERR(priv->vdd_cpu_reg)) {
-> -		ret = PTR_ERR(priv->vdd_cpu_reg);
-> -		goto out_put_np;
-> -	}
-> -
->  	priv->cpu_clk = of_clk_get_by_name(np, "cpu_g");
->  	if (IS_ERR(priv->cpu_clk)) {
->  		ret = PTR_ERR(priv->cpu_clk);
-> -		goto out_put_vdd_cpu_reg;
-> +		goto out_put_np;
->  	}
->  
->  	priv->dfll_clk = of_clk_get_by_name(np, "dfll");
-> @@ -129,15 +113,13 @@ static int tegra124_cpufreq_probe(struct platform_device *pdev)
->  		platform_device_register_full(&cpufreq_dt_devinfo);
->  	if (IS_ERR(priv->cpufreq_dt_pdev)) {
->  		ret = PTR_ERR(priv->cpufreq_dt_pdev);
-> -		goto out_switch_to_pllx;
-> +		goto out_put_pllp_clk;
->  	}
->  
->  	platform_set_drvdata(pdev, priv);
->  
->  	return 0;
->  
-> -out_switch_to_pllx:
-> -	tegra124_cpu_switch_to_pllx(priv);
->  out_put_pllp_clk:
->  	clk_put(priv->pllp_clk);
->  out_put_pllx_clk:
-> @@ -146,8 +128,6 @@ static int tegra124_cpufreq_probe(struct platform_device *pdev)
->  	clk_put(priv->dfll_clk);
->  out_put_cpu_clk:
->  	clk_put(priv->cpu_clk);
-> -out_put_vdd_cpu_reg:
-> -	regulator_put(priv->vdd_cpu_reg);
->  out_put_np:
->  	of_node_put(np);
->  
-> @@ -159,13 +139,11 @@ static int tegra124_cpufreq_remove(struct platform_device *pdev)
->  	struct tegra124_cpufreq_priv *priv = platform_get_drvdata(pdev);
->  
->  	platform_device_unregister(priv->cpufreq_dt_pdev);
-> -	tegra124_cpu_switch_to_pllx(priv);
->  
->  	clk_put(priv->pllp_clk);
->  	clk_put(priv->pllx_clk);
->  	clk_put(priv->dfll_clk);
->  	clk_put(priv->cpu_clk);
-> -	regulator_put(priv->vdd_cpu_reg);
+>  	/*>
 
-I see what you are saying and while this does appear to be broken, it
-also does not seem right that if we load and unload this driver the CPU
-clock parent will remain as the DFLL clock. Can't we query the voltage
-of the vdd-cpu regulator before we switch and then restore it before we
-switch back?
-
-I am just trying to understand if there is no way to switch back? If not
-then maybe we should not allow this driver to be built as a module and
-remove the removal function altogether.
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
 
 Cheers
 Jon
