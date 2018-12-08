@@ -2,265 +2,164 @@ Return-Path: <SRS0=/4Wq=OR=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD03DC04EB8
-	for <linux-clk@archiver.kernel.org>; Sat,  8 Dec 2018 15:30:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21F4CC67838
+	for <linux-clk@archiver.kernel.org>; Sat,  8 Dec 2018 17:13:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 615DA2083D
-	for <linux-clk@archiver.kernel.org>; Sat,  8 Dec 2018 15:30:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544283001;
-	bh=2hkfujxVfdOfzKnNKIaqz8e01A+D0HMekUzkboHFT0M=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=mxBvXYoPxbRwf0PLHj7m/A0G0vOgsjKQXL2XOLQ3VZZuFQ1rsRIOesUfJgV1cbnzF
-	 7eh/JGd4UyTmls3ii0CVlKhmkU/oJNR7XbnO5X0XiPJqVE3l0R6Mrr+cN2XSl0lovc
-	 FwxMBqDDQsMG5UwaAUxY/+ChUlAnJlYf1GvNeNAo=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 615DA2083D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id DAAFE2083D
+	for <linux-clk@archiver.kernel.org>; Sat,  8 Dec 2018 17:13:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="iF4U0Dsy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAAFE2083D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=googlemail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726153AbeLHPaA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 8 Dec 2018 10:30:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36648 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726147AbeLHPaA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 8 Dec 2018 10:30:00 -0500
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 54047208E7;
-        Sat,  8 Dec 2018 15:29:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544282999;
-        bh=2hkfujxVfdOfzKnNKIaqz8e01A+D0HMekUzkboHFT0M=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=OCjxr2T7wE+NxWoX2GaeXZfaLYO6egbZUKGs9XoEFiPL+DauyRhuBfA303DmDaRdK
-         LPsEduC4yRecIC9rKuGUKV8G4FqQCXy+cKLwoszLV7hH21ult/WnxM11cYDRtiCpr5
-         +UIScHAM17WPUF0hRTuMk4OaRCczaaq3QercDQmA=
-Date:   Sat, 8 Dec 2018 15:29:54 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Mircea Caprioru <mircea.caprioru@analog.com>
-Cc:     <Michael.Hennerich@analog.com>, <knaack.h@gmx.de>,
-        <lars@metafoo.de>, <pmeerw@pmeerw.net>,
-        <gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
-        <linux-iio@vger.kernel.org>, <devel@driverdev.osuosl.org>,
-        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 1/2] staging: iio: adc: ad7192: Add clock for external
- clock reference
-Message-ID: <20181208152954.596529f8@archlinux>
-In-Reply-To: <20181206091052.7644-1-mircea.caprioru@analog.com>
-References: <20181206091052.7644-1-mircea.caprioru@analog.com>
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726239AbeLHRNR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 8 Dec 2018 12:13:17 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:43431 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726152AbeLHRNQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 8 Dec 2018 12:13:16 -0500
+Received: by mail-wr1-f68.google.com with SMTP id r10so6555909wrs.10;
+        Sat, 08 Dec 2018 09:13:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=1CKwmb26jrhBLBt3QpwRPRe3U3/77uADy4gMJnqH2Dc=;
+        b=iF4U0Dsy22CATFhzUilDo3CA4AGa0ooH8buA9bFahQ2WxXGenn7SykJf1aPB5rmjSF
+         mtLq1RBaP/O1lg5oFAU7GePAet5stjS/Zf3Wq+8zEftMGK8CInR2YTtPyT77axgE49QA
+         NNxzGBMMJudHPKOcSD7gakWFY8xX7IHVDLOOY74RHo18nVNrKYFmczYPNbJDn43TH0Wh
+         uWhwNmUHjoFFIxlsHyBHstZAjUAAKMWVNNmmLqtXhz5H1w9L2y4wcnuDcCf0wp/RfM02
+         Wodk2B8gj7L5ZiDsGceyhmLQ3kSSlYts6oX8PG0id50HT4jA6tbpLm2FN9FRUH6PNCyH
+         VR6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=1CKwmb26jrhBLBt3QpwRPRe3U3/77uADy4gMJnqH2Dc=;
+        b=ceEO4tpGRE18GoTQOE14iFKNrtf6NoIsCs/nWyHg81Q0prR4BiQQznFE7KEkN1xntJ
+         O+PecoGhj+Gq/rDUMgOH/cNLNYytqAfUvVgZ9HMKj1JCI9wDv/z6V+uTTpos/lRccKqK
+         EBeXzj8/wcU6HpFb1eK+ap2dlDPyjT3CCp+I5q+F7Q0+VoHnb+JSFapBr5dknuRAgUeN
+         yaDKijhCRQpGzXJjfrltJo+ua9WlaOgY1roSfedz6O9m8Q522G1X0W5g+c5YufgUbvuH
+         2j/xZsToIsZR224hl3sfIhiMswG30H+rUwZWe3x1hybZxXUKizp5OCYIuNSnjSBSyjFb
+         oX/w==
+X-Gm-Message-State: AA+aEWYRVHIxItvJYAtRippxWStgwq/fhRbxHEsr59B1Fm2vdV6MYhaE
+        tP8kdgAgRkFVsKSadH7QPbo=
+X-Google-Smtp-Source: AFSGD/Xt/gYdaEq443dIwgz6+RZMT51zJkRJfreev114eQ/oJxHbAf2Eg1si4RKHoWt1jARc5qOabg==
+X-Received: by 2002:a5d:46c2:: with SMTP id g2mr5313106wrs.49.1544289194507;
+        Sat, 08 Dec 2018 09:13:14 -0800 (PST)
+Received: from blackbox.darklights.net (p200300DCD73FBA00428D5CFFFEB99DB8.dip0.t-ipconnect.de. [2003:dc:d73f:ba00:428d:5cff:feb9:9db8])
+        by smtp.googlemail.com with ESMTPSA id r12sm4995851wrq.3.2018.12.08.09.13.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 08 Dec 2018 09:13:13 -0800 (PST)
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To:     linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        jbrunet@baylibre.com, narmstrong@baylibre.com,
+        khilman@baylibre.com, robh+dt@kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        sboyd@kernel.org, mturquette@baylibre.com,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH 5/5] ARM: dts: meson8b: add the Mali-450 MP2 GPU
+Date:   Sat,  8 Dec 2018 18:12:47 +0100
+Message-Id: <20181208171247.22238-6-martin.blumenstingl@googlemail.com>
+X-Mailer: git-send-email 2.19.2
+In-Reply-To: <20181208171247.22238-1-martin.blumenstingl@googlemail.com>
+References: <20181208171247.22238-1-martin.blumenstingl@googlemail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 6 Dec 2018 11:10:51 +0200
-Mircea Caprioru <mircea.caprioru@analog.com> wrote:
+Add the Mali-450 GPU and it's OPP table for Meson8. The GPU uses two
+pixel processors in this configuration. The OPP table is taken from the
+3.10 vendor kernel which uses the following table:
+  FCLK_DEV5 | 1,     /* 255 Mhz */
+  FCLK_DEV7 | 0,     /* 364 Mhz */
+  FCLK_DEV3 | 1,     /* 425 Mhz */
+  FCLK_DEV5 | 0,     /* 510 Mhz */
+  FCLK_DEV4 | 0,     /* 637.5 Mhz */
+This describes the mux (FCLK_DEVx) and a 0-based divider in the clock
+controller. "FCLK" is "fixed_pll" which is running at 2550MHz.
+The "turbo" setting is described by "turbo_clock = 4" where 4 is the
+index of the table above.
 
-> This patch adds a clock to the state structure of ad7192 for getting the
-> external clock frequency. This modifications is in accordance with clock
-> framework dt bindings documentation.
-> 
-> Signed-off-by: Mircea Caprioru <mircea.caprioru@analog.com>
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+---
+ arch/arm/boot/dts/meson8b.dtsi | 46 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 46 insertions(+)
 
-+cc Rob and the clk list for advise on how to do the binding for this one.
-
-It is basically 2 pins, you can put a clock in on one of them or connect
-a crystal across them.  The driver has to set a register to say which is
-the case.  
-
-Current proposal is two optional clocks (fall back to internal oscillator)
-but that doesn't seem to be commonly done, so I'm wondering if there
-is a 'standard' way to handle this sort of thing.
-
-Thanks,
-
-Jonathan
-
-> ---
->  drivers/staging/iio/adc/ad7192.c | 74 +++++++++++++++++++++-----------
->  drivers/staging/iio/adc/ad7192.h |  2 -
->  2 files changed, 50 insertions(+), 26 deletions(-)
-> 
-> diff --git a/drivers/staging/iio/adc/ad7192.c b/drivers/staging/iio/adc/ad7192.c
-> index acdbc07fd259..8a4e6ede42b3 100644
-> --- a/drivers/staging/iio/adc/ad7192.c
-> +++ b/drivers/staging/iio/adc/ad7192.c
-> @@ -6,6 +6,7 @@
->   * Licensed under the GPL-2.
->   */
->  
-> +#include <linux/clk.h>
->  #include <linux/interrupt.h>
->  #include <linux/device.h>
->  #include <linux/kernel.h>
-> @@ -156,8 +157,9 @@
->  struct ad7192_state {
->  	struct regulator		*avdd;
->  	struct regulator		*dvdd;
-> +	struct clk			*mclk;
->  	u16				int_vref_mv;
-> -	u32				mclk;
-> +	u32				fclk;
->  	u32				f_order;
->  	u32				mode;
->  	u32				conf;
-> @@ -165,6 +167,7 @@ struct ad7192_state {
->  	u8				gpocon;
->  	u8				devid;
->  	struct mutex			lock;	/* protect sensor state */
-> +	u8				clock_sel;
->  
->  	struct ad_sigma_delta		sd;
->  };
-> @@ -250,28 +253,8 @@ static int ad7192_setup(struct ad7192_state *st,
->  		dev_warn(&st->sd.spi->dev, "device ID query failed (0x%X)\n",
->  			 id);
->  
-> -	switch (pdata->clock_source_sel) {
-> -	case AD7192_CLK_INT:
-> -	case AD7192_CLK_INT_CO:
-> -		st->mclk = AD7192_INT_FREQ_MHZ;
-> -		break;
-> -	case AD7192_CLK_EXT_MCLK1_2:
-> -	case AD7192_CLK_EXT_MCLK2:
-> -		if (ad7192_valid_external_frequency(pdata->ext_clk_hz)) {
-> -			st->mclk = pdata->ext_clk_hz;
-> -			break;
-> -		}
-> -		dev_err(&st->sd.spi->dev, "Invalid frequency setting %u\n",
-> -			pdata->ext_clk_hz);
-> -		ret = -EINVAL;
-> -		goto out;
-> -	default:
-> -		ret = -EINVAL;
-> -		goto out;
-> -	}
-> -
->  	st->mode = AD7192_MODE_SEL(AD7192_MODE_IDLE) |
-> -		AD7192_MODE_CLKSRC(pdata->clock_source_sel) |
-> +		AD7192_MODE_CLKSRC(st->clock_sel) |
->  		AD7192_MODE_RATE(480);
->  
->  	st->conf = AD7192_CONF_GAIN(0);
-> @@ -499,7 +482,7 @@ static int ad7192_read_raw(struct iio_dev *indio_dev,
->  			*val -= 273 * ad7192_get_temp_scale(unipolar);
->  		return IIO_VAL_INT;
->  	case IIO_CHAN_INFO_SAMP_FREQ:
-> -		*val = st->mclk /
-> +		*val = st->fclk /
->  			(st->f_order * 1024 * AD7192_MODE_RATE(st->mode));
->  		return IIO_VAL_INT;
->  	}
-> @@ -546,7 +529,7 @@ static int ad7192_write_raw(struct iio_dev *indio_dev,
->  			break;
->  		}
->  
-> -		div = st->mclk / (val * st->f_order * 1024);
-> +		div = st->fclk / (val * st->f_order * 1024);
->  		if (div < 1 || div > 1023) {
->  			ret = -EINVAL;
->  			break;
-> @@ -625,6 +608,42 @@ static const struct iio_chan_spec ad7193_channels[] = {
->  	IIO_CHAN_SOFT_TIMESTAMP(14),
->  };
->  
-> +static int ad7192_clock_select(struct spi_device *spi, struct ad7192_state *st)
-> +{
-> +	int ret;
-> +
-> +	st->clock_sel = AD7192_CLK_EXT_MCLK2;
-> +	st->mclk = devm_clk_get(&spi->dev, "clk");
-> +	if (IS_ERR(st->mclk)) {
-> +		if (PTR_ERR(st->mclk) != -ENOENT)
-> +			return PTR_ERR(st->mclk);
-> +
-> +		/* try xtal option */
-> +		st->mclk = devm_clk_get(&spi->dev, "xtal");
-
-I'm not seeing any other driver using clock naming to distinguish
-between different clock options. 
-
-Which does raise the question of how to do this? 
-
-I think it's probably going to be a single clock as both the external
-clock and the crystal would be connected to the same pins.
-
-
-> +		st->clock_sel = AD7192_CLK_EXT_MCLK1_2;
-> +		if (IS_ERR(st->mclk)) {
-> +			if (PTR_ERR(st->mclk) != -ENOENT)
-> +				return PTR_ERR(st->mclk);
-> +
-> +			/* use internal clock */
-> +			st->clock_sel = AD7192_CLK_INT;
-> +			st->fclk = AD7192_INT_FREQ_MHZ;
-> +		}
-> +	}
-> +	if (st->clock_sel == AD7192_CLK_EXT_MCLK2 ||
-> +	    st->clock_sel == AD7192_CLK_EXT_MCLK1_2) {
-> +		ret = clk_prepare_enable(st->mclk);
-> +		if (ret < 0)
-> +			return ret;
-> +
-> +		st->fclk = clk_get_rate(st->mclk);
-> +		if (!ad7192_valid_external_frequency(st->fclk))
-> +			return -EINVAL;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static int ad7192_probe(struct spi_device *spi)
->  {
->  	const struct ad7192_platform_data *pdata = dev_get_platdata(&spi->dev);
-> @@ -672,6 +691,10 @@ static int ad7192_probe(struct spi_device *spi)
->  		goto error_disable_avdd;
->  	}
->  
-> +	ret = ad7192_clock_select(spi, st);
-> +	if (ret < 0)
-> +		goto error_clk_disable_unprepare;
-> +
->  	voltage_uv = regulator_get_voltage(st->avdd);
->  
->  	if (pdata->vref_mv)
-> @@ -720,6 +743,8 @@ static int ad7192_probe(struct spi_device *spi)
->  
->  error_remove_trigger:
->  	ad_sd_cleanup_buffer_and_trigger(indio_dev);
-> +error_clk_disable_unprepare:
-> +	clk_disable_unprepare(st->mclk);
->  error_disable_dvdd:
->  	regulator_disable(st->dvdd);
->  error_disable_avdd:
-> @@ -735,6 +760,7 @@ static int ad7192_remove(struct spi_device *spi)
->  
->  	iio_device_unregister(indio_dev);
->  	ad_sd_cleanup_buffer_and_trigger(indio_dev);
-> +	clk_disable_unprepare(st->mclk);
->  
->  	regulator_disable(st->dvdd);
->  	regulator_disable(st->avdd);
-> diff --git a/drivers/staging/iio/adc/ad7192.h b/drivers/staging/iio/adc/ad7192.h
-> index 7433a43c2611..3be3ee269ed5 100644
-> --- a/drivers/staging/iio/adc/ad7192.h
-> +++ b/drivers/staging/iio/adc/ad7192.h
-> @@ -33,8 +33,6 @@
->  
->  struct ad7192_platform_data {
->  	u16		vref_mv;
-> -	u8		clock_source_sel;
-> -	u32		ext_clk_hz;
->  	bool		refin2_en;
->  	bool		rej60_en;
->  	bool		sinc3_en;
+diff --git a/arch/arm/boot/dts/meson8b.dtsi b/arch/arm/boot/dts/meson8b.dtsi
+index 5d036842c355..dd498e681939 100644
+--- a/arch/arm/boot/dts/meson8b.dtsi
++++ b/arch/arm/boot/dts/meson8b.dtsi
+@@ -158,6 +158,32 @@
+ 		};
+ 	};
+ 
++	gpu_opp_table: gpu-opp-table {
++		compatible = "operating-points-v2";
++
++		opp-255000000 {
++			opp-hz = /bits/ 64 <255000000>;
++			opp-microvolt = <1150000>;
++		};
++		opp-364300000 {
++			opp-hz = /bits/ 64 <364300000>;
++			opp-microvolt = <1150000>;
++		};
++		opp-425000000 {
++			opp-hz = /bits/ 64 <425000000>;
++			opp-microvolt = <1150000>;
++		};
++		opp-510000000 {
++			opp-hz = /bits/ 64 <510000000>;
++			opp-microvolt = <1150000>;
++		};
++		opp-637500000 {
++			opp-hz = /bits/ 64 <637500000>;
++			opp-microvolt = <1150000>;
++			turbo-mode;
++		};
++	};
++
+ 	pmu {
+ 		compatible = "arm,cortex-a5-pmu";
+ 		interrupts = <GIC_SPI 137 IRQ_TYPE_LEVEL_HIGH>,
+@@ -185,6 +211,26 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+ 		ranges = <0x0 0xd0000000 0x200000>;
++
++		mali: gpu@c0000 {
++			compatible = "amlogic,meson8b-mali", "arm,mali-450";
++			reg = <0xc0000 0x40000>;
++			interrupts = <GIC_SPI 160 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 161 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "gp", "gpmmu", "pp", "pmu",
++					  "pp0", "ppmmu0", "pp1", "ppmmu1";
++			resets = <&reset RESET_MALI>;
++			clocks = <&clkc CLKID_CLK81>, <&clkc CLKID_MALI>;
++			clock-names = "bus", "core";
++			operating-points-v2 = <&gpu_opp_table>;
++			switch-delay = <0xffff>;
++		};
+ 	};
+ }; /* end of / */
+ 
+-- 
+2.19.2
 
