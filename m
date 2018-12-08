@@ -2,109 +2,265 @@ Return-Path: <SRS0=/4Wq=OR=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09A64C07E85
-	for <linux-clk@archiver.kernel.org>; Sat,  8 Dec 2018 00:03:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD03DC04EB8
+	for <linux-clk@archiver.kernel.org>; Sat,  8 Dec 2018 15:30:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0D382054F
-	for <linux-clk@archiver.kernel.org>; Sat,  8 Dec 2018 00:03:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 615DA2083D
+	for <linux-clk@archiver.kernel.org>; Sat,  8 Dec 2018 15:30:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544227396;
-	bh=jBTDkw51DkUqeutehCqzibEpVANKtvX3W7HAKjj6dsQ=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=T5qR7VENfsHKZypLf3wPKJcNxxrTSrMFiERqrK5T3nDey29qRTU3jG9/ntezp9oH3
-	 mnVYzV5rVJ+FuYpmGDAIq9Fa49DNvtPhjiMm3yM5XjZNP3XZU8TCsKZ2FbOLszRuRV
-	 1nLnZrg0ScTJ2j58DWTS6r5S4Lbgkl+Wsi6EDdhE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0D382054F
+	s=default; t=1544283001;
+	bh=2hkfujxVfdOfzKnNKIaqz8e01A+D0HMekUzkboHFT0M=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=mxBvXYoPxbRwf0PLHj7m/A0G0vOgsjKQXL2XOLQ3VZZuFQ1rsRIOesUfJgV1cbnzF
+	 7eh/JGd4UyTmls3ii0CVlKhmkU/oJNR7XbnO5X0XiPJqVE3l0R6Mrr+cN2XSl0lovc
+	 FwxMBqDDQsMG5UwaAUxY/+ChUlAnJlYf1GvNeNAo=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 615DA2083D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726047AbeLHADQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 7 Dec 2018 19:03:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60784 "EHLO mail.kernel.org"
+        id S1726153AbeLHPaA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 8 Dec 2018 10:30:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36648 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726041AbeLHADQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 7 Dec 2018 19:03:16 -0500
-Received: from mail.kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726147AbeLHPaA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 8 Dec 2018 10:30:00 -0500
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 417552054F;
-        Sat,  8 Dec 2018 00:03:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 54047208E7;
+        Sat,  8 Dec 2018 15:29:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544227395;
-        bh=jBTDkw51DkUqeutehCqzibEpVANKtvX3W7HAKjj6dsQ=;
-        h=From:To:Cc:Subject:Date:From;
-        b=v7iSXbtFF/Ed9eSxglTCuWYLREbQwtUJPkrRJS98wJGve2yTyMrU67Bzn88/lTR38
-         w2fNfOUwp6+GyoIx0+k+PeUbE8SWNo34PF0ZcW0qm36ROVEAzv2Nv0m0UXBuJuWDT0
-         LdF8Fecby605Bwf3SstmO/1817kcPrtLkta2V4jA=
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] clk fixes for v4.20-rc6
-Date:   Fri,  7 Dec 2018 16:03:14 -0800
-Message-Id: <20181208000314.180968-1-sboyd@kernel.org>
-X-Mailer: git-send-email 2.20.0.rc2.403.gdbc3b29805-goog
+        s=default; t=1544282999;
+        bh=2hkfujxVfdOfzKnNKIaqz8e01A+D0HMekUzkboHFT0M=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=OCjxr2T7wE+NxWoX2GaeXZfaLYO6egbZUKGs9XoEFiPL+DauyRhuBfA303DmDaRdK
+         LPsEduC4yRecIC9rKuGUKV8G4FqQCXy+cKLwoszLV7hH21ult/WnxM11cYDRtiCpr5
+         +UIScHAM17WPUF0hRTuMk4OaRCczaaq3QercDQmA=
+Date:   Sat, 8 Dec 2018 15:29:54 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Mircea Caprioru <mircea.caprioru@analog.com>
+Cc:     <Michael.Hennerich@analog.com>, <knaack.h@gmx.de>,
+        <lars@metafoo.de>, <pmeerw@pmeerw.net>,
+        <gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
+        <linux-iio@vger.kernel.org>, <devel@driverdev.osuosl.org>,
+        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/2] staging: iio: adc: ad7192: Add clock for external
+ clock reference
+Message-ID: <20181208152954.596529f8@archlinux>
+In-Reply-To: <20181206091052.7644-1-mircea.caprioru@analog.com>
+References: <20181206091052.7644-1-mircea.caprioru@analog.com>
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The following changes since commit 1aefa98b010e9cc7a07046cbcb1237ddad85b708:
+On Thu, 6 Dec 2018 11:10:51 +0200
+Mircea Caprioru <mircea.caprioru@analog.com> wrote:
 
-  clk: qcom: gcc: Fix board clock node name (2018-11-09 14:13:55 -0800)
+> This patch adds a clock to the state structure of ad7192 for getting the
+> external clock frequency. This modifications is in accordance with clock
+> framework dt bindings documentation.
+> 
+> Signed-off-by: Mircea Caprioru <mircea.caprioru@analog.com>
 
-are available in the Git repository at:
++cc Rob and the clk list for advise on how to do the binding for this one.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+It is basically 2 pins, you can put a clock in on one of them or connect
+a crystal across them.  The driver has to set a register to say which is
+the case.  
 
-for you to fetch changes up to 9a43be9cedd516f188e6333d3b43402386723eff:
+Current proposal is two optional clocks (fall back to internal oscillator)
+but that doesn't seem to be commonly done, so I'm wondering if there
+is a 'standard' way to handle this sort of thing.
 
-  clk: zynqmp: Off by one in zynqmp_is_valid_clock() (2018-12-03 09:54:48 -0800)
+Thanks,
 
-----------------------------------------------------------------
-A few clk driver fixes this time:
+Jonathan
 
- - Introduce protected-clock DT binding to fix breakage on qcom sdm845-mtp
-   boards where the qspi clks introduced this merge window cause the
-   firmware on those boards to take down the system if we try to read
-   the clk registers
+> ---
+>  drivers/staging/iio/adc/ad7192.c | 74 +++++++++++++++++++++-----------
+>  drivers/staging/iio/adc/ad7192.h |  2 -
+>  2 files changed, 50 insertions(+), 26 deletions(-)
+> 
+> diff --git a/drivers/staging/iio/adc/ad7192.c b/drivers/staging/iio/adc/ad7192.c
+> index acdbc07fd259..8a4e6ede42b3 100644
+> --- a/drivers/staging/iio/adc/ad7192.c
+> +++ b/drivers/staging/iio/adc/ad7192.c
+> @@ -6,6 +6,7 @@
+>   * Licensed under the GPL-2.
+>   */
+>  
+> +#include <linux/clk.h>
+>  #include <linux/interrupt.h>
+>  #include <linux/device.h>
+>  #include <linux/kernel.h>
+> @@ -156,8 +157,9 @@
+>  struct ad7192_state {
+>  	struct regulator		*avdd;
+>  	struct regulator		*dvdd;
+> +	struct clk			*mclk;
+>  	u16				int_vref_mv;
+> -	u32				mclk;
+> +	u32				fclk;
+>  	u32				f_order;
+>  	u32				mode;
+>  	u32				conf;
+> @@ -165,6 +167,7 @@ struct ad7192_state {
+>  	u8				gpocon;
+>  	u8				devid;
+>  	struct mutex			lock;	/* protect sensor state */
+> +	u8				clock_sel;
+>  
+>  	struct ad_sigma_delta		sd;
+>  };
+> @@ -250,28 +253,8 @@ static int ad7192_setup(struct ad7192_state *st,
+>  		dev_warn(&st->sd.spi->dev, "device ID query failed (0x%X)\n",
+>  			 id);
+>  
+> -	switch (pdata->clock_source_sel) {
+> -	case AD7192_CLK_INT:
+> -	case AD7192_CLK_INT_CO:
+> -		st->mclk = AD7192_INT_FREQ_MHZ;
+> -		break;
+> -	case AD7192_CLK_EXT_MCLK1_2:
+> -	case AD7192_CLK_EXT_MCLK2:
+> -		if (ad7192_valid_external_frequency(pdata->ext_clk_hz)) {
+> -			st->mclk = pdata->ext_clk_hz;
+> -			break;
+> -		}
+> -		dev_err(&st->sd.spi->dev, "Invalid frequency setting %u\n",
+> -			pdata->ext_clk_hz);
+> -		ret = -EINVAL;
+> -		goto out;
+> -	default:
+> -		ret = -EINVAL;
+> -		goto out;
+> -	}
+> -
+>  	st->mode = AD7192_MODE_SEL(AD7192_MODE_IDLE) |
+> -		AD7192_MODE_CLKSRC(pdata->clock_source_sel) |
+> +		AD7192_MODE_CLKSRC(st->clock_sel) |
+>  		AD7192_MODE_RATE(480);
+>  
+>  	st->conf = AD7192_CONF_GAIN(0);
+> @@ -499,7 +482,7 @@ static int ad7192_read_raw(struct iio_dev *indio_dev,
+>  			*val -= 273 * ad7192_get_temp_scale(unipolar);
+>  		return IIO_VAL_INT;
+>  	case IIO_CHAN_INFO_SAMP_FREQ:
+> -		*val = st->mclk /
+> +		*val = st->fclk /
+>  			(st->f_order * 1024 * AD7192_MODE_RATE(st->mode));
+>  		return IIO_VAL_INT;
+>  	}
+> @@ -546,7 +529,7 @@ static int ad7192_write_raw(struct iio_dev *indio_dev,
+>  			break;
+>  		}
+>  
+> -		div = st->mclk / (val * st->f_order * 1024);
+> +		div = st->fclk / (val * st->f_order * 1024);
+>  		if (div < 1 || div > 1023) {
+>  			ret = -EINVAL;
+>  			break;
+> @@ -625,6 +608,42 @@ static const struct iio_chan_spec ad7193_channels[] = {
+>  	IIO_CHAN_SOFT_TIMESTAMP(14),
+>  };
+>  
+> +static int ad7192_clock_select(struct spi_device *spi, struct ad7192_state *st)
+> +{
+> +	int ret;
+> +
+> +	st->clock_sel = AD7192_CLK_EXT_MCLK2;
+> +	st->mclk = devm_clk_get(&spi->dev, "clk");
+> +	if (IS_ERR(st->mclk)) {
+> +		if (PTR_ERR(st->mclk) != -ENOENT)
+> +			return PTR_ERR(st->mclk);
+> +
+> +		/* try xtal option */
+> +		st->mclk = devm_clk_get(&spi->dev, "xtal");
 
- - Fix a couple off-by-one errors found by Dan Carpenter
+I'm not seeing any other driver using clock naming to distinguish
+between different clock options. 
 
- - Handle failure in zynq fixed factor clk driver to avoid using
-   uninitialized data
+Which does raise the question of how to do this? 
 
-----------------------------------------------------------------
-Bjorn Andersson (1):
-      arm64: dts: qcom: sdm845-mtp: Mark protected gcc clocks
+I think it's probably going to be a single clock as both the external
+clock and the crystal would be connected to the same pins.
 
-Dan Carpenter (3):
-      clk: mvebu: Off by one bugs in cp110_of_clk_get()
-      clk: mmp: Off by one in mmp_clk_add()
-      clk: zynqmp: Off by one in zynqmp_is_valid_clock()
 
-Rajan Vaja (1):
-      clk: zynqmp: handle fixed factor param query error
+> +		st->clock_sel = AD7192_CLK_EXT_MCLK1_2;
+> +		if (IS_ERR(st->mclk)) {
+> +			if (PTR_ERR(st->mclk) != -ENOENT)
+> +				return PTR_ERR(st->mclk);
+> +
+> +			/* use internal clock */
+> +			st->clock_sel = AD7192_CLK_INT;
+> +			st->fclk = AD7192_INT_FREQ_MHZ;
+> +		}
+> +	}
+> +	if (st->clock_sel == AD7192_CLK_EXT_MCLK2 ||
+> +	    st->clock_sel == AD7192_CLK_EXT_MCLK1_2) {
+> +		ret = clk_prepare_enable(st->mclk);
+> +		if (ret < 0)
+> +			return ret;
+> +
+> +		st->fclk = clk_get_rate(st->mclk);
+> +		if (!ad7192_valid_external_frequency(st->fclk))
+> +			return -EINVAL;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static int ad7192_probe(struct spi_device *spi)
+>  {
+>  	const struct ad7192_platform_data *pdata = dev_get_platdata(&spi->dev);
+> @@ -672,6 +691,10 @@ static int ad7192_probe(struct spi_device *spi)
+>  		goto error_disable_avdd;
+>  	}
+>  
+> +	ret = ad7192_clock_select(spi, st);
+> +	if (ret < 0)
+> +		goto error_clk_disable_unprepare;
+> +
+>  	voltage_uv = regulator_get_voltage(st->avdd);
+>  
+>  	if (pdata->vref_mv)
+> @@ -720,6 +743,8 @@ static int ad7192_probe(struct spi_device *spi)
+>  
+>  error_remove_trigger:
+>  	ad_sd_cleanup_buffer_and_trigger(indio_dev);
+> +error_clk_disable_unprepare:
+> +	clk_disable_unprepare(st->mclk);
+>  error_disable_dvdd:
+>  	regulator_disable(st->dvdd);
+>  error_disable_avdd:
+> @@ -735,6 +760,7 @@ static int ad7192_remove(struct spi_device *spi)
+>  
+>  	iio_device_unregister(indio_dev);
+>  	ad_sd_cleanup_buffer_and_trigger(indio_dev);
+> +	clk_disable_unprepare(st->mclk);
+>  
+>  	regulator_disable(st->dvdd);
+>  	regulator_disable(st->avdd);
+> diff --git a/drivers/staging/iio/adc/ad7192.h b/drivers/staging/iio/adc/ad7192.h
+> index 7433a43c2611..3be3ee269ed5 100644
+> --- a/drivers/staging/iio/adc/ad7192.h
+> +++ b/drivers/staging/iio/adc/ad7192.h
+> @@ -33,8 +33,6 @@
+>  
+>  struct ad7192_platform_data {
+>  	u16		vref_mv;
+> -	u8		clock_source_sel;
+> -	u32		ext_clk_hz;
+>  	bool		refin2_en;
+>  	bool		rej60_en;
+>  	bool		sinc3_en;
 
-Stephen Boyd (3):
-      dt-bindings: clk: Introduce 'protected-clocks' property
-      clk: qcom: Support 'protected-clocks' property
-      Merge branch 'clk-protected-binding' into clk-fixes
-
- .../devicetree/bindings/clock/clock-bindings.txt       | 16 ++++++++++++++++
- arch/arm64/boot/dts/qcom/sdm845-mtp.dts                |  6 ++++++
- drivers/clk/mmp/clk.c                                  |  2 +-
- drivers/clk/mvebu/cp110-system-controller.c            |  4 ++--
- drivers/clk/qcom/common.c                              | 18 ++++++++++++++++++
- drivers/clk/zynqmp/clkc.c                              |  5 ++++-
- 6 files changed, 47 insertions(+), 4 deletions(-)
-
--- 
-Sent by a computer through tubes
