@@ -1,72 +1,77 @@
-Return-Path: <SRS0=/4Wq=OR=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=YnS5=OS=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AE92C04EB8
-	for <linux-clk@archiver.kernel.org>; Sat,  8 Dec 2018 19:50:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF8FEC07E85
+	for <linux-clk@archiver.kernel.org>; Sun,  9 Dec 2018 15:10:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F6ED2081F
-	for <linux-clk@archiver.kernel.org>; Sat,  8 Dec 2018 19:50:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544298603;
-	bh=XytNLpwKLhY5lB7JcrV7e18SjlzXaxG1fveYNBReJ2w=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=lmwdXyPmU6h7UMvk/P5VaCdFuLyfi/Q0XiCtmPAQ5oKpzzEam4D5JklE+Q3c9nWI6
-	 ayzFULhPGfZEnMPBYnqyP0wmreHz5NBvUkE38gFlq5LH+aLGPaGNcIMDtpwOkzY3qd
-	 ndm6UDcayOa5kQLRpmI4P4VBxstPuorhyse3H0YU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F6ED2081F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 9F44320672
+	for <linux-clk@archiver.kernel.org>; Sun,  9 Dec 2018 15:10:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F44320672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726193AbeLHTuC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 8 Dec 2018 14:50:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53178 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726189AbeLHTuC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 8 Dec 2018 14:50:02 -0500
-Subject: Re: [GIT PULL] clk fixes for v4.20-rc6
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544298601;
-        bh=XytNLpwKLhY5lB7JcrV7e18SjlzXaxG1fveYNBReJ2w=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=QrPS0YbX6YRql2cbG4p301pHwZICTsmS4K3N7CxXjS7iuoPED6WBsE3j7APrmLBni
-         tuWOew0C/pp5TaTaV2g55hl2Ztu8YXYg2MeWFiVz+9nNMidejIqg8+auIzJ+I587U+
-         Z4JVx9KDPiO8AZfgbm/lUkAAoDK3m4bcI0ieuQi4=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20181208000314.180968-1-sboyd@kernel.org>
-References: <20181208000314.180968-1-sboyd@kernel.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20181208000314.180968-1-sboyd@kernel.org>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git
- tags/clk-fixes-for-linus
-X-PR-Tracked-Commit-Id: 9a43be9cedd516f188e6333d3b43402386723eff
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 570c9139c358d45ab4d52fb0c4e478e2bd7123a2
-Message-Id: <20181208195001.26881.95048.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
-Date:   Sat, 08 Dec 2018 19:50:01 +0000
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        id S1726246AbeLIPKB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 9 Dec 2018 10:10:01 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:46736 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726227AbeLIPKB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 9 Dec 2018 10:10:01 -0500
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1gW0h7-0001cd-C0; Sun, 09 Dec 2018 15:08:33 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][clk-next] clk: imx: remove redundant initialization of ret to zero
+Date:   Sun,  9 Dec 2018 15:08:32 +0000
+Message-Id: <20181209150832.9366-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.19.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The pull request you sent on Fri,  7 Dec 2018 16:03:14 -0800:
+From: Colin Ian King <colin.king@canonical.com>
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+The initialization of ret is redundant as it is being re-assigned to
+the return value from the call to imx8m_clk_composite_compute_dividers.
+Clean this up by removing the initialization.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/570c9139c358d45ab4d52fb0c4e478e2bd7123a2
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/clk/imx/clk-composite-8m.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thank you!
-
+diff --git a/drivers/clk/imx/clk-composite-8m.c b/drivers/clk/imx/clk-composite-8m.c
+index 6d9d3714b4df..527ade1d6933 100644
+--- a/drivers/clk/imx/clk-composite-8m.c
++++ b/drivers/clk/imx/clk-composite-8m.c
+@@ -93,7 +93,7 @@ static int imx8m_clk_composite_divider_set_rate(struct clk_hw *hw,
+ 	unsigned long flags = 0;
+ 	int prediv_value;
+ 	int div_value;
+-	int ret = 0;
++	int ret;
+ 	u32 val;
+ 
+ 	ret = imx8m_clk_composite_compute_dividers(rate, parent_rate,
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+2.19.1
+
