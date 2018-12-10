@@ -2,146 +2,78 @@ Return-Path: <SRS0=Ck/k=OT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF877C65BAF
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Dec 2018 07:34:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4F5CC04EB8
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Dec 2018 08:15:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E4EE20865
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Dec 2018 07:34:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E4EE20865
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 5D6A020855
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Dec 2018 08:15:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544429748;
+	bh=5y3zc/+2hkhN1mF9U7YAwTWZDQrnbdgBDNip+gKr0+M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=VPA4XxSDUPdiWQMXR9QoMldT0XmppcoFieOV+gRta2803WXChKC9NaQg3+0ASM5oR
+	 niRRbj5fshNK790AW8K9sO9uUGhKcZFM4knSl5aVvHnjAUs4kX+lgMtaZNFeaIupNL
+	 seTn/Bd9paoxCxeReoI8uKuvq2BUh25JI0JOVl58=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D6A020855
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726158AbeLJHc4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Dec 2018 02:32:56 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:24087 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726029AbeLJHc4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Dec 2018 02:32:56 -0500
-X-UUID: 8ef88177eb224210b3bc58ca81884f86-20181210
-X-UUID: 8ef88177eb224210b3bc58ca81884f86-20181210
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
-        (envelope-from <weiyi.lu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1330390238; Mon, 10 Dec 2018 15:32:52 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 10 Dec 2018 15:32:51 +0800
-Received: from mtkslt210.mediatek.inc (10.21.14.14) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 10 Dec 2018 15:32:51 +0800
-From:   Weiyi Lu <weiyi.lu@mediatek.com>
-To:     Nicolas Boichat <drinkcat@chromium.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Rob Herring <robh@kernel.org>
-CC:     James Liao <jamesjj.liao@mediatek.com>,
-        Fan Chen <fan.chen@mediatek.com>,
+        id S1726146AbeLJIPs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Dec 2018 03:15:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47404 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726029AbeLJIPr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 10 Dec 2018 03:15:47 -0500
+Received: from dragon (61-216-91-114.HINET-IP.hinet.net [61.216.91.114])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EBF1B2082F;
+        Mon, 10 Dec 2018 08:15:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544429747;
+        bh=5y3zc/+2hkhN1mF9U7YAwTWZDQrnbdgBDNip+gKr0+M=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=aNBpfdX4mjxl+6UK2W1FrAKhGAx3vYd/VmOWLDiTtyR+yVlSJphsGs9WUb9jgwYE+
+         efFNr1sfVQLfQ2nkaxhS6l0lnrezF5Ahg17HKjljYBsCcrXJbIyjMkF3Sp6Mrq1KJb
+         iZKFr3QF3Qo5WbskeA6hx+gbx82kwXe+OncexzRw=
+Date:   Mon, 10 Dec 2018 16:14:56 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        Aisheng DONG <aisheng.dong@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <srv_heupstream@mediatek.com>, <stable@vger.kernel.org>,
-        Weiyi Lu <weiyi.lu@mediatek.com>,
-        Owen Chen <owen.chen@mediatek.com>
-Subject: [PATCH v3 03/12] clk: mediatek: add configurable pcwibits and fmin to mtk_pll_data
-Date:   Mon, 10 Dec 2018 15:32:31 +0800
-Message-ID: <20181210073240.32278-5-weiyi.lu@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20181210073240.32278-1-weiyi.lu@mediatek.com>
-References: <20181210073240.32278-1-weiyi.lu@mediatek.com>
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Jacky Bai <ping.bai@nxp.com>, dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH V6 0/9] clk: add imx7ulp clk support
+Message-ID: <20181210081454.GQ3987@dragon>
+References: <1542200198-3017-1-git-send-email-aisheng.dong@nxp.com>
+ <154386550302.88331.785218354920872757@swboyd.mtv.corp.google.com>
+ <AM0PR04MB42111FFF525D6EC5D785692380AF0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+ <154403886196.88331.15597466595875847820@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <154403886196.88331.15597466595875847820@swboyd.mtv.corp.google.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Owen Chen <owen.chen@mediatek.com>
+On Wed, Dec 05, 2018 at 11:41:01AM -0800, Stephen Boyd wrote:
+> No worries, I fixed it up and merged to clk-next.
 
-1. pcwibits: The integer bits of pcw for plls is extend to 8 bits,
-   add a variable to indicate this change and
-   backward-compatible.
-2. fmin: The pll freqency lower-bound is vary from 1GMhz to
-   1.5Ghz, add a variable to indicate platform-dependent.
+Hi Stephen,
 
-Signed-off-by: Owen Chen <owen.chen@mediatek.com>
-Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
-Acked-by: Sean Wang <sean.wang@kernel.org>
----
- drivers/clk/mediatek/clk-mtk.h |  2 ++
- drivers/clk/mediatek/clk-pll.c | 12 +++++++++---
- 2 files changed, 11 insertions(+), 3 deletions(-)
+In order to send imx7ulp device tree for 4.21, I pulled branch
+clk-imx7ulp into IMX tree to resolve the dependency on clock ID
+definitions.  So please keep the branch stable, thanks.
 
-diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mtk.h
-index f83c2bbb677e..11b5517903d0 100644
---- a/drivers/clk/mediatek/clk-mtk.h
-+++ b/drivers/clk/mediatek/clk-mtk.h
-@@ -214,8 +214,10 @@ struct mtk_pll_data {
- 	unsigned int flags;
- 	const struct clk_ops *ops;
- 	u32 rst_bar_mask;
-+	unsigned long fmin;
- 	unsigned long fmax;
- 	int pcwbits;
-+	int pcwibits;
- 	uint32_t pcw_reg;
- 	int pcw_shift;
- 	const struct mtk_pll_div_table *div_table;
-diff --git a/drivers/clk/mediatek/clk-pll.c b/drivers/clk/mediatek/clk-pll.c
-index f0ff5f535c7e..81400601f107 100644
---- a/drivers/clk/mediatek/clk-pll.c
-+++ b/drivers/clk/mediatek/clk-pll.c
-@@ -32,6 +32,8 @@
- #define AUDPLL_TUNER_EN		BIT(31)
- 
- #define POSTDIV_MASK		0x7
-+
-+/* default 7 bits integer, can be overridden with pcwibits. */
- #define INTEGER_BITS		7
- 
- /*
-@@ -69,11 +71,13 @@ static unsigned long __mtk_pll_recalc_rate(struct mtk_clk_pll *pll, u32 fin,
- {
- 	int pcwbits = pll->data->pcwbits;
- 	int pcwfbits;
-+	int ibits;
- 	u64 vco;
- 	u8 c = 0;
- 
- 	/* The fractional part of the PLL divider. */
--	pcwfbits = pcwbits > INTEGER_BITS ? pcwbits - INTEGER_BITS : 0;
-+	ibits = pll->data->pcwibits ? pll->data->pcwibits : INTEGER_BITS;
-+	pcwfbits = pcwbits > ibits ? pcwbits - ibits : 0;
- 
- 	vco = (u64)fin * pcw;
- 
-@@ -167,9 +171,10 @@ static void mtk_pll_set_rate_regs(struct mtk_clk_pll *pll, u32 pcw,
- static void mtk_pll_calc_values(struct mtk_clk_pll *pll, u32 *pcw, u32 *postdiv,
- 		u32 freq, u32 fin)
- {
--	unsigned long fmin = 1000 * MHZ;
-+	unsigned long fmin = pll->data->fmin ? pll->data->fmin : (1000 * MHZ);
- 	const struct mtk_pll_div_table *div_table = pll->data->div_table;
- 	u64 _pcw;
-+	int ibits;
- 	u32 val;
- 
- 	if (freq > pll->data->fmax)
-@@ -193,7 +198,8 @@ static void mtk_pll_calc_values(struct mtk_clk_pll *pll, u32 *pcw, u32 *postdiv,
- 	}
- 
- 	/* _pcw = freq * postdiv / fin * 2^pcwfbits */
--	_pcw = ((u64)freq << val) << (pll->data->pcwbits - INTEGER_BITS);
-+	ibits = pll->data->pcwibits ? pll->data->pcwibits : INTEGER_BITS;
-+	_pcw = ((u64)freq << val) << (pll->data->pcwbits - ibits);
- 	do_div(_pcw, fin);
- 
- 	*pcw = (u32)_pcw;
--- 
-2.18.0
-
+Shawn
