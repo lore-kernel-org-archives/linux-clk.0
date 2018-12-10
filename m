@@ -4,56 +4,56 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94F06C5CFFE
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Dec 2018 16:18:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 282B8C5CFFE
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Dec 2018 16:18:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5864020672
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Dec 2018 16:18:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E2A3F20672
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Dec 2018 16:18:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="S6PS8uPD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5864020672
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="bdtJzKSo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2A3F20672
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728652AbeLJQSI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Dec 2018 11:18:08 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:36529 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728647AbeLJQSG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Dec 2018 11:18:06 -0500
-Received: by mail-wm1-f66.google.com with SMTP id a18so11946427wmj.1
-        for <linux-clk@vger.kernel.org>; Mon, 10 Dec 2018 08:18:05 -0800 (PST)
+        id S1728647AbeLJQSh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Dec 2018 11:18:37 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:46981 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728596AbeLJQSI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Dec 2018 11:18:08 -0500
+Received: by mail-wr1-f68.google.com with SMTP id l9so11041812wrt.13
+        for <linux-clk@vger.kernel.org>; Mon, 10 Dec 2018 08:18:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=DaE2bcL6r+p/M15eQzTefkij1Q0qgITroLCaQhT54ts=;
-        b=S6PS8uPD8o5uagR8UnFFV5omwXh05Mz44ipN7Z9aiXIlDLaDRYzk2Jj/QB6wdZGifY
-         UfH6mmYsN3/xenatx9Yp6xZ6SrIX2kOaNglIrA4UwTpP6kGP3k/6TrHj05Ho1hEiBJLg
-         KEwN29zz3nVhYewi3bpIULmuRTEgscTShjO4I=
+        bh=00q3XfiQq5Un+1gbOZybpEVXgQFaLUYl4K2oxVIJvfo=;
+        b=bdtJzKSohaqs/xFQ2lRdqluAHitNCxTJ1T6qCPzDp+8cSpK9Aw/9HNW92lxNV7Vvka
+         E4MU+osHjfuP/ALbPKdi66NNY2T/cjiBTxu/yeFbZ3cIRY3t8oSic3Ni78g7wAHTxlue
+         pGlOkVwv0gak1VI8qe1BqgCfWDpDW3tBJLUEY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=DaE2bcL6r+p/M15eQzTefkij1Q0qgITroLCaQhT54ts=;
-        b=pwWSt6cTTIQySbJdrXGKdo1IdeVjCo188oAJmqE1oMWzjDU/Q5rMR/P/5u6rQBp43X
-         32wS9Bkk+pCN3R6TSWbv+dEcaF1ELWLklO/VglPacmQZMjj3HHO7zehGxHmjtKVu818Y
-         5FOEF02Nlxnl0VMf9+xck/PO8rAWWCVrW6MDN43VN4uex0Drcr7Hf3M4YvSTx1n8WVQE
-         HKyFwQPm4d0NMRvSj3VysThcgU7znnE/Ck9CO6uyBkjTwWJvUQZRO+w3z3QYHkgz5f+D
-         4y86a+RQnwrHHzO68y/Uj84t3zY57tV7vfxckJ8kIv6WNP6m3u2qyhPPtHg5rWFpXlww
-         XawA==
-X-Gm-Message-State: AA+aEWbELp1mH7TTpE8AZDfAb1OO5SmHwHHSNt2Rp9UiUT1Te2jBH6hm
-        O32eeSx5HAxIyp2CW25SLLyzcg==
-X-Google-Smtp-Source: AFSGD/VZAupYbQ9LuzdN+x/pfuCVOroCGUxCmBhiF84wmW8VVo6bObaVkTtxkS+buZnlKVFmY0nK5g==
-X-Received: by 2002:a1c:9dcc:: with SMTP id g195mr10789931wme.153.1544458684950;
-        Mon, 10 Dec 2018 08:18:04 -0800 (PST)
+        bh=00q3XfiQq5Un+1gbOZybpEVXgQFaLUYl4K2oxVIJvfo=;
+        b=Aw+une8yh3ksVZVd2f/kAqXdJBHqtxiaGUmx2cSVpX1wvSWbCzSa1Lp7KbcWXHFpFn
+         zrBRP8Bk2DJw0Zap8pPGWjgvCLdP8fHj1+1CiZs9tlHKgp7zsZevauWaRICzINuZ15oh
+         oXAbH6GIDxbhzcUSlgo0//PRtBDTY8xDzRrtlZnIR2t7IFuVleY8/Bt3vJtaxnKwS0Om
+         Lb0voF5eB118wxTqlmLBGaYn9GphOSkEOZNOAJFxSi0Ox0KvUr6mgSXJl6st2c5saeCV
+         VdzAg/ipQUTwEm4yPkHcDYxuQx2wQfibReGfiGc+OPXY08Ccfie6mw1lQX2hfzvTqdNk
+         ZAIg==
+X-Gm-Message-State: AA+aEWYlDRmz4QnaNTow8cXiSr4YomeT6P+MDN8DJL3tdrm+kTsQ04D5
+        ZfSSI7fQX+MOZ0M8Tt0d2aUfKA==
+X-Google-Smtp-Source: AFSGD/WIIhGNAtofTDEjWfZNJq8NHZ5r84pdS+Vg4KRajzLQ+W2qdsgCoQZTkL+O2cEpDZQpEY9rfg==
+X-Received: by 2002:adf:a28d:: with SMTP id s13mr11073625wra.100.1544458686730;
+        Mon, 10 Dec 2018 08:18:06 -0800 (PST)
 Received: from localhost.localdomain (ip-162-59.sn-213-198.clouditalia.com. [213.198.162.59])
-        by smtp.gmail.com with ESMTPSA id b13sm8397503wrn.28.2018.12.10.08.18.03
+        by smtp.gmail.com with ESMTPSA id b13sm8397503wrn.28.2018.12.10.08.18.05
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Dec 2018 08:18:04 -0800 (PST)
+        Mon, 10 Dec 2018 08:18:05 -0800 (PST)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Chen-Yu Tsai <wens@csie.org>,
@@ -65,9 +65,9 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-sunxi <linux-sunxi@googlegroups.com>,
         linux-amarula@amarulasolutions.com,
         Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v5 12/17] drm/sun4i: sun6i_mipi_dsi: Set proper vblk timing calculation
-Date:   Mon, 10 Dec 2018 21:47:24 +0530
-Message-Id: <20181210161729.29720-13-jagan@amarulasolutions.com>
+Subject: [PATCH v5 13/17] drm/sun4i: sun6i_mipi_dsi: Add support for VCC-DSI voltage regulator
+Date:   Mon, 10 Dec 2018 21:47:25 +0530
+Message-Id: <20181210161729.29720-14-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 In-Reply-To: <20181210161729.29720-1-jagan@amarulasolutions.com>
 References: <20181210161729.29720-1-jagan@amarulasolutions.com>
@@ -78,72 +78,78 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Unlike hblk, the vblk timings should follow an equation to compute
-the desired value for lane 4 devices and rest of devices it would be 0.
+Some boards have VCC-DSI pin connected to voltage regulator which may
+not be turned on by default.
 
-BSP code from BPI-M64-bsp is computing vblk as for 4-lane devices
-(from linux-sunxi
-drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c)
-
-tmp = (ht*dsi_pixel_bits[format]/8)*vt-(4+dsi_hblk+2);
-dsi_vblk = (lane-tmp%lane);
-
-So, update the vblk timing calculation accordingly.
-
-Tested on 2-lane, 4-lane MIPI-DSI LCD panels.
+Add support for such boards by adding voltage regulator handling code to
+MIPI DSI driver.
 
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
- drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 29 +++++++++++++++++++-------
- 1 file changed, 22 insertions(+), 7 deletions(-)
+ drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 14 ++++++++++++++
+ drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h |  3 +++
+ 2 files changed, 17 insertions(+)
 
 diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-index d8947be92f9d..cbcef7bf7681 100644
+index cbcef7bf7681..a87b65fff0e0 100644
 --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
 +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-@@ -355,6 +355,27 @@ static void sun6i_dsi_inst_init(struct sun6i_dsi *dsi,
- 		     SUN6I_DSI_INST_JUMP_CFG_NUM(1));
- };
+@@ -1023,6 +1023,12 @@ static int sun6i_dsi_probe(struct platform_device *pdev)
+ 		return PTR_ERR(base);
+ 	}
  
-+static u16 sun6i_dsi_get_timings_vblk(struct sun6i_dsi *dsi,
-+				      struct drm_display_mode *mode, u16 hblk)
-+{
-+	struct mipi_dsi_device *device = dsi->device;
-+	unsigned int Bpp = mipi_dsi_pixel_format_to_bpp(device->format) / 8;
-+	int tmp;
++	dsi->regulator = devm_regulator_get(dev, "vcc-dsi");
++	if (IS_ERR(dsi->regulator)) {
++		dev_err(dev, "Couldn't get VCC-DSI supply\n");
++		return PTR_ERR(dsi->regulator);
++	}
 +
-+	if (device->lanes != 4)
-+		return 0;
-+
-+	/*
-+	 * The vertical blank is set using a blanking packet (4 bytes +
-+	 * payload + 2 bytes). Its minimal size is therefore 6 bytes
-+	 */
-+#define VBLK_PACKET_OVERHEAD	6
-+	tmp = (mode->htotal * Bpp) * mode->vtotal -
-+	      (hblk + VBLK_PACKET_OVERHEAD);
-+
-+	return (device->lanes - tmp % device->lanes);
-+}
-+
- static u16 sun6i_dsi_get_video_start_delay(struct sun6i_dsi *dsi,
- 					   struct drm_display_mode *mode)
+ 	dsi->regs = devm_regmap_init_mmio_clk(dev, "bus", base,
+ 					      &sun6i_dsi_regmap_config);
+ 	if (IS_ERR(dsi->regs)) {
+@@ -1104,6 +1110,13 @@ static int sun6i_dsi_remove(struct platform_device *pdev)
+ static int __maybe_unused sun6i_dsi_runtime_resume(struct device *dev)
  {
-@@ -503,13 +524,7 @@ static void sun6i_dsi_setup_timings(struct sun6i_dsi *dsi,
- 		   (mode->htotal - (mode->hsync_end - mode->hsync_start)) *
- 		   Bpp - HBLK_PACKET_OVERHEAD);
+ 	struct sun6i_dsi *dsi = dev_get_drvdata(dev);
++	int err;
++
++	err = regulator_enable(dsi->regulator);
++	if (err) {
++		dev_err(dsi->dev, "failed to enable VCC-DSI supply: %d\n", err);
++		return err;
++	}
  
--	/*
--	 * And I'm not entirely sure what vblk is about. The driver in
--	 * Allwinner BSP is using a rather convoluted calculation
--	 * there only for 4 lanes. However, using 0 (the !4 lanes
--	 * case) even with a 4 lanes screen seems to work...
--	 */
--	vblk = 0;
-+	vblk = sun6i_dsi_get_timings_vblk(dsi, mode, hblk);
+ 	reset_control_deassert(dsi->reset);
+ 	if (dsi->variant->has_mod_clk)
+@@ -1138,6 +1151,7 @@ static int __maybe_unused sun6i_dsi_runtime_suspend(struct device *dev)
+ 	if (dsi->variant->has_mod_clk)
+ 		clk_disable_unprepare(dsi->mod_clk);
+ 	reset_control_assert(dsi->reset);
++	regulator_disable(dsi->regulator);
  
- 	/* How many bytes do we need to send all payloads? */
- 	bytes = max_t(size_t, max(max(hfp, hblk), max(hsa, hbp)), vblk);
+ 	return 0;
+ }
+diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h
+index 597b62227019..0df60f84bab3 100644
+--- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h
++++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h
+@@ -13,6 +13,8 @@
+ #include <drm/drm_encoder.h>
+ #include <drm/drm_mipi_dsi.h>
+ 
++#include <linux/regulator/consumer.h>
++
+ struct sun6i_dphy {
+ 	struct clk		*bus_clk;
+ 	struct clk		*mod_clk;
+@@ -32,6 +34,7 @@ struct sun6i_dsi {
+ 	struct clk		*bus_clk;
+ 	struct clk		*mod_clk;
+ 	struct regmap		*regs;
++	struct regulator	*regulator;
+ 	struct reset_control	*reset;
+ 	struct sun6i_dphy	*dphy;
+ 
 -- 
 2.18.0.321.gffc6fa0e3
 
