@@ -2,28 +2,28 @@ Return-Path: <SRS0=Ck/k=OT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6422C6783B
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Dec 2018 16:05:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D937C6783B
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Dec 2018 16:05:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76D77204FD
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Dec 2018 16:05:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76D77204FD
+	by mail.kernel.org (Postfix) with ESMTP id 29D3720672
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Dec 2018 16:05:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29D3720672
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728444AbeLJQFD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Dec 2018 11:05:03 -0500
+        id S1728448AbeLJQFR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Dec 2018 11:05:17 -0500
 Received: from mail-sh2.amlogic.com ([58.32.228.45]:52645 "EHLO
         mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726261AbeLJQFC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Dec 2018 11:05:02 -0500
+        with ESMTP id S1728508AbeLJQFQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Dec 2018 11:05:16 -0500
 Received: from localhost.localdomain (10.18.11.217) by mail-sh2.amlogic.com
  (10.18.11.6) with Microsoft SMTP Server id 15.0.1320.4; Tue, 11 Dec 2018
- 00:05:12 +0800
+ 00:05:19 +0800
 From:   Jianxin Pan <jianxin.pan@amlogic.com>
 To:     Jerome Brunet <jbrunet@baylibre.com>,
         Neil Armstrong <narmstrong@baylibre.com>
@@ -43,11 +43,13 @@ CC:     Jianxin Pan <jianxin.pan@amlogic.com>,
         Victor Wan <victor.wan@amlogic.com>,
         <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
         <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH RESEND v7 0/4] clk: meson: add a sub EMMC clock controller support
-Date:   Tue, 11 Dec 2018 00:04:32 +0800
-Message-ID: <1544457877-51301-1-git-send-email-jianxin.pan@amlogic.com>
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH RESEND v7 4/4] clk: meson: add one based divider support for sclk divider
+Date:   Tue, 11 Dec 2018 00:04:36 +0800
+Message-ID: <1544457877-51301-5-git-send-email-jianxin.pan@amlogic.com>
 X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1544457877-51301-1-git-send-email-jianxin.pan@amlogic.com>
+References: <1544457877-51301-1-git-send-email-jianxin.pan@amlogic.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.18.11.217]
@@ -56,74 +58,107 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This driver will add a MMC clock controller driver support.
-The original idea about adding a clock controller is during the
-discussion in the NAND driver mainline effort[1].
+When CLK_DIVIDER_ONE_BASED flag is set, the sclk divider will be:
+one based divider (div = val), and zero value gates the clock
 
-This driver is tested in the S400 board (AXG platform) with NAND driver.
+Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
+---
+ drivers/clk/meson/clkc-audio.h |  1 +
+ drivers/clk/meson/sclk-div.c   | 28 ++++++++++++++++++----------
+ 2 files changed, 19 insertions(+), 10 deletions(-)
 
-Changes since v6 [7]:
- - add one based support for sclk divier
- - alloc sclk in probe for multiple instance
- - fix coding styles
-
-Changes since v5 [6]:
- - remove divider ops with .init and use sclk_div instead
- - drop CLK_DIVIDER_ROUND_CLOSEST in mux and div
- - drop the useless type cast 
-
-Changes since v4 [5]:
- - use struct parm in phase delay driver
- - remove 0 delay releted part in phase delay driver
- - don't rebuild the parent name once again
- - add divider ops with .init
-
-Changes since v3 [4]:
- - separate clk-phase-delay driver
- - replace clk_get_rate() with clk_hw_get_rate()
- - collect Rob's R-Y
- - drop 'meson-' prefix from compatible string
-
- Changes since v2 [3]:
- - squash dt-binding clock-id patch
- - update license
- - fix alignment
- - construct a clk register helper() function
-
-Changes since v1 [2]:
- - implement phase clock
- - update compatible name
- - adjust file name
- - divider probe() into small functions, and re-use them
-
-[1] https://lkml.kernel.org/r/20180628090034.0637a062@xps13
-[2] https://lkml.kernel.org/r/20180703145716.31860-1-yixun.lan@amlogic.com
-[3] https://lkml.kernel.org/r/20180710163658.6175-1-yixun.lan@amlogic.com
-[4] https://lkml.kernel.org/r/20180712211244.11428-1-yixun.lan@amlogic.com
-[5] https://lkml.kernel.org/r/20180809070724.11935-4-yixun.lan@amlogic.com
-[6] https://lkml.kernel.org/r/1539839245-13793-1-git-send-email-jianxin.pan@amlogic.com
-[7] https://lkml.kernel.org/r/1541089855-19356-1-git-send-email-jianxin.pan@amlogic.com
-Yixun Lan (3):
-  clk: meson: add emmc sub clock phase delay driver
-  clk: meson: add DT documentation for emmc clock controller
-  clk: meson: add sub MMC clock controller driver
-  clk: meson: add one based divider support for sclk divider
-
- .../devicetree/bindings/clock/amlogic,mmc-clkc.txt |  39 +++
- drivers/clk/meson/Kconfig                          |  10 +
- drivers/clk/meson/Makefile                         |   3 +-
- drivers/clk/meson/clk-phase-delay.c                |  64 +++++
- drivers/clk/meson/clkc-audio.h                     |   1 +
- drivers/clk/meson/clkc.h                           |  13 +
- drivers/clk/meson/mmc-clkc.c                       | 313 +++++++++++++++++++++
- drivers/clk/meson/sclk-div.c                       |  28 +-
- include/dt-bindings/clock/amlogic,mmc-clkc.h       |  17 ++
- 9 files changed, 477 insertions(+), 11 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
- create mode 100644 drivers/clk/meson/clk-phase-delay.c
- create mode 100644 drivers/clk/meson/mmc-clkc.c
- create mode 100644 include/dt-bindings/clock/amlogic,mmc-clkc.h
-
+diff --git a/drivers/clk/meson/clkc-audio.h b/drivers/clk/meson/clkc-audio.h
+index 0a7c157..9bd6ced 100644
+--- a/drivers/clk/meson/clkc-audio.h
++++ b/drivers/clk/meson/clkc-audio.h
+@@ -20,6 +20,7 @@ struct meson_sclk_div_data {
+ 	struct parm hi;
+ 	unsigned int cached_div;
+ 	struct clk_duty cached_duty;
++	u8	flags;
+ };
+ 
+ extern const struct clk_ops meson_clk_triphase_ops;
+diff --git a/drivers/clk/meson/sclk-div.c b/drivers/clk/meson/sclk-div.c
+index bc64019..d98707b 100644
+--- a/drivers/clk/meson/sclk-div.c
++++ b/drivers/clk/meson/sclk-div.c
+@@ -24,22 +24,23 @@
+ 	return (struct meson_sclk_div_data *)clk->data;
+ }
+ 
+-static int sclk_div_maxval(struct meson_sclk_div_data *sclk)
+-{
+-	return (1 << sclk->div.width) - 1;
+-}
+-
+ static int sclk_div_maxdiv(struct meson_sclk_div_data *sclk)
+ {
+-	return sclk_div_maxval(sclk) + 1;
++	if (sclk->flags & CLK_DIVIDER_ONE_BASED)
++		return clk_div_mask(sclk->div.width);
++	else
++		return clk_div_mask(sclk->div.width) + 1;
+ }
+ 
+ static int sclk_div_getdiv(struct clk_hw *hw, unsigned long rate,
+ 			   unsigned long prate, int maxdiv)
+ {
+ 	int div = DIV_ROUND_CLOSEST_ULL((u64)prate, rate);
++	struct clk_regmap *clk = to_clk_regmap(hw);
++	struct meson_sclk_div_data *sclk = meson_sclk_div_data(clk);
++	int mindiv = (sclk->flags & CLK_DIVIDER_ONE_BASED) ? 1 : 2;
+ 
+-	return clamp(div, 2, maxdiv);
++	return clamp(div, mindiv, maxdiv);
+ }
+ 
+ static int sclk_div_bestdiv(struct clk_hw *hw, unsigned long rate,
+@@ -47,7 +48,7 @@ static int sclk_div_bestdiv(struct clk_hw *hw, unsigned long rate,
+ 			    struct meson_sclk_div_data *sclk)
+ {
+ 	struct clk_hw *parent = clk_hw_get_parent(hw);
+-	int bestdiv = 0, i;
++	int bestdiv = 0, i, mindiv;
+ 	unsigned long maxdiv, now, parent_now;
+ 	unsigned long best = 0, best_parent = 0;
+ 
+@@ -64,8 +65,9 @@ static int sclk_div_bestdiv(struct clk_hw *hw, unsigned long rate,
+ 	 * unsigned long in rate * i below
+ 	 */
+ 	maxdiv = min(ULONG_MAX / rate, maxdiv);
++	mindiv = (sclk->flags & CLK_DIVIDER_ONE_BASED) ? 1 : 2;
+ 
+-	for (i = 2; i <= maxdiv; i++) {
++	for (i = mindiv; i <= maxdiv; i++) {
+ 		/*
+ 		 * It's the most ideal case if the requested rate can be
+ 		 * divided from parent clock without needing to change
+@@ -153,10 +155,14 @@ static int sclk_div_get_duty_cycle(struct clk_hw *hw,
+ static void sclk_apply_divider(struct clk_regmap *clk,
+ 			       struct meson_sclk_div_data *sclk)
+ {
++	unsigned int div;
++
+ 	if (MESON_PARM_APPLICABLE(&sclk->hi))
+ 		sclk_apply_ratio(clk, sclk);
+ 
+-	meson_parm_write(clk->map, &sclk->div, sclk->cached_div - 1);
++	div = (sclk->flags & CLK_DIVIDER_ONE_BASED) ?
++		sclk->cached_div : (sclk->cached_div - 1);
++	meson_parm_write(clk->map, &sclk->div, div);
+ }
+ 
+ static int sclk_div_set_rate(struct clk_hw *hw, unsigned long rate,
+@@ -223,6 +229,8 @@ static void sclk_div_init(struct clk_hw *hw)
+ 	/* if the divider is initially disabled, assume max */
+ 	if (!val)
+ 		sclk->cached_div = sclk_div_maxdiv(sclk);
++	else if (sclk->flags & CLK_DIVIDER_ONE_BASED)
++		sclk->cached_div = val;
+ 	else
+ 		sclk->cached_div = val + 1;
+ 
 -- 
 1.9.1
 
