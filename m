@@ -2,226 +2,137 @@ Return-Path: <SRS0=Ck/k=OT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 514B3C04EB8
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Dec 2018 09:44:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C24DC04EB8
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Dec 2018 11:06:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01E332082F
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Dec 2018 09:44:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C74A2086D
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Dec 2018 11:06:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="qMnm35st"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01E332082F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Av7Rdyrn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C74A2086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726682AbeLJJon (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Dec 2018 04:44:43 -0500
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:14004 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726292AbeLJJon (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Dec 2018 04:44:43 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c0e35870000>; Mon, 10 Dec 2018 01:44:39 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 10 Dec 2018 01:44:41 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 10 Dec 2018 01:44:41 -0800
-Received: from [10.21.132.148] (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 10 Dec
- 2018 09:44:38 +0000
-Subject: Re: [PATCH 01/19] dt-bindings: clock: tegra124-dfll: Update DFLL
- binding for PWM regulator
-To:     Joseph Lo <josephl@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-References: <20181204092548.3038-1-josephl@nvidia.com>
- <20181204092548.3038-2-josephl@nvidia.com>
- <af1211f0-dda0-bdde-f320-03e54f82d7e1@nvidia.com>
- <46b5eafa-00a0-1d91-1f4d-97ab119fcf21@nvidia.com>
- <e61b1da8-78cd-c3d4-9878-c25fd9c89ba3@nvidia.com>
- <433ed5cf-70ce-1d03-530f-406b2cb16e07@nvidia.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <c5a7360b-3aed-108b-fd77-921626db6797@nvidia.com>
-Date:   Mon, 10 Dec 2018 09:44:21 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        id S1727261AbeLJLGA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Dec 2018 06:06:00 -0500
+Received: from mail-ed1-f49.google.com ([209.85.208.49]:32951 "EHLO
+        mail-ed1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727259AbeLJLGA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Dec 2018 06:06:00 -0500
+Received: by mail-ed1-f49.google.com with SMTP id p6so9125162eds.0;
+        Mon, 10 Dec 2018 03:05:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=2LoAo0WUj8Un3Q9f981rYvsqu+F2AhGN+7kJadUrfzQ=;
+        b=Av7RdyrnEGtyXvSrx1BWSbKjOoRL0x269LIZ3a2DKAg4GaFRfTeQP/+a7fvfpcWl6C
+         gV5heYDgmttfuRbkAFBJ7ybySsMXJlgnXeSVoDnszNkPpELIGMA5rk7uaVUp/kCDMmsJ
+         HHdq/0bQ0K5uvD4rRWNKtORuOMZtvttbBOZFpgzQlg3I+DoKpoJJEf1cyik8UAO5EG1w
+         mVUuqWkDJl+ba2VgbGC5fFkgXw1rxj2S1FKEuN5Pq+m9pQWvs8hGUT43bkFWSh7gep1G
+         hXKqW0mE76IVSj2i5nu6ByWellOlenNZmDa6+ONu0uvmBwW6VzJ77KAs6wOVLcxxjSQ0
+         +Mjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=2LoAo0WUj8Un3Q9f981rYvsqu+F2AhGN+7kJadUrfzQ=;
+        b=IWn0Lx5gnLU0vBHvbach5w9oeEg8mlLtIkNOCBfTtAE8SBg3i3LJrab17c0BZXRIZF
+         y372ELHFPVoLjlMMnX+v+LcqRjky5z2+SGU3X/CQ8clmavqPGhwGsocdI4FWtFklAgdP
+         TaHkQ/Du5lbPuq+2FoSM+HfknTvpnBw+wQiW7bTOdrRTh2KJx8GRnrigpQP6RSV6OOkm
+         4kxXxmzlnC8T2YcgqZoUUxnm1fmxfWgFC6XGb/Fr3uUf7h9f8omlIIYhd//1BS2jefUT
+         otLm3KDqbml/cQZh9/nZ3JsvoY1heKx8bkgmvMhkyVDP5hS6g7raAMU9uGF8Qk2Hlg/u
+         Os9g==
+X-Gm-Message-State: AA+aEWa3xA821xuFOJGCoSORfp08YFtE6bQIEHRa9fASUbdxo30zQPnh
+        tCWgf9xJO3Egvw7pf7Qez095rLGt
+X-Google-Smtp-Source: AFSGD/WrBKLcyLJt4HvNmwxwkMDfJRPHoXbPO8kMKbzQOq6+OecrqvVy85L+r744gDwbe5bwQMIupw==
+X-Received: by 2002:a17:906:1e57:: with SMTP id i23-v6mr9669438ejj.146.1544439958271;
+        Mon, 10 Dec 2018 03:05:58 -0800 (PST)
+Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
+        by smtp.gmail.com with ESMTPSA id p22-v6sm1734446ejb.76.2018.12.10.03.05.57
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 10 Dec 2018 03:05:57 -0800 (PST)
+Date:   Mon, 10 Dec 2018 12:05:56 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [GIT PULL] clk: tegra: Changes for v4.21-rc1
+Message-ID: <20181210110556.GM15154@ulmo>
+References: <20181207142119.9574-1-thierry.reding@gmail.com>
+ <154420452153.57851.10805463686191930083@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-In-Reply-To: <433ed5cf-70ce-1d03-530f-406b2cb16e07@nvidia.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1544435080; bh=i0A/2LHJBvYMdPMOPocQ4kchixi+FvVzyDIPng+bPs4=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=qMnm35stuQQpDqWR0p6QIV2eU4uCAUcInK5mdON18S82kZ1WLtJ72S63FSYMJgVrv
-         Pbw5oNN3UCSc3J+DS10DIYGX8izax0lJB4InolWgJc02+UegEPSpVEJXJvjykFhoVv
-         A9uhw4MGMvtUhZr9JDdoZ1T+4BGfnvN3RnXx2b5DeieAtBfN3rxHHiKjRYejA/z7VH
-         CJjBO/yjM5e3Jsm2KWlbXhKwE18GVTjBlPVQodDo/5z2NPGiMMTKhme5Z4/qaspF/N
-         s1t/hLtOiWNQ85PgSnsEg9leTC/Ll+WUIa0y4ZIXjhnybqPLvO6gqKKC1lR0ifV4tX
-         bR8tIjobQLkZg==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="LJm8egi4vkexsie5"
+Content-Disposition: inline
+In-Reply-To: <154420452153.57851.10805463686191930083@swboyd.mtv.corp.google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
-On 10/12/2018 09:31, Joseph Lo wrote:
-> On 12/10/18 4:59 PM, Jon Hunter wrote:
->>
->> On 10/12/2018 08:49, Joseph Lo wrote:
->>> Hi Jon,
->>>
->>> Thanks for reviewing this series.
->>>
->>> On 12/7/18 9:41 PM, Jon Hunter wrote:
->>>>
->>>> On 04/12/2018 09:25, Joseph Lo wrote:
->>>>> From: Peter De Schrijver <pdeschrijver@nvidia.com>
->>>>>
->>>>> Add new properties to configure the DFLL PWM regulator support. Also
->>>>> add an example and make the I2C clock only required when I2C
->>>>> support is
->>>>> used.
->>>>>
->>>>> Cc: devicetree@vger.kernel.org
->>>>> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
->>>>> Signed-off-by: Joseph Lo <josephl@nvidia.com>
->>>>> ---
->>>>> =C2=A0=C2=A0 .../bindings/clock/nvidia,tegra124-dfll.txt=C2=A0=C2=A0 =
-| 73
->>>>> ++++++++++++++++++-
->>>>> =C2=A0=C2=A0 1 file changed, 71 insertions(+), 2 deletions(-)
->>>>>
->>>>> diff --git
->>>>> a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
->>>>> b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
->>>>> index dff236f524a7..8c97600d2bad 100644
->>>>> --- a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.tx=
-t
->>>>> +++ b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.tx=
-t
->>>>> @@ -8,7 +8,6 @@ the fast CPU cluster. It consists of a free-running
->>>>> voltage controlled
->>>>> =C2=A0=C2=A0 oscillator connected to the CPU voltage rail (VDD_CPU), =
-and a
->>>>> closed loop
->>>>> =C2=A0=C2=A0 control module that will automatically adjust the VDD_CP=
-U
->>>>> voltage by
->>>>> =C2=A0=C2=A0 communicating with an off-chip PMIC either via an I2C bu=
-s or via
->>>>> PWM signals.
->>>>> -Currently only the I2C mode is supported by these bindings.
->>>>> =C2=A0=C2=A0 =C2=A0 Required properties:
->>>>> =C2=A0=C2=A0 - compatible : should be "nvidia,tegra124-dfll"
->>>>> @@ -45,10 +44,28 @@ Required properties for the control loop
->>>>> parameters:
->>>>> =C2=A0=C2=A0 Optional properties for the control loop parameters:
->>>>> =C2=A0=C2=A0 - nvidia,cg-scale: Boolean value, see the field
->>>>> DFLL_PARAMS_CG_SCALE in the TRM.
->>>>> =C2=A0=C2=A0 +Optional properties for mode selection:
->>>>> +- nvidia,pwm-to-pmic: Use PWM to control regulator rather then I2C.
->>>>> +
->>>>> =C2=A0=C2=A0 Required properties for I2C mode:
->>>>> =C2=A0=C2=A0 - nvidia,i2c-fs-rate: I2C transfer rate, if using full s=
-peed mode.
->>>>> =C2=A0=C2=A0 -Example:
->>>>> +Required properties for PWM mode:
->>>>> +- nvidia,pwm-period: period of PWM square wave in microseconds.
->>>>> +- nvidia,init-uv: Regulator voltage in micro volts when PWM control
->>>>> is disabled.
->>>>
->>>> Maybe consider 'pwm-inactive-voltage-microvolt'.
->>> Ah, I think I need to refine the description here. It should be
->>> something like below.
->>> =C2=A0=C2=A0- nvidia,pwm-init-microvolt : Regulator voltage in micro vo=
-lts when
->>> PWM
->>> control is initialized
->>>
->>> This is the initial voltage that when we just initialize the DFLL
->>> hardware for PWM output. And before we switch the CPU clock from PLLX t=
-o
->>> DFLL, we will enable DFLL hardware in closed loop mode which will aplly
->>> the DVFS table that was calculated from CVB table.
->>>
->>> The original description maybe make you think that it's the working
->>> voltage when it's under open-loop mode. But it's not. Sorry.
->>>
->>> When we working on open-loop mode which will switch to low voltage rang=
-e
->>> which also follows the DVFS table. Not this one.
->>
->> OK, but I am still not sure what this voltage is. I mean that I
->> understand it is the initial voltage, but how exactly do we define this
->> number? Where does it come from, how is this determined?
-> IIRC, this is the same output voltage that bootloader configured with
-> proper PLLX rate. So before DFLL handling the CPU clock, that is the
-> output voltage. We configure the same when DFLL HW is just initialized.
+--LJm8egi4vkexsie5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Dec 07, 2018 at 09:42:01AM -0800, Stephen Boyd wrote:
+> Quoting Thierry Reding (2018-12-07 06:21:19)
+> > Hi Michael, Stephen,
+> >=20
+> > The following changes since commit 651022382c7f8da46cb4872a545ee1da6d09=
+7d2a:
+> >=20
+> >   Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
+> >=20
+> > are available in the Git repository at:
+> >=20
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/te=
+gra-for-4.21-clk
+> >=20
+> > for you to fetch changes up to d14ce174ca02ee2a9f390b9e279663b3a848a48b:
+> >=20
+> >   clk: tegra20: Check whether direct PLLM sourcing is turned off for EM=
+C (2018-11-08 12:47:18 +0100)
+> >=20
+> > Turns out that these were not build-time dependencies for the EMC series
+> > after all, but since I already have them in a branch, I might as well
+> > send them out.
 >=20
-> 1 volt here is pretty safe when CPU clock switched from bootloader to
-> kernel at 6.912MHz@pllx.
+> Ok. There were other Tegra patches on the list which I guess I can just
+> pick up on top of this tag?
 
-OK, now I understand. Seems a little fragile, but maybe there is no
-better alternative here.
+Yes, correct. I'm not aware of any conflicts between these two patches
+and the others on the list.
 
-Please describe what this voltage is in the binding doc, so if anyone
-happened to modify their bootloader to run at a different speed that it
-is stated that this voltage should be high enough to support initial
-boot frequency.
+Thierry
 
->>
->>>>
->>>>> +- nvidia,align-offset-uv: Regulator voltage in micro volts when PWM
->>>>> control is
->>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 enabled and PWM output is low.
->>>>
->>>> Would this be considered the minimum pwm active voltage?
->>> This would be used for minimum voltage for LUT table, which is the tabl=
-e
->>> that PMIC can output. The real minimum voltage in PWM mode still depend=
-s
->>> on the CVB table.
->>>
->>> So maybe change this one to 'nvidia,pwm-offset-uv'.
->>
->> So is this the min supported by the PMIC? Maybe the name should reflect
->> that because the above name does not reflect this. Furthermore, if this
->> is a min then maybe the name should use 'min' as opposed to 'offset'.
->> for example, 'nvidia,pwm-pmic-min-microvolts'.
->>
->> Does this need to be described in DT, can it not be queried from the
->> PMIC?
->>
-> Yes, either way needs to go with DT. The very initial patchset for
-> DFLL-PWM support, which introduced a redundant pwm-dfll driver. And with
-> the driver, we can describe the PWM vdd-cpu regulator in DT with the
-> voltage table that the PMIC can output. But NAKed by reviewer.
->=20
-> Okay, 'nvidia,pwm-pmic-min-microvolts' looks fine. Thanks.
->=20
-> [1]: https://patchwork.ozlabs.org/patch/613524/
+--LJm8egi4vkexsie5
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thierry, what are your thoughts here? I guess you had asked initially
-why we needed a phandle to the PMIC. Seems we need to comprehend the min
-voltage supported by the PMIC for creating the LUT.
+-----BEGIN PGP SIGNATURE-----
 
-Cheers
-Jon
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlwOSJQACgkQ3SOs138+
+s6GJ7A//exeAtWoSykjO6gg6krJPa3i3bpdgfyvwubHQ1hg06Gadq2f0pB+15hjV
+1zNt34/AYrjniJ9Ry7t/0EUoCWvasuOtD2AT13eAR4krCnhc6E2ihC/y6ssYgDr2
+gp91WN+UEvJO9/Qy3fwxbc3sJHdQRcli2H1y9EpOvjltmd2y950ouqfYwkb+xnFy
+Q5kzTN5a7bv62jYOHRT7IXL7Xln/Hkvuuzks4oDaqwUaQe2iVN0kREYX5Pst5ovk
+ffFT9bj7ZlZado1AvQYKATRkVArZIfXfrqPO7XGBOEUsFBnqguTSnK6F6B3sD3ap
+zV/48RNPuwqypojX5hr/0pf89U5jA/7WXp4stymlvA0pl8nvXGMFe9rG9uh/cCfY
+NpMkUrqvZwhtHbNYOfznSsRAaT1auudn+amx8XL88V0LoxDtWIcpiGG8FlWHrSbU
+DPUoKmRM1YFCIVH+CIbDiY3HAIZumwHbj4Xpk5hNnbyyFsIB4p1uuxCSCOlgBW7Q
+aty6Ht8RTyUZcPZ8aK8MCz/aolu8guPE26IQrK+88GQ8IVk7VGVTuAdtE8KbiKHV
+2WO+Pmy5/p8dlVq7vpepF9VzkrCsADcKRmrFTTtD6Eb1nCFERLW5jAUE813SqQld
+H4+zvJ5KY1pd1isHyQG4gxLZTMopKzPB3i3uwM/Xb0k/Iylv7e8=
+=wZr1
+-----END PGP SIGNATURE-----
 
---=20
-nvpublic
+--LJm8egi4vkexsie5--
