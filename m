@@ -4,56 +4,56 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72445C5CFFE
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Dec 2018 16:18:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C20AC5CFFE
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Dec 2018 16:18:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3718A20672
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Dec 2018 16:18:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5EA5E20672
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Dec 2018 16:18:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="YF3sJk2r"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3718A20672
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="aqPbNxfJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EA5E20672
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728665AbeLJQSN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Dec 2018 11:18:13 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:55920 "EHLO
+        id S1728697AbeLJQSX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Dec 2018 11:18:23 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:36543 "EHLO
         mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728654AbeLJQSK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Dec 2018 11:18:10 -0500
-Received: by mail-wm1-f65.google.com with SMTP id y139so11493555wmc.5
-        for <linux-clk@vger.kernel.org>; Mon, 10 Dec 2018 08:18:08 -0800 (PST)
+        with ESMTP id S1728666AbeLJQSP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Dec 2018 11:18:15 -0500
+Received: by mail-wm1-f65.google.com with SMTP id a18so11946976wmj.1
+        for <linux-clk@vger.kernel.org>; Mon, 10 Dec 2018 08:18:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=0A16quYt+swrquBMzw4Px8WMyAYxU03soI2v/Bfgb1A=;
-        b=YF3sJk2rubhEazU2ITO1ZU+iTOrr+E5kT9wdu2ixC/aNx3jRrsdVG/2WpQLVD7SFv9
-         x06odRqVx9/4OBPP6uv8S0TTYoO80v57K8Ubf7WIXDiFtUq7zLE442UUdgNRoSeCDlJV
-         YbmTAWm+nTXXDjGe30+BwZV3cxtoLv/Erft5Q=
+        bh=FjGhPpG8sG9uBklMCJSskhFh/huEKC/N4BLQs4vEQZ4=;
+        b=aqPbNxfJVW0/xjfottM/ES1pxezCOVjUQ2wAkUXTBOKqfUJUIK5AJ0C3SKuV3Ajp/Q
+         CxaRLB/C6QeFwmz5BsgCj47v0HyyD6E7HU+nuNMaTkdIxhlkI9V4znXKSXCQc+MIcpBf
+         AzffqZ9bvrC9Z5NgxF1OZ1gu431eOchzQvR94=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=0A16quYt+swrquBMzw4Px8WMyAYxU03soI2v/Bfgb1A=;
-        b=hQ6mEzD5fEsctNV1paf6BpNXb8TCWv2mblhOnDQglc2kjOpXuSgNcm5dq9x3kbsp7B
-         hOYEyBdI2cj7Q+TPhZgcBRDAnf0u/V4D/tSKmTDDBbKmcD3zWkMBsfye7VF7GCilrQfd
-         N7zkJRsZD6NjDRiVVybItAD4QSpeiDWHNky2hlFyQZyZpMOpHRr0LuGM4KgGc1mMkJS9
-         jkmWwY3XVPgJ2bYeUSUtoL3wg3NfT5L2iv7i+oByDNjSv2Bhl+b526gcBK2MdwYBtoIE
-         W0UTxZ8Z/tAwzIZZZo8D/YzWlg13QpLjXkBsQaCCiWgWDOlTE8lJZIXl/MESDSwMQo4W
-         c/ag==
-X-Gm-Message-State: AA+aEWZwfzw6qbC4nCZQ8iQ0u18KXkXq9dn/JHTPym8V+ZsQXq8aEHnT
-        /x4WAPJmz6Jhpj1z66h0EniKUhLJaTY=
-X-Google-Smtp-Source: AFSGD/X4P2P8IWz19Jw4ghafGW1XCdsWJRT1xawLts5BHe68/7lQ0SenyM2uKUJlIk2b3q5hqzzE8A==
-X-Received: by 2002:a1c:1707:: with SMTP id 7mr11448132wmx.150.1544458688215;
-        Mon, 10 Dec 2018 08:18:08 -0800 (PST)
+        bh=FjGhPpG8sG9uBklMCJSskhFh/huEKC/N4BLQs4vEQZ4=;
+        b=cd0BxN0hhtBLkDAqo4RkhaqZQGMC3nMO17PowIs39gqkNOVVqYG9UPBK5gZhvB3/Dd
+         gxjf8tEhFzfwdULj3r3TmBo5GON8YLWLuhXaNwUUAxsaM/CTURTEfItLqDGXR9AatvoL
+         887vWhxSSL7NRlh0E4QArTt87XUGIQmNglvuUwflGqpcmGHB3KzaVDeZs5GY7meyso2Y
+         enj7sC3mW5oMT37PWCLcWvdLKC0h1iVbqQo4vtHNO7c13WWXQY/Sua4RYgSgcEcqMUW1
+         jRxgDY5M3I4czQp9i4RfGq+ZTNwOw9OaiUtJgJ9CbtUseZPAbsnA04FqP9vGY00KT41Y
+         3yLQ==
+X-Gm-Message-State: AA+aEWYaX8DLIAgtc0i8LjPOQ7qHCvervqlIspMf0ocA3kNVgFHHawim
+        Di7SDhKkVStGIEebsfn28wVb1A==
+X-Google-Smtp-Source: AFSGD/XofnVFXaIamGKZrCl8m9R2W57jrmtIYgZOTKF+Z01pEg48PsY16QkLyN3oPdocX2J4piqR4g==
+X-Received: by 2002:a1c:de57:: with SMTP id v84mr10923948wmg.55.1544458693211;
+        Mon, 10 Dec 2018 08:18:13 -0800 (PST)
 Received: from localhost.localdomain (ip-162-59.sn-213-198.clouditalia.com. [213.198.162.59])
-        by smtp.gmail.com with ESMTPSA id b13sm8397503wrn.28.2018.12.10.08.18.06
+        by smtp.gmail.com with ESMTPSA id b13sm8397503wrn.28.2018.12.10.08.18.11
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Dec 2018 08:18:07 -0800 (PST)
+        Mon, 10 Dec 2018 08:18:12 -0800 (PST)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Chen-Yu Tsai <wens@csie.org>,
@@ -65,9 +65,9 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-sunxi <linux-sunxi@googlegroups.com>,
         linux-amarula@amarulasolutions.com,
         Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v5 14/17] dt-bindings: sun6i-dsi: Add VCC-DSI supply property
-Date:   Mon, 10 Dec 2018 21:47:26 +0530
-Message-Id: <20181210161729.29720-15-jagan@amarulasolutions.com>
+Subject: [PATCH v5 17/17] arm64: dts: allwinner: a64: Add DSI pipeline
+Date:   Mon, 10 Dec 2018 21:47:29 +0530
+Message-Id: <20181210161729.29720-18-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 In-Reply-To: <20181210161729.29720-1-jagan@amarulasolutions.com>
 References: <20181210161729.29720-1-jagan@amarulasolutions.com>
@@ -78,33 +78,81 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Most of the Allwinner MIPI DSI controllers are supply with
-VCC-DSI pin. which need to supply for some of the boards to
-trigger the power.
+The A64 has a MIPI-DSI block which is similar to A31
+without mod clock.
 
-So, document the supply property so-that the required board
-can eable it via device tree.
+So, add dsi node with A64 compatible, dphy node with
+A31 compatible and finally connect dsi to tcon0 to
+make proper DSI pipeline.
 
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 45 +++++++++++++++++++
+ 1 file changed, 45 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt b/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
-index 9fa6e7a758ad..adc7cdf129dd 100644
---- a/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
-+++ b/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
-@@ -28,6 +28,9 @@ Required properties:
-     first port should be the input endpoint, usually coming from the
-     associated TCON.
- 
-+Optional properties:
-+  - vcc-dsi-supply: the VCC-DSI power supply of the DSI encoder
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+index dd5740bc3fc9..dd5c7ad55149 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+@@ -344,6 +344,12 @@
+ 					#address-cells = <1>;
+ 					#size-cells = <0>;
+ 					reg = <1>;
 +
- Any MIPI-DSI device attached to this should be described according to
- the bindings defined in ../mipi-dsi-bus.txt
++					tcon0_out_dsi: endpoint@1 {
++						reg = <1>;
++						remote-endpoint = <&dsi_in_tcon0>;
++						allwinner,tcon-channel = <1>;
++					};
+ 				};
+ 			};
+ 		};
+@@ -910,6 +916,45 @@
+ 			status = "disabled";
+ 		};
  
++		dsi: dsi@1ca0000 {
++			compatible = "allwinner,sun50i-a64-mipi-dsi";
++			reg = <0x01ca0000 0x1000>;
++			interrupts = <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&ccu CLK_BUS_MIPI_DSI>;
++			clock-names = "bus";
++			resets = <&ccu RST_BUS_MIPI_DSI>;
++			phys = <&dphy>;
++			phy-names = "dphy";
++			status = "disabled";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@0 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <0>;
++
++					dsi_in_tcon0: endpoint {
++						remote-endpoint = <&tcon0_out_dsi>;
++					};
++				};
++			};
++		};
++
++		dphy: d-phy@1ca1000 {
++			compatible = "allwinner,sun50i-a64-mipi-dphy",
++				     "allwinner,sun6i-a31-mipi-dphy";
++			reg = <0x01ca1000 0x1000>;
++			clocks = <&ccu CLK_BUS_MIPI_DSI>,
++				 <&ccu CLK_DSI_DPHY>;
++			clock-names = "bus", "mod";
++			resets = <&ccu RST_BUS_MIPI_DSI>;
++			status = "disabled";
++			#phy-cells = <0>;
++		};
++
+ 		csi: csi@1cb0000 {
+ 			compatible = "allwinner,sun50i-a64-csi";
+ 			reg = <0x01cb0000 0x1000>;
 -- 
 2.18.0.321.gffc6fa0e3
 
