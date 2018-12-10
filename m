@@ -2,189 +2,173 @@ Return-Path: <SRS0=Ck/k=OT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78538C6783B
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Dec 2018 16:05:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44C2BC67839
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Dec 2018 16:07:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46CAE20672
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Dec 2018 16:05:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46CAE20672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
+	by mail.kernel.org (Postfix) with ESMTP id E269920870
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Dec 2018 16:07:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="qZrqOe9i"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E269920870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728477AbeLJQFK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Dec 2018 11:05:10 -0500
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:52645 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728448AbeLJQFJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Dec 2018 11:05:09 -0500
-Received: from localhost.localdomain (10.18.11.217) by mail-sh2.amlogic.com
- (10.18.11.6) with Microsoft SMTP Server id 15.0.1320.4; Tue, 11 Dec 2018
- 00:05:18 +0800
-From:   Jianxin Pan <jianxin.pan@amlogic.com>
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-CC:     Yixun Lan <yixun.lan@amlogic.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Liang Yang <liang.yang@amlogic.com>,
-        Jian Hu <jian.hu@amlogic.com>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Hanjie Lin <hanjie.lin@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH RESEND v7 1/4] clk: meson: add emmc sub clock phase delay driver
-Date:   Tue, 11 Dec 2018 00:04:33 +0800
-Message-ID: <1544457877-51301-2-git-send-email-jianxin.pan@amlogic.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1544457877-51301-1-git-send-email-jianxin.pan@amlogic.com>
-References: <1544457877-51301-1-git-send-email-jianxin.pan@amlogic.com>
+        id S1727313AbeLJQHh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Dec 2018 11:07:37 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:37773 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726677AbeLJQHh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Dec 2018 11:07:37 -0500
+Received: by mail-ot1-f68.google.com with SMTP id 40so10900589oth.4
+        for <linux-clk@vger.kernel.org>; Mon, 10 Dec 2018 08:07:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=706PBGmkV48/HcbLMZWflsnZr+TVd3yuVsGo/4DR1f8=;
+        b=qZrqOe9iym2AL2GkjgW8rRNrL6Lh3xM6Y2S2PhEd30uLK31ZdzOhVYJYW3ZDkrnkJk
+         EHNotu5j1Gc4gjAAtwOffzQoV7ShVWggmFvlsydstPAOWrcVFbgFmYiyhgHnB+EBzmkb
+         6C5PuH1RS0zu+74H6lG6eYz/k/yYrw7+EHZw0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=706PBGmkV48/HcbLMZWflsnZr+TVd3yuVsGo/4DR1f8=;
+        b=fgkJgeBzANiBiqtVf0zZ2R/my+Cc4qc2gf1pfrSXnIHHnsBicV/Nxilxx8BsPuDIbU
+         wuGh6UYlpqaoSQrWdlsZjlii0Jz/VtC+rxpa9O8SJci/P/zPUyHOk62WAIrRJRCpZJr6
+         OZkWXcjNDVaJBrCLWX/xS8R832lht/NLDfDbQ1qBo72SAyaVgJ661e04rMOxa0Xrfs8E
+         TQ9gV3lRug++VqI83UXc/7aHiNdiWmign/qbEMv59h4PB0AD8TvZwmkyoZ6MahKpaWX5
+         VVU98rXw2ZBOfPLGOTYEGnkCw2cg60dyRrSLfTMrwnYN4WVnuJdzugzDV3RZTuq6bm7q
+         aR7g==
+X-Gm-Message-State: AA+aEWbxlY2ijQk2tgc/CozfHSS+5k6u6Vm7VDo9nW6Dyuicu7lviUJx
+        A/CGnHDNNLw0jyFiBRQb4fyLYnZnu05kOm/C9PILsJmLAwA=
+X-Google-Smtp-Source: AFSGD/V1iqxAWyhgJZlBWmb/eoW6+lrCG3VgAy2gxGkP+QDXODZCCN243GoIeyy0Wj/G1FzHNc0cpRqgubPfto/ZsPg=
+X-Received: by 2002:a9d:4682:: with SMTP id z2mr8780542ote.104.1544458055714;
+ Mon, 10 Dec 2018 08:07:35 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.18.11.217]
+References: <20181113111633.20189-1-jagan@amarulasolutions.com>
+ <20181113111633.20189-9-jagan@amarulasolutions.com> <20181115095551.uctdkfmuwlnzhjnn@flea>
+ <CAMty3ZAEHiovm6OF6JvJVQR4aqpG1Q3ML5YqxJkF2ntwRkUO=A@mail.gmail.com>
+ <20181120155715.andrjp5kg6ugcv72@flea> <CAMty3ZCUOJmvekupOwh281g5HaazTpBbukWQY2Pv2OYypAwciw@mail.gmail.com>
+ <20181127102450.b65jzhrdpxn5rxmk@flea> <CAMty3ZDTvn4VF_oOvEi2jCw9Rw5WPd1LQT3SZ5X1K0fJAFg2cQ@mail.gmail.com>
+ <20181207132136.oa4nzpczytzxhl2d@flea>
+In-Reply-To: <20181207132136.oa4nzpczytzxhl2d@flea>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Mon, 10 Dec 2018 21:37:23 +0530
+Message-ID: <CAMty3ZB4uSxMETSrGbod54N++rimTmv1jNnCPKCy0PRa2e9WFw@mail.gmail.com>
+Subject: Re: [linux-sunxi] Re: [PATCH v4 08/26] drm/sun4i: sun6i_mipi_dsi: Fix
+ VBP size calculation
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        linux-amarula@amarulasolutions.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Yixun Lan <yixun.lan@amlogic.com>
+On Fri, Dec 7, 2018 at 6:51 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+>
+> On Tue, Nov 27, 2018 at 04:34:35PM +0530, Jagan Teki wrote:
+> > On Tue, Nov 27, 2018 at 3:55 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+> > >
+> > > On Tue, Nov 20, 2018 at 09:55:42PM +0530, Jagan Teki wrote:
+> > > > On Tue, Nov 20, 2018 at 9:27 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+> > > > >
+> > > > > On Thu, Nov 15, 2018 at 11:19:53PM +0530, Jagan Teki wrote:
+> > > > > > On Thu, Nov 15, 2018 at 3:26 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+> > > > > > >
+> > > > > > > Hi,
+> > > > > > >
+> > > > > > > On Tue, Nov 13, 2018 at 04:46:15PM +0530, Jagan Teki wrote:
+> > > > > > > > The horizontal and vertical back porch calculation in BSP
+> > > > > > > > code is simply following the Linux drm comment diagram, in
+> > > > > > > > include/drm/drm_modes.h which is
+> > > > > > > >
+> > > > > > > > [hv]back porch = [hv]total - [hv]sync_end
+> > > > > > > >
+> > > > > > > > BSP code form BPI-M64-bsp is calculating vertical back porch as
+> > > > > > > > (from linux-sunxi/drivers/video/sunxi/disp2/disp/de/disp_lcd.c)
+> > > > > > > >
+> > > > > > > > timmings->ver_sync_time= panel_info->lcd_vspw;
+> > > > > > > > timmings->ver_back_porch= panel_info->lcd_vbp-panel_info->lcd_vspw;
+> > > > > > > >
+> > > > > > > > vbp = panel->lcd_vbp;
+> > > > > > > > vspw = panel->lcd_vspw;
+> > > > > > > > dsi_dev[sel]->dsi_basic_size0.bits.vbp = vbp-vspw;
+> > > > > > > > dsi_dev[sel]->dsi_basic_size0.bits.vbp = panel->lcd_vbp - panel->lcd_vspw;
+> > > > > > > > =>  timmings->ver_back_porch + panel_info->lcd_vspw - panel_info->lcd_vspw
+> > > > > > > > =>  timmings->ver_back_porch
+> > > > > > > > =>  mode->vtotal - mode->end
+> > > > > > > >
+> > > > > > > > Which evatually same as mode->vtotal - mode->vsync_end so update the
+> > > > > > > > same in SUN6I_DSI_BASIC_SIZE0_VBP
+> > > > > > > >
+> > > > > > > > On the information note, existing SUN6I_DSI_BASIC_SIZE0_VSA is proper
+> > > > > > > > value.
+> > > > > > > >
+> > > > > > > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > > > > > >
+> > > > > > > I've tested your changes on my A33 board, and this commit will break
+> > > > > > > it.
+> > > > > > >
+> > > > > > > It creates vblank timeouts, and visual artifacts at the bottom of the
+> > > > > > > display.
+> > > > > >
+> > > > > > Strange, VBP is earlier gives front porch which is anyway wrong.
+> > > > > >
+> > > > > > >
+> > > > > > > Later commits seem to fix the issue, but will create some blanking on
+> > > > > > > the upper third of the display.
+> > > > > > >
+> > > > > > > Since the documentation is quite sparse, and a MIPI-DSI analyzer is
+> > > > > > > way too expensive, I'd really like to have at least what each of these
+> > > > > > > commits are actually fixing, and what symptoms each of these were
+> > > > > > > causing, and not just "the BSP does it".
+> > > > > >
+> > > > > > W/o this 2-lane panel is breaking, same vblank timeout and visual
+> > > > > > artifacts at the bottom of the panel. though the commits may reference
+> > > > > > BSP, I have at-least tested on 3 different panels for us to prove its
+> > > > > > working.
+> > > > > >
+> > > > > > > Having some datasheet for the panels you had working would help too.
+> > > > > >
+> > > > > > Unfortunately datasheet doesn't have any required information what we
+> > > > > > actually looking for.
+> > > > >
+> > > > > Not even the timings? How did you get that information then?
+> > > >
+> > > > datasheet has timing values, but this changes need controller
+> > > > information about VBP register that I don't have. But again existing
+> > > > VBP is not back porch for real, it's front porch.
+> > >
+> > > Yet, this breaks the existing setup. So again:
+> >
+> > Was it with 4-lane or 2-lane panel? can you test it with 2-lane panel?
+> > I can see the issue on 2-lane but the 4-lane working fine with this
+> > patch even.
+>
+> It's a 4 lane display.
 
-Export the emmc sub clock phase delay ops which will be used
-by the emmc sub clock driver itself.
-
-Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
-Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
----
- drivers/clk/meson/Makefile          |  2 +-
- drivers/clk/meson/clk-phase-delay.c | 64 +++++++++++++++++++++++++++++++++++++
- drivers/clk/meson/clkc.h            | 13 ++++++++
- 3 files changed, 78 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/meson/clk-phase-delay.c
-
-diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
-index 72ec8c4..39ce566 100644
---- a/drivers/clk/meson/Makefile
-+++ b/drivers/clk/meson/Makefile
-@@ -2,7 +2,7 @@
- # Makefile for Meson specific clk
- #
- 
--obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-mpll.o clk-phase.o
-+obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-mpll.o clk-phase.o clk-phase-delay.o
- obj-$(CONFIG_COMMON_CLK_AMLOGIC_AUDIO)	+= clk-triphase.o sclk-div.o
- obj-$(CONFIG_COMMON_CLK_MESON_AO) += meson-aoclk.o
- obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
-diff --git a/drivers/clk/meson/clk-phase-delay.c b/drivers/clk/meson/clk-phase-delay.c
-new file mode 100644
-index 0000000..84e7b63
---- /dev/null
-+++ b/drivers/clk/meson/clk-phase-delay.c
-@@ -0,0 +1,64 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Amlogic Meson MMC Sub Clock Controller Driver
-+ *
-+ * Copyright (c) 2017 Baylibre SAS.
-+ * Author: Jerome Brunet <jbrunet@baylibre.com>
-+ *
-+ * Copyright (c) 2018 Amlogic, inc.
-+ * Author: Yixun Lan <yixun.lan@amlogic.com>
-+ * Author: Jianxin Pan <jianxin.pan@amlogic.com>
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include "clkc.h"
-+
-+static int meson_clk_phase_delay_get_phase(struct clk_hw *hw)
-+{
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct meson_clk_phase_delay_data *ph;
-+	unsigned long period_ps, p, d;
-+	int degrees;
-+
-+	ph = meson_clk_get_phase_delay_data(clk);
-+	p = meson_parm_read(clk->map, &ph->phase);
-+	degrees = p * 360 / (1 << (ph->phase.width));
-+
-+	period_ps = DIV_ROUND_UP(NSEC_PER_SEC * 1000,
-+				 clk_hw_get_rate(hw));
-+
-+	d = meson_parm_read(clk->map, &ph->delay);
-+	degrees += d * ph->delay_step_ps * 360 / period_ps;
-+	degrees %= 360;
-+
-+	return degrees;
-+}
-+
-+static int meson_clk_phase_delay_set_phase(struct clk_hw *hw, int degrees)
-+{
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct meson_clk_phase_delay_data *ph;
-+	unsigned long period_ps, d = 0, r;
-+
-+	ph = meson_clk_get_phase_delay_data(clk);
-+	period_ps = DIV_ROUND_UP(NSEC_PER_SEC * 1000, clk_hw_get_rate(hw));
-+
-+	/*
-+	 * First compute the phase index (p), the remainder (r) is the
-+	 * part we'll try to acheive using the delays (d).
-+	 */
-+	r = do_div(degrees, 360 / 1 << (ph->phase.width));
-+	d = DIV_ROUND_CLOSEST(r * period_ps,
-+			      360 * ph->delay_step_ps);
-+	d = min(d, PMASK(ph->delay.width));
-+
-+	meson_parm_write(clk->map, &ph->phase, degrees);
-+	meson_parm_write(clk->map, &ph->delay, d);
-+	return 0;
-+}
-+
-+const struct clk_ops meson_clk_phase_delay_ops = {
-+	.get_phase = meson_clk_phase_delay_get_phase,
-+	.set_phase = meson_clk_phase_delay_set_phase,
-+};
-+EXPORT_SYMBOL_GPL(meson_clk_phase_delay_ops);
-diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
-index 6b96d55..30470c6 100644
---- a/drivers/clk/meson/clkc.h
-+++ b/drivers/clk/meson/clkc.h
-@@ -105,6 +105,18 @@ struct clk_regmap _name = {						\
- 	},								\
- };
- 
-+struct meson_clk_phase_delay_data {
-+	struct parm			phase;
-+	struct parm			delay;
-+	unsigned int			delay_step_ps;
-+};
-+
-+static inline struct meson_clk_phase_delay_data *
-+meson_clk_get_phase_delay_data(struct clk_regmap *clk)
-+{
-+	return clk->data;
-+}
-+
- /* clk_ops */
- extern const struct clk_ops meson_clk_pll_ro_ops;
- extern const struct clk_ops meson_clk_pll_ops;
-@@ -112,5 +124,6 @@ struct clk_regmap _name = {						\
- extern const struct clk_ops meson_clk_mpll_ro_ops;
- extern const struct clk_ops meson_clk_mpll_ops;
- extern const struct clk_ops meson_clk_phase_ops;
-+extern const struct clk_ops meson_clk_phase_delay_ops;
- 
- #endif /* __CLKC_H */
--- 
-1.9.1
-
+Thanks, look like my panel timings seems reverse b/w BP and FP. It
+work irrespective of this change after proper update.
