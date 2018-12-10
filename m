@@ -1,77 +1,133 @@
-Return-Path: <SRS0=YnS5=OS=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=Ck/k=OT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF8FEC07E85
-	for <linux-clk@archiver.kernel.org>; Sun,  9 Dec 2018 15:10:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F664C07E85
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Dec 2018 00:55:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F44320672
-	for <linux-clk@archiver.kernel.org>; Sun,  9 Dec 2018 15:10:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F44320672
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 015E02081F
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Dec 2018 00:55:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MUs73JM6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 015E02081F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726246AbeLIPKB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 9 Dec 2018 10:10:01 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:46736 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726227AbeLIPKB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 9 Dec 2018 10:10:01 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1gW0h7-0001cd-C0; Sun, 09 Dec 2018 15:08:33 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][clk-next] clk: imx: remove redundant initialization of ret to zero
-Date:   Sun,  9 Dec 2018 15:08:32 +0000
-Message-Id: <20181209150832.9366-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.19.1
+        id S1726255AbeLJAzy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 9 Dec 2018 19:55:54 -0500
+Received: from mail-lj1-f182.google.com ([209.85.208.182]:36962 "EHLO
+        mail-lj1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726317AbeLJAzy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 9 Dec 2018 19:55:54 -0500
+Received: by mail-lj1-f182.google.com with SMTP id e5-v6so8075331lja.4;
+        Sun, 09 Dec 2018 16:55:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=GxPvzXoUBDGR5+FlTmMxXrWm2Oum4ZzE0Vp7VbxmPN0=;
+        b=MUs73JM6FZ9xuyE4sVR+zeD09W+Jv02jr9gFOdFmLRNDaqvWwDkBl3KMkg3LP7zCRz
+         HlG8q+TtuZSfL9EATCS0S1CH3Rm+YAFcXjaHZY7ZR6jERzaRa4VtM9f1Jd6dAdNodUOX
+         OQodikao2Kktr0PonIZa1Mg9zUnAvarfva2bAv6kSvtTvp33P5/Hf7ZKbRpFAFNEZa5Y
+         pYfwWhmzRsXdXfHyW10HBwUangUbYch0uBA1CxBntFSFtXyhARr5m8H2jxQGUbhCOhK/
+         XISeVGS4GJ5VVuRa4bbZahzuQDwdomFcWhgzcQvMqcjZfPJqZHZ8ozETJbuWoeLCGQ6r
+         vDxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=GxPvzXoUBDGR5+FlTmMxXrWm2Oum4ZzE0Vp7VbxmPN0=;
+        b=CfAZVsVWmEX/9uFLAdqKQyybr5HgVK56k3lnCUd0aXCVnUPXKetZUv+aGjV31l7zfu
+         lSsWkKghJLkTw2aRuHVR4rlJnoxoz7x0g3tuzXtpiJNDAnJkVuvGkvgFi6let4hpIx2I
+         qatp/KGSOh9GQvXbL3rirpqeh8lV2FnxVEKl7u2G+jLcdUbwOoAJ3ikjI8osX0AABX6t
+         ETRep3le4yzHSTfCW1dA4jOSkZ8IBHJoCw3eMbTAFKe90MFpEo3L1nMEgB0NRLZQiYl2
+         iVVo7iQPJXu6e8oMPKByLdy8rHk51uBgl06Q80/vHZUe9AmCgwvh1JRNjeRe8DK3mHwJ
+         iIOA==
+X-Gm-Message-State: AA+aEWZaW6tuqj6qhp+uFgwjK8qdKwhpqoU1zS0P6L6c4BeyWaAYCfr+
+        evNDRGFAx2VDn1jgc5e9AGI=
+X-Google-Smtp-Source: AFSGD/WmbADgvdZpowlJYvynvnX6XRyVJNpiSoDcJUwTNxH9tLNhA4JN4ovKE+hwx+Wvney+fGUWIg==
+X-Received: by 2002:a2e:908b:: with SMTP id l11-v6mr5919882ljg.150.1544403351816;
+        Sun, 09 Dec 2018 16:55:51 -0800 (PST)
+Received: from dimatab (ppp91-79-165-221.pppoe.mtu-net.ru. [91.79.165.221])
+        by smtp.gmail.com with ESMTPSA id z7-v6sm1850043lji.42.2018.12.09.16.55.50
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 09 Dec 2018 16:55:51 -0800 (PST)
+Date:   Mon, 10 Dec 2018 03:58:36 +0300
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        "pdeschrijver@nvidia.com" <pdeschrijver@nvidia.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "pgaikwad@nvidia.com" <pgaikwad@nvidia.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH v2 2/2] clk: tegra20: Enable lock-status polling for
+ PLLs
+Message-ID: <20181210035836.602757d5@dimatab>
+In-Reply-To: <2a011477-26cb-7e89-a468-54a84465f178@gmail.com>
+References: <20180830184210.5369-1-digetx@gmail.com>
+        <20180830184210.5369-2-digetx@gmail.com>
+        <20180831092948.GP1636@tbergstrom-lnx.Nvidia.com>
+        <1539773948.6233.23.camel@toradex.com>
+        <2a011477-26cb-7e89-a468-54a84465f178@gmail.com>
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; arm-unknown-linux-gnueabihf)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+=D0=92 Wed, 17 Oct 2018 14:41:35 +0300
+Dmitry Osipenko <digetx@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
 
-The initialization of ret is redundant as it is being re-assigned to
-the return value from the call to imx8m_clk_composite_compute_dividers.
-Clean this up by removing the initialization.
+> On 10/17/18 1:59 PM, Marcel Ziswiler wrote:
+> > On Fri, 2018-08-31 at 12:29 +0300, Peter De Schrijver wrote: =20
+> >> On Thu, Aug 30, 2018 at 09:42:10PM +0300, Dmitry Osipenko wrote: =20
+> >>> Currently all PLL's on Tegra20 use a hardcoded delay despite of
+> >>> having
+> >>> a lock-status bit. The lock-status polling was disabled ~7 years
+> >>> ago
+> >>> because PLLE was failing to lock and was a suspicion that other
+> >>> PLLs
+> >>> might be faulty too. Other PLLs are okay, hence enable the lock-
+> >>> status
+> >>> polling for them. This reduces delay of any operation that require
+> >>> PLL
+> >>> to lock.
+> >>>
+> >>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> >>> ---
+> >>>
+> >>> Changelog:
+> >>>
+> >>> v2:	Don't enable polling for PLLE as it known to not being
+> >>> able to lock.
+> >>> =20
+> >>
+> >> This isn't correct. The lock bit of PLLE can declare lock too
+> >> early, but the
+> >> PLL itself does lock. =20
+> >=20
+> > Is there an errata documenting this? As I could not really find any
+> > mentioning of this anywhere at least up to the v11 from Dec 21,
+> > 2010 I still have access to.
+> >=20
+> > BTW: It looks like also PLLA may not always lock properly with those
+> > changes. Is there anything known about that as well? Here is what I
+> > get on various Colibri T20 modules (while random other ones seem to
+> > work fine): =20
+> Could you please try to increase the timeout value?
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/clk/imx/clk-composite-8m.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hello Marcel,
 
-diff --git a/drivers/clk/imx/clk-composite-8m.c b/drivers/clk/imx/clk-composite-8m.c
-index 6d9d3714b4df..527ade1d6933 100644
---- a/drivers/clk/imx/clk-composite-8m.c
-+++ b/drivers/clk/imx/clk-composite-8m.c
-@@ -93,7 +93,7 @@ static int imx8m_clk_composite_divider_set_rate(struct clk_hw *hw,
- 	unsigned long flags = 0;
- 	int prediv_value;
- 	int div_value;
--	int ret = 0;
-+	int ret;
- 	u32 val;
- 
- 	ret = imx8m_clk_composite_compute_dividers(rate, parent_rate,
--- 
-2.19.1
-
+Do you have any update on the PLL-lock-failure problem?
