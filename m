@@ -2,38 +2,37 @@ Return-Path: <SRS0=Ck/k=OT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8364DC65BAF
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Dec 2018 07:34:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F84AC65BAF
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Dec 2018 07:34:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F7142082F
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Dec 2018 07:34:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F7142082F
+	by mail.kernel.org (Postfix) with ESMTP id 239822082F
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Dec 2018 07:34:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 239822082F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726648AbeLJHdI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Dec 2018 02:33:08 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:45267 "EHLO
+        id S1726622AbeLJHdG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Dec 2018 02:33:06 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:12184 "EHLO
         mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726626AbeLJHdH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Dec 2018 02:33:07 -0500
-X-UUID: 77995d5ded14475491f325c7a465f8e9-20181210
-X-UUID: 77995d5ded14475491f325c7a465f8e9-20181210
-Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw01.mediatek.com
+        with ESMTP id S1726623AbeLJHdF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Dec 2018 02:33:05 -0500
+X-UUID: def1d4cf5aaa4d3d943d03af442faa96-20181210
+X-UUID: def1d4cf5aaa4d3d943d03af442faa96-20181210
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
         (envelope-from <weiyi.lu@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1923065532; Mon, 10 Dec 2018 15:32:53 +0800
+        with ESMTP id 175179261; Mon, 10 Dec 2018 15:32:53 +0800
 Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 10 Dec 2018 15:32:52 +0800
+ mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Mon, 10 Dec 2018 15:32:50 +0800
 Received: from mtkslt210.mediatek.inc (10.21.14.14) by mtkcas08.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 10 Dec 2018 15:32:52 +0800
+ Transport; Mon, 10 Dec 2018 15:32:50 +0800
 From:   Weiyi Lu <weiyi.lu@mediatek.com>
 To:     Nicolas Boichat <drinkcat@chromium.org>,
         Matthias Brugger <matthias.bgg@gmail.com>,
@@ -46,96 +45,40 @@ CC:     James Liao <jamesjj.liao@mediatek.com>,
         <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
         <srv_heupstream@mediatek.com>, <stable@vger.kernel.org>,
         Weiyi Lu <weiyi.lu@mediatek.com>
-Subject: [PATCH v3 07/12] clk: mediatek: Add flags support for mtk_gate data
-Date:   Mon, 10 Dec 2018 15:32:35 +0800
-Message-ID: <20181210073240.32278-9-weiyi.lu@mediatek.com>
+Subject: [PATCH v3 00/11] Mediatek MT8183 clock and scpsys support  
+Date:   Mon, 10 Dec 2018 15:32:27 +0800
+Message-ID: <20181210073240.32278-1-weiyi.lu@mediatek.com>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20181210073240.32278-1-weiyi.lu@mediatek.com>
-References: <20181210073240.32278-1-weiyi.lu@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-TM-SNTS-SMTP: 59A34B42CAB057A9D43AF6DCD6B7AEE159428957B6DABD038B5BA24CC3EE5FE12000:8
+X-TM-SNTS-SMTP: 98568D4BF0651C0872EA77837AECE0C26AA2FA95B139DE38A9752A878412378A2000:8
 X-MTK:  N
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On some Mediatek platforms, there are critical clocks of
-clock gate type.
-To register clock gate with flags CLK_IS_CRITICAL,
-we need to add the flags field in mtk_gate data and register APIs.
+This series is based on v4.20-rc1 and most of changes are extracted from series below
+(clock/scpsys common changes for both MT8183 & MT6765)
+https://patchwork.kernel.org/patch/10528495/
+(clock support of MT8183)
+https://patchwork.kernel.org/patch/10549891/
 
-Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
----
- drivers/clk/mediatek/clk-gate.c | 5 +++--
- drivers/clk/mediatek/clk-gate.h | 3 ++-
- drivers/clk/mediatek/clk-mtk.c  | 3 ++-
- drivers/clk/mediatek/clk-mtk.h  | 1 +
- 4 files changed, 8 insertions(+), 4 deletions(-)
+The whole series is composed of
+clock common changes for both MT8183 & MT6765 (PATCH 1-3),
+scpsys common changes for both MT8183 & MT6765 (PATCH 4),
+clock support of MT8183 (PATCH 5-8),
+scpsys support of MT8183 (PATCH 9-11) and
+resend a clock patch long time ago(PTACH 12).
 
-diff --git a/drivers/clk/mediatek/clk-gate.c b/drivers/clk/mediatek/clk-gate.c
-index 934bf0e45e26..85daf826619a 100644
---- a/drivers/clk/mediatek/clk-gate.c
-+++ b/drivers/clk/mediatek/clk-gate.c
-@@ -157,7 +157,8 @@ struct clk *mtk_clk_register_gate(
- 		int clr_ofs,
- 		int sta_ofs,
- 		u8 bit,
--		const struct clk_ops *ops)
-+		const struct clk_ops *ops,
-+		unsigned long flags)
- {
- 	struct mtk_clk_gate *cg;
- 	struct clk *clk;
-@@ -168,7 +169,7 @@ struct clk *mtk_clk_register_gate(
- 		return ERR_PTR(-ENOMEM);
- 
- 	init.name = name;
--	init.flags = CLK_SET_RATE_PARENT;
-+	init.flags = flags | CLK_SET_RATE_PARENT;
- 	init.parent_names = parent_name ? &parent_name : NULL;
- 	init.num_parents = parent_name ? 1 : 0;
- 	init.ops = ops;
-diff --git a/drivers/clk/mediatek/clk-gate.h b/drivers/clk/mediatek/clk-gate.h
-index 72ef89b3ad7b..9f766dfe1d57 100644
---- a/drivers/clk/mediatek/clk-gate.h
-+++ b/drivers/clk/mediatek/clk-gate.h
-@@ -47,6 +47,7 @@ struct clk *mtk_clk_register_gate(
- 		int clr_ofs,
- 		int sta_ofs,
- 		u8 bit,
--		const struct clk_ops *ops);
-+		const struct clk_ops *ops,
-+		unsigned long flags);
- 
- #endif /* __DRV_CLK_GATE_H */
-diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mtk.c
-index 9c0ae4278a94..35359e5397c7 100644
---- a/drivers/clk/mediatek/clk-mtk.c
-+++ b/drivers/clk/mediatek/clk-mtk.c
-@@ -130,7 +130,8 @@ int mtk_clk_register_gates(struct device_node *node,
- 				gate->regs->set_ofs,
- 				gate->regs->clr_ofs,
- 				gate->regs->sta_ofs,
--				gate->shift, gate->ops);
-+				gate->shift, gate->ops,
-+				gate->flags);
- 
- 		if (IS_ERR(clk)) {
- 			pr_err("Failed to register clk %s: %ld\n",
-diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mtk.h
-index 11b5517903d0..928905496c4b 100644
---- a/drivers/clk/mediatek/clk-mtk.h
-+++ b/drivers/clk/mediatek/clk-mtk.h
-@@ -158,6 +158,7 @@ struct mtk_gate {
- 	const struct mtk_gate_regs *regs;
- 	int shift;
- 	const struct clk_ops *ops;
-+	unsigned long flags;
- };
- 
- int mtk_clk_register_gates(struct device_node *node,
--- 
-2.18.0
+change sinve v2:
+- refine for implementation consistency of mtk clk mux.
+- separate the onoff API into enable/disable API for mtk scpsys.
+- resend a patch about PLL rate changing.
+
+changes since v1:
+- refine for better code quality.
+- some minor bug fix of clock part, like incorrect control address
+  and missing clocks.
+
 
