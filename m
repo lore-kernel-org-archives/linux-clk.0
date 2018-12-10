@@ -2,173 +2,223 @@ Return-Path: <SRS0=Ck/k=OT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44C2BC67839
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Dec 2018 16:07:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AF45C04EB8
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Dec 2018 16:17:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E269920870
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Dec 2018 16:07:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5525F20672
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Dec 2018 16:17:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="qZrqOe9i"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E269920870
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="kNb5POBI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5525F20672
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727313AbeLJQHh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Dec 2018 11:07:37 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:37773 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726677AbeLJQHh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Dec 2018 11:07:37 -0500
-Received: by mail-ot1-f68.google.com with SMTP id 40so10900589oth.4
-        for <linux-clk@vger.kernel.org>; Mon, 10 Dec 2018 08:07:36 -0800 (PST)
+        id S1727416AbeLJQRu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Dec 2018 11:17:50 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:53161 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727410AbeLJQRu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Dec 2018 11:17:50 -0500
+Received: by mail-wm1-f65.google.com with SMTP id r11-v6so11501517wmb.2
+        for <linux-clk@vger.kernel.org>; Mon, 10 Dec 2018 08:17:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=706PBGmkV48/HcbLMZWflsnZr+TVd3yuVsGo/4DR1f8=;
-        b=qZrqOe9iym2AL2GkjgW8rRNrL6Lh3xM6Y2S2PhEd30uLK31ZdzOhVYJYW3ZDkrnkJk
-         EHNotu5j1Gc4gjAAtwOffzQoV7ShVWggmFvlsydstPAOWrcVFbgFmYiyhgHnB+EBzmkb
-         6C5PuH1RS0zu+74H6lG6eYz/k/yYrw7+EHZw0=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=rlpTqVyJlpHFfIEuYuSfPKgTjg+EAGEL37BZe3O0asI=;
+        b=kNb5POBIBg7XzJkmwn4Gn1mBl5X6SAgU4zKK8zpqOvax0/eJk56DU8LwrbzdpxrQLw
+         lpzC2tFY28hbXcAI/itZQh7tj85b3hCcfDJNwPOrkvbE9Ov5bPqL2uZu7/lJVqWijN9W
+         S1XOoLrcgpdO4jhAQsbhlLoHWPo9rV/4nsGcg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=706PBGmkV48/HcbLMZWflsnZr+TVd3yuVsGo/4DR1f8=;
-        b=fgkJgeBzANiBiqtVf0zZ2R/my+Cc4qc2gf1pfrSXnIHHnsBicV/Nxilxx8BsPuDIbU
-         wuGh6UYlpqaoSQrWdlsZjlii0Jz/VtC+rxpa9O8SJci/P/zPUyHOk62WAIrRJRCpZJr6
-         OZkWXcjNDVaJBrCLWX/xS8R832lht/NLDfDbQ1qBo72SAyaVgJ661e04rMOxa0Xrfs8E
-         TQ9gV3lRug++VqI83UXc/7aHiNdiWmign/qbEMv59h4PB0AD8TvZwmkyoZ6MahKpaWX5
-         VVU98rXw2ZBOfPLGOTYEGnkCw2cg60dyRrSLfTMrwnYN4WVnuJdzugzDV3RZTuq6bm7q
-         aR7g==
-X-Gm-Message-State: AA+aEWbxlY2ijQk2tgc/CozfHSS+5k6u6Vm7VDo9nW6Dyuicu7lviUJx
-        A/CGnHDNNLw0jyFiBRQb4fyLYnZnu05kOm/C9PILsJmLAwA=
-X-Google-Smtp-Source: AFSGD/V1iqxAWyhgJZlBWmb/eoW6+lrCG3VgAy2gxGkP+QDXODZCCN243GoIeyy0Wj/G1FzHNc0cpRqgubPfto/ZsPg=
-X-Received: by 2002:a9d:4682:: with SMTP id z2mr8780542ote.104.1544458055714;
- Mon, 10 Dec 2018 08:07:35 -0800 (PST)
-MIME-Version: 1.0
-References: <20181113111633.20189-1-jagan@amarulasolutions.com>
- <20181113111633.20189-9-jagan@amarulasolutions.com> <20181115095551.uctdkfmuwlnzhjnn@flea>
- <CAMty3ZAEHiovm6OF6JvJVQR4aqpG1Q3ML5YqxJkF2ntwRkUO=A@mail.gmail.com>
- <20181120155715.andrjp5kg6ugcv72@flea> <CAMty3ZCUOJmvekupOwh281g5HaazTpBbukWQY2Pv2OYypAwciw@mail.gmail.com>
- <20181127102450.b65jzhrdpxn5rxmk@flea> <CAMty3ZDTvn4VF_oOvEi2jCw9Rw5WPd1LQT3SZ5X1K0fJAFg2cQ@mail.gmail.com>
- <20181207132136.oa4nzpczytzxhl2d@flea>
-In-Reply-To: <20181207132136.oa4nzpczytzxhl2d@flea>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=rlpTqVyJlpHFfIEuYuSfPKgTjg+EAGEL37BZe3O0asI=;
+        b=GB0/kOeoOF7PcGXcAdfeXFkVQeH52gqHqJYxg1j92LUlUvUlALboaaGLGifrsO4HdH
+         IQiogZj2TpM6eAaWJ3x19iRBK9SPqYEG5NZjccAMto/pfX9hn2OI8OdUP868TpqvJmHX
+         LHtH3loZITzYqDEFWzfsI4+LGm/0UwPgh+jtdbgl12gmRwMgtsXEd0wG/L5HUMULMf6k
+         8BqgkbHRdmA1dc4/tfWWkKQ0hqUaG1HT/dK5+x4vWvyscBhFA3QzgSqkn8+HugA2Lp9Q
+         xnpC2YnTKyiAiZe6PHlSLShePAA4IaqDFaA9C3jMIgfEjKSU8M+G9Grx5J5/Y/Zn2fiR
+         cLOA==
+X-Gm-Message-State: AA+aEWaLT8A/jnoPwfEJXAORoz+etyOz6ThnRWH1x/6flpLXk7oM2Gey
+        K5t2XAhaqGeegKdXlLA05cITAg==
+X-Google-Smtp-Source: AFSGD/VoTlK9WvKe2US+zX0kbpr0yUt00tI+tJODq6fmyn2DLN+OprVTA8jEQYXnmnycVt8TbQJKiA==
+X-Received: by 2002:a1c:18c:: with SMTP id 134mr10850811wmb.88.1544458667726;
+        Mon, 10 Dec 2018 08:17:47 -0800 (PST)
+Received: from localhost.localdomain (ip-162-59.sn-213-198.clouditalia.com. [213.198.162.59])
+        by smtp.gmail.com with ESMTPSA id b13sm8397503wrn.28.2018.12.10.08.17.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 10 Dec 2018 08:17:47 -0800 (PST)
 From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Mon, 10 Dec 2018 21:37:23 +0530
-Message-ID: <CAMty3ZB4uSxMETSrGbod54N++rimTmv1jNnCPKCy0PRa2e9WFw@mail.gmail.com>
-Subject: Re: [linux-sunxi] Re: [PATCH v4 08/26] drm/sun4i: sun6i_mipi_dsi: Fix
- VBP size calculation
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
+To:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
         Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
         linux-sunxi <linux-sunxi@googlegroups.com>,
-        linux-amarula@amarulasolutions.com
-Content-Type: text/plain; charset="UTF-8"
+        linux-amarula@amarulasolutions.com,
+        Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH v5 02/17] drm/sun4i: sun6i_mipi_dsi: Add has_mod_clk quirk
+Date:   Mon, 10 Dec 2018 21:47:14 +0530
+Message-Id: <20181210161729.29720-3-jagan@amarulasolutions.com>
+X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
+In-Reply-To: <20181210161729.29720-1-jagan@amarulasolutions.com>
+References: <20181210161729.29720-1-jagan@amarulasolutions.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Dec 7, 2018 at 6:51 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
->
-> On Tue, Nov 27, 2018 at 04:34:35PM +0530, Jagan Teki wrote:
-> > On Tue, Nov 27, 2018 at 3:55 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-> > >
-> > > On Tue, Nov 20, 2018 at 09:55:42PM +0530, Jagan Teki wrote:
-> > > > On Tue, Nov 20, 2018 at 9:27 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-> > > > >
-> > > > > On Thu, Nov 15, 2018 at 11:19:53PM +0530, Jagan Teki wrote:
-> > > > > > On Thu, Nov 15, 2018 at 3:26 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-> > > > > > >
-> > > > > > > Hi,
-> > > > > > >
-> > > > > > > On Tue, Nov 13, 2018 at 04:46:15PM +0530, Jagan Teki wrote:
-> > > > > > > > The horizontal and vertical back porch calculation in BSP
-> > > > > > > > code is simply following the Linux drm comment diagram, in
-> > > > > > > > include/drm/drm_modes.h which is
-> > > > > > > >
-> > > > > > > > [hv]back porch = [hv]total - [hv]sync_end
-> > > > > > > >
-> > > > > > > > BSP code form BPI-M64-bsp is calculating vertical back porch as
-> > > > > > > > (from linux-sunxi/drivers/video/sunxi/disp2/disp/de/disp_lcd.c)
-> > > > > > > >
-> > > > > > > > timmings->ver_sync_time= panel_info->lcd_vspw;
-> > > > > > > > timmings->ver_back_porch= panel_info->lcd_vbp-panel_info->lcd_vspw;
-> > > > > > > >
-> > > > > > > > vbp = panel->lcd_vbp;
-> > > > > > > > vspw = panel->lcd_vspw;
-> > > > > > > > dsi_dev[sel]->dsi_basic_size0.bits.vbp = vbp-vspw;
-> > > > > > > > dsi_dev[sel]->dsi_basic_size0.bits.vbp = panel->lcd_vbp - panel->lcd_vspw;
-> > > > > > > > =>  timmings->ver_back_porch + panel_info->lcd_vspw - panel_info->lcd_vspw
-> > > > > > > > =>  timmings->ver_back_porch
-> > > > > > > > =>  mode->vtotal - mode->end
-> > > > > > > >
-> > > > > > > > Which evatually same as mode->vtotal - mode->vsync_end so update the
-> > > > > > > > same in SUN6I_DSI_BASIC_SIZE0_VBP
-> > > > > > > >
-> > > > > > > > On the information note, existing SUN6I_DSI_BASIC_SIZE0_VSA is proper
-> > > > > > > > value.
-> > > > > > > >
-> > > > > > > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> > > > > > >
-> > > > > > > I've tested your changes on my A33 board, and this commit will break
-> > > > > > > it.
-> > > > > > >
-> > > > > > > It creates vblank timeouts, and visual artifacts at the bottom of the
-> > > > > > > display.
-> > > > > >
-> > > > > > Strange, VBP is earlier gives front porch which is anyway wrong.
-> > > > > >
-> > > > > > >
-> > > > > > > Later commits seem to fix the issue, but will create some blanking on
-> > > > > > > the upper third of the display.
-> > > > > > >
-> > > > > > > Since the documentation is quite sparse, and a MIPI-DSI analyzer is
-> > > > > > > way too expensive, I'd really like to have at least what each of these
-> > > > > > > commits are actually fixing, and what symptoms each of these were
-> > > > > > > causing, and not just "the BSP does it".
-> > > > > >
-> > > > > > W/o this 2-lane panel is breaking, same vblank timeout and visual
-> > > > > > artifacts at the bottom of the panel. though the commits may reference
-> > > > > > BSP, I have at-least tested on 3 different panels for us to prove its
-> > > > > > working.
-> > > > > >
-> > > > > > > Having some datasheet for the panels you had working would help too.
-> > > > > >
-> > > > > > Unfortunately datasheet doesn't have any required information what we
-> > > > > > actually looking for.
-> > > > >
-> > > > > Not even the timings? How did you get that information then?
-> > > >
-> > > > datasheet has timing values, but this changes need controller
-> > > > information about VBP register that I don't have. But again existing
-> > > > VBP is not back porch for real, it's front porch.
-> > >
-> > > Yet, this breaks the existing setup. So again:
-> >
-> > Was it with 4-lane or 2-lane panel? can you test it with 2-lane panel?
-> > I can see the issue on 2-lane but the 4-lane working fine with this
-> > patch even.
->
-> It's a 4 lane display.
+Mod clock is not mandatory for all Allwinner MIPI DSI
+controllers, it is connected as CLK_DSI_SCLK for A31
+and not available in A64.
 
-Thanks, look like my panel timings seems reverse b/w BP and FP. It
-work irrespective of this change after proper update.
+So add has_mod_clk quirk and process the clk accordingly.
+
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+---
+ drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 39 ++++++++++++++++++--------
+ drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h |  5 ++++
+ 2 files changed, 33 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+index e3b34a345546..561de393ea23 100644
+--- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
++++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+@@ -10,6 +10,7 @@
+ #include <linux/component.h>
+ #include <linux/crc-ccitt.h>
+ #include <linux/of_address.h>
++#include <linux/of_device.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/regmap.h>
+ #include <linux/reset.h>
+@@ -981,6 +982,8 @@ static int sun6i_dsi_probe(struct platform_device *pdev)
+ 	dsi->host.ops = &sun6i_dsi_host_ops;
+ 	dsi->host.dev = dev;
+ 
++	dsi->variant = of_device_get_match_data(dev);
++
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	base = devm_ioremap_resource(dev, res);
+ 	if (IS_ERR(base)) {
+@@ -1001,17 +1004,20 @@ static int sun6i_dsi_probe(struct platform_device *pdev)
+ 		return PTR_ERR(dsi->reset);
+ 	}
+ 
+-	dsi->mod_clk = devm_clk_get(dev, "mod");
+-	if (IS_ERR(dsi->mod_clk)) {
+-		dev_err(dev, "Couldn't get the DSI mod clock\n");
+-		return PTR_ERR(dsi->mod_clk);
++	if (dsi->variant->has_mod_clk) {
++		dsi->mod_clk = devm_clk_get(dev, "mod");
++		if (IS_ERR(dsi->mod_clk)) {
++			dev_err(dev, "Couldn't get the DSI mod clock\n");
++			return PTR_ERR(dsi->mod_clk);
++		}
+ 	}
+ 
+ 	/*
+ 	 * In order to operate properly, that clock seems to be always
+ 	 * set to 297MHz.
+ 	 */
+-	clk_set_rate_exclusive(dsi->mod_clk, 297000000);
++	if (dsi->variant->has_mod_clk)
++		clk_set_rate_exclusive(dsi->mod_clk, 297000000);
+ 
+ 	dphy_node = of_parse_phandle(dev->of_node, "phys", 0);
+ 	ret = sun6i_dphy_probe(dsi, dphy_node);
+@@ -1043,7 +1049,8 @@ static int sun6i_dsi_probe(struct platform_device *pdev)
+ 	pm_runtime_disable(dev);
+ 	sun6i_dphy_remove(dsi);
+ err_unprotect_clk:
+-	clk_rate_exclusive_put(dsi->mod_clk);
++	if (dsi->variant->has_mod_clk)
++		clk_rate_exclusive_put(dsi->mod_clk);
+ 	return ret;
+ }
+ 
+@@ -1056,7 +1063,8 @@ static int sun6i_dsi_remove(struct platform_device *pdev)
+ 	mipi_dsi_host_unregister(&dsi->host);
+ 	pm_runtime_disable(dev);
+ 	sun6i_dphy_remove(dsi);
+-	clk_rate_exclusive_put(dsi->mod_clk);
++	if (dsi->variant->has_mod_clk)
++		clk_rate_exclusive_put(dsi->mod_clk);
+ 
+ 	return 0;
+ }
+@@ -1066,7 +1074,8 @@ static int __maybe_unused sun6i_dsi_runtime_resume(struct device *dev)
+ 	struct sun6i_dsi *dsi = dev_get_drvdata(dev);
+ 
+ 	reset_control_deassert(dsi->reset);
+-	clk_prepare_enable(dsi->mod_clk);
++	if (dsi->variant->has_mod_clk)
++		clk_prepare_enable(dsi->mod_clk);
+ 
+ 	/*
+ 	 * Enable the DSI block.
+@@ -1094,7 +1103,8 @@ static int __maybe_unused sun6i_dsi_runtime_suspend(struct device *dev)
+ {
+ 	struct sun6i_dsi *dsi = dev_get_drvdata(dev);
+ 
+-	clk_disable_unprepare(dsi->mod_clk);
++	if (dsi->variant->has_mod_clk)
++		clk_disable_unprepare(dsi->mod_clk);
+ 	reset_control_assert(dsi->reset);
+ 
+ 	return 0;
+@@ -1106,9 +1116,16 @@ static const struct dev_pm_ops sun6i_dsi_pm_ops = {
+ 			   NULL)
+ };
+ 
++static const struct sun6i_dsi_variant sun6i_a31_dsi = {
++	.has_mod_clk = true,
++};
++
+ static const struct of_device_id sun6i_dsi_of_table[] = {
+-	{ .compatible = "allwinner,sun6i-a31-mipi-dsi" },
+-	{ }
++	{
++		.compatible = "allwinner,sun6i-a31-mipi-dsi",
++		.data = &sun6i_a31_dsi,
++	},
++	{ /* sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(of, sun6i_dsi_of_table);
+ 
+diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h
+index dbbc5b3ecbda..597b62227019 100644
+--- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h
++++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h
+@@ -20,6 +20,10 @@ struct sun6i_dphy {
+ 	struct reset_control	*reset;
+ };
+ 
++struct sun6i_dsi_variant {
++	bool			has_mod_clk;
++};
++
+ struct sun6i_dsi {
+ 	struct drm_connector	connector;
+ 	struct drm_encoder	encoder;
+@@ -35,6 +39,7 @@ struct sun6i_dsi {
+ 	struct sun4i_drv	*drv;
+ 	struct mipi_dsi_device	*device;
+ 	struct drm_panel	*panel;
++	const struct sun6i_dsi_variant	*variant;
+ };
+ 
+ static inline struct sun6i_dsi *host_to_sun6i_dsi(struct mipi_dsi_host *host)
+-- 
+2.18.0.321.gffc6fa0e3
+
