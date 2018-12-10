@@ -2,108 +2,149 @@ Return-Path: <SRS0=Ck/k=OT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00227C5CFFE
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Dec 2018 21:41:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4739C04EB8
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Dec 2018 21:56:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C18322082F
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Dec 2018 21:41:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C18322082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
+	by mail.kernel.org (Postfix) with ESMTP id A242D2084E
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Dec 2018 21:56:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544478970;
+	bh=RVvvfaRq2VkibiJbgy7GLb0+rHp/tsrl/UYuhPu1mOo=;
+	h=In-Reply-To:To:Subject:From:References:Cc:Date:List-ID:From;
+	b=mEancIpnlAOxNb+EQ10ZlRJp7G766lGZiLVqfXyaNj6YyKDbXSk/nMnIjC8c6d2Um
+	 molBorjjDCJoYzTNilg5SwSJ5W62x0KZW6+FxSX+bw84cxqUzVUgoU/hsd9K3qPIpO
+	 CNRTxHv1V825Lx7FFEuDw1bUx9t3JprZ7iXl0j6w=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A242D2084E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730133AbeLJVln convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Dec 2018 16:41:43 -0500
-Received: from mout.perfora.net ([74.208.4.196]:45169 "EHLO mout.perfora.net"
+        id S1727156AbeLJV4K (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Dec 2018 16:56:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46246 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730045AbeLJVln (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 10 Dec 2018 16:41:43 -0500
-Received: from [10.185.195.207] ([178.197.229.26]) by mrelay.perfora.net
- (mreueus001 [74.208.5.2]) with ESMTPSA (Nemesis) id 0LkRO1-1h33680TbX-00cS83;
- Mon, 10 Dec 2018 22:41:31 +0100
-Date:   Mon, 10 Dec 2018 22:41:24 +0100
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20181128092404.GF17419@ulmo>
-References: <20181101015230.27310-1-marcel@ziswiler.com> <20181101015230.27310-3-marcel@ziswiler.com> <20181101084152.GS7636@tbergstrom-lnx.Nvidia.com> <20181128092404.GF17419@ulmo>
+        id S1726687AbeLJV4K (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 10 Dec 2018 16:56:10 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9A2492081F;
+        Mon, 10 Dec 2018 21:56:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544478969;
+        bh=RVvvfaRq2VkibiJbgy7GLb0+rHp/tsrl/UYuhPu1mOo=;
+        h=In-Reply-To:To:Subject:From:References:Cc:Date:From;
+        b=zQEe6xsUrRd1JK/xFdD+CpqxTTbUmJiDjscbrS9GXhx8xcdc7D4CneHAyWq/H6TnX
+         A8frpr8GiNC1D7f8g0ry0Rupw8TyIZf4NBueGQkZcFucU1NzX9RYQVoTw5SzCTOliB
+         4Bol5pxEcpDBQ/c4xPEdCblNywu/YvrZ+uVUuNdY=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: [PATCH v1 2/3] clk: tegra: ignore unused vfir clock shared with uartb
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>
-CC:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org
-From:   Marcel Ziswiler <marcel@ziswiler.com>
-Message-ID: <929FC681-E2DE-42FA-803A-AEDBD9779523@ziswiler.com>
-X-Provags-ID: V03:K1:F1lgV2Kan2hAx36regNTdHl76cuonDjifIzlJlZZ9y0d+PoN2+w
- A3PQz7mMaCo1AVPSTaLQY3hEMPdDO8Gudj6NsMLQGQkJHIV5XMs7vW1BMBpJKnXlyLLaFay
- zECU5f2+ardWY9cowPYwgB57rGj9oYlCI/+ens546J4ZXU6uiJqubx8NkL0+fGPirl7WDsg
- WwLB4Rl7dUSEEBcEeLGmA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:xo0u5yJSHwM=:fLdmI7bNH7q/f1fjwhgHa9
- ARuhngCOinsdfWj46wqqYzAAJhrpW0mm4R5yt6dMEHfyFsgxeib7fAI7A28gX0tU5mnTAMC7z
- /X/of72e6/jMwfZpwch841b0Hf68FscG8JEGeaUq2SNQT1+bXga/aZicPTpDyCsIQHavgHETy
- 0nb0Vi6zubCrMUroRyhthyw2HUImfjXaMGzG8jWiglGMpd2hz3f2oXdYo9WnAGNTUDg6f16Zy
- JAAh9MXvHp7XKnl1BDsnem04FK0Gvyi/tCCenRwta6ZSZbf+7geAUxhkb1yLBqpayPWMjK9qV
- T0kXVtXtaf7zMUlYGjzPivExTIfJ1amdSDdoWwKpNQ1oDYzjkjhhwITDC7MLz7zqvQaG1Febe
- QdV5b6WQDrPWVsHDVxVyVLdo26TN5BqEndHtffqMJPMfY4FTKU1Y7yYwFGXrtLrC7z1XMIsya
- Hgh2JghMHssnO/bf6MYYFoCgZsure4LuqHMivr06KUE9g6R1fkI2hG8nnK7VET0iwEJgLyqkC
- m7IMiFcVr5FWDqd/wu90SIJdnJxJvdOVys30ILHfRtTZ5Q2SZ8jv+YwhkVbf9008TctI3duUH
- JfvRanpJ4wJpUZoJVrHlD3UxG96rbgTaiWCfEaBICYGez7VrVoDniS4eabo8v9XVFZlSIuvhg
- UDaEXfluniAD+SGsFtWVdPN81KeBL1873pL/R0v+Q2jJBk4K3Skbgu+pGmjzU5EiR/0Ee2Nnr
- XtiVV8uSEyzxRj0BzQUMQeOpoTU6EqZpZB3OdQZyeDvc+3XsKJAiUymi6kA=
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1543934041-12572-3-git-send-email-aisheng.dong@nxp.com>
+Message-ID: <154447896872.17204.13777399275077720705@swboyd.mtv.corp.google.com>
+To:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        Aisheng DONG <aisheng.dong@nxp.com>
+Subject: Re: [PATCH V9 2/7] clk: imx: add scu clock common part
+From:   Stephen Boyd <sboyd@kernel.org>
+User-Agent: alot/0.7
+References: <1543934041-12572-1-git-send-email-aisheng.dong@nxp.com> <1543934041-12572-3-git-send-email-aisheng.dong@nxp.com>
+Cc:     "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        Aisheng DONG <aisheng.dong@nxp.com>
+Date:   Mon, 10 Dec 2018 13:56:08 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Quoting Aisheng DONG (2018-12-04 06:39:25)
+> diff --git a/drivers/clk/imx/Kconfig b/drivers/clk/imx/Kconfig
+> index 43a3ecc..63e7b01 100644
+> --- a/drivers/clk/imx/Kconfig
+> +++ b/drivers/clk/imx/Kconfig
+> @@ -3,3 +3,7 @@
+>  config MXC_CLK
+>         bool
+>         depends on ARCH_MXC
+> +
+> +config MXC_CLK_SCU
 
+Is there any reason to make this a hidden option instead of making it a
+selectable option? It can still depend on ARCH_MXC and ARM64, but
+otherwise it should be compilable as long as CONFIG_IMX_SCU is defined
+(this should also be a config we depend on here).
 
-On November 28, 2018 10:24:04 AM GMT+01:00, Thierry Reding <thierry.reding@gmail.com> wrote:
->On Thu, Nov 01, 2018 at 10:41:52AM +0200, Peter De Schrijver wrote:
->> On Thu, Nov 01, 2018 at 02:52:29AM +0100, Marcel Ziswiler wrote:
->> > From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
->> > 
->> > As UARTB and VFIR share their clock enable bit it is rather unwise
->for
->> > the kernel to turn off the VFIR one should that be unused (and
->> > potentially vice versa but so far there anyway is no VFIR driver).
->> > 
->> > Without this patch trying to use UARTB with the regular 8250 driver
->> > will freeze as soon as ttyS1 is accessed after boot. Luckily, using
->the
->> > high-speed Tegra serial driver won't exhibit the issue as clocks
->are
->> > dynamically enabled/disabled on every access.
->> > 
->> > This has been reproduced both on Apalis T30 as well as Apalis TK1
->but
->> > may be an issue on all Tegra UARTB's which share the clock enable
->with
->> > VFIR.
->> > 
->> 
->> Ah.. the correct fix for this is to initialize the enable_refcnt
->based on the
->> hw state. This is done in 9619dba8325fce098bbc9ee2911d1b0150fec0c9
->for
->> periph gate clocks, but obviously also applies to normal periph
->clocks.
->
->Hi Marcel,
->
->were you going to send a new version with the alternative fix as
->suggested by Peter?
+> +       bool
+> +       depends on ARCH_MXC && ARM64
+> diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
+> index f850424..4abed37 100644
+> --- a/drivers/clk/imx/Makefile
+> +++ b/drivers/clk/imx/Makefile
+> @@ -20,6 +20,9 @@ obj-$(CONFIG_MXC_CLK) +=3D \
+>         clk-pllv4.o \
+>         clk-sccg-pll.o
+> =20
+> +obj-$(CONFIG_MXC_CLK_SCU) +=3D \
+> +       clk-scu.o
+> +
+>  obj-$(CONFIG_SOC_IMX1)   +=3D clk-imx1.o
+>  obj-$(CONFIG_SOC_IMX21)  +=3D clk-imx21.o
+>  obj-$(CONFIG_SOC_IMX25)  +=3D clk-imx25.o
+> diff --git a/drivers/clk/imx/clk-scu.c b/drivers/clk/imx/clk-scu.c
+> new file mode 100644
+> index 0000000..ec8a471
+> --- /dev/null
+> +++ b/drivers/clk/imx/clk-scu.c
+> @@ -0,0 +1,265 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * Copyright 2018 NXP
+> + *   Dong Aisheng <aisheng.dong@nxp.com>
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/err.h>
+> +#include <linux/slab.h>
+> +
+> +#include "clk-scu.h"
+> +
+> +struct imx_sc_ipc *ccm_ipc_handle;
 
-Yes, sorry. Let me look at that now.
+Why does this need to be a global? Can it be in each clk_scu instance
+instead?
 
->Thierry
+> +
+> diff --git a/drivers/clk/imx/clk-scu.h b/drivers/clk/imx/clk-scu.h
+> new file mode 100644
+> index 0000000..09f381b
+> --- /dev/null
+> +++ b/drivers/clk/imx/clk-scu.h
+> @@ -0,0 +1,21 @@
+> +/* SPDX-License-Identifier: GPL-2.0+ */
+> +/*
+> + * Copyright 2018 NXP
+> + *   Dong Aisheng <aisheng.dong@nxp.com>
+> + */
+> +
+> +#ifndef __IMX_CLK_SCU_H
+> +#define __IMX_CLK_SCU_H
+> +
+> +#include <linux/firmware/imx/sci.h>
+> +
+> +extern struct imx_sc_ipc *ccm_ipc_handle;
+> +
+> +static inline int imx_clk_scu_init(void)
+> +{
+> +       return imx_scu_get_handle(&ccm_ipc_handle);
+
+And then this can be implemented in the C driver so that ccm_ipc_handle
+doesn't need to be exported into the header file?
+
