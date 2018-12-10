@@ -7,53 +7,53 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BCEAC04EB8
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84794C5CFFE
 	for <linux-clk@archiver.kernel.org>; Mon, 10 Dec 2018 16:19:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C523320672
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Dec 2018 16:19:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45BC220672
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Dec 2018 16:19:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="mN9suXNq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C523320672
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="O+e/8jGe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45BC220672
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727577AbeLJQTH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Dec 2018 11:19:07 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:34618 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728557AbeLJQR4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Dec 2018 11:17:56 -0500
-Received: by mail-wr1-f68.google.com with SMTP id j2so11124806wrw.1
-        for <linux-clk@vger.kernel.org>; Mon, 10 Dec 2018 08:17:55 -0800 (PST)
+        id S1727143AbeLJQTM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Dec 2018 11:19:12 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:53649 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728538AbeLJQRw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Dec 2018 11:17:52 -0500
+Received: by mail-wm1-f68.google.com with SMTP id y1so11504605wmi.3
+        for <linux-clk@vger.kernel.org>; Mon, 10 Dec 2018 08:17:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=1E70xeoJgFDlzIA3oUYjw8e22CRq5X3bSrjLQMHtvYQ=;
-        b=mN9suXNqQg3s1ivOE+Oyt4ThILfe2dCniMwRaX4g401CTmR6aZfqEKhAxLoY1X/IWq
-         cc+mzAdvuSgJUStOEfys0Wv2XXVEMBbeHqM5DCC/fL8MBY8mzA9L4B1q3bZI0upLJ2SJ
-         BNIgEDmTCD2lkiXC1HXq13almmLQNHmLuT6J4=
+        bh=/FobAdk1F/zKxxqm1vIJo/CC8EUNzQ/B2arqE/fLkis=;
+        b=O+e/8jGesF+TnCn8gM5SRD6NP0q6G5NYENXdrkyRc7q6CU8Eb4i7GTW60z95JnEKPO
+         3fzgHoSR4cQxYPPHQx7cgqEWpf8VhVRVlamBtQKDyQ+1D8h+RYZ3/XueJyOGoxXBOYx7
+         ArhaFDsmcOHfNIiTy6wxPHhItB8ClC60tXJgY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=1E70xeoJgFDlzIA3oUYjw8e22CRq5X3bSrjLQMHtvYQ=;
-        b=Sr8vjDhUiXs7pgUOupOrJIUiqW1biiqJsFFcX3EHA/UFYTz5hNc1FcluQqO4p3ah3l
-         ENx0To+0zonv4/4/xLaPjR7NydSP3Xlpby8bvuYYPcw36FF679Z4JhxDLfi07Qa6JWQU
-         oc2IlNP9h6f36B9FZZxNepSNqAMOGUgqLV+D2gi8teCa7gYZZjExcScilTjHl69bhMYf
-         1RG/KfNevWRMNCye6Czl/oJoNVR+EXF4Yaymrwc2an8XXzG+5bz1AIqA3MwCLmYIZm8A
-         yMj/Z8Y0iZjinKI47JZGKv4cmAkfqySL5pruda/OSAFTrfydiLvecpNZYn5yUC+YBhJb
-         KLdg==
-X-Gm-Message-State: AA+aEWYwk63GgFkl0mZDyV+kvOcpZhMibQP6ui1gica1vVjAWYIGhEQR
-        RGvn3+RbuVnpKtxtU4sEB6EDVw==
-X-Google-Smtp-Source: AFSGD/V0RE8LG+FIsAjtBoW76+Ltv5cDn/pbtTDZAbRKucmXo2LBvuD0aJheiCDGz4F9Ll+4+gLGFA==
-X-Received: by 2002:adf:9361:: with SMTP id 88mr9946323wro.204.1544458674818;
-        Mon, 10 Dec 2018 08:17:54 -0800 (PST)
+        bh=/FobAdk1F/zKxxqm1vIJo/CC8EUNzQ/B2arqE/fLkis=;
+        b=Hdz+OEUPY4V7EAj4wC/MTMxErDp8gQ5Uyx+lg/VFG6GlGdFw01Pk/l/YGySoswNv6k
+         gBVFQmJi/XgVD2drxmYTh0pTJEaUcoox+Dik0Pi+85whK3aG1JAcZ2QILr4r2GzVxM0b
+         9dnKQzfjZ1Zyls4eY4xt4s3jaEhcqTAmoLq3qyy9EVqhoQVpr7prwPAYIzhGijElNFJz
+         X76vk4yDZ7xJEYxm/wAC4pL5GKFqt7YgeMyX4R1pREjl7xO5YqS7jeTP7chtdhCcugRs
+         RT3zabPG3q0JnU6hOy+y3WI3dp8fdnEFizfZOY/vc3+BaofkzWZRBDtkcxvlLllBMwFR
+         +W4g==
+X-Gm-Message-State: AA+aEWaEOk5ysy+8t4FXm+oGkbpCg0fSgJBj1n5yFvyVPzgmtVM69cd4
+        LJW/T+U/1yAM1GdjQGc/y+LbZA==
+X-Google-Smtp-Source: AFSGD/UGSus8mIueXi7G092yzijN2KgoYa8ydFRdqDZafNWarrOeEj+ecoQ1Q8xrLccYkOaSqYz39g==
+X-Received: by 2002:a1c:2787:: with SMTP id n129mr11580381wmn.128.1544458671352;
+        Mon, 10 Dec 2018 08:17:51 -0800 (PST)
 Received: from localhost.localdomain (ip-162-59.sn-213-198.clouditalia.com. [213.198.162.59])
-        by smtp.gmail.com with ESMTPSA id b13sm8397503wrn.28.2018.12.10.08.17.53
+        by smtp.gmail.com with ESMTPSA id b13sm8397503wrn.28.2018.12.10.08.17.50
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Dec 2018 08:17:54 -0800 (PST)
+        Mon, 10 Dec 2018 08:17:50 -0800 (PST)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Chen-Yu Tsai <wens@csie.org>,
@@ -65,9 +65,9 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-sunxi <linux-sunxi@googlegroups.com>,
         linux-amarula@amarulasolutions.com,
         Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v5 06/17] drm/sun4i: sun6i_mipi_dsi: Fix TCON DRQ set bits
-Date:   Mon, 10 Dec 2018 21:47:18 +0530
-Message-Id: <20181210161729.29720-7-jagan@amarulasolutions.com>
+Subject: [PATCH v5 04/17] dt-bindings: sun6i-dsi: Add compatible for A64 MIPI DSI
+Date:   Mon, 10 Dec 2018 21:47:16 +0530
+Message-Id: <20181210161729.29720-5-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 In-Reply-To: <20181210161729.29720-1-jagan@amarulasolutions.com>
 References: <20181210161729.29720-1-jagan@amarulasolutions.com>
@@ -78,42 +78,27 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-TCON DRQ set bits for non-burst DSI mode can computed via
-horizontal front porch instead of front porch + sync timings.
-
-BSP code form BPI-M64-bsp is computing TCON DRQ set bits
-for non-burts as (from linux-sunxi/
-drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c)
-
-=> panel->lcd_ht -    panel->lcd_x - panel->lcd_hbp
-=> (timmings->hor_front_porch + panel->lcd_hbp + panel->lcd_x)
-   - panel->lcd_x - panel->hbp
-=> timmings->hor_front_porch
-=> mode->hsync_start - mode->hdisplay
-
-So, update the DRQ set bits accordingly.
+The MIPI DSI controller on Allwinner A64 is similar to
+Allwinner A31 without support of DSI mod clock.
 
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-index cdd44a1307b3..c9b0222ebcd4 100644
---- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-+++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-@@ -367,9 +367,9 @@ static void sun6i_dsi_setup_burst(struct sun6i_dsi *dsi,
- 	struct mipi_dsi_device *device = dsi->device;
- 	u32 val = 0;
- 
--	if ((mode->hsync_end - mode->hdisplay) > 20) {
-+	if ((mode->hsync_start - mode->hdisplay) > 20) {
- 		/* Maaaaaagic */
--		u16 drq = (mode->hsync_end - mode->hdisplay) - 20;
-+		u16 drq = (mode->hsync_start - mode->hdisplay) - 20;
- 
- 		drq *= mipi_dsi_pixel_format_to_bpp(device->format);
- 		drq /= 32;
+diff --git a/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt b/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
+index 6a6cf5de08b0..9fa6e7a758ad 100644
+--- a/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
++++ b/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
+@@ -12,6 +12,7 @@ The DSI Encoder generates the DSI signal from the TCON's.
+ Required properties:
+   - compatible: value must be one of:
+     * allwinner,sun6i-a31-mipi-dsi
++    * allwinner,sun50i-a64-mipi-dsi
+   - reg: base address and size of memory-mapped region
+   - interrupts: interrupt associated to this IP
+   - clocks: phandles to the clocks feeding the DSI encoder
 -- 
 2.18.0.321.gffc6fa0e3
 
