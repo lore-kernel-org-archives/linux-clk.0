@@ -2,99 +2,108 @@ Return-Path: <SRS0=Ck/k=OT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BECBC04EB8
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Dec 2018 20:55:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00227C5CFFE
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Dec 2018 21:41:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8CBA2084C
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Dec 2018 20:55:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544475306;
-	bh=GbowKODnpFqwR4aPYcQkndvPuXB0oIO8rYxtHkaFx0k=;
-	h=In-Reply-To:To:Subject:From:References:Cc:Date:List-ID:From;
-	b=blsjEJ55nse7CUCRqJi2EUoXk+weFWkt5hLgNg3Yk0QqP4bVb1z0IVcj3Kqh70YTB
-	 9M/1yUxm9x7JfDGBlxxZ4Y/Qogpc0oQ1iFSASNKn/MtAXLiaamxylj9QCEZtPc6ljA
-	 0CL8BIGJtKhYR9u7Oo7q2vGdx67DUgpoW7lpnUsg=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8CBA2084C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id C18322082F
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Dec 2018 21:41:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C18322082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729349AbeLJUzF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Dec 2018 15:55:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49598 "EHLO mail.kernel.org"
+        id S1730133AbeLJVln convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Dec 2018 16:41:43 -0500
+Received: from mout.perfora.net ([74.208.4.196]:45169 "EHLO mout.perfora.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726677AbeLJUzF (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 10 Dec 2018 15:55:05 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 238702082F;
-        Mon, 10 Dec 2018 20:55:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544475305;
-        bh=GbowKODnpFqwR4aPYcQkndvPuXB0oIO8rYxtHkaFx0k=;
-        h=In-Reply-To:To:Subject:From:References:Cc:Date:From;
-        b=uDK7akgzhMC9ItQKdEDTY/kPdmNTbW04oTOSdUopFi/E0V2omcFPDkwJPbSMJlMLW
-         Ryp8h4hxF5uU7ZtZ3Z5HmBBrWR5LJkBIkL1lUqHu0KaBtGNAfUARAYN1hzCFFyqUAK
-         heL5zTRv2gpeJW/EM8wCob71jnuCu0YYZ+YQ/uFM=
-Content-Type: text/plain; charset="utf-8"
+        id S1730045AbeLJVln (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 10 Dec 2018 16:41:43 -0500
+Received: from [10.185.195.207] ([178.197.229.26]) by mrelay.perfora.net
+ (mreueus001 [74.208.5.2]) with ESMTPSA (Nemesis) id 0LkRO1-1h33680TbX-00cS83;
+ Mon, 10 Dec 2018 22:41:31 +0100
+Date:   Mon, 10 Dec 2018 22:41:24 +0100
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20181128092404.GF17419@ulmo>
+References: <20181101015230.27310-1-marcel@ziswiler.com> <20181101015230.27310-3-marcel@ziswiler.com> <20181101084152.GS7636@tbergstrom-lnx.Nvidia.com> <20181128092404.GF17419@ulmo>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1543934041-12572-2-git-send-email-aisheng.dong@nxp.com>
-Message-ID: <154447530435.17204.3027810086542897433@swboyd.mtv.corp.google.com>
-To:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Aisheng DONG <aisheng.dong@nxp.com>
-Subject: Re: [PATCH V9 1/7] clk: imx: add configuration option for mmio clks
-From:   Stephen Boyd <sboyd@kernel.org>
-User-Agent: alot/0.7
-References: <1543934041-12572-1-git-send-email-aisheng.dong@nxp.com> <1543934041-12572-2-git-send-email-aisheng.dong@nxp.com>
-Cc:     "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Aisheng DONG <aisheng.dong@nxp.com>
-Date:   Mon, 10 Dec 2018 12:55:04 -0800
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Subject: Re: [PATCH v1 2/3] clk: tegra: ignore unused vfir clock shared with uartb
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>
+CC:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org
+From:   Marcel Ziswiler <marcel@ziswiler.com>
+Message-ID: <929FC681-E2DE-42FA-803A-AEDBD9779523@ziswiler.com>
+X-Provags-ID: V03:K1:F1lgV2Kan2hAx36regNTdHl76cuonDjifIzlJlZZ9y0d+PoN2+w
+ A3PQz7mMaCo1AVPSTaLQY3hEMPdDO8Gudj6NsMLQGQkJHIV5XMs7vW1BMBpJKnXlyLLaFay
+ zECU5f2+ardWY9cowPYwgB57rGj9oYlCI/+ens546J4ZXU6uiJqubx8NkL0+fGPirl7WDsg
+ WwLB4Rl7dUSEEBcEeLGmA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:xo0u5yJSHwM=:fLdmI7bNH7q/f1fjwhgHa9
+ ARuhngCOinsdfWj46wqqYzAAJhrpW0mm4R5yt6dMEHfyFsgxeib7fAI7A28gX0tU5mnTAMC7z
+ /X/of72e6/jMwfZpwch841b0Hf68FscG8JEGeaUq2SNQT1+bXga/aZicPTpDyCsIQHavgHETy
+ 0nb0Vi6zubCrMUroRyhthyw2HUImfjXaMGzG8jWiglGMpd2hz3f2oXdYo9WnAGNTUDg6f16Zy
+ JAAh9MXvHp7XKnl1BDsnem04FK0Gvyi/tCCenRwta6ZSZbf+7geAUxhkb1yLBqpayPWMjK9qV
+ T0kXVtXtaf7zMUlYGjzPivExTIfJ1amdSDdoWwKpNQ1oDYzjkjhhwITDC7MLz7zqvQaG1Febe
+ QdV5b6WQDrPWVsHDVxVyVLdo26TN5BqEndHtffqMJPMfY4FTKU1Y7yYwFGXrtLrC7z1XMIsya
+ Hgh2JghMHssnO/bf6MYYFoCgZsure4LuqHMivr06KUE9g6R1fkI2hG8nnK7VET0iwEJgLyqkC
+ m7IMiFcVr5FWDqd/wu90SIJdnJxJvdOVys30ILHfRtTZ5Q2SZ8jv+YwhkVbf9008TctI3duUH
+ JfvRanpJ4wJpUZoJVrHlD3UxG96rbgTaiWCfEaBICYGez7VrVoDniS4eabo8v9XVFZlSIuvhg
+ UDaEXfluniAD+SGsFtWVdPN81KeBL1873pL/R0v+Q2jJBk4K3Skbgu+pGmjzU5EiR/0Ee2Nnr
+ XtiVV8uSEyzxRj0BzQUMQeOpoTU6EqZpZB3OdQZyeDvc+3XsKJAiUymi6kA=
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Aisheng DONG (2018-12-04 06:39:22)
-> diff --git a/arch/arm/mach-imx/Kconfig b/arch/arm/mach-imx/Kconfig
-> index c12a05c..303082c 100644
-> --- a/arch/arm/mach-imx/Kconfig
-> +++ b/arch/arm/mach-imx/Kconfig
-> @@ -570,6 +580,7 @@ config SOC_IMX7ULP
->  config SOC_VF610
->         bool "Vybrid Family VF610 support"
->         select ARM_GIC if ARCH_MULTI_V7
-> +       select MXC_CLK
->         select PINCTRL_VF610
-> =20
 
-Instead of select can we break this dependency on the arch Kconfig and
-have:
 
-	config MXC_CLK
-		def_bool ARCH_MXC && !ARM64
+On November 28, 2018 10:24:04 AM GMT+01:00, Thierry Reding <thierry.reding@gmail.com> wrote:
+>On Thu, Nov 01, 2018 at 10:41:52AM +0200, Peter De Schrijver wrote:
+>> On Thu, Nov 01, 2018 at 02:52:29AM +0100, Marcel Ziswiler wrote:
+>> > From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+>> > 
+>> > As UARTB and VFIR share their clock enable bit it is rather unwise
+>for
+>> > the kernel to turn off the VFIR one should that be unused (and
+>> > potentially vice versa but so far there anyway is no VFIR driver).
+>> > 
+>> > Without this patch trying to use UARTB with the regular 8250 driver
+>> > will freeze as soon as ttyS1 is accessed after boot. Luckily, using
+>the
+>> > high-speed Tegra serial driver won't exhibit the issue as clocks
+>are
+>> > dynamically enabled/disabled on every access.
+>> > 
+>> > This has been reproduced both on Apalis T30 as well as Apalis TK1
+>but
+>> > may be an issue on all Tegra UARTB's which share the clock enable
+>with
+>> > VFIR.
+>> > 
+>> 
+>> Ah.. the correct fix for this is to initialize the enable_refcnt
+>based on the
+>> hw state. This is done in 9619dba8325fce098bbc9ee2911d1b0150fec0c9
+>for
+>> periph gate clocks, but obviously also applies to normal periph
+>clocks.
+>
+>Hi Marcel,
+>
+>were you going to send a new version with the alternative fix as
+>suggested by Peter?
 
-> diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
-> index 5c0b11e..f850424 100644
-> --- a/drivers/clk/imx/Makefile
-> +++ b/drivers/clk/imx/Makefile
-> @@ -1,6 +1,6 @@
->  # SPDX-License-Identifier: GPL-2.0
-> =20
-> -obj-y +=3D \
-> +obj-$(CONFIG_MXC_CLK) +=3D \
+Yes, sorry. Let me look at that now.
 
-Because this changes to obj-$(CONFIG) we should change the
-drivers/clk/Makefile to have obj-y for this Makefile instead of
-depending on ARCH_MXC.
-
+>Thierry
