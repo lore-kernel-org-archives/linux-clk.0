@@ -2,130 +2,186 @@ Return-Path: <SRS0=DnCL=OU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A946C07E85
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Dec 2018 04:06:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 297FFC07E85
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Dec 2018 05:07:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24C5620672
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Dec 2018 04:06:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9F9D2084A
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Dec 2018 05:07:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="eTicZj6G"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24C5620672
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="c3sdAS9c"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9F9D2084A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728304AbeLKEGj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Dec 2018 23:06:39 -0500
-Received: from mail-eopbgr40072.outbound.protection.outlook.com ([40.107.4.72]:28032
-        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727594AbeLKEGj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 10 Dec 2018 23:06:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6iRLmvYNgZEshPDfT5bQXdhVD3/xeaBxphY5yHqq/wY=;
- b=eTicZj6Ga5IYob/g0AohJEyKFIPyuRJ9tgRzPccc+BhR4W0WXtxjYNTGIek6aKH/3u0x3nfGKL8x7JhHLkjZ9vYtOt6OlPvK44lPqX3rn0Yo3TKH1sLbu1zkIf6IVVdUugrq4BRAobBztJohiiVabR2Kl/k7VR6PaOvOPJLGMF8=
-Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.126.21) by
- AM0PR04MB4145.eurprd04.prod.outlook.com (52.134.125.155) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1404.21; Tue, 11 Dec 2018 04:05:56 +0000
-Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
- ([fe80::31e3:2aa6:8d93:9927]) by AM0PR04MB4211.eurprd04.prod.outlook.com
- ([fe80::31e3:2aa6:8d93:9927%2]) with mapi id 15.20.1404.026; Tue, 11 Dec 2018
- 04:05:56 +0000
-From:   Aisheng Dong <aisheng.dong@nxp.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-CC:     "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>
-Subject: RE: [PATCH V9 0/7] clk: imx: add imx8qxp clock support
-Thread-Topic: [PATCH V9 0/7] clk: imx: add imx8qxp clock support
-Thread-Index: AQHUi98jvykrnvKQL0Kg33biwal6j6V4eymAgAB4qnA=
-Date:   Tue, 11 Dec 2018 04:05:55 +0000
-Message-ID: <AM0PR04MB4211BE52F403155BD09538C780A60@AM0PR04MB4211.eurprd04.prod.outlook.com>
-References: <1543934041-12572-1-git-send-email-aisheng.dong@nxp.com>
- <154447480107.17204.18337865638259063687@swboyd.mtv.corp.google.com>
-In-Reply-To: <154447480107.17204.18337865638259063687@swboyd.mtv.corp.google.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=aisheng.dong@nxp.com; 
-x-originating-ip: [101.93.238.110]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM0PR04MB4145;6:sjQhA3lWz9lC7HWM1pTCDSkJBDmC0MCXPkDB1tfqd2g+NZ7ryCYlYamDnMfnTMWj9dLDXCuabnmkgQlbT3dY6w0EgN2/WEvVZtRt3oXlGbF+sUXRANWBvmcxTgd9PAY8wnb8EMFYBRuKI7e4s/xzj3xbJpwx4m6wwsvFeMbEG46CIRspWZ/2Jxzj8qSRZbZh4oo+WMc6OIQnN7leuzVPkGnPqa28wR/fzNxSuwRFhA81jV4sNnu9vCicvU6+x7BZgdB2u7XiCc3LRn+J6nHowrvCnzdxxfotosM9LGRBmrEkCwhsTtkpBiKp/9qir25+rqxmy4p5YCvQXaG5atTC8MbPuvhTSUrr33hjoDnZMPc5ZSviaU4eYMemPbbafA65v6pAZR9DXr79ldpFkyAIqYCYYvjz43KPDdnI1y7rSe8fNKIZgEZIy9bwCOvj4AA8YN+gOAwEjz/R+Wmd0JcmSw==;5:aN70vqpSq1uZVKlxlW31N1T+O8OmMp4HYsLrZSACUFsJ76ImFT2W8DzMYRkJdedVmafF7uU8PlGxmGYeXNHSNMGU+T5bBiE4yIQYFCMlux/XHU9rIVNiekHEI2pvOCJq+NAafkjlF5X6cMUDSBH6Q73NBQEXge/H9Bnz4JwXwFY=;7:vsKoBTbrYC868R/2zPeGRx1NC1oLeQNx5JCr5Ns8PkzX2j5C6qIerLPxRJKXhPVNWQBVW7BArcmI5II43220gaPcW+yua1M0yRH9Zexw7I+oh8UB+CV4wD5GtHpmXj0PgCvJmGnqxUsniYjQ2PnTUw==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 6759afdf-35bc-4c7d-cd87-08d65f1df353
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB4145;
-x-ms-traffictypediagnostic: AM0PR04MB4145:
-x-microsoft-antispam-prvs: <AM0PR04MB41455977796C5BD3973FDC1380A60@AM0PR04MB4145.eurprd04.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93001095)(3002001)(3231455)(999002)(944501520)(52105112)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123564045)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:AM0PR04MB4145;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB4145;
-x-forefront-prvs: 08831F51DC
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(376002)(366004)(136003)(39860400002)(396003)(199004)(13464003)(189003)(9686003)(53936002)(2501003)(446003)(3846002)(81156014)(2906002)(11346002)(81166006)(110136005)(316002)(54906003)(486006)(476003)(55016002)(8676002)(6116002)(97736004)(14454004)(86362001)(44832011)(99286004)(8936002)(106356001)(6246003)(25786009)(74316002)(186003)(66066001)(68736007)(105586002)(71200400001)(33656002)(5660300001)(102836004)(256004)(76176011)(6506007)(229853002)(7696005)(14444005)(6436002)(305945005)(71190400001)(7736002)(26005)(478600001)(4326008)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4145;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: wCO0wVJP/39W11tVO7bqL+jYSAJeEOddDyW5xn6gJiJ/+QrAa1kgRQIv0neMaLGAdQBgyNYTlIw/ibBlldOi7Xwufi5T/zdj7krUbc1KgxASLdDmkVpxmGqBcREbTPFuAhtkzgdutE76lGzRGOnYJIa2gDYknHHDQK1obZzbrwjpZiCNyxoXSJOBX06zp3KyDF1p2q7o3LtU6Hh+Z/GlQKRAgHKyXw9BtzGu+4W5/MrXKc7DJjs7/WBwfLI9O4+YKQwya1tU4CF/p4r+ObpystSsBlbSGXFw++0I4BQdoymdy7RExBL2FAw8ktWJMzKk
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6759afdf-35bc-4c7d-cd87-08d65f1df353
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Dec 2018 04:05:55.9669
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4145
+        id S1727903AbeLKFHB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 11 Dec 2018 00:07:01 -0500
+Received: from mailout1.samsung.com ([203.254.224.24]:41471 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726324AbeLKFHA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Dec 2018 00:07:00 -0500
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20181211050656epoutp01554b41cc83ec59ce1cd9ecc227324e67~vLvKUlScM0992809928epoutp01R;
+        Tue, 11 Dec 2018 05:06:56 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20181211050656epoutp01554b41cc83ec59ce1cd9ecc227324e67~vLvKUlScM0992809928epoutp01R
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1544504816;
+        bh=0sunCkbqNJ9M5IR5CgqcdouvUDSefFI6HSyk/HzGRNE=;
+        h=Date:From:To:Cc:Subject:In-reply-to:References:From;
+        b=c3sdAS9chLtu9le/eBcu0SI7i27kqTq1KYE7byMylGWU+tJJ61tfbJ9SZKUtnHKtR
+         DU6D2wVrLbBo8DXqqE7SYdfqFwqKEyZuJzVIcDjKjyedipuF70eN1RGKhzGM2LceSO
+         uZIBly1YBRU3vYWPw2UaS24lKhzrA2CxxaHVzUyE=
+Received: from epsmges1p1.samsung.com (unknown [182.195.40.156]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20181211050652epcas1p16c2414c8334323cfad0270b4bcfbc441~vLvG5vLhl1402314023epcas1p1f;
+        Tue, 11 Dec 2018 05:06:52 +0000 (GMT)
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        CB.81.04058.CE54F0C5; Tue, 11 Dec 2018 14:06:52 +0900 (KST)
+Received: from epsmgms2p1new.samsung.com (unknown [182.195.42.142]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20181211050652epcas1p16c4d9e30947de8dd9b2440414c49e8f4~vLvGpWLAH0444004440epcas1p1L;
+        Tue, 11 Dec 2018 05:06:52 +0000 (GMT)
+X-AuditID: b6c32a35-e1fff70000000fda-50-5c0f45ec3590
+Received: from epmmp1.local.host ( [203.254.227.16]) by
+        epsmgms2p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        E5.C4.03601.CE54F0C5; Tue, 11 Dec 2018 14:06:52 +0900 (KST)
+MIME-version: 1.0
+Content-transfer-encoding: 8BIT
+Content-type: text/plain; charset="utf-8"
+Received: from [10.113.63.77] by mmp1.samsung.com (Oracle Communications
+        Messaging Server 7.0.5.31.0 64bit (built May  5 2014)) with ESMTPA id
+        <0PJK004QW3JGB010@mmp1.samsung.com>; Tue, 11 Dec 2018 14:06:52 +0900 (KST)
+Message-id: <5C0F45EC.7020509@samsung.com>
+Date:   Tue, 11 Dec 2018 14:06:52 +0900
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
+        Thunderbird/31.6.0
+To:     Kamil Konieczny <k.konieczny@partner.samsung.com>,
+        linux-samsung-soc@vger.kernel.org
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v3 3/5] dt-bindings: clk: exynos5433: document imem
+ clock
+In-reply-to: <20181204165248.17572-4-k.konieczny@partner.samsung.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0hTYRju29nZjtr0NLW+Fto60Q8NzaPOjtUk6MIiSemG6EhP7jRlV3a2
+        TH/EopuJmKaSmJlKkiyjWpqmpegmRdQkI4rKRWgx85Z00TKpbafIf+/7vM/z8rzP92GIuFgg
+        wfL1Zsakp7WEIJB/1xEVGzOxI0QZN9lKUbdrbqLUFacLpcp6fgPq/Mg4Qg0O3hJSM6VulKoZ
+        7OFRN5zDQqr55TMedfqBU0g5Js6iW4MUrfWtQGG3nRMo+qbu8xRlbTag+GKPTEczNVvyGFrF
+        mKSMPtegyter5cTufdnbsmVJcWQMmUxtJKR6WsfIie2p6TE787Vea4T0KK21eKF0mmWJDSlb
+        TAaLmZHmGViznGCMKq0x2RjL0jrWolfH5hp0m8i4uHiZl5ijyZufaRAaO8XHBkvq+VYwHlwC
+        AjCIJ8K6Ox9ACQjExHgngF+uv+ZzzSyApW/mhP9Y16xulBt0AzjzrYLnG4jwZXCu0u1VYBiC
+        r4bOIY0PRvAo6Pl64e+iYQAnbjUJOH40nK1v8fP5+Dpo9ah9sMAL93pe+Skh+Br4Ym4E+Opw
+        PAPeu/Ld7yEMz4Tt0+1+pwju5sGrjdOIb08ongZbJpf6OAH4Dmh7VwY4z+MCeNkKuXo7HB1q
+        QLk6FH562Cb0SSG+Cg4NyH0rIX4WwK+ekyjXlAP4+fEdHidIgB8bS3jcYcFw6lspyolFsPiM
+        mKMo4GRHl4C79zmAjp9v+eUgonZRRLX/I6pdFFEDQGxgOWNkdWqGJY3k4sezA/8vjJZ1gipX
+        aj/AMUAsFUlPBSvFKH2ULdT1A4ghRJgo5ohIKRap6MIixmTINlm0DNsPZN6EKxBJeK7B+6f1
+        5mxSFp+QkEAlkkkykiRWiEYll7PEuJo2MxqGMTKmfzoeFiCxgsygpoWV3R1jHUt6CiTxtqSC
+        X3Z3c+XeAuklVXFRdfr+rrSi1U2CF9ZTRT+qZzdHHNE/GnvaaeebXPE55c7wXT9PpDgwlWW4
+        SnHw8ALy5JDGtmkqdmZeeqLdocyKbDYirtQDYCDs4khhYrD0WYpyVUbG977jvXsi6za8X8u6
+        1ssJPptHk9GIiaX/AEBFrh6bAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrALMWRmVeSWpSXmKPExsVy+t9jAd03rvwxBsceKFpsnLGe1WL+kXOs
+        Fn37/jNa9D9+zWxx/vwGdouPPfdYLWac38dksfbIXXaLpdcvMlm07j3CbnH4TTurA7fHmnlr
+        GD02repk8zj4bg+TR9+WVYwenzfJBbBGcdmkpOZklqUW6dslcGX8/riAvWCHUMX5rnksDYyv
+        +boYOTkkBEwkljfcY+1i5OIQEtjJKLHr3zQmkASvgKDEj8n3WLoYOTiYBeQljlzKhjDVJaZM
+        yYUov88osWzBMhaIci2J7/NWgJWzCKhKNLxIBwmzAYX3v7jBBmLzCyhKXP3xmBGkRFQgQqL7
+        RCVIWEQgSmL+s8lsICOZBR4wSbyY1Ad2gbCAr8TzTR/ZIHZdZpQ49XA62C5OAVeJVff7GCcw
+        CsxCcukshEtnIVy6gJF5FaNkakFxbnpusVGBYV5quV5xYm5xaV66XnJ+7iZGYDxsO6zVt4Px
+        /pL4Q4wCHIxKPLwVbXwxQqyJZcWVuYcYJTiYlUR4ddN4Y4R4UxIrq1KL8uOLSnNSiw8xSnOw
+        KInz3s47FikkkJ5YkpqdmlqQWgSTZeLglGpgnJndfkk51PT+/7vJV6bMVq2/tDHMUedaQcHZ
+        k48Ca668duZeV/ZJodQ5VfsUg2eK5r8n7H4My1f9Lfx91jzKObTbUSDtTm/X9wOfeMzFPu58
+        VyGR17U2uegpny2btrt7xOcOTT/Ty+a5YhqilWGBivs3GM2cMl1jS/uvm/PPvzE8eOFh+QcR
+        JZbijERDLeai4kQAex621IMCAAA=
+X-CMS-MailID: 20181211050652epcas1p16c4d9e30947de8dd9b2440414c49e8f4
+X-Msg-Generator: CA
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20181204165317eucas1p10bef0207ee57a9420911410ed2a22453
+References: <20181204165248.17572-1-k.konieczny@partner.samsung.com>
+        <CGME20181204165317eucas1p10bef0207ee57a9420911410ed2a22453@eucas1p1.samsung.com>
+        <20181204165248.17572-4-k.konieczny@partner.samsung.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBTdGVwaGVuIEJveWQgW21haWx0
-bzpzYm95ZEBrZXJuZWwub3JnXQ0KPiBRdW90aW5nIEFpc2hlbmcgRE9ORyAoMjAxOC0xMi0wNCAw
-NjozOToxOCkNCj4gPiBUaGlzIHBhdGNoIHNlcmllcyBhZGRzIGkuTVg4UVhQIGNsb2NrIHN1cHBv
-cnQgd2hpY2ggaXMgYmFzZWQgb24gdGhlDQo+ID4gY2xvY2sgc2VydmljZSBwcm92aWRlZCBieSBT
-Q1UgZmlybXdhcmUuDQo+ID4NCj4gPiBOb3RlOiBJdCBkZXBlbmRzIG9uIFNDVSBkcml2ZXIgd2hp
-Y2ggaGFzIGFscmVhZHkgYmVlbiBtZXJnZWQgYnkgU2hhd24uDQo+ID4gU28gdGhpcyBwYXRjaCBz
-ZXJpZXMgY291bGQgZ28gdGhyb3VnaCBTaGF3bidzIHRyZWUgYXMgd2VsbC4NCj4gDQo+IFdoaWNo
-IHBhdGNoIHNlcmllcz8NCj4gDQo+IEknbSBoYXZpbmcgdHJvdWJsZSBhcHBseWluZyB0aGUgZmly
-c3QgcGF0Y2gsIHNvIEkgc3VzcGVjdCBzb21ldGhpbmcgaXMgd3JvbmcuDQoNCkFzIEkgcmVwbGll
-ZCBpbiBsYXN0IG1haWwsIHBhdGNoZXMgd2VyZSBtYWRlIGFnYWluc3QgY2xrLW5leHQgYnJhbmNo
-Lg0KSSBhbHNvIHRyaWVkIGFwcGx5IGFnYWluc3QgY2xrLW1hc3RlciBicmFuY2ggYW5kIG1ldCB0
-aGUgc2FtZSBmYWlsdXJlLg0KDQokIGdpdCBhbSAqLnBhdGNoDQpQYXRjaCBpcyBlbXB0eS4gV2Fz
-IGl0IHNwbGl0IHdyb25nPw0KV2hlbiB5b3UgaGF2ZSByZXNvbHZlZCB0aGlzIHByb2JsZW0sIHJ1
-biAiZ2l0IGFtIC0tY29udGludWUiLg0KSWYgeW91IHByZWZlciB0byBza2lwIHRoaXMgcGF0Y2gs
-IHJ1biAiZ2l0IGFtIC0tc2tpcCIgaW5zdGVhZC4NClRvIHJlc3RvcmUgdGhlIG9yaWdpbmFsIGJy
-YW5jaCBhbmQgc3RvcCBwYXRjaGluZywgcnVuICJnaXQgYW0gLS1hYm9ydCIuDQokIGdpdCBhbSAt
-LXNraXANCkFwcGx5aW5nOiBjbGs6IGlteDogYWRkIGNvbmZpZ3VyYXRpb24gb3B0aW9uIGZvciBt
-bWlvIGNsa3MNCmVycm9yOiBwYXRjaCBmYWlsZWQ6IGRyaXZlcnMvY2xrL2lteC9NYWtlZmlsZTox
-DQplcnJvcjogZHJpdmVycy9jbGsvaW14L01ha2VmaWxlOiBwYXRjaCBkb2VzIG5vdCBhcHBseQ0K
-UGF0Y2ggZmFpbGVkIGF0IDAwMDIgY2xrOiBpbXg6IGFkZCBjb25maWd1cmF0aW9uIG9wdGlvbiBm
-b3IgbW1pbyBjbGtzDQpUaGUgY29weSBvZiB0aGUgcGF0Y2ggdGhhdCBmYWlsZWQgaXMgZm91bmQg
-aW46IC5naXQvcmViYXNlLWFwcGx5L3BhdGNoDQpXaGVuIHlvdSBoYXZlIHJlc29sdmVkIHRoaXMg
-cHJvYmxlbSwgcnVuICJnaXQgYW0gLS1jb250aW51ZSIuDQpJZiB5b3UgcHJlZmVyIHRvIHNraXAg
-dGhpcyBwYXRjaCwgcnVuICJnaXQgYW0gLS1za2lwIiBpbnN0ZWFkLg0KVG8gcmVzdG9yZSB0aGUg
-b3JpZ2luYWwgYnJhbmNoIGFuZCBzdG9wIHBhdGNoaW5nLCBydW4gImdpdCBhbSAtLWFib3J0Ii4N
-Cg0KSWYgbWFudWFsbHkgYXBwbHksIGl0IGNhbiB3b3JrLg0KJCBwYXRjaCAtcDEgPCAwMDAxLWNs
-ay1pbXgtYWRkLWNvbmZpZ3VyYXRpb24tb3B0aW9uLWZvci1tbWlvLWNsa3MucGF0Y2gNCnBhdGNo
-aW5nIGZpbGUgYXJjaC9hcm0vbWFjaC1pbXgvS2NvbmZpZw0KSHVuayAjNyBzdWNjZWVkZWQgYXQg
-NTcxIChvZmZzZXQgLTkgbGluZXMpLg0KcGF0Y2hpbmcgZmlsZSBkcml2ZXJzL2Nsay9LY29uZmln
-DQpwYXRjaGluZyBmaWxlIGRyaXZlcnMvY2xrL2lteC9LY29uZmlnDQpwYXRjaGluZyBmaWxlIGRy
-aXZlcnMvY2xrL2lteC9NYWtlZmlsZQ0KSHVuayAjMSBzdWNjZWVkZWQgYXQgMSB3aXRoIGZ1enog
-MS4NCg0KSSBndWVzcyBpdCBtaWdodCBiZWNhdXNlIGNsay1uZXh0IG1lcmdlZCBjbGstaW14N3Vs
-cC5jIGFuZCBjbGstaW14OG1xLmMgd2hpY2gNCkNoYW5nZWQgdGhlIGRyaXZlcnMvY2xrL2lteC9N
-YWtlZmlsZSBhIGJpdC4NCg0KSWYgeW91IHdhbnQgbWUgdG8gZ2VuZXJhdGUgdGhlIHBhdGNoIHNl
-dCBhZ2FpbnN0IGNsay1tYXN0ZXIsIHBsZWFzZSBsZXQgbWUga25vdy4NCg0KUmVnYXJkcw0KRG9u
-ZyBBaXNoZW5nDQo=
+Hi Kamil,
+
+On 2018년 12월 05일 01:52, Kamil Konieczny wrote:
+> Document DT bindings for imem clock of the Samsung Exynos5433 SSS (Security
+> SubSystem) and SlimSSS IPs.
+> 
+> Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
+> ---
+>  .../bindings/clock/exynos5433-clock.txt       | 23 +++++++++++++++++++
+>  1 file changed, 23 insertions(+)
+
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/exynos5433-clock.txt b/Documentation/devicetree/bindings/clock/exynos5433-clock.txt
+> index 50d5897c9849..183c327a7d6b 100644
+> --- a/Documentation/devicetree/bindings/clock/exynos5433-clock.txt
+> +++ b/Documentation/devicetree/bindings/clock/exynos5433-clock.txt
+> @@ -50,6 +50,8 @@ Required Properties:
+>      IPs.
+>    - "samsung,exynos5433-cmu-cam1" - clock controller compatible for CMU_CAM1
+>      which generates clocks for Cortex-A5/MIPI_CSIS2/FIMC-LITE_C/FIMC-FD IPs.
+> +  - "samsung,exynos5433-cmu-imem"   - clock controller compatible for CMU_IMEM
+> +    which generates clocks for SSS (Security SubSystem) and SlimSSS IPs.
+>  
+>  - reg: physical base address of the controller and length of memory mapped
+>    region.
+> @@ -168,6 +170,12 @@ Required Properties:
+>  		- aclk_cam1_400
+>  		- aclk_cam1_552
+>  
+> +	Input clocks for imem clock controller:
+> +		- oscclk
+> +		- aclk_imem_sssx_266
+> +		- aclk_imem_266
+> +		- aclk_imem_200
+> +
+>  Optional properties:
+>    - power-domains: a phandle to respective power domain node as described by
+>  	generic PM domain bindings (see power/power_domain.txt for more
+> @@ -469,6 +477,21 @@ Example 2: Examples of clock controller nodes are listed below.
+>  		power-domains = <&pd_cam1>;
+>  	};
+>  
+> +	cmu_imem: clock-controller@11060000 {
+> +		compatible = "samsung,exynos5433-cmu-imem";
+> +		reg = <0x11060000 0x1000>;
+> +		#clock-cells = <1>;
+> +
+> +		clock-names = "oscclk",
+> +			"aclk_imem_sssx_266",
+> +			"aclk_imem_266",
+> +			"aclk_imem_200";
+> +		clocks = <&xxti>,
+> +			<&cmu_top CLK_DIV_ACLK_IMEM_SSSX_266>,
+> +			<&cmu_top CLK_DIV_ACLK_IMEM_266>,
+> +			<&cmu_top CLK_DIV_ACLK_IMEM_200>;
+> +	};
+> +
+>  Example 3: UART controller node that consumes the clock generated by the clock
+>  	   controller.
+>  
+> 
+
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
