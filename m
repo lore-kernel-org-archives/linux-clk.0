@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEA72C07E85
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Dec 2018 16:32:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5848C07E85
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Dec 2018 16:34:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D62D2081B
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Dec 2018 16:32:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D62D2081B
+	by mail.kernel.org (Postfix) with ESMTP id B47352081B
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Dec 2018 16:34:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B47352081B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726917AbeLKQcf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 11 Dec 2018 11:32:35 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:59020 "EHLO mail.bootlin.com"
+        id S1726965AbeLKQe2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 11 Dec 2018 11:34:28 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:59154 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726906AbeLKQce (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 11 Dec 2018 11:32:34 -0500
+        id S1726906AbeLKQe2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 11 Dec 2018 11:34:28 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 7342820726; Tue, 11 Dec 2018 17:32:32 +0100 (CET)
+        id 72992206D8; Tue, 11 Dec 2018 17:34:25 +0100 (CET)
 Received: from localhost (unknown [185.94.189.187])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 34DE6206A1;
-        Tue, 11 Dec 2018 17:32:22 +0100 (CET)
-Date:   Tue, 11 Dec 2018 17:32:22 +0100
+        by mail.bootlin.com (Postfix) with ESMTPSA id 306BC2039F;
+        Tue, 11 Dec 2018 17:34:15 +0100 (CET)
+Date:   Tue, 11 Dec 2018 17:34:15 +0100
 From:   Maxime Ripard <maxime.ripard@bootlin.com>
 To:     Jagan Teki <jagan@amarulasolutions.com>
 Cc:     Chen-Yu Tsai <wens@csie.org>,
@@ -37,16 +37,15 @@ Cc:     Chen-Yu Tsai <wens@csie.org>,
         Michael Trimarchi <michael@amarulasolutions.com>,
         linux-sunxi <linux-sunxi@googlegroups.com>,
         linux-amarula@amarulasolutions.com
-Subject: Re: [PATCH v5 15/17] clk: sunxi-ng: a64: Add minimum rate for
- PLL_MIPI
-Message-ID: <20181211163222.hk647c24cjhmwrz4@flea>
+Subject: Re: [PATCH v5 17/17] arm64: dts: allwinner: a64: Add DSI pipeline
+Message-ID: <20181211163415.74sen2drjol5j7iu@flea>
 References: <20181210161729.29720-1-jagan@amarulasolutions.com>
- <20181210161729.29720-16-jagan@amarulasolutions.com>
+ <20181210161729.29720-18-jagan@amarulasolutions.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="swh3x3cihaooc5eu"
+        protocol="application/pgp-signature"; boundary="3gj7e5tiwlqkg6xk"
 Content-Disposition: inline
-In-Reply-To: <20181210161729.29720-16-jagan@amarulasolutions.com>
+In-Reply-To: <20181210161729.29720-18-jagan@amarulasolutions.com>
 User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
@@ -54,38 +53,72 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---swh3x3cihaooc5eu
+--3gj7e5tiwlqkg6xk
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 10, 2018 at 09:47:27PM +0530, Jagan Teki wrote:
-> Minimum PLL used for MIPI is 500MHz, as per manual, but
-> lowering the min rate by 300MHz can result proper working
-> nkms divider with the help of desired dclock rate from
-> panel driver.
+On Mon, Dec 10, 2018 at 09:47:29PM +0530, Jagan Teki wrote:
+> The A64 has a MIPI-DSI block which is similar to A31
+> without mod clock.
+>=20
+> So, add dsi node with A64 compatible, dphy node with
+> A31 compatible and finally connect dsi to tcon0 to
+> make proper DSI pipeline.
 >=20
 > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> Acked-by: Stephen Boyd <sboyd@kernel.org>
 > ---
->  drivers/clk/sunxi-ng/ccu-sun50i-a64.c | 1 +
->  1 file changed, 1 insertion(+)
+>  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 45 +++++++++++++++++++
+>  1 file changed, 45 insertions(+)
 >=20
-> diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c b/drivers/clk/sunxi-ng=
-/ccu-sun50i-a64.c
-> index 181b599dc163..b623c8150b4f 100644
-> --- a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-> +++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-> @@ -183,6 +183,7 @@ static struct ccu_nkm pll_mipi_clk =3D {
->  	.n		=3D _SUNXI_CCU_MULT(8, 4),
->  	.k		=3D _SUNXI_CCU_MULT_MIN(4, 2, 2),
->  	.m		=3D _SUNXI_CCU_DIV(0, 4),
-> +	.min_rate	=3D 300000000,		/* Actual rate is 500MHz */
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/b=
+oot/dts/allwinner/sun50i-a64.dtsi
+> index dd5740bc3fc9..dd5c7ad55149 100644
+> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+> @@ -344,6 +344,12 @@
+>  					#address-cells =3D <1>;
+>  					#size-cells =3D <0>;
+>  					reg =3D <1>;
+> +
+> +					tcon0_out_dsi: endpoint@1 {
+> +						reg =3D <1>;
+> +						remote-endpoint =3D <&dsi_in_tcon0>;
+> +						allwinner,tcon-channel =3D <1>;
+> +					};
+>  				};
+>  			};
+>  		};
+> @@ -910,6 +916,45 @@
+>  			status =3D "disabled";
+>  		};
+> =20
+> +		dsi: dsi@1ca0000 {
+> +			compatible =3D "allwinner,sun50i-a64-mipi-dsi";
+> +			reg =3D <0x01ca0000 0x1000>;
+> +			interrupts =3D <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks =3D <&ccu CLK_BUS_MIPI_DSI>;
+> +			clock-names =3D "bus";
+> +			resets =3D <&ccu RST_BUS_MIPI_DSI>;
+> +			phys =3D <&dphy>;
+> +			phy-names =3D "dphy";
+> +			status =3D "disabled";
+> +
+> +			ports {
+> +				#address-cells =3D <1>;
+> +				#size-cells =3D <0>;
+> +
+> +				port@0 {
+> +					#address-cells =3D <1>;
+> +					#size-cells =3D <0>;
+> +					reg =3D <0>;
+> +
+> +					dsi_in_tcon0: endpoint {
+> +						remote-endpoint =3D <&tcon0_out_dsi>;
+> +					};
 
-That comment still doesn't make any sense. Is it running at 500MHz or 300?
-
-Also, IIRC you had a patch adding support for maximum boundaries in
-your previous patch, where did it go?
+The reg address-cells and size-cells properties will generate DTC
+warnings when compiled with W=3D1, please fix them.
 
 Maxime
 
@@ -94,15 +127,15 @@ Maxime Ripard, Bootlin
 Embedded Linux and Kernel engineering
 https://bootlin.com
 
---swh3x3cihaooc5eu
+--3gj7e5tiwlqkg6xk
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXA/mlgAKCRDj7w1vZxhR
-xUJjAP9p8yLcOBcyhEdhgW00NS0Z0gfYTLFmuPBz7wb/2SZ6LwEAzYo2pQyUdgVd
-1UsL1ohFZbYCCzqIC2JzFIAZyNtvvAQ=
-=alGr
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXA/nBwAKCRDj7w1vZxhR
+xbV3AP9sXQHxi+1vGa4rm1B/LWKXKZnWP6P4p0BUz1YaGfj4hAEAxaOjO/yfOwaQ
+9iLluJKH6gRLme16UVLw0OGlgzsBhwc=
+=mdq4
 -----END PGP SIGNATURE-----
 
---swh3x3cihaooc5eu--
+--3gj7e5tiwlqkg6xk--
