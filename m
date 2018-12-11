@@ -2,106 +2,71 @@ Return-Path: <SRS0=DnCL=OU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 745C3C6783C
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Dec 2018 20:12:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6EA4C67839
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Dec 2018 21:26:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 461B22084C
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Dec 2018 20:12:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 461B22084C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id A721C2084E
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Dec 2018 21:26:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544563577;
+	bh=cx/LJoXcmXsAMm3oEL8FLB0cxAHt1sjQFwQN2RrEAxg=;
+	h=In-Reply-To:To:Subject:From:References:Cc:Date:List-ID:From;
+	b=VBv9sA4tRBHAxXN8M3DX4ji4PR5qQ2S4Gx9wytAdJOBfab8hcyCgJuukVWppqqUYr
+	 /SM1Hb7C06wYmK8lQlbAmb5ZjAZgyWMmTZLwmmDrr7pWpJ97YakQPUXB1ai+d3Cm3Y
+	 CQXxYF5RdSUHdHBScuhf12clP0H5DYM/55oNy2ZY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A721C2084E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726285AbeLKUMz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 11 Dec 2018 15:12:55 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:35822 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726266AbeLKUMy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Dec 2018 15:12:54 -0500
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBBK8waX112713
-        for <linux-clk@vger.kernel.org>; Tue, 11 Dec 2018 15:12:53 -0500
-Received: from e34.co.us.ibm.com (e34.co.us.ibm.com [32.97.110.152])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2paj95n0nb-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-clk@vger.kernel.org>; Tue, 11 Dec 2018 15:12:52 -0500
-Received: from localhost
-        by e34.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-clk@vger.kernel.org> from <eajames@linux.ibm.com>;
-        Tue, 11 Dec 2018 20:12:51 -0000
-Received: from b03cxnp08028.gho.boulder.ibm.com (9.17.130.20)
-        by e34.co.us.ibm.com (192.168.1.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 11 Dec 2018 20:12:47 -0000
-Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
-        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBBKCkWG23855276
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 11 Dec 2018 20:12:46 GMT
-Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D63B9136059;
-        Tue, 11 Dec 2018 20:12:46 +0000 (GMT)
-Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3A12A13605E;
-        Tue, 11 Dec 2018 20:12:46 +0000 (GMT)
-Received: from talon7.ibm.com (unknown [9.41.179.222])
-        by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Tue, 11 Dec 2018 20:12:46 +0000 (GMT)
-From:   Eddie James <eajames@linux.ibm.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-aspeed@lists.ozlabs.org, andrew@aj.id.au, sboyd@kernel.org,
-        mturquette@baylibre.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, joel@jms.id.au,
-        Eddie James <eajames@linux.ibm.com>
-Subject: [PATCH 1/2] clk: aspeed: Add video engine reset index definition
-Date:   Tue, 11 Dec 2018 14:12:40 -0600
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1544559161-21468-1-git-send-email-eajames@linux.ibm.com>
-References: <1544559161-21468-1-git-send-email-eajames@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18121120-0016-0000-0000-00000962F242
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010214; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01130352; UDB=6.00587356; IPR=6.00910485;
- MB=3.00024657; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-11 20:12:50
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18121120-0017-0000-0000-0000415EC2F8
-Message-Id: <1544559161-21468-2-git-send-email-eajames@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-11_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812110179
+        id S1726209AbeLKV0M (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 11 Dec 2018 16:26:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34470 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726134AbeLKV0L (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 11 Dec 2018 16:26:11 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1664F2084E;
+        Tue, 11 Dec 2018 21:26:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544563571;
+        bh=cx/LJoXcmXsAMm3oEL8FLB0cxAHt1sjQFwQN2RrEAxg=;
+        h=In-Reply-To:To:Subject:From:References:Cc:Date:From;
+        b=qn1cKS+xnIyA1vfcZIgRiv3VLvghpdUi2f7Ujm7MDCjKCJHfG/VNxT3bNiL5iF6AH
+         zQSK0To6GOJ9b9oOk+MfKSRuPo65boNnXRYAWjsg19hSKZB1++fZ31ic4ynrbk/GDh
+         ca24G1ukYwY5hPGoCZoVjIUXsd9bpey5+zEEJSTo=
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1544558404-1705-1-git-send-email-jhugo@codeaurora.org>
+Message-ID: <154456357033.17204.6634705913514698304@swboyd.mtv.corp.google.com>
+To:     Jeffrey Hugo <jhugo@codeaurora.org>, andy.gross@linaro.org,
+        david.brown@linaro.org, mturquette@baylibre.com
+Subject: Re: [PATCH] clk: qcom: Add missing msm8998 resets
+From:   Stephen Boyd <sboyd@kernel.org>
+User-Agent: alot/0.7
+References: <1544558404-1705-1-git-send-email-jhugo@codeaurora.org>
+Cc:     bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jeffrey Hugo <jhugo@codeaurora.org>
+Date:   Tue, 11 Dec 2018 13:26:10 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add an index into the array of resets kept in the Aspeed clock driver
-for the video engine. This isn't a HW bit definition.
+Quoting Jeffrey Hugo (2018-12-11 12:00:04)
+> commit c0cb7c7e7164 ("clk: qcom: Enumerate remaining msm8998 resets")
+> missed two USB2 resets.  Add them.
+>=20
+> Fixes: c0cb7c7e7164 ("clk: qcom: Enumerate remaining msm8998 resets")
+> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
+> ---
 
-Signed-off-by: Eddie James <eajames@linux.ibm.com>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- include/dt-bindings/clock/aspeed-clock.h | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/include/dt-bindings/clock/aspeed-clock.h b/include/dt-bindings/clock/aspeed-clock.h
-index f437386..15a9059 100644
---- a/include/dt-bindings/clock/aspeed-clock.h
-+++ b/include/dt-bindings/clock/aspeed-clock.h
-@@ -50,5 +50,6 @@
- #define ASPEED_RESET_I2C		7
- #define ASPEED_RESET_AHB		8
- #define ASPEED_RESET_CRT1		9
-+#define ASPEED_RESET_VIDEO		10
- 
- #endif
--- 
-1.8.3.1
+Applied to clk-next
 
