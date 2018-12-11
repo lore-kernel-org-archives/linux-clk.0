@@ -2,231 +2,107 @@ Return-Path: <SRS0=DnCL=OU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FB6DC07E85
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Dec 2018 16:28:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEA72C07E85
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Dec 2018 16:32:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBBFD2081B
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Dec 2018 16:28:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="Np6rTVgq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBBFD2081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by mail.kernel.org (Postfix) with ESMTP id 8D62D2081B
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Dec 2018 16:32:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D62D2081B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727252AbeLKQ2G (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 11 Dec 2018 11:28:06 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:33043 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727287AbeLKQ2G (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Dec 2018 11:28:06 -0500
-Received: by mail-wr1-f66.google.com with SMTP id c14so14787179wrr.0
-        for <linux-clk@vger.kernel.org>; Tue, 11 Dec 2018 08:28:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=f7K6GN5/aa8DCXT+gCMZwybLJkMHYSJQth2S97vanzo=;
-        b=Np6rTVgqPxvJka6+7brT/Eim4w/Hd2CraROFW2i6SrUrrtDFf+5dxyKFNR3HTU+Zgt
-         +vCWjDHnZGc+F2olDiYddyTEFyE/GNi7dXqazkNISskFklqX+tdSVgwQx266peIz9ct7
-         ePiHh0fyp/cbKyR8yoQ4JWkKDUdxboWNTu/CO7Kbc+hPD0HikMWm5UZWPVkPYk6KshBt
-         TVAN4io2nE8969uKqKTlM9HJeuZ9HHUQjRUln6G/cYZK4DZW7daog3ijzWsGzvI107jG
-         echLmz0tB9thiCWCCAyAPjjj65fhYTyfmOvQecfFe+330PeTTAP6+VfsaquG/0Z/GKzF
-         cpTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=f7K6GN5/aa8DCXT+gCMZwybLJkMHYSJQth2S97vanzo=;
-        b=I5a1Iocl8A7M/UgoWetTfdFOwFLz+KVBQNxYTNrQF3Hs58SNnD4qj75Q89lreJ8LuG
-         QZq4HmtWac49ehrirMkzLFEttUI8RaLvtzZ+9U8WyyiPVA57XC6eDoaQRs226M0onvcz
-         QE03x9y4FsBWl8QOk6CEF4gE9S8JllYXIwPWQ1oN2nah+NRT134yTdPhAZXYxzTOx+80
-         46riPdoy4N4vwwVWv2RfDD5Z0gTtyblJnl28Dz0eHzGI0vKYdEfdy0HK9+nM1QlKFYYu
-         ms1o04QXLbCC0UYHcbdla59WNpTBcRGbE9wDWkkGrNEu33GE/VewnmFI5yT2ruT45LoE
-         bsmg==
-X-Gm-Message-State: AA+aEWb56cn8dhtkJxJWpNIYJ9JJsjtUmG2CcHYVcOoisYcgBabFjdD+
-        DnrIvLbJz3clSLLdjiidwOl4BQ==
-X-Google-Smtp-Source: AFSGD/UXMlaOEMcHHY+QljpOlM8+FZoMmIr7+8jsqKzy6aCccOZYqm9qFkRhYtZH8/ETWEHMRXDEXA==
-X-Received: by 2002:adf:ce86:: with SMTP id r6mr14862307wrn.257.1544545683894;
-        Tue, 11 Dec 2018 08:28:03 -0800 (PST)
-Received: from boomer.baylibre.com ([2a01:e34:eeb6:4690:106b:bae3:31ed:7561])
-        by smtp.gmail.com with ESMTPSA id y34sm44330957wrd.68.2018.12.11.08.28.01
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 11 Dec 2018 08:28:02 -0800 (PST)
-Message-ID: <8e1c711b477eeee60809f33926cf9c6a52f530cd.camel@baylibre.com>
-Subject: Re: [PATCH RESEND v7 1/4] clk: meson: add emmc sub clock phase
- delay driver
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Jianxin Pan <jianxin.pan@amlogic.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-Cc:     Yixun Lan <yixun.lan@amlogic.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
+        id S1726917AbeLKQcf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 11 Dec 2018 11:32:35 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:59020 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726906AbeLKQce (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 11 Dec 2018 11:32:34 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 7342820726; Tue, 11 Dec 2018 17:32:32 +0100 (CET)
+Received: from localhost (unknown [185.94.189.187])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 34DE6206A1;
+        Tue, 11 Dec 2018 17:32:22 +0100 (CET)
+Date:   Tue, 11 Dec 2018 17:32:22 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Liang Yang <liang.yang@amlogic.com>,
-        Jian Hu <jian.hu@amlogic.com>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Hanjie Lin <hanjie.lin@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>, linux-clk@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Date:   Tue, 11 Dec 2018 17:28:00 +0100
-In-Reply-To: <1544457877-51301-2-git-send-email-jianxin.pan@amlogic.com>
-References: <1544457877-51301-1-git-send-email-jianxin.pan@amlogic.com>
-         <1544457877-51301-2-git-send-email-jianxin.pan@amlogic.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.2 (3.30.2-2.fc29) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        linux-amarula@amarulasolutions.com
+Subject: Re: [PATCH v5 15/17] clk: sunxi-ng: a64: Add minimum rate for
+ PLL_MIPI
+Message-ID: <20181211163222.hk647c24cjhmwrz4@flea>
+References: <20181210161729.29720-1-jagan@amarulasolutions.com>
+ <20181210161729.29720-16-jagan@amarulasolutions.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="swh3x3cihaooc5eu"
+Content-Disposition: inline
+In-Reply-To: <20181210161729.29720-16-jagan@amarulasolutions.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 2018-12-11 at 00:04 +0800, Jianxin Pan wrote:
-> From: Yixun Lan <yixun.lan@amlogic.com>
-> 
-> Export the emmc sub clock phase delay ops which will be used
-> by the emmc sub clock driver itself.
-> 
-> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
-> Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
+
+--swh3x3cihaooc5eu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Dec 10, 2018 at 09:47:27PM +0530, Jagan Teki wrote:
+> Minimum PLL used for MIPI is 500MHz, as per manual, but
+> lowering the min rate by 300MHz can result proper working
+> nkms divider with the help of desired dclock rate from
+> panel driver.
+>=20
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
 > ---
->  drivers/clk/meson/Makefile          |  2 +-
->  drivers/clk/meson/clk-phase-delay.c | 64
-> +++++++++++++++++++++++++++++++++++++
->  drivers/clk/meson/clkc.h            | 13 ++++++++
->  3 files changed, 78 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/clk/meson/clk-phase-delay.c
-> 
-> diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
-> index 72ec8c4..39ce566 100644
-> --- a/drivers/clk/meson/Makefile
-> +++ b/drivers/clk/meson/Makefile
-> @@ -2,7 +2,7 @@
->  # Makefile for Meson specific clk
->  #
->  
-> -obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-mpll.o clk-phase.o
-> +obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-mpll.o clk-phase.o clk-
-> phase-delay.o
->  obj-$(CONFIG_COMMON_CLK_AMLOGIC_AUDIO)	+= clk-triphase.o sclk-div.o
->  obj-$(CONFIG_COMMON_CLK_MESON_AO) += meson-aoclk.o
->  obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
-> diff --git a/drivers/clk/meson/clk-phase-delay.c b/drivers/clk/meson/clk-
-> phase-delay.c
-> new file mode 100644
-> index 0000000..84e7b63
-> --- /dev/null
-> +++ b/drivers/clk/meson/clk-phase-delay.c
-> @@ -0,0 +1,64 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +/*
-> + * Amlogic Meson MMC Sub Clock Controller Driver
-> + *
-> + * Copyright (c) 2017 Baylibre SAS.
-> + * Author: Jerome Brunet <jbrunet@baylibre.com>
-> + *
-> + * Copyright (c) 2018 Amlogic, inc.
-> + * Author: Yixun Lan <yixun.lan@amlogic.com>
-> + * Author: Jianxin Pan <jianxin.pan@amlogic.com>
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include "clkc.h"
-> +
-> +static int meson_clk_phase_delay_get_phase(struct clk_hw *hw)
-> +{
-> +	struct clk_regmap *clk = to_clk_regmap(hw);
-> +	struct meson_clk_phase_delay_data *ph;
-> +	unsigned long period_ps, p, d;
-> +	int degrees;
-> +
-> +	ph = meson_clk_get_phase_delay_data(clk);
-> +	p = meson_parm_read(clk->map, &ph->phase);
-> +	degrees = p * 360 / (1 << (ph->phase.width));
-> +
-> +	period_ps = DIV_ROUND_UP(NSEC_PER_SEC * 1000,
-> +				 clk_hw_get_rate(hw));
-> +
-> +	d = meson_parm_read(clk->map, &ph->delay);
-> +	degrees += d * ph->delay_step_ps * 360 / period_ps;
-> +	degrees %= 360;
-> +
-> +	return degrees;
-> +}
-> +
-> +static int meson_clk_phase_delay_set_phase(struct clk_hw *hw, int degrees)
-> +{
-> +	struct clk_regmap *clk = to_clk_regmap(hw);
-> +	struct meson_clk_phase_delay_data *ph;
-> +	unsigned long period_ps, d = 0, r;
-> +
-> +	ph = meson_clk_get_phase_delay_data(clk);
-> +	period_ps = DIV_ROUND_UP(NSEC_PER_SEC * 1000, clk_hw_get_rate(hw));
-> +
-> +	/*
-> +	 * First compute the phase index (p), the remainder (r) is the
-> +	 * part we'll try to acheive using the delays (d).
-> +	 */
-> +	r = do_div(degrees, 360 / 1 << (ph->phase.width));
-> +	d = DIV_ROUND_CLOSEST(r * period_ps,
-> +			      360 * ph->delay_step_ps);
-> +	d = min(d, PMASK(ph->delay.width));
-> +
-> +	meson_parm_write(clk->map, &ph->phase, degrees);
-> +	meson_parm_write(clk->map, &ph->delay, d);
-> +	return 0;
-> +}
-> +
-> +const struct clk_ops meson_clk_phase_delay_ops = {
-> +	.get_phase = meson_clk_phase_delay_get_phase,
-> +	.set_phase = meson_clk_phase_delay_set_phase,
-> +};
-> +EXPORT_SYMBOL_GPL(meson_clk_phase_delay_ops);
-> diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
-> index 6b96d55..30470c6 100644
-> --- a/drivers/clk/meson/clkc.h
-> +++ b/drivers/clk/meson/clkc.h
-> @@ -105,6 +105,18 @@ struct clk_regmap _name = {				
-> 		\
->  	},								\
->  };
->  
-> +struct meson_clk_phase_delay_data {
-> +	struct parm			phase;
-> +	struct parm			delay;
-> +	unsigned int			delay_step_ps;
-> +};
-> +
-> +static inline struct meson_clk_phase_delay_data *
-> +meson_clk_get_phase_delay_data(struct clk_regmap *clk)
-> +{
-> +	return clk->data;
-> +}
+>  drivers/clk/sunxi-ng/ccu-sun50i-a64.c | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c b/drivers/clk/sunxi-ng=
+/ccu-sun50i-a64.c
+> index 181b599dc163..b623c8150b4f 100644
+> --- a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+> +++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+> @@ -183,6 +183,7 @@ static struct ccu_nkm pll_mipi_clk =3D {
+>  	.n		=3D _SUNXI_CCU_MULT(8, 4),
+>  	.k		=3D _SUNXI_CCU_MULT_MIN(4, 2, 2),
+>  	.m		=3D _SUNXI_CCU_DIV(0, 4),
+> +	.min_rate	=3D 300000000,		/* Actual rate is 500MHz */
 
-This is only usefull in the related clock driver, no need to export it
+That comment still doesn't make any sense. Is it running at 500MHz or 300?
 
-> +
->  /* clk_ops */
->  extern const struct clk_ops meson_clk_pll_ro_ops;
->  extern const struct clk_ops meson_clk_pll_ops;
-> @@ -112,5 +124,6 @@ struct clk_regmap _name = {				
-> 		\
->  extern const struct clk_ops meson_clk_mpll_ro_ops;
->  extern const struct clk_ops meson_clk_mpll_ops;
->  extern const struct clk_ops meson_clk_phase_ops;
-> +extern const struct clk_ops meson_clk_phase_delay_ops;
->  
->  #endif /* __CLKC_H */
+Also, IIRC you had a patch adding support for maximum boundaries in
+your previous patch, where did it go?
 
+Maxime
 
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--swh3x3cihaooc5eu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXA/mlgAKCRDj7w1vZxhR
+xUJjAP9p8yLcOBcyhEdhgW00NS0Z0gfYTLFmuPBz7wb/2SZ6LwEAzYo2pQyUdgVd
+1UsL1ohFZbYCCzqIC2JzFIAZyNtvvAQ=
+=alGr
+-----END PGP SIGNATURE-----
+
+--swh3x3cihaooc5eu--
