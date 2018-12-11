@@ -4,36 +4,35 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8431AC07E85
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Dec 2018 06:36:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A20DC07E85
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Dec 2018 06:37:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4775B20672
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Dec 2018 06:36:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D79FB20672
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Dec 2018 06:37:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="UKbDX5Gg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4775B20672
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="JtlxQ7J+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D79FB20672
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725923AbeLKGga (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 11 Dec 2018 01:36:30 -0500
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:3024 "EHLO
+        id S1727121AbeLKGhV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 11 Dec 2018 01:37:21 -0500
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:3091 "EHLO
         hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726720AbeLKGga (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Dec 2018 01:36:30 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c0f5aeb0000>; Mon, 10 Dec 2018 22:36:27 -0800
+        with ESMTP id S1726614AbeLKGhV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Dec 2018 01:37:21 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c0f5b1d0001>; Mon, 10 Dec 2018 22:37:17 -0800
 Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Mon, 10 Dec 2018 22:36:29 -0800
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 10 Dec 2018 22:37:19 -0800
 X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Mon, 10 Dec 2018 22:36:29 -0800
+        by hqpgpgate101.nvidia.com on Mon, 10 Dec 2018 22:37:19 -0800
 Received: from [10.19.108.132] (172.20.13.39) by HQMAIL101.nvidia.com
  (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 11 Dec
- 2018 06:36:28 +0000
+ 2018 06:37:18 +0000
 Subject: Re: [PATCH 07/19] clk: tegra: dfll: support PWM regulator control
 To:     Jon Hunter <jonathanh@nvidia.com>,
         Thierry Reding <thierry.reding@gmail.com>,
@@ -42,14 +41,14 @@ CC:     <linux-arm-kernel@lists.infradead.org>,
         <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
 References: <20181204092548.3038-1-josephl@nvidia.com>
  <20181204092548.3038-8-josephl@nvidia.com>
- <6cdab503-e463-ddbb-2ce9-035c81da7058@nvidia.com>
+ <3d0f52c6-770e-bae2-2396-87f32455b807@nvidia.com>
 From:   Joseph Lo <josephl@nvidia.com>
-Message-ID: <f737d9e2-2888-6255-2872-cfc9dc0a6aa1@nvidia.com>
-Date:   Tue, 11 Dec 2018 14:36:26 +0800
+Message-ID: <c92940a1-23a1-852e-72d5-7b8c7bcb948f@nvidia.com>
+Date:   Tue, 11 Dec 2018 14:37:16 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <6cdab503-e463-ddbb-2ce9-035c81da7058@nvidia.com>
+In-Reply-To: <3d0f52c6-770e-bae2-2396-87f32455b807@nvidia.com>
 X-Originating-IP: [172.20.13.39]
 X-ClientProxiedBy: HQMAIL106.nvidia.com (172.18.146.12) To
  HQMAIL101.nvidia.com (172.20.187.10)
@@ -57,23 +56,23 @@ Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1544510187; bh=MLOYi/41hjvgZB/WNx6gkLkG8vQw5cFd2knJ2erxad4=;
+        t=1544510237; bh=kvVxqiPXAmX1CXgN96FYgaqT8E5pqr47GXEVLPCFyhQ=;
         h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
          User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
          X-ClientProxiedBy:Content-Type:Content-Language:
          Content-Transfer-Encoding;
-        b=UKbDX5GgIEV1CVZzNowdG+SlgSFXVejwmPkF5tq9G90eefZtns/L/xjv6vUIrVUDC
-         G6DX7Um+a3ASVOtILtrmLHa3inYPY+1/Hx/+3mcNTjmvFNGfVHLyqFB71fKCqRy5k2
-         1WcXA3mGhZ3FEapU34CDplzCifCDjZY2u7id8oH+zXqGJAcn8c2ZnkOaSSZjslEILg
-         YvxXI7oVMiB+sKy6aZH8QU4dyfvdzfd/3qpnjY8olGZMc/GN0PDiksbykkYzoFCv2W
-         3OAr8HZZ79j+kcEJrBu5qPcxVq/R+6F6y6sw9PKZ6kolshvvM+EusmiEFaI6FSJIGa
-         aO2zrZEQlfbsQ==
+        b=JtlxQ7J+lNbVaDb609o19mhXXxRISpIptQZjqGaJ1D3+6whH8FZ2F8dvYF2dXhaS8
+         6e66M9fms+VRoZf1mjtkvbGpq26gnt/+xkMqe831VvvT8b7/N9D8PZFxj1bZZBCso+
+         nkS0MCxZOaxStJY8gorHhVo5G/dhuSl0UYMARsQGLwmOMGbkd0vo9eVgE6ZtkFaTUp
+         8L0UACxR+x7L15n/k6t+bkk1JjHrJNMU+yn7zuz8gkJc8PqOdQ2+ozarX155wOoh1h
+         kYrUqDw7b647N5wNcod7dn4j164rvmdYtHIdbTuBfVJpa2MEFx109xV2iH4bCbul1y
+         SEj/L2s2DdfUg==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 12/7/18 10:26 PM, Jon Hunter wrote:
+On 12/7/18 11:09 PM, Jon Hunter wrote:
 > 
 > On 04/12/2018 09:25, Joseph Lo wrote:
 >> The DFLL hardware supports two modes (I2C and PWM) for voltage control
@@ -135,15 +134,54 @@ On 12/7/18 10:26 PM, Jon Hunter wrote:
 >>   	u32				cg;
 >>   	bool				cg_scale;
 >> +	u32				reg_init_uV;
+>>   
+>>   	/* I2C interface parameters */
+>>   	u32				i2c_fs_rate;
+>>   	u32				i2c_reg;
+>>   	u32				i2c_slave_addr;
+>>   
+>> -	/* i2c_lut array entries are regulator framework selectors */
+>> -	unsigned			i2c_lut[MAX_DFLL_VOLTAGES];
+>> -	int				i2c_lut_size;
+>> -	u8				lut_min, lut_max, lut_safe;
+>> +	/* lut array entries are regulator framework selectors or PWM values*/
+>> +	unsigned			lut[MAX_DFLL_VOLTAGES];
+>> +	unsigned			lut_uv[MAX_DFLL_VOLTAGES];
+>> +	int				lut_size;
+>> +	u8				lut_bottom, lut_min, lut_max, lut_safe;
+>> +
+>> +	/* PWM interface */
+>> +	enum tegra_dfll_pmu_if		pmu_if;
+>> +	unsigned long			pwm_rate;
+>> +	struct pinctrl			*pwm_pin;
+>> +	struct pinctrl_state		*pwm_enable_state;
+>> +	struct pinctrl_state		*pwm_disable_state;
+>>   };
+>>   
+>>   #define clk_hw_to_dfll(_hw) container_of(_hw, struct tegra_dfll, dfll_clk_hw)
+>> @@ -489,6 +505,34 @@ static void dfll_set_mode(struct tegra_dfll *td,
+>>   	dfll_wmb(td);
+>>   }
+>>   
+>> +/*
+>> + * DVCO rate control
+>> + */
+>> +
+>> +static unsigned long get_dvco_rate_below(struct tegra_dfll *td, u8 out_min)
+>> +{
+>> +	struct dev_pm_opp *opp;
+>> +	unsigned long rate, prev_rate;
+>> +	int uv, min_uv;
+>> +
+>> +	min_uv = td->lut_uv[out_min];
+>> +	for (rate = 0, prev_rate = 0; ; rate++) {
+>> +		opp = dev_pm_opp_find_freq_ceil(td->soc->dev, &rate);
+>> +		if (IS_ERR(opp))
+>> +			break;
+>> +
+>> +		uv = dev_pm_opp_get_voltage(opp);
 > 
-> Doesn't this belong under PWM interface? Also being picky I dont' find
-> init_uV very descriptive.
+> Can you fix the type of 'uv' here? It should be unsigned long.
 
-Yes, will move that to PWM interface section. Thanks.
+Okay, will fix it. Thanks.
 
-> 
-> Otherwise the change looks fine to me.
-> 
-> Cheers
-> Jon
-> 
