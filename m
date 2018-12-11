@@ -2,41 +2,40 @@ Return-Path: <SRS0=DnCL=OU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBBFDC67839
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Dec 2018 15:13:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE3C3C07E85
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Dec 2018 15:14:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 985582081B
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Dec 2018 15:13:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 70B922081B
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Dec 2018 15:14:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="EEPJItcR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 985582081B
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="u9lzrVKa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70B922081B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726417AbeLKPNw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:13:52 -0500
-Received: from mail-eopbgr130057.outbound.protection.outlook.com ([40.107.13.57]:46232
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        id S1726342AbeLKPOA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 11 Dec 2018 10:14:00 -0500
+Received: from mail-eopbgr40087.outbound.protection.outlook.com ([40.107.4.87]:31584
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726398AbeLKPNv (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:13:51 -0500
+        id S1726401AbeLKPN7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:13:59 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GK4NoP9rf6f/ot0orsY+e3Y6aW94ajTwoENXJE/zSc0=;
- b=EEPJItcR5XG4VDKI3kbDTcLnMn53NP0ag/q7KhVKlBdJEq2RofaPovOR/JWq5MFCKxWVGbfgXr+pvp6xuj79V4MrZ7E8QVrIabTQA/UGCXJ+o8JRz66qBTsvIsA745Sa/eM9+8Zfe8yESMP+WqYvy6goB/4GkZacX5/bkE0FXUE=
+ bh=uQsYP653LGPBI40OnJMnnvGyV+zUqMJ/KATAecDmUrE=;
+ b=u9lzrVKauu1J7mWb4syHTpYC3R20jP8jVZngAGZUcl/SZTgeWAEVmumC4arUleHM9jFNi5sItMl4DViVrWIPbQ9c8f71XZI9+9oE4UEBqQr5K30367Eu5ptoZPZQYreMzN06lNJaPIhF6PIWtMlPwc2LZGjt+Vy4RkBjV7mgbc8=
 Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.126.21) by
- AM0PR04MB4419.eurprd04.prod.outlook.com (52.135.148.25) with Microsoft SMTP
+ AM0PR04MB5859.eurprd04.prod.outlook.com (20.178.202.220) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1404.23; Tue, 11 Dec 2018 15:13:45 +0000
+ 15.20.1425.18; Tue, 11 Dec 2018 15:13:13 +0000
 Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
  ([fe80::31e3:2aa6:8d93:9927]) by AM0PR04MB4211.eurprd04.prod.outlook.com
  ([fe80::31e3:2aa6:8d93:9927%2]) with mapi id 15.20.1404.026; Tue, 11 Dec 2018
- 15:13:45 +0000
+ 15:13:13 +0000
 From:   Aisheng Dong <aisheng.dong@nxp.com>
 To:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
 CC:     "linux-arm-kernel@lists.infradead.org" 
@@ -48,13 +47,11 @@ CC:     "linux-arm-kernel@lists.infradead.org"
         dl-linux-imx <linux-imx@nxp.com>,
         "kernel@pengutronix.de" <kernel@pengutronix.de>,
         Aisheng Dong <aisheng.dong@nxp.com>
-Subject: [PATCH V10 7/7] clk: imx: add imx8qxp lpcg driver
-Thread-Topic: [PATCH V10 7/7] clk: imx: add imx8qxp lpcg driver
-Thread-Index: AQHUkWQcDAWLE6+6U0y6ejqbh7naWw==
-Date:   Tue, 11 Dec 2018 15:13:45 +0000
-Message-ID: <1544540867-6342-8-git-send-email-aisheng.dong@nxp.com>
-References: <1544540867-6342-1-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1544540867-6342-1-git-send-email-aisheng.dong@nxp.com>
+Subject: [PATCH V10 0/7] clk: imx: add imx8qxp clock support
+Thread-Topic: [PATCH V10 0/7] clk: imx: add imx8qxp clock support
+Thread-Index: AQHUkWQIbRNxBwjK40+nBfx8zhf5nA==
+Date:   Tue, 11 Dec 2018 15:13:13 +0000
+Message-ID: <1544540867-6342-1-git-send-email-aisheng.dong@nxp.com>
 Accept-Language: zh-CN, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -68,477 +65,122 @@ authentication-results: spf=none (sender IP is )
 x-ms-exchange-messagesentrepresentingtype: 1
 x-originating-ip: [119.31.174.66]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM0PR04MB4419;6:2bPEHe0NbK9VUQp6cTS6v0J87Dwo6tR8sQQJ5MJu0bDBly/IKU6+y3oAhgN/dy+6iFMO5TlO3kv66223HH5520afJN6gCYjOMyTAJFCdhO9SRu35TBVAYhZrqyxrdLcqLaPzmx3nD2RwJGEkDp9CTFKxMAjmVAwx1VEwZYQX4io62SpxY7O8IxwkwSmhSLQR9f/WCq47XJ7paF4J0q3+xXAM8WQIkoeWl15areQPkI7wb2aJGBXHc35n2mjc6cy4oDS2mna7sXb7OycqaFCu7gzuRKC4UlG5VfQxQfCuZO5WToDszVvAe3ZPa+YiY+Ap7sbqshK2rW9x9PsGKM1Zk7EhVz81qXcw0pA3m1/otR502abbEhIloD5Qfg37IO/daVDCRFBHH4oaLgLFD55QO09+eIE9M7DHKd2NGX5QrhTzP4ptHKhmdwdJwk8AjgvcoY9/d8D6V3uE8fU3UsGFZg==;5:oxUoKJIKm19uTZCIH2W5Vie5aDQcTAtqPGeamRp7nk9WMoeO25uqT9/E4+wW3eEf8uOvajbvqpQA3ddP7gcEBJ3NhT1Sm1OUilEu4DZPxbHIJNF/6khv7o9CW0QNneQubChKi4LPoIWp6Be96+Lyo0m8hVcDW4CwhOVsN/YTOLk=;7:fv5fW09aA8ciERyFsPg4NEDLvpl+9ciTSVi2CujD17cxMCfihzXWW//hTP+aLE4TdLl7QOA1OeFreVFZVJAZpdcRpRfGYmywq4408152/NOgyVOc9TdohRgagfk137qUdmniXNqdXWWMOFe9W/DXeA==
-x-ms-office365-filtering-correlation-id: 4341bc6f-b559-4d3d-236b-08d65f7b3e57
+x-microsoft-exchange-diagnostics: 1;AM0PR04MB5859;6:vOeAWj1QptLar7KbXs+cF7RWpdCx4rvCPrc8c5zbcGu2bY0T6f/UvMO8WPdiJdPWlbDnmzgcp1AI1MSd5ci/gSlw+SsKTWoK74s6EBR/g0i71bRfoT0y3nmZF+Ynp0xMIvcSXtY2dNVn+68htMZUq7PU8ZEX7+M5iATlBXghrUod9dJqPz2zYqflCS0dX7cr/wUGj7hLFAC1cJOc43y2qAf1vAUQCpymbaQZrGiQ9UEJ+eoBIrIkLRX9nAcYfHC5kn7Z7KFAimPO/33EDBjKB8db/HrcyVCZEp16s4rVhqCuOAukhoG5e7/xKAyFp63gODs0e+7R9QMFhzbBBLSOJlce+FWpz58VtQ6lVZfcWtKuCfoPU5/ak3y3XqquYQP4BLY5xVenn2w8WbT/PkiPPLgyHc5h6DmGvjw6it8UOYzwchx9rk/xTV31Gd8gelTfja+9ha4c/T8gY+PcAsgzHg==;5:gtiW8sPt9Jy8RSF9bFxlmStgzaORYY9J29QoaWXyPT+n4YmeFc5zNhyty7UvEW4CHBf/WyYdio9LeJrehaymHQJWbe9OXoBZuPfNIbtZL8UvxlhDEeCsDAHX3BgxW6jWuzrZB+wJwmxorUQNR3//Xlla0N5hkgB7MdrdoJKNEZg=;7:+uhGqaJFmavXWfyz0jugW1pC6BCcTP+78+YEfrn9MpwTng4rbLQbPheNM8Y+IHF6PCSq5GAFHaUZq77ViXzHuY8UWrQmXPTlggyfY4CNfeYcYBHNwUk3QcWdUhn3IGPQoIaqC8iRbKYJnb2t4rnGGg==
+x-ms-office365-filtering-correlation-id: 85394ec9-38db-4e20-bc86-08d65f7b2b2e
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(4534185)(4627221)(201703031133081)(201702281549075)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB4419;
-x-ms-traffictypediagnostic: AM0PR04MB4419:
-x-microsoft-antispam-prvs: <AM0PR04MB441972DCD96A9248F235229F80A60@AM0PR04MB4419.eurprd04.prod.outlook.com>
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB5859;
+x-ms-traffictypediagnostic: AM0PR04MB5859:
+x-microsoft-antispam-prvs: <AM0PR04MB5859CCA8E66051F5ECC51EA680A60@AM0PR04MB5859.eurprd04.prod.outlook.com>
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231455)(999002)(944501520)(52105112)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:AM0PR04MB4419;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB4419;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230017)(999002)(6040522)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93001095)(3231472)(944501520)(52105112)(3002001)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(20161123560045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:AM0PR04MB5859;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB5859;
 x-forefront-prvs: 08831F51DC
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(396003)(376002)(366004)(346002)(39860400002)(54534003)(189003)(199004)(8676002)(8936002)(81156014)(81166006)(575784001)(26005)(102836004)(186003)(76176011)(68736007)(6506007)(386003)(2906002)(3846002)(50226002)(6116002)(54906003)(44832011)(86362001)(6436002)(52116002)(446003)(316002)(486006)(11346002)(99286004)(106356001)(4326008)(2616005)(476003)(97736004)(105586002)(14454004)(66066001)(71190400001)(6916009)(71200400001)(53946003)(478600001)(256004)(14444005)(53936002)(2351001)(6512007)(5640700003)(7736002)(305945005)(25786009)(5660300001)(6486002)(36756003)(4744004)(2501003)(32563001)(473944003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4419;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(396003)(376002)(346002)(136003)(366004)(199004)(189003)(54534003)(106356001)(44832011)(256004)(14444005)(2616005)(476003)(54906003)(68736007)(7736002)(102836004)(486006)(2351001)(316002)(26005)(8936002)(50226002)(25786009)(2501003)(4326008)(3846002)(6116002)(97736004)(478600001)(53936002)(186003)(81166006)(81156014)(6512007)(105586002)(2906002)(8676002)(6486002)(86362001)(386003)(71190400001)(66066001)(99286004)(14454004)(6916009)(5660300001)(6506007)(5640700003)(52116002)(36756003)(6436002)(305945005)(71200400001)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5859;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: YZvkDKK/7eVfqx84IJOOgPjrJ/GjzAn1CyBC/PFlBPVsTDpPoqRUHUONlAZtfqyK4hQuHTxuDep9kksxAbKJInSWgzbicAJG3GwAaXbywKzpsFilAwdB9WdInZqX9eMbf8rPgDUdAMfbuGBMqyEHActuEz9/kM0Hwbirs9hY/YvygNV8BNquzNXZXzK6C4jmXN388bthOOgD3kRiK0qgEJQBzMzJ29JNnl4sWdWUVK5L1usVPNjM2DRaxYZl9ajt8782u8y8iXrZ4NJYuu5RVaCZkkvF1pKsc5QxE0FhFNkLJa07vLLNZ94aWS9NwQeX
+x-microsoft-antispam-message-info: bjeflr3658yQmSmxDWrymE/xvPEQivQ/q7XXpmnojMl2ftPeghQybvlJR7+zoETaF0Vs8butuZnsuXo2Snjs1cCaKA86+dmwb2IExFQR8JfqSbx2ldygbJDKR485Pmcj2hVxQA1EWD1nZZ9e1129XJbQVstphREgLEGeenB9rDlORpz4a/7EvVLdVOTR9KtVct8mTQ9pwEvn6HWLfJ0iC0+JPL5RQ9zD+H+XQun6rh3TAXuwGvshzcQMynEuPV72bWB/B2iC63zq3aPxQd6tWQzpnW2j3jJ+3pZcBTQ/ji1jDJawIohPD125mistPTm4
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4341bc6f-b559-4d3d-236b-08d65f7b3e57
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Dec 2018 15:13:45.3709
+X-MS-Exchange-CrossTenant-Network-Message-Id: 85394ec9-38db-4e20-bc86-08d65f7b2b2e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Dec 2018 15:13:13.3495
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4419
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5859
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add imx8qxp lpcg driver support
+This patch series adds i.MX8QXP clock support which is based
+on the clock service provided by SCU firmware.
 
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Sascha Hauer <kernel@pengutronix.de>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
----
+Note: It depends on SCU driver which has already been merged by Shawn.
+So this patch series could go through Shawn's tree as well.
+
 ChangeLog:
-v7->v10:
- * no changes
+v9->v10:
+ * a small clean up of PATCH 2
+   remove ccm_ipc_handle from headfile as no other users need it now
+   and move imx_clk_scu_init() implementation into driver accordingly.
+ * a typo fix of Patch 10
+v8->v9:
+ * add __le32 and __le16 for SCU message structure members as it's little e=
+ndian
+ * use readl_relaxed() as it does not need insert barrier
+ * a small code logic improvement suggested by Stephen
+v7->v8:
+ * add more kernel doc for lpcg and scu clock structures
+ * remove one unneccessry reg checking
 v6->v7:
- * use resource_size()
- * add kernel doc for structs
- * Include this after <linux/*> and before locals
+ * use struct_size()
  * remove MODULE_ macros
- * add suppress_bind_attrs
-v6:
- * new patch, separate from scu gate driver
----
- drivers/clk/imx/Makefile           |   2 +-
- drivers/clk/imx/clk-imx8qxp-lpcg.c | 216 +++++++++++++++++++++++++++++++++=
+ * add more kernel docs/code comments
+ * other small improvements
+ * update reviewed-by tags
+ * add the missing PATCH 1 in V6
+v5->v6:
+ * simply the driver a lot by re-orgnizing the driver into a few clock type=
+s:
+   scu clock (merge scu divider/gate/mux) and scu gpr lock which accessing =
+is
+   through SCU protocol and LPCG clock which is directly accessible by CPU.
+ * LPCG clock is separate from SCU clock, gpr clock is still not used
+   and will be added later.
+ * remove old year license as the code is totally rewritten
+ * scu mux support will be added later as it's also still not used.
+v4->v5:
+ Address all Stephen and Sascha's review comments, see details in each patc=
+h
+v3->v4:
+ * scu headfile path update
+ * no functionality change
+v2->v3:
+ * structures/enums name update with imx_sc prefix
+ * no functionality change
+v1->v2:
+ * structure and enums name update
+ * api usage update due to api change
+ * no functionality change
+
+Dong Aisheng (7):
+  clk: imx: add configuration option for mmio clks
+  clk: imx: add scu clock common part
+  dt-bindings: clock: imx8qxp: add SCU clock IDs
+  clk: imx: add imx8qxp clk driver
+  dt-bindings: clock: add imx8qxp lpcg clock binding
+  clk: imx: add lpcg clock support
+  clk: imx: add imx8qxp lpcg driver
+
+ .../devicetree/bindings/clock/imx8qxp-lpcg.txt     |  51 ++++
+ arch/arm/mach-imx/Kconfig                          |  11 +
+ drivers/clk/Kconfig                                |   1 +
+ drivers/clk/imx/Kconfig                            |   9 +
+ drivers/clk/imx/Makefile                           |   8 +-
+ drivers/clk/imx/clk-imx8qxp-lpcg.c                 | 216 +++++++++++++++
+ drivers/clk/imx/clk-imx8qxp-lpcg.h                 | 102 ++++++++
+ drivers/clk/imx/clk-imx8qxp.c                      | 153 +++++++++++
+ drivers/clk/imx/clk-lpcg-scu.c                     | 114 ++++++++
+ drivers/clk/imx/clk-scu.c                          | 270 +++++++++++++++++=
+++
+ drivers/clk/imx/clk-scu.h                          |  18 ++
+ include/dt-bindings/clock/imx8qxp-clock.h          | 289 +++++++++++++++++=
 ++++
- drivers/clk/imx/clk-imx8qxp-lpcg.h | 102 ++++++++++++++++++
- 3 files changed, 319 insertions(+), 1 deletion(-)
+ 12 files changed, 1241 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/imx8qxp-lpcg.tx=
+t
+ create mode 100644 drivers/clk/imx/Kconfig
  create mode 100644 drivers/clk/imx/clk-imx8qxp-lpcg.c
  create mode 100644 drivers/clk/imx/clk-imx8qxp-lpcg.h
+ create mode 100644 drivers/clk/imx/clk-imx8qxp.c
+ create mode 100644 drivers/clk/imx/clk-lpcg-scu.c
+ create mode 100644 drivers/clk/imx/clk-scu.c
+ create mode 100644 drivers/clk/imx/clk-scu.h
+ create mode 100644 include/dt-bindings/clock/imx8qxp-clock.h
 
-diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
-index 4f72163..ba6521c 100644
---- a/drivers/clk/imx/Makefile
-+++ b/drivers/clk/imx/Makefile
-@@ -41,4 +41,4 @@ obj-$(CONFIG_SOC_IMX7ULP) +=3D clk-imx7ulp.o
- obj-$(CONFIG_SOC_IMX8MQ) +=3D clk-imx8mq.o
- obj-$(CONFIG_SOC_VF610)  +=3D clk-vf610.o
-=20
--obj-$(CONFIG_SOC_IMX8QXP)	+=3D clk-imx8qxp.o
-+obj-$(CONFIG_SOC_IMX8QXP) +=3D clk-imx8qxp.o clk-imx8qxp-lpcg.o
-diff --git a/drivers/clk/imx/clk-imx8qxp-lpcg.c b/drivers/clk/imx/clk-imx8q=
-xp-lpcg.c
-new file mode 100644
-index 0000000..dcae1dd
---- /dev/null
-+++ b/drivers/clk/imx/clk-imx8qxp-lpcg.c
-@@ -0,0 +1,216 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Copyright 2018 NXP
-+ *	Dong Aisheng <aisheng.dong@nxp.com>
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/err.h>
-+#include <linux/io.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+
-+#include "clk-scu.h"
-+#include "clk-imx8qxp-lpcg.h"
-+
-+#include <dt-bindings/clock/imx8qxp-clock.h>
-+
-+/*
-+ * struct imx8qxp_lpcg_data - Description of one LPCG clock
-+ * @id: clock ID
-+ * @name: clock name
-+ * @parent: parent clock name
-+ * @flags: common clock flags
-+ * @offset: offset of this LPCG clock
-+ * @bit_idx: bit index of this LPCG clock
-+ * @hw_gate: whether supports HW autogate
-+ *
-+ * This structure describes one LPCG clock
-+ */
-+struct imx8qxp_lpcg_data {
-+	int id;
-+	char *name;
-+	char *parent;
-+	unsigned long flags;
-+	u32 offset;
-+	u8 bit_idx;
-+	bool hw_gate;
-+};
-+
-+/*
-+ * struct imx8qxp_ss_lpcg - Description of one subsystem LPCG clocks
-+ * @lpcg: LPCG clocks array of one subsystem
-+ * @num_lpcg: the number of LPCG clocks
-+ * @num_max: the maximum number of LPCG clocks
-+ *
-+ * This structure describes each subsystem LPCG clocks information
-+ * which then will be used to create respective LPCGs clocks
-+ */
-+struct imx8qxp_ss_lpcg {
-+	const struct imx8qxp_lpcg_data *lpcg;
-+	u8 num_lpcg;
-+	u8 num_max;
-+};
-+
-+static const struct imx8qxp_lpcg_data imx8qxp_lpcg_adma[] =3D {
-+	{ IMX8QXP_ADMA_LPCG_UART0_IPG_CLK, "uart0_lpcg_ipg_clk", "dma_ipg_clk_roo=
-t", 0, ADMA_LPUART_0_LPCG, 16, 0, },
-+	{ IMX8QXP_ADMA_LPCG_UART0_BAUD_CLK, "uart0_lpcg_baud_clk", "uart0_clk", 0=
-, ADMA_LPUART_0_LPCG, 0, 0, },
-+	{ IMX8QXP_ADMA_LPCG_UART1_IPG_CLK, "uart1_lpcg_ipg_clk", "dma_ipg_clk_roo=
-t", 0, ADMA_LPUART_1_LPCG, 16, 0, },
-+	{ IMX8QXP_ADMA_LPCG_UART1_BAUD_CLK, "uart1_lpcg_baud_clk", "uart1_clk", 0=
-, ADMA_LPUART_1_LPCG, 0, 0, },
-+	{ IMX8QXP_ADMA_LPCG_UART2_IPG_CLK, "uart2_lpcg_ipg_clk", "dma_ipg_clk_roo=
-t", 0, ADMA_LPUART_2_LPCG, 16, 0, },
-+	{ IMX8QXP_ADMA_LPCG_UART2_BAUD_CLK, "uart2_lpcg_baud_clk", "uart2_clk", 0=
-, ADMA_LPUART_2_LPCG, 0, 0, },
-+	{ IMX8QXP_ADMA_LPCG_UART3_IPG_CLK, "uart3_lpcg_ipg_clk", "dma_ipg_clk_roo=
-t", 0, ADMA_LPUART_3_LPCG, 16, 0, },
-+	{ IMX8QXP_ADMA_LPCG_UART3_BAUD_CLK, "uart3_lpcg_baud_clk", "uart3_clk", 0=
-, ADMA_LPUART_3_LPCG, 0, 0, },
-+	{ IMX8QXP_ADMA_LPCG_I2C0_IPG_CLK, "i2c0_lpcg_ipg_clk", "dma_ipg_clk_root"=
-, 0, ADMA_LPI2C_0_LPCG, 16, 0, },
-+	{ IMX8QXP_ADMA_LPCG_I2C0_CLK, "i2c0_lpcg_clk", "i2c0_clk", 0, ADMA_LPI2C_=
-0_LPCG, 0, 0, },
-+	{ IMX8QXP_ADMA_LPCG_I2C1_IPG_CLK, "i2c1_lpcg_ipg_clk", "dma_ipg_clk_root"=
-, 0, ADMA_LPI2C_1_LPCG, 16, 0, },
-+	{ IMX8QXP_ADMA_LPCG_I2C1_CLK, "i2c1_lpcg_clk", "i2c1_clk", 0, ADMA_LPI2C_=
-1_LPCG, 0, 0, },
-+	{ IMX8QXP_ADMA_LPCG_I2C2_IPG_CLK, "i2c2_lpcg_ipg_clk", "dma_ipg_clk_root"=
-, 0, ADMA_LPI2C_2_LPCG, 16, 0, },
-+	{ IMX8QXP_ADMA_LPCG_I2C2_CLK, "i2c2_lpcg_clk", "i2c2_clk", 0, ADMA_LPI2C_=
-2_LPCG, 0, 0, },
-+	{ IMX8QXP_ADMA_LPCG_I2C3_IPG_CLK, "i2c3_lpcg_ipg_clk", "dma_ipg_clk_root"=
-, 0, ADMA_LPI2C_3_LPCG, 16, 0, },
-+	{ IMX8QXP_ADMA_LPCG_I2C3_CLK, "i2c3_lpcg_clk", "i2c3_clk", 0, ADMA_LPI2C_=
-3_LPCG, 0, 0, },
-+};
-+
-+static const struct imx8qxp_ss_lpcg imx8qxp_ss_adma =3D {
-+	.lpcg =3D imx8qxp_lpcg_adma,
-+	.num_lpcg =3D ARRAY_SIZE(imx8qxp_lpcg_adma),
-+	.num_max =3D IMX8QXP_ADMA_LPCG_CLK_END,
-+};
-+
-+static const struct imx8qxp_lpcg_data imx8qxp_lpcg_conn[] =3D {
-+	{ IMX8QXP_CONN_LPCG_SDHC0_PER_CLK, "sdhc0_lpcg_per_clk", "sdhc0_clk", 0, =
-CONN_USDHC_0_LPCG, 0, 0, },
-+	{ IMX8QXP_CONN_LPCG_SDHC0_IPG_CLK, "sdhc0_lpcg_ipg_clk", "conn_ipg_clk_ro=
-ot", 0, CONN_USDHC_0_LPCG, 16, 0, },
-+	{ IMX8QXP_CONN_LPCG_SDHC0_HCLK, "sdhc0_lpcg_ahb_clk", "conn_axi_clk_root"=
-, 0, CONN_USDHC_0_LPCG, 20, 0, },
-+	{ IMX8QXP_CONN_LPCG_SDHC1_PER_CLK, "sdhc1_lpcg_per_clk", "sdhc1_clk", 0, =
-CONN_USDHC_1_LPCG, 0, 0, },
-+	{ IMX8QXP_CONN_LPCG_SDHC1_IPG_CLK, "sdhc1_lpcg_ipg_clk", "conn_ipg_clk_ro=
-ot", 0, CONN_USDHC_1_LPCG, 16, 0, },
-+	{ IMX8QXP_CONN_LPCG_SDHC1_HCLK, "sdhc1_lpcg_ahb_clk", "conn_axi_clk_root"=
-, 0, CONN_USDHC_1_LPCG, 20, 0, },
-+	{ IMX8QXP_CONN_LPCG_SDHC2_PER_CLK, "sdhc2_lpcg_per_clk", "sdhc2_clk", 0, =
-CONN_USDHC_2_LPCG, 0, 0, },
-+	{ IMX8QXP_CONN_LPCG_SDHC2_IPG_CLK, "sdhc2_lpcg_ipg_clk", "conn_ipg_clk_ro=
-ot", 0, CONN_USDHC_2_LPCG, 16, 0, },
-+	{ IMX8QXP_CONN_LPCG_SDHC2_HCLK, "sdhc2_lpcg_ahb_clk", "conn_axi_clk_root"=
-, 0, CONN_USDHC_2_LPCG, 20, 0, },
-+	{ IMX8QXP_CONN_LPCG_ENET0_ROOT_CLK, "enet0_ipg_root_clk", "enet0_clk", 0,=
- CONN_ENET_0_LPCG, 0, 0, },
-+	{ IMX8QXP_CONN_LPCG_ENET0_TX_CLK, "enet0_tx_clk", "enet0_clk", 0, CONN_EN=
-ET_0_LPCG, 4, 0, },
-+	{ IMX8QXP_CONN_LPCG_ENET0_AHB_CLK, "enet0_ahb_clk", "conn_axi_clk_root", =
-0, CONN_ENET_0_LPCG, 8, 0, },
-+	{ IMX8QXP_CONN_LPCG_ENET0_IPG_S_CLK, "enet0_ipg_s_clk", "conn_ipg_clk_roo=
-t", 0, CONN_ENET_0_LPCG, 20, 0, },
-+	{ IMX8QXP_CONN_LPCG_ENET0_IPG_CLK, "enet0_ipg_clk", "enet0_ipg_s_clk", 0,=
- CONN_ENET_0_LPCG, 16, 0, },
-+	{ IMX8QXP_CONN_LPCG_ENET1_ROOT_CLK, "enet1_ipg_root_clk", "enet1_clk", 0,=
- CONN_ENET_1_LPCG, 0, 0, },
-+	{ IMX8QXP_CONN_LPCG_ENET1_TX_CLK, "enet1_tx_clk", "enet1_clk", 0, CONN_EN=
-ET_1_LPCG, 4, 0, },
-+	{ IMX8QXP_CONN_LPCG_ENET1_AHB_CLK, "enet1_ahb_clk", "conn_axi_clk_root", =
-0, CONN_ENET_1_LPCG, 8, 0, },
-+	{ IMX8QXP_CONN_LPCG_ENET1_IPG_S_CLK, "enet1_ipg_s_clk", "conn_ipg_clk_roo=
-t", 0, CONN_ENET_1_LPCG, 20, 0, },
-+	{ IMX8QXP_CONN_LPCG_ENET1_IPG_CLK, "enet1_ipg_clk", "enet0_ipg_s_clk", 0,=
- CONN_ENET_1_LPCG, 16, 0, },
-+};
-+
-+static const struct imx8qxp_ss_lpcg imx8qxp_ss_conn =3D {
-+	.lpcg =3D imx8qxp_lpcg_conn,
-+	.num_lpcg =3D ARRAY_SIZE(imx8qxp_lpcg_conn),
-+	.num_max =3D IMX8QXP_CONN_LPCG_CLK_END,
-+};
-+
-+static const struct imx8qxp_lpcg_data imx8qxp_lpcg_lsio[] =3D {
-+	{ IMX8QXP_LSIO_LPCG_PWM0_IPG_CLK, "pwm0_lpcg_ipg_clk", "pwm0_clk", 0, LSI=
-O_PWM_0_LPCG, 0, 0, },
-+	{ IMX8QXP_LSIO_LPCG_PWM0_IPG_HF_CLK, "pwm0_lpcg_ipg_hf_clk", "pwm0_clk", =
-0, LSIO_PWM_0_LPCG, 4, 0, },
-+	{ IMX8QXP_LSIO_LPCG_PWM0_IPG_S_CLK, "pwm0_lpcg_ipg_s_clk", "pwm0_clk", 0,=
- LSIO_PWM_0_LPCG, 16, 0, },
-+	{ IMX8QXP_LSIO_LPCG_PWM0_IPG_SLV_CLK, "pwm0_lpcg_ipg_slv_clk", "lsio_bus_=
-clk_root", 0, LSIO_PWM_0_LPCG, 20, 0, },
-+	{ IMX8QXP_LSIO_LPCG_PWM0_IPG_MSTR_CLK, "pwm0_lpcg_ipg_mstr_clk", "pwm0_cl=
-k", 0, LSIO_PWM_0_LPCG, 24, 0, },
-+	{ IMX8QXP_LSIO_LPCG_PWM1_IPG_CLK, "pwm1_lpcg_ipg_clk", "pwm1_clk", 0, LSI=
-O_PWM_1_LPCG, 0, 0, },
-+	{ IMX8QXP_LSIO_LPCG_PWM1_IPG_HF_CLK, "pwm1_lpcg_ipg_hf_clk", "pwm1_clk", =
-0, LSIO_PWM_1_LPCG, 4, 0, },
-+	{ IMX8QXP_LSIO_LPCG_PWM1_IPG_S_CLK, "pwm1_lpcg_ipg_s_clk", "pwm1_clk", 0,=
- LSIO_PWM_1_LPCG, 16, 0, },
-+	{ IMX8QXP_LSIO_LPCG_PWM1_IPG_SLV_CLK, "pwm1_lpcg_ipg_slv_clk", "lsio_bus_=
-clk_root", 0, LSIO_PWM_1_LPCG, 20, 0, },
-+	{ IMX8QXP_LSIO_LPCG_PWM1_IPG_MSTR_CLK, "pwm1_lpcg_ipg_mstr_clk", "pwm1_cl=
-k", 0, LSIO_PWM_1_LPCG, 24, 0, },
-+	{ IMX8QXP_LSIO_LPCG_PWM2_IPG_CLK, "pwm2_lpcg_ipg_clk", "pwm2_clk", 0, LSI=
-O_PWM_2_LPCG, 0, 0, },
-+	{ IMX8QXP_LSIO_LPCG_PWM2_IPG_HF_CLK, "pwm2_lpcg_ipg_hf_clk", "pwm2_clk", =
-0, LSIO_PWM_2_LPCG, 4, 0, },
-+	{ IMX8QXP_LSIO_LPCG_PWM2_IPG_S_CLK, "pwm2_lpcg_ipg_s_clk", "pwm2_clk", 0,=
- LSIO_PWM_2_LPCG, 16, 0, },
-+	{ IMX8QXP_LSIO_LPCG_PWM2_IPG_SLV_CLK, "pwm2_lpcg_ipg_slv_clk", "lsio_bus_=
-clk_root", 0, LSIO_PWM_2_LPCG, 20, 0, },
-+	{ IMX8QXP_LSIO_LPCG_PWM2_IPG_MSTR_CLK, "pwm2_lpcg_ipg_mstr_clk", "pwm2_cl=
-k", 0, LSIO_PWM_2_LPCG, 24, 0, },
-+	{ IMX8QXP_LSIO_LPCG_PWM3_IPG_CLK, "pwm3_lpcg_ipg_clk", "pwm3_clk", 0, LSI=
-O_PWM_3_LPCG, 0, 0, },
-+	{ IMX8QXP_LSIO_LPCG_PWM3_IPG_HF_CLK, "pwm3_lpcg_ipg_hf_clk", "pwm3_clk", =
-0, LSIO_PWM_3_LPCG, 4, 0, },
-+	{ IMX8QXP_LSIO_LPCG_PWM3_IPG_S_CLK, "pwm3_lpcg_ipg_s_clk", "pwm3_clk", 0,=
- LSIO_PWM_3_LPCG, 16, 0, },
-+	{ IMX8QXP_LSIO_LPCG_PWM3_IPG_SLV_CLK, "pwm3_lpcg_ipg_slv_clk", "lsio_bus_=
-clk_root", 0, LSIO_PWM_3_LPCG, 20, 0, },
-+	{ IMX8QXP_LSIO_LPCG_PWM3_IPG_MSTR_CLK, "pwm3_lpcg_ipg_mstr_clk", "pwm3_cl=
-k", 0, LSIO_PWM_3_LPCG, 24, 0, },
-+	{ IMX8QXP_LSIO_LPCG_PWM4_IPG_CLK, "pwm4_lpcg_ipg_clk", "pwm4_clk", 0, LSI=
-O_PWM_4_LPCG, 0, 0, },
-+	{ IMX8QXP_LSIO_LPCG_PWM4_IPG_HF_CLK, "pwm4_lpcg_ipg_hf_clk", "pwm4_clk", =
-0, LSIO_PWM_4_LPCG, 4, 0, },
-+	{ IMX8QXP_LSIO_LPCG_PWM4_IPG_S_CLK, "pwm4_lpcg_ipg_s_clk", "pwm4_clk", 0,=
- LSIO_PWM_4_LPCG, 16, 0, },
-+	{ IMX8QXP_LSIO_LPCG_PWM4_IPG_SLV_CLK, "pwm4_lpcg_ipg_slv_clk", "lsio_bus_=
-clk_root", 0, LSIO_PWM_4_LPCG, 20, 0, },
-+	{ IMX8QXP_LSIO_LPCG_PWM4_IPG_MSTR_CLK, "pwm4_lpcg_ipg_mstr_clk", "pwm4_cl=
-k", 0, LSIO_PWM_4_LPCG, 24, 0, },
-+	{ IMX8QXP_LSIO_LPCG_PWM5_IPG_CLK, "pwm5_lpcg_ipg_clk", "pwm5_clk", 0, LSI=
-O_PWM_5_LPCG, 0, 0, },
-+	{ IMX8QXP_LSIO_LPCG_PWM5_IPG_HF_CLK, "pwm5_lpcg_ipg_hf_clk", "pwm5_clk", =
-0, LSIO_PWM_5_LPCG, 4, 0, },
-+	{ IMX8QXP_LSIO_LPCG_PWM5_IPG_S_CLK, "pwm5_lpcg_ipg_s_clk", "pwm5_clk", 0,=
- LSIO_PWM_5_LPCG, 16, 0, },
-+	{ IMX8QXP_LSIO_LPCG_PWM5_IPG_SLV_CLK, "pwm5_lpcg_ipg_slv_clk", "lsio_bus_=
-clk_root", 0, LSIO_PWM_5_LPCG, 20, 0, },
-+	{ IMX8QXP_LSIO_LPCG_PWM5_IPG_MSTR_CLK, "pwm5_lpcg_ipg_mstr_clk", "pwm5_cl=
-k", 0, LSIO_PWM_5_LPCG, 24, 0, },
-+	{ IMX8QXP_LSIO_LPCG_PWM6_IPG_CLK, "pwm6_lpcg_ipg_clk", "pwm6_clk", 0, LSI=
-O_PWM_6_LPCG, 0, 0, },
-+	{ IMX8QXP_LSIO_LPCG_PWM6_IPG_HF_CLK, "pwm6_lpcg_ipg_hf_clk", "pwm6_clk", =
-0, LSIO_PWM_6_LPCG, 4, 0, },
-+	{ IMX8QXP_LSIO_LPCG_PWM6_IPG_S_CLK, "pwm6_lpcg_ipg_s_clk", "pwm6_clk", 0,=
- LSIO_PWM_6_LPCG, 16, 0, },
-+	{ IMX8QXP_LSIO_LPCG_PWM6_IPG_SLV_CLK, "pwm6_lpcg_ipg_slv_clk", "lsio_bus_=
-clk_root", 0, LSIO_PWM_6_LPCG, 20, 0, },
-+	{ IMX8QXP_LSIO_LPCG_PWM6_IPG_MSTR_CLK, "pwm6_lpcg_ipg_mstr_clk", "pwm6_cl=
-k", 0, LSIO_PWM_6_LPCG, 24, 0, },
-+};
-+
-+static const struct imx8qxp_ss_lpcg imx8qxp_ss_lsio =3D {
-+	.lpcg =3D imx8qxp_lpcg_lsio,
-+	.num_lpcg =3D ARRAY_SIZE(imx8qxp_lpcg_lsio),
-+	.num_max =3D IMX8QXP_LSIO_LPCG_CLK_END,
-+};
-+
-+static int imx8qxp_lpcg_clk_probe(struct platform_device *pdev)
-+{
-+	struct device *dev =3D &pdev->dev;
-+	struct device_node *np =3D dev->of_node;
-+	struct clk_hw_onecell_data *clk_data;
-+	const struct imx8qxp_ss_lpcg *ss_lpcg;
-+	const struct imx8qxp_lpcg_data *lpcg;
-+	struct resource *res;
-+	struct clk_hw **clks;
-+	void __iomem *base;
-+	int i;
-+
-+	ss_lpcg =3D of_device_get_match_data(dev);
-+	if (!ss_lpcg)
-+		return -ENODEV;
-+
-+	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	base =3D devm_ioremap(dev, res->start, resource_size(res));
-+	if (!base)
-+		return -ENOMEM;
-+
-+	clk_data =3D devm_kzalloc(&pdev->dev, struct_size(clk_data, hws,
-+				ss_lpcg->num_max), GFP_KERNEL);
-+	if (!clk_data)
-+		return -ENOMEM;
-+
-+	clk_data->num =3D ss_lpcg->num_max;
-+	clks =3D clk_data->hws;
-+
-+	for (i =3D 0; i < ss_lpcg->num_lpcg; i++) {
-+		lpcg =3D ss_lpcg->lpcg + i;
-+		clks[lpcg->id] =3D imx_clk_lpcg_scu(lpcg->name, lpcg->parent,
-+						  lpcg->flags, base + lpcg->offset,
-+						  lpcg->bit_idx, lpcg->hw_gate);
-+	}
-+
-+	for (i =3D 0; i < clk_data->num; i++) {
-+		if (IS_ERR(clks[i]))
-+			pr_warn("i.MX clk %u: register failed with %ld\n",
-+				i, PTR_ERR(clks[i]));
-+	}
-+
-+	return of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_data);
-+}
-+
-+static const struct of_device_id imx8qxp_lpcg_match[] =3D {
-+	{ .compatible =3D "fsl,imx8qxp-lpcg-adma", &imx8qxp_ss_adma, },
-+	{ .compatible =3D "fsl,imx8qxp-lpcg-conn", &imx8qxp_ss_conn, },
-+	{ .compatible =3D "fsl,imx8qxp-lpcg-lsio", &imx8qxp_ss_lsio, },
-+	{ /* sentinel */ }
-+};
-+
-+static struct platform_driver imx8qxp_lpcg_clk_driver =3D {
-+	.driver =3D {
-+		.name =3D "imx8qxp-lpcg-clk",
-+		.of_match_table =3D imx8qxp_lpcg_match,
-+		.suppress_bind_attrs =3D true,
-+	},
-+	.probe =3D imx8qxp_lpcg_clk_probe,
-+};
-+
-+builtin_platform_driver(imx8qxp_lpcg_clk_driver);
-diff --git a/drivers/clk/imx/clk-imx8qxp-lpcg.h b/drivers/clk/imx/clk-imx8q=
-xp-lpcg.h
-new file mode 100644
-index 0000000..2a37ce5
---- /dev/null
-+++ b/drivers/clk/imx/clk-imx8qxp-lpcg.h
-@@ -0,0 +1,102 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
-+/*
-+ * Copyright 2018 NXP
-+ *   Dong Aisheng <aisheng.dong@nxp.com>
-+ */
-+
-+#ifndef _IMX8QXP_LPCG_H
-+#define _IMX8QXP_LPCG_H
-+
-+/*LSIO SS */
-+#define LSIO_PWM_0_LPCG			0x00000
-+#define LSIO_PWM_1_LPCG			0x10000
-+#define LSIO_PWM_2_LPCG			0x20000
-+#define LSIO_PWM_3_LPCG			0x30000
-+#define LSIO_PWM_4_LPCG			0x40000
-+#define LSIO_PWM_5_LPCG			0x50000
-+#define LSIO_PWM_6_LPCG			0x60000
-+#define LSIO_PWM_7_LPCG			0x70000
-+#define LSIO_GPIO_0_LPCG		0x80000
-+#define LSIO_GPIO_1_LPCG		0x90000
-+#define LSIO_GPIO_2_LPCG		0xa0000
-+#define LSIO_GPIO_3_LPCG		0xb0000
-+#define LSIO_GPIO_4_LPCG		0xc0000
-+#define LSIO_GPIO_5_LPCG		0xd0000
-+#define LSIO_GPIO_6_LPCG		0xe0000
-+#define LSIO_GPIO_7_LPCG		0xf0000
-+#define LSIO_FSPI_0_LPCG		0x120000
-+#define LSIO_FSPI_1_LPCG		0x130000
-+#define LSIO_GPT_0_LPCG			0x140000
-+#define LSIO_GPT_1_LPCG			0x150000
-+#define LSIO_GPT_2_LPCG			0x160000
-+#define LSIO_GPT_3_LPCG			0x170000
-+#define LSIO_GPT_4_LPCG			0x180000
-+#define LSIO_OCRAM_LPCG			0x190000
-+#define LSIO_KPP_LPCG			0x1a0000
-+#define LSIO_ROMCP_LPCG			0x100000
-+
-+/* Connectivity SS */
-+#define CONN_USDHC_0_LPCG		0x00000
-+#define CONN_USDHC_1_LPCG		0x10000
-+#define CONN_USDHC_2_LPCG		0x20000
-+#define CONN_ENET_0_LPCG		0x30000
-+#define CONN_ENET_1_LPCG		0x40000
-+#define CONN_DTCP_LPCG			0x50000
-+#define CONN_MLB_LPCG			0x60000
-+#define CONN_USB_2_LPCG			0x70000
-+#define CONN_USB_3_LPCG			0x80000
-+#define CONN_NAND_LPCG			0x90000
-+#define CONN_EDMA_LPCG			0xa0000
-+
-+/* ADMA SS */
-+#define ADMA_ASRC_0_LPCG		0x400000
-+#define ADMA_ESAI_0_LPCG		0x410000
-+#define ADMA_SPDIF_0_LPCG		0x420000
-+#define ADMA_SAI_0_LPCG			0x440000
-+#define ADMA_SAI_1_LPCG			0x450000
-+#define ADMA_SAI_2_LPCG			0x460000
-+#define ADMA_SAI_3_LPCG			0x470000
-+#define ADMA_GPT_5_LPCG			0x4b0000
-+#define ADMA_GPT_6_LPCG			0x4c0000
-+#define ADMA_GPT_7_LPCG			0x4d0000
-+#define ADMA_GPT_8_LPCG			0x4e0000
-+#define ADMA_GPT_9_LPCG			0x4f0000
-+#define ADMA_GPT_10_LPCG		0x500000
-+#define ADMA_HIFI_LPCG			0x580000
-+#define ADMA_OCRAM_LPCG			0x590000
-+#define ADMA_EDMA_0_LPCG		0x5f0000
-+#define ADMA_ASRC_1_LPCG		0xc00000
-+#define ADMA_SAI_4_LPCG			0xc20000
-+#define ADMA_SAI_5_LPCG			0xc30000
-+#define ADMA_AMIX_LPCG			0xc40000
-+#define ADMA_MQS_LPCG			0xc50000
-+#define ADMA_ACM_LPCG			0xc60000
-+#define ADMA_REC_CLK0_LPCG		0xd00000
-+#define ADMA_REC_CLK1_LPCG		0xd10000
-+#define ADMA_PLL_CLK0_LPCG		0xd20000
-+#define ADMA_PLL_CLK1_LPCG		0xd30000
-+#define ADMA_MCLKOUT0_LPCG		0xd50000
-+#define ADMA_MCLKOUT1_LPCG		0xd60000
-+#define ADMA_EDMA_1_LPCG		0xdf0000
-+#define ADMA_LPSPI_0_LPCG		0x1400000
-+#define ADMA_LPSPI_1_LPCG		0x1410000
-+#define ADMA_LPSPI_2_LPCG		0x1420000
-+#define ADMA_LPSPI_3_LPCG		0x1430000
-+#define ADMA_LPUART_0_LPCG		0x1460000
-+#define ADMA_LPUART_1_LPCG		0x1470000
-+#define ADMA_LPUART_2_LPCG		0x1480000
-+#define ADMA_LPUART_3_LPCG		0x1490000
-+#define ADMA_LCD_LPCG			0x1580000
-+#define ADMA_PWM_LPCG			0x1590000
-+#define ADMA_LPI2C_0_LPCG		0x1c00000
-+#define ADMA_LPI2C_1_LPCG		0x1c10000
-+#define ADMA_LPI2C_2_LPCG		0x1c20000
-+#define ADMA_LPI2C_3_LPCG		0x1c30000
-+#define ADMA_ADC_0_LPCG			0x1c80000
-+#define ADMA_FTM_0_LPCG			0x1ca0000
-+#define ADMA_FTM_1_LPCG			0x1cb0000
-+#define ADMA_FLEXCAN_0_LPCG		0x1cd0000
-+#define ADMA_FLEXCAN_1_LPCG		0x1ce0000
-+#define ADMA_FLEXCAN_2_LPCG		0x1cf0000
-+
-+#endif /* _IMX8QXP_LPCG_H */
 --=20
 2.7.4
 
