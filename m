@@ -2,124 +2,224 @@ Return-Path: <SRS0=DnCL=OU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59C3FC5CFFE
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Dec 2018 14:35:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90EC2C67839
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Dec 2018 14:39:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 297D92054F
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Dec 2018 14:35:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 297D92054F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 578EF2084A
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Dec 2018 14:39:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="CpMJl7pq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 578EF2084A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726342AbeLKOfn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 11 Dec 2018 09:35:43 -0500
-Received: from mout.kundenserver.de ([217.72.192.74]:45019 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726176AbeLKOfm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Dec 2018 09:35:42 -0500
-Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
- (mreue109 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1MD9Kp-1gfHhj1Z6f-009As2; Tue, 11 Dec 2018 15:35:30 +0100
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        id S1726398AbeLKOj0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 11 Dec 2018 09:39:26 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:54403 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726402AbeLKOj0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Dec 2018 09:39:26 -0500
+Received: by mail-wm1-f68.google.com with SMTP id a62so2468912wmh.4
+        for <linux-clk@vger.kernel.org>; Tue, 11 Dec 2018 06:39:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=QD3eJs/RaEFfBBcOak7at7J5XZS3rHC6GMqA/4qo2JE=;
+        b=CpMJl7pqUmM5M5gdmlDWsZSyzrLV2h5NybK4gJFeQxAT/PnGYf4x9sTQFM+cwMrM/L
+         mJLvm32K99KXFv7zwWiHuAAJWi0ARa04mVliBSaV5zTJ/85tSF4HBuUhydsFwIwgq1PC
+         fRtCSYx7/tJ6gBoND4XqVgXgBhAZhUQ7hdrMdypuUdc501Kc9HUrVNf4kT0WxS0ftCUP
+         tMZJ8tlldoRp9cSYW2OLMYHTOSU1b0Nj71AqOLDVaH1thu4Gb9+ZInppJ+UaQLKPZAGo
+         vUJnqJiKXbinCjaE/dDiEKMv7m3I6q0Fx9NLocKlShqnJueoQQvg5K74LT/RqF34xQhh
+         FkMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=QD3eJs/RaEFfBBcOak7at7J5XZS3rHC6GMqA/4qo2JE=;
+        b=g1fz4pfHpWJ8WSzj2vNWw8+PmBtYdjA6/rh7IcFTNJiiN26dLNa7J4f5Kmr+/AI4lO
+         wDqCOkczPviXujsj3f2Df/g+d2IOiIr7NTLtGUV1pkqc7ZrLr3Cr8nYY7TXjpFsiMelM
+         j2ByzhXQ746gjUDdzyWWpI1ZEQGCv4kcCZYUdWNyEd0t1XDxGGU1oUKEonqHjjpSy3M2
+         COPEgiQHL0gIbTvqzvbWr9EWM3q68+7CjTFDEzg0YB8HAMuCdfmZfQhFnw5tecYU12zg
+         LZSmBOOlJFZme1PHVKZXNBvaeijQ5F957s9W9s+RcS6BrSocETfsG9T4RiFv76KfXwU7
+         NLZw==
+X-Gm-Message-State: AA+aEWZxWxYHEe1YdUQMbJNc/mRLfTjLq27cnya6Gac4HEuLJGsf1f9F
+        czKvbU2lOaQ6M4g80d55OX5/yg==
+X-Google-Smtp-Source: AFSGD/W39xHPT4eyXXzepuA82xS6hyVMU31nUqHw4EPBUjPMfFO3ijoACBQhkihSZjwMJsdrM/NNpA==
+X-Received: by 2002:a1c:aad2:: with SMTP id t201mr2482648wme.148.1544539162989;
+        Tue, 11 Dec 2018 06:39:22 -0800 (PST)
+Received: from boomer.baylibre.com ([2a01:e34:eeb6:4690:106b:bae3:31ed:7561])
+        by smtp.gmail.com with ESMTPSA id v1sm19160147wrw.90.2018.12.11.06.39.20
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 11 Dec 2018 06:39:22 -0800 (PST)
+Message-ID: <48899a9beb0c32103ae7edea14cec890779d498e.camel@baylibre.com>
+Subject: Re: [PATCH v5 1/2] dt-bindings: clk: meson-g12a: Add G12A EE Clock
+ Bindings
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Jian Hu <jian.hu@amlogic.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+Cc:     Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>, Rob Herring <robh@kernel.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Aapo Vienamo <avienamo@nvidia.com>, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: tegra: fix SMP build
-Date:   Tue, 11 Dec 2018 15:35:07 +0100
-Message-Id: <20181211143528.2024488-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:Yr3PefCHlIiPhTL2RRzUnnSvWzKtAq7GB9ZHq121Zj2swOZ/i7Q
- Vl0WGVI0DbkaB9jq6r13YWDMxu0CMgNUIqHe2QS8CEmITnyrrzc6tbzoIFZR2yHUYji/hZ8
- StAtGjdFXpMiH/PO+l19Wuu6XA1e1JBiXYnrNMGMmky3oDd7+zidzlyY9Ce8W4WoUhQomMY
- HJ/nwwHZUX77NphkjGvuA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:PrHJ2V1FYIA=:+dIncFvgge7dlAORd3u9bI
- eArkfmGK4PCk4pFtgJofpH9QNtdEUyJ8ZZxK3fMfyTukNeBh08s19ZK7P4WJk5Eh+iB3RDyPX
- eXVUmz4k9L3T/cZe+yyeuAiVO6O5QFCrQdmdZO+jSzIKWvAkB7R6dVCbHUaqhzonnC64w6cU1
- fM4hxWY1kUBOVYP2ZmbYwhb3B6E4gMAEljvX8aBv3CKD9WZ5uPoJNiWGUOoYmerPjBK5aOKLk
- W53/QqOwBEJxAOz3B6rXJYtiCET0RppSgwo5ADzXkMCxj5MLv9Zp/O2p3enP7AVqhwoit98nj
- NqvyNNs5hlWctupAgUdMriWUfu+KQUxaPfkFOA2NwEkj5LHXST0Nizi+iLWUNeeC4XNFa/xhP
- 3cwAiJvVLpCcpSlx09LlHiT1DY7h1NoXZGbiPnLL1OgnLIHY3AGxgxD/4Qz9XR0twU5o3HMOQ
- iOtZQ+/+s45e/1FDZsgt6Fo40LkFch9jxbABTkWJx2zT7FLORYeh1gJtHQCMc6anlMirFi16L
- STYpWESpc1766UEp6AM0UXJKiV1GtiWQr+GTAWRxQiuxp2FFOLLw5EmOPkaWy4xYtM3yF/Ej/
- Lb+Ayld0eQH8zJKA0p/UaeI0xgJD6HU7mca2a/tNm4S2eq2zZQu81LiBhyxzAZ05Ns83gEaoK
- WnZM78wknjdmcAwyZD7enX7RiK0QN72zHqUwuNo/xTAVg8OueD+RQ3XfcMpsx1GlPkJC3SXK9
- fNZ9LqDAVVe7edE1rpBKKvRerw72dlrX973SXw==
+        Stephen Boyd <sboyd@kernel.org>,
+        Yixun Lan <yixun.lan@amlogic.com>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Date:   Tue, 11 Dec 2018 15:39:19 +0100
+In-Reply-To: <1543498917-98605-2-git-send-email-jian.hu@amlogic.com>
+References: <1543498917-98605-1-git-send-email-jian.hu@amlogic.com>
+         <1543498917-98605-2-git-send-email-jian.hu@amlogic.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.2 (3.30.2-2.fc29) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-When CONFIG_SMP is disabled, the tegra clk driver now fails to build:
+On Thu, 2018-11-29 at 21:41 +0800, Jian Hu wrote:
+> Add new clock controller compatible and dt-bingdings headers
+> for the Everything-Else domain of the g12a SoC
+> 
+> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
+> ---
+>  .../bindings/clock/amlogic,gxbb-clkc.txt           |  1 +
+>  include/dt-bindings/clock/g12a-clkc.h              | 93
+> ++++++++++++++++++++++
+>  2 files changed, 94 insertions(+)
+>  create mode 100644 include/dt-bindings/clock/g12a-clkc.h
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
+> b/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
+> index e950599..0833006 100644
+> --- a/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
+> +++ b/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
+> @@ -9,6 +9,7 @@ Required Properties:
+>  		"amlogic,gxbb-clkc" for GXBB SoC,
+>  		"amlogic,gxl-clkc" for GXL and GXM SoC,
+>  		"amlogic,axg-clkc" for AXG SoC.
+> +		"amlogic,g12a-clkc" for G12A SoC.
 
-drivers/clk/tegra/clk-tegra30.c: In function 'tegra30_cpu_rail_off_ready':
-drivers/clk/tegra/clk-tegra30.c:1151:19: error: implicit declaration of function 'tegra_pmc_cpu_is_powered'; did you mean 'tegra_powergate_is_powered'? [-Werror=implicit-function-declaration]
-  cpu_pwr_status = tegra_pmc_cpu_is_powered(1) ||
 
-I don't know if tegra works without CONFIG_SMP, but we can get it to
-build by making the calls conditional, and removing the pointless
-ifdef around the declaration. The assumption now is that in a
-non-SMP system, the secondary CPUs are always disabled.
+Binding description is not aligned with what the driver does.
+If you are going take clock input from DT, it needs to be documented.
 
-Fixes: 61866523ed6e ("clk: tegra30: Use Tegra CPU powergate helper function")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
-Not sure if this is the best solution. If you think it's not, please
-submit a different fix.
----
- drivers/clk/tegra/clk-tegra30.c | 10 +++++++---
- include/soc/tegra/pmc.h         |  2 --
- 2 files changed, 7 insertions(+), 5 deletions(-)
+In the meantime this has been done [0] for you but you'll have to rebase.
 
-diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-index fa8d573ac626..1505185936f4 100644
---- a/drivers/clk/tegra/clk-tegra30.c
-+++ b/drivers/clk/tegra/clk-tegra30.c
-@@ -1148,9 +1148,13 @@ static bool tegra30_cpu_rail_off_ready(void)
- 
- 	cpu_rst_status = readl(clk_base +
- 				TEGRA30_CLK_RST_CONTROLLER_CPU_CMPLX_STATUS);
--	cpu_pwr_status = tegra_pmc_cpu_is_powered(1) ||
--			 tegra_pmc_cpu_is_powered(2) ||
--			 tegra_pmc_cpu_is_powered(3);
-+
-+	if (IS_ENABLED(CONFIG_SMP))
-+		cpu_pwr_status = tegra_pmc_cpu_is_powered(1) ||
-+				 tegra_pmc_cpu_is_powered(2) ||
-+				 tegra_pmc_cpu_is_powered(3);
-+	else
-+		cpu_pwr_status = 0;
- 
- 	if (((cpu_rst_status & 0xE) != 0xE) || cpu_pwr_status)
- 		return false;
-diff --git a/include/soc/tegra/pmc.h b/include/soc/tegra/pmc.h
-index fd816f6aa9cc..a9db1b501de1 100644
---- a/include/soc/tegra/pmc.h
-+++ b/include/soc/tegra/pmc.h
-@@ -26,11 +26,9 @@
- struct clk;
- struct reset_control;
- 
--#ifdef CONFIG_SMP
- bool tegra_pmc_cpu_is_powered(unsigned int cpuid);
- int tegra_pmc_cpu_power_on(unsigned int cpuid);
- int tegra_pmc_cpu_remove_clamping(unsigned int cpuid);
--#endif /* CONFIG_SMP */
- 
- /*
-  * powergate and I/O rail APIs
--- 
-2.20.0
+[0]: 20181203171640.12110-3-jbrunet@baylibre.com
+
+>  
+>  - #clock-cells: should be 1.
+>  
+> diff --git a/include/dt-bindings/clock/g12a-clkc.h b/include/dt-
+> bindings/clock/g12a-clkc.h
+> new file mode 100644
+> index 0000000..b55e6e1
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/g12a-clkc.h
+> @@ -0,0 +1,93 @@
+> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
+> +/*
+> + * Meson-G12A clock tree IDs
+> + *
+> + * Copyright (c) 2018 Amlogic, Inc. All rights reserved.
+> + */
+> +
+> +#ifndef __G12A_CLKC_H
+> +#define __G12A_CLKC_H
+> +
+> +#define CLKID_SYS_PLL				0
+> +#define CLKID_FIXED_PLL				1
+> +#define CLKID_FCLK_DIV2				2
+> +#define CLKID_FCLK_DIV3				3
+> +#define CLKID_FCLK_DIV4				4
+> +#define CLKID_FCLK_DIV5				5
+> +#define CLKID_FCLK_DIV7				6
+> +#define CLKID_GP0_PLL				7
+> +#define CLKID_CLK81				10
+> +#define CLKID_MPLL0				11
+> +#define CLKID_MPLL1				12
+> +#define CLKID_MPLL2				13
+> +#define CLKID_MPLL3				14
+> +#define CLKID_DDR				15
+> +#define CLKID_DOS				16
+> +#define CLKID_AUDIO_LOCKER			17
+> +#define CLKID_MIPI_DSI_HOST			18
+> +#define CLKID_ETH_PHY				19
+> +#define CLKID_ISA				20
+> +#define CLKID_PL301				21
+> +#define CLKID_PERIPHS				22
+> +#define CLKID_SPICC0				23
+> +#define CLKID_I2C				24
+> +#define CLKID_SANA				25
+> +#define CLKID_SD				26
+> +#define CLKID_RNG0				27
+> +#define CLKID_UART0				28
+> +#define CLKID_SPICC1				29
+> +#define CLKID_HIU_IFACE				30
+> +#define CLKID_MIPI_DSI_PHY			31
+> +#define CLKID_ASSIST_MISC			32
+> +#define CLKID_SD_EMMC_A				33
+> +#define CLKID_SD_EMMC_B				34
+> +#define CLKID_SD_EMMC_C				35
+> +#define CLKID_AUDIO_CODEC			36
+> +#define CLKID_AUDIO				37
+> +#define CLKID_ETH				38
+> +#define CLKID_DEMUX				39
+> +#define CLKID_AUDIO_IFIFO			40
+> +#define CLKID_ADC				41
+> +#define CLKID_UART1				42
+> +#define CLKID_G2D				43
+> +#define CLKID_RESET				44
+> +#define CLKID_PCIE_COMB				45
+> +#define CLKID_PARSER				46
+> +#define CLKID_USB				47
+> +#define CLKID_PCIE_PHY				48
+> +#define CLKID_AHB_ARB0				49
+> +#define CLKID_AHB_DATA_BUS			50
+> +#define CLKID_AHB_CTRL_BUS			51
+> +#define CLKID_HTX_HDCP22			52
+> +#define CLKID_HTX_PCLK				53
+> +#define CLKID_BT656				54
+> +#define CLKID_USB1_DDR_BRIDGE			55
+> +#define CLKID_MMC_PCLK				56
+> +#define CLKID_UART2				57
+> +#define CLKID_VPU_INTR				58
+> +#define CLKID_GIC				59
+> +#define CLKID_SD_EMMC_B_CLK0			60
+> +#define CLKID_SD_EMMC_C_CLK0			61
+> +#define CLKID_HIFI_PLL				71
+> +#define CLKID_VCLK2_VENCI0			77
+> +#define CLKID_VCLK2_VENCI1			78
+> +#define CLKID_VCLK2_VENCP0			79
+> +#define CLKID_VCLK2_VENCP1			80
+> +#define CLKID_VCLK2_VENCT0			81
+> +#define CLKID_VCLK2_VENCT1			82
+> +#define CLKID_VCLK2_OTHER			83
+> +#define CLKID_VCLK2_ENCI			84
+> +#define CLKID_VCLK2_ENCP			85
+> +#define CLKID_DAC_CLK				86
+> +#define CLKID_AOCLK				87
+> +#define CLKID_IEC958				88
+> +#define CLKID_ENC480P				89
+> +#define CLKID_RNG1				90
+> +#define CLKID_VCLK2_ENCT			91
+> +#define CLKID_VCLK2_ENCL			92
+> +#define CLKID_VCLK2_VENCLMMC			93
+> +#define CLKID_VCLK2_VENCL			94
+> +#define CLKID_VCLK2_OTHER1			95
+> +#define CLKID_FCLK_DIV2P5			96
+> +
+> +#endif /* __G12A_CLKC_H */
+
 
