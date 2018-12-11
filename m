@@ -2,143 +2,242 @@ Return-Path: <SRS0=DnCL=OU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37A64C07E85
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Dec 2018 15:06:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C24D0C07E85
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Dec 2018 15:13:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C4D92081B
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Dec 2018 15:06:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 78BE92081B
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Dec 2018 15:13:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="zH+GHK+c"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C4D92081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="VMwkSfd9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78BE92081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726455AbeLKPGE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:06:04 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:34168 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726401AbeLKPGD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Dec 2018 10:06:03 -0500
-Received: by mail-wr1-f68.google.com with SMTP id j2so14468482wrw.1
-        for <linux-clk@vger.kernel.org>; Tue, 11 Dec 2018 07:06:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:openpgp:autocrypt:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=2FfjbBVh3NMYlxvx0kpMUTiT+VcuQMpKGe66zpo84ys=;
-        b=zH+GHK+cyzfnCsldWjfKATBR3d3zBPOndVU4g9rNwEQC6jiVhxRdZzd2dFz/I04q/g
-         Fsn74ZyOmQhGA7bcWGOSFl8uXOGTPxJkJwT/goglZx+gk1QwjtkFTqpb7SgeXQeEBzTK
-         QS5BUsAUBWkrP/V1DySROryNmcs7zQzCRe3GQfVz6JtLdAjp0joayTBPp/oXCLe5v24C
-         EobMGcVZ5l9CCv0s/CEtTOtw5k/IlfSD3P9LCB01EpGFOt92/oQ3dbcCELt/yxQYtgtr
-         XLfi7LmTJL8mDGfb4AmOTwu1Yu20uQ4x17zuCU6Yux1vtWZ18Pgh8EoDFsf3nfyCkk0H
-         L51w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :organization:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=2FfjbBVh3NMYlxvx0kpMUTiT+VcuQMpKGe66zpo84ys=;
-        b=n16adZBtkz1b5kE5giW/Qui91NOqJMIwmMh4t7f7/nKtKziJdhCYs6hMtDsQvSMrmc
-         wXcGemtlZpc6Mj8uDcA6Gbyw0FV9733SqZk4/jBGENlyFB+sTjCblBKuKYJsB1YK0DSQ
-         sxgUxdwtDntihj+re1dMsJrQQkK8JLSTNrIS3fcUTFAi9zbhggYsUSBZIekKyab4Zw8Z
-         xtcPb/uTQuVB7YhKJxAqpeA4xY1LQlZGdte+uSgNLNz6ghuISnveA8K/ZxZEW0l8RiWH
-         1TBlqqRkPv7oqZySRcFJ23oxpMGauzbVbDEzKHrvaqs0qKocewgi291cpYBPjGQfoEp5
-         4LhA==
-X-Gm-Message-State: AA+aEWboqR3T/XKA/V7lTLSFMtj+0eok0qpHDUU7MiLXpTyNVpAeLkty
-        Y+IG7rguO/BoQHvkPYiyXQ3M13cabFp5Cw==
-X-Google-Smtp-Source: AFSGD/USfNrs8j5sX9n01FLHEqMyaJqW7AVnl0eC6XATlyN2gyLsZXGliTIXrUHgJDdMsjC8WOz+uw==
-X-Received: by 2002:adf:91c3:: with SMTP id 61mr13184213wri.324.1544540761464;
-        Tue, 11 Dec 2018 07:06:01 -0800 (PST)
-Received: from [192.168.1.16] (lfbn-nic-1-206-198.w2-15.abo.wanadoo.fr. [2.15.53.198])
-        by smtp.gmail.com with ESMTPSA id n9sm14709940wrx.80.2018.12.11.07.06.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Dec 2018 07:06:00 -0800 (PST)
-Subject: Re: [PATCH] clk: meson: axg-audio: fix input clock name
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>
-Cc:     linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20181211124751.30108-1-jbrunet@baylibre.com>
-From:   Neil Armstrong <narmstrong@baylibre.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKE5laWwgQXJtc3Ryb25nIDxuYXJtc3Ryb25nQGJheWxpYnJlLmNvbT7CwHsEEwEKACUC
- GyMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheABQJXDO2CAhkBAAoJEBaat7Gkz/iubGIH/iyk
- RqvgB62oKOFlgOTYCMkYpm2aAOZZLf6VKHKc7DoVwuUkjHfIRXdslbrxi4pk5VKU6ZP9AKsN
- NtMZntB8WrBTtkAZfZbTF7850uwd3eU5cN/7N1Q6g0JQihE7w4GlIkEpQ8vwSg5W7hkx3yQ6
- 2YzrUZh/b7QThXbNZ7xOeSEms014QXazx8+txR7jrGF3dYxBsCkotO/8DNtZ1R+aUvRfpKg5
- ZgABTC0LmAQnuUUf2PHcKFAHZo5KrdO+tyfL+LgTUXIXkK+tenkLsAJ0cagz1EZ5gntuheLD
- YJuzS4zN+1Asmb9kVKxhjSQOcIh6g2tw7vaYJgL/OzJtZi6JlIXOwE0ETVkGzwEIALyKDN/O
- GURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYpQTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXM
- coJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hi
- SvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY4yG6xI99NIPEVE9lNBXBKIlewIyVlkOa
- YvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoMMtsyw18YoX9BqMFInxqYQQ3j/HpVgTSv
- mo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUXoUk33HEAEQEAAcLAXwQYAQIACQUCTVkG
- zwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfnM7IbRuiSZS1unlySUVYu3SD6YBYnNi3G
- 5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa33eDIHu/zr1HMKErm+2SD6PO9umRef8V8
- 2o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCSKmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+
- RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJ
- C3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTTQbM0WUIBIcGmq38+OgUsMYu4NzLu7uZF
- Acmp6h8g
-Organization: Baylibre
-Message-ID: <79f49d43-7eb0-d056-158c-c6c78db9cdef@baylibre.com>
-Date:   Tue, 11 Dec 2018 16:06:00 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20181211124751.30108-1-jbrunet@baylibre.com>
-Content-Type: text/plain; charset=utf-8
+        id S1726329AbeLKPNW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 11 Dec 2018 10:13:22 -0500
+Received: from mail-eopbgr60067.outbound.protection.outlook.com ([40.107.6.67]:5968
+        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726402AbeLKPNV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:13:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xh6hiClCiolwTSRK1RtUPgG1KAEX8e65iQ6zkNL0c6E=;
+ b=VMwkSfd9qPullm/nml8B/4TcDWeyktfqfwrDx1BPRSZhWprMpT6kwOrslYEnpvZNtUeCYTKp4XWz96dfe/RJg5LhdYbxZWJgERwYtFFng0lCq7XhYrI+b1bWY/DZY1fn5otdgZInAI0uUJ870bdw9RMEXLoFBHqYheHbEgDzpvA=
+Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.126.21) by
+ AM0PR04MB4291.eurprd04.prod.outlook.com (52.134.126.146) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1425.18; Tue, 11 Dec 2018 15:13:17 +0000
+Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
+ ([fe80::31e3:2aa6:8d93:9927]) by AM0PR04MB4211.eurprd04.prod.outlook.com
+ ([fe80::31e3:2aa6:8d93:9927%2]) with mapi id 15.20.1404.026; Tue, 11 Dec 2018
+ 15:13:17 +0000
+From:   Aisheng Dong <aisheng.dong@nxp.com>
+To:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+CC:     "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        Aisheng Dong <aisheng.dong@nxp.com>
+Subject: [PATCH V10 1/7] clk: imx: add configuration option for mmio clks
+Thread-Topic: [PATCH V10 1/7] clk: imx: add configuration option for mmio clks
+Thread-Index: AQHUkWQLbGd8McQJ50K05Ro1RXHVEg==
+Date:   Tue, 11 Dec 2018 15:13:16 +0000
+Message-ID: <1544540867-6342-2-git-send-email-aisheng.dong@nxp.com>
+References: <1544540867-6342-1-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1544540867-6342-1-git-send-email-aisheng.dong@nxp.com>
+Accept-Language: zh-CN, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.7.4
+x-clientproxiedby: HK0PR03CA0081.apcprd03.prod.outlook.com
+ (2603:1096:203:72::21) To AM0PR04MB4211.eurprd04.prod.outlook.com
+ (2603:10a6:208:66::21)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=aisheng.dong@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM0PR04MB4291;6:Z/VcYmHvCsEulfa4vMdFrCDuF9NedbzfWT76Kc9ATTAXSBsGtD5eM0jHZFDdG9m6NC3Nu8h83aFBEpH9Ds5iDahAD6mfz2AmQBMWGJ/OropBbDdhV1T7jIgkCuQQVe3OnOcBV+U2M/iLV7fU8tep7GjSDLB622jm0MuqBaifa8VVO3y357tEI8m/pmrn3cLi5mEQiKbS9Z+nUQ700MAFwpwluFnU8nBdZV6Wvizwh1V0w4iJJVxWYRx27UoyVP2mxVyc3pF449OUzYEG/BnFpT0yFbAjyFNHIBceeDURbbORwR0hESthAUVXUBdvkwxcU42poF2CUA0OuPDu91YTkAbrsg31bkx7JfLK5p5V2K8x56LcjvU1NGdMNXj4Mkr5GIHis0JMPrM6LnZln5cmHQKo9a0GCMpYQTX83eXAE22KJ4mP1QwOE1o339Giq+kscctt7m0yGuNcXDsntwAqHg==;5:YfVXP90oABGMC1YA7Ttyqt8HDG0Dhe+b0zLAcNUaIqmh3qg/eNyZEXCj4s2B8WM7ERFnGYN7MqvbgVNbLp8zCIUiJcW0TYqQ0iRBWBPoUXmfq8KijyTFwUYL9Oxbo6QHsvKyqUoK0R3CgW5dO0McUEWqFUt1f6uOQx5B2GxhdFE=;7:AAezWUgrEvSlaLJH5UK0AJl54TzUMwxGcng9WwYanrQ20+hRmT2MgHseZkAymoPXfdZRav+hjIGia44H5HKaGiRPHAhqbp1pchME4VSQ6QB/Y2Ebc6BacwCV4eM1hM7WlA55rdK2Ga+MLmYsDAVqkg==
+x-ms-office365-filtering-correlation-id: dca838c9-84f2-497b-effb-08d65f7b2d6d
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB4291;
+x-ms-traffictypediagnostic: AM0PR04MB4291:
+x-microsoft-antispam-prvs: <AM0PR04MB42919CEC5CD2D388162EFFBD80A60@AM0PR04MB4291.eurprd04.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230017)(999002)(6040522)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93001095)(3231472)(944501520)(52105112)(3002001)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:AM0PR04MB4291;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB4291;
+x-forefront-prvs: 08831F51DC
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(396003)(39860400002)(366004)(346002)(136003)(199004)(189003)(102836004)(3846002)(386003)(6506007)(66066001)(486006)(26005)(6512007)(8676002)(186003)(6116002)(4326008)(476003)(2616005)(446003)(97736004)(11346002)(54906003)(316002)(25786009)(36756003)(76176011)(53936002)(6486002)(99286004)(6436002)(106356001)(44832011)(105586002)(5640700003)(5660300001)(2351001)(52116002)(7736002)(6916009)(575784001)(68736007)(71200400001)(71190400001)(86362001)(50226002)(305945005)(2906002)(14444005)(2501003)(8936002)(478600001)(81156014)(256004)(81166006)(14454004);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4291;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: XSQ2hSGcZJo/rBfGYofzSpNDqmgY6pPeNr1K066sDQTpNr7Hbn9XzTB9wRhEos8VqaU1c2Dl1ugqL9/bUB6AEzwrf/4ivD49UUQxXr369/bQaHoFhNcQYgFPZJQapVaTjk7TZ++gFI5//FR1TDeXB/l+HuAnE5nu+nj349QcGWlO8DbeADVYGkgqdZebvUK7dz9exdu60P6OFI3IMd3/x8m2FkZKcLlRQkEmzj7Tw2e1VxvIPQlIqxr6TRA0rS+DXbONRR0ab4S0zsBXPZ+XrTva1Y5odiWhuZ9miUT/Ao96NeGLte3CxEEVi4tJinXp
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: dca838c9-84f2-497b-effb-08d65f7b2d6d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Dec 2018 15:13:16.9881
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4291
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 11/12/2018 13:47, Jerome Brunet wrote:
-> The name of input clock is not aligned with the rest of the tree
-> Because of this, the audio peripheral clocks are orphaned.
-> 
-> Fixes: 1222ab89328f ("clk: meson: axg-audio: use the clk input helper function")
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
->  Neil,
-> 
->  Feel free to squash this with commit 1222ab89328f if you prefer
+The patch introduces CONFIG_MXC_CLK option for legacy MMIO clocks,
+this is required to compile legacy MMIO clock conditionally when adding
+SCU based clocks for MX8 platforms later.
 
-Well, I'm lazy so I squashed it :-)
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Sascha Hauer <kernel@pengutronix.de>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+---
+v1->v10: no changes
+---
+ arch/arm/mach-imx/Kconfig | 11 +++++++++++
+ drivers/clk/Kconfig       |  1 +
+ drivers/clk/imx/Kconfig   |  5 +++++
+ drivers/clk/imx/Makefile  |  2 +-
+ 4 files changed, 18 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/imx/Kconfig
 
-> 
->  Cheers
->  Jerome
-> 
->  drivers/clk/meson/axg-audio.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/meson/axg-audio.c b/drivers/clk/meson/axg-audio.c
-> index 72b717e61a68..8ac3a2295473 100644
-> --- a/drivers/clk/meson/axg-audio.c
-> +++ b/drivers/clk/meson/axg-audio.c
-> @@ -752,7 +752,7 @@ static int axg_audio_clkc_probe(struct platform_device *pdev)
->  	}
->  
->  	/* Register the peripheral input clock */
-> -	hw = meson_clk_hw_register_input(dev, "pclk", "audio_pclk", 0);
-> +	hw = meson_clk_hw_register_input(dev, "pclk", "axg_audio_pclk", 0);
->  	if (IS_ERR(hw))
->  		return PTR_ERR(hw);
->  
-> 
+diff --git a/arch/arm/mach-imx/Kconfig b/arch/arm/mach-imx/Kconfig
+index abc3371..11a9661 100644
+--- a/arch/arm/mach-imx/Kconfig
++++ b/arch/arm/mach-imx/Kconfig
+@@ -57,23 +57,27 @@ config SOC_IMX21
+ 	select CPU_ARM926T
+ 	select IMX_HAVE_IOMUX_V1
+ 	select MXC_AVIC
++	select MXC_CLK
+=20
+ config SOC_IMX27
+ 	bool
+ 	select CPU_ARM926T
+ 	select IMX_HAVE_IOMUX_V1
+ 	select MXC_AVIC
++	select MXC_CLK
+ 	select PINCTRL_IMX27
+=20
+ config SOC_IMX31
+ 	bool
+ 	select CPU_V6
+ 	select MXC_AVIC
++	select MXC_CLK
+=20
+ config SOC_IMX35
+ 	bool
+ 	select ARCH_MXC_IOMUX_V3
+ 	select MXC_AVIC
++	select MXC_CLK
+ 	select PINCTRL_IMX35
+=20
+ if ARCH_MULTI_V5
+@@ -417,6 +421,7 @@ config SOC_IMX1
+ 	bool "i.MX1 support"
+ 	select CPU_ARM920T
+ 	select MXC_AVIC
++	select MXC_CLK
+ 	select PINCTRL_IMX1
+ 	help
+ 	  This enables support for Freescale i.MX1 processor
+@@ -430,6 +435,7 @@ config SOC_IMX25
+ 	select ARCH_MXC_IOMUX_V3
+ 	select CPU_ARM926T
+ 	select MXC_AVIC
++	select MXC_CLK
+ 	select PINCTRL_IMX25
+ 	help
+ 	  This enables support for Freescale i.MX25 processor
+@@ -442,6 +448,7 @@ comment "Cortex-A platforms"
+ config SOC_IMX5
+ 	bool
+ 	select HAVE_IMX_SRC
++	select MXC_CLK
+ 	select MXC_TZIC
+=20
+ config	SOC_IMX50
+@@ -478,6 +485,7 @@ config SOC_IMX6
+ 	select HAVE_IMX_MMDC
+ 	select HAVE_IMX_SRC
+ 	select MFD_SYSCON
++	select MXC_CLK
+ 	select PL310_ERRATA_769419 if CACHE_L2X0
+=20
+ config SOC_IMX6Q
+@@ -545,10 +553,12 @@ config SOC_IMX7D_CA7
+ 	select HAVE_IMX_MMDC
+ 	select HAVE_IMX_SRC
+ 	select IMX_GPCV2
++	select MXC_CLK
+=20
+ config SOC_IMX7D_CM4
+ 	bool
+ 	select ARMV7M_SYSTICK
++	select MXC_CLK
+=20
+ config SOC_IMX7D
+ 	bool "i.MX7 Dual support"
+@@ -561,6 +571,7 @@ config SOC_IMX7D
+ config SOC_VF610
+ 	bool "Vybrid Family VF610 support"
+ 	select ARM_GIC if ARCH_MULTI_V7
++	select MXC_CLK
+ 	select PINCTRL_VF610
+=20
+ 	help
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 2dc12bf..d2f0bb5 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -294,6 +294,7 @@ source "drivers/clk/actions/Kconfig"
+ source "drivers/clk/bcm/Kconfig"
+ source "drivers/clk/hisilicon/Kconfig"
+ source "drivers/clk/imgtec/Kconfig"
++source "drivers/clk/imx/Kconfig"
+ source "drivers/clk/ingenic/Kconfig"
+ source "drivers/clk/keystone/Kconfig"
+ source "drivers/clk/mediatek/Kconfig"
+diff --git a/drivers/clk/imx/Kconfig b/drivers/clk/imx/Kconfig
+new file mode 100644
+index 0000000..43a3ecc
+--- /dev/null
++++ b/drivers/clk/imx/Kconfig
+@@ -0,0 +1,5 @@
++# SPDX-License-Identifier: GPL-2.0
++# common clock support for NXP i.MX SoC family.
++config MXC_CLK
++	bool
++	depends on ARCH_MXC
+diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
+index 5c0b11e..f850424 100644
+--- a/drivers/clk/imx/Makefile
++++ b/drivers/clk/imx/Makefile
+@@ -1,6 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0
+=20
+-obj-y +=3D \
++obj-$(CONFIG_MXC_CLK) +=3D \
+ 	clk.o \
+ 	clk-busy.o \
+ 	clk-composite-8m.o \
+--=20
+2.7.4
 
