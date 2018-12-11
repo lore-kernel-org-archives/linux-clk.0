@@ -2,206 +2,231 @@ Return-Path: <SRS0=DnCL=OU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5FD1C5CFFE
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Dec 2018 15:21:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FB6DC07E85
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Dec 2018 16:28:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69C01204FD
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Dec 2018 15:21:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EBBFD2081B
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Dec 2018 16:28:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="wwe06DGd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69C01204FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="Np6rTVgq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBBFD2081B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726417AbeLKPVz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:21:55 -0500
-Received: from mail-eopbgr20074.outbound.protection.outlook.com ([40.107.2.74]:29936
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726402AbeLKPVy (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:21:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Oo2kYiEAhgEfYgKT0zpYtzOhj7UQnLL7jE9cpYZa0YY=;
- b=wwe06DGdCxzVlXhflZAVyz/MLn4QkBbRdfQxfd5L3ZE+H4lUArkAOT4X2UGb3mZeOypZNqnezdxioP96ULMbLRetC5aTvwJuRJUgmXARN1NMwGmCk1z9Spw03MMFWoB4MfMfTlRsoAG6j/N4SlRrTSACyQZXpUczCV8+795Oml8=
-Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.126.21) by
- AM0PR04MB5234.eurprd04.prod.outlook.com (20.177.42.27) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1404.22; Tue, 11 Dec 2018 15:21:49 +0000
-Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
- ([fe80::31e3:2aa6:8d93:9927]) by AM0PR04MB4211.eurprd04.prod.outlook.com
- ([fe80::31e3:2aa6:8d93:9927%2]) with mapi id 15.20.1404.026; Tue, 11 Dec 2018
- 15:21:48 +0000
-From:   Aisheng Dong <aisheng.dong@nxp.com>
-To:     "sboyd@kernel.org" <sboyd@kernel.org>
-CC:     "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: RE: [PATCH V10 0/7] clk: imx: add imx8qxp clock support
-Thread-Topic: [PATCH V10 0/7] clk: imx: add imx8qxp clock support
-Thread-Index: AQHUkWQIbRNxBwjK40+nBfx8zhf5nKV5psHw
-Date:   Tue, 11 Dec 2018 15:21:48 +0000
-Message-ID: <AM0PR04MB42118633A444FE26E32DF1B980A60@AM0PR04MB4211.eurprd04.prod.outlook.com>
-References: <1544540867-6342-1-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1544540867-6342-1-git-send-email-aisheng.dong@nxp.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=aisheng.dong@nxp.com; 
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM0PR04MB5234;6:k5gTe+3A6J2+vAUJHjgOo1ZlhcCStsMHUaBWP3lekKh+rZY3+nQQsRG6Zs5awk2bv2c2I/bbGB4CL6r5mcuwG9M2b2mGUvsRbJYdUeIUotnOzEznUuXwdo9pEqpwZCzkA4VAI3J/jvvUJ6IZ6YE2Aq8zEshviOPD4BBa/WXyRg+OYCTcmSlBwpUjWhvpvpYF/P/bCQ1xKipXraAvoRxztVwLW7nyGjDOyQpJsuQgxTHpP97d0LIZF0l0Yz+aA0j6G5ACoiEXY4SFMLDo7mgSCyyweGmpura8XNeQCmBGri+LbBCIqJYz5bzzs7b+sk9jaAYJr0D2/LJGVprpq7+gUchEywgV38mATBrqyPE1HnsgJoBxGLgPXlkLxLGaxib7h/6z7YpBy2AwhGrXBfmmuUcSSjoBLcukAAeGf+3ARm6fdoPr+U74/P+vdaAZzTOx7B+LvuYizqe6UsW1q+h1zQ==;5:6S7FYqdbrZSDdpMcAs9BCKPvRIozgQ9Wc++thrQIlBkiR610ReSKqCbzMXjZbdEl8yTCTz9pldWRS0n6pt9/UJ+1dyN4Q3OCwr5xtbJAU+dx9bVvBTQlnNbZ7W819U8M6QhhX0gcu+b2l5X5pPVBzZDZlMA8IPEw68UDIDbjp4Y=;7:pSLmSr9pr4DHmuK6zWh/5NlKkYsywuGkT+r4impllOYYkFXGmynYEV2RK+VjER4xc4DPJBIPVi4MKBvDizlR80Z6can4L6gpD69MgkoMbmLy9sAHtIKFtkw0cQ36v6I5dfhd6s/7/TvJRUgtn7w+AA==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 367ec721-a246-412b-f2f8-08d65f7c5ebd
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB5234;
-x-ms-traffictypediagnostic: AM0PR04MB5234:
-x-microsoft-antispam-prvs: <AM0PR04MB5234753E319141A2706A814380A60@AM0PR04MB5234.eurprd04.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(3231455)(999002)(944501520)(52105112)(10201501046)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201703061421075)(201703161042150)(20161123560045)(20161123558120)(20161123562045)(20161123564045)(6042181)(201708071742011)(7699051)(76991095);SRVR:AM0PR04MB5234;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB5234;
-x-forefront-prvs: 08831F51DC
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(189003)(199004)(13464003)(54534003)(26005)(74316002)(105586002)(4326008)(68736007)(5660300001)(66066001)(33656002)(305945005)(186003)(71200400001)(102836004)(71190400001)(7736002)(76176011)(2501003)(53546011)(6506007)(256004)(229853002)(14444005)(7696005)(6436002)(3846002)(11346002)(6116002)(54906003)(486006)(5640700003)(8676002)(55016002)(476003)(498600001)(446003)(9686003)(2351001)(81166006)(81156014)(2906002)(53936002)(1730700003)(106356001)(6916009)(99286004)(44832011)(6246003)(86362001)(8936002)(97736004)(14454004)(25786009)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5234;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: CUBdLxlBwRfR0fdKPpTBXeaaMV2aesb1dfrpb3i09eTYJkB7rTHLWDdeIU9fIuJ3q6zTmoFfrO+iErsp4HMBXBtCutDrYzwYzUDWP+UxiVAtdgO3kOMzzpymPUdu4rpxQztWxn8BmJWqmkCHrAnQ9z0g7W/M6xIhvjk8WcuiNSt9Q/62y3nphsQWWwQtWLDuKrVfdpXX8UQYjpX1LY3ffm20wg1kyHNWPIV8RQXhTbFPVD7OS9gv8+6ZNNTTo4H83eSToDNwYiSM9p5LNWoi9Axnq3qpFO+ibVUrggxzNrqaOu3vXUr0vo40hvn3D8Va
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 367ec721-a246-412b-f2f8-08d65f7c5ebd
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Dec 2018 15:21:48.8493
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5234
+        id S1727252AbeLKQ2G (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 11 Dec 2018 11:28:06 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:33043 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727287AbeLKQ2G (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Dec 2018 11:28:06 -0500
+Received: by mail-wr1-f66.google.com with SMTP id c14so14787179wrr.0
+        for <linux-clk@vger.kernel.org>; Tue, 11 Dec 2018 08:28:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=f7K6GN5/aa8DCXT+gCMZwybLJkMHYSJQth2S97vanzo=;
+        b=Np6rTVgqPxvJka6+7brT/Eim4w/Hd2CraROFW2i6SrUrrtDFf+5dxyKFNR3HTU+Zgt
+         +vCWjDHnZGc+F2olDiYddyTEFyE/GNi7dXqazkNISskFklqX+tdSVgwQx266peIz9ct7
+         ePiHh0fyp/cbKyR8yoQ4JWkKDUdxboWNTu/CO7Kbc+hPD0HikMWm5UZWPVkPYk6KshBt
+         TVAN4io2nE8969uKqKTlM9HJeuZ9HHUQjRUln6G/cYZK4DZW7daog3ijzWsGzvI107jG
+         echLmz0tB9thiCWCCAyAPjjj65fhYTyfmOvQecfFe+330PeTTAP6+VfsaquG/0Z/GKzF
+         cpTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=f7K6GN5/aa8DCXT+gCMZwybLJkMHYSJQth2S97vanzo=;
+        b=I5a1Iocl8A7M/UgoWetTfdFOwFLz+KVBQNxYTNrQF3Hs58SNnD4qj75Q89lreJ8LuG
+         QZq4HmtWac49ehrirMkzLFEttUI8RaLvtzZ+9U8WyyiPVA57XC6eDoaQRs226M0onvcz
+         QE03x9y4FsBWl8QOk6CEF4gE9S8JllYXIwPWQ1oN2nah+NRT134yTdPhAZXYxzTOx+80
+         46riPdoy4N4vwwVWv2RfDD5Z0gTtyblJnl28Dz0eHzGI0vKYdEfdy0HK9+nM1QlKFYYu
+         ms1o04QXLbCC0UYHcbdla59WNpTBcRGbE9wDWkkGrNEu33GE/VewnmFI5yT2ruT45LoE
+         bsmg==
+X-Gm-Message-State: AA+aEWb56cn8dhtkJxJWpNIYJ9JJsjtUmG2CcHYVcOoisYcgBabFjdD+
+        DnrIvLbJz3clSLLdjiidwOl4BQ==
+X-Google-Smtp-Source: AFSGD/UXMlaOEMcHHY+QljpOlM8+FZoMmIr7+8jsqKzy6aCccOZYqm9qFkRhYtZH8/ETWEHMRXDEXA==
+X-Received: by 2002:adf:ce86:: with SMTP id r6mr14862307wrn.257.1544545683894;
+        Tue, 11 Dec 2018 08:28:03 -0800 (PST)
+Received: from boomer.baylibre.com ([2a01:e34:eeb6:4690:106b:bae3:31ed:7561])
+        by smtp.gmail.com with ESMTPSA id y34sm44330957wrd.68.2018.12.11.08.28.01
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 11 Dec 2018 08:28:02 -0800 (PST)
+Message-ID: <8e1c711b477eeee60809f33926cf9c6a52f530cd.camel@baylibre.com>
+Subject: Re: [PATCH RESEND v7 1/4] clk: meson: add emmc sub clock phase
+ delay driver
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Jianxin Pan <jianxin.pan@amlogic.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+Cc:     Yixun Lan <yixun.lan@amlogic.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Liang Yang <liang.yang@amlogic.com>,
+        Jian Hu <jian.hu@amlogic.com>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>, linux-clk@vger.kernel.org,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Date:   Tue, 11 Dec 2018 17:28:00 +0100
+In-Reply-To: <1544457877-51301-2-git-send-email-jianxin.pan@amlogic.com>
+References: <1544457877-51301-1-git-send-email-jianxin.pan@amlogic.com>
+         <1544457877-51301-2-git-send-email-jianxin.pan@amlogic.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.2 (3.30.2-2.fc29) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+On Tue, 2018-12-11 at 00:04 +0800, Jianxin Pan wrote:
+> From: Yixun Lan <yixun.lan@amlogic.com>
+> 
+> Export the emmc sub clock phase delay ops which will be used
+> by the emmc sub clock driver itself.
+> 
+> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+> Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
+> ---
+>  drivers/clk/meson/Makefile          |  2 +-
+>  drivers/clk/meson/clk-phase-delay.c | 64
+> +++++++++++++++++++++++++++++++++++++
+>  drivers/clk/meson/clkc.h            | 13 ++++++++
+>  3 files changed, 78 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/clk/meson/clk-phase-delay.c
+> 
+> diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
+> index 72ec8c4..39ce566 100644
+> --- a/drivers/clk/meson/Makefile
+> +++ b/drivers/clk/meson/Makefile
+> @@ -2,7 +2,7 @@
+>  # Makefile for Meson specific clk
+>  #
+>  
+> -obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-mpll.o clk-phase.o
+> +obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-mpll.o clk-phase.o clk-
+> phase-delay.o
+>  obj-$(CONFIG_COMMON_CLK_AMLOGIC_AUDIO)	+= clk-triphase.o sclk-div.o
+>  obj-$(CONFIG_COMMON_CLK_MESON_AO) += meson-aoclk.o
+>  obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
+> diff --git a/drivers/clk/meson/clk-phase-delay.c b/drivers/clk/meson/clk-
+> phase-delay.c
+> new file mode 100644
+> index 0000000..84e7b63
+> --- /dev/null
+> +++ b/drivers/clk/meson/clk-phase-delay.c
+> @@ -0,0 +1,64 @@
+> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> +/*
+> + * Amlogic Meson MMC Sub Clock Controller Driver
+> + *
+> + * Copyright (c) 2017 Baylibre SAS.
+> + * Author: Jerome Brunet <jbrunet@baylibre.com>
+> + *
+> + * Copyright (c) 2018 Amlogic, inc.
+> + * Author: Yixun Lan <yixun.lan@amlogic.com>
+> + * Author: Jianxin Pan <jianxin.pan@amlogic.com>
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +#include "clkc.h"
+> +
+> +static int meson_clk_phase_delay_get_phase(struct clk_hw *hw)
+> +{
+> +	struct clk_regmap *clk = to_clk_regmap(hw);
+> +	struct meson_clk_phase_delay_data *ph;
+> +	unsigned long period_ps, p, d;
+> +	int degrees;
+> +
+> +	ph = meson_clk_get_phase_delay_data(clk);
+> +	p = meson_parm_read(clk->map, &ph->phase);
+> +	degrees = p * 360 / (1 << (ph->phase.width));
+> +
+> +	period_ps = DIV_ROUND_UP(NSEC_PER_SEC * 1000,
+> +				 clk_hw_get_rate(hw));
+> +
+> +	d = meson_parm_read(clk->map, &ph->delay);
+> +	degrees += d * ph->delay_step_ps * 360 / period_ps;
+> +	degrees %= 360;
+> +
+> +	return degrees;
+> +}
+> +
+> +static int meson_clk_phase_delay_set_phase(struct clk_hw *hw, int degrees)
+> +{
+> +	struct clk_regmap *clk = to_clk_regmap(hw);
+> +	struct meson_clk_phase_delay_data *ph;
+> +	unsigned long period_ps, d = 0, r;
+> +
+> +	ph = meson_clk_get_phase_delay_data(clk);
+> +	period_ps = DIV_ROUND_UP(NSEC_PER_SEC * 1000, clk_hw_get_rate(hw));
+> +
+> +	/*
+> +	 * First compute the phase index (p), the remainder (r) is the
+> +	 * part we'll try to acheive using the delays (d).
+> +	 */
+> +	r = do_div(degrees, 360 / 1 << (ph->phase.width));
+> +	d = DIV_ROUND_CLOSEST(r * period_ps,
+> +			      360 * ph->delay_step_ps);
+> +	d = min(d, PMASK(ph->delay.width));
+> +
+> +	meson_parm_write(clk->map, &ph->phase, degrees);
+> +	meson_parm_write(clk->map, &ph->delay, d);
+> +	return 0;
+> +}
+> +
+> +const struct clk_ops meson_clk_phase_delay_ops = {
+> +	.get_phase = meson_clk_phase_delay_get_phase,
+> +	.set_phase = meson_clk_phase_delay_set_phase,
+> +};
+> +EXPORT_SYMBOL_GPL(meson_clk_phase_delay_ops);
+> diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
+> index 6b96d55..30470c6 100644
+> --- a/drivers/clk/meson/clkc.h
+> +++ b/drivers/clk/meson/clkc.h
+> @@ -105,6 +105,18 @@ struct clk_regmap _name = {				
+> 		\
+>  	},								\
+>  };
+>  
+> +struct meson_clk_phase_delay_data {
+> +	struct parm			phase;
+> +	struct parm			delay;
+> +	unsigned int			delay_step_ps;
+> +};
+> +
+> +static inline struct meson_clk_phase_delay_data *
+> +meson_clk_get_phase_delay_data(struct clk_regmap *clk)
+> +{
+> +	return clk->data;
+> +}
 
-This series is made against clk-next.
-Due to newly added clk-imx7ulp and clk-imx8mq in clk-next,
-you may meet apply failure if apply against clk-master branch.
+This is only usefull in the related clock driver, no need to export it
 
-So If you need me to re-generate a patch series against clk-master,
-Please let me know. But that may still get an error when merger the
-Series Into clk-next, I guess.
+> +
+>  /* clk_ops */
+>  extern const struct clk_ops meson_clk_pll_ro_ops;
+>  extern const struct clk_ops meson_clk_pll_ops;
+> @@ -112,5 +124,6 @@ struct clk_regmap _name = {				
+> 		\
+>  extern const struct clk_ops meson_clk_mpll_ro_ops;
+>  extern const struct clk_ops meson_clk_mpll_ops;
+>  extern const struct clk_ops meson_clk_phase_ops;
+> +extern const struct clk_ops meson_clk_phase_delay_ops;
+>  
+>  #endif /* __CLKC_H */
 
-Regards
-Dong Aisheng
-
-> -----Original Message-----
-> From: Aisheng Dong
-> Sent: Tuesday, December 11, 2018 11:13 PM
-> To: linux-clk@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org; sboyd@kernel.org;
-> mturquette@baylibre.com; shawnguo@kernel.org; Fabio Estevam
-> <fabio.estevam@nxp.com>; dl-linux-imx <linux-imx@nxp.com>;
-> kernel@pengutronix.de; Aisheng Dong <aisheng.dong@nxp.com>
-> Subject: [PATCH V10 0/7] clk: imx: add imx8qxp clock support
->=20
-> This patch series adds i.MX8QXP clock support which is based on the clock
-> service provided by SCU firmware.
->=20
-> Note: It depends on SCU driver which has already been merged by Shawn.
-> So this patch series could go through Shawn's tree as well.
->=20
-> ChangeLog:
-> v9->v10:
->  * a small clean up of PATCH 2
->    remove ccm_ipc_handle from headfile as no other users need it now
->    and move imx_clk_scu_init() implementation into driver accordingly.
->  * a typo fix of Patch 10
-> v8->v9:
->  * add __le32 and __le16 for SCU message structure members as it's little
-> endian
->  * use readl_relaxed() as it does not need insert barrier
->  * a small code logic improvement suggested by Stephen
-> v7->v8:
->  * add more kernel doc for lpcg and scu clock structures
->  * remove one unneccessry reg checking
-> v6->v7:
->  * use struct_size()
->  * remove MODULE_ macros
->  * add more kernel docs/code comments
->  * other small improvements
->  * update reviewed-by tags
->  * add the missing PATCH 1 in V6
-> v5->v6:
->  * simply the driver a lot by re-orgnizing the driver into a few clock ty=
-pes:
->    scu clock (merge scu divider/gate/mux) and scu gpr lock which accessin=
-g is
->    through SCU protocol and LPCG clock which is directly accessible by CP=
-U.
->  * LPCG clock is separate from SCU clock, gpr clock is still not used
->    and will be added later.
->  * remove old year license as the code is totally rewritten
->  * scu mux support will be added later as it's also still not used.
-> v4->v5:
->  Address all Stephen and Sascha's review comments, see details in each pa=
-tch
-> v3->v4:
->  * scu headfile path update
->  * no functionality change
-> v2->v3:
->  * structures/enums name update with imx_sc prefix
->  * no functionality change
-> v1->v2:
->  * structure and enums name update
->  * api usage update due to api change
->  * no functionality change
->=20
-> Dong Aisheng (7):
->   clk: imx: add configuration option for mmio clks
->   clk: imx: add scu clock common part
->   dt-bindings: clock: imx8qxp: add SCU clock IDs
->   clk: imx: add imx8qxp clk driver
->   dt-bindings: clock: add imx8qxp lpcg clock binding
->   clk: imx: add lpcg clock support
->   clk: imx: add imx8qxp lpcg driver
->=20
->  .../devicetree/bindings/clock/imx8qxp-lpcg.txt     |  51 ++++
->  arch/arm/mach-imx/Kconfig                          |  11 +
->  drivers/clk/Kconfig                                |   1 +
->  drivers/clk/imx/Kconfig                            |   9 +
->  drivers/clk/imx/Makefile                           |   8 +-
->  drivers/clk/imx/clk-imx8qxp-lpcg.c                 | 216
-> +++++++++++++++
->  drivers/clk/imx/clk-imx8qxp-lpcg.h                 | 102 ++++++++
->  drivers/clk/imx/clk-imx8qxp.c                      | 153 +++++++++++
->  drivers/clk/imx/clk-lpcg-scu.c                     | 114 ++++++++
->  drivers/clk/imx/clk-scu.c                          | 270
-> +++++++++++++++++++
->  drivers/clk/imx/clk-scu.h                          |  18 ++
->  include/dt-bindings/clock/imx8qxp-clock.h          | 289
-> +++++++++++++++++++++
->  12 files changed, 1241 insertions(+), 1 deletion(-)  create mode 100644
-> Documentation/devicetree/bindings/clock/imx8qxp-lpcg.txt
->  create mode 100644 drivers/clk/imx/Kconfig  create mode 100644
-> drivers/clk/imx/clk-imx8qxp-lpcg.c
->  create mode 100644 drivers/clk/imx/clk-imx8qxp-lpcg.h
->  create mode 100644 drivers/clk/imx/clk-imx8qxp.c  create mode 100644
-> drivers/clk/imx/clk-lpcg-scu.c  create mode 100644 drivers/clk/imx/clk-sc=
-u.c
-> create mode 100644 drivers/clk/imx/clk-scu.h  create mode 100644
-> include/dt-bindings/clock/imx8qxp-clock.h
->=20
-> --
-> 2.7.4
 
