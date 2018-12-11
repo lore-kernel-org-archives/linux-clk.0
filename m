@@ -2,224 +2,143 @@ Return-Path: <SRS0=DnCL=OU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90EC2C67839
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Dec 2018 14:39:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37A64C07E85
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Dec 2018 15:06:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 578EF2084A
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Dec 2018 14:39:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C4D92081B
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Dec 2018 15:06:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="CpMJl7pq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 578EF2084A
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="zH+GHK+c"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C4D92081B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726398AbeLKOj0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 11 Dec 2018 09:39:26 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:54403 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726402AbeLKOj0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Dec 2018 09:39:26 -0500
-Received: by mail-wm1-f68.google.com with SMTP id a62so2468912wmh.4
-        for <linux-clk@vger.kernel.org>; Tue, 11 Dec 2018 06:39:23 -0800 (PST)
+        id S1726455AbeLKPGE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 11 Dec 2018 10:06:04 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:34168 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726401AbeLKPGD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Dec 2018 10:06:03 -0500
+Received: by mail-wr1-f68.google.com with SMTP id j2so14468482wrw.1
+        for <linux-clk@vger.kernel.org>; Tue, 11 Dec 2018 07:06:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=QD3eJs/RaEFfBBcOak7at7J5XZS3rHC6GMqA/4qo2JE=;
-        b=CpMJl7pqUmM5M5gdmlDWsZSyzrLV2h5NybK4gJFeQxAT/PnGYf4x9sTQFM+cwMrM/L
-         mJLvm32K99KXFv7zwWiHuAAJWi0ARa04mVliBSaV5zTJ/85tSF4HBuUhydsFwIwgq1PC
-         fRtCSYx7/tJ6gBoND4XqVgXgBhAZhUQ7hdrMdypuUdc501Kc9HUrVNf4kT0WxS0ftCUP
-         tMZJ8tlldoRp9cSYW2OLMYHTOSU1b0Nj71AqOLDVaH1thu4Gb9+ZInppJ+UaQLKPZAGo
-         vUJnqJiKXbinCjaE/dDiEKMv7m3I6q0Fx9NLocKlShqnJueoQQvg5K74LT/RqF34xQhh
-         FkMg==
+        h=subject:to:cc:references:from:openpgp:autocrypt:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=2FfjbBVh3NMYlxvx0kpMUTiT+VcuQMpKGe66zpo84ys=;
+        b=zH+GHK+cyzfnCsldWjfKATBR3d3zBPOndVU4g9rNwEQC6jiVhxRdZzd2dFz/I04q/g
+         Fsn74ZyOmQhGA7bcWGOSFl8uXOGTPxJkJwT/goglZx+gk1QwjtkFTqpb7SgeXQeEBzTK
+         QS5BUsAUBWkrP/V1DySROryNmcs7zQzCRe3GQfVz6JtLdAjp0joayTBPp/oXCLe5v24C
+         EobMGcVZ5l9CCv0s/CEtTOtw5k/IlfSD3P9LCB01EpGFOt92/oQ3dbcCELt/yxQYtgtr
+         XLfi7LmTJL8mDGfb4AmOTwu1Yu20uQ4x17zuCU6Yux1vtWZ18Pgh8EoDFsf3nfyCkk0H
+         L51w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=QD3eJs/RaEFfBBcOak7at7J5XZS3rHC6GMqA/4qo2JE=;
-        b=g1fz4pfHpWJ8WSzj2vNWw8+PmBtYdjA6/rh7IcFTNJiiN26dLNa7J4f5Kmr+/AI4lO
-         wDqCOkczPviXujsj3f2Df/g+d2IOiIr7NTLtGUV1pkqc7ZrLr3Cr8nYY7TXjpFsiMelM
-         j2ByzhXQ746gjUDdzyWWpI1ZEQGCv4kcCZYUdWNyEd0t1XDxGGU1oUKEonqHjjpSy3M2
-         COPEgiQHL0gIbTvqzvbWr9EWM3q68+7CjTFDEzg0YB8HAMuCdfmZfQhFnw5tecYU12zg
-         LZSmBOOlJFZme1PHVKZXNBvaeijQ5F957s9W9s+RcS6BrSocETfsG9T4RiFv76KfXwU7
-         NLZw==
-X-Gm-Message-State: AA+aEWZxWxYHEe1YdUQMbJNc/mRLfTjLq27cnya6Gac4HEuLJGsf1f9F
-        czKvbU2lOaQ6M4g80d55OX5/yg==
-X-Google-Smtp-Source: AFSGD/W39xHPT4eyXXzepuA82xS6hyVMU31nUqHw4EPBUjPMfFO3ijoACBQhkihSZjwMJsdrM/NNpA==
-X-Received: by 2002:a1c:aad2:: with SMTP id t201mr2482648wme.148.1544539162989;
-        Tue, 11 Dec 2018 06:39:22 -0800 (PST)
-Received: from boomer.baylibre.com ([2a01:e34:eeb6:4690:106b:bae3:31ed:7561])
-        by smtp.gmail.com with ESMTPSA id v1sm19160147wrw.90.2018.12.11.06.39.20
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 11 Dec 2018 06:39:22 -0800 (PST)
-Message-ID: <48899a9beb0c32103ae7edea14cec890779d498e.camel@baylibre.com>
-Subject: Re: [PATCH v5 1/2] dt-bindings: clk: meson-g12a: Add G12A EE Clock
- Bindings
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Jian Hu <jian.hu@amlogic.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-Cc:     Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>, Rob Herring <robh@kernel.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Yixun Lan <yixun.lan@amlogic.com>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Date:   Tue, 11 Dec 2018 15:39:19 +0100
-In-Reply-To: <1543498917-98605-2-git-send-email-jian.hu@amlogic.com>
-References: <1543498917-98605-1-git-send-email-jian.hu@amlogic.com>
-         <1543498917-98605-2-git-send-email-jian.hu@amlogic.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.2 (3.30.2-2.fc29) 
-Mime-Version: 1.0
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :organization:message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=2FfjbBVh3NMYlxvx0kpMUTiT+VcuQMpKGe66zpo84ys=;
+        b=n16adZBtkz1b5kE5giW/Qui91NOqJMIwmMh4t7f7/nKtKziJdhCYs6hMtDsQvSMrmc
+         wXcGemtlZpc6Mj8uDcA6Gbyw0FV9733SqZk4/jBGENlyFB+sTjCblBKuKYJsB1YK0DSQ
+         sxgUxdwtDntihj+re1dMsJrQQkK8JLSTNrIS3fcUTFAi9zbhggYsUSBZIekKyab4Zw8Z
+         xtcPb/uTQuVB7YhKJxAqpeA4xY1LQlZGdte+uSgNLNz6ghuISnveA8K/ZxZEW0l8RiWH
+         1TBlqqRkPv7oqZySRcFJ23oxpMGauzbVbDEzKHrvaqs0qKocewgi291cpYBPjGQfoEp5
+         4LhA==
+X-Gm-Message-State: AA+aEWboqR3T/XKA/V7lTLSFMtj+0eok0qpHDUU7MiLXpTyNVpAeLkty
+        Y+IG7rguO/BoQHvkPYiyXQ3M13cabFp5Cw==
+X-Google-Smtp-Source: AFSGD/USfNrs8j5sX9n01FLHEqMyaJqW7AVnl0eC6XATlyN2gyLsZXGliTIXrUHgJDdMsjC8WOz+uw==
+X-Received: by 2002:adf:91c3:: with SMTP id 61mr13184213wri.324.1544540761464;
+        Tue, 11 Dec 2018 07:06:01 -0800 (PST)
+Received: from [192.168.1.16] (lfbn-nic-1-206-198.w2-15.abo.wanadoo.fr. [2.15.53.198])
+        by smtp.gmail.com with ESMTPSA id n9sm14709940wrx.80.2018.12.11.07.06.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 11 Dec 2018 07:06:00 -0800 (PST)
+Subject: Re: [PATCH] clk: meson: axg-audio: fix input clock name
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>
+Cc:     linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20181211124751.30108-1-jbrunet@baylibre.com>
+From:   Neil Armstrong <narmstrong@baylibre.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKE5laWwgQXJtc3Ryb25nIDxuYXJtc3Ryb25nQGJheWxpYnJlLmNvbT7CwHsEEwEKACUC
+ GyMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheABQJXDO2CAhkBAAoJEBaat7Gkz/iubGIH/iyk
+ RqvgB62oKOFlgOTYCMkYpm2aAOZZLf6VKHKc7DoVwuUkjHfIRXdslbrxi4pk5VKU6ZP9AKsN
+ NtMZntB8WrBTtkAZfZbTF7850uwd3eU5cN/7N1Q6g0JQihE7w4GlIkEpQ8vwSg5W7hkx3yQ6
+ 2YzrUZh/b7QThXbNZ7xOeSEms014QXazx8+txR7jrGF3dYxBsCkotO/8DNtZ1R+aUvRfpKg5
+ ZgABTC0LmAQnuUUf2PHcKFAHZo5KrdO+tyfL+LgTUXIXkK+tenkLsAJ0cagz1EZ5gntuheLD
+ YJuzS4zN+1Asmb9kVKxhjSQOcIh6g2tw7vaYJgL/OzJtZi6JlIXOwE0ETVkGzwEIALyKDN/O
+ GURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYpQTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXM
+ coJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hi
+ SvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY4yG6xI99NIPEVE9lNBXBKIlewIyVlkOa
+ YvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoMMtsyw18YoX9BqMFInxqYQQ3j/HpVgTSv
+ mo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUXoUk33HEAEQEAAcLAXwQYAQIACQUCTVkG
+ zwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfnM7IbRuiSZS1unlySUVYu3SD6YBYnNi3G
+ 5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa33eDIHu/zr1HMKErm+2SD6PO9umRef8V8
+ 2o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCSKmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+
+ RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJ
+ C3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTTQbM0WUIBIcGmq38+OgUsMYu4NzLu7uZF
+ Acmp6h8g
+Organization: Baylibre
+Message-ID: <79f49d43-7eb0-d056-158c-c6c78db9cdef@baylibre.com>
+Date:   Tue, 11 Dec 2018 16:06:00 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <20181211124751.30108-1-jbrunet@baylibre.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 2018-11-29 at 21:41 +0800, Jian Hu wrote:
-> Add new clock controller compatible and dt-bingdings headers
-> for the Everything-Else domain of the g12a SoC
+On 11/12/2018 13:47, Jerome Brunet wrote:
+> The name of input clock is not aligned with the rest of the tree
+> Because of this, the audio peripheral clocks are orphaned.
 > 
-> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
+> Fixes: 1222ab89328f ("clk: meson: axg-audio: use the clk input helper function")
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 > ---
->  .../bindings/clock/amlogic,gxbb-clkc.txt           |  1 +
->  include/dt-bindings/clock/g12a-clkc.h              | 93
-> ++++++++++++++++++++++
->  2 files changed, 94 insertions(+)
->  create mode 100644 include/dt-bindings/clock/g12a-clkc.h
+>  Neil,
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
-> b/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
-> index e950599..0833006 100644
-> --- a/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
-> +++ b/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
-> @@ -9,6 +9,7 @@ Required Properties:
->  		"amlogic,gxbb-clkc" for GXBB SoC,
->  		"amlogic,gxl-clkc" for GXL and GXM SoC,
->  		"amlogic,axg-clkc" for AXG SoC.
-> +		"amlogic,g12a-clkc" for G12A SoC.
+>  Feel free to squash this with commit 1222ab89328f if you prefer
 
+Well, I'm lazy so I squashed it :-)
 
-Binding description is not aligned with what the driver does.
-If you are going take clock input from DT, it needs to be documented.
-
-In the meantime this has been done [0] for you but you'll have to rebase.
-
-[0]: 20181203171640.12110-3-jbrunet@baylibre.com
-
+> 
+>  Cheers
+>  Jerome
+> 
+>  drivers/clk/meson/axg-audio.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/meson/axg-audio.c b/drivers/clk/meson/axg-audio.c
+> index 72b717e61a68..8ac3a2295473 100644
+> --- a/drivers/clk/meson/axg-audio.c
+> +++ b/drivers/clk/meson/axg-audio.c
+> @@ -752,7 +752,7 @@ static int axg_audio_clkc_probe(struct platform_device *pdev)
+>  	}
 >  
->  - #clock-cells: should be 1.
+>  	/* Register the peripheral input clock */
+> -	hw = meson_clk_hw_register_input(dev, "pclk", "audio_pclk", 0);
+> +	hw = meson_clk_hw_register_input(dev, "pclk", "axg_audio_pclk", 0);
+>  	if (IS_ERR(hw))
+>  		return PTR_ERR(hw);
 >  
-> diff --git a/include/dt-bindings/clock/g12a-clkc.h b/include/dt-
-> bindings/clock/g12a-clkc.h
-> new file mode 100644
-> index 0000000..b55e6e1
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/g12a-clkc.h
-> @@ -0,0 +1,93 @@
-> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
-> +/*
-> + * Meson-G12A clock tree IDs
-> + *
-> + * Copyright (c) 2018 Amlogic, Inc. All rights reserved.
-> + */
-> +
-> +#ifndef __G12A_CLKC_H
-> +#define __G12A_CLKC_H
-> +
-> +#define CLKID_SYS_PLL				0
-> +#define CLKID_FIXED_PLL				1
-> +#define CLKID_FCLK_DIV2				2
-> +#define CLKID_FCLK_DIV3				3
-> +#define CLKID_FCLK_DIV4				4
-> +#define CLKID_FCLK_DIV5				5
-> +#define CLKID_FCLK_DIV7				6
-> +#define CLKID_GP0_PLL				7
-> +#define CLKID_CLK81				10
-> +#define CLKID_MPLL0				11
-> +#define CLKID_MPLL1				12
-> +#define CLKID_MPLL2				13
-> +#define CLKID_MPLL3				14
-> +#define CLKID_DDR				15
-> +#define CLKID_DOS				16
-> +#define CLKID_AUDIO_LOCKER			17
-> +#define CLKID_MIPI_DSI_HOST			18
-> +#define CLKID_ETH_PHY				19
-> +#define CLKID_ISA				20
-> +#define CLKID_PL301				21
-> +#define CLKID_PERIPHS				22
-> +#define CLKID_SPICC0				23
-> +#define CLKID_I2C				24
-> +#define CLKID_SANA				25
-> +#define CLKID_SD				26
-> +#define CLKID_RNG0				27
-> +#define CLKID_UART0				28
-> +#define CLKID_SPICC1				29
-> +#define CLKID_HIU_IFACE				30
-> +#define CLKID_MIPI_DSI_PHY			31
-> +#define CLKID_ASSIST_MISC			32
-> +#define CLKID_SD_EMMC_A				33
-> +#define CLKID_SD_EMMC_B				34
-> +#define CLKID_SD_EMMC_C				35
-> +#define CLKID_AUDIO_CODEC			36
-> +#define CLKID_AUDIO				37
-> +#define CLKID_ETH				38
-> +#define CLKID_DEMUX				39
-> +#define CLKID_AUDIO_IFIFO			40
-> +#define CLKID_ADC				41
-> +#define CLKID_UART1				42
-> +#define CLKID_G2D				43
-> +#define CLKID_RESET				44
-> +#define CLKID_PCIE_COMB				45
-> +#define CLKID_PARSER				46
-> +#define CLKID_USB				47
-> +#define CLKID_PCIE_PHY				48
-> +#define CLKID_AHB_ARB0				49
-> +#define CLKID_AHB_DATA_BUS			50
-> +#define CLKID_AHB_CTRL_BUS			51
-> +#define CLKID_HTX_HDCP22			52
-> +#define CLKID_HTX_PCLK				53
-> +#define CLKID_BT656				54
-> +#define CLKID_USB1_DDR_BRIDGE			55
-> +#define CLKID_MMC_PCLK				56
-> +#define CLKID_UART2				57
-> +#define CLKID_VPU_INTR				58
-> +#define CLKID_GIC				59
-> +#define CLKID_SD_EMMC_B_CLK0			60
-> +#define CLKID_SD_EMMC_C_CLK0			61
-> +#define CLKID_HIFI_PLL				71
-> +#define CLKID_VCLK2_VENCI0			77
-> +#define CLKID_VCLK2_VENCI1			78
-> +#define CLKID_VCLK2_VENCP0			79
-> +#define CLKID_VCLK2_VENCP1			80
-> +#define CLKID_VCLK2_VENCT0			81
-> +#define CLKID_VCLK2_VENCT1			82
-> +#define CLKID_VCLK2_OTHER			83
-> +#define CLKID_VCLK2_ENCI			84
-> +#define CLKID_VCLK2_ENCP			85
-> +#define CLKID_DAC_CLK				86
-> +#define CLKID_AOCLK				87
-> +#define CLKID_IEC958				88
-> +#define CLKID_ENC480P				89
-> +#define CLKID_RNG1				90
-> +#define CLKID_VCLK2_ENCT			91
-> +#define CLKID_VCLK2_ENCL			92
-> +#define CLKID_VCLK2_VENCLMMC			93
-> +#define CLKID_VCLK2_VENCL			94
-> +#define CLKID_VCLK2_OTHER1			95
-> +#define CLKID_FCLK_DIV2P5			96
-> +
-> +#endif /* __G12A_CLKC_H */
-
+> 
 
