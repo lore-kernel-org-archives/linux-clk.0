@@ -2,98 +2,109 @@ Return-Path: <SRS0=DnCL=OU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.9 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7023DC5CFFE
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Dec 2018 19:58:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67E06C5CFFE
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Dec 2018 20:00:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E89320870
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Dec 2018 19:58:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E89320870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sntech.de
+	by mail.kernel.org (Postfix) with ESMTP id 255C220870
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Dec 2018 20:00:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="HKFYjLF9";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="SBW9IRok"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 255C220870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726136AbeLKT63 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 11 Dec 2018 14:58:29 -0500
-Received: from gloria.sntech.de ([185.11.138.130]:46870 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726125AbeLKT63 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 11 Dec 2018 14:58:29 -0500
-Received: from p5b127a5a.dip0.t-ipconnect.de ([91.18.122.90] helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1gWoAl-0008B2-FW; Tue, 11 Dec 2018 20:58:27 +0100
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     Stephen Boyd <sboyd@codeaurora.org>, mturquette@baylibre.com
-Cc:     linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: [GIT PULL] Rockchip clock updates for 4.21
-Date:   Tue, 11 Dec 2018 20:58:26 +0100
-Message-ID: <4187870.lCvQibHAte@phil>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        id S1726158AbeLKUAS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 11 Dec 2018 15:00:18 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:60016 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726125AbeLKUAS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Dec 2018 15:00:18 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 1D77E60227; Tue, 11 Dec 2018 20:00:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1544558418;
+        bh=b1cCFHkNyzpXw51nJO7Dp9Y78GDfx9moKasqPuTPQ+U=;
+        h=From:To:Cc:Subject:Date:From;
+        b=HKFYjLF9OAfBPZd5OcP9fdpWqwareXKQqVsO7Gwy68joF1rAsgoTtnds/SAzB62tN
+         Yjcbh6XBOeswhEtarsxwnccJP9tLwBpIyfxp3Oh9baHmCi810rsfpWEHOuOlQWWAav
+         U7JZdR/wn+18JfU0Qzx7m2W45kgU0BB40ZzCZS1E=
+Received: from jhugo-perf-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jhugo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id B9CAD60132;
+        Tue, 11 Dec 2018 20:00:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1544558417;
+        bh=b1cCFHkNyzpXw51nJO7Dp9Y78GDfx9moKasqPuTPQ+U=;
+        h=From:To:Cc:Subject:Date:From;
+        b=SBW9IRokC5U79mzo9yMnS6P/r1rIL6Dxf3pHiHCrVjPvBVDDHmKqfquNago4E2OG0
+         yNIuhCsX3XzmN+fdLMKpfngwdKm2LMwOlwzzuMJLEleMTgGyE+uofA00kzhkhBhekt
+         /hVtO9Eniau9s3nf3tsjW1R3KkCevsMr6fbpNOXI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B9CAD60132
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
+From:   Jeffrey Hugo <jhugo@codeaurora.org>
+To:     sboyd@kernel.org, andy.gross@linaro.org, david.brown@linaro.org,
+        mturquette@baylibre.com
+Cc:     bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jeffrey Hugo <jhugo@codeaurora.org>
+Subject: [PATCH] clk: qcom: Add missing msm8998 resets
+Date:   Tue, 11 Dec 2018 13:00:04 -0700
+Message-Id: <1544558404-1705-1-git-send-email-jhugo@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Mike, Stephen,
+commit c0cb7c7e7164 ("clk: qcom: Enumerate remaining msm8998 resets")
+missed two USB2 resets.  Add them.
 
-looks I can re-use my introduction from 4.20 - no big changes again this
-time. Some minor clock register fixes, a new critical clock and a new
-clock dt-export.
+Fixes: c0cb7c7e7164 ("clk: qcom: Enumerate remaining msm8998 resets")
+Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
+---
 
-So please pull.
+Sorry, noticed this when working on USB.  I double checked the documentation
+again, and I'm reasonably sure I got them all now.
 
+ drivers/clk/qcom/gcc-msm8998.c               | 2 ++
+ include/dt-bindings/clock/qcom,gcc-msm8998.h | 2 ++
+ 2 files changed, 4 insertions(+)
 
-Thanks
-Heiko
-
-
-The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
-
-  Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git tags/v4.21-rockchip-clk-1
-
-for you to fetch changes up to d0618247a80f0c1c5a522b93888f20d8f034ec09:
-
-  clk: rockchip: add clock-id to gate of ACODEC for rk3328 (2018-11-26 14:22:12 +0100)
-
-----------------------------------------------------------------
-Clock register fixes for rk3188 and rk3328 one new critical clock
-for rk3188 and a fixed clock id (double used number) + a new one
-for rk3328.
-
-----------------------------------------------------------------
-Finley Xiao (1):
-      clk: rockchip: fix rk3188 sclk_smc gate data
-
-Heiko Stuebner (2):
-      clk: rockchip: fix rk3188 sclk_mac_lbtest parameter ordering
-      Merge branch 'v4.21-shared/clkids' into v4.21-clk/next
-
-Johan Jonker (1):
-      clk: rockchip: fix typo in rk3188 spdif_frac parent
-
-Katsuhiro Suzuki (4):
-      clk: rockchip: fix I2S1 clock gate register for rk3328
-      clk: rockchip: fix ID of 8ch clock of I2S1 for rk3328
-      clk: rockchip: add clock ID of ACODEC for rk3328
-      clk: rockchip: add clock-id to gate of ACODEC for rk3328
-
-Mark Yao (1):
-      clk: rockchip: make rk3188 hclk_vio_bus critical
-
- drivers/clk/rockchip/clk-rk3188.c      | 13 +++++++------
- drivers/clk/rockchip/clk-rk3328.c      |  4 ++--
- include/dt-bindings/clock/rk3328-cru.h |  3 ++-
- 3 files changed, 11 insertions(+), 9 deletions(-)
-
-
+diff --git a/drivers/clk/qcom/gcc-msm8998.c b/drivers/clk/qcom/gcc-msm8998.c
+index 5f989ee..f3c2ab4 100644
+--- a/drivers/clk/qcom/gcc-msm8998.c
++++ b/drivers/clk/qcom/gcc-msm8998.c
+@@ -2827,6 +2827,8 @@ enum {
+ 	[GCC_MMSS_BCR] = { 0xb000 },
+ 	[GCC_QDSS_BCR] = { 0xc000 },
+ 	[GCC_WCSS_BCR] = { 0x11000 },
++	[GCC_QUSB2PHY_PRIM_BCR] = { 0x12000 },
++	[GCC_QUSB2PHY_SEC_BCR] = { 0x12004 },
+ 	[GCC_BLSP1_BCR] = { 0x17000 },
+ 	[GCC_BLSP1_UART1_BCR] = { 0x1a000 },
+ 	[GCC_BLSP1_UART2_BCR] = { 0x1c000 },
+diff --git a/include/dt-bindings/clock/qcom,gcc-msm8998.h b/include/dt-bindings/clock/qcom,gcc-msm8998.h
+index 958fe83..ba84bba 100644
+--- a/include/dt-bindings/clock/qcom,gcc-msm8998.h
++++ b/include/dt-bindings/clock/qcom,gcc-msm8998.h
+@@ -296,5 +296,7 @@
+ #define GCC_GLM_BCR						103
+ #define GCC_SKL_BCR						104
+ #define GCC_MSMPU_BCR						105
++#define GCC_QUSB2PHY_PRIM_BCR					106
++#define GCC_QUSB2PHY_SEC_BCR					107
+ 
+ #endif
+-- 
+Qualcomm Datacenter Technologies as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
 
