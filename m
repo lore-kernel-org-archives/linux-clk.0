@@ -4,184 +4,117 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A20DC07E85
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Dec 2018 06:37:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5752AC07E85
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Dec 2018 07:34:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D79FB20672
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Dec 2018 06:37:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0906320811
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Dec 2018 07:34:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="JtlxQ7J+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D79FB20672
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="WLS4IsIH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0906320811
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727121AbeLKGhV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 11 Dec 2018 01:37:21 -0500
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:3091 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726614AbeLKGhV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Dec 2018 01:37:21 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c0f5b1d0001>; Mon, 10 Dec 2018 22:37:17 -0800
+        id S1726032AbeLKHea (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 11 Dec 2018 02:34:30 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:13671 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725958AbeLKHea (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Dec 2018 02:34:30 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c0f68820000>; Mon, 10 Dec 2018 23:34:26 -0800
 Received: from hqmail.nvidia.com ([172.20.161.6])
   by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 10 Dec 2018 22:37:19 -0800
+  Mon, 10 Dec 2018 23:34:29 -0800
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 10 Dec 2018 22:37:19 -0800
-Received: from [10.19.108.132] (172.20.13.39) by HQMAIL101.nvidia.com
+        by hqpgpgate101.nvidia.com on Mon, 10 Dec 2018 23:34:29 -0800
+Received: from [10.19.108.132] (10.124.1.5) by HQMAIL101.nvidia.com
  (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 11 Dec
- 2018 06:37:18 +0000
-Subject: Re: [PATCH 07/19] clk: tegra: dfll: support PWM regulator control
+ 2018 07:34:28 +0000
+Subject: Re: [PATCH 09/19] clk: tegra: dfll: add CVB tables for Tegra210
 To:     Jon Hunter <jonathanh@nvidia.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Peter De Schrijver <pdeschrijver@nvidia.com>
 CC:     <linux-arm-kernel@lists.infradead.org>,
         <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
 References: <20181204092548.3038-1-josephl@nvidia.com>
- <20181204092548.3038-8-josephl@nvidia.com>
- <3d0f52c6-770e-bae2-2396-87f32455b807@nvidia.com>
+ <20181204092548.3038-10-josephl@nvidia.com>
+ <61658127-d299-013a-d745-47a648f7a4cf@nvidia.com>
 From:   Joseph Lo <josephl@nvidia.com>
-Message-ID: <c92940a1-23a1-852e-72d5-7b8c7bcb948f@nvidia.com>
-Date:   Tue, 11 Dec 2018 14:37:16 +0800
+Message-ID: <dcd13c46-423c-f03a-5df2-70316c5d21c9@nvidia.com>
+Date:   Tue, 11 Dec 2018 15:34:26 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <3d0f52c6-770e-bae2-2396-87f32455b807@nvidia.com>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL106.nvidia.com (172.18.146.12) To
+In-Reply-To: <61658127-d299-013a-d745-47a648f7a4cf@nvidia.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
  HQMAIL101.nvidia.com (172.20.187.10)
 Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1544510237; bh=kvVxqiPXAmX1CXgN96FYgaqT8E5pqr47GXEVLPCFyhQ=;
+        t=1544513666; bh=DhaqXg0IOhKzcg7WyHQ+l5cF1HbQychcErzd3myxPHM=;
         h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
          User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
          X-ClientProxiedBy:Content-Type:Content-Language:
          Content-Transfer-Encoding;
-        b=JtlxQ7J+lNbVaDb609o19mhXXxRISpIptQZjqGaJ1D3+6whH8FZ2F8dvYF2dXhaS8
-         6e66M9fms+VRoZf1mjtkvbGpq26gnt/+xkMqe831VvvT8b7/N9D8PZFxj1bZZBCso+
-         nkS0MCxZOaxStJY8gorHhVo5G/dhuSl0UYMARsQGLwmOMGbkd0vo9eVgE6ZtkFaTUp
-         8L0UACxR+x7L15n/k6t+bkk1JjHrJNMU+yn7zuz8gkJc8PqOdQ2+ozarX155wOoh1h
-         kYrUqDw7b647N5wNcod7dn4j164rvmdYtHIdbTuBfVJpa2MEFx109xV2iH4bCbul1y
-         SEj/L2s2DdfUg==
+        b=WLS4IsIH8k0xY9kRmIWGtsX8y5ra/XMmQcec2N415MAYUHyQvGAc/AuscMssIITrZ
+         Dpau8PkSWLuvSrd9T1wB9yzlXyeh5Y9w4/teP++ejQ9jrJYCUyee15EpIGS3wIo4oG
+         ONDWTpe0m1NBu+iXlg7yohnL94HgHgXnM1wNzVwpZMpqc+RhijMD+XPNWmZm2ZqoNt
+         +Iok16g95G/SbpzrZXn5mGHIlPSviYJXUMVs+9IqWfNo/EyfoUWQvQ7TiTgaSMP+C4
+         RT+8I6a8XAJRXKBAElxggGRw4rDuEsKk5lxzPdEh9tBiTFXXvdOyFaA6bq326rTUPj
+         i7vjLb9RKfiWg==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 12/7/18 11:09 PM, Jon Hunter wrote:
+On 12/7/18 10:39 PM, Jon Hunter wrote:
 > 
 > On 04/12/2018 09:25, Joseph Lo wrote:
->> The DFLL hardware supports two modes (I2C and PWM) for voltage control
->> when requesting a frequency. In this patch, we introduce PWM mode support.
->>
->> To support that, we re-organize the LUT for unifying the table for both
->> cases of I2C and PWM mode. And generate that based on regulator info.
->> For the PWM-based regulator, we get this info from DT. And do the same as
->> the case of I2C LUT, which can help to map the PMIC voltage ID and voltages
->> that the regulator supported.
->>
->> The other parts are the support code for initializing the DFLL hardware
->> to support PWM mode. Also, the register debugfs file is slightly
->> reworked to only show the i2c registers when I2C mode is in use.
->>
->> Based on the work of Peter De Schrijver <pdeschrijver@nvidia.com>.
+>> Add CVB tables with different chip characterization, so that we can
+>> generate the customize OPP table that suitable for different chips with
+>> different SKUs.
 >>
 >> Signed-off-by: Joseph Lo <josephl@nvidia.com>
 >> ---
->>   drivers/clk/tegra/clk-dfll.c | 431 ++++++++++++++++++++++++++++++-----
->>   1 file changed, 368 insertions(+), 63 deletions(-)
+>>   drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 426 +++++++++++++++++++++
+>>   drivers/clk/tegra/cvb.h                    |   1 +
+>>   2 files changed, 427 insertions(+)
 >>
->> diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
->> index 609e363dabf8..c294a2989f31 100644
->> --- a/drivers/clk/tegra/clk-dfll.c
->> +++ b/drivers/clk/tegra/clk-dfll.c
->> @@ -1,7 +1,7 @@
->>   /*
->>    * clk-dfll.c - Tegra DFLL clock source common code
->>    *
->> - * Copyright (C) 2012-2014 NVIDIA Corporation. All rights reserved.
->> + * Copyright (C) 2012-2018 NVIDIA Corporation. All rights reserved.
->>    *
->>    * Aleksandr Frid <afrid@nvidia.com>
->>    * Paul Walmsley <pwalmsley@nvidia.com>
->> @@ -47,6 +47,7 @@
->>   #include <linux/kernel.h>
->>   #include <linux/module.h>
->>   #include <linux/of.h>
->> +#include <linux/pinctrl/consumer.h>
->>   #include <linux/pm_opp.h>
->>   #include <linux/pm_runtime.h>
->>   #include <linux/regmap.h>
->> @@ -243,6 +244,12 @@ enum dfll_tune_range {
->>   	DFLL_TUNE_LOW = 1,
+>> diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+>> index 071a5c674832..bc1358d8084b 100644
+>> --- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+>> +++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+>> @@ -88,6 +88,421 @@ static const struct cvb_table tegra124_cpu_cvb_tables[] = {
+>>   	},
 >>   };
 >>   
->> +
->> +enum tegra_dfll_pmu_if {
->> +	TEGRA_DFLL_PMU_I2C = 0,
->> +	TEGRA_DFLL_PMU_PWM = 1,
->> +};
->> +
->>   /**
->>    * struct dfll_rate_req - target DFLL rate request data
->>    * @rate: target frequency, after the postscaling
->> @@ -294,16 +301,25 @@ struct tegra_dfll {
->>   	u32				ci;
->>   	u32				cg;
->>   	bool				cg_scale;
->> +	u32				reg_init_uV;
+snip.
 >>   
->>   	/* I2C interface parameters */
->>   	u32				i2c_fs_rate;
->>   	u32				i2c_reg;
->>   	u32				i2c_slave_addr;
->>   
->> -	/* i2c_lut array entries are regulator framework selectors */
->> -	unsigned			i2c_lut[MAX_DFLL_VOLTAGES];
->> -	int				i2c_lut_size;
->> -	u8				lut_min, lut_max, lut_safe;
->> +	/* lut array entries are regulator framework selectors or PWM values*/
->> +	unsigned			lut[MAX_DFLL_VOLTAGES];
->> +	unsigned			lut_uv[MAX_DFLL_VOLTAGES];
->> +	int				lut_size;
->> +	u8				lut_bottom, lut_min, lut_max, lut_safe;
->> +
->> +	/* PWM interface */
->> +	enum tegra_dfll_pmu_if		pmu_if;
->> +	unsigned long			pwm_rate;
->> +	struct pinctrl			*pwm_pin;
->> +	struct pinctrl_state		*pwm_enable_state;
->> +	struct pinctrl_state		*pwm_disable_state;
->>   };
->>   
->>   #define clk_hw_to_dfll(_hw) container_of(_hw, struct tegra_dfll, dfll_clk_hw)
->> @@ -489,6 +505,34 @@ static void dfll_set_mode(struct tegra_dfll *td,
->>   	dfll_wmb(td);
->>   }
->>   
->> +/*
->> + * DVCO rate control
->> + */
->> +
->> +static unsigned long get_dvco_rate_below(struct tegra_dfll *td, u8 out_min)
->> +{
->> +	struct dev_pm_opp *opp;
->> +	unsigned long rate, prev_rate;
->> +	int uv, min_uv;
->> +
->> +	min_uv = td->lut_uv[out_min];
->> +	for (rate = 0, prev_rate = 0; ; rate++) {
->> +		opp = dev_pm_opp_find_freq_ceil(td->soc->dev, &rate);
->> +		if (IS_ERR(opp))
->> +			break;
->> +
->> +		uv = dev_pm_opp_get_voltage(opp);
+>> diff --git a/drivers/clk/tegra/cvb.h b/drivers/clk/tegra/cvb.h
+>> index bcf15a089b93..91a1941c21ef 100644
+>> --- a/drivers/clk/tegra/cvb.h
+>> +++ b/drivers/clk/tegra/cvb.h
+>> @@ -41,6 +41,7 @@ struct cvb_cpu_dfll_data {
+>>   	u32 tune0_low;
+>>   	u32 tune0_high;
+>>   	u32 tune1;
+>> +	unsigned int tune_high_min_millivolts;
 > 
-> Can you fix the type of 'uv' here? It should be unsigned long.
+> Where is this actually used?
 
-Okay, will fix it. Thanks.
+It's just part of the initial CVB table. We don't have the dynamic 
+tunning support yet that will use this tune parameter for output freq 
+tunning. It's on my plan of the next series for DFLL enhancement.
+
+Should I remove that from the table?
+
+Thanks,
+Joseph
+
 
