@@ -2,138 +2,142 @@ Return-Path: <SRS0=3egD=OV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36C13C67839
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Dec 2018 01:57:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AF4CC67839
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Dec 2018 08:42:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6B8F2086D
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Dec 2018 01:57:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C11932086D
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Dec 2018 08:42:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="U2YCQU8V"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6B8F2086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ZkndDXk8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C11932086D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726218AbeLLB51 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 11 Dec 2018 20:57:27 -0500
-Received: from mail-eopbgr140059.outbound.protection.outlook.com ([40.107.14.59]:2947
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726201AbeLLB51 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 11 Dec 2018 20:57:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2aHcde6Dqp6C4aoF2aNJcofINbNxA2vzAxyQzq5NEw8=;
- b=U2YCQU8V+GMETZZeZ9rpCE/oSyl4n7EfzMscAKCDlk6YmGGqzsaUFmSqdRC1HwyrqiZoPC2CPOy/xSJ8BohkShp/XGUCRX5zo9MM0+i7CpvcrFYIbWUKlTVe49ABUeilG+NjVGONNfMNhI9Lz57dBiyGHi4cQg/9EpyUrdOLjWI=
-Received: from VI1PR04MB4333.eurprd04.prod.outlook.com (52.134.122.155) by
- VI1PR04MB1600.eurprd04.prod.outlook.com (10.164.84.146) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1404.20; Wed, 12 Dec 2018 01:57:10 +0000
-Received: from VI1PR04MB4333.eurprd04.prod.outlook.com
- ([fe80::f474:8a44:efb6:769c]) by VI1PR04MB4333.eurprd04.prod.outlook.com
- ([fe80::f474:8a44:efb6:769c%5]) with mapi id 15.20.1404.026; Wed, 12 Dec 2018
- 01:57:10 +0000
-From:   Andy Tang <andy.tang@nxp.com>
-To:     Scott Wood <oss@buserror.net>
-CC:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
-        "paulus@samba.org" <paulus@samba.org>,
-        "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-Subject: RE: [PATCH 1/2 v3] powerpc/fsl: Use new clockgen binding
-Thread-Topic: [PATCH 1/2 v3] powerpc/fsl: Use new clockgen binding
-Thread-Index: AQHUcOeYAoWjO7RvzU6Dyo+EEyCbvqVhajYAgBkuOxA=
-Date:   Wed, 12 Dec 2018 01:57:10 +0000
-Message-ID: <VI1PR04MB43332FE4914896FCBE8E997FF3A70@VI1PR04MB4333.eurprd04.prod.outlook.com>
-References: <20181031065736.32719-1-andy.tang@nxp.com>
- <09ee2f91765add47e628e0ab03776d468cec0914.camel@buserror.net>
-In-Reply-To: <09ee2f91765add47e628e0ab03776d468cec0914.camel@buserror.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=andy.tang@nxp.com; 
-x-originating-ip: [119.31.174.73]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR04MB1600;6:WJDcO33Rp04e3iMNHh252AoOa+x3Q9p/NLcmj5ysMfThe9o/5MZYj8vsstd6d2OrIJs/A4/fuv9b5IhnfnIIqP/iJWhr2oUyKOF+kfA/F/1YmPqWVLm0VbNOqTAQf8qtrnyfKBLhC21I7i9GYyyRpW2lulVvuCuHkpBUuyaFcIKNFjEM2HN+3keQ7U/tkfcVkmgvOiLp68drUPyDlCBtnz8/tYiB4bj+aYfdwkggc/qa+e4mybSFM11t04CrFVpS+zlosDyPCkU2QuHpUtxONQGA72UrwHHS9Vu1JsjLIYqFRgm8pS/Pdj3C+l+rI95jZ2cCHjJljS+NfczTFXikV44an+6HhjpRLt+ECnPGxBMzGhHFYEA/bthIwZMz6tpQ6k754iPwhyoivMXDX70Va2Xum34gia8XU5pKWgKMTeZQRgNNhPPoQCUi1r7ZQRLkv+xhwqlsXglLyVRqAPo8jw==;5:Cr5gGZ86iPssa42cibRuaz6bcN1YxI83AET3OrSZ/OekdgAAp1o+2Bwfp8ewxeS3E0XD3R0JVI30Y26/ASdXvGB/sGFw+V/okhHNscufJ4q6HqCdAXp01635J6h4BnG3qFf1QLPgGWZDyNEM/5nlzwTf07bLoWrpEwP1xyohTWs=;7:L2zF6ovf1+PsnlBuGpvFS6A/PGW7uU4yCuxwy6uF/frOe9aR6S3BPZYiTl8x2unq/NFHAcdwqjBI5Lh0i94mWrgQDB0gDnWaBN5UUKghtMhs6vjzUheG+zQzYki+4F45/NL2Z4HIVBaxi5Rga3hx/w==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 2076d2ea-42c5-4b0a-087b-08d65fd520cc
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB1600;
-x-ms-traffictypediagnostic: VI1PR04MB1600:
-x-microsoft-antispam-prvs: <VI1PR04MB1600CB7A0E5F2E93172D12E7F3A70@VI1PR04MB1600.eurprd04.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231455)(999002)(944501520)(52105112)(93006095)(93001095)(3002001)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:VI1PR04MB1600;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB1600;
-x-forefront-prvs: 0884AAA693
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(366004)(39860400002)(136003)(376002)(396003)(13464003)(189003)(199004)(55016002)(74316002)(4326008)(9686003)(76176011)(2906002)(6916009)(99286004)(14454004)(6246003)(6116002)(53936002)(186003)(6306002)(316002)(105586002)(86362001)(6506007)(97736004)(54906003)(53546011)(5660300001)(7696005)(4001150100001)(102836004)(26005)(8676002)(305945005)(71200400001)(25786009)(3846002)(66066001)(8936002)(478600001)(7416002)(71190400001)(68736007)(486006)(106356001)(81166006)(81156014)(229853002)(11346002)(6436002)(446003)(44832011)(33656002)(476003)(14444005)(256004)(7736002)(966005);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB1600;H:VI1PR04MB4333.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 1RxdtrY2jhMQjL4SPblJXQqmfo/yAKO4ZeKg+/1X+4i9CFoGWXTiEuWaF3gwngzNkgIyPfXQRZ6oNoO5iZTCklnsSeEel1pEOCCDY+slLw0Ck1mYUKNC8nL9Do2eOJQECPDniYK59E7NX5t4bCySozflc27grRwyhvJBl01gf5ufXos5i+AYziC6qLwzVD/AlqjLP4d4xwZNVF0SoZ742MODoedgJphK54eBSmPedE1pvBbLCTHwBR7tJwBsCCFvSicJUF0/Kdjxy3r/+NOIl4Eqmm0oQNPa7UFliBZ1UW6G+sDFc7cVKWgXmc+Rlf9k
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1726519AbeLLIml (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Dec 2018 03:42:41 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:58422 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726020AbeLLImk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Dec 2018 03:42:40 -0500
+Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id C929E55A;
+        Wed, 12 Dec 2018 09:42:37 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1544604158;
+        bh=hZXZhHD/dwZIxm0bdVT0D+P3k5+3rM79VVC34XPLAO0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ZkndDXk8TnMxisV7vTW7yAoeGFh8JBeoCDfIIw3aSrh4TPI39b9MxoxJv5NkkY/Zg
+         t5kL0S9KgPoyVAdypMwIeE5+hJ2Aw1K6dxqOYuHn9o1nhYWfN0+OoKV2apOgc58WlN
+         RDgTNNQEAY1XpAgv4Q6XpSwEKWkO5lw5v3X69SqE=
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Marek Vasut <marek.vasut@gmail.com>
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Alexey Firago <alexey_firago@mentor.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH V2] clk: vc5: Add suspend/resume support
+Date:   Wed, 12 Dec 2018 10:43:22 +0200
+Message-ID: <1632836.JPXSTA8kTp@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <20181212014130.18634-1-marek.vasut+renesas@gmail.com>
+References: <20181212014130.18634-1-marek.vasut+renesas@gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2076d2ea-42c5-4b0a-087b-08d65fd520cc
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Dec 2018 01:57:10.1068
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB1600
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogU2NvdHQgV29vZCA8b3Nz
-QGJ1c2Vycm9yLm5ldD4NCj4gU2VudDogMjAxOOW5tDEx5pyIMjbml6UgOToxOQ0KPiBUbzogQW5k
-eSBUYW5nIDxhbmR5LnRhbmdAbnhwLmNvbT4NCj4gQ2M6IG10dXJxdWV0dGVAYmF5bGlicmUuY29t
-OyBzYm95ZEBrZXJuZWwub3JnOyByb2JoK2R0QGtlcm5lbC5vcmc7DQo+IG1hcmsucnV0bGFuZEBh
-cm0uY29tOyBiZW5oQGtlcm5lbC5jcmFzaGluZy5vcmc7IHBhdWx1c0BzYW1iYS5vcmc7DQo+IG1w
-ZUBlbGxlcm1hbi5pZC5hdTsgbGludXgtY2xrQHZnZXIua2VybmVsLm9yZzsNCj4gZGV2aWNldHJl
-ZUB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7DQo+IGxpbnV4
-cHBjLWRldkBsaXN0cy5vemxhYnMub3JnDQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggMS8yIHYzXSBw
-b3dlcnBjL2ZzbDogVXNlIG5ldyBjbG9ja2dlbiBiaW5kaW5nDQo+IA0KPiBPbiBXZWQsIDIwMTgt
-MTAtMzEgYXQgMTQ6NTcgKzA4MDAsIFl1YW50aWFuIFRhbmcgd3JvdGU6DQo+ID4gRnJvbTogU2Nv
-dHQgV29vZCA8b3NzQGJ1c2Vycm9yLm5ldD4NCj4gPg0KPiA+IFRoZSBkcml2ZXIgcmV0YWlucyBj
-b21wYXRpYmlsaXR5IHdpdGggb2xkIGRldmljZSB0cmVlcywgYnV0IHdlIGRvbid0DQo+ID4gd2Fu
-dCB0aGUgb2xkIG5vZGVzIGx5aW5nIGFyb3VuZCB0byBiZSBjb3BpZWQsIG9yIHVzZWQgYXMgYSBy
-ZWZlcmVuY2UNCj4gPiAoc29tZSBvZiB0aGUgbXV4IG9wdGlvbnMgYXJlIGluY29ycmVjdCksIG9y
-IGV2ZW4ganVzdCBiZWluZyBjbHV0dGVyLg0KPiA+DQo+ID4NCj4gPiArc3lzY2xrOiBzeXNjbGsg
-ew0KPiA+ICsJY29tcGF0aWJsZSA9ICJmaXhlZC1jbG9jayI7DQo+ID4gKwkjY2xvY2stY2VsbHMg
-PSA8MD47DQo+ID4gKwljbG9jay1mcmVxdWVuY3kgPSA8MTAwMDAwMDAwPjsNCj4gPiArCWNsb2Nr
-LW91dHB1dC1uYW1lcyA9ICJzeXNjbGsiOw0KPiA+ICt9Ow0KPiA+ICsNCj4gPiAgY2xvY2tnZW46
-IGdsb2JhbC11dGlsaXRpZXNAZTEwMDAgew0KPiANCj4gVGhlIFUtQm9vdCBmaXh1cCB3b24ndCB3
-b3JrIHdpdGggdGhpcy4gIFUtQm9vdCBwYXRjaGVzIHRoZSBmcmVxdWVuY3kNCj4gZGlyZWN0bHkg
-aW50byB0aGUgY2xvY2tnZW4gbm9kZSAoQlRXLCB0aGlzIGlzIGFub3RoZXIgcmVhc29uIHRvIHBy
-ZXNlcnZlDQo+IHRoZSBnZW5lcmljDQo+IDEuMC8yLjAgY29tcGF0aWJsZSBzdHJpbmcpLiAgVGhl
-IG5ldyBiaW5kaW5nIGRvZXMgbm90IHJlcXVpcmUgYW4gaW5wdXQNCj4gY2xvY2sgbm9kZSB3aGVu
-IGl0IGlzIHByb3ZpZGVkIGFzIGNsb2NrLWZyZXF1ZW5jeSBkaXJlY3RseSBpbiB0aGUgY2xvY2tn
-ZW4NCj4gbm9kZSAtLSBhbmQgdGhlIHN5c2NsayBub2RlIHdhcyBub3QgaW4gbXkgb3JpZ2luYWwg
-cGF0Y2ggKG5vciBkaWQgeW91IG5vdGUNCj4gdGhhdCB5b3UgbWFkZSBjaGFuZ2VzIGZyb20gdGhh
-dCBvcmlnaW5hbCkuICBXaHkgZGlkIHlvdSBhZGQgaXQ/DQo+IA0KPiBJIHdvdWxkIGp1c3QgcmVt
-b3ZlIGl0IHdoZW4gYXBwbHlpbmcsIGJ1dCBJJ20gY29uY2VybmVkIHRoYXQgdGhpcyBpbmRpY2F0
-ZXMNCj4gYSBsYWNrIG9mIHRlc3RpbmcgKGFuZCBJIGRvbid0IGhhdmUgdGhlIGhhcmR3YXJlIGFj
-Y2VzcyB0byB0ZXN0IGl0IG15c2VsZiwNCj4gZXhjZXB0IG9uIHQ0MjQwKSAtLSB1bmxlc3MgdGhl
-IDEwMCBNSHogc3lzY2xrIGp1c3QgaGFwcGVuZWQgdG8gYmUgY29ycmVjdA0KPiBvbiB0aGUgbWFj
-aGluZXMgeW91IHRlc3RlZCAod2hpY2ggd291bGQgYWxzbyBiZSBhIHRlc3QgY292ZXJhZ2UNCj4g
-cHJvYmxlbSk/DQpbQW5keV0gWW91IGFyZSByaWdodC4gU3lzY2xrIG1heSBub3QgYmUgdXNlZnVs
-IGFueW1vcmUuIA0KVWJvb3Qgd2lsbCBmaXh1cCB0aGUgY2xvY2tnZW4gbm9kZSBjb3JyZWN0bHku
-IFBsZWFzZSBhcHBseSB0aGlzIHBhdGNoIHdpdGhvdXQgc3lzY2xrLiBXZSB3aWxsDQp0ZXN0IGl0
-IGFuZCBjYXRjaCB0aGUgZXJyb3IgaWYgdGhlIGNsb2NrIGlzIG5vdCBmaXhlZCBjb3JyZWN0bHku
-DQoNCkJUVywgd2hpY2ggZ2l0IHRyZWUgYXJlIHlvdSBnb2luZyB0byBhcHBseSBpdCBvbj8gVGhp
-cyBvbmU/DQpodHRwczovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVsL2dpdC9z
-Y290dHdvb2QvbGludXguZ2l0L2xvZy8/aD1uZXh0DQoNCkJSLA0KQW5keQ0KPiANCj4gLVNjb3R0
-DQo+IA0KDQo=
+Hi Marex,
+
+Thank you for the patch.
+
+On Wednesday, 12 December 2018 03:41:30 EET Marek Vasut wrote:
+> Add simple suspend/resume handlers to the driver to restore the chip
+> configuration after resume. It is possible that the chip was configured
+> with non-default values before suspend-resume cycle and that the chip
+> is powered down during this cycle, so the configuration could get lost.
+> 
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> Cc: Alexey Firago <alexey_firago@mentor.com>
+> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@codeaurora.org>
+> Cc: linux-renesas-soc@vger.kernel.org
+> ---
+> V2: Replace ifdef with __maybe_unused
+>     Simplify return value handling in resume
+> ---
+>  drivers/clk/clk-versaclock5.c | 31 +++++++++++++++++++++++++++++++
+>  1 file changed, 31 insertions(+)
+> 
+> diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
+> index decffb3826ec..b66586a3abb7 100644
+> --- a/drivers/clk/clk-versaclock5.c
+> +++ b/drivers/clk/clk-versaclock5.c
+> @@ -906,6 +906,34 @@ static int vc5_remove(struct i2c_client *client)
+>  	return 0;
+>  }
+> 
+> +static int __maybe_unused vc5_suspend(struct device *dev)
+> +{
+> +	struct vc5_driver_data *vc5 = dev_get_drvdata(dev);
+> +	int ret;
+> +
+> +	ret = regcache_sync(vc5->regmap);
+
+Didn't you say the sync here was unneeded and would be dropped ?
+
+> +	if (ret != 0) {
+> +		dev_err(dev, "Failed to save register map: %d\n", ret);
+> +		return ret;
+> +	}
+> +	regcache_cache_only(vc5->regmap, true);
+> +	regcache_mark_dirty(vc5->regmap);
+> +
+> +	return 0;
+> +}
+> +
+> +static int __maybe_unused vc5_resume(struct device *dev)
+> +{
+> +	struct vc5_driver_data *vc5 = dev_get_drvdata(dev);
+> +	int ret;
+> +
+> +	regcache_cache_only(vc5->regmap, false);
+> +	ret = regcache_sync(vc5->regmap);
+> +	if (ret)
+> +		dev_err(dev, "Failed to restore register map: %d\n", ret);
+> +	return ret;
+> +}
+> +
+>  static const struct vc5_chip_info idt_5p49v5923_info = {
+>  	.model = IDT_VC5_5P49V5923,
+>  	.clk_fod_cnt = 2,
+> @@ -961,9 +989,12 @@ static const struct of_device_id clk_vc5_of_match[] = {
+> };
+>  MODULE_DEVICE_TABLE(of, clk_vc5_of_match);
+> 
+> +static SIMPLE_DEV_PM_OPS(vc5_pm_ops, vc5_suspend, vc5_resume);
+> +
+>  static struct i2c_driver vc5_driver = {
+>  	.driver = {
+>  		.name = "vc5",
+> +		.pm	= &vc5_pm_ops,
+>  		.of_match_table = clk_vc5_of_match,
+>  	},
+>  	.probe		= vc5_probe,
+
+-- 
+Regards,
+
+Laurent Pinchart
+
+
+
