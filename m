@@ -2,27 +2,27 @@ Return-Path: <SRS0=3egD=OV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A802C6786C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B42DC67872
 	for <linux-clk@archiver.kernel.org>; Wed, 12 Dec 2018 22:18:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B65C220851
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Dec 2018 22:18:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D7552084E
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Dec 2018 22:18:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="U+0ao6au"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B65C220851
+	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="QQCo6Pdx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D7552084E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=crapouillou.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728487AbeLLWSN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Dec 2018 17:18:13 -0500
-Received: from outils.crapouillou.net ([89.234.176.41]:40742 "EHLO
+        id S1728507AbeLLWS2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Dec 2018 17:18:28 -0500
+Received: from outils.crapouillou.net ([89.234.176.41]:40724 "EHLO
         crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728589AbeLLWQw (ORCPT
+        with ESMTP id S1728575AbeLLWQw (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Dec 2018 17:16:52 -0500
 From:   Paul Cercueil <paul@crapouillou.net>
 To:     Thierry Reding <thierry.reding@gmail.com>,
@@ -42,66 +42,110 @@ Cc:     Mathieu Malaterre <malat@debian.org>,
         linux-mips@vger.kernel.org, linux-doc@vger.kernel.org,
         linux-clk@vger.kernel.org, od@zcrc.me,
         Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v8 16/26] clk: jz4740: Add TCU clock
-Date:   Wed, 12 Dec 2018 23:09:11 +0100
-Message-Id: <20181212220922.18759-17-paul@crapouillou.net>
+Subject: [PATCH v8 12/26] pwm: jz4740: Allow selection of PWM channels 0 and 1
+Date:   Wed, 12 Dec 2018 23:09:07 +0100
+Message-Id: <20181212220922.18759-13-paul@crapouillou.net>
 In-Reply-To: <20181212220922.18759-1-paul@crapouillou.net>
 References: <20181212220922.18759-1-paul@crapouillou.net>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net; s=mail; t=1544652602; bh=Fiz3MZxmOJxJC5lEAonv4esf/BmrXGJylwcSlpbxKt4=; h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=U+0ao6aum0yq7lzsFMl8Yti66d5IAgi86frwWF0OKjGDcXnz4+U6FapIqwcMPudWuODGy4r7O8jrOEq33ShE+QLyCI+mi+Rn5H/1jF2gNeTYc+36INVR7KL3Awhu6YvjygHtMOE/r+mPX/9hOu9Jay9NJH+weSDIBph5+u+h7F4=
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net; s=mail; t=1544652595; bh=gzVBUknhZ+etpvM4N2BC87GurKdkHwwN5alAAk9sbAI=; h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=QQCo6Pdx+fDz+UmyK1RpYn3Kah4Eag3TXivVejccl6VFTBys72cvp8y5QGrISolCRXSUZExZ7PPzLF2wUlFkXMrKIdo44tGYqjNnCJShvRXd0Zd7gbIBSILTM1aXUkDZm700XpmUcrjmvYFgzQ9m54+d/1O5e4SjhDfSoamEz+A=
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add the missing TCU clock to the list of clocks supplied by the CGU for
-the JZ4740 SoC.
+The TCU channels 0 and 1 were previously reserved for system tasks, and
+thus unavailable for PWM.
+
+The driver will now only allow a PWM channel to be requested if memory
+resources corresponding to the register area of the channel were
+supplied to the driver. This allows the TCU channels to be reserved for
+system tasks from within the devicetree.
 
 Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
-Acked-by: Rob Herring <robh@kernel.org>
 ---
 
 Notes:
-     v5: New patch
-    
-     v6: No change
+     v6: New patch
     
      v7: No change
 
-     v8: No change
+     v8: ingenic_tcu_[request,release]_channel are dropped. We now use
+         the memory resources provided to the driver to detect whether
+	 or not we are allowed to use the TCU channel.
 
- drivers/clk/ingenic/jz4740-cgu.c       | 6 ++++++
- include/dt-bindings/clock/jz4740-cgu.h | 1 +
- 2 files changed, 7 insertions(+)
+ drivers/pwm/pwm-jz4740.c | 38 +++++++++++++++++++++++++++++++++-----
+ 1 file changed, 33 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/clk/ingenic/jz4740-cgu.c b/drivers/clk/ingenic/jz4740-cgu.c
-index 4479c102e899..d8ac7f2e183a 100644
---- a/drivers/clk/ingenic/jz4740-cgu.c
-+++ b/drivers/clk/ingenic/jz4740-cgu.c
-@@ -211,6 +211,12 @@ static const struct ingenic_cgu_clk_info jz4740_cgu_clocks[] = {
- 		.parents = { JZ4740_CLK_EXT, -1, -1, -1 },
- 		.gate = { CGU_REG_CLKGR, 5 },
- 	},
-+
-+	[JZ4740_CLK_TCU] = {
-+		"tcu", CGU_CLK_GATE,
-+		.parents = { JZ4740_CLK_EXT, -1, -1, -1 },
-+		.gate = { CGU_REG_CLKGR, 1 },
-+	},
+diff --git a/drivers/pwm/pwm-jz4740.c b/drivers/pwm/pwm-jz4740.c
+index 6b865c14f789..7b12e5628f4f 100644
+--- a/drivers/pwm/pwm-jz4740.c
++++ b/drivers/pwm/pwm-jz4740.c
+@@ -28,6 +28,7 @@ struct jz4740_pwm_chip {
+ 	struct pwm_chip chip;
+ 	struct clk *clks[NUM_PWM];
+ 	struct regmap *map;
++	struct resource *parent_res;
  };
  
- static void __init jz4740_cgu_init(struct device_node *np)
-diff --git a/include/dt-bindings/clock/jz4740-cgu.h b/include/dt-bindings/clock/jz4740-cgu.h
-index 6ed83f926ae7..e82d77028581 100644
---- a/include/dt-bindings/clock/jz4740-cgu.h
-+++ b/include/dt-bindings/clock/jz4740-cgu.h
-@@ -34,5 +34,6 @@
- #define JZ4740_CLK_ADC		19
- #define JZ4740_CLK_I2C		20
- #define JZ4740_CLK_AIC		21
-+#define JZ4740_CLK_TCU		22
+ static inline struct jz4740_pwm_chip *to_jz4740(struct pwm_chip *chip)
+@@ -35,6 +36,31 @@ static inline struct jz4740_pwm_chip *to_jz4740(struct pwm_chip *chip)
+ 	return container_of(chip, struct jz4740_pwm_chip, chip);
+ }
  
- #endif /* __DT_BINDINGS_CLOCK_JZ4740_CGU_H__ */
++static bool jz4740_pwm_can_use_chn(struct jz4740_pwm_chip *jz, unsigned int chn)
++{
++	struct platform_device *pdev = to_platform_device(jz->chip.dev);
++	struct resource chn_res, *res;
++	unsigned int i;
++
++	chn_res.start = jz->parent_res->start + TCU_REG_TDFRc(chn);
++	chn_res.end = chn_res.start + TCU_CHANNEL_STRIDE - 1;
++	chn_res.flags = IORESOURCE_MEM;
++
++	/*
++	 * Walk the list of resources, find if there's one that contains the
++	 * registers for the requested TCU channel
++	 */
++	for (i = 0; ; i++) {
++		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
++		if (!res)
++			break;
++		if (resource_contains(res, &chn_res))
++			return true;
++	}
++
++	return false;
++}
++
+ static int jz4740_pwm_request(struct pwm_chip *chip, struct pwm_device *pwm)
+ {
+ 	struct jz4740_pwm_chip *jz = to_jz4740(chip);
+@@ -42,11 +68,7 @@ static int jz4740_pwm_request(struct pwm_chip *chip, struct pwm_device *pwm)
+ 	char clk_name[16];
+ 	int ret;
+ 
+-	/*
+-	 * Timers 0 and 1 are used for system tasks, so they are unavailable
+-	 * for use as PWMs.
+-	 */
+-	if (pwm->hwpwm < 2)
++	if (!jz4740_pwm_can_use_chn(jz, pwm->hwpwm))
+ 		return -EBUSY;
+ 
+ 	snprintf(clk_name, sizeof(clk_name), "timer%u", pwm->hwpwm);
+@@ -208,6 +230,12 @@ static int jz4740_pwm_probe(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
+ 
++	jz4740->parent_res = platform_get_resource(
++				to_platform_device(dev->parent),
++				IORESOURCE_MEM, 0);
++	if (!jz4740->parent_res)
++		return -EINVAL;
++
+ 	jz4740->chip.dev = dev;
+ 	jz4740->chip.ops = &jz4740_pwm_ops;
+ 	jz4740->chip.npwm = NUM_PWM;
 -- 
 2.11.0
 
