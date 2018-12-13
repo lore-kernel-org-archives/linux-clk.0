@@ -2,136 +2,214 @@ Return-Path: <SRS0=bPXJ=OW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C843EC67839
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Dec 2018 08:02:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AB47C67839
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Dec 2018 08:03:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BFE520672
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Dec 2018 08:02:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="JeQN7cki"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BFE520672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
+	by mail.kernel.org (Postfix) with ESMTP id DCAA220672
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Dec 2018 08:03:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCAA220672
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726781AbeLMICt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Dec 2018 03:02:49 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:53208 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726500AbeLMICt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Dec 2018 03:02:49 -0500
-Received: by mail-it1-f193.google.com with SMTP id g76so2417605itg.2
-        for <linux-clk@vger.kernel.org>; Thu, 13 Dec 2018 00:02:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+EoIiB7t0sg6iJAPwEj4Js/iaR5JgIvLxPtOu5qkufY=;
-        b=JeQN7ckiOiW4f9lpfNizP6DwENk0Q3Y/8/aDk9rAbZrRjDVcS6n23BqOaMl7NdePkW
-         2kCQBUQ6nTot06irm9XwPFpVhBuSbNFK9d2/mG4JH7jQVSKVgekhuuWQCe4KdJsccfTv
-         NywH2BngJHVIPC4T+6QknFvvcNaayloiAuMZHPnaydT+qK3Il18L7nM0+BRncfRW42jn
-         T7qj7rZ10v6Ohvpi4tuPDNfZwRNeaI3nJnmu/S7otgQEPm09We9vxkWcWeEiyByonKkJ
-         G1RW2CE9q/GAz1n0EU/Ucfv7U3AGXI0BnwkHx7nR2tktKpkxTe0NO7Vjfajlj8OWyjOe
-         e2uw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+EoIiB7t0sg6iJAPwEj4Js/iaR5JgIvLxPtOu5qkufY=;
-        b=Xk9TOG6Hb9e+gjWSxKT9rCtLfzPfJ5Ixx2WEpxiEO6FKbRXXWERXJ0CKMGynWBZRK4
-         DUbWd26KgM4TSD0kGp1y/TuI4KPCU6aZxBej8B9ZqABlQBdp/baXdJDKI8ayCTo4GxiF
-         5ckFJV5fNeRKZp9RwDHCo3CYcili+BprJWPZpHpj//zxNcFhxgI3eV3YY9fv/pF6alXL
-         kZ7J7U6wNT69hwv+KsJ2gdKgp0nrLkRNmi6FwjmrJxFV6cbFsOxH8rio0X29RAKkZUGD
-         InDikcBMonMp6zHynw2E5Ap4qxJ1bL4FhhIfh0oYtpze3yq3GYXL6j/PAOZCniU/6RRl
-         ImxA==
-X-Gm-Message-State: AA+aEWYlGuyv8f5Xxpp3kjjmHFuAWBf/jxbVEdZlutNocpCxKUkqie5o
-        UO88eVikGhXSg53J0dVplLpXI0kxkvz/9HNulcmK/w==
-X-Google-Smtp-Source: AFSGD/U9Rk0VY/1NraQ3wTCjiG3nPTHd1U+iFwaUqElceNiFnhhO6sPh0tGSkSJRQnXr3MeWhjQbsrbxSZrZsK85C/M=
-X-Received: by 2002:a02:88cf:: with SMTP id b15mr22592849jak.10.1544688166628;
- Thu, 13 Dec 2018 00:02:46 -0800 (PST)
-MIME-Version: 1.0
-References: <1544662938-5020-1-git-send-email-aisheng.dong@nxp.com>
- <1544662938-5020-2-git-send-email-aisheng.dong@nxp.com> <154468785263.19322.9529215687462426277@swboyd.mtv.corp.google.com>
-In-Reply-To: <154468785263.19322.9529215687462426277@swboyd.mtv.corp.google.com>
-From:   Olof Johansson <olof@lixom.net>
-Date:   Thu, 13 Dec 2018 16:02:34 +0800
-Message-ID: <CAOesGMhFtawJLpHmXbxvs=z+S1jVW8n2VQVv1gMcWicrOxDWdA@mail.gmail.com>
-Subject: Re: [PATCH V11 1/7] clk: imx: add configuration option for mmio clks
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk <linux-clk@vger.kernel.org>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
+        id S1727268AbeLMIDW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Dec 2018 03:03:22 -0500
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:32582 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726995AbeLMIDW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Dec 2018 03:03:22 -0500
+Received: from [10.18.29.207] (10.18.29.207) by mail-sh2.amlogic.com
+ (10.18.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Thu, 13 Dec
+ 2018 16:03:40 +0800
+Subject: Re: [PATCH RESEND v7 4/4] clk: meson: add one based divider support
+ for sclk divider
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+CC:     Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>, linux-imx@nxp.com,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Yixun Lan <yixun.lan@amlogic.com>,
+        Liang Yang <liang.yang@amlogic.com>,
+        Jian Hu <jian.hu@amlogic.com>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1544457877-51301-1-git-send-email-jianxin.pan@amlogic.com>
+ <1544457877-51301-5-git-send-email-jianxin.pan@amlogic.com>
+ <4da764c237b8f752af1dc33a011e2a4b73068f02.camel@baylibre.com>
+From:   Jianxin Pan <jianxin.pan@amlogic.com>
+Message-ID: <d748a030-441f-dab0-83f7-aa8fc1106cb4@amlogic.com>
+Date:   Thu, 13 Dec 2018 16:03:39 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.2
+MIME-Version: 1.0
+In-Reply-To: <4da764c237b8f752af1dc33a011e2a4b73068f02.camel@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.18.29.207]
+X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
+ (10.18.11.6)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Dec 13, 2018 at 3:57 PM Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Quoting Aisheng Dong (2018-12-12 17:07:52)
-> > The patch introduces CONFIG_MXC_CLK option for legacy MMIO clocks,
-> > this is required to compile legacy MMIO clock conditionally when adding
-> > SCU based clocks for MX8 platforms later.
-> >
-> > Cc: Shawn Guo <shawnguo@kernel.org>
-> > Cc: Sascha Hauer <kernel@pengutronix.de>
-> > Cc: Fabio Estevam <fabio.estevam@nxp.com>
-> > Cc: Stephen Boyd <sboyd@kernel.org>
-> > Cc: Michael Turquette <mturquette@baylibre.com>
-> > Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-> > diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-> > index a47430b..8a9440a 100644
-> > --- a/drivers/clk/Makefile
-> > +++ b/drivers/clk/Makefile
-> > @@ -72,7 +72,7 @@ obj-$(CONFIG_ARCH_DAVINCI)            += davinci/
-> >  obj-$(CONFIG_H8300)                    += h8300/
-> >  obj-$(CONFIG_ARCH_HISI)                        += hisilicon/
-> >  obj-y                                  += imgtec/
-> > -obj-$(CONFIG_ARCH_MXC)                 += imx/
-> > +obj-y                                  += imx/
-> >  obj-y                                  += ingenic/
-> >  obj-$(CONFIG_ARCH_K3)                  += keystone/
-> >  obj-$(CONFIG_ARCH_KEYSTONE)            += keystone/
-> > diff --git a/drivers/clk/imx/Kconfig b/drivers/clk/imx/Kconfig
-> > new file mode 100644
-> > index 0000000..37478ba
-> > --- /dev/null
-> > +++ b/drivers/clk/imx/Kconfig
-> > @@ -0,0 +1,5 @@
-> > +# SPDX-License-Identifier: GPL-2.0
-> > +# common clock support for NXP i.MX SoC family.
-> > +config MXC_CLK
-> > +       bool
-> > +       def_bool (ARCH_MXC && !ARM64) || (ARCH_MXC && ARM64 && SOC_IMX8MQ)
->
-> Ok I looked closer, SOC_IMX8MQ is only being introduced now and has only
-> been in linux-next for a few days. Having such a config symbol is highly
-> unusual for arm64 code. Has that been accepted by arm-soc? I don't know
-> why it would be because we don't add SoC specific config options
-> anymore. I imagine it will be rejected and we'll need to have this new
-> MXC_CLK config be enabled in the defconfig instead of selected from the
-> arch layer.
->
-> Given all that, is there any damage if this is just a def_bool ARCH_MXC
-> right now? If it's enabled on the platforms that don't use it because
-> they have SCU, does it actually matter? Or we just get some code bloat?
-> If it's just some extra code, then even more reason to make a user
-> visible config option that can be selected in the configurations that
-> care to save some space.
+Hi Jerome,
 
-On arm64 we generally add an ARCH_<family> and leave it at that. So,
-ARCH_MXC would be suitable, but we shouldn't add more finegrained than
-that.
+Thanks for the fully review, we really appreciate your time.
 
+On 2018/12/12 1:16, Jerome Brunet wrote:
+> On Tue, 2018-12-11 at 00:04 +0800, Jianxin Pan wrote:
+>> When CLK_DIVIDER_ONE_BASED flag is set, the sclk divider will be:
+>> one based divider (div = val), and zero value gates the clock
+>>
+>> Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
+>> ---
+>>  drivers/clk/meson/clkc-audio.h |  1 +
+>>  drivers/clk/meson/sclk-div.c   | 28 ++++++++++++++++++----------
+>>  2 files changed, 19 insertions(+), 10 deletions(-)
+> 
+> Such a patch should be done earlier in the series, at least before using sclk
+> in your controller, otherwise thing will be broken in between
+> 
+I will move it to the first one of the patchset. 
+> In general, I would prefer if you had added two helper function to deal with
+> the translation between register value and divider value.
+> 
+> Only these function should care about CLK_DIVIDER_ONE_BASED, the rest should
+> just call them.
+> 
+> This, we will be able to deal the with HI (duty cycle) part as well, which you
+> completly skiped.
+> 
+> I know your device does not have this, but still the code has to make sense.
+> 
+OK, I will add two helper for value and register translation, and then appy them to both div and hi.
+>>
+>> diff --git a/drivers/clk/meson/clkc-audio.h b/drivers/clk/meson/clkc-audio.h
+>> index 0a7c157..9bd6ced 100644
+>> --- a/drivers/clk/meson/clkc-audio.h
+>> +++ b/drivers/clk/meson/clkc-audio.h
+>> @@ -20,6 +20,7 @@ struct meson_sclk_div_data {
+>>  	struct parm hi;
+>>  	unsigned int cached_div;
+>>  	struct clk_duty cached_duty;
+>> +	u8	flags;
+>>  };
+>>  
+>>  extern const struct clk_ops meson_clk_triphase_ops;
+>> diff --git a/drivers/clk/meson/sclk-div.c b/drivers/clk/meson/sclk-div.c
+>> index bc64019..d98707b 100644
+>> --- a/drivers/clk/meson/sclk-div.c
+>> +++ b/drivers/clk/meson/sclk-div.c
+>> @@ -24,22 +24,23 @@
+>>  	return (struct meson_sclk_div_data *)clk->data;
+>>  }
+>>  
+>> -static int sclk_div_maxval(struct meson_sclk_div_data *sclk)
+>> -{
+>> -	return (1 << sclk->div.width) - 1;
+>> -}
+>> -
+>>  static int sclk_div_maxdiv(struct meson_sclk_div_data *sclk)
+>>  {
+>> -	return sclk_div_maxval(sclk) + 1;
+>> +	if (sclk->flags & CLK_DIVIDER_ONE_BASED)
+>> +		return clk_div_mask(sclk->div.width);
+>> +	else
+>> +		return clk_div_mask(sclk->div.width) + 1;
+> 
+> seems over complicated.
+> why no call clk_div_mask just once, and add 1 if necessary ?
+Yes, I will use helper here.
+> 
+>>  }
+>>  
+>>  static int sclk_div_getdiv(struct clk_hw *hw, unsigned long rate,
+>>  			   unsigned long prate, int maxdiv)
+>>  {
+>>  	int div = DIV_ROUND_CLOSEST_ULL((u64)prate, rate);
+>> +	struct clk_regmap *clk = to_clk_regmap(hw);
+>> +	struct meson_sclk_div_data *sclk = meson_sclk_div_data(clk);
+>> +	int mindiv = (sclk->flags & CLK_DIVIDER_ONE_BASED) ? 1 : 2;
+> 
+> This is why I want helpers, don't like this above
+OK, I will replace it with helpers.
+> 
+>>  
+>> -	return clamp(div, 2, maxdiv);
+>> +	return clamp(div, mindiv, maxdiv);
+>>  }
+>>  
+>>  static int sclk_div_bestdiv(struct clk_hw *hw, unsigned long rate,
+>> @@ -47,7 +48,7 @@ static int sclk_div_bestdiv(struct clk_hw *hw, unsigned
+>> long rate,
+>>  			    struct meson_sclk_div_data *sclk)
+>>  {
+>>  	struct clk_hw *parent = clk_hw_get_parent(hw);
+>> -	int bestdiv = 0, i;
+>> +	int bestdiv = 0, i, mindiv;
+>>  	unsigned long maxdiv, now, parent_now;
+>>  	unsigned long best = 0, best_parent = 0;
+>>  
+>> @@ -64,8 +65,9 @@ static int sclk_div_bestdiv(struct clk_hw *hw, unsigned
+>> long rate,
+>>  	 * unsigned long in rate * i below
+>>  	 */
+>>  	maxdiv = min(ULONG_MAX / rate, maxdiv);
+>> +	mindiv = (sclk->flags & CLK_DIVIDER_ONE_BASED) ? 1 : 2;
+>>  
+>> -	for (i = 2; i <= maxdiv; i++) {
+>> +	for (i = mindiv; i <= maxdiv; i++) {
+>>  		/*
+>>  		 * It's the most ideal case if the requested rate can be
+>>  		 * divided from parent clock without needing to change
+>> @@ -153,10 +155,14 @@ static int sclk_div_get_duty_cycle(struct clk_hw *hw,
+>>  static void sclk_apply_divider(struct clk_regmap *clk,
+>>  			       struct meson_sclk_div_data *sclk)
+>>  {
+>> +	unsigned int div;
+>> +
+>>  	if (MESON_PARM_APPLICABLE(&sclk->hi))
+>>  		sclk_apply_ratio(clk, sclk);
+>>  
+>> -	meson_parm_write(clk->map, &sclk->div, sclk->cached_div - 1);
+>> +	div = (sclk->flags & CLK_DIVIDER_ONE_BASED) ?
+>> +		sclk->cached_div : (sclk->cached_div - 1);
+> 
+> helpers again.
+OK!
+> 
+>> +	meson_parm_write(clk->map, &sclk->div, div);
+>>  }
+>>  
+>>  static int sclk_div_set_rate(struct clk_hw *hw, unsigned long rate,
+>> @@ -223,6 +229,8 @@ static void sclk_div_init(struct clk_hw *hw)
+>>  	/* if the divider is initially disabled, assume max */
+>>  	if (!val)
+>>  		sclk->cached_div = sclk_div_maxdiv(sclk);
+>> +	else if (sclk->flags & CLK_DIVIDER_ONE_BASED)
+>> +		sclk->cached_div = val;
+>>  	else
+>>  		sclk->cached_div = val + 1;
+> 
+> same ...
+OK, I will fix them. Thanks again for your time!
+> 
+>>  
+> 
+> 
+> .
+> 
 
--Olof
