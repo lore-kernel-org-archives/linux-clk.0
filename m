@@ -4,54 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07842C65BAE
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Dec 2018 09:35:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C49FFC65BAE
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Dec 2018 09:35:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B02DC20811
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Dec 2018 09:35:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8090820870
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Dec 2018 09:35:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="MFAeg8gJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B02DC20811
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="SVjYnz3a"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8090820870
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727548AbeLMJfP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Dec 2018 04:35:15 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:1368 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727890AbeLMJfO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Dec 2018 04:35:14 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c1227cd0002>; Thu, 13 Dec 2018 01:35:09 -0800
+        id S1727991AbeLMJfU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Dec 2018 04:35:20 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:8169 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727972AbeLMJfT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Dec 2018 04:35:19 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c1227d10001>; Thu, 13 Dec 2018 01:35:13 -0800
 Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 13 Dec 2018 01:35:13 -0800
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Thu, 13 Dec 2018 01:35:17 -0800
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 13 Dec 2018 01:35:13 -0800
-Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL104.nvidia.com
- (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 13 Dec
- 2018 09:35:12 +0000
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 13 Dec
- 2018 09:35:12 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
- Transport; Thu, 13 Dec 2018 09:35:12 +0000
+        by hqpgpgate102.nvidia.com on Thu, 13 Dec 2018 01:35:17 -0800
+Received: from HQMAIL103.nvidia.com (172.20.187.11) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 13 Dec
+ 2018 09:35:17 +0000
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL103.nvidia.com
+ (172.20.187.11) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
+ Transport; Thu, 13 Dec 2018 09:35:17 +0000
 Received: from josephl-linux.nvidia.com (Not Verified[10.19.108.132]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5c1227cf0002>; Thu, 13 Dec 2018 01:35:12 -0800
+        id <B5c1227d40000>; Thu, 13 Dec 2018 01:35:17 -0800
 From:   Joseph Lo <josephl@nvidia.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Peter De Schrijver <pdeschrijver@nvidia.com>,
         Jonathan Hunter <jonathanh@nvidia.com>
 CC:     <linux-arm-kernel@lists.infradead.org>,
         <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        Joseph Lo <josephl@nvidia.com>
-Subject: [PATCH V2 10/21] clk: tegra: dfll: add CVB tables for Tegra210
-Date:   Thu, 13 Dec 2018 17:34:27 +0800
-Message-ID: <20181213093438.29621-11-josephl@nvidia.com>
+        Joseph Lo <josephl@nvidia.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        <linux-pm@vger.kernel.org>
+Subject: [PATCH V2 12/21] cpufreq: tegra124: do not handle the CPU rail
+Date:   Thu, 13 Dec 2018 17:34:29 +0800
+Message-ID: <20181213093438.29621-13-josephl@nvidia.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181213093438.29621-1-josephl@nvidia.com>
 References: <20181213093438.29621-1-josephl@nvidia.com>
@@ -60,498 +59,164 @@ X-NVConfidentiality: public
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1544693709; bh=KB3y32OVJ0XKIfcRrIH9t783CV8W76JOi+7QmwSnqb8=;
+        t=1544693713; bh=cFkhAstfSy6edE2nU4IXZTM12YCmE+CLGBX/yRk0+KM=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:MIME-Version:X-NVConfidentiality:
          Content-Transfer-Encoding:Content-Type;
-        b=MFAeg8gJGMQtUW0MfypUf2idJR3FYsvMoBs3mys7oMX4qp/X/2YBjPnYNh+zA1jIn
-         ihlJFUDmDjHYR+j5pYOgevVpfeu75Q1678L1EToMG1/Eq5eCSehdDQGVzpvm7eNaYq
-         YwlEwazgQl1kQOx3GmfhlvBzrk8y1q/ERRnXFzR0vBkzsCK2mEKHb/g0gNqbx5a/LH
-         QzrImjBDlF7bpx6MuRoN36yf+w6Nb8JRQHMj8z2sZY8pmCtEJehocvJ7C6z6dvYocq
-         w9m4bPwDvv+eR/9E0FmTVu0ENbvPYkvNWr8+k6v02XmSNN1eQZqJ4ZdZLKAQ/MzTf0
-         trt+dDvqz6Liw==
+        b=SVjYnz3a0Y2QCK2LAde4VURux6fQl+94wCgpe+11rWohRRTOPRqFk6aAseOLHnfqT
+         9Rwm4lEGpSMrmK8prj6pgEm1S7zfeqLNrrLsPLf3rif9v6YYGGOCtluH+hh7i4AxT+
+         +GS9c2P+BRKusrmhaW3D1blR54ImuzNqFmYOytQeV5hSTRUkKKr6UNPRj2W4L3KRw6
+         xd1BHetWN5g/hhxhbdsj2S1FBE8NlAEkxeOm3wfogbn9I/4kHTgveK5BmJ5iyhPujv
+         siBWQBnXy05Oa8KG3RlYR8ab0WDt/DIQd/VUMOryBuwHRMIuH0zQYa7PVVXPP5nkKN
+         vF6xL4eJx46Dw==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add CVB tables with different chip characterization, so that we can
-generate the customize OPP table that suitable for different chips with
-different SKUs.
+The Tegra124 cpufreq driver has no information to handle the Vdd-CPU
+rail. So this driver shouldn't handle for the CPU clock switching from
+DFLL to other PLL clocks. It was designed to work on DFLL clock only,
+which handle the frequency/voltage scaling in the background.
 
+This patch removes the driver dependency of the CPU rail, as well as not
+allow it to be built as a module and remove the removal function. So it
+can keep working on DFLL clock.
+
+Cc: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: linux-pm@vger.kernel.org
 Signed-off-by: Joseph Lo <josephl@nvidia.com>
 ---
 *V2:
- - no update
+ - update the commit message since we change the driver not able to be
+ built as a module and remove the removal function in V2
 ---
- drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 426 +++++++++++++++++++++
- drivers/clk/tegra/cvb.h                    |   1 +
- 2 files changed, 427 insertions(+)
+ drivers/cpufreq/Kconfig.arm        |  4 +--
+ drivers/cpufreq/tegra124-cpufreq.c | 41 ++----------------------------
+ 2 files changed, 4 insertions(+), 41 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra=
-/clk-tegra124-dfll-fcpu.c
-index 189b5e20ee4e..db117e9991e3 100644
---- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-+++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-@@ -88,6 +88,421 @@ static const struct cvb_table tegra124_cpu_cvb_tables[]=
- =3D {
- 	},
+diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+index 4e1131ef85ae..1d83b6e81222 100644
+--- a/drivers/cpufreq/Kconfig.arm
++++ b/drivers/cpufreq/Kconfig.arm
+@@ -261,8 +261,8 @@ config ARM_TEGRA20_CPUFREQ
+ 	  This adds the CPUFreq driver support for Tegra20 SOCs.
+=20
+ config ARM_TEGRA124_CPUFREQ
+-	tristate "Tegra124 CPUFreq support"
+-	depends on ARCH_TEGRA && CPUFREQ_DT && REGULATOR
++	bool "Tegra124 CPUFreq support"
++	depends on ARCH_TEGRA && CPUFREQ_DT
+ 	default y
+ 	help
+ 	  This adds the CPUFreq driver support for Tegra124 SOCs.
+diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-=
+cpufreq.c
+index 43530254201a..a1bfde0a7950 100644
+--- a/drivers/cpufreq/tegra124-cpufreq.c
++++ b/drivers/cpufreq/tegra124-cpufreq.c
+@@ -22,11 +22,9 @@
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_opp.h>
+-#include <linux/regulator/consumer.h>
+ #include <linux/types.h>
+=20
+ struct tegra124_cpufreq_priv {
+-	struct regulator *vdd_cpu_reg;
+ 	struct clk *cpu_clk;
+ 	struct clk *pllp_clk;
+ 	struct clk *pllx_clk;
+@@ -60,14 +58,6 @@ static int tegra124_cpu_switch_to_dfll(struct tegra124_c=
+pufreq_priv *priv)
+ 	return ret;
+ }
+=20
+-static void tegra124_cpu_switch_to_pllx(struct tegra124_cpufreq_priv *priv=
+)
+-{
+-	clk_set_parent(priv->cpu_clk, priv->pllp_clk);
+-	clk_disable_unprepare(priv->dfll_clk);
+-	regulator_sync_voltage(priv->vdd_cpu_reg);
+-	clk_set_parent(priv->cpu_clk, priv->pllx_clk);
+-}
+-
+ static int tegra124_cpufreq_probe(struct platform_device *pdev)
+ {
+ 	struct tegra124_cpufreq_priv *priv;
+@@ -88,16 +78,10 @@ static int tegra124_cpufreq_probe(struct platform_devic=
+e *pdev)
+ 	if (!np)
+ 		return -ENODEV;
+=20
+-	priv->vdd_cpu_reg =3D regulator_get(cpu_dev, "vdd-cpu");
+-	if (IS_ERR(priv->vdd_cpu_reg)) {
+-		ret =3D PTR_ERR(priv->vdd_cpu_reg);
+-		goto out_put_np;
+-	}
+-
+ 	priv->cpu_clk =3D of_clk_get_by_name(np, "cpu_g");
+ 	if (IS_ERR(priv->cpu_clk)) {
+ 		ret =3D PTR_ERR(priv->cpu_clk);
+-		goto out_put_vdd_cpu_reg;
++		goto out_put_np;
+ 	}
+=20
+ 	priv->dfll_clk =3D of_clk_get_by_name(np, "dfll");
+@@ -129,15 +113,13 @@ static int tegra124_cpufreq_probe(struct platform_dev=
+ice *pdev)
+ 		platform_device_register_full(&cpufreq_dt_devinfo);
+ 	if (IS_ERR(priv->cpufreq_dt_pdev)) {
+ 		ret =3D PTR_ERR(priv->cpufreq_dt_pdev);
+-		goto out_switch_to_pllx;
++		goto out_put_pllp_clk;
+ 	}
+=20
+ 	platform_set_drvdata(pdev, priv);
+=20
+ 	return 0;
+=20
+-out_switch_to_pllx:
+-	tegra124_cpu_switch_to_pllx(priv);
+ out_put_pllp_clk:
+ 	clk_put(priv->pllp_clk);
+ out_put_pllx_clk:
+@@ -146,34 +128,15 @@ static int tegra124_cpufreq_probe(struct platform_dev=
+ice *pdev)
+ 	clk_put(priv->dfll_clk);
+ out_put_cpu_clk:
+ 	clk_put(priv->cpu_clk);
+-out_put_vdd_cpu_reg:
+-	regulator_put(priv->vdd_cpu_reg);
+ out_put_np:
+ 	of_node_put(np);
+=20
+ 	return ret;
+ }
+=20
+-static int tegra124_cpufreq_remove(struct platform_device *pdev)
+-{
+-	struct tegra124_cpufreq_priv *priv =3D platform_get_drvdata(pdev);
+-
+-	platform_device_unregister(priv->cpufreq_dt_pdev);
+-	tegra124_cpu_switch_to_pllx(priv);
+-
+-	clk_put(priv->pllp_clk);
+-	clk_put(priv->pllx_clk);
+-	clk_put(priv->dfll_clk);
+-	clk_put(priv->cpu_clk);
+-	regulator_put(priv->vdd_cpu_reg);
+-
+-	return 0;
+-}
+-
+ static struct platform_driver tegra124_cpufreq_platdrv =3D {
+ 	.driver.name	=3D "cpufreq-tegra124",
+ 	.probe		=3D tegra124_cpufreq_probe,
+-	.remove		=3D tegra124_cpufreq_remove,
  };
 =20
-+static const unsigned long tegra210_cpu_max_freq_table[] =3D {
-+	[0] =3D 1912500000UL,
-+	[1] =3D 1912500000UL,
-+	[2] =3D 2218500000UL,
-+	[3] =3D 1785000000UL,
-+	[4] =3D 1632000000UL,
-+	[5] =3D 1912500000UL,
-+	[6] =3D 2014500000UL,
-+	[7] =3D 1734000000UL,
-+	[8] =3D 1683000000UL,
-+	[9] =3D 1555500000UL,
-+	[10] =3D 1504500000UL,
-+};
-+
-+#define CPU_CVB_TABLE \
-+	.speedo_scale =3D 100,	\
-+	.voltage_scale =3D 1000,	\
-+	.entries =3D {		\
-+		{  204000000UL,	{ 1007452, -23865, 370 } }, \
-+		{  306000000UL,	{ 1052709, -24875, 370 } }, \
-+		{  408000000UL,	{ 1099069, -25895, 370 } }, \
-+		{  510000000UL,	{ 1146534, -26905, 370 } }, \
-+		{  612000000UL,	{ 1195102, -27915, 370 } }, \
-+		{  714000000UL,	{ 1244773, -28925, 370 } }, \
-+		{  816000000UL,	{ 1295549, -29935, 370 } }, \
-+		{  918000000UL,	{ 1347428, -30955, 370 } }, \
-+		{ 1020000000UL,	{ 1400411, -31965, 370 } }, \
-+		{ 1122000000UL,	{ 1454497, -32975, 370 } }, \
-+		{ 1224000000UL,	{ 1509687, -33985, 370 } }, \
-+		{ 1326000000UL,	{ 1565981, -35005, 370 } }, \
-+		{ 1428000000UL,	{ 1623379, -36015, 370 } }, \
-+		{ 1530000000UL,	{ 1681880, -37025, 370 } }, \
-+		{ 1632000000UL,	{ 1741485, -38035, 370 } }, \
-+		{ 1734000000UL,	{ 1802194, -39055, 370 } }, \
-+		{ 1836000000UL,	{ 1864006, -40065, 370 } }, \
-+		{ 1912500000UL,	{ 1910780, -40815, 370 } }, \
-+		{ 2014500000UL,	{ 1227000,      0,   0 } }, \
-+		{ 2218500000UL,	{ 1227000,      0,   0 } }, \
-+		{          0UL,	{       0,      0,   0 } }, \
-+	}
-+
-+#define CPU_CVB_TABLE_XA \
-+	.speedo_scale =3D 100,	\
-+	.voltage_scale =3D 1000,	\
-+	.entries =3D {		\
-+		{  204000000UL,	{ 1250024, -39785, 565 } }, \
-+		{  306000000UL,	{ 1297556, -41145, 565 } }, \
-+		{  408000000UL,	{ 1346718, -42505, 565 } }, \
-+		{  510000000UL,	{ 1397511, -43855, 565 } }, \
-+		{  612000000UL,	{ 1449933, -45215, 565 } }, \
-+		{  714000000UL,	{ 1503986, -46575, 565 } }, \
-+		{  816000000UL,	{ 1559669, -47935, 565 } }, \
-+		{  918000000UL,	{ 1616982, -49295, 565 } }, \
-+		{ 1020000000UL,	{ 1675926, -50645, 565 } }, \
-+		{ 1122000000UL,	{ 1736500, -52005, 565 } }, \
-+		{ 1224000000UL,	{ 1798704, -53365, 565 } }, \
-+		{ 1326000000UL,	{ 1862538, -54725, 565 } }, \
-+		{ 1428000000UL,	{ 1928003, -56085, 565 } }, \
-+		{ 1530000000UL,	{ 1995097, -57435, 565 } }, \
-+		{ 1606500000UL,	{ 2046149, -58445, 565 } }, \
-+		{ 1632000000UL,	{ 2063822, -58795, 565 } }, \
-+		{          0UL,	{       0,      0,   0 } }, \
-+	}
-+
-+#define CPU_CVB_TABLE_EUCM1 \
-+	.speedo_scale =3D 100,	\
-+	.voltage_scale =3D 1000,	\
-+	.entries =3D {		\
-+		{  204000000UL,	{  734429, 0, 0 } }, \
-+		{  306000000UL,	{  768191, 0, 0 } }, \
-+		{  408000000UL,	{  801953, 0, 0 } }, \
-+		{  510000000UL,	{  835715, 0, 0 } }, \
-+		{  612000000UL,	{  869477, 0, 0 } }, \
-+		{  714000000UL,	{  903239, 0, 0 } }, \
-+		{  816000000UL,	{  937001, 0, 0 } }, \
-+		{  918000000UL,	{  970763, 0, 0 } }, \
-+		{ 1020000000UL,	{ 1004525, 0, 0 } }, \
-+		{ 1122000000UL,	{ 1038287, 0, 0 } }, \
-+		{ 1224000000UL,	{ 1072049, 0, 0 } }, \
-+		{ 1326000000UL,	{ 1105811, 0, 0 } }, \
-+		{ 1428000000UL,	{ 1130000, 0, 0 } }, \
-+		{ 1555500000UL,	{ 1130000, 0, 0 } }, \
-+		{ 1632000000UL,	{ 1170000, 0, 0 } }, \
-+		{ 1734000000UL,	{ 1227500, 0, 0 } }, \
-+		{          0UL,	{       0, 0, 0 } }, \
-+	}
-+
-+#define CPU_CVB_TABLE_EUCM2 \
-+	.speedo_scale =3D 100,	\
-+	.voltage_scale =3D 1000,	\
-+	.entries =3D {		\
-+		{  204000000UL,	{  742283, 0, 0 } }, \
-+		{  306000000UL,	{  776249, 0, 0 } }, \
-+		{  408000000UL,	{  810215, 0, 0 } }, \
-+		{  510000000UL,	{  844181, 0, 0 } }, \
-+		{  612000000UL,	{  878147, 0, 0 } }, \
-+		{  714000000UL,	{  912113, 0, 0 } }, \
-+		{  816000000UL,	{  946079, 0, 0 } }, \
-+		{  918000000UL,	{  980045, 0, 0 } }, \
-+		{ 1020000000UL,	{ 1014011, 0, 0 } }, \
-+		{ 1122000000UL,	{ 1047977, 0, 0 } }, \
-+		{ 1224000000UL,	{ 1081943, 0, 0 } }, \
-+		{ 1326000000UL,	{ 1090000, 0, 0 } }, \
-+		{ 1479000000UL,	{ 1090000, 0, 0 } }, \
-+		{ 1555500000UL,	{ 1162000, 0, 0 } }, \
-+		{ 1683000000UL,	{ 1195000, 0, 0 } }, \
-+		{          0UL,	{       0, 0, 0 } }, \
-+	}
-+
-+#define CPU_CVB_TABLE_EUCM2_JOINT_RAIL \
-+	.speedo_scale =3D 100,	\
-+	.voltage_scale =3D 1000,	\
-+	.entries =3D {		\
-+		{  204000000UL,	{  742283, 0, 0 } }, \
-+		{  306000000UL,	{  776249, 0, 0 } }, \
-+		{  408000000UL,	{  810215, 0, 0 } }, \
-+		{  510000000UL,	{  844181, 0, 0 } }, \
-+		{  612000000UL,	{  878147, 0, 0 } }, \
-+		{  714000000UL,	{  912113, 0, 0 } }, \
-+		{  816000000UL,	{  946079, 0, 0 } }, \
-+		{  918000000UL,	{  980045, 0, 0 } }, \
-+		{ 1020000000UL,	{ 1014011, 0, 0 } }, \
-+		{ 1122000000UL,	{ 1047977, 0, 0 } }, \
-+		{ 1224000000UL,	{ 1081943, 0, 0 } }, \
-+		{ 1326000000UL,	{ 1090000, 0, 0 } }, \
-+		{ 1479000000UL,	{ 1090000, 0, 0 } }, \
-+		{ 1504500000UL,	{ 1120000, 0, 0 } }, \
-+		{          0UL,	{       0, 0, 0 } }, \
-+	}
-+
-+#define CPU_CVB_TABLE_ODN \
-+	.speedo_scale =3D 100,	\
-+	.voltage_scale =3D 1000,	\
-+	.entries =3D {		\
-+		{  204000000UL,	{  721094, 0, 0 } }, \
-+		{  306000000UL,	{  754040, 0, 0 } }, \
-+		{  408000000UL,	{  786986, 0, 0 } }, \
-+		{  510000000UL,	{  819932, 0, 0 } }, \
-+		{  612000000UL,	{  852878, 0, 0 } }, \
-+		{  714000000UL,	{  885824, 0, 0 } }, \
-+		{  816000000UL,	{  918770, 0, 0 } }, \
-+		{  918000000UL,	{  915716, 0, 0 } }, \
-+		{ 1020000000UL,	{  984662, 0, 0 } }, \
-+		{ 1122000000UL,	{ 1017608, 0, 0 } }, \
-+		{ 1224000000UL,	{ 1050554, 0, 0 } }, \
-+		{ 1326000000UL,	{ 1083500, 0, 0 } }, \
-+		{ 1428000000UL,	{ 1116446, 0, 0 } }, \
-+		{ 1581000000UL,	{ 1130000, 0, 0 } }, \
-+		{ 1683000000UL,	{ 1168000, 0, 0 } }, \
-+		{ 1785000000UL,	{ 1227500, 0, 0 } }, \
-+		{          0UL,	{       0, 0, 0 } }, \
-+	}
-+
-+struct cvb_table tegra210_cpu_cvb_tables[] =3D {
-+	{
-+		.speedo_id =3D 10,
-+		.process_id =3D 0,
-+		.min_millivolts =3D 840,
-+		.max_millivolts =3D 1120,
-+		CPU_CVB_TABLE_EUCM2_JOINT_RAIL,
-+		.cpu_dfll_data =3D {
-+			.tune0_low =3D 0xffead0ff,
-+			.tune0_high =3D 0xffead0ff,
-+			.tune1 =3D 0x20091d9,
-+			.tune_high_min_millivolts =3D 864,
-+		}
-+	},
-+	{
-+		.speedo_id =3D 10,
-+		.process_id =3D 1,
-+		.min_millivolts =3D 840,
-+		.max_millivolts =3D 1120,
-+		CPU_CVB_TABLE_EUCM2_JOINT_RAIL,
-+		.cpu_dfll_data =3D {
-+			.tune0_low =3D 0xffead0ff,
-+			.tune0_high =3D 0xffead0ff,
-+			.tune1 =3D 0x20091d9,
-+			.tune_high_min_millivolts =3D 864,
-+		}
-+	},
-+	{
-+		.speedo_id =3D 9,
-+		.process_id =3D 0,
-+		.min_millivolts =3D 900,
-+		.max_millivolts =3D 1162,
-+		CPU_CVB_TABLE_EUCM2,
-+		.cpu_dfll_data =3D {
-+			.tune0_low =3D 0xffead0ff,
-+			.tune0_high =3D 0xffead0ff,
-+			.tune1 =3D 0x20091d9,
-+		}
-+	},
-+	{
-+		.speedo_id =3D 9,
-+		.process_id =3D 1,
-+		.min_millivolts =3D 900,
-+		.max_millivolts =3D 1162,
-+		CPU_CVB_TABLE_EUCM2,
-+		.cpu_dfll_data =3D {
-+			.tune0_low =3D 0xffead0ff,
-+			.tune0_high =3D 0xffead0ff,
-+			.tune1 =3D 0x20091d9,
-+		}
-+	},
-+	{
-+		.speedo_id =3D 8,
-+		.process_id =3D 0,
-+		.min_millivolts =3D 900,
-+		.max_millivolts =3D 1195,
-+		CPU_CVB_TABLE_EUCM2,
-+		.cpu_dfll_data =3D {
-+			.tune0_low =3D 0xffead0ff,
-+			.tune0_high =3D 0xffead0ff,
-+			.tune1 =3D 0x20091d9,
-+		}
-+	},
-+	{
-+		.speedo_id =3D 8,
-+		.process_id =3D 1,
-+		.min_millivolts =3D 900,
-+		.max_millivolts =3D 1195,
-+		CPU_CVB_TABLE_EUCM2,
-+		.cpu_dfll_data =3D {
-+			.tune0_low =3D 0xffead0ff,
-+			.tune0_high =3D 0xffead0ff,
-+			.tune1 =3D 0x20091d9,
-+		}
-+	},
-+	{
-+		.speedo_id =3D 7,
-+		.process_id =3D 0,
-+		.min_millivolts =3D 841,
-+		.max_millivolts =3D 1227,
-+		CPU_CVB_TABLE_EUCM1,
-+		.cpu_dfll_data =3D {
-+			.tune0_low =3D 0xffead0ff,
-+			.tune0_high =3D 0xffead0ff,
-+			.tune1 =3D 0x20091d9,
-+			.tune_high_min_millivolts =3D 864,
-+		}
-+	},
-+	{
-+		.speedo_id =3D 7,
-+		.process_id =3D 1,
-+		.min_millivolts =3D 841,
-+		.max_millivolts =3D 1227,
-+		CPU_CVB_TABLE_EUCM1,
-+		.cpu_dfll_data =3D {
-+			.tune0_low =3D 0xffead0ff,
-+			.tune0_high =3D 0xffead0ff,
-+			.tune1 =3D 0x20091d9,
-+			.tune_high_min_millivolts =3D 864,
-+		}
-+	},
-+	{
-+		.speedo_id =3D 6,
-+		.process_id =3D 0,
-+		.min_millivolts =3D 870,
-+		.max_millivolts =3D 1150,
-+		CPU_CVB_TABLE,
-+		.cpu_dfll_data =3D {
-+			.tune0_low =3D 0xffead0ff,
-+			.tune1 =3D 0x20091d9,
-+		}
-+	},
-+	{
-+		.speedo_id =3D 6,
-+		.process_id =3D 1,
-+		.min_millivolts =3D 870,
-+		.max_millivolts =3D 1150,
-+		CPU_CVB_TABLE,
-+		.cpu_dfll_data =3D {
-+			.tune0_low =3D 0xffead0ff,
-+			.tune1 =3D 0x25501d0,
-+		}
-+	},
-+	{
-+		.speedo_id =3D 5,
-+		.process_id =3D 0,
-+		.min_millivolts =3D 818,
-+		.max_millivolts =3D 1227,
-+		CPU_CVB_TABLE,
-+		.cpu_dfll_data =3D {
-+			.tune0_low =3D 0xffead0ff,
-+			.tune0_high =3D 0xffead0ff,
-+			.tune1 =3D 0x20091d9,
-+			.tune_high_min_millivolts =3D 864,
-+		}
-+	},
-+	{
-+		.speedo_id =3D 5,
-+		.process_id =3D 1,
-+		.min_millivolts =3D 818,
-+		.max_millivolts =3D 1227,
-+		CPU_CVB_TABLE,
-+		.cpu_dfll_data =3D {
-+			.tune0_low =3D 0xffead0ff,
-+			.tune0_high =3D 0xffead0ff,
-+			.tune1 =3D 0x25501d0,
-+			.tune_high_min_millivolts =3D 864,
-+		}
-+	},
-+	{
-+		.speedo_id =3D 4,
-+		.process_id =3D -1,
-+		.min_millivolts =3D 918,
-+		.max_millivolts =3D 1113,
-+		CPU_CVB_TABLE_XA,
-+		.cpu_dfll_data =3D {
-+			.tune0_low =3D 0xffead0ff,
-+			.tune1 =3D 0x17711BD,
-+		}
-+	},
-+	{
-+		.speedo_id =3D 3,
-+		.process_id =3D 0,
-+		.min_millivolts =3D 825,
-+		.max_millivolts =3D 1227,
-+		CPU_CVB_TABLE_ODN,
-+		.cpu_dfll_data =3D {
-+			.tune0_low =3D 0xffead0ff,
-+			.tune0_high =3D 0xffead0ff,
-+			.tune1 =3D 0x20091d9,
-+			.tune_high_min_millivolts =3D 864,
-+		}
-+	},
-+	{
-+		.speedo_id =3D 3,
-+		.process_id =3D 1,
-+		.min_millivolts =3D 825,
-+		.max_millivolts =3D 1227,
-+		CPU_CVB_TABLE_ODN,
-+		.cpu_dfll_data =3D {
-+			.tune0_low =3D 0xffead0ff,
-+			.tune0_high =3D 0xffead0ff,
-+			.tune1 =3D 0x25501d0,
-+			.tune_high_min_millivolts =3D 864,
-+		}
-+	},
-+	{
-+		.speedo_id =3D 2,
-+		.process_id =3D 0,
-+		.min_millivolts =3D 870,
-+		.max_millivolts =3D 1227,
-+		CPU_CVB_TABLE,
-+		.cpu_dfll_data =3D {
-+			.tune0_low =3D 0xffead0ff,
-+			.tune1 =3D 0x20091d9,
-+		}
-+	},
-+	{
-+		.speedo_id =3D 2,
-+		.process_id =3D 1,
-+		.min_millivolts =3D 870,
-+		.max_millivolts =3D 1227,
-+		CPU_CVB_TABLE,
-+		.cpu_dfll_data =3D {
-+			.tune0_low =3D 0xffead0ff,
-+			.tune1 =3D 0x25501d0,
-+		}
-+	},
-+	{
-+		.speedo_id =3D 1,
-+		.process_id =3D 0,
-+		.min_millivolts =3D 837,
-+		.max_millivolts =3D 1227,
-+		CPU_CVB_TABLE,
-+		.cpu_dfll_data =3D {
-+			.tune0_low =3D 0xffead0ff,
-+			.tune0_high =3D 0xffead0ff,
-+			.tune1 =3D 0x20091d9,
-+			.tune_high_min_millivolts =3D 864,
-+		}
-+	},
-+	{
-+		.speedo_id =3D 1,
-+		.process_id =3D 1,
-+		.min_millivolts =3D 837,
-+		.max_millivolts =3D 1227,
-+		CPU_CVB_TABLE,
-+		.cpu_dfll_data =3D {
-+			.tune0_low =3D 0xffead0ff,
-+			.tune0_high =3D 0xffead0ff,
-+			.tune1 =3D 0x25501d0,
-+			.tune_high_min_millivolts =3D 864,
-+		}
-+	},
-+	{
-+		.speedo_id =3D 0,
-+		.process_id =3D 0,
-+		.min_millivolts =3D 850,
-+		.max_millivolts =3D 1170,
-+		CPU_CVB_TABLE,
-+		.cpu_dfll_data =3D {
-+			.tune0_low =3D 0xffead0ff,
-+			.tune0_high =3D 0xffead0ff,
-+			.tune1 =3D 0x20091d9,
-+			.tune_high_min_millivolts =3D 864,
-+		}
-+	},
-+	{
-+		.speedo_id =3D 0,
-+		.process_id =3D 1,
-+		.min_millivolts =3D 850,
-+		.max_millivolts =3D 1170,
-+		CPU_CVB_TABLE,
-+		.cpu_dfll_data =3D {
-+			.tune0_low =3D 0xffead0ff,
-+			.tune0_high =3D 0xffead0ff,
-+			.tune1 =3D 0x25501d0,
-+			.tune_high_min_millivolts =3D 864,
-+		}
-+	},
-+};
-+
- static const struct dfll_fcpu_data tegra124_dfll_fcpu_data =3D {
- 	.cpu_max_freq_table =3D tegra124_cpu_max_freq_table,
- 	.cpu_max_freq_table_size =3D ARRAY_SIZE(tegra124_cpu_max_freq_table),
-@@ -95,11 +510,22 @@ static const struct dfll_fcpu_data tegra124_dfll_fcpu_=
-data =3D {
- 	.cpu_cvb_tables_size =3D ARRAY_SIZE(tegra124_cpu_cvb_tables)
- };
-=20
-+static const struct dfll_fcpu_data tegra210_dfll_fcpu_data =3D {
-+	.cpu_max_freq_table =3D tegra210_cpu_max_freq_table,
-+	.cpu_max_freq_table_size =3D ARRAY_SIZE(tegra210_cpu_max_freq_table),
-+	.cpu_cvb_tables =3D tegra210_cpu_cvb_tables,
-+	.cpu_cvb_tables_size =3D ARRAY_SIZE(tegra210_cpu_cvb_tables),
-+};
-+
- static const struct of_device_id tegra124_dfll_fcpu_of_match[] =3D {
- 	{
- 		.compatible =3D "nvidia,tegra124-dfll",
- 		.data =3D &tegra124_dfll_fcpu_data,
- 	},
-+	{
-+		.compatible =3D "nvidia,tegra210-dfll",
-+		.data =3D &tegra210_dfll_fcpu_data
-+	},
- 	{ },
- };
-=20
-diff --git a/drivers/clk/tegra/cvb.h b/drivers/clk/tegra/cvb.h
-index bcf15a089b93..91a1941c21ef 100644
---- a/drivers/clk/tegra/cvb.h
-+++ b/drivers/clk/tegra/cvb.h
-@@ -41,6 +41,7 @@ struct cvb_cpu_dfll_data {
- 	u32 tune0_low;
- 	u32 tune0_high;
- 	u32 tune1;
-+	unsigned int tune_high_min_millivolts;
- };
-=20
- struct cvb_table {
+ static int __init tegra_cpufreq_init(void)
 --=20
 2.19.2
 
