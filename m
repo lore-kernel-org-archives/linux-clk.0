@@ -2,196 +2,111 @@ Return-Path: <SRS0=bPXJ=OW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43F91C65BAE
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Dec 2018 16:46:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1F5CC65BAE
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Dec 2018 16:51:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F23D920851
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Dec 2018 16:46:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 95D8E2086D
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Dec 2018 16:51:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eU+Mot8J"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F23D920851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="vzydl2eu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95D8E2086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729348AbeLMQqH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Dec 2018 11:46:07 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:42775 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729021AbeLMQqG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Dec 2018 11:46:06 -0500
-Received: by mail-wr1-f68.google.com with SMTP id q18so2706147wrx.9;
-        Thu, 13 Dec 2018 08:46:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=IDuOQAKWc2hSXR3ae1rDE3cg8G3Tm4Isy24SAo7xkRc=;
-        b=eU+Mot8JXmLbmXTfCFGrb3vlqD3Akeh4DqN5o9XmByLhgodlIVUAUbw2suVxpJqdGV
-         T4mcmq8wuw41u8kxiv2tYi6QglYB7jhqAdwQnpCSnU/mrmRq5bBAYfmI4Ad3TuPDkoqr
-         jwmgiBwT6tawrXo03mWuyK2Ok2sEdnTaqH2qud5M2+3gAfg0fsSAQgew+NXecmYhj95B
-         jaZ+rkEEjbtSbBl6044k0sRonMj+5+UMqKKfnhnwMochGGZMU/NWdQf1ybbZkoleeohx
-         vkubRRWjdwspnwxBwwhGDvfd3aBBIZs+f5v8zM0LtfcfAZJuzGwworp4Z5pInE6BnR5R
-         CepA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=IDuOQAKWc2hSXR3ae1rDE3cg8G3Tm4Isy24SAo7xkRc=;
-        b=JM6m1N9dNRJ0B8sC6jtWnsGuz1gUcfWkLZdUv9+2951dVyoWK/434OOBq9us5XwYMA
-         o+fOoPCQ1PFstTtS1+BqAKLdDn21Kvzlelw+9X7yGHSTF5IQkDLJjSmL+y9dI7qIeI/b
-         4hhaEAkbdbJyuJbyrhuaXXxYey/aNlRwBfWCPjdv68knWnjJy38gKfOM4SK42TVNxMLY
-         nTEEoFgKObq0OIve2rpClqr+jeEeFC0rcFvFihQ9Lw2IecQGQVRqJ7eKYXXiL5jr5Qy7
-         tB0TN1VnnPLcdB+ZmbswlYX/ww3zN5WOTHH5lWprQ9DMqbPyiX8sQ/nGl6ffsKMHApia
-         0adA==
-X-Gm-Message-State: AA+aEWbgdZvMOWNwB9PZO0yZArghM1bJYRr3gBIID70AgenFxa/VOWPQ
-        Aj6hCXVWEpswFkEmMt5H6zk=
-X-Google-Smtp-Source: AFSGD/XhRTJsK9cgb5F5mhVJ6KrV6O14In3TBDhG4HOFuZht6xkEGkezxe6qRXGUDq0u0dnQKKrGtA==
-X-Received: by 2002:adf:a4d9:: with SMTP id h25mr20606707wrb.167.1544719564497;
-        Thu, 13 Dec 2018 08:46:04 -0800 (PST)
-Received: from [192.168.1.4] (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
-        by smtp.gmail.com with ESMTPSA id y12sm1937830wmi.7.2018.12.13.08.46.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 13 Dec 2018 08:46:03 -0800 (PST)
-Subject: Re: [PATCH V2] clk: vc5: Add suspend/resume support
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Alexey Firago <alexey_firago@mentor.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-References: <20181212014130.18634-1-marek.vasut+renesas@gmail.com>
- <1632836.JPXSTA8kTp@avalon> <904df663-92e1-7891-b897-9cd0de1b1521@gmail.com>
- <3136523.fA2jzEL6tu@avalon>
-From:   Marek Vasut <marek.vasut@gmail.com>
-Message-ID: <7c418bb0-5ac8-fcfa-4fda-1e33c55b4c46@gmail.com>
-Date:   Thu, 13 Dec 2018 17:17:24 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <3136523.fA2jzEL6tu@avalon>
-Content-Type: text/plain; charset=windows-1252
+        id S1727942AbeLMQvX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Dec 2018 11:51:23 -0500
+Received: from mail-eopbgr50078.outbound.protection.outlook.com ([40.107.5.78]:21686
+        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727600AbeLMQvW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 13 Dec 2018 11:51:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=m4T7eatUFSR14mBcKey4DbkBntTsT4T7+k6Jp6eJyYA=;
+ b=vzydl2euznx90LqwzBQfCU4/p21wpLCseGXLQ/fxY92mvKjRKUjNtCxufRZu+vHPB56yvD5iRXYieaCy6Duk5ADYxSs9X5q5Fv8CP8eXLCXHla++OYDKGjU7l6i22tEgsImjfxSPmdLP2QRqa8t94J9A3/meTw/1JHW2DxY8zEE=
+Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.126.21) by
+ AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.126.21) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1404.19; Thu, 13 Dec 2018 16:51:18 +0000
+Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
+ ([fe80::31e3:2aa6:8d93:9927]) by AM0PR04MB4211.eurprd04.prod.outlook.com
+ ([fe80::31e3:2aa6:8d93:9927%2]) with mapi id 15.20.1404.026; Thu, 13 Dec 2018
+ 16:51:18 +0000
+From:   Aisheng Dong <aisheng.dong@nxp.com>
+To:     Daniel Baluta <daniel.baluta@gmail.com>,
+        Abel Vesa <abel.vesa@nxp.com>
+CC:     "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "olof@lixom.net" <olof@lixom.net>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>
+Subject: RE: [PATCH] clk: imx: Make the i.MX8MQ CCM clock driver CLK_IMX8MQ
+ dependant
+Thread-Topic: [PATCH] clk: imx: Make the i.MX8MQ CCM clock driver CLK_IMX8MQ
+ dependant
+Thread-Index: AQHUkv9IB3KEsUBSeEGaC3/cu+N6C6V82jQAgAAGgnA=
+Date:   Thu, 13 Dec 2018 16:51:18 +0000
+Message-ID: <AM0PR04MB4211C143F6BEDD5716E746AA80A00@AM0PR04MB4211.eurprd04.prod.outlook.com>
+References: <1544717789-27388-1-git-send-email-abel.vesa@nxp.com>
+ <CAEnQRZC+frwbcdA657v5SB_u1z=FaOFOFrQxuNXsWNrDgnPzGA@mail.gmail.com>
+In-Reply-To: <CAEnQRZC+frwbcdA657v5SB_u1z=FaOFOFrQxuNXsWNrDgnPzGA@mail.gmail.com>
+Accept-Language: zh-CN, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=aisheng.dong@nxp.com; 
+x-originating-ip: [101.93.238.110]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM0PR04MB4211;6:YMvk2NqV85Gh3HRWXY6hYrB2azIiUwWsII77DQec2RaAAEu1XXtExitUn5hThmoeERA8i8+KqaGOzNf36N7GkjrzUkta2LjutV5ckzexye9A6smWJYIxvVhk7yS1+UD0vimM9Ci4KUhy6DGtLIZKevNrZhRRSQ/kvfoUVxT9mqRKaitwPaViRpogRTsPoA44xWJqljs7PbVrKJo0vxepvFvv5Gee+M+YdKwAS1pMchZnsq2Sooz+dWNQTq4iQZ53AYqQp+NttOp4uWXLC+0F9pLlBUaPQVBBn5q0+82oVX58s57qkh9GwAAL6j/lchReI7TwqXxHEJzmPXjL0ALhJKON8Kw6dXknu+/2sLfTy/nDDSd1WvjDggwr563DMiOpfKOpYc1t+joi2uGHJyMP7A2JtMiSd7i+MsfHa/PUIElBjq7ZO3bxs8taQbtUGHw4vQzo+z/WSiL+5a/eeTtRKA==;5:ued2tpnYr/OvZZ2z5r0PYg42ngJOP2iPToT1dDZKTWSQmfTC5ekuBtu1frGfPH0ymd9Ca4xkuzZ5reKjOJ8nN5Rn6WIibTsNI+vsbvQ95OIVL7gBK5ts2czaTUGjkk+zr4ETdSCcmu5HDu88xHnO/Bvvgni3I8Wfrut0GoMTdJI=;7:1YQ0Z3SCvm/wbgd4C1c7kE85h2vFyw7VRfkebAmBWf2E9jObQ35xfrlkrpwCPKTk7wVpB1yJxYLongjYm3kj2NtrOjMnO2tarj35D4UiZzAt50E+cjtEaMBTQaswdoutgPyWguHsDEMjUbsbzFYLAA==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 6dba0fd2-cf4f-4d83-f0ad-08d6611b33ff
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB4211;
+x-ms-traffictypediagnostic: AM0PR04MB4211:
+x-microsoft-antispam-prvs: <AM0PR04MB421121CD6AA64D877318E4A180A00@AM0PR04MB4211.eurprd04.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(6040522)(2401047)(8121501046)(5005006)(3231475)(944501520)(52105112)(10201501046)(3002001)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(20161123564045)(20161123562045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:AM0PR04MB4211;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB4211;
+x-forefront-prvs: 088552DE73
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(136003)(39860400002)(366004)(346002)(376002)(52314003)(189003)(199004)(7736002)(476003)(11346002)(25786009)(71190400001)(486006)(44832011)(229853002)(68736007)(305945005)(446003)(33656002)(5660300001)(81166006)(2906002)(6636002)(6506007)(66066001)(71200400001)(8676002)(478600001)(6436002)(14454004)(81156014)(186003)(4326008)(26005)(102836004)(6116002)(3846002)(105586002)(97736004)(106356001)(8936002)(53936002)(7696005)(9686003)(74316002)(256004)(54906003)(76176011)(86362001)(99286004)(39060400002)(55016002)(110136005)(6246003)(316002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4211;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: L1zSdBE1ymq2nbX6BHtmQXiQtyPA+8aNoo0J0AMTJtShuCixre1ZCpMz5B0cubawr159hRXpcWpQ8fatVl96o3P+4WqPsXojSw8pTfa5MWJHP7j84eL5tYK9yCMyjDzRIz2gsdd9LD+GZWHd9th9Hu4W6nTsBd0Wrkaqv1UiyPiuwNLfodobLKRFzGGvv9uzYrQIdezZJ52UaFgveCynAHyJQfh6WoR1O79o6sMn39E5IXq4VAIlxt7PZ9OqG6p7xtyO0xn4H+6LJD4PVHzTd5bVohJF5l0BLyJhIEB34HkTmsCdr3xBSXDFlTDRgXQB
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6dba0fd2-cf4f-4d83-f0ad-08d6611b33ff
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Dec 2018 16:51:18.2395
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4211
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 12/13/2018 05:52 AM, Laurent Pinchart wrote:
-> Hi Marek,
-
-Hi,
-
-> On Thursday, 13 December 2018 04:09:19 EET Marek Vasut wrote:
->> On 12/12/2018 09:43 AM, Laurent Pinchart wrote:
->>> On Wednesday, 12 December 2018 03:41:30 EET Marek Vasut wrote:
->>>> Add simple suspend/resume handlers to the driver to restore the chip
->>>> configuration after resume. It is possible that the chip was configured
->>>> with non-default values before suspend-resume cycle and that the chip
->>>> is powered down during this cycle, so the configuration could get lost.
->>>>
->>>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
->>>> Cc: Alexey Firago <alexey_firago@mentor.com>
->>>> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
->>>> Cc: Michael Turquette <mturquette@baylibre.com>
->>>> Cc: Stephen Boyd <sboyd@codeaurora.org>
->>>> Cc: linux-renesas-soc@vger.kernel.org
->>>> ---
->>>> V2: Replace ifdef with __maybe_unused
->>>>
->>>>     Simplify return value handling in resume
->>>>
->>>> ---
->>>>
->>>>  drivers/clk/clk-versaclock5.c | 31 +++++++++++++++++++++++++++++++
->>>>  1 file changed, 31 insertions(+)
->>>>
->>>> diff --git a/drivers/clk/clk-versaclock5.c
->>>> b/drivers/clk/clk-versaclock5.c
->>>> index decffb3826ec..b66586a3abb7 100644
->>>> --- a/drivers/clk/clk-versaclock5.c
->>>> +++ b/drivers/clk/clk-versaclock5.c
->>>> @@ -906,6 +906,34 @@ static int vc5_remove(struct i2c_client *client)
->>>>  	return 0;
->>>>  }
->>>>
->>>> +static int __maybe_unused vc5_suspend(struct device *dev)
->>>> +{
->>>> +	struct vc5_driver_data *vc5 = dev_get_drvdata(dev);
->>>> +	int ret;
->>>> +
->>>> +	ret = regcache_sync(vc5->regmap);
->>>
->>> Didn't you say the sync here was unneeded and would be dropped ?
->>>
->>>> +	if (ret != 0) {
->>>> +		dev_err(dev, "Failed to save register map: %d\n", ret);
->>>> +		return ret;
->>>> +	}
->>
->> If you have a setup with working DU and VGA on something close to next
->> (it's broken in next), can you try dropping this hunk (basically do
->> ret = 0;//regcache_sync(vc5->regmap); ) and see if the regcache stays
->> consistent ? It should. If so, I'll drop this in V3.
->>
->>>> +	regcache_cache_only(vc5->regmap, true);
->>>> +	regcache_mark_dirty(vc5->regmap);
->>
->> [...]
-> 
-> Here's my test procedure:
-> 
-> - Boot the board
-> - Dump the VC5 state (into vc5-next+*-1-boot.log)
-> - Enable the VGA output with kmstest -c VGA-1
-
-I didn't know this was needed, all right.
-
-> - Dump the VC5 state (into vc5-next+*-2-display-on.log)
-> - Suspend and resume
-> - Dump the VC5 state (into vc5-next+*-3-post-suspend.log)
-> - Stop kmstest
-> - Dump the VC5 state (into vc5-next+*-4-display-off.log)
-> 
-> To dump the VC5 state, I use
-> 
-> -----------------------------------------------------------------------------
-> #!/bin/sh
-> 
-> echo "-------- i2cdump --------"
-> i2cdump -f -y 4 0x6a
-> 
-> for f in /sys/kernel/debug/regmap/4-006a/* ; do
->         echo "-------- $f --------"
->         cat $f
-> done
-> -----------------------------------------------------------------------------
-> 
-> The base kernel version is v4.20-rc6 + the fixes branch from linux media. I've 
-> tested the following three configurations, in order:
-> 
-> next+0 - Base
-> next+1 - Base + this patch
-> next+2 - Base + this patch + removal of regcache_sync() from vc5_suspend()
-> 
-> With base, the VGA output would remain off after resume, and running kmstest 
-> again wouldn't help. With the other two configurations the problem is fixed 
-> and the VGA output is functional.
-> 
-> Furthermore, there are no differences in the VC5 dumps between next+1 and 
-> next+2, neither are there between the boot and display-on dumps between any of 
-> the three configurations.
-> 
-> I've attached the logs to this e-mail.
-
-Thanks for the test, I sent out a V3 without the regcache_sync() .
-
--- 
-Best regards,
-Marek Vasut
+Wy4uLl0NCg0KPiA+IC0tLSBhL2RyaXZlcnMvY2xrL2lteC9NYWtlZmlsZQ0KPiA+ICsrKyBiL2Ry
+aXZlcnMvY2xrL2lteC9NYWtlZmlsZQ0KPiA+IEBAIC0zNCw1ICszNCw2IEBAIG9iai0kKENPTkZJ
+R19TT0NfSU1YNlNYKSArPSBjbGstaW14NnN4Lm8NCj4gPiAgb2JqLSQoQ09ORklHX1NPQ19JTVg2
+VUwpICs9IGNsay1pbXg2dWwubw0KPiA+ICBvYmotJChDT05GSUdfU09DX0lNWDdEKSAgKz0gY2xr
+LWlteDdkLm8NCj4gPiAgb2JqLSQoQ09ORklHX1NPQ19JTVg3VUxQKSArPSBjbGstaW14N3VscC5v
+DQo+ID4gLW9iai0kKENPTkZJR19TT0NfSU1YOE1RKSArPSBjbGstaW14OG1xLm8NCj4gPiAgb2Jq
+LSQoQ09ORklHX1NPQ19WRjYxMCkgICs9IGNsay12ZjYxMC5vDQo+ID4gKw0KPiA+ICtvYmotJChD
+T05GSUdfQ0xLX0lNWDhNUSkgKz0gY2xrLWlteDhtcS5vDQo+IA0KPiBOaXQ6IERvIHdlIHdhbnQg
+dG8ga2VlcCBDT05GSUdfIHNvcnRlZD8NCg0KSU1ITyBJdCBtaWdodCBiZSBva2F5IHRvIG1ha2Ug
+TVg4IChBUk02NCkgYSBuZXcgZ3JvdXAgdG8gc3RhcnQNClRvIGdldCBhIGNsZWFyIHNlcGFyYXRp
+b24uIChTbGlnaHRseSBub3Qgc29ydGVkIGR1ZSB0byBWRjYxMCkNCkFueXdheSwgaXQgbGVhdmVz
+IHRvIFN0ZXBoZW4gdG8gbWFrZSB0aGUganVkZ2UuDQoNClJlZ2FyZHMNCkRvbmcgQWlzaGVuZw0K
