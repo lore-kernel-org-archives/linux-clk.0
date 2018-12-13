@@ -2,119 +2,87 @@ Return-Path: <SRS0=bPXJ=OW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7D73C65BAE
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Dec 2018 17:09:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42D7DC65BAE
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Dec 2018 19:36:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C14B20851
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Dec 2018 17:09:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="dY2fxuPN";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="K7g7mBjN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C14B20851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id D3AA820870
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Dec 2018 19:36:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544729782;
+	bh=5Lk5CdTHmRY4t+blL2zeIHiMM+B3ZNO9k98hvL6UXHg=;
+	h=In-Reply-To:Subject:To:References:From:Cc:Date:List-ID:From;
+	b=QvLYvFd6GPyExyZ2EWrL11yM/Fpx7hnUPJizA3DRAUtcJRsSxeMIN0WBonetiPvfb
+	 oFGSZrdAIS1jwsOEYUrPIrDZHdM5ywwM+8Is+5voAccGew+nML7qwoxeRbDkgvim3r
+	 dC+v9rS42ej+uaLxwIWIGCP+c6LpdX5l9/IO6/cY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3AA820870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727984AbeLMRJW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Dec 2018 12:09:22 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:44440 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727775AbeLMRJW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Dec 2018 12:09:22 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id C8C04608FF; Thu, 13 Dec 2018 17:09:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1544720961;
-        bh=7W2RS0AZlLIaSl6nh7HXG6MNVr2oYC/ut88J6IALeDk=;
-        h=From:To:Cc:Subject:Date:From;
-        b=dY2fxuPN0Qaslih9HtCb8E9XdZ22ECGEz2bHelXW/Xapro+ief3kjWpPPFQuDFdsU
-         mLibpEpaW6/N6PH0DaX67yQFmPxKq8+NSFU8/H7VkIce3FUjEKfF6cIwvFpPD3rz5u
-         DjMyHk3n40AspYg6GaOHiGwt7rQc/UfRMg3AGomw=
-Received: from jhugo-perf-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        id S1727786AbeLMTgW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Dec 2018 14:36:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56440 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726465AbeLMTgW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 13 Dec 2018 14:36:22 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: jhugo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 078DF608FF;
-        Thu, 13 Dec 2018 17:09:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1544720960;
-        bh=7W2RS0AZlLIaSl6nh7HXG6MNVr2oYC/ut88J6IALeDk=;
-        h=From:To:Cc:Subject:Date:From;
-        b=K7g7mBjN4Mz/OWZI0L6FnILK5BBHlStIfcJwncaI4UZqMWMaDvh+eUiPoSqQmLSZe
-         eT4GCOCLXCESoTxB0DC+oU5VS9y3sK/5RQWYc1+UAMpoYJ8lHRBTU9AlnD9TOEieKQ
-         oS5W98UIaE1CWPraUpTexIHbq5Bvos93YkIulmvk=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 078DF608FF
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
-From:   Jeffrey Hugo <jhugo@codeaurora.org>
-To:     sboyd@kernel.org, andy.gross@linaro.org, david.brown@linaro.org,
-        mturquette@baylibre.com
+        by mail.kernel.org (Postfix) with ESMTPSA id 81F8D2086D;
+        Thu, 13 Dec 2018 19:36:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544729781;
+        bh=5Lk5CdTHmRY4t+blL2zeIHiMM+B3ZNO9k98hvL6UXHg=;
+        h=In-Reply-To:Subject:To:References:From:Cc:Date:From;
+        b=LCzIXalZPXtfVERJAzxnCfKY65QjxaYZ+WlibU+E5TZAHuoFYtF/OyPeaiThd9fFc
+         plMaZWx6ZmwgeOeYc1qp+nMvt/ewHv96ZQNRHQJFzOD1yu+MYWr3/g8ihMlBICpFxL
+         4/AYZ1KttPv98u8FioHAOGCNatP/nIqLJfHhU+i4=
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1544720370-11598-1-git-send-email-jhugo@codeaurora.org>
+Subject: Re: [PATCH] clk: qcom: Leave mmss noc on for 8998
+To:     Jeffrey Hugo <jhugo@codeaurora.org>, andy.gross@linaro.org,
+        david.brown@linaro.org, mturquette@baylibre.com
+References: <1544720370-11598-1-git-send-email-jhugo@codeaurora.org>
+Message-ID: <154472978059.19322.5895645487468845661@swboyd.mtv.corp.google.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+User-Agent: alot/0.8
 Cc:     bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         marc.w.gonzalez@free.fr, Jeffrey Hugo <jhugo@codeaurora.org>
-Subject: [PATCH v2] clk: qcom: Drop unused 8998 clock
-Date:   Thu, 13 Dec 2018 10:09:09 -0700
-Message-Id: <1544720949-18404-1-git-send-email-jhugo@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+Date:   Thu, 13 Dec 2018 11:36:20 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-gcc_lpass_trig_clk is not used downstream, therefore there is no reason to
-expect it to be needed for clients.  Let's remove it because messing with
-the clock has been observed to cause Linux hangs when the qdss_clk is
-initialized by rpmcc.
+Quoting Jeffrey Hugo (2018-12-13 08:59:30)
+> Similar to other qcom targets, gcc_mmss_noc_cfg_ahb_clk should not be
+> disabled.  Any mmss access depends on this clock, and its been observed
+> that enabling mmssnoc_axi_rpm_clk with rpmcc results in an implicit
+> access to mmss and will crash the system if gcc_mmss_noc_cfg_ahb_clk is
+> disabled.
+>=20
+> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
+> ---
+>  drivers/clk/qcom/gcc-msm8998.c | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/drivers/clk/qcom/gcc-msm8998.c b/drivers/clk/qcom/gcc-msm899=
+8.c
+> index 4b75a09..b371308 100644
+> --- a/drivers/clk/qcom/gcc-msm8998.c
+> +++ b/drivers/clk/qcom/gcc-msm8998.c
+> @@ -2014,6 +2014,7 @@ enum {
+>                 .hw.init =3D &(struct clk_init_data){
+>                         .name =3D "gcc_mmss_noc_cfg_ahb_clk",
+>                         .ops =3D &clk_branch2_ops,
+> +                       .flags =3D CLK_IGNORE_UNUSED,
 
-Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
-Reviewed-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
----
-
-v2:
--corrected commit text per Marc
--added Marc's reviewed-by
-
- drivers/clk/qcom/gcc-msm8998.c | 14 --------------
- 1 file changed, 14 deletions(-)
-
-diff --git a/drivers/clk/qcom/gcc-msm8998.c b/drivers/clk/qcom/gcc-msm8998.c
-index f3c2ab4..4b75a09 100644
---- a/drivers/clk/qcom/gcc-msm8998.c
-+++ b/drivers/clk/qcom/gcc-msm8998.c
-@@ -2005,19 +2005,6 @@ enum {
- 	},
- };
- 
--static struct clk_branch gcc_lpass_trig_clk = {
--	.halt_reg = 0x4701c,
--	.halt_check = BRANCH_HALT,
--	.clkr = {
--		.enable_reg = 0x4701c,
--		.enable_mask = BIT(0),
--		.hw.init = &(struct clk_init_data){
--			.name = "gcc_lpass_trig_clk",
--			.ops = &clk_branch2_ops,
--		},
--	},
--};
--
- static struct clk_branch gcc_mmss_noc_cfg_ahb_clk = {
- 	.halt_reg = 0x9004,
- 	.halt_check = BRANCH_HALT,
-@@ -2710,7 +2697,6 @@ enum {
- 	[GCC_HMSS_AT_CLK] = &gcc_hmss_at_clk.clkr,
- 	[GCC_HMSS_RBCPR_CLK] = &gcc_hmss_rbcpr_clk.clkr,
- 	[GCC_HMSS_TRIG_CLK] = &gcc_hmss_trig_clk.clkr,
--	[GCC_LPASS_TRIG_CLK] = &gcc_lpass_trig_clk.clkr,
- 	[GCC_MMSS_NOC_CFG_AHB_CLK] = &gcc_mmss_noc_cfg_ahb_clk.clkr,
- 	[GCC_MMSS_QM_AHB_CLK] = &gcc_mmss_qm_ahb_clk.clkr,
- 	[GCC_MMSS_QM_CORE_CLK] = &gcc_mmss_qm_core_clk.clkr,
--- 
-Qualcomm Datacenter Technologies as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+It should be marked as CLK_IS_CRITICAL and a comment should be added to
+the code indicating why it's critical.
 
