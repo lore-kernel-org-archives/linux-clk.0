@@ -2,40 +2,41 @@ Return-Path: <SRS0=bPXJ=OW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,UPPERCASE_50_75,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5461DC65BAE
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Dec 2018 13:17:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C97BC67839
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Dec 2018 13:18:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0197420849
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Dec 2018 13:17:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC62E20849
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Dec 2018 13:18:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="m3u5XPIs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0197420849
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="m3RYvhoZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC62E20849
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729364AbeLMNRp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Dec 2018 08:17:45 -0500
+        id S1729285AbeLMNRx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Dec 2018 08:17:53 -0500
 Received: from mail-eopbgr30086.outbound.protection.outlook.com ([40.107.3.86]:44700
         "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729285AbeLMNRp (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 13 Dec 2018 08:17:45 -0500
+        id S1729366AbeLMNRw (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 13 Dec 2018 08:17:52 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IttkqedxI7/eKcmWVjuNP4AGS1Eow4wq+J6L9CzuYm0=;
- b=m3u5XPIsDnHQVpOCr8aw/kkei+U2c1Eq7nojeLxBaP3ydeRbaxtOEOUYg9o/27r8ssxNAsk3x0+9MSGuzMqRTEmv9IhQKVxEvwtcafBBd1mTa7i3WAPsE214+nKIDtEpvHQl2niKcXVbtSyNC0ZMQTeoVz8GLuoMd65WuJUBH8Q=
+ bh=79Ryls9WoN2uPfg8zdg2z5SwKrCJUkH6KSy1ovwm9kQ=;
+ b=m3RYvhoZ+LQQjfyKBNxVrrbgSYINvdMNMMyHcCgodLvUOVhaRTPaXVEsIHEXPsWzWla98KKRbeS3CfQaJKYVTLtlc47xB//QDrBEt0tNzbq48rmzfUwmU3H71lazmUJ3kLexBjVFd/re6AN/F++xKqV5nuT+EIXHdNDVENPxKC4=
 Received: from DB3PR0402MB3658.eurprd04.prod.outlook.com (52.134.65.28) by
  DB3PR0402MB3692.eurprd04.prod.outlook.com (52.134.65.15) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1425.19; Thu, 13 Dec 2018 13:17:40 +0000
+ 15.20.1425.19; Thu, 13 Dec 2018 13:17:44 +0000
 Received: from DB3PR0402MB3658.eurprd04.prod.outlook.com
  ([fe80::ce5:fddb:6290:c5eb]) by DB3PR0402MB3658.eurprd04.prod.outlook.com
  ([fe80::ce5:fddb:6290:c5eb%5]) with mapi id 15.20.1425.016; Thu, 13 Dec 2018
- 13:17:40 +0000
+ 13:17:44 +0000
 From:   Abel Vesa <abel.vesa@nxp.com>
 To:     Shawn Guo <shawnguo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
         Aisheng Dong <aisheng.dong@nxp.com>
@@ -50,11 +51,13 @@ CC:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
         Lucas Stach <l.stach@pengutronix.de>,
         Fabio Estevam <fabio.estevam@nxp.com>,
         Abel Vesa <abel.vesa@nxp.com>
-Subject: [PATCH 0/3] i.MX8MQ build dependency fixes
-Thread-Topic: [PATCH 0/3] i.MX8MQ build dependency fixes
-Thread-Index: AQHUkuY53d/oCm2ngUK7tf7BE0j/Pw==
-Date:   Thu, 13 Dec 2018 13:17:40 +0000
-Message-ID: <1544707047-4417-1-git-send-email-abel.vesa@nxp.com>
+Subject: [PATCH 3/3] arm64: Add i.MX8 boot necesarry configs to defconfig
+Thread-Topic: [PATCH 3/3] arm64: Add i.MX8 boot necesarry configs to defconfig
+Thread-Index: AQHUkuY7xsi/enJXskWRpq5LGMGyIg==
+Date:   Thu, 13 Dec 2018 13:17:44 +0000
+Message-ID: <1544707047-4417-4-git-send-email-abel.vesa@nxp.com>
+References: <1544707047-4417-1-git-send-email-abel.vesa@nxp.com>
+In-Reply-To: <1544707047-4417-1-git-send-email-abel.vesa@nxp.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -67,27 +70,27 @@ authentication-results: spf=none (sender IP is )
  smtp.mailfrom=abel.vesa@nxp.com; 
 x-ms-exchange-messagesentrepresentingtype: 1
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DB3PR0402MB3692;6:sSoL9sSDXE+NtyHzavtOcPL7ehVOBNobph6Gf4ZtdVshrebJHyp5cw8+NduZMf9AZp9BWXt8uMJpe0B3KFzsIZ882bSD2+EZlfQ/dI+DdipP7yULulNwlrzvKTvHcYNUSae2chKy4pSSPE9gaZUNbteLTmylpU+8/uDaFlWC3MJyWYgMU4uf8IV7zj51dQj59jPpJb6UI3Ui0E4UXKsWvCrxdr53tzxZlLxCGtqANaIkW/o5Ji+4X8to0bxqQF2vitHewUzdoMeVEymwtgQ9u89khSDW0O8HmBdHII2hJdh4/jxopsQ9ZKRfCGNHmSPg4qEHSyEW/O2zDUrJVP7YDuaFBN1Tcc47VCfe4imbLAWPUF12vHRJsecnWSiWJJAzgPJivJvR93L7OiXTezoSz7dMs2Mi2L7mwt4rqCdysB7LIxTsSKtDXEYmnI6xuV9RrOshT5HH7qyZxo41TtCFRw==;5:WHwAibX17l9xQwwOLKK8OCrnGT7AVJI+wPxvutak3Kpa6mA41y9br+7KlvUjDqLGiFiMf4bgV8xzgq46xj91sAoZ0gnM3wSG41ZK82aVS6wHNv7gKZ7RerHMomoeKoXgP73HMk6XO51NMo99yoFyZM3jPGCJl9zvrArOs2MY5wk=;7:NMGfMacHLhUmWf2cdiM6fgBFMZyRd1tOuyagzx5M2Zpse/oZf3AHTBexr2BZ0z8PdQqzmMW8dNnfWqbnMshrmrT0Y9Ew6O1OqcxygJUOFPywu6KHXbIs6ud1SrVEslWBbiyxe2nKNTLiQ7BQA4ACTg==
-x-ms-office365-filtering-correlation-id: 42726cc9-5244-4b25-e65c-08d660fd5bf0
+x-microsoft-exchange-diagnostics: 1;DB3PR0402MB3692;6:owjKpEKlIXGMqCYxTtgVzhNSRxqN0puyEvY2+M5SBC9g93RsmkKN495LKmgnCwH9ypNfYCREavwiaN7a+v/QAfjBX383CXjpw53wWrzC4oklWild71QTkRXbD9MwEKXA8O7N7FInfD7XKg/Paw7uWsn0D/c6jrhOcdFC8QGWiL10WtkVsG6wN9Sk/HgLxiH7Yz/Tunw2qgfIxJDq37Ygeh3TkuEbfW/Gv+1cuQqcX8TxYI09jQWxL4oSqiO0feL07KOxtPpmYm8bm8uZWdW7JZOFReLMqpkT8WNvkc+5fp9jBKSoZEr1oNsC8pO66zKc0MOD//EnG3ZRE2HavCAF2ZSnSJJHTfBrfpkNhGXB/pXmPr4uU3QOqHJBBN94in5E+nI1R4o1pbP53WPw1ss7xrWAW75+DbDi0x/SwGaocBTMwq4xuDsl92Au4D5GLt292eitEzgyfDn+XIHsLCWxqQ==;5:HH9mCLWxb+2ifwfW6D+8lUPM+R/tCTg35DlsmvvLtByKv1AhG1ELLr9U8HeXz/djkJAJjM/689s2FeOOlYyxMyx4VcQ0D/9LoRGV16irdLf9efEkG4rSCKeJUHo6P6kCUyZeOjy3Q53o6MwbV0JnC9hakFpHOuGt0o785nqUm+8=;7:0JhnQbtCWt+s6lW7L2+2cByc+Z+JcMRTS+5BPlXqBgAuxxAoqrI60eitusng4YvK1ziME3xJeiu4KxlLAMZXjC3CJVJ0tHCxUIU7h/4SDsqMEL/QOsbxgqOfLJC0KEzv4SE13GPnBeMORherqZqQuQ==
+x-ms-office365-filtering-correlation-id: 320dbb52-4647-4120-2137-08d660fd5e42
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DB3PR0402MB3692;
 x-ms-traffictypediagnostic: DB3PR0402MB3692:
-x-microsoft-antispam-prvs: <DB3PR0402MB3692DB5F2303EE85121DFF8FF6A00@DB3PR0402MB3692.eurprd04.prod.outlook.com>
+x-microsoft-antispam-prvs: <DB3PR0402MB3692031EE5F6E09F4B5F294DF6A00@DB3PR0402MB3692.eurprd04.prod.outlook.com>
 x-ms-exchange-senderadcheck: 1
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(6040522)(2401047)(5005006)(8121501046)(3002001)(3231475)(944501520)(52105112)(10201501046)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123562045)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:DB3PR0402MB3692;BCL:0;PCL:0;RULEID:;SRVR:DB3PR0402MB3692;
 x-forefront-prvs: 088552DE73
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(366004)(376002)(136003)(39860400002)(396003)(199004)(189003)(81166006)(36756003)(8936002)(486006)(186003)(25786009)(305945005)(2616005)(476003)(26005)(2906002)(68736007)(8676002)(81156014)(6486002)(14454004)(386003)(7416002)(478600001)(6436002)(6636002)(5660300001)(6506007)(256004)(6512007)(86362001)(66066001)(106356001)(105586002)(7736002)(54906003)(110136005)(14444005)(102836004)(316002)(71190400001)(71200400001)(44832011)(52116002)(3846002)(6116002)(53936002)(97736004)(99286004)(4326008);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3692;H:DB3PR0402MB3658.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(366004)(376002)(136003)(39860400002)(396003)(199004)(189003)(81166006)(36756003)(8936002)(486006)(186003)(25786009)(305945005)(2616005)(11346002)(446003)(76176011)(476003)(26005)(2906002)(68736007)(8676002)(81156014)(6486002)(14454004)(386003)(7416002)(478600001)(6436002)(6636002)(5660300001)(6506007)(256004)(6512007)(86362001)(66066001)(106356001)(105586002)(7736002)(54906003)(110136005)(102836004)(316002)(71190400001)(71200400001)(44832011)(52116002)(3846002)(6116002)(53936002)(97736004)(99286004)(4326008);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3692;H:DB3PR0402MB3658.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: W1lkyMcUT0SLpUzqd0io/oHF2GjKV5UqfkaGLvnyr7i0CaSK/r6zj6fOSq0xzQVFp5x9WTzruemRWNr2yciejdvEvrt7/gMBOFqId6a9guCJt80FyM2g+xVkdUH9846nJ5CUCChzo/YQh2pc0+OkJm8/RU4sdBWvWuOqmPSPK31cOoSH8mXtiR9j5YU3Sf4h2/1gHot+HymKnuDqG18LlNyIKV08nQc8WfJjUneW1JwMdFuKTi1YB3w471omvhBRAR9hAdGbHruLbSG1HemFPo+tRXrjmEkY9Q98c8Sexn7QpM82gucInK94Jww9qHqk
+x-microsoft-antispam-message-info: qyw0JUxUeVhF+3y+16bEMgQ3yyA/NsIWUoeLaaaMyrCQaK8jK4T3GXEvJDJvWBFoqP76K9L5QxwyXkoWR1GDxWk1/w1+sRJT+HC3tsgceC4nY88AlkmwqWLG+FB0j/NdqVReRXIQUFgVfajqU18X2TuqjkJuydaRrRxPoFHSH5bWzm68D2RLleSTY5qkRG+bu6MIMeWTMNNC1HzguQ9NjemqPt/U5XWDazHljKL2k9jVYT6KsR2hn45W7uCDylHl3VeDOS/RIZxUSlXQLwtcdVQ3ZVPnepJ3Ng/VvuF2gSeMX/iIN/8ptKs2x1PNNybM
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 42726cc9-5244-4b25-e65c-08d660fd5bf0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Dec 2018 13:17:40.8362
+X-MS-Exchange-CrossTenant-Network-Message-Id: 320dbb52-4647-4120-2137-08d660fd5e42
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Dec 2018 13:17:44.6770
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
@@ -97,26 +100,52 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-These patches will probably have to be take through different
-trees, but the order has to be kept otherwise this won't work.
+The CONFIG_ARCH_MXC will enable all the i.MX8 SoC.
+Also add the FEC config for ethernet support, the serial
+and the pinctrl for i.MX8MQ.
 
-I can resend as separate patches (if necessary) as long as we can
-get them in together.
+Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+---
+ arch/arm64/configs/defconfig | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Abel Vesa (3):
-  arm64: Remove CONFIG_SOC_IMX8MQ and use ARCH_MXC instead
-  clk: imx: Build imx8mq clocks on arm64 only
-  arm64: Add i.MX8 boot necesarry configs to defconfig
-
- arch/arm64/Kconfig.platforms           |  8 --------
- arch/arm64/boot/dts/freescale/Makefile |  2 +-
- arch/arm64/configs/defconfig           |  5 +++++
- drivers/clk/imx/Makefile               | 11 ++++++-----
- drivers/phy/freescale/Kconfig          |  2 +-
- drivers/pinctrl/freescale/Kconfig      |  2 +-
- drivers/soc/imx/Kconfig                |  2 +-
- 7 files changed, 15 insertions(+), 17 deletions(-)
-
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 5c2b1f6..a129e5e 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -45,6 +45,7 @@ CONFIG_ARCH_HISI=3Dy
+ CONFIG_ARCH_MEDIATEK=3Dy
+ CONFIG_ARCH_MESON=3Dy
+ CONFIG_ARCH_MVEBU=3Dy
++CONFIG_ARCH_MXC=3Dy
+ CONFIG_ARCH_QCOM=3Dy
+ CONFIG_ARCH_ROCKCHIP=3Dy
+ CONFIG_ARCH_SEATTLE=3Dy
+@@ -226,6 +227,7 @@ CONFIG_NET_XGENE=3Dy
+ CONFIG_ATL1C=3Dm
+ CONFIG_MACB=3Dy
+ CONFIG_THUNDER_NIC_PF=3Dy
++CONFIG_FEC=3Dy
+ CONFIG_HIX5HD2_GMAC=3Dy
+ CONFIG_HNS_DSAF=3Dy
+ CONFIG_HNS_ENET=3Dy
+@@ -300,6 +302,8 @@ CONFIG_SERIAL_MESON_CONSOLE=3Dy
+ CONFIG_SERIAL_SAMSUNG=3Dy
+ CONFIG_SERIAL_SAMSUNG_CONSOLE=3Dy
+ CONFIG_SERIAL_TEGRA=3Dy
++CONFIG_SERIAL_IMX=3Dy
++CONFIG_SERIAL_IMX_CONSOLE=3Dy
+ CONFIG_SERIAL_SH_SCI=3Dy
+ CONFIG_SERIAL_MSM=3Dy
+ CONFIG_SERIAL_MSM_CONSOLE=3Dy
+@@ -346,6 +350,7 @@ CONFIG_SPI_SPIDEV=3Dm
+ CONFIG_SPMI=3Dy
+ CONFIG_PINCTRL_SINGLE=3Dy
+ CONFIG_PINCTRL_MAX77620=3Dy
++CONFIG_PINCTRL_IMX8MQ=3Dy
+ CONFIG_PINCTRL_IPQ8074=3Dy
+ CONFIG_PINCTRL_MSM8916=3Dy
+ CONFIG_PINCTRL_MSM8994=3Dy
 --=20
 2.7.4
 
