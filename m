@@ -7,38 +7,41 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1578C67839
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Dec 2018 09:35:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74EF1C65BAE
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Dec 2018 09:35:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2F282080F
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Dec 2018 09:35:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 35DE72080F
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Dec 2018 09:35:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="rDY8pqF4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2F282080F
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="ZrMis8t0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35DE72080F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727884AbeLMJfM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Dec 2018 04:35:12 -0500
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:18384 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727754AbeLMJfL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Dec 2018 04:35:11 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c1227cb0000>; Thu, 13 Dec 2018 01:35:07 -0800
+        id S1727892AbeLMJfN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Dec 2018 04:35:13 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:8147 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727063AbeLMJfJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Dec 2018 04:35:09 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c1227c80000>; Thu, 13 Dec 2018 01:35:04 -0800
 Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 13 Dec 2018 01:35:10 -0800
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Thu, 13 Dec 2018 01:35:08 -0800
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 13 Dec 2018 01:35:10 -0800
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL107.nvidia.com
+        by hqpgpgate102.nvidia.com on Thu, 13 Dec 2018 01:35:08 -0800
+Received: from HQMAIL112.nvidia.com (172.18.146.18) by HQMAIL107.nvidia.com
  (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 13 Dec
- 2018 09:35:10 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
- Transport; Thu, 13 Dec 2018 09:35:10 +0000
+ 2018 09:35:08 +0000
+Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL112.nvidia.com
+ (172.18.146.18) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 13 Dec
+ 2018 09:35:08 +0000
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
+ Transport; Thu, 13 Dec 2018 09:35:08 +0000
 Received: from josephl-linux.nvidia.com (Not Verified[10.19.108.132]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5c1227cd0001>; Thu, 13 Dec 2018 01:35:10 -0800
+        id <B5c1227ca0005>; Thu, 13 Dec 2018 01:35:08 -0800
 From:   Joseph Lo <josephl@nvidia.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Peter De Schrijver <pdeschrijver@nvidia.com>,
@@ -46,9 +49,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
 CC:     <linux-arm-kernel@lists.infradead.org>,
         <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
         Joseph Lo <josephl@nvidia.com>
-Subject: [PATCH V2 09/21] clk: tegra: dfll: add protection for find_vdd_map APIs
-Date:   Thu, 13 Dec 2018 17:34:26 +0800
-Message-ID: <20181213093438.29621-10-josephl@nvidia.com>
+Subject: [PATCH V2 08/21] clk: tegra: dfll: round down voltages based on alignment
+Date:   Thu, 13 Dec 2018 17:34:25 +0800
+Message-ID: <20181213093438.29621-9-josephl@nvidia.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181213093438.29621-1-josephl@nvidia.com>
 References: <20181213093438.29621-1-josephl@nvidia.com>
@@ -57,62 +60,107 @@ X-NVConfidentiality: public
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1544693707; bh=HAfEKjzYprxlPBOEemM+ZU5kIUKVvi6v5gdpSPuX82Q=;
+        t=1544693704; bh=/9b0vccXVbSsPPDgtuaNPJXlfIPgbx2xijk4gBTdtP4=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:MIME-Version:X-NVConfidentiality:
          Content-Transfer-Encoding:Content-Type;
-        b=rDY8pqF46YJ0xXMULIH+P0hsiNlS6N0YZeKXA4B23l/DybOWdWguGsCW3eVJjfM4k
-         h1C4+76ntDtUKo9hssCHse7unSb0ik8ezhkVy7Vef+drY4l2CovlJ0c9bjoF9/CJkR
-         sQ4TcfhVRtitk2FypAlqU/IMbwf2j1OTFrXleK1OsysXBBqWtENUQGEB91zsMQBSU8
-         qZWLdLQ+1QoKXFoCLnCPzCrcap3dD2Ukt1Ua75NTnqoZ79PUCFeXCgmZOQ4/8VIVLg
-         +4G0r/J1brDWANz9SgmznaU2GWPHz4X+0/HT8zS+5SUI6DLIu37gS2NevgGMmoDRwg
-         eWoYOFFz0LgfA==
+        b=ZrMis8t0yZiUf6YoPWFFZXWj8rD2JtmIpFwNciC81dTuEal6h0fUEo890mdsqPDMc
+         9StlYhTfU+oeXBnROymY1+nBafyGvyJYf32Xgj/okQe5W/RsU1xhQ3c+zmsanUuq7m
+         Xjb2by8tnj9mdDcDvpBOfsVn8hg3i4+fI6Uz/lyyZFLYsk5syzbtKqRk/xwquM+1To
+         u6Ir7wnLWEWCbunZLh9dHPgN5DSt+JKYtOPm8q3L5dSgKhEnarIYV1ygWWj4aPC3be
+         11XAgAH0kowXClce6f61h+UBGRF/11EQBmdxA3dy+JqF0LUgrcPurINagI4I8gExGm
+         lkhye8XRtoaNg==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The DFLL hardware supports both I2C and PWM based regulator. SW driver
-only touches I2C regulator when generating LUT. And shouldn't touch it
-anymore once the DFLL is enabled.
+When generating the OPP table, the voltages are round down with the
+alignment from the regulator. The alignment should be applied for
+voltages look up as well.
 
-This patch adds the protection for the APIs that only work with I2C mode
-to avoid they could be called accidentally.
+Based on the work of Penny Chiu <pchiu@nvidia.com>.
 
 Signed-off-by: Joseph Lo <josephl@nvidia.com>
 ---
 *V2:
- - new added patch in V2
+ - s/align_volt/align_step/
+ - s/reg_volt/reg_volt_id/
 ---
- drivers/clk/tegra/clk-dfll.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/clk/tegra/clk-dfll.c | 26 +++++++++++++++-----------
+ 1 file changed, 15 insertions(+), 11 deletions(-)
 
 diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
-index b3668073d9b4..93cc86f17f7b 100644
+index 72e02898006c..b3668073d9b4 100644
 --- a/drivers/clk/tegra/clk-dfll.c
 +++ b/drivers/clk/tegra/clk-dfll.c
-@@ -1534,6 +1534,9 @@ static int find_vdd_map_entry_exact(struct tegra_dfll=
- *td, int uV)
+@@ -804,17 +804,17 @@ static void dfll_init_out_if(struct tegra_dfll *td)
+ static int find_lut_index_for_rate(struct tegra_dfll *td, unsigned long ra=
+te)
  {
- 	int i, n_voltages, reg_volt_id, align_step;
+ 	struct dev_pm_opp *opp;
+-	int i, uv;
++	int i, align_step;
 =20
-+	if (WARN_ON(td->pmu_if =3D=3D TEGRA_DFLL_PMU_PWM))
-+		return -EINVAL;
-+
- 	align_step =3D uV / td->soc->alignment.step_uv;
+ 	opp =3D dev_pm_opp_find_freq_ceil(td->soc->dev, &rate);
+ 	if (IS_ERR(opp))
+ 		return PTR_ERR(opp);
+=20
+-	uv =3D dev_pm_opp_get_voltage(opp);
++	align_step =3D dev_pm_opp_get_voltage(opp) / td->soc->alignment.step_uv;
+ 	dev_pm_opp_put(opp);
+=20
+ 	for (i =3D td->lut_bottom; i < td->lut_size; i++) {
+-		if (td->lut_uv[i] >=3D uv)
++		if ((td->lut_uv[i] / td->soc->alignment.step_uv) >=3D align_step)
+ 			return i;
+ 	}
+=20
+@@ -1532,15 +1532,17 @@ static int dfll_init(struct tegra_dfll *td)
+  */
+ static int find_vdd_map_entry_exact(struct tegra_dfll *td, int uV)
+ {
+-	int i, n_voltages, reg_uV;
++	int i, n_voltages, reg_volt_id, align_step;
+=20
++	align_step =3D uV / td->soc->alignment.step_uv;
  	n_voltages =3D regulator_count_voltages(td->vdd_reg);
  	for (i =3D 0; i < n_voltages; i++) {
-@@ -1558,6 +1561,9 @@ static int find_vdd_map_entry_min(struct tegra_dfll *=
-td, int uV)
- {
- 	int i, n_voltages, reg_volt_id, align_step;
+-		reg_uV =3D regulator_list_voltage(td->vdd_reg, i);
+-		if (reg_uV < 0)
++		reg_volt_id =3D regulator_list_voltage(td->vdd_reg, i) /
++			      td->soc->alignment.step_uv;
++		if (reg_volt_id < 0)
+ 			break;
 =20
-+	if (WARN_ON(td->pmu_if =3D=3D TEGRA_DFLL_PMU_PWM))
-+		return -EINVAL;
-+
- 	align_step =3D uV / td->soc->alignment.step_uv;
+-		if (uV =3D=3D reg_uV)
++		if (align_step =3D=3D reg_volt_id)
+ 			return i;
+ 	}
+=20
+@@ -1554,15 +1556,17 @@ static int find_vdd_map_entry_exact(struct tegra_df=
+ll *td, int uV)
+  * */
+ static int find_vdd_map_entry_min(struct tegra_dfll *td, int uV)
+ {
+-	int i, n_voltages, reg_uV;
++	int i, n_voltages, reg_volt_id, align_step;
+=20
++	align_step =3D uV / td->soc->alignment.step_uv;
  	n_voltages =3D regulator_count_voltages(td->vdd_reg);
  	for (i =3D 0; i < n_voltages; i++) {
+-		reg_uV =3D regulator_list_voltage(td->vdd_reg, i);
+-		if (reg_uV < 0)
++		reg_volt_id =3D regulator_list_voltage(td->vdd_reg, i) /
++			      td->soc->alignment.step_uv;
++		if (reg_volt_id < 0)
+ 			break;
+=20
+-		if (uV <=3D reg_uV)
++		if (align_step <=3D reg_volt_id)
+ 			return i;
+ 	}
+=20
 --=20
 2.19.2
 
