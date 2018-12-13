@@ -6,65 +6,69 @@ X-Spam-Status: No, score=-4.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CA80C65BAE
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Dec 2018 19:49:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82548C67839
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Dec 2018 19:49:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC8882086D
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Dec 2018 19:49:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D9B72086D
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Dec 2018 19:49:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544730570;
-	bh=fm5UmYkgQ6WRq/+JmcaPnDTkmmGVN7qkhKj9RuF9Krc=;
+	s=default; t=1544730574;
+	bh=fwpEhYnAitTkI58HnEDWfuYQSDqXGjoA5pgdrzVMneE=;
 	h=In-Reply-To:Subject:To:References:From:Cc:Date:List-ID:From;
-	b=H6133PH5erGvkelpOJDUmOaqyRrhBLFdfH7xznJ1Dt8QGaIJwg1LxVogugbbUFQBx
-	 v284Z8DlBpWmp7Q8LI3yVt41v0o4H+9XwBVqaO8i0PPUwlqyJDtrpXvf6CMFK4Ekz+
-	 KICHQHhNo2N0RYVRfO2E/AGkWUaVmUIovnKsCYR0=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC8882086D
+	b=RvVRHNAbLkI+sAl3WldJYMvYf2HNi9004GZjXom69/d2SkRiZ6rj3uSePH2cMzu/g
+	 HD5/dynLAFRmGiwJZCxNnqTHLdgd+QzEFwzW5qglBhd6erssuFEx7Z8Iert9TOG0gM
+	 0y0q1TswD468kZLRAGFWfB1Zy1AGD5SpedRV8C5c=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D9B72086D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728437AbeLMTt3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Dec 2018 14:49:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35624 "EHLO mail.kernel.org"
+        id S1729099AbeLMTtd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Dec 2018 14:49:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35720 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728023AbeLMTt3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 13 Dec 2018 14:49:29 -0500
+        id S1728128AbeLMTtc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 13 Dec 2018 14:49:32 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 96A302086D;
-        Thu, 13 Dec 2018 19:49:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EDB6D20870;
+        Thu, 13 Dec 2018 19:49:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544730568;
-        bh=fm5UmYkgQ6WRq/+JmcaPnDTkmmGVN7qkhKj9RuF9Krc=;
+        s=default; t=1544730572;
+        bh=fwpEhYnAitTkI58HnEDWfuYQSDqXGjoA5pgdrzVMneE=;
         h=In-Reply-To:Subject:To:References:From:Cc:Date:From;
-        b=rmXNSUQWBIuILonEx+9loVLA/KQ6YGWZm0Fv6BwWV/gWw2xFQaxpfS0qF/wQmRIcH
-         /GB0yw8iuL6jVmUfn3HrOblOFUaP6uOtofzCgpifL9r3/S1UkYZsdn+prGWUEKkZJn
-         MndbWJmEAkcuvH9O4j9Ux/nC1y38yF2xzfcccJAE=
+        b=EepJRaH5NyLnRVTer2m+JN+OSAj1JxO+3DQ4Thmq8znyg+WrODMDl1UXbRNGtw6f/
+         H4o+2PULSAACGpAJrHgTueabG6dWegcwnAFstOyspyneLUcDA30yX55j4mmNhzkuyf
+         Zma6vgvUPl3wq0tZc28mzwKBCm7p8f9dHEyZvH34=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20181206215858.3880-7-sboyd@kernel.org>
-Subject: Re: [PATCH 6/8] clk: versatile: sp810: Remove usage of CLK_IS_BASIC
+In-Reply-To: <20181206215858.3880-8-sboyd@kernel.org>
+Subject: Re: [PATCH 7/8] clk: samsung: s3c2410: Remove usage of CLK_IS_BASIC
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
-References: <20181206215858.3880-1-sboyd@kernel.org> <20181206215858.3880-7-sboyd@kernel.org>
-Message-ID: <154473056792.19322.17686768139057371781@swboyd.mtv.corp.google.com>
+References: <20181206215858.3880-1-sboyd@kernel.org> <20181206215858.3880-8-sboyd@kernel.org>
+Message-ID: <154473057112.19322.13875835469680558809@swboyd.mtv.corp.google.com>
 From:   Stephen Boyd <sboyd@kernel.org>
 User-Agent: alot/0.8
 Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 13 Dec 2018 11:49:27 -0800
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>
+Date:   Thu, 13 Dec 2018 11:49:31 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Stephen Boyd (2018-12-06 13:58:56)
+Quoting Stephen Boyd (2018-12-06 13:58:57)
 > This flag doesn't look to be used by any code, just set in the clk init
-> structure and then never tested again. Remove it from this driver as it
+> structure and then never tested again. Remove it from this drivers as it
 > doesn't provide any benefit.
 >=20
-> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Kukjin Kim <kgene@kernel.org>
+> Cc: Krzysztof Kozlowski <krzk@kernel.org>
+> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
 > Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 > ---
 
