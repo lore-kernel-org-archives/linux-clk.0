@@ -2,104 +2,101 @@ Return-Path: <SRS0=bPXJ=OW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9239CC65BAE
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Dec 2018 04:40:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24BDDC65BAE
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Dec 2018 04:41:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46C4520849
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Dec 2018 04:40:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544676015;
-	bh=bjxYaD8HVrmIx8uz5j2E58Eiup7UbzoqqXgJuPimOQE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=RWVJmzNoPdXiOYx+gko0jeak9GGPvERfb6mrrgPN4jc7OpaWBDxXwwi6DlKa6ePBi
-	 1RNFAy7MCH40E/iGJQPkUPkPM6B9GVK3tlGIWGAdirJzGL6bOKXEbZjGoQqDBQITux
-	 086v5M6sCwnXwVQOdMbflkNAjgd8sjFmiit0fLzI=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46C4520849
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id E5BE120849
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Dec 2018 04:41:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5BE120849
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729080AbeLMEc2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Dec 2018 23:32:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45368 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729076AbeLMEc1 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 12 Dec 2018 23:32:27 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 67E1C20672;
-        Thu, 13 Dec 2018 04:32:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544675547;
-        bh=bjxYaD8HVrmIx8uz5j2E58Eiup7UbzoqqXgJuPimOQE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JhSUDHY/zKaVyDzeahYG9fRM0X5ThaAN4K+o04/DwBamQcrkcgSVT8h0NMa3DW5NC
-         Bv8oS3WaA0UqnZcpJI2aMMcdYi1DwbQwUJ6MB7K+CVFai+S86AACnjeScNXWoumdQO
-         IlTo1YAXsCV5uu4OLrO3fx04Lq81vZhpMpHbsjKc=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 15/34] clk: mvebu: Off by one bugs in cp110_of_clk_get()
-Date:   Wed, 12 Dec 2018 23:31:41 -0500
-Message-Id: <20181213043200.76295-15-sashal@kernel.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181213043200.76295-1-sashal@kernel.org>
-References: <20181213043200.76295-1-sashal@kernel.org>
+        id S1727986AbeLMElo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Dec 2018 23:41:44 -0500
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:58396 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728683AbeLMElo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Dec 2018 23:41:44 -0500
+Received: from [10.18.29.207] (10.18.29.207) by mail-sh2.amlogic.com
+ (10.18.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Thu, 13 Dec
+ 2018 12:42:02 +0800
+Subject: Re: [PATCH RESEND v7 1/4] clk: meson: add emmc sub clock phase delay
+ driver
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+CC:     Yixun Lan <yixun.lan@amlogic.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Liang Yang <liang.yang@amlogic.com>,
+        Jian Hu <jian.hu@amlogic.com>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+References: <1544457877-51301-1-git-send-email-jianxin.pan@amlogic.com>
+ <1544457877-51301-2-git-send-email-jianxin.pan@amlogic.com>
+ <8e1c711b477eeee60809f33926cf9c6a52f530cd.camel@baylibre.com>
+From:   Jianxin Pan <jianxin.pan@amlogic.com>
+Message-ID: <33721ac4-3564-1347-3b7b-2c795db63851@amlogic.com>
+Date:   Thu, 13 Dec 2018 12:42:02 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.2
 MIME-Version: 1.0
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <8e1c711b477eeee60809f33926cf9c6a52f530cd.camel@baylibre.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.18.29.207]
+X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
+ (10.18.11.6)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+HI Jerome,
 
-[ Upstream commit d9f5b7f5dd0fa74a89de5a7ac1e26366f211ccee ]
-
-These > comparisons should be >= to prevent reading beyond the end of
-of the clk_data->hws[] buffer.
-
-The clk_data->hws[] array is allocated in cp110_syscon_common_probe()
-when we do:
-	cp110_clk_data = devm_kzalloc(dev, sizeof(*cp110_clk_data) +
-				      sizeof(struct clk_hw *) * CP110_CLK_NUM,
-				      GFP_KERNEL);
-As you can see, it has CP110_CLK_NUM elements which is equivalent to
-CP110_MAX_CORE_CLOCKS + CP110_MAX_GATABLE_CLOCKS.
-
-Fixes: d3da3eaef7f4 ("clk: mvebu: new driver for Armada CP110 system controller")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/clk/mvebu/cp110-system-controller.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/mvebu/cp110-system-controller.c b/drivers/clk/mvebu/cp110-system-controller.c
-index f2303da7fda7..465953c75320 100644
---- a/drivers/clk/mvebu/cp110-system-controller.c
-+++ b/drivers/clk/mvebu/cp110-system-controller.c
-@@ -172,11 +172,11 @@ static struct clk *cp110_of_clk_get(struct of_phandle_args *clkspec, void *data)
- 	unsigned int idx = clkspec->args[1];
- 
- 	if (type == CP110_CLK_TYPE_CORE) {
--		if (idx > CP110_MAX_CORE_CLOCKS)
-+		if (idx >= CP110_MAX_CORE_CLOCKS)
- 			return ERR_PTR(-EINVAL);
- 		return clk_data->clks[idx];
- 	} else if (type == CP110_CLK_TYPE_GATABLE) {
--		if (idx > CP110_MAX_GATABLE_CLOCKS)
-+		if (idx >= CP110_MAX_GATABLE_CLOCKS)
- 			return ERR_PTR(-EINVAL);
- 		return clk_data->clks[CP110_MAX_CORE_CLOCKS + idx];
- 	}
--- 
-2.19.1
+On 2018/12/12 0:28, Jerome Brunet wrote:
+> On Tue, 2018-12-11 at 00:04 +0800, Jianxin Pan wrote:
+>> From: Yixun Lan <yixun.lan@amlogic.com>
+>>
+[...]
+>> +
+>> +static inline struct meson_clk_phase_delay_data *
+>> +meson_clk_get_phase_delay_data(struct clk_regmap *clk)
+>> +{
+>> +	return clk->data;
+>> +}
+> 
+> This is only usefull in the related clock driver, no need to export it
+OK, I will move it to clk-phase-delay.c.
+Thanks for the review.
+> 
+>> +
+>>  /* clk_ops */
+>>  extern const struct clk_ops meson_clk_pll_ro_ops;
+>>  extern const struct clk_ops meson_clk_pll_ops;
+>> @@ -112,5 +124,6 @@ struct clk_regmap _name = {				
+>> 		\
+>>  extern const struct clk_ops meson_clk_mpll_ro_ops;
+>>  extern const struct clk_ops meson_clk_mpll_ops;
+>>  extern const struct clk_ops meson_clk_phase_ops;
+>> +extern const struct clk_ops meson_clk_phase_delay_ops;
+>>  
+>>  #endif /* __CLKC_H */
+> 
+> 
+> .
+> 
 
