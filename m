@@ -2,214 +2,121 @@ Return-Path: <SRS0=bPXJ=OW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AB47C67839
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Dec 2018 08:03:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4F3CC65BAE
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Dec 2018 08:13:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCAA220672
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Dec 2018 08:03:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCAA220672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
+	by mail.kernel.org (Postfix) with ESMTP id 8F0ED20849
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Dec 2018 08:13:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544688825;
+	bh=hdSxwL6L48BawQk84aJlwPIeau5JWl7HwWdpz6eEVcY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=d6cJbtruYa9a3KJLYKce8cvoHYhlmslhAxXnyYNRDBX5FYmE7XpU5kYCtK/hQnSs/
+	 nA2qcV+sVirmvNhZx//qSz3PqtYjMQxnSHIq/nSNKtZ6WW48wTW1NodJsD+VAj/60k
+	 hgtBbzpkRVvUyWcPkvSfE6bi4tEgWAjrGa5O55Ck=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F0ED20849
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727268AbeLMIDW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Dec 2018 03:03:22 -0500
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:32582 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726995AbeLMIDW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Dec 2018 03:03:22 -0500
-Received: from [10.18.29.207] (10.18.29.207) by mail-sh2.amlogic.com
- (10.18.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Thu, 13 Dec
- 2018 16:03:40 +0800
-Subject: Re: [PATCH RESEND v7 4/4] clk: meson: add one based divider support
- for sclk divider
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-CC:     Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
+        id S1727065AbeLMINp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Dec 2018 03:13:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46880 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726895AbeLMINp (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 13 Dec 2018 03:13:45 -0500
+Received: from dragon (61-216-91-114.HINET-IP.hinet.net [61.216.91.114])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 83D9E20672;
+        Thu, 13 Dec 2018 08:13:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544688823;
+        bh=hdSxwL6L48BawQk84aJlwPIeau5JWl7HwWdpz6eEVcY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Sscv4wFdgL2IdKX8eV/BP7/OwMEOne7iu887Yt2xkGBYEr+4Hn9+ZfZ06aCAQF0KP
+         N+JJHp5XctJ3Y6rfVX4w4u8gUTo8hs+MNsqbUlPD8oLItZdRj5or/9zmRwASP/S83i
+         CYxm1QVRCWQGDbNGF7v/RfYGf1Mv8IjlZuAkrGJw=
+Date:   Thu, 13 Dec 2018 16:12:41 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Olof Johansson <olof@lixom.net>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Yixun Lan <yixun.lan@amlogic.com>,
-        Liang Yang <liang.yang@amlogic.com>,
-        Jian Hu <jian.hu@amlogic.com>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Hanjie Lin <hanjie.lin@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1544457877-51301-1-git-send-email-jianxin.pan@amlogic.com>
- <1544457877-51301-5-git-send-email-jianxin.pan@amlogic.com>
- <4da764c237b8f752af1dc33a011e2a4b73068f02.camel@baylibre.com>
-From:   Jianxin Pan <jianxin.pan@amlogic.com>
-Message-ID: <d748a030-441f-dab0-83f7-aa8fc1106cb4@amlogic.com>
-Date:   Thu, 13 Dec 2018 16:03:39 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.2
+        Fabio Estevam <fabio.estevam@nxp.com>, linux-imx@nxp.com,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH V11 1/7] clk: imx: add configuration option for mmio clks
+Message-ID: <20181213081239.GB12458@dragon>
+References: <1544662938-5020-1-git-send-email-aisheng.dong@nxp.com>
+ <1544662938-5020-2-git-send-email-aisheng.dong@nxp.com>
+ <154468785263.19322.9529215687462426277@swboyd.mtv.corp.google.com>
+ <CAOesGMhFtawJLpHmXbxvs=z+S1jVW8n2VQVv1gMcWicrOxDWdA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <4da764c237b8f752af1dc33a011e2a4b73068f02.camel@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.18.29.207]
-X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
- (10.18.11.6)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOesGMhFtawJLpHmXbxvs=z+S1jVW8n2VQVv1gMcWicrOxDWdA@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Jerome,
+On Thu, Dec 13, 2018 at 04:02:34PM +0800, Olof Johansson wrote:
+...
+> > > diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+> > > index a47430b..8a9440a 100644
+> > > --- a/drivers/clk/Makefile
+> > > +++ b/drivers/clk/Makefile
+> > > @@ -72,7 +72,7 @@ obj-$(CONFIG_ARCH_DAVINCI)            += davinci/
+> > >  obj-$(CONFIG_H8300)                    += h8300/
+> > >  obj-$(CONFIG_ARCH_HISI)                        += hisilicon/
+> > >  obj-y                                  += imgtec/
+> > > -obj-$(CONFIG_ARCH_MXC)                 += imx/
+> > > +obj-y                                  += imx/
+> > >  obj-y                                  += ingenic/
+> > >  obj-$(CONFIG_ARCH_K3)                  += keystone/
+> > >  obj-$(CONFIG_ARCH_KEYSTONE)            += keystone/
+> > > diff --git a/drivers/clk/imx/Kconfig b/drivers/clk/imx/Kconfig
+> > > new file mode 100644
+> > > index 0000000..37478ba
+> > > --- /dev/null
+> > > +++ b/drivers/clk/imx/Kconfig
+> > > @@ -0,0 +1,5 @@
+> > > +# SPDX-License-Identifier: GPL-2.0
+> > > +# common clock support for NXP i.MX SoC family.
+> > > +config MXC_CLK
+> > > +       bool
+> > > +       def_bool (ARCH_MXC && !ARM64) || (ARCH_MXC && ARM64 && SOC_IMX8MQ)
+> >
+> > Ok I looked closer, SOC_IMX8MQ is only being introduced now and has only
+> > been in linux-next for a few days. Having such a config symbol is highly
+> > unusual for arm64 code. Has that been accepted by arm-soc? I don't know
+> > why it would be because we don't add SoC specific config options
+> > anymore. I imagine it will be rejected and we'll need to have this new
+> > MXC_CLK config be enabled in the defconfig instead of selected from the
+> > arch layer.
+> >
+> > Given all that, is there any damage if this is just a def_bool ARCH_MXC
+> > right now? If it's enabled on the platforms that don't use it because
+> > they have SCU, does it actually matter? Or we just get some code bloat?
+> > If it's just some extra code, then even more reason to make a user
+> > visible config option that can be selected in the configurations that
+> > care to save some space.
+> 
+> On arm64 we generally add an ARCH_<family> and leave it at that. So,
+> ARCH_MXC would be suitable, but we shouldn't add more finegrained than
+> that.
 
-Thanks for the fully review, we really appreciate your time.
+Olof,
 
-On 2018/12/12 1:16, Jerome Brunet wrote:
-> On Tue, 2018-12-11 at 00:04 +0800, Jianxin Pan wrote:
->> When CLK_DIVIDER_ONE_BASED flag is set, the sclk divider will be:
->> one based divider (div = val), and zero value gates the clock
->>
->> Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
->> ---
->>  drivers/clk/meson/clkc-audio.h |  1 +
->>  drivers/clk/meson/sclk-div.c   | 28 ++++++++++++++++++----------
->>  2 files changed, 19 insertions(+), 10 deletions(-)
-> 
-> Such a patch should be done earlier in the series, at least before using sclk
-> in your controller, otherwise thing will be broken in between
-> 
-I will move it to the first one of the patchset. 
-> In general, I would prefer if you had added two helper function to deal with
-> the translation between register value and divider value.
-> 
-> Only these function should care about CLK_DIVIDER_ONE_BASED, the rest should
-> just call them.
-> 
-> This, we will be able to deal the with HI (duty cycle) part as well, which you
-> completly skiped.
-> 
-> I know your device does not have this, but still the code has to make sense.
-> 
-OK, I will add two helper for value and register translation, and then appy them to both div and hi.
->>
->> diff --git a/drivers/clk/meson/clkc-audio.h b/drivers/clk/meson/clkc-audio.h
->> index 0a7c157..9bd6ced 100644
->> --- a/drivers/clk/meson/clkc-audio.h
->> +++ b/drivers/clk/meson/clkc-audio.h
->> @@ -20,6 +20,7 @@ struct meson_sclk_div_data {
->>  	struct parm hi;
->>  	unsigned int cached_div;
->>  	struct clk_duty cached_duty;
->> +	u8	flags;
->>  };
->>  
->>  extern const struct clk_ops meson_clk_triphase_ops;
->> diff --git a/drivers/clk/meson/sclk-div.c b/drivers/clk/meson/sclk-div.c
->> index bc64019..d98707b 100644
->> --- a/drivers/clk/meson/sclk-div.c
->> +++ b/drivers/clk/meson/sclk-div.c
->> @@ -24,22 +24,23 @@
->>  	return (struct meson_sclk_div_data *)clk->data;
->>  }
->>  
->> -static int sclk_div_maxval(struct meson_sclk_div_data *sclk)
->> -{
->> -	return (1 << sclk->div.width) - 1;
->> -}
->> -
->>  static int sclk_div_maxdiv(struct meson_sclk_div_data *sclk)
->>  {
->> -	return sclk_div_maxval(sclk) + 1;
->> +	if (sclk->flags & CLK_DIVIDER_ONE_BASED)
->> +		return clk_div_mask(sclk->div.width);
->> +	else
->> +		return clk_div_mask(sclk->div.width) + 1;
-> 
-> seems over complicated.
-> why no call clk_div_mask just once, and add 1 if necessary ?
-Yes, I will use helper here.
-> 
->>  }
->>  
->>  static int sclk_div_getdiv(struct clk_hw *hw, unsigned long rate,
->>  			   unsigned long prate, int maxdiv)
->>  {
->>  	int div = DIV_ROUND_CLOSEST_ULL((u64)prate, rate);
->> +	struct clk_regmap *clk = to_clk_regmap(hw);
->> +	struct meson_sclk_div_data *sclk = meson_sclk_div_data(clk);
->> +	int mindiv = (sclk->flags & CLK_DIVIDER_ONE_BASED) ? 1 : 2;
-> 
-> This is why I want helpers, don't like this above
-OK, I will replace it with helpers.
-> 
->>  
->> -	return clamp(div, 2, maxdiv);
->> +	return clamp(div, mindiv, maxdiv);
->>  }
->>  
->>  static int sclk_div_bestdiv(struct clk_hw *hw, unsigned long rate,
->> @@ -47,7 +48,7 @@ static int sclk_div_bestdiv(struct clk_hw *hw, unsigned
->> long rate,
->>  			    struct meson_sclk_div_data *sclk)
->>  {
->>  	struct clk_hw *parent = clk_hw_get_parent(hw);
->> -	int bestdiv = 0, i;
->> +	int bestdiv = 0, i, mindiv;
->>  	unsigned long maxdiv, now, parent_now;
->>  	unsigned long best = 0, best_parent = 0;
->>  
->> @@ -64,8 +65,9 @@ static int sclk_div_bestdiv(struct clk_hw *hw, unsigned
->> long rate,
->>  	 * unsigned long in rate * i below
->>  	 */
->>  	maxdiv = min(ULONG_MAX / rate, maxdiv);
->> +	mindiv = (sclk->flags & CLK_DIVIDER_ONE_BASED) ? 1 : 2;
->>  
->> -	for (i = 2; i <= maxdiv; i++) {
->> +	for (i = mindiv; i <= maxdiv; i++) {
->>  		/*
->>  		 * It's the most ideal case if the requested rate can be
->>  		 * divided from parent clock without needing to change
->> @@ -153,10 +155,14 @@ static int sclk_div_get_duty_cycle(struct clk_hw *hw,
->>  static void sclk_apply_divider(struct clk_regmap *clk,
->>  			       struct meson_sclk_div_data *sclk)
->>  {
->> +	unsigned int div;
->> +
->>  	if (MESON_PARM_APPLICABLE(&sclk->hi))
->>  		sclk_apply_ratio(clk, sclk);
->>  
->> -	meson_parm_write(clk->map, &sclk->div, sclk->cached_div - 1);
->> +	div = (sclk->flags & CLK_DIVIDER_ONE_BASED) ?
->> +		sclk->cached_div : (sclk->cached_div - 1);
-> 
-> helpers again.
-OK!
-> 
->> +	meson_parm_write(clk->map, &sclk->div, div);
->>  }
->>  
->>  static int sclk_div_set_rate(struct clk_hw *hw, unsigned long rate,
->> @@ -223,6 +229,8 @@ static void sclk_div_init(struct clk_hw *hw)
->>  	/* if the divider is initially disabled, assume max */
->>  	if (!val)
->>  		sclk->cached_div = sclk_div_maxdiv(sclk);
->> +	else if (sclk->flags & CLK_DIVIDER_ONE_BASED)
->> +		sclk->cached_div = val;
->>  	else
->>  		sclk->cached_div = val + 1;
-> 
-> same ...
-OK, I will fix them. Thanks again for your time!
-> 
->>  
-> 
-> 
-> .
-> 
+I'm just about to send pull request for i.MX8MQ support, which
+introduced SOC_IMX8MQ option.  It sounds like we should rework the
+patches to get SOC_IMX8MQ killed?
 
+Shawn
