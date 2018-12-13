@@ -2,149 +2,151 @@ Return-Path: <SRS0=bPXJ=OW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4A0EC67839
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Dec 2018 16:17:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0088EC67839
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Dec 2018 16:18:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E6A020879
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Dec 2018 16:17:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B8C8320879
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Dec 2018 16:18:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="mU6C0RXq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E6A020879
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bQ/1vb5c"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8C8320879
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729196AbeLMQRH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Dec 2018 11:17:07 -0500
-Received: from mail-eopbgr140079.outbound.protection.outlook.com ([40.107.14.79]:42603
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727942AbeLMQRH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 13 Dec 2018 11:17:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UmJAN4wtHXV/dUPVh8AOAa0trKBJo4xPO46NdtfRh1U=;
- b=mU6C0RXqRGLb+3fa0f7pjvVe/jhrODRCckJbMVoIiNNTk9ho1QyMTKhdWG1CmBt+z8rKD/Pl6TOUGFr8GGJbqL2LqA7LUQvXwO20eRx5/2f5jqnIpeOS8hd423rFvED6MKiAacNitcQ3ETWqKxxj3GES2e+sw+Wl26bgBaPXHLI=
-Received: from DB3PR0402MB3658.eurprd04.prod.outlook.com (52.134.65.28) by
- DB3PR0402MB3659.eurprd04.prod.outlook.com (52.134.66.160) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1425.19; Thu, 13 Dec 2018 16:17:02 +0000
-Received: from DB3PR0402MB3658.eurprd04.prod.outlook.com
- ([fe80::ce5:fddb:6290:c5eb]) by DB3PR0402MB3658.eurprd04.prod.outlook.com
- ([fe80::ce5:fddb:6290:c5eb%5]) with mapi id 15.20.1425.016; Thu, 13 Dec 2018
- 16:17:02 +0000
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Shawn Guo <shawnguo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        Aisheng Dong <aisheng.dong@nxp.com>
-CC:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Olof Johansson <olof@lixom.net>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Abel Vesa <abel.vesa@nxp.com>
-Subject: [PATCH] clk: imx: Make the i.MX8MQ CCM clock driver CLK_IMX8MQ
- dependant
-Thread-Topic: [PATCH] clk: imx: Make the i.MX8MQ CCM clock driver CLK_IMX8MQ
- dependant
-Thread-Index: AQHUkv9IB3KEsUBSeEGaC3/cu+N6Cw==
-Date:   Thu, 13 Dec 2018 16:17:02 +0000
-Message-ID: <1544717789-27388-1-git-send-email-abel.vesa@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM5P190CA0019.EURP190.PROD.OUTLOOK.COM
- (2603:10a6:206:14::32) To DB3PR0402MB3658.eurprd04.prod.outlook.com
- (2603:10a6:8:2::28)
-x-originating-ip: [95.76.156.53]
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=abel.vesa@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DB3PR0402MB3659;6:1C/wncVESe1HewFEHUPS52r9qXDpVmEbVIACds9u8bOLSMN1jaUXevM7QQIadYNC+4eI8FiISlMxkbNwvNPtCozbz07+4waAnpJRhWSoeAJZ64I9XNM4XFKVFugwo6AxC73Pn8z4MYHWoxYzUpIiMUUgcZ1jApvzJg2VfRL2NN/WzH2GO0BUV5zMdMdMMUnfaNg4NsxzocmjKV6gieEh8Fud0QyQ8E6O5KoepwCylufx0F8pmMKX+D6LqGxL/if4oZtqNuIWH4lHZguEB3gaaN61jyKvmEe4xMASPCGb1OQGAfgxCmKFSWrzw2Brimmsuxfe/24bNn0V/QypQeQZCnKggVAQuVlqqDEnsgDSJiVwwGU/1LKgpoaHj2/azVWQjEEjjepfB+oyRBZmy1tmw1+SZ1Bdcx+LLh9feqrxWhgnbQEC2YIGES5acCz943Ezy1Eo25f6VcFsNW7zKcDJhQ==;5:/CZ9KUayzXi5C077Y7lcjeV6nZ50lm0CSgbkYg8rD7NPo9lUT2zNMcKHIbzzuSYWqc2ZlmlJdaoHk0dps31sSu+dj9fZUt+njb7DJkFbe6zgGTqrTOkCWasbYcVrJxEhQleFMYQpBhuIGi5Qe1ce4DfQatSj3NzJTJbGgDHUcuQ=;7:NkCFlwIHyWvu1rq5YLySgonRY2iMfTVFg4o9LOytt6li0ktdKa+mGOvELhYpW1pF8GoGC6E33DSCArQipqLnJVGfw8zj0CPpsEFU5jmkN2+gAiN1QiCiaYvW/TaSG6bkfs8BohSQtyW4GkA+sUsBMg==
-x-ms-office365-filtering-correlation-id: f9c98633-180f-48d6-754d-08d661166aa6
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DB3PR0402MB3659;
-x-ms-traffictypediagnostic: DB3PR0402MB3659:
-x-microsoft-antispam-prvs: <DB3PR0402MB36597B536540A7F63B3E3E42F6A00@DB3PR0402MB3659.eurprd04.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(6040522)(2401047)(8121501046)(5005006)(3231475)(944501520)(52105112)(93006095)(93001095)(3002001)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:DB3PR0402MB3659;BCL:0;PCL:0;RULEID:;SRVR:DB3PR0402MB3659;
-x-forefront-prvs: 088552DE73
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(136003)(366004)(376002)(346002)(396003)(199004)(189003)(52116002)(102836004)(6486002)(6436002)(36756003)(186003)(6636002)(14444005)(256004)(6512007)(2616005)(486006)(99286004)(476003)(71190400001)(26005)(44832011)(71200400001)(66066001)(53936002)(8936002)(81166006)(86362001)(575784001)(81156014)(8676002)(4326008)(478600001)(7736002)(105586002)(97736004)(106356001)(14454004)(110136005)(54906003)(305945005)(2906002)(25786009)(386003)(6506007)(316002)(68736007)(5660300001)(3846002)(6116002);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3659;H:DB3PR0402MB3658.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 1rpAgoBNNPY5vVr2M7NKIQbmGHPNooi4kRN3EFRhujJu2EIvXyCUt6KpjyAhOX9qK8LLiAh4N3Z/ZK0EqgS3EaSvK5dVbR3PTgU6pZ5YN4m36ZsqPn3YN1g+oruRxZtd0pCz+7WkhEAo/D/cm8ZomFsgc5heEj4oh/+GBLOHHp0nLRJh59u8CLvO7FJYex3HOXLhQFzvutQr08zEK9XK3Uqx1FMWCyFh4e2xDeq2R09V4w8ocvUFxxZPHb6wfEssvldeYHsdtBX2Pix5YFA2HE7dg6PpwUL2cyiQ9hu1R6jJV0MMPHYkLsOgs3JIDEGb
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S1729407AbeLMQSg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Dec 2018 11:18:36 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:40142 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727428AbeLMQSg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Dec 2018 11:18:36 -0500
+Received: by mail-ed1-f66.google.com with SMTP id d3so2498992edx.7;
+        Thu, 13 Dec 2018 08:18:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=+FdXPipH9AIz3yWNmpA4/ClAfz2jT9tmmIjwYuktQ+E=;
+        b=bQ/1vb5cCIdHP7A762nSa7Ce2w2un5zz0IfsSzrx+QthoqKuIJaFdrLZs6vwOLfeMf
+         uix/5McKQTkmpX0Y6iYY4hXgAJ7x8Arf8xqZg/A/4nMpRC45QjFGxayE74keC1ewiW4c
+         kPxo3NAoi35hAU5lhsHkMrzgd7+DuNOwjiEHeWEYLyc5SJbEv1jfpn4C53U6lSWglti6
+         FTYRQi2YYgnQCwBHznmL9Ljeg3RADkRqX2nvOhFcOnKEU8Yhq3cRgj3ooVnyJv5Kab7U
+         Wd+iZnaNjQ9l7rtTozZnkYthc0kBw7k3xdrgsynro2mzEXofgfEoo0I2f4fo8TF7sZde
+         b8vw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+FdXPipH9AIz3yWNmpA4/ClAfz2jT9tmmIjwYuktQ+E=;
+        b=UWoKX6PUlVhx61L+rpWL3NVMVX/JQ/9ISoxqSgkpg+aZVcQu39+33FUvT0WM1Bwo/Q
+         6BYo8sT386SPIg+tlrLxWftxNaiF7oGH4fTlcymOm3alMGx+Ut/P3KY/PZ+5SgSlCwB6
+         8Ta54vgv6PajAUcIxW1LzQmRyi83v0RrklcctCDcs6j4A3GRDjbiK+cdaSbyugeKlufp
+         ixAABZxroQg2PYl+fvS5JTAo8PTwQPZ3aQ6lBEpF6RQcc975MzMsHJWWZAd+lDthAM4S
+         0YOOWlIibv+AIOi6iceynW7wJlZ0PmbdUPjCxsDda7vSyg37cQfLHb96d+z9QzeyL0Yz
+         q3OA==
+X-Gm-Message-State: AA+aEWaPCY1Dqj0ekw0RxUhchMWAwkC4UtaBgA2aA1m8buJPqD2bkCjT
+        tQacAhu1H9qeSpPwBui0Cxo=
+X-Google-Smtp-Source: AFSGD/XHM3NswUvX+kvSB6GgwBHruq+9RY4kmKXvtZ1x9yOZWjFcjY50qAH4sw7m6tfwvHzf+XrZcg==
+X-Received: by 2002:a17:906:e287:: with SMTP id gg7-v6mr19062147ejb.128.1544717913525;
+        Thu, 13 Dec 2018 08:18:33 -0800 (PST)
+Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
+        by smtp.gmail.com with ESMTPSA id h11-v6sm403394ejc.3.2018.12.13.08.18.32
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 13 Dec 2018 08:18:32 -0800 (PST)
+Date:   Thu, 13 Dec 2018 17:18:31 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mathieu Malaterre <malat@debian.org>,
+        Ezequiel Garcia <ezequiel@collabora.co.uk>,
+        PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
+        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-clk@vger.kernel.org, od@zcrc.me
+Subject: Re: [PATCH v8 15/26] pwm: jz4740: Add support for the JZ4725B
+Message-ID: <20181213161831.GC13531@ulmo>
+References: <20181212220922.18759-1-paul@crapouillou.net>
+ <20181212220922.18759-16-paul@crapouillou.net>
+ <20181213092409.ml4wpnzow2nnszkd@pengutronix.de>
+ <1544709795.18952.1@crapouillou.net>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f9c98633-180f-48d6-754d-08d661166aa6
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Dec 2018 16:17:02.8684
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3659
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="8NvZYKFJsRX2Djef"
+Content-Disposition: inline
+In-Reply-To: <1544709795.18952.1@crapouillou.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Remove the dependency between the i.MX8MQ CCM clock driver
-and the CONFIG_SOC_IMX8MQ and use CONFIG_CLK_IMX8MQ instead.
-CONFIG_CLK_IMX8MQ depends on ARCH_MXC && ARM64.
 
-Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
----
- drivers/clk/Kconfig      | 1 +
- drivers/clk/imx/Kconfig  | 5 +++++
- drivers/clk/imx/Makefile | 3 ++-
- 3 files changed, 8 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/imx/Kconfig
+--8NvZYKFJsRX2Djef
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 2dc12bf..833353c 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -293,6 +293,7 @@ config COMMON_CLK_BD718XX
- source "drivers/clk/actions/Kconfig"
- source "drivers/clk/bcm/Kconfig"
- source "drivers/clk/hisilicon/Kconfig"
-+source "drivers/clk/imx/Kconfig"
- source "drivers/clk/imgtec/Kconfig"
- source "drivers/clk/ingenic/Kconfig"
- source "drivers/clk/keystone/Kconfig"
-diff --git a/drivers/clk/imx/Kconfig b/drivers/clk/imx/Kconfig
-new file mode 100644
-index 0000000..98ede6a
---- /dev/null
-+++ b/drivers/clk/imx/Kconfig
-@@ -0,0 +1,5 @@
-+config CLK_IMX8MQ
-+	bool "IMX8MQ CCM Clock Driver"
-+	depends on ARCH_MXC && ARM64
-+	help
-+	    Build the driver for i.MX8MQ CCM Clock Driver
-diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
-index 5c0b11e..01e5f55 100644
---- a/drivers/clk/imx/Makefile
-+++ b/drivers/clk/imx/Makefile
-@@ -34,5 +34,6 @@ obj-$(CONFIG_SOC_IMX6SX) +=3D clk-imx6sx.o
- obj-$(CONFIG_SOC_IMX6UL) +=3D clk-imx6ul.o
- obj-$(CONFIG_SOC_IMX7D)  +=3D clk-imx7d.o
- obj-$(CONFIG_SOC_IMX7ULP) +=3D clk-imx7ulp.o
--obj-$(CONFIG_SOC_IMX8MQ) +=3D clk-imx8mq.o
- obj-$(CONFIG_SOC_VF610)  +=3D clk-vf610.o
-+
-+obj-$(CONFIG_CLK_IMX8MQ) +=3D clk-imx8mq.o
---=20
-2.7.4
+On Thu, Dec 13, 2018 at 03:03:15PM +0100, Paul Cercueil wrote:
+> Hi,
+>=20
+> Le jeu. 13 d=C3=A9c. 2018 =C3=A0 10:24, Uwe Kleine-K=C3=B6nig
+> <u.kleine-koenig@pengutronix.de> a =C3=A9crit :
+> > Hello,
+> >=20
+> > On Wed, Dec 12, 2018 at 11:09:10PM +0100, Paul Cercueil wrote:
+> > >  The PWM in the JZ4725B works the same as in the JZ4740, except that
+> > > it
+> > >  only has 6 channels available instead of 8.
+> >=20
+> > this driver is probed only from device tree? If yes, it might be
+> > sensible to specify the number of PWMs there and get it from there.
+> > There doesn't seem to be a generic binding for that, but there are
+> > several drivers that could benefit from it. (This is a bigger project
+> > though and shouldn't stop your patch. Still more as it already got
+> > Thierry's ack.)
+>=20
+> I think there needs to be a proper guideline, as there doesn't seem to be
+> a consensus about this. I learned from emails with Rob and Linus (Walleij)
+> that I should not have in devicetree what I can deduce from the compatible
+> string.
 
+Correct. If the compatible string already defines the number of PWMs
+that the hardware exposes, there's no need to explicitly say so again in
+DT.
+
+Thierry
+
+--8NvZYKFJsRX2Djef
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlwShlcACgkQ3SOs138+
+s6FpGBAAnSdBj1VfdT/8QgKaKbqU4xM6IIM84lPPIcpnwOx61r4Q9wKVlcWX7I9h
+uYpGNc+ObutBYqeqCt73aJZ6AW9EQyvD47/D2dMHt6SexpCAse2Rg7OfwPxV3qN7
+NlfVdBSqtBGcrVZZLtZ3+JPkLzIUhl4UooMQo6j73FCRiww7k1B5YfdrGeN38kDA
+o8nMXKNuSRSXSF3KUNeDHx2mIB1BjRJJjW5pOwfIbQbO4EdhxHzkgS54UlZU/bUr
+z0gqwFMOGsRPrhSmvDv5CR5GKbbxC/YR3uPcAFOSgEuXr+1LEaEtzhTea5h1yokw
+POmWLezWZ6Y8RlhawFhnBWGg44E/HO1x5H3UVUQjmM16I++lovIyZh8PwwAhyO5q
+6mEWlcLjBnPoOXh7t8RRmZUJ5s6za2l2oBm6Ot/mjDjrPmabwNCMVDTz5GyHDtK3
+uflj6xxSlSt8eQV66yFA62wdoXPz5MFSGumz+kOQQOs2rqzSGh3C7rp3nU5xmE/K
+DfsNs92AvWte+ad0nbvZ3IrPYkZH/FdJErx6QMEBUvbwcmwxPh0m4VfKaa8DUZ7Z
+s9dKdJYLkT6RtGpBK9qK3Anrh7Cp6+zImtyf7pyh89KN2P4oIQroq51Ape6gpFnt
+RZVc3NqUTOk2/RXelfCPC23ShWn1dxzOSOhXrtQ6FQOAKwQ7bkY=
+=qfF6
+-----END PGP SIGNATURE-----
+
+--8NvZYKFJsRX2Djef--
