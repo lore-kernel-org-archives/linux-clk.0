@@ -6,48 +6,48 @@ X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC432C65BAE
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Dec 2018 04:49:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 373C4C65BAE
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Dec 2018 04:49:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91A3520870
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Dec 2018 04:49:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 019FC20849
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Dec 2018 04:49:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544676573;
-	bh=SbQWuKOFwUFj4m7tvmdd14cyKqZ6Jc8j5/TzWpp56tc=;
+	s=default; t=1544676581;
+	bh=1966haSkD7Am1iqQXIyrqWOSsOF2F1QgqNW8FGvHJtI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=RMK5OfBv7UYQU6/u6dqEU43qG9f8lWongFHoVSBA8DBS1djuVoZXqvuWwUM5ZHP1M
-	 x0l7kN87s3KCZzm2N08f3tsRCNdZ/fqHNSpZFfD8DEYttBXmmYeI+Kq2ljkmc0iVqY
-	 FjmyEo2jDRWC/yQeiFF5gAQ2l5Ft/rJJyv56PWQQ=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91A3520870
+	b=neMBkCrjAhDYJkRrvzEfVTGPsPLyMZIPeXJxG38Msm88tLsUdoYzDKNI2NtigvXHC
+	 q4Aq1h2YemyG6oOQ6BBEtHPeiKxhqBQ1Gcncv5Yq8/t4bbIPC1erBOc+lVQvM6uzIg
+	 fH42cILGwAs6XIagc+v2QhLOs1LxA2X1F1WAbkgQ=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 019FC20849
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726662AbeLME3z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Dec 2018 23:29:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42854 "EHLO mail.kernel.org"
+        id S1728130AbeLMEte (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Dec 2018 23:49:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42814 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727901AbeLME3y (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 12 Dec 2018 23:29:54 -0500
+        id S1727872AbeLME3w (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 12 Dec 2018 23:29:52 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2507820880;
-        Thu, 13 Dec 2018 04:29:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F1E8A20873;
+        Thu, 13 Dec 2018 04:29:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544675393;
-        bh=SbQWuKOFwUFj4m7tvmdd14cyKqZ6Jc8j5/TzWpp56tc=;
+        s=default; t=1544675391;
+        bh=1966haSkD7Am1iqQXIyrqWOSsOF2F1QgqNW8FGvHJtI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uUX04gF6Yje8zRFED/P82n63IkS4Prj97ifCNzg8BqdXcpv1iyVaZRkqLKqD23jtI
-         ASwy2rShb0ubtZZ5CvY4/8kOwgbtnFbxwkCdbv1X9bES+KTjags/oppImfH+NThVeh
-         o/1JlZ2gE4UoFJxlsZBRldW1Poie95H+dTT79Bqk=
+        b=T6x8CwLHei4T0jrGRJnMqV+lVpZT3N7rnlEqFmg6u1zdwpwGbiGD7ndjj1cniTo9o
+         AR7pLVgRYCuHkUoiEx3Z3zS5MEADTdQO4m9KzyXxYB6nIbstcMjp7byh6yJ8O4HM7Z
+         /TKbCr/bHZlFoHxAUquaeZZu1TYK3Ouh6Kkss0XE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 38/73] clk: mmp: Off by one in mmp_clk_add()
-Date:   Wed, 12 Dec 2018 23:28:03 -0500
-Message-Id: <20181213042838.75160-38-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 37/73] clk: mvebu: Off by one bugs in cp110_of_clk_get()
+Date:   Wed, 12 Dec 2018 23:28:02 -0500
+Message-Id: <20181213042838.75160-37-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181213042838.75160-1-sashal@kernel.org>
 References: <20181213042838.75160-1-sashal@kernel.org>
@@ -61,34 +61,44 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 2e85c57493e391b93445c1e0d530b36b95becc64 ]
+[ Upstream commit d9f5b7f5dd0fa74a89de5a7ac1e26366f211ccee ]
 
-The > comparison should be >= or we write one element beyond the end of
-the unit->clk_table[] array.
+These > comparisons should be >= to prevent reading beyond the end of
+of the clk_data->hws[] buffer.
 
-(The unit->clk_table[] array is allocated in the mmp_clk_init() function
-and it has unit->nr_clks elements).
+The clk_data->hws[] array is allocated in cp110_syscon_common_probe()
+when we do:
+	cp110_clk_data = devm_kzalloc(dev, sizeof(*cp110_clk_data) +
+				      sizeof(struct clk_hw *) * CP110_CLK_NUM,
+				      GFP_KERNEL);
+As you can see, it has CP110_CLK_NUM elements which is equivalent to
+CP110_MAX_CORE_CLOCKS + CP110_MAX_GATABLE_CLOCKS.
 
-Fixes: 4661fda10f8b ("clk: mmp: add basic support functions for DT support")
+Fixes: d3da3eaef7f4 ("clk: mvebu: new driver for Armada CP110 system controller")
 Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/mmp/clk.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/mvebu/cp110-system-controller.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/mmp/clk.c b/drivers/clk/mmp/clk.c
-index ad8d483a35cd..ca7d37e2c7be 100644
---- a/drivers/clk/mmp/clk.c
-+++ b/drivers/clk/mmp/clk.c
-@@ -183,7 +183,7 @@ void mmp_clk_add(struct mmp_clk_unit *unit, unsigned int id,
- 		pr_err("CLK %d has invalid pointer %p\n", id, clk);
- 		return;
- 	}
--	if (id > unit->nr_clks) {
-+	if (id >= unit->nr_clks) {
- 		pr_err("CLK %d is invalid\n", id);
- 		return;
+diff --git a/drivers/clk/mvebu/cp110-system-controller.c b/drivers/clk/mvebu/cp110-system-controller.c
+index 75bf7b8f282f..0153c76d4a20 100644
+--- a/drivers/clk/mvebu/cp110-system-controller.c
++++ b/drivers/clk/mvebu/cp110-system-controller.c
+@@ -202,11 +202,11 @@ static struct clk_hw *cp110_of_clk_get(struct of_phandle_args *clkspec,
+ 	unsigned int idx = clkspec->args[1];
+ 
+ 	if (type == CP110_CLK_TYPE_CORE) {
+-		if (idx > CP110_MAX_CORE_CLOCKS)
++		if (idx >= CP110_MAX_CORE_CLOCKS)
+ 			return ERR_PTR(-EINVAL);
+ 		return clk_data->hws[idx];
+ 	} else if (type == CP110_CLK_TYPE_GATABLE) {
+-		if (idx > CP110_MAX_GATABLE_CLOCKS)
++		if (idx >= CP110_MAX_GATABLE_CLOCKS)
+ 			return ERR_PTR(-EINVAL);
+ 		return clk_data->hws[CP110_MAX_CORE_CLOCKS + idx];
  	}
 -- 
 2.19.1
