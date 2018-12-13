@@ -2,139 +2,110 @@ Return-Path: <SRS0=bPXJ=OW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15B1BC67872
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Dec 2018 20:38:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBF3EC67839
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Dec 2018 20:42:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C81F420870
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Dec 2018 20:38:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="sX7aJ5Yc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C81F420870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+	by mail.kernel.org (Postfix) with ESMTP id 9FAB020811
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Dec 2018 20:42:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FAB020811
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726697AbeLMUi4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Dec 2018 15:38:56 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:41444 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726401AbeLMUiz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Dec 2018 15:38:55 -0500
-Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 094FD549;
-        Thu, 13 Dec 2018 21:38:52 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1544733533;
-        bh=J1hXCAHdtIfJqU4GaZ1ZmJyhE71YtKjRJ3JtN3MjlWY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sX7aJ5YctB33nMQ55Cjh9X6B9XHssPpeGvlPCfJ2Lx9yZ1WAyX93UgYpW/EXcY4oh
-         sJn+EDH6ITIjYzwK1VgYpZazN/kSObUrBiqAPJAyAw8BFRalah/jF6r4TtvElCXkSl
-         yZmXzqvFa5PbTHqe/U0Db+CRBYOD8+kImBrHhyUI=
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Marek Vasut <marek.vasut@gmail.com>
-Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Alexey Firago <alexey_firago@mentor.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [PATCH V3] clk: vc5: Add suspend/resume support
-Date:   Thu, 13 Dec 2018 22:39:40 +0200
-Message-ID: <2567101.UjicnDk6qB@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <20181213161528.20318-1-marek.vasut+renesas@gmail.com>
-References: <20181213161528.20318-1-marek.vasut+renesas@gmail.com>
+        id S1727810AbeLMUmj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Dec 2018 15:42:39 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:38949 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726401AbeLMUmi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Dec 2018 15:42:38 -0500
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gXXoL-0003hN-Dt; Thu, 13 Dec 2018 21:42:21 +0100
+Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gXXoK-0001FF-2n; Thu, 13 Dec 2018 21:42:20 +0100
+Date:   Thu, 13 Dec 2018 21:42:19 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mathieu Malaterre <malat@debian.org>,
+        Ezequiel Garcia <ezequiel@collabora.co.uk>,
+        PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
+        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-clk@vger.kernel.org, od@zcrc.me,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v8 15/26] pwm: jz4740: Add support for the JZ4725B
+Message-ID: <20181213204219.onem3q6dcmakusl2@pengutronix.de>
+References: <20181212220922.18759-1-paul@crapouillou.net>
+ <20181212220922.18759-16-paul@crapouillou.net>
+ <20181213092409.ml4wpnzow2nnszkd@pengutronix.de>
+ <1544709795.18952.1@crapouillou.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1544709795.18952.1@crapouillou.net>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Marek,
+[Adding Linus Walleij to Cc:]
 
-Thank you for the patch.
+Hello,
 
-On Thursday, 13 December 2018 18:15:28 EET Marek Vasut wrote:
-> Add simple suspend/resume handlers to the driver to restore the chip
-> configuration after resume. It is possible that the chip was configured
-> with non-default values before suspend-resume cycle and that the chip
-> is powered down during this cycle, so the configuration could get lost.
+On Thu, Dec 13, 2018 at 03:03:15PM +0100, Paul Cercueil wrote:
+> Le jeu. 13 déc. 2018 à 10:24, Uwe Kleine-König
+> <u.kleine-koenig@pengutronix.de> a écrit :
+> > On Wed, Dec 12, 2018 at 11:09:10PM +0100, Paul Cercueil wrote:
+> > >  The PWM in the JZ4725B works the same as in the JZ4740, except that
+> > > it
+> > >  only has 6 channels available instead of 8.
+> > 
+> > this driver is probed only from device tree? If yes, it might be
+> > sensible to specify the number of PWMs there and get it from there.
+> > There doesn't seem to be a generic binding for that, but there are
+> > several drivers that could benefit from it. (This is a bigger project
+> > though and shouldn't stop your patch. Still more as it already got
+> > Thierry's ack.)
 > 
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> Cc: Alexey Firago <alexey_firago@mentor.com>
-> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@codeaurora.org>
-> Cc: linux-renesas-soc@vger.kernel.org
+> I think there needs to be a proper guideline, as there doesn't seem to be
+> a consensus about this. I learned from emails with Rob and Linus (Walleij)
+> that I should not have in devicetree what I can deduce from the compatible
+> string.
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Tested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+I understood them a bit differently. It is ok to deduce things from the
+compatible string. But if you define a generic property (say) "num-pwms"
+that is used uniformly in most bindings this is ok, too. (And then the
+two different devices could use the same compatible.)
 
-> ---
-> V2: Replace ifdef with __maybe_unused
->     Simplify return value handling in resume
-> V3: Drop useless regcache_sync() call from suspend callback
->     (thanks Laurent for testing with working DU)
-> ---
->  drivers/clk/clk-versaclock5.c | 25 +++++++++++++++++++++++++
->  1 file changed, 25 insertions(+)
-> 
-> diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
-> index decffb3826ec..5b393e711e94 100644
-> --- a/drivers/clk/clk-versaclock5.c
-> +++ b/drivers/clk/clk-versaclock5.c
-> @@ -906,6 +906,28 @@ static int vc5_remove(struct i2c_client *client)
->  	return 0;
->  }
-> 
-> +static int __maybe_unused vc5_suspend(struct device *dev)
-> +{
-> +	struct vc5_driver_data *vc5 = dev_get_drvdata(dev);
-> +
-> +	regcache_cache_only(vc5->regmap, true);
-> +	regcache_mark_dirty(vc5->regmap);
-> +
-> +	return 0;
-> +}
-> +
-> +static int __maybe_unused vc5_resume(struct device *dev)
-> +{
-> +	struct vc5_driver_data *vc5 = dev_get_drvdata(dev);
-> +	int ret;
-> +
-> +	regcache_cache_only(vc5->regmap, false);
-> +	ret = regcache_sync(vc5->regmap);
-> +	if (ret)
-> +		dev_err(dev, "Failed to restore register map: %d\n", ret);
-> +	return ret;
-> +}
-> +
->  static const struct vc5_chip_info idt_5p49v5923_info = {
->  	.model = IDT_VC5_5P49V5923,
->  	.clk_fod_cnt = 2,
-> @@ -961,9 +983,12 @@ static const struct of_device_id clk_vc5_of_match[] = {
-> };
->  MODULE_DEVICE_TABLE(of, clk_vc5_of_match);
-> 
-> +static SIMPLE_DEV_PM_OPS(vc5_pm_ops, vc5_suspend, vc5_resume);
-> +
->  static struct i2c_driver vc5_driver = {
->  	.driver = {
->  		.name = "vc5",
-> +		.pm	= &vc5_pm_ops,
->  		.of_match_table = clk_vc5_of_match,
->  	},
->  	.probe		= vc5_probe,
+An upside of the generic "num-pwms" property is that the pwm core could
+sanity check pwm phandles before passing them to the hardware drivers.
+
+Best regards
+Uwe
 
 -- 
-Regards,
-
-Laurent Pinchart
-
-
-
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
