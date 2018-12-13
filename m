@@ -2,147 +2,164 @@ Return-Path: <SRS0=bPXJ=OW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76B66C67872
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Dec 2018 14:34:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2C6EC67839
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Dec 2018 14:35:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3DFCD20870
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Dec 2018 14:34:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="T7UHAV5/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DFCD20870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=crapouillou.net
+	by mail.kernel.org (Postfix) with ESMTP id B223C20870
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Dec 2018 14:35:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B223C20870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728173AbeLMOe6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Dec 2018 09:34:58 -0500
-Received: from outils.crapouillou.net ([89.234.176.41]:33626 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727618AbeLMOe6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Dec 2018 09:34:58 -0500
-Date:   Thu, 13 Dec 2018 15:34:48 +0100
-From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH v8 11/26] pwm: jz4740: Use regmap and clocks from TCU
- driver
-To:     Uwe =?iso-8859-1?q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mathieu Malaterre <malat@debian.org>,
-        Ezequiel Garcia <ezequiel@collabora.co.uk>,
-        PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
-        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-clk@vger.kernel.org, od@zcrc.me
-Message-Id: <1544711688.18952.2@crapouillou.net>
-In-Reply-To: <20181213093049.rxdvf6tip7iqdj3c@pengutronix.de>
-References: <20181212220922.18759-1-paul@crapouillou.net>
-        <20181212220922.18759-12-paul@crapouillou.net>
-        <20181213093049.rxdvf6tip7iqdj3c@pengutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Transfer-Encoding: quoted-printable
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net; s=mail; t=1544711695; bh=vaRtKNxh69Zx4hzvWE5BlnM9SpbIUcaAwID6xRuePy8=; h=Date:From:Subject:To:Cc:Message-Id:In-Reply-To:References:MIME-Version:Content-Type:Content-Transfer-Encoding; b=T7UHAV5/VDNreRQfwVVjkZX+9isrsLbPDUyjv9HX0ECy20R2rJZgWtH8FSok79fnY87YvQff34fYuHIwmRmCVTFQGkRzUs0Lclil4Imr34ZWTQy6ETzwB2nJX8dGGZskwkrWKvJNBRbUrM+DSnhnqOcNo5FSow8chDMzWibIufs=
+        id S1727551AbeLMOff (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Dec 2018 09:35:35 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:60489 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728907AbeLMOfe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Dec 2018 09:35:34 -0500
+Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1gXS5I-00049s-Q5; Thu, 13 Dec 2018 15:35:28 +0100
+Message-ID: <1544711727.3137.32.camel@pengutronix.de>
+Subject: Re: [PATCH 1/3] arm64: Remove CONFIG_SOC_IMX8MQ and use ARCH_MXC
+ instead
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     Abel Vesa <abel.vesa@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Aisheng Dong <aisheng.dong@nxp.com>
+Cc:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Olof Johansson <olof@lixom.net>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>, Rob Herring <robh@kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>
+Date:   Thu, 13 Dec 2018 15:35:27 +0100
+In-Reply-To: <1544707047-4417-2-git-send-email-abel.vesa@nxp.com>
+References: <1544707047-4417-1-git-send-email-abel.vesa@nxp.com>
+         <1544707047-4417-2-git-send-email-abel.vesa@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+Am Donnerstag, den 13.12.2018, 13:17 +0000 schrieb Abel Vesa:
+> To keep aligned with arm64, remove the unnecessary SOC_IMX8MQ and use
+> ARCH_MXC instead.
+> 
+> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+> ---
+>  arch/arm64/Kconfig.platforms           | 8 --------
+>  arch/arm64/boot/dts/freescale/Makefile | 2 +-
+>  drivers/clk/imx/Makefile               | 3 ++-
+>  drivers/phy/freescale/Kconfig          | 2 +-
+>  drivers/pinctrl/freescale/Kconfig      | 2 +-
+>  drivers/soc/imx/Kconfig                | 2 +-
+>  6 files changed, 6 insertions(+), 13 deletions(-)
+> 
+> diff --git a/arch/arm64/Kconfig.platforms
+> b/arch/arm64/Kconfig.platforms
+> index 7e1545a..318dbb9 100644
+> --- a/arch/arm64/Kconfig.platforms
+> +++ b/arch/arm64/Kconfig.platforms
+> @@ -148,14 +148,6 @@ config ARCH_MXC
+>  	  This enables support for the ARMv8 based SoCs in the
+>  	  NXP i.MX family.
+>  
+> -config SOC_IMX8MQ
+> -	bool "i.MX8MQ support"
+> -	depends on ARCH_MXC
+> -	select ARM64_ERRATUM_843419
+> -	select ARM64_ERRATUM_845719
+> -	help
+> -	  This enables support for the i.MX8MQ SoC.
+> -
 
-Le jeu. 13 d=E9c. 2018 =E0 10:30, Uwe Kleine-K=F6nig=20
-<u.kleine-koenig@pengutronix.de> a =E9crit :
-> Hello,
->=20
-> On Wed, Dec 12, 2018 at 11:09:06PM +0100, Paul Cercueil wrote:
->>  [...]
->>   static int jz4740_pwm_enable(struct pwm_chip *chip, struct=20
->> pwm_device *pwm)
->>   {
->>  -	uint32_t ctrl =3D jz4740_timer_get_ctrl(pwm->pwm);
->>  +	struct jz4740_pwm_chip *jz =3D to_jz4740(chip);
->>=20
->>  -	ctrl |=3D JZ_TIMER_CTRL_PWM_ENABLE;
->>  -	jz4740_timer_set_ctrl(pwm->hwpwm, ctrl);
->>  -	jz4740_timer_enable(pwm->hwpwm);
->>  +	/* Enable PWM output */
->>  +	regmap_update_bits(jz->map, TCU_REG_TCSRc(pwm->hwpwm),
->>  +				TCU_TCSR_PWM_EN, TCU_TCSR_PWM_EN);
->=20
-> Usually follow-up lines are indented to the matching parenthesis.
+NACK on this one. Having a single place where stuff that is absolutely
+critical for proper SoC operation can be selected is very useful and
+avoids hard to debug issues due to slightly wrong configs in the long
+run.
 
-OK.
+Regards,
+Lucas
 
->>  [...]
->>   static int jz4740_pwm_config(struct pwm_chip *chip, struct=20
->> pwm_device *pwm,
->>   			     int duty_ns, int period_ns)
->>   {
->>   	struct jz4740_pwm_chip *jz4740 =3D to_jz4740(pwm->chip);
->>  +	struct clk *clk =3D jz4740->clks[pwm->hwpwm];
->>  +	unsigned long rate, new_rate, period, duty;
->>   	unsigned long long tmp;
->>  -	unsigned long period, duty;
->>  -	unsigned int prescaler =3D 0;
->>  -	uint16_t ctrl;
->>  +	unsigned int tcsr;
->>   	bool is_enabled;
->>=20
->>  -	tmp =3D (unsigned long long)clk_get_rate(jz4740->clk) * period_ns;
->>  -	do_div(tmp, 1000000000);
->>  -	period =3D tmp;
->>  +	rate =3D clk_get_rate(clk);
->>  +
->>  +	for (;;) {
->>  +		tmp =3D (unsigned long long) rate * period_ns;
->>  +		do_div(tmp, 1000000000);
->>=20
->>  -	while (period > 0xffff && prescaler < 6) {
->>  -		period >>=3D 2;
->>  -		++prescaler;
->>  +		if (tmp <=3D 0xffff)
->>  +			break;
->>  +
->>  +		new_rate =3D clk_round_rate(clk, rate / 2);
->>  +
->>  +		if (new_rate < rate)
->>  +			rate =3D new_rate;
->>  +		else
->>  +			return -EINVAL;
->>   	}
->>=20
->>  -	if (prescaler =3D=3D 6)
->>  -		return -EINVAL;
->>  +	clk_set_rate(clk, rate);
->=20
-> Maybe this could better live in a separate patch. If you split still
-> further to have the conversion to regmap in a single patch, then the
-> conversion to the clk_* functions and then improve the algorithm for=20
-> the
-> clk settings each of the patches is easier to review than this one=20
-> patch
-> that does all three things at once.
-
-I can try.
-
-> Best regards
-> Uwe
->=20
-> --
-> Pengutronix e.K.                           | Uwe Kleine-K=F6nig       =20
->     |
-> Industrial Linux Solutions                 |=20
-> http://www.pengutronix.de/  |
-=
-
+>  config ARCH_QCOM
+>  	bool "Qualcomm Platforms"
+>  	select GPIOLIB
+> diff --git a/arch/arm64/boot/dts/freescale/Makefile
+> b/arch/arm64/boot/dts/freescale/Makefile
+> index 0001361..f9be242 100644
+> --- a/arch/arm64/boot/dts/freescale/Makefile
+> +++ b/arch/arm64/boot/dts/freescale/Makefile
+> @@ -19,4 +19,4 @@ dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2088a-
+> rdb.dtb
+>  dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-lx2160a-qds.dtb
+>  dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-lx2160a-rdb.dtb
+>  
+> -dtb-$(CONFIG_SOC_IMX8MQ) += imx8mq-evk.dtb
+> +dtb-$(CONFIG_ARCH_MXC) += imx8mq-evk.dtb
+> diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
+> index 5c0b11e..62a1882 100644
+> --- a/drivers/clk/imx/Makefile
+> +++ b/drivers/clk/imx/Makefile
+> @@ -34,5 +34,6 @@ obj-$(CONFIG_SOC_IMX6SX) += clk-imx6sx.o
+>  obj-$(CONFIG_SOC_IMX6UL) += clk-imx6ul.o
+>  obj-$(CONFIG_SOC_IMX7D)  += clk-imx7d.o
+>  obj-$(CONFIG_SOC_IMX7ULP) += clk-imx7ulp.o
+> -obj-$(CONFIG_SOC_IMX8MQ) += clk-imx8mq.o
+>  obj-$(CONFIG_SOC_VF610)  += clk-vf610.o
+> +
+> +obj-$(CONFIG_ARCH_MXC) += clk-imx8mq.o
+> diff --git a/drivers/phy/freescale/Kconfig
+> b/drivers/phy/freescale/Kconfig
+> index f050bd4..923c0ef 100644
+> --- a/drivers/phy/freescale/Kconfig
+> +++ b/drivers/phy/freescale/Kconfig
+> @@ -2,4 +2,4 @@ config PHY_FSL_IMX8MQ_USB
+>  	tristate "Freescale i.MX8M USB3 PHY"
+>  	depends on OF && HAS_IOMEM
+>  	select GENERIC_PHY
+> -	default SOC_IMX8MQ
+> +	default ARCH_MXC
+> diff --git a/drivers/pinctrl/freescale/Kconfig
+> b/drivers/pinctrl/freescale/Kconfig
+> index 2d6db43..9874a16 100644
+> --- a/drivers/pinctrl/freescale/Kconfig
+> +++ b/drivers/pinctrl/freescale/Kconfig
+> @@ -123,7 +123,7 @@ config PINCTRL_IMX7ULP
+>  
+>  config PINCTRL_IMX8MQ
+>  	bool "IMX8MQ pinctrl driver"
+> -	depends on SOC_IMX8MQ
+> +	depends on ARCH_MXC
+>  	select PINCTRL_IMX
+>  	help
+>  	  Say Y here to enable the imx8mq pinctrl driver
+> diff --git a/drivers/soc/imx/Kconfig b/drivers/soc/imx/Kconfig
+> index 2112d18..7ffbb6b 100644
+> --- a/drivers/soc/imx/Kconfig
+> +++ b/drivers/soc/imx/Kconfig
+> @@ -2,7 +2,7 @@ menu "i.MX SoC drivers"
+>  
+>  config IMX_GPCV2_PM_DOMAINS
+>  	bool "i.MX GPCv2 PM domains"
+> -	depends on SOC_IMX7D || SOC_IMX8MQ || (COMPILE_TEST && OF)
+> +	depends on SOC_IMX7D || ARCH_MXC || (COMPILE_TEST && OF)
+>  	depends on PM
+>  	select PM_GENERIC_DOMAINS
+>  	default y if SOC_IMX7D
