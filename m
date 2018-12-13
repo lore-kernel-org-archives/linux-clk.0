@@ -3,65 +3,70 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CEBFC65BAE
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Dec 2018 19:43:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 514E3C65BAE
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Dec 2018 19:48:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3795F2086D
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Dec 2018 19:43:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 195C120870
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Dec 2018 19:48:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544730235;
-	bh=7qLupQQAJCyoUyYK7QED4TeWIFQT5zrjJ5/sMGhoj28=;
+	s=default; t=1544730537;
+	bh=rylVSC7jJeP6um1CjbVRtc2oPbnHhFWfSgtqO+GJlfo=;
 	h=In-Reply-To:Subject:To:References:From:Cc:Date:List-ID:From;
-	b=uYdhdI0Lt0Ms+BnpVf3l+SoZnJjLQkEjL1uT1aCOEpgEBGpon8QdAO++hhSCpubXY
-	 eN4hgfOUXTHvbr4rXpU9GsRTPVJDXRIa+N5zZ5HXum4JuXcbMxUxErG8H+jKiK9XLz
-	 kwHkrTb1JDfqAzlX5NE6bPFRn9b4WcriVfjRkOYc=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3795F2086D
+	b=Z72ClHQ8ITW1O1ixNO+36zyh51hCzY03WJPn/DVhHCVKs86HMEFRIGQGsYc1Xe0Kq
+	 FjXo55XY5gMDmP9O3NcMmogFrNEFAXgqrvEWcHd3OMbh2oGRyn7zpTb8WL2/1CH7ZE
+	 kmnXO5bDfOVMr3ZPeec4E46FcRi88T9DsPczTASk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 195C120870
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728950AbeLMTnl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Dec 2018 14:43:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60232 "EHLO mail.kernel.org"
+        id S1728235AbeLMTs4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Dec 2018 14:48:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34926 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728077AbeLMTnk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 13 Dec 2018 14:43:40 -0500
+        id S1727768AbeLMTs4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 13 Dec 2018 14:48:56 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B6DEA2086D;
-        Thu, 13 Dec 2018 19:43:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AA6202086D;
+        Thu, 13 Dec 2018 19:48:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544730219;
-        bh=7qLupQQAJCyoUyYK7QED4TeWIFQT5zrjJ5/sMGhoj28=;
+        s=default; t=1544730535;
+        bh=rylVSC7jJeP6um1CjbVRtc2oPbnHhFWfSgtqO+GJlfo=;
         h=In-Reply-To:Subject:To:References:From:Cc:Date:From;
-        b=XPKyE/DBYJBjTkPc1zSabYw19AeWA/l3Ur9yz1h/yBfmHlsKaPmiR66N1MslQ99hg
-         zGFEbq/6tO3fDz76sRx2eFI0Vmd0Ihwf+k8CgngiVlWVv1YdepGhG20fHtkEES6nMI
-         ekq9mVzG/3eqoyYnprSZBdY6+D2o2jFNL1q9bkPA=
+        b=Q0BWAt/kpPYVMp9CN2MMNi4yChTHUAdDADms08aYIS4N5JNN3DpW4+fEgqZXmsoG3
+         5gclOvLbjMm/N0666S8j1zjgS5CKCrv2RirqsgHfLUNMU4db0/bOYAbg5eohqHpFi0
+         D5aQn6HzQSCUTvDHq5oumTAGHAmy5j7urUeugPPQ=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20181211180250.220623-2-sboyd@kernel.org>
-Subject: Re: [PATCH 2/2] clk: Tag basic clk types with SPDX
+In-Reply-To: <20181206215858.3880-2-sboyd@kernel.org>
+Subject: Re: [PATCH 1/8] clk: renesas: Remove usage of CLK_IS_BASIC
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
-References: <20181211180250.220623-1-sboyd@kernel.org> <20181211180250.220623-2-sboyd@kernel.org>
-Message-ID: <154473021904.19322.4396609935844748710@swboyd.mtv.corp.google.com>
+References: <20181206215858.3880-1-sboyd@kernel.org> <20181206215858.3880-2-sboyd@kernel.org>
+Message-ID: <154473053490.19322.3731378889854414729@swboyd.mtv.corp.google.com>
 From:   Stephen Boyd <sboyd@kernel.org>
 User-Agent: alot/0.8
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Date:   Thu, 13 Dec 2018 11:43:39 -0800
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-renesas-soc@vger.kernel.org
+Date:   Thu, 13 Dec 2018 11:48:54 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Stephen Boyd (2018-12-11 10:02:50)
-> These are all GPL-2.0 files per the existing license text. Replace the
-> boiler plate with the tag.
+Quoting Stephen Boyd (2018-12-06 13:58:51)
+> This flag doesn't look to be used by any code, just set in various clk
+> init structures and then never tested again. Remove it from these
+> drivers as it doesn't provide any benefit.
 >=20
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: <linux-renesas-soc@vger.kernel.org>
 > Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 > ---
 
