@@ -2,181 +2,223 @@ Return-Path: <SRS0=bPXJ=OW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8701AC65BAE
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Dec 2018 12:50:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C47DC65BAE
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Dec 2018 12:55:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 162272086D
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Dec 2018 12:50:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F20592086D
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Dec 2018 12:55:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cadence.com header.i=@cadence.com header.b="V/RHDp2/";
-	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="FIPhsUgB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 162272086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cadence.com
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="g0m+k7BL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F20592086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729488AbeLMMuq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Dec 2018 07:50:46 -0500
-Received: from mx0b-0014ca01.pphosted.com ([208.86.201.193]:40750 "EHLO
-        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729296AbeLMMt4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Dec 2018 07:49:56 -0500
-Received: from pps.filterd (m0042333.ppops.net [127.0.0.1])
-        by mx0b-0014ca01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wBDCi0TF023749;
-        Thu, 13 Dec 2018 04:49:47 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-type; s=proofpoint;
- bh=T0UMzpLF3AycVbxLT8Yc/ui+a0qFObNkZoNSQxZpIbA=;
- b=V/RHDp2/IifMyrplCcEBMn4NbdTMKy3mwDgz2nUeD3yGH7Wl+lx8IgdUxaS6ubZwJFHn
- qorzZNijVDCweYtTA8y3W0PGHmkssmzrQ9+wo2vKw7pUGV07jfciI7QEakVK5sZDXbY0
- PKFyh76jn5WYACaZcWLlbUOrvN7TwBshw1XR2EepUOyIpIwxW+QN/+KPEC1ehLwKKIbl
- Fi3V8wZLK3fWkGZhBDe+TztlSkLBP/6N301JbM2PluToKiSFvdgOINUTJhgEy0acsbvm
- bn1/3TlUxvvWpoh3ohQxMHKmSviXwPZp5sy6m4rkT/YqsFnoOWCarsNM+ZTtk+eLaGqt Ag== 
-Authentication-Results: cadence.com;
-        spf=pass smtp.mailfrom=jank@cadence.com
-Received: from nam04-co1-obe.outbound.protection.outlook.com (mail-co1nam04lp2059.outbound.protection.outlook.com [104.47.45.59])
-        by mx0b-0014ca01.pphosted.com with ESMTP id 2pbkac1c6f-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 13 Dec 2018 04:49:46 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=T0UMzpLF3AycVbxLT8Yc/ui+a0qFObNkZoNSQxZpIbA=;
- b=FIPhsUgBPRHiga1yZUa3eiyM408fbC7V0TpzLidtjFtLFbYIqy4nfNTnDej4HmBcquAFeGeHBgC466vpHK39NUu4OtWc9rKqw/ROVcmk8llVNakQ5Qwkr0WSdcMDwfERGx6U5eO++awnD78b0nFioGU7dA5Apb8wvDzXdfNlRkM=
-Received: from DM5PR07CA0035.namprd07.prod.outlook.com (2603:10b6:3:16::21) by
- BYAPR07MB4407.namprd07.prod.outlook.com (2603:10b6:a02:c1::12) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1404.19; Thu, 13 Dec 2018 12:49:43 +0000
-Received: from BY2NAM05FT056.eop-nam05.prod.protection.outlook.com
- (2a01:111:f400:7e52::206) by DM5PR07CA0035.outlook.office365.com
- (2603:10b6:3:16::21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1425.19 via Frontend
- Transport; Thu, 13 Dec 2018 12:49:42 +0000
-Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
- cadence.com discourages use of 199.43.4.28 as permitted sender)
-Received: from rmmaillnx1.cadence.com (199.43.4.28) by
- BY2NAM05FT056.mail.protection.outlook.com (10.152.100.193) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.1446.5 via Frontend Transport; Thu, 13 Dec 2018 12:49:42 +0000
-Received: from maileu3.global.cadence.com (maileu3.cadence.com [10.160.88.99])
-        by rmmaillnx1.cadence.com (8.14.4/8.14.4) with ESMTP id wBDCnccv019277
-        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
-        Thu, 13 Dec 2018 07:49:40 -0500
-X-CrossPremisesHeadersFilteredBySendConnector: maileu3.global.cadence.com
-Received: from maileu3.global.cadence.com (10.160.88.99) by
- maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
- 15.0.1367.3; Thu, 13 Dec 2018 13:49:40 +0100
-Received: from lvloginb.cadence.com (10.165.177.11) by
- maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
- 15.0.1367.3 via Frontend Transport; Thu, 13 Dec 2018 13:49:40 +0100
-Received: from lvloginb.cadence.com (localhost [127.0.0.1])
-        by lvloginb.cadence.com (8.14.4/8.14.4) with ESMTP id wBDCnapr000523;
-        Thu, 13 Dec 2018 12:49:36 GMT
-Received: (from jank@localhost)
-        by lvloginb.cadence.com (8.14.4/8.14.4/Submit) id wBDCnY1j000459;
-        Thu, 13 Dec 2018 12:49:34 GMT
-From:   Jan Kotas <jank@cadence.com>
-To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>
-CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Jan Kotas <jank@cadence.com>
-Subject: [PATCH v2 0/2] clk: Add driver and bindings for Fixed MMIO clock
-Date:   Thu, 13 Dec 2018 12:49:27 +0000
-Message-ID: <20181213124929.32736-1-jank@cadence.com>
-X-Mailer: git-send-email 2.15.0
+        id S1728875AbeLMMzh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Dec 2018 07:55:37 -0500
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:12293 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728803AbeLMMzh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Dec 2018 07:55:37 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c1256c40000>; Thu, 13 Dec 2018 04:55:32 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 13 Dec 2018 04:55:35 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 13 Dec 2018 04:55:35 -0800
+Received: from [10.26.11.125] (172.20.13.39) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 13 Dec
+ 2018 12:55:32 +0000
+Subject: Re: [PATCH V2 12/21] cpufreq: tegra124: do not handle the CPU rail
+To:     Joseph Lo <josephl@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        <linux-pm@vger.kernel.org>
+References: <20181213093438.29621-1-josephl@nvidia.com>
+ <20181213093438.29621-13-josephl@nvidia.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <83b2b2cd-7db5-5a5d-1c9e-9fe70afd6b4a@nvidia.com>
+Date:   Thu, 13 Dec 2018 12:55:29 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-OrganizationHeadersPreserved: maileu3.global.cadence.com
-X-EOPAttributedMessage: 0
-X-Forefront-Antispam-Report: CIP:199.43.4.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(39860400002)(136003)(396003)(376002)(2980300002)(199004)(189003)(36092001)(106466001)(87636003)(68736007)(110136005)(47776003)(316002)(42186006)(8936002)(51416003)(26005)(186003)(53936002)(8676002)(305945005)(50226002)(81156014)(81166006)(486006)(476003)(4326008)(2616005)(50466002)(126002)(69596002)(54906003)(426003)(105596002)(36756003)(5660300001)(16586007)(356004)(26826003)(336012)(107886003)(478600001)(86362001)(48376002)(1076002)(6666004)(2906002)(97736004);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR07MB4407;H:rmmaillnx1.cadence.com;FPR:;SPF:SoftFail;LANG:en;PTR:InfoDomainNonexistent;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: 1;BY2NAM05FT056;1:+k69O4Si6zoP1tQoGV7BvL51zc1O4HYnGgfqDOX1dzhnzCBBw6XuHCmKe1G1CSg1CfUv6a/X7eKgHnUfRC3gujUTaYs3WTZ8sAy3RWAD5lCeHLBaTv+K4868ZsKJFKSn
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 593d6f90-86ec-481e-7371-08d660f973da
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060);SRVR:BYAPR07MB4407;
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR07MB4407;3:xpo/t2WIClewzSHvNcWaXIyPtqXS2QvFkJOAmPqP437ISo5hxmeMNakWfsSdayg9c0N3eqqYw9HOcEow/A1KlM2I2NrQrbUzQwEQkjM1GfgqmatidjSCr8If+Xdn2ht+4GEOcfHk8V9fTYaBIwT1W9UogCMHCa+L0ik6kOE2XTaWIfpWiHWmIkoxb6zXe4coJUGXCDyjjs7FsOSr0rxx/R9ztnqYSitFCL4Ru37ESrS01i/VFcQaxbsWQUghh5nwLMY0Nb17IEQCdvWoQdR42Nt40K7FJttrKPpZr+iL6JbzBQSjGcHUd6IZx+1v/liR3zNRlUD0+1zfyHF3ALFRpw==;25:mH5xhnVMXELlFUV6zbwdeuHY5oijgtBFtlYTaTgrZu1mX27U0bjcxyYKVl2x2i+q72vehf7brCjdRxP9EnikzAeRTXW2OjVclqCb3eKX9gf4QsZ08jIFMT0eBQPtXThayl99u3cjlYa0phHXi+wuH62q1xPatpilro1MZ/oIvMjG5+wMlTFdZf8Pi2RQGhUefROuqFtD5vUBWYGksC3cX9bo8SUU/jcUNQP9szP8q5XpU9ivZJrckAFcuecyLHmCA5vvJApHbBf34MfdGsMer/7Eh99CMrDPAzuatRbDsLgAKMDk1IURBrdRS7kgNhiCvdBMPjMnSF78s/wG5Doqp2iQJdsRqLU1JFJ7FqJu3Dw=
-X-MS-TrafficTypeDiagnostic: BYAPR07MB4407:
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR07MB4407;31:DMnJa8ymqFQg0lsyy10/ySoeT/5/9K5ETZHxR9rqDJW/uFSZoQOk7xl71yoHtvcURcp5P70G5bhTjG/+cT8iouzXLdX93BYEs+buOnaujeaSdEpVlWTi/nSBuTqwgDVlt9xGre/eXNZEO2gsCol4SohSzISm/ZNYWRUZ26x62UaRsxLqGlMLdomrYEnYN5648kp6BOf/BUtMVb955oc50vCSwJGslDv8xlj/GyWiVVI=;20:I/3biE2BiIR2fXxJTg0xENAV42KXol9qdAfp/PP7AOc2tDKdeZG8tLwcwiAlHst1b4ABeVdfu+b8t3vW74ABy4gjnflnlZhPG95NeNynOstR1QH0qp5MbrV/sdy5Hix+D5AhPwtDMTPgd7SJRfJ+D145SDmrHPfeYieWkySTxj0RpLdisHQ29rGtTYKUb/DokyxTbXpR1vSpqb8b5qYL/mq7rCWQ2AtXoNTAS654MAOTmM4cxfWnjmuHpG104sd3ardqwYLnHn5aWz0dB7ETyORphl8Cv2aMY9eFOTsYFEqCWeuVz7Wu9igqXmvf4UmTnb8lTLauaYjcQddrdxqTSKNVOocZi3tvequV8S6oPalUofbTEYd2md5AH7LGCbmmgvOU8Q2gixWKFyfnopd5ebtdUxCC1WzYywN8zdgpD5yrF5/QmS2xFtCd09kqNIkxbZMATK7tV1Va1Wq/lvxFfNsPJafIfqFywcSfoqFhwWSYmQWbfZ/IZD7SaDuLVTHK
-X-Microsoft-Antispam-PRVS: <BYAPR07MB4407A5E0D71CDFE3793FCF80D0A00@BYAPR07MB4407.namprd07.prod.outlook.com>
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3231475)(944501520)(52105112)(93006095)(93003095)(3002001)(148016)(149066)(150057)(6041310)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:BYAPR07MB4407;BCL:0;PCL:0;RULEID:;SRVR:BYAPR07MB4407;
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR07MB4407;4:E1mahWjTeszuGCyipWAyctD7Q+nZW4sguWgcKBPk4SRjvdrlKxAVak8tNep1WVyuGvYO3DPiXAincnAXbjllfVtl63wmKRbOyFn2o6C6gvbehriOBY3ceIsX8k5WAusGu1fQpGgnPBkZhTgBQ/Hj0v8DVp4STzkX1Yok1d6mjfVACQO06Is1TPoVm3l/b/2Rqm/+SoxOZrU6SoaRlebAAb4KkoaUYVQHSa5btd/Mkn3vbFr8wfNxpCjib+9PBDRHQdWHyO+NYNKGsFQYnnBbeA==
-X-Forefront-PRVS: 088552DE73
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BYAPR07MB4407;23:3/4eZzt0Fi9MJK/Wtzd8NhbIVYVMsMOnWuEnYHJHW?=
- =?us-ascii?Q?Yzsh5a2024YcDNkpXJnl8h7cdG8wKd+nzqfzdBgq5HaBHMo80iAJ8Igga4dw?=
- =?us-ascii?Q?0eLdY/r+P7b1iD7m7VxN7nvkRiu9cWaLB9nqphDEAdVaKmpqlxrrjr0C35GC?=
- =?us-ascii?Q?2kN0uYt1wVrCrjqXT31G7As258+/NffJIbtQBFLP7/Z3sDZGmiM49M5nzw/7?=
- =?us-ascii?Q?htYUQOYMFtrHo44naYZTaCz/Fh9kfEk4oge8+GWbVRshyDBqgOokNRcnIhVv?=
- =?us-ascii?Q?zuyAGbaDHOT30e2m5hQ5tD0kkqM3lahw2eoRY1hNqd+lqKWl4dlJKAh6+ybw?=
- =?us-ascii?Q?z76I1Vkwth3Jzayw/sn+4GNETt5HJkMK+7y+A1fBYMGMlz1u0rsGXzwoN2eU?=
- =?us-ascii?Q?Zsj01QkWqdg1ftfGYDrFSBva+EA1M6Gjo/8Vtzb/yvu7GtSrGqV/lt+MoF0w?=
- =?us-ascii?Q?9RW1TRkguJra48kWLT4nPY+Ih/oW9n9OBctC5Kbv7DyjL+KN7xPIQZw5Z8Ce?=
- =?us-ascii?Q?rflcqAUOzKf2gDpR8mPPEAzaYFvt+0JEL/jVmhiJNkbHQi/zx0MtUtvW0WoJ?=
- =?us-ascii?Q?KJYU8LN98WxjqmcXroSjAwsOwAw5RnwrBy9Bk0P51ykvJRyWAsEZmpQb0tLw?=
- =?us-ascii?Q?AiAtv6yk0VBG5TsMNM26cv/XVEZz729iLlG5qf6SHA0ApN+2qpgYPRdCZ6IJ?=
- =?us-ascii?Q?tOpEGXrbkIi2yn7SX8gKs4Ef26EcQVK4Jga3lIvbDerHW7PCuYp6dTSx76rr?=
- =?us-ascii?Q?VFcI4dCJHxdOhjNSmVLPg6z+zRfmupZ3K99A+ggxkH++8H5eAM2LU0zcs68q?=
- =?us-ascii?Q?kIdSpbrnbZ7zapUZcCxzB/wyUh84uoAppG4ra7VeXGsmgWhYNqUlHBrTXvcR?=
- =?us-ascii?Q?4FgZDqoUzM/82vW+258ChkSHcTGXMp1VqwKi+EwUNE3Fq5+4B6K2DT9d3Vmx?=
- =?us-ascii?Q?/qiGLgYtuKryLp3TORCWsYafClgF8rC2u14tp0W5eXXtEToVwRycqeO8E9lp?=
- =?us-ascii?Q?uE6cRvUqlQUddWB7VnmwVxCTUsRjq8BmLYJRPGVkGRSQ0NdVYTB5UrLhney2?=
- =?us-ascii?Q?SIs+igeJlgQGka50vGtxor3aiKFXqLtTMPVemkfRg7i1hG5XsxF5PXTtOSTN?=
- =?us-ascii?Q?zt09a/Swvj022MMDszGVYwD3ovzu2K8?=
-X-Microsoft-Antispam-Message-Info: zuJmAk8iK8kljwuUzufdBMD8Rw5Ya/EhTzG09/2gaBx3qyLmrORbl76SwR7tDzYYoF+mYqDo7o7Go1cL/VPRZ3qCYhXxmliFj8d6KRs/DMARAHi9MmpbklauIXv42rStaMpsyImVn3PjHLUOJWHPGym+FYrkhW5mnXDh0Op1UgVCme4iST9+E/zKczoYjtfrboPkJa3EUeuRFUP3Tzh/mrfGIMcOafiM3sT1Q09t6cmtqTO4qmblIa6sugPMBum2doR59VcAO68x5DdBLAz0GBCkhD+pqMRqeRBA6f/Aw+Pm8BCxD2U56GpW98+YQzja
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR07MB4407;6:8+0pQon1xHEwGgXIxZ5RQBd6bwue4Sb/6MQM4ulNoC3/zw/7P24x0WpkWKrnHHwny4p+1CB1WgE9v11pU+4sZpsOvd5S9SHd85CkRHwfWEeUsZsiTyOm3zNrF5krKCUyQ5KLYYDrlbnRcbcpAF/YQZD53BOd9mrInr6bb4XY6vTTNOf7lW4pNGHCFX6bB6bPB0Ao/Uej0hRi6wrDYBWNf7SPeA1rqpx+FYtQeONFcnVvVfJPxKvXl0nG18QtVr6sP7kmZQSLe5Od44VzGmAL8lmiyfZ+yC3il74TouMLHlLn9O//qfcpAdtWHITwQIran92UngsfE0Ypw+5XNCX8ZqQ8I/U2Yc0wlsgnxftr6luRXCERzMrhFGxRRhUl/Daoskj6ZRSkLPXpNil55ObhAX0vln8zMt2/GEJNW8O7gGJxBIF+fLGPbK/PkDHarDrsTtUgMEYXkOaFSz6mtDZ0Gg==;5:GhL6r0OYPkXNhcqfZHSm2UgoJVbuDq69+WhDjXt7pPV/fp97fuNlGfeE4TC/4iSaoS0TsTNy4u7RZRvZSE2B3Dv7TqtOgndLi/7VPqYe+dWtS9VStvN5HJfPybUPlLCxSbarTyGwxufoDKPFC79y8sLS3R6FtcowLqHfh4fsLSk=;7:C3gscq2b5DaHWhGOar5DEfvOqsy1BVt+Y7/oAw1CgZ6tcD5ZeNTiE7IY0yI1Wzz30pwk324puWJ0Pxq8LDDnbPo7anZuLVtIwdi+I2QpBzB6J/nQRE0KVCd6eQh266dC/julNQVS7WVVCcvAb8fl5Q==
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR07MB4407;20:6emxAPNK/BjRZgri4WOSXwgFmiHhS2gjUH5dptdCxBhA5Jngzy3K2m8uHOnyl14B8Ql7GsIA5pmh77SJgMHT4dKv8dGl9qaWXpOVnxa3+uTCIOLLa4nvL8wGFrgmaV2WbQZdLfXWojq97xFks5VbkGUSbNMYD+mYK9nWurnhnyq7OQvmbNFdkUFPmpCzlF3uZf3Lquj8jVj9rSkYpFvVFHwnAyS6A8g5PXIIyFavccalQsDXw8wCQihkEQGoOsp+
-X-OriginatorOrg: cadence.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Dec 2018 12:49:42.3823
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 593d6f90-86ec-481e-7371-08d660f973da
-X-MS-Exchange-CrossTenant-Id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=d36035c5-6ce6-4662-a3dc-e762e61ae4c9;Ip=[199.43.4.28];Helo=[rmmaillnx1.cadence.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR07MB4407
-X-Proofpoint-SPF-Result: pass
-X-Proofpoint-SPF-Record: v=spf1 include:_spf.salesforce.com include:mktomail.com
- include:spf-0014ca01.pphosted.com include:spf.protection.outlook.com
- include:auth.msgapp.com include:spf.mandrillapp.com ~all
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-13_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0
- priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
- spamscore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=896 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812130113
+In-Reply-To: <20181213093438.29621-13-josephl@nvidia.com>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1544705732; bh=hH4bdOk9vapZeGAOsCAVTaT3yoK1zzWkBv7B09Ov/wE=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=g0m+k7BLOE7Y+pZqRydBfx/aYD8IXvbvxfL+7eNP9oTHRkfDr4+jkLvvVspaTaQ9x
+         sjL19SetwzMVUM4YS2+DTqrYYOUZq/gmQvpAySOsPlEme3ftqFB0wUSF5oi9mLROP4
+         3P1Zg3CTeg30yhKpHOPhH4HE3fgBDc/g+fq0Kz+/IP3o+cj3cJsmw/3As0353n9Ynp
+         4ve9BPZqKjTFEp7v6yptvqGnyO04tZD36swTdoXmAh0RsloSZlptbzGFCdXRR8bfGt
+         gyNYD4TwgTsL+ddGcbVBSkYn5kAtRMnxOeMtr5WC7RkAlKyplAiYc7zL8OZvlairHv
+         RmnbIB+vAZ2dA==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This patchset adds a driver support for Fixed Memory Mapped IO clock.
 
-The driver reads a clock frequency value from a single 32-bit memory
-mapped register and registers it as a fixed rate clock.
+On 13/12/2018 09:34, Joseph Lo wrote:
+> The Tegra124 cpufreq driver has no information to handle the Vdd-CPU
+> rail. So this driver shouldn't handle for the CPU clock switching from
+> DFLL to other PLL clocks. It was designed to work on DFLL clock only,
+> which handle the frequency/voltage scaling in the background.
+> 
+> This patch removes the driver dependency of the CPU rail, as well as not
+> allow it to be built as a module and remove the removal function. So it
+> can keep working on DFLL clock.
+> 
+> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> Cc: linux-pm@vger.kernel.org
+> Signed-off-by: Joseph Lo <josephl@nvidia.com>
+> ---
+> *V2:
+>  - update the commit message since we change the driver not able to be
+>  built as a module and remove the removal function in V2
+> ---
+>  drivers/cpufreq/Kconfig.arm        |  4 +--
+>  drivers/cpufreq/tegra124-cpufreq.c | 41 ++----------------------------
+>  2 files changed, 4 insertions(+), 41 deletions(-)
+> 
+> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+> index 4e1131ef85ae..1d83b6e81222 100644
+> --- a/drivers/cpufreq/Kconfig.arm
+> +++ b/drivers/cpufreq/Kconfig.arm
+> @@ -261,8 +261,8 @@ config ARM_TEGRA20_CPUFREQ
+>  	  This adds the CPUFreq driver support for Tegra20 SOCs.
+>  
+>  config ARM_TEGRA124_CPUFREQ
+> -	tristate "Tegra124 CPUFreq support"
+> -	depends on ARCH_TEGRA && CPUFREQ_DT && REGULATOR
+> +	bool "Tegra124 CPUFreq support"
+> +	depends on ARCH_TEGRA && CPUFREQ_DT
+>  	default y
+>  	help
+>  	  This adds the CPUFreq driver support for Tegra124 SOCs.
+> diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
+> index 43530254201a..a1bfde0a7950 100644
+> --- a/drivers/cpufreq/tegra124-cpufreq.c
+> +++ b/drivers/cpufreq/tegra124-cpufreq.c
+> @@ -22,11 +22,9 @@
+>  #include <linux/of.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/pm_opp.h>
+> -#include <linux/regulator/consumer.h>
+>  #include <linux/types.h>
+>  
+>  struct tegra124_cpufreq_priv {
+> -	struct regulator *vdd_cpu_reg;
+>  	struct clk *cpu_clk;
+>  	struct clk *pllp_clk;
+>  	struct clk *pllx_clk;
+> @@ -60,14 +58,6 @@ static int tegra124_cpu_switch_to_dfll(struct tegra124_cpufreq_priv *priv)
+>  	return ret;
+>  }
+>  
+> -static void tegra124_cpu_switch_to_pllx(struct tegra124_cpufreq_priv *priv)
+> -{
+> -	clk_set_parent(priv->cpu_clk, priv->pllp_clk);
+> -	clk_disable_unprepare(priv->dfll_clk);
+> -	regulator_sync_voltage(priv->vdd_cpu_reg);
+> -	clk_set_parent(priv->cpu_clk, priv->pllx_clk);
+> -}
+> -
+>  static int tegra124_cpufreq_probe(struct platform_device *pdev)
+>  {
+>  	struct tegra124_cpufreq_priv *priv;
+> @@ -88,16 +78,10 @@ static int tegra124_cpufreq_probe(struct platform_device *pdev)
+>  	if (!np)
+>  		return -ENODEV;
+>  
+> -	priv->vdd_cpu_reg = regulator_get(cpu_dev, "vdd-cpu");
+> -	if (IS_ERR(priv->vdd_cpu_reg)) {
+> -		ret = PTR_ERR(priv->vdd_cpu_reg);
+> -		goto out_put_np;
+> -	}
+> -
+>  	priv->cpu_clk = of_clk_get_by_name(np, "cpu_g");
+>  	if (IS_ERR(priv->cpu_clk)) {
+>  		ret = PTR_ERR(priv->cpu_clk);
+> -		goto out_put_vdd_cpu_reg;
+> +		goto out_put_np;
+>  	}
+>  
+>  	priv->dfll_clk = of_clk_get_by_name(np, "dfll");
+> @@ -129,15 +113,13 @@ static int tegra124_cpufreq_probe(struct platform_device *pdev)
+>  		platform_device_register_full(&cpufreq_dt_devinfo);
+>  	if (IS_ERR(priv->cpufreq_dt_pdev)) {
+>  		ret = PTR_ERR(priv->cpufreq_dt_pdev);
+> -		goto out_switch_to_pllx;
+> +		goto out_put_pllp_clk;
+>  	}
+>  
+>  	platform_set_drvdata(pdev, priv);
+>  
+>  	return 0;
+>  
+> -out_switch_to_pllx:
+> -	tegra124_cpu_switch_to_pllx(priv);
+>  out_put_pllp_clk:
+>  	clk_put(priv->pllp_clk);
+>  out_put_pllx_clk:
+> @@ -146,34 +128,15 @@ static int tegra124_cpufreq_probe(struct platform_device *pdev)
+>  	clk_put(priv->dfll_clk);
+>  out_put_cpu_clk:
+>  	clk_put(priv->cpu_clk);
+> -out_put_vdd_cpu_reg:
+> -	regulator_put(priv->vdd_cpu_reg);
+>  out_put_np:
+>  	of_node_put(np);
+>  
+>  	return ret;
+>  }
+>  
+> -static int tegra124_cpufreq_remove(struct platform_device *pdev)
+> -{
+> -	struct tegra124_cpufreq_priv *priv = platform_get_drvdata(pdev);
+> -
+> -	platform_device_unregister(priv->cpufreq_dt_pdev);
+> -	tegra124_cpu_switch_to_pllx(priv);
+> -
+> -	clk_put(priv->pllp_clk);
+> -	clk_put(priv->pllx_clk);
+> -	clk_put(priv->dfll_clk);
+> -	clk_put(priv->cpu_clk);
+> -	regulator_put(priv->vdd_cpu_reg);
+> -
+> -	return 0;
+> -}
+> -
+>  static struct platform_driver tegra124_cpufreq_platdrv = {
+>  	.driver.name	= "cpufreq-tegra124",
+>  	.probe		= tegra124_cpufreq_probe,
+> -	.remove		= tegra124_cpufreq_remove,
+>  };
+>  
+>  static int __init tegra_cpufreq_init(void)
+> 
 
-It can be useful for prototyping Linux on various hardware platforms.
-It is not intended to be used on finished, complete SoCs.
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
 
-Changes since V1:
-	Added platform driver support.
-	Removed unnecessary messages.
-
-Jan Kotas (2):
-  dt-bindings: clk: Add bindings for Fixed MMIO clock
-  clk: Add Fixed MMIO clock driver
-
- .../devicetree/bindings/clock/fixed-mmio-clock.txt |  24 +++++
- drivers/clk/Kconfig                                |   6 ++
- drivers/clk/Makefile                               |   1 +
- drivers/clk/clk-fixed-mmio.c                       | 109 +++++++++++++++++++++
- 4 files changed, 140 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/fixed-mmio-clock.txt
- create mode 100644 drivers/clk/clk-fixed-mmio.c
+Cheers
+Jon
 
 -- 
-2.15.0
-
+nvpublic
