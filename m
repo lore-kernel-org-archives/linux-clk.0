@@ -2,53 +2,53 @@ Return-Path: <SRS0=SiOT=OX=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F3E5C6786C
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Dec 2018 05:44:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE070C67839
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Dec 2018 06:07:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 251A6208E7
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Dec 2018 05:44:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 869C720866
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Dec 2018 06:07:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544766261;
-	bh=zEtND072MverXHNjnDrs63pMQCgNgJnQz1m9DMrCxJQ=;
+	s=default; t=1544767630;
+	bh=Dsw03dJ4fDddQDqjn/YETqV88hAozHFLxhrxDfKnbFg=;
 	h=In-Reply-To:Subject:To:References:From:Cc:Date:List-ID:From;
-	b=kUcWafNjLvMgG1/ALb8nJjFKGdfLBIyqDQGoGU5fOsPLzavnf9maACUqO7mb3EQct
-	 ogFhHr23hDNAS9IpOXc2JFYC1Ey0MaxGlb2Snex7I/wdjRWD5soyBDRLVJvbtKQWTb
-	 Kejb3M3FNJnpaksA1H72TTfaGeWiJtTVTIDNU55A=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 251A6208E7
+	b=zBVr1T200xQgVRASUTxcy/6q6B+aH/fkJYkneNqOn2IzfFK4iqeynP8bX9kAgtfPb
+	 LYnIwBInzGXlg+MNg4rkZUxN30T8Uo0R8fyA4tb8xXs0W1BEjSETd95+paGJrwUkru
+	 Gx/ku2viPgiohUPuYZKSIa0xfsLC5y8cOtfvynjw=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 869C720866
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727165AbeLNFoU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Dec 2018 00:44:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49382 "EHLO mail.kernel.org"
+        id S1726465AbeLNGHK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Dec 2018 01:07:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54192 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727127AbeLNFoU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 14 Dec 2018 00:44:20 -0500
+        id S1726437AbeLNGHJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 14 Dec 2018 01:07:09 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1C69B20811;
-        Fri, 14 Dec 2018 05:44:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4BC162075B;
+        Fri, 14 Dec 2018 06:07:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544766259;
-        bh=zEtND072MverXHNjnDrs63pMQCgNgJnQz1m9DMrCxJQ=;
+        s=default; t=1544767629;
+        bh=Dsw03dJ4fDddQDqjn/YETqV88hAozHFLxhrxDfKnbFg=;
         h=In-Reply-To:Subject:To:References:From:Cc:Date:From;
-        b=EX6AFq1DJgwPgmX6YbBdjbXvTakkUZ3APNNb6Vo61V3L0nx9/N2x+DWhbxCCsg7oT
-         PvpI1TaEfanGBthHXPz2J8N5cog7PVWmujj+8h42O+uzH8wpPzso/mgN99m5NYTC8b
-         nXR7A8Y7TXFCxyM2sJKdVyo0Eqy+ZsTRExBngGnw=
+        b=Him3H2zgOKvxp2NCokxYs0VBCLj+xH3cHGUwfaGOrxIlgKNY3SmnmhDujg8gTqGpL
+         CPCkJUqlc+GX+XW/6xZJaLHhuGE161QQkGEePPbp2y9n4r/qUvlw0hDa6QJlgBLxcg
+         yZ4Uqq5XgJO4KYg2iI/CYwMznZKsDVbJPxzI+R4Y=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <AM0PR04MB4211CEFB586B7878BBB58FEB80A10@AM0PR04MB4211.eurprd04.prod.outlook.com>
-Subject: RE: [PATCH V12 0/5] clk: imx: add imx8qxp clock support
+In-Reply-To: <20181214053033.GF13243@dragon>
+Subject: Re: [PATCH V12 0/5] clk: imx: add imx8qxp clock support
 To:     Aisheng Dong <aisheng.dong@nxp.com>,
         Shawn Guo <shawnguo@kernel.org>
-References: <1544715442-8902-1-git-send-email-aisheng.dong@nxp.com> <20181214020533.GC13243@dragon> <AM0PR04MB42114ACB1A55BB42D2C5523280A10@AM0PR04MB4211.eurprd04.prod.outlook.com> <20181214031931.GD13243@dragon> <AM0PR04MB4211D692CBED348EF8C109A180A10@AM0PR04MB4211.eurprd04.prod.outlook.com> <20181214035606.GE13243@dragon> <AM0PR04MB4211CEFB586B7878BBB58FEB80A10@AM0PR04MB4211.eurprd04.prod.outlook.com>
-Message-ID: <154476625826.19322.10114583343237309899@swboyd.mtv.corp.google.com>
+References: <1544715442-8902-1-git-send-email-aisheng.dong@nxp.com> <20181214020533.GC13243@dragon> <AM0PR04MB42114ACB1A55BB42D2C5523280A10@AM0PR04MB4211.eurprd04.prod.outlook.com> <20181214031931.GD13243@dragon> <AM0PR04MB4211D692CBED348EF8C109A180A10@AM0PR04MB4211.eurprd04.prod.outlook.com> <20181214035606.GE13243@dragon> <AM0PR04MB4211CEFB586B7878BBB58FEB80A10@AM0PR04MB4211.eurprd04.prod.outlook.com> <20181214053033.GF13243@dragon>
+Message-ID: <154476762849.19322.6761040252503231833@swboyd.mtv.corp.google.com>
 From:   Stephen Boyd <sboyd@kernel.org>
 User-Agent: alot/0.8
 Cc:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
@@ -58,88 +58,22 @@ Cc:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
         "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
         "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>
-Date:   Thu, 13 Dec 2018 21:44:18 -0800
+Date:   Thu, 13 Dec 2018 22:07:08 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Aisheng Dong (2018-12-13 20:57:46)
-> > -----Original Message-----
-> > From: Shawn Guo [mailto:shawnguo@kernel.org]
-> > On Fri, Dec 14, 2018 at 03:37:47AM +0000, Aisheng Dong wrote:
-> > > > -----Original Message-----
-> > > > From: Shawn Guo [mailto:shawnguo@kernel.org] On Fri, Dec 14, 2018 at
-> > > > 02:17:04AM +0000, Aisheng Dong wrote:
-> > > > > [...]
-> > > > > > > Note: It depends on SCU driver which has already been merged
-> > > > > > > by
-> > > > Shawn.
-> > > > > > > So this patch series could go through Shawn's tree as well.
-> > > > > >
-> > > > > > To be clear, I'm not going to take this via my tree, and it
-> > > > > > definitely needs to go through clk tree.  If there is a
-> > > > > > dependency on my tree, you will likely need to wait for the
-> > > > > > dependency to land on
-> > > > mainline and then retry.
-> > > > > >
-> > > > >
-> > > > > Sorry, I should have corrected that comment.
-> > > > > It's not depend on SCU driver which is already in the Stephen's t=
-ree.
-> > > > > It actually depends on the resource ID definitions[1] and the
-> > > > > centralized PM related service definitions headifle in in power
-> > > > > domain series which is already in your tree.
-> > > > >
-> > > > > [2] can be fixed by defining them in clock driver.
-> > > > > But [1] seems can't be fixed as resource ID is shared by power
-> > > > > domain and possible many other SCU client drivers.
-> > > > >
-> > > > > Any suggestion?
-> > > >
-> > > > After [1] and [2] land on v4.21-rc1, you rebase the series on that.
-> > > > The dependency will be gone, right?  This is what I suggested above.
-> > > >
-> > >
-> > > Okay, that may need a few more weeks.
-> > > BTW, after v4.21-rc1 is out, can the mx8qxp CLK and DTS hit the final=
- v4.21
-> > release?
-> > > As I understand, usually we don't receive new feature patch after the
-> > > first RC, right?
-> >=20
-> > Yes, they will have to land on 4.22 then.
+Quoting Shawn Guo (2018-12-13 21:30:35)
 >=20
-> That's unfortunately and may need wait 3 more months.
-> I really wish we can hit v4.21-rc1, then other modules driver can start
-> their work based on it.
+> In case Stephen is fine by pulling dependency from my tree, it's all on
+> branch below, which has been pulled/queued by arm-soc folks for 4.21
+> merge window.
 >=20
-> Stephen,
-> What's your option?
->=20
-> Can we try the same way as Shawn did for arch and dts part?
+>  git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git imx/dri=
+vers
 >=20
 
-I see some options:
-
-	1. Shawn can provide the required header files in some signed
-	tag that I can pull into clk tree and then apply these patches
-	on top and merge it all up into clk-next.
-
-	2. I can pick any patches required for the header files the clk
-	driver needs into clk tree and duplicate the commits in Shawn's
-	tree. I don't see a big downside here, git manages just fine
-	when it sees duplicate content on both sides of a merge so it's
-	just more noise than anything else.
-
-	3. I apply the clk driver bits but nobody tries to enable the
-	config option around it just yet. Instead, we wait for
-	everything to meet up in linux-next via different trees and then
-	enable compilation later. This is bad for compile testing
-	drivers and makes it harder to bisect problems later. Probably
-	not a big deal here for bringing in new hardware support but it
-	might work out.
-
-	4. We all wait three months (happy new year!) but otherwise are
-	sad that we can't figure this out.
+I can pull just the first patch from this branch and then everything
+will compile? That should be OK.
 
