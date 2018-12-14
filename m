@@ -3,137 +3,104 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C576C67839
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Dec 2018 13:50:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72AFEC43387
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Dec 2018 14:13:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FBBA20656
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Dec 2018 13:50:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1DAC0206E0
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Dec 2018 14:11:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="IGmGG/fR"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tWR+VrTq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730007AbeLNNue (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Dec 2018 08:50:34 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:38869 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729804AbeLNNue (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Dec 2018 08:50:34 -0500
-Received: by mail-lf1-f68.google.com with SMTP id p86so4312131lfg.5
-        for <linux-clk@vger.kernel.org>; Fri, 14 Dec 2018 05:50:33 -0800 (PST)
+        id S1729731AbeLNOMA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Dec 2018 09:12:00 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:35857 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726554AbeLNOL7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Dec 2018 09:11:59 -0500
+Received: by mail-ed1-f67.google.com with SMTP id f23so5077743edb.3;
+        Fri, 14 Dec 2018 06:11:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=TT1Xs744YvFr5FAOSJ08uVRir7gQf/QP/n2KzZnawb4=;
-        b=IGmGG/fR90Y4O2GWuPCFosA3GPigBCBFBNgDMnigNYaRp29bz+Q64UKDZ3ciUk8yHw
-         7Gs09Ev9iiu6JyOo3nFwZ0IE3PdcBBpYZLTzU4xL003pMsLgJKswjiIrhdj6+IgnPkv4
-         wV5x+yytrMqp85gCYnD8rqNfM9U/4WazcNCqg=
+         :cc;
+        bh=lOHfZAhHLVpxi/tMQLzkDV/TIgSG0ZS7mbtAEjInM2A=;
+        b=tWR+VrTqybd0uVGRyW5uPuxi/51ijeGmBVaN8Uq/9XdIydPiX8MYkJKaikuzX+Q+If
+         VD7ve2GvuSGiuo80t/SvbOZ3C5HCOxcXIhMfIkG8Luq32ead3eYDfVcAELiT351DK80p
+         MO32VvUH1UipcKwMFeVCLmyDsLeBr58EDus9LcnbyHGAY+iJQmuGpqFCM65y77abuSyx
+         2Q1FG1n/YXZuiWFsrFDXoVCcEBhhVWUcQavqqPua6S7S5MwW5S36Br11VYV4CLTb+gNQ
+         eM1osuJUdqzCKi8aPizB4ihPNMUHXahAgrSyjzXCt35B2N6XNVHavNDooGcXlxOt2HqO
+         11Tg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=TT1Xs744YvFr5FAOSJ08uVRir7gQf/QP/n2KzZnawb4=;
-        b=CLWfYNO/ft73EU/rMLz5i3p/HAyziGagjfy27hIOE+amhCpg2ZoP7o4iRPHfDHolBj
-         RatwWtjB/yID1x7X9KkLXH1iOuxPqne6zrGxqCm9pa9ZfAWssd3zXyDLadkVQbJvq4ld
-         GcR1+zwzZF3fcD4aUsqBreGt9U8Jw3wDGKYvmsdu2eRd2Q0R8vda/gg/fV3B4gUDbegb
-         sZtRyv4yHUaV+24qoBP+m6ox8de/Zmk+Q+YSeJifTveXctzUmT1RSUZLsuqT7XfoysLp
-         oWaHEVhGZ7xmneCWED+MAf6WxDNp5YDOOenw7S4bGrPB4VQVCfzVe8CSW57Kku/tUd3X
-         hu/g==
-X-Gm-Message-State: AA+aEWaWMb8G7Qs+s0DInEppxm35/FavaCgCRBVK44pKYp6UzwpmofmH
-        z1Ae8MYFZ0yPCfIna4gdRkixCx2ezeC/VQIv9cOwzA==
-X-Google-Smtp-Source: AFSGD/UqPR5H867B8OQqykdWDeMpN/oCXYbkKZLdsU9DGeKyv5jHL9rQd2rVYFonCRchJ54w/zm7nWjRae35TLhjVgk=
-X-Received: by 2002:a19:4849:: with SMTP id v70mr1849137lfa.62.1544795432320;
- Fri, 14 Dec 2018 05:50:32 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=lOHfZAhHLVpxi/tMQLzkDV/TIgSG0ZS7mbtAEjInM2A=;
+        b=tUL22A1VAHJcYobfzYF2sbnarzn7XqtxhEtIsg4GUPYelXmHpFKswcdW0a4IaJcHrz
+         oIZgCACkoD1hV4fIZeavn8POQvnJbwsKiHbGoLNxHL1t+Gbqk6oQqmaJVPTqwOb5nn+B
+         7AafEhVC2CNOoWccUGs4Lp3zBbdFd0TbyzwpPwTucmnnzDWLEvMxxyh0O6mLI67T0S7E
+         /nzSlDEOp3OFd3zsKJjMqYo5pXdmtCeTZHw6v6+rf/8sUjiGj64H9kxl7KW2mJMCC5o+
+         De1TJSPgk6OM4i0E3fwnVMwy7rfaNU+i/CJ6dPuKsViOKlWmHrcSF2ztilc67MXHozV7
+         d/kQ==
+X-Gm-Message-State: AA+aEWa6g0URqG6nUeD2CeAtcr6kzGgep48IyU66QcQw0VR3VkJKe2gs
+        2UKj5ifzQHRA0HNZw9XlHQoStiln8YtSBqXEEu0=
+X-Google-Smtp-Source: AFSGD/XeDodsmoR5pS6Lgq1o5XT4tgeJBwzJcbyfjFmTcDcnx3zYZA19TxkEbnmtjSqc862ho+XTYebzeK1KH4SjPMs=
+X-Received: by 2002:aa7:d9d6:: with SMTP id v22mr3139376eds.265.1544796717889;
+ Fri, 14 Dec 2018 06:11:57 -0800 (PST)
 MIME-Version: 1.0
-References: <20181212220922.18759-1-paul@crapouillou.net> <20181212220922.18759-16-paul@crapouillou.net>
- <20181213092409.ml4wpnzow2nnszkd@pengutronix.de> <1544709795.18952.1@crapouillou.net>
- <20181213204219.onem3q6dcmakusl2@pengutronix.de>
-In-Reply-To: <20181213204219.onem3q6dcmakusl2@pengutronix.de>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 14 Dec 2018 14:50:20 +0100
-Message-ID: <CACRpkdbABtDgwKai=8Pfji7qVb-XHsX8pDsuDdS5hhg7qEN0Bw@mail.gmail.com>
-Subject: Re: [PATCH v8 15/26] pwm: jz4740: Add support for the JZ4725B
-To:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Paul Cercueil <paul@crapouillou.net>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ralf Baechle <ralf@linux-mips.org>, paul.burton@mips.com,
-        James Hogan <jhogan@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mathieu Malaterre <malat@debian.org>, ezequiel@collabora.co.uk,
-        prasannatsmkumar@gmail.com, linux-pwm@vger.kernel.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>,
-        linux-mips@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-clk <linux-clk@vger.kernel.org>, od@zcrc.me
+References: <1544717789-27388-1-git-send-email-abel.vesa@nxp.com>
+ <CAEnQRZC+frwbcdA657v5SB_u1z=FaOFOFrQxuNXsWNrDgnPzGA@mail.gmail.com>
+ <AM0PR04MB4211C143F6BEDD5716E746AA80A00@AM0PR04MB4211.eurprd04.prod.outlook.com>
+ <20181214010101.GA13243@dragon>
+In-Reply-To: <20181214010101.GA13243@dragon>
+From:   Daniel Baluta <daniel.baluta@gmail.com>
+Date:   Fri, 14 Dec 2018 16:11:45 +0200
+Message-ID: <CAEnQRZB_fEeASWsBye0HSn=tUBe31DugO42f3Z1GNYR4PNHXWQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: imx: Make the i.MX8MQ CCM clock driver CLK_IMX8MQ dependant
+To:     Shawn Guo <shawnguo@kernel.org>
+Cc:     Aisheng Dong <aisheng.dong@nxp.com>, Abel Vesa <abel.vesa@nxp.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "olof@lixom.net" <olof@lixom.net>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Dec 13, 2018 at 9:42 PM Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@pengutronix.de> wrote:
-> [Adding Linus Walleij to Cc:]
+On Fri, Dec 14, 2018 at 3:02 AM Shawn Guo <shawnguo@kernel.org> wrote:
 >
-> Hello,
->
-> On Thu, Dec 13, 2018 at 03:03:15PM +0100, Paul Cercueil wrote:
-> > Le jeu. 13 d=C3=A9c. 2018 =C3=A0 10:24, Uwe Kleine-K=C3=B6nig
-> > <u.kleine-koenig@pengutronix.de> a =C3=A9crit :
-> > > On Wed, Dec 12, 2018 at 11:09:10PM +0100, Paul Cercueil wrote:
-> > > >  The PWM in the JZ4725B works the same as in the JZ4740, except tha=
-t
-> > > > it
-> > > >  only has 6 channels available instead of 8.
-> > >
-> > > this driver is probed only from device tree? If yes, it might be
-> > > sensible to specify the number of PWMs there and get it from there.
-> > > There doesn't seem to be a generic binding for that, but there are
-> > > several drivers that could benefit from it. (This is a bigger project
-> > > though and shouldn't stop your patch. Still more as it already got
-> > > Thierry's ack.)
+> On Thu, Dec 13, 2018 at 04:51:18PM +0000, Aisheng Dong wrote:
+> > [...]
 > >
-> > I think there needs to be a proper guideline, as there doesn't seem to =
-be
-> > a consensus about this. I learned from emails with Rob and Linus (Walle=
-ij)
-> > that I should not have in devicetree what I can deduce from the compati=
-ble
-> > string.
+> > > > --- a/drivers/clk/imx/Makefile
+> > > > +++ b/drivers/clk/imx/Makefile
+> > > > @@ -34,5 +34,6 @@ obj-$(CONFIG_SOC_IMX6SX) += clk-imx6sx.o
+> > > >  obj-$(CONFIG_SOC_IMX6UL) += clk-imx6ul.o
+> > > >  obj-$(CONFIG_SOC_IMX7D)  += clk-imx7d.o
+> > > >  obj-$(CONFIG_SOC_IMX7ULP) += clk-imx7ulp.o
+> > > > -obj-$(CONFIG_SOC_IMX8MQ) += clk-imx8mq.o
+> > > >  obj-$(CONFIG_SOC_VF610)  += clk-vf610.o
+> > > > +
+> > > > +obj-$(CONFIG_CLK_IMX8MQ) += clk-imx8mq.o
+> > >
+> > > Nit: Do we want to keep CONFIG_ sorted?
+> >
+> > IMHO It might be okay to make MX8 (ARM64) a new group to start
+> > To get a clear separation. (Slightly not sorted due to VF610)
+> > Anyway, it leaves to Stephen to make the judge.
 >
-> I understood them a bit differently. It is ok to deduce things from the
-> compatible string. But if you define a generic property (say) "num-pwms"
-> that is used uniformly in most bindings this is ok, too. (And then the
-> two different devices could use the same compatible.)
->
-> An upside of the generic "num-pwms" property is that the pwm core could
-> sanity check pwm phandles before passing them to the hardware drivers.
+> I think Daniel is suggesting that we put CONFIG_CLK_IMX8MQ prior to
+> CONFIG_SOC_IMX1, so that all CONFIG_CLK_xxx options go before
+> CONFIG_SOC_xxx and the list is still naturally alphabetically sorted.
 
-I don't know if this helps, but in GPIO we have "ngpios" which is
-used to augment an existing block as to the number of lines actually
-used with it.
-
-The typical case is that an ASIC engineer synthesize a block for
-32 GPIOs but only 12 of them are routed to external pads. So
-we augment the behaviour of that driver to only use 12 of the
-32 lines.
-
-I guess using the remaining 20 lines "works" in a sense but they
-have no practical use and will just bias electrons in the silicon
-for no use.
-
-So if the PWM case is something similar, then by all means add
-num-pwms.
-
-Yours,
-Linus Walleij
+Yes, that's correct.
