@@ -4,35 +4,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9750CC65BAE
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Dec 2018 02:04:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 323DAC65BAE
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Dec 2018 02:04:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 570F020879
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Dec 2018 02:04:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 570F020879
+	by mail.kernel.org (Postfix) with ESMTP id 01B7D20870
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Dec 2018 02:04:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01B7D20870
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728625AbeLNCEf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Dec 2018 21:04:35 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:49087 "EHLO
+        id S1729044AbeLNCEi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Dec 2018 21:04:38 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:14396 "EHLO
         mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727901AbeLNCEf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Dec 2018 21:04:35 -0500
-X-UUID: be1ddd17aeda42feaabcf474277c118c-20181214
-X-UUID: be1ddd17aeda42feaabcf474277c118c-20181214
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
+        with ESMTP id S1728130AbeLNCEh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Dec 2018 21:04:37 -0500
+X-UUID: 19ee1892613e45daa65a7b9c047d64a3-20181214
+X-UUID: 19ee1892613e45daa65a7b9c047d64a3-20181214
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
         (envelope-from <weiyi.lu@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 532484311; Fri, 14 Dec 2018 10:04:20 +0800
+        with ESMTP id 744815289; Fri, 14 Dec 2018 10:04:24 +0800
 Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
+ mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
  15.0.1395.4; Fri, 14 Dec 2018 10:04:19 +0800
 Received: from mtkslt210.mediatek.inc (10.21.14.14) by MTKCAS06.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 14 Dec 2018 10:04:18 +0800
+ Transport; Fri, 14 Dec 2018 10:04:19 +0800
 From:   Weiyi Lu <weiyi.lu@mediatek.com>
 To:     Matthias Brugger <matthias.bgg@gmail.com>,
         Stephen Boyd <sboyd@codeaurora.org>,
@@ -43,42 +44,63 @@ CC:     James Liao <jamesjj.liao@mediatek.com>,
         <linux-kernel@vger.kernel.org>,
         <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
         <srv_heupstream@mediatek.com>, Weiyi Lu <weiyi.lu@mediatek.com>
-Subject: [resend PATCH v1 1/2] dt-bindings: clock: add clock for MT2712
-Date:   Fri, 14 Dec 2018 10:04:16 +0800
-Message-ID: <20181214020417.2871-3-weiyi.lu@mediatek.com>
+Subject: [resend PATCH v1 2/2] clk: mediatek: update clock driver of MT2712
+Date:   Fri, 14 Dec 2018 10:04:17 +0800
+Message-ID: <20181214020417.2871-4-weiyi.lu@mediatek.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20181214020417.2871-1-weiyi.lu@mediatek.com>
 References: <20181214020417.2871-1-weiyi.lu@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
+X-TM-SNTS-SMTP: EF4EB2EA208F57F3D0056F890733E7F6D5DC0C35D23C0A7444B93812A9D9DE842000:8
 X-MTK:  N
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add new clock according to 3rd ECO design change.
-It's the parent clock of audio clock mux.
+According to 3rd ECO design change,
+1. Add new fixed factor clock of audio.
+2. Add the parent clocks for audio clock mux.
 
 Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
 ---
- include/dt-bindings/clock/mt2712-clk.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/clk/mediatek/clk-mt2712.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/include/dt-bindings/clock/mt2712-clk.h b/include/dt-bindings/clock/mt2712-clk.h
-index 76265836a1e1..c3b29dff9c0e 100644
---- a/include/dt-bindings/clock/mt2712-clk.h
-+++ b/include/dt-bindings/clock/mt2712-clk.h
-@@ -228,7 +228,8 @@
- #define CLK_TOP_NFI2X_EN		189
- #define CLK_TOP_NFIECC_EN		190
- #define CLK_TOP_NFI1X_CK_EN		191
--#define CLK_TOP_NR_CLK			192
-+#define CLK_TOP_APLL2_D3		192
-+#define CLK_TOP_NR_CLK			193
+diff --git a/drivers/clk/mediatek/clk-mt2712.c b/drivers/clk/mediatek/clk-mt2712.c
+index 991d4093726e..e36f4aab634d 100644
+--- a/drivers/clk/mediatek/clk-mt2712.c
++++ b/drivers/clk/mediatek/clk-mt2712.c
+@@ -223,6 +223,8 @@ static const struct mtk_fixed_factor top_divs[] = {
+ 		4),
+ 	FACTOR(CLK_TOP_APLL1_D3, "apll1_d3", "apll1_ck", 1,
+ 		3),
++	FACTOR(CLK_TOP_APLL2_D3, "apll2_d3", "apll2_ck", 1,
++		3),
+ };
  
- /* INFRACFG */
+ static const char * const axi_parents[] = {
+@@ -594,7 +596,8 @@ static const char * const a1sys_hp_parents[] = {
+ 	"apll1_ck",
+ 	"apll1_d2",
+ 	"apll1_d4",
+-	"apll1_d8"
++	"apll1_d8",
++	"apll1_d3"
+ };
  
+ static const char * const a2sys_hp_parents[] = {
+@@ -602,7 +605,8 @@ static const char * const a2sys_hp_parents[] = {
+ 	"apll2_ck",
+ 	"apll2_d2",
+ 	"apll2_d4",
+-	"apll2_d8"
++	"apll2_d8",
++	"apll2_d3"
+ };
+ 
+ static const char * const asm_l_parents[] = {
 -- 
 2.18.0
 
