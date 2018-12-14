@@ -2,209 +2,157 @@ Return-Path: <SRS0=SiOT=OX=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EE1AC43444
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Dec 2018 15:48:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73D14C43387
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Dec 2018 17:16:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 984A92070B
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Dec 2018 15:48:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4DC99206E0
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Dec 2018 17:16:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544807765;
+	bh=ySFlzq5RjV08D0LJcC5AwZ6G1xf3mFqoVIv4qlhNNmM=;
+	h=In-Reply-To:Subject:To:References:From:Cc:Date:List-ID:From;
+	b=hT3OlSy3F4/k0dpgKVaxZYULwgoMPGVccTeAhSQPN55XoaFjv8pUZ6vKufSbt67Zf
+	 +nSwSZMHvYrOdJn9h/I4r4IOM95medRNUX/37Jl+EbkmYl9byYZtGv1JYPDf4Y+PzM
+	 NuyoUl102F0IPG3e6lNcnG/2nc4LsQeuvcKy1k1M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727795AbeLNPsD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Dec 2018 10:48:03 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43824 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727206AbeLNPsD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Dec 2018 10:48:03 -0500
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBEFiB6O196312
-        for <linux-clk@vger.kernel.org>; Fri, 14 Dec 2018 10:48:01 -0500
-Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2pcdga5knq-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-clk@vger.kernel.org>; Fri, 14 Dec 2018 10:48:00 -0500
-Received: from localhost
-        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-clk@vger.kernel.org> from <eajames@linux.ibm.com>;
-        Fri, 14 Dec 2018 15:47:59 -0000
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 14 Dec 2018 15:47:55 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBEFlsKB23331052
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 14 Dec 2018 15:47:54 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 64DB0B2066;
-        Fri, 14 Dec 2018 15:47:54 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C49E9B2065;
-        Fri, 14 Dec 2018 15:47:53 +0000 (GMT)
-Received: from oc6728276242.ibm.com (unknown [9.85.180.238])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri, 14 Dec 2018 15:47:53 +0000 (GMT)
-Subject: Re: [PATCH 2/2] clk: aspeed: Setup video engine clocking
-To:     Joel Stanley <joel@jms.id.au>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-aspeed@lists.ozlabs.org, Andrew Jeffery <andrew@aj.id.au>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-References: <1544559161-21468-1-git-send-email-eajames@linux.ibm.com>
- <1544559161-21468-3-git-send-email-eajames@linux.ibm.com>
- <CACPK8XcY_c9NzNv-WyZcz+mZ5c2jixyCzEQAK-+t0QvQ_uJXwg@mail.gmail.com>
-From:   Eddie James <eajames@linux.ibm.com>
-Date:   Fri, 14 Dec 2018 09:47:53 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1730085AbeLNRQD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Dec 2018 12:16:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40314 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729508AbeLNRQD (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 14 Dec 2018 12:16:03 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C18AF206DD;
+        Fri, 14 Dec 2018 17:16:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544807763;
+        bh=ySFlzq5RjV08D0LJcC5AwZ6G1xf3mFqoVIv4qlhNNmM=;
+        h=In-Reply-To:Subject:To:References:From:Cc:Date:From;
+        b=Ow/ASwOosmXhefebjh04Lye50s8P5Wz0971HNukWKwnrcz9p40voQDBSeFQtcGHHj
+         HRwVxmh/XdryZD8DfY+B35UhBVNfbhsp4KVC1PrNkxxoDqA9X1omGE/metCXDEGQlc
+         cePgdb85M+aJgtnTYz6PJ5eDBkGQJpa7zpLCqcnI=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <CACPK8XcY_c9NzNv-WyZcz+mZ5c2jixyCzEQAK-+t0QvQ_uJXwg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18121415-0064-0000-0000-0000038668E7
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010224; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000271; SDB=6.01131703; UDB=6.00588165; IPR=6.00911835;
- MB=3.00024690; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-14 15:47:58
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18121415-0065-0000-0000-00003BADFF45
-Message-Id: <81b100b7-252e-3145-fb34-17a9c0cdd91e@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-14_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812140138
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20181214124145.dbtx6z3itwepsuwb@fsr-ub1664-175>
+Subject: Re: [PATCH 1/3] arm64: Remove CONFIG_SOC_IMX8MQ and use ARCH_MXC instead
+To:     Abel Vesa <abel.vesa@nxp.com>, Lucas Stach <l.stach@pengutronix.de>
+References: <1544707047-4417-1-git-send-email-abel.vesa@nxp.com> <1544707047-4417-2-git-send-email-abel.vesa@nxp.com> <1544711727.3137.32.camel@pengutronix.de> <20181213145149.6hyyhi6hxdzvikl4@fsr-ub1664-175> <20181214011207.GB13243@dragon> <1544779331.3137.36.camel@pengutronix.de> <20181214124145.dbtx6z3itwepsuwb@fsr-ub1664-175>
+Message-ID: <154480776200.19322.2879096818180669421@swboyd.mtv.corp.google.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+User-Agent: alot/0.8
+Cc:     Shawn Guo <shawnguo@kernel.org>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Olof Johansson <olof@lixom.net>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>, Rob Herring <robh@kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>
+Date:   Fri, 14 Dec 2018 09:16:02 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Quoting Abel Vesa (2018-12-14 04:41:46)
+> On 18-12-14 10:22:11, Lucas Stach wrote:
+> > Hi Shawn,
+> >=20
+> > Am Freitag, den 14.12.2018, 09:12 +0800 schrieb Shawn Guo:
+> > > On Thu, Dec 13, 2018 at 02:51:50PM +0000, Abel Vesa wrote:
+> > > ...
+> > > > > > diff --git a/arch/arm64/Kconfig.platforms
+> > > > > > b/arch/arm64/Kconfig.platforms
+> > > > > > index 7e1545a..318dbb9 100644
+> > > > > > --- a/arch/arm64/Kconfig.platforms
+> > > > > > +++ b/arch/arm64/Kconfig.platforms
+> > > > > > @@ -148,14 +148,6 @@ config ARCH_MXC
+> > > > > > > > > > =C2=A0     =C2=A0=C2=A0This enables support for the ARM=
+v8 based SoCs in the
+> > > > > > > > > > =C2=A0     =C2=A0=C2=A0NXP i.MX family.
+> > > > > > =C2=A0
+> > > > > > -config SOC_IMX8MQ
+> > > > > > > > > > -     bool "i.MX8MQ support"
+> > > > > > > > > > -     depends on ARCH_MXC
+> > > > > > > > > > -     select ARM64_ERRATUM_843419
+> > > > > > > > > > -     select ARM64_ERRATUM_845719
+> > > > > > > > > > -     help
+> > > > > > > > > > -     =C2=A0=C2=A0This enables support for the i.MX8MQ =
+SoC.
+> > > > > > -
+> > > > >=20
+> > > > > NACK on this one. Having a single place where stuff that is absol=
+utely
+> > > > > critical for proper SoC operation can be selected is very useful =
+and
+> > > > > avoids hard to debug issues due to slightly wrong configs in the =
+long
+> > > > > run.
+> > > >=20
+> > > > As mentioned in the cover letter, please ignore this patch set enti=
+rely.
+> > > > The ARCH_MXC is actually used on arm32 too, so it won't work.
+> > > >=20
+> > > > I'm working on a patchset that will add the Kconfig into=C2=A0
+> > > > drivers/clk/imx/ and in it will add CLK_IMX8MQ. That will
+> > > > fix the clock dependency since the CLK_IMX8MQ will depend on
+> > > > ARCH_MXC and ARM64. I believe the CLK_IMX8QXP will follow
+> > > > the same pattern.
+> > > >=20
+> > > > As for the SOC_IMX8MQ, all the other vendors have one single
+> > > > config for all the arm64 platforms. TBH, to control every SoC
+> > > > independently it's a little bit of an overkill.
+> > >=20
+> > > Lucas,
+> > >=20
+> > > We are still waiting for further comments from Olof [1].=C2=A0=C2=A0B=
+ut it sounds
+> > > like SoC specific option is not welcomed on ARM64.
+> >=20
+> > While I personally would prefer to keep the SoC options, I see that we
+> > need to align with the judgment of the arm-soc maintainers.
+> >=20
+> > But at the very least we should keep the select for vital system
+> > workarounds. They need to move to the arch Kconfig symbol in that case
+> > and might select stuff that isn't needed on each of the i.MX8 SoCs. But
+> > better enabling more workaround and drivers than necessary than having
+> > hard to debug system failures in the future.
 
+CPU erratas are typically implemented with runtime code patching and
+they're pretty much all 'default y' so having the SoC config option
+select them doesn't do much besides force the errata to always be
+enabled. If allowing the user to disable errata handling is a problem,
+then perhaps those should only be visible when CONFIG_EXPERT=3Dy.
 
-On 12/13/2018 07:02 PM, Joel Stanley wrote:
-> Hi Eddie,
->
-> On Wed, 12 Dec 2018 at 06:42, Eddie James <eajames@linux.ibm.com> wrote:
->> Add the video engine reset bit. Add eclk mux and clock divider table.
->>
->> Signed-off-by: Eddie James <eajames@linux.ibm.com>
->> Acked-by: Stephen Boyd <sboyd@kernel.org>
->> ---
->>   drivers/clk/clk-aspeed.c | 41 +++++++++++++++++++++++++++++++++++++++--
->>   1 file changed, 39 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
->> index 5961367..f16ce7d 100644
->> --- a/drivers/clk/clk-aspeed.c
->> +++ b/drivers/clk/clk-aspeed.c
->> @@ -87,7 +87,7 @@ struct aspeed_clk_gate {
->>   /* TODO: ask Aspeed about the actual parent data */
->>   static const struct aspeed_gate_data aspeed_gates[] = {
->>          /*                               clk rst   name                 parent  flags */
->> -       [ASPEED_CLK_GATE_ECLK] =        {  0, -1, "eclk-gate",          "eclk", 0 }, /* Video Engine */
->> +       [ASPEED_CLK_GATE_ECLK] =        {  0,  6, "eclk-gate",          "eclk", 0 }, /* Video Engine */
->
->>          [ASPEED_CLK_GATE_GCLK] =        {  1,  7, "gclk-gate",          NULL,   0 }, /* 2D engine */
->>          [ASPEED_CLK_GATE_MCLK] =        {  2, -1, "mclk-gate",          "mpll", CLK_IS_CRITICAL }, /* SDRAM */
->>          [ASPEED_CLK_GATE_VCLK] =        {  3,  6, "vclk-gate",          NULL,   0 }, /* Video Capture */
->> @@ -113,6 +113,24 @@ struct aspeed_clk_gate {
->>          [ASPEED_CLK_GATE_LHCCLK] =      { 28, -1, "lhclk-gate",         "lhclk", 0 }, /* LPC master/LPC+ */
->>   };
->>
->> +static const char * const eclk_parent_names[] = {
->> +       "mpll",
-> Is the mpll really an input to the eclk?
+> >=20
+>=20
+> I get your point. But that seems to be an issue with the whole arm64 appr=
+oach.
+> TBH, I believe now would be the perfect time to "get it right" on IMX sin=
+ce the 8MQ
+> is the first one to get boot-up support upstream. It will be way much har=
+der
+> to change this later when more arm64 IMX SoCs get upstreamed.
+>=20
+> I would really love more opinions on this.
+>=20
+> I have patches on stand-by that remove the SOC_IMX8MQ in all the subsyste=
+ms and
+> a patch for the defconfig update which I'll keep on holding on to until t=
+here
+> is a agreement on this.
+>=20
 
-Yep, it's the default.
-
->
->> +       "hpll",
->> +       "dpll",
-> We don't have a dpll in the driver that I can see.
-
-True... I supposed I would just add the parent here now in case the dpll 
-clock is ever added.
-
->
->> +};
->> +
->> +static const struct clk_div_table ast2500_eclk_div_table[] = {
-> Is the clocking setup different on the ast2400?
-
-Yes, the dividers are the default ast2400 ones.
-
->
->> +       { 0x0, 2 },
->> +       { 0x1, 2 },
->> +       { 0x2, 3 },
->> +       { 0x3, 4 },
->> +       { 0x4, 5 },
->> +       { 0x5, 6 },
->> +       { 0x6, 7 },
->> +       { 0x7, 8 },
->> +       { 0 }
->> +};
->> @@ -317,6 +338,7 @@ struct aspeed_reset {
->>          [ASPEED_RESET_PECI]     = 10,
->>          [ASPEED_RESET_I2C]      =  2,
->>          [ASPEED_RESET_AHB]      =  1,
->> +       [ASPEED_RESET_VIDEO]    =  6,
-> You've added the reset line to the ASPEED_CLK_GATE_ECLK clock so you
-> do not need to separately expose the reset controller. Instead
-> enabling the clock will deassert the rest line for you.
->
-> This means you should drop the change from the header too, and it
-> affects the bindings document for the video engine.
-
-I want that reset available separately for use in the video engine 
-actually. I could do without it, but it's somewhat useful.
-
-Thanks,
-Eddie
-
->
->>          /*
->>           * SCUD4 resets start at an offset to separate them from
->> @@ -522,6 +544,22 @@ static int aspeed_clk_probe(struct platform_device *pdev)
->>                  return PTR_ERR(hw);
->>          aspeed_clk_data->hws[ASPEED_CLK_24M] = hw;
->>
->> +       hw = clk_hw_register_mux(dev, "eclk-mux", eclk_parent_names,
->> +                                ARRAY_SIZE(eclk_parent_names), 0,
->> +                                scu_base + ASPEED_CLK_SELECTION, 2, 0x3, 0,
->> +                                &aspeed_clk_lock);
->> +       if (IS_ERR(hw))
->> +               return PTR_ERR(hw);
->> +       aspeed_clk_data->hws[ASPEED_CLK_ECLK_MUX] = hw;
->> +
->> +       hw = clk_hw_register_divider_table(dev, "eclk", "eclk-mux", 0,
->> +                                          scu_base + ASPEED_CLK_SELECTION, 28,
->> +                                          3, 0, soc_data->eclk_div_table,
->> +                                          &aspeed_clk_lock);
->> +       if (IS_ERR(hw))
->> +               return PTR_ERR(hw);
->> +       aspeed_clk_data->hws[ASPEED_CLK_ECLK] = hw;
->> +
->>          /*
->>           * TODO: There are a number of clocks that not included in this driver
->>           * as more information is required:
->> @@ -531,7 +569,6 @@ static int aspeed_clk_probe(struct platform_device *pdev)
->>           *   RGMII
->>           *   RMII
->>           *   UART[1..5] clock source mux
->> -        *   Video Engine (ECLK) mux and clock divider
->>           */
->>
->>          for (i = 0; i < ARRAY_SIZE(aspeed_gates); i++) {
->> --
->> 1.8.3.1
->>
+I will merge the clk patch now. Hope that helps you feel more confident
+that CONFIG_SOC_FOO options aren't welcome.
 
