@@ -2,184 +2,138 @@ Return-Path: <SRS0=SiOT=OX=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DE7BC67839
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Dec 2018 12:41:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C576C67839
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Dec 2018 13:50:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5708420892
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Dec 2018 12:41:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FBBA20656
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Dec 2018 13:50:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="HejSI7do"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5708420892
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="IGmGG/fR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730276AbeLNMlv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:41:51 -0500
-Received: from mail-eopbgr50044.outbound.protection.outlook.com ([40.107.5.44]:62016
-        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729750AbeLNMlu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:41:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dkArKe1eQy3qyb/AckD2OuD50GGT/EFYhtp6kRmLjOA=;
- b=HejSI7do7R4x6Nwa2glKeZNBivTp3STrb44CROrUrk7q5y/HvW3p4M8+RDrr2hSye7L+QpaHsLWcBj5679DGHDBlEQiPskRrhbH8zS68u6CZcgtWmcHWVgNOG4wUEEwubSyWLX/fc2OxT7kYt1+Kj4wyTbbiy6ehf033CB9sWIg=
-Received: from DB3PR0402MB3658.eurprd04.prod.outlook.com (52.134.65.28) by
- DB3PR0402MB3849.eurprd04.prod.outlook.com (52.134.71.16) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1425.18; Fri, 14 Dec 2018 12:41:46 +0000
-Received: from DB3PR0402MB3658.eurprd04.prod.outlook.com
- ([fe80::ce5:fddb:6290:c5eb]) by DB3PR0402MB3658.eurprd04.prod.outlook.com
- ([fe80::ce5:fddb:6290:c5eb%5]) with mapi id 15.20.1425.016; Fri, 14 Dec 2018
- 12:41:46 +0000
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Lucas Stach <l.stach@pengutronix.de>
-CC:     Shawn Guo <shawnguo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Olof Johansson <olof@lixom.net>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>, Rob Herring <robh@kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>
-Subject: Re: [PATCH 1/3] arm64: Remove CONFIG_SOC_IMX8MQ and use ARCH_MXC
- instead
-Thread-Topic: [PATCH 1/3] arm64: Remove CONFIG_SOC_IMX8MQ and use ARCH_MXC
- instead
-Thread-Index: AQHUkuY6nb3Z7jYWIkKip6q0zf3chKV8vGGAgAAEk4CAAK1RgIAAiOqAgAA3woA=
-Date:   Fri, 14 Dec 2018 12:41:46 +0000
-Message-ID: <20181214124145.dbtx6z3itwepsuwb@fsr-ub1664-175>
-References: <1544707047-4417-1-git-send-email-abel.vesa@nxp.com>
- <1544707047-4417-2-git-send-email-abel.vesa@nxp.com>
- <1544711727.3137.32.camel@pengutronix.de>
- <20181213145149.6hyyhi6hxdzvikl4@fsr-ub1664-175>
- <20181214011207.GB13243@dragon> <1544779331.3137.36.camel@pengutronix.de>
-In-Reply-To: <1544779331.3137.36.camel@pengutronix.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=abel.vesa@nxp.com; 
-x-originating-ip: [95.76.156.53]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DB3PR0402MB3849;6:XTcnWpOJt2Tpdk4wQ9WjEgGLxDHg5lSxBSrPrXbL3/MOX7gEmG2RM0rLZZkCmTIuIviK51FxVrEx1Qmr8f1RvxBJOGcR6j2L5mqaCY02nOAJBIQnaijBM3488fYIXe5+GbawGUdFEvfdpLvPgqZqk7HwBMlHTtdaX3faaN4PKXitijjsy4PJlqlaXmwJsloPBSUDokCW/7g1eww3H50eZ4QEBC8LTfmvaPwS8TlCLHIcKOFr5PlJTQVK79MBzwCdisj9OCCtGSauXlHUxpi80yoQew7Va4BCnUHRfXCgE/p3HRiihnqThk02wY3A+ohB9MZyCknN7Z6zhjjwi4xG/Lbb2GAxXYh2yPmKhPR+IgvdhoLpGoKICC0TKs5OJbwSdLIrzgIwrcxWsGtPdJ85paU7pnvJRshQUg96j4einCcEAx6tDF30TIQgCBO9qgvXwdOA9J7BosngXqiskBII4g==;5:njv9MtwKc3mTWGwAdOWu0Zby4YDouJo8G6pRPZOrakwkhSlkUYHtHZHlTpSIGBeW7Bgr4M1gyG+a9SvAvKwIfOhsiYTgCwZvz4YPZ/+Ii3lS/i80sKXotOKnI1a/j9OmmNLFcP+tpXJd67vLYWe75ib3nHmhQt/JVv/U4l3pGlE=;7:BIgjVZJVvwu+F+RgiyqpMM4xXC7oMLjgkkkaJm6SJ4uNgk9UqmXulDX9RQsJevmYAtmy9ZNE/jOKMlMTPRzKZGZetOjxSjEGqMcSUyTTIAzn6bKFqMBP38lCaYXePEkfBDotjlwu2Q+Wvka5Aa3OAg==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 328ba95b-93fb-4ad9-dba6-08d661c1827f
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DB3PR0402MB3849;
-x-ms-traffictypediagnostic: DB3PR0402MB3849:
-x-microsoft-antispam-prvs: <DB3PR0402MB3849CF4978A6140752EF3F27F6A10@DB3PR0402MB3849.eurprd04.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3002001)(3231475)(944501520)(52105112)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:DB3PR0402MB3849;BCL:0;PCL:0;RULEID:;SRVR:DB3PR0402MB3849;
-x-forefront-prvs: 08864C38AC
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(7916004)(396003)(136003)(346002)(39860400002)(366004)(376002)(189003)(199004)(8676002)(53546011)(81156014)(6506007)(316002)(81166006)(6116002)(476003)(4326008)(3846002)(54906003)(97736004)(68736007)(86362001)(6916009)(33716001)(102836004)(66066001)(478600001)(25786009)(229853002)(2906002)(105586002)(6436002)(305945005)(6486002)(6246003)(53936002)(71190400001)(7416002)(11346002)(446003)(1076002)(7736002)(71200400001)(33896004)(26005)(76176011)(256004)(14444005)(99286004)(44832011)(486006)(93886005)(186003)(6512007)(9686003)(106356001)(14454004)(8936002)(5660300001);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3849;H:DB3PR0402MB3658.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: spEpKzbQNr9nrruo8T+dXlQZl46GJN3d3O01nnz/V/6BcQtKbd0p3Jr4T5um2/QZB6/sKjO3Hjwr687bfPqoVql9whpd7HhrvwBvtN7ehUO8E9rX4s1wHVxZ0RF/CgZCatgpf+dbMmdmchaQLkdTrHTDLHXIdbKfovTWDSl/DzyhlbpTzji9qWsxLJOOtrXxcY0LjI5ojIdTGTiDfL35+3x2DWSsZfJeEomuuNRB7Zjqbg4PbqakBw+XtN58ci/IRy607im+A1nHom5ZMPsZDg8w7W4TgiMl1BWlIEgPTZKwizvJ93BrQcfLXuHUNi7n
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-ID: <7004F42C0BF510469BA2C36CD6C42A7D@eurprd04.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        id S1730007AbeLNNue (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Dec 2018 08:50:34 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:38869 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729804AbeLNNue (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Dec 2018 08:50:34 -0500
+Received: by mail-lf1-f68.google.com with SMTP id p86so4312131lfg.5
+        for <linux-clk@vger.kernel.org>; Fri, 14 Dec 2018 05:50:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=TT1Xs744YvFr5FAOSJ08uVRir7gQf/QP/n2KzZnawb4=;
+        b=IGmGG/fR90Y4O2GWuPCFosA3GPigBCBFBNgDMnigNYaRp29bz+Q64UKDZ3ciUk8yHw
+         7Gs09Ev9iiu6JyOo3nFwZ0IE3PdcBBpYZLTzU4xL003pMsLgJKswjiIrhdj6+IgnPkv4
+         wV5x+yytrMqp85gCYnD8rqNfM9U/4WazcNCqg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=TT1Xs744YvFr5FAOSJ08uVRir7gQf/QP/n2KzZnawb4=;
+        b=CLWfYNO/ft73EU/rMLz5i3p/HAyziGagjfy27hIOE+amhCpg2ZoP7o4iRPHfDHolBj
+         RatwWtjB/yID1x7X9KkLXH1iOuxPqne6zrGxqCm9pa9ZfAWssd3zXyDLadkVQbJvq4ld
+         GcR1+zwzZF3fcD4aUsqBreGt9U8Jw3wDGKYvmsdu2eRd2Q0R8vda/gg/fV3B4gUDbegb
+         sZtRyv4yHUaV+24qoBP+m6ox8de/Zmk+Q+YSeJifTveXctzUmT1RSUZLsuqT7XfoysLp
+         oWaHEVhGZ7xmneCWED+MAf6WxDNp5YDOOenw7S4bGrPB4VQVCfzVe8CSW57Kku/tUd3X
+         hu/g==
+X-Gm-Message-State: AA+aEWaWMb8G7Qs+s0DInEppxm35/FavaCgCRBVK44pKYp6UzwpmofmH
+        z1Ae8MYFZ0yPCfIna4gdRkixCx2ezeC/VQIv9cOwzA==
+X-Google-Smtp-Source: AFSGD/UqPR5H867B8OQqykdWDeMpN/oCXYbkKZLdsU9DGeKyv5jHL9rQd2rVYFonCRchJ54w/zm7nWjRae35TLhjVgk=
+X-Received: by 2002:a19:4849:: with SMTP id v70mr1849137lfa.62.1544795432320;
+ Fri, 14 Dec 2018 05:50:32 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 328ba95b-93fb-4ad9-dba6-08d661c1827f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Dec 2018 12:41:46.4442
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3849
+References: <20181212220922.18759-1-paul@crapouillou.net> <20181212220922.18759-16-paul@crapouillou.net>
+ <20181213092409.ml4wpnzow2nnszkd@pengutronix.de> <1544709795.18952.1@crapouillou.net>
+ <20181213204219.onem3q6dcmakusl2@pengutronix.de>
+In-Reply-To: <20181213204219.onem3q6dcmakusl2@pengutronix.de>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 14 Dec 2018 14:50:20 +0100
+Message-ID: <CACRpkdbABtDgwKai=8Pfji7qVb-XHsX8pDsuDdS5hhg7qEN0Bw@mail.gmail.com>
+Subject: Re: [PATCH v8 15/26] pwm: jz4740: Add support for the JZ4725B
+To:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     Paul Cercueil <paul@crapouillou.net>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ralf Baechle <ralf@linux-mips.org>, paul.burton@mips.com,
+        James Hogan <jhogan@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mathieu Malaterre <malat@debian.org>, ezequiel@collabora.co.uk,
+        prasannatsmkumar@gmail.com, linux-pwm@vger.kernel.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>,
+        linux-mips@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-clk <linux-clk@vger.kernel.org>, od@zcrc.me
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 18-12-14 10:22:11, Lucas Stach wrote:
-> Hi Shawn,
->=20
-> Am Freitag, den 14.12.2018, 09:12 +0800 schrieb Shawn Guo:
-> > On Thu, Dec 13, 2018 at 02:51:50PM +0000, Abel Vesa wrote:
-> > ...
-> > > > > diff --git a/arch/arm64/Kconfig.platforms
-> > > > > b/arch/arm64/Kconfig.platforms
-> > > > > index 7e1545a..318dbb9 100644
-> > > > > --- a/arch/arm64/Kconfig.platforms
-> > > > > +++ b/arch/arm64/Kconfig.platforms
-> > > > > @@ -148,14 +148,6 @@ config ARCH_MXC
-> > > > > > > > > =A0	=A0=A0This enables support for the ARMv8 based SoCs i=
-n the
-> > > > > > > > > =A0	=A0=A0NXP i.MX family.
-> > > > > =A0
-> > > > > -config SOC_IMX8MQ
-> > > > > > > > > -	bool "i.MX8MQ support"
-> > > > > > > > > -	depends on ARCH_MXC
-> > > > > > > > > -	select ARM64_ERRATUM_843419
-> > > > > > > > > -	select ARM64_ERRATUM_845719
-> > > > > > > > > -	help
-> > > > > > > > > -	=A0=A0This enables support for the i.MX8MQ SoC.
-> > > > > -
-> > > >=20
-> > > > NACK on this one. Having a single place where stuff that is absolut=
-ely
-> > > > critical for proper SoC operation can be selected is very useful an=
-d
-> > > > avoids hard to debug issues due to slightly wrong configs in the lo=
-ng
-> > > > run.
-> > >=20
-> > > As mentioned in the cover letter, please ignore this patch set entire=
-ly.
-> > > The ARCH_MXC is actually used on arm32 too, so it won't work.
-> > >=20
-> > > I'm working on a patchset that will add the Kconfig into=A0
-> > > drivers/clk/imx/ and in it will add CLK_IMX8MQ. That will
-> > > fix the clock dependency since the CLK_IMX8MQ will depend on
-> > > ARCH_MXC and ARM64. I believe the CLK_IMX8QXP will follow
-> > > the same pattern.
-> > >=20
-> > > As for the SOC_IMX8MQ, all the other vendors have one single
-> > > config for all the arm64 platforms. TBH, to control every SoC
-> > > independently it's a little bit of an overkill.
-> >=20
-> > Lucas,
-> >=20
-> > We are still waiting for further comments from Olof [1].=A0=A0But it so=
-unds
-> > like SoC specific option is not welcomed on ARM64.
->=20
-> While I personally would prefer to keep the SoC options, I see that we
-> need to align with the judgment of the arm-soc maintainers.
->=20
-> But at the very least we should keep the select for vital system
-> workarounds. They need to move to the arch Kconfig symbol in that case
-> and might select stuff that isn't needed on each of the i.MX8 SoCs. But
-> better enabling more workaround and drivers than necessary than having
-> hard to debug system failures in the future.
->=20
+On Thu, Dec 13, 2018 at 9:42 PM Uwe Kleine-K=C3=B6nig
+<u.kleine-koenig@pengutronix.de> wrote:
+> [Adding Linus Walleij to Cc:]
+>
+> Hello,
+>
+> On Thu, Dec 13, 2018 at 03:03:15PM +0100, Paul Cercueil wrote:
+> > Le jeu. 13 d=C3=A9c. 2018 =C3=A0 10:24, Uwe Kleine-K=C3=B6nig
+> > <u.kleine-koenig@pengutronix.de> a =C3=A9crit :
+> > > On Wed, Dec 12, 2018 at 11:09:10PM +0100, Paul Cercueil wrote:
+> > > >  The PWM in the JZ4725B works the same as in the JZ4740, except tha=
+t
+> > > > it
+> > > >  only has 6 channels available instead of 8.
+> > >
+> > > this driver is probed only from device tree? If yes, it might be
+> > > sensible to specify the number of PWMs there and get it from there.
+> > > There doesn't seem to be a generic binding for that, but there are
+> > > several drivers that could benefit from it. (This is a bigger project
+> > > though and shouldn't stop your patch. Still more as it already got
+> > > Thierry's ack.)
+> >
+> > I think there needs to be a proper guideline, as there doesn't seem to =
+be
+> > a consensus about this. I learned from emails with Rob and Linus (Walle=
+ij)
+> > that I should not have in devicetree what I can deduce from the compati=
+ble
+> > string.
+>
+> I understood them a bit differently. It is ok to deduce things from the
+> compatible string. But if you define a generic property (say) "num-pwms"
+> that is used uniformly in most bindings this is ok, too. (And then the
+> two different devices could use the same compatible.)
+>
+> An upside of the generic "num-pwms" property is that the pwm core could
+> sanity check pwm phandles before passing them to the hardware drivers.
 
-I get your point. But that seems to be an issue with the whole arm64 approa=
-ch.
-TBH, I believe now would be the perfect time to "get it right" on IMX since=
- the 8MQ
-is the first one to get boot-up support upstream. It will be way much harde=
-r
-to change this later when more arm64 IMX SoCs get upstreamed.
+I don't know if this helps, but in GPIO we have "ngpios" which is
+used to augment an existing block as to the number of lines actually
+used with it.
 
-I would really love more opinions on this.
+The typical case is that an ASIC engineer synthesize a block for
+32 GPIOs but only 12 of them are routed to external pads. So
+we augment the behaviour of that driver to only use 12 of the
+32 lines.
 
-I have patches on stand-by that remove the SOC_IMX8MQ in all the subsystems=
- and
-a patch for the defconfig update which I'll keep on holding on to until the=
-re
-is a agreement on this.
+I guess using the remaining 20 lines "works" in a sense but they
+have no practical use and will just bias electrons in the silicon
+for no use.
 
-> Regards,
-> Lucas=
+So if the PWM case is something similar, then by all means add
+num-pwms.
+
+Yours,
+Linus Walleij
