@@ -3,66 +3,88 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55405C67839
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Dec 2018 01:37:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06A45C65BAE
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Dec 2018 01:39:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C39420811
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Dec 2018 01:37:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B905420892
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Dec 2018 01:39:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544751427;
-	bh=ibV8eyfgsVfH1f5cpbensDp++iJLMkuduArHM03ZmNw=;
+	s=default; t=1544751564;
+	bh=OY7VzTFnl/o7Zj5mlJ2aBunXOzfDB/fOVSpzIQUoHkY=;
 	h=In-Reply-To:Subject:To:References:From:Cc:Date:List-ID:From;
-	b=HPqg6ZVMbMe82sufBxB2LlSE74+lxW7E1gIfQainKoHBZBO3FZSYANvlxHST67mN6
-	 dX0k3tRtWERLWXgACteEn/Yx0gc/ozZ+XeKtNaMUBPkX8W3N3kWKnY/ajOzNMCyEST
-	 B1kre1WSD6VN0dxHlL4Popvncn4dRSIu5p8UylbY=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C39420811
+	b=PWDcxnWWWgjT/9EoCIAo6sEhIP+KQiDttjlORl6W8qCwqI6w3m8hdyXqLE34n0JxS
+	 loT77dORKpXnlcEPXm73bAayOHB/EYkIl5rT0f/XjTgsN1vr798xilW8Apmv6upwLb
+	 9KylVX5iet5SO0CJEeCY66nL9e3box5MCTphVjtw=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B905420892
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729164AbeLNBhG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Dec 2018 20:37:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33664 "EHLO mail.kernel.org"
+        id S1728596AbeLNBjY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Dec 2018 20:39:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34720 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728203AbeLNBhG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 13 Dec 2018 20:37:06 -0500
+        id S1728203AbeLNBjY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 13 Dec 2018 20:39:24 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CD3C920811;
-        Fri, 14 Dec 2018 01:37:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 795A220811;
+        Fri, 14 Dec 2018 01:39:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544751425;
-        bh=ibV8eyfgsVfH1f5cpbensDp++iJLMkuduArHM03ZmNw=;
+        s=default; t=1544751563;
+        bh=OY7VzTFnl/o7Zj5mlJ2aBunXOzfDB/fOVSpzIQUoHkY=;
         h=In-Reply-To:Subject:To:References:From:Cc:Date:From;
-        b=hXyNYWsVavR19y/cU84PAzzerIWu2LqSKieESg32pzYrSxvdLrLlAnlu2HvG5v6YE
-         gCTvCyhJHCJUzIwXKeaVUSDJgTV7B6lLW/POjeo9f4OMlbHU1T5sR3tGxJMRGnSksB
-         UqBBkz2MLX7AtaV3qiSpzbaXdK2CsLEAoUL75RRI=
+        b=aCnnKHO8xtTgxe0yGbrerK54ciPcgG4eQUMM6YGQehYjuaNVcBoZV+b97sAl45u1r
+         7CRGT/TrvrJfawF5fKmqPXvX0GFwXewDKX8P4NahT5XLrr/hNS1TJlKS8TokblDUM/
+         ftoDKtw+5JGCKoK3oAvcIrotAz8VyTNl5Ji3Ip9s=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20181210232203.16561-1-dinguyen@kernel.org>
-Subject: Re: [PATCH] clk: socfpga: stratix10: fix naming convention for the fixed-clocks
-To:     Dinh Nguyen <dinguyen@kernel.org>, linux-clk@vger.kernel.org
-References: <20181210232203.16561-1-dinguyen@kernel.org>
-Message-ID: <154475142505.19322.5301231555488286179@swboyd.mtv.corp.google.com>
+In-Reply-To: <20181208152954.596529f8@archlinux>
+Subject: Re: [PATCH 1/2] staging: iio: adc: ad7192: Add clock for external clock reference
+To:     Jonathan Cameron <jic23@kernel.org>,
+        Mircea Caprioru <mircea.caprioru@analog.com>
+References: <20181206091052.7644-1-mircea.caprioru@analog.com> <20181208152954.596529f8@archlinux>
+Message-ID: <154475156267.19322.6284056396098102605@swboyd.mtv.corp.google.com>
 From:   Stephen Boyd <sboyd@kernel.org>
 User-Agent: alot/0.8
-Cc:     dinguyen@kernel.org, mturquette@baylibre.com
-Date:   Thu, 13 Dec 2018 17:37:05 -0800
+Cc:     Michael.Hennerich@analog.com, knaack.h@gmx.de, lars@metafoo.de,
+        pmeerw@pmeerw.net, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+        devel@driverdev.osuosl.org, Rob Herring <robh+dt@kernel.org>,
+        linux-clk@vger.kernel.org
+Date:   Thu, 13 Dec 2018 17:39:22 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Dinh Nguyen (2018-12-10 15:22:03)
-> The fixed clocks in the DTS file have a hyphen, but the clock driver has
-> the fixed clocks using underbar. Thus the clock driver cannot detect the
-> other fixed clocks correctly. Change the fixed clock names to a hyphen.
+Quoting Jonathan Cameron (2018-12-08 07:29:54)
+> On Thu, 6 Dec 2018 11:10:51 +0200
+> Mircea Caprioru <mircea.caprioru@analog.com> wrote:
 >=20
-> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
-> ---
+> > This patch adds a clock to the state structure of ad7192 for getting the
+> > external clock frequency. This modifications is in accordance with clock
+> > framework dt bindings documentation.
+> >=20
+> > Signed-off-by: Mircea Caprioru <mircea.caprioru@analog.com>
+>=20
+> +cc Rob and the clk list for advise on how to do the binding for this one.
+>=20
+> It is basically 2 pins, you can put a clock in on one of them or connect
+> a crystal across them.  The driver has to set a register to say which is
+> the case. =20
+>=20
+> Current proposal is two optional clocks (fall back to internal oscillator)
+> but that doesn't seem to be commonly done, so I'm wondering if there
+> is a 'standard' way to handle this sort of thing.
+>=20
 
-Any fixes tag? Should it go back to stable trees?
+I'm not sure I fully understand, but I think perhaps
+assigned-clock-parents would work? Or does that not work because either
+way some parent is assigned, either the crystal or the optional clk that
+isn't a crystal?
+
