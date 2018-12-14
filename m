@@ -2,126 +2,303 @@ Return-Path: <SRS0=SiOT=OX=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,T_MIXED_ES,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1ECBC65BAE
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Dec 2018 02:28:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 876BFC65BAE
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Dec 2018 02:35:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C5E42086D
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Dec 2018 02:28:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 387112086D
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Dec 2018 02:35:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="SW91BnTv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C5E42086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Xa6YipLM";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="oJbDm7wI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 387112086D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728625AbeLNC2b (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Dec 2018 21:28:31 -0500
-Received: from mail-eopbgr50053.outbound.protection.outlook.com ([40.107.5.53]:41940
-        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728517AbeLNC2b (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 13 Dec 2018 21:28:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uY7nB0/u6njwE5leZ/6kT7aP/E5OD9jPBP/BWCC+hiQ=;
- b=SW91BnTvIGb7nPVlHXu7G/KBFWapQ+wzrH1Z0waoY4kvyaHU1bwUrXTJi3GuNuD4y8poMROpv7cmnOygF/xmwOfIxD7hCv/GdI8+1x/hGPsAgQha7Xe8ZMWtnIDS0PdZHsmpZPYZlA9NjXXYtEVa3xg/WFGcEaEnulyJ9pIoGqc=
-Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.126.21) by
- AM0PR04MB5809.eurprd04.prod.outlook.com (20.178.203.16) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1425.18; Fri, 14 Dec 2018 02:28:23 +0000
-Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
- ([fe80::31e3:2aa6:8d93:9927]) by AM0PR04MB4211.eurprd04.prod.outlook.com
- ([fe80::31e3:2aa6:8d93:9927%2]) with mapi id 15.20.1404.026; Fri, 14 Dec 2018
- 02:28:23 +0000
-From:   Aisheng Dong <aisheng.dong@nxp.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-CC:     "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>
-Subject: RE: [PATCH V11 2/7] clk: imx: add scu clock common part
-Thread-Topic: [PATCH V11 2/7] clk: imx: add scu clock common part
-Thread-Index: AQHUkoBHoRLNmKbTG0W2ArFlHoWixqV8S10AgAA08PCAAPPtgIAAAqXggAAKbQCAAAAo8A==
-Date:   Fri, 14 Dec 2018 02:28:23 +0000
-Message-ID: <AM0PR04MB42111F2B6702F6B9D699A67480A10@AM0PR04MB4211.eurprd04.prod.outlook.com>
-References: <1544662938-5020-1-git-send-email-aisheng.dong@nxp.com>
- <1544662938-5020-3-git-send-email-aisheng.dong@nxp.com>
- <154468728640.19322.12955855783518519739@swboyd.mtv.corp.google.com>
- <AM0PR04MB42118C3E7F49A0437453BA5880A00@AM0PR04MB4211.eurprd04.prod.outlook.com>
- <154475103791.19322.8783777114832958727@swboyd.mtv.corp.google.com>
- <AM0PR04MB4211D584BCE4B6D06D57637280A10@AM0PR04MB4211.eurprd04.prod.outlook.com>
- <154475384479.19322.759264653632754113@swboyd.mtv.corp.google.com>
-In-Reply-To: <154475384479.19322.759264653632754113@swboyd.mtv.corp.google.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=aisheng.dong@nxp.com; 
-x-originating-ip: [101.93.238.110]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM0PR04MB5809;6:QuKGJ4vBVRuIA6rzdfLNAZA8t2CYl16rKdPQboo5VaNSOsE2HJ6+luj1XlqayXPWkdYcCbkfzZ8TfTK9yKgFbSkIpR1KNhDdgYjx4xbjjml0rYK0B6OTFIN+C68hDozcFPWIOvm4lQ7GZINUcs9NWjgRrMpo2eDrKG+P0NErdCg3ygSbYWH4TmHJOH3AqL7ygiQVhrMs+g/bAFJeU948daeegBqdsK/wKYmZb5JIb3yN7C3J99RSpDiVew0PySHwiDlOQ/ttIe3xTtOJnrISmIQXxEy+T2v54VWURhWm5jopZloEnZ4ZfDZqXidAgXhrYEgDXQC7693iiagBmKfCC4SXQ+7jTzlsUrfkBY0TdkkWp+PuGa0tT/hYFkhr2rH+y9vdroKWe02rmNOGDTkAoYUw+bgfuO4Xc+b5MRILcH1x3zz46/4GzMcjiPNNL8Arnp8CLTjhtNoMgxI1fLdUJQ==;5:vdr18JeuFawc/uNCfbpj+CRRh8KABadhReRGIJ8y3myPU9Vz0YcSzPYMoEclooy8XiXNcbIRZZWA8Dn/Vr5KQGEC5T5tpgNu2md0BmXcxPwx9GxymvcFFKl+Jp18z+j+d+/Y6lDod9LZv2d6n3BRpcziwYj8H7pSagLhDestRqM=;7:Ax3+qsWC4zZhybHO6RBeLDkhqDsg1y5q3ad8BvjVTNVgmzEuBj9U/GhgRo2QjDKCIHfgcr3s2EOO6X/k2jGmHgarZyA3j6YF/ilRz5vfKbihSTyOAiRPmL8ilAiLqOnU3wv7PrjaSkn/8s2Bakcl2g==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 4020fb54-10f8-4b99-33c0-08d6616bd26b
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB5809;
-x-ms-traffictypediagnostic: AM0PR04MB5809:
-x-microsoft-antispam-prvs: <AM0PR04MB58096377A957181021D4CF4880A10@AM0PR04MB5809.eurprd04.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(6040522)(2401047)(5005006)(8121501046)(3002001)(10201501046)(93006095)(93001095)(3231475)(944501520)(52105112)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:AM0PR04MB5809;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB5809;
-x-forefront-prvs: 08864C38AC
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(366004)(136003)(39850400004)(346002)(376002)(189003)(13464003)(199004)(54906003)(110136005)(93886005)(316002)(26005)(6436002)(86362001)(6506007)(4001150100001)(71190400001)(2906002)(99286004)(97736004)(2501003)(71200400001)(6116002)(3846002)(14454004)(256004)(14444005)(66066001)(229853002)(74316002)(25786009)(7736002)(8936002)(76176011)(305945005)(9686003)(44832011)(5660300001)(6306002)(478600001)(55016002)(106356001)(53936002)(81166006)(186003)(4326008)(8676002)(81156014)(966005)(33656002)(68736007)(486006)(102836004)(105586002)(446003)(7696005)(11346002)(476003)(6246003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5809;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: IyQUnfY4StqKPYaN/bfVhozEqlUaYdwjNCBQvFwqSlDotmh6RT5N1gcJr4YX8YpXBfPwIVAQjh7ZXopBvdwNV+rtVh/69WdIqEOOKcnluBDM2L/3QY5ENUnxJ84UApllh++wf9x5UDq8C3UfAybk4Kz55A+Wj88otdM3utbFPzEBxrmQHpEr/aw0HMN6uzXN7xbM5zP5Pk/Kjf3hSqZO8XmGiVcmOvVtnG/zIKJxJ7eMQn4LZtaWdUGags0m8cY/TLzbQ9FqBPJs+T3HnVD5WitGSYh2XmbTacbx0UcA86zeHID4Ih3WszJiN8cyCE13
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4020fb54-10f8-4b99-33c0-08d6616bd26b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Dec 2018 02:28:23.8369
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5809
+        id S1728625AbeLNCfO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Dec 2018 21:35:14 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:42148 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728612AbeLNCfO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Dec 2018 21:35:14 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id F1CF3601E7; Fri, 14 Dec 2018 02:35:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1544754913;
+        bh=cPTLGuUz/rlnX/opxzjZU9PlCopro2P+r+cJw+D4btE=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Xa6YipLMYK3LCTb2UeG5uOt2axihHW/L5MDMYbKQlobowHV+osm7N5NEGLIpimif5
+         gm8l1WaSn7LNYHqrdVr3pS/a773tHUMws7cfYFc2fVBAOMiOitOz6M0PolrTXQk8cx
+         IIHuZBgdUgC7NVfRyF642E9EVDdRMBZp47wQZFkU=
+Received: from davidai-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: daidavid1@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 62567600E2;
+        Fri, 14 Dec 2018 02:35:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1544754911;
+        bh=cPTLGuUz/rlnX/opxzjZU9PlCopro2P+r+cJw+D4btE=;
+        h=From:To:Cc:Subject:Date:From;
+        b=oJbDm7wI0IG9Q4LzuE+6rzhzf/KrecJb8vRt1n3ZYsnbon1yRIf5vE21y9njobpGq
+         z3NbGRRkRto0aR84CkthvneWUTtB24Y1YtnTJ2vx1e7/ZaAiivbCttwwU1LbdTJiEc
+         +Y44Kc7qd4rNFe/LXIrfZrat4KPMIVIN4aoguI9g=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 62567600E2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=daidavid1@codeaurora.org
+From:   David Dai <daidavid1@codeaurora.org>
+To:     sboyd@kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Cc:     David Dai <daidavid1@codeaurora.org>, georgi.djakov@linaro.org,
+        bjorn.andersson@linaro.org, evgreen@google.com,
+        tdas@codeaurora.org, elder@linaro.org
+Subject: [PATCH v1] clk: qcom: clk-rpmh: Add IPA clock support
+Date:   Thu, 13 Dec 2018 18:35:04 -0800
+Message-Id: <1544754904-18951-1-git-send-email-daidavid1@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBTdGVwaGVuIEJveWQgW21haWx0
-bzpzYm95ZEBrZXJuZWwub3JnXQ0KWy4uLl0NCj4gUXVvdGluZyBBaXNoZW5nIERvbmcgKDIwMTgt
-MTItMTMgMTc6NDQ6NTUpDQo+ID4gPiA+DQo+ID4gPiA+IEhvdyB3b3VsZCB5b3Ugc3VnZ2VzdCBm
-b3IgdGhpcyBzaXR1YXRpb24/DQo+ID4gPiA+DQo+ID4gPg0KPiA+ID4gSSBzdWdnZXN0IHRoZSBk
-ZWZpbmVzIGp1c3QgZ28gaW50byB0aGUgY2xrIGRyaXZlci4gSXMgdGhhdCBhDQo+ID4gPiB3b3Jr
-YWJsZSBzb2x1dGlvbiBvciBkb2VzIHNvbWV0aGluZyBub3Qgd29yaz8NCj4gPg0KPiA+IEFyZSB5
-b3Ugc3VnZ2VzdGluZyBtZSB0byBkb2luZyBpdCBub3c/DQo+ID4gQXMgdGhlIHBhdGNoIGlzIGFs
-cmVhZHkgaW4gU2hhd24ncyB0cmVlLCBidXQgSSB0aGluayBJIGNhbiBkbyBpdCBhbmQNCj4gPiBj
-bGVhbiB1cCB0aGUgZmlsZSBpbiBTaGF3bidzIHRyZWUgbGF0ZXIuDQo+ID4NCj4gPiBIb3dldmVy
-LCBvbmx5IG1vdmluZyB0aGUgY2xrIHJlbGF0ZWQgZGVmaW5lcyBpbnRvIGNsayBkcml2ZXIgaXMg
-bm90IGVub3VnaC4NCj4gPiBUaGUgZHJpdmVyIGNvbXBpbGluZyBzdGlsbCBkZXBlbmRzIG9uIHRo
-ZSByZXNvdXJjZSBJRCBmaWxlIHdoaWNoIGlzDQo+ID4gc2hhcmVkIGJ5IHBvd2VyIGRvbWFpbiBk
-cml2ZXIgYW5kIGNsayBkcml2ZXIgKGFuZCBwb3NzaWJsZSBtYW55IG90aGVycykuDQo+ID4gU28g
-d2Ugc3RpbGwgaGF2ZSBkZXBlbmRlbmN5IGlzc3Vlcy4NCj4gPg0KPiANCj4gRG8gdGhlIHJlc291
-cmNlcyBuZWVkIHRvIGJlIGRlZmluZWQgaW4gb25lIHBsYWNlIGVpdGhlcj8gT3IgY2FuIHRoZXkg
-YmUgc3ByZWFkDQo+IHRvIGFsbCB0aGUgZHJpdmVycyB0aGF0IHVzZSB0aGVtPw0KDQpJIGd1ZXNz
-IG5vLiBUaGV5J3JlIG1vc3RseSBzaGFyZWQgYW1vbmcgYSB2YXJpZXR5IG9mIGRyaXZlciwgcG93
-ZXIgZG9tYWluLCBjbGsgYW5kDQpvdGhlciBwb3NzaWJsZSBjbGllbnRzLg0KZS5nLiBwb3dlciBk
-b21haW4gdXNlIGFsbCBvZiB0aGVtIHRvIHNwZWNpZnkgZG9tYWluIGluIGRldmljZSB0cmVlLg0K
-KwkJYWRtYV9scHVhcnQwOiBzZXJpYWxANWEwNjAwMDAgew0KKwkJCWNvbXBhdGlibGUgPSAiZnNs
-LGlteDhxeHAtbHB1YXJ0IiwgImZzbCxpbXg3dWxwLWxwdWFydCI7DQorCQkJcmVnID0gPDB4NWEw
-NjAwMDAgMHgxMDAwPjsNCisJCQlpbnRlcnJ1cHRzID0gPEdJQ19TUEkgMjI1IElSUV9UWVBFX0xF
-VkVMX0hJR0g+Ow0KKwkJCWludGVycnVwdC1wYXJlbnQgPSA8JmdpYz47DQorCQkJY2xvY2tzID0g
-PCZhZG1hX2xwY2cgSU1YOFFYUF9BRE1BX0xQQ0dfVUFSVDBfQkFVRF9DTEs+Ow0KKwkJCWNsb2Nr
-LW5hbWVzID0gImlwZyI7DQorCQkJcG93ZXItZG9tYWlucyA9IDwmcGQgSU1YX1NDX1JfVUFSVF8w
-PjsNCisJCQlzdGF0dXMgPSAiZGlzYWJsZWQiOw0KKwkJfTsNCg0KaHR0cHM6Ly9wYXRjaHdvcmsu
-a2VybmVsLm9yZy9wYXRjaC8xMDY3NzMxMS8NCg0KUmVnYXJkcw0KRG9uZyBBaXNoZW5nDQo=
+The current clk-rpmh driver only supports on and off RPMh clock resources,
+let's extend the current driver by add support for clocks that are managed
+by a different type of RPMh resource known as Bus Clock Manager(BCM).
+The BCM is a configurable shared resource aggregator that scales performance
+based on a preset of frequency points. The Qualcomm IP Accelerator (IPA) clock
+is an example of a resource that is managed by the BCM and this a requirement
+from the IPA driver in order to scale its core clock.
+
+Signed-off-by: David Dai <daidavid1@codeaurora.org>
+---
+ drivers/clk/qcom/clk-rpmh.c           | 141 ++++++++++++++++++++++++++++++++++
+ include/dt-bindings/clock/qcom,rpmh.h |   1 +
+ 2 files changed, 142 insertions(+)
+
+diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
+index 9f4fc77..ee78c4b 100644
+--- a/drivers/clk/qcom/clk-rpmh.c
++++ b/drivers/clk/qcom/clk-rpmh.c
+@@ -18,6 +18,31 @@
+ #define CLK_RPMH_ARC_EN_OFFSET		0
+ #define CLK_RPMH_VRM_EN_OFFSET		4
+ 
++#define BCM_TCS_CMD_COMMIT_MASK		0x40000000
++#define BCM_TCS_CMD_VALID_SHIFT		29
++#define BCM_TCS_CMD_VOTE_MASK		0x3fff
++#define BCM_TCS_CMD_VOTE_SHIFT		0
++
++#define BCM_TCS_CMD(valid, vote)				\
++	(BCM_TCS_CMD_COMMIT_MASK |				\
++	((valid) << BCM_TCS_CMD_VALID_SHIFT) |			\
++	((cpu_to_le32(vote) &					\
++	BCM_TCS_CMD_VOTE_MASK) << BCM_TCS_CMD_VOTE_SHIFT))
++
++/**
++ * struct bcm_db - Auxiliary data pertaining to each Bus Clock Manager(BCM)
++ * @unit: divisor used to convert Hz value to an RPMh msg
++ * @width: multiplier used to convert Hz value to an RPMh msg
++ * @vcd: virtual clock domain that this bcm belongs to
++ * @reserved: reserved to pad the struct
++ */
++struct bcm_db {
++	__le32 unit;
++	__le16 width;
++	u8 vcd;
++	u8 reserved;
++};
++
+ /**
+  * struct clk_rpmh - individual rpmh clock data structure
+  * @hw:			handle between common and hardware-specific interfaces
+@@ -29,6 +54,7 @@
+  * @aggr_state:		rpmh clock aggregated state
+  * @last_sent_aggr_state: rpmh clock last aggr state sent to RPMh
+  * @valid_state_mask:	mask to determine the state of the rpmh clock
++ * @aux_data:		data specific to the bcm rpmh resource
+  * @dev:		device to which it is attached
+  * @peer:		pointer to the clock rpmh sibling
+  */
+@@ -42,6 +68,7 @@ struct clk_rpmh {
+ 	u32 aggr_state;
+ 	u32 last_sent_aggr_state;
+ 	u32 valid_state_mask;
++	u32 unit;
+ 	struct device *dev;
+ 	struct clk_rpmh *peer;
+ };
+@@ -98,6 +125,17 @@ struct clk_rpmh_desc {
+ 	__DEFINE_CLK_RPMH(_platform, _name, _name_active, _res_name,	\
+ 			  CLK_RPMH_VRM_EN_OFFSET, 1, _div)
+ 
++#define DEFINE_CLK_RPMH_BCM(_platform, _name, _res_name)		\
++	static struct clk_rpmh _platform##_##_name = {			\
++		.res_name = _res_name,					\
++		.valid_state_mask = BIT(RPMH_ACTIVE_ONLY_STATE),	\
++		.div = 1,						\
++		.hw.init = &(struct clk_init_data){			\
++			.ops = &clk_rpmh_bcm_ops,			\
++			.name = #_name,					\
++		},							\
++	}
++
+ static inline struct clk_rpmh *to_clk_rpmh(struct clk_hw *_hw)
+ {
+ 	return container_of(_hw, struct clk_rpmh, hw);
+@@ -210,6 +248,91 @@ static unsigned long clk_rpmh_recalc_rate(struct clk_hw *hw,
+ 	.recalc_rate	= clk_rpmh_recalc_rate,
+ };
+ 
++static int clk_rpmh_bcm_send_cmd(struct clk_rpmh *c, bool enable)
++{
++	struct tcs_cmd cmd = { 0 };
++	u32 cmd_state;
++	int ret;
++
++	mutex_lock(&rpmh_clk_lock);
++
++	cmd_state = enable ? (c->aggr_state ? c->aggr_state : 1) : 0;
++
++	if (c->last_sent_aggr_state == cmd_state)
++		return 0;
++
++	cmd.addr = c->res_addr;
++	cmd.data = BCM_TCS_CMD(enable, cmd_state);
++
++	ret = rpmh_write_async(c->dev, RPMH_ACTIVE_ONLY_STATE, &cmd, 1);
++	if (ret) {
++		dev_err(c->dev, "set active state of %s failed: (%d)\n",
++			c->res_name, ret);
++		return ret;
++	}
++
++	c->last_sent_aggr_state = cmd_state;
++
++	mutex_unlock(&rpmh_clk_lock);
++
++	return 0;
++}
++
++static int clk_rpmh_bcm_prepare(struct clk_hw *hw)
++{
++	struct clk_rpmh *c = to_clk_rpmh(hw);
++	int ret;
++
++	ret = clk_rpmh_bcm_send_cmd(c, true);
++
++	return ret;
++};
++
++static void clk_rpmh_bcm_unprepare(struct clk_hw *hw)
++{
++	struct clk_rpmh *c = to_clk_rpmh(hw);
++
++	clk_rpmh_bcm_send_cmd(c, false);
++};
++
++static int clk_rpmh_bcm_set_rate(struct clk_hw *hw, unsigned long rate,
++				 unsigned long parent_rate)
++{
++	struct clk_rpmh *c = to_clk_rpmh(hw);
++
++	c->aggr_state = rate / c->unit;
++	/*
++	 * Since any non-zero value sent to hw would result in enabling the
++	 * clock, only send the value if the clock has already been prepared.
++	 */
++	if (clk_hw_is_prepared(hw))
++		clk_rpmh_bcm_send_cmd(c, true);
++
++	return 0;
++};
++
++static long clk_rpmh_round_rate(struct clk_hw *hw, unsigned long rate,
++				unsigned long *parent_rate)
++{
++	return rate;
++}
++
++static unsigned long clk_rpmh_bcm_recalc_rate(struct clk_hw *hw,
++					unsigned long prate)
++{
++	struct clk_rpmh *c = to_clk_rpmh(hw);
++
++	return c->aggr_state * c->unit;
++}
++
++static const struct clk_ops clk_rpmh_bcm_ops = {
++	.prepare	= clk_rpmh_bcm_prepare,
++	.unprepare	= clk_rpmh_bcm_unprepare,
++	.set_rate	= clk_rpmh_bcm_set_rate,
++	.round_rate	= clk_rpmh_round_rate,
++	.recalc_rate	= clk_rpmh_bcm_recalc_rate,
++};
++
+ /* Resource name must match resource id present in cmd-db. */
+ DEFINE_CLK_RPMH_ARC(sdm845, bi_tcxo, bi_tcxo_ao, "xo.lvl", 0x3, 2);
+ DEFINE_CLK_RPMH_VRM(sdm845, ln_bb_clk2, ln_bb_clk2_ao, "lnbclka2", 2);
+@@ -217,6 +340,7 @@ static unsigned long clk_rpmh_recalc_rate(struct clk_hw *hw,
+ DEFINE_CLK_RPMH_VRM(sdm845, rf_clk1, rf_clk1_ao, "rfclka1", 1);
+ DEFINE_CLK_RPMH_VRM(sdm845, rf_clk2, rf_clk2_ao, "rfclka2", 1);
+ DEFINE_CLK_RPMH_VRM(sdm845, rf_clk3, rf_clk3_ao, "rfclka3", 1);
++DEFINE_CLK_RPMH_BCM(sdm845, ipa, "IP0");
+ 
+ static struct clk_hw *sdm845_rpmh_clocks[] = {
+ 	[RPMH_CXO_CLK]		= &sdm845_bi_tcxo.hw,
+@@ -231,6 +355,7 @@ static unsigned long clk_rpmh_recalc_rate(struct clk_hw *hw,
+ 	[RPMH_RF_CLK2_A]	= &sdm845_rf_clk2_ao.hw,
+ 	[RPMH_RF_CLK3]		= &sdm845_rf_clk3.hw,
+ 	[RPMH_RF_CLK3_A]	= &sdm845_rf_clk3_ao.hw,
++	[RPMH_IPA_CLK]		= &sdm845_ipa.hw,
+ };
+ 
+ static const struct clk_rpmh_desc clk_rpmh_sdm845 = {
+@@ -267,6 +392,8 @@ static int clk_rpmh_probe(struct platform_device *pdev)
+ 
+ 	for (i = 0; i < desc->num_clks; i++) {
+ 		u32 res_addr;
++		size_t aux_data_len;
++		const struct bcm_db *data;
+ 
+ 		rpmh_clk = to_clk_rpmh(hw_clks[i]);
+ 		res_addr = cmd_db_read_addr(rpmh_clk->res_name);
+@@ -275,6 +402,20 @@ static int clk_rpmh_probe(struct platform_device *pdev)
+ 				rpmh_clk->res_name);
+ 			return -ENODEV;
+ 		}
++
++		data = cmd_db_read_aux_data(rpmh_clk->res_name, &aux_data_len);
++		if (IS_ERR(data)) {
++			ret = PTR_ERR(data);
++			dev_err(&pdev->dev,
++				"error reading RPMh aux data for %s (%d)\n",
++				rpmh_clk->res_name, ret);
++				return ret;
++		}
++
++		/* Convert unit from Khz to Hz */
++		if (aux_data_len == sizeof(*data))
++			rpmh_clk->unit = le32_to_cpu(data->unit) * 1000ULL;
++
+ 		rpmh_clk->res_addr += res_addr;
+ 		rpmh_clk->dev = &pdev->dev;
+ 
+diff --git a/include/dt-bindings/clock/qcom,rpmh.h b/include/dt-bindings/clock/qcom,rpmh.h
+index f48fbd6..edcab3f 100644
+--- a/include/dt-bindings/clock/qcom,rpmh.h
++++ b/include/dt-bindings/clock/qcom,rpmh.h
+@@ -18,5 +18,6 @@
+ #define RPMH_RF_CLK2_A				9
+ #define RPMH_RF_CLK3				10
+ #define RPMH_RF_CLK3_A				11
++#define RPMH_IPA_CLK				12
+ 
+ #endif
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
