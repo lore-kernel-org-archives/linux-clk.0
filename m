@@ -2,183 +2,144 @@ Return-Path: <SRS0=SiOT=OX=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FAC1C67839
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Dec 2018 05:38:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F3E5C6786C
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Dec 2018 05:44:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3853E20811
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Dec 2018 05:38:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="QmOIWbMB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3853E20811
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id 251A6208E7
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Dec 2018 05:44:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544766261;
+	bh=zEtND072MverXHNjnDrs63pMQCgNgJnQz1m9DMrCxJQ=;
+	h=In-Reply-To:Subject:To:References:From:Cc:Date:List-ID:From;
+	b=kUcWafNjLvMgG1/ALb8nJjFKGdfLBIyqDQGoGU5fOsPLzavnf9maACUqO7mb3EQct
+	 ogFhHr23hDNAS9IpOXc2JFYC1Ey0MaxGlb2Snex7I/wdjRWD5soyBDRLVJvbtKQWTb
+	 Kejb3M3FNJnpaksA1H72TTfaGeWiJtTVTIDNU55A=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 251A6208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726465AbeLNFiv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Dec 2018 00:38:51 -0500
-Received: from mail-eopbgr150048.outbound.protection.outlook.com ([40.107.15.48]:55745
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726437AbeLNFiv (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 14 Dec 2018 00:38:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xUgSVYkpwfiEGLIVytW9R/tAndMTjClOJ4ZvtK4/VEg=;
- b=QmOIWbMBWAa420nWqSVYCDIt4ieQoSBQEmUxjx5ZdoxhvBUZC5dnh+PksmSUqwEV0h5qnYW7mKmiZ3it8K/rgX5T1jc9I2c030LYiCxz0yjlv+Y5BTNuoPorF9AlRPWzpMiZOKrLTG66V3ACL/sAx2tICEhUQdUo9riQTVNICdg=
-Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.126.21) by
- AM0PR04MB5858.eurprd04.prod.outlook.com (20.178.202.215) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1425.18; Fri, 14 Dec 2018 05:38:08 +0000
-Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
- ([fe80::31e3:2aa6:8d93:9927]) by AM0PR04MB4211.eurprd04.prod.outlook.com
- ([fe80::31e3:2aa6:8d93:9927%2]) with mapi id 15.20.1404.026; Fri, 14 Dec 2018
- 05:38:08 +0000
-From:   Aisheng Dong <aisheng.dong@nxp.com>
-To:     Shawn Guo <shawnguo@kernel.org>
-CC:     "sboyd@kernel.org" <sboyd@kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        id S1727165AbeLNFoU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Dec 2018 00:44:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49382 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727127AbeLNFoU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 14 Dec 2018 00:44:20 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1C69B20811;
+        Fri, 14 Dec 2018 05:44:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544766259;
+        bh=zEtND072MverXHNjnDrs63pMQCgNgJnQz1m9DMrCxJQ=;
+        h=In-Reply-To:Subject:To:References:From:Cc:Date:From;
+        b=EX6AFq1DJgwPgmX6YbBdjbXvTakkUZ3APNNb6Vo61V3L0nx9/N2x+DWhbxCCsg7oT
+         PvpI1TaEfanGBthHXPz2J8N5cog7PVWmujj+8h42O+uzH8wpPzso/mgN99m5NYTC8b
+         nXR7A8Y7TXFCxyM2sJKdVyo0Eqy+ZsTRExBngGnw=
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <AM0PR04MB4211CEFB586B7878BBB58FEB80A10@AM0PR04MB4211.eurprd04.prod.outlook.com>
+Subject: RE: [PATCH V12 0/5] clk: imx: add imx8qxp clock support
+To:     Aisheng Dong <aisheng.dong@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>
+References: <1544715442-8902-1-git-send-email-aisheng.dong@nxp.com> <20181214020533.GC13243@dragon> <AM0PR04MB42114ACB1A55BB42D2C5523280A10@AM0PR04MB4211.eurprd04.prod.outlook.com> <20181214031931.GD13243@dragon> <AM0PR04MB4211D692CBED348EF8C109A180A10@AM0PR04MB4211.eurprd04.prod.outlook.com> <20181214035606.GE13243@dragon> <AM0PR04MB4211CEFB586B7878BBB58FEB80A10@AM0PR04MB4211.eurprd04.prod.outlook.com>
+Message-ID: <154476625826.19322.10114583343237309899@swboyd.mtv.corp.google.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+User-Agent: alot/0.8
+Cc:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
         dl-linux-imx <linux-imx@nxp.com>,
         "kernel@pengutronix.de" <kernel@pengutronix.de>,
         Fabio Estevam <fabio.estevam@nxp.com>,
         "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
         "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH V12 0/5] clk: imx: add imx8qxp clock support
-Thread-Topic: [PATCH V12 0/5] clk: imx: add imx8qxp clock support
-Thread-Index: AQHUkvp+2I/kA9Gq1kKYOSfh1d+quqV9fQkAgAABMXCAABN6AIAAA+qggAAGT4CAAA3/QIAADGWAgAABMpA=
-Date:   Fri, 14 Dec 2018 05:38:08 +0000
-Message-ID: <AM0PR04MB421136352C4D0A3A0A543BBF80A10@AM0PR04MB4211.eurprd04.prod.outlook.com>
-References: <1544715442-8902-1-git-send-email-aisheng.dong@nxp.com>
- <20181214020533.GC13243@dragon>
- <AM0PR04MB42114ACB1A55BB42D2C5523280A10@AM0PR04MB4211.eurprd04.prod.outlook.com>
- <20181214031931.GD13243@dragon>
- <AM0PR04MB4211D692CBED348EF8C109A180A10@AM0PR04MB4211.eurprd04.prod.outlook.com>
- <20181214035606.GE13243@dragon>
- <AM0PR04MB4211CEFB586B7878BBB58FEB80A10@AM0PR04MB4211.eurprd04.prod.outlook.com>
- <20181214053033.GF13243@dragon>
-In-Reply-To: <20181214053033.GF13243@dragon>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=aisheng.dong@nxp.com; 
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM0PR04MB5858;6:Fhx6pp44A9Hh63JHO40JeFDkKw3E5j7JoCNcx12kGJiGulQWtG+9H8c+u+p9KcoVMURXslQRg5wN/hzDxYxAN3cTNaP2zUJJrKiY1ISulTsGuXf7aGUYWwCCI+9D2dQGXW2/dPcUZ0RcinFdOttUmWDW3np22MzU2ls6t4RAz81F8193xJiKUCXxC/VSiQjK76E0TLdwoDz6NqKX9unTT0koVMYfc0nVd4P1rp8VWKLXtJc4nqORjCQMxG+4tGmfQyOOuXpsC0NboSAIiJUouU0ZMKgU2nFYN5HZXiv/9eANOIdPTgiWgf5BnMZlj6SqshC2P2iD2ZhrWeQ+WCP6TTNNhWxFyJv2CmdgUrkPcEbwG4QQV2QnknEZClO08hqCtjcMdUwDD5hUVkUa2+GGxqDqRQriMtT7ll0q1zRYcxPsPVrnjS7MxWR9DeJ9mpMEjBYoVuX+JzYOPaoisufQRg==;5:gH56ZvBopTrcr+8GmfUlH94LeratCjf23saktvouA6YBDDDRf7jIXZCV0iYbSzi42ExPwbKk5c7D+bgeIx3FcNTvzkHnVqhcBJrgdySebpbFRQM/6IPjT4Hkw6fENHAiRNdVSLeyNfZJ07tSZxAKBl8k9MSv4TwDdh6hakev3lw=;7:S234+352CvCUCVpJuE1X/JzhOmym4VPX+TbTdFnB5rYYCju4Jxbe+VIc1wkNlyRubqEa58jQH+hP53hKiMO0S3246i67+22WUoTJ4FZS7g6IGRS9t2jxpygzoIgtz8gJkKAy8M5Bd9PdE3MZZhOoVQ==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 003e0556-629c-49c0-b1e9-08d6618653f8
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB5858;
-x-ms-traffictypediagnostic: AM0PR04MB5858:
-x-microsoft-antispam-prvs: <AM0PR04MB58589C236295050109E70C0B80A10@AM0PR04MB5858.eurprd04.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231475)(944501520)(52105112)(3002001)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:AM0PR04MB5858;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB5858;
-x-forefront-prvs: 08864C38AC
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(39860400002)(346002)(396003)(366004)(136003)(189003)(51914003)(13464003)(199004)(71190400001)(99286004)(5660300001)(102836004)(25786009)(6246003)(229853002)(11346002)(14454004)(53936002)(105586002)(44832011)(7736002)(6116002)(6506007)(476003)(4326008)(106356001)(9686003)(486006)(71200400001)(3846002)(6436002)(86362001)(256004)(81156014)(8676002)(81166006)(55016002)(76176011)(2906002)(97736004)(7696005)(478600001)(93886005)(66066001)(54906003)(446003)(33656002)(74316002)(6916009)(186003)(305945005)(68736007)(316002)(8936002)(26005)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5858;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: TB4W1hKwt3jVpkerkSy+F9jSBVEGrLpEv2PlEMg9AIMeEcIMh/uw9qe9MBpFttfV62bM2W95cTMrxl+SKYIy4vwyJ037C40pelPJjIlvqi+wnyzwBInj178gJFTCP74fa2dxHbeP5rj0QoGYCD9Bna00wmf6SqNfgghHuwSO2uCWXjDj2uF0egbAX3wEKd3YRSyl1m4pkpDL0SuNM4dcCUuvx4b+IFWJfCnSIs5n0Q7GzhL7HXLgqkgmFCa23E0qK5LYb0NMdZ2EUG4gocb62eeUa8isChifja8DqLerIGXglGz3vHjVJJ0gWyjNInca
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 003e0556-629c-49c0-b1e9-08d6618653f8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Dec 2018 05:38:08.0652
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5858
+Date:   Thu, 13 Dec 2018 21:44:18 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-> -----Original Message-----
-> From: Shawn Guo [mailto:shawnguo@kernel.org]
-> On Fri, Dec 14, 2018 at 04:57:46AM +0000, Aisheng Dong wrote:
-> > > -----Original Message-----
-> > > From: Shawn Guo [mailto:shawnguo@kernel.org] On Fri, Dec 14, 2018 at
-> > > 03:37:47AM +0000, Aisheng Dong wrote:
-> > > > > -----Original Message-----
-> > > > > From: Shawn Guo [mailto:shawnguo@kernel.org] On Fri, Dec 14,
-> > > > > 2018 at 02:17:04AM +0000, Aisheng Dong wrote:
-> > > > > > [...]
-> > > > > > > > Note: It depends on SCU driver which has already been
-> > > > > > > > merged by
-> > > > > Shawn.
-> > > > > > > > So this patch series could go through Shawn's tree as well.
-> > > > > > >
-> > > > > > > To be clear, I'm not going to take this via my tree, and it
-> > > > > > > definitely needs to go through clk tree.  If there is a
-> > > > > > > dependency on my tree, you will likely need to wait for the
-> > > > > > > dependency to land on
-> > > > > mainline and then retry.
-> > > > > > >
+Quoting Aisheng Dong (2018-12-13 20:57:46)
+> > -----Original Message-----
+> > From: Shawn Guo [mailto:shawnguo@kernel.org]
+> > On Fri, Dec 14, 2018 at 03:37:47AM +0000, Aisheng Dong wrote:
+> > > > -----Original Message-----
+> > > > From: Shawn Guo [mailto:shawnguo@kernel.org] On Fri, Dec 14, 2018 at
+> > > > 02:17:04AM +0000, Aisheng Dong wrote:
+> > > > > [...]
+> > > > > > > Note: It depends on SCU driver which has already been merged
+> > > > > > > by
+> > > > Shawn.
+> > > > > > > So this patch series could go through Shawn's tree as well.
 > > > > > >
-> > > > > > Sorry, I should have corrected that comment.
-> > > > > > It's not depend on SCU driver which is already in the Stephen's=
- tree.
-> > > > > > It actually depends on the resource ID definitions[1] and the
-> > > > > > centralized PM related service definitions headifle in in
-> > > > > > power domain series which is already in your tree.
+> > > > > > To be clear, I'm not going to take this via my tree, and it
+> > > > > > definitely needs to go through clk tree.  If there is a
+> > > > > > dependency on my tree, you will likely need to wait for the
+> > > > > > dependency to land on
+> > > > mainline and then retry.
 > > > > > >
-> > > > > > [2] can be fixed by defining them in clock driver.
-> > > > > > But [1] seems can't be fixed as resource ID is shared by power
-> > > > > > domain and possible many other SCU client drivers.
-> > > > > >
-> > > > > > Any suggestion?
 > > > > >
-> > > > > After [1] and [2] land on v4.21-rc1, you rebase the series on tha=
-t.
-> > > > > The dependency will be gone, right?  This is what I suggested abo=
-ve.
+> > > > > Sorry, I should have corrected that comment.
+> > > > > It's not depend on SCU driver which is already in the Stephen's t=
+ree.
+> > > > > It actually depends on the resource ID definitions[1] and the
+> > > > > centralized PM related service definitions headifle in in power
+> > > > > domain series which is already in your tree.
 > > > > >
+> > > > > [2] can be fixed by defining them in clock driver.
+> > > > > But [1] seems can't be fixed as resource ID is shared by power
+> > > > > domain and possible many other SCU client drivers.
+> > > > >
+> > > > > Any suggestion?
 > > > >
-> > > > Okay, that may need a few more weeks.
-> > > > BTW, after v4.21-rc1 is out, can the mx8qxp CLK and DTS hit the
-> > > > final v4.21
-> > > release?
-> > > > As I understand, usually we don't receive new feature patch after
-> > > > the first RC, right?
+> > > > After [1] and [2] land on v4.21-rc1, you rebase the series on that.
+> > > > The dependency will be gone, right?  This is what I suggested above.
+> > > >
 > > >
-> > > Yes, they will have to land on 4.22 then.
-> >
-> > That's unfortunately and may need wait 3 more months.
-> > I really wish we can hit v4.21-rc1, then other modules driver can
-> > start their work based on it.
+> > > Okay, that may need a few more weeks.
+> > > BTW, after v4.21-rc1 is out, can the mx8qxp CLK and DTS hit the final=
+ v4.21
+> > release?
+> > > As I understand, usually we don't receive new feature patch after the
+> > > first RC, right?
+> >=20
+> > Yes, they will have to land on 4.22 then.
 >=20
-> You can not always expect all the pieces get in with one merge window.
-> It's very usual in upstreaming process that the dependant parts lands in
-> mainline with multiple release cycles.
+> That's unfortunately and may need wait 3 more months.
+> I really wish we can hit v4.21-rc1, then other modules driver can start
+> their work based on it.
 >=20
-
-Yes, i understand.
-Thanks for the clarification.
-
-> > Stephen,
-> > What's your option?
-> >
-> > Can we try the same way as Shawn did for arch and dts part?
+> Stephen,
+> What's your option?
 >=20
-> In case Stephen is fine by pulling dependency from my tree, it's all on b=
-ranch
-> below, which has been pulled/queued by arm-soc folks for 4.21 merge windo=
-w.
->=20
->  git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git imx/dri=
-vers
+> Can we try the same way as Shawn did for arch and dts part?
 >=20
 
-Thanks
+I see some options:
 
-Regards
-Dong Aisheng
+	1. Shawn can provide the required header files in some signed
+	tag that I can pull into clk tree and then apply these patches
+	on top and merge it all up into clk-next.
 
-> Shawn
+	2. I can pick any patches required for the header files the clk
+	driver needs into clk tree and duplicate the commits in Shawn's
+	tree. I don't see a big downside here, git manages just fine
+	when it sees duplicate content on both sides of a merge so it's
+	just more noise than anything else.
+
+	3. I apply the clk driver bits but nobody tries to enable the
+	config option around it just yet. Instead, we wait for
+	everything to meet up in linux-next via different trees and then
+	enable compilation later. This is bad for compile testing
+	drivers and makes it harder to bisect problems later. Probably
+	not a big deal here for bringing in new hardware support but it
+	might work out.
+
+	4. We all wait three months (happy new year!) but otherwise are
+	sad that we can't figure this out.
+
