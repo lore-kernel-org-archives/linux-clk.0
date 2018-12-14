@@ -2,107 +2,119 @@ Return-Path: <SRS0=SiOT=OX=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADA42C67839
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Dec 2018 07:43:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8797FC67839
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Dec 2018 09:22:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A43320811
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Dec 2018 07:43:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="XPYzD7Uc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A43320811
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by mail.kernel.org (Postfix) with ESMTP id 4E0E220866
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Dec 2018 09:22:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E0E220866
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-clk-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726520AbeLNHnd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Dec 2018 02:43:33 -0500
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:2164 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726641AbeLNHnc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Dec 2018 02:43:32 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c135f1e0001>; Thu, 13 Dec 2018 23:43:26 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 13 Dec 2018 23:43:32 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 13 Dec 2018 23:43:32 -0800
-Received: from [10.19.108.132] (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 14 Dec
- 2018 07:43:30 +0000
-Subject: Re: [PATCH V2 10/21] clk: tegra: dfll: add CVB tables for Tegra210
-To:     Jon Hunter <jonathanh@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>
-References: <20181213093438.29621-1-josephl@nvidia.com>
- <20181213093438.29621-11-josephl@nvidia.com>
- <8fda3564-ab10-bb24-6d2a-6bd26358fe88@nvidia.com>
-From:   Joseph Lo <josephl@nvidia.com>
-Message-ID: <9f0d08e3-a87a-2e85-e0d2-49ab25afc109@nvidia.com>
-Date:   Fri, 14 Dec 2018 15:43:28 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <8fda3564-ab10-bb24-6d2a-6bd26358fe88@nvidia.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL108.nvidia.com (172.18.146.13) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1544773406; bh=5wYnr7yEhYR4g6GmiiEkncHydhAlqpHLiDLTCGqIwfg=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=XPYzD7UcEiEy+m8ipS2Iah9DUl+b1vdFYPrhpAsYnK7iwb9PAURGNA+7cd1vom41k
-         VtatzybBSbEVc3m2e8BOWJ5xhKSjDtxRzvdkRKF+tQmK8Y/erjf8nUHPbMSjrlks2t
-         vwhYVujGuD9RnL4WRsPWHdtyMsKz+/qRfe6a/TP3LMRNDRwwTUneuqlupvuqyJKFwK
-         gqy6MJdPBMx4SVVb7pNFPnFpjEfgjLgsYig8MflUtcZ40Qbs9zDqh0C5rDtSPw8PZW
-         AK8DfT4jswF6JtldzsYTYc8BY79gD16KuiyWsSlZ6bXDrTHrY0nl2+F+PfY0DPNT8r
-         NRm4oxbY6RLwA==
+        id S1726344AbeLNJWS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Dec 2018 04:22:18 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:48989 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727579AbeLNJWR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Dec 2018 04:22:17 -0500
+Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1gXjfg-00007T-GT; Fri, 14 Dec 2018 10:22:12 +0100
+Message-ID: <1544779331.3137.36.camel@pengutronix.de>
+Subject: Re: [PATCH 1/3] arm64: Remove CONFIG_SOC_IMX8MQ and use ARCH_MXC
+ instead
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     Shawn Guo <shawnguo@kernel.org>, Abel Vesa <abel.vesa@nxp.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Olof Johansson <olof@lixom.net>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>, Rob Herring <robh@kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>
+Date:   Fri, 14 Dec 2018 10:22:11 +0100
+In-Reply-To: <20181214011207.GB13243@dragon>
+References: <1544707047-4417-1-git-send-email-abel.vesa@nxp.com>
+         <1544707047-4417-2-git-send-email-abel.vesa@nxp.com>
+         <1544711727.3137.32.camel@pengutronix.de>
+         <20181213145149.6hyyhi6hxdzvikl4@fsr-ub1664-175>
+         <20181214011207.GB13243@dragon>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 12/13/18 8:50 PM, Jon Hunter wrote:
-> 
-> On 13/12/2018 09:34, Joseph Lo wrote:
->> Add CVB tables with different chip characterization, so that we can
->> generate the customize OPP table that suitable for different chips with
->> different SKUs.
->>
->> Signed-off-by: Joseph Lo <josephl@nvidia.com>
-> 
+Hi Shawn,
+
+Am Freitag, den 14.12.2018, 09:12 +0800 schrieb Shawn Guo:
+> On Thu, Dec 13, 2018 at 02:51:50PM +0000, Abel Vesa wrote:
 > ...
+> > > > diff --git a/arch/arm64/Kconfig.platforms
+> > > > b/arch/arm64/Kconfig.platforms
+> > > > index 7e1545a..318dbb9 100644
+> > > > --- a/arch/arm64/Kconfig.platforms
+> > > > +++ b/arch/arm64/Kconfig.platforms
+> > > > @@ -148,14 +148,6 @@ config ARCH_MXC
+> > > > > > > >  	  This enables support for the ARMv8 based SoCs in the
+> > > > > > > >  	  NXP i.MX family.
+> > > >  
+> > > > -config SOC_IMX8MQ
+> > > > > > > > -	bool "i.MX8MQ support"
+> > > > > > > > -	depends on ARCH_MXC
+> > > > > > > > -	select ARM64_ERRATUM_843419
+> > > > > > > > -	select ARM64_ERRATUM_845719
+> > > > > > > > -	help
+> > > > > > > > -	  This enables support for the i.MX8MQ SoC.
+> > > > -
+> > > 
+> > > NACK on this one. Having a single place where stuff that is absolutely
+> > > critical for proper SoC operation can be selected is very useful and
+> > > avoids hard to debug issues due to slightly wrong configs in the long
+> > > run.
+> > 
+> > As mentioned in the cover letter, please ignore this patch set entirely.
+> > The ARCH_MXC is actually used on arm32 too, so it won't work.
+> > 
+> > I'm working on a patchset that will add the Kconfig into 
+> > drivers/clk/imx/ and in it will add CLK_IMX8MQ. That will
+> > fix the clock dependency since the CLK_IMX8MQ will depend on
+> > ARCH_MXC and ARM64. I believe the CLK_IMX8QXP will follow
+> > the same pattern.
+> > 
+> > As for the SOC_IMX8MQ, all the other vendors have one single
+> > config for all the arm64 platforms. TBH, to control every SoC
+> > independently it's a little bit of an overkill.
 > 
->> diff --git a/drivers/clk/tegra/cvb.h b/drivers/clk/tegra/cvb.h
->> index bcf15a089b93..91a1941c21ef 100644
->> --- a/drivers/clk/tegra/cvb.h
->> +++ b/drivers/clk/tegra/cvb.h
->> @@ -41,6 +41,7 @@ struct cvb_cpu_dfll_data {
->>   	u32 tune0_low;
->>   	u32 tune0_high;
->>   	u32 tune1;
->> +	unsigned int tune_high_min_millivolts;
->>   };
+> Lucas,
 > 
-> Sorry, I forgot to respond to this on the previous version. I think that
-> it is OK to add now, but please add a comment in the changelog to
-> reflect that this is not currently used, but we have plans to use it and
-> so we are adding all the data now.
+> We are still waiting for further comments from Olof [1].  But it sounds
+> like SoC specific option is not welcomed on ARM64.
 
-Okay, will do. Thanks.
+While I personally would prefer to keep the SoC options, I see that we
+need to align with the judgment of the arm-soc maintainers.
 
-> 
-> Cheers
-> Jon
-> 
+But at the very least we should keep the select for vital system
+workarounds. They need to move to the arch Kconfig symbol in that case
+and might select stuff that isn't needed on each of the i.MX8 SoCs. But
+better enabling more workaround and drivers than necessary than having
+hard to debug system failures in the future.
+
+Regards,
+Lucas
