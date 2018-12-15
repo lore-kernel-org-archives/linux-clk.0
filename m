@@ -1,124 +1,113 @@
-Return-Path: <SRS0=SiOT=OX=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=SShM=OY=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CF45C43387
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Dec 2018 22:29:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFECAC43612
+	for <linux-clk@archiver.kernel.org>; Sat, 15 Dec 2018 00:55:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7E7D2086D
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Dec 2018 22:29:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB770208C1
+	for <linux-clk@archiver.kernel.org>; Sat, 15 Dec 2018 00:55:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c2D21m7l"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UGzE8Xen"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729691AbeLNW3g (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Dec 2018 17:29:36 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:50826 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729519AbeLNW3f (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Dec 2018 17:29:35 -0500
-Received: by mail-wm1-f67.google.com with SMTP id n190so7093517wmd.0;
-        Fri, 14 Dec 2018 14:29:33 -0800 (PST)
+        id S1727634AbeLOAzZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Dec 2018 19:55:25 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:33554 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726609AbeLOAzZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Dec 2018 19:55:25 -0500
+Received: by mail-wr1-f67.google.com with SMTP id c14so7073885wrr.0;
+        Fri, 14 Dec 2018 16:55:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=uAaP4jVStVp4MUgrxkDDuXre0XdfMO7PrAfUyw0/N34=;
-        b=c2D21m7leRBVex++bCFf7t7X3A3WKuHXnOtFoopw9TByr2p/o5/48IUd0aLSvytUhG
-         qgVF2RWmlBB8KwHhmWitNMqMkmgk+pyes3aH5Pkg7KrVY315WoUFjnh1oJCnCwAE+NJ2
-         RMvAewDCL41t1Qt//EvMh5P83pX4YfDc47vJxILTh4hEQ7qfQdWpUpFAJC7gAAix+xR+
-         EWLOS8XFVXycL7vlKYqQEWSHSK2LFSIoIv5Lg6Xv8/LhrcVJB1aHTxlHvxMYoJ19r3uR
-         3c1eb1p2JD2OpYIgrpOsar/BVaO6vdC4R6/1vJQhsHVHvycjpOrnutS3Dq3PXUjEKlEA
-         ZWrg==
+        h=from:to:cc:subject:date:message-id;
+        bh=qEgzsXyxIPXLuA6cB6v8ynvGDOnw9XDvTahrMCNEvzA=;
+        b=UGzE8Xen4S6YEXv4e1nWJzrn1fmn/y4EjFEGxAdEC5Lhg/gbmDifWmYAU1ugCyNfpm
+         9sZU2yKVOS9W/S3nRVoebzSoLL4p5Baq/LCpKqUySUFm+xsFLj0ZeWN9+OAuO0mKoisB
+         3PthobpX2kyhZ6iLbknhWeW8pjDofBQNboj8FhCv9nEjWAgRDK4GlabjDOmiOAscSRjM
+         0VWWD0lkmatn89fLHjZpifSuLecJ/e+vakOScVmSsBjvIY2NqkpcZH+2DnUOruUPnDmH
+         UdEGUvp7n2PWgDZEAqhtsYlOzuXh77GtqJKass3tvJd3sDoii+RMiDiv9d0gVWYaI9yF
+         xBxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=uAaP4jVStVp4MUgrxkDDuXre0XdfMO7PrAfUyw0/N34=;
-        b=Wff3IvQf7y72TjdI4ViEmr2C2jdGXGcNuq0BvsXnHE9z9/stLd4cKcqRbuCyQRJJu+
-         YONayfSm9WqWqSrf7m409lTE3I86bGVZXRx5ryiLMhEiVflEBj/0pA2W1s0SEa/UjKMm
-         8ZoHAbwPE3o5jRN7/y+QhDQm4GgK2LMLF1FwCuEqJSTiRP9GR5nfANHpcvyTZE5vg8Pe
-         CKfOiLbQI8i95CUDf7XLg3Cubpd0WawJ5+EqVp8q+tvR/suz93i3PAPlB705LV3lJRu6
-         c35ex2alJs5olpJSHs8Rc9lyU5BjAn3cGlMvoUxwJbZLp8CJkFxlXutpMRM9WQ3sZBYU
-         ur1A==
-X-Gm-Message-State: AA+aEWbxB8QboWKi99GiUsf4csOU80TMlLbjRWDH+54uxlQOKro6yl6m
-        TbPg2yVzAT3nRrZHI5VLPYrllAHw
-X-Google-Smtp-Source: AFSGD/W1E1t2xDMHR+ArhLPP1DnN+0ZJbTugoHN8h1LVU1jtILWkgKkxC/rQqngsfHXOJDtrhRBahQ==
-X-Received: by 2002:a1c:de57:: with SMTP id v84mr4443721wmg.55.1544826572483;
-        Fri, 14 Dec 2018 14:29:32 -0800 (PST)
-Received: from [192.168.1.4] (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
-        by smtp.gmail.com with ESMTPSA id c7sm11260619wre.64.2018.12.14.14.29.31
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=qEgzsXyxIPXLuA6cB6v8ynvGDOnw9XDvTahrMCNEvzA=;
+        b=T4LVWP+7Xuo5Y7ELbF+OG+OtoCqYTxBTNOvwZZevENkcajjbDAlLqy1x6GLcDsnqTk
+         K5Kp/RAr2v6Bj7116GsLmwKtYOe51a7TqU8lYG3JmH583jhlUsSCyI5uYzeC3W/7pzgj
+         LMKiZyOOwGu7+w3Mgsfvk8NpNm4U0JLHB4mgj/KnQczmB9tOUpBS5QxdsplJWMNCOPFk
+         U6RPSW+hSzn2YIkvALMMx1238a0iBzrDrd0pUMhVKdbC/taLHRd/yRVkwSTM2RCBfrMq
+         ZgHXZOEwE1PB+PUgJnjojhS8MgZI1DSXSnGr4y3Z34u2viTgFEjsFQ7FxGulF898utL4
+         lHZQ==
+X-Gm-Message-State: AA+aEWZY588Uw8eeAb1OaE3DDeSisz5tbKvwYPbUv26a5FPzqJpweMLl
+        0H1f8diSUksUFWJo33QJVWpOb6aC
+X-Google-Smtp-Source: AFSGD/VDTXxxm0A46KJpK83W/fpPyv5PSon2TUDGGICZPSDlWfGe2UANL5JCflEFfj9HNDtm6d91Hw==
+X-Received: by 2002:adf:ea11:: with SMTP id q17mr3950844wrm.328.1544835323322;
+        Fri, 14 Dec 2018 16:55:23 -0800 (PST)
+Received: from kurokawa.lan (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
+        by smtp.gmail.com with ESMTPSA id v19sm11895607wrd.46.2018.12.14.16.55.21
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 14 Dec 2018 14:29:31 -0800 (PST)
-Subject: Re: [PATCH] clk: vc5: Initialize src in vc5_mux_set_parent()
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Fri, 14 Dec 2018 16:55:22 -0800 (PST)
+From:   Marek Vasut <marek.vasut@gmail.com>
+X-Google-Original-From: Marek Vasut <marek.vasut+renesas@gmail.com>
+To:     linux-clk@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org,
         Marek Vasut <marek.vasut+renesas@gmail.com>,
         Alexey Firago <alexey_firago@mentor.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org
-References: <20181214214959.162744-1-sboyd@kernel.org>
-From:   Marek Vasut <marek.vasut@gmail.com>
-Message-ID: <c1065c2f-3e7e-e2c4-a9f5-e672e86beb43@gmail.com>
-Date:   Fri, 14 Dec 2018 23:29:30 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20181214214959.162744-1-sboyd@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Stephen Boyd <sboyd@kernel.org>
+Subject: [PATCH] clk: vc5: Abort clock configuration without upstream clock
+Date:   Sat, 15 Dec 2018 01:55:19 +0100
+Message-Id: <20181215005519.3695-1-marek.vasut+renesas@gmail.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 12/14/2018 10:49 PM, Stephen Boyd wrote:
-> It seems that it may be possible to get to the regmap update call
-> without ever initializing this variable, so just set it to 0 to be safe.
-> 
-> Cc: Marek Vasut <marek.vasut+renesas@gmail.com>
-> Cc: Alexey Firago <alexey_firago@mentor.com>
-> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Cc: linux-renesas-soc@vger.kernel.org
-> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-> ---
->  drivers/clk/clk-versaclock5.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
-> index 5b393e711e94..026f76276933 100644
-> --- a/drivers/clk/clk-versaclock5.c
-> +++ b/drivers/clk/clk-versaclock5.c
-> @@ -246,7 +246,7 @@ static int vc5_mux_set_parent(struct clk_hw *hw, u8 index)
->  	struct vc5_driver_data *vc5 =
->  		container_of(hw, struct vc5_driver_data, clk_mux);
->  	const u8 mask = VC5_PRIM_SRC_SHDN_EN_XTAL | VC5_PRIM_SRC_SHDN_EN_CLKIN;
-> -	u8 src;
-> +	u8 src = 0;
->  
->  	if ((index > 1) || !vc5->clk_mux_ins)
->  		return -EINVAL;
+In case the upstream clock are not set, which can happen in case the
+VC5 has no valid upstream clock, the $src variable is used uninited
+by regmap_update_bits(). Check for this condition and return -EINVAL
+in such case.
 
-Can you rather change the else { } branch in that function such that it does
+Note that in case the VC5 has no valid upstream clock, the VC5 can
+not operate correctly. That is a hardware property of the VC5. The
+internal oscilator present in some VC5 models is also considered
+upstream clock.
 
- if (vc5->clk_mux)ins == ...)
-  ...
- else if (...)
-  ...
-+ else
-+  return -EINVAL;
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Alexey Firago <alexey_firago@mentor.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org
+---
+NOTE: This is an updated version of:
+      https://patchwork.kernel.org/patch/10731699/
+---
+ drivers/clk/clk-versaclock5.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-The last bit would assure the function would fail in case the
-clk_mux_ins == 0, which can happen if someone builds a setup without any
-clock into connected to the VC5 (which would not work hardware-vise).
-
+diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
+index 5b393e711e94..b10801506518 100644
+--- a/drivers/clk/clk-versaclock5.c
++++ b/drivers/clk/clk-versaclock5.c
+@@ -262,8 +262,10 @@ static int vc5_mux_set_parent(struct clk_hw *hw, u8 index)
+ 
+ 		if (vc5->clk_mux_ins == VC5_MUX_IN_XIN)
+ 			src = VC5_PRIM_SRC_SHDN_EN_XTAL;
+-		if (vc5->clk_mux_ins == VC5_MUX_IN_CLKIN)
++		else if (vc5->clk_mux_ins == VC5_MUX_IN_CLKIN)
+ 			src = VC5_PRIM_SRC_SHDN_EN_CLKIN;
++		else
++			return -EINVAL;
+ 	}
+ 
+ 	return regmap_update_bits(vc5->regmap, VC5_PRIM_SRC_SHDN, mask, src);
 -- 
-Best regards,
-Marek Vasut
+2.18.0
+
