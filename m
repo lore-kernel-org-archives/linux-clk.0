@@ -2,146 +2,138 @@ Return-Path: <SRS0=q5Yd=OZ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C502C43387
-	for <linux-clk@archiver.kernel.org>; Sun, 16 Dec 2018 14:19:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D2C6C43387
+	for <linux-clk@archiver.kernel.org>; Sun, 16 Dec 2018 17:14:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BFFA217F9
-	for <linux-clk@archiver.kernel.org>; Sun, 16 Dec 2018 14:19:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 19B53206BA
+	for <linux-clk@archiver.kernel.org>; Sun, 16 Dec 2018 17:14:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="kpCkiwt8"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dJ9wJRtp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730733AbeLPOTC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 16 Dec 2018 09:19:02 -0500
-Received: from outils.crapouillou.net ([89.234.176.41]:47650 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730181AbeLPOTC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 16 Dec 2018 09:19:02 -0500
-Date:   Sun, 16 Dec 2018 15:18:52 +0100
-From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH v8 15/26] pwm: jz4740: Add support for the JZ4725B
-To:     Uwe =?iso-8859-1?q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ralf Baechle <ralf@linux-mips.org>, paul.burton@mips.com,
-        James Hogan <jhogan@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mathieu Malaterre <malat@debian.org>, ezequiel@collabora.co.uk,
-        prasannatsmkumar@gmail.com, linux-pwm@vger.kernel.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>,
-        linux-mips@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-clk <linux-clk@vger.kernel.org>, od@zcrc.me
-Message-Id: <1544969932.1649.1@crapouillou.net>
-In-Reply-To: <20181214142628.zwi4hadrju53z6f3@pengutronix.de>
-References: <20181212220922.18759-1-paul@crapouillou.net>
-        <20181212220922.18759-16-paul@crapouillou.net>
-        <20181213092409.ml4wpnzow2nnszkd@pengutronix.de>
-        <1544709795.18952.1@crapouillou.net>
-        <20181213204219.onem3q6dcmakusl2@pengutronix.de>
-        <CACRpkdbABtDgwKai=8Pfji7qVb-XHsX8pDsuDdS5hhg7qEN0Bw@mail.gmail.com>
-        <20181214142628.zwi4hadrju53z6f3@pengutronix.de>
+        id S1730733AbeLPROe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 16 Dec 2018 12:14:34 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:54627 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730618AbeLPROe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 16 Dec 2018 12:14:34 -0500
+Received: by mail-wm1-f67.google.com with SMTP id a62so10106175wmh.4;
+        Sun, 16 Dec 2018 09:14:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=CBmA82j01timjeeuqbduSdDWCwV27ZThKbESNT7LpTc=;
+        b=dJ9wJRtpTynrcTMy+TnV/MaIcAPQ/Q36XOYI2z96/YlZsdVvfdunPp6zSZ9Xq4hd9t
+         34VSefuG1vX9T5CMn7B0Pao7i9o8SiSamDiPd3B+INow4YA2Q9o+0AOKIVIl87XSKauL
+         i3l2UkIOuGBMve/bMTXtVJLxAskXzqXocBpwMkB9PX3586qvg/QamW+tv8YurCnywRQ2
+         hj2RpQrdl4MykBrAWEG19/+t71V5iy1dGLpCgSFFRaom2H+2Ee1FifFVw8WKzbbblTNJ
+         BwVr8SRw423Dd78ZQrCepWqjPoP+pmR+6PEINgbWYh7YPeaLb85JQEnkODn15GADY6+k
+         a+EQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=CBmA82j01timjeeuqbduSdDWCwV27ZThKbESNT7LpTc=;
+        b=gEimE8KyVjhThQszBXN9i7sEL4capMwra+by/NO70aAyymkfgfGwiHEgHYR23iVVW1
+         tW+waoX9OW4a4E8+Jzvy5/LkYOTuHmG7Dc2rH8aX8m72HclqYapfW7+Q5Cl6Ah1kEi+I
+         bokhvV5fQhZjuwea+aTgwcSGmsISXylZPdvhswdXaDVRsFP8bUsVisxZ8pVwdfL7Amvq
+         Mm+qCEmqpiqXSRWIRYFZ622KQRDyg7fXOT91r1ReqvZLgfCyiqyyUYJ57AcP5KxNYH9i
+         Z4kMfoM0P5rjHpAcSR0cnkZMdI7tuHIrA2IFx5iihqaxjx7bhnSd2fD2r+E7QUiFxLld
+         lF3g==
+X-Gm-Message-State: AA+aEWYYZLC6bOlp94I8tXeEFNY7IiGzTMYynXPE2ECy2i3s/CRYx0Mb
+        vlgMZq0gZ5USw753bFaKSQk=
+X-Google-Smtp-Source: AFSGD/W+mAlnHwe9K7VewvFNaQg9iacRtrsn0TjhFuby/gA/FHkqMQvWgcjC0H8ftGBmMustXHRUyg==
+X-Received: by 2002:a1c:ae15:: with SMTP id x21mr9012519wme.146.1544980471897;
+        Sun, 16 Dec 2018 09:14:31 -0800 (PST)
+Received: from [192.168.1.4] (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
+        by smtp.gmail.com with ESMTPSA id n15sm19485618wrt.21.2018.12.16.09.14.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 16 Dec 2018 09:14:30 -0800 (PST)
+Subject: Re: [PATCH] clk: vc5: Abort clock configuration without upstream
+ clock
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Alexey Firago <alexey_firago@mentor.com>,
+        Stephen Boyd <sboyd@kernel.org>
+References: <20181215005519.3695-1-marek.vasut+renesas@gmail.com>
+ <13438812.kSL9ZioSIq@avalon>
+From:   Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <3220bca0-486d-08a8-7575-34c961ed1261@gmail.com>
+Date:   Sun, 16 Dec 2018 18:14:29 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Transfer-Encoding: quoted-printable
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net; s=mail; t=1544969939; bh=Hq0ZCESR3VxDldevdsZM7ZBAIOVzdtDgctxCR8ptZxw=; h=Date:From:Subject:To:Cc:Message-Id:In-Reply-To:References:MIME-Version:Content-Type:Content-Transfer-Encoding; b=kpCkiwt8CzWBqSxf3PO2XKz2pv714bSG/ju7bnOTcthGFgwwX/s/S89ZPxETnVvQu+mZCgmWYFY/fYruHETa+6BD01b8ZDJoHAl0etWfET5yqAvlsF9V1BKhn0PsicOtXTS7sRSzuHiJO2hVto2EJlpt1+mUmFAL75SX6rs40j4=
+In-Reply-To: <13438812.kSL9ZioSIq@avalon>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+On 12/16/2018 08:19 AM, Laurent Pinchart wrote:
+> Hi Marek,
+> 
+> Thank you for the patch.
+> 
+> On Saturday, 15 December 2018 02:55:19 EET Marek Vasut wrote:
+>> In case the upstream clock are not set, which can happen in case the
+>> VC5 has no valid upstream clock, the $src variable is used uninited
+>> by regmap_update_bits(). Check for this condition and return -EINVAL
+>> in such case.
+> 
+> Note that the probe() function will fail in this case, so vc5_mux_set_parent() 
+> won't be reached.
+> 
+>> Note that in case the VC5 has no valid upstream clock, the VC5 can
+>> not operate correctly. That is a hardware property of the VC5. The
+>> internal oscilator present in some VC5 models is also considered
+>> upstream clock.
+>>
+>> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+>> Cc: Alexey Firago <alexey_firago@mentor.com>
+>> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+>> Cc: Stephen Boyd <sboyd@kernel.org>
+>> Cc: linux-renesas-soc@vger.kernel.org
+>> ---
+>> NOTE: This is an updated version of:
+>>       https://patchwork.kernel.org/patch/10731699/
+>> ---
+>>  drivers/clk/clk-versaclock5.c | 4 +++-
+>>  1 file changed, 3 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
+>> index 5b393e711e94..b10801506518 100644
+>> --- a/drivers/clk/clk-versaclock5.c
+>> +++ b/drivers/clk/clk-versaclock5.c
+>> @@ -262,8 +262,10 @@ static int vc5_mux_set_parent(struct clk_hw *hw, u8
+>> index)
+>>
+>>  		if (vc5->clk_mux_ins == VC5_MUX_IN_XIN)
+>>  			src = VC5_PRIM_SRC_SHDN_EN_XTAL;
+>> -		if (vc5->clk_mux_ins == VC5_MUX_IN_CLKIN)
+>> +		else if (vc5->clk_mux_ins == VC5_MUX_IN_CLKIN)
+>>  			src = VC5_PRIM_SRC_SHDN_EN_CLKIN;
+>> +		else
+>> +			return -EINVAL;
+>>  	}
+> 
+> I'd rather go for Stephen's approach if the goal is just to silence a warning 
+> for a condition that can't happen in practice.
 
-Le ven. 14 d=E9c. 2018 =E0 15:26, Uwe Kleine-K=F6nig=20
-<u.kleine-koenig@pengutronix.de> a =E9crit :
-> Hello,
->=20
-> On Fri, Dec 14, 2018 at 02:50:20PM +0100, Linus Walleij wrote:
->>  On Thu, Dec 13, 2018 at 9:42 PM Uwe Kleine-K=F6nig
->>  <u.kleine-koenig@pengutronix.de> wrote:
->>  > [Adding Linus Walleij to Cc:]
->>  > On Thu, Dec 13, 2018 at 03:03:15PM +0100, Paul Cercueil wrote:
->>  > > Le jeu. 13 d=E9c. 2018 =E0 10:24, Uwe Kleine-K=F6nig
->>  > > <u.kleine-koenig@pengutronix.de> a =E9crit :
->>  > > > On Wed, Dec 12, 2018 at 11:09:10PM +0100, Paul Cercueil wrote:
->>  > > > >  The PWM in the JZ4725B works the same as in the JZ4740,=20
->> except that
->>  > > > > it
->>  > > > >  only has 6 channels available instead of 8.
->>  > > >
->>  > > > this driver is probed only from device tree? If yes, it might=20
->> be
->>  > > > sensible to specify the number of PWMs there and get it from=20
->> there.
->>  > > > There doesn't seem to be a generic binding for that, but=20
->> there are
->>  > > > several drivers that could benefit from it. (This is a bigger=20
->> project
->>  > > > though and shouldn't stop your patch. Still more as it=20
->> already got
->>  > > > Thierry's ack.)
->>  > >
->>  > > I think there needs to be a proper guideline, as there doesn't=20
->> seem to be
->>  > > a consensus about this. I learned from emails with Rob and=20
->> Linus (Walleij)
->>  > > that I should not have in devicetree what I can deduce from the=20
->> compatible
->>  > > string.
->>  >
->>  > I understood them a bit differently. It is ok to deduce things=20
->> from the
->>  > compatible string. But if you define a generic property (say)=20
->> "num-pwms"
->>  > that is used uniformly in most bindings this is ok, too. (And=20
->> then the
->>  > two different devices could use the same compatible.)
->>  >
->>  > An upside of the generic "num-pwms" property is that the pwm core=20
->> could
->>  > sanity check pwm phandles before passing them to the hardware=20
->> drivers.
->>=20
->>  I don't know if this helps, but in GPIO we have "ngpios" which is
->>  used to augment an existing block as to the number of lines actually
->>  used with it.
->>=20
->>  The typical case is that an ASIC engineer synthesize a block for
->>  32 GPIOs but only 12 of them are routed to external pads. So
->>  we augment the behaviour of that driver to only use 12 of the
->>  32 lines.
->>=20
->>  I guess using the remaining 20 lines "works" in a sense but they
->>  have no practical use and will just bias electrons in the silicon
->>  for no use.
->=20
-> This looks very similar to the case under discussion.
->=20
->>  So if the PWM case is something similar, then by all means add
->>  num-pwms.
->=20
-> .. or "npwms" to use the same nomenclature as the gpio binding?
+Sure, probe will fail, but it's safer to handle the possibility that
+probe() is broken and this code is reached by properly handling the
+failure instead of doing something obviously wrong (like configuring the
+hardware with value 0).
 
-If we're going to do something like this, should it be the drivers or
-the core (within pwmchip_add) that checks for this "npwms" property?
-
-> Best regards
-> Uwe
->=20
-> --
-> Pengutronix e.K.                           | Uwe Kleine-K=F6nig       =20
->     |
-> Industrial Linux Solutions                 |=20
-> http://www.pengutronix.de/  |
-=
-
+-- 
+Best regards,
+Marek Vasut
