@@ -2,93 +2,86 @@ Return-Path: <SRS0=q5Yd=OZ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7298AC43612
-	for <linux-clk@archiver.kernel.org>; Sun, 16 Dec 2018 07:19:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75714C43387
+	for <linux-clk@archiver.kernel.org>; Sun, 16 Dec 2018 09:37:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38AB5217FA
-	for <linux-clk@archiver.kernel.org>; Sun, 16 Dec 2018 07:19:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ZmtwED6S"
+	by mail.kernel.org (Postfix) with ESMTP id 4AB4B217FB
+	for <linux-clk@archiver.kernel.org>; Sun, 16 Dec 2018 09:37:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729831AbeLPHT5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 16 Dec 2018 02:19:57 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:45964 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729732AbeLPHT5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 16 Dec 2018 02:19:57 -0500
-Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0BE0159;
-        Sun, 16 Dec 2018 08:19:54 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1544944795;
-        bh=GlI1ornDKN5A9uyJrQzjbO3L8p4TZ2Gy4NMVF/JdkKM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZmtwED6SfBbwrPMbf20qbG55N0htoxD/jet+13BtXmM2CQaGF8Wlz1C7YeGR7YVMi
-         lT9XwODK5UQiUr61NoLslamTrm/BdVJ/oLDxeSZl7ST3QN9Ipxjx0CcKB84HllepRX
-         bp8qO+/YcvqER9Kh4JJf2xSXi8P3LIfJKVKoJQ/o=
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+        id S1729811AbeLPJg7 convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 16 Dec 2018 04:36:59 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:55759 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729354AbeLPJg7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 16 Dec 2018 04:36:59 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 8382320BE1; Sun, 16 Dec 2018 10:36:56 +0100 (CET)
+Received: from localhost (vfc69-4-88-175-133-2.fbx.proxad.net [88.175.133.2])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 4393E206FF;
+        Sun, 16 Dec 2018 10:36:46 +0100 (CET)
+From:   Gregory CLEMENT <gregory.clement@bootlin.com>
 To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Alexey Firago <alexey_firago@mentor.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] clk: vc5: Initialize src in vc5_mux_set_parent()
-Date:   Sun, 16 Dec 2018 09:20:44 +0200
-Message-ID: <2374057.Z2vKcv2BoK@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <20181214214959.162744-1-sboyd@kernel.org>
-References: <20181214214959.162744-1-sboyd@kernel.org>
+Cc:     Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        devicetree@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        =?utf-8?Q?Miqu=C3=A8l?= Raynal <miquel.raynal@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>
+Subject: Re: [PATCH v2 0/5] Add CPU clock support for Armada 7K/8K
+References: <20181206171516.15891-1-gregory.clement@bootlin.com>
+        <154482536298.19322.16460657058404864070@swboyd.mtv.corp.google.com>
+Date:   Sun, 16 Dec 2018 10:36:46 +0100
+In-Reply-To: <154482536298.19322.16460657058404864070@swboyd.mtv.corp.google.com>
+        (Stephen Boyd's message of "Fri, 14 Dec 2018 14:09:22 -0800")
+Message-ID: <87h8fdke35.fsf@bootlin.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 Hi Stephen,
+ 
+ On ven., déc. 14 2018, Stephen Boyd <sboyd@kernel.org> wrote:
 
-On Friday, 14 December 2018 23:49:59 EET Stephen Boyd wrote:
-> It seems that it may be possible to get to the regmap update call
-> without ever initializing this variable, so just set it to 0 to be safe.
+> Quoting Gregory CLEMENT (2018-12-06 09:15:11)
+>> Hello,
+>> 
+>> This is the second version of a series allowing to manage the cpu
+>> clock for Armada 7K/8K. For these SoCs, the CPUs share the same clock
+>> by cluster, so actually the clock management is done at cluster level.
+>> 
+>> As for the other Armada 7K/8K clocks it is possible to have multiple
+>> AP so here again we need to have unique name: the purpose of the second
+>> patch is to share a common code which will be used in 3 drivers.
+>> 
+>> The last 2 patch enable the driver at dt and platform level and will
+>> be applied through the mvebu subsystem.
+>  
+> The binding "marvell,ap806-cpu-clock" is not documented. It was in the
+> previous series but then got dropped from this one? Why?
 
-This can't happen as the probe() function would have failed first. I'd thus 
-add a comment to explain that the goal is only to silence a compiler warning.
+I made a mistake and start my git-format on the wrong commit, I am
+sending a new series right now with this missing patch.
 
-> Cc: Marek Vasut <marek.vasut+renesas@gmail.com>
-> Cc: Alexey Firago <alexey_firago@mentor.com>
-> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Cc: linux-renesas-soc@vger.kernel.org
-> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-> ---
->  drivers/clk/clk-versaclock5.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
-> index 5b393e711e94..026f76276933 100644
-> --- a/drivers/clk/clk-versaclock5.c
-> +++ b/drivers/clk/clk-versaclock5.c
-> @@ -246,7 +246,7 @@ static int vc5_mux_set_parent(struct clk_hw *hw, u8
-> index) struct vc5_driver_data *vc5 =
->  		container_of(hw, struct vc5_driver_data, clk_mux);
->  	const u8 mask = VC5_PRIM_SRC_SHDN_EN_XTAL | VC5_PRIM_SRC_SHDN_EN_CLKIN;
-> -	u8 src;
-> +	u8 src = 0;
-> 
->  	if ((index > 1) || !vc5->clk_mux_ins)
->  		return -EINVAL;
+Gregory
 
+>
 
 -- 
-Regards,
-
-Laurent Pinchart
-
-
-
+Gregory Clement, Bootlin
+Embedded Linux and Kernel engineering
+http://bootlin.com
