@@ -6,23 +6,23 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BC2CC43387
-	for <linux-clk@archiver.kernel.org>; Sun, 16 Dec 2018 09:42:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F10F1C43387
+	for <linux-clk@archiver.kernel.org>; Sun, 16 Dec 2018 09:42:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9B83217FA
-	for <linux-clk@archiver.kernel.org>; Sun, 16 Dec 2018 09:42:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CBF89217FA
+	for <linux-clk@archiver.kernel.org>; Sun, 16 Dec 2018 09:42:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730361AbeLPJmU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 16 Dec 2018 04:42:20 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:55904 "EHLO mail.bootlin.com"
+        id S1730189AbeLPJmH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 16 Dec 2018 04:42:07 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:55867 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730319AbeLPJmN (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 16 Dec 2018 04:42:13 -0500
+        id S1729805AbeLPJmE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 16 Dec 2018 04:42:04 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 221312037D; Sun, 16 Dec 2018 10:42:11 +0100 (CET)
+        id A530B20C94; Sun, 16 Dec 2018 10:42:01 +0100 (CET)
 Received: from localhost (vfc69-4-88-175-133-2.fbx.proxad.net [88.175.133.2])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 2EE0920C4D;
-        Sun, 16 Dec 2018 10:41:55 +0100 (CET)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 647C3206FF;
+        Sun, 16 Dec 2018 10:41:51 +0100 (CET)
 From:   Gregory CLEMENT <gregory.clement@bootlin.com>
 To:     Stephen Boyd <sboyd@codeaurora.org>,
         Mike Turquette <mturquette@baylibre.com>,
@@ -37,9 +37,9 @@ Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
         Antoine Tenart <antoine.tenart@bootlin.com>,
         =?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@bootlin.com>,
         Maxime Chevallier <maxime.chevallier@bootlin.com>
-Subject: [PATCH v3 6/6] arm64: dts: marvell: Add cpu clock node on Armada 7K/8K
-Date:   Sun, 16 Dec 2018 10:41:47 +0100
-Message-Id: <20181216094147.6468-7-gregory.clement@bootlin.com>
+Subject: [PATCH v3 1/6] dt-bindings: ap806: add the cluster clock node in the syscon file
+Date:   Sun, 16 Dec 2018 10:41:42 +0100
+Message-Id: <20181216094147.6468-2-gregory.clement@bootlin.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181216094147.6468-1-gregory.clement@bootlin.com>
 References: <20181216094147.6468-1-gregory.clement@bootlin.com>
@@ -50,64 +50,44 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add cpu clock node on AP
+Document the device tree binding for the cluster clock controllers found
+in the Armada 7K/8K SoCs.
 
 Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
 ---
- arch/arm64/boot/dts/marvell/armada-ap806-quad.dtsi | 4 ++++
- arch/arm64/boot/dts/marvell/armada-ap806.dtsi      | 6 ++++++
- 2 files changed, 10 insertions(+)
+ .../arm/marvell/ap806-system-controller.txt   | 22 +++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/marvell/armada-ap806-quad.dtsi b/arch/arm64/boot/dts/marvell/armada-ap806-quad.dtsi
-index 01ea662afba8..c2c81d4e2d38 100644
---- a/arch/arm64/boot/dts/marvell/armada-ap806-quad.dtsi
-+++ b/arch/arm64/boot/dts/marvell/armada-ap806-quad.dtsi
-@@ -20,24 +20,28 @@
- 			compatible = "arm,cortex-a72", "arm,armv8";
- 			reg = <0x000>;
- 			enable-method = "psci";
-+			clocks = <&cpu_clk 0>;
- 		};
- 		cpu1: cpu@1 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a72", "arm,armv8";
- 			reg = <0x001>;
- 			enable-method = "psci";
-+			clocks = <&cpu_clk 0>;
- 		};
- 		cpu2: cpu@100 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a72", "arm,armv8";
- 			reg = <0x100>;
- 			enable-method = "psci";
-+			clocks = <&cpu_clk 1>;
- 		};
- 		cpu3: cpu@101 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a72", "arm,armv8";
- 			reg = <0x101>;
- 			enable-method = "psci";
-+			clocks = <&cpu_clk 1>;
- 		};
+diff --git a/Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt b/Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt
+index 3fd21bb7cb37..8f281816a6b8 100644
+--- a/Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt
++++ b/Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt
+@@ -136,3 +136,25 @@ ap_syscon1: system-controller@6f8000 {
+ 		#thermal-sensor-cells = <1>;
  	};
  };
-diff --git a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
-index 7d94c1fa592a..a430e884b1a3 100644
---- a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
-+++ b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
-@@ -263,6 +263,12 @@
- 				#address-cells = <1>;
- 				#size-cells = <1>;
- 
-+				cpu_clk: clock-cpu {
-+					compatible = "marvell,ap806-cpu-clock";
-+					clocks = <&ap_clk 0>, <&ap_clk 1>;
-+					#clock-cells = <1>;
-+				};
 +
- 				ap_thermal: thermal-sensor@80 {
- 					compatible = "marvell,armada-ap806-thermal";
- 					reg = <0x80 0x10>;
++Cluster clocks:
++---------------
++
++Device Tree Clock bindings for cluster clock of AP806 Marvell. Each
++cluster contain up to 2 CPUs running at the same frequency.
++
++Required properties:
++- compatible: must be  "marvell,ap806-cpu-clock";
++- #clock-cells : should be set to 1.
++- clocks : shall be the input parents clock phandle for the clock.
++
++ap_syscon1: system-controller@6f8000 {
++	compatible = "syscon", "simple-mfd";
++	reg = <0x6f8000 0x1000>;
++
++	cpu_clk: clock-cpu {
++		compatible = "marvell,ap806-cpu-clock";
++		clocks = <&ap_clk 0>, <&ap_clk 1>;
++		#clock-cells = <1>;
++	};
++};
 -- 
 2.19.2
 
