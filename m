@@ -2,27 +2,27 @@ Return-Path: <SRS0=q5Yd=OZ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7033C43387
-	for <linux-clk@archiver.kernel.org>; Sun, 16 Dec 2018 09:42:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7AC8C43444
+	for <linux-clk@archiver.kernel.org>; Sun, 16 Dec 2018 09:42:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 928E4217FB
-	for <linux-clk@archiver.kernel.org>; Sun, 16 Dec 2018 09:42:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE8B52183E
+	for <linux-clk@archiver.kernel.org>; Sun, 16 Dec 2018 09:42:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729901AbeLPJmE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 16 Dec 2018 04:42:04 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:55859 "EHLO mail.bootlin.com"
+        id S1730334AbeLPJmN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 16 Dec 2018 04:42:13 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:55897 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729354AbeLPJmD (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 16 Dec 2018 04:42:03 -0500
+        id S1730323AbeLPJmN (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 16 Dec 2018 04:42:13 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id F296220CDB; Sun, 16 Dec 2018 10:42:00 +0100 (CET)
+        id 206BF20BE6; Sun, 16 Dec 2018 10:42:11 +0100 (CET)
 Received: from localhost (vfc69-4-88-175-133-2.fbx.proxad.net [88.175.133.2])
-        by mail.bootlin.com (Postfix) with ESMTPSA id B0F962037D;
-        Sun, 16 Dec 2018 10:41:50 +0100 (CET)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 7840D20C36;
+        Sun, 16 Dec 2018 10:41:54 +0100 (CET)
 From:   Gregory CLEMENT <gregory.clement@bootlin.com>
 To:     Stephen Boyd <sboyd@codeaurora.org>,
         Mike Turquette <mturquette@baylibre.com>,
@@ -37,10 +37,12 @@ Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
         Antoine Tenart <antoine.tenart@bootlin.com>,
         =?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@bootlin.com>,
         Maxime Chevallier <maxime.chevallier@bootlin.com>
-Subject: [PATCH v3 0/6] Add CPU clock support for Armada 7K/8K
-Date:   Sun, 16 Dec 2018 10:41:41 +0100
-Message-Id: <20181216094147.6468-1-gregory.clement@bootlin.com>
+Subject: [PATCH v3 5/6] arm64: marvell: enable the  Armada 7K/8K CPU clk driver
+Date:   Sun, 16 Dec 2018 10:41:46 +0100
+Message-Id: <20181216094147.6468-6-gregory.clement@bootlin.com>
 X-Mailer: git-send-email 2.19.2
+In-Reply-To: <20181216094147.6468-1-gregory.clement@bootlin.com>
+References: <20181216094147.6468-1-gregory.clement@bootlin.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
@@ -48,56 +50,26 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello,
+This commit makes sure the driver for the Armada 7K/8K CPU clock is
+enabled.
 
-This is the third version of a series allowing to manage the cpu
-clock for Armada 7K/8K. For these SoCs, the CPUs share the same clock
-by cluster, so actually the clock management is done at cluster level.
+Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+---
+ arch/arm64/Kconfig.platforms | 1 +
+ 1 file changed, 1 insertion(+)
 
-As for the other Armada 7K/8K clocks it is possible to have multiple
-AP so here again we need to have unique name: the purpose of the second
-patch is to share a common code which will be used in 3 drivers.
-
-The last 2 patch enable the driver at dt and platform level and will
-be applied through the mvebu subsystem.
-
-Changelog v2->v3:
- - Add back the first patch documenting the binding
-
-Changelog v1->v2:
- - Header cleanup
- - Use unsigned int instead of it for cluster member of the ap_cpu_clk struct
- - Use clk_hw instead of clk
- - Use regmap_read_poll_timeout
- - Use for_each_of_cpu_node
- - Remove unnecessary WARN_ON()
- - Remove headers from armada_ap_cp_helper.h
- - Few other minor cleanup
-
-Gregory CLEMENT (6):
-  dt-bindings: ap806: add the cluster clock node in the syscon file
-  clk: mvebu: add helper file for Armada AP and CP clocks
-  clk: mvebu: add CPU clock driver for Armada 7K/8K
-  clk: mvebu: ap806: Fix clock name for the cluster
-  arm64: marvell: enable the  Armada 7K/8K CPU clk driver
-  arm64: dts: marvell: Add cpu clock node on Armada 7K/8K
-
- .../arm/marvell/ap806-system-controller.txt   |  22 ++
- arch/arm64/Kconfig.platforms                  |   1 +
- .../boot/dts/marvell/armada-ap806-quad.dtsi   |   4 +
- arch/arm64/boot/dts/marvell/armada-ap806.dtsi |   6 +
- drivers/clk/mvebu/Kconfig                     |   8 +
- drivers/clk/mvebu/Makefile                    |   2 +
- drivers/clk/mvebu/ap-cpu-clk.c                | 259 ++++++++++++++++++
- drivers/clk/mvebu/ap806-system-controller.c   |  24 +-
- drivers/clk/mvebu/armada_ap_cp_helper.c       |  30 ++
- drivers/clk/mvebu/armada_ap_cp_helper.h       |  11 +
- drivers/clk/mvebu/cp110-system-controller.c   |  32 +--
- 11 files changed, 357 insertions(+), 42 deletions(-)
- create mode 100644 drivers/clk/mvebu/ap-cpu-clk.c
- create mode 100644 drivers/clk/mvebu/armada_ap_cp_helper.c
- create mode 100644 drivers/clk/mvebu/armada_ap_cp_helper.h
-
+diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+index 51bc479334a4..8a05870b1ba8 100644
+--- a/arch/arm64/Kconfig.platforms
++++ b/arch/arm64/Kconfig.platforms
+@@ -121,6 +121,7 @@ config ARCH_MESON
+ 
+ config ARCH_MVEBU
+ 	bool "Marvell EBU SoC Family"
++	select ARMADA_AP_CPU_CLK
+ 	select ARMADA_AP806_SYSCON
+ 	select ARMADA_CP110_SYSCON
+ 	select ARMADA_37XX_CLK
 -- 
 2.19.2
 
