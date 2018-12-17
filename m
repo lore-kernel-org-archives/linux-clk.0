@@ -2,122 +2,103 @@ Return-Path: <SRS0=zTeK=O2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FFDFC43387
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Dec 2018 09:48:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80ED7C43387
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Dec 2018 10:30:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E76662086C
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Dec 2018 09:48:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 447E12133F
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Dec 2018 10:30:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="YbXbCYun"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="I0uuBY2T"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732102AbeLQJsA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Dec 2018 04:48:00 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:55840 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732099AbeLQJqk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Dec 2018 04:46:40 -0500
-Received: by mail-wm1-f66.google.com with SMTP id y139so11567465wmc.5
-        for <linux-clk@vger.kernel.org>; Mon, 17 Dec 2018 01:46:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=rA8teKiCQvBpv/jfjC2a7MA/lCNZKpqm0xO+S8oLkqM=;
-        b=YbXbCYunUW3tubTWVVJb5UBGIYmnq3QR6aAeKO8sBv641SUkCq2JGFk3UXK9gihIF+
-         yS59VYvgidBAEq9hRQ3kc5BPXQuoJEoA2f6mXSojC1iz7M4w1nmn/S/TNOGEKdzbLP7n
-         tCUPHDMhIQ7mrxrDTHm3zx9iIT7shIbdFz2GU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=rA8teKiCQvBpv/jfjC2a7MA/lCNZKpqm0xO+S8oLkqM=;
-        b=RssOHrC8c/1MPzB0mDTDZFuC5e3t7SogmcwkfKkLXtcAhnuHiFc5/dUvhNUK0Crzga
-         RzDmVXGgi2YzjAJlkRVvgHl2jcWT5P58+q/bzzjwMuVF/HZT/81oVHnoRB3uPyXXyobi
-         eTHekWHTRrYbCsPIYFmWRcOf6rbyspQntKLWX7dh+JWP/WShBrwJ7Va/9gtmeambrdm5
-         xfB5w+Dao8KX7ANjWJLdwS0+kywMMtkHn+BTDEA18YkUatPvOAnZpi5XdVgLAdUHlid1
-         cwbevA+LtzERm2enqarDt9gbxFX8w/TPJZOcocUW+rQvF5vYdwoCyi+jFpydW6lqJeKg
-         tPYg==
-X-Gm-Message-State: AA+aEWbGTcCO6oauPzU54KOrZ6FIeiyCFI3P8lUTArEAskGpJWn4j4LB
-        k+S1kRqteUMBixIQ1veA37hi1g==
-X-Google-Smtp-Source: AFSGD/UYdiFVj+9m/cqZ0SaVersMLTUha7XyliP7JunYTdoPuXWcGMWWqcUG/I8FWhybcV+WFxCHSw==
-X-Received: by 2002:a1c:1b8d:: with SMTP id b135mr10854223wmb.115.1545039999082;
-        Mon, 17 Dec 2018 01:46:39 -0800 (PST)
-Received: from localhost.localdomain (58.red-81-47-145.staticip.rima-tde.net. [81.47.145.58])
-        by smtp.gmail.com with ESMTPSA id h12sm28878113wma.48.2018.12.17.01.46.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 17 Dec 2018 01:46:38 -0800 (PST)
-From:   Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-To:     jorge.ramirez-ortiz@linaro.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, andy.gross@linaro.org,
-        david.brown@linaro.org, sboyd@kernel.org, will.deacon@arm.com,
-        mturquette@baylibre.com, jassisinghbrar@gmail.com
-Cc:     bjorn.andersson@linaro.org, vkoul@kernel.org,
-        niklas.cassel@linaro.org, sibis@codeaurora.org,
-        georgi.djakov@linaro.org, arnd@arndb.de,
-        horms+renesas@verge.net.au, heiko@sntech.de,
-        enric.balletbo@collabora.com, jagan@amarulasolutions.com,
-        olof@lixom.net, amit.kucheria@linaro.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: [PATCH 02/13] mbox: qcom: add APCS child device for QCS404
-Date:   Mon, 17 Dec 2018 10:46:19 +0100
-Message-Id: <1545039990-19984-3-git-send-email-jorge.ramirez-ortiz@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1545039990-19984-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
-References: <1545039990-19984-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
+        id S1727064AbeLQKaz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Dec 2018 05:30:55 -0500
+Received: from mail-eopbgr70048.outbound.protection.outlook.com ([40.107.7.48]:45696
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726755AbeLQKay (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 17 Dec 2018 05:30:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WedQ8U4Yqd+/+fMzsdW8wDZY0HYmpxqVmGqlmoyULJQ=;
+ b=I0uuBY2TlA9YgqWo1BDE2v2gOufUJIHfnJkrDrDG6wAFJsvJNGbxIGKNKv6tkjdwnjJg60voUjrZkVTwOKzwTBbIYxNzb17FATgmv83YDOkr/z/WPkTgo/iov0sNK5VUKDrEfFBUxHyvq4A8KJpAOt2vsxhM4po9u0Js4WwdAQE=
+Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.126.21) by
+ AM0PR04MB4161.eurprd04.prod.outlook.com (52.134.125.159) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1425.18; Mon, 17 Dec 2018 10:30:50 +0000
+Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
+ ([fe80::9125:e806:7303:d8e6]) by AM0PR04MB4211.eurprd04.prod.outlook.com
+ ([fe80::9125:e806:7303:d8e6%6]) with mapi id 15.20.1425.021; Mon, 17 Dec 2018
+ 10:30:49 +0000
+From:   Aisheng Dong <aisheng.dong@nxp.com>
+To:     =?utf-8?B?TG90aGFyIFdhw59tYW5u?= <LW@KARO-electronics.de>
+CC:     Stephen Boyd <sboyd@kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH V9 2/7] clk: imx: add scu clock common part
+Thread-Topic: [PATCH V9 2/7] clk: imx: add scu clock common part
+Thread-Index: AQHUi98nS3QbsFuE9k65NTuug/+jZaV4jpEAgABYpPCACedhAIAAAEww
+Date:   Mon, 17 Dec 2018 10:30:49 +0000
+Message-ID: <AM0PR04MB4211990EC26C327AA2649C1080BC0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+References: <1543934041-12572-1-git-send-email-aisheng.dong@nxp.com>
+        <1543934041-12572-3-git-send-email-aisheng.dong@nxp.com>
+        <154447896872.17204.13777399275077720705@swboyd.mtv.corp.google.com>
+        <AM0PR04MB4211E44C3B64033C3795BDB380A60@AM0PR04MB4211.eurprd04.prod.outlook.com>
+ <20181217112752.07e43d05@karo-electronics.de>
+In-Reply-To: <20181217112752.07e43d05@karo-electronics.de>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=aisheng.dong@nxp.com; 
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM0PR04MB4161;6:v1lDytCby0jFov/8Vv2DglmBZYoiM8jdDwvow2RqrM+faXHAbE/G/RJtQsh7GBUlfa/cW43azjLLwMHLbGrdZdxCJaEZ3jHdeTktil8X8pTSOJDPElvVKX36SIuD0MwFlnfqP7kvi8uTZhFl5YYh1sn6KVhw5V0ftk7+0wzm3dtJoMCz5yovKV5PwJWFLUB3AqikFp2rFBHZ3vnf2HfEYDj4CHf2PgfwT0kn2pw+gc9AjwSJEQFq+dJHRDQcOmlqYehoV7lY/g0iKDEGMTISLfF52uHT/xvdT6/L1qEzDg7iOofvTNWWzobrooAbTVel34CPTvBRkWIC15+HonfAe0b1v1XWu9+B18xtoJN2gsDwZK+IST904JSmJQgnPRunSA8e8HkFZpGbnBJ7glAjkTX77RDe9/TKaSV9a/NwNA6YZeTzA++OTrAFj3wRmZJDXto+GTc/cv/pgGAqxaSGng==;5:oguVbF8gA8rQI1lK6IAmFWWtV2d/2jjxDjYwfhzxqAoyIGahrwHxzIOlKCJ0sqzLOrkJCrmPe9SINK7qNHICW6BemF8brdaxZgi6MaGCvPG6vml9Th10a7bRExeNB5beejotWS2POft8KbxSAYtAUoH0kZLmzykXEL17oZ6z3yo=;7:ZXDWepJMj7pSy5qhEwqRI9jZLoKImPrazR6/TL8PSDcipcKOUrATBNmeLzJJSQRBQYNHDdxQI0KB8iObm5hpBLylv8JoeglvTuNIxJD1TAiAcIXS9+m8WmNQWJlnyW274qFWvxLHJ1LwspIUt7UVYw==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: be4c1c42-1733-41bd-12c9-08d6640ab6d4
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB4161;
+x-ms-traffictypediagnostic: AM0PR04MB4161:
+x-microsoft-antispam-prvs: <AM0PR04MB4161A71881384213342FBED780BC0@AM0PR04MB4161.eurprd04.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(6040522)(2401047)(8121501046)(5005006)(3231475)(944501520)(52105112)(93006095)(93001095)(3002001)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123564045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:AM0PR04MB4161;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB4161;
+x-forefront-prvs: 08897B549D
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(396003)(366004)(376002)(136003)(346002)(189003)(199004)(446003)(11346002)(55016002)(486006)(25786009)(6116002)(99286004)(6916009)(105586002)(256004)(6246003)(229853002)(53936002)(478600001)(106356001)(74316002)(305945005)(86362001)(2906002)(68736007)(8936002)(76176011)(6436002)(71200400001)(8676002)(7736002)(186003)(71190400001)(66066001)(9686003)(3846002)(14454004)(33656002)(44832011)(97736004)(26005)(316002)(54906003)(7696005)(81166006)(81156014)(93886005)(6506007)(102836004)(476003)(4326008)(5660300001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4161;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: L+f5nXwoxX6ClMfXATfj4NMICb1hM0xkAQWGfwTv9b6p+OGPMZBfL0J/yORJ29V8Bnk1xTd+WW6AmMF88AyBA+sJ8Eb8m3BYUdWmnTufM+L3Dj9JiSR2qqGsUWdDDn7wBuvJiqLsS6c7uou2IGjYQBnd6odwrwxvU0GBO6g0HDz9IKFeB6YPH1K3dAkM/cmeRFQyVlweU7CHpOxWAe1pb60A2aWJTRlso+nYLhZBIL/VvxxTZL8W05poWf445DXU+ivH2w3mbIB65MWZyGeFv83lusAOFtk04udzTJn8uQbFiQEnXuCo1NUU44qJVlr4
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: be4c1c42-1733-41bd-12c9-08d6640ab6d4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Dec 2018 10:30:49.8524
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4161
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-There is clock controller functionality in the APCS hardware block of
-qcs404 devices similar to msm8916.
-
-Co-developed-by: Niklas Cassel <niklas.cassel@linaro.org>
-Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
-Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
----
- drivers/mailbox/qcom-apcs-ipc-mailbox.c | 21 +++++++++++++--------
- 1 file changed, 13 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/mailbox/qcom-apcs-ipc-mailbox.c b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
-index aed23ac..dc8fdab1 100644
---- a/drivers/mailbox/qcom-apcs-ipc-mailbox.c
-+++ b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
-@@ -97,16 +97,21 @@ static int qcom_apcs_ipc_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
--	if (of_device_is_compatible(np, "qcom,msm8916-apcs-kpss-global")) {
--		apcs->clk = platform_device_register_data(&pdev->dev,
--							  "qcom-apcs-msm8916-clk",
--							  -1, NULL, 0);
--		if (IS_ERR(apcs->clk))
--			dev_err(&pdev->dev, "failed to register APCS clk\n");
--	}
--
- 	platform_set_drvdata(pdev, apcs);
- 
-+	if (of_device_is_compatible(np, "qcom,msm8916-apcs-kpss-global") ||
-+	    of_device_is_compatible(np, "qcom,qcs404-apcs-apps-global"))
-+		goto register_clk;
-+
-+	return 0;
-+
-+register_clk:
-+	apcs->clk = platform_device_register_data(&pdev->dev,
-+						  "qcom-apcs-msm8916-clk",
-+						  -1, NULL, 0);
-+	if (IS_ERR(apcs->clk))
-+		dev_err(&pdev->dev, "failed to register APCS clk\n");
-+
- 	return 0;
- }
- 
--- 
-2.7.4
-
+Wy4uLl0NCj4gPiA+ID4gKyNpbmNsdWRlICJjbGstc2N1LmgiDQo+ID4gPiA+ICsNCj4gPiA+ID4g
+K3N0cnVjdCBpbXhfc2NfaXBjICpjY21faXBjX2hhbmRsZTsNCj4gPiA+DQo+ID4gPiBXaHkgZG9l
+cyB0aGlzIG5lZWQgdG8gYmUgYSBnbG9iYWw/IENhbiBpdCBiZSBpbiBlYWNoIGNsa19zY3UgaW5z
+dGFuY2UNCj4gaW5zdGVhZD8NCj4gPiA+DQo+ID4NCj4gPiBObywgbm8gbmVlZCB0byBiZSBpbiBl
+YWNoIGNsa19zY3UgaW5zdGFuY2UuDQo+ID4gVGhlcmUncyBvbmx5IG9uZSBoYW5kbGVyLg0KPiA+
+DQo+IFNob3VsZG4ndCBpdCBiZSAnc3RhdGljJz8NCj4gDQoNClRoaXMgaGFzIGJlZW4gZml4ZWQg
+aW4gQ0xLIHRyZWUuDQoNClJlZ2FyZHMNCkRvbmcgQWlzaGVuZw0KDQo+IA0KPiBMb3RoYXIgV2HD
+n21hbm4NCg==
