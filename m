@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FE4FC43444
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Dec 2018 09:46:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BA0AC43387
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Dec 2018 09:46:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60454217FA
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Dec 2018 09:46:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D0AA4217FB
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Dec 2018 09:46:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="M4fmN2UP"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="hMkC5urK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732178AbeLQJqv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Dec 2018 04:46:51 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:40742 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732160AbeLQJqv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Dec 2018 04:46:51 -0500
-Received: by mail-wr1-f66.google.com with SMTP id p4so11527222wrt.7
-        for <linux-clk@vger.kernel.org>; Mon, 17 Dec 2018 01:46:49 -0800 (PST)
+        id S1732205AbeLQJqz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Dec 2018 04:46:55 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:53887 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732203AbeLQJqy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Dec 2018 04:46:54 -0500
+Received: by mail-wm1-f67.google.com with SMTP id y1so11589470wmi.3
+        for <linux-clk@vger.kernel.org>; Mon, 17 Dec 2018 01:46:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=jVpmDAqKxQ/sn4lpMw47fV7HcMyJcxjw7jbklh3qbPU=;
-        b=M4fmN2UPFDBuCsA/l/cfcC1hAR2jDhREULfaMwREXj9jde/LxvV5oqmtitq/xTFGoK
-         JcghxbB0VRELV28L1XuXo8UNv6/qfU5zrtZrWbBEUQN4HBKc+hdqh7Kus5kWW177TwD/
-         VAKgPKG+lBoxikNDrD45+8T0MbSLbmTWCrvS4=
+        bh=xY2V4sBj5Ds3+SQmdTspSIBla6JHASTE6hEmXoXtqtk=;
+        b=hMkC5urKEck/zn5xSgMuam1rniWk/yQbP4srf4MLONnN9Z6SsKDuVHSY9Zw4tdfAws
+         QMGRwRY5tU3zqgRXgGdeb9F5lnl7Cf9rXo7E4dBhmnlHdDxnfVFUOtbhk0tKXYe7GBCN
+         dxipQAVzK5xuZEKt97qd3h7gvGGRoSdY0Rh0w=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=jVpmDAqKxQ/sn4lpMw47fV7HcMyJcxjw7jbklh3qbPU=;
-        b=cXx10+mT7yDMmgbVWgO/KQ7h1b02juLuAFgaEX1PhbX/LjgrcrkoTpj8ywPJiaNfCl
-         Mt/dxW0H0/CWGD73PUoV+lT5Az/cg4tfx1o4dZ2igLiUYa2Awt7XDnydI2TuKlyY6rMr
-         ItXFucj7A4V0LbpnDozig2hYy8uvgbE3kCOV4vgFvMHf8s1D13BYGS1p3dXAnw6YxTD4
-         3HPnVGy4knoBxDptTIdEJ38ei7TTWADc56CpNzbd0cWbjv2EKdBIF491wWSezWEHQMzu
-         CDrKUrZG7aVvNzZ3vxYPJbZW08zR4djVPOipn8EcsHtnyMtALaETdtyMQ/twocirVIeK
-         RwZw==
-X-Gm-Message-State: AA+aEWYXj44KHWUPxBe/+IiOfF7P0a0IZLjdBM2imkIkAUR/+mR687gu
-        /MCoC9Dm+zd8qJVtYI22TGn3Kg==
-X-Google-Smtp-Source: AFSGD/VTupLcbMqZPhg1oCeeYfC/f3CgT6s4do11VgP7Qhki/qWB+BpHpXcMxaMUDN5phIvMK1Zfwg==
-X-Received: by 2002:adf:eec9:: with SMTP id a9mr9561514wrp.242.1545040009055;
-        Mon, 17 Dec 2018 01:46:49 -0800 (PST)
+        bh=xY2V4sBj5Ds3+SQmdTspSIBla6JHASTE6hEmXoXtqtk=;
+        b=eL19eseTH4+9HVeo+wb5XYNTjMDVRYCW2AHHAKtiKpGVXMtP1aIVKf5etb/vdG2aJu
+         MjqhfjCXDMka1jD9/vQiy3zZMcyXHsPtKhqIOezhgIQa9iJh3jDnEASnQbfOpnRs517U
+         h/tHmWhY+FemCy1mIHaDpArAmDzzoe9U+AWezv71wnQO8VZYLVbzFEhoXJBtgMnwPpFP
+         HGavMfsktkNLTp4sFZUs4Df/ZtNv+lnkd11favxZgWojDGhmcprpDj7WosxIGpPyyG15
+         URA5Jj3RMxg5Mrgl8jmBXJOQMj/paicTc3Qx1YIIu0KNaWM1ptwSBNh/zfLUB77fuGpE
+         p4Fw==
+X-Gm-Message-State: AA+aEWb3vrtF+9ne/y9qJy+t10Q2rXfDDRwtGF2+6EvmoHjsA4vhPrF8
+        SXF7pHVF0em/PsiDgjkUYFRORA==
+X-Google-Smtp-Source: AFSGD/XEAqABFCF+vzzoc6Evp5frnxOq8ZucUcPTzNqlvHX2OCzE6pYNSSCHRNax02pKjaL+IURaxQ==
+X-Received: by 2002:a1c:ad43:: with SMTP id w64mr10526130wme.32.1545040013020;
+        Mon, 17 Dec 2018 01:46:53 -0800 (PST)
 Received: from localhost.localdomain (58.red-81-47-145.staticip.rima-tde.net. [81.47.145.58])
-        by smtp.gmail.com with ESMTPSA id h12sm28878113wma.48.2018.12.17.01.46.47
+        by smtp.gmail.com with ESMTPSA id h12sm28878113wma.48.2018.12.17.01.46.51
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 17 Dec 2018 01:46:48 -0800 (PST)
+        Mon, 17 Dec 2018 01:46:52 -0800 (PST)
 From:   Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
 To:     jorge.ramirez-ortiz@linaro.org, robh+dt@kernel.org,
         mark.rutland@arm.com, andy.gross@linaro.org,
@@ -63,9 +63,9 @@ Cc:     bjorn.andersson@linaro.org, vkoul@kernel.org,
         olof@lixom.net, amit.kucheria@linaro.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: [PATCH 07/13] clk: qcom: hfpll: register as clock provider
-Date:   Mon, 17 Dec 2018 10:46:24 +0100
-Message-Id: <1545039990-19984-8-git-send-email-jorge.ramirez-ortiz@linaro.org>
+Subject: [PATCH 09/13] arm64: dts: qcom: qcs404: Add OPP table
+Date:   Mon, 17 Dec 2018 10:46:26 +0100
+Message-Id: <1545039990-19984-10-git-send-email-jorge.ramirez-ortiz@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1545039990-19984-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
 References: <1545039990-19984-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
@@ -74,44 +74,41 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Make the output of the high frequency pll a clock provider.
-On the QCS404 this PLL controls cpu frequency scaling.
+Add a CPU OPP table to qcs404
 
 Co-developed-by: Niklas Cassel <niklas.cassel@linaro.org>
 Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
 Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
 ---
- drivers/clk/qcom/hfpll.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/qcom/qcs404.dtsi | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-diff --git a/drivers/clk/qcom/hfpll.c b/drivers/clk/qcom/hfpll.c
-index 87b7f46..0ffed0d 100644
---- a/drivers/clk/qcom/hfpll.c
-+++ b/drivers/clk/qcom/hfpll.c
-@@ -53,6 +53,7 @@ static int qcom_hfpll_probe(struct platform_device *pdev)
- 	struct regmap *regmap;
- 	struct clk_hfpll *h;
- 	struct clk *pclk;
-+	int ret;
- 	struct clk_init_data init = {
- 		.parent_names = (const char *[]){ "xo" },
- 		.num_parents = 1,
-@@ -87,7 +88,14 @@ static int qcom_hfpll_probe(struct platform_device *pdev)
- 	h->clkr.hw.init = &init;
- 	spin_lock_init(&h->lock);
+diff --git a/arch/arm64/boot/dts/qcom/qcs404.dtsi b/arch/arm64/boot/dts/qcom/qcs404.dtsi
+index 9b5c165..4594fea7 100644
+--- a/arch/arm64/boot/dts/qcom/qcs404.dtsi
++++ b/arch/arm64/boot/dts/qcom/qcs404.dtsi
+@@ -62,6 +62,21 @@
+ 		};
+ 	};
  
--	return devm_clk_register_regmap(&pdev->dev, &h->clkr);
-+	ret = devm_clk_register_regmap(dev, &h->clkr);
-+	if (ret) {
-+		dev_err(dev, "failed to register regmap clock: %d\n", ret);
-+		return ret;
-+	}
++	cpu_opp_table: cpu_opp_table {
++		compatible = "operating-points-v2";
++		opp-shared;
 +
-+	return devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get,
-+					   &h->clkr.hw);
- }
- 
- static struct platform_driver qcom_hfpll_driver = {
++		opp-1094400000 {
++			opp-hz = /bits/ 64 <1094400000>;
++		};
++		opp-1248000000 {
++			opp-hz = /bits/ 64 <1248000000>;
++		};
++		opp-1401600000 {
++			opp-hz = /bits/ 64 <1401600000>;
++		};
++	};
++
+ 	firmware {
+ 		scm: scm {
+ 			compatible = "qcom,scm-qcs404", "qcom,scm";
 -- 
 2.7.4
 
