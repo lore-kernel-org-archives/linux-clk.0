@@ -2,275 +2,122 @@ Return-Path: <SRS0=zTeK=O2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBFB1C43387
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Dec 2018 16:25:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03B6FC43387
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Dec 2018 16:33:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8745B21473
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Dec 2018 16:25:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C69142133F
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Dec 2018 16:33:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545064380;
+	bh=LKhOleOlBhjoVhGgngiuCyT9eg7veW7FAI5ktqXiueY=;
+	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
+	b=o47m/+kApK2CrMn/EQUhgFU/dRjy2ReMFtabDOih0xHvBhePge+T6b8WoSmHtRcIS
+	 aDSwlBhlonkiFprVAhIG9SlBFKQzm2v8j4Xzu5CKmSAgZkcK2lv9Pf0YoKMEdbcvKH
+	 oMV5RxmeVolmGAJcRGWMxx2KNvsH8EMK5nFHLb58=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387953AbeLQQYi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Dec 2018 11:24:38 -0500
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:33928 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387823AbeLQQYh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Dec 2018 11:24:37 -0500
-Received: from localhost.localdomain (10.18.11.217) by mail-sh2.amlogic.com
- (10.18.11.6) with Microsoft SMTP Server id 15.0.1320.4; Tue, 18 Dec 2018
- 00:24:49 +0800
-From:   Jianxin Pan <jianxin.pan@amlogic.com>
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-CC:     Jianxin Pan <jianxin.pan@amlogic.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Yixun Lan <yixun.lan@amlogic.com>,
-        Liang Yang <liang.yang@amlogic.com>,
-        Jian Hu <jian.hu@amlogic.com>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Hanjie Lin <hanjie.lin@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH v8 1/4] clk: meson: add one based divider support for sclk divider
-Date:   Tue, 18 Dec 2018 00:24:07 +0800
-Message-ID: <1545063850-21504-2-git-send-email-jianxin.pan@amlogic.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1545063850-21504-1-git-send-email-jianxin.pan@amlogic.com>
-References: <1545063850-21504-1-git-send-email-jianxin.pan@amlogic.com>
+        id S1727771AbeLQQdA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Dec 2018 11:33:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59940 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387903AbeLQQdA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 17 Dec 2018 11:33:00 -0500
+Received: from [192.168.1.10] (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EA3172133F;
+        Mon, 17 Dec 2018 16:32:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1545064379;
+        bh=LKhOleOlBhjoVhGgngiuCyT9eg7veW7FAI5ktqXiueY=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=cdqFGjoH0Qma5QuuH2hMYepJ79YODKjjo4/KdBpR9OGH0/eYZQd5EFJVdTUv+Y+DA
+         1LJ//Sg84+G0QSqa8ubZerhh44BLjS03GvXSEhPa+3VyyHECZreE+3kKClCRdxFSRb
+         7IZ5FFaBoIKlH8oYUxHixyBmAI/7+SOwLOKuqRQw=
+Subject: Re: [PATCH] clk: socfpga: stratix10: fix naming convention for the
+ fixed-clocks
+To:     Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Cc:     mturquette@baylibre.com
+References: <20181210232203.16561-1-dinguyen@kernel.org>
+ <154475142505.19322.5301231555488286179@swboyd.mtv.corp.google.com>
+From:   Dinh Nguyen <dinguyen@kernel.org>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dinguyen@kernel.org; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <5410fcd4-7920-487d-9504-f88c46aa7301@kernel.org>
+Date:   Mon, 17 Dec 2018 10:32:57 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.18.11.217]
+In-Reply-To: <154475142505.19322.5301231555488286179@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-When CLK_DIVIDER_ONE_BASED flag is set, the sclk divider will be:
-one based divider (div = val), and zero value gates the clock
 
-Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
----
- drivers/clk/meson/Makefile     |  3 ++-
- drivers/clk/meson/clkc-audio.h |  8 ------
- drivers/clk/meson/clkc.h       | 10 ++++++-
- drivers/clk/meson/sclk-div.c   | 59 ++++++++++++++++++++++++++++--------------
- 4 files changed, 50 insertions(+), 30 deletions(-)
 
-diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
-index a849aa8..acd8694 100644
---- a/drivers/clk/meson/Makefile
-+++ b/drivers/clk/meson/Makefile
-@@ -4,7 +4,8 @@
- 
- obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-mpll.o clk-phase.o vid-pll-div.o
- obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-input.o
--obj-$(CONFIG_COMMON_CLK_AMLOGIC_AUDIO)	+= clk-triphase.o sclk-div.o
-+obj-$(CONFIG_COMMON_CLK_AMLOGIC) += sclk-div.o
-+obj-$(CONFIG_COMMON_CLK_AMLOGIC_AUDIO) += clk-triphase.o
- obj-$(CONFIG_COMMON_CLK_MESON_AO) += meson-aoclk.o
- obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
- obj-$(CONFIG_COMMON_CLK_GXBB)	 += gxbb.o gxbb-aoclk.o gxbb-aoclk-32k.o
-diff --git a/drivers/clk/meson/clkc-audio.h b/drivers/clk/meson/clkc-audio.h
-index 0a7c157..286ff12 100644
---- a/drivers/clk/meson/clkc-audio.h
-+++ b/drivers/clk/meson/clkc-audio.h
-@@ -15,14 +15,6 @@ struct meson_clk_triphase_data {
- 	struct parm ph2;
- };
- 
--struct meson_sclk_div_data {
--	struct parm div;
--	struct parm hi;
--	unsigned int cached_div;
--	struct clk_duty cached_duty;
--};
--
- extern const struct clk_ops meson_clk_triphase_ops;
--extern const struct clk_ops meson_sclk_div_ops;
- 
- #endif /* __MESON_CLKC_AUDIO_H */
-diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
-index 6183b22..00b3320 100644
---- a/drivers/clk/meson/clkc.h
-+++ b/drivers/clk/meson/clkc.h
-@@ -27,6 +27,14 @@ struct parm {
- 	u8	width;
- };
- 
-+struct meson_sclk_div_data {
-+	struct parm div;
-+	struct parm hi;
-+	unsigned int cached_div;
-+	struct clk_duty cached_duty;
-+	u8 flags;
-+};
-+
- static inline unsigned int meson_parm_read(struct regmap *map, struct parm *p)
- {
- 	unsigned int val;
-@@ -118,10 +126,10 @@ struct clk_regmap _name = {						\
- extern const struct clk_ops meson_clk_mpll_ops;
- extern const struct clk_ops meson_clk_phase_ops;
- extern const struct clk_ops meson_vid_pll_div_ro_ops;
-+extern const struct clk_ops meson_sclk_div_ops;
- 
- struct clk_hw *meson_clk_hw_register_input(struct device *dev,
- 					   const char *of_name,
- 					   const char *clk_name,
- 					   unsigned long flags);
--
- #endif /* __CLKC_H */
-diff --git a/drivers/clk/meson/sclk-div.c b/drivers/clk/meson/sclk-div.c
-index bc64019..a6c425b 100644
---- a/drivers/clk/meson/sclk-div.c
-+++ b/drivers/clk/meson/sclk-div.c
-@@ -4,42 +4,60 @@
-  * Author: Jerome Brunet <jbrunet@baylibre.com>
-  *
-  * Sample clock generator divider:
-- * This HW divider gates with value 0 but is otherwise a zero based divider:
-+ * This HW divider gates with value 0
-  *
-  * val >= 1
-- * divider = val + 1
-+ * divider = val + 1 if ONE_BASED is not set, otherwise divider = val.
-  *
-  * The duty cycle may also be set for the LR clock variant. The duty cycle
-  * ratio is:
-  *
-  * hi = [0 - val]
-- * duty_cycle = (1 + hi) / (1 + val)
-+ * duty_cycle = (1 + hi) / (1 + val) if ONE_BASED is not set, otherwise:
-+ * duty_cycle = hi / (1 + val)
-  */
- 
--#include "clkc-audio.h"
-+#include "clkc.h"
- 
--static inline struct meson_sclk_div_data *
--meson_sclk_div_data(struct clk_regmap *clk)
-+static inline int get_reg(int val, unsigned char flag)
- {
--	return (struct meson_sclk_div_data *)clk->data;
-+	WARN_ON(val < 1);
-+	if ((flag & CLK_DIVIDER_ONE_BASED) || !val)
-+		return val;
-+	else
-+		return val - 1;
-+}
-+
-+static inline int get_value(int reg, unsigned char flag)
-+{
-+	if (flag & CLK_DIVIDER_ONE_BASED)
-+		return reg;
-+	else
-+		return reg + 1;
- }
- 
--static int sclk_div_maxval(struct meson_sclk_div_data *sclk)
-+static inline struct meson_sclk_div_data *
-+meson_sclk_div_data(struct clk_regmap *clk)
- {
--	return (1 << sclk->div.width) - 1;
-+	return (struct meson_sclk_div_data *)clk->data;
- }
- 
- static int sclk_div_maxdiv(struct meson_sclk_div_data *sclk)
- {
--	return sclk_div_maxval(sclk) + 1;
-+	unsigned int reg = clk_div_mask(sclk->div.width);
-+
-+	return get_value(reg, sclk->flags);
- }
- 
- static int sclk_div_getdiv(struct clk_hw *hw, unsigned long rate,
- 			   unsigned long prate, int maxdiv)
- {
- 	int div = DIV_ROUND_CLOSEST_ULL((u64)prate, rate);
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct meson_sclk_div_data *sclk = meson_sclk_div_data(clk);
-+	int mindiv = get_value(1, sclk->flags);
- 
--	return clamp(div, 2, maxdiv);
-+	return clamp(div, mindiv, maxdiv);
- }
- 
- static int sclk_div_bestdiv(struct clk_hw *hw, unsigned long rate,
-@@ -47,7 +65,7 @@ static int sclk_div_bestdiv(struct clk_hw *hw, unsigned long rate,
- 			    struct meson_sclk_div_data *sclk)
- {
- 	struct clk_hw *parent = clk_hw_get_parent(hw);
--	int bestdiv = 0, i;
-+	int bestdiv = 0, i, mindiv;
- 	unsigned long maxdiv, now, parent_now;
- 	unsigned long best = 0, best_parent = 0;
- 
-@@ -64,8 +82,9 @@ static int sclk_div_bestdiv(struct clk_hw *hw, unsigned long rate,
- 	 * unsigned long in rate * i below
- 	 */
- 	maxdiv = min(ULONG_MAX / rate, maxdiv);
-+	mindiv = get_value(1, sclk->flags);
- 
--	for (i = 2; i <= maxdiv; i++) {
-+	for (i = mindiv; i <= maxdiv; i++) {
- 		/*
- 		 * It's the most ideal case if the requested rate can be
- 		 * divided from parent clock without needing to change
-@@ -111,10 +130,7 @@ static void sclk_apply_ratio(struct clk_regmap *clk,
- 					    sclk->cached_duty.num,
- 					    sclk->cached_duty.den);
- 
--	if (hi)
--		hi -= 1;
--
--	meson_parm_write(clk->map, &sclk->hi, hi);
-+	meson_parm_write(clk->map, &sclk->hi, get_reg(hi, sclk->flags));
- }
- 
- static int sclk_div_set_duty_cycle(struct clk_hw *hw,
-@@ -145,7 +161,7 @@ static int sclk_div_get_duty_cycle(struct clk_hw *hw,
- 	}
- 
- 	hi = meson_parm_read(clk->map, &sclk->hi);
--	duty->num = hi + 1;
-+	duty->num = get_value(hi, sclk->flags);
- 	duty->den = sclk->cached_div;
- 	return 0;
- }
-@@ -153,10 +169,13 @@ static int sclk_div_get_duty_cycle(struct clk_hw *hw,
- static void sclk_apply_divider(struct clk_regmap *clk,
- 			       struct meson_sclk_div_data *sclk)
- {
-+	unsigned int div;
-+
- 	if (MESON_PARM_APPLICABLE(&sclk->hi))
- 		sclk_apply_ratio(clk, sclk);
- 
--	meson_parm_write(clk->map, &sclk->div, sclk->cached_div - 1);
-+	div = get_reg(sclk->cached_div, sclk->flags);
-+	meson_parm_write(clk->map, &sclk->div, div);
- }
- 
- static int sclk_div_set_rate(struct clk_hw *hw, unsigned long rate,
-@@ -224,7 +243,7 @@ static void sclk_div_init(struct clk_hw *hw)
- 	if (!val)
- 		sclk->cached_div = sclk_div_maxdiv(sclk);
- 	else
--		sclk->cached_div = val + 1;
-+		sclk->cached_div = get_value(val, sclk->flags);
- 
- 	sclk_div_get_duty_cycle(hw, &sclk->cached_duty);
- }
--- 
-1.9.1
+On 12/13/18 7:37 PM, Stephen Boyd wrote:
+> Quoting Dinh Nguyen (2018-12-10 15:22:03)
+>> The fixed clocks in the DTS file have a hyphen, but the clock driver has
+>> the fixed clocks using underbar. Thus the clock driver cannot detect the
+>> other fixed clocks correctly. Change the fixed clock names to a hyphen.
+>>
+>> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+>> ---
+> 
+> Any fixes tag? Should it go back to stable trees?
+> 
 
+No, full stratix10 platform support is only available starting with
+v4.19 kernel. Figure I will send this patch, once its accepted to the
+v4.19-stable kernel.
+
+Thanks,
+Dinh
