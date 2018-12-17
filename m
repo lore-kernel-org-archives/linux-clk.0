@@ -4,52 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6597DC43387
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Dec 2018 09:47:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FA8FC43612
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Dec 2018 09:47:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35F0C20675
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Dec 2018 09:47:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F162D2086C
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Dec 2018 09:47:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GJ94LMcb"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FzHtBQec"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732163AbeLQJqs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Dec 2018 04:46:48 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:42340 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732159AbeLQJqr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Dec 2018 04:46:47 -0500
-Received: by mail-wr1-f66.google.com with SMTP id q18so11524901wrx.9
-        for <linux-clk@vger.kernel.org>; Mon, 17 Dec 2018 01:46:45 -0800 (PST)
+        id S1732155AbeLQJrs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Dec 2018 04:47:48 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:41034 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732117AbeLQJqm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Dec 2018 04:46:42 -0500
+Received: by mail-wr1-f65.google.com with SMTP id x10so11528184wrs.8
+        for <linux-clk@vger.kernel.org>; Mon, 17 Dec 2018 01:46:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=rPu/KTYynL2hZ7Udac90NfGfOmFb5CPU0go+pwum/Ko=;
-        b=GJ94LMcb2mXK/ECVCU6TpApvTHWweBWfPuTlBANuxKYmT4xaLEEdPjiPieHmsBgCCJ
-         z4ECesqUmXpzpaYofaj1LKaF+l2Je+bQxM9psvo3s1WnbjqTzYEQWA5v+p8daXFv4J9Z
-         Z8UZHjZ9x5J6+ubZs+m3Rzsq2Al5FdcnarC60=
+        bh=DZnT+i5jw7FKMKXrOSMgnbdLeVWkWYBBUnpyBbjaMIo=;
+        b=FzHtBQecwnsOdmLrHWs1fQzYOhp3dfjJ0dhPsVXtjH7IPLKxHLdtL8K99B09iFOjlM
+         nKlO/8up0jW8eqbjiOZjUhUdv9/rStEqwSDMqAXIih+cpUEK8huEj4Gk+ybQPCePF8fA
+         dPkfbuUPbHOjqKk5/e3mvs5VhMyDoWap7Knr8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=rPu/KTYynL2hZ7Udac90NfGfOmFb5CPU0go+pwum/Ko=;
-        b=Y1zdjaXQnZTJCym2oltWeVLCaGNjE1LCtMauscvPCY0dkoB49rN7aZpEAfaOV8d3fC
-         3Jg3OrH9qJ15WEIHYb/v4Jr5TT3WG2ZJTRzjQd0S1q4WkSaOHobnTap8BRCZit2lXP1m
-         njjuitEIs98Pew2ep0oabp+XIvy8dFjHzVMM5hs9NalQWr/ozph/+O9FLHSF1GN1CjWb
-         L2NtGloDmeoWAZVOa0uzcLDz9KV7trjQneYbUAVX+pha0w4KNpo4fQyktjpx/x/nMzCl
-         BKaXIVqi2e5k1s3ccnvz7fB7GJMQW9vm5gGVASOUjYsoewl+2OXY70qekbruHS/51gCa
-         uQjA==
-X-Gm-Message-State: AA+aEWaTqBxn7AlP0U8JW7tTKpGBAFA71aL5URKphrf5SlOdyNoDpiwO
-        uAF65meKDMm7RLzX94vLsA+q6g==
-X-Google-Smtp-Source: AFSGD/WPbRY1qjo9wPqeWKiKnySAmHLHE2lhnFzt6KZue5DSPhSZN+WWivK1Ikwsj0MRbtN1VoM1JA==
-X-Received: by 2002:a5d:4b01:: with SMTP id v1mr9480128wrq.5.1545040005201;
-        Mon, 17 Dec 2018 01:46:45 -0800 (PST)
+        bh=DZnT+i5jw7FKMKXrOSMgnbdLeVWkWYBBUnpyBbjaMIo=;
+        b=ZHjiYERJcL5O1blaltrHrjVK3BTGJu2F1fV+FnVrCxDjt0DGezG4uwzxF9RqIwHXqT
+         RpSYII172WPQVPQzolM8nXIMSLE6WES/YQPC0VelFA/JtOSSEUIxIht8twXN4uZd68wS
+         4Zhrd7/LjBj8qHwVIFF+FcwivZXb0//luXHyqFmltjLkQq7TFYXK4CQBIjmIfxd6YOXr
+         hUkxD23XQ76w0JduUFMmKAsHRwmR3lxRJi2Zl0OfywnrrobVfTaRrp6vct1I9oJHmPcC
+         RRH8zjGb2j/eZbe3x0R1bTUL016tQ7hQJW2yGvw7VNLRs3t9ZBxdU8GRkXhalvkpg9WH
+         0+Xg==
+X-Gm-Message-State: AA+aEWYSmBClRDzYuFj8EPGCDytKq9OAJX6teg6EfR9UbjDrqV2TX3Qs
+        oiEw+Ye7Gefp4rDT+BcdYN2mEw==
+X-Google-Smtp-Source: AFSGD/W556/G72nW1KLgphiChECIUNEbP+PQ5P/XZO+ldt3E2+Te6cBFOdGtxBOq5cdnXt3oz6dVlQ==
+X-Received: by 2002:adf:a4d9:: with SMTP id h25mr9285946wrb.167.1545040000993;
+        Mon, 17 Dec 2018 01:46:40 -0800 (PST)
 Received: from localhost.localdomain (58.red-81-47-145.staticip.rima-tde.net. [81.47.145.58])
-        by smtp.gmail.com with ESMTPSA id h12sm28878113wma.48.2018.12.17.01.46.43
+        by smtp.gmail.com with ESMTPSA id h12sm28878113wma.48.2018.12.17.01.46.39
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 17 Dec 2018 01:46:44 -0800 (PST)
+        Mon, 17 Dec 2018 01:46:40 -0800 (PST)
 From:   Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
 To:     jorge.ramirez-ortiz@linaro.org, robh+dt@kernel.org,
         mark.rutland@arm.com, andy.gross@linaro.org,
@@ -63,9 +63,9 @@ Cc:     bjorn.andersson@linaro.org, vkoul@kernel.org,
         olof@lixom.net, amit.kucheria@linaro.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: [PATCH 05/13] clk: qcom: apcs-msm8916: get parent clock names from DT
-Date:   Mon, 17 Dec 2018 10:46:22 +0100
-Message-Id: <1545039990-19984-6-git-send-email-jorge.ramirez-ortiz@linaro.org>
+Subject: [PATCH 03/13] mbox: qcom: replace integer with valid macro
+Date:   Mon, 17 Dec 2018 10:46:20 +0100
+Message-Id: <1545039990-19984-4-git-send-email-jorge.ramirez-ortiz@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1545039990-19984-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
 References: <1545039990-19984-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
@@ -74,89 +74,28 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Allow accessing the parent clock names required for the driver
-operation by using the device tree node.
-
-This permits extending the driver to other platforms without having to
-modify its source code.
-
-For backwards compatibility leave previous values as default.
+Use the correct macro when registering the platform device.
 
 Co-developed-by: Niklas Cassel <niklas.cassel@linaro.org>
 Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
 Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
 ---
- drivers/clk/qcom/apcs-msm8916.c | 33 ++++++++++++++++++++++++---------
- 1 file changed, 24 insertions(+), 9 deletions(-)
+ drivers/mailbox/qcom-apcs-ipc-mailbox.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/qcom/apcs-msm8916.c b/drivers/clk/qcom/apcs-msm8916.c
-index a6c89a3..2453242 100644
---- a/drivers/clk/qcom/apcs-msm8916.c
-+++ b/drivers/clk/qcom/apcs-msm8916.c
-@@ -19,7 +19,7 @@
+diff --git a/drivers/mailbox/qcom-apcs-ipc-mailbox.c b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
+index dc8fdab1..b782173 100644
+--- a/drivers/mailbox/qcom-apcs-ipc-mailbox.c
++++ b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
+@@ -108,7 +108,7 @@ static int qcom_apcs_ipc_probe(struct platform_device *pdev)
+ register_clk:
+ 	apcs->clk = platform_device_register_data(&pdev->dev,
+ 						  "qcom-apcs-msm8916-clk",
+-						  -1, NULL, 0);
++						  PLATFORM_DEVID_NONE, NULL, 0);
+ 	if (IS_ERR(apcs->clk))
+ 		dev_err(&pdev->dev, "failed to register APCS clk\n");
  
- static const u32 gpll0_a53cc_map[] = { 4, 5 };
- 
--static const char * const gpll0_a53cc[] = {
-+static const char *gpll0_a53cc[] = {
- 	"gpll0_vote",
- 	"a53pll",
- };
-@@ -50,17 +50,39 @@ static int qcom_apcs_msm8916_clk_probe(struct platform_device *pdev)
- 	struct regmap *regmap;
- 	struct clk_init_data init = { };
- 	int ret = -ENODEV;
-+	struct clk_bulk_data pclks[] = {
-+		[0] = { .id = "aux", .clk = NULL },
-+		[1] = { .id = "pll", .clk = NULL },
-+	};
- 
- 	regmap = dev_get_regmap(parent, NULL);
- 	if (!regmap) {
- 		dev_err(dev, "failed to get regmap: %d\n", ret);
- 		return ret;
- 	}
--
- 	a53cc = devm_kzalloc(dev, sizeof(*a53cc), GFP_KERNEL);
- 	if (!a53cc)
- 		return -ENOMEM;
- 
-+	/* check if the parent names are present in the device tree */
-+	ret = devm_clk_bulk_get(parent, ARRAY_SIZE(pclks), pclks);
-+	if (ret == -EPROBE_DEFER)
-+		return ret;
-+
-+	if (!ret) {
-+		gpll0_a53cc[0] = __clk_get_name(pclks[0].clk);
-+		gpll0_a53cc[1] = __clk_get_name(pclks[1].clk);
-+		a53cc->pclk = pclks[1].clk;
-+	} else {
-+		/* support old binding where only pll was explicitily defined */
-+		a53cc->pclk = devm_clk_get(parent, NULL);
-+		if (IS_ERR(a53cc->pclk)) {
-+			ret = PTR_ERR(a53cc->pclk);
-+			dev_err(dev, "failed to get clk: %d\n", ret);
-+			return ret;
-+		}
-+	}
-+
- 	init.name = "a53mux";
- 	init.parent_names = gpll0_a53cc;
- 	init.num_parents = ARRAY_SIZE(gpll0_a53cc);
-@@ -76,13 +98,6 @@ static int qcom_apcs_msm8916_clk_probe(struct platform_device *pdev)
- 	a53cc->src_shift = 8;
- 	a53cc->parent_map = gpll0_a53cc_map;
- 
--	a53cc->pclk = devm_clk_get(parent, NULL);
--	if (IS_ERR(a53cc->pclk)) {
--		ret = PTR_ERR(a53cc->pclk);
--		dev_err(dev, "failed to get clk: %d\n", ret);
--		return ret;
--	}
--
- 	a53cc->clk_nb.notifier_call = a53cc_notifier_cb;
- 	ret = clk_notifier_register(a53cc->pclk, &a53cc->clk_nb);
- 	if (ret) {
 -- 
 2.7.4
 
