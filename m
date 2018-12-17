@@ -2,122 +2,112 @@ Return-Path: <SRS0=zTeK=O2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03B6FC43387
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Dec 2018 16:33:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EB08C43387
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Dec 2018 18:40:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C69142133F
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Dec 2018 16:33:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FD7A2133F
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Dec 2018 18:40:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545064380;
-	bh=LKhOleOlBhjoVhGgngiuCyT9eg7veW7FAI5ktqXiueY=;
-	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
-	b=o47m/+kApK2CrMn/EQUhgFU/dRjy2ReMFtabDOih0xHvBhePge+T6b8WoSmHtRcIS
-	 aDSwlBhlonkiFprVAhIG9SlBFKQzm2v8j4Xzu5CKmSAgZkcK2lv9Pf0YoKMEdbcvKH
-	 oMV5RxmeVolmGAJcRGWMxx2KNvsH8EMK5nFHLb58=
+	s=default; t=1545072054;
+	bh=/6TLKhoYmyr9xh25j31W+MHdowTtKqPQoal8ILNWY1I=;
+	h=In-Reply-To:Subject:To:References:From:Cc:Date:List-ID:From;
+	b=SQPzdPPPDnKidMchwKip0/N0aeGbrfzK90HRxXgDLrSxaPM2OLNS5EChPBUZF5mHH
+	 VPEra3aL4WH4R5sYjz8NUf0ePd2eAj/lPfxFxORCG/OpmtS8HD1mWUnJkFOipIi6n8
+	 jiBA1N/2TMxzT0Yr5KbAhshDn4zUpe2nQhniUxYo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727771AbeLQQdA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Dec 2018 11:33:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59940 "EHLO mail.kernel.org"
+        id S1728208AbeLQSky (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Dec 2018 13:40:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39268 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387903AbeLQQdA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 17 Dec 2018 11:33:00 -0500
-Received: from [192.168.1.10] (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1728155AbeLQSkx (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 17 Dec 2018 13:40:53 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EA3172133F;
-        Mon, 17 Dec 2018 16:32:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1A71D2086C;
+        Mon, 17 Dec 2018 18:40:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545064379;
-        bh=LKhOleOlBhjoVhGgngiuCyT9eg7veW7FAI5ktqXiueY=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=cdqFGjoH0Qma5QuuH2hMYepJ79YODKjjo4/KdBpR9OGH0/eYZQd5EFJVdTUv+Y+DA
-         1LJ//Sg84+G0QSqa8ubZerhh44BLjS03GvXSEhPa+3VyyHECZreE+3kKClCRdxFSRb
-         7IZ5FFaBoIKlH8oYUxHixyBmAI/7+SOwLOKuqRQw=
-Subject: Re: [PATCH] clk: socfpga: stratix10: fix naming convention for the
- fixed-clocks
-To:     Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Cc:     mturquette@baylibre.com
-References: <20181210232203.16561-1-dinguyen@kernel.org>
- <154475142505.19322.5301231555488286179@swboyd.mtv.corp.google.com>
-From:   Dinh Nguyen <dinguyen@kernel.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dinguyen@kernel.org; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <5410fcd4-7920-487d-9504-f88c46aa7301@kernel.org>
-Date:   Mon, 17 Dec 2018 10:32:57 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        s=default; t=1545072053;
+        bh=/6TLKhoYmyr9xh25j31W+MHdowTtKqPQoal8ILNWY1I=;
+        h=In-Reply-To:Subject:To:References:From:Cc:Date:From;
+        b=CM6FSfh7U7P163eFsuMZMSLoNUcfcUc3+fCBAGWT7+zodqXvOGNwjOlwC531XnHqt
+         ZEu3nlfB73CakgZq/2KAKOzz7xVt17p15Edf+4Ia1ijS2lOiQza824fkWIJbzmHASa
+         /FQhJ+JFjrPQfQjQfui0P7obKfYjJ//KuA7v7Blg=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <154475142505.19322.5301231555488286179@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20181217113539.nfwp4knbx3luxoqn@fsr-ub1664-175>
+Subject: Re: [PATCH 0/3] clk: imx: Make all the parent_names arrays be const pointers
+To:     Abel Vesa <abel.vesa@nxp.com>
+References: <1544801400-18951-1-git-send-email-abel.vesa@nxp.com> <154482171780.19322.123667425822315496@swboyd.mtv.corp.google.com> <20181217113539.nfwp4knbx3luxoqn@fsr-ub1664-175>
+Message-ID: <154507205230.19322.658078387500141910@swboyd.mtv.corp.google.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+User-Agent: alot/0.8
+Cc:     Aisheng Dong <aisheng.dong@nxp.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Date:   Mon, 17 Dec 2018 10:40:52 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Quoting Abel Vesa (2018-12-17 03:35:40)
+> On 18-12-14 13:08:37, Stephen Boyd wrote:
+> > Quoting Abel Vesa (2018-12-14 07:30:08)
+> > > This is mainly to shut up the checkpatch.pl script warnings about the
+> > > "static const char *" needing to be "static const char * const".
+> > >=20
+> > > Abel Vesa (3):
+> > >   clk: imx: Make parent_names const pointer in composite-8m
+> > >   clk: imx: Make parents const pointer in mux wrappers
+> > >   clk: imx8mq: Make parent names arrays const pointers
+> > >=20
+> >=20
+> > I still see warnings though so there seems to be some more work to do.
+> >=20
+> > drivers/clk/imx/clk-imx8mq.c:401:89: warning: passing argument 5 of 'im=
+x_clk_mux2' discards 'const' qualifier from pointer target type [-Wdiscarde=
+d-qualifiers]
+> >   clks[IMX8MQ_CLK_GPU_SHADER_SRC] =3D imx_clk_mux2("gpu_shader_src", ba=
+se + 0x8200, 24, 3, imx8mq_gpu_shader_sels,  ARRAY_SIZE(imx8mq_gpu_shader_s=
+els));
+> >=20
+> Hmm, I guess you applied this on top of clk-imx8mq, right ?
+> This change is against linux-next. The actual problem is the imx_clk_mux2
+> which looks like this on branch clk-imx8mq:
 
+Yes. It would be great if you could indicate where patches are
+generated. In fact, I see that 'git format-patch' now has an option to
+do just this!
 
-On 12/13/18 7:37 PM, Stephen Boyd wrote:
-> Quoting Dinh Nguyen (2018-12-10 15:22:03)
->> The fixed clocks in the DTS file have a hyphen, but the clock driver has
->> the fixed clocks using underbar. Thus the clock driver cannot detect the
->> other fixed clocks correctly. Change the fixed clock names to a hyphen.
->>
->> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
->> ---
-> 
-> Any fixes tag? Should it go back to stable trees?
-> 
+	git format-patch --base=3Dcommit
 
-No, full stratix10 platform support is only available starting with
-v4.19 kernel. Figure I will send this patch, once its accepted to the
-v4.19-stable kernel.
+>=20
+> static inline struct clk *imx_clk_mux2(const char *name, void __iomem *re=
+g, =20
+>                 u8 shift, u8 width, const char **parents, int num_parents=
+)  =20
+>=20
+> but it looks like this on linux-next (which is exactly the same on clk-ne=
+xt):
+>=20
+> static inline struct clk *imx_clk_mux2(const char *name, void __iomem *re=
+g, =20
+>                         u8 shift, u8 width, const char * const *parents, =
+   =20
+>                         int num_parents)                                 =
+   =20
 
-Thanks,
-Dinh
+Hrmm ok. I'll have to rejigger things and I probably won't be getting to
+it until early next year.
+
