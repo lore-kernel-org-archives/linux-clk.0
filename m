@@ -2,52 +2,54 @@ Return-Path: <SRS0=zTeK=O2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50621C43387
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Dec 2018 09:46:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35DDEC43444
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Dec 2018 09:46:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F135217F4
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Dec 2018 09:46:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 04D3F217FB
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Dec 2018 09:46:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="B/QfC1Nt"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ju0aYP9T"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732058AbeLQJqh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Dec 2018 04:46:37 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:39569 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732019AbeLQJqh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Dec 2018 04:46:37 -0500
-Received: by mail-wm1-f65.google.com with SMTP id f81so11835249wmd.4
-        for <linux-clk@vger.kernel.org>; Mon, 17 Dec 2018 01:46:36 -0800 (PST)
+        id S1732098AbeLQJqj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Dec 2018 04:46:39 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:43234 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727052AbeLQJqj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Dec 2018 04:46:39 -0500
+Received: by mail-wr1-f66.google.com with SMTP id r10so11513154wrs.10
+        for <linux-clk@vger.kernel.org>; Mon, 17 Dec 2018 01:46:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=XTyfhH2eCsCUKpKWC/aZRLTEDIsgmMe1VvDgoS4i9HU=;
-        b=B/QfC1Ntfl4nY7T5Ah71k0VxA8CeWBU9RJGKuCDjBT8nEf32NMQDD0miFWCBPZNtH9
-         CkUzZnZa5o/ZFxgIsNCud6MH9mZHUt4bzrW+XhDnYnXckAdgbPXev4FJnBSwgnfAcCZ1
-         9/8u/V75gltfZ09z1QmBvRX1Unpi8Bn4TIQPI=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=MAoZVGyUyqIgBFjZmHlB19eSlto0aZoSbTGaZ+uSfto=;
+        b=ju0aYP9TwSWXr86I68EvqHSMfznus+2y4taD626AEyJQ8pivkVBFmqA1lZo0dF3+8n
+         oMhIBEWw3Ak98UO+qQLaGCcj8vlMp1u0qie8op4+DYKI/rgoSKEXaTxUS0NvD52uSCJt
+         EMU5uAVjdn/0rTOdtAPD4+qBGXiDqhE8eN8Mk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=XTyfhH2eCsCUKpKWC/aZRLTEDIsgmMe1VvDgoS4i9HU=;
-        b=Fc5ME3c257yCbZcPkhqHM8NpAgLITCYWVw1PljUcnxYJjDBTnfDyBhe0LdD98GqbN7
-         bqFxB3CCOLykBQIrWCYt0+lfJ0uSIRxPOUxOf0BY0QLvXna20iEzUE+V+z3DEn/0BzW2
-         BPfWK8OZHvd5CSURPMhcDtG6iMoTUZ7pSw3LDpTEC685fUbl9uIFmDkYxJybHRcQZC5a
-         sntMR28HHKI6AP46plUaGsPfSgFMvi0/cj61I8tNUO7M59/K/vcmt+IOYGXkAjpGsCyR
-         8FBMMWLa2ejPkJNfs0UJ35HwjBelUP5zm8smuFbfPp+LWoBg39RWtsPZrnscDzFuvWrY
-         Rurw==
-X-Gm-Message-State: AA+aEWavAMcv7zSba06l0hfLlUCFt0JvFN+iCfj/UWGOqb3E1pftAx3l
-        5JWCUKYEqAXJuXB1Ps0n8x9vhw==
-X-Google-Smtp-Source: AFSGD/WKiBep+PS9VFJ8wt9BZhAWEZIkBQHDBDSzgNn2pdTiof7a5TmX0NFXI/3dVBiwBSV8h1Wbpw==
-X-Received: by 2002:a1c:19c2:: with SMTP id 185mr9154002wmz.8.1545039995231;
-        Mon, 17 Dec 2018 01:46:35 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=MAoZVGyUyqIgBFjZmHlB19eSlto0aZoSbTGaZ+uSfto=;
+        b=H82Q0YZ3hLynO7rxLSPlB35gUt/INrhJGfDWfjrg9Bra4VVqPGlxtyhATcHBXpkyFe
+         s6wIb74u4/5jJffyyaeGfjAJG1ZLn4dUzmOhaK+lq5cZ/LBtajwYkc/tHWTuWFeqtQTd
+         Mjw/gJSrIhxkaTqNqB/HXdu69I0Ml6NL+4qIjVPvc5In7t+N7XhUt2W9z6nEdHrq7VBv
+         /kFRmos1L9mzVe8vxoGKe5okaUIkxHFm5B/GYHZRHKVWpyEVGBr+eaPFoSr8JgMX8YMu
+         Ih+nXUFcJC12gHFpuPLU8vuqQinrjiwQYWfLj9oHD6lFxgESbCuCYLA/YIN87hPbkSRT
+         oK4Q==
+X-Gm-Message-State: AA+aEWZX4z1hQbHzZzNlcenWLyZWxQUNct8j78iK06vrUc2VCdiTzDKR
+        KCUcS64GSFAJdMqMtuUXZVvcJkP/6ifF1w==
+X-Google-Smtp-Source: AFSGD/Xrh7uK6Mu8+N9b9d9Pgvt1vtXG0aJhPLLByVmwbg+okG7Sa8pkk44ta/5GWQAwOEg8cCvHBw==
+X-Received: by 2002:a5d:418b:: with SMTP id m11mr8959307wrp.8.1545039997185;
+        Mon, 17 Dec 2018 01:46:37 -0800 (PST)
 Received: from localhost.localdomain (58.red-81-47-145.staticip.rima-tde.net. [81.47.145.58])
-        by smtp.gmail.com with ESMTPSA id h12sm28878113wma.48.2018.12.17.01.46.33
+        by smtp.gmail.com with ESMTPSA id h12sm28878113wma.48.2018.12.17.01.46.35
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 17 Dec 2018 01:46:34 -0800 (PST)
+        Mon, 17 Dec 2018 01:46:36 -0800 (PST)
 From:   Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
 To:     jorge.ramirez-ortiz@linaro.org, robh+dt@kernel.org,
         mark.rutland@arm.com, andy.gross@linaro.org,
@@ -61,57 +63,48 @@ Cc:     bjorn.andersson@linaro.org, vkoul@kernel.org,
         olof@lixom.net, amit.kucheria@linaro.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: [PATCH 00/13] Support CPU frequency scaling on QCS404
-Date:   Mon, 17 Dec 2018 10:46:17 +0100
-Message-Id: <1545039990-19984-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
+Subject: [PATCH 01/13] clk: qcom: gcc: limit GPLL0_AO_OUT operating frequency
+Date:   Mon, 17 Dec 2018 10:46:18 +0100
+Message-Id: <1545039990-19984-2-git-send-email-jorge.ramirez-ortiz@linaro.org>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1545039990-19984-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
+References: <1545039990-19984-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The following patchset enables CPU frequency scaling support on the
-QCS404.
-
-Patch 8 "clk: qcom: hfpll: CLK_IGNORE_UNUSED" is a bit controversial;
-in this platform, this PLL provides the clock signal to a CPU
-core. But in others it might not.
-
-I opted for the minimal ammount of changes without affecting the
-default functionality: simply bypassing the COMMON_CLK_DISABLE_UNUSED
-framework and letting the firwmare chose whether to enable or disable
-the clock at boot. However maybe a DT property and marking the clock
-as critical would be more appropriate for this PLL. I'd appreciate the
-maintainer's input on this topic.
+Limit the GPLL0_AO_OUT_MAIN operating frequency as per its hardware
+specifications.
 
 Co-developed-by: Niklas Cassel <niklas.cassel@linaro.org>
 Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
 Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+---
+ drivers/clk/qcom/gcc-qcs404.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Jorge Ramirez-Ortiz (13):
-  clk: qcom: gcc: limit GPLL0_AO_OUT operating frequency
-  mbox: qcom: add APCS child device for QCS404
-  mbox: qcom: replace integer with valid macro
-  dt-bindings: mailbox: qcom: Add clock-name optional property
-  clk: qcom: apcs-msm8916: get parent clock names from DT
-  clk: qcom: hfpll: get parent clock names from DT
-  clk: qcom: hfpll: register as clock provider
-  clk: qcom: hfpll: CLK_IGNORE_UNUSED
-  arm64: dts: qcom: qcs404: Add OPP table
-  arm64: dts: qcom: qcs404: Add HFPLL node
-  arm64: dts: qcom: qcs404: Add the clocks for APCS mux/divider
-  arm64: dts: qcom: qcs404: Add cpufreq support
-  arm64: defconfig: Enable HFPLL
-
- .../bindings/mailbox/qcom,apcs-kpss-global.txt     | 21 +++++++++++++
- arch/arm64/boot/dts/qcom/qcs404.dtsi               | 35 ++++++++++++++++++++++
- arch/arm64/configs/defconfig                       |  1 +
- drivers/clk/qcom/apcs-msm8916.c                    | 33 ++++++++++++++------
- drivers/clk/qcom/gcc-qcs404.c                      |  6 ++++
- drivers/clk/qcom/hfpll.c                           | 19 +++++++++++-
- drivers/mailbox/qcom-apcs-ipc-mailbox.c            | 21 ++++++++-----
- 7 files changed, 118 insertions(+), 18 deletions(-)
-
+diff --git a/drivers/clk/qcom/gcc-qcs404.c b/drivers/clk/qcom/gcc-qcs404.c
+index 64da032..833436a 100644
+--- a/drivers/clk/qcom/gcc-qcs404.c
++++ b/drivers/clk/qcom/gcc-qcs404.c
+@@ -304,10 +304,16 @@ static struct clk_alpha_pll gpll0_out_main = {
+ 	},
+ };
+ 
++static const struct pll_vco gpll0_ao_out_vco[] = {
++	{ 800000000, 800000000, 0 },
++};
++
+ static struct clk_alpha_pll gpll0_ao_out_main = {
+ 	.offset = 0x21000,
+ 	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT],
+ 	.flags = SUPPORTS_FSM_MODE,
++	.vco_table = gpll0_ao_out_vco,
++	.num_vco = ARRAY_SIZE(gpll0_ao_out_vco),
+ 	.clkr = {
+ 		.enable_reg = 0x45000,
+ 		.enable_mask = BIT(0),
 -- 
 2.7.4
 
