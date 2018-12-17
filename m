@@ -2,127 +2,81 @@ Return-Path: <SRS0=zTeK=O2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39793C43387
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Dec 2018 22:50:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE9FDC43387
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Dec 2018 23:18:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02A0B21473
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Dec 2018 22:50:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C1523214C6
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Dec 2018 23:18:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545087049;
-	bh=wpMRzmT5l80ObPa0/0jB0LSUGmKb/wnpg+HyuS7PKH0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=VtjbIShXOtfhikaTJVwxAGRoUr1EN95SfUC9zZT+Qe+FjDU6tQmUa5SHbYqx/43dH
-	 qiMNC11diEq317ZIIDFvP1XfB90E7zO1QvdzR6f+74hCWzE987UuYptYpQGS+J2abr
-	 vIHuLUF9NqV17TCswGFOO03ituNjgpwbnLbtc5HU=
+	s=default; t=1545088727;
+	bh=p7GueG7YcInPFS9F2IRy2AbY47F0jfd4T5IVA7Cq9Mo=;
+	h=In-Reply-To:Subject:To:References:From:Cc:Date:List-ID:From;
+	b=RqpAlnXI5GfjnYjw4KVU2TRxLD4zb+x52me+uFpwc5M8K7IfLb1VvBBae1G2QKsAD
+	 WkE+mGb+cdmSt/Yw58kkpYrHX3JKtRCFfmLLSf4IfbISuGL+AKPd4dyN1ovik3cCzU
+	 I0j1nFYb2LMvLIIene82IJoOv2bFPWaLNt63fT/c=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732238AbeLQWus (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Dec 2018 17:50:48 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:35636 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732214AbeLQWur (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Dec 2018 17:50:47 -0500
-Received: by mail-ot1-f66.google.com with SMTP id 81so13833381otj.2;
-        Mon, 17 Dec 2018 14:50:45 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=qq9RWe0o0AwcBrBkMiHV/TYpBZUXDqrNISSfY4PEHKw=;
-        b=fZwEQGfYJ//rTIAK0utX7psqL/9xOQrZmgJDqXNNETIPl3H+CuNO+4RV4/F2s7ApZL
-         KqFPWkjHQwudvetP+eSVH/uhS2PGg+UHIzL49hLowK2CoRH8eAzXDax36/iWNFE/S15E
-         qOsiMWos3KVmXD+/PMjGSOFzIt1p39+7rQ1DHIP17RR6My8KoazjIW7Zza1ogzyozCSs
-         xWhI2FUXgKR4rWmyl+FRBKM2gg06vyWTehsJFv6gRCJJmLrtqawedHqkkBOo/wAFmrtt
-         olN3wJDVpY/HEHL+SUqwa4OBy4EVK3EEKln9Rze/UTE36e0X63fw0U/i4JyPAT4Wbm+Y
-         6hng==
-X-Gm-Message-State: AA+aEWardxD6/RsG5QJ/ZF/YEfeUb25RyqeACjLQEN4rVz2/xqhL/aYK
-        MhZ7zdbPOWf8Y6fjAm93Eg==
-X-Google-Smtp-Source: AFSGD/Uy0/PDtV85R3dYiMENowAmvV0y/y+2yLxz3mUD12V1btwpToPPKOYDhysi0quw5ldDK1qR9w==
-X-Received: by 2002:a9d:191a:: with SMTP id j26mr1577700ota.81.1545087045319;
-        Mon, 17 Dec 2018 14:50:45 -0800 (PST)
-Received: from localhost (cpe-70-114-214-127.austin.res.rr.com. [70.114.214.127])
-        by smtp.gmail.com with ESMTPSA id v3sm14103455oib.57.2018.12.17.14.50.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 17 Dec 2018 14:50:44 -0800 (PST)
-Date:   Mon, 17 Dec 2018 16:50:44 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Gregory CLEMENT <gregory.clement@bootlin.com>
-Cc:     Stephen Boyd <sboyd@codeaurora.org>,
-        Mike Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        =?iso-8859-1?Q?Miqu=E8l?= Raynal <miquel.raynal@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>
-Subject: Re: [PATCH v3 1/6] dt-bindings: ap806: add the cluster clock node in
- the syscon file
-Message-ID: <20181217225044.GA25148@bogus>
-References: <20181216094147.6468-1-gregory.clement@bootlin.com>
- <20181216094147.6468-2-gregory.clement@bootlin.com>
+        id S1726956AbeLQXSl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Dec 2018 18:18:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39610 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726934AbeLQXSk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 17 Dec 2018 18:18:40 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 58E0B21783;
+        Mon, 17 Dec 2018 23:18:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1545088719;
+        bh=p7GueG7YcInPFS9F2IRy2AbY47F0jfd4T5IVA7Cq9Mo=;
+        h=In-Reply-To:Subject:To:References:From:Cc:Date:From;
+        b=0kLLmlJIynTy4HN/SyWpxwTBD7WAOiI8ZKrkpA2BNtkksLNxBX9Gsi3BH8LGM5ee0
+         IMzt39rc0w18Xllh5azMnpVVZ13POsB5/k3H2TfFdsk1uu+NmLgN8TGuc8AIOgmbm+
+         9Uu7zvPrPiYnJZNITG/x0JnDOQgzEHh+Oq4jMeoY=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181216094147.6468-2-gregory.clement@bootlin.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20181212220922.18759-2-paul@crapouillou.net>
+Subject: Re: [PATCH v8 01/26] dt-bindings: ingenic: Add DT bindings for TCU clocks
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        James Hogan <jhogan@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+References: <20181212220922.18759-1-paul@crapouillou.net> <20181212220922.18759-2-paul@crapouillou.net>
+Message-ID: <154508871842.19322.11473376752929195621@swboyd.mtv.corp.google.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+User-Agent: alot/0.8
+Cc:     Mathieu Malaterre <malat@debian.org>,
+        Ezequiel Garcia <ezequiel@collabora.co.uk>,
+        PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
+        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-clk@vger.kernel.org, od@zcrc.me,
+        Paul Cercueil <paul@crapouillou.net>
+Date:   Mon, 17 Dec 2018 15:18:38 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, Dec 16, 2018 at 10:41:42AM +0100, Gregory CLEMENT wrote:
-> Document the device tree binding for the cluster clock controllers found
-> in the Armada 7K/8K SoCs.
-> 
-> Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+Quoting Paul Cercueil (2018-12-12 14:08:56)
+> This header provides clock numbers for the ingenic,tcu
+> DT binding.
+>=20
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> Reviewed-by: Rob Herring <robh@kernel.org>
 > ---
->  .../arm/marvell/ap806-system-controller.txt   | 22 +++++++++++++++++++
->  1 file changed, 22 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt b/Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt
-> index 3fd21bb7cb37..8f281816a6b8 100644
-> --- a/Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt
-> +++ b/Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.txt
-> @@ -136,3 +136,25 @@ ap_syscon1: system-controller@6f8000 {
->  		#thermal-sensor-cells = <1>;
->  	};
->  };
-> +
-> +Cluster clocks:
-> +---------------
-> +
-> +Device Tree Clock bindings for cluster clock of AP806 Marvell. Each
-> +cluster contain up to 2 CPUs running at the same frequency.
-> +
-> +Required properties:
-> +- compatible: must be  "marvell,ap806-cpu-clock";
-> +- #clock-cells : should be set to 1.
-> +- clocks : shall be the input parents clock phandle for the clock.
-> +
-> +ap_syscon1: system-controller@6f8000 {
-> +	compatible = "syscon", "simple-mfd";
-> +	reg = <0x6f8000 0x1000>;
-> +
-> +	cpu_clk: clock-cpu {
 
-There's not a register address range you can use even if Linux happens 
-to not need it (currently)?
+Acked-by: Stephen Boyd <sboyd@kernel.org>
 
-There's already a clock node under this syscon? Are they really separate 
-sub-blocks?
-
-> +		compatible = "marvell,ap806-cpu-clock";
-> +		clocks = <&ap_clk 0>, <&ap_clk 1>;
-> +		#clock-cells = <1>;
-> +	};
-> +};
-> -- 
-> 2.19.2
-> 
