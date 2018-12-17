@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35DDEC43444
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Dec 2018 09:46:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 217E3C43387
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Dec 2018 09:46:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04D3F217FB
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Dec 2018 09:46:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD38920675
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Dec 2018 09:46:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ju0aYP9T"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="YdHo/8Vl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732098AbeLQJqj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Dec 2018 04:46:39 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:43234 "EHLO
+        id S1732159AbeLQJqs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Dec 2018 04:46:48 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:45445 "EHLO
         mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727052AbeLQJqj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Dec 2018 04:46:39 -0500
-Received: by mail-wr1-f66.google.com with SMTP id r10so11513154wrs.10
-        for <linux-clk@vger.kernel.org>; Mon, 17 Dec 2018 01:46:37 -0800 (PST)
+        with ESMTP id S1732156AbeLQJqq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Dec 2018 04:46:46 -0500
+Received: by mail-wr1-f66.google.com with SMTP id t6so11359154wrr.12
+        for <linux-clk@vger.kernel.org>; Mon, 17 Dec 2018 01:46:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=MAoZVGyUyqIgBFjZmHlB19eSlto0aZoSbTGaZ+uSfto=;
-        b=ju0aYP9TwSWXr86I68EvqHSMfznus+2y4taD626AEyJQ8pivkVBFmqA1lZo0dF3+8n
-         oMhIBEWw3Ak98UO+qQLaGCcj8vlMp1u0qie8op4+DYKI/rgoSKEXaTxUS0NvD52uSCJt
-         EMU5uAVjdn/0rTOdtAPD4+qBGXiDqhE8eN8Mk=
+        bh=RXGJUDtV43vtkJcjcMqswspwSUTkhQ4p8WwX+rLLTcY=;
+        b=YdHo/8VlDHD/XH++DFycOyIheMQnzZsvbLugbbHc7UQZcNUmGcurmALjHh0qfwqFAO
+         1+iCxmpXAHraLrtCGrNtgw+bXyRr78aSb9mf48IqnDu5imbXEZUUX1TX6gKmuvSg36qY
+         kgiE0JP7rrL6FXcVFIc/RRM5iiPPqO1AIgK5Y=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=MAoZVGyUyqIgBFjZmHlB19eSlto0aZoSbTGaZ+uSfto=;
-        b=H82Q0YZ3hLynO7rxLSPlB35gUt/INrhJGfDWfjrg9Bra4VVqPGlxtyhATcHBXpkyFe
-         s6wIb74u4/5jJffyyaeGfjAJG1ZLn4dUzmOhaK+lq5cZ/LBtajwYkc/tHWTuWFeqtQTd
-         Mjw/gJSrIhxkaTqNqB/HXdu69I0Ml6NL+4qIjVPvc5In7t+N7XhUt2W9z6nEdHrq7VBv
-         /kFRmos1L9mzVe8vxoGKe5okaUIkxHFm5B/GYHZRHKVWpyEVGBr+eaPFoSr8JgMX8YMu
-         Ih+nXUFcJC12gHFpuPLU8vuqQinrjiwQYWfLj9oHD6lFxgESbCuCYLA/YIN87hPbkSRT
-         oK4Q==
-X-Gm-Message-State: AA+aEWZX4z1hQbHzZzNlcenWLyZWxQUNct8j78iK06vrUc2VCdiTzDKR
-        KCUcS64GSFAJdMqMtuUXZVvcJkP/6ifF1w==
-X-Google-Smtp-Source: AFSGD/Xrh7uK6Mu8+N9b9d9Pgvt1vtXG0aJhPLLByVmwbg+okG7Sa8pkk44ta/5GWQAwOEg8cCvHBw==
-X-Received: by 2002:a5d:418b:: with SMTP id m11mr8959307wrp.8.1545039997185;
-        Mon, 17 Dec 2018 01:46:37 -0800 (PST)
+        bh=RXGJUDtV43vtkJcjcMqswspwSUTkhQ4p8WwX+rLLTcY=;
+        b=eho9iTb5/ldYCDxnsH2KylGToTnVN+/RjAeGw8UEyF0Jcys7Zgmo/48VTlkRPa8Pch
+         WimKa5IuQFqMzweXCOxw7G0pDy5xlSw/sXDnRR2ebExajMXdQfVdaWvC33M9mCIRpg0V
+         EqQuizGFpGHHGz1YdBWNi1HG3jqcOgNQqSSFkjYzEt8afMdkpxS9AiAeh43FPiOukABh
+         cs3Vj4lkFF/Hor6Q6xp5ZFcPriNx/FVucll68yMgvvT9KM4lAKqkg+dqGL6LZedgdG/f
+         8fakNtwCEYYaHdtX//KeDg1HjGnRLy+io/IzOwRPstmIBLNDapBOuXwELdM/rN+QwmJB
+         ZAkg==
+X-Gm-Message-State: AA+aEWaPZmf/tEXJUVy9TGHr8rlXE4pmBVbUJbQmd3aPhtXc7RPqU6vJ
+        fjKjHhsAdQRJXJDlnxOD/dh/0g==
+X-Google-Smtp-Source: AFSGD/W8DpmQ1e838SqPlmsvrSAYTNxnzP5FGpj5vmGIgcpooxl9YQ4KtNc5pi02rANEG/HKd3RoRA==
+X-Received: by 2002:adf:c042:: with SMTP id c2mr10420188wrf.158.1545040003249;
+        Mon, 17 Dec 2018 01:46:43 -0800 (PST)
 Received: from localhost.localdomain (58.red-81-47-145.staticip.rima-tde.net. [81.47.145.58])
-        by smtp.gmail.com with ESMTPSA id h12sm28878113wma.48.2018.12.17.01.46.35
+        by smtp.gmail.com with ESMTPSA id h12sm28878113wma.48.2018.12.17.01.46.41
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 17 Dec 2018 01:46:36 -0800 (PST)
+        Mon, 17 Dec 2018 01:46:42 -0800 (PST)
 From:   Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
 To:     jorge.ramirez-ortiz@linaro.org, robh+dt@kernel.org,
         mark.rutland@arm.com, andy.gross@linaro.org,
@@ -63,9 +63,9 @@ Cc:     bjorn.andersson@linaro.org, vkoul@kernel.org,
         olof@lixom.net, amit.kucheria@linaro.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: [PATCH 01/13] clk: qcom: gcc: limit GPLL0_AO_OUT operating frequency
-Date:   Mon, 17 Dec 2018 10:46:18 +0100
-Message-Id: <1545039990-19984-2-git-send-email-jorge.ramirez-ortiz@linaro.org>
+Subject: [PATCH 04/13] dt-bindings: mailbox: qcom: Add clock-name optional property
+Date:   Mon, 17 Dec 2018 10:46:21 +0100
+Message-Id: <1545039990-19984-5-git-send-email-jorge.ramirez-ortiz@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1545039990-19984-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
 References: <1545039990-19984-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
@@ -74,37 +74,63 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Limit the GPLL0_AO_OUT_MAIN operating frequency as per its hardware
-specifications.
+When the APCS clock is registered (platform dependent), it retrieves
+its parent names from hardcoded values in the driver.
+
+The following commit allows the DT node to provide such clock names to
+the platform data based clock driver therefore avoiding having to
+explicitly embed those names in the clock driver source code.
 
 Co-developed-by: Niklas Cassel <niklas.cassel@linaro.org>
 Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
 Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
 ---
- drivers/clk/qcom/gcc-qcs404.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ .../bindings/mailbox/qcom,apcs-kpss-global.txt      | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-diff --git a/drivers/clk/qcom/gcc-qcs404.c b/drivers/clk/qcom/gcc-qcs404.c
-index 64da032..833436a 100644
---- a/drivers/clk/qcom/gcc-qcs404.c
-+++ b/drivers/clk/qcom/gcc-qcs404.c
-@@ -304,10 +304,16 @@ static struct clk_alpha_pll gpll0_out_main = {
- 	},
- };
+diff --git a/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.txt b/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.txt
+index 1232fc9..f252439 100644
+--- a/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.txt
++++ b/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.txt
+@@ -23,6 +23,10 @@ platforms.
+ 	Value type: <phandle>
+ 	Definition: phandle to the input PLL, which feeds the APCS mux/divider
  
-+static const struct pll_vco gpll0_ao_out_vco[] = {
-+	{ 800000000, 800000000, 0 },
-+};
++       Usage: required if #clock-names property is present
++       Value type: <phandle array>
++	Definition: phandles to the two parent clocks of the clock driver.
 +
- static struct clk_alpha_pll gpll0_ao_out_main = {
- 	.offset = 0x21000,
- 	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT],
- 	.flags = SUPPORTS_FSM_MODE,
-+	.vco_table = gpll0_ao_out_vco,
-+	.num_vco = ARRAY_SIZE(gpll0_ao_out_vco),
- 	.clkr = {
- 		.enable_reg = 0x45000,
- 		.enable_mask = BIT(0),
+ - #mbox-cells:
+ 	Usage: required
+ 	Value type: <u32>
+@@ -33,6 +37,12 @@ platforms.
+ 	Value type: <u32>
+ 	Definition: as described in clock.txt, must be 0
+ 
++- clock-names:
++	Usage: required if the platform data based clock driver needs to
++	retrieve the parent clock names from device tree.
++	This will requires two mandatory clocks to be defined.
++	Value type: <string-array>
++	Definition: must be "aux" and "pll"
+ 
+ = EXAMPLE
+ The following example describes the APCS HMSS found in MSM8996 and part of the
+@@ -65,3 +75,14 @@ Below is another example of the APCS binding on MSM8916 platforms:
+ 		clocks = <&a53pll>;
+ 		#clock-cells = <0>;
+ 	};
++
++Below is another example of the APCS binding on QCS404 platforms:
++
++	apcs_glb: mailbox@b011000 {
++		compatible = "qcom,qcs404-apcs-apps-global", "syscon";
++		reg = <0x0b011000 0x1000>;
++		#mbox-cells = <1>;
++		clocks = <&gcc GCC_GPLL0_AO_OUT_MAIN>, <&apcs_hfpll>;
++		clock-names = "aux", "pll";
++		#clock-cells = <0>;
++	};
 -- 
 2.7.4
 
