@@ -2,149 +2,116 @@ Return-Path: <SRS0=zTeK=O2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FAD4C43612
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Dec 2018 07:53:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50621C43387
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Dec 2018 09:46:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67A132084D
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Dec 2018 07:53:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F135217F4
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Dec 2018 09:46:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="B/QfC1Nt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726349AbeLQHxh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Dec 2018 02:53:37 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:60697 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731514AbeLQHxh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Dec 2018 02:53:37 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gYniN-0000bW-FO; Mon, 17 Dec 2018 08:53:23 +0100
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gYniL-0000uu-UU; Mon, 17 Dec 2018 08:53:21 +0100
-Date:   Mon, 17 Dec 2018 08:53:21 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ralf Baechle <ralf@linux-mips.org>, paul.burton@mips.com,
-        James Hogan <jhogan@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mathieu Malaterre <malat@debian.org>, ezequiel@collabora.co.uk,
-        prasannatsmkumar@gmail.com, linux-pwm@vger.kernel.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>,
-        linux-mips@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-clk <linux-clk@vger.kernel.org>, od@zcrc.me
-Subject: Re: [PATCH v8 15/26] pwm: jz4740: Add support for the JZ4725B
-Message-ID: <20181217075321.k45vhgnszeqs3tea@pengutronix.de>
-References: <20181212220922.18759-1-paul@crapouillou.net>
- <20181212220922.18759-16-paul@crapouillou.net>
- <20181213092409.ml4wpnzow2nnszkd@pengutronix.de>
- <1544709795.18952.1@crapouillou.net>
- <20181213204219.onem3q6dcmakusl2@pengutronix.de>
- <CACRpkdbABtDgwKai=8Pfji7qVb-XHsX8pDsuDdS5hhg7qEN0Bw@mail.gmail.com>
- <20181214142628.zwi4hadrju53z6f3@pengutronix.de>
- <1544969932.1649.1@crapouillou.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1544969932.1649.1@crapouillou.net>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+        id S1732058AbeLQJqh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Dec 2018 04:46:37 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:39569 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732019AbeLQJqh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Dec 2018 04:46:37 -0500
+Received: by mail-wm1-f65.google.com with SMTP id f81so11835249wmd.4
+        for <linux-clk@vger.kernel.org>; Mon, 17 Dec 2018 01:46:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=XTyfhH2eCsCUKpKWC/aZRLTEDIsgmMe1VvDgoS4i9HU=;
+        b=B/QfC1Ntfl4nY7T5Ah71k0VxA8CeWBU9RJGKuCDjBT8nEf32NMQDD0miFWCBPZNtH9
+         CkUzZnZa5o/ZFxgIsNCud6MH9mZHUt4bzrW+XhDnYnXckAdgbPXev4FJnBSwgnfAcCZ1
+         9/8u/V75gltfZ09z1QmBvRX1Unpi8Bn4TIQPI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=XTyfhH2eCsCUKpKWC/aZRLTEDIsgmMe1VvDgoS4i9HU=;
+        b=Fc5ME3c257yCbZcPkhqHM8NpAgLITCYWVw1PljUcnxYJjDBTnfDyBhe0LdD98GqbN7
+         bqFxB3CCOLykBQIrWCYt0+lfJ0uSIRxPOUxOf0BY0QLvXna20iEzUE+V+z3DEn/0BzW2
+         BPfWK8OZHvd5CSURPMhcDtG6iMoTUZ7pSw3LDpTEC685fUbl9uIFmDkYxJybHRcQZC5a
+         sntMR28HHKI6AP46plUaGsPfSgFMvi0/cj61I8tNUO7M59/K/vcmt+IOYGXkAjpGsCyR
+         8FBMMWLa2ejPkJNfs0UJ35HwjBelUP5zm8smuFbfPp+LWoBg39RWtsPZrnscDzFuvWrY
+         Rurw==
+X-Gm-Message-State: AA+aEWavAMcv7zSba06l0hfLlUCFt0JvFN+iCfj/UWGOqb3E1pftAx3l
+        5JWCUKYEqAXJuXB1Ps0n8x9vhw==
+X-Google-Smtp-Source: AFSGD/WKiBep+PS9VFJ8wt9BZhAWEZIkBQHDBDSzgNn2pdTiof7a5TmX0NFXI/3dVBiwBSV8h1Wbpw==
+X-Received: by 2002:a1c:19c2:: with SMTP id 185mr9154002wmz.8.1545039995231;
+        Mon, 17 Dec 2018 01:46:35 -0800 (PST)
+Received: from localhost.localdomain (58.red-81-47-145.staticip.rima-tde.net. [81.47.145.58])
+        by smtp.gmail.com with ESMTPSA id h12sm28878113wma.48.2018.12.17.01.46.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 17 Dec 2018 01:46:34 -0800 (PST)
+From:   Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+To:     jorge.ramirez-ortiz@linaro.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, andy.gross@linaro.org,
+        david.brown@linaro.org, sboyd@kernel.org, will.deacon@arm.com,
+        mturquette@baylibre.com, jassisinghbrar@gmail.com
+Cc:     bjorn.andersson@linaro.org, vkoul@kernel.org,
+        niklas.cassel@linaro.org, sibis@codeaurora.org,
+        georgi.djakov@linaro.org, arnd@arndb.de,
+        horms+renesas@verge.net.au, heiko@sntech.de,
+        enric.balletbo@collabora.com, jagan@amarulasolutions.com,
+        olof@lixom.net, amit.kucheria@linaro.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: [PATCH 00/13] Support CPU frequency scaling on QCS404
+Date:   Mon, 17 Dec 2018 10:46:17 +0100
+Message-Id: <1545039990-19984-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, Dec 16, 2018 at 03:18:52PM +0100, Paul Cercueil wrote:
-> Hi,
-> 
-> Le ven. 14 déc. 2018 à 15:26, Uwe Kleine-König
-> <u.kleine-koenig@pengutronix.de> a écrit :
-> > Hello,
-> > 
-> > On Fri, Dec 14, 2018 at 02:50:20PM +0100, Linus Walleij wrote:
-> > > On Thu, Dec 13, 2018 at 9:42 PM Uwe Kleine-König
-> > > <u.kleine-koenig@pengutronix.de> wrote:
-> > > > [Adding Linus Walleij to Cc:]
-> > > > On Thu, Dec 13, 2018 at 03:03:15PM +0100, Paul Cercueil wrote:
-> > > > > Le jeu. 13 déc. 2018 à 10:24, Uwe Kleine-König
-> > > > > <u.kleine-koenig@pengutronix.de> a écrit :
-> > > > > > On Wed, Dec 12, 2018 at 11:09:10PM +0100, Paul Cercueil wrote:
-> > > > > > >  The PWM in the JZ4725B works the same as in the JZ4740,
-> > > > > > >  except that it only has 6 channels available instead of
-> > > > > > >  8.
-> > > > > >
-> > > > > > this driver is probed only from device tree? If yes, it
-> > > > > > might be sensible to specify the number of PWMs there and
-> > > > > > get it from there.
-> > > > > > There doesn't seem to be a generic binding for that, but there are
-> > > > > > several drivers that could benefit from it. (This is a bigger project
-> > > > > > though and shouldn't stop your patch. Still more as it already got
-> > > > > > Thierry's ack.)
-> > > > >
-> > > > > I think there needs to be a proper guideline, as there doesn't seem to be
-> > > > > a consensus about this. I learned from emails with Rob and  Linus (Walleij)
-> > > > > that I should not have in devicetree what I can deduce from the compatible
-> > > > > string.
-> > > >
-> > > > I understood them a bit differently. It is ok to deduce things from the
-> > > > compatible string. But if you define a generic property (say) "num-pwms"
-> > > > that is used uniformly in most bindings this is ok, too. (And then the
-> > > > two different devices could use the same compatible.)
-> > > >
-> > > > An upside of the generic "num-pwms" property is that the pwm core could
-> > > > sanity check pwm phandles before passing them to the hardware drivers.
-> > > 
-> > >  I don't know if this helps, but in GPIO we have "ngpios" which is
-> > >  used to augment an existing block as to the number of lines actually
-> > >  used with it.
-> > > 
-> > >  The typical case is that an ASIC engineer synthesize a block for
-> > >  32 GPIOs but only 12 of them are routed to external pads. So
-> > >  we augment the behaviour of that driver to only use 12 of the
-> > >  32 lines.
-> > > 
-> > >  I guess using the remaining 20 lines "works" in a sense but they
-> > >  have no practical use and will just bias electrons in the silicon
-> > >  for no use.
-> > 
-> > This looks very similar to the case under discussion.
-> > 
-> > >  So if the PWM case is something similar, then by all means add
-> > >  num-pwms.
-> > 
-> > .. or "npwms" to use the same nomenclature as the gpio binding?
-> 
-> If we're going to do something like this, should it be the drivers or
-> the core (within pwmchip_add) that checks for this "npwms" property?
+The following patchset enables CPU frequency scaling support on the
+QCS404.
 
-Of course this should be done in the core. The driver than can rely on
-the validity of the index. But as I wrote before, this shouldn't stop
-your patch from going in.
+Patch 8 "clk: qcom: hfpll: CLK_IGNORE_UNUSED" is a bit controversial;
+in this platform, this PLL provides the clock signal to a CPU
+core. But in others it might not.
 
-But if Thierry agrees that this npmws (or num-pwms) is a good idea, it
-would be great to start early to convert drivers.
+I opted for the minimal ammount of changes without affecting the
+default functionality: simply bypassing the COMMON_CLK_DISABLE_UNUSED
+framework and letting the firwmare chose whether to enable or disable
+the clock at boot. However maybe a DT property and marking the clock
+as critical would be more appropriate for this PLL. I'd appreciate the
+maintainer's input on this topic.
 
-Best regards
-Uwe
+Co-developed-by: Niklas Cassel <niklas.cassel@linaro.org>
+Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
+Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+
+Jorge Ramirez-Ortiz (13):
+  clk: qcom: gcc: limit GPLL0_AO_OUT operating frequency
+  mbox: qcom: add APCS child device for QCS404
+  mbox: qcom: replace integer with valid macro
+  dt-bindings: mailbox: qcom: Add clock-name optional property
+  clk: qcom: apcs-msm8916: get parent clock names from DT
+  clk: qcom: hfpll: get parent clock names from DT
+  clk: qcom: hfpll: register as clock provider
+  clk: qcom: hfpll: CLK_IGNORE_UNUSED
+  arm64: dts: qcom: qcs404: Add OPP table
+  arm64: dts: qcom: qcs404: Add HFPLL node
+  arm64: dts: qcom: qcs404: Add the clocks for APCS mux/divider
+  arm64: dts: qcom: qcs404: Add cpufreq support
+  arm64: defconfig: Enable HFPLL
+
+ .../bindings/mailbox/qcom,apcs-kpss-global.txt     | 21 +++++++++++++
+ arch/arm64/boot/dts/qcom/qcs404.dtsi               | 35 ++++++++++++++++++++++
+ arch/arm64/configs/defconfig                       |  1 +
+ drivers/clk/qcom/apcs-msm8916.c                    | 33 ++++++++++++++------
+ drivers/clk/qcom/gcc-qcs404.c                      |  6 ++++
+ drivers/clk/qcom/hfpll.c                           | 19 +++++++++++-
+ drivers/mailbox/qcom-apcs-ipc-mailbox.c            | 21 ++++++++-----
+ 7 files changed, 118 insertions(+), 18 deletions(-)
 
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+2.7.4
+
