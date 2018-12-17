@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9832CC43387
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Dec 2018 09:47:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C288AC43387
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Dec 2018 09:47:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6910520675
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Dec 2018 09:47:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91A0D20675
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Dec 2018 09:47:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="et20Z1Nv"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FoJRxte5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732222AbeLQJq7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Dec 2018 04:46:59 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:37862 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732203AbeLQJq4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Dec 2018 04:46:56 -0500
-Received: by mail-wr1-f65.google.com with SMTP id s12so11100619wrt.4
-        for <linux-clk@vger.kernel.org>; Mon, 17 Dec 2018 01:46:55 -0800 (PST)
+        id S1732236AbeLQJrB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Dec 2018 04:47:01 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:45474 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732224AbeLQJrA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Dec 2018 04:47:00 -0500
+Received: by mail-wr1-f66.google.com with SMTP id t6so11359995wrr.12
+        for <linux-clk@vger.kernel.org>; Mon, 17 Dec 2018 01:46:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=frYLNG9WBBqiLZuXMzbyk9zPbudi5BcqFSN9a29J878=;
-        b=et20Z1Nvhy4cU7BaSDu0Rr0o8eprDB52wxTtNTCZZIeVJB+REqsCz5LohKL6+c4bHc
-         BBu8BsOZf02tVrTWV/4iNqxH5Xrryxvc8gCF4HXIhoB0FggKGUUPonfUccV/BjaAqgJ8
-         V3bJfXiHcaCkhPVmE/5R33wu/PxiebX04HaEY=
+        bh=trBOZeUZ42tXHraYvTz2rphVlhKTWLVThNKSv6QZHLQ=;
+        b=FoJRxte5GxIjPmcVqIEkGM+x/BCDOU1h6ZYf63+VJDb0xLs7ryQZiUSVsBlpThKX4v
+         PfyLuqhwQ6UN1N4rbF/rM5NLdCLQ6rat3x8M7claAyBkDAxKuY9R6FhHE2KAhflZaF1D
+         6sPl5ernAuDWw9WtWPeZVPzpwnpQ/nYk27+hQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=frYLNG9WBBqiLZuXMzbyk9zPbudi5BcqFSN9a29J878=;
-        b=LG+zivfJQcSND+sbjWRvC0wnBkXt+EX7Wg7FI7LV07b8toaIZxDahTiF0akfLH1bdu
-         gSjkr2LB+4Vw8qzkPmSqtwTZbbj2eM93ShDxz57YR3b4/6j0/6RrL+I3x0x91NCZRyLT
-         iBUWybzaXGbqolaRqqtFAb/CdxMVRAOEueDQa5Zh5SaCSAU7TpXaY1eefEsNsBrXis+q
-         LZh7rfACjz+tOUCHpIxytxZi8fSP4BI8BIIEa1hySG1gC+aOuHgfBDH1YJDluefdniQ4
-         tjD4nJxocVrhgyGbMxrZXXeg7qe7qiNBwWZ7Cbpyc02Iik/X2XlQWd7x76ZIgaBpDSyN
-         uMKA==
-X-Gm-Message-State: AA+aEWYvoUWXO5tj4xLzLKBfzjTrLfdDU0FMPqpPOotqVLds+7B2bu3t
-        NPT9VACKwRkvaq4Cs+3r35VvFg==
-X-Google-Smtp-Source: AFSGD/Wm89lY5AWabPhjL97+zfhBn8ec4Izasd9Vo+Ys9CWY1kITyl9TwTkkjUL9dy/zq4p2/3eK4w==
-X-Received: by 2002:a5d:4512:: with SMTP id s18mr10609352wrq.182.1545040015164;
-        Mon, 17 Dec 2018 01:46:55 -0800 (PST)
+        bh=trBOZeUZ42tXHraYvTz2rphVlhKTWLVThNKSv6QZHLQ=;
+        b=i590xRCY4PRZspcvyPq9GCh+2LVcghA6C7L5i6S96C6X2eFhQrG1RIZUSzh1umS3tj
+         8SIK1tyuBEdwok8mNrMmv5VZ9vcK28eHKTH0E3ff3w6y0yEwmbzXtkDI7l5KtWUk3V4R
+         5uvODsBtD9gXp0T3qNxN9aApl4NeCOY96/RdLJU7s56hUgmlR1w84nHY33f9a2/Gfc2H
+         PcAysC2IXMNmYP9p+//KCcJigqUnIJLhGW9Idkgv45c7945uZly+K7zxfkQDFrzsT9Qj
+         scvvwpVxtKkApPCZwhD5uHSceYvpARR/pi4pMt7Wheh+kweU7rqkCrgSeAcdHVA3oQaN
+         X/zA==
+X-Gm-Message-State: AA+aEWYP613el8HgO9pZdpCwDQXuTGabpN0rzJpfQbdR9zWUL9+vaNh/
+        sA8w/rYMXuCaizUzOB585CgZBw==
+X-Google-Smtp-Source: AFSGD/UzwOvBjMk5OAnuhTgTLtekacbChin6HSwst6mWBMEinLXT29f0XoEfR9M5MgMwW7wd8+Vh2g==
+X-Received: by 2002:a5d:488f:: with SMTP id g15mr9993063wrq.15.1545040019026;
+        Mon, 17 Dec 2018 01:46:59 -0800 (PST)
 Received: from localhost.localdomain (58.red-81-47-145.staticip.rima-tde.net. [81.47.145.58])
-        by smtp.gmail.com with ESMTPSA id h12sm28878113wma.48.2018.12.17.01.46.53
+        by smtp.gmail.com with ESMTPSA id h12sm28878113wma.48.2018.12.17.01.46.57
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 17 Dec 2018 01:46:54 -0800 (PST)
+        Mon, 17 Dec 2018 01:46:58 -0800 (PST)
 From:   Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
 To:     jorge.ramirez-ortiz@linaro.org, robh+dt@kernel.org,
         mark.rutland@arm.com, andy.gross@linaro.org,
@@ -63,9 +63,9 @@ Cc:     bjorn.andersson@linaro.org, vkoul@kernel.org,
         olof@lixom.net, amit.kucheria@linaro.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: [PATCH 10/13] arm64: dts: qcom: qcs404: Add HFPLL node
-Date:   Mon, 17 Dec 2018 10:46:27 +0100
-Message-Id: <1545039990-19984-11-git-send-email-jorge.ramirez-ortiz@linaro.org>
+Subject: [PATCH 12/13] arm64: dts: qcom: qcs404: Add cpufreq support
+Date:   Mon, 17 Dec 2018 10:46:29 +0100
+Message-Id: <1545039990-19984-13-git-send-email-jorge.ramirez-ortiz@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1545039990-19984-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
 References: <1545039990-19984-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
@@ -74,36 +74,55 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The high frequency pll functionality is required to enable CPU
-frequency scaling operation.
+Support CPU frequency scaling on qcs404.
 
 Co-developed-by: Niklas Cassel <niklas.cassel@linaro.org>
 Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
 Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
 ---
- arch/arm64/boot/dts/qcom/qcs404.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ arch/arm64/boot/dts/qcom/qcs404.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/qcom/qcs404.dtsi b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-index 4594fea7..ec3f6c7 100644
+index 2d9e70e..5a14887 100644
 --- a/arch/arm64/boot/dts/qcom/qcs404.dtsi
 +++ b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-@@ -375,6 +375,15 @@
- 			#mbox-cells = <1>;
+@@ -30,6 +30,8 @@
+ 			reg = <0x100>;
+ 			enable-method = "psci";
+ 			next-level-cache = <&L2_0>;
++			clocks = <&apcs_glb>;
++			operating-points-v2 = <&cpu_opp_table>;
  		};
  
-+		apcs_hfpll: clock-controller@0b016000 {
-+			compatible = "qcom,hfpll";
-+			reg = <0x0b016000 0x30>;
-+			#clock-cells = <0>;
-+			clock-output-names = "apcs_hfpll";
-+			clocks = <&xo_board>;
-+			clock-names = "xo";
-+		};
-+
- 		timer@b120000 {
- 			#address-cells = <1>;
- 			#size-cells = <1>;
+ 		CPU1: cpu@101 {
+@@ -38,6 +40,8 @@
+ 			reg = <0x101>;
+ 			enable-method = "psci";
+ 			next-level-cache = <&L2_0>;
++			clocks = <&apcs_glb>;
++			operating-points-v2 = <&cpu_opp_table>;
+ 		};
+ 
+ 		CPU2: cpu@102 {
+@@ -46,6 +50,8 @@
+ 			reg = <0x102>;
+ 			enable-method = "psci";
+ 			next-level-cache = <&L2_0>;
++			clocks = <&apcs_glb>;
++			operating-points-v2 = <&cpu_opp_table>;
+ 		};
+ 
+ 		CPU3: cpu@103 {
+@@ -54,6 +60,8 @@
+ 			reg = <0x103>;
+ 			enable-method = "psci";
+ 			next-level-cache = <&L2_0>;
++			clocks = <&apcs_glb>;
++			operating-points-v2 = <&cpu_opp_table>;
+ 		};
+ 
+ 		L2_0: l2-cache {
 -- 
 2.7.4
 
