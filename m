@@ -2,88 +2,90 @@ Return-Path: <SRS0=zTeK=O2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 905F8C43387
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Dec 2018 19:34:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 445F6C43387
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Dec 2018 19:37:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F594206A2
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Dec 2018 19:34:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545075295;
-	bh=8q71VrlrFxiLv05x0S/KA/wO9UUxLh9zLSEtkIrKRwo=;
-	h=In-Reply-To:Subject:To:References:From:Cc:Date:List-ID:From;
-	b=Z27J+MNaYi4xs8K1YgzagFqPkVDnSZgbt1JoC0nAvr6XNS60teONYplvWDUZHFJb4
-	 JKsUfbIy1kg3BKilORaOHmoeh4XxiuS0O9gOBqsnCC8SHzpB0/aJJKCAToTnFXKIFr
-	 Pnb/6V//XrsGzJH73I71IGTitRr5RQwQJlfOKrUc=
+	by mail.kernel.org (Postfix) with ESMTP id 15CA3206A2
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Dec 2018 19:37:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=rere.qmqm.pl header.i=@rere.qmqm.pl header.b="r3QAP4yq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388250AbeLQTey (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Dec 2018 14:34:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45638 "EHLO mail.kernel.org"
+        id S2388341AbeLQThI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Dec 2018 14:37:08 -0500
+Received: from rere.qmqm.pl ([91.227.64.183]:24857 "EHLO rere.qmqm.pl"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727175AbeLQTey (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 17 Dec 2018 14:34:54 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3EDE6206A2;
-        Mon, 17 Dec 2018 19:34:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545075293;
-        bh=8q71VrlrFxiLv05x0S/KA/wO9UUxLh9zLSEtkIrKRwo=;
-        h=In-Reply-To:Subject:To:References:From:Cc:Date:From;
-        b=wnnHV0DgvtTlK7BRMh9m3P1+jUqnvHXU0/OWbCdrT6O5hq4MyR7nyvFFaeQp6jNRz
-         VJ7Dpzm3J1lcRx72pISW/utFtEkQUi4fV/9x4dq52mNCUQ0SgWAYV//SG3mojcEPdU
-         owfbCftPUqEqhwn+EM5XdP5HAOpuQskyrU22rqIg=
-Content-Type: text/plain; charset="utf-8"
+        id S1726758AbeLQThH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 17 Dec 2018 14:37:07 -0500
+Received: from remote.user (localhost [127.0.0.1])
+        by rere.qmqm.pl (Postfix) with ESMTPSA id 43JWbG1f2vz60;
+        Mon, 17 Dec 2018 20:35:38 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
+        t=1545075339; bh=B0IHFVymz4dj8jF2LKmyqX+dBVLS/zqRKUHcldhF5Gk=;
+        h=Date:From:Subject:To:Cc:From;
+        b=r3QAP4yqmHq5ohv2mGSblubtmuQu0og9rS0DDxWSZzVsXD1vS3CQmEKD7AUppxmtd
+         /BHKpER3w4meNax3vP6LYIZgW5Iy2d5lAo63jd+GlXgG3kh9rH9v9MQw/lUV1PP2m0
+         vRCPITXVDEY/f2MqepoARGUynQUafPYxzX8gxW1kI+ekpDp7pKWrCRh6MmhDD9knMo
+         W0mQg3WC8GbtB/QaY6kj/rJP5IOHnbSjXBSZ2berNG2yGJVCpjsT6S9+2ACFFkQ+t8
+         AFyt8TYDiyRrNAZkxtAYMTk4fH8I3X4PwuYBEI5b4m7+xPtIZ8yOhZpM6M9J7D9TGe
+         Rfb/L3lk7MMFA==
+X-Virus-Status: Clean
+X-Virus-Scanned: clamav-milter 0.100.2 at mail
+Date:   Mon, 17 Dec 2018 20:37:04 +0100
+Message-Id: <e07fdef0c9a959a6e820a040048e9ab5b7aec9d2.1545075103.git.mirq-linux@rere.qmqm.pl>
+From:   =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
+Subject: [PATCH] clk: at91: enable AUDIOPLL as source for PCKx
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20181215103557.2748-4-govinds@codeaurora.org>
-Subject: Re: [PATCH v3 3/7] dt-bindings: clock: qcom: Add QCOM WCSS GCC clock bindings
-To:     Govind Singh <govinds@codeaurora.org>, bjorn.andersson@linaro.org,
-        linux-remoteproc@vger.kernel.org
-References: <20181215103557.2748-1-govinds@codeaurora.org> <20181215103557.2748-4-govinds@codeaurora.org>
-Message-ID: <154507529252.19322.2985382543561079731@swboyd.mtv.corp.google.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-User-Agent: alot/0.8
-Cc:     linux-clk@vger.kernel.org, sricharan@codeaurora.org,
-        sibis@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        andy.gross@linaro.org, david.brown@linaro.org,
-        linux-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Govind Singh <govinds@codeaurora.org>
-Date:   Mon, 17 Dec 2018 11:34:52 -0800
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+To:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Govind Singh (2018-12-15 02:35:53)
-> Add device tree bindings for WiFi QDSP gcc clock controls found in
-> QCS404 soc.
->=20
-> Signed-off-by: Govind Singh <govinds@codeaurora.org>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> ---
->  include/dt-bindings/clock/qcom,gcc-qcs404.h | 3 +++
->  1 file changed, 3 insertions(+)
->=20
-> diff --git a/include/dt-bindings/clock/qcom,gcc-qcs404.h b/include/dt-bin=
-dings/clock/qcom,gcc-qcs404.h
-> index 00ab0d77b38a..8f800adda225 100644
-> --- a/include/dt-bindings/clock/qcom,gcc-qcs404.h
-> +++ b/include/dt-bindings/clock/qcom,gcc-qcs404.h
-> @@ -146,6 +146,8 @@
->  #define GCC_MDP_TBU_CLK                                        138
->  #define GCC_QDSS_DAP_CLK                               139
->  #define GCC_DCC_XO_CLK                                 140
-> +#define GCC_WCSS_Q6_AHB_CBCR_CLK                       141
-> +#define GCC_WCSS_Q6_AXIM_CBCR_CLK                      142
+SAMA5D2x have 6 sources, the last being AUDIOPLL.
 
-Does the register really call it FOO_CBCR_CLK? I'd prefer we drop the
-CBCR part unless you really want it to keep it.
+Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+---
+ arch/arm/boot/dts/sama5d2.dtsi | 2 +-
+ drivers/clk/at91/dt-compat.c   | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-> =20
->  #define GCC_GENI_IR_BCR                                        0
->  #define GCC_USB_HS_BCR                                 1
+diff --git a/arch/arm/boot/dts/sama5d2.dtsi b/arch/arm/boot/dts/sama5d2.dtsi
+index dd0dda6ed44b..6c8c15c363e4 100644
+--- a/arch/arm/boot/dts/sama5d2.dtsi
++++ b/arch/arm/boot/dts/sama5d2.dtsi
+@@ -526,7 +526,7 @@
+ 					#address-cells = <1>;
+ 					#size-cells = <0>;
+ 					interrupt-parent = <&pmc>;
+-					clocks = <&clk32k>, <&main>, <&plladiv>, <&utmi>, <&mck>;
++					clocks = <&clk32k>, <&main>, <&plladiv>, <&utmi>, <&mck>, <&audio_pll_pmc>;
+ 
+ 					prog0: prog0 {
+ 						#clock-cells = <0>;
+diff --git a/drivers/clk/at91/dt-compat.c b/drivers/clk/at91/dt-compat.c
+index b95bb4e2a927..19badfc51f50 100644
+--- a/drivers/clk/at91/dt-compat.c
++++ b/drivers/clk/at91/dt-compat.c
+@@ -17,7 +17,7 @@
+ 
+ #define PERIPHERAL_ID_MIN	2
+ 
+-#define PROG_SOURCE_MAX		5
++#define PROG_SOURCE_MAX		6
+ #define PROG_ID_MAX		7
+ 
+ #define SYSTEM_MAX_ID		31
+-- 
+2.19.2
+
