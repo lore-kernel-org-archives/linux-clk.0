@@ -2,110 +2,150 @@ Return-Path: <SRS0=G9W/=O3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65A65C43387
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Dec 2018 14:16:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DDA7C43387
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Dec 2018 14:35:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B412217D7
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Dec 2018 14:16:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1FDF021871
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Dec 2018 14:35:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="r2MkyULG"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="TCH4B9Sx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726883AbeLROQs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 Dec 2018 09:16:48 -0500
-Received: from mail-eopbgr140040.outbound.protection.outlook.com ([40.107.14.40]:56926
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726824AbeLROQs (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 18 Dec 2018 09:16:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=E2Y7EvIcCHexouM3HBkeQw2IoQ5LVllDDVjuFzBX/Ug=;
- b=r2MkyULGCIQXCi5x9pOnOLJ9ubQ462vUGZDSKRwA0pwxKNQ4/F7B4AfCFNmbo5t2K2CMIjk2Z81kTjXvnUuELb0XvA/Mz3cMs4V4vvLlSt3K0bX9Up6eFWoApBQWXNLFO6MZZYIlgomrsibTEvWTG0WTVrhalMYpDOs3a2aAfP8=
-Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.126.21) by
- AM0PR04MB5025.eurprd04.prod.outlook.com (20.177.40.142) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1425.22; Tue, 18 Dec 2018 14:16:44 +0000
-Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
- ([fe80::9125:e806:7303:d8e6]) by AM0PR04MB4211.eurprd04.prod.outlook.com
- ([fe80::9125:e806:7303:d8e6%6]) with mapi id 15.20.1425.023; Tue, 18 Dec 2018
- 14:16:43 +0000
-From:   Aisheng Dong <aisheng.dong@nxp.com>
-To:     Fabio Estevam <festevam@gmail.com>,
-        Wei Yongjun <weiyongjun1@huawei.com>
-CC:     Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH -next] clk: imx: fix potential NULL dereference in
- imx8qxp_lpcg_clk_probe()
-Thread-Topic: [PATCH -next] clk: imx: fix potential NULL dereference in
- imx8qxp_lpcg_clk_probe()
-Thread-Index: AQHUlpvry2qgkPP2Wk6112vrMZV9TqWEQIGAgABJ0CA=
-Date:   Tue, 18 Dec 2018 14:16:43 +0000
-Message-ID: <AM0PR04MB42111E537F8377C4DDAD56A880BD0@AM0PR04MB4211.eurprd04.prod.outlook.com>
-References: <1545115389-173136-1-git-send-email-weiyongjun1@huawei.com>
- <CAOMZO5C1+bxWtapaBrdzf0o3Q30BkBNHLg9=4K5ZsxBk6s2DWw@mail.gmail.com>
-In-Reply-To: <CAOMZO5C1+bxWtapaBrdzf0o3Q30BkBNHLg9=4K5ZsxBk6s2DWw@mail.gmail.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM0PR04MB5025;6:mcPocRJc3jJGKc2SFkNXh7jTPBvOwWI9+vLISdXD2754i/reMDR+jbBep69i1ugzoBWPmWneJdeTEyf81HtXpqiz2WopQxA1WJzVAHEBsrexK/m4SuH0JwumxGyATLLWkB2gSoRff0Wwu9T6lGcRZ8ryzm/OabJVA1Jzre/Tt3LijOvlqJpaf8ZOA4kD8wsgpRd/5H+xSG5cRVfq361sCbHyNzzQ84m7+XP1L8UoUB8xt1pUd7qELWCkrQMXzXoZX2phvUTg4WMA663xiwYRCcwRpez34Fhpl/kKwi9ShfplORt1G2xcsCZCBmdH12svvy6E54HNO5/VXG3gnim2ZA7P81LNJSY/fMzm7IIn/HYrP2SzouC8uquoa2cZad50e/tKNVIRCtvEk9AJmTGAyUUA1hGkuF4HBJO9JcU088+9BH6qCb2I/+KsYDRELgGYbdWLyyyBuYW3xent3TS/NQ==;5:RNFL9W+ONRpJaAe0RvAkS6LVd9/HVv5cFeb9xt4BeLOrlA27RDlJakFWM5vFu4vvvzawx4cPLEWRhS0LvWBTMQGMCCI96K65SG+XNSzFWZnYrl9jvSqEv970iiJ4+0M3Ckzll7+Z8N5r0Ujw2AgBfAK52R7DoDSH5OmSSag7rdE=;7:ANpfH5iiV+WeaCqmYKKL2cIQ1PaDmRpmNxTy6YVo6m9elrh3saT47lrmazYe6TBrbbLg7bxDCOHY6Lk5U4KsKnxelAex7LAfqy12l1ibbAuM4unhR1MItQpyIf6Ufijui0X+QwSyM18ZS+X21cwT1g==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 03876311-c95d-4d18-d92a-08d664f37013
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB5025;
-x-ms-traffictypediagnostic: AM0PR04MB5025:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=aisheng.dong@nxp.com; 
-x-microsoft-antispam-prvs: <AM0PR04MB5025105367C9FB7B52C6878E80BD0@AM0PR04MB5025.eurprd04.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(5005020)(6040522)(2401047)(8121501046)(10201501046)(3002001)(93006095)(93001095)(3231475)(944501520)(52105112)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:AM0PR04MB5025;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB5025;
-x-forefront-prvs: 08902E536D
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(136003)(39860400002)(346002)(366004)(376002)(199004)(189003)(13464003)(4326008)(5660300001)(53936002)(9686003)(14454004)(86362001)(33656002)(97736004)(6246003)(39060400002)(74316002)(7736002)(7416002)(55016002)(305945005)(476003)(11346002)(105586002)(44832011)(106356001)(446003)(6506007)(53546011)(102836004)(486006)(76176011)(26005)(66066001)(71190400001)(71200400001)(14444005)(186003)(256004)(110136005)(25786009)(54906003)(316002)(229853002)(2906002)(478600001)(68736007)(8936002)(81166006)(81156014)(99286004)(8676002)(7696005)(6116002)(3846002)(6436002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5025;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: i9SHsOiq71jV7q4gWhfnLmlUV8dBx1R0B3rJcflnZZE6USIQoAk+QXsVOlWaSCOgMOuKeaXmUquM2/MsJLTXoLA3P6kzGX85Km2b/OQgHksoLunCfBLEe72BivgrewwIRQxgmNH9URDywaEm5mcVexLqEgFrZByH5At9xCXisWgNNK27KaOP6/GPDH13b32MeYICOky38c2CuTby89LuL1n1qpGLEAp1lnldv73mAsc8/ouKNOf1WHFj8ZgPZfyMZGIhPnvJ8vxt3gX+STGKNQmRabWYTzUEO+gpecWWbjaPitwzkqKdZv/hlxcsxN0H
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1726761AbeLROfJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 Dec 2018 09:35:09 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:34706 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726426AbeLROfJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Dec 2018 09:35:09 -0500
+Received: by mail-lf1-f65.google.com with SMTP id p6so12449577lfc.1
+        for <linux-clk@vger.kernel.org>; Tue, 18 Dec 2018 06:35:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=wjtDy5LCCPCxU08g/WY8ZETjRs/RcgYVHI8wzk4RLPc=;
+        b=TCH4B9Sx8zA8ePT/xOySX0oG4gKueOSsJuNwS/1mw/4VdhisSdI7+EgmovbgAGqYZ/
+         q8dsA+lbLP7/HlZa/EKut+PzX7YfV1le+RiJ/GGv2Oyo1h68cLYsYp7sZMFqeQnKLd2S
+         lyxy+S6RAjO6kZiVH6Y9xuRkzg8zL4xRUt/8Q=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=wjtDy5LCCPCxU08g/WY8ZETjRs/RcgYVHI8wzk4RLPc=;
+        b=k5kGXF++Dj0TwZFVR5Uj+fVgXlOHTD4mWQa+tRIfEPeA7BY4q2SZ1GUo8LDbglGpcF
+         wOWuJdm5NkizmS/sbONOnOzb2WFVADZppsgRlM2BscIBXx+v+dP4JxT6Q/0pNOYCfv5E
+         c9iVQ6g4zewYZz/iVdp4qk1q0c0mX1IpFB56tCkwY2rjOnNv1/wbjcsg3mA7lk8Jo0sm
+         38kFTCqFpejs9p/M/aqOQrkVT2kDU0vd4woGFgfXNy0mA8Wrif8pYQHoGk/+2pwgND6O
+         zNi9qKLH+v0O+i2evZNsvqyxii8q5nS/31A6i0zS6P0yqZjwdrrO+vATZylPv/FkpB0o
+         7Dng==
+X-Gm-Message-State: AA+aEWZZwdhDXbhc0xkEmJZKF60L8e+6FTeNKR4s/UfIO1bhRx6mt5pu
+        c92KZNu079Mc7O1iV0Z7nQ4erg==
+X-Google-Smtp-Source: AFSGD/U20A6CEFVSajvQAN+pviytKaYVlOmZX9yKcEB9j6OzbKJBo8x4a2G9O1BD33zRmMyUtSOS1A==
+X-Received: by 2002:a19:9904:: with SMTP id b4mr9734560lfe.95.1545143706995;
+        Tue, 18 Dec 2018 06:35:06 -0800 (PST)
+Received: from centauri.ideon.se ([85.235.10.227])
+        by smtp.gmail.com with ESMTPSA id a62sm3284092lfa.37.2018.12.18.06.35.05
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 18 Dec 2018 06:35:06 -0800 (PST)
+Date:   Tue, 18 Dec 2018 15:35:03 +0100
+From:   Niklas Cassel <niklas.cassel@linaro.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     andy.gross@linaro.org, david.brown@linaro.org,
+        jassisinghbrar@gmail.com, jorge.ramirez-ortiz@linaro.org,
+        mark.rutland@arm.com, mturquette@baylibre.com, robh+dt@kernel.org,
+        will.deacon@arm.com, bjorn.andersson@linaro.org, vkoul@kernel.org,
+        sibis@codeaurora.org, georgi.djakov@linaro.org, arnd@arndb.de,
+        horms+renesas@verge.net.au, heiko@sntech.de,
+        enric.balletbo@collabora.com, jagan@amarulasolutions.com,
+        olof@lixom.net, amit.kucheria@linaro.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 05/13] clk: qcom: apcs-msm8916: get parent clock names
+ from DT
+Message-ID: <20181218143503.GA32562@centauri.ideon.se>
+References: <1545039990-19984-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
+ <1545039990-19984-6-git-send-email-jorge.ramirez-ortiz@linaro.org>
+ <154508986359.19322.1555129141976726505@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 03876311-c95d-4d18-d92a-08d664f37013
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Dec 2018 14:16:43.8902
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5025
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <154508986359.19322.1555129141976726505@swboyd.mtv.corp.google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBGYWJpbyBFc3RldmFtIFttYWls
-dG86ZmVzdGV2YW1AZ21haWwuY29tXQ0KPiBIaSBXZWksDQo+IA0KPiBPbiBUdWUsIERlYyAxOCwg
-MjAxOCBhdCA0OjM2IEFNIFdlaSBZb25nanVuIDx3ZWl5b25nanVuMUBodWF3ZWkuY29tPg0KPiB3
-cm90ZToNCj4gDQo+ID4gICAgICAgICByZXMgPSBwbGF0Zm9ybV9nZXRfcmVzb3VyY2UocGRldiwg
-SU9SRVNPVVJDRV9NRU0sIDApOw0KPiA+ICsgICAgICAgaWYgKCFyZXMpDQo+ID4gKyAgICAgICAg
-ICAgICAgIHJldHVybiAtRUlOVkFMOw0KPiA+ICAgICAgICAgYmFzZSA9IGRldm1faW9yZW1hcChk
-ZXYsIHJlcy0+c3RhcnQsIHJlc291cmNlX3NpemUocmVzKSk7DQo+IA0KPiBXb3VsZG4ndCBpdCBi
-ZSBiZXR0ZXIgdG8gdXNlIGRldm1faW9yZW1hcF9yZXNvdXJjZSgpLCB3aGljaCBkb2VzIHRoZSBO
-VUxMDQo+IGNoZWNrPw0KDQpObywgZGV2bV9pb3JlbWFwX3Jlc291cmNlIHdpbGwgY2FsbCByZXF1
-ZXN0X21lbV9yZWdpb24gd2hpY2ggd2UgZG9uJ3Qgd2FudA0KYXMgTFBDRyBtZW1vcnkgc3BhY2Ug
-bWF5IG92ZXJsYXAgd2l0aCBvdGhlciBtb2R1bGVzIHdpdGhpbiB0aGUgc2FtZSBTUy4NCg0KVGhp
-cyBpcyBzb21ldGhpbmcgbGlrZSB0aGUgc3lzY29uIGRldmljZSBkb2VzOg0KZHJpdmVycy9tZmQv
-c3lzY29uLmMuDQoNClJlZ2FyZHMNCkRvbmcgQWlzaGVuZw0K
+On Mon, Dec 17, 2018 at 03:37:43PM -0800, Stephen Boyd wrote:
+> Quoting Jorge Ramirez-Ortiz (2018-12-17 01:46:22)
+> > Allow accessing the parent clock names required for the driver
+> > operation by using the device tree node.
+> > 
+> > This permits extending the driver to other platforms without having to
+> > modify its source code.
+> > 
+> > For backwards compatibility leave previous values as default.
+> 
+> Why do we need to maintain backwards compatibility? Isn't is required
+> that the nodes have clocks properties?
+> 
+
+Hello Stephen,
+
+
+This is the existing DT nodes for msm8916:
+
+               a53pll: clock@b016000 {
+                        compatible = "qcom,msm8916-a53pll";
+                        reg = <0xb016000 0x40>;
+                        #clock-cells = <0>;
+                };
+
+                apcs: mailbox@b011000 {
+                        compatible = "qcom,msm8916-apcs-kpss-global", "syscon";
+                        reg = <0xb011000 0x1000>;
+                        #mbox-cells = <1>;
+                        clocks = <&a53pll>;
+                        #clock-cells = <0>;
+                };
+
+
+This is the (suggested) DT nodes for qcs404:
+
+                apcs_hfpll: clock-controller@0b016000 {
+                        compatible = "qcom,hfpll";
+                        reg = <0x0b016000 0x30>;
+                        #clock-cells = <0>;
+                        clock-output-names = "apcs_hfpll";
+                        clocks = <&xo_board>;
+                        clock-names = "xo";
+                };
+
+                apcs_glb: mailbox@b011000 {
+                        compatible = "qcom,qcs404-apcs-apps-global", "syscon";
+                        reg = <0x0b011000 0x1000>;
+                        #mbox-cells = <1>;
+                        clocks = <&gcc GCC_GPLL0_AO_OUT_MAIN>, <&apcs_hfpll>;
+                        clock-names = "aux", "pll";
+                        #clock-cells = <0>;
+                };
+
+qcs404 specifies two clocks, with an accompanied clock-name for each clock.
+
+msm8916 specifies a single clock, without an accompanied clock-name.
+
+It is possible to append clock-names = "pll" for the existing clock,
+as well as to define the aux clock in the apcs node in the msm8916 DT:
+clocks = <&gcc GPLL0_VOTE>;
+clock-names = "aux";
+
+However, since the DT is treated as an ABI, the existing DT for msm8916 must
+still work, so I don't think that it is possible to ignore having backwards
+compability in the apcs clock driver.
+
+
+Kind regards,
+Niklas
