@@ -2,139 +2,137 @@ Return-Path: <SRS0=G9W/=O3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A061C43444
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Dec 2018 16:36:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36D89C43387
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Dec 2018 17:08:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5AA6B218A5
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Dec 2018 16:36:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545151011;
-	bh=mf4+sc8moYkidTXd88Q9pc3Ndqt4TNLyO0MJGzs+8zM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=TjsiG5RHl48ukdBA0Mte8gGcTys+wACL5yDoGofSYkCrPj2JJZCBgZAZaDRZ0fDsX
-	 9UVzvT10Kr4mHkB0nr0tM1E5zSwxriamoxO5jjeA8f31e5/fN5GT2sYiSQIHy+JB5d
-	 f4RUaOeWboK/PuLwHqo9+F27SnogDE2gnO7kBrhI=
+	by mail.kernel.org (Postfix) with ESMTP id 06E0F21873
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Dec 2018 17:08:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="X7rlwMEp";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="RrPw3yiR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727114AbeLRQgu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 Dec 2018 11:36:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35292 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726980AbeLRQgu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 18 Dec 2018 11:36:50 -0500
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1727043AbeLRRIS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 Dec 2018 12:08:18 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:48942 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726899AbeLRRIS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Dec 2018 12:08:18 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 6696E605A5; Tue, 18 Dec 2018 17:08:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1545152897;
+        bh=aYJkrPOgJuHwT8PEc3wRoJtoLpp5dPqY7ziQqra9rAM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=X7rlwMEpkGrrrE+U5PAhlj6nImLXrwYgawYhsDEweYXwqHl8/ZMzampmnyP9xOPxs
+         fYatT79g1Kr0LfcLDaRrj43+AWZNAWiElkrODurcba1rTT7v0cypOOtIrbX2P5yD4O
+         hVd4WPVHhznmmpzWDpRcTDzTZyAplUoU48V+Ai48=
+Received: from jhugo-perf-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 44159218AF;
-        Tue, 18 Dec 2018 16:36:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545151009;
-        bh=mf4+sc8moYkidTXd88Q9pc3Ndqt4TNLyO0MJGzs+8zM=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=M7vHFnzsY1SikD/wPVeRpIG25a+IhPTQrkEr4VnWS/7rHjkV7V0Ts0okqThKnrgAE
-         mtrpaf2KQM6O5LX62eDEaZXbzoBFIbMe2oA/kfOlLmr5/Pqgudg9b6RP0r0ScpFOdi
-         BJgRmc6CLeD+AJ0Cw2OSaGnd0NmBvi06Zjqh09Zg=
-Received: by mail-qt1-f174.google.com with SMTP id t13so18873950qtn.3;
-        Tue, 18 Dec 2018 08:36:49 -0800 (PST)
-X-Gm-Message-State: AA+aEWYxrxq50bvPkgo1jEiir0WHhZxzNFLS8+oZB/SOLKBmRYCifsRi
-        /aP668nGxNW3U4ulShTJIaD+dujNvR7oJZ8knA==
-X-Google-Smtp-Source: AFSGD/W9EM9+0Y6Mvl/GEHksvVmaXWJznGtNOhtfD4esKHNUdIIlDROKbNz04PG/zjZcpSpax0QbKCTUY5SthD8Mpu0=
-X-Received: by 2002:a0c:f212:: with SMTP id h18mr18194216qvk.106.1545151008366;
- Tue, 18 Dec 2018 08:36:48 -0800 (PST)
-MIME-Version: 1.0
-References: <20181212220922.18759-1-paul@crapouillou.net> <20181212220922.18759-4-paul@crapouillou.net>
- <20181217210531.GA29770@bogus> <1545084222.1958.0@smtp.crapouillou.net>
-In-Reply-To: <1545084222.1958.0@smtp.crapouillou.net>
-From:   Rob Herring <robh@kernel.org>
-Date:   Tue, 18 Dec 2018 10:36:36 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqLhnitSM7-S1hq8M7S-7BHO5oYByXQ8QD2JkUY3jb63fQ@mail.gmail.com>
-Message-ID: <CAL_JsqLhnitSM7-S1hq8M7S-7BHO5oYByXQ8QD2JkUY3jb63fQ@mail.gmail.com>
-Subject: Re: [PATCH v8 03/26] dt-bindings: Add doc for the Ingenic TCU drivers
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mathieu Malaterre <malat@debian.org>,
-        Ezequiel Garcia <ezequiel@collabora.co.uk>,
-        PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
-        Linux PWM List <linux-pwm@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        LINUX-WATCHDOG <linux-watchdog@vger.kernel.org>,
-        linux-mips@vger.kernel.org,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>, od@zcrc.me
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        (Authenticated sender: jhugo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id D7A2C605A5;
+        Tue, 18 Dec 2018 17:08:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1545152896;
+        bh=aYJkrPOgJuHwT8PEc3wRoJtoLpp5dPqY7ziQqra9rAM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=RrPw3yiR0XE2bZ+U0c96wnL1pv5bc58o4ImlNusPSUS03pHCk3GWBVubtF/bYuy9p
+         3pvcLB3e51tWX5V5IpKv4+l4SJ0oG0lJYdwndeqw+fKHs/Qx2+Cz1ZznPDjd2WDdyr
+         h3Jv5Tjgvc2//zCH4NPnF0hlc+/ewCebcroyOMEc=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D7A2C605A5
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
+From:   Jeffrey Hugo <jhugo@codeaurora.org>
+To:     mturquette@baylibre.com, sboyd@kernel.org, andy.gross@linaro.org,
+        david.brown@linaro.org
+Cc:     bjorn.andersson@linaro.org, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jeffrey Hugo <jhugo@codeaurora.org>
+Subject: [PATCH] clk: qcom: List rates in debugfs for rcg
+Date:   Tue, 18 Dec 2018 10:08:04 -0700
+Message-Id: <1545152884-768-1-git-send-email-jhugo@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Dec 17, 2018 at 4:04 PM Paul Cercueil <paul@crapouillou.net> wrote:
->
-> Hi Rob,
->
-> Le lun. 17 d=C3=A9c. 2018 =C3=A0 22:05, Rob Herring <robh@kernel.org> a =
-=C3=A9crit :
-> > On Wed, Dec 12, 2018 at 11:08:58PM +0100, Paul Cercueil wrote:
-> >>  Add documentation about how to properly use the Ingenic TCU
-> >>  (Timer/Counter Unit) drivers from devicetree.
-> >>
-> >>  Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> >>  ---
-> >>
-> >>  Notes:
-> >>       v4: New patch in this series. Corresponds to V2 patches 3-4-5
-> >> with
-> >>           added content.
-> >>
-> >>       v5: - Edited PWM/watchdog DT bindings documentation to point
-> >> to the new
-> >>             document.
-> >>           - Moved main document to
-> >>             Documentation/devicetree/bindings/timer/ingenic,tcu.txt
-> >>           - Updated documentation to reflect the new devicetree
-> >> bindings.
-> >>
-> >>       v6: - Removed PWM/watchdog documentation files as asked by
-> >> upstream
-> >>           - Removed doc about properties that should be implicit
-> >>           - Removed doc about ingenic,timer-channel /
-> >>             ingenic,clocksource-channel as they are gone
-> >>           - Fix WDT clock name in the binding doc
-> >>           - Fix lengths of register areas in watchdog/pwm nodes
-> >>
-> >>       v7: No change
-> >>
-> >>       v8: - Fix address of the PWM node
-> >>           - Added doc about system timer and clocksource children
-> >> nodes
-> >
-> > I thought we'd sorted this out...
->
-> Yeah, well I just can't please everybody. V6/V7 didn't have the
-> system timer or clocksource in devicetree, which was good for
-> you, but then the driver nearly doubled in size and complexity,
-> and Thierry rightfully refused it. Now I'm at the point where
+RCGs typically have multiple frequencies they can support based on client
+requests.  It can be very helpful to have a list of what are the supported
+frequencies when attempting to bringup or debug a new device.  Add a clock
+specific "list_rates" debugfs file which dumps the supported rates of a
+selected rcg in a convenient format.
 
-You mean Daniel?
+Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
+---
+ drivers/clk/qcom/clk-rcg2.c | 33 +++++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
 
-> I'm trying alternative ways of encoding the information in
-> devicetree, as suggested by various people, just so that you
-> accept it. Because I don't see any other option.
+diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+index 6e3bd19..e4b1d35 100644
+--- a/drivers/clk/qcom/clk-rcg2.c
++++ b/drivers/clk/qcom/clk-rcg2.c
+@@ -13,6 +13,8 @@
+ #include <linux/regmap.h>
+ #include <linux/math64.h>
+ #include <linux/slab.h>
++#include <linux/debugfs.h>
++#include <linux/seq_file.h>
+ 
+ #include <asm/div64.h>
+ 
+@@ -347,6 +349,36 @@ static int clk_rcg2_set_floor_rate_and_parent(struct clk_hw *hw,
+ 	return __clk_rcg2_set_rate(hw, rate, FLOOR);
+ }
+ 
++static int rcg2_list_rates_show(struct seq_file *m, void *unused)
++{
++	struct clk_rcg2 *rcg = m->private;
++	const struct freq_tbl *f;
++
++	if (rcg->freq_tbl)
++		for (f = rcg->freq_tbl; f->freq; f++)
++			seq_printf(m, "%lu\n", f->freq);
++
++	return 0;
++}
++
++static int rcg2_list_rates_open(struct inode *inode, struct file *file)
++{
++	return single_open(file, rcg2_list_rates_show, inode->i_private);
++}
++
++static const struct file_operations rcg2_list_rates_fops = {
++	.open		= rcg2_list_rates_open,
++	.read		= seq_read,
++	.llseek		= seq_lseek,
++	.release	= seq_release,
++};
++
++static void clk_rcg2_debug_init(struct clk_hw *hw, struct dentry *dentry)
++{
++	debugfs_create_file("list_rates", 0444, dentry, to_clk_rcg2(hw),
++			    &rcg2_list_rates_fops);
++}
++
+ const struct clk_ops clk_rcg2_ops = {
+ 	.is_enabled = clk_rcg2_is_enabled,
+ 	.get_parent = clk_rcg2_get_parent,
+@@ -355,6 +387,7 @@ static int clk_rcg2_set_floor_rate_and_parent(struct clk_hw *hw,
+ 	.determine_rate = clk_rcg2_determine_rate,
+ 	.set_rate = clk_rcg2_set_rate,
+ 	.set_rate_and_parent = clk_rcg2_set_rate_and_parent,
++	.debug_init = clk_rcg2_debug_init,
+ };
+ EXPORT_SYMBOL_GPL(clk_rcg2_ops);
+ 
+-- 
+Qualcomm Datacenter Technologies as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
 
-Does the problem boil down to needing to reserve channel x to use PWMx
-pin? If so, just do a mask property of reserved for PWM channels.
-
-Sorry this is going in circles.
-
-Rob
