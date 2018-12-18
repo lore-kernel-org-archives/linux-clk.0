@@ -4,40 +4,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A22FC43387
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Dec 2018 11:20:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DD73C43387
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Dec 2018 11:24:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C817F21850
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Dec 2018 11:20:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 527502184E
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Dec 2018 11:24:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=rere.qmqm.pl header.i=@rere.qmqm.pl header.b="mpAwMMAp"
+	dkim=pass (2048-bit key) header.d=rere.qmqm.pl header.i=@rere.qmqm.pl header.b="pigx0JnH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726450AbeLRLUv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 Dec 2018 06:20:51 -0500
-Received: from rere.qmqm.pl ([91.227.64.183]:20662 "EHLO rere.qmqm.pl"
+        id S1726544AbeLRLYG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 Dec 2018 06:24:06 -0500
+Received: from rere.qmqm.pl ([91.227.64.183]:60342 "EHLO rere.qmqm.pl"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726379AbeLRLUv (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 18 Dec 2018 06:20:51 -0500
+        id S1726430AbeLRLYG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 18 Dec 2018 06:24:06 -0500
 Received: from remote.user (localhost [127.0.0.1])
-        by rere.qmqm.pl (Postfix) with ESMTPSA id 43JwX96CXdzHb;
-        Tue, 18 Dec 2018 12:19:21 +0100 (CET)
+        by rere.qmqm.pl (Postfix) with ESMTPSA id 43Jwbx1D9Dz1f;
+        Tue, 18 Dec 2018 12:22:37 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
-        t=1545131961; bh=jycAhEYzEBtnnZoIZGaZbJ1DFaTdDSu9LD2wajM16/g=;
+        t=1545132157; bh=LoiL0Ir2qotlSd4J6F6YKsc3OqiC7BOqc1ue5iQ2gtE=;
         h=Date:From:Subject:To:Cc:From;
-        b=mpAwMMApmN8uoG4xh979VO7RlITGhfUDRY4C/AYkXJ4K5BZJ+OXay+LL5POTqAbt3
-         0UjdSzIyA+0uzA/4evpexUK/07teX32fw4L+Ll43r6z5VojB6RnFDx0veErQ9FZSBN
-         F4B4p6Zlk/NTjDTozhBvqVkQV/f5vMK43eVZKfAD6Q+XAs8n9nlTYmHeAlYh/HDNPq
-         naA4jx9CCdiEDQialJIy4tJxjKMbqG00nbLPNiLlNi0BGFnwUP7EVTG8mZr7zBAOqr
-         OqGBX50kCJVHjIgsjtwfslt7Y9KwbkjD/iVENEEpvTP/qG40zbH6JrwVLnlgXDHt/f
-         lqioPEpTnFUmw==
+        b=pigx0JnHuPz++WuMHysiiZ1dS2MvSSSmGKgcey1ScdcVrvpBh4iA/HeNXwNMKWuf/
+         qPUdwpnvqaBE0tJoibJjrF4g5X45awcaL+J8Wftbknp8FaW7cnn8DkRrBqFUYdDS+x
+         hJ9N+gUwAmSNTGqmAbEs1MWFxhQxY0ttY/1Uf+ODhOKYnul7gaTGSHepC5NReqHkii
+         WxaeLtLwIabHn+XtqasNf9I59FXHiyp37gJGGpDqBj8N58Qfv59vTVoXtXJ4PhEmqC
+         gUQoPnuSlUrJdUMFPheAYn6e9fX++WV36GSB6qkru5c4HjGXnQKreYWgg2TlV/Z3GO
+         I1NY4/MdDm9Tg==
 X-Virus-Status: Clean
 X-Virus-Scanned: clamav-milter 0.100.2 at mail
-Date:   Tue, 18 Dec 2018 12:20:48 +0100
-Message-Id: <70db24a03b552ca553e6435306d895644fb08545.1545131728.git.mirq-linux@rere.qmqm.pl>
+Date:   Tue, 18 Dec 2018 12:24:03 +0100
+Message-Id: <1-28c5791f73370d0aa8cbb57af796b61de2b21238.1545131728.git.mirq-linux@rere.qmqm.pl>
 From:   =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
-Subject: [PATCH v3] clk: at91: optimize clk_round_rate() for AUDIO_PLL
+Subject: [RESEND PATCH v3] clk: at91: enable AUDIOPLL as source for PCKx on SAMA5D2
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -52,46 +53,37 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Stop the search for parent rate when exact match is found.
-
-This makes for 3 clk_round_rate() calls instead of 64 of them on
-SAMA5D2-based board when searching for 12.288MHz clock.
+Datasheet for SAMA5D2x mentions 6 sources for PCKx, the last being AUDIOPLL.
 
 Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
----
- v2: rebased on v4.20-rc7
- v3: formatting and commit description changes
----
- drivers/clk/at91/clk-audio-pll.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/at91/clk-audio-pll.c b/drivers/clk/at91/clk-audio-pll.c
-index 36d77146a3bd..3cc4a82f4e9f 100644
---- a/drivers/clk/at91/clk-audio-pll.c
-+++ b/drivers/clk/at91/clk-audio-pll.c
-@@ -340,7 +340,12 @@ static long clk_audio_pll_pmc_round_rate(struct clk_hw *hw, unsigned long rate,
- 	pr_debug("A PLL/PMC: %s, rate = %lu (parent_rate = %lu)\n", __func__,
- 		 rate, *parent_rate);
+---
+ v2: rebased for 4.20-rc7
+ v3: rewritten for 4.21
+---
+ drivers/clk/at91/sama5d2.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/at91/sama5d2.c b/drivers/clk/at91/sama5d2.c
+index d69ad96fe988..ade063622531 100644
+--- a/drivers/clk/at91/sama5d2.c
++++ b/drivers/clk/at91/sama5d2.c
+@@ -241,13 +241,14 @@ static void __init sama5d2_pmc_setup(struct device_node *np)
+ 	parent_names[2] = "plladivck";
+ 	parent_names[3] = "utmick";
+ 	parent_names[4] = "mck";
++	parent_names[5] = "audiopll_pmcck";
+ 	for (i = 0; i < 3; i++) {
+ 		char name[6];
  
--	for (div = 1; div <= AUDIO_PLL_QDPMC_MAX; div++) {
-+	if (!rate)
-+		return 0;
-+
-+	best_parent_rate = clk_round_rate(pclk->clk, 1);
-+	div = max(best_parent_rate / rate, 1UL);
-+	for (; div <= AUDIO_PLL_QDPMC_MAX; div++) {
- 		best_parent_rate = clk_round_rate(pclk->clk, rate * div);
- 		tmp_rate = best_parent_rate / div;
- 		tmp_diff = abs(rate - tmp_rate);
-@@ -350,6 +355,8 @@ static long clk_audio_pll_pmc_round_rate(struct clk_hw *hw, unsigned long rate,
- 			best_rate = tmp_rate;
- 			best_diff = tmp_diff;
- 			tmp_qd = div;
-+			if (!best_diff)
-+				break;	/* got exact match */
- 		}
- 	}
+ 		snprintf(name, sizeof(name), "prog%d", i);
  
+ 		hw = at91_clk_register_programmable(regmap, name,
+-						    parent_names, 5, i,
++						    parent_names, 6, i,
+ 						    &at91sam9x5_programmable_layout);
+ 		if (IS_ERR(hw))
+ 			goto err_free;
 -- 
 2.19.2
 
