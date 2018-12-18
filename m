@@ -7,35 +7,38 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E068C43387
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Dec 2018 09:12:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61758C43387
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Dec 2018 09:12:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFCCB217D8
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Dec 2018 09:12:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30F64217D8
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Dec 2018 09:12:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="iUeAo+I7"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="NJXbBHeh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726430AbeLRJMz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 Dec 2018 04:12:55 -0500
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:5637 "EHLO
+        id S1726439AbeLRJM6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 Dec 2018 04:12:58 -0500
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:5640 "EHLO
         hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726368AbeLRJMz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Dec 2018 04:12:55 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c18ba110000>; Tue, 18 Dec 2018 01:12:49 -0800
+        with ESMTP id S1726368AbeLRJM5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Dec 2018 04:12:57 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c18ba130000>; Tue, 18 Dec 2018 01:12:51 -0800
 Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 18 Dec 2018 01:12:54 -0800
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Tue, 18 Dec 2018 01:12:56 -0800
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 18 Dec 2018 01:12:54 -0800
-Received: from HQMAIL106.nvidia.com (172.18.146.12) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 18 Dec
- 2018 09:12:54 +0000
-Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL106.nvidia.com
- (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
- Transport; Tue, 18 Dec 2018 09:12:54 +0000
+        by hqpgpgate102.nvidia.com on Tue, 18 Dec 2018 01:12:56 -0800
+Received: from HQMAIL112.nvidia.com (172.18.146.18) by HQMAIL106.nvidia.com
+ (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 18 Dec
+ 2018 09:12:56 +0000
+Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL112.nvidia.com
+ (172.18.146.18) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 18 Dec
+ 2018 09:12:56 +0000
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
+ Transport; Tue, 18 Dec 2018 09:12:56 +0000
 Received: from josephl-linux.nvidia.com (Not Verified[10.19.108.132]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5c18ba140004>; Tue, 18 Dec 2018 01:12:53 -0800
+        id <B5c18ba160004>; Tue, 18 Dec 2018 01:12:55 -0800
 From:   Joseph Lo <josephl@nvidia.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Peter De Schrijver <pdeschrijver@nvidia.com>,
@@ -43,9 +46,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
 CC:     <linux-arm-kernel@lists.infradead.org>,
         <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
         Joseph Lo <josephl@nvidia.com>, <devicetree@vger.kernel.org>
-Subject: [PATCH V3 03/20] dt-bindings: cpufreq: tegra124: remove vdd-cpu-supply from required properties
-Date:   Tue, 18 Dec 2018 17:12:15 +0800
-Message-ID: <20181218091232.23532-4-josephl@nvidia.com>
+Subject: [PATCH V3 04/20] dt-bindings: cpufreq: tegra124: remove cpu_lp clock from required properties
+Date:   Tue, 18 Dec 2018 17:12:16 +0800
+Message-ID: <20181218091232.23532-5-josephl@nvidia.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181218091232.23532-1-josephl@nvidia.com>
 References: <20181218091232.23532-1-josephl@nvidia.com>
@@ -54,24 +57,24 @@ X-NVConfidentiality: public
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1545124369; bh=5t6DkNBPxVoGlP6p7NLGB2QoJqKyG7/5Egpw0nrDCVY=;
+        t=1545124371; bh=MGogn6gmC82VxzW8tN2AiGeyYrbzuQHtjEPnjCPReRs=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:MIME-Version:X-NVConfidentiality:
          Content-Transfer-Encoding:Content-Type;
-        b=iUeAo+I7RhbloCGx5EABTv4Creepp02Q+8Ql28v2nsB0TacUZomgr4eCbgWWYq+tD
-         8onbEEL2rmHDTJp4Og8L+xuKYNNoIcZpHJvgtLqA7A2g85gMe+7xEoxxqrPFgIdPRr
-         NAkvNpoIpgGVV7IUmIz4i7egSYUfYyLI54cC7YdRdhHbp1Liwdi/kMuevuqJ2Z27MX
-         EyJUl7yHpdNzXsW9LYGsUqrLeC/Dd0mePofilw/l1NyGDKD15ywzQuAM6pzNLAHOlt
-         FU90uPV+PYHFim8E5eG25G6kc+EPC4FLFCpEOCXC6TRD20C35wHE/3zfoD4SlUNF2a
-         GJo3bn0zGTwlg==
+        b=NJXbBHehspJAW+XoECtVLw/H5J/vHpaq1ytDkB9hRpeI8yL0ZgweqOiFvjG71m7eF
+         vNxQLO2BotlrZZadBg4+FvGnZYpyDIVKElfK8CT1qoB17DlNOJ5iOCFx03g+2RoWKr
+         lFGjMK7LCvyKmY8sO5mcWEw8WczhFcQKLZmFafed2ZP05qj3VVzzGKIRrtT2OpLaCz
+         eGZcOBG6zTxaBCFjNcWmFoCpeovmjr9HVM950uYg9TQp4Nvpoe8T+GgEdGAXsIu4CA
+         iaBk/An/yRMsWPD/LnJXtWlMQwQOQTjB/xi/vRrvzxJZzQ8XCQU37nljvUUSVsO8s7
+         0GbKL5iXSm42A==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The Tegra124 cpufreq driver works only with DFLL clock, which is a
-hardware-based frequency/voltage controller. The driver doesn't need to
-control the regulator itself. Hence remove that.
+The cpu_lp clock property is only needed when the CPUfreq driver
+supports CPU cluster switching. But it was not a design for this driver
+and it didn't handle that as well. So removing this property.
 
 Cc: devicetree@vger.kernel.org
 Signed-off-by: Joseph Lo <josephl@nvidia.com>
@@ -82,33 +85,37 @@ Acked-by: Jon Hunter <jonathanh@nvidia.com>
 *V2:
  - add ack tag
 ---
- .../devicetree/bindings/cpufreq/nvidia,tegra124-cpufreq.txt     | 2 --
- 1 file changed, 2 deletions(-)
+ .../devicetree/bindings/cpufreq/nvidia,tegra124-cpufreq.txt   | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
 diff --git a/Documentation/devicetree/bindings/cpufreq/nvidia,tegra124-cpuf=
 req.txt b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra124-cpufreq=
 .txt
-index b1669fbfb740..031545a29caf 100644
+index 031545a29caf..03196d5ea515 100644
 --- a/Documentation/devicetree/bindings/cpufreq/nvidia,tegra124-cpufreq.txt
 +++ b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra124-cpufreq.txt
-@@ -13,7 +13,6 @@ Required properties:
+@@ -9,7 +9,6 @@ Required properties:
+   See ../clocks/clock-bindings.txt for details.
+ - clock-names: Must include the following entries:
+   - cpu_g: Clock mux for the fast CPU cluster.
+-  - cpu_lp: Clock mux for the low-power CPU cluster.
    - pll_x: Fast PLL clocksource.
    - pll_p: Auxiliary PLL used during fast PLL rate changes.
    - dfll: Fast DFLL clocksource that also automatically scales CPU voltage=
 .
--- vdd-cpu-supply: Regulator for CPU voltage
+@@ -30,11 +29,10 @@ cpus {
+ 		reg =3D <0>;
 =20
- Optional properties:
- - clock-latency: Specify the possible maximum transition latency for clock=
-,
-@@ -37,7 +36,6 @@ cpus {
+ 		clocks =3D <&tegra_car TEGRA124_CLK_CCLK_G>,
+-			 <&tegra_car TEGRA124_CLK_CCLK_LP>,
+ 			 <&tegra_car TEGRA124_CLK_PLL_X>,
+ 			 <&tegra_car TEGRA124_CLK_PLL_P>,
  			 <&dfll>;
- 		clock-names =3D "cpu_g", "cpu_lp", "pll_x", "pll_p", "dfll";
+-		clock-names =3D "cpu_g", "cpu_lp", "pll_x", "pll_p", "dfll";
++		clock-names =3D "cpu_g", "pll_x", "pll_p", "dfll";
  		clock-latency =3D <300000>;
--		vdd-cpu-supply: <&vdd_cpu>;
  	};
 =20
- 	<...>
 --=20
 2.20.1
 
