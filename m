@@ -2,199 +2,124 @@ Return-Path: <SRS0=G9W/=O3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64309C43387
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Dec 2018 02:15:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87C6CC43387
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Dec 2018 02:56:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 263262080D
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Dec 2018 02:15:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2DC362145D
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Dec 2018 02:56:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Wf8j9kUG";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Kcodba2B"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="mybhHW2R"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726503AbeLRCPv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Dec 2018 21:15:51 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:59466 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726295AbeLRCPv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Dec 2018 21:15:51 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 049EF60860; Tue, 18 Dec 2018 02:15:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1545099350;
-        bh=ErmrL16E0heg/giXRM5GLnAO5thNlkvBcDzW7GSfOxk=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Wf8j9kUGfkB6ylSV042GTNRgg3rxBoAb8cL0o/M1F2QnoZKzhvgiL46EOIXHVW8GX
-         2sjuEiHsPkboUCUGb42qvdt3HmSDQRNv4U1qsYtDQKktkBgydCIqwGzNPWY8pWAjPT
-         +hnZy+rtElU/cUD2QFUGzu/LQd/4khHnSWpVaDIU=
-Received: from jhugo-perf-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: jhugo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id EF637601D7;
-        Tue, 18 Dec 2018 02:15:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1545099348;
-        bh=ErmrL16E0heg/giXRM5GLnAO5thNlkvBcDzW7GSfOxk=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Kcodba2BNPF5ewrkiklFRpmnaGAj1mvlwGiESF3Y1nVtuV6VZ8SVyNhXAjXzPmH7K
-         nB4YNR99K7jBUBVijnT2fpCZTjb8yKb6+DME+wDT0dion5bBcURjiSPYNUQrNAyPuB
-         OVEl0jgeTSNB08IGpO4r804OxzWOwhN4OjiOKkm8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EF637601D7
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
-From:   Jeffrey Hugo <jhugo@codeaurora.org>
-To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc:     bjorn.andersson@linaro.org, marc.w.gonzalez@free.fr,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jeffrey Hugo <jhugo@codeaurora.org>
-Subject: [PATCH v4] clk: qcom: smd: Add support for MSM8998 rpm clocks
-Date:   Mon, 17 Dec 2018 19:15:36 -0700
-Message-Id: <1545099336-5615-1-git-send-email-jhugo@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        id S1726303AbeLRC4H (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Dec 2018 21:56:07 -0500
+Received: from mail-eopbgr30058.outbound.protection.outlook.com ([40.107.3.58]:35616
+        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726301AbeLRC4H (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 17 Dec 2018 21:56:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UX0mSS/8Gw/k0Xla90uKTQDwj1VRJl/Yw2mclDihot0=;
+ b=mybhHW2RZhorhRNQrLiETctGabYZfeyxSg7aw6ASaEnZEY3PyL6CL80XoF4Se3FIvCA6R1CVHW8iHw5j53rAQtdy7OuFZcid6DsZZo7RjZvWq/Prub+9bjVVJy/AMBZo4WcxzJfxvmL1+IUtjXZfwtxTmANcbvSuSEurFRBXRMQ=
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
+ DB3PR0402MB3866.eurprd04.prod.outlook.com (52.134.71.20) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1425.19; Tue, 18 Dec 2018 02:56:03 +0000
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::adf8:f49d:deb4:58fd]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::adf8:f49d:deb4:58fd%3]) with mapi id 15.20.1425.023; Tue, 18 Dec 2018
+ 02:56:03 +0000
+From:   Anson Huang <anson.huang@nxp.com>
+To:     "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     dl-linux-imx <linux-imx@nxp.com>
+Subject: [PATCH] clk: imx: add CLK_GET_RATE_NOCACHE flag for i.MX8M composite
+ clock
+Thread-Topic: [PATCH] clk: imx: add CLK_GET_RATE_NOCACHE flag for i.MX8M
+ composite clock
+Thread-Index: AQHUln02eAG5Z54Wc0mB2eSSS/znhw==
+Date:   Tue, 18 Dec 2018 02:56:03 +0000
+Message-ID: <1545101396-16335-1-git-send-email-Anson.Huang@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.7.4
+x-clientproxiedby: HK0PR03CA0006.apcprd03.prod.outlook.com
+ (2603:1096:203:2e::18) To DB3PR0402MB3916.eurprd04.prod.outlook.com
+ (2603:10a6:8:10::18)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=anson.huang@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DB3PR0402MB3866;6:4WL4G1THcXFLVo4ozpfqI8sp3UY/y5dj+M853qDTaV3Ljmzm+qD+BL4UhN7SYspyYhNUn7pTxbGWuaVWs7eZzhs74t3MVeCnsX/zVw5LMssj4TDQMJDT5SDzuj6FsIMFlxMPTeGZHtPJDBaYBQ0nYnzK9hzHndaR0SDfVu96Hjq6fVskSV/urPmEe1HCPmsqf39BaPou5yK09g5DQ1wD6s0NunyPVrirbHvR4NGacE9WvfhrUdb2hki8TLZoADufPNK3k8zWiVFHooIahMGZ8d2QSEeZLh/K/7dzSGWyt9m7wmuPmv29G9/gtN7de16c+un075gWaMMeD/XCm1QJ+OyausXnQfsKjiPsF8/719kIgSy/4H88Tz8bY4Jtq27ZUbtHFLfoWExr3ixbuarGqH5MJhthM4dp6YE9fPQrWxUv3J6HesQcUldSXxssBOZousMf1A9t2GWqVmBKYxN4Rg==;5:ymcoTfcM5NxM3klNIt5EeM0UciaNypmDoWAmaYIIt9ook2BUzhXSikxF3SfIFHkOq7hZVLfEtSBJQbE9Q1wxAhlX+J1hNl6OhXe6jA/xUSMv63ICksweWsmStXaoYFVju3Wv2ZmJbOIVyk/0kTG7rzdcT/lBvcyJPWy4mBs7btE=;7:e9z1NYYI6l7OQY18sCYyjMu3073T1o7NTAVHNDoVkpsufBpU2PfIUK/Dwmpr2Y6hQikmt8fNIwwdHtdKXot1gDVn/WvIxx7KvExeFBRIJH/x+QzQKjR3qUuWmecV8TXj1q+Oehn+43h0mtwloytRqQ==
+x-ms-office365-filtering-correlation-id: 964c3c64-6804-4506-9437-08d6649458cd
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DB3PR0402MB3866;
+x-ms-traffictypediagnostic: DB3PR0402MB3866:
+x-microsoft-antispam-prvs: <DB3PR0402MB38660B2A3380CAD493FA2F1FF5BD0@DB3PR0402MB3866.eurprd04.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(6040522)(2401047)(5005006)(8121501046)(3002001)(10201501046)(3231475)(944501520)(52105112)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:DB3PR0402MB3866;BCL:0;PCL:0;RULEID:;SRVR:DB3PR0402MB3866;
+x-forefront-prvs: 08902E536D
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(136003)(39860400002)(346002)(376002)(366004)(199004)(189003)(53936002)(6436002)(102836004)(2201001)(66066001)(6506007)(86362001)(2501003)(2906002)(386003)(6512007)(71200400001)(68736007)(71190400001)(256004)(97736004)(6486002)(14454004)(316002)(52116002)(8936002)(99286004)(50226002)(81166006)(110136005)(26005)(8676002)(25786009)(6116002)(476003)(486006)(4326008)(3846002)(186003)(305945005)(106356001)(2616005)(478600001)(7736002)(105586002)(36756003)(81156014)(5660300001);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3866;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: sf93K+F3Hna5r0gI0Y0XcQhGHo/VLRQbyxhiMBBD1R37G29fT3iTCjCgaQB6ho6k0vz72ORBGrH7skclwPyyO2FwgtUIihuwsVn0fZP3SeY75RnwkfVJw2JYC6z5zJ9552wLVKrWd9ZtLoq/8KTZgAvhnOwH0gzrrS3la1hZoyPcXvUn2wAmdY+aV9o9ZGzpXQ98Zs3PQ0Ve4EcCepr/DlslSi5ViQvGFYEzhv0oYkiesUE/r0yVRIvTTWZe3ZdQ1hGXluNOcMyz5cv6NzCP85QPtAgCKmJzD0hzagGnAe+9S0Rs4C7QT6thW3lZi9qF
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 964c3c64-6804-4506-9437-08d6649458cd
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Dec 2018 02:56:03.2212
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3866
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add rpm smd clocks, PMIC and bus clocks which are required on MSM8998
-for clients to vote on.
+On i.MX8M, some of the bus clocks' rate could be changed in TF-A,
+so Linux clock framework does NOT know it at all, need to add
+CLK_GET_RATE_NOCACHE flag for composite clock to make sure the
+clk rate from Linux clock tree always matches the HW settings.
 
-Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
-v4
--Fix compile issue
+ drivers/clk/imx/clk-composite-8m.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-v3
--Ensure Marc's hang was addressed by GCC fixes
--Renamed the bb clks to ln_bb to match the schematics
-
-v2
--fix compatible ordering nits per Stephen 
-
- .../devicetree/bindings/clock/qcom,rpmcc.txt       |  1 +
- drivers/clk/qcom/clk-smd-rpm.c                     | 63 ++++++++++++++++++++++
- include/dt-bindings/clock/qcom,rpmcc.h             | 10 ++++
- 3 files changed, 74 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-index 87b4949..944719b 100644
---- a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-+++ b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-@@ -16,6 +16,7 @@ Required properties :
- 			"qcom,rpmcc-msm8974", "qcom,rpmcc"
- 			"qcom,rpmcc-apq8064", "qcom,rpmcc"
- 			"qcom,rpmcc-msm8996", "qcom,rpmcc"
-+			"qcom,rpmcc-msm8998", "qcom,rpmcc"
- 			"qcom,rpmcc-qcs404", "qcom,rpmcc"
- 
- - #clock-cells : shall contain 1
-diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
-index d3aadae..22dd42a 100644
---- a/drivers/clk/qcom/clk-smd-rpm.c
-+++ b/drivers/clk/qcom/clk-smd-rpm.c
-@@ -655,10 +655,73 @@ static int clk_smd_rpm_enable_scaling(struct qcom_smd_rpm *rpm)
- 	.num_clks = ARRAY_SIZE(qcs404_clks),
- };
- 
-+/* msm8998 */
-+DEFINE_CLK_SMD_RPM(msm8998, snoc_clk, snoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 1);
-+DEFINE_CLK_SMD_RPM(msm8998, cnoc_clk, cnoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 2);
-+DEFINE_CLK_SMD_RPM(msm8998, ce1_clk, ce1_a_clk, QCOM_SMD_RPM_CE_CLK, 0);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, div_clk1, div_clk1_a, 0xb);
-+DEFINE_CLK_SMD_RPM(msm8998, ipa_clk, ipa_a_clk, QCOM_SMD_RPM_IPA_CLK, 0);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, ln_bb_clk1, ln_bb_clk1_a, 1);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, ln_bb_clk2, ln_bb_clk2_a, 2);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8998, ln_bb_clk3_pin, ln_bb_clk3_a_pin,
-+				     3);
-+DEFINE_CLK_SMD_RPM(msm8998, mmssnoc_axi_rpm_clk, mmssnoc_axi_rpm_a_clk,
-+		   QCOM_SMD_RPM_MMAXI_CLK, 0);
-+DEFINE_CLK_SMD_RPM(msm8998, aggre1_noc_clk, aggre1_noc_a_clk,
-+		   QCOM_SMD_RPM_AGGR_CLK, 1);
-+DEFINE_CLK_SMD_RPM(msm8998, aggre2_noc_clk, aggre2_noc_a_clk,
-+		   QCOM_SMD_RPM_AGGR_CLK, 2);
-+DEFINE_CLK_SMD_RPM_QDSS(msm8998, qdss_clk, qdss_a_clk,
-+			QCOM_SMD_RPM_MISC_CLK, 1);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, rf_clk1, rf_clk1_a, 4);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8998, rf_clk2_pin, rf_clk2_a_pin, 5);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, rf_clk3, rf_clk3_a, 6);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8998, rf_clk3_pin, rf_clk3_a_pin, 6);
-+static struct clk_smd_rpm *msm8998_clks[] = {
-+	[RPM_SMD_SNOC_CLK] = &msm8998_snoc_clk,
-+	[RPM_SMD_SNOC_A_CLK] = &msm8998_snoc_a_clk,
-+	[RPM_SMD_CNOC_CLK] = &msm8998_cnoc_clk,
-+	[RPM_SMD_CNOC_A_CLK] = &msm8998_cnoc_a_clk,
-+	[RPM_SMD_CE1_CLK] = &msm8998_ce1_clk,
-+	[RPM_SMD_CE1_A_CLK] = &msm8998_ce1_a_clk,
-+	[RPM_SMD_DIV_CLK1] = &msm8998_div_clk1,
-+	[RPM_SMD_DIV_A_CLK1] = &msm8998_div_clk1_a,
-+	[RPM_SMD_IPA_CLK] = &msm8998_ipa_clk,
-+	[RPM_SMD_IPA_A_CLK] = &msm8998_ipa_a_clk,
-+	[RPM_SMD_LN_BB_CLK1] = &msm8998_ln_bb_clk1,
-+	[RPM_SMD_LN_BB_CLK1_A] = &msm8998_ln_bb_clk1_a,
-+	[RPM_SMD_LN_BB_CLK2] = &msm8998_ln_bb_clk2,
-+	[RPM_SMD_LN_BB_CLK2_A] = &msm8998_ln_bb_clk2_a,
-+	[RPM_SMD_LN_BB_CLK3_PIN] = &msm8998_ln_bb_clk3_pin,
-+	[RPM_SMD_LN_BB_CLK3_A_PIN] = &msm8998_ln_bb_clk3_a_pin,
-+	[RPM_SMD_MMAXI_CLK] = &msm8998_mmssnoc_axi_rpm_clk,
-+	[RPM_SMD_MMAXI_A_CLK] = &msm8998_mmssnoc_axi_rpm_a_clk,
-+	[RPM_SMD_AGGR1_NOC_CLK] = &msm8998_aggre1_noc_clk,
-+	[RPM_SMD_AGGR1_NOC_A_CLK] = &msm8998_aggre1_noc_a_clk,
-+	[RPM_SMD_AGGR2_NOC_CLK] = &msm8998_aggre2_noc_clk,
-+	[RPM_SMD_AGGR2_NOC_A_CLK] = &msm8998_aggre2_noc_a_clk,
-+	[RPM_SMD_QDSS_CLK] = &msm8998_qdss_clk,
-+	[RPM_SMD_QDSS_A_CLK] = &msm8998_qdss_a_clk,
-+	[RPM_SMD_RF_CLK1] = &msm8998_rf_clk1,
-+	[RPM_SMD_RF_CLK1_A] = &msm8998_rf_clk1_a,
-+	[RPM_SMD_RF_CLK2_PIN] = &msm8998_rf_clk2_pin,
-+	[RPM_SMD_RF_CLK2_A_PIN] = &msm8998_rf_clk2_a_pin,
-+	[RPM_SMD_RF_CLK3] = &msm8998_rf_clk3,
-+	[RPM_SMD_RF_CLK3_A] = &msm8998_rf_clk3_a,
-+	[RPM_SMD_RF_CLK3_PIN] = &msm8998_rf_clk3_pin,
-+	[RPM_SMD_RF_CLK3_A_PIN] = &msm8998_rf_clk3_a_pin,
-+};
+diff --git a/drivers/clk/imx/clk-composite-8m.c b/drivers/clk/imx/clk-compo=
+site-8m.c
+index 527ade1..d9147ec 100644
+--- a/drivers/clk/imx/clk-composite-8m.c
++++ b/drivers/clk/imx/clk-composite-8m.c
+@@ -161,6 +161,8 @@ struct clk *imx8m_clk_composite_flags(const char *name,
+ 	gate->reg =3D reg;
+ 	gate->bit_idx =3D PCG_CGC_SHIFT;
+=20
++	flags |=3D CLK_GET_RATE_NOCACHE;
 +
-+static const struct rpm_smd_clk_desc rpm_clk_msm8998 = {
-+	.clks = msm8998_clks,
-+	.num_clks = ARRAY_SIZE(msm8998_clks),
-+};
-+
- static const struct of_device_id rpm_smd_clk_match_table[] = {
- 	{ .compatible = "qcom,rpmcc-msm8916", .data = &rpm_clk_msm8916 },
- 	{ .compatible = "qcom,rpmcc-msm8974", .data = &rpm_clk_msm8974 },
- 	{ .compatible = "qcom,rpmcc-msm8996", .data = &rpm_clk_msm8996 },
-+	{ .compatible = "qcom,rpmcc-msm8998", .data = &rpm_clk_msm8998 },
- 	{ .compatible = "qcom,rpmcc-qcs404",  .data = &rpm_clk_qcs404  },
- 	{ }
- };
-diff --git a/include/dt-bindings/clock/qcom,rpmcc.h b/include/dt-bindings/clock/qcom,rpmcc.h
-index 3658b0c..ede93a0 100644
---- a/include/dt-bindings/clock/qcom,rpmcc.h
-+++ b/include/dt-bindings/clock/qcom,rpmcc.h
-@@ -127,5 +127,15 @@
- #define RPM_SMD_BIMC_GPU_A_CLK			77
- #define RPM_SMD_QPIC_CLK			78
- #define RPM_SMD_QPIC_CLK_A			79
-+#define RPM_SMD_LN_BB_CLK1			80
-+#define RPM_SMD_LN_BB_CLK1_A			81
-+#define RPM_SMD_LN_BB_CLK2			82
-+#define RPM_SMD_LN_BB_CLK2_A			83
-+#define RPM_SMD_LN_BB_CLK3_PIN			84
-+#define RPM_SMD_LN_BB_CLK3_A_PIN		85
-+#define RPM_SMD_RF_CLK3				86
-+#define RPM_SMD_RF_CLK3_A			87
-+#define RPM_SMD_RF_CLK3_PIN			88
-+#define RPM_SMD_RF_CLK3_A_PIN			89
- 
- #endif
--- 
-Qualcomm Datacenter Technologies as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+ 	hw =3D clk_hw_register_composite(NULL, name, parent_names, num_parents,
+ 			mux_hw, &clk_mux_ops, div_hw,
+ 			&imx8m_clk_composite_divider_ops,
+--=20
+2.7.4
 
