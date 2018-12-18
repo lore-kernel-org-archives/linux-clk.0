@@ -4,38 +4,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 459D3C43387
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Dec 2018 09:13:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B71BC43444
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Dec 2018 09:13:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08B91217D8
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Dec 2018 09:13:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD407217D8
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Dec 2018 09:13:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="agf7iJjr"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Ui8UQv18"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726449AbeLRJNC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 Dec 2018 04:13:02 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:14242 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726416AbeLRJNC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Dec 2018 04:13:02 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c18ba170003>; Tue, 18 Dec 2018 01:12:55 -0800
+        id S1726498AbeLRJNH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 Dec 2018 04:13:07 -0500
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:5652 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726412AbeLRJNH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Dec 2018 04:13:07 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c18ba1b0002>; Tue, 18 Dec 2018 01:12:59 -0800
 Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Tue, 18 Dec 2018 01:13:00 -0800
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 18 Dec 2018 01:13:05 -0800
 X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Tue, 18 Dec 2018 01:13:00 -0800
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL103.nvidia.com
- (172.20.187.11) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 18 Dec
- 2018 09:13:00 +0000
-Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
- Transport; Tue, 18 Dec 2018 09:13:00 +0000
+        by hqpgpgate101.nvidia.com on Tue, 18 Dec 2018 01:13:05 -0800
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL108.nvidia.com
+ (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 18 Dec
+ 2018 09:13:04 +0000
+Received: from HQMAIL106.nvidia.com (172.18.146.12) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 18 Dec
+ 2018 09:13:04 +0000
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL106.nvidia.com
+ (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
+ Transport; Tue, 18 Dec 2018 09:13:04 +0000
 Received: from josephl-linux.nvidia.com (Not Verified[10.19.108.132]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5c18ba1a0002>; Tue, 18 Dec 2018 01:12:59 -0800
+        id <B5c18ba1e0008>; Tue, 18 Dec 2018 01:13:04 -0800
 From:   Joseph Lo <josephl@nvidia.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Peter De Schrijver <pdeschrijver@nvidia.com>,
@@ -43,9 +46,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
 CC:     <linux-arm-kernel@lists.infradead.org>,
         <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
         Joseph Lo <josephl@nvidia.com>
-Subject: [PATCH V3 06/20] clk: tegra: dfll: CVB calculation alignment with the regulator
-Date:   Tue, 18 Dec 2018 17:12:18 +0800
-Message-ID: <20181218091232.23532-7-josephl@nvidia.com>
+Subject: [PATCH V3 08/20] clk: tegra: dfll: round down voltages based on alignment
+Date:   Tue, 18 Dec 2018 17:12:20 +0800
+Message-ID: <20181218091232.23532-9-josephl@nvidia.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181218091232.23532-1-josephl@nvidia.com>
 References: <20181218091232.23532-1-josephl@nvidia.com>
@@ -54,259 +57,114 @@ X-NVConfidentiality: public
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1545124375; bh=FkgExbzsU/MRzDFAaQ0pZx//tvKQEeACOwBUOj/HWyw=;
+        t=1545124379; bh=L81OmWKyjvSNfStsAV9bXBE0hngnsHVQ1gpZL9QEw7E=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:MIME-Version:X-NVConfidentiality:
          Content-Transfer-Encoding:Content-Type;
-        b=agf7iJjrUI20Ku64xVYiH4moqM906nLVtNhRfaY1iLPyyd2BHQ/DwzASt0ciUPMPq
-         E+32I/+JlGUXCcwkR44wNc2IrjKbWD/u/HEXlDytugk6HvRRqHbEVgxpoYhWzIGdEl
-         Q40ac4CxT+R08smxCpABtXJqdPcAP7JT/uPb1TpOdQ3XzIi15ikjqqiAi5o1GJxEJo
-         V/DgkJfvuQeFCZFekF6T54ZfqTDhijsMeafg53jk3d0va4TkSuLjh6SdXwpkaJ/OYz
-         RlO88CBJ8KC1C8R4sZDZV6JZF8yWjn4/pAh+xjXnEGtU3gmdKBtjxJvW1mEaf0Pf12
-         oBtYODWascaxQ==
+        b=Ui8UQv18UTQcAAVid4QB3NfHJVfIK5RLURcz2UACGZMzMNdd7PHqBKogpB7xBspua
+         aE4SNptpMJFLvyfokwyKk7uMZrggFHleumesZKxiNzf6ObC7+QGNfXVRFUy//655V+
+         XlW1xlbsM3xLHQ6RkxBJ4hWJeav6AAYVGubtiY6rWRPW09my+RshADUpK0XcEz8gRA
+         qrIJD3w7+1BblkPUzywYf5AyKbxHD2HKp/cr/FMHspnRu5kaPBI9yINHRL9JlmWjX0
+         S/fmuy3Z7Nd5pRy+LJjdYKR4E6rvZAKmLgRYho2y++rCwk8FqH9E5H1CwL+i2vzrBL
+         frPKFlNbpD6Qg==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The CVB table contains calibration data for the CPU DFLL based on
-process characterization. The regulator step and offset parameters depend
-on the regulator supplying vdd-cpu, not on the specific Tegra SKU.
+When generating the OPP table, the voltages are round down with the
+alignment from the regulator. The alignment should be applied for
+voltages look up as well.
 
-When using a PWM controlled regulator, the voltage step and offset are
-determined by the regulator type in use. This is specified in DT. When
-using an I2C controlled regulator, we can retrieve them from CPU regulator
-Then pass this information to the CVB table calculation function.
-
-Based on the work done of "Peter De Schrijver <pdeschrijver@nvidia.com>"
-and "Alex Frid <afrid@nvidia.com>".
+Based on the work of Penny Chiu <pchiu@nvidia.com>.
 
 Signed-off-by: Joseph Lo <josephl@nvidia.com>
 ---
-*V3:
- - remove redundant variable initialization code in get_alignment_from_dt
- - fix the error handling when retuning error from
- get_alignment_from_regulator
+*v3:
+ - fix error handling code when regulator_list_voltage returns error
 *V2:
- - use the updated DT binding string for parsing
- - update the mechanism for geting regulator data from DT (PWM mode) or
- regulator (I2C mode)
+ - s/align_volt/align_step/
+ - s/reg_volt/reg_volt_id/
 ---
- drivers/clk/tegra/clk-dfll.h               |  6 ++-
- drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 49 +++++++++++++++++++---
- drivers/clk/tegra/cvb.c                    | 12 +++---
- drivers/clk/tegra/cvb.h                    |  6 +--
- 4 files changed, 59 insertions(+), 14 deletions(-)
+ drivers/clk/tegra/clk-dfll.c | 21 +++++++++++++--------
+ 1 file changed, 13 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-dfll.h b/drivers/clk/tegra/clk-dfll.h
-index 83352c8078f2..ecc43cb9b6f1 100644
---- a/drivers/clk/tegra/clk-dfll.h
-+++ b/drivers/clk/tegra/clk-dfll.h
-@@ -1,6 +1,6 @@
- /*
-  * clk-dfll.h - prototypes and macros for the Tegra DFLL clocksource drive=
-r
-- * Copyright (C) 2013 NVIDIA Corporation.  All rights reserved.
-+ * Copyright (C) 2013-2018 NVIDIA Corporation.  All rights reserved.
-  *
-  * Aleksandr Frid <afrid@nvidia.com>
-  * Paul Walmsley <pwalmsley@nvidia.com>
-@@ -22,11 +22,14 @@
- #include <linux/reset.h>
- #include <linux/types.h>
-=20
-+#include "cvb.h"
-+
- /**
-  * struct tegra_dfll_soc_data - SoC-specific hooks/integration for the DFL=
-L driver
-  * @dev: struct device * that holds the OPP table for the DFLL
-  * @max_freq: maximum frequency supported on this SoC
-  * @cvb: CPU frequency table for this SoC
-+ * @alignment: parameters of the regulator step and offset
-  * @init_clock_trimmers: callback to initialize clock trimmers
-  * @set_clock_trimmers_high: callback to tune clock trimmers for high volt=
-age
-  * @set_clock_trimmers_low: callback to tune clock trimmers for low voltag=
-e
-@@ -35,6 +38,7 @@ struct tegra_dfll_soc_data {
- 	struct device *dev;
- 	unsigned long max_freq;
- 	const struct cvb_table *cvb;
-+	struct rail_alignment alignment;
-=20
- 	void (*init_clock_trimmers)(void);
- 	void (*set_clock_trimmers_high)(void);
-diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra=
-/clk-tegra124-dfll-fcpu.c
-index 1a2cc113e5c8..e87f73957c6f 100644
---- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-+++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-@@ -23,6 +23,7 @@
- #include <linux/init.h>
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
-+#include <linux/regulator/consumer.h>
- #include <soc/tegra/fuse.h>
-=20
- #include "clk.h"
-@@ -50,9 +51,6 @@ static const struct cvb_table tegra124_cpu_cvb_tables[] =
-=3D {
- 		.process_id =3D -1,
- 		.min_millivolts =3D 900,
- 		.max_millivolts =3D 1260,
--		.alignment =3D {
--			.step_uv =3D 10000, /* 10mV */
--		},
- 		.speedo_scale =3D 100,
- 		.voltage_scale =3D 1000,
- 		.entries =3D {
-@@ -105,11 +103,42 @@ static const struct of_device_id tegra124_dfll_fcpu_o=
-f_match[] =3D {
- 	{ },
- };
-=20
-+static void get_alignment_from_dt(struct device *dev,
-+				  struct rail_alignment *align)
-+{
-+	if (of_property_read_u32(dev->of_node,
-+				 "nvidia,pwm-voltage-step-microvolts",
-+				 &align->step_uv))
-+		align->step_uv =3D 0;
-+
-+	if (of_property_read_u32(dev->of_node,
-+				 "nvidia,pwm-min-microvolts",
-+				 &align->offset_uv))
-+		align->offset_uv =3D 0;
-+}
-+
-+static int get_alignment_from_regulator(struct device *dev,
-+					 struct rail_alignment *align)
-+{
-+	struct regulator *reg =3D devm_regulator_get(dev, "vdd-cpu");
-+
-+	if (IS_ERR(reg))
-+		return PTR_ERR(reg);
-+
-+	align->offset_uv =3D regulator_list_voltage(reg, 0);
-+	align->step_uv =3D regulator_get_linear_step(reg);
-+
-+	devm_regulator_put(reg);
-+
-+	return 0;
-+}
-+
- static int tegra124_dfll_fcpu_probe(struct platform_device *pdev)
+diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
+index 96be522398ed..ca9a4ae0d29e 100644
+--- a/drivers/clk/tegra/clk-dfll.c
++++ b/drivers/clk/tegra/clk-dfll.c
+@@ -804,18 +804,17 @@ static void dfll_init_out_if(struct tegra_dfll *td)
+ static int find_lut_index_for_rate(struct tegra_dfll *td, unsigned long ra=
+te)
  {
- 	int process_id, speedo_id, speedo_value, err;
- 	struct tegra_dfll_soc_data *soc;
- 	const struct dfll_fcpu_data *fcpu_data;
-+	struct rail_alignment align;
+ 	struct dev_pm_opp *opp;
+-	unsigned long uv;
+-	int i;
++	int i, align_step;
 =20
- 	fcpu_data =3D of_device_get_match_data(&pdev->dev);
- 	if (!fcpu_data)
-@@ -135,12 +164,22 @@ static int tegra124_dfll_fcpu_probe(struct platform_d=
-evice *pdev)
- 		return -ENODEV;
+ 	opp =3D dev_pm_opp_find_freq_ceil(td->soc->dev, &rate);
+ 	if (IS_ERR(opp))
+ 		return PTR_ERR(opp);
+=20
+-	uv =3D dev_pm_opp_get_voltage(opp);
++	align_step =3D dev_pm_opp_get_voltage(opp) / td->soc->alignment.step_uv;
+ 	dev_pm_opp_put(opp);
+=20
+ 	for (i =3D td->lut_bottom; i < td->lut_size; i++) {
+-		if (td->lut_uv[i] >=3D uv)
++		if ((td->lut_uv[i] / td->soc->alignment.step_uv) >=3D align_step)
+ 			return i;
  	}
 =20
-+	if (of_property_read_bool(pdev->dev.of_node, "nvidia,pwm-to-pmic")) {
-+		get_alignment_from_dt(&pdev->dev, &align);
-+	} else {
-+		err =3D get_alignment_from_regulator(&pdev->dev, &align);
-+		if (err)
-+			return err;
-+	}
-+
- 	soc->max_freq =3D fcpu_data->cpu_max_freq_table[speedo_id];
-=20
- 	soc->cvb =3D tegra_cvb_add_opp_table(soc->dev, fcpu_data->cpu_cvb_tables,
- 					   fcpu_data->cpu_cvb_tables_size,
--					   process_id, speedo_id, speedo_value,
--					   soc->max_freq);
-+					   &align, process_id, speedo_id,
-+					   speedo_value, soc->max_freq);
-+	soc->alignment =3D align;
-+
- 	if (IS_ERR(soc->cvb)) {
- 		dev_err(&pdev->dev, "couldn't add OPP table: %ld\n",
- 			PTR_ERR(soc->cvb));
-diff --git a/drivers/clk/tegra/cvb.c b/drivers/clk/tegra/cvb.c
-index da9e8e7b5ce5..81dcb97a9e0a 100644
---- a/drivers/clk/tegra/cvb.c
-+++ b/drivers/clk/tegra/cvb.c
-@@ -1,7 +1,7 @@
- /*
-  * Utility functions for parsing Tegra CVB voltage tables
-  *
-- * Copyright (C) 2012-2014 NVIDIA Corporation.  All rights reserved.
-+ * Copyright (C) 2012-2018 NVIDIA Corporation.  All rights reserved.
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 2 as
-@@ -62,9 +62,9 @@ static int round_voltage(int mv, const struct rail_alignm=
-ent *align, int up)
- }
-=20
- static int build_opp_table(struct device *dev, const struct cvb_table *tab=
-le,
-+			   struct rail_alignment *align,
- 			   int speedo_value, unsigned long max_freq)
- {
--	const struct rail_alignment *align =3D &table->alignment;
- 	int i, ret, dfll_mv, min_mv, max_mv;
-=20
- 	min_mv =3D round_voltage(table->min_millivolts, align, UP);
-@@ -109,8 +109,9 @@ static int build_opp_table(struct device *dev, const st=
-ruct cvb_table *table,
+@@ -1533,18 +1532,21 @@ static int dfll_init(struct tegra_dfll *td)
   */
- const struct cvb_table *
- tegra_cvb_add_opp_table(struct device *dev, const struct cvb_table *tables=
-,
--			size_t count, int process_id, int speedo_id,
--			int speedo_value, unsigned long max_freq)
-+			size_t count, struct rail_alignment *align,
-+			int process_id, int speedo_id, int speedo_value,
-+			unsigned long max_freq)
+ static int find_vdd_map_entry_exact(struct tegra_dfll *td, int uV)
  {
- 	size_t i;
- 	int ret;
-@@ -124,7 +125,8 @@ tegra_cvb_add_opp_table(struct device *dev, const struc=
-t cvb_table *tables,
- 		if (table->process_id !=3D -1 && table->process_id !=3D process_id)
- 			continue;
+-	int i, n_voltages, reg_uV;
++	int i, n_voltages, reg_uV,reg_volt_id, align_step;
 =20
--		ret =3D build_opp_table(dev, table, speedo_value, max_freq);
-+		ret =3D build_opp_table(dev, table, align, speedo_value,
-+				      max_freq);
- 		return ret ? ERR_PTR(ret) : table;
+ 	if (WARN_ON(td->pmu_if =3D=3D TEGRA_DFLL_PMU_PWM))
+ 		return -EINVAL;
+=20
++	align_step =3D uV / td->soc->alignment.step_uv;
+ 	n_voltages =3D regulator_count_voltages(td->vdd_reg);
+ 	for (i =3D 0; i < n_voltages; i++) {
+ 		reg_uV =3D regulator_list_voltage(td->vdd_reg, i);
+ 		if (reg_uV < 0)
+ 			break;
+=20
+-		if (uV =3D=3D reg_uV)
++		reg_volt_id =3D reg_uV / td->soc->alignment.step_uv;
++
++		if (align_step =3D=3D reg_volt_id)
+ 			return i;
  	}
 =20
-diff --git a/drivers/clk/tegra/cvb.h b/drivers/clk/tegra/cvb.h
-index c1f077993b2a..bcf15a089b93 100644
---- a/drivers/clk/tegra/cvb.h
-+++ b/drivers/clk/tegra/cvb.h
-@@ -49,7 +49,6 @@ struct cvb_table {
+@@ -1558,18 +1560,21 @@ static int find_vdd_map_entry_exact(struct tegra_df=
+ll *td, int uV)
+  * */
+ static int find_vdd_map_entry_min(struct tegra_dfll *td, int uV)
+ {
+-	int i, n_voltages, reg_uV;
++	int i, n_voltages, reg_uV, reg_volt_id, align_step;
 =20
- 	int min_millivolts;
- 	int max_millivolts;
--	struct rail_alignment alignment;
+ 	if (WARN_ON(td->pmu_if =3D=3D TEGRA_DFLL_PMU_PWM))
+ 		return -EINVAL;
 =20
- 	int speedo_scale;
- 	int voltage_scale;
-@@ -59,8 +58,9 @@ struct cvb_table {
++	align_step =3D uV / td->soc->alignment.step_uv;
+ 	n_voltages =3D regulator_count_voltages(td->vdd_reg);
+ 	for (i =3D 0; i < n_voltages; i++) {
+ 		reg_uV =3D regulator_list_voltage(td->vdd_reg, i);
+ 		if (reg_uV < 0)
+ 			break;
 =20
- const struct cvb_table *
- tegra_cvb_add_opp_table(struct device *dev, const struct cvb_table *cvb_ta=
-bles,
--			size_t count, int process_id, int speedo_id,
--			int speedo_value, unsigned long max_freq);
-+			size_t count, struct rail_alignment *align,
-+			int process_id, int speedo_id, int speedo_value,
-+			unsigned long max_freq);
- void tegra_cvb_remove_opp_table(struct device *dev,
- 				const struct cvb_table *table,
- 				unsigned long max_freq);
+-		if (uV <=3D reg_uV)
++		reg_volt_id =3D reg_uV / td->soc->alignment.step_uv;
++
++		if (align_step <=3D reg_volt_id)
+ 			return i;
+ 	}
+=20
 --=20
 2.20.1
 
