@@ -2,89 +2,87 @@ Return-Path: <SRS0=G9W/=O3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0681BC43387
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Dec 2018 09:37:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0488C43387
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Dec 2018 09:48:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C88C521841
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Dec 2018 09:37:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545125860;
-	bh=NtEbTZIVa3HtZubsN6gQw/OvUX1eel6J+S3vlFJZdMA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=UV5YN4PsCzSEcvUxWZGipFSpX2o5CmZED8ZytpKmgXM8vZ8XqQDnYa3n/Dm3wUj9n
-	 9eHRoQRs/kSoi2eFFwQlhdMTbO0OL/0i03GmpwLyTmpqBAUXzc93k1GJyVHDaDCIfR
-	 Tyn29K23w7eJjhd4HPaf7Nsj8+z24kpRJnqnC9aw=
+	by mail.kernel.org (Postfix) with ESMTP id 93BC3214C6
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Dec 2018 09:48:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hSo7/HSs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726364AbeLRJhk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 Dec 2018 04:37:40 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:37697 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726358AbeLRJhk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Dec 2018 04:37:40 -0500
-Received: by mail-oi1-f194.google.com with SMTP id y23so1444114oia.4;
-        Tue, 18 Dec 2018 01:37:39 -0800 (PST)
+        id S1726432AbeLRJsu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 Dec 2018 04:48:50 -0500
+Received: from mail-oi1-f177.google.com ([209.85.167.177]:42094 "EHLO
+        mail-oi1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726430AbeLRJsu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Dec 2018 04:48:50 -0500
+Received: by mail-oi1-f177.google.com with SMTP id w13so1438314oiw.9;
+        Tue, 18 Dec 2018 01:48:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=t/S7/FqDmA+7g8YYk57whu1nnBdedagnVtqBFsNKTs4=;
+        b=hSo7/HSsPCtWSYNoWH7ZhQiOAlfd3QgDckGMrWRAq9BKcARCTXk68DwzgHcgJrZYOZ
+         xX2HclMDi+sO/KYYYnyymOEI0UWwT9ZXTGZY6zYsQeTqIfAX22Cosdu8iWPHpHSXbdYe
+         Ilky7pGZSvjHHF/EqFo4OaQYiYgPncA3hIxfDznJ6hh4DuqZxRmHMydjGwn9jAqj3R9o
+         pz5EmPSO4AkDDPGa3/21HmuaZe9ew8Hxbi7KYqKYQlgrShO0GzEfwT50bRImo5hDmjFO
+         gY+K13PLPN/Q1Ce7e6h41LKdCDcBntGJ7tKGg26LjO4y3m0liFOM5JbK7i93+XXAWPXG
+         c2Lw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=NtEbTZIVa3HtZubsN6gQw/OvUX1eel6J+S3vlFJZdMA=;
-        b=LpAu0BuFngoULrZFxNYVt5tZ7XRwltDxbt/QpnMJ24cXO5WJIMRKjM5xuURatI7xCm
-         cFAcsPEHive/HQYOg24Xpb4nfvV7GmH5AjhzklPaFztCVPOXvHZU6nk2PK/tlOuZZhpg
-         h9bfYZpobfYlbSI4LGI0/5A010dlz6BULzrUovU4KMjJWFhEuV3TNXaQb0ZpKia+cLAo
-         bnmvatUNC+LoiAKfEqmfPFT/h2p0BiEWwguVSqfJz98jb9RGLxiKs3sGv4ShSZrKZv8X
-         Iwuli0nspathq7tajYsNq2L2/Bsr3HWgml1mLg+GYCvszf3loFoWU7ahRMdtla2DoRCw
-         1BNA==
-X-Gm-Message-State: AA+aEWavyD4OE0Q+224YCNih9SXzdt0eHA7f40umW3GsqYQHI9ehuQpo
-        rqgbfFIZHSF1ucPslYrZykgnHb6VFsuWb+l8ZKg=
-X-Google-Smtp-Source: AFSGD/UAgt+i+CCX/hSPt2IZPUFnCkHDZdPdmfTJn1PefSS/ZauMF3UUjgctFFr3j5ZFu/KuogslbboVLDWygfW0K44=
-X-Received: by 2002:aca:3d42:: with SMTP id k63mr7705258oia.95.1545125859261;
- Tue, 18 Dec 2018 01:37:39 -0800 (PST)
+        bh=t/S7/FqDmA+7g8YYk57whu1nnBdedagnVtqBFsNKTs4=;
+        b=rdSSnt6cheFHFkB8Z444MvmaUUXWIpIrAQGD7xZIVwh3uVPslZQ78b/5n7Gs4p8mOv
+         KFU1eWAhypQjzEYAAcpLGm4JxLx6yVixgBr+I9i1+QqwetEgyqjhvJxH/1Wk4PwLep9P
+         7JuWeQp5B910Ad9x4CmwLvQzFsyP2KVpeUUiLtPpOMFie3ooxE90omPfjltskvgXwdY3
+         N0eyVmlAykpbv8s+WcAeEkcr/NesmL3gQ6+AKa/QUbuCE9gpoQbhWxdDBBeNIjmNX/5q
+         l1DPky6WQSwNU2/NzGH4YQ9oik3u9rWfgSlEKVaSGUAzzejECqD5V51Wi79egVrml1M5
+         NCIw==
+X-Gm-Message-State: AA+aEWabscfY50puEQc9zdSecJp4Gmy+6RcoSpczqSJmNrzqzYFL5jSd
+        MCjmAGa58sw2ZJxmHl/Sn/SBtndNB7hqVYv499c=
+X-Google-Smtp-Source: AFSGD/W05Z5iPtTs0/4NSp24/Jvk6y4O8qD2dKpa7L02+a4WJxXHSnfjFd7X8vpQE/OfhzkZl/j7rRotkwMxo4Q85vE=
+X-Received: by 2002:aca:3092:: with SMTP id w140mr7683815oiw.237.1545126529293;
+ Tue, 18 Dec 2018 01:48:49 -0800 (PST)
 MIME-Version: 1.0
-References: <20181218091232.23532-1-josephl@nvidia.com> <20181218091232.23532-12-josephl@nvidia.com>
-In-Reply-To: <20181218091232.23532-12-josephl@nvidia.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Tue, 18 Dec 2018 10:37:27 +0100
-Message-ID: <CAJZ5v0h0n2AXERvXFX_dQWMUw_89ap_LgB6dUK0ThJgZ+unkkQ@mail.gmail.com>
-Subject: Re: [PATCH V3 11/20] cpufreq: tegra124: do not handle the CPU rail
-To:     josephl@nvidia.com
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-tegra@vger.kernel.org, linux-clk <linux-clk@vger.kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Linux PM <linux-pm@vger.kernel.org>
+References: <1545115389-173136-1-git-send-email-weiyongjun1@huawei.com>
+In-Reply-To: <1545115389-173136-1-git-send-email-weiyongjun1@huawei.com>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Tue, 18 Dec 2018 07:48:43 -0200
+Message-ID: <CAOMZO5C1+bxWtapaBrdzf0o3Q30BkBNHLg9=4K5ZsxBk6s2DWw@mail.gmail.com>
+Subject: Re: [PATCH -next] clk: imx: fix potential NULL dereference in imx8qxp_lpcg_clk_probe()
+To:     Wei Yongjun <weiyongjun1@huawei.com>
+Cc:     Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        kernel-janitors@vger.kernel.org,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Dec 18, 2018 at 10:13 AM Joseph Lo <josephl@nvidia.com> wrote:
->
-> The Tegra124 cpufreq driver has no information to handle the Vdd-CPU
-> rail. So this driver shouldn't handle for the CPU clock switching from
-> DFLL to other PLL clocks. It was designed to work on DFLL clock only,
-> which handle the frequency/voltage scaling in the background.
->
-> This patch removes the driver dependency of the CPU rail, as well as not
-> allow it to be built as a module and remove the removal function. So it
-> can keep working on DFLL clock.
->
-> Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> Cc: linux-pm@vger.kernel.org
-> Signed-off-by: Joseph Lo <josephl@nvidia.com>
-> Acked-by: Jon Hunter <jonathanh@nvidia.com>
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Hi Wei,
 
-I'm assuming that this entire series will go in via arm-soc, so I
-won't be picking up the cpufreq patches from it.
+On Tue, Dec 18, 2018 at 4:36 AM Wei Yongjun <weiyongjun1@huawei.com> wrote:
 
-Please let me know if that is not what you want.
+>         res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +       if (!res)
+> +               return -EINVAL;
+>         base = devm_ioremap(dev, res->start, resource_size(res));
 
-Thanks,
-Rafael
+Wouldn't it be better to use devm_ioremap_resource(), which does the NULL check?
