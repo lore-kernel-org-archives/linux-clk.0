@@ -7,35 +7,35 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF8C4C43444
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Dec 2018 09:12:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E068C43387
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Dec 2018 09:12:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD7E2217D9
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Dec 2018 09:12:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CFCCB217D8
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Dec 2018 09:12:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="dRgFddZM"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="iUeAo+I7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726413AbeLRJMx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 Dec 2018 04:12:53 -0500
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:5630 "EHLO
+        id S1726430AbeLRJMz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 Dec 2018 04:12:55 -0500
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:5637 "EHLO
         hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726368AbeLRJMx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Dec 2018 04:12:53 -0500
+        with ESMTP id S1726368AbeLRJMz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Dec 2018 04:12:55 -0500
 Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c18ba0f0000>; Tue, 18 Dec 2018 01:12:47 -0800
+        id <B5c18ba110000>; Tue, 18 Dec 2018 01:12:49 -0800
 Received: from hqmail.nvidia.com ([172.20.161.6])
   by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 18 Dec 2018 01:12:52 -0800
+  Tue, 18 Dec 2018 01:12:54 -0800
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 18 Dec 2018 01:12:52 -0800
-Received: from HQMAIL106.nvidia.com (172.18.146.12) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 18 Dec
- 2018 09:12:52 +0000
+        by hqpgpgate101.nvidia.com on Tue, 18 Dec 2018 01:12:54 -0800
+Received: from HQMAIL106.nvidia.com (172.18.146.12) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 18 Dec
+ 2018 09:12:54 +0000
 Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL106.nvidia.com
  (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
- Transport; Tue, 18 Dec 2018 09:12:52 +0000
+ Transport; Tue, 18 Dec 2018 09:12:54 +0000
 Received: from josephl-linux.nvidia.com (Not Verified[10.19.108.132]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5c18ba120000>; Tue, 18 Dec 2018 01:12:51 -0800
+        id <B5c18ba140004>; Tue, 18 Dec 2018 01:12:53 -0800
 From:   Joseph Lo <josephl@nvidia.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Peter De Schrijver <pdeschrijver@nvidia.com>,
@@ -43,9 +43,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
 CC:     <linux-arm-kernel@lists.infradead.org>,
         <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
         Joseph Lo <josephl@nvidia.com>, <devicetree@vger.kernel.org>
-Subject: [PATCH V3 02/20] dt-bindings: clock: tegra124-dfll: add Tegra210 support
-Date:   Tue, 18 Dec 2018 17:12:14 +0800
-Message-ID: <20181218091232.23532-3-josephl@nvidia.com>
+Subject: [PATCH V3 03/20] dt-bindings: cpufreq: tegra124: remove vdd-cpu-supply from required properties
+Date:   Tue, 18 Dec 2018 17:12:15 +0800
+Message-ID: <20181218091232.23532-4-josephl@nvidia.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20181218091232.23532-1-josephl@nvidia.com>
 References: <20181218091232.23532-1-josephl@nvidia.com>
@@ -54,22 +54,24 @@ X-NVConfidentiality: public
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1545124367; bh=AQnLTX2e1Oi9iHUJGbPa5+L3Mn7ZKyIGYfnd03JrXcE=;
+        t=1545124369; bh=5t6DkNBPxVoGlP6p7NLGB2QoJqKyG7/5Egpw0nrDCVY=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:MIME-Version:X-NVConfidentiality:
          Content-Transfer-Encoding:Content-Type;
-        b=dRgFddZMTUW8Lh41CNq9nrOQUvC5na5aI8S0efHRZx277YX8nJdVQdqI2yJap/LmF
-         TiP1kEg2p39AF3otq/o5M2SqOuvYtFeC8f6X2vvugw6J5HvI1Z1/Tthq+3Mqz1xjY6
-         J1LrS6VPj36WipSugGdwgr4tuxC7+r7nc8OZjiZC8P8HHr2VMd9uXyT5vmSElrOVpk
-         zReVTxyGp3V09bZgXINpEX2OGncjNv+303qJugnJKpcmlaWyaYmw0Z/v45jT1kyHi2
-         HUk0fNzY4xMT2mCr5pi008ksYToky7Av2TTa4dHxi5b6+jI282/XmMwtGyR9ErXJCT
-         R7+8Aq9gKZ2ow==
+        b=iUeAo+I7RhbloCGx5EABTv4Creepp02Q+8Ql28v2nsB0TacUZomgr4eCbgWWYq+tD
+         8onbEEL2rmHDTJp4Og8L+xuKYNNoIcZpHJvgtLqA7A2g85gMe+7xEoxxqrPFgIdPRr
+         NAkvNpoIpgGVV7IUmIz4i7egSYUfYyLI54cC7YdRdhHbp1Liwdi/kMuevuqJ2Z27MX
+         EyJUl7yHpdNzXsW9LYGsUqrLeC/Dd0mePofilw/l1NyGDKD15ywzQuAM6pzNLAHOlt
+         FU90uPV+PYHFim8E5eG25G6kc+EPC4FLFCpEOCXC6TRD20C35wHE/3zfoD4SlUNF2a
+         GJo3bn0zGTwlg==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add Tegra210 support for DFLL clock.
+The Tegra124 cpufreq driver works only with DFLL clock, which is a
+hardware-based frequency/voltage controller. The driver doesn't need to
+control the regulator itself. Hence remove that.
 
 Cc: devicetree@vger.kernel.org
 Signed-off-by: Joseph Lo <josephl@nvidia.com>
@@ -80,27 +82,33 @@ Acked-by: Jon Hunter <jonathanh@nvidia.com>
 *V2:
  - add ack tag
 ---
- .../devicetree/bindings/clock/nvidia,tegra124-dfll.txt        | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ .../devicetree/bindings/cpufreq/nvidia,tegra124-cpufreq.txt     | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.t=
-xt b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
-index 38e8cc8c70a8..8a38c8e78acf 100644
---- a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
-+++ b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
-@@ -10,7 +10,9 @@ control module that will automatically adjust the VDD_CPU=
- voltage by
- communicating with an off-chip PMIC either via an I2C bus or via PWM signa=
-ls.
+diff --git a/Documentation/devicetree/bindings/cpufreq/nvidia,tegra124-cpuf=
+req.txt b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra124-cpufreq=
+.txt
+index b1669fbfb740..031545a29caf 100644
+--- a/Documentation/devicetree/bindings/cpufreq/nvidia,tegra124-cpufreq.txt
++++ b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra124-cpufreq.txt
+@@ -13,7 +13,6 @@ Required properties:
+   - pll_x: Fast PLL clocksource.
+   - pll_p: Auxiliary PLL used during fast PLL rate changes.
+   - dfll: Fast DFLL clocksource that also automatically scales CPU voltage=
+.
+-- vdd-cpu-supply: Regulator for CPU voltage
 =20
- Required properties:
--- compatible : should be "nvidia,tegra124-dfll"
-+- compatible : should be one of:
-+  - "nvidia,tegra124-dfll": for Tegra124
-+  - "nvidia,tegra210-dfll": for Tegra210
- - reg : Defines the following set of registers, in the order listed:
-         - registers for the DFLL control logic.
-         - registers for the I2C output logic.
+ Optional properties:
+ - clock-latency: Specify the possible maximum transition latency for clock=
+,
+@@ -37,7 +36,6 @@ cpus {
+ 			 <&dfll>;
+ 		clock-names =3D "cpu_g", "cpu_lp", "pll_x", "pll_p", "dfll";
+ 		clock-latency =3D <300000>;
+-		vdd-cpu-supply: <&vdd_cpu>;
+ 	};
+=20
+ 	<...>
 --=20
 2.20.1
 
