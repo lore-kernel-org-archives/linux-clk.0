@@ -2,275 +2,118 @@ Return-Path: <SRS0=x0k0=O4=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7404EC43387
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Dec 2018 11:41:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33EF7C43387
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Dec 2018 15:27:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43AB1214C6
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Dec 2018 11:41:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0439520874
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Dec 2018 15:27:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="lsSFWuN+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729353AbeLSLlB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 19 Dec 2018 06:41:01 -0500
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:6680 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729294AbeLSLlA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Dec 2018 06:41:00 -0500
-Received: from localhost.localdomain (10.18.11.217) by mail-sh2.amlogic.com
- (10.18.11.6) with Microsoft SMTP Server id 15.0.1320.4; Wed, 19 Dec 2018
- 19:41:18 +0800
-From:   Jianxin Pan <jianxin.pan@amlogic.com>
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-CC:     Jianxin Pan <jianxin.pan@amlogic.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Yixun Lan <yixun.lan@amlogic.com>,
-        Liang Yang <liang.yang@amlogic.com>,
-        Jian Hu <jian.hu@amlogic.com>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Hanjie Lin <hanjie.lin@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+        id S1728758AbeLSP1H (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 19 Dec 2018 10:27:07 -0500
+Received: from mail-eopbgr20041.outbound.protection.outlook.com ([40.107.2.41]:49376
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727960AbeLSP1H (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 19 Dec 2018 10:27:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=FCzHH0YIqgJWs7KWt7r1CVOqpv0XG5IQDudk0MvBr8M=;
+ b=lsSFWuN+ZVw5KwUhdwbgcWXh/EDBxrdx9lny/iAHOBxIlQhHAgJtfTQEW20TFkgRivgeWrXRS+ra4BvZ8sgeGNDCjliCHKYuesxSDwbPZu2EPV3Niq7u9MzRyjnuScXhzBDcewiWYbOL+A4Bo6LbSwtjcEVnSkB1TP71VPeR+60=
+Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.126.21) by
+ AM0PR04MB5633.eurprd04.prod.outlook.com (20.178.118.18) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1425.19; Wed, 19 Dec 2018 15:27:02 +0000
+Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
+ ([fe80::9125:e806:7303:d8e6]) by AM0PR04MB4211.eurprd04.prod.outlook.com
+ ([fe80::9125:e806:7303:d8e6%6]) with mapi id 15.20.1425.024; Wed, 19 Dec 2018
+ 15:27:02 +0000
+From:   Aisheng Dong <aisheng.dong@nxp.com>
+To:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+CC:     "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH RESEND v8 1/4] clk: meson: add one based divider support for sclk divider
-Date:   Wed, 19 Dec 2018 19:40:39 +0800
-Message-ID: <1545219642-9834-2-git-send-email-jianxin.pan@amlogic.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1545219642-9834-1-git-send-email-jianxin.pan@amlogic.com>
-References: <1545219642-9834-1-git-send-email-jianxin.pan@amlogic.com>
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        Aisheng Dong <aisheng.dong@nxp.com>
+Subject: [PATCH 0/5] clk: imx8qm: prepare for imx8qm clock support
+Thread-Topic: [PATCH 0/5] clk: imx8qm: prepare for imx8qm clock support
+Thread-Index: AQHUl69KP5rFoD0FDkqjgax/qBib7g==
+Date:   Wed, 19 Dec 2018 15:27:02 +0000
+Message-ID: <1545232888-9302-1-git-send-email-aisheng.dong@nxp.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.7.4
+x-clientproxiedby: HK0PR03CA0070.apcprd03.prod.outlook.com
+ (2603:1096:203:52::34) To AM0PR04MB4211.eurprd04.prod.outlook.com
+ (2603:10a6:208:66::21)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=aisheng.dong@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM0PR04MB5633;6:XdAqAy/q0S95zc4FbYgS4C2DQNQpTT59Ko+dSxCnuQKzsA1mmP5sj0EIfk6aoOMWsawoLJQHwr6QvDpfCaXQFKJIelEpmThGhD5h78vRZdxO/PsCXQOW+uRusHc/w42+zgKbERLtN73c1UAdWv/lsxJ7DuynMz4YOoEKqogXZuarf1DI4eZ9I7F/kFcTZIWshIpX6Pj836nhykWOjeixnznu2lIIcmXRDxb6meD7vxZTGI2l5P27xzxt/OGPEScfagmmYsqxKOze8QxpTxLdqltX9vzKguLYP0smzO1JUgfpBQsJlK+BYZP4pMeYJbRJ9TWdEdz2F969zo6u203RuZGkieuhPIKpk1hVrrbirkAQSDF++hHxJdWSxdlIJ8tCTcoctce13eLBbfmcoSnjxPs/Kfqv1BihQ9mcVxLOMFHIT+tMW60ZTo9FSDct3URkhFAPNT0cJEplROd08YLG8w==;5:+ZSpufpsSzjeJzd6IcnaQPFSIiTHGKNANCLXULMDKmrxSxAQSOiRptlZHKp2elTZNNC/smP2NLDX4/q7T7i22YzDO3RSZlkP2yQEq9YClLHIZ53ZQVmJe51yRn+4J11yPVyzbMhqxlemPb5LTjEUVR5QE/AO9ogTiBBWcC4/KAY=;7:QeIrwTN67ZlrSfLEJ4hRqP64Nkg9zIfi6lHgxu2bKseUigGSaAGi/CEBIb7hefOix0qEbfaFaKbX28CDVr3v67cScbodY9Nuy3TIqsQ2O/2y1DGu5u7xQHFpgYDruaf0zA2pwUoYRNExglZHQuCxaA==
+x-ms-office365-filtering-correlation-id: df5374c6-3aab-4cd5-a47b-08d665c66c74
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB5633;
+x-ms-traffictypediagnostic: AM0PR04MB5633:
+x-microsoft-antispam-prvs: <AM0PR04MB563312FCD5ECB4EC8E618A3180BE0@AM0PR04MB5633.eurprd04.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(5005020)(6040522)(2401047)(8121501046)(3231475)(944501520)(52105112)(3002001)(93006095)(93001095)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:AM0PR04MB5633;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB5633;
+x-forefront-prvs: 0891BC3F3D
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(346002)(366004)(136003)(39860400002)(396003)(189003)(199004)(2906002)(305945005)(7736002)(6486002)(256004)(14444005)(66066001)(4326008)(6116002)(86362001)(6512007)(44832011)(3846002)(54906003)(97736004)(102836004)(186003)(5640700003)(2501003)(53936002)(50226002)(68736007)(5660300001)(476003)(81156014)(2616005)(386003)(8676002)(26005)(81166006)(105586002)(8936002)(6436002)(486006)(36756003)(52116002)(106356001)(25786009)(71190400001)(478600001)(6916009)(99286004)(71200400001)(6506007)(2351001)(316002)(14454004)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5633;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: 32blxFa5Q1o2/WB7E20/IaWECFesBaPB1sDkaPVh0bUTyASM2IUPqNawRh+X19b0AVgMY1pWiQiEmR0Vj87MgTLV9XaxAOJycQxaA3WrjPgClEbnZgI5efXKTS/9xjTXM3sXr6ZCmS3sw0cR2gr7i9RC9aT87TvIlGsWz/RnVbdiPPzpS8jNXAMiEMOHKXx7iliYdUjPNgo8XM2klJslks32sK3mF+CJg8xQKMC11E9dhO3zweGoZ6NBGfDtMDMjM1QkrVlO8rsz6PfInI3yqx0xWiLqbCOX0QBiwh6w9k+66V0xX3KE8+x3AxGzw0ym
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.18.11.217]
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: df5374c6-3aab-4cd5-a47b-08d665c66c74
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Dec 2018 15:27:02.2642
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5633
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-When CLK_DIVIDER_ONE_BASED flag is set, the sclk divider will be:
-one based divider (div = val), and zero value gates the clock
+After a bit more investigation on IMX8QM, it seemed SCU clock can be used
+in a similar way as IMX8QXP. So update the binding and driver to be a bit
+generic for easily extension of IMX8QM support later.
 
-Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
+Dong Aisheng (5):
+  dt-bindings: fsl: scu: add fallback compatible string for clock
+  dt-bindings: fsl: scu: add imx8qm scu clock support
+  clk: imx: scu: add fallback compatible string support
+  clk: imx8qxp: make the name of clock ID generic
+  dt-bindings: imx8-clock: add a53 and a72 clock id
+
+ .../devicetree/bindings/arm/freescale/fsl,scu.txt  |   7 +-
+ drivers/clk/imx/clk-imx8qxp-lpcg.c                 | 146 +++++------
+ drivers/clk/imx/clk-imx8qxp.c                      | 153 +++++------
+ include/dt-bindings/clock/imx8-clock.h             | 291 +++++++++++++++++=
+++++
+ include/dt-bindings/clock/imx8qxp-clock.h          | 289 -----------------=
 ---
- drivers/clk/meson/Makefile     |  3 ++-
- drivers/clk/meson/clkc-audio.h |  8 ------
- drivers/clk/meson/clkc.h       | 10 ++++++-
- drivers/clk/meson/sclk-div.c   | 59 ++++++++++++++++++++++++++++--------------
- 4 files changed, 50 insertions(+), 30 deletions(-)
+ 5 files changed, 446 insertions(+), 440 deletions(-)
+ create mode 100644 include/dt-bindings/clock/imx8-clock.h
+ delete mode 100644 include/dt-bindings/clock/imx8qxp-clock.h
 
-diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
-index a849aa8..acd8694 100644
---- a/drivers/clk/meson/Makefile
-+++ b/drivers/clk/meson/Makefile
-@@ -4,7 +4,8 @@
- 
- obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-mpll.o clk-phase.o vid-pll-div.o
- obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-input.o
--obj-$(CONFIG_COMMON_CLK_AMLOGIC_AUDIO)	+= clk-triphase.o sclk-div.o
-+obj-$(CONFIG_COMMON_CLK_AMLOGIC) += sclk-div.o
-+obj-$(CONFIG_COMMON_CLK_AMLOGIC_AUDIO) += clk-triphase.o
- obj-$(CONFIG_COMMON_CLK_MESON_AO) += meson-aoclk.o
- obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
- obj-$(CONFIG_COMMON_CLK_GXBB)	 += gxbb.o gxbb-aoclk.o gxbb-aoclk-32k.o
-diff --git a/drivers/clk/meson/clkc-audio.h b/drivers/clk/meson/clkc-audio.h
-index 0a7c157..286ff12 100644
---- a/drivers/clk/meson/clkc-audio.h
-+++ b/drivers/clk/meson/clkc-audio.h
-@@ -15,14 +15,6 @@ struct meson_clk_triphase_data {
- 	struct parm ph2;
- };
- 
--struct meson_sclk_div_data {
--	struct parm div;
--	struct parm hi;
--	unsigned int cached_div;
--	struct clk_duty cached_duty;
--};
--
- extern const struct clk_ops meson_clk_triphase_ops;
--extern const struct clk_ops meson_sclk_div_ops;
- 
- #endif /* __MESON_CLKC_AUDIO_H */
-diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
-index 6183b22..00b3320 100644
---- a/drivers/clk/meson/clkc.h
-+++ b/drivers/clk/meson/clkc.h
-@@ -27,6 +27,14 @@ struct parm {
- 	u8	width;
- };
- 
-+struct meson_sclk_div_data {
-+	struct parm div;
-+	struct parm hi;
-+	unsigned int cached_div;
-+	struct clk_duty cached_duty;
-+	u8 flags;
-+};
-+
- static inline unsigned int meson_parm_read(struct regmap *map, struct parm *p)
- {
- 	unsigned int val;
-@@ -118,10 +126,10 @@ struct clk_regmap _name = {						\
- extern const struct clk_ops meson_clk_mpll_ops;
- extern const struct clk_ops meson_clk_phase_ops;
- extern const struct clk_ops meson_vid_pll_div_ro_ops;
-+extern const struct clk_ops meson_sclk_div_ops;
- 
- struct clk_hw *meson_clk_hw_register_input(struct device *dev,
- 					   const char *of_name,
- 					   const char *clk_name,
- 					   unsigned long flags);
--
- #endif /* __CLKC_H */
-diff --git a/drivers/clk/meson/sclk-div.c b/drivers/clk/meson/sclk-div.c
-index bc64019..a6c425b 100644
---- a/drivers/clk/meson/sclk-div.c
-+++ b/drivers/clk/meson/sclk-div.c
-@@ -4,42 +4,60 @@
-  * Author: Jerome Brunet <jbrunet@baylibre.com>
-  *
-  * Sample clock generator divider:
-- * This HW divider gates with value 0 but is otherwise a zero based divider:
-+ * This HW divider gates with value 0
-  *
-  * val >= 1
-- * divider = val + 1
-+ * divider = val + 1 if ONE_BASED is not set, otherwise divider = val.
-  *
-  * The duty cycle may also be set for the LR clock variant. The duty cycle
-  * ratio is:
-  *
-  * hi = [0 - val]
-- * duty_cycle = (1 + hi) / (1 + val)
-+ * duty_cycle = (1 + hi) / (1 + val) if ONE_BASED is not set, otherwise:
-+ * duty_cycle = hi / (1 + val)
-  */
- 
--#include "clkc-audio.h"
-+#include "clkc.h"
- 
--static inline struct meson_sclk_div_data *
--meson_sclk_div_data(struct clk_regmap *clk)
-+static inline int get_reg(int val, unsigned char flag)
- {
--	return (struct meson_sclk_div_data *)clk->data;
-+	WARN_ON(val < 1);
-+	if ((flag & CLK_DIVIDER_ONE_BASED) || !val)
-+		return val;
-+	else
-+		return val - 1;
-+}
-+
-+static inline int get_value(int reg, unsigned char flag)
-+{
-+	if (flag & CLK_DIVIDER_ONE_BASED)
-+		return reg;
-+	else
-+		return reg + 1;
- }
- 
--static int sclk_div_maxval(struct meson_sclk_div_data *sclk)
-+static inline struct meson_sclk_div_data *
-+meson_sclk_div_data(struct clk_regmap *clk)
- {
--	return (1 << sclk->div.width) - 1;
-+	return (struct meson_sclk_div_data *)clk->data;
- }
- 
- static int sclk_div_maxdiv(struct meson_sclk_div_data *sclk)
- {
--	return sclk_div_maxval(sclk) + 1;
-+	unsigned int reg = clk_div_mask(sclk->div.width);
-+
-+	return get_value(reg, sclk->flags);
- }
- 
- static int sclk_div_getdiv(struct clk_hw *hw, unsigned long rate,
- 			   unsigned long prate, int maxdiv)
- {
- 	int div = DIV_ROUND_CLOSEST_ULL((u64)prate, rate);
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct meson_sclk_div_data *sclk = meson_sclk_div_data(clk);
-+	int mindiv = get_value(1, sclk->flags);
- 
--	return clamp(div, 2, maxdiv);
-+	return clamp(div, mindiv, maxdiv);
- }
- 
- static int sclk_div_bestdiv(struct clk_hw *hw, unsigned long rate,
-@@ -47,7 +65,7 @@ static int sclk_div_bestdiv(struct clk_hw *hw, unsigned long rate,
- 			    struct meson_sclk_div_data *sclk)
- {
- 	struct clk_hw *parent = clk_hw_get_parent(hw);
--	int bestdiv = 0, i;
-+	int bestdiv = 0, i, mindiv;
- 	unsigned long maxdiv, now, parent_now;
- 	unsigned long best = 0, best_parent = 0;
- 
-@@ -64,8 +82,9 @@ static int sclk_div_bestdiv(struct clk_hw *hw, unsigned long rate,
- 	 * unsigned long in rate * i below
- 	 */
- 	maxdiv = min(ULONG_MAX / rate, maxdiv);
-+	mindiv = get_value(1, sclk->flags);
- 
--	for (i = 2; i <= maxdiv; i++) {
-+	for (i = mindiv; i <= maxdiv; i++) {
- 		/*
- 		 * It's the most ideal case if the requested rate can be
- 		 * divided from parent clock without needing to change
-@@ -111,10 +130,7 @@ static void sclk_apply_ratio(struct clk_regmap *clk,
- 					    sclk->cached_duty.num,
- 					    sclk->cached_duty.den);
- 
--	if (hi)
--		hi -= 1;
--
--	meson_parm_write(clk->map, &sclk->hi, hi);
-+	meson_parm_write(clk->map, &sclk->hi, get_reg(hi, sclk->flags));
- }
- 
- static int sclk_div_set_duty_cycle(struct clk_hw *hw,
-@@ -145,7 +161,7 @@ static int sclk_div_get_duty_cycle(struct clk_hw *hw,
- 	}
- 
- 	hi = meson_parm_read(clk->map, &sclk->hi);
--	duty->num = hi + 1;
-+	duty->num = get_value(hi, sclk->flags);
- 	duty->den = sclk->cached_div;
- 	return 0;
- }
-@@ -153,10 +169,13 @@ static int sclk_div_get_duty_cycle(struct clk_hw *hw,
- static void sclk_apply_divider(struct clk_regmap *clk,
- 			       struct meson_sclk_div_data *sclk)
- {
-+	unsigned int div;
-+
- 	if (MESON_PARM_APPLICABLE(&sclk->hi))
- 		sclk_apply_ratio(clk, sclk);
- 
--	meson_parm_write(clk->map, &sclk->div, sclk->cached_div - 1);
-+	div = get_reg(sclk->cached_div, sclk->flags);
-+	meson_parm_write(clk->map, &sclk->div, div);
- }
- 
- static int sclk_div_set_rate(struct clk_hw *hw, unsigned long rate,
-@@ -224,7 +243,7 @@ static void sclk_div_init(struct clk_hw *hw)
- 	if (!val)
- 		sclk->cached_div = sclk_div_maxdiv(sclk);
- 	else
--		sclk->cached_div = val + 1;
-+		sclk->cached_div = get_value(val, sclk->flags);
- 
- 	sclk_div_get_duty_cycle(hw, &sclk->cached_duty);
- }
--- 
-1.9.1
+--=20
+2.7.4
 
