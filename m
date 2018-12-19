@@ -2,177 +2,82 @@ Return-Path: <SRS0=x0k0=O4=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15D55C43387
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Dec 2018 18:16:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D1C9C43387
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Dec 2018 18:55:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB735218C3
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Dec 2018 18:16:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 402E72084A
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Dec 2018 18:55:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545243416;
-	bh=72fdjbNpxrOgaid6/wodsdGUd2NO2XEPMocUEpv/mR8=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=uhezd4SWiklftl2VhGIQTrRpXpwNfwlrdvcC1kKUPRKQLxGYzCJpNHT6JTXEVJD2D
-	 m2efDn3z8geLQ51NLd61BSJBv6BqBS8BBY2MdJorje85JHbxauTNmDKxeqesTDLhwe
-	 DyMtO1qrSIGe7uhO50qvSCjB2qyuK0K3V7vIdOuk=
+	s=default; t=1545245735;
+	bh=hNLNctRUGV6DWK8yI8Df6Q3pz6d+a7qTPKjiJq4xlzE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=lXQT2S2JCaPnVG2WWE+CJDQL38O5K35gXexqE1P6JxQAuRtDlnNT3Jg4fON9zMTi/
+	 3qxl+4OhQ9FTjN8T25di2x2+p5nkmsZr8XwrEEs7aPL5Vaxjmo+LJ6nV4hvimHAxC2
+	 fNk4pgn+sNPuO8h+ix8LL2UK2IrO+K2HNf0CcIG0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727976AbeLSSQ4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 19 Dec 2018 13:16:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52244 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726774AbeLSSQ4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 19 Dec 2018 13:16:56 -0500
-Received: from ziggy.de (unknown [37.223.145.79])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A0345217D9;
-        Wed, 19 Dec 2018 18:16:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545243415;
-        bh=72fdjbNpxrOgaid6/wodsdGUd2NO2XEPMocUEpv/mR8=;
-        h=From:To:Cc:Subject:Date:From;
-        b=sGWRAJ2SndK7M/Ziwv0aivWhCtYKU3w3GNUo2Y2tJDkwbknoc0GVfB1MTLl8wB1Ev
-         Y2u6zmf7AfzPJuuk+LYiiKnsmYE/52YASLeeVZX6xLnNeiMAbRu2F+1o0Bo7rNSrJA
-         zYrr2wBnAqN0591OM6b9aB9IMwSdCIGotA3+C0/4=
-From:   matthias.bgg@kernel.org
-To:     mturquette@baylibre.com, sboyd@kernel.org,
-        kevin-cw.chen@mediatek.com, mars.cheng@mediatek.com
-Cc:     matthias.bgg@gmail.com, jasu@njomotys.info,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Subject: [PATCH] clk: mediatek: Mark bus and DRAM related clocks as critical
-Date:   Wed, 19 Dec 2018 19:16:50 +0100
-Message-Id: <20181219181650.27105-1-matthias.bgg@kernel.org>
-X-Mailer: git-send-email 2.19.2
+        id S1728784AbeLSSze (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 19 Dec 2018 13:55:34 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:37771 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728559AbeLSSze (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Dec 2018 13:55:34 -0500
+Received: by mail-ot1-f66.google.com with SMTP id 40so20093736oth.4;
+        Wed, 19 Dec 2018 10:55:34 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=7HUiX94SswtmPoBx8ulvQvKbQnVaVrrXa2kPGfNaJmA=;
+        b=ASbvRwc40EocBsJJ88qiwFmXZ+Og39Rd/1KtLRSskwFsB5Lq4roCPvYQ18kwRlMefM
+         YWYwRyiJW81JYUHZVFBYcd8omM8juRxcoLP1apDAOBjYOyDOt+mLa4Aykn7WdrchOGVQ
+         JFSiP6rUNHucen7WYT/zVe1wY0VARxWeTy3qje1hLeBDmZ/1jeL+bRWGEDS6c/mL0xL8
+         ESiEF/59X6fYwrLLablY/hA60mGoSGFwl477drfP/wRVG9q7XtyPyDgiSYLysVwvmsuP
+         KO7/9fsruyj5mANRULyyBRfxdCBBqe4NOX3fUx73AX7yxN5A0A0OdRshD3h/K/UwkQS7
+         PWtg==
+X-Gm-Message-State: AA+aEWbrYAleYGMUodnGjSj5DUNfFNAG+XuEX5sKRtPecKAwJQRfci8Q
+        yaPvL9gpjxuAf6KNnzrYIw==
+X-Google-Smtp-Source: AFSGD/VA3IeSpI4dOqWG8JdMkU6bNwBHLzrT0RuSxICdlpmpsZ16HctWXin0Pkg413rmy4udhGa0eQ==
+X-Received: by 2002:a9d:5f06:: with SMTP id f6mr16508683oti.258.1545245733637;
+        Wed, 19 Dec 2018 10:55:33 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id m129sm9265078oif.50.2018.12.19.10.55.32
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 19 Dec 2018 10:55:33 -0800 (PST)
+Date:   Wed, 19 Dec 2018 12:55:32 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Jerome Brunet <jbrunet@baylibre.com>
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/5] dt-bindings: clk: meson: add ao slow clock path ids
+Message-ID: <20181219185532.GA23002@bogus>
+References: <20181204165310.20806-1-jbrunet@baylibre.com>
+ <20181204165310.20806-2-jbrunet@baylibre.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181204165310.20806-2-jbrunet@baylibre.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Jasper Mattsson <jasu@njomotys.info>
+On Tue,  4 Dec 2018 17:53:06 +0100, Jerome Brunet wrote:
+> Add the CLKIDs for the slow clock generation path
+> 
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> ---
+>  include/dt-bindings/clock/axg-aoclkc.h  | 7 ++++++-
+>  include/dt-bindings/clock/gxbb-aoclkc.h | 7 +++++++
+>  2 files changed, 13 insertions(+), 1 deletion(-)
+> 
 
-Currently, DRAM-related clocks are not marked with CLK_IS_CRITICAL
-for MT6797. This causes memory corruption when the system is
-booted without clk_ignore_unused.
-This patch marks MUX ddrphycfg_sel as well as gates infra_dramc_f26m
-and infra_dramc_b_f26m as CLK_IS_CRITICAL.
-
-Signed-off-by: Jasper Mattsson <jasu@njomotys.info>
-Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
----
-changes since v2 [1]:
-- first two patches of series are in clk-next, drop them
-- axi_sel is not needed, drop CLK_IS_CRITICAL for it.
-- update commit message
-
-[1] https://patchwork.kernel.org/patch/10686759/ 
-
- drivers/clk/mediatek/clk-mt6797.c | 60 ++++++++++++++++++-------------
- 1 file changed, 35 insertions(+), 25 deletions(-)
-
-diff --git a/drivers/clk/mediatek/clk-mt6797.c b/drivers/clk/mediatek/clk-mt6797.c
-index 5702bc974ed9..a6e5408e0388 100644
---- a/drivers/clk/mediatek/clk-mt6797.c
-+++ b/drivers/clk/mediatek/clk-mt6797.c
-@@ -331,8 +331,8 @@ static const struct mtk_composite top_muxes[] = {
- 	    ulposc_axi_ck_mux_parents, 0x0040, 2, 1),
- 	MUX(CLK_TOP_MUX_AXI, "axi_sel", axi_parents,
- 	    0x0040, 0, 2),
--	MUX(CLK_TOP_MUX_DDRPHYCFG, "ddrphycfg_sel", ddrphycfg_parents,
--	    0x0040, 16, 2),
-+	MUX_FLAGS(CLK_TOP_MUX_DDRPHYCFG, "ddrphycfg_sel", ddrphycfg_parents,
-+		  0x0040, 16, 2, CLK_IS_CRITICAL | CLK_SET_RATE_PARENT),
- 	MUX(CLK_TOP_MUX_MM, "mm_sel", mm_parents,
- 	    0x0040, 24, 2),
- 	MUX_GATE(CLK_TOP_MUX_PWM, "pwm_sel", pwm_parents, 0x0050, 0, 3, 7),
-@@ -424,31 +424,39 @@ static const struct mtk_gate_regs infra2_cg_regs = {
- 	.sta_ofs = 0x00b0,
- };
- 
--#define GATE_ICG0(_id, _name, _parent, _shift) {	\
--	.id = _id,					\
--	.name = _name,					\
--	.parent_name = _parent,				\
--	.regs = &infra0_cg_regs,			\
--	.shift = _shift,				\
--	.ops = &mtk_clk_gate_ops_setclr,		\
-+#define GATE_ICG0(_id, _name, _parent, _shift) {		\
-+	.id = _id,						\
-+	.name = _name,						\
-+	.parent_name = _parent,					\
-+	.regs = &infra0_cg_regs,				\
-+	.shift = _shift,					\
-+	.ops = &mtk_clk_gate_ops_setclr,			\
- }
- 
--#define GATE_ICG1(_id, _name, _parent, _shift) {	\
--	.id = _id,					\
--	.name = _name,					\
--	.parent_name = _parent,				\
--	.regs = &infra1_cg_regs,			\
--	.shift = _shift,				\
--	.ops = &mtk_clk_gate_ops_setclr,		\
-+#define GATE_ICG1(_id, _name, _parent, _shift)			\
-+	GATE_ICG1_FLAGS(_id, _name, _parent, _shift, 0)
-+
-+#define GATE_ICG1_FLAGS(_id, _name, _parent, _shift, _flags) {	\
-+	.id = _id,						\
-+	.name = _name,						\
-+	.parent_name = _parent,					\
-+	.regs = &infra1_cg_regs,				\
-+	.shift = _shift,					\
-+	.ops = &mtk_clk_gate_ops_setclr,			\
-+	.flags = _flags,					\
- }
- 
--#define GATE_ICG2(_id, _name, _parent, _shift) {	\
--	.id = _id,					\
--	.name = _name,					\
--	.parent_name = _parent,				\
--	.regs = &infra2_cg_regs,			\
--	.shift = _shift,				\
--	.ops = &mtk_clk_gate_ops_setclr,		\
-+#define GATE_ICG2(_id, _name, _parent, _shift)			\
-+	GATE_ICG2_FLAGS(_id, _name, _parent, _shift, 0)
-+
-+#define GATE_ICG2_FLAGS(_id, _name, _parent, _shift, _flags) {	\
-+	.id = _id,						\
-+	.name = _name,						\
-+	.parent_name = _parent,					\
-+	.regs = &infra2_cg_regs,				\
-+	.shift = _shift,					\
-+	.ops = &mtk_clk_gate_ops_setclr,			\
-+	.flags = _flags,					\
- }
- 
- static const struct mtk_gate infra_clks[] = {
-@@ -505,7 +513,8 @@ static const struct mtk_gate infra_clks[] = {
- 	GATE_ICG1(CLK_INFRA_CCIF_AP, "infra_ccif_ap", "axi_sel", 23),
- 	GATE_ICG1(CLK_INFRA_AUDIO, "infra_audio", "axi_sel", 25),
- 	GATE_ICG1(CLK_INFRA_CCIF_MD, "infra_ccif_md", "axi_sel", 26),
--	GATE_ICG1(CLK_INFRA_DRAMC_F26M, "infra_dramc_f26m", "clk26m", 31),
-+	GATE_ICG1_FLAGS(CLK_INFRA_DRAMC_F26M, "infra_dramc_f26m",
-+			"clk26m", 31, CLK_IS_CRITICAL),
- 	GATE_ICG2(CLK_INFRA_I2C4, "infra_i2c4", "axi_sel", 0),
- 	GATE_ICG2(CLK_INFRA_I2C_APPM, "infra_i2c_appm", "axi_sel", 1),
- 	GATE_ICG2(CLK_INFRA_I2C_GPUPM, "infra_i2c_gpupm", "axi_sel", 2),
-@@ -516,7 +525,8 @@ static const struct mtk_gate infra_clks[] = {
- 	GATE_ICG2(CLK_INFRA_I2C5, "infra_i2c5", "axi_sel", 7),
- 	GATE_ICG2(CLK_INFRA_SYS_CIRQ, "infra_sys_cirq", "axi_sel", 8),
- 	GATE_ICG2(CLK_INFRA_SPI1, "infra_spi1", "spi_sel", 10),
--	GATE_ICG2(CLK_INFRA_DRAMC_B_F26M, "infra_dramc_b_f26m", "clk26m", 11),
-+	GATE_ICG2_FLAGS(CLK_INFRA_DRAMC_B_F26M, "infra_dramc_b_f26m",
-+			"clk26m", 11, CLK_IS_CRITICAL),
- 	GATE_ICG2(CLK_INFRA_ANC_MD32, "infra_anc_md32", "anc_md32_sel", 12),
- 	GATE_ICG2(CLK_INFRA_ANC_MD32_32K, "infra_anc_md32_32k", "clk26m", 13),
- 	GATE_ICG2(CLK_INFRA_DVFS_SPM1, "infra_dvfs_spm1", "axi_sel", 15),
--- 
-2.19.2
-
+Reviewed-by: Rob Herring <robh@kernel.org>
