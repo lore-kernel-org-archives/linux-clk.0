@@ -2,83 +2,116 @@ Return-Path: <SRS0=NpU+=O5=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6C54C43387
-	for <linux-clk@archiver.kernel.org>; Thu, 20 Dec 2018 20:44:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3915C43387
+	for <linux-clk@archiver.kernel.org>; Thu, 20 Dec 2018 20:56:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95BCE218FD
-	for <linux-clk@archiver.kernel.org>; Thu, 20 Dec 2018 20:44:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545338642;
-	bh=Z5rOK3u6ymh9OW532rWSwHVNF0K+yfxQkXwvJ7jVE/8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=jcJL5s5XkB7ih2HGVhRX6GOeeTICJ5Fa/1fCorSkNdJu/FpY76blw0glKNAhKw9ut
-	 TpxeMAljsKlv8imFLkrsaDf1o8C/cHABP0fJIahdWJvGv9Ny/KavNm/SfucmaPK/Qa
-	 F9S67F+ISPq01FNYvhMcw3TpBJNuj4mVy9MXNtQM=
+	by mail.kernel.org (Postfix) with ESMTP id A1C3C218FD
+	for <linux-clk@archiver.kernel.org>; Thu, 20 Dec 2018 20:56:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="JNQuNJqZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732917AbeLTUoC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 20 Dec 2018 15:44:02 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:40506 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730558AbeLTUoC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Dec 2018 15:44:02 -0500
-Received: by mail-ot1-f65.google.com with SMTP id s5so3174217oth.7;
-        Thu, 20 Dec 2018 12:44:01 -0800 (PST)
+        id S2389685AbeLTU40 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 20 Dec 2018 15:56:26 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:52501 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389684AbeLTU4Y (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Dec 2018 15:56:24 -0500
+Received: by mail-it1-f193.google.com with SMTP id g76so4024880itg.2
+        for <linux-clk@vger.kernel.org>; Thu, 20 Dec 2018 12:56:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=efF2qmFwsJ1axs0m1B4BUuW+RUh8a4wq2pjaccVYe9c=;
+        b=JNQuNJqZv35yGcoTQlpjyNDO1LK/icLfT60oa8Oe1zdECcpIoOi/jLh7f+N+AXGbr4
+         b6Yp3533F2UND8fzsMoBSLPV3qQcXdZ8jBlLxTJ7daT78hXkveFq6xwdbd2Mugz8vO5e
+         tfkhEYtNZnFFapSAFdmYjwAin4vKTOu2ST8Rg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=EXWVS91ufBJJfiGUyJ5XnKh030tDRBDxANLyB1KtJw4=;
-        b=nryqrxdRMhF4s/jFS5eGpT295Nj4WWcf8OnFVX6pGTI62nqblNYjhliu5y5r8RdRWP
-         vahwrcJTwpsGcxT3FqhefSrFwbS7H2ZIUyrN2T8O3yrziUSG5ZowXO7QKy6BnkKCHdtt
-         nSIVLm5hnKBUNtZai+OCLY13DlTqiCC90TreWL/mC49MO0c06wfx7fSo8Wq4NbdlYChk
-         R/AoHkbFSLyNgadtaLMZa/NZZ2q8gaBqopw3I7i9VKdxspzTfk1aSiWny6Z90RMRkQWV
-         8Hu/QyB4cPcb6z516XmL7pVl0uEayCErRd/Zi4i5j/cKmgFgPMBNo2TlhiMmqkV1V+OE
-         iymg==
-X-Gm-Message-State: AA+aEWYlFxE2uMj+eN1soWppq+kR/S/ck0C7z+D5mNVwpnhtoH1yA30i
-        dsrUp2IjEg7s6B37Lunz7A==
-X-Google-Smtp-Source: AFSGD/VXe0MhHlsYdG17qfGX5cvIdirTzp/umiPaI7RmnuoamVBohj2bxUJpJOAUvGWmHALBR5IOyg==
-X-Received: by 2002:a9d:65c8:: with SMTP id z8mr19516975oth.338.1545338640975;
-        Thu, 20 Dec 2018 12:44:00 -0800 (PST)
-Received: from localhost ([2607:fb90:20d2:a5e2:49af:e73e:5a36:3b50])
-        by smtp.gmail.com with ESMTPSA id k11sm10648077oib.35.2018.12.20.12.44.00
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 20 Dec 2018 12:44:00 -0800 (PST)
-Date:   Thu, 20 Dec 2018 14:43:59 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Weiyi Lu <weiyi.lu@mediatek.com>
-Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        James Liao <jamesjj.liao@mediatek.com>,
-        Fan Chen <fan.chen@mediatek.com>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-        srv_heupstream@mediatek.com, Weiyi Lu <weiyi.lu@mediatek.com>
-Subject: Re: [resend PATCH v1 1/2] dt-bindings: clock: add clock for MT2712
-Message-ID: <20181220204359.GA30122@bogus>
-References: <20181214020417.2871-1-weiyi.lu@mediatek.com>
- <20181214020417.2871-3-weiyi.lu@mediatek.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=efF2qmFwsJ1axs0m1B4BUuW+RUh8a4wq2pjaccVYe9c=;
+        b=fZjBs9/G9eMY3ubKJWdzWtpUWbktyB1ybMUhqHPGNySz/F0WAAoFpIhkIwFe72jP84
+         WUtT5ALEf/8HBxjOger42vdNyCegT0Rfjf1jF0uLtwyFBppkm7Vqb/Ofd88+3m33MLmz
+         9MwYS4Fkx/nZe86SeDpHpduTysij/rr7JYETMqMrleKmHOjyVDK0INpw6kU4WdNAyKRY
+         KzyD9xrMkeDtERL5Ae93ozRwev2aw6/ZiFWEtyGdqD5RuVBh0ufpxJNPN2QrYzXfMauT
+         raLspRqTAHhb2s2ecx3vvNqbWdHx+e1NAH2MrKpFrCAujm+UmVyozB8eLPZQJF0etX+6
+         1xog==
+X-Gm-Message-State: AA+aEWZRphnA6j++1PkXeBGXHj58OItRY8HYQ+txN2CxQ6equYsW0s0M
+        Tzz5K6Ef85X8Lhtr0EuytDHn+chPSIuuzo6W2eblKg==
+X-Google-Smtp-Source: ALg8bN6rfXd4idarU47KMo5Mow2yJjrhhdUXYqRqjjZX8AY37yXXMGazvLIMeKxtXulHnZixSS1jALfRLmJ1Sme/Y88=
+X-Received: by 2002:a24:5411:: with SMTP id t17mr207706ita.32.1545339383319;
+ Thu, 20 Dec 2018 12:56:23 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181214020417.2871-3-weiyi.lu@mediatek.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181210161729.29720-1-jagan@amarulasolutions.com>
+ <20181210161729.29720-8-jagan@amarulasolutions.com> <20181211164900.wfmkmbrbj3nmlb3h@flea>
+In-Reply-To: <20181211164900.wfmkmbrbj3nmlb3h@flea>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Fri, 21 Dec 2018 02:26:11 +0530
+Message-ID: <CAMty3ZB5F5jD9iJT1soXSA5HtQOf5W9rKO9nCdGFUfVo0hpO4Q@mail.gmail.com>
+Subject: Re: [PATCH v5 07/17] drm/sun4i: sun6i_mipi_dsi: Refactor vertical
+ video start delay
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        linux-amarula@amarulasolutions.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 14 Dec 2018 10:04:16 +0800, Weiyi Lu wrote:
-> Add new clock according to 3rd ECO design change.
-> It's the parent clock of audio clock mux.
-> 
-> Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
-> ---
->  include/dt-bindings/clock/mt2712-clk.h | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
+On Tue, Dec 11, 2018 at 10:19 PM Maxime Ripard
+<maxime.ripard@bootlin.com> wrote:
+>
+> On Mon, Dec 10, 2018 at 09:47:19PM +0530, Jagan Teki wrote:
+> > Video start delay can be computed by subtracting total vertical
+> > timing with front porch timing and with adding 1 delay line for TCON.
+> >
+> > BSP code form BPI-M64-bsp is computing video start delay as
+> > (from linux-sunxi/
+> > drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c)
+> >
+> > u32 vfp = panel->lcd_vt - panel->lcd_y - panel->lcd_vbp;
+> > => (panel->lcd_vt) - panel->lcd_y - (panel->lcd_vbp)
+> > => (timmings->ver_front_porch + panel->lcd_vbp + panel->lcd_y)
+> >    - panel->lcd_y - (panel->lcd_vbp)
+> > => timmings->ver_front_porch + panel->lcd_vbp + panel->lcd_y
+> >                            - panel->lcd_y - panel->lcd_vbp
+> > => timmings->ver_front_porch
+> >
+> > So, update the start delay computation accordingly.
+> >
+> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+>
+> Even though it's a bit better now on my A33 board and I don't have the
+> white stripes on the bottom of the display, there's still some
+> flickering with your patches applied.
+>
+> Bisecting it seems to point at that patch, but reverting it doesn't
+> make the issue go away, so it's not really clear which one exactly is
+> at fault.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Is reverting this patch, work fine or not?
+
+This patch is trying to make use of front porch instead of existing
+back porch to compute the delay. Since we revert the VBP fix patch[1]
+to assume VBP as VFP value look like your setup would also require to
+revert this change. But as per BSP or drm_mode details all of my
+displays even work with and w/o reverting these two.
+
+I'm thinking your display should work in the same behavior since the
+dsi controller making this route.
+
+[1] https://patchwork.kernel.org/patch/10680309/
