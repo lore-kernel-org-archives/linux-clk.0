@@ -6,48 +6,48 @@ X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BBEAC43387
-	for <linux-clk@archiver.kernel.org>; Thu, 20 Dec 2018 21:40:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5811C43387
+	for <linux-clk@archiver.kernel.org>; Thu, 20 Dec 2018 21:42:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BFE8218FD
-	for <linux-clk@archiver.kernel.org>; Thu, 20 Dec 2018 21:40:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A8FD218FD
+	for <linux-clk@archiver.kernel.org>; Thu, 20 Dec 2018 21:42:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545342053;
-	bh=2idrwtPcnlrZPsUUEdlPXAgVtAS4C11FwmMlxk3wb7E=;
+	s=default; t=1545342123;
+	bh=OmBTaIO6ZLU6/AYt5lDNx0Ohpi7ViC4/hokQ8ig8Io0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=2cg+ITnb/6x+zc/4s6hf5OkPT1rvIetkzSROrDp64Nkyd8VAUl/mDcUn88zcF6iew
-	 Bx/hcQ2dhQoLZN0/M7sGmVNw6PLE3VQmQKNR1Mkno8OrpSh5f4bLWDPg3/uSnT4f/5
-	 KeNdXsQfsRMaKO05uiwPOX4Cv2Wj62sb2+yME70E=
+	b=PToOlNNb4Krl2ui8SDhOfZH2Xq/loraeQYX1FBAzpCR7eevYAQKl6tp7kdSoZpMX3
+	 jXIFWjawAgo28fwcOu5WEg6CQtQrQFlha9Hu0flWHet1nnTMaftThNtPOU2ESHKAY5
+	 /fcqtwlCrAreDaomlkYqZPdys2sGnD1KxuBdYhsk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732588AbeLTVkw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 20 Dec 2018 16:40:52 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:36337 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728803AbeLTVkw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Dec 2018 16:40:52 -0500
-Received: by mail-pl1-f194.google.com with SMTP id g9so1472643plo.3;
-        Thu, 20 Dec 2018 13:40:52 -0800 (PST)
+        id S2390000AbeLTVmD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 20 Dec 2018 16:42:03 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:45322 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732606AbeLTVmD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Dec 2018 16:42:03 -0500
+Received: by mail-oi1-f194.google.com with SMTP id y1so3131432oie.12;
+        Thu, 20 Dec 2018 13:42:02 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=OzlDUGVZLwA1bPenBZhw8gF2o4JDnMQ6lT/6wPw/zFg=;
-        b=QWU/19p+L5GUOecus9ed1FYyHNmcoYRy3FQagRTFlq8l9v88C9JsFbeBcel++NEBmP
-         bqEosfh+/ggn30QFEJw7lc3Xwe/Hnbt0sQKlESxN4yL8UV6DihV+7SBnKkhIWqtZdsFV
-         afgSa6aPQOhaeG+Idmv0C4c/qMlkIdG8bpAGzw/ef3EmdiyjpiMFGlyJ7mUoWCKN8V3s
-         AvTx8Z1nHgIKoGGUDaOuVJji87tHA19MM8k83CHqgaDK/L7Y0voGE9rDrLOgdEX5Str9
-         noPJ7upVAOt/Toy2zLbwuOT7Fs/ZZVn4wvKjr2sF4mWCLtY6p+Don1+1ytJnyZQOLK1O
-         LIjg==
-X-Gm-Message-State: AA+aEWZue82V3j084WtMsr0DcHWJpULentl1b135spiNTDsKSRcwVy4O
-        EyFlWE1eyjNyBIB1YMdPOw==
-X-Google-Smtp-Source: AFSGD/UFVTsWeOtKla8gn4ybx5gCW+EByIkVajFut8Aul+L32NEp5KzdiETowkB/S7OXnNezF/oMbg==
-X-Received: by 2002:a17:902:a710:: with SMTP id w16mr25082864plq.95.1545342051999;
-        Thu, 20 Dec 2018 13:40:51 -0800 (PST)
+        bh=5YsEhyaUPRZXg/JZZlbqLdZiJRNmQFO+ziEMYQYfyvo=;
+        b=MnXLsuFv0rmFHsN2SOV8Z5kWlMjAqevRTELENbfIcSYZVU62OwF+NomTE/WHLUX3tX
+         dpegFGRZjpVM1Dpr52cv6ygUCWPT7Y7m7UNv6IeGnHagkpnbmb8CyFIYNHZCxnGUy5jp
+         GROM2bmmorCnQoGk5/8h8IHRNwburg8a1jfZBKOqvr87BS7SoRC1JA7BF8cOVmDHo/l/
+         kcBQOuYHYH0iptkeRaJgxwWnZuHoj+nq5yz6HgXYm8Rqqppz/1pmmGTrCf9EQye5VGdx
+         GfIlf+vFcPraVhiKPjGzX+1N9kckcwanwET611V8tCG1CsSlvCY043HA2Pv09M8/9iF3
+         JcJg==
+X-Gm-Message-State: AA+aEWbMBelz9envI8TxtqtdWPzdtKPHdgaGIHTb06ISNDC47irx0dWp
+        qL3WR52F8ZulC7bb25aBiw==
+X-Google-Smtp-Source: AFSGD/VV1VdaqkMb24ABWv2itXTSQrD2vxZU0AokEdO6vky4wcTCLiw0ujWoS+/Cy3CBdCC/Usg1xg==
+X-Received: by 2002:a05:6808:493:: with SMTP id z19mr316745oid.46.1545342122097;
+        Thu, 20 Dec 2018 13:42:02 -0800 (PST)
 Received: from localhost ([2607:fb90:1cd6:97bd:49af:e73e:5a36:3b50])
-        by smtp.gmail.com with ESMTPSA id q5sm37727187pfi.165.2018.12.20.13.40.50
+        by smtp.gmail.com with ESMTPSA id u18sm10224498otk.1.2018.12.20.13.42.01
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 20 Dec 2018 13:40:51 -0800 (PST)
-Date:   Thu, 20 Dec 2018 15:40:49 -0600
+        Thu, 20 Dec 2018 13:42:01 -0800 (PST)
+Date:   Thu, 20 Dec 2018 15:42:00 -0600
 From:   Rob Herring <robh@kernel.org>
 To:     Heiko Stuebner <heiko@sntech.de>
 Cc:     linux-rockchip@lists.infradead.org, hjc@rock-chips.com,
@@ -56,36 +56,30 @@ Cc:     linux-rockchip@lists.infradead.org, hjc@rock-chips.com,
         robh+dt@kernel.org, mark.rutland@arm.com, architt@codeaurora.org,
         a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com,
         linux-clk@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>
-Subject: Re: [PATCH 06/15] drm/rockchip: analogix_dp: add support for the
- rk3368 variant
-Message-ID: <20181220214049.GA14179@bogus>
+Subject: Re: [PATCH 07/15] drm/rockchip: dw-mipi-dsi: add support for
+ rk3368-variant
+Message-ID: <20181220214200.GA15833@bogus>
 References: <20181217123650.6773-1-heiko@sntech.de>
- <20181217123650.6773-7-heiko@sntech.de>
+ <20181217123650.6773-8-heiko@sntech.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181217123650.6773-7-heiko@sntech.de>
+In-Reply-To: <20181217123650.6773-8-heiko@sntech.de>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 17 Dec 2018 13:36:41 +0100, Heiko Stuebner wrote:
-> Add the compatible and allow the driver to also not set any crtc input
-> on socs that only have one vop. While that was already possible
-> because the driver checked against the grf-reg being 0, make that
-> var an int as "0x0" is a valid grf address itself. So standardize
-> on -1 for "no setting needed".
-> 
-> The dp controller behaves similar to the one found on rk3288, so we
-> don't add a new chip_type to not overly pollute the bridge driver.
+On Mon, 17 Dec 2018 13:36:42 +0100, Heiko Stuebner wrote:
+> Add the compatible and grf values and allow the driver to also
+> not select a specific crtc input on systems with only one vop.
 > 
 > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 > ---
->  .../display/rockchip/analogix_dp-rockchip.txt   |  1 +
->  drivers/gpu/drm/rockchip/analogix_dp-rockchip.c | 17 +++++++++++++----
->  2 files changed, 14 insertions(+), 4 deletions(-)
+>  .../display/rockchip/dw_mipi_dsi_rockchip.txt |  1 +
+>  .../gpu/drm/rockchip/dw-mipi-dsi-rockchip.c   | 25 +++++++++++++++++--
+>  2 files changed, 24 insertions(+), 2 deletions(-)
 > 
 
 Reviewed-by: Rob Herring <robh@kernel.org>
