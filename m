@@ -2,115 +2,72 @@ Return-Path: <SRS0=NpU+=O5=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78DADC43387
-	for <linux-clk@archiver.kernel.org>; Thu, 20 Dec 2018 21:09:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7C8BC43387
+	for <linux-clk@archiver.kernel.org>; Thu, 20 Dec 2018 21:15:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3ED3E21903
-	for <linux-clk@archiver.kernel.org>; Thu, 20 Dec 2018 21:09:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6BA6621905
+	for <linux-clk@archiver.kernel.org>; Thu, 20 Dec 2018 21:15:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545340161;
-	bh=Ge1/tEjB2RmN0rIIzRGmX3o8YdSsD9kdZGbjH8HZELI=;
+	s=default; t=1545340543;
+	bh=8Eag9tEeLAOkPfHOvwKQIBsJzR2egdr+WAQlC5teXCg=;
 	h=To:References:Cc:From:In-Reply-To:Subject:Date:List-ID:From;
-	b=MeVGI+B9JQCsXe4sGmSihz3HtWiohU/1BVgqAiT2pje0XTMixeSHn7Xc9yuKx+BrK
-	 HhmC8GhZb3OdZuzPMIA5xZECzxlGWGLYyg+ZTJ8zB2bOHs6/koueiZM6dKdU6oWEa4
-	 I62wv6DipK8nLv1QWZZICMF3WbxSIYxzdHGAIHwQ=
+	b=SodzQAt5+8uHEhR0Adod8k5wcpIPTFS4LO1I9qw0uxUTPbccTIQEHYE/1nqRTUiWx
+	 MRU55sFzFa9raWnVlIGnyK5WqZ3j4VV3FoFxIpkN8/3qU7H/y05+mPn1YXXQCwsCIN
+	 y0c+4r1NjOYAlhvn9xFnBiUS7YPnt1KWu1mWcL4k=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730840AbeLTVJU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 20 Dec 2018 16:09:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53026 "EHLO mail.kernel.org"
+        id S1731364AbeLTVPn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 20 Dec 2018 16:15:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58108 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730184AbeLTVJU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 20 Dec 2018 16:09:20 -0500
+        id S1727703AbeLTVPm (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 20 Dec 2018 16:15:42 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EF981218FE;
-        Thu, 20 Dec 2018 21:09:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1CB48218F0;
+        Thu, 20 Dec 2018 21:15:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545340160;
-        bh=Ge1/tEjB2RmN0rIIzRGmX3o8YdSsD9kdZGbjH8HZELI=;
+        s=default; t=1545340542;
+        bh=8Eag9tEeLAOkPfHOvwKQIBsJzR2egdr+WAQlC5teXCg=;
         h=To:References:Cc:From:In-Reply-To:Subject:Date:From;
-        b=llX4WFK0DS9Jd8LXQWAU6kE8TbhIDKBD5I6oV6Ep+XOzx13ZtNNRlPN94Mjm/o/UZ
-         tHq4SH5c6+qzbEKQbH/BgnJcvsk8qtyw67OS7T/z51iwQ8isZbPkrMpKKAk4e0lQdo
-         Q37jRlqe+KF1LgquvUNCqAkQvHNBnnktK2shItCQ=
+        b=HG+oagdZ7lQIl8JfYm8JmL4S7dgqWiQCkIpy3pLluT4AbyG6y4d9mfGjqKoCGTrEF
+         IXCn2XpXT8GMvORKYpY5qxBPhgab56OMoTWfyBEyFh5vwbW9alDqquCyVXiLUTnc3U
+         +O5m0WIOpV0uwajqXZIk0zmUDm1VYbVe1nCNXyM0=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 User-Agent: alot/0.8
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-References: <20181204192440.12125-1-miquel.raynal@bootlin.com> <20181204192440.12125-2-miquel.raynal@bootlin.com> <154517780935.238328.764268020422357561@swboyd.mtv.corp.google.com> <20181219090331.4c8c4852@xps13>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>
+To:     Derek Basehore <dbasehore@chromium.org>,
+        linux-kernel@vger.kernel.org
+References: <20181024013132.115907-1-dbasehore@chromium.org>
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-doc@vger.kernel.org,
+        mturquette@baylibre.com, heiko@sntech.de, aisheng.dong@nxp.com,
+        mchehab+samsung@kernel.org, corbet@lwn.net,
+        Derek Basehore <dbasehore@chromium.org>
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20181219090331.4c8c4852@xps13>
-Message-ID: <154534015908.79149.14109221006631310404@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH v3 1/4] clk: core: clarify the check for runtime PM
-Date:   Thu, 20 Dec 2018 13:09:19 -0800
+In-Reply-To: <20181024013132.115907-1-dbasehore@chromium.org>
+Message-ID: <154534054131.79149.12015186156265337224@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH 0/6] Coordinated Clks
+Date:   Thu, 20 Dec 2018 13:15:41 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Miquel Raynal (2018-12-19 00:03:31)
-> Hi Stephen,
->=20
-> Stephen Boyd <sboyd@kernel.org> wrote on Tue, 18 Dec 2018 16:03:29
-> -0800:
->=20
-> > Quoting Miquel Raynal (2018-12-04 11:24:37)
-> > > Currently, the core->dev entry is populated only if runtime PM is
-> > > enabled. Doing so prevents accessing the device structure in any
-> > > case.
-> > >=20
-> > > Keep the same logic but instead of using the presence of core->dev as
-> > > the only condition, also check the status of
-> > > pm_runtime_enabled(). Then, we can set the core->dev pointer at any
-> > > time as long as a device structure is available.
-> > >=20
-> > > This change will help supporting device links in the clock subsystem.
-> > >=20
-> > > Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> > > ---
-> > >  drivers/clk/clk.c | 11 +++++------
-> > >  1 file changed, 5 insertions(+), 6 deletions(-)
-> > >=20
-> > > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > > index af011974d4ec..b799347c5fd6 100644
-> > > --- a/drivers/clk/clk.c
-> > > +++ b/drivers/clk/clk.c
-> > > @@ -97,7 +97,7 @@ static int clk_pm_runtime_get(struct clk_core *core)
-> > >  {
-> > >         int ret =3D 0;
-> > > =20
-> > > -       if (!core->dev)
-> > > +       if (!core->dev || !pm_runtime_enabled(core->dev)) =20
-> >=20
-> > This looks potentially dangerous. What if runtime PM is disabled for the
-> > clk when this function is called? Shouldn't we just stash a bool away in
-> > the clk_core structure when it's registered? And then we can replace the
-> > check for !core->dev with a check for 'core->rpm_enabled' instead. That
-> > would be a more exact transformation.
->=20
-> Sure, I'll do that if you think there is a danger.
+Quoting Derek Basehore (2018-10-23 18:31:26)
+> Here's the first set of patches that I'm working on for the Common
+> Clk Framework. Part of this patch series adds a new clk op,
+> pre_rate_req. This is designed to replace the clk notifier approach
+> that many clk drivers use right now to setup alt parents or temporary
+> dividers. This should allow for the removal of the
+> CLK_RECALC_NEW_RATES flag and the implementation of a better locking
+> scheme for the prepare lock.
 
-I've made the change and pushed it out to the clk tree. I'm working on
-some patches to change how we do parent lookups and reworking clk_get()
-in the process. Take a look so we don't duplicate efforts. The code
-isn't complete, but I hope to finish soon. Your device links patches can
-build upon this.
-
- git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-parent-rew=
-rite
+Are you going to resend this series? I can do a review but I wonder how
+much it will change anyway.
 
