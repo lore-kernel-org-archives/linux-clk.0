@@ -2,72 +2,95 @@ Return-Path: <SRS0=NpU+=O5=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7C8BC43387
-	for <linux-clk@archiver.kernel.org>; Thu, 20 Dec 2018 21:15:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F333C43387
+	for <linux-clk@archiver.kernel.org>; Thu, 20 Dec 2018 21:37:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BA6621905
-	for <linux-clk@archiver.kernel.org>; Thu, 20 Dec 2018 21:15:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4CF9C2070D
+	for <linux-clk@archiver.kernel.org>; Thu, 20 Dec 2018 21:37:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545340543;
-	bh=8Eag9tEeLAOkPfHOvwKQIBsJzR2egdr+WAQlC5teXCg=;
-	h=To:References:Cc:From:In-Reply-To:Subject:Date:List-ID:From;
-	b=SodzQAt5+8uHEhR0Adod8k5wcpIPTFS4LO1I9qw0uxUTPbccTIQEHYE/1nqRTUiWx
-	 MRU55sFzFa9raWnVlIGnyK5WqZ3j4VV3FoFxIpkN8/3qU7H/y05+mPn1YXXQCwsCIN
-	 y0c+4r1NjOYAlhvn9xFnBiUS7YPnt1KWu1mWcL4k=
+	s=default; t=1545341841;
+	bh=dZdo+MRhpcP+xwDV78ysDPWkHssEANn6w2bSh9KvBIo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=gvBnpk8FiiYZruyKJOAaO4bjueBrg0DiMMGXIhoH0wvxKbhMw5mJjLadBfAnaQi59
+	 H0MccrB1wwZ+N42S1rVEx7yRlgjZDlWr14UqpdY9ACQSU5VyFblYjsRKpASxNhrOMY
+	 TDvTaVelm2scvEgf0etHs5fpzydGmWfqfbg3VYVI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731364AbeLTVPn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 20 Dec 2018 16:15:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58108 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727703AbeLTVPm (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 20 Dec 2018 16:15:42 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1CB48218F0;
-        Thu, 20 Dec 2018 21:15:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545340542;
-        bh=8Eag9tEeLAOkPfHOvwKQIBsJzR2egdr+WAQlC5teXCg=;
-        h=To:References:Cc:From:In-Reply-To:Subject:Date:From;
-        b=HG+oagdZ7lQIl8JfYm8JmL4S7dgqWiQCkIpy3pLluT4AbyG6y4d9mfGjqKoCGTrEF
-         IXCn2XpXT8GMvORKYpY5qxBPhgab56OMoTWfyBEyFh5vwbW9alDqquCyVXiLUTnc3U
-         +O5m0WIOpV0uwajqXZIk0zmUDm1VYbVe1nCNXyM0=
-Content-Type: text/plain; charset="utf-8"
+        id S2389950AbeLTVhU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 20 Dec 2018 16:37:20 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:37601 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728808AbeLTVhU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Dec 2018 16:37:20 -0500
+Received: by mail-oi1-f196.google.com with SMTP id y23so3145396oia.4;
+        Thu, 20 Dec 2018 13:37:19 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=AxaU7zrSWX0fc6SAAGFXliyhUgi/Gs4msHYZMlxcnWk=;
+        b=Jcd2KLQrxC/einHV9Of0vC0NcRRS2lBH9zWxIkqS2UcC+XWwpJQ0hbzb64EdIEou/L
+         oJeFgxe2bL16wXhznCWOJVvb1ug00gd8e0hYKkk0yhrqHazmXRxhSKMhFO5zFk8AcSEP
+         GWbKyp+fRlANXgrcVKZhG/aMlCCCLbz0ktB5gxg8dMAXm3byD0e8FrqBCqkkxRawBg/F
+         e+UkqAk/9v5sMZhAtI93RgZTmwOZskAAEAGcXlNliuFKUzfxScjFsyy5D3hpNanDcIyg
+         H1BHCEX7wuTgNLTzfFMVRpdPFuTFRAoX5jjswU4mxoMvXtZJomSHuEpg+vv7eB+FszLw
+         8bmQ==
+X-Gm-Message-State: AA+aEWZsNBfNM+W/hjJfgvNbYFGbOLpkBM80xHPG7KFYItDWTG/817sA
+        FEXQNL10FhUUHaSY6N+sVQ==
+X-Google-Smtp-Source: AFSGD/Vf/DktaMqCOXHukHpteFCFgM10KmSvObZxBOJ6Y5xehWpYzXb4iUuipNfn5aGRnBWKemZqtQ==
+X-Received: by 2002:aca:52d4:: with SMTP id g203mr305385oib.14.1545341838608;
+        Thu, 20 Dec 2018 13:37:18 -0800 (PST)
+Received: from localhost ([2607:fb90:1cd6:97bd:49af:e73e:5a36:3b50])
+        by smtp.gmail.com with ESMTPSA id n185sm10461267oih.18.2018.12.20.13.37.17
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 20 Dec 2018 13:37:17 -0800 (PST)
+Date:   Thu, 20 Dec 2018 15:37:14 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+Cc:     jorge.ramirez-ortiz@linaro.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, andy.gross@linaro.org,
+        david.brown@linaro.org, sboyd@kernel.org, will.deacon@arm.com,
+        mturquette@baylibre.com, jassisinghbrar@gmail.com,
+        bjorn.andersson@linaro.org, vkoul@kernel.org,
+        niklas.cassel@linaro.org, sibis@codeaurora.org,
+        georgi.djakov@linaro.org, arnd@arndb.de,
+        horms+renesas@verge.net.au, heiko@sntech.de,
+        enric.balletbo@collabora.com, jagan@amarulasolutions.com,
+        olof@lixom.net, amit.kucheria@linaro.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 04/13] dt-bindings: mailbox: qcom: Add clock-name
+ optional property
+Message-ID: <20181220213714.GA8965@bogus>
+References: <1545039990-19984-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
+ <1545039990-19984-5-git-send-email-jorge.ramirez-ortiz@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-User-Agent: alot/0.8
-To:     Derek Basehore <dbasehore@chromium.org>,
-        linux-kernel@vger.kernel.org
-References: <20181024013132.115907-1-dbasehore@chromium.org>
-Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-doc@vger.kernel.org,
-        mturquette@baylibre.com, heiko@sntech.de, aisheng.dong@nxp.com,
-        mchehab+samsung@kernel.org, corbet@lwn.net,
-        Derek Basehore <dbasehore@chromium.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20181024013132.115907-1-dbasehore@chromium.org>
-Message-ID: <154534054131.79149.12015186156265337224@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH 0/6] Coordinated Clks
-Date:   Thu, 20 Dec 2018 13:15:41 -0800
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1545039990-19984-5-git-send-email-jorge.ramirez-ortiz@linaro.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Derek Basehore (2018-10-23 18:31:26)
-> Here's the first set of patches that I'm working on for the Common
-> Clk Framework. Part of this patch series adds a new clk op,
-> pre_rate_req. This is designed to replace the clk notifier approach
-> that many clk drivers use right now to setup alt parents or temporary
-> dividers. This should allow for the removal of the
-> CLK_RECALC_NEW_RATES flag and the implementation of a better locking
-> scheme for the prepare lock.
+On Mon, 17 Dec 2018 10:46:21 +0100, Jorge Ramirez-Ortiz wrote:
+> When the APCS clock is registered (platform dependent), it retrieves
+> its parent names from hardcoded values in the driver.
+> 
+> The following commit allows the DT node to provide such clock names to
+> the platform data based clock driver therefore avoiding having to
+> explicitly embed those names in the clock driver source code.
+> 
+> Co-developed-by: Niklas Cassel <niklas.cassel@linaro.org>
+> Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
+> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+> ---
+>  .../bindings/mailbox/qcom,apcs-kpss-global.txt      | 21 +++++++++++++++++++++
+>  1 file changed, 21 insertions(+)
+> 
 
-Are you going to resend this series? I can do a review but I wonder how
-much it will change anyway.
-
+Reviewed-by: Rob Herring <robh@kernel.org>
