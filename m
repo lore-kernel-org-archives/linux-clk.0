@@ -2,84 +2,66 @@ Return-Path: <SRS0=NpU+=O5=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5811C43387
-	for <linux-clk@archiver.kernel.org>; Thu, 20 Dec 2018 21:42:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FCCEC43387
+	for <linux-clk@archiver.kernel.org>; Thu, 20 Dec 2018 22:44:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A8FD218FD
-	for <linux-clk@archiver.kernel.org>; Thu, 20 Dec 2018 21:42:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545342123;
-	bh=OmBTaIO6ZLU6/AYt5lDNx0Ohpi7ViC4/hokQ8ig8Io0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=PToOlNNb4Krl2ui8SDhOfZH2Xq/loraeQYX1FBAzpCR7eevYAQKl6tp7kdSoZpMX3
-	 jXIFWjawAgo28fwcOu5WEg6CQtQrQFlha9Hu0flWHet1nnTMaftThNtPOU2ESHKAY5
-	 /fcqtwlCrAreDaomlkYqZPdys2sGnD1KxuBdYhsk=
+	by mail.kernel.org (Postfix) with ESMTP id C92F52186A
+	for <linux-clk@archiver.kernel.org>; Thu, 20 Dec 2018 22:44:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390000AbeLTVmD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 20 Dec 2018 16:42:03 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:45322 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732606AbeLTVmD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Dec 2018 16:42:03 -0500
-Received: by mail-oi1-f194.google.com with SMTP id y1so3131432oie.12;
-        Thu, 20 Dec 2018 13:42:02 -0800 (PST)
+        id S2390172AbeLTWoW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 20 Dec 2018 17:44:22 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:41642 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725781AbeLTWoW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Dec 2018 17:44:22 -0500
+Received: by mail-qt1-f195.google.com with SMTP id l12so3683624qtf.8
+        for <linux-clk@vger.kernel.org>; Thu, 20 Dec 2018 14:44:21 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=5YsEhyaUPRZXg/JZZlbqLdZiJRNmQFO+ziEMYQYfyvo=;
-        b=MnXLsuFv0rmFHsN2SOV8Z5kWlMjAqevRTELENbfIcSYZVU62OwF+NomTE/WHLUX3tX
-         dpegFGRZjpVM1Dpr52cv6ygUCWPT7Y7m7UNv6IeGnHagkpnbmb8CyFIYNHZCxnGUy5jp
-         GROM2bmmorCnQoGk5/8h8IHRNwburg8a1jfZBKOqvr87BS7SoRC1JA7BF8cOVmDHo/l/
-         kcBQOuYHYH0iptkeRaJgxwWnZuHoj+nq5yz6HgXYm8Rqqppz/1pmmGTrCf9EQye5VGdx
-         GfIlf+vFcPraVhiKPjGzX+1N9kckcwanwET611V8tCG1CsSlvCY043HA2Pv09M8/9iF3
-         JcJg==
-X-Gm-Message-State: AA+aEWbMBelz9envI8TxtqtdWPzdtKPHdgaGIHTb06ISNDC47irx0dWp
-        qL3WR52F8ZulC7bb25aBiw==
-X-Google-Smtp-Source: AFSGD/VV1VdaqkMb24ABWv2itXTSQrD2vxZU0AokEdO6vky4wcTCLiw0ujWoS+/Cy3CBdCC/Usg1xg==
-X-Received: by 2002:a05:6808:493:: with SMTP id z19mr316745oid.46.1545342122097;
-        Thu, 20 Dec 2018 13:42:02 -0800 (PST)
-Received: from localhost ([2607:fb90:1cd6:97bd:49af:e73e:5a36:3b50])
-        by smtp.gmail.com with ESMTPSA id u18sm10224498otk.1.2018.12.20.13.42.01
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 20 Dec 2018 13:42:01 -0800 (PST)
-Date:   Thu, 20 Dec 2018 15:42:00 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Heiko Stuebner <heiko@sntech.de>
-Cc:     linux-rockchip@lists.infradead.org, hjc@rock-chips.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, architt@codeaurora.org,
-        a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com,
-        linux-clk@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>
-Subject: Re: [PATCH 07/15] drm/rockchip: dw-mipi-dsi: add support for
- rk3368-variant
-Message-ID: <20181220214200.GA15833@bogus>
-References: <20181217123650.6773-1-heiko@sntech.de>
- <20181217123650.6773-8-heiko@sntech.de>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0D5Dc/si8xPRw0x5o3p7VyIeXk4ElYdDjAf++SoeC6Q=;
+        b=KQMQ8b7j8yrpruhhTH+vsBWaAi1DMZyYZpUfkf9jCJCPCA3NU4FE2J5RVn2KtV+VxM
+         sCZP02OAv8tCgZHbKy6cvtEEQyp3FxWxM0xzsIqltbrEBPk5nyaKg9RSk83hXmrjOIk0
+         rFw799BaEfuq69KjXK/ojMHptszHag0HJLdp+OfDnEdG+LN1NvGyRRSJB0V/483XO3hv
+         sZ8Aa6ICZzOFkJ6gVijxRA9ykROsTj8exBfrZa2uMOfffhZIYCbuCYY6WHWO8axE2WGw
+         Q2IcFA3BiGachjc0IcHQO92DdKRv23KiZZaXkx3TfNPbs4ljLUdwycuVGp+ytAV2aizP
+         /EHw==
+X-Gm-Message-State: AA+aEWZNAvrSX9vO7Ng0jeUVeFww+olFsf6Ds38smExoIhzLVtsq7lPw
+        c5BKRHTkVX5Eyr86QNkRDe5l0xySi6X0HJhUXq27h5MYwGw=
+X-Google-Smtp-Source: ALg8bN6E380i9sSTS/E+mDtlpsfv6yNKcltEgn1dZhKqHwZM4v8WbzTo8qgjB1e3NQtvU198WNMk3C2FThNajaAu7Ac=
+X-Received: by 2002:ac8:4141:: with SMTP id e1mr97282qtm.96.1545345860549;
+ Thu, 20 Dec 2018 14:44:20 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181217123650.6773-8-heiko@sntech.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181220085433.20334-1-shc_work@mail.ru> <154533496261.79149.8151013115299125376@swboyd.mtv.corp.google.com>
+In-Reply-To: <154533496261.79149.8151013115299125376@swboyd.mtv.corp.google.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 20 Dec 2018 23:44:03 +0100
+Message-ID: <CAK8P3a17F-M3e=8-CwmeYip1eLyhok9yCLBC6AoGy1voC24P2A@mail.gmail.com>
+Subject: Re: [PATCH] clk: clps711x: Remove board support
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Alexander Shiyan <shc_work@mail.ru>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 17 Dec 2018 13:36:42 +0100, Heiko Stuebner wrote:
-> Add the compatible and grf values and allow the driver to also
-> not select a specific crtc input on systems with only one vop.
-> 
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> ---
->  .../display/rockchip/dw_mipi_dsi_rockchip.txt |  1 +
->  .../gpu/drm/rockchip/dw-mipi-dsi-rockchip.c   | 25 +++++++++++++++++--
->  2 files changed, 24 insertions(+), 2 deletions(-)
-> 
+On Thu, Dec 20, 2018 at 8:42 PM Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> Quoting Alexander Shiyan (2018-12-20 00:54:33)
+> > Since board support for the CLPS711X platform was removed,
+> > remove the board support from the clk-clps711x driver.
+>
+> Can you reference the commit where the platform was removed in the
+> commit text here? It helps me know if there are dependencies.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+This was a while back, in commit 4a56f46a7dc6 ("ARM: clps711x:
+Remove boards support"), which made it into linux-4.8.
+
+      Arnd
