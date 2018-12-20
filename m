@@ -2,204 +2,101 @@ Return-Path: <SRS0=NpU+=O5=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F9FEC43612
-	for <linux-clk@archiver.kernel.org>; Thu, 20 Dec 2018 20:58:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E4ADC43444
+	for <linux-clk@archiver.kernel.org>; Thu, 20 Dec 2018 21:05:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60A74218FE
-	for <linux-clk@archiver.kernel.org>; Thu, 20 Dec 2018 20:58:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CA1921908
+	for <linux-clk@archiver.kernel.org>; Thu, 20 Dec 2018 21:05:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545339900;
+	bh=k9ZOs6Z9ayUZn++BZJFEEV81SU6Z4YhaSf6YMjfDQWw=;
+	h=To:References:Cc:From:In-Reply-To:Subject:Date:List-ID:From;
+	b=p2yK3Ft9eKE0g05hyyxSUH9of05F78xm5HpFrXGpa4Dt/8Eft5Hjt8/LKcvzc5PlN
+	 9HDfpxh6Fw+hyaqK8pMBBryNi53lUhhzyS0PCaQGtG5CkevkpMnGfHi5/3FHs154Bw
+	 Wt9AWJMQPo/LbgMgzBMAdF0XsifC3smwRCHFw64c=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731108AbeLTU63 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 20 Dec 2018 15:58:29 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:58007 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729578AbeLTU63 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Dec 2018 15:58:29 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1ga5OW-0005zd-Dj; Thu, 20 Dec 2018 21:58:12 +0100
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1ga5OT-0000P7-8J; Thu, 20 Dec 2018 21:58:09 +0100
-Date:   Thu, 20 Dec 2018 21:58:09 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Paul Cercueil <paul@crapouillou.net>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ralf Baechle <ralf@linux-mips.org>, paul.burton@mips.com,
-        James Hogan <jhogan@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mathieu Malaterre <malat@debian.org>, ezequiel@collabora.co.uk,
-        prasannatsmkumar@gmail.com, linux-pwm@vger.kernel.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>,
-        linux-mips@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-clk <linux-clk@vger.kernel.org>, od@zcrc.me
-Subject: Re: [PATCH v8 15/26] pwm: jz4740: Add support for the JZ4725B
-Message-ID: <20181220205809.5t2klpb7donmoibb@pengutronix.de>
-References: <20181212220922.18759-1-paul@crapouillou.net>
- <20181212220922.18759-16-paul@crapouillou.net>
- <20181213092409.ml4wpnzow2nnszkd@pengutronix.de>
- <1544709795.18952.1@crapouillou.net>
- <20181213204219.onem3q6dcmakusl2@pengutronix.de>
- <CACRpkdbABtDgwKai=8Pfji7qVb-XHsX8pDsuDdS5hhg7qEN0Bw@mail.gmail.com>
- <20181214142628.zwi4hadrju53z6f3@pengutronix.de>
- <1544969932.1649.1@crapouillou.net>
- <20181217075321.k45vhgnszeqs3tea@pengutronix.de>
- <20181220173904.GE9408@ulmo>
+        id S1725440AbeLTVE7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 20 Dec 2018 16:04:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50982 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389807AbeLTVE5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 20 Dec 2018 16:04:57 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 70CD7218FE;
+        Thu, 20 Dec 2018 21:04:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1545339896;
+        bh=k9ZOs6Z9ayUZn++BZJFEEV81SU6Z4YhaSf6YMjfDQWw=;
+        h=To:References:Cc:From:In-Reply-To:Subject:Date:From;
+        b=h2J/gJ40bayPTQXguMuIzA3jeIf2irBuLgVRqrfxPu41CywXUBPQ2fZAgxeal3rGs
+         Wy72AlLLAlNefiFVCIRlp+CdO3/f1jqh5UUSbdijVjl2UWutrjzPi0ip0XLbmueFAT
+         MdtCq0Ofs5+LeNnLbE8cQlLtw993jSNPCU6s6GKU=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181220173904.GE9408@ulmo>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+User-Agent: alot/0.8
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <tdas@codeaurora.org>
+References: <1545306385-31240-1-git-send-email-tdas@codeaurora.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Taniya Das <tdas@codeaurora.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1545306385-31240-1-git-send-email-tdas@codeaurora.org>
+Message-ID: <154533989563.79149.10213938035592547726@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v1] clk: qcom: lpass: Add CLK_IGNORE_UNUSED for lpass clocks
+Date:   Thu, 20 Dec 2018 13:04:55 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Dec 20, 2018 at 06:39:04PM +0100, Thierry Reding wrote:
-> On Mon, Dec 17, 2018 at 08:53:21AM +0100, Uwe Kleine-König wrote:
-> > On Sun, Dec 16, 2018 at 03:18:52PM +0100, Paul Cercueil wrote:
-> > > Hi,
-> > > 
-> > > Le ven. 14 déc. 2018 à 15:26, Uwe Kleine-König
-> > > <u.kleine-koenig@pengutronix.de> a écrit :
-> > > > Hello,
-> > > > 
-> > > > On Fri, Dec 14, 2018 at 02:50:20PM +0100, Linus Walleij wrote:
-> > > > > On Thu, Dec 13, 2018 at 9:42 PM Uwe Kleine-König
-> > > > > <u.kleine-koenig@pengutronix.de> wrote:
-> > > > > > [Adding Linus Walleij to Cc:]
-> > > > > > On Thu, Dec 13, 2018 at 03:03:15PM +0100, Paul Cercueil wrote:
-> > > > > > > Le jeu. 13 déc. 2018 à 10:24, Uwe Kleine-König
-> > > > > > > <u.kleine-koenig@pengutronix.de> a écrit :
-> > > > > > > > On Wed, Dec 12, 2018 at 11:09:10PM +0100, Paul Cercueil wrote:
-> > > > > > > > >  The PWM in the JZ4725B works the same as in the JZ4740,
-> > > > > > > > >  except that it only has 6 channels available instead of
-> > > > > > > > >  8.
-> > > > > > > >
-> > > > > > > > this driver is probed only from device tree? If yes, it
-> > > > > > > > might be sensible to specify the number of PWMs there and
-> > > > > > > > get it from there.
-> > > > > > > > There doesn't seem to be a generic binding for that, but there are
-> > > > > > > > several drivers that could benefit from it. (This is a bigger project
-> > > > > > > > though and shouldn't stop your patch. Still more as it already got
-> > > > > > > > Thierry's ack.)
-> > > > > > >
-> > > > > > > I think there needs to be a proper guideline, as there doesn't seem to be
-> > > > > > > a consensus about this. I learned from emails with Rob and  Linus (Walleij)
-> > > > > > > that I should not have in devicetree what I can deduce from the compatible
-> > > > > > > string.
-> > > > > >
-> > > > > > I understood them a bit differently. It is ok to deduce things from the
-> > > > > > compatible string. But if you define a generic property (say) "num-pwms"
-> > > > > > that is used uniformly in most bindings this is ok, too. (And then the
-> > > > > > two different devices could use the same compatible.)
-> > > > > >
-> > > > > > An upside of the generic "num-pwms" property is that the pwm core could
-> > > > > > sanity check pwm phandles before passing them to the hardware drivers.
-> > > > > 
-> > > > >  I don't know if this helps, but in GPIO we have "ngpios" which is
-> > > > >  used to augment an existing block as to the number of lines actually
-> > > > >  used with it.
-> > > > > 
-> > > > >  The typical case is that an ASIC engineer synthesize a block for
-> > > > >  32 GPIOs but only 12 of them are routed to external pads. So
-> > > > >  we augment the behaviour of that driver to only use 12 of the
-> > > > >  32 lines.
-> > > > > 
-> > > > >  I guess using the remaining 20 lines "works" in a sense but they
-> > > > >  have no practical use and will just bias electrons in the silicon
-> > > > >  for no use.
-> > > > 
-> > > > This looks very similar to the case under discussion.
-> > > > 
-> > > > >  So if the PWM case is something similar, then by all means add
-> > > > >  num-pwms.
-> > > > 
-> > > > .. or "npwms" to use the same nomenclature as the gpio binding?
-> > > 
-> > > If we're going to do something like this, should it be the drivers or
-> > > the core (within pwmchip_add) that checks for this "npwms" property?
-> > 
-> > Of course this should be done in the core. The driver than can rely on
-> > the validity of the index. But as I wrote before, this shouldn't stop
-> > your patch from going in.
+Quoting Taniya Das (2018-12-20 03:46:25)
+> The LPASS clocks has a dependency on the GCC lpass clocks to be enabled
+> before accessing them and that was the reason to mark the gcc lpass clocks
+> as critical. But in the case where the lpass subsystem would require a
+> restart, toggling the lpass reset would from HW clear the SW enable bits
+> of the GCC lpass clocks. Thus the next time bringing up the lpass subsyst=
+em
+> out of reset would fail.
+>=20
+> Allow the lpass clock driver to enable/disable the gcc lpass clocks and
+> mark the lpass clocks not be accessed during late_init if no client vote.
 
-Actually the core already takes care of the validity of the index with
-the number of pwms being provided to pwmchip_add().
- 
-> > But if Thierry agrees that this npmws (or num-pwms) is a good idea, it
-> > would be great to start early to convert drivers.
-> 
-> Do we actually need this? It seems like Paul's patch here properly
-> derives the number of available PWMs from the compatible string, so I
-> don't see what the extra num-pwms (or whatever) property would add.
+You need to add more details here. It feels like you wrote the beginning
+of a paragraph and then stopped abruptly, leaving the reader hanging for
+the whole story. Why is late_init important? Why do we need to leave
+them on from the bootloader? What if the bootloader doesn't leave them
+enabled? This is all rather hacky so I'm deeply confused. Does the lpass
+driver need to get these gcc clks and enable/prepare them during probe?
+But then it needs to also allow a reset happen and change the clk state?
 
-Given that the only difference between the two different implementations
-is just the number of pwms provided, this could just be expressed in the
-dts as:
+I suspect this situation is circling a larger problem where a reset is
+toggled and that changes some clk state without the clk framework
+knowing. There's not much we can do about that besides having some
+mechanism for the clks to know that their state is now out of sync. If
+that can be done on the provider driver side then we should have an
+easier time not needing to write a bunch of framework code to handle
+this. OMAP folks are dealing with the same problems from what I recall.
 
-	pwm@2000000 {
-		compatible = "jz4740";
-		num-pwms = <8>;
-	}
+>=20
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
 
-and
+> @@ -77,6 +81,7 @@
+>                 .enable_mask =3D BIT(0),
+>                 .hw.init =3D &(struct clk_init_data){
+>                         .name =3D "lpass_qdsp6ss_sleep_clk",
+> +                       .flags =3D CLK_IGNORE_UNUSED,
 
-	pwm@2000000 {
-		compatible = "jz4740";
-		num-pwms = <6>;
-	}
+All uses of CLK_IGNORE_UNUSED and CLK_IS_CRITICAL need comments about
+why they're there. It's never obvious why these things are being done.
 
-instead of
-
-	pwm@2000000 {
-		compatible = "jz4740";
-	}
-
-and
-
-	pwm@2000000 {
-		compatible = "jz4725";
-	}
-
-. According to my metric the former is more descriptive and so better.
-
-And then the pwm core could provide parsing of that property (e.g. if
-chip.npwm == 0) which simplifies the driver (and all others using that
-mechanism).
-
-Regarding the question "Do we actually need this?": We don't, but I
-think it would make a nice step to get more descriptive device trees and
-so I consider it an improvement. It would also allow to check a dtb
-because even without the driver you can notice that
-
-	pwms = <&pwm 12 0>;
-
-is invalid if &pwm has "num-pwms = <8>". Drivers that could benefit are
-(at least): hibvt, sun4i, tegra, lpss.
-
-Best regards
-Uwe
-
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
