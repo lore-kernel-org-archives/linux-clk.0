@@ -4,78 +4,80 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 690D9C43387
-	for <linux-clk@archiver.kernel.org>; Thu, 20 Dec 2018 21:37:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01D0EC43387
+	for <linux-clk@archiver.kernel.org>; Thu, 20 Dec 2018 21:39:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3470C218FD
-	for <linux-clk@archiver.kernel.org>; Thu, 20 Dec 2018 21:37:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5775218FD
+	for <linux-clk@archiver.kernel.org>; Thu, 20 Dec 2018 21:39:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545341878;
-	bh=DN/CJVreNvWjfET5WnHXH5izOp6u7ri/uZzMHfYaAz0=;
+	s=default; t=1545341964;
+	bh=lDLEiiFNxJYuDtkWm87MvPsVJlHqTdWZYrML2D6sXHU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=CydmYcYzUQpmhw2dAMsDmJ2hWTNRZdV5OVmb+qpm9TG/L1IznoWibJoX5ELbZ+K4S
-	 pmmOQCyjvpum8oeU1cJlyhwgqyRLnpAARxTHN1m31CmPAA2Vs6uce/Cik9REhFZ2dl
-	 Kat6AExRjqnGLryPagJtxe3Yn5MLrr3AGMHwv1Eg=
+	b=n3C4NFBJUjRgKWC2ct+Xx22tcyGDRKTXxvnYKvuM9mk0n/Mj2RafwMaKTTGwCiyAU
+	 whkaRFBSau+5CgF3olnit/zyXAufRvmjG/8aSWqVGOPvB8kiq3wnH8jbH85RhSFnaB
+	 TyGyoPNN2TPU4f3bkpvC4E7uwEze4PaPTlu6kTAs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732195AbeLTVh5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 20 Dec 2018 16:37:57 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:44458 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728808AbeLTVh5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Dec 2018 16:37:57 -0500
-Received: by mail-ot1-f66.google.com with SMTP id f18so3292041otl.11;
-        Thu, 20 Dec 2018 13:37:57 -0800 (PST)
+        id S1731519AbeLTVjT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 20 Dec 2018 16:39:19 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:33250 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731515AbeLTVjT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Dec 2018 16:39:19 -0500
+Received: by mail-ot1-f65.google.com with SMTP id i20so3335725otl.0;
+        Thu, 20 Dec 2018 13:39:18 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=M1Mb5ZZmqRzVXpJFEwetW2OU5YkngUp0rn8ckubybWs=;
-        b=ebcQSZ/4xoX563Ee6Mth7yiS6HaFnRjLoD5Lq8V/BbkxiCbxPbUb1PEkh6cP/8yDZI
-         5ar04ojIPrrBQsBRnMY9Dj/MWBbS7VF3uyQDBMmaQII8Zo0a0t9Mze5kQ/j5IR/hvm7o
-         gfEvU4drvzWLNGSLLf0CtisObIw7WlVe7RQJ2ZaBvGJHHJq7TU8TpW33jq0WuQz+xuNv
-         /7T+4dzszLd7SZeVyNpVGrjIKFl+x3+/iDcjKxkiU7DoSrBkluZ6duuFs6bZ/w/9nAMb
-         Ap0OW6pZPnyPfd1G6ZhLD0eGBajCLjYc81MIHem1mrdatzUmV4L6lg4eGtPr3LmGzXuU
-         dj7g==
-X-Gm-Message-State: AA+aEWY3Xz4FwIqaoGHjEt+E7qjq7WRUam/TatTR+vokWKuXNbi+aZhl
-        ssJy70fisM2XJETyTFiNRw==
-X-Google-Smtp-Source: AFSGD/XtvXqt0oZftKijt7Iu2VHOaj9Kmnis9QGu52DgirVpVQcxypA9sO9TGYxerZRR6BmUPL+OBg==
-X-Received: by 2002:a9d:245:: with SMTP id 63mr18963313otb.135.1545341876746;
-        Thu, 20 Dec 2018 13:37:56 -0800 (PST)
+        bh=qYfUlyfdTFSzvnhly1xQ2zw/wrNbkf8eZk1/fJIxbQI=;
+        b=uHz+h1AnUtfRZQ9Lz5SFo7ch7Hcx7ilAGQA8r0+DAGN8WMoMpIRENRMwwImkbHY/tb
+         wt7l1jp5ZnCL2RN7PXnmLGWfyennxIWY8GLa3Pp62T5NkV0RfL1RJt2d1kSDucd+fKUo
+         UX0eD0UJQcNC3kqsux4ny5Yup3yqk5KT7uyGujO6uK/4aBUHo4GlcOGOVrESSm3FawfH
+         gCnzgFmIzerBtKzTDG8i95HgsiZOwiACulyiIYFBkcee71ZFUfEZfQfOBSep3HJyRqW6
+         O3WMGib4NeT4sk746o3eanBaCr4goyrepJzY/dyfHUGWzBnIEaUSYd5bxf6He2f0MpV6
+         K6sA==
+X-Gm-Message-State: AA+aEWakodXF99jzved0eEQrIaoFHwaQxVubo+nVmCYdawjBaAhInT5a
+        axmK8G7afLPb+FD84oB5MQ==
+X-Google-Smtp-Source: AFSGD/Wx5he7Hc4IYcf1wiaeOKq8aeMnwf8oCv9slWCZfPCBUZ3IsE326wI28P/TWaNKZSLK82HN4w==
+X-Received: by 2002:a9d:27e3:: with SMTP id c90mr18432795otb.21.1545341958313;
+        Thu, 20 Dec 2018 13:39:18 -0800 (PST)
 Received: from localhost ([2607:fb90:1cd6:97bd:49af:e73e:5a36:3b50])
-        by smtp.gmail.com with ESMTPSA id x4sm10324225otk.37.2018.12.20.13.37.55
+        by smtp.gmail.com with ESMTPSA id m25sm10487093otq.32.2018.12.20.13.39.17
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 20 Dec 2018 13:37:56 -0800 (PST)
-Date:   Thu, 20 Dec 2018 15:37:54 -0600
+        Thu, 20 Dec 2018 13:39:17 -0800 (PST)
+Date:   Thu, 20 Dec 2018 15:39:15 -0600
 From:   Rob Herring <robh@kernel.org>
 To:     Heiko Stuebner <heiko@sntech.de>
 Cc:     linux-rockchip@lists.infradead.org, hjc@rock-chips.com,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        robh+dt@kernel.org, Laurent.pinchart@ideasonboard.com,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 02/15] clk: rockchip: add clock id 24m dsi clock on rk3368
-Message-ID: <20181220213754.GA10095@bogus>
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        mark.rutland@arm.com, architt@codeaurora.org, a.hajda@samsung.com,
+        Laurent.pinchart@ideasonboard.com, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 05/15] drm/rockchip: dw_hdmi: add support for rk3368
+Message-ID: <20181220213915.GA10254@bogus>
 References: <20181217123650.6773-1-heiko@sntech.de>
- <20181217123650.6773-3-heiko@sntech.de>
+ <20181217123650.6773-6-heiko@sntech.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181217123650.6773-3-heiko@sntech.de>
+In-Reply-To: <20181217123650.6773-6-heiko@sntech.de>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 17 Dec 2018 13:36:37 +0100, Heiko Stuebner wrote:
-> Needed as input for the dsi controller.
+On Mon, Dec 17, 2018 at 01:36:40PM +0100, Heiko Stuebner wrote:
+> The rk3368 only has one vop block and thus the dw_hdmi does not need to
+> do the source selection.
 > 
 > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 > ---
->  include/dt-bindings/clock/rk3368-cru.h | 1 +
->  1 file changed, 1 insertion(+)
-> 
+>  .../display/rockchip/dw_hdmi-rockchip.txt         |  1 +
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Rob Herring <robh@kernel.org>
+
+>  drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c       | 15 +++++++++++++++
+>  2 files changed, 16 insertions(+)
