@@ -2,116 +2,204 @@ Return-Path: <SRS0=NpU+=O5=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3915C43387
-	for <linux-clk@archiver.kernel.org>; Thu, 20 Dec 2018 20:56:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F9FEC43612
+	for <linux-clk@archiver.kernel.org>; Thu, 20 Dec 2018 20:58:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1C3C218FD
-	for <linux-clk@archiver.kernel.org>; Thu, 20 Dec 2018 20:56:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="JNQuNJqZ"
+	by mail.kernel.org (Postfix) with ESMTP id 60A74218FE
+	for <linux-clk@archiver.kernel.org>; Thu, 20 Dec 2018 20:58:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389685AbeLTU40 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 20 Dec 2018 15:56:26 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:52501 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389684AbeLTU4Y (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Dec 2018 15:56:24 -0500
-Received: by mail-it1-f193.google.com with SMTP id g76so4024880itg.2
-        for <linux-clk@vger.kernel.org>; Thu, 20 Dec 2018 12:56:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=efF2qmFwsJ1axs0m1B4BUuW+RUh8a4wq2pjaccVYe9c=;
-        b=JNQuNJqZv35yGcoTQlpjyNDO1LK/icLfT60oa8Oe1zdECcpIoOi/jLh7f+N+AXGbr4
-         b6Yp3533F2UND8fzsMoBSLPV3qQcXdZ8jBlLxTJ7daT78hXkveFq6xwdbd2Mugz8vO5e
-         tfkhEYtNZnFFapSAFdmYjwAin4vKTOu2ST8Rg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=efF2qmFwsJ1axs0m1B4BUuW+RUh8a4wq2pjaccVYe9c=;
-        b=fZjBs9/G9eMY3ubKJWdzWtpUWbktyB1ybMUhqHPGNySz/F0WAAoFpIhkIwFe72jP84
-         WUtT5ALEf/8HBxjOger42vdNyCegT0Rfjf1jF0uLtwyFBppkm7Vqb/Ofd88+3m33MLmz
-         9MwYS4Fkx/nZe86SeDpHpduTysij/rr7JYETMqMrleKmHOjyVDK0INpw6kU4WdNAyKRY
-         KzyD9xrMkeDtERL5Ae93ozRwev2aw6/ZiFWEtyGdqD5RuVBh0ufpxJNPN2QrYzXfMauT
-         raLspRqTAHhb2s2ecx3vvNqbWdHx+e1NAH2MrKpFrCAujm+UmVyozB8eLPZQJF0etX+6
-         1xog==
-X-Gm-Message-State: AA+aEWZRphnA6j++1PkXeBGXHj58OItRY8HYQ+txN2CxQ6equYsW0s0M
-        Tzz5K6Ef85X8Lhtr0EuytDHn+chPSIuuzo6W2eblKg==
-X-Google-Smtp-Source: ALg8bN6rfXd4idarU47KMo5Mow2yJjrhhdUXYqRqjjZX8AY37yXXMGazvLIMeKxtXulHnZixSS1jALfRLmJ1Sme/Y88=
-X-Received: by 2002:a24:5411:: with SMTP id t17mr207706ita.32.1545339383319;
- Thu, 20 Dec 2018 12:56:23 -0800 (PST)
+        id S1731108AbeLTU63 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 20 Dec 2018 15:58:29 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:58007 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729578AbeLTU63 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Dec 2018 15:58:29 -0500
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1ga5OW-0005zd-Dj; Thu, 20 Dec 2018 21:58:12 +0100
+Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1ga5OT-0000P7-8J; Thu, 20 Dec 2018 21:58:09 +0100
+Date:   Thu, 20 Dec 2018 21:58:09 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Paul Cercueil <paul@crapouillou.net>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ralf Baechle <ralf@linux-mips.org>, paul.burton@mips.com,
+        James Hogan <jhogan@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mathieu Malaterre <malat@debian.org>, ezequiel@collabora.co.uk,
+        prasannatsmkumar@gmail.com, linux-pwm@vger.kernel.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>,
+        linux-mips@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-clk <linux-clk@vger.kernel.org>, od@zcrc.me
+Subject: Re: [PATCH v8 15/26] pwm: jz4740: Add support for the JZ4725B
+Message-ID: <20181220205809.5t2klpb7donmoibb@pengutronix.de>
+References: <20181212220922.18759-1-paul@crapouillou.net>
+ <20181212220922.18759-16-paul@crapouillou.net>
+ <20181213092409.ml4wpnzow2nnszkd@pengutronix.de>
+ <1544709795.18952.1@crapouillou.net>
+ <20181213204219.onem3q6dcmakusl2@pengutronix.de>
+ <CACRpkdbABtDgwKai=8Pfji7qVb-XHsX8pDsuDdS5hhg7qEN0Bw@mail.gmail.com>
+ <20181214142628.zwi4hadrju53z6f3@pengutronix.de>
+ <1544969932.1649.1@crapouillou.net>
+ <20181217075321.k45vhgnszeqs3tea@pengutronix.de>
+ <20181220173904.GE9408@ulmo>
 MIME-Version: 1.0
-References: <20181210161729.29720-1-jagan@amarulasolutions.com>
- <20181210161729.29720-8-jagan@amarulasolutions.com> <20181211164900.wfmkmbrbj3nmlb3h@flea>
-In-Reply-To: <20181211164900.wfmkmbrbj3nmlb3h@flea>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Fri, 21 Dec 2018 02:26:11 +0530
-Message-ID: <CAMty3ZB5F5jD9iJT1soXSA5HtQOf5W9rKO9nCdGFUfVo0hpO4Q@mail.gmail.com>
-Subject: Re: [PATCH v5 07/17] drm/sun4i: sun6i_mipi_dsi: Refactor vertical
- video start delay
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        linux-amarula@amarulasolutions.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181220173904.GE9408@ulmo>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Dec 11, 2018 at 10:19 PM Maxime Ripard
-<maxime.ripard@bootlin.com> wrote:
->
-> On Mon, Dec 10, 2018 at 09:47:19PM +0530, Jagan Teki wrote:
-> > Video start delay can be computed by subtracting total vertical
-> > timing with front porch timing and with adding 1 delay line for TCON.
-> >
-> > BSP code form BPI-M64-bsp is computing video start delay as
-> > (from linux-sunxi/
-> > drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c)
-> >
-> > u32 vfp = panel->lcd_vt - panel->lcd_y - panel->lcd_vbp;
-> > => (panel->lcd_vt) - panel->lcd_y - (panel->lcd_vbp)
-> > => (timmings->ver_front_porch + panel->lcd_vbp + panel->lcd_y)
-> >    - panel->lcd_y - (panel->lcd_vbp)
-> > => timmings->ver_front_porch + panel->lcd_vbp + panel->lcd_y
-> >                            - panel->lcd_y - panel->lcd_vbp
-> > => timmings->ver_front_porch
-> >
-> > So, update the start delay computation accordingly.
-> >
-> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
->
-> Even though it's a bit better now on my A33 board and I don't have the
-> white stripes on the bottom of the display, there's still some
-> flickering with your patches applied.
->
-> Bisecting it seems to point at that patch, but reverting it doesn't
-> make the issue go away, so it's not really clear which one exactly is
-> at fault.
+On Thu, Dec 20, 2018 at 06:39:04PM +0100, Thierry Reding wrote:
+> On Mon, Dec 17, 2018 at 08:53:21AM +0100, Uwe Kleine-König wrote:
+> > On Sun, Dec 16, 2018 at 03:18:52PM +0100, Paul Cercueil wrote:
+> > > Hi,
+> > > 
+> > > Le ven. 14 déc. 2018 à 15:26, Uwe Kleine-König
+> > > <u.kleine-koenig@pengutronix.de> a écrit :
+> > > > Hello,
+> > > > 
+> > > > On Fri, Dec 14, 2018 at 02:50:20PM +0100, Linus Walleij wrote:
+> > > > > On Thu, Dec 13, 2018 at 9:42 PM Uwe Kleine-König
+> > > > > <u.kleine-koenig@pengutronix.de> wrote:
+> > > > > > [Adding Linus Walleij to Cc:]
+> > > > > > On Thu, Dec 13, 2018 at 03:03:15PM +0100, Paul Cercueil wrote:
+> > > > > > > Le jeu. 13 déc. 2018 à 10:24, Uwe Kleine-König
+> > > > > > > <u.kleine-koenig@pengutronix.de> a écrit :
+> > > > > > > > On Wed, Dec 12, 2018 at 11:09:10PM +0100, Paul Cercueil wrote:
+> > > > > > > > >  The PWM in the JZ4725B works the same as in the JZ4740,
+> > > > > > > > >  except that it only has 6 channels available instead of
+> > > > > > > > >  8.
+> > > > > > > >
+> > > > > > > > this driver is probed only from device tree? If yes, it
+> > > > > > > > might be sensible to specify the number of PWMs there and
+> > > > > > > > get it from there.
+> > > > > > > > There doesn't seem to be a generic binding for that, but there are
+> > > > > > > > several drivers that could benefit from it. (This is a bigger project
+> > > > > > > > though and shouldn't stop your patch. Still more as it already got
+> > > > > > > > Thierry's ack.)
+> > > > > > >
+> > > > > > > I think there needs to be a proper guideline, as there doesn't seem to be
+> > > > > > > a consensus about this. I learned from emails with Rob and  Linus (Walleij)
+> > > > > > > that I should not have in devicetree what I can deduce from the compatible
+> > > > > > > string.
+> > > > > >
+> > > > > > I understood them a bit differently. It is ok to deduce things from the
+> > > > > > compatible string. But if you define a generic property (say) "num-pwms"
+> > > > > > that is used uniformly in most bindings this is ok, too. (And then the
+> > > > > > two different devices could use the same compatible.)
+> > > > > >
+> > > > > > An upside of the generic "num-pwms" property is that the pwm core could
+> > > > > > sanity check pwm phandles before passing them to the hardware drivers.
+> > > > > 
+> > > > >  I don't know if this helps, but in GPIO we have "ngpios" which is
+> > > > >  used to augment an existing block as to the number of lines actually
+> > > > >  used with it.
+> > > > > 
+> > > > >  The typical case is that an ASIC engineer synthesize a block for
+> > > > >  32 GPIOs but only 12 of them are routed to external pads. So
+> > > > >  we augment the behaviour of that driver to only use 12 of the
+> > > > >  32 lines.
+> > > > > 
+> > > > >  I guess using the remaining 20 lines "works" in a sense but they
+> > > > >  have no practical use and will just bias electrons in the silicon
+> > > > >  for no use.
+> > > > 
+> > > > This looks very similar to the case under discussion.
+> > > > 
+> > > > >  So if the PWM case is something similar, then by all means add
+> > > > >  num-pwms.
+> > > > 
+> > > > .. or "npwms" to use the same nomenclature as the gpio binding?
+> > > 
+> > > If we're going to do something like this, should it be the drivers or
+> > > the core (within pwmchip_add) that checks for this "npwms" property?
+> > 
+> > Of course this should be done in the core. The driver than can rely on
+> > the validity of the index. But as I wrote before, this shouldn't stop
+> > your patch from going in.
 
-Is reverting this patch, work fine or not?
+Actually the core already takes care of the validity of the index with
+the number of pwms being provided to pwmchip_add().
+ 
+> > But if Thierry agrees that this npmws (or num-pwms) is a good idea, it
+> > would be great to start early to convert drivers.
+> 
+> Do we actually need this? It seems like Paul's patch here properly
+> derives the number of available PWMs from the compatible string, so I
+> don't see what the extra num-pwms (or whatever) property would add.
 
-This patch is trying to make use of front porch instead of existing
-back porch to compute the delay. Since we revert the VBP fix patch[1]
-to assume VBP as VFP value look like your setup would also require to
-revert this change. But as per BSP or drm_mode details all of my
-displays even work with and w/o reverting these two.
+Given that the only difference between the two different implementations
+is just the number of pwms provided, this could just be expressed in the
+dts as:
 
-I'm thinking your display should work in the same behavior since the
-dsi controller making this route.
+	pwm@2000000 {
+		compatible = "jz4740";
+		num-pwms = <8>;
+	}
 
-[1] https://patchwork.kernel.org/patch/10680309/
+and
+
+	pwm@2000000 {
+		compatible = "jz4740";
+		num-pwms = <6>;
+	}
+
+instead of
+
+	pwm@2000000 {
+		compatible = "jz4740";
+	}
+
+and
+
+	pwm@2000000 {
+		compatible = "jz4725";
+	}
+
+. According to my metric the former is more descriptive and so better.
+
+And then the pwm core could provide parsing of that property (e.g. if
+chip.npwm == 0) which simplifies the driver (and all others using that
+mechanism).
+
+Regarding the question "Do we actually need this?": We don't, but I
+think it would make a nice step to get more descriptive device trees and
+so I consider it an improvement. It would also allow to check a dtb
+because even without the driver you can notice that
+
+	pwms = <&pwm 12 0>;
+
+is invalid if &pwm has "num-pwms = <8>". Drivers that could benefit are
+(at least): hibvt, sun4i, tegra, lpss.
+
+Best regards
+Uwe
+
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
