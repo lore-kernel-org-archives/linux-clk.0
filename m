@@ -2,148 +2,345 @@ Return-Path: <SRS0=PmFx=O6=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B087C43387
-	for <linux-clk@archiver.kernel.org>; Fri, 21 Dec 2018 12:36:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 333DFC43387
+	for <linux-clk@archiver.kernel.org>; Fri, 21 Dec 2018 13:50:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A08021908
-	for <linux-clk@archiver.kernel.org>; Fri, 21 Dec 2018 12:36:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="VBD9sojf"
+	by mail.kernel.org (Postfix) with ESMTP id E516C21917
+	for <linux-clk@archiver.kernel.org>; Fri, 21 Dec 2018 13:50:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731197AbeLUMgv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 21 Dec 2018 07:36:51 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:53554 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390337AbeLUMgu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Dec 2018 07:36:50 -0500
-Received: by mail-wm1-f68.google.com with SMTP id d15so5163305wmb.3
-        for <linux-clk@vger.kernel.org>; Fri, 21 Dec 2018 04:36:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=TBeYpA+ZER3k/7FfAniVy3+DDhg63t94WdSvWr+H9BM=;
-        b=VBD9sojfwuff9TQd3cCRJZqV+/JLU472daO5wi/nmLsk1/qtxnXGa8nL1C3xrgIvf4
-         CokE6JYhoN1NMDqHXEx7CVSq3NztiYyoxzw+aWqpZqllRjqFVhTpMHUL6OSDBWzPfk1q
-         7OREXHISVJkfJsapbuZWmv3G7kxXFqt2uNQpM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=TBeYpA+ZER3k/7FfAniVy3+DDhg63t94WdSvWr+H9BM=;
-        b=EXnpftg3cilLDAYIS4FtuliWIQIJ0kY7CejS33i1PWTdOz80o+SKNyXvcldM3fRATv
-         37Ad13jz7nz5dxus0yS1Axr4ZIUE6KcqrmzhMDfRJj+Yv4x41qHnE97IO4U3wl2xaFmV
-         vcc4DjFhuziO8zoPXtyPvOJML+RLAooeZPsSTscsVf1dnvqLYpAga/toyvjjsiERpr2K
-         TDYG3tRcaikWU1sRTMN1KIW3tVrrhrWY5Gglo8QdziYU2QmcZi736aeR27W7ICchVkA2
-         va73w7sYqLb0TGOgTxH0FvRUosLyo0h4WyLqzdaoq0xNstNKQeuhJb83hG9KWTrVrb6o
-         q8Fw==
-X-Gm-Message-State: AA+aEWaCdPOYJvX8v9U6lgvGBXaiAa4HvMiKbaVe0h5YJgN68nOVrIKU
-        ygMvxoNsOmsIi06kNdOPAB6DBWQxg9Y=
-X-Google-Smtp-Source: AFSGD/UjQ3OTNyO6YJMQpLq3ZRqdIy0AMuUGPKYrYCFKqRJRBppcvQvKeFM0ZRsyQBfVEEM3tJzqVA==
-X-Received: by 2002:a1c:d74a:: with SMTP id o71mr2708065wmg.73.1545395807382;
-        Fri, 21 Dec 2018 04:36:47 -0800 (PST)
-Received: from [192.168.1.2] (119.red-79-146-81.dynamicip.rima-tde.net. [79.146.81.119])
-        by smtp.gmail.com with ESMTPSA id k135sm17256615wmd.42.2018.12.21.04.36.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 21 Dec 2018 04:36:46 -0800 (PST)
-Subject: Re: [PATCH 01/13] clk: qcom: gcc: limit GPLL0_AO_OUT operating
- frequency
-To:     Taniya Das <tdas@codeaurora.org>, robh+dt@kernel.org,
-        mark.rutland@arm.com, andy.gross@linaro.org,
-        david.brown@linaro.org, sboyd@kernel.org, will.deacon@arm.com,
-        mturquette@baylibre.com, jassisinghbrar@gmail.com
-Cc:     bjorn.andersson@linaro.org, vkoul@kernel.org,
-        niklas.cassel@linaro.org, sibis@codeaurora.org,
-        georgi.djakov@linaro.org, arnd@arndb.de,
-        horms+renesas@verge.net.au, heiko@sntech.de,
-        enric.balletbo@collabora.com, jagan@amarulasolutions.com,
-        olof@lixom.net, amit.kucheria@linaro.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-References: <1545039990-19984-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
- <1545039990-19984-2-git-send-email-jorge.ramirez-ortiz@linaro.org>
- <e97d9050-effc-56d7-0f9b-768df90dd73a@codeaurora.org>
-From:   Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>
-Message-ID: <6814777f-1e5f-bd99-db63-a0050dcdd930@linaro.org>
-Date:   Fri, 21 Dec 2018 13:36:44 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        id S1725911AbeLUNuq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 21 Dec 2018 08:50:46 -0500
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:33306 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725785AbeLUNuq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Dec 2018 08:50:46 -0500
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+        by mx0a-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wBLDodgG028730;
+        Fri, 21 Dec 2018 07:50:39 -0600
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from mail4.cirrus.com ([87.246.98.35])
+        by mx0a-001ae601.pphosted.com with ESMTP id 2pcyw5vw2c-1;
+        Fri, 21 Dec 2018 07:50:38 -0600
+Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
+        by mail4.cirrus.com (Postfix) with ESMTP id 0EBD1611C8B7;
+        Fri, 21 Dec 2018 07:54:30 -0600 (CST)
+Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
+ (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Fri, 21 Dec 2018
+ 13:50:37 +0000
+Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
+        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id wBLDobOn031103; Fri,
+ 21 Dec 2018 13:50:37 GMT
+Date:   Fri, 21 Dec 2018 13:50:37 +0000
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+CC:     <broonie@kernel.org>, <lee.jones@linaro.org>,
+        <linus.walleij@linaro.org>, <mturquette@baylibre.com>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <lgirdwood@gmail.com>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>,
+        <linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>
+Subject: Re: [PATCH v5 7/8] clk: lochnagar: Add support for the Cirrus Logic
+ Lochnagar
+Message-ID: <20181221135037.GH16508@imbe.wolfsonmicro.main>
+References: <20181120141631.18949-1-ckeepax@opensource.cirrus.com>
+ <20181120141631.18949-7-ckeepax@opensource.cirrus.com>
+ <154356443157.88331.15749597863624143993@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-In-Reply-To: <e97d9050-effc-56d7-0f9b-768df90dd73a@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <154356443157.88331.15749597863624143993@swboyd.mtv.corp.google.com>
+User-Agent: Mutt/1.5.20 (2009-12-10)
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1812210109
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 12/21/18 12:19, Taniya Das wrote:
->
->
-> On 12/17/2018 3:16 PM, Jorge Ramirez-Ortiz wrote:
->> Limit the GPLL0_AO_OUT_MAIN operating frequency as per its hardware
->> specifications.
->>
->> Co-developed-by: Niklas Cassel <niklas.cassel@linaro.org>
->> Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
->> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
->> ---
->>   drivers/clk/qcom/gcc-qcs404.c | 6 ++++++
->>   1 file changed, 6 insertions(+)
->>
->> diff --git a/drivers/clk/qcom/gcc-qcs404.c 
->> b/drivers/clk/qcom/gcc-qcs404.c
->> index 64da032..833436a 100644
->> --- a/drivers/clk/qcom/gcc-qcs404.c
->> +++ b/drivers/clk/qcom/gcc-qcs404.c
->> @@ -304,10 +304,16 @@ static struct clk_alpha_pll gpll0_out_main = {
->>       },
->>   };
->>   +static const struct pll_vco gpll0_ao_out_vco[] = {
->> +    { 800000000, 800000000, 0 },
->> +};
->> +
->>   static struct clk_alpha_pll gpll0_ao_out_main = {
->>       .offset = 0x21000,
->>       .regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT],
->>       .flags = SUPPORTS_FSM_MODE,
->> +    .vco_table = gpll0_ao_out_vco,
->> +    .num_vco = ARRAY_SIZE(gpll0_ao_out_vco),
->
-> Could you please help as to why this is required? This is a fixed PLL 
-> and we do not require a VCO table for it.
+On Thu, Nov 29, 2018 at 11:53:51PM -0800, Stephen Boyd wrote:
+> Quoting Charles Keepax (2018-11-20 06:16:30)
 
-Hi Taniya,
+Apologies for the delay on this we have been very swamped at this
+end lately.
 
-this patch - the additional information that it provides about the 
-hardware - helps to select the right parent clock for a given frequency.
+> > diff --git a/drivers/clk/clk-lochnagar.c b/drivers/clk/clk-lochnagar.c
+> > new file mode 100644
+> > index 000000000000..8b2a78689715
+> > --- /dev/null
+> > +++ b/drivers/clk/clk-lochnagar.c
+> > @@ -0,0 +1,360 @@
+> [...]
+> > +
+> > +static int lochnagar_regmap_set_parent(struct clk_hw *hw, u8 index)
+> > +{
+> > +       struct lochnagar_clk *lclk = lochnagar_hw_to_lclk(hw);
+> > +       struct lochnagar_clk_priv *priv = lclk->priv;
+> > +       struct regmap *regmap = priv->regmap;
+> > +       int ret;
+> > +
+> > +       /*
+> > +        * Some clocks on Lochnagar can either generate a clock themselves
+> > +        * or accept an external clock, these default to generating the clock
+> > +        * themselves. If we set a parent however we should update the dir_mask
+> > +        * to indicate to the hardware that this clock will now be receiving an
+> > +        * external clock.
+> 
+> Hmm ok. So the plan is to configure parents in DT or from driver code if
+> the configuration is to accept an external clk? I guess this works.
+> 
 
-On the qcs404 this clock is one of the two parent clocks of the apcs 
-clock controller (the other one being the high frequency pll)
-When cpufreq sets a target frequency, there is an iteration through the 
-list of parents to select the one that delivers the best match.
+Actually from further discussions on the hardware side it seems
+this is handled automatically by the hardware so we no longer
+need to set these direction bits. As such I will remove them in
+the next spin.
 
-When attempting to set the clock for an alpha_pll, the operation does a 
-sanity check to validate that the requested frequency is in fact 
-reachable using the vco range: trying to set a value that is not in 
-range will fail.
+> > +        */
+> > +       if (lclk->dir_mask) {
+> > +               ret = regmap_update_bits(regmap, lclk->cfg_reg,
+> > +                                        lclk->dir_mask, lclk->dir_mask);
+> > +               if (ret < 0) {
+> > +                       dev_err(priv->dev, "Failed to set %s direction: %d\n",
+> > +                               lclk->name, ret);
+> > +                       return ret;
+> > +               }
+> > +       }
+> > +
+> > +       ret = regmap_update_bits(regmap, lclk->src_reg, lclk->src_mask, index);
+> > +       if (ret < 0)
+> > +               dev_err(priv->dev, "Failed to reparent %s: %d\n",
+> > +                       lclk->name, ret);
+> > +
+> > +       return ret;
+> > +}
+> > +
+> > +static u8 lochnagar_regmap_get_parent(struct clk_hw *hw)
+> > +{
+> > +       struct lochnagar_clk *lclk = lochnagar_hw_to_lclk(hw);
+> > +       struct lochnagar_clk_priv *priv = lclk->priv;
+> > +       struct regmap *regmap = priv->regmap;
+> > +       unsigned int val;
+> > +       int ret;
+> > +
+> > +       ret = regmap_read(regmap, lclk->src_reg, &val);
+> > +       if (ret < 0) {
+> > +               dev_err(priv->dev, "Failed to read parent of %s: %d\n",
+> > +                       lclk->name, ret);
+> 
+> The error messages in the above functions could be spammy. Just let
+> drivers who fail when using these clks ops print errors and maybe
+> downgrade these to debug? If you don't agree with this it's fine, I'll
+> just hope to never see these prints change to debug in the future.
+> 
 
-This patch makes sure that its range is explicitly defined.
+Seems reasonable to me I will change them to debug prints.
 
-It also helps making sure there are no rounding issues when setting its 
-value: without it the clock was being read at 799MHz
+> > +               return priv->nparents;
+> > +       }
+> > +
+> > +       val &= lclk->src_mask;
+> > +
+> > +       return val;
+> > +}
+> > +
+> > +static const struct clk_ops lochnagar_clk_regmap_ops = {
+> > +       .prepare = lochnagar_regmap_prepare,
+> > +       .unprepare = lochnagar_regmap_unprepare,
+> > +       .set_parent = lochnagar_regmap_set_parent,
+> > +       .get_parent = lochnagar_regmap_get_parent,
+> 
+> Is regmap important to have in the name of these functions and struct?
+> I'd prefer it was just clk instead of regmap.
+> 
 
+Again no objection happy to rename.
 
->
->>       .clkr = {
->>           .enable_reg = 0x45000,
->>           .enable_mask = BIT(0),
->>
->
+> > +};
+> > +
+> > +static int lochnagar_init_parents(struct lochnagar_clk_priv *priv)
+> > +{
+> > +       struct device_node *np = priv->dev->of_node;
+> > +       int i, j;
+> > +
+> > +       switch (priv->type) {
+> > +       case LOCHNAGAR1:
+> > +               memcpy(priv->lclks, lochnagar1_clks, sizeof(lochnagar1_clks));
+> > +
+> > +               priv->nparents = ARRAY_SIZE(lochnagar1_clk_parents);
+> > +               priv->parents = devm_kmemdup(priv->dev, lochnagar1_clk_parents,
+> > +                                            sizeof(lochnagar1_clk_parents),
+> > +                                            GFP_KERNEL);
+> > +               break;
+> > +       case LOCHNAGAR2:
+> > +               memcpy(priv->lclks, lochnagar2_clks, sizeof(lochnagar2_clks));
+> > +
+> > +               priv->nparents = ARRAY_SIZE(lochnagar2_clk_parents);
+> > +               priv->parents = devm_kmemdup(priv->dev, lochnagar2_clk_parents,
+> > +                                            sizeof(lochnagar2_clk_parents),
+> > +                                            GFP_KERNEL);
+> 
+> Why do we need to kmemdup it? The clk framework already deep copies
+> everything from clk_init structure.
+> 
 
+The copy is needed for the updates to the list down below.
+
+> > +               break;
+> > +       default:
+> > +               dev_err(priv->dev, "Unknown Lochnagar type: %d\n", priv->type);
+> > +               return -EINVAL;
+> > +       }
+> > +
+> > +       if (!priv->parents)
+> > +               return -ENOMEM;
+> > +
+> > +       for (i = 0; i < priv->nparents; i++) {
+> > +               j = of_property_match_string(np, "clock-names",
+> > +                                            priv->parents[i]);
+> > +               if (j >= 0)
+> > +                       priv->parents[i] = of_clk_get_parent_name(np, j);
+> 
+> Isn't this of_clk_parent_fill()? But there are holes or something?
+> 
+
+I guess rather than a fill, this is perhaps more of a name and
+replace. I could make this a core function if you prefer? I think
+there are a couple of other drivers that could also use it,
+although might be worth doing that as a separate series rather
+than holding this one up.
+
+> > +       }
+> > +
+> > +       return 0;
+> > +}
+> > +
+> > +static int lochnagar_init_clks(struct lochnagar_clk_priv *priv)
+> > +{
+> > +       struct clk_init_data clk_init = {
+> > +               .ops = &lochnagar_clk_regmap_ops,
+> > +               .parent_names = priv->parents,
+> > +               .num_parents = priv->nparents,
+> > +       };
+> > +       struct lochnagar_clk *lclk;
+> > +       int ret, i;
+> > +
+> > +       for (i = 0; i < ARRAY_SIZE(priv->lclks); i++) {
+> 
+> We already have an array of clks.
+> 
+> > +               lclk = &priv->lclks[i];
+> > +
+> > +               if (!lclk->name)
+> > +                       continue;
+> > +
+> > +               clk_init.name = lclk->name;
+> > +
+> > +               lclk->priv = priv;
+> > +               lclk->hw.init = &clk_init;
+> > +
+> > +               ret = devm_clk_hw_register(priv->dev, &lclk->hw);
+> > +               if (ret) {
+> > +                       dev_err(priv->dev, "Failed to register %s: %d\n",
+> > +                               lclk->name, ret);
+> > +                       return ret;
+> > +               }
+> > +
+> > +               priv->clk_data->hws[i] = &lclk->hw;
+> 
+> But then we copy the pointers into here to use of_clk_hw_onecell_get().
+> Can you just roll your own function to use your own array of clk
+> structures? I know it's sort of sad, but it avoids a copy.
+> 
+
+Apologies for not doing it this way the first time, looks much
+clearer that way round.
+
+> > +       }
+> > +
+> > +       priv->clk_data->num = ARRAY_SIZE(priv->lclks);
+> > +
+> > +       ret = devm_of_clk_add_hw_provider(priv->dev, of_clk_hw_onecell_get,
+> > +                                         priv->clk_data);
+> > +       if (ret < 0) {
+> > +               dev_err(priv->dev, "Failed to register provider: %d\n", ret);
+> > +               return ret;
+> > +       }
+> > +
+> > +       return 0;
+> 
+> Simplify this to
+> 
+> 	if (ret < 0)
+> 		dev_err(...)
+> 
+> 	return ret;
+> 
+
+No problem.
+
+> > +}
+> > +
+> > +static const struct of_device_id lochnagar_of_match[] = {
+> > +       { .compatible = "cirrus,lochnagar1-clk", .data = (void *)LOCHNAGAR1 },
+> > +       { .compatible = "cirrus,lochnagar2-clk", .data = (void *)LOCHNAGAR2 },
+> > +       {},
+> 
+> Nitpick: Drop the comma, it's the sentinel so nothing should come after.
+> 
+
+Again no problem.
+
+> > +};
+> 
+> Any MODULE_DEVICE_TABLE?
+> 
+
+Yes oversight there, will add that.
+
+> > +static struct platform_driver lochnagar_clk_driver = {
+> > +       .driver = {
+> > +               .name = "lochnagar-clk",
+> > +               .of_match_table = of_match_ptr(lochnagar_of_match),
+> 
+> I suspect of_match_ptr() makes the build complain about unused match
+> table when CONFIG_OF=N. Can you try building it that way?
+> 
+
+The driver depends on the MFD which in turn depends on CONFIG_OF
+so that shouldn't be a problem.
+
+> > +       },
+> > +
+> 
+> Nitpick: Why the extra newline?
+> 
+
+Happy to remove.
+
+> > +       .probe = lochnagar_clk_probe,
+> > +};
+> > +module_platform_driver(lochnagar_clk_driver);
+> > +
+> > +MODULE_AUTHOR("Charles Keepax <ckeepax@opensource.cirrus.com>");
+> > +MODULE_DESCRIPTION("Clock driver for Cirrus Logic Lochnagar Board");
+> > +MODULE_LICENSE("GPL v2");
+> > +MODULE_ALIAS("platform:lochnagar-clk");
+> 
+> I think MODULE_ALIAS is not needed if it's this simple?
+> 
+
+Not actually sure on this one, to be honest its mostly cargo
+culted from other drivers. I will investigate and see what I dig
+up but if has any pointers I would greatly appreciate it.
+
+Should be able to send another version very shortly.
+
+Thanks,
+Charles
