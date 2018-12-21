@@ -2,121 +2,110 @@ Return-Path: <SRS0=PmFx=O6=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB168C43387
-	for <linux-clk@archiver.kernel.org>; Fri, 21 Dec 2018 20:34:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79DF5C43387
+	for <linux-clk@archiver.kernel.org>; Fri, 21 Dec 2018 20:44:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F9A421773
-	for <linux-clk@archiver.kernel.org>; Fri, 21 Dec 2018 20:34:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 422CF21906
+	for <linux-clk@archiver.kernel.org>; Fri, 21 Dec 2018 20:44:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545424497;
-	bh=vwPzy//5Zq8kHAFJXX1ENCRdop7FngE2euBI1e5qEUg=;
+	s=default; t=1545425084;
+	bh=g942pk09EJ1iGKMMOHXnbS57mF70xjkbIi8RYZsDTkg=;
 	h=Subject:Cc:To:From:In-Reply-To:References:Date:List-ID:From;
-	b=iJ8EIt6OFMA5wQRjvwc3dHyg2gq8AwjL2h0Yf9xlXbprheJDViGG/p/0DnemNLBl5
-	 ugOt+P0msxOKLABhw+zChQhyQ1f8FVifyWN+AjSh+G+TdtdEWHSAznQIfojmg4lSfe
-	 GTqqltL5sooWDvcXnW39J2ci4F4MkvDom2MKZTWs=
+	b=PGSix0Yh9/TXNAML/Bmbr14v0VuJyu1LKa94CWbPd4qGuQqxKZsLCOCXs+dUvsJ2j
+	 ypJvSV3BfZ6PiiA+iljCosZSkWChdy+ddhOBiNl7F8unXBvplELlz2PrguNuPveYH6
+	 SNv0TyHOOFwr8EFaDRsh20wsXe1ETfetPcBiD5/I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388242AbeLUUe5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 21 Dec 2018 15:34:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54724 "EHLO mail.kernel.org"
+        id S2390131AbeLUUoj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 21 Dec 2018 15:44:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57912 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732146AbeLUUe4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 21 Dec 2018 15:34:56 -0500
+        id S2388218AbeLUUoj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 21 Dec 2018 15:44:39 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D33D621773;
-        Fri, 21 Dec 2018 20:34:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3934A21906;
+        Fri, 21 Dec 2018 20:44:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545424495;
-        bh=vwPzy//5Zq8kHAFJXX1ENCRdop7FngE2euBI1e5qEUg=;
+        s=default; t=1545425078;
+        bh=g942pk09EJ1iGKMMOHXnbS57mF70xjkbIi8RYZsDTkg=;
         h=Subject:Cc:To:From:In-Reply-To:References:Date:From;
-        b=qxAbeRlcdqBkyIea3IXs7gOpFZ7kAwj8Vp+W8jRlKG12i+iGHUHhpeJudTIXTaa3v
-         igAuXQ7m0vYyRDMKUo/9Nhvx7Bh1fNRdbeBII28dSJZuXTv/gmIgP/VO8f+Q9e6ZFT
-         Bf7MLO6WJy5cIYwzFI+4p/7/2Z5sj123XS8+4DBg=
+        b=g1DjJ/A5I04U20IDH4yJq3T9oeyTabOOdqCXVrQhp54B/Lk+DwOM7o/sO/LJptBKL
+         yxOQatou3sWXHP43kD03f+8B3+kEXPnEZVim8BMvKvjHGiXV/n33OahD6GJ7jxNBVP
+         9vZ8B8tPVy+b3yhTf1AAiUUNYoBA0MZWsyxkrdfM=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] clk: Remove global clk traversal on fetch parent index
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Derek Basehore <dbasehore@chromium.org>
-To:     Derek Basehore <dbasehore@chromium.org>, mturquette@baylibre.com
+Subject: Re: [PATCH v5 7/8] clk: lochnagar: Add support for the Cirrus Logic Lochnagar
+Cc:     broonie@kernel.org, lee.jones@linaro.org, linus.walleij@linaro.org,
+        mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        lgirdwood@gmail.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, patches@opensource.cirrus.com,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
+To:     Charles Keepax <ckeepax@opensource.cirrus.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20181221003100.157581-1-dbasehore@chromium.org>
+In-Reply-To: <20181221135037.GH16508@imbe.wolfsonmicro.main>
 User-Agent: alot/0.8
-References: <20181221003100.157581-1-dbasehore@chromium.org>
-Message-ID: <154542449501.13075.1518070014652024380@swboyd.mtv.corp.google.com>
-Date:   Fri, 21 Dec 2018 12:34:55 -0800
+References: <20181120141631.18949-1-ckeepax@opensource.cirrus.com> <20181120141631.18949-7-ckeepax@opensource.cirrus.com> <154356443157.88331.15749597863624143993@swboyd.mtv.corp.google.com> <20181221135037.GH16508@imbe.wolfsonmicro.main>
+Message-ID: <154542507738.13075.5210584076841559233@swboyd.mtv.corp.google.com>
+Date:   Fri, 21 Dec 2018 12:44:37 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Derek Basehore (2018-12-20 16:31:00)
-> It's not required to traverse the entire clk tree when the parents
-> array contains a NULL value. You already have the parent clk_core
-> pointer, so you can just compare the parent->name and parent_names[i]
-> pointers.
+Quoting Charles Keepax (2018-12-21 05:50:37)
+> On Thu, Nov 29, 2018 at 11:53:51PM -0800, Stephen Boyd wrote:
+> > Quoting Charles Keepax (2018-11-20 06:16:30)
+>=20
+> > > +               break;
+> > > +       default:
+> > > +               dev_err(priv->dev, "Unknown Lochnagar type: %d\n", pr=
+iv->type);
+> > > +               return -EINVAL;
+> > > +       }
+> > > +
+> > > +       if (!priv->parents)
+> > > +               return -ENOMEM;
+> > > +
+> > > +       for (i =3D 0; i < priv->nparents; i++) {
+> > > +               j =3D of_property_match_string(np, "clock-names",
+> > > +                                            priv->parents[i]);
+> > > +               if (j >=3D 0)
+> > > +                       priv->parents[i] =3D of_clk_get_parent_name(n=
+p, j);
+> >=20
+> > Isn't this of_clk_parent_fill()? But there are holes or something?
+> >=20
+>=20
+> I guess rather than a fill, this is perhaps more of a name and
+> replace. I could make this a core function if you prefer? I think
+> there are a couple of other drivers that could also use it,
+> although might be worth doing that as a separate series rather
+> than holding this one up.
 
-Ok.
+No worries. I'm actively changing the parent_names design anyway so this
+is fine.
 
 >=20
-> In cases where clk names are never registered, this can be
-> a substantial power improvement since a mux having an unregistered
-> parent name will traverse the clk tree on every set_rate. This can
-> happen hundreds of times a second on CPU clks.
 >=20
-> Change-Id: I85499d2e576249568ff508e424ca8d5009e6e2b1
-
-This should go away.
-
-> Signed-off-by: Derek Basehore <dbasehore@chromium.org>
-> ---
->  drivers/clk/clk.c | 13 +++++++++++--
->  1 file changed, 11 insertions(+), 2 deletions(-)
+> > > +static struct platform_driver lochnagar_clk_driver =3D {
+> > > +       .driver =3D {
+> > > +               .name =3D "lochnagar-clk",
+> > > +               .of_match_table =3D of_match_ptr(lochnagar_of_match),
+> >=20
+> > I suspect of_match_ptr() makes the build complain about unused match
+> > table when CONFIG_OF=3DN. Can you try building it that way?
+> >=20
 >=20
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index af011974d4ec..57a95c713286 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -1516,9 +1516,18 @@ static int clk_fetch_parent_index(struct clk_core =
-*core,
->         if (!parent)
->                 return -EINVAL;
-> =20
-> -       for (i =3D 0; i < core->num_parents; i++)
-> -               if (clk_core_get_parent_by_index(core, i) =3D=3D parent)
-> +       for (i =3D 0; i < core->num_parents; i++) {
-> +               if (core->parents[i] =3D=3D parent)
-> +                       return i;
-> +
-> +               if (core->parents[i])
-> +                       continue;
-> +
-> +               if (!strcmp(parent->name, core->parent_names[i])) {
-> +                       core->parents[i] =3D parent;
->                         return i;
-> +               }
-> +       }
-> =20
+> The driver depends on the MFD which in turn depends on CONFIG_OF
+> so that shouldn't be a problem.
 
-Wow, this looks really familiar. In fact, take a look at commit
-da0f0b2c3ad2 ("clk: Correct lookup logic in clk_fetch_parent_index()")
-and you'll see that it's almost the same code. The main difference is
-that this patch's clk_fetch_parent_index() doesn't call __clk_lookup()
-to get a pointer to the clk it already has. And then in commit
-470b5e2f97cf ("clk: simplify clk_fetch_parent_index() function") we
-consolidated all the logic to simplify things, but it seems that we
-became confused that the result of !strcmp(parent, names[i]) is actually
-only true when the strings are equal. That was an invalid
-transformation. Ouch. But this is a good find!
+Ok. Then it's really not needed and it's better to drop the usage of
+of_match_ptr() then.
 
-So this patch is reverting commit 470b5e2f97cf and then optimizing it to
-never call __clk_lookup() because it's useless. I'll need to add a
-comment and expand on the commit text here so that it's more obvious
-what's going on. Otherwise someone will come by and try to consolidate
-again and we'll do this all over again.
-
+>=20
