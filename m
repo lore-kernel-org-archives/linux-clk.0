@@ -6,95 +6,99 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0FD7C43387
-	for <linux-clk@archiver.kernel.org>; Fri, 21 Dec 2018 21:51:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0A82C43387
+	for <linux-clk@archiver.kernel.org>; Fri, 21 Dec 2018 22:24:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D28721929
-	for <linux-clk@archiver.kernel.org>; Fri, 21 Dec 2018 21:51:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 86BF821929
+	for <linux-clk@archiver.kernel.org>; Fri, 21 Dec 2018 22:24:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545429086;
-	bh=SjHlVTvrZg8PN3rMMMnqKhe/vbtxJDTRrZatwEU/qaE=;
+	s=default; t=1545431097;
+	bh=SwQOcWERL7EJwd43LXg8u0TCfoGYoS0lA0RO/ydYGCw=;
 	h=Subject:Cc:To:From:In-Reply-To:References:Date:List-ID:From;
-	b=SbETrxTpPCXafoAfVRULVcGvz3udoMGeowq8rpympuWi8OdWAR/qQr5OVvpsFxWEg
-	 xyqBRvHrxfO3JeDcMn5jydYmy2cJK1cDhki+mz/CsuQCQl3Oj5dt2LoscIbLGSNSto
-	 E4hbgLnHwHSp/SeuCfcufGXW5hZE2LgSNhA9JNek=
+	b=TWxNEV+LMGYjiiaMoKMaxc+MaKWizMlJrFNeIFq2sG+Qz1C7RlK+uIKq2orskde52
+	 mmk6//tv0vD5SYiQxbKfKJFBmon8ykn0fqFocpID7BGXAkZKGBCkVF8jZDDnoROZFM
+	 wET6q5wrFTZPlFLtckrZccrnjwqQmcDmZ1+QNzTo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725911AbeLUVv0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 21 Dec 2018 16:51:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44780 "EHLO mail.kernel.org"
+        id S2403785AbeLUWY5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 21 Dec 2018 17:24:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57470 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725837AbeLUVv0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 21 Dec 2018 16:51:26 -0500
+        id S1730887AbeLUWY4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 21 Dec 2018 17:24:56 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 59CFA21927;
-        Fri, 21 Dec 2018 21:51:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5774F21920;
+        Fri, 21 Dec 2018 22:24:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545429085;
-        bh=SjHlVTvrZg8PN3rMMMnqKhe/vbtxJDTRrZatwEU/qaE=;
+        s=default; t=1545431096;
+        bh=SwQOcWERL7EJwd43LXg8u0TCfoGYoS0lA0RO/ydYGCw=;
         h=Subject:Cc:To:From:In-Reply-To:References:Date:From;
-        b=jntpyoWLZm9jD+4De/drzSbnqakk+eDtFIb52DqaOI19a2OlBXfQ1IxIg1yliyxrk
-         fg6pmj9sIhQWK/L3xiuMAmD2Mn8NpW5Jh66fLXVzZ32bdpxPmhOP/cRRRMM4f5egw5
-         GqTvaUe0E+m0Sfh31xmqKNu4zku8zOytC4E7hVL4=
+        b=AryT69FKwnfM8l/GMYXzkyCEUepTNWGeBtUCKL66W42Ziw/tBfxBy25cM4+8hBXQN
+         Q8FFjMa7PZbvv6XIO9qHdlq/yGUj67CaI9EXTnqNZLpt5pQOK+T8xnc4lhP6xmw+Pd
+         kvLURBXzKMv8pVKRNX7g04FYtMXh2RUCVuCv2RaE=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 01/13] clk: qcom: gcc: limit GPLL0_AO_OUT operating frequency
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org,
-        david.brown@linaro.org, will.deacon@arm.com,
-        mturquette@baylibre.com, jassisinghbrar@gmail.com,
-        vkoul@kernel.org, niklas.cassel@linaro.org, sibis@codeaurora.org,
-        georgi.djakov@linaro.org, arnd@arndb.de,
-        horms+renesas@verge.net.au, heiko@sntech.de,
-        enric.balletbo@collabora.com, jagan@amarulasolutions.com,
-        olof@lixom.net, amit.kucheria@linaro.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>,
-        Taniya Das <tdas@codeaurora.org>
+Subject: Re: [PATCH] Revert "clk: fix __clk_init_parent() for single parent clocks"
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <914bd56c-4470-4f78-75ac-f7bedd83d7c0@linaro.org>
+In-Reply-To: <7e6f1ce65a59f7ad7c3d0da7f8d4b41c93346c2b.camel@baylibre.com>
 User-Agent: alot/0.8
-References: <1545039990-19984-1-git-send-email-jorge.ramirez-ortiz@linaro.org> <1545039990-19984-2-git-send-email-jorge.ramirez-ortiz@linaro.org> <e97d9050-effc-56d7-0f9b-768df90dd73a@codeaurora.org> <6814777f-1e5f-bd99-db63-a0050dcdd930@linaro.org> <874ce15d-67f5-8e55-8b62-73071fe6ae06@codeaurora.org> <20181221192823.GA9704@minitux> <94b12f58-b586-6b4b-6c0c-b4adad80d7b0@linaro.org> <154542841268.13075.13095552962351570142@swboyd.mtv.corp.google.com> <914bd56c-4470-4f78-75ac-f7bedd83d7c0@linaro.org>
-Message-ID: <154542908449.13075.11379256415955338261@swboyd.mtv.corp.google.com>
-Date:   Fri, 21 Dec 2018 13:51:24 -0800
+References: <20181204163257.32085-1-jbrunet@baylibre.com> <154394675320.88331.12449582989130694425@swboyd.mtv.corp.google.com> <807f2924b67239f61c6d93de7f7b124f8a1f195a.camel@baylibre.com> <154399647605.88331.115722031910044874@swboyd.mtv.corp.google.com> <98e430d7a96fa6b4f0225e57820a4a677108a052.camel@baylibre.com> <154413410087.88331.10879623310968389005@swboyd.mtv.corp.google.com> <63f9b6f613cab0db91c8363635aa673a11f75fba.camel@baylibre.com> <154509805561.19322.14057956205431846882@swboyd.mtv.corp.google.com> <7e6f1ce65a59f7ad7c3d0da7f8d4b41c93346c2b.camel@baylibre.com>
+Message-ID: <154543109549.13075.4102525082189864496@swboyd.mtv.corp.google.com>
+Date:   Fri, 21 Dec 2018 14:24:55 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jorge Ramirez (2018-12-21 13:45:41)
-> On 12/21/18 22:40, Stephen Boyd wrote:
-> > Quoting Jorge Ramirez (2018-12-21 11:45:28)
-> >> On 12/21/18 20:28, Bjorn Andersson wrote:
-> >>> Perhaps there's a better way to define that this particular clock
-> >>> hardware can change rate, but in this implementation it must not?
-> >> the initialization for this particular PLL on this particular platform
-> >> is wrong
-> >> as the interface does not apply to the platform needs even though it i=
-s an
-> >> alpha_pll
-> >>
-> >> if the VCO is not an option -even though it reflects the platform
-> >> constrains-
-> >> I would suggest nullifying the alpha_pll_ops that do not apply to this
-> >> platform:
-> >> ie: set_rate, round_rate set to null in the probe.
-> >>
-> >> allowing the interface calls (ops) to go through to later on make them=
- fail
-> >> based on some setting would be fundamentally wrong IMO
-> >>
-> > We have clk_alpha_pll_postdiv_ro_ops so maybe just add another set of
-> > those for the alpha_pll itself?
-> >
-> >
+Quoting Jerome Brunet (2018-12-21 08:03:29)
+> On Mon, 2018-12-17 at 17:54 -0800, Stephen Boyd wrote:
+> >=20
+> > Ok. Thanks for the explanation. What should the framework do when the
+> > parent is not known? Mark the clk as not an orphan but parent it to
+> > NULL? That might work here.
 >=20
-> something like=20
-> clk_alpha_pll_fixed_ops?
+> I don't really get the difference in the framework ATM. Is this linked to=
+ the
+> 'orphan probe defer logic' WIP you have been mentionning ?
 
-Either way works. We're not consistent in naming now that we have
-clk_alpha_pll_fixed_fabia_ops.
+Yes, we have orphan marking logic, but we haven't finished the topic and
+returned PROBE_DEFER for orphaned clks. It was blocked on some Allwinner
+drivers having problems but that was over a year ago so I don't see
+anything blocking us now. I really want to do it soon so now is the time
+to fix all of this and see what breaks.
+
+>=20
+> All this below is very interresting but it looks like a very complex way =
+to
+> solve what was initially a very simple problem, with considerations that =
+are
+> still WIP a this stage.
+>=20
+> Even with these future constraints in mind, I don't understand how the
+> proposed patch changes anything to the situtation. A clock with a get_par=
+ent()
+> callback (and several known parents) may still return an out of bound val=
+ue
+> ... CCF will still have to deal with this case gracefully, as it is curre=
+ntly
+> doing
+
+Ok. I think the problem you see is that the clk provider doesn't know
+anything besides parent name is a string? And so you're not sure how the
+provider can return NULL for "this clk won't ever appear", vs. an error
+pointer for "things failed while reading"?
+
+I think you understand I'm not trying to change clk_ops::get_parent().
+I'm sidestepping the problem and other problems that we have with the
+return type of that clk_op (u8) by introducing a new clk_op that can
+return an error pointer for exceptional cases. Drivers would need to
+migrate to this new clk op to fix the problem you're solving, and those
+drivers will also need to know what their clk parents are and what the
+clk_hw pointers are for them.
 
