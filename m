@@ -2,153 +2,174 @@ Return-Path: <SRS0=PmFx=O6=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 984B9C43387
-	for <linux-clk@archiver.kernel.org>; Fri, 21 Dec 2018 19:00:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC1FCC43387
+	for <linux-clk@archiver.kernel.org>; Fri, 21 Dec 2018 19:28:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6467621928
-	for <linux-clk@archiver.kernel.org>; Fri, 21 Dec 2018 19:00:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545418857;
-	bh=tKCy/obsv6cYooVTpl2l9vGZthElPottVY1/IlJ5K/g=;
-	h=Subject:Cc:To:From:In-Reply-To:References:Date:List-ID:From;
-	b=KvNOsf8AETQwvooVHQRgsXTa3mpnFwicY7gxcI5IrTUTsr0JdKXrUVRC8UaR/giva
-	 ZTXENNmYRdG+tmotexxojt1FE9WIDA/8faHwJ0AplyQjOIUjy6flfA+xoq2xiHvyTs
-	 AThii3XpvM/zCLE5pC0nQc89fq1UqMkvfB50Vpko=
+	by mail.kernel.org (Postfix) with ESMTP id 6CCF321906
+	for <linux-clk@archiver.kernel.org>; Fri, 21 Dec 2018 19:28:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="BOKUMEAI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729726AbeLUTA5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 21 Dec 2018 14:00:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49290 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729609AbeLUTA4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 21 Dec 2018 14:00:56 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 850B32190A;
-        Fri, 21 Dec 2018 19:00:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1545418855;
-        bh=tKCy/obsv6cYooVTpl2l9vGZthElPottVY1/IlJ5K/g=;
-        h=Subject:Cc:To:From:In-Reply-To:References:Date:From;
-        b=a+mBcdCUQcVDpSgzwJmjvTpF8HuVX+W8gv7FKLePBo3HkWAHngvyfIM9+kRkz2lPk
-         UVlad/N1p7E6CtM4nebr4kewmMjn9LE744MIzmh4Jk6OgUHQ8bxz3dn15MbvUQOi4x
-         DPvrl04jDBvy/rqilWyEGgDmCgkKFkrQqMhK/UUM=
-Content-Type: text/plain; charset="utf-8"
+        id S2389995AbeLUT22 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 21 Dec 2018 14:28:28 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:44937 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389690AbeLUT22 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Dec 2018 14:28:28 -0500
+Received: by mail-pg1-f195.google.com with SMTP id t13so2907650pgr.11
+        for <linux-clk@vger.kernel.org>; Fri, 21 Dec 2018 11:28:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=/4zLhrrDI5tXqdZs1MGr4wpX9qBajD53lBxnddDIVbg=;
+        b=BOKUMEAIPk1XCHxFx8C5wm4LuY4O0wV7h70hAiCXYn6ET5eMcEVpebCaycAOCblFFZ
+         JNgy2qG2R9VUOZ8k6Vt+urat+15dOvg8zOEYHBhLNTFX6+wM/V/DMkkNhaP7d6p5e4Qc
+         qPTEzLaQxuq7I26vMztJiwG6H36K2WQMa6+ew=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=/4zLhrrDI5tXqdZs1MGr4wpX9qBajD53lBxnddDIVbg=;
+        b=KQREPX0d2AhfZuTz/yGsjRiQthExizySphA3h/lx4tXR79PZPMR8DxOT8qk7/1alDP
+         IFXlPZT8I8hLNXIkLPP2hWEYtIMyb7jWKbnlTNgCH+X8Y2dPhcMFiRh2JfCz5j6ni1KK
+         CFzbfgdN+Q0YJt/oZhafEkQh9c5qC1nUW3zFvyDuOpuRJFfDXyWk7Y3xpKpVWsZiw390
+         yaz0mJYi7t8s4bOb1xhFXzHoeni7FTz59sn1+cnVn6GO7TXX0BTcX0rFePTMQt5/bNSB
+         LYxGW9r+2HN6/mgMx+sXfdFXSoXiEqUpYARXyTJFv0Jprmb/k/iJo889fB/WpWMn+r86
+         suhQ==
+X-Gm-Message-State: AA+aEWbyFay3TAz7KnYJcXkXuOYmeBFGDaDMWIYAuRCeBq0SFSTaVf7s
+        g99a2FbhkfwuTIp6dI8lOwtsZg==
+X-Google-Smtp-Source: AFSGD/VuBnDH+QkDsswEVpvWSgHa7hGCdfYV5lOToWBZI3irxqoRGNebG3ierYuA7DoLeQG5lzmz1Q==
+X-Received: by 2002:a62:d148:: with SMTP id t8mr3913888pfl.52.1545420507345;
+        Fri, 21 Dec 2018 11:28:27 -0800 (PST)
+Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id q195sm28046252pgq.7.2018.12.21.11.28.24
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 21 Dec 2018 11:28:25 -0800 (PST)
+Date:   Fri, 21 Dec 2018 11:28:23 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Taniya Das <tdas@codeaurora.org>
+Cc:     Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>, robh+dt@kernel.org,
+        mark.rutland@arm.com, andy.gross@linaro.org,
+        david.brown@linaro.org, sboyd@kernel.org, will.deacon@arm.com,
+        mturquette@baylibre.com, jassisinghbrar@gmail.com,
+        vkoul@kernel.org, niklas.cassel@linaro.org, sibis@codeaurora.org,
+        georgi.djakov@linaro.org, arnd@arndb.de,
+        horms+renesas@verge.net.au, heiko@sntech.de,
+        enric.balletbo@collabora.com, jagan@amarulasolutions.com,
+        olof@lixom.net, amit.kucheria@linaro.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 01/13] clk: qcom: gcc: limit GPLL0_AO_OUT operating
+ frequency
+Message-ID: <20181221192823.GA9704@minitux>
+References: <1545039990-19984-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
+ <1545039990-19984-2-git-send-email-jorge.ramirez-ortiz@linaro.org>
+ <e97d9050-effc-56d7-0f9b-768df90dd73a@codeaurora.org>
+ <6814777f-1e5f-bd99-db63-a0050dcdd930@linaro.org>
+ <874ce15d-67f5-8e55-8b62-73071fe6ae06@codeaurora.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Subject: RE: [PATCH 4/5] clk: imx8qxp: make the name of clock ID generic
-Cc:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-To:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <AM0PR04MB4211F8786714DD6CCBB55F0A80B80@AM0PR04MB4211.eurprd04.prod.outlook.com>
-User-Agent: alot/0.8
-References: <1545232888-9302-1-git-send-email-aisheng.dong@nxp.com> <1545232888-9302-5-git-send-email-aisheng.dong@nxp.com> <CAOMZO5DzMpMp-Tf74iM3SuHoFpji8z-dxM-UsC13GeDx2bZYgA@mail.gmail.com> <VI1PR04MB4222ABD43B82BD3C0B73404780BF0@VI1PR04MB4222.eurprd04.prod.outlook.com> <154533484105.79149.16225192496445475758@swboyd.mtv.corp.google.com> <AM0PR04MB4211F8786714DD6CCBB55F0A80B80@AM0PR04MB4211.eurprd04.prod.outlook.com>
-Message-ID: <154541885475.13075.16994932864140896829@swboyd.mtv.corp.google.com>
-Date:   Fri, 21 Dec 2018 11:00:54 -0800
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <874ce15d-67f5-8e55-8b62-73071fe6ae06@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Aisheng Dong (2018-12-20 17:44:28)
-> > -----Original Message-----
-> > From: Stephen Boyd [mailto:sboyd@kernel.org]
-> > Quoting Aisheng Dong (2018-12-19 22:26:50)
-> > > > -----Original Message-----
-> > > > From: Fabio Estevam [mailto:festevam@gmail.com] Hi Aisheng,
-> > > >
-> > > > On Wed, Dec 19, 2018 at 1:29 PM Aisheng Dong
-> > <aisheng.dong@nxp.com>
-> > > > wrote:
-> > > > >
-> > > > > SCU clock can be used in a similar way by IMX8QXP and IMX8QM SoCs.
-> > > > > Let's make the name of clock ID generic to allow other SoCs to
-> > > > > reuse the common part.
-> > > > >
-> > > > > This patch only changes the clock id name and file name, so no
-> > > > > functional change.
-> > > > >
-> > > > > Cc: Shawn Guo <shawnguo@kernel.org>
-> > > > > Cc: Sascha Hauer <kernel@pengutronix.de>
-> > > > > Cc: Fabio Estevam <fabio.estevam@nxp.com>
-> > > > > Cc: Stephen Boyd <sboyd@kernel.org>
-> > > > > Cc: Michael Turquette <mturquette@baylibre.com>
-> > > > > Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-> > > > > ---
-> > > > >  drivers/clk/imx/clk-imx8qxp-lpcg.c        | 146 +++++++--------
-> > > > >  drivers/clk/imx/clk-imx8qxp.c             | 152 ++++++++--------
-> > > > >  include/dt-bindings/clock/imx8-clock.h    | 289
-> > > > ++++++++++++++++++++++++++++++
-> > > > >  include/dt-bindings/clock/imx8qxp-clock.h | 289
-> > > > > ------------------------------
-> > > > >  4 files changed, 438 insertions(+), 438 deletions(-)
-> > > >
-> > > > This seems like unneeded churn. Just keep the existing naming and
-> > > > other SoCs can reuse it without problem.
-> > >
-> > > There's a reason.
-> > > We still need add some clock IDs which exist on MX8QM only (probably
-> > > more on future SoCs) Having them prefixed with 'IMX8QXP' may look
-> > strange.
-> > >
-> > > Besides that, as those clock IDs will also be used in devicetree, make
-> > > the name generic for different SoCs seems still better and less confu=
-sing.
-> > >
-> >=20
-> > This looks like an integration problem. Is anyone using the defines tha=
-t are
-> > merged through clk tree now? A grep of linux-next says no, but how can =
-I be
-> > sure?
->=20
-> I'm sure no one is using it now.
-> The only user DTS (imx8qxp mek) is waiting for merge after 4.21-rc1 is ou=
-t.
-> So it's a chance to update it.=20
->=20
-> >=20
-> > So can you leave around the header file with the deprecated define name=
-s and
-> > introduce another one that's a copy of the header file but with the non=
--SoC
-> > specific names?  Then you can wait for a release cycle and delete the o=
-ld
-> > header file that nobody should be using in DT anymore.
-> > Unless you plan to make sure that nobody uses the deprecated defines
-> > somehow?
-> >=20
->=20
-> Yes, the plan is to make sure nobody uses that.
-> Otherwise, it may be hard to send DTS patches using new CLK ID name throu=
-gh
-> different tree later.
->=20
+On Fri 21 Dec 09:58 PST 2018, Taniya Das wrote:
 
-I've already tagged and prepared to send out clk tree for the next merge
-window. It's getting difficult to change this before -rc1 too because
-I'm traveling for the holidays in the US. I'm fine with changing the
-world if it doesn't break anything, but I'm not interested in making the
-pull request wait another few days for this particular topic, so I'd
-rather send this as part of a follow-on fixes PR during the merge window
-next week.
+> Hello,
+> 
+> On 12/21/2018 6:06 PM, Jorge Ramirez wrote:
+> > On 12/21/18 12:19, Taniya Das wrote:
+> > > 
+> > > 
+> > > On 12/17/2018 3:16 PM, Jorge Ramirez-Ortiz wrote:
+> > > > Limit the GPLL0_AO_OUT_MAIN operating frequency as per its hardware
+> > > > specifications.
+> > > > 
+> > > > Co-developed-by: Niklas Cassel <niklas.cassel@linaro.org>
+> > > > Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
+> > > > Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+> > > > ---
+> > > >   drivers/clk/qcom/gcc-qcs404.c | 6 ++++++
+> > > >   1 file changed, 6 insertions(+)
+> > > > 
+> > > > diff --git a/drivers/clk/qcom/gcc-qcs404.c
+> > > > b/drivers/clk/qcom/gcc-qcs404.c
+> > > > index 64da032..833436a 100644
+> > > > --- a/drivers/clk/qcom/gcc-qcs404.c
+> > > > +++ b/drivers/clk/qcom/gcc-qcs404.c
+> > > > @@ -304,10 +304,16 @@ static struct clk_alpha_pll gpll0_out_main = {
+> > > >       },
+> > > >   };
+> > > >   +static const struct pll_vco gpll0_ao_out_vco[] = {
+> > > > +    { 800000000, 800000000, 0 },
+> > > > +};
+> > > > +
+> > > >   static struct clk_alpha_pll gpll0_ao_out_main = {
+> > > >       .offset = 0x21000,
+> > > >       .regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT],
+> > > >       .flags = SUPPORTS_FSM_MODE,
+> > > > +    .vco_table = gpll0_ao_out_vco,
+> > > > +    .num_vco = ARRAY_SIZE(gpll0_ao_out_vco),
+> > > 
+> > > Could you please help as to why this is required? This is a fixed
+> > > PLL and we do not require a VCO table for it.
+> > 
+> > Hi Taniya,
+> > 
+> > this patch - the additional information that it provides about the
+> > hardware - helps to select the right parent clock for a given frequency.
+> > 
+> > On the qcs404 this clock is one of the two parent clocks of the apcs
+> > clock controller (the other one being the high frequency pll)
+> > When cpufreq sets a target frequency, there is an iteration through the
+> > list of parents to select the one that delivers the best match.
+> > 
+> > When attempting to set the clock for an alpha_pll, the operation does a
+> > sanity check to validate that the requested frequency is in fact
+> > reachable using the vco range: trying to set a value that is not in
+> > range will fail.
+> > 
+> > This patch makes sure that its range is explicitly defined.
+> > 
+> > It also helps making sure there are no rounding issues when setting its
+> > value: without it the clock was being read at 799MHz
+> > 
+> > 
+> 
+> If the PLL is being read as 799MHz it would because not all the 40 bits of
+> the ALPHA_VAL being programmed by the bootloaders(which are the original
+> owners of this PLL). So we should go with the way they are being set by
+> bootloaders and read by HLOS driver.
+> 
+> And a VCO range you have considered is wrong from a PLL perspective. As
+> these are fixed PLLs and VCO range really does not matter here, so please
+> drop this change.
+> 
 
-Can you resend with just the things that need to be changed for the next
-release (v4.21 or v5.0)? And Cc the relevant people/lists and try to
-collect acks and reviewed-by tags before next Wednesday? I can send a
-fixes PR on Friday next week then.
+The problem here is that the PLL should be fixed at 800MHz, but the
+alpha PLL is defined such that it can change. So when the mux-div is
+looking for a suitable parent and divider for our CPU clock it concludes
+that the best way to reach certain frequencies is to change the rate of
+GPLL0.
 
+Adding the vco_table limits the available frequencies for GPLL0 in
+QCS404, without modifying the implementation of the alpha PLL.
+
+Perhaps there's a better way to define that this particular clock
+hardware can change rate, but in this implementation it must not?
+
+Regards,
+Bjorn
