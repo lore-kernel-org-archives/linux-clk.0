@@ -2,135 +2,123 @@ Return-Path: <SRS0=PmFx=O6=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4B7DC43387
-	for <linux-clk@archiver.kernel.org>; Fri, 21 Dec 2018 01:51:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40AE0C43387
+	for <linux-clk@archiver.kernel.org>; Fri, 21 Dec 2018 11:19:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A45B0218FE
-	for <linux-clk@archiver.kernel.org>; Fri, 21 Dec 2018 01:51:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1060B218FD
+	for <linux-clk@archiver.kernel.org>; Fri, 21 Dec 2018 11:19:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="sou4RENQ"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="kncOjfiN";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="m5UG2fOj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388248AbeLUBvt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 20 Dec 2018 20:51:49 -0500
-Received: from mail-eopbgr60075.outbound.protection.outlook.com ([40.107.6.75]:5664
-        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729293AbeLUBvs (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 20 Dec 2018 20:51:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VPqeyUDPPbmOINtFte4KtIM9RU3aGRN4g+GmvxnGB8I=;
- b=sou4RENQUmmx31XD8IyAqOFpGLTP2aH1j4uj9VW7G+kOcgMM7zQlF7FBCy7wIDnKO0wSQz16gwElOyUtlpeIESkgWXL231T0wjI9tfKvRxsNzWrxM+i7b+fuAwFKZFjPTolV7MmQGlvf6lXqGGjnMmGPceHwT/myoDncQivd9aA=
-Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.126.21) by
- AM0PR04MB5796.eurprd04.prod.outlook.com (20.178.202.213) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1446.21; Fri, 21 Dec 2018 01:51:44 +0000
-Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
- ([fe80::9125:e806:7303:d8e6]) by AM0PR04MB4211.eurprd04.prod.outlook.com
- ([fe80::9125:e806:7303:d8e6%7]) with mapi id 15.20.1446.020; Fri, 21 Dec 2018
- 01:51:44 +0000
-From:   Aisheng Dong <aisheng.dong@nxp.com>
-To:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>
-CC:     "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: RE: [PATCH 0/5] clk: imx8qm: prepare for imx8qm clock support
-Thread-Topic: [PATCH 0/5] clk: imx8qm: prepare for imx8qm clock support
-Thread-Index: AQHUl69KP5rFoD0FDkqjgax/qBib7qWIb1rg
-Date:   Fri, 21 Dec 2018 01:51:44 +0000
-Message-ID: <AM0PR04MB421151E86936A1FAB5CD34D380B80@AM0PR04MB4211.eurprd04.prod.outlook.com>
-References: <1545232888-9302-1-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1545232888-9302-1-git-send-email-aisheng.dong@nxp.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=aisheng.dong@nxp.com; 
-x-originating-ip: [101.93.238.110]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM0PR04MB5796;6:j4hmZz7Ok/0KJRPxhJTcoHUrhpKFYEs8ZrKWeezM1vLTo4QH+bNUs7uxvWex9AUlLlEHJt8vQ+sUEPPugqVaVewGD+f3O8PKPntvJSqqiZpk7g8I2W8Gfk9kXF5eilgD4As7Gi8rDLTfq6ewrSGdAP3LIbngzMfeHaQEWdtyAM5GfKCOsHaScmWtZiFDTyUdBjBa5R1qGyV3KJcFrVhfSG0eeEXZk2Ec8T333WJg4IlWu01fUlH8kz4OybAHNifMqc+QnWYTsH68Qfi7yaHdT0VT5T3IHmK+7Us9pVI/jpMuvgeIp3nNFv2hKLVR9SH+bLOIMx+gEdtvkstTx3Whwkpwx7LH0lwE+LdK8sEe+Fm8bPM/tNNDGjLAINiUJRQyne7ig2QPe0Tkhbv+Oi/e7oshgzFUKRXsm3VAlLBkhfxSOn0cH7AvvEWSZ9o02Y5J5oogGEqu7/azUq3XnNr4MQ==;5:l5OTzNeREkgCorZHSc3sohXHawckY3VVwcnEYm+L6w1u+3z+HcGPSV4xr+am+LB9GNvfbIlkAMnFh9R7Q8K+Fn2sJqNFWC0tA8wq+GMGgo1yOWq0nwkHyDmsmCHiiE62k2qklCwtJgbjFJf5mUeEJRvvleCmnsl+yce/n9NgaBs=;7:T/fs2NLkXVdZKQ01n47WCGAJRumbfa8b5iibNv93m3r6l+LBplNXsSvH1suBps5M22LEvfV+4m9kczXFIxOieWQ7YcqkpywF4A1L57tbdwRL1yWpsOgRsZ5MclCmMaBTWSxRNFZDhNC8hrFvmbly9Q==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 084a62f6-3629-4c55-d26d-08d666e6dc4c
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB5796;
-x-ms-traffictypediagnostic: AM0PR04MB5796:
-x-microsoft-antispam-prvs: <AM0PR04MB57961EBF805E9F314C67BB9380B80@AM0PR04MB5796.eurprd04.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(5005026)(6040522)(2401047)(8121501046)(3002001)(10201501046)(3231475)(944501520)(52105112)(93006095)(93001095)(6055026)(149066)(150057)(6041310)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:AM0PR04MB5796;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB5796;
-x-forefront-prvs: 0893636978
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(366004)(346002)(136003)(376002)(39860400002)(189003)(199004)(13464003)(5660300001)(71200400001)(71190400001)(4326008)(316002)(97736004)(3846002)(6116002)(66066001)(9686003)(54906003)(2501003)(53936002)(6246003)(55016002)(74316002)(305945005)(110136005)(86362001)(105586002)(44832011)(76176011)(476003)(7696005)(6506007)(53546011)(446003)(11346002)(8936002)(14454004)(256004)(186003)(102836004)(106356001)(8676002)(14444005)(81166006)(26005)(81156014)(33656002)(486006)(6436002)(7736002)(229853002)(2906002)(99286004)(478600001)(25786009)(68736007)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5796;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: iV66UnbepzMeqbdpRj+xDK4L8AS8ldG26UIJNedcUsZZ/uHZCfiaXXaMTkj3noim1z7Y72I9z/rOhcNo2UT+8vvLjLcHJhj1N+wckJIrfo7MdZccIioUq9vxgnohm1pnUJH3By1bOp/va7/97nkDyU6fy5v4fCUMLaWOQcSiqraORxSLI311mwHuOxHwvLG8iTN8VOlB1hCrUew12uEcPn9sBqaQky8HGPFntLZ7LHCGs/uyAyuYSrNlDDs+dkUmPEfgA6SA63BoHrL9o2Let7s/HS0CVZ3F9HETPrCpjeME+LxSLARQSB2IqVX9cLmK
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1733145AbeLULTp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 21 Dec 2018 06:19:45 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:38702 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731691AbeLULTo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Dec 2018 06:19:44 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 9586560909; Fri, 21 Dec 2018 11:19:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1545391183;
+        bh=EoRquBr4Hj2je3Da64uLThh3DoJ/cG7aKPuvTCCA/KQ=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=kncOjfiNBgQz7n39Z8c9gAzngtx1pi/3vudJ1p9KewXkW8+iDXthf1QC148dRpsW0
+         a9mTrQWX2hZ2AaLCqpDNdmJdNx9em163TWv5ZXJmbcG8qFKFWduHEx9qykLzkSsWOF
+         mAk34WPJMRGOUDnt6IQG6Q/WS6WtvX9tAR/V3wJA=
+Received: from [192.168.225.247] (unknown [49.32.154.203])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 20E5360208;
+        Fri, 21 Dec 2018 11:19:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1545391182;
+        bh=EoRquBr4Hj2je3Da64uLThh3DoJ/cG7aKPuvTCCA/KQ=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=m5UG2fOjzR2K5QntPkAGuknOl7Ye0fV8uYoaCvcivDenci76IdrMHgkIMVH8a8rql
+         +cS5ot6V4/sxbfauUOe/dni8FIFvA4kM9/vcPj9SxPp/MlaLbhdf7QfHsKqv+6l78g
+         moA6sE1BYXC+fOne/mnJImufSIM5RogxK1fvrSmo=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 20E5360208
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+Subject: Re: [PATCH 01/13] clk: qcom: gcc: limit GPLL0_AO_OUT operating
+ frequency
+To:     Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>,
+        robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org,
+        david.brown@linaro.org, sboyd@kernel.org, will.deacon@arm.com,
+        mturquette@baylibre.com, jassisinghbrar@gmail.com
+Cc:     bjorn.andersson@linaro.org, vkoul@kernel.org,
+        niklas.cassel@linaro.org, sibis@codeaurora.org,
+        georgi.djakov@linaro.org, arnd@arndb.de,
+        horms+renesas@verge.net.au, heiko@sntech.de,
+        enric.balletbo@collabora.com, jagan@amarulasolutions.com,
+        olof@lixom.net, amit.kucheria@linaro.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+References: <1545039990-19984-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
+ <1545039990-19984-2-git-send-email-jorge.ramirez-ortiz@linaro.org>
+From:   Taniya Das <tdas@codeaurora.org>
+Message-ID: <e97d9050-effc-56d7-0f9b-768df90dd73a@codeaurora.org>
+Date:   Fri, 21 Dec 2018 16:49:30 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 084a62f6-3629-4c55-d26d-08d666e6dc4c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Dec 2018 01:51:44.3717
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5796
+In-Reply-To: <1545039990-19984-2-git-send-email-jorge.ramirez-ortiz@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The patch set is missed to CC Devicetree maintainers.
-Copy Rob and Devicetree maillist.
 
-Regards
-Dong Aisheng
 
-> -----Original Message-----
-> From: Aisheng Dong
-> Sent: Wednesday, December 19, 2018 11:27 PM
-> To: linux-clk@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org; sboyd@kernel.org;
-> mturquette@baylibre.com; shawnguo@kernel.org; Fabio Estevam
-> <fabio.estevam@nxp.com>; dl-linux-imx <linux-imx@nxp.com>;
-> kernel@pengutronix.de; Aisheng Dong <aisheng.dong@nxp.com>
-> Subject: [PATCH 0/5] clk: imx8qm: prepare for imx8qm clock support
->=20
-> After a bit more investigation on IMX8QM, it seemed SCU clock can be used=
- in
-> a similar way as IMX8QXP. So update the binding and driver to be a bit ge=
-neric
-> for easily extension of IMX8QM support later.
->=20
-> Dong Aisheng (5):
->   dt-bindings: fsl: scu: add fallback compatible string for clock
->   dt-bindings: fsl: scu: add imx8qm scu clock support
->   clk: imx: scu: add fallback compatible string support
->   clk: imx8qxp: make the name of clock ID generic
->   dt-bindings: imx8-clock: add a53 and a72 clock id
->=20
->  .../devicetree/bindings/arm/freescale/fsl,scu.txt  |   7 +-
->  drivers/clk/imx/clk-imx8qxp-lpcg.c                 | 146 +++++------
->  drivers/clk/imx/clk-imx8qxp.c                      | 153 +++++------
->  include/dt-bindings/clock/imx8-clock.h             | 291
-> +++++++++++++++++++++
->  include/dt-bindings/clock/imx8qxp-clock.h          | 289 ---------------=
------
->  5 files changed, 446 insertions(+), 440 deletions(-)  create mode 100644
-> include/dt-bindings/clock/imx8-clock.h
->  delete mode 100644 include/dt-bindings/clock/imx8qxp-clock.h
->=20
-> --
-> 2.7.4
+On 12/17/2018 3:16 PM, Jorge Ramirez-Ortiz wrote:
+> Limit the GPLL0_AO_OUT_MAIN operating frequency as per its hardware
+> specifications.
+> 
+> Co-developed-by: Niklas Cassel <niklas.cassel@linaro.org>
+> Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
+> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+> ---
+>   drivers/clk/qcom/gcc-qcs404.c | 6 ++++++
+>   1 file changed, 6 insertions(+)
+> 
+> diff --git a/drivers/clk/qcom/gcc-qcs404.c b/drivers/clk/qcom/gcc-qcs404.c
+> index 64da032..833436a 100644
+> --- a/drivers/clk/qcom/gcc-qcs404.c
+> +++ b/drivers/clk/qcom/gcc-qcs404.c
+> @@ -304,10 +304,16 @@ static struct clk_alpha_pll gpll0_out_main = {
+>   	},
+>   };
+>   
+> +static const struct pll_vco gpll0_ao_out_vco[] = {
+> +	{ 800000000, 800000000, 0 },
+> +};
+> +
+>   static struct clk_alpha_pll gpll0_ao_out_main = {
+>   	.offset = 0x21000,
+>   	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT],
+>   	.flags = SUPPORTS_FSM_MODE,
+> +	.vco_table = gpll0_ao_out_vco,
+> +	.num_vco = ARRAY_SIZE(gpll0_ao_out_vco),
 
+Could you please help as to why this is required? This is a fixed PLL 
+and we do not require a VCO table for it.
+
+>   	.clkr = {
+>   		.enable_reg = 0x45000,
+>   		.enable_mask = BIT(0),
+> 
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
+
+--
