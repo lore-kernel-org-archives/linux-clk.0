@@ -2,140 +2,122 @@ Return-Path: <SRS0=N8uP=O7=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=DATE_IN_PAST_03_06,
-	DKIM_INVALID,DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E0FBC43612
-	for <linux-clk@archiver.kernel.org>; Sat, 22 Dec 2018 17:08:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90DADC43387
+	for <linux-clk@archiver.kernel.org>; Sat, 22 Dec 2018 20:27:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DCA921939
-	for <linux-clk@archiver.kernel.org>; Sat, 22 Dec 2018 17:08:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="b5tsJlLS"
+	by mail.kernel.org (Postfix) with ESMTP id 66EFF21773
+	for <linux-clk@archiver.kernel.org>; Sat, 22 Dec 2018 20:27:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388818AbeLVRHz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 22 Dec 2018 12:07:55 -0500
-Received: from outils.crapouillou.net ([89.234.176.41]:35386 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726475AbeLVRHz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 22 Dec 2018 12:07:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1545476981; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=eHVD3wuv5y8Wv1Q5MfEgEhtMxuWsgAkJR+tNwfVbxZ0=;
-        b=b5tsJlLSv/CS3iwe3R0J0G1OQLEYllzfVovCYsD571DHGNeJNPhF3iBtVLTyW6dCIo0lFw
-        EbLe5itbVY/DNzlDo8nkWLJS5OtjonqchYUXhrzlezWLJajoNBbkp45xYihLtjkHbGm26R
-        01rLbYTMOJvMMSg/1TCyRQid7fRWrAQ=
-Date:   Sat, 22 Dec 2018 12:09:32 +0100
-From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH v8 03/26] dt-bindings: Add doc for the Ingenic TCU drivers
-To:     Rob Herring <robh@kernel.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mathieu Malaterre <malat@debian.org>,
-        Ezequiel Garcia <ezequiel@collabora.co.uk>,
-        PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
-        Linux PWM List <linux-pwm@vger.kernel.org>,
-        devicetree@vger.kernel.org,
+        id S2404995AbeLVU06 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 22 Dec 2018 15:26:58 -0500
+Received: from baldur.buserror.net ([165.227.176.147]:41358 "EHLO
+        baldur.buserror.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404987AbeLVU04 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 22 Dec 2018 15:26:56 -0500
+Received: from [2601:449:8400:7293:12bf:48ff:fe84:c9a0]
+        by baldur.buserror.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <oss@buserror.net>)
+        id 1gaZ0s-0000VD-Fz; Fri, 21 Dec 2018 22:35:47 -0600
+Message-ID: <5f83750ca7c146f7080444b85dc58f51cc0b3b35.camel@buserror.net>
+From:   Scott Wood <oss@buserror.net>
+To:     Andy Tang <andy.tang@nxp.com>
+Cc:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
+        "paulus@samba.org" <paulus@samba.org>,
+        "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        LINUX-WATCHDOG <linux-watchdog@vger.kernel.org>,
-        linux-mips@vger.kernel.org,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>, od@zcrc.me
-Message-Id: <1545476972.2113.1@crapouillou.net>
-In-Reply-To: <CAL_JsqLhnitSM7-S1hq8M7S-7BHO5oYByXQ8QD2JkUY3jb63fQ@mail.gmail.com>
-References: <20181212220922.18759-1-paul@crapouillou.net>
-        <20181212220922.18759-4-paul@crapouillou.net> <20181217210531.GA29770@bogus>
-        <1545084222.1958.0@smtp.crapouillou.net>
-        <CAL_JsqLhnitSM7-S1hq8M7S-7BHO5oYByXQ8QD2JkUY3jb63fQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Transfer-Encoding: quoted-printable
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
+Date:   Fri, 21 Dec 2018 22:35:45 -0600
+In-Reply-To: <VI1PR04MB43332FE4914896FCBE8E997FF3A70@VI1PR04MB4333.eurprd04.prod.outlook.com>
+References: <20181031065736.32719-1-andy.tang@nxp.com>
+         <09ee2f91765add47e628e0ab03776d468cec0914.camel@buserror.net>
+         <VI1PR04MB43332FE4914896FCBE8E997FF3A70@VI1PR04MB4333.eurprd04.prod.outlook.com>
+Organization: Red Hat
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2601:449:8400:7293:12bf:48ff:fe84:c9a0
+X-SA-Exim-Rcpt-To: andy.tang@nxp.com, mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com, benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+X-SA-Exim-Mail-From: oss@buserror.net
+Subject: Re: [PATCH 1/2 v3] powerpc/fsl: Use new clockgen binding
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on baldur.buserror.net)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Wed, 2018-12-12 at 01:57 +0000, Andy Tang wrote:
+> > -----Original Message-----
+> > From: Scott Wood <oss@buserror.net>
+> > Sent: 2018年11月26日 9:19
+> > To: Andy Tang <andy.tang@nxp.com>
+> > Cc: mturquette@baylibre.com; sboyd@kernel.org; robh+dt@kernel.org;
+> > mark.rutland@arm.com; benh@kernel.crashing.org; paulus@samba.org;
+> > mpe@ellerman.id.au; linux-clk@vger.kernel.org;
+> > devicetree@vger.kernel.org; linux-kernel@vger.kernel.org;
+> > linuxppc-dev@lists.ozlabs.org
+> > Subject: Re: [PATCH 1/2 v3] powerpc/fsl: Use new clockgen binding
+> > 
+> > On Wed, 2018-10-31 at 14:57 +0800, Yuantian Tang wrote:
+> > > From: Scott Wood <oss@buserror.net>
+> > > 
+> > > The driver retains compatibility with old device trees, but we don't
+> > > want the old nodes lying around to be copied, or used as a reference
+> > > (some of the mux options are incorrect), or even just being clutter.
+> > > 
+> > > 
+> > > +sysclk: sysclk {
+> > > +	compatible = "fixed-clock";
+> > > +	#clock-cells = <0>;
+> > > +	clock-frequency = <100000000>;
+> > > +	clock-output-names = "sysclk";
+> > > +};
+> > > +
+> > >  clockgen: global-utilities@e1000 {
+> > 
+> > The U-Boot fixup won't work with this.  U-Boot patches the frequency
+> > directly into the clockgen node (BTW, this is another reason to preserve
+> > the generic
+> > 1.0/2.0 compatible string).  The new binding does not require an input
+> > clock node when it is provided as clock-frequency directly in the clockgen
+> > node -- and the sysclk node was not in my original patch (nor did you note
+> > that you made changes from that original).  Why did you add it?
+> > 
+> > I would just remove it when applying, but I'm concerned that this
+> > indicates
+> > a lack of testing (and I don't have the hardware access to test it myself,
+> > except on t4240) -- unless the 100 MHz sysclk just happened to be correct
+> > on the machines you tested (which would also be a test coverage
+> > problem)?
+> 
+> [Andy] You are right. Sysclk may not be useful anymore. 
+> Uboot will fixup the clockgen node correctly. Please apply this patch
+> without sysclk. We will
+> test it and catch the error if the clock is not fixed correctly.
 
+OK.
 
-Le mar. 18 d=E9c. 2018 =E0 17:36, Rob Herring <robh@kernel.org> a =E9crit :
-> On Mon, Dec 17, 2018 at 4:04 PM Paul Cercueil <paul@crapouillou.net>=20
-> wrote:
->>=20
->>  Hi Rob,
->>=20
->>  Le lun. 17 d=E9c. 2018 =E0 22:05, Rob Herring <robh@kernel.org> a=20
->> =E9crit :
->>  > On Wed, Dec 12, 2018 at 11:08:58PM +0100, Paul Cercueil wrote:
->>  >>  Add documentation about how to properly use the Ingenic TCU
->>  >>  (Timer/Counter Unit) drivers from devicetree.
->>  >>
->>  >>  Signed-off-by: Paul Cercueil <paul@crapouillou.net>
->>  >>  ---
->>  >>
->>  >>  Notes:
->>  >>       v4: New patch in this series. Corresponds to V2 patches=20
->> 3-4-5
->>  >> with
->>  >>           added content.
->>  >>
->>  >>       v5: - Edited PWM/watchdog DT bindings documentation to=20
->> point
->>  >> to the new
->>  >>             document.
->>  >>           - Moved main document to
->>  >>            =20
->> Documentation/devicetree/bindings/timer/ingenic,tcu.txt
->>  >>           - Updated documentation to reflect the new devicetree
->>  >> bindings.
->>  >>
->>  >>       v6: - Removed PWM/watchdog documentation files as asked by
->>  >> upstream
->>  >>           - Removed doc about properties that should be implicit
->>  >>           - Removed doc about ingenic,timer-channel /
->>  >>             ingenic,clocksource-channel as they are gone
->>  >>           - Fix WDT clock name in the binding doc
->>  >>           - Fix lengths of register areas in watchdog/pwm nodes
->>  >>
->>  >>       v7: No change
->>  >>
->>  >>       v8: - Fix address of the PWM node
->>  >>           - Added doc about system timer and clocksource children
->>  >> nodes
->>  >
->>  > I thought we'd sorted this out...
->>=20
->>  Yeah, well I just can't please everybody. V6/V7 didn't have the
->>  system timer or clocksource in devicetree, which was good for
->>  you, but then the driver nearly doubled in size and complexity,
->>  and Thierry rightfully refused it. Now I'm at the point where
->=20
-> You mean Daniel?
+> BTW, which git tree are you going to apply it on? This one?
+> 
+https://git.kernel.org/pub/scm/linux/kernel/git/scottwood/linux.git/log/?h=next
 
-Oops - I meant Daniel yes.
+That will be the branch I use to send the patches to Michael, but it's not a
+branch that is kept constantly updated.  If you're asking what tree to base
+future patches on, that would generally be the next branch of
+powerpc/linux.git (unless you depend on something else that isn't there yet).
 
->>  I'm trying alternative ways of encoding the information in
->>  devicetree, as suggested by various people, just so that you
->>  accept it. Because I don't see any other option.
->=20
-> Does the problem boil down to needing to reserve channel x to use PWMx
-> pin? If so, just do a mask property of reserved for PWM channels.
+-Scott
 
-Yes, that's exactly the problem. I will go with a property then. Thanks!
-
-> Sorry this is going in circles.
->=20
-> Rob
-=
 
