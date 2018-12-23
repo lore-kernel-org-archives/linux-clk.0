@@ -2,169 +2,1398 @@ Return-Path: <SRS0=O+9D=PA=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,UPPERCASE_50_75,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37EC2C43387
-	for <linux-clk@archiver.kernel.org>; Sun, 23 Dec 2018 15:35:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68FA5C43387
+	for <linux-clk@archiver.kernel.org>; Sun, 23 Dec 2018 16:20:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BED4321971
-	for <linux-clk@archiver.kernel.org>; Sun, 23 Dec 2018 15:35:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E04A21971
+	for <linux-clk@archiver.kernel.org>; Sun, 23 Dec 2018 16:20:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="EcuVCwJf"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="nn7fGd7w"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729331AbeLWPfR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 23 Dec 2018 10:35:17 -0500
-Received: from mail-eopbgr70072.outbound.protection.outlook.com ([40.107.7.72]:60576
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        id S1729662AbeLWQUS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 23 Dec 2018 11:20:18 -0500
+Received: from mail-eopbgr10085.outbound.protection.outlook.com ([40.107.1.85]:59395
+        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726561AbeLWPfR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 23 Dec 2018 10:35:17 -0500
+        id S1728109AbeLWQUS (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 23 Dec 2018 11:20:18 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ARSB9MP2O2T0GgNmwoC2i8GvEmiD0tz9pwxnUXO0yaY=;
- b=EcuVCwJfuGOvk5jdKmAQaMb6LtjW3ykhFDLWdMmIBmMOHINjMmMFFdYyL/OBhixYJVClnREN7m8roUMJ56ARNE4pMFxuVMy/1JfIpggcPnOrUkTaGXr3fXTyEIpyumyYSK2Z9hai5PGMHnB0NZ5kFWNRRDplxMaoG79YPyALLkw=
+ bh=6V6xfuKFNs130Nl3OzWGfNBrQNPlZADyBq777dot4FI=;
+ b=nn7fGd7wXdx5tgGeB4E/5qcYDZoiA2Wkc5h9fV/KInzHH23gnEzkUN4+lR8i3CJ7JrCzsS126PYfHZQZRCyMQlj6YJMKq7avrCcWj1v/8p+Dcu0s1AlpgPJUj+wGTFxbzQrpi9J1PYpXBbyL/oMqQ1BsF3mmknH5XX+fq1ow0iQ=
 Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.126.21) by
- AM0PR04MB5409.eurprd04.prod.outlook.com (20.178.114.142) with Microsoft SMTP
+ AM0PR04MB5380.eurprd04.prod.outlook.com (20.178.115.212) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1446.23; Sun, 23 Dec 2018 15:35:08 +0000
+ 15.20.1446.23; Sun, 23 Dec 2018 16:20:03 +0000
 Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
  ([fe80::9125:e806:7303:d8e6]) by AM0PR04MB4211.eurprd04.prod.outlook.com
  ([fe80::9125:e806:7303:d8e6%7]) with mapi id 15.20.1446.026; Sun, 23 Dec 2018
- 15:35:08 +0000
+ 16:20:03 +0000
 From:   Aisheng Dong <aisheng.dong@nxp.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>
-CC:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+To:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+CC:     "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
         "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
         dl-linux-imx <linux-imx@nxp.com>,
         "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH 4/5] clk: imx8qxp: make the name of clock ID generic
-Thread-Topic: [PATCH 4/5] clk: imx8qxp: make the name of clock ID generic
-Thread-Index: AQHUl69S+HgseDOVoEaFEXoCLLe+SaWGS2qAgADXyCCAAOU2gIAAY27wgAEjygCAAugrYA==
-Date:   Sun, 23 Dec 2018 15:35:08 +0000
-Message-ID: <AM0PR04MB4211494A964F6DBD437A7EAC80BA0@AM0PR04MB4211.eurprd04.prod.outlook.com>
-References: <1545232888-9302-1-git-send-email-aisheng.dong@nxp.com>
- <1545232888-9302-5-git-send-email-aisheng.dong@nxp.com>
- <CAOMZO5DzMpMp-Tf74iM3SuHoFpji8z-dxM-UsC13GeDx2bZYgA@mail.gmail.com>
- <VI1PR04MB4222ABD43B82BD3C0B73404780BF0@VI1PR04MB4222.eurprd04.prod.outlook.com>
- <154533484105.79149.16225192496445475758@swboyd.mtv.corp.google.com>
- <AM0PR04MB4211F8786714DD6CCBB55F0A80B80@AM0PR04MB4211.eurprd04.prod.outlook.com>
- <154541885475.13075.16994932864140896829@swboyd.mtv.corp.google.com>
-In-Reply-To: <154541885475.13075.16994932864140896829@swboyd.mtv.corp.google.com>
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: [PATCH V2 1/1] clk: imx8qxp: make the name of clock ID generic
+Thread-Topic: [PATCH V2 1/1] clk: imx8qxp: make the name of clock ID generic
+Thread-Index: AQHUmttb81cIWccNrEmB4MDcKOs9uA==
+Date:   Sun, 23 Dec 2018 16:20:02 +0000
+Message-ID: <1545581665-15446-1-git-send-email-aisheng.dong@nxp.com>
 Accept-Language: zh-CN, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.7.4
+x-clientproxiedby: HK0P153CA0017.APCP153.PROD.OUTLOOK.COM
+ (2603:1096:203:18::29) To AM0PR04MB4211.eurprd04.prod.outlook.com
+ (2603:10a6:208:66::21)
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=aisheng.dong@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
 x-originating-ip: [119.31.174.66]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM0PR04MB5409;6:kjQbWoWyNJupzvRxtHSpxQMyu8g49fnSJOEKw+j3YjZ1/gRm9eu7HGrzjGZq33kPpwpOTXecajdSpkbTjTfcPUoR5YWEWKUZoIEW+bRWgTCkauf27CiPBQ/ah5fOMPmK1TlB5CvXeE7ECD4rXX3mHXHw1shlWIog0qplhOK3yBhMhfz4XIx+CD7VgOXC9u+YQRfDaUzxM10vgk8a947ajTevC15XTRe6huYfwLvA+TzeUYIhcN2a/lsWoUjd9rNyEzvolIKjhZMuk3JVqrLFn+z/c0AZF6D3CAnB3ERgoquL/El7c3uWbjO0+8QxPeMk6NGtg6/WC55Oq/ybomsI0TrPrSnwljRNox20hzVtCFYp+6qxQyzfhToIjmckQG+nNnIibxaQyO55KilSwVak+YQXtJQwgSm82YbLa90MBs82JPiIfudlS560G+fyZtkvTvZ4HNjlTJCcETVgMcalOA==;5:3wFGuHYYh1aAkR+ohBP2oCcraGGFs8tzVsGwVe+nDpj7jAGCb3dMF0fud/yQz47cEblR0IAD5ovGgSVofWFsRCdzY4imUb9CEZg3lQzzu19IZeuQzhpemVvqwaAVe6iqWRWKGwxunVMNpqLMs78OCLmSBbRAAmlxlik5C9te0a0=;7:sUWi7ybotPoQk1z+C2SM3XQ3auolIpNGz8chw7quPxG/zEycM1yY4zYjzFLw8J9br+gOvBzxU9OH3pAW9Mh3dUCk2JeYKNwfuWywm2mCa7IBuAPBFTJDPzkwWj25NnTOvESRAk+PK6I7k3yX/hpTQQ==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 3a62dc33-1336-4ea5-039a-08d668ec3814
+x-microsoft-exchange-diagnostics: 1;AM0PR04MB5380;6:a3HuEwHhgagfCl/e1VCEL1WaJbgyrfSq9jH/XdeZ+n0nVwhZDUI113ZWracSFKA9VdzIRYrUKekEw94RQ/4AWNR3b6RuO++SctIpP+XfgoD5le6oCK0FU9PAdZEuGMq9AtkE/UrD+A0Mcl9R2MwFREfdR2WFkI3YpQ+F8394uaXnRCkssEIaA12u6iO0Rs5N/qUvBVvFM/Tjpsl8miGUl0bxWdcujCjuWDX0LND1U2LxziKK6ts6QsV3kuoXBSlAFFEx6YZBkf+EmDxvFTxSjOwvsVYCc5sAUXhpzs3ArBhwR/hEXUaGHGnPTCzmOogTKzf3r7IPUM1G5Oot/AjtenYqaN0X1NFwsJVuSLtpVJoTrwlaoctx8DRnKaGEV3fj8jP4z3c/aix11L1A/eKLiKYyp5mDCqCvdMw5u4oJtcxu1cDvTFX5zoGcizE6YyVae9og0QkhlSWizvxQFj4+7A==;5:+AH2DhSng4D23fEiedXbT+D7s0K0rTJdJwgbsWN2DjtzAUtJ+Kx/4yGx45iSdEefbCAP2CvjLKnMksbIcw8zjVBV8IlVBBAlHOkM933kmqST/L/icYKt5IX3Cb+lOccxl1MiSZPrKG0ZDefSGmF7Lc+XcqUkLCNHF5gfvXuca0I=;7:Nbp8mo6sc0dbLL9MLAIkk+GI1o720HIIPsV6t9ZbeyHUPPkqhWdYMc/1eKtVX2PTUiuqQmEn970S8A2wcR3r5YFLCOV8aftwzO/Pl+EKtMEb3on1H/XLbDD7haIEOlDGmoLntxZUwiXcvpgiNmbMcg==
+x-ms-office365-filtering-correlation-id: 4f31bc45-d119-4016-eac9-08d668f27dfd
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB5409;
-x-ms-traffictypediagnostic: AM0PR04MB5409:
-x-microsoft-antispam-prvs: <AM0PR04MB54094448BAA71F51EF99AB3E80BA0@AM0PR04MB5409.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(908002)(999002)(5005026)(6040522)(2401047)(8121501046)(3002001)(93006095)(93001095)(10201501046)(3231475)(944501520)(52105112)(6055026)(6041310)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:AM0PR04MB5409;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB5409;
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB5380;
+x-ms-traffictypediagnostic: AM0PR04MB5380:
+x-microsoft-antispam-prvs: <AM0PR04MB538080C50ED81E91DAE2468680BA0@AM0PR04MB5380.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(908002)(999002)(5005026)(6040522)(2401047)(8121501046)(10201501046)(3231475)(944501520)(52105112)(3002001)(93006095)(93001095)(6055026)(6041310)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:AM0PR04MB5380;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB5380;
 x-forefront-prvs: 0895DF8FFD
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(346002)(136003)(396003)(39860400002)(366004)(13464003)(51914003)(199004)(189003)(76176011)(55016002)(4326008)(9686003)(39060400002)(71200400001)(44832011)(71190400001)(26005)(486006)(2906002)(74316002)(476003)(6116002)(3846002)(256004)(446003)(11346002)(86362001)(25786009)(102836004)(93886005)(7696005)(186003)(14444005)(53546011)(6506007)(6246003)(14454004)(53936002)(316002)(8936002)(4001150100001)(81166006)(81156014)(478600001)(8676002)(97736004)(68736007)(99286004)(33656002)(2501003)(305945005)(6436002)(7736002)(66066001)(54906003)(110136005)(229853002)(105586002)(5660300001)(106356001)(41533002)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5409;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(39860400002)(376002)(136003)(396003)(346002)(189003)(199004)(105586002)(68736007)(26005)(6512007)(186003)(2616005)(486006)(6306002)(106356001)(6916009)(386003)(6506007)(2501003)(66066001)(316002)(476003)(5660300001)(2351001)(4326008)(52116002)(3846002)(102836004)(14454004)(44832011)(6116002)(305945005)(86362001)(97736004)(54906003)(478600001)(99286004)(8936002)(2906002)(50226002)(25786009)(6436002)(8676002)(5640700003)(81166006)(53936002)(81156014)(71200400001)(6486002)(71190400001)(7736002)(4744004)(966005)(53946003)(256004)(36756003)(14444005)(41533002)(32563001)(569006);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5380;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: SyXH4tH64M3oD4ySsgjIzuqzWwn18menTFSu1UZqkBZsFGuNdeNwlV87Lc8Qrj3s1ASq9V1dpjmt+nueNrrcr9lJc70+TdYy5yOEoHblhuvkkQOCls1TyUQx3kx6OavSnsXWGfW5ubRbHdhJ/iMVSLaWmGF9aWrXKYrOOss8kQRI22P0FD4kOJfNGgyf7PqNpdGRxhRLVwzvdro2YkXEvTJtimy1DUml4ATzcOPGF9vrW1rWVkzQoJz8k1+OXuo0Et2Jo+K0kIRfSPAgX4Fk9cQQknkEcja/EfCQpKOqRwC9qm+JDF2Rg9m50Tg6KblJ
+x-microsoft-antispam-message-info: NlmU9VSrJoZMV3YgxfH/Q+xGZ9S38PgSagxacV4dfGtKD/MOdR8g6PFc6TLNDLo2+OGpxC8r4rSORHkzubnuGIwkNVi4v+Bu1ys5aVnpkBgackjGULhVd6XHY2Vr1z0Tum8LTlkiMaTQK++yTyvjLu4ICtqvgQhqfuZmPRQuwwA7Z5w7+VzyZ5/kPfrpJXUulkrddIOBOD2zUqP8qK8MOkQZmyJLYhv2s8QoI+J0cN7rkkDkWJab3a0lZ7vt9atAE+8b8dsYr3eHkxUaX3WlX9vjNeVeA+vlR48rAWvlMtw+bA6VQ5Q2NwLcOdHop5Cw
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3a62dc33-1336-4ea5-039a-08d668ec3814
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Dec 2018 15:35:08.0479
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4f31bc45-d119-4016-eac9-08d668f27dfd
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Dec 2018 16:20:02.9624
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5409
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5380
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBTdGVwaGVuIEJveWQgW21haWx0
-bzpzYm95ZEBrZXJuZWwub3JnXQ0KPiBRdW90aW5nIEFpc2hlbmcgRG9uZyAoMjAxOC0xMi0yMCAx
-Nzo0NDoyOCkNCj4gPiA+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+ID4gPiBGcm9tOiBT
-dGVwaGVuIEJveWQgW21haWx0bzpzYm95ZEBrZXJuZWwub3JnXSBRdW90aW5nIEFpc2hlbmcgRG9u
-Zw0KPiA+ID4gKDIwMTgtMTItMTkgMjI6MjY6NTApDQo+ID4gPiA+ID4gLS0tLS1PcmlnaW5hbCBN
-ZXNzYWdlLS0tLS0NCj4gPiA+ID4gPiBGcm9tOiBGYWJpbyBFc3RldmFtIFttYWlsdG86ZmVzdGV2
-YW1AZ21haWwuY29tXSBIaSBBaXNoZW5nLA0KPiA+ID4gPiA+DQo+ID4gPiA+ID4gT24gV2VkLCBE
-ZWMgMTksIDIwMTggYXQgMToyOSBQTSBBaXNoZW5nIERvbmcNCj4gPiA+IDxhaXNoZW5nLmRvbmdA
-bnhwLmNvbT4NCj4gPiA+ID4gPiB3cm90ZToNCj4gPiA+ID4gPiA+DQo+ID4gPiA+ID4gPiBTQ1Ug
-Y2xvY2sgY2FuIGJlIHVzZWQgaW4gYSBzaW1pbGFyIHdheSBieSBJTVg4UVhQIGFuZCBJTVg4UU0N
-Cj4gU29Dcy4NCj4gPiA+ID4gPiA+IExldCdzIG1ha2UgdGhlIG5hbWUgb2YgY2xvY2sgSUQgZ2Vu
-ZXJpYyB0byBhbGxvdyBvdGhlciBTb0NzIHRvDQo+ID4gPiA+ID4gPiByZXVzZSB0aGUgY29tbW9u
-IHBhcnQuDQo+ID4gPiA+ID4gPg0KPiA+ID4gPiA+ID4gVGhpcyBwYXRjaCBvbmx5IGNoYW5nZXMg
-dGhlIGNsb2NrIGlkIG5hbWUgYW5kIGZpbGUgbmFtZSwgc28gbm8NCj4gPiA+ID4gPiA+IGZ1bmN0
-aW9uYWwgY2hhbmdlLg0KPiA+ID4gPiA+ID4NCj4gPiA+ID4gPiA+IENjOiBTaGF3biBHdW8gPHNo
-YXduZ3VvQGtlcm5lbC5vcmc+DQo+ID4gPiA+ID4gPiBDYzogU2FzY2hhIEhhdWVyIDxrZXJuZWxA
-cGVuZ3V0cm9uaXguZGU+DQo+ID4gPiA+ID4gPiBDYzogRmFiaW8gRXN0ZXZhbSA8ZmFiaW8uZXN0
-ZXZhbUBueHAuY29tPg0KPiA+ID4gPiA+ID4gQ2M6IFN0ZXBoZW4gQm95ZCA8c2JveWRAa2VybmVs
-Lm9yZz4NCj4gPiA+ID4gPiA+IENjOiBNaWNoYWVsIFR1cnF1ZXR0ZSA8bXR1cnF1ZXR0ZUBiYXls
-aWJyZS5jb20+DQo+ID4gPiA+ID4gPiBTaWduZWQtb2ZmLWJ5OiBEb25nIEFpc2hlbmcgPGFpc2hl
-bmcuZG9uZ0BueHAuY29tPg0KPiA+ID4gPiA+ID4gLS0tDQo+ID4gPiA+ID4gPiAgZHJpdmVycy9j
-bGsvaW14L2Nsay1pbXg4cXhwLWxwY2cuYyAgICAgICAgfCAxNDYgKysrKysrKy0tLS0tLS0tDQo+
-ID4gPiA+ID4gPiAgZHJpdmVycy9jbGsvaW14L2Nsay1pbXg4cXhwLmMgICAgICAgICAgICAgfCAx
-NTIgKysrKysrKystLS0tLS0tLQ0KPiA+ID4gPiA+ID4gIGluY2x1ZGUvZHQtYmluZGluZ3MvY2xv
-Y2svaW14OC1jbG9jay5oICAgIHwgMjg5DQo+ID4gPiA+ID4gKysrKysrKysrKysrKysrKysrKysr
-KysrKysrKysrDQo+ID4gPiA+ID4gPiAgaW5jbHVkZS9kdC1iaW5kaW5ncy9jbG9jay9pbXg4cXhw
-LWNsb2NrLmggfCAyODkNCj4gPiA+ID4gPiA+IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LQ0KPiA+ID4gPiA+ID4gIDQgZmlsZXMgY2hhbmdlZCwgNDM4IGluc2VydGlvbnMoKyksIDQzOCBk
-ZWxldGlvbnMoLSkNCj4gPiA+ID4gPg0KPiA+ID4gPiA+IFRoaXMgc2VlbXMgbGlrZSB1bm5lZWRl
-ZCBjaHVybi4gSnVzdCBrZWVwIHRoZSBleGlzdGluZyBuYW1pbmcNCj4gPiA+ID4gPiBhbmQgb3Ro
-ZXIgU29DcyBjYW4gcmV1c2UgaXQgd2l0aG91dCBwcm9ibGVtLg0KPiA+ID4gPg0KPiA+ID4gPiBU
-aGVyZSdzIGEgcmVhc29uLg0KPiA+ID4gPiBXZSBzdGlsbCBuZWVkIGFkZCBzb21lIGNsb2NrIElE
-cyB3aGljaCBleGlzdCBvbiBNWDhRTSBvbmx5DQo+ID4gPiA+IChwcm9iYWJseSBtb3JlIG9uIGZ1
-dHVyZSBTb0NzKSBIYXZpbmcgdGhlbSBwcmVmaXhlZCB3aXRoICdJTVg4UVhQJw0KPiA+ID4gPiBt
-YXkgbG9vaw0KPiA+ID4gc3RyYW5nZS4NCj4gPiA+ID4NCj4gPiA+ID4gQmVzaWRlcyB0aGF0LCBh
-cyB0aG9zZSBjbG9jayBJRHMgd2lsbCBhbHNvIGJlIHVzZWQgaW4gZGV2aWNldHJlZSwNCj4gPiA+
-ID4gbWFrZSB0aGUgbmFtZSBnZW5lcmljIGZvciBkaWZmZXJlbnQgU29DcyBzZWVtcyBzdGlsbCBi
-ZXR0ZXIgYW5kIGxlc3MNCj4gY29uZnVzaW5nLg0KPiA+ID4gPg0KPiA+ID4NCj4gPiA+IFRoaXMg
-bG9va3MgbGlrZSBhbiBpbnRlZ3JhdGlvbiBwcm9ibGVtLiBJcyBhbnlvbmUgdXNpbmcgdGhlIGRl
-ZmluZXMNCj4gPiA+IHRoYXQgYXJlIG1lcmdlZCB0aHJvdWdoIGNsayB0cmVlIG5vdz8gQSBncmVw
-IG9mIGxpbnV4LW5leHQgc2F5cyBubywNCj4gPiA+IGJ1dCBob3cgY2FuIEkgYmUgc3VyZT8NCj4g
-Pg0KPiA+IEknbSBzdXJlIG5vIG9uZSBpcyB1c2luZyBpdCBub3cuDQo+ID4gVGhlIG9ubHkgdXNl
-ciBEVFMgKGlteDhxeHAgbWVrKSBpcyB3YWl0aW5nIGZvciBtZXJnZSBhZnRlciA0LjIxLXJjMSBp
-cyBvdXQuDQo+ID4gU28gaXQncyBhIGNoYW5jZSB0byB1cGRhdGUgaXQuDQo+ID4NCj4gPiA+DQo+
-ID4gPiBTbyBjYW4geW91IGxlYXZlIGFyb3VuZCB0aGUgaGVhZGVyIGZpbGUgd2l0aCB0aGUgZGVw
-cmVjYXRlZCBkZWZpbmUNCj4gPiA+IG5hbWVzIGFuZCBpbnRyb2R1Y2UgYW5vdGhlciBvbmUgdGhh
-dCdzIGEgY29weSBvZiB0aGUgaGVhZGVyIGZpbGUgYnV0DQo+ID4gPiB3aXRoIHRoZSBub24tU29D
-IHNwZWNpZmljIG5hbWVzPyAgVGhlbiB5b3UgY2FuIHdhaXQgZm9yIGEgcmVsZWFzZQ0KPiA+ID4g
-Y3ljbGUgYW5kIGRlbGV0ZSB0aGUgb2xkIGhlYWRlciBmaWxlIHRoYXQgbm9ib2R5IHNob3VsZCBi
-ZSB1c2luZyBpbiBEVA0KPiBhbnltb3JlLg0KPiA+ID4gVW5sZXNzIHlvdSBwbGFuIHRvIG1ha2Ug
-c3VyZSB0aGF0IG5vYm9keSB1c2VzIHRoZSBkZXByZWNhdGVkIGRlZmluZXMNCj4gPiA+IHNvbWVo
-b3c/DQo+ID4gPg0KPiA+DQo+ID4gWWVzLCB0aGUgcGxhbiBpcyB0byBtYWtlIHN1cmUgbm9ib2R5
-IHVzZXMgdGhhdC4NCj4gPiBPdGhlcndpc2UsIGl0IG1heSBiZSBoYXJkIHRvIHNlbmQgRFRTIHBh
-dGNoZXMgdXNpbmcgbmV3IENMSyBJRCBuYW1lDQo+ID4gdGhyb3VnaCBkaWZmZXJlbnQgdHJlZSBs
-YXRlci4NCj4gPg0KPiANCj4gSSd2ZSBhbHJlYWR5IHRhZ2dlZCBhbmQgcHJlcGFyZWQgdG8gc2Vu
-ZCBvdXQgY2xrIHRyZWUgZm9yIHRoZSBuZXh0IG1lcmdlDQo+IHdpbmRvdy4gSXQncyBnZXR0aW5n
-IGRpZmZpY3VsdCB0byBjaGFuZ2UgdGhpcyBiZWZvcmUgLXJjMSB0b28gYmVjYXVzZSBJJ20NCj4g
-dHJhdmVsaW5nIGZvciB0aGUgaG9saWRheXMgaW4gdGhlIFVTLiBJJ20gZmluZSB3aXRoIGNoYW5n
-aW5nIHRoZSB3b3JsZCBpZiBpdA0KPiBkb2Vzbid0IGJyZWFrIGFueXRoaW5nLCBidXQgSSdtIG5v
-dCBpbnRlcmVzdGVkIGluIG1ha2luZyB0aGUgcHVsbCByZXF1ZXN0IHdhaXQNCj4gYW5vdGhlciBm
-ZXcgZGF5cyBmb3IgdGhpcyBwYXJ0aWN1bGFyIHRvcGljLCBzbyBJJ2QgcmF0aGVyIHNlbmQgdGhp
-cyBhcyBwYXJ0IG9mIGENCj4gZm9sbG93LW9uIGZpeGVzIFBSIGR1cmluZyB0aGUgbWVyZ2Ugd2lu
-ZG93IG5leHQgd2Vlay4NCj4gDQoNCkl0J3MgZmluZSB0byBtZS4NClRoYW5rcyBmb3IgdGhlIGRl
-dGFpbGVkIGV4cGxhbmF0aW9uLg0KDQo+IENhbiB5b3UgcmVzZW5kIHdpdGgganVzdCB0aGUgdGhp
-bmdzIHRoYXQgbmVlZCB0byBiZSBjaGFuZ2VkIGZvciB0aGUgbmV4dA0KPiByZWxlYXNlICh2NC4y
-MSBvciB2NS4wKT8gQW5kIENjIHRoZSByZWxldmFudCBwZW9wbGUvbGlzdHMgYW5kIHRyeSB0byBj
-b2xsZWN0IGFja3MNCj4gYW5kIHJldmlld2VkLWJ5IHRhZ3MgYmVmb3JlIG5leHQgV2VkbmVzZGF5
-PyBJIGNhbiBzZW5kIGEgZml4ZXMgUFIgb24gRnJpZGF5DQo+IG5leHQgd2VlayB0aGVuLg0KDQpP
-a2F5LCBJIHdpbGwgcmVzZW5kIHRoaXMgb25lIG9ubHkuDQpUaGFua3MNCg0KUmVnYXJkcw0KRG9u
-ZyBBaXNoZW5nDQo=
+SCU clock can be used in a similar way by IMX8QXP and IMX8QM SoCs.
+Let's make the name of clock ID generic to allow other SoCs to reuse
+the common part.
+
+This patch only changes the clock id name and file name, so no
+functional change.
+
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Sascha Hauer <kernel@pengutronix.de>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: devicetree@vger.kernel.org
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+---
+According to Stephen's suggestion[1], resend the needed changes
+for 4.21 separately, then we can pick it up and send it as part
+of a follow-on fixes PR during the merge window next week.
+As there's still no users in kernel and the plan is also to avoid
+any using of it, so please help review at an early time.
+v1->v2:
+ * resend Patch [4/5] which needs to change for v4.21.
+ * update headfile name accordingly
+[1] https://patchwork.kernel.org/patch/10737463/
+---
+ drivers/clk/imx/clk-imx8qxp-lpcg.c        | 148 +++++++--------
+ drivers/clk/imx/clk-imx8qxp.c             | 154 ++++++++--------
+ include/dt-bindings/clock/imx8-clock.h    | 289 ++++++++++++++++++++++++++=
+++++
+ include/dt-bindings/clock/imx8qxp-clock.h | 289 --------------------------=
+----
+ 4 files changed, 440 insertions(+), 440 deletions(-)
+ create mode 100644 include/dt-bindings/clock/imx8-clock.h
+ delete mode 100644 include/dt-bindings/clock/imx8qxp-clock.h
+
+diff --git a/drivers/clk/imx/clk-imx8qxp-lpcg.c b/drivers/clk/imx/clk-imx8q=
+xp-lpcg.c
+index dcae1dd..99c2508 100644
+--- a/drivers/clk/imx/clk-imx8qxp-lpcg.c
++++ b/drivers/clk/imx/clk-imx8qxp-lpcg.c
+@@ -16,7 +16,7 @@
+ #include "clk-scu.h"
+ #include "clk-imx8qxp-lpcg.h"
+=20
+-#include <dt-bindings/clock/imx8qxp-clock.h>
++#include <dt-bindings/clock/imx8-clock.h>
+=20
+ /*
+  * struct imx8qxp_lpcg_data - Description of one LPCG clock
+@@ -56,100 +56,100 @@ struct imx8qxp_ss_lpcg {
+ };
+=20
+ static const struct imx8qxp_lpcg_data imx8qxp_lpcg_adma[] =3D {
+-	{ IMX8QXP_ADMA_LPCG_UART0_IPG_CLK, "uart0_lpcg_ipg_clk", "dma_ipg_clk_roo=
+t", 0, ADMA_LPUART_0_LPCG, 16, 0, },
+-	{ IMX8QXP_ADMA_LPCG_UART0_BAUD_CLK, "uart0_lpcg_baud_clk", "uart0_clk", 0=
+, ADMA_LPUART_0_LPCG, 0, 0, },
+-	{ IMX8QXP_ADMA_LPCG_UART1_IPG_CLK, "uart1_lpcg_ipg_clk", "dma_ipg_clk_roo=
+t", 0, ADMA_LPUART_1_LPCG, 16, 0, },
+-	{ IMX8QXP_ADMA_LPCG_UART1_BAUD_CLK, "uart1_lpcg_baud_clk", "uart1_clk", 0=
+, ADMA_LPUART_1_LPCG, 0, 0, },
+-	{ IMX8QXP_ADMA_LPCG_UART2_IPG_CLK, "uart2_lpcg_ipg_clk", "dma_ipg_clk_roo=
+t", 0, ADMA_LPUART_2_LPCG, 16, 0, },
+-	{ IMX8QXP_ADMA_LPCG_UART2_BAUD_CLK, "uart2_lpcg_baud_clk", "uart2_clk", 0=
+, ADMA_LPUART_2_LPCG, 0, 0, },
+-	{ IMX8QXP_ADMA_LPCG_UART3_IPG_CLK, "uart3_lpcg_ipg_clk", "dma_ipg_clk_roo=
+t", 0, ADMA_LPUART_3_LPCG, 16, 0, },
+-	{ IMX8QXP_ADMA_LPCG_UART3_BAUD_CLK, "uart3_lpcg_baud_clk", "uart3_clk", 0=
+, ADMA_LPUART_3_LPCG, 0, 0, },
+-	{ IMX8QXP_ADMA_LPCG_I2C0_IPG_CLK, "i2c0_lpcg_ipg_clk", "dma_ipg_clk_root"=
+, 0, ADMA_LPI2C_0_LPCG, 16, 0, },
+-	{ IMX8QXP_ADMA_LPCG_I2C0_CLK, "i2c0_lpcg_clk", "i2c0_clk", 0, ADMA_LPI2C_=
+0_LPCG, 0, 0, },
+-	{ IMX8QXP_ADMA_LPCG_I2C1_IPG_CLK, "i2c1_lpcg_ipg_clk", "dma_ipg_clk_root"=
+, 0, ADMA_LPI2C_1_LPCG, 16, 0, },
+-	{ IMX8QXP_ADMA_LPCG_I2C1_CLK, "i2c1_lpcg_clk", "i2c1_clk", 0, ADMA_LPI2C_=
+1_LPCG, 0, 0, },
+-	{ IMX8QXP_ADMA_LPCG_I2C2_IPG_CLK, "i2c2_lpcg_ipg_clk", "dma_ipg_clk_root"=
+, 0, ADMA_LPI2C_2_LPCG, 16, 0, },
+-	{ IMX8QXP_ADMA_LPCG_I2C2_CLK, "i2c2_lpcg_clk", "i2c2_clk", 0, ADMA_LPI2C_=
+2_LPCG, 0, 0, },
+-	{ IMX8QXP_ADMA_LPCG_I2C3_IPG_CLK, "i2c3_lpcg_ipg_clk", "dma_ipg_clk_root"=
+, 0, ADMA_LPI2C_3_LPCG, 16, 0, },
+-	{ IMX8QXP_ADMA_LPCG_I2C3_CLK, "i2c3_lpcg_clk", "i2c3_clk", 0, ADMA_LPI2C_=
+3_LPCG, 0, 0, },
++	{ IMX_ADMA_LPCG_UART0_IPG_CLK, "uart0_lpcg_ipg_clk", "dma_ipg_clk_root", =
+0, ADMA_LPUART_0_LPCG, 16, 0, },
++	{ IMX_ADMA_LPCG_UART0_BAUD_CLK, "uart0_lpcg_baud_clk", "uart0_clk", 0, AD=
+MA_LPUART_0_LPCG, 0, 0, },
++	{ IMX_ADMA_LPCG_UART1_IPG_CLK, "uart1_lpcg_ipg_clk", "dma_ipg_clk_root", =
+0, ADMA_LPUART_1_LPCG, 16, 0, },
++	{ IMX_ADMA_LPCG_UART1_BAUD_CLK, "uart1_lpcg_baud_clk", "uart1_clk", 0, AD=
+MA_LPUART_1_LPCG, 0, 0, },
++	{ IMX_ADMA_LPCG_UART2_IPG_CLK, "uart2_lpcg_ipg_clk", "dma_ipg_clk_root", =
+0, ADMA_LPUART_2_LPCG, 16, 0, },
++	{ IMX_ADMA_LPCG_UART2_BAUD_CLK, "uart2_lpcg_baud_clk", "uart2_clk", 0, AD=
+MA_LPUART_2_LPCG, 0, 0, },
++	{ IMX_ADMA_LPCG_UART3_IPG_CLK, "uart3_lpcg_ipg_clk", "dma_ipg_clk_root", =
+0, ADMA_LPUART_3_LPCG, 16, 0, },
++	{ IMX_ADMA_LPCG_UART3_BAUD_CLK, "uart3_lpcg_baud_clk", "uart3_clk", 0, AD=
+MA_LPUART_3_LPCG, 0, 0, },
++	{ IMX_ADMA_LPCG_I2C0_IPG_CLK, "i2c0_lpcg_ipg_clk", "dma_ipg_clk_root", 0,=
+ ADMA_LPI2C_0_LPCG, 16, 0, },
++	{ IMX_ADMA_LPCG_I2C0_CLK, "i2c0_lpcg_clk", "i2c0_clk", 0, ADMA_LPI2C_0_LP=
+CG, 0, 0, },
++	{ IMX_ADMA_LPCG_I2C1_IPG_CLK, "i2c1_lpcg_ipg_clk", "dma_ipg_clk_root", 0,=
+ ADMA_LPI2C_1_LPCG, 16, 0, },
++	{ IMX_ADMA_LPCG_I2C1_CLK, "i2c1_lpcg_clk", "i2c1_clk", 0, ADMA_LPI2C_1_LP=
+CG, 0, 0, },
++	{ IMX_ADMA_LPCG_I2C2_IPG_CLK, "i2c2_lpcg_ipg_clk", "dma_ipg_clk_root", 0,=
+ ADMA_LPI2C_2_LPCG, 16, 0, },
++	{ IMX_ADMA_LPCG_I2C2_CLK, "i2c2_lpcg_clk", "i2c2_clk", 0, ADMA_LPI2C_2_LP=
+CG, 0, 0, },
++	{ IMX_ADMA_LPCG_I2C3_IPG_CLK, "i2c3_lpcg_ipg_clk", "dma_ipg_clk_root", 0,=
+ ADMA_LPI2C_3_LPCG, 16, 0, },
++	{ IMX_ADMA_LPCG_I2C3_CLK, "i2c3_lpcg_clk", "i2c3_clk", 0, ADMA_LPI2C_3_LP=
+CG, 0, 0, },
+ };
+=20
+ static const struct imx8qxp_ss_lpcg imx8qxp_ss_adma =3D {
+ 	.lpcg =3D imx8qxp_lpcg_adma,
+ 	.num_lpcg =3D ARRAY_SIZE(imx8qxp_lpcg_adma),
+-	.num_max =3D IMX8QXP_ADMA_LPCG_CLK_END,
++	.num_max =3D IMX_ADMA_LPCG_CLK_END,
+ };
+=20
+ static const struct imx8qxp_lpcg_data imx8qxp_lpcg_conn[] =3D {
+-	{ IMX8QXP_CONN_LPCG_SDHC0_PER_CLK, "sdhc0_lpcg_per_clk", "sdhc0_clk", 0, =
+CONN_USDHC_0_LPCG, 0, 0, },
+-	{ IMX8QXP_CONN_LPCG_SDHC0_IPG_CLK, "sdhc0_lpcg_ipg_clk", "conn_ipg_clk_ro=
+ot", 0, CONN_USDHC_0_LPCG, 16, 0, },
+-	{ IMX8QXP_CONN_LPCG_SDHC0_HCLK, "sdhc0_lpcg_ahb_clk", "conn_axi_clk_root"=
+, 0, CONN_USDHC_0_LPCG, 20, 0, },
+-	{ IMX8QXP_CONN_LPCG_SDHC1_PER_CLK, "sdhc1_lpcg_per_clk", "sdhc1_clk", 0, =
+CONN_USDHC_1_LPCG, 0, 0, },
+-	{ IMX8QXP_CONN_LPCG_SDHC1_IPG_CLK, "sdhc1_lpcg_ipg_clk", "conn_ipg_clk_ro=
+ot", 0, CONN_USDHC_1_LPCG, 16, 0, },
+-	{ IMX8QXP_CONN_LPCG_SDHC1_HCLK, "sdhc1_lpcg_ahb_clk", "conn_axi_clk_root"=
+, 0, CONN_USDHC_1_LPCG, 20, 0, },
+-	{ IMX8QXP_CONN_LPCG_SDHC2_PER_CLK, "sdhc2_lpcg_per_clk", "sdhc2_clk", 0, =
+CONN_USDHC_2_LPCG, 0, 0, },
+-	{ IMX8QXP_CONN_LPCG_SDHC2_IPG_CLK, "sdhc2_lpcg_ipg_clk", "conn_ipg_clk_ro=
+ot", 0, CONN_USDHC_2_LPCG, 16, 0, },
+-	{ IMX8QXP_CONN_LPCG_SDHC2_HCLK, "sdhc2_lpcg_ahb_clk", "conn_axi_clk_root"=
+, 0, CONN_USDHC_2_LPCG, 20, 0, },
+-	{ IMX8QXP_CONN_LPCG_ENET0_ROOT_CLK, "enet0_ipg_root_clk", "enet0_clk", 0,=
+ CONN_ENET_0_LPCG, 0, 0, },
+-	{ IMX8QXP_CONN_LPCG_ENET0_TX_CLK, "enet0_tx_clk", "enet0_clk", 0, CONN_EN=
+ET_0_LPCG, 4, 0, },
+-	{ IMX8QXP_CONN_LPCG_ENET0_AHB_CLK, "enet0_ahb_clk", "conn_axi_clk_root", =
+0, CONN_ENET_0_LPCG, 8, 0, },
+-	{ IMX8QXP_CONN_LPCG_ENET0_IPG_S_CLK, "enet0_ipg_s_clk", "conn_ipg_clk_roo=
+t", 0, CONN_ENET_0_LPCG, 20, 0, },
+-	{ IMX8QXP_CONN_LPCG_ENET0_IPG_CLK, "enet0_ipg_clk", "enet0_ipg_s_clk", 0,=
+ CONN_ENET_0_LPCG, 16, 0, },
+-	{ IMX8QXP_CONN_LPCG_ENET1_ROOT_CLK, "enet1_ipg_root_clk", "enet1_clk", 0,=
+ CONN_ENET_1_LPCG, 0, 0, },
+-	{ IMX8QXP_CONN_LPCG_ENET1_TX_CLK, "enet1_tx_clk", "enet1_clk", 0, CONN_EN=
+ET_1_LPCG, 4, 0, },
+-	{ IMX8QXP_CONN_LPCG_ENET1_AHB_CLK, "enet1_ahb_clk", "conn_axi_clk_root", =
+0, CONN_ENET_1_LPCG, 8, 0, },
+-	{ IMX8QXP_CONN_LPCG_ENET1_IPG_S_CLK, "enet1_ipg_s_clk", "conn_ipg_clk_roo=
+t", 0, CONN_ENET_1_LPCG, 20, 0, },
+-	{ IMX8QXP_CONN_LPCG_ENET1_IPG_CLK, "enet1_ipg_clk", "enet0_ipg_s_clk", 0,=
+ CONN_ENET_1_LPCG, 16, 0, },
++	{ IMX_CONN_LPCG_SDHC0_PER_CLK, "sdhc0_lpcg_per_clk", "sdhc0_clk", 0, CONN=
+_USDHC_0_LPCG, 0, 0, },
++	{ IMX_CONN_LPCG_SDHC0_IPG_CLK, "sdhc0_lpcg_ipg_clk", "conn_ipg_clk_root",=
+ 0, CONN_USDHC_0_LPCG, 16, 0, },
++	{ IMX_CONN_LPCG_SDHC0_HCLK, "sdhc0_lpcg_ahb_clk", "conn_axi_clk_root", 0,=
+ CONN_USDHC_0_LPCG, 20, 0, },
++	{ IMX_CONN_LPCG_SDHC1_PER_CLK, "sdhc1_lpcg_per_clk", "sdhc1_clk", 0, CONN=
+_USDHC_1_LPCG, 0, 0, },
++	{ IMX_CONN_LPCG_SDHC1_IPG_CLK, "sdhc1_lpcg_ipg_clk", "conn_ipg_clk_root",=
+ 0, CONN_USDHC_1_LPCG, 16, 0, },
++	{ IMX_CONN_LPCG_SDHC1_HCLK, "sdhc1_lpcg_ahb_clk", "conn_axi_clk_root", 0,=
+ CONN_USDHC_1_LPCG, 20, 0, },
++	{ IMX_CONN_LPCG_SDHC2_PER_CLK, "sdhc2_lpcg_per_clk", "sdhc2_clk", 0, CONN=
+_USDHC_2_LPCG, 0, 0, },
++	{ IMX_CONN_LPCG_SDHC2_IPG_CLK, "sdhc2_lpcg_ipg_clk", "conn_ipg_clk_root",=
+ 0, CONN_USDHC_2_LPCG, 16, 0, },
++	{ IMX_CONN_LPCG_SDHC2_HCLK, "sdhc2_lpcg_ahb_clk", "conn_axi_clk_root", 0,=
+ CONN_USDHC_2_LPCG, 20, 0, },
++	{ IMX_CONN_LPCG_ENET0_ROOT_CLK, "enet0_ipg_root_clk", "enet0_clk", 0, CON=
+N_ENET_0_LPCG, 0, 0, },
++	{ IMX_CONN_LPCG_ENET0_TX_CLK, "enet0_tx_clk", "enet0_clk", 0, CONN_ENET_0=
+_LPCG, 4, 0, },
++	{ IMX_CONN_LPCG_ENET0_AHB_CLK, "enet0_ahb_clk", "conn_axi_clk_root", 0, C=
+ONN_ENET_0_LPCG, 8, 0, },
++	{ IMX_CONN_LPCG_ENET0_IPG_S_CLK, "enet0_ipg_s_clk", "conn_ipg_clk_root", =
+0, CONN_ENET_0_LPCG, 20, 0, },
++	{ IMX_CONN_LPCG_ENET0_IPG_CLK, "enet0_ipg_clk", "enet0_ipg_s_clk", 0, CON=
+N_ENET_0_LPCG, 16, 0, },
++	{ IMX_CONN_LPCG_ENET1_ROOT_CLK, "enet1_ipg_root_clk", "enet1_clk", 0, CON=
+N_ENET_1_LPCG, 0, 0, },
++	{ IMX_CONN_LPCG_ENET1_TX_CLK, "enet1_tx_clk", "enet1_clk", 0, CONN_ENET_1=
+_LPCG, 4, 0, },
++	{ IMX_CONN_LPCG_ENET1_AHB_CLK, "enet1_ahb_clk", "conn_axi_clk_root", 0, C=
+ONN_ENET_1_LPCG, 8, 0, },
++	{ IMX_CONN_LPCG_ENET1_IPG_S_CLK, "enet1_ipg_s_clk", "conn_ipg_clk_root", =
+0, CONN_ENET_1_LPCG, 20, 0, },
++	{ IMX_CONN_LPCG_ENET1_IPG_CLK, "enet1_ipg_clk", "enet0_ipg_s_clk", 0, CON=
+N_ENET_1_LPCG, 16, 0, },
+ };
+=20
+ static const struct imx8qxp_ss_lpcg imx8qxp_ss_conn =3D {
+ 	.lpcg =3D imx8qxp_lpcg_conn,
+ 	.num_lpcg =3D ARRAY_SIZE(imx8qxp_lpcg_conn),
+-	.num_max =3D IMX8QXP_CONN_LPCG_CLK_END,
++	.num_max =3D IMX_CONN_LPCG_CLK_END,
+ };
+=20
+ static const struct imx8qxp_lpcg_data imx8qxp_lpcg_lsio[] =3D {
+-	{ IMX8QXP_LSIO_LPCG_PWM0_IPG_CLK, "pwm0_lpcg_ipg_clk", "pwm0_clk", 0, LSI=
+O_PWM_0_LPCG, 0, 0, },
+-	{ IMX8QXP_LSIO_LPCG_PWM0_IPG_HF_CLK, "pwm0_lpcg_ipg_hf_clk", "pwm0_clk", =
+0, LSIO_PWM_0_LPCG, 4, 0, },
+-	{ IMX8QXP_LSIO_LPCG_PWM0_IPG_S_CLK, "pwm0_lpcg_ipg_s_clk", "pwm0_clk", 0,=
+ LSIO_PWM_0_LPCG, 16, 0, },
+-	{ IMX8QXP_LSIO_LPCG_PWM0_IPG_SLV_CLK, "pwm0_lpcg_ipg_slv_clk", "lsio_bus_=
+clk_root", 0, LSIO_PWM_0_LPCG, 20, 0, },
+-	{ IMX8QXP_LSIO_LPCG_PWM0_IPG_MSTR_CLK, "pwm0_lpcg_ipg_mstr_clk", "pwm0_cl=
+k", 0, LSIO_PWM_0_LPCG, 24, 0, },
+-	{ IMX8QXP_LSIO_LPCG_PWM1_IPG_CLK, "pwm1_lpcg_ipg_clk", "pwm1_clk", 0, LSI=
+O_PWM_1_LPCG, 0, 0, },
+-	{ IMX8QXP_LSIO_LPCG_PWM1_IPG_HF_CLK, "pwm1_lpcg_ipg_hf_clk", "pwm1_clk", =
+0, LSIO_PWM_1_LPCG, 4, 0, },
+-	{ IMX8QXP_LSIO_LPCG_PWM1_IPG_S_CLK, "pwm1_lpcg_ipg_s_clk", "pwm1_clk", 0,=
+ LSIO_PWM_1_LPCG, 16, 0, },
+-	{ IMX8QXP_LSIO_LPCG_PWM1_IPG_SLV_CLK, "pwm1_lpcg_ipg_slv_clk", "lsio_bus_=
+clk_root", 0, LSIO_PWM_1_LPCG, 20, 0, },
+-	{ IMX8QXP_LSIO_LPCG_PWM1_IPG_MSTR_CLK, "pwm1_lpcg_ipg_mstr_clk", "pwm1_cl=
+k", 0, LSIO_PWM_1_LPCG, 24, 0, },
+-	{ IMX8QXP_LSIO_LPCG_PWM2_IPG_CLK, "pwm2_lpcg_ipg_clk", "pwm2_clk", 0, LSI=
+O_PWM_2_LPCG, 0, 0, },
+-	{ IMX8QXP_LSIO_LPCG_PWM2_IPG_HF_CLK, "pwm2_lpcg_ipg_hf_clk", "pwm2_clk", =
+0, LSIO_PWM_2_LPCG, 4, 0, },
+-	{ IMX8QXP_LSIO_LPCG_PWM2_IPG_S_CLK, "pwm2_lpcg_ipg_s_clk", "pwm2_clk", 0,=
+ LSIO_PWM_2_LPCG, 16, 0, },
+-	{ IMX8QXP_LSIO_LPCG_PWM2_IPG_SLV_CLK, "pwm2_lpcg_ipg_slv_clk", "lsio_bus_=
+clk_root", 0, LSIO_PWM_2_LPCG, 20, 0, },
+-	{ IMX8QXP_LSIO_LPCG_PWM2_IPG_MSTR_CLK, "pwm2_lpcg_ipg_mstr_clk", "pwm2_cl=
+k", 0, LSIO_PWM_2_LPCG, 24, 0, },
+-	{ IMX8QXP_LSIO_LPCG_PWM3_IPG_CLK, "pwm3_lpcg_ipg_clk", "pwm3_clk", 0, LSI=
+O_PWM_3_LPCG, 0, 0, },
+-	{ IMX8QXP_LSIO_LPCG_PWM3_IPG_HF_CLK, "pwm3_lpcg_ipg_hf_clk", "pwm3_clk", =
+0, LSIO_PWM_3_LPCG, 4, 0, },
+-	{ IMX8QXP_LSIO_LPCG_PWM3_IPG_S_CLK, "pwm3_lpcg_ipg_s_clk", "pwm3_clk", 0,=
+ LSIO_PWM_3_LPCG, 16, 0, },
+-	{ IMX8QXP_LSIO_LPCG_PWM3_IPG_SLV_CLK, "pwm3_lpcg_ipg_slv_clk", "lsio_bus_=
+clk_root", 0, LSIO_PWM_3_LPCG, 20, 0, },
+-	{ IMX8QXP_LSIO_LPCG_PWM3_IPG_MSTR_CLK, "pwm3_lpcg_ipg_mstr_clk", "pwm3_cl=
+k", 0, LSIO_PWM_3_LPCG, 24, 0, },
+-	{ IMX8QXP_LSIO_LPCG_PWM4_IPG_CLK, "pwm4_lpcg_ipg_clk", "pwm4_clk", 0, LSI=
+O_PWM_4_LPCG, 0, 0, },
+-	{ IMX8QXP_LSIO_LPCG_PWM4_IPG_HF_CLK, "pwm4_lpcg_ipg_hf_clk", "pwm4_clk", =
+0, LSIO_PWM_4_LPCG, 4, 0, },
+-	{ IMX8QXP_LSIO_LPCG_PWM4_IPG_S_CLK, "pwm4_lpcg_ipg_s_clk", "pwm4_clk", 0,=
+ LSIO_PWM_4_LPCG, 16, 0, },
+-	{ IMX8QXP_LSIO_LPCG_PWM4_IPG_SLV_CLK, "pwm4_lpcg_ipg_slv_clk", "lsio_bus_=
+clk_root", 0, LSIO_PWM_4_LPCG, 20, 0, },
+-	{ IMX8QXP_LSIO_LPCG_PWM4_IPG_MSTR_CLK, "pwm4_lpcg_ipg_mstr_clk", "pwm4_cl=
+k", 0, LSIO_PWM_4_LPCG, 24, 0, },
+-	{ IMX8QXP_LSIO_LPCG_PWM5_IPG_CLK, "pwm5_lpcg_ipg_clk", "pwm5_clk", 0, LSI=
+O_PWM_5_LPCG, 0, 0, },
+-	{ IMX8QXP_LSIO_LPCG_PWM5_IPG_HF_CLK, "pwm5_lpcg_ipg_hf_clk", "pwm5_clk", =
+0, LSIO_PWM_5_LPCG, 4, 0, },
+-	{ IMX8QXP_LSIO_LPCG_PWM5_IPG_S_CLK, "pwm5_lpcg_ipg_s_clk", "pwm5_clk", 0,=
+ LSIO_PWM_5_LPCG, 16, 0, },
+-	{ IMX8QXP_LSIO_LPCG_PWM5_IPG_SLV_CLK, "pwm5_lpcg_ipg_slv_clk", "lsio_bus_=
+clk_root", 0, LSIO_PWM_5_LPCG, 20, 0, },
+-	{ IMX8QXP_LSIO_LPCG_PWM5_IPG_MSTR_CLK, "pwm5_lpcg_ipg_mstr_clk", "pwm5_cl=
+k", 0, LSIO_PWM_5_LPCG, 24, 0, },
+-	{ IMX8QXP_LSIO_LPCG_PWM6_IPG_CLK, "pwm6_lpcg_ipg_clk", "pwm6_clk", 0, LSI=
+O_PWM_6_LPCG, 0, 0, },
+-	{ IMX8QXP_LSIO_LPCG_PWM6_IPG_HF_CLK, "pwm6_lpcg_ipg_hf_clk", "pwm6_clk", =
+0, LSIO_PWM_6_LPCG, 4, 0, },
+-	{ IMX8QXP_LSIO_LPCG_PWM6_IPG_S_CLK, "pwm6_lpcg_ipg_s_clk", "pwm6_clk", 0,=
+ LSIO_PWM_6_LPCG, 16, 0, },
+-	{ IMX8QXP_LSIO_LPCG_PWM6_IPG_SLV_CLK, "pwm6_lpcg_ipg_slv_clk", "lsio_bus_=
+clk_root", 0, LSIO_PWM_6_LPCG, 20, 0, },
+-	{ IMX8QXP_LSIO_LPCG_PWM6_IPG_MSTR_CLK, "pwm6_lpcg_ipg_mstr_clk", "pwm6_cl=
+k", 0, LSIO_PWM_6_LPCG, 24, 0, },
++	{ IMX_LSIO_LPCG_PWM0_IPG_CLK, "pwm0_lpcg_ipg_clk", "pwm0_clk", 0, LSIO_PW=
+M_0_LPCG, 0, 0, },
++	{ IMX_LSIO_LPCG_PWM0_IPG_HF_CLK, "pwm0_lpcg_ipg_hf_clk", "pwm0_clk", 0, L=
+SIO_PWM_0_LPCG, 4, 0, },
++	{ IMX_LSIO_LPCG_PWM0_IPG_S_CLK, "pwm0_lpcg_ipg_s_clk", "pwm0_clk", 0, LSI=
+O_PWM_0_LPCG, 16, 0, },
++	{ IMX_LSIO_LPCG_PWM0_IPG_SLV_CLK, "pwm0_lpcg_ipg_slv_clk", "lsio_bus_clk_=
+root", 0, LSIO_PWM_0_LPCG, 20, 0, },
++	{ IMX_LSIO_LPCG_PWM0_IPG_MSTR_CLK, "pwm0_lpcg_ipg_mstr_clk", "pwm0_clk", =
+0, LSIO_PWM_0_LPCG, 24, 0, },
++	{ IMX_LSIO_LPCG_PWM1_IPG_CLK, "pwm1_lpcg_ipg_clk", "pwm1_clk", 0, LSIO_PW=
+M_1_LPCG, 0, 0, },
++	{ IMX_LSIO_LPCG_PWM1_IPG_HF_CLK, "pwm1_lpcg_ipg_hf_clk", "pwm1_clk", 0, L=
+SIO_PWM_1_LPCG, 4, 0, },
++	{ IMX_LSIO_LPCG_PWM1_IPG_S_CLK, "pwm1_lpcg_ipg_s_clk", "pwm1_clk", 0, LSI=
+O_PWM_1_LPCG, 16, 0, },
++	{ IMX_LSIO_LPCG_PWM1_IPG_SLV_CLK, "pwm1_lpcg_ipg_slv_clk", "lsio_bus_clk_=
+root", 0, LSIO_PWM_1_LPCG, 20, 0, },
++	{ IMX_LSIO_LPCG_PWM1_IPG_MSTR_CLK, "pwm1_lpcg_ipg_mstr_clk", "pwm1_clk", =
+0, LSIO_PWM_1_LPCG, 24, 0, },
++	{ IMX_LSIO_LPCG_PWM2_IPG_CLK, "pwm2_lpcg_ipg_clk", "pwm2_clk", 0, LSIO_PW=
+M_2_LPCG, 0, 0, },
++	{ IMX_LSIO_LPCG_PWM2_IPG_HF_CLK, "pwm2_lpcg_ipg_hf_clk", "pwm2_clk", 0, L=
+SIO_PWM_2_LPCG, 4, 0, },
++	{ IMX_LSIO_LPCG_PWM2_IPG_S_CLK, "pwm2_lpcg_ipg_s_clk", "pwm2_clk", 0, LSI=
+O_PWM_2_LPCG, 16, 0, },
++	{ IMX_LSIO_LPCG_PWM2_IPG_SLV_CLK, "pwm2_lpcg_ipg_slv_clk", "lsio_bus_clk_=
+root", 0, LSIO_PWM_2_LPCG, 20, 0, },
++	{ IMX_LSIO_LPCG_PWM2_IPG_MSTR_CLK, "pwm2_lpcg_ipg_mstr_clk", "pwm2_clk", =
+0, LSIO_PWM_2_LPCG, 24, 0, },
++	{ IMX_LSIO_LPCG_PWM3_IPG_CLK, "pwm3_lpcg_ipg_clk", "pwm3_clk", 0, LSIO_PW=
+M_3_LPCG, 0, 0, },
++	{ IMX_LSIO_LPCG_PWM3_IPG_HF_CLK, "pwm3_lpcg_ipg_hf_clk", "pwm3_clk", 0, L=
+SIO_PWM_3_LPCG, 4, 0, },
++	{ IMX_LSIO_LPCG_PWM3_IPG_S_CLK, "pwm3_lpcg_ipg_s_clk", "pwm3_clk", 0, LSI=
+O_PWM_3_LPCG, 16, 0, },
++	{ IMX_LSIO_LPCG_PWM3_IPG_SLV_CLK, "pwm3_lpcg_ipg_slv_clk", "lsio_bus_clk_=
+root", 0, LSIO_PWM_3_LPCG, 20, 0, },
++	{ IMX_LSIO_LPCG_PWM3_IPG_MSTR_CLK, "pwm3_lpcg_ipg_mstr_clk", "pwm3_clk", =
+0, LSIO_PWM_3_LPCG, 24, 0, },
++	{ IMX_LSIO_LPCG_PWM4_IPG_CLK, "pwm4_lpcg_ipg_clk", "pwm4_clk", 0, LSIO_PW=
+M_4_LPCG, 0, 0, },
++	{ IMX_LSIO_LPCG_PWM4_IPG_HF_CLK, "pwm4_lpcg_ipg_hf_clk", "pwm4_clk", 0, L=
+SIO_PWM_4_LPCG, 4, 0, },
++	{ IMX_LSIO_LPCG_PWM4_IPG_S_CLK, "pwm4_lpcg_ipg_s_clk", "pwm4_clk", 0, LSI=
+O_PWM_4_LPCG, 16, 0, },
++	{ IMX_LSIO_LPCG_PWM4_IPG_SLV_CLK, "pwm4_lpcg_ipg_slv_clk", "lsio_bus_clk_=
+root", 0, LSIO_PWM_4_LPCG, 20, 0, },
++	{ IMX_LSIO_LPCG_PWM4_IPG_MSTR_CLK, "pwm4_lpcg_ipg_mstr_clk", "pwm4_clk", =
+0, LSIO_PWM_4_LPCG, 24, 0, },
++	{ IMX_LSIO_LPCG_PWM5_IPG_CLK, "pwm5_lpcg_ipg_clk", "pwm5_clk", 0, LSIO_PW=
+M_5_LPCG, 0, 0, },
++	{ IMX_LSIO_LPCG_PWM5_IPG_HF_CLK, "pwm5_lpcg_ipg_hf_clk", "pwm5_clk", 0, L=
+SIO_PWM_5_LPCG, 4, 0, },
++	{ IMX_LSIO_LPCG_PWM5_IPG_S_CLK, "pwm5_lpcg_ipg_s_clk", "pwm5_clk", 0, LSI=
+O_PWM_5_LPCG, 16, 0, },
++	{ IMX_LSIO_LPCG_PWM5_IPG_SLV_CLK, "pwm5_lpcg_ipg_slv_clk", "lsio_bus_clk_=
+root", 0, LSIO_PWM_5_LPCG, 20, 0, },
++	{ IMX_LSIO_LPCG_PWM5_IPG_MSTR_CLK, "pwm5_lpcg_ipg_mstr_clk", "pwm5_clk", =
+0, LSIO_PWM_5_LPCG, 24, 0, },
++	{ IMX_LSIO_LPCG_PWM6_IPG_CLK, "pwm6_lpcg_ipg_clk", "pwm6_clk", 0, LSIO_PW=
+M_6_LPCG, 0, 0, },
++	{ IMX_LSIO_LPCG_PWM6_IPG_HF_CLK, "pwm6_lpcg_ipg_hf_clk", "pwm6_clk", 0, L=
+SIO_PWM_6_LPCG, 4, 0, },
++	{ IMX_LSIO_LPCG_PWM6_IPG_S_CLK, "pwm6_lpcg_ipg_s_clk", "pwm6_clk", 0, LSI=
+O_PWM_6_LPCG, 16, 0, },
++	{ IMX_LSIO_LPCG_PWM6_IPG_SLV_CLK, "pwm6_lpcg_ipg_slv_clk", "lsio_bus_clk_=
+root", 0, LSIO_PWM_6_LPCG, 20, 0, },
++	{ IMX_LSIO_LPCG_PWM6_IPG_MSTR_CLK, "pwm6_lpcg_ipg_mstr_clk", "pwm6_clk", =
+0, LSIO_PWM_6_LPCG, 24, 0, },
+ };
+=20
+ static const struct imx8qxp_ss_lpcg imx8qxp_ss_lsio =3D {
+ 	.lpcg =3D imx8qxp_lpcg_lsio,
+ 	.num_lpcg =3D ARRAY_SIZE(imx8qxp_lpcg_lsio),
+-	.num_max =3D IMX8QXP_LSIO_LPCG_CLK_END,
++	.num_max =3D IMX_LSIO_LPCG_CLK_END,
+ };
+=20
+ static int imx8qxp_lpcg_clk_probe(struct platform_device *pdev)
+diff --git a/drivers/clk/imx/clk-imx8qxp.c b/drivers/clk/imx/clk-imx8qxp.c
+index 33c9396..83e2ef9 100644
+--- a/drivers/clk/imx/clk-imx8qxp.c
++++ b/drivers/clk/imx/clk-imx8qxp.c
+@@ -14,7 +14,7 @@
+=20
+ #include "clk-scu.h"
+=20
+-#include <dt-bindings/clock/imx8qxp-clock.h>
++#include <dt-bindings/clock/imx8-clock.h>
+ #include <dt-bindings/firmware/imx/rsrc.h>
+=20
+ static int imx8qxp_clk_probe(struct platform_device *pdev)
+@@ -29,104 +29,104 @@ static int imx8qxp_clk_probe(struct platform_device *=
+pdev)
+ 		return ret;
+=20
+ 	clk_data =3D devm_kzalloc(&pdev->dev, struct_size(clk_data, hws,
+-				IMX8QXP_SCU_CLK_END), GFP_KERNEL);
++				IMX_SCU_CLK_END), GFP_KERNEL);
+ 	if (!clk_data)
+ 		return -ENOMEM;
+=20
+-	clk_data->num =3D IMX8QXP_SCU_CLK_END;
++	clk_data->num =3D IMX_SCU_CLK_END;
+ 	clks =3D clk_data->hws;
+=20
+ 	/* Fixed clocks */
+-	clks[IMX8QXP_CLK_DUMMY]			=3D clk_hw_register_fixed_rate(NULL, "dummy", N=
+ULL, 0, 0);
+-	clks[IMX8QXP_ADMA_IPG_CLK_ROOT] 	=3D clk_hw_register_fixed_rate(NULL, "dm=
+a_ipg_clk_root", NULL, 0, 120000000);
+-	clks[IMX8QXP_CONN_AXI_CLK_ROOT]		=3D clk_hw_register_fixed_rate(NULL, "co=
+nn_axi_clk_root", NULL, 0, 333333333);
+-	clks[IMX8QXP_CONN_AHB_CLK_ROOT]		=3D clk_hw_register_fixed_rate(NULL, "co=
+nn_ahb_clk_root", NULL, 0, 166666666);
+-	clks[IMX8QXP_CONN_IPG_CLK_ROOT]		=3D clk_hw_register_fixed_rate(NULL, "co=
+nn_ipg_clk_root", NULL, 0, 83333333);
+-	clks[IMX8QXP_DC_AXI_EXT_CLK]		=3D clk_hw_register_fixed_rate(NULL, "dc_ax=
+i_ext_clk_root", NULL, 0, 800000000);
+-	clks[IMX8QXP_DC_AXI_INT_CLK]		=3D clk_hw_register_fixed_rate(NULL, "dc_ax=
+i_int_clk_root", NULL, 0, 400000000);
+-	clks[IMX8QXP_DC_CFG_CLK]		=3D clk_hw_register_fixed_rate(NULL, "dc_cfg_cl=
+k_root", NULL, 0, 100000000);
+-	clks[IMX8QXP_MIPI_IPG_CLK]		=3D clk_hw_register_fixed_rate(NULL, "mipi_ip=
+g_clk_root", NULL, 0, 120000000);
+-	clks[IMX8QXP_IMG_AXI_CLK]		=3D clk_hw_register_fixed_rate(NULL, "img_axi_=
+clk_root", NULL, 0, 400000000);
+-	clks[IMX8QXP_IMG_IPG_CLK]		=3D clk_hw_register_fixed_rate(NULL, "img_ipg_=
+clk_root", NULL, 0, 200000000);
+-	clks[IMX8QXP_IMG_PXL_CLK]		=3D clk_hw_register_fixed_rate(NULL, "img_pxl_=
+clk_root", NULL, 0, 600000000);
+-	clks[IMX8QXP_HSIO_AXI_CLK]		=3D clk_hw_register_fixed_rate(NULL, "hsio_ax=
+i_clk_root", NULL, 0, 400000000);
+-	clks[IMX8QXP_HSIO_PER_CLK]		=3D clk_hw_register_fixed_rate(NULL, "hsio_pe=
+r_clk_root", NULL, 0, 133333333);
+-	clks[IMX8QXP_LSIO_MEM_CLK]		=3D clk_hw_register_fixed_rate(NULL, "lsio_me=
+m_clk_root", NULL, 0, 200000000);
+-	clks[IMX8QXP_LSIO_BUS_CLK]		=3D clk_hw_register_fixed_rate(NULL, "lsio_bu=
+s_clk_root", NULL, 0, 100000000);
++	clks[IMX_CLK_DUMMY]		=3D clk_hw_register_fixed_rate(NULL, "dummy", NULL, =
+0, 0);
++	clks[IMX_ADMA_IPG_CLK_ROOT] 	=3D clk_hw_register_fixed_rate(NULL, "dma_ip=
+g_clk_root", NULL, 0, 120000000);
++	clks[IMX_CONN_AXI_CLK_ROOT]	=3D clk_hw_register_fixed_rate(NULL, "conn_ax=
+i_clk_root", NULL, 0, 333333333);
++	clks[IMX_CONN_AHB_CLK_ROOT]	=3D clk_hw_register_fixed_rate(NULL, "conn_ah=
+b_clk_root", NULL, 0, 166666666);
++	clks[IMX_CONN_IPG_CLK_ROOT]	=3D clk_hw_register_fixed_rate(NULL, "conn_ip=
+g_clk_root", NULL, 0, 83333333);
++	clks[IMX_DC_AXI_EXT_CLK]	=3D clk_hw_register_fixed_rate(NULL, "dc_axi_ext=
+_clk_root", NULL, 0, 800000000);
++	clks[IMX_DC_AXI_INT_CLK]	=3D clk_hw_register_fixed_rate(NULL, "dc_axi_int=
+_clk_root", NULL, 0, 400000000);
++	clks[IMX_DC_CFG_CLK]		=3D clk_hw_register_fixed_rate(NULL, "dc_cfg_clk_ro=
+ot", NULL, 0, 100000000);
++	clks[IMX_MIPI_IPG_CLK]		=3D clk_hw_register_fixed_rate(NULL, "mipi_ipg_cl=
+k_root", NULL, 0, 120000000);
++	clks[IMX_IMG_AXI_CLK]		=3D clk_hw_register_fixed_rate(NULL, "img_axi_clk_=
+root", NULL, 0, 400000000);
++	clks[IMX_IMG_IPG_CLK]		=3D clk_hw_register_fixed_rate(NULL, "img_ipg_clk_=
+root", NULL, 0, 200000000);
++	clks[IMX_IMG_PXL_CLK]		=3D clk_hw_register_fixed_rate(NULL, "img_pxl_clk_=
+root", NULL, 0, 600000000);
++	clks[IMX_HSIO_AXI_CLK]		=3D clk_hw_register_fixed_rate(NULL, "hsio_axi_cl=
+k_root", NULL, 0, 400000000);
++	clks[IMX_HSIO_PER_CLK]		=3D clk_hw_register_fixed_rate(NULL, "hsio_per_cl=
+k_root", NULL, 0, 133333333);
++	clks[IMX_LSIO_MEM_CLK]		=3D clk_hw_register_fixed_rate(NULL, "lsio_mem_cl=
+k_root", NULL, 0, 200000000);
++	clks[IMX_LSIO_BUS_CLK]		=3D clk_hw_register_fixed_rate(NULL, "lsio_bus_cl=
+k_root", NULL, 0, 100000000);
+=20
+ 	/* ARM core */
+-	clks[IMX8QXP_A35_CLK]			=3D imx_clk_scu("a35_clk", IMX_SC_R_A35, IMX_SC_P=
+M_CLK_CPU);
++	clks[IMX_A35_CLK]		=3D imx_clk_scu("a35_clk", IMX_SC_R_A35, IMX_SC_PM_CLK=
+_CPU);
+=20
+ 	/* LSIO SS */
+-	clks[IMX8QXP_LSIO_PWM0_CLK]		=3D imx_clk_scu("pwm0_clk", IMX_SC_R_PWM_0, =
+IMX_SC_PM_CLK_PER);
+-	clks[IMX8QXP_LSIO_PWM1_CLK]		=3D imx_clk_scu("pwm1_clk", IMX_SC_R_PWM_1, =
+IMX_SC_PM_CLK_PER);
+-	clks[IMX8QXP_LSIO_PWM2_CLK]		=3D imx_clk_scu("pwm2_clk", IMX_SC_R_PWM_2, =
+IMX_SC_PM_CLK_PER);
+-	clks[IMX8QXP_LSIO_PWM3_CLK]		=3D imx_clk_scu("pwm3_clk", IMX_SC_R_PWM_3, =
+IMX_SC_PM_CLK_PER);
+-	clks[IMX8QXP_LSIO_PWM4_CLK]		=3D imx_clk_scu("pwm4_clk", IMX_SC_R_PWM_4, =
+IMX_SC_PM_CLK_PER);
+-	clks[IMX8QXP_LSIO_PWM5_CLK]		=3D imx_clk_scu("pwm5_clk", IMX_SC_R_PWM_5, =
+IMX_SC_PM_CLK_PER);
+-	clks[IMX8QXP_LSIO_PWM6_CLK]		=3D imx_clk_scu("pwm6_clk", IMX_SC_R_PWM_6, =
+IMX_SC_PM_CLK_PER);
+-	clks[IMX8QXP_LSIO_PWM7_CLK]		=3D imx_clk_scu("pwm7_clk", IMX_SC_R_PWM_7, =
+IMX_SC_PM_CLK_PER);
+-	clks[IMX8QXP_LSIO_GPT0_CLK]		=3D imx_clk_scu("gpt0_clk", IMX_SC_R_GPT_0, =
+IMX_SC_PM_CLK_PER);
+-	clks[IMX8QXP_LSIO_GPT1_CLK]		=3D imx_clk_scu("gpt1_clk", IMX_SC_R_GPT_1, =
+IMX_SC_PM_CLK_PER);
+-	clks[IMX8QXP_LSIO_GPT2_CLK]		=3D imx_clk_scu("gpt2_clk", IMX_SC_R_GPT_2, =
+IMX_SC_PM_CLK_PER);
+-	clks[IMX8QXP_LSIO_GPT3_CLK]		=3D imx_clk_scu("gpt3_clk", IMX_SC_R_GPT_3, =
+IMX_SC_PM_CLK_PER);
+-	clks[IMX8QXP_LSIO_GPT4_CLK]		=3D imx_clk_scu("gpt4_clk", IMX_SC_R_GPT_4, =
+IMX_SC_PM_CLK_PER);
+-	clks[IMX8QXP_LSIO_FSPI0_CLK]		=3D imx_clk_scu("fspi0_clk", IMX_SC_R_FSPI_=
+0, IMX_SC_PM_CLK_PER);
+-	clks[IMX8QXP_LSIO_FSPI1_CLK]		=3D imx_clk_scu("fspi1_clk", IMX_SC_R_FSPI_=
+1, IMX_SC_PM_CLK_PER);
++	clks[IMX_LSIO_PWM0_CLK]		=3D imx_clk_scu("pwm0_clk", IMX_SC_R_PWM_0, IMX_=
+SC_PM_CLK_PER);
++	clks[IMX_LSIO_PWM1_CLK]		=3D imx_clk_scu("pwm1_clk", IMX_SC_R_PWM_1, IMX_=
+SC_PM_CLK_PER);
++	clks[IMX_LSIO_PWM2_CLK]		=3D imx_clk_scu("pwm2_clk", IMX_SC_R_PWM_2, IMX_=
+SC_PM_CLK_PER);
++	clks[IMX_LSIO_PWM3_CLK]		=3D imx_clk_scu("pwm3_clk", IMX_SC_R_PWM_3, IMX_=
+SC_PM_CLK_PER);
++	clks[IMX_LSIO_PWM4_CLK]		=3D imx_clk_scu("pwm4_clk", IMX_SC_R_PWM_4, IMX_=
+SC_PM_CLK_PER);
++	clks[IMX_LSIO_PWM5_CLK]		=3D imx_clk_scu("pwm5_clk", IMX_SC_R_PWM_5, IMX_=
+SC_PM_CLK_PER);
++	clks[IMX_LSIO_PWM6_CLK]		=3D imx_clk_scu("pwm6_clk", IMX_SC_R_PWM_6, IMX_=
+SC_PM_CLK_PER);
++	clks[IMX_LSIO_PWM7_CLK]		=3D imx_clk_scu("pwm7_clk", IMX_SC_R_PWM_7, IMX_=
+SC_PM_CLK_PER);
++	clks[IMX_LSIO_GPT0_CLK]		=3D imx_clk_scu("gpt0_clk", IMX_SC_R_GPT_0, IMX_=
+SC_PM_CLK_PER);
++	clks[IMX_LSIO_GPT1_CLK]		=3D imx_clk_scu("gpt1_clk", IMX_SC_R_GPT_1, IMX_=
+SC_PM_CLK_PER);
++	clks[IMX_LSIO_GPT2_CLK]		=3D imx_clk_scu("gpt2_clk", IMX_SC_R_GPT_2, IMX_=
+SC_PM_CLK_PER);
++	clks[IMX_LSIO_GPT3_CLK]		=3D imx_clk_scu("gpt3_clk", IMX_SC_R_GPT_3, IMX_=
+SC_PM_CLK_PER);
++	clks[IMX_LSIO_GPT4_CLK]		=3D imx_clk_scu("gpt4_clk", IMX_SC_R_GPT_4, IMX_=
+SC_PM_CLK_PER);
++	clks[IMX_LSIO_FSPI0_CLK]	=3D imx_clk_scu("fspi0_clk", IMX_SC_R_FSPI_0, IM=
+X_SC_PM_CLK_PER);
++	clks[IMX_LSIO_FSPI1_CLK]	=3D imx_clk_scu("fspi1_clk", IMX_SC_R_FSPI_1, IM=
+X_SC_PM_CLK_PER);
+=20
+ 	/* ADMA SS */
+-	clks[IMX8QXP_ADMA_UART0_CLK]		=3D imx_clk_scu("uart0_clk", IMX_SC_R_UART_=
+0, IMX_SC_PM_CLK_PER);
+-	clks[IMX8QXP_ADMA_UART1_CLK]		=3D imx_clk_scu("uart1_clk", IMX_SC_R_UART_=
+1, IMX_SC_PM_CLK_PER);
+-	clks[IMX8QXP_ADMA_UART2_CLK]		=3D imx_clk_scu("uart2_clk", IMX_SC_R_UART_=
+2, IMX_SC_PM_CLK_PER);
+-	clks[IMX8QXP_ADMA_UART3_CLK]		=3D imx_clk_scu("uart3_clk", IMX_SC_R_UART_=
+3, IMX_SC_PM_CLK_PER);
+-	clks[IMX8QXP_ADMA_SPI0_CLK]		=3D imx_clk_scu("spi0_clk",  IMX_SC_R_SPI_0,=
+ IMX_SC_PM_CLK_PER);
+-	clks[IMX8QXP_ADMA_SPI1_CLK]		=3D imx_clk_scu("spi1_clk",  IMX_SC_R_SPI_1,=
+ IMX_SC_PM_CLK_PER);
+-	clks[IMX8QXP_ADMA_SPI2_CLK]		=3D imx_clk_scu("spi2_clk",  IMX_SC_R_SPI_2,=
+ IMX_SC_PM_CLK_PER);
+-	clks[IMX8QXP_ADMA_SPI3_CLK]		=3D imx_clk_scu("spi3_clk",  IMX_SC_R_SPI_3,=
+ IMX_SC_PM_CLK_PER);
+-	clks[IMX8QXP_ADMA_CAN0_CLK]		=3D imx_clk_scu("can0_clk",  IMX_SC_R_CAN_0,=
+ IMX_SC_PM_CLK_PER);
+-	clks[IMX8QXP_ADMA_I2C0_CLK]		=3D imx_clk_scu("i2c0_clk",  IMX_SC_R_I2C_0,=
+ IMX_SC_PM_CLK_PER);
+-	clks[IMX8QXP_ADMA_I2C1_CLK]		=3D imx_clk_scu("i2c1_clk",  IMX_SC_R_I2C_1,=
+ IMX_SC_PM_CLK_PER);
+-	clks[IMX8QXP_ADMA_I2C2_CLK]		=3D imx_clk_scu("i2c2_clk",  IMX_SC_R_I2C_2,=
+ IMX_SC_PM_CLK_PER);
+-	clks[IMX8QXP_ADMA_I2C3_CLK]		=3D imx_clk_scu("i2c3_clk",  IMX_SC_R_I2C_3,=
+ IMX_SC_PM_CLK_PER);
+-	clks[IMX8QXP_ADMA_FTM0_CLK]		=3D imx_clk_scu("ftm0_clk",  IMX_SC_R_FTM_0,=
+ IMX_SC_PM_CLK_PER);
+-	clks[IMX8QXP_ADMA_FTM1_CLK]		=3D imx_clk_scu("ftm1_clk",  IMX_SC_R_FTM_1,=
+ IMX_SC_PM_CLK_PER);
+-	clks[IMX8QXP_ADMA_ADC0_CLK]		=3D imx_clk_scu("adc0_clk",  IMX_SC_R_ADC_0,=
+ IMX_SC_PM_CLK_PER);
+-	clks[IMX8QXP_ADMA_PWM_CLK]		=3D imx_clk_scu("pwm_clk",   IMX_SC_R_LCD_0_P=
+WM_0, IMX_SC_PM_CLK_PER);
+-	clks[IMX8QXP_ADMA_LCD_CLK]		=3D imx_clk_scu("lcd_clk",   IMX_SC_R_LCD_0, =
+IMX_SC_PM_CLK_PER);
++	clks[IMX_ADMA_UART0_CLK]	=3D imx_clk_scu("uart0_clk", IMX_SC_R_UART_0, IM=
+X_SC_PM_CLK_PER);
++	clks[IMX_ADMA_UART1_CLK]	=3D imx_clk_scu("uart1_clk", IMX_SC_R_UART_1, IM=
+X_SC_PM_CLK_PER);
++	clks[IMX_ADMA_UART2_CLK]	=3D imx_clk_scu("uart2_clk", IMX_SC_R_UART_2, IM=
+X_SC_PM_CLK_PER);
++	clks[IMX_ADMA_UART3_CLK]	=3D imx_clk_scu("uart3_clk", IMX_SC_R_UART_3, IM=
+X_SC_PM_CLK_PER);
++	clks[IMX_ADMA_SPI0_CLK]		=3D imx_clk_scu("spi0_clk",  IMX_SC_R_SPI_0, IMX=
+_SC_PM_CLK_PER);
++	clks[IMX_ADMA_SPI1_CLK]		=3D imx_clk_scu("spi1_clk",  IMX_SC_R_SPI_1, IMX=
+_SC_PM_CLK_PER);
++	clks[IMX_ADMA_SPI2_CLK]		=3D imx_clk_scu("spi2_clk",  IMX_SC_R_SPI_2, IMX=
+_SC_PM_CLK_PER);
++	clks[IMX_ADMA_SPI3_CLK]		=3D imx_clk_scu("spi3_clk",  IMX_SC_R_SPI_3, IMX=
+_SC_PM_CLK_PER);
++	clks[IMX_ADMA_CAN0_CLK]		=3D imx_clk_scu("can0_clk",  IMX_SC_R_CAN_0, IMX=
+_SC_PM_CLK_PER);
++	clks[IMX_ADMA_I2C0_CLK]		=3D imx_clk_scu("i2c0_clk",  IMX_SC_R_I2C_0, IMX=
+_SC_PM_CLK_PER);
++	clks[IMX_ADMA_I2C1_CLK]		=3D imx_clk_scu("i2c1_clk",  IMX_SC_R_I2C_1, IMX=
+_SC_PM_CLK_PER);
++	clks[IMX_ADMA_I2C2_CLK]		=3D imx_clk_scu("i2c2_clk",  IMX_SC_R_I2C_2, IMX=
+_SC_PM_CLK_PER);
++	clks[IMX_ADMA_I2C3_CLK]		=3D imx_clk_scu("i2c3_clk",  IMX_SC_R_I2C_3, IMX=
+_SC_PM_CLK_PER);
++	clks[IMX_ADMA_FTM0_CLK]		=3D imx_clk_scu("ftm0_clk",  IMX_SC_R_FTM_0, IMX=
+_SC_PM_CLK_PER);
++	clks[IMX_ADMA_FTM1_CLK]		=3D imx_clk_scu("ftm1_clk",  IMX_SC_R_FTM_1, IMX=
+_SC_PM_CLK_PER);
++	clks[IMX_ADMA_ADC0_CLK]		=3D imx_clk_scu("adc0_clk",  IMX_SC_R_ADC_0, IMX=
+_SC_PM_CLK_PER);
++	clks[IMX_ADMA_PWM_CLK]		=3D imx_clk_scu("pwm_clk",   IMX_SC_R_LCD_0_PWM_0=
+, IMX_SC_PM_CLK_PER);
++	clks[IMX_ADMA_LCD_CLK]		=3D imx_clk_scu("lcd_clk",   IMX_SC_R_LCD_0, IMX_=
+SC_PM_CLK_PER);
+=20
+ 	/* Connectivity */
+-	clks[IMX8QXP_CONN_SDHC0_CLK]		=3D imx_clk_scu("sdhc0_clk", IMX_SC_R_SDHC_=
+0, IMX_SC_PM_CLK_PER);
+-	clks[IMX8QXP_CONN_SDHC1_CLK]		=3D imx_clk_scu("sdhc1_clk", IMX_SC_R_SDHC_=
+1, IMX_SC_PM_CLK_PER);
+-	clks[IMX8QXP_CONN_SDHC2_CLK]		=3D imx_clk_scu("sdhc2_clk", IMX_SC_R_SDHC_=
+2, IMX_SC_PM_CLK_PER);
+-	clks[IMX8QXP_CONN_ENET0_ROOT_CLK]	=3D imx_clk_scu("enet0_clk", IMX_SC_R_E=
+NET_0, IMX_SC_PM_CLK_PER);
+-	clks[IMX8QXP_CONN_ENET0_BYPASS_CLK]	=3D imx_clk_scu("enet0_bypass_clk", I=
+MX_SC_R_ENET_0, IMX_SC_PM_CLK_BYPASS);
+-	clks[IMX8QXP_CONN_ENET0_RGMII_CLK]	=3D imx_clk_scu("enet0_rgmii_clk", IMX=
+_SC_R_ENET_0, IMX_SC_PM_CLK_MISC0);
+-	clks[IMX8QXP_CONN_ENET1_ROOT_CLK]	=3D imx_clk_scu("enet1_clk", IMX_SC_R_E=
+NET_1, IMX_SC_PM_CLK_PER);
+-	clks[IMX8QXP_CONN_ENET1_BYPASS_CLK]	=3D imx_clk_scu("enet1_bypass_clk", I=
+MX_SC_R_ENET_1, IMX_SC_PM_CLK_BYPASS);
+-	clks[IMX8QXP_CONN_ENET1_RGMII_CLK]	=3D imx_clk_scu("enet1_rgmii_clk", IMX=
+_SC_R_ENET_1, IMX_SC_PM_CLK_MISC0);
+-	clks[IMX8QXP_CONN_GPMI_BCH_IO_CLK]	=3D imx_clk_scu("gpmi_io_clk", IMX_SC_=
+R_NAND, IMX_SC_PM_CLK_MST_BUS);
+-	clks[IMX8QXP_CONN_GPMI_BCH_CLK]		=3D imx_clk_scu("gpmi_bch_clk", IMX_SC_R=
+_NAND, IMX_SC_PM_CLK_PER);
+-	clks[IMX8QXP_CONN_USB2_ACLK]		=3D imx_clk_scu("usb3_aclk_div", IMX_SC_R_U=
+SB_2, IMX_SC_PM_CLK_PER);
+-	clks[IMX8QXP_CONN_USB2_BUS_CLK]		=3D imx_clk_scu("usb3_bus_div", IMX_SC_R=
+_USB_2, IMX_SC_PM_CLK_MST_BUS);
+-	clks[IMX8QXP_CONN_USB2_LPM_CLK]		=3D imx_clk_scu("usb3_lpm_div", IMX_SC_R=
+_USB_2, IMX_SC_PM_CLK_MISC);
++	clks[IMX_CONN_SDHC0_CLK]	=3D imx_clk_scu("sdhc0_clk", IMX_SC_R_SDHC_0, IM=
+X_SC_PM_CLK_PER);
++	clks[IMX_CONN_SDHC1_CLK]	=3D imx_clk_scu("sdhc1_clk", IMX_SC_R_SDHC_1, IM=
+X_SC_PM_CLK_PER);
++	clks[IMX_CONN_SDHC2_CLK]	=3D imx_clk_scu("sdhc2_clk", IMX_SC_R_SDHC_2, IM=
+X_SC_PM_CLK_PER);
++	clks[IMX_CONN_ENET0_ROOT_CLK]	=3D imx_clk_scu("enet0_clk", IMX_SC_R_ENET_=
+0, IMX_SC_PM_CLK_PER);
++	clks[IMX_CONN_ENET0_BYPASS_CLK]	=3D imx_clk_scu("enet0_bypass_clk", IMX_S=
+C_R_ENET_0, IMX_SC_PM_CLK_BYPASS);
++	clks[IMX_CONN_ENET0_RGMII_CLK]	=3D imx_clk_scu("enet0_rgmii_clk", IMX_SC_=
+R_ENET_0, IMX_SC_PM_CLK_MISC0);
++	clks[IMX_CONN_ENET1_ROOT_CLK]	=3D imx_clk_scu("enet1_clk", IMX_SC_R_ENET_=
+1, IMX_SC_PM_CLK_PER);
++	clks[IMX_CONN_ENET1_BYPASS_CLK]	=3D imx_clk_scu("enet1_bypass_clk", IMX_S=
+C_R_ENET_1, IMX_SC_PM_CLK_BYPASS);
++	clks[IMX_CONN_ENET1_RGMII_CLK]	=3D imx_clk_scu("enet1_rgmii_clk", IMX_SC_=
+R_ENET_1, IMX_SC_PM_CLK_MISC0);
++	clks[IMX_CONN_GPMI_BCH_IO_CLK]	=3D imx_clk_scu("gpmi_io_clk", IMX_SC_R_NA=
+ND, IMX_SC_PM_CLK_MST_BUS);
++	clks[IMX_CONN_GPMI_BCH_CLK]	=3D imx_clk_scu("gpmi_bch_clk", IMX_SC_R_NAND=
+, IMX_SC_PM_CLK_PER);
++	clks[IMX_CONN_USB2_ACLK]	=3D imx_clk_scu("usb3_aclk_div", IMX_SC_R_USB_2,=
+ IMX_SC_PM_CLK_PER);
++	clks[IMX_CONN_USB2_BUS_CLK]	=3D imx_clk_scu("usb3_bus_div", IMX_SC_R_USB_=
+2, IMX_SC_PM_CLK_MST_BUS);
++	clks[IMX_CONN_USB2_LPM_CLK]	=3D imx_clk_scu("usb3_lpm_div", IMX_SC_R_USB_=
+2, IMX_SC_PM_CLK_MISC);
+=20
+ 	/* Display controller SS */
+-	clks[IMX8QXP_DC0_DISP0_CLK]		=3D imx_clk_scu("dc0_disp0_clk", IMX_SC_R_DC=
+_0, IMX_SC_PM_CLK_MISC0);
+-	clks[IMX8QXP_DC0_DISP1_CLK]		=3D imx_clk_scu("dc0_disp1_clk", IMX_SC_R_DC=
+_0, IMX_SC_PM_CLK_MISC1);
++	clks[IMX_DC0_DISP0_CLK]		=3D imx_clk_scu("dc0_disp0_clk", IMX_SC_R_DC_0, =
+IMX_SC_PM_CLK_MISC0);
++	clks[IMX_DC0_DISP1_CLK]		=3D imx_clk_scu("dc0_disp1_clk", IMX_SC_R_DC_0, =
+IMX_SC_PM_CLK_MISC1);
+=20
+ 	/* MIPI-LVDS SS */
+-	clks[IMX8QXP_MIPI0_I2C0_CLK]		=3D imx_clk_scu("mipi0_i2c0_clk", IMX_SC_R_=
+MIPI_0_I2C_0, IMX_SC_PM_CLK_MISC2);
+-	clks[IMX8QXP_MIPI0_I2C1_CLK]		=3D imx_clk_scu("mipi0_i2c1_clk", IMX_SC_R_=
+MIPI_0_I2C_1, IMX_SC_PM_CLK_MISC2);
++	clks[IMX_MIPI0_I2C0_CLK]	=3D imx_clk_scu("mipi0_i2c0_clk", IMX_SC_R_MIPI_=
+0_I2C_0, IMX_SC_PM_CLK_MISC2);
++	clks[IMX_MIPI0_I2C1_CLK]	=3D imx_clk_scu("mipi0_i2c1_clk", IMX_SC_R_MIPI_=
+0_I2C_1, IMX_SC_PM_CLK_MISC2);
+=20
+ 	/* MIPI CSI SS */
+-	clks[IMX8QXP_CSI0_CORE_CLK]		=3D imx_clk_scu("mipi_csi0_core_clk", IMX_SC=
+_R_CSI_0, IMX_SC_PM_CLK_PER);
+-	clks[IMX8QXP_CSI0_ESC_CLK]		=3D imx_clk_scu("mipi_csi0_esc_clk",  IMX_SC_=
+R_CSI_0, IMX_SC_PM_CLK_MISC);
+-	clks[IMX8QXP_CSI0_I2C0_CLK]		=3D imx_clk_scu("mipi_csi0_i2c0_clk", IMX_SC=
+_R_CSI_0_I2C_0, IMX_SC_PM_CLK_PER);
+-	clks[IMX8QXP_CSI0_PWM0_CLK]		=3D imx_clk_scu("mipi_csi0_pwm0_clk", IMX_SC=
+_R_CSI_0_PWM_0, IMX_SC_PM_CLK_PER);
++	clks[IMX_CSI0_CORE_CLK]		=3D imx_clk_scu("mipi_csi0_core_clk", IMX_SC_R_C=
+SI_0, IMX_SC_PM_CLK_PER);
++	clks[IMX_CSI0_ESC_CLK]		=3D imx_clk_scu("mipi_csi0_esc_clk",  IMX_SC_R_CS=
+I_0, IMX_SC_PM_CLK_MISC);
++	clks[IMX_CSI0_I2C0_CLK]		=3D imx_clk_scu("mipi_csi0_i2c0_clk", IMX_SC_R_C=
+SI_0_I2C_0, IMX_SC_PM_CLK_PER);
++	clks[IMX_CSI0_PWM0_CLK]		=3D imx_clk_scu("mipi_csi0_pwm0_clk", IMX_SC_R_C=
+SI_0_PWM_0, IMX_SC_PM_CLK_PER);
+=20
+ 	/* GPU SS */
+-	clks[IMX8QXP_GPU0_CORE_CLK]		=3D imx_clk_scu("gpu_core0_clk",	 IMX_SC_R_G=
+PU_0_PID0, IMX_SC_PM_CLK_PER);
+-	clks[IMX8QXP_GPU0_SHADER_CLK]		=3D imx_clk_scu("gpu_shader0_clk", IMX_SC_=
+R_GPU_0_PID0, IMX_SC_PM_CLK_MISC);
++	clks[IMX_GPU0_CORE_CLK]		=3D imx_clk_scu("gpu_core0_clk",	 IMX_SC_R_GPU_0=
+_PID0, IMX_SC_PM_CLK_PER);
++	clks[IMX_GPU0_SHADER_CLK]	=3D imx_clk_scu("gpu_shader0_clk", IMX_SC_R_GPU=
+_0_PID0, IMX_SC_PM_CLK_MISC);
+=20
+ 	for (i =3D 0; i < clk_data->num; i++) {
+ 		if (IS_ERR(clks[i]))
+diff --git a/include/dt-bindings/clock/imx8-clock.h b/include/dt-bindings/c=
+lock/imx8-clock.h
+new file mode 100644
+index 0000000..4236818
+--- /dev/null
++++ b/include/dt-bindings/clock/imx8-clock.h
+@@ -0,0 +1,289 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
++/*
++ * Copyright 2018 NXP
++ *   Dong Aisheng <aisheng.dong@nxp.com>
++ */
++
++#ifndef __DT_BINDINGS_CLOCK_IMX_H
++#define __DT_BINDINGS_CLOCK_IMX_H
++
++/* SCU Clocks */
++
++#define IMX_CLK_DUMMY				0
++
++/* CPU */
++#define IMX_A35_CLK					1
++
++/* LSIO SS */
++#define IMX_LSIO_MEM_CLK				2
++#define IMX_LSIO_BUS_CLK				3
++#define IMX_LSIO_PWM0_CLK				10
++#define IMX_LSIO_PWM1_CLK				11
++#define IMX_LSIO_PWM2_CLK				12
++#define IMX_LSIO_PWM3_CLK				13
++#define IMX_LSIO_PWM4_CLK				14
++#define IMX_LSIO_PWM5_CLK				15
++#define IMX_LSIO_PWM6_CLK				16
++#define IMX_LSIO_PWM7_CLK				17
++#define IMX_LSIO_GPT0_CLK				18
++#define IMX_LSIO_GPT1_CLK				19
++#define IMX_LSIO_GPT2_CLK				20
++#define IMX_LSIO_GPT3_CLK				21
++#define IMX_LSIO_GPT4_CLK				22
++#define IMX_LSIO_FSPI0_CLK				23
++#define IMX_LSIO_FSPI1_CLK				24
++
++/* Connectivity SS */
++#define IMX_CONN_AXI_CLK_ROOT				30
++#define IMX_CONN_AHB_CLK_ROOT				31
++#define IMX_CONN_IPG_CLK_ROOT				32
++#define IMX_CONN_SDHC0_CLK				40
++#define IMX_CONN_SDHC1_CLK				41
++#define IMX_CONN_SDHC2_CLK				42
++#define IMX_CONN_ENET0_ROOT_CLK				43
++#define IMX_CONN_ENET0_BYPASS_CLK			44
++#define IMX_CONN_ENET0_RGMII_CLK			45
++#define IMX_CONN_ENET1_ROOT_CLK				46
++#define IMX_CONN_ENET1_BYPASS_CLK			47
++#define IMX_CONN_ENET1_RGMII_CLK			48
++#define IMX_CONN_GPMI_BCH_IO_CLK			49
++#define IMX_CONN_GPMI_BCH_CLK				50
++#define IMX_CONN_USB2_ACLK				51
++#define IMX_CONN_USB2_BUS_CLK				52
++#define IMX_CONN_USB2_LPM_CLK				53
++
++/* HSIO SS */
++#define IMX_HSIO_AXI_CLK				60
++#define IMX_HSIO_PER_CLK				61
++
++/* Display controller SS */
++#define IMX_DC_AXI_EXT_CLK				70
++#define IMX_DC_AXI_INT_CLK				71
++#define IMX_DC_CFG_CLK					72
++#define IMX_DC0_PLL0_CLK				80
++#define IMX_DC0_PLL1_CLK				81
++#define IMX_DC0_DISP0_CLK				82
++#define IMX_DC0_DISP1_CLK				83
++
++/* MIPI-LVDS SS */
++#define IMX_MIPI_IPG_CLK				90
++#define IMX_MIPI0_PIXEL_CLK				100
++#define IMX_MIPI0_BYPASS_CLK				101
++#define IMX_MIPI0_LVDS_PIXEL_CLK			102
++#define IMX_MIPI0_LVDS_BYPASS_CLK			103
++#define IMX_MIPI0_LVDS_PHY_CLK				104
++#define IMX_MIPI0_I2C0_CLK				105
++#define IMX_MIPI0_I2C1_CLK				106
++#define IMX_MIPI0_PWM0_CLK				107
++#define IMX_MIPI1_PIXEL_CLK				108
++#define IMX_MIPI1_BYPASS_CLK				109
++#define IMX_MIPI1_LVDS_PIXEL_CLK			110
++#define IMX_MIPI1_LVDS_BYPASS_CLK			111
++#define IMX_MIPI1_LVDS_PHY_CLK				112
++#define IMX_MIPI1_I2C0_CLK				113
++#define IMX_MIPI1_I2C1_CLK				114
++#define IMX_MIPI1_PWM0_CLK				115
++
++/* IMG SS */
++#define IMX_IMG_AXI_CLK					120
++#define IMX_IMG_IPG_CLK					121
++#define IMX_IMG_PXL_CLK					122
++
++/* MIPI-CSI SS */
++#define IMX_CSI0_CORE_CLK				130
++#define IMX_CSI0_ESC_CLK				131
++#define IMX_CSI0_PWM0_CLK				132
++#define IMX_CSI0_I2C0_CLK				133
++
++/* PARALLER CSI SS */
++#define IMX_PARALLEL_CSI_DPLL_CLK			140
++#define IMX_PARALLEL_CSI_PIXEL_CLK			141
++#define IMX_PARALLEL_CSI_MCLK_CLK			142
++
++/* VPU SS */
++#define IMX_VPU_ENC_CLK					150
++#define IMX_VPU_DEC_CLK					151
++
++/* GPU SS */
++#define IMX_GPU0_CORE_CLK				160
++#define IMX_GPU0_SHADER_CLK				161
++
++/* ADMA SS */
++#define IMX_ADMA_IPG_CLK_ROOT				165
++#define IMX_ADMA_UART0_CLK				170
++#define IMX_ADMA_UART1_CLK				171
++#define IMX_ADMA_UART2_CLK				172
++#define IMX_ADMA_UART3_CLK				173
++#define IMX_ADMA_SPI0_CLK				174
++#define IMX_ADMA_SPI1_CLK				175
++#define IMX_ADMA_SPI2_CLK				176
++#define IMX_ADMA_SPI3_CLK				177
++#define IMX_ADMA_CAN0_CLK				178
++#define IMX_ADMA_CAN1_CLK				179
++#define IMX_ADMA_CAN2_CLK				180
++#define IMX_ADMA_I2C0_CLK				181
++#define IMX_ADMA_I2C1_CLK				182
++#define IMX_ADMA_I2C2_CLK				183
++#define IMX_ADMA_I2C3_CLK				184
++#define IMX_ADMA_FTM0_CLK				185
++#define IMX_ADMA_FTM1_CLK				186
++#define IMX_ADMA_ADC0_CLK				187
++#define IMX_ADMA_PWM_CLK				188
++#define IMX_ADMA_LCD_CLK				189
++
++#define IMX_SCU_CLK_END					190
++
++/* LPCG clocks */
++
++/* LSIO SS LPCG */
++#define IMX_LSIO_LPCG_PWM0_IPG_CLK			0
++#define IMX_LSIO_LPCG_PWM0_IPG_S_CLK			1
++#define IMX_LSIO_LPCG_PWM0_IPG_HF_CLK			2
++#define IMX_LSIO_LPCG_PWM0_IPG_SLV_CLK			3
++#define IMX_LSIO_LPCG_PWM0_IPG_MSTR_CLK			4
++#define IMX_LSIO_LPCG_PWM1_IPG_CLK			5
++#define IMX_LSIO_LPCG_PWM1_IPG_S_CLK			6
++#define IMX_LSIO_LPCG_PWM1_IPG_HF_CLK			7
++#define IMX_LSIO_LPCG_PWM1_IPG_SLV_CLK			8
++#define IMX_LSIO_LPCG_PWM1_IPG_MSTR_CLK			9
++#define IMX_LSIO_LPCG_PWM2_IPG_CLK			10
++#define IMX_LSIO_LPCG_PWM2_IPG_S_CLK			11
++#define IMX_LSIO_LPCG_PWM2_IPG_HF_CLK			12
++#define IMX_LSIO_LPCG_PWM2_IPG_SLV_CLK			13
++#define IMX_LSIO_LPCG_PWM2_IPG_MSTR_CLK			14
++#define IMX_LSIO_LPCG_PWM3_IPG_CLK			15
++#define IMX_LSIO_LPCG_PWM3_IPG_S_CLK			16
++#define IMX_LSIO_LPCG_PWM3_IPG_HF_CLK			17
++#define IMX_LSIO_LPCG_PWM3_IPG_SLV_CLK			18
++#define IMX_LSIO_LPCG_PWM3_IPG_MSTR_CLK			19
++#define IMX_LSIO_LPCG_PWM4_IPG_CLK			20
++#define IMX_LSIO_LPCG_PWM4_IPG_S_CLK			21
++#define IMX_LSIO_LPCG_PWM4_IPG_HF_CLK			22
++#define IMX_LSIO_LPCG_PWM4_IPG_SLV_CLK			23
++#define IMX_LSIO_LPCG_PWM4_IPG_MSTR_CLK			24
++#define IMX_LSIO_LPCG_PWM5_IPG_CLK			25
++#define IMX_LSIO_LPCG_PWM5_IPG_S_CLK			26
++#define IMX_LSIO_LPCG_PWM5_IPG_HF_CLK			27
++#define IMX_LSIO_LPCG_PWM5_IPG_SLV_CLK			28
++#define IMX_LSIO_LPCG_PWM5_IPG_MSTR_CLK			29
++#define IMX_LSIO_LPCG_PWM6_IPG_CLK			30
++#define IMX_LSIO_LPCG_PWM6_IPG_S_CLK			31
++#define IMX_LSIO_LPCG_PWM6_IPG_HF_CLK			32
++#define IMX_LSIO_LPCG_PWM6_IPG_SLV_CLK			33
++#define IMX_LSIO_LPCG_PWM6_IPG_MSTR_CLK			34
++#define IMX_LSIO_LPCG_PWM7_IPG_CLK			35
++#define IMX_LSIO_LPCG_PWM7_IPG_S_CLK			36
++#define IMX_LSIO_LPCG_PWM7_IPG_HF_CLK			37
++#define IMX_LSIO_LPCG_PWM7_IPG_SLV_CLK			38
++#define IMX_LSIO_LPCG_PWM7_IPG_MSTR_CLK			39
++#define IMX_LSIO_LPCG_GPT0_IPG_CLK			40
++#define IMX_LSIO_LPCG_GPT0_IPG_S_CLK			41
++#define IMX_LSIO_LPCG_GPT0_IPG_HF_CLK			42
++#define IMX_LSIO_LPCG_GPT0_IPG_SLV_CLK			43
++#define IMX_LSIO_LPCG_GPT0_IPG_MSTR_CLK			44
++#define IMX_LSIO_LPCG_GPT1_IPG_CLK			45
++#define IMX_LSIO_LPCG_GPT1_IPG_S_CLK			46
++#define IMX_LSIO_LPCG_GPT1_IPG_HF_CLK			47
++#define IMX_LSIO_LPCG_GPT1_IPG_SLV_CLK			48
++#define IMX_LSIO_LPCG_GPT1_IPG_MSTR_CLK			49
++#define IMX_LSIO_LPCG_GPT2_IPG_CLK			50
++#define IMX_LSIO_LPCG_GPT2_IPG_S_CLK			51
++#define IMX_LSIO_LPCG_GPT2_IPG_HF_CLK			52
++#define IMX_LSIO_LPCG_GPT2_IPG_SLV_CLK			53
++#define IMX_LSIO_LPCG_GPT2_IPG_MSTR_CLK			54
++#define IMX_LSIO_LPCG_GPT3_IPG_CLK			55
++#define IMX_LSIO_LPCG_GPT3_IPG_S_CLK			56
++#define IMX_LSIO_LPCG_GPT3_IPG_HF_CLK			57
++#define IMX_LSIO_LPCG_GPT3_IPG_SLV_CLK			58
++#define IMX_LSIO_LPCG_GPT3_IPG_MSTR_CLK			59
++#define IMX_LSIO_LPCG_GPT4_IPG_CLK			60
++#define IMX_LSIO_LPCG_GPT4_IPG_S_CLK			61
++#define IMX_LSIO_LPCG_GPT4_IPG_HF_CLK			62
++#define IMX_LSIO_LPCG_GPT4_IPG_SLV_CLK			63
++#define IMX_LSIO_LPCG_GPT4_IPG_MSTR_CLK			64
++#define IMX_LSIO_LPCG_FSPI0_HCLK			65
++#define IMX_LSIO_LPCG_FSPI0_IPG_CLK			66
++#define IMX_LSIO_LPCG_FSPI0_IPG_S_CLK			67
++#define IMX_LSIO_LPCG_FSPI0_IPG_SFCK			68
++#define IMX_LSIO_LPCG_FSPI1_HCLK			69
++#define IMX_LSIO_LPCG_FSPI1_IPG_CLK			70
++#define IMX_LSIO_LPCG_FSPI1_IPG_S_CLK			71
++#define IMX_LSIO_LPCG_FSPI1_IPG_SFCK			72
++
++#define IMX_LSIO_LPCG_CLK_END				73
++
++/* Connectivity SS LPCG */
++#define IMX_CONN_LPCG_SDHC0_IPG_CLK			0
++#define IMX_CONN_LPCG_SDHC0_PER_CLK			1
++#define IMX_CONN_LPCG_SDHC0_HCLK			2
++#define IMX_CONN_LPCG_SDHC1_IPG_CLK			3
++#define IMX_CONN_LPCG_SDHC1_PER_CLK			4
++#define IMX_CONN_LPCG_SDHC1_HCLK			5
++#define IMX_CONN_LPCG_SDHC2_IPG_CLK			6
++#define IMX_CONN_LPCG_SDHC2_PER_CLK			7
++#define IMX_CONN_LPCG_SDHC2_HCLK			8
++#define IMX_CONN_LPCG_GPMI_APB_CLK			9
++#define IMX_CONN_LPCG_GPMI_BCH_APB_CLK			10
++#define IMX_CONN_LPCG_GPMI_BCH_IO_CLK			11
++#define IMX_CONN_LPCG_GPMI_BCH_CLK			12
++#define IMX_CONN_LPCG_APBHDMA_CLK			13
++#define IMX_CONN_LPCG_ENET0_ROOT_CLK			14
++#define IMX_CONN_LPCG_ENET0_TX_CLK			15
++#define IMX_CONN_LPCG_ENET0_AHB_CLK			16
++#define IMX_CONN_LPCG_ENET0_IPG_S_CLK			17
++#define IMX_CONN_LPCG_ENET0_IPG_CLK			18
++
++#define IMX_CONN_LPCG_ENET1_ROOT_CLK			19
++#define IMX_CONN_LPCG_ENET1_TX_CLK			20
++#define IMX_CONN_LPCG_ENET1_AHB_CLK			21
++#define IMX_CONN_LPCG_ENET1_IPG_S_CLK			22
++#define IMX_CONN_LPCG_ENET1_IPG_CLK			23
++
++#define IMX_CONN_LPCG_CLK_END				24
++
++/* ADMA SS LPCG */
++#define IMX_ADMA_LPCG_UART0_IPG_CLK			0
++#define IMX_ADMA_LPCG_UART0_BAUD_CLK			1
++#define IMX_ADMA_LPCG_UART1_IPG_CLK			2
++#define IMX_ADMA_LPCG_UART1_BAUD_CLK			3
++#define IMX_ADMA_LPCG_UART2_IPG_CLK			4
++#define IMX_ADMA_LPCG_UART2_BAUD_CLK			5
++#define IMX_ADMA_LPCG_UART3_IPG_CLK			6
++#define IMX_ADMA_LPCG_UART3_BAUD_CLK			7
++#define IMX_ADMA_LPCG_SPI0_IPG_CLK			8
++#define IMX_ADMA_LPCG_SPI1_IPG_CLK			9
++#define IMX_ADMA_LPCG_SPI2_IPG_CLK			10
++#define IMX_ADMA_LPCG_SPI3_IPG_CLK			11
++#define IMX_ADMA_LPCG_SPI0_CLK				12
++#define IMX_ADMA_LPCG_SPI1_CLK				13
++#define IMX_ADMA_LPCG_SPI2_CLK				14
++#define IMX_ADMA_LPCG_SPI3_CLK				15
++#define IMX_ADMA_LPCG_CAN0_IPG_CLK			16
++#define IMX_ADMA_LPCG_CAN0_IPG_PE_CLK			17
++#define IMX_ADMA_LPCG_CAN0_IPG_CHI_CLK			18
++#define IMX_ADMA_LPCG_CAN1_IPG_CLK			19
++#define IMX_ADMA_LPCG_CAN1_IPG_PE_CLK			20
++#define IMX_ADMA_LPCG_CAN1_IPG_CHI_CLK			21
++#define IMX_ADMA_LPCG_CAN2_IPG_CLK			22
++#define IMX_ADMA_LPCG_CAN2_IPG_PE_CLK			23
++#define IMX_ADMA_LPCG_CAN2_IPG_CHI_CLK			24
++#define IMX_ADMA_LPCG_I2C0_CLK				25
++#define IMX_ADMA_LPCG_I2C1_CLK				26
++#define IMX_ADMA_LPCG_I2C2_CLK				27
++#define IMX_ADMA_LPCG_I2C3_CLK				28
++#define IMX_ADMA_LPCG_I2C0_IPG_CLK			29
++#define IMX_ADMA_LPCG_I2C1_IPG_CLK			30
++#define IMX_ADMA_LPCG_I2C2_IPG_CLK			31
++#define IMX_ADMA_LPCG_I2C3_IPG_CLK			32
++#define IMX_ADMA_LPCG_FTM0_CLK				33
++#define IMX_ADMA_LPCG_FTM1_CLK				34
++#define IMX_ADMA_LPCG_FTM0_IPG_CLK			35
++#define IMX_ADMA_LPCG_FTM1_IPG_CLK			36
++#define IMX_ADMA_LPCG_PWM_HI_CLK			37
++#define IMX_ADMA_LPCG_PWM_IPG_CLK			38
++#define IMX_ADMA_LPCG_LCD_PIX_CLK			39
++#define IMX_ADMA_LPCG_LCD_APB_CLK			40
++
++#define IMX_ADMA_LPCG_CLK_END				41
++
++#endif /* __DT_BINDINGS_CLOCK_IMX_H */
+diff --git a/include/dt-bindings/clock/imx8qxp-clock.h b/include/dt-binding=
+s/clock/imx8qxp-clock.h
+deleted file mode 100644
+index 6fec368..0000000
+--- a/include/dt-bindings/clock/imx8qxp-clock.h
++++ /dev/null
+@@ -1,289 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0+ */
+-/*
+- * Copyright 2018 NXP
+- *   Dong Aisheng <aisheng.dong@nxp.com>
+- */
+-
+-#ifndef __DT_BINDINGS_CLOCK_IMX8QXP_H
+-#define __DT_BINDINGS_CLOCK_IMX8QXP_H
+-
+-/* SCU Clocks */
+-
+-#define IMX8QXP_CLK_DUMMY				0
+-
+-/* CPU */
+-#define IMX8QXP_A35_CLK					1
+-
+-/* LSIO SS */
+-#define IMX8QXP_LSIO_MEM_CLK				2
+-#define IMX8QXP_LSIO_BUS_CLK				3
+-#define IMX8QXP_LSIO_PWM0_CLK				10
+-#define IMX8QXP_LSIO_PWM1_CLK				11
+-#define IMX8QXP_LSIO_PWM2_CLK				12
+-#define IMX8QXP_LSIO_PWM3_CLK				13
+-#define IMX8QXP_LSIO_PWM4_CLK				14
+-#define IMX8QXP_LSIO_PWM5_CLK				15
+-#define IMX8QXP_LSIO_PWM6_CLK				16
+-#define IMX8QXP_LSIO_PWM7_CLK				17
+-#define IMX8QXP_LSIO_GPT0_CLK				18
+-#define IMX8QXP_LSIO_GPT1_CLK				19
+-#define IMX8QXP_LSIO_GPT2_CLK				20
+-#define IMX8QXP_LSIO_GPT3_CLK				21
+-#define IMX8QXP_LSIO_GPT4_CLK				22
+-#define IMX8QXP_LSIO_FSPI0_CLK				23
+-#define IMX8QXP_LSIO_FSPI1_CLK				24
+-
+-/* Connectivity SS */
+-#define IMX8QXP_CONN_AXI_CLK_ROOT			30
+-#define IMX8QXP_CONN_AHB_CLK_ROOT			31
+-#define IMX8QXP_CONN_IPG_CLK_ROOT			32
+-#define IMX8QXP_CONN_SDHC0_CLK				40
+-#define IMX8QXP_CONN_SDHC1_CLK				41
+-#define IMX8QXP_CONN_SDHC2_CLK				42
+-#define IMX8QXP_CONN_ENET0_ROOT_CLK			43
+-#define IMX8QXP_CONN_ENET0_BYPASS_CLK			44
+-#define IMX8QXP_CONN_ENET0_RGMII_CLK			45
+-#define IMX8QXP_CONN_ENET1_ROOT_CLK			46
+-#define IMX8QXP_CONN_ENET1_BYPASS_CLK			47
+-#define IMX8QXP_CONN_ENET1_RGMII_CLK			48
+-#define IMX8QXP_CONN_GPMI_BCH_IO_CLK			49
+-#define IMX8QXP_CONN_GPMI_BCH_CLK			50
+-#define IMX8QXP_CONN_USB2_ACLK				51
+-#define IMX8QXP_CONN_USB2_BUS_CLK			52
+-#define IMX8QXP_CONN_USB2_LPM_CLK			53
+-
+-/* HSIO SS */
+-#define IMX8QXP_HSIO_AXI_CLK				60
+-#define IMX8QXP_HSIO_PER_CLK				61
+-
+-/* Display controller SS */
+-#define IMX8QXP_DC_AXI_EXT_CLK				70
+-#define IMX8QXP_DC_AXI_INT_CLK				71
+-#define IMX8QXP_DC_CFG_CLK				72
+-#define IMX8QXP_DC0_PLL0_CLK				80
+-#define IMX8QXP_DC0_PLL1_CLK				81
+-#define IMX8QXP_DC0_DISP0_CLK				82
+-#define IMX8QXP_DC0_DISP1_CLK				83
+-
+-/* MIPI-LVDS SS */
+-#define IMX8QXP_MIPI_IPG_CLK				90
+-#define IMX8QXP_MIPI0_PIXEL_CLK				100
+-#define IMX8QXP_MIPI0_BYPASS_CLK			101
+-#define IMX8QXP_MIPI0_LVDS_PIXEL_CLK			102
+-#define IMX8QXP_MIPI0_LVDS_BYPASS_CLK			103
+-#define IMX8QXP_MIPI0_LVDS_PHY_CLK			104
+-#define IMX8QXP_MIPI0_I2C0_CLK				105
+-#define IMX8QXP_MIPI0_I2C1_CLK				106
+-#define IMX8QXP_MIPI0_PWM0_CLK				107
+-#define IMX8QXP_MIPI1_PIXEL_CLK				108
+-#define IMX8QXP_MIPI1_BYPASS_CLK			109
+-#define IMX8QXP_MIPI1_LVDS_PIXEL_CLK			110
+-#define IMX8QXP_MIPI1_LVDS_BYPASS_CLK			111
+-#define IMX8QXP_MIPI1_LVDS_PHY_CLK			112
+-#define IMX8QXP_MIPI1_I2C0_CLK				113
+-#define IMX8QXP_MIPI1_I2C1_CLK				114
+-#define IMX8QXP_MIPI1_PWM0_CLK				115
+-
+-/* IMG SS */
+-#define IMX8QXP_IMG_AXI_CLK				120
+-#define IMX8QXP_IMG_IPG_CLK				121
+-#define IMX8QXP_IMG_PXL_CLK				122
+-
+-/* MIPI-CSI SS */
+-#define IMX8QXP_CSI0_CORE_CLK				130
+-#define IMX8QXP_CSI0_ESC_CLK				131
+-#define IMX8QXP_CSI0_PWM0_CLK				132
+-#define IMX8QXP_CSI0_I2C0_CLK				133
+-
+-/* PARALLER CSI SS */
+-#define IMX8QXP_PARALLEL_CSI_DPLL_CLK			140
+-#define IMX8QXP_PARALLEL_CSI_PIXEL_CLK			141
+-#define IMX8QXP_PARALLEL_CSI_MCLK_CLK			142
+-
+-/* VPU SS */
+-#define IMX8QXP_VPU_ENC_CLK				150
+-#define IMX8QXP_VPU_DEC_CLK				151
+-
+-/* GPU SS */
+-#define IMX8QXP_GPU0_CORE_CLK				160
+-#define IMX8QXP_GPU0_SHADER_CLK				161
+-
+-/* ADMA SS */
+-#define IMX8QXP_ADMA_IPG_CLK_ROOT			165
+-#define IMX8QXP_ADMA_UART0_CLK				170
+-#define IMX8QXP_ADMA_UART1_CLK				171
+-#define IMX8QXP_ADMA_UART2_CLK				172
+-#define IMX8QXP_ADMA_UART3_CLK				173
+-#define IMX8QXP_ADMA_SPI0_CLK				174
+-#define IMX8QXP_ADMA_SPI1_CLK				175
+-#define IMX8QXP_ADMA_SPI2_CLK				176
+-#define IMX8QXP_ADMA_SPI3_CLK				177
+-#define IMX8QXP_ADMA_CAN0_CLK				178
+-#define IMX8QXP_ADMA_CAN1_CLK				179
+-#define IMX8QXP_ADMA_CAN2_CLK				180
+-#define IMX8QXP_ADMA_I2C0_CLK				181
+-#define IMX8QXP_ADMA_I2C1_CLK				182
+-#define IMX8QXP_ADMA_I2C2_CLK				183
+-#define IMX8QXP_ADMA_I2C3_CLK				184
+-#define IMX8QXP_ADMA_FTM0_CLK				185
+-#define IMX8QXP_ADMA_FTM1_CLK				186
+-#define IMX8QXP_ADMA_ADC0_CLK				187
+-#define IMX8QXP_ADMA_PWM_CLK				188
+-#define IMX8QXP_ADMA_LCD_CLK				189
+-
+-#define IMX8QXP_SCU_CLK_END				190
+-
+-/* LPCG clocks */
+-
+-/* LSIO SS LPCG */
+-#define IMX8QXP_LSIO_LPCG_PWM0_IPG_CLK			0
+-#define IMX8QXP_LSIO_LPCG_PWM0_IPG_S_CLK		1
+-#define IMX8QXP_LSIO_LPCG_PWM0_IPG_HF_CLK		2
+-#define IMX8QXP_LSIO_LPCG_PWM0_IPG_SLV_CLK		3
+-#define IMX8QXP_LSIO_LPCG_PWM0_IPG_MSTR_CLK		4
+-#define IMX8QXP_LSIO_LPCG_PWM1_IPG_CLK			5
+-#define IMX8QXP_LSIO_LPCG_PWM1_IPG_S_CLK		6
+-#define IMX8QXP_LSIO_LPCG_PWM1_IPG_HF_CLK		7
+-#define IMX8QXP_LSIO_LPCG_PWM1_IPG_SLV_CLK		8
+-#define IMX8QXP_LSIO_LPCG_PWM1_IPG_MSTR_CLK		9
+-#define IMX8QXP_LSIO_LPCG_PWM2_IPG_CLK			10
+-#define IMX8QXP_LSIO_LPCG_PWM2_IPG_S_CLK		11
+-#define IMX8QXP_LSIO_LPCG_PWM2_IPG_HF_CLK		12
+-#define IMX8QXP_LSIO_LPCG_PWM2_IPG_SLV_CLK		13
+-#define IMX8QXP_LSIO_LPCG_PWM2_IPG_MSTR_CLK		14
+-#define IMX8QXP_LSIO_LPCG_PWM3_IPG_CLK			15
+-#define IMX8QXP_LSIO_LPCG_PWM3_IPG_S_CLK		16
+-#define IMX8QXP_LSIO_LPCG_PWM3_IPG_HF_CLK		17
+-#define IMX8QXP_LSIO_LPCG_PWM3_IPG_SLV_CLK		18
+-#define IMX8QXP_LSIO_LPCG_PWM3_IPG_MSTR_CLK		19
+-#define IMX8QXP_LSIO_LPCG_PWM4_IPG_CLK			20
+-#define IMX8QXP_LSIO_LPCG_PWM4_IPG_S_CLK		21
+-#define IMX8QXP_LSIO_LPCG_PWM4_IPG_HF_CLK		22
+-#define IMX8QXP_LSIO_LPCG_PWM4_IPG_SLV_CLK		23
+-#define IMX8QXP_LSIO_LPCG_PWM4_IPG_MSTR_CLK		24
+-#define IMX8QXP_LSIO_LPCG_PWM5_IPG_CLK			25
+-#define IMX8QXP_LSIO_LPCG_PWM5_IPG_S_CLK		26
+-#define IMX8QXP_LSIO_LPCG_PWM5_IPG_HF_CLK		27
+-#define IMX8QXP_LSIO_LPCG_PWM5_IPG_SLV_CLK		28
+-#define IMX8QXP_LSIO_LPCG_PWM5_IPG_MSTR_CLK		29
+-#define IMX8QXP_LSIO_LPCG_PWM6_IPG_CLK			30
+-#define IMX8QXP_LSIO_LPCG_PWM6_IPG_S_CLK		31
+-#define IMX8QXP_LSIO_LPCG_PWM6_IPG_HF_CLK		32
+-#define IMX8QXP_LSIO_LPCG_PWM6_IPG_SLV_CLK		33
+-#define IMX8QXP_LSIO_LPCG_PWM6_IPG_MSTR_CLK		34
+-#define IMX8QXP_LSIO_LPCG_PWM7_IPG_CLK			35
+-#define IMX8QXP_LSIO_LPCG_PWM7_IPG_S_CLK		36
+-#define IMX8QXP_LSIO_LPCG_PWM7_IPG_HF_CLK		37
+-#define IMX8QXP_LSIO_LPCG_PWM7_IPG_SLV_CLK		38
+-#define IMX8QXP_LSIO_LPCG_PWM7_IPG_MSTR_CLK		39
+-#define IMX8QXP_LSIO_LPCG_GPT0_IPG_CLK			40
+-#define IMX8QXP_LSIO_LPCG_GPT0_IPG_S_CLK		41
+-#define IMX8QXP_LSIO_LPCG_GPT0_IPG_HF_CLK		42
+-#define IMX8QXP_LSIO_LPCG_GPT0_IPG_SLV_CLK		43
+-#define IMX8QXP_LSIO_LPCG_GPT0_IPG_MSTR_CLK		44
+-#define IMX8QXP_LSIO_LPCG_GPT1_IPG_CLK			45
+-#define IMX8QXP_LSIO_LPCG_GPT1_IPG_S_CLK		46
+-#define IMX8QXP_LSIO_LPCG_GPT1_IPG_HF_CLK		47
+-#define IMX8QXP_LSIO_LPCG_GPT1_IPG_SLV_CLK		48
+-#define IMX8QXP_LSIO_LPCG_GPT1_IPG_MSTR_CLK		49
+-#define IMX8QXP_LSIO_LPCG_GPT2_IPG_CLK			50
+-#define IMX8QXP_LSIO_LPCG_GPT2_IPG_S_CLK		51
+-#define IMX8QXP_LSIO_LPCG_GPT2_IPG_HF_CLK		52
+-#define IMX8QXP_LSIO_LPCG_GPT2_IPG_SLV_CLK		53
+-#define IMX8QXP_LSIO_LPCG_GPT2_IPG_MSTR_CLK		54
+-#define IMX8QXP_LSIO_LPCG_GPT3_IPG_CLK			55
+-#define IMX8QXP_LSIO_LPCG_GPT3_IPG_S_CLK		56
+-#define IMX8QXP_LSIO_LPCG_GPT3_IPG_HF_CLK		57
+-#define IMX8QXP_LSIO_LPCG_GPT3_IPG_SLV_CLK		58
+-#define IMX8QXP_LSIO_LPCG_GPT3_IPG_MSTR_CLK		59
+-#define IMX8QXP_LSIO_LPCG_GPT4_IPG_CLK			60
+-#define IMX8QXP_LSIO_LPCG_GPT4_IPG_S_CLK		61
+-#define IMX8QXP_LSIO_LPCG_GPT4_IPG_HF_CLK		62
+-#define IMX8QXP_LSIO_LPCG_GPT4_IPG_SLV_CLK		63
+-#define IMX8QXP_LSIO_LPCG_GPT4_IPG_MSTR_CLK		64
+-#define IMX8QXP_LSIO_LPCG_FSPI0_HCLK			65
+-#define IMX8QXP_LSIO_LPCG_FSPI0_IPG_CLK			66
+-#define IMX8QXP_LSIO_LPCG_FSPI0_IPG_S_CLK		67
+-#define IMX8QXP_LSIO_LPCG_FSPI0_IPG_SFCK		68
+-#define IMX8QXP_LSIO_LPCG_FSPI1_HCLK			69
+-#define IMX8QXP_LSIO_LPCG_FSPI1_IPG_CLK			70
+-#define IMX8QXP_LSIO_LPCG_FSPI1_IPG_S_CLK		71
+-#define IMX8QXP_LSIO_LPCG_FSPI1_IPG_SFCK		72
+-
+-#define IMX8QXP_LSIO_LPCG_CLK_END			73
+-
+-/* Connectivity SS LPCG */
+-#define IMX8QXP_CONN_LPCG_SDHC0_IPG_CLK			0
+-#define IMX8QXP_CONN_LPCG_SDHC0_PER_CLK			1
+-#define IMX8QXP_CONN_LPCG_SDHC0_HCLK			2
+-#define IMX8QXP_CONN_LPCG_SDHC1_IPG_CLK			3
+-#define IMX8QXP_CONN_LPCG_SDHC1_PER_CLK			4
+-#define IMX8QXP_CONN_LPCG_SDHC1_HCLK			5
+-#define IMX8QXP_CONN_LPCG_SDHC2_IPG_CLK			6
+-#define IMX8QXP_CONN_LPCG_SDHC2_PER_CLK			7
+-#define IMX8QXP_CONN_LPCG_SDHC2_HCLK			8
+-#define IMX8QXP_CONN_LPCG_GPMI_APB_CLK			9
+-#define IMX8QXP_CONN_LPCG_GPMI_BCH_APB_CLK		10
+-#define IMX8QXP_CONN_LPCG_GPMI_BCH_IO_CLK		11
+-#define IMX8QXP_CONN_LPCG_GPMI_BCH_CLK			12
+-#define IMX8QXP_CONN_LPCG_APBHDMA_CLK			13
+-#define IMX8QXP_CONN_LPCG_ENET0_ROOT_CLK		14
+-#define IMX8QXP_CONN_LPCG_ENET0_TX_CLK			15
+-#define IMX8QXP_CONN_LPCG_ENET0_AHB_CLK			16
+-#define IMX8QXP_CONN_LPCG_ENET0_IPG_S_CLK		17
+-#define IMX8QXP_CONN_LPCG_ENET0_IPG_CLK			18
+-
+-#define IMX8QXP_CONN_LPCG_ENET1_ROOT_CLK		19
+-#define IMX8QXP_CONN_LPCG_ENET1_TX_CLK			20
+-#define IMX8QXP_CONN_LPCG_ENET1_AHB_CLK			21
+-#define IMX8QXP_CONN_LPCG_ENET1_IPG_S_CLK		22
+-#define IMX8QXP_CONN_LPCG_ENET1_IPG_CLK			23
+-
+-#define IMX8QXP_CONN_LPCG_CLK_END			24
+-
+-/* ADMA SS LPCG */
+-#define IMX8QXP_ADMA_LPCG_UART0_IPG_CLK			0
+-#define IMX8QXP_ADMA_LPCG_UART0_BAUD_CLK		1
+-#define IMX8QXP_ADMA_LPCG_UART1_IPG_CLK			2
+-#define IMX8QXP_ADMA_LPCG_UART1_BAUD_CLK		3
+-#define IMX8QXP_ADMA_LPCG_UART2_IPG_CLK			4
+-#define IMX8QXP_ADMA_LPCG_UART2_BAUD_CLK		5
+-#define IMX8QXP_ADMA_LPCG_UART3_IPG_CLK			6
+-#define IMX8QXP_ADMA_LPCG_UART3_BAUD_CLK		7
+-#define IMX8QXP_ADMA_LPCG_SPI0_IPG_CLK			8
+-#define IMX8QXP_ADMA_LPCG_SPI1_IPG_CLK			9
+-#define IMX8QXP_ADMA_LPCG_SPI2_IPG_CLK			10
+-#define IMX8QXP_ADMA_LPCG_SPI3_IPG_CLK			11
+-#define IMX8QXP_ADMA_LPCG_SPI0_CLK			12
+-#define IMX8QXP_ADMA_LPCG_SPI1_CLK			13
+-#define IMX8QXP_ADMA_LPCG_SPI2_CLK			14
+-#define IMX8QXP_ADMA_LPCG_SPI3_CLK			15
+-#define IMX8QXP_ADMA_LPCG_CAN0_IPG_CLK			16
+-#define IMX8QXP_ADMA_LPCG_CAN0_IPG_PE_CLK		17
+-#define IMX8QXP_ADMA_LPCG_CAN0_IPG_CHI_CLK		18
+-#define IMX8QXP_ADMA_LPCG_CAN1_IPG_CLK			19
+-#define IMX8QXP_ADMA_LPCG_CAN1_IPG_PE_CLK		20
+-#define IMX8QXP_ADMA_LPCG_CAN1_IPG_CHI_CLK		21
+-#define IMX8QXP_ADMA_LPCG_CAN2_IPG_CLK			22
+-#define IMX8QXP_ADMA_LPCG_CAN2_IPG_PE_CLK		23
+-#define IMX8QXP_ADMA_LPCG_CAN2_IPG_CHI_CLK		24
+-#define IMX8QXP_ADMA_LPCG_I2C0_CLK			25
+-#define IMX8QXP_ADMA_LPCG_I2C1_CLK			26
+-#define IMX8QXP_ADMA_LPCG_I2C2_CLK			27
+-#define IMX8QXP_ADMA_LPCG_I2C3_CLK			28
+-#define IMX8QXP_ADMA_LPCG_I2C0_IPG_CLK			29
+-#define IMX8QXP_ADMA_LPCG_I2C1_IPG_CLK			30
+-#define IMX8QXP_ADMA_LPCG_I2C2_IPG_CLK			31
+-#define IMX8QXP_ADMA_LPCG_I2C3_IPG_CLK			32
+-#define IMX8QXP_ADMA_LPCG_FTM0_CLK			33
+-#define IMX8QXP_ADMA_LPCG_FTM1_CLK			34
+-#define IMX8QXP_ADMA_LPCG_FTM0_IPG_CLK			35
+-#define IMX8QXP_ADMA_LPCG_FTM1_IPG_CLK			36
+-#define IMX8QXP_ADMA_LPCG_PWM_HI_CLK			37
+-#define IMX8QXP_ADMA_LPCG_PWM_IPG_CLK			38
+-#define IMX8QXP_ADMA_LPCG_LCD_PIX_CLK			39
+-#define IMX8QXP_ADMA_LPCG_LCD_APB_CLK			40
+-
+-#define IMX8QXP_ADMA_LPCG_CLK_END			41
+-
+-#endif /* __DT_BINDINGS_CLOCK_IMX8QXP_H */
+--=20
+2.7.4
+
