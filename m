@@ -2,45 +2,49 @@ Return-Path: <SRS0=MD/5=PB=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 060D3C43387
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Dec 2018 06:39:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AE14C43387
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Dec 2018 07:04:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD82E2173B
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Dec 2018 06:39:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2BD2621773
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Dec 2018 07:04:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725927AbeLXGjz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Dec 2018 01:39:55 -0500
-Received: from gateway33.websitewelcome.com ([192.185.145.216]:23939 "EHLO
-        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725922AbeLXGjz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Dec 2018 01:39:55 -0500
-X-Greylist: delayed 1500 seconds by postgrey-1.27 at vger.kernel.org; Mon, 24 Dec 2018 01:39:54 EST
-Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
-        by gateway33.websitewelcome.com (Postfix) with ESMTP id 430DE2EC229
-        for <linux-clk@vger.kernel.org>; Sun, 23 Dec 2018 23:51:05 -0600 (CST)
+        id S1725946AbeLXHEh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Dec 2018 02:04:37 -0500
+Received: from gateway31.websitewelcome.com ([192.185.143.4]:23753 "EHLO
+        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725927AbeLXHEh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Dec 2018 02:04:37 -0500
+X-Greylist: delayed 1449 seconds by postgrey-1.27 at vger.kernel.org; Mon, 24 Dec 2018 02:04:36 EST
+Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
+        by gateway31.websitewelcome.com (Postfix) with ESMTP id 984DEEDFEF
+        for <linux-clk@vger.kernel.org>; Mon, 24 Dec 2018 00:40:26 -0600 (CST)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id bJ8rgy4cw90onbJ8rgVIng; Sun, 23 Dec 2018 23:51:05 -0600
+        id bJucgtSA8YTGMbJucghvfZ; Mon, 24 Dec 2018 00:40:26 -0600
 X-Authority-Reason: nr=8
-Received: from [189.250.106.44] (port=49820 helo=embeddedor)
+Received: from [189.250.106.44] (port=50094 helo=embeddedor)
         by gator4166.hostgator.com with esmtpa (Exim 4.91)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1gbJ8q-00478n-9u; Sun, 23 Dec 2018 23:51:04 -0600
-Date:   Sun, 23 Dec 2018 23:50:58 -0600
+        id 1gbJub-000Gyx-OC; Mon, 24 Dec 2018 00:40:25 -0600
+Date:   Mon, 24 Dec 2018 00:40:25 -0600
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Jolly Shah <jolly.shah@xilinx.com>,
+To:     Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michal Simek <michal.simek@xilinx.com>
-Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] clk: zynqmp: Fix memory allocation in zynqmp_clk_setup
-Message-ID: <20181224055058.GA23947@embeddedor.com>
+Subject: [PATCH] clk: imx: imx7ulp: use struct_size() in kzalloc()
+Message-ID: <20181224064025.GA9588@embeddedor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -53,13 +57,13 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 189.250.106.44
 X-Source-L: No
-X-Exim-ID: 1gbJ8q-00478n-9u
+X-Exim-ID: 1gbJub-000Gyx-OC
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.106.44]:49820
+X-Source-Sender: (embeddedor) [189.250.106.44]:50094
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 10
+X-Email-Count: 13
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-clk-owner@vger.kernel.org
@@ -67,30 +71,77 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Fix memory allocation and use struct_size() in kzalloc().
+One of the more common cases of allocation size calculations is finding
+the size of a structure that has a zero-sized array at the end, along
+with memory for some number of elements for that array. For example:
 
-Fixes: 3fde0e16d016 ("drivers: clk: Add ZynqMP clock driver")
-Cc: stable@vger.kernel.org
+struct foo {
+    int stuff;
+    void *entry[];
+};
+
+instance = kzalloc(sizeof(struct foo) + sizeof(void *) * count, GFP_KERNEL);
+
+Instead of leaving these open-coded and prone to type mistakes, we can
+now use the new struct_size() helper:
+
+instance = kzalloc(struct_size(instance, entry, count), GFP_KERNEL);
+
+This issue was detected with the help of Coccinelle.
+
 Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- drivers/clk/zynqmp/clkc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/imx/clk-imx7ulp.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/clk/zynqmp/clkc.c b/drivers/clk/zynqmp/clkc.c
-index f65cc0ff76ab..b0908ec62f73 100644
---- a/drivers/clk/zynqmp/clkc.c
-+++ b/drivers/clk/zynqmp/clkc.c
-@@ -669,8 +669,8 @@ static int zynqmp_clk_setup(struct device_node *np)
- 	if (ret)
- 		return ret;
+diff --git a/drivers/clk/imx/clk-imx7ulp.c b/drivers/clk/imx/clk-imx7ulp.c
+index 4e18f629f823..ce306631e844 100644
+--- a/drivers/clk/imx/clk-imx7ulp.c
++++ b/drivers/clk/imx/clk-imx7ulp.c
+@@ -48,8 +48,8 @@ static void __init imx7ulp_clk_scg1_init(struct device_node *np)
+ 	struct clk_hw **clks;
+ 	void __iomem *base;
  
--	zynqmp_data = kzalloc(sizeof(*zynqmp_data) + sizeof(*zynqmp_data) *
--						clock_max_idx, GFP_KERNEL);
-+	zynqmp_data = kzalloc(struct_size(zynqmp_data, hws, clock_max_idx),
-+			      GFP_KERNEL);
- 	if (!zynqmp_data)
- 		return -ENOMEM;
+-	clk_data = kzalloc(sizeof(*clk_data) + sizeof(*clk_data->hws) *
+-			   IMX7ULP_CLK_SCG1_END, GFP_KERNEL);
++	clk_data = kzalloc(struct_size(clk_data, hws, IMX7ULP_CLK_SCG1_END),
++			   GFP_KERNEL);
+ 	if (!clk_data)
+ 		return;
+ 
+@@ -136,8 +136,8 @@ static void __init imx7ulp_clk_pcc2_init(struct device_node *np)
+ 	struct clk_hw **clks;
+ 	void __iomem *base;
+ 
+-	clk_data = kzalloc(sizeof(*clk_data) + sizeof(*clk_data->hws) *
+-			   IMX7ULP_CLK_PCC2_END, GFP_KERNEL);
++	clk_data = kzalloc(struct_size(clk_data, hws, IMX7ULP_CLK_PCC2_END),
++			   GFP_KERNEL);
+ 	if (!clk_data)
+ 		return;
+ 
+@@ -183,8 +183,8 @@ static void __init imx7ulp_clk_pcc3_init(struct device_node *np)
+ 	struct clk_hw **clks;
+ 	void __iomem *base;
+ 
+-	clk_data = kzalloc(sizeof(*clk_data) + sizeof(*clk_data->hws) *
+-			   IMX7ULP_CLK_PCC3_END, GFP_KERNEL);
++	clk_data = kzalloc(struct_size(clk_data, hws, IMX7ULP_CLK_PCC3_END),
++			   GFP_KERNEL);
+ 	if (!clk_data)
+ 		return;
+ 
+@@ -228,8 +228,8 @@ static void __init imx7ulp_clk_smc1_init(struct device_node *np)
+ 	struct clk_hw **clks;
+ 	void __iomem *base;
+ 
+-	clk_data = kzalloc(sizeof(*clk_data) + sizeof(*clk_data->hws) *
+-			   IMX7ULP_CLK_SMC1_END, GFP_KERNEL);
++	clk_data = kzalloc(struct_size(clk_data, hws, IMX7ULP_CLK_SMC1_END),
++			   GFP_KERNEL);
+ 	if (!clk_data)
+ 		return;
  
 -- 
-2.17.0
+2.20.1
 
