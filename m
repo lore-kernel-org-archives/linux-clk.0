@@ -2,184 +2,90 @@ Return-Path: <SRS0=TWcp=PD=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DC04C43387
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Dec 2018 09:20:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3E49C43387
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Dec 2018 13:10:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D52621741
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Dec 2018 09:20:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A946E21720
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Dec 2018 13:10:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bFAHfm3f"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rjItMP5X"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726142AbeLZJUS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 26 Dec 2018 04:20:18 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:37587 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726144AbeLZJUN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Dec 2018 04:20:13 -0500
-Received: by mail-wr1-f65.google.com with SMTP id s12so15148205wrt.4
-        for <linux-clk@vger.kernel.org>; Wed, 26 Dec 2018 01:20:11 -0800 (PST)
+        id S1726549AbeLZNKG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 26 Dec 2018 08:10:06 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:38449 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726138AbeLZNKG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Dec 2018 08:10:06 -0500
+Received: by mail-pl1-f196.google.com with SMTP id e5so7543409plb.5;
+        Wed, 26 Dec 2018 05:10:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=cPkYBpJFj3rRgobWvv5/Zg1QLJiRxRLFFuoVIzu1RGU=;
-        b=bFAHfm3fwnWQGByGvmlEfB71fCHzpTOnC9nkLhBcM1T+/KTzeBLQzOx1ScmHEV/7Gk
-         qZDLgdJ5Z+RdREt3RYgQVHnMuyZUhesoZ1bBhcpS/L+yx7RDXmN0oX5auh6v/p4NLsXf
-         bNwq2AX5jFa3VKu6RDyKEjP9id9XnQgJwrSH0=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=0I4s3GxOOwCcZbSPSFDvUZhd+6NotTcCuPivJ0ciKF0=;
+        b=rjItMP5XTwDbEusoGqHChM3X8+fhzKwas1QOEIGc47vk0QOF7T4eIce1o0yf+UcBTl
+         UIvmBuCRNmMnEQR9fKZNJuYArW0i9N4u321iY5IW3Bzvi4Nsdh/KWNU3N3LPg2aInqeV
+         WmLvEjiR9ky9nmNemCw6ilaOisjdoJdAr0DOueARtDlWmZdI842awXsos7sYh580R6VB
+         PJPGjBVbs/AQ9PA2SBsuYPHzGzhHoHOjA0Hmx1v6fP0t2uMvK0f4g7sYiB4Ol8rk5M8O
+         4EKXoUV27/JNe/EFVul+rYzFSxHItLab/dOIjBeK237A2EI3XQia7QhxPzQwL4L+vFE9
+         QgOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=cPkYBpJFj3rRgobWvv5/Zg1QLJiRxRLFFuoVIzu1RGU=;
-        b=UkFBgKw3ztCvgIJdFrbKz+kXNKxyaZp49IxDmvJkugw54waYFnCYXcZFli1+iNTN2M
-         5petA/ijeUyKttfd+Qp6fppI9Bo/i55bBLJwW8LrJZicd0MrnTRF1EF1kDKJukMjm8a8
-         R9WwEGjsgaW16LPIYgLi92h+zarz/6LqdvbpOgF94zrwbu5Zp3JXe09+sMfe0Rc/iMDp
-         tUya+9HWOG5c8g+Q1aDG0Sy46s9ojN6aFXBO/HQP3kelVsoYVNgJZ6Q0hSPJcpDhPGa7
-         mME42cV/SnCkubJGvBKKHqw12xwPtfBeWXm5LGQCkusgd94MchZSYuWrre+7dH1o4vIC
-         gq6Q==
-X-Gm-Message-State: AJcUukdHmf7CPVpEWYVwNwlxbfpt1xG5UoNvnAnsQtDd3PU6EI6GC+Y+
-        wjo1QxEowxxeFXb9teqpXGfN43VOAvA=
-X-Google-Smtp-Source: ALg8bN59NDUN0Zy2q3OY46DeuLXssPI9QfG1WmFMkF6m8tOgLANQL2H/y8tc4z9eRY7dYpOzVRYSeQ==
-X-Received: by 2002:adf:91a3:: with SMTP id 32mr16217113wri.99.1545816010832;
-        Wed, 26 Dec 2018 01:20:10 -0800 (PST)
-Received: from [192.168.1.2] (227.red-79-146-82.dynamicip.rima-tde.net. [79.146.82.227])
-        by smtp.gmail.com with ESMTPSA id l37sm49776483wre.69.2018.12.26.01.20.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 26 Dec 2018 01:20:10 -0800 (PST)
-Subject: Re: [PATCH 05/13] clk: qcom: apcs-msm8916: get parent clock names
- from DT
-To:     Niklas Cassel <niklas.cassel@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     andy.gross@linaro.org, david.brown@linaro.org,
-        jassisinghbrar@gmail.com, mark.rutland@arm.com,
-        mturquette@baylibre.com, robh+dt@kernel.org, will.deacon@arm.com,
-        bjorn.andersson@linaro.org, vkoul@kernel.org, sibis@codeaurora.org,
-        georgi.djakov@linaro.org, arnd@arndb.de,
-        horms+renesas@verge.net.au, heiko@sntech.de,
-        enric.balletbo@collabora.com, jagan@amarulasolutions.com,
-        olof@lixom.net, amit.kucheria@linaro.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-References: <1545039990-19984-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
- <1545039990-19984-6-git-send-email-jorge.ramirez-ortiz@linaro.org>
- <154508986359.19322.1555129141976726505@swboyd.mtv.corp.google.com>
- <20181218143503.GA32562@centauri.ideon.se>
-From:   Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>
-Message-ID: <72bc192f-b60a-1209-7818-78a2fed07831@linaro.org>
-Date:   Wed, 26 Dec 2018 10:20:07 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20181218143503.GA32562@centauri.ideon.se>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=0I4s3GxOOwCcZbSPSFDvUZhd+6NotTcCuPivJ0ciKF0=;
+        b=XHx4km0bnkvrRxuLgBOACOx+GRsaWVG0/u4WPzAvthSI537P4EDhi3N3ENCQQbfNZy
+         hCoQZd0FNgraet3W2StXEztNgUUMmqmVkwzr46TfRqpO03rPLzLv/3kZ0sUeApKpiRaN
+         /8CKuLzlShFBhHDnM3wxFdKRfDoVRF2XgJ4nzWpYoDtoAA7SFHrdoiavovuPtg3Xqi3m
+         W6xga5R8AxLORCiJkXyUrWyzEnjaQLAdGs3MUnWsu+0Y5iKDxxKA7yhf3jazNCLPXivh
+         nNMBiy/fORvrA8UiXvNPqkPMrQoy8OYPwXcyLNVRXEPc3vBwfaZq3zu6Igr6y2su3BDq
+         L5kg==
+X-Gm-Message-State: AJcUukf100B+6Sg2KHz5m5dCNg0LGUiheBqJ/g4h9SsTrz4ya7/2jQyw
+        cbyxS198tH6pnzI37ZcimTA=
+X-Google-Smtp-Source: ALg8bN5ia4R6Mp5tvr0ajVSfJL6f6wv+TJ5QfqF/JIAmQI3nIJjXPLx5otq2LhQG9T0b1F4MaPTcTQ==
+X-Received: by 2002:a17:902:708b:: with SMTP id z11mr19746813plk.203.1545829805323;
+        Wed, 26 Dec 2018 05:10:05 -0800 (PST)
+Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
+        by smtp.gmail.com with ESMTPSA id k15sm58740215pfb.147.2018.12.26.05.10.03
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 26 Dec 2018 05:10:04 -0800 (PST)
+From:   Yangtao Li <tiny.windzz@gmail.com>
+To:     mturquette@baylibre.com, sboyd@kernel.org
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH] clk: highbank: fix refcount leak in hb_clk_init()
+Date:   Wed, 26 Dec 2018 08:10:01 -0500
+Message-Id: <20181226131001.4285-1-tiny.windzz@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 12/18/18 15:35, Niklas Cassel wrote:
-> On Mon, Dec 17, 2018 at 03:37:43PM -0800, Stephen Boyd wrote:
->> Quoting Jorge Ramirez-Ortiz (2018-12-17 01:46:22)
->>> Allow accessing the parent clock names required for the driver
->>> operation by using the device tree node.
->>>
->>> This permits extending the driver to other platforms without having to
->>> modify its source code.
->>>
->>> For backwards compatibility leave previous values as default.
->>
->> Why do we need to maintain backwards compatibility? Isn't is required
->> that the nodes have clocks properties?
->>
-> 
-> Hello Stephen,
-> 
-> 
-> This is the existing DT nodes for msm8916:
-> 
->                 a53pll: clock@b016000 {
->                          compatible = "qcom,msm8916-a53pll";
->                          reg = <0xb016000 0x40>;
->                          #clock-cells = <0>;
->                  };
-> 
->                  apcs: mailbox@b011000 {
->                          compatible = "qcom,msm8916-apcs-kpss-global", "syscon";
->                          reg = <0xb011000 0x1000>;
->                          #mbox-cells = <1>;
->                          clocks = <&a53pll>;
->                          #clock-cells = <0>;
->                  };
-> 
-> 
-> This is the (suggested) DT nodes for qcs404:
-> 
->                  apcs_hfpll: clock-controller@0b016000 {
->                          compatible = "qcom,hfpll";
->                          reg = <0x0b016000 0x30>;
->                          #clock-cells = <0>;
->                          clock-output-names = "apcs_hfpll";
->                          clocks = <&xo_board>;
->                          clock-names = "xo";
->                  };
-> 
->                  apcs_glb: mailbox@b011000 {
->                          compatible = "qcom,qcs404-apcs-apps-global", "syscon";
->                          reg = <0x0b011000 0x1000>;
->                          #mbox-cells = <1>;
->                          clocks = <&gcc GCC_GPLL0_AO_OUT_MAIN>, <&apcs_hfpll>;
->                          clock-names = "aux", "pll";
->                          #clock-cells = <0>;
->                  };
-> 
-> qcs404 specifies two clocks, with an accompanied clock-name for each clock.
-> 
-> msm8916 specifies a single clock, without an accompanied clock-name.
-> 
-> It is possible to append clock-names = "pll" for the existing clock,
-> as well as to define the aux clock in the apcs node in the msm8916 DT:
-> clocks = <&gcc GPLL0_VOTE>;
-> clock-names = "aux";
-> 
-> However, since the DT is treated as an ABI, the existing DT for msm8916 must
-> still work, so I don't think that it is possible to ignore having backwards
-> compability in the apcs clock driver.
+The of_find_compatible_node() returns a node pointer with refcount
+incremented, but there is the lack of use of the of_node_put() when
+done. Add the missing of_node_put() to release the refcount.
 
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+---
+ drivers/clk/clk-highbank.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-so where are we with this?
-
-do we remove backwards compatibility (see below] for v2 or is the DT 
-really an ABI and therefore the patch under review is good as is?
-
-
-diff --git a/arch/arm64/boot/dts/qcom/msm8916.dtsi 
-b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-index c5348c3..729c117 100644
---- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-@@ -425,7 +425,8 @@
-                         compatible = "qcom,msm8916-apcs-kpss-global", 
-"syscon";
-                         reg = <0xb011000 0x1000>;
-                         #mbox-cells = <1>;
--                   clocks = <&a53pll>;
-+                 clocks = <&gcc GPLL0_VOTE>, <&a53pll>;
-+                 clock-names = "aux", "pll";
-                         #clock-cells = <0>;
-                 };
-
-
-
-> 
-> 
-> Kind regards,
-> Niklas
-> 
+diff --git a/drivers/clk/clk-highbank.c b/drivers/clk/clk-highbank.c
+index 727ed8e1bb72..8e4581004695 100644
+--- a/drivers/clk/clk-highbank.c
++++ b/drivers/clk/clk-highbank.c
+@@ -293,6 +293,7 @@ static __init struct clk *hb_clk_init(struct device_node *node, const struct clk
+ 	/* Map system registers */
+ 	srnp = of_find_compatible_node(NULL, NULL, "calxeda,hb-sregs");
+ 	hb_clk->reg = of_iomap(srnp, 0);
++	of_node_put(srnp);
+ 	BUG_ON(!hb_clk->reg);
+ 	hb_clk->reg += reg;
+ 
+-- 
+2.17.0
 
