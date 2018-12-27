@@ -2,125 +2,112 @@ Return-Path: <SRS0=Z81n=PE=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA9DEC43387
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Dec 2018 20:13:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F541C43387
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Dec 2018 21:54:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A78122148D
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Dec 2018 20:13:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="AQP2qlzv"
+	by mail.kernel.org (Postfix) with ESMTP id 24AA5214C6
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Dec 2018 21:54:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1545947692;
+	bh=awRPkOCwZCqEXgSjcvnRe+MIIT79iYUZ5M4RJz1z0gk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=HQY9sNndBbe5F6smossbh7fXjU40rvX0W8KGc82l/6xv5EMvtMV4/ZMFmPEIMBrQP
+	 GOGjOC35uMzFYbZv9I5+6E5TLJA9h1KvI2ie1LtS99+MYYhS9zISt05iKW9RxRl2UI
+	 tOVwZ4OCBc2tGAnSzJdV+k79s3xT66HjaI7rd1EY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729597AbeL0UNC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Dec 2018 15:13:02 -0500
-Received: from mail.andi.de1.cc ([85.214.239.24]:60784 "EHLO
-        h2641619.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729494AbeL0UNC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Dec 2018 15:13:02 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=kemnade.info; s=20180802; h=Content-Type:MIME-Version:References:
-        In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=tUF3Nc9Cy2Iu7AF/uNSRNI7ASH7L3YuDeGvyAj2YKbA=; b=AQP2qlzvsCbFeNC+yB7i65MAO
-        olJy7Np4GGA7nZvCL5zSEtbVAOG7X/npOHMWEBVKwPHVrbJRFK0EWgeqh4EjnyoDCOd+9uL8Xch8a
-        ptByLVC3mTMRDZJfnmqZmJ84uVqnlTVdMBnaV2txWE8SOUCHLxG54vNuVpW1yVJK0UEa4=;
-Received: from p5dcc3f32.dip0.t-ipconnect.de ([93.204.63.50] helo=aktux)
-        by h2641619.stratoserver.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1gcc1S-0006RY-Ed; Thu, 27 Dec 2018 21:12:50 +0100
-Date:   Thu, 27 Dec 2018 21:12:22 +0100
-From:   Andreas Kemnade <andreas@kemnade.info>
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>, Tero Kristo <t-kristo@ti.com>,
-        bcousson@baylibre.com, letux-kernel@openphoenux.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, mturquette@baylibre.com, paul@pwsan.com
-Subject: Re: [PATCH v2 2/3] clk: ti: check clock type before doing autoidle
- ops
-Message-ID: <20181227211222.5996c356@aktux>
-In-Reply-To: <20181204164556.GB6707@atomide.com>
-References: <154353750560.88331.11814738542436183126@swboyd.mtv.corp.google.com>
-        <20181130071534.0a6cd455@kemnade.info>
-        <154356242517.88331.8496814814468751012@swboyd.mtv.corp.google.com>
-        <9eb7b090-4803-d389-4112-3bf058385b2e@ti.com>
-        <154356463284.88331.13323307899580657085@swboyd.mtv.corp.google.com>
-        <eca27a46-2ca3-1a02-c0c8-c1c00b3b2f46@ti.com>
-        <20181130153729.GG53235@atomide.com>
-        <154362191595.88331.15503578806026771935@swboyd.mtv.corp.google.com>
-        <20181203153910.GA6707@atomide.com>
-        <20181203172246.0e767a16@kemnade.info>
-        <20181204164556.GB6707@atomide.com>
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1729937AbeL0Vyv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Dec 2018 16:54:51 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:40086 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729935AbeL0Vyv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Dec 2018 16:54:51 -0500
+Received: by mail-io1-f66.google.com with SMTP id a2so3129122iok.7;
+        Thu, 27 Dec 2018 13:54:50 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=qVKjW1jPignFC6PDbZudzDYlcK9KOJ0D+lc5t1OhGkk=;
+        b=AEy/nQylTz790UnVO/KtUeOrxhbWlHzdNPBv1zQrGlHUFM5athHflGSP4q2VTPeyZO
+         wAMnS7lunVQSEPfCYLV3fX9jycy3BlD1MLxLVX1UDtvmv1AT8a6LvBOCykxYtucVNb//
+         F7tU+7cfBWfljVXEKUfeYrPsKFIojXz4lGsInBzStzCDFa6dtYlibNsFzHE2TzFSD/2U
+         Py1vjmRSCL/miH0jQNDfIn+f7X3bCWUjoHSIVOghM0PNArTd1FAFMuXF8qLF+vpJRWg7
+         0zBvF0RDc/Tcgcw/oJ5A5FaFWDwn6L4C0RGeCsprrTGcHmD9jNzC8pz+QIEUS9CROxRR
+         UB6w==
+X-Gm-Message-State: AJcUukeY1D2zI/vGvQfS1iOKVzUQn4PXzgzLH0PrizLNLOqPenQ+NWq6
+        hXMYDsQyWc9o/ML2K0G8cQ==
+X-Google-Smtp-Source: ALg8bN49OFGnMLTGDjsDK+EoPFZBSNCvPAEs+X6v6LWm5j66PJz3T9YclANLW4lO9+T2Gv19Mxbs/w==
+X-Received: by 2002:a6b:c386:: with SMTP id t128mr17449483iof.304.1545947690494;
+        Thu, 27 Dec 2018 13:54:50 -0800 (PST)
+Received: from localhost ([24.51.61.172])
+        by smtp.gmail.com with ESMTPSA id s4sm6546133iom.83.2018.12.27.13.54.49
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 27 Dec 2018 13:54:49 -0800 (PST)
+Date:   Thu, 27 Dec 2018 15:54:47 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Aisheng Dong <aisheng.dong@nxp.com>
+Cc:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH V2 1/1] clk: imx8qxp: make the name of clock ID generic
+Message-ID: <20181227215447.GA12514@bogus>
+References: <1545581665-15446-1-git-send-email-aisheng.dong@nxp.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/TIvixuQ9bzfDR./7PwxIb2L"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1545581665-15446-1-git-send-email-aisheng.dong@nxp.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
---Sig_/TIvixuQ9bzfDR./7PwxIb2L
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Sun, 23 Dec 2018 16:20:02 +0000, Aisheng Dong wrote:
+> SCU clock can be used in a similar way by IMX8QXP and IMX8QM SoCs.
+> Let's make the name of clock ID generic to allow other SoCs to reuse
+> the common part.
+> 
+> This patch only changes the clock id name and file name, so no
+> functional change.
+> 
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: Sascha Hauer <kernel@pengutronix.de>
+> Cc: Fabio Estevam <fabio.estevam@nxp.com>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: devicetree@vger.kernel.org
+> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+> ---
+> According to Stephen's suggestion[1], resend the needed changes
+> for 4.21 separately, then we can pick it up and send it as part
+> of a follow-on fixes PR during the merge window next week.
+> As there's still no users in kernel and the plan is also to avoid
+> any using of it, so please help review at an early time.
+> v1->v2:
+>  * resend Patch [4/5] which needs to change for v4.21.
+>  * update headfile name accordingly
+> [1] https://patchwork.kernel.org/patch/10737463/
+> ---
+>  drivers/clk/imx/clk-imx8qxp-lpcg.c        | 148 +++++++--------
+>  drivers/clk/imx/clk-imx8qxp.c             | 154 ++++++++--------
+>  include/dt-bindings/clock/imx8-clock.h    | 289 ++++++++++++++++++++++++++++++
+>  include/dt-bindings/clock/imx8qxp-clock.h | 289 ------------------------------
+>  4 files changed, 440 insertions(+), 440 deletions(-)
+>  create mode 100644 include/dt-bindings/clock/imx8-clock.h
+>  delete mode 100644 include/dt-bindings/clock/imx8qxp-clock.h
+> 
 
-Hi,
-
-On Tue, 4 Dec 2018 08:45:57 -0800
-Tony Lindgren <tony@atomide.com> wrote:
-
-> * Andreas Kemnade <andreas@kemnade.info> [181204 06:17]:
-> > On Mon, 3 Dec 2018 07:39:10 -0800
-> > Tony Lindgren <tony@atomide.com> wrote: =20
-> > > The consumer device stays active just fine with PM runtime
-> > > calls. So yes, the problem is keeping a clock controller forced
-> > > active for the period of consumer device reset. Other than
-> > > that typically autoidle can be just kept enabled.
-> > >  =20
-> > Are we still talking about the same problem? Maybe I am losing track
-> > here. Just to make sure.=20
-> > The patch series was about disabling autoidle for devices which cannot
-> > work with it during normal operation. Not during reset or something
-> > like that.=20
-> > Or is the keep-clock-active-during-reset just a requirement for bigger
-> > restructuring ideas? =20
->=20
-> Yeah there are two issues: The fix needed for the issue you brought up,
-> and also how to let a reset driver to block autoidle for reset.
->=20
-Hmm, is this set now waiting for the famous "somebody" fixing all
-the stuff?
-What are currently visible symptoms for the driver not blocking
-autoidle for reset? Maybe I can at least test something there. I have
-also omap5 here.
-
-Regards,
-Andreas
-
---Sig_/TIvixuQ9bzfDR./7PwxIb2L
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEE7sDbhY5mwNpwYgrAfb1qx03ikyQFAlwlMiYACgkQfb1qx03i
-kySS0xAArFtcBqNv3FgSHyXCkCfojx8xM1WGyVr+paQgNoOZtmThhgTTi1CEgQ4a
-ElAK5Lp7sl1JeYmqIP/XYHBkFDRfavWRIGU1ZggahsP5gmalPZV1k7HtkCGaubua
-5pVvpmNYy4txp7oatJ4FpQJKAiyXqz9u6on4t2uUdOxqDIJWpnP/3EHORjiXzel4
-Ss4P712YS42TsKsCvdwNNXAMNtci1GyDZ0OWYITBgW+bqzIV+qWgaNAX6g2q+1rd
-0lmqTllP2N9KRLQ8dteBYlDQiB2A7GSblynObVnaRWGN/1/gFgbQ87SoSbyaFvXT
-4gmypEeB9Sh/vkg9Jjjxq7gkpV6v3STXIy8Dx7jY0I1/Wtd4KRhJYApOs2xQqZo0
-iOZqSflhm3/np3ldpxkZYb0IEqFHPZzYzfjlmNxYojpJ8qInrMF1sVcvpRFPNh/p
-mIx7bHF37KOmex/+H1GBHWTuAvEitrNHAYT3JdpKxVHfOJX/b7H0OhZXjnQ6Mvvm
-VAqWEBkjueo0wEH4cfMz3yxftEpjAYgBnOb7KLfinc38gS4PQWMEun6YyWTg8Z4E
-SSJvK3BYPXNZT1HLjlhB4W4JtzNtKbIqwJAOBahiK0KgHHNRg3FV+KE9ZdwMxX6O
-T+z8EQLrsdFkS5vM6LNJn7JbgSix33pO9X20xE50sLvCmqEEfrw=
-=5Sng
------END PGP SIGNATURE-----
-
---Sig_/TIvixuQ9bzfDR./7PwxIb2L--
+Reviewed-by: Rob Herring <robh@kernel.org>
