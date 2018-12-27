@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 967FEC43387
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Dec 2018 18:14:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDA26C43387
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Dec 2018 18:14:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F3AF206BB
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Dec 2018 18:14:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC7F4206BB
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Dec 2018 18:14:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="klRbrqIx"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="inGNFDP4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727796AbeL0SOU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Dec 2018 13:14:20 -0500
-Received: from outils.crapouillou.net ([89.234.176.41]:54870 "EHLO
+        id S1727580AbeL0SOP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Dec 2018 13:14:15 -0500
+Received: from outils.crapouillou.net ([89.234.176.41]:54728 "EHLO
         crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727337AbeL0SOT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Dec 2018 13:14:19 -0500
+        with ESMTP id S1727412AbeL0SOP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Dec 2018 13:14:15 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1545934454; h=from:from:sender:reply-to:subject:subject:date:date:
+        s=mail; t=1545934451; h=from:from:sender:reply-to:subject:subject:date:date:
          message-id:message-id:to:to:cc:cc:mime-version:content-type:
          content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=yKG322FndZ2CbkJ8FcD7Y6jllruXqMnKih4gGdHMsM0=;
-        b=klRbrqIxL7+ywFY0Ek2SW41S9JW6wkenSZSD1fzb6DFFCNCBcrHk54dHS4wIpmygW9sjSb
-        7e5/OuD63jwvVKty4ySnU3R0lI2/5cX+huXTNAN9+xdm8Obx4mFi/deHp0SE8RvFismiwK
-        zbXM7zcAa7ZIeOPgFRww3kmTbkghlSA=
+        bh=QNeFphZ9hUGkh5Yk3GbZdG621Ws/p+nAIHYSiHDJAPE=;
+        b=inGNFDP4u+szGVWW/QS6brBJhsGki+GK/44lyG2HU4dYYlcWJ3Qhr/ChyrcIQVTapQv3UV
+        /rV48VpTWqYe/V20RjyPV4pjuYXT3dsSf7lUKSjgh4meAMiWDSsCO0Hyc217gq75JPIAB7
+        jJ2LFI4vqGffI1nFdjEDOrmL3OctpFw=
 From:   Paul Cercueil <paul@crapouillou.net>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -44,9 +44,9 @@ Cc:     linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
         linux-mips@vger.kernel.org, linux-doc@vger.kernel.org,
         linux-clk@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v9 25/27] MIPS: GCW0: Reduce system timer to 750 kHz
-Date:   Thu, 27 Dec 2018 19:13:17 +0100
-Message-Id: <20181227181319.31095-26-paul@crapouillou.net>
+Subject: [PATCH v9 23/27] MIPS: CI20: Reduce system timer to 3 MHz
+Date:   Thu, 27 Dec 2018 19:13:15 +0100
+Message-Id: <20181227181319.31095-24-paul@crapouillou.net>
 In-Reply-To: <20181227181319.31095-1-paul@crapouillou.net>
 References: <20181227181319.31095-1-paul@crapouillou.net>
 Sender: linux-clk-owner@vger.kernel.org
@@ -54,33 +54,39 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The default clock (12 MHz) is too fast for the system timer.
+The default clock (48 MHz) is too fast for the system timer.
 
 Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 ---
 
 Notes:
-     v8: New patch
+     v5: New patch
+    
+     v6: Set also the rate for the clocksource channel's clock
+    
+     v7: No change
+
+     v8: No change
 
      v9: Don't configure clock timer1, as the OS Timer is used as
          clocksource on this SoC
 
- arch/mips/boot/dts/ingenic/gcw0.dts | 6 ++++++
+ arch/mips/boot/dts/ingenic/ci20.dts | 6 ++++++
  1 file changed, 6 insertions(+)
 
-diff --git a/arch/mips/boot/dts/ingenic/gcw0.dts b/arch/mips/boot/dts/ingenic/gcw0.dts
-index 35f0291e8d38..c26572f8b8ae 100644
---- a/arch/mips/boot/dts/ingenic/gcw0.dts
-+++ b/arch/mips/boot/dts/ingenic/gcw0.dts
-@@ -60,3 +60,9 @@
- 	/* The WiFi module is connected to the UHC. */
- 	status = "okay";
+diff --git a/arch/mips/boot/dts/ingenic/ci20.dts b/arch/mips/boot/dts/ingenic/ci20.dts
+index 50cff3cbcc6d..700cf28a52ec 100644
+--- a/arch/mips/boot/dts/ingenic/ci20.dts
++++ b/arch/mips/boot/dts/ingenic/ci20.dts
+@@ -238,3 +238,9 @@
+ 		bias-disable;
+ 	};
  };
 +
 +&tcu {
-+	/* 750 kHz for the system timer */
++	/* 3 MHz for the system timer */
 +	assigned-clocks = <&tcu TCU_CLK_TIMER0>;
-+	assigned-clock-rates = <750000>;
++	assigned-clock-rates = <3000000>;
 +};
 -- 
 2.11.0
