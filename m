@@ -2,67 +2,94 @@ Return-Path: <SRS0=9SV/=PF=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A18BC43387
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Dec 2018 19:46:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DF1BC43387
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Dec 2018 20:02:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44BB420866
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Dec 2018 19:46:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546026388;
-	bh=uXJd8IZ1PNumWdx2uYY+UIcfRd3zfh0Ov0ERRVcqgPg=;
-	h=To:References:Subject:Cc:From:In-Reply-To:Date:List-ID:From;
-	b=qUTAHtjvBVtPwJpQDXslVqrOUviQJ9ZYwZzpjw+aF+V6O5/FXXvCFHql22Yc83NS3
-	 a6joshAoIqIYyA7K3Z9xREQ6G/pYIiJgZOmHeQoIsfTzKN5Jj57/Tqsmlj3VL+iO6B
-	 kenNWhYkDUZVvQczKFvJAsLT1d2FfLT3RsjcEIGk=
+	by mail.kernel.org (Postfix) with ESMTP id 0E49A20866
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Dec 2018 20:02:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730058AbeL1TqV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 28 Dec 2018 14:46:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38188 "EHLO mail.kernel.org"
+        id S1732051AbeL1UCd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 28 Dec 2018 15:02:33 -0500
+Received: from muru.com ([72.249.23.125]:59620 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387954AbeL1TqV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 28 Dec 2018 14:46:21 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6E4DE20866;
-        Fri, 28 Dec 2018 19:46:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546026380;
-        bh=uXJd8IZ1PNumWdx2uYY+UIcfRd3zfh0Ov0ERRVcqgPg=;
-        h=To:References:Subject:Cc:From:In-Reply-To:Date:From;
-        b=Aj82qTa2QH3dxTqLn312g7AvtSikt+j5NVIH6Q1ugHbIAVGEEpGkaeUGJNwEptaJe
-         IRl99CVALViipw2DThC6Lq9kKpcdl6Rl9tIe3xPRbPqhtmYZeTfQhj9TqSlAHWakAU
-         VPbXglDLSZgzAipqDiF8u0PRGzxaK9EBPabRGuqI=
-Content-Type: text/plain; charset="utf-8"
+        id S1726466AbeL1UCd (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 28 Dec 2018 15:02:33 -0500
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 3ADA080BF;
+        Fri, 28 Dec 2018 20:02:37 +0000 (UTC)
+Date:   Fri, 28 Dec 2018 12:02:29 -0800
+From:   Tony Lindgren <tony@atomide.com>
+To:     Andreas Kemnade <andreas@kemnade.info>
+Cc:     Stephen Boyd <sboyd@kernel.org>, Tero Kristo <t-kristo@ti.com>,
+        bcousson@baylibre.com, letux-kernel@openphoenux.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, mturquette@baylibre.com, paul@pwsan.com
+Subject: Re: [PATCH v2 2/3] clk: ti: check clock type before doing autoidle
+ ops
+Message-ID: <20181228200229.GY6707@atomide.com>
+References: <154356242517.88331.8496814814468751012@swboyd.mtv.corp.google.com>
+ <9eb7b090-4803-d389-4112-3bf058385b2e@ti.com>
+ <154356463284.88331.13323307899580657085@swboyd.mtv.corp.google.com>
+ <eca27a46-2ca3-1a02-c0c8-c1c00b3b2f46@ti.com>
+ <20181130153729.GG53235@atomide.com>
+ <154362191595.88331.15503578806026771935@swboyd.mtv.corp.google.com>
+ <20181203153910.GA6707@atomide.com>
+ <20181203172246.0e767a16@kemnade.info>
+ <20181204164556.GB6707@atomide.com>
+ <20181227211222.5996c356@aktux>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Yangtao Li <tiny.windzz@gmail.com>, gregory.clement@bootlin.com,
-        mturquette@baylibre.com
-Message-ID: <154602637977.179992.16699867972525520096@swboyd.mtv.corp.google.com>
-References: <20181226133658.5095-1-tiny.windzz@gmail.com>
-Subject: Re: [PATCH] clk: armada-370: fix refcount leak in a370_clk_init()
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Yangtao Li <tiny.windzz@gmail.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-User-Agent: alot/0.8
-In-Reply-To: <20181226133658.5095-1-tiny.windzz@gmail.com>
-Date:   Fri, 28 Dec 2018 11:46:19 -0800
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181227211222.5996c356@aktux>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Yangtao Li (2018-12-26 05:36:58)
-> The of_find_compatible_node() returns a node pointer with refcount
-> incremented, but there is the lack of use of the of_node_put() when
-> done. Add the missing of_node_put() to release the refcount.
->=20
-> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-> ---
+* Andreas Kemnade <andreas@kemnade.info> [181227 20:13]:
+> Hi,
+> 
+> On Tue, 4 Dec 2018 08:45:57 -0800
+> Tony Lindgren <tony@atomide.com> wrote:
+> 
+> > * Andreas Kemnade <andreas@kemnade.info> [181204 06:17]:
+> > > On Mon, 3 Dec 2018 07:39:10 -0800
+> > > Tony Lindgren <tony@atomide.com> wrote:  
+> > > > The consumer device stays active just fine with PM runtime
+> > > > calls. So yes, the problem is keeping a clock controller forced
+> > > > active for the period of consumer device reset. Other than
+> > > > that typically autoidle can be just kept enabled.
+> > > >   
+> > > Are we still talking about the same problem? Maybe I am losing track
+> > > here. Just to make sure. 
+> > > The patch series was about disabling autoidle for devices which cannot
+> > > work with it during normal operation. Not during reset or something
+> > > like that. 
+> > > Or is the keep-clock-active-during-reset just a requirement for bigger
+> > > restructuring ideas?  
+> > 
+> > Yeah there are two issues: The fix needed for the issue you brought up,
+> > and also how to let a reset driver to block autoidle for reset.
+> > 
+> Hmm, is this set now waiting for the famous "somebody" fixing all
+> the stuff?
 
-Applied to clk-next
+Well I think we're still waiting on Tero to comment on this.
+
+> What are currently visible symptoms for the driver not blocking
+> autoidle for reset? Maybe I can at least test something there. I have
+> also omap5 here.
+
+Oh that's just for making drivers/reset drivers to work in
+the long run. Let's keep that separate from these fixes..
+
+Regards,
+
+Tony
+
 
