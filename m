@@ -2,130 +2,126 @@ Return-Path: <SRS0=9SV/=PF=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A96DCC43387
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Dec 2018 06:39:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22A23C43387
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Dec 2018 08:10:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 815C8208E4
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Dec 2018 06:39:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E26E12148E
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Dec 2018 08:10:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729454AbeL1GjD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 28 Dec 2018 01:39:03 -0500
-Received: from mx.socionext.com ([202.248.49.38]:9170 "EHLO mx.socionext.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729363AbeL1GjD (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 28 Dec 2018 01:39:03 -0500
-Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
-  by mx.socionext.com with ESMTP; 28 Dec 2018 15:38:59 +0900
-Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
-        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id 0D8C21800F6;
-        Fri, 28 Dec 2018 15:39:00 +0900 (JST)
-Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Fri, 28 Dec 2018 15:38:59 +0900
-Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
-        by iyokan.css.socionext.com (Postfix) with ESMTP id B1C6C40221;
-        Fri, 28 Dec 2018 15:38:59 +0900 (JST)
-Received: from [127.0.0.1] (unknown [10.213.119.83])
-        by yuzu.css.socionext.com (Postfix) with ESMTP id 95260121BF2;
-        Fri, 28 Dec 2018 15:38:59 +0900 (JST)
-Subject: Re: [PATCH 07/14] clock: milbeaut: Add Milbeaut M10V clock control
-To:     Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+        id S1727989AbeL1IKA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 28 Dec 2018 03:10:00 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:7077 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728006AbeL1IKA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Dec 2018 03:10:00 -0500
+X-UUID: c2721f1436b0405aa4f384da51032f57-20181228
+X-UUID: c2721f1436b0405aa4f384da51032f57-20181228
+Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw01.mediatek.com
+        (envelope-from <erin.lo@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1889686763; Fri, 28 Dec 2018 16:09:53 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs02n2.mediatek.inc (172.21.101.101) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 28 Dec 2018 16:09:50 +0800
+Received: from mtkslt303.mediatek.inc (10.21.14.116) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 28 Dec 2018 16:09:50 +0800
+From:   Erin Lo <erin.lo@mediatek.com>
+To:     Matthias Brugger <matthias.bgg@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Jiri Slaby <jslaby@suse.com>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>
-References: <1542589274-13878-1-git-send-email-sugaya.taichi@socionext.com>
- <1542589274-13878-8-git-send-email-sugaya.taichi@socionext.com>
- <154356669840.88331.4455990896653868594@swboyd.mtv.corp.google.com>
- <9fba4689-b20f-c18a-ea11-d961de497ea3@socionext.com>
- <154595756614.179992.794211301759568891@swboyd.mtv.corp.google.com>
-From:   "Sugaya, Taichi" <sugaya.taichi@socionext.com>
-Message-ID: <0c8db56a-6738-e003-5088-0c13588f695a@socionext.com>
-Date:   Fri, 28 Dec 2018 15:38:58 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Stephen Boyd <sboyd@codeaurora.org>
+CC:     <devicetree@vger.kernel.org>,
+        srv_heupstream <srv_heupstream@mediatek.com>,
+        <linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <yingjoe.chen@mediatek.com>, <erin.lo@mediatek.com>,
+        <mars.cheng@mediatek.com>, <eddie.huang@mediatek.com>,
+        <linux-clk@vger.kernel.org>
+Subject: [PATCH v5 0/6] Add basic and clock support for Mediatek MT8183 SoC
+Date:   Fri, 28 Dec 2018 16:09:35 +0800
+Message-ID: <1545984581-25843-1-git-send-email-erin.lo@mediatek.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-In-Reply-To: <154595756614.179992.794211301759568891@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-TM-SNTS-SMTP: 03A174E426CB1C589FDC2791DACB0D395FA53E3951E9A9D31D983E2BDC60B6512000:8
+X-MTK:  N
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi
+MT8183 is a SoC based on 64bit ARMv8 architecture.
+It contains 4 CA53 and 4 CA73 cores.
+MT8183 share many HW IP with MT65xx series.
+This patchset was tested on MT8183 evaluation board and use correct clock to shell.
 
-On 2018/12/28 9:39, Stephen Boyd wrote:
-> Quoting Sugaya, Taichi (2018-12-25 17:35:27)
->> Hi
->>
->> On 2018/11/30 17:31, Stephen Boyd wrote:
->>>> +       init.num_parents = parents;
->>>> +       init.parent_names = parent_names;
->>>> +
->>>> +       mcm->cname = clk_name;
->>>> +       mcm->parent = 0;
->>>> +       mcm->hw.init = &init;
->>>> +
->>>> +       clk = clk_register(NULL, &mcm->hw);
->>>> +       if (IS_ERR(clk))
->>>> +               goto err_clk;
->>>> +
->>>> +       of_clk_add_provider(node, of_clk_src_simple_get, clk);
->>>> +       return;
->>>> +
->>>> +err_clk:
->>>> +       kfree(mcm);
->>>> +err_mcm:
->>>> +       kfree(parent_names);
->>>> +}
->>>> +CLK_OF_DECLARE(m10v_clk_mux, "socionext,milbeaut-m10v-clk-mux",
->>>> +                       m10v_clk_mux_setup);
->>>
->>> Any chance you can use a platform driver?
->>>
->>
->> Excuse me to re-ask you.
->> Why do you recommend to use a platform driver? Is that current fad?
-> 
-> Not exactly a fad. We've been doing it for some time now. From an older
-> email on the list:
-> 
-> Reasons (in no particular order):
-> 
->    1. We get a dev pointer to use with clk_hw_register()
-> 
->    2. We can handle probe defer if some resource is not available
-> 
->    3. Using device model gets us a hook into power management frameworks
->       like runtime PM and system PM for things like suspend and hibernate
-> 
->    4. It encourages a single DT node clk controller style binding
->       instead of a single node per clk style binding
-> 
->    5. We can use non-DT specific functions like devm_ioremap_resource() to map
->       registers and acquire other resources, leading to more portable and
->       generic code
-> 
->    6. We may be able to make the device driver a module, which will
->       make distros happy if we don't have to compile in all
->       these clk drivers to the resulting vmlinux
-> 
+This series contains document bindings, device tree including
+interrupt, uart, clock, pinctrl, power, iommu, spi, and pwrap.
 
-Great thanks for answering. I strongly understand.
-#It takes a bit of time to send v2.
+Based on v4.20-rc1 and
+http://lists.infradead.org/pipermail/linux-mediatek/2018-December/016243.html
+http://lists.infradead.org/pipermail/linux-mediatek/2018-December/016205.html
+http://lists.infradead.org/pipermail/linux-mediatek/2018-October/015676.html
 
-Best Regards,
-Sugaya Taichi
+Change in v5:
+1. Collect all device tree nodes to the last patch
+2. Add PMU
+3. Add Signed-off-by
+4. Remove clock driver code and binding doc
+5. Add pinctrl, iommu, spi, and pwrap nodes
+
+Change in v4:
+1. Correct syntax error in dtsi
+2. Add MT8183 clock support
+
+Change in v3:
+1. Fill out GICC, GICH, GICV regions
+2. Update Copyright to 2018
+
+Change in v2:
+1. Split dt-bindings into different patches
+2. Correct bindings for supported SoCs (mtk-uart.txt)
+
+Ben Ho (1):
+  arm64: dts: Add Mediatek SoC MT8183 and evaluation board dts and
+    Makefile
+
+Erin Lo (3):
+  dt-bindings: arm: Add bindings for Mediatek MT8183 SoC Platform
+  dt-bindings: mtk-sysirq: Add compatible for Mediatek MT8183
+  dt-bindings: serial: Add compatible for Mediatek MT8183
+
+Seiya Wang (1):
+  irqchip/mtk-sysirq: support 4 interrupt parameters for sysirq
+
+Zhiyong Tao (1):
+  dt-bindings: pinctrl: mt8183: add binding document
+
+ Documentation/devicetree/bindings/arm/mediatek.txt |    4 +
+ .../interrupt-controller/mediatek,sysirq.txt       |    1 +
+ .../devicetree/bindings/pinctrl/pinctrl-mt8183.txt |  110 ++
+ .../devicetree/bindings/serial/mtk-uart.txt        |    1 +
+ arch/arm64/boot/dts/mediatek/Makefile              |    1 +
+ arch/arm64/boot/dts/mediatek/mt8183-evb.dts        |  136 +++
+ arch/arm64/boot/dts/mediatek/mt8183-pinfunc.h      | 1120 ++++++++++++++++++++
+ arch/arm64/boot/dts/mediatek/mt8183.dtsi           |  547 ++++++++++
+ drivers/irqchip/irq-mtk-sysirq.c                   |    4 +-
+ 9 files changed, 1922 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-mt8183.txt
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt8183-evb.dts
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt8183-pinfunc.h
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt8183.dtsi
+
+--
+1.9.1
 
