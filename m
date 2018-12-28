@@ -1,113 +1,124 @@
-Return-Path: <SRS0=Z81n=PE=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=9SV/=PF=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F541C43387
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Dec 2018 21:54:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B07A4C43387
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Dec 2018 00:39:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24AA5214C6
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Dec 2018 21:54:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8143B218FE
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Dec 2018 00:39:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1545947692;
-	bh=awRPkOCwZCqEXgSjcvnRe+MIIT79iYUZ5M4RJz1z0gk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=HQY9sNndBbe5F6smossbh7fXjU40rvX0W8KGc82l/6xv5EMvtMV4/ZMFmPEIMBrQP
-	 GOGjOC35uMzFYbZv9I5+6E5TLJA9h1KvI2ie1LtS99+MYYhS9zISt05iKW9RxRl2UI
-	 tOVwZ4OCBc2tGAnSzJdV+k79s3xT66HjaI7rd1EY=
+	s=default; t=1545957573;
+	bh=1ddqU3RtRwJWXxclcxRkIZinYqh+4vVVHA0QuoYWCAg=;
+	h=To:References:Subject:Cc:From:In-Reply-To:Date:List-ID:From;
+	b=q88SR/4LIgtY6fGSYDaClLsHbunRtF335RJYmA1Gob8y7Ri2y3yUifKQSK4Rp+sN9
+	 KE4qc9/2YX9NOOan9b+VAlShNNalcjpHcXTZIy/gt/oy/L9DX4lFy6TvPzTYvIx0RX
+	 6K9ubD6tRzmSh2d9LcYnBHoEtUNWIuKXZz2caDa4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729937AbeL0Vyv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Dec 2018 16:54:51 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:40086 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729935AbeL0Vyv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Dec 2018 16:54:51 -0500
-Received: by mail-io1-f66.google.com with SMTP id a2so3129122iok.7;
-        Thu, 27 Dec 2018 13:54:50 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=qVKjW1jPignFC6PDbZudzDYlcK9KOJ0D+lc5t1OhGkk=;
-        b=AEy/nQylTz790UnVO/KtUeOrxhbWlHzdNPBv1zQrGlHUFM5athHflGSP4q2VTPeyZO
-         wAMnS7lunVQSEPfCYLV3fX9jycy3BlD1MLxLVX1UDtvmv1AT8a6LvBOCykxYtucVNb//
-         F7tU+7cfBWfljVXEKUfeYrPsKFIojXz4lGsInBzStzCDFa6dtYlibNsFzHE2TzFSD/2U
-         Py1vjmRSCL/miH0jQNDfIn+f7X3bCWUjoHSIVOghM0PNArTd1FAFMuXF8qLF+vpJRWg7
-         0zBvF0RDc/Tcgcw/oJ5A5FaFWDwn6L4C0RGeCsprrTGcHmD9jNzC8pz+QIEUS9CROxRR
-         UB6w==
-X-Gm-Message-State: AJcUukeY1D2zI/vGvQfS1iOKVzUQn4PXzgzLH0PrizLNLOqPenQ+NWq6
-        hXMYDsQyWc9o/ML2K0G8cQ==
-X-Google-Smtp-Source: ALg8bN49OFGnMLTGDjsDK+EoPFZBSNCvPAEs+X6v6LWm5j66PJz3T9YclANLW4lO9+T2Gv19Mxbs/w==
-X-Received: by 2002:a6b:c386:: with SMTP id t128mr17449483iof.304.1545947690494;
-        Thu, 27 Dec 2018 13:54:50 -0800 (PST)
-Received: from localhost ([24.51.61.172])
-        by smtp.gmail.com with ESMTPSA id s4sm6546133iom.83.2018.12.27.13.54.49
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 27 Dec 2018 13:54:49 -0800 (PST)
-Date:   Thu, 27 Dec 2018 15:54:47 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Aisheng Dong <aisheng.dong@nxp.com>
-Cc:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH V2 1/1] clk: imx8qxp: make the name of clock ID generic
-Message-ID: <20181227215447.GA12514@bogus>
-References: <1545581665-15446-1-git-send-email-aisheng.dong@nxp.com>
+        id S1727814AbeL1Aj2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Dec 2018 19:39:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45052 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726868AbeL1Aj1 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 27 Dec 2018 19:39:27 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E33682148E;
+        Fri, 28 Dec 2018 00:39:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1545957567;
+        bh=1ddqU3RtRwJWXxclcxRkIZinYqh+4vVVHA0QuoYWCAg=;
+        h=To:References:Subject:Cc:From:In-Reply-To:Date:From;
+        b=BrT+HptPTHXixErxKdZK0ULHXTRmcI5npZLplUBH05ts30fXdkPbeEcv/FjdiTbBC
+         +ZFmMxkL1t0yBrCGKr9qL2Urcb58QJVtfb07U1oB/sKPThRCwrxuMl7aXxUqj+L1IF
+         Vj/CtYNqbUZKwtOI2AU5xa0GrCHrcWlVIHprW77I=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1545581665-15446-1-git-send-email-aisheng.dong@nxp.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+To:     "Sugaya, Taichi" <sugaya.taichi@socionext.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-serial@vger.kernel.org
+Message-ID: <154595756614.179992.794211301759568891@swboyd.mtv.corp.google.com>
+References: <1542589274-13878-1-git-send-email-sugaya.taichi@socionext.com> <1542589274-13878-8-git-send-email-sugaya.taichi@socionext.com> <154356669840.88331.4455990896653868594@swboyd.mtv.corp.google.com> <9fba4689-b20f-c18a-ea11-d961de497ea3@socionext.com>
+Subject: Re: [PATCH 07/14] clock: milbeaut: Add Milbeaut M10V clock control
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Jiri Slaby <jslaby@suse.com>,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+User-Agent: alot/0.8
+In-Reply-To: <9fba4689-b20f-c18a-ea11-d961de497ea3@socionext.com>
+Date:   Thu, 27 Dec 2018 16:39:26 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, 23 Dec 2018 16:20:02 +0000, Aisheng Dong wrote:
-> SCU clock can be used in a similar way by IMX8QXP and IMX8QM SoCs.
-> Let's make the name of clock ID generic to allow other SoCs to reuse
-> the common part.
-> 
-> This patch only changes the clock id name and file name, so no
-> functional change.
-> 
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: Sascha Hauer <kernel@pengutronix.de>
-> Cc: Fabio Estevam <fabio.estevam@nxp.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: devicetree@vger.kernel.org
-> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-> ---
-> According to Stephen's suggestion[1], resend the needed changes
-> for 4.21 separately, then we can pick it up and send it as part
-> of a follow-on fixes PR during the merge window next week.
-> As there's still no users in kernel and the plan is also to avoid
-> any using of it, so please help review at an early time.
-> v1->v2:
->  * resend Patch [4/5] which needs to change for v4.21.
->  * update headfile name accordingly
-> [1] https://patchwork.kernel.org/patch/10737463/
-> ---
->  drivers/clk/imx/clk-imx8qxp-lpcg.c        | 148 +++++++--------
->  drivers/clk/imx/clk-imx8qxp.c             | 154 ++++++++--------
->  include/dt-bindings/clock/imx8-clock.h    | 289 ++++++++++++++++++++++++++++++
->  include/dt-bindings/clock/imx8qxp-clock.h | 289 ------------------------------
->  4 files changed, 440 insertions(+), 440 deletions(-)
->  create mode 100644 include/dt-bindings/clock/imx8-clock.h
->  delete mode 100644 include/dt-bindings/clock/imx8qxp-clock.h
-> 
+Quoting Sugaya, Taichi (2018-12-25 17:35:27)
+> Hi
+>=20
+> On 2018/11/30 17:31, Stephen Boyd wrote:
+> >> +       init.num_parents =3D parents;
+> >> +       init.parent_names =3D parent_names;
+> >> +
+> >> +       mcm->cname =3D clk_name;
+> >> +       mcm->parent =3D 0;
+> >> +       mcm->hw.init =3D &init;
+> >> +
+> >> +       clk =3D clk_register(NULL, &mcm->hw);
+> >> +       if (IS_ERR(clk))
+> >> +               goto err_clk;
+> >> +
+> >> +       of_clk_add_provider(node, of_clk_src_simple_get, clk);
+> >> +       return;
+> >> +
+> >> +err_clk:
+> >> +       kfree(mcm);
+> >> +err_mcm:
+> >> +       kfree(parent_names);
+> >> +}
+> >> +CLK_OF_DECLARE(m10v_clk_mux, "socionext,milbeaut-m10v-clk-mux",
+> >> +                       m10v_clk_mux_setup);
+> >=20
+> > Any chance you can use a platform driver?
+> >=20
+>=20
+> Excuse me to re-ask you.
+> Why do you recommend to use a platform driver? Is that current fad?
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Not exactly a fad. We've been doing it for some time now. From an older
+email on the list:
+
+Reasons (in no particular order):
+
+  1. We get a dev pointer to use with clk_hw_register()
+
+  2. We can handle probe defer if some resource is not available
+
+  3. Using device model gets us a hook into power management frameworks
+     like runtime PM and system PM for things like suspend and hibernate
+
+  4. It encourages a single DT node clk controller style binding
+     instead of a single node per clk style binding
+
+  5. We can use non-DT specific functions like devm_ioremap_resource() to m=
+ap
+     registers and acquire other resources, leading to more portable and
+     generic code
+
+  6. We may be able to make the device driver a module, which will
+     make distros happy if we don't have to compile in all
+     these clk drivers to the resulting vmlinux
+
