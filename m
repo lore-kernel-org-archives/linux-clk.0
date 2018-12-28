@@ -2,94 +2,116 @@ Return-Path: <SRS0=9SV/=PF=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DF1BC43387
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Dec 2018 20:02:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A7EBC43387
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Dec 2018 21:48:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E49A20866
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Dec 2018 20:02:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 331E520856
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Dec 2018 21:48:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546033738;
+	bh=HFMaKroDzHtipIHAZDno4GUadc1hp4rR+dpnwd3/iSA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=ZKeZT7En28DK8PzZG2+rnyRRVI8822cycGgGahqCEDp83QSdgyt23qL7LvFZC/vAK
+	 y6YmVWFA3HB6QJxbV4+3fpyHEJk6kIsBfXeFcsl6JSv7VE2I8w63glQCfiH9TeEUKD
+	 M3AYHb0ChwMUG/UajNQ9rbDVx+fSbBzDHGmcJkgA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732051AbeL1UCd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 28 Dec 2018 15:02:33 -0500
-Received: from muru.com ([72.249.23.125]:59620 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726466AbeL1UCd (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 28 Dec 2018 15:02:33 -0500
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 3ADA080BF;
-        Fri, 28 Dec 2018 20:02:37 +0000 (UTC)
-Date:   Fri, 28 Dec 2018 12:02:29 -0800
-From:   Tony Lindgren <tony@atomide.com>
-To:     Andreas Kemnade <andreas@kemnade.info>
-Cc:     Stephen Boyd <sboyd@kernel.org>, Tero Kristo <t-kristo@ti.com>,
-        bcousson@baylibre.com, letux-kernel@openphoenux.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, mturquette@baylibre.com, paul@pwsan.com
-Subject: Re: [PATCH v2 2/3] clk: ti: check clock type before doing autoidle
- ops
-Message-ID: <20181228200229.GY6707@atomide.com>
-References: <154356242517.88331.8496814814468751012@swboyd.mtv.corp.google.com>
- <9eb7b090-4803-d389-4112-3bf058385b2e@ti.com>
- <154356463284.88331.13323307899580657085@swboyd.mtv.corp.google.com>
- <eca27a46-2ca3-1a02-c0c8-c1c00b3b2f46@ti.com>
- <20181130153729.GG53235@atomide.com>
- <154362191595.88331.15503578806026771935@swboyd.mtv.corp.google.com>
- <20181203153910.GA6707@atomide.com>
- <20181203172246.0e767a16@kemnade.info>
- <20181204164556.GB6707@atomide.com>
- <20181227211222.5996c356@aktux>
+        id S1726288AbeL1Vs5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 28 Dec 2018 16:48:57 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:46839 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725913AbeL1Vs5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Dec 2018 16:48:57 -0500
+Received: by mail-io1-f65.google.com with SMTP id v10so17639484ios.13;
+        Fri, 28 Dec 2018 13:48:56 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Pgp8QGM8Sxxy+ekOkA+knxIXmgF85vwv+RMpA4VSbk8=;
+        b=lAWfndzZAMnCjngEkD+CYOj+aq8t05yWQfWRZosGqPSC12qfTFpRAKpMSd6gf3TkV6
+         IL25p+pRj2n++KIGdwJTc9+EypgTMJG3llJCiOjHUnfjH0x0XQhwisTC1be7hj4Qv65W
+         AQK3fJ84WdfcHi16RktPzKRrQAW6W9loM1+954d0GTXRgptdf535yYHtzFphVbn+9mtk
+         /Q2e01DzgEcgPgRbamGmig9oPxuzmqmjTT8/8WXgAX1Do5cfotxv+E3oyzHZBBcwBd+o
+         xxgc+ct6DoLDq0A1rAr7c8TuCSpFWTK21xakt4cwx0vuxMuJeQlVcIloRzVoQfXKj+Fs
+         AbbQ==
+X-Gm-Message-State: AJcUukdjTKdDG8gMQDC2OfNnLjGcDrfV2BmlkKOF7UU0m9gh9kCdIJGs
+        kU7dfUrxbPwScQvLW38yxLyp0kU=
+X-Google-Smtp-Source: ALg8bN6aDTD1I7/EbuShlAij+H9/MbsXHjlDPik1xXo1Fd8ylo7K27yHtXd/qIvMn/YaGE7V6iXytg==
+X-Received: by 2002:a6b:2b07:: with SMTP id r7mr19828025ior.169.1546033735971;
+        Fri, 28 Dec 2018 13:48:55 -0800 (PST)
+Received: from localhost ([24.51.61.172])
+        by smtp.gmail.com with ESMTPSA id m10sm4218931ioq.25.2018.12.28.13.48.54
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 28 Dec 2018 13:48:55 -0800 (PST)
+Date:   Fri, 28 Dec 2018 15:48:53 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>, linux-pwm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH v9 03/27] dt-bindings: Add doc for the Ingenic TCU drivers
+Message-ID: <20181228214853.GA8568@bogus>
+References: <20181227181319.31095-1-paul@crapouillou.net>
+ <20181227181319.31095-4-paul@crapouillou.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181227211222.5996c356@aktux>
+In-Reply-To: <20181227181319.31095-4-paul@crapouillou.net>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-* Andreas Kemnade <andreas@kemnade.info> [181227 20:13]:
-> Hi,
+On Thu, 27 Dec 2018 19:12:55 +0100, Paul Cercueil wrote:
+> Add documentation about how to properly use the Ingenic TCU
+> (Timer/Counter Unit) drivers from devicetree.
 > 
-> On Tue, 4 Dec 2018 08:45:57 -0800
-> Tony Lindgren <tony@atomide.com> wrote:
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> ---
 > 
-> > * Andreas Kemnade <andreas@kemnade.info> [181204 06:17]:
-> > > On Mon, 3 Dec 2018 07:39:10 -0800
-> > > Tony Lindgren <tony@atomide.com> wrote:  
-> > > > The consumer device stays active just fine with PM runtime
-> > > > calls. So yes, the problem is keeping a clock controller forced
-> > > > active for the period of consumer device reset. Other than
-> > > > that typically autoidle can be just kept enabled.
-> > > >   
-> > > Are we still talking about the same problem? Maybe I am losing track
-> > > here. Just to make sure. 
-> > > The patch series was about disabling autoidle for devices which cannot
-> > > work with it during normal operation. Not during reset or something
-> > > like that. 
-> > > Or is the keep-clock-active-during-reset just a requirement for bigger
-> > > restructuring ideas?  
-> > 
-> > Yeah there are two issues: The fix needed for the issue you brought up,
-> > and also how to let a reset driver to block autoidle for reset.
-> > 
-> Hmm, is this set now waiting for the famous "somebody" fixing all
-> the stuff?
+> Notes:
+>      v4: New patch in this series. Corresponds to V2 patches 3-4-5 with
+>          added content.
+>     
+>      v5: - Edited PWM/watchdog DT bindings documentation to point to the new
+>            document.
+>          - Moved main document to
+>            Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+>          - Updated documentation to reflect the new devicetree bindings.
+>     
+>      v6: - Removed PWM/watchdog documentation files as asked by upstream
+>          - Removed doc about properties that should be implicit
+>          - Removed doc about ingenic,timer-channel /
+>            ingenic,clocksource-channel as they are gone
+>          - Fix WDT clock name in the binding doc
+>          - Fix lengths of register areas in watchdog/pwm nodes
+>     
+>      v7: No change
+> 
+>      v8: - Fix address of the PWM node
+>          - Added doc about system timer and clocksource children nodes
+> 
+>      v9: - Remove doc about system timer and clocksource children
+>            nodes...
+> 	 - Add doc about ingenic,pwm-channels-mask property
+> 
+>  .../devicetree/bindings/pwm/ingenic,jz47xx-pwm.txt |  25 ----
+>  .../devicetree/bindings/timer/ingenic,tcu.txt      | 139 +++++++++++++++++++++
+>  .../bindings/watchdog/ingenic,jz4740-wdt.txt       |  17 ---
+>  3 files changed, 139 insertions(+), 42 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/pwm/ingenic,jz47xx-pwm.txt
+>  create mode 100644 Documentation/devicetree/bindings/timer/ingenic,tcu.txt
+>  delete mode 100644 Documentation/devicetree/bindings/watchdog/ingenic,jz4740-wdt.txt
+> 
 
-Well I think we're still waiting on Tero to comment on this.
-
-> What are currently visible symptoms for the driver not blocking
-> autoidle for reset? Maybe I can at least test something there. I have
-> also omap5 here.
-
-Oh that's just for making drivers/reset drivers to work in
-the long run. Let's keep that separate from these fixes..
-
-Regards,
-
-Tony
-
-
+Reviewed-by: Rob Herring <robh@kernel.org>
