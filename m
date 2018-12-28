@@ -6,58 +6,58 @@ X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D222EC43387
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Dec 2018 19:36:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69E43C43387
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Dec 2018 19:37:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F24C20869
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Dec 2018 19:36:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3548020855
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Dec 2018 19:37:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546025799;
-	bh=nyiCv7nkDp1lmyAEr+eIA63hjakIjXgWl2ozNMF4TwU=;
+	s=default; t=1546025833;
+	bh=hWeuHkNMhjXGzVysfSCEvEiy2xj+fKZtovoQ7jH2J+E=;
 	h=To:References:Subject:Cc:From:In-Reply-To:Date:List-ID:From;
-	b=BnX/c0mCCapktHLZR3FjWmTzkBpm1EohczZncVNXcccokfLciTcfWnGI0aMUzx8AP
-	 /3pX3SN4L9zgOZh4Szcx3HBKMG8qMNcws9OidrF7n5Tf9+u+S01L+BdKN76/Ndt+nX
-	 3NDEux2YIzieMUtPENEomZUwrJ5zwERXW6KO7goI=
+	b=hviZN8gRMPVwU1ifwfeqlzv/YLj1R1rmFURFh7y/1lm8WuqrLDAx28ASXFlRmeCpJ
+	 b22DGBV2kBzpPcFt0RYk7Pv0Y1crBQZ5fB4zX2GWl7IohIAbamKoqaIpr82NRm8gCg
+	 LmktO1e9TgWWiOR+Y7v7jM2CoHRwBEsIKMjfdkZs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732022AbeL1Tgj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 28 Dec 2018 14:36:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32940 "EHLO mail.kernel.org"
+        id S1732082AbeL1ThM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 28 Dec 2018 14:37:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33266 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730937AbeL1Tgj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 28 Dec 2018 14:36:39 -0500
+        id S2387864AbeL1ThM (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 28 Dec 2018 14:37:12 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7A41220861;
-        Fri, 28 Dec 2018 19:36:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D2E3C20861;
+        Fri, 28 Dec 2018 19:37:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546025798;
-        bh=nyiCv7nkDp1lmyAEr+eIA63hjakIjXgWl2ozNMF4TwU=;
+        s=default; t=1546025831;
+        bh=hWeuHkNMhjXGzVysfSCEvEiy2xj+fKZtovoQ7jH2J+E=;
         h=To:References:Subject:Cc:From:In-Reply-To:Date:From;
-        b=ZW+SG+mq30o5Amy47Z/M0nhPBZAUA+crO2EAntqyCNPO5b2UXQocUk1clJc0H4XG0
-         wjkXgRqxZFikzVIGiani3Rjx11q0QPAwEKKutRz+mJnYDWBcSjJB6vMvZNnUZX1ocP
-         3JYDHJHf3y3dp7GdFAitUymBb3ejwfwriYvfVFdo=
+        b=Y1Xhbc6xLoOCnqHk8gmTGBGy9avBQBlRGGUbStVZ+7LY2BRb6aK/SIClECxnfT3Oc
+         dK294lEN2Vkjpbf7vHk1XDMTBNEvrCrcEQSItYLlACKFK5Ho2eFZipLq415oZ6hRK+
+         kgDP6nm7QCGjoZgRcW82hqN/j/4FmZO/36yrgKZ4=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 To:     Yangtao Li <tiny.windzz@gmail.com>, fabio.estevam@nxp.com,
         kernel@pengutronix.de, linux-imx@nxp.com, mturquette@baylibre.com,
         s.hauer@pengutronix.de, shawnguo@kernel.org
-Message-ID: <154602579775.179992.18206324177054144317@swboyd.mtv.corp.google.com>
-References: <20181226135510.5862-1-tiny.windzz@gmail.com>
-Subject: Re: [PATCH] clk: imx6sx: fix refcount leak in imx6sx_clocks_init()
+Message-ID: <154602583106.179992.17980601036225187687@swboyd.mtv.corp.google.com>
+References: <20181226135716.5972-1-tiny.windzz@gmail.com>
+Subject: Re: [PATCH] clk: imx7d: fix refcount leak in imx7d_clocks_init()
 Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
 From:   Stephen Boyd <sboyd@kernel.org>
 User-Agent: alot/0.8
-In-Reply-To: <20181226135510.5862-1-tiny.windzz@gmail.com>
-Date:   Fri, 28 Dec 2018 11:36:37 -0800
+In-Reply-To: <20181226135716.5972-1-tiny.windzz@gmail.com>
+Date:   Fri, 28 Dec 2018 11:37:11 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Yangtao Li (2018-12-26 05:55:10)
+Quoting Yangtao Li (2018-12-26 05:57:16)
 > The of_find_compatible_node() returns a node pointer with refcount
 > incremented, but there is the lack of use of the of_node_put() when
 > done. Add the missing of_node_put() to release the refcount.
