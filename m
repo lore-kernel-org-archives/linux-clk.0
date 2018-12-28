@@ -4,32 +4,33 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02943C43387
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Dec 2018 08:10:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25A27C43444
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Dec 2018 08:10:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCB252148E
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Dec 2018 08:10:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EAC082148E
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Dec 2018 08:10:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731694AbeL1IKG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 28 Dec 2018 03:10:06 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:55694 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728006AbeL1IKF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Dec 2018 03:10:05 -0500
-X-UUID: a37c10ae9a35430c84d7100f7fde0881-20181228
-X-UUID: a37c10ae9a35430c84d7100f7fde0881-20181228
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
+        id S1731932AbeL1IKY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 28 Dec 2018 03:10:24 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:48603 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1731869AbeL1IKV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Dec 2018 03:10:21 -0500
+X-UUID: 265ebbebdac24e5f9f8d9839822c936c-20181228
+X-UUID: 265ebbebdac24e5f9f8d9839822c936c-20181228
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
         (envelope-from <erin.lo@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 2001813503; Fri, 28 Dec 2018 16:09:56 +0800
+        with ESMTP id 2069359684; Fri, 28 Dec 2018 16:09:59 +0800
 Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Fri, 28 Dec 2018 16:09:54 +0800
+ mtkmbs02n1.mediatek.inc (172.21.101.77) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 28 Dec 2018 16:09:57 +0800
 Received: from mtkslt303.mediatek.inc (10.21.14.116) by mtkcas09.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 28 Dec 2018 16:09:54 +0800
+ Transport; Fri, 28 Dec 2018 16:09:58 +0800
 From:   Erin Lo <erin.lo@mediatek.com>
 To:     Matthias Brugger <matthias.bgg@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -46,55 +47,42 @@ CC:     <devicetree@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <yingjoe.chen@mediatek.com>, <erin.lo@mediatek.com>,
         <mars.cheng@mediatek.com>, <eddie.huang@mediatek.com>,
-        <linux-clk@vger.kernel.org>, Seiya Wang <seiya.wang@mediatek.com>
-Subject: [PATCH v5 1/6] irqchip/mtk-sysirq: support 4 interrupt parameters for sysirq
-Date:   Fri, 28 Dec 2018 16:09:36 +0800
-Message-ID: <1545984581-25843-2-git-send-email-erin.lo@mediatek.com>
+        <linux-clk@vger.kernel.org>
+Subject: [PATCH v5 3/6] dt-bindings: mtk-sysirq: Add compatible for Mediatek MT8183
+Date:   Fri, 28 Dec 2018 16:09:38 +0800
+Message-ID: <1545984581-25843-4-git-send-email-erin.lo@mediatek.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1545984581-25843-1-git-send-email-erin.lo@mediatek.com>
 References: <1545984581-25843-1-git-send-email-erin.lo@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-TM-SNTS-SMTP: 485846AECE0DE1B2333DEA885EDD0ED1CCFA23A2F08E5A9DF62712A56D57871F2000:8
 X-MTK:  N
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Seiya Wang <seiya.wang@mediatek.com>
+This adds dt-binding documentation of SYSIRQ for Mediatek MT8183 SoC
+Platform.
 
-To support partitioned PPIs, 4 interrupt parameters should be valid
-for sysirq.
-
-Signed-off-by: Seiya Wang <seiya.wang@mediatek.com>
 Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- drivers/irqchip/irq-mtk-sysirq.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ .../devicetree/bindings/interrupt-controller/mediatek,sysirq.txt         | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/irqchip/irq-mtk-sysirq.c b/drivers/irqchip/irq-mtk-sysirq.c
-index 90aaf19..282736a 100644
---- a/drivers/irqchip/irq-mtk-sysirq.c
-+++ b/drivers/irqchip/irq-mtk-sysirq.c
-@@ -81,7 +81,7 @@ static int mtk_sysirq_domain_translate(struct irq_domain *d,
- 				       unsigned int *type)
- {
- 	if (is_of_node(fwspec->fwnode)) {
--		if (fwspec->param_count != 3)
-+		if (fwspec->param_count != 3 && fwspec->param_count != 4)
- 			return -EINVAL;
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt b/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt
+index 33a98eb..91aa9ab 100644
+--- a/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt
++++ b/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt
+@@ -5,6 +5,7 @@ interrupt.
  
- 		/* No PPI should point to this domain */
-@@ -104,7 +104,7 @@ static int mtk_sysirq_domain_alloc(struct irq_domain *domain, unsigned int virq,
- 	struct irq_fwspec *fwspec = arg;
- 	struct irq_fwspec gic_fwspec = *fwspec;
- 
--	if (fwspec->param_count != 3)
-+	if (fwspec->param_count != 3 && fwspec->param_count != 4)
- 		return -EINVAL;
- 
- 	/* sysirq doesn't support PPI */
+ Required properties:
+ - compatible: should be
++	"mediatek,mt8183-sysirq", "mediatek,mt6577-sysirq": for MT8183
+ 	"mediatek,mt8173-sysirq", "mediatek,mt6577-sysirq": for MT8173
+ 	"mediatek,mt8135-sysirq", "mediatek,mt6577-sysirq": for MT8135
+ 	"mediatek,mt8127-sysirq", "mediatek,mt6577-sysirq": for MT8127
 -- 
 1.9.1
 
