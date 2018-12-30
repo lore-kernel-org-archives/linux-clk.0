@@ -3,26 +3,26 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF79DC43387
-	for <linux-clk@archiver.kernel.org>; Sun, 30 Dec 2018 17:14:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81965C43387
+	for <linux-clk@archiver.kernel.org>; Sun, 30 Dec 2018 17:22:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7952C20866
-	for <linux-clk@archiver.kernel.org>; Sun, 30 Dec 2018 17:14:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 55CFA20828
+	for <linux-clk@archiver.kernel.org>; Sun, 30 Dec 2018 17:22:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726293AbeL3ROp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 30 Dec 2018 12:14:45 -0500
-Received: from gloria.sntech.de ([185.11.138.130]:43456 "EHLO gloria.sntech.de"
+        id S1726310AbeL3RWK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 30 Dec 2018 12:22:10 -0500
+Received: from gloria.sntech.de ([185.11.138.130]:43498 "EHLO gloria.sntech.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726216AbeL3ROo (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 30 Dec 2018 12:14:44 -0500
+        id S1726216AbeL3RWK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 30 Dec 2018 12:22:10 -0500
 Received: from [46.183.103.17] (helo=phil.localnet)
         by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <heiko@sntech.de>)
-        id 1gdefY-0003f0-RG; Sun, 30 Dec 2018 18:14:32 +0100
+        id 1gdemo-0003gf-4o; Sun, 30 Dec 2018 18:22:02 +0100
 From:   Heiko Stuebner <heiko@sntech.de>
 To:     Johan Jonker <jbx6244@gmail.com>
 Cc:     hjc@rock-chips.com, airlied@linux.ie, robh+dt@kernel.org,
@@ -31,11 +31,11 @@ Cc:     hjc@rock-chips.com, airlied@linux.ie, robh+dt@kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 2/7] clk: rockchip: rk3188: add CLK_SET_RATE_PARENT for lcdc dclk
-Date:   Sun, 30 Dec 2018 18:05:00 +0100
-Message-ID: <4934072.iLo9ia0RBU@phil>
-In-Reply-To: <20181229133318.18128-3-jbx6244@gmail.com>
-References: <20181229133318.18128-1-jbx6244@gmail.com> <20181229133318.18128-3-jbx6244@gmail.com>
+Subject: Re: [PATCH v2 3/7] drm: rockchip: vop: add rk3066 vop definitions
+Date:   Sun, 30 Dec 2018 18:22:00 +0100
+Message-ID: <154632658.xpTMZOjgxT@phil>
+In-Reply-To: <20181229133318.18128-4-jbx6244@gmail.com>
+References: <20181229133318.18128-1-jbx6244@gmail.com> <20181229133318.18128-4-jbx6244@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
@@ -44,17 +44,51 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Am Samstag, 29. Dezember 2018, 14:33:13 CET schrieb Johan Jonker:
-> From: Finley Xiao <finley.xiao@rock-chips.com>
+Hi Johan,
+
+Am Samstag, 29. Dezember 2018, 14:33:14 CET schrieb Johan Jonker:
+> From: Mark Yao <mark.yao@rock-chips.com>
 > 
-> Add CLK_SET_RATE_PARENT for lcdc dclk.
+> This patch adds the rk3066 VOP definitions.
 > 
-> Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
+> The VOP or LCD Controller serves as interface between
+> framebuffer memory and a display device (LCD panel or TV set).
+> 
+> This SOC has two symmetrical LCDC's for a dual panel application.
+> 
+> A LCDC has 5 display layers.
+> Only 3 are used here.
+> 
+> - Video layer 0 (Win0)
+> - Video layer 1 (Win1)
+> - OSD layer     (Win2)
+
+Patch itself looks good, we'll need to wait a bit to give Rob a chance
+to look at the (simple) dt-binding change and I'll drop the paragraph
+about the display layers when applying.
+
+Looking at the rk3066-manual, the lcdcs really only have 3 fully usable
+layers + the special cursor layer which is right now not really usable in
+a drm context, so the above paragraph is misleading, so I'll just drop it.
+
+Heiko
+
+
+> Win0 and Win1 are exchangeable.
+> Maximum resolution is 1920x1080.
+> 
+> The LCDC0 output is connected to:
+> - LCDC0 IO (without IOMUX)
+> - HDMI TX video input
+> 
+> The LCDC1 output is connected to:
+> - LCDC1 IO (with IOMUX)
+> - HDMI TX video input
+> 
+> The HDMI TX input can switch between LCDC0 and LCDC1.
+> 
+> Signed-off-by: Mark Yao <mark.yao@rock-chips.com>
 > Signed-off-by: Johan Jonker <jbx6244@gmail.com>
 
-applied for 4.22
-
-Thanks
-Heiko
 
 
