@@ -2,93 +2,67 @@ Return-Path: <SRS0=o/yH=PH=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81965C43387
-	for <linux-clk@archiver.kernel.org>; Sun, 30 Dec 2018 17:22:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02BE3C43387
+	for <linux-clk@archiver.kernel.org>; Sun, 30 Dec 2018 19:48:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55CFA20828
-	for <linux-clk@archiver.kernel.org>; Sun, 30 Dec 2018 17:22:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C78972070D
+	for <linux-clk@archiver.kernel.org>; Sun, 30 Dec 2018 19:48:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726310AbeL3RWK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 30 Dec 2018 12:22:10 -0500
-Received: from gloria.sntech.de ([185.11.138.130]:43498 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726216AbeL3RWK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 30 Dec 2018 12:22:10 -0500
-Received: from [46.183.103.17] (helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1gdemo-0003gf-4o; Sun, 30 Dec 2018 18:22:02 +0100
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     Johan Jonker <jbx6244@gmail.com>
-Cc:     hjc@rock-chips.com, airlied@linux.ie, robh+dt@kernel.org,
-        mark.rutland@arm.com, mturquette@baylibre.com, sboyd@kernel.org,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 3/7] drm: rockchip: vop: add rk3066 vop definitions
-Date:   Sun, 30 Dec 2018 18:22:00 +0100
-Message-ID: <154632658.xpTMZOjgxT@phil>
-In-Reply-To: <20181229133318.18128-4-jbx6244@gmail.com>
-References: <20181229133318.18128-1-jbx6244@gmail.com> <20181229133318.18128-4-jbx6244@gmail.com>
+        id S1726454AbeL3TsQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 30 Dec 2018 14:48:16 -0500
+Received: from mx2.suse.de ([195.135.220.15]:39976 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726432AbeL3TsQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 30 Dec 2018 14:48:16 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 589BBAE1D;
+        Sun, 30 Dec 2018 19:48:14 +0000 (UTC)
+From:   =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
+To:     linux-lpwan@lists.infradead.org
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ben Whitten <ben.whitten@gmail.com>,
+        Ben Whitten <ben.whitten@lairdtech.com>,
+        linux-clk@vger.kernel.org,
+        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
+Subject: [PATCH lora-next] net: lora: sx125x: Clean up clock provider
+Date:   Sun, 30 Dec 2018 20:47:59 +0100
+Message-Id: <20181230194759.12204-1-afaerber@suse.de>
+X-Mailer: git-send-email 2.16.4
+In-Reply-To: <491d1a46-c112-1106-9f25-14149f0dcbd0@suse.de>
+References: <491d1a46-c112-1106-9f25-14149f0dcbd0@suse.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Johan,
+Use devm_ variant to have the clock provider deleted again.
 
-Am Samstag, 29. Dezember 2018, 14:33:14 CET schrieb Johan Jonker:
-> From: Mark Yao <mark.yao@rock-chips.com>
-> 
-> This patch adds the rk3066 VOP definitions.
-> 
-> The VOP or LCD Controller serves as interface between
-> framebuffer memory and a display device (LCD panel or TV set).
-> 
-> This SOC has two symmetrical LCDC's for a dual panel application.
-> 
-> A LCDC has 5 display layers.
-> Only 3 are used here.
-> 
-> - Video layer 0 (Win0)
-> - Video layer 1 (Win1)
-> - OSD layer     (Win2)
+Signed-off-by: Andreas Färber <afaerber@suse.de>
+---
+ drivers/net/lora/sx125x.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Patch itself looks good, we'll need to wait a bit to give Rob a chance
-to look at the (simple) dt-binding change and I'll drop the paragraph
-about the display layers when applying.
-
-Looking at the rk3066-manual, the lcdcs really only have 3 fully usable
-layers + the special cursor layer which is right now not really usable in
-a drm context, so the above paragraph is misleading, so I'll just drop it.
-
-Heiko
-
-
-> Win0 and Win1 are exchangeable.
-> Maximum resolution is 1920x1080.
-> 
-> The LCDC0 output is connected to:
-> - LCDC0 IO (without IOMUX)
-> - HDMI TX video input
-> 
-> The LCDC1 output is connected to:
-> - LCDC1 IO (with IOMUX)
-> - HDMI TX video input
-> 
-> The HDMI TX input can switch between LCDC0 and LCDC1.
-> 
-> Signed-off-by: Mark Yao <mark.yao@rock-chips.com>
-> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
-
-
+diff --git a/drivers/net/lora/sx125x.c b/drivers/net/lora/sx125x.c
+index 2c48301a12ab..68d8afed48ba 100644
+--- a/drivers/net/lora/sx125x.c
++++ b/drivers/net/lora/sx125x.c
+@@ -161,7 +161,7 @@ static int sx125x_register_clock_provider(struct sx125x_priv *priv)
+ 		dev_err(dev, "failed to register clkout\n");
+ 		return PTR_ERR(priv->clkout);
+ 	}
+-	ret = of_clk_add_hw_provider(dev->of_node, of_clk_hw_simple_get,
++	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get,
+ 			&priv->clkout_hw);
+ 	return ret;
+ }
+-- 
+2.16.4
 
