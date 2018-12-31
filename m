@@ -2,122 +2,108 @@ Return-Path: <SRS0=BdQT=PI=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 738B5C43387
-	for <linux-clk@archiver.kernel.org>; Mon, 31 Dec 2018 17:50:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13EC2C43387
+	for <linux-clk@archiver.kernel.org>; Mon, 31 Dec 2018 18:55:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 446AD2080D
-	for <linux-clk@archiver.kernel.org>; Mon, 31 Dec 2018 17:50:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546278658;
-	bh=7aHvTtvkUw1/iiFQT/fCmBP0JXJRG7rHRVGSR2OJl3E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=GiSINcL8Sb0D0f6qUkZ9o1D9Dj4a9GTyAj8Tmupd5cfjllxVoiwbJpKF+IPYDk+l/
-	 nwH/PJDYZ3yH62h6+JxuZouxv3kIQm8tevEvLOixbzXFKirvnddCn1Pzttz14uxzsD
-	 rOiRIdlODfxbhW/c/76N689MHeLyi7T4Ax4cYIhU=
+	by mail.kernel.org (Postfix) with ESMTP id D58B92073F
+	for <linux-clk@archiver.kernel.org>; Mon, 31 Dec 2018 18:55:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="b98qWlJY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727581AbeLaRuv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 31 Dec 2018 12:50:51 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57584 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727482AbeLaRuu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 31 Dec 2018 12:50:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=EuxVX4LJYId/8LX28UqFKZnuP20NSGU0ia1Xsei30RY=; b=XZe4LPumYFC3s7XJzACepq9y5
-        8X+dgydcSTraMgudKh7IJK2UKaNVMDeCinlfgfuHV/ObdbwbaJV2L3KlUaYfHfAGzoIqSoDYwKcIU
-        84qPyRXgXxD/7MkEOxkaHclr6lEWDYRIjCaLKPgbHUCO8C1AmEnXZlyar1EPp2OTK8JFU=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=finisterre.ee.mobilebroadband)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1ge1hz-0002Ny-Nz; Mon, 31 Dec 2018 17:50:35 +0000
-Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 009E6440080; Mon, 31 Dec 2018 17:50:34 +0000 (GMT)
-Date:   Mon, 31 Dec 2018 17:50:34 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
-Cc:     Ben Whitten <ben.whitten@gmail.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        "linux-lpwan@lists.infradead.org" <linux-lpwan@lists.infradead.org>,
-        linux-kernel@vger.kernel.org, starnight@g.ncu.edu.tw,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v3 lora-next 5/5] net: lora: sx125x sx1301: allow radio
- to register as a clk provider
-Message-ID: <20181231175034.GI1846@sirena.org.uk>
-References: <1539361567-3602-1-git-send-email-ben.whitten@lairdtech.com>
- <1539361567-3602-6-git-send-email-ben.whitten@lairdtech.com>
- <a89c7974-672f-e5d0-8022-d2c2f9ffeac0@suse.de>
- <d22f1f18-0c93-a537-a439-07363174a03b@suse.de>
- <491d1a46-c112-1106-9f25-14149f0dcbd0@suse.de>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="nEsDIrWrg+hrB7l1"
-Content-Disposition: inline
-In-Reply-To: <491d1a46-c112-1106-9f25-14149f0dcbd0@suse.de>
-X-Cookie: knowledge, n.:
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1727754AbeLaSzk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 31 Dec 2018 13:55:40 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:43686 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727752AbeLaSzk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 31 Dec 2018 13:55:40 -0500
+Received: by mail-pf1-f195.google.com with SMTP id w73so13456140pfk.10
+        for <linux-clk@vger.kernel.org>; Mon, 31 Dec 2018 10:55:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=XIzqSzvnS+vj4Sll9x6Seco6sA7Z+UbLnEB7Ylb8mHc=;
+        b=b98qWlJYut0UqW3LDhal3ej051J+e5txsgs5wuNpP5qFP84EPLc44VkTayjTFlCezR
+         EugbUq5bvrF1Ga+rXUESXzsWJtI3sG0+FcCHF0gCfGWwRE3SGH2OrJfBeiUO8006OoXJ
+         TJYdc1ei9ec4P39pFyLvsD1pw/knGRSlGauu4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=XIzqSzvnS+vj4Sll9x6Seco6sA7Z+UbLnEB7Ylb8mHc=;
+        b=ukmAZn2YKnRZq5U/PjG9r02ObTE8/7HtZDDFDWDHM9EbxO3NKRMcQG5Ir65l0luM/j
+         8TMWdrOW1hvl13JjvVHcnLMnPyjyCdaA9aKIGIGA5EgbQuWQP1eFSLQINQqNDl01D3X8
+         xHSJmoZsAK+AYveoGiDrfeg9LMElVUdAqtXvq6c+EuDehiU2PtoAwu+Muk2bfUgTq+0p
+         diHJ91cm+yepJ5aWfqAUFZwjIjzTTAZJR0mWveXuvGsVUPmoGmjKjG2prds1yjoZuQ6n
+         9POGpQnNjyYe+dCD6p5MR+McajjCZSUiqmjDgZMORNJIpdjtCsNQtOjyA5QwXlZI5JH3
+         yOzA==
+X-Gm-Message-State: AJcUukck7G1BJi/k7Pxz8o8Uy8tWibtC/daty7y+cczlkkvMydxin31m
+        FYj31+zl7AnTfjiRQcdM23rK
+X-Google-Smtp-Source: ALg8bN5Usp8F4ykrKm2/LbYg1HM7q7JAX2yRcmpDfT6GvtdTtC/hyJXNCygE78NaIHPx4kXLEXIovA==
+X-Received: by 2002:a63:9402:: with SMTP id m2mr8086322pge.93.1546282538801;
+        Mon, 31 Dec 2018 10:55:38 -0800 (PST)
+Received: from localhost.localdomain ([2405:204:7440:b882:8d58:e15f:9ff4:efc2])
+        by smtp.gmail.com with ESMTPSA id s9sm66146224pgl.88.2018.12.31.10.55.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 31 Dec 2018 10:55:38 -0800 (PST)
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     sboyd@kernel.org, mturquette@baylibre.com, afaerber@suse.de,
+        robh+dt@kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org,
+        linux-actions@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH 0/6] Add clock support for Actions Semi S500 SoC
+Date:   Tue,  1 Jan 2019 00:25:11 +0530
+Message-Id: <20181231185517.18517-1-manivannan.sadhasivam@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hello,
 
---nEsDIrWrg+hrB7l1
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This patchset adds common clock support for Actions Semi S500 SoC of
+the Owl family SoCs. This series is based on the initial work done
+by Edgar Bernardi Righi. https://patchwork.kernel.org/cover/10587527/
 
-On Sun, Dec 30, 2018 at 11:55:46AM +0100, Andreas F=E4rber wrote:
-> + linux-spi, LAKML
+Since there isn't any update from him for long time, I took the liberty
+to modify his patches, address review comments and send to list for review.
 
-> Given that observed symptoms were CPU stalls, workqueue hangs and RCU
-> problems, requiring a power-cycle to recover, I wonder whether we are
-> running into some atomic/locking issue with clk_enable()? Is it valid at
-> all to use SPI/regmap for clk_enable()? If it is, is there a known issue
-> specific to spi-sun6i (A64) in 4.20.0?
-> I already tried setting .disable_locking =3D true in both regmap_configs.
-> Any suggestions how to further debug?
+This series has been tested on Allo Sparky SBC.
 
-You can't use SPI for clk_enable(), clk_enable() needs to be doable in
-atomic context since we need to wait for the bus operations to complete
-(you can start SPI transfers in atomic context but you still need to
-wait for them to complete).  Any clocks that are only accessible via a
-slow bus like I2C or SPI need to do the enable/disable in the
-prepare/unprepare operations which aren't done in atomic context.
+Thanks,
+Mani
 
-regmap can be used in atomic contexts, though you need to configure it
-to use spinlocks instead of mutexes and ensure that no register cache
-allocations happen during I/O (eg, by providing defaults for all
-registers or by not using a cache).
+Edgar Bernardi Righi (1):
+  dt-bindings: clock: Add DT bindings for Actions Semi S500 CMU
 
---nEsDIrWrg+hrB7l1
-Content-Type: application/pgp-signature; name="signature.asc"
+Manivannan Sadhasivam (5):
+  clk: actions: Add configurable PLL delay
+  ARM: dts: Add CMU support for Actions Semi Owl S500 SoC
+  ARM: dts: Remove fake UART clock for S500 based SBCs
+  clk: actions: Add clock driver for S500 SoC
+  MAINTAINERS: Add linux-actions mailing list for Actions Semi
 
------BEGIN PGP SIGNATURE-----
+ .../bindings/clock/actions,owl-cmu.txt        |   7 +-
+ MAINTAINERS                                   |   1 +
+ arch/arm/boot/dts/owl-s500-cubieboard6.dts    |   7 -
+ .../arm/boot/dts/owl-s500-guitar-bb-rev-b.dts |   7 -
+ arch/arm/boot/dts/owl-s500-sparky.dts         |   7 -
+ arch/arm/boot/dts/owl-s500.dtsi               |  22 +
+ drivers/clk/actions/Kconfig                   |   5 +
+ drivers/clk/actions/Makefile                  |   1 +
+ drivers/clk/actions/owl-pll.c                 |   2 +-
+ drivers/clk/actions/owl-pll.h                 |  30 +-
+ drivers/clk/actions/owl-s500.c                | 524 ++++++++++++++++++
+ include/dt-bindings/clock/actions,s500-cmu.h  |  78 +++
+ 12 files changed, 660 insertions(+), 31 deletions(-)
+ create mode 100644 drivers/clk/actions/owl-s500.c
+ create mode 100644 include/dt-bindings/clock/actions,s500-cmu.h
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlwqVuoACgkQJNaLcl1U
-h9B/iwf7BlSQzbOQ0KksQFHM3Zo+w60UAruaEM3FZHfuKjMa19b2GVVEYt6jfcrh
-tpvudfBIi3vlkx4Z0adtfhOb5oGv8Y3owUOBMWWpS4Bn/ZHOBvZOdh2EWHw85Jvb
-6YijmsoqAj1fNooCPEXFD6SCEAGfyRjVz3hANVIZmiBQYKrU2KT32/hNQ/WC6XK2
-AG6ZlNDFZJHyuP6dQ9hOhH3fUyYZSYEB7xopOje8ZTCrdO5htJNA17P4C+zojRR8
-5KO2RrumYLTaEdeXCIq+qvFaErgsYAg30mJwGVZLb14KPy0z4w8SFriJDNKG/0K3
-fcTWnePlEZ7GfuI2t+b9vyV0xJgKxQ==
-=OefZ
------END PGP SIGNATURE-----
+-- 
+2.17.1
 
---nEsDIrWrg+hrB7l1--
