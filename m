@@ -2,176 +2,242 @@ Return-Path: <SRS0=BdQT=PI=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF8A7C43612
-	for <linux-clk@archiver.kernel.org>; Mon, 31 Dec 2018 08:42:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BDA6C43387
+	for <linux-clk@archiver.kernel.org>; Mon, 31 Dec 2018 13:27:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FFBE213A2
-	for <linux-clk@archiver.kernel.org>; Mon, 31 Dec 2018 08:42:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="B0mgJ4q8"
+	by mail.kernel.org (Postfix) with ESMTP id 134C421019
+	for <linux-clk@archiver.kernel.org>; Mon, 31 Dec 2018 13:27:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727158AbeLaImj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 31 Dec 2018 03:42:39 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:52265 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726461AbeLaImi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 31 Dec 2018 03:42:38 -0500
-Received: by mail-wm1-f67.google.com with SMTP id m1so23078429wml.2
-        for <linux-clk@vger.kernel.org>; Mon, 31 Dec 2018 00:42:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=El90UuvXSTwvHkTCycgQ+Zo1FPArY4bUiDSukrnlXpo=;
-        b=B0mgJ4q8VvsUUC6I+FZaFu3eQ6CD5FFUjZpzdzCpOem5TjESV0+8tPdYbh849/DRkt
-         X4sZo9vftrf83GdHq8pEGjl9JH8SU8JWhofQQtS2LGx97/7fG1VnAsttLZnHV7F87UpA
-         d/lC4UMEBTm38vD8QyWYTYVmcEKRVFtUheNf0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=El90UuvXSTwvHkTCycgQ+Zo1FPArY4bUiDSukrnlXpo=;
-        b=fP5xKWP4J9oEVQeP9hVbAHE4tSUaRnmIj82OL4ZdQmdbjlgXVopOHPYhns/U7nUR4R
-         ea81MxPlPeyK+QThRghvNyAM+zkFbYeXn01p0+aQXhN9PemNOpu0lP9MwQ4e6GwQi/0W
-         oH3bWz+vqDpAOZG4OygVOzwbRuHIrdwPUsMipz/u2QDL45QywTnQyMfGedv/Vt7whFOP
-         xcSgKf2DufaKvUvGZpg20l175FvnivYjgG9pHYuYOQVW405t+13vbMFCvC4F7/S1IYhq
-         VVk8+rxzjkmEjBt6BcaG92u8/OytoHeHG0nJsb/6uBeb5tNNoe7PwlFM3NFyGptjVttH
-         s27A==
-X-Gm-Message-State: AA+aEWbut1qyy9O/PtCLe5kVQl0moFxqF9sEVR3vcXGHh431AH+jwTVP
-        XG3hWhuLr3l0LicgEnDlqBcNngrqDj4=
-X-Google-Smtp-Source: AFSGD/WEKyUwv2tuz8D2f7vDYkbd3Buv/bJHy53tqnckCpIFz1B/AtUQ3hNtKf1utkb9M7je68532g==
-X-Received: by 2002:a1c:6607:: with SMTP id a7mr29394245wmc.129.1546245755633;
-        Mon, 31 Dec 2018 00:42:35 -0800 (PST)
-Received: from [192.168.1.2] (92.red-83-34-185.dynamicip.rima-tde.net. [83.34.185.92])
-        by smtp.gmail.com with ESMTPSA id g198sm53816074wmd.23.2018.12.31.00.42.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 31 Dec 2018 00:42:34 -0800 (PST)
-Subject: Re: [PATCH 05/13] clk: qcom: apcs-msm8916: get parent clock names
- from DT
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Niklas Cassel <niklas.cassel@linaro.org>
-Cc:     andy.gross@linaro.org, david.brown@linaro.org,
-        jassisinghbrar@gmail.com, mark.rutland@arm.com,
-        mturquette@baylibre.com, robh+dt@kernel.org, will.deacon@arm.com,
-        bjorn.andersson@linaro.org, vkoul@kernel.org, sibis@codeaurora.org,
-        georgi.djakov@linaro.org, arnd@arndb.de,
-        horms+renesas@verge.net.au, heiko@sntech.de,
-        enric.balletbo@collabora.com, jagan@amarulasolutions.com,
-        olof@lixom.net, amit.kucheria@linaro.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-References: <1545039990-19984-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
- <1545039990-19984-6-git-send-email-jorge.ramirez-ortiz@linaro.org>
- <154508986359.19322.1555129141976726505@swboyd.mtv.corp.google.com>
- <20181218143503.GA32562@centauri.ideon.se>
- <72bc192f-b60a-1209-7818-78a2fed07831@linaro.org>
- <154603613437.179992.1170701312259011363@swboyd.mtv.corp.google.com>
-From:   Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>
-Message-ID: <45a9e033-16e8-e0f9-36cf-3b892af1bd8f@linaro.org>
-Date:   Mon, 31 Dec 2018 09:42:33 +0100
+        id S1726980AbeLaN1O (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 31 Dec 2018 08:27:14 -0500
+Received: from mx2.suse.de ([195.135.220.15]:60882 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726689AbeLaN1N (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 31 Dec 2018 08:27:13 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id C1E14AE62;
+        Mon, 31 Dec 2018 13:27:07 +0000 (UTC)
+Subject: Re: [PATCH v3 lora-next 5/5] net: lora: sx125x sx1301: allow radio to
+ register as a clk provider
+From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
+To:     Ben Whitten <ben.whitten@gmail.com>,
+        linux-clk <linux-clk@vger.kernel.org>
+Cc:     devicetree <devicetree@vger.kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        netdev@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        "linux-lpwan@lists.infradead.org" <linux-lpwan@lists.infradead.org>,
+        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Russell King <linux@armlinux.org.uk>
+References: <1539361567-3602-1-git-send-email-ben.whitten@lairdtech.com>
+ <1539361567-3602-6-git-send-email-ben.whitten@lairdtech.com>
+ <a89c7974-672f-e5d0-8022-d2c2f9ffeac0@suse.de>
+ <d22f1f18-0c93-a537-a439-07363174a03b@suse.de>
+ <491d1a46-c112-1106-9f25-14149f0dcbd0@suse.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=afaerber@suse.de; prefer-encrypt=mutual; keydata=
+ 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
+Organization: SUSE Linux GmbH
+Message-ID: <a5fd0ea3-c2d1-add2-87bc-b0fd9bbc926b@suse.de>
+Date:   Mon, 31 Dec 2018 14:27:06 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-In-Reply-To: <154603613437.179992.1170701312259011363@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <491d1a46-c112-1106-9f25-14149f0dcbd0@suse.de>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 12/28/18 23:28, Stephen Boyd wrote:
-> Quoting Jorge Ramirez (2018-12-26 01:20:07)
->> On 12/18/18 15:35, Niklas Cassel wrote:
->>> On Mon, Dec 17, 2018 at 03:37:43PM -0800, Stephen Boyd wrote:
->>>> Quoting Jorge Ramirez-Ortiz (2018-12-17 01:46:22)
->>>>> Allow accessing the parent clock names required for the driver
->>>>> operation by using the device tree node.
->>>>>
->>>>> This permits extending the driver to other platforms without having to
->>>>> modify its source code.
->>>>>
->>>>> For backwards compatibility leave previous values as default.
->>>>
->>>> Why do we need to maintain backwards compatibility? Isn't is required
->>>> that the nodes have clocks properties?
->>>>
->>>
->>> Hello Stephen,
->>>
->>>
->>> This is the existing DT nodes for msm8916:
->>>
->>>                  a53pll: clock@b016000 {
->>>                           compatible = "qcom,msm8916-a53pll";
->>>                           reg = <0xb016000 0x40>;
->>>                           #clock-cells = <0>;
->>>                   };
->>>
->>>                   apcs: mailbox@b011000 {
->>>                           compatible = "qcom,msm8916-apcs-kpss-global", "syscon";
->>>                           reg = <0xb011000 0x1000>;
->>>                           #mbox-cells = <1>;
->>>                           clocks = <&a53pll>;
->>>                           #clock-cells = <0>;
->>>                   };
->>>
->>>
->>> This is the (suggested) DT nodes for qcs404:
->>>
->>>                   apcs_hfpll: clock-controller@0b016000 {
->>>                           compatible = "qcom,hfpll";
->>>                           reg = <0x0b016000 0x30>;
->>>                           #clock-cells = <0>;
->>>                           clock-output-names = "apcs_hfpll";
->>>                           clocks = <&xo_board>;
->>>                           clock-names = "xo";
->>>                   };
->>>
->>>                   apcs_glb: mailbox@b011000 {
->>>                           compatible = "qcom,qcs404-apcs-apps-global", "syscon";
->>>                           reg = <0x0b011000 0x1000>;
->>>                           #mbox-cells = <1>;
->>>                           clocks = <&gcc GCC_GPLL0_AO_OUT_MAIN>, <&apcs_hfpll>;
->>>                           clock-names = "aux", "pll";
->>>                           #clock-cells = <0>;
->>>                   };
->>>
->>> qcs404 specifies two clocks, with an accompanied clock-name for each clock.
->>>
->>> msm8916 specifies a single clock, without an accompanied clock-name.
->>>
->>> It is possible to append clock-names = "pll" for the existing clock,
->>> as well as to define the aux clock in the apcs node in the msm8916 DT:
->>> clocks = <&gcc GPLL0_VOTE>;
->>> clock-names = "aux";
->>>
->>> However, since the DT is treated as an ABI, the existing DT for msm8916 must
->>> still work, so I don't think that it is possible to ignore having backwards
->>> compability in the apcs clock driver.
+Am 30.12.18 um 11:55 schrieb Andreas Färber:
+> Am 29.12.18 um 21:16 schrieb Andreas Färber:
+>> `sudo ip link set lora2 up` froze my system, with both
+>> lora1 and lora2 being sx1301. [...]
 >>
->>
->> so where are we with this?
->>
->> do we remove backwards compatibility (see below] for v2 or is the DT
->> really an ABI and therefore the patch under review is good as is?
->>
+>> Investigating...
 > 
-> Breaking compatibility is up to the platform maintainers. If anything, I
-> would make the DTS and driver changes in parallel and then remove the
-> driver's backwards compatibility logic later on.
+> I've bisected and confirmed that it was indeed this patch that regresses
+> for one of my SX1301 concentrators.
+[...]
+> We never return from the sx125x_clkout_enable() performing the
+> regmap_field_write() on our regmap_bus, which in turn uses a SPI regmap
+> in sx1301_regmap_bus_read().
 > 
+> A notable difference between my two concentrators is that the working
+> one is using spi-gpio driver, the regressing one spi-sun6i.
 > 
+> Two things stood out in spi-sun6i: It uses a completion (I do not run
+> into its timeout warning!), and it uses clk_{get,set}_rate().
+> 
+> Given that observed symptoms were CPU stalls, workqueue [freezes] and RCU
+> problems, requiring a power-cycle to recover, I wonder whether we are
+> running into some atomic/locking issue with clk_enable()? Is it valid at
+> all to use SPI/regmap for clk_enable()? If it is, is there a known issue
+> specific to spi-sun6i (A64) in 4.20.0?
 
-I am not completely sure of what you mean. are you saying that the 
-original patch is good and we should just provide another patch (not 
-part of the current patch series) to remove the compatibility?
+I've now hacked together a test case: delaying the regmap operation to a
+work queue (violating the .enable contract of a stable clk on return!)
+and having our caller poll afterwards for the operation to finish. Guess
+what, below gross hack makes it work again on both cards... :/
 
-TIA
+Is this hinting at an issue with spi-sun6i clk_get_rate()'s prepare_lock
+vs. our clk_enable()'s enable_lock? I grep'ed around and spi-sun6i is
+not the only SPI driver using clk_get_rate() in transfer_one...
 
+Thanks for any hints,
+
+Andreas
+
+
+diff --git a/drivers/net/lora/sx125x.c b/drivers/net/lora/sx125x.c
+index 597b882379ac..095ca40e5de7 100644
+--- a/drivers/net/lora/sx125x.c
++++ b/drivers/net/lora/sx125x.c
+@@ -11,6 +11,7 @@
+
+ #include <linux/clk.h>
+ #include <linux/clk-provider.h>
++#include <linux/delay.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/of_device.h>
+@@ -49,6 +50,9 @@ struct sx125x_priv {
+        struct device           *dev;
+        struct regmap           *regmap;
+        struct regmap_field
+*regmap_fields[ARRAY_SIZE(sx125x_regmap_fields)];
++
++       struct workqueue_struct *clk_wq;
++       struct work_struct      clk_out_enable_work;
+ };
+
+ #define to_clkout(_hw) container_of(_hw, struct sx125x_priv, clkout_hw)
+@@ -81,8 +85,17 @@ static int sx125x_clkout_enable(struct clk_hw *hw)
+ {
+        struct sx125x_priv *priv = to_clkout(hw);
+
++       dev_info(priv->dev, "enabling clkout...\n");
++       queue_work(priv->clk_wq, &priv->clk_out_enable_work);
++       return 0;
++}
++
++static void sx125x_clk_out_enable_work_handler(struct work_struct *ws)
++{
++       struct sx125x_priv *priv = container_of(ws, struct sx125x_priv,
+clk_out_enable_work);
++
+        dev_info(priv->dev, "enabling clkout\n");
+-       return sx125x_field_write(priv, F_CLK_OUT, 1);
++       sx125x_field_write(priv, F_CLK_OUT, 1);
+ }
+
+ static void sx125x_clkout_disable(struct clk_hw *hw)
+@@ -230,6 +243,9 @@ static int __maybe_unused sx125x_regmap_probe(struct
+device *dev, struct regmap
+                }
+        }
+
++       priv->clk_wq = alloc_workqueue("sx127x_wq", WQ_FREEZABLE |
+WQ_MEM_RECLAIM, 0);
++       INIT_WORK(&priv->clk_out_enable_work,
+sx125x_clk_out_enable_work_handler);
++
+        dev_info(dev, "SX125x module probed\n");
+
+        return 0;
+@@ -237,6 +253,10 @@ static int __maybe_unused
+sx125x_regmap_probe(struct device *dev, struct regmap
+
+ static int __maybe_unused sx125x_regmap_remove(struct device *dev)
+ {
++       struct sx125x_priv *priv = dev_get_drvdata(dev);
++
++       destroy_workqueue(priv->clk_wq);
++
+        dev_info(dev, "SX125x module removed\n");
+
+        return 0;
+diff --git a/drivers/net/lora/sx130x.c b/drivers/net/lora/sx130x.c
+index 7ac7de9eda46..4ae6699d38ad 100644
+--- a/drivers/net/lora/sx130x.c
++++ b/drivers/net/lora/sx130x.c
+@@ -11,6 +11,7 @@
+
+ #include <linux/bitops.h>
+ #include <linux/clk.h>
++#include <linux/clk-provider.h>
+ #include <linux/delay.h>
+ #include <linux/firmware.h>
+ #include <linux/lora.h>
+@@ -391,6 +392,10 @@ static int sx130x_loradev_open(struct net_device
+*netdev)
+                goto err_clk_enable;
+        }
+
++       do {
++               usleep_range(100, 1000);
++       } while (!__clk_is_enabled(priv->clk32m));
++
+        ret = sx130x_field_write(priv, F_GLOBAL_EN, 1);
+        if (ret) {
+                dev_err(priv->dev, "enable global clocks failed (%d)\n",
+ret);
+
+
+-- 
+SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
