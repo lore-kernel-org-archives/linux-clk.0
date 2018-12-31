@@ -4,62 +4,63 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D31E7C43387
-	for <linux-clk@archiver.kernel.org>; Mon, 31 Dec 2018 18:55:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E6E7C43444
+	for <linux-clk@archiver.kernel.org>; Mon, 31 Dec 2018 18:55:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0CB92073F
-	for <linux-clk@archiver.kernel.org>; Mon, 31 Dec 2018 18:55:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A21B2073F
+	for <linux-clk@archiver.kernel.org>; Mon, 31 Dec 2018 18:55:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="X8Tt52Jc"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Uhjesctv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727773AbeLaSzp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 31 Dec 2018 13:55:45 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:45779 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727770AbeLaSzp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 31 Dec 2018 13:55:45 -0500
-Received: by mail-pl1-f194.google.com with SMTP id a14so12880176plm.12
-        for <linux-clk@vger.kernel.org>; Mon, 31 Dec 2018 10:55:45 -0800 (PST)
+        id S1727809AbeLaSz6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 31 Dec 2018 13:55:58 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:39933 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727793AbeLaSzx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 31 Dec 2018 13:55:53 -0500
+Received: by mail-pg1-f194.google.com with SMTP id w6so12946865pgl.6
+        for <linux-clk@vger.kernel.org>; Mon, 31 Dec 2018 10:55:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=wGON2lybsGy7FC0OgCUYudVtpokObJD+vq+U001MecQ=;
-        b=X8Tt52JcCR8ZkeN2DDakfZzHCPRVV4UzdKgl85bFhx1Btuy/aWNp56Wa1wbQuEAxvX
-         /6FPeBENCGfp9th/naRoCzH1Em3pitOhqvpb8ASdME5jGaStYrLVfWR45Km9V/MoK3RH
-         9hQfv8eqdpXnFgZsEYmGWIB+ds0g8icOp38qw=
+        bh=9D7Rmsu05/Pbcqbi1xBn66qiVOUkQv4REhih46r6FtQ=;
+        b=Uhjesctv2Sn27JZlyXrOgt4VnPsGLpQiRpLu0pyiNYRmKSYhCoDrGpQeWpf1rMU+7+
+         nrH4mLw6X3N2HaUnYTAv/DB3s+CsG13BXY9/bbkpMMcZm74+reGhIiw1/us7rjTqbz0Q
+         4lLNMtsU4F6M7rZz4mujTd8dqQLbpPdWXDHxs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=wGON2lybsGy7FC0OgCUYudVtpokObJD+vq+U001MecQ=;
-        b=nRIdmJAQUDXy+YwP5OjcjHvuNbwqUjKrn48GfUKvT5Sp9pZM71EsQwAEMHltLX10Ez
-         R1Xwj0ubLY/Fh1ykwE2O8MGShBiNJTEkf6Vef5K+rmzH7BUYR42aJNoiKg3quFogp6HO
-         lT12E3rVvYch7CdUc5FUEFrC2yAyhp3k5QIg93jgvhnTmBfnWLviEdw6XDiMP/iN4ZQX
-         LmvfEccZohkb1aCU1Msgx3zK4N9UrlOvk9yOjeAG2QbDme6DK5XQQw0QJfdkxizFhPpT
-         ueGpAImZc4E2DhIX0NNqXCt8dDr6gqF8byA1JNIIZkO4UZCGYlNuONOqHfHiBHWM7+xN
-         1wYQ==
-X-Gm-Message-State: AJcUukfQga79nC22xlj9y7oGPwcjaswpicVNzExOM1CYDy/KdDeHTg2k
-        hAgclaZCORclAe6BuV14gl7L
-X-Google-Smtp-Source: ALg8bN41CVinuICeb02ZWQO42BBaPPILhSZY7fz9tt82jxIo6da0gpuWlRJ39SrdVbBINotWx8zlpA==
-X-Received: by 2002:a17:902:c05:: with SMTP id 5mr38534757pls.155.1546282544662;
-        Mon, 31 Dec 2018 10:55:44 -0800 (PST)
+        bh=9D7Rmsu05/Pbcqbi1xBn66qiVOUkQv4REhih46r6FtQ=;
+        b=XETETZiW97Pp/l60c3dKqErNuvs1nE6+Mqemby6PivWLlm3yaeqV/hTIum+sHMBFti
+         tPkd/L7jX+dNJ/y86qDNTGOk7ysNsKqwfQ2pxqMSf8GG30Kew2auXzO1sIrxRnCYDQ3d
+         6/oQxD1ASpluxS2J4fdhbDBb2i0NCi8Swg2NpUWiIE8PFI0CJh5d6bgH9SUunYarhI+x
+         zYJJop15yf5QldfqRPpvtwAMcDvakyZ+BlE4zxBauwBnLu73Zj6Uwxxbh82i2UB7Aue7
+         pMvTjs25IzCCd+TuNE6GarDq6edvRmA+LVxuQUM4g2YFMiOQ+QclvFZ4KOUDr+iFhF6v
+         AAnA==
+X-Gm-Message-State: AJcUukf59nOY4D1yx8KVuU2lwLoGIiM3jNVsBr6abLdWAFko/Z+B83Ha
+        MWVUsDnjgnEm485bh9gNFBuj
+X-Google-Smtp-Source: ALg8bN7rAo8T1pt8mQGMzJEOpPlWv6qGczbwWVs7FsunvcRXHzIVmSGfbhXqHssxyqnCsT9xHhUMfA==
+X-Received: by 2002:a63:4b60:: with SMTP id k32mr8334133pgl.186.1546282551092;
+        Mon, 31 Dec 2018 10:55:51 -0800 (PST)
 Received: from localhost.localdomain ([2405:204:7440:b882:8d58:e15f:9ff4:efc2])
-        by smtp.gmail.com with ESMTPSA id s9sm66146224pgl.88.2018.12.31.10.55.39
+        by smtp.gmail.com with ESMTPSA id s9sm66146224pgl.88.2018.12.31.10.55.44
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 31 Dec 2018 10:55:44 -0800 (PST)
+        Mon, 31 Dec 2018 10:55:50 -0800 (PST)
 From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To:     sboyd@kernel.org, mturquette@baylibre.com, afaerber@suse.de,
         robh+dt@kernel.org
 Cc:     linux-arm-kernel@lists.infradead.org,
         linux-actions@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Edgar Bernardi Righi <edgar.righi@lsitec.org.br>,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH 1/6] clk: actions: Add configurable PLL delay
-Date:   Tue,  1 Jan 2019 00:25:12 +0530
-Message-Id: <20181231185517.18517-2-manivannan.sadhasivam@linaro.org>
+Subject: [PATCH 2/6] dt-bindings: clock: Add DT bindings for Actions Semi S500 CMU
+Date:   Tue,  1 Jan 2019 00:25:13 +0530
+Message-Id: <20181231185517.18517-3-manivannan.sadhasivam@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181231185517.18517-1-manivannan.sadhasivam@linaro.org>
 References: <20181231185517.18517-1-manivannan.sadhasivam@linaro.org>
@@ -68,113 +69,139 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-S500 SoC requires configurable delay for different PLLs. Hence, add
-a separate macro for declaring a PLL with configurable delay and also
-modify the existing OWL_PLL_NO_PARENT macro to use default delay so
-that no need to modify the existing S700/S900 drivers.
+From: Edgar Bernardi Righi <edgar.righi@lsitec.org.br>
 
+Add devicetree bindings for Actions Semi S500 Clock Management Unit.
+
+Signed-off-by: Edgar Bernardi Righi <edgar.righi@lsitec.org.br>
+[Mani: Documented S500 CMU compatible]
 Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
- drivers/clk/actions/owl-pll.c |  2 +-
- drivers/clk/actions/owl-pll.h | 30 ++++++++++++++++++++++++------
- 2 files changed, 25 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/clk/actions/owl-pll.c b/drivers/clk/actions/owl-pll.c
-index 058e06d7099f..02437bdedf4d 100644
---- a/drivers/clk/actions/owl-pll.c
-+++ b/drivers/clk/actions/owl-pll.c
-@@ -179,7 +179,7 @@ static int owl_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+Rob, I have removed your Reviewed-by tag for this patch since the
+earlier revision contained only bindings constants and lacked the
+compatible documentation, which is added now.
+
+ .../bindings/clock/actions,owl-cmu.txt        |  7 +-
+ include/dt-bindings/clock/actions,s500-cmu.h  | 78 +++++++++++++++++++
+ 2 files changed, 82 insertions(+), 3 deletions(-)
+ create mode 100644 include/dt-bindings/clock/actions,s500-cmu.h
+
+diff --git a/Documentation/devicetree/bindings/clock/actions,owl-cmu.txt b/Documentation/devicetree/bindings/clock/actions,owl-cmu.txt
+index 2ef86ae96df8..86183f559022 100644
+--- a/Documentation/devicetree/bindings/clock/actions,owl-cmu.txt
++++ b/Documentation/devicetree/bindings/clock/actions,owl-cmu.txt
+@@ -2,13 +2,14 @@
  
- 	regmap_write(common->regmap, pll_hw->reg, reg);
+ The Actions Semi Owl Clock Management Unit generates and supplies clock
+ to various controllers within the SoC. The clock binding described here is
+-applicable to S900 and S700 SoC's.
++applicable to S900,S700 and S500 SoC's.
  
--	udelay(PLL_STABILITY_WAIT_US);
-+	udelay(pll_hw->delay);
+ Required Properties:
  
- 	return 0;
- }
-diff --git a/drivers/clk/actions/owl-pll.h b/drivers/clk/actions/owl-pll.h
-index 0aae30abd5dc..6fb0d45bb088 100644
---- a/drivers/clk/actions/owl-pll.h
-+++ b/drivers/clk/actions/owl-pll.h
-@@ -13,6 +13,8 @@
+ - compatible: should be one of the following,
+ 	"actions,s900-cmu"
+ 	"actions,s700-cmu"
++	"actions,s500-cmu"
+ - reg: physical base address of the controller and length of memory mapped
+   region.
+ - clocks: Reference to the parent clocks ("hosc", "losc")
+@@ -19,8 +20,8 @@ Each clock is assigned an identifier, and client nodes can use this identifier
+ to specify the clock which they consume.
  
- #include "owl-common.h"
+ All available clocks are defined as preprocessor macros in corresponding
+-dt-bindings/clock/actions,s900-cmu.h or actions,s700-cmu.h header and can be
+-used in device tree sources.
++dt-bindings/clock/actions,s900-cmu.h or actions,s700-cmu.h or
++actions,s500-cmu.h header and can be used in device tree sources.
  
-+#define OWL_PLL_DEF_DELAY	50
+ External clocks:
+ 
+diff --git a/include/dt-bindings/clock/actions,s500-cmu.h b/include/dt-bindings/clock/actions,s500-cmu.h
+new file mode 100644
+index 000000000000..dc3fd2b0299d
+--- /dev/null
++++ b/include/dt-bindings/clock/actions,s500-cmu.h
+@@ -0,0 +1,78 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Device Tree binding constants for Actions Semi S500 Clock Management Unit
++ *
++ * Copyright (c) 2014 Actions Semi Inc.
++ * Copyright (c) 2018 LSI-TEC - Caninos Loucos
++ */
 +
- /* last entry should have rate = 0 */
- struct clk_pll_table {
- 	unsigned int		val;
-@@ -27,6 +29,7 @@ struct owl_pll_hw {
- 	u8			width;
- 	u8			min_mul;
- 	u8			max_mul;
-+	u8			delay;
- 	const struct clk_pll_table *table;
- };
- 
-@@ -36,7 +39,7 @@ struct owl_pll {
- };
- 
- #define OWL_PLL_HW(_reg, _bfreq, _bit_idx, _shift,			\
--		   _width, _min_mul, _max_mul, _table)			\
-+		   _width, _min_mul, _max_mul, _delay, _table)		\
- 	{								\
- 		.reg		= _reg,					\
- 		.bfreq		= _bfreq,				\
-@@ -45,6 +48,7 @@ struct owl_pll {
- 		.width		= _width,				\
- 		.min_mul	= _min_mul,				\
- 		.max_mul	= _max_mul,				\
-+		.delay		= _delay,				\
- 		.table		= _table,				\
- 	}
- 
-@@ -52,8 +56,8 @@ struct owl_pll {
- 		_shift, _width, _min_mul, _max_mul, _table, _flags)	\
- 	struct owl_pll _struct = {					\
- 		.pll_hw	= OWL_PLL_HW(_reg, _bfreq, _bit_idx, _shift,	\
--				     _width, _min_mul,			\
--				     _max_mul, _table),			\
-+				     _width, _min_mul, _max_mul,	\
-+				     OWL_PLL_DEF_DELAY,	_table),	\
- 		.common = {						\
- 			.regmap = NULL,					\
- 			.hw.init = CLK_HW_INIT(_name,			\
-@@ -67,8 +71,23 @@ struct owl_pll {
- 		_shift, _width, _min_mul, _max_mul, _table, _flags)	\
- 	struct owl_pll _struct = {					\
- 		.pll_hw	= OWL_PLL_HW(_reg, _bfreq, _bit_idx, _shift,	\
--				     _width, _min_mul,			\
--				     _max_mul, _table),			\
-+				     _width, _min_mul, _max_mul,	\
-+				     OWL_PLL_DEF_DELAY,	_table),	\
-+		.common = {						\
-+			.regmap = NULL,					\
-+			.hw.init = CLK_HW_INIT_NO_PARENT(_name,		\
-+					       &owl_pll_ops,		\
-+					       _flags),			\
-+		},							\
-+	}
++#ifndef __DT_BINDINGS_CLOCK_S500_CMU_H
++#define __DT_BINDINGS_CLOCK_S500_CMU_H
 +
-+#define OWL_PLL_NO_PARENT_DELAY(_struct, _name, _reg, _bfreq, _bit_idx,	\
-+		_shift, _width, _min_mul, _max_mul, _delay, _table,	\
-+		_flags)							\
-+	struct owl_pll _struct = {					\
-+		.pll_hw	= OWL_PLL_HW(_reg, _bfreq, _bit_idx, _shift,	\
-+				     _width, _min_mul,  _max_mul,	\
-+				     _delay, _table),			\
- 		.common = {						\
- 			.regmap = NULL,					\
- 			.hw.init = CLK_HW_INIT_NO_PARENT(_name,		\
-@@ -78,7 +97,6 @@ struct owl_pll {
- 	}
- 
- #define mul_mask(m)		((1 << ((m)->width)) - 1)
--#define PLL_STABILITY_WAIT_US	(50)
- 
- static inline struct owl_pll *hw_to_owl_pll(const struct clk_hw *hw)
- {
++#define CLK_NONE		0
++
++/* fixed rate clocks */
++#define CLK_LOSC		1
++#define CLK_HOSC		2
++
++/* pll clocks */
++#define CLK_CORE_PLL		3
++#define CLK_DEV_PLL		4
++#define CLK_DDR_PLL		5
++#define CLK_NAND_PLL		6
++#define CLK_DISPLAY_PLL		7
++#define CLK_ETHERNET_PLL	8
++#define CLK_AUDIO_PLL		9
++
++/* system clock */
++#define CLK_DEV			10
++#define CLK_H			11
++#define CLK_AHBPREDIV		12
++#define CLK_AHB			13
++#define CLK_DE			14
++#define CLK_BISP		15
++#define CLK_VCE			16
++#define CLK_VDE			17
++
++/* peripheral device clock */
++#define CLK_TIMER		18
++#define CLK_I2C0		19
++#define CLK_I2C1		20
++#define CLK_I2C2		21
++#define CLK_I2C3		22
++#define CLK_PWM0		23
++#define CLK_PWM1		24
++#define CLK_PWM2		25
++#define CLK_PWM3		26
++#define CLK_PWM4		27
++#define CLK_PWM5		28
++#define CLK_SD0			29
++#define CLK_SD1			30
++#define CLK_SD2			31
++#define CLK_SENSOR0		32
++#define CLK_SENSOR1		33
++#define CLK_SPI0		34
++#define CLK_SPI1		35
++#define CLK_SPI2		36
++#define CLK_SPI3		37
++#define CLK_UART0		38
++#define CLK_UART1		39
++#define CLK_UART2		40
++#define CLK_UART3		41
++#define CLK_UART4		42
++#define CLK_UART5		43
++#define CLK_UART6		44
++#define CLK_DE1			45
++#define CLK_DE2			46
++#define CLK_I2SRX		47
++#define CLK_I2STX		48
++#define CLK_HDMI_AUDIO		49
++#define CLK_HDMI		50
++#define CLK_SPDIF		51
++#define CLK_NAND		52
++#define CLK_ECC			53
++#define CLK_RMII_REF		54
++
++#define CLK_NR_CLKS	       (CLK_RMII_REF + 1)
++
++#endif /* __DT_BINDINGS_CLOCK_S500_CMU_H */
 -- 
 2.17.1
 
