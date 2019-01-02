@@ -2,118 +2,115 @@ Return-Path: <SRS0=vVV6=PK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAC6DC43387
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Jan 2019 10:55:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1886EC43387
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Jan 2019 14:59:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFCEA2171F
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Jan 2019 10:55:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5CFF218FF
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Jan 2019 14:59:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546441191;
+	bh=EuszS8KBOJ304Cnia9J6Vs+/UHV0QCxGUcTe6yeso/M=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=Q5/eD6aY52B+yCLycajClctBQNp8OiNHcRuGMEJUS/j0dOtiMDYZNw9MHrKGS593v
+	 q55mreDx6kXi1DFaXJ2CLDhNEIfa0AcDmyWSYl99pai8NtOiym824JYWGSl/K4/klW
+	 mSgd9bZAUEBSjI0n1zqxzlYTf7qVXLwqpj7eT450=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727631AbfABKzZ convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 2 Jan 2019 05:55:25 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:37516 "EHLO mail.bootlin.com"
+        id S1729462AbfABO7v (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 2 Jan 2019 09:59:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54856 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727294AbfABKzZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 2 Jan 2019 05:55:25 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id DC8EF207B0; Wed,  2 Jan 2019 11:55:22 +0100 (CET)
-Received: from xps13 (aaubervilliers-681-1-29-148.w90-88.abo.wanadoo.fr [90.88.149.148])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 87F7A206A6;
-        Wed,  2 Jan 2019 11:55:22 +0100 (CET)
-Date:   Wed, 2 Jan 2019 11:55:22 +0100
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>
-Subject: Re: [PATCH v3 1/4] clk: core: clarify the check for runtime PM
-Message-ID: <20190102115522.2d7a1c37@xps13>
-In-Reply-To: <154534015908.79149.14109221006631310404@swboyd.mtv.corp.google.com>
-References: <20181204192440.12125-1-miquel.raynal@bootlin.com>
-        <20181204192440.12125-2-miquel.raynal@bootlin.com>
-        <154517780935.238328.764268020422357561@swboyd.mtv.corp.google.com>
-        <20181219090331.4c8c4852@xps13>
-        <154534015908.79149.14109221006631310404@swboyd.mtv.corp.google.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1729358AbfABO7v (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 2 Jan 2019 09:59:51 -0500
+Received: from localhost.localdomain (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BAE3A218E2;
+        Wed,  2 Jan 2019 14:59:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1546441190;
+        bh=EuszS8KBOJ304Cnia9J6Vs+/UHV0QCxGUcTe6yeso/M=;
+        h=From:To:Cc:Subject:Date:From;
+        b=b3aAcjBFlrmZBH6z7ZbwMQUeRqDoryo8a+Q46+wtLJwx36BassH2TsNui0rAji4yi
+         FCBcuf4LT44ArRBvrlLd+kNZgXy/qebUonAkON1XCDvKeGqYTFp1emTjyTjCGRMRp3
+         TfE4GgbXViybF03mNKKNY60RTuzDH9M0CFg3GVlI=
+From:   Dinh Nguyen <dinguyen@kernel.org>
+To:     linux-clk@vger.kernel.org
+Cc:     dinguyen@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        linux-stable@vger.kernel.org
+Subject: [PATCH RESEND 1/2] clk: socfpga: stratix10: fix naming convention for the fixed-clocks
+Date:   Wed,  2 Jan 2019 08:59:31 -0600
+Message-Id: <20190102145932.26423-1-dinguyen@kernel.org>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+The fixed clocks in the DTS file have a hyphen, but the clock driver has
+the fixed clocks using underbar. Thus the clock driver cannot detect the
+other fixed clocks correctly. Change the fixed clock names to a hyphen.
 
-Stephen Boyd <sboyd@kernel.org> wrote on Thu, 20 Dec 2018 13:09:19
--0800:
+Fixes: 07afb8db7340 ("clk: socfpga: stratix10: add clock driver for
+Stratix10 platform")
+Cc: linux-stable@vger.kernel.org
+Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+---
+ drivers/clk/socfpga/clk-s10.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-> Quoting Miquel Raynal (2018-12-19 00:03:31)
-> > Hi Stephen,
-> > 
-> > Stephen Boyd <sboyd@kernel.org> wrote on Tue, 18 Dec 2018 16:03:29
-> > -0800:
-> >   
-> > > Quoting Miquel Raynal (2018-12-04 11:24:37)  
-> > > > Currently, the core->dev entry is populated only if runtime PM is
-> > > > enabled. Doing so prevents accessing the device structure in any
-> > > > case.
-> > > > 
-> > > > Keep the same logic but instead of using the presence of core->dev as
-> > > > the only condition, also check the status of
-> > > > pm_runtime_enabled(). Then, we can set the core->dev pointer at any
-> > > > time as long as a device structure is available.
-> > > > 
-> > > > This change will help supporting device links in the clock subsystem.
-> > > > 
-> > > > Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> > > > ---
-> > > >  drivers/clk/clk.c | 11 +++++------
-> > > >  1 file changed, 5 insertions(+), 6 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > > > index af011974d4ec..b799347c5fd6 100644
-> > > > --- a/drivers/clk/clk.c
-> > > > +++ b/drivers/clk/clk.c
-> > > > @@ -97,7 +97,7 @@ static int clk_pm_runtime_get(struct clk_core *core)
-> > > >  {
-> > > >         int ret = 0;
-> > > >  
-> > > > -       if (!core->dev)
-> > > > +       if (!core->dev || !pm_runtime_enabled(core->dev))    
-> > > 
-> > > This looks potentially dangerous. What if runtime PM is disabled for the
-> > > clk when this function is called? Shouldn't we just stash a bool away in
-> > > the clk_core structure when it's registered? And then we can replace the
-> > > check for !core->dev with a check for 'core->rpm_enabled' instead. That
-> > > would be a more exact transformation.  
-> > 
-> > Sure, I'll do that if you think there is a danger.  
-> 
-> I've made the change and pushed it out to the clk tree. I'm working on
-> some patches to change how we do parent lookups and reworking clk_get()
-> in the process. Take a look so we don't duplicate efforts. The code
-> isn't complete, but I hope to finish soon. Your device links patches can
-> build upon this.
-> 
->  git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-parent-rewrite
-> 
+diff --git a/drivers/clk/socfpga/clk-s10.c b/drivers/clk/socfpga/clk-s10.c
+index 5b238fc314ac..8281dfbf38c2 100644
+--- a/drivers/clk/socfpga/clk-s10.c
++++ b/drivers/clk/socfpga/clk-s10.c
+@@ -12,17 +12,17 @@
+ 
+ #include "stratix10-clk.h"
+ 
+-static const char * const pll_mux[] = { "osc1", "cb_intosc_hs_div2_clk",
+-					"f2s_free_clk",};
++static const char * const pll_mux[] = { "osc1", "cb-intosc-hs-div2-clk",
++					"f2s-free-clk",};
+ static const char * const cntr_mux[] = { "main_pll", "periph_pll",
+-					 "osc1", "cb_intosc_hs_div2_clk",
+-					 "f2s_free_clk"};
+-static const char * const boot_mux[] = { "osc1", "cb_intosc_hs_div2_clk",};
++					 "osc1", "cb-intosc-hs-div2-clk",
++					 "f2s-free-clk"};
++static const char * const boot_mux[] = { "osc1", "cb-intosc-hs-div2-clk",};
+ 
+ static const char * const noc_free_mux[] = {"main_noc_base_clk",
+ 					    "peri_noc_base_clk",
+-					    "osc1", "cb_intosc_hs_div2_clk",
+-					    "f2s_free_clk"};
++					    "osc1", "cb-intosc-hs-div2-clk",
++					    "f2s-free-clk"};
+ 
+ static const char * const emaca_free_mux[] = {"peri_emaca_clk", "boot_clk"};
+ static const char * const emacb_free_mux[] = {"peri_emacb_clk", "boot_clk"};
+@@ -33,14 +33,14 @@ static const char * const s2f_usr1_free_mux[] = {"peri_s2f_usr1_clk", "boot_clk"
+ static const char * const psi_ref_free_mux[] = {"peri_psi_ref_clk", "boot_clk"};
+ static const char * const mpu_mux[] = { "mpu_free_clk", "boot_clk",};
+ 
+-static const char * const s2f_usr0_mux[] = {"f2s_free_clk", "boot_clk"};
++static const char * const s2f_usr0_mux[] = {"f2s-free-clk", "boot_clk"};
+ static const char * const emac_mux[] = {"emaca_free_clk", "emacb_free_clk"};
+ static const char * const noc_mux[] = {"noc_free_clk", "boot_clk"};
+ 
+ static const char * const mpu_free_mux[] = {"main_mpu_base_clk",
+ 					    "peri_mpu_base_clk",
+-					    "osc1", "cb_intosc_hs_div2_clk",
+-					    "f2s_free_clk"};
++					    "osc1", "cb-intosc-hs-div2-clk",
++					    "f2s-free-clk"};
+ 
+ /* clocks in AO (always on) controller */
+ static const struct stratix10_pll_clock s10_pll_clks[] = {
+-- 
+2.20.0
 
-Sorry for the delay and thanks for the update. I have been preempted by
-another issue, I will switch to clocks and propose something ASAP.
-
-
-Thanks,
-Miquèl
