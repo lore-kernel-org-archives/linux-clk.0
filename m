@@ -2,256 +2,130 @@ Return-Path: <SRS0=Wo9f=PM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8577BC43387
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Jan 2019 09:13:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D6A7C43387
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Jan 2019 09:30:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 496BB217F5
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Jan 2019 09:13:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546593224;
-	bh=kRhrn0GqHvLVBSyJaj2/l/wYC/wLT07POAcDWSryzu4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=O7AAo8GIFNabu7+Y0RGrgepaf45U6njzCDH4spJ4Wb7dElxkaqrHq93THUI/EEn36
-	 Ujr3sFSUYPO8v16iL/y6kNJizZOgJ+BRHLwlXn6K+d87+vjaeQA482WdFnxNBJfMv3
-	 FxjL/I87rQax8Qd7aTxZhApCPfUe1NlWGbQrVmkY=
+	by mail.kernel.org (Postfix) with ESMTP id 2FAA7218CD
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Jan 2019 09:30:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="c/hMRVSj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726581AbfADJNo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 4 Jan 2019 04:13:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56824 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726169AbfADJNn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 4 Jan 2019 04:13:43 -0500
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7BE3F218D8;
-        Fri,  4 Jan 2019 09:13:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546593221;
-        bh=kRhrn0GqHvLVBSyJaj2/l/wYC/wLT07POAcDWSryzu4=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=IliswcbsjSqTWCHPatLUuVbKCXo5vhEEY0TibX2RTwfD8uPoCiVYFRCBdojgy0iaS
-         hx+JCXeT/PWzB6M0wGAaDsQDbzwwSDkT9c8ZKZQTrg8kJ5wXXVFHl+8p8vjhWQ6ypW
-         Kiu0oKNOxsoS5q5C0LcDWuMay1u9Q7wcG54f/zqA=
-Received: by mail-wm1-f41.google.com with SMTP id g67so556556wmd.2;
-        Fri, 04 Jan 2019 01:13:41 -0800 (PST)
-X-Gm-Message-State: AJcUuke6MZF02NJTZDeVxlN64rUxYXrl9Sy+jiOWDNibhnRhf7XwICtz
-        ms+NrG3IOKxVG2dt5RpySSW14JYI7ojnCEeor5w=
-X-Google-Smtp-Source: ALg8bN4sm7mDJpejChjSCdMCz9hr08Pid6kmIZPlBlHIYCujFFWyDbvMA1J3GH9hcqX2oL5yR76D5auxwGJecMtuSFg=
-X-Received: by 2002:a1c:2e43:: with SMTP id u64mr751976wmu.52.1546593219832;
- Fri, 04 Jan 2019 01:13:39 -0800 (PST)
-MIME-Version: 1.0
-References: <1545984581-25843-1-git-send-email-erin.lo@mediatek.com>
- <1545984581-25843-6-git-send-email-erin.lo@mediatek.com> <20181228220405.GA8739@bogus>
- <1546585723.21915.7.camel@mhfsdcap03>
-In-Reply-To: <1546585723.21915.7.camel@mhfsdcap03>
-From:   Sean Wang <sean.wang@kernel.org>
-Date:   Fri, 4 Jan 2019 01:14:33 -0800
-X-Gmail-Original-Message-ID: <CAGp9LzoAyZqC53eo4JKcouu=pNgsGm9FFm1GaxbH1Jc1OD8Bvw@mail.gmail.com>
-Message-ID: <CAGp9LzoAyZqC53eo4JKcouu=pNgsGm9FFm1GaxbH1Jc1OD8Bvw@mail.gmail.com>
-Subject: Re: [PATCH v5 5/6] dt-bindings: pinctrl: mt8183: add binding document
-To:     Zhiyong Tao <zhiyong.tao@mediatek.com>
-Cc:     Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Jason Cooper <jason@lakedaemon.net>,
-        srv_heupstream <srv_heupstream@mediatek.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        =?UTF-8?B?RXJpbiBMbyAo576F6ZuF6b2hKQ==?= <erin.lo@mediatek.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-        =?UTF-8?B?TWFycyBDaGVuZyAo6YSt5qOu5Y+LKQ==?= 
-        <Mars.Cheng@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        =?UTF-8?B?WWluZ2pvZSBDaGVuICjpmbPoi7HmtLIp?= 
-        <Yingjoe.Chen@mediatek.com>, Thomas Gleixner <tglx@linutronix.de>,
-        =?UTF-8?B?RWRkaWUgSHVhbmcgKOm7g+aZuuWCkSk=?= 
-        <eddie.huang@mediatek.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1726198AbfADJak (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 4 Jan 2019 04:30:40 -0500
+Received: from mailout1.samsung.com ([203.254.224.24]:32525 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725958AbfADJak (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Jan 2019 04:30:40 -0500
+Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20190104093037epoutp0115b89215fb8d19ac5a658d5ec8ba0953~2m0Pb3rxz0301803018epoutp01f;
+        Fri,  4 Jan 2019 09:30:37 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20190104093037epoutp0115b89215fb8d19ac5a658d5ec8ba0953~2m0Pb3rxz0301803018epoutp01f
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1546594237;
+        bh=rAuUhlcWuGKwbn7geXrX9I1Pwo5hFkoElQ0VdQn0dLg=;
+        h=Subject:To:Cc:From:Date:In-reply-to:References:From;
+        b=c/hMRVSjW9ZGTM+tyM3TYYBblAQogXmediNSHyAwBC5eslv5JSABJOzmXoEmQZem8
+         1LLEnR+KmM2xaTtSFNtG/eFUFGNOSGul6/wxWYAQICnefIab1G/TR+5/xAIQcuzZ+e
+         CIkfwZFZq8543a9ApIuUOVa9046oHV/VR3Sz38cE=
+Received: from epsmges2p2.samsung.com (unknown [182.195.42.70]) by
+        epcas2p1.samsung.com (KnoxPortal) with ESMTP id
+        20190104093037epcas2p12becc505df6b4d0f2e6d19ca45a4ad2e~2m0PSG4QM1884518845epcas2p1D;
+        Fri,  4 Jan 2019 09:30:37 +0000 (GMT)
+Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
+        epsmges2p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        94.89.04060.DB72F2C5; Fri,  4 Jan 2019 18:30:37 +0900 (KST)
+Received: from epsmgms2p2new.samsung.com (unknown [182.195.42.143]) by
+        epcas2p4.samsung.com (KnoxPortal) with ESMTP id
+        20190104093036epcas2p4d68eac64fa40e3f5e8da6e26dddcee30~2m0OPHlxN2893128931epcas2p4N;
+        Fri,  4 Jan 2019 09:30:36 +0000 (GMT)
+X-AuditID: b6c32a46-b2dff70000000fdc-84-5c2f27bd6077
+Received: from epmmp2 ( [203.254.227.17]) by epsmgms2p2new.samsung.com
+        (Symantec Messaging Gateway) with SMTP id 20.74.03627.CB72F2C5; Fri,  4 Jan
+        2019 18:30:36 +0900 (KST)
+Received: from [106.116.147.40] by mmp2.samsung.com (Oracle Communications
+        Messaging Server 7.0.5.31.0 64bit (built May  5 2014)) with ESMTPA id
+        <0PKS00966VQXV730@mmp2.samsung.com>; Fri, 04 Jan 2019 18:30:36 +0900 (KST)
+Subject: Re: Informing common clock framework driver of externally-derived
+ base clock frequency
+To:     Jonny Hall <jonny.hall@boxcast.com>, linux-clk@vger.kernel.org
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-id: <32a08ee4-3989-3785-88d6-7d215147eba3@samsung.com>
+Date:   Fri, 04 Jan 2019 10:30:33 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.2.1
+MIME-version: 1.0
+In-reply-to: <CAP_wsPYwykAPF=aedoHkZnKhLgFdbUNMK7tpFJkhMfr_X2Gnrg@mail.gmail.com>
+Content-type: text/plain; charset="utf-8"
+Content-language: en-GB
+Content-transfer-encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrIIsWRmVeSWpSXmKPExsWy7bCmqe5edf0Yg+ffVS16di5ktfjYc4/V
+        4uIpV4t/1zayOLB4vL/Ryu4x79F3Jo9NqzrZPD5vkgtgieKySUnNySxLLdK3S+DKOLVZruAi
+        Z8Wv3wtZGxjvsXcxcnJICJhITHz2iLWLkYtDSGAHo0RbYy+U851RYtHFjawwVZ/udjJDJDYw
+        Svx6eg+q6j6jxJIHF4AcDg5hgUSJXXOYQEwRASeJF9/4QHqZBYIkXj5pZAOx2QQMJXqP9jGC
+        2LwCdhLb9/9nBrFZBFQlrkxtB7NFBSIkOu6vZoOoEZT4MfkeC4jNKRAsMWfTdBaImZoSL75M
+        grLFJY7dv8kIYctLbF7zFuxOCYE1bBIzNsM84CIx/extZghbWOLV8S1Q70tLPFu1kRHCrpbY
+        tb0bqrmDUaLlwnaoBmuJw8cvskJs4JPoOPyXHeRJCQFeiY42IYgSD4lpOw9DA2gJo8SFl63s
+        ExhlZyF5YhaSw2chOXwWksMXMLKsYhRLLSjOTU8tNiow0itOzC0uzUvXS87P3cQITghabjsY
+        l5zzOcQowMGoxMMbwacXI8SaWFZcmXuIUYKDWUmEN5FJP0aINyWxsiq1KD++qDQntfgQozQH
+        i5I470PpudFCAumJJanZqakFqUUwWSYOTqkGRla9a7sVWW5xpG/lfbE69FuQ8fxehwmBEm3r
+        VqxsTi3XaD5ef+2QUkLK6/KLOZeqL+yO31OV0Ma5m+mn9deLp4W2ym1J9J9kF1X1O3WzRsSn
+        xWWPHhTzZuVui4iwCfs383TQ99JD2z0NL+tzCH84+OLyif6+6bvWfPD2U9165HHqPQ0VHXYJ
+        VSWW4oxEQy3mouJEAEJjpD8EAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrCLMWRmVeSWpSXmKPExsVy+t9jQd096voxBkemSVn07FzIavGx5x6r
+        xcVTrhb/rm1kcWDxeH+jld1j3qPvTB6bVnWyeXzeJBfAEsVlk5Kak1mWWqRvl8CVcWqzXMFF
+        zopfvxeyNjDeY+9i5OSQEDCR+HS3k7mLkYtDSGAdo8T9OytYIJyHjBKTe56wgVQJCyRKvO59
+        CNTBwSEi4CTx4hsfRM0yRomnnV/BapgFAiQOPN/ACGKzCRhK9B7tA7N5Bewktu//zwxiswio
+        SlyZ2g5miwpESJx9uQ6qRlDix+R7LCA2p0CwxInOtSwgu5gF1CWmTMmFGC8ucez+TUYIW15i
+        85q3zBMYBWYh6Z6F0DELSccsJB0LGFlWMUqmFhTnpucWGxUY5aWW6xUn5haX5qXrJefnbmIE
+        hvW2w1r9OxgfL4k/xCjAwajEwxvBpxcjxJpYVlyZe4hRgoNZSYQ3kUk/Rog3JbGyKrUoP76o
+        NCe1+BCjNAeLkjgvf/6xSCGB9MSS1OzU1ILUIpgsEwenVAMjA0/7vXdTfX/f8prxvqosTEdM
+        NDD9utm6PTftQ7TMJLKmrI/K25lzL3Nm0pJ7nya1u11tLHkhZMi4+//2GvdZ1ZUHtl3TL372
+        TubTwj8Su+y5iwr82xLZDW5U5PvXXXayYFK15n3EMb+qyfz66vzJipyzWZJ+LOm4XSutHfV5
+        kv3tkgkfDCKVWIozEg21mIuKEwELUWRmZwIAAA==
+X-CMS-MailID: 20190104093036epcas2p4d68eac64fa40e3f5e8da6e26dddcee30
+X-Msg-Generator: CA
+CMS-TYPE: 102P
+X-CMS-RootMailID: 20190104023702epcas4p4e6b225121db059cb6ed167581c303e92
+References: <CGME20190104023702epcas4p4e6b225121db059cb6ed167581c303e92@epcas4p4.samsung.com>
+        <CAP_wsPYwykAPF=aedoHkZnKhLgFdbUNMK7tpFJkhMfr_X2Gnrg@mail.gmail.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Jan 3, 2019 at 11:09 PM Zhiyong Tao <zhiyong.tao@mediatek.com> wrote:
->
-> On Sat, 2018-12-29 at 06:04 +0800, Rob Herring wrote:
-> > On Fri, Dec 28, 2018 at 04:09:40PM +0800, Erin Lo wrote:
-> > > From: Zhiyong Tao <zhiyong.tao@mediatek.com>
-> > >
-> > > The commit adds mt8183 compatible node in binding document.
-> > >
-> > > Signed-off-by: Zhiyong Tao <zhiyong.tao@mediatek.com>
-> > > Signed-off-by: Erin Lo <erin.lo@mediatek.com>
-> > > ---
-> > >  .../devicetree/bindings/pinctrl/pinctrl-mt8183.txt | 110 +++++++++++++++++++++
-> > >  1 file changed, 110 insertions(+)
-> > >  create mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-mt8183.txt
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8183.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8183.txt
-> > > new file mode 100644
-> > > index 0000000..7b5285e
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8183.txt
-> > > @@ -0,0 +1,110 @@
-> > > +* Mediatek MT8183 Pin Controller
-> > > +
-> > > +The Mediatek's Pin controller is used to control SoC pins.
-> > > +
-> > > +Required properties:
-> > > +- compatible: value should be one of the following.
-> > > +   "mediatek,mt8183-pinctrl", compatible with mt8183 pinctrl.
-> > > +- gpio-controller : Marks the device node as a gpio controller.
-> > > +- #gpio-cells: number of cells in GPIO specifier. Since the generic GPIO
-> > > +  binding is used, the amount of cells must be specified as 2. See the below
-> > > +  mentioned gpio binding representation for description of particular cells.
-> > > +- gpio-ranges : gpio valid number range.
-> > > +
-> > > +   Eg: <&pio 6 0>
-> > > +   <[phandle of the gpio controller node]
-> > > +   [line number within the gpio controller]
-> > > +   [flags]>
-> > > +
-> > > +   Values for gpio specifier:
-> > > +   - Line number: is a value between 0 to 202.
-> > > +   - Flags:  bit field of flags, as defined in <dt-bindings/gpio/gpio.h>.
-> > > +            Only the following flags are supported:
-> > > +            0 - GPIO_ACTIVE_HIGH
-> > > +            1 - GPIO_ACTIVE_LOW
-> > > +
-> > > +Optional properties:
-> > > +- reg: physicall address base for gpio base registers.
-> >
-> > s/physicall/physical/
-> >
-> > reg should never be optional.
-> >
-> > Need to say how many reg entries.
->
-> ==> Thanks for your suggestion. We will change 'reg' to Required
-> properties and add the reg entries in next version.
-> >
-> > > +- reg-names: gpio base registers name.
-> >
-> > Need to say what are the names. However, I don't find the names in the
-> > example all that useful, so I'd just drop it.
->
-> ==> we will add the reg-names in next version.
-> They are used in the sample code, such as:
-> > +             reg-names = "iocfg0", "iocfg1", "iocfg2",
-> > > +                       "iocfg3", "iocfg4", "iocfg5",
-> > > +                       "iocfg6", "iocfg7", "iocfg8";
->
-> >
-> > > +- interrupt-controller: Marks the device node as an interrupt controller
-> > > +- #interrupt-cells: Should be two.
-> > > +- interrupts : The interrupt outputs from the controller.
-> > > +
-> > > +Please refer to pinctrl-bindings.txt in this directory for details of the
-> > > +common pinctrl bindings used by client devices.
-> > > +
-> > > +Subnode format
-> > > +A pinctrl node should contain at least one subnodes representing the
-> > > +pinctrl groups available on the machine. Each subnode will list the
-> > > +pins it needs, and how they should be configured, with regard to muxer
-> > > +configuration, pullups, drive strength, input enable/disable and input schmitt.
-> > > +
-> > > +    node {
-> > > +   pinmux = <PIN_NUMBER_PINMUX>;
-> > > +   GENERIC_PINCONFIG;
-> > > +    };
-> > > +
-> > > +Required properties:
-> > > +- pinmux: integer array, represents gpio pin number and mux setting.
-> > > +    Supported pin number and mux varies for different SoCs, and are defined
-> > > +    as macros in boot/dts/<soc>-pinfunc.h directly.
-> > > +
-> > > +Optional properties:
-> > > +- GENERIC_PINCONFIG: is the generic pinconfig options to use, bias-disable,
-> > > +    bias-pull-down, bias-pull-up, input-enable, input-disable, output-low, output-high,
-> > > +    input-schmitt-enable, input-schmitt-disable and drive-strength are valid.
-> > > +
-> > > +    Some special pins have extra pull up strength, there are R0 and R1 pull-up
-> > > +    resistors available, but for user, it's only need to set R1R0 as 00, 01, 10 or 11.
-> > > +    So when config mediatek,pull-up-adv or mediatek,pull-down-adv,
-> > > +    it support arguments for those special pins.
-> > > +
-> > > +    When config drive-strength, it can support some arguments, such as
-> > > +    MTK_DRIVE_4mA, MTK_DRIVE_6mA, etc. See dt-bindings/pinctrl/mt65xx.h.
-> > > +
+Hi,
 
-One point we can fix more is the drive-strength already is supported
-as the generic one, not need to depend on a dedicated header file.
+Cc: CCF maintainers
 
-> > > +Examples:
-> > > +
-> > > +#include "mt8183-pinfunc.h"
-> > > +
-> > > +...
-> > > +{
-> > > +   pio: pinctrl@10005000 {
-> > > +           compatible = "mediatek,mt8183-pinctrl";
-> > > +           reg = <0 0x10005000 0 0x1000>,
-> > > +                 <0 0x11F20000 0 0x1000>,
-> > > +                 <0 0x11E80000 0 0x1000>,
-> > > +                 <0 0x11E70000 0 0x1000>,
-> > > +                 <0 0x11E90000 0 0x1000>,
-> > > +                 <0 0x11D30000 0 0x1000>,
-> > > +                 <0 0x11D20000 0 0x1000>,
-> > > +                 <0 0x11C50000 0 0x1000>,
-> > > +                 <0 0x11F30000 0 0x1000>;
-> > > +           reg-names = "iocfg0", "iocfg1", "iocfg2",
-> > > +                       "iocfg3", "iocfg4", "iocfg5",
-> > > +                       "iocfg6", "iocfg7", "iocfg8";
-> > > +           gpio-controller;
-> > > +           #gpio-cells = <2>;
-> > > +           gpio-ranges = <&pio 0 0 192>;
-> > > +           interrupt-controller;
-> > > +           interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
-> > > +           interrupt-parent = <&gic>;
-> > > +           #interrupt-cells = <2>;
-> > > +
-> > > +           i2c0_pins_a: i2c0@0 {
-> >
-> > unit-address without reg property is not valid.
->
-> ==> we will change "i2c0_pins_a: i2c0@0" to "i2c0_pins_a: i2c0" in the
-> next version.
-> >
-> > > +                   pins1 {
-> > > +                           pinmux = <PINMUX_GPIO48__FUNC_SCL5>,
-> > > +                                    <PINMUX_GPIO49__FUNC_SDA5>;
-> > > +                           mediatek,pull-up-adv = <11>;
-> > > +                   };
-> > > +           };
-> > > +
-> > > +           i2c1_pins_a: i2c1@0 {
-> > > +                   pins {
-> > > +                           pinmux = <PINMUX_GPIO50__FUNC_SCL3>,
-> > > +                                    <PINMUX_GPIO51__FUNC_SDA3>;
-> > > +                           mediatek,pull-down-adv = <10>;
-> > > +                   };
-> > > +           };
-> > > +           ...
-> > > +   };
-> > > +};
-> > > --
-> > > 1.9.1
-> > >
->
->
->
-> _______________________________________________
-> Linux-mediatek mailing list
-> Linux-mediatek@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-mediatek
+On 1/4/19 03:35, Jonny Hall wrote:
+[...]
+
+> ... However, in my application, the input frequency of
+> the si5342 is not known in advance, is derived from an external
+> source, and can change during runtime. The si5342 will need to be
+> (re)configured during operation with the frequency of this root clock
+> source in order to properly lock onto it and generate the correct
+> output frequencies -- it cannot independently determine the input
+> frequency, only "locked" / "unlocked" state.  The application software
+> (other drivers and usermode application code) will know the input
+> clock rate.  I've though of a couple ways to do this:
+> 
+> -Implement the root clock source as an "imaginary" divider where the
+> set_rate call actually configures the input dividers of the si5342.
+> This approach seems to abuse the common clock framework, as I'm not
+> actually *setting* the rate, I'm *informing* the driver of a rate that
+> was determined independently.
+
+It sounds like registering a clk notifier on the si5342 root source clock
+might be a way to go, wouldn't that work for you?
+For an example you could have a look at drivers/clk/sunxi-ng/ccu_mux.c.
+
+--
+Regards,
+Sylwester
