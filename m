@@ -2,272 +2,120 @@ Return-Path: <SRS0=Wo9f=PM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D3C1C43387
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Jan 2019 09:55:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 134E6C43387
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Jan 2019 15:54:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 263D921872
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Jan 2019 09:55:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546595708;
-	bh=qDZdZnbZ5LXv4AkuLT+qVg5zFWeU72i7jAqMsIswbHs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=dVk9KIrlShXHwhn/lvjK6vNLRBtaWuuzHWecO/5ynr8oYuNlhKJfUa4nmmDCG/XBU
-	 10d77sGJ1DGHy4ktQHE6uZe3kNAzreImoGLZTqDNi3iP0Q2KNZdqZC/ttkrGVj+kIa
-	 p6aeCme4gAO7KruAwxDVjD/mpCPT+NO2O1OrY1pI=
+	by mail.kernel.org (Postfix) with ESMTP id DC3C421874
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Jan 2019 15:54:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726530AbfADJzH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 4 Jan 2019 04:55:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47204 "EHLO mail.kernel.org"
+        id S1728243AbfADPyK convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 4 Jan 2019 10:54:10 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:53923 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726074AbfADJzH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 4 Jan 2019 04:55:07 -0500
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 19771218E2;
-        Fri,  4 Jan 2019 09:55:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546595706;
-        bh=qDZdZnbZ5LXv4AkuLT+qVg5zFWeU72i7jAqMsIswbHs=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=UhQwVDaTSY76ZIEtejISPxvLraa6cAgh5eorrbatXBMBHz4JiCbh5ishRrsLdBHd5
-         nQl4AFRSutStzGYVi6Xo03xb9inEAZLC7vjIA5TB7sMATSzEODzU2B93R9it0jj/j3
-         ySEdjyZJ+JzfkCdoByQNX68TGFjAbpAyft/EyKrI=
-Received: by mail-wm1-f46.google.com with SMTP id y139so618398wmc.5;
-        Fri, 04 Jan 2019 01:55:06 -0800 (PST)
-X-Gm-Message-State: AJcUukfFxTabYud47P9gn6ZSijr1C1JR8MuiJCAIMee5wALsb+y2mJWX
-        z45jbC07LZ3btZKCl1JFWiirgRmjk6ZBFu1yo4Y=
-X-Google-Smtp-Source: ALg8bN6refDqiHgMQ+GBzX+Fwf6DUnuEv1+Mm8uvn61/7xju9l9qRfoXnsBnpfMQ3ccSbTjxXE3CF9/9g1KuQ7SH+ok=
-X-Received: by 2002:a1c:2e43:: with SMTP id u64mr856166wmu.52.1546595704426;
- Fri, 04 Jan 2019 01:55:04 -0800 (PST)
+        id S1726232AbfADPyK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 4 Jan 2019 10:54:10 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 68A8B2075E; Fri,  4 Jan 2019 16:54:07 +0100 (CET)
+Received: from xps13 (aaubervilliers-681-1-29-148.w90-88.abo.wanadoo.fr [90.88.149.148])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 17ED4206A6;
+        Fri,  4 Jan 2019 16:54:07 +0100 (CET)
+Date:   Fri, 4 Jan 2019 16:54:06 +0100
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Nadav Haklai <nadavh@marvell.com>
+Subject: Re: [PATCH v3 2/4] clk: core: link consumer with clock driver
+Message-ID: <20190104165406.3b52399a@xps13>
+In-Reply-To: <154454837597.17204.11648795524314926025@swboyd.mtv.corp.google.com>
+References: <20181204192440.12125-1-miquel.raynal@bootlin.com>
+        <20181204192440.12125-3-miquel.raynal@bootlin.com>
+        <154454837597.17204.11648795524314926025@swboyd.mtv.corp.google.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <1545984581-25843-1-git-send-email-erin.lo@mediatek.com>
- <1545984581-25843-6-git-send-email-erin.lo@mediatek.com> <20181228220405.GA8739@bogus>
- <1546585723.21915.7.camel@mhfsdcap03> <CAGp9LzoAyZqC53eo4JKcouu=pNgsGm9FFm1GaxbH1Jc1OD8Bvw@mail.gmail.com>
- <1546594814.21915.16.camel@mhfsdcap03>
-In-Reply-To: <1546594814.21915.16.camel@mhfsdcap03>
-From:   Sean Wang <sean.wang@kernel.org>
-Date:   Fri, 4 Jan 2019 01:55:57 -0800
-X-Gmail-Original-Message-ID: <CAGp9LzpNTKxgPyPOFQefJ1B_459dFtGUseW2sKHTiESDVLj9jw@mail.gmail.com>
-Message-ID: <CAGp9LzpNTKxgPyPOFQefJ1B_459dFtGUseW2sKHTiESDVLj9jw@mail.gmail.com>
-Subject: Re: [PATCH v5 5/6] dt-bindings: pinctrl: mt8183: add binding document
-To:     Zhiyong Tao <zhiyong.tao@mediatek.com>
-Cc:     Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Jason Cooper <jason@lakedaemon.net>,
-        srv_heupstream <srv_heupstream@mediatek.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        =?UTF-8?B?RXJpbiBMbyAo576F6ZuF6b2hKQ==?= <erin.lo@mediatek.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-        =?UTF-8?B?TWFycyBDaGVuZyAo6YSt5qOu5Y+LKQ==?= 
-        <Mars.Cheng@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        =?UTF-8?B?WWluZ2pvZSBDaGVuICjpmbPoi7HmtLIp?= 
-        <Yingjoe.Chen@mediatek.com>, Thomas Gleixner <tglx@linutronix.de>,
-        =?UTF-8?B?RWRkaWUgSHVhbmcgKOm7g+aZuuWCkSk=?= 
-        <eddie.huang@mediatek.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Jan 4, 2019 at 1:40 AM Zhiyong Tao <zhiyong.tao@mediatek.com> wrote:
->
-> On Fri, 2019-01-04 at 01:14 -0800, Sean Wang wrote:
-> > On Thu, Jan 3, 2019 at 11:09 PM Zhiyong Tao <zhiyong.tao@mediatek.com> wrote:
-> > >
-> > > On Sat, 2018-12-29 at 06:04 +0800, Rob Herring wrote:
-> > > > On Fri, Dec 28, 2018 at 04:09:40PM +0800, Erin Lo wrote:
-> > > > > From: Zhiyong Tao <zhiyong.tao@mediatek.com>
-> > > > >
-> > > > > The commit adds mt8183 compatible node in binding document.
-> > > > >
-> > > > > Signed-off-by: Zhiyong Tao <zhiyong.tao@mediatek.com>
-> > > > > Signed-off-by: Erin Lo <erin.lo@mediatek.com>
-> > > > > ---
-> > > > >  .../devicetree/bindings/pinctrl/pinctrl-mt8183.txt | 110 +++++++++++++++++++++
-> > > > >  1 file changed, 110 insertions(+)
-> > > > >  create mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-mt8183.txt
-> > > > >
-> > > > > diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8183.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8183.txt
-> > > > > new file mode 100644
-> > > > > index 0000000..7b5285e
-> > > > > --- /dev/null
-> > > > > +++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8183.txt
-> > > > > @@ -0,0 +1,110 @@
-> > > > > +* Mediatek MT8183 Pin Controller
-> > > > > +
-> > > > > +The Mediatek's Pin controller is used to control SoC pins.
-> > > > > +
-> > > > > +Required properties:
-> > > > > +- compatible: value should be one of the following.
-> > > > > +   "mediatek,mt8183-pinctrl", compatible with mt8183 pinctrl.
-> > > > > +- gpio-controller : Marks the device node as a gpio controller.
-> > > > > +- #gpio-cells: number of cells in GPIO specifier. Since the generic GPIO
-> > > > > +  binding is used, the amount of cells must be specified as 2. See the below
-> > > > > +  mentioned gpio binding representation for description of particular cells.
-> > > > > +- gpio-ranges : gpio valid number range.
-> > > > > +
-> > > > > +   Eg: <&pio 6 0>
-> > > > > +   <[phandle of the gpio controller node]
-> > > > > +   [line number within the gpio controller]
-> > > > > +   [flags]>
-> > > > > +
-> > > > > +   Values for gpio specifier:
-> > > > > +   - Line number: is a value between 0 to 202.
-> > > > > +   - Flags:  bit field of flags, as defined in <dt-bindings/gpio/gpio.h>.
-> > > > > +            Only the following flags are supported:
-> > > > > +            0 - GPIO_ACTIVE_HIGH
-> > > > > +            1 - GPIO_ACTIVE_LOW
-> > > > > +
-> > > > > +Optional properties:
-> > > > > +- reg: physicall address base for gpio base registers.
-> > > >
-> > > > s/physicall/physical/
-> > > >
-> > > > reg should never be optional.
-> > > >
-> > > > Need to say how many reg entries.
-> > >
-> > > ==> Thanks for your suggestion. We will change 'reg' to Required
-> > > properties and add the reg entries in next version.
-> > > >
-> > > > > +- reg-names: gpio base registers name.
-> > > >
-> > > > Need to say what are the names. However, I don't find the names in the
-> > > > example all that useful, so I'd just drop it.
-> > >
-> > > ==> we will add the reg-names in next version.
-> > > They are used in the sample code, such as:
-> > > > +             reg-names = "iocfg0", "iocfg1", "iocfg2",
-> > > > > +                       "iocfg3", "iocfg4", "iocfg5",
-> > > > > +                       "iocfg6", "iocfg7", "iocfg8";
-> > >
-> > > >
-> > > > > +- interrupt-controller: Marks the device node as an interrupt controller
-> > > > > +- #interrupt-cells: Should be two.
-> > > > > +- interrupts : The interrupt outputs from the controller.
-> > > > > +
-> > > > > +Please refer to pinctrl-bindings.txt in this directory for details of the
-> > > > > +common pinctrl bindings used by client devices.
-> > > > > +
-> > > > > +Subnode format
-> > > > > +A pinctrl node should contain at least one subnodes representing the
-> > > > > +pinctrl groups available on the machine. Each subnode will list the
-> > > > > +pins it needs, and how they should be configured, with regard to muxer
-> > > > > +configuration, pullups, drive strength, input enable/disable and input schmitt.
-> > > > > +
-> > > > > +    node {
-> > > > > +   pinmux = <PIN_NUMBER_PINMUX>;
-> > > > > +   GENERIC_PINCONFIG;
-> > > > > +    };
-> > > > > +
-> > > > > +Required properties:
-> > > > > +- pinmux: integer array, represents gpio pin number and mux setting.
-> > > > > +    Supported pin number and mux varies for different SoCs, and are defined
-> > > > > +    as macros in boot/dts/<soc>-pinfunc.h directly.
-> > > > > +
-> > > > > +Optional properties:
-> > > > > +- GENERIC_PINCONFIG: is the generic pinconfig options to use, bias-disable,
-> > > > > +    bias-pull-down, bias-pull-up, input-enable, input-disable, output-low, output-high,
-> > > > > +    input-schmitt-enable, input-schmitt-disable and drive-strength are valid.
-> > > > > +
-> > > > > +    Some special pins have extra pull up strength, there are R0 and R1 pull-up
-> > > > > +    resistors available, but for user, it's only need to set R1R0 as 00, 01, 10 or 11.
-> > > > > +    So when config mediatek,pull-up-adv or mediatek,pull-down-adv,
-> > > > > +    it support arguments for those special pins.
-> > > > > +
-> > > > > +    When config drive-strength, it can support some arguments, such as
-> > > > > +    MTK_DRIVE_4mA, MTK_DRIVE_6mA, etc. See dt-bindings/pinctrl/mt65xx.h.
-> > > > > +
-> >
-> > One point we can fix more is the drive-strength already is supported
-> > as the generic one, not need to depend on a dedicated header file.
->
-> ==> We think that we use MTK_DRIVE_4mA to set as driving in dts. it it
-> more clear in v2 common driver for single pin -> single group mode.
-> How about the idea?
->
+Hi Stephen,
 
-Sure, thank for post your idea and it sounds not bad to keep the
-convention for the single pin -> single group mode binding.
+Stephen Boyd <sboyd@kernel.org> wrote on Tue, 11 Dec 2018 09:12:55
+-0800:
 
-> Thanks.
-> >
-> > > > > +Examples:
-> > > > > +
-> > > > > +#include "mt8183-pinfunc.h"
-> > > > > +
-> > > > > +...
-> > > > > +{
-> > > > > +   pio: pinctrl@10005000 {
-> > > > > +           compatible = "mediatek,mt8183-pinctrl";
-> > > > > +           reg = <0 0x10005000 0 0x1000>,
-> > > > > +                 <0 0x11F20000 0 0x1000>,
-> > > > > +                 <0 0x11E80000 0 0x1000>,
-> > > > > +                 <0 0x11E70000 0 0x1000>,
-> > > > > +                 <0 0x11E90000 0 0x1000>,
-> > > > > +                 <0 0x11D30000 0 0x1000>,
-> > > > > +                 <0 0x11D20000 0 0x1000>,
-> > > > > +                 <0 0x11C50000 0 0x1000>,
-> > > > > +                 <0 0x11F30000 0 0x1000>;
-> > > > > +           reg-names = "iocfg0", "iocfg1", "iocfg2",
-> > > > > +                       "iocfg3", "iocfg4", "iocfg5",
-> > > > > +                       "iocfg6", "iocfg7", "iocfg8";
-> > > > > +           gpio-controller;
-> > > > > +           #gpio-cells = <2>;
-> > > > > +           gpio-ranges = <&pio 0 0 192>;
-> > > > > +           interrupt-controller;
-> > > > > +           interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
-> > > > > +           interrupt-parent = <&gic>;
-> > > > > +           #interrupt-cells = <2>;
-> > > > > +
-> > > > > +           i2c0_pins_a: i2c0@0 {
-> > > >
-> > > > unit-address without reg property is not valid.
-> > >
-> > > ==> we will change "i2c0_pins_a: i2c0@0" to "i2c0_pins_a: i2c0" in the
-> > > next version.
-> > > >
-> > > > > +                   pins1 {
-> > > > > +                           pinmux = <PINMUX_GPIO48__FUNC_SCL5>,
-> > > > > +                                    <PINMUX_GPIO49__FUNC_SDA5>;
-> > > > > +                           mediatek,pull-up-adv = <11>;
-> > > > > +                   };
-> > > > > +           };
-> > > > > +
-> > > > > +           i2c1_pins_a: i2c1@0 {
-> > > > > +                   pins {
-> > > > > +                           pinmux = <PINMUX_GPIO50__FUNC_SCL3>,
-> > > > > +                                    <PINMUX_GPIO51__FUNC_SDA3>;
-> > > > > +                           mediatek,pull-down-adv = <10>;
-> > > > > +                   };
-> > > > > +           };
-> > > > > +           ...
-> > > > > +   };
-> > > > > +};
-> > > > > --
-> > > > > 1.9.1
-> > > > >
-> > >
-> > >
-> > >
-> > > _______________________________________________
-> > > Linux-mediatek mailing list
-> > > Linux-mediatek@lists.infradead.org
-> > > http://lists.infradead.org/mailman/listinfo/linux-mediatek
->
->
+> Sorry, I'm not reviewing the whole patch right now, just this one little
+> bit because I'm also working in the same area.
+> 
+> Quoting Miquel Raynal (2018-12-04 11:24:38)
+> > diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+> > index 60c51871b04b..721d6b55b2fa 100644
+> > --- a/include/linux/clk-provider.h
+> > +++ b/include/linux/clk-provider.h
+> > @@ -781,6 +781,8 @@ void devm_clk_hw_unregister(struct device *dev, struct clk_hw *hw);
+> >  const char *__clk_get_name(const struct clk *clk);
+> >  const char *clk_hw_get_name(const struct clk_hw *hw);
+> >  struct clk_hw *__clk_get_hw(struct clk *clk);
+> > +void clk_link_consumer(struct device *consumer, struct clk *clk);
+> > +void clk_unlink_consumer(struct clk *clk);  
+> 
+> We shouldn't need to add these functions as far as I can tell. That's
+> because __clk_get() has become an internal API between clkdev.c and
+> clk.c that does nothing now on implementations that aren't the CCF. We
+> can even change this API to take a clk_hw pointer instead of a clk
+> pointer.
+> 
+> I'd rather see us plumb a struct device and clk_hw structure down into
+> __clk_get() and fold it all into __clk_create_clk, possibly even
+> renaming __clk_create_clk to clk_hw_create_clk(). That way we can get
+> the calling device and clk_hw pointer in one call in the clk framework,
+> along with the device name and connection name, and then generate the
+> struct clk right there. This can simplify some code and make it easier
+> to extend this to associate calling devices with the clk consumer
+> somehow.
+> 
+> Here's the diff. With this, you should be able to add and remove device
+> links in clk_hw_create_clk() when dev != NULL.
+
+Thanks for the help; I updated my work on top of yours, it looks ok but
+I need to run some more tests.
+
+However I had to tweak a parameter in one of your recent changes, you
+used '-1' as index in __of_clock_get() while it is not a valid value
+(returning an error). As in the __of_clk_get_by_name() function you
+removed index was just set to 0 at the top of the function, I think the
+below fix is valid.
+
+
+Thanks,
+Miquèl
+
+
+---
+
+diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
+index ba4d1e06732d..f2f4f2afd28c 100644
+--- a/drivers/clk/clkdev.c
++++ b/drivers/clk/clkdev.c
+@@ -163,7 +163,7 @@ struct clk *clk_get(struct device *dev, const char *con_id)
+        struct clk_hw *hw;
+ 
+        if (dev && dev->of_node) {
+-               hw = of_clk_get_hw(dev->of_node, -1, con_id);
++               hw = of_clk_get_hw(dev->of_node, 0, con_id);
+                if (!IS_ERR(hw) || PTR_ERR(hw) == -EPROBE_DEFER)
+                        return clk_hw_create_clk(dev, hw, dev_id, con_id);
+        }
