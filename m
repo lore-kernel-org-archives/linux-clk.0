@@ -2,120 +2,95 @@ Return-Path: <SRS0=Wo9f=PM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 134E6C43387
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Jan 2019 15:54:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E710C43387
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Jan 2019 16:49:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC3C421874
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Jan 2019 15:54:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F8AE218CD
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Jan 2019 16:49:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="VtDzKUWy";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="VtDzKUWy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728243AbfADPyK convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 4 Jan 2019 10:54:10 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:53923 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726232AbfADPyK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 4 Jan 2019 10:54:10 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 68A8B2075E; Fri,  4 Jan 2019 16:54:07 +0100 (CET)
-Received: from xps13 (aaubervilliers-681-1-29-148.w90-88.abo.wanadoo.fr [90.88.149.148])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 17ED4206A6;
-        Fri,  4 Jan 2019 16:54:07 +0100 (CET)
-Date:   Fri, 4 Jan 2019 16:54:06 +0100
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>
-Subject: Re: [PATCH v3 2/4] clk: core: link consumer with clock driver
-Message-ID: <20190104165406.3b52399a@xps13>
-In-Reply-To: <154454837597.17204.11648795524314926025@swboyd.mtv.corp.google.com>
-References: <20181204192440.12125-1-miquel.raynal@bootlin.com>
-        <20181204192440.12125-3-miquel.raynal@bootlin.com>
-        <154454837597.17204.11648795524314926025@swboyd.mtv.corp.google.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+        id S1726642AbfADQtn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 4 Jan 2019 11:49:43 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:59224 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726201AbfADQtm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Jan 2019 11:49:42 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id DE7A56030B; Fri,  4 Jan 2019 16:49:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1546620581;
+        bh=+MbjqoR51c+Gch68Ic50SHN5eOfORbYQiTJRX2fiWv4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=VtDzKUWyBqfUzzZ4ngswki+3vTLB/juz45lCfxlAMQrAN/YQKVJ7ynjJt7E/2t1st
+         3DTBKbf1sIWvCmA+ELe5MNDlFrpVucjquzaT11ryIhM/pY+PT76E0lgirWDxpiFfcb
+         SofTognvoWo52zfoLADnlIFg31MrMxaitmOtViFI=
+Received: from jhugo-perf-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jhugo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id C814660591;
+        Fri,  4 Jan 2019 16:49:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1546620581;
+        bh=+MbjqoR51c+Gch68Ic50SHN5eOfORbYQiTJRX2fiWv4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=VtDzKUWyBqfUzzZ4ngswki+3vTLB/juz45lCfxlAMQrAN/YQKVJ7ynjJt7E/2t1st
+         3DTBKbf1sIWvCmA+ELe5MNDlFrpVucjquzaT11ryIhM/pY+PT76E0lgirWDxpiFfcb
+         SofTognvoWo52zfoLADnlIFg31MrMxaitmOtViFI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C814660591
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
+From:   Jeffrey Hugo <jhugo@codeaurora.org>
+Cc:     bjorn.andersson@linaro.org, andy.gross@linaro.org,
+        david.brown@linaro.org, mturquette@baylibre.com, sboyd@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kishon@ti.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, devicetree@vger.kernel.org,
+        gregkh@linuxfoundation.org, balbi@kernel.org,
+        linux-usb@vger.kernel.org, Jeffrey Hugo <jhugo@codeaurora.org>
+Subject: [PATCH v1 0/6] MSM8998 basic USB support
+Date:   Fri,  4 Jan 2019 09:49:12 -0700
+Message-Id: <1546620552-2312-1-git-send-email-jhugo@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+This series provides basic USB support for MSM8998.  Currently missing is
+wiring up the Type-C detection logic so that the controller can correctly
+switch between host and peripheral modes.  Work to implement that is
+ongoing, and expected to appear soon in followup patches.
 
-Stephen Boyd <sboyd@kernel.org> wrote on Tue, 11 Dec 2018 09:12:55
--0800:
+Jeffrey Hugo (6):
+  clk: qcom: Add missing freq for usb30_master_clk on 8998
+  clk: qcom: Skip halt checks on gcc_usb3_phy_pipe_clk for 8998
+  phy: qcom-qusb2: Add QUSB2 PHY support for msm8998
+  phy: qcom-qmp: Add QMP V3 USB3 PHY support for msm8998
+  usb: dwc3: qcom: Add support for MSM8998
+  arm64: dts: qcom: msm8998: Add USB-related nodes
 
-> Sorry, I'm not reviewing the whole patch right now, just this one little
-> bit because I'm also working in the same area.
-> 
-> Quoting Miquel Raynal (2018-12-04 11:24:38)
-> > diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-> > index 60c51871b04b..721d6b55b2fa 100644
-> > --- a/include/linux/clk-provider.h
-> > +++ b/include/linux/clk-provider.h
-> > @@ -781,6 +781,8 @@ void devm_clk_hw_unregister(struct device *dev, struct clk_hw *hw);
-> >  const char *__clk_get_name(const struct clk *clk);
-> >  const char *clk_hw_get_name(const struct clk_hw *hw);
-> >  struct clk_hw *__clk_get_hw(struct clk *clk);
-> > +void clk_link_consumer(struct device *consumer, struct clk *clk);
-> > +void clk_unlink_consumer(struct clk *clk);  
-> 
-> We shouldn't need to add these functions as far as I can tell. That's
-> because __clk_get() has become an internal API between clkdev.c and
-> clk.c that does nothing now on implementations that aren't the CCF. We
-> can even change this API to take a clk_hw pointer instead of a clk
-> pointer.
-> 
-> I'd rather see us plumb a struct device and clk_hw structure down into
-> __clk_get() and fold it all into __clk_create_clk, possibly even
-> renaming __clk_create_clk to clk_hw_create_clk(). That way we can get
-> the calling device and clk_hw pointer in one call in the clk framework,
-> along with the device name and connection name, and then generate the
-> struct clk right there. This can simplify some code and make it easier
-> to extend this to associate calling devices with the clk consumer
-> somehow.
-> 
-> Here's the diff. With this, you should be able to add and remove device
-> links in clk_hw_create_clk() when dev != NULL.
+ .../devicetree/bindings/phy/qcom-qmp-phy.txt       |   5 +
+ .../devicetree/bindings/phy/qcom-qusb2-phy.txt     |   1 +
+ .../devicetree/bindings/usb/qcom,dwc3.txt          |   1 +
+ arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi          |  22 ++++
+ arch/arm64/boot/dts/qcom/msm8998.dtsi              |  90 +++++++++++++
+ drivers/clk/qcom/gcc-msm8998.c                     |   3 +-
+ drivers/phy/qualcomm/phy-qcom-qmp.c                | 142 +++++++++++++++++++++
+ drivers/phy/qualcomm/phy-qcom-qmp.h                |   4 +
+ drivers/phy/qualcomm/phy-qcom-qusb2.c              |  41 ++++++
+ drivers/usb/dwc3/dwc3-qcom.c                       |   1 +
+ 10 files changed, 309 insertions(+), 1 deletion(-)
 
-Thanks for the help; I updated my work on top of yours, it looks ok but
-I need to run some more tests.
+-- 
+Qualcomm Datacenter Technologies as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
 
-However I had to tweak a parameter in one of your recent changes, you
-used '-1' as index in __of_clock_get() while it is not a valid value
-(returning an error). As in the __of_clk_get_by_name() function you
-removed index was just set to 0 at the top of the function, I think the
-below fix is valid.
-
-
-Thanks,
-Miquèl
-
-
----
-
-diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
-index ba4d1e06732d..f2f4f2afd28c 100644
---- a/drivers/clk/clkdev.c
-+++ b/drivers/clk/clkdev.c
-@@ -163,7 +163,7 @@ struct clk *clk_get(struct device *dev, const char *con_id)
-        struct clk_hw *hw;
- 
-        if (dev && dev->of_node) {
--               hw = of_clk_get_hw(dev->of_node, -1, con_id);
-+               hw = of_clk_get_hw(dev->of_node, 0, con_id);
-                if (!IS_ERR(hw) || PTR_ERR(hw) == -EPROBE_DEFER)
-                        return clk_hw_create_clk(dev, hw, dev_id, con_id);
-        }
