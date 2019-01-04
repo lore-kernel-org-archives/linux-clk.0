@@ -2,160 +2,256 @@ Return-Path: <SRS0=Wo9f=PM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32D97C43387
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Jan 2019 07:30:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8577BC43387
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Jan 2019 09:13:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E89D02184B
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Jan 2019 07:30:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="RTLRfGIs"
+	by mail.kernel.org (Postfix) with ESMTP id 496BB217F5
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Jan 2019 09:13:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546593224;
+	bh=kRhrn0GqHvLVBSyJaj2/l/wYC/wLT07POAcDWSryzu4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=O7AAo8GIFNabu7+Y0RGrgepaf45U6njzCDH4spJ4Wb7dElxkaqrHq93THUI/EEn36
+	 Ujr3sFSUYPO8v16iL/y6kNJizZOgJ+BRHLwlXn6K+d87+vjaeQA482WdFnxNBJfMv3
+	 FxjL/I87rQax8Qd7aTxZhApCPfUe1NlWGbQrVmkY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726105AbfADHaI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 4 Jan 2019 02:30:08 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:46628 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725958AbfADHaH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Jan 2019 02:30:07 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x047TitB122456;
-        Fri, 4 Jan 2019 01:29:44 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1546586984;
-        bh=IPGTJuUiXWkPHhQ163oiu7Dr6rc49vzAAy3iWwrtfaI=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=RTLRfGIsSKVQ1n7M8RPkBx0WUic4W9SOgI4VLP95ZH3Qk6shUEiyF6cUYmCl7/wCW
-         2m6J0JdIUUHdU1IA2SFq+6dhdSqa9BbbI4fNBVxGOVN1G1X4aaZ4xZm1EzaGokVXJG
-         yIu1cP1yswW3FZh6YyrrPzbaTskPsz2ZS/Ed4IYk=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x047Tius129285
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 4 Jan 2019 01:29:44 -0600
-Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Fri, 4
- Jan 2019 01:29:42 -0600
-Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Fri, 4 Jan 2019 01:29:42 -0600
-Received: from [127.0.0.1] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x047Tbvk018289;
-        Fri, 4 Jan 2019 01:29:38 -0600
-Subject: Re: [PATCH v2 2/3] clk: ti: check clock type before doing autoidle
- ops
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Andreas Kemnade <andreas@kemnade.info>
-CC:     Tony Lindgren <tony@atomide.com>, <bcousson@baylibre.com>,
-        <letux-kernel@openphoenux.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <mturquette@baylibre.com>, <paul@pwsan.com>
-References: <154356242517.88331.8496814814468751012@swboyd.mtv.corp.google.com>
- <20181130153729.GG53235@atomide.com>
- <154362191595.88331.15503578806026771935@swboyd.mtv.corp.google.com>
- <20181203153910.GA6707@atomide.com> <20181203172246.0e767a16@kemnade.info>
- <20181204164556.GB6707@atomide.com> <20181227211222.5996c356@aktux>
- <20181228200229.GY6707@atomide.com>
- <76d9fc57-898b-53ba-1dca-78e5b5c9b2be@ti.com> <20181231092944.014fc1c0@aktux>
- <154655874528.15366.10423050138946294754@swboyd.mtv.corp.google.com>
-From:   Tero Kristo <t-kristo@ti.com>
-Message-ID: <33b3aecd-54dc-ae93-dabe-883275e1d7b0@ti.com>
-Date:   Fri, 4 Jan 2019 09:28:58 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        id S1726581AbfADJNo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 4 Jan 2019 04:13:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56824 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726169AbfADJNn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 4 Jan 2019 04:13:43 -0500
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7BE3F218D8;
+        Fri,  4 Jan 2019 09:13:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1546593221;
+        bh=kRhrn0GqHvLVBSyJaj2/l/wYC/wLT07POAcDWSryzu4=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=IliswcbsjSqTWCHPatLUuVbKCXo5vhEEY0TibX2RTwfD8uPoCiVYFRCBdojgy0iaS
+         hx+JCXeT/PWzB6M0wGAaDsQDbzwwSDkT9c8ZKZQTrg8kJ5wXXVFHl+8p8vjhWQ6ypW
+         Kiu0oKNOxsoS5q5C0LcDWuMay1u9Q7wcG54f/zqA=
+Received: by mail-wm1-f41.google.com with SMTP id g67so556556wmd.2;
+        Fri, 04 Jan 2019 01:13:41 -0800 (PST)
+X-Gm-Message-State: AJcUuke6MZF02NJTZDeVxlN64rUxYXrl9Sy+jiOWDNibhnRhf7XwICtz
+        ms+NrG3IOKxVG2dt5RpySSW14JYI7ojnCEeor5w=
+X-Google-Smtp-Source: ALg8bN4sm7mDJpejChjSCdMCz9hr08Pid6kmIZPlBlHIYCujFFWyDbvMA1J3GH9hcqX2oL5yR76D5auxwGJecMtuSFg=
+X-Received: by 2002:a1c:2e43:: with SMTP id u64mr751976wmu.52.1546593219832;
+ Fri, 04 Jan 2019 01:13:39 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <154655874528.15366.10423050138946294754@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <1545984581-25843-1-git-send-email-erin.lo@mediatek.com>
+ <1545984581-25843-6-git-send-email-erin.lo@mediatek.com> <20181228220405.GA8739@bogus>
+ <1546585723.21915.7.camel@mhfsdcap03>
+In-Reply-To: <1546585723.21915.7.camel@mhfsdcap03>
+From:   Sean Wang <sean.wang@kernel.org>
+Date:   Fri, 4 Jan 2019 01:14:33 -0800
+X-Gmail-Original-Message-ID: <CAGp9LzoAyZqC53eo4JKcouu=pNgsGm9FFm1GaxbH1Jc1OD8Bvw@mail.gmail.com>
+Message-ID: <CAGp9LzoAyZqC53eo4JKcouu=pNgsGm9FFm1GaxbH1Jc1OD8Bvw@mail.gmail.com>
+Subject: Re: [PATCH v5 5/6] dt-bindings: pinctrl: mt8183: add binding document
+To:     Zhiyong Tao <zhiyong.tao@mediatek.com>
+Cc:     Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        srv_heupstream <srv_heupstream@mediatek.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        =?UTF-8?B?RXJpbiBMbyAo576F6ZuF6b2hKQ==?= <erin.lo@mediatek.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        =?UTF-8?B?TWFycyBDaGVuZyAo6YSt5qOu5Y+LKQ==?= 
+        <Mars.Cheng@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        =?UTF-8?B?WWluZ2pvZSBDaGVuICjpmbPoi7HmtLIp?= 
+        <Yingjoe.Chen@mediatek.com>, Thomas Gleixner <tglx@linutronix.de>,
+        =?UTF-8?B?RWRkaWUgSHVhbmcgKOm7g+aZuuWCkSk=?= 
+        <eddie.huang@mediatek.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 04/01/2019 01:39, Stephen Boyd wrote:
-> Quoting Andreas Kemnade (2018-12-31 00:30:21)
->> On Mon, 31 Dec 2018 09:23:01 +0200
->> Tero Kristo <t-kristo@ti.com> wrote:
->>
->>> On 28/12/2018 22:02, Tony Lindgren wrote:
->>>> * Andreas Kemnade <andreas@kemnade.info> [181227 20:13]:
->>>>> Hi,
->>>>>
->>>>> On Tue, 4 Dec 2018 08:45:57 -0800
->>>>> Tony Lindgren <tony@atomide.com> wrote:
->>>>>   
->>>>>> * Andreas Kemnade <andreas@kemnade.info> [181204 06:17]:
->>>>>>> On Mon, 3 Dec 2018 07:39:10 -0800
->>>>>>> Tony Lindgren <tony@atomide.com> wrote:
->>>>>>>> The consumer device stays active just fine with PM runtime
->>>>>>>> calls. So yes, the problem is keeping a clock controller forced
->>>>>>>> active for the period of consumer device reset. Other than
->>>>>>>> that typically autoidle can be just kept enabled.
->>>>>>>>       
->>>>>>> Are we still talking about the same problem? Maybe I am losing track
->>>>>>> here. Just to make sure.
->>>>>>> The patch series was about disabling autoidle for devices which cannot
->>>>>>> work with it during normal operation. Not during reset or something
->>>>>>> like that.
->>>>>>> Or is the keep-clock-active-during-reset just a requirement for bigger
->>>>>>> restructuring ideas?
->>>>>>
->>>>>> Yeah there are two issues: The fix needed for the issue you brought up,
->>>>>> and also how to let a reset driver to block autoidle for reset.
->>>>>>   
->>>>> Hmm, is this set now waiting for the famous "somebody" fixing all
->>>>> the stuff?
->>>>
->>>> Well I think we're still waiting on Tero to comment on this.
->>>
->>> The only item requiring immediate fixing is the point Stephen made out,
->>> removing the usage of CLK_IS_BASIC from this patch.
->>>
->>> Afaics, the reset related concerns Tony has can be handled later.
->>>
->> hmm, and there we need Stephen's opinion about having the allow/deny
->> autoidle functions in the main clk_ops struct.
->>
-> 
-> I have unanswered questions on the list for this thread[1].
+On Thu, Jan 3, 2019 at 11:09 PM Zhiyong Tao <zhiyong.tao@mediatek.com> wrote:
+>
+> On Sat, 2018-12-29 at 06:04 +0800, Rob Herring wrote:
+> > On Fri, Dec 28, 2018 at 04:09:40PM +0800, Erin Lo wrote:
+> > > From: Zhiyong Tao <zhiyong.tao@mediatek.com>
+> > >
+> > > The commit adds mt8183 compatible node in binding document.
+> > >
+> > > Signed-off-by: Zhiyong Tao <zhiyong.tao@mediatek.com>
+> > > Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+> > > ---
+> > >  .../devicetree/bindings/pinctrl/pinctrl-mt8183.txt | 110 +++++++++++++++++++++
+> > >  1 file changed, 110 insertions(+)
+> > >  create mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-mt8183.txt
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8183.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8183.txt
+> > > new file mode 100644
+> > > index 0000000..7b5285e
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8183.txt
+> > > @@ -0,0 +1,110 @@
+> > > +* Mediatek MT8183 Pin Controller
+> > > +
+> > > +The Mediatek's Pin controller is used to control SoC pins.
+> > > +
+> > > +Required properties:
+> > > +- compatible: value should be one of the following.
+> > > +   "mediatek,mt8183-pinctrl", compatible with mt8183 pinctrl.
+> > > +- gpio-controller : Marks the device node as a gpio controller.
+> > > +- #gpio-cells: number of cells in GPIO specifier. Since the generic GPIO
+> > > +  binding is used, the amount of cells must be specified as 2. See the below
+> > > +  mentioned gpio binding representation for description of particular cells.
+> > > +- gpio-ranges : gpio valid number range.
+> > > +
+> > > +   Eg: <&pio 6 0>
+> > > +   <[phandle of the gpio controller node]
+> > > +   [line number within the gpio controller]
+> > > +   [flags]>
+> > > +
+> > > +   Values for gpio specifier:
+> > > +   - Line number: is a value between 0 to 202.
+> > > +   - Flags:  bit field of flags, as defined in <dt-bindings/gpio/gpio.h>.
+> > > +            Only the following flags are supported:
+> > > +            0 - GPIO_ACTIVE_HIGH
+> > > +            1 - GPIO_ACTIVE_LOW
+> > > +
+> > > +Optional properties:
+> > > +- reg: physicall address base for gpio base registers.
+> >
+> > s/physicall/physical/
+> >
+> > reg should never be optional.
+> >
+> > Need to say how many reg entries.
+>
+> ==> Thanks for your suggestion. We will change 'reg' to Required
+> properties and add the reg entries in next version.
+> >
+> > > +- reg-names: gpio base registers name.
+> >
+> > Need to say what are the names. However, I don't find the names in the
+> > example all that useful, so I'd just drop it.
+>
+> ==> we will add the reg-names in next version.
+> They are used in the sample code, such as:
+> > +             reg-names = "iocfg0", "iocfg1", "iocfg2",
+> > > +                       "iocfg3", "iocfg4", "iocfg5",
+> > > +                       "iocfg6", "iocfg7", "iocfg8";
+>
+> >
+> > > +- interrupt-controller: Marks the device node as an interrupt controller
+> > > +- #interrupt-cells: Should be two.
+> > > +- interrupts : The interrupt outputs from the controller.
+> > > +
+> > > +Please refer to pinctrl-bindings.txt in this directory for details of the
+> > > +common pinctrl bindings used by client devices.
+> > > +
+> > > +Subnode format
+> > > +A pinctrl node should contain at least one subnodes representing the
+> > > +pinctrl groups available on the machine. Each subnode will list the
+> > > +pins it needs, and how they should be configured, with regard to muxer
+> > > +configuration, pullups, drive strength, input enable/disable and input schmitt.
+> > > +
+> > > +    node {
+> > > +   pinmux = <PIN_NUMBER_PINMUX>;
+> > > +   GENERIC_PINCONFIG;
+> > > +    };
+> > > +
+> > > +Required properties:
+> > > +- pinmux: integer array, represents gpio pin number and mux setting.
+> > > +    Supported pin number and mux varies for different SoCs, and are defined
+> > > +    as macros in boot/dts/<soc>-pinfunc.h directly.
+> > > +
+> > > +Optional properties:
+> > > +- GENERIC_PINCONFIG: is the generic pinconfig options to use, bias-disable,
+> > > +    bias-pull-down, bias-pull-up, input-enable, input-disable, output-low, output-high,
+> > > +    input-schmitt-enable, input-schmitt-disable and drive-strength are valid.
+> > > +
+> > > +    Some special pins have extra pull up strength, there are R0 and R1 pull-up
+> > > +    resistors available, but for user, it's only need to set R1R0 as 00, 01, 10 or 11.
+> > > +    So when config mediatek,pull-up-adv or mediatek,pull-down-adv,
+> > > +    it support arguments for those special pins.
+> > > +
+> > > +    When config drive-strength, it can support some arguments, such as
+> > > +    MTK_DRIVE_4mA, MTK_DRIVE_6mA, etc. See dt-bindings/pinctrl/mt65xx.h.
+> > > +
 
-The reset portion we can't answer with the current knowledge I fear, we 
-need to prototype this a bit first and see which way to go.
+One point we can fix more is the drive-strength already is supported
+as the generic one, not need to depend on a dedicated header file.
 
-> I'm not sure
-> what allow/deny autoidle functions mean to clk drivers. It looks like an
-> OMAP specific addition to the clk_ops struct, which sounds wrong to put
-> it plainly.
-
-Yeah, I don't think other SoCs implement the same functionality, at 
-least not in the same way. The autoidle bits are available in 
-omap2/omap3 only, where they control the HW autoidle functionality of 
-these clocks. If the bit is enabled, the HW can autonomously disable the 
-clock once it is not needed anymore by HW.
-
-> Hopefully it can be done outside of the clk framework by
-> having the provider driver know more things about all the frameworks
-> it's hooking into.
-
-This is how it has been done so far, however Andreas wants to expand the 
-functionality a bit where it breaks... unless we can use the 
-CLK_IS_BASIC flag to detect if we accessing an OMAP specific clock or 
-not. If we are passing in a clk pointer from a consumer level API, I 
-don't know if there is any other way to go with this if we can't modify 
-the generic clk_ops struct.
-
-The same flag check is used across TI clock driver already btw.
-
--Tero
-
-> 
-> [1] https://lkml.kernel.org/r/154385676593.88331.5239924154783168815@swboyd.mtv.corp.google.com
-> 
-
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+> > > +Examples:
+> > > +
+> > > +#include "mt8183-pinfunc.h"
+> > > +
+> > > +...
+> > > +{
+> > > +   pio: pinctrl@10005000 {
+> > > +           compatible = "mediatek,mt8183-pinctrl";
+> > > +           reg = <0 0x10005000 0 0x1000>,
+> > > +                 <0 0x11F20000 0 0x1000>,
+> > > +                 <0 0x11E80000 0 0x1000>,
+> > > +                 <0 0x11E70000 0 0x1000>,
+> > > +                 <0 0x11E90000 0 0x1000>,
+> > > +                 <0 0x11D30000 0 0x1000>,
+> > > +                 <0 0x11D20000 0 0x1000>,
+> > > +                 <0 0x11C50000 0 0x1000>,
+> > > +                 <0 0x11F30000 0 0x1000>;
+> > > +           reg-names = "iocfg0", "iocfg1", "iocfg2",
+> > > +                       "iocfg3", "iocfg4", "iocfg5",
+> > > +                       "iocfg6", "iocfg7", "iocfg8";
+> > > +           gpio-controller;
+> > > +           #gpio-cells = <2>;
+> > > +           gpio-ranges = <&pio 0 0 192>;
+> > > +           interrupt-controller;
+> > > +           interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
+> > > +           interrupt-parent = <&gic>;
+> > > +           #interrupt-cells = <2>;
+> > > +
+> > > +           i2c0_pins_a: i2c0@0 {
+> >
+> > unit-address without reg property is not valid.
+>
+> ==> we will change "i2c0_pins_a: i2c0@0" to "i2c0_pins_a: i2c0" in the
+> next version.
+> >
+> > > +                   pins1 {
+> > > +                           pinmux = <PINMUX_GPIO48__FUNC_SCL5>,
+> > > +                                    <PINMUX_GPIO49__FUNC_SDA5>;
+> > > +                           mediatek,pull-up-adv = <11>;
+> > > +                   };
+> > > +           };
+> > > +
+> > > +           i2c1_pins_a: i2c1@0 {
+> > > +                   pins {
+> > > +                           pinmux = <PINMUX_GPIO50__FUNC_SCL3>,
+> > > +                                    <PINMUX_GPIO51__FUNC_SDA3>;
+> > > +                           mediatek,pull-down-adv = <10>;
+> > > +                   };
+> > > +           };
+> > > +           ...
+> > > +   };
+> > > +};
+> > > --
+> > > 1.9.1
+> > >
+>
+>
+>
+> _______________________________________________
+> Linux-mediatek mailing list
+> Linux-mediatek@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-mediatek
