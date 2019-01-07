@@ -2,139 +2,102 @@ Return-Path: <SRS0=QWvG=PP=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CADFEC43387
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Jan 2019 15:28:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE3A4C43387
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Jan 2019 18:18:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A6E1206C0
-	for <linux-clk@archiver.kernel.org>; Mon,  7 Jan 2019 15:28:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546874917;
-	bh=RcixJq78h0C952Zgsn01+myiP+SUgsh5msjaZxrUJm4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=KCLjv6zJalPsHa7YiL1/n8VfoBcui8EtPA80ZwS9bk+iI1P6PGOiwCAQQOV8QcZY1
-	 /V9Y25WCwvhWh7Z11W8B8I6t+JPvLsSdroHxOO61AYgLo/TM++0QT8vyxpl8fykeJB
-	 UwzmdIzsr5fAXdTS6kBcBgY/c+Id79E5XP+RYDoo=
+	by mail.kernel.org (Postfix) with ESMTP id 9EA392087F
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Jan 2019 18:18:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="XIoOWHIr";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="BCcoIe0G"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729855AbfAGP2h (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 7 Jan 2019 10:28:37 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:37486 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729808AbfAGP2g (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Jan 2019 10:28:36 -0500
-Received: by mail-lj1-f193.google.com with SMTP id t18-v6so675277ljd.4;
-        Mon, 07 Jan 2019 07:28:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=aWgsobAhrek/X2lv+z2iwZQ0pv5cj7NcHN3lmCT1VaY=;
-        b=k+IjXNorJBKjNh1L4Eu1C/P7UeKcE1Y1hYWYhkY6AMrORQC17sowJg4S474M7jjmI5
-         PLla+zTHuw0WZxA6PBaR8wpS/wbnajkbsU7xQ3Ngi6gpmuCRC9TKQgmwUF2dHH9YGEBA
-         1YXsGl1aZJP3v8ASpoN0VJ/jOk26n8znPBj3qTXbfPWHlop8TIll0DdXaeWNpqatKqXH
-         MgrUzY8rLq8UDm1rFSOYoYmjzc78JqEVs/MgjHcw4XOCVk2aqVo7phXoUkdvD5bPdMDa
-         vbLb1K+HJra0ienW0DtktcTxWjszuLXvxZRXKtab48WRDgBeTwUNbGXctTXYHEICXIN8
-         P4tA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=aWgsobAhrek/X2lv+z2iwZQ0pv5cj7NcHN3lmCT1VaY=;
-        b=iZ7SHjtYAzK7FGxMO14zVBVu7DtDLKuI263Pv9/SeHyIn6J8HfPVLo0Wvzexgnr8XA
-         HHBTb1mlGrGTVubtYI2ZqphsWShoGWsbMVX8N5iMXeX2h6EpsAVYV0N3UOAtmsAhTJET
-         wyNWFgYFQAQTG26TlxP5oH+rTWmDsGFk2ReyEV92h8a7rH/mVj5efMynAA+G3G30JiHW
-         z+11f0o3PkepB8yZ9HY0EmbEujFq1aVMU4aVkmKHpssxeI1u8OVkbSoXGEYiRlsG/AEC
-         gB5XbOKgoyW/OHEe4mwi4hzUe81xHimuTS+BW+fXz7qAgYjnmT5dzWFOENj+9+XR4qo6
-         KqGQ==
-X-Gm-Message-State: AJcUukeFgqxhA5beb9ez0+v3WQlwK8Sxv5OuLSpOFqKOGHIfZE/b50zB
-        LQeKVbX+XH3H5fkDYjmBCNs=
-X-Google-Smtp-Source: ALg8bN6gqCHucZ0GB6CO/t9fGUK+uCdHzcIi4JGUrbgJCXeYKAWVnjYzaCnPRkX1wZKfbUIIPJetTA==
-X-Received: by 2002:a2e:94ce:: with SMTP id r14-v6mr34162556ljh.34.1546874914004;
-        Mon, 07 Jan 2019 07:28:34 -0800 (PST)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id a62sm12756190lfa.37.2019.01.07.07.28.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 07 Jan 2019 07:28:33 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1ggWpO-0003VN-Ir; Mon, 07 Jan 2019 16:28:34 +0100
-Date:   Mon, 7 Jan 2019 16:28:34 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
-Cc:     Rob Herring <robh@kernel.org>, linux-lpwan@lists.infradead.org,
-        linux-serial <linux-serial@vger.kernel.org>,
-        Linux USB List <linux-usb@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Johan Hovold <johan@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Oliver Neukum <oneukum@suse.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        netdev <netdev@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Subject: Re: [RFC lora-next 5/5] HACK: net: lora: sx130x: Add PicoCell
- gateway shim for cdc-acm
-Message-ID: <20190107152834.GC14782@localhost>
-References: <20190104112131.14451-1-afaerber@suse.de>
- <20190104112131.14451-6-afaerber@suse.de>
- <CAL_Jsq+BMOvRLEbD2Eo2D=n446vSubeXV3-FbkBSHjpfL=LYsg@mail.gmail.com>
- <9d97fec5-31b0-8717-cd10-de4f36d1cf05@suse.de>
+        id S1728685AbfAGSSM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 7 Jan 2019 13:18:12 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:37062 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727304AbfAGSSM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 7 Jan 2019 13:18:12 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 57FCE60303; Mon,  7 Jan 2019 18:18:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1546885091;
+        bh=h2y2f6ljErUMEwF8S5vac2OLt0DPZ+yuztxI/VxgrFY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=XIoOWHIreII/iRdYhcdBoZYmhWwEYjTxSLdgDWaoV19BBRT6iNbdVouqYPxaBmmNP
+         cYJyGn0jDWah5IoA3uSMK7gSpbLSuWatss7Mc9P8ZJLXSqUOm8QtJFg3qKLTh1YZPb
+         k62qgBZsb/4iMeub2t0b+xD8yUJEC12uM5FG6MH8=
+Received: from jackp-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jackp@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id ABC1460303;
+        Mon,  7 Jan 2019 18:18:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1546885090;
+        bh=h2y2f6ljErUMEwF8S5vac2OLt0DPZ+yuztxI/VxgrFY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=BCcoIe0G9Z6LN0OSfHRvZishwEoZXx4NNFqtC+VcOhngyA5sMZrD3+4SS2QIbAYx0
+         Cls+KOA0iTf9zmgzs8CGnCpIVtcnbAFjty09wBzKvywd7EwwghB5j0Eifl6ibxhSZQ
+         wvrT5+igSqQl3qLiEQhewqejDZShwYSPLShfpPtE=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org ABC1460303
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jackp@codeaurora.org
+Date:   Mon, 7 Jan 2019 10:18:04 -0800
+From:   Jack Pham <jackp@codeaurora.org>
+To:     Jeffrey Hugo <jhugo@codeaurora.org>
+Cc:     kishon@ti.com, robh+dt@kernel.org, bjorn.andersson@linaro.org,
+        andy.gross@linaro.org, david.brown@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, gregkh@linuxfoundation.org,
+        balbi@kernel.org, linux-usb@vger.kernel.org
+Subject: Re: [PATCH v1 3/6] phy: qcom-qusb2: Add QUSB2 PHY support for msm8998
+Message-ID: <20190107181749.GA23243@jackp-linux.qualcomm.com>
+References: <1546620629-2426-1-git-send-email-jhugo@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <9d97fec5-31b0-8717-cd10-de4f36d1cf05@suse.de>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+In-Reply-To: <1546620629-2426-1-git-send-email-jhugo@codeaurora.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, Jan 05, 2019 at 12:43:48AM +0100, Andreas Färber wrote:
-> Hi Rob,
+Hi Jeff,
+
+Spotted a typo below:
+
+On Fri, Jan 04, 2019 at 09:50:29AM -0700, Jeffrey Hugo wrote:
+> MSM8998 contains one QUSB2 PHY which is very similar to the existing
+> sdm845 support.
 > 
-> Am 04.01.19 um 18:07 schrieb Rob Herring:
-> > On Fri, Jan 4, 2019 at 5:21 AM Andreas Färber <afaerber@suse.de> wrote:
-> >>
-> >> Ignore our device in cdc-acm probing and add a new driver for it,
-> >> dispatching to cdc-acm for the actual implementation.
-> >>
-> >> WARNING: It is likely that this VID/PID is in use for unrelated devices.
-> >> Only the Product string hints what this really is in current v0.2.1.
-> >> Previous code v0.2.0 was using a Semtech VID/PID, but no card shipping
-> >> with such firmware is known to me.
-> >>
-> >> While this may seem unorthodox, no internals of the driver are accessed,
-> >> just the set of driver callbacks is duplicated as shim.
-> >>
-> >> Use this shim construct to fake DT nodes for serdev on probe.
-> >> For testing purposes these nodes do not have a parent yet.
-> >> This results in two "Error -2 creating of_node link" warnings on probe.
-> > 
-> > It looks like the DT is pretty static. Rather than creating the nodes
-> > at run-time, can't you create a dts file and build that into your
-> > module.
+> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
+> ---
+>  .../devicetree/bindings/phy/qcom-qusb2-phy.txt     |  1 +
+>  drivers/phy/qualcomm/phy-qcom-qusb2.c              | 41 ++++++++++++++++++++++
+>  2 files changed, 42 insertions(+)
 > 
-> Heh, if that were the only issue with this patch... ;)
+> diff --git a/Documentation/devicetree/bindings/phy/qcom-qusb2-phy.txt b/Documentation/devicetree/bindings/phy/qcom-qusb2-phy.txt
+> index 03025d9..3976847 100644
+> --- a/Documentation/devicetree/bindings/phy/qcom-qusb2-phy.txt
+> +++ b/Documentation/devicetree/bindings/phy/qcom-qusb2-phy.txt
+> @@ -6,6 +6,7 @@ QUSB2 controller supports LS/FS/HS usb connectivity on Qualcomm chipsets.
+>  Required properties:
+>   - compatible: compatible list, contains
+>  	       "qcom,msm8996-qusb2-phy" for 14nm PHY on msm8996,
+> +	       "qcom,msm8998-qusb2-phy" for 10nm PHY on msm8996,
+                                                           ^^^^
+should be 8998.
 
-My thoughts exactly. ;)
-
-This clearly is too much of a hack, but maintaining serdev compatible
-information in the corresponding tty drivers is probably what we'll want
-to do.
-
-When the tty driver binds and registers its ports with tty core, we can
-could match again on the USB descriptors, but since the device has
-already been matched, we can just pass the equivalent of a compatible
-string, or more generally dt-fragment, instead.
-
-Without having had time to look into it myself yet, this sounds like
-something we should be using the new software nodes for (software
-generated fw nodes). That way, we don't depend on CONFIG_OF either.
-
-Johan
+Thanks,
+Jack
+-- 
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
