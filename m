@@ -1,120 +1,270 @@
-Return-Path: <SRS0=agcy=PO=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=QWvG=PP=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 573B6C43387
-	for <linux-clk@archiver.kernel.org>; Sun,  6 Jan 2019 16:29:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBDFCC43387
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Jan 2019 02:03:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17ACF20868
-	for <linux-clk@archiver.kernel.org>; Sun,  6 Jan 2019 16:29:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="qbyRdDrk"
+	by mail.kernel.org (Postfix) with ESMTP id 9BF8720838
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Jan 2019 02:03:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726417AbfAFQ3Q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 6 Jan 2019 11:29:16 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:50848 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726415AbfAFQ3Q (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 6 Jan 2019 11:29:16 -0500
-Received: by mail-it1-f193.google.com with SMTP id z7so7669059iti.0
-        for <linux-clk@vger.kernel.org>; Sun, 06 Jan 2019 08:29:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TKV0p0WiCpw6qO3c5kAhJMQNLPjT6ksNPdJwxNKMSuU=;
-        b=qbyRdDrkrL8+wVP5kRFOrUd9GpbW6hfXwP3sikDl34Khjh8tn/NthFLOgIJkf+c4XS
-         IdSQRufwXswLwN1MhuYnS8NuNrk7XI+8YnCuDzj+2oqTqLgIN2OiDyIyybqEjAydga/O
-         8Z7V6o7tCpGvczj6oTFoH486mngVLnuAFE+Cg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TKV0p0WiCpw6qO3c5kAhJMQNLPjT6ksNPdJwxNKMSuU=;
-        b=Zgw2DkRCQkQlbxE6GsGB1N9Gh/SN7IQmr0aonSFwEJBA7dOqS0u2GzXdJ8a7QI1qv7
-         oET7G34cGktNDJWt/DLFCfULJVSePR7tI6bdd1d16OLl84hGN5Uj6lRhHg+1OQeWZmip
-         2ca1eIRkNicd6RhMLtpVL8/gueAkTALCnYtbqy18P4XkCEn1QnR6fnzN0vjkIYwNqMMh
-         xZfSwm0BViztFzVzN3dfW+mBiP/LVvsBv64lSmeIrLcaLNATKXInzMk4Z+r1r3csJG3H
-         9A71N2XpNyo3lLR8JiUzQLEoCVzL8HuoP9BlUUZ5EfpPT2RcDLvJ9u95NmJF1eUOAmyj
-         RDFg==
-X-Gm-Message-State: AA+aEWaHZ7eXPEwXcIK9RdB1WWABjTjk3TZ/tmhi8vheqEr+9fRdK6dt
-        YcqsHqUcOFyNzEHQaVBIpXJ6Fkvn36SgUKYQUOFf/g==
-X-Google-Smtp-Source: AFSGD/WO5KHvO8i5w4GQv2nQLGDMRwvYHfOS1klhTp/EzwMcl0Fka+F7cdD3WrsGhP7qljdVyDj0e2L0MRGYfdjDjtw=
-X-Received: by 2002:a02:104a:: with SMTP id 71mr36368412jay.103.1546792155191;
- Sun, 06 Jan 2019 08:29:15 -0800 (PST)
-MIME-Version: 1.0
-References: <20181210161729.29720-1-jagan@amarulasolutions.com>
- <20181210161729.29720-8-jagan@amarulasolutions.com> <20181211164900.wfmkmbrbj3nmlb3h@flea>
- <CAMty3ZB5F5jD9iJT1soXSA5HtQOf5W9rKO9nCdGFUfVo0hpO4Q@mail.gmail.com>
-In-Reply-To: <CAMty3ZB5F5jD9iJT1soXSA5HtQOf5W9rKO9nCdGFUfVo0hpO4Q@mail.gmail.com>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Sun, 6 Jan 2019 21:59:04 +0530
-Message-ID: <CAMty3ZC_FqQUjTik_3+bUbk7pfy=KtxXac9AKBJH4g2cSnPF0g@mail.gmail.com>
-Subject: Re: [PATCH v5 07/17] drm/sun4i: sun6i_mipi_dsi: Refactor vertical
- video start delay
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        linux-amarula@amarulasolutions.com
+        id S1726170AbfAGCDG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 6 Jan 2019 21:03:06 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:3374 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726160AbfAGCDG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 6 Jan 2019 21:03:06 -0500
+X-UUID: a835135dff394a39be03255b94fe0ccc-20190107
+X-UUID: a835135dff394a39be03255b94fe0ccc-20190107
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
+        (envelope-from <zhiyong.tao@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 905427784; Mon, 07 Jan 2019 10:02:52 +0800
+Received: from MTKCAS36.mediatek.inc (172.27.4.186) by mtkmbs02n2.mediatek.inc
+ (172.21.101.101) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 7 Jan
+ 2019 10:02:51 +0800
+Received: from [10.17.3.153] (10.17.3.153) by MTKCAS36.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Mon, 7 Jan 2019 10:02:50 +0800
+Message-ID: <1546826570.3267.0.camel@mhfsdcap03>
+Subject: Re: [PATCH v5 5/6] dt-bindings: pinctrl: mt8183: add binding
+ document
+From:   Zhiyong Tao <zhiyong.tao@mediatek.com>
+To:     Sean Wang <sean.wang@kernel.org>
+CC:     Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        srv_heupstream <srv_heupstream@mediatek.com>,
+        "Marc Zyngier" <marc.zyngier@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Erin Lo =?UTF-8?Q?=28=E7=BE=85=E9=9B=85=E9=BD=A1=29?= 
+        <erin.lo@mediatek.com>, Stephen Boyd <sboyd@codeaurora.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        Mars Cheng =?UTF-8?Q?=28=E9=84=AD=E6=A3=AE=E5=8F=8B=29?= 
+        <Mars.Cheng@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Yingjoe Chen =?UTF-8?Q?=28=E9=99=B3=E8=8B=B1=E6=B4=B2=29?= 
+        <Yingjoe.Chen@mediatek.com>, Thomas Gleixner <tglx@linutronix.de>,
+        Eddie Huang =?UTF-8?Q?=28=E9=BB=83=E6=99=BA=E5=82=91=29?= 
+        <eddie.huang@mediatek.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Date:   Mon, 7 Jan 2019 10:02:50 +0800
+In-Reply-To: <CAGp9LzpNTKxgPyPOFQefJ1B_459dFtGUseW2sKHTiESDVLj9jw@mail.gmail.com>
+References: <1545984581-25843-1-git-send-email-erin.lo@mediatek.com>
+         <1545984581-25843-6-git-send-email-erin.lo@mediatek.com>
+         <20181228220405.GA8739@bogus> <1546585723.21915.7.camel@mhfsdcap03>
+         <CAGp9LzoAyZqC53eo4JKcouu=pNgsGm9FFm1GaxbH1Jc1OD8Bvw@mail.gmail.com>
+         <1546594814.21915.16.camel@mhfsdcap03>
+         <CAGp9LzpNTKxgPyPOFQefJ1B_459dFtGUseW2sKHTiESDVLj9jw@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-TM-SNTS-SMTP: E210B8FF21D57CAC3248F7F1E8E314A21461913E922D23FBA047133A6E91F1A52000:8
+X-MTK:  N
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Dec 21, 2018 at 2:26 AM Jagan Teki <jagan@amarulasolutions.com> wrote:
->
-> On Tue, Dec 11, 2018 at 10:19 PM Maxime Ripard
-> <maxime.ripard@bootlin.com> wrote:
+On Fri, 2019-01-04 at 01:55 -0800, Sean Wang wrote:
+> On Fri, Jan 4, 2019 at 1:40 AM Zhiyong Tao <zhiyong.tao@mediatek.com> wrote:
 > >
-> > On Mon, Dec 10, 2018 at 09:47:19PM +0530, Jagan Teki wrote:
-> > > Video start delay can be computed by subtracting total vertical
-> > > timing with front porch timing and with adding 1 delay line for TCON.
+> > On Fri, 2019-01-04 at 01:14 -0800, Sean Wang wrote:
+> > > On Thu, Jan 3, 2019 at 11:09 PM Zhiyong Tao <zhiyong.tao@mediatek.com> wrote:
+> > > >
+> > > > On Sat, 2018-12-29 at 06:04 +0800, Rob Herring wrote:
+> > > > > On Fri, Dec 28, 2018 at 04:09:40PM +0800, Erin Lo wrote:
+> > > > > > From: Zhiyong Tao <zhiyong.tao@mediatek.com>
+> > > > > >
+> > > > > > The commit adds mt8183 compatible node in binding document.
+> > > > > >
+> > > > > > Signed-off-by: Zhiyong Tao <zhiyong.tao@mediatek.com>
+> > > > > > Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+> > > > > > ---
+> > > > > >  .../devicetree/bindings/pinctrl/pinctrl-mt8183.txt | 110 +++++++++++++++++++++
+> > > > > >  1 file changed, 110 insertions(+)
+> > > > > >  create mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-mt8183.txt
+> > > > > >
+> > > > > > diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8183.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8183.txt
+> > > > > > new file mode 100644
+> > > > > > index 0000000..7b5285e
+> > > > > > --- /dev/null
+> > > > > > +++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt8183.txt
+> > > > > > @@ -0,0 +1,110 @@
+> > > > > > +* Mediatek MT8183 Pin Controller
+> > > > > > +
+> > > > > > +The Mediatek's Pin controller is used to control SoC pins.
+> > > > > > +
+> > > > > > +Required properties:
+> > > > > > +- compatible: value should be one of the following.
+> > > > > > +   "mediatek,mt8183-pinctrl", compatible with mt8183 pinctrl.
+> > > > > > +- gpio-controller : Marks the device node as a gpio controller.
+> > > > > > +- #gpio-cells: number of cells in GPIO specifier. Since the generic GPIO
+> > > > > > +  binding is used, the amount of cells must be specified as 2. See the below
+> > > > > > +  mentioned gpio binding representation for description of particular cells.
+> > > > > > +- gpio-ranges : gpio valid number range.
+> > > > > > +
+> > > > > > +   Eg: <&pio 6 0>
+> > > > > > +   <[phandle of the gpio controller node]
+> > > > > > +   [line number within the gpio controller]
+> > > > > > +   [flags]>
+> > > > > > +
+> > > > > > +   Values for gpio specifier:
+> > > > > > +   - Line number: is a value between 0 to 202.
+> > > > > > +   - Flags:  bit field of flags, as defined in <dt-bindings/gpio/gpio.h>.
+> > > > > > +            Only the following flags are supported:
+> > > > > > +            0 - GPIO_ACTIVE_HIGH
+> > > > > > +            1 - GPIO_ACTIVE_LOW
+> > > > > > +
+> > > > > > +Optional properties:
+> > > > > > +- reg: physicall address base for gpio base registers.
+> > > > >
+> > > > > s/physicall/physical/
+> > > > >
+> > > > > reg should never be optional.
+> > > > >
+> > > > > Need to say how many reg entries.
+> > > >
+> > > > ==> Thanks for your suggestion. We will change 'reg' to Required
+> > > > properties and add the reg entries in next version.
+> > > > >
+> > > > > > +- reg-names: gpio base registers name.
+> > > > >
+> > > > > Need to say what are the names. However, I don't find the names in the
+> > > > > example all that useful, so I'd just drop it.
+> > > >
+> > > > ==> we will add the reg-names in next version.
+> > > > They are used in the sample code, such as:
+> > > > > +             reg-names = "iocfg0", "iocfg1", "iocfg2",
+> > > > > > +                       "iocfg3", "iocfg4", "iocfg5",
+> > > > > > +                       "iocfg6", "iocfg7", "iocfg8";
+> > > >
+> > > > >
+> > > > > > +- interrupt-controller: Marks the device node as an interrupt controller
+> > > > > > +- #interrupt-cells: Should be two.
+> > > > > > +- interrupts : The interrupt outputs from the controller.
+> > > > > > +
+> > > > > > +Please refer to pinctrl-bindings.txt in this directory for details of the
+> > > > > > +common pinctrl bindings used by client devices.
+> > > > > > +
+> > > > > > +Subnode format
+> > > > > > +A pinctrl node should contain at least one subnodes representing the
+> > > > > > +pinctrl groups available on the machine. Each subnode will list the
+> > > > > > +pins it needs, and how they should be configured, with regard to muxer
+> > > > > > +configuration, pullups, drive strength, input enable/disable and input schmitt.
+> > > > > > +
+> > > > > > +    node {
+> > > > > > +   pinmux = <PIN_NUMBER_PINMUX>;
+> > > > > > +   GENERIC_PINCONFIG;
+> > > > > > +    };
+> > > > > > +
+> > > > > > +Required properties:
+> > > > > > +- pinmux: integer array, represents gpio pin number and mux setting.
+> > > > > > +    Supported pin number and mux varies for different SoCs, and are defined
+> > > > > > +    as macros in boot/dts/<soc>-pinfunc.h directly.
+> > > > > > +
+> > > > > > +Optional properties:
+> > > > > > +- GENERIC_PINCONFIG: is the generic pinconfig options to use, bias-disable,
+> > > > > > +    bias-pull-down, bias-pull-up, input-enable, input-disable, output-low, output-high,
+> > > > > > +    input-schmitt-enable, input-schmitt-disable and drive-strength are valid.
+> > > > > > +
+> > > > > > +    Some special pins have extra pull up strength, there are R0 and R1 pull-up
+> > > > > > +    resistors available, but for user, it's only need to set R1R0 as 00, 01, 10 or 11.
+> > > > > > +    So when config mediatek,pull-up-adv or mediatek,pull-down-adv,
+> > > > > > +    it support arguments for those special pins.
+> > > > > > +
+> > > > > > +    When config drive-strength, it can support some arguments, such as
+> > > > > > +    MTK_DRIVE_4mA, MTK_DRIVE_6mA, etc. See dt-bindings/pinctrl/mt65xx.h.
+> > > > > > +
 > > >
-> > > BSP code form BPI-M64-bsp is computing video start delay as
-> > > (from linux-sunxi/
-> > > drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c)
-> > >
-> > > u32 vfp = panel->lcd_vt - panel->lcd_y - panel->lcd_vbp;
-> > > => (panel->lcd_vt) - panel->lcd_y - (panel->lcd_vbp)
-> > > => (timmings->ver_front_porch + panel->lcd_vbp + panel->lcd_y)
-> > >    - panel->lcd_y - (panel->lcd_vbp)
-> > > => timmings->ver_front_porch + panel->lcd_vbp + panel->lcd_y
-> > >                            - panel->lcd_y - panel->lcd_vbp
-> > > => timmings->ver_front_porch
-> > >
-> > > So, update the start delay computation accordingly.
-> > >
-> > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > > One point we can fix more is the drive-strength already is supported
+> > > as the generic one, not need to depend on a dedicated header file.
 > >
-> > Even though it's a bit better now on my A33 board and I don't have the
-> > white stripes on the bottom of the display, there's still some
-> > flickering with your patches applied.
+> > ==> We think that we use MTK_DRIVE_4mA to set as driving in dts. it it
+> > more clear in v2 common driver for single pin -> single group mode.
+> > How about the idea?
 > >
-> > Bisecting it seems to point at that patch, but reverting it doesn't
-> > make the issue go away, so it's not really clear which one exactly is
-> > at fault.
->
-> Is reverting this patch, work fine or not?
->
-> This patch is trying to make use of front porch instead of existing
-> back porch to compute the delay. Since we revert the VBP fix patch[1]
-> to assume VBP as VFP value look like your setup would also require to
-> revert this change. But as per BSP or drm_mode details all of my
-> displays even work with and w/o reverting these two.
->
-> I'm thinking your display should work in the same behavior since the
-> dsi controller making this route.
+> 
+> Sure, thank for post your idea and it sounds not bad to keep the
+> convention for the single pin -> single group mode binding.
 
-Any further comments on this?
+Thanks for your confirm. We will keep it in next version.
+> 
+> > Thanks.
+> > >
+> > > > > > +Examples:
+> > > > > > +
+> > > > > > +#include "mt8183-pinfunc.h"
+> > > > > > +
+> > > > > > +...
+> > > > > > +{
+> > > > > > +   pio: pinctrl@10005000 {
+> > > > > > +           compatible = "mediatek,mt8183-pinctrl";
+> > > > > > +           reg = <0 0x10005000 0 0x1000>,
+> > > > > > +                 <0 0x11F20000 0 0x1000>,
+> > > > > > +                 <0 0x11E80000 0 0x1000>,
+> > > > > > +                 <0 0x11E70000 0 0x1000>,
+> > > > > > +                 <0 0x11E90000 0 0x1000>,
+> > > > > > +                 <0 0x11D30000 0 0x1000>,
+> > > > > > +                 <0 0x11D20000 0 0x1000>,
+> > > > > > +                 <0 0x11C50000 0 0x1000>,
+> > > > > > +                 <0 0x11F30000 0 0x1000>;
+> > > > > > +           reg-names = "iocfg0", "iocfg1", "iocfg2",
+> > > > > > +                       "iocfg3", "iocfg4", "iocfg5",
+> > > > > > +                       "iocfg6", "iocfg7", "iocfg8";
+> > > > > > +           gpio-controller;
+> > > > > > +           #gpio-cells = <2>;
+> > > > > > +           gpio-ranges = <&pio 0 0 192>;
+> > > > > > +           interrupt-controller;
+> > > > > > +           interrupts = <GIC_SPI 153 IRQ_TYPE_LEVEL_HIGH>;
+> > > > > > +           interrupt-parent = <&gic>;
+> > > > > > +           #interrupt-cells = <2>;
+> > > > > > +
+> > > > > > +           i2c0_pins_a: i2c0@0 {
+> > > > >
+> > > > > unit-address without reg property is not valid.
+> > > >
+> > > > ==> we will change "i2c0_pins_a: i2c0@0" to "i2c0_pins_a: i2c0" in the
+> > > > next version.
+> > > > >
+> > > > > > +                   pins1 {
+> > > > > > +                           pinmux = <PINMUX_GPIO48__FUNC_SCL5>,
+> > > > > > +                                    <PINMUX_GPIO49__FUNC_SDA5>;
+> > > > > > +                           mediatek,pull-up-adv = <11>;
+> > > > > > +                   };
+> > > > > > +           };
+> > > > > > +
+> > > > > > +           i2c1_pins_a: i2c1@0 {
+> > > > > > +                   pins {
+> > > > > > +                           pinmux = <PINMUX_GPIO50__FUNC_SCL3>,
+> > > > > > +                                    <PINMUX_GPIO51__FUNC_SDA3>;
+> > > > > > +                           mediatek,pull-down-adv = <10>;
+> > > > > > +                   };
+> > > > > > +           };
+> > > > > > +           ...
+> > > > > > +   };
+> > > > > > +};
+> > > > > > --
+> > > > > > 1.9.1
+> > > > > >
+> > > >
+> > > >
+> > > >
+> > > > _______________________________________________
+> > > > Linux-mediatek mailing list
+> > > > Linux-mediatek@lists.infradead.org
+> > > > http://lists.infradead.org/mailman/listinfo/linux-mediatek
+> >
+> >
+
+
