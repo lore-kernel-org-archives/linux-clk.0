@@ -7,48 +7,46 @@ X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6071AC43444
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Jan 2019 19:54:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38202C43387
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Jan 2019 19:55:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3064C20827
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Jan 2019 19:54:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 093B1206BB
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Jan 2019 19:55:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546977253;
-	bh=DdyKglgoHMmy+zF3Qd4EspB1vhwa9aH009maPG7Q+hk=;
+	s=default; t=1546977318;
+	bh=DjmsFRFUWKVngoXY2X+mP62jscbsOIGcYfnwvsX/qVQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ahRMsPZNK/aQxEJ4QjTVf4AT3vEn1UNtePXHE4lPZ33YvE97XCRYxBsh+3BNXC0zq
-	 GIPNfKOdqifGOBoPuCa7twzcKC43gRpVeQslRiPJWPjejfbfhj7qW45tC7KTYj+Oee
-	 UfUjYO9b3v7c6wXtBotRiE8MKDZ2VU/83v13oLU8=
+	b=LflcBYfo75h6uFneCK4qyNABcHy7WMCyhL2blTXcwqemQW46cax0wkUB7H7JASolg
+	 XbrhKj194bMCGr6OYuGAAGwmqrefneTeIrbi95oPRct6Z7lwinyuq/BjoaM49MZteZ
+	 WzVwECKgJrDE0F8XqbDTh+jjgQXIg0v041GgVkgM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729874AbfAHTyG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:54:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38656 "EHLO mail.kernel.org"
+        id S1730744AbfAHTaX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Jan 2019 14:30:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38112 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730876AbfAHTat (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:30:49 -0500
+        id S1730051AbfAHTaW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:30:22 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 75C0720827;
-        Tue,  8 Jan 2019 19:30:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 031E82070B;
+        Tue,  8 Jan 2019 19:30:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975848;
-        bh=DdyKglgoHMmy+zF3Qd4EspB1vhwa9aH009maPG7Q+hk=;
+        s=default; t=1546975821;
+        bh=DjmsFRFUWKVngoXY2X+mP62jscbsOIGcYfnwvsX/qVQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fzP1JkB2novWM8jnbYVmb/UTNv/EjyumsqLY7Zqwb76dVxXfE/dmVRd5Kdm1YEYRo
-         XjPLr8uJqKKlEEryQZ/4813kKMhyGoPzDNH+H3h+CIbml0d1iM9BLJ7483oO7acdHZ
-         CYnrSZEL0Dn3+CETPmvNojGBzVJbZtXFlxODRjTc=
+        b=PSg4O2mrFGW5PCvuHR2nzaxrtD6WfMl69SzJcQWqf+sFO1fTnfilIr5zSNjeCyNIH
+         2RMwcyxv97k1UUObuGzWudYe9pn18kVjJsMHP/TOr6XQ1BtPZzI/7pspqxWmAhhLAJ
+         w6Eyf6YurXL04m6H80cdv8xTxVeA61ZsBv203fQc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     "A.s. Dong" <aisheng.dong@nxp.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 34/97] clk: imx: make mux parent strings const
-Date:   Tue,  8 Jan 2019 14:28:43 -0500
-Message-Id: <20190108192949.122407-34-sashal@kernel.org>
+Cc:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 21/97] clk: meson: meson8b: fix incorrect divider mapping in cpu_scale_table
+Date:   Tue,  8 Jan 2019 14:28:30 -0500
+Message-Id: <20190108192949.122407-21-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192949.122407-1-sashal@kernel.org>
 References: <20190108192949.122407-1-sashal@kernel.org>
@@ -60,127 +58,107 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: "A.s. Dong" <aisheng.dong@nxp.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-[ Upstream commit 9e5ef7a57ca75a1b9411c46caeeb6881124284a3 ]
+[ Upstream commit ad9b2b8e53af61375322e3c7d624acf3a3ef53b0 ]
 
-As the commit 2893c379461a ("clk: make strings in parent name arrays
-const"), let's make the parent strings const, otherwise we may meet
-the following warning when compiling:
+The public S805 datasheet only mentions that
+HHI_SYS_CPU_CLK_CNTL1[20:29] contains a divider called "cpu_scale_div".
+Unfortunately it does not mention how to use the register contents.
 
-drivers/clk/imx/clk-imx7ulp.c: In function 'imx7ulp_clocks_init':
-drivers/clk/imx/clk-imx7ulp.c:73:35: warning: passing argument 5 of
-	'imx_clk_mux_flags' discards 'const' qualifier from pointer target type
+The Amlogic 3.10 GPL kernel sources are using the following code to
+calculate the CPU clock based on that register (taken from
+arch/arm/mach-meson8/clock.c in the 3.10 Amlogic kernel, shortened to
+make it easier to read):
+N = (aml_read_reg32(P_HHI_SYS_CPU_CLK_CNTL1) >> 20) & 0x3FF;
+if (sel == 3) /* use cpu_scale_div */
+  div = 2 * N;
+else
+  div = ... /* not relevant for this example */
+cpu_clk = parent_clk / div;
 
-  clks[IMX7ULP_CLK_APLL_PRE_SEL] = imx_clk_mux_flags("apll_pre_sel", base + 0x508, 0,
-	1, pll_pre_sels, ARRAY_SIZE(pll_pre_sels), CLK_SET_PARENT_GATE);
-                                   ^
-In file included from drivers/clk/imx/clk-imx7ulp.c:23:0:
-drivers/clk/imx/clk.h:200:27: note: expected 'const char **' but argument is
- of type 'const char * const*'
-...
+This suggests that the formula is: parent_rate / 2 * register_value
+However, running perf (which can measure the CPU clock rate thanks to
+the ARM PMU) shows that this formula is not correct.
+This can be reproduced with the following steps:
+1. boot into u-boot
+2. let the CPU clock run off the XTAL clock:
+   mw.l 0xC110419C 0x30 1
+3. set the cpu_scale_div register:
+   to value 0x1: mw.l 0xC110415C 0x801016A2 1
+   to value 0x2: mw.l 0xC110415C 0x802016A2 1
+   to value 0x5: mw.l 0xC110415C 0x805016A2 1
+4. let the CPU clock run off cpu_scale_div:
+   mw.l 0xC110419C 0xbd 1
+5. boot Linux
+6. run: perf stat -aB stress --cpu 4 --timeout 10
+7. check the "cycles" value
 
-Cc: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+I get the following results depending on the cpu_scale_div value:
+- (cpu_in_sel - this is the input clock for cpu_scale_div - runs at
+   1.2GHz)
+- 0x1 = 300MHz
+- 0x2 = 200MHz
+- 0x5 = 100MHz
+
+This means that the actual formula to calculate the output of the
+cpu_scale_div clock is: parent_rate / 2 * (register value + 1).
+
+The register value 0x0 is reserved. When letting the CPU clock run off
+the cpu_scale_div while the value is 0x0 the whole board hangs (even in
+u-boot).
+
+I also verified this with the TWD timer: when adding this to the .dts
+without specifying it's clock it will auto-detect the PERIPH (which is
+the input clock of the TWD) clock rate (and the result is shown in the
+kernel log). On Meson8, Meson8b and Meson8m2 the PERIPH clock is CPUCLK
+divided by 4. This also matched for all three test-cases from above (in
+all cases the TWD timer clock rate was approx. one fourth of the CPU
+clock rate).
+
+A small note regarding the "fixes" tag: the original issue seems to
+exist virtually since forever. Even commit 28b9fcd016126e ("clk:
+meson8b: Add support for Meson8b clocks") seems to handle this wrong. I
+still decided to use commit 251b6fd38bcb9c ("clk: meson: rework meson8b
+cpu clock") because this is the first commit which gets the CPU hiearchy
+correct and thus it's the first commit where the cpu_scale_div register
+is used correctly (apart from the bug in the cpu_scale_table).
+
+Fixes: 251b6fd38bcb9c ("clk: meson: rework meson8b cpu clock")
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Link: https://lkml.kernel.org/r/20180927085921.24627-2-martin.blumenstingl@googlemail.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/imx/clk-busy.c      |  2 +-
- drivers/clk/imx/clk-fixup-mux.c |  2 +-
- drivers/clk/imx/clk.h           | 18 +++++++++++-------
- 3 files changed, 13 insertions(+), 9 deletions(-)
+ drivers/clk/meson/meson8b.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/clk/imx/clk-busy.c b/drivers/clk/imx/clk-busy.c
-index 99036527eb0d..e695622c5aa5 100644
---- a/drivers/clk/imx/clk-busy.c
-+++ b/drivers/clk/imx/clk-busy.c
-@@ -154,7 +154,7 @@ static const struct clk_ops clk_busy_mux_ops = {
- 
- struct clk *imx_clk_busy_mux(const char *name, void __iomem *reg, u8 shift,
- 			     u8 width, void __iomem *busy_reg, u8 busy_shift,
--			     const char **parent_names, int num_parents)
-+			     const char * const *parent_names, int num_parents)
- {
- 	struct clk_busy_mux *busy;
- 	struct clk *clk;
-diff --git a/drivers/clk/imx/clk-fixup-mux.c b/drivers/clk/imx/clk-fixup-mux.c
-index c9b327e0a8dd..44817c1b0b88 100644
---- a/drivers/clk/imx/clk-fixup-mux.c
-+++ b/drivers/clk/imx/clk-fixup-mux.c
-@@ -70,7 +70,7 @@ static const struct clk_ops clk_fixup_mux_ops = {
+diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+index 74697e145dde..50060e895e7a 100644
+--- a/drivers/clk/meson/meson8b.c
++++ b/drivers/clk/meson/meson8b.c
+@@ -568,13 +568,14 @@ static struct clk_fixed_factor meson8b_cpu_div3 = {
  };
  
- struct clk *imx_clk_fixup_mux(const char *name, void __iomem *reg,
--			      u8 shift, u8 width, const char **parents,
-+			      u8 shift, u8 width, const char * const *parents,
- 			      int num_parents, void (*fixup)(u32 *val))
- {
- 	struct clk_fixup_mux *fixup_mux;
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index 8076ec040f37..e65c1115d978 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -63,14 +63,14 @@ struct clk *imx_clk_busy_divider(const char *name, const char *parent_name,
+ static const struct clk_div_table cpu_scale_table[] = {
+-	{ .val = 2, .div = 4 },
+-	{ .val = 3, .div = 6 },
+-	{ .val = 4, .div = 8 },
+-	{ .val = 5, .div = 10 },
+-	{ .val = 6, .div = 12 },
+-	{ .val = 7, .div = 14 },
+-	{ .val = 8, .div = 16 },
++	{ .val = 1, .div = 4 },
++	{ .val = 2, .div = 6 },
++	{ .val = 3, .div = 8 },
++	{ .val = 4, .div = 10 },
++	{ .val = 5, .div = 12 },
++	{ .val = 6, .div = 14 },
++	{ .val = 7, .div = 16 },
++	{ .val = 8, .div = 18 },
+ 	{ /* sentinel */ },
+ };
  
- struct clk *imx_clk_busy_mux(const char *name, void __iomem *reg, u8 shift,
- 			     u8 width, void __iomem *busy_reg, u8 busy_shift,
--			     const char **parent_names, int num_parents);
-+			     const char * const *parent_names, int num_parents);
- 
- struct clk *imx_clk_fixup_divider(const char *name, const char *parent,
- 				  void __iomem *reg, u8 shift, u8 width,
- 				  void (*fixup)(u32 *val));
- 
- struct clk *imx_clk_fixup_mux(const char *name, void __iomem *reg,
--			      u8 shift, u8 width, const char **parents,
-+			      u8 shift, u8 width, const char * const *parents,
- 			      int num_parents, void (*fixup)(u32 *val));
- 
- static inline struct clk *imx_clk_fixed(const char *name, int rate)
-@@ -79,7 +79,8 @@ static inline struct clk *imx_clk_fixed(const char *name, int rate)
- }
- 
- static inline struct clk *imx_clk_mux_ldb(const char *name, void __iomem *reg,
--		u8 shift, u8 width, const char **parents, int num_parents)
-+			u8 shift, u8 width, const char * const *parents,
-+			int num_parents)
- {
- 	return clk_register_mux(NULL, name, parents, num_parents,
- 			CLK_SET_RATE_NO_REPARENT | CLK_SET_RATE_PARENT, reg,
-@@ -192,7 +193,8 @@ static inline struct clk *imx_clk_gate4(const char *name, const char *parent,
- }
- 
- static inline struct clk *imx_clk_mux(const char *name, void __iomem *reg,
--		u8 shift, u8 width, const char **parents, int num_parents)
-+			u8 shift, u8 width, const char * const *parents,
-+			int num_parents)
- {
- 	return clk_register_mux(NULL, name, parents, num_parents,
- 			CLK_SET_RATE_NO_REPARENT, reg, shift,
-@@ -200,7 +202,8 @@ static inline struct clk *imx_clk_mux(const char *name, void __iomem *reg,
- }
- 
- static inline struct clk *imx_clk_mux2(const char *name, void __iomem *reg,
--		u8 shift, u8 width, const char **parents, int num_parents)
-+			u8 shift, u8 width, const char * const *parents,
-+			int num_parents)
- {
- 	return clk_register_mux(NULL, name, parents, num_parents,
- 			CLK_SET_RATE_NO_REPARENT | CLK_OPS_PARENT_ENABLE,
-@@ -208,8 +211,9 @@ static inline struct clk *imx_clk_mux2(const char *name, void __iomem *reg,
- }
- 
- static inline struct clk *imx_clk_mux_flags(const char *name,
--		void __iomem *reg, u8 shift, u8 width, const char **parents,
--		int num_parents, unsigned long flags)
-+			void __iomem *reg, u8 shift, u8 width,
-+			const char * const *parents, int num_parents,
-+			unsigned long flags)
- {
- 	return clk_register_mux(NULL, name, parents, num_parents,
- 			flags | CLK_SET_RATE_NO_REPARENT, reg, shift, width, 0,
 -- 
 2.19.1
 
