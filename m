@@ -2,58 +2,61 @@ Return-Path: <SRS0=Ml2J=PQ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3023FC43387
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Jan 2019 13:31:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD81DC43387
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Jan 2019 13:31:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC49B20827
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Jan 2019 13:31:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8997320827
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Jan 2019 13:31:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="qJ3VUWZs"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="SL0UsEMn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728426AbfAHNbj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Jan 2019 08:31:39 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:39448 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727654AbfAHNbj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Jan 2019 08:31:39 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x08DVQAb075118;
-        Tue, 8 Jan 2019 07:31:26 -0600
+        id S1728588AbfAHNbq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Jan 2019 08:31:46 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:53510 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728558AbfAHNbq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Jan 2019 08:31:46 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x08DVa4s030076;
+        Tue, 8 Jan 2019 07:31:36 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1546954286;
-        bh=+wg76Pqo+Bo8l3yM3CQNB0mIE8I40rfxxv6nykYX4ZQ=;
-        h=From:To:Subject:Date;
-        b=qJ3VUWZsgw9hWVOKKifu3XUtcnHXdv0S5lU0LOvp2cooODlt/fY3Z80mphwFT5t29
-         hyZgYK0g8/9nj7zB5RuJCwtZuL0Aex2mRNd79eJJ04Dki/rh6lWqtp8JwT2AMSMfyg
-         6ia0H3Jx4mVHXjh+OUIEsVIUHtymgGkJqJof1Sfw=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x08DVQJp074701
+        s=ti-com-17Q1; t=1546954296;
+        bh=eAmFgPhGva96tsSGYPDLO5HO50MYtplOHJgyz1RyOhE=;
+        h=From:To:Subject:Date:In-Reply-To:References;
+        b=SL0UsEMn3V89g+/zYOzydPvpgPnVABOFxm/na3R9J9TMEHBk46yF2FbVmFdy2cJA5
+         1RWV0MxNPa2+0Bc1kuyT7yv3Ar/yJFwKZUgIQDjpkYJUiluVtKqMmSKqrb9g1q1KZz
+         lv9VCLig9P2Rm++AIEQKZaz3yOM+5pEq1J0XFh2s=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x08DVa4S120766
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 8 Jan 2019 07:31:26 -0600
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+        Tue, 8 Jan 2019 07:31:36 -0600
+Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Tue, 8
- Jan 2019 07:31:25 -0600
-Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_0,
+ Jan 2019 07:31:34 -0600
+Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_0,
  cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Tue, 8 Jan 2019 07:31:25 -0600
+ Tue, 8 Jan 2019 07:31:34 -0600
 Received: from gomoku.home (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x08DVMue011668;
-        Tue, 8 Jan 2019 07:31:23 -0600
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x08DVMuh011668;
+        Tue, 8 Jan 2019 07:31:32 -0600
 From:   Tero Kristo <t-kristo@ti.com>
 To:     <sboyd@kernel.org>, <mturquette@baylibre.com>,
         <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <robh+dt@kernel.org>, <ssantosh@kernel.org>,
         <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH 0/3] clk: keystone: a few TI sci-clk improvements
-Date:   Tue, 8 Jan 2019 15:30:20 +0200
-Message-ID: <1546954223-9738-1-git-send-email-t-kristo@ti.com>
+Subject: [PATCH 3/3] clk: keystone: sci-clk: use shorter names for clocks
+Date:   Tue, 8 Jan 2019 15:30:23 +0200
+Message-ID: <1546954223-9738-4-git-send-email-t-kristo@ti.com>
 X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1546954223-9738-1-git-send-email-t-kristo@ti.com>
+References: <1546954223-9738-1-git-send-email-t-kristo@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
@@ -62,30 +65,42 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+Currently the full device name of the clock provider is used as the initial
+part of the registered clock name. This is pretty long and completely
+unnecessary info in generic case, so shorten it up. Now, we only contain
+the short name of the clock provider node (pOFn.)
 
-Patch 1 & 2 introduce a new DT flag for parsing the clock data from devicetree
-instead of querying everything from firmware. The purpose of this change
-is to improve boot time, it can be seen to give ~2s improvement in certain
-setups. If adding a new DT flag for this is not acceptable, a kernel command
-line parameter could be introduced instead, or even a new Kconfig option.
-I voted for the DT flag for now as that seems to be the most versatile
-solution.
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ drivers/clk/keystone/sci-clk.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Patch 3 shortens the kernel registered clock names, currently for am65x
-they are of the form:
-
-interconnect@100000:interconnect@28380000:interconnect@42040000:dmsc:clocks:11:1
-0
-
-After this patch the same clock name is cut down to:
-
-clocks:11:10
-
-This makes the debugfs interface much more readable in addition to some
-memory savings.
-
--Tero
+diff --git a/drivers/clk/keystone/sci-clk.c b/drivers/clk/keystone/sci-clk.c
+index d1d6dc8..57b7d02 100644
+--- a/drivers/clk/keystone/sci-clk.c
++++ b/drivers/clk/keystone/sci-clk.c
+@@ -283,7 +283,7 @@ static int _sci_clk_build(struct sci_clk_provider *provider,
+ 	int i;
+ 	int ret = 0;
+ 
+-	name = kasprintf(GFP_KERNEL, "%s:%d:%d", dev_name(provider->dev),
++	name = kasprintf(GFP_KERNEL, "%pOFn:%d:%d", provider->dev->of_node,
+ 			 sci_clk->dev_id, sci_clk->clk_id);
+ 
+ 	init.name = name;
+@@ -309,8 +309,8 @@ static int _sci_clk_build(struct sci_clk_provider *provider,
+ 		for (i = 0; i < sci_clk->num_parents; i++) {
+ 			char *parent_name;
+ 
+-			parent_name = kasprintf(GFP_KERNEL, "%s:%d:%d",
+-						dev_name(provider->dev),
++			parent_name = kasprintf(GFP_KERNEL, "%pOFn:%d:%d",
++						provider->dev->of_node,
+ 						sci_clk->dev_id,
+ 						sci_clk->clk_id + 1 + i);
+ 			if (!parent_name) {
+-- 
+1.9.1
 
 --
 Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
