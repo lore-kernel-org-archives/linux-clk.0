@@ -7,48 +7,48 @@ X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1A55C43387
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Jan 2019 19:39:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78514C43612
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Jan 2019 19:41:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96A672063F
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Jan 2019 19:39:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 415EB20645
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Jan 2019 19:41:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546976352;
-	bh=6cOhFqO/9x5iVXUnGkodK93GH/+rI2u5VVHZ4Oba+Yw=;
+	s=default; t=1546976493;
+	bh=buDvPRuGpI4Ip4q6GJVcMFbxrUjNVWPo7my1Xave8QQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=KaQiyH/buxQ3VI0csywqJWA7V99EYcgaMjisqzCViAcnYPEtl0ZFYwS7QLn2FSeCl
-	 svvV+AyZlwm2FkF9ji/+YjZ3mmw1rbRApbyc/Mx5beCBVNYV4Om0qyvrGzOzScOtk0
-	 OxyiupHvOojr0zw1WVafwjDZRxGkjX2+kNh3TD+E=
+	b=D31qArc22WHpW+ZGVO/8MTGsbEHWgXadIis0AT470H0JH01DeeqBmhzvSgS8suMCO
+	 jW5GK83vb1bXEhETP5l6iQV8Yo6HpbyohbC9sJj/EH1FTSSM76/w9z2Ld3yXwrioGx
+	 cW39a1KNadwEV2KzmUUAqdASDJJESzkhnn1VsxY8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732144AbfAHTjF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:39:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43930 "EHLO mail.kernel.org"
+        id S1731941AbfAHTeT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Jan 2019 14:34:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43034 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732171AbfAHTfI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:35:08 -0500
+        id S1731934AbfAHTeS (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:34:18 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 69E342063F;
-        Tue,  8 Jan 2019 19:35:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3DBDE2176F;
+        Tue,  8 Jan 2019 19:34:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546976108;
-        bh=6cOhFqO/9x5iVXUnGkodK93GH/+rI2u5VVHZ4Oba+Yw=;
+        s=default; t=1546976057;
+        bh=buDvPRuGpI4Ip4q6GJVcMFbxrUjNVWPo7my1Xave8QQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EmV33uABKgbAeeH97GbnflAjaAyB9ss2xoe7cXDB1mWWer2odq3e23OFexhmkCZD9
-         HkWLDs0RwUdBc2biZaHFklL+xk4K8mNz2C6tCA4lGU0B2JiH09FONHRVrNit6SQ2SH
-         pu8WXTAI3NUA0g5DSNNsOZFQfvRaiEgMvokm7U3I=
+        b=pE8WPc6JLEBfjhkl/o8YNqWuwqiAwZCHLaE8/jnXdDK9MRFX5CstFiCGqCzmjIVpY
+         SyHLPLJ3j/ZvjrsnJoaSKQNLDMGMv2F79e3IgkJh+EB7TjbYeBvSGgmKuOaUBomq1e
+         QMLEB5UFH2R9UEz88cvPYTmt0F+wYfK6nh/mTHcw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Lucas Stach <l.stach@pengutronix.de>,
         Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 14/28] clk: imx6q: reset exclusive gates on init
-Date:   Tue,  8 Jan 2019 14:34:31 -0500
-Message-Id: <20190108193445.124251-14-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 19/36] clk: imx6q: reset exclusive gates on init
+Date:   Tue,  8 Jan 2019 14:33:31 -0500
+Message-Id: <20190108193348.123880-19-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190108193445.124251-1-sashal@kernel.org>
-References: <20190108193445.124251-1-sashal@kernel.org>
+In-Reply-To: <20190108193348.123880-1-sashal@kernel.org>
+References: <20190108193348.123880-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -78,10 +78,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
-index a0df83e6b84b..46c05c9a9354 100644
+index 93a19667003d..14682df5d312 100644
 --- a/drivers/clk/imx/clk-imx6q.c
 +++ b/drivers/clk/imx/clk-imx6q.c
-@@ -239,8 +239,12 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
+@@ -258,8 +258,12 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
  	 * lvds1_gate and lvds2_gate are pseudo-gates.  Both can be
  	 * independently configured as clock inputs or outputs.  We treat
  	 * the "output_enable" bit as a gate, even though it's really just
