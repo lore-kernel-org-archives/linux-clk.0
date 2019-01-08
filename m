@@ -4,48 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ABEFC43612
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Jan 2019 20:05:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7288C43387
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Jan 2019 20:07:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EF7020660
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Jan 2019 20:05:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7916820660
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Jan 2019 20:07:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546977912;
-	bh=IpoEWFN2V3WzgVluy3yVNPwzwvmawDw92oJ0UPGmtf8=;
+	s=default; t=1546978048;
+	bh=nNqkdm+pQ7ZxSj/wlFUXdC724chCR7sop/Q+V8jxWiU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=uqkwgd86MP9Ag6nw0g1rqOhsFq6/J64KaNW1Zck5zVrCCX3iDbjUA/KH6oogknrrt
-	 HSHMxjgekcHN7K5Y8o6TmpKrS93CkImqOJhNkzCuTyEWs48Ky5zbaEdEMFAI+rR6gt
-	 Ewm6wYOOnZFkKI0R3rngq2JIUuONEG8itngcpooo=
+	b=JYsJWMxp55cBJR5x81QH4cg84Ffvn36tMdQzBPO3nGlg0lSjXQcthivnzaqilf0up
+	 2IdN1oDNURlm1WdHHu+w0FMXju4ykY6Z4JGPEf4rzBLciMWpMTTENVHOtILcdSlpn0
+	 K9qWiHmKndW8d7pcCuuYwhSMWusuy8XALyTWKlpw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730219AbfAHUFE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Jan 2019 15:05:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35276 "EHLO mail.kernel.org"
+        id S1731145AbfAHUHV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Jan 2019 15:07:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34370 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729204AbfAHT2T (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:28:19 -0500
+        id S1729823AbfAHT1x (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:27:53 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BA3BB20645;
-        Tue,  8 Jan 2019 19:28:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D98592173C;
+        Tue,  8 Jan 2019 19:27:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975698;
-        bh=IpoEWFN2V3WzgVluy3yVNPwzwvmawDw92oJ0UPGmtf8=;
+        s=default; t=1546975672;
+        bh=nNqkdm+pQ7ZxSj/wlFUXdC724chCR7sop/Q+V8jxWiU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=n0bWYj4i0R9tRxArh93qTaZHOaFW6nbLkJ/yj1feYvvIXWRJkKxam0fSbsiZnplJD
-         wHYVJ/rTOFY5R4sZJbubwi/lN75omHkgAexWHHZo/wWY8CeGhN1qNT00lSjzkHeZMu
-         qGaCspxCyveQ2DyzNeXqHwfKCUDGn17MRbwjI8lQ=
+        b=05t6oEJpn7ZSxuulSLwgsqdtiGUkOOtTIMuE4FISftvdH3cA/x1T74yiwgqKwNwwb
+         R+K7VlogwkV6AdknFFhZTb1St/2QbhdsW1yuLxzEmq59YANJtTRfF01QN9r5ODCk+f
+         pgFimFD0M3RGbfzKpybsh9s6PgRYJV7CEL2ZM5b8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Lucas Stach <l.stach@pengutronix.de>,
+Cc:     "A.s. Dong" <aisheng.dong@nxp.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Shawn Guo <shawnguo@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 062/117] clk: imx6q: reset exclusive gates on init
-Date:   Tue,  8 Jan 2019 14:25:30 -0500
-Message-Id: <20190108192628.121270-62-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 044/117] clk: imx: make mux parent strings const
+Date:   Tue,  8 Jan 2019 14:25:12 -0500
+Message-Id: <20190108192628.121270-44-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192628.121270-1-sashal@kernel.org>
 References: <20190108192628.121270-1-sashal@kernel.org>
@@ -57,44 +59,127 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Lucas Stach <l.stach@pengutronix.de>
+From: "A.s. Dong" <aisheng.dong@nxp.com>
 
-[ Upstream commit f7542d817733f461258fd3a47d77da35b2d9fc81 ]
+[ Upstream commit 9e5ef7a57ca75a1b9411c46caeeb6881124284a3 ]
 
-The exclusive gates may be set up in the wrong way by software running
-before the clock driver comes up. In that case the exclusive setup is
-locked in its initial state, as the complementary function can't be
-activated without disabling the initial setup first.
+As the commit 2893c379461a ("clk: make strings in parent name arrays
+const"), let's make the parent strings const, otherwise we may meet
+the following warning when compiling:
 
-To avoid this lock situation, reset the exclusive gates to the off
-state and allow the kernel to provide the proper setup.
+drivers/clk/imx/clk-imx7ulp.c: In function 'imx7ulp_clocks_init':
+drivers/clk/imx/clk-imx7ulp.c:73:35: warning: passing argument 5 of
+	'imx_clk_mux_flags' discards 'const' qualifier from pointer target type
 
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-Reviewed-by: Dong Aisheng <Aisheng.dong@nxp.com>
+  clks[IMX7ULP_CLK_APLL_PRE_SEL] = imx_clk_mux_flags("apll_pre_sel", base + 0x508, 0,
+	1, pll_pre_sels, ARRAY_SIZE(pll_pre_sels), CLK_SET_PARENT_GATE);
+                                   ^
+In file included from drivers/clk/imx/clk-imx7ulp.c:23:0:
+drivers/clk/imx/clk.h:200:27: note: expected 'const char **' but argument is
+ of type 'const char * const*'
+...
+
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/imx/clk-imx6q.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/clk/imx/clk-busy.c      |  2 +-
+ drivers/clk/imx/clk-fixup-mux.c |  2 +-
+ drivers/clk/imx/clk.h           | 18 +++++++++++-------
+ 3 files changed, 13 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
-index bbe0c60f4d09..59f6a3e087db 100644
---- a/drivers/clk/imx/clk-imx6q.c
-+++ b/drivers/clk/imx/clk-imx6q.c
-@@ -508,8 +508,12 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
- 	 * lvds1_gate and lvds2_gate are pseudo-gates.  Both can be
- 	 * independently configured as clock inputs or outputs.  We treat
- 	 * the "output_enable" bit as a gate, even though it's really just
--	 * enabling clock output.
-+	 * enabling clock output. Initially the gate bits are cleared, as
-+	 * otherwise the exclusive configuration gets locked in the setup done
-+	 * by software running before the clock driver, with no way to change
-+	 * it.
- 	 */
-+	writel(readl(base + 0x160) & ~0x3c00, base + 0x160);
- 	clk[IMX6QDL_CLK_LVDS1_GATE] = imx_clk_gate_exclusive("lvds1_gate", "lvds1_sel", base + 0x160, 10, BIT(12));
- 	clk[IMX6QDL_CLK_LVDS2_GATE] = imx_clk_gate_exclusive("lvds2_gate", "lvds2_sel", base + 0x160, 11, BIT(13));
+diff --git a/drivers/clk/imx/clk-busy.c b/drivers/clk/imx/clk-busy.c
+index 99036527eb0d..e695622c5aa5 100644
+--- a/drivers/clk/imx/clk-busy.c
++++ b/drivers/clk/imx/clk-busy.c
+@@ -154,7 +154,7 @@ static const struct clk_ops clk_busy_mux_ops = {
  
+ struct clk *imx_clk_busy_mux(const char *name, void __iomem *reg, u8 shift,
+ 			     u8 width, void __iomem *busy_reg, u8 busy_shift,
+-			     const char **parent_names, int num_parents)
++			     const char * const *parent_names, int num_parents)
+ {
+ 	struct clk_busy_mux *busy;
+ 	struct clk *clk;
+diff --git a/drivers/clk/imx/clk-fixup-mux.c b/drivers/clk/imx/clk-fixup-mux.c
+index c9b327e0a8dd..44817c1b0b88 100644
+--- a/drivers/clk/imx/clk-fixup-mux.c
++++ b/drivers/clk/imx/clk-fixup-mux.c
+@@ -70,7 +70,7 @@ static const struct clk_ops clk_fixup_mux_ops = {
+ };
+ 
+ struct clk *imx_clk_fixup_mux(const char *name, void __iomem *reg,
+-			      u8 shift, u8 width, const char **parents,
++			      u8 shift, u8 width, const char * const *parents,
+ 			      int num_parents, void (*fixup)(u32 *val))
+ {
+ 	struct clk_fixup_mux *fixup_mux;
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index 5895e2237b6c..2c377e188281 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -63,14 +63,14 @@ struct clk *imx_clk_busy_divider(const char *name, const char *parent_name,
+ 
+ struct clk *imx_clk_busy_mux(const char *name, void __iomem *reg, u8 shift,
+ 			     u8 width, void __iomem *busy_reg, u8 busy_shift,
+-			     const char **parent_names, int num_parents);
++			     const char * const *parent_names, int num_parents);
+ 
+ struct clk *imx_clk_fixup_divider(const char *name, const char *parent,
+ 				  void __iomem *reg, u8 shift, u8 width,
+ 				  void (*fixup)(u32 *val));
+ 
+ struct clk *imx_clk_fixup_mux(const char *name, void __iomem *reg,
+-			      u8 shift, u8 width, const char **parents,
++			      u8 shift, u8 width, const char * const *parents,
+ 			      int num_parents, void (*fixup)(u32 *val));
+ 
+ static inline struct clk *imx_clk_fixed(const char *name, int rate)
+@@ -79,7 +79,8 @@ static inline struct clk *imx_clk_fixed(const char *name, int rate)
+ }
+ 
+ static inline struct clk *imx_clk_mux_ldb(const char *name, void __iomem *reg,
+-		u8 shift, u8 width, const char **parents, int num_parents)
++			u8 shift, u8 width, const char * const *parents,
++			int num_parents)
+ {
+ 	return clk_register_mux(NULL, name, parents, num_parents,
+ 			CLK_SET_RATE_NO_REPARENT | CLK_SET_RATE_PARENT, reg,
+@@ -199,7 +200,8 @@ static inline struct clk *imx_clk_gate4(const char *name, const char *parent,
+ }
+ 
+ static inline struct clk *imx_clk_mux(const char *name, void __iomem *reg,
+-		u8 shift, u8 width, const char **parents, int num_parents)
++			u8 shift, u8 width, const char * const *parents,
++			int num_parents)
+ {
+ 	return clk_register_mux(NULL, name, parents, num_parents,
+ 			CLK_SET_RATE_NO_REPARENT, reg, shift,
+@@ -207,7 +209,8 @@ static inline struct clk *imx_clk_mux(const char *name, void __iomem *reg,
+ }
+ 
+ static inline struct clk *imx_clk_mux2(const char *name, void __iomem *reg,
+-		u8 shift, u8 width, const char **parents, int num_parents)
++			u8 shift, u8 width, const char * const *parents,
++			int num_parents)
+ {
+ 	return clk_register_mux(NULL, name, parents, num_parents,
+ 			CLK_SET_RATE_NO_REPARENT | CLK_OPS_PARENT_ENABLE,
+@@ -215,8 +218,9 @@ static inline struct clk *imx_clk_mux2(const char *name, void __iomem *reg,
+ }
+ 
+ static inline struct clk *imx_clk_mux_flags(const char *name,
+-		void __iomem *reg, u8 shift, u8 width, const char **parents,
+-		int num_parents, unsigned long flags)
++			void __iomem *reg, u8 shift, u8 width,
++			const char * const *parents, int num_parents,
++			unsigned long flags)
+ {
+ 	return clk_register_mux(NULL, name, parents, num_parents,
+ 			flags | CLK_SET_RATE_NO_REPARENT, reg, shift, width, 0,
 -- 
 2.19.1
 
