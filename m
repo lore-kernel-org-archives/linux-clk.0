@@ -4,36 +4,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D47D3C43387
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Jan 2019 09:00:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF614C43387
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Jan 2019 09:01:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E6D3206B6
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Jan 2019 09:00:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 67561206B6
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Jan 2019 09:01:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="LoZYt8BL"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="WKi+cBY4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727509AbfAHJAx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Jan 2019 04:00:53 -0500
-Received: from mail-eopbgr60047.outbound.protection.outlook.com ([40.107.6.47]:37293
+        id S1727872AbfAHJBF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Jan 2019 04:01:05 -0500
+Received: from mail-eopbgr60077.outbound.protection.outlook.com ([40.107.6.77]:23939
         "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726333AbfAHJAw (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 8 Jan 2019 04:00:52 -0500
+        id S1727295AbfAHJBE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 8 Jan 2019 04:01:04 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ydjK6s2UOqVGxfXhn7QweNsjdu7dwKVS+eJJaY/ydHY=;
- b=LoZYt8BLrmhQVywNi/CN/b6wRQwSsmXUtLA9qBSUZjyncU5Q/xA9BhTsfP++wxu2odx0bsIPwGg1Y3vtmk9ve/iXQ1c1H95z5ld8vqAtVATzKacSQacDxEXFQKm0KFWoSRBqQyyzb5DoZ++OxcBP0WYm1aCBJmhaSR+dJX2RbCE=
+ bh=j9VARjTa86YrG31zdgKG8DwPJ+o/9pBDST3e6nBnpBM=;
+ b=WKi+cBY4gUN0WDD2aU04nGqhBfvyAgu2ygz82JxumSLet9MVtELuQUEQGxazxashRQZW9JOsbq9mKSmVRc/rt/M4Me7WzM2DAPOCh/hGyI4UxXukuiInETJ14Vz2NUe5Pq0GOEWLe65GSDRBXM3V9s5dBfS1dSvJRTsxBL2Clvs=
 Received: from VI1PR0402MB3519.eurprd04.prod.outlook.com (52.134.4.24) by
  VI1PR0402MB2736.eurprd04.prod.outlook.com (10.175.22.146) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1495.6; Tue, 8 Jan 2019 09:00:45 +0000
+ 15.20.1495.6; Tue, 8 Jan 2019 09:00:58 +0000
 Received: from VI1PR0402MB3519.eurprd04.prod.outlook.com
  ([fe80::5d51:a6f6:df78:87e]) by VI1PR0402MB3519.eurprd04.prod.outlook.com
  ([fe80::5d51:a6f6:df78:87e%5]) with mapi id 15.20.1495.011; Tue, 8 Jan 2019
- 09:00:45 +0000
+ 09:00:58 +0000
 From:   Jacky Bai <ping.bai@nxp.com>
 To:     "sboyd@kernel.org" <sboyd@kernel.org>,
         "mturquette@baylibre.com" <mturquette@baylibre.com>,
@@ -44,11 +44,13 @@ CC:     Fabio Estevam <fabio.estevam@nxp.com>,
         dl-linux-imx <linux-imx@nxp.com>,
         "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: [PATCH 1/3] clk: imx: Add PLLs driver for imx8mm soc
-Thread-Topic: [PATCH 1/3] clk: imx: Add PLLs driver for imx8mm soc
-Thread-Index: AQHUpzCk4T8BTNGyR0q6Q1fWz83NOQ==
-Date:   Tue, 8 Jan 2019 09:00:45 +0000
-Message-ID: <1546938317-23203-1-git-send-email-ping.bai@nxp.com>
+Subject: [PATCH 2/3] dt-bindings: imx: Add clock binding doc for imx8mm
+Thread-Topic: [PATCH 2/3] dt-bindings: imx: Add clock binding doc for imx8mm
+Thread-Index: AQHUpzCrD39omiAYVE6WZBWElns7nw==
+Date:   Tue, 8 Jan 2019 09:00:58 +0000
+Message-ID: <1546938317-23203-2-git-send-email-ping.bai@nxp.com>
+References: <1546938317-23203-1-git-send-email-ping.bai@nxp.com>
+In-Reply-To: <1546938317-23203-1-git-send-email-ping.bai@nxp.com>
 Accept-Language: zh-CN, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -62,27 +64,27 @@ authentication-results: spf=none (sender IP is )
 x-ms-exchange-messagesentrepresentingtype: 1
 x-originating-ip: [119.31.174.71]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR0402MB2736;6:eZb+vkhL1bDtIRMSNmiPRCjQ71CC1q1qEmdgsnbFK6VQkunyQtySatrU2iy0aTd9BStctlvxyM0d1NtEvWcrD/cdwu6Fzo7bNPvxtmtxdzKwFi9Vo5/jL34zjERYLf0Hyc+4mFuOLY5QMkrr7RUhm7aPwn/J4fDgrgJSqFR2OGYBjztdeysZzC5YurSBr6mV1q+WmHlrIfsl86Nl5LVLO8ppZFxUoRpsYK65jxwwZOInXu37/G+OPT1L1M739D939SFQbL5pl3zWlHL6T1ob9gDlxccyozWSQdGOBQ7DV8ZrsjeW9VxzPKOGKdeejTqlyElFRWE7/uuVPv0O3R/KY/eH0vxA9xHb8gsYRzbp5Wu0kxqChtBNrkGVe+0cGbzwJaQ6y77Y4XZhC+WU6sTf9IYMinK4HK7asAErje3zY8lVG1D6X4jfOqZqWx4ilAtVMh0Xwtf6adbJYoSq43UrGQ==;5:uq4GDepm0qIW/06Ya36GDnWekXjX9/u3bp1nBCvOgzoCDxyDbO7tep+ba2jrvMYjdn2kELjfUk9Q5EI5xVc5U8GG0WT5A0vg8yjaBCmSWsyITkEMjLDHYTRwT3w2s4nlrUZi9ID+kQLW1fShE5Kp6NDV7iPHBeNhJVr/bp1CUos75DoJTcearldX6TnBBygORM3nm/fJRlg2cZMKS5u4IQ==;7:jbXpglBkmSepNbqHlp5j4PD3TbbSE2imTkA05HoTyBrTh4/ZloJ4qqoMcFuoihJ0O48+3HhELkLs6jgEut3IggsDE89LdNrj7vDPThX1wNkLvrCqMwxbekdoGvbUxIXBD0Tuq/LKYsxT2oBsydekBQ==
-x-ms-office365-filtering-correlation-id: 338062fd-22b2-4f71-7448-08d67547c637
+x-microsoft-exchange-diagnostics: 1;VI1PR0402MB2736;6:11hlFW0Cou4Wh3n67CNHwiP6Ml/7yfx/fM8ffPSCDEbPTaU9dOLbiu59d+JQBpDhVyKQ8ysMT8oS3TNDRFwMZglXlZLrzHcJv058IutM8vYAUU89vcSo5Osal9FjFcZKiM+LCBN1sFsBRbwm3gwFaHfT7+JamtLz6pcWnE5xCj7shGCzfrsypRt93VjydiMXwqGqCK0cP3Y5/hm4gPxeqFFhvDZf9ESIejWgeI+YzohOEztAwymSeFc9hZofQq9yty3ruIO+gYq65xWtMP9B/4GsE2mU/KxyCEOE0qbxWs2UJbYucnONWrFgItOnemp73eH/qWPNHYtizzGxc+asPRTsGCoXmhKT1z0JxpUe6DWazblZwIaaoVB+ouc8+v0m1CGDE/PzGQdzIdv57azmzIBSIi6REoLQCvI0QQZmv1tBrE8mSScjdjUOsEbPEvGWdAfrXoL9FDlirD1rcZAVww==;5:nMJK+ac6K57zPKKyivL2D16Eobe8uS22So8hjCmrEHFreoaC4JH2jdG6pGFWvPTDxlSAvZeUieyqrWxr0z3jGCMR99y/oufuY4rLkV1ceQ5Z8YFrM9cMNz89JmCg0BrmTVrQuV5fynyuxXQ5WbeVi5ENIjD71ZanGatcVbmgDkrh8wMBPOvGnA8VJkkputch2i95MUwvDeHgpptxAif8lA==;7:NXiWgyfd1yGivss+j6RpFtK6Tv3emDfm9pU//+3ZfgxbkdNNUsGgfeR+qALagE18/N5nnNanaBgREwlHbpPGftjDI6Khw4GDpqXuzIOqmmQXOW2asscg29z+qIj8vKb06NVs8SVGZ4d97ROJK9H36Q==
+x-ms-office365-filtering-correlation-id: 5ca5c493-f96b-495f-227d-08d67547cdc4
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR0402MB2736;
 x-ms-traffictypediagnostic: VI1PR0402MB2736:
-x-microsoft-antispam-prvs: <VI1PR0402MB2736F6C813A1C6C2F359615A878A0@VI1PR0402MB2736.eurprd04.prod.outlook.com>
+x-microsoft-antispam-prvs: <VI1PR0402MB27369297CA68F260DFF24B1A878A0@VI1PR0402MB2736.eurprd04.prod.outlook.com>
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(908002)(999002)(5005026)(6040522)(8220060)(2401047)(8121501046)(93006095)(93001095)(3231475)(944501520)(52105112)(3002001)(10201501046)(6055026)(6041310)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:VI1PR0402MB2736;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0402MB2736;
 x-forefront-prvs: 0911D5CE78
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(366004)(376002)(136003)(346002)(39860400002)(199004)(189003)(66066001)(50226002)(14444005)(186003)(256004)(476003)(2616005)(2501003)(5660300001)(486006)(575784001)(4744004)(478600001)(36756003)(102836004)(86362001)(25786009)(8936002)(71190400001)(71200400001)(81166006)(81156014)(26005)(8676002)(2906002)(68736007)(106356001)(6486002)(6436002)(4326008)(97736004)(14454004)(54906003)(53936002)(110136005)(52116002)(305945005)(6512007)(7736002)(3846002)(6116002)(316002)(105586002)(99286004)(386003)(6506007)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB2736;H:VI1PR0402MB3519.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(366004)(376002)(136003)(346002)(39860400002)(199004)(189003)(66066001)(50226002)(446003)(11346002)(186003)(256004)(476003)(2616005)(2501003)(5660300001)(486006)(478600001)(36756003)(102836004)(86362001)(25786009)(8936002)(71190400001)(71200400001)(81166006)(81156014)(26005)(8676002)(2906002)(68736007)(106356001)(6486002)(6436002)(4326008)(76176011)(97736004)(14454004)(54906003)(53936002)(110136005)(52116002)(305945005)(6512007)(7736002)(3846002)(6116002)(316002)(105586002)(99286004)(386003)(6506007)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB2736;H:VI1PR0402MB3519.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: e4oHhFsKk1S+llwA/jFMffcPSzC5Xvp/dgioXgF3OznafHyOlnbW06M/EoZMLT/vHKhaePUmoJPGhlS45OmU5r/VTtHfbMkzSB23A4YBkKd0+bc5AsQMnTQzGqehbXdLQhJU1JEyzKz/ta3NNuFtRyxPFWhsE2TQXreDc1ESNPAOLiiDHY+RwQFyAYPivKgVoJMcwc3VhGGJ/+esCspxx95ZBL1tSRrScHYfvFUPKicV/rUc/ThGUOkJ+9nIRg5IIr0CmTncBjZYhCd0uTz6WqOqEhe1/z+5Qtu5xG52gH9yDTQIivnUUAPqA6rldQ7A
+x-microsoft-antispam-message-info: MdIapaAb+eL/bZyUSk06orf9Gf1HAI5nogTJC7pbWHH+VKO2cc4SIAoc50YpJCEbE/GG/T7W1m/Mi2I8Z8LM6y3cPz/Yahf7baKgQYN4kkX7CQR+/Fb0BHdJy2PIH8s8FLK4s4kXySpBqwIlfQAyOycSkaxlhqUE+0vuq693vPpwGPMkgNg4YFRUrwKZvqkpTjjyh9tYGhdgevdm1PE0nyQhghb3Pk3CCKdRHKF74TLfJvTvlaKpuU7h9rbTZN/ZPWCgChXztsgpVsW0emvTSElmVGCIidKs1ikoyIPb0lm52MOwDDEniwwmvQL7Y4W9
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 338062fd-22b2-4f71-7448-08d67547c637
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Jan 2019 09:00:41.3900
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5ca5c493-f96b-495f-227d-08d67547cdc4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Jan 2019 09:00:53.9920
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
@@ -92,484 +94,297 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-New PLLs are introduced on i.MX8M Mini SOC.
-PLL1416X is Integer PLL, PLL1443X is a Frac PLL.
+Add the clock binding doc for i.MX8MM.
 
 Signed-off-by: Bai Ping <ping.bai@nxp.com>
 ---
- drivers/clk/imx/Makefile      |   3 +-
- drivers/clk/imx/clk-pll14xx.c | 409 ++++++++++++++++++++++++++++++++++++++=
+ .../devicetree/bindings/clock/imx8mm-clock.txt     |  19 ++
+ include/dt-bindings/clock/imx8mm-clock.h           | 244 +++++++++++++++++=
 ++++
- drivers/clk/imx/clk.h         |  23 +++
- 3 files changed, 434 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/imx/clk-pll14xx.c
+ 2 files changed, 263 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/imx8mm-clock.tx=
+t
+ create mode 100644 include/dt-bindings/clock/imx8mm-clock.h
 
-diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
-index 73119fb..ff74287 100644
---- a/drivers/clk/imx/Makefile
-+++ b/drivers/clk/imx/Makefile
-@@ -18,7 +18,8 @@ obj-$(CONFIG_MXC_CLK) +=3D \
- 	clk-pllv2.o \
- 	clk-pllv3.o \
- 	clk-pllv4.o \
--	clk-sccg-pll.o
-+	clk-sccg-pll.o \
-+	clk-pll14xx.o
-=20
- obj-$(CONFIG_MXC_CLK_SCU) +=3D \
- 	clk-scu.o \
-diff --git a/drivers/clk/imx/clk-pll14xx.c b/drivers/clk/imx/clk-pll14xx.c
+diff --git a/Documentation/devicetree/bindings/clock/imx8mm-clock.txt b/Doc=
+umentation/devicetree/bindings/clock/imx8mm-clock.txt
 new file mode 100644
-index 0000000..c9f83fd
+index 0000000..034b6d4
 --- /dev/null
-+++ b/drivers/clk/imx/clk-pll14xx.c
-@@ -0,0 +1,409 @@
-+// SPDX-License-Identifier: GPL-2.0
++++ b/Documentation/devicetree/bindings/clock/imx8mm-clock.txt
+@@ -0,0 +1,19 @@
++* Clock bindings for NXP i.MX8M Mini
++
++Required properties:
++- compatible: Should be "fsl,imx8mm-ccm"
++- reg: Address and length of the register set
++- #clock-cells: Should be <1>
++- clocks: list of clock specifiers, must contain an entry for each require=
+d
++          entry in clock-names
++- clock-names: should include the following entries:
++    - "osc_32k"
++    - "osc_24m"
++    - "clk_ext1"
++    - "clk_ext2"
++    - "clk_ext3"
++    - "clk_ext4"
++
++The clock consumer should specify the desired clock by having the clock
++ID in its "clocks" phandle cell. See include/dt-bindings/clock/imx8mm-cloc=
+k.h
++for the full list of i.MX8M Mini clock IDs.
+diff --git a/include/dt-bindings/clock/imx8mm-clock.h b/include/dt-bindings=
+/clock/imx8mm-clock.h
+new file mode 100644
+index 0000000..0301581
+--- /dev/null
++++ b/include/dt-bindings/clock/imx8mm-clock.h
+@@ -0,0 +1,244 @@
++/* SPDX-License-Identifier: GPL-2.0 */
 +/*
-+ * Copyright 2017-2018 NXP.
++ * Copyright 2017-2018 NXP
 + */
 +
-+#include <linux/bitops.h>
-+#include <linux/clk-provider.h>
-+#include <linux/delay.h>
-+#include <linux/err.h>
-+#include <linux/io.h>
-+#include <linux/slab.h>
-+#include <linux/jiffies.h>
-+
-+#include "clk.h"
-+
-+#define GNRL_CTL	0x0
-+#define DIV_CTL		0x4
-+#define LOCK_STATUS	BIT(31)
-+#define LOCK_SEL_MASK	BIT(29)
-+#define CLKE_MASK	BIT(11)
-+#define RST_MASK	BIT(9)
-+#define BYPASS_MASK	BIT(4)
-+#define MDIV_SHIFT	12
-+#define MDIV_MASK	GENMASK(21, 12)
-+#define PDIV_SHIFT	4
-+#define PDIV_MASK	GENMASK(9, 4)
-+#define SDIV_SHIFT	0
-+#define SDIV_MASK	GENMASK(2, 0)
-+#define KDIV_SHIFT	0
-+#define KDIV_MASK	GENMASK(15, 0)
-+
-+struct clk_pll14xx {
-+	struct clk_hw			hw;
-+	void __iomem			*base;
-+	enum imx_pll14xx_type		type;
-+	struct imx_pll14xx_rate_table	*rate_table;
-+	int rate_count;
-+};
-+
-+#define to_clk_pll14xx(_hw) container_of(_hw, struct clk_pll14xx, hw)
-+
-+static const struct imx_pll14xx_rate_table *imx_get_pll_settings(
-+		struct clk_pll14xx *pll, unsigned long rate)
-+{
-+	const struct imx_pll14xx_rate_table *rate_table =3D pll->rate_table;
-+	int i;
-+
-+	for (i =3D 0; i < pll->rate_count; i++) {
-+		if (rate =3D=3D rate_table[i].rate)
-+			return &rate_table[i];
-+	}
-+
-+	return NULL;
-+}
-+
-+static long clk_pll14xx_round_rate(struct clk_hw *hw, unsigned long rate,
-+			unsigned long *prate)
-+{
-+	struct clk_pll14xx *pll =3D to_clk_pll14xx(hw);
-+	const struct imx_pll14xx_rate_table *rate_table =3D pll->rate_table;
-+	int i;
-+
-+	/* Assumming rate_table is in descending order */
-+	for (i =3D 0; i < pll->rate_count; i++) {
-+		if (rate >=3D rate_table[i].rate)
-+			return rate_table[i].rate;
-+	}
-+	/* return minimum supported value */
-+	return rate_table[i - 1].rate;
-+}
-+
-+static unsigned long clk_pll1416x_recalc_rate(struct clk_hw *hw,
-+						  unsigned long parent_rate)
-+{
-+	struct clk_pll14xx *pll =3D to_clk_pll14xx(hw);
-+	u32 mdiv, pdiv, sdiv, pll_gnrl, pll_div;
-+	u64 fvco =3D parent_rate;
-+
-+	pll_gnrl =3D readl_relaxed(pll->base);
-+	pll_div =3D readl_relaxed(pll->base + 4);
-+	mdiv =3D (pll_div & MDIV_MASK) >> MDIV_SHIFT;
-+	pdiv =3D (pll_div & PDIV_MASK) >> PDIV_SHIFT;
-+	sdiv =3D (pll_div & SDIV_MASK) >> SDIV_SHIFT;
-+
-+	fvco *=3D mdiv;
-+	do_div(fvco, pdiv << sdiv);
-+
-+	return (unsigned long)fvco;
-+}
-+
-+static unsigned long clk_pll1443x_recalc_rate(struct clk_hw *hw,
-+						  unsigned long parent_rate)
-+{
-+	struct clk_pll14xx *pll =3D to_clk_pll14xx(hw);
-+	u32 mdiv, pdiv, sdiv, pll_gnrl, pll_div_ctl0, pll_div_ctl1;
-+	short int kdiv;
-+	u64 fvco =3D parent_rate;
-+
-+	pll_gnrl =3D readl_relaxed(pll->base);
-+	pll_div_ctl0 =3D readl_relaxed(pll->base + 4);
-+	pll_div_ctl1 =3D readl_relaxed(pll->base + 8);
-+	mdiv =3D (pll_div_ctl0 & MDIV_MASK) >> MDIV_SHIFT;
-+	pdiv =3D (pll_div_ctl0 & PDIV_MASK) >> PDIV_SHIFT;
-+	sdiv =3D (pll_div_ctl0 & SDIV_MASK) >> SDIV_SHIFT;
-+	kdiv =3D pll_div_ctl1 & KDIV_MASK;
-+
-+	/* fvco =3D (m * 65536 + k) * Fin / (p * 65536) */
-+	fvco *=3D (mdiv * 65536 + kdiv);
-+	pdiv *=3D 65536;
-+
-+	do_div(fvco, pdiv << sdiv);
-+
-+	return (unsigned long)fvco;
-+}
-+
-+static inline bool clk_pll1416x_mp_change(const struct imx_pll14xx_rate_ta=
-ble *rate,
-+					  u32 pll_div)
-+{
-+	u32 old_mdiv, old_pdiv;
-+
-+	old_mdiv =3D (pll_div >> MDIV_SHIFT) & MDIV_MASK;
-+	old_pdiv =3D (pll_div >> PDIV_SHIFT) & PDIV_MASK;
-+
-+	return (rate->mdiv !=3D old_mdiv || rate->pdiv !=3D old_pdiv);
-+}
-+
-+static inline bool clk_pll1443x_mpk_change(const struct imx_pll14xx_rate_t=
-able *rate,
-+					  u32 pll_div_ctl0, u32 pll_div_ctl1)
-+{
-+	u32 old_mdiv, old_pdiv, old_kdiv;
-+
-+	old_mdiv =3D (pll_div_ctl0 >> MDIV_SHIFT) & MDIV_MASK;
-+	old_pdiv =3D (pll_div_ctl0 >> PDIV_SHIFT) & PDIV_MASK;
-+	old_kdiv =3D (pll_div_ctl1 >> KDIV_SHIFT) & KDIV_MASK;
-+
-+	return (rate->mdiv !=3D old_mdiv || rate->pdiv !=3D old_pdiv ||
-+		rate->kdiv !=3D old_kdiv);
-+}
-+
-+static inline bool clk_pll1443x_mp_change(const struct imx_pll14xx_rate_ta=
-ble *rate,
-+					  u32 pll_div_ctl0, u32 pll_div_ctl1)
-+{
-+	u32 old_mdiv, old_pdiv, old_kdiv;
-+
-+	old_mdiv =3D (pll_div_ctl0 >> MDIV_SHIFT) & MDIV_MASK;
-+	old_pdiv =3D (pll_div_ctl0 >> PDIV_SHIFT) & PDIV_MASK;
-+	old_kdiv =3D (pll_div_ctl1 >> KDIV_SHIFT) & KDIV_MASK;
-+
-+	return (rate->mdiv !=3D old_mdiv || rate->pdiv !=3D old_pdiv ||
-+		rate->kdiv !=3D old_kdiv);
-+}
-+
-+static int clk_pll14xx_wait_lock(struct clk_pll14xx *pll)
-+{
-+	unsigned long timeout =3D jiffies + msecs_to_jiffies(10);
-+
-+	/* Wait for PLL to lock */
-+	do {
-+		if (readl_relaxed(pll->base) & LOCK_STATUS)
-+			break;
-+		if (time_after(jiffies, timeout))
-+			break;
-+	} while (1);
-+
-+	return readl_relaxed(pll->base) & LOCK_STATUS ? 0 : -ETIMEDOUT;
-+}
-+
-+static int clk_pll1416x_set_rate(struct clk_hw *hw, unsigned long drate,
-+				 unsigned long prate)
-+{
-+	struct clk_pll14xx *pll =3D to_clk_pll14xx(hw);
-+	const struct imx_pll14xx_rate_table *rate;
-+	u32 tmp, div_val;
-+	int ret;
-+
-+	rate =3D imx_get_pll_settings(pll, drate);
-+	if (!rate) {
-+		pr_err("%s: Invalid rate : %lu for pll clk %s\n", __func__,
-+		       drate, clk_hw_get_name(hw));
-+		return -EINVAL;
-+	}
-+
-+	tmp =3D readl_relaxed(pll->base + 4);
-+
-+	if (!clk_pll1416x_mp_change(rate, tmp)) {
-+		tmp &=3D ~(SDIV_MASK) << SDIV_SHIFT;
-+		tmp |=3D rate->sdiv << SDIV_SHIFT;
-+		writel_relaxed(tmp, pll->base + 4);
-+
-+		return 0;
-+	}
-+
-+	/* Bypass clock and set lock to pll output lock */
-+	tmp =3D readl_relaxed(pll->base);
-+	tmp |=3D LOCK_SEL_MASK;
-+	writel_relaxed(tmp, pll->base);
-+
-+	/* Enable RST */
-+	tmp &=3D ~RST_MASK;
-+	writel_relaxed(tmp, pll->base);
-+
-+	div_val =3D (rate->mdiv << MDIV_SHIFT) | (rate->pdiv << PDIV_SHIFT) |
-+		(rate->sdiv << SDIV_SHIFT);
-+	writel_relaxed(div_val, pll->base + 0x4);
-+
-+	/*
-+	 * According to SPEC, t3 - t2 need to be greater than
-+	 * 1us and 1/FREF, respectively.
-+	 * FREF is FIN / Prediv, the prediv is [1, 63], so choose
-+	 * 3us.
-+	 */
-+	udelay(3);
-+
-+	/* Disable RST */
-+	tmp |=3D RST_MASK;
-+	writel_relaxed(tmp, pll->base);
-+
-+	/* Wait Lock */
-+	ret =3D clk_pll14xx_wait_lock(pll);
-+	if (ret)
-+		return ret;
-+
-+	/* Bypass */
-+	tmp &=3D ~BYPASS_MASK;
-+	writel_relaxed(tmp, pll->base);
-+
-+	return 0;
-+}
-+
-+static int clk_pll1443x_set_rate(struct clk_hw *hw, unsigned long drate,
-+				 unsigned long prate)
-+{
-+	struct clk_pll14xx *pll =3D to_clk_pll14xx(hw);
-+	const struct imx_pll14xx_rate_table *rate;
-+	u32 tmp, div_val;
-+	int ret;
-+
-+	rate =3D imx_get_pll_settings(pll, drate);
-+	if (!rate) {
-+		pr_err("%s: Invalid rate : %lu for pll clk %s\n", __func__,
-+			drate, clk_hw_get_name(hw));
-+		return -EINVAL;
-+	}
-+
-+	tmp =3D readl_relaxed(pll->base + 4);
-+	div_val =3D readl_relaxed(pll->base + 8);
-+
-+	if (!clk_pll1443x_mpk_change(rate, tmp, div_val)) {
-+		tmp &=3D ~(SDIV_MASK) << SDIV_SHIFT;
-+		tmp |=3D rate->sdiv << SDIV_SHIFT;
-+		writel_relaxed(tmp, pll->base + 4);
-+
-+		return 0;
-+	}
-+
-+	/* Enable RST */
-+	tmp =3D readl_relaxed(pll->base);
-+	tmp &=3D ~RST_MASK;
-+	writel_relaxed(tmp, pll->base);
-+
-+	div_val =3D (rate->mdiv << MDIV_SHIFT) | (rate->pdiv << PDIV_SHIFT) |
-+		(rate->sdiv << SDIV_SHIFT);
-+	writel_relaxed(div_val, pll->base + 0x4);
-+	writel_relaxed(rate->kdiv << KDIV_SHIFT, pll->base + 0x8);
-+
-+	/*
-+	 * According to SPEC, t3 - t2 need to be greater than
-+	 * 1us and 1/FREF, respectively.
-+	 * FREF is FIN / Prediv, the prediv is [1, 63], so choose
-+	 * 3us.
-+	 */
-+	udelay(3);
-+
-+	/* Disable RST */
-+	tmp |=3D RST_MASK;
-+	writel_relaxed(tmp, pll->base);
-+
-+	/* Wait Lock*/
-+	ret =3D clk_pll14xx_wait_lock(pll);
-+	if (ret)
-+		return ret;
-+
-+	/* Bypass */
-+	tmp &=3D ~BYPASS_MASK;
-+	writel_relaxed(tmp, pll->base);
-+
-+	return 0;
-+}
-+
-+static int clk_pll14xx_prepare(struct clk_hw *hw)
-+{
-+	struct clk_pll14xx *pll =3D to_clk_pll14xx(hw);
-+	u32 val;
-+
-+	/*
-+	 * RESETB =3D 1 from 0, PLL starts its normal
-+	 * operation after lock time
-+	 */
-+	val =3D readl_relaxed(pll->base + GNRL_CTL);
-+	val |=3D RST_MASK;
-+	writel_relaxed(val, pll->base + GNRL_CTL);
-+
-+	return clk_pll14xx_wait_lock(pll);
-+}
-+
-+static int clk_pll14xx_is_prepared(struct clk_hw *hw)
-+{
-+	struct clk_pll14xx *pll =3D to_clk_pll14xx(hw);
-+	u32 val;
-+
-+	val =3D readl_relaxed(pll->base + GNRL_CTL);
-+
-+	return (val & RST_MASK) ? 1 : 0;
-+}
-+
-+static void clk_pll14xx_unprepare(struct clk_hw *hw)
-+{
-+	struct clk_pll14xx *pll =3D to_clk_pll14xx(hw);
-+	u32 val;
-+
-+	/*
-+	 * Set RST to 0, power down mode is enabled and
-+	 * every digital block is reset
-+	 */
-+	val =3D readl_relaxed(pll->base + GNRL_CTL);
-+	val &=3D ~RST_MASK;
-+	writel_relaxed(val, pll->base + GNRL_CTL);
-+}
-+
-+static const struct clk_ops clk_pll1416x_ops =3D {
-+	.prepare	=3D clk_pll14xx_prepare,
-+	.unprepare	=3D clk_pll14xx_unprepare,
-+	.is_prepared	=3D clk_pll14xx_is_prepared,
-+	.recalc_rate	=3D clk_pll1416x_recalc_rate,
-+	.round_rate	=3D clk_pll14xx_round_rate,
-+	.set_rate	=3D clk_pll1416x_set_rate,
-+};
-+
-+static const struct clk_ops clk_pll1416x_min_ops =3D {
-+	.recalc_rate	=3D clk_pll1416x_recalc_rate,
-+};
-+
-+static const struct clk_ops clk_pll1443x_ops =3D {
-+	.prepare	=3D clk_pll14xx_prepare,
-+	.unprepare	=3D clk_pll14xx_unprepare,
-+	.is_prepared	=3D clk_pll14xx_is_prepared,
-+	.recalc_rate	=3D clk_pll1443x_recalc_rate,
-+	.round_rate	=3D clk_pll14xx_round_rate,
-+	.set_rate	=3D clk_pll1443x_set_rate,
-+};
-+
-+struct clk *imx_clk_pll14xx(const char *name, const char *parent_name,
-+			    void __iomem *base,
-+			    const struct imx_pll14xx_clk *pll_clk)
-+{
-+	struct clk_pll14xx *pll;
-+	struct clk *clk;
-+	struct clk_init_data init;
-+	int len;
-+
-+	pll =3D kzalloc(sizeof(*pll), GFP_KERNEL);
-+	if (!pll)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init.name =3D name;
-+	init.flags =3D pll_clk->flags;
-+	init.parent_names =3D &parent_name;
-+	init.num_parents =3D 1;
-+
-+	if (pll_clk->rate_table) {
-+		for (len =3D 0; pll_clk->rate_table[len].rate !=3D 0; )
-+			len++;
-+
-+		pll->rate_count =3D len;
-+		pll->rate_table =3D kmemdup(pll_clk->rate_table,
-+					  pll->rate_count *
-+					  sizeof(struct imx_pll14xx_rate_table),
-+					  GFP_KERNEL);
-+		WARN(!pll->rate_table, "%s : could not alloc rate table\n", __func__);
-+	}
-+
-+	switch (pll_clk->type) {
-+	case PLL_1416X:
-+		if (!pll->rate_table)
-+			init.ops =3D &clk_pll1416x_min_ops;
-+		else
-+			init.ops =3D &clk_pll1416x_ops;
-+		break;
-+	case PLL_1443X:
-+		init.ops =3D &clk_pll1443x_ops;
-+		break;
-+	default:
-+		pr_err("%s: Unknown pll type for pll clk %s\n",
-+		       __func__, name);
-+	};
-+
-+	pll->base =3D base;
-+	pll->hw.init =3D &init;
-+	pll->type =3D pll_clk->type;
-+
-+	clk =3D clk_register(NULL, &pll->hw);
-+	if (IS_ERR(clk)) {
-+		pr_err("%s: failed to register pll %s %lu\n",
-+			__func__, name, PTR_ERR(clk));
-+		kfree(pll);
-+	}
-+
-+	return clk;
-+}
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index 028312d..27372f7 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -27,6 +27,29 @@ enum imx_sccg_pll_type {
- 	SCCG_PLL2,
- };
-=20
-+enum imx_pll14xx_type {
-+	PLL_1416X,
-+	PLL_1443X,
-+};
-+
-+/* NOTE: Rate table should be kept sorted in descending order. */
-+struct imx_pll14xx_rate_table {
-+	unsigned int rate;
-+	unsigned int pdiv;
-+	unsigned int mdiv;
-+	unsigned int sdiv;
-+	unsigned int kdiv;
-+};
-+
-+struct imx_pll14xx_clk {
-+	enum imx_pll14xx_type type;
-+	const struct imx_pll14xx_rate_table *rate_table;
-+	int flags;
-+};
-+
-+struct clk *imx_clk_pll14xx(const char *name, const char *parent_name,
-+		 void __iomem *base, const struct imx_pll14xx_clk *pll_clk);
-+
- struct clk *imx_clk_pllv1(enum imx_pllv1_type type, const char *name,
- 		const char *parent, void __iomem *base);
-=20
++#ifndef __DT_BINDINGS_CLOCK_IMX8MM_H
++#define __DT_BINDINGS_CLOCK_IMX8MM_H
++
++#define	IMX8MM_CLK_DUMMY			0
++#define	IMX8MM_CLK_32K				1
++#define	IMX8MM_CLK_24M				2
++#define	IMX8MM_OSC_HDMI_CLK			3
++#define	IMX8MM_CLK_EXT1				4
++#define	IMX8MM_CLK_EXT2				5
++#define	IMX8MM_CLK_EXT3				6
++#define	IMX8MM_CLK_EXT4				7
++#define	IMX8MM_AUDIO_PLL1_REF_SEL		8
++#define	IMX8MM_AUDIO_PLL2_REF_SEL		9
++#define	IMX8MM_VIDEO_PLL1_REF_SEL		10
++#define	IMX8MM_DRAM_PLL_REF_SEL			11
++#define	IMX8MM_GPU_PLL_REF_SEL			12
++#define	IMX8MM_VPU_PLL_REF_SEL			13
++#define	IMX8MM_ARM_PLL_REF_SEL			14
++#define	IMX8MM_SYS_PLL1_REF_SEL			15
++#define	IMX8MM_SYS_PLL2_REF_SEL			16
++#define	IMX8MM_SYS_PLL3_REF_SEL			17
++#define	IMX8MM_AUDIO_PLL1			18
++#define	IMX8MM_AUDIO_PLL2			19
++#define	IMX8MM_VIDEO_PLL1			20
++#define	IMX8MM_DRAM_PLL				21
++#define	IMX8MM_GPU_PLL				22
++#define	IMX8MM_VPU_PLL				23
++#define	IMX8MM_ARM_PLL				24
++#define	IMX8MM_SYS_PLL1				25
++#define	IMX8MM_SYS_PLL2				26
++#define	IMX8MM_SYS_PLL3				27
++#define	IMX8MM_AUDIO_PLL1_BYPASS		28
++#define	IMX8MM_AUDIO_PLL2_BYPASS		29
++#define	IMX8MM_VIDEO_PLL1_BYPASS		30
++#define	IMX8MM_DRAM_PLL_BYPASS			31
++#define	IMX8MM_GPU_PLL_BYPASS			32
++#define	IMX8MM_VPU_PLL_BYPASS			33
++#define	IMX8MM_ARM_PLL_BYPASS			34
++#define	IMX8MM_SYS_PLL1_BYPASS			35
++#define	IMX8MM_SYS_PLL2_BYPASS			36
++#define	IMX8MM_SYS_PLL3_BYPASS			37
++#define	IMX8MM_AUDIO_PLL1_OUT			38
++#define	IMX8MM_AUDIO_PLL2_OUT			39
++#define	IMX8MM_VIDEO_PLL1_OUT			40
++#define	IMX8MM_DRAM_PLL_OUT			41
++#define	IMX8MM_GPU_PLL_OUT			42
++#define	IMX8MM_VPU_PLL_OUT			43
++#define	IMX8MM_ARM_PLL_OUT			44
++#define	IMX8MM_SYS_PLL1_OUT			45
++#define	IMX8MM_SYS_PLL2_OUT			46
++#define	IMX8MM_SYS_PLL3_OUT			47
++#define	IMX8MM_SYS_PLL1_40M			48
++#define	IMX8MM_SYS_PLL1_80M			49
++#define	IMX8MM_SYS_PLL1_100M			50
++#define	IMX8MM_SYS_PLL1_133M			51
++#define	IMX8MM_SYS_PLL1_160M			52
++#define	IMX8MM_SYS_PLL1_200M			53
++#define	IMX8MM_SYS_PLL1_266M			54
++#define	IMX8MM_SYS_PLL1_400M			55
++#define	IMX8MM_SYS_PLL1_800M			56
++#define	IMX8MM_SYS_PLL2_50M			57
++#define	IMX8MM_SYS_PLL2_100M			58
++#define	IMX8MM_SYS_PLL2_125M			59
++#define	IMX8MM_SYS_PLL2_166M			60
++#define	IMX8MM_SYS_PLL2_200M			61
++#define	IMX8MM_SYS_PLL2_250M			62
++#define	IMX8MM_SYS_PLL2_333M			63
++#define	IMX8MM_SYS_PLL2_500M			64
++#define	IMX8MM_SYS_PLL2_1000M			65
++
++/* core */
++#define	IMX8MM_CLK_A53_SRC			66
++#define	IMX8MM_CLK_M4_SRC			67
++#define	IMX8MM_CLK_VPU_SRC			68
++#define	IMX8MM_CLK_GPU3D_SRC			69
++#define	IMX8MM_CLK_GPU2D_SRC			70
++#define	IMX8MM_CLK_A53_CG			71
++#define	IMX8MM_CLK_M4_CG			72
++#define	IMX8MM_CLK_VPU_CG			73
++#define	IMX8MM_CLK_GPU3D_CG			74
++#define	IMX8MM_CLK_GPU2D_CG			75
++#define	IMX8MM_CLK_A53_DIV			76
++#define	IMX8MM_CLK_M4_DIV			77
++#define	IMX8MM_CLK_VPU_DIV			78
++#define	IMX8MM_CLK_GPU3D_DIV			79
++#define	IMX8MM_CLK_GPU2D_DIV			80
++
++/* bus */
++#define	IMX8MM_CLK_MAIN_AXI			81
++#define	IMX8MM_CLK_ENET_AXI			82
++#define	IMX8MM_CLK_NAND_USDHC_BUS		83
++#define	IMX8MM_CLK_VPU_BUS			84
++#define	IMX8MM_CLK_DISP_AXI			85
++#define	IMX8MM_CLK_DISP_APB			86
++#define	IMX8MM_CLK_DISP_RTRM			87
++#define	IMX8MM_CLK_USB_BUS			88
++#define	IMX8MM_CLK_GPU_AXI			89
++#define	IMX8MM_CLK_GPU_AHB			90
++#define	IMX8MM_CLK_NOC				91
++#define	IMX8MM_CLK_NOC_APB			92
++
++#define	IMX8MM_CLK_AHB				93
++#define	IMX8MM_CLK_AUDIO_AHB			94
++#define IMX8MM_CLK_IPG_ROOT			95
++#define IMX8MM_CLK_IPG_AUDIO_ROOT		96
++
++#define	IMX8MM_CLK_DRAM_ALT			97
++#define	IMX8MM_CLK_DRAM_APB			98
++#define	IMX8MM_CLK_VPU_G1			99
++#define	IMX8MM_CLK_VPU_G2			100
++#define	IMX8MM_CLK_DISP_DTRC			101
++#define	IMX8MM_CLK_DISP_DC8000			102
++#define	IMX8MM_CLK_PCIE1_CTRL			103
++#define	IMX8MM_CLK_PCIE1_PHY			104
++#define	IMX8MM_CLK_PCIE1_AUX			105
++#define	IMX8MM_CLK_DC_PIXEL			106
++#define	IMX8MM_CLK_LCDIF_PIXEL			107
++#define	IMX8MM_CLK_SAI1				108
++#define	IMX8MM_CLK_SAI2				109
++#define	IMX8MM_CLK_SAI3				110
++#define	IMX8MM_CLK_SAI4				111
++#define	IMX8MM_CLK_SAI5				112
++#define	IMX8MM_CLK_SAI6				113
++#define	IMX8MM_CLK_SPDIF1			114
++#define	IMX8MM_CLK_SPDIF2			115
++#define	IMX8MM_CLK_ENET_REF			116
++#define	IMX8MM_CLK_ENET_TIMER			117
++#define	IMX8MM_CLK_ENET_PHY_REF			118
++#define	IMX8MM_CLK_NAND				119
++#define	IMX8MM_CLK_QSPI				120
++#define	IMX8MM_CLK_USDHC1			121
++#define	IMX8MM_CLK_USDHC2			122
++#define	IMX8MM_CLK_I2C1				123
++#define	IMX8MM_CLK_I2C2				124
++#define	IMX8MM_CLK_I2C3				125
++#define	IMX8MM_CLK_I2C4				126
++#define	IMX8MM_CLK_UART1			127
++#define	IMX8MM_CLK_UART2			128
++#define	IMX8MM_CLK_UART3			129
++#define	IMX8MM_CLK_UART4			130
++#define	IMX8MM_CLK_USB_CORE_REF			131
++#define	IMX8MM_CLK_USB_PHY_REF			132
++#define	IMX8MM_CLK_ECSPI1			133
++#define	IMX8MM_CLK_ECSPI2			134
++#define	IMX8MM_CLK_PWM1				135
++#define	IMX8MM_CLK_PWM2				136
++#define	IMX8MM_CLK_PWM3				137
++#define	IMX8MM_CLK_PWM4				138
++#define	IMX8MM_CLK_GPT1				139
++#define	IMX8MM_CLK_WDOG				140
++#define	IMX8MM_CLK_WRCLK			141
++#define	IMX8MM_CLK_DSI_CORE			142
++#define	IMX8MM_CLK_DSI_PHY_REF			143
++#define	IMX8MM_CLK_DSI_DBI			144
++#define	IMX8MM_CLK_USDHC3			145
++#define	IMX8MM_CLK_CSI1_CORE			146
++#define	IMX8MM_CLK_CSI1_PHY_REF			147
++#define	IMX8MM_CLK_CSI1_ESC			148
++#define	IMX8MM_CLK_CSI2_CORE			149
++#define	IMX8MM_CLK_CSI2_PHY_REF			150
++#define	IMX8MM_CLK_CSI2_ESC			151
++#define	IMX8MM_CLK_PCIE2_CTRL			152
++#define	IMX8MM_CLK_PCIE2_PHY			153
++#define	IMX8MM_CLK_PCIE2_AUX			154
++#define	IMX8MM_CLK_ECSPI3			155
++#define	IMX8MM_CLK_PDM				156
++#define	IMX8MM_CLK_VPU_H1			157
++#define	IMX8MM_CLK_CLKO1			158
++
++#define	IMX8MM_CLK_ECSPI1_ROOT			159
++#define	IMX8MM_CLK_ECSPI2_ROOT			160
++#define	IMX8MM_CLK_ECSPI3_ROOT			161
++#define	IMX8MM_CLK_ENET1_ROOT			162
++#define	IMX8MM_CLK_GPT1_ROOT			163
++#define	IMX8MM_CLK_I2C1_ROOT			164
++#define	IMX8MM_CLK_I2C2_ROOT			165
++#define	IMX8MM_CLK_I2C3_ROOT			166
++#define	IMX8MM_CLK_I2C4_ROOT			167
++#define	IMX8MM_CLK_OCOTP_ROOT			168
++#define	IMX8MM_CLK_PCIE1_ROOT			169
++#define	IMX8MM_CLK_PWM1_ROOT			170
++#define	IMX8MM_CLK_PWM2_ROOT			171
++#define	IMX8MM_CLK_PWM3_ROOT			172
++#define	IMX8MM_CLK_PWM4_ROOT			173
++#define	IMX8MM_CLK_QSPI_ROOT			174
++#define	IMX8MM_CLK_NAND_ROOT			175
++#define	IMX8MM_CLK_SAI1_ROOT			176
++#define	IMX8MM_CLK_SAI1_IPG			177
++#define	IMX8MM_CLK_SAI2_ROOT			178
++#define	IMX8MM_CLK_SAI2_IPG			179
++#define	IMX8MM_CLK_SAI3_ROOT			180
++#define	IMX8MM_CLK_SAI3_IPG			181
++#define	IMX8MM_CLK_SAI4_ROOT			182
++#define	IMX8MM_CLK_SAI4_IPG			183
++#define	IMX8MM_CLK_SAI5_ROOT			184
++#define	IMX8MM_CLK_SAI5_IPG			185
++#define	IMX8MM_CLK_SAI6_ROOT			186
++#define	IMX8MM_CLK_SAI6_IPG			187
++#define	IMX8MM_CLK_UART1_ROOT			188
++#define	IMX8MM_CLK_UART2_ROOT			189
++#define	IMX8MM_CLK_UART3_ROOT			190
++#define	IMX8MM_CLK_UART4_ROOT			191
++#define	IMX8MM_CLK_USB1_CTRL_ROOT		192
++#define	IMX8MM_CLK_GPU3D_ROOT			193
++#define	IMX8MM_CLK_USDHC1_ROOT			194
++#define	IMX8MM_CLK_USDHC2_ROOT			195
++#define	IMX8MM_CLK_WDOG1_ROOT			196
++#define	IMX8MM_CLK_WDOG2_ROOT			197
++#define	IMX8MM_CLK_WDOG3_ROOT			198
++#define	IMX8MM_CLK_VPU_G1_ROOT			199
++#define	IMX8MM_CLK_GPU_BUS_ROOT			200
++#define	IMX8MM_CLK_VPU_H1_ROOT			201
++#define	IMX8MM_CLK_VPU_G2_ROOT			202
++#define	IMX8MM_CLK_PDM_ROOT			203
++#define	IMX8MM_CLK_DISP_ROOT			204
++#define	IMX8MM_CLK_DISP_AXI_ROOT		205
++#define	IMX8MM_CLK_DISP_APB_ROOT		206
++#define	IMX8MM_CLK_DISP_RTRM_ROOT		207
++#define	IMX8MM_CLK_USDHC3_ROOT			208
++#define	IMX8MM_CLK_TMU_ROOT			209
++#define	IMX8MM_CLK_VPU_DEC_ROOT			210
++#define	IMX8MM_CLK_SDMA1_ROOT			211
++#define	IMX8MM_CLK_SDMA2_ROOT			212
++#define	IMX8MM_CLK_SDMA3_ROOT			213
++#define	IMX8MM_CLK_GPT_3M			214
++#define	IMX8MM_CLK_ARM				215
++#define	IMX8MM_CLK_PDM_IPG			216
++#define	IMX8MM_CLK_GPU2D_ROOT			217
++#define	IMX8MM_CLK_MU_ROOT			218
++#define	IMX8MM_CLK_CSI1_ROOT			219
++
++#define IMX8MM_CLK_DRAM_CORE			220
++#define IMX8MM_CLK_DRAM_ALT_ROOT		221
++
++#define IMX8MM_CLK_NAND_USDHC_BUS_RAWNAND_CLK	222
++
++#define	IMX8MM_CLK_END				223
++
++#endif
 --=20
 1.9.1
 
