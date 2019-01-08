@@ -2,331 +2,421 @@ Return-Path: <SRS0=Ml2J=PQ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 836C2C43444
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Jan 2019 13:31:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8418C43387
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Jan 2019 13:51:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4831C20827
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Jan 2019 13:31:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="iqCPygxk"
+	by mail.kernel.org (Postfix) with ESMTP id 956B22087E
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Jan 2019 13:51:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728558AbfAHNbq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Jan 2019 08:31:46 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:33336 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727654AbfAHNbq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Jan 2019 08:31:46 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x08DVYKl070017;
-        Tue, 8 Jan 2019 07:31:34 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1546954294;
-        bh=KLUDPgiqB2RNqQgymE+6+90cu36gYyuW3rKexeJElss=;
-        h=From:To:Subject:Date:In-Reply-To:References;
-        b=iqCPygxknmCdN6bSCSj8Uoh9A128i0gpGf4cRaEQnNk/a/5GK4l5TfNUCpb0HA51v
-         FgRALXB/HSmHJG6TnZWtfkOkor8h8eceQPQ8kMDDXHmWfV2WDLPY8dbALZcbNZomzx
-         UHgmsrEHTAGHCdTh8WnA3gi27DazHx7g1RbZkSrM=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x08DVX5S120735
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 8 Jan 2019 07:31:34 -0600
-Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Tue, 8
- Jan 2019 07:31:32 -0600
-Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Tue, 8 Jan 2019 07:31:32 -0600
-Received: from gomoku.home (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x08DVMug011668;
-        Tue, 8 Jan 2019 07:31:28 -0600
-From:   Tero Kristo <t-kristo@ti.com>
-To:     <sboyd@kernel.org>, <mturquette@baylibre.com>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <robh+dt@kernel.org>, <ssantosh@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH 2/3] clk: keystone: sci-clk: add support from parsing clock info from DT
-Date:   Tue, 8 Jan 2019 15:30:22 +0200
-Message-ID: <1546954223-9738-3-git-send-email-t-kristo@ti.com>
+        id S1728289AbfAHNvT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Jan 2019 08:51:19 -0500
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:63162 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728615AbfAHNvP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Jan 2019 08:51:15 -0500
+Received: from localhost.localdomain (10.18.11.217) by mail-sh2.amlogic.com
+ (10.18.11.6) with Microsoft SMTP Server id 15.0.1320.4; Tue, 8 Jan 2019
+ 21:51:33 +0800
+From:   Jianxin Pan <jianxin.pan@amlogic.com>
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+CC:     Yixun Lan <yixun.lan@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Liang Yang <liang.yang@amlogic.com>,
+        Jian Hu <jian.hu@amlogic.com>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v9 4/4] clk: meson: add sub MMC clock controller driver
+Date:   Tue, 8 Jan 2019 21:50:44 +0800
+Message-ID: <1546955444-7549-5-git-send-email-jianxin.pan@amlogic.com>
 X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1546954223-9738-1-git-send-email-t-kristo@ti.com>
-References: <1546954223-9738-1-git-send-email-t-kristo@ti.com>
+In-Reply-To: <1546955444-7549-1-git-send-email-jianxin.pan@amlogic.com>
+References: <1546955444-7549-1-git-send-email-jianxin.pan@amlogic.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-Originating-IP: [10.18.11.217]
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Currently the sci-clk driver queries clock data from the firmware, which
-can be pretty slow operation in certain cases. Add an option for the
-driver to probe the available clocks from DT also, in this case the
-number of clocks probed from firmware gets cut down drastically. To
-enable the feature, a new flag ti,scan-clocks-from-dt can be added
-under the clock provider node.
+From: Yixun Lan <yixun.lan@amlogic.com>
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
-Tested-by: Andreas Dannenberg <dannenberg@ti.com>
+The patch will add a MMC clock controller driver which used by MMC or NAND,
+It provide a mux and divider clock, and three phase clocks - core, tx, tx.
+
+Two clocks are provided as the parent of MMC clock controller from
+upper layer clock controller - eg "amlogic,axg-clkc" in AXG platform.
+
+To specify which clock the MMC or NAND driver may consume,
+the preprocessor macros in the dt-bindings/clock/amlogic,mmc-clkc.h header
+can be used in the device tree sources.
+
+Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
 ---
- drivers/clk/keystone/sci-clk.c | 188 ++++++++++++++++++++++++++++++++++-------
- 1 file changed, 159 insertions(+), 29 deletions(-)
+ drivers/clk/meson/Kconfig    |  10 ++
+ drivers/clk/meson/Makefile   |   1 +
+ drivers/clk/meson/mmc-clkc.c | 304 +++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 315 insertions(+)
+ create mode 100644 drivers/clk/meson/mmc-clkc.c
 
-diff --git a/drivers/clk/keystone/sci-clk.c b/drivers/clk/keystone/sci-clk.c
-index 4cb70be..d1d6dc8 100644
---- a/drivers/clk/keystone/sci-clk.c
-+++ b/drivers/clk/keystone/sci-clk.c
-@@ -23,6 +23,7 @@
- #include <linux/slab.h>
- #include <linux/soc/ti/ti_sci_protocol.h>
- #include <linux/bsearch.h>
-+#include <linux/list_sort.h>
+diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+index efaa70f..3555f9d 100644
+--- a/drivers/clk/meson/Kconfig
++++ b/drivers/clk/meson/Kconfig
+@@ -15,6 +15,16 @@ config COMMON_CLK_MESON_AO
+ 	select COMMON_CLK_REGMAP_MESON
+ 	select RESET_CONTROLLER
  
- #define SCI_CLK_SSC_ENABLE		BIT(0)
- #define SCI_CLK_ALLOW_FREQ_CHANGE	BIT(1)
-@@ -52,6 +53,7 @@ struct sci_clk_provider {
-  * @num_parents: Number of parents for this clock
-  * @provider:	 Master clock provider
-  * @flags:	 Flags for the clock
-+ * @node:	 Link for handling clocks probed via DT
-  */
- struct sci_clk {
- 	struct clk_hw hw;
-@@ -60,6 +62,7 @@ struct sci_clk {
- 	u8 num_parents;
- 	struct sci_clk_provider *provider;
- 	u8 flags;
-+	struct list_head node;
- };
- 
- #define to_sci_clk(_hw) container_of(_hw, struct sci_clk, hw)
-@@ -353,6 +356,15 @@ static int _cmp_sci_clk(const void *a, const void *b)
- 	return -1;
- }
- 
-+static int _cmp_sci_clk_list(void *priv, struct list_head *a,
-+			     struct list_head *b)
-+{
-+	struct sci_clk *ca = container_of(a, struct sci_clk, node);
-+	struct sci_clk *cb = container_of(b, struct sci_clk, node);
++config COMMON_CLK_MMC_MESON
++	tristate "Meson MMC Sub Clock Controller Driver"
++	depends on ARCH_MESON || COMPILE_TEST
++	select MFD_SYSCON
++	select COMMON_CLK_AMLOGIC
++	help
++	  Support for the MMC sub clock controller on Amlogic Meson Platform,
++	  which include S905 (GXBB, GXL), A113D/X (AXG) devices.
++	  Say Y if you want this clock enabled.
 +
-+	return _cmp_sci_clk(ca, &cb);
-+}
-+
- /**
-  * sci_clk_get - Xlate function for getting clock handles
-  * @clkspec: device tree clock specifier
-@@ -404,22 +416,8 @@ static int ti_sci_init_clocks(struct sci_clk_provider *p)
- };
- MODULE_DEVICE_TABLE(of, ti_sci_clk_of_match);
- 
--/**
-- * ti_sci_clk_probe - Probe function for the TI SCI clock driver
-- * @pdev: platform device pointer to be probed
-- *
-- * Probes the TI SCI clock device. Allocates a new clock provider
-- * and registers this to the common clock framework. Also applies
-- * any required flags to the identified clocks via clock lists
-- * supplied from DT. Returns 0 for success, negative error value
-- * for failure.
-- */
--static int ti_sci_clk_probe(struct platform_device *pdev)
-+static int ti_sci_scan_clocks_from_fw(struct sci_clk_provider *provider)
- {
--	struct device *dev = &pdev->dev;
--	struct device_node *np = dev->of_node;
--	struct sci_clk_provider *provider;
--	const struct ti_sci_handle *handle;
- 	int ret;
- 	int num_clks = 0;
- 	struct sci_clk **clks = NULL;
-@@ -430,18 +428,7 @@ static int ti_sci_clk_probe(struct platform_device *pdev)
- 	int dev_id = 0;
- 	u8 num_parents;
- 	int gap_size = 0;
--
--	handle = devm_ti_sci_get_handle(dev);
--	if (IS_ERR(handle))
--		return PTR_ERR(handle);
--
--	provider = devm_kzalloc(dev, sizeof(*provider), GFP_KERNEL);
--	if (!provider)
--		return -ENOMEM;
--
--	provider->sci = handle;
--	provider->ops = &handle->ops.clk_ops;
--	provider->dev = dev;
-+	struct device *dev = provider->dev;
- 
- 	while (1) {
- 		ret = provider->ops->get_num_parents(provider->sci, dev_id,
-@@ -502,13 +489,156 @@ static int ti_sci_clk_probe(struct platform_device *pdev)
- 
- 	devm_kfree(dev, clks);
- 
-+	return 0;
-+}
-+
-+static int ti_sci_scan_clocks_from_dt(struct sci_clk_provider *provider)
-+{
-+	struct device *dev = provider->dev;
-+	struct device_node *np = NULL;
-+	int ret;
-+	int index;
-+	struct of_phandle_args args;
-+	struct list_head clks;
-+	struct sci_clk *sci_clk, *prev;
-+	int num_clks = 0;
-+	int num_parents;
-+	int clk_id;
-+
-+	INIT_LIST_HEAD(&clks);
-+
-+	while (1) {
-+		np = of_find_node_with_property(np, "clocks");
-+		if (!np)
-+			break;
-+
-+		index = 0;
-+
-+		do {
-+			ret = of_parse_phandle_with_args(np, "clocks",
-+							 "#clock-cells", index,
-+							 &args);
-+			if (ret)
-+				break;
-+
-+			if (args.args_count == 2 && args.np == dev->of_node) {
-+				sci_clk = devm_kzalloc(dev, sizeof(*sci_clk),
-+						       GFP_KERNEL);
-+				if (!sci_clk)
-+					return -ENOMEM;
-+
-+				sci_clk->dev_id = args.args[0];
-+				sci_clk->clk_id = args.args[1];
-+				sci_clk->provider = provider;
-+				provider->ops->
-+					get_num_parents(provider->sci,
-+							sci_clk->dev_id,
-+							sci_clk->clk_id,
-+							&sci_clk->num_parents);
-+				list_add_tail(&sci_clk->node, &clks);
-+
-+				num_clks++;
-+
-+				num_parents = sci_clk->num_parents;
-+				if (num_parents == 1)
-+					num_parents = 0;
-+
-+				clk_id = args.args[1] + 1;
-+
-+				while (num_parents--) {
-+					sci_clk = devm_kzalloc(dev,
-+							       sizeof(*sci_clk),
-+							       GFP_KERNEL);
-+					if (!sci_clk)
-+						return -ENOMEM;
-+					sci_clk->dev_id = args.args[0];
-+					sci_clk->clk_id = clk_id++;
-+					sci_clk->provider = provider;
-+					list_add_tail(&sci_clk->node, &clks);
-+
-+					num_clks++;
-+				}
-+			}
-+
-+			index++;
-+		} while (args.np);
-+	}
-+
-+	list_sort(NULL, &clks, _cmp_sci_clk_list);
-+
-+	provider->clocks = devm_kmalloc_array(dev, num_clks, sizeof(sci_clk),
-+					      GFP_KERNEL);
-+	if (!provider->clocks)
-+		return -ENOMEM;
-+
-+	num_clks = 0;
-+	prev = NULL;
-+
-+	list_for_each_entry(sci_clk, &clks, node) {
-+		if (prev && prev->dev_id == sci_clk->dev_id &&
-+		    prev->clk_id == sci_clk->clk_id)
-+			continue;
-+
-+		provider->clocks[num_clks++] = sci_clk;
-+		prev = sci_clk;
-+	}
-+
-+	provider->num_clocks = num_clks;
-+
-+	return 0;
-+}
-+
-+/**
-+ * ti_sci_clk_probe - Probe function for the TI SCI clock driver
-+ * @pdev: platform device pointer to be probed
+ config COMMON_CLK_REGMAP_MESON
+ 	bool
+ 	select REGMAP
+diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
+index d59620d..54416a2 100644
+--- a/drivers/clk/meson/Makefile
++++ b/drivers/clk/meson/Makefile
+@@ -12,4 +12,5 @@ obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
+ obj-$(CONFIG_COMMON_CLK_GXBB)	 += gxbb.o gxbb-aoclk.o gxbb-aoclk-32k.o
+ obj-$(CONFIG_COMMON_CLK_AXG)	 += axg.o axg-aoclk.o
+ obj-$(CONFIG_COMMON_CLK_AXG_AUDIO)	+= axg-audio.o
++obj-$(CONFIG_COMMON_CLK_MMC_MESON) 	+= mmc-clkc.o
+ obj-$(CONFIG_COMMON_CLK_REGMAP_MESON)	+= clk-regmap.o
+diff --git a/drivers/clk/meson/mmc-clkc.c b/drivers/clk/meson/mmc-clkc.c
+new file mode 100644
+index 0000000..2582a98
+--- /dev/null
++++ b/drivers/clk/meson/mmc-clkc.c
+@@ -0,0 +1,304 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * Amlogic Meson MMC Sub Clock Controller Driver
 + *
-+ * Probes the TI SCI clock device. Allocates a new clock provider
-+ * and registers this to the common clock framework. Also applies
-+ * any required flags to the identified clocks via clock lists
-+ * supplied from DT. Returns 0 for success, negative error value
-+ * for failure.
++ * Copyright (c) 2017 Baylibre SAS.
++ * Author: Jerome Brunet <jbrunet@baylibre.com>
++ *
++ * Copyright (c) 2018 Amlogic, inc.
++ * Author: Yixun Lan <yixun.lan@amlogic.com>
++ * Author: Jianxin Pan <jianxin.pan@amlogic.com>
 + */
-+static int ti_sci_clk_probe(struct platform_device *pdev)
++
++#include <linux/clk.h>
++#include <linux/clk-provider.h>
++#include <linux/module.h>
++#include <linux/regmap.h>
++#include <linux/slab.h>
++#include <linux/of_device.h>
++#include <linux/mfd/syscon.h>
++#include <linux/platform_device.h>
++#include <dt-bindings/clock/amlogic,mmc-clkc.h>
++
++#include "clkc.h"
++
++/* clock ID used by internal driver */
++
++#define SD_EMMC_CLOCK		0
++#define CLK_DELAY_STEP_PS	200
++#define MUX_CLK_NUM_PARENTS	2
++#define MMC_MAX_CLKS		4
++
++struct mmc_clkc_data {
++	struct meson_clk_phase_delay_data tx;
++	struct meson_clk_phase_delay_data rx;
++};
++
++static struct clk_regmap_mux_data mmc_clkc_mux_data = {
++	.offset = SD_EMMC_CLOCK,
++	.mask   = 0x3,
++	.shift  = 6,
++};
++
++static const struct meson_sclk_div_data mmc_clkc_div_data = {
++	.div = {
++		.reg_off = SD_EMMC_CLOCK,
++		.width   = 6,
++	},
++	.flags = CLK_DIVIDER_ONE_BASED,
++};
++
++static struct meson_clk_phase_data mmc_clkc_core_phase = {
++	.ph = {
++		.reg_off = SD_EMMC_CLOCK,
++		.shift   = 8,
++		.width   = 2,
++	}
++};
++
++static const struct mmc_clkc_data mmc_clkc_gx_data = {
++	.tx = {
++		.phase = {
++			.reg_off = SD_EMMC_CLOCK,
++			.shift   = 10,
++			.width   = 2,
++		},
++		.delay = {
++			.reg_off = SD_EMMC_CLOCK,
++			.shift   = 16,
++			.width   = 4,
++		},
++		.delay_step_ps = CLK_DELAY_STEP_PS,
++	},
++	.rx = {
++		.phase = {
++			.reg_off = SD_EMMC_CLOCK,
++			.shift   = 12,
++			.width   = 2,
++		},
++		.delay = {
++			.reg_off = SD_EMMC_CLOCK,
++			.shift   = 20,
++			.width   = 4,
++		},
++		.delay_step_ps   = CLK_DELAY_STEP_PS,
++	},
++};
++
++static const struct mmc_clkc_data mmc_clkc_axg_data = {
++	.tx = {
++		.phase = {
++			.reg_off = SD_EMMC_CLOCK,
++			.shift   = 10,
++			.width   = 2,
++		},
++		.delay = {
++			.reg_off = SD_EMMC_CLOCK,
++			.shift   = 16,
++			.width   = 6,
++		},
++		.delay_step_ps   = CLK_DELAY_STEP_PS,
++	},
++	.rx = {
++		.phase = {
++			.reg_off = SD_EMMC_CLOCK,
++			.shift   = 12,
++			.width   = 2,
++		},
++		.delay = {
++			.reg_off = SD_EMMC_CLOCK,
++			.shift   = 22,
++			.width   = 6,
++		},
++		.delay_step_ps   = CLK_DELAY_STEP_PS,
++	},
++};
++
++static const struct of_device_id mmc_clkc_match_table[] = {
++	{
++		.compatible	= "amlogic,gx-mmc-clkc",
++		.data		= &mmc_clkc_gx_data
++	},
++	{
++		.compatible	= "amlogic,axg-mmc-clkc",
++		.data		= &mmc_clkc_axg_data
++	},
++	{}
++};
++MODULE_DEVICE_TABLE(of, mmc_clkc_match_table);
++
++static struct clk_regmap *
++mmc_clkc_register_clk(struct device *dev, struct regmap *map,
++		      struct clk_init_data *init,
++		      const char *suffix, void *data)
 +{
-+	struct device *dev = &pdev->dev;
-+	struct device_node *np = dev->of_node;
-+	struct sci_clk_provider *provider;
-+	const struct ti_sci_handle *handle;
++	struct clk_regmap *clk;
++	char *name;
 +	int ret;
 +
-+	handle = devm_ti_sci_get_handle(dev);
-+	if (IS_ERR(handle))
-+		return PTR_ERR(handle);
++	clk = devm_kzalloc(dev, sizeof(*clk), GFP_KERNEL);
++	if (!clk)
++		return ERR_PTR(-ENOMEM);
 +
-+	provider = devm_kzalloc(dev, sizeof(*provider), GFP_KERNEL);
-+	if (!provider)
-+		return -ENOMEM;
++	name = kasprintf(GFP_KERNEL, "%s#%s", dev_name(dev), suffix);
++	if (!name)
++		return ERR_PTR(-ENOMEM);
 +
-+	provider->sci = handle;
-+	provider->ops = &handle->ops.clk_ops;
-+	provider->dev = dev;
++	init->name = name;
++	clk->map = map;
++	clk->data = data;
++	clk->hw.init = init;
++	ret = devm_clk_hw_register(dev, &clk->hw);
++	if (ret)
++		clk = ERR_PTR(ret);
 +
-+	if (of_property_read_bool(np, "ti,scan-clocks-from-dt")) {
-+		ret = ti_sci_scan_clocks_from_dt(provider);
-+		if (ret) {
-+			dev_err(dev, "scan clocks from DT failed: %d\n", ret);
-+			return ret;
++	kfree(name);
++	return clk;
++}
++
++static struct clk_regmap *mmc_clkc_register_mux(struct device *dev,
++						struct regmap *map)
++{
++	const char *parent_names[MUX_CLK_NUM_PARENTS];
++	struct clk_init_data init;
++	struct clk_regmap *mux;
++	struct clk *clk;
++	int i;
++
++	for (i = 0; i < MUX_CLK_NUM_PARENTS; i++) {
++		char name[8];
++
++		snprintf(name, sizeof(name), "clkin%d", i);
++		clk = devm_clk_get(dev, name);
++		if (IS_ERR(clk)) {
++			if (clk != ERR_PTR(-EPROBE_DEFER))
++				dev_err(dev, "Missing clock %s\n", name);
++			return ERR_CAST(clk);
 +		}
-+	} else {
-+		ret = ti_sci_scan_clocks_from_fw(provider);
-+		if (ret) {
-+			dev_err(dev, "scan clocks from FW failed: %d\n", ret);
-+			return ret;
-+		}
++
++		parent_names[i] = __clk_get_name(clk);
 +	}
 +
- 	ret = ti_sci_init_clocks(provider);
- 	if (ret) {
--		pr_err("ti-sci-init-clocks failed.\n");
-+		dev_err(dev, "init-clocks failed: %d\n", ret);
- 		return ret;
- 	}
- 
--	return of_clk_add_hw_provider(np, sci_clk_get, provider);
-+	return of_clk_add_hw_provider(dev->of_node, sci_clk_get, provider);
- }
- 
- /**
++	init.ops = &clk_regmap_mux_ops;
++	init.flags = CLK_SET_RATE_PARENT;
++	init.parent_names = parent_names;
++	init.num_parents = MUX_CLK_NUM_PARENTS;
++
++	mux = mmc_clkc_register_clk(dev, map, &init, "mux", &mmc_clkc_mux_data);
++	if (IS_ERR(mux))
++		dev_err(dev, "Mux clock registration failed\n");
++
++	return mux;
++}
++
++static struct clk_regmap *
++mmc_clkc_register_clk_with_parent(struct device *dev, struct regmap *map,
++				  char *suffix, const struct clk_hw *hw,
++				  unsigned long flags,
++				  const struct clk_ops *ops, void *data)
++{
++	struct clk_init_data init;
++	struct clk_regmap *clk;
++	const char *parent_name = clk_hw_get_name(hw);
++
++	init.ops = ops;
++	init.flags = flags;
++	init.parent_names = &parent_name;
++	init.num_parents = 1;
++
++	clk = mmc_clkc_register_clk(dev, map, &init, suffix, data);
++	if (IS_ERR(clk))
++		dev_err(dev, "%s clock registration failed\n", suffix);
++
++	return clk;
++}
++
++static int mmc_clkc_probe(struct platform_device *pdev)
++{
++	struct clk_hw_onecell_data *onecell_data;
++	struct device *dev = &pdev->dev;
++	struct mmc_clkc_data *data;
++	struct regmap *map;
++	struct clk_regmap *clk, *core;
++	struct meson_sclk_div_data *div_data;
++
++	/*cast to drop the const in match->data*/
++	data = (struct mmc_clkc_data *)of_device_get_match_data(dev);
++	if (!data)
++		return -ENODEV;
++
++	map = syscon_node_to_regmap(dev->of_node);
++	if (IS_ERR(map)) {
++		dev_err(dev, "could not find mmc clock controller\n");
++		return PTR_ERR(map);
++	}
++
++	onecell_data = devm_kzalloc(dev, sizeof(*onecell_data) +
++				    sizeof(*onecell_data->hws) * MMC_MAX_CLKS,
++				    GFP_KERNEL);
++	if (!onecell_data)
++		return -ENOMEM;
++
++	clk = mmc_clkc_register_mux(dev, map);
++	if (IS_ERR(clk))
++		return PTR_ERR(clk);
++
++	div_data = devm_kzalloc(dev, sizeof(*div_data), GFP_KERNEL);
++	if (!div_data)
++		return -ENOMEM;
++
++	memcpy(div_data, &mmc_clkc_div_data, sizeof(*div_data));
++	clk = mmc_clkc_register_clk_with_parent(dev, map, "div",
++						&clk->hw,
++						CLK_SET_RATE_PARENT,
++						&meson_sclk_div_ops,
++						div_data);
++	if (IS_ERR(clk))
++		return PTR_ERR(clk);
++
++	onecell_data->hws[CLKID_MMC_DIV] = &clk->hw,
++
++	core = mmc_clkc_register_clk_with_parent(dev, map, "core",
++						 &clk->hw,
++						 CLK_SET_RATE_PARENT,
++						 &meson_clk_phase_ops,
++						 &mmc_clkc_core_phase);
++	if (IS_ERR(core))
++		return PTR_ERR(core);
++
++	onecell_data->hws[CLKID_MMC_PHASE_CORE] = &core->hw,
++
++	clk = mmc_clkc_register_clk_with_parent(dev, map, "rx",
++						&core->hw,  0,
++						&meson_clk_phase_delay_ops,
++						&data->rx);
++	if (IS_ERR(clk))
++		return PTR_ERR(clk);
++
++	onecell_data->hws[CLKID_MMC_PHASE_RX] = &clk->hw,
++	clk = mmc_clkc_register_clk_with_parent(dev, map, "tx",
++						&core->hw,  0,
++						&meson_clk_phase_delay_ops,
++						&data->tx);
++	if (IS_ERR(clk))
++		return PTR_ERR(clk);
++
++	onecell_data->hws[CLKID_MMC_PHASE_TX] = &clk->hw,
++	onecell_data->num = MMC_MAX_CLKS;
++	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
++					   onecell_data);
++}
++
++static struct platform_driver mmc_clkc_driver = {
++	.probe		= mmc_clkc_probe,
++	.driver		= {
++		.name	= "meson-mmc-clkc",
++		.of_match_table = of_match_ptr(mmc_clkc_match_table),
++	},
++};
++
++module_platform_driver(mmc_clkc_driver);
++
++MODULE_DESCRIPTION("Amlogic AXG MMC clock driver");
++MODULE_AUTHOR("Jianxin Pan <jianxin.pan@amlogic.com>");
++MODULE_LICENSE("GPL v2");
 -- 
 1.9.1
 
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
