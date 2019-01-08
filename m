@@ -2,85 +2,163 @@ Return-Path: <SRS0=Ml2J=PQ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 234C3C43387
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Jan 2019 16:21:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 527FFC43612
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Jan 2019 19:27:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0A072087F
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Jan 2019 16:21:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 205E9217D9
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Jan 2019 19:27:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546975644;
+	bh=cU3B0wKKFM6sAVf1JmNfLSIVNTdZJPcuK8XPnGos9ls=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=udI1tOq3Pq3C9cH09t4CDPF8ktrewXhi5LtDe5Ti2AtMnLRpPJykkSt7ob/USf1uP
+	 GCOZE56NzjRXS37dJRptC4LjG3sjVXkTPHBCWcSyrQs+pvGSiZu0P+67RIY6X3Qn4c
+	 C+OTYD+UVxfZWFqIz9f2d/i8z/m/pA+Nm0LF3hQU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728211AbfAHQVW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Jan 2019 11:21:22 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:33845 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728483AbfAHQVW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Jan 2019 11:21:22 -0500
-Received: from dude02.hi.pengutronix.de ([2001:67c:670:100:1d::28] helo=dude02.pengutronix.de.)
-        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
-        (envelope-from <l.stach@pengutronix.de>)
-        id 1ggu7x-0006Mm-3s; Tue, 08 Jan 2019 17:21:17 +0100
-From:   Lucas Stach <l.stach@pengutronix.de>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        kernel@pengutronix.de, patchwork-lst@pengutronix.de
-Subject: [PATCH] clk: imx5: add imx5_SCC2_IPG_GATE
-Date:   Tue,  8 Jan 2019 17:21:15 +0100
-Message-Id: <20190108162115.1998-1-l.stach@pengutronix.de>
-X-Mailer: git-send-email 2.20.1
+        id S1729621AbfAHT1X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Jan 2019 14:27:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33500 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729616AbfAHT1X (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:27:23 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7D3AE2183F;
+        Tue,  8 Jan 2019 19:27:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1546975642;
+        bh=cU3B0wKKFM6sAVf1JmNfLSIVNTdZJPcuK8XPnGos9ls=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=EM8R0XLEzbKFkbDDYnE7LuJoPrmwS4KMK5kScpUB1T84P8cMpGNmMIa4PzHVgTRCu
+         bVx8mJZY7ajkGs7bHYq0Pdb5XWgIAF3Dk1WjRd9H1jrWOsAsQkpx4WFYTQ7TojKC7v
+         T3SvcdT6+JR96VxcZeDT51iM/0akshzjYZc+UkzU=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 028/117] clk: meson: meson8b: fix incorrect divider mapping in cpu_scale_table
+Date:   Tue,  8 Jan 2019 14:24:56 -0500
+Message-Id: <20190108192628.121270-28-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190108192628.121270-1-sashal@kernel.org>
+References: <20190108192628.121270-1-sashal@kernel.org>
 MIME-Version: 1.0
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::28
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Michael Grzeschik <m.grzeschik@pengutronix.de>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-This adds the missing clock for the SCC2 peripheral unit.
+[ Upstream commit ad9b2b8e53af61375322e3c7d624acf3a3ef53b0 ]
 
-Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+The public S805 datasheet only mentions that
+HHI_SYS_CPU_CLK_CNTL1[20:29] contains a divider called "cpu_scale_div".
+Unfortunately it does not mention how to use the register contents.
+
+The Amlogic 3.10 GPL kernel sources are using the following code to
+calculate the CPU clock based on that register (taken from
+arch/arm/mach-meson8/clock.c in the 3.10 Amlogic kernel, shortened to
+make it easier to read):
+N = (aml_read_reg32(P_HHI_SYS_CPU_CLK_CNTL1) >> 20) & 0x3FF;
+if (sel == 3) /* use cpu_scale_div */
+  div = 2 * N;
+else
+  div = ... /* not relevant for this example */
+cpu_clk = parent_clk / div;
+
+This suggests that the formula is: parent_rate / 2 * register_value
+However, running perf (which can measure the CPU clock rate thanks to
+the ARM PMU) shows that this formula is not correct.
+This can be reproduced with the following steps:
+1. boot into u-boot
+2. let the CPU clock run off the XTAL clock:
+   mw.l 0xC110419C 0x30 1
+3. set the cpu_scale_div register:
+   to value 0x1: mw.l 0xC110415C 0x801016A2 1
+   to value 0x2: mw.l 0xC110415C 0x802016A2 1
+   to value 0x5: mw.l 0xC110415C 0x805016A2 1
+4. let the CPU clock run off cpu_scale_div:
+   mw.l 0xC110419C 0xbd 1
+5. boot Linux
+6. run: perf stat -aB stress --cpu 4 --timeout 10
+7. check the "cycles" value
+
+I get the following results depending on the cpu_scale_div value:
+- (cpu_in_sel - this is the input clock for cpu_scale_div - runs at
+   1.2GHz)
+- 0x1 = 300MHz
+- 0x2 = 200MHz
+- 0x5 = 100MHz
+
+This means that the actual formula to calculate the output of the
+cpu_scale_div clock is: parent_rate / 2 * (register value + 1).
+
+The register value 0x0 is reserved. When letting the CPU clock run off
+the cpu_scale_div while the value is 0x0 the whole board hangs (even in
+u-boot).
+
+I also verified this with the TWD timer: when adding this to the .dts
+without specifying it's clock it will auto-detect the PERIPH (which is
+the input clock of the TWD) clock rate (and the result is shown in the
+kernel log). On Meson8, Meson8b and Meson8m2 the PERIPH clock is CPUCLK
+divided by 4. This also matched for all three test-cases from above (in
+all cases the TWD timer clock rate was approx. one fourth of the CPU
+clock rate).
+
+A small note regarding the "fixes" tag: the original issue seems to
+exist virtually since forever. Even commit 28b9fcd016126e ("clk:
+meson8b: Add support for Meson8b clocks") seems to handle this wrong. I
+still decided to use commit 251b6fd38bcb9c ("clk: meson: rework meson8b
+cpu clock") because this is the first commit which gets the CPU hiearchy
+correct and thus it's the first commit where the cpu_scale_div register
+is used correctly (apart from the bug in the cpu_scale_table).
+
+Fixes: 251b6fd38bcb9c ("clk: meson: rework meson8b cpu clock")
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Link: https://lkml.kernel.org/r/20180927085921.24627-2-martin.blumenstingl@googlemail.com
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/imx/clk-imx51-imx53.c      | 1 +
- include/dt-bindings/clock/imx5-clock.h | 3 ++-
- 2 files changed, 3 insertions(+), 1 deletion(-)
+ drivers/clk/meson/meson8b.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/clk/imx/clk-imx51-imx53.c b/drivers/clk/imx/clk-imx51-imx53.c
-index fc8e782d817b..e91c826bce70 100644
---- a/drivers/clk/imx/clk-imx51-imx53.c
-+++ b/drivers/clk/imx/clk-imx51-imx53.c
-@@ -428,6 +428,7 @@ static void __init mx51_clocks_init(struct device_node *np)
- 	clk[IMX5_CLK_ESDHC4_PER_GATE]	= imx_clk_gate2("esdhc4_per_gate", "esdhc_d_sel", MXC_CCM_CCGR3, 14);
- 	clk[IMX5_CLK_USB_PHY_GATE]	= imx_clk_gate2("usb_phy_gate", "usb_phy_sel", MXC_CCM_CCGR2, 0);
- 	clk[IMX5_CLK_HSI2C_GATE]	= imx_clk_gate2("hsi2c_gate", "ipg", MXC_CCM_CCGR1, 22);
-+	clk[IMX5_CLK_SCC2_IPG_GATE]	= imx_clk_gate2("scc2_gate", "ipg", MXC_CCM_CCGR1, 30);
- 	clk[IMX5_CLK_MIPI_HSC1_GATE]	= imx_clk_gate2_flags("mipi_hsc1_gate", "ipg", MXC_CCM_CCGR4, 6, CLK_IS_CRITICAL);
- 	clk[IMX5_CLK_MIPI_HSC2_GATE]	= imx_clk_gate2_flags("mipi_hsc2_gate", "ipg", MXC_CCM_CCGR4, 8, CLK_IS_CRITICAL);
- 	clk[IMX5_CLK_MIPI_ESC_GATE]	= imx_clk_gate2_flags("mipi_esc_gate", "ipg", MXC_CCM_CCGR4, 10, CLK_IS_CRITICAL);
-diff --git a/include/dt-bindings/clock/imx5-clock.h b/include/dt-bindings/clock/imx5-clock.h
-index d382fc71aa83..a81be5be6700 100644
---- a/include/dt-bindings/clock/imx5-clock.h
-+++ b/include/dt-bindings/clock/imx5-clock.h
-@@ -214,6 +214,7 @@
- #define IMX5_CLK_IEEE1588_SEL		202
- #define IMX5_CLK_IEEE1588_PODF		203
- #define IMX5_CLK_IEEE1588_GATE		204
--#define IMX5_CLK_END			205
-+#define IMX5_CLK_SCC2_IPG_GATE		205
-+#define IMX5_CLK_END			206
+diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+index a059db63907c..1d39273d7a04 100644
+--- a/drivers/clk/meson/meson8b.c
++++ b/drivers/clk/meson/meson8b.c
+@@ -584,13 +584,14 @@ static struct clk_fixed_factor meson8b_cpu_div3 = {
+ };
  
- #endif /* __DT_BINDINGS_CLOCK_IMX5_H */
+ static const struct clk_div_table cpu_scale_table[] = {
+-	{ .val = 2, .div = 4 },
+-	{ .val = 3, .div = 6 },
+-	{ .val = 4, .div = 8 },
+-	{ .val = 5, .div = 10 },
+-	{ .val = 6, .div = 12 },
+-	{ .val = 7, .div = 14 },
+-	{ .val = 8, .div = 16 },
++	{ .val = 1, .div = 4 },
++	{ .val = 2, .div = 6 },
++	{ .val = 3, .div = 8 },
++	{ .val = 4, .div = 10 },
++	{ .val = 5, .div = 12 },
++	{ .val = 6, .div = 14 },
++	{ .val = 7, .div = 16 },
++	{ .val = 8, .div = 18 },
+ 	{ /* sentinel */ },
+ };
+ 
 -- 
-2.20.1
+2.19.1
 
