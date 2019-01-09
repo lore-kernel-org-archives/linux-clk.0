@@ -6,62 +6,59 @@ X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0502AC43387
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Jan 2019 19:42:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 939FFC43387
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Jan 2019 19:42:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C65DA20859
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Jan 2019 19:42:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6065220859
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Jan 2019 19:42:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547062967;
-	bh=bHvLiL+mJwW4hxgJNVXeE/kVSEfp9vZrHOQeoC8Z7v8=;
+	s=default; t=1547062969;
+	bh=ikcDu2SaSUZMPMQZ71Sxt/H4KpcKcg3ccQFlMhVZMv0=;
 	h=Subject:Cc:To:In-Reply-To:From:References:Date:List-ID:From;
-	b=hQp7d5YiGWAEqwUVEUI13GEUxjO+TaokrgR8Nqt/Lpt5Uw25NSWlsUOH7eb4quHG1
-	 ulFDSqpGZbBtvBI0+hDI/8ie7o9WljsuRYRtIgMecC8TMCyHoE1zLU5mXmpnbUWPFE
-	 xY2xq0LeNho7t497cHBcjTfdqBHlNFFzpZtNS4K0=
+	b=Cw+dLm+6tOr3nmasX44cRmBdLHgdGlLBYERg8GkLU9QcTAALnE9uChX4vQV6LBzB5
+	 WQye0HRlA2TJD4NA5h+FIGidinLgM+RwGmxRVXzANO7F1VfZzwDe7TySI5nZPNbvUz
+	 Xj0gjJevQaltbocg1FCmxE1eiC2txpInJZ7eQvaE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728451AbfAITmn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 9 Jan 2019 14:42:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40970 "EHLO mail.kernel.org"
+        id S1728369AbfAITmk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 9 Jan 2019 14:42:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40912 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727123AbfAITmm (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 9 Jan 2019 14:42:42 -0500
+        id S1727123AbfAITmk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 9 Jan 2019 14:42:40 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 435FD20859;
-        Wed,  9 Jan 2019 19:42:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7014020859;
+        Wed,  9 Jan 2019 19:42:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547062962;
-        bh=bHvLiL+mJwW4hxgJNVXeE/kVSEfp9vZrHOQeoC8Z7v8=;
+        s=default; t=1547062959;
+        bh=ikcDu2SaSUZMPMQZ71Sxt/H4KpcKcg3ccQFlMhVZMv0=;
         h=Subject:Cc:To:In-Reply-To:From:References:Date:From;
-        b=HjyY+OUZnykC7jJS30GrHIcq0NM8aLRATGNz4coY5yeyuaw+7QlsuVZJSAuBhs9al
-         D841//UCetpMaaFXzCh/FeC6u/10x7aeO+ZgLGwhFgu222U8BxASCjdJrw9ZW7+i58
-         6rvmmrOPQ1jhmjPT5va+88/pk4DMLRczxYCqYoa0=
+        b=EvX2UYn379u2C8Y33nLZqTzVF0Wgj8bFzgIvaLTnifQ5HyYFTo/bkxmsCYQ2jXAVd
+         ddTCYd4TiaoavYDylZG795NC+SPIkdKlqqTTaYiF8cjbnzmiyIKLYxx6qSbama+/sK
+         yZjlHjsOBGdH7v6HPz1XTehlZF28Bt20re8I2LZQ=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 2/2] clk: Add Fixed MMIO clock driver
+Subject: Re: [PATCH v2 1/2] dt-bindings: clk: Add bindings for Fixed MMIO clock
 Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, Jan Kotas <jank@cadence.com>
 To:     Jan Kotas <jank@cadence.com>, mark.rutland@arm.com,
         mturquette@baylibre.com, robh+dt@kernel.org
-In-Reply-To: <20181213124929.32736-3-jank@cadence.com>
+In-Reply-To: <20181213124929.32736-2-jank@cadence.com>
 From:   Stephen Boyd <sboyd@kernel.org>
 User-Agent: alot/0.8
-References: <20181213124929.32736-1-jank@cadence.com> <20181213124929.32736-3-jank@cadence.com>
-Message-ID: <154706296156.15366.5318350293286114474@swboyd.mtv.corp.google.com>
-Date:   Wed, 09 Jan 2019 11:42:41 -0800
+References: <20181213124929.32736-1-jank@cadence.com> <20181213124929.32736-2-jank@cadence.com>
+Message-ID: <154706295874.15366.533170065938308433@swboyd.mtv.corp.google.com>
+Date:   Wed, 09 Jan 2019 11:42:38 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jan Kotas (2018-12-13 04:49:29)
-> This patch adds a driver for Fixed MMIO clock.
-> The driver reads a clock frequency value from a single 32-bit memory
-> mapped register and registers it as a fixed rate clock.
->=20
-> It can be enabled with COMMON_CLK_FIXED_MMIO Kconfig option.
+Quoting Jan Kotas (2018-12-13 04:49:28)
+> This patch adds a DT binding documentation for Fixed
+> Memory Mapped IO clocks.
 >=20
 > Signed-off-by: Jan Kotas <jank@cadence.com>
 > ---
