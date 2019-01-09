@@ -2,274 +2,97 @@ Return-Path: <SRS0=vytI=PR=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61CB2C43387
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Jan 2019 19:28:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66CA2C43387
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Jan 2019 19:28:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 254442075C
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Jan 2019 19:28:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547062114;
-	bh=6U1KDrcsevcvwGfBKYeJgIPM7++biLKhzOrw9JS7jkA=;
-	h=Subject:Cc:To:In-Reply-To:From:References:Date:List-ID:From;
-	b=p/f74z9W+rTOiPUCMEIGkjHDKEhC/OZduh26sWEjNFSv0NBe46U4KpGXgEdIwHOmI
-	 A3C8mXoYqFTT0/FHqc/83k4wmVJHd03e6iOam0XAukbjpj52PN0xri+7ZGVr/GTjmD
-	 gdM0GHCoVpkgny3kpF+kqpHBxveUUQzU3NGVzreQ=
+	by mail.kernel.org (Postfix) with ESMTP id 34BD4206BA
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Jan 2019 19:28:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="AscLUH9m";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="AFkn4l0i"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728246AbfAIT2d (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 9 Jan 2019 14:28:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35634 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727826AbfAIT2d (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 9 Jan 2019 14:28:33 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1728434AbfAIT2t (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 9 Jan 2019 14:28:49 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:48246 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727826AbfAIT2t (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Jan 2019 14:28:49 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 0C74A609CD; Wed,  9 Jan 2019 19:28:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547062128;
+        bh=gz/RW69cV/3MnbCSx5rOIAbS706C6JlpwqF6HQBxYuo=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=AscLUH9mJgr+CwKmm1KVCtVh07gA6UHm2Mo64BADNQ8fUofzYzjC3usEiOBNxVqvb
+         ckwtwfSuaCcSKZk7mXhQ5iP+l4WD5gZ3CXWji/3AJFGghhA7m7ehL0XC2yIoXjI/7d
+         jkf3rCj6wknMGUl9pkVemhYP/G+E5kYyfmMlDCX8=
+Received: from [10.226.60.81] (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 07B8A206BA;
-        Wed,  9 Jan 2019 19:28:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547062112;
-        bh=6U1KDrcsevcvwGfBKYeJgIPM7++biLKhzOrw9JS7jkA=;
-        h=Subject:Cc:To:In-Reply-To:From:References:Date:From;
-        b=wq46CGzb1bPdE9VvCLq/4GnDuGS5rm/SQUegpW13B/zxlqTCBmhyquq9KI2xlEmi+
-         MZbfVm3bZbwqO53q6kIXQNBvf+REIMe54j0V6AF4Tdknto3XtCX/4PxJ4ZUDLmXVwA
-         DnW+fkEUcxKudUJoOLsVz1Vk57fk7oEctIfmD8Z4=
-Content-Type: text/plain; charset="utf-8"
+        (Authenticated sender: jhugo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id CC7BF609D1;
+        Wed,  9 Jan 2019 19:28:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547062127;
+        bh=gz/RW69cV/3MnbCSx5rOIAbS706C6JlpwqF6HQBxYuo=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=AFkn4l0irQrsCXk6Bscce1BxbBeZbzc3uREd4NLHaUsnXxHekmjMzvP76OKppaaH5
+         1KIXnse6maog9VYtTKjKJPm8hYTp3OUguWdKuTLOV1mzTLrOz8XRn0Utr9OOuxd+Ql
+         hVtMQqFSEU/AoLj8JpAxuaSS/1yW80+KXkV9EGAc=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CC7BF609D1
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
+Subject: Re: [PATCH v1 2/6] clk: qcom: Skip halt checks on
+ gcc_usb3_phy_pipe_clk for 8998
+To:     Stephen Boyd <sboyd@kernel.org>, mturquette@baylibre.com
+Cc:     bjorn.andersson@linaro.org, andy.gross@linaro.org,
+        david.brown@linaro.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, gregkh@linuxfoundation.org,
+        balbi@kernel.org, linux-usb@vger.kernel.org
+References: <1546620615-2389-1-git-send-email-jhugo@codeaurora.org>
+ <154706034090.15366.11081837995313995010@swboyd.mtv.corp.google.com>
+From:   Jeffrey Hugo <jhugo@codeaurora.org>
+Message-ID: <d99bd2ac-4c35-470e-e19d-e90f091cad4b@codeaurora.org>
+Date:   Wed, 9 Jan 2019 12:28:44 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v1] clk: qcom: clk-rpmh: Add IPA clock support
-Cc:     David Dai <daidavid1@codeaurora.org>, georgi.djakov@linaro.org,
-        bjorn.andersson@linaro.org, evgreen@google.com,
-        tdas@codeaurora.org, elder@linaro.org
-To:     David Dai <daidavid1@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <1544754904-18951-1-git-send-email-daidavid1@codeaurora.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-User-Agent: alot/0.8
-References: <1544754904-18951-1-git-send-email-daidavid1@codeaurora.org>
-Message-ID: <154706211110.15366.8008755843113316822@swboyd.mtv.corp.google.com>
-Date:   Wed, 09 Jan 2019 11:28:31 -0800
+In-Reply-To: <154706034090.15366.11081837995313995010@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting David Dai (2018-12-13 18:35:04)
-> The current clk-rpmh driver only supports on and off RPMh clock resources,
-> let's extend the current driver by add support for clocks that are managed
-> by a different type of RPMh resource known as Bus Clock Manager(BCM).
-> The BCM is a configurable shared resource aggregator that scales performa=
-nce
-> based on a preset of frequency points. The Qualcomm IP Accelerator (IPA) =
-clock
-> is an example of a resource that is managed by the BCM and this a require=
-ment
-> from the IPA driver in order to scale its core clock.
+On 1/9/2019 11:59 AM, Stephen Boyd wrote:
+> Quoting Jeffrey Hugo (2019-01-04 08:50:15)
+>> The gcc_usb3_phy_pipe_clk is generated by the phy, but is also used by
+>> the phy during init.  The clock needs to be enabled during the init
+>> sequence, but may not be fully active until after the init sequence is
+>> complete.  This causes a catch-22 if the clock status is checked during
+>> enable.  As a result, skip the checks to avoid the troubling situation.
+> 
+> I will ask again, is anyone going to fix this in the phy driver? In
+> theory it isn't needed if the phy driver can do things differently, but
+> last time I checked I was told that the phy team said it had to be done
+> this way.
+> 
 
-Please use this commit text instead:
+Interesting.  I was unaware of past discussion(s) on this.  Thank you 
+for taking the change, but I'll try having a look to see if maybe I can 
+prove your theory going forward.
 
-   =20
-The clk-rpmh driver only supports on and off RPMh clock resources. Let's
-extend the driver by add support for clocks that are managed by a
-different type of RPMh resource known as Bus Clock Manager(BCM). The BCM
-is a configurable shared resource aggregator that scales performance
-based on a set of frequency points. The Qualcomm IP Accelerator (IPA)
-clock is an example of a resource that is managed by the BCM and this a
-requirement from the IPA driver in order to scale its core clock.
-
->=20
-> Signed-off-by: David Dai <daidavid1@codeaurora.org>
-> ---
->  drivers/clk/qcom/clk-rpmh.c           | 141 ++++++++++++++++++++++++++++=
-++++++
->  include/dt-bindings/clock/qcom,rpmh.h |   1 +
->  2 files changed, 142 insertions(+)
->=20
-> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
-> index 9f4fc77..ee78c4b 100644
-> --- a/drivers/clk/qcom/clk-rpmh.c
-> +++ b/drivers/clk/qcom/clk-rpmh.c
-> @@ -18,6 +18,31 @@
->  #define CLK_RPMH_ARC_EN_OFFSET         0
->  #define CLK_RPMH_VRM_EN_OFFSET         4
-> =20
-> +#define BCM_TCS_CMD_COMMIT_MASK                0x40000000
-> +#define BCM_TCS_CMD_VALID_SHIFT                29
-> +#define BCM_TCS_CMD_VOTE_MASK          0x3fff
-> +#define BCM_TCS_CMD_VOTE_SHIFT         0
-> +
-> +#define BCM_TCS_CMD(valid, vote)                               \
-> +       (BCM_TCS_CMD_COMMIT_MASK |                              \
-> +       ((valid) << BCM_TCS_CMD_VALID_SHIFT) |                  \
-> +       ((cpu_to_le32(vote) &                                   \
-
-Why?
-
-> +       BCM_TCS_CMD_VOTE_MASK) << BCM_TCS_CMD_VOTE_SHIFT))
-> +
-> +/**
-> + * struct bcm_db - Auxiliary data pertaining to each Bus Clock Manager(B=
-CM)
-> + * @unit: divisor used to convert Hz value to an RPMh msg
-> + * @width: multiplier used to convert Hz value to an RPMh msg
-> + * @vcd: virtual clock domain that this bcm belongs to
-> + * @reserved: reserved to pad the struct
-> + */
-> +struct bcm_db {
-> +       __le32 unit;
-> +       __le16 width;
-> +       u8 vcd;
-> +       u8 reserved;
-> +};
-> +
->  /**
->   * struct clk_rpmh - individual rpmh clock data structure
->   * @hw:                        handle between common and hardware-specif=
-ic interfaces
-> @@ -29,6 +54,7 @@
->   * @aggr_state:                rpmh clock aggregated state
->   * @last_sent_aggr_state: rpmh clock last aggr state sent to RPMh
->   * @valid_state_mask:  mask to determine the state of the rpmh clock
-> + * @aux_data:          data specific to the bcm rpmh resource
-
-But there isn't aux_data. Is this supposed to be unit? And what is unit
-going to be? 1000?
-
->   * @dev:               device to which it is attached
->   * @peer:              pointer to the clock rpmh sibling
->   */
-> @@ -42,6 +68,7 @@ struct clk_rpmh {
->         u32 aggr_state;
->         u32 last_sent_aggr_state;
->         u32 valid_state_mask;
-> +       u32 unit;
->         struct device *dev;
->         struct clk_rpmh *peer;
->  };
-> @@ -210,6 +248,91 @@ static unsigned long clk_rpmh_recalc_rate(struct clk=
-_hw *hw,
->         .recalc_rate    =3D clk_rpmh_recalc_rate,
->  };
-> =20
-> +static int clk_rpmh_bcm_send_cmd(struct clk_rpmh *c, bool enable)
-> +{
-> +       struct tcs_cmd cmd =3D { 0 };
-> +       u32 cmd_state;
-> +       int ret;
-> +
-> +       mutex_lock(&rpmh_clk_lock);
-> +
-> +       cmd_state =3D enable ? (c->aggr_state ? c->aggr_state : 1) : 0;
-
-Make this into an if statement instead of double ternary?
-
-	cmd_state =3D 0;
-	if (enable) {
-		cmd_state =3D 1;
-		if (c->aggr_state)
-			cmd_state =3D c->aggr_state;
-
-	}
-
-> +
-> +       if (c->last_sent_aggr_state =3D=3D cmd_state)
-> +               return 0;
-
-We just returned with a mutex held. Oops!
-
-> +
-> +       cmd.addr =3D c->res_addr;
-> +       cmd.data =3D BCM_TCS_CMD(enable, cmd_state);
-> +
-> +       ret =3D rpmh_write_async(c->dev, RPMH_ACTIVE_ONLY_STATE, &cmd, 1);
-> +       if (ret) {
-> +               dev_err(c->dev, "set active state of %s failed: (%d)\n",
-> +                       c->res_name, ret);
-> +               return ret;
-
-Again!
-
-> +       }
-> +
-> +       c->last_sent_aggr_state =3D cmd_state;
-> +
-> +       mutex_unlock(&rpmh_clk_lock);
-> +
-> +       return 0;
-> +}
-> +
-> +static int clk_rpmh_bcm_prepare(struct clk_hw *hw)
-> +{
-> +       struct clk_rpmh *c =3D to_clk_rpmh(hw);
-> +       int ret;
-> +
-> +       ret =3D clk_rpmh_bcm_send_cmd(c, true);
-> +
-> +       return ret;
-
-Just write return clk_rpmh_bcm_send_cmd(...)
-
-> +};
-> +
-> +static void clk_rpmh_bcm_unprepare(struct clk_hw *hw)
-> +{
-> +       struct clk_rpmh *c =3D to_clk_rpmh(hw);
-> +
-> +       clk_rpmh_bcm_send_cmd(c, false);
-> +};
-> +
-> +static int clk_rpmh_bcm_set_rate(struct clk_hw *hw, unsigned long rate,
-> +                                unsigned long parent_rate)
-> +{
-> +       struct clk_rpmh *c =3D to_clk_rpmh(hw);
-> +
-> +       c->aggr_state =3D rate / c->unit;
-> +       /*
-> +        * Since any non-zero value sent to hw would result in enabling t=
-he
-> +        * clock, only send the value if the clock has already been prepa=
-red.
-> +        */
-> +       if (clk_hw_is_prepared(hw))
-
-This is sad, but OK.
-
-> +               clk_rpmh_bcm_send_cmd(c, true);
-> +
-> +       return 0;
-> +};
-> +
-[...]
-> @@ -217,6 +340,7 @@ static unsigned long clk_rpmh_recalc_rate(struct clk_=
-hw *hw,
->  DEFINE_CLK_RPMH_VRM(sdm845, rf_clk1, rf_clk1_ao, "rfclka1", 1);
->  DEFINE_CLK_RPMH_VRM(sdm845, rf_clk2, rf_clk2_ao, "rfclka2", 1);
->  DEFINE_CLK_RPMH_VRM(sdm845, rf_clk3, rf_clk3_ao, "rfclka3", 1);
-> +DEFINE_CLK_RPMH_BCM(sdm845, ipa, "IP0");
-
-It's really IP0?! What was wrong with IPA?
-
-> =20
->  static struct clk_hw *sdm845_rpmh_clocks[] =3D {
->         [RPMH_CXO_CLK]          =3D &sdm845_bi_tcxo.hw,
-> @@ -275,6 +402,20 @@ static int clk_rpmh_probe(struct platform_device *pd=
-ev)
->                                 rpmh_clk->res_name);
->                         return -ENODEV;
->                 }
-> +
-> +               data =3D cmd_db_read_aux_data(rpmh_clk->res_name, &aux_da=
-ta_len);
-> +               if (IS_ERR(data)) {
-> +                       ret =3D PTR_ERR(data);
-> +                       dev_err(&pdev->dev,
-> +                               "error reading RPMh aux data for %s (%d)\=
-n",
-> +                               rpmh_clk->res_name, ret);
-> +                               return ret;
-
-Weird indent here.
+-- 
+Jeffrey Hugo
+Qualcomm Datacenter Technologies as an affiliate of Qualcomm 
+Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
