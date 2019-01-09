@@ -2,110 +2,101 @@ Return-Path: <SRS0=vytI=PR=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20BFFC43387
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Jan 2019 21:22:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A05C1C43387
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Jan 2019 22:30:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB70F206B6
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Jan 2019 21:22:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B424206BB
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Jan 2019 22:30:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gvg9UXJU"
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="Xr55jgAi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725775AbfAIVWK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 9 Jan 2019 16:22:10 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:34976 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725681AbfAIVWK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Jan 2019 16:22:10 -0500
-Received: by mail-wr1-f66.google.com with SMTP id 96so9166615wrb.2;
-        Wed, 09 Jan 2019 13:22:09 -0800 (PST)
+        id S1726761AbfAIWag (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 9 Jan 2019 17:30:36 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:44740 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726221AbfAIWag (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Jan 2019 17:30:36 -0500
+Received: by mail-ot1-f65.google.com with SMTP id f18so8163907otl.11
+        for <linux-clk@vger.kernel.org>; Wed, 09 Jan 2019 14:30:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=HieqPFu/h0vY5Opn+/BucoOr9IvuvEBhl2J+ZDqVL98=;
-        b=Gvg9UXJU4VZmhajJVpHYtUg4M4y+T5rsXYpGPSMkz/2MK4jnkPCyF69QM9yztnN97y
-         K5o40mI1pI0WJl2u+akfM0Rx+ktmF+yVZL5U4ovJmqi3T1TS5xTTdVeGzaFZM2utAHLM
-         VbQCY5J9bMg9qb2XJZVtJ4WwJ5jOabqhQPR+UWnuvCoVaBADGH06rvK5es5c+/OFOtcm
-         UPBqZQSX7IHJRevccA/fzQhE3PqHqgM1Cebrgld0QaD9rKVJBozhRS4svfRldwI58Wkk
-         HgoeN7BJIPznKVgP9qud8A+Y2R0qbbdHvpFEr+0JXKaZu11Sa6/Q6594BtnMp4jleqXN
-         PmyA==
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xLWY6Pk/ualqBVtv+OfnoGEuQRZ9pIAPaVj1nvw9h/c=;
+        b=Xr55jgAiVrMt/SKUOwSy3JhjfieyRHJqOlLNx2YsJNzJnSp2VhGrPYkgzAPVCIn5C0
+         VQXiKH9ENIoNzIl6cJR79y3bAGIEfht2JNNjs34kFFt74W6DZNDlUcly/QvAQu0ePLph
+         CdgAQWXOunKtbJJkKwK52Geifug7VMp5h/WcNloOxGNnvlYW8Rm4M++kd4bnsiLbD9Zh
+         Vzk0PZRmjRul9bGQxXxHYP1lIdyDW/oFJ40u4b8P5mx0IkuUVZgXUDnmALz32WrOK0+f
+         YKaEkqfPNwwBENbAsc0aTqTtMtJGuJ+oqWHkj+tVzAV+QDAy3rrvD0IXBLkXjXTTWVUb
+         UqRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=HieqPFu/h0vY5Opn+/BucoOr9IvuvEBhl2J+ZDqVL98=;
-        b=o/diphe18hs1oXgjHEi5bBXOU6VY+wqT/ZKz0OyyNhgYJ2SNN/Ipe5fwUE6EAJ2Twg
-         z8PeqAHhAgyU3I2XEr7w4yoWcN90MWKddeV2W36Pi+4APfL+yBp8JuliJPWa4H9GEJ7w
-         2iPyBRj74hRLxOF9xTtz3JD8mEOhcS4XV0Fadywo+vhgvLWM5nUOaBhe7j6WwUy34/08
-         MzEVSOtAaB/gByARA9POjPy0ZA+nDlDUfPS9ICLL2UaCTKjZ60ugpAlNgSvDgKEGVjy0
-         nxcm0gVgs8BzM7Ce1uYrrboUqs1OEWND4Ue7vWD8u/U2BGiRp98yIu89hKlBviojgIaJ
-         VwjQ==
-X-Gm-Message-State: AJcUukdutW57x6TxeLyDHqUoK6xmU14XvbJE492kIqA6qAIaH3ERV5Bh
-        zBHdb3kt/wfrA7mF6PlK9cQnyEf+
-X-Google-Smtp-Source: ALg8bN5zk6GQ/+lXPhtMSRt2ggBddwwCbCaiQ2xJP9jsCDVxJfI7R14wRg8DfGJ0vTYDNBvh329q1A==
-X-Received: by 2002:a5d:664a:: with SMTP id f10mr6369213wrw.311.1547068927843;
-        Wed, 09 Jan 2019 13:22:07 -0800 (PST)
-Received: from [192.168.1.4] (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
-        by smtp.gmail.com with ESMTPSA id a12sm62776164wro.18.2019.01.09.13.22.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 09 Jan 2019 13:22:07 -0800 (PST)
-Subject: Re: [PATCH] clk: Fix a missing check on regmap_bulk_read
-To:     Aditya Pakki <pakki001@umn.edu>
-Cc:     kjlu@umn.edu, Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20181224190032.23167-1-pakki001@umn.edu>
-From:   Marek Vasut <marek.vasut@gmail.com>
-Openpgp: preference=signencrypt
-Message-ID: <dc74d564-8db7-a270-5bc3-44993a966f82@gmail.com>
-Date:   Wed, 9 Jan 2019 22:22:06 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xLWY6Pk/ualqBVtv+OfnoGEuQRZ9pIAPaVj1nvw9h/c=;
+        b=qBNAQ1TTi0JO708Vg3FcU/b0Kjq1s9ioTf8ujqdAUB9g1bqQyggn8jWg4FY4Am4GH7
+         BDFF6p5t3prL+u6vuCpas/DLsVfaBhvKQgfGrBfU/0qL4BHT4BmEdEaQUmJxpcXYQCPw
+         hlAT7gDGV/UdZ8M1VoxBgEkBJN37Ss5RZId/V3H7cHH3MXzGCevcybZt+EHWL44NB6hz
+         80EFFG+xGF1FKn66wQoF7sxVXXwSlzhb7UIaM7dG/b1BvTB6PLnxarJrAgIXzoC+7ZmQ
+         Gw1cNqsrdyVXYLGCdxQulJmX35PgPb+2CfPcz2sOPdrEArZxIIlfm6QoEC+lKgs77/Kc
+         J6WA==
+X-Gm-Message-State: AJcUukf2OyASHfRUNwiwUZhssv6QZJR210DNijPqS5+jNPO42mdrlfv/
+        Nm7uk9YG+MQFafWkrGpwO4o3iCeVSZwMxkIS9ZA=
+X-Google-Smtp-Source: ALg8bN4KMr5LYE/CvqC1gBMKCYEb9cuejjk3Bnd9kCO9zHMbKGdbgZRVUjLdyxZCqMkoSCdWBdOsdqY4NXAtnNmr458=
+X-Received: by 2002:a9d:715d:: with SMTP id y29mr5331851otj.148.1547073035745;
+ Wed, 09 Jan 2019 14:30:35 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181224190032.23167-1-pakki001@umn.edu>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20181223235836.12466-1-martin.blumenstingl@googlemail.com>
+ <20181223235836.12466-2-martin.blumenstingl@googlemail.com> <154705938114.15366.1098954164811397084@swboyd.mtv.corp.google.com>
+In-Reply-To: <154705938114.15366.1098954164811397084@swboyd.mtv.corp.google.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Wed, 9 Jan 2019 23:30:24 +0100
+Message-ID: <CAFBinCAginPSuBObJE52puvbay-S698OjAj6aLEm5kfn0SdU0A@mail.gmail.com>
+Subject: Re: [PATCH 1/1] clk: meson: meson8b: fix naming of the APB clocks
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>
+Cc:     jbrunet@baylibre.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, mturquette@baylibre.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 12/24/18 8:00 PM, Aditya Pakki wrote:
-> Currently, vc5_pll_recalc_rate() may produce incorrect output when
-> regmap_bulk_read() fails. The fix checks the return value of the
-> latter function and returns 0 in case of failure.
-> 
-> Signed-off-by: Aditya Pakki <pakki001@umn.edu>
-> ---
->  drivers/clk/clk-versaclock5.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
-> index decffb3826ec..cd76a893c594 100644
-> --- a/drivers/clk/clk-versaclock5.c
-> +++ b/drivers/clk/clk-versaclock5.c
-> @@ -413,7 +413,8 @@ static unsigned long vc5_pll_recalc_rate(struct clk_hw *hw,
->  	u32 div_int, div_frc;
->  	u8 fb[5];
->  
-> -	regmap_bulk_read(vc5->regmap, VC5_FEEDBACK_INT_DIV, fb, 5);
-> +	if (regmap_bulk_read(vc5->regmap, VC5_FEEDBACK_INT_DIV, fb, 5))
-> +		return 0;
+Hi Stephen, Hi Neil,
 
-Shouldn't this return ret on failure ?
+On Wed, Jan 9, 2019 at 7:43 PM Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> Quoting Martin Blumenstingl (2018-12-23 15:58:36)
+> > Fix a typo in the APB clock names by renaming them from "abp" to "apb".
+> > No functional changes.
+> >
+> > Fixes: 8e1dd17c8b0e3f ("dt-bindings: clock: meson8b: export the CPU post dividers")
+> > Fixes: a7d19b05ce817d ("clk: meson: meson8b: add the CPU clock post divider clocks")
+> > Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> > ---
+>
+> Can I apply this directly to fixes? Or it's not critical so we can punt
+> until next merge window?
+actually it's not critical:
+I'm not aware of any IP block that I needs the APB clock as input (I'm
+pretty sure there is some, but I'm not aware of it so it can wait).
 
->  	div_int = (fb[0] << 4) | (fb[1] >> 4);
->  	div_frc = (fb[2] << 16) | (fb[3] << 8) | fb[4];
-> 
+Neil already applied another patch for -next which conflicts with this.
+we can choose now:
+1. Stephen takes this patch, Neil drops the (conflicting) GPU clock
+patches from -next and I re-send the GPU clock patches
+2. Stephen and Neil don't do anything, I re-send this patch on top of
+the GPU clock patches
+
+I'm fine either way, but #2 is less work for you guys.
+if I don't hear back from you then I'll go with option #2
 
 
--- 
-Best regards,
-Marek Vasut
+Regards
+Martin
