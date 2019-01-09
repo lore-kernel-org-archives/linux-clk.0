@@ -2,165 +2,218 @@ Return-Path: <SRS0=vytI=PR=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65FD2C43387
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Jan 2019 14:22:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D9D4C43387
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Jan 2019 16:54:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F04412075C
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Jan 2019 14:22:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC7A0206BA
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Jan 2019 16:54:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="s1S35ost"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fiq3ebHI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730380AbfAIOWM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 9 Jan 2019 09:22:12 -0500
-Received: from mailout1.samsung.com ([203.254.224.24]:12826 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730017AbfAIOWM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Jan 2019 09:22:12 -0500
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20190109142210epoutp018eda0fc4d77e19d3a1dd1ade14565eb9~4NBNwUG8Q0996209962epoutp01P;
-        Wed,  9 Jan 2019 14:22:10 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20190109142210epoutp018eda0fc4d77e19d3a1dd1ade14565eb9~4NBNwUG8Q0996209962epoutp01P
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1547043730;
-        bh=8bDMvRpJ/Yh/Jb2wYY/ds0yHxLF5uUVimVtfo2RNVbA=;
-        h=Subject:To:Cc:From:Date:In-reply-to:References:From;
-        b=s1S35ostDSVafUfUr+OLNci7hYDkh40PR+UruXQDpFKykIRDc19FoZNgRVS8xSGMP
-         VbQi3RotBNd5gPsAwOSAh3qirZSoA/QvYSlzrFUIuZC4e5irslsh0pxxf10D6IlD8V
-         cP77jJhAVzND1FoLIbbXhtOz5t3ax9CbkTCINlUM=
-Received: from epsmges1p4.samsung.com (unknown [182.195.42.56]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20190109142209epcas1p24933b8e45fb2fe3a534ee1f71af184e4~4NBNdD4Ru2321223212epcas1p2R;
-        Wed,  9 Jan 2019 14:22:09 +0000 (GMT)
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
-        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        D7.EF.04146.193063C5; Wed,  9 Jan 2019 23:22:09 +0900 (KST)
-Received: from epsmgms2p1new.samsung.com (unknown [182.195.42.142]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20190109142208epcas1p142f795e0cc8f4de05aa189b843bc2dbb~4NBMf12PI0606506065epcas1p1R;
-        Wed,  9 Jan 2019 14:22:08 +0000 (GMT)
-X-AuditID: b6c32a38-18fff70000001032-f9-5c360391f393
-Received: from epmmp1.local.host ( [203.254.227.16]) by
-        epsmgms2p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        CF.DB.03601.093063C5; Wed,  9 Jan 2019 23:22:08 +0900 (KST)
-Received: from [106.116.147.40] by mmp1.samsung.com (Oracle Communications
-        Messaging Server 7.0.5.31.0 64bit (built May  5 2014)) with ESMTPA id
-        <0PL200DWCIKUQE60@mmp1.samsung.com>; Wed, 09 Jan 2019 23:22:08 +0900 (KST)
-Subject: Re: Informing common clock framework driver of externally-derived
- base clock frequency
-To:     Jonny Hall <jonny.hall@boxcast.com>
-Cc:     linux-clk@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <f5d6c493-5e7e-00ec-a547-c952369630c6@samsung.com>
-Date:   Wed, 09 Jan 2019 15:22:05 +0100
+        id S1726408AbfAIQyT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 9 Jan 2019 11:54:19 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:45485 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726072AbfAIQyT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Jan 2019 11:54:19 -0500
+Received: by mail-ed1-f66.google.com with SMTP id d39so7837912edb.12;
+        Wed, 09 Jan 2019 08:54:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=iRHQV9UA/tZd6I5vbS1Nt1Z2XPAnN4P+UZiKxF8EUGM=;
+        b=fiq3ebHIoJVFnpgMFF1EmQRC6XmDzWcNvCoiaLr71A+W0oA3amFM9V5S3/dKRBl8A2
+         nOU+HardShTMPosIQdydQBcsk2Q6c6/p32kdgB/cqs3dOYwlHetkIo0UB/Pj+5QIi7ep
+         IZDy6393bmlQPQl1HNHlAma6ssKNEZMJHr8OH/1pLqau6iDYAvumTHukuht1qIEUf+Tf
+         kTvsXnZEh+cCfUOKp1eFYS1NrZCEUY3BKHmuwXzk5EiJj1Y7tQ3U0FBV87AgT4an004P
+         QWNhlYq3oOPck0ODWPfoF2abHOqrC0ZqTcLKADlR8K+RpJR7yImHHAaSRzaOppz8iFsB
+         RClw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=iRHQV9UA/tZd6I5vbS1Nt1Z2XPAnN4P+UZiKxF8EUGM=;
+        b=aTFx2rE58kb56Uau+ONZfBwsuPwaVsDm4iFtd2wh8CX2pLplshEiV/p7HV5sxBYOyf
+         cS2F/NfScQwnuLvEW4dGODIoiGiakcdDIDp/kI4UusoaIZerqZm5zukdzpCubc4uE/NT
+         WPswRfISK9zvnkwv5uVIWULSWZwRB9MGxY98wdWcbOuhqPahcGN/WAxxHoEopuJNVCVS
+         F07IqDoQtisSZmkzXN2heyy1qt0zwCy9bcyD11qUWeuagpC+NbipDNCViP0GpXFyQCZH
+         xQhhTNXCsWkEEPFUALWIkqDRfUraumofLIV+Pdoys3BaZPesQwo8LfHuzuDwO6BUgriA
+         78mA==
+X-Gm-Message-State: AJcUukeqJYOH8n10ybWYrLLhK8u32DqU1jvZujnnPafH2Jrw5VWw+W4Y
+        blOli9L4pQySmqSPNdryOowaFOzn
+X-Google-Smtp-Source: ALg8bN6CaKEKkAjfWrzQgGI1EHaVrgbyqcZBKg7FnVF9FjlFxDDvikoJhrA7kMlJNAbbJA/4Knibrw==
+X-Received: by 2002:a50:8863:: with SMTP id c32mr6382356edc.156.1547052856530;
+        Wed, 09 Jan 2019 08:54:16 -0800 (PST)
+Received: from ziggy.stardust ([37.223.147.38])
+        by smtp.gmail.com with ESMTPSA id b49sm1400255edb.73.2019.01.09.08.54.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 09 Jan 2019 08:54:15 -0800 (PST)
+Subject: Re: [PATCH 4/9] drm/mediatek: fix the rate and divder of hdmi phy for
+ MT2701
+To:     chunhui dai <chunhui.dai@mediatek.com>,
+        --to=Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, CK Hu <ck.hu@mediatek.com>
+Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
+        David Airlie <airlied@linux.ie>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        dri-devel@lists.freedesktop.org, srv_heupstream@mediatek.com,
+        bibby.hsieh@mediatek.com, jamesjj.liao@mediatek.com,
+        jitao.shi@mediatek.com
+References: <1546585439-30455-1-git-send-email-chunhui.dai@mediatek.com>
+ <1546585439-30455-5-git-send-email-chunhui.dai@mediatek.com>
+From:   Matthias Brugger <matthias.bgg@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ jrHWeQEI2ucSKsNa8FllDmG/fQ==
+Message-ID: <a3e37dde-2bab-be02-27ec-d15784bd560b@gmail.com>
+Date:   Wed, 9 Jan 2019 17:54:13 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.2.1
-MIME-version: 1.0
-In-reply-to: <CAP_wsPa5qsuUhDNXWe55612xY-ppytj+jX4+5s-bFxn5BURoTg@mail.gmail.com>
-Content-type: text/plain; charset="utf-8"
-Content-language: en-GB
-Content-transfer-encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrIIsWRmVeSWpSXmKPExsWy7bCmvu5EZrMYg2WvNSx6di5ktfjYc4/V
-        4uIpV4t/1zayOLB4vL/Ryu4x79F3Jo9NqzrZPD5vkgtgieKySUnNySxLLdK3S+DKODb3LmPB
-        U6mKA/MXsjQwHhbtYuTkkBAwkeie+J+5i5GLQ0hgB6PEprXX2SGc74wSK9beZYaputA5gQ3E
-        FhLYzSgxZ04+RNF9RolvN28AFXFwCAskSuyawwRSIyKgLrFz2WMwm1kgV6Ln5XkWEJtNwFCi
-        92gfI4jNK2An0fRwLVgNi4CqxPE5G8B2iQpESHTcX80GUSMo8WPyPbBeToFgiU99l5khZmpK
-        vPgyiQXCFpc4dv8mI4QtL7F5zVuwbyQE1rBJrJh/jxHiAReJFbs3skPYwhKvjm9hB7lZQkBa
-        4tJRW4hwtcSu7d1QvR2MEi0XtkM9by1x+PhFVogFfBLvvvawQvTySnS0CUGUeEhM23kYGooL
-        mCROvzzKPIFRdhaSH2YhuXsWkrtnIbl7ASPLKkax1ILi3PTUYsMCE73ixNzi0rx0veT83E2M
-        4ISgZbGDcc85n0OMAhyMSjy8OxjMYoRYE8uKK3MPMUpwMCuJ8KrfMYkR4k1JrKxKLcqPLyrN
-        SS0+xCjNwaIkzvtEam60kEB6YklqdmpqQWoRTJaJg1OqgTHeVEVe5eMbLs0vGl7xb2Tuvg7+
-        UVK4e9/uFQ9cj3/8/vNvZtrdTabqcp9vZHasXM+3K8RB4fLx8scMly0TH+54FCGddCdxXYz1
-        Brnlh88nTDwVInPP8QVPuaQhi9+LSybNBxT+a4dGPinQ2n7J9O0F26Pb5i34OY3xQ+a2zyFL
-        CtLXrk7awVGrxFKckWioxVxUnAgAVeZVHAQDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrGLMWRmVeSWpSXmKPExsVy+t9jAd0JzGYxBhNbtSx6di5ktfjYc4/V
-        4uIpV4t/1zayOLB4vL/Ryu4x79F3Jo9NqzrZPD5vkgtgieKySUnNySxLLdK3S+DKODb3LmPB
-        U6mKA/MXsjQwHhbtYuTkkBAwkbjQOYGti5GLQ0hgJ6PEqTuPGCGch4wSnXfPMYNUCQskSrzu
-        fcgOYosIqEvsXPaYCcRmFsiVOLh9O1T3IiaJzf/WgRWxCRhK9B7tYwSxeQXsJJoergVrYBFQ
-        lTg+ZwPYUFGBCImzL9dB1QhK/Jh8jwXE5hQIlni9fAdQPQfQAnWJKVNyIXaJSxy7f5MRwpaX
-        2LzmLfMERoFZSLpnIXTMQtIxC0nHAkaWVYySqQXFuem5xUYFhnmp5XrFibnFpXnpesn5uZsY
-        gaG97bBW3w7G+0viDzEKcDAq8fAm/DONEWJNLCuuzD3EKMHBrCTCq37HJEaINyWxsiq1KD++
-        qDQntfgQozQHi5I47+28Y5FCAumJJanZqakFqUUwWSYOTqkGxvKHnnKGnqfrgs1mtN9euCtd
-        zNmqfie3wqmGuOs8/0M+XVlfuHfFRtOXS5fs+5exkymiN22WSK7t/WvRV5UOtOU/npXwVlXW
-        mi/6+Xm5Y/0Pp0e1n+1fvylD9d6FS14uIg+bPQ45McvcN1uqzxE1s+7ZNs/MNdLH0k+6a7F9
-        Km2YsuP8CaXNKkosxRmJhlrMRcWJAK1kHIZpAgAA
-X-CMS-MailID: 20190109142208epcas1p142f795e0cc8f4de05aa189b843bc2dbb
-X-Msg-Generator: CA
-CMS-TYPE: 101P
-X-CMS-RootMailID: 20190104023702epcas4p4e6b225121db059cb6ed167581c303e92
-References: <CGME20190104023702epcas4p4e6b225121db059cb6ed167581c303e92@epcas4p4.samsung.com>
-        <CAP_wsPYwykAPF=aedoHkZnKhLgFdbUNMK7tpFJkhMfr_X2Gnrg@mail.gmail.com>
-        <32a08ee4-3989-3785-88d6-7d215147eba3@samsung.com>
-        <CAP_wsPa5qsuUhDNXWe55612xY-ppytj+jX4+5s-bFxn5BURoTg@mail.gmail.com>
+ Thunderbird/60.3.3
+MIME-Version: 1.0
+In-Reply-To: <1546585439-30455-5-git-send-email-chunhui.dai@mediatek.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 1/4/19 22:29, Jonny Hall wrote:
-> On Fri, Jan 4, 2019 at 4:30 AM Sylwester Nawrocki
-> <s.nawrocki@samsung.com> wrote:
-[...]
->> On 1/4/19 03:35, Jonny Hall wrote:
->> [...]
->>> ... However, in my application, the input frequency of
->>> the si5342 is not known in advance, is derived from an external
->>> source, and can change during runtime. The si5342 will need to be
->>> (re)configured during operation with the frequency of this root clock
->>> source in order to properly lock onto it and generate the correct
->>> output frequencies -- it cannot independently determine the input
->>> frequency, only "locked" / "unlocked" state.  The application software
->>> (other drivers and usermode application code) will know the input
->>> clock rate.  I've though of a couple ways to do this:
->>>
->>> -Implement the root clock source as an "imaginary" divider where the
->>> set_rate call actually configures the input dividers of the si5342.
->>> This approach seems to abuse the common clock framework, as I'm not
->>> actually *setting* the rate, I'm *informing* the driver of a rate that
->>> was determined independently.
->>
->> It sounds like registering a clk notifier on the si5342 root source clock
->> might be a way to go, wouldn't that work for you?
->> For an example you could have a look at drivers/clk/sunxi-ng/ccu_mux.c.
 
-> Maybe my understanding is incorrect, but to me it looks like a
-> notifier (callback registered with clk_notifier_register) is actually
-> the opposite case -- this method would be used by a clock consumer
-> that wants to be notified by the common clock framework that a clock
-> rate has changed (I, as an endpoint, want to know when my clock
-> source, which is controlled by CCF drivers, changes rate).  The use
-> case I'm looking for is when a clock chip needs to be notified by
-> *something else* that something in the system has changed (I, as a
-> clock chip, need to be informed by other parts of the system what my
-> input clock rate is).
 
-How about modelling SI5432 input clocks as clock objects? Don't you do it 
-already? These are clocks the SI5432 consumes so would be needed anyway.
- 
-> To add a bit of clarity to the scenario -- in my use case, the si5342
-> is generating video pixel clocks for video outputs from the system.
-> The inputs of the si5342 are other video pixel clocks, from video
-> inputs to the system.  The parts of the system that are aware of the
-> input clock rates are things like HDMI subsystem drivers and usermode
-> application code.  I need a way to connect these
-> "parts-that-are-aware-of-the-clock-rate" to my si5342 driver so it can
-> properly configure that portion of the si5342 -- preferably within the
-> common clock framework, because on the output side of the si5342, our
-> video output drivers already work with the CCF.
+On 04/01/2019 08:03, chunhui dai wrote:
+> fix the rate and divder of hdmi phy for MT2701.
 
-Assuming the HDMI receiver is source of the clock, couldn't the HDMI 
-driver just register a clock and modify its rate according to the HW
-state changes or user ioctls, etc.? The rate is then propagated through
-whole clock tree and any element can get notified about changes.
+This is a bug? Then we would need a fixes tag.
+Otherwise you should explain in the commit, that you need to change the
+calculation due to previous commits.
 
-> It looks like some similar chips use recalc_rate as their function to
-> configure input dividers -- but there appears to be no way to call
-> recalc_rate through the clk.h API -- it looks like recalc_rate is only
-> used for keeping track of things internal to the CCF.
--- 
 Regards,
-Sylwester
+Matthias
+
+> 
+> Signed-off-by: chunhui dai <chunhui.dai@mediatek.com>
+> ---
+>  drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c b/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
+> index a28a32d..10b6235 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
+> @@ -114,8 +114,8 @@ static int mtk_hdmi_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+>  
+>  	if (rate <= 64000000)
+>  		pos_div = 3;
+> -	else if (rate <= 12800000)
+> -		pos_div = 1;
+> +	else if (rate <= 128000000)
+> +		pos_div = 2;
+>  	else
+>  		pos_div = 1;
+>  
+> 
