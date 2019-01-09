@@ -5,59 +5,59 @@ X-Spam-Level:
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D9D4C43387
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Jan 2019 16:54:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2A3FC43387
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Jan 2019 16:55:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC7A0206BA
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Jan 2019 16:54:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6EF79206BA
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Jan 2019 16:55:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fiq3ebHI"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mo5Yp4Uw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726408AbfAIQyT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 9 Jan 2019 11:54:19 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:45485 "EHLO
+        id S1726437AbfAIQzX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 9 Jan 2019 11:55:23 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:39706 "EHLO
         mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726072AbfAIQyT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Jan 2019 11:54:19 -0500
-Received: by mail-ed1-f66.google.com with SMTP id d39so7837912edb.12;
-        Wed, 09 Jan 2019 08:54:17 -0800 (PST)
+        with ESMTP id S1726072AbfAIQzV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Jan 2019 11:55:21 -0500
+Received: by mail-ed1-f66.google.com with SMTP id b14so7884329edt.6;
+        Wed, 09 Jan 2019 08:55:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=iRHQV9UA/tZd6I5vbS1Nt1Z2XPAnN4P+UZiKxF8EUGM=;
-        b=fiq3ebHIoJVFnpgMFF1EmQRC6XmDzWcNvCoiaLr71A+W0oA3amFM9V5S3/dKRBl8A2
-         nOU+HardShTMPosIQdydQBcsk2Q6c6/p32kdgB/cqs3dOYwlHetkIo0UB/Pj+5QIi7ep
-         IZDy6393bmlQPQl1HNHlAma6ssKNEZMJHr8OH/1pLqau6iDYAvumTHukuht1qIEUf+Tf
-         kTvsXnZEh+cCfUOKp1eFYS1NrZCEUY3BKHmuwXzk5EiJj1Y7tQ3U0FBV87AgT4an004P
-         QWNhlYq3oOPck0ODWPfoF2abHOqrC0ZqTcLKADlR8K+RpJR7yImHHAaSRzaOppz8iFsB
-         RClw==
+        bh=iBNiD4TJ4++2Y0hKQ9jYDiyvQO2sl35EXjB4oCbD92Q=;
+        b=mo5Yp4UwUZGdDEmTmZXF81wWgqGHO+DD6GtjzSCJixJTQq10YmcQwY/GZC9YcWDDXa
+         Ka5Dw23HeyIy0VqPTTrYp7O2KMesKJ3N1mXinprDgbxNCBa5zLBxnakPVgywv4tWtede
+         I83czNz/qUO6AjndiK4r2UAELZyvK29QQTFUo2qEyWsNOeHD4DnNuGQ0pczQjvXEso8S
+         KtDwXMWayca5aM/wzmdWSwBUuTL/ZKl/j96UXqyavec0kDQQ6cR98Vy79gLI0ZWYWYZz
+         88X3B/lc7DdnyW2D4vUfKiibjjZ40i4gk52v51KMSx5Ix/Io6Ct3jYBRSxoWQlba2RV2
+         lGOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=iRHQV9UA/tZd6I5vbS1Nt1Z2XPAnN4P+UZiKxF8EUGM=;
-        b=aTFx2rE58kb56Uau+ONZfBwsuPwaVsDm4iFtd2wh8CX2pLplshEiV/p7HV5sxBYOyf
-         cS2F/NfScQwnuLvEW4dGODIoiGiakcdDIDp/kI4UusoaIZerqZm5zukdzpCubc4uE/NT
-         WPswRfISK9zvnkwv5uVIWULSWZwRB9MGxY98wdWcbOuhqPahcGN/WAxxHoEopuJNVCVS
-         F07IqDoQtisSZmkzXN2heyy1qt0zwCy9bcyD11qUWeuagpC+NbipDNCViP0GpXFyQCZH
-         xQhhTNXCsWkEEPFUALWIkqDRfUraumofLIV+Pdoys3BaZPesQwo8LfHuzuDwO6BUgriA
-         78mA==
-X-Gm-Message-State: AJcUukeqJYOH8n10ybWYrLLhK8u32DqU1jvZujnnPafH2Jrw5VWw+W4Y
-        blOli9L4pQySmqSPNdryOowaFOzn
-X-Google-Smtp-Source: ALg8bN6CaKEKkAjfWrzQgGI1EHaVrgbyqcZBKg7FnVF9FjlFxDDvikoJhrA7kMlJNAbbJA/4Knibrw==
-X-Received: by 2002:a50:8863:: with SMTP id c32mr6382356edc.156.1547052856530;
-        Wed, 09 Jan 2019 08:54:16 -0800 (PST)
+        bh=iBNiD4TJ4++2Y0hKQ9jYDiyvQO2sl35EXjB4oCbD92Q=;
+        b=m3Av/mXhib8FKNaw/iieHjOmR5DiMtWL2cVTzdAjVYQIt/GE7uu/mzba73R/WKP4qN
+         xME96hRJERGAxt0M4h5fOfJEtDMmoJtIoIC9FvMxRGr4+rY1ck5CcyQuE908lE9VEqW4
+         dF8gM/95SddkqjzfjVjmoLxTKlgbz4Vp2FCKgYZglnMbLrZYZ7MwuWmIdeUw6lAGE+78
+         4GJnZMUrkDl2jjMJ+f0CIIxpyak6EPI2RRfB9EnSqdxefMXLZ2wnBP+OdJzTKmcHUaGu
+         qSxeeALfcQOpjn5SBv/f6zqOI1HVsfZxrbN9IB6+g5rt+xC4RXRRBaz42lXz+0OPOREh
+         UoLw==
+X-Gm-Message-State: AJcUukfzZJVaeMkUpNBgmDXB1VQTmKtzAKESOvUu8UpijVH4pAaWQDI5
+        YSBFe+vI9IGnO6+QwC5/+rU=
+X-Google-Smtp-Source: ALg8bN5l3mnfvt8DdfcMgDJhHmTf8ibDpsMbBB8R+Cr7mZJCRhVyGJRslDrjBVNjA45gBelpFH0Piw==
+X-Received: by 2002:a17:906:1b12:: with SMTP id o18-v6mr5999182ejg.65.1547052919327;
+        Wed, 09 Jan 2019 08:55:19 -0800 (PST)
 Received: from ziggy.stardust ([37.223.147.38])
-        by smtp.gmail.com with ESMTPSA id b49sm1400255edb.73.2019.01.09.08.54.14
+        by smtp.gmail.com with ESMTPSA id n3-v6sm774310ejd.35.2019.01.09.08.55.17
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 09 Jan 2019 08:54:15 -0800 (PST)
-Subject: Re: [PATCH 4/9] drm/mediatek: fix the rate and divder of hdmi phy for
- MT2701
+        Wed, 09 Jan 2019 08:55:18 -0800 (PST)
+Subject: Re: [PATCH 1/9] drm/mediatek: recalculate hdmi phy clock of MT2701 by
+ querying hardware
 To:     chunhui dai <chunhui.dai@mediatek.com>,
         --to=Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, CK Hu <ck.hu@mediatek.com>
@@ -73,7 +73,7 @@ Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
         bibby.hsieh@mediatek.com, jamesjj.liao@mediatek.com,
         jitao.shi@mediatek.com
 References: <1546585439-30455-1-git-send-email-chunhui.dai@mediatek.com>
- <1546585439-30455-5-git-send-email-chunhui.dai@mediatek.com>
+ <1546585439-30455-2-git-send-email-chunhui.dai@mediatek.com>
 From:   Matthias Brugger <matthias.bgg@gmail.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
@@ -169,12 +169,12 @@ Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
  pac005PuhxCWkKTJz3gCmznnoat4GCnL5gy/m0Qk45l4PFqwWXVLo9AQg2Kp3mlIFZ6fsEKI
  AN5hxlbNvNb9V2Zo5bFZjPWPFTxOteM0omUAS+QopwU0yPLLGJVf2iCmItHcUXI+r2JwH1CJ
  jrHWeQEI2ucSKsNa8FllDmG/fQ==
-Message-ID: <a3e37dde-2bab-be02-27ec-d15784bd560b@gmail.com>
-Date:   Wed, 9 Jan 2019 17:54:13 +0100
+Message-ID: <3d3f3726-0eef-00c5-1444-a4112af683ac@gmail.com>
+Date:   Wed, 9 Jan 2019 17:55:17 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.3.3
 MIME-Version: 1.0
-In-Reply-To: <1546585439-30455-5-git-send-email-chunhui.dai@mediatek.com>
+In-Reply-To: <1546585439-30455-2-git-send-email-chunhui.dai@mediatek.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -186,34 +186,141 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 
 On 04/01/2019 08:03, chunhui dai wrote:
-> fix the rate and divder of hdmi phy for MT2701.
+> Recalculate the rate of this clock, by querying hardware.
+> 
+> Signed-off-by: chunhui dai <chunhui.dai@mediatek.com>
+> ---
+>  drivers/gpu/drm/mediatek/mtk_hdmi_phy.c        |  7 ++--
+>  drivers/gpu/drm/mediatek/mtk_hdmi_phy.h        |  3 +-
+>  drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c | 49 ++++++++++++++++++++++++++
+>  drivers/gpu/drm/mediatek/mtk_mt8173_hdmi_phy.c |  8 +++++
+>  4 files changed, 61 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi_phy.c b/drivers/gpu/drm/mediatek/mtk_hdmi_phy.c
+> index 4ef9c57..79e737d 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_hdmi_phy.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_hdmi_phy.c
+> @@ -29,12 +29,11 @@ long mtk_hdmi_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+>  	return rate;
+>  }
+>  
+> -unsigned long mtk_hdmi_pll_recalc_rate(struct clk_hw *hw,
+> -				       unsigned long parent_rate)
+> +u32 mtk_hdmi_phy_read(struct mtk_hdmi_phy *hdmi_phy, u32 offset)
+>  {
+> -	struct mtk_hdmi_phy *hdmi_phy = to_mtk_hdmi_phy(hw);
+> +	void __iomem *reg = hdmi_phy->regs + offset;
+>  
+> -	return hdmi_phy->pll_rate;
+> +	return readl(reg);
+>  }
+>  
+>  void mtk_hdmi_phy_clear_bits(struct mtk_hdmi_phy *hdmi_phy, u32 offset,
+> diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi_phy.h b/drivers/gpu/drm/mediatek/mtk_hdmi_phy.h
+> index f39b1fc..fdad8b1 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_hdmi_phy.h
+> +++ b/drivers/gpu/drm/mediatek/mtk_hdmi_phy.h
+> @@ -41,6 +41,7 @@ struct mtk_hdmi_phy {
+>  	unsigned int ibias_up;
+>  };
+>  
+> +u32 mtk_hdmi_phy_read(struct mtk_hdmi_phy *hdmi_phy, u32 offset);
+>  void mtk_hdmi_phy_clear_bits(struct mtk_hdmi_phy *hdmi_phy, u32 offset,
+>  			     u32 bits);
+>  void mtk_hdmi_phy_set_bits(struct mtk_hdmi_phy *hdmi_phy, u32 offset,
+> @@ -50,8 +51,6 @@ void mtk_hdmi_phy_mask(struct mtk_hdmi_phy *hdmi_phy, u32 offset,
+>  struct mtk_hdmi_phy *to_mtk_hdmi_phy(struct clk_hw *hw);
+>  long mtk_hdmi_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+>  			     unsigned long *parent_rate);
+> -unsigned long mtk_hdmi_pll_recalc_rate(struct clk_hw *hw,
+> -				       unsigned long parent_rate);
+>  
+>  extern struct platform_driver mtk_hdmi_phy_driver;
+>  extern struct mtk_hdmi_phy_conf mtk_hdmi_phy_8173_conf;
+> diff --git a/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c b/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
+> index fcc42dc..b5ed6b7 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
+> @@ -153,6 +153,55 @@ static int mtk_hdmi_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+>  			  RG_HDMITX_DRV_IBIAS_MASK);
+>  	return 0;
+>  }
+> +static unsigned long mtk_hdmi_pll_recalc_rate(struct clk_hw *hw,
+> +				       unsigned long parent_rate)
+> +{
+> +	struct mtk_hdmi_phy *hdmi_phy = to_mtk_hdmi_phy(hw);
+> +	unsigned long out_rate, val;
+> +
+> +	val = (mtk_hdmi_phy_read(hdmi_phy, HDMI_CON6)
+> +			& RG_HTPLL_PREDIV_MASK) >> RG_HTPLL_PREDIV;
+> +	switch (val) {
+> +	case 0x00:
+> +		out_rate = parent_rate;
+> +		break;
+> +	case 0x01:
+> +		out_rate = parent_rate / 2;
+> +		break;
+> +	default:
+> +		out_rate = parent_rate / 4;
+> +		break;
+> +	}
+> +
+> +	val = (mtk_hdmi_phy_read(hdmi_phy, HDMI_CON6)
+> +			& RG_HTPLL_FBKDIV_MASK) >> RG_HTPLL_FBKDIV;
+> +	out_rate = out_rate * (val + 1) * 2;
+> +	val = (mtk_hdmi_phy_read(hdmi_phy, HDMI_CON2)
+> +			& RG_HDMITX_TX_POSDIV_MASK) >> RG_HDMITX_TX_POSDIV;
+> +	switch (val) {
+> +	case 0x00:
+> +		out_rate = out_rate;
+> +		break;
+> +	case 0x01:
+> +		out_rate = out_rate / 2;
+> +		break;
+> +	case 0x02:
+> +		out_rate = out_rate / 4;
+> +		break;
+> +	case 0x03:
+> +		out_rate = out_rate / 8;
+> +		break;
+> +	default:
+> +		break;
+> +	}
+> +
+> +	if (mtk_hdmi_phy_read(hdmi_phy, HDMI_CON2) & RG_HDMITX_EN_TX_POSDIV)
 
-This is a bug? Then we would need a fixes tag.
-Otherwise you should explain in the commit, that you need to change the
-calculation due to previous commits.
+Is this path time critical? You are reading the same register twice instead of
+saving the read in a local varibale.
 
 Regards,
 Matthias
 
-> 
-> Signed-off-by: chunhui dai <chunhui.dai@mediatek.com>
-> ---
->  drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c b/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
-> index a28a32d..10b6235 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
-> @@ -114,8 +114,8 @@ static int mtk_hdmi_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+> +		out_rate = out_rate / 5;
+> +
+> +	hdmi_phy->pll_rate = out_rate;
+> +
+> +	return hdmi_phy->pll_rate;
+> +}
 >  
->  	if (rate <= 64000000)
->  		pos_div = 3;
-> -	else if (rate <= 12800000)
-> -		pos_div = 1;
-> +	else if (rate <= 128000000)
-> +		pos_div = 2;
->  	else
->  		pos_div = 1;
+>  static const struct clk_ops mtk_hdmi_phy_pll_ops = {
+>  	.prepare = mtk_hdmi_pll_prepare,
+> diff --git a/drivers/gpu/drm/mediatek/mtk_mt8173_hdmi_phy.c b/drivers/gpu/drm/mediatek/mtk_mt8173_hdmi_phy.c
+> index ed5916b..cb23c1e 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_mt8173_hdmi_phy.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_mt8173_hdmi_phy.c
+> @@ -285,6 +285,14 @@ static int mtk_hdmi_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+>  	return 0;
+>  }
 >  
+> +static unsigned long mtk_hdmi_pll_recalc_rate(struct clk_hw *hw,
+> +				       unsigned long parent_rate)
+> +{
+> +	struct mtk_hdmi_phy *hdmi_phy = to_mtk_hdmi_phy(hw);
+> +
+> +	return hdmi_phy->pll_rate;
+> +}
+> +
+>  static const struct clk_ops mtk_hdmi_phy_pll_ops = {
+>  	.prepare = mtk_hdmi_pll_prepare,
+>  	.unprepare = mtk_hdmi_pll_unprepare,
 > 
