@@ -6,67 +6,68 @@ X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5456CC43387
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Jan 2019 18:38:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 301E3C43387
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Jan 2019 18:39:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D9C8214C6
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Jan 2019 18:38:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 01DBA214C6
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Jan 2019 18:39:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547059116;
-	bh=zAHkjSyi+jTx0DIie4pkuFbukekEgTKpSWVM0YuaOak=;
+	s=default; t=1547059169;
+	bh=VrH//XlMJm8zf4cEdUsxKdKXXd1j0P1uCJjI7t/nZdg=;
 	h=Subject:Cc:To:In-Reply-To:From:References:Date:List-ID:From;
-	b=h2df4fJLIa62w9riHzmzHQJSAvJMFtQx2wmlB2p2BQB2uPRMlnR1+Bn7zF1vlgMB1
-	 ZYJVLUaiTWZx3qQjsMxGuklz9ovN0ZDk/vHgOP2PqRQIR3ZJyWXpNfR2hHp9A+gKy/
-	 wyxRDSFlqm7UZVxqgL5IrKOVrfQVIAQEC6ocMMtU=
+	b=x34xO5k2WrRTaEd4lP8BAg25o+CTZ5J+oMs4v+976U9gccjsQLRdGSRX7DMsi6ViH
+	 hhdQ44eNTT+6ReGsHlmLRIEyqUNUxlgLaXO1Gh00N1fc3sclBAx5q0/RghrO7IQ5Kr
+	 smjKZV8IUGxq/JhJMaYjQhyGEc2VqcsW4bwXTpuo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726782AbfAISif (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 9 Jan 2019 13:38:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42604 "EHLO mail.kernel.org"
+        id S1727403AbfAISj2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 9 Jan 2019 13:39:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43452 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726292AbfAISif (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 9 Jan 2019 13:38:35 -0500
+        id S1726465AbfAISj2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 9 Jan 2019 13:39:28 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 00F5920657;
-        Wed,  9 Jan 2019 18:38:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C9A4D20657;
+        Wed,  9 Jan 2019 18:39:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547059115;
-        bh=zAHkjSyi+jTx0DIie4pkuFbukekEgTKpSWVM0YuaOak=;
+        s=default; t=1547059167;
+        bh=VrH//XlMJm8zf4cEdUsxKdKXXd1j0P1uCJjI7t/nZdg=;
         h=Subject:Cc:To:In-Reply-To:From:References:Date:From;
-        b=e8SsE1qNCHJvSHwA2tc38zbYfveTMH4a3ZufmnI2f55+h4z7E2F8CPlBs+ebW49bN
-         obg10Rll0Qcxct8Pt5AT89Mr0+pAZbU3h4vyat9jPromqSdtW//awLnKeSOlhIwjYB
-         e6UpQqe326xBYoG/9GQsbacom7qelor/eQh87UgE=
+        b=KeTyiLcPUS/vkj0DieVFRd7UHbTgmSMcgPhE8vs+lcj3oavDNQVHp4Nb6Wz/yo3hU
+         88xrMfrKSDcxhYY11gImwy/riO+cBEjlNxmCwLVg75vR1oGyVxMbnRjVmIlG7A6Mf3
+         r1zuRuL7LU5i880pPkKFAKOknoU+TwPXpsE/6kcI=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] clk: zynqmp: Fix memory allocation in zynqmp_clk_setup
-Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Jolly Shah <jolly.shah@xilinx.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Michal Simek <michal.simek@xilinx.com>
-In-Reply-To: <20181224055058.GA23947@embeddedor.com>
+Subject: Re: [PATCH V4 10/20] clk: tegra: dfll: build clk-dfll.c for Tegra124 and Tegra210
+Cc:     linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+        linux-clk@vger.kernel.org, Joseph Lo <josephl@nvidia.com>
+To:     Jonathan Hunter <jonathanh@nvidia.com>,
+        Joseph Lo <josephl@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+In-Reply-To: <20190104030702.8684-11-josephl@nvidia.com>
 From:   Stephen Boyd <sboyd@kernel.org>
 User-Agent: alot/0.8
-References: <20181224055058.GA23947@embeddedor.com>
-Message-ID: <154705911409.15366.7750153096311644237@swboyd.mtv.corp.google.com>
-Date:   Wed, 09 Jan 2019 10:38:34 -0800
+References: <20190104030702.8684-1-josephl@nvidia.com> <20190104030702.8684-11-josephl@nvidia.com>
+Message-ID: <154705916710.15366.6261013325488194200@swboyd.mtv.corp.google.com>
+Date:   Wed, 09 Jan 2019 10:39:27 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Gustavo A. R. Silva (2018-12-23 21:50:58)
-> Fix memory allocation and use struct_size() in kzalloc().
+Quoting Joseph Lo (2019-01-03 19:06:52)
+> From: Peter De Schrijver <pdeschrijver@nvidia.com>
 >=20
-> Fixes: 3fde0e16d016 ("drivers: clk: Add ZynqMP clock driver")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> Tegra210 has a DFLL as well and can share the majority of the code with
+> the Tegra124 implementation. So build the same code for both platforms.
+>=20
+> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> Signed-off-by: Joseph Lo <josephl@nvidia.com>
+> Acked-by: Jon Hunter <jonathanh@nvidia.com>
 > ---
 
-Applied to clk-fixes
+Acked-by: Stephen Boyd <sboyd@kernel.org>
 
-And I added some words to commit text.
