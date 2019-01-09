@@ -2,97 +2,70 @@ Return-Path: <SRS0=vytI=PR=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66CA2C43387
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Jan 2019 19:28:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B3CDC43387
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Jan 2019 19:42:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34BD4206BA
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Jan 2019 19:28:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="AscLUH9m";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="AFkn4l0i"
+	by mail.kernel.org (Postfix) with ESMTP id C5E9A214C6
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Jan 2019 19:42:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547062956;
+	bh=KNDEipFrtz5Wc4vrJ7sCDkWIwUgvnFZ0W0yxxbBs8lk=;
+	h=Subject:Cc:To:In-Reply-To:From:References:Date:List-ID:From;
+	b=wTN8dOuUR44tGrGhC0aRPhMzoMCcoRRI1HObUPZxDhGzuBUlgRap6yg65FSFFiyDA
+	 DDRpAjTJa4wgQSZNhVbD/nh1QXkg5Q7WpJydglF1yFOJkJEPKpHYZ7veOeS8N4yX8b
+	 OBA6Ty8X9RpscXS4kpYuQkQ4QWY/9S8NFdmlpgig=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728434AbfAIT2t (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 9 Jan 2019 14:28:49 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:48246 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727826AbfAIT2t (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Jan 2019 14:28:49 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 0C74A609CD; Wed,  9 Jan 2019 19:28:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547062128;
-        bh=gz/RW69cV/3MnbCSx5rOIAbS706C6JlpwqF6HQBxYuo=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=AscLUH9mJgr+CwKmm1KVCtVh07gA6UHm2Mo64BADNQ8fUofzYzjC3usEiOBNxVqvb
-         ckwtwfSuaCcSKZk7mXhQ5iP+l4WD5gZ3CXWji/3AJFGghhA7m7ehL0XC2yIoXjI/7d
-         jkf3rCj6wknMGUl9pkVemhYP/G+E5kYyfmMlDCX8=
-Received: from [10.226.60.81] (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1728318AbfAITmg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 9 Jan 2019 14:42:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40846 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727123AbfAITmg (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 9 Jan 2019 14:42:36 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: jhugo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id CC7BF609D1;
-        Wed,  9 Jan 2019 19:28:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547062127;
-        bh=gz/RW69cV/3MnbCSx5rOIAbS706C6JlpwqF6HQBxYuo=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=AFkn4l0irQrsCXk6Bscce1BxbBeZbzc3uREd4NLHaUsnXxHekmjMzvP76OKppaaH5
-         1KIXnse6maog9VYtTKjKJPm8hYTp3OUguWdKuTLOV1mzTLrOz8XRn0Utr9OOuxd+Ql
-         hVtMQqFSEU/AoLj8JpAxuaSS/1yW80+KXkV9EGAc=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CC7BF609D1
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
-Subject: Re: [PATCH v1 2/6] clk: qcom: Skip halt checks on
- gcc_usb3_phy_pipe_clk for 8998
-To:     Stephen Boyd <sboyd@kernel.org>, mturquette@baylibre.com
-Cc:     bjorn.andersson@linaro.org, andy.gross@linaro.org,
-        david.brown@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, gregkh@linuxfoundation.org,
-        balbi@kernel.org, linux-usb@vger.kernel.org
-References: <1546620615-2389-1-git-send-email-jhugo@codeaurora.org>
- <154706034090.15366.11081837995313995010@swboyd.mtv.corp.google.com>
-From:   Jeffrey Hugo <jhugo@codeaurora.org>
-Message-ID: <d99bd2ac-4c35-470e-e19d-e90f091cad4b@codeaurora.org>
-Date:   Wed, 9 Jan 2019 12:28:44 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        by mail.kernel.org (Postfix) with ESMTPSA id 7144020859;
+        Wed,  9 Jan 2019 19:42:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547062955;
+        bh=KNDEipFrtz5Wc4vrJ7sCDkWIwUgvnFZ0W0yxxbBs8lk=;
+        h=Subject:Cc:To:In-Reply-To:From:References:Date:From;
+        b=S5srZ8Eo2bZxGh9EXvFlWvP5tNclUvi9Us7v2Koe6O7wfi3Va4+D5jrKwub4VyH8i
+         rURtiOv1aOZDRJiADvwx3TsgKu2DkIJsK/so+VB4HqSzEUBtwK3xt3ai4EpQl+j12d
+         BvHSmfChiZfZh1dXkGw51XT0m+4Uw8gepc61OwYY=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <154706034090.15366.11081837995313995010@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 2/2] clk: Add Fixed MMIO clock driver
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jan Kotas <jank@cadence.com>
+To:     Jan Kotas <jank@cadence.com>, mark.rutland@arm.com,
+        mturquette@baylibre.com, robh+dt@kernel.org
+In-Reply-To: <20181213124929.32736-3-jank@cadence.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+User-Agent: alot/0.8
+References: <20181213124929.32736-1-jank@cadence.com> <20181213124929.32736-3-jank@cadence.com>
+Message-ID: <154706295457.15366.6974721928926110954@swboyd.mtv.corp.google.com>
+Date:   Wed, 09 Jan 2019 11:42:34 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 1/9/2019 11:59 AM, Stephen Boyd wrote:
-> Quoting Jeffrey Hugo (2019-01-04 08:50:15)
->> The gcc_usb3_phy_pipe_clk is generated by the phy, but is also used by
->> the phy during init.  The clock needs to be enabled during the init
->> sequence, but may not be fully active until after the init sequence is
->> complete.  This causes a catch-22 if the clock status is checked during
->> enable.  As a result, skip the checks to avoid the troubling situation.
-> 
-> I will ask again, is anyone going to fix this in the phy driver? In
-> theory it isn't needed if the phy driver can do things differently, but
-> last time I checked I was told that the phy team said it had to be done
-> this way.
-> 
+Quoting Jan Kotas (2018-12-13 04:49:29)
+> This patch adds a driver for Fixed MMIO clock.
+> The driver reads a clock frequency value from a single 32-bit memory
+> mapped register and registers it as a fixed rate clock.
+>=20
+> It can be enabled with COMMON_CLK_FIXED_MMIO Kconfig option.
+>=20
+> Signed-off-by: Jan Kotas <jank@cadence.com>
 
-Interesting.  I was unaware of past discussion(s) on this.  Thank you 
-for taking the change, but I'll try having a look to see if maybe I can 
-prove your theory going forward.
+This needed to use the clk_hw based APIs and add a static. I made the
+changes myself. Let me know if you have any problems with what's in
+clk-next and it can be fixed.
 
--- 
-Jeffrey Hugo
-Qualcomm Datacenter Technologies as an affiliate of Qualcomm 
-Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
