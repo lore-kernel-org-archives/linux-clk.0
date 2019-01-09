@@ -2,45 +2,45 @@ Return-Path: <SRS0=vytI=PR=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDCB4C43387
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Jan 2019 20:32:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2973C43387
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Jan 2019 20:35:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B1F8206BB
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Jan 2019 20:32:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9DDB4206BB
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Jan 2019 20:35:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547065952;
-	bh=KL7f9tvo8mk7WSzCIO5Q6PVQ+r99ofBSd+97Q+7fVkM=;
+	s=default; t=1547066148;
+	bh=aaIRuW6Qd/yTZz7oNGGEoxcIAKmwEF0f2qkP21x/HPE=;
 	h=Subject:Cc:To:In-Reply-To:From:References:Date:List-ID:From;
-	b=XBkejXiPm40urC3vi79YTcHbgknncJmmfisyZZqr1I87XLad9I7c8OPK+3RyKS4vc
-	 4BLHYSC8POv7sZd/xV/uBOgPM+W9jAy55CcV5bnI8nZfzFcm6SFF2IcNDtTOHwTWDj
-	 EYrMj6YPVU83VlitiY9SsYtvEKeyh/y+1/K5bFsA=
+	b=e8M7v4TlXL4Dp25YGcCNCV039qYnY3RQ4cv0y63gWsHq57Ce0sw2qNpN+oBzxKLdP
+	 nz4M2H+e7EgzmPDPq/UCsuJW5mczv2x0jUPAoaEtalRU1E3yoq8gAq+6Z/wHtSP2+T
+	 BbHKcNrrMyCURNS5VxqJvsu78LKMtO/B/z8nDTKs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726721AbfAIUcc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 9 Jan 2019 15:32:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51704 "EHLO mail.kernel.org"
+        id S1726799AbfAIUfs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 9 Jan 2019 15:35:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52334 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726181AbfAIUcb (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 9 Jan 2019 15:32:31 -0500
+        id S1726181AbfAIUfs (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 9 Jan 2019 15:35:48 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DD45D206B6;
-        Wed,  9 Jan 2019 20:32:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AC0EE206B6;
+        Wed,  9 Jan 2019 20:35:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547065951;
-        bh=KL7f9tvo8mk7WSzCIO5Q6PVQ+r99ofBSd+97Q+7fVkM=;
+        s=default; t=1547066146;
+        bh=aaIRuW6Qd/yTZz7oNGGEoxcIAKmwEF0f2qkP21x/HPE=;
         h=Subject:Cc:To:In-Reply-To:From:References:Date:From;
-        b=GA8z+a1KcmpYBF5zLpFdru7+mWtXRfF11NThI+HzO6UCWiykVhkt3Yaq0abjXWlgv
-         doj9vD/El4oepANiUqoadQrp61fLnoszVq4VaImF6Z0qSKARneyjDuJg70PC9UQsmb
-         dkaqCEyANV43S4rMGqWPJxlI6gEChH9Tn1xI1e2I=
+        b=jrMmmzE9li8E7Fya5H8q2OWz+RDmJW2+jw7CksMWm4sAHSiyTvoFCw/o/XeqUvTd7
+         T4uW5WPWFdsdK0GsdKw6SADu02RWEcldDytoSV+0kskv21XkPOSzkGjuTwKp85zCnM
+         MBKfr6tAyxL/HtkVYHWDP73ogfC3xqMA1FIQPy34=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 3/3] clk: imx: Add clock driver support for imx8mm
+Subject: Re: [PATCH 1/3] clk: imx: Add PLLs driver for imx8mm soc
 Cc:     Fabio Estevam <fabio.estevam@nxp.com>,
         Aisheng Dong <aisheng.dong@nxp.com>,
         dl-linux-imx <linux-imx@nxp.com>,
@@ -50,92 +50,261 @@ To:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
         "robh+dt@kernel.org" <robh+dt@kernel.org>,
         "shawnguo@kernel.org" <shawnguo@kernel.org>,
         Jacky Bai <ping.bai@nxp.com>
-In-Reply-To: <1546938317-23203-3-git-send-email-ping.bai@nxp.com>
+In-Reply-To: <1546938317-23203-1-git-send-email-ping.bai@nxp.com>
 From:   Stephen Boyd <sboyd@kernel.org>
 User-Agent: alot/0.8
-References: <1546938317-23203-1-git-send-email-ping.bai@nxp.com> <1546938317-23203-3-git-send-email-ping.bai@nxp.com>
-Message-ID: <154706594997.15366.8932514505305165638@swboyd.mtv.corp.google.com>
-Date:   Wed, 09 Jan 2019 12:32:29 -0800
+References: <1546938317-23203-1-git-send-email-ping.bai@nxp.com>
+Message-ID: <154706614586.15366.5517254314423441854@swboyd.mtv.corp.google.com>
+Date:   Wed, 09 Jan 2019 12:35:45 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jacky Bai (2019-01-08 01:01:04)
+Quoting Jacky Bai (2019-01-08 01:00:45)
+> diff --git a/drivers/clk/imx/clk-pll14xx.c b/drivers/clk/imx/clk-pll14xx.c
+> new file mode 100644
+> index 0000000..c9f83fd
+> --- /dev/null
+> +++ b/drivers/clk/imx/clk-pll14xx.c
+> @@ -0,0 +1,409 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright 2017-2018 NXP.
+> + */
 > +
-> +static int imx8mm_clocks_probe(struct platform_device *pdev)
+> +#include <linux/bitops.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/delay.h>
+> +#include <linux/err.h>
+> +#include <linux/io.h>
+> +#include <linux/slab.h>
+> +#include <linux/jiffies.h>
+> +
+> +#include "clk.h"
+> +
+> +#define GNRL_CTL       0x0
+> +#define DIV_CTL                0x4
+> +#define LOCK_STATUS    BIT(31)
+> +#define LOCK_SEL_MASK  BIT(29)
+> +#define CLKE_MASK      BIT(11)
+> +#define RST_MASK       BIT(9)
+> +#define BYPASS_MASK    BIT(4)
+> +#define MDIV_SHIFT     12
+> +#define MDIV_MASK      GENMASK(21, 12)
+> +#define PDIV_SHIFT     4
+> +#define PDIV_MASK      GENMASK(9, 4)
+> +#define SDIV_SHIFT     0
+> +#define SDIV_MASK      GENMASK(2, 0)
+> +#define KDIV_SHIFT     0
+> +#define KDIV_MASK      GENMASK(15, 0)
+> +
+> +struct clk_pll14xx {
+> +       struct clk_hw                   hw;
+> +       void __iomem                    *base;
+> +       enum imx_pll14xx_type           type;
+> +       struct imx_pll14xx_rate_table   *rate_table;
+> +       int rate_count;
+> +};
+> +
+> +#define to_clk_pll14xx(_hw) container_of(_hw, struct clk_pll14xx, hw)
+> +
+> +static const struct imx_pll14xx_rate_table *imx_get_pll_settings(
+> +               struct clk_pll14xx *pll, unsigned long rate)
 > +{
-> +       struct device *dev =3D &pdev->dev;
-> +       struct device_node *np =3D dev->of_node;
-> +       void __iomem *base;
-> +       int ret =3D 0;
-
-Please don't assign ret here. Just let it be assigned later on.
-
+> +       const struct imx_pll14xx_rate_table *rate_table =3D pll->rate_tab=
+le;
+> +       int i;
 > +
-> +       clks[IMX8MM_CLK_DUMMY] =3D imx_clk_fixed("dummy", 0);
-> +       clks[IMX8MM_CLK_24M] =3D of_clk_get_by_name(np, "osc_24m");
-> +       clks[IMX8MM_CLK_32K] =3D of_clk_get_by_name(np, "osc_32k"); /* Ch=
-eck more */
-> +       clks[IMX8MM_CLK_EXT1] =3D of_clk_get_by_name(np, "clk_ext1");
-> +       clks[IMX8MM_CLK_EXT2] =3D of_clk_get_by_name(np, "clk_ext2");
-> +       clks[IMX8MM_CLK_EXT3] =3D of_clk_get_by_name(np, "clk_ext3");
-> +       clks[IMX8MM_CLK_EXT4] =3D of_clk_get_by_name(np, "clk_ext4");
-> +
-> +       np =3D of_find_compatible_node(NULL, NULL, "fsl,imx8mm-anatop");
-> +       base =3D of_iomap(np, 0);
-> +       if (WARN_ON(!base))
-> +               return -ENOMEM;
-
-Why do we need to reach into some other node to get the memory region to
-map?
-
-> +
-> +       clks[IMX8MM_AUDIO_PLL1_REF_SEL] =3D imx_clk_mux("audio_pll1_ref_s=
-el", base + 0x0, 0, 2, pll_ref_sels, ARRAY_SIZE(pll_ref_sels));
-> +       clks[IMX8MM_AUDIO_PLL2_REF_SEL] =3D imx_clk_mux("audio_pll2_ref_s=
-el", base + 0x14, 0, 2, pll_ref_sels, ARRAY_SIZE(pll_ref_sels));
-> +       clks[IMX8MM_VIDEO_PLL1_REF_SEL] =3D imx_clk_mux("video_pll1_ref_s=
-el", base + 0x28, 0, 2, pll_ref_sels, ARRAY_SIZE(pll_ref_sels));
-> +       clks[IMX8MM_DRAM_PLL_REF_SEL] =3D imx_clk_mux("dram_pll_ref_sel",=
- base + 0x50, 0, 2, pll_ref_sels, ARRAY_SIZE(pll_ref_sels));
-[...]
-> +       clks[IMX8MM_SYS_PLL2_333M] =3D imx_clk_fixed_factor("sys_pll2_333=
-m", "sys_pll2_out", 1, 3);
-> +       clks[IMX8MM_SYS_PLL2_500M] =3D imx_clk_fixed_factor("sys_pll2_500=
-m", "sys_pll2_out", 1, 2);
-> +       clks[IMX8MM_SYS_PLL2_1000M] =3D imx_clk_fixed_factor("sys_pll2_10=
-00m", "sys_pll2_out", 1, 1);
-> +
-> +       np =3D dev->of_node;
-> +       base =3D of_iomap(np, 0);
-> +       if (WARN_ON(!base))
-> +               return -ENOMEM;
-
-This can surely use the platform device APIs to map and retrieve memory
-regions.
-
-> +
-[...]
-> +
-> +       imx_check_clocks(clks, ARRAY_SIZE(clks));
-> +
-> +       clk_data.clks =3D clks;
-> +       clk_data.clk_num =3D ARRAY_SIZE(clks);
-> +       ret =3D of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data=
-);
-> +       if (ret < 0) {
-> +               dev_err(dev, "failed to register clks for i.MX8MM\n");
-> +               return -EINVAL;
+> +       for (i =3D 0; i < pll->rate_count; i++) {
+> +               if (rate =3D=3D rate_table[i].rate)
+> +                       return &rate_table[i];
 > +       }
-> +
-> +       imx_register_uart_clocks(uart_clks);
-> +
-> +       pr_info("i.MX8MM clock driver init done\n");
 
-Please no "I"m alive" messages.
+Nitpick: Drop the brackets.
 
 > +
-> +       return 0;
+> +       return NULL;
 > +}
 > +
+> +static long clk_pll14xx_round_rate(struct clk_hw *hw, unsigned long rate,
+> +                       unsigned long *prate)
+> +{
+> +       struct clk_pll14xx *pll =3D to_clk_pll14xx(hw);
+> +       const struct imx_pll14xx_rate_table *rate_table =3D pll->rate_tab=
+le;
+> +       int i;
+> +
+> +       /* Assumming rate_table is in descending order */
+> +       for (i =3D 0; i < pll->rate_count; i++) {
+> +               if (rate >=3D rate_table[i].rate)
+> +                       return rate_table[i].rate;
+> +       }
+> +       /* return minimum supported value */
+> +       return rate_table[i - 1].rate;
+> +}
+> +
+> +static unsigned long clk_pll1416x_recalc_rate(struct clk_hw *hw,
+> +                                                 unsigned long parent_ra=
+te)
+> +{
+> +       struct clk_pll14xx *pll =3D to_clk_pll14xx(hw);
+> +       u32 mdiv, pdiv, sdiv, pll_gnrl, pll_div;
+> +       u64 fvco =3D parent_rate;
+> +
+> +       pll_gnrl =3D readl_relaxed(pll->base);
+> +       pll_div =3D readl_relaxed(pll->base + 4);
+> +       mdiv =3D (pll_div & MDIV_MASK) >> MDIV_SHIFT;
+> +       pdiv =3D (pll_div & PDIV_MASK) >> PDIV_SHIFT;
+> +       sdiv =3D (pll_div & SDIV_MASK) >> SDIV_SHIFT;
+> +
+> +       fvco *=3D mdiv;
+> +       do_div(fvco, pdiv << sdiv);
+> +
+> +       return (unsigned long)fvco;
+
+Nitpick: Drop the cast.
+
+> +}
+> +
+> +static unsigned long clk_pll1443x_recalc_rate(struct clk_hw *hw,
+> +                                                 unsigned long parent_ra=
+te)
+> +{
+> +       struct clk_pll14xx *pll =3D to_clk_pll14xx(hw);
+> +       u32 mdiv, pdiv, sdiv, pll_gnrl, pll_div_ctl0, pll_div_ctl1;
+> +       short int kdiv;
+> +       u64 fvco =3D parent_rate;
+> +
+> +       pll_gnrl =3D readl_relaxed(pll->base);
+> +       pll_div_ctl0 =3D readl_relaxed(pll->base + 4);
+> +       pll_div_ctl1 =3D readl_relaxed(pll->base + 8);
+> +       mdiv =3D (pll_div_ctl0 & MDIV_MASK) >> MDIV_SHIFT;
+> +       pdiv =3D (pll_div_ctl0 & PDIV_MASK) >> PDIV_SHIFT;
+> +       sdiv =3D (pll_div_ctl0 & SDIV_MASK) >> SDIV_SHIFT;
+> +       kdiv =3D pll_div_ctl1 & KDIV_MASK;
+> +
+> +       /* fvco =3D (m * 65536 + k) * Fin / (p * 65536) */
+> +       fvco *=3D (mdiv * 65536 + kdiv);
+> +       pdiv *=3D 65536;
+> +
+> +       do_div(fvco, pdiv << sdiv);
+> +
+> +       return (unsigned long)fvco;
+
+Nitpick: Drop the cast.
+
+> +}
+> +
+> +static inline bool clk_pll1416x_mp_change(const struct imx_pll14xx_rate_=
+table *rate,
+> +                                         u32 pll_div)
+> +{
+> +       u32 old_mdiv, old_pdiv;
+> +
+> +       old_mdiv =3D (pll_div >> MDIV_SHIFT) & MDIV_MASK;
+> +       old_pdiv =3D (pll_div >> PDIV_SHIFT) & PDIV_MASK;
+> +
+> +       return (rate->mdiv !=3D old_mdiv || rate->pdiv !=3D old_pdiv);
+> +}
+> +
+> +static inline bool clk_pll1443x_mpk_change(const struct imx_pll14xx_rate=
+_table *rate,
+> +                                         u32 pll_div_ctl0, u32 pll_div_c=
+tl1)
+> +{
+> +       u32 old_mdiv, old_pdiv, old_kdiv;
+> +
+> +       old_mdiv =3D (pll_div_ctl0 >> MDIV_SHIFT) & MDIV_MASK;
+> +       old_pdiv =3D (pll_div_ctl0 >> PDIV_SHIFT) & PDIV_MASK;
+> +       old_kdiv =3D (pll_div_ctl1 >> KDIV_SHIFT) & KDIV_MASK;
+> +
+> +       return (rate->mdiv !=3D old_mdiv || rate->pdiv !=3D old_pdiv ||
+> +               rate->kdiv !=3D old_kdiv);
+> +}
+> +
+> +static inline bool clk_pll1443x_mp_change(const struct imx_pll14xx_rate_=
+table *rate,
+> +                                         u32 pll_div_ctl0, u32 pll_div_c=
+tl1)
+> +{
+> +       u32 old_mdiv, old_pdiv, old_kdiv;
+> +
+> +       old_mdiv =3D (pll_div_ctl0 >> MDIV_SHIFT) & MDIV_MASK;
+> +       old_pdiv =3D (pll_div_ctl0 >> PDIV_SHIFT) & PDIV_MASK;
+> +       old_kdiv =3D (pll_div_ctl1 >> KDIV_SHIFT) & KDIV_MASK;
+> +
+> +       return (rate->mdiv !=3D old_mdiv || rate->pdiv !=3D old_pdiv ||
+> +               rate->kdiv !=3D old_kdiv);
+
+Nitpick: Please drop the parenthesis on all the returns above.
+
+> +}
+> +
+> +static int clk_pll14xx_wait_lock(struct clk_pll14xx *pll)
+> +{
+> +       unsigned long timeout =3D jiffies + msecs_to_jiffies(10);
+> +
+> +       /* Wait for PLL to lock */
+> +       do {
+> +               if (readl_relaxed(pll->base) & LOCK_STATUS)
+> +                       break;
+> +               if (time_after(jiffies, timeout))
+> +                       break;
+> +       } while (1);
+> +
+> +       return readl_relaxed(pll->base) & LOCK_STATUS ? 0 : -ETIMEDOUT;
+
+Is this readl_poll_timeout()?
+
+> +}
+> +
+[...]
+> +
+> +struct clk *imx_clk_pll14xx(const char *name, const char *parent_name,
+> +                           void __iomem *base,
+> +                           const struct imx_pll14xx_clk *pll_clk)
+> +{
+> +       struct clk_pll14xx *pll;
+> +       struct clk *clk;
+> +       struct clk_init_data init;
+> +       int len;
+> +
+> +       pll =3D kzalloc(sizeof(*pll), GFP_KERNEL);
+> +       if (!pll)
+> +               return ERR_PTR(-ENOMEM);
+> +
+> +       init.name =3D name;
+> +       init.flags =3D pll_clk->flags;
+> +       init.parent_names =3D &parent_name;
+> +       init.num_parents =3D 1;
+> +
+> +       if (pll_clk->rate_table) {
+> +               for (len =3D 0; pll_clk->rate_table[len].rate !=3D 0; )
+> +                       len++;
+> +
+> +               pll->rate_count =3D len;
+> +               pll->rate_table =3D kmemdup(pll_clk->rate_table,
+> +                                         pll->rate_count *
+> +                                         sizeof(struct imx_pll14xx_rate_=
+table),
+
+Is this struct_size()?
+
+> +                                         GFP_KERNEL);
+> +               WARN(!pll->rate_table, "%s : could not alloc rate table\n=
+", __func__);
+
+Allocations will fail with a loud message indicating as such, so this
+WARN is not necessary.
+
+> +       }
+> +
+> +       switch (pll_clk->type) {
+> +       case PLL_1416X:
+> +               if (!pll->rate_table)
+> +                       init.ops =3D &clk_pll1416x_min_ops;
+> +               else
+> +                       init.ops =3D &clk_pll1416x_ops;
+> +               break;
+> +       case PLL_1443X:
