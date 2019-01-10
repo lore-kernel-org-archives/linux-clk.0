@@ -1,95 +1,223 @@
-Return-Path: <SRS0=vytI=PR=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=wvUy=PS=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83A02C43612
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Jan 2019 23:56:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A77DDC43387
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Jan 2019 01:47:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46D9720859
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Jan 2019 23:56:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547078168;
-	bh=BtZKa8ke/W+kc1urj0r2VWXhtZFrHzTiN6ylajabc0Y=;
-	h=Subject:Cc:To:In-Reply-To:From:References:Date:List-ID:From;
-	b=f5z0EOONT42eC+hRYQcb7FgVhxgM2367XgD/vG0UsVpKWr0v6E/ACbNzsKy6jVJsf
-	 xrvmPZiRnBe9bY9u9jXGVDn4K2RXftcJzRRZwfOpRA/AKhUD0E7j5gTO3ayHcDF27T
-	 RuHmMV3OhNNBNZmIK22Uvvw/OjHx4IVp+3rbmZlQ=
+	by mail.kernel.org (Postfix) with ESMTP id 7007C2075C
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Jan 2019 01:47:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726753AbfAIX4H (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 9 Jan 2019 18:56:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46152 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726887AbfAIX4H (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 9 Jan 2019 18:56:07 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3AEE920675;
-        Wed,  9 Jan 2019 23:56:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547078166;
-        bh=BtZKa8ke/W+kc1urj0r2VWXhtZFrHzTiN6ylajabc0Y=;
-        h=Subject:Cc:To:In-Reply-To:From:References:Date:From;
-        b=TdG8S+ofsSX2xZQFjPfVLgRP27fJB0CQyZCM0NE5woscCBlEsSoQTuZzCbXIV1kn4
-         pKHCL24iDqT1qVNSK5J3CigGTvbuEdQC+f3xauo6TqcbIJMinEv/2otyzaUc/rZBLN
-         IzTM9maBA6onBbHIxixSd+qWHrWh5zGy/x67FL5g=
-Content-Type: text/plain; charset="utf-8"
+        id S1726580AbfAJBr2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 9 Jan 2019 20:47:28 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:62127 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726458AbfAJBr2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Jan 2019 20:47:28 -0500
+X-UUID: 7d82fd3530094ad19b3ed55a243ce952-20190110
+X-UUID: 7d82fd3530094ad19b3ed55a243ce952-20190110
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 407359008; Thu, 10 Jan 2019 09:47:17 +0800
+Received: from MTKMBS06N1.mediatek.inc (172.21.101.129) by
+ mtkmbs02n1.mediatek.inc (172.21.101.77) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Thu, 10 Jan 2019 09:47:10 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs06n1.mediatek.inc (172.21.101.129) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Thu, 10 Jan 2019 09:47:09 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 10 Jan 2019 09:47:09 +0800
+Message-ID: <1547084829.27684.8.camel@mtksdaap41>
+Subject: Re: [PATCH 1/9] drm/mediatek: recalculate hdmi phy clock of MT2701
+ by querying hardware
+From:   CK Hu <ck.hu@mediatek.com>
+To:     chunhui dai <chunhui.dai@mediatek.com>
+CC:     --to=Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        "Philipp Zabel" <p.zabel@pengutronix.de>,
+        David Airlie <airlied@linux.ie>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        "Colin Ian King" <colin.king@canonical.com>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <dri-devel@lists.freedesktop.org>, <srv_heupstream@mediatek.com>,
+        <bibby.hsieh@mediatek.com>, <jamesjj.liao@mediatek.com>,
+        <jitao.shi@mediatek.com>
+Date:   Thu, 10 Jan 2019 09:47:09 +0800
+In-Reply-To: <1546585439-30455-2-git-send-email-chunhui.dai@mediatek.com>
+References: <1546585439-30455-1-git-send-email-chunhui.dai@mediatek.com>
+         <1546585439-30455-2-git-send-email-chunhui.dai@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 1/1] clk: meson: meson8b: fix naming of the APB clocks
-Cc:     jbrunet@baylibre.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, mturquette@baylibre.com
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-In-Reply-To: <CAFBinCAginPSuBObJE52puvbay-S698OjAj6aLEm5kfn0SdU0A@mail.gmail.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-User-Agent: alot/0.8
-References: <20181223235836.12466-1-martin.blumenstingl@googlemail.com> <20181223235836.12466-2-martin.blumenstingl@googlemail.com> <154705938114.15366.1098954164811397084@swboyd.mtv.corp.google.com> <CAFBinCAginPSuBObJE52puvbay-S698OjAj6aLEm5kfn0SdU0A@mail.gmail.com>
-Message-ID: <154707816530.15366.6699688522231286811@swboyd.mtv.corp.google.com>
-Date:   Wed, 09 Jan 2019 15:56:05 -0800
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Martin Blumenstingl (2019-01-09 14:30:24)
-> Hi Stephen, Hi Neil,
->=20
-> On Wed, Jan 9, 2019 at 7:43 PM Stephen Boyd <sboyd@kernel.org> wrote:
-> >
-> > Quoting Martin Blumenstingl (2018-12-23 15:58:36)
-> > > Fix a typo in the APB clock names by renaming them from "abp" to "apb=
-".
-> > > No functional changes.
-> > >
-> > > Fixes: 8e1dd17c8b0e3f ("dt-bindings: clock: meson8b: export the CPU p=
-ost dividers")
-> > > Fixes: a7d19b05ce817d ("clk: meson: meson8b: add the CPU clock post d=
-ivider clocks")
-> > > Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.co=
-m>
-> > > ---
-> >
-> > Can I apply this directly to fixes? Or it's not critical so we can punt
-> > until next merge window?
-> actually it's not critical:
-> I'm not aware of any IP block that I needs the APB clock as input (I'm
-> pretty sure there is some, but I'm not aware of it so it can wait).
->=20
-> Neil already applied another patch for -next which conflicts with this.
-> we can choose now:
-> 1. Stephen takes this patch, Neil drops the (conflicting) GPU clock
-> patches from -next and I re-send the GPU clock patches
-> 2. Stephen and Neil don't do anything, I re-send this patch on top of
-> the GPU clock patches
->=20
-> I'm fine either way, but #2 is less work for you guys.
-> if I don't hear back from you then I'll go with option #2
+Hi, Chunhui:
 
-If it's not critical then I'll let it go via the normal paths through
-Neil's tree.
+
+On Fri, 2019-01-04 at 15:03 +0800, chunhui dai wrote:
+> Recalculate the rate of this clock, by querying hardware.
+> 
+> Signed-off-by: chunhui dai <chunhui.dai@mediatek.com>
+> ---
+>  drivers/gpu/drm/mediatek/mtk_hdmi_phy.c        |  7 ++--
+>  drivers/gpu/drm/mediatek/mtk_hdmi_phy.h        |  3 +-
+>  drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c | 49 ++++++++++++++++++++++++++
+>  drivers/gpu/drm/mediatek/mtk_mt8173_hdmi_phy.c |  8 +++++
+>  4 files changed, 61 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi_phy.c b/drivers/gpu/drm/mediatek/mtk_hdmi_phy.c
+> index 4ef9c57..79e737d 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_hdmi_phy.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_hdmi_phy.c
+> @@ -29,12 +29,11 @@ long mtk_hdmi_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+>  	return rate;
+>  }
+>  
+> -unsigned long mtk_hdmi_pll_recalc_rate(struct clk_hw *hw,
+> -				       unsigned long parent_rate)
+> +u32 mtk_hdmi_phy_read(struct mtk_hdmi_phy *hdmi_phy, u32 offset)
+>  {
+> -	struct mtk_hdmi_phy *hdmi_phy = to_mtk_hdmi_phy(hw);
+> +	void __iomem *reg = hdmi_phy->regs + offset;
+>  
+> -	return hdmi_phy->pll_rate;
+> +	return readl(reg);
+
+reg is used only once, so
+
+return readl(hdmi_phy->regs + offset);
+
+>  }
+>  
+>  void mtk_hdmi_phy_clear_bits(struct mtk_hdmi_phy *hdmi_phy, u32 offset,
+> diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi_phy.h b/drivers/gpu/drm/mediatek/mtk_hdmi_phy.h
+> index f39b1fc..fdad8b1 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_hdmi_phy.h
+> +++ b/drivers/gpu/drm/mediatek/mtk_hdmi_phy.h
+> @@ -41,6 +41,7 @@ struct mtk_hdmi_phy {
+>  	unsigned int ibias_up;
+>  };
+>  
+> +u32 mtk_hdmi_phy_read(struct mtk_hdmi_phy *hdmi_phy, u32 offset);
+>  void mtk_hdmi_phy_clear_bits(struct mtk_hdmi_phy *hdmi_phy, u32 offset,
+>  			     u32 bits);
+>  void mtk_hdmi_phy_set_bits(struct mtk_hdmi_phy *hdmi_phy, u32 offset,
+> @@ -50,8 +51,6 @@ void mtk_hdmi_phy_mask(struct mtk_hdmi_phy *hdmi_phy, u32 offset,
+>  struct mtk_hdmi_phy *to_mtk_hdmi_phy(struct clk_hw *hw);
+>  long mtk_hdmi_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+>  			     unsigned long *parent_rate);
+> -unsigned long mtk_hdmi_pll_recalc_rate(struct clk_hw *hw,
+> -				       unsigned long parent_rate);
+>  
+>  extern struct platform_driver mtk_hdmi_phy_driver;
+>  extern struct mtk_hdmi_phy_conf mtk_hdmi_phy_8173_conf;
+> diff --git a/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c b/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
+> index fcc42dc..b5ed6b7 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
+> @@ -153,6 +153,55 @@ static int mtk_hdmi_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+>  			  RG_HDMITX_DRV_IBIAS_MASK);
+>  	return 0;
+>  }
+> +static unsigned long mtk_hdmi_pll_recalc_rate(struct clk_hw *hw,
+> +				       unsigned long parent_rate)
+> +{
+> +	struct mtk_hdmi_phy *hdmi_phy = to_mtk_hdmi_phy(hw);
+> +	unsigned long out_rate, val;
+> +
+> +	val = (mtk_hdmi_phy_read(hdmi_phy, HDMI_CON6)
+> +			& RG_HTPLL_PREDIV_MASK) >> RG_HTPLL_PREDIV;
+> +	switch (val) {
+> +	case 0x00:
+> +		out_rate = parent_rate;
+> +		break;
+> +	case 0x01:
+> +		out_rate = parent_rate / 2;
+> +		break;
+> +	default:
+> +		out_rate = parent_rate / 4;
+> +		break;
+
+If the val would not be 3, maybe out_rate could be calculate as
+
+out_rate >>= val;
+
+> +	}
+> +
+> +	val = (mtk_hdmi_phy_read(hdmi_phy, HDMI_CON6)
+> +			& RG_HTPLL_FBKDIV_MASK) >> RG_HTPLL_FBKDIV;
+> +	out_rate = out_rate * (val + 1) * 2;
+
+out_rate *= (val + 1) * 2;
+
+> +	val = (mtk_hdmi_phy_read(hdmi_phy, HDMI_CON2)
+> +			& RG_HDMITX_TX_POSDIV_MASK) >> RG_HDMITX_TX_POSDIV;
+> +	switch (val) {
+> +	case 0x00:
+> +		out_rate = out_rate;
+> +		break;
+> +	case 0x01:
+> +		out_rate = out_rate / 2;
+> +		break;
+> +	case 0x02:
+> +		out_rate = out_rate / 4;
+> +		break;
+> +	case 0x03:
+> +		out_rate = out_rate / 8;
+> +		break;
+> +	default:
+> +		break;
+> +	}
+
+out_rate >>= val;
+
+Regards,
+CK
+
+> +
+> +	if (mtk_hdmi_phy_read(hdmi_phy, HDMI_CON2) & RG_HDMITX_EN_TX_POSDIV)
+> +		out_rate = out_rate / 5;
+> +
+> +	hdmi_phy->pll_rate = out_rate;
+> +
+> +	return hdmi_phy->pll_rate;
+> +}
+>  
+>  static const struct clk_ops mtk_hdmi_phy_pll_ops = {
+>  	.prepare = mtk_hdmi_pll_prepare,
+> diff --git a/drivers/gpu/drm/mediatek/mtk_mt8173_hdmi_phy.c b/drivers/gpu/drm/mediatek/mtk_mt8173_hdmi_phy.c
+> index ed5916b..cb23c1e 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_mt8173_hdmi_phy.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_mt8173_hdmi_phy.c
+> @@ -285,6 +285,14 @@ static int mtk_hdmi_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+>  	return 0;
+>  }
+>  
+> +static unsigned long mtk_hdmi_pll_recalc_rate(struct clk_hw *hw,
+> +				       unsigned long parent_rate)
+> +{
+> +	struct mtk_hdmi_phy *hdmi_phy = to_mtk_hdmi_phy(hw);
+> +
+> +	return hdmi_phy->pll_rate;
+> +}
+> +
+>  static const struct clk_ops mtk_hdmi_phy_pll_ops = {
+>  	.prepare = mtk_hdmi_pll_prepare,
+>  	.unprepare = mtk_hdmi_pll_unprepare,
+
 
