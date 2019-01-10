@@ -2,258 +2,177 @@ Return-Path: <SRS0=wvUy=PS=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.9 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C20D6C43387
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Jan 2019 17:11:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D53AC43387
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Jan 2019 22:19:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 931D120685
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Jan 2019 17:11:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CDABA208E3
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Jan 2019 22:19:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547158770;
+	bh=6Iv/PPOIjmEwPbwF5g7x79NbQO/d37D4LsWAXVwzrmQ=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=C7cuQLFAJLdiKFD/ijfIKAVchR2LkVX0OXlL632Hf03AgyCG166za5G4bCEPumKoB
+	 LUoUBbCJRgmXopSGASVHCsCR+qCkZLBJKccT9xx38nhO2nfU4hig+1BAgJmZqcYF4x
+	 QmBAUza2fiTxzOHjAWIprult9oSDCWPxG+CsW7nQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729309AbfAJRLL convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 10 Jan 2019 12:11:11 -0500
-Received: from mailoutvs17.siol.net ([185.57.226.208]:58615 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728262AbfAJRLL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Jan 2019 12:11:11 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id 72C97522BE0;
-        Thu, 10 Jan 2019 18:11:05 +0100 (CET)
-X-Virus-Scanned: amavisd-new at psrvmta09.zcs-production.pri
-Received: from mail.siol.net ([127.0.0.1])
-        by localhost (psrvmta09.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id 5dT4gcv2nSc5; Thu, 10 Jan 2019 18:11:04 +0100 (CET)
-Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id B98C8522C08;
-        Thu, 10 Jan 2019 18:11:04 +0100 (CET)
-Received: from jernej-laptop.localnet (cpe1-8-82.cable.triera.net [213.161.8.82])
-        (Authenticated sender: 031275009)
-        by mail.siol.net (Postfix) with ESMTPA id 33D0F522B85;
-        Thu, 10 Jan 2019 18:11:00 +0100 (CET)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To:     Priit Laes <plaes@plaes.org>
-Cc:     maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org, airlied@linux.ie,
-        architt@codeaurora.org, a.hajda@samsung.com,
-        Laurent.pinchart@ideasonboard.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [linux-sunxi] [PATCH v3 02/28] clk: sunxi-ng: Adjust MP clock parent rate when allowed
-Date:   Thu, 10 Jan 2019 18:10:59 +0100
-Message-ID: <2085880.8AFF3nNMGQ@jernej-laptop>
-In-Reply-To: <20190110091548.e6btt2qofi7ttt6z@plaes.org>
-References: <20181104182705.18047-1-jernej.skrabec@siol.net> <20181104182705.18047-3-jernej.skrabec@siol.net> <20190110091548.e6btt2qofi7ttt6z@plaes.org>
+        id S1728825AbfAJWTY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 10 Jan 2019 17:19:24 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:41092 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728882AbfAJWTO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Jan 2019 17:19:14 -0500
+Received: by mail-ot1-f65.google.com with SMTP id u16so11416846otk.8;
+        Thu, 10 Jan 2019 14:19:14 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=8mXKyDOeuv77l2GB4kWHUs7/iI/PNHekuOkXLJVMaq4=;
+        b=ESTmADy3BsFZmTYKyAmGk/ebTiYkHrB7B1PDHs1rXZdFqpvXl2qorlP3y3pVqHtMBQ
+         TVCWmN8xJDgF9KrVpDZhihU/SA7YxlL+IxkG6qZ1GFzmPpcXH4wVVExKqqJA9osCQgk5
+         y5pJovaYaRqvQymmIkrWECjAzd8O099JzFFzMdD00Qn0hrv+1xtqECNocpvg0U5KUHgI
+         pJhDcygjypQc602DCjvIMhmyQ7xBqnWhjciLOBXdkuc32Zk2pB6xcvmMgUnOCpDlWW8T
+         pUQBHdQrh4tUR1eYTJw/gYqhxuroFvl/VUgzKOeh61K9uNMC7Z0GQ3KDGJxG0v1+tFpM
+         dabg==
+X-Gm-Message-State: AJcUukeuToYSxcimp++2Rxc1mEE3IWfeR/PTSszf3n1zl6TCfT597Q8a
+        jj75ZlM1TDYvLNLjvfl0czwzyd8=
+X-Google-Smtp-Source: ALg8bN6f8SHvnKK5VJSIN1SWFmUwn/fYGBFQwswqM37xWh4pLZzoZrcXET7WfIxfmPySy5xQMoRZMg==
+X-Received: by 2002:a9d:5a81:: with SMTP id w1mr8415635oth.317.1547158753259;
+        Thu, 10 Jan 2019 14:19:13 -0800 (PST)
+Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.googlemail.com with ESMTPSA id c19sm36776707otl.16.2019.01.10.14.19.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 10 Jan 2019 14:19:12 -0800 (PST)
+From:   Rob Herring <robh@kernel.org>
+To:     devicetree@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH] dt-bindings: clock: Convert fixed-factor-clock to json-schema
+Date:   Thu, 10 Jan 2019 16:19:02 -0600
+Message-Id: <20190110221903.3990-5-robh@kernel.org>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Dne četrtek, 10. januar 2019 ob 10:15:48 CET je Priit Laes napisal(a):
-> On Sun, Nov 04, 2018 at 07:26:39PM +0100, Jernej Skrabec wrote:
-> > Currently MP clocks don't consider adjusting parent rate even if they
-> > are allowed to do so. Such behaviour considerably lowers amount of
-> > possible rates, which is very inconvenient when such clock is used for
-> > pixel clock, for example.
-> > 
-> > In order to improve the situation, adjusting parent rate is considered
-> > when allowed.
-> > 
-> > This code is inspired by clk_divider_bestdiv() function, which does
-> > basically the same thing for different clock type.
-> 
-> This patch seems to break the eMMC support on Olinuxino-Lime2-eMMC boards:
-> 
-> EXT4-fs (mmcblk1p4): INFO: recovery required on readonly filesystem
-> EXT4-fs (mmcblk1p4): write access will be enabled during recovery
-> sunxi-mmc 1c11000.mmc: data error, sending stop command
-> sunxi-mmc 1c11000.mmc: send stop command failed
-> 
+Convert the fixed-factor-clock binding to DT schema format using
+json-schema.
 
-I'm not familiar with A20. What is interesting is that emmc clocks don't have 
-CLK_SET_RATE_PARENT flag set, so you shouldn't see any difference.
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org
+Signed-off-by: Rob Herring <robh@kernel.org>
+---
+ .../bindings/clock/fixed-factor-clock.txt     | 28 ----------
+ .../bindings/clock/fixed-factor-clock.yaml    | 56 +++++++++++++++++++
+ 2 files changed, 56 insertions(+), 28 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/fixed-factor-clock.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/fixed-factor-clock.yaml
 
-Can you post content of clk_summary with and without this patch?
-
-Best regards,
-Jernej
-
-> 
-> $ git bisect log
-> git bisect start
-> # good: [3df407b2a5346db1c48809706ece7a8616c79e0b] mmc: dw_mmc-bluefield:
-> simplify the probe() function git bisect good
-> 3df407b2a5346db1c48809706ece7a8616c79e0b
-> # bad: [00d59fde8532b2d42e80909d2e58678755e04da9] Merge tag 'mmc-v4.21' of
-> git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc git bisect bad
-> 00d59fde8532b2d42e80909d2e58678755e04da9
-> # good: [01e421feec0817bb3141eaae4c517410d193d440] Merge branch 'fixes' into
-> next git bisect good 01e421feec0817bb3141eaae4c517410d193d440
-> # bad: [1eefdec18eded41833401cfd64749643ff72e7da] Merge branch
-> 'locking-core-for-linus' of
-> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip git bisect bad
-> 1eefdec18eded41833401cfd64749643ff72e7da
-> # good: [eaa76499711535fd64d747cc4ef0d78ab0fd41c6] Merge tag 'mtd/for-4.21'
-> of git://git.infradead.org/linux-mtd git bisect good
-> eaa76499711535fd64d747cc4ef0d78ab0fd41c6
-> # good: [4e4390ad067a61ce4e7607bd0df31f19a4caa36a] Merge tag
-> 'leds-for-4.21-rc1' of
-> git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds git
-> bisect good 4e4390ad067a61ce4e7607bd0df31f19a4caa36a
-> # bad: [c2f1f3e0e17d94ab0c66d83e669492cb9e9a3698] Merge
-> git://git.kernel.org/pub/scm/linux/kernel/git/davem/sparc-next git bisect
-> bad c2f1f3e0e17d94ab0c66d83e669492cb9e9a3698
-> # bad: [e4b99d415c3908581d4703203e1e805f043a3e71] Merge branch
-> 'irq-core-for-linus' of
-> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip git bisect bad
-> e4b99d415c3908581d4703203e1e805f043a3e71
-> # bad: [ffe05540d18013db62c43627836a3638e9a2c7aa] Merge branches
-> 'clk-renesas', 'clk-allwinner', 'clk-tegra', 'clk-meson' and 'clk-rockchip'
-> into clk-next git bisect bad ffe05540d18013db62c43627836a3638e9a2c7aa
-> # good: [1a501c8defe950571316d5ddd917bf44f5ed7bd4] Merge branches
-> 'clk-managed-registration', 'clk-spdx', 'clk-remove-basic' and
-> 'clk-ops-const' into clk-next git bisect good
-> 1a501c8defe950571316d5ddd917bf44f5ed7bd4
-> # good: [e74581b79ddd9b49b8c61e2791fc4dffc0245afb] Merge tag
-> 'meson-clk-4.21-2' of https://github.com/BayLibre/clk-meson into clk-meson
-> git bisect good e74581b79ddd9b49b8c61e2791fc4dffc0245afb
-> # good: [60baf75e3f5b76043c25328ac0c5320aaef5ea41] Merge tag
-> 'clk-renesas-for-v4.21-tag2' of
-> git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers into
-> clk-renesas git bisect good 60baf75e3f5b76043c25328ac0c5320aaef5ea41
-> # bad: [a41f85b6017ee20952a60e4330bcae2527fe2c2a] Merge tag
-> 'sunxi-clk-for-4.21' of
-> https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux into
-> clk-allwinner git bisect bad a41f85b6017ee20952a60e4330bcae2527fe2c2a
-> # bad: [ee678706e46d0d185c27cc214ad97828e0643159] clk: sunxi-ng: a64: Fix
-> gate bit of DSI DPHY git bisect bad
-> ee678706e46d0d185c27cc214ad97828e0643159
-> # bad: [65b6657672388b72822e0367f06d41c1e3ffb5bb] clk: sunxi-ng: Use u64 for
-> calculation of NM rate git bisect bad
-> 65b6657672388b72822e0367f06d41c1e3ffb5bb
-> # good: [db7548934603d9eda12649dff97ea5c29884405d] clk: sunxi-ng: sun50i:
-> h6: Fix MMC clock mux width git bisect good
-> db7548934603d9eda12649dff97ea5c29884405d
-> # bad: [3f790433c3cb27ecaf2ca0e07ac25964e4fd9f15] clk: sunxi-ng: Adjust MP
-> clock parent rate when allowed git bisect bad
-> 3f790433c3cb27ecaf2ca0e07ac25964e4fd9f15
-> # first bad commit: [3f790433c3cb27ecaf2ca0e07ac25964e4fd9f15] clk:
-> sunxi-ng: Adjust MP clock parent rate when allowed
-> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> > ---
-> > 
-> >  drivers/clk/sunxi-ng/ccu_mp.c | 64 +++++++++++++++++++++++++++++++++--
-> >  1 file changed, 62 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/clk/sunxi-ng/ccu_mp.c b/drivers/clk/sunxi-ng/ccu_mp.c
-> > index 5d0af4051737..0357349eb767 100644
-> > --- a/drivers/clk/sunxi-ng/ccu_mp.c
-> > +++ b/drivers/clk/sunxi-ng/ccu_mp.c
-> > @@ -40,6 +40,61 @@ static void ccu_mp_find_best(unsigned long parent,
-> > unsigned long rate,> 
-> >  	*p = best_p;
-> >  
-> >  }
-> > 
-> > +static unsigned long ccu_mp_find_best_with_parent_adj(struct clk_hw *hw,
-> > +						      
-unsigned long *parent,
-> > +						      
-unsigned long rate,
-> > +						      
-unsigned int max_m,
-> > +						      
-unsigned int max_p)
-> > +{
-> > +	unsigned long parent_rate_saved;
-> > +	unsigned long parent_rate, now;
-> > +	unsigned long best_rate = 0;
-> > +	unsigned int _m, _p, div;
-> > +	unsigned long maxdiv;
-> > +
-> > +	parent_rate_saved = *parent;
-> > +
-> > +	/*
-> > +	 * The maximum divider we can use without overflowing
-> > +	 * unsigned long in rate * m * p below
-> > +	 */
-> > +	maxdiv = max_m * max_p;
-> > +	maxdiv = min(ULONG_MAX / rate, maxdiv);
-> > +
-> > +	for (_p = 1; _p <= max_p; _p <<= 1) {
-> > +		for (_m = 1; _m <= max_m; _m++) {
-> > +			div = _m * _p;
-> > +
-> > +			if (div > maxdiv)
-> > +				break;
-> > +
-> > +			if (rate * div == parent_rate_saved) {
-> > +				/*
-> > +				 * It's the most ideal case if 
-the requested
-> > +				 * rate can be divided from 
-parent clock without
-> > +				 * needing to change parent rate, 
-so return the
-> > +				 * divider immediately.
-> > +				 */
-> > +				*parent = parent_rate_saved;
-> > +				return rate;
-> > +			}
-> > +
-> > +			parent_rate = clk_hw_round_rate(hw, rate * 
-div);
-> > +			now = parent_rate / div;
-> > +
-> > +			if (now <= rate && now > best_rate) {
-> > +				best_rate = now;
-> > +				*parent = parent_rate;
-> > +
-> > +				if (now == rate)
-> > +					return rate;
-> > +			}
-> > +		}
-> > +	}
-> > +
-> > +	return best_rate;
-> > +}
-> > +
-> > 
-> >  static unsigned long ccu_mp_round_rate(struct ccu_mux_internal *mux,
-> >  
-> >  				       struct clk_hw *hw,
-> >  				       unsigned long 
-*parent_rate,
-> > 
-> > @@ -56,8 +111,13 @@ static unsigned long ccu_mp_round_rate(struct
-> > ccu_mux_internal *mux,> 
-> >  	max_m = cmp->m.max ?: 1 << cmp->m.width;
-> >  	max_p = cmp->p.max ?: 1 << ((1 << cmp->p.width) - 1);
-> > 
-> > -	ccu_mp_find_best(*parent_rate, rate, max_m, max_p, &m, &p);
-> > -	rate = *parent_rate / p / m;
-> > +	if (!(clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT)) {
-> > +		ccu_mp_find_best(*parent_rate, rate, max_m, max_p, &m, 
-&p);
-> > +		rate = *parent_rate / p / m;
-> > +	} else {
-> > +		rate = ccu_mp_find_best_with_parent_adj(hw, parent_rate, 
-rate,
-> > +							
-max_m, max_p);
-> > +	}
-> > 
-> >  	if (cmp->common.features & CCU_FEATURE_FIXED_POSTDIV)
-> >  	
-> >  		rate /= cmp->fixed_post_div;
-
-
-
+diff --git a/Documentation/devicetree/bindings/clock/fixed-factor-clock.txt b/Documentation/devicetree/bindings/clock/fixed-factor-clock.txt
+deleted file mode 100644
+index 189467a7188a..000000000000
+--- a/Documentation/devicetree/bindings/clock/fixed-factor-clock.txt
++++ /dev/null
+@@ -1,28 +0,0 @@
+-Binding for simple fixed factor rate clock sources.
+-
+-This binding uses the common clock binding[1].
+-
+-[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
+-
+-Required properties:
+-- compatible : shall be "fixed-factor-clock".
+-- #clock-cells : from common clock binding; shall be set to 0.
+-- clock-div: fixed divider.
+-- clock-mult: fixed multiplier.
+-- clocks: parent clock.
+-
+-Optional properties:
+-- clock-output-names : From common clock binding.
+-
+-Some clocks that require special treatments are also handled by that
+-driver, with the compatibles:
+-  - allwinner,sun4i-a10-pll3-2x-clk
+-
+-Example:
+-	clock {
+-		compatible = "fixed-factor-clock";
+-		clocks = <&parentclk>;
+-		#clock-cells = <0>;
+-		clock-div = <2>;
+-		clock-mult = <1>;
+-	};
+diff --git a/Documentation/devicetree/bindings/clock/fixed-factor-clock.yaml b/Documentation/devicetree/bindings/clock/fixed-factor-clock.yaml
+new file mode 100644
+index 000000000000..e7cd4ebac456
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/fixed-factor-clock.yaml
+@@ -0,0 +1,56 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/fixed-factor-clock.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Binding for simple fixed factor rate clock sources.
++
++maintainers:
++  - Michael Turquette <mturquette@baylibre.com>
++  - Stephen Boyd <sboyd@kernel.org>
++
++properties:
++  compatible:
++    enum:
++      - allwinner,sun4i-a10-pll3-2x-clk
++      - fixed-factor-clock
++
++  "#clock-cells":
++    const: 0
++
++  clocks:
++    maxItems: 1
++
++  clock-div:
++    description: Fixed divider
++    allOf:
++      - $ref: /schemas/types.yaml#/definitions/uint32
++      - minimum: 1
++
++  clock-mult:
++    description: Fixed multiplier
++    $ref: /schemas/types.yaml#/definitions/uint32
++
++  clock-output-names:
++    maxItems: 1
++
++required:
++  - compatible
++  - clocks
++  - "#clock-cells"
++  - clock-div
++  - clock-mult
++
++additionalProperties: false
++
++examples:
++  - |
++    clock {
++      compatible = "fixed-factor-clock";
++      clocks = <&parentclk>;
++      #clock-cells = <0>;
++      clock-div = <2>;
++      clock-mult = <1>;
++    };
++...
+-- 
+2.19.1
 
