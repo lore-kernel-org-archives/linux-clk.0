@@ -6,43 +6,46 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 796DEC43387
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Jan 2019 16:16:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4ACEC43387
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Jan 2019 16:36:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D851206B7
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Jan 2019 16:16:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8ED70206B7
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Jan 2019 16:36:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728603AbfAJQQf convert rfc822-to-8bit (ORCPT
+        id S1727932AbfAJQgq convert rfc822-to-8bit (ORCPT
         <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 10 Jan 2019 11:16:35 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:51302 "EHLO mail.bootlin.com"
+        Thu, 10 Jan 2019 11:36:46 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:52598 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727771AbfAJQQf (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 10 Jan 2019 11:16:35 -0500
+        id S1727344AbfAJQgp (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 10 Jan 2019 11:36:45 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id C85E7209BD; Thu, 10 Jan 2019 17:16:32 +0100 (CET)
+        id 4945820A08; Thu, 10 Jan 2019 17:36:43 +0100 (CET)
 Received: from localhost (alyon-652-1-22-18.w109-213.abo.wanadoo.fr [109.213.145.18])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 7BDFF20898;
-        Thu, 10 Jan 2019 17:16:22 +0100 (CET)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 0B28220898;
+        Thu, 10 Jan 2019 17:36:33 +0100 (CET)
 From:   Gregory CLEMENT <gregory.clement@bootlin.com>
-To:     Stephen Boyd <sboyd@codeaurora.org>
-Cc:     Mike Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Stephen Boyd <sboyd@codeaurora.org>, devicetree@vger.kernel.org,
         Jason Cooper <jason@lakedaemon.net>,
         Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-arm-kernel@lists.infradead.org,
         Antoine Tenart <antoine.tenart@bootlin.com>,
+        Mike Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         =?utf-8?Q?Miqu=C3=A8l?= Raynal <miquel.raynal@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 Subject: Re: [PATCH v3 0/6] Add CPU clock support for Armada 7K/8K
 References: <20181216094147.6468-1-gregory.clement@bootlin.com>
-Date:   Thu, 10 Jan 2019 17:16:22 +0100
-In-Reply-To: <20181216094147.6468-1-gregory.clement@bootlin.com> (Gregory
-        CLEMENT's message of "Sun, 16 Dec 2018 10:41:41 +0100")
-Message-ID: <87a7k8o5d5.fsf@FE-laptop>
+        <87a7k8o5d5.fsf@FE-laptop>
+        <154713766177.15366.14948014236046606980@swboyd.mtv.corp.google.com>
+Date:   Thu, 10 Jan 2019 17:36:33 +0100
+In-Reply-To: <154713766177.15366.14948014236046606980@swboyd.mtv.corp.google.com>
+        (Stephen Boyd's message of "Thu, 10 Jan 2019 08:27:41 -0800")
+Message-ID: <875zuwo4fi.fsf@FE-laptop>
 User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
@@ -54,72 +57,41 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 Hi Stephen,
  
- On dim., déc. 16 2018, Gregory CLEMENT <gregory.clement@bootlin.com> wrote:
+ On jeu., janv. 10 2019, Stephen Boyd <sboyd@kernel.org> wrote:
 
-> Hello,
+> Quoting Gregory CLEMENT (2019-01-10 08:16:22)
+>> Hi Stephen,
+>>  
+>>  On dim., déc. 16 2018, Gregory CLEMENT <gregory.clement@bootlin.com> wrote:
+>> 
+>> > Hello,
+>> >
+>> > This is the third version of a series allowing to manage the cpu
+>> > clock for Armada 7K/8K. For these SoCs, the CPUs share the same clock
+>> > by cluster, so actually the clock management is done at cluster level.
+>> >
+>> > As for the other Armada 7K/8K clocks it is possible to have multiple
+>> > AP so here again we need to have unique name: the purpose of the second
+>> > patch is to share a common code which will be used in 3 drivers.
+>> >
+>> > The last 2 patch enable the driver at dt and platform level and will
+>> > be applied through the mvebu subsystem.
+>> 
+>> What is the status of this series?
+>> 
+>> The only comments I had was from Rob about the binding and I answered
+>> them 3 weeks ago. Do you have any other comments? Do you expect a rebase
+>> of this series on v5.0-rc1?
+>> 
 >
-> This is the third version of a series allowing to manage the cpu
-> clock for Armada 7K/8K. For these SoCs, the CPUs share the same clock
-> by cluster, so actually the clock management is done at cluster level.
->
-> As for the other Armada 7K/8K clocks it is possible to have multiple
-> AP so here again we need to have unique name: the purpose of the second
-> patch is to share a common code which will be used in 3 drivers.
->
-> The last 2 patch enable the driver at dt and platform level and will
-> be applied through the mvebu subsystem.
+> I'm waiting for Rob. I think the binding is not proper so presumably you
+> will figure out what Rob wants and then change the code accordingly and
+> resend?
 
-What is the status of this series?
-
-The only comments I had was from Rob about the binding and I answered
-them 3 weeks ago. Do you have any other comments? Do you expect a rebase
-of this series on v5.0-rc1?
-
-Thanks,
+Actually the binding describes properly the hardware we have and that
+what I answered to Rob.
 
 Gregory
-
->
-> Changelog v2->v3:
->  - Add back the first patch documenting the binding
->
-> Changelog v1->v2:
->  - Header cleanup
->  - Use unsigned int instead of it for cluster member of the ap_cpu_clk struct
->  - Use clk_hw instead of clk
->  - Use regmap_read_poll_timeout
->  - Use for_each_of_cpu_node
->  - Remove unnecessary WARN_ON()
->  - Remove headers from armada_ap_cp_helper.h
->  - Few other minor cleanup
->
-> Gregory CLEMENT (6):
->   dt-bindings: ap806: add the cluster clock node in the syscon file
->   clk: mvebu: add helper file for Armada AP and CP clocks
->   clk: mvebu: add CPU clock driver for Armada 7K/8K
->   clk: mvebu: ap806: Fix clock name for the cluster
->   arm64: marvell: enable the  Armada 7K/8K CPU clk driver
->   arm64: dts: marvell: Add cpu clock node on Armada 7K/8K
->
->  .../arm/marvell/ap806-system-controller.txt   |  22 ++
->  arch/arm64/Kconfig.platforms                  |   1 +
->  .../boot/dts/marvell/armada-ap806-quad.dtsi   |   4 +
->  arch/arm64/boot/dts/marvell/armada-ap806.dtsi |   6 +
->  drivers/clk/mvebu/Kconfig                     |   8 +
->  drivers/clk/mvebu/Makefile                    |   2 +
->  drivers/clk/mvebu/ap-cpu-clk.c                | 259 ++++++++++++++++++
->  drivers/clk/mvebu/ap806-system-controller.c   |  24 +-
->  drivers/clk/mvebu/armada_ap_cp_helper.c       |  30 ++
->  drivers/clk/mvebu/armada_ap_cp_helper.h       |  11 +
->  drivers/clk/mvebu/cp110-system-controller.c   |  32 +--
->  11 files changed, 357 insertions(+), 42 deletions(-)
->  create mode 100644 drivers/clk/mvebu/ap-cpu-clk.c
->  create mode 100644 drivers/clk/mvebu/armada_ap_cp_helper.c
->  create mode 100644 drivers/clk/mvebu/armada_ap_cp_helper.h
->
-> -- 
-> 2.19.2
->
 
 -- 
 Gregory Clement, Bootlin
