@@ -2,107 +2,134 @@ Return-Path: <SRS0=xK8l=PT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 572D0C43387
-	for <linux-clk@archiver.kernel.org>; Fri, 11 Jan 2019 14:56:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 582C7C43387
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Jan 2019 17:44:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27EDD206B6
-	for <linux-clk@archiver.kernel.org>; Fri, 11 Jan 2019 14:56:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 333CE20874
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Jan 2019 17:44:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547218611;
-	bh=PNaSA5oi/G6SLSRjD9v6KUhmfX6uGarCAkHaMrloPNw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=A9nw49Qx08YD43yeX/05Fwf8f2hSZM71yX0pJAzTlY6s0CaGeFbGHAvILOPf2D4lh
-	 uQcBx+ZmMMNei+wm24zLoG2LkUJZ6U6Pf0riIRwrhODyJwXZGIMagLZSqnp52acfzc
-	 dgJcYqQwHlRbyYc2wTo/ANH9KMtUUARRFMQAQ0ak=
+	s=default; t=1547228658;
+	bh=O/HUrYYxLFFTdVRLBprksuW+5WBvx8+afTff2Pkw+Ko=;
+	h=Subject:In-Reply-To:References:Cc:To:From:Date:List-ID:From;
+	b=2ARAnJhRz/Zl2ZY6+u4Y/dHNcq1JAZ+/3OkOEI8eOioAKkRU2AWF2O0awD/pluHBD
+	 uevy7Jej4AaMYN+uEJdDmY7rs8cbvmC0GHJ10tdkdJBDW8FTwjpvbTjCOui7auzU6P
+	 JqIqKLohBXReZvKBjxM4aa97BM9whBhXovCbYrNE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732145AbfAKO4o (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:56:44 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:39693 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731544AbfAKO4n (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 11 Jan 2019 09:56:43 -0500
-Received: by mail-oi1-f193.google.com with SMTP id i6so12408245oia.6;
-        Fri, 11 Jan 2019 06:56:43 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=dOZ7ydKjrFInmblb4snE5E2ZFfXlu7+y0nbTinIkDn0=;
-        b=OXthK1Aqdo5jYbbkqtkDj4rnOiOP//5KN6/mJpmCy9CezSpOU/W0udLHfE9bIpgVZD
-         ExteE09dQWSzJw4RVYy4oX6D+LMsnvWYeKl5ZO8Tym8ZoANti6jVMQUeI7huhHlPZoLu
-         Pbx2ZVzuJ+JZhIQ/baRvPyNCXUcefp1ri2wS4toGtStVQNJD6w1YK/IQfdy/QHX0kSvs
-         2kGKYC+RaK98SpQlulsCyP6mXViySqRlbVeDId1fKao0tTrfsmnzF7uTHSnGv5i/0O92
-         cijnE7ZswvFaJCIGskvIr4096ho3NmkWakDVMz4NIj+aw7hBBQPJbhmWwvvbgEoIV/GR
-         Cr+w==
-X-Gm-Message-State: AJcUukc26I7fkgrJvRViG3GZL2SLiRwn+hPx3dHmX1MOCrFpHJn3fMZV
-        rowPGO9NK/bfAHTjYz3/2w==
-X-Google-Smtp-Source: ALg8bN6MHh/sH867VMmlp3MFoU+z+L15kBA8wRT0Ao/QgxP+nngTy5tg2TecIHSSwviwWTPgrZzHNQ==
-X-Received: by 2002:aca:bc42:: with SMTP id m63mr8971423oif.323.1547218603102;
-        Fri, 11 Jan 2019 06:56:43 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id k13sm59192406otj.19.2019.01.11.06.56.42
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 11 Jan 2019 06:56:42 -0800 (PST)
-Date:   Fri, 11 Jan 2019 08:56:42 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc:     sboyd@kernel.org, mturquette@baylibre.com, afaerber@suse.de,
-        linux-arm-kernel@lists.infradead.org,
-        linux-actions@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Edgar Bernardi Righi <edgar.righi@lsitec.org.br>
-Subject: Re: [PATCH 2/6] dt-bindings: clock: Add DT bindings for Actions Semi
- S500 CMU
-Message-ID: <20190111145642.GA25726@bogus>
-References: <20181231185517.18517-1-manivannan.sadhasivam@linaro.org>
- <20181231185517.18517-3-manivannan.sadhasivam@linaro.org>
+        id S1731767AbfAKRoM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 11 Jan 2019 12:44:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43872 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731396AbfAKRoM (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 11 Jan 2019 12:44:12 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 673B120874;
+        Fri, 11 Jan 2019 17:44:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547228651;
+        bh=O/HUrYYxLFFTdVRLBprksuW+5WBvx8+afTff2Pkw+Ko=;
+        h=Subject:In-Reply-To:References:Cc:To:From:Date:From;
+        b=r/HDcVsog+ppED98B7hQP4QzFFMYdbnlmzeSKDMREW6XSNk0jlkKTfYJNLeM2uP8R
+         uh4gsSn7cSNRoSAORr0hS64W0gRoYI+VIlKnat+x9HBTTUBp8284+12GGaAXpanWpz
+         z6S9TqQKGIiaw/LSSw14TiayIOUvPk2uPQ+MRlqM=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181231185517.18517-3-manivannan.sadhasivam@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] dt-bindings: clock: Convert fixed-clock binding to json-schema
+User-Agent: alot/0.8
+In-Reply-To: <20190110221903.3990-4-robh@kernel.org>
+References: <20190110221903.3990-4-robh@kernel.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org
+To:     Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org
+Message-ID: <154722865051.169631.16957443589975628047@swboyd.mtv.corp.google.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+Date:   Fri, 11 Jan 2019 09:44:10 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Jan 01, 2019 at 12:25:13AM +0530, Manivannan Sadhasivam wrote:
-> From: Edgar Bernardi Righi <edgar.righi@lsitec.org.br>
-> 
-> Add devicetree bindings for Actions Semi S500 Clock Management Unit.
-> 
-> Signed-off-by: Edgar Bernardi Righi <edgar.righi@lsitec.org.br>
-> [Mani: Documented S500 CMU compatible]
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
-> 
-> Rob, I have removed your Reviewed-by tag for this patch since the
-> earlier revision contained only bindings constants and lacked the
-> compatible documentation, which is added now.
-> 
->  .../bindings/clock/actions,owl-cmu.txt        |  7 +-
->  include/dt-bindings/clock/actions,s500-cmu.h  | 78 +++++++++++++++++++
->  2 files changed, 82 insertions(+), 3 deletions(-)
->  create mode 100644 include/dt-bindings/clock/actions,s500-cmu.h
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/actions,owl-cmu.txt b/Documentation/devicetree/bindings/clock/actions,owl-cmu.txt
-> index 2ef86ae96df8..86183f559022 100644
-> --- a/Documentation/devicetree/bindings/clock/actions,owl-cmu.txt
-> +++ b/Documentation/devicetree/bindings/clock/actions,owl-cmu.txt
-> @@ -2,13 +2,14 @@
->  
->  The Actions Semi Owl Clock Management Unit generates and supplies clock
->  to various controllers within the SoC. The clock binding described here is
-> -applicable to S900 and S700 SoC's.
-> +applicable to S900,S700 and S500 SoC's.
+Quoting Rob Herring (2019-01-10 14:19:01)
+> Convert the fixed-clock binding to DT schema format using json-schema.
+>=20
 
-space needed after the ','.
+Any pointer to the full schema?
 
-With that,
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: linux-clk@vger.kernel.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
+[...]
+> diff --git a/Documentation/devicetree/bindings/clock/fixed-clock.yaml b/D=
+ocumentation/devicetree/bindings/clock/fixed-clock.yaml
+> new file mode 100644
+> index 000000000000..8b5628463b90
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/fixed-clock.yaml
+> @@ -0,0 +1,44 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/fixed-clock.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Binding for simple fixed-rate clock sources.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Why does title have a full stop?
+
+> +
+> +maintainers:
+> +  - Michael Turquette <mturquette@baylibre.com>
+> +  - Stephen Boyd <sboyd@kernel.org>
+> +
+> +properties:
+> +  compatible:
+> +    const: fixed-clock
+> +
+> +  "#clock-cells":
+> +    const: 0
+> +
+> +  clock-frequency: true
+
+Why doesn't this need the $ref: /schemas/types.yaml#/... thing?
+
+> +  clock-accuracy:
+> +    description: accuracy of clock in ppb (parts per billion).
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +
+> +  clock-output-names:
+> +    maxItems: 1
+
+Is there a schema for strings?
+
+> +
+> +required:
+> +  - compatible
+> +  - "#clock-cells"
+> +  - clock-frequency
+> +
+> +additionalProperties: false
+
+Does this always have to be specified even if it's false?
+
+> +
+> +examples:
+> +  - |
+> +    clock {
+> +      compatible =3D "fixed-clock";
+> +      #clock-cells =3D <0>;
+> +      clock-frequency =3D <1000000000>;
+> +      clock-accuracy =3D <100>;
+> +    };
+> +...
+>=20
+
+Is the triple dot part of the schema?
+
