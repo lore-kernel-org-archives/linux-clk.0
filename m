@@ -2,109 +2,82 @@ Return-Path: <SRS0=xK8l=PT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82D74C43387
-	for <linux-clk@archiver.kernel.org>; Fri, 11 Jan 2019 19:49:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76E71C43387
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Jan 2019 20:14:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5991A206B7
-	for <linux-clk@archiver.kernel.org>; Fri, 11 Jan 2019 19:49:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="m/SCxCur";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Q0jhrkQ2"
+	by mail.kernel.org (Postfix) with ESMTP id 40F7E2084C
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Jan 2019 20:14:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547237644;
+	bh=Tns2HzlCPwGUIO5h0kc6dWRc81keKGWJOGbTkIDsrtY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=v/F274Cwzy5ySVhSIdpM+d8kTC1W4rbh9lx+cejAjHR8SRQb+pEfLbSXYS8fFYbhN
+	 MN6WjhAjwlVsp1uXYNr2sce94a3GvcgnPHVYyrpQ2PHQmUs+xKC3IwF8RSgyPzjNUl
+	 N14kcC873QPlFb1XX4xGyC/UwWFo91MkxJ2oZ8G4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728903AbfAKTsy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 11 Jan 2019 14:48:54 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:56846 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728042AbfAKTsy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 11 Jan 2019 14:48:54 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 11238607F4; Fri, 11 Jan 2019 19:48:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547236133;
-        bh=7GkrtKZPOvXOzlIjB7wYFqGqSz+/Wp7aIytFKWbA4Wo=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=m/SCxCuruorEnoH6T5XJZ2GI0d96l6rYJgAUlMQcB2/Q7sw6zR232pfIrNLGEBAw7
-         h/jEz9Cln12NCDBUt5iyTY0MIeJhC+IrBgKY9v5Qj0jHwwWw6u9kqaMzsbwB9+Esjw
-         h9eHeZDiwFgnKa11Oqo9P18trUXVMyPMgacUBQfw=
-Received: from [10.226.60.81] (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: jhugo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 51F93601B4;
-        Fri, 11 Jan 2019 19:48:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547236132;
-        bh=7GkrtKZPOvXOzlIjB7wYFqGqSz+/Wp7aIytFKWbA4Wo=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=Q0jhrkQ2d05V1lAWQwCw6R+W5HNjB5jsBM0Vu1JZtCIWGlpUVMLlWBwWUTOPea7Ul
-         Fnzx+10BCC6SptoeLd2p7wCJNaOASNgO8B3dbLqyyQgerdl69KKHvvrXiJZ5I3J7xB
-         ZusAaB9jEM2rerCe4qgCqdVK0p3jgiILvZSvcvV0=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 51F93601B4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
-Subject: Re: [PATCH v1 4/6] phy: qcom-qmp: Add QMP V3 USB3 PHY support for
- msm8998
-To:     Rob Herring <robh@kernel.org>
-Cc:     kishon@ti.com, bjorn.andersson@linaro.org, andy.gross@linaro.org,
-        david.brown@linaro.org, mturquette@baylibre.com, sboyd@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, gregkh@linuxfoundation.org,
-        balbi@kernel.org, linux-usb@vger.kernel.org
-References: <1546620647-2467-1-git-send-email-jhugo@codeaurora.org>
- <20190111194513.GA13699@bogus>
-From:   Jeffrey Hugo <jhugo@codeaurora.org>
-Message-ID: <a5f38a7b-a761-c924-08ef-fc685f027561@codeaurora.org>
-Date:   Fri, 11 Jan 2019 12:48:50 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        id S2389278AbfAKUOE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 11 Jan 2019 15:14:04 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:46985 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387951AbfAKUOD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 11 Jan 2019 15:14:03 -0500
+Received: by mail-ot1-f67.google.com with SMTP id w25so14197034otm.13;
+        Fri, 11 Jan 2019 12:14:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=C7AT1paUpexE0fxOgLbS01YsTZMkfGBrjy2UmVen7/Q=;
+        b=Bey2+6DrbaZb5q2x0TRW6grHUuNxrqyf8+BnbPlXlzq7TFwVniij6/bYTBUx41SPtJ
+         OsW7ce96Moen91C6RIe9CR7LsHRZQJz/VnbPc3bnndsqcBjEZcIQN1Gp7yWKdENcgaDI
+         spqfLwHSAqAIpYUtFAMgdrp9hZAqyes+O2gzYxVK/EWkUKz3CKmLODLlDdgK2wgZLZhV
+         avTJ3sHo2qqiYh3vYNxkNnCV1ach2+RapJDDa2DorHSkRFaYbDC9ZtmMPB9bKxwTZAHJ
+         ygpdkVtKYdThu0cEUjp9AqDl1kJjT9WZs35AyLaseLPc5ZQhAedU6NDbSsaPG3encSgF
+         FV+Q==
+X-Gm-Message-State: AJcUukfH3LX44diVHkIdKYOtBNCWNtYrf1E4aKmzWzhF7DwhOg0h+reA
+        93s9wQFG574rT+gYEYT4Nd8yjr3e/Q==
+X-Google-Smtp-Source: ALg8bN7fkDB+k1ARB/nhz26/XhyhW4sFirvLzsMRQovG8JvU+0oEZIfyseFcDYZNeDBWFQEXl+TrHg==
+X-Received: by 2002:a9d:a83:: with SMTP id 3mr10962331otq.88.1547237642888;
+        Fri, 11 Jan 2019 12:14:02 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id o2sm40211341otj.2.2019.01.11.12.14.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 11 Jan 2019 12:14:02 -0800 (PST)
+Date:   Fri, 11 Jan 2019 14:14:01 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Lubomir Rintel <lkundrak@v3.sk>
+Cc:     Jiri Kosina <trivial@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] dt-bindings: marvell,mmp2: fix typos in bindings doc
+Message-ID: <20190111201401.GA1349@bogus>
+References: <20190104215656.23002-1-lkundrak@v3.sk>
 MIME-Version: 1.0
-In-Reply-To: <20190111194513.GA13699@bogus>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190104215656.23002-1-lkundrak@v3.sk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 1/11/2019 12:45 PM, Rob Herring wrote:
-> On Fri, Jan 04, 2019 at 09:50:47AM -0700, Jeffrey Hugo wrote:
->> MSM8998 contains a single QMP v3 USB3 phy similar to the existing sdm845
->> support, however MSM8998 does not have display port (DP) support.
->>
->> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
->> ---
->>   .../devicetree/bindings/phy/qcom-qmp-phy.txt       |   5 +
->>   drivers/phy/qualcomm/phy-qcom-qmp.c                | 142 +++++++++++++++++++++
->>   drivers/phy/qualcomm/phy-qcom-qmp.h                |   4 +
->>   3 files changed, 151 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt b/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
->> index 41a1074..6061b6f 100644
->> --- a/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
->> +++ b/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
->> @@ -9,6 +9,7 @@ Required properties:
->>   	       "qcom,ipq8074-qmp-pcie-phy" for PCIe phy on IPQ8074
->>   	       "qcom,msm8996-qmp-pcie-phy" for 14nm PCIe phy on msm8996,
->>   	       "qcom,msm8996-qmp-usb3-phy" for 14nm USB3 phy on msm8996,
->> +	       "qcom,msm8998-qmp-usb3-phy" for USB3 QMP V3 phy on msm8998,
+On Fri, Jan 04, 2019 at 10:56:56PM +0100, Lubomir Rintel wrote:
+> A pair of rather trivial ones.
 > 
-> Please make bindings a separate patch. Combining patch 1 and 2
-> binding changes is fine.
+> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 > 
-> Rob
+> ---
+> Changes since v1:
+> - s/identifier/identifiers/ as suggested by Rob Herring
 > 
+>  Documentation/devicetree/bindings/clock/marvell,mmp2.txt | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Sure.  Planning on re-spinning early next week to address a few comments.
+Applied, thanks.
 
--- 
-Jeffrey Hugo
-Qualcomm Datacenter Technologies as an affiliate of Qualcomm 
-Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+Rob
