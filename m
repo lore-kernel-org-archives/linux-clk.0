@@ -2,82 +2,161 @@ Return-Path: <SRS0=xK8l=PT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76E71C43387
-	for <linux-clk@archiver.kernel.org>; Fri, 11 Jan 2019 20:14:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEBCCC43387
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Jan 2019 20:49:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40F7E2084C
-	for <linux-clk@archiver.kernel.org>; Fri, 11 Jan 2019 20:14:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BDCE12133F
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Jan 2019 20:49:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547237644;
-	bh=Tns2HzlCPwGUIO5h0kc6dWRc81keKGWJOGbTkIDsrtY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=v/F274Cwzy5ySVhSIdpM+d8kTC1W4rbh9lx+cejAjHR8SRQb+pEfLbSXYS8fFYbhN
-	 MN6WjhAjwlVsp1uXYNr2sce94a3GvcgnPHVYyrpQ2PHQmUs+xKC3IwF8RSgyPzjNUl
-	 N14kcC873QPlFb1XX4xGyC/UwWFo91MkxJ2oZ8G4=
+	s=default; t=1547239759;
+	bh=GE6MFGkevP3oHwgQFacU37gcdTIyXhguSNBrg4fNM9o=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=ScApBtsK8VtHnM5Df5aBsgfUV2ScXkLgZN8aZbjPvNQXZtOOWJB0lzo0xPSkyJTPa
+	 mHm17RS9eIAzm1EZT8B6hJa9dhBkMOlqsAuFWnrd6zZs9aeJVv5TulToLTspkD+oZj
+	 XFUCLNg2XkKP0SKYrXe0EvGLsP9h8nJTbqPHUCaM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389278AbfAKUOE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 11 Jan 2019 15:14:04 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:46985 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387951AbfAKUOD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 11 Jan 2019 15:14:03 -0500
-Received: by mail-ot1-f67.google.com with SMTP id w25so14197034otm.13;
-        Fri, 11 Jan 2019 12:14:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=C7AT1paUpexE0fxOgLbS01YsTZMkfGBrjy2UmVen7/Q=;
-        b=Bey2+6DrbaZb5q2x0TRW6grHUuNxrqyf8+BnbPlXlzq7TFwVniij6/bYTBUx41SPtJ
-         OsW7ce96Moen91C6RIe9CR7LsHRZQJz/VnbPc3bnndsqcBjEZcIQN1Gp7yWKdENcgaDI
-         spqfLwHSAqAIpYUtFAMgdrp9hZAqyes+O2gzYxVK/EWkUKz3CKmLODLlDdgK2wgZLZhV
-         avTJ3sHo2qqiYh3vYNxkNnCV1ach2+RapJDDa2DorHSkRFaYbDC9ZtmMPB9bKxwTZAHJ
-         ygpdkVtKYdThu0cEUjp9AqDl1kJjT9WZs35AyLaseLPc5ZQhAedU6NDbSsaPG3encSgF
-         FV+Q==
-X-Gm-Message-State: AJcUukfH3LX44diVHkIdKYOtBNCWNtYrf1E4aKmzWzhF7DwhOg0h+reA
-        93s9wQFG574rT+gYEYT4Nd8yjr3e/Q==
-X-Google-Smtp-Source: ALg8bN7fkDB+k1ARB/nhz26/XhyhW4sFirvLzsMRQovG8JvU+0oEZIfyseFcDYZNeDBWFQEXl+TrHg==
-X-Received: by 2002:a9d:a83:: with SMTP id 3mr10962331otq.88.1547237642888;
-        Fri, 11 Jan 2019 12:14:02 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id o2sm40211341otj.2.2019.01.11.12.14.02
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 11 Jan 2019 12:14:02 -0800 (PST)
-Date:   Fri, 11 Jan 2019 14:14:01 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Lubomir Rintel <lkundrak@v3.sk>
-Cc:     Jiri Kosina <trivial@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] dt-bindings: marvell,mmp2: fix typos in bindings doc
-Message-ID: <20190111201401.GA1349@bogus>
-References: <20190104215656.23002-1-lkundrak@v3.sk>
+        id S1726525AbfAKUtT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 11 Jan 2019 15:49:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49942 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725801AbfAKUtT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 11 Jan 2019 15:49:19 -0500
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AA8342133F;
+        Fri, 11 Jan 2019 20:49:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547239757;
+        bh=GE6MFGkevP3oHwgQFacU37gcdTIyXhguSNBrg4fNM9o=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=YNQPPe0KElil6Rl5HKa96cu+U5inmCyOe2FmAdsqX+ePklgTC3J18eb59ltmmlGaD
+         q/KLtV/zqBSgjs+qdWg1+ChCU6MoKVG52T2R1qoOzgcBYHPusuyjbNYvQ+ymXWed//
+         kglksjaj9bqTW5VUdxlR3/aXgWkK8F0O45sf1jMU=
+Received: by mail-qt1-f181.google.com with SMTP id y20so20298968qtm.13;
+        Fri, 11 Jan 2019 12:49:17 -0800 (PST)
+X-Gm-Message-State: AJcUukdeQUxzkMgLnC+B9UtM5MThUngUOCmTPedmhkfezCOTJqSjMyJw
+        P/UygiV89b498qwJTHW7gDXAgqGKSD6LHL7Jzw==
+X-Google-Smtp-Source: ALg8bN7eE/X9BYzSc7z8RQeVuiEMPWzapOJpzqt8NFwUPXsUOg1r4gkdhm6+51D0E9cR53Jb88e1f5hQCQO4TLP791I=
+X-Received: by 2002:a0c:f212:: with SMTP id h18mr15620049qvk.106.1547239756893;
+ Fri, 11 Jan 2019 12:49:16 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190104215656.23002-1-lkundrak@v3.sk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190110221903.3990-4-robh@kernel.org> <154722865051.169631.16957443589975628047@swboyd.mtv.corp.google.com>
+ <CAL_JsqJzNBYCMWbZtR37eZd4yx2kc590V+q3603Hg=kG2bZwhw@mail.gmail.com> <154723284041.169631.6622751321828044091@swboyd.mtv.corp.google.com>
+In-Reply-To: <154723284041.169631.6622751321828044091@swboyd.mtv.corp.google.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Fri, 11 Jan 2019 14:49:04 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJFyC3AXwbd8PoJS1wZ5BSokAPcFi=4FF2DQ6yFi0XwCw@mail.gmail.com>
+Message-ID: <CAL_JsqJFyC3AXwbd8PoJS1wZ5BSokAPcFi=4FF2DQ6yFi0XwCw@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: clock: Convert fixed-clock binding to json-schema
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Jan 04, 2019 at 10:56:56PM +0100, Lubomir Rintel wrote:
-> A pair of rather trivial ones.
-> 
-> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-> 
-> ---
-> Changes since v1:
-> - s/identifier/identifiers/ as suggested by Rob Herring
-> 
->  Documentation/devicetree/bindings/clock/marvell,mmp2.txt | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+On Fri, Jan 11, 2019 at 12:54 PM Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> Quoting Rob Herring (2019-01-11 10:27:48)
+> > On Fri, Jan 11, 2019 at 11:44 AM Stephen Boyd <sboyd@kernel.org> wrote:
+> > >
+> > > Quoting Rob Herring (2019-01-10 14:19:01)
+> > > > Convert the fixed-clock binding to DT schema format using json-schema.
+> > > >
+> > >
+> > > Any pointer to the full schema?
+> >
+> > https://github.com/robherring/yaml-bindings/blob/master/schemas/
+> >
+> > And the clock schema in particular:
+> > https://github.com/robherring/yaml-bindings/blob/master/schemas/clock.yaml
+>
+> Awesome. Thanks for the pointers! Is the clock schema posted to the list
+> somewhere?
 
-Applied, thanks.
+No. Happy to post things, but I'm struggling to find anyone that cares.
+
+> > > > Cc: Michael Turquette <mturquette@baylibre.com>
+> > > > Cc: Stephen Boyd <sboyd@kernel.org>
+> > > > Cc: linux-clk@vger.kernel.org
+> > > > Signed-off-by: Rob Herring <robh@kernel.org>
+> > > [...]
+> > > > diff --git a/Documentation/devicetree/bindings/clock/fixed-clock.yaml b/Documentation/devicetree/bindings/clock/fixed-clock.yaml
+> > > > new file mode 100644
+> > > > index 000000000000..8b5628463b90
+> > > > --- /dev/null
+> > > > +++ b/Documentation/devicetree/bindings/clock/fixed-clock.yaml
+> > > > @@ -0,0 +1,44 @@
+> > > > +# SPDX-License-Identifier: GPL-2.0
+> > > > +%YAML 1.2
+> > > > +---
+> > > > +$id: http://devicetree.org/schemas/clock/fixed-clock.yaml#
+> > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > > +
+> > > > +title: Binding for simple fixed-rate clock sources.
+> > >
+> > > Why does title have a full stop?
+> >
+> > Because it was there in the original. My script to extract just takes
+> > the first line of alphanumeric text.
+>
+> Ok. I think it would be good to treat them like commit subjects that
+> don't have the full stop either, so if the script is able to drop the
+> full stop it would be great.
+
+I can just write a meta-schema to enforce that. :)
+
+> > > > +
+> > > > +maintainers:
+> > > > +  - Michael Turquette <mturquette@baylibre.com>
+> > > > +  - Stephen Boyd <sboyd@kernel.org>
+> > > > +
+> > > > +properties:
+> > > > +  compatible:
+> > > > +    const: fixed-clock
+> > > > +
+> > > > +  "#clock-cells":
+> > > > +    const: 0
+> > > > +
+> > > > +  clock-frequency: true
+> > >
+> > > Why doesn't this need the $ref: /schemas/types.yaml#/... thing?
+> >
+> > You might want to read bindings/example-schema.yaml which tries to
+> > explain some of this.
+> >
+> > Standard properties are already defined in the core schemas. So we
+> > only have to say "we use this property" and any binding specific
+> > constraints. In this case, there aren't any other constraints. It is
+> > also needed to be listed here to mark it required and to satisfy
+> > 'additionalProperties: false'.
+>
+> Hmm ok. I suppose I'll have to hold that information in my mind when
+> reviewing bindings. Is there any tooling or some script that I can run
+> on json-schema bindings to verify they're correct? Or to find something
+> redundant like this where a standard property is redefined? Grep would
+> work for the redundant problem I suppose.
+
+Yes, the meta-schema enforces this at least to the extent there is a
+meta-schema defined for a standard property. Even if not something for
+a specific property, we limit things to a subset of json-schema
+keywords. Also, you also can't define something contradicting a core
+schema (e.g. { reg: { type: string } }), but that wouldn't be found
+until you check actual DTs.
+
+The meta-schema check is run with:
+make dt_binding_check
+
+This is all documented in Documentation/devicetree/writing-schema.md.
 
 Rob
