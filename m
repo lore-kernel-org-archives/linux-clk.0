@@ -2,69 +2,156 @@ Return-Path: <SRS0=xK8l=PT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38B7EC43387
-	for <linux-clk@archiver.kernel.org>; Fri, 11 Jan 2019 13:38:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FE66C43387
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Jan 2019 13:44:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14CE320874
-	for <linux-clk@archiver.kernel.org>; Fri, 11 Jan 2019 13:38:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 08B4F2084C
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Jan 2019 13:44:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732735AbfAKNiB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 11 Jan 2019 08:38:01 -0500
-Received: from smtp3-g21.free.fr ([212.27.42.3]:51654 "EHLO smtp3-g21.free.fr"
+        id S1732125AbfAKNox convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 11 Jan 2019 08:44:53 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:51545 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728590AbfAKNiA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 11 Jan 2019 08:38:00 -0500
-Received: from [192.168.108.68] (unknown [213.36.7.13])
-        (Authenticated sender: marc.w.gonzalez)
-        by smtp3-g21.free.fr (Postfix) with ESMTPSA id AA40E13F8BC;
-        Fri, 11 Jan 2019 14:37:43 +0100 (CET)
+        id S1728591AbfAKNox (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 11 Jan 2019 08:44:53 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 3AA9C20797; Fri, 11 Jan 2019 14:44:51 +0100 (CET)
+Received: from xps13 (aaubervilliers-681-1-45-241.w90-88.abo.wanadoo.fr [90.88.163.241])
+        by mail.bootlin.com (Postfix) with ESMTPSA id CC5602074E;
+        Fri, 11 Jan 2019 14:44:40 +0100 (CET)
+Date:   Fri, 11 Jan 2019 14:44:40 +0100
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     linux-clk <linux-clk@vger.kernel.org>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        Jeffrey Hugo <jhugo@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <andy.gross@linaro.org>
-From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
-Subject: [PATCH v1] clk: qcom: Select QCOM_GDSC with MSM_GCC_8998
-Message-ID: <b0970d61-5658-5a00-0f5e-158f31aa2460@free.fr>
-Date:   Fri, 11 Jan 2019 14:37:43 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Bjorn Helgaas <bhelgaas@google.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Nadav Haklai <nadavh@marvell.com>
+Subject: Re: [PATCH 2/4] clk: mvebu: armada-37xx-periph: change
+ suspend/resume time
+Message-ID: <20190111144440.6fd456b5@xps13>
+In-Reply-To: <20181130115821.255394d4@xps13>
+References: <20181123094444.27956-1-miquel.raynal@bootlin.com>
+        <20181123094444.27956-3-miquel.raynal@bootlin.com>
+        <154353827849.88331.12767996548874447262@swboyd.mtv.corp.google.com>
+        <20181130115821.255394d4@xps13>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-If QCOM_GDSC is disabled, gdsc_register() returns -ENOSYS, which causes
-gcc_msm8998_probe() to fail. Select QCOM_GDSC to solve the problem.
+Hi Bjorn and Stephen
 
-gcc-msm8998: probe of 100000.clock-controller failed with error -38
+Gentle ping about the below debate, I hope you will have enough
+context to answer, please ask if something is unclear.
 
-Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
----
- drivers/clk/qcom/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+The question here about "shall we upgrade the clocks S2RAM callbacks to
+the NOIRQ phase" to be handled before/after the PCIe callbacks (which
+also are in the NOIRQ phase) also applies to the pinctrl driver so I am
+really interested to know why this would not be a valid solution.
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index 1b1ba54e33dd..1c04575c118f 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -215,6 +215,7 @@ config MSM_MMCC_8996
- 
- config MSM_GCC_8998
- 	tristate "MSM8998 Global Clock Controller"
-+	select QCOM_GDSC
- 	help
- 	  Support for the global clock controller on msm8998 devices.
- 	  Say Y if you want to use peripheral devices such as UART, SPI,
--- 
-2.17.1
+Miquel Raynal <miquel.raynal@bootlin.com> wrote on Fri, 30
+Nov 2018 11:58:21 +0100:
+
+> Hi Stephen,
+> 
+> + Bjorn to help us on PCI suspend/resume questions.
+> 
+> Stephen Boyd <sboyd@kernel.org> wrote on Thu, 29 Nov 2018 16:37:58
+> -0800:
+> 
+> > Quoting Miquel Raynal (2018-11-23 01:44:41)  
+> > > Armada 3700 PCIe IP relies on the PCIe clock managed by this
+> > > driver. For reasons related to the PCI core's organization when
+> > > suspending/resuming, PCI host controller drivers must reconfigure
+> > > their register at suspend_noirq()/resume_noirq() which happens after
+> > > suspend()/suspend_late() and before resume_early()/resume().
+> > > 
+> > > Device link support in the clock framework enforce that the clock
+> > > driver's resume() callback will be called before the PCIe
+> > > driver's. But, any resume_noirq() callback will be called before all
+> > > the registered resume() callbacks.    
+> > 
+> > I thought any device driver that provides something to another device
+> > driver will implicitly be probed before the driver that consumes said
+> > resources. And we actually reorder the dpm list on probe defer so that
+> > the order of devices is correct. Is it more that we want to parallelize
+> > suspend/resume of the PCIe chip so we need to have device links so that
+> > we know the dependency of the PCIe driver on the clock driver?  
+> 
+> I had the same idea of device links before testing. I hope I did
+> not make any mistake leading me to wrong observations, but indeed
+> this is what I think is happening:
+> * PM core call all suspend() callbacks
+> * then all suspend_late()
+> * then all suspend_noirq()
+> For me, the PM core does not care if a suspend_noirq() depends on the
+> suspend() of another driver.
+> 
+> I hope I did not miss anything.
+> 
+> >   
+> > > 
+> > > The solution to support PCIe resume operation is to change the
+> > > "priority" of this clock driver PM callbacks to "_noirq()".    
+> > 
+> > This seems sad that the PM core can't "priority boost" any
+> > suspend/resume callbacks of a device that doesn't have noirq callbacks
+> > when a device that depends on it from the device link perspective does
+> > have noirq callbacks.  
+> 
+> I do agree on this but I'm not sure it would work. I suppose the
+> "noirq" state is a global state and thus code in regular suspend()
+> callbacks could probably fail to run in a "noirq" context?
+> 
+> > And why does the PCIe device need to use noirq callbacks in general?  
+> 
+> I would like Bjorn to confirm this, but there is this commit that could
+> explain the situation:
+> 
+> commit ab14d45ea58eae67c739e4ba01871cae7b6c4586
+> Author: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+> Date:   Tue Mar 17 15:55:45 2015 +0100
+> 
+>     PCI: mvebu: Add suspend/resume support
+>     
+>     Add suspend/resume support for the mvebu PCIe host driver.  Without this
+>     commit, the system will panic at resume time when PCIe devices are
+>     connected.
+>     
+>     Note that we have to use the ->suspend_noirq() and ->resume_noirq() hooks,
+>     because at resume time, the PCI fixups are done at ->resume_noirq() time,
+>     so the PCIe controller has to be ready at this point.
+>     
+>     Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+>     Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+>     Acked-by: Jason Cooper <jason@lakedaemon.net>
+> 
+> > 
+> > I'm just saying this seems like a more fundamental problem with ordering
+> > of provider and consumer suspend/resume functions that isn't being
+> > solved in this patch. In fact, it's quite the opposite, this is working
+> > around the problem.
+> >   
+> 
+> I do agree with your point, but I would not be confident tweaking the PM
+> core's scheduling "alone" :)
+> 
+
+Thanks,
+Miquèl
