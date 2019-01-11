@@ -2,156 +2,101 @@ Return-Path: <SRS0=xK8l=PT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FE66C43387
-	for <linux-clk@archiver.kernel.org>; Fri, 11 Jan 2019 13:44:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9966C43612
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Jan 2019 14:54:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08B4F2084C
-	for <linux-clk@archiver.kernel.org>; Fri, 11 Jan 2019 13:44:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B3F3206B6
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Jan 2019 14:54:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547218473;
+	bh=S6ElH7k6esPaLtiC5jX9RX0OZYVYFi1FXOVpTZQXqGU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=GvOHGgDW0DxfC/6XN71g5hCWYyUCCegVM0TEnvHFocuHvxCvsHT5UGyB2OaOE6Tnf
+	 AYHd60zDJt8MjNOyBSHg7h724gZSH8gnarqb6OzFUGAaRfLWfOJ9Zwd92tcrjRufdI
+	 rYPAMjuLsjfYd9AE+UPxXZkxKh9wWpwsrQl08j8Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732125AbfAKNox convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 11 Jan 2019 08:44:53 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:51545 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728591AbfAKNox (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 11 Jan 2019 08:44:53 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 3AA9C20797; Fri, 11 Jan 2019 14:44:51 +0100 (CET)
-Received: from xps13 (aaubervilliers-681-1-45-241.w90-88.abo.wanadoo.fr [90.88.163.241])
-        by mail.bootlin.com (Postfix) with ESMTPSA id CC5602074E;
-        Fri, 11 Jan 2019 14:44:40 +0100 (CET)
-Date:   Fri, 11 Jan 2019 14:44:40 +0100
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>
-Subject: Re: [PATCH 2/4] clk: mvebu: armada-37xx-periph: change
- suspend/resume time
-Message-ID: <20190111144440.6fd456b5@xps13>
-In-Reply-To: <20181130115821.255394d4@xps13>
-References: <20181123094444.27956-1-miquel.raynal@bootlin.com>
-        <20181123094444.27956-3-miquel.raynal@bootlin.com>
-        <154353827849.88331.12767996548874447262@swboyd.mtv.corp.google.com>
-        <20181130115821.255394d4@xps13>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S2390247AbfAKOy1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 11 Jan 2019 09:54:27 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:40773 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733133AbfAKOy0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 11 Jan 2019 09:54:26 -0500
+Received: by mail-ot1-f67.google.com with SMTP id s5so13299437oth.7;
+        Fri, 11 Jan 2019 06:54:26 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=AxBTm/miHcpzTWrZ6oK4vYugnLB4OJ4qPCXeYxBcs9I=;
+        b=LupztZU59vq4bf2BLj1nqyWo5GuK24RfUht9oLknUXNU+zdZkpOCw6QF9sAqYVcR65
+         CGmNg0xmh3ats325UUopYp8C4PZ+SlxSC/xkEtEGMhfYyM0IDdENU6mzldUFH6H3agug
+         yR9ZskfXeIruTmMNzb6l7IIvaWkhmASpC7XnGvkVV+nnkLfolLfEekYxl6/9F02qdnfU
+         cR/ivk+A4/hDKbzJIOuIgR2QIgHHn4CXWBXmVgtZek+wYSFpAmemdSW1XfKNZqSJY318
+         12tYOjPU2Ro1wZpShMngWx6dxjwHpWHEka69RZanUSNBvp3qiCbE57yMKK8IoL75hyDv
+         SN/w==
+X-Gm-Message-State: AJcUukcsxXtByXBSlLT6cEuTCfq1qPM1WE82Hkk1tUbkNt8zVJWY6WNF
+        7HEyxaoqGnUS3jH0WVIe6g==
+X-Google-Smtp-Source: ALg8bN7V0LmbKUmrNricS3ji6iXmjFN22dEwo5X+zsrnshlMFJPUSzs6OlleaePLksTmKgNq0jURtg==
+X-Received: by 2002:a9d:4b0f:: with SMTP id q15mr5119413otf.201.1547218465767;
+        Fri, 11 Jan 2019 06:54:25 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id d3sm35589465otb.79.2019.01.11.06.54.24
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 11 Jan 2019 06:54:24 -0800 (PST)
+Date:   Fri, 11 Jan 2019 08:54:24 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Heiko Stuebner <heiko@sntech.de>
+Cc:     Johan Jonker <jbx6244@gmail.com>, hjc@rock-chips.com,
+        airlied@linux.ie, mark.rutland@arm.com, mturquette@baylibre.com,
+        sboyd@kernel.org, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 3/7] drm: rockchip: vop: add rk3066 vop definitions
+Message-ID: <20190111145424.GA21604@bogus>
+References: <20181229133318.18128-1-jbx6244@gmail.com>
+ <20181229133318.18128-4-jbx6244@gmail.com>
+ <154632658.xpTMZOjgxT@phil>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <154632658.xpTMZOjgxT@phil>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Bjorn and Stephen
-
-Gentle ping about the below debate, I hope you will have enough
-context to answer, please ask if something is unclear.
-
-The question here about "shall we upgrade the clocks S2RAM callbacks to
-the NOIRQ phase" to be handled before/after the PCIe callbacks (which
-also are in the NOIRQ phase) also applies to the pinctrl driver so I am
-really interested to know why this would not be a valid solution.
-
-Miquel Raynal <miquel.raynal@bootlin.com> wrote on Fri, 30
-Nov 2018 11:58:21 +0100:
-
-> Hi Stephen,
+On Sun, Dec 30, 2018 at 06:22:00PM +0100, Heiko Stuebner wrote:
+> Hi Johan,
 > 
-> + Bjorn to help us on PCI suspend/resume questions.
-> 
-> Stephen Boyd <sboyd@kernel.org> wrote on Thu, 29 Nov 2018 16:37:58
-> -0800:
-> 
-> > Quoting Miquel Raynal (2018-11-23 01:44:41)  
-> > > Armada 3700 PCIe IP relies on the PCIe clock managed by this
-> > > driver. For reasons related to the PCI core's organization when
-> > > suspending/resuming, PCI host controller drivers must reconfigure
-> > > their register at suspend_noirq()/resume_noirq() which happens after
-> > > suspend()/suspend_late() and before resume_early()/resume().
-> > > 
-> > > Device link support in the clock framework enforce that the clock
-> > > driver's resume() callback will be called before the PCIe
-> > > driver's. But, any resume_noirq() callback will be called before all
-> > > the registered resume() callbacks.    
+> Am Samstag, 29. Dezember 2018, 14:33:14 CET schrieb Johan Jonker:
+> > From: Mark Yao <mark.yao@rock-chips.com>
 > > 
-> > I thought any device driver that provides something to another device
-> > driver will implicitly be probed before the driver that consumes said
-> > resources. And we actually reorder the dpm list on probe defer so that
-> > the order of devices is correct. Is it more that we want to parallelize
-> > suspend/resume of the PCIe chip so we need to have device links so that
-> > we know the dependency of the PCIe driver on the clock driver?  
-> 
-> I had the same idea of device links before testing. I hope I did
-> not make any mistake leading me to wrong observations, but indeed
-> this is what I think is happening:
-> * PM core call all suspend() callbacks
-> * then all suspend_late()
-> * then all suspend_noirq()
-> For me, the PM core does not care if a suspend_noirq() depends on the
-> suspend() of another driver.
-> 
-> I hope I did not miss anything.
-> 
-> >   
-> > > 
-> > > The solution to support PCIe resume operation is to change the
-> > > "priority" of this clock driver PM callbacks to "_noirq()".    
+> > This patch adds the rk3066 VOP definitions.
 > > 
-> > This seems sad that the PM core can't "priority boost" any
-> > suspend/resume callbacks of a device that doesn't have noirq callbacks
-> > when a device that depends on it from the device link perspective does
-> > have noirq callbacks.  
-> 
-> I do agree on this but I'm not sure it would work. I suppose the
-> "noirq" state is a global state and thus code in regular suspend()
-> callbacks could probably fail to run in a "noirq" context?
-> 
-> > And why does the PCIe device need to use noirq callbacks in general?  
-> 
-> I would like Bjorn to confirm this, but there is this commit that could
-> explain the situation:
-> 
-> commit ab14d45ea58eae67c739e4ba01871cae7b6c4586
-> Author: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-> Date:   Tue Mar 17 15:55:45 2015 +0100
-> 
->     PCI: mvebu: Add suspend/resume support
->     
->     Add suspend/resume support for the mvebu PCIe host driver.  Without this
->     commit, the system will panic at resume time when PCIe devices are
->     connected.
->     
->     Note that we have to use the ->suspend_noirq() and ->resume_noirq() hooks,
->     because at resume time, the PCI fixups are done at ->resume_noirq() time,
->     so the PCIe controller has to be ready at this point.
->     
->     Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
->     Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
->     Acked-by: Jason Cooper <jason@lakedaemon.net>
-> 
+> > The VOP or LCD Controller serves as interface between
+> > framebuffer memory and a display device (LCD panel or TV set).
 > > 
-> > I'm just saying this seems like a more fundamental problem with ordering
-> > of provider and consumer suspend/resume functions that isn't being
-> > solved in this patch. In fact, it's quite the opposite, this is working
-> > around the problem.
-> >   
+> > This SOC has two symmetrical LCDC's for a dual panel application.
+> > 
+> > A LCDC has 5 display layers.
+> > Only 3 are used here.
+> > 
+> > - Video layer 0 (Win0)
+> > - Video layer 1 (Win1)
+> > - OSD layer     (Win2)
 > 
-> I do agree with your point, but I would not be confident tweaking the PM
-> core's scheduling "alone" :)
-> 
+> Patch itself looks good, we'll need to wait a bit to give Rob a chance
+> to look at the (simple) dt-binding change and I'll drop the paragraph
+> about the display layers when applying.
 
-Thanks,
-Miquèl
+Don't wait on me for simple oneline compatible additions.
+
+Acked-by: Rob Herring <robh@kernel.org>
+
+Rob
