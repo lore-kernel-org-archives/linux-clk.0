@@ -2,150 +2,248 @@ Return-Path: <SRS0=xK8l=PT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D44F2C43387
-	for <linux-clk@archiver.kernel.org>; Fri, 11 Jan 2019 00:37:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B699C43387
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Jan 2019 08:14:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1D6320872
-	for <linux-clk@archiver.kernel.org>; Fri, 11 Jan 2019 00:37:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F96A2084C
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Jan 2019 08:14:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="hgrOev/A"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="QovjwM4Y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728702AbfAKAh1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 10 Jan 2019 19:37:27 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:43475 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728860AbfAKAh1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Jan 2019 19:37:27 -0500
-Received: by mail-pf1-f195.google.com with SMTP id w73so6078747pfk.10
-        for <linux-clk@vger.kernel.org>; Thu, 10 Jan 2019 16:37:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=tArBfX2/yWTLPAN6WGgGaPqHLNX3JSZr3+h2fOti0lQ=;
-        b=hgrOev/AEn0v0YbfqI/buSHdETAPA0YE2mVEthVtuL5d9OOlMaebfPCSRubZ46m9sz
-         1k4Ygnp4f8xIWh8SMdjpp0AqPWb5bSEF40iXR1/V660S40VZjGnC7HQbEm596g9C2ozU
-         pqTmRIrjkmPYqqHxZXHDCwyM4p3tJfIrr40Ov84pTrJQ2ZRP7CejJ2yKFxlO+2L2+6qE
-         f6bfhAYPJJG7TM9zGNN7+lwXrVFXvOs3xwcbHZZ04mL/RAKizYD5l3aFbYMY/1Z4d1Qd
-         VcKNjKznuPPTe4QRbVWMtvHhspv7oJ6HTiUA1ffGhplSGy1hQHiN3pUddr0Q9Z+4sisG
-         uP4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=tArBfX2/yWTLPAN6WGgGaPqHLNX3JSZr3+h2fOti0lQ=;
-        b=r362Es8c0sqILtOBm7L0dQrsb085ARXPT7v8tZLniUdoXDSj8ST7deDkBjeewAupoh
-         aAjHXBP7ozi7l4/gBTHMQME6bEfi20VnUlxMbG+FDvIbwO39eHrYaCgJt3i1/16fheZT
-         gSVsr3cx9OkOD55OKXwHJDoNt9S6XValXOxC7pASktYFkfU4GtgQiePXvp69SCCqUa8R
-         5tJsCSiEXWkkTCdIOrl8wMUVaCY1l8xMvVO2XiG6XNAkbcFtcUyU5St38W5vCMQ7+Oh9
-         GoY5/iZVHH1LXQITwmXlxLfLJmWBQTPLXqJGhDVLBi2klHzICltoOgUHgdtvBCnmuEPG
-         3OJw==
-X-Gm-Message-State: AJcUukf7GCNFbht9W9140rFPu+VZ6ge0W5tCg1cxQyjJiIj9wAxXhGts
-        eAYqNiYLGW+igf3wW+C8OU4dmw==
-X-Google-Smtp-Source: ALg8bN7qW+ukQwCDcs13BbWmyGw9xMYTBXwn/X0ez5v/Yn2fH/2jOfGSLy4PDp62AyCkvcUHSPZcvg==
-X-Received: by 2002:a63:1b58:: with SMTP id b24mr11203008pgm.247.1547167045786;
-        Thu, 10 Jan 2019 16:37:25 -0800 (PST)
-Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
-        by smtp.googlemail.com with ESMTPSA id f32sm93544454pgf.80.2019.01.10.16.37.24
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 10 Jan 2019 16:37:24 -0800 (PST)
-From:   Kevin Hilman <khilman@baylibre.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        jbrunet@baylibre.com, robh+dt@kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        sboyd@kernel.org, mturquette@baylibre.com
-Subject: Re: [PATCH 0/5] Meson (32-bit): add support for the Mali GPU
-In-Reply-To: <13bd9d3a-3cbe-3952-03bb-ef5da6eec401@baylibre.com>
-References: <20181208171247.22238-1-martin.blumenstingl@googlemail.com> <13bd9d3a-3cbe-3952-03bb-ef5da6eec401@baylibre.com>
-Date:   Thu, 10 Jan 2019 16:37:24 -0800
-Message-ID: <7hef9kqbaz.fsf@baylibre.com>
+        id S1730108AbfAKIOi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 11 Jan 2019 03:14:38 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:9356 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725601AbfAKIOh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 11 Jan 2019 03:14:37 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c3850510000>; Fri, 11 Jan 2019 00:14:09 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Fri, 11 Jan 2019 00:14:35 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Fri, 11 Jan 2019 00:14:35 -0800
+Received: from [10.19.108.132] (10.124.1.5) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 11 Jan
+ 2019 08:14:33 +0000
+Subject: Re: [PATCH V4 01/20] dt-bindings: clock: tegra124-dfll: Update DFLL
+ binding for PWM regulator
+From:   Joseph Lo <josephl@nvidia.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+References: <20190104030702.8684-1-josephl@nvidia.com>
+ <20190104030702.8684-2-josephl@nvidia.com>
+ <142f619f-9939-0d87-9fe7-2e72efa027a0@nvidia.com>
+Message-ID: <74087bd9-1cc4-9897-9ded-81eaa9ca434b@nvidia.com>
+Date:   Fri, 11 Jan 2019 16:14:31 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <142f619f-9939-0d87-9fe7-2e72efa027a0@nvidia.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1547194449; bh=4R0QJ6PW6nMd9ERm2Bhc4cHql+uaH5yq/rJ6HYDjGhA=;
+        h=X-PGP-Universal:Subject:From:To:CC:References:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=QovjwM4Yb/YhuX6etuQ4FV5AY68zdYuPi9IQQWLzaqjKn73jZXnNAwM89sx6uDE6V
+         6A9A+x2ZIvA4YNnl1y+HUIWmjCDDKm7Rv2OrbWtVGiqx2vz6AV/aRJfzURw40n0/Mn
+         Myn0lpHAHP78sjAq6c1B7usd/6GMO0FN+ZSg0UApZTrQQiYImvEXZtbuVaDt50mJeH
+         J5yOB8BMKZn6FyUFmjDnixaJEGx0kQXV0RmjxXLrPZ55Ik7qG2YbO7JfkULVqnbYOs
+         38wtIuzizwlIuympEDlsx+ZY65Rl797B3KONTe4E4UOSFx/CnMtqGhTpRWipjWfm4u
+         GUremcEgMixxQ==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Neil Armstrong <narmstrong@baylibre.com> writes:
+On 1/8/19 8:35 AM, Joseph Lo wrote:
+> On 1/4/19 11:06 AM, Joseph Lo wrote:
+>> From: Peter De Schrijver <pdeschrijver@nvidia.com>
+>>
+>> Add new properties to configure the DFLL PWM regulator support.
+>>
+>> Cc: devicetree@vger.kernel.org
+>> Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+>> Signed-off-by: Joseph Lo <josephl@nvidia.com>
+>> Acked-by: Jon Hunter <jonathanh@nvidia.com>
+>> ---
+>> *V4:
+>> =C2=A0 - s/nvidia,pwm-period/nvidia,pwm-period-nanoseconds/
+>> *V3:
+>> =C2=A0 - no change
+>> *V2:
+>> =C2=A0 - update the binding strings and descriptions for
+>> =C2=A0 nvidia,pwm-tristate-microvolts
+>> =C2=A0 nvidia,pwm-min-microvolts
+>> =C2=A0 nvidia,pwm-voltage-step-microvolts
+>> ---
+>=20
+> Hi Rob,
+>=20
+> Could you help me to review this patch again?
 
-> On 08/12/2018 18:12, Martin Blumenstingl wrote:
->> This series adds support for the Mali-450 GPU on Meson8 and Meson8b.
->> Meson6 uses a Mali-400 GPU but since we don't have a clock driver (and
->> I don't have a device for testing) Meson6 is left out in this series.
->> 
->> Meson8 uses a Mali-450 MP6 with six pixel processors. Meson8b (as
->> cost-reduced SoC) uses a Mali-450 MP2 with two pixel processors.
->> I tested both using the open source lima driver and a patched mesa
->> from the lima project as well. Since we don't have display support
->> on the 32-bit SoCs I used off-screen rendering as described in [0].
->> The result is (for example): [1]
->> 
->> The bootloader (at least on my boards) leaves the Mali clock disabled
->> by default. The board crashes when trying to access the Mali registers
->> with the "core" clock disabled.
->> Thus this series also implements the required clock driver changes. The
->> Mali clock tree on Meson8b and Meson8m2 is almost identical to the one
->> on GXBB (see the description of patch #3 for more details). Only Meson8
->> is slightly different as it doesn't have a glitch-free mux. Patch #2
->> prepares the meson8b clock driver so we can have different clocks per
->> SoC.
->> 
->> Dependencies:
->> - the .dts changes depend on my other series "ARM: dts: meson: add the
->>   APB/APB2 busses" from [2]
->> - the .dts changes from this series have no compile-time dependency on
->>   the clock driver changes because CLKID_MALI was defined in the
->>   dt-bindings since the first version of the clock driver (but it was
->>   not used until now).
->> - the .dts changes from this series have a runtime dependency on the
->>   clock driver changes (also from this series) if you have a kernel
->>   patched with the lima driver (without the lima driver there's no
->>   runtime dependency)
->> 
->> Other notes:
->> By default the GPU runs off the XTAL clock (24MHz). The lima driver
->> currently does not update the GPU clock rate. Different frequencies
->> have to be requested by adding the following properties to the Mali
->> GPU node (to run it at 510MHz for example):
->>   assigned-clocks = <&clkc CLKID_MALI>;
->>   assigned-clock-rates = <510000000>;
->> 
->> 
->> [0] https://gitlab.freedesktop.org/lima/web/wikis/home
->> [1] https://abload.de/img/dump0myic0.png
->> [2] https://patchwork.kernel.org/cover/10719445/
->> 
->> 
->> Martin Blumenstingl (5):
->>   dt-bindings: gpu: mali-utgard: add Amlogic Meson8 and Meson8b
->>     compatible
->>   clk: meson: meson8b: use a separate clock table for Meson8
->>   clk: meson: meson8b: add the GPU clock tree
->>   ARM: dts: meson8: add the Mali-450 MP6 GPU
->>   ARM: dts: meson8b: add the Mali-450 MP2 GPU
->> 
->>  .../bindings/gpu/arm,mali-utgard.txt          |   6 +
->>  arch/arm/boot/dts/meson8.dtsi                 |  58 +++
->>  arch/arm/boot/dts/meson8b.dtsi                |  46 +++
->>  drivers/clk/meson/meson8b.c                   | 349 +++++++++++++++++-
->>  drivers/clk/meson/meson8b.h                   |   9 +-
->>  5 files changed, 461 insertions(+), 7 deletions(-)
->> 
->
-> Applied patches 2 & 3 to next/drivers for Linux 5.1
->
-> Kevin, have fun with the other patches !
+Gentle ping.
 
-Fun was had.
+Thanks,
+Joseph
 
-Patches 1, 4, 5 queued for v5.1 (branch: v5.1/dt)
-
-Kevin
-
+>=20
+> Thanks,
+> Joseph
+>=20
+>> =C2=A0 .../bindings/clock/nvidia,tegra124-dfll.txt=C2=A0=C2=A0 | 79 ++++=
+++++++++++++++-
+>> =C2=A0 1 file changed, 77 insertions(+), 2 deletions(-)
+>>
+>> diff --git=20
+>> a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt=20
+>> b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
+>> index dff236f524a7..5558bb5fcf2c 100644
+>> --- a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
+>> +++ b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
+>> @@ -8,7 +8,6 @@ the fast CPU cluster. It consists of a free-running=20
+>> voltage controlled
+>> =C2=A0 oscillator connected to the CPU voltage rail (VDD_CPU), and a clo=
+sed=20
+>> loop
+>> =C2=A0 control module that will automatically adjust the VDD_CPU voltage=
+ by
+>> =C2=A0 communicating with an off-chip PMIC either via an I2C bus or via =
+PWM=20
+>> signals.
+>> -Currently only the I2C mode is supported by these bindings.
+>> =C2=A0 Required properties:
+>> =C2=A0 - compatible : should be "nvidia,tegra124-dfll"
+>> @@ -45,10 +44,31 @@ Required properties for the control loop parameters:
+>> =C2=A0 Optional properties for the control loop parameters:
+>> =C2=A0 - nvidia,cg-scale: Boolean value, see the field DFLL_PARAMS_CG_SC=
+ALE=20
+>> in the TRM.
+>> +Optional properties for mode selection:
+>> +- nvidia,pwm-to-pmic: Use PWM to control regulator rather then I2C.
+>> +
+>> =C2=A0 Required properties for I2C mode:
+>> =C2=A0 - nvidia,i2c-fs-rate: I2C transfer rate, if using full speed mode=
+.
+>> -Example:
+>> +Required properties for PWM mode:
+>> +- nvidia,pwm-period-nanoseconds: period of PWM square wave in=20
+>> nanoseconds.
+>> +- nvidia,pwm-tristate-microvolts: Regulator voltage in micro volts=20
+>> when PWM
+>> +=C2=A0 control is disabled and the PWM output is tristated. Note that t=
+his=20
+>> voltage is
+>> +=C2=A0 configured in hardware, typically via a resistor divider.
+>> +- nvidia,pwm-min-microvolts: Regulator voltage in micro volts when=20
+>> PWM control
+>> +=C2=A0 is enabled and PWM output is low. Hence, this is the minimum out=
+put=20
+>> voltage
+>> +=C2=A0 that the regulator supports when PWM control is enabled.
+>> +- nvidia,pwm-voltage-step-microvolts: Voltage increase in micro volts
+>> +=C2=A0 corresponding to a 1/33th increase in duty cycle. Eg the voltage=
+=20
+>> for 2/33th
+>> +=C2=A0 duty cycle would be: nvidia,pwm-min-microvolts +
+>> +=C2=A0 nvidia,pwm-voltage-step-microvolts * 2.
+>> +- pinctrl-0: I/O pad configuration when PWM control is enabled.
+>> +- pinctrl-1: I/O pad configuration when PWM control is disabled.
+>> +- pinctrl-names: must include the following entries:
+>> +=C2=A0 - dvfs_pwm_enable: I/O pad configuration when PWM control is ena=
+bled.
+>> +=C2=A0 - dvfs_pwm_disable: I/O pad configuration when PWM control is=20
+>> disabled.
+>> +
+>> +Example for I2C:
+>> =C2=A0 clock@70110000 {
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 compatible =3D "n=
+vidia,tegra124-dfll";
+>> @@ -76,3 +96,58 @@ clock@70110000 {
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 nvidia,i2c-fs-rat=
+e =3D <400000>;
+>> =C2=A0 };
+>> +
+>> +Example for PWM:
+>> +
+>> +clock@70110000 {
+>> +=C2=A0=C2=A0=C2=A0 compatible =3D "nvidia,tegra124-dfll";
+>> +=C2=A0=C2=A0=C2=A0 reg =3D <0 0x70110000 0 0x100>, /* DFLL control */
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 <0 0x70110000 0 =
+0x100>, /* I2C output control */
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 <0 0x70110100 0 =
+0x100>, /* Integrated I2C controller */
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 <0 0x70110200 0 =
+0x100>; /* Look-up table RAM */
+>> +=C2=A0=C2=A0=C2=A0 interrupts =3D <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
+>> +=C2=A0=C2=A0=C2=A0 clocks =3D <&tegra_car TEGRA210_CLK_DFLL_SOC>,
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 <&tegra_car TEGRA210_CLK_DFLL_REF>,
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 <&tegra_car TEGRA124_C=
+LK_I2C5>;;
+>> +=C2=A0=C2=A0=C2=A0 clock-names =3D "soc", "ref", "i2c";
+>> +=C2=A0=C2=A0=C2=A0 resets =3D <&tegra_car TEGRA124_RST_DFLL_DVCO>;
+>> +=C2=A0=C2=A0=C2=A0 reset-names =3D "dvco";
+>> +=C2=A0=C2=A0=C2=A0 #clock-cells =3D <0>;
+>> +=C2=A0=C2=A0=C2=A0 clock-output-names =3D "dfllCPU_out";
+>> +
+>> +=C2=A0=C2=A0=C2=A0 nvidia,sample-rate =3D <25000>;
+>> +=C2=A0=C2=A0=C2=A0 nvidia,droop-ctrl =3D <0x00000f00>;
+>> +=C2=A0=C2=A0=C2=A0 nvidia,force-mode =3D <1>;
+>> +=C2=A0=C2=A0=C2=A0 nvidia,cf =3D <6>;
+>> +=C2=A0=C2=A0=C2=A0 nvidia,ci =3D <0>;
+>> +=C2=A0=C2=A0=C2=A0 nvidia,cg =3D <2>;
+>> +
+>> +=C2=A0=C2=A0=C2=A0 nvidia,pwm-min-microvolts =3D <708000>; /* 708mV */
+>> +=C2=A0=C2=A0=C2=A0 nvidia,pwm-period-nanoseconds =3D <2500>; /* 2.5us *=
+/
+>> +=C2=A0=C2=A0=C2=A0 nvidia,pwm-to-pmic;
+>> +=C2=A0=C2=A0=C2=A0 nvidia,pwm-tristate-microvolts =3D <1000000>;
+>> +=C2=A0=C2=A0=C2=A0 nvidia,pwm-voltage-step-microvolts =3D <19200>; /* 1=
+9.2mV */
+>> +
+>> +=C2=A0=C2=A0=C2=A0 pinctrl-names =3D "dvfs_pwm_enable", "dvfs_pwm_disab=
+le";
+>> +=C2=A0=C2=A0=C2=A0 pinctrl-0 =3D <&dvfs_pwm_active_state>;
+>> +=C2=A0=C2=A0=C2=A0 pinctrl-1 =3D <&dvfs_pwm_inactive_state>;
+>> +};
+>> +
+>> +/* pinmux nodes added for completeness. Binding doc can be found in:
+>> + * Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-pinmux.txt
+>> + */
+>> +
+>> +pinmux: pinmux@700008d4 {
+>> +=C2=A0=C2=A0=C2=A0 dvfs_pwm_active_state: dvfs_pwm_active {
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dvfs_pwm_pbb1 {
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 nvid=
+ia,pins =3D "dvfs_pwm_pbb1";
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 nvid=
+ia,tristate =3D <TEGRA_PIN_DISABLE>;
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 };
+>> +=C2=A0=C2=A0=C2=A0 };
+>> +=C2=A0=C2=A0=C2=A0 dvfs_pwm_inactive_state: dvfs_pwm_inactive {
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dvfs_pwm_pbb1 {
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 nvid=
+ia,pins =3D "dvfs_pwm_pbb1";
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 nvid=
+ia,tristate =3D <TEGRA_PIN_ENABLE>;
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 };
+>> +=C2=A0=C2=A0=C2=A0 };
+>> +};
+>>
