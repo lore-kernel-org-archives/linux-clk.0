@@ -7,33 +7,33 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59B89C43387
-	for <linux-clk@archiver.kernel.org>; Fri, 11 Jan 2019 11:56:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D998AC43387
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Jan 2019 11:56:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29F1F2064C
-	for <linux-clk@archiver.kernel.org>; Fri, 11 Jan 2019 11:56:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB2EE2064C
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Jan 2019 11:56:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="FCqHuUvt"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="MJBuBL3F"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729237AbfAKL4E (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 11 Jan 2019 06:56:04 -0500
-Received: from mail-eopbgr30066.outbound.protection.outlook.com ([40.107.3.66]:55008
+        id S1731918AbfAKL4J (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 11 Jan 2019 06:56:09 -0500
+Received: from mail-eopbgr30056.outbound.protection.outlook.com ([40.107.3.56]:54748
         "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731289AbfAKL4E (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 11 Jan 2019 06:56:04 -0500
+        id S1731289AbfAKL4J (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 11 Jan 2019 06:56:09 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UBAptFk6e8pShXlMBsateOWHrrcALuqlDnDlN5NfSrc=;
- b=FCqHuUvtCWUNJLP3Ql2PcYOfkLkNvMmouOhjQHHaiSuTCD5qlutJR4Uw3FVYbIMZrPZTjW78RQNXArDajkLTFSmjxguuDQUeICWOkisl1HQoDD8wsCatkV7IW8PBv3MDrzca1fOpG1spGk0QdcNWWsmtHngxH4BGX/IUYscfWzo=
+ bh=hx0sjWW7vfvMa2anGrtbd22/ZIAO9GvHUrm6VsEsgJs=;
+ b=MJBuBL3FpzwgP0/nSGlMWu4P7zHHaETrmAPUvqI++b3I/AkQ2VnISmYvyA8D7LhrdLnnlG2Fi44vbxCqXAN2QgRVTKkTXR/aS5XIvosEGX4BP/wdzk87UqQYogMvyVXJ7+SoL77xaCMEsTCG2ZDZY/YFcOgWQhPviawufFoHgEM=
 Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.126.21) by
  AM0PR04MB5281.eurprd04.prod.outlook.com (20.177.42.78) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1495.9; Fri, 11 Jan 2019 11:56:01 +0000
+ 15.20.1495.9; Fri, 11 Jan 2019 11:56:05 +0000
 Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
  ([fe80::c4d2:7dfd:4576:bdd5]) by AM0PR04MB4211.eurprd04.prod.outlook.com
  ([fe80::c4d2:7dfd:4576:bdd5%5]) with mapi id 15.20.1516.016; Fri, 11 Jan 2019
- 11:56:01 +0000
+ 11:56:05 +0000
 From:   Aisheng Dong <aisheng.dong@nxp.com>
 To:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
 CC:     "linux-arm-kernel@lists.infradead.org" 
@@ -47,13 +47,13 @@ CC:     "linux-arm-kernel@lists.infradead.org"
         "robh+dt@kernel.org" <robh+dt@kernel.org>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         Aisheng Dong <aisheng.dong@nxp.com>
-Subject: [PATCH RESEND v1 2/4] dt-bindings: fsl: scu: add imx8qm scu clock
+Subject: [PATCH RESEND v1 3/4] clk: imx: scu: add fallback compatible string
  support
-Thread-Topic: [PATCH RESEND v1 2/4] dt-bindings: fsl: scu: add imx8qm scu
- clock support
-Thread-Index: AQHUqaSfloWwjzPfcU69BMY7ob8z+A==
-Date:   Fri, 11 Jan 2019 11:56:00 +0000
-Message-ID: <1547207400-28307-3-git-send-email-aisheng.dong@nxp.com>
+Thread-Topic: [PATCH RESEND v1 3/4] clk: imx: scu: add fallback compatible
+ string support
+Thread-Index: AQHUqaShCArI6C0FpUmUaDgoQmCTVA==
+Date:   Fri, 11 Jan 2019 11:56:05 +0000
+Message-ID: <1547207400-28307-4-git-send-email-aisheng.dong@nxp.com>
 References: <1547207400-28307-1-git-send-email-aisheng.dong@nxp.com>
 In-Reply-To: <1547207400-28307-1-git-send-email-aisheng.dong@nxp.com>
 Accept-Language: zh-CN, en-US
@@ -67,28 +67,28 @@ x-clientproxiedby: HK0PR03CA0063.apcprd03.prod.outlook.com
 x-ms-exchange-messagesentrepresentingtype: 1
 x-originating-ip: [119.31.174.66]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM0PR04MB5281;6:L5QmZLImakqgJV0pJvi56mGnRrm3hC/WW2mevO5uLowsSgvsu4jKemFVp33oI+Vj5ljmukDOla4QGHnQfU/RAjo6TbwfmyExK2cYfiCnc8Syz2H//ceUP9R6e0oVozky2qBNzRsaMDkRL7DyYyRDMJlgzBl1Edbx8ChKGkWx1LN5a2sl6XMm7c7aRhq5Dym2OEBmGmWuJ1ras0+098TFNSyXXnvljMUzAjf4PnstCWMd0J/s36LQVlZ2PP4mxr4zsJZEq6UxIhMbg5XuAxmHOsj35trTsigGlI+GBtexOWk5lbJ8RVyEglA0dxll1Z4WWaWDt8RMLSB0RNshvzvriCYadoaI/w3PivGdcBKiqD4VZnb+FbrxjgCHwe7GN+VaGN5ZhgqrYp7g9NgxKuaYu3fPKdoIjO3SGVgxmeNU477cFIcngojoTtapjnLKc9gLdhDYxv6F+MT9oGhsttcmnw==;5:dcrBLHX3zqbWHsdxmzuHloxX801EHPG5PAt9T2S1aUgFrjSeciD2sZKz0Kmkblvm5fm29ew0Jresw2hG1BY926I7kygkBtckdMFnKQIiEAJf3ZZHyPZJjLQmh5PGZaFY+HqKnyBihuuDh4q+mxtzg+wmEcmSYC4MiAeIXPkhUNvvJQ2sc80LXIEEB1g3Ehnq87/3U8x+OaO5VrqirVLECQ==;7:ozqQABjuZC4x/gHouwEfF3UvHLYFH29uXikIPEYKWSKX4V8RgN2ZDLw94iGUMkXAUTYIsAmTx1B8kr2NHP98QBIhOuDDt2y25E3duEUYeBi0RlaOOw9WI2g6NdbBzuzvimq3OGeU+uCRcth/vCwaaw==
-x-ms-office365-filtering-correlation-id: 6435f977-42ed-4e23-5343-08d677bbc14f
+x-microsoft-exchange-diagnostics: 1;AM0PR04MB5281;6:1Nf0tpjljCXchLal4uq+rVvo/1cmcL6nIEQXVQQ35zjSv1C4dQ8gmdKiNqIxtHkdzI0cGtRHSllOH4d8D1PSe3hKaXrFtQW+iaKsfZgWXAxsV3YBxambVwKYdkUo7c12we2mw69cpyrDvSWjhbIPkB6VeUW4wn9nU6Mqve+eOxqnYa2faX1S3tO3nswqETuLMoselTkG8xoU/RjnjalG4PEU9hQrw/EYzvip9DtB5Mx2FFuDGfqS26Gx6hYkmIBGo9O+HUqJm5WixjIB0J2kqva7JTaOTcouXB442N4j/ejc7ha3xKOTB3XRRNWusq0Sg8XQNYROkE2XX7jUuKCxUsujEaZXEu3z8YM7iWNRrJyIm3P9YOPotRfDXOyarCaFFlZaQer5puAfPQCOPNidsaWDjh31W/MBnlwTvbtE/nDwSfTN8V8ITDxmvMMietSH4QhLQonywl7b3byHpGHqCQ==;5:jVk1eL1iWCjgIjABKSn7Zy6ggMqimMQZzx2pSy/0qxYPQp28mC8ORAICW4Wg1AgsBJR7TYTS6uS5B6l/XR/o6NtLiS7wlw9d6xISVu9x2pM1agPbbOXA/PEJ1bZ2UTzq0v/wwdKSXEOa+HFXRmgmICkv6CIgtTNEhZWir6gqeE5wcUEmvOVjb+3L7MeY9J/843h2rJqG32xk5x4ZYXu2VQ==;7:FTzheH7VpWoPwGN/YxUEHa+Isk3KAVxTX5OP+s4tMRjo8VjNQGK48BeR+foUOel/rLezZovvce79iBaoqVAgVIRzRp4LOxPBdYc/TIpQQVVkgzCVGgU8NsL2hBoLbDrxr68I+d7gBw5E18YCfpCIdg==
+x-ms-office365-filtering-correlation-id: 23afaf8c-57f4-4e74-73e9-08d677bbc3d6
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB5281;
 x-ms-traffictypediagnostic: AM0PR04MB5281:
-x-microsoft-antispam-prvs: <AM0PR04MB5281486A05024D996F46EC0E80850@AM0PR04MB5281.eurprd04.prod.outlook.com>
+x-microsoft-antispam-prvs: <AM0PR04MB528164603F9BD1659064F47480850@AM0PR04MB5281.eurprd04.prod.outlook.com>
 x-forefront-prvs: 09144DB0F7
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(366004)(39860400002)(346002)(136003)(376002)(189003)(199004)(105586002)(106356001)(7736002)(2501003)(305945005)(71190400001)(71200400001)(4326008)(5640700003)(25786009)(50226002)(8936002)(81166006)(81156014)(8676002)(54906003)(6506007)(6346003)(97736004)(186003)(52116002)(316002)(76176011)(68736007)(217873002)(11346002)(14444005)(36756003)(2906002)(4744005)(476003)(486006)(3846002)(2616005)(446003)(26005)(6116002)(44832011)(386003)(102836004)(53936002)(478600001)(86362001)(6486002)(66066001)(256004)(99286004)(6512007)(2351001)(14454004)(5660300001)(6916009)(6436002)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5281;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(366004)(39860400002)(346002)(136003)(376002)(189003)(199004)(105586002)(106356001)(7736002)(2501003)(305945005)(71190400001)(71200400001)(4326008)(5640700003)(25786009)(50226002)(8936002)(81166006)(81156014)(8676002)(54906003)(6506007)(6346003)(97736004)(186003)(52116002)(316002)(76176011)(68736007)(217873002)(11346002)(36756003)(2906002)(4744005)(476003)(486006)(3846002)(2616005)(446003)(26005)(6116002)(44832011)(386003)(102836004)(53936002)(478600001)(86362001)(6486002)(66066001)(256004)(99286004)(6512007)(2351001)(14454004)(5660300001)(6916009)(6436002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5281;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=aisheng.dong@nxp.com; 
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: p11ucBd2Wktxdlx2Chk4VViSwkzXB/dG0IQ3ZAIv6fs5ogDy+rqcb9bRNscfUSAybHVp01U3+AClMXJiCEmL30ihFjQiCU5KLoZwBOIF9n+kMjt+ysZHXpG6DIefNSW7oMolqSAfMc5QkgxTH0T/8Jya2aNHRyZiz+ZDGRmSeFI1n5cGR8dKEnc2gB4oQNAqahU4EijzcLn1rhcMNf8oDzzt3oA3jYtMik1t3L7ai9fWroFU4TUvjBko4TzyfaaCYn8UuXgJp0Dab89DzIGi3Ho6n6Pg7/1L3hust9qwszH7wwiwlqUzz8Z62A91wOaLtJSMcy+6tYLErE0UOPFj9BQ9v90l83HaInvK4li1TgDb0AlGrmxeyRowWqh7XBhdyFiXJy522AIBGxQT7FoscLfyh/qi3vt8pHfibvGzrBg=
+x-microsoft-antispam-message-info: qP91LMt3wYV0sX6SiZDYJy7gIRGf3d7jHrGxWPQy7A/sq3/5THD99TPvkY2Nmx0Pty4oRZIHcQNn8NDN3Rh9adCKDUGIG8kAMnbDiK+pfxS+208pimMWCJQ1bHm3aE8CuJE4sN+sfpbzHR3qZXeAddyFzmiP+ziHkg2JclJKcDmT5gKEPuHOXGWf4ihzplyo4JdsH/Zpc9Jo5nT9+qN8niQJ5HMuo3QJ0ejIbs45av3X/E/NLZ+nGIiEyIL5wRtjkriSO/t5XiSRsqf1ZgmWa33c3i9ZonxWBZH5KUzEt8d/RYQtWMFS0wbaB57FrU3+Eiw3OExqhGLG5lfeIvL1I0WvvNn0im4bt+/JlWDIVlGlrZX+6oYckJEZeFE0dHFrDl+wxDm866JiF+6lTfffZSpTQPKaKrmLH2z/j+eBtdk=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6435f977-42ed-4e23-5343-08d677bbc14f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Jan 2019 11:55:57.0089
+X-MS-Exchange-CrossTenant-Network-Message-Id: 23afaf8c-57f4-4e74-73e9-08d677bbc3d6
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Jan 2019 11:56:01.2450
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
@@ -98,7 +98,9 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add imx8qm scu clock support
+SCU clock can be used in a similar way by IMX8QXP and IMX8QM SoCs.
+Make the driver support "fsl,scu-clk" fallback compatible string
+to allow other SoCs to reuse the common part.
 
 Cc: Stephen Boyd <sboyd@kernel.org>
 Cc: Rob Herring <robh+dt@kernel.org>
@@ -109,24 +111,22 @@ Cc: Fabio Estevam <fabio.estevam@nxp.com>
 Cc: Michael Turquette <mturquette@baylibre.com>
 Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 ---
- Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/clk/imx/clk-imx8qxp.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt b/=
-Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
-index 5ec6dca..b6a883e 100644
---- a/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
-+++ b/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
-@@ -71,7 +71,8 @@ This binding uses the common clock binding[1].
+diff --git a/drivers/clk/imx/clk-imx8qxp.c b/drivers/clk/imx/clk-imx8qxp.c
+index 83e2ef9..5e2903e 100644
+--- a/drivers/clk/imx/clk-imx8qxp.c
++++ b/drivers/clk/imx/clk-imx8qxp.c
+@@ -138,6 +138,7 @@ static int imx8qxp_clk_probe(struct platform_device *pd=
+ev)
+ }
 =20
- Required properties:
- - compatible:		Should be one of:
--			  "fsl,imx8qxp-clock"
-+			  "fsl,imx8qm-clock",
-+			  "fsl,imx8qxp-clock".
- 			followed by "fsl,scu-clk"
- - #clock-cells:		Should be 1. Contains the Clock ID value.
- - clocks:		List of clock specifiers, must contain an entry for
+ static const struct of_device_id imx8qxp_match[] =3D {
++	{ .compatible =3D "fsl,scu-clk", },
+ 	{ .compatible =3D "fsl,imx8qxp-clk", },
+ 	{ /* sentinel */ }
+ };
 --=20
 2.7.4
 
