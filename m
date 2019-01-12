@@ -2,59 +2,164 @@ Return-Path: <SRS0=8pxQ=PU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99483C43387
-	for <linux-clk@archiver.kernel.org>; Sat, 12 Jan 2019 19:24:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E05DDC43387
+	for <linux-clk@archiver.kernel.org>; Sat, 12 Jan 2019 19:37:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C35020836
-	for <linux-clk@archiver.kernel.org>; Sat, 12 Jan 2019 19:24:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 56C1F206B7
+	for <linux-clk@archiver.kernel.org>; Sat, 12 Jan 2019 19:37:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="WBDmlh3h"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726618AbfALTYc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 12 Jan 2019 14:24:32 -0500
-Received: from gloria.sntech.de ([185.11.138.130]:41808 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726617AbfALTYc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 12 Jan 2019 14:24:32 -0500
-Received: from p54b26ced.dip0.t-ipconnect.de ([84.178.108.237] helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1giOtM-0006p6-8d; Sat, 12 Jan 2019 20:24:24 +0100
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     Johan Jonker <jbx6244@gmail.com>
-Cc:     hjc@rock-chips.com, airlied@linux.ie, robh+dt@kernel.org,
-        mark.rutland@arm.com, mturquette@baylibre.com, sboyd@kernel.org,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 5/7] ARM: dts: rockchip: add rk3066 vop display nodes
-Date:   Sat, 12 Jan 2019 20:24:23 +0100
-Message-ID: <2822435.PgMx1mWbPR@phil>
-In-Reply-To: <20181229133318.18128-6-jbx6244@gmail.com>
-References: <20181229133318.18128-1-jbx6244@gmail.com> <20181229133318.18128-6-jbx6244@gmail.com>
+        id S1726387AbfALThz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 12 Jan 2019 14:37:55 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:40606 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725870AbfALThy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 12 Jan 2019 14:37:54 -0500
+Received: by mail-it1-f195.google.com with SMTP id h193so7367075ita.5
+        for <linux-clk@vger.kernel.org>; Sat, 12 Jan 2019 11:37:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=a6/AqKf7RXx3dwwLOQZboz4+JYU15WvU1kVkeMx3CDw=;
+        b=WBDmlh3h3j7VByEvZVcA00hP29C6knFitu3zCvNlVJlXZXGPRIF5lcEyEvURzqxRFr
+         +SAE2KF3sbwyKAM9vPy+v5QVBFunfatrMaDw8klDlSxw70e3XUaDbhDd4i+2l7ID0Aqk
+         kxEPd/N31Mjo+2XRWDa9AElVEmsKayZ2WSF+Y=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=a6/AqKf7RXx3dwwLOQZboz4+JYU15WvU1kVkeMx3CDw=;
+        b=Fq71g2KEk2iWV4Mm5mtZgUx39+E8xliIkaqA42iV/RiILbO7WlKACUEo+ADtz7ho3T
+         Aqidv1XJGQHxwv0nGpb+olFYDZmgJw9VwH2LD+JyNmfwXOCLO1P3BAi71l91CtWTUI/D
+         /VNKeCCUDgjULt7/kx4H1GrrW5gcBbi/v7m0+H7Smmm86VGMkkGSFm5y29kg2G9E+94d
+         MwtEaCXBLxyA4FO8ZDjf9i/z18j34BZJuXnvE4m9NMT/38ZjvvGh+HImyFYfFjLnqhM+
+         j1iK34I1tcVXLrrU3Wf9wgLBXQilFHKCJWM73Y4kdU22hG/u8oLOSSRLkxc3IfR+Kbe5
+         l+Lg==
+X-Gm-Message-State: AJcUukeA9ltx6F3A1FJynXGJvDNLMGAdSNkyShxYW3T9oXpR1GHev+PN
+        x5H7z3FGDFFY3z4SrAuQ6xp5u/Q80aQPqE/+T9boTb5AtAc=
+X-Google-Smtp-Source: ALg8bN7byJ2iItPlPW9oT100lh7hB/k1KH7tnIIheF+01qyV8D+zhleB1+RwH4qgGq91xzcm0oD/iowOqOKzzyfqS8M=
+X-Received: by 2002:a24:10cb:: with SMTP id 194mr4708337ity.173.1547321873531;
+ Sat, 12 Jan 2019 11:37:53 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+References: <20181210161729.29720-1-jagan@amarulasolutions.com>
+ <20181210161729.29720-8-jagan@amarulasolutions.com> <20181211164900.wfmkmbrbj3nmlb3h@flea>
+ <CAMty3ZB5F5jD9iJT1soXSA5HtQOf5W9rKO9nCdGFUfVo0hpO4Q@mail.gmail.com>
+ <20190107141158.zaimizk4rlqa6xli@flea> <CAMty3ZBb8byOwh=_W83Ta0Dse1qkoqccOeaBEY9oHPaxDxe9QA@mail.gmail.com>
+ <20190108085829.clianbtjovu3oieq@flea> <CAMty3ZC9OQtwT-iH=S1LhHsBPc_jFKGAnCYYeR9nuKuDWSKLQw@mail.gmail.com>
+ <20190112164319.whr7gwvl4oux5svz@flea>
+In-Reply-To: <20190112164319.whr7gwvl4oux5svz@flea>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Sun, 13 Jan 2019 01:07:41 +0530
+Message-ID: <CAMty3ZD8X9KmHjUtAo-+Y83a2j8NF3DjM9Yr3LPMxOvQ8kOV7g@mail.gmail.com>
+Subject: Re: [PATCH v5 07/17] drm/sun4i: sun6i_mipi_dsi: Refactor vertical
+ video start delay
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        linux-amarula@amarulasolutions.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Am Samstag, 29. Dezember 2018, 14:33:16 CET schrieb Johan Jonker:
-> From: Mark Yao <mark.yao@rock-chips.com>
-> 
-> This patch adds the core display subsystem and vop nodes to rk3066.
-> 
-> Signed-off-by: Mark Yao <mark.yao@rock-chips.com>
-> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+On Sat, Jan 12, 2019 at 10:13 PM Maxime Ripard
+<maxime.ripard@bootlin.com> wrote:
+>
+> On Wed, Jan 09, 2019 at 06:57:57PM +0530, Jagan Teki wrote:
+> > On Tue, Jan 8, 2019 at 2:28 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+> > >
+> > > On Mon, Jan 07, 2019 at 08:48:21PM +0530, Jagan Teki wrote:
+> > > > On Mon, Jan 7, 2019 at 7:42 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+> > > > >
+> > > > > On Fri, Dec 21, 2018 at 02:26:11AM +0530, Jagan Teki wrote:
+> > > > > > On Tue, Dec 11, 2018 at 10:19 PM Maxime Ripard
+> > > > > > <maxime.ripard@bootlin.com> wrote:
+> > > > > > >
+> > > > > > > On Mon, Dec 10, 2018 at 09:47:19PM +0530, Jagan Teki wrote:
+> > > > > > > > Video start delay can be computed by subtracting total vertical
+> > > > > > > > timing with front porch timing and with adding 1 delay line for TCON.
+> > > > > > > >
+> > > > > > > > BSP code form BPI-M64-bsp is computing video start delay as
+> > > > > > > > (from linux-sunxi/
+> > > > > > > > drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c)
+> > > > > > > >
+> > > > > > > > u32 vfp = panel->lcd_vt - panel->lcd_y - panel->lcd_vbp;
+> > > > > > > > => (panel->lcd_vt) - panel->lcd_y - (panel->lcd_vbp)
+> > > > > > > > => (timmings->ver_front_porch + panel->lcd_vbp + panel->lcd_y)
+> > > > > > > >    - panel->lcd_y - (panel->lcd_vbp)
+> > > > > > > > => timmings->ver_front_porch + panel->lcd_vbp + panel->lcd_y
+> > > > > > > >                            - panel->lcd_y - panel->lcd_vbp
+> > > > > > > > => timmings->ver_front_porch
+> > > > > > > >
+> > > > > > > > So, update the start delay computation accordingly.
+> > > > > > > >
+> > > > > > > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > > > > > >
+> > > > > > > Even though it's a bit better now on my A33 board and I don't have the
+> > > > > > > white stripes on the bottom of the display, there's still some
+> > > > > > > flickering with your patches applied.
+> > > > > > >
+> > > > > > > Bisecting it seems to point at that patch, but reverting it doesn't
+> > > > > > > make the issue go away, so it's not really clear which one exactly is
+> > > > > > > at fault.
+> > > > > >
+> > > > > > Is reverting this patch, work fine or not?
+> > > > >
+> > > > > As I was saying, it doesn't.
+> > > > >
+> > > > > > This patch is trying to make use of front porch instead of existing
+> > > > > > back porch to compute the delay. Since we revert the VBP fix patch[1]
+> > > > > > to assume VBP as VFP value look like your setup would also require to
+> > > > > > revert this change. But as per BSP or drm_mode details all of my
+> > > > > > displays even work with and w/o reverting these two.
+> > > > >
+> > > > > Again, I cannot help you without the datasheet for the panels you're
+> > > > > trying to submit.
+> > > >
+> > > > The panel bound with Sitronix ST7701 IC
+> > > > http://www.startek-lcd.com/res/starteklcd/pdres/201705/20170512144242904.pdf
+> > >
+> > > It's the controller, not the panel
+> >
+> > As I said before, the datasheet of that panel doesn't have any
+> > information except electrical characteristics and used IC which is
+> > ST7701.
+> >
+> > I have one more panel, which is from Bananapi, S070WV20-CT16 ICN621
+> > please find the attachment for the same.
+> >
+> > Here is some more details of the same.
+> >
+> > https://github.com/yesnoandor/x300/blob/master/kernel/arch/arm/boot/dts/erobbing/x300/x300.dtsi#L81
+> > https://github.com/wxzed/Raspberry_5MIPI_Display/blob/master/I2C_Slave/USER/main.c#L15
+> >
+> > https://github.com/eliot-shao/qcom/blob/master/icn6211_cxn0102/kernel/drivers/video/msm/mdss/mdss_i2c_interface.c#L152
+> > matches timings for
+> > https://github.com/eliot-shao/qcom/blob/master/icn6211_cxn0102/kernel/arch/arm/boot/dts/qcom/dsi-mipi-2-rgb_1280p_video.dtsi#L20
+> >
+> > https://github.com/zestroly/micromat/blob/master/test/raspberry/ICN6211.cpp#L169
+>
+> Where did you get the timings from then?
 
-applied for 5.1
+You mean drm_mode timings, the same panel with RGB available in
+panel-simple[1], and dsi driver in Mailing list[2] and actual DSI
+sequence commands from BSP[3]
 
-Thanks
-Heiko
-
-
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/drivers/gpu/drm/panel/panel-simple.c?id=7ad8b41cd8f5c2842646d01cdd576663caee04a7
+[2] https://patchwork.kernel.org/patch/10680331/
+[3] https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/lcd/S070WV20_MIPI_RGB.c
