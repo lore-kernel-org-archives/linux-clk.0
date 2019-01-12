@@ -2,272 +2,179 @@ Return-Path: <SRS0=8pxQ=PU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 469D1C43387
-	for <linux-clk@archiver.kernel.org>; Sat, 12 Jan 2019 00:56:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA458C43387
+	for <linux-clk@archiver.kernel.org>; Sat, 12 Jan 2019 15:39:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B13E20872
-	for <linux-clk@archiver.kernel.org>; Sat, 12 Jan 2019 00:56:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3C8D2084C
+	for <linux-clk@archiver.kernel.org>; Sat, 12 Jan 2019 15:39:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="inYM6MFe";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="h7oB4vRf"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SOtf/dFA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726406AbfALA4R (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 11 Jan 2019 19:56:17 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:60044 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725915AbfALA4R (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 11 Jan 2019 19:56:17 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 1127C607F4; Sat, 12 Jan 2019 00:56:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547254576;
-        bh=p6roF1IPES67DV0WA5ZzSTDEfg8WLtmbs3pPh6Hn7QY=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=inYM6MFeQ7jerAPwuYank2hoevoI+nzXhPU8igbSVdgG9ZJ/iLpjvV+GjzcE+6bSj
-         KTF0VqniKW8E4NF5vdUK/1EkwhkyiMY+CyPxxV8UuwKuKltutM6lYedijyohyCOKAl
-         EBfyzfxDh6ynGgUSIA5eDrmSefZURjMLKFNci0XQ=
-Received: from [10.46.162.234] (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: daidavid1@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 7D34E6079B;
-        Sat, 12 Jan 2019 00:56:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547254574;
-        bh=p6roF1IPES67DV0WA5ZzSTDEfg8WLtmbs3pPh6Hn7QY=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=h7oB4vRfbJ1wlCqCarDa7Tkh34B6+Ss0bURmXaEmS2DZAZL6P2yyN8V1o02MVa+wM
-         QvnsUVqK4JPKxfrQoWFT1tJ6Dwnt2Kh4/51pSBzoH4GZm+pIixoBxDZ3SRnFsujs6/
-         UgukywVbMpk2bOu5EZwbT4ab/TO1/fUXcCq3RXtY=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7D34E6079B
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=daidavid1@codeaurora.org
-Subject: Re: [PATCH v1] clk: qcom: clk-rpmh: Add IPA clock support
-To:     Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     georgi.djakov@linaro.org, bjorn.andersson@linaro.org,
-        evgreen@google.com, tdas@codeaurora.org, elder@linaro.org
-References: <1544754904-18951-1-git-send-email-daidavid1@codeaurora.org>
- <154706211110.15366.8008755843113316822@swboyd.mtv.corp.google.com>
-From:   David Dai <daidavid1@codeaurora.org>
-Message-ID: <11f948dc-3045-762f-b6bf-63c32d51772a@codeaurora.org>
-Date:   Fri, 11 Jan 2019 16:56:14 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
-MIME-Version: 1.0
-In-Reply-To: <154706211110.15366.8008755843113316822@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        id S1725854AbfALPjD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 12 Jan 2019 10:39:03 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:39181 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725842AbfALPjD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 12 Jan 2019 10:39:03 -0500
+Received: by mail-wr1-f66.google.com with SMTP id t27so18280619wra.6;
+        Sat, 12 Jan 2019 07:39:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=message-id:subject:from:to:cc:date:user-agent:mime-version
+         :content-transfer-encoding;
+        bh=nMwqmyNYMU4Y77Zqh2k3EBCoarap/68KCGLgVioocUU=;
+        b=SOtf/dFAR8yU+SCrjfEVybTk0f5OPYc9/sOa4FPSKMfsU++g/Z6keAeEG7Hs2WE+bn
+         AMsKOwbSs1mBedpRDdIVhOQWAlnXFtkav3VDgjaGOtd4Ao9vimBcfYPyO7cPKl3H8eL2
+         iCQhzHy1Mq/uUXbZK+gnMyJAqe1rptq+SscyD+zo0aPFYXP9PRjW8vl4HMumN4uSI4gT
+         sGPfTWvtJzdmjKp9FxjF4Q9U6IGEtwtpi2rnPuwsSa736DmLlcnOA9KgzdZLgsMZF/0j
+         odPmdQRM3XOqfMsfpvgNG2LtHaQLePehKGzsGkjCf5g3InTVeuh1tKhPmQni494LfR5R
+         Sfpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:user-agent
+         :mime-version:content-transfer-encoding;
+        bh=nMwqmyNYMU4Y77Zqh2k3EBCoarap/68KCGLgVioocUU=;
+        b=q477d5i+t/SVxiK9Xga9GmAS1rvPjkOlmO6xH0NDD3gHS3IfJji2WRm0uSl1JypeyR
+         nCJuO7oLgOe5IDhADzBaJtpOhPQEAKCvwsOOZD710MlNAVSsrwXvwyHIKhGSmOjMWcZp
+         HUlc5i+kNM0zIQHoAM45S1MSVwQW7O+RNiNxI82DQx2bvNIVJ3wbddXmgS4msbl2KJVz
+         Xqo+LJAxwSGRXUQD+4Gg2fkgoLCiQ7uXvA9zJ2r6k9HZuoOfb3BeXKLKXM6xmzjweuua
+         xAlw85NuuV3O8W05sWf1oR1rZRwMiMs326aW/C1Nf3xXNONOWQ7wdxpfeIEB4lx/hm2+
+         pIBg==
+X-Gm-Message-State: AJcUukcBgRId2b/yO76urgJrUIqbc/s1Vg0MV/eX6VkfAgKGI8keK/Rl
+        63R8kBsHg/7/XMdDWPumrhc=
+X-Google-Smtp-Source: ALg8bN5NvFDYedcXTEQaePlc7FQiN2bOqTlXR+oWXim4hbsCsfc228aBI8cM06FJb1BwFkCOncZeZA==
+X-Received: by 2002:a5d:448f:: with SMTP id j15mr16643422wrq.108.1547307540319;
+        Sat, 12 Jan 2019 07:39:00 -0800 (PST)
+Received: from [192.168.1.100] ([93.51.16.173])
+        by smtp.gmail.com with ESMTPSA id u204sm38589501wmu.30.2019.01.12.07.38.59
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 12 Jan 2019 07:38:59 -0800 (PST)
+Message-ID: <2fcdf0e9b1eef55350911984064dd94f16f1fcd8.camel@gmail.com>
+Subject: [PATCH] clk: qcom: smd: Add support for MSM8956/76 RPM clocks
+From:   AngeloGioacchino Del Regno <kholk11@gmail.com>
+To:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     AngeloGioacchino Del Regno <kholk11@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Date:   Sat, 12 Jan 2019 16:38:58 +0100
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.2 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+From 6aeefad77a2a5d47a9bd009d2d10db2a5dd153a2 Mon Sep 17 00:00:00 2001
+From: "Angelo G. Del Regno" <kholk11@gmail.com>
+Date: Sat, 12 Jan 2019 16:31:09 +0100
+Subject: [PATCH] clk: qcom: smd: Add support for MSM8956/76 RPM clocks
 
-On 1/9/2019 11:28 AM, Stephen Boyd wrote:
-> Quoting David Dai (2018-12-13 18:35:04)
->> The current clk-rpmh driver only supports on and off RPMh clock resources,
->> let's extend the current driver by add support for clocks that are managed
->> by a different type of RPMh resource known as Bus Clock Manager(BCM).
->> The BCM is a configurable shared resource aggregator that scales performance
->> based on a preset of frequency points. The Qualcomm IP Accelerator (IPA) clock
->> is an example of a resource that is managed by the BCM and this a requirement
->> from the IPA driver in order to scale its core clock.
-> Please use this commit text instead:
->
->      
-> The clk-rpmh driver only supports on and off RPMh clock resources. Let's
-> extend the driver by add support for clocks that are managed by a
-> different type of RPMh resource known as Bus Clock Manager(BCM). The BCM
-> is a configurable shared resource aggregator that scales performance
-> based on a set of frequency points. The Qualcomm IP Accelerator (IPA)
-> clock is an example of a resource that is managed by the BCM and this a
-> requirement from the IPA driver in order to scale its core clock.
-Ok.
->> Signed-off-by: David Dai <daidavid1@codeaurora.org>
->> ---
->>   drivers/clk/qcom/clk-rpmh.c           | 141 ++++++++++++++++++++++++++++++++++
->>   include/dt-bindings/clock/qcom,rpmh.h |   1 +
->>   2 files changed, 142 insertions(+)
->>
->> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
->> index 9f4fc77..ee78c4b 100644
->> --- a/drivers/clk/qcom/clk-rpmh.c
->> +++ b/drivers/clk/qcom/clk-rpmh.c
->> @@ -18,6 +18,31 @@
->>   #define CLK_RPMH_ARC_EN_OFFSET         0
->>   #define CLK_RPMH_VRM_EN_OFFSET         4
->>   
->> +#define BCM_TCS_CMD_COMMIT_MASK                0x40000000
->> +#define BCM_TCS_CMD_VALID_SHIFT                29
->> +#define BCM_TCS_CMD_VOTE_MASK          0x3fff
->> +#define BCM_TCS_CMD_VOTE_SHIFT         0
->> +
->> +#define BCM_TCS_CMD(valid, vote)                               \
->> +       (BCM_TCS_CMD_COMMIT_MASK |                              \
->> +       ((valid) << BCM_TCS_CMD_VALID_SHIFT) |                  \
->> +       ((cpu_to_le32(vote) &                                   \
-> Why?
-Sorry, could you clarify this question? If you're referring to the 
-cpu_to_le32, shouldn't we be explicit about converting endianness even 
-if it might be redundant for this particular qcom platform?
->
->> +       BCM_TCS_CMD_VOTE_MASK) << BCM_TCS_CMD_VOTE_SHIFT))
->> +
->> +/**
->> + * struct bcm_db - Auxiliary data pertaining to each Bus Clock Manager(BCM)
->> + * @unit: divisor used to convert Hz value to an RPMh msg
->> + * @width: multiplier used to convert Hz value to an RPMh msg
->> + * @vcd: virtual clock domain that this bcm belongs to
->> + * @reserved: reserved to pad the struct
->> + */
->> +struct bcm_db {
->> +       __le32 unit;
->> +       __le16 width;
->> +       u8 vcd;
->> +       u8 reserved;
->> +};
->> +
->>   /**
->>    * struct clk_rpmh - individual rpmh clock data structure
->>    * @hw:                        handle between common and hardware-specific interfaces
->> @@ -29,6 +54,7 @@
->>    * @aggr_state:                rpmh clock aggregated state
->>    * @last_sent_aggr_state: rpmh clock last aggr state sent to RPMh
->>    * @valid_state_mask:  mask to determine the state of the rpmh clock
->> + * @aux_data:          data specific to the bcm rpmh resource
-> But there isn't aux_data. Is this supposed to be unit? And what is unit
-> going to be? 1000?
-Supposed to be unit, the value is on the order of Khz.
->>    * @dev:               device to which it is attached
->>    * @peer:              pointer to the clock rpmh sibling
->>    */
->> @@ -42,6 +68,7 @@ struct clk_rpmh {
->>          u32 aggr_state;
->>          u32 last_sent_aggr_state;
->>          u32 valid_state_mask;
->> +       u32 unit;
->>          struct device *dev;
->>          struct clk_rpmh *peer;
->>   };
->> @@ -210,6 +248,91 @@ static unsigned long clk_rpmh_recalc_rate(struct clk_hw *hw,
->>          .recalc_rate    = clk_rpmh_recalc_rate,
->>   };
->>   
->> +static int clk_rpmh_bcm_send_cmd(struct clk_rpmh *c, bool enable)
->> +{
->> +       struct tcs_cmd cmd = { 0 };
->> +       u32 cmd_state;
->> +       int ret;
->> +
->> +       mutex_lock(&rpmh_clk_lock);
->> +
->> +       cmd_state = enable ? (c->aggr_state ? c->aggr_state : 1) : 0;
-> Make this into an if statement instead of double ternary?
-Ok.
-> 	cmd_state = 0;
-> 	if (enable) {
-> 		cmd_state = 1;
-> 		if (c->aggr_state)
-> 			cmd_state = c->aggr_state;
->
-> 	}
->
->> +
->> +       if (c->last_sent_aggr_state == cmd_state)
->> +               return 0;
-> We just returned with a mutex held. Oops!
-Oops, will fix.
->> +
->> +       cmd.addr = c->res_addr;
->> +       cmd.data = BCM_TCS_CMD(enable, cmd_state);
->> +
->> +       ret = rpmh_write_async(c->dev, RPMH_ACTIVE_ONLY_STATE, &cmd, 1);
->> +       if (ret) {
->> +               dev_err(c->dev, "set active state of %s failed: (%d)\n",
->> +                       c->res_name, ret);
->> +               return ret;
-> Again!
->> +       }
->> +
->> +       c->last_sent_aggr_state = cmd_state;
->> +
->> +       mutex_unlock(&rpmh_clk_lock);
->> +
->> +       return 0;
->> +}
->> +
->> +static int clk_rpmh_bcm_prepare(struct clk_hw *hw)
->> +{
->> +       struct clk_rpmh *c = to_clk_rpmh(hw);
->> +       int ret;
->> +
->> +       ret = clk_rpmh_bcm_send_cmd(c, true);
->> +
->> +       return ret;
-> Just write return clk_rpmh_bcm_send_cmd(...)
-Ok.
->
->> +};
->> +
->> +static void clk_rpmh_bcm_unprepare(struct clk_hw *hw)
->> +{
->> +       struct clk_rpmh *c = to_clk_rpmh(hw);
->> +
->> +       clk_rpmh_bcm_send_cmd(c, false);
->> +};
->> +
->> +static int clk_rpmh_bcm_set_rate(struct clk_hw *hw, unsigned long rate,
->> +                                unsigned long parent_rate)
->> +{
->> +       struct clk_rpmh *c = to_clk_rpmh(hw);
->> +
->> +       c->aggr_state = rate / c->unit;
->> +       /*
->> +        * Since any non-zero value sent to hw would result in enabling the
->> +        * clock, only send the value if the clock has already been prepared.
->> +        */
->> +       if (clk_hw_is_prepared(hw))
-> This is sad, but OK.
->
->> +               clk_rpmh_bcm_send_cmd(c, true);
->> +
->> +       return 0;
->> +};
->> +
-> [...]
->> @@ -217,6 +340,7 @@ static unsigned long clk_rpmh_recalc_rate(struct clk_hw *hw,
->>   DEFINE_CLK_RPMH_VRM(sdm845, rf_clk1, rf_clk1_ao, "rfclka1", 1);
->>   DEFINE_CLK_RPMH_VRM(sdm845, rf_clk2, rf_clk2_ao, "rfclka2", 1);
->>   DEFINE_CLK_RPMH_VRM(sdm845, rf_clk3, rf_clk3_ao, "rfclka3", 1);
->> +DEFINE_CLK_RPMH_BCM(sdm845, ipa, "IP0");
-> It's really IP0?! What was wrong with IPA?
-Yeah... convention seems to be 2 letters and then a number for most BCM 
-resources.
->>   
->>   static struct clk_hw *sdm845_rpmh_clocks[] = {
->>          [RPMH_CXO_CLK]          = &sdm845_bi_tcxo.hw,
->> @@ -275,6 +402,20 @@ static int clk_rpmh_probe(struct platform_device *pdev)
->>                                  rpmh_clk->res_name);
->>                          return -ENODEV;
->>                  }
->> +
->> +               data = cmd_db_read_aux_data(rpmh_clk->res_name, &aux_data_len);
->> +               if (IS_ERR(data)) {
->> +                       ret = PTR_ERR(data);
->> +                       dev_err(&pdev->dev,
->> +                               "error reading RPMh aux data for %s (%d)\n",
->> +                               rpmh_clk->res_name, ret);
->> +                               return ret;
-> Weird indent here.
-will fix.
+Add all RPM clocks found on MSM8956/MSM8976 SoCs.
 
+Signed-off-by: Angelo G. Del Regno <kholk11@gmail.com>
+---
+ .../devicetree/bindings/clock/qcom,rpmcc.txt  |  1 +
+ drivers/clk/qcom/clk-smd-rpm.c                | 53 +++++++++++++++++++
+ 2 files changed, 54 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
+index 87b4949e9bc8..2aebc4db54f3 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
++++ b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
+@@ -15,6 +15,7 @@ Required properties :
+ 			"qcom,rpmcc-msm8916", "qcom,rpmcc"
+ 			"qcom,rpmcc-msm8974", "qcom,rpmcc"
+ 			"qcom,rpmcc-apq8064", "qcom,rpmcc"
++			"qcom,rpmcc-msm8976", "qcom,rpmcc"
+ 			"qcom,rpmcc-msm8996", "qcom,rpmcc"
+ 			"qcom,rpmcc-qcs404", "qcom,rpmcc"
+ 
+diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
+index d3aadaeb2903..b916435e2759 100644
+--- a/drivers/clk/qcom/clk-smd-rpm.c
++++ b/drivers/clk/qcom/clk-smd-rpm.c
+@@ -531,6 +531,58 @@ static const struct rpm_smd_clk_desc rpm_clk_msm8974 = {
+ 	.num_clks = ARRAY_SIZE(msm8974_clks),
+ };
+ 
++/* msm8976 */
++DEFINE_CLK_SMD_RPM_BRANCH(msm8976, cxo, cxo_a,
++				QCOM_SMD_RPM_MISC_CLK, 0, 19200000);
++DEFINE_CLK_SMD_RPM(msm8976, bimc_clk, bimc_a_clk, QCOM_SMD_RPM_MEM_CLK, 0);
++DEFINE_CLK_SMD_RPM(msm8976, ipa_clk, ipa_a_clk, QCOM_SMD_RPM_IPA_CLK, 0);
++DEFINE_CLK_SMD_RPM(msm8976, pcnoc_clk, pcnoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 0);
++DEFINE_CLK_SMD_RPM(msm8976, snoc_clk, snoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 1);
++DEFINE_CLK_SMD_RPM(msm8976, mmssnoc_axi_clk, mmssnoc_axi_a_clk,
++				QCOM_SMD_RPM_BUS_CLK, 2);
++DEFINE_CLK_SMD_RPM_QDSS(msm8976, qdss_clk, qdss_a_clk,
++				QCOM_SMD_RPM_MISC_CLK, 1);
++DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8976, bb_clk1, bb_clk1_a, 0x1);
++DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8976, bb_clk2, bb_clk2_a, 0x2);
++DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8976, rf_clk2, rf_clk2_a, 0x5);
++DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8976, div_clk2, div_clk2_a, 0xC);
++DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8976, bb_clk1_pin, bb_clk1_a_pin, 1);
++DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8976, bb_clk2_pin, bb_clk2_a_pin, 2);
++
++static struct clk_smd_rpm *msm8976_clks[] = {
++	[RPM_SMD_XO_CLK_SRC] = &msm8976_cxo,
++	[RPM_SMD_XO_A_CLK_SRC] = &msm8976_cxo_a,
++	[RPM_SMD_BIMC_CLK] = &msm8976_bimc_clk,
++	[RPM_SMD_BIMC_A_CLK] = &msm8976_bimc_a_clk,
++	[RPM_SMD_MMAXI_CLK] = &msm8976_mmssnoc_axi_clk,
++	[RPM_SMD_MMAXI_A_CLK] = &msm8976_mmssnoc_axi_a_clk,
++	[RPM_SMD_IPA_CLK] = &msm8976_ipa_clk,
++	[RPM_SMD_IPA_A_CLK] = &msm8976_ipa_a_clk,
++	[RPM_SMD_PCNOC_CLK] = &msm8976_pcnoc_clk,
++	[RPM_SMD_PCNOC_A_CLK] = &msm8976_pcnoc_a_clk,
++	[RPM_SMD_SNOC_CLK] = &msm8976_snoc_clk,
++	[RPM_SMD_SNOC_A_CLK] = &msm8976_snoc_a_clk,
++	[RPM_SMD_QDSS_CLK] = &msm8976_qdss_clk,
++	[RPM_SMD_QDSS_A_CLK] = &msm8976_qdss_a_clk,
++	[RPM_SMD_BB_CLK1] = &msm8976_bb_clk1,
++	[RPM_SMD_BB_CLK1_A] = &msm8976_bb_clk1_a,
++	[RPM_SMD_BB_CLK1_PIN] = &msm8976_bb_clk1_pin,
++	[RPM_SMD_BB_CLK1_A_PIN] = &msm8976_bb_clk1_a_pin,
++	[RPM_SMD_BB_CLK2] = &msm8976_bb_clk2,
++	[RPM_SMD_BB_CLK2_A] = &msm8976_bb_clk2_a,
++	[RPM_SMD_BB_CLK2_PIN] = &msm8976_bb_clk2_pin,
++	[RPM_SMD_BB_CLK2_A_PIN] = &msm8976_bb_clk2_a_pin,
++	[RPM_SMD_RF_CLK2] = &msm8976_rf_clk2,
++	[RPM_SMD_RF_CLK2_A] = &msm8976_rf_clk2_a,
++	[RPM_SMD_DIV_CLK2] = &msm8976_div_clk2,
++	[RPM_SMD_DIV_A_CLK2] = &msm8976_div_clk2_a,
++};
++
++static const struct rpm_smd_clk_desc rpm_clk_msm8976 = {
++	.clks = msm8976_clks,
++	.num_clks = ARRAY_SIZE(msm8976_clks),
++};
++
+ /* msm8996 */
+ DEFINE_CLK_SMD_RPM(msm8996, pcnoc_clk, pcnoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 0);
+ DEFINE_CLK_SMD_RPM(msm8996, snoc_clk, snoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 1);
+@@ -658,6 +710,7 @@ static const struct rpm_smd_clk_desc rpm_clk_qcs404 = {
+ static const struct of_device_id rpm_smd_clk_match_table[] = {
+ 	{ .compatible = "qcom,rpmcc-msm8916", .data = &rpm_clk_msm8916 },
+ 	{ .compatible = "qcom,rpmcc-msm8974", .data = &rpm_clk_msm8974 },
++	{ .compatible = "qcom,rpmcc-msm8976", .data = &rpm_clk_msm8976 },
+ 	{ .compatible = "qcom,rpmcc-msm8996", .data = &rpm_clk_msm8996 },
+ 	{ .compatible = "qcom,rpmcc-qcs404",  .data = &rpm_clk_qcs404  },
+ 	{ }
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.19.1
+
 
