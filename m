@@ -2,179 +2,141 @@ Return-Path: <SRS0=8pxQ=PU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA458C43387
-	for <linux-clk@archiver.kernel.org>; Sat, 12 Jan 2019 15:39:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF190C43387
+	for <linux-clk@archiver.kernel.org>; Sat, 12 Jan 2019 16:43:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3C8D2084C
-	for <linux-clk@archiver.kernel.org>; Sat, 12 Jan 2019 15:39:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SOtf/dFA"
+	by mail.kernel.org (Postfix) with ESMTP id 7D95E20836
+	for <linux-clk@archiver.kernel.org>; Sat, 12 Jan 2019 16:43:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725854AbfALPjD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 12 Jan 2019 10:39:03 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:39181 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725842AbfALPjD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 12 Jan 2019 10:39:03 -0500
-Received: by mail-wr1-f66.google.com with SMTP id t27so18280619wra.6;
-        Sat, 12 Jan 2019 07:39:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=message-id:subject:from:to:cc:date:user-agent:mime-version
-         :content-transfer-encoding;
-        bh=nMwqmyNYMU4Y77Zqh2k3EBCoarap/68KCGLgVioocUU=;
-        b=SOtf/dFAR8yU+SCrjfEVybTk0f5OPYc9/sOa4FPSKMfsU++g/Z6keAeEG7Hs2WE+bn
-         AMsKOwbSs1mBedpRDdIVhOQWAlnXFtkav3VDgjaGOtd4Ao9vimBcfYPyO7cPKl3H8eL2
-         iCQhzHy1Mq/uUXbZK+gnMyJAqe1rptq+SscyD+zo0aPFYXP9PRjW8vl4HMumN4uSI4gT
-         sGPfTWvtJzdmjKp9FxjF4Q9U6IGEtwtpi2rnPuwsSa736DmLlcnOA9KgzdZLgsMZF/0j
-         odPmdQRM3XOqfMsfpvgNG2LtHaQLePehKGzsGkjCf5g3InTVeuh1tKhPmQni494LfR5R
-         Sfpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:user-agent
-         :mime-version:content-transfer-encoding;
-        bh=nMwqmyNYMU4Y77Zqh2k3EBCoarap/68KCGLgVioocUU=;
-        b=q477d5i+t/SVxiK9Xga9GmAS1rvPjkOlmO6xH0NDD3gHS3IfJji2WRm0uSl1JypeyR
-         nCJuO7oLgOe5IDhADzBaJtpOhPQEAKCvwsOOZD710MlNAVSsrwXvwyHIKhGSmOjMWcZp
-         HUlc5i+kNM0zIQHoAM45S1MSVwQW7O+RNiNxI82DQx2bvNIVJ3wbddXmgS4msbl2KJVz
-         Xqo+LJAxwSGRXUQD+4Gg2fkgoLCiQ7uXvA9zJ2r6k9HZuoOfb3BeXKLKXM6xmzjweuua
-         xAlw85NuuV3O8W05sWf1oR1rZRwMiMs326aW/C1Nf3xXNONOWQ7wdxpfeIEB4lx/hm2+
-         pIBg==
-X-Gm-Message-State: AJcUukcBgRId2b/yO76urgJrUIqbc/s1Vg0MV/eX6VkfAgKGI8keK/Rl
-        63R8kBsHg/7/XMdDWPumrhc=
-X-Google-Smtp-Source: ALg8bN5NvFDYedcXTEQaePlc7FQiN2bOqTlXR+oWXim4hbsCsfc228aBI8cM06FJb1BwFkCOncZeZA==
-X-Received: by 2002:a5d:448f:: with SMTP id j15mr16643422wrq.108.1547307540319;
-        Sat, 12 Jan 2019 07:39:00 -0800 (PST)
-Received: from [192.168.1.100] ([93.51.16.173])
-        by smtp.gmail.com with ESMTPSA id u204sm38589501wmu.30.2019.01.12.07.38.59
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 12 Jan 2019 07:38:59 -0800 (PST)
-Message-ID: <2fcdf0e9b1eef55350911984064dd94f16f1fcd8.camel@gmail.com>
-Subject: [PATCH] clk: qcom: smd: Add support for MSM8956/76 RPM clocks
-From:   AngeloGioacchino Del Regno <kholk11@gmail.com>
-To:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
+        id S1725855AbfALQnd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 12 Jan 2019 11:43:33 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:50179 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725842AbfALQnc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 12 Jan 2019 11:43:32 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 11A352074D; Sat, 12 Jan 2019 17:43:30 +0100 (CET)
+Received: from localhost (lfbn-1-10718-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        by mail.bootlin.com (Postfix) with ESMTPSA id CEAFE20714;
+        Sat, 12 Jan 2019 17:43:19 +0100 (CET)
+Date:   Sat, 12 Jan 2019 17:43:19 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     AngeloGioacchino Del Regno <kholk11@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Date:   Sat, 12 Jan 2019 16:38:58 +0100
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        linux-amarula@amarulasolutions.com
+Subject: Re: [PATCH v5 07/17] drm/sun4i: sun6i_mipi_dsi: Refactor vertical
+ video start delay
+Message-ID: <20190112164319.whr7gwvl4oux5svz@flea>
+References: <20181210161729.29720-1-jagan@amarulasolutions.com>
+ <20181210161729.29720-8-jagan@amarulasolutions.com>
+ <20181211164900.wfmkmbrbj3nmlb3h@flea>
+ <CAMty3ZB5F5jD9iJT1soXSA5HtQOf5W9rKO9nCdGFUfVo0hpO4Q@mail.gmail.com>
+ <20190107141158.zaimizk4rlqa6xli@flea>
+ <CAMty3ZBb8byOwh=_W83Ta0Dse1qkoqccOeaBEY9oHPaxDxe9QA@mail.gmail.com>
+ <20190108085829.clianbtjovu3oieq@flea>
+ <CAMty3ZC9OQtwT-iH=S1LhHsBPc_jFKGAnCYYeR9nuKuDWSKLQw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMty3ZC9OQtwT-iH=S1LhHsBPc_jFKGAnCYYeR9nuKuDWSKLQw@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From 6aeefad77a2a5d47a9bd009d2d10db2a5dd153a2 Mon Sep 17 00:00:00 2001
-From: "Angelo G. Del Regno" <kholk11@gmail.com>
-Date: Sat, 12 Jan 2019 16:31:09 +0100
-Subject: [PATCH] clk: qcom: smd: Add support for MSM8956/76 RPM clocks
+On Wed, Jan 09, 2019 at 06:57:57PM +0530, Jagan Teki wrote:
+> On Tue, Jan 8, 2019 at 2:28 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+> >
+> > On Mon, Jan 07, 2019 at 08:48:21PM +0530, Jagan Teki wrote:
+> > > On Mon, Jan 7, 2019 at 7:42 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+> > > >
+> > > > On Fri, Dec 21, 2018 at 02:26:11AM +0530, Jagan Teki wrote:
+> > > > > On Tue, Dec 11, 2018 at 10:19 PM Maxime Ripard
+> > > > > <maxime.ripard@bootlin.com> wrote:
+> > > > > >
+> > > > > > On Mon, Dec 10, 2018 at 09:47:19PM +0530, Jagan Teki wrote:
+> > > > > > > Video start delay can be computed by subtracting total vertical
+> > > > > > > timing with front porch timing and with adding 1 delay line for TCON.
+> > > > > > >
+> > > > > > > BSP code form BPI-M64-bsp is computing video start delay as
+> > > > > > > (from linux-sunxi/
+> > > > > > > drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c)
+> > > > > > >
+> > > > > > > u32 vfp = panel->lcd_vt - panel->lcd_y - panel->lcd_vbp;
+> > > > > > > => (panel->lcd_vt) - panel->lcd_y - (panel->lcd_vbp)
+> > > > > > > => (timmings->ver_front_porch + panel->lcd_vbp + panel->lcd_y)
+> > > > > > >    - panel->lcd_y - (panel->lcd_vbp)
+> > > > > > > => timmings->ver_front_porch + panel->lcd_vbp + panel->lcd_y
+> > > > > > >                            - panel->lcd_y - panel->lcd_vbp
+> > > > > > > => timmings->ver_front_porch
+> > > > > > >
+> > > > > > > So, update the start delay computation accordingly.
+> > > > > > >
+> > > > > > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > > > > >
+> > > > > > Even though it's a bit better now on my A33 board and I don't have the
+> > > > > > white stripes on the bottom of the display, there's still some
+> > > > > > flickering with your patches applied.
+> > > > > >
+> > > > > > Bisecting it seems to point at that patch, but reverting it doesn't
+> > > > > > make the issue go away, so it's not really clear which one exactly is
+> > > > > > at fault.
+> > > > >
+> > > > > Is reverting this patch, work fine or not?
+> > > >
+> > > > As I was saying, it doesn't.
+> > > >
+> > > > > This patch is trying to make use of front porch instead of existing
+> > > > > back porch to compute the delay. Since we revert the VBP fix patch[1]
+> > > > > to assume VBP as VFP value look like your setup would also require to
+> > > > > revert this change. But as per BSP or drm_mode details all of my
+> > > > > displays even work with and w/o reverting these two.
+> > > >
+> > > > Again, I cannot help you without the datasheet for the panels you're
+> > > > trying to submit.
+> > >
+> > > The panel bound with Sitronix ST7701 IC
+> > > http://www.startek-lcd.com/res/starteklcd/pdres/201705/20170512144242904.pdf
+> >
+> > It's the controller, not the panel
+> 
+> As I said before, the datasheet of that panel doesn't have any
+> information except electrical characteristics and used IC which is
+> ST7701.
+> 
+> I have one more panel, which is from Bananapi, S070WV20-CT16 ICN621
+> please find the attachment for the same.
+> 
+> Here is some more details of the same.
+> 
+> https://github.com/yesnoandor/x300/blob/master/kernel/arch/arm/boot/dts/erobbing/x300/x300.dtsi#L81
+> https://github.com/wxzed/Raspberry_5MIPI_Display/blob/master/I2C_Slave/USER/main.c#L15
+> 
+> https://github.com/eliot-shao/qcom/blob/master/icn6211_cxn0102/kernel/drivers/video/msm/mdss/mdss_i2c_interface.c#L152
+> matches timings for
+> https://github.com/eliot-shao/qcom/blob/master/icn6211_cxn0102/kernel/arch/arm/boot/dts/qcom/dsi-mipi-2-rgb_1280p_video.dtsi#L20
+> 
+> https://github.com/zestroly/micromat/blob/master/test/raspberry/ICN6211.cpp#L169
 
-Add all RPM clocks found on MSM8956/MSM8976 SoCs.
+Where did you get the timings from then?
 
-Signed-off-by: Angelo G. Del Regno <kholk11@gmail.com>
----
- .../devicetree/bindings/clock/qcom,rpmcc.txt  |  1 +
- drivers/clk/qcom/clk-smd-rpm.c                | 53 +++++++++++++++++++
- 2 files changed, 54 insertions(+)
+Maxime
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-index 87b4949e9bc8..2aebc4db54f3 100644
---- a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-+++ b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-@@ -15,6 +15,7 @@ Required properties :
- 			"qcom,rpmcc-msm8916", "qcom,rpmcc"
- 			"qcom,rpmcc-msm8974", "qcom,rpmcc"
- 			"qcom,rpmcc-apq8064", "qcom,rpmcc"
-+			"qcom,rpmcc-msm8976", "qcom,rpmcc"
- 			"qcom,rpmcc-msm8996", "qcom,rpmcc"
- 			"qcom,rpmcc-qcs404", "qcom,rpmcc"
- 
-diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
-index d3aadaeb2903..b916435e2759 100644
---- a/drivers/clk/qcom/clk-smd-rpm.c
-+++ b/drivers/clk/qcom/clk-smd-rpm.c
-@@ -531,6 +531,58 @@ static const struct rpm_smd_clk_desc rpm_clk_msm8974 = {
- 	.num_clks = ARRAY_SIZE(msm8974_clks),
- };
- 
-+/* msm8976 */
-+DEFINE_CLK_SMD_RPM_BRANCH(msm8976, cxo, cxo_a,
-+				QCOM_SMD_RPM_MISC_CLK, 0, 19200000);
-+DEFINE_CLK_SMD_RPM(msm8976, bimc_clk, bimc_a_clk, QCOM_SMD_RPM_MEM_CLK, 0);
-+DEFINE_CLK_SMD_RPM(msm8976, ipa_clk, ipa_a_clk, QCOM_SMD_RPM_IPA_CLK, 0);
-+DEFINE_CLK_SMD_RPM(msm8976, pcnoc_clk, pcnoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 0);
-+DEFINE_CLK_SMD_RPM(msm8976, snoc_clk, snoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 1);
-+DEFINE_CLK_SMD_RPM(msm8976, mmssnoc_axi_clk, mmssnoc_axi_a_clk,
-+				QCOM_SMD_RPM_BUS_CLK, 2);
-+DEFINE_CLK_SMD_RPM_QDSS(msm8976, qdss_clk, qdss_a_clk,
-+				QCOM_SMD_RPM_MISC_CLK, 1);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8976, bb_clk1, bb_clk1_a, 0x1);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8976, bb_clk2, bb_clk2_a, 0x2);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8976, rf_clk2, rf_clk2_a, 0x5);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8976, div_clk2, div_clk2_a, 0xC);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8976, bb_clk1_pin, bb_clk1_a_pin, 1);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8976, bb_clk2_pin, bb_clk2_a_pin, 2);
-+
-+static struct clk_smd_rpm *msm8976_clks[] = {
-+	[RPM_SMD_XO_CLK_SRC] = &msm8976_cxo,
-+	[RPM_SMD_XO_A_CLK_SRC] = &msm8976_cxo_a,
-+	[RPM_SMD_BIMC_CLK] = &msm8976_bimc_clk,
-+	[RPM_SMD_BIMC_A_CLK] = &msm8976_bimc_a_clk,
-+	[RPM_SMD_MMAXI_CLK] = &msm8976_mmssnoc_axi_clk,
-+	[RPM_SMD_MMAXI_A_CLK] = &msm8976_mmssnoc_axi_a_clk,
-+	[RPM_SMD_IPA_CLK] = &msm8976_ipa_clk,
-+	[RPM_SMD_IPA_A_CLK] = &msm8976_ipa_a_clk,
-+	[RPM_SMD_PCNOC_CLK] = &msm8976_pcnoc_clk,
-+	[RPM_SMD_PCNOC_A_CLK] = &msm8976_pcnoc_a_clk,
-+	[RPM_SMD_SNOC_CLK] = &msm8976_snoc_clk,
-+	[RPM_SMD_SNOC_A_CLK] = &msm8976_snoc_a_clk,
-+	[RPM_SMD_QDSS_CLK] = &msm8976_qdss_clk,
-+	[RPM_SMD_QDSS_A_CLK] = &msm8976_qdss_a_clk,
-+	[RPM_SMD_BB_CLK1] = &msm8976_bb_clk1,
-+	[RPM_SMD_BB_CLK1_A] = &msm8976_bb_clk1_a,
-+	[RPM_SMD_BB_CLK1_PIN] = &msm8976_bb_clk1_pin,
-+	[RPM_SMD_BB_CLK1_A_PIN] = &msm8976_bb_clk1_a_pin,
-+	[RPM_SMD_BB_CLK2] = &msm8976_bb_clk2,
-+	[RPM_SMD_BB_CLK2_A] = &msm8976_bb_clk2_a,
-+	[RPM_SMD_BB_CLK2_PIN] = &msm8976_bb_clk2_pin,
-+	[RPM_SMD_BB_CLK2_A_PIN] = &msm8976_bb_clk2_a_pin,
-+	[RPM_SMD_RF_CLK2] = &msm8976_rf_clk2,
-+	[RPM_SMD_RF_CLK2_A] = &msm8976_rf_clk2_a,
-+	[RPM_SMD_DIV_CLK2] = &msm8976_div_clk2,
-+	[RPM_SMD_DIV_A_CLK2] = &msm8976_div_clk2_a,
-+};
-+
-+static const struct rpm_smd_clk_desc rpm_clk_msm8976 = {
-+	.clks = msm8976_clks,
-+	.num_clks = ARRAY_SIZE(msm8976_clks),
-+};
-+
- /* msm8996 */
- DEFINE_CLK_SMD_RPM(msm8996, pcnoc_clk, pcnoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 0);
- DEFINE_CLK_SMD_RPM(msm8996, snoc_clk, snoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 1);
-@@ -658,6 +710,7 @@ static const struct rpm_smd_clk_desc rpm_clk_qcs404 = {
- static const struct of_device_id rpm_smd_clk_match_table[] = {
- 	{ .compatible = "qcom,rpmcc-msm8916", .data = &rpm_clk_msm8916 },
- 	{ .compatible = "qcom,rpmcc-msm8974", .data = &rpm_clk_msm8974 },
-+	{ .compatible = "qcom,rpmcc-msm8976", .data = &rpm_clk_msm8976 },
- 	{ .compatible = "qcom,rpmcc-msm8996", .data = &rpm_clk_msm8996 },
- 	{ .compatible = "qcom,rpmcc-qcs404",  .data = &rpm_clk_qcs404  },
- 	{ }
 -- 
-2.19.1
-
-
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
