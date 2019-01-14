@@ -2,105 +2,158 @@ Return-Path: <SRS0=99XN=PW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 454DFC43387
-	for <linux-clk@archiver.kernel.org>; Mon, 14 Jan 2019 16:47:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 900C0C43387
+	for <linux-clk@archiver.kernel.org>; Mon, 14 Jan 2019 17:05:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14E86206B7
-	for <linux-clk@archiver.kernel.org>; Mon, 14 Jan 2019 16:47:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547484432;
-	bh=D2MNF+Kq2lSmR31nGOTN9/JLfwQzExxBYfVq8a9D794=;
-	h=Subject:In-Reply-To:References:Cc:To:From:Date:List-ID:From;
-	b=oDB/yX9KOlibJeR55DOMSgbmVoV5LfH+94V5UmS7prvjzN7kdxRCW1wf7mmDrUgZF
-	 Rsk9Wm0xCFcvPEzWzhmJaey6jgDm2F/YwGl/Bm2jdIStuC64NPetzxGdYmVLifnRx6
-	 /fvxFrY4GhlIo9lL6h/ByLAn5iCgyx6LhGF2xMhk=
+	by mail.kernel.org (Postfix) with ESMTP id 6A18420659
+	for <linux-clk@archiver.kernel.org>; Mon, 14 Jan 2019 17:05:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726813AbfANQrF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 14 Jan 2019 11:47:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37702 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726724AbfANQrE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 14 Jan 2019 11:47:04 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 883A0206B7;
-        Mon, 14 Jan 2019 16:47:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547484423;
-        bh=D2MNF+Kq2lSmR31nGOTN9/JLfwQzExxBYfVq8a9D794=;
-        h=Subject:In-Reply-To:References:Cc:To:From:Date:From;
-        b=w99w+y1CWUP2LYdA5FqWVqsYD32L4wFxdkkksBw+GkI34d9i4U+u8H5xIbWSjVRoq
-         BV19sKtHhoNlUAiZTsFsgUwBVFh60Fm1ot1SseZWvhGSz6RoscR6ZmpJlZl4TKHVGG
-         YUs56IUvbO4sBX1VtzIA43P8L8dvZuMIYlCuZ+IY=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v1] clk: qcom: clk-rpmh: Add IPA clock support
-User-Agent: alot/0.8
-In-Reply-To: <11f948dc-3045-762f-b6bf-63c32d51772a@codeaurora.org>
-References: <1544754904-18951-1-git-send-email-daidavid1@codeaurora.org> <154706211110.15366.8008755843113316822@swboyd.mtv.corp.google.com> <11f948dc-3045-762f-b6bf-63c32d51772a@codeaurora.org>
-Cc:     georgi.djakov@linaro.org, bjorn.andersson@linaro.org,
-        evgreen@google.com, tdas@codeaurora.org, elder@linaro.org
-To:     David Dai <daidavid1@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        id S1726736AbfANRF7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 14 Jan 2019 12:05:59 -0500
+Received: from gateway32.websitewelcome.com ([192.185.144.98]:45574 "EHLO
+        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726646AbfANRF7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Jan 2019 12:05:59 -0500
+X-Greylist: delayed 1272 seconds by postgrey-1.27 at vger.kernel.org; Mon, 14 Jan 2019 12:05:58 EST
+Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
+        by gateway32.websitewelcome.com (Postfix) with ESMTP id 468912D943
+        for <linux-clk@vger.kernel.org>; Mon, 14 Jan 2019 10:44:46 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id j5Lxg7Y5mYTGMj5Lygrn0l; Mon, 14 Jan 2019 10:44:46 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.130.205] (port=46058 helo=[192.168.43.131])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gj5Lw-002oK3-CM; Mon, 14 Jan 2019 10:44:45 -0600
+Subject: Re: [PATCH] clk: imx: imx7ulp: use struct_size() in kzalloc()
+To:     Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Message-ID: <154748442276.169631.994019688641603420@swboyd.mtv.corp.google.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-Date:   Mon, 14 Jan 2019 08:47:02 -0800
+References: <20181224064025.GA9588@embeddedor.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Message-ID: <18969a9a-f9e1-e301-9f17-d1e3ab301dbd@embeddedor.com>
+Date:   Mon, 14 Jan 2019 10:44:37 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <20181224064025.GA9588@embeddedor.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.130.205
+X-Source-L: No
+X-Exim-ID: 1gj5Lw-002oK3-CM
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.43.131]) [189.250.130.205]:46058
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 9
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting David Dai (2019-01-11 16:56:14)
->=20
-> On 1/9/2019 11:28 AM, Stephen Boyd wrote:
-> > Quoting David Dai (2018-12-13 18:35:04)
-> >> +
-> >> +#define BCM_TCS_CMD(valid, vote)                               \
-> >> +       (BCM_TCS_CMD_COMMIT_MASK |                              \
-> >> +       ((valid) << BCM_TCS_CMD_VALID_SHIFT) |                  \
-> >> +       ((cpu_to_le32(vote) &                                   \
-> > Why?
-> Sorry, could you clarify this question? If you're referring to the=20
-> cpu_to_le32, shouldn't we be explicit about converting endianness even=20
-> if it might be redundant for this particular qcom platform?
+Hi,
 
-Is only the vote part of the message in little endian format and the
-rest is native CPU endianess? It's very odd to see that jammed in the
-middle of a bit packing statement like that. Typically the whole u32
-would be in one or the other endianness. Also, sparse right complains
-about this macro and it's usage, so something is wrong.
+Friendly ping:
 
-I think one other problem is that rpmh API doesn't really talk about
-endianness here and that's busted. So if you want to fix endianness
-issues that needs to be fixed first.
+Who can take this?
 
-> >> @@ -29,6 +54,7 @@
-> >>    * @aggr_state:                rpmh clock aggregated state
-> >>    * @last_sent_aggr_state: rpmh clock last aggr state sent to RPMh
-> >>    * @valid_state_mask:  mask to determine the state of the rpmh clock
-> >> + * @aux_data:          data specific to the bcm rpmh resource
-> > But there isn't aux_data. Is this supposed to be unit? And what is unit
-> > going to be? 1000?
-> Supposed to be unit, the value is on the order of Khz.
+Thanks
+--
+Gustavo
 
-Ok, hopefully the kernel-doc comes out easy to understand.
-
-> >> @@ -217,6 +340,7 @@ static unsigned long clk_rpmh_recalc_rate(struct c=
-lk_hw *hw,
-> >>   DEFINE_CLK_RPMH_VRM(sdm845, rf_clk1, rf_clk1_ao, "rfclka1", 1);
-> >>   DEFINE_CLK_RPMH_VRM(sdm845, rf_clk2, rf_clk2_ao, "rfclka2", 1);
-> >>   DEFINE_CLK_RPMH_VRM(sdm845, rf_clk3, rf_clk3_ao, "rfclka3", 1);
-> >> +DEFINE_CLK_RPMH_BCM(sdm845, ipa, "IP0");
-> > It's really IP0?! What was wrong with IPA?
-> Yeah... convention seems to be 2 letters and then a number for most BCM=20
-> resources.
-
-OK.
-
+On 12/24/18 12:40 AM, Gustavo A. R. Silva wrote:
+> One of the more common cases of allocation size calculations is finding
+> the size of a structure that has a zero-sized array at the end, along
+> with memory for some number of elements for that array. For example:
+> 
+> struct foo {
+>      int stuff;
+>      void *entry[];
+> };
+> 
+> instance = kzalloc(sizeof(struct foo) + sizeof(void *) * count, GFP_KERNEL);
+> 
+> Instead of leaving these open-coded and prone to type mistakes, we can
+> now use the new struct_size() helper:
+> 
+> instance = kzalloc(struct_size(instance, entry, count), GFP_KERNEL);
+> 
+> This issue was detected with the help of Coccinelle.
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> ---
+>   drivers/clk/imx/clk-imx7ulp.c | 16 ++++++++--------
+>   1 file changed, 8 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/clk/imx/clk-imx7ulp.c b/drivers/clk/imx/clk-imx7ulp.c
+> index 4e18f629f823..ce306631e844 100644
+> --- a/drivers/clk/imx/clk-imx7ulp.c
+> +++ b/drivers/clk/imx/clk-imx7ulp.c
+> @@ -48,8 +48,8 @@ static void __init imx7ulp_clk_scg1_init(struct device_node *np)
+>   	struct clk_hw **clks;
+>   	void __iomem *base;
+>   
+> -	clk_data = kzalloc(sizeof(*clk_data) + sizeof(*clk_data->hws) *
+> -			   IMX7ULP_CLK_SCG1_END, GFP_KERNEL);
+> +	clk_data = kzalloc(struct_size(clk_data, hws, IMX7ULP_CLK_SCG1_END),
+> +			   GFP_KERNEL);
+>   	if (!clk_data)
+>   		return;
+>   
+> @@ -136,8 +136,8 @@ static void __init imx7ulp_clk_pcc2_init(struct device_node *np)
+>   	struct clk_hw **clks;
+>   	void __iomem *base;
+>   
+> -	clk_data = kzalloc(sizeof(*clk_data) + sizeof(*clk_data->hws) *
+> -			   IMX7ULP_CLK_PCC2_END, GFP_KERNEL);
+> +	clk_data = kzalloc(struct_size(clk_data, hws, IMX7ULP_CLK_PCC2_END),
+> +			   GFP_KERNEL);
+>   	if (!clk_data)
+>   		return;
+>   
+> @@ -183,8 +183,8 @@ static void __init imx7ulp_clk_pcc3_init(struct device_node *np)
+>   	struct clk_hw **clks;
+>   	void __iomem *base;
+>   
+> -	clk_data = kzalloc(sizeof(*clk_data) + sizeof(*clk_data->hws) *
+> -			   IMX7ULP_CLK_PCC3_END, GFP_KERNEL);
+> +	clk_data = kzalloc(struct_size(clk_data, hws, IMX7ULP_CLK_PCC3_END),
+> +			   GFP_KERNEL);
+>   	if (!clk_data)
+>   		return;
+>   
+> @@ -228,8 +228,8 @@ static void __init imx7ulp_clk_smc1_init(struct device_node *np)
+>   	struct clk_hw **clks;
+>   	void __iomem *base;
+>   
+> -	clk_data = kzalloc(sizeof(*clk_data) + sizeof(*clk_data->hws) *
+> -			   IMX7ULP_CLK_SMC1_END, GFP_KERNEL);
+> +	clk_data = kzalloc(struct_size(clk_data, hws, IMX7ULP_CLK_SMC1_END),
+> +			   GFP_KERNEL);
+>   	if (!clk_data)
+>   		return;
+>   
+> 
