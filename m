@@ -3,103 +3,105 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE755C43444
-	for <linux-clk@archiver.kernel.org>; Mon, 14 Jan 2019 21:55:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55027C43387
+	for <linux-clk@archiver.kernel.org>; Mon, 14 Jan 2019 22:25:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C21C206B7
-	for <linux-clk@archiver.kernel.org>; Mon, 14 Jan 2019 21:55:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E61320657
+	for <linux-clk@archiver.kernel.org>; Mon, 14 Jan 2019 22:25:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547502917;
-	bh=8xGbSw414rVINc77HwxSQPE88V4EOEo6pGoxgRcjJTQ=;
+	s=default; t=1547504713;
+	bh=fXgvGEPvJuxiKA4UO/eJVYuVwSVyczNhU6jRW0Q5AII=;
 	h=Subject:In-Reply-To:References:Cc:To:From:Date:List-ID:From;
-	b=AJq35au9cebQOGN46/P7LA5SvAaxh1k+M6nqlITAVfvE1xIaNsU3vhnMYeJD3MW9r
-	 Tr0214FkbKGn2qVRLQlDvrUB8JXalEg2y4olZF3HaczXfdzEp1quTwMdQfnvkAnE+c
-	 Q4wx5ShMtheGD54K1mcuitrKVNXgf6wfs9DqiR6E=
+	b=2R9XFpaDiaEw8Sa5xDxXLCLNivy5TUfVXJwJYevY/Nm1QeXWK4pxrJ6IjAvb1pUVf
+	 zcYsLktGItbwFDEadlHzL/S/OCMelxy6A5OfHbv7j+U7ATSKribfbVTzm4KvSV+EmN
+	 SZaUtIlmw92cG5YW+yrqZHGyvMc3Q9B6AU+tVLAI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726618AbfANVzM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 14 Jan 2019 16:55:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60924 "EHLO mail.kernel.org"
+        id S1726708AbfANWZM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 14 Jan 2019 17:25:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43916 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726591AbfANVzM (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 14 Jan 2019 16:55:12 -0500
+        id S1726653AbfANWZM (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 14 Jan 2019 17:25:12 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 266F520657;
-        Mon, 14 Jan 2019 21:55:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B58A320657;
+        Mon, 14 Jan 2019 22:25:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547502911;
-        bh=8xGbSw414rVINc77HwxSQPE88V4EOEo6pGoxgRcjJTQ=;
+        s=default; t=1547504711;
+        bh=fXgvGEPvJuxiKA4UO/eJVYuVwSVyczNhU6jRW0Q5AII=;
         h=Subject:In-Reply-To:References:Cc:To:From:Date:From;
-        b=EXIGT37SMG06yPPTlbsFMkfS0YiL6Fr1c2r5sztdU7rJMADYnYW2ofTbM97vZKRVM
-         QLJcoJ5sBos87VqIlS8Hk6uB/UB13aW4QN9CQP8+2ynhjCoeUvODCpp+RWJ95lU8vm
-         Lg6LAFIWFBtxW3VS4lXGXTjsGpHAfUSQv+rbVhhc=
+        b=O2VKReb573qYJo+Y3K2Bpqf7qOH/TYL4Rhpyy8Zb57QzvfYQH/sZ+PxXN1SFfEYG2
+         jGiZTtZUCeeC2JvWHuhISP4PJaMjd6xiOvxtpjikCErYFvHlobmzs5u3R+9DIDycm2
+         FLLwuBz9Yfe0Epf+4uaflW/BrpvPs/KJuSjouqg8=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 0/6] Add clock support for Actions Semi S500 SoC
+Subject: Re: [PATCH v1] clk: qcom: lpass: Add CLK_IGNORE_UNUSED for lpass clocks
 User-Agent: alot/0.8
-In-Reply-To: <20190114091850.GB13162@Mani-XPS-13-9360>
-References: <20181231185517.18517-1-manivannan.sadhasivam@linaro.org> <154724706468.169631.2903523518830581075@swboyd.mtv.corp.google.com> <20190114091850.GB13162@Mani-XPS-13-9360>
-Cc:     afaerber@suse.de, mturquette@baylibre.com, robh+dt@kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-actions@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Message-ID: <154750291027.169631.13825540584530234373@swboyd.mtv.corp.google.com>
+In-Reply-To: <adc9235a-3700-7730-a473-8a6baf47a1e0@codeaurora.org>
+References: <1545306385-31240-1-git-send-email-tdas@codeaurora.org> <154533989563.79149.10213938035592547726@swboyd.mtv.corp.google.com> <b6397ef1-a6df-0040-9dcc-c491b76a2f8f@codeaurora.org> <154689507747.15366.6553307032295093169@swboyd.mtv.corp.google.com> <adc9235a-3700-7730-a473-8a6baf47a1e0@codeaurora.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <tdas@codeaurora.org>
+Message-ID: <154750471090.169631.5712250327468594228@swboyd.mtv.corp.google.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-Date:   Mon, 14 Jan 2019 13:55:10 -0800
+Date:   Mon, 14 Jan 2019 14:25:10 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Manivannan Sadhasivam (2019-01-14 01:18:50)
-> Hi Stephen,
+Quoting Taniya Das (2019-01-13 22:12:39)
 >=20
-> On Fri, Jan 11, 2019 at 02:51:04PM -0800, Stephen Boyd wrote:
-> > Quoting Manivannan Sadhasivam (2018-12-31 10:55:11)
-> > > Hello,
-> > >=20
-> > > This patchset adds common clock support for Actions Semi S500 SoC of
-> > > the Owl family SoCs. This series is based on the initial work done
-> > > by Edgar Bernardi Righi. https://patchwork.kernel.org/cover/10587527/
-> > >=20
-> > > Since there isn't any update from him for long time, I took the liber=
-ty
-> > > to modify his patches, address review comments and send to list for r=
-eview.
-> > >=20
-> > > This series has been tested on Allo Sparky SBC.
-> > >=20
-> > > Thanks,
-> > > Mani
-> > >=20
-> > > Edgar Bernardi Righi (1):
-> > >   dt-bindings: clock: Add DT bindings for Actions Semi S500 CMU
-> > >=20
-> > > Manivannan Sadhasivam (5):
-> > >   clk: actions: Add configurable PLL delay
-> > >   ARM: dts: Add CMU support for Actions Semi Owl S500 SoC
-> > >   ARM: dts: Remove fake UART clock for S500 based SBCs
-> > >   clk: actions: Add clock driver for S500 SoC
-> > >   MAINTAINERS: Add linux-actions mailing list for Actions Semi
+>=20
+> On 1/8/2019 2:34 AM, Stephen Boyd wrote:
 > >=20
-> > What's the merge strategy for these patches? Some are for clk, others
-> > are for arm-soc, etc. I see a sandwich of patches too so it sounds like
-> > I can't even take just the clk ones for fear of breaking something that
-> > the dts bits in the middle clear out of the way.
+> > As far as I know, I'm not suggesting the use of CLK_IS_CRITICAL here.
+> > But removing CLK_IS_CRITICAL and relying on some random bootloader
+> > behavior also looks wrong. Can you clarify what's going on?
 > >=20
 >=20
-> As we did with previous patchsets, clk patches will go through your tree
-> and I'll take the ARM/MAINTAINERS patches through Actions sub-tree. Let's
-> target these for 5.1. Even if your patches reach first, there won't be
-> any regression with existing DTS.
+> To enable LPASS clocks the requirement is to enable the GCC_LPASS_SWAY=20
+> clock.
+> 1) If the LPASS drivers are enabled/probed before the clock late init=20
+> the client would take care to maintain the dependency to enable the=20
+> GCC_LPASS_SWAY clock before enabling the LPASS clocks.
+>=20
+> 2) There could be a condition where the LPASS drivers would probe/init=20
+> later the clock late_init. When the clock_late_init would try to access=20
+> the LPASS clocks, since we cannot maintain the dependency this access=20
+> would fail. To avoid this the earlier patch has made the GCC_LPASS_SWAY=20
+> clock as CRITICAL.
+>=20
+> 3) Marking the GCC_LPASS_SWAY clock as CRITICAL has a issue, in the case =
+
+> where the LPASS subsystem would be restarted due to some critical=20
+> failure on LPASS. Toggling the restart register of LPASS would clear the =
+
+> hardware state of this clock and thus the next access of the LPASS=20
+> clocks would result in failure of the system.
+>=20
+> 4) To avoid issues happening in (2) and (3) all the LPASS clocks chould=20
+> be safely marked as CLK_IGNORE_UNUSED. And lpass drivers would take care =
+
+> of the dependency to enable the required clocks.
 >=20
 
-Ok. I have just minor nits. Please resend and I will merge the clk
-patches to clk tree.
+Ok, so why can't we enable/disable the lpass sway clk in the
+prepare/unprepare phase of the lpass clk driver paths? Or why can't we
+forcibly enable this lpass sway clk after the reset is deasserted? Which
+clk controller is the reset part of? GCC or LPASS?
+
+It still sounds like the LPASS clk driver isn't handling dependencies it
+has on accessing registers, but maybe we can get away with not handling
+the dependency still if we make the reset "do the right thing" and turn
+the clk back on so it stays "critical".
 
