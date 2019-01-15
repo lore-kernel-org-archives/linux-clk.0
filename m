@@ -4,199 +4,178 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8C47C43612
-	for <linux-clk@archiver.kernel.org>; Tue, 15 Jan 2019 03:34:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACB79C43444
+	for <linux-clk@archiver.kernel.org>; Tue, 15 Jan 2019 03:34:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77B7820656
-	for <linux-clk@archiver.kernel.org>; Tue, 15 Jan 2019 03:34:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E2CE2085A
+	for <linux-clk@archiver.kernel.org>; Tue, 15 Jan 2019 03:34:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="aHQTYI+M"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HHUtGV6B"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728027AbfAODeK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 14 Jan 2019 22:34:10 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:40106 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727848AbfAODeJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Jan 2019 22:34:09 -0500
-Received: by mail-pf1-f195.google.com with SMTP id i12so618924pfo.7
-        for <linux-clk@vger.kernel.org>; Mon, 14 Jan 2019 19:34:09 -0800 (PST)
+        id S1727169AbfAODeV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 14 Jan 2019 22:34:21 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:32827 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728043AbfAODeP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Jan 2019 22:34:15 -0500
+Received: by mail-pl1-f195.google.com with SMTP id z23so631398plo.0
+        for <linux-clk@vger.kernel.org>; Mon, 14 Jan 2019 19:34:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=7d6Ogf6N7tz/DtneEdqXk8KBTvb//DmYHP2fab33+vI=;
-        b=aHQTYI+MRzBz5YPrG/LcAGSPcHfPmmk8JgMahVC7qUtRr3SLHlSoPsOL1/9/l0o22v
-         Wdg1SpJU9kfluxaN/PUDS0UBQm3TSjboUAJJ/uxjdI45PIaemXEP28ED46uaqXA3GZ1M
-         2HhefJkl01rthv2vuTQMOTlvsOLtq5JRyDI2s=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=QzEw+0c7YCMrIJx0PSwB5TjdR5ksSYaunb0Z3JfV66A=;
+        b=HHUtGV6Bj0Zj+6v3TzOmsCTcz3nUIF8RYPXUoENgTw83quUwGId8YxiD/vXr4KDxru
+         7cwVtubU9A24OMrCre37l5/BsWqQt/E+iOga54NjfzCK957vp8nDoTOdF3fck1pSqqu8
+         tUrzUrT+5yNofk77YiSO/OFIh/QyUHAbQJeP0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=7d6Ogf6N7tz/DtneEdqXk8KBTvb//DmYHP2fab33+vI=;
-        b=jwHcKj02zgGHKcfZEDi2QrgNi4k4tdWf8lHk7TGM+sIZ1s9Z5BtQky0vm0MjXqG93J
-         KyXr4L2mH8M5xgGu8HKupn3qpka59K7qXf/Mnco3u4n7p4/cNzliR+XvLxjycZoEaWf+
-         ncU1s1dhf9woBnvK8ulcYFgm5SIGNKl5nedHhwCxj1JAebi+1IP1vLTTN5x7EAWtCbaX
-         sQZAuDjXwl2PaanZ+zXnXJ8IcXRcEMIOvtjvWKU95g+bUbmDLiTvxVRbsVisZ2jJxJRZ
-         j49GmfNxK/gHR+M2NtsHLPBMVg0zCrXOrJUS9DSRg2N86SsJh4VAV257mgNkfNSxnKXc
-         fvBw==
-X-Gm-Message-State: AJcUukdd6xExYB0AnjLrvSQmD56CECZdTOr7D9KWTNhI6aBeHxx4Bz8r
-        A7ok2Q9h2JzfxLkkuf/lTwot
-X-Google-Smtp-Source: ALg8bN7ao6X1kcEHeVSPExFQ0KBWu2DSRlw4r5xoQr3MN0o9y/5MIrjkwL+KYhv2XZp3Glc4SIgVTQ==
-X-Received: by 2002:a65:6094:: with SMTP id t20mr1795150pgu.285.1547523248748;
-        Mon, 14 Jan 2019 19:34:08 -0800 (PST)
+         :references:mime-version:content-transfer-encoding;
+        bh=QzEw+0c7YCMrIJx0PSwB5TjdR5ksSYaunb0Z3JfV66A=;
+        b=XdwHOuc+qZnO2ngw8Cg//jmAC6Eui+JZEc0OygqvziGUdlhfLCEzO1w69j2cb/cQJG
+         oIt1+5JKHwSasgE8J09GHXIKG4WD7SOhEDgmlytBn0HiPtlN3U8xwdDURuRAf7wDg+BS
+         YeyWzwM0yr2CJ6Smsm/ezN8CZHqrgEg/VPfkW3fBUpXaXScBUOnxWmAC5r+HEtuHqThz
+         Jra1GWRAxJNSZsYAJTeqbKsSt1+XfLUYWccjvKj5v5UDwaDp1CpLTaDUsRaJAIOmE2jL
+         PmmUnDdgzWie9Cwafjx97skFu7wCKcf6EUwUfxc7eHI9+KonVZwVU/Ai3StYSJzZ6eaY
+         v3kw==
+X-Gm-Message-State: AJcUukeXZoVCJJb2WvMbudgIabet+nq8pWfsZyMccoCEpNwQgzNs8EDB
+        6uvqy2Mb47WF6feuhv9Ap/gX
+X-Google-Smtp-Source: ALg8bN5g5uMXPav02wZj17J108BuRNg5LAOSwAxAHeknYgo8mPBgYSnHviqmY5Fna7SYMv0PBLm2rw==
+X-Received: by 2002:a17:902:2868:: with SMTP id e95mr1891450plb.317.1547523254819;
+        Mon, 14 Jan 2019 19:34:14 -0800 (PST)
 Received: from localhost.localdomain ([2409:4072:6084:4813:7cd6:42d1:f14c:3e90])
-        by smtp.gmail.com with ESMTPSA id s9sm2137023pgl.88.2019.01.14.19.34.03
+        by smtp.gmail.com with ESMTPSA id s9sm2137023pgl.88.2019.01.14.19.34.09
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 14 Jan 2019 19:34:07 -0800 (PST)
+        Mon, 14 Jan 2019 19:34:14 -0800 (PST)
 From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To:     sboyd@kernel.org, mturquette@baylibre.com, afaerber@suse.de,
         robh+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-actions@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Cc:     Edgar Bernardi Righi <edgar.righi@lsitec.org.br>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v2 2/6] dt-bindings: clock: Add DT bindings for Actions Semi S500 CMU
-Date:   Tue, 15 Jan 2019 09:03:36 +0530
-Message-Id: <20190115033340.25016-3-manivannan.sadhasivam@linaro.org>
+Cc:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Edgar Bernardi Righi <edgar.righi@lsitec.org.br>
+Subject: [PATCH v2 3/6] ARM: dts: Add CMU support for Actions Semi Owl S500 SoC
+Date:   Tue, 15 Jan 2019 09:03:37 +0530
+Message-Id: <20190115033340.25016-4-manivannan.sadhasivam@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190115033340.25016-1-manivannan.sadhasivam@linaro.org>
 References: <20190115033340.25016-1-manivannan.sadhasivam@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Edgar Bernardi Righi <edgar.righi@lsitec.org.br>
-
-Add devicetree bindings for Actions Semi S500 Clock Management Unit.
+Add Clock Management Unit (CMU) support for Actions Semi Owl family
+S500 SoC.
 
 Signed-off-by: Edgar Bernardi Righi <edgar.righi@lsitec.org.br>
-[Mani: Documented S500 CMU compatible]
+[Mani: Fixed commit message and DTS]
 Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- .../bindings/clock/actions,owl-cmu.txt        |  7 +-
- include/dt-bindings/clock/actions,s500-cmu.h  | 78 +++++++++++++++++++
- 2 files changed, 82 insertions(+), 3 deletions(-)
- create mode 100644 include/dt-bindings/clock/actions,s500-cmu.h
+ arch/arm/boot/dts/owl-s500.dtsi | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/actions,owl-cmu.txt b/Documentation/devicetree/bindings/clock/actions,owl-cmu.txt
-index 2ef86ae96df8..d19885b7c73f 100644
---- a/Documentation/devicetree/bindings/clock/actions,owl-cmu.txt
-+++ b/Documentation/devicetree/bindings/clock/actions,owl-cmu.txt
-@@ -2,13 +2,14 @@
+diff --git a/arch/arm/boot/dts/owl-s500.dtsi b/arch/arm/boot/dts/owl-s500.dtsi
+index 5ceb6cc4451d..aa758538de8c 100644
+--- a/arch/arm/boot/dts/owl-s500.dtsi
++++ b/arch/arm/boot/dts/owl-s500.dtsi
+@@ -3,8 +3,10 @@
+  * Actions Semi S500 SoC
+  *
+  * Copyright (c) 2016-2017 Andreas Färber
++ * Copyright (c) 2018 Edgar Bernardi Righi
+  */
  
- The Actions Semi Owl Clock Management Unit generates and supplies clock
- to various controllers within the SoC. The clock binding described here is
--applicable to S900 and S700 SoC's.
-+applicable to S900, S700 and S500 SoC's.
++#include <dt-bindings/clock/actions,s500-cmu.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/power/owl-s500-powergate.h>
  
- Required Properties:
+@@ -70,6 +72,12 @@
+ 		#clock-cells = <0>;
+ 	};
  
- - compatible: should be one of the following,
- 	"actions,s900-cmu"
- 	"actions,s700-cmu"
-+	"actions,s500-cmu"
- - reg: physical base address of the controller and length of memory mapped
-   region.
- - clocks: Reference to the parent clocks ("hosc", "losc")
-@@ -19,8 +20,8 @@ Each clock is assigned an identifier, and client nodes can use this identifier
- to specify the clock which they consume.
++	losc: losc {
++		compatible = "fixed-clock";
++		clock-frequency = <32768>;
++		#clock-cells = <0>;
++	};
++
+ 	soc {
+ 		compatible = "simple-bus";
+ 		#address-cells = <1>;
+@@ -124,6 +132,7 @@
+ 			compatible = "actions,s500-uart", "actions,owl-uart";
+ 			reg = <0xb0120000 0x2000>;
+ 			interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cmu CLK_UART0>;
+ 			status = "disabled";
+ 		};
  
- All available clocks are defined as preprocessor macros in corresponding
--dt-bindings/clock/actions,s900-cmu.h or actions,s700-cmu.h header and can be
--used in device tree sources.
-+dt-bindings/clock/actions,s900-cmu.h or actions,s700-cmu.h or
-+actions,s500-cmu.h header and can be used in device tree sources.
+@@ -131,6 +140,7 @@
+ 			compatible = "actions,s500-uart", "actions,owl-uart";
+ 			reg = <0xb0122000 0x2000>;
+ 			interrupts = <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cmu CLK_UART1>;
+ 			status = "disabled";
+ 		};
  
- External clocks:
+@@ -138,6 +148,7 @@
+ 			compatible = "actions,s500-uart", "actions,owl-uart";
+ 			reg = <0xb0124000 0x2000>;
+ 			interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cmu CLK_UART2>;
+ 			status = "disabled";
+ 		};
  
-diff --git a/include/dt-bindings/clock/actions,s500-cmu.h b/include/dt-bindings/clock/actions,s500-cmu.h
-new file mode 100644
-index 000000000000..dc3fd2b0299d
---- /dev/null
-+++ b/include/dt-bindings/clock/actions,s500-cmu.h
-@@ -0,0 +1,78 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Device Tree binding constants for Actions Semi S500 Clock Management Unit
-+ *
-+ * Copyright (c) 2014 Actions Semi Inc.
-+ * Copyright (c) 2018 LSI-TEC - Caninos Loucos
-+ */
+@@ -145,6 +156,7 @@
+ 			compatible = "actions,s500-uart", "actions,owl-uart";
+ 			reg = <0xb0126000 0x2000>;
+ 			interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cmu CLK_UART3>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -152,6 +164,7 @@
+ 			compatible = "actions,s500-uart", "actions,owl-uart";
+ 			reg = <0xb0128000 0x2000>;
+ 			interrupts = <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cmu CLK_UART4>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -159,6 +172,7 @@
+ 			compatible = "actions,s500-uart", "actions,owl-uart";
+ 			reg = <0xb012a000 0x2000>;
+ 			interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cmu CLK_UART5>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -166,9 +180,17 @@
+ 			compatible = "actions,s500-uart", "actions,owl-uart";
+ 			reg = <0xb012c000 0x2000>;
+ 			interrupts = <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cmu CLK_UART6>;
+ 			status = "disabled";
+ 		};
+ 
++		cmu: clock-controller@b0160000 {
++			compatible = "actions,s500-cmu";
++			reg = <0xb0160000 0x8000>;
++			clocks = <&hosc>, <&losc>;
++			#clock-cells = <1>;
++		};
 +
-+#ifndef __DT_BINDINGS_CLOCK_S500_CMU_H
-+#define __DT_BINDINGS_CLOCK_S500_CMU_H
-+
-+#define CLK_NONE		0
-+
-+/* fixed rate clocks */
-+#define CLK_LOSC		1
-+#define CLK_HOSC		2
-+
-+/* pll clocks */
-+#define CLK_CORE_PLL		3
-+#define CLK_DEV_PLL		4
-+#define CLK_DDR_PLL		5
-+#define CLK_NAND_PLL		6
-+#define CLK_DISPLAY_PLL		7
-+#define CLK_ETHERNET_PLL	8
-+#define CLK_AUDIO_PLL		9
-+
-+/* system clock */
-+#define CLK_DEV			10
-+#define CLK_H			11
-+#define CLK_AHBPREDIV		12
-+#define CLK_AHB			13
-+#define CLK_DE			14
-+#define CLK_BISP		15
-+#define CLK_VCE			16
-+#define CLK_VDE			17
-+
-+/* peripheral device clock */
-+#define CLK_TIMER		18
-+#define CLK_I2C0		19
-+#define CLK_I2C1		20
-+#define CLK_I2C2		21
-+#define CLK_I2C3		22
-+#define CLK_PWM0		23
-+#define CLK_PWM1		24
-+#define CLK_PWM2		25
-+#define CLK_PWM3		26
-+#define CLK_PWM4		27
-+#define CLK_PWM5		28
-+#define CLK_SD0			29
-+#define CLK_SD1			30
-+#define CLK_SD2			31
-+#define CLK_SENSOR0		32
-+#define CLK_SENSOR1		33
-+#define CLK_SPI0		34
-+#define CLK_SPI1		35
-+#define CLK_SPI2		36
-+#define CLK_SPI3		37
-+#define CLK_UART0		38
-+#define CLK_UART1		39
-+#define CLK_UART2		40
-+#define CLK_UART3		41
-+#define CLK_UART4		42
-+#define CLK_UART5		43
-+#define CLK_UART6		44
-+#define CLK_DE1			45
-+#define CLK_DE2			46
-+#define CLK_I2SRX		47
-+#define CLK_I2STX		48
-+#define CLK_HDMI_AUDIO		49
-+#define CLK_HDMI		50
-+#define CLK_SPDIF		51
-+#define CLK_NAND		52
-+#define CLK_ECC			53
-+#define CLK_RMII_REF		54
-+
-+#define CLK_NR_CLKS	       (CLK_RMII_REF + 1)
-+
-+#endif /* __DT_BINDINGS_CLOCK_S500_CMU_H */
+ 		timer: timer@b0168000 {
+ 			compatible = "actions,s500-timer";
+ 			reg = <0xb0168000 0x8000>;
 -- 
 2.17.1
 
