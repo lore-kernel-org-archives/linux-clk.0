@@ -2,130 +2,108 @@ Return-Path: <SRS0=VWtO=PX=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A23EBC43387
-	for <linux-clk@archiver.kernel.org>; Tue, 15 Jan 2019 19:46:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA0C5C43387
+	for <linux-clk@archiver.kernel.org>; Tue, 15 Jan 2019 20:24:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6AC3B20859
-	for <linux-clk@archiver.kernel.org>; Tue, 15 Jan 2019 19:46:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9628B20675
+	for <linux-clk@archiver.kernel.org>; Tue, 15 Jan 2019 20:24:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="fgzGE20i"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="iiNpF5J+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389429AbfAOTqt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 15 Jan 2019 14:46:49 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:37410 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728745AbfAOTqt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Jan 2019 14:46:49 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0FJhf7q146032;
-        Tue, 15 Jan 2019 19:46:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type : in-reply-to;
- s=corp-2018-07-02; bh=aGLg8QDYgkYPTsnHPTkJg5JeCauxU/pAdr3VtQ9f9mc=;
- b=fgzGE20ioEtgtaOe+DtOTycrJSUltaLbjxPmzp3InsY4XS6WyZpAldDng/QHZKLdj0GC
- pPQmkHHljDTOIvKtazH4fltQIfmLaut+fjqlbZzqQXN+WZu8QLShyZkTfcWV/WNnEQoJ
- hFpq25LKdsVBPes1mE1PMKswDdvFRIXHmYQqIoF+UOx+v7iiVIXdrnVEKtWhSIKee3Zo
- iRedCxIJul+dX73KfI1zlhPHox7/1366MPBqyUf0bEIP7F1W/Qki1wQ1OlIWhElb2sgC
- ru+VzqUyCJQXduuP3gZlCbXuTY2VZwIKzhz5ghWKXo8/tzW1Qp2PCpbLmJMxZGNtm5Bb eQ== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2120.oracle.com with ESMTP id 2pybjs5xp5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 15 Jan 2019 19:46:44 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x0FJkccS018128
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 15 Jan 2019 19:46:38 GMT
-Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x0FJka84004304;
-        Tue, 15 Jan 2019 19:46:38 GMT
-Received: from kadam (/197.157.34.180)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 15 Jan 2019 11:46:36 -0800
-Date:   Tue, 15 Jan 2019 22:46:25 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
+        id S2389750AbfAOUYe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 15 Jan 2019 15:24:34 -0500
+Received: from mail.andi.de1.cc ([85.214.239.24]:52602 "EHLO
+        h2641619.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732372AbfAOUYe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 15 Jan 2019 15:24:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=kemnade.info; s=20180802; h=Content-Type:MIME-Version:References:
+        In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=bjZ0t6VVJuZjz/OQIcUjH2ule/fJNhALQPPlZOidNO0=; b=iiNpF5J+56frZ134cApo5can+
+        pfojuDqdiMn0sLP+1oysmABx9vtKzcxssiCfQADdcKAx1lm9QDcmVASo9ZtsWuaunYuG1Pw6pbXG6
+        LXR2jRIcVwBpuot/WOh5ki/xaeIW8RsPpBTsaDi6sBYN3SfS6R6b5+FXMNqV8NmM7uAEY=;
+Received: from p5dcc371e.dip0.t-ipconnect.de ([93.204.55.30] helo=aktux)
+        by h2641619.stratoserver.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1gjVG7-0005c9-8H; Tue, 15 Jan 2019 21:24:27 +0100
+Date:   Tue, 15 Jan 2019 21:24:26 +0100
+From:   Andreas Kemnade <andreas@kemnade.info>
 To:     Tero Kristo <t-kristo@ti.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-omap@vger.kernel.org,
-        linux-clk@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH v2] clk: ti: Fix error handling in ti_clk_parse_divider_data()
-Message-ID: <20190115194625.GA1074@kadam>
+Cc:     Tony Lindgren <tony@atomide.com>, <linux-clk@vger.kernel.org>,
+        <sboyd@kernel.org>, <mturquette@baylibre.com>,
+        <linux-omap@vger.kernel.org>
+Subject: Re: [PATCH 0/4] clk: ti: get rid of CLK_IS_BASIC
+Message-ID: <20190115212426.1b0ff82d@aktux>
+In-Reply-To: <b7571829-fb5e-c2be-59d1-b08d73bfca6d@ti.com>
+References: <1547543715-16467-1-git-send-email-t-kristo@ti.com>
+        <20190115182021.GH5544@atomide.com>
+        <b7571829-fb5e-c2be-59d1-b08d73bfca6d@ti.com>
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190115070149.wpiyqw5vqqqsapxt@kili.mountain>
-X-Mailer: git-send-email haha only kidding
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9137 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=921
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1901150158
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/rOvGcLiwcr/ym8Zz.ng8TE3"; protocol="application/pgp-signature"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The ti_clk_parse_divider_data() function is only called from
-_get_div_table_from_setup().  That function doesn't look at the return
-value but instead looks at the "*table" pointer.  In this case, if the
-kcalloc() fails then *table is NULL (which means success).  It should
-instead be an error pointer.
+--Sig_/rOvGcLiwcr/ym8Zz.ng8TE3
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-The ti_clk_parse_divider_data() function has two callers.  One checks
-for errors and the other doesn't.  I have fixed it so now both handle
-errors.
+Hi Tero,
 
-Fixes: 4f6be5655dc9 ("clk: ti: divider: add driver internal API for parsing divider data")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
-v2:  I somehow didn't compile the v1 of this patch so it had a couple
-     stupid bugs.  I'm very sorry.
+On Tue, 15 Jan 2019 20:31:54 +0200
+Tero Kristo <t-kristo@ti.com> wrote:
 
- drivers/clk/ti/divider.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+> On 15/01/2019 20:20, Tony Lindgren wrote:
+> > * Tero Kristo <t-kristo@ti.com> [190115 09:15]: =20
+> >> Hi Stephen,
+> >>
+> >> As requested, this series gets rid of CLK_IS_BASIC flag usage from
+> >> TI clock drivers.
+> >>
+> >> Boot tested on am3/am4/am5/omap3/omap4 series of SoCs. Also, ran a qui=
+ck
+> >> suspend/resume test on omap3/omap4/am5. =20
+> >=20
+> > Does this also fix the issue Andreas was fixing earlier
+> > or is this separate clean-up? =20
+>=20
+> The series from Andreas would be needed on top of this.
+>=20
+thanks for this cleanup. I will rebase my work upon it the next days.
 
-diff --git a/drivers/clk/ti/divider.c b/drivers/clk/ti/divider.c
-index 8d77090ad94a..0241450f3eb3 100644
---- a/drivers/clk/ti/divider.c
-+++ b/drivers/clk/ti/divider.c
-@@ -403,8 +403,10 @@ int ti_clk_parse_divider_data(int *div_table, int num_dividers, int max_div,
- 	num_dividers = i;
- 
- 	tmp = kcalloc(valid_div + 1, sizeof(*tmp), GFP_KERNEL);
--	if (!tmp)
-+	if (!tmp) {
-+		*table = ERR_PTR(-ENOMEM);
- 		return -ENOMEM;
-+	}
- 
- 	valid_div = 0;
- 	*width = 0;
-@@ -439,6 +441,7 @@ struct clk_hw *ti_clk_build_component_div(struct ti_clk_divider *setup)
- {
- 	struct clk_omap_divider *div;
- 	struct clk_omap_reg *reg;
-+	int ret;
- 
- 	if (!setup)
- 		return NULL;
-@@ -458,6 +461,12 @@ struct clk_hw *ti_clk_build_component_div(struct ti_clk_divider *setup)
- 		div->flags |= CLK_DIVIDER_POWER_OF_TWO;
- 
- 	div->table = _get_div_table_from_setup(setup, &div->width);
-+	if (IS_ERR(div->table)) {
-+		ret = PTR_ERR(div->table);
-+		kfree(div);
-+		return ERR_PTR(ret);
-+	}
-+
- 
- 	div->shift = setup->bit_shift;
- 	div->latch = -EINVAL;
--- 
-2.17.1
+Regards,
+Andreas
 
+--Sig_/rOvGcLiwcr/ym8Zz.ng8TE3
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEE7sDbhY5mwNpwYgrAfb1qx03ikyQFAlw+QXoACgkQfb1qx03i
+kySQTQ/8DKWLs6eggkLka2mhyUVWAZHFws6gbI9BB9ywF08MwmCmjH5RMgc+o2UL
+/YmVwbgyus3XAilZvsl8K4A5By+YZDgEGxprjJJdtWhYBMJ4Uv3DXgMa9OiUmaQw
+/cX/0BAnIeyAs9UY9cG164A/exKUW0Uonb0B0wLMcgc0IVWVmGL+ZEl6jvg3vgIs
+8Qe4MrQ0vWt/2glaBr5d9gPZkaI4DvbxCYxQM4XZ0RzrI3hKThokg3h1tMFBf+Z3
+qPCSMChHFzHueHQulLZcl6w83fh48KMNQL1Rmygokd23txIHvchU/i3gyw1FqFbS
+Szp6M5BMdr93Dp9y/+AK7BgN1Y727VbdYSU2R+6ZCJxhL3Wd7Akx3qesTmoAyqwJ
+8mtm8GoqFm7QekgUMuhY/iWbQ4sNsspbqnPuCzXBM/3Cly28cmLu2WjR0SswXGNY
+ogOf1C3xp8lFsKPv/Kfs2eMw3I1DIgxC0Xk/i2WyzCgIyrsNZpv1Yna5UNx16uaL
+dNa+DVKleIIz4Zk8WRJb2r5bYZD0gLb7Za9ICbdr0ObK13m4p58sMb5JW+QO0Usb
+IQbk3Alwrw78En1v07PMbBTW3GLzhwtJDI8cvY1A9J5YoIX+5klcoyb/c61BlRYd
+JJknj+BqF/+xGtP5xy+ueyCC8oL6D+Ics2ovApchnk8Z2JYzXHM=
+=LdRX
+-----END PGP SIGNATURE-----
+
+--Sig_/rOvGcLiwcr/ym8Zz.ng8TE3--
