@@ -4,53 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACB79C43444
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8F2AC43613
 	for <linux-clk@archiver.kernel.org>; Tue, 15 Jan 2019 03:34:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E2CE2085A
+	by mail.kernel.org (Postfix) with ESMTP id AA3D720656
 	for <linux-clk@archiver.kernel.org>; Tue, 15 Jan 2019 03:34:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HHUtGV6B"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KSJYPPQH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727169AbfAODeV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 14 Jan 2019 22:34:21 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:32827 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728043AbfAODeP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Jan 2019 22:34:15 -0500
-Received: by mail-pl1-f195.google.com with SMTP id z23so631398plo.0
-        for <linux-clk@vger.kernel.org>; Mon, 14 Jan 2019 19:34:15 -0800 (PST)
+        id S1728060AbfAODeU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 14 Jan 2019 22:34:20 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:38729 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727169AbfAODeU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Jan 2019 22:34:20 -0500
+Received: by mail-pf1-f193.google.com with SMTP id q1so625944pfi.5
+        for <linux-clk@vger.kernel.org>; Mon, 14 Jan 2019 19:34:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=QzEw+0c7YCMrIJx0PSwB5TjdR5ksSYaunb0Z3JfV66A=;
-        b=HHUtGV6Bj0Zj+6v3TzOmsCTcz3nUIF8RYPXUoENgTw83quUwGId8YxiD/vXr4KDxru
-         7cwVtubU9A24OMrCre37l5/BsWqQt/E+iOga54NjfzCK957vp8nDoTOdF3fck1pSqqu8
-         tUrzUrT+5yNofk77YiSO/OFIh/QyUHAbQJeP0=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=xnTFjl+GiCKiqWScUNzvjAlPROFJTsMxFZH/vteR13U=;
+        b=KSJYPPQHYCKO/l2r4rZBK4OAdG04CVUdVDmoYcG7ST+tf+myncWW+OHrcD5mY7CuX2
+         sT/s3qNmsbYtBTUWh+QzEosgr2c5GmOwDqEWij8yVx9KjN6u5USyPNUG9AEtX8yRrPCT
+         wwPOWt59DLPBlsV9v8i//MAD42zuOUgs/tAPE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=QzEw+0c7YCMrIJx0PSwB5TjdR5ksSYaunb0Z3JfV66A=;
-        b=XdwHOuc+qZnO2ngw8Cg//jmAC6Eui+JZEc0OygqvziGUdlhfLCEzO1w69j2cb/cQJG
-         oIt1+5JKHwSasgE8J09GHXIKG4WD7SOhEDgmlytBn0HiPtlN3U8xwdDURuRAf7wDg+BS
-         YeyWzwM0yr2CJ6Smsm/ezN8CZHqrgEg/VPfkW3fBUpXaXScBUOnxWmAC5r+HEtuHqThz
-         Jra1GWRAxJNSZsYAJTeqbKsSt1+XfLUYWccjvKj5v5UDwaDp1CpLTaDUsRaJAIOmE2jL
-         PmmUnDdgzWie9Cwafjx97skFu7wCKcf6EUwUfxc7eHI9+KonVZwVU/Ai3StYSJzZ6eaY
-         v3kw==
-X-Gm-Message-State: AJcUukeXZoVCJJb2WvMbudgIabet+nq8pWfsZyMccoCEpNwQgzNs8EDB
-        6uvqy2Mb47WF6feuhv9Ap/gX
-X-Google-Smtp-Source: ALg8bN5g5uMXPav02wZj17J108BuRNg5LAOSwAxAHeknYgo8mPBgYSnHviqmY5Fna7SYMv0PBLm2rw==
-X-Received: by 2002:a17:902:2868:: with SMTP id e95mr1891450plb.317.1547523254819;
-        Mon, 14 Jan 2019 19:34:14 -0800 (PST)
+         :references;
+        bh=xnTFjl+GiCKiqWScUNzvjAlPROFJTsMxFZH/vteR13U=;
+        b=ev1sNxiZfQL+l3SAkGZx68CsW3rIbk4Wgkvn1tV9MytWu/mMvQmjfBspKK6S3GhWin
+         oT7Az0hFRL6OPN9ZLWUUlWr07cikp3OjTI3BTiSwO4FtYZ51A/cy8LBu7f54Q19OKipr
+         i9n6ijYa3XO6oB3OQMi+8+kEtiriNvOVpDigkLvOKrZmXfGlMfSxwXKLDwxZFtGvnVZV
+         JQeDCgNAcMNS/E2MoyY4xU+hSKgW8BAW1gnauPQXacKlBwkU6BPp/npEtIYSfN8pVsJW
+         h5vAhg22lH182Nf3UV6ZqSoaTr2NDspvkFlmkcFJgAbPa1LKC3vPWbNrEc7iTJl5qXHe
+         Ojwg==
+X-Gm-Message-State: AJcUukcf0awdgO2b7HQ7hnhmHnSjzE+km90njKy3HMXRr7iZCW3m8vpD
+        PKWG5CtPqnNfvHinNjv5tsYo
+X-Google-Smtp-Source: ALg8bN6/ddsnp8BrTIrA0u520y91d7bXcRebBkdnn3X/OPNHe1f7i66C9FyPxEf7x8JmchG3Id+Xug==
+X-Received: by 2002:a63:9712:: with SMTP id n18mr1777491pge.295.1547523260000;
+        Mon, 14 Jan 2019 19:34:20 -0800 (PST)
 Received: from localhost.localdomain ([2409:4072:6084:4813:7cd6:42d1:f14c:3e90])
-        by smtp.gmail.com with ESMTPSA id s9sm2137023pgl.88.2019.01.14.19.34.09
+        by smtp.gmail.com with ESMTPSA id s9sm2137023pgl.88.2019.01.14.19.34.15
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 14 Jan 2019 19:34:14 -0800 (PST)
+        Mon, 14 Jan 2019 19:34:19 -0800 (PST)
 From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To:     sboyd@kernel.org, mturquette@baylibre.com, afaerber@suse.de,
         robh+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
@@ -58,124 +57,95 @@ To:     sboyd@kernel.org, mturquette@baylibre.com, afaerber@suse.de,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 Cc:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
         Edgar Bernardi Righi <edgar.righi@lsitec.org.br>
-Subject: [PATCH v2 3/6] ARM: dts: Add CMU support for Actions Semi Owl S500 SoC
-Date:   Tue, 15 Jan 2019 09:03:37 +0530
-Message-Id: <20190115033340.25016-4-manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v2 4/6] ARM: dts: Remove fake UART clock for S500 based SBCs
+Date:   Tue, 15 Jan 2019 09:03:38 +0530
+Message-Id: <20190115033340.25016-5-manivannan.sadhasivam@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190115033340.25016-1-manivannan.sadhasivam@linaro.org>
 References: <20190115033340.25016-1-manivannan.sadhasivam@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add Clock Management Unit (CMU) support for Actions Semi Owl family
-S500 SoC.
+Since Actions Semi S500 SoC has gained support for Clock Management Unit
+in kernel, let's remove the fake UART clocks from Cubieboard6, Guitar and
+Sparky SBCs.
 
 Signed-off-by: Edgar Bernardi Righi <edgar.righi@lsitec.org.br>
-[Mani: Fixed commit message and DTS]
 Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
- arch/arm/boot/dts/owl-s500.dtsi | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+ arch/arm/boot/dts/owl-s500-cubieboard6.dts     | 7 -------
+ arch/arm/boot/dts/owl-s500-guitar-bb-rev-b.dts | 7 -------
+ arch/arm/boot/dts/owl-s500-sparky.dts          | 7 -------
+ 3 files changed, 21 deletions(-)
 
-diff --git a/arch/arm/boot/dts/owl-s500.dtsi b/arch/arm/boot/dts/owl-s500.dtsi
-index 5ceb6cc4451d..aa758538de8c 100644
---- a/arch/arm/boot/dts/owl-s500.dtsi
-+++ b/arch/arm/boot/dts/owl-s500.dtsi
-@@ -3,8 +3,10 @@
-  * Actions Semi S500 SoC
-  *
-  * Copyright (c) 2016-2017 Andreas Färber
-+ * Copyright (c) 2018 Edgar Bernardi Righi
-  */
- 
-+#include <dt-bindings/clock/actions,s500-cmu.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/power/owl-s500-powergate.h>
- 
-@@ -70,6 +72,12 @@
- 		#clock-cells = <0>;
+diff --git a/arch/arm/boot/dts/owl-s500-cubieboard6.dts b/arch/arm/boot/dts/owl-s500-cubieboard6.dts
+index 7c96c59b610d..c2b02895910c 100644
+--- a/arch/arm/boot/dts/owl-s500-cubieboard6.dts
++++ b/arch/arm/boot/dts/owl-s500-cubieboard6.dts
+@@ -25,12 +25,6 @@
+ 		device_type = "memory";
+ 		reg = <0x0 0x80000000>;
  	};
+-
+-	uart3_clk: uart3-clk {
+-		compatible = "fixed-clock";
+-		clock-frequency = <921600>;
+-		#clock-cells = <0>;
+-	};
+ };
  
-+	losc: losc {
-+		compatible = "fixed-clock";
-+		clock-frequency = <32768>;
-+		#clock-cells = <0>;
-+	};
-+
- 	soc {
- 		compatible = "simple-bus";
- 		#address-cells = <1>;
-@@ -124,6 +132,7 @@
- 			compatible = "actions,s500-uart", "actions,owl-uart";
- 			reg = <0xb0120000 0x2000>;
- 			interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cmu CLK_UART0>;
- 			status = "disabled";
- 		};
+ &timer {
+@@ -39,5 +33,4 @@
  
-@@ -131,6 +140,7 @@
- 			compatible = "actions,s500-uart", "actions,owl-uart";
- 			reg = <0xb0122000 0x2000>;
- 			interrupts = <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cmu CLK_UART1>;
- 			status = "disabled";
- 		};
+ &uart3 {
+ 	status = "okay";
+-	clocks = <&uart3_clk>;
+ };
+diff --git a/arch/arm/boot/dts/owl-s500-guitar-bb-rev-b.dts b/arch/arm/boot/dts/owl-s500-guitar-bb-rev-b.dts
+index e610d49395d2..7ae34a23e320 100644
+--- a/arch/arm/boot/dts/owl-s500-guitar-bb-rev-b.dts
++++ b/arch/arm/boot/dts/owl-s500-guitar-bb-rev-b.dts
+@@ -18,15 +18,8 @@
+ 	chosen {
+ 		stdout-path = "serial3:115200n8";
+ 	};
+-
+-	uart3_clk: uart3-clk {
+-		compatible = "fixed-clock";
+-		clock-frequency = <921600>;
+-		#clock-cells = <0>;
+-	};
+ };
  
-@@ -138,6 +148,7 @@
- 			compatible = "actions,s500-uart", "actions,owl-uart";
- 			reg = <0xb0124000 0x2000>;
- 			interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cmu CLK_UART2>;
- 			status = "disabled";
- 		};
+ &uart3 {
+ 	status = "okay";
+-	clocks = <&uart3_clk>;
+ };
+diff --git a/arch/arm/boot/dts/owl-s500-sparky.dts b/arch/arm/boot/dts/owl-s500-sparky.dts
+index c665ce8b88b4..9d8f7336bec0 100644
+--- a/arch/arm/boot/dts/owl-s500-sparky.dts
++++ b/arch/arm/boot/dts/owl-s500-sparky.dts
+@@ -25,12 +25,6 @@
+ 		device_type = "memory";
+ 		reg = <0x0 0x40000000>; /* 1 or 2 GiB */
+ 	};
+-
+-	uart3_clk: uart3-clk {
+-		compatible = "fixed-clock";
+-		clock-frequency = <921600>;
+-		#clock-cells = <0>;
+-	};
+ };
  
-@@ -145,6 +156,7 @@
- 			compatible = "actions,s500-uart", "actions,owl-uart";
- 			reg = <0xb0126000 0x2000>;
- 			interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cmu CLK_UART3>;
- 			status = "disabled";
- 		};
+ &timer {
+@@ -39,5 +33,4 @@
  
-@@ -152,6 +164,7 @@
- 			compatible = "actions,s500-uart", "actions,owl-uart";
- 			reg = <0xb0128000 0x2000>;
- 			interrupts = <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cmu CLK_UART4>;
- 			status = "disabled";
- 		};
- 
-@@ -159,6 +172,7 @@
- 			compatible = "actions,s500-uart", "actions,owl-uart";
- 			reg = <0xb012a000 0x2000>;
- 			interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cmu CLK_UART5>;
- 			status = "disabled";
- 		};
- 
-@@ -166,9 +180,17 @@
- 			compatible = "actions,s500-uart", "actions,owl-uart";
- 			reg = <0xb012c000 0x2000>;
- 			interrupts = <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cmu CLK_UART6>;
- 			status = "disabled";
- 		};
- 
-+		cmu: clock-controller@b0160000 {
-+			compatible = "actions,s500-cmu";
-+			reg = <0xb0160000 0x8000>;
-+			clocks = <&hosc>, <&losc>;
-+			#clock-cells = <1>;
-+		};
-+
- 		timer: timer@b0168000 {
- 			compatible = "actions,s500-timer";
- 			reg = <0xb0168000 0x8000>;
+ &uart3 {
+ 	status = "okay";
+-	clocks = <&uart3_clk>;
+ };
 -- 
 2.17.1
 
