@@ -2,131 +2,176 @@ Return-Path: <SRS0=O/eU=PY=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75F7FC43387
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Jan 2019 05:40:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E967EC43387
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Jan 2019 06:37:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FFCF2082F
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Jan 2019 05:40:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="RTneqmjp"
+	by mail.kernel.org (Postfix) with ESMTP id C29C520866
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Jan 2019 06:37:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732453AbfAPFkI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 16 Jan 2019 00:40:08 -0500
-Received: from mail-eopbgr10080.outbound.protection.outlook.com ([40.107.1.80]:39884
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730832AbfAPFkH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 16 Jan 2019 00:40:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/0Yhcnj8c+K4KSLTEOMcdar/X0LcdWHsev3KX3NIGYY=;
- b=RTneqmjpEdz/USNwlqIvL3kIggCVeN2LlycXA1YbsPWSCWTWDKm7fIkrE+Fvzryd0fFTJWdfrr1a5fd7bKvmHJYWQJl5jfWPsa5shViXfs9pyV1Qo2MgDb2rUCtlko0WeyWhqUQjYNffLTeUSA4aLvfCMnH6Qa581zJpb5phVWQ=
-Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.126.21) by
- AM0PR04MB4596.eurprd04.prod.outlook.com (52.135.149.22) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1516.19; Wed, 16 Jan 2019 05:40:01 +0000
-Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
- ([fe80::c4d2:7dfd:4576:bdd5]) by AM0PR04MB4211.eurprd04.prod.outlook.com
- ([fe80::c4d2:7dfd:4576:bdd5%5]) with mapi id 15.20.1537.018; Wed, 16 Jan 2019
- 05:40:01 +0000
-From:   Aisheng Dong <aisheng.dong@nxp.com>
-To:     Aisheng Dong <aisheng.dong@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "sboyd@kernel.org" <sboyd@kernel.org>
-CC:     "linux-arm-kernel@lists.infradead.org" 
+        id S2387967AbfAPGhj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 16 Jan 2019 01:37:39 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:45127 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2388010AbfAPGhj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Jan 2019 01:37:39 -0500
+X-UUID: 466dfa097e55467385e91c2588dca683-20190116
+X-UUID: 466dfa097e55467385e91c2588dca683-20190116
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1566480008; Wed, 16 Jan 2019 14:37:33 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 16 Jan 2019 14:37:25 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 16 Jan 2019 14:37:25 +0800
+Message-ID: <1547620645.5335.3.camel@mtksdaap41>
+Subject: Re: [PATCH 3/9] drm/mediatek: using different flags of clk for HDMI
+ phy
+From:   CK Hu <ck.hu@mediatek.com>
+To:     chunhui dai <chunhui.dai@mediatek.com>
+CC:     --to=Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        "Philipp Zabel" <p.zabel@pengutronix.de>,
+        David Airlie <airlied@linux.ie>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        "Colin Ian King" <colin.king@canonical.com>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: RE: [PATCH RESEND v1 0/4] dt-binding: clk: prepare for imx8qm clock
- support
-Thread-Topic: [PATCH RESEND v1 0/4] dt-binding: clk: prepare for imx8qm clock
- support
-Thread-Index: AQHUqaSa8HQ124jcu0KqZJxAJsOAcqWxZ6Xw
-Date:   Wed, 16 Jan 2019 05:40:01 +0000
-Message-ID: <AM0PR04MB42115D3E98B8B319936AC60E80820@AM0PR04MB4211.eurprd04.prod.outlook.com>
-References: <1547207400-28307-1-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1547207400-28307-1-git-send-email-aisheng.dong@nxp.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=aisheng.dong@nxp.com; 
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM0PR04MB4596;6:9q7q2ESnYogaTi19CpJ1T/2FyyQPAcCEBjQtgXImQ2/18CvQM7eYAsAMN2nGhz5PWlQ2K5yediNz+I3iwX7Lz9IHLp1Df4wsLaZ3farlWaY2B/TDQI8bT5FYYqrrvpb2c15L2UfuajZ8GCgAliE86OX9Lf4F6O6lhLKm66Cx+hFXuNUh5YtlobNH7bgIM13ai9oeI4Nij5dqX+6Xwg6L2mmVuI3f3CJtVh5yUjeC0AlrSrX9ui/P7iOV5IAFWmHx7yVg91mNoJVuFpnBhzqyURGBXTCPILVvfRIpPjWFsYM65tcB5CcJHr9r6Pr2IzoBodtkzf22ikDJI86KzfmuqAkgZUV72YGUPFtiLZQVPd4+E/QhgtC70hmuoOLR2RZ5UAZ384BszfW2euQU5xbo0RwQMI/XpJWuYTjIZV4YbXff/LzdjKp1KJhvdkNXROfJ1wqLcWWNI3GjTXHDj27p2w==;5:LTEukSytWhRNdfcVcuI+UlvcRKvht6wQzza/dv7SQQr34xZhEQTMcd/s3AYnwzFyZNzXPKRwpIpydJWWJROx7K9PE1o2OGJ7DPlKjYzSNG+Dpde1pGdrrzDzHyvQu5J9ikPBNnlbo07j7+dTuB7Vq0wzIWwdF0oC1s7nAD72f+2/TRgMyHczYuyX8zDx6u2RIgwaUVvQ94uCWWlLq1T7eQ==;7:5sZzYhOWKioFBY9KnUqQMOxBXqYKyxCfLU68/11F0AGrSDmkPC4/qQ92EowZY263xlh0yy2i5Wz9U3UamIdc14kOgKkculWuThHgq7pd4FO5OU5z4yP18Ih9JZpC2GtGDNKWZ5mUCC/KfjZTcyfidw==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 7935bd62-30ed-428c-55b6-08d67b750f07
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600109)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB4596;
-x-ms-traffictypediagnostic: AM0PR04MB4596:
-x-microsoft-antispam-prvs: <AM0PR04MB4596FCB692E6E4B3FE7872C480820@AM0PR04MB4596.eurprd04.prod.outlook.com>
-x-forefront-prvs: 091949432C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(979002)(376002)(39860400002)(136003)(346002)(396003)(366004)(199004)(189003)(68736007)(2501003)(8676002)(305945005)(8936002)(71190400001)(81156014)(7736002)(110136005)(186003)(81166006)(33656002)(66066001)(105586002)(106356001)(102836004)(54906003)(9686003)(44832011)(86362001)(71200400001)(53936002)(25786009)(76176011)(55016002)(7696005)(6506007)(6246003)(2201001)(4326008)(229853002)(486006)(11346002)(97736004)(99286004)(446003)(5660300001)(14454004)(2906002)(14444005)(316002)(26005)(74316002)(256004)(478600001)(6116002)(217873002)(3846002)(476003)(6436002)(32563001)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4596;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: gwx6+rV30JrDmLDnTS/r63motBIROZpcTLebZNddudRR9kPVrIoPsXoSEAsYI6fTr1NFnYLPSbFObW8GbJUFFK4Fn+gZCDdnM2G7HU8DzfZ/Fe5dKIAqEOIIBZoefD1VPEVabswf+TSjaqibSn08qovsRs2QqXv3FSunKKuRN/eRvC7Gmn8jtPWgmXD4bWdBRK/tpb1eE1bdG7ZUKQbrv/3ze+dxfVsDkqiXTVedyhEI/bGBp4aohQcVjK15yBb0MevivSwbZBbvk0xl9MOylU87zf4E5/eeBXepsPCWDTJkfL1h8SlmX8MUu7IOnK5P9X1/uNRsUft5s6OipVskLcjOJo9PzL5PJVMgIFOz4sEVN4Y36np2UvFoqBiV/gHqw9dSuwHMGiWR2QI4vB4s8YKm/YcuZiJSJudq0LYlX3Y=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        <linux-mediatek@lists.infradead.org>,
+        <dri-devel@lists.freedesktop.org>, <srv_heupstream@mediatek.com>,
+        <bibby.hsieh@mediatek.com>, <jamesjj.liao@mediatek.com>,
+        <jitao.shi@mediatek.com>
+Date:   Wed, 16 Jan 2019 14:37:25 +0800
+In-Reply-To: <1546585439-30455-4-git-send-email-chunhui.dai@mediatek.com>
+References: <1546585439-30455-1-git-send-email-chunhui.dai@mediatek.com>
+         <1546585439-30455-4-git-send-email-chunhui.dai@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7935bd62-30ed-428c-55b6-08d67b750f07
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Jan 2019 05:40:01.1531
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4596
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Ping...
+Hi, Chunhui:
 
-BTW, as the first two patches change the same firmware binding doc fs.scu.t=
-xt.
-I'm not sure whether it should go to Shawn's tree for the binding part, or =
-Stephen's clock tree.
+On Fri, 2019-01-04 at 15:03 +0800, chunhui dai wrote:
+> The parent rate of hdmi phy had set by DPI driver.
 
-Shawn & Stephen,
-What's your suggestion?
+The difference of DPI driver in MT8173 and MT2701 is
 
-Regards
-Dong Aisheng
+static const struct mtk_dpi_conf mt8173_conf = {
+	.cal_factor = mt8173_calculate_factor,
+	.reg_h_fre_con = 0xe0,
+};
 
-> From: Aisheng Dong [mailto:aisheng.dong@nxp.com]
-> Sent: Friday, January 11, 2019 7:56 PM
->=20
-> After a bit more investigation on IMX8QM, it seemed SCU clock can be used=
- in
-> a similar way as IMX8QXP. So update the binding and driver to be a bit ge=
-neric
-> for easily extension of IMX8QM support later.
->=20
-> Dong Aisheng (4):
->   dt-bindings: fsl: scu: add fallback compatible string for clock
->   dt-bindings: fsl: scu: add imx8qm scu clock support
->   clk: imx: scu: add fallback compatible string support
->   dt-bindings: imx8-clock: add a53 and a72 clock id
->=20
->  Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt | 7 +++++--
->  drivers/clk/imx/clk-imx8qxp.c                               | 1 +
->  include/dt-bindings/clock/imx8-clock.h                      | 6 ++++--
->  3 files changed, 10 insertions(+), 4 deletions(-)
->=20
-> --
-> 2.7.4
+static const struct mtk_dpi_conf mt2701_conf = {
+	.cal_factor = mt2701_calculate_factor,
+	.reg_h_fre_con = 0xb0,
+	.edge_sel_en = true,
+};
+
+Which one influence the phy setting?
+
+Regards,
+CK
+
+> We should not set or change the parent rate of MT2701 hdmi phy,
+> as a result we should remove the flags of "CLK_SET_RATE_PARENT"
+> from the clock of MT2701 hdmi phy.
+> 
+> Signed-off-by: chunhui dai <chunhui.dai@mediatek.com>
+> ---
+>  drivers/gpu/drm/mediatek/mtk_hdmi_phy.c        | 13 +++++--------
+>  drivers/gpu/drm/mediatek/mtk_hdmi_phy.h        |  1 +
+>  drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c |  1 +
+>  drivers/gpu/drm/mediatek/mtk_mt8173_hdmi_phy.c |  1 +
+>  4 files changed, 8 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi_phy.c b/drivers/gpu/drm/mediatek/mtk_hdmi_phy.c
+> index 79e737d..c0a9cf5 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_hdmi_phy.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_hdmi_phy.c
+> @@ -109,13 +109,11 @@ static int mtk_hdmi_phy_power_off(struct phy *phy)
+>  		return NULL;
+>  }
+>  
+> -static void mtk_hdmi_phy_clk_get_ops(struct mtk_hdmi_phy *hdmi_phy,
+> -				     const struct clk_ops **ops)
+> +static void mtk_hdmi_phy_clk_get_data(struct mtk_hdmi_phy *hdmi_phy,
+> +				     struct clk_init_data *clk_init)
+>  {
+> -	if (hdmi_phy && hdmi_phy->conf && hdmi_phy->conf->hdmi_phy_clk_ops)
+> -		*ops = hdmi_phy->conf->hdmi_phy_clk_ops;
+> -	else
+> -		dev_err(hdmi_phy->dev, "Failed to get clk ops of phy\n");
+> +	clk_init->flags = hdmi_phy->conf->flags;
+> +	clk_init->ops = hdmi_phy->conf->hdmi_phy_clk_ops;
+>  }
+>  
+>  static int mtk_hdmi_phy_probe(struct platform_device *pdev)
+> @@ -128,7 +126,6 @@ static int mtk_hdmi_phy_probe(struct platform_device *pdev)
+>  	struct clk_init_data clk_init = {
+>  		.num_parents = 1,
+>  		.parent_names = (const char * const *)&ref_clk_name,
+> -		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
+>  	};
+>  
+>  	struct phy *phy;
+> @@ -166,7 +163,7 @@ static int mtk_hdmi_phy_probe(struct platform_device *pdev)
+>  	hdmi_phy->dev = dev;
+>  	hdmi_phy->conf =
+>  		(struct mtk_hdmi_phy_conf *)of_device_get_match_data(dev);
+> -	mtk_hdmi_phy_clk_get_ops(hdmi_phy, &clk_init.ops);
+> +	mtk_hdmi_phy_clk_get_data(hdmi_phy, &clk_init);
+>  	hdmi_phy->pll_hw.init = &clk_init;
+>  	hdmi_phy->pll = devm_clk_register(dev, &hdmi_phy->pll_hw);
+>  	if (IS_ERR(hdmi_phy->pll)) {
+> diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi_phy.h b/drivers/gpu/drm/mediatek/mtk_hdmi_phy.h
+> index fdad8b1..446e2ac 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_hdmi_phy.h
+> +++ b/drivers/gpu/drm/mediatek/mtk_hdmi_phy.h
+> @@ -21,6 +21,7 @@
+>  
+>  struct mtk_hdmi_phy_conf {
+>  	bool tz_disabled;
+> +	unsigned long flags;
+>  	const struct clk_ops *hdmi_phy_clk_ops;
+>  	void (*hdmi_phy_enable_tmds)(struct mtk_hdmi_phy *hdmi_phy);
+>  	void (*hdmi_phy_disable_tmds)(struct mtk_hdmi_phy *hdmi_phy);
+> diff --git a/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c b/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
+> index 68b124f..a28a32d 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
+> @@ -248,6 +248,7 @@ static void mtk_hdmi_phy_disable_tmds(struct mtk_hdmi_phy *hdmi_phy)
+>  
+>  struct mtk_hdmi_phy_conf mtk_hdmi_phy_2701_conf = {
+>  	.tz_disabled = true,
+> +	.flags = CLK_SET_RATE_NO_REPARENT | CLK_SET_RATE_GATE,
+>  	.hdmi_phy_clk_ops = &mtk_hdmi_phy_pll_ops,
+>  	.hdmi_phy_enable_tmds = mtk_hdmi_phy_enable_tmds,
+>  	.hdmi_phy_disable_tmds = mtk_hdmi_phy_disable_tmds,
+> diff --git a/drivers/gpu/drm/mediatek/mtk_mt8173_hdmi_phy.c b/drivers/gpu/drm/mediatek/mtk_mt8173_hdmi_phy.c
+> index cb23c1e..63dde42 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_mt8173_hdmi_phy.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_mt8173_hdmi_phy.c
+> @@ -317,6 +317,7 @@ static void mtk_hdmi_phy_disable_tmds(struct mtk_hdmi_phy *hdmi_phy)
+>  }
+>  
+>  struct mtk_hdmi_phy_conf mtk_hdmi_phy_8173_conf = {
+> +	.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
+>  	.hdmi_phy_clk_ops = &mtk_hdmi_phy_pll_ops,
+>  	.hdmi_phy_enable_tmds = mtk_hdmi_phy_enable_tmds,
+>  	.hdmi_phy_disable_tmds = mtk_hdmi_phy_disable_tmds,
+
 
