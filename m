@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A49BDC43387
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Jan 2019 18:39:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF822C43387
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Jan 2019 18:39:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76AB520866
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Jan 2019 18:39:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A89F120866
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Jan 2019 18:39:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729183AbfAPSjI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 16 Jan 2019 13:39:08 -0500
+        id S1729210AbfAPSjO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 16 Jan 2019 13:39:14 -0500
 Received: from relmlor1.renesas.com ([210.160.252.171]:31084 "EHLO
         relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729056AbfAPSjI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Jan 2019 13:39:08 -0500
+        by vger.kernel.org with ESMTP id S1729056AbfAPSjO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Jan 2019 13:39:14 -0500
 X-IronPort-AV: E=Sophos;i="5.56,487,1539615600"; 
-   d="scan'208";a="5355891"
+   d="scan'208";a="5355899"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 17 Jan 2019 03:39:05 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 17 Jan 2019 03:39:12 +0900
 Received: from fabrizio-dev.ree.adwin.renesas.com (unknown [10.226.37.13])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 347C240F10E1;
-        Thu, 17 Jan 2019 03:38:59 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 03A6740F1461;
+        Thu, 17 Jan 2019 03:39:05 +0900 (JST)
 From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -51,10 +51,10 @@ Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-can@vger.kernel.org, netdev@vger.kernel.org,
         linux-clk@vger.kernel.org, Biju Das <biju.das@bp.renesas.com>,
-        ebiharaml@si-linux.co.jp
-Subject: [PATCH 08/11] clk: renesas: r8a774c0: Add missing CANFD clock
-Date:   Wed, 16 Jan 2019 18:37:51 +0000
-Message-Id: <1547663874-29411-9-git-send-email-fabrizio.castro@bp.renesas.com>
+        linux-kernel@vger.kernel.org, ebiharaml@si-linux.co.jp
+Subject: [PATCH 09/11] dt-bindings: can: rcar_can: Fix RZ/G2 CAN clocks
+Date:   Wed, 16 Jan 2019 18:37:52 +0000
+Message-Id: <1547663874-29411-10-git-send-email-fabrizio.castro@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1547663874-29411-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1547663874-29411-1-git-send-email-fabrizio.castro@bp.renesas.com>
@@ -63,79 +63,46 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This patch adds the missing CANFD clock to the r8a774c0 specific
-clock driver.
+According to the latest information, the clock options for CAN on RZ/G2
+are the same as the ones available on R-Car Gen3
 
+Fixes: 868b7c0f43e6 ("dt-bindings: can: rcar_can: Add r8a774a1 support")
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
 ---
- drivers/clk/renesas/r8a774c0-cpg-mssr.c       |  4 ++++
- include/dt-bindings/clock/r8a774c0-cpg-mssr.h | 17 +++++++++--------
- 2 files changed, 13 insertions(+), 8 deletions(-)
+ Documentation/devicetree/bindings/net/can/rcar_can.txt | 12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/clk/renesas/r8a774c0-cpg-mssr.c b/drivers/clk/renesas/r8a774c0-cpg-mssr.c
-index 10b9689..28bcc81 100644
---- a/drivers/clk/renesas/r8a774c0-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a774c0-cpg-mssr.c
-@@ -33,6 +33,7 @@ enum clk_ids {
- 	CLK_PLL1,
- 	CLK_PLL3,
- 	CLK_PLL0D4,
-+	CLK_PLL0D6,
- 	CLK_PLL0D8,
- 	CLK_PLL0D20,
- 	CLK_PLL0D24,
-@@ -61,6 +62,7 @@ static const struct cpg_core_clk r8a774c0_core_clks[] __initconst = {
+diff --git a/Documentation/devicetree/bindings/net/can/rcar_can.txt b/Documentation/devicetree/bindings/net/can/rcar_can.txt
+index 7fcf501..b463e12 100644
+--- a/Documentation/devicetree/bindings/net/can/rcar_can.txt
++++ b/Documentation/devicetree/bindings/net/can/rcar_can.txt
+@@ -28,13 +28,8 @@ Required properties:
  
- 	DEF_FIXED(".pll0",     CLK_PLL0,           CLK_MAIN,	   1, 100),
- 	DEF_FIXED(".pll0d4",   CLK_PLL0D4,         CLK_PLL0,       4, 1),
-+	DEF_FIXED(".pll0d6",   CLK_PLL0D6,         CLK_PLL0,       6, 1),
- 	DEF_FIXED(".pll0d8",   CLK_PLL0D8,         CLK_PLL0,       8, 1),
- 	DEF_FIXED(".pll0d20",  CLK_PLL0D20,        CLK_PLL0,      20, 1),
- 	DEF_FIXED(".pll0d24",  CLK_PLL0D24,        CLK_PLL0,      24, 1),
-@@ -112,6 +114,7 @@ static const struct cpg_core_clk r8a774c0_core_clks[] __initconst = {
- 	DEF_GEN3_PE("s3d2c",   R8A774C0_CLK_S3D2C, CLK_S3, 2, CLK_PE, 2),
- 	DEF_GEN3_PE("s3d4c",   R8A774C0_CLK_S3D4C, CLK_S3, 4, CLK_PE, 4),
+ - reg: physical base address and size of the R-Car CAN register map.
+ - interrupts: interrupt specifier for the sole interrupt.
+-- clocks: phandles and clock specifiers for 2 CAN clock inputs for RZ/G2
+-	  devices.
+-	  phandles and clock specifiers for 3 CAN clock inputs for every other
+-	  SoC.
+-- clock-names: 2 clock input name strings for RZ/G2: "clkp1", "can_clk".
+-	       3 clock input name strings for every other SoC: "clkp1", "clkp2",
+-	       "can_clk".
++- clocks: phandles and clock specifiers for 3 CAN clock inputs.
++- clock-names: 3 clock input name strings: "clkp1", "clkp2", and "can_clk".
+ - pinctrl-0: pin control group to be used for this controller.
+ - pinctrl-names: must be "default".
  
-+	DEF_DIV6P1("canfd",    R8A774C0_CLK_CANFD, CLK_PLL0D6, 0x244),
- 	DEF_DIV6P1("csi0",     R8A774C0_CLK_CSI0,  CLK_PLL1D2, 0x00c),
- 	DEF_DIV6P1("mso",      R8A774C0_CLK_MSO,   CLK_PLL1D2, 0x014),
+@@ -50,8 +45,7 @@ using the below properties:
+ Optional properties:
+ - renesas,can-clock-select: R-Car CAN Clock Source Select. Valid values are:
+ 			    <0x0> (default) : Peripheral clock (clkp1)
+-			    <0x1> : Peripheral clock (clkp2) (not supported by
+-				    RZ/G2 devices)
++			    <0x1> : Peripheral clock (clkp2)
+ 			    <0x3> : External input clock
  
-@@ -187,6 +190,7 @@ static const struct mssr_mod_clk r8a774c0_mod_clks[] __initconst = {
- 	DEF_MOD("gpio2",		 910,	R8A774C0_CLK_S3D4),
- 	DEF_MOD("gpio1",		 911,	R8A774C0_CLK_S3D4),
- 	DEF_MOD("gpio0",		 912,	R8A774C0_CLK_S3D4),
-+	DEF_MOD("can-fd",		 914,	R8A774C0_CLK_S3D2),
- 	DEF_MOD("can-if1",		 915,	R8A774C0_CLK_S3D4),
- 	DEF_MOD("can-if0",		 916,	R8A774C0_CLK_S3D4),
- 	DEF_MOD("i2c6",			 918,	R8A774C0_CLK_S3D2),
-diff --git a/include/dt-bindings/clock/r8a774c0-cpg-mssr.h b/include/dt-bindings/clock/r8a774c0-cpg-mssr.h
-index 8fe51b6..f269ce3 100644
---- a/include/dt-bindings/clock/r8a774c0-cpg-mssr.h
-+++ b/include/dt-bindings/clock/r8a774c0-cpg-mssr.h
-@@ -48,13 +48,14 @@
- #define R8A774C0_CLK_ZA2		37
- #define R8A774C0_CLK_ZA8		38
- #define R8A774C0_CLK_Z2D		39
--#define R8A774C0_CLK_MSO		40
--#define R8A774C0_CLK_R			41
--#define R8A774C0_CLK_OSC		42
--#define R8A774C0_CLK_LV0		43
--#define R8A774C0_CLK_LV1		44
--#define R8A774C0_CLK_CSI0		45
--#define R8A774C0_CLK_CP			46
--#define R8A774C0_CLK_CPEX		47
-+#define R8A774C0_CLK_CANFD		40
-+#define R8A774C0_CLK_MSO		41
-+#define R8A774C0_CLK_R			42
-+#define R8A774C0_CLK_OSC		43
-+#define R8A774C0_CLK_LV0		44
-+#define R8A774C0_CLK_LV1		45
-+#define R8A774C0_CLK_CSI0		46
-+#define R8A774C0_CLK_CP			47
-+#define R8A774C0_CLK_CPEX		48
- 
- #endif /* __DT_BINDINGS_CLOCK_R8A774C0_CPG_MSSR_H__ */
+ Example
 -- 
 2.7.4
 
