@@ -2,117 +2,105 @@ Return-Path: <SRS0=O/eU=PY=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BF8CC43387
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Jan 2019 22:05:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FF45C43612
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Jan 2019 23:29:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE30C206C2
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Jan 2019 22:05:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="f9frrGk6"
+	by mail.kernel.org (Postfix) with ESMTP id D528720866
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Jan 2019 23:29:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547681390;
+	bh=LSR8tEWUlm1kKOaN4dJsZGlE0DROhmLCC3b9XWPNUfQ=;
+	h=Subject:In-Reply-To:References:Cc:To:From:Date:List-ID:From;
+	b=i2CNaZdger7CQFfVPcvumnm7yDmf+wUeVqJdrpeHGbtkpotDOAvZr8c0lahLQJF/A
+	 kJniajuXBobpajp7NsnNQt90XvNZTDANoWoAfqdNiulOqluui/kvAt16rQnwFOGAsj
+	 YqDS3gNXY1t4Vp9P7zySaLifT7UONEkp185JmT84=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732613AbfAPWEl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 16 Jan 2019 17:04:41 -0500
-Received: from mail.andi.de1.cc ([85.214.239.24]:55778 "EHLO
-        h2641619.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732331AbfAPWEl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Jan 2019 17:04:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=kemnade.info; s=20180802; h=References:In-Reply-To:Message-Id:Date:Subject:
-        Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=W8mLpcohFLbgoUsNHzm3JNGLn4a+GB69xPfLUSFX8bA=; b=f9frrGk6lUGj9X6wHXVjlU9kS
-        u5CnFyIKhHdjwdLUnYXFHMPk2hKVEu2dSdMd871yiC86bhSaXR6cXFWXt/udDNl70gJ//WqS5OBA4
-        TY7WEho82TFakjS/JuG0lIAUSvh7NhgGcU1qG5fF5OUlOues8bvqP7HGFwo4xAb7myjcE=;
-Received: from p200300ccfbcc8e001a3da2fffebfd33a.dip0.t-ipconnect.de ([2003:cc:fbcc:8e00:1a3d:a2ff:febf:d33a] helo=aktux)
-        by h2641619.stratoserver.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1gjtIY-0006lg-1a; Wed, 16 Jan 2019 23:04:34 +0100
-Received: from andi by aktux with local (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1gjtIX-0002PX-Oy; Wed, 16 Jan 2019 23:04:33 +0100
-From:   Andreas Kemnade <andreas@kemnade.info>
-To:     t-kristo@ti.com, mturquette@baylibre.com, sboyd@kernel.org,
-        linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, bcousson@baylibre.com,
-        paul@pwsan.com, tony@atomide.com, letux-kernel@openphoenux.org
-Cc:     Andreas Kemnade <andreas@kemnade.info>
-Subject: [PATCH v3 3/3] arm: omap_hwmod disable ick autoidling when a hwmod requires that
-Date:   Wed, 16 Jan 2019 23:04:29 +0100
-Message-Id: <20190116220429.9136-4-andreas@kemnade.info>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20190116220429.9136-1-andreas@kemnade.info>
-References: <20190116220429.9136-1-andreas@kemnade.info>
+        id S1726832AbfAPX3u (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 16 Jan 2019 18:29:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59754 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726674AbfAPX3t (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 16 Jan 2019 18:29:49 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D891D206C2;
+        Wed, 16 Jan 2019 23:29:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547681389;
+        bh=LSR8tEWUlm1kKOaN4dJsZGlE0DROhmLCC3b9XWPNUfQ=;
+        h=Subject:In-Reply-To:References:Cc:To:From:Date:From;
+        b=mZhePsvBek3QoTJ1qcNEFW1yBSKGz9phWekg2RhNWym+xTDqPVJCTsmh9CCj/5G7X
+         7k80nBKoEx/6HzxUmWl9XFMVSR3gAcWjfPr+aXcwBeCrnvGBTZYo+Hl5ZQV0AgFsPk
+         Qxv9kDmKY9V978mz7W4HDhU08+oieJHRb/9eIuVg=
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] clk: mmp2: avoid disabling the SP clock when unused
+User-Agent: alot/0.8
+In-Reply-To: <73b20a5caef100d5768679cc395168976e86ed04.camel@v3.sk>
+References: <20190116093505.1920945-1-lkundrak@v3.sk> <154765664632.169631.9344557684702266461@swboyd.mtv.corp.google.com> <73b20a5caef100d5768679cc395168976e86ed04.camel@v3.sk>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+To:     Lubomir Rintel <lkundrak@v3.sk>,
+        Michael Turquette <mturquette@baylibre.com>
+Message-ID: <154768138798.169631.18317264971847478148@swboyd.mtv.corp.google.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+Date:   Wed, 16 Jan 2019 15:29:47 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Deny autoidle for hwmods with the OCPIF_SWSUP_IDLE flag,
-that makes hwmods working properly which cannot handle
-autoidle properly in lower power states.
-Affected is e. g. the omap_hdq.
-Since an ick might have mulitple users, autoidle is disabled
-when an individual user requires that rather than in
-_setup_iclk_autoidle. dss_ick is an example for that.
+Quoting Lubomir Rintel (2019-01-16 09:26:31)
+> On Wed, 2019-01-16 at 08:37 -0800, Stephen Boyd wrote:
+> > Quoting Lubomir Rintel (2019-01-16 01:35:05)
+> > > There could be vital functionality running on the SP PJ1 core it can =
+not be
+> > > restarted just by turning the clock back on.
+> > >=20
+> > > On the OLPC laptop, the keyboard controller code runs there. It
+> > > wouldn't be possible to load the driver for it as a module if the clo=
+ck
+> > > is disabled on boot.
+> > >=20
+> > > Cc: stable@vger.kernel.org # v4.18+
+> > > Fixes: commit fc27c2394d96 ("clk: mmp2: add SP clock")
+> > > Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+> > > ---
+> > >  drivers/clk/mmp/clk-of-mmp2.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > >=20
+> > > diff --git a/drivers/clk/mmp/clk-of-mmp2.c b/drivers/clk/mmp/clk-of-m=
+mp2.c
+> > > index f2a1c9bbaa63..3e33f1295f59 100644
+> > > --- a/drivers/clk/mmp/clk-of-mmp2.c
+> > > +++ b/drivers/clk/mmp/clk-of-mmp2.c
+> > > @@ -246,7 +246,7 @@ static struct mmp_param_gate_clk apmu_gate_clks[]=
+ =3D {
+> > >         {MMP2_CLK_CCIC1, "ccic1_clk", "ccic1_mix_clk", CLK_SET_RATE_P=
+ARENT, APMU_CCIC1, 0x1b, 0x1b, 0x0, 0, &ccic1_lock},
+> > >         {MMP2_CLK_CCIC1_PHY, "ccic1_phy_clk", "ccic1_mix_clk", CLK_SE=
+T_RATE_PARENT, APMU_CCIC1, 0x24, 0x24, 0x0, 0, &ccic1_lock},
+> > >         {MMP2_CLK_CCIC1_SPHY, "ccic1_sphy_clk", "ccic1_sphy_div", CLK=
+_SET_RATE_PARENT, APMU_CCIC1, 0x300, 0x300, 0x0, 0, &ccic1_lock},
+> > > -       {MMP2_CLK_SP, "sp_clk", NULL, CLK_SET_RATE_PARENT, APMU_SP, 0=
+x1b, 0x1b, 0x0, 0, &sp_lock},
+> > > +       {MMP2_CLK_SP, "sp_clk", NULL, CLK_SET_RATE_PARENT | CLK_IGNOR=
+E_UNUSED, APMU_SP, 0x1b, 0x1b, 0x0, 0, &sp_lock},
+> >=20
+> > Is it a critical clk that should never be turned off?
+>=20
+> I don't think it is. It is entirely plausible to have no use for the
+> "security processor", and in that case it's just okay to keep the clock
+> disabled.
 
-Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
----
- Comments to v1 to this patch were worked into a new 2/3
----
- arch/arm/mach-omap2/omap_hwmod.c | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
-
-diff --git a/arch/arm/mach-omap2/omap_hwmod.c b/arch/arm/mach-omap2/omap_hwmod.c
-index b5531dd3ae9c..3a04c73ac03c 100644
---- a/arch/arm/mach-omap2/omap_hwmod.c
-+++ b/arch/arm/mach-omap2/omap_hwmod.c
-@@ -1002,8 +1002,10 @@ static int _enable_clocks(struct omap_hwmod *oh)
- 		clk_enable(oh->_clk);
- 
- 	list_for_each_entry(os, &oh->slave_ports, node) {
--		if (os->_clk && (os->flags & OCPIF_SWSUP_IDLE))
-+		if (os->_clk && (os->flags & OCPIF_SWSUP_IDLE)) {
-+			omap2_clk_deny_idle(os->_clk);
- 			clk_enable(os->_clk);
-+		}
- 	}
- 
- 	/* The opt clocks are controlled by the device driver. */
-@@ -1055,8 +1057,10 @@ static int _disable_clocks(struct omap_hwmod *oh)
- 		clk_disable(oh->_clk);
- 
- 	list_for_each_entry(os, &oh->slave_ports, node) {
--		if (os->_clk && (os->flags & OCPIF_SWSUP_IDLE))
-+		if (os->_clk && (os->flags & OCPIF_SWSUP_IDLE)) {
- 			clk_disable(os->_clk);
-+			omap2_clk_allow_idle(os->_clk);
-+		}
- 	}
- 
- 	if (oh->flags & HWMOD_OPT_CLKS_NEEDED)
-@@ -2436,9 +2440,13 @@ static void _setup_iclk_autoidle(struct omap_hwmod *oh)
- 			continue;
- 
- 		if (os->flags & OCPIF_SWSUP_IDLE) {
--			/* XXX omap_iclk_deny_idle(c); */
-+			/*
-+			 * we might have multiple users of one iclk with
-+			 * different requirements, disable autoidle when
-+			 * the module is enabled, e.g. dss iclk
-+			 */
- 		} else {
--			/* XXX omap_iclk_allow_idle(c); */
-+			/* we are enabling autoidle afterwards anyways */
- 			clk_enable(os->_clk);
- 		}
- 	}
--- 
-2.11.0
+So does the firmware/bootloader leave the clk enabled out of boot and we
+shouldn't really touch the on/off bits of the clk hardware from the
+kernel? Or do we want to actively manage this clk from a driver
+somewhere in the kernel?
 
