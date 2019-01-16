@@ -2,97 +2,96 @@ Return-Path: <SRS0=O/eU=PY=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32487C43387
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Jan 2019 17:26:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1E24C43387
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Jan 2019 17:54:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EEDD20578
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Jan 2019 17:26:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9964520859
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Jan 2019 17:54:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="PXuSBDEx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728182AbfAPR0i (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 16 Jan 2019 12:26:38 -0500
-Received: from shell.v3.sk ([90.176.6.54]:57499 "EHLO shell.v3.sk"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728076AbfAPR0i (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 16 Jan 2019 12:26:38 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id B08C1558DE;
-        Wed, 16 Jan 2019 18:26:35 +0100 (CET)
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id 3Bajl05IjrRu; Wed, 16 Jan 2019 18:26:33 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 1A18F558E1;
-        Wed, 16 Jan 2019 18:26:33 +0100 (CET)
-X-Virus-Scanned: amavisd-new at zimbra.v3.sk
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id 5gN-fzHBQehy; Wed, 16 Jan 2019 18:26:32 +0100 (CET)
-Received: from belphegor (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 615BA558DE;
-        Wed, 16 Jan 2019 18:26:32 +0100 (CET)
-Message-ID: <73b20a5caef100d5768679cc395168976e86ed04.camel@v3.sk>
-Subject: Re: [PATCH] clk: mmp2: avoid disabling the SP clock when unused
-From:   Lubomir Rintel <lkundrak@v3.sk>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Date:   Wed, 16 Jan 2019 18:26:31 +0100
-In-Reply-To: <154765664632.169631.9344557684702266461@swboyd.mtv.corp.google.com>
-References: <20190116093505.1920945-1-lkundrak@v3.sk>
-         <154765664632.169631.9344557684702266461@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.3 (3.30.3-1.fc29) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1727775AbfAPRyv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 16 Jan 2019 12:54:51 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:43518 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726754AbfAPRyv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Jan 2019 12:54:51 -0500
+Received: by mail-wr1-f68.google.com with SMTP id r10so7939335wrs.10
+        for <linux-clk@vger.kernel.org>; Wed, 16 Jan 2019 09:54:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SVtN4iPcY9zshcCkTMLevoptOZxFBUuW0e/FWPhm+M0=;
+        b=PXuSBDEx8jenUvktfa+dL3KOmAHKnN1f3NXBjaaSO2lYL6p+A4jIJhsB9l/Nl7a5CO
+         BatQOv3PqoY9mwywoL4V3ZP3SE03TWdwi+yGYfNReV3NjtmCO44UYXBtep1TKsJQjXdh
+         gGYBm6q5BzEhdyklYb6OJAAiMtaqNgIl+SXnXs/1IbaH+vwOboBLJrhKbAROT0rEyXvr
+         cSzyz0V59SYh55RCpZxN2McXyK7Ht/lFzw2fKv40lDfnzq03JV4jUl0om2TGQh0cY+VX
+         8SjjDch+NxrceCkqrS5fw1TxGs8KeoSlJ5Gia3QE423cUxL1yHRxbtkCun+XQGtCSPUT
+         j4OQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SVtN4iPcY9zshcCkTMLevoptOZxFBUuW0e/FWPhm+M0=;
+        b=Ki40r+CiLxo0T9lORe2jH7lTH+H9Owzsck2SWkF8qioxsz3xaiFeBh0a81ex+GfBeV
+         MLxgzf+kh4qbm5bRxxz83wL+kN7gTwzU9BIKNvXEsDDjMI2l52EelUGtBa+xa4pCpicx
+         mXf7SpNJOY7Bpwy4gZxsQAtLYsJ1Q93+0xGyUjXF1fi4kJL1tET2pIzkXVz3Y/rj/+rO
+         EtLrUcrA8HwRDL5U7WQnxkuzkHrcZP5PBcrIt1ySQMlD9jGt5mlt8vYrNAuevBInf8ys
+         ST/LBwkPuWEaNUiQDUN8vNZZSZQesDGps3hA0TE8zDU7nIqOhThsZ0OzatBprWumaGAn
+         PQbg==
+X-Gm-Message-State: AJcUukf+61G/6i9s445uBNnUsv0FIHLX+Q1dHpq1eGrTHFjUUCwB70NX
+        k4QCxanG4ZbEMfLNMNeu+mevKQ==
+X-Google-Smtp-Source: ALg8bN7k8146w1SKv9w0xx2lsDhIDb65NLp99FCuk6OViftv3063GGkHsaM0phdh5uZDHnV8MeEU3Q==
+X-Received: by 2002:adf:ed46:: with SMTP id u6mr8857298wro.262.1547661289277;
+        Wed, 16 Jan 2019 09:54:49 -0800 (PST)
+Received: from boomer.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.googlemail.com with ESMTPSA id z9sm68703861wrs.63.2019.01.16.09.54.48
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 16 Jan 2019 09:54:48 -0800 (PST)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, patchwork-bot+notify@kernel.org
+Subject: [PATCH 0/3] clk: meson: claim input clocks through DT
+Date:   Wed, 16 Jan 2019 18:54:32 +0100
+Message-Id: <20190116175435.4990-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 2019-01-16 at 08:37 -0800, Stephen Boyd wrote:
-> Quoting Lubomir Rintel (2019-01-16 01:35:05)
-> > There could be vital functionality running on the SP PJ1 core it can not be
-> > restarted just by turning the clock back on.
-> > 
-> > On the OLPC laptop, the keyboard controller code runs there. It
-> > wouldn't be possible to load the driver for it as a module if the clock
-> > is disabled on boot.
-> > 
-> > Cc: stable@vger.kernel.org # v4.18+
-> > Fixes: commit fc27c2394d96 ("clk: mmp2: add SP clock")
-> > Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-> > ---
-> >  drivers/clk/mmp/clk-of-mmp2.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/clk/mmp/clk-of-mmp2.c b/drivers/clk/mmp/clk-of-mmp2.c
-> > index f2a1c9bbaa63..3e33f1295f59 100644
-> > --- a/drivers/clk/mmp/clk-of-mmp2.c
-> > +++ b/drivers/clk/mmp/clk-of-mmp2.c
-> > @@ -246,7 +246,7 @@ static struct mmp_param_gate_clk apmu_gate_clks[] = {
-> >         {MMP2_CLK_CCIC1, "ccic1_clk", "ccic1_mix_clk", CLK_SET_RATE_PARENT, APMU_CCIC1, 0x1b, 0x1b, 0x0, 0, &ccic1_lock},
-> >         {MMP2_CLK_CCIC1_PHY, "ccic1_phy_clk", "ccic1_mix_clk", CLK_SET_RATE_PARENT, APMU_CCIC1, 0x24, 0x24, 0x0, 0, &ccic1_lock},
-> >         {MMP2_CLK_CCIC1_SPHY, "ccic1_sphy_clk", "ccic1_sphy_div", CLK_SET_RATE_PARENT, APMU_CCIC1, 0x300, 0x300, 0x0, 0, &ccic1_lock},
-> > -       {MMP2_CLK_SP, "sp_clk", NULL, CLK_SET_RATE_PARENT, APMU_SP, 0x1b, 0x1b, 0x0, 0, &sp_lock},
-> > +       {MMP2_CLK_SP, "sp_clk", NULL, CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, APMU_SP, 0x1b, 0x1b, 0x0, 0, &sp_lock},
-> 
-> Is it a critical clk that should never be turned off?
+Following the preparation series [0] sent in the last cycle, this
+patchset adds clock input claim through DT in the gxbb and axg clock
+controllers
 
-I don't think it is. It is entirely plausible to have no use for the
-"security processor", and in that case it's just okay to keep the clock
-disabled.
+[0]: https://lkml.kernel.org/r/20181203171640.12110-1-jbrunet@baylibre.com
 
-> If so, mark it as
-> CLK_IS_CRITICAL. Either way, please add a comment in the code about why
-> CLK_IGNORE_UNUSED or CLK_IS_CRITICAL is used.
+Jerome Brunet (3):
+  clk: meson: gxbb: claim clock controller input clock from DT
+  clk: meson: axg: claim clock controller input clock from DT
+  clk: meson: ao-clkc: claim clock controller input clocks from DT
 
-Okay.
+ drivers/clk/meson/axg-aoclk.c   | 22 +++++++++++++++-----
+ drivers/clk/meson/axg.c         | 27 +++++++++++++++++-------
+ drivers/clk/meson/gxbb-aoclk.c  | 25 ++++++++++++++++------
+ drivers/clk/meson/gxbb.c        | 37 +++++++++++++++++++++------------
+ drivers/clk/meson/meson-aoclk.c | 37 ++++++++++++++++++++++++++++++++-
+ drivers/clk/meson/meson-aoclk.h | 12 +++++++++--
+ 6 files changed, 125 insertions(+), 35 deletions(-)
 
-Thanks,
-Lubo
+-- 
+2.20.1
 
