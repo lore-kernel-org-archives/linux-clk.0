@@ -2,163 +2,94 @@ Return-Path: <SRS0=O/eU=PY=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A69EDC43387
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Jan 2019 15:18:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C0ADC43387
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Jan 2019 16:37:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 671FB205C9
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Jan 2019 15:18:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="nOl7yNlP"
+	by mail.kernel.org (Postfix) with ESMTP id 1535720675
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Jan 2019 16:37:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547656649;
+	bh=0E8482UkW9G/eNFSVcOQ9clPk1Mh0QWM7J0ZBRY6xGo=;
+	h=Subject:In-Reply-To:References:Cc:To:From:Date:List-ID:From;
+	b=tlIdfrHAqoxapwdNXP9LNUsri8Ng1ujh2rixMn5u456K8WaaTQLmMrDxwIhI5RW2U
+	 9khvw/ZCjeIl6Pu0S79Ovas7ZwCGbkv9UVaQ+hAO3asI40QV8eu0iqoOXGNJu21aH6
+	 kglzUTOesfXZHhq8U5hfqd5ibrA0NBPi72A3NFOc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387431AbfAPPSs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 16 Jan 2019 10:18:48 -0500
-Received: from mail-eopbgr1400095.outbound.protection.outlook.com ([40.107.140.95]:31136
-        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731337AbfAPPSs (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 16 Jan 2019 10:18:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WA+sW76ngWkgHuRQ/PbGwznsOWkwRzFqMDxyjNIa9N0=;
- b=nOl7yNlP2zkWX7NDjyYmlh18oEzmRrhR6/HiXUzw5rAKOF1of2a+M9n+1K8OwIFYaRl/6iafq8MT6DqTwVcFO5gkdzSRNcdwWvukK6/s8xfKJc6N4YBO5KvAff6ZddZytd7Ddb72tM+TWAgotLwCX0Fw4mcl5HIFfXmrSt40yQg=
-Received: from TY1PR01MB1769.jpnprd01.prod.outlook.com (52.133.163.146) by
- TY1PR01MB1563.jpnprd01.prod.outlook.com (52.133.162.19) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1516.14; Wed, 16 Jan 2019 15:18:42 +0000
-Received: from TY1PR01MB1769.jpnprd01.prod.outlook.com
- ([fe80::84f5:1420:6fb3:ea62]) by TY1PR01MB1769.jpnprd01.prod.outlook.com
- ([fe80::84f5:1420:6fb3:ea62%4]) with mapi id 15.20.1537.018; Wed, 16 Jan 2019
- 15:18:42 +0000
-From:   Phil Edworthy <phil.edworthy@renesas.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        =?iso-8859-1?Q?Uwe_Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Stephen Boyd <sboyd@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-CC:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH v9 1/2] clk: Add comment about __of_clk_get_by_name()
- error values
-Thread-Topic: [PATCH v9 1/2] clk: Add comment about __of_clk_get_by_name()
- error values
-Thread-Index: AQHUivk3i4Y+f5/feUuqUWNTx+pZGqVtAtEAgASlWYCAQJ6ToA==
-Date:   Wed, 16 Jan 2019 15:18:42 +0000
-Message-ID: <TY1PR01MB17690EDAC0E4B637FF7A81DBF5820@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-References: <20181203111309.3709-1-phil.edworthy@renesas.com>
- <20181203111309.3709-2-phil.edworthy@renesas.com>
- <20181203133040.GN10650@smile.fi.intel.com>
- <TY1PR01MB1769B12A216ED3E76A40A6B7F5A90@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-In-Reply-To: <TY1PR01MB1769B12A216ED3E76A40A6B7F5A90@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=phil.edworthy@renesas.com; 
-x-originating-ip: [193.141.220.21]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;TY1PR01MB1563;20:8ynzqdDimtoOX088lqVenoRUjZ1U9th2NtVpo/N4I+jkn4V0/7OUZ5YkLBzsryuw/WLEP9UABs3xeePPJ20fY2ylk5L3Yqi5X2ovR4SwRL7ctBDRwBG7dDU0S66qR5iBNpsoZqGvmhaDr5mlhUDn5HO2a2EaTXEscM5Q7Se95Xk=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 0187b540-9eb6-42cd-1a18-08d67bc5e6a6
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600109)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:TY1PR01MB1563;
-x-ms-traffictypediagnostic: TY1PR01MB1563:
-x-microsoft-antispam-prvs: <TY1PR01MB1563CFC6C0C4BA53815B52F4F5820@TY1PR01MB1563.jpnprd01.prod.outlook.com>
-x-forefront-prvs: 091949432C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(346002)(376002)(396003)(136003)(366004)(13464003)(189003)(199004)(51914003)(53936002)(9686003)(55016002)(8676002)(476003)(2906002)(6306002)(6246003)(86362001)(66066001)(14454004)(6436002)(186003)(93886005)(53546011)(446003)(66574012)(305945005)(8936002)(6506007)(26005)(102836004)(7696005)(7736002)(76176011)(68736007)(11346002)(81156014)(81166006)(74316002)(5660300001)(110136005)(33656002)(6116002)(54906003)(71200400001)(44832011)(3846002)(316002)(106356001)(99286004)(4326008)(71190400001)(14444005)(25786009)(486006)(478600001)(97736004)(229853002)(105586002)(256004);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB1563;H:TY1PR01MB1769.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: renesas.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: WkvkZUSjBLjL4wr8bNm+lHttIu4rmtzg7LLZXd7W+55f+cvMoUZcqVfncDeOoWGJgca8pPCY6FkDN+VDfBNIUu5a0qoTWzcDv9C8p5fXQI/TvYA7EF8B7z/xMbcB18wmrosMre6kLdCkqpthDu6NHlVRDT+YmQUujDmS301RRkYnr+Iye0qIJmuegH2Tna//VsmU2teAE1UPFBYN/C7+hSCKFp4EzYj3MMlcocxDAcWVoPosdzEBTrsam3+92xDLt8AbMFy6yY849gmzoaqGlyuuHU2zpdnEhlAwWhxEtvDqceQIqj/e0JR9JxOQh/4SAFfsmcCmfZzWp/I7eN0bX7yWYAjWhpcYbGxAND6KKeI3BJZqTRAC6PDC495F8DCbAXA5CmCevQ1cumU4IP4EG53tZ4LzhwLUSLooVYU6VYg=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S2387677AbfAPQh2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 16 Jan 2019 11:37:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40006 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726065AbfAPQh2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 16 Jan 2019 11:37:28 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4AA7220657;
+        Wed, 16 Jan 2019 16:37:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547656647;
+        bh=0E8482UkW9G/eNFSVcOQ9clPk1Mh0QWM7J0ZBRY6xGo=;
+        h=Subject:In-Reply-To:References:Cc:To:From:Date:From;
+        b=o3jDF7qle1YpwxzRG8WWn+0wkNIreblaKhq2B7jUfYftpOlmqWzqGNJDcGPxb7+mN
+         xv3iCDcW15wc5jHgA3vNhuAduoJVgFB2oveKrzoS8mCIbHTc0HTUd4HY2ZAPQnycly
+         D6tkMAdh5+zq9k1nOLVbFzMZKq8vKg8/BPmcVG8k=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0187b540-9eb6-42cd-1a18-08d67bc5e6a6
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Jan 2019 15:18:42.5621
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1563
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] clk: mmp2: avoid disabling the SP clock when unused
+User-Agent: alot/0.8
+In-Reply-To: <20190116093505.1920945-1-lkundrak@v3.sk>
+References: <20190116093505.1920945-1-lkundrak@v3.sk>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lubomir Rintel <lkundrak@v3.sk>, stable@vger.kernel.org
+To:     Lubomir Rintel <lkundrak@v3.sk>,
+        Michael Turquette <mturquette@baylibre.com>
+Message-ID: <154765664632.169631.9344557684702266461@swboyd.mtv.corp.google.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+Date:   Wed, 16 Jan 2019 08:37:26 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+Quoting Lubomir Rintel (2019-01-16 01:35:05)
+> There could be vital functionality running on the SP PJ1 core it can not =
+be
+> restarted just by turning the clock back on.
+>=20
+> On the OLPC laptop, the keyboard controller code runs there. It
+> wouldn't be possible to load the driver for it as a module if the clock
+> is disabled on boot.
+>=20
+> Cc: stable@vger.kernel.org # v4.18+
+> Fixes: commit fc27c2394d96 ("clk: mmp2: add SP clock")
+> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+> ---
+>  drivers/clk/mmp/clk-of-mmp2.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/clk/mmp/clk-of-mmp2.c b/drivers/clk/mmp/clk-of-mmp2.c
+> index f2a1c9bbaa63..3e33f1295f59 100644
+> --- a/drivers/clk/mmp/clk-of-mmp2.c
+> +++ b/drivers/clk/mmp/clk-of-mmp2.c
+> @@ -246,7 +246,7 @@ static struct mmp_param_gate_clk apmu_gate_clks[] =3D=
+ {
+>         {MMP2_CLK_CCIC1, "ccic1_clk", "ccic1_mix_clk", CLK_SET_RATE_PAREN=
+T, APMU_CCIC1, 0x1b, 0x1b, 0x0, 0, &ccic1_lock},
+>         {MMP2_CLK_CCIC1_PHY, "ccic1_phy_clk", "ccic1_mix_clk", CLK_SET_RA=
+TE_PARENT, APMU_CCIC1, 0x24, 0x24, 0x0, 0, &ccic1_lock},
+>         {MMP2_CLK_CCIC1_SPHY, "ccic1_sphy_clk", "ccic1_sphy_div", CLK_SET=
+_RATE_PARENT, APMU_CCIC1, 0x300, 0x300, 0x0, 0, &ccic1_lock},
+> -       {MMP2_CLK_SP, "sp_clk", NULL, CLK_SET_RATE_PARENT, APMU_SP, 0x1b,=
+ 0x1b, 0x0, 0, &sp_lock},
+> +       {MMP2_CLK_SP, "sp_clk", NULL, CLK_SET_RATE_PARENT | CLK_IGNORE_UN=
+USED, APMU_SP, 0x1b, 0x1b, 0x0, 0, &sp_lock},
 
-Any other comments on this patch and patch 2/2 (https://lkml.org/lkml/2018/=
-12/3/326)?
-
-Thanks
-Phil
-
-> -----Original Message-----
-> From: Phil Edworthy
-> Sent: 06 December 2018 12:31
-> To: 'Andy Shevchenko' <andriy.shevchenko@linux.intel.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>; Stephen Boyd
-> <sboyd@kernel.org>; Russell King <linux@armlinux.org.uk>; Geert
-> Uytterhoeven <geert@linux-m68k.org>; Uwe Kleine-K=F6nig <u.kleine-
-> koenig@pengutronix.de>; linux-clk@vger.kernel.org; linux-
-> kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org
-> Subject: RE: [PATCH v9 1/2] clk: Add comment about
-> __of_clk_get_by_name() error values
->=20
-> Hi Andy,
->=20
-> On 03 December 2018 13:31 Andy Shevchenko wrote:
-> > On Mon, Dec 03, 2018 at 11:13:08AM +0000, Phil Edworthy wrote:
-> > > It's not immediately obvious from the code that failure to get a
-> > > clock provider can return either -ENOENT or -EINVAL. Therefore, add
-> > > a comment to highlight this.
-> >
-> > > +/*
-> > > + * Beware the return values when np is valid, but no clock provider
-> > > +is
-> > found.
-> > > + * If name =3D NULL, the function returns -ENOENT.
-> > > + * If name !=3D NULL, the function returns -EINVAL. This is because
-> > > +__of_clk_get()
-> >
-> > I would start new sentence from new line (this will emphasize the
-> > possible
-> > variants)
-> >
-> >  * This is ...
-> I disagree, the explanation is specifically related to the case where the
-> function returns -EINVAL. Though this is a nit, so I'm not really bothere=
-d
-> either way.
->=20
-> Thanks for the review!
-> Phil
->=20
-> >  Otherwise looks good to me:
-> >
-> > Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> >
-> > > + * is called even if of_property_match_string() returns an error.
-> > > + */
-> > >  static struct clk *__of_clk_get_by_name(struct device_node *np,
-> > >  					const char *dev_id,
-> > >  					const char *name)
-> > > --
-> > > 2.17.1
-> > >
-> >
-> > --
-> > With Best Regards,
-> > Andy Shevchenko
-> >
+Is it a critical clk that should never be turned off? If so, mark it as
+CLK_IS_CRITICAL. Either way, please add a comment in the code about why
+CLK_IGNORE_UNUSED or CLK_IS_CRITICAL is used.
 
