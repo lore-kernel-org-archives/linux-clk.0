@@ -2,58 +2,58 @@ Return-Path: <SRS0=O/eU=PY=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33004C43612
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Jan 2019 17:55:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C284C43387
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Jan 2019 17:55:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E19D520859
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Jan 2019 17:55:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B879720859
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Jan 2019 17:55:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="Cr+qjYQ0"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="WqWEQS4l"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727635AbfAPRzK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 16 Jan 2019 12:55:10 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:37189 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727804AbfAPRyz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Jan 2019 12:54:55 -0500
-Received: by mail-wm1-f67.google.com with SMTP id g67so2960916wmd.2
-        for <linux-clk@vger.kernel.org>; Wed, 16 Jan 2019 09:54:53 -0800 (PST)
+        id S1727802AbfAPRzL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 16 Jan 2019 12:55:11 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:42660 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727774AbfAPRyx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Jan 2019 12:54:53 -0500
+Received: by mail-wr1-f68.google.com with SMTP id q18so7948211wrx.9
+        for <linux-clk@vger.kernel.org>; Wed, 16 Jan 2019 09:54:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=ON9b15ZwfrikGupCu78N3jweJWBpOTUz81iElHrpQ5c=;
-        b=Cr+qjYQ0PyPM428mvNPohQRIdPlfqXNvo6QmAkqDsxAuTgJPVN1CdEgT/mdZupdTTF
-         Cx6mPlO5LNu8mmOH/G4QwpFFRQxATPGzn4wyTlxZ5WccD/Bc3sS31WQUbRnPAXjeHH0P
-         kIrduBZkFinQ18MHYrpj1JGGD8s5SJPZUD7YS4WFK3pv1TGNL/AvGR2dJSB7PKaNcOcT
-         HcsGr00BeYwdmyOzmYfvNP74ivnXQFx+Mp2/rLXTrRpOIa4n/wtChFUiIvEFqdqLEi+i
-         oPAKD4blrjvqbWNlhKV7TB5c4GZU+uJg+SZmyLtgzMhHIlzL2DpOJZ1BSS5ir6H3eR7W
-         m3TA==
+        bh=ZEFgIUtqQbsi+JQedq7tZ44e0QX9Tj/+bq0nOMFDQxo=;
+        b=WqWEQS4l3cv9mvkBmJx/pU7rAbx39S1J9STqryyUF160UnzNMbPRNAcGFoADcjh/ai
+         Y0HLj5rezE12Y6SqrSHVyRQ2DHNRky91VZn2GOpWnO88dK9uwAWYw3TT3L7RVMVhpvjr
+         MPRdStIa7rih0uehNegWLknAbL0M9aiOFj9VZqIFHkldwVpKHwhnXoJgeMti4ucZJ2ah
+         a6GXdrNWVrcrEayZVSHigs0qdba61s6zSsQxJuCFj4aMygen0O752BWVTrr38GKD/vaM
+         eaZpYv1QxEOcov3Ih3JAsae5nZSmzaRUX16e2vxLF+BdETtHcF5IrwxcZQpBz69pwxql
+         +Uow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ON9b15ZwfrikGupCu78N3jweJWBpOTUz81iElHrpQ5c=;
-        b=ekB/F3ji2+doguwGi336FIEnxP10kiq1T0kvsB9nQ8CJIQBGQRrmkgPI12eoDz7Xnm
-         9k+yQbieQTWNkrRxboti7sKE+YAtfwjThHf28Ajiha6rISIoEj3gd1YewAK/cl6s5n0E
-         CfeEwq+ajGWZdvecZ7q9PkXKd/uZhLyKBql9ixBVn6tzZGfCPElAmO2gqPVlm2XM9m/2
-         6ZIuwhYduWx26VTM93LXRJKI5v1v0AvZSXA6KxTAJjn0qUbPSPLaAtqV3hXPuIPT0rQc
-         3Pm1L6ZzzhoKugctBfVn7u51unK3qicdUiSaS1Hg/52MiCtrOtulCJiQB3dGRD5hjIFI
-         uVog==
-X-Gm-Message-State: AJcUukddx+oq5JiwzQh8jmAvHqGpNcgPWAftNWPdGB/2fz/oJv/9r2O0
-        BiZXneIf4p1nMcXGj2Ju3zfxFA==
-X-Google-Smtp-Source: ALg8bN7ilB2A3dd+B4h7VhDCTEwaseWaYU/mcfc5QyT9hjbGEwuYWNKyK7f3cJC99pvYaFMxj36IVw==
-X-Received: by 2002:a1c:6607:: with SMTP id a7mr8233044wmc.129.1547661292863;
-        Wed, 16 Jan 2019 09:54:52 -0800 (PST)
+        bh=ZEFgIUtqQbsi+JQedq7tZ44e0QX9Tj/+bq0nOMFDQxo=;
+        b=C9TvTVNjnxdtkiTmPDJJC2MkcgUWPvGxzJ8xo0Lb6ni+mdoEAO3Tzw5SQkwBSoQX4V
+         dMF3B0XEt4K5UeNTelKVyN04Gc2HoP5JSCr7Q85wZW0H5SXrjcOJYS/QVcSb6cE1OPrx
+         oi8e76fhPm7g+5Q1AggnPYBPqTn0Lz+XZ8nYHfx16CCkix+EzaeeeSgwFBYomYOS8EVg
+         vAggJCoL1QSubpjnWR2pMUvq5UuxYlU3HyXtw+hn/AVuxiPkwaGwmuErw7jUQmoKXr74
+         GcHEKD5IVoc3pJD5D25M82y2AF87oG7Zk1TqRDTJnCb2tlZl1/4lMFeESSmYaADK9WP1
+         GEsA==
+X-Gm-Message-State: AJcUukfqJ8u2ZzqZdMtRZq4vDcR9gN0Xxc/GiyQE/sKXEpPjHO283g3Z
+        /x99GDThS5MNxU85RveaP/JXCg==
+X-Google-Smtp-Source: ALg8bN7fgEmFsOaWhxae7UzX7ACAptcBtXcZsD04VDB8B1iFcXClSYLM2Tw0wJKR0vfbyLTL8so8vg==
+X-Received: by 2002:a5d:470b:: with SMTP id y11mr8528017wrq.16.1547661290420;
+        Wed, 16 Jan 2019 09:54:50 -0800 (PST)
 Received: from boomer.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id z9sm68703861wrs.63.2019.01.16.09.54.51
+        by smtp.googlemail.com with ESMTPSA id z9sm68703861wrs.63.2019.01.16.09.54.49
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 16 Jan 2019 09:54:52 -0800 (PST)
+        Wed, 16 Jan 2019 09:54:49 -0800 (PST)
 From:   Jerome Brunet <jbrunet@baylibre.com>
 To:     Neil Armstrong <narmstrong@baylibre.com>
 Cc:     Jerome Brunet <jbrunet@baylibre.com>,
@@ -63,9 +63,9 @@ Cc:     Jerome Brunet <jbrunet@baylibre.com>,
         linux-amlogic@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, patchwork-bot+notify@kernel.org
-Subject: [PATCH 3/3] clk: meson: ao-clkc: claim clock controller input clocks from DT
-Date:   Wed, 16 Jan 2019 18:54:35 +0100
-Message-Id: <20190116175435.4990-4-jbrunet@baylibre.com>
+Subject: [PATCH 1/3] clk: meson: gxbb: claim clock controller input clock from DT
+Date:   Wed, 16 Jan 2019 18:54:33 +0100
+Message-Id: <20190116175435.4990-2-jbrunet@baylibre.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190116175435.4990-1-jbrunet@baylibre.com>
 References: <20190116175435.4990-1-jbrunet@baylibre.com>
@@ -76,268 +76,167 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Instead of relying on a fixed names for the differents input clocks
-of the controller, get them through DT.
+Instead of relying on a fixed name for the xtal clock, claim the
+controller input clock trough DT.
 
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- drivers/clk/meson/axg-aoclk.c   | 22 +++++++++++++++-----
- drivers/clk/meson/gxbb-aoclk.c  | 25 ++++++++++++++++------
- drivers/clk/meson/meson-aoclk.c | 37 ++++++++++++++++++++++++++++++++-
- drivers/clk/meson/meson-aoclk.h | 12 +++++++++--
- 4 files changed, 82 insertions(+), 14 deletions(-)
+ drivers/clk/meson/gxbb.c | 37 ++++++++++++++++++++++++-------------
+ 1 file changed, 24 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/clk/meson/axg-aoclk.c b/drivers/clk/meson/axg-aoclk.c
-index 5f518be144ce..5701f5840b75 100644
---- a/drivers/clk/meson/axg-aoclk.c
-+++ b/drivers/clk/meson/axg-aoclk.c
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index 65f2599e5243..ecf9a8f6281c 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
 @@ -16,6 +16,8 @@
- #include "meson-aoclk.h"
- #include "axg-aoclk.h"
+ #include "gxbb.h"
+ #include "clk-regmap.h"
  
-+#define IN_PREFIX "ao-in-"
++#define IN_PREFIX "ee-in-"
 +
- /*
-  * AO Configuration Clock registers offsets
-  * Register offsets from the data sheet must be multiplied by 4.
-@@ -38,7 +40,7 @@ static struct clk_regmap axg_aoclk_##_name = {				\
- 	.hw.init = &(struct clk_init_data) {				\
- 		.name =  "axg_ao_" #_name,				\
- 		.ops = &clk_regmap_gate_ops,				\
--		.parent_names = (const char *[]){ "clk81" },		\
-+		.parent_names = (const char *[]){ IN_PREFIX "mpeg-clk" }, \
- 		.num_parents = 1,					\
- 		.flags = CLK_IGNORE_UNUSED,				\
- 	},								\
-@@ -60,7 +62,7 @@ static struct clk_regmap axg_aoclk_cts_oscin = {
+ static DEFINE_SPINLOCK(meson_clk_lock);
+ 
+ static const struct pll_params_table gxbb_gp0_pll_params_table[] = {
+@@ -118,7 +120,7 @@ static struct clk_regmap gxbb_fixed_pll_dco = {
  	.hw.init = &(struct clk_init_data){
- 		.name = "cts_oscin",
- 		.ops = &clk_regmap_gate_ro_ops,
+ 		.name = "fixed_pll_dco",
+ 		.ops = &meson_clk_pll_ro_ops,
 -		.parent_names = (const char *[]){ "xtal" },
 +		.parent_names = (const char *[]){ IN_PREFIX "xtal" },
  		.num_parents = 1,
  	},
  };
-@@ -167,7 +169,7 @@ static struct clk_regmap axg_aoclk_cts_rtc_oscin = {
- 		.name = "axg_ao_cts_rtc_oscin",
- 		.ops = &clk_regmap_mux_ops,
- 		.parent_names = (const char *[]){ "axg_ao_32k",
--						  "axg_ext_32k" },
-+						  IN_PREFIX "ext_32k-0" },
- 		.num_parents = 2,
- 		.flags = CLK_SET_RATE_PARENT,
- 	},
-@@ -183,7 +185,7 @@ static struct clk_regmap axg_aoclk_clk81 = {
+@@ -148,7 +150,7 @@ static struct clk_fixed_factor gxbb_hdmi_pll_pre_mult = {
  	.hw.init = &(struct clk_init_data){
- 		.name = "axg_ao_clk81",
- 		.ops = &clk_regmap_mux_ro_ops,
--		.parent_names = (const char *[]){ "clk81",
-+		.parent_names = (const char *[]){ IN_PREFIX "mpeg-clk",
- 						  "axg_ao_cts_rtc_oscin"},
- 		.num_parents = 2,
- 		.flags = CLK_SET_RATE_PARENT,
-@@ -199,7 +201,8 @@ static struct clk_regmap axg_aoclk_saradc_mux = {
- 	.hw.init = &(struct clk_init_data){
- 		.name = "axg_ao_saradc_mux",
- 		.ops = &clk_regmap_mux_ops,
--		.parent_names = (const char *[]){ "xtal", "axg_ao_clk81" },
-+		.parent_names = (const char *[]){ IN_PREFIX "xtal",
-+						  "axg_ao_clk81" },
- 		.num_parents = 2,
- 	},
- };
-@@ -285,6 +288,12 @@ static const struct clk_hw_onecell_data axg_aoclk_onecell_data = {
- 	.num = NR_CLKS,
- };
- 
-+static const struct meson_aoclk_input axg_aoclk_inputs[] = {
-+	{ .name = "xtal",	.required = true  },
-+	{ .name = "mpeg-clk",	.required = true  },
-+	{ .name = "ext-32k-0",	.required = false },
-+};
-+
- static const struct meson_aoclk_data axg_aoclkc_data = {
- 	.reset_reg	= AO_RTI_GEN_CNTL_REG0,
- 	.num_reset	= ARRAY_SIZE(axg_aoclk_reset),
-@@ -292,6 +301,9 @@ static const struct meson_aoclk_data axg_aoclkc_data = {
- 	.num_clks	= ARRAY_SIZE(axg_aoclk_regmap),
- 	.clks		= axg_aoclk_regmap,
- 	.hw_data	= &axg_aoclk_onecell_data,
-+	.inputs		= axg_aoclk_inputs,
-+	.num_inputs	= ARRAY_SIZE(axg_aoclk_inputs),
-+	.input_prefix	= IN_PREFIX,
- };
- 
- static const struct of_device_id axg_aoclkc_match_table[] = {
-diff --git a/drivers/clk/meson/gxbb-aoclk.c b/drivers/clk/meson/gxbb-aoclk.c
-index 5fa57b623b8f..510b6a7d2f18 100644
---- a/drivers/clk/meson/gxbb-aoclk.c
-+++ b/drivers/clk/meson/gxbb-aoclk.c
-@@ -9,6 +9,8 @@
- #include "meson-aoclk.h"
- #include "gxbb-aoclk.h"
- 
-+#define IN_PREFIX "ao-in-"
-+
- /* AO Configuration Clock registers offsets */
- #define AO_RTI_PWR_CNTL_REG1	0x0c
- #define AO_RTI_PWR_CNTL_REG0	0x10
-@@ -27,7 +29,7 @@ static struct clk_regmap _name##_ao = {					\
- 	.hw.init = &(struct clk_init_data) {				\
- 		.name = #_name "_ao",					\
- 		.ops = &clk_regmap_gate_ops,				\
--		.parent_names = (const char *[]){ "clk81" },		\
-+		.parent_names = (const char *[]){ IN_PREFIX "mpeg-clk" }, \
- 		.num_parents = 1,					\
- 		.flags = CLK_IGNORE_UNUSED,				\
- 	},								\
-@@ -48,7 +50,7 @@ static struct clk_regmap ao_cts_oscin = {
- 	.hw.init = &(struct clk_init_data){
- 		.name = "ao_cts_oscin",
- 		.ops = &clk_regmap_gate_ro_ops,
+ 		.name = "hdmi_pll_pre_mult",
+ 		.ops = &clk_fixed_factor_ops,
 -		.parent_names = (const char *[]){ "xtal" },
 +		.parent_names = (const char *[]){ IN_PREFIX "xtal" },
  		.num_parents = 1,
  	},
  };
-@@ -155,9 +157,9 @@ static struct clk_regmap ao_cts_rtc_oscin = {
+@@ -241,7 +243,7 @@ static struct clk_regmap gxl_hdmi_pll_dco = {
  	.hw.init = &(struct clk_init_data){
- 		.name = "ao_cts_rtc_oscin",
+ 		.name = "hdmi_pll_dco",
+ 		.ops = &meson_clk_pll_ro_ops,
+-		.parent_names = (const char *[]){ "xtal" },
++		.parent_names = (const char *[]){ IN_PREFIX "xtal" },
+ 		.num_parents = 1,
+ 		/*
+ 		 * Display directly handle hdmi pll registers ATM, we need
+@@ -378,7 +380,7 @@ static struct clk_regmap gxbb_sys_pll_dco = {
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "sys_pll_dco",
+ 		.ops = &meson_clk_pll_ro_ops,
+-		.parent_names = (const char *[]){ "xtal" },
++		.parent_names = (const char *[]){ IN_PREFIX "xtal" },
+ 		.num_parents = 1,
+ 	},
+ };
+@@ -439,7 +441,7 @@ static struct clk_regmap gxbb_gp0_pll_dco = {
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "gp0_pll_dco",
+ 		.ops = &meson_clk_pll_ops,
+-		.parent_names = (const char *[]){ "xtal" },
++		.parent_names = (const char *[]){ IN_PREFIX "xtal" },
+ 		.num_parents = 1,
+ 	},
+ };
+@@ -491,7 +493,7 @@ static struct clk_regmap gxl_gp0_pll_dco = {
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "gp0_pll_dco",
+ 		.ops = &meson_clk_pll_ops,
+-		.parent_names = (const char *[]){ "xtal" },
++		.parent_names = (const char *[]){ IN_PREFIX "xtal" },
+ 		.num_parents = 1,
+ 	},
+ };
+@@ -789,7 +791,7 @@ static struct clk_regmap gxbb_mpll2 = {
+ 
+ static u32 mux_table_clk81[]	= { 0, 2, 3, 4, 5, 6, 7 };
+ static const char * const clk81_parent_names[] = {
+-	"xtal", "fclk_div7", "mpll1", "mpll2", "fclk_div4",
++	IN_PREFIX "xtal", "fclk_div7", "mpll1", "mpll2", "fclk_div4",
+ 	"fclk_div3", "fclk_div5"
+ };
+ 
+@@ -852,7 +854,7 @@ static struct clk_regmap gxbb_sar_adc_clk_sel = {
+ 		.name = "sar_adc_clk_sel",
  		.ops = &clk_regmap_mux_ops,
--		.parent_names = (const char *[]){ "ext_32k_0",
--						  "ext_32k_1",
--						  "ext_32k_2",
-+		.parent_names = (const char *[]){ IN_PREFIX "ext-32k-0",
-+						  IN_PREFIX "ext-32k-1",
-+						  IN_PREFIX "ext-32k-2",
- 						  "ao_32k" },
- 		.num_parents = 4,
- 		.flags = CLK_SET_RATE_PARENT,
-@@ -174,7 +176,7 @@ static struct clk_regmap ao_clk81 = {
- 	.hw.init = &(struct clk_init_data){
- 		.name = "ao_clk81",
- 		.ops = &clk_regmap_mux_ro_ops,
--		.parent_names = (const char *[]){ "clk81",
-+		.parent_names = (const char *[]){ IN_PREFIX "mpeg-clk",
- 						  "ao_cts_rtc_oscin" },
+ 		/* NOTE: The datasheet doesn't list the parents for bit 10 */
+-		.parent_names = (const char *[]){ "xtal", "clk81", },
++		.parent_names = (const char *[]){ IN_PREFIX "xtal", "clk81", },
  		.num_parents = 2,
- 		.flags = CLK_SET_RATE_PARENT,
-@@ -257,6 +259,14 @@ static const struct clk_hw_onecell_data gxbb_aoclk_onecell_data = {
- 	.num = NR_CLKS,
+ 	},
+ };
+@@ -891,7 +893,7 @@ static struct clk_regmap gxbb_sar_adc_clk = {
+  */
+ 
+ static const char * const gxbb_mali_0_1_parent_names[] = {
+-	"xtal", "gp0_pll", "mpll2", "mpll1", "fclk_div7",
++	IN_PREFIX "xtal", "gp0_pll", "mpll2", "mpll1", "fclk_div7",
+ 	"fclk_div4", "fclk_div3", "fclk_div5"
  };
  
-+static const struct meson_aoclk_input gxbb_aoclk_inputs[] = {
-+	{ .name = "xtal",	.required = true,  },
-+	{ .name = "mpeg-clk",	.required = true,  },
-+	{. name = "ext-32k-0",	.required = false, },
-+	{. name = "ext-32k-1",	.required = false, },
-+	{. name = "ext-32k-2",	.required = false, },
-+};
-+
- static const struct meson_aoclk_data gxbb_aoclkc_data = {
- 	.reset_reg	= AO_RTI_GEN_CNTL_REG0,
- 	.num_reset	= ARRAY_SIZE(gxbb_aoclk_reset),
-@@ -264,6 +274,9 @@ static const struct meson_aoclk_data gxbb_aoclkc_data = {
- 	.num_clks	= ARRAY_SIZE(gxbb_aoclk),
- 	.clks		= gxbb_aoclk,
- 	.hw_data	= &gxbb_aoclk_onecell_data,
-+	.inputs		= gxbb_aoclk_inputs,
-+	.num_inputs	= ARRAY_SIZE(gxbb_aoclk_inputs),
-+	.input_prefix	= IN_PREFIX,
+@@ -1153,7 +1155,7 @@ static struct clk_regmap gxbb_32k_clk = {
  };
  
- static const struct of_device_id gxbb_aoclkc_match_table[] = {
-diff --git a/drivers/clk/meson/meson-aoclk.c b/drivers/clk/meson/meson-aoclk.c
-index 258c8d259ea1..7b9d194ccc3b 100644
---- a/drivers/clk/meson/meson-aoclk.c
-+++ b/drivers/clk/meson/meson-aoclk.c
-@@ -14,7 +14,7 @@
- #include <linux/reset-controller.h>
- #include <linux/mfd/syscon.h>
- #include <linux/of_device.h>
--#include "clk-regmap.h"
-+#include <linux/slab.h>
- #include "meson-aoclk.h"
- 
- static int meson_aoclk_do_reset(struct reset_controller_dev *rcdev,
-@@ -31,6 +31,37 @@ static const struct reset_control_ops meson_aoclk_reset_ops = {
- 	.reset = meson_aoclk_do_reset,
+ static const char * const gxbb_32k_clk_parent_names[] = {
+-	"xtal", "cts_slow_oscin", "fclk_div3", "fclk_div5"
++	IN_PREFIX "xtal", "cts_slow_oscin", "fclk_div3", "fclk_div5"
  };
  
-+static int meson_aoclkc_register_inputs(struct device *dev,
-+					struct meson_aoclk_data *data)
-+{
-+	struct clk_hw *hw;
-+	char *str;
-+	int i;
-+
-+	for (i = 0; i < data->num_inputs; i++) {
-+		const struct meson_aoclk_input *in = &data->inputs[i];
-+
-+		str = kasprintf(GFP_KERNEL, "%s%s", data->input_prefix,
-+				in->name);
-+		if (!str)
-+			return -ENOMEM;
-+
-+		hw = meson_clk_hw_register_input(dev, in->name, str, 0);
-+		kfree(str);
-+
-+		if (IS_ERR(hw)) {
-+			if (!in->required && PTR_ERR(hw) == -ENOENT)
-+				continue;
-+			else if (PTR_ERR(hw) != -EPROBE_DEFER)
-+				dev_err(dev, "failed to register input %s\n",
-+					in->name);
-+			return PTR_ERR(hw);
-+		}
-+	}
-+
-+	return 0;
-+}
-+
- int meson_aoclkc_probe(struct platform_device *pdev)
+ static struct clk_regmap gxbb_32k_clk_sel = {
+@@ -1172,7 +1174,7 @@ static struct clk_regmap gxbb_32k_clk_sel = {
+ };
+ 
+ static const char * const gxbb_sd_emmc_clk0_parent_names[] = {
+-	"xtal", "fclk_div2", "fclk_div3", "fclk_div5", "fclk_div7",
++	IN_PREFIX "xtal", "fclk_div2", "fclk_div3", "fclk_div5", "fclk_div7",
+ 
+ 	/*
+ 	 * Following these parent clocks, we should also have had mpll2, mpll3
+@@ -2138,7 +2140,7 @@ static struct clk_regmap gxbb_hdmi_tx = {
+ /* HDMI Clocks */
+ 
+ static const char * const gxbb_hdmi_parent_names[] = {
+-	"xtal", "fclk_div4", "fclk_div3", "fclk_div5"
++	IN_PREFIX "xtal", "fclk_div4", "fclk_div3", "fclk_div5"
+ };
+ 
+ static struct clk_regmap gxbb_hdmi_sel = {
+@@ -2285,7 +2287,7 @@ static struct clk_regmap gxbb_vdec_hevc = {
+ static u32 mux_table_gen_clk[]	= { 0, 4, 5, 6, 7, 8,
+ 				    9, 10, 11, 13, 14, };
+ static const char * const gen_clk_parent_names[] = {
+-	"xtal", "vdec_1", "vdec_hevc", "mpll0", "mpll1", "mpll2",
++	IN_PREFIX "xtal", "vdec_1", "vdec_hevc", "mpll0", "mpll1", "mpll2",
+ 	"fclk_div4", "fclk_div3", "fclk_div5", "fclk_div7", "gp0_pll",
+ };
+ 
+@@ -3085,6 +3087,7 @@ static const struct of_device_id clkc_match_table[] = {
+ static int gxbb_clkc_probe(struct platform_device *pdev)
  {
- 	struct meson_aoclk_reset_controller *rstc;
-@@ -53,6 +84,10 @@ int meson_aoclkc_probe(struct platform_device *pdev)
- 		return PTR_ERR(regmap);
+ 	const struct clkc_data *clkc_data;
++	struct clk_hw *input;
+ 	struct regmap *map;
+ 	int ret, i;
+ 	struct device *dev = &pdev->dev;
+@@ -3100,6 +3103,14 @@ static int gxbb_clkc_probe(struct platform_device *pdev)
+ 		return PTR_ERR(map);
  	}
  
-+	ret = meson_aoclkc_register_inputs(dev, data);
-+	if (ret)
++	input = meson_clk_hw_register_input(dev, "xtal", IN_PREFIX "xtal", 0);
++	if (IS_ERR(input)) {
++		ret = PTR_ERR(input);
++		if (ret != -EPROBE_DEFER)
++			dev_err(dev, "failed to get input clock");
 +		return ret;
++	}
 +
- 	/* Reset Controller */
- 	rstc->data = data;
- 	rstc->regmap = regmap;
-diff --git a/drivers/clk/meson/meson-aoclk.h b/drivers/clk/meson/meson-aoclk.h
-index ab2819e88922..0758b35d4427 100644
---- a/drivers/clk/meson/meson-aoclk.h
-+++ b/drivers/clk/meson/meson-aoclk.h
-@@ -13,14 +13,22 @@
- 
- #include <linux/platform_device.h>
- #include <linux/reset-controller.h>
--#include "clk-regmap.h"
-+#include "clkc.h"
-+
-+struct meson_aoclk_input {
-+	const char *name;
-+	bool required;
-+};
- 
- struct meson_aoclk_data {
- 	const unsigned int			reset_reg;
- 	const int				num_reset;
- 	const unsigned int			*reset;
--	int					num_clks;
-+	const int				num_clks;
- 	struct clk_regmap			**clks;
-+	const int				num_inputs;
-+	const struct meson_aoclk_input		*inputs;
-+	const char				*input_prefix;
- 	const struct clk_hw_onecell_data	*hw_data;
- };
- 
+ 	/* Populate regmap for the common regmap backed clocks */
+ 	for (i = 0; i < ARRAY_SIZE(gx_clk_regmaps); i++)
+ 		gx_clk_regmaps[i]->map = map;
 -- 
 2.20.1
 
