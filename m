@@ -2,125 +2,89 @@ Return-Path: <SRS0=O/eU=PY=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 308C8C43387
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Jan 2019 08:58:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59621C43387
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Jan 2019 09:35:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF55020859
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Jan 2019 08:58:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ibVcyo/w"
+	by mail.kernel.org (Postfix) with ESMTP id 28E2620840
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Jan 2019 09:35:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390202AbfAPI6S (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 16 Jan 2019 03:58:18 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:48878 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389533AbfAPI6S (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Jan 2019 03:58:18 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0G8wBql013562;
-        Wed, 16 Jan 2019 02:58:11 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1547629091;
-        bh=uodxHO5sh4LiIItRYqEG+2BUEjlHfSHuPSpyLZ43uPg=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=ibVcyo/w9quCt08fI4may+VmX/J8xH61hgzH1+dXZrxLsbMOWsI4kPg8utpiYoEwA
-         iSz9phfximNrhdgvdLSJbWiChsoNo8Ry+TJ2ZEjRE/VTVE4kCYovbGodj88rH76kWP
-         RGaefO3PXL92gSWYtP00WLy85FpuY++IZj0c2mm8=
-Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0G8wBZZ092961
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 16 Jan 2019 02:58:11 -0600
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 16
- Jan 2019 02:58:10 -0600
-Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Wed, 16 Jan 2019 02:58:10 -0600
-Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0G8w62Q001016;
-        Wed, 16 Jan 2019 02:58:07 -0600
-Subject: Re: [PATCH v2 1/6] dt-bindings: phy-qcom: Add support for msm8998 usb
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Jeffrey Hugo <jhugo@codeaurora.org>
-CC:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <andy.gross@linaro.org>, <david.brown@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <gregkh@linuxfoundation.org>, <balbi@kernel.org>,
-        <linux-usb@vger.kernel.org>
-References: <1547483771-5334-1-git-send-email-jhugo@codeaurora.org>
- <20190115180839.GC28907@builder>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <899dbd3d-2ce2-9a31-aca3-0ca936bdd2dd@ti.com>
-Date:   Wed, 16 Jan 2019 14:27:43 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        id S2388957AbfAPJfN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 16 Jan 2019 04:35:13 -0500
+Received: from shell.v3.sk ([90.176.6.54]:55902 "EHLO shell.v3.sk"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388935AbfAPJfN (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 16 Jan 2019 04:35:13 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 4FFDB527B1;
+        Wed, 16 Jan 2019 10:35:10 +0100 (CET)
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id iVZGMiR5SVVE; Wed, 16 Jan 2019 10:35:08 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id D14BA5283F;
+        Wed, 16 Jan 2019 10:35:07 +0100 (CET)
+X-Virus-Scanned: amavisd-new at zimbra.v3.sk
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id frTvlp2_1CTS; Wed, 16 Jan 2019 10:35:07 +0100 (CET)
+Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 3303B527B1;
+        Wed, 16 Jan 2019 10:35:07 +0100 (CET)
+From:   Lubomir Rintel <lkundrak@v3.sk>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lubomir Rintel <lkundrak@v3.sk>, stable@vger.kernel.org
+Subject: [PATCH] clk: mmp2: avoid disabling the SP clock when unused
+Date:   Wed, 16 Jan 2019 10:35:05 +0100
+Message-Id: <20190116093505.1920945-1-lkundrak@v3.sk>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20190115180839.GC28907@builder>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+There could be vital functionality running on the SP PJ1 core it can not =
+be
+restarted just by turning the clock back on.
 
+On the OLPC laptop, the keyboard controller code runs there. It
+wouldn't be possible to load the driver for it as a module if the clock
+is disabled on boot.
 
-On 15/01/19 11:38 PM, Bjorn Andersson wrote:
-> On Mon 14 Jan 08:36 PST 2019, Jeffrey Hugo wrote:
-> 
->> USB on msm8998 utilizes the QUSB2 and QMP phys, similar to sdm845.
->>
->> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
->> ---
->>  Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt   | 5 +++++
->>  Documentation/devicetree/bindings/phy/qcom-qusb2-phy.txt | 1 +
->>  2 files changed, 6 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt b/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
->> index 41a1074..6061b6f 100644
->> --- a/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
->> +++ b/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
->> @@ -9,6 +9,7 @@ Required properties:
->>  	       "qcom,ipq8074-qmp-pcie-phy" for PCIe phy on IPQ8074
->>  	       "qcom,msm8996-qmp-pcie-phy" for 14nm PCIe phy on msm8996,
->>  	       "qcom,msm8996-qmp-usb3-phy" for 14nm USB3 phy on msm8996,
->> +	       "qcom,msm8998-qmp-usb3-phy" for USB3 QMP V3 phy on msm8998,
->>  	       "qcom,sdm845-qmp-usb3-phy" for USB3 QMP V3 phy on sdm845,
->>  	       "qcom,sdm845-qmp-usb3-uni-phy" for USB3 QMP V3 UNI phy on sdm845,
->>  	       "qcom,sdm845-qmp-ufs-phy" for UFS QMP phy on sdm845.
->> @@ -42,6 +43,8 @@ Required properties:
->>  			"aux", "cfg_ahb", "ref".
->>  		For "qcom,msm8996-qmp-usb3-phy" must contain:
->>  			"aux", "cfg_ahb", "ref".
->> +		For "qcom,msm8998-qmp-usb3-phy" must contain:
->> +			"aux", "cfg_ahb", "ref".
->>  		For "qcom,sdm845-qmp-usb3-phy" must contain:
->>  			"aux", "cfg_ahb", "ref", "com_aux".
->>  		For "qcom,sdm845-qmp-usb3-uni-phy" must contain:
->> @@ -60,6 +63,8 @@ Required properties:
->>  		For "qcom,msm8996-qmp-pcie-phy" must contain:
->>  			"phy", "common", "cfg".
->>  		For "qcom,msm8996-qmp-usb3-phy" must contain
->> +		 "phy", "common".
-> 
-> Odd indentation.
-> 
-> 
-> Apart from this, you have my
-> 
-> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: stable@vger.kernel.org # v4.18+
+Fixes: commit fc27c2394d96 ("clk: mmp2: add SP clock")
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+---
+ drivers/clk/mmp/clk-of-mmp2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Fixed the indentation and merged it.
+diff --git a/drivers/clk/mmp/clk-of-mmp2.c b/drivers/clk/mmp/clk-of-mmp2.=
+c
+index f2a1c9bbaa63..3e33f1295f59 100644
+--- a/drivers/clk/mmp/clk-of-mmp2.c
++++ b/drivers/clk/mmp/clk-of-mmp2.c
+@@ -246,7 +246,7 @@ static struct mmp_param_gate_clk apmu_gate_clks[] =3D=
+ {
+ 	{MMP2_CLK_CCIC1, "ccic1_clk", "ccic1_mix_clk", CLK_SET_RATE_PARENT, APM=
+U_CCIC1, 0x1b, 0x1b, 0x0, 0, &ccic1_lock},
+ 	{MMP2_CLK_CCIC1_PHY, "ccic1_phy_clk", "ccic1_mix_clk", CLK_SET_RATE_PAR=
+ENT, APMU_CCIC1, 0x24, 0x24, 0x0, 0, &ccic1_lock},
+ 	{MMP2_CLK_CCIC1_SPHY, "ccic1_sphy_clk", "ccic1_sphy_div", CLK_SET_RATE_=
+PARENT, APMU_CCIC1, 0x300, 0x300, 0x0, 0, &ccic1_lock},
+-	{MMP2_CLK_SP, "sp_clk", NULL, CLK_SET_RATE_PARENT, APMU_SP, 0x1b, 0x1b,=
+ 0x0, 0, &sp_lock},
++	{MMP2_CLK_SP, "sp_clk", NULL, CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, =
+APMU_SP, 0x1b, 0x1b, 0x0, 0, &sp_lock},
+ };
+=20
+ static void mmp2_axi_periph_clk_init(struct mmp2_clk_unit *pxa_unit)
+--=20
+2.20.1
 
-Thanks
-Kishon
