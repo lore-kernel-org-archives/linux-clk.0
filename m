@@ -2,129 +2,136 @@ Return-Path: <SRS0=O/eU=PY=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0192CC43612
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Jan 2019 19:46:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 086F5C43444
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Jan 2019 22:05:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1C1220868
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Jan 2019 19:46:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CAB32206C2
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Jan 2019 22:05:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="bTuW51YH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731484AbfAPTp6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 16 Jan 2019 14:45:58 -0500
-Received: from relmlor1.renesas.com ([210.160.252.171]:10113 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731174AbfAPTp6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Jan 2019 14:45:58 -0500
-X-IronPort-AV: E=Sophos;i="5.56,487,1539615600"; 
-   d="scan'208";a="5357751"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 17 Jan 2019 04:45:55 +0900
-Received: from fabrizio-dev.ree.adwin.renesas.com (unknown [10.226.37.13])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 0EA9E401DD31;
-        Thu, 17 Jan 2019 04:45:48 +0900 (JST)
-From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Thierry Reding <treding@nvidia.com>,
-        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Johan Hovold <johan@kernel.org>,
-        Lukasz Majewski <lukma@denx.de>,
-        Michal Simek <monstr@monstr.eu>,
-        =?UTF-8?q?Michal=20Vok=C3=A1=C4=8D?= <michal.vokac@ysoft.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Ben Whitten <ben.whitten@gmail.com>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-can@vger.kernel.org, netdev@vger.kernel.org,
-        linux-clk@vger.kernel.org, Biju Das <biju.das@bp.renesas.com>,
-        ebiharaml@si-linux.co.jp
-Subject: [PATCH v2 08/11] clk: renesas: r8a774c0: Add missing CANFD clock
-Date:   Wed, 16 Jan 2019 19:45:45 +0000
-Message-Id: <1547667945-5588-1-git-send-email-fabrizio.castro@bp.renesas.com>
-X-Mailer: git-send-email 2.7.4
+        id S1732656AbfAPWEm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 16 Jan 2019 17:04:42 -0500
+Received: from mail.andi.de1.cc ([85.214.239.24]:55766 "EHLO
+        h2641619.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732006AbfAPWEl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Jan 2019 17:04:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=kemnade.info; s=20180802; h=References:In-Reply-To:Message-Id:Date:Subject:
+        Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=0HrSc9TjfAApcBtB66m46jVWZ+gQ86n9XEvM/jcR5Bk=; b=bTuW51YHeG3ZfthC3Xnt+y6B4
+        +tYZrqsMd3hhPpoNkTVJoY5YyyRedscK07fii2Bc4/BZaJvqVan4/egVWU4jJmyvBWyyYavyVEU4y
+        5gKG0jAUgimTJLNcms2VlI/db6GOypMoZ30aDQjkznsIKpWYziBr1d0sRV7Rw3nN6e/JY=;
+Received: from p200300ccfbcc8e001a3da2fffebfd33a.dip0.t-ipconnect.de ([2003:cc:fbcc:8e00:1a3d:a2ff:febf:d33a] helo=aktux)
+        by h2641619.stratoserver.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1gjtIW-0006la-Vm; Wed, 16 Jan 2019 23:04:33 +0100
+Received: from andi by aktux with local (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1gjtIW-0002PR-DT; Wed, 16 Jan 2019 23:04:32 +0100
+From:   Andreas Kemnade <andreas@kemnade.info>
+To:     t-kristo@ti.com, mturquette@baylibre.com, sboyd@kernel.org,
+        linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, bcousson@baylibre.com,
+        paul@pwsan.com, tony@atomide.com, letux-kernel@openphoenux.org
+Cc:     Andreas Kemnade <andreas@kemnade.info>
+Subject: [PATCH v3 1/3] clk: ti: add a usecount for autoidle
+Date:   Wed, 16 Jan 2019 23:04:27 +0100
+Message-Id: <20190116220429.9136-2-andreas@kemnade.info>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20190116220429.9136-1-andreas@kemnade.info>
+References: <20190116220429.9136-1-andreas@kemnade.info>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This patch adds the missing CANFD clock to the r8a774c0 specific
-clock driver.
+Multiple users might deny autoidle on a clock. So we should have some
+counting here, also according to the comment in  _setup_iclk_autoidle().
+Also setting autoidle regs is not atomic, so there is another reason
+for locking.
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
-
+Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
 ---
-The relevant documentation should appear in the next version
-of the HW User's manual
+Change  since v2:
+- rebase on top of clk: ti: get rid of CLK_IS_BASIC
+Changes since v1:
+- use spinlocks instead of mutexes
+- invert logic
+ drivers/clk/ti/autoidle.c | 32 ++++++++++++++++++++++++++++----
+ include/linux/clk/ti.h    |  1 +
+ 2 files changed, 29 insertions(+), 4 deletions(-)
 
-v1->v2:
-* appended R8A774C0_CLK_CANFD as per Geert's comment
-
- drivers/clk/renesas/r8a774c0-cpg-mssr.c       | 4 ++++
- include/dt-bindings/clock/r8a774c0-cpg-mssr.h | 1 +
- 2 files changed, 5 insertions(+)
-
-diff --git a/drivers/clk/renesas/r8a774c0-cpg-mssr.c b/drivers/clk/renesas/r8a774c0-cpg-mssr.c
-index 10b9689..28bcc81 100644
---- a/drivers/clk/renesas/r8a774c0-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a774c0-cpg-mssr.c
-@@ -33,6 +33,7 @@ enum clk_ids {
- 	CLK_PLL1,
- 	CLK_PLL3,
- 	CLK_PLL0D4,
-+	CLK_PLL0D6,
- 	CLK_PLL0D8,
- 	CLK_PLL0D20,
- 	CLK_PLL0D24,
-@@ -61,6 +62,7 @@ static const struct cpg_core_clk r8a774c0_core_clks[] __initconst = {
+diff --git a/drivers/clk/ti/autoidle.c b/drivers/clk/ti/autoidle.c
+index a129b4b36ea3..964e97b5478a 100644
+--- a/drivers/clk/ti/autoidle.c
++++ b/drivers/clk/ti/autoidle.c
+@@ -36,17 +36,41 @@ struct clk_ti_autoidle {
  
- 	DEF_FIXED(".pll0",     CLK_PLL0,           CLK_MAIN,	   1, 100),
- 	DEF_FIXED(".pll0d4",   CLK_PLL0D4,         CLK_PLL0,       4, 1),
-+	DEF_FIXED(".pll0d6",   CLK_PLL0D6,         CLK_PLL0,       6, 1),
- 	DEF_FIXED(".pll0d8",   CLK_PLL0D8,         CLK_PLL0,       8, 1),
- 	DEF_FIXED(".pll0d20",  CLK_PLL0D20,        CLK_PLL0,      20, 1),
- 	DEF_FIXED(".pll0d24",  CLK_PLL0D24,        CLK_PLL0,      24, 1),
-@@ -112,6 +114,7 @@ static const struct cpg_core_clk r8a774c0_core_clks[] __initconst = {
- 	DEF_GEN3_PE("s3d2c",   R8A774C0_CLK_S3D2C, CLK_S3, 2, CLK_PE, 2),
- 	DEF_GEN3_PE("s3d4c",   R8A774C0_CLK_S3D4C, CLK_S3, 4, CLK_PE, 4),
+ static LIST_HEAD(autoidle_clks);
  
-+	DEF_DIV6P1("canfd",    R8A774C0_CLK_CANFD, CLK_PLL0D6, 0x244),
- 	DEF_DIV6P1("csi0",     R8A774C0_CLK_CSI0,  CLK_PLL1D2, 0x00c),
- 	DEF_DIV6P1("mso",      R8A774C0_CLK_MSO,   CLK_PLL1D2, 0x014),
++/*
++ * we have some non-atomic read/write
++ * operations behind it, so lets
++ * take one lock for handling autoidle
++ * of all clocks
++ */
++static DEFINE_SPINLOCK(autoidle_spinlock);
++
+ static int _omap2_clk_deny_idle(struct clk_hw_omap *clk)
+ {
+-	if (clk->ops && clk->ops->deny_idle)
+-		clk->ops->deny_idle(clk);
++	if (clk->ops && clk->ops->deny_idle) {
++		unsigned long irqflags;
++
++		spin_lock_irqsave(&autoidle_spinlock, irqflags);
++		clk->autoidle_count++;
++		if (clk->autoidle_count == 1)
++			clk->ops->deny_idle(clk);
++
++		spin_unlock_irqrestore(&autoidle_spinlock, irqflags);
++	}
+ 	return 0;
+ }
  
-@@ -187,6 +190,7 @@ static const struct mssr_mod_clk r8a774c0_mod_clks[] __initconst = {
- 	DEF_MOD("gpio2",		 910,	R8A774C0_CLK_S3D4),
- 	DEF_MOD("gpio1",		 911,	R8A774C0_CLK_S3D4),
- 	DEF_MOD("gpio0",		 912,	R8A774C0_CLK_S3D4),
-+	DEF_MOD("can-fd",		 914,	R8A774C0_CLK_S3D2),
- 	DEF_MOD("can-if1",		 915,	R8A774C0_CLK_S3D4),
- 	DEF_MOD("can-if0",		 916,	R8A774C0_CLK_S3D4),
- 	DEF_MOD("i2c6",			 918,	R8A774C0_CLK_S3D2),
-diff --git a/include/dt-bindings/clock/r8a774c0-cpg-mssr.h b/include/dt-bindings/clock/r8a774c0-cpg-mssr.h
-index 8fe51b6..8ad9cd6 100644
---- a/include/dt-bindings/clock/r8a774c0-cpg-mssr.h
-+++ b/include/dt-bindings/clock/r8a774c0-cpg-mssr.h
-@@ -56,5 +56,6 @@
- #define R8A774C0_CLK_CSI0		45
- #define R8A774C0_CLK_CP			46
- #define R8A774C0_CLK_CPEX		47
-+#define R8A774C0_CLK_CANFD		48
+ static int _omap2_clk_allow_idle(struct clk_hw_omap *clk)
+ {
+-	if (clk->ops && clk->ops->allow_idle)
+-		clk->ops->allow_idle(clk);
++	if (clk->ops && clk->ops->allow_idle) {
++		unsigned long irqflags;
++
++		spin_lock_irqsave(&autoidle_spinlock, irqflags);
++		clk->autoidle_count--;
++		if (clk->autoidle_count == 0)
++			clk->ops->allow_idle(clk);
++
++		spin_unlock_irqrestore(&autoidle_spinlock, irqflags);
++	}
+ 	return 0;
+ }
  
- #endif /* __DT_BINDINGS_CLOCK_R8A774C0_CPG_MSSR_H__ */
+diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
+index eacc5df57b99..78872efc7be0 100644
+--- a/include/linux/clk/ti.h
++++ b/include/linux/clk/ti.h
+@@ -160,6 +160,7 @@ struct clk_hw_omap {
+ 	struct clockdomain	*clkdm;
+ 	const struct clk_hw_omap_ops	*ops;
+ 	u32			context;
++	int			autoidle_count;
+ };
+ 
+ /*
 -- 
-2.7.4
+2.11.0
 
