@@ -2,176 +2,125 @@ Return-Path: <SRS0=O/eU=PY=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E967EC43387
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Jan 2019 06:37:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 308C8C43387
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Jan 2019 08:58:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C29C520866
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Jan 2019 06:37:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF55020859
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Jan 2019 08:58:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ibVcyo/w"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387967AbfAPGhj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 16 Jan 2019 01:37:39 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:45127 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2388010AbfAPGhj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Jan 2019 01:37:39 -0500
-X-UUID: 466dfa097e55467385e91c2588dca683-20190116
-X-UUID: 466dfa097e55467385e91c2588dca683-20190116
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1566480008; Wed, 16 Jan 2019 14:37:33 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 16 Jan 2019 14:37:25 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 16 Jan 2019 14:37:25 +0800
-Message-ID: <1547620645.5335.3.camel@mtksdaap41>
-Subject: Re: [PATCH 3/9] drm/mediatek: using different flags of clk for HDMI
- phy
-From:   CK Hu <ck.hu@mediatek.com>
-To:     chunhui dai <chunhui.dai@mediatek.com>
-CC:     --to=Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        "Philipp Zabel" <p.zabel@pengutronix.de>,
-        David Airlie <airlied@linux.ie>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        "Colin Ian King" <colin.king@canonical.com>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <dri-devel@lists.freedesktop.org>, <srv_heupstream@mediatek.com>,
-        <bibby.hsieh@mediatek.com>, <jamesjj.liao@mediatek.com>,
-        <jitao.shi@mediatek.com>
-Date:   Wed, 16 Jan 2019 14:37:25 +0800
-In-Reply-To: <1546585439-30455-4-git-send-email-chunhui.dai@mediatek.com>
-References: <1546585439-30455-1-git-send-email-chunhui.dai@mediatek.com>
-         <1546585439-30455-4-git-send-email-chunhui.dai@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        id S2390202AbfAPI6S (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 16 Jan 2019 03:58:18 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:48878 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389533AbfAPI6S (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Jan 2019 03:58:18 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0G8wBql013562;
+        Wed, 16 Jan 2019 02:58:11 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1547629091;
+        bh=uodxHO5sh4LiIItRYqEG+2BUEjlHfSHuPSpyLZ43uPg=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=ibVcyo/w9quCt08fI4may+VmX/J8xH61hgzH1+dXZrxLsbMOWsI4kPg8utpiYoEwA
+         iSz9phfximNrhdgvdLSJbWiChsoNo8Ry+TJ2ZEjRE/VTVE4kCYovbGodj88rH76kWP
+         RGaefO3PXL92gSWYtP00WLy85FpuY++IZj0c2mm8=
+Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0G8wBZZ092961
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 16 Jan 2019 02:58:11 -0600
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 16
+ Jan 2019 02:58:10 -0600
+Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Wed, 16 Jan 2019 02:58:10 -0600
+Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0G8w62Q001016;
+        Wed, 16 Jan 2019 02:58:07 -0600
+Subject: Re: [PATCH v2 1/6] dt-bindings: phy-qcom: Add support for msm8998 usb
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Jeffrey Hugo <jhugo@codeaurora.org>
+CC:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <andy.gross@linaro.org>, <david.brown@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <gregkh@linuxfoundation.org>, <balbi@kernel.org>,
+        <linux-usb@vger.kernel.org>
+References: <1547483771-5334-1-git-send-email-jhugo@codeaurora.org>
+ <20190115180839.GC28907@builder>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <899dbd3d-2ce2-9a31-aca3-0ca936bdd2dd@ti.com>
+Date:   Wed, 16 Jan 2019 14:27:43 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
+In-Reply-To: <20190115180839.GC28907@builder>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-MTK:  N
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi, Chunhui:
 
-On Fri, 2019-01-04 at 15:03 +0800, chunhui dai wrote:
-> The parent rate of hdmi phy had set by DPI driver.
 
-The difference of DPI driver in MT8173 and MT2701 is
-
-static const struct mtk_dpi_conf mt8173_conf = {
-	.cal_factor = mt8173_calculate_factor,
-	.reg_h_fre_con = 0xe0,
-};
-
-static const struct mtk_dpi_conf mt2701_conf = {
-	.cal_factor = mt2701_calculate_factor,
-	.reg_h_fre_con = 0xb0,
-	.edge_sel_en = true,
-};
-
-Which one influence the phy setting?
-
-Regards,
-CK
-
-> We should not set or change the parent rate of MT2701 hdmi phy,
-> as a result we should remove the flags of "CLK_SET_RATE_PARENT"
-> from the clock of MT2701 hdmi phy.
+On 15/01/19 11:38 PM, Bjorn Andersson wrote:
+> On Mon 14 Jan 08:36 PST 2019, Jeffrey Hugo wrote:
 > 
-> Signed-off-by: chunhui dai <chunhui.dai@mediatek.com>
-> ---
->  drivers/gpu/drm/mediatek/mtk_hdmi_phy.c        | 13 +++++--------
->  drivers/gpu/drm/mediatek/mtk_hdmi_phy.h        |  1 +
->  drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c |  1 +
->  drivers/gpu/drm/mediatek/mtk_mt8173_hdmi_phy.c |  1 +
->  4 files changed, 8 insertions(+), 8 deletions(-)
+>> USB on msm8998 utilizes the QUSB2 and QMP phys, similar to sdm845.
+>>
+>> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
+>> ---
+>>  Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt   | 5 +++++
+>>  Documentation/devicetree/bindings/phy/qcom-qusb2-phy.txt | 1 +
+>>  2 files changed, 6 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt b/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
+>> index 41a1074..6061b6f 100644
+>> --- a/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
+>> +++ b/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
+>> @@ -9,6 +9,7 @@ Required properties:
+>>  	       "qcom,ipq8074-qmp-pcie-phy" for PCIe phy on IPQ8074
+>>  	       "qcom,msm8996-qmp-pcie-phy" for 14nm PCIe phy on msm8996,
+>>  	       "qcom,msm8996-qmp-usb3-phy" for 14nm USB3 phy on msm8996,
+>> +	       "qcom,msm8998-qmp-usb3-phy" for USB3 QMP V3 phy on msm8998,
+>>  	       "qcom,sdm845-qmp-usb3-phy" for USB3 QMP V3 phy on sdm845,
+>>  	       "qcom,sdm845-qmp-usb3-uni-phy" for USB3 QMP V3 UNI phy on sdm845,
+>>  	       "qcom,sdm845-qmp-ufs-phy" for UFS QMP phy on sdm845.
+>> @@ -42,6 +43,8 @@ Required properties:
+>>  			"aux", "cfg_ahb", "ref".
+>>  		For "qcom,msm8996-qmp-usb3-phy" must contain:
+>>  			"aux", "cfg_ahb", "ref".
+>> +		For "qcom,msm8998-qmp-usb3-phy" must contain:
+>> +			"aux", "cfg_ahb", "ref".
+>>  		For "qcom,sdm845-qmp-usb3-phy" must contain:
+>>  			"aux", "cfg_ahb", "ref", "com_aux".
+>>  		For "qcom,sdm845-qmp-usb3-uni-phy" must contain:
+>> @@ -60,6 +63,8 @@ Required properties:
+>>  		For "qcom,msm8996-qmp-pcie-phy" must contain:
+>>  			"phy", "common", "cfg".
+>>  		For "qcom,msm8996-qmp-usb3-phy" must contain
+>> +		 "phy", "common".
 > 
-> diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi_phy.c b/drivers/gpu/drm/mediatek/mtk_hdmi_phy.c
-> index 79e737d..c0a9cf5 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_hdmi_phy.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_hdmi_phy.c
-> @@ -109,13 +109,11 @@ static int mtk_hdmi_phy_power_off(struct phy *phy)
->  		return NULL;
->  }
->  
-> -static void mtk_hdmi_phy_clk_get_ops(struct mtk_hdmi_phy *hdmi_phy,
-> -				     const struct clk_ops **ops)
-> +static void mtk_hdmi_phy_clk_get_data(struct mtk_hdmi_phy *hdmi_phy,
-> +				     struct clk_init_data *clk_init)
->  {
-> -	if (hdmi_phy && hdmi_phy->conf && hdmi_phy->conf->hdmi_phy_clk_ops)
-> -		*ops = hdmi_phy->conf->hdmi_phy_clk_ops;
-> -	else
-> -		dev_err(hdmi_phy->dev, "Failed to get clk ops of phy\n");
-> +	clk_init->flags = hdmi_phy->conf->flags;
-> +	clk_init->ops = hdmi_phy->conf->hdmi_phy_clk_ops;
->  }
->  
->  static int mtk_hdmi_phy_probe(struct platform_device *pdev)
-> @@ -128,7 +126,6 @@ static int mtk_hdmi_phy_probe(struct platform_device *pdev)
->  	struct clk_init_data clk_init = {
->  		.num_parents = 1,
->  		.parent_names = (const char * const *)&ref_clk_name,
-> -		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
->  	};
->  
->  	struct phy *phy;
-> @@ -166,7 +163,7 @@ static int mtk_hdmi_phy_probe(struct platform_device *pdev)
->  	hdmi_phy->dev = dev;
->  	hdmi_phy->conf =
->  		(struct mtk_hdmi_phy_conf *)of_device_get_match_data(dev);
-> -	mtk_hdmi_phy_clk_get_ops(hdmi_phy, &clk_init.ops);
-> +	mtk_hdmi_phy_clk_get_data(hdmi_phy, &clk_init);
->  	hdmi_phy->pll_hw.init = &clk_init;
->  	hdmi_phy->pll = devm_clk_register(dev, &hdmi_phy->pll_hw);
->  	if (IS_ERR(hdmi_phy->pll)) {
-> diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi_phy.h b/drivers/gpu/drm/mediatek/mtk_hdmi_phy.h
-> index fdad8b1..446e2ac 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_hdmi_phy.h
-> +++ b/drivers/gpu/drm/mediatek/mtk_hdmi_phy.h
-> @@ -21,6 +21,7 @@
->  
->  struct mtk_hdmi_phy_conf {
->  	bool tz_disabled;
-> +	unsigned long flags;
->  	const struct clk_ops *hdmi_phy_clk_ops;
->  	void (*hdmi_phy_enable_tmds)(struct mtk_hdmi_phy *hdmi_phy);
->  	void (*hdmi_phy_disable_tmds)(struct mtk_hdmi_phy *hdmi_phy);
-> diff --git a/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c b/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
-> index 68b124f..a28a32d 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
-> @@ -248,6 +248,7 @@ static void mtk_hdmi_phy_disable_tmds(struct mtk_hdmi_phy *hdmi_phy)
->  
->  struct mtk_hdmi_phy_conf mtk_hdmi_phy_2701_conf = {
->  	.tz_disabled = true,
-> +	.flags = CLK_SET_RATE_NO_REPARENT | CLK_SET_RATE_GATE,
->  	.hdmi_phy_clk_ops = &mtk_hdmi_phy_pll_ops,
->  	.hdmi_phy_enable_tmds = mtk_hdmi_phy_enable_tmds,
->  	.hdmi_phy_disable_tmds = mtk_hdmi_phy_disable_tmds,
-> diff --git a/drivers/gpu/drm/mediatek/mtk_mt8173_hdmi_phy.c b/drivers/gpu/drm/mediatek/mtk_mt8173_hdmi_phy.c
-> index cb23c1e..63dde42 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_mt8173_hdmi_phy.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_mt8173_hdmi_phy.c
-> @@ -317,6 +317,7 @@ static void mtk_hdmi_phy_disable_tmds(struct mtk_hdmi_phy *hdmi_phy)
->  }
->  
->  struct mtk_hdmi_phy_conf mtk_hdmi_phy_8173_conf = {
-> +	.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
->  	.hdmi_phy_clk_ops = &mtk_hdmi_phy_pll_ops,
->  	.hdmi_phy_enable_tmds = mtk_hdmi_phy_enable_tmds,
->  	.hdmi_phy_disable_tmds = mtk_hdmi_phy_disable_tmds,
+> Odd indentation.
+> 
+> 
+> Apart from this, you have my
+> 
+> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
+Fixed the indentation and merged it.
 
+Thanks
+Kishon
