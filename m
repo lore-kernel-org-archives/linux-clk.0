@@ -2,101 +2,163 @@ Return-Path: <SRS0=O/eU=PY=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37975C43387
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Jan 2019 12:41:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A69EDC43387
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Jan 2019 15:18:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0888D20651
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Jan 2019 12:41:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 671FB205C9
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Jan 2019 15:18:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="nOl7yNlP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732869AbfAPMl0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 16 Jan 2019 07:41:26 -0500
-Received: from honk.sigxcpu.org ([24.134.29.49]:40595 "EHLO honk.sigxcpu.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730505AbfAPMl0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 16 Jan 2019 07:41:26 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by honk.sigxcpu.org (Postfix) with ESMTP id 32A24FB03;
-        Wed, 16 Jan 2019 13:41:23 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at honk.sigxcpu.org
-Received: from honk.sigxcpu.org ([127.0.0.1])
-        by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 3YOd_pioiJ6e; Wed, 16 Jan 2019 13:41:22 +0100 (CET)
-Received: by bogon.sigxcpu.org (Postfix, from userid 1000)
-        id BC9EF475EF; Wed, 16 Jan 2019 13:41:21 +0100 (CET)
-Date:   Wed, 16 Jan 2019 13:41:21 +0100
-From:   Guido =?iso-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>
-To:     Abel Vesa <abel.vesa@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: imx8mq: Add dsi_ipg_div
-Message-ID: <20190116124121.GA30303@bogon.m.sigxcpu.org>
-References: <20190115163823.GA32114@bogon.m.sigxcpu.org>
+        id S2387431AbfAPPSs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 16 Jan 2019 10:18:48 -0500
+Received: from mail-eopbgr1400095.outbound.protection.outlook.com ([40.107.140.95]:31136
+        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731337AbfAPPSs (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 16 Jan 2019 10:18:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WA+sW76ngWkgHuRQ/PbGwznsOWkwRzFqMDxyjNIa9N0=;
+ b=nOl7yNlP2zkWX7NDjyYmlh18oEzmRrhR6/HiXUzw5rAKOF1of2a+M9n+1K8OwIFYaRl/6iafq8MT6DqTwVcFO5gkdzSRNcdwWvukK6/s8xfKJc6N4YBO5KvAff6ZddZytd7Ddb72tM+TWAgotLwCX0Fw4mcl5HIFfXmrSt40yQg=
+Received: from TY1PR01MB1769.jpnprd01.prod.outlook.com (52.133.163.146) by
+ TY1PR01MB1563.jpnprd01.prod.outlook.com (52.133.162.19) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1516.14; Wed, 16 Jan 2019 15:18:42 +0000
+Received: from TY1PR01MB1769.jpnprd01.prod.outlook.com
+ ([fe80::84f5:1420:6fb3:ea62]) by TY1PR01MB1769.jpnprd01.prod.outlook.com
+ ([fe80::84f5:1420:6fb3:ea62%4]) with mapi id 15.20.1537.018; Wed, 16 Jan 2019
+ 15:18:42 +0000
+From:   Phil Edworthy <phil.edworthy@renesas.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        =?iso-8859-1?Q?Uwe_Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Stephen Boyd <sboyd@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+CC:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH v9 1/2] clk: Add comment about __of_clk_get_by_name()
+ error values
+Thread-Topic: [PATCH v9 1/2] clk: Add comment about __of_clk_get_by_name()
+ error values
+Thread-Index: AQHUivk3i4Y+f5/feUuqUWNTx+pZGqVtAtEAgASlWYCAQJ6ToA==
+Date:   Wed, 16 Jan 2019 15:18:42 +0000
+Message-ID: <TY1PR01MB17690EDAC0E4B637FF7A81DBF5820@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+References: <20181203111309.3709-1-phil.edworthy@renesas.com>
+ <20181203111309.3709-2-phil.edworthy@renesas.com>
+ <20181203133040.GN10650@smile.fi.intel.com>
+ <TY1PR01MB1769B12A216ED3E76A40A6B7F5A90@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+In-Reply-To: <TY1PR01MB1769B12A216ED3E76A40A6B7F5A90@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=phil.edworthy@renesas.com; 
+x-originating-ip: [193.141.220.21]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;TY1PR01MB1563;20:8ynzqdDimtoOX088lqVenoRUjZ1U9th2NtVpo/N4I+jkn4V0/7OUZ5YkLBzsryuw/WLEP9UABs3xeePPJ20fY2ylk5L3Yqi5X2ovR4SwRL7ctBDRwBG7dDU0S66qR5iBNpsoZqGvmhaDr5mlhUDn5HO2a2EaTXEscM5Q7Se95Xk=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 0187b540-9eb6-42cd-1a18-08d67bc5e6a6
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600109)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:TY1PR01MB1563;
+x-ms-traffictypediagnostic: TY1PR01MB1563:
+x-microsoft-antispam-prvs: <TY1PR01MB1563CFC6C0C4BA53815B52F4F5820@TY1PR01MB1563.jpnprd01.prod.outlook.com>
+x-forefront-prvs: 091949432C
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(346002)(376002)(396003)(136003)(366004)(13464003)(189003)(199004)(51914003)(53936002)(9686003)(55016002)(8676002)(476003)(2906002)(6306002)(6246003)(86362001)(66066001)(14454004)(6436002)(186003)(93886005)(53546011)(446003)(66574012)(305945005)(8936002)(6506007)(26005)(102836004)(7696005)(7736002)(76176011)(68736007)(11346002)(81156014)(81166006)(74316002)(5660300001)(110136005)(33656002)(6116002)(54906003)(71200400001)(44832011)(3846002)(316002)(106356001)(99286004)(4326008)(71190400001)(14444005)(25786009)(486006)(478600001)(97736004)(229853002)(105586002)(256004);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB1563;H:TY1PR01MB1769.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: renesas.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: WkvkZUSjBLjL4wr8bNm+lHttIu4rmtzg7LLZXd7W+55f+cvMoUZcqVfncDeOoWGJgca8pPCY6FkDN+VDfBNIUu5a0qoTWzcDv9C8p5fXQI/TvYA7EF8B7z/xMbcB18wmrosMre6kLdCkqpthDu6NHlVRDT+YmQUujDmS301RRkYnr+Iye0qIJmuegH2Tna//VsmU2teAE1UPFBYN/C7+hSCKFp4EzYj3MMlcocxDAcWVoPosdzEBTrsam3+92xDLt8AbMFy6yY849gmzoaqGlyuuHU2zpdnEhlAwWhxEtvDqceQIqj/e0JR9JxOQh/4SAFfsmcCmfZzWp/I7eN0bX7yWYAjWhpcYbGxAND6KKeI3BJZqTRAC6PDC495F8DCbAXA5CmCevQ1cumU4IP4EG53tZ4LzhwLUSLooVYU6VYg=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190115163823.GA32114@bogon.m.sigxcpu.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0187b540-9eb6-42cd-1a18-08d67bc5e6a6
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Jan 2019 15:18:42.5621
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1563
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 Hi,
-On Tue, Jan 15, 2019 at 05:38:23PM +0100, Guido Günther wrote:
-> It's defined imx8mq-clock.h but wasn't assigned yet.
 
-I've found these additional unassigned clocks (defined in
-include/dt-bindings/clock/imx8mq-clock.h but not assigned in
-drivers/clk/imx/clk-imx8mq.c):
+Any other comments on this patch and patch 2/2 (https://lkml.org/lkml/2018/=
+12/3/326)?
 
-IMX8MQ_CLK_A53_ROOT 
-IMX8MQ_CLK_DRAM_ROOT
-IMX8MQ_CLK_HEVC_ROOT
-IMX8MQ_CLK_AVC_ROOT
-IMX8MQ_CLK_VP9_ROOT
-IMX8MQ_CLK_HEVC_INTER_ROOT
-IMX8MQ_CLK_HDMI_ROOT
-IMX8MQ_CLK_HDMI_PHY_ROOT
-IMX8MQ_VIDEO2_PLL_OUT
-IMX8MQ_CLK_M4_ROOT
-IMX8MQ_CLK_M4_SRC
-IMX8MQ_CLK_M4_CG
-IMX8MQ_CLK_M4_DIV
+Thanks
+Phil
 
-I can look into adding these but just wanted to make sure they're not
-sitting in a tree already.
+> -----Original Message-----
+> From: Phil Edworthy
+> Sent: 06 December 2018 12:31
+> To: 'Andy Shevchenko' <andriy.shevchenko@linux.intel.com>
+> Cc: Michael Turquette <mturquette@baylibre.com>; Stephen Boyd
+> <sboyd@kernel.org>; Russell King <linux@armlinux.org.uk>; Geert
+> Uytterhoeven <geert@linux-m68k.org>; Uwe Kleine-K=F6nig <u.kleine-
+> koenig@pengutronix.de>; linux-clk@vger.kernel.org; linux-
+> kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org
+> Subject: RE: [PATCH v9 1/2] clk: Add comment about
+> __of_clk_get_by_name() error values
+>=20
+> Hi Andy,
+>=20
+> On 03 December 2018 13:31 Andy Shevchenko wrote:
+> > On Mon, Dec 03, 2018 at 11:13:08AM +0000, Phil Edworthy wrote:
+> > > It's not immediately obvious from the code that failure to get a
+> > > clock provider can return either -ENOENT or -EINVAL. Therefore, add
+> > > a comment to highlight this.
+> >
+> > > +/*
+> > > + * Beware the return values when np is valid, but no clock provider
+> > > +is
+> > found.
+> > > + * If name =3D NULL, the function returns -ENOENT.
+> > > + * If name !=3D NULL, the function returns -EINVAL. This is because
+> > > +__of_clk_get()
+> >
+> > I would start new sentence from new line (this will emphasize the
+> > possible
+> > variants)
+> >
+> >  * This is ...
+> I disagree, the explanation is specifically related to the case where the
+> function returns -EINVAL. Though this is a nit, so I'm not really bothere=
+d
+> either way.
+>=20
+> Thanks for the review!
+> Phil
+>=20
+> >  Otherwise looks good to me:
+> >
+> > Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> >
+> > > + * is called even if of_property_match_string() returns an error.
+> > > + */
+> > >  static struct clk *__of_clk_get_by_name(struct device_node *np,
+> > >  					const char *dev_id,
+> > >  					const char *name)
+> > > --
+> > > 2.17.1
+> > >
+> >
+> > --
+> > With Best Regards,
+> > Andy Shevchenko
+> >
 
-Cheers,
- -- Guido
-
-> Signed-off-by: Guido Günther <agx@sigxcpu.org>
-> ---
-> I'm not sure I picked the intended clock type but it gives me the right
-> clock rate.
-> 
->  drivers/clk/imx/clk-imx8mq.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-imx8mq.c
-> index 398ab0bcd9de..6f082153714e 100644
-> --- a/drivers/clk/imx/clk-imx8mq.c
-> +++ b/drivers/clk/imx/clk-imx8mq.c
-> @@ -485,6 +485,7 @@ static int imx8mq_clocks_probe(struct platform_device *pdev)
->  	clks[IMX8MQ_CLK_DSI_DBI] = imx8m_clk_composite("dsi_dbi", imx8mq_dsi_dbi_sels, base + 0xbc00);
->  	clks[IMX8MQ_CLK_DSI_ESC] = imx8m_clk_composite("dsi_esc", imx8mq_dsi_esc_sels, base + 0xbc80);
->  	clks[IMX8MQ_CLK_DSI_AHB] = imx8m_clk_composite("dsi_ahb", imx8mq_dsi_ahb_sels, base + 0x9200);
-> +	clks[IMX8MQ_CLK_DSI_IPG_DIV] = imx_clk_divider2("dsi_ipg_div", "dsi_ahb", base + 0x9280, 0, 6);
->  	clks[IMX8MQ_CLK_CSI1_CORE] = imx8m_clk_composite("csi1_core", imx8mq_csi1_core_sels, base + 0xbd00);
->  	clks[IMX8MQ_CLK_CSI1_PHY_REF] = imx8m_clk_composite("csi1_phy_ref", imx8mq_csi1_phy_sels, base + 0xbd80);
->  	clks[IMX8MQ_CLK_CSI1_ESC] = imx8m_clk_composite("csi1_esc", imx8mq_csi1_esc_sels, base + 0xbe00);
-> -- 
-> 2.20.1
