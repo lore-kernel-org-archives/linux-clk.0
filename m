@@ -3,46 +3,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11DF1C43387
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 11:05:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2437C43387
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 11:06:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D05DB20657
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 11:05:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E90F20657
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 11:06:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728514AbfAQLFE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 17 Jan 2019 06:05:04 -0500
-Received: from mail-vk1-f193.google.com ([209.85.221.193]:43596 "EHLO
-        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728460AbfAQLFE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Jan 2019 06:05:04 -0500
-Received: by mail-vk1-f193.google.com with SMTP id o130so2161747vke.10;
-        Thu, 17 Jan 2019 03:05:03 -0800 (PST)
+        id S1728706AbfAQLGM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Jan 2019 06:06:12 -0500
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:43039 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728485AbfAQLGM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Jan 2019 06:06:12 -0500
+Received: by mail-vs1-f67.google.com with SMTP id x1so5940890vsc.10;
+        Thu, 17 Jan 2019 03:06:11 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=mR/av/JkzpPz2SVXWsu5C670v1+MQqVMmUFu/t2SzGU=;
-        b=qn/59wvFZ3vAXzZaA90U88sXPdwSpJKxEBzp5CjsU+b/jWbAsrYcpjxraPu7u9v7o2
-         7poaU7DJ975iqhcIqZkCmuVunxL82uufjFByeeaOswbKbVwhlBlJPSrnxX+a6YpbAnol
-         1dUDZh8hqPaIF1H3ICRkJgX+HyASqbx0m79CqgaqwNDbV3ymU/XkFgcdebmo7/NQ42/L
-         2IpRG3nq23kNjuZO2S9/nC8DZUq65kiLYXJ1dOGe046UaPicvhq3i6l+62gA8Oopo8+g
-         NifTvC97QlFge6Epk2qFJ8kib4A/M1aJfY3kww+I83OTirUh2epC5IcNxfOElAf4zhfI
-         BzDA==
-X-Gm-Message-State: AJcUukfYH6QLUAjKOeMABPEOU8q/bhsMdyWuRBrDaPEjlr8lwWcF3WrD
-        opHixCAqjZ3T+cBmttKqxJtgmq+F/a6+czS9tew=
-X-Google-Smtp-Source: ALg8bN5Q+DaRiRYnYGTwerhRnCCs8KP2WCQQRFmET19FFDNPYow9vPq80MmhZrNn0MvgAsYFuEmzqAFCTFaoitGL6fA=
-X-Received: by 2002:a1f:2145:: with SMTP id h66mr5576990vkh.65.1547723102462;
- Thu, 17 Jan 2019 03:05:02 -0800 (PST)
+        bh=vAZzhJPKeJn7CJqKcjB2cAodWyvcBj4T33BcqKeF/mI=;
+        b=FfJWVg6dk3y1rv9uONNrfqQ3UsuBI3ysI6+x1x5ekj9TRbs1wzPQrwkdnP9NKoPo/g
+         uZuttgv2nc+4IAF5534+TloXL+Y86feBs5h8vtcOJ7KmI5Qj+g/ETG4AbQ3yWsQcVn2V
+         zzvlmlmQSBSsy215HJ0z0/TounY+BJfHeadYXasYFcCCRCT9OEKJWS8wkxfRvwNX5qOp
+         bGUYp+/lXp4gZw7wfUQoFNX9yioK2N9aoj7jf71jKzFbqU8YTWCsTSJRGTd+C+o47JF6
+         QQdRZu8nzO2UHrMW5SfjTRctFwVA0vCarDNufbvtepZWIkPVA6gJkRDLZSz7Jccd+mWk
+         gAoA==
+X-Gm-Message-State: AJcUukcFlyidb6n6XvADVA2D7On8PA9u5EHI6VPHYztOLKk35/snoGnS
+        nL/bQSLzIugxhsuOeXlOXVDFR5YgaAV1bYNHNZM=
+X-Google-Smtp-Source: ALg8bN6yG/M2XWEx0egyMlm7r7KANA4vPga21ApKZsYILuSd3EDncHjogaC6uNruvN8rteEVvAtsmJhZaM6DnxxGX6g=
+X-Received: by 2002:a67:c202:: with SMTP id i2mr5590290vsj.11.1547723171140;
+ Thu, 17 Jan 2019 03:06:11 -0800 (PST)
 MIME-Version: 1.0
-References: <1547663874-29411-1-git-send-email-fabrizio.castro@bp.renesas.com> <1547663874-29411-4-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1547663874-29411-4-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1547663874-29411-1-git-send-email-fabrizio.castro@bp.renesas.com> <1547663874-29411-5-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1547663874-29411-5-git-send-email-fabrizio.castro@bp.renesas.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 17 Jan 2019 12:04:51 +0100
-Message-ID: <CAMuHMdWhcH2=FS62jawZrMeSc_qKBS_SpDTMoVvhP2o736wtgg@mail.gmail.com>
-Subject: Re: [PATCH 03/11] arm64: dts: renesas: Add Si-Linux CAT874 board support
+Date:   Thu, 17 Jan 2019 12:05:59 +0100
+Message-ID: <CAMuHMdVvMZWNrPfWrOmyFoK+oBu69N_G8s1U4mdAQdt_uj+N2g@mail.gmail.com>
+Subject: Re: [PATCH 04/11] arm64: dts: renesas: Add Si-Linux EK874 board support
 To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Cc:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -81,10 +81,8 @@ On Wed, Jan 16, 2019 at 7:38 PM Fabrizio Castro
 <fabrizio.castro@bp.renesas.com> wrote:
 > From: Biju Das <biju.das@bp.renesas.com>
 >
-> Basic support for the Si-Linux board based on RZ/G2E:
->   - Memory,
->   - Main crystal,
->   - Serial console
+> The EK874 development kit from Silicon Linux is made of CAT874 (the main
+> board) and CAT875 (the sub board that goes on top of CAT874).
 >
 > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
@@ -92,18 +90,6 @@ On Wed, Jan 16, 2019 at 7:38 PM Fabrizio Castro
 
 Pending acceptance of the DT bindings
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
-
-> +       chosen {
-> +               bootargs = "ignore_loglevel rw root=/dev/nfs ip=dhcp";
-
-FWIW, the root and ip parameters won't do anything, until you add network
-support.
-
-> +               stdout-path = "serial0:115200n8";
-> +       };
 
 Gr{oetje,eeting}s,
 
