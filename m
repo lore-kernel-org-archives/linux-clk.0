@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A026C43387
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 06:28:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEE32C43612
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 06:28:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A99720851
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 06:28:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AEABB20859
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 06:28:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="NP0si3ic"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="OFJTc2ZW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727073AbfAQG20 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 17 Jan 2019 01:28:26 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:40861 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726820AbfAQG20 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Jan 2019 01:28:26 -0500
-Received: by mail-pl1-f196.google.com with SMTP id u18so4243411plq.7
-        for <linux-clk@vger.kernel.org>; Wed, 16 Jan 2019 22:28:25 -0800 (PST)
+        id S1726926AbfAQG2w (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Jan 2019 01:28:52 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:43827 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726795AbfAQG2w (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Jan 2019 01:28:52 -0500
+Received: by mail-pg1-f193.google.com with SMTP id v28so3963910pgk.10
+        for <linux-clk@vger.kernel.org>; Wed, 16 Jan 2019 22:28:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=mCTsp1TTN24owrN3MkvyzPcw6V8d8yP34TwiCxlzb8c=;
-        b=NP0si3icH+q949vp9PsZlav441VAes3Iasb9e4lrP2xKcjFSv+lD5enZ3ImNJRIg0t
-         CWlEtH81nkckNERuyHwAjjRkMuqI3ZBPy0sRTv+3QKhdBfEwJPsMV4eIeb6Let2qgYUW
-         ucQI2iMJfKSQ9OPf4jtd3543DnAh+mqShy4Js=
+        bh=it49WLHEA1GzTHs3Z8BztlHSPMPMqqjJh3zyQ6F6IVY=;
+        b=OFJTc2ZW2OXMpVxSecxBuoozg0/vHavAPyNs43TQ3G6tx+43WIYV12OlMXK4Ha2gU/
+         mPE8CkGI1nuybffQIAoS8HkNhncXmbRotyaTZwkkd6ZmhYk/kU/O3uZBDUeCow+NCaVz
+         w8Iz0l5jQ+/GE3BYf26fQpt5MbYq+6i+Kl3Jc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=mCTsp1TTN24owrN3MkvyzPcw6V8d8yP34TwiCxlzb8c=;
-        b=GE8lvXQeZ5d9zhzxSKTF55nTM3yqC9IutsBoENjyjU8RShLRxPqqXKW1OBlwkgwqAy
-         vFU9WdMfNA0oTAcryliJVa1l8GzPkSWraJlJEBc1U1n3PEAhem7ruNdao9tHi7gDZM4w
-         F6p7w+r0ZOuaQ2qjyoSYGiuz7xPgO+uZYRqFyxFxGJAQDzC5/7aXZCzrpIyjDJKY6iyt
-         h/bu5vsz94CZMHLRAEpk+Wa/LIlKKCNIdGPrtODxLgt6pZfN5P8yQfeR+FnAByZSi70i
-         FowrS1M+FBmx0qtS/CBWO9QJB4xudmtAQqiLM6Fb3TQ5beeeFC8fphHffbNzlcMPBuPL
-         KLMQ==
-X-Gm-Message-State: AJcUukfa9X9KP9Bbe19FBNpE79tDv5gsgImP9mxRCcpJgsCMUAWOYiib
-        iRF2uV0jYwTOcgXNyatJivpr/w==
-X-Google-Smtp-Source: ALg8bN6S2LSSTkwbXEfiV7zbbXX4x9A+nE0YeIh5T7O3Cy3pZEJW9a6Jh4dS+fn7V4CINpZ1PZX4CA==
-X-Received: by 2002:a17:902:24d:: with SMTP id 71mr13353580plc.225.1547706505216;
-        Wed, 16 Jan 2019 22:28:25 -0800 (PST)
+        bh=it49WLHEA1GzTHs3Z8BztlHSPMPMqqjJh3zyQ6F6IVY=;
+        b=ZGxsKE4shkAi++eXCJ+2AL8zgzb2mCOuUY0qbub2KrXkkX3veqDuiqxI+M1O0HLtq2
+         Gx8um56qdwiImDh7K9Jppi1c3ucWOQr639jVhq0iNSOYTWsDw2qjZaPGTZukEC53X376
+         Ews6qYKD291YonE9RKwS9vbAXLs3rK6zO4T8Ru0rCyhW9KzQr7Wey3uc8SyHxfQJ+xdh
+         iEEaUV2lXZdTQW7ioIDZexhKOVu6/XYnCQ8kKbJ7nyDz700/LmBZSQX5FxA1oybgSogP
+         GbVOy9j7qMIruI9tOI0gujlPWxYGMCcbyNr2ywlSO3JWVs1u9Cxq3o2tIYU6Mx4hvHq2
+         +t0g==
+X-Gm-Message-State: AJcUukf7jXfTPuMtKisuR9lbwmv/2mpWOuUF8P2OxJc6AZ7VXp34+ZTC
+        giDF38tGObPXEHy1RTcH13kl4Q==
+X-Google-Smtp-Source: ALg8bN4p+rF0kFpefxR+B19hWoQ347mPz/zaLWDA3qpjIA7wixr0D4u9JTrmkP2LAwU9dL/0zdEABw==
+X-Received: by 2002:a63:5c22:: with SMTP id q34mr12269636pgb.417.1547706531679;
+        Wed, 16 Jan 2019 22:28:51 -0800 (PST)
 Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id y29sm755820pga.59.2019.01.16.22.28.23
+        by smtp.gmail.com with ESMTPSA id b4sm772074pgq.65.2019.01.16.22.28.50
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 16 Jan 2019 22:28:24 -0800 (PST)
-Date:   Wed, 16 Jan 2019 22:27:44 -0800
+        Wed, 16 Jan 2019 22:28:51 -0800 (PST)
+Date:   Wed, 16 Jan 2019 22:28:10 -0800
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
 To:     Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
 Cc:     robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org,
@@ -64,14 +64,14 @@ Cc:     robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org,
         olof@lixom.net, amit.kucheria@linaro.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 06/13] clk: qcom: hfpll: get parent clock names from DT
-Message-ID: <20190117062744.GC25498@builder>
+Subject: Re: [PATCH 07/13] clk: qcom: hfpll: register as clock provider
+Message-ID: <20190117062810.GD25498@builder>
 References: <1545039990-19984-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
- <1545039990-19984-7-git-send-email-jorge.ramirez-ortiz@linaro.org>
+ <1545039990-19984-8-git-send-email-jorge.ramirez-ortiz@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1545039990-19984-7-git-send-email-jorge.ramirez-ortiz@linaro.org>
+In-Reply-To: <1545039990-19984-8-git-send-email-jorge.ramirez-ortiz@linaro.org>
 User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
@@ -80,13 +80,8 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 On Mon 17 Dec 01:46 PST 2018, Jorge Ramirez-Ortiz wrote:
 
-> Allow accessing the parent clock name required for the driver
-> operation using the device tree node.
-> 
-> This permits extending the driver to other platforms without having to
-> modify its source code.
-> 
-> For backwards compatibility leave the previous value as default.
+> Make the output of the high frequency pll a clock provider.
+> On the QCS404 this PLL controls cpu frequency scaling.
 > 
 
 Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
@@ -95,35 +90,37 @@ Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 > Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
 > Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
 > ---
->  drivers/clk/qcom/hfpll.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
+>  drivers/clk/qcom/hfpll.c | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
 > 
 > diff --git a/drivers/clk/qcom/hfpll.c b/drivers/clk/qcom/hfpll.c
-> index a6de7101..87b7f46 100644
+> index 87b7f46..0ffed0d 100644
 > --- a/drivers/clk/qcom/hfpll.c
 > +++ b/drivers/clk/qcom/hfpll.c
-> @@ -52,6 +52,7 @@ static int qcom_hfpll_probe(struct platform_device *pdev)
->  	void __iomem *base;
+> @@ -53,6 +53,7 @@ static int qcom_hfpll_probe(struct platform_device *pdev)
 >  	struct regmap *regmap;
 >  	struct clk_hfpll *h;
-> +	struct clk *pclk;
+>  	struct clk *pclk;
+> +	int ret;
 >  	struct clk_init_data init = {
 >  		.parent_names = (const char *[]){ "xo" },
 >  		.num_parents = 1,
-> @@ -75,6 +76,13 @@ static int qcom_hfpll_probe(struct platform_device *pdev)
->  					  0, &init.name))
->  		return -ENODEV;
->  
-> +	/* get parent clock from device tree (optional) */
-> +	pclk = devm_clk_get(dev, "xo");
-> +	if (!IS_ERR(pclk))
-> +		init.parent_names = (const char *[]){ __clk_get_name(pclk) };
-> +	else if (PTR_ERR(pclk) == -EPROBE_DEFER)
-> +		return -EPROBE_DEFER;
-> +
->  	h->d = &hdata;
+> @@ -87,7 +88,14 @@ static int qcom_hfpll_probe(struct platform_device *pdev)
 >  	h->clkr.hw.init = &init;
 >  	spin_lock_init(&h->lock);
+>  
+> -	return devm_clk_register_regmap(&pdev->dev, &h->clkr);
+> +	ret = devm_clk_register_regmap(dev, &h->clkr);
+> +	if (ret) {
+> +		dev_err(dev, "failed to register regmap clock: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	return devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get,
+> +					   &h->clkr.hw);
+>  }
+>  
+>  static struct platform_driver qcom_hfpll_driver = {
 > -- 
 > 2.7.4
 > 
