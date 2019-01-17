@@ -2,175 +2,140 @@ Return-Path: <SRS0=NuDk=PZ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DC64C43387
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 08:38:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 159D5C43387
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 08:49:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D996F20657
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 08:38:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fqMWms08"
+	by mail.kernel.org (Postfix) with ESMTP id DAD7020851
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 08:49:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726998AbfAQIiV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 17 Jan 2019 03:38:21 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:44121 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727284AbfAQIiV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Jan 2019 03:38:21 -0500
-Received: by mail-wr1-f66.google.com with SMTP id z5so9932972wrt.11
-        for <linux-clk@vger.kernel.org>; Thu, 17 Jan 2019 00:38:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=TUa7v44EgL51hqJdpJbqu9DZEckjKML/2Dfdppi/ENE=;
-        b=fqMWms08tAtamGiiA6y4t6ZIt2keKs81seHvpVhDYMWC3D4WpnFk1qAK5yikFmIBFf
-         LwiNIQQuXhwhJHNB75wRiva9svb11nqKl2KE3szXtl2xomYQkjQrp3RcW2nPAJG+Iyur
-         EqIfK8caZ3jtTiiVu4/TPv3MxJrENPrRz7dpE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=TUa7v44EgL51hqJdpJbqu9DZEckjKML/2Dfdppi/ENE=;
-        b=I2PwTOsiNZTBqwZgZ5HDlxamEMHFURl3pZpRhOGCM3Nbl6m0P/T25B45SFwY6VJknA
-         Y3flWLxU1KLJ8d2QiXsN12IUR7P4N/aw3xCYQ73Gm2qJgihmjrYGqqsLspKXANhjiqe1
-         T+OxheevcEJ77/uP5zdTdqB+8mihKgwcG2E8IekLK3r4Ru3u1nc60aNO9RS5G/Sziak3
-         FBLhEE9yS6TEL8qai97b56LTN2l5BaPbCVdfCnXUJo34AH7jOainJMOUy0AnYoCJkWxv
-         7OPWmqJp//lJzUDh5sjKQeGvlfujjCDpGWttI3qj3j+Vxh9qZ7P51tRKtO6bnkLG1Qyg
-         64mg==
-X-Gm-Message-State: AJcUukfV+q4aaP9daHFtyqVgl3pqpRHhCUPsBwLvvI9nnejb2w/tUMkw
-        +dl8t9s2wVuthjfFdnV2oFt18mE9Unw=
-X-Google-Smtp-Source: ALg8bN6+5FHCyE61OT0u4whQA+qc0ReIsDotQjaFj3HTMiktBe1MtVo8XThYvV3D2lTGfHLjIyvnZQ==
-X-Received: by 2002:adf:b102:: with SMTP id l2mr10609682wra.296.1547714298758;
-        Thu, 17 Jan 2019 00:38:18 -0800 (PST)
-Received: from [192.168.1.2] (92.red-83-34-185.dynamicip.rima-tde.net. [83.34.185.92])
-        by smtp.gmail.com with ESMTPSA id f2sm94297783wre.34.2019.01.17.00.38.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 17 Jan 2019 00:38:18 -0800 (PST)
-Subject: Re: [PATCH 08/13] clk: qcom: hfpll: CLK_IGNORE_UNUSED
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org,
-        david.brown@linaro.org, sboyd@kernel.org, will.deacon@arm.com,
-        mturquette@baylibre.com, jassisinghbrar@gmail.com,
-        vkoul@kernel.org, niklas.cassel@linaro.org, sibis@codeaurora.org,
-        georgi.djakov@linaro.org, arnd@arndb.de,
-        horms+renesas@verge.net.au, heiko@sntech.de,
-        enric.balletbo@collabora.com, jagan@amarulasolutions.com,
-        olof@lixom.net, amit.kucheria@linaro.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-References: <1545039990-19984-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
- <1545039990-19984-9-git-send-email-jorge.ramirez-ortiz@linaro.org>
- <20190117063312.GE25498@builder>
-From:   Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>
-Message-ID: <9abbe59b-433c-4e30-1e4d-b5eed3afc695@linaro.org>
-Date:   Thu, 17 Jan 2019 09:38:16 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        id S1726109AbfAQItr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Jan 2019 03:49:47 -0500
+Received: from mailgw02.mediatek.com ([1.203.163.81]:29962 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726098AbfAQItr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Jan 2019 03:49:47 -0500
+X-UUID: 046f84fa026b4d509bef472a79c630ad-20190117
+X-UUID: 046f84fa026b4d509bef472a79c630ad-20190117
+Received: from mtkcas35.mediatek.inc [(172.27.4.250)] by mailgw02.mediatek.com
+        (envelope-from <chunhui.dai@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 1019627097; Thu, 17 Jan 2019 16:49:40 +0800
+Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS33N1.mediatek.inc
+ (172.27.4.75) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 17 Jan
+ 2019 16:49:39 +0800
+Received: from [10.16.6.141] (10.16.6.141) by MTKCAS32.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 17 Jan 2019 16:49:38 +0800
+Message-ID: <1547714978.4664.10.camel@mszsdaap41>
+Subject: Re: [PATCH 2/9] drm/mediatek: move the setting of fixed divider
+From:   Chunhui Dai <chunhui.dai@mediatek.com>
+To:     CK Hu <ck.hu@mediatek.com>
+CC:     --to=Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <wangyan.wang@mediatek.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "David Airlie" <airlied@linux.ie>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <dri-devel@lists.freedesktop.org>, <srv_heupstream@mediatek.com>,
+        <bibby.hsieh@mediatek.com>, <jamesjj.liao@mediatek.com>,
+        <jitao.shi@mediatek.com>
+Date:   Thu, 17 Jan 2019 16:49:38 +0800
+In-Reply-To: <1547108895.31582.1.camel@mtksdaap41>
+References: <1546585439-30455-1-git-send-email-chunhui.dai@mediatek.com>
+         <1546585439-30455-3-git-send-email-chunhui.dai@mediatek.com>
+         <1547108895.31582.1.camel@mtksdaap41>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-In-Reply-To: <20190117063312.GE25498@builder>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 1/17/19 07:33, Bjorn Andersson wrote:
-> On Mon 17 Dec 01:46 PST 2018, Jorge Ramirez-Ortiz wrote:
+On Thu, 2019-01-10 at 16:28 +0800, CK Hu wrote:
+> Hi, Chunhui:
 > 
->> When COMMON_CLK_DISABLED_UNUSED is set, in an effort to save power and
->> to keep the software model of the clock in line with reality, the
->> framework transverses the clock tree and disables those clocks that
->> were enabled by the firmware but have not been enabled by any device
->> driver.
->>
->> If CPUFREQ is enabled, early during the system boot, it might attempt
->> to change the CPU frequency ("set_rate"). If the HFPLL is selected as
->> a provider, it will then change the rate for this clock.
->>
->> As boot continues, clk_disable_unused_subtree will run. Since it wont
->> find a valid counter (enable_count) for a clock that is actually
->> enabled it will attempt to disable it which will cause the CPU to
->> stop. Notice that in this driver, calls to check whether the clock is
->> enabled are routed via the is_enabled callback which queries the
->> hardware.
->>
+> On Fri, 2019-01-04 at 15:03 +0800, chunhui dai wrote:
+> > move the setting of fixed divider from enable/disable
+> > to the function of setting rate.
 > 
-> With the CPUFREQ referencing the CPU clock driver, that has decided to
-> run off this clock, why is it not refcounted?
+> Please describe more about _WHY_ of this patch. Does it fix any bug, or
+> enhance some thing, or a new feature?
 
-COMMON_CLK_DISABLED_UNUSED relies on the enable_count reference counter
-to disable the clocks that were enabled by the firwmare and not by the
-drivers.
-
-the cpufreq driver does not enable the cpu clock.
-
-so when clk_change_rate is called, the enable_count counter is not
-incremented and therefore it just remains null since this was enabled by
-the firmware.
-
-I tried doing:
-
-diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
-index e58bfcb..5a9f83e 100644
---- a/drivers/cpufreq/cpufreq-dt.c
-+++ b/drivers/cpufreq/cpufreq-dt.c
-@@ -124,6 +124,10 @@ static int resources_available(void)
-                return ret;
-        }
-
-+ ret = clk_prepare_enable(cpu_clk);
-+ if (ret)
-+         return ret;
-+
-        clk_put(cpu_clk);
-
-        name = find_supply_name(cpu_dev);
-
-
-and that removed the need for CLK_IGNORE_UNUSED. But I am not sure of
-the system wide consequences of that change to cpufreq.
-
-maybe Viresh can comment?
+.recalc_rate would calculate the clock rate by get the setting of
+hardward. the bit which modify in this patch, would affect the clock
+divider. we need to do the modify of this bit before ".recal_rate".So,
+we move it to the ops of clock. Otherwise, the .recalc_rate would get
+wrong setting of divider, and return wrong rate.
+we would describe more in the V2.
 
 > 
 > Regards,
-> Bjorn
+> CK
 > 
->> The following commit, rather than marking the clock critical and
->> forcing the clock to be always enabled, addresses the above scenario
->> making sure the clock is not disabled but it continues to rely on the
->> firmware to enable the clock.
->>
->> Co-developed-by: Niklas Cassel <niklas.cassel@linaro.org>
->> Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
->> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
->> ---
->>  drivers/clk/qcom/hfpll.c | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/clk/qcom/hfpll.c b/drivers/clk/qcom/hfpll.c
->> index 0ffed0d..9d92f5d 100644
->> --- a/drivers/clk/qcom/hfpll.c
->> +++ b/drivers/clk/qcom/hfpll.c
->> @@ -58,6 +58,7 @@ static int qcom_hfpll_probe(struct platform_device *pdev)
->>  		.parent_names = (const char *[]){ "xo" },
->>  		.num_parents = 1,
->>  		.ops = &clk_ops_hfpll,
->> +		.flags = CLK_IGNORE_UNUSED,
->>  	};
->>  
->>  	h = devm_kzalloc(dev, sizeof(*h), GFP_KERNEL);
->> -- 
->> 2.7.4
->>
+> > 
+> > Signed-off-by: chunhui dai <chunhui.dai@mediatek.com>
+> > ---
+> >  drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c | 5 +----
+> >  1 file changed, 1 insertion(+), 4 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c b/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
+> > index b5ed6b7..68b124f 100644
+> > --- a/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
+> > +++ b/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
+> > @@ -79,7 +79,6 @@ static int mtk_hdmi_pll_prepare(struct clk_hw *hw)
+> >  	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_SLDO_MASK);
+> >  	usleep_range(80, 100);
+> >  	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON2, RG_HDMITX_MBIAS_LPF_EN);
+> > -	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON2, RG_HDMITX_EN_TX_POSDIV);
+> >  	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_SER_MASK);
+> >  	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_PRED_MASK);
+> >  	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_DRV_MASK);
+> > @@ -94,7 +93,6 @@ static void mtk_hdmi_pll_unprepare(struct clk_hw *hw)
+> >  	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_DRV_MASK);
+> >  	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_PRED_MASK);
+> >  	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_SER_MASK);
+> > -	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON2, RG_HDMITX_EN_TX_POSDIV);
+> >  	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON2, RG_HDMITX_MBIAS_LPF_EN);
+> >  	usleep_range(80, 100);
+> >  	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_SLDO_MASK);
+> > @@ -123,6 +121,7 @@ static int mtk_hdmi_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+> >  
+> >  	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON6, RG_HTPLL_PREDIV_MASK);
+> >  	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON6, RG_HTPLL_POSDIV_MASK);
+> > +	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON2, RG_HDMITX_EN_TX_POSDIV);
+> >  	mtk_hdmi_phy_mask(hdmi_phy, HDMI_CON6, (0x1 << RG_HTPLL_IC),
+> >  			  RG_HTPLL_IC_MASK);
+> >  	mtk_hdmi_phy_mask(hdmi_phy, HDMI_CON6, (0x1 << RG_HTPLL_IR),
+> > @@ -223,7 +222,6 @@ static void mtk_hdmi_phy_enable_tmds(struct mtk_hdmi_phy *hdmi_phy)
+> >  	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_SLDO_MASK);
+> >  	usleep_range(80, 100);
+> >  	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON2, RG_HDMITX_MBIAS_LPF_EN);
+> > -	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON2, RG_HDMITX_EN_TX_POSDIV);
+> >  	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_SER_MASK);
+> >  	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_PRED_MASK);
+> >  	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_DRV_MASK);
+> > @@ -235,7 +233,6 @@ static void mtk_hdmi_phy_disable_tmds(struct mtk_hdmi_phy *hdmi_phy)
+> >  	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_DRV_MASK);
+> >  	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_PRED_MASK);
+> >  	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_SER_MASK);
+> > -	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON2, RG_HDMITX_EN_TX_POSDIV);
+> >  	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON2, RG_HDMITX_MBIAS_LPF_EN);
+> >  	usleep_range(80, 100);
+> >  	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_SLDO_MASK);
 > 
+> 
+
 
