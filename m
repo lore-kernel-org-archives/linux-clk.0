@@ -2,94 +2,147 @@ Return-Path: <SRS0=NuDk=PZ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8076C43387
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 18:49:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66B3AC43387
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 19:30:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABBDF20868
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 18:49:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547750978;
-	bh=qcLpyuMuQfYRbWRTFJI7mthOtX7fu2Yi02akRLm2Zls=;
-	h=Subject:In-Reply-To:References:Cc:To:From:Date:List-ID:From;
-	b=CvU49mVUJQMaOi6N3VeipwXj5NwpGgQVSwXUHyyfCkiESqMnMu/3tfTBCqI1BkfKH
-	 xSD9plAt8c2qdZ2rduiHuSoLyUgMORT7hfZhm1GRJhthUv2g9zVwdaAD/h5Fg5DUWb
-	 Fs5/fk2TYA/tNkZ1YERqriVqAAz88o+kV5ML325I=
+	by mail.kernel.org (Postfix) with ESMTP id 0A05A20859
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 19:30:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="QDmSszFI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727752AbfAQSti (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 17 Jan 2019 13:49:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56910 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726325AbfAQSti (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 17 Jan 2019 13:49:38 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 45CD920859;
-        Thu, 17 Jan 2019 18:49:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547750977;
-        bh=qcLpyuMuQfYRbWRTFJI7mthOtX7fu2Yi02akRLm2Zls=;
-        h=Subject:In-Reply-To:References:Cc:To:From:Date:From;
-        b=ztEKbsWF5XoA5qDP3fvDZjT59SJD7iCGIZYyXDQEjitnQQar7JD1KtJjfwB/fxg6W
-         nTjh8PFYagiJlml8ytIv0RnR2SxN3wgeS5Qv+YZWW0Xv+7KjnDWHvKBLc2kBksn0K3
-         4JIwK2OBInv6AASVAnw8kBqtrt4UR9E/K/5gFVug=
-Content-Type: text/plain; charset="utf-8"
+        id S1728599AbfAQTaw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Jan 2019 14:30:52 -0500
+Received: from mail-40135.protonmail.ch ([185.70.40.135]:32843 "EHLO
+        mail-40135.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727692AbfAQTaw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Jan 2019 14:30:52 -0500
+Date:   Thu, 17 Jan 2019 19:30:41 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+        s=default; t=1547753448;
+        bh=HJBKZ8PtqxY+VcQp4wvvTxv0AeJJfjPihAJvQvXbFJ4=;
+        h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:
+         Feedback-ID:From;
+        b=QDmSszFILA5oT5phVVPaNnP7z7h7fMNDjX8+qFGL6fi7LPHlTJ9RaLytNgDAn7CWB
+         1LgSm7Fyqg8UzrD8f6iLP6omi8lWaJuxeO6HWtdaTLvHesWw5eBW1evoQCKmMHjEL/
+         er5qwHsSmruJs69y7V+Q4UoAWbLnLThHkinhqQSw=
+To:     Hans de Goede <hdegoede@redhat.com>
+From:   Mogens Jensen <mogens-jensen@protonmail.com>
+Cc:     Dean Wallace <duffydack73@gmail.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Stable <stable@vger.kernel.org>,
+        Johannes Stezenbach <js@sig21.net>,
+        Carlo Caione <carlo@endlessm.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Reply-To: Mogens Jensen <mogens-jensen@protonmail.com>
+Subject: Re: Regression found (Stop-marking-clocks-as-CLK_IS_CRITICAL)
+Message-ID: <pozwYTgSVvWumpTgwwf_C-qvYFNnl7yl9gcq9M-LOUXQTvkSX5f8E_2d-HYNYV_ruL8kAURaIR3ItM_UmFJeV-e28eYy8b2MomlwHMbb-5U=@protonmail.com>
+In-Reply-To: <c935552f-951f-ab9f-b41c-76c729c6d85c@redhat.com>
+References: <20181025232517.ywnw54qibemosjws@picard>
+ <d53738e1-4ba5-640e-7ef7-1705ab205061@redhat.com>
+ <kAuINEBUUnlS5_uJafGtvryMEJVkDO4pb_yLfClwMcTS1h3sB1gYPcXBvg9X3RINfp5Uch7kLXuhTRX_JtouTYxoS6xNr77_b46e-mugl3k=@protonmail.com>
+ <b8849ae1-5a38-e7a1-da14-dc7f9d164825@redhat.com>
+ <3iO9ehQbZm_haTV0IuZ0qhsVHR0QLUbTgRJT8ZenGuRsnz2_uBvO93f0bHVYnsApibUT16JsJ0dgphLhUBd-u0t-lDBNsbvvlKWTgq8XOlw=@protonmail.com>
+ <3e12e051-b874-187d-d4f5-e146f59c659b@redhat.com>
+ <U9ny3qDg8fEQ-IaXWgwAmDf_U7yb1NZxpwoOvTorCbG86v8wUae3kWsa5omAv-ngu3VMaSONp6RdzmaI26Cz6uoyf5ddIiXuJQbzGf2MN3w=@protonmail.com>
+ <20190117091214.7djttnpo4jjzi4su@spock>
+ <c935552f-951f-ab9f-b41c-76c729c6d85c@redhat.com>
+Feedback-ID: 4dFv7M8pOtP7CMTtfNdOwXARWpF2vcQYB4dRuX1h9mb-6008qkzO2MVweOzrAYHEdkjJ6P5PUdgJEubk4l9Lhg==:Ext:ProtonMail
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v1] clk: qcom: clk-rpmh: Add IPA clock support
-User-Agent: alot/0.8
-In-Reply-To: <7db43e9e-0f5c-9c26-6f26-c601ec69f964@codeaurora.org>
-References: <1544754904-18951-1-git-send-email-daidavid1@codeaurora.org> <154706211110.15366.8008755843113316822@swboyd.mtv.corp.google.com> <11f948dc-3045-762f-b6bf-63c32d51772a@codeaurora.org> <154748442276.169631.994019688641603420@swboyd.mtv.corp.google.com> <7db43e9e-0f5c-9c26-6f26-c601ec69f964@codeaurora.org>
-Cc:     georgi.djakov@linaro.org, bjorn.andersson@linaro.org,
-        evgreen@google.com, tdas@codeaurora.org, elder@linaro.org
-To:     David Dai <daidavid1@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Message-ID: <154775097646.169631.4497796001681545243@swboyd.mtv.corp.google.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-Date:   Thu, 17 Jan 2019 10:49:36 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting David Dai (2019-01-16 16:54:39)
->=20
-> On 1/14/2019 8:47 AM, Stephen Boyd wrote:
-> > Quoting David Dai (2019-01-11 16:56:14)
-> >> On 1/9/2019 11:28 AM, Stephen Boyd wrote:
-> >>> Quoting David Dai (2018-12-13 18:35:04)
-> >>>> +
-> >>>> +#define BCM_TCS_CMD(valid, vote)                               \
-> >>>> +       (BCM_TCS_CMD_COMMIT_MASK |                              \
-> >>>> +       ((valid) << BCM_TCS_CMD_VALID_SHIFT) |                  \
-> >>>> +       ((cpu_to_le32(vote) &                                   \
-> >>> Why?
-> >> Sorry, could you clarify this question? If you're referring to the
-> >> cpu_to_le32, shouldn't we be explicit about converting endianness even
-> >> if it might be redundant for this particular qcom platform?
-> > Is only the vote part of the message in little endian format and the
-> > rest is native CPU endianess? It's very odd to see that jammed in the
-> > middle of a bit packing statement like that. Typically the whole u32
-> > would be in one or the other endianness. Also, sparse right complains
-> > about this macro and it's usage, so something is wrong.
-> Point taken, I'll leave it out of the macro for now.
-> > I think one other problem is that rpmh API doesn't really talk about
-> > endianness here and that's busted. So if you want to fix endianness
-> > issues that needs to be fixed first.
->=20
-> Since a similar macro is being used as part of the interconnect provider =
+=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90 Original Me=
+ssage =E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90
+On Thursday, January 17, 2019 12:05 PM, Hans de Goede <hdegoede@redhat.com>=
+ wrote:
 
-> driver, I was thinking a better place for this macro might be in the=20
-> tcs.h as part of the rpmh driver? I could submit a different patch for=20
-> rpmh that mentions endianness along with this change.
+> Hi,
+>
+> On 17-01-19 10:12, Dean Wallace wrote:
+>
+> > Hi Hans, Mogens,
+> > On 17-01-19, Mogens Jensen wrote:
+> >
+> > > Kernel is compiled with SND_SOC_INTEL_CHT_BSW_MAX98090_TI_MACH and th=
+e quirk seems to have fixed the problem caused by commit 648e921888ad ("clk=
+: x86: Stop marking clocks as CLK_IS_CRITICAL"), as sound is now working if=
+ running "speaker-test" on my system which is clean ALSA.
+>
+> Note being "clean ALSA" is really not a good thing now a days,
+> for lots of things we depend on pulseaudio (like setting
+> up UCM mixer profiles).
+>
+I'm using UCM mixer profile from:
 
-Sure that's fine. But be warned that making a dependency across kernel
-trees is best avoided. I would do that sort of cleanup and consolidation
-after the two drivers are merged upstream so that it can go via either
-tree.
+https://github.com/plbossart/UCM/tree/master/chtmax98090
 
+This is enabled with:
+
+alsaucm -c chtmax98090 set _verb HiFi set _enadev Speakers
+
+> > > Unfortunately, SND_SOC_INTEL_CHT_BSW_MAX98090_TI_MACH driver is unusa=
+ble on Clapper Chromebooks as audio played from everything but "speaker-tes=
+t" as video players or web browsers is extremly low and sounds like played =
+at 10x speed. At the same time kernel log is spammed with messages like thi=
+s:
+> > > max98090 i2c-193C9890:00: PLL unlocked
+> > > intel_sst_acpi 80860F28:00: FW Version 01.0c.00.01
+> > > writing to lpe: 00000000: 01 01 01 01 00 00 08 00 ff ff ff ff 55 00 0=
+0 00 ............U...
+> > > writing to lpe: 00000000: 01 01 01 01 00 00 1a 00 ff ff ff ff 75 00 1=
+2 00 ............u...
+> > > This is probably not related to the problem discussed in this thread,=
+ but the result is that I have to use the legacy driver SND_SOC_INTEL_BYT_M=
+AX98090_MACH and therefore still has to revert commit 648e921888ad for soun=
+d to work.
+> > > Is it possible to create a fix for SND_SOC_INTEL_BYT_MAX98090_MACH on=
+ kernel 4.19? Kernel 4.19 is a long term release so it would be very nice t=
+o have fix for this version upstream.
+> >
+> > I have been reverting "clk: x86: Stop marking clocks as CLK_IS_CRITICAL=
+"
+> > and the patch that initially added the quirk for swanky because of soun=
+d
+> > instability issues as you described. I'm compiling vanilla Archlinux
+> > kernel with SND_SOC_INTEL_CHT_BSW_MAX98090_TI_MACH, using pulseaudio,
+> > and have sound in all my apps.
+> > Baytrail sound has always been a little touchy, especially using headse=
+t
+> > with mic, but since the clk patch breaking sound and the quirk patch to
+> > fix it, there is a lot more instability. Just running pavucontrol, or
+> > plugging in headset sets it off. It's a head scratcher.
+>
+> Mogens, Dean, can you please try the SND_SOC_INTEL_CHT_BSW_MAX98090_TI_MA=
+CH
+> driver, without reverting any patches, with the attached patch on top and
+> see if that helps?
+>
+> Thanks & Regards,
+>
+> Hans
+
+I have applied the patch to kernel 4.19.15 and unfortunately this has not s=
+olved the problems.
+
+Audio generated from "speaker-test" is normal, but from everything else is =
+very low and played at 10x speed. However, I'm not seeing the "max98090 i2c=
+-193C9890:00: PLL unlocked" message in kernel log anymore, but it's still s=
+pammed with "writing to lpe: ...".
+
+Regards,
+
+Mogens
