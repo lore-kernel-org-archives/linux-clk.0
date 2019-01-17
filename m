@@ -4,54 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CD6CC43444
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 06:26:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35604C43387
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 06:26:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F179F205C9
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 06:26:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F409E205C9
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 06:26:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="WwjJnC/V"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MnHy+TY/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730154AbfAQG0N (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 17 Jan 2019 01:26:13 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:41189 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730025AbfAQG0N (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Jan 2019 01:26:13 -0500
-Received: by mail-pg1-f195.google.com with SMTP id m1so3962057pgq.8
-        for <linux-clk@vger.kernel.org>; Wed, 16 Jan 2019 22:26:12 -0800 (PST)
+        id S1730177AbfAQG01 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Jan 2019 01:26:27 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:34744 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730005AbfAQG01 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Jan 2019 01:26:27 -0500
+Received: by mail-pf1-f194.google.com with SMTP id h3so4330795pfg.1
+        for <linux-clk@vger.kernel.org>; Wed, 16 Jan 2019 22:26:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=b6oO4hJkrokTcoyK5DzVWM2dwkV29FZtWLlVvwJwlU0=;
-        b=WwjJnC/VD2ffmy1KuOcgUPjpS1m4sX2+Oe0ygvF+4Exsd86SYih8UqvNisckxbtqdX
-         NuLgMv4GAZgL8Eoqtejn0cs3dggqLfLVfcx2q/C97QFua1OfNZF5rtHdwm+3lp/pLjHP
-         f0AAydrkxqcVnVoqHNpOAgcSm4ErWbDD5kbj8=
+        bh=ZcjbTI5xOS96dovzHOGssmsgn7mTRNgCB4K7GgUyByY=;
+        b=MnHy+TY/VmeF9spGWlNq55ho73HCUz2OKKcfxan9stjPxB2sYV+SJipJqa1nfdO3hP
+         CVbBNP7ePOats3cAlA1Cm24oHcC7huN6JKq14mnl4naZw6jWb3Qbj7pj7kMaEqztxpIX
+         frYQJ6J4csGmo8UGWPzxu2eVnGJ9oKr/UrRlg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=b6oO4hJkrokTcoyK5DzVWM2dwkV29FZtWLlVvwJwlU0=;
-        b=G9pVlhDujyZbcEzX3KaULpvy/m0LjQ73WQAw+GBXaCC6nqHpqLUdkNaN8JIejcP8S3
-         5W4XAteMud3dxBwxigPQINBr4pWeVfvijjZZUkkthncPn86ebHwDgV7XxonDMfIgokHq
-         Zm3t94WxPut3hyidDaLNvwCMMcYVhQlKsTi83WJ+lFHWyl5l5jdKFDSCXC2WmGQ86mpB
-         ULy6NioDBUU2TQ9/Ad6ifYswQNJLu4gWAR+yy8aXBP0dQzaiDaRomsnyhj1Ixcbc+iG4
-         nO24Xc1+dexARIy/ZEvZPwJE2RdEmuSj4V2gqBxzAnKOIMQlJksp03R+EKLxF9QDKK/D
-         p3Pg==
-X-Gm-Message-State: AJcUukeRrnDmJBwMzMY5laDpixVCK3BJ3KLds5TENyB/XHVw+aWhqnDb
-        id+jgW7oMYg/Udf5Oa7CHy1hHw==
-X-Google-Smtp-Source: ALg8bN4o6v2C4wRkw9EJ8UWK1ReUBkRAibfXPLX+4mL7IPo64cLU1BMxGKk/QVkH+yqrBe6pkNbWCQ==
-X-Received: by 2002:a63:7306:: with SMTP id o6mr12096593pgc.343.1547706372118;
-        Wed, 16 Jan 2019 22:26:12 -0800 (PST)
+        bh=ZcjbTI5xOS96dovzHOGssmsgn7mTRNgCB4K7GgUyByY=;
+        b=pTik7D+dCAbuLs8o1hiNcxmvzsumHnYVhlvDZKtf8Kz3CtNfqD/UrzGsfeGYUNJb5S
+         Xp3j3zy0Fgz3VJ6BNvEXkyttVbQTEDEkv/Wc24X+fNzdyVFppWr/xYrN5R9b3DdtkvfK
+         bEG6sOx8cyGr6rgnPwR83kJlYcCZk1k46DzZSr9QO4UBzNAQIBOnE3XRKvjU8eWCJm49
+         nbGsITl8wk2tZIbdBcqI6k7y8wkQbqzwsl6SFbMvPrnKBv9yqH9fFEeURvZ3K2VQe7YC
+         rubFg8unaTZ48o0s/Kr7w/Jy922Llp6lZAK93zvqq8qFHtcg/ROeirdjiqzS/C0zT1B2
+         BbUA==
+X-Gm-Message-State: AJcUukfv399Qy1EnCBvdCSXqryMUJ1FimEQmbLKTfhYqH4nlcxEUenNJ
+        9CubsBlCegTDVHelevAZouipvA==
+X-Google-Smtp-Source: ALg8bN5mrh3N/A4MxMIkKcRkj6aiVYA7i4NhIOmAk1S90S0Fhgs+/TbzRCntsH+zpd1QaOoSq9Q3eQ==
+X-Received: by 2002:a63:d904:: with SMTP id r4mr12362368pgg.207.1547706386482;
+        Wed, 16 Jan 2019 22:26:26 -0800 (PST)
 Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id d69sm1178833pfg.168.2019.01.16.22.26.10
+        by smtp.gmail.com with ESMTPSA id i5sm997815pfg.34.2019.01.16.22.26.24
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 16 Jan 2019 22:26:11 -0800 (PST)
-Date:   Wed, 16 Jan 2019 22:25:31 -0800
+        Wed, 16 Jan 2019 22:26:25 -0800 (PST)
+Date:   Wed, 16 Jan 2019 22:25:45 -0800
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
 To:     Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
 Cc:     robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org,
@@ -64,14 +64,14 @@ Cc:     robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org,
         olof@lixom.net, amit.kucheria@linaro.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 02/13] mbox: qcom: add APCS child device for QCS404
-Message-ID: <20190117062531.GA25498@builder>
+Subject: Re: [PATCH 03/13] mbox: qcom: replace integer with valid macro
+Message-ID: <20190117062545.GB25498@builder>
 References: <1545039990-19984-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
- <1545039990-19984-3-git-send-email-jorge.ramirez-ortiz@linaro.org>
+ <1545039990-19984-4-git-send-email-jorge.ramirez-ortiz@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1545039990-19984-3-git-send-email-jorge.ramirez-ortiz@linaro.org>
+In-Reply-To: <1545039990-19984-4-git-send-email-jorge.ramirez-ortiz@linaro.org>
 User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
@@ -80,8 +80,7 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 On Mon 17 Dec 01:46 PST 2018, Jorge Ramirez-Ortiz wrote:
 
-> There is clock controller functionality in the APCS hardware block of
-> qcs404 devices similar to msm8916.
+> Use the correct macro when registering the platform device.
 > 
 
 Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
@@ -90,42 +89,21 @@ Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 > Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
 > Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
 > ---
->  drivers/mailbox/qcom-apcs-ipc-mailbox.c | 21 +++++++++++++--------
->  1 file changed, 13 insertions(+), 8 deletions(-)
+>  drivers/mailbox/qcom-apcs-ipc-mailbox.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
 > diff --git a/drivers/mailbox/qcom-apcs-ipc-mailbox.c b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
-> index aed23ac..dc8fdab1 100644
+> index dc8fdab1..b782173 100644
 > --- a/drivers/mailbox/qcom-apcs-ipc-mailbox.c
 > +++ b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
-> @@ -97,16 +97,21 @@ static int qcom_apcs_ipc_probe(struct platform_device *pdev)
->  		return ret;
->  	}
->  
-> -	if (of_device_is_compatible(np, "qcom,msm8916-apcs-kpss-global")) {
-> -		apcs->clk = platform_device_register_data(&pdev->dev,
-> -							  "qcom-apcs-msm8916-clk",
-> -							  -1, NULL, 0);
-> -		if (IS_ERR(apcs->clk))
-> -			dev_err(&pdev->dev, "failed to register APCS clk\n");
-> -	}
-> -
->  	platform_set_drvdata(pdev, apcs);
->  
-> +	if (of_device_is_compatible(np, "qcom,msm8916-apcs-kpss-global") ||
-> +	    of_device_is_compatible(np, "qcom,qcs404-apcs-apps-global"))
-> +		goto register_clk;
-> +
-> +	return 0;
-> +
-> +register_clk:
-> +	apcs->clk = platform_device_register_data(&pdev->dev,
-> +						  "qcom-apcs-msm8916-clk",
-> +						  -1, NULL, 0);
-> +	if (IS_ERR(apcs->clk))
-> +		dev_err(&pdev->dev, "failed to register APCS clk\n");
-> +
->  	return 0;
->  }
+> @@ -108,7 +108,7 @@ static int qcom_apcs_ipc_probe(struct platform_device *pdev)
+>  register_clk:
+>  	apcs->clk = platform_device_register_data(&pdev->dev,
+>  						  "qcom-apcs-msm8916-clk",
+> -						  -1, NULL, 0);
+> +						  PLATFORM_DEVID_NONE, NULL, 0);
+>  	if (IS_ERR(apcs->clk))
+>  		dev_err(&pdev->dev, "failed to register APCS clk\n");
 >  
 > -- 
 > 2.7.4
