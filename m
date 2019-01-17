@@ -2,39 +2,27 @@ Return-Path: <SRS0=NuDk=PZ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E6EDC43387
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 11:11:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAF93C43387
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 11:18:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D17582054F
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 11:11:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="IJDolZhK"
+	by mail.kernel.org (Postfix) with ESMTP id B5B292054F
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 11:18:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728422AbfAQLLz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 17 Jan 2019 06:11:55 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:60111 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727186AbfAQLLy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Jan 2019 06:11:54 -0500
-Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 7370525B760;
-        Thu, 17 Jan 2019 22:11:49 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1547723509; bh=hPshUkVrJYqBAJ1MQKD8+WaOrXi1RDZHWSs+lcwqS/Q=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=IJDolZhKOnCylP8jy4UQCPQwbTFwmAqlDKx1xrJYT/CWXkD+43kBh+xMwxnenYZLQ
-         877Am+byOGsUp1bN5asPPgZVSk+ZMXCmsSHXFjoBMQKYk8qj0a2LP0qvzdXuKPqyOY
-         4ozYyB9xLQA0fCpy7w3TAEhDmJZexFNR0rYeFB0I=
-Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id C4EAC940459; Thu, 17 Jan 2019 12:11:47 +0100 (CET)
-Date:   Thu, 17 Jan 2019 12:11:47 +0100
-From:   Simon Horman <horms@verge.net.au>
-To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+        id S1727537AbfAQLSC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Jan 2019 06:18:02 -0500
+Received: from mx2.suse.de ([195.135.220.15]:46702 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726739AbfAQLSC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 17 Jan 2019 06:18:02 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id C2EEDAEEE;
+        Thu, 17 Jan 2019 11:17:58 +0000 (UTC)
+Subject: Re: [PATCH 01/11] dt-bindings: Add vendor prefix for Silicon Linux.
 Cc:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Wolfgang Grandegger <wg@grandegger.com>,
@@ -42,137 +30,133 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         "David S. Miller" <davem@davemloft.net>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Thierry Reding <treding@nvidia.com>,
-        Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>,
         Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Kevin Hilman <khilman@baylibre.com>,
         Johan Hovold <johan@kernel.org>,
         Lukasz Majewski <lukma@denx.de>,
         Michal Simek <monstr@monstr.eu>,
-        Michal =?utf-8?B?Vm9rw6HEjQ==?= <michal.vokac@ysoft.com>,
+        =?UTF-8?B?TWljaGFsIFZva8OhxI0=?= <michal.vokac@ysoft.com>,
         Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
         Ben Whitten <ben.whitten@gmail.com>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-can@vger.kernel.org, netdev@vger.kernel.org,
-        linux-clk@vger.kernel.org, ebiharaml@si-linux.co.jp
-Subject: Re: [PATCH 06/11] arm64: dts: renesas: r8a774c0-cat874: Add uSD
- support
-Message-ID: <20190117111147.vb3lkdmgx24zusjx@verge.net.au>
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ebiharaml@si-linux.co.jp
 References: <1547663874-29411-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1547663874-29411-7-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1547663874-29411-2-git-send-email-fabrizio.castro@bp.renesas.com>
+From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=afaerber@suse.de; prefer-encrypt=mutual; keydata=
+ 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
+Organization: SUSE Linux GmbH
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Message-ID: <bb5b27ed-a077-f639-b97b-4da22c9bb3ad@suse.de>
+Date:   Thu, 17 Jan 2019 12:17:56 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1547663874-29411-7-git-send-email-fabrizio.castro@bp.renesas.com>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <1547663874-29411-2-git-send-email-fabrizio.castro@bp.renesas.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Jan 16, 2019 at 06:37:49PM +0000, Fabrizio Castro wrote:
+Hi Fabrizio,
+
+Am 16.01.19 um 19:37 schrieb Fabrizio Castro:
 > From: Biju Das <biju.das@bp.renesas.com>
 > 
-> This patch adds uSD card support.
-
-Can I confirm that SDHI0 is wired up to a uSD slot?
-
-I ask because if that is the case then this patch looks good to me.
-But if it is wired up to a full-size SD slot then I believe
-a wp-gpio (write protect) should be described.
-
+> Add Silicon Linux to the list of devicetree vendor prefixes.
+> 
+> Website: http://www.si-linux.co.jp
 > 
 > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 > Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
 > ---
->  arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts | 50 +++++++++++++++++++++++++
->  1 file changed, 50 insertions(+)
+>  Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts b/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
-> index c545ce5..477a56b 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
-> +++ b/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
-> @@ -7,6 +7,7 @@
->  
->  /dts-v1/;
->  #include "r8a774c0.dtsi"
-> +#include <dt-bindings/gpio/gpio.h>
->  
->  / {
->  	model = "Silicon Linux RZ/G2E 96board platform (CAT874)";
-> @@ -26,6 +27,29 @@
->  		/* first 128MB is reserved for secure area. */
->  		reg = <0x0 0x48000000 0x0 0x78000000>;
->  	};
-> +
-> +	vcc_sdhi0: regulator-vcc-sdhi0 {
-> +		compatible = "regulator-fixed";
-> +
-> +		regulator-name = "SDHI0 Vcc";
-> +		regulator-min-microvolt = <3300000>;
-> +		regulator-max-microvolt = <3300000>;
-> +		regulator-always-on;
-> +		regulator-boot-on;
-> +	};
-> +
-> +	vccq_sdhi0: regulator-vccq-sdhi0 {
-> +		compatible = "regulator-gpio";
-> +
-> +		regulator-name = "SDHI0 VccQ";
-> +		regulator-min-microvolt = <1800000>;
-> +		regulator-max-microvolt = <3300000>;
-> +
-> +		gpios = <&gpio3 13 GPIO_ACTIVE_HIGH>;
-> +		gpios-states = <1>;
-> +		states = <3300000 1
-> +			  1800000 0>;
-> +	};
->  };
->  
->  &extal_clk {
-> @@ -37,6 +61,18 @@
->  		groups = "scif2_data_a";
->  		function = "scif2";
->  	};
-> +
-> +	sdhi0_pins: sd0 {
-> +		groups = "sdhi0_data4", "sdhi0_ctrl";
-> +		function = "sdhi0";
-> +		power-source = <3300>;
-> +	};
-> +
-> +	sdhi0_pins_uhs: sd0_uhs {
-> +		groups = "sdhi0_data4", "sdhi0_ctrl";
-> +		function = "sdhi0";
-> +		power-source = <1800>;
-> +	};
->  };
->  
->  &scif2 {
-> @@ -45,3 +81,17 @@
->  
->  	status = "okay";
->  };
-> +
-> +&sdhi0 {
-> +	pinctrl-0 = <&sdhi0_pins>;
-> +	pinctrl-1 = <&sdhi0_pins_uhs>;
-> +	pinctrl-names = "default", "state_uhs";
-> +
-> +	vmmc-supply = <&vcc_sdhi0>;
-> +	vqmmc-supply = <&vccq_sdhi0>;
-> +	cd-gpios = <&gpio3 12 GPIO_ACTIVE_LOW>;
-> +	bus-width = <4>;
-> +	sd-uhs-sdr50;
-> +	sd-uhs-sdr104;
-> +	status = "okay";
-> +};
-> -- 
-> 2.7.4
-> 
+> diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
+> index 4b1a2a8..02a7037 100644
+> --- a/Documentation/devicetree/bindings/vendor-prefixes.txt
+> +++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+> @@ -344,6 +344,7 @@ sgx	SGX Sensortech
+>  sharp	Sharp Corporation
+>  shimafuji	Shimafuji Electric, Inc.
+>  si-en	Si-En Technology Ltd.
+> +si-linux	Silicon Linux Corporation
+
+With the website being Japanese only, I haven't been able to confirm the
+spelling of the company name. Looks sensible though.
+
+Due to "en" coming before "five" I've double-checked that elsewhere we
+do order dashes before letters, so placement in file and tab-indentation
+is fine, too.
+
+>  sifive	SiFive, Inc.
+>  sigma	Sigma Designs, Inc.
+>  sii	Seiko Instruments, Inc.
+
+Personally I would drop the full stop at the end of the subject, but anyway:
+
+Reviewed-by: Andreas Färber <afaerber@suse.de>
+
+Thanks,
+Andreas
+
+P.S. Please double-check how this excessive CC list came to life!
+
+-- 
+SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
