@@ -2,138 +2,148 @@ Return-Path: <SRS0=NuDk=PZ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-13.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 524FBC43387
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 11:19:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 541EDC43387
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 11:59:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21FA22054F
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 11:19:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 21EE220851
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 11:59:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="I6mXoR1P";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="PvnaG38v"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="arnUbred"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727301AbfAQLTx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 17 Jan 2019 06:19:53 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:35586 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726826AbfAQLTx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Jan 2019 06:19:53 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 7ED3260807; Thu, 17 Jan 2019 11:19:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547723992;
-        bh=BCZR8UQDjYKKai5NpFpjklSk3mT5UK7jcQhOw69F3T4=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=I6mXoR1Py35p+W8awHHCCTQ5O3N3x+hJ85aAFLdWbaki6d9UOzgn77Z34TT9gQxCM
-         ir8bwOGvZIQ1w2h9laY5cAC0SY8DLYRP84aZ0+EHGAry4gy3R/Ac+oKDyMfBSbVq/4
-         TMkyXSMKnudlnAGBlXDegwY5mCwZozbu8my3VsPg=
-Received: from [192.168.225.247] (unknown [49.33.245.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id D0829606E1;
-        Thu, 17 Jan 2019 11:19:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547723991;
-        bh=BCZR8UQDjYKKai5NpFpjklSk3mT5UK7jcQhOw69F3T4=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=PvnaG38vg/6+ek02L4IMa++e5aBViaSvZFpYNbGnpQdtDsiWjg6U9JAUHAdWey+8u
-         R/A//gAWyh6XJtQvLJ4glViqXb5ZGZ26lClXYpBHeVX0LHlfi0H4NhfEjJFMIu6wDb
-         /gICebHf3rzt2KhUm1fcF8/14wrsMJWZ9rcI4Cs0=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D0829606E1
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-Subject: Re: [PATCH v1] clk: qcom: lpass: Add CLK_IGNORE_UNUSED for lpass
- clocks
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1545306385-31240-1-git-send-email-tdas@codeaurora.org>
- <154533989563.79149.10213938035592547726@swboyd.mtv.corp.google.com>
- <b6397ef1-a6df-0040-9dcc-c491b76a2f8f@codeaurora.org>
- <154689507747.15366.6553307032295093169@swboyd.mtv.corp.google.com>
- <adc9235a-3700-7730-a473-8a6baf47a1e0@codeaurora.org>
- <154750471090.169631.5712250327468594228@swboyd.mtv.corp.google.com>
-From:   Taniya Das <tdas@codeaurora.org>
-Message-ID: <6ad2f27c-0afc-af6a-8198-679a88dcc2f9@codeaurora.org>
-Date:   Thu, 17 Jan 2019 16:49:22 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        id S1727085AbfAQL7y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Jan 2019 06:59:54 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:60766 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726964AbfAQL7x (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Jan 2019 06:59:53 -0500
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 38FBC25B760;
+        Thu, 17 Jan 2019 22:59:48 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1547726388; bh=7jAemxdwaDAqNUtU7Bl/0y3TPn9jB3LsDxYRkP0wL6c=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=arnUbredTTBph7O6wmVrqsVrBiKGqP3ep4X/QwZUPno90JqNH24UtOAIExGvRIdL+
+         s13xEeXTjDgfBaoWsI63rBh0Pqq8pJmrfgCD1C7n6BL0nFFL/AEKbi0/0D209nzHfy
+         rbUSQqo9IDJd1j9TJP5D1+JztrPr8tYPoCI0XAFQ=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id 4F4D1940459; Thu, 17 Jan 2019 12:59:46 +0100 (CET)
+Date:   Thu, 17 Jan 2019 12:59:46 +0100
+From:   Simon Horman <horms@verge.net.au>
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Thierry Reding <treding@nvidia.com>,
+        Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Johan Hovold <johan@kernel.org>,
+        Lukasz Majewski <lukma@denx.de>,
+        Michal Simek <monstr@monstr.eu>,
+        Michal =?utf-8?B?Vm9rw6HEjQ==?= <michal.vokac@ysoft.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Ben Whitten <ben.whitten@gmail.com>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-can@vger.kernel.org, netdev@vger.kernel.org,
+        linux-clk@vger.kernel.org, ebiharaml@si-linux.co.jp
+Subject: Re: [PATCH 07/11] arm64: dts: renesas: cat875: Add ethernet support
+Message-ID: <20190117115945.bmlaoeoqvsmdqqot@verge.net.au>
+References: <1547663874-29411-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1547663874-29411-8-git-send-email-fabrizio.castro@bp.renesas.com>
 MIME-Version: 1.0
-In-Reply-To: <154750471090.169631.5712250327468594228@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1547663874-29411-8-git-send-email-fabrizio.castro@bp.renesas.com>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-
-On 1/15/2019 3:55 AM, Stephen Boyd wrote:
-> Quoting Taniya Das (2019-01-13 22:12:39)
->>
->>
->> On 1/8/2019 2:34 AM, Stephen Boyd wrote:
->>>
->>> As far as I know, I'm not suggesting the use of CLK_IS_CRITICAL here.
->>> But removing CLK_IS_CRITICAL and relying on some random bootloader
->>> behavior also looks wrong. Can you clarify what's going on?
->>>
->>
->> To enable LPASS clocks the requirement is to enable the GCC_LPASS_SWAY
->> clock.
->> 1) If the LPASS drivers are enabled/probed before the clock late init
->> the client would take care to maintain the dependency to enable the
->> GCC_LPASS_SWAY clock before enabling the LPASS clocks.
->>
->> 2) There could be a condition where the LPASS drivers would probe/init
->> later the clock late_init. When the clock_late_init would try to access
->> the LPASS clocks, since we cannot maintain the dependency this access
->> would fail. To avoid this the earlier patch has made the GCC_LPASS_SWAY
->> clock as CRITICAL.
->>
->> 3) Marking the GCC_LPASS_SWAY clock as CRITICAL has a issue, in the case
->> where the LPASS subsystem would be restarted due to some critical
->> failure on LPASS. Toggling the restart register of LPASS would clear the
->> hardware state of this clock and thus the next access of the LPASS
->> clocks would result in failure of the system.
->>
->> 4) To avoid issues happening in (2) and (3) all the LPASS clocks chould
->> be safely marked as CLK_IGNORE_UNUSED. And lpass drivers would take care
->> of the dependency to enable the required clocks.
->>
+On Wed, Jan 16, 2019 at 06:37:50PM +0000, Fabrizio Castro wrote:
+> From: Biju Das <biju.das@bp.renesas.com>
 > 
-> Ok, so why can't we enable/disable the lpass sway clk in the
-> prepare/unprepare phase of the lpass clk driver paths? Or why can't we
-> forcibly enable this lpass sway clk after the reset is deasserted? Which
-> clk controller is the reset part of? GCC or LPASS?
-
-It is part of Always On Subsystem.
-
+> This patch adds ethernet support to the sub board.
 > 
-> It still sounds like the LPASS clk driver isn't handling dependencies it
-> has on accessing registers, but maybe we can get away with not handling
-> the dependency still if we make the reset "do the right thing" and turn
-> the clk back on so it stays "critical".
->
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
+> ---
+>  arch/arm64/boot/dts/renesas/cat875.dtsi | 30 ++++++++++++++++++++++++++++++
+>  1 file changed, 30 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/renesas/cat875.dtsi b/arch/arm64/boot/dts/renesas/cat875.dtsi
+> index a41d0d8..805ffa7 100644
+> --- a/arch/arm64/boot/dts/renesas/cat875.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/cat875.dtsi
+> @@ -7,4 +7,34 @@
+>  
+>  / {
+>  	model = "Silicon Linux sub board for CAT874 (CAT875)";
+> +
+> +	aliases {
+> +		ethernet0 = &avb;
+> +	};
+> +};
+> +
+> +&avb {
+> +	pinctrl-0 = <&avb_pins>;
+> +	pinctrl-names = "default";
+> +	renesas,no-ether-link;
 
-This is a reset from hardware and it does not bring back the clock to 
-the previous state and so we can not mark it "critical". I would submit 
-the next series with comments updated. Please let me know in case you 
-have any comments.
+Is the renesas,no-ether-link required?
 
+My understanding is that "the property should only be used when a
+board does not provide a proper AVB_LINK signal". And from my reading
+of the schematic it looks like that signal may be provided on this board.
 
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
+That said, I have an outstanding patch for this for E3/Ebisu which
+I have not applied because I am unsure of its correctness.
 
---
+[PATCH] arm64: dts: renesas: ebisu: Remove renesas, no-ether-link property
+https://patchwork.kernel.org/patch/10692755/
+
+Similar patches have been applied for other boards.
+f.e:
+
+[PATCH] arm64: dts: renesas: salvator-x: Remove renesas, no-ether-link property
+https://git.kernel.org/torvalds/c/87c059e9c39d
+
+> +	phy-handle = <&phy0>;
+> +	phy-mode = "rgmii";
+> +	status = "okay";
+> +
+> +	phy0: ethernet-phy@0 {
+> +		rxc-skew-ps = <1500>;
+> +		reg = <0>;
+> +		interrupt-parent = <&gpio2>;
+> +		interrupts = <21 IRQ_TYPE_LEVEL_LOW>;
+> +		reset-gpios = <&gpio1 20 GPIO_ACTIVE_LOW>;
+> +	};
+> +};
+> +
+> +&pfc {
+> +	avb_pins: avb {
+> +		mux {
+> +			groups = "avb_mii";
+> +			function = "avb";
+> +		};
+> +	};
+>  };
+> -- 
+> 2.7.4
+> 
