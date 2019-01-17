@@ -2,128 +2,138 @@ Return-Path: <SRS0=NuDk=PZ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CF88C43387
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 09:38:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 506C0C43387
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 09:48:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E74B02054F
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 09:38:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="f9DC3s3j"
+	by mail.kernel.org (Postfix) with ESMTP id 27B772054F
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 09:48:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726914AbfAQJi6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 17 Jan 2019 04:38:58 -0500
-Received: from esa5.microchip.iphmx.com ([216.71.150.166]:9739 "EHLO
-        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726632AbfAQJi6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Jan 2019 04:38:58 -0500
-X-IronPort-AV: E=Sophos;i="5.56,488,1539673200"; 
-   d="scan'208";a="23507779"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/AES128-SHA; 17 Jan 2019 02:38:57 -0700
-Received: from NAM01-BN3-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.76.37) with Microsoft SMTP Server (TLS) id
- 14.3.352.0; Thu, 17 Jan 2019 02:38:56 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector1-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=is3PtBt1v7cnY7dDj0lsgiHuqYQyV6irFm4guMzxCHs=;
- b=f9DC3s3jpWOPsFSU0W6Hq9hV7qAdxhwXc3VZh1o1MU/m9eFBhC3JEggwXM34vNy8EfBMOoLPifzqHsnSSGsbjBAzo2MhMEb6Zqlzbg6rg3JYk2smBXUR81k5Bx7+QI9jLsKYO4Vp4iKfR5VC0VLbZUVhIlFrRjbYU99wk28Ma4Y=
-Received: from MWHPR11MB1662.namprd11.prod.outlook.com (10.172.55.15) by
- MWHPR11MB1741.namprd11.prod.outlook.com (10.175.52.148) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1516.14; Thu, 17 Jan 2019 09:38:54 +0000
-Received: from MWHPR11MB1662.namprd11.prod.outlook.com
- ([fe80::890b:3c0f:a8f4:5de5]) by MWHPR11MB1662.namprd11.prod.outlook.com
- ([fe80::890b:3c0f:a8f4:5de5%7]) with mapi id 15.20.1516.019; Thu, 17 Jan 2019
- 09:38:53 +0000
-From:   <Nicolas.Ferre@microchip.com>
-To:     <mirq-linux@rere.qmqm.pl>, <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <sboyd@kernel.org>,
-        <alexandre.belloni@bootlin.com>
-CC:     <mturquette@baylibre.com>, <Ludovic.Desroches@microchip.com>,
-        <bbrezillon@kernel.org>
-Subject: Re: [PATCH v3] clk: at91: optimize clk_round_rate() for AUDIO_PLL
-Thread-Topic: [PATCH v3] clk: at91: optimize clk_round_rate() for AUDIO_PLL
-Thread-Index: AQHUrkh1502hqd2qBkWT3ydFay3+rg==
-Date:   Thu, 17 Jan 2019 09:38:53 +0000
-Message-ID: <834542a0-2895-0b73-162c-7bfea622eae8@microchip.com>
-References: <70db24a03b552ca553e6435306d895644fb08545.1545131728.git.mirq-linux@rere.qmqm.pl>
-In-Reply-To: <70db24a03b552ca553e6435306d895644fb08545.1545131728.git.mirq-linux@rere.qmqm.pl>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: LNXP265CA0066.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:5d::30) To MWHPR11MB1662.namprd11.prod.outlook.com
- (2603:10b6:301:e::15)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Nicolas.Ferre@microchip.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [195.6.168.232]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR11MB1741;6:go/bHqby96Kn3eg0WmkEo5aKgfIBxVNg7IHW31Pvqya2XLSqmR2V+YjNSicnjDj0c1GELNt4Kmn7oukQUax8CGUIiso4vibhLdmgmWIl4TSqjp9crGvw3ZuFI4il4gYl9lbpniYs/rJcoNLjvIzyOZzK1HpwV90wQk62oI2sok7GdUQBODR9cbYz+ymiIAeo20Gg6kSuNR7Su+qdJJhzgcwUp85RtFX7oKSxi0EkUxvh1VtZVA28AHs2apvE4cK46TcMs9Wo/27FSBHAYbuED9IbkuxjAaJSTZxg9eM51y6YJHky/+VLIvbrqnhBJ7fHIsUGScGz8r2/QMoAAam5u+chAthLl/GpiHC6XORRPsFpBYOQ0NurAnII0Mk8Q808sW5XA86GhdZVFCn85GXu5yOZYKi05vgBdnf/AJAg5hMOmayBG+wMTIa/0i6UvrrZ2LguB9b637sru9+HmWRK9A==;5:sKAeekDe4rS9rccWJWrPlWax1t+AXiKDbQoqwK5sUyG2etseViynXIrovNbMfnLDe/pkNu/ekRS1UFAvFMMrfOZ1028n3ity+f9EWRnCrWDYdVIpiTeCSdZ9Kx4qYg1RggJeJt8+t9jNmwaKIE9H/pV/7w6FteCUWygW/5RPiXKSsIRjbKodrECUxOFnKhlLHVbD7JRnHnxrOVlZFd5XCA==;7:qa64kqGia0UdOwAUKtecm0s4Gnt/mMEsxwa3YMSkvTjKizceOlw/+I5QZuz6fBuWB4lfoGRvpc6WOX4QzpX9hgzwTyd7qQq6BQ2Uod05768Devby/KX60S6keH/Nzf3tCRJL+iRbvyav+R4G9AqBVw==
-x-ms-office365-filtering-correlation-id: 61471143-d26a-4798-c884-08d67c5f9816
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(2017052603328)(7153060)(7193020);SRVR:MWHPR11MB1741;
-x-ms-traffictypediagnostic: MWHPR11MB1741:
-x-microsoft-antispam-prvs: <MWHPR11MB17412BB9FAD475E1B8DF2FA0E0830@MWHPR11MB1741.namprd11.prod.outlook.com>
-x-forefront-prvs: 0920602B08
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(366004)(346002)(136003)(39860400002)(396003)(199004)(189003)(4326008)(25786009)(86362001)(2201001)(2501003)(8676002)(66574012)(6486002)(476003)(186003)(8936002)(54906003)(31696002)(68736007)(446003)(99286004)(110136005)(81156014)(11346002)(81166006)(6246003)(2906002)(2616005)(316002)(26005)(7736002)(3846002)(478600001)(52116002)(486006)(102836004)(5660300001)(97736004)(6116002)(31686004)(105586002)(106356001)(6436002)(305945005)(6506007)(14444005)(256004)(53546011)(53936002)(36756003)(76176011)(71200400001)(71190400001)(229853002)(66066001)(14454004)(386003)(6512007)(72206003);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR11MB1741;H:MWHPR11MB1662.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: nGkk4mrEywH0sseEj7LIpo4l/cQdnJ09l64Hr1TQX2jaq6FilVTSIxfdwbsfA9ZkmGDTkfGWp36WeA5RCjiUeMYzwSHMzXPjuZm/WSV0UszWT4oAzW+4d9uhu3o8oN98ovMw//lOEa9sIrHb2x0MgnbUzJnI6S4eSd+MM2e2heUOnnCbzF7fpxB4x2vi5PzrnQfDoXcjT6RO/+75BB4Dqo1ROKRJtoUcPzJYdurgXXIrXhWBVAzMgVfpYinbraP9oxG7qUjj5oMwhZ4Ckckh/LtPX938X+9zeFEGnY67fC9EqknY8NkvmD80bCRFcP0Vi1Gq3q0AX2r8RdzYJYDx6/7xEzwqNysbDF/jG9B6xEzQSydtQ8dVCpVmoQ/mf59F1MoTThYHMB1goYog8f68cdroSNU9mMToLuy6wou82QA=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <D36EB94EB1DB014496250DD322A22D0B@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 61471143-d26a-4798-c884-08d67c5f9816
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jan 2019 09:38:51.4303
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR11MB1741
-X-OriginatorOrg: microchip.com
+        id S1726029AbfAQJsF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Jan 2019 04:48:05 -0500
+Received: from shell.v3.sk ([90.176.6.54]:60842 "EHLO shell.v3.sk"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725965AbfAQJsF (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 17 Jan 2019 04:48:05 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 21B205AB44;
+        Thu, 17 Jan 2019 10:48:01 +0100 (CET)
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id PUQX9U1ttL0m; Thu, 17 Jan 2019 10:47:58 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id C77265AB57;
+        Thu, 17 Jan 2019 10:47:57 +0100 (CET)
+X-Virus-Scanned: amavisd-new at zimbra.v3.sk
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id rUZfttvU1wnp; Thu, 17 Jan 2019 10:47:57 +0100 (CET)
+Received: from belphegor (nat-pool-brq-t.redhat.com [213.175.37.10])
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 0D7F75AB44;
+        Thu, 17 Jan 2019 10:47:56 +0100 (CET)
+Message-ID: <bec06415e980f18d5d3407d498cad372dc3abd1b.camel@v3.sk>
+Subject: Re: [PATCH] clk: mmp2: avoid disabling the SP clock when unused
+From:   Lubomir Rintel <lkundrak@v3.sk>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Date:   Thu, 17 Jan 2019 10:47:55 +0100
+In-Reply-To: <154768138798.169631.18317264971847478148@swboyd.mtv.corp.google.com>
+References: <20190116093505.1920945-1-lkundrak@v3.sk>
+         <154765664632.169631.9344557684702266461@swboyd.mtv.corp.google.com>
+         <73b20a5caef100d5768679cc395168976e86ed04.camel@v3.sk>
+         <154768138798.169631.18317264971847478148@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.3 (3.30.3-1.fc29) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-T24gMTgvMTIvMjAxOCBhdCAxMjoyMCwgTWljaGHFgiBNaXJvc8WCYXcgd3JvdGU6DQo+IFN0b3Ag
-dGhlIHNlYXJjaCBmb3IgcGFyZW50IHJhdGUgd2hlbiBleGFjdCBtYXRjaCBpcyBmb3VuZC4NCj4g
-DQo+IFRoaXMgbWFrZXMgZm9yIDMgY2xrX3JvdW5kX3JhdGUoKSBjYWxscyBpbnN0ZWFkIG9mIDY0
-IG9mIHRoZW0gb24NCj4gU0FNQTVEMi1iYXNlZCBib2FyZCB3aGVuIHNlYXJjaGluZyBmb3IgMTIu
-Mjg4TUh6IGNsb2NrLg0KPiANCj4gU2lnbmVkLW9mZi1ieTogTWljaGHFgiBNaXJvc8WCYXcgPG1p
-cnEtbGludXhAcmVyZS5xbXFtLnBsPg0KDQpJdCBsb29rcyBjb3JyZWN0IHRvIG1lOg0KUmV2aWV3
-ZWQtYnk6IE5pY29sYXMgRmVycmUgPG5pY29sYXMuZmVycmVAbWljcm9jaGlwLmNvbT4NCg0KVGhh
-bmtzIE1pY2hhxYIhDQoNCkJlc3QgcmVnYXJkcywNCiAgIE5pY29sYXMNCg0KDQo+IC0tLQ0KPiAg
-IHYyOiByZWJhc2VkIG9uIHY0LjIwLXJjNw0KPiAgIHYzOiBmb3JtYXR0aW5nIGFuZCBjb21taXQg
-ZGVzY3JpcHRpb24gY2hhbmdlcw0KPiAtLS0NCj4gICBkcml2ZXJzL2Nsay9hdDkxL2Nsay1hdWRp
-by1wbGwuYyB8IDkgKysrKysrKystDQo+ICAgMSBmaWxlIGNoYW5nZWQsIDggaW5zZXJ0aW9ucygr
-KSwgMSBkZWxldGlvbigtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvY2xrL2F0OTEvY2xr
-LWF1ZGlvLXBsbC5jIGIvZHJpdmVycy9jbGsvYXQ5MS9jbGstYXVkaW8tcGxsLmMNCj4gaW5kZXgg
-MzZkNzcxNDZhM2JkLi4zY2M0YTgyZjRlOWYgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvY2xrL2F0
-OTEvY2xrLWF1ZGlvLXBsbC5jDQo+ICsrKyBiL2RyaXZlcnMvY2xrL2F0OTEvY2xrLWF1ZGlvLXBs
-bC5jDQo+IEBAIC0zNDAsNyArMzQwLDEyIEBAIHN0YXRpYyBsb25nIGNsa19hdWRpb19wbGxfcG1j
-X3JvdW5kX3JhdGUoc3RydWN0IGNsa19odyAqaHcsIHVuc2lnbmVkIGxvbmcgcmF0ZSwNCj4gICAJ
-cHJfZGVidWcoIkEgUExML1BNQzogJXMsIHJhdGUgPSAlbHUgKHBhcmVudF9yYXRlID0gJWx1KVxu
-IiwgX19mdW5jX18sDQo+ICAgCQkgcmF0ZSwgKnBhcmVudF9yYXRlKTsNCj4gICANCj4gLQlmb3Ig
-KGRpdiA9IDE7IGRpdiA8PSBBVURJT19QTExfUURQTUNfTUFYOyBkaXYrKykgew0KPiArCWlmICgh
-cmF0ZSkNCj4gKwkJcmV0dXJuIDA7DQo+ICsNCj4gKwliZXN0X3BhcmVudF9yYXRlID0gY2xrX3Jv
-dW5kX3JhdGUocGNsay0+Y2xrLCAxKTsNCj4gKwlkaXYgPSBtYXgoYmVzdF9wYXJlbnRfcmF0ZSAv
-IHJhdGUsIDFVTCk7DQo+ICsJZm9yICg7IGRpdiA8PSBBVURJT19QTExfUURQTUNfTUFYOyBkaXYr
-Kykgew0KPiAgIAkJYmVzdF9wYXJlbnRfcmF0ZSA9IGNsa19yb3VuZF9yYXRlKHBjbGstPmNsaywg
-cmF0ZSAqIGRpdik7DQo+ICAgCQl0bXBfcmF0ZSA9IGJlc3RfcGFyZW50X3JhdGUgLyBkaXY7DQo+
-ICAgCQl0bXBfZGlmZiA9IGFicyhyYXRlIC0gdG1wX3JhdGUpOw0KPiBAQCAtMzUwLDYgKzM1NSw4
-IEBAIHN0YXRpYyBsb25nIGNsa19hdWRpb19wbGxfcG1jX3JvdW5kX3JhdGUoc3RydWN0IGNsa19o
-dyAqaHcsIHVuc2lnbmVkIGxvbmcgcmF0ZSwNCj4gICAJCQliZXN0X3JhdGUgPSB0bXBfcmF0ZTsN
-Cj4gICAJCQliZXN0X2RpZmYgPSB0bXBfZGlmZjsNCj4gICAJCQl0bXBfcWQgPSBkaXY7DQo+ICsJ
-CQlpZiAoIWJlc3RfZGlmZikNCj4gKwkJCQlicmVhazsJLyogZ290IGV4YWN0IG1hdGNoICovDQo+
-ICAgCQl9DQo+ICAgCX0NCj4gICANCj4gDQoNCg0KLS0gDQpOaWNvbGFzIEZlcnJlDQo=
+On Wed, 2019-01-16 at 15:29 -0800, Stephen Boyd wrote:
+> Quoting Lubomir Rintel (2019-01-16 09:26:31)
+> > On Wed, 2019-01-16 at 08:37 -0800, Stephen Boyd wrote:
+> > > Quoting Lubomir Rintel (2019-01-16 01:35:05)
+> > > > There could be vital functionality running on the SP PJ1 core it can not be
+> > > > restarted just by turning the clock back on.
+> > > > 
+> > > > On the OLPC laptop, the keyboard controller code runs there. It
+> > > > wouldn't be possible to load the driver for it as a module if the clock
+> > > > is disabled on boot.
+> > > > 
+> > > > Cc: stable@vger.kernel.org # v4.18+
+> > > > Fixes: commit fc27c2394d96 ("clk: mmp2: add SP clock")
+> > > > Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+> > > > ---
+> > > >  drivers/clk/mmp/clk-of-mmp2.c | 2 +-
+> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > > 
+> > > > diff --git a/drivers/clk/mmp/clk-of-mmp2.c b/drivers/clk/mmp/clk-of-mmp2.c
+> > > > index f2a1c9bbaa63..3e33f1295f59 100644
+> > > > --- a/drivers/clk/mmp/clk-of-mmp2.c
+> > > > +++ b/drivers/clk/mmp/clk-of-mmp2.c
+> > > > @@ -246,7 +246,7 @@ static struct mmp_param_gate_clk apmu_gate_clks[] = {
+> > > >         {MMP2_CLK_CCIC1, "ccic1_clk", "ccic1_mix_clk", CLK_SET_RATE_PARENT, APMU_CCIC1, 0x1b, 0x1b, 0x0, 0, &ccic1_lock},
+> > > >         {MMP2_CLK_CCIC1_PHY, "ccic1_phy_clk", "ccic1_mix_clk", CLK_SET_RATE_PARENT, APMU_CCIC1, 0x24, 0x24, 0x0, 0, &ccic1_lock},
+> > > >         {MMP2_CLK_CCIC1_SPHY, "ccic1_sphy_clk", "ccic1_sphy_div", CLK_SET_RATE_PARENT, APMU_CCIC1, 0x300, 0x300, 0x0, 0, &ccic1_lock},
+> > > > -       {MMP2_CLK_SP, "sp_clk", NULL, CLK_SET_RATE_PARENT, APMU_SP, 0x1b, 0x1b, 0x0, 0, &sp_lock},
+> > > > +       {MMP2_CLK_SP, "sp_clk", NULL, CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, APMU_SP, 0x1b, 0x1b, 0x0, 0, &sp_lock},
+> > > 
+> > > Is it a critical clk that should never be turned off?
+> > 
+> > I don't think it is. It is entirely plausible to have no use for the
+> > "security processor", and in that case it's just okay to keep the clock
+> > disabled.
+> 
+> So does the firmware/bootloader leave the clk enabled out of boot and we
+> shouldn't really touch the on/off bits of the clk hardware from the
+> kernel?
+
+I think so.
+
+> Or do we want to actively manage this clk from a driver
+> somewhere in the kernel?
+
+The olpc_apsp driver actually manages this clock, but that might turn
+out to be the wrong thing to do. It currently only works if the driver
+is built-in and thus the clock is always kept enabled.
+
+I'm now somewhat more confused that I believed myself to be when
+sending the patch. Perhaps you could help me understand things a bit
+more:
+
+1.) What's the principal difference between CLK_IGNORE_UNUSED and
+CLK_IS_CRITICAL? Is it that the CLK_IGNORE_UNUSED clocks are permitted 
+to be disabled by a driver, but an attempt to disable CLK_IS_CRITICAL
+is a bug?
+
+2.) Perhaps it makes sense to disable the SP on the machines that don't
+utilize it even if firmware keeps it enabled? Would it make sense to
+make the clk driver use the  "protected-clocks" DT property for this?
+
+----8<----
+
+Here's some more context for the SP on the MMP2:
+
+The SP is a small PJ1 core. It starts when the platform is powered on
+and eventually brings up the large PJ4 core.
+
+On the OLPC machine, the first stage firmware (cforth) starts running
+on the SP, configures the DRAM, starts the boot firmware (openfirmware)
+on the main PJ4 core and then enters a loop that bit-bangs the PS/2
+protocol on the attached keyboard/touchpad.
+
+It is entirely possible that on some boards the SP is not used for
+anything but the bringup of the bootloader on the main core.
+
+SP is sometimes referred to as WTM, "wireless trusted module", but it's
+not clear to me why is it the case. There's no documentation.
+
+Lubo
+
