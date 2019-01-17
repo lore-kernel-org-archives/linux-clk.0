@@ -2,123 +2,128 @@ Return-Path: <SRS0=NuDk=PZ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3F97C43387
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 09:12:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CF88C43387
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 09:38:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 740B620657
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 09:12:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E74B02054F
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 09:38:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="losz+YX4"
+	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="f9DC3s3j"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728022AbfAQJMU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 17 Jan 2019 04:12:20 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:36335 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726926AbfAQJMU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Jan 2019 04:12:20 -0500
-Received: by mail-wr1-f66.google.com with SMTP id u4so10110382wrp.3;
-        Thu, 17 Jan 2019 01:12:18 -0800 (PST)
+        id S1726914AbfAQJi6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Jan 2019 04:38:58 -0500
+Received: from esa5.microchip.iphmx.com ([216.71.150.166]:9739 "EHLO
+        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726632AbfAQJi6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Jan 2019 04:38:58 -0500
+X-IronPort-AV: E=Sophos;i="5.56,488,1539673200"; 
+   d="scan'208";a="23507779"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/AES128-SHA; 17 Jan 2019 02:38:57 -0700
+Received: from NAM01-BN3-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.76.37) with Microsoft SMTP Server (TLS) id
+ 14.3.352.0; Thu, 17 Jan 2019 02:38:56 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=gxxz24gKY5aBwImV4VMtmFLIleRU+xZZKrYJMvsCIFE=;
-        b=losz+YX42vwzPjQsZzYTyRfuX80AEv0o4kFo+ob2w02nekydRGcD2VIHn/TVvPUNCt
-         3OApjCq6tCrRq4umyW/XUtoqDSJgILnTr015I5yr2W81yO6A48LuuaNM4PYopUX9KOT9
-         k8PBtl0hs79fZWTi3Puwthr7pBw+AMpk3nBxb+PV57tlz1JzgCTvz7iPL8PSaw1Fx7qG
-         A4ZnPbdsDrOUrzf7KvlevIXrLdAnA1ZJ09ITGXiaA4DF/pLnwRrag+FzcvpWsYUnxfhS
-         7scZF8YtG/uLhYCcG2SbQM7s5ClncMWviyLwkZkRt/C12WISLAX619nuGXjSqoLP+7Vt
-         RpgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=gxxz24gKY5aBwImV4VMtmFLIleRU+xZZKrYJMvsCIFE=;
-        b=kgNGOee26Nl+a7J4RxlhUmiEeErH4hb4hamFMu3it2sstOtwS5m6YVO5aTlMBaYbbA
-         hWlY8/KkxU5gSm0zVSVfO9zhBBmY0RwmIqsAqI59ucwbOYuS+Ws4yDl/GEw5u8+MmhnY
-         EpcK+a1FIEJZRLWIiB824AeO5l5HxRO+vIe1qi/kUwMEY2+DpIfBHo6MviXYu6v2s9TZ
-         PYURr8Dm6aFIC72TxFbZGimlJXrY81aAS+Bjdy9RKrffMdfswXf0aoGmYe1o32d0k06d
-         sWUT9K4Atb1pErm1pe7zSZwBzajgVLAJccv15LReTs6mVhoWEYWlmfAIGA5vH99IbARH
-         6/Yw==
-X-Gm-Message-State: AJcUukeWF90AW+Vv5MS2lFttyS6eYqdzVZPbHFK3A3ey9C9+fB9SRwpG
-        KTh8ZrTaqlfanJRMO/KuBJE=
-X-Google-Smtp-Source: ALg8bN7ZTadRqVjHbDR9TD64E6Od++65T6P5f+vMiENQaTQ21waTfhrQWqY/wSjj453+dJGdERMZOA==
-X-Received: by 2002:a5d:43d0:: with SMTP id v16mr11679301wrr.67.1547716337170;
-        Thu, 17 Jan 2019 01:12:17 -0800 (PST)
-Received: from spock ([194.207.103.1])
-        by smtp.gmail.com with ESMTPSA id q9sm122889170wrp.0.2019.01.17.01.12.15
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 17 Jan 2019 01:12:15 -0800 (PST)
-Date:   Thu, 17 Jan 2019 09:12:14 +0000
-From:   Dean Wallace <duffydack73@gmail.com>
-To:     Mogens Jensen <mogens-jensen@protonmail.com>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Stable <stable@vger.kernel.org>,
-        Johannes Stezenbach <js@sig21.net>,
-        Carlo Caione <carlo@endlessm.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: Regression found (Stop-marking-clocks-as-CLK_IS_CRITICAL)
-Message-ID: <20190117091214.7djttnpo4jjzi4su@spock>
-References: <20181025232517.ywnw54qibemosjws@picard>
- <d00df762-e4fc-06c5-701e-d5100bfd0e35@redhat.com>
- <e48696f0-aa3e-e20e-d038-9d8dda9cbfce@redhat.com>
- <BaxBOBmUCld7THAnRIDXUpKq8uQ2oJ49EaNlq0mZ11gFjA5JjhbfhVouLZGc1q74PrQC6uGfddKklIP059D_DtQwBqK-sn9rd4xEPhW9E6s=@protonmail.com>
- <d53738e1-4ba5-640e-7ef7-1705ab205061@redhat.com>
- <kAuINEBUUnlS5_uJafGtvryMEJVkDO4pb_yLfClwMcTS1h3sB1gYPcXBvg9X3RINfp5Uch7kLXuhTRX_JtouTYxoS6xNr77_b46e-mugl3k=@protonmail.com>
- <b8849ae1-5a38-e7a1-da14-dc7f9d164825@redhat.com>
- <3iO9ehQbZm_haTV0IuZ0qhsVHR0QLUbTgRJT8ZenGuRsnz2_uBvO93f0bHVYnsApibUT16JsJ0dgphLhUBd-u0t-lDBNsbvvlKWTgq8XOlw=@protonmail.com>
- <3e12e051-b874-187d-d4f5-e146f59c659b@redhat.com>
- <U9ny3qDg8fEQ-IaXWgwAmDf_U7yb1NZxpwoOvTorCbG86v8wUae3kWsa5omAv-ngu3VMaSONp6RdzmaI26Cz6uoyf5ddIiXuJQbzGf2MN3w=@protonmail.com>
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector1-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=is3PtBt1v7cnY7dDj0lsgiHuqYQyV6irFm4guMzxCHs=;
+ b=f9DC3s3jpWOPsFSU0W6Hq9hV7qAdxhwXc3VZh1o1MU/m9eFBhC3JEggwXM34vNy8EfBMOoLPifzqHsnSSGsbjBAzo2MhMEb6Zqlzbg6rg3JYk2smBXUR81k5Bx7+QI9jLsKYO4Vp4iKfR5VC0VLbZUVhIlFrRjbYU99wk28Ma4Y=
+Received: from MWHPR11MB1662.namprd11.prod.outlook.com (10.172.55.15) by
+ MWHPR11MB1741.namprd11.prod.outlook.com (10.175.52.148) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1516.14; Thu, 17 Jan 2019 09:38:54 +0000
+Received: from MWHPR11MB1662.namprd11.prod.outlook.com
+ ([fe80::890b:3c0f:a8f4:5de5]) by MWHPR11MB1662.namprd11.prod.outlook.com
+ ([fe80::890b:3c0f:a8f4:5de5%7]) with mapi id 15.20.1516.019; Thu, 17 Jan 2019
+ 09:38:53 +0000
+From:   <Nicolas.Ferre@microchip.com>
+To:     <mirq-linux@rere.qmqm.pl>, <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <sboyd@kernel.org>,
+        <alexandre.belloni@bootlin.com>
+CC:     <mturquette@baylibre.com>, <Ludovic.Desroches@microchip.com>,
+        <bbrezillon@kernel.org>
+Subject: Re: [PATCH v3] clk: at91: optimize clk_round_rate() for AUDIO_PLL
+Thread-Topic: [PATCH v3] clk: at91: optimize clk_round_rate() for AUDIO_PLL
+Thread-Index: AQHUrkh1502hqd2qBkWT3ydFay3+rg==
+Date:   Thu, 17 Jan 2019 09:38:53 +0000
+Message-ID: <834542a0-2895-0b73-162c-7bfea622eae8@microchip.com>
+References: <70db24a03b552ca553e6435306d895644fb08545.1545131728.git.mirq-linux@rere.qmqm.pl>
+In-Reply-To: <70db24a03b552ca553e6435306d895644fb08545.1545131728.git.mirq-linux@rere.qmqm.pl>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: LNXP265CA0066.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:5d::30) To MWHPR11MB1662.namprd11.prod.outlook.com
+ (2603:10b6:301:e::15)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Nicolas.Ferre@microchip.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [195.6.168.232]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR11MB1741;6:go/bHqby96Kn3eg0WmkEo5aKgfIBxVNg7IHW31Pvqya2XLSqmR2V+YjNSicnjDj0c1GELNt4Kmn7oukQUax8CGUIiso4vibhLdmgmWIl4TSqjp9crGvw3ZuFI4il4gYl9lbpniYs/rJcoNLjvIzyOZzK1HpwV90wQk62oI2sok7GdUQBODR9cbYz+ymiIAeo20Gg6kSuNR7Su+qdJJhzgcwUp85RtFX7oKSxi0EkUxvh1VtZVA28AHs2apvE4cK46TcMs9Wo/27FSBHAYbuED9IbkuxjAaJSTZxg9eM51y6YJHky/+VLIvbrqnhBJ7fHIsUGScGz8r2/QMoAAam5u+chAthLl/GpiHC6XORRPsFpBYOQ0NurAnII0Mk8Q808sW5XA86GhdZVFCn85GXu5yOZYKi05vgBdnf/AJAg5hMOmayBG+wMTIa/0i6UvrrZ2LguB9b637sru9+HmWRK9A==;5:sKAeekDe4rS9rccWJWrPlWax1t+AXiKDbQoqwK5sUyG2etseViynXIrovNbMfnLDe/pkNu/ekRS1UFAvFMMrfOZ1028n3ity+f9EWRnCrWDYdVIpiTeCSdZ9Kx4qYg1RggJeJt8+t9jNmwaKIE9H/pV/7w6FteCUWygW/5RPiXKSsIRjbKodrECUxOFnKhlLHVbD7JRnHnxrOVlZFd5XCA==;7:qa64kqGia0UdOwAUKtecm0s4Gnt/mMEsxwa3YMSkvTjKizceOlw/+I5QZuz6fBuWB4lfoGRvpc6WOX4QzpX9hgzwTyd7qQq6BQ2Uod05768Devby/KX60S6keH/Nzf3tCRJL+iRbvyav+R4G9AqBVw==
+x-ms-office365-filtering-correlation-id: 61471143-d26a-4798-c884-08d67c5f9816
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(2017052603328)(7153060)(7193020);SRVR:MWHPR11MB1741;
+x-ms-traffictypediagnostic: MWHPR11MB1741:
+x-microsoft-antispam-prvs: <MWHPR11MB17412BB9FAD475E1B8DF2FA0E0830@MWHPR11MB1741.namprd11.prod.outlook.com>
+x-forefront-prvs: 0920602B08
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(366004)(346002)(136003)(39860400002)(396003)(199004)(189003)(4326008)(25786009)(86362001)(2201001)(2501003)(8676002)(66574012)(6486002)(476003)(186003)(8936002)(54906003)(31696002)(68736007)(446003)(99286004)(110136005)(81156014)(11346002)(81166006)(6246003)(2906002)(2616005)(316002)(26005)(7736002)(3846002)(478600001)(52116002)(486006)(102836004)(5660300001)(97736004)(6116002)(31686004)(105586002)(106356001)(6436002)(305945005)(6506007)(14444005)(256004)(53546011)(53936002)(36756003)(76176011)(71200400001)(71190400001)(229853002)(66066001)(14454004)(386003)(6512007)(72206003);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR11MB1741;H:MWHPR11MB1662.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microchip.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: nGkk4mrEywH0sseEj7LIpo4l/cQdnJ09l64Hr1TQX2jaq6FilVTSIxfdwbsfA9ZkmGDTkfGWp36WeA5RCjiUeMYzwSHMzXPjuZm/WSV0UszWT4oAzW+4d9uhu3o8oN98ovMw//lOEa9sIrHb2x0MgnbUzJnI6S4eSd+MM2e2heUOnnCbzF7fpxB4x2vi5PzrnQfDoXcjT6RO/+75BB4Dqo1ROKRJtoUcPzJYdurgXXIrXhWBVAzMgVfpYinbraP9oxG7qUjj5oMwhZ4Ckckh/LtPX938X+9zeFEGnY67fC9EqknY8NkvmD80bCRFcP0Vi1Gq3q0AX2r8RdzYJYDx6/7xEzwqNysbDF/jG9B6xEzQSydtQ8dVCpVmoQ/mf59F1MoTThYHMB1goYog8f68cdroSNU9mMToLuy6wou82QA=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <D36EB94EB1DB014496250DD322A22D0B@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <U9ny3qDg8fEQ-IaXWgwAmDf_U7yb1NZxpwoOvTorCbG86v8wUae3kWsa5omAv-ngu3VMaSONp6RdzmaI26Cz6uoyf5ddIiXuJQbzGf2MN3w=@protonmail.com>
-X-Info: Keep It Simple, Stupid.
-X-Operating-System: Linux, kernel 4.20.2-arch1-1-max98090
-X-Message-Flag: WARNING!! Outlook sucks
-User-Agent: Every email client sucks, this one just sucks less.
+X-MS-Exchange-CrossTenant-Network-Message-Id: 61471143-d26a-4798-c884-08d67c5f9816
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jan 2019 09:38:51.4303
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR11MB1741
+X-OriginatorOrg: microchip.com
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Hans, Mogens,
-
-On 17-01-19, Mogens Jensen wrote:
- 
-> Kernel is compiled with SND_SOC_INTEL_CHT_BSW_MAX98090_TI_MACH and the quirk seems to have fixed the problem caused by commit 648e921888ad ("clk: x86: Stop marking clocks as CLK_IS_CRITICAL"), as sound is now working if running "speaker-test" on my system which is clean ALSA.
-> 
-> Unfortunately, SND_SOC_INTEL_CHT_BSW_MAX98090_TI_MACH driver is unusable on Clapper Chromebooks as audio played from everything but "speaker-test" as video players or web browsers is extremly low and sounds like played at 10x speed. At the same time kernel log is spammed with messages like this:
-> 
-> max98090 i2c-193C9890:00: PLL unlocked
-> intel_sst_acpi 80860F28:00: FW Version 01.0c.00.01
-> writing to lpe: 00000000: 01 01 01 01 00 00 08 00 ff ff ff ff 55 00 00 00  ............U...
-> writing to lpe: 00000000: 01 01 01 01 00 00 1a 00 ff ff ff ff 75 00 12 00  ............u...
-> 
-> This is probably not related to the problem discussed in this thread, but the result is that I have to use the legacy driver SND_SOC_INTEL_BYT_MAX98090_MACH and therefore still has to revert commit 648e921888ad for sound to work.
-> 
-> Is it possible to create a fix for SND_SOC_INTEL_BYT_MAX98090_MACH on kernel 4.19? Kernel 4.19 is a long term release so it would be very nice to have fix for this version upstream.
-
-I have been reverting "clk: x86: Stop marking clocks as CLK_IS_CRITICAL"
-and the patch that initially added the quirk for swanky because of sound
-instability issues as you described.  I'm compiling vanilla Archlinux
-kernel with SND_SOC_INTEL_CHT_BSW_MAX98090_TI_MACH, using pulseaudio,
-and have sound in all my apps.
-
-Baytrail sound has always been a little touchy, especially using headset
-with mic, but since the clk patch breaking sound and the quirk patch to
-fix it, there is a lot more instability.  Just running pavucontrol, or
-plugging in headset sets it off.  It's a head scratcher.
-
--Dean
+T24gMTgvMTIvMjAxOCBhdCAxMjoyMCwgTWljaGHFgiBNaXJvc8WCYXcgd3JvdGU6DQo+IFN0b3Ag
+dGhlIHNlYXJjaCBmb3IgcGFyZW50IHJhdGUgd2hlbiBleGFjdCBtYXRjaCBpcyBmb3VuZC4NCj4g
+DQo+IFRoaXMgbWFrZXMgZm9yIDMgY2xrX3JvdW5kX3JhdGUoKSBjYWxscyBpbnN0ZWFkIG9mIDY0
+IG9mIHRoZW0gb24NCj4gU0FNQTVEMi1iYXNlZCBib2FyZCB3aGVuIHNlYXJjaGluZyBmb3IgMTIu
+Mjg4TUh6IGNsb2NrLg0KPiANCj4gU2lnbmVkLW9mZi1ieTogTWljaGHFgiBNaXJvc8WCYXcgPG1p
+cnEtbGludXhAcmVyZS5xbXFtLnBsPg0KDQpJdCBsb29rcyBjb3JyZWN0IHRvIG1lOg0KUmV2aWV3
+ZWQtYnk6IE5pY29sYXMgRmVycmUgPG5pY29sYXMuZmVycmVAbWljcm9jaGlwLmNvbT4NCg0KVGhh
+bmtzIE1pY2hhxYIhDQoNCkJlc3QgcmVnYXJkcywNCiAgIE5pY29sYXMNCg0KDQo+IC0tLQ0KPiAg
+IHYyOiByZWJhc2VkIG9uIHY0LjIwLXJjNw0KPiAgIHYzOiBmb3JtYXR0aW5nIGFuZCBjb21taXQg
+ZGVzY3JpcHRpb24gY2hhbmdlcw0KPiAtLS0NCj4gICBkcml2ZXJzL2Nsay9hdDkxL2Nsay1hdWRp
+by1wbGwuYyB8IDkgKysrKysrKystDQo+ICAgMSBmaWxlIGNoYW5nZWQsIDggaW5zZXJ0aW9ucygr
+KSwgMSBkZWxldGlvbigtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvY2xrL2F0OTEvY2xr
+LWF1ZGlvLXBsbC5jIGIvZHJpdmVycy9jbGsvYXQ5MS9jbGstYXVkaW8tcGxsLmMNCj4gaW5kZXgg
+MzZkNzcxNDZhM2JkLi4zY2M0YTgyZjRlOWYgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvY2xrL2F0
+OTEvY2xrLWF1ZGlvLXBsbC5jDQo+ICsrKyBiL2RyaXZlcnMvY2xrL2F0OTEvY2xrLWF1ZGlvLXBs
+bC5jDQo+IEBAIC0zNDAsNyArMzQwLDEyIEBAIHN0YXRpYyBsb25nIGNsa19hdWRpb19wbGxfcG1j
+X3JvdW5kX3JhdGUoc3RydWN0IGNsa19odyAqaHcsIHVuc2lnbmVkIGxvbmcgcmF0ZSwNCj4gICAJ
+cHJfZGVidWcoIkEgUExML1BNQzogJXMsIHJhdGUgPSAlbHUgKHBhcmVudF9yYXRlID0gJWx1KVxu
+IiwgX19mdW5jX18sDQo+ICAgCQkgcmF0ZSwgKnBhcmVudF9yYXRlKTsNCj4gICANCj4gLQlmb3Ig
+KGRpdiA9IDE7IGRpdiA8PSBBVURJT19QTExfUURQTUNfTUFYOyBkaXYrKykgew0KPiArCWlmICgh
+cmF0ZSkNCj4gKwkJcmV0dXJuIDA7DQo+ICsNCj4gKwliZXN0X3BhcmVudF9yYXRlID0gY2xrX3Jv
+dW5kX3JhdGUocGNsay0+Y2xrLCAxKTsNCj4gKwlkaXYgPSBtYXgoYmVzdF9wYXJlbnRfcmF0ZSAv
+IHJhdGUsIDFVTCk7DQo+ICsJZm9yICg7IGRpdiA8PSBBVURJT19QTExfUURQTUNfTUFYOyBkaXYr
+Kykgew0KPiAgIAkJYmVzdF9wYXJlbnRfcmF0ZSA9IGNsa19yb3VuZF9yYXRlKHBjbGstPmNsaywg
+cmF0ZSAqIGRpdik7DQo+ICAgCQl0bXBfcmF0ZSA9IGJlc3RfcGFyZW50X3JhdGUgLyBkaXY7DQo+
+ICAgCQl0bXBfZGlmZiA9IGFicyhyYXRlIC0gdG1wX3JhdGUpOw0KPiBAQCAtMzUwLDYgKzM1NSw4
+IEBAIHN0YXRpYyBsb25nIGNsa19hdWRpb19wbGxfcG1jX3JvdW5kX3JhdGUoc3RydWN0IGNsa19o
+dyAqaHcsIHVuc2lnbmVkIGxvbmcgcmF0ZSwNCj4gICAJCQliZXN0X3JhdGUgPSB0bXBfcmF0ZTsN
+Cj4gICAJCQliZXN0X2RpZmYgPSB0bXBfZGlmZjsNCj4gICAJCQl0bXBfcWQgPSBkaXY7DQo+ICsJ
+CQlpZiAoIWJlc3RfZGlmZikNCj4gKwkJCQlicmVhazsJLyogZ290IGV4YWN0IG1hdGNoICovDQo+
+ICAgCQl9DQo+ICAgCX0NCj4gICANCj4gDQoNCg0KLS0gDQpOaWNvbGFzIEZlcnJlDQo=
