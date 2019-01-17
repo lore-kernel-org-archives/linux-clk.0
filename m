@@ -4,54 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEE32C43612
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 06:28:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8E8FC43387
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 06:33:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEABB20859
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 06:28:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7903B20851
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 06:33:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="OFJTc2ZW"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="NNL/kO9C"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726926AbfAQG2w (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 17 Jan 2019 01:28:52 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:43827 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726795AbfAQG2w (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Jan 2019 01:28:52 -0500
-Received: by mail-pg1-f193.google.com with SMTP id v28so3963910pgk.10
-        for <linux-clk@vger.kernel.org>; Wed, 16 Jan 2019 22:28:52 -0800 (PST)
+        id S1727198AbfAQGdz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Jan 2019 01:33:55 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:38542 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726972AbfAQGdy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Jan 2019 01:33:54 -0500
+Received: by mail-pg1-f195.google.com with SMTP id g189so3980737pgc.5
+        for <linux-clk@vger.kernel.org>; Wed, 16 Jan 2019 22:33:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=it49WLHEA1GzTHs3Z8BztlHSPMPMqqjJh3zyQ6F6IVY=;
-        b=OFJTc2ZW2OXMpVxSecxBuoozg0/vHavAPyNs43TQ3G6tx+43WIYV12OlMXK4Ha2gU/
-         mPE8CkGI1nuybffQIAoS8HkNhncXmbRotyaTZwkkd6ZmhYk/kU/O3uZBDUeCow+NCaVz
-         w8Iz0l5jQ+/GE3BYf26fQpt5MbYq+6i+Kl3Jc=
+        bh=aqC+vB4fSjRN90IibQ7rlURw1TMhvABYquzwyDXgypA=;
+        b=NNL/kO9CdzEPti7SThDJKLv7Yq+SCVjXCEv003EZOStG3hNTBpZfyr6YP2iPuGFqD/
+         MOLr/6bfHbUk+HqbJjIer6QZDxP24yIvm4NpTf1EcEBIYGpOX2Mr2QPcU/pAWw0rRUpB
+         B8K5bFtba6YWPktyH7QWTfPTRL38b8zQRjZ2M=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=it49WLHEA1GzTHs3Z8BztlHSPMPMqqjJh3zyQ6F6IVY=;
-        b=ZGxsKE4shkAi++eXCJ+2AL8zgzb2mCOuUY0qbub2KrXkkX3veqDuiqxI+M1O0HLtq2
-         Gx8um56qdwiImDh7K9Jppi1c3ucWOQr639jVhq0iNSOYTWsDw2qjZaPGTZukEC53X376
-         Ews6qYKD291YonE9RKwS9vbAXLs3rK6zO4T8Ru0rCyhW9KzQr7Wey3uc8SyHxfQJ+xdh
-         iEEaUV2lXZdTQW7ioIDZexhKOVu6/XYnCQ8kKbJ7nyDz700/LmBZSQX5FxA1oybgSogP
-         GbVOy9j7qMIruI9tOI0gujlPWxYGMCcbyNr2ywlSO3JWVs1u9Cxq3o2tIYU6Mx4hvHq2
-         +t0g==
-X-Gm-Message-State: AJcUukf7jXfTPuMtKisuR9lbwmv/2mpWOuUF8P2OxJc6AZ7VXp34+ZTC
-        giDF38tGObPXEHy1RTcH13kl4Q==
-X-Google-Smtp-Source: ALg8bN4p+rF0kFpefxR+B19hWoQ347mPz/zaLWDA3qpjIA7wixr0D4u9JTrmkP2LAwU9dL/0zdEABw==
-X-Received: by 2002:a63:5c22:: with SMTP id q34mr12269636pgb.417.1547706531679;
-        Wed, 16 Jan 2019 22:28:51 -0800 (PST)
+        bh=aqC+vB4fSjRN90IibQ7rlURw1TMhvABYquzwyDXgypA=;
+        b=Gdmdt9eEkFWpEDaz0fGJQMQDd2rWX10qyOrUqPKXSuXArdYquOLN5DJt+HZ9JEqTTJ
+         MsUS6TakUGGkkgnhl08HG+ohoMap+9vjR5c0NpgtuPLxyqN0atLXuaF797ooGrWrmg6Z
+         xvarFRMbKHJ8VpgiyHCI85PfqBPXnU/ugZDWwqT/bRCkvxnoL/K3NLjFMj92EVaQcpHG
+         Y3kaBGSBYAYP9XmdRCR77qNxVBE4Fee5J7+WamAIqs8wfvrgpFfD3ye+HCbeIa3Kncrb
+         If8LgjRJdBVzR3PjRku8wjPPYH80IPeRmbsvNn7DFXkxE7bP9LtURbCYyisWqsooEJDB
+         8NKw==
+X-Gm-Message-State: AJcUukeyEd/t/2GjAQvfzTNhx9Ke7yQ1onEGumM8xe7TSeFiQQsbRzIB
+        xrjmnY6vld9RYXGOe/5Pzhdsvw==
+X-Google-Smtp-Source: ALg8bN6ggp1MCPExQs+vQQxL2bvJB70+5pOHGn4EVdYjBbSFbcYTmWXyX/5SrPW/Mj7UW3le2dfSgQ==
+X-Received: by 2002:a62:fb07:: with SMTP id x7mr13619330pfm.71.1547706833568;
+        Wed, 16 Jan 2019 22:33:53 -0800 (PST)
 Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id b4sm772074pgq.65.2019.01.16.22.28.50
+        by smtp.gmail.com with ESMTPSA id b4sm793210pgq.65.2019.01.16.22.33.51
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 16 Jan 2019 22:28:51 -0800 (PST)
-Date:   Wed, 16 Jan 2019 22:28:10 -0800
+        Wed, 16 Jan 2019 22:33:52 -0800 (PST)
+Date:   Wed, 16 Jan 2019 22:33:12 -0800
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
 To:     Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
 Cc:     robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org,
@@ -64,14 +64,14 @@ Cc:     robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org,
         olof@lixom.net, amit.kucheria@linaro.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 07/13] clk: qcom: hfpll: register as clock provider
-Message-ID: <20190117062810.GD25498@builder>
+Subject: Re: [PATCH 08/13] clk: qcom: hfpll: CLK_IGNORE_UNUSED
+Message-ID: <20190117063312.GE25498@builder>
 References: <1545039990-19984-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
- <1545039990-19984-8-git-send-email-jorge.ramirez-ortiz@linaro.org>
+ <1545039990-19984-9-git-send-email-jorge.ramirez-ortiz@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1545039990-19984-8-git-send-email-jorge.ramirez-ortiz@linaro.org>
+In-Reply-To: <1545039990-19984-9-git-send-email-jorge.ramirez-ortiz@linaro.org>
 User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
@@ -80,47 +80,54 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 On Mon 17 Dec 01:46 PST 2018, Jorge Ramirez-Ortiz wrote:
 
-> Make the output of the high frequency pll a clock provider.
-> On the QCS404 this PLL controls cpu frequency scaling.
+> When COMMON_CLK_DISABLED_UNUSED is set, in an effort to save power and
+> to keep the software model of the clock in line with reality, the
+> framework transverses the clock tree and disables those clocks that
+> were enabled by the firmware but have not been enabled by any device
+> driver.
+> 
+> If CPUFREQ is enabled, early during the system boot, it might attempt
+> to change the CPU frequency ("set_rate"). If the HFPLL is selected as
+> a provider, it will then change the rate for this clock.
+> 
+> As boot continues, clk_disable_unused_subtree will run. Since it wont
+> find a valid counter (enable_count) for a clock that is actually
+> enabled it will attempt to disable it which will cause the CPU to
+> stop. Notice that in this driver, calls to check whether the clock is
+> enabled are routed via the is_enabled callback which queries the
+> hardware.
 > 
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+With the CPUFREQ referencing the CPU clock driver, that has decided to
+run off this clock, why is it not refcounted?
 
+Regards,
+Bjorn
+
+> The following commit, rather than marking the clock critical and
+> forcing the clock to be always enabled, addresses the above scenario
+> making sure the clock is not disabled but it continues to rely on the
+> firmware to enable the clock.
+> 
 > Co-developed-by: Niklas Cassel <niklas.cassel@linaro.org>
 > Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
 > Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
 > ---
->  drivers/clk/qcom/hfpll.c | 10 +++++++++-
->  1 file changed, 9 insertions(+), 1 deletion(-)
+>  drivers/clk/qcom/hfpll.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
 > diff --git a/drivers/clk/qcom/hfpll.c b/drivers/clk/qcom/hfpll.c
-> index 87b7f46..0ffed0d 100644
+> index 0ffed0d..9d92f5d 100644
 > --- a/drivers/clk/qcom/hfpll.c
 > +++ b/drivers/clk/qcom/hfpll.c
-> @@ -53,6 +53,7 @@ static int qcom_hfpll_probe(struct platform_device *pdev)
->  	struct regmap *regmap;
->  	struct clk_hfpll *h;
->  	struct clk *pclk;
-> +	int ret;
->  	struct clk_init_data init = {
+> @@ -58,6 +58,7 @@ static int qcom_hfpll_probe(struct platform_device *pdev)
 >  		.parent_names = (const char *[]){ "xo" },
 >  		.num_parents = 1,
-> @@ -87,7 +88,14 @@ static int qcom_hfpll_probe(struct platform_device *pdev)
->  	h->clkr.hw.init = &init;
->  	spin_lock_init(&h->lock);
+>  		.ops = &clk_ops_hfpll,
+> +		.flags = CLK_IGNORE_UNUSED,
+>  	};
 >  
-> -	return devm_clk_register_regmap(&pdev->dev, &h->clkr);
-> +	ret = devm_clk_register_regmap(dev, &h->clkr);
-> +	if (ret) {
-> +		dev_err(dev, "failed to register regmap clock: %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	return devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get,
-> +					   &h->clkr.hw);
->  }
->  
->  static struct platform_driver qcom_hfpll_driver = {
+>  	h = devm_kzalloc(dev, sizeof(*h), GFP_KERNEL);
 > -- 
 > 2.7.4
 > 
