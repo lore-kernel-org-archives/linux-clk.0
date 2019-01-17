@@ -4,54 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79673C43387
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 06:36:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01C82C43387
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 06:37:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3516E20851
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 06:36:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C2C8F20657
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 06:37:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="TFx/29Ie"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XV5xvWcG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728161AbfAQGgp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 17 Jan 2019 01:36:45 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:46458 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728155AbfAQGgo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Jan 2019 01:36:44 -0500
-Received: by mail-pg1-f193.google.com with SMTP id w7so3963979pgp.13
-        for <linux-clk@vger.kernel.org>; Wed, 16 Jan 2019 22:36:44 -0800 (PST)
+        id S1727823AbfAQGhY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Jan 2019 01:37:24 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:37795 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727340AbfAQGhU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Jan 2019 01:37:20 -0500
+Received: by mail-pf1-f196.google.com with SMTP id y126so4330222pfb.4
+        for <linux-clk@vger.kernel.org>; Wed, 16 Jan 2019 22:37:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=vxQkdMjTikHdV+D01KGNE2ZNqnn8VM0XG4t7jDYHpmE=;
-        b=TFx/29Ie+5knQFudhi+WqwXV24nkiYswHFAKpKYV0VkehePeXz/neJgm9QNjOu5P2V
-         6oYDYjB9c0i9Hm5SDWyOCLBrMRSAm3on6eVIjfzXSButwLm8Fir/LrLsrhj4oUk5xBtQ
-         jUN2L782MCldVNIBX0QZup13nN9maF33PeSyQ=
+        bh=BRoWq6QA3qXs2sGySJTI8itioTQ0G12j79FEeArL7fQ=;
+        b=XV5xvWcGUIX8XKEYjooW+BSHWzyZuau3H+TQByT5K3DnTUPMysFCzWcM9RL+OJUr8o
+         0NlUm8C1TxouVDx52aKJu2u1W2dz8en6QFJp6hhXtydYiZxMLgMyr+uE4GCSaiI8Dlgu
+         ovGyvY6g7B9csf+ZFIoL4fpAMpot6JqZVBaVA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vxQkdMjTikHdV+D01KGNE2ZNqnn8VM0XG4t7jDYHpmE=;
-        b=nZs1D7REeIr6w3uWoUOtkRiF5+AX5AlN4fsHeKpcEfL6rIHNINYGzcbzTr5xPg+gP8
-         dgl1s3XDjkSSAu8lLbIt4dtAPrEwzMG/w834H3sX2o+4QHzvJFba4zGNmgOPRD+4hcfC
-         PsxyU8bHhOYGCrVEuKi4oYWxZgY2YZqto8/Y1Ey0V1XohZta/IsljoDS8ELxZuvT4k8v
-         hSbGVWTYJkHHqn0ORbeaIn899c/Ugv2uXF51EApRJjHsXOHpMILHKnb8PwW5eD3WKacg
-         l5PjLlFWleBiEGuiYfbvsnqrfjyVAqOiVg2YMWm3a5cwPYuCLrif0YRftKd7j1HR8mdH
-         DlqA==
-X-Gm-Message-State: AJcUukfQtjfhGIInkLAC/xR5mUO13zebd/hj4x/6ac2ouBUR/Mm6ZgTQ
-        KMvkfCXbtwc2WC3orRpGnXUgtg==
-X-Google-Smtp-Source: ALg8bN7lRBsL54kfBxvrKwmQG6g1r5xezKcKdsu+5mmNQDe+0CGMtHhf2p3BAH6wcOHC19lpIIH8sw==
-X-Received: by 2002:a62:1212:: with SMTP id a18mr14112211pfj.217.1547707003688;
-        Wed, 16 Jan 2019 22:36:43 -0800 (PST)
+        bh=BRoWq6QA3qXs2sGySJTI8itioTQ0G12j79FEeArL7fQ=;
+        b=JTpyJU6X3Bk6pNBN3wNRPDeqpehpZyNEyl7GIjND8AEV/DG0VprBCmrUBR/nfAzJss
+         E/rxdYaF59LLHQ3AXsCvB8hJYAq+NewTsT4ca3Jp1zdlj1H/9C2K76r+R/6oq0VM/BtM
+         nSPKqSmvBRj8s80E/Kr/OOr9seoTtM2NNOI9F3ebOHFxHoQfOYosrnpHU5vXpBjtRaJW
+         7kYKk1+4bjUbh/8akZ0RSRLlAC32ydw7vbasvLrweoWO/3FkHDiUDGwHgBRAgKIlvq4Q
+         GMH5WhI30ExG8EoU0fyDpRBUyzL/jLdxRZ3zgLneC6U/4ti0I7EOwNh9yrdTLG4qdKSn
+         +sTw==
+X-Gm-Message-State: AJcUukf0krb0J/lk+k3kD6hXszfS8fcBBhtQJfg9gESFrrbDEtRIN2kg
+        bUaa/8vCJiGR3JWkyBpg1nDvlw==
+X-Google-Smtp-Source: ALg8bN6YmqkH+B0NgtT3Hu83Xh8ALxL68xcPoX2x8QAgbHE6sowX540mNSC2NGyLDFrV7gI/0eZdkw==
+X-Received: by 2002:a62:6143:: with SMTP id v64mr13729570pfb.142.1547707039115;
+        Wed, 16 Jan 2019 22:37:19 -0800 (PST)
 Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id d13sm1378590pfd.58.2019.01.16.22.36.42
+        by smtp.gmail.com with ESMTPSA id n21sm1072121pfg.84.2019.01.16.22.37.17
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 16 Jan 2019 22:36:43 -0800 (PST)
-Date:   Wed, 16 Jan 2019 22:36:03 -0800
+        Wed, 16 Jan 2019 22:37:18 -0800 (PST)
+Date:   Wed, 16 Jan 2019 22:36:38 -0800
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
 To:     Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
 Cc:     robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org,
@@ -64,14 +64,14 @@ Cc:     robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org,
         olof@lixom.net, amit.kucheria@linaro.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 12/13] arm64: dts: qcom: qcs404: Add cpufreq support
-Message-ID: <20190117063603.GH25498@builder>
+Subject: Re: [PATCH 13/13] arm64: defconfig: Enable HFPLL
+Message-ID: <20190117063638.GI25498@builder>
 References: <1545039990-19984-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
- <1545039990-19984-13-git-send-email-jorge.ramirez-ortiz@linaro.org>
+ <1545039990-19984-14-git-send-email-jorge.ramirez-ortiz@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1545039990-19984-13-git-send-email-jorge.ramirez-ortiz@linaro.org>
+In-Reply-To: <1545039990-19984-14-git-send-email-jorge.ramirez-ortiz@linaro.org>
 User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
@@ -80,7 +80,8 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 On Mon 17 Dec 01:46 PST 2018, Jorge Ramirez-Ortiz wrote:
 
-> Support CPU frequency scaling on qcs404.
+> The high frequency pll is required on compatible Qualcomm SoCs to
+> support the CPU frequency scaling feature.
 > 
 
 Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
@@ -89,49 +90,21 @@ Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 > Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
 > Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
 > ---
->  arch/arm64/boot/dts/qcom/qcs404.dtsi | 8 ++++++++
->  1 file changed, 8 insertions(+)
+>  arch/arm64/configs/defconfig | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/qcs404.dtsi b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-> index 2d9e70e..5a14887 100644
-> --- a/arch/arm64/boot/dts/qcom/qcs404.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-> @@ -30,6 +30,8 @@
->  			reg = <0x100>;
->  			enable-method = "psci";
->  			next-level-cache = <&L2_0>;
-> +			clocks = <&apcs_glb>;
-> +			operating-points-v2 = <&cpu_opp_table>;
->  		};
->  
->  		CPU1: cpu@101 {
-> @@ -38,6 +40,8 @@
->  			reg = <0x101>;
->  			enable-method = "psci";
->  			next-level-cache = <&L2_0>;
-> +			clocks = <&apcs_glb>;
-> +			operating-points-v2 = <&cpu_opp_table>;
->  		};
->  
->  		CPU2: cpu@102 {
-> @@ -46,6 +50,8 @@
->  			reg = <0x102>;
->  			enable-method = "psci";
->  			next-level-cache = <&L2_0>;
-> +			clocks = <&apcs_glb>;
-> +			operating-points-v2 = <&cpu_opp_table>;
->  		};
->  
->  		CPU3: cpu@103 {
-> @@ -54,6 +60,8 @@
->  			reg = <0x103>;
->  			enable-method = "psci";
->  			next-level-cache = <&L2_0>;
-> +			clocks = <&apcs_glb>;
-> +			operating-points-v2 = <&cpu_opp_table>;
->  		};
->  
->  		L2_0: l2-cache {
+> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+> index 5c2b1f6..da390aa 100644
+> --- a/arch/arm64/configs/defconfig
+> +++ b/arch/arm64/configs/defconfig
+> @@ -615,6 +615,7 @@ CONFIG_MSM_MMCC_8996=y
+>  CONFIG_MSM_GCC_8998=y
+>  CONFIG_QCS_GCC_404=y
+>  CONFIG_SDM_GCC_845=y
+> +CONFIG_QCOM_HFPLL=y
+>  CONFIG_HWSPINLOCK=y
+>  CONFIG_HWSPINLOCK_QCOM=y
+>  CONFIG_ARM_MHU=y
 > -- 
 > 2.7.4
 > 
