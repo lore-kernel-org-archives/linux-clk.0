@@ -4,48 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B12CC43387
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 12:11:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B3E3C43387
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 12:19:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDF5D2054F
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 12:11:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0706E20652
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 12:19:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="UAc5C/Lj"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="ihU+42A0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727200AbfAQMLo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 17 Jan 2019 07:11:44 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:60976 "EHLO
+        id S1726948AbfAQMT2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Jan 2019 07:19:28 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:32822 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726964AbfAQMLo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Jan 2019 07:11:44 -0500
+        with ESMTP id S1725928AbfAQMT2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Jan 2019 07:19:28 -0500
 Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 6753225B760;
-        Thu, 17 Jan 2019 23:11:39 +1100 (AEDT)
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 6286325B760;
+        Thu, 17 Jan 2019 23:19:21 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1547727100; bh=G6ZaZWv+S+AsEbzDMS70CAwhselONIBi9I5jdKO92aQ=;
+        t=1547727562; bh=toeG74A7tPD9//tWwZ9d9JQs5MernHiBINuWSxGVR8Y=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UAc5C/Lji/BJtBpTf9PiOKC5JL/w09gqRwIMf//T0zrn0qTaxu7/0BOfvNxrxlTzX
-         xZjuwqRaNggpkv3RRXmlEdj0ZjhqYYWUOB+YEwy2yDrXscdBoJhSXLA3kHo1jfwEsp
-         A69EPh1zv4bpg9hup1ZzJRdnyyE32HOyRpP58IbU=
+        b=ihU+42A0wqE4J5WRhcM/STpLyAr/jAajSIY5h15Bizm/i+vc3v8g0oZVnHt+2uMRi
+         UGuULnXCfw1Ff8fUU23qZaTPmFAQorbIqam6xUkPtomA9UpwvC+o9DvWqvvzi+z1EY
+         xHR1v2H9EjRSsi/zbFJv1e8gYhg564z/2ViPlObU=
 Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id CA84F940459; Thu, 17 Jan 2019 13:11:37 +0100 (CET)
-Date:   Thu, 17 Jan 2019 13:11:37 +0100
+        id CB312940459; Thu, 17 Jan 2019 13:19:19 +0100 (CET)
+Date:   Thu, 17 Jan 2019 13:19:19 +0100
 From:   Simon Horman <horms@verge.net.au>
-To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
+To:     Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>
+Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Wolfgang Grandegger <wg@grandegger.com>,
         Marc Kleine-Budde <mkl@pengutronix.de>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
+        Biju Das <biju.das@bp.renesas.com>,
         Magnus Damm <magnus.damm@gmail.com>,
         "David S. Miller" <davem@davemloft.net>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Thierry Reding <treding@nvidia.com>,
-        Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>,
         Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Kevin Hilman <khilman@baylibre.com>,
         Johan Hovold <johan@kernel.org>,
@@ -57,17 +58,18 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-can@vger.kernel.org, netdev@vger.kernel.org,
-        linux-clk@vger.kernel.org, Biju Das <biju.das@bp.renesas.com>,
-        linux-kernel@vger.kernel.org, ebiharaml@si-linux.co.jp
-Subject: Re: [PATCH 11/11] dt-bindings: can: rcar_canfd: document r8a774c0
- support
-Message-ID: <20190117121137.riri7nzwegkocnxc@verge.net.au>
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ebiharaml@si-linux.co.jp
+Subject: Re: [PATCH 01/11] dt-bindings: Add vendor prefix for Silicon Linux.
+Message-ID: <20190117121919.c5u66sorut5a5nib@verge.net.au>
 References: <1547663874-29411-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1547663874-29411-12-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1547663874-29411-2-git-send-email-fabrizio.castro@bp.renesas.com>
+ <bb5b27ed-a077-f639-b97b-4da22c9bb3ad@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1547663874-29411-12-git-send-email-fabrizio.castro@bp.renesas.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <bb5b27ed-a077-f639-b97b-4da22c9bb3ad@suse.de>
 Organisation: Horms Solutions BV
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-clk-owner@vger.kernel.org
@@ -75,56 +77,65 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Jan 16, 2019 at 06:37:54PM +0000, Fabrizio Castro wrote:
-> Document the support for rcar_canfd on R8A774C0 SoC devices.
+On Thu, Jan 17, 2019 at 12:17:56PM +0100, Andreas Färber wrote:
+> Hi Fabrizio,
 > 
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
-> ---
-> This patch depends on:
-> https://patchwork.kernel.org/patch/10687999/
-> https://patchwork.kernel.org/patch/10688001/
+> Am 16.01.19 um 19:37 schrieb Fabrizio Castro:
+> > From: Biju Das <biju.das@bp.renesas.com>
+> > 
+> > Add Silicon Linux to the list of devicetree vendor prefixes.
+> > 
+> > Website: http://www.si-linux.co.jp
+> > 
+> > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
+> > ---
+> >  Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
+> > index 4b1a2a8..02a7037 100644
+> > --- a/Documentation/devicetree/bindings/vendor-prefixes.txt
+> > +++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+> > @@ -344,6 +344,7 @@ sgx	SGX Sensortech
+> >  sharp	Sharp Corporation
+> >  shimafuji	Shimafuji Electric, Inc.
+> >  si-en	Si-En Technology Ltd.
+> > +si-linux	Silicon Linux Corporation
 > 
->  Documentation/devicetree/bindings/net/can/rcar_canfd.txt | 16 +++++++++-------
+> With the website being Japanese only, I haven't been able to confirm the
+> spelling of the company name. Looks sensible though.
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+According to the company web site
+(http://si-linux.co.jp/index.php?%E4%BC%9A%E7%A4%BE%E6%A1%88%E5%86%85)
+the company name is.
 
->  1 file changed, 9 insertions(+), 7 deletions(-)
+Japanese: シリコンリナックス株式会社
+English:  Silicon Linux Corporation
+
+And in my opinion these are equivalent (although other translations of
+the corporation bit are possible).
+
+> Due to "en" coming before "five" I've double-checked that elsewhere we
+> do order dashes before letters, so placement in file and tab-indentation
+> is fine, too.
 > 
-> diff --git a/Documentation/devicetree/bindings/net/can/rcar_canfd.txt b/Documentation/devicetree/bindings/net/can/rcar_canfd.txt
-> index 41049fe..32f051f 100644
-> --- a/Documentation/devicetree/bindings/net/can/rcar_canfd.txt
-> +++ b/Documentation/devicetree/bindings/net/can/rcar_canfd.txt
-> @@ -3,7 +3,8 @@ Renesas R-Car CAN FD controller Device Tree Bindings
->  
->  Required properties:
->  - compatible: Must contain one or more of the following:
-> -  - "renesas,rcar-gen3-canfd" for R-Car Gen3 compatible controller.
-> +  - "renesas,rcar-gen3-canfd" for R-Car Gen3 and RZ/G2 compatible controllers.
-> +  - "renesas,r8a774c0-canfd" for R8A774C0 (RZ/G2E) compatible controller.
->    - "renesas,r8a7795-canfd" for R8A7795 (R-Car H3) compatible controller.
->    - "renesas,r8a7796-canfd" for R8A7796 (R-Car M3-W) compatible controller.
->    - "renesas,r8a77965-canfd" for R8A77965 (R-Car M3-N) compatible controller.
-> @@ -28,12 +29,13 @@ The name of the child nodes are "channel0" and "channel1" respectively. Each
->  child node supports the "status" property only, which is used to
->  enable/disable the respective channel.
->  
-> -Required properties for "renesas,r8a7795-canfd", "renesas,r8a7796-canfd",
-> -"renesas,r8a77965-canfd" and "renesas,r8a77990-canfd" compatible:
-> -In R8A7795, R8A7796, R8A77965 and R8A77990 SoCs, canfd clock is a div6 clock
-> -and can be used by both CAN and CAN FD controller at the same time. It needs
-> -to be scaled to maximum frequency if any of these controllers use it. This is
-> -done using the below properties:
-> +Required properties for "renesas,r8a774c0-canfd", "renesas,r8a7795-canfd",
-> +"renesas,r8a7796-canfd", "renesas,r8a77965-canfd", and "renesas,r8a77990-canfd"
-> +compatible:
-> +In R8A774C0, R8A7795, R8A7796, R8A77965, and R8A77990 SoCs, canfd clock is a
-> +div6 clock and can be used by both CAN and CAN FD controller at the same time.
-> +It needs to be scaled to maximum frequency if any of these controllers use it.
-> +This is done using the below properties:
->  
->  - assigned-clocks: phandle of canfd clock.
->  - assigned-clock-rates: maximum frequency of this clock.
+> >  sifive	SiFive, Inc.
+> >  sigma	Sigma Designs, Inc.
+> >  sii	Seiko Instruments, Inc.
+> 
+> Personally I would drop the full stop at the end of the subject, but anyway:
+> 
+> Reviewed-by: Andreas Färber <afaerber@suse.de>
+> 
+> Thanks,
+> Andreas
+> 
+> P.S. Please double-check how this excessive CC list came to life!
+> 
 > -- 
-> 2.7.4
+> SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
+> GF: Felix Imendörffer, Jane Smithard, Graham Norton
+> HRB 21284 (AG Nürnberg)
 > 
