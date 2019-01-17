@@ -2,132 +2,216 @@ Return-Path: <SRS0=NuDk=PZ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 599DCC43387
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 04:32:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87B68C43444
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 05:58:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E625E20855
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 04:32:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5654B20657
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 05:58:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="icT2g4/x"
+	dkim=pass (1024-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="VQ1e/1Rt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728923AbfAQEcZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 16 Jan 2019 23:32:25 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:50352 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728839AbfAQEcZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Jan 2019 23:32:25 -0500
-Received: by mail-it1-f193.google.com with SMTP id z7so6849500iti.0
-        for <linux-clk@vger.kernel.org>; Wed, 16 Jan 2019 20:32:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ZsXVNpKQnBsqi29ZepEVp6DR5CyMftcA0Ev/oOZ4p1w=;
-        b=icT2g4/xCFD2rxhgpNkTzA1/5epdYT2eWAu16wZUYgvVWUim43FdhaXM1H624HLBW9
-         PlRray4VBEJzNVyIhdMaN1ifE1bfF+C9STa9q/gtP5rmyEc69KNWn7Ggm1TJv7mYwQ/p
-         uWCTMZqzvbhqBOg6hUWKJLVUv4zNlBn8aQYRg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ZsXVNpKQnBsqi29ZepEVp6DR5CyMftcA0Ev/oOZ4p1w=;
-        b=WL2n0lnZfYZnTLO40Uep6IBX3Eh5Wzc7/OoCmEZZdIIWc+Xrkt6FNhxkaNUn81sjvo
-         CVrE+0pOZgYOfidLOQjDCBfC4QwY4qFW59hM4hNGI1sW3ouKYDA6EQdjS5wztEypmNen
-         834FbIfq38nI2prS5FPvCVgSWie4YjXZwsnG98ad+jEIAgyeg6Utm6ouDkaD4RncVcAZ
-         HGyxYQNTAm1oKpPkmoTeW2c8Im5zqpz7xUiHDSBOi1OTphUe6r3ysiP7A+7wxlxhkHzM
-         rOQeq/62PF2jYJnwgBblzych6esbEIUI0AzpjGi764GdzCie+UXvhDKS9OOQ49vQ+Sg4
-         uNtA==
-X-Gm-Message-State: AJcUukcc70cQRX5J6q/RaCSFlhqUeZVIQZrS96Yp77C6U5X+Rt3py1PT
-        4ZUMcMeemPJ95I1VGPzT/Onza8sBn9hf7eADlVdPEQ==
-X-Google-Smtp-Source: ALg8bN4LBtuMuYJRxuoCtj4jcK7NzTzmR+sGnRZ9nhO7G+cF4g+YnIOnYs5VCmYuNtc/4wVQIzLztNs1T/ySnduLvIA=
-X-Received: by 2002:a02:104a:: with SMTP id 71mr6639151jay.103.1547699543763;
- Wed, 16 Jan 2019 20:32:23 -0800 (PST)
-MIME-Version: 1.0
-References: <20181210161729.29720-1-jagan@amarulasolutions.com>
- <20181210161729.29720-8-jagan@amarulasolutions.com> <20181211164900.wfmkmbrbj3nmlb3h@flea>
- <CAMty3ZB5F5jD9iJT1soXSA5HtQOf5W9rKO9nCdGFUfVo0hpO4Q@mail.gmail.com>
- <20190107141158.zaimizk4rlqa6xli@flea> <CAMty3ZBb8byOwh=_W83Ta0Dse1qkoqccOeaBEY9oHPaxDxe9QA@mail.gmail.com>
- <20190108085829.clianbtjovu3oieq@flea> <CAMty3ZC9OQtwT-iH=S1LhHsBPc_jFKGAnCYYeR9nuKuDWSKLQw@mail.gmail.com>
- <20190112164319.whr7gwvl4oux5svz@flea> <CAMty3ZD8X9KmHjUtAo-+Y83a2j8NF3DjM9Yr3LPMxOvQ8kOV7g@mail.gmail.com>
- <20190116191756.ajzzaga43srk77dk@flea>
-In-Reply-To: <20190116191756.ajzzaga43srk77dk@flea>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Thu, 17 Jan 2019 10:02:12 +0530
-Message-ID: <CAMty3ZCw8itG=nizA5E218HT5kg=-xDzLmShF51vRh4ENYKuBA@mail.gmail.com>
-Subject: Re: [PATCH v5 07/17] drm/sun4i: sun6i_mipi_dsi: Refactor vertical
- video start delay
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        id S1728659AbfAQF64 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Jan 2019 00:58:56 -0500
+Received: from mail-40136.protonmail.ch ([185.70.40.136]:19703 "EHLO
+        mail-40136.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726825AbfAQF6z (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Jan 2019 00:58:55 -0500
+Date:   Thu, 17 Jan 2019 05:58:50 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+        s=default; t=1547704731;
+        bh=i1VkpQwcMKdx7TXYZssic6HvDGJTyZCn+4K+pxJQPUg=;
+        h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:
+         Feedback-ID:From;
+        b=VQ1e/1Rtsxg5ilhohZbnpuvB/Ykb3ia8+k0KMo6u8RJFFcOOCUg4F/uOb+L5T6zVF
+         l6UfCEixoaeJxTmJWaY8yeSYrflG9Abp/xKwnHbcjmPnnMb1NoyvVECjBDgDEWkoZa
+         5NQ102VJn6p0F25DtnAjbX+6CyxwoR3fBXVPHIbA=
+To:     Hans de Goede <hdegoede@redhat.com>
+From:   Mogens Jensen <mogens-jensen@protonmail.com>
+Cc:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Dean Wallace <duffydack73@gmail.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         linux-clk <linux-clk@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        linux-amarula@amarulasolutions.com
-Content-Type: text/plain; charset="UTF-8"
+        Stable <stable@vger.kernel.org>,
+        Johannes Stezenbach <js@sig21.net>,
+        Carlo Caione <carlo@endlessm.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Reply-To: Mogens Jensen <mogens-jensen@protonmail.com>
+Subject: Re: Regression found (Stop-marking-clocks-as-CLK_IS_CRITICAL)
+Message-ID: <U9ny3qDg8fEQ-IaXWgwAmDf_U7yb1NZxpwoOvTorCbG86v8wUae3kWsa5omAv-ngu3VMaSONp6RdzmaI26Cz6uoyf5ddIiXuJQbzGf2MN3w=@protonmail.com>
+In-Reply-To: <3e12e051-b874-187d-d4f5-e146f59c659b@redhat.com>
+References: <20181025232517.ywnw54qibemosjws@picard>
+ <d00df762-e4fc-06c5-701e-d5100bfd0e35@redhat.com>
+ <e48696f0-aa3e-e20e-d038-9d8dda9cbfce@redhat.com>
+ <BaxBOBmUCld7THAnRIDXUpKq8uQ2oJ49EaNlq0mZ11gFjA5JjhbfhVouLZGc1q74PrQC6uGfddKklIP059D_DtQwBqK-sn9rd4xEPhW9E6s=@protonmail.com>
+ <d53738e1-4ba5-640e-7ef7-1705ab205061@redhat.com>
+ <kAuINEBUUnlS5_uJafGtvryMEJVkDO4pb_yLfClwMcTS1h3sB1gYPcXBvg9X3RINfp5Uch7kLXuhTRX_JtouTYxoS6xNr77_b46e-mugl3k=@protonmail.com>
+ <b8849ae1-5a38-e7a1-da14-dc7f9d164825@redhat.com>
+ <3iO9ehQbZm_haTV0IuZ0qhsVHR0QLUbTgRJT8ZenGuRsnz2_uBvO93f0bHVYnsApibUT16JsJ0dgphLhUBd-u0t-lDBNsbvvlKWTgq8XOlw=@protonmail.com>
+ <3e12e051-b874-187d-d4f5-e146f59c659b@redhat.com>
+Feedback-ID: 4dFv7M8pOtP7CMTtfNdOwXARWpF2vcQYB4dRuX1h9mb-6008qkzO2MVweOzrAYHEdkjJ6P5PUdgJEubk4l9Lhg==:Ext:ProtonMail
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Jan 17, 2019 at 12:48 AM Maxime Ripard
-<maxime.ripard@bootlin.com> wrote:
+=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90 Original Me=
+ssage =E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90
+On Sunday, December 2, 2018 12:25 PM, Hans de Goede <hdegoede@redhat.com> w=
+rote:
+
+> Hi,
 >
-> On Sun, Jan 13, 2019 at 01:07:41AM +0530, Jagan Teki wrote:
-> > > > > > > Again, I cannot help you without the datasheet for the panels you're
-> > > > > > > trying to submit.
-> > > > > >
-> > > > > > The panel bound with Sitronix ST7701 IC
-> > > > > > http://www.startek-lcd.com/res/starteklcd/pdres/201705/20170512144242904.pdf
-> > > > >
-> > > > > It's the controller, not the panel
-> > > >
-> > > > As I said before, the datasheet of that panel doesn't have any
-> > > > information except electrical characteristics and used IC which is
-> > > > ST7701.
-> > > >
-> > > > I have one more panel, which is from Bananapi, S070WV20-CT16 ICN621
-> > > > please find the attachment for the same.
-> > > >
-> > > > Here is some more details of the same.
-> > > >
-> > > > https://github.com/yesnoandor/x300/blob/master/kernel/arch/arm/boot/dts/erobbing/x300/x300.dtsi#L81
-> > > > https://github.com/wxzed/Raspberry_5MIPI_Display/blob/master/I2C_Slave/USER/main.c#L15
-> > > >
-> > > > https://github.com/eliot-shao/qcom/blob/master/icn6211_cxn0102/kernel/drivers/video/msm/mdss/mdss_i2c_interface.c#L152
-> > > > matches timings for
-> > > > https://github.com/eliot-shao/qcom/blob/master/icn6211_cxn0102/kernel/arch/arm/boot/dts/qcom/dsi-mipi-2-rgb_1280p_video.dtsi#L20
-> > > >
-> > > > https://github.com/zestroly/micromat/blob/master/test/raspberry/ICN6211.cpp#L169
+> On 01-11-18 07:55, Mogens Jensen wrote:
+>
+> > =E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90 Origina=
+l Message =E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=
+=90
+> > On Wednesday, October 31, 2018 9:29 AM, Hans de Goede hdegoede@redhat.c=
+om wrote:
+> >
+> > > Hi,
+> > > On 31-10-18 07:02, Mogens Jensen wrote:
 > > >
-> > > Where did you get the timings from then?
+> > > > =E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90 Ori=
+ginal Message =E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=
+=E2=80=90
+> > > > On Tuesday, October 30, 2018 7:10 PM, Hans de Goede hdegoede@redhat=
+.com wrote:
+> > > >
+> > > > > Hi,
+> > > > > On 30-10-18 19:56, Mogens Jensen wrote:
+> > > > >
+> > > > > > =E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=
+=90 Original Message =E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=
+=90=E2=80=90
+> > > > > > On Tuesday, October 30, 2018 4:04 PM, Hans de Goede hdegoede@re=
+dhat.com wrote:
+> > > > > >
+> > > > > > > Hi,
+> > > > > > > On 30-10-18 16:46, Hans de Goede wrote:
+> > > > > > >
+> > > > > > > > Hi,
+> > > > > > > > On 30-10-18 16:04, Pierre-Louis Bossart wrote:
+> > > > > > > >
+> > > > > > > > > In addition I am not aware of any baytrail device using p=
+lt_clk_0, so moving a common machine driver such a cht_bsw_max98090_ti to u=
+se plt_clk0 only would break other devices (e.g. Rambi/Orco). Asking for bo=
+th clocks to be on might work though,
+> > > > > > > >
+> > > > > > > > Ok, so we need to have a DMI based quirk for the Swanky and=
+ maybe also
+> > > > > > > > the clapper to use plt_clk_0 there. Asking for 2 clks if we=
+ only need
+> > > > > > > > one does not seem like a good plan.
+> > > > > > >
+> > > > > > > Dean, Mogens,
+> > > > > > > To write a proper patch for this I'm going to need DMI string=
+s
+> > > > > > > from your devices.
+> > > > > > > Can you please run (as normal user):
+> > > > > > > grep . /sys/class/dmi/id/* 2> /dev/null
+> > > > > > > And reply with the output of this command?
+> > > > > > > I have attached the output from a coreboot seabios based clap=
+per.
+> > > > >
+> > > > > Thank you.
+> > > > >
+> > > > > > Should I still test 0001-ASoC-intel-cht_bsw_max98090_ti-Use-pmc=
+_plt_clk_0-ins.patch with SND_SOC_INTEL_CHT_BSW_MAX98090_TI_MACH and asound=
+rc from Dean? There seems to have been some development in the case since t=
+hat request was made.
+> > > > >
+> > > > > Yes please test that, I expect that to also fix things for the
+> > > > > Clapper, but I need to have that confirmed before submitting a
+> > > > > patch upstream adding a quirk for the Clapper to use pmc_plt_clk_=
+0
+> > > > > instead of pmc_plt_clk_3.
+> > > > > Regards,
+> > > > > Hans
+> > > >
+> > > > Unfortunately I only have access to longterm kernel 4.14 for buildi=
+ng/running on this system, and 0001-ASoC-intel-cht_bsw_max98090_ti-Use-pmc_=
+plt_clk_0-ins.patch does not patch against 4.14.78. Can a test patch for 4.=
+14 be created?
+> > >
+> > > Can you run (as root):
+> > > for i in /sys/kernel/debug/clk/pmc_plt_clk_?; do echo -n "$i: "; cat =
+$i/clk_flags; echo; done
+> > > When running a kernel with working audio?
+> > > Then I can confirm that the Clapper is also using pmc_plt_clk_0, so t=
+hat I can
+> > > fix this for the clapper for 4.18+
+> > > I've just checked the 4.14 sources and in 4.14 the SND_SOC_INTEL_CHT_=
+BSW_MAX98090_TI_MACH
+> > > driver does not support mclk control yet, so for the 4.14 kernel the =
+only way to
+> > > fix this is to revert the 648e921888ad ("clk: x86: Stop marking clock=
+s as CLK_IS_CRITICAL")
+> > > commit.
+> > > Regards,
+> > > Hans
 > >
-> > You mean drm_mode timings, the same panel with RGB available in
-> > panel-simple[1], and dsi driver in Mailing list[2] and actual DSI
-> > sequence commands from BSP[3]
-> >
-> > [1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/drivers/gpu/drm/panel/panel-simple.c?id=7ad8b41cd8f5c2842646d01cdd576663caee04a7
-> > [2] https://patchwork.kernel.org/patch/10680331/
-> > [3] https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/lcd/S070WV20_MIPI_RGB.c
+> > Here is the output from the Clapper with 4.14.78 and working sound:
+> > /sys/kernel/debug/clk/pmc_plt_clk_0: 0x00000800
+> > /sys/kernel/debug/clk/pmc_plt_clk_1: 0x00000000
+> > /sys/kernel/debug/clk/pmc_plt_clk_2: 0x00000000
+> > /sys/kernel/debug/clk/pmc_plt_clk_3: 0x00000000
+> > /sys/kernel/debug/clk/pmc_plt_clk_4: 0x00000000
+> > /sys/kernel/debug/clk/pmc_plt_clk_5: 0x00000000
 >
-> So you had no reliable source for the timings then? How do you know if
-> all your patches that are timing related are right then?
+> Ok, so your Clapper model indeed is also using clk 0 and not clk 3 as
+> expected. I've just submitted a patch upstream adding a quirk for this.
+>
+> As for what the plan is with 4.14, I don't know. I believe that
+> reverting the commit causing the issue there is fine.
+>
+> Regards,
+>
+> Hans
 
-I don't understand your point, or may be I confused with many links
-that I attached in previous mail.
+Hi,
 
-1. Patch for same panel timings are already in Mainline that was
-tested on one of the board. [1]
-2. Driver from AW, released bsp from BPI-M64-bsp [3]
+I have now tried the recently released kernel 4.19.14 on my Chromebook Clap=
+per as this version now contains the DMI quirk (commit 984bfb398a3af6fa9b7e=
+80165e524933b0616686 upstream).
 
-Do you think the above two points are not valid sources?
+Kernel is compiled with SND_SOC_INTEL_CHT_BSW_MAX98090_TI_MACH and the quir=
+k seems to have fixed the problem caused by commit 648e921888ad ("clk: x86:=
+ Stop marking clocks as CLK_IS_CRITICAL"), as sound is now working if runni=
+ng "speaker-test" on my system which is clean ALSA.
 
-Jagan.
+Unfortunately, SND_SOC_INTEL_CHT_BSW_MAX98090_TI_MACH driver is unusable on=
+ Clapper Chromebooks as audio played from everything but "speaker-test" as =
+video players or web browsers is extremly low and sounds like played at 10x=
+ speed. At the same time kernel log is spammed with messages like this:
+
+max98090 i2c-193C9890:00: PLL unlocked
+intel_sst_acpi 80860F28:00: FW Version 01.0c.00.01
+writing to lpe: 00000000: 01 01 01 01 00 00 08 00 ff ff ff ff 55 00 00 00  =
+............U...
+writing to lpe: 00000000: 01 01 01 01 00 00 1a 00 ff ff ff ff 75 00 12 00  =
+............u...
+
+This is probably not related to the problem discussed in this thread, but t=
+he result is that I have to use the legacy driver SND_SOC_INTEL_BYT_MAX9809=
+0_MACH and therefore still has to revert commit 648e921888ad for sound to w=
+ork.
+
+Is it possible to create a fix for SND_SOC_INTEL_BYT_MAX98090_MACH on kerne=
+l 4.19? Kernel 4.19 is a long term release so it would be very nice to have=
+ fix for this version upstream.
+
+Regards,
+
+Mogens
