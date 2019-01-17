@@ -2,138 +2,124 @@ Return-Path: <SRS0=NuDk=PZ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 506C0C43387
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 09:48:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CA95C43387
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 10:08:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27B772054F
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 09:48:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6ABAE20657
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 10:08:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gXTQ10Xn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726029AbfAQJsF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 17 Jan 2019 04:48:05 -0500
-Received: from shell.v3.sk ([90.176.6.54]:60842 "EHLO shell.v3.sk"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725965AbfAQJsF (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 17 Jan 2019 04:48:05 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 21B205AB44;
-        Thu, 17 Jan 2019 10:48:01 +0100 (CET)
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id PUQX9U1ttL0m; Thu, 17 Jan 2019 10:47:58 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id C77265AB57;
-        Thu, 17 Jan 2019 10:47:57 +0100 (CET)
-X-Virus-Scanned: amavisd-new at zimbra.v3.sk
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id rUZfttvU1wnp; Thu, 17 Jan 2019 10:47:57 +0100 (CET)
-Received: from belphegor (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 0D7F75AB44;
-        Thu, 17 Jan 2019 10:47:56 +0100 (CET)
-Message-ID: <bec06415e980f18d5d3407d498cad372dc3abd1b.camel@v3.sk>
-Subject: Re: [PATCH] clk: mmp2: avoid disabling the SP clock when unused
-From:   Lubomir Rintel <lkundrak@v3.sk>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Date:   Thu, 17 Jan 2019 10:47:55 +0100
-In-Reply-To: <154768138798.169631.18317264971847478148@swboyd.mtv.corp.google.com>
-References: <20190116093505.1920945-1-lkundrak@v3.sk>
-         <154765664632.169631.9344557684702266461@swboyd.mtv.corp.google.com>
-         <73b20a5caef100d5768679cc395168976e86ed04.camel@v3.sk>
-         <154768138798.169631.18317264971847478148@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.3 (3.30.3-1.fc29) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1727377AbfAQKIM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Jan 2019 05:08:12 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:40573 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727005AbfAQKIL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Jan 2019 05:08:11 -0500
+Received: by mail-pg1-f196.google.com with SMTP id z10so4240241pgp.7
+        for <linux-clk@vger.kernel.org>; Thu, 17 Jan 2019 02:08:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=+HjIxHy2YTkkHug9kwKKVx+R4/lzJQ2zziaHnfwNtT0=;
+        b=gXTQ10XnlhXUwSxfQybKblMRmC9bRikmPdTT7rRHBFXGAyRW9/ly/WqIiLeziMB9UH
+         N+JNiE0z4eITRZIaIFp+hRVpGVi4mrgjQBRwgPGLxrOqU4iDNE0762Ba/nI1nGgwd2RG
+         OZFVQTJzmUO1x4Z8F8AIsErji3dEtamnF2Jnw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+HjIxHy2YTkkHug9kwKKVx+R4/lzJQ2zziaHnfwNtT0=;
+        b=I0WEZVKmnVnGmFMB4K/8fjUso+Ps922p94dD0Qy9BUGZtNAXlTW1bZa3pGNt5RvTM9
+         CEnQeAD6WJHEUUENwoPjpm51gKVs/rHL7F8djGxdNH3RSckhconWfbOgskJQvih7KKkC
+         eV3XwlvvtRAuf54xi2nKowx1adxRS4kj6H2JpwH/mXqIYUdiJUguaGbaT8GYjs1WE5MW
+         KrG6IOX60nZDF9F+qO0BAisW3KNxnhprHs7VzNePiIYHzag+JygAdcxWJOfmPIQz2vwq
+         7QqfSj86xhvt5HZkdfuWcUNwU1BHYI1QxB9r6xAz8CiC1/yYMOEuOdSerjWjL9+umUtN
+         e2eA==
+X-Gm-Message-State: AJcUukeFYSKIHURel6ZKei5FrZsVtv/jwAG1vDrkKgwz3/fVvAT/UF2Z
+        jVhy+o/rMc2mEOVvHrm9yKkdzA==
+X-Google-Smtp-Source: ALg8bN5vOOzlmwPiCQJiExLQG1QkeO2rcKXMrjtF1L3GCzHIDBhN9sVTDkpwnm2Z2MIRxvddiFJlLA==
+X-Received: by 2002:a62:76cc:: with SMTP id r195mr14268347pfc.38.1547719690261;
+        Thu, 17 Jan 2019 02:08:10 -0800 (PST)
+Received: from localhost ([122.172.102.63])
+        by smtp.gmail.com with ESMTPSA id y89sm3127863pfa.136.2019.01.17.02.08.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 17 Jan 2019 02:08:09 -0800 (PST)
+Date:   Thu, 17 Jan 2019 15:38:07 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>, robh+dt@kernel.org,
+        mark.rutland@arm.com, andy.gross@linaro.org,
+        david.brown@linaro.org, sboyd@kernel.org, will.deacon@arm.com,
+        mturquette@baylibre.com, jassisinghbrar@gmail.com,
+        vkoul@kernel.org, niklas.cassel@linaro.org, sibis@codeaurora.org,
+        georgi.djakov@linaro.org, arnd@arndb.de,
+        horms+renesas@verge.net.au, heiko@sntech.de,
+        enric.balletbo@collabora.com, jagan@amarulasolutions.com,
+        olof@lixom.net, amit.kucheria@linaro.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 08/13] clk: qcom: hfpll: CLK_IGNORE_UNUSED
+Message-ID: <20190117100807.pmew5iqisdcc63eq@vireshk-i7>
+References: <1545039990-19984-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
+ <1545039990-19984-9-git-send-email-jorge.ramirez-ortiz@linaro.org>
+ <20190117063312.GE25498@builder>
+ <9abbe59b-433c-4e30-1e4d-b5eed3afc695@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9abbe59b-433c-4e30-1e4d-b5eed3afc695@linaro.org>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 2019-01-16 at 15:29 -0800, Stephen Boyd wrote:
-> Quoting Lubomir Rintel (2019-01-16 09:26:31)
-> > On Wed, 2019-01-16 at 08:37 -0800, Stephen Boyd wrote:
-> > > Quoting Lubomir Rintel (2019-01-16 01:35:05)
-> > > > There could be vital functionality running on the SP PJ1 core it can not be
-> > > > restarted just by turning the clock back on.
-> > > > 
-> > > > On the OLPC laptop, the keyboard controller code runs there. It
-> > > > wouldn't be possible to load the driver for it as a module if the clock
-> > > > is disabled on boot.
-> > > > 
-> > > > Cc: stable@vger.kernel.org # v4.18+
-> > > > Fixes: commit fc27c2394d96 ("clk: mmp2: add SP clock")
-> > > > Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-> > > > ---
-> > > >  drivers/clk/mmp/clk-of-mmp2.c | 2 +-
-> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > > 
-> > > > diff --git a/drivers/clk/mmp/clk-of-mmp2.c b/drivers/clk/mmp/clk-of-mmp2.c
-> > > > index f2a1c9bbaa63..3e33f1295f59 100644
-> > > > --- a/drivers/clk/mmp/clk-of-mmp2.c
-> > > > +++ b/drivers/clk/mmp/clk-of-mmp2.c
-> > > > @@ -246,7 +246,7 @@ static struct mmp_param_gate_clk apmu_gate_clks[] = {
-> > > >         {MMP2_CLK_CCIC1, "ccic1_clk", "ccic1_mix_clk", CLK_SET_RATE_PARENT, APMU_CCIC1, 0x1b, 0x1b, 0x0, 0, &ccic1_lock},
-> > > >         {MMP2_CLK_CCIC1_PHY, "ccic1_phy_clk", "ccic1_mix_clk", CLK_SET_RATE_PARENT, APMU_CCIC1, 0x24, 0x24, 0x0, 0, &ccic1_lock},
-> > > >         {MMP2_CLK_CCIC1_SPHY, "ccic1_sphy_clk", "ccic1_sphy_div", CLK_SET_RATE_PARENT, APMU_CCIC1, 0x300, 0x300, 0x0, 0, &ccic1_lock},
-> > > > -       {MMP2_CLK_SP, "sp_clk", NULL, CLK_SET_RATE_PARENT, APMU_SP, 0x1b, 0x1b, 0x0, 0, &sp_lock},
-> > > > +       {MMP2_CLK_SP, "sp_clk", NULL, CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, APMU_SP, 0x1b, 0x1b, 0x0, 0, &sp_lock},
-> > > 
-> > > Is it a critical clk that should never be turned off?
-> > 
-> > I don't think it is. It is entirely plausible to have no use for the
-> > "security processor", and in that case it's just okay to keep the clock
-> > disabled.
+On 17-01-19, 09:38, Jorge Ramirez wrote:
+> COMMON_CLK_DISABLED_UNUSED relies on the enable_count reference counter
+> to disable the clocks that were enabled by the firwmare and not by the
+> drivers.
 > 
-> So does the firmware/bootloader leave the clk enabled out of boot and we
-> shouldn't really touch the on/off bits of the clk hardware from the
-> kernel?
+> the cpufreq driver does not enable the cpu clock.
+> 
+> so when clk_change_rate is called, the enable_count counter is not
+> incremented and therefore it just remains null since this was enabled by
+> the firmware.
+> 
+> I tried doing:
+> 
+> diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
+> index e58bfcb..5a9f83e 100644
+> --- a/drivers/cpufreq/cpufreq-dt.c
+> +++ b/drivers/cpufreq/cpufreq-dt.c
+> @@ -124,6 +124,10 @@ static int resources_available(void)
+>                 return ret;
+>         }
+> 
+> + ret = clk_prepare_enable(cpu_clk);
+> + if (ret)
+> +         return ret;
+> +
+>         clk_put(cpu_clk);
+> 
+>         name = find_supply_name(cpu_dev);
+> 
+> 
+> and that removed the need for CLK_IGNORE_UNUSED. But I am not sure of
+> the system wide consequences of that change to cpufreq.
 
-I think so.
+If the cpufreq driver enables it then it should disable it on exit as
+well, right ? And in that case if you unload your driver's module, you
+will hang the system as the clock will get disabled :)
 
-> Or do we want to actively manage this clk from a driver
-> somewhere in the kernel?
+Every other platform must either be marking it with CLK_IGNORE_UNUSED
+or they must be doing clk_enable from somewhere, maybe the CPU online
+path, not sure though.
 
-The olpc_apsp driver actually manages this clock, but that might turn
-out to be the wrong thing to do. It currently only works if the driver
-is built-in and thus the clock is always kept enabled.
-
-I'm now somewhat more confused that I believed myself to be when
-sending the patch. Perhaps you could help me understand things a bit
-more:
-
-1.) What's the principal difference between CLK_IGNORE_UNUSED and
-CLK_IS_CRITICAL? Is it that the CLK_IGNORE_UNUSED clocks are permitted 
-to be disabled by a driver, but an attempt to disable CLK_IS_CRITICAL
-is a bug?
-
-2.) Perhaps it makes sense to disable the SP on the machines that don't
-utilize it even if firmware keeps it enabled? Would it make sense to
-make the clk driver use the  "protected-clocks" DT property for this?
-
-----8<----
-
-Here's some more context for the SP on the MMP2:
-
-The SP is a small PJ1 core. It starts when the platform is powered on
-and eventually brings up the large PJ4 core.
-
-On the OLPC machine, the first stage firmware (cforth) starts running
-on the SP, configures the DRAM, starts the boot firmware (openfirmware)
-on the main PJ4 core and then enters a loop that bit-bangs the PS/2
-protocol on the attached keyboard/touchpad.
-
-It is entirely possible that on some boards the SP is not used for
-anything but the bringup of the bootloader on the main core.
-
-SP is sometimes referred to as WTM, "wireless trusted module", but it's
-not clear to me why is it the case. There's no documentation.
-
-Lubo
-
+-- 
+viresh
