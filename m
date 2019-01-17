@@ -2,91 +2,129 @@ Return-Path: <SRS0=NuDk=PZ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 470F6C43387
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 13:12:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B9A1C43387
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 13:16:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14FDA20652
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 13:12:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 44E1420652
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 13:16:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="CWWZ+bvN"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kxWo0xtr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728244AbfAQNMD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 17 Jan 2019 08:12:03 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:34150 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725887AbfAQNMD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Jan 2019 08:12:03 -0500
-Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 2777D25B7E8;
-        Fri, 18 Jan 2019 00:11:59 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1547730719; bh=fTFi3yJMHb3fufpa3KR8Li76A6adNKw9txxmjJskzBY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=CWWZ+bvNXwtcg6qDBjyLL15vc7KW5/wcioSgm5XuoDJ/E1ktLHmRPhIU7qmFcbfD+
-         Y4cWg2yHUgwL1OvDvlOZb7VxiY66NnfZBNI11oJ1hc5/+0444dFxNMPark86Zmn0/4
-         87tyl1DBUrTZJa0FePLGYIi65a3ChVIn3Ej6Ed/4=
-Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 13DAA940459; Thu, 17 Jan 2019 14:11:57 +0100 (CET)
-Date:   Thu, 17 Jan 2019 14:11:57 +0100
-From:   Simon Horman <horms@verge.net.au>
-To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>,
+        id S1725918AbfAQNQG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Jan 2019 08:16:06 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:38071 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725878AbfAQNQF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Jan 2019 08:16:05 -0500
+Received: by mail-wr1-f67.google.com with SMTP id v13so10976487wrw.5;
+        Thu, 17 Jan 2019 05:16:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=vO0u/ighJu9/Pgld8XWvcp25uFZhyw/lMVsD9ojHRh8=;
+        b=kxWo0xtrN4S9G9SG3QB8h/KJn3nNYrHG2n8GN743BJqSe9Kk5yq8MkvUaabJKwGpWt
+         kkFZQyCNVyIr2jVYJg5ZfeYb2xSRM9QR/9T4c9JEne7vrcDK/dNrdL8i9Icvw/1UNSi/
+         /n2L2EyrpBfr7e9IrNMCzrZ2FwR7bYiXl/8fad+nFarRtF1P8uZIBdWBpY8SAHwLnXMW
+         5z0Bc6A8OYjyJFWfsODzvK5k8zpMO6SKuyNwJ3WJ0ta3iLBKM0DDskaC0ln+ROildl+z
+         Kioa/gFBOMph4VUQEySfPiDNkhKkilYrxR4x91oIbmgRFJza4lS8yGw6mDL1DoRm/pqm
+         f9+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=vO0u/ighJu9/Pgld8XWvcp25uFZhyw/lMVsD9ojHRh8=;
+        b=JhTQhCS7Lap23FdEa2e9/QYuLJfWZR0mdYEnvl9onrEs2n2Vi3l0/2y9an5L46daiF
+         bnem8Jx5o/lAgUVxjp3bNLLQDVmWrJP26MahHQLQyFoHC+6p2Jjs4Ul4c119Ab8lh4lm
+         HukuYAsuSkRfc2t3b7raO8ILRblKsDqtceDqql+70bLC+hEHW5u8tfaBpdRUWDEHnX2O
+         88VGLZYllJ0ckdbA8/97yA74tyH04+y+MAQ7IB9iY8L3PMNQHoDYSv6Zyq7QWNTxQx2y
+         iaY170qMo2aj9VFP9KS7ZuuK4qby+xgZAthIr1IAoatuub8G1ZQMBWXsLCOWsHkknZQ0
+         a3fA==
+X-Gm-Message-State: AJcUukePdZfVdVNFkiyGjV0Z+cKnY2k3p/0tQaXauQaDRE3kpM3yIb8c
+        2BVC4033R+DBP3/eqovR+rU=
+X-Google-Smtp-Source: ALg8bN5jE5ei3NdujAOhSwy2ncQ0ixXP4RHKHTQReyRtYx+sNO7w3afFtTuqcfpN6cmsA2Pt9ddlcw==
+X-Received: by 2002:adf:ea11:: with SMTP id q17mr11550698wrm.328.1547730963253;
+        Thu, 17 Jan 2019 05:16:03 -0800 (PST)
+Received: from spock ([194.207.103.1])
+        by smtp.gmail.com with ESMTPSA id k3sm117499926wrm.7.2019.01.17.05.16.01
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 17 Jan 2019 05:16:02 -0800 (PST)
+Date:   Thu, 17 Jan 2019 13:16:01 +0000
+From:   Dean Wallace <duffydack73@gmail.com>
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Mogens Jensen <mogens-jensen@protonmail.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Thierry Reding <treding@nvidia.com>,
-        Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Johan Hovold <johan@kernel.org>,
-        Lukasz Majewski <lukma@denx.de>,
-        Michal Simek <monstr@monstr.eu>,
-        Michal =?utf-8?B?Vm9rw6HEjQ==?= <michal.vokac@ysoft.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Ben Whitten <ben.whitten@gmail.com>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-can@vger.kernel.org, netdev@vger.kernel.org,
-        linux-clk@vger.kernel.org, Biju Das <biju.das@bp.renesas.com>,
-        ebiharaml@si-linux.co.jp
-Subject: Re: [PATCH v2 08/11] clk: renesas: r8a774c0: Add missing CANFD clock
-Message-ID: <20190117131156.eq7zh3y5e6koueos@verge.net.au>
-References: <1547667945-5588-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Stable <stable@vger.kernel.org>,
+        Johannes Stezenbach <js@sig21.net>,
+        Carlo Caione <carlo@endlessm.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: Regression found (Stop-marking-clocks-as-CLK_IS_CRITICAL)
+Message-ID: <20190117131601.qlkdk6tqznyr2s7x@spock>
+References: <e48696f0-aa3e-e20e-d038-9d8dda9cbfce@redhat.com>
+ <BaxBOBmUCld7THAnRIDXUpKq8uQ2oJ49EaNlq0mZ11gFjA5JjhbfhVouLZGc1q74PrQC6uGfddKklIP059D_DtQwBqK-sn9rd4xEPhW9E6s=@protonmail.com>
+ <d53738e1-4ba5-640e-7ef7-1705ab205061@redhat.com>
+ <kAuINEBUUnlS5_uJafGtvryMEJVkDO4pb_yLfClwMcTS1h3sB1gYPcXBvg9X3RINfp5Uch7kLXuhTRX_JtouTYxoS6xNr77_b46e-mugl3k=@protonmail.com>
+ <b8849ae1-5a38-e7a1-da14-dc7f9d164825@redhat.com>
+ <3iO9ehQbZm_haTV0IuZ0qhsVHR0QLUbTgRJT8ZenGuRsnz2_uBvO93f0bHVYnsApibUT16JsJ0dgphLhUBd-u0t-lDBNsbvvlKWTgq8XOlw=@protonmail.com>
+ <3e12e051-b874-187d-d4f5-e146f59c659b@redhat.com>
+ <U9ny3qDg8fEQ-IaXWgwAmDf_U7yb1NZxpwoOvTorCbG86v8wUae3kWsa5omAv-ngu3VMaSONp6RdzmaI26Cz6uoyf5ddIiXuJQbzGf2MN3w=@protonmail.com>
+ <20190117091214.7djttnpo4jjzi4su@spock>
+ <c935552f-951f-ab9f-b41c-76c729c6d85c@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1547667945-5588-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <c935552f-951f-ab9f-b41c-76c729c6d85c@redhat.com>
+X-Info: Keep It Simple, Stupid.
+X-Operating-System: Linux, kernel 4.20.3-arch1-1-max98090
+X-Message-Flag: WARNING!! Outlook sucks
+User-Agent: Every email client sucks, this one just sucks less.
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Jan 16, 2019 at 07:45:45PM +0000, Fabrizio Castro wrote:
-> This patch adds the missing CANFD clock to the r8a774c0 specific
-> clock driver.
-> 
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
-> 
-> ---
-> The relevant documentation should appear in the next version
-> of the HW User's manual
-> 
-> v1->v2:
-> * appended R8A774C0_CLK_CANFD as per Geert's comment
+On 17-01-19, Hans de Goede wrote:
+> Mogens, Dean, can you please try the SND_SOC_INTEL_CHT_BSW_MAX98090_TI_MACH
+> driver, without reverting any patches, with the attached patch on top and
+> see if that helps?
 
+Hi Hans.   Just compiled 4.20.3 with your new patch and no other
+patches.  First impressions are, this is now as stable as it has ever
+been in my experiences with this baytrail drama.  A quick run down on my
+tests/findings:-
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+No PLL messages on boot, good.
+Played audio using mpd, all fine.  Plugged in headphones, switches,
+stays stable, no messages.
+Unplugged/plugged again few times, no issues.
+Ran pavucontrol, stayed stable, no messages.
+I can still make it lose the lock and turn on the dalek distortion by
+switching profiles in pavucontrol (from stereo output to any other, like
+putput + input) but that has always been the case afaik for this
+machine.  So basically this is now back to working as it was before the
+4.18.5 'clk' breakage.
 
+One thing to mention, I don;t normally use UCM files, tho I have in the
+past, which is where I assume my asound.state file has come from, which
+makes my sound work /shrug.  Well I've just tested using the UCM, and
+things are a little less stable regarding plugging/unplugging headset a
+few times.  It loses lock, but, what's different now is after maybe 3-4
+seconds it corrects itself.  Not sure if it matters, but shows things
+are a little more stable with this patch than previously known.
+
+I'll test a little longer and report (if) any problems.  It will be
+interesting to see how my buddy who uses headset/mic a lot gets on, as
+he needs to use usb audio device because internal sound and mic don't
+work properly.
+
+-Dean
