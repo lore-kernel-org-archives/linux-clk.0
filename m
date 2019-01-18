@@ -2,146 +2,134 @@ Return-Path: <SRS0=hvdj=P2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E507C43387
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Jan 2019 15:35:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D6B8C43387
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Jan 2019 15:44:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38A3320883
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Jan 2019 15:35:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 28DC320883
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Jan 2019 15:44:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="f6tuhciC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727617AbfARPfT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 18 Jan 2019 10:35:19 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:41167 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727481AbfARPfT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Jan 2019 10:35:19 -0500
-Received: by mail-ed1-f68.google.com with SMTP id a20so11418984edc.8
-        for <linux-clk@vger.kernel.org>; Fri, 18 Jan 2019 07:35:17 -0800 (PST)
+        id S1727323AbfARPod (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 18 Jan 2019 10:44:33 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:51508 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727241AbfARPoc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Jan 2019 10:44:32 -0500
+Received: by mail-it1-f196.google.com with SMTP id w18so7289584ite.1
+        for <linux-clk@vger.kernel.org>; Fri, 18 Jan 2019 07:44:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=M8rXTSbBX4ubMvOTSWd77IQNaWFBuPmToHx2tviAqv8=;
+        b=f6tuhciCex2pZhhiAe+9TsKtQQMPXIxp/GZCnFoQ2lOYUxu8PzjpdZ28GrY3+ari/7
+         ClVCsgWJRqcJ4ZUkepP7DnoMeUy7CPjzTUxRGOovNivX8D0YTKqF0vHN2ZKGfN2Szuiz
+         BBsSBEIxoolJqcSsitbbXBgKw5QSuoPimSBfo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=KlCbU+v2Ly6akxMfB/fMOsrfrjngzKkxYrx+Juqud64=;
-        b=QUQ9zE6OT1FbKIvG6nRgut9TW1+ATsQoE+yNm3kXkAequ1lcITt2iTnCnVauHdhtfX
-         6l3MGUKHNbxsnpAdFaWCHaybsdBwDls8ha2AC0lih6ewNwZV/XcgxrVEaO0ErifRJHbi
-         oFFYhUqi33erddmM6P7rK1bWzrVgQJaiuN4NFIlvHeF1tkli8SFslctVJ2ZH2HHyRHDh
-         dj+/76+0/os60/qeHhiOpdy7ZDkcNureZsOXtgNcQjC2f/ss4jOImN82+MpU1JyXxkui
-         QmrkS9w212DmkKkHjYbDJAmY72h47KhBxGSJaU3RggB3tkB5i8zO296XqaupJisaSaCK
-         CsiQ==
-X-Gm-Message-State: AJcUukdI16UBNwx67jUXAYCcN+wuyDEfwkIw3GU+QGQASO3ZJhW2PYu6
-        IZjeZNlLUfLafbynq8RYlgbt72tXQ/0=
-X-Google-Smtp-Source: ALg8bN6ePZRrwzfw1keGsTzx61lfsdSkPHnIMz55CQMKN+riF3LWObI/PQclycFJFJuzOkq1n3m2mg==
-X-Received: by 2002:a17:906:e0cb:: with SMTP id gl11-v6mr15085794ejb.92.1547825717007;
-        Fri, 18 Jan 2019 07:35:17 -0800 (PST)
-Received: from dhcp-44-202.space.revspace.nl ([2a01:4f8:1c0c:6c86:46e0:a7ad:5246:f04d])
-        by smtp.gmail.com with ESMTPSA id c11-v6sm3971571ejz.70.2019.01.18.07.35.15
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 18 Jan 2019 07:35:16 -0800 (PST)
-Subject: Re: Regression found (Stop-marking-clocks-as-CLK_IS_CRITICAL)
-To:     Mogens Jensen <mogens-jensen@protonmail.com>
-Cc:     Dean Wallace <duffydack73@gmail.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Stable <stable@vger.kernel.org>,
-        Johannes Stezenbach <js@sig21.net>,
-        Carlo Caione <carlo@endlessm.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20181025232517.ywnw54qibemosjws@picard>
- <d53738e1-4ba5-640e-7ef7-1705ab205061@redhat.com>
- <kAuINEBUUnlS5_uJafGtvryMEJVkDO4pb_yLfClwMcTS1h3sB1gYPcXBvg9X3RINfp5Uch7kLXuhTRX_JtouTYxoS6xNr77_b46e-mugl3k=@protonmail.com>
- <b8849ae1-5a38-e7a1-da14-dc7f9d164825@redhat.com>
- <3iO9ehQbZm_haTV0IuZ0qhsVHR0QLUbTgRJT8ZenGuRsnz2_uBvO93f0bHVYnsApibUT16JsJ0dgphLhUBd-u0t-lDBNsbvvlKWTgq8XOlw=@protonmail.com>
- <3e12e051-b874-187d-d4f5-e146f59c659b@redhat.com>
- <U9ny3qDg8fEQ-IaXWgwAmDf_U7yb1NZxpwoOvTorCbG86v8wUae3kWsa5omAv-ngu3VMaSONp6RdzmaI26Cz6uoyf5ddIiXuJQbzGf2MN3w=@protonmail.com>
- <20190117091214.7djttnpo4jjzi4su@spock>
- <c935552f-951f-ab9f-b41c-76c729c6d85c@redhat.com>
- <pozwYTgSVvWumpTgwwf_C-qvYFNnl7yl9gcq9M-LOUXQTvkSX5f8E_2d-HYNYV_ruL8kAURaIR3ItM_UmFJeV-e28eYy8b2MomlwHMbb-5U=@protonmail.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <983fb777-df22-1b53-acea-8bbcab23b260@redhat.com>
-Date:   Fri, 18 Jan 2019 16:35:14 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=M8rXTSbBX4ubMvOTSWd77IQNaWFBuPmToHx2tviAqv8=;
+        b=YXugLNH39Q8H3aBulpiDPHWU6EHBAKEfUW5npmm/trtPn0kE4pJk73rLw967COOOQm
+         D2EkWSr+MoSGQP7x7qF60xxd4m6khiHhpyiwIS4nF3FZgIF/7PcBD+TKa2pDBYsUni3+
+         GkwXuEgJdtKd92nUuvWZGZTy1LNw/Z5I3ULerDqIvyWMnE4cxjj3LB6EHkIfyrFBTTkH
+         uQLJVC3lP4bkJ/3VsUMzMejb55tJG2tnbMHxEvB9uH+M6nDHArgroLH0dhWL+SE0HCKY
+         sKKgmOaxVWkI5c5TkpMGnRTqZb14Lye8koAnGoYqCsxc7HpwpN6RSLVM9JNCdJBkCOBl
+         7qig==
+X-Gm-Message-State: AJcUuke3MGZxaiaHgSjPqn0zqm0PtnOmhL4Lkl1aLtLEkph6N4DNHedL
+        qoxm7Ew6cieeeG/h7L0X/NDPNtCd1WFBdbd9SiKuWQ==
+X-Google-Smtp-Source: ALg8bN6L/+sKvZ0HTo+pIJ0mihUdAg+iv8v9dLRS+wyz/iSOZ/Oqc48dXJYeSuGKMMhAWuAT1z0BlLaP1k/SJLNIQ9o=
+X-Received: by 2002:a24:10cb:: with SMTP id 194mr11701953ity.173.1547826271072;
+ Fri, 18 Jan 2019 07:44:31 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <pozwYTgSVvWumpTgwwf_C-qvYFNnl7yl9gcq9M-LOUXQTvkSX5f8E_2d-HYNYV_ruL8kAURaIR3ItM_UmFJeV-e28eYy8b2MomlwHMbb-5U=@protonmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20181210161729.29720-1-jagan@amarulasolutions.com>
+ <20181210161729.29720-8-jagan@amarulasolutions.com> <20181211164900.wfmkmbrbj3nmlb3h@flea>
+ <CAMty3ZB5F5jD9iJT1soXSA5HtQOf5W9rKO9nCdGFUfVo0hpO4Q@mail.gmail.com>
+ <20190107141158.zaimizk4rlqa6xli@flea> <CAMty3ZBb8byOwh=_W83Ta0Dse1qkoqccOeaBEY9oHPaxDxe9QA@mail.gmail.com>
+ <20190108085829.clianbtjovu3oieq@flea> <CAMty3ZC9OQtwT-iH=S1LhHsBPc_jFKGAnCYYeR9nuKuDWSKLQw@mail.gmail.com>
+ <20190112164319.whr7gwvl4oux5svz@flea> <CAMty3ZD8X9KmHjUtAo-+Y83a2j8NF3DjM9Yr3LPMxOvQ8kOV7g@mail.gmail.com>
+ <20190116191756.ajzzaga43srk77dk@flea> <CAMty3ZCw8itG=nizA5E218HT5kg=-xDzLmShF51vRh4ENYKuBA@mail.gmail.com>
+In-Reply-To: <CAMty3ZCw8itG=nizA5E218HT5kg=-xDzLmShF51vRh4ENYKuBA@mail.gmail.com>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Fri, 18 Jan 2019 21:14:19 +0530
+Message-ID: <CAMty3ZDbTgo3EY12VC0X_XuaRobQXvHx=Y6-_sgSWxDm1ZXbHQ@mail.gmail.com>
+Subject: Re: [PATCH v5 07/17] drm/sun4i: sun6i_mipi_dsi: Refactor vertical
+ video start delay
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        linux-amarula@amarulasolutions.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+On Thu, Jan 17, 2019 at 10:02 AM Jagan Teki <jagan@amarulasolutions.com> wrote:
+>
+> On Thu, Jan 17, 2019 at 12:48 AM Maxime Ripard
+> <maxime.ripard@bootlin.com> wrote:
+> >
+> > On Sun, Jan 13, 2019 at 01:07:41AM +0530, Jagan Teki wrote:
+> > > > > > > > Again, I cannot help you without the datasheet for the panels you're
+> > > > > > > > trying to submit.
+> > > > > > >
+> > > > > > > The panel bound with Sitronix ST7701 IC
+> > > > > > > http://www.startek-lcd.com/res/starteklcd/pdres/201705/20170512144242904.pdf
+> > > > > >
+> > > > > > It's the controller, not the panel
+> > > > >
+> > > > > As I said before, the datasheet of that panel doesn't have any
+> > > > > information except electrical characteristics and used IC which is
+> > > > > ST7701.
+> > > > >
+> > > > > I have one more panel, which is from Bananapi, S070WV20-CT16 ICN621
+> > > > > please find the attachment for the same.
+> > > > >
+> > > > > Here is some more details of the same.
+> > > > >
+> > > > > https://github.com/yesnoandor/x300/blob/master/kernel/arch/arm/boot/dts/erobbing/x300/x300.dtsi#L81
+> > > > > https://github.com/wxzed/Raspberry_5MIPI_Display/blob/master/I2C_Slave/USER/main.c#L15
+> > > > >
+> > > > > https://github.com/eliot-shao/qcom/blob/master/icn6211_cxn0102/kernel/drivers/video/msm/mdss/mdss_i2c_interface.c#L152
+> > > > > matches timings for
+> > > > > https://github.com/eliot-shao/qcom/blob/master/icn6211_cxn0102/kernel/arch/arm/boot/dts/qcom/dsi-mipi-2-rgb_1280p_video.dtsi#L20
+> > > > >
+> > > > > https://github.com/zestroly/micromat/blob/master/test/raspberry/ICN6211.cpp#L169
+> > > >
+> > > > Where did you get the timings from then?
+> > >
+> > > You mean drm_mode timings, the same panel with RGB available in
+> > > panel-simple[1], and dsi driver in Mailing list[2] and actual DSI
+> > > sequence commands from BSP[3]
+> > >
+> > > [1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/drivers/gpu/drm/panel/panel-simple.c?id=7ad8b41cd8f5c2842646d01cdd576663caee04a7
+> > > [2] https://patchwork.kernel.org/patch/10680331/
+> > > [3] https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/lcd/S070WV20_MIPI_RGB.c
+> >
+> > So you had no reliable source for the timings then? How do you know if
+> > all your patches that are timing related are right then?
+>
+> I don't understand your point, or may be I confused with many links
+> that I attached in previous mail.
+>
+> 1. Patch for same panel timings are already in Mainline that was
+> tested on one of the board. [1]
+> 2. Driver from AW, released bsp from BPI-M64-bsp [3]
+>
+> Do you think the above two points are not valid sources?
 
-On 1/17/19 8:30 PM, Mogens Jensen wrote:
-> ‐‐‐‐‐‐‐ Original Message ‐‐‐‐‐‐‐
-> On Thursday, January 17, 2019 12:05 PM, Hans de Goede <hdegoede@redhat.com> wrote:
-> 
->> Hi,
->>
->> On 17-01-19 10:12, Dean Wallace wrote:
->>
->>> Hi Hans, Mogens,
->>> On 17-01-19, Mogens Jensen wrote:
->>>
->>>> Kernel is compiled with SND_SOC_INTEL_CHT_BSW_MAX98090_TI_MACH and the quirk seems to have fixed the problem caused by commit 648e921888ad ("clk: x86: Stop marking clocks as CLK_IS_CRITICAL"), as sound is now working if running "speaker-test" on my system which is clean ALSA.
->>
->> Note being "clean ALSA" is really not a good thing now a days,
->> for lots of things we depend on pulseaudio (like setting
->> up UCM mixer profiles).
->>
-> I'm using UCM mixer profile from:
-> 
-> https://github.com/plbossart/UCM/tree/master/chtmax98090
-> 
-> This is enabled with:
-> 
-> alsaucm -c chtmax98090 set _verb HiFi set _enadev Speakers
-> 
->>>> Unfortunately, SND_SOC_INTEL_CHT_BSW_MAX98090_TI_MACH driver is unusable on Clapper Chromebooks as audio played from everything but "speaker-test" as video players or web browsers is extremly low and sounds like played at 10x speed. At the same time kernel log is spammed with messages like this:
->>>> max98090 i2c-193C9890:00: PLL unlocked
->>>> intel_sst_acpi 80860F28:00: FW Version 01.0c.00.01
->>>> writing to lpe: 00000000: 01 01 01 01 00 00 08 00 ff ff ff ff 55 00 00 00 ............U...
->>>> writing to lpe: 00000000: 01 01 01 01 00 00 1a 00 ff ff ff ff 75 00 12 00 ............u...
->>>> This is probably not related to the problem discussed in this thread, but the result is that I have to use the legacy driver SND_SOC_INTEL_BYT_MAX98090_MACH and therefore still has to revert commit 648e921888ad for sound to work.
->>>> Is it possible to create a fix for SND_SOC_INTEL_BYT_MAX98090_MACH on kernel 4.19? Kernel 4.19 is a long term release so it would be very nice to have fix for this version upstream.
->>>
->>> I have been reverting "clk: x86: Stop marking clocks as CLK_IS_CRITICAL"
->>> and the patch that initially added the quirk for swanky because of sound
->>> instability issues as you described. I'm compiling vanilla Archlinux
->>> kernel with SND_SOC_INTEL_CHT_BSW_MAX98090_TI_MACH, using pulseaudio,
->>> and have sound in all my apps.
->>> Baytrail sound has always been a little touchy, especially using headset
->>> with mic, but since the clk patch breaking sound and the quirk patch to
->>> fix it, there is a lot more instability. Just running pavucontrol, or
->>> plugging in headset sets it off. It's a head scratcher.
->>
->> Mogens, Dean, can you please try the SND_SOC_INTEL_CHT_BSW_MAX98090_TI_MACH
->> driver, without reverting any patches, with the attached patch on top and
->> see if that helps?
->>
->> Thanks & Regards,
->>
->> Hans
-> 
-> I have applied the patch to kernel 4.19.15 and unfortunately this has not solved the problems.
-> 
-> Audio generated from "speaker-test" is normal, but from everything else is very low and played at 10x speed. However, I'm not seeing the "max98090 i2c-193C9890:00: PLL unlocked" message in kernel log anymore, but it's still spammed with "writing to lpe: ...".
-
-Hmm, I've a feeling the problem is your using alsa directly, do you have
-dmix enabled ? You probably need dmix since the SST sound support
-only supports 48KHz AFAIK.
-
-Can you perhaps give things a try with pulseaudio ?
-
-Regards,
-
-Hans
+fyi, the panel datasheet attached in above mail has timing information.
