@@ -2,134 +2,74 @@ Return-Path: <SRS0=hvdj=P2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D6B8C43387
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Jan 2019 15:44:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8828C43387
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Jan 2019 15:48:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28DC320883
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Jan 2019 15:44:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="f6tuhciC"
+	by mail.kernel.org (Postfix) with ESMTP id 80E472087E
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Jan 2019 15:48:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727323AbfARPod (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 18 Jan 2019 10:44:33 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:51508 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727241AbfARPoc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Jan 2019 10:44:32 -0500
-Received: by mail-it1-f196.google.com with SMTP id w18so7289584ite.1
-        for <linux-clk@vger.kernel.org>; Fri, 18 Jan 2019 07:44:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=M8rXTSbBX4ubMvOTSWd77IQNaWFBuPmToHx2tviAqv8=;
-        b=f6tuhciCex2pZhhiAe+9TsKtQQMPXIxp/GZCnFoQ2lOYUxu8PzjpdZ28GrY3+ari/7
-         ClVCsgWJRqcJ4ZUkepP7DnoMeUy7CPjzTUxRGOovNivX8D0YTKqF0vHN2ZKGfN2Szuiz
-         BBsSBEIxoolJqcSsitbbXBgKw5QSuoPimSBfo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=M8rXTSbBX4ubMvOTSWd77IQNaWFBuPmToHx2tviAqv8=;
-        b=YXugLNH39Q8H3aBulpiDPHWU6EHBAKEfUW5npmm/trtPn0kE4pJk73rLw967COOOQm
-         D2EkWSr+MoSGQP7x7qF60xxd4m6khiHhpyiwIS4nF3FZgIF/7PcBD+TKa2pDBYsUni3+
-         GkwXuEgJdtKd92nUuvWZGZTy1LNw/Z5I3ULerDqIvyWMnE4cxjj3LB6EHkIfyrFBTTkH
-         uQLJVC3lP4bkJ/3VsUMzMejb55tJG2tnbMHxEvB9uH+M6nDHArgroLH0dhWL+SE0HCKY
-         sKKgmOaxVWkI5c5TkpMGnRTqZb14Lye8koAnGoYqCsxc7HpwpN6RSLVM9JNCdJBkCOBl
-         7qig==
-X-Gm-Message-State: AJcUuke3MGZxaiaHgSjPqn0zqm0PtnOmhL4Lkl1aLtLEkph6N4DNHedL
-        qoxm7Ew6cieeeG/h7L0X/NDPNtCd1WFBdbd9SiKuWQ==
-X-Google-Smtp-Source: ALg8bN6L/+sKvZ0HTo+pIJ0mihUdAg+iv8v9dLRS+wyz/iSOZ/Oqc48dXJYeSuGKMMhAWuAT1z0BlLaP1k/SJLNIQ9o=
-X-Received: by 2002:a24:10cb:: with SMTP id 194mr11701953ity.173.1547826271072;
- Fri, 18 Jan 2019 07:44:31 -0800 (PST)
+        id S1727323AbfARPsL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 18 Jan 2019 10:48:11 -0500
+Received: from muru.com ([72.249.23.125]:34200 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726902AbfARPsL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 18 Jan 2019 10:48:11 -0500
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 725648047;
+        Fri, 18 Jan 2019 15:48:17 +0000 (UTC)
+Date:   Fri, 18 Jan 2019 07:48:07 -0800
+From:   Tony Lindgren <tony@atomide.com>
+To:     Andreas Kemnade <andreas@kemnade.info>
+Cc:     t-kristo@ti.com, mturquette@baylibre.com, sboyd@kernel.org,
+        linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, bcousson@baylibre.com,
+        paul@pwsan.com, letux-kernel@openphoenux.org
+Subject: Re: [PATCH v3 3/3] arm: omap_hwmod disable ick autoidling when a
+ hwmod requires that
+Message-ID: <20190118154807.GV5544@atomide.com>
+References: <20190116220429.9136-1-andreas@kemnade.info>
+ <20190116220429.9136-4-andreas@kemnade.info>
 MIME-Version: 1.0
-References: <20181210161729.29720-1-jagan@amarulasolutions.com>
- <20181210161729.29720-8-jagan@amarulasolutions.com> <20181211164900.wfmkmbrbj3nmlb3h@flea>
- <CAMty3ZB5F5jD9iJT1soXSA5HtQOf5W9rKO9nCdGFUfVo0hpO4Q@mail.gmail.com>
- <20190107141158.zaimizk4rlqa6xli@flea> <CAMty3ZBb8byOwh=_W83Ta0Dse1qkoqccOeaBEY9oHPaxDxe9QA@mail.gmail.com>
- <20190108085829.clianbtjovu3oieq@flea> <CAMty3ZC9OQtwT-iH=S1LhHsBPc_jFKGAnCYYeR9nuKuDWSKLQw@mail.gmail.com>
- <20190112164319.whr7gwvl4oux5svz@flea> <CAMty3ZD8X9KmHjUtAo-+Y83a2j8NF3DjM9Yr3LPMxOvQ8kOV7g@mail.gmail.com>
- <20190116191756.ajzzaga43srk77dk@flea> <CAMty3ZCw8itG=nizA5E218HT5kg=-xDzLmShF51vRh4ENYKuBA@mail.gmail.com>
-In-Reply-To: <CAMty3ZCw8itG=nizA5E218HT5kg=-xDzLmShF51vRh4ENYKuBA@mail.gmail.com>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Fri, 18 Jan 2019 21:14:19 +0530
-Message-ID: <CAMty3ZDbTgo3EY12VC0X_XuaRobQXvHx=Y6-_sgSWxDm1ZXbHQ@mail.gmail.com>
-Subject: Re: [PATCH v5 07/17] drm/sun4i: sun6i_mipi_dsi: Refactor vertical
- video start delay
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        linux-amarula@amarulasolutions.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190116220429.9136-4-andreas@kemnade.info>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Jan 17, 2019 at 10:02 AM Jagan Teki <jagan@amarulasolutions.com> wrote:
->
-> On Thu, Jan 17, 2019 at 12:48 AM Maxime Ripard
-> <maxime.ripard@bootlin.com> wrote:
-> >
-> > On Sun, Jan 13, 2019 at 01:07:41AM +0530, Jagan Teki wrote:
-> > > > > > > > Again, I cannot help you without the datasheet for the panels you're
-> > > > > > > > trying to submit.
-> > > > > > >
-> > > > > > > The panel bound with Sitronix ST7701 IC
-> > > > > > > http://www.startek-lcd.com/res/starteklcd/pdres/201705/20170512144242904.pdf
-> > > > > >
-> > > > > > It's the controller, not the panel
-> > > > >
-> > > > > As I said before, the datasheet of that panel doesn't have any
-> > > > > information except electrical characteristics and used IC which is
-> > > > > ST7701.
-> > > > >
-> > > > > I have one more panel, which is from Bananapi, S070WV20-CT16 ICN621
-> > > > > please find the attachment for the same.
-> > > > >
-> > > > > Here is some more details of the same.
-> > > > >
-> > > > > https://github.com/yesnoandor/x300/blob/master/kernel/arch/arm/boot/dts/erobbing/x300/x300.dtsi#L81
-> > > > > https://github.com/wxzed/Raspberry_5MIPI_Display/blob/master/I2C_Slave/USER/main.c#L15
-> > > > >
-> > > > > https://github.com/eliot-shao/qcom/blob/master/icn6211_cxn0102/kernel/drivers/video/msm/mdss/mdss_i2c_interface.c#L152
-> > > > > matches timings for
-> > > > > https://github.com/eliot-shao/qcom/blob/master/icn6211_cxn0102/kernel/arch/arm/boot/dts/qcom/dsi-mipi-2-rgb_1280p_video.dtsi#L20
-> > > > >
-> > > > > https://github.com/zestroly/micromat/blob/master/test/raspberry/ICN6211.cpp#L169
-> > > >
-> > > > Where did you get the timings from then?
-> > >
-> > > You mean drm_mode timings, the same panel with RGB available in
-> > > panel-simple[1], and dsi driver in Mailing list[2] and actual DSI
-> > > sequence commands from BSP[3]
-> > >
-> > > [1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/drivers/gpu/drm/panel/panel-simple.c?id=7ad8b41cd8f5c2842646d01cdd576663caee04a7
-> > > [2] https://patchwork.kernel.org/patch/10680331/
-> > > [3] https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/lcd/S070WV20_MIPI_RGB.c
-> >
-> > So you had no reliable source for the timings then? How do you know if
-> > all your patches that are timing related are right then?
->
-> I don't understand your point, or may be I confused with many links
-> that I attached in previous mail.
->
-> 1. Patch for same panel timings are already in Mainline that was
-> tested on one of the board. [1]
-> 2. Driver from AW, released bsp from BPI-M64-bsp [3]
->
-> Do you think the above two points are not valid sources?
+Hi,
 
-fyi, the panel datasheet attached in above mail has timing information.
+* Andreas Kemnade <andreas@kemnade.info> [190116 22:04]:
+> Deny autoidle for hwmods with the OCPIF_SWSUP_IDLE flag,
+> that makes hwmods working properly which cannot handle
+> autoidle properly in lower power states.
+
+Sorry if I'm still missing something :)
+
+But doesn't this now block autoidle for all modules
+with OCPIF_SWSUP_IDLE even if they work just fine with
+autoidle?
+
+I think what you want to do is keep clocks enabled
+while in use?
+
+If so, how about using HWMOD_CLKDM_NOAUTO:
+
+"HWMOD_CLKDM_NOAUTO: Allows the hwmod's clockdomain to
+ be prevented from entering HW_AUTO while hwmod is
+ active."
+
+> Affected is e. g. the omap_hdq.
+
+Have you already tried what happens if you just tag
+omap_hdq with HWMOD_CLKDM_NOAUTO?
+
+Regards,
+
+Tony
