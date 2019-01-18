@@ -1,148 +1,162 @@
-Return-Path: <SRS0=NuDk=PZ=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=hvdj=P2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66B3AC43387
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 19:30:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4FEDC43387
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Jan 2019 09:50:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A05A20859
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Jan 2019 19:30:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9853A2086D
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Jan 2019 09:50:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="QDmSszFI"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="t+Dk55GB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728599AbfAQTaw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 17 Jan 2019 14:30:52 -0500
-Received: from mail-40135.protonmail.ch ([185.70.40.135]:32843 "EHLO
-        mail-40135.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727692AbfAQTaw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Jan 2019 14:30:52 -0500
-Date:   Thu, 17 Jan 2019 19:30:41 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-        s=default; t=1547753448;
-        bh=HJBKZ8PtqxY+VcQp4wvvTxv0AeJJfjPihAJvQvXbFJ4=;
-        h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:
-         Feedback-ID:From;
-        b=QDmSszFILA5oT5phVVPaNnP7z7h7fMNDjX8+qFGL6fi7LPHlTJ9RaLytNgDAn7CWB
-         1LgSm7Fyqg8UzrD8f6iLP6omi8lWaJuxeO6HWtdaTLvHesWw5eBW1evoQCKmMHjEL/
-         er5qwHsSmruJs69y7V+Q4UoAWbLnLThHkinhqQSw=
-To:     Hans de Goede <hdegoede@redhat.com>
-From:   Mogens Jensen <mogens-jensen@protonmail.com>
-Cc:     Dean Wallace <duffydack73@gmail.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        id S1726461AbfARJuy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 18 Jan 2019 04:50:54 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:36022 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726418AbfARJuy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Jan 2019 04:50:54 -0500
+Received: by mail-wm1-f65.google.com with SMTP id p6so3857482wmc.1
+        for <linux-clk@vger.kernel.org>; Fri, 18 Jan 2019 01:50:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:openpgp:autocrypt:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=9B3qQz2jRrUxvqhO6MTS8K+j34dnh0frQL5SvmEk0mY=;
+        b=t+Dk55GBtLHSU7i+zV8bcDYuC18GIQ0qolZaIgdfDEiH8dc6UDA2jhel8NSNz1xHGz
+         NY50v/+cwoQdGwSVFtEoelTrPD0Dj97V5S2FOdtcupiHc28uK38wkhAF2FP8i2auBNUO
+         Gtv8Q01jGttFhuPeDtpBiUX+5bF5TFoKp77pLlJn9WmB6qC8LEa4Dw+9KDOiAUmNWRqF
+         KxQTKTlafaQx2FlNviLrZBKrOP/YFAzMtaDsEi3FrO1CXYpsYyFUfuRPKSppH4pxK1IF
+         bqSk8drqSQ0Uk6KRBXG/jMqAf2pf13lbyA6VlYuLJTw1K3oZny1RBCLbvMRrTnQ63Gwh
+         +NkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :organization:message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=9B3qQz2jRrUxvqhO6MTS8K+j34dnh0frQL5SvmEk0mY=;
+        b=TBpkAkYWPgARrhdYJXxY/6okA+g4qNYmaOQf18RTPf8OwgzdYiZOu9e0uRhBfGRkWC
+         WHxnkB5KUNEbhYlzb3CuDP/1l4qmJ0ArCkbT4qKJ02kipV83BPxKwU583udulBrIpTHQ
+         cPuA8ypDhPuvgSDVFyMOAC4Q7g4GJlUTvTpbvxD30P6KEbhCKLUVcUqZWQZxkMS1hbLl
+         00sC0MNOTnEHqWR07Cagu61Arr0MYPiKiEXhYtUurkkxCYdQmxJcADRr5e3SzVPLWQPe
+         ECF+JO0sesq5W8g5jjGSJ7M1gaTbN6LboJCZBlgfetP247XX0nsn5UyjJNA3gutrtm4S
+         SE3Q==
+X-Gm-Message-State: AJcUukfkRk4AeLBleZRAg/v8KL5aWC8Z6PFJaBbQJpEckfZXqdK1EE60
+        46IOyBUrE5pQ9PvcmoqzgfN/hWv2Hso=
+X-Google-Smtp-Source: ALg8bN7DpNhHkhHSh5wPjIYNFZsPnzXm2SrxFmUpA2yE8+99rLK+YWwoKKp+iYCxifg8ngmxxHBBOQ==
+X-Received: by 2002:a1c:1383:: with SMTP id 125mr15529112wmt.71.1547805051385;
+        Fri, 18 Jan 2019 01:50:51 -0800 (PST)
+Received: from [10.1.2.12] (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id g67sm82072647wmd.38.2019.01.18.01.50.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 18 Jan 2019 01:50:50 -0800 (PST)
+Subject: Re: [PATCH 0/3] clk: meson: claim input clocks through DT
+To:     Jerome Brunet <jbrunet@baylibre.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Stable <stable@vger.kernel.org>,
-        Johannes Stezenbach <js@sig21.net>,
-        Carlo Caione <carlo@endlessm.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Reply-To: Mogens Jensen <mogens-jensen@protonmail.com>
-Subject: Re: Regression found (Stop-marking-clocks-as-CLK_IS_CRITICAL)
-Message-ID: <pozwYTgSVvWumpTgwwf_C-qvYFNnl7yl9gcq9M-LOUXQTvkSX5f8E_2d-HYNYV_ruL8kAURaIR3ItM_UmFJeV-e28eYy8b2MomlwHMbb-5U=@protonmail.com>
-In-Reply-To: <c935552f-951f-ab9f-b41c-76c729c6d85c@redhat.com>
-References: <20181025232517.ywnw54qibemosjws@picard>
- <d53738e1-4ba5-640e-7ef7-1705ab205061@redhat.com>
- <kAuINEBUUnlS5_uJafGtvryMEJVkDO4pb_yLfClwMcTS1h3sB1gYPcXBvg9X3RINfp5Uch7kLXuhTRX_JtouTYxoS6xNr77_b46e-mugl3k=@protonmail.com>
- <b8849ae1-5a38-e7a1-da14-dc7f9d164825@redhat.com>
- <3iO9ehQbZm_haTV0IuZ0qhsVHR0QLUbTgRJT8ZenGuRsnz2_uBvO93f0bHVYnsApibUT16JsJ0dgphLhUBd-u0t-lDBNsbvvlKWTgq8XOlw=@protonmail.com>
- <3e12e051-b874-187d-d4f5-e146f59c659b@redhat.com>
- <U9ny3qDg8fEQ-IaXWgwAmDf_U7yb1NZxpwoOvTorCbG86v8wUae3kWsa5omAv-ngu3VMaSONp6RdzmaI26Cz6uoyf5ddIiXuJQbzGf2MN3w=@protonmail.com>
- <20190117091214.7djttnpo4jjzi4su@spock>
- <c935552f-951f-ab9f-b41c-76c729c6d85c@redhat.com>
-Feedback-ID: 4dFv7M8pOtP7CMTtfNdOwXARWpF2vcQYB4dRuX1h9mb-6008qkzO2MVweOzrAYHEdkjJ6P5PUdgJEubk4l9Lhg==:Ext:ProtonMail
+        Kevin Hilman <khilman@baylibre.com>,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, patchwork-bot+notify@kernel.org
+References: <20190116175435.4990-1-jbrunet@baylibre.com>
+From:   Neil Armstrong <narmstrong@baylibre.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
+ 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
+ ZaTUOEkgIor5losDrePdPgE=
+Organization: Baylibre
+Message-ID: <3d579ebf-1fea-d54f-e253-217ac301de67@baylibre.com>
+Date:   Fri, 18 Jan 2019 10:50:48 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190116175435.4990-1-jbrunet@baylibre.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90 Original Me=
-ssage =E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90
-On Thursday, January 17, 2019 12:05 PM, Hans de Goede <hdegoede@redhat.com>=
- wrote:
+On 16/01/2019 18:54, Jerome Brunet wrote:
+> Following the preparation series [0] sent in the last cycle, this
+> patchset adds clock input claim through DT in the gxbb and axg clock
+> controllers
+> 
+> [0]: https://lkml.kernel.org/r/20181203171640.12110-1-jbrunet@baylibre.com
+> 
+> Jerome Brunet (3):
+>   clk: meson: gxbb: claim clock controller input clock from DT
+>   clk: meson: axg: claim clock controller input clock from DT
+>   clk: meson: ao-clkc: claim clock controller input clocks from DT
+> 
+>  drivers/clk/meson/axg-aoclk.c   | 22 +++++++++++++++-----
+>  drivers/clk/meson/axg.c         | 27 +++++++++++++++++-------
+>  drivers/clk/meson/gxbb-aoclk.c  | 25 ++++++++++++++++------
+>  drivers/clk/meson/gxbb.c        | 37 +++++++++++++++++++++------------
+>  drivers/clk/meson/meson-aoclk.c | 37 ++++++++++++++++++++++++++++++++-
+>  drivers/clk/meson/meson-aoclk.h | 12 +++++++++--
+>  6 files changed, 125 insertions(+), 35 deletions(-)
+> 
 
-> Hi,
->
-> On 17-01-19 10:12, Dean Wallace wrote:
->
-> > Hi Hans, Mogens,
-> > On 17-01-19, Mogens Jensen wrote:
-> >
-> > > Kernel is compiled with SND_SOC_INTEL_CHT_BSW_MAX98090_TI_MACH and th=
-e quirk seems to have fixed the problem caused by commit 648e921888ad ("clk=
-: x86: Stop marking clocks as CLK_IS_CRITICAL"), as sound is now working if=
- running "speaker-test" on my system which is clean ALSA.
->
-> Note being "clean ALSA" is really not a good thing now a days,
-> for lots of things we depend on pulseaudio (like setting
-> up UCM mixer profiles).
->
-I'm using UCM mixer profile from:
+Looks good for me :
 
-https://github.com/plbossart/UCM/tree/master/chtmax98090
+Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
 
-This is enabled with:
+and
 
-alsaucm -c chtmax98090 set _verb HiFi set _enadev Speakers
+Applied on next/drivers for Linux 5.1-rc1
 
-> > > Unfortunately, SND_SOC_INTEL_CHT_BSW_MAX98090_TI_MACH driver is unusa=
-ble on Clapper Chromebooks as audio played from everything but "speaker-tes=
-t" as video players or web browsers is extremly low and sounds like played =
-at 10x speed. At the same time kernel log is spammed with messages like thi=
-s:
-> > > max98090 i2c-193C9890:00: PLL unlocked
-> > > intel_sst_acpi 80860F28:00: FW Version 01.0c.00.01
-> > > writing to lpe: 00000000: 01 01 01 01 00 00 08 00 ff ff ff ff 55 00 0=
-0 00 ............U...
-> > > writing to lpe: 00000000: 01 01 01 01 00 00 1a 00 ff ff ff ff 75 00 1=
-2 00 ............u...
-> > > This is probably not related to the problem discussed in this thread,=
- but the result is that I have to use the legacy driver SND_SOC_INTEL_BYT_M=
-AX98090_MACH and therefore still has to revert commit 648e921888ad for soun=
-d to work.
-> > > Is it possible to create a fix for SND_SOC_INTEL_BYT_MAX98090_MACH on=
- kernel 4.19? Kernel 4.19 is a long term release so it would be very nice t=
-o have fix for this version upstream.
-> >
-> > I have been reverting "clk: x86: Stop marking clocks as CLK_IS_CRITICAL=
-"
-> > and the patch that initially added the quirk for swanky because of soun=
-d
-> > instability issues as you described. I'm compiling vanilla Archlinux
-> > kernel with SND_SOC_INTEL_CHT_BSW_MAX98090_TI_MACH, using pulseaudio,
-> > and have sound in all my apps.
-> > Baytrail sound has always been a little touchy, especially using headse=
-t
-> > with mic, but since the clk patch breaking sound and the quirk patch to
-> > fix it, there is a lot more instability. Just running pavucontrol, or
-> > plugging in headset sets it off. It's a head scratcher.
->
-> Mogens, Dean, can you please try the SND_SOC_INTEL_CHT_BSW_MAX98090_TI_MA=
-CH
-> driver, without reverting any patches, with the attached patch on top and
-> see if that helps?
->
-> Thanks & Regards,
->
-> Hans
-
-I have applied the patch to kernel 4.19.15 and unfortunately this has not s=
-olved the problems.
-
-Audio generated from "speaker-test" is normal, but from everything else is =
-very low and played at 10x speed. However, I'm not seeing the "max98090 i2c=
--193C9890:00: PLL unlocked" message in kernel log anymore, but it's still s=
-pammed with "writing to lpe: ...".
-
-Regards,
-
-Mogens
+Neil
