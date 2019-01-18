@@ -2,145 +2,136 @@ Return-Path: <SRS0=hvdj=P2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB8F8C07EBF
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Jan 2019 17:22:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F173C07EBF
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Jan 2019 17:31:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B039F20823
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Jan 2019 17:22:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="Oa4Tr/Fq"
+	by mail.kernel.org (Postfix) with ESMTP id E780D20883
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Jan 2019 17:31:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547832673;
+	bh=+kqyZIlnO3ixeb2SUutOIYXVyPLGTVBMNSP9HOFSdvs=;
+	h=Subject:In-Reply-To:References:Cc:To:From:Date:List-ID:From;
+	b=bnnSPt7RUkqm9sN2TQ7snQv/rx0hbsa4Tfv1PAIb0OZ76xcY6w19EAoX3dISqaWvO
+	 BxKPS7QzIr3tFfj3HHFl4iU+Hs6mycnhOON3QBCLniFeRdz0z3dXSZMaIVTwmgu23L
+	 bx/jnM5ENMeGPG9zoQ2p1RjvKV+ypBm1s+BwsXhY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728510AbfARRWH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 18 Jan 2019 12:22:07 -0500
-Received: from mail.andi.de1.cc ([85.214.239.24]:60414 "EHLO
-        h2641619.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728385AbfARRSn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Jan 2019 12:18:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=kemnade.info; s=20180802; h=Content-Type:MIME-Version:References:
-        In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=FR37dNV2StMDy/4G45SmkCsaP1PX3ShhSHv6pOERd/E=; b=Oa4Tr/FqvE/gsvqxOeFJPRMN3
-        XmSJUTg+hDiMCF1Mcz0gh4ziRj3KJcBeDh3q2pvId4UCjogW38Fsy0LEWf1a6rNWcE/YgyEEqQMxc
-        6IPFBHWPbRC/7ZauhYQqvW+xLMS8yDi+mdXw/ZiaC3ek5+CIuAjkj4HpRw85YIvaxH0Bg=;
-Received: from p5dcc388c.dip0.t-ipconnect.de ([93.204.56.140] helo=aktux)
-        by h2641619.stratoserver.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1gkXmq-00023U-K2; Fri, 18 Jan 2019 18:18:32 +0100
-Date:   Fri, 18 Jan 2019 18:18:27 +0100
-From:   Andreas Kemnade <andreas@kemnade.info>
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     t-kristo@ti.com, mturquette@baylibre.com, sboyd@kernel.org,
-        linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, bcousson@baylibre.com,
-        paul@pwsan.com, letux-kernel@openphoenux.org
-Subject: Re: [PATCH v3 3/3] arm: omap_hwmod disable ick autoidling when a
- hwmod requires that
-Message-ID: <20190118181827.7163bee4@aktux>
-In-Reply-To: <20190118154807.GV5544@atomide.com>
-References: <20190116220429.9136-1-andreas@kemnade.info>
-        <20190116220429.9136-4-andreas@kemnade.info>
-        <20190118154807.GV5544@atomide.com>
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1728070AbfARRbM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 18 Jan 2019 12:31:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55942 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727527AbfARRbM (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 18 Jan 2019 12:31:12 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7CFB320823;
+        Fri, 18 Jan 2019 17:31:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547832671;
+        bh=+kqyZIlnO3ixeb2SUutOIYXVyPLGTVBMNSP9HOFSdvs=;
+        h=Subject:In-Reply-To:References:Cc:To:From:Date:From;
+        b=xgq2HtOYS33MJZMhob4YFIv2ge93HM7Uji8PLiKi58FVWjOH1PsCciLXC7dLQiZmi
+         l414MOJU22WmyVe979GbG5s82r3v4SDmJig7r1n3GnjIMP6mWM4ZHISJUgHEvNySOE
+         G8wYNF+IQM+LeDq4vWfzRvfqKH8XBaKNjnTK5+C4=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/3lHBf4TAeKUNdaSQ9oYE/gh"; protocol="application/pgp-signature"
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] clk: mmp2: avoid disabling the SP clock when unused
+User-Agent: alot/0.8
+In-Reply-To: <bec06415e980f18d5d3407d498cad372dc3abd1b.camel@v3.sk>
+References: <20190116093505.1920945-1-lkundrak@v3.sk> <154765664632.169631.9344557684702266461@swboyd.mtv.corp.google.com> <73b20a5caef100d5768679cc395168976e86ed04.camel@v3.sk> <154768138798.169631.18317264971847478148@swboyd.mtv.corp.google.com> <bec06415e980f18d5d3407d498cad372dc3abd1b.camel@v3.sk>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+To:     Lubomir Rintel <lkundrak@v3.sk>,
+        Michael Turquette <mturquette@baylibre.com>
+Message-ID: <154783267051.169631.3197836544646625747@swboyd.mtv.corp.google.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+Date:   Fri, 18 Jan 2019 09:31:10 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
---Sig_/3lHBf4TAeKUNdaSQ9oYE/gh
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi,
-
-On Fri, 18 Jan 2019 07:48:07 -0800
-Tony Lindgren <tony@atomide.com> wrote:
-
-> Hi,
+Quoting Lubomir Rintel (2019-01-17 01:47:55)
+> On Wed, 2019-01-16 at 15:29 -0800, Stephen Boyd wrote:
+> > Quoting Lubomir Rintel (2019-01-16 09:26:31)
+> > > On Wed, 2019-01-16 at 08:37 -0800, Stephen Boyd wrote:
+> > > >=20
+> > > > Is it a critical clk that should never be turned off?
+> > >=20
+> > > I don't think it is. It is entirely plausible to have no use for the
+> > > "security processor", and in that case it's just okay to keep the clo=
+ck
+> > > disabled.
+> >=20
+> > So does the firmware/bootloader leave the clk enabled out of boot and we
+> > shouldn't really touch the on/off bits of the clk hardware from the
+> > kernel?
 >=20
-> * Andreas Kemnade <andreas@kemnade.info> [190116 22:04]:
-> > Deny autoidle for hwmods with the OCPIF_SWSUP_IDLE flag,
-> > that makes hwmods working properly which cannot handle
-> > autoidle properly in lower power states. =20
+> I think so.
 >=20
-> Sorry if I'm still missing something :)
+> > Or do we want to actively manage this clk from a driver
+> > somewhere in the kernel?
 >=20
-> But doesn't this now block autoidle for all modules
-> with OCPIF_SWSUP_IDLE even if they work just fine with
-> autoidle?
+> The olpc_apsp driver actually manages this clock, but that might turn
+> out to be the wrong thing to do. It currently only works if the driver
+> is built-in and thus the clock is always kept enabled.
+>=20
+> I'm now somewhat more confused that I believed myself to be when
+> sending the patch. Perhaps you could help me understand things a bit
+> more:
+>=20
+> 1.) What's the principal difference between CLK_IGNORE_UNUSED and
+> CLK_IS_CRITICAL? Is it that the CLK_IGNORE_UNUSED clocks are permitted=20
+> to be disabled by a driver, but an attempt to disable CLK_IS_CRITICAL
+> is a bug?
 
-According to the code comments, it was just meant for that.
-             if (os->flags & OCPIF_SWSUP_IDLE) {
--                       /* XXX omap_iclk_deny_idle(c); */
-+                       /*
-
-
-I guess there are workarounds for the other modules in place,
-or critical situations were not found yet.=20
-The other affected module is e.g. DSS. And we had some trouble
-in initialisation order for omap3 in the past and did some
-quirks. Probably we also fixed issues in reality caused by
-having the autoidle bit set.
-That flags also causes the iclk being enabled/disabled
-manually.
-
-Did you see any regressions? The patch is now 3 month old
-and nobody complained. I checked module idlest bits and did
-not see any changes.
+Yes. CLK_IGNORE_UNUSED is a workaround for two opposing forces. The
+first being the lack of a way for the clk framework to "hand off" the
+state of a clk to clk consumers after late init and the second being the
+desire to save power by disabling unused clocks.
 
 >=20
-> I think what you want to do is keep clocks enabled
-> while in use?
+> 2.) Perhaps it makes sense to disable the SP on the machines that don't
+> utilize it even if firmware keeps it enabled? Would it make sense to
+> make the clk driver use the  "protected-clocks" DT property for this?
+
+I don't think so. The protected-clocks property lists clks that
+shouldn't be touched by the OS. Critical clks in theory are still
+touched because the framework turns them on once, in case they're not
+already enabled. That's sort of a weird implementation detail that some
+drivers rely on. We haven't had a situation where drivers shouldn't
+read/write clk registers but also mark them as critical. I would think
+that we just wouldn't register those clks with the kernel because they
+would never be used.
+
+Does having this clk actually matter? Maybe it can just be removed
+instead? Put another way, is it saving any power to manage the clk from
+the kernel?
+
 >=20
-> If so, how about using HWMOD_CLKDM_NOAUTO:
+> ----8<----
 >=20
-> "HWMOD_CLKDM_NOAUTO: Allows the hwmod's clockdomain to
->  be prevented from entering HW_AUTO while hwmod is
->  active."
-
-That is about iclk. I think we should have clear wording here
-between all the idle things.
+> Here's some more context for the SP on the MMP2:
 >=20
-> > Affected is e. g. the omap_hdq. =20
+> The SP is a small PJ1 core. It starts when the platform is powered on
+> and eventually brings up the large PJ4 core.
 >=20
-> Have you already tried what happens if you just tag
-> omap_hdq with HWMOD_CLKDM_NOAUTO?
+> On the OLPC machine, the first stage firmware (cforth) starts running
+> on the SP, configures the DRAM, starts the boot firmware (openfirmware)
+> on the main PJ4 core and then enters a loop that bit-bangs the PS/2
+> protocol on the attached keyboard/touchpad.
 >=20
-Well, I am just happy with having that single bit cleared.
-But having two flags for the same things makes no sense to me.
+> It is entirely possible that on some boards the SP is not used for
+> anything but the bringup of the bootloader on the main core.
+>=20
+> SP is sometimes referred to as WTM, "wireless trusted module", but it's
+> not clear to me why is it the case. There's no documentation.
+>=20
 
-Regards,
-Andreas
+Ok. Thanks for the background.
 
---Sig_/3lHBf4TAeKUNdaSQ9oYE/gh
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEE7sDbhY5mwNpwYgrAfb1qx03ikyQFAlxCCmMACgkQfb1qx03i
-kyQ6TBAAjpFQDokqCcThBIXanpTuL7QL0hVYuxWtIW+lzA1SFg5R5aZnIaR6thuz
-RlzC8bpQ8q79S57pF2jYueCA4B2xpP8cY3DgiHJ3Of+v3Wj+7WvnpndFaICDcEJx
-qxgoMwbC8nSlskvMrxaI3ywqGeQkeEeBRQNGQjwo2kYVtHBv8BvgfjvYZmP1HeK5
-MtUIgI+7L1RwBr1wplMFW0aG4E937+A0t22w4oP2NHPjBNf7207WzNi9AIoNH5Co
-r3D6gJ8OqhsB8QTD4Ty9owvm8YmAMa5A1hUKVrR190OpUEz7I6psalwyas0QQgYk
-mB+2RHIdIWFbrK4PhokCaRonqN6fuiStxotgWO6gx4aX3a1YyGHO4bdvYlXJd65f
-sh/Dnz5g8PydmfdCNaC/DH3MSM2SYE1iVbfnNWz4NnitjC/oEpGSfYR3aiU9Bf/M
-KT8j3dDByw2soiBG+GyO9FzycYKpyT8yqQz+z9Cdy0v4Y7U8DGJczhbC/n32J1/Y
-6QTSmljwgJmNHFH13pNfJOaVpkMt/jFOK0uAGIqAMfdcF7Cy0kbwGz58meiJwsGZ
-f1HMOOanOdnln8J0gIzu9QSsjhbWbBETxtcpON4eemvgEq52YYjISd1H7oNK628R
-yOj7jWFAZiQoXNivNiH+SRCGdbAKdhWVd89gwG5ZUsQ5iK4WKDo=
-=dLt3
------END PGP SIGNATURE-----
-
---Sig_/3lHBf4TAeKUNdaSQ9oYE/gh--
