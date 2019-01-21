@@ -2,89 +2,74 @@ Return-Path: <SRS0=Ex8p=P5=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72D61C2F3A0
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Jan 2019 13:01:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0901C2F3A6
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Jan 2019 13:14:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B5C42087F
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Jan 2019 13:01:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BFEC720870
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Jan 2019 13:14:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728501AbfAUNBC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Jan 2019 08:01:02 -0500
-Received: from mail-vk1-f194.google.com ([209.85.221.194]:35206 "EHLO
-        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726885AbfAUNBC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Jan 2019 08:01:02 -0500
-Received: by mail-vk1-f194.google.com with SMTP id b18so4571886vke.2;
-        Mon, 21 Jan 2019 05:01:01 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=sUbShfmDKmMA5atKxszRotJWgTwajcG6Mj31KVUuZTA=;
-        b=dJVf1VNDWqdVN2C4vv2mTPi4nfvJPGtWyX31dYtukCYfgX2IQvwMpnR7yRElNPAWux
-         IGkSFG48dHSIDjAIPlgf3oHQfK/XP+05dzrBop2I4ORjfEX75IJNTcXMIZqJVlM8Tnu0
-         etGPyL0Iz+b5YCxi0WNMz8pDSXgKk/Fza6567/jOKQYUKuIN11mjV6K73teP3IdznCe7
-         G9mkfclmVhC7hhQDGIDTVrRghWfKdUDoUxbrnZIaa9uiXRL4QwRuXEqpq+nBIKFJ4wwM
-         CxE45QJ3e2Z4np5OCSLNpNNMPPGw7CB/SmTcXwhQYfL+hrMZV2P6JsdaXZl6QYdTS0+E
-         OdCA==
-X-Gm-Message-State: AJcUukfgZuPqmEEg8TQEQbu3ZsyCtnvZCCGj5w76+DhKoGf0qKwD1LY+
-        g+u6kAhjHTlc1y4j3TTpDC3Trd5xvlUQtLqoEvA=
-X-Google-Smtp-Source: ALg8bN55EUSLaNF6tj+EMWQ3CT2WE67wNzY9BaGQ77wZ7ldhFdyTb/zGWAT4lCcHI2mkzcf3z8H4htNeRVwvFMQJfk8=
-X-Received: by 2002:a1f:298e:: with SMTP id p136mr11713619vkp.40.1548075660909;
- Mon, 21 Jan 2019 05:01:00 -0800 (PST)
-MIME-Version: 1.0
-References: <1547736856-16539-1-git-send-email-fabrizio.castro@bp.renesas.com> <1547736856-16539-2-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1547736856-16539-2-git-send-email-fabrizio.castro@bp.renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 21 Jan 2019 14:00:49 +0100
-Message-ID: <CAMuHMdW0aSmcGRHi3n__dZ9SEAh40EuUrbqLNt9kq8QoLmr1mg@mail.gmail.com>
-Subject: Re: [PATCH 1/3] clk: renesas: r8a774a1: Add missing CANFD clock
-To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc:     Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+        id S1728910AbfAUNOR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 21 Jan 2019 08:14:17 -0500
+Received: from andre.telenet-ops.be ([195.130.132.53]:45900 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725970AbfAUNOQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Jan 2019 08:14:16 -0500
+Received: from ramsan ([84.194.111.163])
+        by andre.telenet-ops.be with bizsmtp
+        id T1ED1z00r3XaVaC011EEmG; Mon, 21 Jan 2019 14:14:14 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1glZP3-0003Gb-Ss; Mon, 21 Jan 2019 14:14:13 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1glZP3-0005Vj-Qd; Mon, 21 Jan 2019 14:14:13 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>, linux-can@vger.kernel.org,
-        netdev <netdev@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clk: renesas: r8a774c0: Correct parent clock of DU
+Date:   Mon, 21 Jan 2019 14:14:10 +0100
+Message-Id: <20190121131410.21137-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Jan 17, 2019 at 3:54 PM Fabrizio Castro
-<fabrizio.castro@bp.renesas.com> wrote:
-> This patch adds the missing CANFD clock to the r8a774a1 specific
-> clock driver.
->
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
+According to the RZ/G Series, 2nd Generation Hardware Manual Rev 0.61,
+the parent clock of the DU module clocks on RZ/G2 is S1D1.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in clk-renesas-for-v5.1.
+Fixes: 906e0a4a6d1ef2d3 ("clk: renesas: cpg-mssr: Add r8a774c0 support")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+To be queued in clk-renesas-for-v5.1.
 
-Gr{oetje,eeting}s,
+ drivers/clk/renesas/r8a774c0-cpg-mssr.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-                        Geert
-
+diff --git a/drivers/clk/renesas/r8a774c0-cpg-mssr.c b/drivers/clk/renesas/r8a774c0-cpg-mssr.c
+index 28bcc8105d579611..4f3111b3113ecce8 100644
+--- a/drivers/clk/renesas/r8a774c0-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a774c0-cpg-mssr.c
+@@ -175,8 +175,8 @@ static const struct mssr_mod_clk r8a774c0_mod_clks[] __initconst = {
+ 	DEF_MOD("ehci0",		 703,	R8A774C0_CLK_S3D4),
+ 	DEF_MOD("hsusb",		 704,	R8A774C0_CLK_S3D4),
+ 	DEF_MOD("csi40",		 716,	R8A774C0_CLK_CSI0),
+-	DEF_MOD("du1",			 723,	R8A774C0_CLK_S2D1),
+-	DEF_MOD("du0",			 724,	R8A774C0_CLK_S2D1),
++	DEF_MOD("du1",			 723,	R8A774C0_CLK_S1D1),
++	DEF_MOD("du0",			 724,	R8A774C0_CLK_S1D1),
+ 	DEF_MOD("lvds",			 727,	R8A774C0_CLK_S2D1),
+ 
+ 	DEF_MOD("vin5",			 806,	R8A774C0_CLK_S1D2),
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.17.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
