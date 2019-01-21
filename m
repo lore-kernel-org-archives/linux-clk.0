@@ -2,314 +2,96 @@ Return-Path: <SRS0=Ex8p=P5=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3187C316A0
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Jan 2019 18:13:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77DC0C316AF
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Jan 2019 18:49:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8353A20989
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Jan 2019 18:13:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C42F21726
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Jan 2019 18:49:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="dT6WD5jV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727407AbfAUSNN convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Jan 2019 13:13:13 -0500
-Received: from mailoutvs36.siol.net ([185.57.226.227]:36172 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726840AbfAUSNM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Jan 2019 13:13:12 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id AB6B25200EE;
-        Mon, 21 Jan 2019 19:13:09 +0100 (CET)
-X-Virus-Scanned: amavisd-new at psrvmta11.zcs-production.pri
-Received: from mail.siol.net ([127.0.0.1])
-        by localhost (psrvmta11.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id Pbus-u7pDNJE; Mon, 21 Jan 2019 19:13:09 +0100 (CET)
-Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id C8249520820;
-        Mon, 21 Jan 2019 19:13:08 +0100 (CET)
-Received: from jernej-laptop.localnet (cpe1-8-82.cable.triera.net [213.161.8.82])
-        (Authenticated sender: 031275009)
-        by mail.siol.net (Postfix) with ESMTPA id 728915200EE;
-        Mon, 21 Jan 2019 19:13:07 +0100 (CET)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To:     Priit Laes <plaes@plaes.org>
-Cc:     maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org, airlied@linux.ie,
-        architt@codeaurora.org, a.hajda@samsung.com,
-        Laurent.pinchart@ideasonboard.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [linux-sunxi] [PATCH v3 02/28] clk: sunxi-ng: Adjust MP clock parent rate when allowed
-Date:   Mon, 21 Jan 2019 19:13:07 +0100
-Message-ID: <1726638.4TPIZlPAWH@jernej-laptop>
-In-Reply-To: <20190121133433.lryqz7ivrj5cxu3g@plaes.org>
-References: <20181104182705.18047-1-jernej.skrabec@siol.net> <20190121083729.7qsmj7drxvmnjoye@plaes.org> <20190121133433.lryqz7ivrj5cxu3g@plaes.org>
+        id S1727837AbfAUStK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 21 Jan 2019 13:49:10 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:43248 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728067AbfAUStJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Jan 2019 13:49:09 -0500
+Received: by mail-lj1-f194.google.com with SMTP id q2-v6so18401223lji.10
+        for <linux-clk@vger.kernel.org>; Mon, 21 Jan 2019 10:49:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=c/mbe/kYXtGbxH5uz/MVTsH8N9qQqJTlIz+IrKDBo9s=;
+        b=dT6WD5jVgOd2WjhQx4l5trq9tgbyhtqpVOiFvzo0mAYoCiiYJ5d7HNU0x3HthETXW4
+         ys1aaCeL2vJ6fPbZR2X0mQVAwUwIyDdbkrt7qXt+GnXRd5y6yH+y2SbBdo7E43WAen2L
+         RyMAZE/mlDB1y4kVXGUbxz7IBIcoKDMFHpzDPTRTo1vIfY7gY6s4tj0hmwdV6IazVl/K
+         fl3CNj5fgB4L1w2M2YvqPWXeHE0QwiOYZHYILTvK4ggumt+eq+U6xZLDqSBAz/o/GVq3
+         cT2RtT3j5D+cL64yXPKKO9jThBPvFItVQzJ2LNpMH+gjatmNf5wL9pqmUWQJAHodeH12
+         gq5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=c/mbe/kYXtGbxH5uz/MVTsH8N9qQqJTlIz+IrKDBo9s=;
+        b=LALMxsWjU4sIvH8lTTvYF0tYuKDkCPawUpIuJVoS9Lxj9iSzPchkSY4XxS3Frk90Ai
+         Piw0eJ5ZE7xVVVt+1pB1opqkBFWSNtzeSbrGI/uGFrmRCq1/HEjtxCktDKIcovol1FMx
+         bb0hsia7yENrvR6AxhMyQKN6VAM/ixCWeng0bUFUb2O7ST8SzfgqPJg8JY59msNB1Bsm
+         mnSArLNINERpoXOYt0BNmDL4VTFR2zAiQRmoRGpJjvXxZIGg0cwGLaNVpwkp75TzjYB9
+         XAvYKwBHI2JZnx8MZCtZTxSR8ydxNsVwLqBLvS3QWormv7goQ7kRQ4D3zAIYiBKYPlNC
+         +q9w==
+X-Gm-Message-State: AJcUukdPA3eDuqB/b38Am5uRO8YxI3AeChuRbLoGzVMOnvBt0xw+hwCE
+        t0BhZ6yqf8fHYTkrHyJnIwFmY1Y6ceo=
+X-Google-Smtp-Source: ALg8bN7Eq4zSy1nyNMshvcqLlyG2/4+FtmKolf8FT8JmCKnezT+8TrlN2Fzmsoa9Dv0Rooq/LQ3F5w==
+X-Received: by 2002:a2e:9dcb:: with SMTP id x11-v6mr20012085ljj.158.1548096547463;
+        Mon, 21 Jan 2019 10:49:07 -0800 (PST)
+Received: from wasted.cogentembedded.com ([31.173.84.215])
+        by smtp.gmail.com with ESMTPSA id g24sm2389259lfh.33.2019.01.21.10.49.06
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 21 Jan 2019 10:49:06 -0800 (PST)
+Subject: Re: [PATCH v2 2/4] clk: renesas: rcar-gen3-cpg: add spinlock
+To:     Simon Horman <horms@verge.net.au>
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-clk@vger.kernel.org
+References: <cfd91d1f-3b1e-c6c4-0975-7aac09383fdf@cogentembedded.com>
+ <eef5ee23-311a-4367-43b5-b793357f06ef@cogentembedded.com>
+ <20181214153332.47ukfkkgdrnsysmb@verge.net.au>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Organization: Cogent Embedded
+Message-ID: <54c236a3-aaa3-c8b5-786c-941a36deff6b@cogentembedded.com>
+Date:   Mon, 21 Jan 2019 21:49:05 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181214153332.47ukfkkgdrnsysmb@verge.net.au>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Dne ponedeljek, 21. januar 2019 ob 14:34:33 CET je Priit Laes napisal(a):
-> On Mon, Jan 21, 2019 at 08:37:29AM +0000, Priit Laes wrote:
-> > On Fri, Jan 18, 2019 at 10:51:10PM +0100, Jernej Škrabec wrote:
-> > > Dne četrtek, 17. januar 2019 ob 08:24:02 CET je Priit Laes napisal(a):
-> > > > On Wed, Jan 16, 2019 at 06:00:32PM +0100, Jernej Škrabec wrote:
-> > > > > Dne sreda, 16. januar 2019 ob 13:09:58 CET je Priit Laes napisal(a):
-> > > > > > On Thu, Jan 10, 2019 at 06:10:59PM +0100, Jernej Škrabec wrote:
-> > > > > > > Dne četrtek, 10. januar 2019 ob 10:15:48 CET je Priit Laes 
-napisal(a):
-> > > > > > > > On Sun, Nov 04, 2018 at 07:26:39PM +0100, Jernej Skrabec 
-wrote:
-> > > > > > > > > Currently MP clocks don't consider adjusting parent rate
-> > > > > > > > > even if
-> > > > > > > > > they
-> > > > > > > > > are allowed to do so. Such behaviour considerably lowers
-> > > > > > > > > amount of
-> > > > > > > > > possible rates, which is very inconvenient when such clock
-> > > > > > > > > is used
-> > > > > > > > > for
-> > > > > > > > > pixel clock, for example.
-> > > > > > > > > 
-> > > > > > > > > In order to improve the situation, adjusting parent rate is
-> > > > > > > > > considered
-> > > > > > > > > when allowed.
-> > > > > > > > > 
-> > > > > > > > > This code is inspired by clk_divider_bestdiv() function,
-> > > > > > > > > which
-> > > > > > > > > does
-> > > > > > > > > basically the same thing for different clock type.
-> > > > > > > > 
-> > > > > > > > This patch seems to break the eMMC support on
-> > > > > > > > Olinuxino-Lime2-eMMC
-> > > > > > > > boards:
-> > > > > > > > 
-> > > > > > > > EXT4-fs (mmcblk1p4): INFO: recovery required on readonly
-> > > > > > > > filesystem
-> > > > > > > > EXT4-fs (mmcblk1p4): write access will be enabled during
-> > > > > > > > recovery
-> > > > > > > > sunxi-mmc 1c11000.mmc: data error, sending stop command
-> > > > > > > > sunxi-mmc 1c11000.mmc: send stop command failed
-> > > > > > > 
-> > > > > > > I'm not familiar with A20. What is interesting is that emmc
-> > > > > > > clocks
-> > > > > > > don't
-> > > > > > > have CLK_SET_RATE_PARENT flag set, so you shouldn't see any
-> > > > > > > difference.
-> > > > > > > 
-> > > > > > > Can you post content of clk_summary with and without this patch?
-> > > > > > 
-> > > > > > In both cases I booted from FEL with rootfs on sdcard and tried to
-> > > > > > mount
-> > > > > > partition from eMMC to /mnt. With your patch, last step it fails.
-> > > > > > 
-> > > > > > pre-patch working:
-> > > > > > pll-ddr-other[768MHz] -> mmc2[512MHz]. (For some reason ahb-mmc2
-> > > > > > is
-> > > > > > off?)
-> > > > > > 
-> > > > > > post-patch not working:
-> > > > > > pll-periph[600MHz] ->  mmc2[500Mhz], (ahb-mmc2 is enabled)
-> > > > > > 
-> > > > > > Also, attached the logs.
-> > > > > 
-> > > > > Thanks. Just one more request. Can you enable debug messages in mmc
-> > > > > driver?
-> > > > > I'm interested in output of this line:
-> > > > > 
-> > > > > dev_dbg(mmc_dev(mmc), "setting clk to %d, rounded %ld\n",
-> > > > > 
-> > > > > 		clock, rate);
-> > > > 
-> > > > 1c11000 is eMMC:
-> > > > [snip]
-> > > > [    1.961644] sunxi-mmc 1c11000.mmc: setting clk to 400000, rounded
-> > > > 400000
-> > > > [    2.004091] sunxi-mmc 1c11000.mmc: setting clk to 400000, rounded
-> > > > 400000
-> > > > [    2.020296] sunxi-mmc 1c11000.mmc: setting clk to 400000, rounded
-> > > > 400000
-> > > > [    2.039917] sunxi-mmc 1c11000.mmc: setting clk to 400000, rounded
-> > > > 400000
-> > > > [    2.047847] sunxi-mmc 1c11000.mmc: setting clk to 400000, rounded
-> > > > 400000
-> > > > [    2.055053] sunxi-mmc 1c11000.mmc: setting clk to 400000, rounded
-> > > > 400000
-> > > > [    2.065256] sunxi-mmc 1c11000.mmc: setting clk to 400000, rounded
-> > > > 400000
-> > > > [    2.092351] sunxi-mmc 1c11000.mmc: setting clk to 400000, rounded
-> > > > 400000
-> > > > [    2.168725] sunxi-mmc 1c11000.mmc: setting clk to 400000, rounded
-> > > > 400000
-> > > > [    2.189403] sunxi-mmc 1c11000.mmc: setting clk to 52000000, rounded
-> > > > 52000000 [    2.203340] sunxi-mmc 1c11000.mmc: setting clk to
-> > > > 52000000,
-> > > > rounded 52000000 [    2.211412] sunxi-mmc 1c11000.mmc: setting clk to
-> > > > 52000000, rounded 52000000 [    4.967865] sunxi-mmc 1c11000.mmc:
-> > > > setting
-> > > > clk to 52000000, rounded 52000000 [    8.755345] sunxi-mmc
-> > > > 1c11000.mmc:
-> > > > setting clk to 52000000, rounded 52000000 [    9.082510] sunxi-mmc
-> > > > 1c11000.mmc: setting clk to 52000000, rounded 52000000
-> > > > 
-> > > > Here I tried to mount partition from eMMC...
-> > > > 
-> > > > [   72.167311] sunxi-mmc 1c11000.mmc: setting clk to 52000000, rounded
-> > > > 52000000 [   72.269629] sunxi-mmc 1c11000.mmc: data error, sending
-> > > > stop
-> > > > command [   73.268999] sunxi-mmc 1c11000.mmc: send stop command failed
-> > > > [/snip]
-> > > > 
-> > > > And clock tree:
-> > > > [snip]
-> > > > pll-periph-base                3        3        0  1200000000        
-> > > >  0
-> > > > 
-> > > >  0  50000 pll-periph                  6        6        0   600000000
-> > > >  
-> > > >    0     0  50000 mmc2                     3        3        0   
-> > > >    50000000
-> > > >    
-> > > >         0     0  50000 mmc2_sample           1        1        0
-> > > > 
-> > > > 50000000          0   120  50000 mmc2_output           1        1     
-> > > >   0
-> > > > 
-> > > >   50000000          0    60  50000 ahb                     18       18
-> > > >   0   300000000          0     0  50000 ahb-mmc2              1       
-> > > >   1
-> > > >   
-> > > >     0   300000000          0     0  50000 [/snip]
-> > > > 
-> > > > And without patch:
-> > > > [snip]
-> > > > [    2.003341] sunxi-mmc 1c11000.mmc: XXX: setting clk to 400000,
-> > > > rounded
-> > > > 400000 [    2.019479] sunxi-mmc 1c11000.mmc: XXX: setting clk to
-> > > > 400000,
-> > > > rounded 400000 [    2.039144] sunxi-mmc 1c11000.mmc: XXX: setting clk
-> > > > to
-> > > > 400000, rounded 400000 [    2.047129] sunxi-mmc 1c11000.mmc: XXX:
-> > > > setting
-> > > > clk to 400000, rounded 400000 [    2.054324] sunxi-mmc 1c11000.mmc:
-> > > > XXX:
-> > > > setting clk to 400000, rounded 400000 [    2.064481] sunxi-mmc
-> > > > 1c11000.mmc:
-> > > > XXX: setting clk to 400000, rounded 400000 [    2.091624] sunxi-mmc
-> > > > 1c11000.mmc: XXX: setting clk to 400000, rounded 400000 [    2.168067]
-> > > > sunxi-mmc 1c11000.mmc: XXX: setting clk to 400000, rounded 400000 [
-> > > > 2.188239] sunxi-mmc 1c11000.mmc: XXX: setting clk to 52000000, rounded
-> > > > 51200000 [    2.202779] sunxi-mmc 1c11000.mmc: XXX: setting clk to
-> > > > 52000000, rounded 51200000 [    2.210817] sunxi-mmc 1c11000.mmc: XXX:
-> > > > setting clk to 52000000, rounded 51200000 [    5.103358] sunxi-mmc
-> > > > 1c11000.mmc: XXX: setting clk to 52000000, rounded 51200000 [   
-> > > > 8.950237]
-> > > > sunxi-mmc 1c11000.mmc: XXX: setting clk to 52000000, rounded 51200000
-> > > > [
-> > > > 9.376201] sunxi-mmc 1c11000.mmc: XXX: setting clk to 52000000, rounded
-> > > > 51200000 [  113.618387] sunxi-mmc 1c11000.mmc: XXX: setting clk to
-> > > > 52000000, rounded 51200000 [  113.707979] EXT4-fs (mmcblk1p4):
-> > > > recovery
-> > > > complete
-> > > > [  113.728162] EXT4-fs (mmcblk1p4): mounted filesystem with ordered
-> > > > data
-> > > > mode. Opts: (null) [/snip]
-> > > > 
-> > > > And clock tree:
-> > > > [snip]
-> > > > pll-ddr-base                   2        2        0   768000000        
-> > > >  0
-> > > > 
-> > > >  0  50000 pll-ddr-other               1        1        0   768000000
-> > > >  
-> > > >    0     0  50000 mmc2                     0        0        0   
-> > > >    51200000
-> > > >    
-> > > >         0     0  50000 mmc2_sample           0        0        0
-> > > > 
-> > > > 51200000          0   120  50000 mmc2_output           0        0     
-> > > >   0
-> > > > 
-> > > >   51200000          0    72  50000 [/snip]
-> > > 
-> > > It seems to me that clock rate is set properly. It's even better than
-> > > before since there is no error between wanted and real clock. I bet
-> > > that if you call clk_get_rate() directly behind clk_set_rate() in mmc
-> > > driver, you'll get correct value.
-> > > 
-> > > However, it seems that at some point some other peripheral changes it's
-> > > parent clock rate, which inadvertely changes emmc2 clock rate too. The
-> > > only possible clock which could interfere is sata. Can you disable
-> > > driver in you kernel config and try again?
-> > 
-> > OK, tried following things in succession, but SATA disabling does not
-> > work:
-> > 
-> > a) Marked all ahci stuff in devicetree as disabled
-> > b) Disable CONFIG_AHCI_SUNXI in kernel
-> > c) Even disabled SATA stuff in u-boot
+On 12/14/2018 06:33 PM, Simon Horman wrote:
+> On Tue, Dec 04, 2018 at 10:49:44PM +0300, Sergei Shtylyov wrote:
+>> Protect the CPG register read-modify-write sequence with a spinlock.
 > 
-> But it works, when I allow mmc2 clock to set parent rate:
+> Spinlocks are expensive, I think an explanation of why this is
+> necessary would be worthwhile.
 
-Strange, I checked both pre- and post- patch clk_summary you sent me and in 
-both cases both mmc2 parent clocks have same rate as before. This would need a 
-more detailed analysis with a lot of debug print, but don't have such board.
+   The driver using a spinlock to protect the hardware registers is such a 
+common scenario, I didn't think it was worth a special explanation. :-)
 
-CLK_SET_PARENT rate might be viable solution, but  you have to be sure that 
-any clock using pll-periph as a parent is in expected range.
+> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+[...]
 
-On the plus side, if this works, eMMC will work faster due to 8 MHz clock rate 
-increase :)
-
-> 
-> pll-periph-base                3        3        0   312000000          0   
->  0  50000 mbus                        1        1        0    78000000      
->    0     0  50000 pll-periph-sata             1        1        0   
-> 26000000          0     0  50000 sata                     1        1       
-> 0    26000000          0     0  50000 pll-periph                  5       
-> 5        0   156000000          0     0  50000 mmc2                     0  
->      0        0    52000000          0     0  50000 mmc2_sample           0
->        0        0    52000000          0   120  50000 mmc2_output          
-> 0        0        0    52000000          0   120  50000 mmc0               
->      0        0        0    39000000          0     0  50000 mmc0_sample   
->        0        0        0    39000000          0    90  50000 mmc0_output 
->          0        0        0    39000000          0    90  50000
-> 
-> 
-> Now, what I don't understand is why the `enable count` does not increase :(
-
-mmc has suspend/resume functionality which might power down mmc when not in 
-use and thus disable clocks. Try initiate some big transfer from/to eMMC and 
-check clocks in between.
-
-BR,
-Jernej
-
-> 
-> ---
-> diff --git a/drivers/clk/sunxi-ng/ccu-sun4i-a10.c
-> b/drivers/clk/sunxi-ng/ccu-sun4i-a10.c index 129ebd2588fd..605e13b4ef90
-> 100644
-> --- a/drivers/clk/sunxi-ng/ccu-sun4i-a10.c
-> +++ b/drivers/clk/sunxi-ng/ccu-sun4i-a10.c
-> @@ -498,7 +498,7 @@ static SUNXI_CCU_MP_WITH_MUX_GATE(mmc2_clk, "mmc2",
-> mod0_default_parents, 0x090, 16, 2,        /* P */
->                                   24, 2,        /* mux */
->                                   BIT(31),      /* gate */
-> -                                 0);
-> +                                 CLK_SET_RATE_PARENT);
-> 
->  /* MMC output and sample clocks are not present on A10 */
->  static SUNXI_CCU_PHASE(mmc2_output_clk, "mmc2_output", "mmc2",
-> 
-> > > Best regards,
-> > > Jernej
-
-
-
-
+MBR, Sergei
