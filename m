@@ -2,186 +2,135 @@ Return-Path: <SRS0=Ex8p=P5=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99595C31D64
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Jan 2019 07:12:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2DD3C31D64
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Jan 2019 07:13:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5887621773
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Jan 2019 07:12:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B455620880
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Jan 2019 07:13:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="DXjMahvg"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="yuahOS1q"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727798AbfAUHMX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Jan 2019 02:12:23 -0500
-Received: from mail-40136.protonmail.ch ([185.70.40.136]:30649 "EHLO
-        mail-40136.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727651AbfAUHML (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Jan 2019 02:12:11 -0500
-Date:   Mon, 21 Jan 2019 05:55:20 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-        s=default; t=1548050125;
-        bh=8NyUiMuMOSuPNT3VyL0sd2h28dm/gvfHneLqJwZhzQw=;
-        h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:
-         Feedback-ID:From;
-        b=DXjMahvgSF9UAKx+nhAS7rWBM8Zzuzd04CP+vah59N2wqo/HR09w25O9TifkaAF9f
-         vphZdQYZlZyrasW+FmRhHLBQTC1qr+LyBT+2l7o9/EtP1eifEmpvlaAhvUgsWT0oon
-         Qt7ZYUSXpCPXtGIqd8/35NZHcfkXw4D5rRxiKUdA=
-To:     Hans de Goede <hdegoede@redhat.com>
-From:   Mogens Jensen <mogens-jensen@protonmail.com>
-Cc:     Dean Wallace <duffydack73@gmail.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Stable <stable@vger.kernel.org>,
-        Johannes Stezenbach <js@sig21.net>,
-        Carlo Caione <carlo@endlessm.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Reply-To: Mogens Jensen <mogens-jensen@protonmail.com>
-Subject: Re: Regression found (Stop-marking-clocks-as-CLK_IS_CRITICAL)
-Message-ID: <G5Oa_GRw3iClWMtIg1FeCwj1szJHRH6ToqQqCskS_HKzyNhpFFQ3sJndttzyvP3IHRJuHXvDsUC82dnw8r66OIroHCzyqTYbZoki5sSKPUE=@protonmail.com>
-In-Reply-To: <983fb777-df22-1b53-acea-8bbcab23b260@redhat.com>
-References: <20181025232517.ywnw54qibemosjws@picard>
- <b8849ae1-5a38-e7a1-da14-dc7f9d164825@redhat.com>
- <3iO9ehQbZm_haTV0IuZ0qhsVHR0QLUbTgRJT8ZenGuRsnz2_uBvO93f0bHVYnsApibUT16JsJ0dgphLhUBd-u0t-lDBNsbvvlKWTgq8XOlw=@protonmail.com>
- <3e12e051-b874-187d-d4f5-e146f59c659b@redhat.com>
- <U9ny3qDg8fEQ-IaXWgwAmDf_U7yb1NZxpwoOvTorCbG86v8wUae3kWsa5omAv-ngu3VMaSONp6RdzmaI26Cz6uoyf5ddIiXuJQbzGf2MN3w=@protonmail.com>
- <20190117091214.7djttnpo4jjzi4su@spock>
- <c935552f-951f-ab9f-b41c-76c729c6d85c@redhat.com>
- <pozwYTgSVvWumpTgwwf_C-qvYFNnl7yl9gcq9M-LOUXQTvkSX5f8E_2d-HYNYV_ruL8kAURaIR3ItM_UmFJeV-e28eYy8b2MomlwHMbb-5U=@protonmail.com>
- <983fb777-df22-1b53-acea-8bbcab23b260@redhat.com>
-Feedback-ID: 4dFv7M8pOtP7CMTtfNdOwXARWpF2vcQYB4dRuX1h9mb-6008qkzO2MVweOzrAYHEdkjJ6P5PUdgJEubk4l9Lhg==:Ext:ProtonMail
+        id S1728173AbfAUHNY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 21 Jan 2019 02:13:24 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:33416 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728143AbfAUHNS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Jan 2019 02:13:18 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0L7CvFu073936;
+        Mon, 21 Jan 2019 01:12:57 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1548054777;
+        bh=1MY2+aLxo+iQWNtqOUc8eCVRHprDMIc0zOaEbr27wQg=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=yuahOS1qZlsJPXmhSwPvDweUePYI6MDLpbx3C+g72YnoykZ6h7vdBd0JyEqPf0HRp
+         Hh2nJ0tWfuZq/fV9MjaGu9hCZtuXQ17IEgN7D//9XyZSIjeXo+v2NFVEbAy3OVFtr7
+         jZZI7qwqrM4y0Vzgj9NJLtzGBtIQcuMYHZBOCSLQ=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0L7CvHY106296
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 21 Jan 2019 01:12:57 -0600
+Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 21
+ Jan 2019 01:12:54 -0600
+Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Mon, 21 Jan 2019 01:12:54 -0600
+Received: from [127.0.0.1] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0L7Cokg020788;
+        Mon, 21 Jan 2019 01:12:51 -0600
+Subject: Re: [PATCH v3 3/3] arm: omap_hwmod disable ick autoidling when a
+ hwmod requires that
+To:     Tony Lindgren <tony@atomide.com>,
+        Andreas Kemnade <andreas@kemnade.info>
+CC:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <bcousson@baylibre.com>,
+        <paul@pwsan.com>, <letux-kernel@openphoenux.org>
+References: <20190116220429.9136-1-andreas@kemnade.info>
+ <20190116220429.9136-4-andreas@kemnade.info>
+ <20190118154807.GV5544@atomide.com> <20190118181827.7163bee4@aktux>
+ <20190118183630.GX5544@atomide.com> <20190118203832.3be7975e@aktux>
+ <20190118194536.GY5544@atomide.com>
+From:   Tero Kristo <t-kristo@ti.com>
+Message-ID: <ed0928fc-add1-1f37-c907-89bf5133fc00@ti.com>
+Date:   Mon, 21 Jan 2019 09:12:41 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190118194536.GY5544@atomide.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90 Original Me=
-ssage =E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90
-On Friday, January 18, 2019 3:35 PM, Hans de Goede <hdegoede@redhat.com> wr=
-ote:
+On 18/01/2019 21:45, Tony Lindgren wrote:
+> * Andreas Kemnade <andreas@kemnade.info> [190118 19:39]:
+>> Hi,
+>>
+>> On Fri, 18 Jan 2019 10:36:30 -0800
+>> Tony Lindgren <tony@atomide.com> wrote:
+>>
+>> [...]
+>>> til the next workaround.
+>>>
+>>>> That flags also causes the iclk being enabled/disabled
+>>>> manually.
+>>>
+>>> Yes but SWSUP_IDLE for the interface clock to me currently
+>>> just means:
+>>>
+>>> "manually enable and disable ocp interface clock"
+>>>
+>> well, if we want to manually disable it and not automatically,
+>> we have to disable autoidle or it will be automatically disabled.
+>>
+>> Disabling it manually when it is already auto-disabled (by autoidle) is
+>> just practically a no-op towards the clock.
+> 
+> OK I buy that :) It should be probably added to the patch
+> description to make it clear what it changes.
+> 
+> Tero, any comments on this change?
 
-> Hi,
->
-> On 1/17/19 8:30 PM, Mogens Jensen wrote:
->
-> > =E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90 Origina=
-l Message =E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=
-=90
-> > On Thursday, January 17, 2019 12:05 PM, Hans de Goede hdegoede@redhat.c=
-om wrote:
-> >
-> > > Hi,
-> > > On 17-01-19 10:12, Dean Wallace wrote:
-> > >
-> > > > Hi Hans, Mogens,
-> > > > On 17-01-19, Mogens Jensen wrote:
-> > > >
-> > > > > Kernel is compiled with SND_SOC_INTEL_CHT_BSW_MAX98090_TI_MACH an=
-d the quirk seems to have fixed the problem caused by commit 648e921888ad (=
-"clk: x86: Stop marking clocks as CLK_IS_CRITICAL"), as sound is now workin=
-g if running "speaker-test" on my system which is clean ALSA.
-> > >
-> > > Note being "clean ALSA" is really not a good thing now a days,
-> > > for lots of things we depend on pulseaudio (like setting
-> > > up UCM mixer profiles).
-> >
-> > I'm using UCM mixer profile from:
-> > https://github.com/plbossart/UCM/tree/master/chtmax98090
-> > This is enabled with:
-> > alsaucm -c chtmax98090 set _verb HiFi set _enadev Speakers
-> >
-> > > > > Unfortunately, SND_SOC_INTEL_CHT_BSW_MAX98090_TI_MACH driver is u=
-nusable on Clapper Chromebooks as audio played from everything but "speaker=
--test" as video players or web browsers is extremly low and sounds like pla=
-yed at 10x speed. At the same time kernel log is spammed with messages like=
- this:
-> > > > > max98090 i2c-193C9890:00: PLL unlocked
-> > > > > intel_sst_acpi 80860F28:00: FW Version 01.0c.00.01
-> > > > > writing to lpe: 00000000: 01 01 01 01 00 00 08 00 ff ff ff ff 55 =
-00 00 00 ............U...
-> > > > > writing to lpe: 00000000: 01 01 01 01 00 00 1a 00 ff ff ff ff 75 =
-00 12 00 ............u...
-> > > > > This is probably not related to the problem discussed in this thr=
-ead, but the result is that I have to use the legacy driver SND_SOC_INTEL_B=
-YT_MAX98090_MACH and therefore still has to revert commit 648e921888ad for =
-sound to work.
-> > > > > Is it possible to create a fix for SND_SOC_INTEL_BYT_MAX98090_MAC=
-H on kernel 4.19? Kernel 4.19 is a long term release so it would be very ni=
-ce to have fix for this version upstream.
-> > > >
-> > > > I have been reverting "clk: x86: Stop marking clocks as CLK_IS_CRIT=
-ICAL"
-> > > > and the patch that initially added the quirk for swanky because of =
-sound
-> > > > instability issues as you described. I'm compiling vanilla Archlinu=
-x
-> > > > kernel with SND_SOC_INTEL_CHT_BSW_MAX98090_TI_MACH, using pulseaudi=
-o,
-> > > > and have sound in all my apps.
-> > > > Baytrail sound has always been a little touchy, especially using he=
-adset
-> > > > with mic, but since the clk patch breaking sound and the quirk patc=
-h to
-> > > > fix it, there is a lot more instability. Just running pavucontrol, =
-or
-> > > > plugging in headset sets it off. It's a head scratcher.
-> > >
-> > > Mogens, Dean, can you please try the SND_SOC_INTEL_CHT_BSW_MAX98090_T=
-I_MACH
-> > > driver, without reverting any patches, with the attached patch on top=
- and
-> > > see if that helps?
-> > > Thanks & Regards,
-> > > Hans
-> >
-> > I have applied the patch to kernel 4.19.15 and unfortunately this has n=
-ot solved the problems.
-> > Audio generated from "speaker-test" is normal, but from everything else=
- is very low and played at 10x speed. However, I'm not seeing the "max98090=
- i2c-193C9890:00: PLL unlocked" message in kernel log anymore, but it's sti=
-ll spammed with "writing to lpe: ...".
->
-> Hmm, I've a feeling the problem is your using alsa directly, do you have
-> dmix enabled ? You probably need dmix since the SST sound support
-> only supports 48KHz AFAIK.
->
-> Can you perhaps give things a try with pulseaudio ?
->
+Well, seeing the flag is pretty much only used for a handful of hwmods 
+nowadays, it should be fine. OMAP3 PM should be tested with this change 
+though, as there are couple of hwmods impacted on that platform. I 
+wonder what happens to cpuidle when display is active...
+
+-Tero
+
+> 
+>>> and with your changes it becomes:
+>>>
+>>> "manually enable and disable ocp interface clock and block
+>>>   autoidle while in use".
+>>>
+>>> So aren't we now changing the way things behave in general
+>>> for SWSUP_IDLE?
+>>>
+>> Yes, we are, so proper testing is needed. But If I read those comments
+>> it was always intended this way but not fully implemented because it
+>> appeared to be more work like needing a usecounter (which my patchset
+>> also adds) for that autoidle flag.
+> 
+> OK yeah the use count seems necessary. I'll test here
+> with my PM use cases.
+> 
 > Regards,
->
-> Hans
+> 
+> Tony
+> 
 
-You are absolutely correct, software mixing was apparently not enabled on m=
-y system and this caused the audio problems. I thought that dmix was enable=
-d by default if hardware mixing was not supported. Thank you very much.
-
-I was completely wrong about "SND_SOC_INTEL_CHT_BSW_MAX98090_TI_MACH driver=
- seems to be unusable on Clapper Chromebooks". Sorry about that.
-
-To sum up, audio is working perfectly on my Clapper Chromebook running kern=
-el 4.19.15 with SND_SOC_INTEL_CHT_BSW_MAX98090_TI_MACH + "0001-ASoC-intel-c=
-ht_bsw_max98090_ti-Enable-codec-clock-on.patch", even better than before wi=
-th the legacy driver.
-
-The only minor annoyance I'm experiencing now, is a large amount of debug o=
-utput from something in kernel log when audio is played on the system:
-
-writing to lpe: 00000000: 01 01 01 01 00 00 08 00 ff ff ff ff 55 00 00 00  =
-............U...
-writing to lpe: 00000000: 01 01 01 01 00 00 1a 00 ff ff ff ff 75 00 12 00  =
-............u...
-...
-
-Regards,
-
-Mogens
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
