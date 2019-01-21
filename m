@@ -2,156 +2,139 @@ Return-Path: <SRS0=Ex8p=P5=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8372FC282E6
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Jan 2019 07:53:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B084EC282DB
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Jan 2019 08:08:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 605E72084A
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Jan 2019 07:53:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F04B214C6
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Jan 2019 08:08:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="W6HpM70G"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727634AbfAUHxe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Jan 2019 02:53:34 -0500
-Received: from shell.v3.sk ([90.176.6.54]:49621 "EHLO shell.v3.sk"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729004AbfAUHxe (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 21 Jan 2019 02:53:34 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 8ACC9CAF89;
-        Mon, 21 Jan 2019 07:23:29 +0100 (CET)
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id XIUdzRkxOTh8; Mon, 21 Jan 2019 07:23:18 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 837A4CAF38;
-        Mon, 21 Jan 2019 07:23:18 +0100 (CET)
-X-Virus-Scanned: amavisd-new at zimbra.v3.sk
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id NBedsD64bK1m; Mon, 21 Jan 2019 07:23:17 +0100 (CET)
-Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 349CDCAE3B;
-        Mon, 21 Jan 2019 07:23:17 +0100 (CET)
-From:   Lubomir Rintel <lkundrak@v3.sk>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        id S1728833AbfAUIIn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 21 Jan 2019 03:08:43 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:32815 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728328AbfAUIIf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Jan 2019 03:08:35 -0500
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190121080834euoutp022c2ea93a90efa9bad365de5261cb7f4f~7zqcZrPoI3208032080euoutp02B
+        for <linux-clk@vger.kernel.org>; Mon, 21 Jan 2019 08:08:34 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190121080834euoutp022c2ea93a90efa9bad365de5261cb7f4f~7zqcZrPoI3208032080euoutp02B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1548058114;
+        bh=4Nus8gGK1A1XJ0Kj8gZ2vgQLPiOqsqHC9ZqLr3kKPeA=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=W6HpM70GS7qs1J2ejxbRvoyUdk1pMTrqHAKcApmaXhUdoTpvCrcGoxaNrzlfEjwV9
+         cHzW2PVNACkk+TWFXf3s6wSfR0URY0vtqXLatpPoVPGvTXH5crfRFKelaLyt3KEKdT
+         0Yl29uIiQwQ4HxtiQMuM4KO+aL/wmvh0MSrKs43M=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20190121080832eucas1p2b34d6e92a079d65a7b97961e684d490d~7zqba5W9W1436514365eucas1p2k;
+        Mon, 21 Jan 2019 08:08:32 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 85.08.04294.00E754C5; Mon, 21
+        Jan 2019 08:08:32 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20190121080832eucas1p2aa0c22a6c4f8291388b9044e91a21477~7zqamwvKk2792127921eucas1p2-;
+        Mon, 21 Jan 2019 08:08:32 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20190121080831eusmtrp238195fc4ef9d61d5e51864935b9d8fcd~7zqaX9gHs1012510125eusmtrp2B;
+        Mon, 21 Jan 2019 08:08:31 +0000 (GMT)
+X-AuditID: cbfec7f4-84fff700000010c6-04-5c457e0018c3
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 92.3B.04128.FFD754C5; Mon, 21
+        Jan 2019 08:08:31 +0000 (GMT)
+Received: from [106.120.51.18] (unknown [106.120.51.18]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20190121080831eusmtip29a8bba0564ed580d9958c8391f2c9224~7zqZ3BCkK3191431914eusmtip2f;
+        Mon, 21 Jan 2019 08:08:31 +0000 (GMT)
+Subject: Re: [PATCH v3 4/5] arm64: dts: exynos: add imem clock
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        devicetree@vger.kernel.org, Kukjin Kim <kgene@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH 1/3] Revert "Input: olpc_apsp - enable the SP clock"
-Date:   Mon, 21 Jan 2019 07:22:54 +0100
-Message-Id: <20190121062255.551587-2-lkundrak@v3.sk>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190121062255.551587-1-lkundrak@v3.sk>
-References: <20190121062255.551587-1-lkundrak@v3.sk>
+        Rob Herring <robh+dt@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+From:   Kamil Konieczny <k.konieczny@partner.samsung.com>
+Message-ID: <3ca730b9-3cad-4e98-1e3b-19aca71863d5@partner.samsung.com>
+Date:   Mon, 21 Jan 2019 09:08:30 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20181213211009.GA5444@kozik-lap>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrBKsWRmVeSWpSXmKPExsWy7djPc7oMda4xBm/uaFhsnLGe1eL6l+es
+        FvOPnGO16H/8mtni/PkN7BYfe+6xWsw4v4/JYu2Ru+wWS69fZLJo3XuE3eLwm3ZWB26PNfPW
+        MHpsWtXJ5tG3ZRWjx+dNcgEsUVw2Kak5mWWpRfp2CVwZb6btYylYxV7x43UTawPjF9YuRk4O
+        CQETiQ8/Wlm6GLk4hARWMEpMPr6NDcL5wijxY+odVgjnM6PEorsb4VpunN0M1bKcUWLmqQfs
+        IAkhgbeMEicf1HcxcnAIC9hJdO7LBgmLCGhKXP/7HWwQs0ATs8Sb+xvB6tkEzCUebT/DBFLP
+        K+AmsXBTJUiYRUBV4u3TtywgtqhAhETH/dVsIDavgKDEyZlPwOKcAnoSxw/sZASxmQXEJW49
+        mc8EYctLbH87hxlkl4TAJXaJBTcmskMc7SLR2ruVDcIWlnh1fAtUXEbi/06IZgmBcondW5+x
+        QzS3MErMnbwIKmEtcfj4RVaQQ5mBvlm/Sx8i7CjxePlXZpCwhACfxI23ghA38ElM2jYdKswr
+        0dEmBFGtKzHv/xloEEpLdP1fxzqBUWkWks9mIflmFpJvZiHsXcDIsopRPLW0ODc9tdgoL7Vc
+        rzgxt7g0L10vOT93EyMwPZ3+d/zLDsZdf5IOMQpwMCrx8P645xIjxJpYVlyZe4hRgoNZSYT3
+        tbtrjBBvSmJlVWpRfnxRaU5q8SFGaQ4WJXHeaoYH0UIC6YklqdmpqQWpRTBZJg5OqQbGvo2X
+        WtzMp2k+WpG1uUH9qHfb401H0mPnLeb7zs3Ed+fLq7nen/jnnJSP4l+gsPYh08HgvxUiDSrM
+        E1wad0ne3nzSp7uQK7f9yZmM9L8Bgnf+B70UCT2iHbJqbuOG6xUcTpMupYYpLBZKFhLxFay9
+        sOKgW3mm54tNwqtNTC7vvp8bsefb00mFSizFGYmGWsxFxYkAUKKT50sDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrDIsWRmVeSWpSXmKPExsVy+t/xe7r/a11jDPZf1rPYOGM9q8X1L89Z
+        LeYfOcdq0f/4NbPF+fMb2C0+9txjtZhxfh+Txdojd9ktll6/yGTRuvcIu8XhN+2sDtwea+at
+        YfTYtKqTzaNvyypGj8+b5AJYovRsivJLS1IVMvKLS2yVog0tjPQMLS30jEws9QyNzWOtjEyV
+        9O1sUlJzMstSi/TtEvQy3kzbx1Kwir3ix+sm1gbGL6xdjJwcEgImEjfObmbpYuTiEBJYyigx
+        7eQDdoiEtETj6dVMELawxJ9rXWwQRa8ZJT5O6WfuYuTgEBawk+jclw1SIyKgKXH973dWkBpm
+        gRZmie27PzNCNHxnlJg+bRbYVDYBc4lH288wgTTzCrhJLNxUCRJmEVCVePv0LQuILSoQIXH2
+        5TpGEJtXQFDi5MwnYHFOAT2J4wd2gsWZBdQl/sy7xAxhi0vcejKfCcKWl9j+dg7zBEahWUja
+        ZyFpmYWkZRaSlgWMLKsYRVJLi3PTc4uN9IoTc4tL89L1kvNzNzECY3LbsZ9bdjB2vQs+xCjA
+        wajEw/vjnkuMEGtiWXFl7iFGCQ5mJRHe1+6uMUK8KYmVValF+fFFpTmpxYcYTYGem8gsJZqc
+        D0wXeSXxhqaG5haWhubG5sZmFkrivOcNKqOEBNITS1KzU1MLUotg+pg4OKUaGF3YWyevCItu
+        XhbFEt3Ut/Ifc287+4X4aUtSAsU+ckxduVRlYdWrPf/ficUHsm++9EXi5b4vlxaWRwTn3d5x
+        3pzN7be7C8cEv0X31SUObilT9Jp/+sGe6x7Gl/MKJktu28j5s1L1/fxfG2bqf9pjdF5dImy9
+        28umgDyX9dtePzmzRsghKtFS+rYSS3FGoqEWc1FxIgCoF0Uo3wIAAA==
+X-CMS-MailID: 20190121080832eucas1p2aa0c22a6c4f8291388b9044e91a21477
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20181204165317eucas1p18cd6168fdefb2aa57259b9ec73438275
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20181204165317eucas1p18cd6168fdefb2aa57259b9ec73438275
+References: <20181204165248.17572-1-k.konieczny@partner.samsung.com>
+        <CGME20181204165317eucas1p18cd6168fdefb2aa57259b9ec73438275@eucas1p1.samsung.com>
+        <20181204165248.17572-5-k.konieczny@partner.samsung.com>
+        <20181213211009.GA5444@kozik-lap>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Turns out this is not such a great idea. Once the SP clock is disabled,
-it's not sufficient to just enable in order to bring the SP core back up.
+On 13.12.2018 22:10, Krzysztof Kozlowski wrote:
+> On Tue, Dec 04, 2018 at 05:52:47PM +0100, Kamil Konieczny wrote:
+>> Add description for imem clock in the Samsung Exynos5433. The users can use
+>> compatibility "samsung,exynos5433-cmu-imem".
+> 
+> Thanks, applied but the commit message above is not matching contents at all.
+> You did not add the description. Mentioning some users and compatibility
+> also seems unrelated. Instead:
+> 1. You added DT node for IMEM clock controller on Exynos5433.
+> 2. Because it is necessary for SSS to work (beside obvious reasons: for
+>    DTS completeness and allowing to gate them when not used).
+> Also, please use SoC name in commit title (for example at the end) to
+> differentiate from Exynos7 or any other future SoCs.
 
-It seems that the kernel has no business managing this clock. Just let
-the firmware keep it enabled.
+Thank you for your work and insightfull comments, I hope to improve my
+commit messages.
 
-This reverts commit ed22cee91a88c47e564478b012fdbcb079653499.
-
-Link: https://lore.kernel.org/lkml/154783267051.169631.319783654464662574=
-7@swboyd.mtv.corp.google.com/
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
----
- .../devicetree/bindings/serio/olpc,ap-sp.txt       |  4 ----
- drivers/input/serio/olpc_apsp.c                    | 14 --------------
- 2 files changed, 18 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/serio/olpc,ap-sp.txt b/Doc=
-umentation/devicetree/bindings/serio/olpc,ap-sp.txt
-index 36603419d6f8..0e72183f52bc 100644
---- a/Documentation/devicetree/bindings/serio/olpc,ap-sp.txt
-+++ b/Documentation/devicetree/bindings/serio/olpc,ap-sp.txt
-@@ -4,14 +4,10 @@ Required properties:
- - compatible : "olpc,ap-sp"
- - reg : base address and length of SoC's WTM registers
- - interrupts : SP-AP interrupt
--- clocks : phandle + clock-specifier for the clock that drives the WTM
--- clock-names:  should be "sp"
-=20
- Example:
- 	ap-sp@d4290000 {
- 		compatible =3D "olpc,ap-sp";
- 		reg =3D <0xd4290000 0x1000>;
- 		interrupts =3D <40>;
--		clocks =3D <&soc_clocks MMP2_CLK_SP>;
--		clock-names =3D "sp";
- 	}
-diff --git a/drivers/input/serio/olpc_apsp.c b/drivers/input/serio/olpc_a=
-psp.c
-index bae08226e3d9..a7cfab3db9ee 100644
---- a/drivers/input/serio/olpc_apsp.c
-+++ b/drivers/input/serio/olpc_apsp.c
-@@ -23,7 +23,6 @@
- #include <linux/of.h>
- #include <linux/slab.h>
- #include <linux/delay.h>
--#include <linux/clk.h>
-=20
- /*
-  * The OLPC XO-1.75 and XO-4 laptops do not have a hardware PS/2 control=
-ler.
-@@ -75,7 +74,6 @@ struct olpc_apsp {
- 	struct serio *kbio;
- 	struct serio *padio;
- 	void __iomem *base;
--	struct clk *clk;
- 	int open_count;
- 	int irq;
- };
-@@ -148,17 +146,11 @@ static int olpc_apsp_open(struct serio *port)
- 	struct olpc_apsp *priv =3D port->port_data;
- 	unsigned int tmp;
- 	unsigned long l;
--	int error;
-=20
- 	if (priv->open_count++ =3D=3D 0) {
--		error =3D clk_prepare_enable(priv->clk);
--		if (error)
--			return error;
--
- 		l =3D readl(priv->base + COMMAND_FIFO_STATUS);
- 		if (!(l & CMD_STS_MASK)) {
- 			dev_err(priv->dev, "SP cannot accept commands.\n");
--			clk_disable_unprepare(priv->clk);
- 			return -EIO;
- 		}
-=20
-@@ -179,8 +171,6 @@ static void olpc_apsp_close(struct serio *port)
- 		/* Disable interrupt 0 */
- 		tmp =3D readl(priv->base + PJ_INTERRUPT_MASK);
- 		writel(tmp | INT_0, priv->base + PJ_INTERRUPT_MASK);
--
--		clk_disable_unprepare(priv->clk);
- 	}
- }
-=20
-@@ -208,10 +198,6 @@ static int olpc_apsp_probe(struct platform_device *p=
-dev)
- 	if (priv->irq < 0)
- 		return priv->irq;
-=20
--	priv->clk =3D devm_clk_get(&pdev->dev, "sp");
--	if (IS_ERR(priv->clk))
--		return PTR_ERR(priv->clk);
--
- 	/* KEYBOARD */
- 	kb_serio =3D kzalloc(sizeof(struct serio), GFP_KERNEL);
- 	if (!kb_serio)
---=20
-2.20.1
+-- 
+Best regards,
+Kamil Konieczny
+Samsung R&D Institute Poland
 
