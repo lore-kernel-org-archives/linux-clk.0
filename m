@@ -2,111 +2,90 @@ Return-Path: <SRS0=Ex8p=P5=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 095B5C37120
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Jan 2019 21:04:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73559C37120
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Jan 2019 21:33:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5A5020861
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Jan 2019 21:04:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548104692;
-	bh=zAIZz96Mjr8ueax7k0hNtGkOEvg9TC6mfVwD1oVJAT4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=jwrXDc2Co7IN6vcfespN9sI5MscgWocHdr+M7yDtlW4TjDtJa2i4tPqfCcq9ksiu6
-	 yao7i7iir+MVvYw+4xtkBkcFGNCn+7xhHq6YmiBgx9YvJzVapqf0tJhqtmYO3GBmm0
-	 1MhKSYUW2LaeIuBdxuYXoBn2MVIejwttPTyRQzlU=
+	by mail.kernel.org (Postfix) with ESMTP id 3FE2B20861
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Jan 2019 21:33:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="aH6sUiQt";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="BsJ0YYBD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727014AbfAUVEw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Jan 2019 16:04:52 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:37369 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726837AbfAUVEw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Jan 2019 16:04:52 -0500
-Received: by mail-ot1-f67.google.com with SMTP id s13so21760308otq.4;
-        Mon, 21 Jan 2019 13:04:51 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=v4yzYvAFmjYSXucy1AcnsqmlP7OsOTnOYguk8hvUVyo=;
-        b=r/3uZin/dVWh+k3+9R2+stQRv4rGlcomElx90SX5CMKTu63LAO4XNYTP0lbgI2CwOd
-         wAYiYLhFjf3IiokX3i9vmY+uECqPzqHKOZZk9tvYCmk3VtsPmXq0PRpZacyWgSeIAi22
-         q6ZMYYyOzDRoug/OFXdui5FlAAvaFCDWBssYTSzd+lJ4PRJIWprtZRUuALsVL8/BgiGP
-         B5BFizmAjtCeUOGP9Qh+5HtOtEBiKor8qn9gzkRPqr7nMu3Fh/h7zjnR0DAc7mLmejc6
-         YuNIx/KlsHmD1h9LTymV5M51SwRwoV6wAuYIxfnCUTZNGi5MGmOzpSnY1Mn+nh72YtpS
-         G7eQ==
-X-Gm-Message-State: AJcUukfQshojEs/9yn2ok8RhD1KYI4y/KYGShyDngvZcUA4GSwIuhg+e
-        x2PGP+iUAlsRc34oFzrMyCS8cKRODg==
-X-Google-Smtp-Source: ALg8bN7WGPqEXqoSBCUcw4Eyvblt6N2iYUD762Y8i0ZeEM4p9SpBqvaGCwhfhMAIVt18ox08NBajGg==
-X-Received: by 2002:a9d:42c:: with SMTP id 41mr21486488otc.41.1548104691140;
-        Mon, 21 Jan 2019 13:04:51 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id w62sm6069766oiw.34.2019.01.21.13.04.50
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 21 Jan 2019 13:04:50 -0800 (PST)
-Date:   Mon, 21 Jan 2019 15:04:49 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Tero Kristo <t-kristo@ti.com>
-Cc:     sboyd@kernel.org, mturquette@baylibre.com,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        ssantosh@kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/3] dt-bindings: clock: ti,sci-clk: Add support for
- parsing clock info from DT
-Message-ID: <20190121210449.GB7851@bogus>
-References: <1546954223-9738-1-git-send-email-t-kristo@ti.com>
- <1546954223-9738-2-git-send-email-t-kristo@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1546954223-9738-2-git-send-email-t-kristo@ti.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1727651AbfAUVdD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 21 Jan 2019 16:33:03 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:58592 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727422AbfAUVdC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Jan 2019 16:33:02 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 3C19260850; Mon, 21 Jan 2019 21:33:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1548106382;
+        bh=NTPM9YYB+L6rBy2BerPK3IqGuy6W0EGVEPdmoOQLtsg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=aH6sUiQt6MW6GtJmj2O3yRw4MVZKeEORc4PrVQDO7Lw4cbHK557M/L1W1GceAsSsk
+         Zs84xNMVTpcULfnuNcP9I2MeUv4+QjmD+pkboLUE5clEC3G5b8+BxiXBkC8krVpXfq
+         mprie9zXpEXMCmaIZo+cz2f3qxal2exddnXR9GvE=
+Received: from jhugo-perf-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jhugo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 8653F6030B;
+        Mon, 21 Jan 2019 21:33:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1548106381;
+        bh=NTPM9YYB+L6rBy2BerPK3IqGuy6W0EGVEPdmoOQLtsg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=BsJ0YYBDBaovJ/nCeFxhFwGdbKLVYK3dRTa3/3zz610lkOr2HkNJejsWyKa6qFY7U
+         jiJPIh3bcsw/CrfyoliISdLnexEvIBFvj4kl0SbJ+5Q+5B8M+y0iystij5jxlFWHge
+         VXsbo6bbqtDrbad/IkiBQgzC+Q89Pn5S4qq/+gfQ=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8653F6030B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
+From:   Jeffrey Hugo <jhugo@codeaurora.org>
+To:     robh+dt@kernel.org, mark.rutland@arm.com, balbi@kernel.org
+Cc:     bjorn.andersson@linaro.org, andy.gross@linaro.org,
+        david.brown@linaro.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, gregkh@linuxfoundation.org,
+        linux-usb@vger.kernel.org, Jeffrey Hugo <jhugo@codeaurora.org>
+Subject: [PATCH v3 1/3] dt-bindings: usb: Add support for msm8998
+Date:   Mon, 21 Jan 2019 14:32:46 -0700
+Message-Id: <1548106366-5042-1-git-send-email-jhugo@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1548106307-4762-1-git-send-email-jhugo@codeaurora.org>
+References: <1548106307-4762-1-git-send-email-jhugo@codeaurora.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Jan 08, 2019 at 03:30:21PM +0200, Tero Kristo wrote:
-> By default, the available clock info is queried from firmware, which can
-> be quite a lengthy operation if there is a very large amount of clocks
-> available. Add option for parsing the used clocks from DT instead, and
-> only register these which can improve the boot time of the device quite
-> a lot.
-> 
-> Signed-off-by: Tero Kristo <t-kristo@ti.com>
-> ---
->  Documentation/devicetree/bindings/clock/ti,sci-clk.txt | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/ti,sci-clk.txt b/Documentation/devicetree/bindings/clock/ti,sci-clk.txt
-> index 4e59dc6..c757ae1 100644
-> --- a/Documentation/devicetree/bindings/clock/ti,sci-clk.txt
-> +++ b/Documentation/devicetree/bindings/clock/ti,sci-clk.txt
-> @@ -18,6 +18,13 @@ Required properties:
->    and clocks IDs for 66AK2G SoC are documented at
->    http://processors.wiki.ti.com/index.php/TISCI#66AK2G02_Data
->  
-> +Optional properties:
-> +-------------------
-> +- ti,scan-clocks-from-dt: Scan clock tree info from DT. By default,
-> +  clocks are queried from firmware, which can be rather slow operation,
-> +  especially if there is a really large number of clocks available out
-> +  of which only a handful are ever used by kernel.
+msm8998 USB has a dwc3 controller just like the existing sdm845 support.
 
-At first, I thought this was an either/or thing. Use firmware or use DT, 
-but it is really only get the clocks used in the DT from firmware.
+Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ Documentation/devicetree/bindings/usb/qcom,dwc3.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-Why wouldn't you just always do that? I can think of 3 cases: 
-reparenting, debug and overlays. This breaks reparenting and overlays, 
-right? Debug could be handled with some userspace trigger to get all the 
-clocks.
+diff --git a/Documentation/devicetree/bindings/usb/qcom,dwc3.txt b/Documentation/devicetree/bindings/usb/qcom,dwc3.txt
+index 95afdcf..cb695aa 100644
+--- a/Documentation/devicetree/bindings/usb/qcom,dwc3.txt
++++ b/Documentation/devicetree/bindings/usb/qcom,dwc3.txt
+@@ -4,6 +4,7 @@ Required properties:
+ - compatible:		Compatible list, contains
+ 			"qcom,dwc3"
+ 			"qcom,msm8996-dwc3" for msm8996 SOC.
++			"qcom,msm8998-dwc3" for msm8998 SOC.
+ 			"qcom,sdm845-dwc3" for sdm845 SOC.
+ - reg:			Offset and length of register set for QSCRATCH wrapper
+ - power-domains:	specifies a phandle to PM domain provider node
+-- 
+Qualcomm Datacenter Technologies as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
 
-Why scan any of the clocks up front? Why not just create the clocks on 
-demand? If an unknown clock id is requested, then create the clock and 
-query the firmware at that point. That would avoid the DT scan too. 
-Maybe there's some issues in the clk framework preventing that, but 
-that's not really a DT problem.
-
-Rob
