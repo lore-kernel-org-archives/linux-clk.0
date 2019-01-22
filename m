@@ -2,294 +2,158 @@ Return-Path: <SRS0=Mnuj=P6=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDE76C282C4
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Jan 2019 09:49:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F9EDC282C5
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Jan 2019 11:11:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDBA6218D0
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Jan 2019 09:49:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A34920870
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Jan 2019 11:11:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727977AbfAVJsy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Jan 2019 04:48:54 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:46741 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727844AbfAVJsy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Jan 2019 04:48:54 -0500
-Received: by mail-lj1-f193.google.com with SMTP id v15-v6so19944076ljh.13;
-        Tue, 22 Jan 2019 01:48:51 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=wlULum/2bmzy/sHq/nzB9YnLl8fucwDhlg0aNAcw10I=;
-        b=jYsEus/vrRyp/qGnzc+xeivXVdAIB1XLj1ukMNKc2BRoWC2ymxo9Q3cNCj3E61bzuB
-         VDUvuActavUXFEOB5d7wszq5qBz3C54qv6ampK7jUoZlQj/dEYyRvoQ+bX6MMnn6ukKr
-         hi0FG0ZR1PWYBiQRcNT/K+M6Rai+xvD2/UO5WkesJsVhQrMb8uacqBAUmYjJ+7LWZKar
-         hQ82QYMQ1UzuWyOz5vlo8DsxS66Mbr9DDoLeGz/xnbqkOrvz773G/7Zmn/sk2hI9HxDD
-         TijbljwDj6cvMMWaFFPRjv4++k9YSaBUdV8pWGUwCWIRSKG1mj4FNgtlbcjz5OTuzPN/
-         KgXw==
-X-Gm-Message-State: AJcUukdi70UTRa0xJn84ZfHIfdNODeC1DzKLZ6AUDTNLaGRTDqNoOCIe
-        JyU3KbfoSvuZLRO1+dBi+NY=
-X-Google-Smtp-Source: ALg8bN4JfGtqDVSGymEXC20x1otO9Gcu5iQ/4/4ZkYqw7K6NhpSOC91lTCdb3OlAWC1tMhYdVyz7sg==
-X-Received: by 2002:a2e:9d8e:: with SMTP id c14-v6mr19780027ljj.146.1548150530733;
-        Tue, 22 Jan 2019 01:48:50 -0800 (PST)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id q10-v6sm2744204ljj.3.2019.01.22.01.48.48
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 22 Jan 2019 01:48:50 -0800 (PST)
-Date:   Tue, 22 Jan 2019 11:48:36 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
-Cc:     lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        lgirdwood@gmail.com, broonie@kernel.org,
-        gregkh@linuxfoundation.org, rafael@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        sre@kernel.org, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
-        linux@roeck-us.net, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
-Subject: [RFC PATCH v1 13/13] watchdog: bd70528: Initial support for ROHM
- BD70528 watchdog block
-Message-ID: <ec70833179d1953dbc91e01901b79d3319ff013d.1548149337.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1548149337.git.matti.vaittinen@fi.rohmeurope.com>
+        id S1727925AbfAVLLd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Jan 2019 06:11:33 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:60274 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728287AbfAVLLb (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 22 Jan 2019 06:11:31 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id C523620898; Tue, 22 Jan 2019 12:11:28 +0100 (CET)
+Received: from localhost (aaubervilliers-681-1-37-87.w90-88.abo.wanadoo.fr [90.88.156.87])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 8BD4B209EF;
+        Tue, 22 Jan 2019 12:11:18 +0100 (CET)
+Date:   Tue, 22 Jan 2019 12:11:18 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        linux-amarula@amarulasolutions.com
+Subject: Re: [PATCH v5 07/17] drm/sun4i: sun6i_mipi_dsi: Refactor vertical
+ video start delay
+Message-ID: <20190122111118.db7bqppop4basxd7@flea>
+References: <CAMty3ZB5F5jD9iJT1soXSA5HtQOf5W9rKO9nCdGFUfVo0hpO4Q@mail.gmail.com>
+ <20190107141158.zaimizk4rlqa6xli@flea>
+ <CAMty3ZBb8byOwh=_W83Ta0Dse1qkoqccOeaBEY9oHPaxDxe9QA@mail.gmail.com>
+ <20190108085829.clianbtjovu3oieq@flea>
+ <CAMty3ZC9OQtwT-iH=S1LhHsBPc_jFKGAnCYYeR9nuKuDWSKLQw@mail.gmail.com>
+ <20190112164319.whr7gwvl4oux5svz@flea>
+ <CAMty3ZD8X9KmHjUtAo-+Y83a2j8NF3DjM9Yr3LPMxOvQ8kOV7g@mail.gmail.com>
+ <20190116191756.ajzzaga43srk77dk@flea>
+ <CAMty3ZCw8itG=nizA5E218HT5kg=-xDzLmShF51vRh4ENYKuBA@mail.gmail.com>
+ <CAMty3ZDbTgo3EY12VC0X_XuaRobQXvHx=Y6-_sgSWxDm1ZXbHQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="oera4ykxkq52d37u"
 Content-Disposition: inline
-In-Reply-To: <cover.1548149337.git.matti.vaittinen@fi.rohmeurope.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <CAMty3ZDbTgo3EY12VC0X_XuaRobQXvHx=Y6-_sgSWxDm1ZXbHQ@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Initial support for watchdog block included in ROHM BD70528
-power management IC.
 
-Configurations for low power states are still to be checked.
+--oera4ykxkq52d37u
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
----
- drivers/watchdog/Kconfig       |  12 +++
- drivers/watchdog/Makefile      |   1 +
- drivers/watchdog/bd70528_wdt.c | 161 +++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 174 insertions(+)
- create mode 100644 drivers/watchdog/bd70528_wdt.c
+On Fri, Jan 18, 2019 at 09:14:19PM +0530, Jagan Teki wrote:
+> On Thu, Jan 17, 2019 at 10:02 AM Jagan Teki <jagan@amarulasolutions.com> =
+wrote:
+> >
+> > On Thu, Jan 17, 2019 at 12:48 AM Maxime Ripard
+> > <maxime.ripard@bootlin.com> wrote:
+> > >
+> > > On Sun, Jan 13, 2019 at 01:07:41AM +0530, Jagan Teki wrote:
+> > > > > > > > > Again, I cannot help you without the datasheet for the pa=
+nels you're
+> > > > > > > > > trying to submit.
+> > > > > > > >
+> > > > > > > > The panel bound with Sitronix ST7701 IC
+> > > > > > > > http://www.startek-lcd.com/res/starteklcd/pdres/201705/2017=
+0512144242904.pdf
+> > > > > > >
+> > > > > > > It's the controller, not the panel
+> > > > > >
+> > > > > > As I said before, the datasheet of that panel doesn't have any
+> > > > > > information except electrical characteristics and used IC which=
+ is
+> > > > > > ST7701.
+> > > > > >
+> > > > > > I have one more panel, which is from Bananapi, S070WV20-CT16 IC=
+N621
+> > > > > > please find the attachment for the same.
+> > > > > >
+> > > > > > Here is some more details of the same.
+> > > > > >
+> > > > > > https://github.com/yesnoandor/x300/blob/master/kernel/arch/arm/=
+boot/dts/erobbing/x300/x300.dtsi#L81
+> > > > > > https://github.com/wxzed/Raspberry_5MIPI_Display/blob/master/I2=
+C_Slave/USER/main.c#L15
+> > > > > >
+> > > > > > https://github.com/eliot-shao/qcom/blob/master/icn6211_cxn0102/=
+kernel/drivers/video/msm/mdss/mdss_i2c_interface.c#L152
+> > > > > > matches timings for
+> > > > > > https://github.com/eliot-shao/qcom/blob/master/icn6211_cxn0102/=
+kernel/arch/arm/boot/dts/qcom/dsi-mipi-2-rgb_1280p_video.dtsi#L20
+> > > > > >
+> > > > > > https://github.com/zestroly/micromat/blob/master/test/raspberry=
+/ICN6211.cpp#L169
+> > > > >
+> > > > > Where did you get the timings from then?
+> > > >
+> > > > You mean drm_mode timings, the same panel with RGB available in
+> > > > panel-simple[1], and dsi driver in Mailing list[2] and actual DSI
+> > > > sequence commands from BSP[3]
+> > > >
+> > > > [1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next=
+=2Egit/commit/drivers/gpu/drm/panel/panel-simple.c?id=3D7ad8b41cd8f5c284264=
+6d01cdd576663caee04a7
+> > > > [2] https://patchwork.kernel.org/patch/10680331/
+> > > > [3] https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-s=
+unxi/drivers/video/sunxi/disp2/disp/lcd/S070WV20_MIPI_RGB.c
+> > >
+> > > So you had no reliable source for the timings then? How do you know if
+> > > all your patches that are timing related are right then?
+> >
+> > I don't understand your point, or may be I confused with many links
+> > that I attached in previous mail.
+> >
+> > 1. Patch for same panel timings are already in Mainline that was
+> > tested on one of the board. [1]
+> > 2. Driver from AW, released bsp from BPI-M64-bsp [3]
+> >
+> > Do you think the above two points are not valid sources?
+>=20
+> fyi, the panel datasheet attached in above mail has timing information.
 
-diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
-index 57f017d74a97..f30e3a3e886e 100644
---- a/drivers/watchdog/Kconfig
-+++ b/drivers/watchdog/Kconfig
-@@ -90,6 +90,18 @@ config SOFT_WATCHDOG_PRETIMEOUT
- 	  watchdog. Be aware that governors might affect the watchdog because it
- 	  is purely software, e.g. the panic governor will stall it!
- 
-+config BD70528_WATCHDOG
-+	tristate "ROHM BD70528 PMIC Watchdog"
-+	depends on MFD_ROHM_BD70528
-+	select WATCHDOG_CORE
-+	help
-+	  Support for the watchdog in the ROHM BD70528 PMIC. Watchdog trigger
-+	  cause system reset.
-+
-+	  Say Y here to include support for the ROHM BD70528 watchdog.
-+	  Alternatively say M to compile the driver as a module,
-+	  which will be called bd70528_wdt.
-+
- config DA9052_WATCHDOG
- 	tristate "Dialog DA9052 Watchdog"
- 	depends on PMIC_DA9052 || COMPILE_TEST
-diff --git a/drivers/watchdog/Makefile b/drivers/watchdog/Makefile
-index a0917ef28e07..1ce87a3b1172 100644
---- a/drivers/watchdog/Makefile
-+++ b/drivers/watchdog/Makefile
-@@ -204,6 +204,7 @@ obj-$(CONFIG_WATCHDOG_SUN4V)		+= sun4v_wdt.o
- obj-$(CONFIG_XEN_WDT) += xen_wdt.o
- 
- # Architecture Independent
-+obj-$(CONFIG_BD70528_WATCHDOG) += bd70528_wdt.o
- obj-$(CONFIG_DA9052_WATCHDOG) += da9052_wdt.o
- obj-$(CONFIG_DA9055_WATCHDOG) += da9055_wdt.o
- obj-$(CONFIG_DA9062_WATCHDOG) += da9062_wdt.o
-diff --git a/drivers/watchdog/bd70528_wdt.c b/drivers/watchdog/bd70528_wdt.c
-new file mode 100644
-index 000000000000..e9a32566f595
---- /dev/null
-+++ b/drivers/watchdog/bd70528_wdt.c
-@@ -0,0 +1,161 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (C) 2018 ROHM Semiconductors
-+// ROHM BD70528MWV watchdog driver
-+
-+#include <linux/bcd.h>
-+#include <linux/kernel.h>
-+#include <linux/mfd/rohm-bd70528.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+#include <linux/watchdog.h>
-+
-+static int bd70528_wdt_set(struct bd70528 *bd70528, int enable)
-+{
-+	int ret;
-+
-+	if (bd70528->rtc_timer_lock)
-+		mutex_lock(bd70528->rtc_timer_lock);
-+
-+	ret = bd70528->wdt_set(bd70528, enable, NULL);
-+
-+	if (bd70528->rtc_timer_lock)
-+		mutex_unlock(bd70528->rtc_timer_lock);
-+	return ret;
-+}
-+
-+static int bd70528_wdt_start(struct watchdog_device *wdt)
-+{
-+	struct bd70528 *bd70528 = watchdog_get_drvdata(wdt);
-+
-+	return bd70528_wdt_set(bd70528, 1);
-+}
-+
-+static int bd70528_wdt_stop(struct watchdog_device *wdt)
-+{
-+	struct bd70528 *bd70528 = watchdog_get_drvdata(wdt);
-+
-+	return bd70528_wdt_set(bd70528, 0);
-+}
-+
-+static int bd70528_wdt_set_timeout(struct watchdog_device *wdt,
-+				    unsigned int timeout)
-+{
-+	unsigned int hours;
-+	unsigned int minutes;
-+	unsigned int seconds;
-+	int ret;
-+	struct bd70528 *bd70528 = watchdog_get_drvdata(wdt);
-+
-+	seconds = timeout;
-+	hours = timeout / (60 * 60);
-+	/* Maximum timeout is 1h 59m 59s => hours is 1 or 0 */
-+	if (hours)
-+		seconds -= (60 * 60);
-+	minutes = seconds / 60;
-+	seconds = seconds % 60;
-+
-+	if (bd70528->rtc_timer_lock)
-+		mutex_lock(bd70528->rtc_timer_lock);
-+
-+	ret = bd70528->wdt_set(bd70528, 0, NULL);
-+	if (ret)
-+		goto out_unlock;
-+
-+	ret = regmap_update_bits(bd70528->chip.regmap, BD70528_REG_WDT_HOUR,
-+				 BD70528_MASK_WDT_HOUR, hours);
-+	if (ret) {
-+		dev_err(bd70528->chip.dev, "Failed to set WDT hours\n");
-+		goto out_en_unlock;
-+	}
-+	ret = regmap_update_bits(bd70528->chip.regmap, BD70528_REG_WDT_MINUTE,
-+				 BD70528_MASK_WDT_MINUTE, bin2bcd(minutes));
-+	if (ret) {
-+		dev_err(bd70528->chip.dev, "Failed to set WDT minutes\n");
-+		goto out_en_unlock;
-+	}
-+	ret = regmap_update_bits(bd70528->chip.regmap, BD70528_REG_WDT_SEC,
-+				 BD70528_MASK_WDT_SEC, bin2bcd(seconds));
-+	if (ret) {
-+		dev_err(bd70528->chip.dev, "Failed to set WDT seconds\n");
-+		goto out_en_unlock;
-+	}
-+
-+out_en_unlock:
-+	ret = bd70528->wdt_set(bd70528, 1, NULL);
-+out_unlock:
-+	if (bd70528->rtc_timer_lock)
-+		mutex_lock(bd70528->rtc_timer_lock);
-+
-+	return ret;
-+}
-+
-+static const struct watchdog_info bd70528_wdt_info = {
-+	.identity = "bd70528-wdt",
-+	.options = WDIOF_SETTIMEOUT | WDIOF_KEEPALIVEPING | WDIOF_MAGICCLOSE,
-+};
-+
-+static const struct watchdog_ops bd70528_wdt_ops = {
-+	.start		= bd70528_wdt_start,
-+	.stop		= bd70528_wdt_stop,
-+	/*
-+	 *  bd70528 WDT ping is same as enable. Eg, writing 'enable' to enabled
-+	 * WDT will restart the timeout
-+	 */
-+	.ping		= bd70528_wdt_start,
-+	.set_timeout	= bd70528_wdt_set_timeout,
-+};
-+
-+/* Max time we can set is 1 hour, 59 minutes and 59 seconds */
-+#define WDT_MAX_MS ((2 * 60 * 60 - 1) * 1000)
-+/* Minimum time is 1 second */
-+#define WDT_MIN_MS 1000
-+static struct watchdog_device bd70528_wd = {
-+	.info = &bd70528_wdt_info,
-+	.ops =  &bd70528_wdt_ops,
-+	.min_hw_heartbeat_ms = WDT_MIN_MS,
-+	.max_hw_heartbeat_ms = WDT_MAX_MS,
-+};
-+
-+static int bd70528_wdt_probe(struct platform_device *pdev)
-+{
-+	struct bd70528 *tmp;
-+	struct bd70528 *bd70528;
-+	int ret;
-+
-+	tmp = dev_get_drvdata(pdev->dev.parent);
-+	if (!tmp) {
-+		dev_err(&pdev->dev, "No MFD driver data\n");
-+		return -EINVAL;
-+	}
-+	bd70528 = devm_kzalloc(&pdev->dev, sizeof(*bd70528), GFP_KERNEL);
-+	if (!bd70528)
-+		return -ENOMEM;
-+
-+	*bd70528 = *tmp;
-+	bd70528->chip.dev = &pdev->dev;
-+
-+	/*
-+	 * TODO: Set the initial state and timeout.
-+	 * See whether the low power states require special handling
-+	 */
-+	watchdog_set_drvdata(&bd70528_wd, bd70528);
-+	ret = devm_watchdog_register_device(&pdev->dev, &bd70528_wd);
-+	if (ret < 0)
-+		dev_err(&pdev->dev, "watchdog registration failed: %d\n", ret);
-+
-+	return ret;
-+}
-+static struct platform_driver bd70528_wdt = {
-+	.driver = {
-+		.name = "bd70528-wdt"
-+	},
-+	.probe = bd70528_wdt_probe,
-+};
-+
-+module_platform_driver(bd70528_wdt);
-+
-+MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
-+MODULE_DESCRIPTION("BD70528 watchdog driver");
-+MODULE_LICENSE("GPL");
--- 
-2.14.3
+Do you have a page number?
 
+maxime
 
--- 
-Matti Vaittinen
-ROHM Semiconductors
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
+--oera4ykxkq52d37u
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXEb6VgAKCRDj7w1vZxhR
+xaTvAPsGr3brO/jlKau1sYSNQdFdKyoye0rN4g7XHa07ekr5SAEA7/vQZfcIbZcp
+bvZbr5Fk+7XL7QJoaHUKbUuS4zoKngI=
+=WAzD
+-----END PGP SIGNATURE-----
+
+--oera4ykxkq52d37u--
