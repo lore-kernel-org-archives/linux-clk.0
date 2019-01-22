@@ -4,35 +4,34 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EC92C282C3
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Jan 2019 14:53:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F8BFC282C3
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Jan 2019 14:54:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3E8821019
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Jan 2019 14:53:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F147F21019
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Jan 2019 14:54:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="Ah7CtPZR"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="X6JOkDym"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728862AbfAVOxw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Jan 2019 09:53:52 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:35148 "EHLO
+        id S1728820AbfAVOy2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Jan 2019 09:54:28 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:35193 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728318AbfAVOxw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Jan 2019 09:53:52 -0500
+        with ESMTP id S1728795AbfAVOy2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Jan 2019 09:54:28 -0500
 Received: from penelope.horms.nl (ip4dab7138.direct-adsl.nl [77.171.113.56])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 2FB6B25B827;
-        Wed, 23 Jan 2019 01:53:48 +1100 (AEDT)
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 58E8725B827;
+        Wed, 23 Jan 2019 01:54:24 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1548168828; bh=Gk8OHvwdgsS1W5Iq1sPjoORarHSGY5s0FQ1cE3scc6s=;
+        t=1548168865; bh=Px1wdUbhmP4Knm+mjivHUYgkasO16ozK3G4p8LYuXsI=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Ah7CtPZRb9udHtP00JY833uapssoOG1hIYlINb2IAX1YoAnh7mO2hNejDLzX33Rnu
-         TIyxjem3f4NHGo5sAnnbB4LVWErKnmfhfQRpdnL0athSu8MjvAu+mBjJz+EPBD45A0
-         /N9VQl6OomYvTXS4kemTm8SX01D0acPHqppEHLNM=
+        b=X6JOkDym3sspA4fViFFa48uj/rVhPuq1SB0Lwquw4oQe8JsSBljV0SE2w8rGTQ3yc
+         6rgL/VzS/yOIsDuMIcFz/pyTl8V/ctnWRUIp/VyAe7ywFn/YSWrI/ErMp/f8VAvyew
+         pN79aPrymF+ddQRleawJfv2Kc8uPk8G9GHC4aD8g=
 Received: by penelope.horms.nl (Postfix, from userid 7100)
-        id D4482E2146E; Tue, 22 Jan 2019 15:53:45 +0100 (CET)
-Date:   Tue, 22 Jan 2019 15:53:45 +0100
+        id 259BDE2146E; Tue, 22 Jan 2019 15:54:22 +0100 (CET)
+Date:   Tue, 22 Jan 2019 15:54:22 +0100
 From:   Simon Horman <horms@verge.net.au>
 To:     Geert Uytterhoeven <geert@linux-m68k.org>
 Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
@@ -62,16 +61,16 @@ Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         <devicetree@vger.kernel.org>, linux-can@vger.kernel.org,
         netdev <netdev@vger.kernel.org>,
         linux-clk <linux-clk@vger.kernel.org>, ebiharaml@si-linux.co.jp
-Subject: Re: [PATCH 04/11] arm64: dts: renesas: Add Si-Linux EK874 board
- support
-Message-ID: <20190122145345.lqwymtx65zgc4tgo@verge.net.au>
+Subject: Re: [PATCH 05/11] arm64: dts: renesas: r8a774c0-cat874: Add
+ pincontrol support to scif2
+Message-ID: <20190122145421.nk2pokk4a6mw4kep@verge.net.au>
 References: <1547663874-29411-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1547663874-29411-5-git-send-email-fabrizio.castro@bp.renesas.com>
- <CAMuHMdVvMZWNrPfWrOmyFoK+oBu69N_G8s1U4mdAQdt_uj+N2g@mail.gmail.com>
+ <1547663874-29411-6-git-send-email-fabrizio.castro@bp.renesas.com>
+ <CAMuHMdUiiVJgMHmZ5UKLXNXd7D=U8Dyc0ZYgvVTVEgspFLaPYg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdVvMZWNrPfWrOmyFoK+oBu69N_G8s1U4mdAQdt_uj+N2g@mail.gmail.com>
+In-Reply-To: <CAMuHMdUiiVJgMHmZ5UKLXNXd7D=U8Dyc0ZYgvVTVEgspFLaPYg@mail.gmail.com>
 Organisation: Horms Solutions BV
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-clk-owner@vger.kernel.org
@@ -79,19 +78,17 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Jan 17, 2019 at 12:05:59PM +0100, Geert Uytterhoeven wrote:
+On Thu, Jan 17, 2019 at 12:06:39PM +0100, Geert Uytterhoeven wrote:
 > On Wed, Jan 16, 2019 at 7:38 PM Fabrizio Castro
 > <fabrizio.castro@bp.renesas.com> wrote:
 > > From: Biju Das <biju.das@bp.renesas.com>
 > >
-> > The EK874 development kit from Silicon Linux is made of CAT874 (the main
-> > board) and CAT875 (the sub board that goes on top of CAT874).
+> > This patch adds pincontrol support to scif2.
 > >
 > > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-> > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > Reviewed-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 > > Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
 > 
-> Pending acceptance of the DT bindings
 > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 Thanks, applied for v5.1.
