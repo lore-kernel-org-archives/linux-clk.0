@@ -4,87 +4,101 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2308C37124
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Jan 2019 00:30:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E332CC37124
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Jan 2019 01:14:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA41D21721
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Jan 2019 00:30:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B1B112089F
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Jan 2019 01:14:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548117021;
-	bh=eaQiUBDfb6E9/VOYkZfCV15xusiVqeKPTawDXxzfKl0=;
+	s=default; t=1548119679;
+	bh=p0JQnfeEP4mkw1em73uUqAiW6/YjHu7GJrbU3dr2msA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=EEudRptmIESmNJc1JBDtelkzcKDwaY2ilUNsY30KXdBQP6P7eEL4yxQglpw5f3nVL
-	 bydTFnGFpWfGKz8Pa5xLl8BmnphQmSprTFeF7rqn/t2Sp/xPc9sMrk40q5xKbMLFWE
-	 n2GXQReI5XWltFQkLtF4I7QqbF1x02C2XIbWzeS4=
+	b=YQRBl58M3VV0DKO2yXmnZs1vq+lhLb6j8s3A0nMusb5XLgZMtv00HNXnIsv5Q/ypf
+	 7DcLjrOIjlZp7JkY/d7r4ejapo9YW3Ww1cOdvPCecQO29kGhZVMBQVC6q6SsyL2cLO
+	 NbJKemhN0rqRKBwOCiOUwFGwvOvxy80GAGPT5g1U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726444AbfAVAaQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Jan 2019 19:30:16 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:38628 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725962AbfAVAaQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Jan 2019 19:30:16 -0500
-Received: by mail-ot1-f66.google.com with SMTP id e12so22139660otl.5;
-        Mon, 21 Jan 2019 16:30:15 -0800 (PST)
+        id S1726672AbfAVBOb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 21 Jan 2019 20:14:31 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:42001 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726027AbfAVBOb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Jan 2019 20:14:31 -0500
+Received: by mail-oi1-f194.google.com with SMTP id w13so16065361oiw.9;
+        Mon, 21 Jan 2019 17:14:31 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=XpDQ3gXdzLJtDwqohrw59Qy2bmeppBzply4LsowzBYo=;
-        b=Xpty50lHRpxudAQknKYg6g8ZeyXk3xuH56+2C2v7bgH6hRGA7ly4NvBR8QIEYFCC4m
-         iNyod5EbH1JOwwmJ1Xk4CWBqXAXU5L0XJjpBYw44TfEhExOCA4g+5IelA1lUZ/hy3pJ2
-         GQg8H/y3/XJnpDu1Vx2P6uwHgmbZf6+ExDzIjiXLcty8+j/5dJGyiXTpLMiDkCdiuziw
-         dDy2ddUwXIW0RUnLdRRhbdv1XOtLZHNPF2MKO7OVVQ+SzEf58Sdj1CtloAfBttfi8x9V
-         eKzKVmFqcic/7/53sxZ4PC3rXGvRb52KhGpCVNirTu0rkkoxGZhDhjs/kr+YIM8o/p4j
-         RiaQ==
-X-Gm-Message-State: AJcUukd9u7b4NOugIfsfwVszzGcR8pDkMHXRMip2zBVGXpWryxC/6cxo
-        XiBp/Z5/XccC63i7CKwNNA==
-X-Google-Smtp-Source: ALg8bN4dO/uDXQQAzJ/yiWBBuVgTk1+I1T5uePSipxY4CNYMkXge4HZCM+dusjk1ye6T0Hq8WpXpmw==
-X-Received: by 2002:a9d:60b:: with SMTP id 11mr20062213otn.200.1548117015485;
-        Mon, 21 Jan 2019 16:30:15 -0800 (PST)
+        bh=wgJ1G6St49wbVw0VgIAlB9lWWvpxL3qtTHgYiuXYdZA=;
+        b=sG00dWvFbTE6HrsHvk1IsaSFsR2J5B/pDWIFMo+1EPO4q1sgU5my05E9Y0W0cY7OEY
+         MB3Mh4n7BNgiXMxcyU8jMsJ6QjPTiUBcheDqdGgCHfn16TQbM+76ncSwvwCTsmXhQKVy
+         N70BbydEReXF3wmsyN6jr1utd/kiW/qnoE15LfK+FF1N6rl3WldAaT7M+bGERUUMtVyv
+         CbpK3Q/mKPbUbxFFElbo+8JqS1ktSM+k77BpG09qZw8KfOAbvfiKbPApfyPER9ZeVpN+
+         wMkVGU/SwH44/iDr1fqSA4nkMtXWKSvYC40SToIyHmRjsrJ2Gks8Af4IO307WW01B3Sc
+         Lf/Q==
+X-Gm-Message-State: AJcUukcySbY4iIBwMwKT7Yw2fDbwTORZK9yx/Xqphh3MlIfjgJ/KdkPj
+        PbvyQy+UXMpng64bLKJsuA==
+X-Google-Smtp-Source: ALg8bN4utbZqAhmfqs4+0qX8BONSTaIcX2rXacBWk9gOxC6S+ByTMVo1nzSwvVox8k0m1XZRvo8fkA==
+X-Received: by 2002:aca:720a:: with SMTP id p10mr6723543oic.169.1548119670567;
+        Mon, 21 Jan 2019 17:14:30 -0800 (PST)
 Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id v20sm6548792otp.10.2019.01.21.16.30.14
+        by smtp.gmail.com with ESMTPSA id 30sm6170166ots.52.2019.01.21.17.14.29
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 21 Jan 2019 16:30:14 -0800 (PST)
-Date:   Mon, 21 Jan 2019 18:30:14 -0600
+        Mon, 21 Jan 2019 17:14:29 -0800 (PST)
+Date:   Mon, 21 Jan 2019 19:14:29 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     AngeloGioacchino Del Regno <kholk11@gmail.com>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: smd: Add support for MSM8956/76 RPM clocks
-Message-ID: <20190122003014.GA26136@bogus>
-References: <2fcdf0e9b1eef55350911984064dd94f16f1fcd8.camel@gmail.com>
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc:     Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Thierry Reding <treding@nvidia.com>,
+        Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Johan Hovold <johan@kernel.org>,
+        Lukasz Majewski <lukma@denx.de>,
+        Michal Simek <monstr@monstr.eu>,
+        Michal =?utf-8?B?Vm9rw6HEjQ==?= <michal.vokac@ysoft.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Ben Whitten <ben.whitten@gmail.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-can@vger.kernel.org, netdev@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ebiharaml@si-linux.co.jp
+Subject: Re: [PATCH 01/11] dt-bindings: Add vendor prefix for Silicon Linux.
+Message-ID: <20190122011429.GA3176@bogus>
+References: <1547663874-29411-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1547663874-29411-2-git-send-email-fabrizio.castro@bp.renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2fcdf0e9b1eef55350911984064dd94f16f1fcd8.camel@gmail.com>
+In-Reply-To: <1547663874-29411-2-git-send-email-fabrizio.castro@bp.renesas.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, Jan 12, 2019 at 04:38:58PM +0100, AngeloGioacchino Del Regno wrote:
-> From 6aeefad77a2a5d47a9bd009d2d10db2a5dd153a2 Mon Sep 17 00:00:00 2001
-> From: "Angelo G. Del Regno" <kholk11@gmail.com>
-> Date: Sat, 12 Jan 2019 16:31:09 +0100
-> Subject: [PATCH] clk: qcom: smd: Add support for MSM8956/76 RPM clocks
+On Wed, 16 Jan 2019 18:37:44 +0000, Fabrizio Castro wrote:
+> From: Biju Das <biju.das@bp.renesas.com>
 > 
-> Add all RPM clocks found on MSM8956/MSM8976 SoCs.
+> Add Silicon Linux to the list of devicetree vendor prefixes.
 > 
-> Signed-off-by: Angelo G. Del Regno <kholk11@gmail.com>
+> Website: http://www.si-linux.co.jp
+> 
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
 > ---
->  .../devicetree/bindings/clock/qcom,rpmcc.txt  |  1 +
+>  Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
+>  1 file changed, 1 insertion(+)
+> 
 
-Separate patch preferred, but for a 1 line change:
-
-Acked-by: Rob Herring <robh@kernel.org>
-
->  drivers/clk/qcom/clk-smd-rpm.c                | 53 +++++++++++++++++++
->  2 files changed, 54 insertions(+)
+Reviewed-by: Rob Herring <robh@kernel.org>
