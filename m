@@ -2,141 +2,117 @@ Return-Path: <SRS0=Mnuj=P6=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7BE0C282C3
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Jan 2019 11:51:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21643C282C3
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Jan 2019 12:58:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8898521019
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Jan 2019 11:51:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DEA7820879
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Jan 2019 12:58:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="iMyKbewf"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="QWaHl8OJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728097AbfAVLvV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Jan 2019 06:51:21 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:36670 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728026AbfAVLvV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Jan 2019 06:51:21 -0500
-Received: by mail-io1-f67.google.com with SMTP id m19so18868726ioh.3
-        for <linux-clk@vger.kernel.org>; Tue, 22 Jan 2019 03:51:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zscSLmR+HktPWYcobcvnsikRBjwszn3NbVA2vmWKuXI=;
-        b=iMyKbewfrtsHRcPBaRnF54v9wxOPLQo7iMSQYIjmTv95GUNNLwTds9qdndbsktgEGY
-         cobEJKEvh6KO6hbr4dhtmwTL6uRXYOKinV33z/bTQQjMl7xSTzQtEfnqqhRkwx370mRi
-         FvlBqOPYbet8E9GrHiGoCc8t1I5enk3CfvWVo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zscSLmR+HktPWYcobcvnsikRBjwszn3NbVA2vmWKuXI=;
-        b=n/oXLSKbGXlF4ibtyjU/ZRXFprD4z/HZzdFvN05QQuzt7WIiQBNxt2ObOnp3vqDZsq
-         FXok4K5ZCZc4ruLtcHspeg8dQ8ootTLrO1Ytzk7Uly5LucEWGHUO2ufSANzDrosEkSj0
-         Y3InJrc2RasY3Q1YaFiReGfa1DGXMtrVOVkvdELCsIvW9nwjUKSCCUNifoE36BLBhJnq
-         HtecxGUSMd/IFBLy56XQ1nADKcf1sbJNCFalVOGGJNp6ihhessyMZE6uoM/hlPMSh0R/
-         kaGZ9Vti6/Fs9u3Lk+X44R5YAXaIqI9O6mJIRvGMnUS6Ry+a/LWG6K+joUwe++ln2vE7
-         SfAg==
-X-Gm-Message-State: AJcUukd82jg6HfqsAiCzNyFt7mSfemmcbQZ/mBHLmL8i+VlD/wlLIp1R
-        dDtYv/s6soxP6geXJGq/ig6CVnD3dMV7H1npD0cWOg==
-X-Google-Smtp-Source: ALg8bN4tmQLQ1xWpoNlKVWQcq3IhDDhuH0pSE5HvZYNsjqjKKuof4rt4lH7YgZnVjq1ITjqvuV1reh9He649ZA8N+j8=
-X-Received: by 2002:a6b:1411:: with SMTP id 17mr19042104iou.252.1548157880024;
- Tue, 22 Jan 2019 03:51:20 -0800 (PST)
+        id S1727936AbfAVM6m (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Jan 2019 07:58:42 -0500
+Received: from mail-eopbgr00085.outbound.protection.outlook.com ([40.107.0.85]:25504
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728205AbfAVM6m (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 22 Jan 2019 07:58:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QYDtCDhhzS+K2yDQEaRzfyYL0h25XSOndp7cVR2FTdQ=;
+ b=QWaHl8OJmD3Rb8uj6arOklj5J8n9jf4eFgnENHsvRlkcyzCljOlPUboqE3hPWmdpazi8Dow41UoY5IGSl1sJjlLXzv2kGFprm+P9fAJdz2KsH2d7qxSuSIE553bE7qbcETqJxA1VjA7aZCiUAp9FGRu4ZkkTYyczmJY/9AEWeVU=
+Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.126.21) by
+ AM0PR04MB6002.eurprd04.prod.outlook.com (20.178.114.33) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1537.26; Tue, 22 Jan 2019 12:58:39 +0000
+Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
+ ([fe80::c4d2:7dfd:4576:bdd5]) by AM0PR04MB4211.eurprd04.prod.outlook.com
+ ([fe80::c4d2:7dfd:4576:bdd5%5]) with mapi id 15.20.1558.016; Tue, 22 Jan 2019
+ 12:58:39 +0000
+From:   Aisheng Dong <aisheng.dong@nxp.com>
+To:     Rob Herring <robh@kernel.org>
+CC:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: RE: [PATCH RESEND v1 2/4] dt-bindings: fsl: scu: add imx8qm scu clock
+ support
+Thread-Topic: [PATCH RESEND v1 2/4] dt-bindings: fsl: scu: add imx8qm scu
+ clock support
+Thread-Index: AQHUqaSfloWwjzPfcU69BMY7ob8z+KW6bngAgADhf1A=
+Date:   Tue, 22 Jan 2019 12:58:38 +0000
+Message-ID: <AM0PR04MB421124D0E6031D97E6693E9680980@AM0PR04MB4211.eurprd04.prod.outlook.com>
+References: <1547207400-28307-1-git-send-email-aisheng.dong@nxp.com>
+ <1547207400-28307-3-git-send-email-aisheng.dong@nxp.com>
+ <20190121232730.GA22676@bogus>
+In-Reply-To: <20190121232730.GA22676@bogus>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=aisheng.dong@nxp.com; 
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM0PR04MB6002;6:JqzWUi4TjF4JllNgK+bRKz8TJw3OUriq6kWmI8/ExOw6zfO6DtgPjOu/eIGqntbLK1pKmExxogQLiLI1XwDn4/JhiDYPGJ5iMTrGDRl1v5P5kY5+uHc3Yxmd/2tGjbnVrOqW19PY4xe8s9dHh3FAK3qpdDszK03VV440e5FkGE9vaO1QzxY/rkLbrwglK1UWLqmySnUKtm1MAH4wLdgBkpWV853u/fAHCijXZsxPXYGpkYGBHf+qRfuv0ElmcXLWtTFFxS43i2YOHwA3zKMnLBMLDWI76y8quKTnPimOaLbi6AALhipMQgHV9+Nzt1Rdsqi0i2doRgm0THxBHGUHw9lQx6O6esUiG1hU3i3JZs2wJ6wd2nz9YT+tM95JF2iVPpdFjIaClt6pvtFq67TRde1O7RNweOoRwmEhJoUYAmx1F+M0f/NaBaHFciL/C+HvPNruxE09sEEtC65lJ+IeTQ==;5:T9pX/Fot13J9IoY8jol36Cm/09cIdGOWAuyE+yOiV2OM+KGh7mCYaTqowydRxJP5uCka1mCbGenucH9cnvqhmNGIBoVFdKCbp84MVmGv7XvQp5lrjWfnkepWqyGgboGiex1fYc+UdxAL1eON+GRsNBIqNHQdK6Tg2iTjpPXcrDmdwCUtKSbvOWtxB25k99Exfh3oUDlCZ5CcASCm2CBU+g==;7:RVht28o6jQHvrVu7nzipW2gKy06VQaBM1/N9oSyIjnHJnMc1Jdf6ZNmjhhfh/yzD9I8wjNKBzMkYNb35Pna1ufcUJjw/zqSoh3GjBOYiOpAvua7OFgGSSjBPICzdzzgnsrerDccMvwhr7EBoSxD8fQ==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 1c58ba38-7ef5-4562-b25e-08d680695416
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB6002;
+x-ms-traffictypediagnostic: AM0PR04MB6002:
+x-microsoft-antispam-prvs: <AM0PR04MB6002E8A893F654A56ACD328A80980@AM0PR04MB6002.eurprd04.prod.outlook.com>
+x-forefront-prvs: 0925081676
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(136003)(346002)(376002)(39860400002)(366004)(189003)(199004)(9686003)(97736004)(6916009)(478600001)(26005)(486006)(81166006)(81156014)(102836004)(86362001)(6506007)(316002)(54906003)(71200400001)(2906002)(71190400001)(6246003)(7696005)(99286004)(76176011)(53936002)(305945005)(186003)(14454004)(217873002)(7736002)(229853002)(446003)(11346002)(14444005)(256004)(4326008)(476003)(68736007)(6436002)(106356001)(4744005)(6116002)(8936002)(33656002)(105586002)(74316002)(44832011)(3846002)(66066001)(25786009)(8676002)(55016002)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB6002;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: p55AYilaI3YXWgSnmCcI7SRmueuRIoTcVpOLKi/xNsow4wdFBJ4wHWOAAvocPgHHbMUcP+GiqnQ4wtDWYvzVyGFVXpERbhKtEKLe4NARM2FeckZL2B/Eb3hdpz2wmSlOVWlPXh2jgNugL0WniLwpgD5HnipZJkH2yY/c3coTYL23YOj+FGps1aeOelR7htJ1rQu7pk4GfccpYzT28RMtgZvMkHkQ1hReTDeUD2YnJJOdjMUdpZO1tNO1eiaNx+/XgNen4rjJPQWYKnzHnSfWtUDcKSBl+eYPVft3hLpxWZk/mdHOBYwqfw94NY3E0qiUwbjoVwKsywP3Z3ctCcoz1ze8j4FzFZvg75veSrwzoSB4cLkH6KUh3xxyj71iZWwvcCy9iCJoGp+h75w3uUoizUfAFB6TjWTR+ZgiLdaXV9g=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <CAMty3ZB5F5jD9iJT1soXSA5HtQOf5W9rKO9nCdGFUfVo0hpO4Q@mail.gmail.com>
- <20190107141158.zaimizk4rlqa6xli@flea> <CAMty3ZBb8byOwh=_W83Ta0Dse1qkoqccOeaBEY9oHPaxDxe9QA@mail.gmail.com>
- <20190108085829.clianbtjovu3oieq@flea> <CAMty3ZC9OQtwT-iH=S1LhHsBPc_jFKGAnCYYeR9nuKuDWSKLQw@mail.gmail.com>
- <20190112164319.whr7gwvl4oux5svz@flea> <CAMty3ZD8X9KmHjUtAo-+Y83a2j8NF3DjM9Yr3LPMxOvQ8kOV7g@mail.gmail.com>
- <20190116191756.ajzzaga43srk77dk@flea> <CAMty3ZCw8itG=nizA5E218HT5kg=-xDzLmShF51vRh4ENYKuBA@mail.gmail.com>
- <CAMty3ZDbTgo3EY12VC0X_XuaRobQXvHx=Y6-_sgSWxDm1ZXbHQ@mail.gmail.com> <20190122111118.db7bqppop4basxd7@flea>
-In-Reply-To: <20190122111118.db7bqppop4basxd7@flea>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Tue, 22 Jan 2019 17:21:08 +0530
-Message-ID: <CAMty3ZA0rhpQbumoVOGQRGDG0-iU84wcpUN2Q=ooT4iRD6y5hQ@mail.gmail.com>
-Subject: Re: [PATCH v5 07/17] drm/sun4i: sun6i_mipi_dsi: Refactor vertical
- video start delay
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        linux-amarula@amarulasolutions.com
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1c58ba38-7ef5-4562-b25e-08d680695416
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Jan 2019 12:58:38.9438
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6002
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 4:41 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
->
-> On Fri, Jan 18, 2019 at 09:14:19PM +0530, Jagan Teki wrote:
-> > On Thu, Jan 17, 2019 at 10:02 AM Jagan Teki <jagan@amarulasolutions.com> wrote:
-> > >
-> > > On Thu, Jan 17, 2019 at 12:48 AM Maxime Ripard
-> > > <maxime.ripard@bootlin.com> wrote:
-> > > >
-> > > > On Sun, Jan 13, 2019 at 01:07:41AM +0530, Jagan Teki wrote:
-> > > > > > > > > > Again, I cannot help you without the datasheet for the panels you're
-> > > > > > > > > > trying to submit.
-> > > > > > > > >
-> > > > > > > > > The panel bound with Sitronix ST7701 IC
-> > > > > > > > > http://www.startek-lcd.com/res/starteklcd/pdres/201705/20170512144242904.pdf
-> > > > > > > >
-> > > > > > > > It's the controller, not the panel
-> > > > > > >
-> > > > > > > As I said before, the datasheet of that panel doesn't have any
-> > > > > > > information except electrical characteristics and used IC which is
-> > > > > > > ST7701.
-> > > > > > >
-> > > > > > > I have one more panel, which is from Bananapi, S070WV20-CT16 ICN621
-> > > > > > > please find the attachment for the same.
-> > > > > > >
-> > > > > > > Here is some more details of the same.
-> > > > > > >
-> > > > > > > https://github.com/yesnoandor/x300/blob/master/kernel/arch/arm/boot/dts/erobbing/x300/x300.dtsi#L81
-> > > > > > > https://github.com/wxzed/Raspberry_5MIPI_Display/blob/master/I2C_Slave/USER/main.c#L15
-> > > > > > >
-> > > > > > > https://github.com/eliot-shao/qcom/blob/master/icn6211_cxn0102/kernel/drivers/video/msm/mdss/mdss_i2c_interface.c#L152
-> > > > > > > matches timings for
-> > > > > > > https://github.com/eliot-shao/qcom/blob/master/icn6211_cxn0102/kernel/arch/arm/boot/dts/qcom/dsi-mipi-2-rgb_1280p_video.dtsi#L20
-> > > > > > >
-> > > > > > > https://github.com/zestroly/micromat/blob/master/test/raspberry/ICN6211.cpp#L169
-> > > > > >
-> > > > > > Where did you get the timings from then?
-> > > > >
-> > > > > You mean drm_mode timings, the same panel with RGB available in
-> > > > > panel-simple[1], and dsi driver in Mailing list[2] and actual DSI
-> > > > > sequence commands from BSP[3]
-> > > > >
-> > > > > [1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/drivers/gpu/drm/panel/panel-simple.c?id=7ad8b41cd8f5c2842646d01cdd576663caee04a7
-> > > > > [2] https://patchwork.kernel.org/patch/10680331/
-> > > > > [3] https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/lcd/S070WV20_MIPI_RGB.c
-> > > >
-> > > > So you had no reliable source for the timings then? How do you know if
-> > > > all your patches that are timing related are right then?
-> > >
-> > > I don't understand your point, or may be I confused with many links
-> > > that I attached in previous mail.
-> > >
-> > > 1. Patch for same panel timings are already in Mainline that was
-> > > tested on one of the board. [1]
-> > > 2. Driver from AW, released bsp from BPI-M64-bsp [3]
-> > >
-> > > Do you think the above two points are not valid sources?
-> >
-> > fyi, the panel datasheet attached in above mail has timing information.
->
-> Do you have a page number?
+> >  Required properties:
+> >  - compatible:		Should be one of:
+> > -			  "fsl,imx8qxp-clock"
+> > +			  "fsl,imx8qm-clock",
+> > +			  "fsl,imx8qxp-clock".
+>=20
+> No need for the punctuation here. The whole point of one per line is to h=
+ave 1
+> line changes. Otherwise,
+>=20
 
-Page 4
-5.2 Interface Timings
+Got it, thanks.
+I will update it later.
+
+> Reviewed-by: Rob Herring <robh@kernel.org>
+>=20
+> >  			followed by "fsl,scu-clk"
+> >  - #clock-cells:		Should be 1. Contains the Clock ID value.
+> >  - clocks:		List of clock specifiers, must contain an entry for
+> > --
+> > 2.7.4
+> >
