@@ -2,109 +2,218 @@ Return-Path: <SRS0=Mnuj=P6=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E20CC282C4
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Jan 2019 09:41:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13A43C282C5
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Jan 2019 09:42:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F2B7218DE
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Jan 2019 09:41:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="Eeoxc4iX";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jueVg1SF"
+	by mail.kernel.org (Postfix) with ESMTP id D89E020870
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Jan 2019 09:42:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727813AbfAVJli (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Jan 2019 04:41:38 -0500
-Received: from new3-smtp.messagingengine.com ([66.111.4.229]:35683 "EHLO
-        new3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726872AbfAVJli (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Jan 2019 04:41:38 -0500
-X-Greylist: delayed 500 seconds by postgrey-1.27 at vger.kernel.org; Tue, 22 Jan 2019 04:41:36 EST
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailnew.nyi.internal (Postfix) with ESMTP id F0F619721;
-        Tue, 22 Jan 2019 04:33:15 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Tue, 22 Jan 2019 04:33:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm2; bh=AjJ5Ycm1nachfdD3JNudGmpI855
-        gZOngSiGL20J/f+E=; b=Eeoxc4iX8Ph3miO+p9h8+vd7Z3vtAciyBjQQKZp27wX
-        F7XPzCKEfY1gYjccEEdkfpYxrUZBLAuWpQikQFPl0nMXk/A8PVpX8MVYr2vnsqKQ
-        S7BjApsC6o9SZWbFlLy2AJwBzF3jDJjgZESzxKWMKNfiC0lHL498+FSP3LQ+QsVB
-        endHhj8luptdqZuBN4iGL/1qWHkVNLzqXFvXdla52+OxuJbMsjTz+RPfYgs3/7Vk
-        V7iSiS4Ly9dx20O2xQjRBkl7OvTio3Jyzw4oRIBPjFouMk6mGuwuy8As1l5mH3po
-        72LVHnBC3OiDMq5jlfnH5VA6bfGQilddKOkZ1MIDJ8g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=AjJ5Yc
-        m1nachfdD3JNudGmpI855gZOngSiGL20J/f+E=; b=jueVg1SFPXq8v/9Tgx1zjC
-        FIJYRO6LbPVMOjBJtxfocal41MQINe6JJUnaU9RhqiWCDSby7f6ME+32ZzZVoEkk
-        SQmx4UqXZ/cbq7NhbM3L/F8+X6ygB5jJTPZMDSPZwox5s7MDREg+FIpu9fQz1wU7
-        EvMtR3+xZZGp59jPoNs3CeIXMukthdb0ZzMtRocfrOmDVzaAL3se1tDFwHdKqCBN
-        C+1PS5ffRqE1bmXIZQHonIgM40gKxvEfAQmmfxivhXnblAh+oPLeE3/Q/3p0rFcg
-        /yihth4uGy9CV2LuO8j1auJ9M8giXgsTzfLI5WGg7zfPoUAglqnH3XpQGmwyf4yQ
-        ==
-X-ME-Sender: <xms:WuNGXJ3EkHLBx4F7tZfsBU1-E32A_JgbLUbmrzPafLD0Lr8WC2nkEg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtledrheekgddtfecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfhuthenuceurghilhhouhhtmecufedt
-    tdenucesvcftvggtihhpihgvnhhtshculddquddttddmnegoufhprghmkfhpucdlfedttd
-    dmnecujfgurhepfffhvffukfhfgggtuggjfgesthdtredttdervdenucfhrhhomhepifhr
-    vghgucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecuffhomhgrihhnpehkvghrnh
-    gvlhdrohhrghenucfkphepkeefrdekiedrkeelrddutdejnecurfgrrhgrmhepmhgrihhl
-    fhhrohhmpehgrhgvgheskhhrohgrhhdrtghomhenucevlhhushhtvghrufhiiigvpedt
-X-ME-Proxy: <xmx:WuNGXEZmuJzrhJmpdmo4DftS1GNAVY4hxdQ3k2ahWEg_L2LNpcUuww>
-    <xmx:WuNGXET_YBZ94SexOC12czXtlfxYGc1JHzkthQYcKdfd0lbUTRjsWg>
-    <xmx:WuNGXE1e_XaMznUwwsEOo2QH-W4O20bT5mXRouw0tyBCpfyPrbTrXg>
-    <xmx:W-NGXBgkHpbk-hNkxyJMPqRotN4lf8mqHx1-lQQHqJN9wkQHcVD_dQ>
-Received: from localhost (5356596b.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 465ED100E5;
-        Tue, 22 Jan 2019 04:33:14 -0500 (EST)
-Date:   Tue, 22 Jan 2019 10:33:13 +0100
-From:   Greg KH <greg@kroah.com>
-To:     Kamil Konieczny <k.konieczny@partner.samsung.com>
-Cc:     linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        stable@vger.kernel.org
-Subject: Re: [PATCH v5 1/5] clk: samsung: exynos5433: fix typo in imem divider
-Message-ID: <20190122093313.GA21774@kroah.com>
-References: <20190122090232.29194-1-k.konieczny@partner.samsung.com>
- <CGME20190122090249eucas1p161cfc1364fb8ee76d2d04383935e8f3b@eucas1p1.samsung.com>
- <20190122090232.29194-2-k.konieczny@partner.samsung.com>
+        id S1727604AbfAVJmM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Jan 2019 04:42:12 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:35532 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727244AbfAVJmM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Jan 2019 04:42:12 -0500
+Received: by mail-lj1-f195.google.com with SMTP id x85-v6so20026120ljb.2;
+        Tue, 22 Jan 2019 01:42:09 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=DDtFklFYG/ucGG4/0fj0M8lNOllj0tgEOi+Jyo81gsw=;
+        b=DFpToFI7M1QpdLOiYys+yaCWzVWnNKg+7ZoEK6b/PfgklkhxO6x91G20yW0q1Ch+yi
+         cTqpIDLcIgU9TqMwkOSYzCbozqVwccmJA8kYMVSyQ5xCCB34RFgawBe6KJQEe5j1nFws
+         cNQxgvPoSBeuV13/S6ht8YpmMgGPoWkJPs1qHkPP5MS0Rw49uuWs/LAJAWI8M1umdnmN
+         gOn3J1WN8YNt74GF5ciO+tcRK5NldcQcbvKTcr3m8GHXkYUOhNfQDt42YpQbIjgFhALR
+         mHj0V8RINiChumd4K1on/g9ybOqHuuxx7MdQq+wMkPBTlUOr1VAkY3Fsfivp8IYVxKpx
+         BX+Q==
+X-Gm-Message-State: AJcUukcwFxVEhIcT1QJO7HTd6drjDmCzVxzMPYLBVlrHuIDCIPXr/fTg
+        b3RjDZLE6W1xEo+aPkdcyrErgVIu
+X-Google-Smtp-Source: ALg8bN4Iq81GfF8ijl7WbioEzJ2Q06IeBbuckLX7lN7FNdQlY4rLZVkAxWTikNHSdSt1q98sdN+Vpw==
+X-Received: by 2002:a2e:8855:: with SMTP id z21-v6mr31509ljj.191.1548150128534;
+        Tue, 22 Jan 2019 01:42:08 -0800 (PST)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id h21sm2792721lfk.41.2019.01.22.01.42.06
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 22 Jan 2019 01:42:07 -0800 (PST)
+Date:   Tue, 22 Jan 2019 11:41:53 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
+Cc:     lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        lgirdwood@gmail.com, broonie@kernel.org,
+        gregkh@linuxfoundation.org, rafael@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        sre@kernel.org, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
+        linux@roeck-us.net, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
+Subject: [RFC PATCH v1 00/13] support ROHM BD70528 PMIC
+Message-ID: <cover.1548149337.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190122090232.29194-2-k.konieczny@partner.samsung.com>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 10:02:28AM +0100, Kamil Konieczny wrote:
-> Fix typo in imem clock divider 200 switched with 266.
-> 
-> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
-> ---
->  drivers/clk/samsung/clk-exynos5433.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+Patch series introducing support for ROHM BD70528 PMIC
 
-<formletter>
+Please note that patch 2 breaks compilation without patches 3 and 4
 
-This is not the correct way to submit patches for inclusion in the
-stable kernel tree.  Please read:
-    https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
-for how to do this properly.
+ROHM BD70528 is a programmable Power Management IC for battery
+powered 'ultra low power' systems like the pre-announced NXP
+i.MX7 ULP. This patch series introduces support for the PMIC.
 
-</formletter>
+I send this a RFC now as I would like to receive comments from
+Lee, Mark and Stephen regarding splitting the existing
+include/linux/mfd/bd718x7.h into ROHM generic and chip specific
+portions. Benefit is that for example the clk sub-driver does
+not need to be aware of chip specific structure(s) (struct
+bd718x7 and struct bd70528) as it only needs to derefernce the
+generic struct rohm_regmap_dev. Thus same clk subdriver can
+support both the bd718x7 and bd70528 as long as MFD driver
+data has this generic structure in the beginning of allocated
+data. But knowing the bd718x7 driver is already in upstream,
+it might be good if this change went through single tree, right?
+
+Another 'RFC' item is 'main register support' for regmap-irq.
+This has been initially discussed with Mark in these mail threads
+
+Option 1
+https://lore.kernel.org/lkml/20181217185014.GH27909@sirena.org.uk/
+
+Option 2
+https://lore.kernel.org/lkml/20181218085803.GD2477@localhost.localdomain/
+
+But I think it is Ok to show it to wider audience with this real
+usage example.
+
+RTC block of the bd70528 can support 'wake' irq which wakes PMIC
+from standby state. Wake irq's can be armed to wake up system up
+to 24 hours from arming. bd70528 can also generate alarm interrupts
+which can be armed to occur years after triggering. The RTC driver
+does always arm both the waker and alarm irqs and does not utilize
+longer period of alarm interrupts. All the RTC timers are limited
+to occur within the next 24 hours. Any suggestions on more elegant
+timer support are welcome =)
+
+GPIO portion of bd70528 driver adds I/O support for driving GPIO
+pins or reading the state. The interrupt functionality is provided
+by regmap-irq. Current GPIO driver is not aware of whether the pin(s)
+are used for I/O or interrupts and it is up-to driver user to
+ensure there is no misconfiguration or "double use".
+
+Currently only MFD core, clk, RTC and regulator portions are
+somehow tested. The RFC series also include initial gpio, power-supply
+and watchdog patches in order to provide better overview on chip
+and to collect initial feedback. Reset and ADC are not supported by
+this series.
+
+Patch 1:
+	regmap-irq, 'main status register support'. See discussion
+	https://lore.kernel.org/lkml/20181217185014.GH27909@sirena.org.uk/
+Patch 2:
+	split the bd718x7.h to generic and chip specific portions.
+	(breaks compilation without patch 3 and 4)
+Patch 3:
+	adapt bd718x7.h changes to bd718x7 regulator driver
+Patch 4:
+	adapt bd718x7.h changes to bd718x7 clk driver
+Patch 5:
+	add MFD core support for bd70528
+Patch 6:
+	support bd70528 clk using bd718x7 clk driver
+Patch 7:
+	document DT bindings for BD70528
+Patch 8:
+	support bd70528 regulators
+Patch 9:
+	document regulator DT bindings for BD70528
+Patch 10:
+	support BD70528 GPIO block
+Patch 11:
+	support BD70528 RTC
+Patch 12:
+	support BD70528 battery charger
+Patch 13:
+	support BD70528 watchdog
+
+This patch series is based on Mark's regulator/for-next branch
+
+---
+
+Matti Vaittinen (13):
+  regmap: regmap-irq: Add main status register support
+  mfd: bd718x7.h split to ROHM common and bd718x7 specific parts
+  regulator: bd718x7 use chip specific and generic data structs
+  clk: bd718x7: use chip specific and generic data structs
+  mfd: bd70528: Support ROHM bd70528 PMIC - core
+  clk: bd718x7: Support ROHM BD70528 clk block
+  devicetree: bindings: Document first ROHM BD70528 bindings
+  regulator: bd70528: Support ROHM BD70528 regulator block
+  devicetree: bindings: ROHM bd70528 regulator bindings
+  gpio: Initial support for ROHM bd70528 GPIO block
+  rtc: bd70528: Initial support for ROHM bd70528 RTC
+  power: supply: Initial support for ROHM BD70528 PMIC charger block
+  watchdog: bd70528: Initial support for ROHM BD70528 watchdog block
+
+ .../devicetree/bindings/mfd/rohm,bd70528-pmic.txt  | 104 ++++
+ .../bindings/regulator/rohm,bd70528-regulator.txt  |  68 +++
+ drivers/base/regmap/regmap-irq.c                   |  99 ++-
+ drivers/clk/Kconfig                                |   6 +-
+ drivers/clk/clk-bd718x7.c                          |  25 +-
+ drivers/gpio/Kconfig                               |  11 +
+ drivers/gpio/Makefile                              |   1 +
+ drivers/gpio/gpio-bd70528.c                        | 192 ++++++
+ drivers/mfd/Kconfig                                |  17 +
+ drivers/mfd/Makefile                               |   1 +
+ drivers/mfd/rohm-bd70528.c                         | 409 +++++++++++++
+ drivers/mfd/rohm-bd718x7.c                         |  23 +-
+ drivers/power/supply/Kconfig                       |   9 +
+ drivers/power/supply/Makefile                      |   1 +
+ drivers/power/supply/bd70528-charger.c             | 670 +++++++++++++++++++++
+ drivers/regulator/Kconfig                          |  11 +
+ drivers/regulator/Makefile                         |   1 +
+ drivers/regulator/bd70528-regulator.c              | 290 +++++++++
+ drivers/regulator/bd718x7-regulator.c              |  22 +-
+ drivers/rtc/Kconfig                                |   8 +
+ drivers/rtc/Makefile                               |   1 +
+ drivers/rtc/rtc-bd70528.c                          | 439 ++++++++++++++
+ drivers/watchdog/Kconfig                           |  12 +
+ drivers/watchdog/Makefile                          |   1 +
+ drivers/watchdog/bd70528_wdt.c                     | 161 +++++
+ include/linux/mfd/rohm-bd70528.h                   | 392 ++++++++++++
+ include/linux/mfd/rohm-bd718x7.h                   |  22 +-
+ include/linux/mfd/rohm-generic.h                   |  20 +
+ include/linux/regmap.h                             |  31 +
+ 29 files changed, 2998 insertions(+), 49 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd70528-pmic.txt
+ create mode 100644 Documentation/devicetree/bindings/regulator/rohm,bd70528-regulator.txt
+ create mode 100644 drivers/gpio/gpio-bd70528.c
+ create mode 100644 drivers/mfd/rohm-bd70528.c
+ create mode 100644 drivers/power/supply/bd70528-charger.c
+ create mode 100644 drivers/regulator/bd70528-regulator.c
+ create mode 100644 drivers/rtc/rtc-bd70528.c
+ create mode 100644 drivers/watchdog/bd70528_wdt.c
+ create mode 100644 include/linux/mfd/rohm-bd70528.h
+ create mode 100644 include/linux/mfd/rohm-generic.h
+
+-- 
+2.14.3
+
+
+-- 
+Matti Vaittinen
+ROHM Semiconductors
+
+~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
