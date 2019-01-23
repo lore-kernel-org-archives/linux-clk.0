@@ -2,61 +2,53 @@ Return-Path: <SRS0=4/Ea=P7=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC326C282C0
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Jan 2019 09:51:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BEE9C282C0
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Jan 2019 09:56:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8EB320861
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Jan 2019 09:51:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 39AF420861
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Jan 2019 09:56:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="GUSd1M80"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="PcXucjwg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727098AbfAWJv2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 23 Jan 2019 04:51:28 -0500
-Received: from kirsty.vergenet.net ([202.4.237.240]:50777 "EHLO
+        id S1727486AbfAWJ4j (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 23 Jan 2019 04:56:39 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:50880 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727069AbfAWJv2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Jan 2019 04:51:28 -0500
+        with ESMTP id S1727438AbfAWJ4W (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Jan 2019 04:56:22 -0500
 Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 31C4525BE34;
-        Wed, 23 Jan 2019 20:51:25 +1100 (AEDT)
+        by kirsty.vergenet.net (Postfix) with ESMTPA id EAB1925BE34;
+        Wed, 23 Jan 2019 20:56:19 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
-        t=1548237085; bh=kJEmpwgYIqLVXkxKYtDYfz8hAU3xX2rKbr704AYnv4I=;
+        t=1548237380; bh=cLK9HBm/A+HoM2Oo/n20OntBmqwDQc2AoTGcbfVHtps=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GUSd1M80mOrdORfzTFghRfZEriFrd4+/9k/y6/lp+8bmFk2r1thD9npA2xCJbW/iT
-         CJMwA4S3K/5Opv/QruXc/CDQoA0O+h8QrIU25h/x3a0/o0PZFjrVbAXL10eWbfvv2X
-         K/FG3Mh8xMqQ0AQMbPUHWJqkVSaWTZMOcLyrMqqE=
+        b=PcXucjwgNuAloivWc+gDiiaNs6G3P7lP9MKdx+1sbpHhKe/VALM34EH3XagSiOHCm
+         N0iwUA0aem4Hogf3biREDuE+pxsKfKyA1qxsWMEUynhMUiCtEv6D7VPhu6mEKujw3U
+         27GkwaAJFMIgVrG2rAqf8RV7N/llxQUA54IK1XiM=
 Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 55100940471; Wed, 23 Jan 2019 10:51:23 +0100 (CET)
-Date:   Wed, 23 Jan 2019 10:51:23 +0100
+        id 20406940471; Wed, 23 Jan 2019 10:56:18 +0100 (CET)
+Date:   Wed, 23 Jan 2019 10:56:18 +0100
 From:   Simon Horman <horms@verge.net.au>
-To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc:     Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>, linux-can@vger.kernel.org,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 2/3] arm64: dts: renesas: r8a774a1: Add clkp2 clock to
- CAN nodes
-Message-ID: <20190123095122.l3engeuwx6qr5lzc@verge.net.au>
-References: <1547736856-16539-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1547736856-16539-3-git-send-email-fabrizio.castro@bp.renesas.com>
- <20190118121353.3mb44a7rmmp2ru5d@verge.net.au>
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH] clk: renesas: r8a774c0: Correct parent clock of DU
+Message-ID: <20190123095617.vxbw3qnup4evjkj6@verge.net.au>
+References: <20190121131410.21137-1-geert+renesas@glider.be>
+ <CAMuHMdVt6kT30K2GTNU__B7px1O_N-oT-S_rLXi9MfngsrPHgg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190118121353.3mb44a7rmmp2ru5d@verge.net.au>
+In-Reply-To: <CAMuHMdVt6kT30K2GTNU__B7px1O_N-oT-S_rLXi9MfngsrPHgg@mail.gmail.com>
 Organisation: Horms Solutions BV
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-clk-owner@vger.kernel.org
@@ -64,19 +56,14 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Jan 18, 2019 at 01:13:53PM +0100, Simon Horman wrote:
-> On Thu, Jan 17, 2019 at 02:54:15PM +0000, Fabrizio Castro wrote:
-> > According to the latest information, clkp2 is available on RZ/G2.
-> > Modify CAN0 and CAN1 nodes accordingly.
-> > 
-> > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> > Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
+On Mon, Jan 21, 2019 at 02:15:07PM +0100, Geert Uytterhoeven wrote:
+> On Mon, Jan 21, 2019 at 2:14 PM Geert Uytterhoeven
+> <geert+renesas@glider.be> wrote:
+> > According to the RZ/G Series, 2nd Generation Hardware Manual Rev 0.61,
+> > the parent clock of the DU module clocks on RZ/G2 is S1D1.
 > 
-> Thanks,
-> 
-> This looks fine to me but I will wait to see if there are other reviews
-> before applying.
-> 
-> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+> Oops, "RZ/G2E".
 
-Thanks again, applied for v5.1.
+That aside,
+
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
