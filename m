@@ -1,121 +1,71 @@
-Return-Path: <SRS0=Mnuj=P6=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=4/Ea=P7=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06E75C282C3
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Jan 2019 22:37:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CD64C282C3
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Jan 2019 01:00:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9BF920866
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Jan 2019 22:37:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548196651;
-	bh=oEL/yInKmSXM4cE27r6QqJaR0pqECWFDAFU8BfdRiWk=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=MLXYFsDTcH8q1V2/05D4cT0yNY/lbjWT+D3uvRp+qhkBnNHhuhlzRnoLF9Hms27+6
-	 82F7eX7xDfzCUajRZ49FXFGzUMAsSuxp9ScKVMq8KVAs9wfdl6zj/yoVaso9sepnAC
-	 d0LsTbmLASpZWNLx/EgralWR8WYrNE2TJChbx0D4=
+	by mail.kernel.org (Postfix) with ESMTP id 42FB921726
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Jan 2019 01:00:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726874AbfAVWhb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Jan 2019 17:37:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42980 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726175AbfAVWhb (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 22 Jan 2019 17:37:31 -0500
-Received: from mail.kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9596E20866;
-        Tue, 22 Jan 2019 22:37:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548196650;
-        bh=oEL/yInKmSXM4cE27r6QqJaR0pqECWFDAFU8BfdRiWk=;
-        h=From:To:Cc:Subject:Date:From;
-        b=DEJQN+TI0EST0C3bQafw2Q1s3jR8f5AjYqjZ7GEtzvqhCNtPZa61tAThpPRPrkqbz
-         SuNiONfYbBfkgZVpjpYG6baMP0/fB7Jv/hN+n7a+oXa2A49ZvW3ojWqYTOZKFTPzsb
-         Fg4qRK5MihHT2zminQkvrN3pLXXZhc9kSUFJGUcw=
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] clk fixes for v5.0-rc3
-Date:   Tue, 22 Jan 2019 14:37:29 -0800
-Message-Id: <20190122223729.95720-1-sboyd@kernel.org>
-X-Mailer: git-send-email 2.20.1.321.g9e740568ce-goog
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1726724AbfAWBAw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Jan 2019 20:00:52 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34342 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725985AbfAWBAv (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 22 Jan 2019 20:00:51 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 69AD115AB;
+        Tue, 22 Jan 2019 17:00:51 -0800 (PST)
+Received: from localhost.localdomain (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AAE253F5C1;
+        Tue, 22 Jan 2019 17:00:49 -0800 (PST)
+From:   Andre Przywara <andre.przywara@arm.com>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@googlegroups.com,
+        linux-clk@vger.kernel.org, Jagan Teki <jagan@openedev.com>
+Subject: [PATCH] clk: sunxi: A31: Fix wrong AHB gate number
+Date:   Wed, 23 Jan 2019 00:59:11 +0000
+Message-Id: <20190123005911.27913-1-andre.przywara@arm.com>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
+According to the manual the gate clock for MMC3 is at bit 11, and NAND1
+is controlled by bit 12.
 
-  Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
+Fix the gate bit definitions in the clock driver.
 
-are available in the Git repository at:
+Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+---
+ drivers/clk/sunxi-ng/ccu-sun6i-a31.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
-
-for you to fetch changes up to b488517b28a47d16b228ce8dcf07f5cb8e5b3dc5:
-
-  clk: socfpga: stratix10: fix naming convention for the fixed-clocks (2019-01-15 12:58:38 -0800)
-
-----------------------------------------------------------------
-This is a sort of random collection of clk fixes that have come in since
-the merge window.
-
- - Handful of memory allocation and potentially bad pointer usage fixes
-
- - JSON format was incorrect for clk_dump because it missed a comma
-
- - Two Kconfig fixes, one duplicate and one missing select line
-
- - Compiler warning fix for the VC5 clk driver
-
- - Name and rate fixes for PLLs in the stratix10 driver so it can
-   properly detect PLL rates and parents
-
-----------------------------------------------------------------
-Abel Vesa (1):
-      clk: imx: Remove Kconfig duplicate include
-
-Dan Carpenter (1):
-      clk: tegra: dfll: Fix a potential Oop in remove()
-
-Dinh Nguyen (2):
-      clk: socfpga: stratix10: fix rate calculation for pll clocks
-      clk: socfpga: stratix10: fix naming convention for the fixed-clocks
-
-Gustavo A. R. Silva (1):
-      clk: zynqmp: Fix memory allocation in zynqmp_clk_setup
-
-Lubomir Rintel (1):
-      clk: sysfs: fix invalid JSON in clk_dump
-
-Marc Gonzalez (1):
-      clk: qcom: Select QCOM_GDSC with MSM_GCC_8998
-
-Marek Vasut (1):
-      clk: vc5: Abort clock configuration without upstream clock
-
-Wei Yongjun (1):
-      clk: imx: fix potential NULL dereference in imx8qxp_lpcg_clk_probe()
-
- drivers/clk/Kconfig                        |  1 -
- drivers/clk/clk-versaclock5.c              |  4 +++-
- drivers/clk/clk.c                          |  2 +-
- drivers/clk/imx/clk-imx8qxp-lpcg.c         |  2 ++
- drivers/clk/qcom/Kconfig                   |  1 +
- drivers/clk/socfpga/clk-pll-s10.c          |  2 +-
- drivers/clk/socfpga/clk-s10.c              | 20 ++++++++++----------
- drivers/clk/tegra/clk-tegra124-dfll-fcpu.c |  4 +++-
- drivers/clk/zynqmp/clkc.c                  |  4 ++--
- 9 files changed, 23 insertions(+), 17 deletions(-)
-
+diff --git a/drivers/clk/sunxi-ng/ccu-sun6i-a31.c b/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
+index 3b97f60540ad..609970c0b666 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
++++ b/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
+@@ -264,9 +264,9 @@ static SUNXI_CCU_GATE(ahb1_mmc1_clk,	"ahb1-mmc1",	"ahb1",
+ static SUNXI_CCU_GATE(ahb1_mmc2_clk,	"ahb1-mmc2",	"ahb1",
+ 		      0x060, BIT(10), 0);
+ static SUNXI_CCU_GATE(ahb1_mmc3_clk,	"ahb1-mmc3",	"ahb1",
+-		      0x060, BIT(12), 0);
++		      0x060, BIT(11), 0);
+ static SUNXI_CCU_GATE(ahb1_nand1_clk,	"ahb1-nand1",	"ahb1",
+-		      0x060, BIT(13), 0);
++		      0x060, BIT(12), 0);
+ static SUNXI_CCU_GATE(ahb1_nand0_clk,	"ahb1-nand0",	"ahb1",
+ 		      0x060, BIT(13), 0);
+ static SUNXI_CCU_GATE(ahb1_sdram_clk,	"ahb1-sdram",	"ahb1",
 -- 
-Sent by a computer through tubes
+2.14.5
+
