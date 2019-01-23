@@ -2,70 +2,68 @@ Return-Path: <SRS0=4/Ea=P7=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CD64C282C3
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Jan 2019 01:00:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C429AC282C3
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Jan 2019 01:10:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42FB921726
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Jan 2019 01:00:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 911CC217D4
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Jan 2019 01:10:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548205804;
+	bh=76eOJnM0BGvPdZb2ExZhHYObV3tK85fef0rUMWzl3y0=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
+	b=UcFxZcJXykGgXlNnv+qdADcPOx6A4xlp1IWJYHteu37FZSjavyfGkKgOCjjTuBf5/
+	 I1cFmpkHvaaIzn89LeRdQ0YwgAGHBG2Ai03oIACOvghLjVYmYov8mly6fbEpcfcUgX
+	 T0RNSqJXrqb5BLUZR9uT/QXLVFYyceK3ve1CoWcg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726724AbfAWBAw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Jan 2019 20:00:52 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34342 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725985AbfAWBAv (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 22 Jan 2019 20:00:51 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 69AD115AB;
-        Tue, 22 Jan 2019 17:00:51 -0800 (PST)
-Received: from localhost.localdomain (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AAE253F5C1;
-        Tue, 22 Jan 2019 17:00:49 -0800 (PST)
-From:   Andre Przywara <andre.przywara@arm.com>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>,
+        id S1726898AbfAWBKE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Jan 2019 20:10:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42408 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726802AbfAWBKE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 22 Jan 2019 20:10:04 -0500
+Subject: Re: [GIT PULL] clk fixes for v5.0-rc3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548205803;
+        bh=76eOJnM0BGvPdZb2ExZhHYObV3tK85fef0rUMWzl3y0=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=NzqdK37PI0/i0grvIwGIcL1B/hT7qAiVYDbO0v+n8c2pkAyz3D4iah7Y6cd/0PALE
+         rze4h/BqSCOFgwJJYlsaSnmcbv9wMEW6Y/mX8ipaq2wGVI6/y6UJkMyCpQ3h/7ae8m
+         YLcQT3ezYUPhZOO2mdPwC/BZzXtxyq8d7s4dLmTY=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20190122223729.95720-1-sboyd@kernel.org>
+References: <20190122223729.95720-1-sboyd@kernel.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20190122223729.95720-1-sboyd@kernel.org>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git
+ tags/clk-fixes-for-linus
+X-PR-Tracked-Commit-Id: b488517b28a47d16b228ce8dcf07f5cb8e5b3dc5
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 0b0d4be6b4880c7199d41afe4d9a3f20f47fd9bb
+Message-Id: <154820580349.10150.7503518216170035889.pr-tracker-bot@kernel.org>
+Date:   Wed, 23 Jan 2019 01:10:03 +0000
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@googlegroups.com,
-        linux-clk@vger.kernel.org, Jagan Teki <jagan@openedev.com>
-Subject: [PATCH] clk: sunxi: A31: Fix wrong AHB gate number
-Date:   Wed, 23 Jan 2019 00:59:11 +0000
-Message-Id: <20190123005911.27913-1-andre.przywara@arm.com>
-X-Mailer: git-send-email 2.14.1
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-According to the manual the gate clock for MMC3 is at bit 11, and NAND1
-is controlled by bit 12.
+The pull request you sent on Tue, 22 Jan 2019 14:37:29 -0800:
 
-Fix the gate bit definitions in the clock driver.
+> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
 
-Signed-off-by: Andre Przywara <andre.przywara@arm.com>
----
- drivers/clk/sunxi-ng/ccu-sun6i-a31.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/0b0d4be6b4880c7199d41afe4d9a3f20f47fd9bb
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun6i-a31.c b/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
-index 3b97f60540ad..609970c0b666 100644
---- a/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
-@@ -264,9 +264,9 @@ static SUNXI_CCU_GATE(ahb1_mmc1_clk,	"ahb1-mmc1",	"ahb1",
- static SUNXI_CCU_GATE(ahb1_mmc2_clk,	"ahb1-mmc2",	"ahb1",
- 		      0x060, BIT(10), 0);
- static SUNXI_CCU_GATE(ahb1_mmc3_clk,	"ahb1-mmc3",	"ahb1",
--		      0x060, BIT(12), 0);
-+		      0x060, BIT(11), 0);
- static SUNXI_CCU_GATE(ahb1_nand1_clk,	"ahb1-nand1",	"ahb1",
--		      0x060, BIT(13), 0);
-+		      0x060, BIT(12), 0);
- static SUNXI_CCU_GATE(ahb1_nand0_clk,	"ahb1-nand0",	"ahb1",
- 		      0x060, BIT(13), 0);
- static SUNXI_CCU_GATE(ahb1_sdram_clk,	"ahb1-sdram",	"ahb1",
+Thank you!
+
 -- 
-2.14.5
-
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
