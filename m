@@ -2,327 +2,277 @@ Return-Path: <SRS0=VLoV=QA=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-9.4 required=3.0 tests=DATE_IN_PAST_12_24,
+	DKIMWL_WL_HIGH,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FCB6C282C3
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 09:10:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30D18C282C3
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 09:58:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B45920855
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 09:10:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E9727218AC
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 09:58:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548323894;
+	bh=RPHncWLIN/FNB1DG7EHuw294rJOX1+5JTql3C4wJ/U4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=a74N3v7kTQByOhVlUl3eJOQ+hkqs3VRN9rTwRgw640VQC8ET2phYwZP6Waw2R0WHX
+	 Ox3/TOQBy1u8+mkF7H+bMg8DyBkFCQkg+rSjVFC1Y2oJSkzEst+e2up4L3AcgoaJ4v
+	 N6XL1h/MShy5cPorOd43UKkXa7AEigfSS0ttgHss=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727345AbfAXJKI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Jan 2019 04:10:08 -0500
-Received: from mail-sh.amlogic.com ([58.32.228.43]:37912 "EHLO
-        mail-sh.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726997AbfAXJKI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Jan 2019 04:10:08 -0500
-Received: from [10.18.29.210] (10.18.29.210) by mail-sh.amlogic.com
- (10.18.11.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1591.10; Thu, 24 Jan
- 2019 17:10:47 +0800
-Subject: Re: [PATCH v9 1/4] clk: meson: add one based divider support for sclk
- divider
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-CC:     Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Yixun Lan <yixun.lan@amlogic.com>,
-        Liang Yang <liang.yang@amlogic.com>,
-        Jian Hu <jian.hu@amlogic.com>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Hanjie Lin <hanjie.lin@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-References: <1546955444-7549-1-git-send-email-jianxin.pan@amlogic.com>
- <1546955444-7549-2-git-send-email-jianxin.pan@amlogic.com>
- <024e1206ad8c103ef67a72fb2a48cdd5ec634a12.camel@baylibre.com>
-From:   Jianxin Pan <jianxin.pan@amlogic.com>
-Message-ID: <609bae99-03d4-c338-a594-efae037ebac7@amlogic.com>
-Date:   Thu, 24 Jan 2019 17:10:47 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        id S1727548AbfAXJ6N (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Jan 2019 04:58:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49498 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726986AbfAXJ6L (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 24 Jan 2019 04:58:11 -0500
+Received: from earth.universe (dyndsl-037-138-185-084.ewe-ip-backbone.de [37.138.185.84])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 09724218AD;
+        Thu, 24 Jan 2019 09:58:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548323890;
+        bh=RPHncWLIN/FNB1DG7EHuw294rJOX1+5JTql3C4wJ/U4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ugbaiosBoSEe2AMlM1X/Lb9n/cbiaOS9/d0pJ/DXfB/6MsegKPQ4wrYXa9+34QKKP
+         gXvve2KTqAnk6COP9237RxUsm2KyAA5kB3SNMp4z6ydxpwp6MJ4zVZpiNV+WDKESCE
+         tLNoIZogu7RKrU9Ldi/0W8PcQPMOPamyx+JlDWGY=
+Received: by earth.universe (Postfix, from userid 1000)
+        id 762B43C08DE; Wed, 23 Jan 2019 18:47:28 +0100 (CET)
+Date:   Wed, 23 Jan 2019 18:47:28 +0100
+From:   Sebastian Reichel <sre@kernel.org>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     Guenter Roeck <linux@roeck-us.net>, mazziesaccount@gmail.com,
+        lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        lgirdwood@gmail.com, broonie@kernel.org,
+        gregkh@linuxfoundation.org, rafael@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        a.zummo@towertech.it, alexandre.belloni@bootlin.com,
+        wim@linux-watchdog.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
+Subject: Re: [RFC PATCH v1 13/13] watchdog: bd70528: Initial support for ROHM
+ BD70528 watchdog block
+Message-ID: <20190123174728.uu7zhno5xea2bga7@earth.universe>
+References: <cover.1548149337.git.matti.vaittinen@fi.rohmeurope.com>
+ <ec70833179d1953dbc91e01901b79d3319ff013d.1548149337.git.matti.vaittinen@fi.rohmeurope.com>
+ <20190122154750.GB1705@roeck-us.net>
+ <20190122171023.GC2559@localhost.localdomain>
+ <20190122174056.GB4964@roeck-us.net>
+ <20190122180309.GD2559@localhost.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <024e1206ad8c103ef67a72fb2a48cdd5ec634a12.camel@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.18.29.210]
-X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh.amlogic.com
- (10.18.11.5)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="yuldro3lnu75a5w4"
+Content-Disposition: inline
+In-Reply-To: <20190122180309.GD2559@localhost.localdomain>
+User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Jerome,
 
-On 2019/1/22 17:25, Jerome Brunet wrote:
-> On Tue, 2019-01-08 at 21:50 +0800, Jianxin Pan wrote:
->> When CLK_DIVIDER_ONE_BASED flag is set, the sclk divider will be:
->> one based divider (div = val), and zero value gates the clock
->>
->> Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
->> ---
->>  drivers/clk/meson/Makefile     |  3 ++-
->>  drivers/clk/meson/clkc-audio.h |  8 ------
->>  drivers/clk/meson/clkc.h       | 10 ++++++-
->>  drivers/clk/meson/sclk-div.c   | 59 ++++++++++++++++++++++++++++-----------
->> ---
->>  4 files changed, 50 insertions(+), 30 deletions(-)
->>
->> diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
->> index a849aa8..acd8694 100644
->> --- a/drivers/clk/meson/Makefile
->> +++ b/drivers/clk/meson/Makefile
->> @@ -4,7 +4,8 @@
->>  
->>  obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-pll.o clk-mpll.o clk-phase.o vid-
->> pll-div.o
->>  obj-$(CONFIG_COMMON_CLK_AMLOGIC) += clk-input.o
->> -obj-$(CONFIG_COMMON_CLK_AMLOGIC_AUDIO)	+= clk-triphase.o sclk-div.o
->> +obj-$(CONFIG_COMMON_CLK_AMLOGIC) += sclk-div.o
->> +obj-$(CONFIG_COMMON_CLK_AMLOGIC_AUDIO) += clk-triphase.o
->>  obj-$(CONFIG_COMMON_CLK_MESON_AO) += meson-aoclk.o
->>  obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
->>  obj-$(CONFIG_COMMON_CLK_GXBB)	 += gxbb.o gxbb-aoclk.o gxbb-aoclk-
->> 32k.o
->> diff --git a/drivers/clk/meson/clkc-audio.h b/drivers/clk/meson/clkc-audio.h
->> index 0a7c157..286ff12 100644
->> --- a/drivers/clk/meson/clkc-audio.h
->> +++ b/drivers/clk/meson/clkc-audio.h
->> @@ -15,14 +15,6 @@ struct meson_clk_triphase_data {
->>  	struct parm ph2;
->>  };
->>  
->> -struct meson_sclk_div_data {
->> -	struct parm div;
->> -	struct parm hi;
->> -	unsigned int cached_div;
->> -	struct clk_duty cached_duty;
->> -};
->> -
->>  extern const struct clk_ops meson_clk_triphase_ops;
->> -extern const struct clk_ops meson_sclk_div_ops;
->>  
->>  #endif /* __MESON_CLKC_AUDIO_H */
->> diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
->> index 6183b22..00b3320 100644
->> --- a/drivers/clk/meson/clkc.h
->> +++ b/drivers/clk/meson/clkc.h
->> @@ -27,6 +27,14 @@ struct parm {
->>  	u8	width;
->>  };
->>  
->> +struct meson_sclk_div_data {
->> +	struct parm div;
->> +	struct parm hi;
->> +	unsigned int cached_div;
->> +	struct clk_duty cached_duty;
->> +	u8 flags;
->> +};
->> +
->>  static inline unsigned int meson_parm_read(struct regmap *map, struct parm
->> *p)
->>  {
->>  	unsigned int val;
->> @@ -118,10 +126,10 @@ struct clk_regmap _name = {				
->> 		\
->>  extern const struct clk_ops meson_clk_mpll_ops;
->>  extern const struct clk_ops meson_clk_phase_ops;
->>  extern const struct clk_ops meson_vid_pll_div_ro_ops;
->> +extern const struct clk_ops meson_sclk_div_ops;
->>  
->>  struct clk_hw *meson_clk_hw_register_input(struct device *dev,
->>  					   const char *of_name,
->>  					   const char *clk_name,
->>  					   unsigned long flags);
->> -
->>  #endif /* __CLKC_H */
->> diff --git a/drivers/clk/meson/sclk-div.c b/drivers/clk/meson/sclk-div.c
->> index bc64019..a6c425b 100644
->> --- a/drivers/clk/meson/sclk-div.c
->> +++ b/drivers/clk/meson/sclk-div.c
->> @@ -4,42 +4,60 @@
->>   * Author: Jerome Brunet <jbrunet@baylibre.com>
->>   *
->>   * Sample clock generator divider:
->> - * This HW divider gates with value 0 but is otherwise a zero based
->> divider:
->> + * This HW divider gates with value 0
->>   *
->>   * val >= 1
->> - * divider = val + 1
->> + * divider = val + 1 if ONE_BASED is not set, otherwise divider = val.
->>   *
->>   * The duty cycle may also be set for the LR clock variant. The duty cycle
->>   * ratio is:
->>   *
->>   * hi = [0 - val]
->> - * duty_cycle = (1 + hi) / (1 + val)
->> + * duty_cycle = (1 + hi) / (1 + val) if ONE_BASED is not set, otherwise:
->> + * duty_cycle = hi / (1 + val)
->>   */
->>  
->> -#include "clkc-audio.h"
->> +#include "clkc.h"
->>  
->> -static inline struct meson_sclk_div_data *
->> -meson_sclk_div_data(struct clk_regmap *clk)
->> +static inline int get_reg(int val, unsigned char flag)
-> 
-> s/get_reg/sclk_get_reg
-OK, I will rename get_reg and get_value in next version.
-Thank you for the review.
-> 
->>  {
->> -	return (struct meson_sclk_div_data *)clk->data;
->> +	WARN_ON(val < 1);
-> 
-> I don't think this WARN is justified, especially since you are using this
-> function to set the hi value.
-OK, it will remove it. Thank you.
-> 
->> +	if ((flag & CLK_DIVIDER_ONE_BASED) || !val)
-> 
-> I don't like that you make a dependency on the generic divider just for this.
-> Please make your own flag like MESON_SCLK_ONE_BASED
-OK, I will define a new flag MESON_SCLK_ONE_BASED in drivers/clk/meson/clkc.h.
-> 
->> +		return val;
->> +	else
->> +		return val - 1;
->> +}
->> +
->> +static inline int get_value(int reg, unsigned char flag)
-> 
-> s/get_value/sclk_get_divider
-OK, I will rename it.
-> 
->> +{
->> +	if (flag & CLK_DIVIDER_ONE_BASED)
->> +		return reg;
->> +	else
->> +		return reg + 1;
->>  }
->>  
->> -static int sclk_div_maxval(struct meson_sclk_div_data *sclk)
->> +static inline struct meson_sclk_div_data *
->> +meson_sclk_div_data(struct clk_regmap *clk)
->>  {
->> -	return (1 << sclk->div.width) - 1;
->> +	return (struct meson_sclk_div_data *)clk->data;
->>  }
->>  
->>  static int sclk_div_maxdiv(struct meson_sclk_div_data *sclk)
->>  {
->> -	return sclk_div_maxval(sclk) + 1;
->> +	unsigned int reg = clk_div_mask(sclk->div.width);
-> 
-> same here, leave the generic divider alone.
->  
-> `(1 << sclk->div.width) - 1` was fine to get max register value.
-> 
->> +
->> +	return get_value(reg, sclk->flags);
->>  }
->>  
->>  static int sclk_div_getdiv(struct clk_hw *hw, unsigned long rate,
->>  			   unsigned long prate, int maxdiv)
->>  {
->>  	int div = DIV_ROUND_CLOSEST_ULL((u64)prate, rate);
->> +	struct clk_regmap *clk = to_clk_regmap(hw);
->> +	struct meson_sclk_div_data *sclk = meson_sclk_div_data(clk);
->> +	int mindiv = get_value(1, sclk->flags);
-> 
-> maxdiv is provided as a param while mindiv is computed inside this function.
-> let's be coherent and pick one approach.
-OK, I will compute min and max in this function both. 
-Thank you for your review.
-> 
->>  
->> -	return clamp(div, 2, maxdiv);
->> +	return clamp(div, mindiv, maxdiv);
->>  }
->>  
->>  static int sclk_div_bestdiv(struct clk_hw *hw, unsigned long rate,
->> @@ -47,7 +65,7 @@ static int sclk_div_bestdiv(struct clk_hw *hw, unsigned
->> long rate,
->>  			    struct meson_sclk_div_data *sclk)
->>  {
->>  	struct clk_hw *parent = clk_hw_get_parent(hw);
->> -	int bestdiv = 0, i;
->> +	int bestdiv = 0, i, mindiv;
->>  	unsigned long maxdiv, now, parent_now;
->>  	unsigned long best = 0, best_parent = 0;
->>  
->> @@ -64,8 +82,9 @@ static int sclk_div_bestdiv(struct clk_hw *hw, unsigned
->> long rate,
->>  	 * unsigned long in rate * i below
->>  	 */
->>  	maxdiv = min(ULONG_MAX / rate, maxdiv);
->> +	mindiv = get_value(1, sclk->flags);
->>  
->> -	for (i = 2; i <= maxdiv; i++) {
->> +	for (i = mindiv; i <= maxdiv; i++) {
->>  		/*
->>  		 * It's the most ideal case if the requested rate can be
->>  		 * divided from parent clock without needing to change
->> @@ -111,10 +130,7 @@ static void sclk_apply_ratio(struct clk_regmap *clk,
->>  					    sclk->cached_duty.num,
->>  					    sclk->cached_duty.den);
->>  
->> -	if (hi)
->> -		hi -= 1;
->> -
->> -	meson_parm_write(clk->map, &sclk->hi, hi);
->> +	meson_parm_write(clk->map, &sclk->hi, get_reg(hi, sclk->flags));
->>  }
->>  
->>  static int sclk_div_set_duty_cycle(struct clk_hw *hw,
->> @@ -145,7 +161,7 @@ static int sclk_div_get_duty_cycle(struct clk_hw *hw,
->>  	}
->>  
->>  	hi = meson_parm_read(clk->map, &sclk->hi);
->> -	duty->num = hi + 1;
->> +	duty->num = get_value(hi, sclk->flags);
->>  	duty->den = sclk->cached_div;
->>  	return 0;
->>  }
->> @@ -153,10 +169,13 @@ static int sclk_div_get_duty_cycle(struct clk_hw *hw,
->>  static void sclk_apply_divider(struct clk_regmap *clk,
->>  			       struct meson_sclk_div_data *sclk)
->>  {
->> +	unsigned int div;
->> +
->>  	if (MESON_PARM_APPLICABLE(&sclk->hi))
->>  		sclk_apply_ratio(clk, sclk);
->>  
->> -	meson_parm_write(clk->map, &sclk->div, sclk->cached_div - 1);
->> +	div = get_reg(sclk->cached_div, sclk->flags);
->> +	meson_parm_write(clk->map, &sclk->div, div);
->>  }
->>  
->>  static int sclk_div_set_rate(struct clk_hw *hw, unsigned long rate,
->> @@ -224,7 +243,7 @@ static void sclk_div_init(struct clk_hw *hw)
->>  	if (!val)
->>  		sclk->cached_div = sclk_div_maxdiv(sclk);
->>  	else
->> -		sclk->cached_div = val + 1;
->> +		sclk->cached_div = get_value(val, sclk->flags);
->>  
->>  	sclk_div_get_duty_cycle(hw, &sclk->cached_duty);
->>  }
-> 
-> 
-> .
-> 
+--yuldro3lnu75a5w4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Hi,
+
+On Tue, Jan 22, 2019 at 08:03:09PM +0200, Matti Vaittinen wrote:
+> On Tue, Jan 22, 2019 at 09:40:56AM -0800, Guenter Roeck wrote:
+> > On Tue, Jan 22, 2019 at 07:10:23PM +0200, Matti Vaittinen wrote:
+> > > On Tue, Jan 22, 2019 at 07:47:50AM -0800, Guenter Roeck wrote:
+> > > > On Tue, Jan 22, 2019 at 11:48:36AM +0200, Matti Vaittinen wrote:
+> > > > > Initial support for watchdog block included in ROHM BD70528
+> > > > > power management IC.
+> > > > >=20
+> > > > > Configurations for low power states are still to be checked.
+> > > > >=20
+> > > > > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> > > > > ---
+> > > > >  drivers/watchdog/Kconfig       |  12 +++
+> > > > >  drivers/watchdog/Makefile      |   1 +
+> > > > >  drivers/watchdog/bd70528_wdt.c | 161 +++++++++++++++++++++++++++=
+++++++++++++++
+> > > > >  3 files changed, 174 insertions(+)
+> > > > >  create mode 100644 drivers/watchdog/bd70528_wdt.c
+> > > > >=20
+> > > > > diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
+> > > > > index 57f017d74a97..f30e3a3e886e 100644
+> > > > > --- a/drivers/watchdog/Kconfig
+> > > > > +++ b/drivers/watchdog/Kconfig
+> > > > > @@ -90,6 +90,18 @@ config SOFT_WATCHDOG_PRETIMEOUT
+> > > > >  	  watchdog. Be aware that governors might affect the watchdog b=
+ecause it
+> > > > >  	  is purely software, e.g. the panic governor will stall it!
+> > > > > =20
+> > > > > +config BD70528_WATCHDOG
+> > > > > +	tristate "ROHM BD70528 PMIC Watchdog"
+> > > > > +	depends on MFD_ROHM_BD70528
+> > > > > +	select WATCHDOG_CORE
+> > > > > +	help
+> > > > > +	  Support for the watchdog in the ROHM BD70528 PMIC. Watchdog t=
+rigger
+> > > > > +	  cause system reset.
+> > > > > +
+> > > > > +	  Say Y here to include support for the ROHM BD70528 watchdog.
+> > > > > +	  Alternatively say M to compile the driver as a module,
+> > > > > +	  which will be called bd70528_wdt.
+> > > > > +
+> > > > >  config DA9052_WATCHDOG
+> > > > >  	tristate "Dialog DA9052 Watchdog"
+> > > > >  	depends on PMIC_DA9052 || COMPILE_TEST
+> > > > > diff --git a/drivers/watchdog/Makefile b/drivers/watchdog/Makefile
+> > > > > index a0917ef28e07..1ce87a3b1172 100644
+> > > > > --- a/drivers/watchdog/Makefile
+> > > > > +++ b/drivers/watchdog/Makefile
+> > > > > @@ -204,6 +204,7 @@ obj-$(CONFIG_WATCHDOG_SUN4V)		+=3D sun4v_wdt.o
+> > > > >  obj-$(CONFIG_XEN_WDT) +=3D xen_wdt.o
+> > > > > =20
+> > > > >  # Architecture Independent
+> > > > > +obj-$(CONFIG_BD70528_WATCHDOG) +=3D bd70528_wdt.o
+> > > > >  obj-$(CONFIG_DA9052_WATCHDOG) +=3D da9052_wdt.o
+> > > > >  obj-$(CONFIG_DA9055_WATCHDOG) +=3D da9055_wdt.o
+> > > > >  obj-$(CONFIG_DA9062_WATCHDOG) +=3D da9062_wdt.o
+> > > > > diff --git a/drivers/watchdog/bd70528_wdt.c b/drivers/watchdog/bd=
+70528_wdt.c
+> > > > > new file mode 100644
+> > > > > index 000000000000..e9a32566f595
+> > > > > --- /dev/null
+> > > > > +++ b/drivers/watchdog/bd70528_wdt.c
+> > > > > @@ -0,0 +1,161 @@
+> > > > > +// SPDX-License-Identifier: GPL-2.0
+> > > > > +// Copyright (C) 2018 ROHM Semiconductors
+> > > > > +// ROHM BD70528MWV watchdog driver
+> > > > > +
+> > > > > +#include <linux/bcd.h>
+> > > > > +#include <linux/kernel.h>
+> > > > > +#include <linux/mfd/rohm-bd70528.h>
+> > > > > +#include <linux/module.h>
+> > > > > +#include <linux/of.h>
+> > > > > +#include <linux/platform_device.h>
+> > > > > +#include <linux/regmap.h>
+> > > > > +#include <linux/watchdog.h>
+> > > > > +
+> > > > > +static int bd70528_wdt_set(struct bd70528 *bd70528, int enable)
+> > > > > +{
+> > > > > +	int ret;
+> > > > > +
+> > > > > +	if (bd70528->rtc_timer_lock)
+> > > > > +		mutex_lock(bd70528->rtc_timer_lock);
+> > > >=20
+> > > > This looks awkward. I don't think the if() is necessary.
+> > >=20
+> > > Right. Now when only bd70528 MFD driver uses this WDT this if is not
+> > > required.
+> > >=20
+> > That doesn't warrant the conditional. It just bloats the code.
+> > If there is only one user, the mutex will always be acquired.
+>=20
+> Yep. What I meant was that the only possible parent is bd70528 MFD
+> driver which always initializes the mutex pointer. So pointer should be
+> always set. I can imagine some other ROHM PMIC having almost identical
+> watchdog block - in which case we might want to re-use this WDT driver
+> with this PMIC. And if this PMIC has no RTC, then we may not need this
+> mutex. But this is all speculation and I will remove check - or see how
+> this changes when I see what to do with the driver's private data.
+>=20
+> > > > > +static const struct watchdog_info bd70528_wdt_info =3D {
+> > > > > +	.identity =3D "bd70528-wdt",
+> > > > > +	.options =3D WDIOF_SETTIMEOUT | WDIOF_KEEPALIVEPING | WDIOF_MAG=
+ICCLOSE,
+> > > > > +};
+> > > > > +
+> > > > > +static const struct watchdog_ops bd70528_wdt_ops =3D {
+> > > > > +	.start		=3D bd70528_wdt_start,
+> > > > > +	.stop		=3D bd70528_wdt_stop,
+> > > > > +	/*
+> > > > > +	 *  bd70528 WDT ping is same as enable. Eg, writing 'enable' to=
+ enabled
+> > > > > +	 * WDT will restart the timeout
+> > > > > +	 */
+> > > > Unnecessary comment.
+> > > >=20
+> > >=20
+> > > Ok. I will remove the comment if this is obvious to others. For me it
+> > > was not obvious. I was first writing a separate ping and start functi=
+ons
+> > > untill I realized that it is the same operation. But this was my first
+> > > WDT driver so I don't know if this is a normal for all WDTs.
+> > >=20
+> > It is documented as part of the API.
+> I'd better read the documentation then. Thanks for pointing this out.
+> I'll remove the comment.
+>=20
+> > > > > +static int bd70528_wdt_probe(struct platform_device *pdev)
+> > > > > +{
+> > > > > +	struct bd70528 *tmp;
+> > > > > +	struct bd70528 *bd70528;
+> > > > > +	int ret;
+> > > > > +
+> > > > > +	tmp =3D dev_get_drvdata(pdev->dev.parent);
+> > > > > +	if (!tmp) {
+> > > > > +		dev_err(&pdev->dev, "No MFD driver data\n");
+> > > > > +		return -EINVAL;
+> > > > > +	}
+> > > > > +	bd70528 =3D devm_kzalloc(&pdev->dev, sizeof(*bd70528), GFP_KERN=
+EL);
+> > > > > +	if (!bd70528)
+> > > > > +		return -ENOMEM;
+> > > > > +
+> > > > > +	*bd70528 =3D *tmp;
+> > > > > +	bd70528->chip.dev =3D &pdev->dev;
+> > > >=20
+> > > > This is wrong.
+> > > > You should not copy the parent's driver data but have local driver
+> > > > data as needed which then points to the parent's driver data if
+> > > > needed. I assume this is why the mutex is a pointer, but that
+> > > > just shows that the whole approach is wrong.
+> > >=20
+> > > Mutex is a pointer because we want to use same mutex from WDT and RTC.
+> > > We can sure point to parent data but then we still need our own dev
+> > > pointer. So we can have a struct with pointer to parent data and dev
+> > > pointer - but I'm not at all sure it is any clearer.
+> >=20
+> > As I said, that is wrong. To say it in plaintext, I won't accept
+> > the driver if it copies the parent's driver data. The driver should
+> > have and use its own driver data, and only maintain a pointer to
+> > its parent's driver data. And most definitely you don't want to
+> > copy and use any device data structure from the parent.
+>=20
+> Allright. At the moment the WDT driver only needs regmap pointer from
+> parent. I'm not sure if it will later need DT or "chip type" - but I
+> will change this.
+
+You probably want to use this:
+
+dev_get_regmap(pdev->dev.parent, NULL);
+
+-- Sebastian
+
+--yuldro3lnu75a5w4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlxIqK0ACgkQ2O7X88g7
++pqNGQ/+KAoHYFu1wj/LtcHF9K5Ev5qjzke4xSM82vZmQ21RTQSrYBU5N17Mk7KR
+Hl4RatrvmB2h4JbZ3huWlrE+NygB9+syPpbXW5kQh+NHMP6bm/ywrVE+7tYUT/lL
+Oi1qw42yhyZO4gqizWHbm4hKEn/avt7WmVlJnwleeOYVceuGNvcAzORQ2MTrl+Lc
+kWaSZ+eIx8Ihl6bnTSd6zfPykY3cxLvLjHmF/ISrUh26YRHRacLiLo4vu+1Suhnl
+hiaGk4hQaGO7yMTAh/TBmMhiV9IdQVKViOAwUEBMXz/b3VQJqfWU3ugbswqSOU4O
+exBgw2IJT9IktSqofpWd2i7fcfGuDO9PWkvb75+x/P0bvymzsFRZVHtTYOkipIMx
+atdUlPdk/l/y0as7OH2livgvblz2dyunrlZHWt7w0q4XHuPC1c7m3yuEfVTqFaDf
+buug8djFPkXeT5do5HQgGnLIUKSZOlWgR6pLyFUWXBpIlTaRmIVBMJ/4pH2j1zHO
+j5FroaPPmcbnnF4rMwpWMN9iE+7Kdu3eZym3+iM3Lq3XpGV7EalfaGFrkRuTNGpB
+36YcP0OatJQreRdCPo55Juw4u31oGPqsHb6WHRLTj41aNG4xL+hdd2g8maVqxTrX
+R5AWk5/T4omcA0n/rytakOT40s3M4FATFEmH/LEe6/nuwltHTkQ=
+=24nB
+-----END PGP SIGNATURE-----
+
+--yuldro3lnu75a5w4--
