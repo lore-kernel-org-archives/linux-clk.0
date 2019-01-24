@@ -2,84 +2,158 @@ Return-Path: <SRS0=VLoV=QA=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB3BBC282C3
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 20:17:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 192D3C282C3
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 20:46:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B156D218D4
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 20:17:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548361070;
-	bh=RsC7Ui+KnjKPbrJt+Jaq4H6HMWLNYRFBgEGx1KifS10=;
-	h=Subject:References:Cc:From:In-Reply-To:To:Date:List-ID:From;
-	b=x8kbjMOW0U++qKpY7niUOranqKt6+M5kQkpUCxDBVKFJFwH8ON14H+QqEnEZhg2Jg
-	 mWh2/UnexnOrgpj7y+e4wrXZe6Xm2IbOrGlX7D5k8Kz971+J4rdjlxaNIwoW5ClGmQ
-	 QJhIs2aqNdSAGJfdB39HeTP8AtOgj5HumI4ygk3M=
+	by mail.kernel.org (Postfix) with ESMTP id DDA54218D0
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 20:46:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="Hg5FfwzG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728855AbfAXURn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Jan 2019 15:17:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47630 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729694AbfAXTW4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:22:56 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2CEAE218E2;
-        Thu, 24 Jan 2019 19:22:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548357776;
-        bh=RsC7Ui+KnjKPbrJt+Jaq4H6HMWLNYRFBgEGx1KifS10=;
-        h=Subject:References:Cc:From:In-Reply-To:To:Date:From;
-        b=DfZ0oglUMnIQE++2DkcmHGEgzXg7AhWStH1Dcg5nYRhaVhq0duEJZ6Gah7Gj9dFa8
-         4UUtnAp499H5KBtdfF2XDotJEZeqHwWSN6196KEae7Wk5NDfP4SPC8B+s6PGKWLdJ8
-         afKLoTrQ9SgDrW/5BlUe+yauFRjpHX0Ko/+8ZnAs=
-Content-Type: text/plain; charset="utf-8"
+        id S1727853AbfAXUq5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Jan 2019 15:46:57 -0500
+Received: from outils.crapouillou.net ([89.234.176.41]:52230 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727664AbfAXUq5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Jan 2019 15:46:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1548362813; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=6S8WqaR8jL4inlJRV8cYTRGRLMje5ISJrfQpJ6yoSXM=;
+        b=Hg5FfwzGKF9kVKeamT12Dmllt4zC044UtiXjaNcdDL4QL0QwbK9xI3cUIZvQ8jf6ubG/GB
+        6sCS8goRmMVntSdDE8JKhrP1C/2vex0wJdYYhWimiEJEH0ZRFi4Drd6t2w1j+bn7WT8mTt
+        T6gL+ejH9KPq3VEnNDhJd+fA2lXu6F8=
+Date:   Thu, 24 Jan 2019 17:46:28 -0300
+From:   Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH v8 05/26] clocksource: Add driver for the Ingenic JZ47xx
+ OST
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        Mathieu Malaterre <malat@debian.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Ezequiel Garcia <ezequiel@collabora.co.uk>,
+        PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
+        linux-pwm@vger.kernel.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        linux-watchdog@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-clk@vger.kernel.org, od@zcrc.me,
+        Maarten ter Huurne <maarten@treewalker.org>
+Message-Id: <1548362788.3881.0@crapouillou.net>
+In-Reply-To: <154835808767.136743.14531363127962557756@swboyd.mtv.corp.google.com>
+References: <20181212220922.18759-1-paul@crapouillou.net>
+        <20181212220922.18759-6-paul@crapouillou.net>
+        <CA+7wUsxNN2SL9_7tDh0DiBAgdUwxd_osgmi=09HP7110Tm0DYQ@mail.gmail.com>
+        <128675a5-7ede-4114-a649-89a536346dc8@roeck-us.net>
+        <1548264353.3173.1@crapouillou.net> <20190123180155.GB9781@roeck-us.net>
+        <154835808767.136743.14531363127962557756@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] clk: qcom: Add MSM8976/56 Global Clock Controller (GCC) driver
-References: <65fb363366f651e42d3e97792d5990185823cbc3.camel@gmail.com>
-User-Agent: alot/0.8
-Cc:     AngeloGioacchino Del Regno <kholk11@gmail.com>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <65fb363366f651e42d3e97792d5990185823cbc3.camel@gmail.com>
-Message-ID: <154835777525.136743.6424256006615217720@swboyd.mtv.corp.google.com>
-To:     Andy Gross <andy.gross@linaro.org>,
-        AngeloGioacchino Del Regno <kholk11@gmail.com>,
-        David Brown <david.brown@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Date:   Thu, 24 Jan 2019 11:22:55 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting AngeloGioacchino Del Regno (2019-01-12 07:03:18)
-> From 50465f2a4454625aac622bb84dbecdeaf5a50904 Mon Sep 17 00:00:00 2001
-> From: "Angelo G. Del Regno" <kholk11@gmail.com>
-> Date: Sat, 12 Jan 2019 10:52:18 +0100
-> Subject: [PATCH] clk: qcom: Add MSM8976/56 Global Clock Controller (GCC)
->  driver
->=20
-> Add support for the global clock controller found on MSM8976
-> and MSM8976 SoCs.
-> Since the multimedia clocks are actually in the GCC on these
-> SoCs, this will allow drivers to probe and control basically
-> all the required clocks.
->=20
-> Signed-off-by: Angelo G. Del Regno <kholk11@gmail.com>
 
-Are you going to send out DTS bits and provide platform support? I'm not
-interested in merging the clk bits and then having to support a driver
-that never gets used.
 
-Also, is this copy/pasted from some downstream kernel sources? Would be
-good to have a pointer to that so we can compare and see if you've
-changed anything.
+Le jeu. 24 janv. 2019 =E0 16:28, Stephen Boyd <sboyd@kernel.org> a=20
+=E9crit :
+> Quoting Guenter Roeck (2019-01-23 10:01:55)
+>>  On Wed, Jan 23, 2019 at 02:25:53PM -0300, Paul Cercueil wrote:
+>>  > Hi,
+>>  >
+>>  > Le mer. 23 janv. 2019 =C3  11:31, Guenter Roeck=20
+>> <linux@roeck-us.net> a =C3=A9crit :
+>>  > >On 1/23/19 4:58 AM, Mathieu Malaterre wrote:
+>>  > >>On Wed, Dec 12, 2018 at 11:09 PM Paul Cercueil=20
+>> <paul@crapouillou.net>
+>>  > >>wrote:
+>>  > >>>
+>>  > >>>From: Maarten ter Huurne <maarten@treewalker.org>
+>>  > >>>
+>>  > >>>OST is the OS Timer, a 64-bit timer/counter with buffered=20
+>> reading.
+>>  > >>>
+>>  > >>>SoCs before the JZ4770 had (if any) a 32-bit OST; the JZ4770=20
+>> and
+>>  > >>>JZ4780 have a 64-bit OST.
+>>  > >>>
+>>  > >>>This driver will register both a clocksource and a sched_clock=20
+>> to the
+>>  > >>>system.
+>>  > >>>
+>>  > >>>Signed-off-by: Maarten ter Huurne <maarten@treewalker.org>
+>>  > >>>Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+>>  > >>>---
+>>  > >>>
+>>  > >>>Notes:
+>>  > >>>      v5: New patch
+>>  > >>>
+>>  > >>>      v6: - Get rid of SoC IDs; pass pointer to=20
+>> ingenic_ost_soc_info
+>>  > >>>as
+>>  > >>>            devicetree match data instead.
+>>  > >>>          - Use device_get_match_data() instead of the of_*=20
+>> variant
+>>  > >>>          - Handle error of dev_get_regmap() properly
+>>  > >>>
+>>  > >>>      v7: Fix section mismatch by using
+>>  > >>>builtin_platform_driver_probe()
+>>  > >>>
+>>  > >>>      v8: builtin_platform_driver_probe() does not work=20
+>> anymore in
+>>  > >>>          4.20-rc6? The probe function won't be called. Work=20
+>> around
+>>  > >>>this
+>>  > >>>          for now by using late_initcall.
+>>  > >>>
+>>  > >
+>>  > >Did anyone notice this ? Either something is wrong with the=20
+>> driver, or
+>>  > >with the kernel core. Hacking around it seems like the worst=20
+>> possible
+>>  > >"solution".
+>>  >
+>>  > I can confirm it still happens on 5.0-rc3.
+>>  >
+>>  > Just to explain what I'm doing:
+>>  >
+>>  > My ingenic-timer driver probes with builtin_platform_driver_probe=20
+>> (this
+>>  > works),
+>>  > and then calls of_platform_populate to probe its children. This=20
+>> driver,
+>>  > ingenic-ost, is one of them, and will fail to probe with
+>>  > builtin_platform_driver_probe.
+>>  >
+>>=20
+>>  The big question is _why_ it fails to probe.
+>>=20
+>=20
+> Are you sharing the device tree node between a 'normal' platform=20
+> device
+> driver and something more low level DT that marks the device's backing
+> DT node as OF_POPULATED early on? That's my only guess why it's not
+> working.
+
+I do, but I clear the OF_POPULATED flag so that it is then probed as a
+normal platform device, and it's not on this driver's node but its=20
+parent.
+=
 
