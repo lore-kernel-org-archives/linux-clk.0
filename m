@@ -2,103 +2,109 @@ Return-Path: <SRS0=VLoV=QA=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1013DC282C3
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 20:01:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6D7BC282C3
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 20:01:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE4C821726
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 20:01:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="MzCBl01/"
+	by mail.kernel.org (Postfix) with ESMTP id AF32D218D0
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 20:01:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730989AbfAXUBE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Jan 2019 15:01:04 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:33477 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730486AbfAXUA6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Jan 2019 15:00:58 -0500
-Received: by mail-pl1-f196.google.com with SMTP id z23so3393468plo.0
-        for <linux-clk@vger.kernel.org>; Thu, 24 Jan 2019 12:00:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=NM8sVvN3Te6g1rqXOdAqs2KSOeU1frtX72ddxyLNR30=;
-        b=MzCBl01/KEWGjIvWEHBS8QjD6yS7sBjuX8vMC1wntVcgcKGdBBB6xfLjy62P7oXNGc
-         ClR+2tbn6U1g2/wbTV4rignbYp91Q6e4q+1SEBY05XnGZfzPc1ZQdgQytM+d/B/78ZII
-         v2R66+PdrttXkbBTjj9YJ5wHCZPspEmS8pdlE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=NM8sVvN3Te6g1rqXOdAqs2KSOeU1frtX72ddxyLNR30=;
-        b=jJRa30lVbB53/yY2cmrm/belbP2aSO15yNSE9isonVli9WWfObbLTJzYeYBhoBtCIu
-         Eu8r3TIi+ojlRZl46+CudkCLERH5uF/NlN7+ZMhGA5v+mSvh8FkddBnoR7DwNo5zJOcL
-         iYqyipZoE7EnZSJacH744MBcNi2EMN4h9YgxR2PlqgzzMQsVKr8cg77LowIe5j1upO23
-         fMcdHeURjy2u3vV/6lzrkatL7JCBoX3h7nqMxzTY0FSzsdOhU34bEVMAzyUjtFhORpLa
-         BKswBpovl8ZPybd7O+UOsnfTcI2FGjr7VXIwlkRn/tI0QJyq2UgDPolYM6kaP0I1k67v
-         byqQ==
-X-Gm-Message-State: AJcUukdJHIt+uPYrmDN9tonguz7dRNgSQsr0d6atmdEJGml0uSDXCgmZ
-        +4VhvPUzPVfN9enp3a8MnKtinA==
-X-Google-Smtp-Source: ALg8bN4qeWnLZUxwNxKPUT5z6WnCfVKyW3VbHKtNjoOBm1gRK3mCVUtBVWmtP016p/gOy0jyHQd6dA==
-X-Received: by 2002:a17:902:2969:: with SMTP id g96mr7811174plb.295.1548360058106;
-        Thu, 24 Jan 2019 12:00:58 -0800 (PST)
-Received: from localhost.localdomain ([115.97.179.75])
-        by smtp.gmail.com with ESMTPSA id x11sm61637003pfe.72.2019.01.24.12.00.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 24 Jan 2019 12:00:57 -0800 (PST)
-From:   Jagan Teki <jagan@amarulasolutions.com>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, Chen-Yu Tsai <wens@csie.org>,
+        id S1728816AbfAXUBH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Jan 2019 15:01:07 -0500
+Received: from gateway23.websitewelcome.com ([192.185.49.179]:36637 "EHLO
+        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731562AbfAXUBH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Jan 2019 15:01:07 -0500
+X-Greylist: delayed 1239 seconds by postgrey-1.27 at vger.kernel.org; Thu, 24 Jan 2019 15:01:06 EST
+Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
+        by gateway23.websitewelcome.com (Postfix) with ESMTP id C5B73A6E3
+        for <linux-clk@vger.kernel.org>; Thu, 24 Jan 2019 13:40:26 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id mkrSgMrEp4FKpmkrSglFa2; Thu, 24 Jan 2019 13:40:26 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.130.205] (port=45760 helo=[192.168.1.76])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gmkqG-001HeQ-0I; Thu, 24 Jan 2019 13:40:26 -0600
+Subject: Re: [PATCH] clk: imx: imx7ulp: use struct_size() in kzalloc()
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-amarula@amarulasolutions.com, linux-sunxi@googlegroups.com,
-        Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v6 18/22] drm/sun4i: sun6i_mipi_dsi: Add DSI Generic short write 2 param transfer
-Date:   Fri, 25 Jan 2019 01:28:56 +0530
-Message-Id: <20190124195900.22620-19-jagan@amarulasolutions.com>
-X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
-In-Reply-To: <20190124195900.22620-1-jagan@amarulasolutions.com>
-References: <20190124195900.22620-1-jagan@amarulasolutions.com>
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20181224064025.GA9588@embeddedor.com>
+ <154835867687.136743.9650857344780789822@swboyd.mtv.corp.google.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Message-ID: <50cb397d-5e41-834d-3a6d-00e1c4efb042@embeddedor.com>
+Date:   Thu, 24 Jan 2019 13:39:10 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <154835867687.136743.9650857344780789822@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.130.205
+X-Source-L: No
+X-Exim-ID: 1gmkqG-001HeQ-0I
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.76]) [189.250.130.205]:45760
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 9
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Short transfer write support for DCS and Generic transfer types
-share similar way to process command sequence in DSI block so
-add generic write 2 param transfer type macro so-that the panels
-which are requesting similar transfer type may process properly.
 
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
----
- drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-index 9be414131460..58bda0928aef 100644
---- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-+++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-@@ -983,6 +983,7 @@ static ssize_t sun6i_dsi_transfer(struct mipi_dsi_host *host,
- 	switch (msg->type) {
- 	case MIPI_DSI_DCS_SHORT_WRITE:
- 	case MIPI_DSI_DCS_SHORT_WRITE_PARAM:
-+	case MIPI_DSI_GENERIC_SHORT_WRITE_2_PARAM:
- 		ret = sun6i_dsi_dcs_write_short(dsi, msg);
- 		break;
- 
--- 
-2.18.0.321.gffc6fa0e3
+On 1/24/19 1:37 PM, Stephen Boyd wrote:
+> Quoting Gustavo A. R. Silva (2018-12-23 22:40:25)
+>> One of the more common cases of allocation size calculations is finding
+>> the size of a structure that has a zero-sized array at the end, along
+>> with memory for some number of elements for that array. For example:
+>>
+>> struct foo {
+>>     int stuff;
+>>     void *entry[];
+>> };
+>>
+>> instance = kzalloc(sizeof(struct foo) + sizeof(void *) * count, GFP_KERNEL);
+>>
+>> Instead of leaving these open-coded and prone to type mistakes, we can
+>> now use the new struct_size() helper:
+>>
+>> instance = kzalloc(struct_size(instance, entry, count), GFP_KERNEL);
+>>
+>> This issue was detected with the help of Coccinelle.
+>>
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>> ---
+> 
+> Applied to clk-next
+> 
 
+Thanks, Stephen.
+
+--
+Gustavo
