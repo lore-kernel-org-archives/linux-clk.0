@@ -3,72 +3,97 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E879C282C3
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 19:48:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 772D5C282C3
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 19:50:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D4DE20663
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 19:48:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548359303;
-	bh=hUqTa21bLX778Lsa3+rWu7OXNXuJoqhQ2OILhGQE42A=;
-	h=Subject:References:Cc:From:In-Reply-To:To:Date:List-ID:From;
-	b=De8ItfortkUgdgyEcW08tHoA/2zHh+CYqczRCQBYLtfjYW4LsE/+WJXrXkAIo+zJ8
-	 ha4Uddd1ZMeWWJYZNIboCSkJiNPzQr7ymZJ4wlff0qOP0eIAIotcZEYoPMGIhiLsl7
-	 6KSn8xj3Re868r7A57lu2/4d5kDE8ADeZHa1Sfk0=
+	by mail.kernel.org (Postfix) with ESMTP id 487FE217D4
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 19:50:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="aqQVY80A"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732196AbfAXTsM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:48:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42738 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733246AbfAXTmR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:42:17 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A4E46218A2;
-        Thu, 24 Jan 2019 19:42:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358936;
-        bh=hUqTa21bLX778Lsa3+rWu7OXNXuJoqhQ2OILhGQE42A=;
-        h=Subject:References:Cc:From:In-Reply-To:To:Date:From;
-        b=BDugm4KXJbH4/M3rFgYt69DXGA2+iNiJ6q1EOIbpm63LSSCtSEeM2+AFlET2WgtkP
-         jsV5AFEEm8aQuTuP1zIwcikt2cmT8ReW9NPFu4LGngGpA+3+lG+rrbDLM+1v3jTnZm
-         tFtPNd0/ZxDrDlYBDxdkQgJEKw2yiruu5p28qmLc=
-Content-Type: text/plain; charset="utf-8"
+        id S1732196AbfAXTux (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Jan 2019 14:50:53 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:56572 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728243AbfAXTuw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Jan 2019 14:50:52 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0OJomKh064817;
+        Thu, 24 Jan 2019 13:50:48 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1548359448;
+        bh=rBNVR6HZYSsfAmqsDI6FSxfgBSk/4QtqmQlIv4klR8o=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=aqQVY80AQ8SMiJZdTCnyg0VZidhd4T8BueDoB5674u8vvnbeTLTl2GSBADCtI3SWW
+         4DS/YCPaJ3eP+6rJyKxSmMxXdQbmEGIUp8Zo3TsGdwpngHq0AjMvv5n5VObkUIuSqX
+         kcYD5zgcgORCMobDikjQxqnmPNfI/oT6Y6JBhOBU=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0OJomtF028107
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 24 Jan 2019 13:50:48 -0600
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 24
+ Jan 2019 13:50:48 -0600
+Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Thu, 24 Jan 2019 13:50:48 -0600
+Received: from [127.0.0.1] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0OJojRS022054;
+        Thu, 24 Jan 2019 13:50:46 -0600
+Subject: Re: [PATCH v2] clk: ti: Fix error handling in
+ ti_clk_parse_divider_data()
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+CC:     Michael Turquette <mturquette@baylibre.com>,
+        <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+References: <20190115194625.GA1074@kadam>
+ <154835786296.136743.12154336975596919287@swboyd.mtv.corp.google.com>
+From:   Tero Kristo <t-kristo@ti.com>
+Message-ID: <2d7a3290-44b3-94ad-076e-fda869480edf@ti.com>
+Date:   Thu, 24 Jan 2019 21:50:33 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v1] clk: qcom: gcc: Use active only source for CPUSS clocks
-References: <1545157181-27095-1-git-send-email-tdas@codeaurora.org>
-User-Agent: alot/0.8
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Taniya Das <tdas@codeaurora.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1545157181-27095-1-git-send-email-tdas@codeaurora.org>
-Message-ID: <154835893585.136743.15387541783447066348@swboyd.mtv.corp.google.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>
-Date:   Thu, 24 Jan 2019 11:42:15 -0800
+In-Reply-To: <154835786296.136743.12154336975596919287@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Taniya Das (2018-12-18 10:19:41)
-> The clocks of the CPUSS such as "gcc_cpuss_ahb_clk_src" is a CRITICAL
-> clock and needs to vote on the active only source of XO, so as to keep the
-> vote as long as CPUSS is active. Similar rbcpr_clk_src is also has the sa=
-me
-> requirement.
->=20
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> ---
+On 24/01/2019 21:24, Stephen Boyd wrote:
+> Quoting Dan Carpenter (2019-01-15 11:46:25)
+>> The ti_clk_parse_divider_data() function is only called from
+>> _get_div_table_from_setup().  That function doesn't look at the return
+>> value but instead looks at the "*table" pointer.  In this case, if the
+>> kcalloc() fails then *table is NULL (which means success).  It should
+>> instead be an error pointer.
+>>
+>> The ti_clk_parse_divider_data() function has two callers.  One checks
+>> for errors and the other doesn't.  I have fixed it so now both handle
+>> errors.
+>>
+>> Fixes: 4f6be5655dc9 ("clk: ti: divider: add driver internal API for parsing divider data")
+>> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+>> ---
+> 
+> Applied to clk-fixes
+> 
+> I'm going to add Tero's ack to this because it isn't really that
+> different.
+> 
 
-Applied to clk-fixes + added a Fixes tag.
+Yeah, thats ok. Thanks Stephen.
 
+-Tero
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
