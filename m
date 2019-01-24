@@ -2,126 +2,168 @@ Return-Path: <SRS0=VLoV=QA=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FA38C282C5
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 13:22:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D88FC282C3
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 14:37:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02C0621855
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 13:22:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E06C32184B
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 14:37:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="em0o8QxP"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qyVlWGPt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728030AbfAXNWw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Jan 2019 08:22:52 -0500
-Received: from mail-eopbgr140085.outbound.protection.outlook.com ([40.107.14.85]:20964
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727622AbfAXNWw (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 24 Jan 2019 08:22:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qebKJTDyXXzhbQIPyfxZ8fSbWE6NlUk74Ot9etjdq+A=;
- b=em0o8QxPToxJzO9LOz3ZgwI5KOctwRkDV9zPMCxoZ2nUH9p5rNeASnNfm9GJKhRRRYF0cnmV/v2ir0a+Wjuhkq816yIR7uR593E1P+M49AK8bggrb7VR3w9P4Usxh6CXqBHG9J1+XhuDG22hT7RxBKzxVvn3HBzSgeTvnoPBBaw=
-Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.126.21) by
- AM0PR04MB6260.eurprd04.prod.outlook.com (20.179.35.80) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1537.27; Thu, 24 Jan 2019 13:22:49 +0000
-Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
- ([fe80::c4d2:7dfd:4576:bdd5]) by AM0PR04MB4211.eurprd04.prod.outlook.com
- ([fe80::c4d2:7dfd:4576:bdd5%5]) with mapi id 15.20.1558.016; Thu, 24 Jan 2019
- 13:22:49 +0000
-From:   Aisheng Dong <aisheng.dong@nxp.com>
-To:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-CC:     "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Aisheng Dong <aisheng.dong@nxp.com>
-Subject: [PATCH V3 5/5] clk: imx: scu: add fallback compatible string support
-Thread-Topic: [PATCH V3 5/5] clk: imx: scu: add fallback compatible string
- support
-Thread-Index: AQHUs+fmr9q1T9UkF0qCpEHsfoSQ+w==
-Date:   Thu, 24 Jan 2019 13:22:49 +0000
-Message-ID: <1548335800-6438-6-git-send-email-aisheng.dong@nxp.com>
-References: <1548335800-6438-1-git-send-email-aisheng.dong@nxp.com>
-In-Reply-To: <1548335800-6438-1-git-send-email-aisheng.dong@nxp.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: git-send-email 2.7.4
-x-clientproxiedby: HK0PR03CA0041.apcprd03.prod.outlook.com
- (2603:1096:203:2f::29) To AM0PR04MB4211.eurprd04.prod.outlook.com
- (2603:10a6:208:66::21)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM0PR04MB6260;6:mr6Vvx/An6VMGtVxO3bL7AT06gecCo2Oa5KzO9kdA37RQ2nVOTzRN0ISOnOhG1Yj6j4eaZ7lPHIA9Gve5OKuQeKpaQJeRGi/GOtRBXrGGibtNzv+N/es1zGtXNTxZp+h+f9auRuOklVqpWIkaiXwUBAX5Q2OXj43wcOsS23dB4YFrsYBxFlMWFnRd0/XF0IUZuwT3U7neMj3d4oZ/f/MEP1iQ2bHye1pdpz6UI3J2xw2vTFnmYOLENODTdTlfIML/Mn3BAROY31dOazqPY87SN8th70teyTysTv5hWE5IRCiTrNl+YByEhrKp5Ixy7CaefpcaqIRKiuq5P/dX0mF5i9FoIXuRSI1aE7xfFWUhDK1vZEZBEsYlq+1CmcKm22VR910mHzswkUKGZ+2RJ2rY46Hep1C3Mku2TeJSzyg//V15u3vC8wRwNcCIAxBBilSywx5FU7vfLeQaqOute+row==;5:Wa+olecvQZOHjYyjWMYnmDlVSnoK7S/pGlUd5llu6UVz/9d8NRrxk1f4OdAAXpbi9igZN0qVTA4JDRs2ZbBtmGP+rglHj3C/AMX9aKDLoLpIAMOJIlEH/TYMrxsE25YX+QBlr+jj89RxyMgWHHZaQaJLI/B/ATLFyXxhPmHRjINZmX5j9EmrwIPtuvWTqyzzcZgsqCBux+FuXYg8NxRs8w==;7:FaabpId83bJGo9qYug/vleaipY48p9q5Pl7kyfVtAT3CpZ7c8v/GtxTnsYH0Xkc7OtJLGZpAznqOJ8lrcy0pBUXOOErMUJUsmShmehZOeiIVHMyERh/rGn4c3AjleInNpodzop9cYvhiHfdG08iDOA==
-x-ms-office365-filtering-correlation-id: 8130da67-6aba-4f3d-3293-08d681ff0910
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600110)(711020)(4605077)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB6260;
-x-ms-traffictypediagnostic: AM0PR04MB6260:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=aisheng.dong@nxp.com; 
-x-microsoft-antispam-prvs: <AM0PR04MB626090786E33249F57197683809A0@AM0PR04MB6260.eurprd04.prod.outlook.com>
-x-forefront-prvs: 0927AA37C7
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(346002)(39860400002)(376002)(366004)(136003)(189003)(199004)(8936002)(44832011)(486006)(53936002)(14454004)(6512007)(6916009)(7736002)(305945005)(50226002)(2501003)(81156014)(478600001)(68736007)(4326008)(66066001)(81166006)(97736004)(476003)(8676002)(2616005)(446003)(11346002)(54906003)(105586002)(86362001)(256004)(386003)(71190400001)(102836004)(76176011)(316002)(6506007)(25786009)(106356001)(26005)(6486002)(52116002)(99286004)(2351001)(5640700003)(71200400001)(186003)(36756003)(6436002)(2906002)(6116002)(3846002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB6260;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: gkbjiVuPEc8sG9T7yITXrIijiVRmgq+fTSfUymTgayZneifMTdRy9sjEjO5BMgyBFBn6iB8v/pDstnEiFEDQsGXtETiuEp70u3CMQv0fTkiYCSIQhWNlPnPlcXah6tWLd6dGzj3skcM28aELuOV/XZHP0auqx8lo4dUnUCzxw0K6GxU/uzgRytK4ba+p3AJg6G/YSK2VDWSVnC7D4CIPkE5bKFKxVjzvvXsaQj0mAHB+aly0TLaAe89fpmlkSC0y7ISzNLpUFTykSI+CBtGCIHxtB4kOC9nJW/SGKkg6lxdqAc42aK1iPdw6AapB23kIzEYPquxLmb8ZesaP0vtv59pR/vDLEGJjxO4H04vOfc9AKd+zC0mqAlTJgLF2iHtm7CvthxItm9oaNb2/AEFcrQ3qC2FmHvm5CRoYEfhzCv4=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S1728261AbfAXOhw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Jan 2019 09:37:52 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:41421 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727649AbfAXOhw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Jan 2019 09:37:52 -0500
+Received: by mail-pl1-f195.google.com with SMTP id u6so2975672plm.8;
+        Thu, 24 Jan 2019 06:37:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Xn1VVko+etvUCk3QL1sGUoOD3oCOAgP6osfKszYJpfI=;
+        b=qyVlWGPt7BgrlHIwfwCyah+Tb7njLbSWStyGjl9zS2a9VIVzAQPDRIj3ICsXgA9ZzE
+         LMHXCzOCuJ1CT8kwhpewgmqTmuMeV91NtmJVluhq7s0RHml39tXAJy/Fsz1HVevdyGPY
+         LhYppSkqrCQIEMmk9aVZa5UaOkIfm43mb4MjEjDtWjxmgGXIyoj/xPaYot/o0kEHZbyc
+         e/n8NwHDT1pDI20uqmzYCZVpa5y6OR5hHcHtOgEpNGdz89NdkNjY+SGYRa5tXHPaHeOH
+         IGlf2CjQQhWFCxWx1imljj/WVesqAH/0PDh1DEJBQMmhm2dG8XOQxMy6b5kgfwoZZ1AV
+         92ug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Xn1VVko+etvUCk3QL1sGUoOD3oCOAgP6osfKszYJpfI=;
+        b=H7nD+59cQWIqP9zghfKJpgU61RVfzuT7g85Ep2GiY58e/K2DhbkwAvvYPgDmzwrOMq
+         d/yUDcdlgntzr7xBDPXYpyFHkVYnajoKa1UVMIXjztTvFbotBduiW/oBGFOXoo8L2AUb
+         LaCMzCajIs4CxSlwS5saCY2/F3FvLgiiw3Pfa3MuYUu9soTYq4YH4TSwicAw/wtiW+vg
+         OhjyeYifVRGbsm/5btv4Z+BJOyxItsSDwIt5Qy7y3hAAGikT7mWXo9+sZwadhKo8a43c
+         ydhTX+q15BCA/VgmYfK4ZEEAQsgmCvKZUi4wkgvQzk5BxiqNti4wV6+R4Mhq4xcQpw1Q
+         bScw==
+X-Gm-Message-State: AJcUukcayF08IOlWRTx/uJ/eDM3ZGKXOmc9/aCEbXoBomzrFyEwopUdJ
+        us/lEzG2zTLTHs/Nyck3XU0=
+X-Google-Smtp-Source: ALg8bN77Y5oJvELoKgchO19nGc14m7zKUHPvxmSzFaQd3zvm+Okd/8Vo1YYljulVtHkE4n6MWTlRkA==
+X-Received: by 2002:a17:902:981:: with SMTP id 1mr6650745pln.142.1548340670826;
+        Thu, 24 Jan 2019 06:37:50 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id o66sm37808457pgo.75.2019.01.24.06.37.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 24 Jan 2019 06:37:49 -0800 (PST)
+Date:   Thu, 24 Jan 2019 06:37:47 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     Sebastian Reichel <sre@kernel.org>, mazziesaccount@gmail.com,
+        lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        lgirdwood@gmail.com, broonie@kernel.org,
+        gregkh@linuxfoundation.org, rafael@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        a.zummo@towertech.it, alexandre.belloni@bootlin.com,
+        wim@linux-watchdog.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
+Subject: Re: [RFC PATCH v1 13/13] watchdog: bd70528: Initial support for ROHM
+ BD70528 watchdog block
+Message-ID: <20190124143747.GA29002@roeck-us.net>
+References: <cover.1548149337.git.matti.vaittinen@fi.rohmeurope.com>
+ <ec70833179d1953dbc91e01901b79d3319ff013d.1548149337.git.matti.vaittinen@fi.rohmeurope.com>
+ <20190122154750.GB1705@roeck-us.net>
+ <20190122171023.GC2559@localhost.localdomain>
+ <20190122174056.GB4964@roeck-us.net>
+ <20190122180309.GD2559@localhost.localdomain>
+ <20190123174728.uu7zhno5xea2bga7@earth.universe>
+ <20190124104434.GF2559@localhost.localdomain>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8130da67-6aba-4f3d-3293-08d681ff0910
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jan 2019 13:22:45.3399
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6260
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190124104434.GF2559@localhost.localdomain>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-SCU clock can be used in a similar way by IMX8QXP and IMX8QM SoCs.
-Make the driver support "fsl,scu-clk" fallback compatible string
-to allow other SoCs to reuse the common part.
+On Thu, Jan 24, 2019 at 12:44:35PM +0200, Matti Vaittinen wrote:
+> On Wed, Jan 23, 2019 at 06:47:28PM +0100, Sebastian Reichel wrote:
+> > Hi,
+> > 
+> > On Tue, Jan 22, 2019 at 08:03:09PM +0200, Matti Vaittinen wrote:
+> > > On Tue, Jan 22, 2019 at 09:40:56AM -0800, Guenter Roeck wrote:
+> > > > On Tue, Jan 22, 2019 at 07:10:23PM +0200, Matti Vaittinen wrote:
+> > > > > On Tue, Jan 22, 2019 at 07:47:50AM -0800, Guenter Roeck wrote:
+> > > > > > On Tue, Jan 22, 2019 at 11:48:36AM +0200, Matti Vaittinen wrote:
+> > > > > > > +static int bd70528_wdt_probe(struct platform_device *pdev)
+> > > > > > > +{
+> > > > > > > +	struct bd70528 *tmp;
+> > > > > > > +	struct bd70528 *bd70528;
+> > > > > > > +	int ret;
+> > > > > > > +
+> > > > > > > +	tmp = dev_get_drvdata(pdev->dev.parent);
+> > > > > > > +	if (!tmp) {
+> > > > > > > +		dev_err(&pdev->dev, "No MFD driver data\n");
+> > > > > > > +		return -EINVAL;
+> > > > > > > +	}
+> > > > > > > +	bd70528 = devm_kzalloc(&pdev->dev, sizeof(*bd70528), GFP_KERNEL);
+> > > > > > > +	if (!bd70528)
+> > > > > > > +		return -ENOMEM;
+> > > > > > > +
+> > > > > > > +	*bd70528 = *tmp;
+> > > > > > > +	bd70528->chip.dev = &pdev->dev;
+> > > > > > 
+> > > > > > This is wrong.
+> > > > > > You should not copy the parent's driver data but have local driver
+> > > > > > data as needed which then points to the parent's driver data if
+> > > > > > needed. I assume this is why the mutex is a pointer, but that
+> > > > > > just shows that the whole approach is wrong.
+> > > > > 
+> > > > > Mutex is a pointer because we want to use same mutex from WDT and RTC.
+> > > > > We can sure point to parent data but then we still need our own dev
+> > > > > pointer. So we can have a struct with pointer to parent data and dev
+> > > > > pointer - but I'm not at all sure it is any clearer.
+> > > > 
+> > > > As I said, that is wrong. To say it in plaintext, I won't accept
+> > > > the driver if it copies the parent's driver data. The driver should
+> > > > have and use its own driver data, and only maintain a pointer to
+> > > > its parent's driver data. And most definitely you don't want to
+> > > > copy and use any device data structure from the parent.
+> > > 
+> > > Allright. At the moment the WDT driver only needs regmap pointer from
+> > > parent. I'm not sure if it will later need DT or "chip type" - but I
+> > > will change this.
+> > 
+> > You probably want to use this:
+> > 
+> > dev_get_regmap(pdev->dev.parent, NULL);
+> 
+> Thanks a bunch Sebastian. All help is highly appreciated!! =)
+> 
+> Unfortunately I forgot to mention the key thing - the RTC mutex. We also
+> need that because RTC needs to stop WDT when RTC is adjusted as the WDT
+> uses RTC as counter - and jumping the RTC WDT enabled might trigger WDT
+> or have other consequences.
+> 
+> Se even if we used dev_get_regmap (which is slightly heavier than
+> accessing direct pointer) - we would still need at least the mutex from
+> parent data, possibly also the chip type and if we want to avoid code
+> dublication - then also the WDT start/stop function.
+> 
+> Thus I guess we can as well keep the regmap in parent data because we
+> need the parent data anyways, right?
+> 
 
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Sascha Hauer <kernel@pengutronix.de>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
----
- drivers/clk/imx/clk-imx8qxp.c | 1 +
- 1 file changed, 1 insertion(+)
+You are free to _use_ the parent data. Just not copy it.
 
-diff --git a/drivers/clk/imx/clk-imx8qxp.c b/drivers/clk/imx/clk-imx8qxp.c
-index 83e2ef9..5e2903e 100644
---- a/drivers/clk/imx/clk-imx8qxp.c
-+++ b/drivers/clk/imx/clk-imx8qxp.c
-@@ -138,6 +138,7 @@ static int imx8qxp_clk_probe(struct platform_device *pd=
-ev)
- }
-=20
- static const struct of_device_id imx8qxp_match[] =3D {
-+	{ .compatible =3D "fsl,scu-clk", },
- 	{ .compatible =3D "fsl,imx8qxp-clk", },
- 	{ /* sentinel */ }
- };
---=20
-2.7.4
+Another possibility would be for the parent to provide platform
+data for the rtc driver to use, and that platform data would
+include pointers to the regmap and to the rtc mutex.
 
+However, again, the one thing you can _not_ do is to copy the parent's
+driver data.
+
+Guenter
