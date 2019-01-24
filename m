@@ -3,45 +3,45 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73F18C282C3
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 18:56:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A4F3C282C5
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 18:56:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 394ED218CD
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 18:56:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 104A1218A6
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 18:56:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548356171;
-	bh=UcJv7/Pf4dJRbx13QDX2ZtRbVwM6Uie4MlpRhDp0caU=;
+	s=default; t=1548356187;
+	bh=xxDA7ZgUr9jlQsh9sg/F1GLFVnZRnBRJQY7+VAKT5iM=;
 	h=Subject:References:Cc:From:In-Reply-To:To:Date:List-ID:From;
-	b=akqK/EaW2bUypNCK8CaeOnvTiY2hlEh83GV4TcPyAY8CY2p/2+xaAozxNbSuAotQR
-	 ZZuetXx3I0R5lbDxdthr5Ss/wbLMzXXBw6Xy+sYgGwgGcvfSh8Ac8H8GyW1585N+bS
-	 2liFD1neYssPWYulWiKHxG0EURd0CFv514uSe1RM=
+	b=K92e32y/dxQHwOA7Zlv4nv4XX5FV2qTai2yKt7NnUcPCgSnk634EzsBElV1dfcKxo
+	 KaWyIPvkGL0z8agecxQdNI+umpIZfppk5Q10NxoJEjWMppz9vx92/ez/9255GLTHWz
+	 tz2SANoFMjJhV+SUY/gSphuIuWBhOQyVbW2rrZ5E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725974AbfAXS4L (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Jan 2019 13:56:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34226 "EHLO mail.kernel.org"
+        id S1728454AbfAXS4W (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Jan 2019 13:56:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34450 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725913AbfAXS4K (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 24 Jan 2019 13:56:10 -0500
+        id S1727690AbfAXS4W (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 24 Jan 2019 13:56:22 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 22EB8218A6;
-        Thu, 24 Jan 2019 18:56:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 68563218A6;
+        Thu, 24 Jan 2019 18:56:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548356170;
-        bh=UcJv7/Pf4dJRbx13QDX2ZtRbVwM6Uie4MlpRhDp0caU=;
+        s=default; t=1548356181;
+        bh=xxDA7ZgUr9jlQsh9sg/F1GLFVnZRnBRJQY7+VAKT5iM=;
         h=Subject:References:Cc:From:In-Reply-To:To:Date:From;
-        b=Y0n/vo0jtenGqCnz0AMXzJZN7FedGU/HXNvdgwgE6xHW3U4LvBvJVNCmtLD+pDcd4
-         HWZ1uDWf71LS0lA02zMQbAaXD+5I7Z+siy1GUAbfWUVF9wYrmbPCjLrKBwjo4eWGfR
-         zL4GIVwggklF+XBc9LF/xSjjX68QMhQaT4FkOU0s=
+        b=Lp+ApK141IAyh2RMZtOxeVsgTzAY6gVGfOny7L0YzHNS8Obia3ke74HcngQ/dkWkM
+         johMP1Y87GXBPcPP7A/Akag4dIyL4SPg2jdqLwYTpUsW89f1+VWJ0ZbzXE1Ye/QZcg
+         6rZHsTV8edfo0irJhp7y3xG8PnIv1wXZqq5UCrXk=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 2/3] Revert "clk: mmp2: add SP clock"
-References: <20190121062255.551587-1-lkundrak@v3.sk> <20190121062255.551587-3-lkundrak@v3.sk>
+Subject: Re: [PATCH 3/3] Revert "dt-bindings: marvell,mmp2: Add clock id for the SP clock"
+References: <20190121062255.551587-1-lkundrak@v3.sk> <20190121062255.551587-4-lkundrak@v3.sk>
 User-Agent: alot/0.8
 Cc:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -49,28 +49,26 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         Lubomir Rintel <lkundrak@v3.sk>
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20190121062255.551587-3-lkundrak@v3.sk>
-Message-ID: <154835616940.136743.9426109859913925018@swboyd.mtv.corp.google.com>
+In-Reply-To: <20190121062255.551587-4-lkundrak@v3.sk>
+Message-ID: <154835618070.136743.10161536507964722189@swboyd.mtv.corp.google.com>
 To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Lubomir Rintel <lkundrak@v3.sk>,
         Michael Turquette <mturquette@baylibre.com>
-Date:   Thu, 24 Jan 2019 10:56:09 -0800
+Date:   Thu, 24 Jan 2019 10:56:20 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Lubomir Rintel (2019-01-20 22:22:55)
+Quoting Lubomir Rintel (2019-01-20 22:22:56)
 > It seems that the kernel has no business managing this clock: once the SP
-> clock is disabled, it's not sufficient to just enable in order to bring t=
-he
-> SP core back up. Just let the firmware keep it enabled and don't expose it
-> to drivers.
+> clock is disabled, it's not sufficient to just enable it in order to bring
+> the SP core back up.
 >=20
-> This reverts commit fc27c2394d96fd19854b7e2d3f0e60df0d86fc90.
+> Pretty sure nothing ever used this and it's safe to remove.
 >=20
-> Link: https://lore.kernel.org/lkml/154783267051.169631.319783654464662574=
-7@swboyd.mtv.corp.google.com/
+> This reverts commit e8a2c779141415105825e65a4715f1130bba61b1.
+>=20
 > Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 > ---
 
