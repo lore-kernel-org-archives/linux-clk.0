@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03540C282C5
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 20:00:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A032C282C6
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 20:00:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB77721726
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 20:00:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 59EFB21726
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 20:00:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="jl0+3mCU"
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="eVLx2Scb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731759AbfAXUAP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Jan 2019 15:00:15 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:38867 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731905AbfAXUAN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Jan 2019 15:00:13 -0500
-Received: by mail-pf1-f196.google.com with SMTP id q1so3529378pfi.5
-        for <linux-clk@vger.kernel.org>; Thu, 24 Jan 2019 12:00:13 -0800 (PST)
+        id S1728816AbfAXUAg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Jan 2019 15:00:36 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:32859 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732358AbfAXUAd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Jan 2019 15:00:33 -0500
+Received: by mail-pf1-f193.google.com with SMTP id c123so3552491pfb.0
+        for <linux-clk@vger.kernel.org>; Thu, 24 Jan 2019 12:00:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=EEGBFedCv0eGIwFBpPqp7aDi2x6OUg3hp3DvnJn01c8=;
-        b=jl0+3mCU+nCI7YGq+itsqShkC/SfgVti3hEQ1ulSvukcgTB3ChDjHL1au/xyTtFmei
-         gQYNExKO3Imrr0vQPZTTFzsBWG6MQKp50I0UaMarYeGQsx7pcN3ZG13p/jAWqjEKAxqo
-         po5DR55psBPduQb+2DpXUqolNrzeewmlxyKzE=
+        bh=tfGb6WOVY/NDozRdyqo5VBI3IXqzYkAU2KTM1oN3JpM=;
+        b=eVLx2Scb54qXLYKHQhAIy8GjghcY+WNLEcnq1+AwxpJbrX8t7UoCTNy9dWt9tXhIYC
+         gu059x4BEqGJQn8NorjkQMj23JRjWw+JCt3C2VXhPiRDDdJaCUGQQkk+9IaSd+gWT2js
+         d7DZW1hYeQ+yJT5ibGVIxU0TAYY8+uKGnvd1E=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=EEGBFedCv0eGIwFBpPqp7aDi2x6OUg3hp3DvnJn01c8=;
-        b=dcIPbw2LtiWVIioM7x3UEgdMPz2uBXHYLrkm9BLHkLTHpXSCyIDv5/X2vAcHNqOR7L
-         FIkEZgug0V+PscED+cjwTCkcmmFVeO4O0bEeb4pdBPwSGeNWZV7L42mBu1SA67itmEK9
-         jXQvOnc+qHHxDJgPhHWEp4m+tcDEOYdjbgef4bVeWE8I98i5fDB3y2e5pU4WMJC6r4ON
-         i1rW7In+s61N+VHVuzY0Xufz3m9NVVrKQ953jt4q7TW5oQh1qPaYeA8DWNvM+BlCeGNQ
-         AIjzZrDQRAI5RTd/l/DnLBzdmc4cymaw7uLN8vOeSaFNlVS334CaCbZ6/xMLRddUTfmQ
-         FkxQ==
-X-Gm-Message-State: AJcUukev25jknQU4dVIJQS5fLhyrpKQfnoIeA4nUVaN2Q6pYp0CB1dHe
-        r4XlS3NkaF97vJWp3ZChPx8pyw==
-X-Google-Smtp-Source: ALg8bN4X3/hdgvk+W8P6tImZrbs+xvmgwlVFgfOK7unjfkPgCq8ckI457VZI6BJ2wPT55mSjYoPRvw==
-X-Received: by 2002:a62:3943:: with SMTP id g64mr7995857pfa.114.1548360012725;
-        Thu, 24 Jan 2019 12:00:12 -0800 (PST)
+        bh=tfGb6WOVY/NDozRdyqo5VBI3IXqzYkAU2KTM1oN3JpM=;
+        b=lLBBj3cYxHLqg9v9BMZ+68iJky6mWL+TGBeanQ5SesBQHF0t4oQ68TpFn9agbC2r2D
+         VJ+LyHaQWWDgjhBS92a9tbv/e0GWqvlnLiHVmBS3mJ9aNuJHAO5KCm01ZMY5x4kdleWX
+         laOYt4ua9KzMfedjvf6kcLlyBrXQNCkvW/iaKPVVCAnJJxAJNI02LSS/hegzDlHifsNK
+         Fzw+fvYOSUBgLYP4yj48AdDC1ayvooUamvzBkEHDwxOtBYg+A66qy54lmjMfDzdnZReY
+         3RwrrhN+GictFid45QYf947E8Qy9yDLZfFXrL3rXpju69IWCfQURFLoWRb3cIfiFTGt8
+         s1kA==
+X-Gm-Message-State: AJcUukcX6kMEnaxSrg9FCVa+RSf7CKXvaF3aUp1eP8DYiomNKWGyeLqA
+        +u4Q814D+EdXeg87eLTbMLCuiw==
+X-Google-Smtp-Source: ALg8bN5zmYWSAPZjYomfF7mFoGKlUGobeKyjO/hE41V45BdXSRRWP3tXd9FVoYY6eSB/NMn3NEw4Pg==
+X-Received: by 2002:a63:5455:: with SMTP id e21mr7255476pgm.316.1548360033058;
+        Thu, 24 Jan 2019 12:00:33 -0800 (PST)
 Received: from localhost.localdomain ([115.97.179.75])
-        by smtp.gmail.com with ESMTPSA id x11sm61637003pfe.72.2019.01.24.12.00.07
+        by smtp.gmail.com with ESMTPSA id x11sm61637003pfe.72.2019.01.24.12.00.27
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 24 Jan 2019 12:00:12 -0800 (PST)
+        Thu, 24 Jan 2019 12:00:32 -0800 (PST)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         David Airlie <airlied@linux.ie>,
@@ -64,9 +64,9 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Michael Trimarchi <michael@amarulasolutions.com>,
         linux-amarula@amarulasolutions.com, linux-sunxi@googlegroups.com,
         Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v6 10/22] clk: sunxi-ng: Add check for minimal rate to NKM PLLs
-Date:   Fri, 25 Jan 2019 01:28:48 +0530
-Message-Id: <20190124195900.22620-11-jagan@amarulasolutions.com>
+Subject: [PATCH v6 14/22] dt-bindings: sun6i-dsi: Add A64 DSI compatible (w/ A31 fallback)
+Date:   Fri, 25 Jan 2019 01:28:52 +0530
+Message-Id: <20190124195900.22620-15-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 In-Reply-To: <20190124195900.22620-1-jagan@amarulasolutions.com>
 References: <20190124195900.22620-1-jagan@amarulasolutions.com>
@@ -77,46 +77,32 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Some NKM PLLs doesn't work well when their output clock rate is set below
-certain rate.
+The MIPI DSI controller in Allwinner A64 is similar to A33.
 
-So, add support for minimal rate for relevant PLLs.
+But unlike A33, A64 doesn't have DSI_SCLK gating which eventually
+set the mod clock rate for the controller.
+
+So, use the DSI_DPHY gating for the similar purpose of mod clock
+so-that the controller can operate properly.
 
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- drivers/clk/sunxi-ng/ccu_nkm.c | 5 +++++
- drivers/clk/sunxi-ng/ccu_nkm.h | 1 +
- 2 files changed, 6 insertions(+)
+ Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_nkm.c
-index 841840e35e61..096ff4f4839a 100644
---- a/drivers/clk/sunxi-ng/ccu_nkm.c
-+++ b/drivers/clk/sunxi-ng/ccu_nkm.c
-@@ -125,6 +125,11 @@ static unsigned long ccu_nkm_round_rate(struct ccu_mux_internal *mux,
- 	if (nkm->common.features & CCU_FEATURE_FIXED_POSTDIV)
- 		rate *= nkm->fixed_post_div;
- 
-+	if (rate < nkm->min_rate) {
-+		rate = nkm->min_rate;
-+		return rate;
-+	}
-+
- 	ccu_nkm_find_best(*parent_rate, rate, &_nkm);
- 
- 	rate = *parent_rate * _nkm.n * _nkm.k / _nkm.m;
-diff --git a/drivers/clk/sunxi-ng/ccu_nkm.h b/drivers/clk/sunxi-ng/ccu_nkm.h
-index cc6efb70a102..ff5bd00f429f 100644
---- a/drivers/clk/sunxi-ng/ccu_nkm.h
-+++ b/drivers/clk/sunxi-ng/ccu_nkm.h
-@@ -35,6 +35,7 @@ struct ccu_nkm {
- 	struct ccu_mux_internal	mux;
- 
- 	unsigned int		fixed_post_div;
-+	unsigned int		min_rate;
- 
- 	struct ccu_common	common;
- };
+diff --git a/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt b/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
+index 69e233e8fad1..dbda2e567760 100644
+--- a/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
++++ b/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
+@@ -12,6 +12,7 @@ The DSI Encoder generates the DSI signal from the TCON's.
+ Required properties:
+   - compatible: value must be one of:
+     * allwinner,sun6i-a31-mipi-dsi
++    * "allwinner,sun50i-a64-mipi-dsi", "allwinner,sun6i-a31-mipi-dsi"
+   - reg: base address and size of memory-mapped region
+   - interrupts: interrupt associated to this IP
+   - clocks: phandles to the clocks feeding the DSI encoder
 -- 
 2.18.0.321.gffc6fa0e3
 
