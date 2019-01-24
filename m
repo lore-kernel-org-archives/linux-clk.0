@@ -7,33 +7,33 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 992C5C282C3
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 13:22:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A08ADC282C3
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 13:22:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69EA021855
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 13:22:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 714A721855
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 13:22:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="a7j+AODH"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="eEU2sCxm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727859AbfAXNWl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Jan 2019 08:22:41 -0500
-Received: from mail-eopbgr60067.outbound.protection.outlook.com ([40.107.6.67]:42880
+        id S1727933AbfAXNWq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Jan 2019 08:22:46 -0500
+Received: from mail-eopbgr60060.outbound.protection.outlook.com ([40.107.6.60]:19049
         "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727622AbfAXNWk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 24 Jan 2019 08:22:40 -0500
+        id S1727622AbfAXNWq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 24 Jan 2019 08:22:46 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ys6mu1Ibz5SI6qFInUSDmmjwhAHT2+USmTN32C3cG2o=;
- b=a7j+AODHjSLbfR9tHcHX5SOfWVeD5ywaqsz5mACgUVT7PB4P52kyvdav2Vtvu3egnH0GfP1OJMJbiQiwKRvx5ZMRA3cSTkupEIVXzSuAW0tl3m2melWzZr5n5Sdlzj2u4ZPbzX+M1c75e3bdF15gCUcQOTzQD7eT+6D7boG8k2E=
+ bh=8x9cfRGjfPu3Vbtwo6fMJQ5g1NRz+du9RGN+MvD1ElU=;
+ b=eEU2sCxmtZKE7VvCwbMuySXrBEIAs9RAz4L3eWrKaTtvJedYq7j5CaQrml0wjT6yFeNhBMAH3GPX9WhKWHRO2NlJf45duJocI34jnAw/fYIMBooo0Y/YyUjk1XLsX/AgbTIYfJL1TYeE6zOaOepzL2fUhd1Qr9+taB0tbcUfKDM=
 Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.126.21) by
- AM0PR04MB6290.eurprd04.prod.outlook.com (20.179.35.202) with Microsoft SMTP
+ AM0PR04MB5443.eurprd04.prod.outlook.com (20.178.112.220) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1558.17; Thu, 24 Jan 2019 13:22:36 +0000
+ 15.20.1537.29; Thu, 24 Jan 2019 13:22:40 +0000
 Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
  ([fe80::c4d2:7dfd:4576:bdd5]) by AM0PR04MB4211.eurprd04.prod.outlook.com
  ([fe80::c4d2:7dfd:4576:bdd5%5]) with mapi id 15.20.1558.016; Thu, 24 Jan 2019
- 13:22:36 +0000
+ 13:22:40 +0000
 From:   Aisheng Dong <aisheng.dong@nxp.com>
 To:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
 CC:     "linux-arm-kernel@lists.infradead.org" 
@@ -47,12 +47,11 @@ CC:     "linux-arm-kernel@lists.infradead.org"
         "robh+dt@kernel.org" <robh+dt@kernel.org>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         Aisheng Dong <aisheng.dong@nxp.com>
-Subject: [PATCH V3 2/5] dt-bindings: fsl: scu: add imx8qm scu clock support
-Thread-Topic: [PATCH V3 2/5] dt-bindings: fsl: scu: add imx8qm scu clock
- support
-Thread-Index: AQHUs+ffHdBhiC9Ai0WQGG7Cay5QWA==
-Date:   Thu, 24 Jan 2019 13:22:36 +0000
-Message-ID: <1548335800-6438-3-git-send-email-aisheng.dong@nxp.com>
+Subject: [PATCH V3 3/5] dt-bindings: clock: update CPU clock ID name
+Thread-Topic: [PATCH V3 3/5] dt-bindings: clock: update CPU clock ID name
+Thread-Index: AQHUs+fhfq3L0RgXGUm25sTWxq5Enw==
+Date:   Thu, 24 Jan 2019 13:22:40 +0000
+Message-ID: <1548335800-6438-4-git-send-email-aisheng.dong@nxp.com>
 References: <1548335800-6438-1-git-send-email-aisheng.dong@nxp.com>
 In-Reply-To: <1548335800-6438-1-git-send-email-aisheng.dong@nxp.com>
 Accept-Language: zh-CN, en-US
@@ -68,59 +67,65 @@ authentication-results: spf=none (sender IP is )
 x-ms-exchange-messagesentrepresentingtype: 1
 x-originating-ip: [119.31.174.66]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM0PR04MB6290;6:Lv5L09umfxdXKWm8RuzqMmkehnUCPFupxOW1cz1KbOp/KpBM2OYDGeiZU8Jb/mdjpeX3oDb/7PMqsYwaUg0hI+B4Z9xbptbBm3rp7EacNCv0szHklEqbhofakUoJfGJ1YlvEs7oU1+OVeXuSu3Tck2XCnmA1CFtD0E4ZZQvgJlR8aXshBFOdnnPjdAjawiFT8+yPAlJ7hvBTsFmHb4LwDkIX8tSKn0rpiX6VOqtXyBOZsGRm+K2EeYk8im7y/xz0NHBmsweixiPyLU+8T8C1tVhc1iLqQfLXLju7pzogu6PhMHGB9sxyELBrGSbinb8aLvpHhw51yZ2UrhC06GRP5vXY5maV5dTSdLR1Y03kdFq+PM6GUDQN+u4a5DkrucRzLExjvXldVFu4pJNijlvvllatbr+bXlg/xxp+VsfFCu/+lTAk/5bPMzSQU6ZjDNkPWflB3Lg9Y9Xg7FS04pCw7w==;5:yzc8OYi+F6YgU+hGRc4D+JUAno5t47v7WpKj4qYNxm0vrgwdpunxgSZKmsV33j28xE3p84xsYAynuHAJ05KnaxkMV9lIAGJj8W6YMhU245cZvjuXqyQiBWtGMpP/VPCLJH1gwKvexhjABlo8+fKtUIjXj4HDQOHyVtwpixP5ROTVDJqujwrGHEkEF8qw/q/RifewMJIatV8/aCIAQZlC3A==;7:vxfMJqsXVtDp6XLp75hbHO0uqMth+QoiJARfi3OJCfNj0pAs16OklQ4Nbx0mTV2uBy7lZ/6ey4yLMulwIsM+4qCk19v1apOIJ10qpg5nQAnakohnfUrZnXNepCdN4CWv4mjEldwsfCWalrBNfQmSVQ==
-x-ms-office365-filtering-correlation-id: 6451c386-9ce2-473a-8b5e-08d681ff0186
+x-microsoft-exchange-diagnostics: 1;AM0PR04MB5443;6:ueB0z6Hqe7FcMQLE2PQIQ3h6CGhI1iHtekQwl1WPg/u4fJovwwnEWd3HbABkStVywTTmY1gbhLEtH03LB0YijkHIDWxhfw3n8gkYqYxeeIIhbcfQ9peGG3ptePz4YicIBW5xD3aw7qVd2R8BUoAC1KQT2OXuzWxYqW5cXj4AqIvCQl56wm+RNd269c9h8oIRtFYfnSXiA32L3VOXchOkJst4Fae6tuWlVUeqoDLu29mcqLHHZmqepiZ7iUM0oEjcQmD5i2q3kOHjD37wHKnKX/FLzVpcNJknKa/+QkFiC1BnrZ6xZOHxWzGAUXyT8MDYmQ1QY4++tFUF6cKGktIzGKOrJPMPXV2d3KVFiy08T6nZBRQPkYUr98kgx4GdSfoG0IKjAdWprY84M2TH1IDeCW27k6LtnOb/Z+WtZF4LPX1QGRgVDHI1bJtN1EDyUxbrWpMBZeJD0eFQQLRWLDX4rA==;5:Xaw85Pr+d2IQjXwGyaaaAYLijcWmMxpo5V1WgPEFaHnOiR1JeCV73az8cX9krX4xrU03B1vehfLPQrZY2dPBPC/g1C+Qp9E+eUZ51HyzE4s4ScBa5cxE7w40+M2ZpmtqYMqSJeCGC5U4PXMpjhykmcfZAWlKlYhTVEFG06fAZpfS7sRPxV2dTLFdo53Cj3mcW3qluw9IVdXpvAZyV4kesA==;7:uHBT09I/uVdcbfx/d4Iwtqi2duDSz1y8BXRPyDWjmGAH9niyv+gsE6jcz0MG+6VftCLCNBoYIdRf4w59aFtBr193hzuYiAcMocrArb9s2OwYNM8CF5t2Q5G/2OJlJ/fL44mKOGPE1AAPxKSLM3NSKw==
+x-ms-office365-filtering-correlation-id: 1f22f3b3-e00f-4ab2-e8d0-08d681ff040c
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB6290;
-x-ms-traffictypediagnostic: AM0PR04MB6290:
-x-microsoft-antispam-prvs: <AM0PR04MB6290505AB3DC87025233AEAB809A0@AM0PR04MB6290.eurprd04.prod.outlook.com>
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600110)(711020)(4605077)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB5443;
+x-ms-traffictypediagnostic: AM0PR04MB5443:
+x-microsoft-antispam-prvs: <AM0PR04MB54431CDFC3599B22BA02F9E2809A0@AM0PR04MB5443.eurprd04.prod.outlook.com>
 x-forefront-prvs: 0927AA37C7
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(376002)(346002)(366004)(39860400002)(396003)(189003)(199004)(446003)(2616005)(476003)(2351001)(97736004)(478600001)(68736007)(256004)(6916009)(25786009)(11346002)(71190400001)(71200400001)(14454004)(4326008)(99286004)(3846002)(6436002)(44832011)(105586002)(76176011)(52116002)(6116002)(81156014)(8676002)(81166006)(6486002)(53936002)(8936002)(2906002)(86362001)(50226002)(186003)(26005)(2501003)(305945005)(66066001)(7736002)(54906003)(102836004)(486006)(6506007)(6512007)(316002)(106356001)(386003)(5640700003)(36756003)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB6290;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(376002)(346002)(39860400002)(136003)(396003)(199004)(189003)(50226002)(6916009)(5640700003)(6512007)(6116002)(66066001)(305945005)(15650500001)(7736002)(486006)(44832011)(97736004)(86362001)(99286004)(316002)(6486002)(68736007)(81156014)(106356001)(81166006)(6436002)(8676002)(8936002)(54906003)(476003)(2351001)(11346002)(446003)(2616005)(71200400001)(14454004)(102836004)(2501003)(2906002)(105586002)(36756003)(71190400001)(478600001)(4326008)(186003)(52116002)(256004)(3846002)(14444005)(53936002)(76176011)(26005)(25786009)(6506007)(386003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5443;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: cP/BzxGim9zkZlz3g+YrgZPKLs5vRDs3bz0xZNmcFt6Je2g6H5n6Hmi2thMSMzzGwMVN2xsHh0f8BzpXOsjK8pLh8YlePMvsc+wsdB9uk9V6Kf0tVfpvZHQ3O4ghnZd5jx+Xn96ZIYF6R6z2tgjUMjzV/vPRQtcoi/7AlLCtpClcOgLrlnlwsSicz06tO4RnpVrQk3eCNcnjMFznYnRmpwfUlk2IRwGvL6aiKAQR5zALJRBQFocgVTw7CzOPxqs1Oeq2EKOHQ9u5fg7iyr5UbG92nr2OvWiLEA/AwMQSsS2lV/euF5EkmZBBxF/vcyZi749yzpIgtvwAuewiYpY/r2bPdcb+MUKwej9CcBLYNe4nm85GZr7kZxKsUgkJuJBdX2sfzDgsDr2wXslh/BtZ3k1VrQtWayhQTRRhgWyqi0M=
+x-microsoft-antispam-message-info: MbALupIqzCnHVq5Tb+ZydlspQGKZCbpCYLH3UAllyDNP1xJ04kli3d/lY4LJLlI5tvytF5gfQWRe7zEWHf3ew0V/nI9E4+L65fd28IsPAzPpKFCYppphiW8NyTXaOm+bQMeVEbBMgvfmYgFm3A6NWzObl9qrwpoq2RRZVYw575sLlq+oAKDRxVl0cRMK+y21m+M5O1b9lZFjLVDvWK/Yd9Yue+oyooC96azXk4FvNfWiwQOR6IhoyB5We+Q/dIQh4uoAQ5prJCp1zW4iMTLjW/9ckIemKKqdRqrek5tTmd1XTh0syeBYWy299e0dRSeLXl2SWRdbvyeziNTLtTQCZ0MiPaj6T4nCI2hQkXsILF3Or7rLuy90XSTqJrAer8rb/nB3gftpIenf1n+YJSl2fBDVZtpaDyYDufyal1StiLo=
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6451c386-9ce2-473a-8b5e-08d681ff0186
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jan 2019 13:22:32.6927
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1f22f3b3-e00f-4ab2-e8d0-08d681ff040c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jan 2019 13:22:36.9287
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6290
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5443
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add imx8qm scu clock support
+Update the CPU clocks to CPU cluster clock.
 
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: devicetree@vger.kernel.org
 Cc: Shawn Guo <shawnguo@kernel.org>
 Cc: Sascha Hauer <kernel@pengutronix.de>
 Cc: Fabio Estevam <fabio.estevam@nxp.com>
 Cc: Michael Turquette <mturquette@baylibre.com>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 ---
- Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt | 1 +
+v1->v2:
+ * change name to cpu cluster clock according to Rob's suggestion
+v2->v3:
+ * keep IMX_CLK_A35 to not break building as clk driver already uses it
+---
+ include/dt-bindings/clock/imx8-clock.h | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt b/=
-Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
-index 6b4e24a..72d481c 100644
---- a/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
-+++ b/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
-@@ -75,6 +75,7 @@ This binding uses the common clock binding[1].
+diff --git a/include/dt-bindings/clock/imx8-clock.h b/include/dt-bindings/c=
+lock/imx8-clock.h
+index 4236818..b149e63 100644
+--- a/include/dt-bindings/clock/imx8-clock.h
++++ b/include/dt-bindings/clock/imx8-clock.h
+@@ -13,6 +13,7 @@
 =20
- Required properties:
- - compatible:		Should be one of:
-+			  "fsl,imx8qm-clock"
- 			  "fsl,imx8qxp-clock"
- 			followed by "fsl,scu-clk"
- - #clock-cells:		Should be 1. Contains the Clock ID value.
+ /* CPU */
+ #define IMX_A35_CLK					1
++#define IMX_CPU_CLUSTER_A35_CLK				1
+=20
+ /* LSIO SS */
+ #define IMX_LSIO_MEM_CLK				2
 --=20
 2.7.4
 
