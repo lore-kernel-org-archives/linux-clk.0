@@ -2,88 +2,188 @@ Return-Path: <SRS0=VLoV=QA=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FF0CC282C6
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 19:53:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1B5DC282C3
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 19:59:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03D7921726
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 19:53:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548359634;
-	bh=NvJxEb0uwFbkNik/mB17l9fI/755tZ+BKXKMx+ZcRng=;
-	h=Subject:References:Cc:From:In-Reply-To:To:Date:List-ID:From;
-	b=aweieXKAMwvzczADUsCs4fR9owNdIm69jZllmKD32mrNCQTv6jPWTkgQBvfJymkC8
-	 KpHHDpVa9DjSrmVEoI8BX7CQyRpg9GyoOcfTPy/fzmJcq8QcaFuVkM7LE/R46OsSVI
-	 uMUJGc2zeFmqPcJg2NMe0SfirLMY+dRwuw3Xfxv0=
+	by mail.kernel.org (Postfix) with ESMTP id 793B321726
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 19:59:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="K75Pm7fc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732740AbfAXTh6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:37:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38056 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732735AbfAXTh6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:37:58 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9D638218FC;
-        Thu, 24 Jan 2019 19:37:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358677;
-        bh=NvJxEb0uwFbkNik/mB17l9fI/755tZ+BKXKMx+ZcRng=;
-        h=Subject:References:Cc:From:In-Reply-To:To:Date:From;
-        b=Gn8fRI9xvZFzw9ZPvcClUC4WnZMrxT2LEAImQZgLeik1ED5CVZIcmmoWgB7I8AwL6
-         8o2OIhGqdS3yDKCHaBcsuEqjIOuQ4Yu/Ot5ccGmQeXQLKAAn0nXXuKxgGf0HWPllws
-         fozHVK4Mtkp1i5uqF19lzPR6ToulPn0fwfK7lO9U=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] clk: imx: imx7ulp: use struct_size() in kzalloc()
-References: <20181224064025.GA9588@embeddedor.com>
-User-Agent: alot/0.8
-Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20181224064025.GA9588@embeddedor.com>
-Message-ID: <154835867687.136743.9650857344780789822@swboyd.mtv.corp.google.com>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
+        id S1730158AbfAXT7T (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Jan 2019 14:59:19 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:41436 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730107AbfAXT7R (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Jan 2019 14:59:17 -0500
+Received: by mail-pl1-f193.google.com with SMTP id u6so3376566plm.8
+        for <linux-clk@vger.kernel.org>; Thu, 24 Jan 2019 11:59:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Gu9TACan5B/DOcFtXC5jyd98RZPdMTDUQnY8jPCFqPQ=;
+        b=K75Pm7fc1DU+mfT9d4Io0qXsbW/bnuhvf1mUe8L1I7PT882iEZf4T/DHGWXa14ojDn
+         vmZejAqy/j877ueH7XznRHw5FvsmtO0wYwrr8bzlh3KY3A9LOw8k+fVVzPdL+MuVgBR0
+         EWa6Jm/r1MV/s6SG+5tKxvNyWEhBvexUuxZcc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Gu9TACan5B/DOcFtXC5jyd98RZPdMTDUQnY8jPCFqPQ=;
+        b=P33AdkdaPPUlumEQPpCVXm78frAvFUJDvmYzqEav38Du43OoDDB+rNUgaPQrR3rMJz
+         l0E6Y4LkNB1fB4TRMFn6NlxqWIRPj7nAtsqdKaYDPB7d4+imFHA2NeNdUarLn0GB92BX
+         hfcmKfE8V9Ckpm5YJhHbEAedzTRSugTaF1I0efjQ+GcP03Wd49gHp3AwxmM5jWADy1cP
+         VgmZbIwnG9VGTPvk6SUEw3fEqWff9Dmt+9UEBq3lcZCE1d6HIY91X17eEWcCSh0O5GLr
+         eTnJcffMKfaPa4pub3ZXbXNyeEnweiwhKJMEVHNFNMPd/u9I6rFgPYRPF9tBQluZJE/0
+         UfDQ==
+X-Gm-Message-State: AJcUukcZ/HE6MkEFFUq7ACv7fXBJQBdOqlR8+s3o5JJ+H1xGt6CfWhDQ
+        VN65bxx+4CgwUJ78JJ/cAo54Bw==
+X-Google-Smtp-Source: ALg8bN4AIIreI3usHTCXC4Y+jWxwZbpBisd2jm45fBSoZpaIjRI/Zz60hUXWrRxkojSHxgfzXxmH4A==
+X-Received: by 2002:a17:902:bc3:: with SMTP id 61mr7937832plr.15.1548359956988;
+        Thu, 24 Jan 2019 11:59:16 -0800 (PST)
+Received: from localhost.localdomain ([115.97.179.75])
+        by smtp.gmail.com with ESMTPSA id x11sm61637003pfe.72.2019.01.24.11.59.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 24 Jan 2019 11:59:16 -0800 (PST)
+From:   Jagan Teki <jagan@amarulasolutions.com>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, Chen-Yu Tsai <wens@csie.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>
-Date:   Thu, 24 Jan 2019 11:37:56 -0800
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-amarula@amarulasolutions.com, linux-sunxi@googlegroups.com,
+        Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH v6 00/22] drm/sun4i: Allwinner A64 MIPI-DSI support
+Date:   Fri, 25 Jan 2019 01:28:38 +0530
+Message-Id: <20190124195900.22620-1-jagan@amarulasolutions.com>
+X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Gustavo A. R. Silva (2018-12-23 22:40:25)
-> One of the more common cases of allocation size calculations is finding
-> the size of a structure that has a zero-sized array at the end, along
-> with memory for some number of elements for that array. For example:
->=20
-> struct foo {
->     int stuff;
->     void *entry[];
-> };
->=20
-> instance =3D kzalloc(sizeof(struct foo) + sizeof(void *) * count, GFP_KER=
-NEL);
->=20
-> Instead of leaving these open-coded and prone to type mistakes, we can
-> now use the new struct_size() helper:
->=20
-> instance =3D kzalloc(struct_size(instance, entry, count), GFP_KERNEL);
->=20
-> This issue was detected with the help of Coccinelle.
->=20
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
+Here is next version changes for Allwinner A64 MIPI-DSI support
 
-Applied to clk-next
+This series grouped the changes from previous version A64 MIPI-DSI[1]
+along with burst mode[2].
+
+Though the series seems to have more patches, but all patches are ordered 
+in a way that the review process is as smooth as possible.
+
+Overall the series is grouped into four different sets to support three 
+different panels types that can fit into the DSI controller.
+
+set:1 for 4-lane, burst mode:
+- patch 0001: 0009, DSI controller changes that support burst mode.
+  all the patches fixed the previous comments along with proper commit message.
+
+set:2 for A64 DSI changes:
+- patch 0010: 0011, PLL-MIPI changes related to A64
+- patch 0012: 0013, VCC-DSI supply change on DSI controller
+- patch 0014: 0015: dt-bindings patches for A64 DSI and DPHY documentation
+- patch 0016: A64 DSI pipeline patch
+- patch 0017: Overlay patch that enable Feiyang FY07024DI26A30-D burst mode
+  panel on Pine64-LTS to validate set:1 changes
+
+set:3 for 4-lane, non-burst mode:
+- patch 0018: msg type MIPI_DSI_GENERIC_SHORT_WRITE_2_PARAM support
+- patch 0019: Overlay patch that enable Bananapi S070WV20-CT16 ICN6211 
+  panel on Bananapi M64 to validate set:3 changes
+
+set:4 for 2-lane, non-burst mode:
+- patch 0020: 0021, DSI hfp and hbp timings fixes
+- patch 0022: patch to enable Techstar TS8550B panel on Amarula A64-Relic
+  to validate set:4 changes.
+
+Changes for v6:
+- dropped unneeded changes, patches
+- fixed all burst mode patches as per previous version comments
+- rebase on master
+- update proper commit message
+- dropped unneeded comments
+- order the patches that make review easy
+Changes for v5:
+- collect Rob, Acked-by
+- droped "Fix VBP size calculation" patch
+- updated vblk timing calculation.
+- droped techstar, bananapi dsi panel drivers which may require
+  bridge or other setup. it's under discussion.
+Changes for v4:
+- droppoed untested CCU_FEATURE_FIXED_POSTDIV check code in
+  nkm min, max rate patches
+- create two patches for "Add Allwinner A64 MIPI DSI support"
+  one for has_mod_clk quirk and other one for A64 support
+- use existing driver code construct for hblk computation
+- dropped "Increase hfp packet overhead" patch [2], though BSP added
+  this but we have no issues as of now.
+  (no issues on panel side w/o this change)
+- create separate function for vblk computation 
+- enable vcc-dsi regulator in dsi_runtime_resume
+- collect Rob, Acked-by
+- update MAINTAINERS file for panel drivers
+- cleanup commit messages
+- fixed checkpatch warnings/errors
+
+[1] https://patchwork.kernel.org/cover/10721509/
+[2] https://patchwork.kernel.org/cover/10686655/
+
+Any inputs?
+Jagan.
+
+Jagan Teki (22):
+  drm/sun4i: sun6i_mipi_dsi: Compute burst mode loop N1 instruction
+    delay
+  drm/sun4i: sun6i_mipi_dsi: Support instruction loop selection
+  drm/sun4i: sun6i_mipi_dsi: Setup burst mode timings
+  drm/sun4i: sun6i_mipi_dsi: Simplify drq to support all modes
+  drm/sun4i: tcon: Export get tcon0 routine
+  drm/sun4i: sun6i_mipi_dsi: Probe tcon0 during dsi_bind
+  drm/sun4i: sun6i_mipi_dsi: Setup burst mode
+  drm/sun4i: sun6i_mipi_dsi: Enable 2byte trail for 4-lane burst mode
+  drm/sun4i: sun6i_mipi_dsi: Enable burst mode HBP, HSA_HSE
+  clk: sunxi-ng: Add check for minimal rate to NKM PLLs
+  clk: sunxi-ng: a64: Add minimum rate for PLL_MIPI
+  dt-bindings: sun6i-dsi: Add VCC-DSI supply property
+  drm/sun4i: sun6i_mipi_dsi: Add support for VCC-DSI voltage regulator
+  dt-bindings: sun6i-dsi: Add A64 DSI compatible (w/ A31 fallback)
+  dt-bindings: sun6i-dsi: Add A64 DPHY compatible (w/ A31 fallback)
+  arm64: dts: allwinner: a64: Add DSI pipeline
+  [DO NOT MERGE] arm64: allwinner: a64: pine64-lts: Enable Feiyang FY07024DI26A30-D DSI
+    panel
+  drm/sun4i: sun6i_mipi_dsi: Add DSI Generic short write 2 param
+    transfer
+  [DO NOT MERGE] arm64: dts: allwinner: bananapi-m64: Bananapi S070WV20-CT16 DSI panel
+  drm/sun4i: sun6i_mipi_dsi: Fix DSI hbp timing value
+  drm/sun4i: sun6i_mipi_dsi: Fix DSI hfp timing value
+  arm64: dts: allwinner: a64-amarula-relic: Add Techstar TS8550B
+    MIPI-DSI panel
+
+ .../bindings/display/sunxi/sun6i-dsi.txt      |   5 +
+ .../allwinner/sun50i-a64-amarula-relic.dts    |  39 +++++
+ .../dts/allwinner/sun50i-a64-bananapi-m64.dts |  43 +++++
+ .../dts/allwinner/sun50i-a64-pine64-lts.dts   |  39 +++++
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi |  47 +++++
+ drivers/clk/sunxi-ng/ccu-sun50i-a64.c         |   1 +
+ drivers/clk/sunxi-ng/ccu_nkm.c                |   5 +
+ drivers/clk/sunxi-ng/ccu_nkm.h                |   1 +
+ drivers/gpu/drm/sun4i/sun4i_tcon.c            |   3 +-
+ drivers/gpu/drm/sun4i/sun4i_tcon.h            |   1 +
+ drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c        | 165 ++++++++++++++++--
+ drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h        |   4 +
+ 12 files changed, 337 insertions(+), 16 deletions(-)
+
+-- 
+2.18.0.321.gffc6fa0e3
 
