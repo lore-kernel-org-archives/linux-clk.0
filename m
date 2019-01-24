@@ -2,87 +2,108 @@ Return-Path: <SRS0=VLoV=QA=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 436A2C282C3
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 21:08:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15EA4C282C3
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 21:26:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1415B218B0
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 21:08:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4738218D2
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 21:26:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725974AbfAXVIE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Jan 2019 16:08:04 -0500
-Received: from mga11.intel.com ([192.55.52.93]:26608 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725913AbfAXVIE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 24 Jan 2019 16:08:04 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jan 2019 13:08:03 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,518,1539673200"; 
-   d="scan'208";a="141073644"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
-  by fmsmga001.fm.intel.com with ESMTP; 24 Jan 2019 13:08:01 -0800
-Received: from andy by smile with local (Exim 4.92-RC4)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1gmmEB-0005QQ-S1; Thu, 24 Jan 2019 23:07:59 +0200
-Date:   Thu, 24 Jan 2019 23:07:59 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Phil Edworthy <phil.edworthy@renesas.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Stephen Boyd <sboyd@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v9 1/2] clk: Add comment about __of_clk_get_by_name()
- error values
-Message-ID: <20190124210759.GM9224@smile.fi.intel.com>
-References: <20181203111309.3709-1-phil.edworthy@renesas.com>
- <20181203111309.3709-2-phil.edworthy@renesas.com>
- <20181203133040.GN10650@smile.fi.intel.com>
- <TY1PR01MB1769B12A216ED3E76A40A6B7F5A90@TY1PR01MB1769.jpnprd01.prod.outlook.com>
- <TY1PR01MB17690EDAC0E4B637FF7A81DBF5820@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+        id S1727755AbfAXV0Y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Jan 2019 16:26:24 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:36572 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726095AbfAXV0Y (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Jan 2019 16:26:24 -0500
+Received: by mail-oi1-f194.google.com with SMTP id x23so6120205oix.3;
+        Thu, 24 Jan 2019 13:26:23 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3BKASeLMZBaJ/TSA8g4AVbiUtB0M/I+YsAh4EUI6f1I=;
+        b=mDtGIznVqujHLrgFv5n+7AyN5AubPd3qnXa+qSLCYmp0zzvpxKZWx4ahzJWfcG1d2p
+         BxJ4ACl3yaIDL2T+bvHqWvUBet4fJol6Q4DwJ9W4bv2EgSMhNnE1f/tth9zxwlQQ+4oE
+         Kl0r2p8MwQr5u/kcrOS830UlZDZmaf/Rk33fUa+Oo3HqNi59JPD2itaQ39tCXAZLY0Zr
+         DTsFUlsWGq2DXlB2c+cEjCgexOragOK742bQyypeGwLYZ6TIgj76beeRGZRi2MDG5XMA
+         iUalQOSe3p2RP+WGFF13QxgvQc3gV6kOwUmXTRLmpihwck8yyGv+foFm7fuslMcvpo3u
+         DzYw==
+X-Gm-Message-State: AJcUukerRzh2GAGduKjuMY0STW1N8gXROmUXczutRcKaQTFd0iTpNFGa
+        QssSBU1Gm69iinqS7y1RDvirnEO3gXV4rz+x0wA=
+X-Google-Smtp-Source: ALg8bN7I3dzDDE37T4ya0I4Yuv8D8lZBMBAURA28lB6dUyh12DiW6fMx2EYsyoDEAfqqSDW+YjKTTsdBaZHHFjc0U1s=
+X-Received: by 2002:aca:5117:: with SMTP id f23mr2405614oib.72.1548365182672;
+ Thu, 24 Jan 2019 13:26:22 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <TY1PR01MB17690EDAC0E4B637FF7A81DBF5820@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181212220922.18759-1-paul@crapouillou.net>
+In-Reply-To: <20181212220922.18759-1-paul@crapouillou.net>
+From:   Mathieu Malaterre <malat@debian.org>
+Date:   Thu, 24 Jan 2019 22:26:11 +0100
+Message-ID: <CA+7wUszMOvGoPSVOKP7F_KHxgJvjBGT7oJmn5EO62hGGTQK4KA@mail.gmail.com>
+Subject: Re: [PATCH v8 00/26] Ingenic TCU patchset v8
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Ezequiel Garcia <ezequiel@collabora.co.uk>,
+        PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
+        linux-pwm@vger.kernel.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        linux-watchdog@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-clk@vger.kernel.org, od@zcrc.me
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Jan 16, 2019 at 03:18:42PM +0000, Phil Edworthy wrote:
+Paul,
+
+On Wed, Dec 12, 2018 at 11:09 PM Paul Cercueil <paul@crapouillou.net> wrote:
+>
 > Hi,
-> 
-> Any other comments on this patch and patch 2/2 (https://lkml.org/lkml/2018/12/3/326)?
+>
+> Here's the version 8 and hopefully final version of my patchset, which
+> adds support for the Timer/Counter Unit found in JZ47xx SoCs from
+> Ingenic.
 
-Was on vacations, sorry.
+I can no longer boot my MIPS Creator CI20 with this series (merged
+opendingux/for-upstream-timer-v8).
 
-> > > I would start new sentence from new line (this will emphasize the
-> > > possible
-> > > variants)
-> > >
-> > >  * This is ...
-> > I disagree, the explanation is specifically related to the case where the
-> > function returns -EINVAL. Though this is a nit, so I'm not really bothered
-> > either way.
+Using screen+ttyUSB, I can see messages stopping at:
 
-Ah, okay. You may bear my tags on.
+...
+[  OK  ] Started Cgroup management daemon.
+         Starting Regular background program processing daemon...
+[  OK  ] Started Regular background program processing daemon.
+         Starting System Logging Service...
+         Starting Provide limited super user privileges to specific users...
+         Starting Restore /etc/resolv.conf if the system cras...s shut down....
+         Starting WPA supplicant...
+         Starting D-Bus System Message Bus...
+[  OK  ] Started D-Bus System Message Bus.
+
+Nothing really stands out in the error messages. Could you suggest
+things to try out to get into a bootable state ?
 
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+> The big change is that the timer driver has been simplified. The code to
+> dynamically update the system timer or clocksource to a new channel has
+> been removed. Now, the system timer and clocksource are provided as
+> children nodes in the devicetree, and the TCU channel to use for these
+> is deduced from their respective memory resource. The PWM driver will
+> also deduce from its memory resources whether a given PWM channel can be
+> used, or is reserved for the system timers.
+>
+> Kind regards,
+> - Paul Cercueil
+>
