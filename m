@@ -2,99 +2,101 @@ Return-Path: <SRS0=VLoV=QA=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61056C41518
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 06:17:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CF08C282C3
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 07:16:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BDAD218A2
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 06:17:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E43821872
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 07:16:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726107AbfAXGR0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Jan 2019 01:17:26 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:28686 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725287AbfAXGR0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Jan 2019 01:17:26 -0500
-X-UUID: 11b2ad6eddbd46aa961f22506c559675-20190124
-X-UUID: 11b2ad6eddbd46aa961f22506c559675-20190124
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1433468263; Thu, 24 Jan 2019 14:17:20 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 24 Jan 2019 14:17:19 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 24 Jan 2019 14:17:19 +0800
-Message-ID: <1548310639.4220.3.camel@mtksdaap41>
-Subject: Re: [PATCH V2,4/8] drm/mediatek: fix the rate and divder of hdmi
- phy for MT2701
-From:   CK Hu <ck.hu@mediatek.com>
-To:     Wangyan Wang <wangyan.wang@mediatek.com>
-CC:     Michael Turquette <mturquette@baylibre.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        David Airlie <airlied@linux.ie>,
-        chunhui dai <chunhui.dai@mediatek.com>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <dri-devel@lists.freedesktop.org>, <jitao.shi@mediatek.com>,
-        <bibby.hsieh@mediatek.com>, <srv_heupstream@mediatek.com>
-Date:   Thu, 24 Jan 2019 14:17:19 +0800
-In-Reply-To: <20190118125928.3279-5-wangyan.wang@mediatek.com>
-References: <20190118125928.3279-1-wangyan.wang@mediatek.com>
-         <20190118125928.3279-5-wangyan.wang@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        id S1726014AbfAXHQm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Jan 2019 02:16:42 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:33564 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725939AbfAXHQl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Jan 2019 02:16:41 -0500
+Received: by mail-lj1-f194.google.com with SMTP id v1-v6so4312453ljd.0;
+        Wed, 23 Jan 2019 23:16:39 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=LP/avWTvepn7HWKvKZScd337ZUBQpptaYWJEMiVqdw8=;
+        b=gXJSjKawLFyKSxMu9knPi8OeEYEt0k2X6LsvZ1rZVf6IoOiIrFdHmGxLWl+nalbF9E
+         8P9yoaPTSq4rbiMLoQ5aeq/MEhHGj6cjv3xA6gVufILow/qmvTrPiyYksrwgkChKw+u9
+         N4qp/riF2+VYpO4/7j+VrGHYjf9WwFC2YoAHf/4kmBfbMoIOJJij0x3emBSgerFtaMZc
+         EEr0B16UFi7zHnqwo5JZ9tdS4DHTg2X515AcAIvJL72hUw4aGnsec9k6JAbYgBqs2ig+
+         lnQ+QwLUOi7Y4Rgmg42JHcSpJtauJjf/e6lPeQ3nArf8cFfT2T1/4WmEtDh66fr9CTbp
+         TOYA==
+X-Gm-Message-State: AJcUukfad0myvBk+qrCjFIg6GEb7J0metZRHnyU3qFTAQsOB4MSMSiUj
+        c1Z2ZH551pUGfsgDWtSGWak=
+X-Google-Smtp-Source: ALg8bN6YVI1nDjTAHHQcPyrvgygWgP0Klv2vOk1tt7ZLHPFyNSvEzs1wFzosiQXasyg74B91Vn9/IQ==
+X-Received: by 2002:a2e:5b1d:: with SMTP id p29-v6mr4369103ljb.176.1548314198679;
+        Wed, 23 Jan 2019 23:16:38 -0800 (PST)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id p10-v6sm849502ljh.59.2019.01.23.23.16.36
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 23 Jan 2019 23:16:37 -0800 (PST)
+Date:   Thu, 24 Jan 2019 09:16:35 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     mazziesaccount@gmail.com, lee.jones@linaro.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, lgirdwood@gmail.com,
+        gregkh@linuxfoundation.org, rafael@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        sre@kernel.org, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
+        linux@roeck-us.net, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
+Subject: Re: [RFC PATCH v1 03/13] regulator: bd718x7 use chip specific and
+ generic data structs
+Message-ID: <20190124071635.GE2559@localhost.localdomain>
+References: <cover.1548149337.git.matti.vaittinen@fi.rohmeurope.com>
+ <3fb3eab3a8a2767404588d0a0a531273fddfc659.1548149337.git.matti.vaittinen@fi.rohmeurope.com>
+ <20190123155121.GB7503@sirena.org.uk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190123155121.GB7503@sirena.org.uk>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 2019-01-18 at 20:59 +0800, Wangyan Wang wrote:
-> From: chunhui dai <chunhui.dai@mediatek.com>
+Hello Mark,
 
-Describe something here.
+Thanks again for looking through my changes =)
 
+On Wed, Jan 23, 2019 at 03:51:21PM +0000, Mark Brown wrote:
+> On Tue, Jan 22, 2019 at 11:43:28AM +0200, Matti Vaittinen wrote:
+> > Header rohm-bd718x7.h was split to generic and component specific
+> > parts. This changed the struct bd718x7. Adapt the regulator driver to
+> > these changes.
 > 
-> Fixes: 0fc721b2968e ("drm/mediatek: add hdmi driver for MT2701 and MT7623")
-> Signed-off-by: chunhui dai <chunhui.dai@mediatek.com>
-
-Any one who pass a patch should sign off it.
-
-Regards,
-CK
-
-> ---
->  drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> Acked-by: Mark Brown <broonie@kernel.org>
 > 
-> diff --git a/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c b/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
-> index 43bc058d5528..88dd9e812ca0 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
-> @@ -114,8 +114,8 @@ static int mtk_hdmi_pll_set_rate(struct clk_hw *hw, unsigned long rate,
->  
->  	if (rate <= 64000000)
->  		pos_div = 3;
-> -	else if (rate <= 12800000)
-> -		pos_div = 1;
-> +	else if (rate <= 128000000)
-> +		pos_div = 2;
->  	else
->  		pos_div = 1;
->  
+> Does this need to be squashed into the earlier commit for bisection?
 
+Yes. If we don't want to break the compilation between commits then
+the patches 2, 3 and 4 should be squashed into one. I sent them as
+separare changes for easier review. I can squash them and send them
+squashed if they are Ok to Lee and Stephen. Please just let me know
+whose tree I should use as the basis so I can do rebasing if needed.
+(Or is there some better way to do changes like this?)
 
+Br,
+	Matti Vaittinen 
+
+-- 
+Matti Vaittinen
+ROHM Semiconductors
+
+~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
