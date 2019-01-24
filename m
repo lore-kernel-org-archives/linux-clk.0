@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EFEBC282C3
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 20:01:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6EBAC282C3
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 20:01:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D27F121726
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 20:01:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9511921726
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 20:01:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="kYXku2+U"
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="TCD0TRN3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732116AbfAXUAT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Jan 2019 15:00:19 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:41079 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732233AbfAXUAS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Jan 2019 15:00:18 -0500
-Received: by mail-pf1-f195.google.com with SMTP id b7so3524510pfi.8
-        for <linux-clk@vger.kernel.org>; Thu, 24 Jan 2019 12:00:18 -0800 (PST)
+        id S1729830AbfAXT7r (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Jan 2019 14:59:47 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:34483 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731544AbfAXT7q (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Jan 2019 14:59:46 -0500
+Received: by mail-pl1-f194.google.com with SMTP id w4so3393477plz.1
+        for <linux-clk@vger.kernel.org>; Thu, 24 Jan 2019 11:59:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=MUFV3EbRWTylHEUKUIeOqSoI6gTTKiS0hGHS2pg+s1g=;
-        b=kYXku2+URiPTdGUN0CnytsHS0hqAI82ylfs+dKmCWQEKJ+BdxgbLh8PPphfZPGNePq
-         /96+rmiOaEGSTphtezeUvV1cBmZLCTvSe8ZnniWkfWch6nY6PK715P0JCMiHKchP0yFq
-         XLJ8t7+p4LPR665DNVYy0yxzgsbmTfwwiQJkk=
+        bh=EkDBLnbNod31G2yEaFX2CmKKS0jTQnqrj15H3QWvn9U=;
+        b=TCD0TRN38afPd8Zhe1O+pYkOUH9l5R+moib5iY6n5hpyBrxb53upzWLLGzkDYl8E+I
+         gTUUj61LciP1lsUReMlCJjvy9FiZefnOeCTMzcBQ0IwfE1S/WNJFNnF0RLMGmBVLhm1Y
+         /4rXYrgXjGbn0Kg6zLVn52zjLpm0bhHsidHbU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=MUFV3EbRWTylHEUKUIeOqSoI6gTTKiS0hGHS2pg+s1g=;
-        b=nRAZWTjJ7cw5WJntZul5U3ErgqdTO9B0GYXYqRM4HwozWlOTUl3XEzPCOaIdQ/EFhn
-         B8udhh9On3c1h7AJJKQ2Zv+h0XOFFZs5pZcFWJOiDJYTyGl31jinVbhGSZCR8BhpXOS/
-         DwUcWyAf56pij5qGHQte8NusyN2aMQDHfc41JkS/lydaD5EEoerld5PeOB2ddUg1WZ1s
-         iqjUBVrA5HRD2FR7xWdZjKNf+7npPWkSzYxJZvs2Yu4w4W6xg2/rcJtzUulWDennGhGy
-         GPD4F8gBoZJv3jJBBEFJSyJoTQ3QLuRO8+zUcBrSsrmA62JOiMC4wQ+8EIQLSQTWZJB9
-         m1Bw==
-X-Gm-Message-State: AJcUukfwQH9rf3oISXW1f8dmjkdIGff77cgd+pKhUBtgCP8KhRjvFqpU
-        CBaQzJy3/UFHEwDXNGm5OIUeXQ==
-X-Google-Smtp-Source: ALg8bN5RmRe8ODy7m+XM46GYuK17hUEAO1Y4XOThFEHBmaFLnaGq3Qms+U0Xep8wBNGFIGPxjc1hGw==
-X-Received: by 2002:a63:e950:: with SMTP id q16mr7211887pgj.138.1548360017678;
-        Thu, 24 Jan 2019 12:00:17 -0800 (PST)
+        bh=EkDBLnbNod31G2yEaFX2CmKKS0jTQnqrj15H3QWvn9U=;
+        b=HYMXvdYbg2xhXiyZPCNaHuCuLW1UuhvDtJCgpigWdxLm24U4UAUqcWHBkUJHlZWKdc
+         6y3GZxyl0TW7IMLXPcKhmi0GB4K7Uu8UeNyFzvrJ5miuUw8PSdg+0p+cQDODsz8RvfCp
+         +YfyXR8kBMHGcmxn3Wn7yJDyEHD9fytGSK4xm/Q1xCnox/LGYs6xFXtc5gsJMWEQdwRy
+         65cFp15OrWeb20cnSB9fb05ljo17MkY7+aXeaxTc0jvqEu8PDp39oLK3OhpjE48b+pdb
+         GVTZwfU3GFZveG4LLlcWTd1qsmL6Ad6qaxskQRd1w3W1I92ujAr6RdHG3S55OYl+qtxL
+         P41w==
+X-Gm-Message-State: AJcUukcy8aaeLVp4sXbqoJv0Ds5wEYQLZv1DZ63l1BYipjAEcnORf+bW
+        1OEY+YZ9G/kKn0lqJoxGWAnMGA==
+X-Google-Smtp-Source: ALg8bN4QkLSV0WFm3xl4VI9OHOoNMAnX0RC7j2nesGatXwzQg47Fp7+0f439shiK4E3EI2iSUdNhvw==
+X-Received: by 2002:a17:902:28aa:: with SMTP id f39mr7941512plb.297.1548359986023;
+        Thu, 24 Jan 2019 11:59:46 -0800 (PST)
 Received: from localhost.localdomain ([115.97.179.75])
-        by smtp.gmail.com with ESMTPSA id x11sm61637003pfe.72.2019.01.24.12.00.12
+        by smtp.gmail.com with ESMTPSA id x11sm61637003pfe.72.2019.01.24.11.59.40
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 24 Jan 2019 12:00:17 -0800 (PST)
+        Thu, 24 Jan 2019 11:59:45 -0800 (PST)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         David Airlie <airlied@linux.ie>,
@@ -64,9 +64,9 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Michael Trimarchi <michael@amarulasolutions.com>,
         linux-amarula@amarulasolutions.com, linux-sunxi@googlegroups.com,
         Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v6 11/22] clk: sunxi-ng: a64: Add minimum rate for PLL_MIPI
-Date:   Fri, 25 Jan 2019 01:28:49 +0530
-Message-Id: <20190124195900.22620-12-jagan@amarulasolutions.com>
+Subject: [PATCH v6 05/22] drm/sun4i: tcon: Export get tcon0 routine
+Date:   Fri, 25 Jan 2019 01:28:43 +0530
+Message-Id: <20190124195900.22620-6-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 In-Reply-To: <20190124195900.22620-1-jagan@amarulasolutions.com>
 References: <20190124195900.22620-1-jagan@amarulasolutions.com>
@@ -77,29 +77,52 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Minimum PLL used for MIPI is 500MHz, as per manual, but
-lowering the min rate by 300MHz can result proper working
-nkms divider with the help of desired dclock rate from
-panel driver.
+Sometimes tcon attributes like tcon divider, clock rate etc are needed
+in interface drivers like DSI. So for such cases interface driver must
+probe the respective tcon and get the attributes.
+
+Since tcon0 probe is already available, via sun4i_get_tcon0 function,
+export the same instead of probing tcon explicitly.
 
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
 ---
- drivers/clk/sunxi-ng/ccu-sun50i-a64.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/sun4i/sun4i_tcon.c | 3 ++-
+ drivers/gpu/drm/sun4i/sun4i_tcon.h | 1 +
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-index 932836d26e2b..296d489aad6e 100644
---- a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-@@ -183,6 +183,7 @@ static struct ccu_nkm pll_mipi_clk = {
- 	.n		= _SUNXI_CCU_MULT(8, 4),
- 	.k		= _SUNXI_CCU_MULT_MIN(4, 2, 2),
- 	.m		= _SUNXI_CCU_DIV(0, 4),
-+	.min_rate	= 300000000,
- 	.common		= {
- 		.reg		= 0x040,
- 		.hw.init	= CLK_HW_INIT("pll-mipi", "pll-video0",
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+index 0420f5c978b9..3da75a0c5c5d 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+@@ -221,7 +221,7 @@ EXPORT_SYMBOL(sun4i_tcon_enable_vblank);
+  * are located in TCON0. This helper returns a pointer to TCON0's
+  * sun4i_tcon structure, or NULL if not found.
+  */
+-static struct sun4i_tcon *sun4i_get_tcon0(struct drm_device *drm)
++struct sun4i_tcon *sun4i_get_tcon0(struct drm_device *drm)
+ {
+ 	struct sun4i_drv *drv = drm->dev_private;
+ 	struct sun4i_tcon *tcon;
+@@ -235,6 +235,7 @@ static struct sun4i_tcon *sun4i_get_tcon0(struct drm_device *drm)
+ 
+ 	return NULL;
+ }
++EXPORT_SYMBOL(sun4i_get_tcon0);
+ 
+ void sun4i_tcon_set_mux(struct sun4i_tcon *tcon, int channel,
+ 			const struct drm_encoder *encoder)
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.h b/drivers/gpu/drm/sun4i/sun4i_tcon.h
+index b5214d71610f..a52696db14a5 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.h
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.h
+@@ -274,6 +274,7 @@ struct sun4i_tcon {
+ struct drm_bridge *sun4i_tcon_find_bridge(struct device_node *node);
+ struct drm_panel *sun4i_tcon_find_panel(struct device_node *node);
+ 
++struct sun4i_tcon *sun4i_get_tcon0(struct drm_device *drm);
+ void sun4i_tcon_enable_vblank(struct sun4i_tcon *tcon, bool enable);
+ void sun4i_tcon_mode_set(struct sun4i_tcon *tcon,
+ 			 const struct drm_encoder *encoder,
 -- 
 2.18.0.321.gffc6fa0e3
 
