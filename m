@@ -3,97 +3,87 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 772D5C282C3
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 19:50:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FF0CC282C6
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 19:53:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 487FE217D4
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 19:50:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="aqQVY80A"
+	by mail.kernel.org (Postfix) with ESMTP id 03D7921726
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 19:53:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548359634;
+	bh=NvJxEb0uwFbkNik/mB17l9fI/755tZ+BKXKMx+ZcRng=;
+	h=Subject:References:Cc:From:In-Reply-To:To:Date:List-ID:From;
+	b=aweieXKAMwvzczADUsCs4fR9owNdIm69jZllmKD32mrNCQTv6jPWTkgQBvfJymkC8
+	 KpHHDpVa9DjSrmVEoI8BX7CQyRpg9GyoOcfTPy/fzmJcq8QcaFuVkM7LE/R46OsSVI
+	 uMUJGc2zeFmqPcJg2NMe0SfirLMY+dRwuw3Xfxv0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732196AbfAXTux (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:50:53 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:56572 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728243AbfAXTuw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Jan 2019 14:50:52 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0OJomKh064817;
-        Thu, 24 Jan 2019 13:50:48 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1548359448;
-        bh=rBNVR6HZYSsfAmqsDI6FSxfgBSk/4QtqmQlIv4klR8o=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=aqQVY80AQ8SMiJZdTCnyg0VZidhd4T8BueDoB5674u8vvnbeTLTl2GSBADCtI3SWW
-         4DS/YCPaJ3eP+6rJyKxSmMxXdQbmEGIUp8Zo3TsGdwpngHq0AjMvv5n5VObkUIuSqX
-         kcYD5zgcgORCMobDikjQxqnmPNfI/oT6Y6JBhOBU=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0OJomtF028107
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 24 Jan 2019 13:50:48 -0600
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 24
- Jan 2019 13:50:48 -0600
-Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Thu, 24 Jan 2019 13:50:48 -0600
-Received: from [127.0.0.1] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0OJojRS022054;
-        Thu, 24 Jan 2019 13:50:46 -0600
-Subject: Re: [PATCH v2] clk: ti: Fix error handling in
- ti_clk_parse_divider_data()
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-CC:     Michael Turquette <mturquette@baylibre.com>,
-        <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-References: <20190115194625.GA1074@kadam>
- <154835786296.136743.12154336975596919287@swboyd.mtv.corp.google.com>
-From:   Tero Kristo <t-kristo@ti.com>
-Message-ID: <2d7a3290-44b3-94ad-076e-fda869480edf@ti.com>
-Date:   Thu, 24 Jan 2019 21:50:33 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        id S1732740AbfAXTh6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Jan 2019 14:37:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38056 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732735AbfAXTh6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:37:58 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9D638218FC;
+        Thu, 24 Jan 2019 19:37:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548358677;
+        bh=NvJxEb0uwFbkNik/mB17l9fI/755tZ+BKXKMx+ZcRng=;
+        h=Subject:References:Cc:From:In-Reply-To:To:Date:From;
+        b=Gn8fRI9xvZFzw9ZPvcClUC4WnZMrxT2LEAImQZgLeik1ED5CVZIcmmoWgB7I8AwL6
+         8o2OIhGqdS3yDKCHaBcsuEqjIOuQ4Yu/Ot5ccGmQeXQLKAAn0nXXuKxgGf0HWPllws
+         fozHVK4Mtkp1i5uqF19lzPR6ToulPn0fwfK7lO9U=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <154835786296.136743.12154336975596919287@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] clk: imx: imx7ulp: use struct_size() in kzalloc()
+References: <20181224064025.GA9588@embeddedor.com>
+User-Agent: alot/0.8
+Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20181224064025.GA9588@embeddedor.com>
+Message-ID: <154835867687.136743.9650857344780789822@swboyd.mtv.corp.google.com>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>
+Date:   Thu, 24 Jan 2019 11:37:56 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 24/01/2019 21:24, Stephen Boyd wrote:
-> Quoting Dan Carpenter (2019-01-15 11:46:25)
->> The ti_clk_parse_divider_data() function is only called from
->> _get_div_table_from_setup().  That function doesn't look at the return
->> value but instead looks at the "*table" pointer.  In this case, if the
->> kcalloc() fails then *table is NULL (which means success).  It should
->> instead be an error pointer.
->>
->> The ti_clk_parse_divider_data() function has two callers.  One checks
->> for errors and the other doesn't.  I have fixed it so now both handle
->> errors.
->>
->> Fixes: 4f6be5655dc9 ("clk: ti: divider: add driver internal API for parsing divider data")
->> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
->> ---
-> 
-> Applied to clk-fixes
-> 
-> I'm going to add Tero's ack to this because it isn't really that
-> different.
-> 
+Quoting Gustavo A. R. Silva (2018-12-23 22:40:25)
+> One of the more common cases of allocation size calculations is finding
+> the size of a structure that has a zero-sized array at the end, along
+> with memory for some number of elements for that array. For example:
+>=20
+> struct foo {
+>     int stuff;
+>     void *entry[];
+> };
+>=20
+> instance =3D kzalloc(sizeof(struct foo) + sizeof(void *) * count, GFP_KER=
+NEL);
+>=20
+> Instead of leaving these open-coded and prone to type mistakes, we can
+> now use the new struct_size() helper:
+>=20
+> instance =3D kzalloc(struct_size(instance, entry, count), GFP_KERNEL);
+>=20
+> This issue was detected with the help of Coccinelle.
+>=20
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> ---
 
-Yeah, thats ok. Thanks Stephen.
+Applied to clk-next
 
--Tero
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
