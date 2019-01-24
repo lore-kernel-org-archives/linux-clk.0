@@ -3,83 +3,76 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C82AC282C3
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 18:53:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2A3AC282C3
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 18:55:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE9B7218CD
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 18:53:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4899218CD
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 18:55:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548356005;
-	bh=ys+cZcN7C23K41TchXjNNZ3jRHLKQYUbYdM0495oLvg=;
+	s=default; t=1548356150;
+	bh=srTkUatcA9i4woWF0ZV0ocQuNChneTT+GsJnt9Ex5yY=;
 	h=Subject:References:Cc:From:In-Reply-To:To:Date:List-ID:From;
-	b=K8NBm6xX7tVsoaY6ZQjphZhRDfMyr+KGH7s6HJcqiLQXTsRhSlBB/G9fgnNhzExFB
-	 nR4AXaNu2qDxdrhHAzJefV/lS1X4ez+F+XYlo0XCkSnVXyTV9GWpB8Z29YKXl9uh9Q
-	 dtYZ8Pd5AJs6IRHezZxTUKd692MKdWf/PccIQa6I=
+	b=Qf6p3Tq83e6ythZwx8I7bFGc/xMAwoblkW9pOQwoMg53bRw3PDM+tORVV8DIzQWjn
+	 2OVRRxr7pmUbHyFL1wir9U/w8S+ROp5si178NqdmIz4wXDwtHHNmrozMLe8zE/6iNE
+	 JtfKUIbLv6erjgsscqTztbgwhBBGUKFNRxyQlm04=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726003AbfAXSxZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Jan 2019 13:53:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59424 "EHLO mail.kernel.org"
+        id S1726026AbfAXSzu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Jan 2019 13:55:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33888 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725936AbfAXSxZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 24 Jan 2019 13:53:25 -0500
+        id S1725913AbfAXSzu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 24 Jan 2019 13:55:50 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7A236218A6;
-        Thu, 24 Jan 2019 18:53:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6DD42218A6;
+        Thu, 24 Jan 2019 18:55:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548356004;
-        bh=ys+cZcN7C23K41TchXjNNZ3jRHLKQYUbYdM0495oLvg=;
+        s=default; t=1548356149;
+        bh=srTkUatcA9i4woWF0ZV0ocQuNChneTT+GsJnt9Ex5yY=;
         h=Subject:References:Cc:From:In-Reply-To:To:Date:From;
-        b=awatSxVAnH2L/XlBIz6WimIrenvKl+ck7m9gY4aRk1xh5B9vf8kspWEkPiAWsJ9B6
-         XKbhdJh1wk7eKDs8sGg5548nOK0rgsx8x2pe6pA+mr84CUQPLW2LH6sehIYPh+31vP
-         nk1M3CByM5duEF3qNUO2AqQttmP15AzruZNxFRi4=
+        b=m2AROoM0B0UJdl/r1kb5Mep/kxAguCYDQ20S/wWfufX0JfRIhgNF4q1mdw40CTTrh
+         i2+5uYGJUWoVONwNqxpR7LkILoS4kGRNOoLbd3qWGmT2iBSLlkOpmw3aqI2miHi5pC
+         Nl3lL007NSDBJH3sCtPGkYHoMmCVbBGSbxg7JkcE=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Subject: Re: [PATCH 1/3] Revert "Input: olpc_apsp - enable the SP clock"
-References: <20190121062255.551587-1-lkundrak@v3.sk> <20190121062255.551587-2-lkundrak@v3.sk> <20190123220545.GD179701@dtor-ws>
+References: <20190121062255.551587-1-lkundrak@v3.sk> <20190121062255.551587-2-lkundrak@v3.sk>
 User-Agent: alot/0.8
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
+Cc:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20190123220545.GD179701@dtor-ws>
-Message-ID: <154835600359.136743.8585628353385883771@swboyd.mtv.corp.google.com>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         Lubomir Rintel <lkundrak@v3.sk>
-Date:   Thu, 24 Jan 2019 10:53:23 -0800
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20190121062255.551587-2-lkundrak@v3.sk>
+Message-ID: <154835614871.136743.8711596686877554586@swboyd.mtv.corp.google.com>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Lubomir Rintel <lkundrak@v3.sk>,
+        Michael Turquette <mturquette@baylibre.com>
+Date:   Thu, 24 Jan 2019 10:55:48 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Dmitry Torokhov (2019-01-23 14:05:45)
-> On Mon, Jan 21, 2019 at 07:22:54AM +0100, Lubomir Rintel wrote:
-> > Turns out this is not such a great idea. Once the SP clock is disabled,
-> > it's not sufficient to just enable in order to bring the SP core back u=
-p.
-> >=20
-> > It seems that the kernel has no business managing this clock. Just let
-> > the firmware keep it enabled.
-> >=20
-> > This reverts commit ed22cee91a88c47e564478b012fdbcb079653499.
-> >=20
-> > Link: https://lore.kernel.org/lkml/154783267051.169631.3197836544646625=
-747@swboyd.mtv.corp.google.com/
-> > Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+Quoting Lubomir Rintel (2019-01-20 22:22:54)
+> Turns out this is not such a great idea. Once the SP clock is disabled,
+> it's not sufficient to just enable in order to bring the SP core back up.
 >=20
-> OK, as clock folks say it is a bad idea it must be so. Merge though clk
-> tree?
+> It seems that the kernel has no business managing this clock. Just let
+> the firmware keep it enabled.
 >=20
-> Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> This reverts commit ed22cee91a88c47e564478b012fdbcb079653499.
 >=20
+> Link: https://lore.kernel.org/lkml/154783267051.169631.319783654464662574=
+7@swboyd.mtv.corp.google.com/
+> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+> ---
 
-Ok sure. I'll merge them through clk tree. I'll fast track it through
-clk-fixes too.
+Applied to clk-fixes
 
