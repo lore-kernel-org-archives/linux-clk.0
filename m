@@ -2,101 +2,128 @@ Return-Path: <SRS0=VLoV=QA=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CF08C282C3
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 07:16:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00DB7C282C3
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 08:14:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E43821872
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 07:16:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CCB7821855
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 08:14:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726014AbfAXHQm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Jan 2019 02:16:42 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:33564 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725939AbfAXHQl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Jan 2019 02:16:41 -0500
-Received: by mail-lj1-f194.google.com with SMTP id v1-v6so4312453ljd.0;
-        Wed, 23 Jan 2019 23:16:39 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=LP/avWTvepn7HWKvKZScd337ZUBQpptaYWJEMiVqdw8=;
-        b=gXJSjKawLFyKSxMu9knPi8OeEYEt0k2X6LsvZ1rZVf6IoOiIrFdHmGxLWl+nalbF9E
-         8P9yoaPTSq4rbiMLoQ5aeq/MEhHGj6cjv3xA6gVufILow/qmvTrPiyYksrwgkChKw+u9
-         N4qp/riF2+VYpO4/7j+VrGHYjf9WwFC2YoAHf/4kmBfbMoIOJJij0x3emBSgerFtaMZc
-         EEr0B16UFi7zHnqwo5JZ9tdS4DHTg2X515AcAIvJL72hUw4aGnsec9k6JAbYgBqs2ig+
-         lnQ+QwLUOi7Y4Rgmg42JHcSpJtauJjf/e6lPeQ3nArf8cFfT2T1/4WmEtDh66fr9CTbp
-         TOYA==
-X-Gm-Message-State: AJcUukfad0myvBk+qrCjFIg6GEb7J0metZRHnyU3qFTAQsOB4MSMSiUj
-        c1Z2ZH551pUGfsgDWtSGWak=
-X-Google-Smtp-Source: ALg8bN6YVI1nDjTAHHQcPyrvgygWgP0Klv2vOk1tt7ZLHPFyNSvEzs1wFzosiQXasyg74B91Vn9/IQ==
-X-Received: by 2002:a2e:5b1d:: with SMTP id p29-v6mr4369103ljb.176.1548314198679;
-        Wed, 23 Jan 2019 23:16:38 -0800 (PST)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id p10-v6sm849502ljh.59.2019.01.23.23.16.36
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 23 Jan 2019 23:16:37 -0800 (PST)
-Date:   Thu, 24 Jan 2019 09:16:35 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     mazziesaccount@gmail.com, lee.jones@linaro.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, lgirdwood@gmail.com,
-        gregkh@linuxfoundation.org, rafael@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        sre@kernel.org, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
-        linux@roeck-us.net, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
-Subject: Re: [RFC PATCH v1 03/13] regulator: bd718x7 use chip specific and
- generic data structs
-Message-ID: <20190124071635.GE2559@localhost.localdomain>
-References: <cover.1548149337.git.matti.vaittinen@fi.rohmeurope.com>
- <3fb3eab3a8a2767404588d0a0a531273fddfc659.1548149337.git.matti.vaittinen@fi.rohmeurope.com>
- <20190123155121.GB7503@sirena.org.uk>
+        id S1726080AbfAXIOT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Jan 2019 03:14:19 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:18522 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725986AbfAXIOS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Jan 2019 03:14:18 -0500
+X-UUID: 75d2a83803564c2ca2d3e1da07741b67-20190124
+X-UUID: 75d2a83803564c2ca2d3e1da07741b67-20190124
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
+        (envelope-from <erin.lo@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 308134618; Thu, 24 Jan 2019 16:14:10 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Thu, 24 Jan 2019 16:14:09 +0800
+Received: from mtkslt303.mediatek.inc (10.21.14.116) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 24 Jan 2019 16:14:09 +0800
+From:   Erin Lo <erin.lo@mediatek.com>
+To:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Stephen Boyd <sboyd@codeaurora.org>
+CC:     <devicetree@vger.kernel.org>,
+        srv_heupstream <srv_heupstream@mediatek.com>,
+        <linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <yingjoe.chen@mediatek.com>, <erin.lo@mediatek.com>,
+        <mars.cheng@mediatek.com>, <eddie.huang@mediatek.com>,
+        <linux-clk@vger.kernel.org>
+Subject: [PATCH v6 0/6] Add basic and clock support for Mediatek MT8183 SoC
+Date:   Thu, 24 Jan 2019 16:07:14 +0800
+Message-ID: <1548317240-44682-1-git-send-email-erin.lo@mediatek.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190123155121.GB7503@sirena.org.uk>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello Mark,
+MT8183 is a SoC based on 64bit ARMv8 architecture.
+It contains 4 CA53 and 4 CA73 cores.
+MT8183 share many HW IP with MT65xx series.
+This patchset was tested on MT8183 evaluation board and use correct clock to shell.
 
-Thanks again for looking through my changes =)
+This series contains document bindings, device tree including interrupt, uart, clock,
+pinctrl, spi, and pwrap.
 
-On Wed, Jan 23, 2019 at 03:51:21PM +0000, Mark Brown wrote:
-> On Tue, Jan 22, 2019 at 11:43:28AM +0200, Matti Vaittinen wrote:
-> > Header rohm-bd718x7.h was split to generic and component specific
-> > parts. This changed the struct bd718x7. Adapt the regulator driver to
-> > these changes.
-> 
-> Acked-by: Mark Brown <broonie@kernel.org>
-> 
-> Does this need to be squashed into the earlier commit for bisection?
+Based on v5.0-rc1 and
+http://lists.infradead.org/pipermail/linux-mediatek/2018-December/016243.html
 
-Yes. If we don't want to break the compilation between commits then
-the patches 2, 3 and 4 should be squashed into one. I sent them as
-separare changes for easier review. I can squash them and send them
-squashed if they are Ok to Lee and Stephen. Please just let me know
-whose tree I should use as the basis so I can do rebasing if needed.
-(Or is there some better way to do changes like this?)
+Change in v6:
+1. Remove power and iommu nodes
+2. Fix dtb build warning
+3. Fix pinctrl binding doc
+4. Fix '_' in node names
 
-Br,
-	Matti Vaittinen 
+Change in v5:
+1. Collect all device tree nodes to the last patch
+2. Add PMU
+3. Add Signed-off-by
+4. Remove clock driver code and binding doc
+5. Add pinctrl, iommu, spi, and pwrap nodes
 
--- 
-Matti Vaittinen
-ROHM Semiconductors
+Change in v4:
+1. Correct syntax error in dtsi
+2. Add MT8183 clock support
 
-~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
+Change in v3:
+1. Fill out GICC, GICH, GICV regions
+2. Update Copyright to 2018
+
+Change in v2:
+1. Split dt-bindings into different patches 2. Correct bindings for supported SoCs (mtk-uart.txt)
+
+Ben Ho (1):
+  arm64: dts: Add Mediatek SoC MT8183 and evaluation board dts and
+    Makefile
+
+Erin Lo (3):
+  dt-bindings: arm: Add bindings for Mediatek MT8183 SoC Platform
+  dt-bindings: mtk-sysirq: Add compatible for Mediatek MT8183
+  dt-bindings: serial: Add compatible for Mediatek MT8183
+
+Seiya Wang (1):
+  irqchip/mtk-sysirq: support 4 interrupt parameters for sysirq
+
+Zhiyong Tao (1):
+  dt-bindings: pinctrl: mt8183: add binding document
+
+ Documentation/devicetree/bindings/arm/mediatek.txt |    4 +
+ .../interrupt-controller/mediatek,sysirq.txt       |    1 +
+ .../devicetree/bindings/pinctrl/pinctrl-mt8183.txt |  115 ++
+ .../devicetree/bindings/serial/mtk-uart.txt        |    1 +
+ arch/arm64/boot/dts/mediatek/Makefile              |    1 +
+ arch/arm64/boot/dts/mediatek/mt8183-evb.dts        |  136 +++
+ arch/arm64/boot/dts/mediatek/mt8183-pinfunc.h      | 1120 ++++++++++++++++++++
+ arch/arm64/boot/dts/mediatek/mt8183.dtsi           |  408 +++++++
+ drivers/irqchip/irq-mtk-sysirq.c                   |    4 +-
+ 9 files changed, 1788 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-mt8183.txt
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt8183-evb.dts
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt8183-pinfunc.h
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt8183.dtsi
+
+--
+1.9.1
+
