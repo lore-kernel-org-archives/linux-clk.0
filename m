@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6EBAC282C3
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 20:01:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6996BC282C3
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 20:01:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9511921726
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 20:01:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3880B21726
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 20:01:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="TCD0TRN3"
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="C2Q0VDKt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729830AbfAXT7r (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:59:47 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:34483 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731544AbfAXT7q (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Jan 2019 14:59:46 -0500
-Received: by mail-pl1-f194.google.com with SMTP id w4so3393477plz.1
-        for <linux-clk@vger.kernel.org>; Thu, 24 Jan 2019 11:59:46 -0800 (PST)
+        id S1729477AbfAXT7b (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Jan 2019 14:59:31 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:47014 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731561AbfAXT72 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Jan 2019 14:59:28 -0500
+Received: by mail-pg1-f196.google.com with SMTP id w7so3110252pgp.13
+        for <linux-clk@vger.kernel.org>; Thu, 24 Jan 2019 11:59:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=EkDBLnbNod31G2yEaFX2CmKKS0jTQnqrj15H3QWvn9U=;
-        b=TCD0TRN38afPd8Zhe1O+pYkOUH9l5R+moib5iY6n5hpyBrxb53upzWLLGzkDYl8E+I
-         gTUUj61LciP1lsUReMlCJjvy9FiZefnOeCTMzcBQ0IwfE1S/WNJFNnF0RLMGmBVLhm1Y
-         /4rXYrgXjGbn0Kg6zLVn52zjLpm0bhHsidHbU=
+        bh=5Ak/RzbTyrrXIVZkdGtey2LIaf9k4mP2yZqsX+ON3ZQ=;
+        b=C2Q0VDKtacLIgo4Mjh++5QTJFI5flCR8BhPzFH1OJGMSW92ZiSnDvX6ObOTGi3Vh+5
+         7GdaDav2EZc4+yTV3gCBsh3xebpBRzpcSM0E8wH+xdfQ8F/juUgrG29Ve/3dL2UTWiXv
+         bammi2n2cGE1VQH6vo0jsMBdrZlBe0lWufylk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=EkDBLnbNod31G2yEaFX2CmKKS0jTQnqrj15H3QWvn9U=;
-        b=HYMXvdYbg2xhXiyZPCNaHuCuLW1UuhvDtJCgpigWdxLm24U4UAUqcWHBkUJHlZWKdc
-         6y3GZxyl0TW7IMLXPcKhmi0GB4K7Uu8UeNyFzvrJ5miuUw8PSdg+0p+cQDODsz8RvfCp
-         +YfyXR8kBMHGcmxn3Wn7yJDyEHD9fytGSK4xm/Q1xCnox/LGYs6xFXtc5gsJMWEQdwRy
-         65cFp15OrWeb20cnSB9fb05ljo17MkY7+aXeaxTc0jvqEu8PDp39oLK3OhpjE48b+pdb
-         GVTZwfU3GFZveG4LLlcWTd1qsmL6Ad6qaxskQRd1w3W1I92ujAr6RdHG3S55OYl+qtxL
-         P41w==
-X-Gm-Message-State: AJcUukcy8aaeLVp4sXbqoJv0Ds5wEYQLZv1DZ63l1BYipjAEcnORf+bW
-        1OEY+YZ9G/kKn0lqJoxGWAnMGA==
-X-Google-Smtp-Source: ALg8bN4QkLSV0WFm3xl4VI9OHOoNMAnX0RC7j2nesGatXwzQg47Fp7+0f439shiK4E3EI2iSUdNhvw==
-X-Received: by 2002:a17:902:28aa:: with SMTP id f39mr7941512plb.297.1548359986023;
-        Thu, 24 Jan 2019 11:59:46 -0800 (PST)
+        bh=5Ak/RzbTyrrXIVZkdGtey2LIaf9k4mP2yZqsX+ON3ZQ=;
+        b=hhk0opFXa7Q6QtK4ZM4Mbj4gLFxicrUF4UtYQMqozwmfR1rSJ2ZgXEqDCWsH745uDS
+         DzDuEW08IF3SH5nJGW/VZOhINk76Gu9FL0KHP/x7JOsgPeJMHt/d2GSuaK86ZFlR7jUx
+         MvNsUoXVgMeR6pTurd7HfZwPyFXTUY7C5Hi6f43fhxiunV3X1POXGANA/oA3mMV2+v0y
+         FxZ5Hl/vzjjy/pWY6XT+p2+3CZlrV6EkVVLPiAuELdteATRY2mhZ4Fb9gAjFqAw6crnJ
+         bnJeubI6QVyhCkhEkrb7xX3iK27nrQqfRivLnLlS7r7IR9ZhlbSccIrFjEmG3rY4CHEc
+         xUSA==
+X-Gm-Message-State: AJcUukfWFu2kq1vpTMxW1rZjvJ9TnWiF/1CWoL1/grOlhlxIUJgZLD9f
+        AX20Fd7i90xCoNxzlvVNkqcBmA==
+X-Google-Smtp-Source: ALg8bN70Hto641qCAhjyPHIEGxG0+WOYHri2dEXZu/4KY0n5xb4Bmf7S/rYMO8nj1Duk/+WXrZQc4w==
+X-Received: by 2002:a63:1d1d:: with SMTP id d29mr7244592pgd.49.1548359967683;
+        Thu, 24 Jan 2019 11:59:27 -0800 (PST)
 Received: from localhost.localdomain ([115.97.179.75])
-        by smtp.gmail.com with ESMTPSA id x11sm61637003pfe.72.2019.01.24.11.59.40
+        by smtp.gmail.com with ESMTPSA id x11sm61637003pfe.72.2019.01.24.11.59.22
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 24 Jan 2019 11:59:45 -0800 (PST)
+        Thu, 24 Jan 2019 11:59:27 -0800 (PST)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         David Airlie <airlied@linux.ie>,
@@ -64,9 +64,9 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Michael Trimarchi <michael@amarulasolutions.com>,
         linux-amarula@amarulasolutions.com, linux-sunxi@googlegroups.com,
         Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v6 05/22] drm/sun4i: tcon: Export get tcon0 routine
-Date:   Fri, 25 Jan 2019 01:28:43 +0530
-Message-Id: <20190124195900.22620-6-jagan@amarulasolutions.com>
+Subject: [PATCH v6 02/22] drm/sun4i: sun6i_mipi_dsi: Support instruction loop selection
+Date:   Fri, 25 Jan 2019 01:28:40 +0530
+Message-Id: <20190124195900.22620-3-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 In-Reply-To: <20190124195900.22620-1-jagan@amarulasolutions.com>
 References: <20190124195900.22620-1-jagan@amarulasolutions.com>
@@ -77,52 +77,35 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Sometimes tcon attributes like tcon divider, clock rate etc are needed
-in interface drivers like DSI. So for such cases interface driver must
-probe the respective tcon and get the attributes.
+Instruction loop selection would require before writing
+loop number registers, so enable idle, LP11 bits on
+loop selection register.
 
-Since tcon0 probe is already available, via sun4i_get_tcon0 function,
-export the same instead of probing tcon explicitly.
+Reference code available in BSP (from linux-sunxi/
+drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c)
+
+(dsi_dev[sel]->dsi_inst_loop_sel.dwval = 2<<(4*DSI_INST_ID_LP11) |
+	3<<(4*DSI_INST_ID_DLY);
 
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
- drivers/gpu/drm/sun4i/sun4i_tcon.c | 3 ++-
- drivers/gpu/drm/sun4i/sun4i_tcon.h | 1 +
- 2 files changed, 3 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-index 0420f5c978b9..3da75a0c5c5d 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-@@ -221,7 +221,7 @@ EXPORT_SYMBOL(sun4i_tcon_enable_vblank);
-  * are located in TCON0. This helper returns a pointer to TCON0's
-  * sun4i_tcon structure, or NULL if not found.
-  */
--static struct sun4i_tcon *sun4i_get_tcon0(struct drm_device *drm)
-+struct sun4i_tcon *sun4i_get_tcon0(struct drm_device *drm)
+diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+index a5fcee750bee..813d5523f1c7 100644
+--- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
++++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+@@ -403,6 +403,9 @@ static void sun6i_dsi_setup_inst_loop(struct sun6i_dsi *dsi,
  {
- 	struct sun4i_drv *drv = drm->dev_private;
- 	struct sun4i_tcon *tcon;
-@@ -235,6 +235,7 @@ static struct sun4i_tcon *sun4i_get_tcon0(struct drm_device *drm)
+ 	u16 delay = sun6i_dsi_setup_inst_delay(dsi, mode);
  
- 	return NULL;
- }
-+EXPORT_SYMBOL(sun4i_get_tcon0);
- 
- void sun4i_tcon_set_mux(struct sun4i_tcon *tcon, int channel,
- 			const struct drm_encoder *encoder)
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.h b/drivers/gpu/drm/sun4i/sun4i_tcon.h
-index b5214d71610f..a52696db14a5 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.h
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.h
-@@ -274,6 +274,7 @@ struct sun4i_tcon {
- struct drm_bridge *sun4i_tcon_find_bridge(struct device_node *node);
- struct drm_panel *sun4i_tcon_find_panel(struct device_node *node);
- 
-+struct sun4i_tcon *sun4i_get_tcon0(struct drm_device *drm);
- void sun4i_tcon_enable_vblank(struct sun4i_tcon *tcon, bool enable);
- void sun4i_tcon_mode_set(struct sun4i_tcon *tcon,
- 			 const struct drm_encoder *encoder,
++	regmap_write(dsi->regs, SUN6I_DSI_INST_LOOP_SEL_REG,
++		     DSI_INST_ID_HSC  << (4 * DSI_INST_ID_LP11) |
++		     DSI_INST_ID_HSD  << (4 * DSI_INST_ID_DLY));
+ 	regmap_write(dsi->regs, SUN6I_DSI_INST_LOOP_NUM_REG(0),
+ 		     SUN6I_DSI_INST_LOOP_NUM_N0(50 - 1) |
+ 		     SUN6I_DSI_INST_LOOP_NUM_N1(delay));
 -- 
 2.18.0.321.gffc6fa0e3
 
