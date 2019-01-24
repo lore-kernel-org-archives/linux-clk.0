@@ -2,55 +2,55 @@ Return-Path: <SRS0=VLoV=QA=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B6AFC282C5
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 19:59:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 287CAC282C3
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 20:00:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DADA21726
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 19:59:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC96E21726
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 20:00:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="jtO8WY2z"
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="a90IHH49"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731789AbfAXT76 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:59:58 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:35945 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727745AbfAXT76 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Jan 2019 14:59:58 -0500
-Received: by mail-pf1-f193.google.com with SMTP id b85so3536816pfc.3
-        for <linux-clk@vger.kernel.org>; Thu, 24 Jan 2019 11:59:57 -0800 (PST)
+        id S1732208AbfAXUAD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Jan 2019 15:00:03 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:43724 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730950AbfAXUAD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Jan 2019 15:00:03 -0500
+Received: by mail-pg1-f195.google.com with SMTP id v28so3119870pgk.10
+        for <linux-clk@vger.kernel.org>; Thu, 24 Jan 2019 12:00:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=7/5Hsb2tbnBgyCik73JZ6QB0i9gQuu71ae0+ehEd1ME=;
-        b=jtO8WY2z3Lecc100gdCc1MjGm53aU8DFsVHeQYUvKXnySWSqb5s0Gp9LOcim3SAoHf
-         ZE+s8o+Byku0VqAXuYGzGDOKYXKnSqMqHSHXEdSntgXar5jlmfVDkXmeCd+jan4IYMJf
-         Ru84/jOM1Rmqda/exVPryGA9U2Vgl29QOvFqM=
+        bh=7Mn8TUKedPpPTwJJGFCwGJQpWISkySJ1aVESwLSs9Og=;
+        b=a90IHH49RLC8u6YgVR2YrGTkKeb3Zwe1s490sZYOmkA5ikOdYurAIGn40rdO5IJLLb
+         WaLV6ku6UwDgFYLAAWlsDvXATmill3rfsWge2+kK1a+bu4P/SrhiZafvGGiVqO+IQ3iF
+         KYtVn4JY2oow8J659KR1jUYFF4tpbwGufMF2M=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=7/5Hsb2tbnBgyCik73JZ6QB0i9gQuu71ae0+ehEd1ME=;
-        b=HTxrPBI2VfzLmbUqV+2YOz0v6nIzYWVICSa4h4nonRriL3qRWwHfZ0L/AgSTe7e+bj
-         XQmEC0vEt70UomjfvHoeB2/yuyAdU9qouHtylpMzJicw0i8XZqt/dGw3U209xrWpmDvV
-         fhv1S/+12orKLHVKYNBP5KoxzvMAnxRQ79sU2dm2KPDb7hjqJFtfGhvP3P/Xk8viQfwk
-         ikmMC0AuRK3oy1hhjhdl2HedHA8Zp6KZHiDcu11KEWu2Jz8bhB1OOjmNWGdQxE1r/nFD
-         pTyvf4RKtHkhmMtJbWYf3OmKnjsqYQM8IQunEyq2P8cVUqtm0Zxr8DLa7KFsOLMv/54P
-         ALJA==
-X-Gm-Message-State: AJcUukeYtKjL8SLgAfCe9aXZsCXWDPO7tVSo6PAimezh/lMbCVid06MO
-        x/D/zp57vv9IScGSUoA5YTzXcA==
-X-Google-Smtp-Source: ALg8bN5o7CYIiKf5z4azOZLOeZhtdah5LCB/znjdbsgm7Z2kWLJE4drlNh/UxmtsRjD80IVJGMeM3g==
-X-Received: by 2002:a62:60c5:: with SMTP id u188mr7930583pfb.4.1548359997052;
-        Thu, 24 Jan 2019 11:59:57 -0800 (PST)
+        bh=7Mn8TUKedPpPTwJJGFCwGJQpWISkySJ1aVESwLSs9Og=;
+        b=FwiiM6M0U2FC4BG9LQyQ3kQlKYEAlQrp08Hsyxuco4yvogVjx6jhWu87rsGZVOQvUm
+         qe0C3oMxTohRl7JN0zSOWoYmy5jYashVyXHqjnQFF5/U3xqQt99/tDpmHNIQtrhq4jW2
+         tR3OZtcFSKLH3qPh+GTWslNUBiCd2xHyZiNQyMfM8EfYg8/B8RSdi5nGrfxrim6T8VcP
+         OAh+SeYyo0vHnfWfpDqZE25Z4MA4HQwVfpdXM0fwGDYdPcdFhJb6WVd7Q4nLFTIMTef1
+         ZWLD3EzhKEsfLG7kLebTXol+utxuxL3xynQ1WbYaRLEoW9ViBEvzKywoZP6VIWd7whuj
+         NyXQ==
+X-Gm-Message-State: AJcUukd5RcCrFzxTDKQC3mKRHpxMc4tzsCbKrhKBqIDcNqiVL12ztOTq
+        nBzCLIbFgxqUfltIsOaj2wDlDw==
+X-Google-Smtp-Source: ALg8bN4cAGeBI6s1ZiVbiYz22ae57CBUg/beYIPEDJ8uj3kLe/zNBcz8/iJJHjtbyolmzAsMvMZrgA==
+X-Received: by 2002:a63:7e5b:: with SMTP id o27mr7163496pgn.214.1548360002252;
+        Thu, 24 Jan 2019 12:00:02 -0800 (PST)
 Received: from localhost.localdomain ([115.97.179.75])
-        by smtp.gmail.com with ESMTPSA id x11sm61637003pfe.72.2019.01.24.11.59.51
+        by smtp.gmail.com with ESMTPSA id x11sm61637003pfe.72.2019.01.24.11.59.57
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 24 Jan 2019 11:59:56 -0800 (PST)
+        Thu, 24 Jan 2019 12:00:01 -0800 (PST)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         David Airlie <airlied@linux.ie>,
@@ -64,9 +64,9 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Michael Trimarchi <michael@amarulasolutions.com>,
         linux-amarula@amarulasolutions.com, linux-sunxi@googlegroups.com,
         Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v6 07/22] drm/sun4i: sun6i_mipi_dsi: Setup burst mode
-Date:   Fri, 25 Jan 2019 01:28:45 +0530
-Message-Id: <20190124195900.22620-8-jagan@amarulasolutions.com>
+Subject: [PATCH v6 08/22] drm/sun4i: sun6i_mipi_dsi: Enable 2byte trail for 4-lane burst mode
+Date:   Fri, 25 Jan 2019 01:28:46 +0530
+Message-Id: <20190124195900.22620-9-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 In-Reply-To: <20190124195900.22620-1-jagan@amarulasolutions.com>
 References: <20190124195900.22620-1-jagan@amarulasolutions.com>
@@ -77,122 +77,47 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Setting up burst mode display would require to compute
-- Horizontal timing edge values to fill burst drq register
-- Line, sync values to fill burst line register
+For 4-lane, burst mode panels would need to enable 2byte trail_fill
+along with filling trail_env in dsi base control register.
 
-Since there is no direct documentation for these computations
-the edge and line formulas are taken from BSP code (from linux-sunxi/
+Similar reference code avialable in BSP (from linux-sunxi/
 drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c)
 
-line_num = panel->lcd_ht*dsi_pixel_bits[panel->lcd_dsi_format]/
-	  (8*panel->lcd_dsi_lane);
-edge1 = sync_point+(panel->lcd_x+panel->lcd_hbp+20)*
-	dsi_pixel_bits[panel->lcd_dsi_format] /(8*panel->lcd_dsi_lane);
-edge1 = (edge1>line_num)?line_num:edge1;
-edge0 = edge1+(panel->lcd_x+40)*tcon_div/8;
-edge0 = (edge0>line_num)?(edge0-line_num):1;
+if (panel->lcd_dsi_lane == 4)
+{
+   dsi_dev[sel]->dsi_basic_ctl.bits.trail_inv = 0xc;
+   dsi_dev[sel]->dsi_basic_ctl.bits.trail_fill     = 1;
+}
 
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
- drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 70 ++++++++++++++++++++++++--
- 1 file changed, 67 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
 diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-index 2aeaa19a8d1e..46ad142e66e8 100644
+index 46ad142e66e8..a2ad9fa7f8d5 100644
 --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
 +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-@@ -355,6 +355,41 @@ static void sun6i_dsi_inst_init(struct sun6i_dsi *dsi,
- 		     SUN6I_DSI_INST_JUMP_CFG_NUM(1));
- };
+@@ -33,6 +33,8 @@
+ #define SUN6I_DSI_CTL_EN			BIT(0)
  
-+static u32 sun6i_dsi_get_edge1(struct sun6i_dsi *dsi,
-+			       struct drm_display_mode *mode, u32 sync_point)
-+{
-+	struct mipi_dsi_device *device = dsi->device;
-+	unsigned int bpp = mipi_dsi_pixel_format_to_bpp(device->format);
-+	u32 hact_sync_bp;
-+
-+	/* Horizontal timings duration excluding front porch */
-+	hact_sync_bp = (mode->hdisplay + mode->htotal - mode->hsync_start);
-+
-+	return (sync_point + ((hact_sync_bp + 20) * bpp / (8 * device->lanes)));
-+}
-+
-+static u32 sun6i_dsi_get_edge0(struct sun6i_dsi *dsi,
-+			       struct drm_display_mode *mode, u32 edge1)
-+{
-+	struct sun4i_tcon *tcon = dsi->tcon;
-+	unsigned long dclk_rate, dclk_parent_rate, tcon0_div;
-+
-+	dclk_rate = clk_get_rate(tcon->dclk);
-+	dclk_parent_rate = clk_get_rate(clk_get_parent(tcon->dclk));
-+	tcon0_div = dclk_parent_rate / dclk_rate;
-+
-+	return (edge1 + (mode->hdisplay + 40) * tcon0_div / 8);
-+}
-+
-+static u32 sun6i_dsi_get_line_num(struct sun6i_dsi *dsi,
-+				  struct drm_display_mode *mode)
-+{
-+	struct mipi_dsi_device *device = dsi->device;
-+	unsigned int bpp = mipi_dsi_pixel_format_to_bpp(device->format);
-+
-+	return (mode->htotal * bpp / (8 * device->lanes));
-+}
-+
- static int sun6i_dsi_get_drq(struct sun6i_dsi *dsi,
- 			      struct drm_display_mode *mode)
- {
-@@ -404,8 +439,32 @@ static u16 sun6i_dsi_get_video_start_delay(struct sun6i_dsi *dsi,
- static void sun6i_dsi_setup_burst(struct sun6i_dsi *dsi,
- 				  struct drm_display_mode *mode)
- {
--	regmap_write(dsi->regs, SUN6I_DSI_TCON_DRQ_REG,
--		     sun6i_dsi_get_drq(dsi, mode));
-+	struct mipi_dsi_device *device = dsi->device;
-+	u32 sync_point = 40;
-+	u32 line_num = sun6i_dsi_get_line_num(dsi, mode);
-+	u32 edge1 = sun6i_dsi_get_edge1(dsi, mode, sync_point);
-+	u32 edge0 = sun6i_dsi_get_edge0(dsi, mode, edge1);
-+	u32 val;
-+
-+	if (edge1 > line_num)
-+		edge1 = line_num;
-+
-+	if (edge0 > line_num)
-+		edge0 -= line_num;
-+	else
-+		edge0 = 1;
-+
-+	regmap_write(dsi->regs, SUN6I_DSI_BURST_DRQ_REG,
-+		     SUN6I_DSI_BURST_DRQ_EDGE1(edge1) |
-+		     SUN6I_DSI_BURST_DRQ_EDGE0(edge0));
-+	regmap_write(dsi->regs, SUN6I_DSI_BURST_LINE_REG,
-+		     SUN6I_DSI_BURST_LINE_NUM(line_num) |
-+		     SUN6I_DSI_BURST_LINE_SYNC_POINT(sync_point));
-+
-+	/* enable burst mode */
-+	regmap_read(dsi->regs, SUN6I_DSI_BASIC_CTL_REG, &val);
-+	val |= SUN6I_DSI_BASIC_CTL_VIDEO_BURST;
-+	regmap_write(dsi->regs, SUN6I_DSI_BASIC_CTL_REG, val);
+ #define SUN6I_DSI_BASIC_CTL_REG		0x00c
++#define SUN6I_DSI_BASIC_CTL_TRAIL_INV(n)	(((n) & 0xf) << 4)
++#define SUN6I_DSI_BASIC_CTL_TRAIL_FILL		BIT(3)
+ #define SUN6I_DSI_BASIC_CTL_HBP_DIS		BIT(2)
+ #define SUN6I_DSI_BASIC_CTL_HSA_HSE_DIS		BIT(1)
+ #define SUN6I_DSI_BASIC_CTL_VIDEO_BURST		BIT(0)
+@@ -464,6 +466,10 @@ static void sun6i_dsi_setup_burst(struct sun6i_dsi *dsi,
+ 	/* enable burst mode */
+ 	regmap_read(dsi->regs, SUN6I_DSI_BASIC_CTL_REG, &val);
+ 	val |= SUN6I_DSI_BASIC_CTL_VIDEO_BURST;
++	if (device->lanes == 4) {
++		val |= SUN6I_DSI_BASIC_CTL_TRAIL_INV(0xc);
++		val |= SUN6I_DSI_BASIC_CTL_TRAIL_FILL;
++	}
+ 	regmap_write(dsi->regs, SUN6I_DSI_BASIC_CTL_REG, val);
  }
  
- static void sun6i_dsi_setup_inst_loop(struct sun6i_dsi *dsi,
-@@ -667,7 +726,12 @@ static void sun6i_dsi_encoder_enable(struct drm_encoder *encoder)
- 		     SUN6I_DSI_BASIC_CTL1_VIDEO_PRECISION |
- 		     SUN6I_DSI_BASIC_CTL1_VIDEO_MODE);
- 
--	sun6i_dsi_setup_burst(dsi, mode);
-+	regmap_write(dsi->regs, SUN6I_DSI_TCON_DRQ_REG,
-+		     sun6i_dsi_get_drq(dsi, mode));
-+
-+	if (device->mode_flags & MIPI_DSI_MODE_VIDEO_BURST)
-+		sun6i_dsi_setup_burst(dsi, mode);
-+
- 	sun6i_dsi_setup_inst_loop(dsi, mode);
- 	sun6i_dsi_setup_format(dsi, mode);
- 	sun6i_dsi_setup_timings(dsi, mode);
 -- 
 2.18.0.321.gffc6fa0e3
 
