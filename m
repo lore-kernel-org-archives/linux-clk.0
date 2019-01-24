@@ -2,91 +2,84 @@ Return-Path: <SRS0=VLoV=QA=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB7F6C282C3
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 15:26:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C82AC282C3
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 18:53:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF48221855
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 15:26:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE9B7218CD
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 18:53:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548356005;
+	bh=ys+cZcN7C23K41TchXjNNZ3jRHLKQYUbYdM0495oLvg=;
+	h=Subject:References:Cc:From:In-Reply-To:To:Date:List-ID:From;
+	b=K8NBm6xX7tVsoaY6ZQjphZhRDfMyr+KGH7s6HJcqiLQXTsRhSlBB/G9fgnNhzExFB
+	 nR4AXaNu2qDxdrhHAzJefV/lS1X4ez+F+XYlo0XCkSnVXyTV9GWpB8Z29YKXl9uh9Q
+	 dtYZ8Pd5AJs6IRHezZxTUKd692MKdWf/PccIQa6I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728721AbfAXP0P (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Jan 2019 10:26:15 -0500
-Received: from xavier.telenet-ops.be ([195.130.132.52]:50874 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728669AbfAXP0P (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Jan 2019 10:26:15 -0500
-Received: from ramsan ([84.194.111.163])
-        by xavier.telenet-ops.be with bizsmtp
-        id UFSD1z00Q3XaVaC01FSDPA; Thu, 24 Jan 2019 16:26:13 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1gmgtR-0007W5-5c; Thu, 24 Jan 2019 16:26:13 +0100
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1gmgtR-00083P-3s; Thu, 24 Jan 2019 16:26:13 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [git pull] clk: renesas: Updates for v5.1
-Date:   Thu, 24 Jan 2019 16:26:07 +0100
-Message-Id: <20190124152607.30916-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
+        id S1726003AbfAXSxZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Jan 2019 13:53:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59424 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725936AbfAXSxZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 24 Jan 2019 13:53:25 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7A236218A6;
+        Thu, 24 Jan 2019 18:53:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548356004;
+        bh=ys+cZcN7C23K41TchXjNNZ3jRHLKQYUbYdM0495oLvg=;
+        h=Subject:References:Cc:From:In-Reply-To:To:Date:From;
+        b=awatSxVAnH2L/XlBIz6WimIrenvKl+ck7m9gY4aRk1xh5B9vf8kspWEkPiAWsJ9B6
+         XKbhdJh1wk7eKDs8sGg5548nOK0rgsx8x2pe6pA+mr84CUQPLW2LH6sehIYPh+31vP
+         nk1M3CByM5duEF3qNUO2AqQttmP15AzruZNxFRi4=
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 1/3] Revert "Input: olpc_apsp - enable the SP clock"
+References: <20190121062255.551587-1-lkundrak@v3.sk> <20190121062255.551587-2-lkundrak@v3.sk> <20190123220545.GD179701@dtor-ws>
+User-Agent: alot/0.8
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20190123220545.GD179701@dtor-ws>
+Message-ID: <154835600359.136743.8585628353385883771@swboyd.mtv.corp.google.com>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Lubomir Rintel <lkundrak@v3.sk>
+Date:   Thu, 24 Jan 2019 10:53:23 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-	Hi Mike, Stephen,
+Quoting Dmitry Torokhov (2019-01-23 14:05:45)
+> On Mon, Jan 21, 2019 at 07:22:54AM +0100, Lubomir Rintel wrote:
+> > Turns out this is not such a great idea. Once the SP clock is disabled,
+> > it's not sufficient to just enable in order to bring the SP core back u=
+p.
+> >=20
+> > It seems that the kernel has no business managing this clock. Just let
+> > the firmware keep it enabled.
+> >=20
+> > This reverts commit ed22cee91a88c47e564478b012fdbcb079653499.
+> >=20
+> > Link: https://lore.kernel.org/lkml/154783267051.169631.3197836544646625=
+747@swboyd.mtv.corp.google.com/
+> > Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+>=20
+> OK, as clock folks say it is a bad idea it must be so. Merge though clk
+> tree?
+>=20
+> Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+>=20
 
-The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
+Ok sure. I'll merge them through clk tree. I'll fast track it through
+clk-fixes too.
 
-  Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v5.1-tag1
-
-for you to fetch changes up to d9286d9743b6e8cfbf1a13f8db84e9c65c0b09c7:
-
-  clk: renesas: r8a774c0: Correct parent clock of DU (2019-01-24 16:01:08 +0100)
-
-----------------------------------------------------------------
-clk: renesas: Updates for v5.1
-
-  - Add missing CANFD clocks on RZ/G2M and RZ/G2E,
-  - Correct the DU (display unit) parent clock on RZ/G2E.
-
-Thanks for pulling!
-
-----------------------------------------------------------------
-Fabrizio Castro (2):
-      clk: renesas: r8a774c0: Add missing CANFD clock
-      clk: renesas: r8a774a1: Add missing CANFD clock
-
-Geert Uytterhoeven (1):
-      clk: renesas: r8a774c0: Correct parent clock of DU
-
- drivers/clk/renesas/r8a774a1-cpg-mssr.c       | 2 ++
- drivers/clk/renesas/r8a774c0-cpg-mssr.c       | 8 ++++++--
- include/dt-bindings/clock/r8a774a1-cpg-mssr.h | 1 +
- include/dt-bindings/clock/r8a774c0-cpg-mssr.h | 1 +
- 4 files changed, 10 insertions(+), 2 deletions(-)
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
