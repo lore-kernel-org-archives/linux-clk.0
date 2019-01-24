@@ -2,109 +2,120 @@ Return-Path: <SRS0=VLoV=QA=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6D7BC282C3
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 20:01:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CEC3C282C5
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 20:01:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF32D218D0
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 20:01:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B66B21726
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Jan 2019 20:01:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="CC7tbdyL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728816AbfAXUBH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Jan 2019 15:01:07 -0500
-Received: from gateway23.websitewelcome.com ([192.185.49.179]:36637 "EHLO
-        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731562AbfAXUBH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Jan 2019 15:01:07 -0500
-X-Greylist: delayed 1239 seconds by postgrey-1.27 at vger.kernel.org; Thu, 24 Jan 2019 15:01:06 EST
-Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
-        by gateway23.websitewelcome.com (Postfix) with ESMTP id C5B73A6E3
-        for <linux-clk@vger.kernel.org>; Thu, 24 Jan 2019 13:40:26 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id mkrSgMrEp4FKpmkrSglFa2; Thu, 24 Jan 2019 13:40:26 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.130.205] (port=45760 helo=[192.168.1.76])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gmkqG-001HeQ-0I; Thu, 24 Jan 2019 13:40:26 -0600
-Subject: Re: [PATCH] clk: imx: imx7ulp: use struct_size() in kzalloc()
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
+        id S1730752AbfAXUBL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Jan 2019 15:01:11 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:37678 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729693AbfAXUBL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Jan 2019 15:01:11 -0500
+Received: by mail-pf1-f193.google.com with SMTP id y126so3532065pfb.4
+        for <linux-clk@vger.kernel.org>; Thu, 24 Jan 2019 12:01:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=p/fJ1iw2WcKuA3279PZCjqMz7GBGf1KE2XCGX061XcE=;
+        b=CC7tbdyLxoRdfqqHGpLeXCUiQEbgaexutUTQRuVYuirYw0CEJF6xTKYaBdsFyFzMgl
+         +mOf3fjdQjDVA496o1n4r6lNRvIDETxD1zWANt0JNbj7Xzp1gr57NASbumpuLDLCBOXs
+         Li2ZfTWYkQZStwDJUpN5TcGcvwK7FaR4lW5eg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=p/fJ1iw2WcKuA3279PZCjqMz7GBGf1KE2XCGX061XcE=;
+        b=ORhYDsvyrrzAxi88fTzQyUWiDY1GeKBxD4wlU3v5ityfCiR//CnquFJZKu2dLHVJ/0
+         HX9hll0O4v/HSS9zhOTdH6cAt8MZ4uFgTkd3KRyQnW3TzfgaY57s8lUPhlb3EUWy9/ZZ
+         5rRRmeFteabPy2FGR3Y60SSIJ+1e884vOiQVGbqzaP6erWBfP9oYPgJ2XE3TbRWN6Ed8
+         fG3dwxxZUIMw2aSe6pxzV/lkLdzQYAlCkzTTZpiZ9VryjDU+F+AAzdFdPxIal6VkVd8l
+         8UarskDwUfcPmnQjwGqi7yVT++/gEJhHBxn5DCF+VzddmTTor7lDzKdO5f5MC3XrTIrX
+         95qg==
+X-Gm-Message-State: AJcUukfD2MBp/JbxJthxV4hQOvP/YXFTOYrFGdBaAdI26/IGR+W7yjxw
+        W/Kw6WsCvLIwNoBny5YwJMKHOA==
+X-Google-Smtp-Source: ALg8bN5s9ZdKUPSLcjyahaie8Nxi1A3bxmx5c2bMvR7xMCSOGff1YPDujEn8dCM/B/3aSm4tatnYrw==
+X-Received: by 2002:a62:1b83:: with SMTP id b125mr8204996pfb.42.1548360070231;
+        Thu, 24 Jan 2019 12:01:10 -0800 (PST)
+Received: from localhost.localdomain ([115.97.179.75])
+        by smtp.gmail.com with ESMTPSA id x11sm61637003pfe.72.2019.01.24.12.01.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 24 Jan 2019 12:01:09 -0800 (PST)
+From:   Jagan Teki <jagan@amarulasolutions.com>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, Chen-Yu Tsai <wens@csie.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20181224064025.GA9588@embeddedor.com>
- <154835867687.136743.9650857344780789822@swboyd.mtv.corp.google.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Message-ID: <50cb397d-5e41-834d-3a6d-00e1c4efb042@embeddedor.com>
-Date:   Thu, 24 Jan 2019 13:39:10 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-amarula@amarulasolutions.com, linux-sunxi@googlegroups.com,
+        Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH v6 20/22] drm/sun4i: sun6i_mipi_dsi: Fix DSI hbp timing value
+Date:   Fri, 25 Jan 2019 01:28:58 +0530
+Message-Id: <20190124195900.22620-21-jagan@amarulasolutions.com>
+X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
+In-Reply-To: <20190124195900.22620-1-jagan@amarulasolutions.com>
+References: <20190124195900.22620-1-jagan@amarulasolutions.com>
 MIME-Version: 1.0
-In-Reply-To: <154835867687.136743.9650857344780789822@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.130.205
-X-Source-L: No
-X-Exim-ID: 1gmkqG-001HeQ-0I
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.76]) [189.250.130.205]:45760
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 9
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Current driver is calculating hbp maximum value by subtracting
+hsync_start with hdisplay which is front porch value, but the
+hbp refers to back porch.
 
+Back porch value is calculating by subtracting htotal with
+hsync_end as per drm_mode timings, and BSP code from BPI-M64-bsp
+is eventually following the same.
 
-On 1/24/19 1:37 PM, Stephen Boyd wrote:
-> Quoting Gustavo A. R. Silva (2018-12-23 22:40:25)
->> One of the more common cases of allocation size calculations is finding
->> the size of a structure that has a zero-sized array at the end, along
->> with memory for some number of elements for that array. For example:
->>
->> struct foo {
->>     int stuff;
->>     void *entry[];
->> };
->>
->> instance = kzalloc(sizeof(struct foo) + sizeof(void *) * count, GFP_KERNEL);
->>
->> Instead of leaving these open-coded and prone to type mistakes, we can
->> now use the new struct_size() helper:
->>
->> instance = kzalloc(struct_size(instance, entry, count), GFP_KERNEL);
->>
->> This issue was detected with the help of Coccinelle.
->>
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->> ---
-> 
-> Applied to clk-next
-> 
+BPI-M64-bsp is computing hbp as
+(in drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c)
+dsi_hbp = (hbp-hspw)*dsi_pixel_bits[format]/8 - (4+2);
+=> (panel->lcd_hbp - timmings->hor_sync_time)
+=> (timmings->hor_back_porch + timmings->hor_sync_time -
+    timmings->hor_sync_time)
+=> timmings->hor_back_porch
+=> mode->htotal - mode->hsync_end
 
-Thanks, Stephen.
+So, update the MIPI-DSI hbp value accordingly.
 
---
-Gustavo
+Tested on 2-lane, 4-lane DSI LCD panels.
+
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+---
+ drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+index 58bda0928aef..e24719cabba2 100644
+--- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
++++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+@@ -578,7 +578,7 @@ static void sun6i_dsi_setup_timings(struct sun6i_dsi *dsi,
+ 	 */
+ #define HBP_PACKET_OVERHEAD	6
+ 	hbp = max((unsigned int)HBP_PACKET_OVERHEAD,
+-		  (mode->hsync_start - mode->hdisplay) * Bpp - HBP_PACKET_OVERHEAD);
++		  (mode->htotal - mode->hsync_end) * Bpp - HBP_PACKET_OVERHEAD);
+ 
+ 	/*
+ 	 * The frontporch is set using a blanking packet (4 bytes +
+-- 
+2.18.0.321.gffc6fa0e3
+
