@@ -6,24 +6,24 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 809ADC282C0
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Jan 2019 15:52:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F833C282C0
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Jan 2019 15:52:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5897B218CD
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Jan 2019 15:52:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 39CA2218B0
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Jan 2019 15:52:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726256AbfAYPwj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 25 Jan 2019 10:52:39 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:54649 "EHLO mail.bootlin.com"
+        id S1728796AbfAYPw4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 25 Jan 2019 10:52:56 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:54732 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726238AbfAYPwi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 25 Jan 2019 10:52:38 -0500
+        id S1726238AbfAYPwz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 25 Jan 2019 10:52:55 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 759DD20712; Fri, 25 Jan 2019 16:52:36 +0100 (CET)
+        id E7F69207B6; Fri, 25 Jan 2019 16:52:52 +0100 (CET)
 Received: from localhost (aaubervilliers-681-1-87-206.w90-88.abo.wanadoo.fr [90.88.29.206])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 45AB0206A6;
-        Fri, 25 Jan 2019 16:52:36 +0100 (CET)
-Date:   Fri, 25 Jan 2019 16:52:36 +0100
+        by mail.bootlin.com (Postfix) with ESMTPSA id BB08E207AD;
+        Fri, 25 Jan 2019 16:52:52 +0100 (CET)
+Date:   Fri, 25 Jan 2019 16:52:53 +0100
 From:   Maxime Ripard <maxime.ripard@bootlin.com>
 To:     Jagan Teki <jagan@amarulasolutions.com>
 Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
@@ -36,16 +36,16 @@ Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
         devicetree@vger.kernel.org,
         Michael Trimarchi <michael@amarulasolutions.com>,
         linux-amarula@amarulasolutions.com, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v6 14/22] dt-bindings: sun6i-dsi: Add A64 DSI compatible
+Subject: Re: [PATCH v6 15/22] dt-bindings: sun6i-dsi: Add A64 DPHY compatible
  (w/ A31 fallback)
-Message-ID: <20190125155236.agxwkxvyefmrbvym@flea>
+Message-ID: <20190125155253.v33vk3rfpdgv6537@flea>
 References: <20190124195900.22620-1-jagan@amarulasolutions.com>
- <20190124195900.22620-15-jagan@amarulasolutions.com>
+ <20190124195900.22620-16-jagan@amarulasolutions.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="yh73odnggzve526p"
+        protocol="application/pgp-signature"; boundary="ykfgu7c2rq7ykthf"
 Content-Disposition: inline
-In-Reply-To: <20190124195900.22620-15-jagan@amarulasolutions.com>
+In-Reply-To: <20190124195900.22620-16-jagan@amarulasolutions.com>
 User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
@@ -53,19 +53,16 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---yh73odnggzve526p
+--ykfgu7c2rq7ykthf
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jan 25, 2019 at 01:28:52AM +0530, Jagan Teki wrote:
-> The MIPI DSI controller in Allwinner A64 is similar to A33.
+On Fri, Jan 25, 2019 at 01:28:53AM +0530, Jagan Teki wrote:
+> The MIPI DSI PHY controller on Allwinner A64 is similar
+> on the one on A31.
 >=20
-> But unlike A33, A64 doesn't have DSI_SCLK gating which eventually
-> set the mod clock rate for the controller.
->=20
-> So, use the DSI_DPHY gating for the similar purpose of mod clock
-> so-that the controller can operate properly.
+> Add A64 compatible and append A31 compatible as fallback.
 >=20
 > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 > Reviewed-by: Rob Herring <robh@kernel.org>
@@ -75,17 +72,16 @@ On Fri, Jan 25, 2019 at 01:28:52AM +0530, Jagan Teki wrote:
 >=20
 > diff --git a/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.tx=
 t b/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
-> index 69e233e8fad1..dbda2e567760 100644
+> index dbda2e567760..9c553637c72b 100644
 > --- a/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
 > +++ b/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
-> @@ -12,6 +12,7 @@ The DSI Encoder generates the DSI signal from the TCON'=
-s.
+> @@ -40,6 +40,7 @@ D-PHY
 >  Required properties:
 >    - compatible: value must be one of:
->      * allwinner,sun6i-a31-mipi-dsi
-> +    * "allwinner,sun50i-a64-mipi-dsi", "allwinner,sun6i-a31-mipi-dsi"
+>      * allwinner,sun6i-a31-mipi-dphy
+> +    * "allwinner,sun50i-a64-mipi-dphy", "allwinner,sun6i-a31-mipi-dphy"
 
-The other line doesn't have quotes, we should be consistent
+Same remark than patch 14
 
 Maxime
 
@@ -94,15 +90,15 @@ Maxime Ripard, Bootlin
 Embedded Linux and Kernel engineering
 https://bootlin.com
 
---yh73odnggzve526p
+--ykfgu7c2rq7ykthf
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXEswxAAKCRDj7w1vZxhR
-xcB8AQC+qWM23c0Ml3qG9Tl8TIfkdzjyvq5aMW6V6TVA+BeEigD5AaRsaa/pLWFO
-t5Sodonduejqf3Dcw9NHxkr1mp9auQA=
-=MQxE
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXEsw1QAKCRDj7w1vZxhR
+xTi8AQDz3tkCaFBlGhOZG03SKppIfmHwuOSJbl3fNs5PW6BAKwEAuk0HYmnWsXo8
+fkTCcHkKV1uTbLP+Woq7p1BlVjuvMg4=
+=DoXw
 -----END PGP SIGNATURE-----
 
---yh73odnggzve526p--
+--ykfgu7c2rq7ykthf--
