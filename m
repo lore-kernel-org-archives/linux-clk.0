@@ -7,67 +7,68 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD5BBC282C0
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Jan 2019 23:46:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1272AC282C0
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Jan 2019 23:46:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90BEB218CD
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Jan 2019 23:46:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8B55218D0
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Jan 2019 23:46:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="PVTbFBab"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="OL34RnmU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729543AbfAYXpk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 25 Jan 2019 18:45:40 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:44003 "EHLO
+        id S1729730AbfAYXqT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 25 Jan 2019 18:46:19 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:45196 "EHLO
         mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729526AbfAYXpj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Jan 2019 18:45:39 -0500
-Received: by mail-pf1-f193.google.com with SMTP id w73so5424487pfk.10
-        for <linux-clk@vger.kernel.org>; Fri, 25 Jan 2019 15:45:39 -0800 (PST)
+        with ESMTP id S1729505AbfAYXpi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Jan 2019 18:45:38 -0500
+Received: by mail-pf1-f193.google.com with SMTP id g62so5420083pfd.12
+        for <linux-clk@vger.kernel.org>; Fri, 25 Jan 2019 15:45:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=uK46UagMeCc0KFc0YPlTS4qrXQgdBZIe1DAGlyy2xmU=;
-        b=PVTbFBabosZnWR3uWaJ393YNkylOMbSzbfz/s9cUNbQA1Y8ukCW4d2F1gQLE4jcvNv
-         2WUAyEHpzndT58Dj0N2VO53+/01NLWUDI5qIv5m6gCgI+j6WlWE34u2MRA2ObmXOSktG
-         f/+TNVkiV8tvjD0r1e4q5ytVuwZGL1pPkFrsE=
+        bh=2e/BKakkztsacyE7KxQ2hK9BiY92qJSpHRggObm9auk=;
+        b=OL34RnmUgZYPoY29dJN7yZgJSkEArXSCb+vDLyAbrd46qHvaJAS5uV/Lj8RL9m8rNX
+         50/HhX4pj9DGeihDWYAd/9zsfHojKg6CW0HpBgaML0YS1W8HZeLIxJE68kMHLQsFBkAU
+         qY8oVrew9rIPAzlxyI7TdM3lcVjIje+PPdhg8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=uK46UagMeCc0KFc0YPlTS4qrXQgdBZIe1DAGlyy2xmU=;
-        b=EjksCwDZj5O+8HtJ20qI1h+juc63lsBie27hNNecUxzYtOaQ+B+uLXZGCOfzSgIlnC
-         tD3l53/vj2r5DVJtmeX9tNtuqSeu1DMVPDz7CxhsW6YSQcOGlCqTSZu+8GS6MRQ+90cI
-         RPfWT5Kef01w2Uj4dJVf3Ol/iomig5r2ThtUekJp3x/IikqdV5s1bC09rE4+wt2bE8bj
-         fllSrCu+1J7B3zfOsxygm4Fq1gvKXwc8Kzff6eGTO9vo8TLP8iYMr8rJPQ17j8bkRJZ8
-         u3uBwv4OVPnw7Nuav/Ea68/hK44JgdgGj67pAzhSIZOifaIYjbERY9XesQs3gpE5RQrW
-         tf4g==
-X-Gm-Message-State: AJcUukci5ZZBgGlUyZUZcTfE28lX+DkEjaVH1BL6briM24drk+rcDMFk
-        I/9XZtsU4QhDXG7xCHsEsrXtHA==
-X-Google-Smtp-Source: ALg8bN6NLxf/W1PVvaxvb8J7oZIGQDaQ2Ob/5IcVnLbRq2KlDG4Yk/3gnPYhUhN6yljAQZforK97Zw==
-X-Received: by 2002:a63:ae01:: with SMTP id q1mr11541487pgf.402.1548459938750;
-        Fri, 25 Jan 2019 15:45:38 -0800 (PST)
-Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id y9sm32950302pfi.74.2019.01.25.15.45.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        bh=2e/BKakkztsacyE7KxQ2hK9BiY92qJSpHRggObm9auk=;
+        b=rLjCpMDiGDX6b633KQL1BMo40VEe55jHaYIB6TJWQExX2XCucGvBa85vlXMRwXLZar
+         q+940JXOHPwtfU6yBanKfrJIxfcEMeBOyjChsig7bWRo1zCyF7oe5j+aT2WpK6YcD9VK
+         pVGcZttsqJZMj7kiQgICv3nOG8DXkihAABft6e5e2x9vRF5NF44G/zMCy1AKhSecPux0
+         +nhKI/Ti19SwkiywXICxljHAWa28ajWRoWfGcOzN72vgMtfWzme40cHn5jt63+kgqt0Q
+         N+Px4sHFz+PuCsQ/K2MFh4nCVLYSAlQYuLS/rMl5MXr2LKADAlYIuzW6I2H1gmjvcM8N
+         nfEQ==
+X-Gm-Message-State: AJcUukcdW/C2LfIlqUspQaAqsv+YvooipqjIRW0pr51Zw9NBsfr9YbMx
+        C5TQIa0oL9mjx1ycb1WZnOqrMg==
+X-Google-Smtp-Source: ALg8bN5ARKvgsDe4qBqaV0PnGmINcuNTVzkJZgkV9AmjQ+rDDERlLjXtNwVacKU8DTkZcJSKoJtUfg==
+X-Received: by 2002:a65:4646:: with SMTP id k6mr11512152pgr.153.1548459937042;
         Fri, 25 Jan 2019 15:45:37 -0800 (PST)
+Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id y9sm32950302pfi.74.2019.01.25.15.45.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 25 Jan 2019 15:45:36 -0800 (PST)
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
 Cc:     Andy Gross <andy.gross@linaro.org>,
         Bjorn Helgaas <bhelgaas@google.com>,
         David Brown <david.brown@linaro.org>,
         Khasim Syed Mohammed <khasim.mohammed@linaro.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+        Mark Rutland <mark.rutland@arm.com>,
         Niklas Cassel <niklas.cassel@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: [PATCH 2/7] dt-bindings: phy: Add binding for Qualcomm PCIe2 PHY
-Date:   Fri, 25 Jan 2019 15:45:04 -0800
-Message-Id: <20190125234509.26419-3-bjorn.andersson@linaro.org>
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org
+Subject: [PATCH 1/7] clk: gcc-qcs404: Add PCIe resets
+Date:   Fri, 25 Jan 2019 15:45:03 -0800
+Message-Id: <20190125234509.26419-2-bjorn.andersson@linaro.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20190125234509.26419-1-bjorn.andersson@linaro.org>
 References: <20190125234509.26419-1-bjorn.andersson@linaro.org>
@@ -76,61 +77,54 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The Qualcomm PCIe2 PHY is a Synopsys based PCIe PHY found in a number of
-Qualcomm platforms, add a binding to describe this.
+Enabling PCIe requires several of the PCIe related resets from GCC, so
+add them all.
 
 Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- .../bindings/phy/qcom-pcie2-phy.txt           | 40 +++++++++++++++++++
- 1 file changed, 40 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/phy/qcom-pcie2-phy.txt
 
-diff --git a/Documentation/devicetree/bindings/phy/qcom-pcie2-phy.txt b/Documentation/devicetree/bindings/phy/qcom-pcie2-phy.txt
-new file mode 100644
-index 000000000000..7da02f9d78c7
---- /dev/null
-+++ b/Documentation/devicetree/bindings/phy/qcom-pcie2-phy.txt
-@@ -0,0 +1,40 @@
-+Qualcomm PCIe2 PHY controller
-+=============================
-+
-+The Qualcomm PCIe2 PHY is a Synopsys based phy found in a number of Qualcomm
-+platforms.
-+
-+Required properties:
-+ - compatible: compatible list, should be:
-+	       "qcom,qcs404-pcie2-phy", "qcom,pcie2-phy"
-+
-+ - reg: offset and length of the PHY register set.
-+ - #phy-cells: must be 0.
-+
-+ - clocks: a clock-specifier pair for the "pipe" clock
-+
-+ - vdda-vp-supply: phandle to low voltage regulator
-+ - vdda-vph-supply: phandle to high voltage regulator
-+
-+ - resets: reset-specifier pairs for the "phy" and "pipe" resets
-+ - reset-names: list of resets, should contain:
-+		"phy" and "pipe"
-+
-+ - clock-output-names: name of the outgoing clock signal from the PHY PLL
-+
-+Example:
-+ phy@7786000 {
-+	compatible = "qcom,qcs404-pcie2-phy", "qcom,pcie2-phy";
-+	reg = <0x07786000 0xb8>;
-+
-+	clocks = <&gcc GCC_PCIE_0_PIPE_CLK>;
-+	resets = <&gcc GCC_PCIEPHY_0_PHY_BCR>,
-+	         <&gcc GCC_PCIE_0_PIPE_ARES>;
-+	reset-names = "phy", "pipe";
-+
-+	vdda-vp-supply = <&vreg_l3_1p05>;
-+	vdda-vph-supply = <&vreg_l5_1p8>;
-+
-+	clock-output-names = "pcie_0_pipe_clk";
-+	#phy-cells = <0>;
-+ };
+Stephen, I suggest that we merge this patch through Andy's devicetree branch,
+together with the DT patch in the end of this series.
+
+ drivers/clk/qcom/gcc-qcs404.c               | 7 +++++++
+ include/dt-bindings/clock/qcom,gcc-qcs404.h | 7 +++++++
+ 2 files changed, 14 insertions(+)
+
+diff --git a/drivers/clk/qcom/gcc-qcs404.c b/drivers/clk/qcom/gcc-qcs404.c
+index 64da032bb9ed..cfb8789ff706 100644
+--- a/drivers/clk/qcom/gcc-qcs404.c
++++ b/drivers/clk/qcom/gcc-qcs404.c
+@@ -2675,6 +2675,13 @@ static const struct qcom_reset_map gcc_qcs404_resets[] = {
+ 	[GCC_PCIE_0_PHY_BCR] = { 0x3e004 },
+ 	[GCC_PCIE_0_LINK_DOWN_BCR] = { 0x3e038 },
+ 	[GCC_PCIEPHY_0_PHY_BCR] = { 0x3e03c },
++	[GCC_PCIE_0_AXI_MASTER_STICKY_ARES] = {0x3e040, 6},
++	[GCC_PCIE_0_AHB_ARES] = {0x3e040, 5},
++	[GCC_PCIE_0_AXI_SLAVE_ARES] = {0x3e040, 4},
++	[GCC_PCIE_0_AXI_MASTER_ARES] = {0x3e040, 3},
++	[GCC_PCIE_0_CORE_STICKY_ARES] = {0x3e040, 2},
++	[GCC_PCIE_0_SLEEP_ARES] = {0x3e040, 1},
++	[GCC_PCIE_0_PIPE_ARES] = {0x3e040, 0},
+ 	[GCC_EMAC_BCR] = { 0x4e000 },
+ };
+ 
+diff --git a/include/dt-bindings/clock/qcom,gcc-qcs404.h b/include/dt-bindings/clock/qcom,gcc-qcs404.h
+index 6ceb55ed72c6..00ab0d77b38a 100644
+--- a/include/dt-bindings/clock/qcom,gcc-qcs404.h
++++ b/include/dt-bindings/clock/qcom,gcc-qcs404.h
+@@ -161,5 +161,12 @@
+ #define GCC_PCIE_0_LINK_DOWN_BCR			11
+ #define GCC_PCIEPHY_0_PHY_BCR				12
+ #define GCC_EMAC_BCR					13
++#define GCC_PCIE_0_AXI_MASTER_STICKY_ARES		14
++#define GCC_PCIE_0_AHB_ARES				15
++#define GCC_PCIE_0_AXI_SLAVE_ARES			16
++#define GCC_PCIE_0_AXI_MASTER_ARES			17
++#define GCC_PCIE_0_CORE_STICKY_ARES			18
++#define GCC_PCIE_0_SLEEP_ARES				19
++#define GCC_PCIE_0_PIPE_ARES				20
+ 
+ #endif
 -- 
 2.18.0
 
