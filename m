@@ -2,111 +2,145 @@ Return-Path: <SRS0=Vu82=QB=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0ACAC282C5
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Jan 2019 02:28:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96BCAC282C6
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Jan 2019 03:23:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93A87217D4
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Jan 2019 02:28:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E7242084A
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Jan 2019 03:23:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728371AbfAYC2m (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Jan 2019 21:28:42 -0500
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:15543 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728372AbfAYC2m (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Jan 2019 21:28:42 -0500
-X-UUID: 7d55a966bba44f91bc7928b74472a746-20190125
-X-UUID: 7d55a966bba44f91bc7928b74472a746-20190125
-Received: from mtkcas32.mediatek.inc [(172.27.4.250)] by mailgw01.mediatek.com
-        (envelope-from <wangyan.wang@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 2046741440; Fri, 25 Jan 2019 10:28:37 +0800
-Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS33DR.mediatek.inc
- (172.27.6.106) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 25 Jan
- 2019 10:28:36 +0800
-Received: from [10.16.6.141] (10.16.6.141) by MTKCAS32.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 25 Jan 2019 10:28:35 +0800
-Message-ID: <1548383315.19561.4.camel@mszsdaap41>
-Subject: Re: [PATCH V2,4/8] drm/mediatek: fix the rate and divder of hdmi
- phy for MT2701
-From:   mtk14994 <wangyan.wang@mediatek.com>
-To:     CK Hu <ck.hu@mediatek.com>
-CC:     Michael Turquette <mturquette@baylibre.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
+        id S1728652AbfAYDXU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Jan 2019 22:23:20 -0500
+Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:59362 "EHLO
+        wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728532AbfAYDXU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 24 Jan 2019 22:23:20 -0500
+Received: by wens.csie.org (Postfix, from userid 1000)
+        id 55CEA5FDD0; Fri, 25 Jan 2019 11:23:15 +0800 (CST)
+From:   Chen-Yu Tsai <wens@csie.org>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         David Airlie <airlied@linux.ie>,
-        chunhui dai <chunhui.dai@mediatek.com>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <dri-devel@lists.freedesktop.org>, <jitao.shi@mediatek.com>,
-        <bibby.hsieh@mediatek.com>, <srv_heupstream@mediatek.com>
-Date:   Fri, 25 Jan 2019 10:28:35 +0800
-In-Reply-To: <1548310639.4220.3.camel@mtksdaap41>
-References: <20190118125928.3279-1-wangyan.wang@mediatek.com>
-         <20190118125928.3279-5-wangyan.wang@mediatek.com>
-         <1548310639.4220.3.camel@mtksdaap41>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Daniel Vetter <daniel@ffwll.ch>
+Cc:     Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 06/11] drm/sun4i: Add support for A23 display pipeline
+Date:   Fri, 25 Jan 2019 11:23:09 +0800
+Message-Id: <20190125032314.20915-7-wens@csie.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190125032314.20915-1-wens@csie.org>
+References: <20190125032314.20915-1-wens@csie.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-MTK:  N
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Dear CK,
+The A23's display pipeline is similar to the A33. Differences include:
 
-      OK,I will modify according your comments in V3.
+  - Display backend supports larger layers, 8192x8192 instead of 2048x2048
 
-Best Regards
-Wangyan Wang
+  - TCON has DMA input
 
+  - There is no SAT module packed in the display backend
 
-On Thu, 2019-01-24 at 14:17 +0800, CK Hu wrote:
-> On Fri, 2019-01-18 at 20:59 +0800, Wangyan Wang wrote:
-> > From: chunhui dai <chunhui.dai@mediatek.com>
-> 
-> Describe something here.
-> 
-> > 
-> > Fixes: 0fc721b2968e ("drm/mediatek: add hdmi driver for MT2701 and MT7623")
-> > Signed-off-by: chunhui dai <chunhui.dai@mediatek.com>
-> 
-> Any one who pass a patch should sign off it.
-> 
-> Regards,
-> CK
-> 
-> > ---
-> >  drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c b/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
-> > index 43bc058d5528..88dd9e812ca0 100644
-> > --- a/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
-> > +++ b/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
-> > @@ -114,8 +114,8 @@ static int mtk_hdmi_pll_set_rate(struct clk_hw *hw, unsigned long rate,
-> >  
-> >  	if (rate <= 64000000)
-> >  		pos_div = 3;
-> > -	else if (rate <= 12800000)
-> > -		pos_div = 1;
-> > +	else if (rate <= 128000000)
-> > +		pos_div = 2;
-> >  	else
-> >  		pos_div = 1;
-> >  
-> 
-> 
+Add support for the display pipeline and its components.
 
+As the MIPI DSI output device is not officially documented, and there
+are no A23 reference devices to test it, it is not covered by this
+patch.
+
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ drivers/gpu/drm/sun4i/sun4i_backend.c  | 4 ++++
+ drivers/gpu/drm/sun4i/sun4i_drv.c      | 2 ++
+ drivers/gpu/drm/sun4i/sun4i_frontend.c | 4 ++++
+ drivers/gpu/drm/sun4i/sun4i_tcon.c     | 1 +
+ drivers/gpu/drm/sun4i/sun6i_drc.c      | 1 +
+ 5 files changed, 12 insertions(+)
+
+diff --git a/drivers/gpu/drm/sun4i/sun4i_backend.c b/drivers/gpu/drm/sun4i/sun4i_backend.c
+index 85e64d02fb5f..2ada915a877e 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_backend.c
++++ b/drivers/gpu/drm/sun4i/sun4i_backend.c
+@@ -1012,6 +1012,10 @@ static const struct of_device_id sun4i_backend_of_table[] = {
+ 		.compatible = "allwinner,sun7i-a20-display-backend",
+ 		.data = &sun7i_backend_quirks,
+ 	},
++	{
++		.compatible = "allwinner,sun8i-a23-display-backend",
++		.data = &sun8i_a33_backend_quirks,
++	},
+ 	{
+ 		.compatible = "allwinner,sun8i-a33-display-backend",
+ 		.data = &sun8i_a33_backend_quirks,
+diff --git a/drivers/gpu/drm/sun4i/sun4i_drv.c b/drivers/gpu/drm/sun4i/sun4i_drv.c
+index 93da837194cf..477957a865fb 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_drv.c
++++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
+@@ -165,6 +165,7 @@ static bool sun4i_drv_node_is_frontend(struct device_node *node)
+ 		of_device_is_compatible(node, "allwinner,sun5i-a13-display-frontend") ||
+ 		of_device_is_compatible(node, "allwinner,sun6i-a31-display-frontend") ||
+ 		of_device_is_compatible(node, "allwinner,sun7i-a20-display-frontend") ||
++		of_device_is_compatible(node, "allwinner,sun8i-a23-display-frontend") ||
+ 		of_device_is_compatible(node, "allwinner,sun8i-a33-display-frontend") ||
+ 		of_device_is_compatible(node, "allwinner,sun9i-a80-display-frontend");
+ }
+@@ -404,6 +405,7 @@ static const struct of_device_id sun4i_drv_of_table[] = {
+ 	{ .compatible = "allwinner,sun6i-a31-display-engine" },
+ 	{ .compatible = "allwinner,sun6i-a31s-display-engine" },
+ 	{ .compatible = "allwinner,sun7i-a20-display-engine" },
++	{ .compatible = "allwinner,sun8i-a23-display-engine" },
+ 	{ .compatible = "allwinner,sun8i-a33-display-engine" },
+ 	{ .compatible = "allwinner,sun8i-a83t-display-engine" },
+ 	{ .compatible = "allwinner,sun8i-h3-display-engine" },
+diff --git a/drivers/gpu/drm/sun4i/sun4i_frontend.c b/drivers/gpu/drm/sun4i/sun4i_frontend.c
+index e8239d4d4dd5..346c8071bd38 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_frontend.c
++++ b/drivers/gpu/drm/sun4i/sun4i_frontend.c
+@@ -719,6 +719,10 @@ const struct of_device_id sun4i_frontend_of_table[] = {
+ 		.compatible = "allwinner,sun7i-a20-display-frontend",
+ 		.data = &sun4i_a10_frontend
+ 	},
++	{
++		.compatible = "allwinner,sun8i-a23-display-frontend",
++		.data = &sun8i_a33_frontend
++	},
+ 	{
+ 		.compatible = "allwinner,sun8i-a33-display-frontend",
+ 		.data = &sun8i_a33_frontend
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+index 0420f5c978b9..565955a46b0b 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+@@ -1494,6 +1494,7 @@ const struct of_device_id sun4i_tcon_of_table[] = {
+ 	{ .compatible = "allwinner,sun6i-a31-tcon", .data = &sun6i_a31_quirks },
+ 	{ .compatible = "allwinner,sun6i-a31s-tcon", .data = &sun6i_a31s_quirks },
+ 	{ .compatible = "allwinner,sun7i-a20-tcon", .data = &sun7i_a20_quirks },
++	{ .compatible = "allwinner,sun8i-a23-tcon", .data = &sun8i_a33_quirks },
+ 	{ .compatible = "allwinner,sun8i-a33-tcon", .data = &sun8i_a33_quirks },
+ 	{ .compatible = "allwinner,sun8i-a83t-tcon-lcd", .data = &sun8i_a83t_lcd_quirks },
+ 	{ .compatible = "allwinner,sun8i-a83t-tcon-tv", .data = &sun8i_a83t_tv_quirks },
+diff --git a/drivers/gpu/drm/sun4i/sun6i_drc.c b/drivers/gpu/drm/sun4i/sun6i_drc.c
+index 88eb268fdf73..442094a4af7a 100644
+--- a/drivers/gpu/drm/sun4i/sun6i_drc.c
++++ b/drivers/gpu/drm/sun4i/sun6i_drc.c
+@@ -101,6 +101,7 @@ static int sun6i_drc_remove(struct platform_device *pdev)
+ static const struct of_device_id sun6i_drc_of_table[] = {
+ 	{ .compatible = "allwinner,sun6i-a31-drc" },
+ 	{ .compatible = "allwinner,sun6i-a31s-drc" },
++	{ .compatible = "allwinner,sun8i-a23-drc" },
+ 	{ .compatible = "allwinner,sun8i-a33-drc" },
+ 	{ .compatible = "allwinner,sun9i-a80-drc" },
+ 	{ }
+-- 
+2.20.1
 
