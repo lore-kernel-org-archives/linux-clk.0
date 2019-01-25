@@ -2,94 +2,66 @@ Return-Path: <SRS0=Vu82=QB=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23945C282C0
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Jan 2019 14:12:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE7B9C282C0
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Jan 2019 15:34:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2BE62085B
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Jan 2019 14:12:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C433218CD
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Jan 2019 15:34:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="soYtqeUS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728048AbfAYOMh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 25 Jan 2019 09:12:37 -0500
-Received: from mga17.intel.com ([192.55.52.151]:15635 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727895AbfAYOMh (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 25 Jan 2019 09:12:37 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jan 2019 06:12:37 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,521,1539673200"; 
-   d="scan'208";a="119443924"
-Received: from jshavlix-mobl.amr.corp.intel.com (HELO [10.251.5.52]) ([10.251.5.52])
-  by fmsmga008.fm.intel.com with ESMTP; 25 Jan 2019 06:12:35 -0800
-Subject: Re: Regression found (Stop-marking-clocks-as-CLK_IS_CRITICAL)
-To:     Mogens Jensen <mogens-jensen@protonmail.com>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        Dean Wallace <duffydack73@gmail.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Stable <stable@vger.kernel.org>,
-        Johannes Stezenbach <js@sig21.net>,
-        Carlo Caione <carlo@endlessm.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20181025232517.ywnw54qibemosjws@picard>
- <3e12e051-b874-187d-d4f5-e146f59c659b@redhat.com>
- <U9ny3qDg8fEQ-IaXWgwAmDf_U7yb1NZxpwoOvTorCbG86v8wUae3kWsa5omAv-ngu3VMaSONp6RdzmaI26Cz6uoyf5ddIiXuJQbzGf2MN3w=@protonmail.com>
- <20190117091214.7djttnpo4jjzi4su@spock>
- <c935552f-951f-ab9f-b41c-76c729c6d85c@redhat.com>
- <pozwYTgSVvWumpTgwwf_C-qvYFNnl7yl9gcq9M-LOUXQTvkSX5f8E_2d-HYNYV_ruL8kAURaIR3ItM_UmFJeV-e28eYy8b2MomlwHMbb-5U=@protonmail.com>
- <983fb777-df22-1b53-acea-8bbcab23b260@redhat.com>
- <G5Oa_GRw3iClWMtIg1FeCwj1szJHRH6ToqQqCskS_HKzyNhpFFQ3sJndttzyvP3IHRJuHXvDsUC82dnw8r66OIroHCzyqTYbZoki5sSKPUE=@protonmail.com>
- <43070180-1f10-9285-7564-cfa24e1d222e@linux.intel.com>
- <3ERhUwlxf4lWV_mn3MgjNMrm8ZDgFevrwjq0KRjy05oM1hGiQUdsPpbIlKytNGHi1ViQ_2Xv7bxzqusfruSjbZJyUSpQ9Uo8HCiNyUdyNdU=@protonmail.com>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <99a58213-2921-9dc3-d6d4-1469f8019fc4@linux.intel.com>
-Date:   Fri, 25 Jan 2019 08:12:35 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <3ERhUwlxf4lWV_mn3MgjNMrm8ZDgFevrwjq0KRjy05oM1hGiQUdsPpbIlKytNGHi1ViQ_2Xv7bxzqusfruSjbZJyUSpQ9Uo8HCiNyUdyNdU=@protonmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+        id S1726350AbfAYPeu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 25 Jan 2019 10:34:50 -0500
+Received: from outils.crapouillou.net ([89.234.176.41]:37812 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726216AbfAYPet (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Jan 2019 10:34:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1548430485; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:content-type:
+         content-transfer-encoding:in-reply-to:references;
+        bh=/4J3YlHXv6Gm+iZIgYgrgwLnXzA8EduTqbFj6NcIEe8=;
+        b=soYtqeUSrku81LDlg0kJhyHAmk3RUvmKEXXUNvtKyDPEjnUn5C1uz6igQF8BlT/AvqINSA
+        Oj3CxD/mtq6NNczGPb6nZe/pd1eQjdcecppuHelCxDw5Qh9ZeeR3dw1CYsSh+VokfjxUWq
+        wyEyMt3b5VLjGYWqmVRWI1Dn5rd2BEs=
+From:   Paul Cercueil <paul@crapouillou.net>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH] clk: ingenic: jz4740: Fix gating of UDC clock
+Date:   Fri, 25 Jan 2019 12:34:36 -0300
+Message-Id: <20190125153436.13517-1-paul@crapouillou.net>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+The UDC clock is gated when the bit is cleared, not when it is set.
 
-On 1/24/19 11:16 PM, Mogens Jensen wrote:
-> ‐‐‐‐‐‐‐ Original Message ‐‐‐‐‐‐‐
-> On Tuesday, January 22, 2019 7:27 PM, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com> wrote:
->
->> On 1/20/19 11:55 PM, Mogens Jensen wrote:
->>
->>> The only minor annoyance I'm experiencing now, is a large amount of debug output from something in kernel log when audio is played on the system:
->>> writing to lpe: 00000000: 01 01 01 01 00 00 08 00 ff ff ff ff 55 00 00 00 ............U...
->>> writing to lpe: 00000000: 01 01 01 01 00 00 1a 00 ff ff ff ff 75 00 12 00 ............u...
->>> ...
->> That's enabled via dynamic debug so that's rather a configuration issue
->> than a kernel problem?
-> Do you have any suggestions on how to disable it?
->
-> My kernel is compiled without DYNAMIC_DEBUG, DEBUG_FS and other debug features, so I don't understand why all this debug output is flooding the kernel log.
->
-> It's a minor issue, but it would be nice to get rid of it.
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Tested-by: Artur Rojek <contact@artur-rojek.eu>
+---
+ drivers/clk/ingenic/jz4740-cgu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I don't see it so it's definitively a config issue. I use
-
-make defconfig
-
-scripts/kconfig/merge_config.sh .config base-defconfig sst-defconfig  
-hdaudio-codecs-defconfig
-
-with all 3 defconfigs fetched from https://github.com/thesofproject/kconfig
+diff --git a/drivers/clk/ingenic/jz4740-cgu.c b/drivers/clk/ingenic/jz4740-cgu.c
+index d8ac7f2e183a..5d0d5be1e6a7 100644
+--- a/drivers/clk/ingenic/jz4740-cgu.c
++++ b/drivers/clk/ingenic/jz4740-cgu.c
+@@ -165,7 +165,7 @@ static const struct ingenic_cgu_clk_info jz4740_cgu_clocks[] = {
+ 		.parents = { JZ4740_CLK_EXT, JZ4740_CLK_PLL_HALF, -1, -1 },
+ 		.mux = { CGU_REG_CPCCR, 29, 1 },
+ 		.div = { CGU_REG_CPCCR, 23, 1, 6, -1, -1, -1 },
+-		.gate = { CGU_REG_SCR, 6 },
++		.gate = { CGU_REG_SCR, 6, true },
+ 	},
+ 
+ 	/* Gate-only clocks */
+-- 
+2.20.1
 
