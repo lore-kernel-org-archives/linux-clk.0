@@ -2,73 +2,96 @@ Return-Path: <SRS0=Vu82=QB=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2BB6C282C7
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Jan 2019 03:24:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9513AC282C0
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Jan 2019 05:17:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E581218D2
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Jan 2019 03:24:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 687F5218CD
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Jan 2019 05:17:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="NTYTh2mG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728468AbfAYDXS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Jan 2019 22:23:18 -0500
-Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:59270 "EHLO
-        wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726304AbfAYDXR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 24 Jan 2019 22:23:17 -0500
-Received: by wens.csie.org (Postfix, from userid 1000)
-        id 2974D5F87E; Fri, 25 Jan 2019 11:23:15 +0800 (CST)
-From:   Chen-Yu Tsai <wens@csie.org>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+        id S1726021AbfAYFRK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 25 Jan 2019 00:17:10 -0500
+Received: from mail-40133.protonmail.ch ([185.70.40.133]:31891 "EHLO
+        mail-40133.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725300AbfAYFRJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Jan 2019 00:17:09 -0500
+Date:   Fri, 25 Jan 2019 05:16:59 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+        s=default; t=1548393426;
+        bh=woeysuqhgtGgsVXmIhjEhQrJa9mY1Hmx2nb9BNPtnFQ=;
+        h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:
+         Feedback-ID:From;
+        b=NTYTh2mGQP9yM5zh8zt3EwpT8osG9zu/vOVt7enqTnC+K17ci0WZAeD6+b0oTbcNg
+         s5kgEmICX3xVCzRdJ4v/M7m4SpG1ba5GJZOCiMxh3dNGoD8VvuhDNt7/kq90u8OVWO
+         Mv0gTmy0K20jts20zMGu1L/FJYn1893BvAuRxwBA=
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+From:   Mogens Jensen <mogens-jensen@protonmail.com>
+Cc:     Hans de Goede <hdegoede@redhat.com>,
+        Dean Wallace <duffydack73@gmail.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>
-Cc:     Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 01/11] clk: sunxi-ng: sun8i-a23: Enable PLL-MIPI LDOs when ungating it
-Date:   Fri, 25 Jan 2019 11:23:04 +0800
-Message-Id: <20190125032314.20915-2-wens@csie.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190125032314.20915-1-wens@csie.org>
-References: <20190125032314.20915-1-wens@csie.org>
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Stable <stable@vger.kernel.org>,
+        Johannes Stezenbach <js@sig21.net>,
+        Carlo Caione <carlo@endlessm.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Reply-To: Mogens Jensen <mogens-jensen@protonmail.com>
+Subject: Re: Regression found (Stop-marking-clocks-as-CLK_IS_CRITICAL)
+Message-ID: <3ERhUwlxf4lWV_mn3MgjNMrm8ZDgFevrwjq0KRjy05oM1hGiQUdsPpbIlKytNGHi1ViQ_2Xv7bxzqusfruSjbZJyUSpQ9Uo8HCiNyUdyNdU=@protonmail.com>
+In-Reply-To: <43070180-1f10-9285-7564-cfa24e1d222e@linux.intel.com>
+References: <20181025232517.ywnw54qibemosjws@picard>
+ <3e12e051-b874-187d-d4f5-e146f59c659b@redhat.com>
+ <U9ny3qDg8fEQ-IaXWgwAmDf_U7yb1NZxpwoOvTorCbG86v8wUae3kWsa5omAv-ngu3VMaSONp6RdzmaI26Cz6uoyf5ddIiXuJQbzGf2MN3w=@protonmail.com>
+ <20190117091214.7djttnpo4jjzi4su@spock>
+ <c935552f-951f-ab9f-b41c-76c729c6d85c@redhat.com>
+ <pozwYTgSVvWumpTgwwf_C-qvYFNnl7yl9gcq9M-LOUXQTvkSX5f8E_2d-HYNYV_ruL8kAURaIR3ItM_UmFJeV-e28eYy8b2MomlwHMbb-5U=@protonmail.com>
+ <983fb777-df22-1b53-acea-8bbcab23b260@redhat.com>
+ <G5Oa_GRw3iClWMtIg1FeCwj1szJHRH6ToqQqCskS_HKzyNhpFFQ3sJndttzyvP3IHRJuHXvDsUC82dnw8r66OIroHCzyqTYbZoki5sSKPUE=@protonmail.com>
+ <43070180-1f10-9285-7564-cfa24e1d222e@linux.intel.com>
+Feedback-ID: 4dFv7M8pOtP7CMTtfNdOwXARWpF2vcQYB4dRuX1h9mb-6008qkzO2MVweOzrAYHEdkjJ6P5PUdgJEubk4l9Lhg==:Ext:ProtonMail
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The PLL-MIPI clock is somewhat special as it has its own LDOs which
-need to be turned on for this PLL to actually work and output a clock
-signal.
+=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90 Original Me=
+ssage =E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90
+On Tuesday, January 22, 2019 7:27 PM, Pierre-Louis Bossart <pierre-louis.bo=
+ssart@linux.intel.com> wrote:
 
-Add the 2 LDO enable bits to the gate bits.
+> On 1/20/19 11:55 PM, Mogens Jensen wrote:
+>
+> > The only minor annoyance I'm experiencing now, is a large amount of deb=
+ug output from something in kernel log when audio is played on the system:
+> > writing to lpe: 00000000: 01 01 01 01 00 00 08 00 ff ff ff ff 55 00 00 =
+00 ............U...
+> > writing to lpe: 00000000: 01 01 01 01 00 00 1a 00 ff ff ff ff 75 00 12 =
+00 ............u...
+> > ...
+>
+> That's enabled via dynamic debug so that's rather a configuration issue
+> than a kernel problem?
 
-Fixes: 5690879d93e8 ("clk: sunxi-ng: Add A23 CCU")
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- drivers/clk/sunxi-ng/ccu-sun8i-a23.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Do you have any suggestions on how to disable it?
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a23.c b/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
-index a4fa2945f230..4b5f8f4e4ab8 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
-@@ -144,7 +144,7 @@ static SUNXI_CCU_NKM_WITH_GATE_LOCK(pll_mipi_clk, "pll-mipi",
- 				    8, 4,		/* N */
- 				    4, 2,		/* K */
- 				    0, 4,		/* M */
--				    BIT(31),		/* gate */
-+				    BIT(31) | BIT(23) | BIT(22), /* gate */
- 				    BIT(28),		/* lock */
- 				    CLK_SET_RATE_UNGATE);
- 
--- 
-2.20.1
+My kernel is compiled without DYNAMIC_DEBUG, DEBUG_FS and other debug featu=
+res, so I don't understand why all this debug output is flooding the kernel=
+ log.
+
+It's a minor issue, but it would be nice to get rid of it.
+
+Regards,
+
+Mogens Jensen
 
