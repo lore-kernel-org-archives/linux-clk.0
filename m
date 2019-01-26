@@ -6,336 +6,137 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F12F6C282C7
-	for <linux-clk@archiver.kernel.org>; Sat, 26 Jan 2019 16:36:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC8B6C282C7
+	for <linux-clk@archiver.kernel.org>; Sat, 26 Jan 2019 17:16:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3A7A2184B
-	for <linux-clk@archiver.kernel.org>; Sat, 26 Jan 2019 16:36:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B4572184C
+	for <linux-clk@archiver.kernel.org>; Sat, 26 Jan 2019 17:16:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CPU/kCY8"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=openedev.com header.i=@openedev.com header.b="N55NHHGE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726106AbfAZQgU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 26 Jan 2019 11:36:20 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:42682 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726084AbfAZQgU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 26 Jan 2019 11:36:20 -0500
-Received: by mail-pg1-f194.google.com with SMTP id d72so5410216pga.9;
-        Sat, 26 Jan 2019 08:36:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=MN5Yd+GZ+1d0sSpmST1GZif/BnYu5CGKz8fJsuK8Bu4=;
-        b=CPU/kCY8OcLI5dPWbX+CLZXgTCVdi0xmnNOMzz8jAk7xjeGEYbcGaxAxqyc7WOfghZ
-         GV2v5BZqoJ6e0NtIQw/IpOMpXVGIq/RDlHm6Fhzj+VTvl14DcgRueS7aAYiPkI4zF1eG
-         Sn9UMqt6Ogjfhw3Pv31xuCVC4ON3nRFWYZHw4jEzdJDeckXNpDXlS6gss5+rsT6lhMlT
-         +7g0agMQ+Z80jTqiOz3HkaKvj2RV8zo1AMiPNaGNfpZcwo04xT05RLkSACxB7I0KrXOd
-         bFzkMOha+8cai+FTKrl2JnZT09heLvo1dgW7lfu5pQzGGfodI9iiKC+jZfQ86UAyMboX
-         kkKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=MN5Yd+GZ+1d0sSpmST1GZif/BnYu5CGKz8fJsuK8Bu4=;
-        b=RC4SXffzjxfUzEsVNE85sot3jgxwfnC7EhIzrIsqLk7zl2zfjw172fSHtkzMhvtPZ6
-         +rJ+MOhfBN/vDM1j+5LFLtz8nEP1Cck2XZFwd/8V/MyQ8q1drrWRkaJumVBrRFgcab3P
-         0KauCOOQUWfmhoVCoTHcdmbeKQLcFaazwheUHKECtrMwsat31qndtQ0+tcash4veHsF2
-         nd44wRWLxJ9wA3Icgx4RILFnZYJ3ooTvvCKDYhZN2bmvECgSsxGrOBYaR4nnUD7+J8bY
-         s4B88a5Jv/UnBzAu8it4NWRVd7os0h+cwQgWwReLCDTKiOKURA6fYbZXcHltwxBZejnO
-         eonQ==
-X-Gm-Message-State: AJcUukd3mXgaiNeBIqwcm/lhY3QJWIPzRpSq38El/r7oflOkm01KH6PN
-        /F8bLx9wncVCoWU78HFtsxoL2SqM
-X-Google-Smtp-Source: ALg8bN7qNOWibE0dUFeCdWpZoO793c4GouWzao94ttwYT4K+R8aIoW+i0ZDrZvBaCD4EJCx9O9ztOg==
-X-Received: by 2002:a62:5b44:: with SMTP id p65mr15277467pfb.47.1548520578381;
-        Sat, 26 Jan 2019 08:36:18 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id v89sm40327183pfk.12.2019.01.26.08.36.15
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 26 Jan 2019 08:36:17 -0800 (PST)
-Subject: Re: [RFC PATCH v2 10/10] watchdog: bd70528: Initial support for ROHM
- BD70528 watchdog block
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-        mazziesaccount@gmail.com
-Cc:     heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
-        lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-watchdog@vger.kernel.org
-References: <20190125110625.GA29348@localhost.localdomain>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <1d05ec19-daf6-f1d9-f80c-57fc92906d22@roeck-us.net>
-Date:   Sat, 26 Jan 2019 08:36:14 -0800
+        id S1726073AbfAZRQX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 26 Jan 2019 12:16:23 -0500
+Received: from se14t.web-hosting.com ([162.255.118.155]:39074 "EHLO
+        se14t.web-hosting.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726070AbfAZRQW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 26 Jan 2019 12:16:22 -0500
+X-Greylist: delayed 4024 seconds by postgrey-1.27 at vger.kernel.org; Sat, 26 Jan 2019 12:16:22 EST
+Received: from [68.65.123.203] (helo=server153.web-hosting.com)
+        by se14.registrar-servers.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <jagan@openedev.com>)
+        id 1gnQW8-0002w8-Kf; Sat, 26 Jan 2019 08:09:16 -0800
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=openedev.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=eerXW8deLRFNJ082VjgdoXPR1hogTB4K5IRcED5Ob3Q=; b=N55NHHGErksks3wkgIKLSVpTMV
+        AyPOu3jAy4oEqzGeV0wB4quAc5qG9HzFd5bpWk499eoLSv7RCagZ9ldqTXQqWIMJ4heu/5V7J0/+/
+        /COiDLD2blMLPcGULqDX+6qbJlgD5mn5V4X8j5MHEP/pJjnwLaSLuV2jlCs+0QldbKB8t84u8HXOa
+        PyVcztswWSc1ZboBU+eHC2prPtoy859LyK+d3+BpQwnNnbYWt2kBFcbspX/TDtH6jAjzPOOIcbXqI
+        6gGn8IsSmnToFlgwolHOa3Va/ZTkuWeOOasYYs8+RYu3NgCwlig/wM8mkg3j3zobOVCzG7vU9n6LZ
+        qM0hHLKQ==;
+Received: from [115.97.179.75] (port=51782 helo=[192.168.0.10])
+        by server153.web-hosting.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <jagan@openedev.com>)
+        id 1gnQW2-002TlN-Vi; Sat, 26 Jan 2019 11:09:07 -0500
+Subject: Re: [linux-sunxi] Re: [PATCH v6 14/22] dt-bindings: sun6i-dsi: Add
+ A64 DSI compatible (w/ A31 fallback)
+To:     maxime.ripard@bootlin.com, Jagan Teki <jagan@amarulasolutions.com>
+Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-amarula@amarulasolutions.com, linux-sunxi@googlegroups.com
+References: <20190124195900.22620-1-jagan@amarulasolutions.com>
+ <20190124195900.22620-15-jagan@amarulasolutions.com>
+ <20190125155236.agxwkxvyefmrbvym@flea>
+From:   Jagan Teki <jagan@openedev.com>
+Message-ID: <bed39fd2-1f4f-4c6b-afc6-da127326775c@openedev.com>
+Date:   Sat, 26 Jan 2019 21:39:00 +0530
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20190125110625.GA29348@localhost.localdomain>
+In-Reply-To: <20190125155236.agxwkxvyefmrbvym@flea>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-OutGoing-Spam-Status: No, score=-1.0
+X-Originating-IP: 68.65.123.203
+X-SpamExperts-Domain: nctest.net
+X-SpamExperts-Username: whmcalls3
+Authentication-Results: registrar-servers.com; auth=pass (login) smtp.auth=whmcalls3@nctest.net
+X-SpamExperts-Outgoing-Class: ham
+X-SpamExperts-Outgoing-Evidence: Combined (0.06)
+X-Recommended-Action: accept
+X-Filter-ID: EX5BVjFpneJeBchSMxfU5p3su2DtuSZ1p0nI9y4N8fZ602E9L7XzfQH6nu9C/Fh9KJzpNe6xgvOx
+ q3u0UDjvO0Ma0zdKrj2HeYAO9pcN4rBgaa/6KAnDjbDW9Kfk8S67g3pl1PjvMwh7dhUCqsSW27/t
+ rDpkMvqAKkcaWePFrnWbCOEGmYDYXX5N55z9d8KgsbramU7NHkOygsZkJKqgTbdp4t6W3IMAO2SH
+ 1E8zaxox8L7GcfNO+2MU0i0gmK7/z4AuKVkkaYzGFQ2Ibzaym5b2BO/9WjebTieNrwxflLMZXQ36
+ dEAVm3i4vm5cXrAOZG9Sp2J20AHLJSx77kQkVnnVSft1LT6y1e0U9STPKa/GQdeBNIkLb6r47afa
+ w/CH6KBkbKsuM8AASIR5FkcIFuzQu5IqYl3M6BKhcK235VfjkgLL7IxFttHKDG1B2EwbdbpdlBjV
+ CLeXVxe8pBwJ2z2ZxJi1Q8sHZ7bnbbjx8d44Mc2SXSmbnCWBzdnGy8uFWJJSMDV+rzwLvyOpGnZR
+ EskE8uGttwnPZM1P+VPKwUVnVpSuzRRB0yO0FgxZ5NStM50u1cVPItYg5ol3QOm7L4Sid3vYU1bR
+ 705IPIadxBD/3mgYy2wgK4dNReNhf3bmnjFv2zPPUxDS+mKKTObFcFx0QrY5Wr4Tr9eOpg5s32g8
+ 9AFms9wgEy0AcHbma/+26M+pbz8SjqkO4ZmYmgW7lHTFgIfDMShmlQFqCr5hA8wXS7Jg7MEKutMz
+ dp+wUO6KCTr6J/h3GgxZZjPp6umVzGyBOCDwRLhgcnpcOwrGK2ayxQgNyqqf/IN48z1lpo6ODRmi
+ SLYXQoEVxAAhr5KC2z00v+4P+5at/HsH1isNq8k+VTLs7+3/QriFdXoSiJZ/kuI+OJDNovVqKLll
+ g3MLAhJh4EBfV0EQXhOSRzoZcOef8MeTUF+3u4q6NzJgW1ruJDheH5hLAJSBqnHN5aPUgBtRC2aF
+ hr6pfb8wbPuJxsjlgTl6fJxyntEfhZCKje4ZXau28ZLUwqHGS5T/H0nFZKe5av/CxXIXJIBC+ema
+ c+G2uJyh1FYJh7VnqItchrC72OUMeHyTpNN0eXybX/w7/4VO4PqH7tRQbUwn/Z22G56P9zwlrdZi
+ NQj4PT1Zbis+EXUG7TNSxNow7/t2xrEP1ATsqGMGrkOirMZUMXyr+Ba9g0MOnCndEeVcIKB2jIn4
+ vrRYEXTMu1QMr3TBnoscZ8OYieT8qf6TsMCg/vmaSHUKgyH3fip4DAxWRW/wxLWB7HrZLYgDmgz6
+ KUwxi29Bp9FIkeIiDP/ECUoOSkeHK8v64f+QgoKau2bG0Hp+HzAjsWCLuhF1p5ywGhk+JygEFSG7
+ X+t1TW39Ja77LGPpOwA1DvwEC4Lrfaqa2sMQ8hhbKGrji4Pk/Gyrw43N0WGaeDB4FfZzPE/Pcs/5
+ uRYMV187qlt4wO85XNTxg1DyrHa1ZbTcx8N0iCdZNCLd191YqcjWBA4Ws7Ey1JEqCGHE58V2XN6q
+ AseowdwxD2E3+DaJDvXMbLOjVpPm3YT8Yh1GaqvcHCQ0IJV0lzcUVPfZKuExL7hrJSk60SF3F6RY
+ OYr2
+X-Report-Abuse-To: spam@se16.registrar-servers.com
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 1/25/19 3:06 AM, Matti Vaittinen wrote:
-> Initial support for watchdog block included in ROHM BD70528
-> power management IC.
+On 25/01/19 9:22 PM, Maxime Ripard wrote:
+> On Fri, Jan 25, 2019 at 01:28:52AM +0530, Jagan Teki wrote:
+>> The MIPI DSI controller in Allwinner A64 is similar to A33.
+>>
+>> But unlike A33, A64 doesn't have DSI_SCLK gating which eventually
+>> set the mod clock rate for the controller.
+>>
+>> So, use the DSI_DPHY gating for the similar purpose of mod clock
+>> so-that the controller can operate properly.
+>>
+>> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+>> Reviewed-by: Rob Herring <robh@kernel.org>
+>> ---
+>>   Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt b/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
+>> index 69e233e8fad1..dbda2e567760 100644
+>> --- a/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
+>> +++ b/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
+>> @@ -12,6 +12,7 @@ The DSI Encoder generates the DSI signal from the TCON's.
+>>   Required properties:
+>>     - compatible: value must be one of:
+>>       * allwinner,sun6i-a31-mipi-dsi
+>> +    * "allwinner,sun50i-a64-mipi-dsi", "allwinner,sun6i-a31-mipi-dsi"
 > 
-> Configurations for low power states are still to be checked.
-> 
-> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> ---
->   drivers/watchdog/Kconfig       |  12 +++
->   drivers/watchdog/Makefile      |   1 +
->   drivers/watchdog/bd70528_wdt.c | 183 +++++++++++++++++++++++++++++++++++++++++
->   3 files changed, 196 insertions(+)
->   create mode 100644 drivers/watchdog/bd70528_wdt.c
-> 
-> diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
-> index 57f017d74a97..f30e3a3e886e 100644
-> --- a/drivers/watchdog/Kconfig
-> +++ b/drivers/watchdog/Kconfig
-> @@ -90,6 +90,18 @@ config SOFT_WATCHDOG_PRETIMEOUT
->   	  watchdog. Be aware that governors might affect the watchdog because it
->   	  is purely software, e.g. the panic governor will stall it!
->   
-> +config BD70528_WATCHDOG
-> +	tristate "ROHM BD70528 PMIC Watchdog"
-> +	depends on MFD_ROHM_BD70528
-> +	select WATCHDOG_CORE
-> +	help
-> +	  Support for the watchdog in the ROHM BD70528 PMIC. Watchdog trigger
-> +	  cause system reset.
-> +
-> +	  Say Y here to include support for the ROHM BD70528 watchdog.
-> +	  Alternatively say M to compile the driver as a module,
-> +	  which will be called bd70528_wdt.
-> +
->   config DA9052_WATCHDOG
->   	tristate "Dialog DA9052 Watchdog"
->   	depends on PMIC_DA9052 || COMPILE_TEST
-> diff --git a/drivers/watchdog/Makefile b/drivers/watchdog/Makefile
-> index a0917ef28e07..1ce87a3b1172 100644
-> --- a/drivers/watchdog/Makefile
-> +++ b/drivers/watchdog/Makefile
-> @@ -204,6 +204,7 @@ obj-$(CONFIG_WATCHDOG_SUN4V)		+= sun4v_wdt.o
->   obj-$(CONFIG_XEN_WDT) += xen_wdt.o
->   
->   # Architecture Independent
-> +obj-$(CONFIG_BD70528_WATCHDOG) += bd70528_wdt.o
->   obj-$(CONFIG_DA9052_WATCHDOG) += da9052_wdt.o
->   obj-$(CONFIG_DA9055_WATCHDOG) += da9055_wdt.o
->   obj-$(CONFIG_DA9062_WATCHDOG) += da9062_wdt.o
-> diff --git a/drivers/watchdog/bd70528_wdt.c b/drivers/watchdog/bd70528_wdt.c
-> new file mode 100644
-> index 000000000000..347339683cb9
-> --- /dev/null
-> +++ b/drivers/watchdog/bd70528_wdt.c
-> @@ -0,0 +1,183 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +// Copyright (C) 2018 ROHM Semiconductors
-> +// ROHM BD70528MWV watchdog driver
-> +
-> +#include <linux/bcd.h>
-> +#include <linux/kernel.h>
-> +#include <linux/mfd/rohm-bd70528.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/regmap.h>
-> +#include <linux/watchdog.h>
-> +
-> +struct wdtbd70528 {
-> +	struct bd70528 *bd;
-> +	struct device *dev;
-> +};
-> +
-> +static int bd70528_wdt_set(struct bd70528 *bd70528, int enable)
-> +{
-> +	int ret;
-> +
-> +	mutex_lock(&bd70528->rtc_timer_lock);
-> +	ret = bd70528->wdt_set(bd70528, enable, NULL);
-> +	mutex_unlock(&bd70528->rtc_timer_lock);
-> +
-> +	return ret;
-> +}
-> +
-> +static int bd70528_wdt_start(struct watchdog_device *wdt)
-> +{
-> +	struct wdtbd70528 *w = watchdog_get_drvdata(wdt);
-> +
-> +	dev_dbg(w->dev, "WDT ping...\n");
-> +	return bd70528_wdt_set(w->bd, 1);
-> +}
-> +
-> +static int bd70528_wdt_stop(struct watchdog_device *wdt)
-> +{
-> +	struct wdtbd70528 *w = watchdog_get_drvdata(wdt);
-> +
-> +	dev_dbg(w->dev, "WDT stopping...\n");
-> +	return bd70528_wdt_set(w->bd, 0);
-> +}
-> +
-> +static int bd70528_wdt_set_timeout(struct watchdog_device *wdt,
-> +				    unsigned int timeout)
-> +{
-> +	unsigned int hours;
-> +	unsigned int minutes;
-> +	unsigned int seconds;
-> +	int ret;
-> +	struct bd70528 *bd70528;
-> +	struct wdtbd70528 *w = watchdog_get_drvdata(wdt);
-> +
-> +	bd70528 = w->bd;
-> +	seconds = timeout;
-> +	hours = timeout / (60 * 60);
-> +	/* Maximum timeout is 1h 59m 59s => hours is 1 or 0 */
-> +	if (hours)
-> +		seconds -= (60 * 60);
-> +	minutes = seconds / 60;
-> +	seconds = seconds % 60;
-> +
-> +	mutex_lock(&bd70528->rtc_timer_lock);
-> +
-> +	ret = bd70528->wdt_set(bd70528, 0, NULL);
-> +	if (ret)
-> +		goto out_unlock;
-> +
-> +	ret = regmap_update_bits(bd70528->chip.regmap, BD70528_REG_WDT_HOUR,
-> +				 BD70528_MASK_WDT_HOUR, hours);
-> +	if (ret) {
-> +		dev_err(w->dev, "Failed to set WDT hours\n");
-> +		goto out_en_unlock;
-> +	}
-> +	ret = regmap_update_bits(bd70528->chip.regmap, BD70528_REG_WDT_MINUTE,
-> +				 BD70528_MASK_WDT_MINUTE, bin2bcd(minutes));
-> +	if (ret) {
-> +		dev_err(w->dev, "Failed to set WDT minutes\n");
-> +		goto out_en_unlock;
-> +	}
-> +	ret = regmap_update_bits(bd70528->chip.regmap, BD70528_REG_WDT_SEC,
-> +				 BD70528_MASK_WDT_SEC, bin2bcd(seconds));
-> +	if (ret)
-> +		dev_err(w->dev, "Failed to set WDT seconds\n");
-> +	else
-> +		dev_dbg(w->dev, "WDT tmo set to %u\n", timeout);
-> +
-> +out_en_unlock:
-> +	ret = bd70528->wdt_set(bd70528, 1, NULL);
-> +out_unlock:
-> +	mutex_unlock(&bd70528->rtc_timer_lock);
-> +
-> +	return ret;
-> +}
-> +
-> +static const struct watchdog_info bd70528_wdt_info = {
-> +	.identity = "bd70528-wdt",
-> +	.options = WDIOF_SETTIMEOUT | WDIOF_KEEPALIVEPING | WDIOF_MAGICCLOSE,
-> +};
-> +
-> +static const struct watchdog_ops bd70528_wdt_ops = {
-> +	.start		= bd70528_wdt_start,
-> +	.stop		= bd70528_wdt_stop,
-> +	.set_timeout	= bd70528_wdt_set_timeout,
-> +};
-> +
-> +/* Max time we can set is 1 hour, 59 minutes and 59 seconds */
-> +#define WDT_MAX_MS ((2 * 60 * 60 - 1) * 1000)
-> +/* Minimum time is 1 second */
-> +#define WDT_MIN_MS 1000
-> +#define DEFAULT_TIMEOUT 60
-> +
-> +static int bd70528_wdt_probe(struct platform_device *pdev)
-> +{
-> +	struct bd70528 *bd70528;
-> +	struct wdtbd70528 *w;
-> +	int ret;
-> +	unsigned int reg;
-> +	struct watchdog_device *wdt;
-> +
-> +	bd70528 = dev_get_drvdata(pdev->dev.parent);
-> +	if (!bd70528) {
-> +		dev_err(&pdev->dev, "No MFD driver data\n");
-> +		return -EINVAL;
-> +	}
-> +	w = devm_kzalloc(&pdev->dev, sizeof(*w), GFP_KERNEL);
-> +	if (!w)
-> +		return -ENOMEM;
-> +	w->bd = bd70528;
+> The other line doesn't have quotes, we should be consistent
 
-Unless I am missing something, only the mutex and the regmap pointer
-are used from struct bd70528. With that in mind, it might be desirable
-to copy those pointers to struct wdtbd70528 to avoid the additional
-dereferencing at runtime.
+You mean to say, remove quotes like this
 
-> +	w->dev = &pdev->dev;
-> +
-> +	wdt = devm_kzalloc(&pdev->dev, sizeof(*wdt), GFP_KERNEL);
-> +	if (!wdt)
-> +		return -ENOMEM;
-> +
 
-struct watchdog_device can be part of struct wdtbd70528. Two separate allocations
-are not necessary.
+allwinner,sun50i-a64-mipi-dsi, allwinner,sun6i-a31-mipi-dsi
 
-> +	wdt->info = &bd70528_wdt_info;
-> +	wdt->ops =  &bd70528_wdt_ops;
-> +	wdt->min_hw_heartbeat_ms = WDT_MIN_MS;
-> +	wdt->max_hw_heartbeat_ms = WDT_MAX_MS;
-> +	wdt->parent = pdev->dev.parent;
-> +	wdt->timeout = DEFAULT_TIMEOUT;
-> +	watchdog_set_drvdata(wdt, w);
-> +	watchdog_init_timeout(wdt, 0, pdev->dev.parent);
-> +
-> +	ret = bd70528_wdt_set_timeout(wdt, wdt->timeout);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "Failed to set the watchdog timeout\n");
-> +		return ret;
-> +	}
-> +
-> +	mutex_lock(&bd70528->rtc_timer_lock);
-> +	ret = regmap_read(bd70528->chip.regmap, BD70528_REG_WDT_CTRL, &reg);
-> +	mutex_unlock(&bd70528->rtc_timer_lock);
-> +
-
-I don't see the point for the above mutex locks. This is just reading a
-single register. regmap itself provides locking for that already.
-
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "Failed to get the watchdog state\n");
-> +		return ret;
-> +	}
-> +	if (reg & BD70528_MASK_WDT_EN) {
-> +		dev_dbg(&pdev->dev, "watchdog was running during probe\n");
-> +		set_bit(WDOG_HW_RUNNING, &wdt->status);
-> +	}
-> +
-> +	ret = devm_watchdog_register_device(&pdev->dev, wdt);
-> +	if (ret < 0)
-> +		dev_err(&pdev->dev, "watchdog registration failed: %d\n", ret);
-> +
-> +	return ret;
-> +}
-> +static struct platform_driver bd70528_wdt = {
-> +	.driver = {
-> +		.name = "bd70528-wdt"
-> +	},
-> +	.probe = bd70528_wdt_probe,
-> +};
-> +
-> +module_platform_driver(bd70528_wdt);
-> +
-> +MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
-> +MODULE_DESCRIPTION("BD70528 watchdog driver");
-> +MODULE_LICENSE("GPL");
-> 
-
+This make confusion with comma with allwinner vs next compatible string 
+isn't it? (In fact I did follow the similar like TCON in sun4i-drm.txt)
