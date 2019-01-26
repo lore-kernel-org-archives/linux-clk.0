@@ -2,49 +2,81 @@ Return-Path: <SRS0=A3eR=QC=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF84CC282C7
-	for <linux-clk@archiver.kernel.org>; Sat, 26 Jan 2019 11:14:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 373C8C282C7
+	for <linux-clk@archiver.kernel.org>; Sat, 26 Jan 2019 16:30:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96CEA218CD
-	for <linux-clk@archiver.kernel.org>; Sat, 26 Jan 2019 11:14:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E7C59218B0
+	for <linux-clk@archiver.kernel.org>; Sat, 26 Jan 2019 16:30:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dIrV2me0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726174AbfAZLOF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 26 Jan 2019 06:14:05 -0500
-Received: from www1102.sakura.ne.jp ([219.94.129.142]:10458 "EHLO
-        www1102.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726165AbfAZLOF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 26 Jan 2019 06:14:05 -0500
-Received: from fsav302.sakura.ne.jp (fsav302.sakura.ne.jp [153.120.85.133])
-        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x0QBDmWc001322;
-        Sat, 26 Jan 2019 20:13:48 +0900 (JST)
-        (envelope-from katsuhiro@katsuster.net)
-Received: from www1102.sakura.ne.jp (219.94.129.142)
- by fsav302.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav302.sakura.ne.jp);
- Sat, 26 Jan 2019 20:13:48 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav302.sakura.ne.jp)
-Received: from [192.168.1.2] (119.104.232.153.ap.dti.ne.jp [153.232.104.119])
-        (authenticated bits=0)
-        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x0QBDmgY001317
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Sat, 26 Jan 2019 20:13:48 +0900 (JST)
-        (envelope-from katsuhiro@katsuster.net)
-Subject: Re: [PATCH] clk: fractional-divider: check parent rate only for
- general approximation
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20190107132124.27788-1-katsuhiro@katsuster.net>
-From:   Katsuhiro Suzuki <katsuhiro@katsuster.net>
-Message-ID: <063dea80-a13e-3af2-1008-1c0c2bbe2706@katsuster.net>
-Date:   Sat, 26 Jan 2019 20:13:48 +0900
+        id S1726165AbfAZQaa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 26 Jan 2019 11:30:30 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:42416 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726038AbfAZQaa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 26 Jan 2019 11:30:30 -0500
+Received: by mail-pg1-f193.google.com with SMTP id d72so5406826pga.9;
+        Sat, 26 Jan 2019 08:30:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=fFa/0BWhN7gscoZhoLEWj0tkxbSLeP2wYD7UzyuqCWU=;
+        b=dIrV2me0giwHSwcSUx+mqOuRrCKNpnIRBD/Goa3cvej7CmKl+jkbMq6z5b2W6RFneG
+         vLklnPuVJYnwY/LcYM2cSK293VO7kfP4NH1JiO6NhQNmRXtsj98WLndt+sGLCwks/UTi
+         bTmNoHbKvpSHRkfDtnoqWNo9TXH1kxOH7i1hWupSZ7Ye8RHToJyHMOvPWhneO/5LyqOW
+         naTGjUXu1DsSTD9Vc8Ccd947GFTcaoGngsAI4ub7PXpbHcAbvDSWSzEgttCOfGaApJhX
+         eY8Jomt4H/TF+GPnZSVobutbhvT3kQdFliybicCSwbjbtPqDq9zVoFqWCq3MvfD/mT3S
+         kCDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=fFa/0BWhN7gscoZhoLEWj0tkxbSLeP2wYD7UzyuqCWU=;
+        b=JSd5L7a0EEdvpGiFN84hIXWh1/3XZ3+8poItrGCbuNyz/odD4JkKnua3nanTui5IDZ
+         TGbsTYT1iel2RYwnIaXnCwGKrp6RtMFT8s8wTssuO4FvC3lHKsoYrAT39qoChG+RX8fk
+         4zC6WoeobnK98tleiIMbf0CvW/kcxH/0zYU3Kdg/oGag7GDrxAh3cy/QnZtmY6h+4jG7
+         f4Smmhe0gzsCq3FIy+tCuai37eE9cxLmOclWi/7q31hKe+Xk0hJDmUz9zOjMRcN+bIxC
+         ov+Sr62fJ5lMwqfP/i1lhH+hS/fkxHmrzct/w1WzxZq1QMyiKJPUJL2QO5ZXV38MsoHN
+         EeDg==
+X-Gm-Message-State: AJcUuke6t+6hsIsfSagJg0AfWCuu8iU6bnrvOUT6ihGch7pwjpZZjFaV
+        0kaYTh7AWYxqeRN1IBG9wKJcvk+M
+X-Google-Smtp-Source: ALg8bN4iO8RYvWrfF9mBbUfJLNfxfPYtaJmVygaRLQduZFR1tLZeIxmx/2nu27BPUurLSYwOUj5PhA==
+X-Received: by 2002:a63:f141:: with SMTP id o1mr14056626pgk.134.1548520228331;
+        Sat, 26 Jan 2019 08:30:28 -0800 (PST)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id j9sm32982481pfi.86.2019.01.26.08.30.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 26 Jan 2019 08:30:27 -0800 (PST)
+Subject: Re: [RFC PATCH v2 08/10] rtc: bd70528: Initial support for ROHM
+ bd70528 RTC
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        mazziesaccount@gmail.com
+Cc:     heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
+        lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-watchdog@vger.kernel.org
+References: <20190125110536.GA29321@localhost.localdomain>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <35bbc5b9-5f8c-ec80-3eaa-bb2c0e2812c9@roeck-us.net>
+Date:   Sat, 26 Jan 2019 08:30:24 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20190107132124.27788-1-katsuhiro@katsuster.net>
+In-Reply-To: <20190125110536.GA29321@localhost.localdomain>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -53,44 +85,541 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Ping...
-
-On 2019/01/07 22:21, Katsuhiro Suzuki wrote:
-> Custom approximation of fractional-divider may not need parent clock
-> rate checking. For example Rockchip SoCs work fine using grand parent
-> clock rate evne if target rate is greater than parent.
+On 1/25/19 3:05 AM, Matti Vaittinen wrote:
+> Support RTC block in ROHM bd70528 power management IC. Support
+> getting and setting the time and date as well as arming an alarm
+> which can also be used to wake the PMIC from standby state.
 > 
-> This patch removes parent clock rate check from custom approximation.
+> HW supports wake interrupt only for the next 24 hours (sec, minute
+> and hour information only) so we limit also the alarm interrupt to
+> this 24 hours for the sake of consistency.
 > 
-> Signed-off-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
+> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 > ---
->   drivers/clk/clk-fractional-divider.c | 10 +++++++---
->   1 file changed, 7 insertions(+), 3 deletions(-)
+>   drivers/rtc/Kconfig       |   8 +
+>   drivers/rtc/Makefile      |   1 +
+>   drivers/rtc/rtc-bd70528.c | 451 ++++++++++++++++++++++++++++++++++++++++++++++
+>   3 files changed, 460 insertions(+)
+>   create mode 100644 drivers/rtc/rtc-bd70528.c
 > 
-> diff --git a/drivers/clk/clk-fractional-divider.c b/drivers/clk/clk-fractional-divider.c
-> index 545dceec0bbf..b0fc5509e0ff 100644
-> --- a/drivers/clk/clk-fractional-divider.c
-> +++ b/drivers/clk/clk-fractional-divider.c
-> @@ -79,13 +79,17 @@ static long clk_fd_round_rate(struct clk_hw *hw, unsigned long rate,
->   	unsigned long m, n;
->   	u64 ret;
->   
-> -	if (!rate || rate >= *parent_rate)
-> +	if (!rate)
->   		return *parent_rate;
->   
-> -	if (fd->approximation)
-> +	if (fd->approximation) {
->   		fd->approximation(hw, rate, parent_rate, &m, &n);
-> -	else
-> +	} else {
-> +		if (rate >= *parent_rate)
-> +			return *parent_rate;
+> diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
+> index 225b0b8516f3..df6211cbd83f 100644
+> --- a/drivers/rtc/Kconfig
+> +++ b/drivers/rtc/Kconfig
+> @@ -487,6 +487,14 @@ config RTC_DRV_M41T80_WDT
+>   	help
+>   	  If you say Y here you will get support for the
+>   	  watchdog timer in the ST M41T60 and M41T80 RTC chips series.
+> +config RTC_DRV_BD70528
+> +	tristate "ROHM BD70528 PMIC RTC"
+> +	help
+> +	  If you say Y here you will get support for the RTC
+> +	  on ROHM BD70528 Power Management IC.
 > +
->   		clk_fd_general_approximation(hw, rate, parent_rate, &m, &n);
-> +	}
+> +	  This driver can also be built as a module. If so, the module
+> +	  will be called rtc-bd70528.
 >   
->   	ret = (u64)*parent_rate * m;
->   	do_div(ret, n);
+>   config RTC_DRV_BQ32K
+>   	tristate "TI BQ32000"
+> diff --git a/drivers/rtc/Makefile b/drivers/rtc/Makefile
+> index df022d820bee..740b13840913 100644
+> --- a/drivers/rtc/Makefile
+> +++ b/drivers/rtc/Makefile
+> @@ -36,6 +36,7 @@ obj-$(CONFIG_RTC_DRV_ASM9260)	+= rtc-asm9260.o
+>   obj-$(CONFIG_RTC_DRV_AT91RM9200)+= rtc-at91rm9200.o
+>   obj-$(CONFIG_RTC_DRV_AT91SAM9)	+= rtc-at91sam9.o
+>   obj-$(CONFIG_RTC_DRV_AU1XXX)	+= rtc-au1xxx.o
+> +obj-$(CONFIG_RTC_DRV_BD70528)	+= rtc-bd70528.o
+>   obj-$(CONFIG_RTC_DRV_BQ32K)	+= rtc-bq32k.o
+>   obj-$(CONFIG_RTC_DRV_BQ4802)	+= rtc-bq4802.o
+>   obj-$(CONFIG_RTC_DRV_BRCMSTB)	+= rtc-brcmstb-waketimer.o
+> diff --git a/drivers/rtc/rtc-bd70528.c b/drivers/rtc/rtc-bd70528.c
+> new file mode 100644
+> index 000000000000..250fb218c784
+> --- /dev/null
+> +++ b/drivers/rtc/rtc-bd70528.c
+> @@ -0,0 +1,451 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +//
+> +// Copyright (C) 2018 ROHM Semiconductors
+> +//
+> +// RTC driver for ROHM BD70528 PMIC
+> +
+> +#include <linux/bcd.h>
+> +#include <linux/mfd/rohm-bd70528.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regmap.h>
+> +#include <linux/rtc.h>
+> +
+> +/*
+> + * We read regs RTC_SEC => RTC_YEAR
+> + * this struct is ordered according to chip registers.
+> + * Keep it u8 only to avoid padding issues.
+> + */
+> +struct bd70528_rtc_day {
+> +	u8 sec;
+> +	u8 min;
+> +	u8 hour;
+> +};
+> +
+> +struct bd70528_rtc_data {
+> +	struct bd70528_rtc_day time;
+> +	u8 week;
+> +	u8 day;
+> +	u8 month;
+> +	u8 year;
+> +};
+> +
+> +struct bd70528_rtc_wake {
+> +	struct bd70528_rtc_day time;
+> +	u8 ctrl;
+> +};
+> +
+> +struct bd70528_rtc_alm {
+> +	struct bd70528_rtc_data data;
+> +	u8 alm_mask;
+> +	u8 alm_repeat;
+> +};
+
+At least some of the above are directly associated with chip registers.
+I don't think this will work for all architectures without explicit packed
+attribute.
+
+> +
+> +struct bd70528_rtc {
+> +	struct bd70528 *mfd;
+> +	struct device *dev;
+> +};
+> +
+> +static int bd70528_set_wake(struct bd70528 *bd70528,
+> +			    int enable, int *old_state)
+> +{
+> +	int ret;
+> +	unsigned int ctrl_reg;
+> +
+> +	ret = regmap_read(bd70528->chip.regmap, BD70528_REG_WAKE_EN, &ctrl_reg);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (old_state) {
+> +		if (ctrl_reg & BD70528_MASK_WAKE_EN)
+> +			*old_state |= BD70528_WAKE_STATE_BIT;
+> +		else
+> +			*old_state &= ~BD70528_WAKE_STATE_BIT;
+> +
+> +		if ((!enable) == (!(*old_state & BD70528_WAKE_STATE_BIT)))
+> +			return 0;
+
+I think
+		if (enable == !!(*old_state & BD70528_WAKE_STATE_BIT))
+would be much better readable. Even if not, there are way too many ()
+in the above conditional.
+
+
+> +	}
+> +
+> +	if (enable)
+> +		ctrl_reg |= BD70528_MASK_WAKE_EN;
+> +	else
+> +		ctrl_reg &= ~BD70528_MASK_WAKE_EN;
+> +
+> +	return regmap_write(bd70528->chip.regmap, BD70528_REG_WAKE_EN,
+> +			    ctrl_reg);
+> +}
+> +
+> +static int bd70528_set_elapsed_tmr(struct bd70528 *bd70528,
+> +				   int enable, int *old_state)
+> +{
+> +	int ret;
+> +	unsigned int ctrl_reg;
+> +
+> +	/*
+> +	 * TBD
+> +	 * What is the purpose of elapsed timer ?
+> +	 * Is the timeout registers counting down, or is the disable - re-enable
+> +	 * going to restart the elapsed-time counting? If counting is restarted
+> +	 * the timeout should be decreased by the amount of time that has
+> +	 * elapsed since starting the timer. Maybe we should store the monotonic
+> +	 * clock value when timer is started so that if RTC is set while timer
+> +	 * is armed we could do the compensation. This is a hack if RTC/system
+> +	 * clk are drifting. OTOH, RTC controlled via I2C is in any case
+> +	 * inaccurate...
+> +	 */
+> +	ret = regmap_read(bd70528->chip.regmap, BD70528_REG_ELAPSED_TIMER_EN,
+> +			  &ctrl_reg);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (old_state) {
+> +		if (ctrl_reg & BD70528_MASK_ELAPSED_TIMER_EN)
+> +			*old_state |= BD70528_ELAPSED_STATE_BIT;
+> +		else
+> +			*old_state &= ~BD70528_ELAPSED_STATE_BIT;
+> +
+> +		if ((!enable) == (!(*old_state & BD70528_ELAPSED_STATE_BIT)))
+> +			return 0;
+> +	}
+> +
+> +	if (enable)
+> +		ctrl_reg |= BD70528_MASK_ELAPSED_TIMER_EN;
+> +	else
+> +		ctrl_reg &= ~BD70528_MASK_ELAPSED_TIMER_EN;
+> +
+> +	return regmap_write(bd70528->chip.regmap, BD70528_REG_ELAPSED_TIMER_EN,
+> +			    ctrl_reg);
+> +}
+> +
+> +static int bd70528_set_rtc_based_timers(struct bd70528_rtc *r, int new_state,
+> +							int *old_state)
+> +{
+> +	int ret;
+> +
+> +	ret = r->mfd->wdt_set(r->mfd, new_state & BD70528_WDT_STATE_BIT,
+> +			       old_state);
+> +	if (ret) {
+> +		dev_err(r->dev,
+> +			"Failed to disable WDG for RTC setting (%d)\n", ret);
+> +		return ret;
+> +	}
+> +	ret = bd70528_set_elapsed_tmr(r->mfd,
+> +				      new_state & BD70528_ELAPSED_STATE_BIT,
+> +				      old_state);
+> +	if (ret) {
+> +		dev_err(r->dev,
+> +			"Failed to disable 'elapsed timer' for RTC setting\n");
+> +		return ret;
+> +	}
+> +	ret = bd70528_set_wake(r->mfd, new_state & BD70528_WAKE_STATE_BIT,
+> +			       old_state);
+> +	if (ret) {
+> +		dev_err(r->dev,
+> +			"Failed to disable 'wake timer' for RTC setting\n");
+> +		return ret;
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +static int bd70528_re_enable_rtc_based_timers(struct bd70528_rtc *r,
+> +							int old_state)
+> +{
+> +	int ret;
+> +
+> +	ret = bd70528_set_rtc_based_timers(r, old_state, NULL);
+> +	mutex_unlock(&r->mfd->rtc_timer_lock);
+> +
+> +	return ret;
+> +}
+> +
+> +static int bd70528_disable_rtc_based_timers(struct bd70528_rtc *r,
+> +							int *old_state)
+> +{
+> +	mutex_lock(&r->mfd->rtc_timer_lock);
+> +
+> +	return bd70528_set_rtc_based_timers(r, 0, old_state);
+> +}
+> +
+> +static inline void tmday2rtc(struct rtc_time *t, struct bd70528_rtc_day *d)
+> +{
+> +	d->sec &= ~BD70528_MASK_RTC_SEC;
+> +	d->min &= ~BD70528_MASK_RTC_MINUTE;
+> +	d->hour &= ~BD70528_MASK_RTC_HOUR;
+> +	d->sec |= bin2bcd(t->tm_sec);
+> +	d->min |= bin2bcd(t->tm_min);
+> +	d->hour |= bin2bcd(t->tm_hour);
+> +}
+> +
+> +static inline void tm2rtc(struct rtc_time *t, struct bd70528_rtc_data *r)
+> +{
+> +	r->day &= ~BD70528_MASK_RTC_DAY;
+> +	r->week &= ~BD70528_MASK_RTC_WEEK;
+> +	r->month &= ~BD70528_MASK_RTC_MONTH;
+> +	/*
+> +	 * PM and 24H bits are not used by Wake - thus we clear them
+> +	 * here and not in tmday2rtc() which is also used by wake.
+> +	 */
+> +	r->time.hour &= ~(BD70528_MASK_RTC_HOUR_PM | BD70528_MASK_RTC_HOUR_24H);
+> +
+> +	tmday2rtc(t, &r->time);
+> +	/*
+> +	 * We do always set time in 24H mode.
+> +	 */
+> +	r->time.hour |= BD70528_MASK_RTC_HOUR_24H;
+> +	r->day |= bin2bcd(t->tm_mday);
+> +	r->week |= bin2bcd(t->tm_wday);
+> +	r->month |= bin2bcd(t->tm_mon + 1);
+> +	r->year = bin2bcd(t->tm_year-100);
+> +}
+> +
+> +static inline void rtc2tm(struct bd70528_rtc_data *r, struct rtc_time *t)
+> +{
+> +	t->tm_sec = bcd2bin(r->time.sec & BD70528_MASK_RTC_SEC);
+> +	t->tm_min = bcd2bin(r->time.min & BD70528_MASK_RTC_MINUTE);
+> +	t->tm_hour = bcd2bin(r->time.hour & BD70528_MASK_RTC_HOUR);
+> +	/*
+> +	 * If RTC is in 12H mode, then bit BD70528_MASK_RTC_HOUR_PM
+> +	 * is not BCD value but tells whether it is AM or PM
+> +	 */
+> +	if (!(r->time.hour & BD70528_MASK_RTC_HOUR_24H)) {
+> +		t->tm_hour %= 12;
+> +		if (r->time.hour & BD70528_MASK_RTC_HOUR_PM)
+> +			t->tm_hour += 12;
+> +	}
+> +	t->tm_mday = bcd2bin(r->day & BD70528_MASK_RTC_DAY);
+> +	t->tm_mon = bcd2bin(r->month & BD70528_MASK_RTC_MONTH) - 1;
+> +	t->tm_year = 100 + bcd2bin(r->year & BD70528_MASK_RTC_YEAR);
+> +	t->tm_wday = bcd2bin(r->week & BD70528_MASK_RTC_WEEK);
+> +}
+> +
+> +static int bd70528_set_alarm(struct device *dev, struct rtc_wkalrm *a)
+> +{
+> +	struct bd70528_rtc_wake wake;
+> +	struct bd70528_rtc_alm alm;
+> +	int ret;
+> +	struct bd70528_rtc *r = dev_get_drvdata(dev);
+> +	struct bd70528 *bd70528 = r->mfd;
+> +
+> +	ret = regmap_bulk_read(bd70528->chip.regmap, BD70528_REG_RTC_WAKE_START,
+> +			       &wake, sizeof(wake));
+> +	if (ret) {
+> +		dev_err(dev, "Failed to read wake regs\n");
+> +		return ret;
+> +	}
+> +
+> +	ret = regmap_bulk_read(bd70528->chip.regmap, BD70528_REG_RTC_ALM_START,
+> +			       &alm, sizeof(alm));
+> +	if (ret) {
+> +		dev_err(dev, "Failed to read alarm regs\n");
+> +		return ret;
+> +	}
+> +
+> +	tm2rtc(&a->time, &alm.data);
+> +	tmday2rtc(&a->time, &wake.time);
+> +
+> +	if (a->enabled) {
+> +		alm.alm_mask &= ~BD70528_MASK_ALM_EN;
+> +		wake.ctrl |= BD70528_MASK_WAKE_EN;
+> +	} else {
+> +		alm.alm_mask |= BD70528_MASK_ALM_EN;
+> +		wake.ctrl &= ~BD70528_MASK_WAKE_EN;
+> +	}
+> +
+> +	ret = regmap_bulk_write(bd70528->chip.regmap,
+> +				BD70528_REG_RTC_WAKE_START, &wake,
+> +				sizeof(wake));
+> +	if (ret) {
+> +		dev_err(dev, "Failed to set wake time\n");
+> +		return ret;
+> +	}
+> +	ret = regmap_bulk_write(bd70528->chip.regmap, BD70528_REG_RTC_ALM_START,
+> +				&alm, sizeof(alm));
+> +	if (ret)
+> +		dev_err(dev, "Failed to set alarm time\n");
+> +
+> +	return ret;
+> +}
+> +
+> +static int bd70528_read_alarm(struct device *dev, struct rtc_wkalrm *a)
+> +{
+> +	struct bd70528_rtc_alm alm;
+> +	int ret;
+> +	struct bd70528_rtc *r = dev_get_drvdata(dev);
+> +	struct bd70528 *bd70528 = r->mfd;
+> +
+> +	ret = regmap_bulk_read(bd70528->chip.regmap, BD70528_REG_RTC_ALM_START,
+> +			  &alm, sizeof(alm));
+> +	if (ret) {
+> +		dev_err(dev, "Failed to read alarm regs\n");
+> +		return ret;
+> +	}
+> +
+> +	rtc2tm(&alm.data, &a->time);
+> +	a->time.tm_mday = -1;
+> +	a->time.tm_mon = -1;
+> +	a->time.tm_year = -1;
+> +	if (alm.alm_mask & BD70528_MASK_ALM_EN)
+> +		a->enabled = 0;
+> +	else
+> +		a->enabled = 1;
+> +
+Without conditional:
+	a->enabled = !(alm.alm_mask & BD70528_MASK_ALM_EN);
+
+> +	a->pending = 0;
+> +
+> +	return 0;
+> +}
+> +
+> +static int bd70528_set_time(struct device *dev, struct rtc_time *t)
+> +{
+> +	int ret, old_states;
+> +	struct bd70528_rtc_data rtc_data;
+> +	struct bd70528_rtc *r = dev_get_drvdata(dev);
+> +	struct bd70528 *bd70528 = r->mfd;
+> +
+> +	ret = bd70528_disable_rtc_based_timers(r, &old_states);
+> +
+
+AFAICS the disable/enable functions are only called once. Since they
+also apply set / clear a mutex, I find that a bit confusing. I think
+it would be better to fold the code into this function. If anything,
+I could imagine something like
+
+	mutex_lock();
+	ret = bd70528_set_time_locked();
+	mutex_unlock()
+
+to simplify error handling.
+
+
+> +	ret = regmap_bulk_read(bd70528->chip.regmap,
+> +			       BD70528_REG_RTC_START, &rtc_data,
+> +			       sizeof(rtc_data));
+> +
+> +	tm2rtc(t, &rtc_data);
+> +
+> +	ret = regmap_bulk_write(bd70528->chip.regmap,
+> +				BD70528_REG_RTC_START, &rtc_data,
+> +				sizeof(rtc_data));
+> +
+> +	ret = bd70528_re_enable_rtc_based_timers(r, old_states);
+> +
+
+Kind of off that all the error returns are ignored here.
+
+> +	return 0;
+> +}
+> +static int bd70528_get_time(struct device *dev, struct rtc_time *t)
+> +{
+> +	struct bd70528_rtc *r = dev_get_drvdata(dev);
+> +	struct bd70528 *bd70528 = r->mfd;
+> +	struct bd70528_rtc_data rtc_data;
+> +	int ret;
+> +
+> +	/* read the RTC date and time registers all at once */
+> +	ret = regmap_bulk_read(bd70528->chip.regmap,
+> +			       BD70528_REG_RTC_START, &rtc_data,
+> +			       sizeof(rtc_data));
+> +	if (ret) {
+> +		dev_err(dev, "Failed to read RTC time (err %d)\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	rtc2tm(&rtc_data, t);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct rtc_class_ops bd70528_rtc_ops = {
+> +	.read_time	= bd70528_get_time,
+> +	.set_time	= bd70528_set_time,
+> +	.read_alarm	= bd70528_read_alarm,
+> +	.set_alarm	= bd70528_set_alarm,
+> +};
+> +
+> +static irqreturn_t alm_hndlr(int irq, void *data)
+> +{
+> +	struct rtc_device *rtc = data;
+> +
+> +	rtc_update_irq(rtc, 1, RTC_IRQF | RTC_AF | RTC_PF);
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +static int bd70528_probe(struct platform_device *pdev)
+> +{
+> +	struct bd70528_rtc *bd_rtc;
+> +	struct bd70528 *mfd;
+> +	int ret;
+> +	struct rtc_device *rtc;
+> +	int irq;
+> +	unsigned int hr;
+> +
+> +	mfd = dev_get_drvdata(pdev->dev.parent);
+> +	if (!mfd) {
+> +		dev_err(&pdev->dev, "No MFD driver data\n");
+> +		return -EINVAL;
+> +	}
+> +	bd_rtc = devm_kzalloc(&pdev->dev, sizeof(*bd_rtc), GFP_KERNEL);
+> +	if (!bd_rtc)
+> +		return -ENOMEM;
+> +
+> +	bd_rtc->mfd = mfd;
+> +	bd_rtc->dev = &pdev->dev;
+> +
+> +	irq = platform_get_irq_byname(pdev, "bd70528-rtc-alm");
+> +
+> +	if (irq < 0) {
+> +		dev_err(&pdev->dev, "Failed to get irq\n");
+> +		return irq;
+> +	}
+> +
+> +	platform_set_drvdata(pdev, bd_rtc);
+> +
+> +	ret = regmap_read(mfd->chip.regmap, BD70528_REG_RTC_HOUR, &hr);
+> +
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "Failed to reag RTC clock\n");
+> +		return ret;
+> +	}
+> +
+> +	if (!(hr & BD70528_MASK_RTC_HOUR_24H)) {
+> +		struct rtc_time t;
+> +
+> +		ret = bd70528_get_time(&pdev->dev, &t);
+> +		if (ret)
+> +			return ret;
+> +
+> +		ret = bd70528_set_time(&pdev->dev, &t);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "Setting 24H clock for RTC failed\n");
+> +		return ret;
+> +	}
+> +
+> +	device_set_wakeup_capable(&pdev->dev, true);
+> +	device_wakeup_enable(&pdev->dev);
+> +	rtc = devm_rtc_device_register(&pdev->dev, "bd70528-rtc",
+> +				       &bd70528_rtc_ops, THIS_MODULE);
+> +	if (IS_ERR(rtc)) {
+> +		dev_err(&pdev->dev, "Registering RTC failed\n");
+> +		return PTR_ERR(rtc);
+> +	}
+> +
+> +	ret = devm_request_threaded_irq(&pdev->dev, irq, NULL, &alm_hndlr,
+> +					IRQF_ONESHOT, "bd70528-rtc", rtc);
+> +
+> +	/*
+> +	 *  BD70528 irq controller is not touching the main mask register.
+> +	 *  So enable the RTC block interrupts at main level. We can just
+> +	 *  leave them enabled as irq-controller should disable irqs
+> +	 *  from sub-registers when IRQ is disabled or freed.
+> +	 */
+> +	ret = regmap_update_bits(mfd->chip.regmap,
+> +				 BD70528_REG_INT_MAIN_MASK,
+> +				 BD70528_INT_RTC_MASK, 0);
+> +
+> +	if (ret)
+> +		dev_err(&pdev->dev, "Failed to enable RTC interrupts\n");
+> +
+> +	return ret;
+> +}
+> +
+> +static struct platform_driver bd70528_rtc = {
+> +	.driver = {
+> +		.name = "bd70528-rtc"
+> +	},
+> +	.probe = bd70528_probe,
+> +};
+> +
+> +module_platform_driver(bd70528_rtc);
+> +
+> +MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
+> +MODULE_DESCRIPTION("BD70528 RTC driver");
+> +MODULE_LICENSE("GPL");
 > 
 
