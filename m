@@ -2,137 +2,121 @@ Return-Path: <SRS0=UrzD=QE=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD0ABC282C8
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 09:36:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDDEDC282C8
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 10:06:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B02921736
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 09:36:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="AY7yun73"
+	by mail.kernel.org (Postfix) with ESMTP id 929372087F
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 10:06:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726683AbfA1JgX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 28 Jan 2019 04:36:23 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:50637 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726672AbfA1JgW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Jan 2019 04:36:22 -0500
-Received: by mail-it1-f194.google.com with SMTP id z7so19627418iti.0
-        for <linux-clk@vger.kernel.org>; Mon, 28 Jan 2019 01:36:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Ozesp4rWwiinrHtP2lbjF0VXem3poIT2No6pvmp0vP4=;
-        b=AY7yun73QD+EMNMwN0Y9/iGld70czBDXBhZwOgwRagFJXGF4+NVDKL7UmP/oFwxqMa
-         bx3rn5BaL6yp5Cf4amrzXIkfjukg6OKP6aXwgTM0QqGO5rzZ41224LwdVvL3SHWhpBL2
-         aR2HTIR8GnB108wOYdYBcqWMpVgeDWctVrae4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Ozesp4rWwiinrHtP2lbjF0VXem3poIT2No6pvmp0vP4=;
-        b=TLs9MTpazK0E54V5egalIgjb1GB0CbASKFBmFdmSj/H003+AtBLT7QrkcYJlRjjx80
-         daZ/YleowWrc03pdiCvi29D+OgGzbsPU1TEkrPF0z9W7YQD39VvWsdzSwCxjl4megd0z
-         9OTqXfUGOGJ4TxwwI5DRK0cPNXM7DVZLVg7jSuJ6H7FYHaSouC+s0vpAmBB8Rga9dJs7
-         3Wmn4NDFpB0E0CPOwBu9FH3aQ1/i44nMvoW6bylFRJszBY01ItjInuuNCd0SCmV6RGV9
-         L4XPMDoEBD7HUw1nxHjUmx7RXkMrn/Oy8bx7471Wt6ZS6Rg7NlQLn80pshpB4kMaGVXX
-         ILLw==
-X-Gm-Message-State: AJcUukc6z/52dAhkRgh9gJDmlffmsdBFJybQCic2dkAWiLSLnvvMHoFV
-        3ckRwA/Afbzam7h9djSfzhNNOtMUDHweY0xQDN0Bww==
-X-Google-Smtp-Source: ALg8bN6pbH8aim/d9XQIpdNF6Ci4nzcWf2S1jjcKEHd6gLiFxhxCMBZ3bZKyOFJKx+7PoFzRn8eTtVwDlkiO4D5JUu4=
-X-Received: by 2002:a02:781e:: with SMTP id p30mr13465792jac.85.1548668181627;
- Mon, 28 Jan 2019 01:36:21 -0800 (PST)
+        id S1726369AbfA1KG5 convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 28 Jan 2019 05:06:57 -0500
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:48419 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726749AbfA1KG5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Jan 2019 05:06:57 -0500
+X-Originating-IP: 90.88.29.206
+Received: from xps13 (aaubervilliers-681-1-87-206.w90-88.abo.wanadoo.fr [90.88.29.206])
+        (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id 1F277E000D;
+        Mon, 28 Jan 2019 10:06:51 +0000 (UTC)
+Date:   Mon, 28 Jan 2019 11:06:50 +0100
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Nadav Haklai <nadavh@marvell.com>
+Subject: Re: [PATCH v3 2/4] clk: core: link consumer with clock driver
+Message-ID: <20190128110650.76367606@xps13>
+In-Reply-To: <154845170894.136743.2408260720819956377@swboyd.mtv.corp.google.com>
+References: <20181204192440.12125-1-miquel.raynal@bootlin.com>
+        <20181204192440.12125-3-miquel.raynal@bootlin.com>
+        <154454837597.17204.11648795524314926025@swboyd.mtv.corp.google.com>
+        <20190104165406.3b52399a@xps13>
+        <154845170894.136743.2408260720819956377@swboyd.mtv.corp.google.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <20190124195900.22620-1-jagan@amarulasolutions.com>
- <20190124195900.22620-12-jagan@amarulasolutions.com> <20190125212433.ni2jg3wvpyjazlxf@flea>
-In-Reply-To: <20190125212433.ni2jg3wvpyjazlxf@flea>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Mon, 28 Jan 2019 15:06:10 +0530
-Message-ID: <CAMty3ZAsH2iZ+JEqTE3D58aXfGuhMSg9YoO56ZhhOeE4c4yQHQ@mail.gmail.com>
-Subject: Re: [PATCH v6 11/22] clk: sunxi-ng: a64: Add minimum rate for PLL_MIPI
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-amarula@amarulasolutions.com,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, Jan 26, 2019 at 2:54 AM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
->
-> On Fri, Jan 25, 2019 at 01:28:49AM +0530, Jagan Teki wrote:
-> > Minimum PLL used for MIPI is 500MHz, as per manual, but
-> > lowering the min rate by 300MHz can result proper working
-> > nkms divider with the help of desired dclock rate from
-> > panel driver.
-> >
-> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> > Acked-by: Stephen Boyd <sboyd@kernel.org>
->
-> Going 200MHz below the minimum doesn't seem really reasonable. What
-> is the issue that you are trying to fix here?
->
-> It looks like it's picking bad dividers, but if that's the case, this
-> isn't the proper fix.
+Hi Stephen,
 
-As I stated in earlier patches, the whole idea is pick the desired
-dclk divider based dclk rate. So the dotclock, sun4i_dclk_round_rate
-is unable to get the proper dclk divider at the end, so it eventually
-picking up wrong divider value and fired vblank timeout.
+Stephen Boyd <sboyd@kernel.org> wrote on Fri, 25 Jan 2019 13:28:28
+-0800:
 
-So, we come-up with optimal and working min_rate 300MHz in pll-mipi to
-get the desired clock something like below.
-[    2.415773] [drm] No driver support for vblank timestamp query.
-[    2.424116] sun4i_dclk_round_rate: min_div = 4 max_div = 127, rate = 55000000
-[    2.424172] ideal = 220000000, rounded = 0
-[    2.424176] ideal = 275000000, rounded = 0
-[    2.424194] ccu_nkm_round_rate: rate = 330000000
-[    2.424197] ideal = 330000000, rounded = 330000000
-[    2.424201] sun4i_dclk_round_rate: div = 6 rate = 55000000
-[    2.424205] sun4i_dclk_round_rate: min_div = 4 max_div = 127, rate = 55000000
-[    2.424209] ideal = 220000000, rounded = 0
-[    2.424213] ideal = 275000000, rounded = 0
-[    2.424230] ccu_nkm_round_rate: rate = 330000000
-[    2.424233] ideal = 330000000, rounded = 330000000
-[    2.424236] sun4i_dclk_round_rate: div = 6 rate = 55000000
-[    2.424253] ccu_nkm_round_rate: rate = 330000000
-[    2.424270] ccu_nkm_round_rate: rate = 330000000
-[    2.424278] sun4i_dclk_recalc_rate: val = 1, rate = 330000000
-[    2.424281] sun4i_dclk_recalc_rate: val = 1, rate = 330000000
-[    2.424306] ccu_nkm_set_rate: rate = 330000000, parent_rate = 297000000
-[    2.424309] ccu_nkm_set_rate: _nkm.n = 5
-[    2.424311] ccu_nkm_set_rate: _nkm.k = 2
-[    2.424313] ccu_nkm_set_rate: _nkm.m = 9
-[    2.424661] sun4i_dclk_set_rate div 6
-[    2.424668] sun4i_dclk_recalc_rate: val = 6, rate = 55000000
+> Quoting Miquel Raynal (2019-01-04 07:54:06)
+> > Hi Stephen,
+> > 
+> > Stephen Boyd <sboyd@kernel.org> wrote on Tue, 11 Dec 2018 09:12:55
+> > -0800:
+> >   
+> > > Sorry, I'm not reviewing the whole patch right now, just this one little
+> > > bit because I'm also working in the same area.
+> > > 
+> > > Quoting Miquel Raynal (2018-12-04 11:24:38)  
+> > > > diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+> > > > index 60c51871b04b..721d6b55b2fa 100644
+> > > > --- a/include/linux/clk-provider.h
+> > > > +++ b/include/linux/clk-provider.h
+> > > > @@ -781,6 +781,8 @@ void devm_clk_hw_unregister(struct device *dev, struct clk_hw *hw);
+> > > >  const char *__clk_get_name(const struct clk *clk);
+> > > >  const char *clk_hw_get_name(const struct clk_hw *hw);
+> > > >  struct clk_hw *__clk_get_hw(struct clk *clk);
+> > > > +void clk_link_consumer(struct device *consumer, struct clk *clk);
+> > > > +void clk_unlink_consumer(struct clk *clk);    
+> > > 
+> > > We shouldn't need to add these functions as far as I can tell. That's
+> > > because __clk_get() has become an internal API between clkdev.c and
+> > > clk.c that does nothing now on implementations that aren't the CCF. We
+> > > can even change this API to take a clk_hw pointer instead of a clk
+> > > pointer.
+> > > 
+> > > I'd rather see us plumb a struct device and clk_hw structure down into
+> > > __clk_get() and fold it all into __clk_create_clk, possibly even
+> > > renaming __clk_create_clk to clk_hw_create_clk(). That way we can get
+> > > the calling device and clk_hw pointer in one call in the clk framework,
+> > > along with the device name and connection name, and then generate the
+> > > struct clk right there. This can simplify some code and make it easier
+> > > to extend this to associate calling devices with the clk consumer
+> > > somehow.
+> > > 
+> > > Here's the diff. With this, you should be able to add and remove device
+> > > links in clk_hw_create_clk() when dev != NULL.  
+> > 
+> > Thanks for the help; I updated my work on top of yours, it looks ok but
+> > I need to run some more tests.
+> > 
+> > However I had to tweak a parameter in one of your recent changes, you
+> > used '-1' as index in __of_clock_get() while it is not a valid value
+> > (returning an error). As in the __of_clk_get_by_name() function you
+> > removed index was just set to 0 at the top of the function, I think the
+> > below fix is valid.  
+> 
+> Thanks. Makes sense so I folded it in.
 
-But look like this wouldn't valid for all other dclock rates, say BPI
-panel has 30MHz clock that would failed with this logic.
+Great!
 
-On the other side Allwinner BSP calculating dclk divider based on the
-SoC's. for A33 [1] it is fixed dclk divider of 4 and for A64 is is
-calculated based on the bpp/lanes.
+Can you update me with the status of this series? Is it going in for 5.1?
 
-Since the above min_rate is not desired for possible panels clock, I
-think we can rely on BSP to make a move here. I'm planning to do these
-changes in next version.
+Lorenzo, the PCI maintainer, is waiting for this series to enter before
+accepting another series depending on it; so please do not hesitate to
+keep me updated.
 
-Let me know if you have any comments here?
 
-[1] https://patchwork.kernel.org/patch/10777519/
+Thanks,
+Miquèl
