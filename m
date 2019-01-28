@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93AD2C282C8
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 17:20:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BFABC282CD
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 17:23:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6029720989
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 17:20:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4982620855
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 17:23:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548696006;
-	bh=NiU+fKxxjAJwJWAOHX8DOnTRU8rjh/xsh3EXRdvZyyQ=;
+	s=default; t=1548696235;
+	bh=Ba0R+3g9W4HxNnMVLMF/nf8iIUSZJx7lxNUDRwOGYLM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0nsKKumaitxfKh+fFyt59IQZMDKdBdaSrp7jcjUrArgfMq5Ox9FMAqMP0QxCz2M8r
-	 EKrxkbfy/8H3dvi+2Krkr3Z2NlxH7w7uAC5iFm0Fx+a8riDn9V1mD1C53sPtjKNkaV
-	 56HAzUFvUS4hXt/mCmEVYOuBWyFjABWwmPYiYAGs=
+	b=uPbNXakgCJORULc5osMHzHjRFIMBjxMPyIKjPU4CaQWyvlOkXxih8VzuJfetAXcaZ
+	 9BcMYhh9hcnuIV5XhWTTJEVKo8Y40muk1zOEy1XlERP9YdlhFkm10LMDYOtPzQWEti
+	 QFqtd15VmstIcrW5lOWeU41bEt+14sFKpU5d1qyY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731691AbfA1RUB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:20:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50344 "EHLO mail.kernel.org"
+        id S1730504AbfA1RXr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 28 Jan 2019 12:23:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47722 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731621AbfA1QEi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:04:38 -0500
+        id S1730093AbfA1QCY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:02:24 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2471921738;
-        Mon, 28 Jan 2019 16:04:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C3CEC21916;
+        Mon, 28 Jan 2019 16:02:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691477;
-        bh=NiU+fKxxjAJwJWAOHX8DOnTRU8rjh/xsh3EXRdvZyyQ=;
+        s=default; t=1548691343;
+        bh=Ba0R+3g9W4HxNnMVLMF/nf8iIUSZJx7lxNUDRwOGYLM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=E0h6d6CTo4CqigH0ZZNm8+A/7fiqZsHTJL6XtuVaG+SwFtDMR49waCv3waJ8qsbti
-         BkQ9aj2hjUu3FCEktXtSVR8imbhdX03yTlRWuW/TfnnOetCfveG3OIf5hJVe/dKDil
-         M5uPPQHQ8mEmWkptOHiWEV31gANTSm2ItSAcqIQE=
+        b=rZbe4OGyNXzFnGCC0yj+wRpsPv1NF9chgVMYhTDewfPY1RbEeozDfn7dgLNrF2uyj
+         7ZtXh6276fDFhbPHMDA1A+ZcmIdWEJrQ947r9uQuoeyK12S5j1k395FnmyItmxIB5L
+         jI3ou8lmPABmR8YXuSXK4NqAZDMlbrk0RoUed48U=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 107/258] clk: sunxi-ng: a33: Set CLK_SET_RATE_PARENT for all audio module clocks
-Date:   Mon, 28 Jan 2019 10:56:53 -0500
-Message-Id: <20190128155924.51521-107-sashal@kernel.org>
+Cc:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 062/258] clk: meson: meson8b: mark the CPU clock as CLK_IS_CRITICAL
+Date:   Mon, 28 Jan 2019 10:56:08 -0500
+Message-Id: <20190128155924.51521-62-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
 References: <20190128155924.51521-1-sashal@kernel.org>
@@ -57,52 +58,50 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Chen-Yu Tsai <wens@csie.org>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-[ Upstream commit 6e6da2039c82271dd873b9ad2b902a692a7dd554 ]
+[ Upstream commit 0dad1ec65bc30a549aba38d34a727309bbf41bc8 ]
 
-All the audio interfaces on Allwinner SoCs need to change their module
-clocks during operation, to switch between support for 44.1 kHz and 48
-kHz family sample rates. The clock rate for the module clocks is
-governed by their upstream audio PLL. The module clocks themselves only
-have a gate, and sometimes a divider or mux. Thus any rate changes need
-to be propagated upstream.
+We don't want the common clock framework to disable the "cpu_clk" if
+it's not used by any device. The cpufreq-dt driver does not enable the
+CPU clocks. However, even if it would we would still want the CPU clock
+to be enabled at all times because the CPU clock is also required even
+if we disable CPU frequency scaling on a specific board.
 
-Set the CLK_SET_RATE_PARENT flag for all audio module clocks to achieve
-this.
+The reason why we want the CPU clock to be enabled is a clock further up
+in the tree:
+Since commit 6f888e7bc7bd58 ("clk: meson: clk-pll: add enable bit") the
+sys_pll can be disabled. However, since the CPU clock is derived from
+sys_pll we don't want sys_pll to get disabled. The common clock
+framework takes care of that for us by enabling all parent clocks of our
+CPU clock when we mark the CPU clock with CLK_IS_CRITICAL.
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Until now this is not a problem yet because all clocks in the CPU
+clock's tree (including sys_pll) are read-only. However, once we allow
+modifications to the clocks in that tree we will need this.
+
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Acked-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Link: https://lkml.kernel.org/r/20181115224048.13511-4-martin.blumenstingl@googlemail.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/sunxi-ng/ccu-sun8i-a33.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/clk/meson/meson8b.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
-index 13eb5b23c5e7..c40d572a7602 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
-@@ -366,10 +366,10 @@ static SUNXI_CCU_MP_WITH_MUX_GATE(spi1_clk, "spi1", mod0_default_parents, 0x0a4,
- static const char * const i2s_parents[] = { "pll-audio-8x", "pll-audio-4x",
- 					    "pll-audio-2x", "pll-audio" };
- static SUNXI_CCU_MUX_WITH_GATE(i2s0_clk, "i2s0", i2s_parents,
--			       0x0b0, 16, 2, BIT(31), 0);
-+			       0x0b0, 16, 2, BIT(31), CLK_SET_RATE_PARENT);
- 
- static SUNXI_CCU_MUX_WITH_GATE(i2s1_clk, "i2s1", i2s_parents,
--			       0x0b4, 16, 2, BIT(31), 0);
-+			       0x0b4, 16, 2, BIT(31), CLK_SET_RATE_PARENT);
- 
- /* TODO: the parent for most of the USB clocks is not known */
- static SUNXI_CCU_GATE(usb_phy0_clk,	"usb-phy0",	"osc24M",
-@@ -446,7 +446,7 @@ static SUNXI_CCU_M_WITH_GATE(ve_clk, "ve", "pll-ve",
- static SUNXI_CCU_GATE(ac_dig_clk,	"ac-dig",	"pll-audio",
- 		      0x140, BIT(31), CLK_SET_RATE_PARENT);
- static SUNXI_CCU_GATE(ac_dig_4x_clk,	"ac-dig-4x",	"pll-audio-4x",
--		      0x140, BIT(30), 0);
-+		      0x140, BIT(30), CLK_SET_RATE_PARENT);
- static SUNXI_CCU_GATE(avs_clk,		"avs",		"osc24M",
- 		      0x144, BIT(31), 0);
+diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+index 0da8334f2e43..9d79ff857d83 100644
+--- a/drivers/clk/meson/meson8b.c
++++ b/drivers/clk/meson/meson8b.c
+@@ -634,7 +634,8 @@ static struct clk_regmap meson8b_cpu_clk = {
+ 						  "cpu_scale_out_sel" },
+ 		.num_parents = 2,
+ 		.flags = (CLK_SET_RATE_PARENT |
+-			  CLK_SET_RATE_NO_REPARENT),
++			  CLK_SET_RATE_NO_REPARENT |
++			  CLK_IS_CRITICAL),
+ 	},
+ };
  
 -- 
 2.19.1
