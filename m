@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A2AEC282C8
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 17:24:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 394DBC282CF
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 17:27:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3B1420855
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 17:24:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F18B220857
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 17:27:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548696245;
-	bh=zg/Vpf28TMYu0pRhPPFBtAn+7EvNhpStuH/LM0Ka8Ko=;
+	s=default; t=1548696436;
+	bh=rA3BSpmdBaghDtwFln+RvjM8tmQS+Y238CqwlyoaXBU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=EIcROlttT/DXxtUJYw0vh8PRv7ZCkxlfJOnyNaxW5u/77uRglsDHg82uSjTJ7LtQg
-	 qrEul05Sl4qqcIgaElnhqVcUKs4pGPUNt5RWlsqaHCmM40uKhDC5nGhs7AHCpSFqdy
-	 b4dhaYb9dnWYbbOSe4HylPPjd7WU3bPvJge7r5K4=
+	b=0hkTAmPOAMesTa4rC6tM17Hs5CRg5prArpMWmsPBH+0CAmb9ax40Gzn/yQlQy0IY1
+	 5lrIeyXYSL1HDj/j+TJSWcMNj1Ql64Y8rs2zdyOH+qmxm1qbMOQY3mhwfdAgcu6emt
+	 akKzfktz3ofGiC6+li9YfSFqDn0tNN4tNHY5eV+s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730828AbfA1RX6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:23:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47682 "EHLO mail.kernel.org"
+        id S1729653AbfA1R1F (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 28 Jan 2019 12:27:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45630 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728381AbfA1QCV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:02:21 -0500
+        id S1730764AbfA1QAW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:00:22 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C6E4E2175B;
-        Mon, 28 Jan 2019 16:02:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2215A21852;
+        Mon, 28 Jan 2019 16:00:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691341;
-        bh=zg/Vpf28TMYu0pRhPPFBtAn+7EvNhpStuH/LM0Ka8Ko=;
+        s=default; t=1548691222;
+        bh=rA3BSpmdBaghDtwFln+RvjM8tmQS+Y238CqwlyoaXBU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tqLGEKb6EpqnWTh5Qp8HaMvhv8rJtPLxOV0FbtwPKwKvX73J+Dku9U6SyzKFoBtG6
-         i0Tl5MMAVm53fLLLSElbf4h3TAddkrweVwxdv9R14swF8btW1XzdggPYumkBMBeMOa
-         wDT481qfUPhqqOJN0IoAWyLMInvoXpg1gtOXEnYg=
+        b=VFxv8uEJtvhNp3RwXMDB1YJnFb+2mDJXEPAKHt3Ewxkym440kDnOu3CmXN1W2hFyH
+         jiYXQwZ2N2W1kLmUirE7DojMfnADUhzGq2mYPEmFM0aC5tbCwrLoMRtzht3GzmeKcv
+         4b56MfVh5B/j/Twc0fHV5A1MRG4+cLfLGDfkRVdc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 061/258] clk: meson: meson8b: fix the width of the cpu_scale_div clock
-Date:   Mon, 28 Jan 2019 10:56:07 -0500
-Message-Id: <20190128155924.51521-61-sashal@kernel.org>
+Cc:     Yi Wang <wang.yi59@zte.com.cn>, Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-mips@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 020/258] clk: boston: fix possible memory leak in clk_boston_setup()
+Date:   Mon, 28 Jan 2019 10:55:26 -0500
+Message-Id: <20190128155924.51521-20-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
 References: <20190128155924.51521-1-sashal@kernel.org>
@@ -58,48 +57,65 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+From: Yi Wang <wang.yi59@zte.com.cn>
 
-[ Upstream commit a8662eadd1032018f31e37deda811790b2326662 ]
+[ Upstream commit 46fda5b5067a391912cf73bf3d32c26b6a22ad09 ]
 
-According to the public S805 datasheet HHI_SYS_CPU_CLK_CNTL1[29:20] is
-the register for the CPU scale_div clock. This matches the code in
-Amlogic's 3.10 GPL kernel sources:
-N = (aml_read_reg32(P_HHI_SYS_CPU_CLK_CNTL1) >> 20) & 0x3FF;
+Smatch report warnings:
+drivers/clk/imgtec/clk-boston.c:76 clk_boston_setup() warn: possible memory leak of 'onecell'
+drivers/clk/imgtec/clk-boston.c:83 clk_boston_setup() warn: possible memory leak of 'onecell'
+drivers/clk/imgtec/clk-boston.c:90 clk_boston_setup() warn: possible memory leak of 'onecell'
 
-This means that the divider register is 10 bit wide instead of 9 bits.
-So far this is not a problem since all u-boot versions I have seen are
-not using the cpu_scale_div clock at all (instead they are configuring
-the CPU clock to run off cpu_in_sel directly).
+'onecell' is malloced in clk_boston_setup(), but not be freed
+before leaving from the error handling cases.
 
-The fixes tag points to the latest rework of the CPU clocks. However,
-even before the rework it was wrong. Commit 7a29a869434e8b ("clk: meson:
-Add support for Meson clock controller") defines MESON_N_WIDTH as 9 (in
-drivers/clk/meson/clk-cpu.c). But since the old clk-cpu implementation
-this only carries the fixes tag for the CPU clock rewordk.
-
-Fixes: 251b6fd38bcb9c ("clk: meson: rework meson8b cpu clock")
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-Link: https://lkml.kernel.org/r/20180927085921.24627-3-martin.blumenstingl@googlemail.com
+Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/meson/meson8b.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/imgtec/clk-boston.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-index 580a86d120e8..0da8334f2e43 100644
---- a/drivers/clk/meson/meson8b.c
-+++ b/drivers/clk/meson/meson8b.c
-@@ -583,7 +583,7 @@ static struct clk_regmap meson8b_cpu_scale_div = {
- 	.data = &(struct clk_regmap_div_data){
- 		.offset =  HHI_SYS_CPU_CLK_CNTL1,
- 		.shift = 20,
--		.width = 9,
-+		.width = 10,
- 		.table = cpu_scale_table,
- 		.flags = CLK_DIVIDER_ALLOW_ZERO,
- 	},
+diff --git a/drivers/clk/imgtec/clk-boston.c b/drivers/clk/imgtec/clk-boston.c
+index 15af423cc0c9..f5d54a64d33c 100644
+--- a/drivers/clk/imgtec/clk-boston.c
++++ b/drivers/clk/imgtec/clk-boston.c
+@@ -73,27 +73,32 @@ static void __init clk_boston_setup(struct device_node *np)
+ 	hw = clk_hw_register_fixed_rate(NULL, "input", NULL, 0, in_freq);
+ 	if (IS_ERR(hw)) {
+ 		pr_err("failed to register input clock: %ld\n", PTR_ERR(hw));
+-		return;
++		goto error;
+ 	}
+ 	onecell->hws[BOSTON_CLK_INPUT] = hw;
+ 
+ 	hw = clk_hw_register_fixed_rate(NULL, "sys", "input", 0, sys_freq);
+ 	if (IS_ERR(hw)) {
+ 		pr_err("failed to register sys clock: %ld\n", PTR_ERR(hw));
+-		return;
++		goto error;
+ 	}
+ 	onecell->hws[BOSTON_CLK_SYS] = hw;
+ 
+ 	hw = clk_hw_register_fixed_rate(NULL, "cpu", "input", 0, cpu_freq);
+ 	if (IS_ERR(hw)) {
+ 		pr_err("failed to register cpu clock: %ld\n", PTR_ERR(hw));
+-		return;
++		goto error;
+ 	}
+ 	onecell->hws[BOSTON_CLK_CPU] = hw;
+ 
+ 	err = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, onecell);
+ 	if (err)
+ 		pr_err("failed to add DT provider: %d\n", err);
++
++	return;
++
++error:
++	kfree(onecell);
+ }
+ 
+ /*
 -- 
 2.19.1
 
