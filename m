@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B6EBC282C8
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 17:23:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A2AEC282C8
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 17:24:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF4D620855
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 17:23:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E3B1420855
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 17:24:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548696236;
-	bh=uD398yIJy610mZG5k/2nL9jaQr1Qnxvq+5OhApJxnCs=;
+	s=default; t=1548696245;
+	bh=zg/Vpf28TMYu0pRhPPFBtAn+7EvNhpStuH/LM0Ka8Ko=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=euNRZWXzJ6HKCUhbNxKp8NZE6G1UjclfEJFNO6yY1BMtw1nbHDNLp7XnOy1KFLcms
-	 JTIZTwZYNOkbk+N4jb7/z9rUiXZrLzJegy5BCtZvXso8Vrd48kt1dM5zcn8UKwA72n
-	 GPjr5GzdkfdJpvpbD6J9Fa7SHgh/kbEI3LLqf90w=
+	b=EIcROlttT/DXxtUJYw0vh8PRv7ZCkxlfJOnyNaxW5u/77uRglsDHg82uSjTJ7LtQg
+	 qrEul05Sl4qqcIgaElnhqVcUKs4pGPUNt5RWlsqaHCmM40uKhDC5nGhs7AHCpSFqdy
+	 b4dhaYb9dnWYbbOSe4HylPPjd7WU3bPvJge7r5K4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727270AbfA1QCX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:02:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47664 "EHLO mail.kernel.org"
+        id S1730828AbfA1RX6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 28 Jan 2019 12:23:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47682 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730192AbfA1QCT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:02:19 -0500
+        id S1728381AbfA1QCV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:02:21 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9D65F21852;
-        Mon, 28 Jan 2019 16:02:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C6E4E2175B;
+        Mon, 28 Jan 2019 16:02:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691339;
-        bh=uD398yIJy610mZG5k/2nL9jaQr1Qnxvq+5OhApJxnCs=;
+        s=default; t=1548691341;
+        bh=zg/Vpf28TMYu0pRhPPFBtAn+7EvNhpStuH/LM0Ka8Ko=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=K3kEXsfu5f2oE28hMtm8AkRbi4xHZxMLprsZYIEsKlVssloF79cs9KxDCGQSdV6OX
-         VmMITq3R6/DOFV+14LoxMsmMd3tY6GxoARWhSsbU06NyRnRKI0GVL68Na2oqQ+Y/HO
-         SBYnx+IxQ5O/2AO4BV7TtfT1OouRz8wMnZ1d1RIg=
+        b=tqLGEKb6EpqnWTh5Qp8HaMvhv8rJtPLxOV0FbtwPKwKvX73J+Dku9U6SyzKFoBtG6
+         i0Tl5MMAVm53fLLLSElbf4h3TAddkrweVwxdv9R14swF8btW1XzdggPYumkBMBeMOa
+         wDT481qfUPhqqOJN0IoAWyLMInvoXpg1gtOXEnYg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
         Neil Armstrong <narmstrong@baylibre.com>,
         Sasha Levin <sashal@kernel.org>,
         linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 060/258] clk: meson: meson8b: do not use cpu_div3 for cpu_scale_out_sel
-Date:   Mon, 28 Jan 2019 10:56:06 -0500
-Message-Id: <20190128155924.51521-60-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 061/258] clk: meson: meson8b: fix the width of the cpu_scale_div clock
+Date:   Mon, 28 Jan 2019 10:56:07 -0500
+Message-Id: <20190128155924.51521-61-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
 References: <20190128155924.51521-1-sashal@kernel.org>
@@ -60,62 +60,46 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-[ Upstream commit a5ac1ead32c9aac285f6436e09b4f6111996e9b8 ]
+[ Upstream commit a8662eadd1032018f31e37deda811790b2326662 ]
 
-The cpu_div3 clock (cpu_in divided by 3) generates a signal with a duty
-cycle of 33%. The CPU clock however requires a clock signal with a duty
-cycle of 50% to run stable.
-cpu_div3 was observed to be problematic when cycling through all
-available CPU frequencies (with additional patches on top of this one)
-while running "stress --cpu 4" in the background. This caused sporadic
-hangs where the whole system would fully lock up.
+According to the public S805 datasheet HHI_SYS_CPU_CLK_CNTL1[29:20] is
+the register for the CPU scale_div clock. This matches the code in
+Amlogic's 3.10 GPL kernel sources:
+N = (aml_read_reg32(P_HHI_SYS_CPU_CLK_CNTL1) >> 20) & 0x3FF;
 
-Amlogic's 3.10 kernel code also does not use the cpu_div3 clock either
-when changing the CPU clock.
+This means that the divider register is 10 bit wide instead of 9 bits.
+So far this is not a problem since all u-boot versions I have seen are
+not using the cpu_scale_div clock at all (instead they are configuring
+the CPU clock to run off cpu_in_sel directly).
 
+The fixes tag points to the latest rework of the CPU clocks. However,
+even before the rework it was wrong. Commit 7a29a869434e8b ("clk: meson:
+Add support for Meson clock controller") defines MESON_N_WIDTH as 9 (in
+drivers/clk/meson/clk-cpu.c). But since the old clk-cpu implementation
+this only carries the fixes tag for the CPU clock rewordk.
+
+Fixes: 251b6fd38bcb9c ("clk: meson: rework meson8b cpu clock")
 Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
 Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-Link: https://lkml.kernel.org/r/20181115224048.13511-3-martin.blumenstingl@googlemail.com
+Link: https://lkml.kernel.org/r/20180927085921.24627-3-martin.blumenstingl@googlemail.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/meson/meson8b.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ drivers/clk/meson/meson8b.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-index 50060e895e7a..580a86d120e8 100644
+index 580a86d120e8..0da8334f2e43 100644
 --- a/drivers/clk/meson/meson8b.c
 +++ b/drivers/clk/meson/meson8b.c
-@@ -596,20 +596,27 @@ static struct clk_regmap meson8b_cpu_scale_div = {
+@@ -583,7 +583,7 @@ static struct clk_regmap meson8b_cpu_scale_div = {
+ 	.data = &(struct clk_regmap_div_data){
+ 		.offset =  HHI_SYS_CPU_CLK_CNTL1,
+ 		.shift = 20,
+-		.width = 9,
++		.width = 10,
+ 		.table = cpu_scale_table,
+ 		.flags = CLK_DIVIDER_ALLOW_ZERO,
  	},
- };
- 
-+static u32 mux_table_cpu_scale_out_sel[] = { 0, 1, 3 };
- static struct clk_regmap meson8b_cpu_scale_out_sel = {
- 	.data = &(struct clk_regmap_mux_data){
- 		.offset = HHI_SYS_CPU_CLK_CNTL0,
- 		.mask = 0x3,
- 		.shift = 2,
-+		.table = mux_table_cpu_scale_out_sel,
- 	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "cpu_scale_out_sel",
- 		.ops = &clk_regmap_mux_ro_ops,
-+		/*
-+		 * NOTE: We are skipping the parent with value 0x2 (which is
-+		 * "cpu_div3") because it results in a duty cycle of 33% which
-+		 * makes the system unstable and can result in a lockup of the
-+		 * whole system.
-+		 */
- 		.parent_names = (const char *[]) { "cpu_in_sel",
- 						   "cpu_div2",
--						   "cpu_div3",
- 						   "cpu_scale_div" },
--		.num_parents = 4,
-+		.num_parents = 3,
- 		.flags = CLK_SET_RATE_PARENT,
- 	},
- };
 -- 
 2.19.1
 
