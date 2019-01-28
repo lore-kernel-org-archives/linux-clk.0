@@ -2,102 +2,131 @@ Return-Path: <SRS0=UrzD=QE=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4F25C282C8
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 15:50:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E7A7C282CF
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 16:17:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 964D921741
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 15:50:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548690659;
-	bh=QQQzEWLlbCra0vUikJV/2Cu3NltPBizsUCK3zm0n99k=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=zmO76SbhV+wYkFcsdtG2gWS6Oy6DTPDUZb11PFhsw6si75acWFGswf1/F0HjTxJDx
-	 uLiMCjZZ+l5akTPHe0DHys4JaN7LM/4/vdIvkBglLLUDbXntgAxaFh2hwkyX3BsBxa
-	 tKBfhifV+bsrKFe27UeetrbLFZponGquhD6RnKLQ=
+	by mail.kernel.org (Postfix) with ESMTP id 6920220879
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 16:17:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727698AbfA1Pu6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:50:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37600 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726958AbfA1Pu6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:50:58 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 545B12147A;
-        Mon, 28 Jan 2019 15:50:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690657;
-        bh=QQQzEWLlbCra0vUikJV/2Cu3NltPBizsUCK3zm0n99k=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kb61NHO+Hgx6Fstit5Inq1KUjf156YiykQZdLTPM00mq7T4kYH4IGfS1qsnbeC6Jb
-         tOtoVNlGapltczQ4benlAGfKCHeWJip8aPDS9bQZr7cPApxXNJEu9FGhzSjnV5P/Rr
-         HEBmyeC2+v551QTLn/uoeEoMm/JpL2Lfend0C+h4=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Anson Huang <anson.huang@nxp.com>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 156/304] clk: imx6sl: ensure MMDC CH0 handshake is bypassed
-Date:   Mon, 28 Jan 2019 10:41:13 -0500
-Message-Id: <20190128154341.47195-156-sashal@kernel.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
-References: <20190128154341.47195-1-sashal@kernel.org>
+        id S2387701AbfA1QRN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 28 Jan 2019 11:17:13 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:45751 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388142AbfA1QRN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Jan 2019 11:17:13 -0500
+Received: by mail-lj1-f193.google.com with SMTP id s5-v6so14699789ljd.12;
+        Mon, 28 Jan 2019 08:17:10 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=02Z4Y/VtUKNB+3hQYTEh9goJq0x6vAgNA823SkAWJAk=;
+        b=ZZKQdwiuhat0Xul/nbD0JIgGPKW+3P/vHEyJiFyN4k1xoYK3lwcLpWJs88e9mSUwiP
+         ruhilUDsvYlO+fvOW4yKEC+8p4ViuXIc+rqdlc7T/6XIfNvBVNvQI2yu0FDTAonn1wLU
+         O7EEz7KHyLepqNThPHI5R+2xOmt1KhYBV6Lf+0FvvUwZQYY7A07F9KBEQuaBf1gNydBW
+         kRsC0l9PCwtyZFqkoG+8RddZS+KiDgPTaZogKhM/W+lLt06nPkEZXFnnRVZrmS15wvGs
+         ceOj0oVcO1/cjOxw9i/TgDz7Jom2jdHfI1pss1U+9iDxmh4NFhrc8JcegahhgZ+fhNIT
+         0lHg==
+X-Gm-Message-State: AJcUukcZCVgIzpxthOQdmUYAu4fm/0wVMyqFD/5dx0c3kaSecCPlY3qz
+        rFbIilMEf3nAztFovXd/hww=
+X-Google-Smtp-Source: ALg8bN41z723oGKt3ZuGbr0tHZmfSBAk/gvqUgRXEU+HcWVT7Jd8jVwv3ncU7TTZeTLytmh5bT+Tkw==
+X-Received: by 2002:a2e:6503:: with SMTP id z3-v6mr17780348ljb.153.1548692229874;
+        Mon, 28 Jan 2019 08:17:09 -0800 (PST)
+Received: from localhost.localdomain (dytkl7s9vpj00trvf9g2y-4.rev.dnainternet.fi. [2001:14bb:410:9dbf:b161:fde8:3a24:e96c])
+        by smtp.gmail.com with ESMTPSA id 85-v6sm3135206lja.16.2019.01.28.08.17.07
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 28 Jan 2019 08:17:09 -0800 (PST)
+Date:   Mon, 28 Jan 2019 18:16:59 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     mazziesaccount@gmail.com, heikki.haikola@fi.rohmeurope.com,
+        mikko.mutanen@fi.rohmeurope.com, lee.jones@linaro.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, broonie@kernel.org,
+        gregkh@linuxfoundation.org, rafael@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-watchdog@vger.kernel.org
+Subject: Re: [RFC PATCH v2 08/10] rtc: bd70528: Initial support for ROHM
+ bd70528 RTC
+Message-ID: <20190128161659.GA2121@localhost.localdomain>
+References: <20190125110536.GA29321@localhost.localdomain>
+ <35bbc5b9-5f8c-ec80-3eaa-bb2c0e2812c9@roeck-us.net>
+ <20190128074849.GB2030@localhost.localdomain>
+ <11ff93bf-c71f-7489-841f-09bf757a8ba7@roeck-us.net>
 MIME-Version: 1.0
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <11ff93bf-c71f-7489-841f-09bf757a8ba7@roeck-us.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Anson Huang <anson.huang@nxp.com>
+On Mon, Jan 28, 2019 at 06:02:47AM -0800, Guenter Roeck wrote:
+> On 1/27/19 11:48 PM, Matti Vaittinen wrote:
+> > Thanks again Guenter,
+> > 
+> > On Sat, Jan 26, 2019 at 08:30:24AM -0800, Guenter Roeck wrote:
+> > > On 1/25/19 3:05 AM, Matti Vaittinen wrote:
+> > > > +/*
+> > > > + * We read regs RTC_SEC => RTC_YEAR
+> > > > + * this struct is ordered according to chip registers.
+> > > > + * Keep it u8 only to avoid padding issues.
+> > > > + */
+> > > > +struct bd70528_rtc_day {
+> > > > +	u8 sec;
+> > > > +	u8 min;
+> > > > +	u8 hour;
+> > > > +};
+> > > > +
+> > > > +struct bd70528_rtc_data {
+> > > > +	struct bd70528_rtc_day time;
+> > > > +	u8 week;
+> > > > +	u8 day;
+> > > > +	u8 month;
+> > > > +	u8 year;
+> > > > +};
+> > > > +
+> > > > +struct bd70528_rtc_wake {
+> > > > +	struct bd70528_rtc_day time;
+> > > > +	u8 ctrl;
+> > > > +};
+> > > > +
+> > > > +struct bd70528_rtc_alm {
+> > > > +	struct bd70528_rtc_data data;
+> > > > +	u8 alm_mask;
+> > > > +	u8 alm_repeat;
+> > > > +};
+> > > 
+> > > At least some of the above are directly associated with chip registers.
+> > > I don't think this will work for all architectures without explicit packed
+> > > attribute.
+> > 
+> > Allright. I was thinking of that but thought that most of the
+> > architectures using this PMIC would handle alignments fine if I used
+> > only u8 members. I did consider using __attribute__((packed)) - but I'm
+> > not sure if we hit into troubles with that too. I guess some people
+> > would like to compile kernel with other compiler(s) but gcc - although
+> > I'm not sure if this should be taken into account. I'll try doing some
+> > study on this - unless someone replies to this and just tells how this
+> > should be done. (I am pretty sure I can find the answer from mail
+> > archives though). I'll try adding some packing hint for compiler at v3.
+> > 
+> 
+> Use __packed ?
 
-[ Upstream commit 0efcc2c0fd2001a83240a8c3d71f67770484917e ]
+Right. That appends to __attribute__((packed)) on gcc. I'll use that.
+Thanks for the tip :)
 
-Same as other i.MX6 SoCs, ensure unused MMDC channel's
-handshake is bypassed, this is to make sure no request
-signal will be generated when periphe_clk_sel is changed
-or SRC warm reset is triggered.
-
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/clk/imx/clk-imx6sl.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/drivers/clk/imx/clk-imx6sl.c b/drivers/clk/imx/clk-imx6sl.c
-index 6fcfbbd907a5..e13d8814cfa4 100644
---- a/drivers/clk/imx/clk-imx6sl.c
-+++ b/drivers/clk/imx/clk-imx6sl.c
-@@ -17,6 +17,8 @@
- 
- #include "clk.h"
- 
-+#define CCDR				0x4
-+#define BM_CCM_CCDR_MMDC_CH0_MASK	(1 << 17)
- #define CCSR			0xc
- #define BM_CCSR_PLL1_SW_CLK_SEL	(1 << 2)
- #define CACRR			0x10
-@@ -411,6 +413,10 @@ static void __init imx6sl_clocks_init(struct device_node *ccm_node)
- 	clks[IMX6SL_CLK_USDHC3]       = imx_clk_gate2("usdhc3",       "usdhc3_podf",       base + 0x80, 6);
- 	clks[IMX6SL_CLK_USDHC4]       = imx_clk_gate2("usdhc4",       "usdhc4_podf",       base + 0x80, 8);
- 
-+	/* Ensure the MMDC CH0 handshake is bypassed */
-+	writel_relaxed(readl_relaxed(base + CCDR) |
-+		BM_CCM_CCDR_MMDC_CH0_MASK, base + CCDR);
-+
- 	imx_check_clocks(clks, ARRAY_SIZE(clks));
- 
- 	clk_data.clks = clks;
--- 
-2.19.1
-
+Br,
+	Matti Vaittinen
