@@ -4,52 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02FACC282CD
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 18:33:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53021C282C8
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 18:33:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8A5B20881
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 18:33:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 234B620881
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 18:33:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="I9vc9C12"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="SWu1KohV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727573AbfA1Sdy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 28 Jan 2019 13:33:54 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:36018 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728059AbfA1Sdl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Jan 2019 13:33:41 -0500
-Received: by mail-wr1-f67.google.com with SMTP id u4so19239701wrp.3
-        for <linux-clk@vger.kernel.org>; Mon, 28 Jan 2019 10:33:40 -0800 (PST)
+        id S1728059AbfA1Sd6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 28 Jan 2019 13:33:58 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:38052 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728051AbfA1Sdj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Jan 2019 13:33:39 -0500
+Received: by mail-wm1-f65.google.com with SMTP id m22so15107804wml.3
+        for <linux-clk@vger.kernel.org>; Mon, 28 Jan 2019 10:33:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=5jwkKlS341j7fyk95QNvo70XMLCAjNUCF7cHyyXT/yc=;
-        b=I9vc9C123OGGrDPTEKb5TUh/XNiAw4yOfrCyECVMnCLNqO9xZI5rx/Z6EAJpySXVEt
-         xDwDN/UvvPHwcg1qG1Isdt7DytmzEJEQ6U8ew76/GlCl7yThh6ae2lefENgeb8ucGlZt
-         j7YQ1Z3CclpMfyTSM8r8Mj6GPj7DUjfRMOoDk=
+        bh=eKEG4PSnkdw0wbmM3EXS4MNpW9S0VVzPeVsDCYH9cC0=;
+        b=SWu1KohVPEDN62e9GI7Pp9rkyz0nPsSFiKPFv5EbE5rqlP7N4qpbH7R2yCb18KZwcx
+         NoRVga7pQsCg6LhBCy/KapUGZIHkw1Qv65vnXLNJvM0I25SbbcFJeTFK3lF4mlW/GTkc
+         XMwIv5ApWAIvUUyhHR1BVNjTEUDdv08dIyDYY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=5jwkKlS341j7fyk95QNvo70XMLCAjNUCF7cHyyXT/yc=;
-        b=LXVyGekuuA/fcTLzXNt7bsf76KX0laaIo4JMsudoJYI6ZOmohp+029VHE66vCCVqrm
-         /KveirnP+jAL9vbwhrj8jfbA6QKZauHpf5VouCoCrorhdMumYYf23Q2oFoGU2WAvTsTl
-         KiuMqAFrNmwA1yNK7PMap/VajQkT29r5qKBWWxZvwQrUVqzdgs0pGmGMXRy0e/kklbAQ
-         ndth9RzQfjxn3pEhwsNqLngL1Y4oz5nAycYXWYHSxQLrwW2A2/qono/pxMrnMrI6cHh4
-         r65HUFCLjkZ7huGmfl0NACthTU7dspVH0Y85R+5y7OIJ3D8oRQuB8szqs2UspgstME52
-         osfQ==
-X-Gm-Message-State: AJcUukdYV8ZI9BdBDNXR5mBHBH4NtYsmbDrARShcoF8X4AW7rGRoLnDb
-        nSQUM8t8+76CRibfWq8QJnWWXg==
-X-Google-Smtp-Source: ALg8bN4ANPmpripSYqtVHClOsBGDkEBMMr4PV/AL/gsrTDBadsPwLHr9Ee1OKnOCk6NaYkvg8yFXLQ==
-X-Received: by 2002:adf:9521:: with SMTP id 30mr21617095wrs.192.1548700419861;
-        Mon, 28 Jan 2019 10:33:39 -0800 (PST)
+        bh=eKEG4PSnkdw0wbmM3EXS4MNpW9S0VVzPeVsDCYH9cC0=;
+        b=DZrtTfuseCIHYqqbFm+duHKdqL4Z+uFcmWvpSPLQaJ+QZkm1uUAhTZtYLumCCFhDeo
+         2aep5SuF8M0CSlqAh7flSlHpH6dyUeicljDHOcDe/eZx/dRdMqAFtPA0MH8d80bMfJjW
+         l8WlBdPUoM6AEsq97cFqeROS9Ap9yNpMSu8e5wHkYkPvS+JFEpfOWVweC6yOlWuAYOTw
+         uUVn+ltCzd0n0eJ+UWa+bokiR7IJDLxfgvD86Mw+2VYoUjtu/i4jPRccZ2SFBwwH/K6r
+         zPmDHMgYj3cVfydzlYnk3TrmayzaD/srBWPICqdwTwUJrJeCIP3fbc4tDOyR0cz4AoAJ
+         L5vQ==
+X-Gm-Message-State: AJcUukcSOgRd6GbK4+e2IDA42Q6Vh7oznl4THAtFoGDlB/p4XJgZ19ts
+        YuXK5Jcvn+D4fUus0qd3NDzeKA==
+X-Google-Smtp-Source: ALg8bN5HBg/3AVwE/R6LQ+V2d+N3KCdQA1GJ9B3JemX+Vubhhdq3SbgrKeSRBV9X2irshm3zsM7/1Q==
+X-Received: by 2002:a1c:6e01:: with SMTP id j1mr17759452wmc.103.1548700418085;
+        Mon, 28 Jan 2019 10:33:38 -0800 (PST)
 Received: from localhost.localdomain (233.red-81-47-145.staticip.rima-tde.net. [81.47.145.233])
-        by smtp.gmail.com with ESMTPSA id l19sm270082wme.21.2019.01.28.10.33.38
+        by smtp.gmail.com with ESMTPSA id l19sm270082wme.21.2019.01.28.10.33.36
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 28 Jan 2019 10:33:39 -0800 (PST)
+        Mon, 28 Jan 2019 10:33:37 -0800 (PST)
 From:   Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
 To:     jorge.ramirez-ortiz@linaro.org, sboyd@kernel.org,
         bjorn.andersson@linaro.org, andy.gross@linaro.org,
@@ -64,9 +64,9 @@ Cc:     vkoul@kernel.org, niklas.cassel@linaro.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, khasim.mohammed@linaro.org
-Subject: [PATCH v2 13/14] arm64: dts: qcom: qcs404: Add cpufreq support
-Date:   Mon, 28 Jan 2019 19:33:00 +0100
-Message-Id: <1548700381-22376-14-git-send-email-jorge.ramirez-ortiz@linaro.org>
+Subject: [PATCH v2 12/14] arm64: dts: qcom: qcs404: Add the clocks for APCS mux/divider
+Date:   Mon, 28 Jan 2019 19:32:59 +0100
+Message-Id: <1548700381-22376-13-git-send-email-jorge.ramirez-ortiz@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1548700381-22376-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
 References: <1548700381-22376-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
@@ -75,55 +75,30 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Support CPU frequency scaling on qcs404.
+Specify the clocks that feed the APCS mux/divider instead of using
+default hardcoded values in the source code.
 
 Co-developed-by: Niklas Cassel <niklas.cassel@linaro.org>
 Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
 Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
 ---
- arch/arm64/boot/dts/qcom/qcs404.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/arm64/boot/dts/qcom/qcs404.dtsi | 3 +++
+ 1 file changed, 3 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/qcom/qcs404.dtsi b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-index 948ba3c..a0f58bf 100644
+index 6a4f8a2..948ba3c 100644
 --- a/arch/arm64/boot/dts/qcom/qcs404.dtsi
 +++ b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-@@ -30,6 +30,8 @@
- 			reg = <0x100>;
- 			enable-method = "psci";
- 			next-level-cache = <&L2_0>;
-+			clocks = <&apcs_glb>;
-+			operating-points-v2 = <&cpu_opp_table>;
+@@ -373,6 +373,9 @@
+ 			compatible = "qcom,qcs404-apcs-apps-global", "syscon";
+ 			reg = <0x0b011000 0x1000>;
+ 			#mbox-cells = <1>;
++			clocks = <&gcc GCC_GPLL0_AO_OUT_MAIN>, <&apcs_hfpll>;
++			clock-names = "aux", "pll";
++			#clock-cells = <0>;
  		};
  
- 		CPU1: cpu@101 {
-@@ -38,6 +40,8 @@
- 			reg = <0x101>;
- 			enable-method = "psci";
- 			next-level-cache = <&L2_0>;
-+			clocks = <&apcs_glb>;
-+			operating-points-v2 = <&cpu_opp_table>;
- 		};
- 
- 		CPU2: cpu@102 {
-@@ -46,6 +50,8 @@
- 			reg = <0x102>;
- 			enable-method = "psci";
- 			next-level-cache = <&L2_0>;
-+			clocks = <&apcs_glb>;
-+			operating-points-v2 = <&cpu_opp_table>;
- 		};
- 
- 		CPU3: cpu@103 {
-@@ -54,6 +60,8 @@
- 			reg = <0x103>;
- 			enable-method = "psci";
- 			next-level-cache = <&L2_0>;
-+			clocks = <&apcs_glb>;
-+			operating-points-v2 = <&cpu_opp_table>;
- 		};
- 
- 		L2_0: l2-cache {
+ 		apcs_hfpll: clock-controller@b016000 {
 -- 
 2.7.4
 
