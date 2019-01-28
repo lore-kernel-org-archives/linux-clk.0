@@ -4,56 +4,56 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39107C282C8
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 18:05:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F891C282C8
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 18:05:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A88B2148E
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 18:05:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E530E2148E
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 18:05:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="pAVKDPg0"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="FYN4Vmd1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727348AbfA1SFG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 28 Jan 2019 13:05:06 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:53263 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727325AbfA1SFF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Jan 2019 13:05:05 -0500
-Received: by mail-wm1-f66.google.com with SMTP id d15so15020653wmb.3
-        for <linux-clk@vger.kernel.org>; Mon, 28 Jan 2019 10:05:04 -0800 (PST)
+        id S1727344AbfA1SFa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 28 Jan 2019 13:05:30 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:53259 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727281AbfA1SFE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Jan 2019 13:05:04 -0500
+Received: by mail-wm1-f65.google.com with SMTP id d15so15020587wmb.3
+        for <linux-clk@vger.kernel.org>; Mon, 28 Jan 2019 10:05:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=4wf9FAXSPyYzzMogrRK8K8vMBiOAXKZiQZa3fRw2VeY=;
-        b=pAVKDPg0Pm08cuC8o0hw5D/VrYpOKQ6CKzqXA6L/cQ6OzR7OMKDBtPu4Aghtl8Sx47
-         RoDoP4Yh/ydPBu2tTQGJll0VfUElhArZksnOZ7/SNkJjFsJ+QHBvI02iR//UIU/Zlj92
-         AijANg0jt6jMbZpvcNhTRF4fDcWlxphkLBVIFrA/fbCkM7DRbPLNnbLBqsPnvwqLOz4L
-         W27uG/V+37FNXPyqp1HysQmNQXBPOFh7qkKPWCHIandCIvV5DoI87D1L/IprVTk7hkyp
-         ZQY7s8ze0GnSpSPvsVjNcjIDYU3nwRXnxsXBu1EBBZQYuSnYRn+ejlquTub0LXhjfRoV
-         yO0A==
+        bh=loRq/ugG9YRm+V78WFAyEPfRVOulSUxZ0A2IJ042/eU=;
+        b=FYN4Vmd1J1SLV0C2c+jYXqaQutGnDX7QOmp0ydJ2RTWdb8OzNgQKEeEN8nb3K4bppC
+         bVgMhgGcrcsSX2NEFcSCMSg4cFwr5tmzfl33bN51K5+Z8XPrTmor7cQIXGOJMMoC2YGC
+         YX03OMa3wH8nPSferwwrLd+TYYrzO+U7uT+Pjcr+PiWGH9s9OvGfPXfUX1mkPeDY/cas
+         nGyPC7QI0Wo8LbfpZeuD78VUjAlf9K3JuaBt2cpLiz04eVGGF/2uK80rwGT+04pBlh6E
+         9qVjxrpU24DLFb2s7fEenIi1YBRdN9Ff8vLsuztd+LQ6l0MLbdAtI1WK37m7CEA8V39u
+         jfwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=4wf9FAXSPyYzzMogrRK8K8vMBiOAXKZiQZa3fRw2VeY=;
-        b=eetuur+1kNzD234w1SXWPdj2V0haSLIoK40oW4yVynL15K5QSjYwTj4Z86CnH7FXsb
-         c3+vksQydyPJyDYCt/NYnXLN1buoqiyvlxko8ASX5EBU+rOa3snBwZ1Rg/CyGZcwCx2q
-         Is+N7vEjvIP/ua72+JYXH3cSTKlAwO6n3ikuZq82VLLIFMSYiJD1sCasf1YtoccsVLgc
-         rAtJPya6w8lC4AJXQBs5G7q6+iS3cKTss8y6Ad4GUmHEf2MMtOVOccgzZt8wsbMcNKvv
-         5rkoaZo6Dcdf7D1NJCZVU5MBYi1S1zX4LJ5YtlqELX7Ir+OCmJmUQlaPWdKQvWpwPLEx
-         ABqA==
-X-Gm-Message-State: AJcUukdopUBqg2a8uvhyaKXmTegOCm7JucsFYB/qwIer+P9sE4FX5VgP
-        6Td55zeFA1iL3IMfFUSrOdMFBg==
-X-Google-Smtp-Source: ALg8bN75sC55jztbjVVmJDd8FxG0eY5D28u2GiTxNeyFtpJy0sKx6KZZC4T1/iMaBQT0GzM1D63dLA==
-X-Received: by 2002:a1c:a68f:: with SMTP id p137mr16745488wme.64.1548698703842;
-        Mon, 28 Jan 2019 10:05:03 -0800 (PST)
+        bh=loRq/ugG9YRm+V78WFAyEPfRVOulSUxZ0A2IJ042/eU=;
+        b=YVBjQMk7ReVQeZdMpdB+yoNm+/hwUNs+Yj2Tf0bWpxxAh2NmmlVANrFm0NPru1emM7
+         diNyS9xY8w9dJtMQZMA0/jlndMVbYOA3Rsj+RbV31cTMHsPYvu1zYIGI3++DLz98T/Fe
+         cGPwHPrAT/3DdC98mVJMmPkr4/RA0cL3FDdg6eL9/MZ4py5PGvTmSnp93L2zu3KmMcOX
+         s803ZsIJwgLLDXYG0uV0szJAYKZeR9APmO36wbmcSLjg4uIZnvtNYQupFitNdRLyj/7p
+         pBN92uV+5MjMxzTR5y3dPTQ3xV59W4cDj1WsGhZvLYa0tzp31jZmh7Ople+6pQGv6tWe
+         Shnw==
+X-Gm-Message-State: AJcUukcyWFgX8Wz3Ntm6ypmuIvlrgB2O/7QkyV4ilYtJL3KeszFd8p6t
+        xtX7jKLi7DTgNWpdqtxHFpTYWOtf04Y=
+X-Google-Smtp-Source: ALg8bN4XikoAiiZ6m8KJzjzTM2NutTFSa6HkbAhF85gQrbCVU3ZNEmYPDUjk9IzArKne3w1nrguH1g==
+X-Received: by 2002:a1c:2382:: with SMTP id j124mr17936184wmj.14.1548698702239;
+        Mon, 28 Jan 2019 10:05:02 -0800 (PST)
 Received: from boomer.local ([2a01:e34:eeb6:4690:106b:bae3:31ed:7561])
-        by smtp.googlemail.com with ESMTPSA id p6sm145548193wrx.50.2019.01.28.10.05.02
+        by smtp.googlemail.com with ESMTPSA id p6sm145548193wrx.50.2019.01.28.10.05.00
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 28 Jan 2019 10:05:03 -0800 (PST)
+        Mon, 28 Jan 2019 10:05:01 -0800 (PST)
 From:   Jerome Brunet <jbrunet@baylibre.com>
 To:     Neil Armstrong <narmstrong@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -63,9 +63,9 @@ Cc:     Jerome Brunet <jbrunet@baylibre.com>,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-amlogic@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 13/14] clk: meson: move sclk-div out of clkc-audio
-Date:   Mon, 28 Jan 2019 19:04:29 +0100
-Message-Id: <20190128180430.28689-14-jbrunet@baylibre.com>
+Subject: [PATCH 12/14] clk: meson: clkc must die
+Date:   Mon, 28 Jan 2019 19:04:28 +0100
+Message-Id: <20190128180430.28689-13-jbrunet@baylibre.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190128180430.28689-1-jbrunet@baylibre.com>
 References: <20190128180430.28689-1-jbrunet@baylibre.com>
@@ -78,78 +78,145 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- drivers/clk/meson/axg-audio.c                  | 2 +-
- drivers/clk/meson/sclk-div.c                   | 9 ++++++++-
- drivers/clk/meson/{clkc-audio.h => sclk-div.h} | 6 +++---
- 3 files changed, 12 insertions(+), 5 deletions(-)
- rename drivers/clk/meson/{clkc-audio.h => sclk-div.h} (79%)
+ drivers/clk/meson/axg-aoclk.c   |  1 -
+ drivers/clk/meson/axg.c         |  1 -
+ drivers/clk/meson/clkc-audio.h  |  3 ++-
+ drivers/clk/meson/clkc.h        | 17 -----------------
+ drivers/clk/meson/gxbb-aoclk.c  |  1 -
+ drivers/clk/meson/gxbb.c        |  1 -
+ drivers/clk/meson/meson-aoclk.h |  5 ++++-
+ drivers/clk/meson/meson8b.c     |  1 -
+ drivers/clk/meson/sclk-div.c    |  1 +
+ 9 files changed, 7 insertions(+), 24 deletions(-)
+ delete mode 100644 drivers/clk/meson/clkc.h
 
-diff --git a/drivers/clk/meson/axg-audio.c b/drivers/clk/meson/axg-audio.c
-index 8db0508ec6ab..7ab200b6c3bf 100644
---- a/drivers/clk/meson/axg-audio.c
-+++ b/drivers/clk/meson/axg-audio.c
-@@ -14,11 +14,11 @@
- #include <linux/reset.h>
- #include <linux/slab.h>
+diff --git a/drivers/clk/meson/axg-aoclk.c b/drivers/clk/meson/axg-aoclk.c
+index 6b408edb1608..0086f31288eb 100644
+--- a/drivers/clk/meson/axg-aoclk.c
++++ b/drivers/clk/meson/axg-aoclk.c
+@@ -12,7 +12,6 @@
+ #include <linux/platform_device.h>
+ #include <linux/reset-controller.h>
+ #include <linux/mfd/syscon.h>
+-#include "clkc.h"
+ #include "meson-aoclk.h"
+ #include "axg-aoclk.h"
  
--#include "clkc-audio.h"
- #include "axg-audio.h"
+diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
+index 12de206b82c2..cbbdd93b175d 100644
+--- a/drivers/clk/meson/axg.c
++++ b/drivers/clk/meson/axg.c
+@@ -17,7 +17,6 @@
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
+ 
+-#include "clkc.h"
  #include "clk-input.h"
  #include "clk-regmap.h"
- #include "clk-phase.h"
-+#include "sclk-div.h"
+ #include "clk-pll.h"
+diff --git a/drivers/clk/meson/clkc-audio.h b/drivers/clk/meson/clkc-audio.h
+index 8e1de2a72610..1eaf4ecac4f7 100644
+--- a/drivers/clk/meson/clkc-audio.h
++++ b/drivers/clk/meson/clkc-audio.h
+@@ -7,7 +7,8 @@
+ #ifndef __MESON_CLKC_AUDIO_H
+ #define __MESON_CLKC_AUDIO_H
  
- #define AXG_MST_IN_COUNT	8
- #define AXG_SLV_SCLK_COUNT	10
+-#include "clkc.h"
++#include <linux/clk-provider.h>
++#include "parm.h"
+ 
+ struct meson_sclk_div_data {
+ 	struct parm div;
+diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
+deleted file mode 100644
+index 3b167803a602..000000000000
+--- a/drivers/clk/meson/clkc.h
++++ /dev/null
+@@ -1,17 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0 */
+-/*
+- * Copyright (c) 2015 Endless Mobile, Inc.
+- * Author: Carlo Caione <carlo@endlessm.com>
+- */
+-
+-#ifndef __CLKC_H
+-#define __CLKC_H
+-
+-#include <linux/clk-provider.h>
+-#include "clk-regmap.h"
+-#include "parm.h"
+-
+-/* clk_ops */
+-extern const struct clk_ops meson_clk_cpu_ops;
+-
+-#endif /* __CLKC_H */
+diff --git a/drivers/clk/meson/gxbb-aoclk.c b/drivers/clk/meson/gxbb-aoclk.c
+index 26578622fc91..449f6ac189d8 100644
+--- a/drivers/clk/meson/gxbb-aoclk.c
++++ b/drivers/clk/meson/gxbb-aoclk.c
+@@ -5,7 +5,6 @@
+  */
+ #include <linux/platform_device.h>
+ #include <linux/mfd/syscon.h>
+-#include "clkc.h"
+ #include "meson-aoclk.h"
+ #include "gxbb-aoclk.h"
+ 
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index 393472b5309b..3741db9a9fe1 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -12,7 +12,6 @@
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
+ 
+-#include "clkc.h"
+ #include "gxbb.h"
+ #include "clk-input.h"
+ #include "clk-regmap.h"
+diff --git a/drivers/clk/meson/meson-aoclk.h b/drivers/clk/meson/meson-aoclk.h
+index 0758b35d4427..999cde3868f7 100644
+--- a/drivers/clk/meson/meson-aoclk.h
++++ b/drivers/clk/meson/meson-aoclk.h
+@@ -11,9 +11,12 @@
+ #ifndef __MESON_AOCLK_H__
+ #define __MESON_AOCLK_H__
+ 
++#include <linux/clk-provider.h>
+ #include <linux/platform_device.h>
++#include <linux/regmap.h>
+ #include <linux/reset-controller.h>
+-#include "clkc.h"
++
++#include "clk-regmap.h"
+ 
+ struct meson_aoclk_input {
+ 	const char *name;
+diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+index 91a5306b13f6..23b1e355a849 100644
+--- a/drivers/clk/meson/meson8b.c
++++ b/drivers/clk/meson/meson8b.c
+@@ -16,7 +16,6 @@
+ #include <linux/slab.h>
+ #include <linux/regmap.h>
+ 
+-#include "clkc.h"
+ #include "meson8b.h"
+ #include "clk-regmap.h"
+ #include "clk-pll.h"
 diff --git a/drivers/clk/meson/sclk-div.c b/drivers/clk/meson/sclk-div.c
-index d3eea53945e9..3acf03780221 100644
+index bc64019b8eeb..d3eea53945e9 100644
 --- a/drivers/clk/meson/sclk-div.c
 +++ b/drivers/clk/meson/sclk-div.c
-@@ -16,8 +16,11 @@
-  * duty_cycle = (1 + hi) / (1 + val)
+@@ -17,6 +17,7 @@
   */
  
--#include "clkc-audio.h"
-+#include <linux/clk-provider.h>
-+#include <linux/module.h>
-+
- #include "clk-regmap.h"
-+#include "sclk-div.h"
+ #include "clkc-audio.h"
++#include "clk-regmap.h"
  
  static inline struct meson_sclk_div_data *
  meson_sclk_div_data(struct clk_regmap *clk)
-@@ -242,3 +245,7 @@ const struct clk_ops meson_sclk_div_ops = {
- 	.init		= sclk_div_init,
- };
- EXPORT_SYMBOL_GPL(meson_sclk_div_ops);
-+
-+MODULE_DESCRIPTION("Amlogic Sample divider driver");
-+MODULE_AUTHOR("Jerome Brunet <jbrunet@baylibre.com>");
-+MODULE_LICENSE("GPL v2");
-diff --git a/drivers/clk/meson/clkc-audio.h b/drivers/clk/meson/sclk-div.h
-similarity index 79%
-rename from drivers/clk/meson/clkc-audio.h
-rename to drivers/clk/meson/sclk-div.h
-index 1eaf4ecac4f7..b64b2a32005f 100644
---- a/drivers/clk/meson/clkc-audio.h
-+++ b/drivers/clk/meson/sclk-div.h
-@@ -4,8 +4,8 @@
-  * Author: Jerome Brunet <jbrunet@baylibre.com>
-  */
- 
--#ifndef __MESON_CLKC_AUDIO_H
--#define __MESON_CLKC_AUDIO_H
-+#ifndef __MESON_SCLK_DIV_H
-+#define __MESON_SCLK_DIV_H
- 
- #include <linux/clk-provider.h>
- #include "parm.h"
-@@ -19,4 +19,4 @@ struct meson_sclk_div_data {
- 
- extern const struct clk_ops meson_sclk_div_ops;
- 
--#endif /* __MESON_CLKC_AUDIO_H */
-+#endif /* __MESON_SCLK_DIV_H */
 -- 
 2.20.1
 
