@@ -2,101 +2,117 @@ Return-Path: <SRS0=UrzD=QE=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA3E4C282C8
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 09:11:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1CAEC282C8
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 09:28:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A73AF20989
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 09:11:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="mIp0uOku"
+	by mail.kernel.org (Postfix) with ESMTP id AB23720880
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 09:28:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726772AbfA1JLi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 28 Jan 2019 04:11:38 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:54004 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726647AbfA1JLh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Jan 2019 04:11:37 -0500
-Received: by mail-it1-f194.google.com with SMTP id g85so19505213ita.3
-        for <linux-clk@vger.kernel.org>; Mon, 28 Jan 2019 01:11:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=er9/I+TyhaggJajko2FO0SWawCUPwizjJ0agacJS0Pk=;
-        b=mIp0uOkuyPs9FBNfudGyqmnrOZcJ6xYYS0pLHOz5eFRNaEYAE1M+MyzJ2LYAmqB2Nn
-         NMsIzzOC9Ql5OE4IPThfq/Q3neXkAFDvJcb0hBck7hPd522Ddx4ym5GqOLija2grJhSR
-         wnQi7k3wm431IY72t5zH/wlm1IfCw3qCiVQfo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=er9/I+TyhaggJajko2FO0SWawCUPwizjJ0agacJS0Pk=;
-        b=HVWx/0sbFHh4/e1F/Np88QJ8TMTIgavvsx8pJoh2VGDgcqppJg+IJPid7T3RrZUHn0
-         ML8lw0iszpbstLQM7/MeZmURMJkkm/g6d3r/It5g4RC+qKl7goOBRCaVMvc1FtWVfcr2
-         IukQGkG0Z1McBeG3Gu9E4gF47C+rPvQO0fU5RFKsxbY5pjGHAxQxZIfcucpd4u7/x+V4
-         AeSIDfmbkCm0CurItAyFrQYZmsts6CkrbolNjvmoacAcpseBfnwQFOpxrI+tiZjGtwEX
-         fzuZ8vSqopWYlmwKaeawKT7fUVfyDe4LCaXVEBTkTL/4XiPwUsF77m/zH1ebCZc1YaNZ
-         y0Kg==
-X-Gm-Message-State: AJcUukfilHfNBZy+sOw4DITR/Wwyc6e5KZlaZ9VlvUE/nQisfSQ2FYWF
-        d4xBVbR91n4y55L0aWBro6gm76WU3d8LdOcUGifdRA==
-X-Google-Smtp-Source: ALg8bN7L6MXqfpULu9ND2ngnThuAu7s7vqf/t98FgrqZEuAOpvXA46hxZ3oPCapa8ePZHHhoOsRsQ6/yEnP0PsKF5xk=
-X-Received: by 2002:a24:385:: with SMTP id e127mr9201443ite.32.1548666697022;
- Mon, 28 Jan 2019 01:11:37 -0800 (PST)
-MIME-Version: 1.0
-References: <20190125032314.20915-1-wens@csie.org> <20190125032314.20915-2-wens@csie.org>
-In-Reply-To: <20190125032314.20915-2-wens@csie.org>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Mon, 28 Jan 2019 14:41:25 +0530
-Message-ID: <CAMty3ZAB99yMQj33XkBV-EXDN7RkapbOTaO0chYwaz=aFYto=w@mail.gmail.com>
-Subject: Re: [PATCH 01/11] clk: sunxi-ng: sun8i-a23: Enable PLL-MIPI LDOs when
- ungating it
-To:     Chen-Yu Tsai <wens@csie.org>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+        id S1726590AbfA1J2G (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 28 Jan 2019 04:28:06 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:42538 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726369AbfA1J2G (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Jan 2019 04:28:06 -0500
+X-UUID: 863d28cdc2af469cb5d87e6ffaa7e7bc-20190128
+X-UUID: 863d28cdc2af469cb5d87e6ffaa7e7bc-20190128
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1465889627; Mon, 28 Jan 2019 17:27:58 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Mon, 28 Jan 2019 17:27:55 +0800
+Received: from [172.21.77.4] (172.21.77.4) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Mon, 28 Jan 2019 17:27:56 +0800
+Message-ID: <1548667676.10401.17.camel@mtksdaap41>
+Subject: Re: [PATCH V3,0/8] make mt7623 clock of HDMI stable
+From:   CK Hu <ck.hu@mediatek.com>
+To:     Wangyan Wang <wangyan.wang@mediatek.com>
+CC:     Michael Turquette <mturquette@baylibre.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
         David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
+        Sean Wang <sean.wang@mediatek.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        "Colin Ian King" <colin.king@canonical.com>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <dri-devel@lists.freedesktop.org>, <jitao.shi@mediatek.com>,
+        <bibby.hsieh@mediatek.com>, <srv_heupstream@mediatek.com>
+Date:   Mon, 28 Jan 2019 17:27:56 +0800
+In-Reply-To: <20190125040205.5451-1-wangyan.wang@mediatek.com>
+References: <20190125040205.5451-1-wangyan.wang@mediatek.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-SNTS-SMTP: 13C157F7FD1C1FE845342FFC67C91DCB7AFB3126B8FEBB6A239CD4F9D45860B62000:8
+X-MTK:  N
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Jan 25, 2019 at 8:54 AM Chen-Yu Tsai <wens@csie.org> wrote:
->
-> The PLL-MIPI clock is somewhat special as it has its own LDOs which
-> need to be turned on for this PLL to actually work and output a clock
-> signal.
->
-> Add the 2 LDO enable bits to the gate bits.
->
-> Fixes: 5690879d93e8 ("clk: sunxi-ng: Add A23 CCU")
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> ---
->  drivers/clk/sunxi-ng/ccu-sun8i-a23.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a23.c b/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
-> index a4fa2945f230..4b5f8f4e4ab8 100644
-> --- a/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
-> +++ b/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
-> @@ -144,7 +144,7 @@ static SUNXI_CCU_NKM_WITH_GATE_LOCK(pll_mipi_clk, "pll-mipi",
->                                     8, 4,               /* N */
->                                     4, 2,               /* K */
->                                     0, 4,               /* M */
-> -                                   BIT(31),            /* gate */
-> +                                   BIT(31) | BIT(23) | BIT(22), /* gate */
+Hi, Wangyan:
 
-Reviewed-by: Jagan Teki <jagan@amarulasolutions.com>
+How do you prove that this series would make mt7623 HDMI clock more
+stable? By experience result? I would like to prove it by the source
+code.
+
+Does 'stable' means that hardware could generate the frequency most
+close to the target frequency? If it does, I think you could compare the
+frequency generated by original code and applying this series for all
+the usually-used frequency. I also need you to show the clock tree and
+all setting of each divider so we could review that is this series good
+enough. Also, describe these in cover latter.
+
+You have mail to dri-devel [1] and linux-mediatek [2], but these patches
+does not show in web site. Maybe your mail is not plain text, please fix
+this and resend patches.
+
+[1] https://lists.freedesktop.org/archives/dri-devel/
+[2] http://lists.infradead.org/pipermail/linux-mediatek/
+
+Regards,
+CK
+
+On Fri, 2019-01-25 at 12:01 +0800, Wangyan Wang wrote:
+> V3 adopt maintainer's suggestion.
+> Here is the change list between V2 & V3:
+> 1. add "Signed-off-by: wangyan wang <wangyan.wang@mediatek.com>"
+> in commit message
+> 
+> 2. add modify description in patch 
+> "drm/mediatek: fix the rate and divder ..."
+>  
+> chunhui dai (8):
+>   drm/mediatek: recalculate hdmi phy clock of MT2701 by querying
+>     hardware
+>   drm/mediatek: move the setting of fixed divider
+>   drm/mediatek: using different flags of clk for HDMI phy
+>   drm/mediatek: fix the rate and divder of hdmi phy for MT2701
+>   clk: mediatek: add MUX_GATE_FLAGS_2
+>   clk: mediatek: using CLK_MUX_ROUND_CLOSEST for the clock of dpi1_sel
+>   drm/mediatek: using new factor for tvdpll in MT2701
+>   drm/mediatek: fix the rate of parent for hdmi phy in MT2701
+> 
+>  drivers/clk/mediatek/clk-mt2701.c             |  4 +-
+>  drivers/clk/mediatek/clk-mtk.c                |  2 +-
+>  drivers/clk/mediatek/clk-mtk.h                | 20 +++++--
+>  drivers/gpu/drm/mediatek/mtk_dpi.c            |  8 +--
+>  drivers/gpu/drm/mediatek/mtk_hdmi_phy.c       | 34 +++--------
+>  drivers/gpu/drm/mediatek/mtk_hdmi_phy.h       |  7 +--
+>  .../gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c    | 56 +++++++++++++++++--
+>  .../gpu/drm/mediatek/mtk_mt8173_hdmi_phy.c    | 23 ++++++++
+>  8 files changed, 102 insertions(+), 52 deletions(-)
+> 
+
+
