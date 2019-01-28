@@ -2,117 +2,137 @@ Return-Path: <SRS0=UrzD=QE=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1CAEC282C8
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 09:28:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD0ABC282C8
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 09:36:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB23720880
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 09:28:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B02921736
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 09:36:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="AY7yun73"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726590AbfA1J2G (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 28 Jan 2019 04:28:06 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:42538 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726369AbfA1J2G (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Jan 2019 04:28:06 -0500
-X-UUID: 863d28cdc2af469cb5d87e6ffaa7e7bc-20190128
-X-UUID: 863d28cdc2af469cb5d87e6ffaa7e7bc-20190128
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1465889627; Mon, 28 Jan 2019 17:27:58 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 28 Jan 2019 17:27:55 +0800
-Received: from [172.21.77.4] (172.21.77.4) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 28 Jan 2019 17:27:56 +0800
-Message-ID: <1548667676.10401.17.camel@mtksdaap41>
-Subject: Re: [PATCH V3,0/8] make mt7623 clock of HDMI stable
-From:   CK Hu <ck.hu@mediatek.com>
-To:     Wangyan Wang <wangyan.wang@mediatek.com>
-CC:     Michael Turquette <mturquette@baylibre.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        David Airlie <airlied@linux.ie>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        "Colin Ian King" <colin.king@canonical.com>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <dri-devel@lists.freedesktop.org>, <jitao.shi@mediatek.com>,
-        <bibby.hsieh@mediatek.com>, <srv_heupstream@mediatek.com>
-Date:   Mon, 28 Jan 2019 17:27:56 +0800
-In-Reply-To: <20190125040205.5451-1-wangyan.wang@mediatek.com>
-References: <20190125040205.5451-1-wangyan.wang@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        id S1726683AbfA1JgX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 28 Jan 2019 04:36:23 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:50637 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726672AbfA1JgW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Jan 2019 04:36:22 -0500
+Received: by mail-it1-f194.google.com with SMTP id z7so19627418iti.0
+        for <linux-clk@vger.kernel.org>; Mon, 28 Jan 2019 01:36:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Ozesp4rWwiinrHtP2lbjF0VXem3poIT2No6pvmp0vP4=;
+        b=AY7yun73QD+EMNMwN0Y9/iGld70czBDXBhZwOgwRagFJXGF4+NVDKL7UmP/oFwxqMa
+         bx3rn5BaL6yp5Cf4amrzXIkfjukg6OKP6aXwgTM0QqGO5rzZ41224LwdVvL3SHWhpBL2
+         aR2HTIR8GnB108wOYdYBcqWMpVgeDWctVrae4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Ozesp4rWwiinrHtP2lbjF0VXem3poIT2No6pvmp0vP4=;
+        b=TLs9MTpazK0E54V5egalIgjb1GB0CbASKFBmFdmSj/H003+AtBLT7QrkcYJlRjjx80
+         daZ/YleowWrc03pdiCvi29D+OgGzbsPU1TEkrPF0z9W7YQD39VvWsdzSwCxjl4megd0z
+         9OTqXfUGOGJ4TxwwI5DRK0cPNXM7DVZLVg7jSuJ6H7FYHaSouC+s0vpAmBB8Rga9dJs7
+         3Wmn4NDFpB0E0CPOwBu9FH3aQ1/i44nMvoW6bylFRJszBY01ItjInuuNCd0SCmV6RGV9
+         L4XPMDoEBD7HUw1nxHjUmx7RXkMrn/Oy8bx7471Wt6ZS6Rg7NlQLn80pshpB4kMaGVXX
+         ILLw==
+X-Gm-Message-State: AJcUukc6z/52dAhkRgh9gJDmlffmsdBFJybQCic2dkAWiLSLnvvMHoFV
+        3ckRwA/Afbzam7h9djSfzhNNOtMUDHweY0xQDN0Bww==
+X-Google-Smtp-Source: ALg8bN6pbH8aim/d9XQIpdNF6Ci4nzcWf2S1jjcKEHd6gLiFxhxCMBZ3bZKyOFJKx+7PoFzRn8eTtVwDlkiO4D5JUu4=
+X-Received: by 2002:a02:781e:: with SMTP id p30mr13465792jac.85.1548668181627;
+ Mon, 28 Jan 2019 01:36:21 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-SNTS-SMTP: 13C157F7FD1C1FE845342FFC67C91DCB7AFB3126B8FEBB6A239CD4F9D45860B62000:8
-X-MTK:  N
+References: <20190124195900.22620-1-jagan@amarulasolutions.com>
+ <20190124195900.22620-12-jagan@amarulasolutions.com> <20190125212433.ni2jg3wvpyjazlxf@flea>
+In-Reply-To: <20190125212433.ni2jg3wvpyjazlxf@flea>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Mon, 28 Jan 2019 15:06:10 +0530
+Message-ID: <CAMty3ZAsH2iZ+JEqTE3D58aXfGuhMSg9YoO56ZhhOeE4c4yQHQ@mail.gmail.com>
+Subject: Re: [PATCH v6 11/22] clk: sunxi-ng: a64: Add minimum rate for PLL_MIPI
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-amarula@amarulasolutions.com,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi, Wangyan:
+On Sat, Jan 26, 2019 at 2:54 AM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+>
+> On Fri, Jan 25, 2019 at 01:28:49AM +0530, Jagan Teki wrote:
+> > Minimum PLL used for MIPI is 500MHz, as per manual, but
+> > lowering the min rate by 300MHz can result proper working
+> > nkms divider with the help of desired dclock rate from
+> > panel driver.
+> >
+> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > Acked-by: Stephen Boyd <sboyd@kernel.org>
+>
+> Going 200MHz below the minimum doesn't seem really reasonable. What
+> is the issue that you are trying to fix here?
+>
+> It looks like it's picking bad dividers, but if that's the case, this
+> isn't the proper fix.
 
-How do you prove that this series would make mt7623 HDMI clock more
-stable? By experience result? I would like to prove it by the source
-code.
+As I stated in earlier patches, the whole idea is pick the desired
+dclk divider based dclk rate. So the dotclock, sun4i_dclk_round_rate
+is unable to get the proper dclk divider at the end, so it eventually
+picking up wrong divider value and fired vblank timeout.
 
-Does 'stable' means that hardware could generate the frequency most
-close to the target frequency? If it does, I think you could compare the
-frequency generated by original code and applying this series for all
-the usually-used frequency. I also need you to show the clock tree and
-all setting of each divider so we could review that is this series good
-enough. Also, describe these in cover latter.
+So, we come-up with optimal and working min_rate 300MHz in pll-mipi to
+get the desired clock something like below.
+[    2.415773] [drm] No driver support for vblank timestamp query.
+[    2.424116] sun4i_dclk_round_rate: min_div = 4 max_div = 127, rate = 55000000
+[    2.424172] ideal = 220000000, rounded = 0
+[    2.424176] ideal = 275000000, rounded = 0
+[    2.424194] ccu_nkm_round_rate: rate = 330000000
+[    2.424197] ideal = 330000000, rounded = 330000000
+[    2.424201] sun4i_dclk_round_rate: div = 6 rate = 55000000
+[    2.424205] sun4i_dclk_round_rate: min_div = 4 max_div = 127, rate = 55000000
+[    2.424209] ideal = 220000000, rounded = 0
+[    2.424213] ideal = 275000000, rounded = 0
+[    2.424230] ccu_nkm_round_rate: rate = 330000000
+[    2.424233] ideal = 330000000, rounded = 330000000
+[    2.424236] sun4i_dclk_round_rate: div = 6 rate = 55000000
+[    2.424253] ccu_nkm_round_rate: rate = 330000000
+[    2.424270] ccu_nkm_round_rate: rate = 330000000
+[    2.424278] sun4i_dclk_recalc_rate: val = 1, rate = 330000000
+[    2.424281] sun4i_dclk_recalc_rate: val = 1, rate = 330000000
+[    2.424306] ccu_nkm_set_rate: rate = 330000000, parent_rate = 297000000
+[    2.424309] ccu_nkm_set_rate: _nkm.n = 5
+[    2.424311] ccu_nkm_set_rate: _nkm.k = 2
+[    2.424313] ccu_nkm_set_rate: _nkm.m = 9
+[    2.424661] sun4i_dclk_set_rate div 6
+[    2.424668] sun4i_dclk_recalc_rate: val = 6, rate = 55000000
 
-You have mail to dri-devel [1] and linux-mediatek [2], but these patches
-does not show in web site. Maybe your mail is not plain text, please fix
-this and resend patches.
+But look like this wouldn't valid for all other dclock rates, say BPI
+panel has 30MHz clock that would failed with this logic.
 
-[1] https://lists.freedesktop.org/archives/dri-devel/
-[2] http://lists.infradead.org/pipermail/linux-mediatek/
+On the other side Allwinner BSP calculating dclk divider based on the
+SoC's. for A33 [1] it is fixed dclk divider of 4 and for A64 is is
+calculated based on the bpp/lanes.
 
-Regards,
-CK
+Since the above min_rate is not desired for possible panels clock, I
+think we can rely on BSP to make a move here. I'm planning to do these
+changes in next version.
 
-On Fri, 2019-01-25 at 12:01 +0800, Wangyan Wang wrote:
-> V3 adopt maintainer's suggestion.
-> Here is the change list between V2 & V3:
-> 1. add "Signed-off-by: wangyan wang <wangyan.wang@mediatek.com>"
-> in commit message
-> 
-> 2. add modify description in patch 
-> "drm/mediatek: fix the rate and divder ..."
->  
-> chunhui dai (8):
->   drm/mediatek: recalculate hdmi phy clock of MT2701 by querying
->     hardware
->   drm/mediatek: move the setting of fixed divider
->   drm/mediatek: using different flags of clk for HDMI phy
->   drm/mediatek: fix the rate and divder of hdmi phy for MT2701
->   clk: mediatek: add MUX_GATE_FLAGS_2
->   clk: mediatek: using CLK_MUX_ROUND_CLOSEST for the clock of dpi1_sel
->   drm/mediatek: using new factor for tvdpll in MT2701
->   drm/mediatek: fix the rate of parent for hdmi phy in MT2701
-> 
->  drivers/clk/mediatek/clk-mt2701.c             |  4 +-
->  drivers/clk/mediatek/clk-mtk.c                |  2 +-
->  drivers/clk/mediatek/clk-mtk.h                | 20 +++++--
->  drivers/gpu/drm/mediatek/mtk_dpi.c            |  8 +--
->  drivers/gpu/drm/mediatek/mtk_hdmi_phy.c       | 34 +++--------
->  drivers/gpu/drm/mediatek/mtk_hdmi_phy.h       |  7 +--
->  .../gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c    | 56 +++++++++++++++++--
->  .../gpu/drm/mediatek/mtk_mt8173_hdmi_phy.c    | 23 ++++++++
->  8 files changed, 102 insertions(+), 52 deletions(-)
-> 
+Let me know if you have any comments here?
 
-
+[1] https://patchwork.kernel.org/patch/10777519/
