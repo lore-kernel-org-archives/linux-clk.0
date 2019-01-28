@@ -4,48 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECC17C4151A
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 17:47:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4884CC282CD
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 17:47:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC7092175B
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 17:47:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 19B5920881
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 17:47:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548697637;
-	bh=W6Ee+8Na3o8JSRghgx72JSwGnzYakdYkq9XKLYI6xoQ=;
+	s=default; t=1548697639;
+	bh=lGqp12kRjIPhNiniLm81wkp0dzvtQF+diNyccXoRzyY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=CsmKhKVaq226GpZBiPTIwEJY7DORfP0wNsQjR9CO6uQaIC6Awzle0WQwlq4q0n6bJ
-	 KP7RSUQUdHaZ9rQRp8qkkw8x8EuV+zp9TA8esIuiTh/hXweOwIT/dcP60gviGUISra
-	 B8gssgbT3sjZpMVV0Stn0ymdqx+BDzt+bSs9Sur8=
+	b=V9z7l1EGFLpleeNXVssu8B8bSuTwp0+HdLNt1AMmnJxuoVC9ArD7s2rqb7DT9q3y6
+	 tbV6xvVPEKglc0Hy5q/ODHbuWCC1kXULU4F0fwKSruxIgWRFq5pnJxp2q6XSaTit4G
+	 N17FCOXnLJP/oGLy/KeDLI/nXFcjudQYjzkQCssw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726832AbfA1RrL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:47:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60168 "EHLO mail.kernel.org"
+        id S1728056AbfA1Pqq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 28 Jan 2019 10:46:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60098 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728085AbfA1Pqr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:46:47 -0500
+        id S1728066AbfA1Pqn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:46:43 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 570572177E;
-        Mon, 28 Jan 2019 15:46:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 80DCA2175B;
+        Mon, 28 Jan 2019 15:46:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690407;
-        bh=W6Ee+8Na3o8JSRghgx72JSwGnzYakdYkq9XKLYI6xoQ=;
+        s=default; t=1548690403;
+        bh=lGqp12kRjIPhNiniLm81wkp0dzvtQF+diNyccXoRzyY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=U4sPStVcwSBOBL0nR0rcp5CrzxW5RKQxgSyhVFe/Ce4l/h+WLLlhjLrJwPn+aeVFP
-         7AbydorX7SG0AdIDW2S3MfWEgm4DAvNJf9+9BZt/g+O5B945HZFgRSsVILlap1QZZU
-         xsWxIrNGkpCimzWoPYmLTzh+Q/HtQ9ctx2dYHsOU=
+        b=gInBz2C3KDek4nh9BsVv6Sni5vgh0lcU0RGUwSx0EZ06FsLs2SxPTLPltL95uPPM8
+         nN+xw0FQuBsfeD0FKa0M+mnxDFxUeYo9gw30Ox5k4inR/mP9kzuCobzWPR5ynDeMBn
+         GM5+ROY6zoyEpfQxYFhgRzxJHikqIjJbkXtbpGL0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
         Neil Armstrong <narmstrong@baylibre.com>,
         Sasha Levin <sashal@kernel.org>,
         linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 075/304] clk: meson: meson8b: mark the CPU clock as CLK_IS_CRITICAL
-Date:   Mon, 28 Jan 2019 10:39:52 -0500
-Message-Id: <20190128154341.47195-75-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 073/304] clk: meson: meson8b: do not use cpu_div3 for cpu_scale_out_sel
+Date:   Mon, 28 Jan 2019 10:39:50 -0500
+Message-Id: <20190128154341.47195-73-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -59,49 +60,62 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-[ Upstream commit 0dad1ec65bc30a549aba38d34a727309bbf41bc8 ]
+[ Upstream commit a5ac1ead32c9aac285f6436e09b4f6111996e9b8 ]
 
-We don't want the common clock framework to disable the "cpu_clk" if
-it's not used by any device. The cpufreq-dt driver does not enable the
-CPU clocks. However, even if it would we would still want the CPU clock
-to be enabled at all times because the CPU clock is also required even
-if we disable CPU frequency scaling on a specific board.
+The cpu_div3 clock (cpu_in divided by 3) generates a signal with a duty
+cycle of 33%. The CPU clock however requires a clock signal with a duty
+cycle of 50% to run stable.
+cpu_div3 was observed to be problematic when cycling through all
+available CPU frequencies (with additional patches on top of this one)
+while running "stress --cpu 4" in the background. This caused sporadic
+hangs where the whole system would fully lock up.
 
-The reason why we want the CPU clock to be enabled is a clock further up
-in the tree:
-Since commit 6f888e7bc7bd58 ("clk: meson: clk-pll: add enable bit") the
-sys_pll can be disabled. However, since the CPU clock is derived from
-sys_pll we don't want sys_pll to get disabled. The common clock
-framework takes care of that for us by enabling all parent clocks of our
-CPU clock when we mark the CPU clock with CLK_IS_CRITICAL.
-
-Until now this is not a problem yet because all clocks in the CPU
-clock's tree (including sys_pll) are read-only. However, once we allow
-modifications to the clocks in that tree we will need this.
+Amlogic's 3.10 kernel code also does not use the cpu_div3 clock either
+when changing the CPU clock.
 
 Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Acked-by: Jerome Brunet <jbrunet@baylibre.com>
+Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
 Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-Link: https://lkml.kernel.org/r/20181115224048.13511-4-martin.blumenstingl@googlemail.com
+Link: https://lkml.kernel.org/r/20181115224048.13511-3-martin.blumenstingl@googlemail.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/meson/meson8b.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/clk/meson/meson8b.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-index 9160a3b2e668..a3a826419c16 100644
+index 1d39273d7a04..328fcf50d9e8 100644
 --- a/drivers/clk/meson/meson8b.c
 +++ b/drivers/clk/meson/meson8b.c
-@@ -650,7 +650,8 @@ static struct clk_regmap meson8b_cpu_clk = {
- 						  "cpu_scale_out_sel" },
- 		.num_parents = 2,
- 		.flags = (CLK_SET_RATE_PARENT |
--			  CLK_SET_RATE_NO_REPARENT),
-+			  CLK_SET_RATE_NO_REPARENT |
-+			  CLK_IS_CRITICAL),
+@@ -612,20 +612,27 @@ static struct clk_regmap meson8b_cpu_scale_div = {
  	},
  };
  
++static u32 mux_table_cpu_scale_out_sel[] = { 0, 1, 3 };
+ static struct clk_regmap meson8b_cpu_scale_out_sel = {
+ 	.data = &(struct clk_regmap_mux_data){
+ 		.offset = HHI_SYS_CPU_CLK_CNTL0,
+ 		.mask = 0x3,
+ 		.shift = 2,
++		.table = mux_table_cpu_scale_out_sel,
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "cpu_scale_out_sel",
+ 		.ops = &clk_regmap_mux_ro_ops,
++		/*
++		 * NOTE: We are skipping the parent with value 0x2 (which is
++		 * "cpu_div3") because it results in a duty cycle of 33% which
++		 * makes the system unstable and can result in a lockup of the
++		 * whole system.
++		 */
+ 		.parent_names = (const char *[]) { "cpu_in_sel",
+ 						   "cpu_div2",
+-						   "cpu_div3",
+ 						   "cpu_scale_div" },
+-		.num_parents = 4,
++		.num_parents = 3,
+ 		.flags = CLK_SET_RATE_PARENT,
+ 	},
+ };
 -- 
 2.19.1
 
