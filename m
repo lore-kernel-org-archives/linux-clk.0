@@ -4,52 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22D65C282C8
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 18:34:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6E92C282C8
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 18:34:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4D1120881
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 18:34:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7591A20881
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 18:34:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KhRO5+cs"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="b6Ldp0I3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727943AbfA1Sd3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 28 Jan 2019 13:33:29 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:34349 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727883AbfA1Sd2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Jan 2019 13:33:28 -0500
-Received: by mail-wm1-f67.google.com with SMTP id y185so11107924wmd.1
-        for <linux-clk@vger.kernel.org>; Mon, 28 Jan 2019 10:33:27 -0800 (PST)
+        id S1727905AbfA1Sea (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 28 Jan 2019 13:34:30 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:50410 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727863AbfA1SdZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Jan 2019 13:33:25 -0500
+Received: by mail-wm1-f65.google.com with SMTP id n190so15131720wmd.0
+        for <linux-clk@vger.kernel.org>; Mon, 28 Jan 2019 10:33:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=CrsB9vDQWUxmYDFtafFb8lMIaGmRCz/1Apw6ozfisK4=;
-        b=KhRO5+csN6b8B+mnXc+NAwS26Oh+divVSo7QhSO3rViTZsfX0dTqWyofGc7paL1I+9
-         YmjqT4gyn4WWHjSJ2KHFD9EVU19issse0zOzuDZq+GpG8ewfA9hfWkLO/h4AOXwezu78
-         f/9cKm4qgduRmD5A5un53ljNDnpsg2bd+AxT4=
+        bh=FIFLlUi8drrhCNTy3FqCtrXujaAw4Y9ofI00ORq7Auk=;
+        b=b6Ldp0I3RPws0bLT95JFNpvw76wG74hw+6/PgQ+T41Qa8oNK+XLjTZ6buT5NPiYHUc
+         q+U9eKO10Tvrzvpnw1hkX/EmEPRxnsv2+mVnwmqqTVBDCq2oqX9OxC0nAv9ML7iAZ2i5
+         tomOdp46RvvGVncKz7AEC+UnNyUd3lAnxhgPE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=CrsB9vDQWUxmYDFtafFb8lMIaGmRCz/1Apw6ozfisK4=;
-        b=UJLESyMqGjPKcHPSA1gtjnrrmnAETV2B8jzUL5tig7J9rdbuAyN8EWG1wkmWCU6b0R
-         fShpn8JniUMl+pyRAGhsKTOc4erqoPmaQjXJyEKVUlSRNJC8VQ5ssXMZ+RDsLuVsboqn
-         8LM+AnyqSjEfToKsaBs71MpEQKtL5tH4AirKd4pvG7Mu1blJy+kofcFku0cK0YLzpkgS
-         Emm3QCHrtLEsMNP8KwauGumbI9ajCcwvSQtiNeXJUpot35TMBskfbmzuCNAK92mVBgal
-         B9jWLtp0dtiHkKp5d93ObqYkm15F3idFeLjkExhEtUK41CYy1r9yH4Wy8Fx8d+y46yKL
-         SxYg==
-X-Gm-Message-State: AJcUukdxypRhPEzmUPtfFomok0abqdz2GKIos0Q6ESnJsSUif+o06CRH
-        6fEiokRJbOeLU9kQK4t/CZ4Lvg==
-X-Google-Smtp-Source: ALg8bN5e+//cVztkL1BiaB2dZA1ZoazVcMiftOg308Qtn/CxK5rzHIza9kn/nUZIMqAIDiibN6IchQ==
-X-Received: by 2002:a1c:5dd1:: with SMTP id r200mr18719376wmb.93.1548700407005;
-        Mon, 28 Jan 2019 10:33:27 -0800 (PST)
+        bh=FIFLlUi8drrhCNTy3FqCtrXujaAw4Y9ofI00ORq7Auk=;
+        b=TrIRH1ulWw6iS4Ohy3tuRTwSKg0vbUlywbw9QxcFwmvk0BSwDZhUhtEXLjagJAsLPz
+         c9c5MmOKVEDL4x01Z/FLRV2wQFQJoKvUVFMUD9TIWiveDpTNDf2OveODSeKRtli9JX8W
+         M8vjE7sLe5ZFV4UhLmcqc/xv8wgJHWdBD8sG4nLvHBTKvnKCvLnqX3pIvMW6bAtWxkle
+         EKhWfADKEVLIXKn69qExIKBCCDmk9fYd4BTLiR/sj81xvyFWxFUzMBFGgr7cF4L52Z+P
+         4EyYHgQYYiQaE0QAor0sxuKGNNU+VRs7KxTql8dJVLlfDPwh/kgC4VAjrd/kf5J9G7UM
+         mLzA==
+X-Gm-Message-State: AJcUukfxQVUyGWLqQWArLUO4GqA0x2vww6SUsmk2Du6Cc2COl9fzpuna
+        UK1xYA766I4/WKWwQRZAFu73AA==
+X-Google-Smtp-Source: ALg8bN79ttzTGTtXdASSq0kwSmgMOpjbXbSGhLwpIeLye7gxlRPIWKGEFgVIcaGSokTzE2quyKJaiQ==
+X-Received: by 2002:a1c:ad45:: with SMTP id w66mr17892760wme.60.1548700403197;
+        Mon, 28 Jan 2019 10:33:23 -0800 (PST)
 Received: from localhost.localdomain (233.red-81-47-145.staticip.rima-tde.net. [81.47.145.233])
-        by smtp.gmail.com with ESMTPSA id l19sm270082wme.21.2019.01.28.10.33.25
+        by smtp.gmail.com with ESMTPSA id l19sm270082wme.21.2019.01.28.10.33.21
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 28 Jan 2019 10:33:26 -0800 (PST)
+        Mon, 28 Jan 2019 10:33:22 -0800 (PST)
 From:   Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
 To:     jorge.ramirez-ortiz@linaro.org, sboyd@kernel.org,
         bjorn.andersson@linaro.org, andy.gross@linaro.org,
@@ -64,9 +64,9 @@ Cc:     vkoul@kernel.org, niklas.cassel@linaro.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, khasim.mohammed@linaro.org
-Subject: [PATCH v2 06/14] clk: qcom: hfpll: get parent clock names from DT
-Date:   Mon, 28 Jan 2019 19:32:53 +0100
-Message-Id: <1548700381-22376-7-git-send-email-jorge.ramirez-ortiz@linaro.org>
+Subject: [PATCH v2 04/14] dt-bindings: mailbox: qcom: Add clock-name optional property
+Date:   Mon, 28 Jan 2019 19:32:51 +0100
+Message-Id: <1548700381-22376-5-git-send-email-jorge.ramirez-ortiz@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1548700381-22376-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
 References: <1548700381-22376-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
@@ -75,47 +75,67 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Allow accessing the parent clock name required for the driver
-operation using the device tree node.
+When the APCS clock is registered (platform dependent), it retrieves
+its parent names from hardcoded values in the driver.
 
-This permits extending the driver to other platforms without having to
-modify its source code.
-
-For backwards compatibility leave the previous value as default.
+The following commit allows the DT node to provide such clock names to
+the platform data based clock driver therefore avoiding having to
+explicitly embed those names in the clock driver source code.
 
 Co-developed-by: Niklas Cassel <niklas.cassel@linaro.org>
 Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
 Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
 ---
- drivers/clk/qcom/hfpll.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ .../bindings/mailbox/qcom,apcs-kpss-global.txt     | 24 +++++++++++++++++++---
+ 1 file changed, 21 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/qcom/hfpll.c b/drivers/clk/qcom/hfpll.c
-index a6de7101..87b7f46 100644
---- a/drivers/clk/qcom/hfpll.c
-+++ b/drivers/clk/qcom/hfpll.c
-@@ -52,6 +52,7 @@ static int qcom_hfpll_probe(struct platform_device *pdev)
- 	void __iomem *base;
- 	struct regmap *regmap;
- 	struct clk_hfpll *h;
-+	struct clk *pclk;
- 	struct clk_init_data init = {
- 		.parent_names = (const char *[]){ "xo" },
- 		.num_parents = 1,
-@@ -75,6 +76,13 @@ static int qcom_hfpll_probe(struct platform_device *pdev)
- 					  0, &init.name))
- 		return -ENODEV;
- 
-+	/* get parent clock from device tree (optional) */
-+	pclk = devm_clk_get(dev, "xo");
-+	if (!IS_ERR(pclk))
-+		init.parent_names = (const char *[]){ __clk_get_name(pclk) };
-+	else if (PTR_ERR(pclk) == -EPROBE_DEFER)
-+		return -EPROBE_DEFER;
+diff --git a/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.txt b/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.txt
+index 1232fc9..b693103 100644
+--- a/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.txt
++++ b/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.txt
+@@ -18,10 +18,11 @@ platforms.
+ 	Usage: required
+ 	Value type: <prop-encoded-array>
+ 	Definition: must specify the base address and size of the global block
 +
- 	h->d = &hdata;
- 	h->clkr.hw.init = &init;
- 	spin_lock_init(&h->lock);
+ - clocks:
+-	Usage: required if #clocks-cells property is present
+-	Value type: <phandle>
+-	Definition: phandle to the input PLL, which feeds the APCS mux/divider
++	Usage: required if #clock-names property is present
++	Value type: <phandle array>
++	Definition: phandles to the two parent clocks of the clock driver.
+ 
+ - #mbox-cells:
+ 	Usage: required
+@@ -33,6 +34,12 @@ platforms.
+ 	Value type: <u32>
+ 	Definition: as described in clock.txt, must be 0
+ 
++- clock-names:
++	Usage: required if the platform data based clock driver needs to
++	retrieve the parent clock names from device tree.
++	This will requires two mandatory clocks to be defined.
++	Value type: <string-array>
++	Definition: must be "aux" and "pll"
+ 
+ = EXAMPLE
+ The following example describes the APCS HMSS found in MSM8996 and part of the
+@@ -65,3 +72,14 @@ Below is another example of the APCS binding on MSM8916 platforms:
+ 		clocks = <&a53pll>;
+ 		#clock-cells = <0>;
+ 	};
++
++Below is another example of the APCS binding on QCS404 platforms:
++
++	apcs_glb: mailbox@b011000 {
++		compatible = "qcom,qcs404-apcs-apps-global", "syscon";
++		reg = <0x0b011000 0x1000>;
++		#mbox-cells = <1>;
++		clocks = <&gcc GCC_GPLL0_AO_OUT_MAIN>, <&apcs_hfpll>;
++		clock-names = "aux", "pll";
++		#clock-cells = <0>;
++	};
 -- 
 2.7.4
 
