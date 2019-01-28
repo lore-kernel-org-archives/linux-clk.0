@@ -2,222 +2,144 @@ Return-Path: <SRS0=UrzD=QE=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D75BC282CF
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 14:49:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 003D1C282CF
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 15:21:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C99EA20844
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 14:49:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C57EA20881
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 15:21:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="QeQgcO6G"
+	dkim=pass (1024-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="wGjTxoAf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726820AbfA1Ot1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 28 Jan 2019 09:49:27 -0500
-Received: from mail-eopbgr1400102.outbound.protection.outlook.com ([40.107.140.102]:28600
-        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726647AbfA1Ot0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 28 Jan 2019 09:49:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector1-bp-renesas-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Z1DhiLDHd5YZyISTmvvkip7jiWe358gAQWWMlkJmZhg=;
- b=QeQgcO6GUS5/DBQoF2uvEpv6i2V/+jC7nciy4W6EJVWnBJCatRr+5NPlVGKke4L5VQZnqY0DnQjgpLWVAyvxH2+6Yj65sMRmUNBxqXTMajXzSAGud56MG3vQgdyb3CdZpMBfOtty7iXy5iPtX+SRshh55+EKfbmeiaTpLXNBysE=
-Received: from TY1PR01MB1770.jpnprd01.prod.outlook.com (52.133.163.147) by
- TY1PR01MB1708.jpnprd01.prod.outlook.com (52.133.160.149) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1558.17; Mon, 28 Jan 2019 14:49:21 +0000
-Received: from TY1PR01MB1770.jpnprd01.prod.outlook.com
- ([fe80::9c4b:5b3e:212f:354e]) by TY1PR01MB1770.jpnprd01.prod.outlook.com
- ([fe80::9c4b:5b3e:212f:354e%3]) with mapi id 15.20.1558.023; Mon, 28 Jan 2019
- 14:49:21 +0000
-From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To:     Simon Horman <horms@verge.net.au>
-CC:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: RE: [PATCH 2/3] arm64: dts: renesas: r8a774a1: Add clkp2 clock to CAN
- nodes
-Thread-Topic: [PATCH 2/3] arm64: dts: renesas: r8a774a1: Add clkp2 clock to
- CAN nodes
-Thread-Index: AQHUrnSRbgSqJocxwEKqLlOaQWLbRqW08aSAgAez2ICAAB3YAIAABKtQgAADo4CAAAIKsIABbPCAgAGrzkCABM/DAIAAHYOw
-Date:   Mon, 28 Jan 2019 14:49:21 +0000
-Message-ID: <TY1PR01MB177071330C7BD433A701F728C0960@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-References: <1547736856-16539-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1547736856-16539-3-git-send-email-fabrizio.castro@bp.renesas.com>
- <20190118121353.3mb44a7rmmp2ru5d@verge.net.au>
- <20190123095122.l3engeuwx6qr5lzc@verge.net.au>
- <20190123113812.e3nojtxjxywmg4gn@verge.net.au>
- <TYXPR01MB1775ABDCFD939F91F1053534C0990@TYXPR01MB1775.jpnprd01.prod.outlook.com>
- <CAMuHMdVkFJ7Cy-+tNHsOcYaxDj82WjMynuFuPRXa4k=DH2fGCQ@mail.gmail.com>
- <TYXPR01MB1775B75CED683E38B9171EA8C0990@TYXPR01MB1775.jpnprd01.prod.outlook.com>
- <20190124100123.a2gvucnnwrxibulf@verge.net.au>
- <TY1PR01MB177085C4C1DF3D9827EB769BC09B0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
- <20190128130111.t54jbcyx35fiymq6@verge.net.au>
-In-Reply-To: <20190128130111.t54jbcyx35fiymq6@verge.net.au>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=fabrizio.castro@bp.renesas.com; 
-x-originating-ip: [193.141.220.21]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;TY1PR01MB1708;20:kE/ansnPv6w1Feuz7dLMTvOfjl/EtE7l86FY/nEZVXGlvCkWNATuU38bbVgD6ywe8PDVMXhRVhSOS9oTVdDDKnvYbU7ANq2uwOUXnp5Q5s0FwGPoVQqP9Ii0zw8D8u5vOQ4QGfiJedU1DyQiXi/rnuoSsHb859yBdgi1ge3JlWg=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-ms-office365-filtering-correlation-id: 828850a5-d3e6-4375-cff3-08d6852fc99a
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:TY1PR01MB1708;
-x-ms-traffictypediagnostic: TY1PR01MB1708:
-x-microsoft-antispam-prvs: <TY1PR01MB17084767B7425F0CC89C2031C0960@TY1PR01MB1708.jpnprd01.prod.outlook.com>
-x-forefront-prvs: 0931CB1479
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(376002)(396003)(39860400002)(346002)(366004)(199004)(189003)(6116002)(486006)(3846002)(99286004)(4326008)(39060400002)(6246003)(74316002)(305945005)(55016002)(7736002)(66066001)(44832011)(11346002)(25786009)(102836004)(26005)(86362001)(6506007)(53546011)(7416002)(186003)(53936002)(93886005)(6916009)(446003)(76176011)(476003)(7696005)(478600001)(6436002)(71190400001)(71200400001)(256004)(14444005)(2906002)(33656002)(68736007)(106356001)(345774005)(97736004)(316002)(9686003)(54906003)(229853002)(14454004)(81166006)(8936002)(8676002)(81156014)(105586002);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB1708;H:TY1PR01MB1770.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:0;MX:1;
-received-spf: None (protection.outlook.com: bp.renesas.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: owgauPf5V7U6ksp5FREODy8uZH5BQs84KO1D8YLmQF55GAZIgPNVttQ5kY0JWSbf4+sNRwUYy96KS0r+FnIbVdaneXr4QIsKhX738MMHKbFLq01FDZlptuRUa+Nnhm+ge2uVJf/DHR/4g9ASURQsbdN7r2+BYanOj6v+iUbUfvlCewS5BDzlqp46a5pliSCRwcXqafEHJ5QJfcKGt2hnjR9MQYOea0/jSF7lUjgQBnotZVYW7LCY3itFxJHDmL9RUp4reDEQgCDdBkDr5aFKM3Acaj7Af03zi9sscirTr9Tlsjg/0sM/H79MZxefWvqZiABSkKjEv+VjJ5sMmnCnGM0zsXw4FxifwXesdodMUTGIRLHrK4fWLG3At3Z97iCVbmP/kTzSopALbiXCXvZ0mfsa1T3Y6HSvzoplC7tKcDg=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1726750AbfA1PVk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 28 Jan 2019 10:21:40 -0500
+Received: from forward104o.mail.yandex.net ([37.140.190.179]:40861 "EHLO
+        forward104o.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726647AbfA1PVk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Jan 2019 10:21:40 -0500
+Received: from mxback4g.mail.yandex.net (mxback4g.mail.yandex.net [IPv6:2a02:6b8:0:1472:2741:0:8b7:165])
+        by forward104o.mail.yandex.net (Yandex) with ESMTP id 68708942187;
+        Mon, 28 Jan 2019 18:21:35 +0300 (MSK)
+Received: from smtp4o.mail.yandex.net (smtp4o.mail.yandex.net [2a02:6b8:0:1a2d::28])
+        by mxback4g.mail.yandex.net (nwsmtp/Yandex) with ESMTP id f4jiajaC1H-LZgW64Sq;
+        Mon, 28 Jan 2019 18:21:35 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; s=mail; t=1548688895;
+        bh=2wiqs9zxe3W64theQBSX1Wi8qaLxM4kryOcr6IFsFbg=;
+        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References;
+        b=wGjTxoAfKZgej0qzkjD5ccJLZGL99KMm1oaJRSvfDoPbpiFbDKK0gSBECH6VODyS7
+         cXumRvlCm8+zfPpo2MkP+tR6sfoEam9NB4/uQwW6ywhxGKQCEd4h1EdnE13ZL6YPwJ
+         pbAZqJvuSsAIBTRTT6SA+14vWqdfolwC03tI+4qQ=
+Authentication-Results: mxback4g.mail.yandex.net; dkim=pass header.i=@flygoat.com
+Received: by smtp4o.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id EWlCXSEkWL-LLnWmkYK;
+        Mon, 28 Jan 2019 18:21:31 +0300
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client certificate not present)
+From:   Jiaxun Yang <jiaxun.yang@flygoat.com>
+To:     linux-mips@vger.kernel.org
+Cc:     mturquette@baylibre.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, Jiaxun Yang <jiaxun.yang@flygoat.com>
+Subject: [PATCH v2 1/3] clk: loongson1: add configuration option for loongson1 clks
+Date:   Mon, 28 Jan 2019 23:20:50 +0800
+Message-Id: <20190128152052.3047-2-jiaxun.yang@flygoat.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190128152052.3047-1-jiaxun.yang@flygoat.com>
+References: <20190125133413.4130-1-jiaxun.yang@flygoat.com>
+ <20190128152052.3047-1-jiaxun.yang@flygoat.com>
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 828850a5-d3e6-4375-cff3-08d6852fc99a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Jan 2019 14:49:21.1045
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1708
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-> From: Simon Horman <horms@verge.net.au>
-> Sent: 28 January 2019 13:01
-> Subject: Re: [PATCH 2/3] arm64: dts: renesas: r8a774a1: Add clkp2 clock t=
-o CAN nodes
->
-> On Fri, Jan 25, 2019 at 11:33:41AM +0000, Fabrizio Castro wrote:
-> > Hello Simon,
-> >
-> > Thank you for your feedback!
-> >
-> > > From: Simon Horman <horms@verge.net.au>
-> > > Sent: 24 January 2019 10:01
-> > > Subject: Re: [PATCH 2/3] arm64: dts: renesas: r8a774a1: Add clkp2 clo=
-ck to CAN nodes
-> > >
-> > > On Wed, Jan 23, 2019 at 12:18:45PM +0000, Fabrizio Castro wrote:
-> > > > Hello Geert,
-> > > >
-> > > > Thank you for your feedback!
-> > > >
-> > > > > From: Geert Uytterhoeven <geert@linux-m68k.org>
-> > > > > Sent: 23 January 2019 12:08
-> > > > > Subject: Re: [PATCH 2/3] arm64: dts: renesas: r8a774a1: Add clkp2=
- clock to CAN nodes
-> > > > >
-> > > > > Hi Fabrizio,
-> > > > >
-> > > > > On Wed, Jan 23, 2019 at 1:01 PM Fabrizio Castro
-> > > > > <fabrizio.castro@bp.renesas.com> wrote:
-> > > > > > > From: Simon Horman <horms@verge.net.au>
-> > > > > > > Sent: 23 January 2019 11:38
-> > > > > > > Subject: Re: [PATCH 2/3] arm64: dts: renesas: r8a774a1: Add c=
-lkp2 clock to CAN nodes
-> > > > > > >
-> > > > > > > On Wed, Jan 23, 2019 at 10:51:23AM +0100, Simon Horman wrote:
-> > > > > > > > On Fri, Jan 18, 2019 at 01:13:53PM +0100, Simon Horman wrot=
-e:
-> > > > > > > > > On Thu, Jan 17, 2019 at 02:54:15PM +0000, Fabrizio Castro=
- wrote:
-> > > > > > > > > > According to the latest information, clkp2 is available=
- on RZ/G2.
-> > > > > > > > > > Modify CAN0 and CAN1 nodes accordingly.
-> > > > > > > > > >
-> > > > > > > > > > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.rene=
-sas.com>
-> > > > > > > > > > Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.co=
-m>
-> > > > >
-> > > > > > > > Thanks again, applied for v5.1.
-> > > > > > >
-> > > > > > > Sorry, I was a little hasty there.
-> > > > > > >
-> > > > > > > This patch depends on the presence of R8A774A1_CLK_CANFD whic=
-h
-> > > > > > > (rightly) is added in a different patch in this series which =
-is to
-> > > > > > > go upstream via a different tree.
-> > > > > > >
-> > > > > > > I have dropped this patch for now. I think there are two solu=
-tion to this
-> > > > > > > problem.
-> > > > > > >
-> > > > > > > 1. Provide a version of this patch which uses a numeric index=
- instead of
-> > > > > > >    R8A774A1_CLK_CANFD. And then, once R8A774A1_CLK_CANFD is p=
-resent in an
-> > > > > > >    RC release provide a patch to switch to using R8A774A1_CLK=
-_CANFD.
-> > > > > > >
-> > > > > > > 2. Defer this patch until R8A774A1_CLK_CANFD is present in an=
- RC release.
-> > > > > >
-> > > > > > Yeah, my personal preference is solution 2.
-> > > > >
-> > > > > Note that solution 2 will probably defer the DT patch to v5.2.
-> > > >
-> > > > Yeah, my understanding is that even if we chose solution 1 we would=
- still
-> > > > need to be waiting for v5.2 for the patch to switch to using
-> > > > R8A774A1_CLK_CANFD to appear in a rc, therefore I think solution 2 =
-is
-> > > > fine.
-> > >
-> > > Your understanding is the same as mine.
-> > >
-> > > I do seem some slight value in option 1 in terms of getting the chang=
-e,
-> > > less the minor issue of using an index rather than a symbol, upstream
-> > > earlier. But I do not feel strongly about this.
-> > >
-> > > I am marking this patch as deferred. Please repost or otherwise ping =
-me
-> > > when you would like to revisit this topic.
-> >
-> > Thank you. Will do.
->
-> Thanks.
->
-> I believe "[10/11] arm64: dts: renesas: r8a774c0: Add clkp2 clock to CAN =
-nodes"
-> falls into the same category. I have marked it as deferred accordingly.
+The patch introduces options for loongson1 clocks so we can
+select the driver we need.
 
-Ok, thank you Simon
+Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+---
+ drivers/clk/Kconfig            |  1 +
+ drivers/clk/Makefile           |  2 +-
+ drivers/clk/loongson1/Kconfig  | 27 +++++++++++++++++++++++++++
+ drivers/clk/loongson1/Makefile |  7 ++++---
+ 4 files changed, 33 insertions(+), 4 deletions(-)
+ create mode 100644 drivers/clk/loongson1/Kconfig
 
-Fab
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index e5b2fe80eab4..136d3d73c6df 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -298,6 +298,7 @@ source "drivers/clk/imgtec/Kconfig"
+ source "drivers/clk/imx/Kconfig"
+ source "drivers/clk/ingenic/Kconfig"
+ source "drivers/clk/keystone/Kconfig"
++source "drivers/clk/loongson1/Kconfig"
+ source "drivers/clk/mediatek/Kconfig"
+ source "drivers/clk/meson/Kconfig"
+ source "drivers/clk/mvebu/Kconfig"
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index 8a9440a97500..7d29e545caf0 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -76,7 +76,7 @@ obj-y					+= imx/
+ obj-y					+= ingenic/
+ obj-$(CONFIG_ARCH_K3)			+= keystone/
+ obj-$(CONFIG_ARCH_KEYSTONE)		+= keystone/
+-obj-$(CONFIG_MACH_LOONGSON32)		+= loongson1/
++obj-y					+= loongson1/
+ obj-y					+= mediatek/
+ obj-$(CONFIG_COMMON_CLK_AMLOGIC)	+= meson/
+ obj-$(CONFIG_MACH_PIC32)		+= microchip/
+diff --git a/drivers/clk/loongson1/Kconfig b/drivers/clk/loongson1/Kconfig
+new file mode 100644
+index 000000000000..e2220332d797
+--- /dev/null
++++ b/drivers/clk/loongson1/Kconfig
+@@ -0,0 +1,27 @@
++menu "Loongson-1 Clock drivers"
++	depends on MACH_LOONGSON32
++
++config LOONGSON1_CLOCK_COMMON
++	bool
++
++config LOONGSON1_CLOCK_LS1B
++	bool "Loongson 1B driver"
++	default y
++	select LOONGSON1_CLOCK_COMMON
++	help
++	  Support the clocks provided by the clock hardware on Loongson-1B
++	  and compatible SoCs.
++
++	  If building for a Loongson-1B SoC, you want to say Y here.
++
++config LOONGSON1_CLOCK_LS1C
++	bool "Loongson 1C driver"
++	default y
++	select LOONGSON1_CLOCK_COMMON
++	help
++	  Support the clocks provided by the clock hardware on Loongson-1C
++	  and compatible SoCs.
++
++	  If building for a Loongson-1C SoC, you want to say Y here.
++
++endmenu
+diff --git a/drivers/clk/loongson1/Makefile b/drivers/clk/loongson1/Makefile
+index b7f6a16390e0..9240189183ff 100644
+--- a/drivers/clk/loongson1/Makefile
++++ b/drivers/clk/loongson1/Makefile
+@@ -1,3 +1,4 @@
+-obj-y				+= clk.o
+-obj-$(CONFIG_LOONGSON1_LS1B)	+= clk-loongson1b.o
+-obj-$(CONFIG_LOONGSON1_LS1C)	+= clk-loongson1c.o
++# SPDX-License-Identifier: GPL-2.0
++obj-$(CONFIG_LOONGSON1_CLOCK_COMMON)	+= clk.o
++obj-$(CONFIG_LOONGSON1_CLOCK_LS1B)	+= clk-loongson1b.o
++obj-$(CONFIG_LOONGSON1_CLOCK_LS1C)	+= clk-loongson1c.o
+-- 
+2.20.1
 
-
-
-
-Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
-uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
- No. 04586709.
