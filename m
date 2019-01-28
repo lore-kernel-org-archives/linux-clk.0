@@ -4,51 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 284FFC282C8
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 17:07:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4579BC282C8
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 17:17:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E27DF21741
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 17:07:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14ECA2082E
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 17:17:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548695269;
-	bh=rA3BSpmdBaghDtwFln+RvjM8tmQS+Y238CqwlyoaXBU=;
+	s=default; t=1548695860;
+	bh=GQQgd1h+nu0wddck8mihkJDmglqn6sJrcIm/erF9ZRE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Tgr8lzqAmsyPZu+9KLcaPFBr8Fug4KPIA+Hk4r0TcwcvkbGAghSabFkH/pSDF8Aeg
-	 J5g6EM4bkWUtBlmuQ9yRITIksqhk09AQlDX5yFjaMndS7ou1EP9l24Q5D8yZk0xIHF
-	 sUsCy+oz+4rxtxZsge/kaFxmn2knOVnC0ZNdxemE=
+	b=sE4a7BFsS7+uWFiy0ci10hgC7KwEEt++4Wc8aCdlc9WzIb4m/aM41eV0Gq3cMg47y
+	 EQ/2X/QaPeGu/ktMUc1rWtAZ1lXZ/OX3r4d6MUT1fmy8UPYKqXkznLZizpvIjBQgwI
+	 Y66Rge+/Zk+tfxSgMUeqCLsDmDYYja5/FIily4XY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732728AbfA1QMg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:12:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40812 "EHLO mail.kernel.org"
+        id S1731870AbfA1QFd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 28 Jan 2019 11:05:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52470 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733179AbfA1QMd (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:12:33 -0500
+        id S1731858AbfA1QFd (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:05:33 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AFA612175B;
-        Mon, 28 Jan 2019 16:12:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 889E821919;
+        Mon, 28 Jan 2019 16:05:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691953;
-        bh=rA3BSpmdBaghDtwFln+RvjM8tmQS+Y238CqwlyoaXBU=;
+        s=default; t=1548691532;
+        bh=GQQgd1h+nu0wddck8mihkJDmglqn6sJrcIm/erF9ZRE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UBbwMYj7C8FHp9fMWHrHH6OzsUJfq6DOmlOqf0qSdR3Z6CexEXE5dHJiTU9RPHegH
-         GM4RyoB7rEzd9ZAElo7qjcAgoTq6mc7p+/d+COfHgwLJg8WpyXHHpzYDx7r+X5b9Ec
-         ooimya3MIQBXzQH13QA0OC3N8njQ5fnJYguWmqU0=
+        b=ZnaaqakT+BAY+WaVEQ3MAsx6oknmI69Y4opFdIs+9GawjgpGft5OWkbbP0G2Kh8hF
+         YYla7DwPuC9nZR1CmT99Pik10AukKNsVsurLLORkRpdMl3nqm0QMD+Rk4EuNeevzI3
+         miQyEmhGI8s2NzqO6KxjIDZRFy1fLxXkh0jXoBIU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yi Wang <wang.yi59@zte.com.cn>, Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-mips@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 013/170] clk: boston: fix possible memory leak in clk_boston_setup()
-Date:   Mon, 28 Jan 2019 11:09:23 -0500
-Message-Id: <20190128161200.55107-13-sashal@kernel.org>
+Cc:     Anson Huang <anson.huang@nxp.com>,
+        Anson Huang <Anson.Huang@nxp.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 132/258] clk: imx6sl: ensure MMDC CH0 handshake is bypassed
+Date:   Mon, 28 Jan 2019 10:57:18 -0500
+Message-Id: <20190128155924.51521-132-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190128161200.55107-1-sashal@kernel.org>
-References: <20190128161200.55107-1-sashal@kernel.org>
+In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
+References: <20190128155924.51521-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -57,65 +57,46 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Yi Wang <wang.yi59@zte.com.cn>
+From: Anson Huang <anson.huang@nxp.com>
 
-[ Upstream commit 46fda5b5067a391912cf73bf3d32c26b6a22ad09 ]
+[ Upstream commit 0efcc2c0fd2001a83240a8c3d71f67770484917e ]
 
-Smatch report warnings:
-drivers/clk/imgtec/clk-boston.c:76 clk_boston_setup() warn: possible memory leak of 'onecell'
-drivers/clk/imgtec/clk-boston.c:83 clk_boston_setup() warn: possible memory leak of 'onecell'
-drivers/clk/imgtec/clk-boston.c:90 clk_boston_setup() warn: possible memory leak of 'onecell'
+Same as other i.MX6 SoCs, ensure unused MMDC channel's
+handshake is bypassed, this is to make sure no request
+signal will be generated when periphe_clk_sel is changed
+or SRC warm reset is triggered.
 
-'onecell' is malloced in clk_boston_setup(), but not be freed
-before leaving from the error handling cases.
-
-Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/imgtec/clk-boston.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ drivers/clk/imx/clk-imx6sl.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/clk/imgtec/clk-boston.c b/drivers/clk/imgtec/clk-boston.c
-index 15af423cc0c9..f5d54a64d33c 100644
---- a/drivers/clk/imgtec/clk-boston.c
-+++ b/drivers/clk/imgtec/clk-boston.c
-@@ -73,27 +73,32 @@ static void __init clk_boston_setup(struct device_node *np)
- 	hw = clk_hw_register_fixed_rate(NULL, "input", NULL, 0, in_freq);
- 	if (IS_ERR(hw)) {
- 		pr_err("failed to register input clock: %ld\n", PTR_ERR(hw));
--		return;
-+		goto error;
- 	}
- 	onecell->hws[BOSTON_CLK_INPUT] = hw;
+diff --git a/drivers/clk/imx/clk-imx6sl.c b/drivers/clk/imx/clk-imx6sl.c
+index eb6bcbf345a3..390e3e0ecc45 100644
+--- a/drivers/clk/imx/clk-imx6sl.c
++++ b/drivers/clk/imx/clk-imx6sl.c
+@@ -17,6 +17,8 @@
  
- 	hw = clk_hw_register_fixed_rate(NULL, "sys", "input", 0, sys_freq);
- 	if (IS_ERR(hw)) {
- 		pr_err("failed to register sys clock: %ld\n", PTR_ERR(hw));
--		return;
-+		goto error;
- 	}
- 	onecell->hws[BOSTON_CLK_SYS] = hw;
+ #include "clk.h"
  
- 	hw = clk_hw_register_fixed_rate(NULL, "cpu", "input", 0, cpu_freq);
- 	if (IS_ERR(hw)) {
- 		pr_err("failed to register cpu clock: %ld\n", PTR_ERR(hw));
--		return;
-+		goto error;
- 	}
- 	onecell->hws[BOSTON_CLK_CPU] = hw;
++#define CCDR				0x4
++#define BM_CCM_CCDR_MMDC_CH0_MASK	(1 << 17)
+ #define CCSR			0xc
+ #define BM_CCSR_PLL1_SW_CLK_SEL	(1 << 2)
+ #define CACRR			0x10
+@@ -409,6 +411,10 @@ static void __init imx6sl_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX6SL_CLK_USDHC3]       = imx_clk_gate2("usdhc3",       "usdhc3_podf",       base + 0x80, 6);
+ 	clks[IMX6SL_CLK_USDHC4]       = imx_clk_gate2("usdhc4",       "usdhc4_podf",       base + 0x80, 8);
  
- 	err = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, onecell);
- 	if (err)
- 		pr_err("failed to add DT provider: %d\n", err);
++	/* Ensure the MMDC CH0 handshake is bypassed */
++	writel_relaxed(readl_relaxed(base + CCDR) |
++		BM_CCM_CCDR_MMDC_CH0_MASK, base + CCDR);
 +
-+	return;
-+
-+error:
-+	kfree(onecell);
- }
+ 	imx_check_clocks(clks, ARRAY_SIZE(clks));
  
- /*
+ 	clk_data.clks = clks;
 -- 
 2.19.1
 
