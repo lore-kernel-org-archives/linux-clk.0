@@ -2,131 +2,108 @@ Return-Path: <SRS0=UrzD=QE=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E7A7C282CF
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 16:17:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67E5AC282C8
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 16:21:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6920220879
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 16:17:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 38E302171F
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 16:21:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548692509;
+	bh=yEk8rl2SKkfERGOelWH4hk91wJwdKXwplI3ATZ+K5Fo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=jAHllZNVPEYf5hFBEQUKXCoajXt6vKt7MON0gx3pZUX0tRx7g3tGM2O3WZLTZ0OW4
+	 Xv4l00QuaDP4XRp8gd4fmcS6084DtYbR8fl5ag/7IRNe8Y5sO2DK9FoPEyDS98Mn5j
+	 2RFqqUw21joTQap6pzp7TxMozve/0iU4D7vkQjZE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387701AbfA1QRN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:17:13 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:45751 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388142AbfA1QRN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Jan 2019 11:17:13 -0500
-Received: by mail-lj1-f193.google.com with SMTP id s5-v6so14699789ljd.12;
-        Mon, 28 Jan 2019 08:17:10 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=02Z4Y/VtUKNB+3hQYTEh9goJq0x6vAgNA823SkAWJAk=;
-        b=ZZKQdwiuhat0Xul/nbD0JIgGPKW+3P/vHEyJiFyN4k1xoYK3lwcLpWJs88e9mSUwiP
-         ruhilUDsvYlO+fvOW4yKEC+8p4ViuXIc+rqdlc7T/6XIfNvBVNvQI2yu0FDTAonn1wLU
-         O7EEz7KHyLepqNThPHI5R+2xOmt1KhYBV6Lf+0FvvUwZQYY7A07F9KBEQuaBf1gNydBW
-         kRsC0l9PCwtyZFqkoG+8RddZS+KiDgPTaZogKhM/W+lLt06nPkEZXFnnRVZrmS15wvGs
-         ceOj0oVcO1/cjOxw9i/TgDz7Jom2jdHfI1pss1U+9iDxmh4NFhrc8JcegahhgZ+fhNIT
-         0lHg==
-X-Gm-Message-State: AJcUukcZCVgIzpxthOQdmUYAu4fm/0wVMyqFD/5dx0c3kaSecCPlY3qz
-        rFbIilMEf3nAztFovXd/hww=
-X-Google-Smtp-Source: ALg8bN41z723oGKt3ZuGbr0tHZmfSBAk/gvqUgRXEU+HcWVT7Jd8jVwv3ncU7TTZeTLytmh5bT+Tkw==
-X-Received: by 2002:a2e:6503:: with SMTP id z3-v6mr17780348ljb.153.1548692229874;
-        Mon, 28 Jan 2019 08:17:09 -0800 (PST)
-Received: from localhost.localdomain (dytkl7s9vpj00trvf9g2y-4.rev.dnainternet.fi. [2001:14bb:410:9dbf:b161:fde8:3a24:e96c])
-        by smtp.gmail.com with ESMTPSA id 85-v6sm3135206lja.16.2019.01.28.08.17.07
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 28 Jan 2019 08:17:09 -0800 (PST)
-Date:   Mon, 28 Jan 2019 18:16:59 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     mazziesaccount@gmail.com, heikki.haikola@fi.rohmeurope.com,
-        mikko.mutanen@fi.rohmeurope.com, lee.jones@linaro.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, broonie@kernel.org,
-        gregkh@linuxfoundation.org, rafael@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-watchdog@vger.kernel.org
-Subject: Re: [RFC PATCH v2 08/10] rtc: bd70528: Initial support for ROHM
- bd70528 RTC
-Message-ID: <20190128161659.GA2121@localhost.localdomain>
-References: <20190125110536.GA29321@localhost.localdomain>
- <35bbc5b9-5f8c-ec80-3eaa-bb2c0e2812c9@roeck-us.net>
- <20190128074849.GB2030@localhost.localdomain>
- <11ff93bf-c71f-7489-841f-09bf757a8ba7@roeck-us.net>
+        id S2389078AbfA1QVs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 28 Jan 2019 11:21:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57646 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732851AbfA1QVr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:21:47 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DC8FE2171F;
+        Mon, 28 Jan 2019 16:21:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548692506;
+        bh=yEk8rl2SKkfERGOelWH4hk91wJwdKXwplI3ATZ+K5Fo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=zGkVg2n4el75Pv6SCYVfAriQUjEwYi5MNdLL7sw3+iYro8gv9skbCel7Ww41LiZPZ
+         E+A8w9j+qgI1byatnKpnD1t9X63RlfMyj3Xbop+3X4BrDjzJ1611FuJ3jm7xsIJC2p
+         KdJExzyYm4eMag+6JblPOzyPYbbNWK7ja29PH4us=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 042/107] clk: sunxi-ng: a33: Set CLK_SET_RATE_PARENT for all audio module clocks
+Date:   Mon, 28 Jan 2019 11:18:42 -0500
+Message-Id: <20190128161947.57405-42-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190128161947.57405-1-sashal@kernel.org>
+References: <20190128161947.57405-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <11ff93bf-c71f-7489-841f-09bf757a8ba7@roeck-us.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 06:02:47AM -0800, Guenter Roeck wrote:
-> On 1/27/19 11:48 PM, Matti Vaittinen wrote:
-> > Thanks again Guenter,
-> > 
-> > On Sat, Jan 26, 2019 at 08:30:24AM -0800, Guenter Roeck wrote:
-> > > On 1/25/19 3:05 AM, Matti Vaittinen wrote:
-> > > > +/*
-> > > > + * We read regs RTC_SEC => RTC_YEAR
-> > > > + * this struct is ordered according to chip registers.
-> > > > + * Keep it u8 only to avoid padding issues.
-> > > > + */
-> > > > +struct bd70528_rtc_day {
-> > > > +	u8 sec;
-> > > > +	u8 min;
-> > > > +	u8 hour;
-> > > > +};
-> > > > +
-> > > > +struct bd70528_rtc_data {
-> > > > +	struct bd70528_rtc_day time;
-> > > > +	u8 week;
-> > > > +	u8 day;
-> > > > +	u8 month;
-> > > > +	u8 year;
-> > > > +};
-> > > > +
-> > > > +struct bd70528_rtc_wake {
-> > > > +	struct bd70528_rtc_day time;
-> > > > +	u8 ctrl;
-> > > > +};
-> > > > +
-> > > > +struct bd70528_rtc_alm {
-> > > > +	struct bd70528_rtc_data data;
-> > > > +	u8 alm_mask;
-> > > > +	u8 alm_repeat;
-> > > > +};
-> > > 
-> > > At least some of the above are directly associated with chip registers.
-> > > I don't think this will work for all architectures without explicit packed
-> > > attribute.
-> > 
-> > Allright. I was thinking of that but thought that most of the
-> > architectures using this PMIC would handle alignments fine if I used
-> > only u8 members. I did consider using __attribute__((packed)) - but I'm
-> > not sure if we hit into troubles with that too. I guess some people
-> > would like to compile kernel with other compiler(s) but gcc - although
-> > I'm not sure if this should be taken into account. I'll try doing some
-> > study on this - unless someone replies to this and just tells how this
-> > should be done. (I am pretty sure I can find the answer from mail
-> > archives though). I'll try adding some packing hint for compiler at v3.
-> > 
-> 
-> Use __packed ?
+From: Chen-Yu Tsai <wens@csie.org>
 
-Right. That appends to __attribute__((packed)) on gcc. I'll use that.
-Thanks for the tip :)
+[ Upstream commit 6e6da2039c82271dd873b9ad2b902a692a7dd554 ]
 
-Br,
-	Matti Vaittinen
+All the audio interfaces on Allwinner SoCs need to change their module
+clocks during operation, to switch between support for 44.1 kHz and 48
+kHz family sample rates. The clock rate for the module clocks is
+governed by their upstream audio PLL. The module clocks themselves only
+have a gate, and sometimes a divider or mux. Thus any rate changes need
+to be propagated upstream.
+
+Set the CLK_SET_RATE_PARENT flag for all audio module clocks to achieve
+this.
+
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/clk/sunxi-ng/ccu-sun8i-a33.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
+index e1dc4e5b34e1..82add4670c53 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
+@@ -362,10 +362,10 @@ static SUNXI_CCU_MP_WITH_MUX_GATE(spi1_clk, "spi1", mod0_default_parents, 0x0a4,
+ static const char * const i2s_parents[] = { "pll-audio-8x", "pll-audio-4x",
+ 					    "pll-audio-2x", "pll-audio" };
+ static SUNXI_CCU_MUX_WITH_GATE(i2s0_clk, "i2s0", i2s_parents,
+-			       0x0b0, 16, 2, BIT(31), 0);
++			       0x0b0, 16, 2, BIT(31), CLK_SET_RATE_PARENT);
+ 
+ static SUNXI_CCU_MUX_WITH_GATE(i2s1_clk, "i2s1", i2s_parents,
+-			       0x0b4, 16, 2, BIT(31), 0);
++			       0x0b4, 16, 2, BIT(31), CLK_SET_RATE_PARENT);
+ 
+ /* TODO: the parent for most of the USB clocks is not known */
+ static SUNXI_CCU_GATE(usb_phy0_clk,	"usb-phy0",	"osc24M",
+@@ -442,7 +442,7 @@ static SUNXI_CCU_M_WITH_GATE(ve_clk, "ve", "pll-ve",
+ static SUNXI_CCU_GATE(ac_dig_clk,	"ac-dig",	"pll-audio",
+ 		      0x140, BIT(31), 0);
+ static SUNXI_CCU_GATE(ac_dig_4x_clk,	"ac-dig-4x",	"pll-audio-4x",
+-		      0x140, BIT(30), 0);
++		      0x140, BIT(30), CLK_SET_RATE_PARENT);
+ static SUNXI_CCU_GATE(avs_clk,		"avs",		"osc24M",
+ 		      0x144, BIT(31), 0);
+ 
+-- 
+2.19.1
+
