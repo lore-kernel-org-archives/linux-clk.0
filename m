@@ -4,48 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93A84C282CF
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 17:00:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A70DAC282C8
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 17:01:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BB5121741
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 17:00:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 785F72175B
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 17:01:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548694817;
-	bh=bnfYUnXYY8e5xhnltHi/bie7DL6yVhHTZ50KQacMjLg=;
+	s=default; t=1548694893;
+	bh=NiU+fKxxjAJwJWAOHX8DOnTRU8rjh/xsh3EXRdvZyyQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=JEfdpHeWvdtsu5/ugxohE66GNFnMB3E7YLm2/WyuBvu71gPZhtEegKci8CaKmvQK5
-	 ke/3uYwDxBol7JqHwtsUT1QKt6GBD+SpYP9fRUfzIHDI7Qr8q2KSwByUkMrFMSI7s7
-	 U6A1U3UalJU5KXnT+XApeIB3sJJ1Ly4JHxFO1oQ8=
+	b=OBDE+5clwJpNihGaGmJxG1gJO9DM5whcG/RzOsA5EYAVnEbaImUCKPtXOK6zJinAs
+	 VjwHfQ+af6bvtm8S2fEoWDB6quzN7Ml4fnUqY3fGdFBm4fowupenen2RGRSPRVyCbo
+	 IkeZaPAmyiZsjnHofQpDKu+/lm8Y4rhyCs5pE7zc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733081AbfA1QPr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:15:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46364 "EHLO mail.kernel.org"
+        id S2387709AbfA1QPG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 28 Jan 2019 11:15:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44696 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387809AbfA1QPo (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:15:44 -0500
+        id S1732968AbfA1QPF (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:15:05 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1389A2147A;
-        Mon, 28 Jan 2019 16:15:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 398AF2148E;
+        Mon, 28 Jan 2019 16:15:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692144;
-        bh=bnfYUnXYY8e5xhnltHi/bie7DL6yVhHTZ50KQacMjLg=;
+        s=default; t=1548692104;
+        bh=NiU+fKxxjAJwJWAOHX8DOnTRU8rjh/xsh3EXRdvZyyQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DHf0i7nDk6ZEdoUMA/KoGPwEaFt7gr+x3ZYJ/VNg6Rli8BqLvHK9kVzBK6Z2SghGw
-         W9ekK/xStsLAuyam4pp6/koTr5MBsVJAX+uATg/8JuMdrzRLygiarzola8s/i1oqWJ
-         GImHPHYoAJqBptfN7BHDEDgiE6+g5vlPZgxR2nso=
+        b=sRDQ0OyFn2e/Zb96qxRjAU2o3PUr+qhgS4VCT27BFBcMegXGdrFY4bua2/LJ44V0l
+         Rq4jXRyuzxhCyhueC5TpLLTkrzEfZ69eQvvRWyWqW7LCY8atMI4SVn3TmOJHoDQdM9
+         1GhciGXlik1NZBTF2cBE59rS7JY+autpMJQvB7Nw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Anson Huang <anson.huang@nxp.com>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
         Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 087/170] clk: imx6sl: ensure MMDC CH0 handshake is bypassed
-Date:   Mon, 28 Jan 2019 11:10:37 -0500
-Message-Id: <20190128161200.55107-87-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 069/170] clk: sunxi-ng: a33: Set CLK_SET_RATE_PARENT for all audio module clocks
+Date:   Mon, 28 Jan 2019 11:10:19 -0500
+Message-Id: <20190128161200.55107-69-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161200.55107-1-sashal@kernel.org>
 References: <20190128161200.55107-1-sashal@kernel.org>
@@ -57,46 +57,53 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Anson Huang <anson.huang@nxp.com>
+From: Chen-Yu Tsai <wens@csie.org>
 
-[ Upstream commit 0efcc2c0fd2001a83240a8c3d71f67770484917e ]
+[ Upstream commit 6e6da2039c82271dd873b9ad2b902a692a7dd554 ]
 
-Same as other i.MX6 SoCs, ensure unused MMDC channel's
-handshake is bypassed, this is to make sure no request
-signal will be generated when periphe_clk_sel is changed
-or SRC warm reset is triggered.
+All the audio interfaces on Allwinner SoCs need to change their module
+clocks during operation, to switch between support for 44.1 kHz and 48
+kHz family sample rates. The clock rate for the module clocks is
+governed by their upstream audio PLL. The module clocks themselves only
+have a gate, and sometimes a divider or mux. Thus any rate changes need
+to be propagated upstream.
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Set the CLK_SET_RATE_PARENT flag for all audio module clocks to achieve
+this.
+
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/imx/clk-imx6sl.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/clk/sunxi-ng/ccu-sun8i-a33.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/imx/clk-imx6sl.c b/drivers/clk/imx/clk-imx6sl.c
-index 9642cdf0fb88..c264a744fae8 100644
---- a/drivers/clk/imx/clk-imx6sl.c
-+++ b/drivers/clk/imx/clk-imx6sl.c
-@@ -17,6 +17,8 @@
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
+index 13eb5b23c5e7..c40d572a7602 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
+@@ -366,10 +366,10 @@ static SUNXI_CCU_MP_WITH_MUX_GATE(spi1_clk, "spi1", mod0_default_parents, 0x0a4,
+ static const char * const i2s_parents[] = { "pll-audio-8x", "pll-audio-4x",
+ 					    "pll-audio-2x", "pll-audio" };
+ static SUNXI_CCU_MUX_WITH_GATE(i2s0_clk, "i2s0", i2s_parents,
+-			       0x0b0, 16, 2, BIT(31), 0);
++			       0x0b0, 16, 2, BIT(31), CLK_SET_RATE_PARENT);
  
- #include "clk.h"
+ static SUNXI_CCU_MUX_WITH_GATE(i2s1_clk, "i2s1", i2s_parents,
+-			       0x0b4, 16, 2, BIT(31), 0);
++			       0x0b4, 16, 2, BIT(31), CLK_SET_RATE_PARENT);
  
-+#define CCDR				0x4
-+#define BM_CCM_CCDR_MMDC_CH0_MASK	(1 << 17)
- #define CCSR			0xc
- #define BM_CCSR_PLL1_SW_CLK_SEL	(1 << 2)
- #define CACRR			0x10
-@@ -414,6 +416,10 @@ static void __init imx6sl_clocks_init(struct device_node *ccm_node)
- 	clks[IMX6SL_CLK_USDHC3]       = imx_clk_gate2("usdhc3",       "usdhc3_podf",       base + 0x80, 6);
- 	clks[IMX6SL_CLK_USDHC4]       = imx_clk_gate2("usdhc4",       "usdhc4_podf",       base + 0x80, 8);
+ /* TODO: the parent for most of the USB clocks is not known */
+ static SUNXI_CCU_GATE(usb_phy0_clk,	"usb-phy0",	"osc24M",
+@@ -446,7 +446,7 @@ static SUNXI_CCU_M_WITH_GATE(ve_clk, "ve", "pll-ve",
+ static SUNXI_CCU_GATE(ac_dig_clk,	"ac-dig",	"pll-audio",
+ 		      0x140, BIT(31), CLK_SET_RATE_PARENT);
+ static SUNXI_CCU_GATE(ac_dig_4x_clk,	"ac-dig-4x",	"pll-audio-4x",
+-		      0x140, BIT(30), 0);
++		      0x140, BIT(30), CLK_SET_RATE_PARENT);
+ static SUNXI_CCU_GATE(avs_clk,		"avs",		"osc24M",
+ 		      0x144, BIT(31), 0);
  
-+	/* Ensure the MMDC CH0 handshake is bypassed */
-+	writel_relaxed(readl_relaxed(base + CCDR) |
-+		BM_CCM_CCDR_MMDC_CH0_MASK, base + CCDR);
-+
- 	imx_check_clocks(clks, ARRAY_SIZE(clks));
- 
- 	clk_data.clks = clks;
 -- 
 2.19.1
 
