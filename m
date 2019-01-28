@@ -2,72 +2,101 @@ Return-Path: <SRS0=UrzD=QE=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64BDDC282CA
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 02:10:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DB68C282C8
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 07:19:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 362822084C
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 02:10:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5105220882
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 07:19:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="CVlusiE6"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fQk60jkq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726602AbfA1CJ5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 27 Jan 2019 21:09:57 -0500
-Received: from outils.crapouillou.net ([89.234.176.41]:35666 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726630AbfA1CJ4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 27 Jan 2019 21:09:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1548641394; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=7+kwgUX7wf/tpEbY0Uzxr09I/Lj4s4J6Y3D3Z9/ZwKE=;
-        b=CVlusiE6ExyjyKozMRQCT0mPvrlMGN2FxjgNb510BDqH29Xsnyu92yhth04yt3eTcB2etT
-        I3P99YQUsE5ezL+B6OwVgWCgk84JZk0QaHpzaKeFkAq3YckKjUoexsmC4Mo5rQ5N7f/Vff
-        +a1CbCF6zrVEhgj8k4F1MUFhXJr9cI4=
-From:   Paul Cercueil <paul@crapouillou.net>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Maarten ter Huurne <maarten@treewalker.org>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Paul Cercueil <paul@crapouillou.net>, stable@vger.kernel.org
-Subject: [PATCH 2/2] clk: ingenic: Fix doc of ingenic_cgu_div_info
-Date:   Sun, 27 Jan 2019 23:09:21 -0300
-Message-Id: <20190128020921.16309-2-paul@crapouillou.net>
-In-Reply-To: <20190128020921.16309-1-paul@crapouillou.net>
-References: <20190128020921.16309-1-paul@crapouillou.net>
+        id S1726683AbfA1HTl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 28 Jan 2019 02:19:41 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:33238 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726648AbfA1HTk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Jan 2019 02:19:40 -0500
+Received: by mail-wm1-f67.google.com with SMTP id r24so9683271wmh.0
+        for <linux-clk@vger.kernel.org>; Sun, 27 Jan 2019 23:19:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=TXYHMJ2QbFqSZ0VMU5oqBXlbGmWhaw/EnvaZ4/gwCyc=;
+        b=fQk60jkqTWKQOZ07LChas50kmBwP0C3F6i+ED9JpOiqeo3xa5NR8UZyE0Yxw9kzPAn
+         1z+4C0lu5Z4RV7b2EvM1KzK6RfwiKRZFNhCNCEn0RgLu5VVE1uZBoU3MkH/dkDnriqmd
+         5gpzPXQw3OTNszHw6Y05EW6dvO9Kvsg7LnP/4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=TXYHMJ2QbFqSZ0VMU5oqBXlbGmWhaw/EnvaZ4/gwCyc=;
+        b=HXpNcDIhfjm3nzw2tAJsjB44xQIWNz8M18jb3+pIBdTwoq3YdJXUQ+zNGa1+kdoj50
+         JoS1+BXS3CDB/uDz84+YeuwJcF7fDU/y7wgXmArK3nKbZMQkmSwLv2uoo5Bvroo1IXLR
+         rq6U7lLWM2BpdiP20GULPwhRvYLY9ERY3fKXuyfkfj6md3VQuZmA4dG+yia4S4ALMkHE
+         u1UhcR2MSN7D2T30J81ebawP05W/TmwcisxwEfm48SEHVa5t2aj1RPEzS3yZBObho3Iu
+         /3CdPcjx8OzVbYw5NgqqQCBV/LFmukqgRlg9pyhrnBq94PP+5IQ9lTYFtDzWrL+6lzuC
+         CJLQ==
+X-Gm-Message-State: AJcUukd1jHTw7so5+zjIrksfnd5eAKKoG2OVOCQS1CGIPgAaXXOGwJrC
+        axzpUDy69xSgXHvDC7p9Ns6ipg==
+X-Google-Smtp-Source: ALg8bN60H1UnmQzAd6CC5HV7/G5IW96x8oGqfJ7eDrkCMFPks2zRNzQpSRTHzjv3j6GgB7dcD5gFzg==
+X-Received: by 2002:a7b:ce84:: with SMTP id q4mr16649262wmj.105.1548659979125;
+        Sun, 27 Jan 2019 23:19:39 -0800 (PST)
+Received: from dell ([2.27.35.198])
+        by smtp.gmail.com with ESMTPSA id y138sm80954826wmc.16.2019.01.27.23.19.37
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 27 Jan 2019 23:19:38 -0800 (PST)
+Date:   Mon, 28 Jan 2019 07:19:36 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     mazziesaccount@gmail.com, heikki.haikola@fi.rohmeurope.com,
+        mikko.mutanen@fi.rohmeurope.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, broonie@kernel.org,
+        gregkh@linuxfoundation.org, rafael@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
+        linux@roeck-us.net, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org
+Subject: Re: [RFC PATCH v2 00/10] support ROHM BD70528 PMIC
+Message-ID: <20190128071936.GD4678@dell>
+References: <20190125110110.GA29171@localhost.localdomain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190125110110.GA29171@localhost.localdomain>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The 'div' field does not represent a number of bits used to divide
-(understand: right-shift) the divider, but a number itself used to
-divide the divider.
+On Fri, 25 Jan 2019, Matti Vaittinen wrote:
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-Signed-off-by: Maarten ter Huurne <maarten@treewalker.org>
-Cc: <stable@vger.kernel.org>
----
- drivers/clk/ingenic/cgu.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Patch series introducing support for ROHM BD70528 PMIC
+> 
+> Please note that patch 1 breaks compilation without patches 2 and 3
+> 
+> ROHM BD70528 is a programmable Power Management IC for battery
+> powered 'ultra low power' systems like the pre-announced NXP
+> i.MX7 ULP. This patch series introduces support for the PMIC.
 
-diff --git a/drivers/clk/ingenic/cgu.h b/drivers/clk/ingenic/cgu.h
-index 502bcbb61b04..e12716d8ce3c 100644
---- a/drivers/clk/ingenic/cgu.h
-+++ b/drivers/clk/ingenic/cgu.h
-@@ -80,7 +80,7 @@ struct ingenic_cgu_mux_info {
-  * @reg: offset of the divider control register within the CGU
-  * @shift: number of bits to left shift the divide value by (ie. the index of
-  *         the lowest bit of the divide value within its control register)
-- * @div: number of bits to divide the divider value by (i.e. if the
-+ * @div: number to divide the divider value by (i.e. if the
-  *	 effective divider value is the value written to the register
-  *	 multiplied by some constant)
-  * @bits: the size of the divide value in bits
+It looks like you've sent this set un-threaded, which means as people
+reply to the patches, they are going to be spread out into the four
+winds (in Inbox terms).
+
 -- 
-2.20.1.495.gaa96b0ce6b
-
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
