@@ -7,53 +7,53 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06C2DC282C8
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 18:06:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24D7AC282CD
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 18:06:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C09AE2148E
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 18:06:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E99B22148E
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 18:06:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="bLJpQmG4"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="C1GUr4pi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727136AbfA1SF6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 28 Jan 2019 13:05:58 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:38285 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727161AbfA1SEz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Jan 2019 13:04:55 -0500
-Received: by mail-wr1-f68.google.com with SMTP id v13so19103510wrw.5
-        for <linux-clk@vger.kernel.org>; Mon, 28 Jan 2019 10:04:54 -0800 (PST)
+        id S1727139AbfA1SGF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 28 Jan 2019 13:06:05 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:38276 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727071AbfA1SEu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Jan 2019 13:04:50 -0500
+Received: by mail-wr1-f67.google.com with SMTP id v13so19103186wrw.5
+        for <linux-clk@vger.kernel.org>; Mon, 28 Jan 2019 10:04:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=nbXfyjfqzqGpHsSm+wGVBTSI4vzKOQ2CLwSheFxJ0pY=;
-        b=bLJpQmG4xEa3nqZqf2uYPgGgvShCScNAnZJS/q4tIDJxY5DwMpFJZ6mdtcbmCk/HP1
-         3O/hdz5zfiulKkSzwA5TFEOFbS7E+gG4O4V0aVFaxQg/TUWTmnOlX+Gk8CHQN4dvuaRr
-         SUbrk8P8HqMB2t2froBrbHPnoLt1VOso5vywumJuWHFv5OSv6pGEekrC2TMP0zm1O6P/
-         WPJTLq4oZmGIVhUNkKJt7UpP3pANfvFrUzdYdUc9qMG+gqsEvzdeQmmyqzLIZbgtkihu
-         4OZ7gqRALpFPdLOzxOIDtLt0efq3sYAqMUIjBg0lMHrIzz0iuXII0gHXWKJU+YuGPbBS
-         7jmw==
+        bh=r+WHTSkzlCo1wnAPo/2Tpux+aNiN2OcVk0MvXqGi20w=;
+        b=C1GUr4pieutpMKwI39/1w6pXhducYBNjduMWnqHc/+8ykx99zy2bSZ83672NJsrZ3S
+         OlynYzQNFkiHHftuCE7WoeyJGnadG2hxM9P38PpPEOcdIGf+zxpJNXFhzNpHe7OKsuTG
+         H/n5tJ52pvXmHf4zbcTyjbiG55/y6AC5Jnm1u4bSCJcdtUkvC5NrGwK2OxEEfP55DBRf
+         93Ma9F4YVhwKSlh/m8SJBtWf1CYtpgnHUNkrFxNaiwgy9Di+hIH/GbJSJGsno1lh7YuZ
+         0TDzN0g5J4BJ284OKXhY40SZK3qLtrV1aXRpivNSRK5JOC8//d7fzRwb2BWxXkw1+t6g
+         +csQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=nbXfyjfqzqGpHsSm+wGVBTSI4vzKOQ2CLwSheFxJ0pY=;
-        b=pz3UdJNJYMR66baeRH1qSEwxuDcv7WXO+KtDb3zc8gRcUoNyfAoly0ew96QGmE/fC2
-         f2ELbAp574G8pBNcMjkYjYk30SPMDTb9cYLOeiCjIXkuiNXTZYfq8/4lUH9MrPFlOO/Y
-         t2BNI6O2RNQHWngjKoBGYFRfYeD01uFkcfxa7f1x1etkJdN1EKcS184+9Xt/0tPLH5rs
-         n2ymklFB4DjX7VF3wkbVzbA5kImi2BSIOL3pteTTGv4oAT/i17WpR9AmqFWxs9/DfuLY
-         1/9XWXw649fY9gs318vDqChIWb5laar7VR/fSggoDeY7YSOR8k9VZIrKCnl6BtDfI7GI
-         VeiQ==
-X-Gm-Message-State: AHQUAubuCORhFmr3m5cBHOA+nnkXBY8hQX1XKeM99s4i3SFp4/xwXJ/K
-        LCnQ4geqQ98DBMVCZfJbveAbpQ==
-X-Google-Smtp-Source: AHgI3Ibf86P6JrR4OEXFj0tAJZiXCpcxEJRKZPGFbtTm60QemWO8lWx4yqtwQENi/Hxu6K3Voru+hg==
-X-Received: by 2002:adf:fd81:: with SMTP id d1mr15171607wrr.105.1548698693294;
-        Mon, 28 Jan 2019 10:04:53 -0800 (PST)
+        bh=r+WHTSkzlCo1wnAPo/2Tpux+aNiN2OcVk0MvXqGi20w=;
+        b=U0nu2uR+dlOeM6DFUwaBSpp6rwsKUr3XWH1TP/+F7nMb7znb9G7eII8fwhNdc8vJPx
+         I+SeE8wuxfi1+TcrQnh1Tbgtm8EN4rWdLyjGVZoDdGPZZIvfE1tKVxLEmcaMFwIBgysy
+         /nhf8tIVQkSbuFz+cN9TQ3eWh89iPliYioOc+zuqfPtE49cZoPyANwF7xw7kJSp1WycL
+         nU9tM+xrrmHMecJX3iwkSQKis6DP0FLWrpjx7c570KJAhrzbQmbmNybsrx0SjY/Qv/iU
+         lyx8S/ugaeAwEuyhMuI0O4+4sUujkTjrKtKjKaoZwyVYmqK4sx5OGLcB5/CIkn4k+A7X
+         XdaA==
+X-Gm-Message-State: AJcUukdtdEWE9JFEI8eEAljTBJDP1ze0bfZ0QG6FKkFxdBdDFVKn+Wo/
+        qzWINpAQFOWQc7rWiYwz6CS8iqO5ZAI=
+X-Google-Smtp-Source: ALg8bN6+zBlIsLdvH0rPTB6ook6Al5zMZJFCCDkzoZ574m1bxusoJ/GiWAUd7oEjSj+qBUP5QEc71g==
+X-Received: by 2002:a05:6000:12c4:: with SMTP id l4mr22393190wrx.134.1548698687963;
+        Mon, 28 Jan 2019 10:04:47 -0800 (PST)
 Received: from boomer.local ([2a01:e34:eeb6:4690:106b:bae3:31ed:7561])
-        by smtp.googlemail.com with ESMTPSA id p6sm145548193wrx.50.2019.01.28.10.04.51
+        by smtp.googlemail.com with ESMTPSA id p6sm145548193wrx.50.2019.01.28.10.04.46
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 28 Jan 2019 10:04:52 -0800 (PST)
+        Mon, 28 Jan 2019 10:04:47 -0800 (PST)
 From:   Jerome Brunet <jbrunet@baylibre.com>
 To:     Neil Armstrong <narmstrong@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -63,9 +63,9 @@ Cc:     Jerome Brunet <jbrunet@baylibre.com>,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-amlogic@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 07/14] clk: meson: take the mpll driver out of clkc
-Date:   Mon, 28 Jan 2019 19:04:23 +0100
-Message-Id: <20190128180430.28689-8-jbrunet@baylibre.com>
+Subject: [PATCH 04/14] clk: meson: move MESON_GATE to clk-regmap.h
+Date:   Mon, 28 Jan 2019 19:04:20 +0100
+Message-Id: <20190128180430.28689-5-jbrunet@baylibre.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190128180430.28689-1-jbrunet@baylibre.com>
 References: <20190128180430.28689-1-jbrunet@baylibre.com>
@@ -78,152 +78,94 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- drivers/clk/meson/axg.c      |  1 +
- drivers/clk/meson/clk-mpll.c | 12 +++++++++++-
- drivers/clk/meson/clk-mpll.h | 30 ++++++++++++++++++++++++++++++
- drivers/clk/meson/clkc.h     | 14 --------------
- drivers/clk/meson/gxbb.c     |  1 +
- drivers/clk/meson/meson8b.c  |  1 +
- 6 files changed, 44 insertions(+), 15 deletions(-)
- create mode 100644 drivers/clk/meson/clk-mpll.h
+ drivers/clk/meson/axg.c        |  1 +
+ drivers/clk/meson/clk-regmap.c |  5 +++++
+ drivers/clk/meson/clk-regmap.h | 15 +++++++++++++++
+ drivers/clk/meson/clkc.h       | 15 ---------------
+ 4 files changed, 21 insertions(+), 15 deletions(-)
 
 diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
-index 8a3896fa343f..dc973b4324f3 100644
+index 1c6539eeee7c..474412234633 100644
 --- a/drivers/clk/meson/axg.c
 +++ b/drivers/clk/meson/axg.c
-@@ -20,6 +20,7 @@
+@@ -18,6 +18,7 @@
+ #include <linux/regmap.h>
+ 
  #include "clkc.h"
- #include "clk-regmap.h"
- #include "clk-pll.h"
-+#include "clk-mpll.h"
++#include "clk-regmap.h"
  #include "axg.h"
  
  #define IN_PREFIX "ee-in-"
-diff --git a/drivers/clk/meson/clk-mpll.c b/drivers/clk/meson/clk-mpll.c
-index 650f75cc15a9..f76850d99e59 100644
---- a/drivers/clk/meson/clk-mpll.c
-+++ b/drivers/clk/meson/clk-mpll.c
-@@ -12,7 +12,11 @@
+diff --git a/drivers/clk/meson/clk-regmap.c b/drivers/clk/meson/clk-regmap.c
+index c515f67322a3..dcd1757cc5df 100644
+--- a/drivers/clk/meson/clk-regmap.c
++++ b/drivers/clk/meson/clk-regmap.c
+@@ -4,6 +4,7 @@
+  * Author: Jerome Brunet <jbrunet@baylibre.com>
   */
  
- #include <linux/clk-provider.h>
--#include "clkc.h"
 +#include <linux/module.h>
-+#include <linux/spinlock.h>
-+
-+#include "clk-regmap.h"
-+#include "clk-mpll.h"
+ #include "clk-regmap.h"
  
- #define SDM_DEN 16384
- #define N2_MIN	4
-@@ -138,9 +142,15 @@ const struct clk_ops meson_clk_mpll_ro_ops = {
- 	.recalc_rate	= mpll_recalc_rate,
- 	.round_rate	= mpll_round_rate,
+ static int clk_regmap_gate_endisable(struct clk_hw *hw, int enable)
+@@ -180,3 +181,7 @@ const struct clk_ops clk_regmap_mux_ro_ops = {
+ 	.get_parent = clk_regmap_mux_get_parent,
  };
-+EXPORT_SYMBOL_GPL(meson_clk_mpll_ro_ops);
- 
- const struct clk_ops meson_clk_mpll_ops = {
- 	.recalc_rate	= mpll_recalc_rate,
- 	.round_rate	= mpll_round_rate,
- 	.set_rate	= mpll_set_rate,
- };
-+EXPORT_SYMBOL_GPL(meson_clk_mpll_ops);
+ EXPORT_SYMBOL_GPL(clk_regmap_mux_ro_ops);
 +
-+MODULE_DESCRIPTION("Amlogic MPLL driver");
-+MODULE_AUTHOR("Michael Turquette <mturquette@baylibre.com>");
++MODULE_DESCRIPTION("Amlogic regmap backed clock driver");
++MODULE_AUTHOR("Jerome Brunet <jbrunet@baylibre.com>");
 +MODULE_LICENSE("GPL v2");
-diff --git a/drivers/clk/meson/clk-mpll.h b/drivers/clk/meson/clk-mpll.h
-new file mode 100644
-index 000000000000..cf79340006dd
---- /dev/null
-+++ b/drivers/clk/meson/clk-mpll.h
-@@ -0,0 +1,30 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (c) 2019 BayLibre, SAS.
-+ * Author: Jerome Brunet <jbrunet@baylibre.com>
-+ */
+diff --git a/drivers/clk/meson/clk-regmap.h b/drivers/clk/meson/clk-regmap.h
+index e9c5728d40eb..b7a085bbf072 100644
+--- a/drivers/clk/meson/clk-regmap.h
++++ b/drivers/clk/meson/clk-regmap.h
+@@ -111,4 +111,19 @@ clk_get_regmap_mux_data(struct clk_regmap *clk)
+ extern const struct clk_ops clk_regmap_mux_ops;
+ extern const struct clk_ops clk_regmap_mux_ro_ops;
+ 
++#define MESON_GATE(_name, _reg, _bit)					\
++struct clk_regmap _name = {						\
++	.data = &(struct clk_regmap_gate_data){				\
++		.offset = (_reg),					\
++		.bit_idx = (_bit),					\
++	},								\
++	.hw.init = &(struct clk_init_data) {				\
++		.name = #_name,						\
++		.ops = &clk_regmap_gate_ops,				\
++		.parent_names = (const char *[]){ "clk81" },		\
++		.num_parents = 1,					\
++		.flags = (CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED),	\
++	},								\
++}
 +
-+#ifndef __MESON_CLK_MPLL_H
-+#define __MESON_CLK_MPLL_H
-+
-+#include <linux/clk-provider.h>
-+#include <linux/spinlock.h>
-+
-+#include "parm.h"
-+
-+struct meson_clk_mpll_data {
-+	struct parm sdm;
-+	struct parm sdm_en;
-+	struct parm n2;
-+	struct parm ssen;
-+	struct parm misc;
-+	spinlock_t *lock;
-+	u8 flags;
-+};
-+
-+#define CLK_MESON_MPLL_ROUND_CLOSEST	BIT(0)
-+
-+extern const struct clk_ops meson_clk_mpll_ro_ops;
-+extern const struct clk_ops meson_clk_mpll_ops;
-+
-+#endif /* __MESON_CLK_MPLL_H */
+ #endif /* __CLK_REGMAP_H */
 diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
-index 4857c8fa1ac4..32947bd76bab 100644
+index e3cd442db739..35768c2327ba 100644
 --- a/drivers/clk/meson/clkc.h
 +++ b/drivers/clk/meson/clkc.h
-@@ -11,18 +11,6 @@
- #include "clk-regmap.h"
- #include "parm.h"
+@@ -95,21 +95,6 @@ struct meson_vid_pll_div_data {
+ 	struct parm sel;
+ };
  
--struct meson_clk_mpll_data {
--	struct parm sdm;
--	struct parm sdm_en;
--	struct parm n2;
--	struct parm ssen;
--	struct parm misc;
--	spinlock_t *lock;
--	u8 flags;
+-#define MESON_GATE(_name, _reg, _bit)					\
+-struct clk_regmap _name = {						\
+-	.data = &(struct clk_regmap_gate_data){				\
+-		.offset = (_reg),					\
+-		.bit_idx = (_bit),					\
+-	},								\
+-	.hw.init = &(struct clk_init_data) {				\
+-		.name = #_name,						\
+-		.ops = &clk_regmap_gate_ops,				\
+-		.parent_names = (const char *[]){ "clk81" },		\
+-		.num_parents = 1,					\
+-		.flags = (CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED),	\
+-	},								\
 -};
 -
--#define CLK_MESON_MPLL_ROUND_CLOSEST	BIT(0)
--
- struct meson_clk_phase_data {
- 	struct parm ph;
- };
-@@ -54,8 +42,6 @@ struct meson_clk_dualdiv_data {
- 
- /* clk_ops */
- extern const struct clk_ops meson_clk_cpu_ops;
--extern const struct clk_ops meson_clk_mpll_ro_ops;
--extern const struct clk_ops meson_clk_mpll_ops;
- extern const struct clk_ops meson_clk_phase_ops;
- extern const struct clk_ops meson_vid_pll_div_ro_ops;
- extern const struct clk_ops meson_clk_dualdiv_ops;
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index 813822ec5f57..6a8358f3e0ef 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -16,6 +16,7 @@
- #include "gxbb.h"
- #include "clk-regmap.h"
- #include "clk-pll.h"
-+#include "clk-mpll.h"
- 
- #define IN_PREFIX "ee-in-"
- 
-diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-index 9b35d5e08378..91a5306b13f6 100644
---- a/drivers/clk/meson/meson8b.c
-+++ b/drivers/clk/meson/meson8b.c
-@@ -20,6 +20,7 @@
- #include "meson8b.h"
- #include "clk-regmap.h"
- #include "clk-pll.h"
-+#include "clk-mpll.h"
- 
- static DEFINE_SPINLOCK(meson_clk_lock);
- 
+ struct meson_clk_dualdiv_param {
+ 	unsigned int n1;
+ 	unsigned int n2;
 -- 
 2.20.1
 
