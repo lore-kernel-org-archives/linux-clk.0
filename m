@@ -2,97 +2,101 @@ Return-Path: <SRS0=UrzD=QE=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D026C282C8
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 08:52:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA3E4C282C8
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 09:11:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1960520880
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 08:52:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A73AF20989
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 09:11:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="mIp0uOku"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726415AbfA1Iwd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 28 Jan 2019 03:52:33 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:50568 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726556AbfA1Iwd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Jan 2019 03:52:33 -0500
-X-UUID: 5856478060624a52b168cce05c68252f-20190128
-X-UUID: 5856478060624a52b168cce05c68252f-20190128
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1259753091; Mon, 28 Jan 2019 16:52:21 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 28 Jan 2019 16:52:20 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 28 Jan 2019 16:52:20 +0800
-Message-ID: <1548665540.10401.0.camel@mtksdaap41>
-Subject: Re: [PATCH V3,4/8] drm/mediatek: fix the rate and divder of hdmi
- phy for MT2701
-From:   CK Hu <ck.hu@mediatek.com>
-To:     Wangyan Wang <wangyan.wang@mediatek.com>
-CC:     Michael Turquette <mturquette@baylibre.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        David Airlie <airlied@linux.ie>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        "Colin Ian King" <colin.king@canonical.com>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <dri-devel@lists.freedesktop.org>, <jitao.shi@mediatek.com>,
-        <bibby.hsieh@mediatek.com>, <srv_heupstream@mediatek.com>,
-        chunhui dai <chunhui.dai@mediatek.com>
-Date:   Mon, 28 Jan 2019 16:52:20 +0800
-In-Reply-To: <20190125040205.5451-5-wangyan.wang@mediatek.com>
-References: <20190125040205.5451-1-wangyan.wang@mediatek.com>
-         <20190125040205.5451-5-wangyan.wang@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        id S1726772AbfA1JLi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 28 Jan 2019 04:11:38 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:54004 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726647AbfA1JLh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Jan 2019 04:11:37 -0500
+Received: by mail-it1-f194.google.com with SMTP id g85so19505213ita.3
+        for <linux-clk@vger.kernel.org>; Mon, 28 Jan 2019 01:11:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=er9/I+TyhaggJajko2FO0SWawCUPwizjJ0agacJS0Pk=;
+        b=mIp0uOkuyPs9FBNfudGyqmnrOZcJ6xYYS0pLHOz5eFRNaEYAE1M+MyzJ2LYAmqB2Nn
+         NMsIzzOC9Ql5OE4IPThfq/Q3neXkAFDvJcb0hBck7hPd522Ddx4ym5GqOLija2grJhSR
+         wnQi7k3wm431IY72t5zH/wlm1IfCw3qCiVQfo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=er9/I+TyhaggJajko2FO0SWawCUPwizjJ0agacJS0Pk=;
+        b=HVWx/0sbFHh4/e1F/Np88QJ8TMTIgavvsx8pJoh2VGDgcqppJg+IJPid7T3RrZUHn0
+         ML8lw0iszpbstLQM7/MeZmURMJkkm/g6d3r/It5g4RC+qKl7goOBRCaVMvc1FtWVfcr2
+         IukQGkG0Z1McBeG3Gu9E4gF47C+rPvQO0fU5RFKsxbY5pjGHAxQxZIfcucpd4u7/x+V4
+         AeSIDfmbkCm0CurItAyFrQYZmsts6CkrbolNjvmoacAcpseBfnwQFOpxrI+tiZjGtwEX
+         fzuZ8vSqopWYlmwKaeawKT7fUVfyDe4LCaXVEBTkTL/4XiPwUsF77m/zH1ebCZc1YaNZ
+         y0Kg==
+X-Gm-Message-State: AJcUukfilHfNBZy+sOw4DITR/Wwyc6e5KZlaZ9VlvUE/nQisfSQ2FYWF
+        d4xBVbR91n4y55L0aWBro6gm76WU3d8LdOcUGifdRA==
+X-Google-Smtp-Source: ALg8bN7L6MXqfpULu9ND2ngnThuAu7s7vqf/t98FgrqZEuAOpvXA46hxZ3oPCapa8ePZHHhoOsRsQ6/yEnP0PsKF5xk=
+X-Received: by 2002:a24:385:: with SMTP id e127mr9201443ite.32.1548666697022;
+ Mon, 28 Jan 2019 01:11:37 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-MTK:  N
+References: <20190125032314.20915-1-wens@csie.org> <20190125032314.20915-2-wens@csie.org>
+In-Reply-To: <20190125032314.20915-2-wens@csie.org>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Mon, 28 Jan 2019 14:41:25 +0530
+Message-ID: <CAMty3ZAB99yMQj33XkBV-EXDN7RkapbOTaO0chYwaz=aFYto=w@mail.gmail.com>
+Subject: Re: [PATCH 01/11] clk: sunxi-ng: sun8i-a23: Enable PLL-MIPI LDOs when
+ ungating it
+To:     Chen-Yu Tsai <wens@csie.org>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 2019-01-25 at 12:02 +0800, Wangyan Wang wrote:
-> From: chunhui dai <chunhui.dai@mediatek.com>
-> 
-> Due to a clerical error,there is one zero less for 12800000.
-> Fix it for 128000000.
-> 
-
-Reviewed-by: CK Hu <ck.hu@mediatek.com>
-
-> Fixes: 0fc721b2968e ("drm/mediatek: add hdmi driver for MT2701 and MT7623")
-> Signed-off-by: chunhui dai <chunhui.dai@mediatek.com>
-> Signed-off-by: wangyan wang <wangyan.wang@mediatek.com>
+On Fri, Jan 25, 2019 at 8:54 AM Chen-Yu Tsai <wens@csie.org> wrote:
+>
+> The PLL-MIPI clock is somewhat special as it has its own LDOs which
+> need to be turned on for this PLL to actually work and output a clock
+> signal.
+>
+> Add the 2 LDO enable bits to the gate bits.
+>
+> Fixes: 5690879d93e8 ("clk: sunxi-ng: Add A23 CCU")
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 > ---
->  drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c b/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
-> index 43bc058d5528..88dd9e812ca0 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
-> @@ -114,8 +114,8 @@ static int mtk_hdmi_pll_set_rate(struct clk_hw *hw, unsigned long rate,
->  
->  	if (rate <= 64000000)
->  		pos_div = 3;
-> -	else if (rate <= 12800000)
-> -		pos_div = 1;
-> +	else if (rate <= 128000000)
-> +		pos_div = 2;
->  	else
->  		pos_div = 1;
->  
+>  drivers/clk/sunxi-ng/ccu-sun8i-a23.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a23.c b/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
+> index a4fa2945f230..4b5f8f4e4ab8 100644
+> --- a/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
+> +++ b/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
+> @@ -144,7 +144,7 @@ static SUNXI_CCU_NKM_WITH_GATE_LOCK(pll_mipi_clk, "pll-mipi",
+>                                     8, 4,               /* N */
+>                                     4, 2,               /* K */
+>                                     0, 4,               /* M */
+> -                                   BIT(31),            /* gate */
+> +                                   BIT(31) | BIT(23) | BIT(22), /* gate */
 
-
+Reviewed-by: Jagan Teki <jagan@amarulasolutions.com>
