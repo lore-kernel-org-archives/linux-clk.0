@@ -4,48 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 637A1C282C8
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 17:40:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F60AC282C8
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 17:44:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 281522147A
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 17:40:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F23B820663
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 17:44:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548697235;
-	bh=Wsbk8JVax5YUHkWy4GDS8CYRJ3+BPQyWJRCBdyga4nk=;
+	s=default; t=1548697443;
+	bh=NiU+fKxxjAJwJWAOHX8DOnTRU8rjh/xsh3EXRdvZyyQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0LmjRF3fyVUEz0gB1urIWg+x6vP5JrFZBpjZm/g0TNblBzk89fr0iPc36rH+XMgBi
-	 yxPBUNA1MDxAfhWGYWtyeceOqwCzFUQvoRagccCjWKWakkMgdPasrIkdtrFNmgTiS6
-	 ybyPUiVSy8o5AiolGpBtlwCq/jQlqPGeWpfSdvE4=
+	b=CBZXervwscP+kWA8/TspkELwZLWKaS1g119o9TliYDobJElB0u8X7b0IKTSk7N6V/
+	 jURh/ZNoV3FRiTDbWzgck9+CyaRKbXbDydWyWrS5+wV1QJLkwVMaK/25cdNlYU2KTG
+	 /OA6LCc1CDa64i2g63QMhcia+IWnhf5je4LQCFKw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729233AbfA1PwO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:52:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38736 "EHLO mail.kernel.org"
+        id S1727448AbfA1Rn5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 28 Jan 2019 12:43:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35080 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729228AbfA1PwN (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:52:13 -0500
+        id S1728684AbfA1PtU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:49:20 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 10BF020880;
-        Mon, 28 Jan 2019 15:52:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D9A9B21741;
+        Mon, 28 Jan 2019 15:49:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690732;
-        bh=Wsbk8JVax5YUHkWy4GDS8CYRJ3+BPQyWJRCBdyga4nk=;
+        s=default; t=1548690559;
+        bh=NiU+fKxxjAJwJWAOHX8DOnTRU8rjh/xsh3EXRdvZyyQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=atlvO6MUB0K8gHVTsToYqwkM11l73atcZNLRA1F1gCCrE29Heyrdms8np5wgM+T+u
-         IGOSCjkTIfIpcTIkmXP/cVn8SovzStxorv7aiPDxJ7RzZ159tb0uGOD66oQamWzhET
-         6lPMmhJUSF9yQGAJADuDf6JiwHqoikt4ye+roZfg=
+        b=gn6mxw353x8XnvKb7fzEo6vfXfbyWQjRoL2gmoyUCVO6g3DWAwFtozcmgqyAdEzvi
+         YcOkaiEOF1J9X4HUgPTOglQyB+i5oqSv3TvOz3LvCfRH+bGgA+7iJz+7wca0obDIm4
+         A3rI7UP5xODa0YgxLPKW2eWVGj1rOHOaalBRozgg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jeffrey Hugo <jhugo@codeaurora.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 177/304] clk: qcom: Leave mmss noc on for 8998
-Date:   Mon, 28 Jan 2019 10:41:34 -0500
-Message-Id: <20190128154341.47195-177-sashal@kernel.org>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 125/304] clk: sunxi-ng: a33: Set CLK_SET_RATE_PARENT for all audio module clocks
+Date:   Mon, 28 Jan 2019 10:40:42 -0500
+Message-Id: <20190128154341.47195-125-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -57,41 +57,53 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Jeffrey Hugo <jhugo@codeaurora.org>
+From: Chen-Yu Tsai <wens@csie.org>
 
-[ Upstream commit 12eced09cd301aa7b1868a67c50a651c2aacd363 ]
+[ Upstream commit 6e6da2039c82271dd873b9ad2b902a692a7dd554 ]
 
-Similar to other qcom targets, gcc_mmss_noc_cfg_ahb_clk should not be
-disabled.  Any mmss access depends on this clock, and its been observed
-that enabling mmssnoc_axi_rpm_clk with rpmcc results in an implicit
-access to mmss and will crash the system if gcc_mmss_noc_cfg_ahb_clk is
-disabled.
+All the audio interfaces on Allwinner SoCs need to change their module
+clocks during operation, to switch between support for 44.1 kHz and 48
+kHz family sample rates. The clock rate for the module clocks is
+governed by their upstream audio PLL. The module clocks themselves only
+have a gate, and sometimes a divider or mux. Thus any rate changes need
+to be propagated upstream.
 
-Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
-Fixes: 4807c71cc688 (arm64: dts: Add msm8998 SoC and MTP board support)
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Set the CLK_SET_RATE_PARENT flag for all audio module clocks to achieve
+this.
+
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/qcom/gcc-msm8998.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/clk/sunxi-ng/ccu-sun8i-a33.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/qcom/gcc-msm8998.c b/drivers/clk/qcom/gcc-msm8998.c
-index 9f0ae403d5f5..cb714c3e2924 100644
---- a/drivers/clk/qcom/gcc-msm8998.c
-+++ b/drivers/clk/qcom/gcc-msm8998.c
-@@ -2042,6 +2042,12 @@ static struct clk_branch gcc_mmss_noc_cfg_ahb_clk = {
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gcc_mmss_noc_cfg_ahb_clk",
- 			.ops = &clk_branch2_ops,
-+			/*
-+			 * Any access to mmss depends on this clock.
-+			 * Gating this clock has been shown to crash the system
-+			 * when mmssnoc_axi_rpm_clk is inited in rpmcc.
-+			 */
-+			.flags = CLK_IS_CRITICAL,
- 		},
- 	},
- };
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
+index 13eb5b23c5e7..c40d572a7602 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
+@@ -366,10 +366,10 @@ static SUNXI_CCU_MP_WITH_MUX_GATE(spi1_clk, "spi1", mod0_default_parents, 0x0a4,
+ static const char * const i2s_parents[] = { "pll-audio-8x", "pll-audio-4x",
+ 					    "pll-audio-2x", "pll-audio" };
+ static SUNXI_CCU_MUX_WITH_GATE(i2s0_clk, "i2s0", i2s_parents,
+-			       0x0b0, 16, 2, BIT(31), 0);
++			       0x0b0, 16, 2, BIT(31), CLK_SET_RATE_PARENT);
+ 
+ static SUNXI_CCU_MUX_WITH_GATE(i2s1_clk, "i2s1", i2s_parents,
+-			       0x0b4, 16, 2, BIT(31), 0);
++			       0x0b4, 16, 2, BIT(31), CLK_SET_RATE_PARENT);
+ 
+ /* TODO: the parent for most of the USB clocks is not known */
+ static SUNXI_CCU_GATE(usb_phy0_clk,	"usb-phy0",	"osc24M",
+@@ -446,7 +446,7 @@ static SUNXI_CCU_M_WITH_GATE(ve_clk, "ve", "pll-ve",
+ static SUNXI_CCU_GATE(ac_dig_clk,	"ac-dig",	"pll-audio",
+ 		      0x140, BIT(31), CLK_SET_RATE_PARENT);
+ static SUNXI_CCU_GATE(ac_dig_4x_clk,	"ac-dig-4x",	"pll-audio-4x",
+-		      0x140, BIT(30), 0);
++		      0x140, BIT(30), CLK_SET_RATE_PARENT);
+ static SUNXI_CCU_GATE(avs_clk,		"avs",		"osc24M",
+ 		      0x144, BIT(31), 0);
+ 
 -- 
 2.19.1
 
