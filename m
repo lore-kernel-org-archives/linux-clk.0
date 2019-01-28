@@ -2,121 +2,180 @@ Return-Path: <SRS0=UrzD=QE=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDDEDC282C8
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 10:06:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF4E8C282C8
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 11:56:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 929372087F
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 10:06:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E60E2086C
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 11:56:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548676571;
+	bh=559CPLfcG5St/5z9rJpZ8EVehSIrsJuSZjAHbs7bDY0=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=Aj5HkfUZ+oGzl4tz8x9G2FRE1zdOUxfzNCSI6ULQSLUA8IvuLOUYbH0gzHEWbf+gr
+	 qOl1uXRQ9rqGtUYQvQmh9FZKPCYIClod3rINrtd3kvRHfiqOm8T5cpel4XxUM0uaBh
+	 ht8H84RxR3FzEGW6+zDARhCs9elphszH71rZnVvE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726369AbfA1KG5 convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 28 Jan 2019 05:06:57 -0500
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:48419 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726749AbfA1KG5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Jan 2019 05:06:57 -0500
-X-Originating-IP: 90.88.29.206
-Received: from xps13 (aaubervilliers-681-1-87-206.w90-88.abo.wanadoo.fr [90.88.29.206])
-        (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id 1F277E000D;
-        Mon, 28 Jan 2019 10:06:51 +0000 (UTC)
-Date:   Mon, 28 Jan 2019 11:06:50 +0100
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>
-Subject: Re: [PATCH v3 2/4] clk: core: link consumer with clock driver
-Message-ID: <20190128110650.76367606@xps13>
-In-Reply-To: <154845170894.136743.2408260720819956377@swboyd.mtv.corp.google.com>
-References: <20181204192440.12125-1-miquel.raynal@bootlin.com>
-        <20181204192440.12125-3-miquel.raynal@bootlin.com>
-        <154454837597.17204.11648795524314926025@swboyd.mtv.corp.google.com>
-        <20190104165406.3b52399a@xps13>
-        <154845170894.136743.2408260720819956377@swboyd.mtv.corp.google.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726864AbfA1L4L (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 28 Jan 2019 06:56:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34210 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726611AbfA1L4K (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 28 Jan 2019 06:56:10 -0500
+Received: from localhost.localdomain (unknown [106.200.228.251])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5E7BE2086C;
+        Mon, 28 Jan 2019 11:56:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548676569;
+        bh=559CPLfcG5St/5z9rJpZ8EVehSIrsJuSZjAHbs7bDY0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=FlW51fWdpwmWeOkpHsDAmIJLbYWPa1GmefF70qwvSc8bWa5n6Joi2B68D+I9PzupT
+         SZQI09SNjhbL1ml4xf7VDZmeLMWTOVpNYwEkM2UZ8kBJBvXPnrjKu9qULnUEud2IOo
+         9TuRz+vX0FA0feL4A5ULgm7XnQjL800MwfRool9w=
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Khasim Syed Mohammed <khasim.mohammed@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        Anu Ramanathan <anur@codeaurora.org>,
+        Shawn Guo <shawn.guo@linaro.org>, Vinod Koul <vkoul@kernel.org>
+Subject: [PATCH 1/2] clk: qcom: clk-rcg2: Introduce a cfg offset for RCGs
+Date:   Mon, 28 Jan 2019 17:23:58 +0530
+Message-Id: <20190128115359.30039-1-vkoul@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+From: Taniya Das <tdas@codeaurora.org>
 
-Stephen Boyd <sboyd@kernel.org> wrote on Fri, 25 Jan 2019 13:28:28
--0800:
+The RCG CFG/M/N/D register base could be at a different offset than
+the CMD register, so introduce a cfg_offset to identify the offset
+with respect to the CMD register.
 
-> Quoting Miquel Raynal (2019-01-04 07:54:06)
-> > Hi Stephen,
-> > 
-> > Stephen Boyd <sboyd@kernel.org> wrote on Tue, 11 Dec 2018 09:12:55
-> > -0800:
-> >   
-> > > Sorry, I'm not reviewing the whole patch right now, just this one little
-> > > bit because I'm also working in the same area.
-> > > 
-> > > Quoting Miquel Raynal (2018-12-04 11:24:38)  
-> > > > diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-> > > > index 60c51871b04b..721d6b55b2fa 100644
-> > > > --- a/include/linux/clk-provider.h
-> > > > +++ b/include/linux/clk-provider.h
-> > > > @@ -781,6 +781,8 @@ void devm_clk_hw_unregister(struct device *dev, struct clk_hw *hw);
-> > > >  const char *__clk_get_name(const struct clk *clk);
-> > > >  const char *clk_hw_get_name(const struct clk_hw *hw);
-> > > >  struct clk_hw *__clk_get_hw(struct clk *clk);
-> > > > +void clk_link_consumer(struct device *consumer, struct clk *clk);
-> > > > +void clk_unlink_consumer(struct clk *clk);    
-> > > 
-> > > We shouldn't need to add these functions as far as I can tell. That's
-> > > because __clk_get() has become an internal API between clkdev.c and
-> > > clk.c that does nothing now on implementations that aren't the CCF. We
-> > > can even change this API to take a clk_hw pointer instead of a clk
-> > > pointer.
-> > > 
-> > > I'd rather see us plumb a struct device and clk_hw structure down into
-> > > __clk_get() and fold it all into __clk_create_clk, possibly even
-> > > renaming __clk_create_clk to clk_hw_create_clk(). That way we can get
-> > > the calling device and clk_hw pointer in one call in the clk framework,
-> > > along with the device name and connection name, and then generate the
-> > > struct clk right there. This can simplify some code and make it easier
-> > > to extend this to associate calling devices with the clk consumer
-> > > somehow.
-> > > 
-> > > Here's the diff. With this, you should be able to add and remove device
-> > > links in clk_hw_create_clk() when dev != NULL.  
-> > 
-> > Thanks for the help; I updated my work on top of yours, it looks ok but
-> > I need to run some more tests.
-> > 
-> > However I had to tweak a parameter in one of your recent changes, you
-> > used '-1' as index in __of_clock_get() while it is not a valid value
-> > (returning an error). As in the __of_clk_get_by_name() function you
-> > removed index was just set to 0 at the top of the function, I think the
-> > below fix is valid.  
-> 
-> Thanks. Makes sense so I folded it in.
+Signed-off-by: Taniya Das <tdas@codeaurora.org>
+Signed-off-by: Anu Ramanathan <anur@codeaurora.org>
+Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
+---
+ drivers/clk/qcom/clk-rcg.h  |  2 ++
+ drivers/clk/qcom/clk-rcg2.c | 30 +++++++++++++++++++-----------
+ 2 files changed, 21 insertions(+), 11 deletions(-)
 
-Great!
+diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
+index e5eca8a1abe4..f06783c20688 100644
+--- a/drivers/clk/qcom/clk-rcg.h
++++ b/drivers/clk/qcom/clk-rcg.h
+@@ -140,6 +140,7 @@ extern const struct clk_ops clk_dyn_rcg_ops;
+  * @parent_map: map from software's parent index to hardware's src_sel field
+  * @freq_tbl: frequency table
+  * @clkr: regmap clock handle
++ * @cfg_off: defines the cfg register offset from the CMD_RCGR
+  *
+  */
+ struct clk_rcg2 {
+@@ -150,6 +151,7 @@ struct clk_rcg2 {
+ 	const struct parent_map	*parent_map;
+ 	const struct freq_tbl	*freq_tbl;
+ 	struct clk_regmap	clkr;
++	u8			cfg_off;
+ };
+ 
+ #define to_clk_rcg2(_hw) container_of(to_clk_regmap(_hw), struct clk_rcg2, clkr)
+diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+index 6e3bd195d012..106848e3313f 100644
+--- a/drivers/clk/qcom/clk-rcg2.c
++++ b/drivers/clk/qcom/clk-rcg2.c
+@@ -74,7 +74,8 @@ static u8 clk_rcg2_get_parent(struct clk_hw *hw)
+ 	u32 cfg;
+ 	int i, ret;
+ 
+-	ret = regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG, &cfg);
++	ret = regmap_read(rcg->clkr.regmap,
++			  rcg->cmd_rcgr + rcg->cfg_off + CFG_REG, &cfg);
+ 	if (ret)
+ 		goto err;
+ 
+@@ -123,7 +124,8 @@ static int clk_rcg2_set_parent(struct clk_hw *hw, u8 index)
+ 	int ret;
+ 	u32 cfg = rcg->parent_map[index].cfg << CFG_SRC_SEL_SHIFT;
+ 
+-	ret = regmap_update_bits(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG,
++	ret = regmap_update_bits(rcg->clkr.regmap,
++				 rcg->cmd_rcgr + rcg->cfg_off + CFG_REG,
+ 				 CFG_SRC_SEL_MASK, cfg);
+ 	if (ret)
+ 		return ret;
+@@ -162,13 +164,16 @@ clk_rcg2_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
+ 	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+ 	u32 cfg, hid_div, m = 0, n = 0, mode = 0, mask;
+ 
+-	regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG, &cfg);
++	regmap_read(rcg->clkr.regmap,
++		    rcg->cmd_rcgr + rcg->cfg_off + CFG_REG, &cfg);
+ 
+ 	if (rcg->mnd_width) {
+ 		mask = BIT(rcg->mnd_width) - 1;
+-		regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + M_REG, &m);
++		regmap_read(rcg->clkr.regmap,
++			    rcg->cmd_rcgr + rcg->cfg_off + M_REG, &m);
+ 		m &= mask;
+-		regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + N_REG, &n);
++		regmap_read(rcg->clkr.regmap,
++			    rcg->cmd_rcgr + rcg->cfg_off + N_REG, &n);
+ 		n =  ~n;
+ 		n &= mask;
+ 		n += m;
+@@ -263,17 +268,20 @@ static int __clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
+ 	if (rcg->mnd_width && f->n) {
+ 		mask = BIT(rcg->mnd_width) - 1;
+ 		ret = regmap_update_bits(rcg->clkr.regmap,
+-				rcg->cmd_rcgr + M_REG, mask, f->m);
++					 rcg->cmd_rcgr + rcg->cfg_off + M_REG,
++					 mask, f->m);
+ 		if (ret)
+ 			return ret;
+ 
+ 		ret = regmap_update_bits(rcg->clkr.regmap,
+-				rcg->cmd_rcgr + N_REG, mask, ~(f->n - f->m));
++					 rcg->cmd_rcgr + rcg->cfg_off + N_REG,
++					 mask, ~(f->n - f->m));
+ 		if (ret)
+ 			return ret;
+ 
+ 		ret = regmap_update_bits(rcg->clkr.regmap,
+-				rcg->cmd_rcgr + D_REG, mask, ~f->n);
++					 rcg->cmd_rcgr + rcg->cfg_off + D_REG,
++					 mask, ~f->n);
+ 		if (ret)
+ 			return ret;
+ 	}
+@@ -284,9 +292,9 @@ static int __clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
+ 	cfg |= rcg->parent_map[index].cfg << CFG_SRC_SEL_SHIFT;
+ 	if (rcg->mnd_width && f->n && (f->m != f->n))
+ 		cfg |= CFG_MODE_DUAL_EDGE;
+-
+-	return regmap_update_bits(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG,
+-					mask, cfg);
++	return regmap_update_bits(rcg->clkr.regmap,
++				    rcg->cmd_rcgr + rcg->cfg_off + CFG_REG,
++				    mask, cfg);
+ }
+ 
+ static int clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
+-- 
+2.20.1
 
-Can you update me with the status of this series? Is it going in for 5.1?
-
-Lorenzo, the PCI maintainer, is waiting for this series to enter before
-accepting another series depending on it; so please do not hesitate to
-keep me updated.
-
-
-Thanks,
-Miquèl
