@@ -2,91 +2,192 @@ Return-Path: <SRS0=UrzD=QE=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4804CC282C8
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 11:56:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CECA8C282CD
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 12:49:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FB2521738
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 11:56:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548676580;
-	bh=f3lxgKhF5Et41sfz+Bweyn0o307QENkvpp62lR482mE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=xQTgYGYdXBd22uanAciaayVDpHUCuMchnhwX2lb4xsqx79vofktRa0eXdfpvw9Z5A
-	 13kQ223rGNBXWamMh5Ws8xeyRc5Anl/brad2cselj9NgsyE6Iq2G6WyPsNADEHw/Pm
-	 AMvsA5G4kCxZpiCW6aPR4zVBQ1bYuU7APU9GPu2o=
+	by mail.kernel.org (Postfix) with ESMTP id 9838B2177B
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Jan 2019 12:49:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KHeCElCT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726878AbfA1L4O (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 28 Jan 2019 06:56:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34250 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726784AbfA1L4O (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 28 Jan 2019 06:56:14 -0500
-Received: from localhost.localdomain (unknown [106.200.228.251])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6A23B21738;
-        Mon, 28 Jan 2019 11:56:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548676573;
-        bh=f3lxgKhF5Et41sfz+Bweyn0o307QENkvpp62lR482mE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=phE01TLNGPIl7vvyPKyB+ZNrL+FuPEpohMrRjK56EOMlyjGRzIY4NK+LaYRYv4uV0
-         z5tD0QMSqmV+dJvNVUcCk4Ss3JpQ59j0InOUopDtMprO3s6tLfiNpC5Cdm8HIlUYdB
-         fiY1gZlVtj915/LNvCPyMn51UESyZVZTYKaypHpo=
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Khasim Syed Mohammed <khasim.mohammed@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        Anu Ramanathan <anur@codeaurora.org>,
-        Shawn Guo <shawn.guo@linaro.org>, Vinod Koul <vkoul@kernel.org>
-Subject: [PATCH 2/2] clk: qcom: gcc-qcs404: Add cfg_offset for blsp1_uart3 clock
-Date:   Mon, 28 Jan 2019 17:23:59 +0530
-Message-Id: <20190128115359.30039-2-vkoul@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190128115359.30039-1-vkoul@kernel.org>
-References: <20190128115359.30039-1-vkoul@kernel.org>
+        id S1726750AbfA1MtT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 28 Jan 2019 07:49:19 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:40022 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726719AbfA1MtT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Jan 2019 07:49:19 -0500
+Received: by mail-lj1-f193.google.com with SMTP id n18-v6so14084074lji.7
+        for <linux-clk@vger.kernel.org>; Mon, 28 Jan 2019 04:49:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=DRhHTshRy93ZavvcEIkGkkKleavHMBYy/IVRyHzjjYk=;
+        b=KHeCElCTAUQULHQkI6+LqXf1i+bdWtjRu+/A7TRxBL2YFMoufazuDbKR4fWzPJeBLa
+         n1I3k8+JqMDDvERYpjK+Ya8Gx4L1HLbxVozIPVoQYsIoA2Lkdd65tOXs5HL5zvHq2XLv
+         v5+j/MNwpoY1A0lAVUJEuGI7sUKT6vtAemA6g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DRhHTshRy93ZavvcEIkGkkKleavHMBYy/IVRyHzjjYk=;
+        b=mVYnQAIepLJSVR/fkCXsxHFVwQEaWu7+VSDlYTOBTUiRdn8RA7fN8cu85aiVsPFk47
+         o0j8my1GU7uaf2mgRGCOCr7HVE4yiRdJl7pLHdkoXiZjHFmGGi1DwKMdphtoLQ6VbmaI
+         ySfuKsGVqthtEyIuh3ZgYID1RKyLtRuh3whH9U7F5yB6V7Jr82OIatTl+fk3Kdxf6oxU
+         8pdqlkasOEZPZBN8bDxTAys1VK/ZVm5F+FRYHPsaZ9OEooYsgjOLEgh8SFdGVmFiYkNm
+         hwFnMfsHfzmLwmFNgkT7yzj0ijzvMf8fJNgpUgc0YUtAyZi1f3rKKxiao9douoRXexlN
+         Pxbg==
+X-Gm-Message-State: AJcUukf6N6zBX40hWJ2kdxn4z+C5G8q3dTeFg3Juhnpd5NaGgm+vmxfx
+        GN9noF5Usv8muY6o9XRo4IlMJIpg/+Qh5muHT4lCog==
+X-Google-Smtp-Source: ALg8bN6hHc81mWUi5OEd/I/TqPaIgQATp+cVW3qkdu0pa8pQotv3LN8Y3OYJ8XT41iZ7yI1vFjaRM8paCX4pxAZwmOQ=
+X-Received: by 2002:a2e:131a:: with SMTP id 26-v6mr16554297ljt.107.1548679756442;
+ Mon, 28 Jan 2019 04:49:16 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190125110600.GA29332@localhost.localdomain>
+In-Reply-To: <20190125110600.GA29332@localhost.localdomain>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 28 Jan 2019 13:49:04 +0100
+Message-ID: <CACRpkdYTCgXo8FeitEfRujeWdshnsR3Kn57cKUZsA3CsZ5Cnrw@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 09/10] power: supply: Initial support for ROHM
+ BD70528 PMIC charger block
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        Baolin Wang <baolin.wang@linaro.org>
+Cc:     Matti Vaittinen <mazziesaccount@gmail.com>,
+        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
+        Lee Jones <lee.jones@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mark Brown <broonie@kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        linux-rtc@vger.kernel.org,
+        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Taniya Das <tdas@codeaurora.org>
+Hi Matti!
 
-The CFG/M/N/D registers are at an offset of 0x20 from the CMD register
-for blsp1_uart3 clock, so add it.
+Thanks for your patch.
 
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
-Signed-off-by: Anu Ramanathan <anur@codeaurora.org>
-Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
----
- drivers/clk/qcom/gcc-qcs404.c | 1 +
- 1 file changed, 1 insertion(+)
+We are going to have a problem with the power subsystem.
 
-diff --git a/drivers/clk/qcom/gcc-qcs404.c b/drivers/clk/qcom/gcc-qcs404.c
-index 64da032bb9ed..493e055299b4 100644
---- a/drivers/clk/qcom/gcc-qcs404.c
-+++ b/drivers/clk/qcom/gcc-qcs404.c
-@@ -678,6 +678,7 @@ static struct clk_rcg2 blsp1_uart3_apps_clk_src = {
- 	.cmd_rcgr = 0x4014,
- 	.mnd_width = 16,
- 	.hid_width = 5,
-+	.cfg_off = 0x20,
- 	.parent_map = gcc_parent_map_0,
- 	.freq_tbl = ftbl_blsp1_uart0_apps_clk_src,
- 	.clkr.hw.init = &(struct clk_init_data){
--- 
-2.20.1
+These charging drivers are growing wild. This is starting to get out
+of hand, we need some more framework for properly handling charging
+state machines the kernel. Not specifically your problem, but
+when working on the driver try to keep generic support in mind.
 
+On Fri, Jan 25, 2019 at 12:06 PM Matti Vaittinen
+<matti.vaittinen@fi.rohmeurope.com> wrote:
+
+> +#define CHG_STAT_SUSPEND       0x0
+> +#define CHG_STAT_TRICKLE       0x1
+> +#define CHG_STAT_FAST          0x3
+> +#define CHG_STAT_TOPOFF                0xe
+> +#define CHG_STAT_DONE          0xf
+> +#define CHG_STAT_OTP_TRICKLE   0x10
+> +#define CHG_STAT_OTP_FAST      0x11
+> +#define CHG_STAT_OTP_DONE      0x12
+> +#define CHG_STAT_TSD_TRICKLE   0x20
+> +#define CHG_STAT_TSD_FAST      0x21
+> +#define CHG_STAT_TSD_TOPOFF    0x22
+> +#define CHG_STAT_BAT_ERR       0x7f
+
+So what I am seeing is that these states are starting to turn up in more
+and more drivers, so we really need to think about a central management
+component for charging state machines. I do not think they are all
+that different after all.
+
+> +BD_ERR_IRQ_HND(BAT_OV_DET, "Battery overvoltage detected\n");
+> +BD_ERR_IRQ_HND(DBAT_DET, "Dead battery detected\n");
+> +BD_ERR_IRQ_HND(COLD_DET, "Battery cold\n");
+> +BD_ERR_IRQ_HND(HOT_DET, "Battery hot\n");
+> +BD_ERR_IRQ_HND(CHG_TSD, "Charger thermal shutdown\n");
+> +BD_ERR_IRQ_HND(DCIN2_OV_DET, "DCIN2 overvoltage detected\n");
+> +
+> +BD_INFO_IRQ_HND(BAT_OV_RES, "Battery voltage back to normal\n");
+> +BD_INFO_IRQ_HND(COLD_RES, "Battery temperature back to normal\n");
+> +BD_INFO_IRQ_HND(HOT_RES, "Battery temperature back to normal\n");
+> +BD_INFO_IRQ_HND(BAT_RMV, "Battery removed\n");
+> +BD_INFO_IRQ_HND(BAT_DET, "Battery detected\n");
+> +BD_INFO_IRQ_HND(DCIN2_OV_RES, "DCIN2 voltage back to normal\n");
+> +BD_INFO_IRQ_HND(DCIN2_RMV, "DCIN2 removed\n");
+> +BD_INFO_IRQ_HND(DCIN2_DET, "DCIN2 detected\n");
+> +BD_INFO_IRQ_HND(DCIN1_RMV, "DCIN1 removed\n");
+> +BD_INFO_IRQ_HND(DCIN1_DET, "DCIN1 detected\n");
+
+So we have states and events, and these events form edges
+between the states, right?
+
+I am certain you must have a graphical picture of this state
+machine somewhere, it seems to be how charging hardware people
+do their thinking.
+
+> +/*
+> + * For BD70528 voltage/current limits we happily accept any value which
+> + * belongs the range. We could check if value matching the selector is
+> + * desired by computing the range min + (sel - sel_low) * range step - but
+> + * I guess it is enough if we use voltage/current which is closest (below)
+> + * the requested?
+> + */
+> +static int find_selector_for_value_low(struct linear_range *r, int selectors,
+> +                                      unsigned int val, unsigned int *sel,
+> +                                      bool *found)
+> +{
+> +       int i;
+> +       int ret = -EINVAL;
+> +
+> +       *found = false;
+> +       for (i = 0; i < selectors; i++) {
+> +               if (r[i].min <= val) {
+> +                       if (r[i].min + r[i].step * r[i].vals >= val) {
+> +                               *found = true;
+> +                               *sel = r[i].low_sel + (val - r[i].min) /
+> +                                      r[i].step;
+> +                               ret = 0;
+> +                               break;
+> +                       }
+> +                       /*
+> +                        * If the range max is smaller than requested
+> +                        * we can set the max supported value from range
+> +                        */
+> +                       *sel = r[i].low_sel + r[i].vals;
+> +                       ret = 0;
+> +               }
+> +       }
+> +       return ret;
+> +}
+
+If I'm not mistaken this is yet another instance of linear interpolation
+from a table?
+
+We really need to think about abstracting this. Last time this
+duplication appeared I suggested adding linear interpolation
+primitives to:
+include/linux/fixp-arith.h
+
+I don't know what others say though?
+
+Yours,
+Linus Walleij
