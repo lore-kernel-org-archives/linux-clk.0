@@ -7,37 +7,37 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 362F3C169C4
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Jan 2019 06:10:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4519BC282C7
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Jan 2019 06:10:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEC4E2175B
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Jan 2019 06:10:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 194772175B
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Jan 2019 06:10:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548742252;
-	bh=xpJjqVk08G7KRA5XNG0b5SrlCMynjA4/zEzEaDe3N0I=;
+	s=default; t=1548742257;
+	bh=M+W9UixXghcZ2tQo1f3291ReSl8cVMi29InxnarTtdw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=vArxrHqqcx+FRrFQ1k1MLbwxS2b5ICOQXvy2H7CVtmKI9q6imLz2YsvqDhKVAvBPU
-	 i2MN18iDzEyfRTGKOsKPS5/5NM+h3DaOI7pfgCo/f2ZBYMaE5DUTplCU3hnCtBDZXF
-	 lSSIXEusPc4utn40pOxt6vQOyGB2Vhodq7fNKXic=
+	b=FdSfeCfHky06MpDy2MLCvgKKo929PNmi+PI021B/O0NgGwYR+E3KSglGY5F2TJsJl
+	 qpOFnnydYJ05PYDrRQ09fJk/SVkVauSKFWlMLF+/+P5Ty+YTnLtv902AcKtTACc2Nm
+	 /BS7ta16i/cuY2rpK8rLi5kcVxGK3QyigN7stqi0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727446AbfA2GK0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 29 Jan 2019 01:10:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33440 "EHLO mail.kernel.org"
+        id S1726292AbfA2GKw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 29 Jan 2019 01:10:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33450 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726799AbfA2GKZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 29 Jan 2019 01:10:25 -0500
+        id S1725832AbfA2GK0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 29 Jan 2019 01:10:26 -0500
 Received: from mail.kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E9D9921848;
-        Tue, 29 Jan 2019 06:10:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4ED102184D;
+        Tue, 29 Jan 2019 06:10:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1548742224;
-        bh=xpJjqVk08G7KRA5XNG0b5SrlCMynjA4/zEzEaDe3N0I=;
+        bh=M+W9UixXghcZ2tQo1f3291ReSl8cVMi29InxnarTtdw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZJC2IYe+v9rw/dx+ZZJFMyshaWLsNA1RnJPBoqxD7sxTSgkoGKoCRLE3V6e0h8VOY
-         Gr762PUjpraoCaHrnIYWVXWtxRcK0RySv+/XtbRiuWS02iplISuK1ZVY8DI21zrNFy
-         mP4oQPSChkRMFXy5YmGzMu4PUnbXy3fcWXqCHlmI=
+        b=otJTGT/9KbicncNoFfTcIJPsST9iDaNbuERW4fqLWz/bpD/WTuOJokbmivJaoCBNm
+         JrWXJ3qYazdCA9ETdJBQmJHtEWLxSPtZsnJ8XydL+JYLNQ+55LbaWbxYdLX2ona6ko
+         +l+d+sFLEX4dLKkW4Q8/vtDRac06nudsDwC7fcQE=
 From:   Stephen Boyd <sboyd@kernel.org>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
@@ -45,9 +45,9 @@ Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         Miquel Raynal <miquel.raynal@bootlin.com>,
         Jerome Brunet <jbrunet@baylibre.com>,
         Russell King <linux@armlinux.org.uk>
-Subject: [PATCH 4/9] clk: Introduce of_clk_get_hw_from_clkspec()
-Date:   Mon, 28 Jan 2019 22:10:16 -0800
-Message-Id: <20190129061021.94775-5-sboyd@kernel.org>
+Subject: [PATCH 5/9] clk: Inform the core about consumer devices
+Date:   Mon, 28 Jan 2019 22:10:17 -0800
+Message-Id: <20190129061021.94775-6-sboyd@kernel.org>
 X-Mailer: git-send-email 2.20.1.495.gaa96b0ce6b-goog
 In-Reply-To: <20190129061021.94775-1-sboyd@kernel.org>
 References: <20190129061021.94775-1-sboyd@kernel.org>
@@ -58,19 +58,10 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-We want to get struct clk_hw pointers from a DT clk specifier (i.e. a
-clocks property) so that we can find parent clks without searching for
-globally unique clk names. This should save time by avoiding the global
-string search for clks that are external to the clock controller
-providing the clk and let us move away from string comparisons in
-general.
-
-Introduce of_clk_get_hw_from_clkspec() which is largely the DT parsing
-part of finding clks implemented in clkdev.c and have that return a
-clk_hw pointer instead of converting that into a clk pointer. This lets
-us push up the clk pointer creation to the caller in clk_get() and
-avoids the need to push the dev_id and con_id throughout the DT parsing
-code.
+We'd like to have a pointer to the device that's consuming a particular
+clk in the clk framework so we can link the consumer to the clk provider
+with a PM device link. Add a device argument to clk_hw_create_clk() for
+this so it can be used in subsequent patches to add and remove the link.
 
 Cc: Miquel Raynal <miquel.raynal@bootlin.com>
 Cc: Jerome Brunet <jbrunet@baylibre.com>
@@ -78,240 +69,144 @@ Cc: Russell King <linux@armlinux.org.uk>
 Cc: Michael Turquette <mturquette@baylibre.com>
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 ---
- drivers/clk/clk.c    | 46 +++++++++++++++++++++---
- drivers/clk/clk.h    |  5 +--
- drivers/clk/clkdev.c | 83 +++++++++++++-------------------------------
- 3 files changed, 69 insertions(+), 65 deletions(-)
+ drivers/clk/clk.c    |  7 +++++--
+ drivers/clk/clk.h    |  7 +++++--
+ drivers/clk/clkdev.c | 16 +++++++++++-----
+ 3 files changed, 21 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 01cdb9ae03fa..d4c4cab42375 100644
+index d4c4cab42375..73f8a287bf42 100644
 --- a/drivers/clk/clk.c
 +++ b/drivers/clk/clk.c
-@@ -4077,6 +4077,42 @@ void devm_of_clk_del_provider(struct device *dev)
- }
- EXPORT_SYMBOL(devm_of_clk_del_provider);
+@@ -85,6 +85,7 @@ struct clk_core {
  
-+int of_parse_clkspec(const struct device_node *np, int index, const char *name,
-+		     struct of_phandle_args *out_args)
-+{
-+	int ret = -ENOENT;
-+
-+	/* Walk up the tree of devices looking for a clock property that matches */
-+	while (np) {
-+		/*
-+		 * For named clocks, first look up the name in the
-+		 * "clock-names" property.  If it cannot be found, then index
-+		 * will be an error code and of_parse_phandle_with_args() will
-+		 * return -EINVAL.
-+		 */
-+		if (name)
-+			index = of_property_match_string(np, "clock-names", name);
-+		ret = of_parse_phandle_with_args(np, "clocks", "#clock-cells",
-+						 index, out_args);
-+		if (!ret)
-+			break;
-+		if (name && index >= 0)
-+			break;
-+
-+		/*
-+		 * No matching clock found on this node.  If the parent node
-+		 * has a "clock-ranges" property, then we can try one of its
-+		 * clocks.
-+		 */
-+		np = np->parent;
-+		if (np && !of_get_property(np, "clock-ranges", NULL))
-+			break;
-+		index = 0;
-+	}
-+
-+	return ret;
-+}
-+
- static struct clk_hw *
- __of_clk_get_hw_from_provider(struct of_clk_provider *provider,
- 			      struct of_phandle_args *clkspec)
-@@ -4092,8 +4128,7 @@ __of_clk_get_hw_from_provider(struct of_clk_provider *provider,
- 	return __clk_get_hw(clk);
- }
- 
--struct clk *__of_clk_get_from_provider(struct of_phandle_args *clkspec,
--				       const char *dev_id, const char *con_id)
-+struct clk_hw *of_clk_get_hw_from_clkspec(struct of_phandle_args *clkspec)
- {
- 	struct of_clk_provider *provider;
- 	struct clk_hw *hw = ERR_PTR(-EPROBE_DEFER);
-@@ -4101,7 +4136,6 @@ struct clk *__of_clk_get_from_provider(struct of_phandle_args *clkspec,
- 	if (!clkspec)
- 		return ERR_PTR(-EINVAL);
- 
--	/* Check if we have such a provider in our array */
- 	mutex_lock(&of_clk_mutex);
- 	list_for_each_entry(provider, &of_clk_providers, link) {
- 		if (provider->node == clkspec->np) {
-@@ -4112,7 +4146,7 @@ struct clk *__of_clk_get_from_provider(struct of_phandle_args *clkspec,
- 	}
- 	mutex_unlock(&of_clk_mutex);
- 
--	return clk_hw_create_clk(hw, dev_id, con_id);
-+	return hw;
- }
- 
+ struct clk {
+ 	struct clk_core	*core;
++	struct device *dev;
+ 	const char *dev_id;
+ 	const char *con_id;
+ 	unsigned long min_rate;
+@@ -3323,6 +3324,7 @@ static void free_clk(struct clk *clk)
  /**
-@@ -4125,7 +4159,9 @@ struct clk *__of_clk_get_from_provider(struct of_phandle_args *clkspec,
+  * clk_hw_create_clk: Allocate and link a clk consumer to a clk_core given
+  * a clk_hw
++ * @dev: clk consumer device
+  * @hw: clk_hw associated with the clk being consumed
+  * @dev_id: string describing device name
+  * @con_id: connection ID string on device
+@@ -3331,7 +3333,7 @@ static void free_clk(struct clk *clk)
+  * consumers. It connects a consumer to the clk_core and clk_hw structures
+  * used by the framework and clk provider respectively.
   */
- struct clk *of_clk_get_from_provider(struct of_phandle_args *clkspec)
+-struct clk *clk_hw_create_clk(struct clk_hw *hw,
++struct clk *clk_hw_create_clk(struct device *dev, struct clk_hw *hw,
+ 			      const char *dev_id, const char *con_id)
  {
--	return __of_clk_get_from_provider(clkspec, NULL, __func__);
-+	struct clk_hw *hw = of_clk_get_hw_from_clkspec(clkspec);
-+
-+	return clk_hw_create_clk(hw, NULL, __func__);
+ 	struct clk *clk;
+@@ -3345,6 +3347,7 @@ struct clk *clk_hw_create_clk(struct clk_hw *hw,
+ 	clk = alloc_clk(core, dev_id, con_id);
+ 	if (IS_ERR(clk))
+ 		return clk;
++	clk->dev = dev;
+ 
+ 	if (!try_module_get(core->owner)) {
+ 		free_clk(clk);
+@@ -4161,7 +4164,7 @@ struct clk *of_clk_get_from_provider(struct of_phandle_args *clkspec)
+ {
+ 	struct clk_hw *hw = of_clk_get_hw_from_clkspec(clkspec);
+ 
+-	return clk_hw_create_clk(hw, NULL, __func__);
++	return clk_hw_create_clk(NULL, hw, NULL, __func__);
  }
  EXPORT_SYMBOL_GPL(of_clk_get_from_provider);
  
 diff --git a/drivers/clk/clk.h b/drivers/clk/clk.h
-index c9a14122fadc..cdac6dfa8094 100644
+index cdac6dfa8094..fda0ad483416 100644
 --- a/drivers/clk/clk.h
 +++ b/drivers/clk/clk.h
-@@ -12,8 +12,9 @@
+@@ -10,6 +10,8 @@
+  */
+ 
  struct clk_hw;
++struct device;
++struct of_phandle_args;
  
  #if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK)
--struct clk *__of_clk_get_from_provider(struct of_phandle_args *clkspec,
--				       const char *dev_id, const char *con_id);
-+int of_parse_clkspec(const struct device_node *np, int index, const char *name,
-+		     struct of_phandle_args *out_args);
-+struct clk_hw *of_clk_get_hw_from_clkspec(struct of_phandle_args *clkspec);
+ int of_parse_clkspec(const struct device_node *np, int index, const char *name,
+@@ -18,13 +20,14 @@ struct clk_hw *of_clk_get_hw_from_clkspec(struct of_phandle_args *clkspec);
  #endif
  
  #ifdef CONFIG_COMMON_CLK
+-struct clk *clk_hw_create_clk(struct clk_hw *hw,
++struct clk *clk_hw_create_clk(struct device *dev, struct clk_hw *hw,
+ 			      const char *dev_id, const char *con_id);
+ void __clk_put(struct clk *clk);
+ #else
+ /* All these casts to avoid ifdefs in clkdev... */
+ static inline struct clk *
+-clk_hw_create_clk(struct clk_hw *hw, const char *dev_id, const char *con_id)
++clk_hw_create_clk(struct device *dev, struct clk_hw *hw, const char *dev_id,
++		  const char *con_id)
+ {
+ 	return (struct clk *)hw;
+ }
 diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
-index bdeaffc950ae..5ebb2119c0b9 100644
+index 5ebb2119c0b9..f2f4f2afd28c 100644
 --- a/drivers/clk/clkdev.c
 +++ b/drivers/clk/clkdev.c
-@@ -28,69 +28,37 @@ static LIST_HEAD(clocks);
- static DEFINE_MUTEX(clocks_mutex);
- 
- #if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK)
--static struct clk *__of_clk_get(struct device_node *np, int index,
--			       const char *dev_id, const char *con_id)
-+static struct clk_hw *of_clk_get_hw(struct device_node *np,
-+				    int index, const char *con_id)
+@@ -51,7 +51,7 @@ static struct clk *__of_clk_get(struct device_node *np,
  {
-+	int ret;
-+	struct clk_hw *hw;
- 	struct of_phandle_args clkspec;
--	struct clk *clk;
--	int rc;
+ 	struct clk_hw *hw = of_clk_get_hw(np, index, con_id);
  
--	rc = of_parse_phandle_with_args(np, "clocks", "#clock-cells", index,
--					&clkspec);
--	if (rc)
--		return ERR_PTR(rc);
-+	ret = of_parse_clkspec(np, index, con_id, &clkspec);
-+	if (ret)
-+		return ERR_PTR(ret);
- 
--	clk = __of_clk_get_from_provider(&clkspec, dev_id, con_id);
-+	hw = of_clk_get_hw_from_clkspec(&clkspec);
- 	of_node_put(clkspec.np);
- 
--	return clk;
-+	return hw;
+-	return clk_hw_create_clk(hw, dev_id, con_id);
++	return clk_hw_create_clk(NULL, hw, dev_id, con_id);
  }
  
--struct clk *of_clk_get(struct device_node *np, int index)
-+static struct clk *__of_clk_get(struct device_node *np,
-+				int index, const char *dev_id,
-+				const char *con_id)
+ struct clk *of_clk_get(struct device_node *np, int index)
+@@ -130,7 +130,8 @@ static struct clk_lookup *clk_find(const char *dev_id, const char *con_id)
+ 	return cl;
+ }
+ 
+-struct clk *clk_get_sys(const char *dev_id, const char *con_id)
++static struct clk *__clk_get_sys(struct device *dev, const char *dev_id,
++				 const char *con_id)
  {
--	return __of_clk_get(np, index, np->full_name, NULL);
-+	struct clk_hw *hw = of_clk_get_hw(np, index, con_id);
+ 	struct clk_lookup *cl;
+ 	struct clk *clk = NULL;
+@@ -141,7 +142,7 @@ struct clk *clk_get_sys(const char *dev_id, const char *con_id)
+ 	if (!cl)
+ 		goto out;
+ 
+-	clk = clk_hw_create_clk(cl->clk_hw, dev_id, con_id);
++	clk = clk_hw_create_clk(dev, cl->clk_hw, dev_id, con_id);
+ 	if (IS_ERR(clk))
+ 		cl = NULL;
+ out:
+@@ -149,6 +150,11 @@ struct clk *clk_get_sys(const char *dev_id, const char *con_id)
+ 
+ 	return cl ? clk : ERR_PTR(-ENOENT);
+ }
 +
-+	return clk_hw_create_clk(hw, dev_id, con_id);
- }
--EXPORT_SYMBOL(of_clk_get);
++struct clk *clk_get_sys(const char *dev_id, const char *con_id)
++{
++	return __clk_get_sys(NULL, dev_id, con_id);
++}
+ EXPORT_SYMBOL(clk_get_sys);
  
--static struct clk *__of_clk_get_by_name(struct device_node *np,
--					const char *dev_id,
--					const char *name)
-+struct clk *of_clk_get(struct device_node *np, int index)
- {
--	struct clk *clk = ERR_PTR(-ENOENT);
--
--	/* Walk up the tree of devices looking for a clock that matches */
--	while (np) {
--		int index = 0;
--
--		/*
--		 * For named clocks, first look up the name in the
--		 * "clock-names" property.  If it cannot be found, then
--		 * index will be an error code, and of_clk_get() will fail.
--		 */
--		if (name)
--			index = of_property_match_string(np, "clock-names", name);
--		clk = __of_clk_get(np, index, dev_id, name);
--		if (!IS_ERR(clk)) {
--			break;
--		} else if (name && index >= 0) {
--			if (PTR_ERR(clk) != -EPROBE_DEFER)
--				pr_err("ERROR: could not get clock %pOF:%s(%i)\n",
--					np, name ? name : "", index);
--			return clk;
--		}
--
--		/*
--		 * No matching clock found on this node.  If the parent node
--		 * has a "clock-ranges" property, then we can try one of its
--		 * clocks.
--		 */
--		np = np->parent;
--		if (np && !of_get_property(np, "clock-ranges", NULL))
--			break;
--	}
--
--	return clk;
-+	return __of_clk_get(np, index, np->full_name, NULL);
- }
-+EXPORT_SYMBOL(of_clk_get);
- 
- /**
-  * of_clk_get_by_name() - Parse and lookup a clock referenced by a device node
-@@ -106,15 +74,14 @@ struct clk *of_clk_get_by_name(struct device_node *np, const char *name)
- 	if (!np)
- 		return ERR_PTR(-ENOENT);
- 
--	return __of_clk_get_by_name(np, np->full_name, name);
-+	return __of_clk_get(np, -1, np->full_name, name);
- }
- EXPORT_SYMBOL(of_clk_get_by_name);
- 
- #else /* defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK) */
- 
--static struct clk *__of_clk_get_by_name(struct device_node *np,
--					const char *dev_id,
--					const char *name)
-+static struct clk_hw *of_clk_get_hw(struct device_node *np,
-+				    int index, const char *con_id)
- {
- 	return ERR_PTR(-ENOENT);
- }
-@@ -187,12 +154,12 @@ EXPORT_SYMBOL(clk_get_sys);
  struct clk *clk_get(struct device *dev, const char *con_id)
- {
- 	const char *dev_id = dev ? dev_name(dev) : NULL;
--	struct clk *clk;
-+	struct clk_hw *hw;
- 
+@@ -159,10 +165,10 @@ struct clk *clk_get(struct device *dev, const char *con_id)
  	if (dev && dev->of_node) {
--		clk = __of_clk_get_by_name(dev->of_node, dev_id, con_id);
--		if (!IS_ERR(clk) || PTR_ERR(clk) == -EPROBE_DEFER)
--			return clk;
-+		hw = of_clk_get_hw(dev->of_node, 0, con_id);
-+		if (!IS_ERR(hw) || PTR_ERR(hw) == -EPROBE_DEFER)
-+			return clk_hw_create_clk(hw, dev_id, con_id);
+ 		hw = of_clk_get_hw(dev->of_node, 0, con_id);
+ 		if (!IS_ERR(hw) || PTR_ERR(hw) == -EPROBE_DEFER)
+-			return clk_hw_create_clk(hw, dev_id, con_id);
++			return clk_hw_create_clk(dev, hw, dev_id, con_id);
  	}
  
- 	return clk_get_sys(dev_id, con_id);
+-	return clk_get_sys(dev_id, con_id);
++	return __clk_get_sys(dev, dev_id, con_id);
+ }
+ EXPORT_SYMBOL(clk_get);
+ 
 -- 
 Sent by a computer through tubes
 
