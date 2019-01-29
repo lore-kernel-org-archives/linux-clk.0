@@ -2,194 +2,249 @@ Return-Path: <SRS0=lEqg=QF=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DB1BC169C4
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Jan 2019 17:31:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 516E6C282D0
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Jan 2019 17:56:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3899B2175B
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Jan 2019 17:31:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 192FA2175B
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Jan 2019 17:56:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="Rs0akdsm"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="TSpT+wgl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727823AbfA2Rbp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 29 Jan 2019 12:31:45 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:34026 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727628AbfA2Rbo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Jan 2019 12:31:44 -0500
-Received: by mail-io1-f67.google.com with SMTP id b16so17015917ior.1
-        for <linux-clk@vger.kernel.org>; Tue, 29 Jan 2019 09:31:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bZh0qe15JVYEhdxehVf2IVz+a7AcDGhW0+jvnJqPk1M=;
-        b=Rs0akdsmCMlEPTq9WHuH9kawCWMxee51GSzmmGmU8FOmCVbDxXNWzqQ4/lvjJ4UgM3
-         9X+tFjCjaUTsp/4QhemzdFHHc08nRBAKIBHB1pPRaAuvqh/IMxcQ528J7DMaAoXwM8hR
-         I2cr0BixknbZGOGPp+Z1sm8mre+8o4DaWo4xY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bZh0qe15JVYEhdxehVf2IVz+a7AcDGhW0+jvnJqPk1M=;
-        b=S/djJ72LtCbNfo1tfipYri36lbV+LWwXviCz2qhykdwcwjJ3SozQ5bZRM1isVEL87Y
-         2dVzLJC5kHp8lruZ+gjOWUJQL2C9WAYRXfp7NIV8MxGECoAHKXXMU8yzR8ycVhllAwn2
-         5cH+ddw3PIFebK4Skp8sh7N+QGCaQm/DwN3QFQ3pmRiu/4p/DuRsV0812nfVlqZBTqjB
-         eEssuHj9vcf42u3eAnWKMexxIy4zO9nyjgVAtSAvkBXLIaLNbuwiy7X6zM9Mjbtr5XQI
-         JahgcfsMwdBiDtb0wVAH/M1R0Z40MfKDiEFvGS12JxTU/ucwTonZbxXTKWKxI8OUosKp
-         KlvQ==
-X-Gm-Message-State: AHQUAuYRgItKFZ3xN2VJL2WWn3jadt1g4G1KKC0yoRgC54/zbHlczscl
-        f1SqMmIYUDb3ODOHYUopSxjJgcOJnXQGXp3v6DDdZyvJqU4=
-X-Google-Smtp-Source: AHgI3Ib6SZoISxrxWS5TsELBm2UfiVTshEipN4cOitSRdbmF6PAKVZDU+9CpAudCOkW2jLTPXxyLRJUpoZ+hjj+k3yE=
-X-Received: by 2002:a6b:7a0a:: with SMTP id h10mr2413852iom.114.1548783103321;
- Tue, 29 Jan 2019 09:31:43 -0800 (PST)
-MIME-Version: 1.0
-References: <20190124195900.22620-1-jagan@amarulasolutions.com>
- <20190124195900.22620-12-jagan@amarulasolutions.com> <20190125212433.ni2jg3wvpyjazlxf@flea>
- <CAMty3ZAsH2iZ+JEqTE3D58aXfGuhMSg9YoO56ZhhOeE4c4yQHQ@mail.gmail.com> <20190129151348.mh27btttsqcmeban@flea>
-In-Reply-To: <20190129151348.mh27btttsqcmeban@flea>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Tue, 29 Jan 2019 23:01:31 +0530
-Message-ID: <CAMty3ZAjAoti8Zu80c=OyCA+u-jtQnkidsKSNz_c2OaRswqc3w@mail.gmail.com>
-Subject: Re: [PATCH v6 11/22] clk: sunxi-ng: a64: Add minimum rate for PLL_MIPI
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Chen-Yu Tsai <wens@csie.org>,
+        id S1728021AbfA2R4I (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 29 Jan 2019 12:56:08 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:48945 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727869AbfA2Rz2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Jan 2019 12:55:28 -0500
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190129175525euoutp020beda2acec62913cce8d4d5467489a7c~_Y1H-5AIZ3063230632euoutp02B
+        for <linux-clk@vger.kernel.org>; Tue, 29 Jan 2019 17:55:25 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190129175525euoutp020beda2acec62913cce8d4d5467489a7c~_Y1H-5AIZ3063230632euoutp02B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1548784525;
+        bh=/B+NB4uqgeDOd3dvQHPUDWOagHz1W+WijPmr921u0mY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=TSpT+wglSeiBNGk5eb+LSC6ZTdKnCZtqxsQd2PE/tTrCAkO9mr1EtSr0OkjNCsp9z
+         3eyHbwgz2Az7KFxwYceBZQCMtzOMWpgKHxRpDNJ8kmfMK31ZfdAzy6kswNgGjpfOGl
+         3PNgOPgNm3HoToCpQ8HPkyjasfErjXsVAZ/xRAGc=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20190129175524eucas1p1d1408cac43dcc05a0ddd844f4b6d0bd8~_Y1HQX_WV2455524555eucas1p1T;
+        Tue, 29 Jan 2019 17:55:24 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 03.D0.04294.C83905C5; Tue, 29
+        Jan 2019 17:55:24 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20190129175524eucas1p26604f138793648903533eb367fdfa0e1~_Y1Gh_yjr2848028480eucas1p2y;
+        Tue, 29 Jan 2019 17:55:24 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20190129175523eusmtrp28dd6c5a2b7e3f1a0abf6ee8ed4e3c442~_Y1GTCc-N0424104241eusmtrp2X;
+        Tue, 29 Jan 2019 17:55:23 +0000 (GMT)
+X-AuditID: cbfec7f4-835ff700000010c6-2c-5c50938c424d
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id D7.09.04284.B83905C5; Tue, 29
+        Jan 2019 17:55:23 +0000 (GMT)
+Received: from AMDC3778.DIGITAL.local (unknown [106.120.51.20]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20190129175523eusmtip1537a596492e5a8bc6f25335681391aeb~_Y1FoB6RH2140821408eusmtip1w;
+        Tue, 29 Jan 2019 17:55:23 +0000 (GMT)
+From:   Lukasz Luba <l.luba@partner.samsung.com>
+To:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc:     b.zolnierkie@samsung.com, krzk@kernel.org, kgene@kernel.org,
+        cw00.choi@samsung.com, kyungmin.park@samsung.com,
+        m.szyprowski@samsung.com, s.nawrocki@samsung.com,
+        myungjoo.ham@samsung.com, Lukasz Luba <l.luba@partner.samsung.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-amarula@amarulasolutions.com,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 2/8] clk: samsung: add new clocks for DMC for Exynos5422
+ SoC
+Date:   Tue, 29 Jan 2019 18:55:08 +0100
+Message-Id: <1548784514-26649-3-git-send-email-l.luba@partner.samsung.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1548784514-26649-1-git-send-email-l.luba@partner.samsung.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA0VSaUhUURjtzpu3ODT5HLeLmdVQMgVplsSFJIoMhkK0MoISaqzXaK7Nc0md
+        yMRdK9PIVpesRqfJcsWGMjc019HczY0UhNIWlcrKMZ9P69/5zvKdy8elMMkz3IbyDQxhVIEK
+        fykhEpbXzxm2pWZ4eG1vKLdHRbef46h3dgJH2XVtOLo+9glDBsMLErXGTJJoINoWFY/14Ohb
+        6jCOOvX3CTRztQ6g24ZKAXpWN0SijqYD6P2VfALVTibgyNhTJNxrJv/SF0fKi7VJhLzk0WV5
+        9edXAvm1Ui2QzxTbeRAnRC5nGX/fMEbluOe0yGdmKBcPbne82DXYiEeDeVkyoChIO8OWHJdk
+        IKIkdD6AcyN3cH6YBXA0IYfkhxkAh6t/LiomS4myRxqMFzQAfv9lJP9F3o7fANxegnaAFdoL
+        XMCCjoKDvW+WAhgdjcGKmDQhJ5jTh+Hjlnckh4X0ZqhvHSM4LKYPwuH0ryTfZgf725IwDpvQ
+        h2Di2CDgFkG6koQF3eMC3uQKc2sqlgPm8GND6TK2hQsvs5c9LGxN1BI8VsOExhX/bljb0IFz
+        j8boLfC53pGn98GUhSGCv9Ea2DdlxtHYIkwvz8R4WgwT4yW8WwZLU9uXi6ygRneL5C1yOD8r
+        5q+TBaDxdRKRBtbf/d+VA4AWWDOhbICSYXcEMuEOrCKADQ1UOpwJCigGi5+o2dgwWwH0f7xr
+        AE0B6WrxqqMeXhJcEcZGBNQASGFSC7HTb3cvifisIiKSUQWdUoX6M2wNWEsJpdbiqFWjJyW0
+        UhHC+DFMMKNaUQWUiU00yGtXyjw1Dx4WbKi2UsfrdMonyaZP1sfOpXW5V33QyFzVNiPOVTof
+        wfScpUH/tDDtpjr2h+mxSvsjuxzCZTFZYFPh6HRzntHGLKX/UlPJVMZ5N5NJXVn81sLInRsT
+        B0aFavt7caK+dcdHPP3mtfXe1ud0+907G6djLIMnqtwyu+VSIeujcNqKqVjFX1/RPoJAAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprAIsWRmVeSWpSXmKPExsVy+t/xu7rdkwNiDO7+NLbYOGM9q8X1L89Z
+        LeYfOcdq0f/4NbPF+fMb2C3ONr1ht7jVIGOx6fE1VouPPfdYLS7vmsNm8bn3CKPFjPP7mCzW
+        HrnLbnHxlKvF7cYVbBaH37SzWvy7tpHFQdDj/Y1Wdo9NqzrZPDYvqfc4+G4Pk0ffllWMHp83
+        yQWwRenZFOWXlqQqZOQXl9gqRRtaGOkZWlroGZlY6hkam8daGZkq6dvZpKTmZJalFunbJehl
+        fL67kLXggn7FlTsnWRsY/2p0MXJySAiYSGxdspy5i5GLQ0hgKaPE6ae32SASYhKT9m1nh7CF
+        Jf5c6wKLCwl8YpR4+7ysi5GDg01AT2LHqkKQsIhAvUT/m0tsIHOYBfqYJRqPL2YFSQgL+Eus
+        3gPRyyKgKrHr7GMwm1fAS+LepA9Q8+Ukbp7rZAaxOQW8JToe32GE2OUl8e31D7YJjHwLGBlW
+        MYqklhbnpucWG+oVJ+YWl+al6yXn525iBMbGtmM/N+9gvLQx+BCjAAejEg8vQ3BAjBBrYllx
+        Ze4hRgkOZiURXsPf/jFCvCmJlVWpRfnxRaU5qcWHGE2BjprILCWanA+M27ySeENTQ3MLS0Nz
+        Y3NjMwslcd7zBpVRQgLpiSWp2ampBalFMH1MHJxSDYyzdVQuz+25dddsf+L2c/5aIQHvz5vo
+        WeWe7xYxSXN8eXT1jJAgA9GSKjWlz8rHFtwRjbZ5asmwf5v+xAOZ/9SrXaKOvC5psrlcsunV
+        x3f3/D6e5fzE8XnnRYUZ6sU9sbULf2a7vFqQKd+1zybc+kjVbI58Kb6ful6Lti3adKPHz3DN
+        iY5PftZKLMUZiYZazEXFiQCrpC9cowIAAA==
+X-CMS-MailID: 20190129175524eucas1p26604f138793648903533eb367fdfa0e1
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20190129175524eucas1p26604f138793648903533eb367fdfa0e1
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190129175524eucas1p26604f138793648903533eb367fdfa0e1
+References: <1548784514-26649-1-git-send-email-l.luba@partner.samsung.com>
+        <CGME20190129175524eucas1p26604f138793648903533eb367fdfa0e1@eucas1p2.samsung.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Jan 29, 2019 at 8:43 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
->
-> On Mon, Jan 28, 2019 at 03:06:10PM +0530, Jagan Teki wrote:
-> > On Sat, Jan 26, 2019 at 2:54 AM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-> > >
-> > > On Fri, Jan 25, 2019 at 01:28:49AM +0530, Jagan Teki wrote:
-> > > > Minimum PLL used for MIPI is 500MHz, as per manual, but
-> > > > lowering the min rate by 300MHz can result proper working
-> > > > nkms divider with the help of desired dclock rate from
-> > > > panel driver.
-> > > >
-> > > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> > > > Acked-by: Stephen Boyd <sboyd@kernel.org>
-> > >
-> > > Going 200MHz below the minimum doesn't seem really reasonable. What
-> > > is the issue that you are trying to fix here?
-> > >
-> > > It looks like it's picking bad dividers, but if that's the case, this
-> > > isn't the proper fix.
-> >
-> > As I stated in earlier patches, the whole idea is pick the desired
-> > dclk divider based dclk rate. So the dotclock, sun4i_dclk_round_rate
-> > is unable to get the proper dclk divider at the end, so it eventually
-> > picking up wrong divider value and fired vblank timeout.
-> >
-> > So, we come-up with optimal and working min_rate 300MHz in pll-mipi to
-> > get the desired clock something like below.
-> > [    2.415773] [drm] No driver support for vblank timestamp query.
-> > [    2.424116] sun4i_dclk_round_rate: min_div = 4 max_div = 127, rate = 55000000
-> > [    2.424172] ideal = 220000000, rounded = 0
-> > [    2.424176] ideal = 275000000, rounded = 0
-> > [    2.424194] ccu_nkm_round_rate: rate = 330000000
-> > [    2.424197] ideal = 330000000, rounded = 330000000
-> > [    2.424201] sun4i_dclk_round_rate: div = 6 rate = 55000000
-> > [    2.424205] sun4i_dclk_round_rate: min_div = 4 max_div = 127, rate = 55000000
-> > [    2.424209] ideal = 220000000, rounded = 0
-> > [    2.424213] ideal = 275000000, rounded = 0
-> > [    2.424230] ccu_nkm_round_rate: rate = 330000000
-> > [    2.424233] ideal = 330000000, rounded = 330000000
-> > [    2.424236] sun4i_dclk_round_rate: div = 6 rate = 55000000
-> > [    2.424253] ccu_nkm_round_rate: rate = 330000000
-> > [    2.424270] ccu_nkm_round_rate: rate = 330000000
-> > [    2.424278] sun4i_dclk_recalc_rate: val = 1, rate = 330000000
-> > [    2.424281] sun4i_dclk_recalc_rate: val = 1, rate = 330000000
-> > [    2.424306] ccu_nkm_set_rate: rate = 330000000, parent_rate = 297000000
-> > [    2.424309] ccu_nkm_set_rate: _nkm.n = 5
-> > [    2.424311] ccu_nkm_set_rate: _nkm.k = 2
-> > [    2.424313] ccu_nkm_set_rate: _nkm.m = 9
-> > [    2.424661] sun4i_dclk_set_rate div 6
-> > [    2.424668] sun4i_dclk_recalc_rate: val = 6, rate = 55000000
-> >
-> > But look like this wouldn't valid for all other dclock rates, say BPI
-> > panel has 30MHz clock that would failed with this logic.
-> >
-> > On the other side Allwinner BSP calculating dclk divider based on the
-> > SoC's. for A33 [1] it is fixed dclk divider of 4 and for A64 is is
-> > calculated based on the bpp/lanes.
->
-> It looks like the A64 has the same divider of 4:
-> https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c#L12
->
-> I think you're confusing it with the ratio between the pixel clock and
-> the dotclock, called dsi_div:
-> https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/disp_al.c#L198
+This patch provides support for clocks needed for Dynamic Memory Controller
+in Exynos5422 SoC. It adds CDREX base register addresses, new DIV, MUX and
+GATE entries.
 
-Ahh.. I thought this initially but as far as DSI clock computation is
-concern, the L12 tcon_div is local variable which is used for edge0
-computation in burst mode and not for the dsi clock computation. Since
-the BSP is unable to get the tcon_div during edge0 computation, they
-defined it locally I think.
+CC: Sylwester Nawrocki <s.nawrocki@samsung.com>
+CC: Chanwoo Choi <cw00.choi@samsung.com>
+CC: Michael Turquette <mturquette@baylibre.com>
+CC: Stephen Boyd <sboyd@kernel.org>
+CC: Kukjin Kim <kgene@kernel.org>
+CC: Krzysztof Kozlowski <krzk@kernel.org>
+CC: linux-samsung-soc@vger.kernel.org
+CC: linux-clk@vger.kernel.org
+CC: linux-arm-kernel@lists.infradead.org
+CC: linux-kernel@vger.kernel.org
+Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+---
+ drivers/clk/samsung/clk-exynos5420.c | 48 +++++++++++++++++++++++++++++++++---
+ 1 file changed, 44 insertions(+), 4 deletions(-)
 
-You can see the lcd_clk_config() code [2], where we can see DSI clock
-computation using dsi_div value.
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index 34cce3c..3e87421 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -132,6 +132,8 @@
+ #define BPLL_LOCK		0x20010
+ #define BPLL_CON0		0x20110
+ #define SRC_CDREX		0x20200
++#define GATE_BUS_CDREX0		0x20700
++#define GATE_BUS_CDREX1		0x20704
+ #define DIV_CDREX0		0x20500
+ #define DIV_CDREX1		0x20504
+ #define KPLL_LOCK		0x28000
+@@ -248,6 +250,8 @@ static const unsigned long exynos5x_clk_regs[] __initconst = {
+ 	DIV_CDREX1,
+ 	SRC_KFC,
+ 	DIV_KFC0,
++	GATE_BUS_CDREX0,
++	GATE_BUS_CDREX1,
+ };
+ 
+ static const unsigned long exynos5800_clk_regs[] __initconst = {
+@@ -425,6 +429,10 @@ PNAME(mout_group13_5800_p)	= { "dout_osc_div", "mout_sw_aclkfl1_550_cam" };
+ PNAME(mout_group14_5800_p)	= { "dout_aclk550_cam", "dout_sclk_sw" };
+ PNAME(mout_group15_5800_p)	= { "dout_osc_div", "mout_sw_aclk550_cam" };
+ PNAME(mout_group16_5800_p)	= { "dout_osc_div", "mout_mau_epll_clk" };
++PNAME(mout_mx_mspll_ccore_phy_p) = { "sclk_bpll", "mout_dpll_ctrl",
++					"mout_mpll_ctrl", "ff_dout_spll2",
++					"mout_sclk_spll"};
++
+ 
+ /* fixed rate clocks generated outside the soc */
+ static struct samsung_fixed_rate_clock
+@@ -450,7 +458,7 @@ static const struct samsung_fixed_factor_clock
+ static const struct samsung_fixed_factor_clock
+ 		exynos5800_fixed_factor_clks[] __initconst = {
+ 	FFACTOR(0, "ff_dout_epll2", "mout_sclk_epll", 1, 2, 0),
+-	FFACTOR(0, "ff_dout_spll2", "mout_sclk_spll", 1, 2, 0),
++	FFACTOR(CLK_FF_DOUT_SPLL2, "ff_dout_spll2", "mout_sclk_spll", 1, 2, 0),
+ };
+ 
+ static const struct samsung_mux_clock exynos5800_mux_clks[] __initconst = {
+@@ -472,11 +480,14 @@ static const struct samsung_mux_clock exynos5800_mux_clks[] __initconst = {
+ 	MUX(0, "mout_aclk300_disp1", mout_group5_5800_p, SRC_TOP2, 24, 2),
+ 	MUX(0, "mout_aclk300_gscl", mout_group5_5800_p, SRC_TOP2, 28, 2),
+ 
++	MUX(CLK_MOUT_MX_MSPLL_CCORE_PHY, "mout_mx_mspll_ccore_phy",
++		mout_mx_mspll_ccore_phy_p, SRC_TOP7, 0, 3),
++
+ 	MUX(CLK_MOUT_MX_MSPLL_CCORE, "mout_mx_mspll_ccore",
+-			mout_mx_mspll_ccore_p, SRC_TOP7, 16, 2),
++			mout_mx_mspll_ccore_p, SRC_TOP7, 16, 3),
+ 	MUX_F(CLK_MOUT_MAU_EPLL, "mout_mau_epll_clk", mout_mau_epll_clk_5800_p,
+ 			SRC_TOP7, 20, 2, CLK_SET_RATE_PARENT, 0),
+-	MUX(0, "sclk_bpll", mout_bpll_p, SRC_TOP7, 24, 1),
++	MUX(CLK_SCLK_BPLL, "sclk_bpll", mout_bpll_p, SRC_TOP7, 24, 1),
+ 	MUX(0, "mout_epll2", mout_epll2_5800_p, SRC_TOP7, 28, 1),
+ 
+ 	MUX(0, "mout_aclk550_cam", mout_group3_5800_p, SRC_TOP8, 16, 3),
+@@ -648,7 +659,7 @@ static const struct samsung_mux_clock exynos5x_mux_clks[] __initconst = {
+ 
+ 	MUX(0, "mout_sclk_mpll", mout_mpll_p, SRC_TOP6, 0, 1),
+ 	MUX(CLK_MOUT_VPLL, "mout_sclk_vpll", mout_vpll_p, SRC_TOP6, 4, 1),
+-	MUX(0, "mout_sclk_spll", mout_spll_p, SRC_TOP6, 8, 1),
++	MUX(CLK_MOUT_SCLK_SPLL, "mout_sclk_spll", mout_spll_p, SRC_TOP6, 8, 1),
+ 	MUX(0, "mout_sclk_ipll", mout_ipll_p, SRC_TOP6, 12, 1),
+ 	MUX(0, "mout_sclk_rpll", mout_rpll_p, SRC_TOP6, 16, 1),
+ 	MUX_F(CLK_MOUT_EPLL, "mout_sclk_epll", mout_epll_p, SRC_TOP6, 20, 1,
+@@ -814,9 +825,13 @@ static const struct samsung_div_clock exynos5x_div_clks[] __initconst = {
+ 			DIV_CDREX0, 16, 3),
+ 	DIV(CLK_DOUT_CCLK_DREX0, "dout_cclk_drex0", "dout_clk2x_phy0",
+ 			DIV_CDREX0, 8, 3),
++	DIV(0, "dout_cclk_drex1", "dout_clk2x_phy0", DIV_CDREX0, 8, 3),
+ 	DIV(CLK_DOUT_CLK2X_PHY0, "dout_clk2x_phy0", "dout_sclk_cdrex",
+ 			DIV_CDREX0, 3, 5),
+ 
++	DIV(0, "dout_pclk_drex0", "dout_cclk_drex0", DIV_CDREX0, 28, 3),
++	DIV(0, "dout_pclk_drex1", "dout_cclk_drex1", DIV_CDREX0, 28, 3),
++
+ 	DIV(CLK_DOUT_PCLK_CORE_MEM, "dout_pclk_core_mem", "mout_mclk_cdrex",
+ 			DIV_CDREX1, 8, 3),
+ 
+@@ -1170,6 +1185,31 @@ static const struct samsung_gate_clock exynos5x_gate_clks[] __initconst = {
+ 			GATE_TOP_SCLK_ISP, 12, CLK_SET_RATE_PARENT, 0),
+ 
+ 	GATE(CLK_G3D, "g3d", "mout_user_aclk_g3d", GATE_IP_G3D, 9, 0, 0),
++
++	GATE(CLK_CLKM_PHY0, "clkm_phy0", "dout_sclk_cdrex",
++			GATE_BUS_CDREX0, 0, 0, 0),
++	GATE(CLK_CLKM_PHY1, "clkm_phy1", "dout_sclk_cdrex",
++			GATE_BUS_CDREX0, 1, 0, 0),
++	GATE(0, "mx_mspll_ccore_phy", "mout_mx_mspll_ccore_phy",
++			SRC_MASK_TOP7, 0, CLK_IGNORE_UNUSED, 0),
++
++	GATE(CLK_ACLK_PPMU_DREX0_0, "aclk_ppmu_drex0_0", "dout_aclk_cdrex1",
++			GATE_BUS_CDREX1, 15, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_PPMU_DREX0_1, "aclk_ppmu_drex0_1", "dout_aclk_cdrex1",
++			GATE_BUS_CDREX1, 14, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_PPMU_DREX1_0, "aclk_ppmu_drex1_0", "dout_aclk_cdrex1",
++			GATE_BUS_CDREX1, 13, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_PPMU_DREX1_1, "aclk_ppmu_drex1_1", "dout_aclk_cdrex1",
++			GATE_BUS_CDREX1, 12, CLK_IGNORE_UNUSED, 0),
++
++	GATE(CLK_PCLK_PPMU_DREX0_0, "pclk_ppmu_drex0_0", "dout_pclk_cdrex",
++			GATE_BUS_CDREX1, 29, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_PPMU_DREX0_1, "pclk_ppmu_drex0_1", "dout_pclk_cdrex",
++			GATE_BUS_CDREX1, 28, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_PPMU_DREX1_0, "pclk_ppmu_drex1_0", "dout_pclk_cdrex",
++			GATE_BUS_CDREX1, 27, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_PPMU_DREX1_1, "pclk_ppmu_drex1_1", "dout_pclk_cdrex",
++			GATE_BUS_CDREX1, 26, CLK_IGNORE_UNUSED, 0),
+ };
+ 
+ static const struct samsung_div_clock exynos5x_disp_div_clks[] __initconst = {
+-- 
+2.7.4
 
-Here is dump after the in Line 792 which is after computation[3]
-[   10.800737] lcd_clk_config: dsi_div = 6, tcon_div = 4, lcd_div = 1
-[   10.800743] lcd_clk_config: lcd_dclk_freq = 55, dclk_rate = 55000000
-[   10.800749] lcd_clk_config: lcd_rate = 330000000, pll_rate = 330000000
-
-The above dump the lcd_rate 330MHz is computed with panel clock, 55MHz
-into dsi_div 6. So this can be our actual divider values dclk_min_div,
-dclk_max_div in sun4i_dclk_round_rate (from
-drivers/gpu/drm/sun4i/sun4i_dotclock.c)
-
-We can even confirm this from Mainline code:
-[    1.866128] sun4i_dclk_round_rate: min_div = 6 max_div = 6, rate = 55000000
-[    1.873112] round_rate, parent = 330000000
-[    1.877351] round_rate, rate = 330000000
-[    1.881338] ideal = 330000000, rounded = 330000000, div = 6
-[    1.887232] sun4i_dclk_round_rate: div = 6 rate = 55000000
-[    1.887239] sun4i_dclk_round_rate: min_div = 6 max_div = 6, rate = 55000000
-[    1.887243] round_rate, parent = 330000000
-[    1.887259] round_rate, rate = 330000000
-[    1.887264] ideal = 330000000, rounded = 330000000, div = 6
-[    1.887267] sun4i_dclk_round_rate: div = 6 rate = 55000000
-[    1.887270] round_rate, parent = 330000000
-[    1.887286] round_rate, rate = 330000000
-[    1.887292] round_rate, parent = 330000000
-[    1.887307] round_rate, rate = 330000000
-[    1.887320] sun4i_dclk_recalc_rate: val = 1, rate = 330000000
-[    1.887324] sun4i_dclk_recalc_rate: val = 1, rate = 330000000
-[    1.887350] rate = 330000000
-[    1.887353] parent_rate = 297000000
-[    1.887355] reg = 0x80c00000
-[    1.887359] _nkm.n = 5, nkm->n.offset = 0x1, nkm->n.shift = 8
-[    1.887362] _nkm.k = 2, nkm->k.offset = 0x1, nkm->k.shift = 4
-[    1.887365] _nkm.m = 9, nkm->m.offset = 0x1, nkm->m.shift = 0
-[    1.887712] sun4i_dclk_set_rate div 6
-[    1.887720] sun4i_dclk_recalc_rate: val = 6, rate = 55000000
-
-So, the dsi_div from AW BSP is our dclk_mini_div(and dclk_max_div) and
-that can be computed as format/lanes in A64.
-
-Hope this explaining clears the diff, let me know if I miss anything.
-
-[2] https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/de/disp_lcd.c#L781
-[3] https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/linux-sunxi/drivers/video/sunxi/disp2/disp/de/disp_lcd.c#L792
