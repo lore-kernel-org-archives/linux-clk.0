@@ -2,95 +2,124 @@ Return-Path: <SRS0=lEqg=QF=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35A26C169C4
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Jan 2019 18:07:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 604F0C169C4
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Jan 2019 18:09:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED19E2184D
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Jan 2019 18:07:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="aA0lz5/x"
+	by mail.kernel.org (Postfix) with ESMTP id 31B8821848
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Jan 2019 18:09:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548785357;
+	bh=VkDWohIUenCSmi9fACRiHhRgqBorJR6nclSPdr+2RTs=;
+	h=Subject:References:Cc:From:In-Reply-To:To:Date:List-ID:From;
+	b=dYrTFdKiPxqZgOPh5wRDoJyEVoURZ2UblGUdWUJS9YKbHIuDXvoTA8x/w2i8+6Jgc
+	 /SzgXrgTLTWsi34TKoUWCyRfLwY84qeD2UycT8TWbybQOLbM5xAWzsKVpiYCie/3Pp
+	 EcKutB3YBQJPAxivwmZkMmBv/XvMtmcc40rwAA1E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727706AbfA2SHJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 29 Jan 2019 13:07:09 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:35826 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727628AbfA2SHJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Jan 2019 13:07:09 -0500
-Received: by mail-wr1-f66.google.com with SMTP id 96so23187469wrb.2
-        for <linux-clk@vger.kernel.org>; Tue, 29 Jan 2019 10:07:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=NzDwDEgriwmCgRdcqLB9TL0tXHCXXVwXdPshYo2uub4=;
-        b=aA0lz5/x4LFTqvA60ICnNMJoFbk39uJ7CnhkZYJOeb9pQcko04r2z8ek1EemQ/H7N1
-         DUy0xRc7jeRdHJ/xh9wTj7kiZJdPNZElsZ+V07PNmqaHMoiEAZWO87U+2K8Bn7EV5FNE
-         EuNgYshQBkNbbhTeKx0AOFK14Sx+r4G5w2+vPjpDkom9sVzpOEYuftscHANqhnIZHD1f
-         xE8AtWvmRK1TYVbQ703NIGgw2zlj0baGYtivZ1NNsOVe2lQC2bE+f6p5ZsdwaBx9tAXK
-         Z1pjWLVPX6Yy1lQ4iKc9hLMDuVYXAKSJEyAnugeho9MU9xZ4hnlFr29Rhmq27UR21i8k
-         a3rA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=NzDwDEgriwmCgRdcqLB9TL0tXHCXXVwXdPshYo2uub4=;
-        b=GH/04e62XmM2mPVe+ZkM0wPz+m8Om5bL3vzLviNhCyhpcWKJIVuE6a04MSywQsFwW7
-         Ry9E7pVKyqePwhDoxpvMWaUq1JJDr9nNRV5Hjg0x9/6rtomdUrZb4bhNhNZbfmyinMRP
-         rJb5ckdr8QQMzKfOFmXJBuYCwK4GcVhjblLg435ZRtvhWxHjVtmBD4sCme9+E5Myy38l
-         I+5WrCUj0bjvwI02srDl8GAtC4/tOFjpUQcS0JI0IcsN04tmFI05eg2+rJ+Uy9EuieQW
-         tim5aQEQ9i07b9u6qTr3sMEOTUG/VygVOWeF4+kjcPlkTFu2WxIVvU6VIKM+GnwAY6Zg
-         j8BQ==
-X-Gm-Message-State: AJcUukdO+iV9h7QfFhtQScWn1C6n3v9aonGYctfEhx9F2qhNuXx0vt84
-        xtdcfeFKMQygVB2J6o+vpeIEVw==
-X-Google-Smtp-Source: ALg8bN5xbEoQ1ihFND9bwxaeig6iPfJJ+zuvOJCox2vVkZ+I7GSjseFGt4qud2fkXGXnmTOQMBeqZw==
-X-Received: by 2002:a05:6000:108d:: with SMTP id y13mr25818527wrw.135.1548785227162;
-        Tue, 29 Jan 2019 10:07:07 -0800 (PST)
-Received: from boomer.baylibre.com ([2a01:e34:eeb6:4690:106b:bae3:31ed:7561])
-        by smtp.gmail.com with ESMTPSA id j33sm192878674wre.91.2019.01.29.10.07.05
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 29 Jan 2019 10:07:06 -0800 (PST)
-Message-ID: <f85275321c93c00494c82a8af19a70c229887944.camel@baylibre.com>
-Subject: Re: [PATCH 04/14] clk: meson: move MESON_GATE to clk-regmap.h
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
+        id S1727100AbfA2SJR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 29 Jan 2019 13:09:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48168 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726846AbfA2SJQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 29 Jan 2019 13:09:16 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C00DC2084A;
+        Tue, 29 Jan 2019 18:09:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548785355;
+        bh=VkDWohIUenCSmi9fACRiHhRgqBorJR6nclSPdr+2RTs=;
+        h=Subject:References:Cc:From:In-Reply-To:To:Date:From;
+        b=f9qXvm99ZMZhTWgYI1q+gleMChm6HixUeTL9EhMS7/Ws+3CqA28jh6ILM43noIppx
+         VFIXZ1qDRS5A8Xmdux7V/zADLocuzbQcRjGuVSbZiGcH54yidfAdTD8R+pzpyRN4d1
+         nlmX2oStBM3gx99tICOIhZHDiYUDIoap8uWseBmM=
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 14/14] clk: meson: rework and clean drivers dependencies
+References: <20190128180430.28689-1-jbrunet@baylibre.com> <20190128180430.28689-15-jbrunet@baylibre.com>
+User-Agent: alot/0.8
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20190128180430.28689-15-jbrunet@baylibre.com>
+Message-ID: <154878535502.136743.7217447718652873910@swboyd.mtv.corp.google.com>
+To:     Jerome Brunet <jbrunet@baylibre.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Neil Armstrong <narmstrong@baylibre.com>
-Cc:     Kevin Hilman <khilman@baylibre.com>, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-Date:   Tue, 29 Jan 2019 19:07:01 +0100
-In-Reply-To: <154878509992.136743.15892625146758066106@swboyd.mtv.corp.google.com>
-References: <20190128180430.28689-1-jbrunet@baylibre.com>
-         <20190128180430.28689-5-jbrunet@baylibre.com>
-         <154878509992.136743.15892625146758066106@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.4 (3.30.4-1.fc29) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Date:   Tue, 29 Jan 2019 10:09:15 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 2019-01-29 at 10:04 -0800, Stephen Boyd wrote:
-> Quoting Jerome Brunet (2019-01-28 10:04:20)
-> > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> > ---
-> 
-> And also make clk-regmap.c a module? Having any commit text would be
-> good.
+Quoting Jerome Brunet (2019-01-28 10:04:30)
+> Initially, the meson clock directory only hosted 2 controllers drivers,
+> for meson8 and gxbb. At the time, both used the same set of clock drivers
+> so managing the dependencies was not a big concern.
+>=20
+> Since this ancient time, entropy did its job, controllers with different
+> requirement and specific clock drivers have been added. Unfortunately, we
+> did not do a great job at managing the dependencies between the
+> controllers and the different clock drivers. Some drivers, such as
+> clk-phase or vid-pll-div, are compiled even if they are useless on the
+> target (meson8). As we are adding new controllers, we need to be able to
+> pick a driver w/o pulling the whole thing.
+>=20
+> The patch aims to clean things up by:
+> * providing a dedicated CONFIG_ for each clock drivers
+> * allowing clock drivers to be compiled as a modules, if possible
+> * stating explicitly which drivers are required by each controller.
+>=20
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 
-Stephen, 
+Sounds good to me.
 
-As stated in the cover-letter, this patch (and several others) is meant to be
-squashed with patch 14 of this series, keeping commit text of patch 14.
+> diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
+> index 2b9490dd9878..8baec10a49a1 100644
+> --- a/drivers/clk/meson/Makefile
+> +++ b/drivers/clk/meson/Makefile
+> @@ -2,12 +2,17 @@
+>  # Makefile for Meson specific clk
+>  #
+> =20
 
-Details are provided in both the cover letter and patch 14
+Add a comment here that these are all the clk library parts or something
+like that?
 
-> 
+> -obj-$(CONFIG_COMMON_CLK_AMLOGIC) +=3D clk-pll.o clk-mpll.o clk-phase.o v=
+id-pll-div.o
+> -obj-$(CONFIG_COMMON_CLK_AMLOGIC) +=3D clk-input.o clk-dualdiv.o
+> -obj-$(CONFIG_COMMON_CLK_AMLOGIC_AUDIO) +=3D sclk-div.o
+> -obj-$(CONFIG_COMMON_CLK_MESON_AO) +=3D meson-aoclk.o
+> +obj-$(CONFIG_COMMON_CLK_MESON_INPUT) +=3D clk-input.o
+> +obj-$(CONFIG_COMMON_CLK_MESON_REGMAP) +=3D clk-regmap.o
+> +obj-$(CONFIG_COMMON_CLK_MESON_DUALDIV) +=3D clk-dualdiv.o
+> +obj-$(CONFIG_COMMON_CLK_MESON_MPLL) +=3D clk-mpll.o
+> +obj-$(CONFIG_COMMON_CLK_MESON_PHASE) +=3D clk-phase.o
+> +obj-$(CONFIG_COMMON_CLK_MESON_PLL) +=3D clk-pll.o
+> +obj-$(CONFIG_COMMON_CLK_MESON_SCLK_DIV) +=3D sclk-div.o
+> +obj-$(CONFIG_COMMON_CLK_MESON_VID_PLL_DIV) +=3D vid-pll-div.o
+> +obj-$(CONFIG_COMMON_CLK_MESON_AO_CLKC) +=3D meson-aoclk.o
+> +
 
+And maybe add a comment here indicating that SoC drivers go below?
+
+>  obj-$(CONFIG_COMMON_CLK_MESON8B) +=3D meson8b.o
+> -obj-$(CONFIG_COMMON_CLK_GXBB)   +=3D gxbb.o gxbb-aoclk.o
+> -obj-$(CONFIG_COMMON_CLK_AXG)    +=3D axg.o axg-aoclk.o
+> -obj-$(CONFIG_COMMON_CLK_AXG_AUDIO)     +=3D axg-audio.o
+> -obj-$(CONFIG_COMMON_CLK_REGMAP_MESON)  +=3D clk-regmap.o
+> +obj-$(CONFIG_COMMON_CLK_GXBB) +=3D gxbb.o gxbb-aoclk.o
+> +obj-$(CONFIG_COMMON_CLK_AXG) +=3D axg.o axg-aoclk.o
+> +obj-$(CONFIG_COMMON_CLK_AXG_AUDIO) +=3D axg-audio.o
+
+And sort them by config name alphanumerically?
 
