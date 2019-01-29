@@ -2,124 +2,82 @@ Return-Path: <SRS0=lEqg=QF=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 604F0C169C4
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Jan 2019 18:09:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3769C169C4
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Jan 2019 18:13:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31B8821848
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Jan 2019 18:09:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69E5321873
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Jan 2019 18:13:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548785357;
-	bh=VkDWohIUenCSmi9fACRiHhRgqBorJR6nclSPdr+2RTs=;
+	s=default; t=1548785592;
+	bh=0qLM2OZxUd82IviRpfQDw00E/Clp0i/bMWEGlb9RTq4=;
 	h=Subject:References:Cc:From:In-Reply-To:To:Date:List-ID:From;
-	b=dYrTFdKiPxqZgOPh5wRDoJyEVoURZ2UblGUdWUJS9YKbHIuDXvoTA8x/w2i8+6Jgc
-	 /SzgXrgTLTWsi34TKoUWCyRfLwY84qeD2UycT8TWbybQOLbM5xAWzsKVpiYCie/3Pp
-	 EcKutB3YBQJPAxivwmZkMmBv/XvMtmcc40rwAA1E=
+	b=ifs6G8d76FedQDGRTQKEpAuSkfc109aQINqDfCOslp4JOrP9Mu1ZmOj4wMSYRnzqV
+	 1HYvcQtXJ97HOR/p4wRAkiAj1zKqbyjRE4hljo4xQVBImtt6HGEIaZ6oH/XPakSuVf
+	 gGjvEX/IPgEmqrb0JaVl1pnBRR0iPutubEL6jrYk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727100AbfA2SJR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 29 Jan 2019 13:09:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48168 "EHLO mail.kernel.org"
+        id S1727499AbfA2SNM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 29 Jan 2019 13:13:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49090 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726846AbfA2SJQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 29 Jan 2019 13:09:16 -0500
+        id S1727492AbfA2SNL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 29 Jan 2019 13:13:11 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C00DC2084A;
-        Tue, 29 Jan 2019 18:09:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3761F20857;
+        Tue, 29 Jan 2019 18:13:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548785355;
-        bh=VkDWohIUenCSmi9fACRiHhRgqBorJR6nclSPdr+2RTs=;
+        s=default; t=1548785591;
+        bh=0qLM2OZxUd82IviRpfQDw00E/Clp0i/bMWEGlb9RTq4=;
         h=Subject:References:Cc:From:In-Reply-To:To:Date:From;
-        b=f9qXvm99ZMZhTWgYI1q+gleMChm6HixUeTL9EhMS7/Ws+3CqA28jh6ILM43noIppx
-         VFIXZ1qDRS5A8Xmdux7V/zADLocuzbQcRjGuVSbZiGcH54yidfAdTD8R+pzpyRN4d1
-         nlmX2oStBM3gx99tICOIhZHDiYUDIoap8uWseBmM=
+        b=tLa8IM58T0QExdlUuuYp5wBw2njuo1Ku2ZMry/4VaeZrIE1Z72kMN+LB42CC3/pMb
+         hoDTJXGuM9uoiZ3v4dCJbfBUiGDXulPhpJ3QMprO2MlL1hIbGaeFSKCCm00n9MvNlZ
+         tNaZjzkG1s/3BIY5HdSbv8dCUeaovMuxeZ26cDuE=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 14/14] clk: meson: rework and clean drivers dependencies
-References: <20190128180430.28689-1-jbrunet@baylibre.com> <20190128180430.28689-15-jbrunet@baylibre.com>
+Subject: Re: [PATCH] clk: ingenic: jz4740: Fix gating of UDC clock
+References: <20190125153436.13517-1-paul@crapouillou.net> <154844250661.136743.15303302299846585853@swboyd.mtv.corp.google.com> <1548444298.1804.2@crapouillou.net>
 User-Agent: alot/0.8
-Cc:     Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20190128180430.28689-15-jbrunet@baylibre.com>
-Message-ID: <154878535502.136743.7217447718652873910@swboyd.mtv.corp.google.com>
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-Date:   Tue, 29 Jan 2019 10:09:15 -0800
+In-Reply-To: <1548444298.1804.2@crapouillou.net>
+Message-ID: <154878559039.136743.10189442694979275708@swboyd.mtv.corp.google.com>
+To:     Paul Cercueil <paul@crapouillou.net>
+Date:   Tue, 29 Jan 2019 10:13:10 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jerome Brunet (2019-01-28 10:04:30)
-> Initially, the meson clock directory only hosted 2 controllers drivers,
-> for meson8 and gxbb. At the time, both used the same set of clock drivers
-> so managing the dependencies was not a big concern.
+Quoting Paul Cercueil (2019-01-25 11:24:58)
+> Hi,
 >=20
-> Since this ancient time, entropy did its job, controllers with different
-> requirement and specific clock drivers have been added. Unfortunately, we
-> did not do a great job at managing the dependencies between the
-> controllers and the different clock drivers. Some drivers, such as
-> clk-phase or vid-pll-div, are compiled even if they are useless on the
-> target (meson8). As we are adding new controllers, we need to be able to
-> pick a driver w/o pulling the whole thing.
 >=20
-> The patch aims to clean things up by:
-> * providing a dedicated CONFIG_ for each clock drivers
-> * allowing clock drivers to be compiled as a modules, if possible
-> * stating explicitly which drivers are required by each controller.
+> On Fri, Jan 25, 2019 at 3:55 PM, Stephen Boyd <sboyd@kernel.org> wrote:
+> > Quoting Paul Cercueil (2019-01-25 07:34:36)
+> >>  The UDC clock is gated when the bit is cleared, not when it is set.
+> >>=20
+> >>  Signed-off-by: Paul Cercueil <paul@crapouillou.net=20
+> >> <mailto:paul@crapouillou.net>>
+> >>  Tested-by: Artur Rojek <contact@artur-rojek.eu=20
+> >> <mailto:contact@artur-rojek.eu>>
+> >>  ---
+> >=20
+> > Any Fixes tag for this?
+> >=20
 >=20
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> Fixes: 2b555a4b9cae
+>=20
+> Should I resend?
+>=20
 
-Sounds good to me.
-
-> diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
-> index 2b9490dd9878..8baec10a49a1 100644
-> --- a/drivers/clk/meson/Makefile
-> +++ b/drivers/clk/meson/Makefile
-> @@ -2,12 +2,17 @@
->  # Makefile for Meson specific clk
->  #
-> =20
-
-Add a comment here that these are all the clk library parts or something
-like that?
-
-> -obj-$(CONFIG_COMMON_CLK_AMLOGIC) +=3D clk-pll.o clk-mpll.o clk-phase.o v=
-id-pll-div.o
-> -obj-$(CONFIG_COMMON_CLK_AMLOGIC) +=3D clk-input.o clk-dualdiv.o
-> -obj-$(CONFIG_COMMON_CLK_AMLOGIC_AUDIO) +=3D sclk-div.o
-> -obj-$(CONFIG_COMMON_CLK_MESON_AO) +=3D meson-aoclk.o
-> +obj-$(CONFIG_COMMON_CLK_MESON_INPUT) +=3D clk-input.o
-> +obj-$(CONFIG_COMMON_CLK_MESON_REGMAP) +=3D clk-regmap.o
-> +obj-$(CONFIG_COMMON_CLK_MESON_DUALDIV) +=3D clk-dualdiv.o
-> +obj-$(CONFIG_COMMON_CLK_MESON_MPLL) +=3D clk-mpll.o
-> +obj-$(CONFIG_COMMON_CLK_MESON_PHASE) +=3D clk-phase.o
-> +obj-$(CONFIG_COMMON_CLK_MESON_PLL) +=3D clk-pll.o
-> +obj-$(CONFIG_COMMON_CLK_MESON_SCLK_DIV) +=3D sclk-div.o
-> +obj-$(CONFIG_COMMON_CLK_MESON_VID_PLL_DIV) +=3D vid-pll-div.o
-> +obj-$(CONFIG_COMMON_CLK_MESON_AO_CLKC) +=3D meson-aoclk.o
-> +
-
-And maybe add a comment here indicating that SoC drivers go below?
-
->  obj-$(CONFIG_COMMON_CLK_MESON8B) +=3D meson8b.o
-> -obj-$(CONFIG_COMMON_CLK_GXBB)   +=3D gxbb.o gxbb-aoclk.o
-> -obj-$(CONFIG_COMMON_CLK_AXG)    +=3D axg.o axg-aoclk.o
-> -obj-$(CONFIG_COMMON_CLK_AXG_AUDIO)     +=3D axg-audio.o
-> -obj-$(CONFIG_COMMON_CLK_REGMAP_MESON)  +=3D clk-regmap.o
-> +obj-$(CONFIG_COMMON_CLK_GXBB) +=3D gxbb.o gxbb-aoclk.o
-> +obj-$(CONFIG_COMMON_CLK_AXG) +=3D axg.o axg-aoclk.o
-> +obj-$(CONFIG_COMMON_CLK_AXG_AUDIO) +=3D axg-audio.o
-
-And sort them by config name alphanumerically?
+No need to resend. Is this fixing something that's broken in the v5.0-rc
+series? I'm trying to understand if this is a critical fix or a
+non-critical fix that can bake until the next release cycle.
 
