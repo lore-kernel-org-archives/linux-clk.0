@@ -2,91 +2,146 @@ Return-Path: <SRS0=lEqg=QF=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0077EC169C4
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Jan 2019 21:55:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61D10C169C4
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Jan 2019 22:26:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B31F221473
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Jan 2019 21:55:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 276DB20882
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Jan 2019 22:26:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548798929;
-	bh=vrxCJaOOpOwcogcgyECS3v0aknQ9iQrGQguScjUaK1M=;
+	s=default; t=1548800764;
+	bh=tF26+0dkvPMN82sf8Qh4/qnGwMHETUp+tJzZyT/8RTg=;
 	h=Subject:References:Cc:From:In-Reply-To:To:Date:List-ID:From;
-	b=2ASsrKWzgULEHluDCzLJjK1y2CQRNTSe19StgSgsvuIFW/h9yihzez0eUP4D17aHs
-	 jqmKJiCLo0ZAPg33LhQi6PXVbJwrB1d0Hdu0DhINCGSP0tfNGzbZTBxfjwR/atV4Un
-	 u4Z9wMNavWBwTKJp8e65k1p7YWRPfTYzl2mR0ABA=
+	b=hTNbjC08V2PYXvvkP5DCIma3hNoeGJ0RfOCdbzH9MVkSEnH1JRWwIk2UGEwpRZh4J
+	 HrnY7vNh7JtIIllj5c5qmsJHZvVUZk1EX42z63ZFlnDEQYfWwBOZZbf3kFX0H35B4Q
+	 yoQnflCT1a1HrGcruhXeTdyax/Wn1cj1ezUuRoww=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727545AbfA2Vz3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 29 Jan 2019 16:55:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58000 "EHLO mail.kernel.org"
+        id S1727342AbfA2W0D (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 29 Jan 2019 17:26:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41182 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727339AbfA2Vz3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 29 Jan 2019 16:55:29 -0500
+        id S1727332AbfA2W0D (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 29 Jan 2019 17:26:03 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6F66D2082F;
-        Tue, 29 Jan 2019 21:55:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 28BA52087F;
+        Tue, 29 Jan 2019 22:26:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548798928;
-        bh=vrxCJaOOpOwcogcgyECS3v0aknQ9iQrGQguScjUaK1M=;
+        s=default; t=1548800762;
+        bh=tF26+0dkvPMN82sf8Qh4/qnGwMHETUp+tJzZyT/8RTg=;
         h=Subject:References:Cc:From:In-Reply-To:To:Date:From;
-        b=U9UxA0cyUrMxiTYxpM3wnnFBmKrfWWxFDHwv/B3kUtMTwSm0zNfd1QcP56IT+Oj9f
-         xI3WbrqQOMvOqqDu5iVfsV6GWAgT5DC3rsliyyqgBmQ0RuhknDkh5tnU3eO/Fhw2vI
-         t1Kw9jsxJWpxw7811NP5A6jM2tLFkDnmsitOtbBc=
+        b=tHrA8hivb7uRmyRqOXgjlsutlNkHqHT6oI9RtkHTN2if0LTPtzY589/RR6InciHnG
+         sISqUDmv8zWOO2r/Ol9WukVzPxOIo6mNaYJJmRb3InnA45XZEvpSRxnYSPy8aTB1Gk
+         iW0vvShysTjv8nfFjGvOOlpmhOvzf2BYgVwfOCJ4=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] clk: fractional-divider: check parent rate only for general approximation
-References: <20190107132124.27788-1-katsuhiro@katsuster.net>
+Subject: Re: Informing common clock framework driver of externally-derived base clock frequency
+References: <CGME20190104023702epcas4p4e6b225121db059cb6ed167581c303e92@epcas4p4.samsung.com> <CAP_wsPYwykAPF=aedoHkZnKhLgFdbUNMK7tpFJkhMfr_X2Gnrg@mail.gmail.com> <32a08ee4-3989-3785-88d6-7d215147eba3@samsung.com> <CAP_wsPa5qsuUhDNXWe55612xY-ppytj+jX4+5s-bFxn5BURoTg@mail.gmail.com> <f5d6c493-5e7e-00ec-a547-c952369630c6@samsung.com>
 User-Agent: alot/0.8
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Katsuhiro Suzuki <katsuhiro@katsuster.net>
+Cc:     linux-clk@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20190107132124.27788-1-katsuhiro@katsuster.net>
-Message-ID: <154879892760.136743.9274469856102314518@swboyd.mtv.corp.google.com>
-To:     Katsuhiro Suzuki <katsuhiro@katsuster.net>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org
-Date:   Tue, 29 Jan 2019 13:55:27 -0800
+In-Reply-To: <f5d6c493-5e7e-00ec-a547-c952369630c6@samsung.com>
+Message-ID: <154880076123.136743.5941772164120864991@swboyd.mtv.corp.google.com>
+To:     Jonny Hall <jonny.hall@boxcast.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>
+Date:   Tue, 29 Jan 2019 14:26:01 -0800
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Katsuhiro Suzuki (2019-01-07 05:21:24)
-> Custom approximation of fractional-divider may not need parent clock
-> rate checking. For example Rockchip SoCs work fine using grand parent
-> clock rate evne if target rate is greater than parent.
+Quoting Sylwester Nawrocki (2019-01-09 06:22:05)
+> On 1/4/19 22:29, Jonny Hall wrote:
+> > On Fri, Jan 4, 2019 at 4:30 AM Sylwester Nawrocki
+> > <s.nawrocki@samsung.com> wrote:
+> [...]
+> >> On 1/4/19 03:35, Jonny Hall wrote:
+> >> [...]
+> >>> ... However, in my application, the input frequency of
+> >>> the si5342 is not known in advance, is derived from an external
+> >>> source, and can change during runtime. The si5342 will need to be
+> >>> (re)configured during operation with the frequency of this root clock
+> >>> source in order to properly lock onto it and generate the correct
+> >>> output frequencies -- it cannot independently determine the input
+> >>> frequency, only "locked" / "unlocked" state.  The application software
+> >>> (other drivers and usermode application code) will know the input
+> >>> clock rate.  I've though of a couple ways to do this:
+> >>>
+> >>> -Implement the root clock source as an "imaginary" divider where the
+> >>> set_rate call actually configures the input dividers of the si5342.
+> >>> This approach seems to abuse the common clock framework, as I'm not
+> >>> actually *setting* the rate, I'm *informing* the driver of a rate that
+> >>> was determined independently.
+> >>
+> >> It sounds like registering a clk notifier on the si5342 root source cl=
+ock
+> >> might be a way to go, wouldn't that work for you?
+> >> For an example you could have a look at drivers/clk/sunxi-ng/ccu_mux.c.
 >=20
-> This patch removes parent clock rate check from custom approximation.
+> > Maybe my understanding is incorrect, but to me it looks like a
+> > notifier (callback registered with clk_notifier_register) is actually
+> > the opposite case -- this method would be used by a clock consumer
+> > that wants to be notified by the common clock framework that a clock
+> > rate has changed (I, as an endpoint, want to know when my clock
+> > source, which is controlled by CCF drivers, changes rate).  The use
+> > case I'm looking for is when a clock chip needs to be notified by
+> > *something else* that something in the system has changed (I, as a
+> > clock chip, need to be informed by other parts of the system what my
+> > input clock rate is).
 >=20
-> Signed-off-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
-> ---
->  drivers/clk/clk-fractional-divider.c | 10 +++++++---
->  1 file changed, 7 insertions(+), 3 deletions(-)
->=20
-> diff --git a/drivers/clk/clk-fractional-divider.c b/drivers/clk/clk-fract=
-ional-divider.c
-> index 545dceec0bbf..b0fc5509e0ff 100644
-> --- a/drivers/clk/clk-fractional-divider.c
-> +++ b/drivers/clk/clk-fractional-divider.c
-> @@ -79,13 +79,17 @@ static long clk_fd_round_rate(struct clk_hw *hw, unsi=
-gned long rate,
->         unsigned long m, n;
->         u64 ret;
+> How about modelling SI5432 input clocks as clock objects? Don't you do it=
+=20
+> already? These are clocks the SI5432 consumes so would be needed anyway.
 > =20
-> -       if (!rate || rate >=3D *parent_rate)
-> +       if (!rate)
+> > To add a bit of clarity to the scenario -- in my use case, the si5342
+> > is generating video pixel clocks for video outputs from the system.
+> > The inputs of the si5342 are other video pixel clocks, from video
+> > inputs to the system.  The parts of the system that are aware of the
+> > input clock rates are things like HDMI subsystem drivers and usermode
+> > application code.  I need a way to connect these
+> > "parts-that-are-aware-of-the-clock-rate" to my si5342 driver so it can
+> > properly configure that portion of the si5342 -- preferably within the
+> > common clock framework, because on the output side of the si5342, our
+> > video output drivers already work with the CCF.
+>=20
+> Assuming the HDMI receiver is source of the clock, couldn't the HDMI=20
+> driver just register a clock and modify its rate according to the HW
+> state changes or user ioctls, etc.? The rate is then propagated through
+> whole clock tree and any element can get notified about changes.
+>=20
 
-Is your fraction multiplying the rate up? If it's a divider it shouldn't
-be increasing the rate more than whatever the parent is supplying so
-this looks odd. How does the grandparent matter here? Maybe you can show
-the example in the commit text so we can all understand what's going on
-here.
+It isn't super clear to me still what the scenario is but let me make
+some general statements.
 
->                 return *parent_rate;
-> =20
+1) Try to avoid using clk notifiers. I'd like to get rid of them so new
+users is frowned up, but accepted if necessary.
+
+2) The root clk can be variable, it doesn't have to be fixed.
+
+3) Adding a way for drivers to 'inject' a new rate seems weird too. We
+already have a way for that to work, just call clk_set_rate() and then
+the rate will be propagated down to all child clks during the set_rate
+call.
+
+So maybe that means your imaginary divider is the way to go? I'm not
+sure, but I would say that whatever is informed about the external clk
+input that's changing rate should be the piece of code that calls
+clk_set_rate() on the external clk and informs the rest of the clk
+children that the rate has changed. If clk drivers need to do something
+else when their clk that uses the external clk changes rate, then they
+can hook their clk's .set_rate op (basically implementing their own rate
+change hook) and do things to keep providing the same rate desired by
+whatever is consuming that clk.
+
+Put another way, calling clk_set_rate() on something near the root of
+the tree doesn't mean that downstream users should be put into an
+inconsistent state. If that use-case isn't working for you we can look
+into fixing it, maybe by using the clk rate locking or clk rate
+constraint features.
+
