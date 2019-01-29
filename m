@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18A5FC282C7
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9C0EC4151A
 	for <linux-clk@archiver.kernel.org>; Tue, 29 Jan 2019 06:11:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CEED12175B
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Jan 2019 06:10:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA65B2177E
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Jan 2019 06:11:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548742259;
-	bh=i2/x4THMEQuaCq9FeqNFX7loZmXx3MGcTTPWunJFV3Y=;
+	s=default; t=1548742260;
+	bh=Z848HCBtnzeyslpUOhB1zGR5r1IbxympifhvWGT6J3A=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=OsyraetX7bzKB4i4iqlUFnm5sJVhMF8a4wQiSZDALIyviBmSV8CTxqd3znfIqVD89
-	 5/Q1PvMqcowGGehtxf3VxTpESTY88hsTy/eMVl7+MKMrrU49iUb73KswqcH2sv2yYI
-	 QV+4WjXKBV3PG3olxSUzX9o/220d0rNzDs0gzqBA=
+	b=iZgWSkdEJMSWpaGTMnjIleEDUI5zVdJIwBu8Gbfg6Jw+a90i6jE0YxRg9iAZwu06x
+	 FUMpVZ+ilbeyLzVEnuYya6Vp55TLTbi+vHlu344wV6NMCSKK+46NUqhhiJBaoLYjM0
+	 vcy/U0Kk+/Eh74cNN1I1ymYZOToAgLd0xScxdS1I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727359AbfA2GKZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 29 Jan 2019 01:10:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33426 "EHLO mail.kernel.org"
+        id S1725832AbfA2GLA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 29 Jan 2019 01:11:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33430 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726217AbfA2GKY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        id S1726230AbfA2GKY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
         Tue, 29 Jan 2019 01:10:24 -0500
 Received: from mail.kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 37B312183F;
+        by mail.kernel.org (Postfix) with ESMTPSA id 9120E21841;
         Tue, 29 Jan 2019 06:10:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1548742223;
-        bh=i2/x4THMEQuaCq9FeqNFX7loZmXx3MGcTTPWunJFV3Y=;
+        bh=Z848HCBtnzeyslpUOhB1zGR5r1IbxympifhvWGT6J3A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qIJXt5K5UO+J5+NRKWV0ajCMxvEFXgGUuxeeVL3Nu7mwJZ//9OOV4M2z8NVWrhwie
-         FUwrlTSVN6FJH5HcxDzPyBYnpwRHoipkUbI8XxSXiN9IIK7I5/D0a5Au4gHRRq3Nc+
-         Ck1sxSDOoZ+dsynGsc6HKkuUJ8Yzjr5Bo5d83h/k=
+        b=V+Jo7mWUqfz1ur1wEqNpUO+8yeyp2rRAvnsgH9ICjO599S1Hyz+Mw16aIXCWFpYI6
+         Z4f9BckDZfClGF0Lls2HaCYLOSzWbIWVBzQfUSCG4JeHbPwkou36Ck6fwLm1gqOix7
+         4Fq6H11JRg0KwEziBjZu7VOl+CZwN15sTo+HBhCU=
 From:   Stephen Boyd <sboyd@kernel.org>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
+Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         Jerome Brunet <jbrunet@baylibre.com>,
         Russell King <linux@armlinux.org.uk>
-Subject: [PATCH 2/9] clk: Introduce get_parent_hw clk op
-Date:   Mon, 28 Jan 2019 22:10:14 -0800
-Message-Id: <20190129061021.94775-3-sboyd@kernel.org>
+Subject: [PATCH 3/9] clk: core: clarify the check for runtime PM
+Date:   Mon, 28 Jan 2019 22:10:15 -0800
+Message-Id: <20190129061021.94775-4-sboyd@kernel.org>
 X-Mailer: git-send-email 2.20.1.495.gaa96b0ce6b-goog
 In-Reply-To: <20190129061021.94775-1-sboyd@kernel.org>
 References: <20190129061021.94775-1-sboyd@kernel.org>
@@ -58,223 +58,90 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The clk_ops::get_parent function is limited in ability to return errors
-because it returns a u8. A "workaround" to return an error is to return
-a number >= the number of parents of a clk. This will in turn cause the
-framework to "orphan" the clk and make the parent of the clk NULL. This
-isn't really correct, because if an error occurs while reading the
-parents of a clk we should fail the clk registration, instead of
-orphaning the clk and waiting for the clk to appear later.
+From: Miquel Raynal <miquel.raynal@bootlin.com>
 
-We really need to have three different return values from the get_parent
-clk op. Something valid for a clk that exists, something invalid for a
-clk that doesn't exist and never will exist or can't be determined
-because the register operation to read the parent failed, and something
-for a clk that doesn't exist because the framework doesn't know about
-what it is. Introduce a new clk_op that can express all of this by
-returning a pointer to the clk_hw of the parent. It's expected that clk
-provider drivers will return a valid pointer when the parent is
-findable, an error pointer like EPROBE_DEFER if their parent provider
-hasn't probed yet but is valid, a NULL pointer if they can't find the
-clk but index is valid, and an error pointer with an appropriate error
-code otherwise.
+Currently, the core->dev entry is populated only if runtime PM is
+enabled. Doing so prevents accessing the device structure in any
+case.
 
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>
+Keep the same logic but instead of using the presence of core->dev as
+the only condition, also check the status of
+pm_runtime_enabled(). Then, we can set the core->dev pointer at any
+time as long as a device structure is available.
+
+This change will help supporting device links in the clock subsystem.
+
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 Cc: Jerome Brunet <jbrunet@baylibre.com>
 Cc: Russell King <linux@armlinux.org.uk>
 Cc: Michael Turquette <mturquette@baylibre.com>
+[sboyd@kernel.org: Change to a boolean flag]
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 ---
- drivers/clk/clk.c            | 117 ++++++++++++++++++++++++++---------
- include/linux/clk-provider.h |   9 +++
- 2 files changed, 96 insertions(+), 30 deletions(-)
+ drivers/clk/clk.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 01b36f0851bd..5d82cf25bb29 100644
+index 5d82cf25bb29..01cdb9ae03fa 100644
 --- a/drivers/clk/clk.c
 +++ b/drivers/clk/clk.c
-@@ -2242,14 +2242,84 @@ struct clk *clk_get_parent(struct clk *clk)
- }
- EXPORT_SYMBOL_GPL(clk_get_parent);
- 
--static struct clk_core *__clk_init_parent(struct clk_core *core)
-+static struct clk_core *
-+__clk_init_parent(struct clk_core *core, bool update_orphan)
+@@ -60,6 +60,7 @@ struct clk_core {
+ 	struct clk_core		*new_child;
+ 	unsigned long		flags;
+ 	bool			orphan;
++	bool			rpm_enabled;
+ 	unsigned int		enable_count;
+ 	unsigned int		prepare_count;
+ 	unsigned int		protect_count;
+@@ -95,9 +96,9 @@ struct clk {
+ /***           runtime pm          ***/
+ static int clk_pm_runtime_get(struct clk_core *core)
  {
- 	u8 index = 0;
-+	struct clk_hw *parent_hw = NULL;
+-	int ret = 0;
++	int ret;
  
--	if (core->num_parents > 1 && core->ops->get_parent)
--		index = core->ops->get_parent(core->hw);
-+	if (core->ops->get_parent_hw) {
-+		parent_hw = core->ops->get_parent_hw(core->hw);
-+		/*
-+		 * The provider driver doesn't know what the parent is,
-+		 * but it's at least something valid, so it's not an
-+		 * orphan, just a clk with some unknown parent.
-+		 */
-+		if (!parent_hw && update_orphan)
-+			core->orphan = false;
-+	} else {
-+		if (core->num_parents > 1 && core->ops->get_parent)
-+			index = core->ops->get_parent(core->hw);
-+
-+		parent_hw = clk_hw_get_parent_by_index(core->hw, index);
-+	}
-+
-+	if (IS_ERR(parent_hw)) {
-+		/* Parent clk provider hasn't probed yet, orphan it */
-+		if (PTR_ERR(parent_hw) == -EPROBE_DEFER) {
-+			if (update_orphan)
-+				core->orphan = true;
-+
-+			return NULL;
-+		}
-+
-+		return ERR_CAST(parent_hw);
-+	}
-+
-+	if (!parent_hw)
-+		return NULL;
-+
-+	return parent_hw->core;
-+}
-+
-+static int clk_init_parent(struct clk_core *core)
-+{
-+	core->parent = __clk_init_parent(core, true);
-+	if (IS_ERR(core->parent))
-+		return PTR_ERR(core->parent);
-+
-+	/*
-+	 * Populate core->parent if parent has already been clk_core_init'd. If
-+	 * parent has not yet been clk_core_init'd then place clk in the orphan
-+	 * list.  If clk doesn't have any parents then place it in the root
-+	 * clk list.
-+	 *
-+	 * Every time a new clk is clk_init'd then we walk the list of orphan
-+	 * clocks and re-parent any that are children of the clock currently
-+	 * being clk_init'd.
-+	 */
-+	if (core->parent) {
-+		hlist_add_head(&core->child_node,
-+				&core->parent->children);
-+		core->orphan = core->parent->orphan;
-+	} else if (!core->num_parents) {
-+		hlist_add_head(&core->child_node, &clk_root_list);
-+		core->orphan = false;
-+	} else {
-+		hlist_add_head(&core->child_node, &clk_orphan_list);
-+	}
-+
-+	return 0;
-+}
+-	if (!core->dev)
++	if (!core->rpm_enabled)
+ 		return 0;
  
--	return clk_core_get_parent_by_index(core, index);
-+static struct clk_core *clk_find_parent(struct clk_core *core)
-+{
-+	return __clk_init_parent(core, false);
-+}
-+
-+static bool clk_has_parent_op(const struct clk_ops *ops)
-+{
-+	return ops->get_parent || ops->get_parent_hw;
- }
+ 	ret = pm_runtime_get_sync(core->dev);
+@@ -106,7 +107,7 @@ static int clk_pm_runtime_get(struct clk_core *core)
  
- static void clk_core_reparent(struct clk_core *core,
-@@ -3045,14 +3115,14 @@ static int __clk_core_init(struct clk_core *core)
- 		goto out;
- 	}
+ static void clk_pm_runtime_put(struct clk_core *core)
+ {
+-	if (!core->dev)
++	if (!core->rpm_enabled)
+ 		return;
  
--	if (core->ops->set_parent && !core->ops->get_parent) {
-+	if (core->ops->set_parent && !clk_has_parent_op(core->ops)) {
- 		pr_err("%s: %s must implement .get_parent & .set_parent\n",
- 		       __func__, core->name);
- 		ret = -EINVAL;
- 		goto out;
- 	}
- 
--	if (core->num_parents > 1 && !core->ops->get_parent) {
-+	if (core->num_parents > 1 && !clk_has_parent_op(core->ops)) {
- 		pr_err("%s: %s must implement .get_parent as it has multi parents\n",
- 		       __func__, core->name);
- 		ret = -EINVAL;
-@@ -3073,29 +3143,9 @@ static int __clk_core_init(struct clk_core *core)
- 				"%s: invalid NULL in %s's .parent_names\n",
- 				__func__, core->name);
- 
--	core->parent = __clk_init_parent(core);
--
--	/*
--	 * Populate core->parent if parent has already been clk_core_init'd. If
--	 * parent has not yet been clk_core_init'd then place clk in the orphan
--	 * list.  If clk doesn't have any parents then place it in the root
--	 * clk list.
--	 *
--	 * Every time a new clk is clk_init'd then we walk the list of orphan
--	 * clocks and re-parent any that are children of the clock currently
--	 * being clk_init'd.
--	 */
--	if (core->parent) {
--		hlist_add_head(&core->child_node,
--				&core->parent->children);
--		core->orphan = core->parent->orphan;
--	} else if (!core->num_parents) {
--		hlist_add_head(&core->child_node, &clk_root_list);
--		core->orphan = false;
--	} else {
--		hlist_add_head(&core->child_node, &clk_orphan_list);
--		core->orphan = true;
--	}
-+	ret = clk_init_parent(core);
-+	if (ret)
-+		goto out;
- 
- 	/*
- 	 * optional platform-specific magic
-@@ -3173,7 +3223,14 @@ static int __clk_core_init(struct clk_core *core)
- 	 * parent.
+ 	pm_runtime_put_sync(core->dev);
+@@ -226,7 +227,7 @@ static bool clk_core_is_enabled(struct clk_core *core)
+ 	 * taking enable spinlock, but the below check is needed if one tries
+ 	 * to call it from other places.
  	 */
- 	hlist_for_each_entry_safe(orphan, tmp2, &clk_orphan_list, child_node) {
--		struct clk_core *parent = __clk_init_parent(orphan);
-+		struct clk_core *parent = clk_find_parent(orphan);
-+
-+		/*
-+		 * Error parent should have been caught before and returned
-+		 * as an error during registration.
-+		 */
-+		if (WARN_ON_ONCE(IS_ERR(parent)))
-+			continue;
+-	if (core->dev) {
++	if (core->rpm_enabled) {
+ 		pm_runtime_get_noresume(core->dev);
+ 		if (!pm_runtime_active(core->dev)) {
+ 			ret = false;
+@@ -236,7 +237,7 @@ static bool clk_core_is_enabled(struct clk_core *core)
  
- 		/*
- 		 * We need to use __clk_set_parent_before() and _after() to
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 60c51871b04b..8b84dee942bf 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -155,6 +155,14 @@ struct clk_duty {
-  *		multiple parents.  It is optional (and unnecessary) for clocks
-  *		with 0 or 1 parents.
-  *
-+ * @get_parent_hw: Queries the hardware to determine the parent of a clock.  The
-+ *		return value is a clk_hw pointer corresponding to
-+ *		the parent clock. In short, this function translates the parent
-+ *		value read from hardware into a pointer to the clk_hw for that clk.
-+ *		Currently only called when the clock is initialized by
-+ *		__clk_init.  This callback is mandatory for clocks with
-+ *		multiple parents.  It is optional for clocks with 0 or 1 parents.
-+ *
-  * @set_rate:	Change the rate of this clock. The requested rate is specified
-  *		by the second argument, which should typically be the return
-  *		of .round_rate call.  The third argument gives the parent rate
-@@ -238,6 +246,7 @@ struct clk_ops {
- 					  struct clk_rate_request *req);
- 	int		(*set_parent)(struct clk_hw *hw, u8 index);
- 	u8		(*get_parent)(struct clk_hw *hw);
-+	struct clk_hw * (*get_parent_hw)(struct clk_hw *hw);
- 	int		(*set_rate)(struct clk_hw *hw, unsigned long rate,
- 				    unsigned long parent_rate);
- 	int		(*set_rate_and_parent)(struct clk_hw *hw,
+ 	ret = core->ops->is_enabled(core->hw);
+ done:
+-	if (core->dev)
++	if (core->rpm_enabled)
+ 		pm_runtime_put(core->dev);
+ 
+ 	return ret;
+@@ -3391,7 +3392,8 @@ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
+ 	core->ops = hw->init->ops;
+ 
+ 	if (dev && pm_runtime_enabled(dev))
+-		core->dev = dev;
++		core->rpm_enabled = true;
++	core->dev = dev;
+ 	if (dev && dev->driver)
+ 		core->owner = dev->driver->owner;
+ 	core->hw = hw;
 -- 
 Sent by a computer through tubes
 
