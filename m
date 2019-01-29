@@ -2,361 +2,113 @@ Return-Path: <SRS0=lEqg=QF=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DA40C169C4
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Jan 2019 06:11:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F22FBC169C4
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Jan 2019 07:01:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DC1E2175B
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Jan 2019 06:11:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548742272;
-	bh=BO+Wbstcwmn5OrAqlJ976Job1PpJEQEUhPaskYglRTs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=S0GPsB6vHdCltI/VVyevXCGuLfI7n98r3a4IIEC8v15XmnhdH4bdXdPmx2BWjnMQk
-	 746A2x3bGcnwuAg/ISfuKdgPjpfIsjAZPzNWMGIFIEkSi2NltQtWJ6tJ1bkyPvrG6x
-	 q+w6BJtG/fb9U55Gkzfvux6g2LMLXjEOVrTGAQi4=
+	by mail.kernel.org (Postfix) with ESMTP id C38B92177E
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Jan 2019 07:01:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727724AbfA2GLH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 29 Jan 2019 01:11:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33406 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726201AbfA2GKY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 29 Jan 2019 01:10:24 -0500
-Received: from mail.kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CAA3B217F5;
-        Tue, 29 Jan 2019 06:10:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548742223;
-        bh=BO+Wbstcwmn5OrAqlJ976Job1PpJEQEUhPaskYglRTs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vdI7hSj2tMm+x90q9cpjz3Rv3nstjp9HbuNdDuU0WEEmysAkCFqjuHNiZESn/Bc3a
-         I4G+JfT7obn609Zm5zBXxBQu+o6UScm7cVrxS5ko+vW14PRVCfuvzy+ktEH5ujBV+m
-         pF0+dCJYq2XN44qxpPQuO0FV7MZo0D6c259PBcHs=
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Russell King <linux@armlinux.org.uk>
-Subject: [PATCH 1/9] clk: Combine __clk_get() and __clk_create_clk()
-Date:   Mon, 28 Jan 2019 22:10:13 -0800
-Message-Id: <20190129061021.94775-2-sboyd@kernel.org>
-X-Mailer: git-send-email 2.20.1.495.gaa96b0ce6b-goog
-In-Reply-To: <20190129061021.94775-1-sboyd@kernel.org>
-References: <20190129061021.94775-1-sboyd@kernel.org>
+        id S1725446AbfA2HBS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 29 Jan 2019 02:01:18 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:38834 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725267AbfA2HBS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Jan 2019 02:01:18 -0500
+Received: by mail-lj1-f196.google.com with SMTP id c19-v6so16506459lja.5;
+        Mon, 28 Jan 2019 23:01:15 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+/qwbFdY2Na2O0rltiLqHVRyBmVnE1tqShBeGQVCfYo=;
+        b=D97IzD7d+iSTgpczYajGpmstLRYE7BWFhf3DlkbObNQKpYLjrUL9hlMh8qnlyt0K20
+         oFzgXUNhWkzdyiBaRKi7byT27UWr5G6nMFMg7vtxJfbwlu0+5TLwySsHfE+e6wLbSRKk
+         b9229jmyG4CvKenK34d/b1FeMi9Bp5Qzlluhg5PcCBYDpdRI8JWmYqDcK/HMyu/fhffX
+         ov+qRmL0GNX3ew023cL3It3hRH0dt/9qe+ss3HzULqF9NyfUjCd8qnpJdERX+DOFDgSW
+         k2sUM0KJBKky5yZ1L/bnoontLls/sAhdBDtN9x4zUwzv1t/PC6QIFGDJWw+uf7hwnks7
+         gXCA==
+X-Gm-Message-State: AJcUukfBq5vJjRwACFUOUz2ZqB1TmT68sB1nAX0SKJg+Rfa/Cp8CqiLT
+        jY3Ol0pzz2mIyriDNgpgB/k=
+X-Google-Smtp-Source: ALg8bN4MehNiWJ2Bq2slhWgMve4uHvp78jlZUoPkr8MoWVegVKz49ykLgUBMZVF8/qz9xQjw8Ghzsg==
+X-Received: by 2002:a2e:8e8e:: with SMTP id z14-v6mr16475950ljk.84.1548745275175;
+        Mon, 28 Jan 2019 23:01:15 -0800 (PST)
+Received: from localhost.localdomain (dytkl7s9vpj00trvf9g2y-4.rev.dnainternet.fi. [2001:14bb:410:9dbf:b161:fde8:3a24:e96c])
+        by smtp.gmail.com with ESMTPSA id s9-v6sm3062759lja.12.2019.01.28.23.01.12
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 28 Jan 2019 23:01:14 -0800 (PST)
+Date:   Tue, 29 Jan 2019 09:01:03 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     Jerry Hoemann <jerry.hoemann@hpe.com>
+Cc:     Guenter Roeck <linux@roeck-us.net>, mazziesaccount@gmail.com,
+        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
+        lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-watchdog@vger.kernel.org
+Subject: Re: [RFC PATCH v2 08/10] rtc: bd70528: Initial support for ROHM
+ bd70528 RTC
+Message-ID: <20190129070103.GA2551@localhost.localdomain>
+References: <20190125110536.GA29321@localhost.localdomain>
+ <35bbc5b9-5f8c-ec80-3eaa-bb2c0e2812c9@roeck-us.net>
+ <20190128202656.GA17466@anatevka>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190128202656.GA17466@anatevka>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The __clk_get() function is practically a private clk implementation
-detail now. No architecture defines it, and given that new code should
-be using the common clk framework there isn't a need for it to keep
-existing just to serve clkdev purposes. Let's fold it into the
-__clk_create_clk() function and make that a little more generic by
-renaming it to clk_hw_create_clk(). This will allow the framework to
-create a struct clk handle to a particular clk_hw pointer and link it up
-as a consumer wherever that's needed.
+On Mon, Jan 28, 2019 at 01:26:56PM -0700, Jerry Hoemann wrote:
+> On Sat, Jan 26, 2019 at 08:30:24AM -0800, Guenter Roeck wrote:
+> > On 1/25/19 3:05 AM, Matti Vaittinen wrote:
+> > > +static int bd70528_set_wake(struct bd70528 *bd70528,
+> > > +			    int enable, int *old_state)
+> > > +{
+> > > +	int ret;
+> > > +	unsigned int ctrl_reg;
+> > > +
+> > > +	ret = regmap_read(bd70528->chip.regmap, BD70528_REG_WAKE_EN, &ctrl_reg);
+> > > +	if (ret)
+> > > +		return ret;
+> > > +
+> > > +	if (old_state) {
+> > > +		if (ctrl_reg & BD70528_MASK_WAKE_EN)
+> > > +			*old_state |= BD70528_WAKE_STATE_BIT;
+> > > +		else
+> > > +			*old_state &= ~BD70528_WAKE_STATE_BIT;
+> > > +
+> > > +		if ((!enable) == (!(*old_state & BD70528_WAKE_STATE_BIT)))
+> > > +			return 0;
+> > 
+> > I think
+> > 		if (enable == !!(*old_state & BD70528_WAKE_STATE_BIT))
+> > would be much better readable. Even if not, there are way too many ()
+> > in the above conditional.
+> > 
+> 
+> The substitution is not equivalent to original.  I think you mean:
+> 
+>  		if (!!enable == !!(*old_state & BD70528_WAKE_STATE_BIT))
 
-Doing this also lets us get rid of the __clk_free_clk() API that had to
-be kept in sync with __clk_put(). Splitting that API up into the "link
-and unlink from consumer list" phase and "free the clk pointer" phase
-allows us to reuse that logic in a couple places, simplifying the code.
+Thanks Jerry! Good catch! I originally wanted that all non-zero values
+of 'enable' would be 'true'. So maybe I just use the original approach
+but get rid of extra parenthesis which were pointed out by Guenter.
 
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
----
- drivers/clk/clk.c    | 140 +++++++++++++++++++++++++++++--------------
- drivers/clk/clk.h    |  10 +---
- drivers/clk/clkdev.c |   9 +--
- 3 files changed, 98 insertions(+), 61 deletions(-)
+		if (!enable == !(*old_state & BD70528_WAKE_STATE_BIT))
+should do it just fine, right?
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index af011974d4ec..01b36f0851bd 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3202,42 +3202,103 @@ static int __clk_core_init(struct clk_core *core)
- 	return ret;
- }
- 
--struct clk *__clk_create_clk(struct clk_hw *hw, const char *dev_id,
-+/**
-+ * clk_core_link_consumer - Add a clk consumer to the list of consumers in a clk_core
-+ * @core: clk to add consumer to
-+ * @clk: consumer to link to a clk
-+ */
-+static void clk_core_link_consumer(struct clk_core *core, struct clk *clk)
-+{
-+	clk_prepare_lock();
-+	hlist_add_head(&clk->clks_node, &core->clks);
-+	clk_prepare_unlock();
-+}
-+
-+/**
-+ * clk_core_unlink_consumer - Remove a clk consumer from the list of consumers in a clk_core
-+ * @clk: consumer to unlink
-+ */
-+static void clk_core_unlink_consumer(struct clk *clk)
-+{
-+	lockdep_assert_held(&prepare_lock);
-+	hlist_del(&clk->clks_node);
-+}
-+
-+/**
-+ * alloc_clk - Allocate a clk consumer, but leave it unlinked to the clk_core
-+ * @core: clk to allocate a consumer for
-+ * @dev_id: string describing device name
-+ * @con_id: connection ID string on device
-+ *
-+ * Returns: clk consumer left unlinked from the consumer list
-+ */
-+static struct clk *alloc_clk(struct clk_core *core, const char *dev_id,
- 			     const char *con_id)
- {
- 	struct clk *clk;
- 
--	/* This is to allow this function to be chained to others */
--	if (IS_ERR_OR_NULL(hw))
--		return ERR_CAST(hw);
--
- 	clk = kzalloc(sizeof(*clk), GFP_KERNEL);
- 	if (!clk)
- 		return ERR_PTR(-ENOMEM);
- 
--	clk->core = hw->core;
-+	clk->core = core;
- 	clk->dev_id = dev_id;
- 	clk->con_id = kstrdup_const(con_id, GFP_KERNEL);
- 	clk->max_rate = ULONG_MAX;
- 
--	clk_prepare_lock();
--	hlist_add_head(&clk->clks_node, &hw->core->clks);
--	clk_prepare_unlock();
--
- 	return clk;
- }
- 
--/* keep in sync with __clk_put */
--void __clk_free_clk(struct clk *clk)
-+/**
-+ * free_clk - Free a clk consumer
-+ * @clk: clk consumer to free
-+ *
-+ * Note, this assumes the clk has been unlinked from the clk_core consumer
-+ * list.
-+ */
-+static void free_clk(struct clk *clk)
- {
--	clk_prepare_lock();
--	hlist_del(&clk->clks_node);
--	clk_prepare_unlock();
--
- 	kfree_const(clk->con_id);
- 	kfree(clk);
- }
- 
-+/**
-+ * clk_hw_create_clk: Allocate and link a clk consumer to a clk_core given
-+ * a clk_hw
-+ * @hw: clk_hw associated with the clk being consumed
-+ * @dev_id: string describing device name
-+ * @con_id: connection ID string on device
-+ *
-+ * This is the main function used to create a clk pointer for use by clk
-+ * consumers. It connects a consumer to the clk_core and clk_hw structures
-+ * used by the framework and clk provider respectively.
-+ */
-+struct clk *clk_hw_create_clk(struct clk_hw *hw,
-+			      const char *dev_id, const char *con_id)
-+{
-+	struct clk *clk;
-+	struct clk_core *core;
-+
-+	/* This is to allow this function to be chained to others */
-+	if (IS_ERR_OR_NULL(hw))
-+		return ERR_CAST(hw);
-+
-+	core = hw->core;
-+	clk = alloc_clk(core, dev_id, con_id);
-+	if (IS_ERR(clk))
-+		return clk;
-+
-+	if (!try_module_get(core->owner)) {
-+		free_clk(clk);
-+		return ERR_PTR(-ENOENT);
-+	}
-+
-+	kref_get(&core->ref);
-+	clk_core_link_consumer(core, clk);
-+
-+	return clk;
-+}
-+
- /**
-  * clk_register - allocate a new clock, register it and return an opaque cookie
-  * @dev: device that is registering this clock
-@@ -3313,17 +3374,27 @@ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
- 
- 	INIT_HLIST_HEAD(&core->clks);
- 
--	hw->clk = __clk_create_clk(hw, NULL, NULL);
-+	/*
-+	 * Don't call clk_hw_create_clk() here because that would pin the
-+	 * provider module to itself and prevent it from ever being removed.
-+	 */
-+	hw->clk = alloc_clk(core, NULL, NULL);
- 	if (IS_ERR(hw->clk)) {
- 		ret = PTR_ERR(hw->clk);
- 		goto fail_parents;
- 	}
- 
-+	clk_core_link_consumer(hw->core, hw->clk);
-+
- 	ret = __clk_core_init(core);
- 	if (!ret)
- 		return hw->clk;
- 
--	__clk_free_clk(hw->clk);
-+	clk_prepare_lock();
-+	clk_core_unlink_consumer(hw->clk);
-+	clk_prepare_unlock();
-+
-+	free_clk(hw->clk);
- 	hw->clk = NULL;
- 
- fail_parents:
-@@ -3594,20 +3665,7 @@ EXPORT_SYMBOL_GPL(devm_clk_hw_unregister);
- /*
-  * clkdev helpers
-  */
--int __clk_get(struct clk *clk)
--{
--	struct clk_core *core = !clk ? NULL : clk->core;
--
--	if (core) {
--		if (!try_module_get(core->owner))
--			return 0;
--
--		kref_get(&core->ref);
--	}
--	return 1;
--}
- 
--/* keep in sync with __clk_free_clk */
- void __clk_put(struct clk *clk)
- {
- 	struct module *owner;
-@@ -3641,8 +3699,7 @@ void __clk_put(struct clk *clk)
- 
- 	module_put(owner);
- 
--	kfree_const(clk->con_id);
--	kfree(clk);
-+	free_clk(clk);
- }
- 
- /***        clk rate change notifiers        ***/
-@@ -3980,8 +4037,7 @@ struct clk *__of_clk_get_from_provider(struct of_phandle_args *clkspec,
- 				       const char *dev_id, const char *con_id)
- {
- 	struct of_clk_provider *provider;
--	struct clk *clk = ERR_PTR(-EPROBE_DEFER);
--	struct clk_hw *hw;
-+	struct clk_hw *hw = ERR_PTR(-EPROBE_DEFER);
- 
- 	if (!clkspec)
- 		return ERR_PTR(-EINVAL);
-@@ -3991,21 +4047,13 @@ struct clk *__of_clk_get_from_provider(struct of_phandle_args *clkspec,
- 	list_for_each_entry(provider, &of_clk_providers, link) {
- 		if (provider->node == clkspec->np) {
- 			hw = __of_clk_get_hw_from_provider(provider, clkspec);
--			clk = __clk_create_clk(hw, dev_id, con_id);
--		}
--
--		if (!IS_ERR(clk)) {
--			if (!__clk_get(clk)) {
--				__clk_free_clk(clk);
--				clk = ERR_PTR(-ENOENT);
--			}
--
--			break;
-+			if (!IS_ERR(hw))
-+				break;
- 		}
- 	}
- 	mutex_unlock(&of_clk_mutex);
- 
--	return clk;
-+	return clk_hw_create_clk(hw, dev_id, con_id);
- }
- 
- /**
-diff --git a/drivers/clk/clk.h b/drivers/clk/clk.h
-index 70c0ba6336c1..c9a14122fadc 100644
---- a/drivers/clk/clk.h
-+++ b/drivers/clk/clk.h
-@@ -17,24 +17,20 @@ struct clk *__of_clk_get_from_provider(struct of_phandle_args *clkspec,
- #endif
- 
- #ifdef CONFIG_COMMON_CLK
--struct clk *__clk_create_clk(struct clk_hw *hw, const char *dev_id,
--			     const char *con_id);
--void __clk_free_clk(struct clk *clk);
--int __clk_get(struct clk *clk);
-+struct clk *clk_hw_create_clk(struct clk_hw *hw,
-+			      const char *dev_id, const char *con_id);
- void __clk_put(struct clk *clk);
- #else
- /* All these casts to avoid ifdefs in clkdev... */
- static inline struct clk *
--__clk_create_clk(struct clk_hw *hw, const char *dev_id, const char *con_id)
-+clk_hw_create_clk(struct clk_hw *hw, const char *dev_id, const char *con_id)
- {
- 	return (struct clk *)hw;
- }
--static inline void __clk_free_clk(struct clk *clk) { }
- static struct clk_hw *__clk_get_hw(struct clk *clk)
- {
- 	return (struct clk_hw *)clk;
- }
--static inline int __clk_get(struct clk *clk) { return 1; }
- static inline void __clk_put(struct clk *clk) { }
- 
- #endif
-diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
-index 9ab3db8b3988..bdeaffc950ae 100644
---- a/drivers/clk/clkdev.c
-+++ b/drivers/clk/clkdev.c
-@@ -174,16 +174,9 @@ struct clk *clk_get_sys(const char *dev_id, const char *con_id)
- 	if (!cl)
- 		goto out;
- 
--	clk = __clk_create_clk(cl->clk_hw, dev_id, con_id);
-+	clk = clk_hw_create_clk(cl->clk_hw, dev_id, con_id);
- 	if (IS_ERR(clk))
--		goto out;
--
--	if (!__clk_get(clk)) {
--		__clk_free_clk(clk);
- 		cl = NULL;
--		goto out;
--	}
--
- out:
- 	mutex_unlock(&clocks_mutex);
- 
--- 
-Sent by a computer through tubes
-
+Br,
+	Matti
