@@ -2,113 +2,88 @@ Return-Path: <SRS0=JnSZ=QG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0274C282D7
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Jan 2019 16:22:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70CC1C282D7
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Jan 2019 16:24:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FA592184D
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Jan 2019 16:22:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548865326;
-	bh=zDNBJOTp/LDdUY/fC6xzsXPDTSmaZ+2iEh69GyyPNuo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=ggOvqPoBzRvBYNT7BLb71c/rEbNMbaZ1KWCB7vwI9HpmVlq5LAMkHahy/XFcQ4d6c
-	 YMta0ig7V9lhLiPXI49LbtpsSaZ1kTUiETsrEFD9JSLP5IMrln/q50p1toc7dyOYsA
-	 Lytbimf6Z0Umi3fFprptm0W26LwrwENiinY72uww=
+	by mail.kernel.org (Postfix) with ESMTP id 419932184D
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Jan 2019 16:24:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727371AbfA3QWG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 30 Jan 2019 11:22:06 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:32878 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725768AbfA3QWG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 Jan 2019 11:22:06 -0500
-Received: by mail-oi1-f195.google.com with SMTP id c206so126125oib.0;
-        Wed, 30 Jan 2019 08:22:05 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=KN1aOOGffgyHdr/32v6SqWUL8gWXLKTH4oDU1/suvRA=;
-        b=fcdDmuBNl66/M5BeW+3c63Gh3/6yg0+WrsuEYpILPjwR5W8Q7EZG//otlNbDktiTpP
-         JcTiEEFzXSvQ7RsK0+pY6gmROnvkSiEFGCUj+hrW7sKYEnby1z+1ktr5rl0XX+T/dMe+
-         OunCILMt9GR1Z95GT13KyMq5sQOqQKj+guszupH4FYPdHe+iuZU6ZMWsAHJvEgpv/Ovb
-         /2UEbWS8+B1YlzQhxhUz8f0YWiQsRDbox8H8givbR8fTwnj3iprb/AEigcMSHJgDDBdI
-         /9ICbM0KUs5+ZpSyaU/li6bddFanGwYJ9VSZRAz7tdhcD9O7TKr5RXSalYCCdgsf2GJg
-         tF2A==
-X-Gm-Message-State: AHQUAuZcgse9jNVgf6CGIItdwJ8Eraf44FZl8tboy0C8RySgsyoWkuX9
-        Ipbo4uDfOpObjlwMh3UgTw==
-X-Google-Smtp-Source: AHgI3IYDHzc1okMvkTuFmyyJ3jddXAwbzHWN9WsfAOKvP0GGvj9I52uGbMLR5RytVLmhuFgMtnkOUA==
-X-Received: by 2002:aca:d78b:: with SMTP id o133mr12135907oig.232.1548865325100;
-        Wed, 30 Jan 2019 08:22:05 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id w4sm698235otm.46.2019.01.30.08.22.04
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 30 Jan 2019 08:22:04 -0800 (PST)
-Date:   Wed, 30 Jan 2019 10:22:04 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Erin Lo <erin.lo@mediatek.com>
-Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        devicetree@vger.kernel.org,
-        srv_heupstream <srv_heupstream@mediatek.com>,
-        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, yingjoe.chen@mediatek.com,
-        mars.cheng@mediatek.com, eddie.huang@mediatek.com,
-        linux-clk@vger.kernel.org, Ben Ho <Ben.Ho@mediatek.com>,
-        Seiya Wang <seiya.wang@mediatek.com>,
-        Zhiyong Tao <zhiyong.tao@mediatek.com>,
-        Weiyi Lu <weiyi.lu@mediatek.com>,
-        Mengqi Zhang <Mengqi.Zhang@mediatek.com>,
-        Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>
-Subject: Re: [PATCH v6 6/6] arm64: dts: Add Mediatek SoC MT8183 and
- evaluation board dts and Makefile
-Message-ID: <20190130162204.GA1521@bogus>
-References: <1548317240-44682-1-git-send-email-erin.lo@mediatek.com>
- <1548317240-44682-7-git-send-email-erin.lo@mediatek.com>
+        id S1730993AbfA3QYj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 30 Jan 2019 11:24:39 -0500
+Received: from smtp3-g21.free.fr ([212.27.42.3]:30969 "EHLO smtp3-g21.free.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725808AbfA3QYi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 30 Jan 2019 11:24:38 -0500
+Received: from [192.168.108.68] (unknown [213.36.7.13])
+        (Authenticated sender: marc.w.gonzalez)
+        by smtp3-g21.free.fr (Postfix) with ESMTPSA id C036013F899;
+        Wed, 30 Jan 2019 17:24:10 +0100 (CET)
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     linux-clk <linux-clk@vger.kernel.org>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>,
+        Jeffrey Hugo <jhugo@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Georgi Djakov <georgi.djakov@linaro.org>
+From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
+Subject: [PATCH v2] arm64: dts: qcom: msm8998: Add rpmcc node
+Message-ID: <40316444-9dfb-f62c-474b-854146eeffd9@free.fr>
+Date:   Wed, 30 Jan 2019 17:24:10 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1548317240-44682-7-git-send-email-erin.lo@mediatek.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Jan 24, 2019 at 04:07:20PM +0800, Erin Lo wrote:
-> From: Ben Ho <Ben.Ho@mediatek.com>
-> 
-> Add basic chip support for Mediatek 8183, include
-> pinctrl file, uart node with correct uart clocks, pwrap device
-> 
-> Add clock controller nodes, include topckgen, infracfg,
-> apmixedsys and subsystem.
-> 
-> Signed-off-by: Ben Ho <Ben.Ho@mediatek.com>
-> Signed-off-by: Erin Lo <erin.lo@mediatek.com>
-> Signed-off-by: Seiya Wang <seiya.wang@mediatek.com>
-> Signed-off-by: Zhiyong Tao <zhiyong.tao@mediatek.com>
-> Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
-> Signed-off-by: Mengqi Zhang <Mengqi.Zhang@mediatek.com>
-> Signed-off-by: Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>
-> Signed-off-by: Eddie Huang <eddie.huang@mediatek.com>
-> ---
+Add MSM8998 Resource Power Manager Clock Controller DT node.
 
+Reviewed-by: Jeffrey Hugo <jhugo@codeaurora.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
+---
+Detach this patch from UFS series
+---
+ arch/arm64/boot/dts/qcom/msm8998.dtsi | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-> +	sysirq: intpol-controller@c530a80 {
-
-interrupt-controller@...
-
-
-Place all the MMIO peripherals under one or more simple-bus nodes.
-
-Rob
+diff --git a/arch/arm64/boot/dts/qcom/msm8998.dtsi b/arch/arm64/boot/dts/qcom/msm8998.dtsi
+index a6d66cf77403..6f4f4b79853b 100644
+--- a/arch/arm64/boot/dts/qcom/msm8998.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8998.dtsi
+@@ -3,6 +3,7 @@
+ 
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/clock/qcom,gcc-msm8998.h>
++#include <dt-bindings/clock/qcom,rpmcc.h>
+ #include <dt-bindings/gpio/gpio.h>
+ 
+ / {
+@@ -266,6 +267,11 @@
+ 		rpm_requests: rpm-requests {
+ 			compatible = "qcom,rpm-msm8998";
+ 			qcom,glink-channels = "rpm_requests";
++
++			rpmcc: clock-controller {
++				compatible = "qcom,rpmcc-msm8998", "qcom,rpmcc";
++				#clock-cells = <1>;
++			};
+ 		};
+ 	};
+ 
+-- 
+2.17.1
