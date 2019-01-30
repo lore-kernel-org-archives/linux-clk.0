@@ -2,119 +2,223 @@ Return-Path: <SRS0=JnSZ=QG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E80EC282D7
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Jan 2019 18:51:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49578C282D7
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Jan 2019 18:53:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D884F2184D
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Jan 2019 18:51:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="TsLNF4uG"
+	by mail.kernel.org (Postfix) with ESMTP id 145F420821
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Jan 2019 18:53:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548874434;
+	bh=8THRmyz+fgVaniTI/ueITJ/39qS9j7bJWcj5iJMtXUo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=z5phQdBGgc9NgjasdhRIH/ZgqryU5WZFLVX/qY4E2v/ZGSr0BHO7hY2H7nUJD/k0I
+	 YG8R2sawADpeMz3nSGDMMHLJqphsBiQiwLWKSOErIBgTl5z3JcXRgNOiG9tgkzh2wP
+	 GRqaCdh2Z9lnv8NyJ72ZDR07u7gnR+6WYtulHs3A=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729295AbfA3SvJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 30 Jan 2019 13:51:09 -0500
-Received: from mail-eopbgr1400120.outbound.protection.outlook.com ([40.107.140.120]:11968
-        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725786AbfA3SvI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 30 Jan 2019 13:51:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector1-bp-renesas-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UNmkpQnNByJOAH5+sQPYsNPYkUMLgYHq+c9qY+UwZKk=;
- b=TsLNF4uGI4OsqmWZRmx7ef/9zvOx7l/WPbuPBYEt127DaZ39c19b/E1AnkHsdl2KmG5laRTgjBbnsDjQoPIaDjeCcClk0JlarSGl+tq0yu+tVjNESSlWlg6EUve1WU5bk1YD9C7a1UH77APSfcHD60JQ2O4femNWbLqBFk6Rkdk=
-Received: from TY1PR01MB1770.jpnprd01.prod.outlook.com (52.133.163.147) by
- TY1PR01MB1818.jpnprd01.prod.outlook.com (52.133.163.143) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1580.17; Wed, 30 Jan 2019 18:51:04 +0000
-Received: from TY1PR01MB1770.jpnprd01.prod.outlook.com
- ([fe80::9c4b:5b3e:212f:354e]) by TY1PR01MB1770.jpnprd01.prod.outlook.com
- ([fe80::9c4b:5b3e:212f:354e%3]) with mapi id 15.20.1580.017; Wed, 30 Jan 2019
- 18:51:04 +0000
-From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To:     Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-CC:     Magnus Damm <magnus.damm@gmail.com>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: RE: [PATCH/RFT v2 5/6] clk: renesas: rcar-gen3: Support r8a7745 Z2
- clock divider
-Thread-Topic: [PATCH/RFT v2 5/6] clk: renesas: rcar-gen3: Support r8a7745 Z2
- clock divider
-Thread-Index: AQHUuH/mESzbax8xEU6gaSZefz2RNqXHj4WAgACY2WA=
-Date:   Wed, 30 Jan 2019 18:51:04 +0000
-Message-ID: <TY1PR01MB1770BD098B6920ECF1B067DAC0900@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-References: <20190130094029.9604-1-horms+renesas@verge.net.au>
- <20190130094029.9604-6-horms+renesas@verge.net.au>
- <OSBPR01MB21036AEED543FE6DD9001E0CB8900@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-In-Reply-To: <OSBPR01MB21036AEED543FE6DD9001E0CB8900@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=fabrizio.castro@bp.renesas.com; 
-x-originating-ip: [193.141.220.21]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;TY1PR01MB1818;20:yyzTW7zXd3IqvAiLLUaSWAxVrkYDVFD8a6mzpT26aGdrvpnE+r1+tCkYOVwjrbQ+fh5O6lQ4Mac40KA7RL+pPYMY+HtybXCymkJf5q4gvmUca8c+MqSi9555OldOSxZAbOqiZdJR602yqkEJgOvBn3ltdvg9v/AtrveGN66CTN0=
-x-ms-office365-filtering-correlation-id: a1fe16f5-ceab-402e-5741-08d686e3e336
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:TY1PR01MB1818;
-x-ms-traffictypediagnostic: TY1PR01MB1818:
-x-microsoft-antispam-prvs: <TY1PR01MB1818CCE723CC7D6B8AF076AAC0900@TY1PR01MB1818.jpnprd01.prod.outlook.com>
-x-forefront-prvs: 0933E9FD8D
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(39860400002)(376002)(366004)(346002)(136003)(51914003)(189003)(199004)(486006)(186003)(2906002)(99286004)(446003)(476003)(8676002)(81166006)(9686003)(97736004)(81156014)(4326008)(53936002)(25786009)(11346002)(26005)(6246003)(256004)(110136005)(53546011)(54906003)(6506007)(316002)(6436002)(8936002)(55016002)(102836004)(229853002)(66066001)(33656002)(39060400002)(71200400001)(3846002)(7696005)(106356001)(71190400001)(76176011)(105586002)(74316002)(478600001)(68736007)(14454004)(86362001)(7736002)(305945005)(44832011)(6116002);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB1818;H:TY1PR01MB1770.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:0;
-received-spf: None (protection.outlook.com: bp.renesas.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: frcbLXeZfd5/9ncs0WSzWsJRrwSJc4pHfYi68L7QWnFDTLqg+dOrS1R5qh/3xVjfN+Y/FvBrIgJPGcOB3mgfPjO+sKk3Bbsou9Hb4mip7E97XRQTSng8hSWGgNyg9Gh/LNyA2CVVV2pdCmAfzTJ8AiaR5F7gTJfqX3zvxrAk+Z5JKlSInlyRKEVNxDS2J74J6O6gGauku3AhmWMmQx4u04BZk0rMB+GEAI1lSvdNzwmTStYKu4MKpLnkCbY7tM264GdFEweVrPTK5YyLCxkrXIziXy3MaWmRjK+IOo9788pZ4Et8CjUI/2VVcb1BYMpr8+4JSkkYfU8o3M9RNzL2pEL/qrqNjzgbqIOGNFX7y3bPfh4d+h8kIGtQql/iNbCdSLVpe8tjCdm9+j1A1kOoo/5jlAitATo5ei8y1saSz1w=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S2387484AbfA3Sxr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 30 Jan 2019 13:53:47 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:34972 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387480AbfA3Sxr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 Jan 2019 13:53:47 -0500
+Received: by mail-ot1-f65.google.com with SMTP id 81so568625otj.2;
+        Wed, 30 Jan 2019 10:53:45 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=n82G04yy4y3goYBawCI7wFPB8cbwDuNMggACM2cuDHk=;
+        b=inQi00FgZD7pqz/FUfro3jR2gfmKOf0aO1hq07xCKaerZoCijF7YEAgusecES6nvxZ
+         5z0/Kc/bAeybKi1tSjEaDQaEcCjU3Wl655/m0+k6Nz/uoEOy+6/Zv0bfIbpK2ypfKQdJ
+         tbOvYoprDWUBPXPug0LugwmtJ1cQxH+KXj5hrQhzDUBQWkEyTcyO4abJEg4S6wTozwtd
+         3w/qRcRpLXLlDsdeO0YwaI/hg0LcFSFJx4faqLSKXy7j056V+4HCmvRa8+Wwa8Xl5045
+         9k9uNjZAigVGCN6TdEUCvRQ46Wer2jl6g91xsXmqPHmKVLniGWbZbDbM1S6xHWh75twm
+         wGDg==
+X-Gm-Message-State: AJcUukc12ujspAztjD0HG2U4Nn9y6wNN+28jSnn2xNwOPRbuG/65KUik
+        p4n6mcHPZ4nF2LYCbLWflg==
+X-Google-Smtp-Source: ALg8bN78dpbhX+G1WlRrgcaNgGSK7wsj/zturmTUWLqS9PIiYBxcZiupeuhNZ1kO86BSOnAWgnL4Cw==
+X-Received: by 2002:a9d:e8c:: with SMTP id 12mr23937974otj.297.1548874425431;
+        Wed, 30 Jan 2019 10:53:45 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id q26sm830341otf.73.2019.01.30.10.53.44
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 30 Jan 2019 10:53:44 -0800 (PST)
+Date:   Wed, 30 Jan 2019 12:53:44 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     mazziesaccount@gmail.com, heikki.haikola@fi.rohmeurope.com,
+        mikko.mutanen@fi.rohmeurope.com, lee.jones@linaro.org,
+        mark.rutland@arm.com, broonie@kernel.org,
+        gregkh@linuxfoundation.org, rafael@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
+        linux@roeck-us.net, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org
+Subject: Re: [RFC PATCH v3 06/10] devicetree: bindings: Document first ROHM
+ BD70528 bindings
+Message-ID: <20190130185344.GA14789@bogus>
+References: <cover.1548838724.git.matti.vaittinen@fi.rohmeurope.com>
+ <eb5d03f3adc72db580a10f95ff6cb07aefce5b47.1548838724.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a1fe16f5-ceab-402e-5741-08d686e3e336
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jan 2019 18:51:04.4659
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1818
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <eb5d03f3adc72db580a10f95ff6cb07aefce5b47.1548838724.git.matti.vaittinen@fi.rohmeurope.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-SGVsbG8gU2ltb24sDQoNCj4gRnJvbTogQmlqdSBEYXMNCj4gU2VudDogMzAgSmFudWFyeSAyMDE5
-IDA5OjQ0DQo+IFN1YmplY3Q6IFJFOiBbUEFUQ0gvUkZUIHYyIDUvNl0gY2xrOiByZW5lc2FzOiBy
-Y2FyLWdlbjM6IFN1cHBvcnQgcjhhNzc0NSBaMiBjbG9jayBkaXZpZGVyDQo+DQo+IEhpIFNpbW9u
-LA0KPg0KPiBUaGFua3MgZm9yIHRoZSBwYXRjaA0KPg0KPiA+IFN1YmplY3Q6IFtQQVRDSC9SRlQg
-djIgNS82XSBjbGs6IHJlbmVzYXM6IHJjYXItZ2VuMzogU3VwcG9ydCByOGE3NzQ1IFoyIGNsb2Nr
-DQo+ID4gZGl2aWRlcg0KPiA+DQo+ID4gT24gdGhlIFJaL0cyRSAocjhhNzc0NSkgU29DIHRoZSBa
-MkZDIGJpdHMgb2YgdGhlIFJGUUNSQyByZWdpc3Rlciwgd2hpY2gNCj4gPiBjb250cm9sIHRoZSBm
-cmVxdWVuY3kgZGl2aXNpb24gcmF0aW8gZm9yIHRoZSBaMs+GIGNsb2NrIGFyZSBsb2NhdGVkIGF0
-IGJpdFsxMjo4XQ0KPiA+IHJhdGhlciB0aGFuIHRoZSBtb3JlIGNvbW1vbiBsb2NhdGlvbiBiaXRb
-NDowXS4NCj4gPg0KPiA+IFRoaXMgY2hhbmdlIGlzIG1hZGUgd2l0aCByZWZlcmVuY2UgdG8gdGhl
-IFVzZXIncyBNYW51YWwgdjAuNjEuDQo+ID4NCj4gPiBGaXhlczogOTEyN2Q1NGJiODk0ICgiY2xr
-OiByZW5lc2FzOiBjcGctbXNzcjogQWRkIFI4QTc3NDUgc3VwcG9ydCIpDQo+ID4gU2lnbmVkLW9m
-Zi1ieTogU2ltb24gSG9ybWFuIDxob3JtcytyZW5lc2FzQHZlcmdlLm5ldC5hdT4NCj4gPiAtLS0N
-Cj4gPiAgZHJpdmVycy9jbGsvcmVuZXNhcy9yY2FyLWdlbjMtY3BnLmMgfCA0ICsrKysNCj4gPiAg
-MSBmaWxlIGNoYW5nZWQsIDQgaW5zZXJ0aW9ucygrKQ0KPiA+DQo+ID4gZGlmZiAtLWdpdCBhL2Ry
-aXZlcnMvY2xrL3JlbmVzYXMvcmNhci1nZW4zLWNwZy5jIGIvZHJpdmVycy9jbGsvcmVuZXNhcy9y
-Y2FyLQ0KPiA+IGdlbjMtY3BnLmMNCj4gPiBpbmRleCBkMjFmZGViNTIwZTEuLmRmZDJiOWNhZWFm
-NSAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL2Nsay9yZW5lc2FzL3JjYXItZ2VuMy1jcGcuYw0K
-PiA+ICsrKyBiL2RyaXZlcnMvY2xrL3JlbmVzYXMvcmNhci1nZW4zLWNwZy5jDQo+ID4gQEAgLTQ1
-MCw2ICs0NTAsMTAgQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBzb2NfZGV2aWNlX2F0dHJpYnV0ZQ0K
-PiA+IGNwZ19xdWlya3NfbWF0Y2hbXSBfX2luaXRjb25zdCA9IHsNCj4gPiAgLnNvY19pZCA9ICJy
-OGE3Nzk5MCIsDQo+ID4gIC5kYXRhID0gKHZvaWQgKilaMkZDX0JJVF9NQVNLX1NGVF84LA0KPiA+
-ICB9LA0KPiA+ICt7DQo+ID4gKy5zb2NfaWQgPSAicjhhNzc0NSIsDQo+ID4gKy5kYXRhID0gKHZv
-aWQgKilaMkZDX0JJVF9NQVNLX1NGVF84LA0KPiA+ICt9LA0KPiA+ICB7IC8qIHNlbnRpbmVsICov
-IH0NCj4gPiAgfTsNCj4NCj4NCj4gUlovRzJFICBTb0MgaWQgaXMgcjhhNzc0YzAuDQoNCisxDQoN
-CkNoZWVycywNCkZhYg0KDQo+DQo+IFJlZ2FyZHMsDQo+IEJpanUNCg0KDQoNClJlbmVzYXMgRWxl
-Y3Ryb25pY3MgRXVyb3BlIEx0ZCwgRHVrZXMgTWVhZG93LCBNaWxsYm9hcmQgUm9hZCwgQm91cm5l
-IEVuZCwgQnVja2luZ2hhbXNoaXJlLCBTTDggNUZILCBVSy4gUmVnaXN0ZXJlZCBpbiBFbmdsYW5k
-ICYgV2FsZXMgdW5kZXIgUmVnaXN0ZXJlZCBOby4gMDQ1ODY3MDkuDQo=
+On Wed, Jan 30, 2019 at 11:09:55AM +0200, Matti Vaittinen wrote:
+> Document bindings for regulators (3 bucks, 3 LDOs and 2 LED
+> drivers) and 4 GPIO pins which can be configured for I/O or
+> as interrupt sources withe configurable trigger levels.
+> 
+> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> ---
+>  .../devicetree/bindings/mfd/rohm,bd70528-pmic.txt  | 104 +++++++++++++++++++++
+>  1 file changed, 104 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd70528-pmic.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/rohm,bd70528-pmic.txt b/Documentation/devicetree/bindings/mfd/rohm,bd70528-pmic.txt
+> new file mode 100644
+> index 000000000000..21801440a53a
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/rohm,bd70528-pmic.txt
+> @@ -0,0 +1,104 @@
+> +* ROHM BD70528 Power Management Integrated Circuit bindings
+> +
+> +BD70528MWV is an ultra-low Iq general purpose single-chip power management IC
+> +for battery-powered portable devices. The IC integrates 3 ultra-low current
+> +consumption buck converters, 3 LDOs and 2 LED Drivers. Also included are 4
+> +GPIOs, a real-time clock (RTC), a 32kHz clock gate, high-accuracy VREF
+> +for use with an external ADC, flexible dual-input power path, 10 bits SAR ADC
+> +for battery temperature monitor and 1S battery charger with scalable charge
+> +currents.
+> +
+> +Required properties:
+> + - compatible		: Should be "rohm,bd70528"
+> + - reg			: I2C slave address.
+> + - interrupt-parent	: Phandle to the parent interrupt controller.
+
+Don't document this. It is implied and could be in a parent node.
+
+> + - interrupts		: The interrupt line the device is connected to.
+> + - interrupt-controller	: To indicate bd70528 acts as an interrupt controller.
+> + - #interrupt-cells	: Should be 2. usage is compliant to the 2 cells
+> +			  variant of ../interrupt-controller/interrupts.txt
+> + - gpio-controller	: To indicate bd70528 acts as a gpio controller.
+> + - #gpio-cells		: Should be 2. The first cell is the pin number and
+> +			  the second cell is used to specify flags. See
+> +			  ../gpio/gpio.txt for more information.
+> + - clock-frequency	: Should be 32768
+
+Forget to drop this?
+
+> + - #clock-cells		: Should be 0.
+> + - regulators:		: List of child nodes that specify the regulators.
+> +			  Please see ../regulator/rohm,bd70528-regulator.txt
+> +
+> +Optional properties:
+> + - clock-output-names	: Should contain name for output clock.
+> +
+> +Example:
+> +/* external oscillator */
+> +osc: oscillator {
+> +	compatible = "fixed-clock";
+> +	#clock-cells = <1>;
+> +	clock-frequency  = <32768>;
+> +	clock-output-names = "osc";
+> +};
+> +
+> +pmic: bd70528@4b {
+
+pmic@4b
+
+Node names should be generic.
+
+> +	compatible = "rohm,bd70528";
+> +	reg = <0x4b>;
+> +	interrupt-parent = <&gpio1>;
+> +	interrupts = <29 GPIO_ACTIVE_LOW>;
+> +	clocks = <&osc 0>;
+> +	#clock-cells = <0>;
+> +	clock-output-names = "bd70528-32k-out";
+> +	#gpio-cells = <2>;
+> +	gpio-controller;
+> +	interrupt-controller;
+> +	#interrupt-cells = <2>;
+> +
+> +	regulators {
+> +		buck1: BUCK1 {
+> +			regulator-name = "buck1";
+> +			regulator-min-microvolt = <1200000>;
+> +			regulator-max-microvolt = <3400000>;
+> +			regulator-boot-on;
+> +			regulator-ramp-delay = <125>;
+> +		};
+> +		buck2: BUCK2 {
+> +			regulator-name = "buck2";
+> +			regulator-min-microvolt = <1200000>;
+> +			regulator-max-microvolt = <3300000>;
+> +			regulator-boot-on;
+> +			regulator-ramp-delay = <125>;
+> +		};
+> +		buck3: BUCK3 {
+> +			regulator-name = "buck3";
+> +			regulator-min-microvolt = <800000>;
+> +			regulator-max-microvolt = <1800000>;
+> +			regulator-boot-on;
+> +			regulator-ramp-delay = <250>;
+> +		};
+> +		ldo1: LDO1 {
+> +			regulator-name = "ldo1";
+> +			regulator-min-microvolt = <1650000>;
+> +			regulator-max-microvolt = <3300000>;
+> +			regulator-boot-on;
+> +		};
+> +		ldo2: LDO2 {
+> +			regulator-name = "ldo2";
+> +			regulator-min-microvolt = <1650000>;
+> +			regulator-max-microvolt = <3300000>;
+> +			regulator-boot-on;
+> +		};
+> +
+> +		ldo3: LDO3 {
+> +			regulator-name = "ldo3";
+> +			regulator-min-microvolt = <1650000>;
+> +			regulator-max-microvolt = <3300000>;
+> +		};
+> +		led_ldo1: LED_LDO1 {
+> +			regulator-name = "led_ldo1";
+> +			regulator-min-microvolt = <200000>;
+> +			regulator-max-microvolt = <300000>;
+> +		};
+> +		led_ldo2: LED_LDO2 {
+> +			regulator-name = "led_ldo2";
+> +			regulator-min-microvolt = <200000>;
+> +			regulator-max-microvolt = <300000>;
+> +		};
+> +	};
+> +};
+> -- 
+> 2.14.3
+> 
+> 
+> -- 
+> Matti Vaittinen
+> ROHM Semiconductors Finland SWDC
+> Kiviharjunlenkki 1E
+> 90220 OULU
+> FINLAND
+> 
+> ~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
