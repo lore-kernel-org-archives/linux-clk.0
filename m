@@ -2,81 +2,85 @@ Return-Path: <SRS0=JnSZ=QG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF5DEC282D7
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Jan 2019 15:43:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2F28C282D7
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Jan 2019 15:46:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B79FB20989
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Jan 2019 15:43:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A78A21473
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Jan 2019 15:46:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548862983;
-	bh=gDMKV8j2KfSo5hcMhcNt/HfD9/TRWVMNpTVCFGOBak4=;
+	s=default; t=1548863216;
+	bh=n+gxj75RpvIpNRphQr8dRvARsQL2/9kHsDQBW1VRkU8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Y3Q70TDMGFX0dMStQggWHFhhmqt9Vi+3G6HDS436geFB4tg9Ej+PKOXU0HGZHzK1X
-	 +OpeYM1xrTCftSh4hjF4RhHmtWIQuhTfNy97lKd1ZSP3TvzSgvv72lYVSEFcc2psmh
-	 7wHYG4lPOYx97fM592mg7UauLQIqJrqmfGpmB7tA=
+	b=OwfUs+vSPsm39BQRs/EBaHDoJ0mtiXrP9SXvpHY0zExyNIebJv71OBjVm7ecDXfzO
+	 6iJBBeh5BsVdpxIHUwDjfBysuaLGGG16JrYTnAyhXIaKuD2TDQxsu5OfTUaVlAXS2C
+	 VyyORaDQIFul61naGAXFF3fFOfm2KPqWmeeS0S0g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731458AbfA3Pm7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 30 Jan 2019 10:42:59 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:44178 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729755AbfA3Pm7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 Jan 2019 10:42:59 -0500
-Received: by mail-ot1-f68.google.com with SMTP id g16so17456149otg.11;
-        Wed, 30 Jan 2019 07:42:59 -0800 (PST)
+        id S1730122AbfA3Pq4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 30 Jan 2019 10:46:56 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:41160 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726439AbfA3Pq4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 Jan 2019 10:46:56 -0500
+Received: by mail-oi1-f196.google.com with SMTP id j21so19566184oii.8;
+        Wed, 30 Jan 2019 07:46:55 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=dPqZEMJw5cB8zPRb7QEMBKK1fjbxjFRkq/X59AUH1Ew=;
-        b=PWRZmuDGMjTsR3XlcoqQVlao88pnu6NgiwMgFVUycJFhiz5tFhZHy2DjiQYbAoOTZa
-         Ux/FpslA6RYUHTge0LjKA2insYQUqORYSh75nrMGZGfpd37OC17c7CjBlzP9tJ4YfKfH
-         mliIOx4A/nay5ldyKnZJLy8us32Sh6VDD7jegtWqtjoeLoB2b2tOLofCFWMunmF0RiVU
-         FmVphuGaSbKYyQmqIOzuAJcLE/5ZMmpj3DD641I1pknBvRoe1LE6eXJ2X69g58i5M+oN
-         lpRpdFaErNNlxTI9fFkcgTEHIbciP8wJ7dym3GnCbvnmHEb1yd7s9sGadQWdAJsx8u18
-         OFPw==
-X-Gm-Message-State: AHQUAuYyBMteJJwXGdmsNZgBDSf9vPnHKAXW59SR3ddLoib3l74VvXMQ
-        GzDS6S2tNFIVStRK2ZYTPQ==
-X-Google-Smtp-Source: AHgI3IYN0gNbQz+3+m18kilPwPqpTRjPci7Qc6UXkSV4VMTzCpfVDU3sTUhq3vEO7IHw7oWvSmXQaQ==
-X-Received: by 2002:a9d:5e8c:: with SMTP id f12mr4093033otl.343.1548862978278;
-        Wed, 30 Jan 2019 07:42:58 -0800 (PST)
+        bh=TN1LQ1HRcvLbPsh//czIuLYaojCX5H8AWx+xzGIPCxI=;
+        b=RyWL3GCpGPHeOe2tp9y47mcucq5y9I2ya1Xh7knYuWsXwVBTIK8cGAh0UT1m4R41ly
+         ZVCYL2ZmKlaRWyo4qbF6j9ou1gux2yc2Vek20LGMxzRkJh4QYntJXfCQIC9c3c2JSGh3
+         ooTAHlNehnikZ57CXdJHelp2mfMQdcMTlmWxN3BmKQ3Em+zkg0BpYInIudQhpih5zpx7
+         STQWpR+x4BOzAXKeop/+YiXiqItjpTZaVlrIAiTAtztKKCzQ87mkUHkowgKfAZwpTKEX
+         aP6k1fOvcZxHCRW1cAWDr01Lov3Iw6S4LzmEdMD1ThSddx83YuZIcbijIvOcBQ7agq+m
+         +Tfw==
+X-Gm-Message-State: AHQUAub5LQx0ta6MyKEYpTZLtNcZp/AHgUYK+7iT+HYwr9Cb0zsbUXLN
+        h0vwDlaILeX+PSbL1vcJSQ==
+X-Google-Smtp-Source: AHgI3Ib/Im/cwyDEXNLWF0ZI8lYRwc2ne6kjvoSfaEqgZFl2u4gqpBUqGqw+yfv2Wtyeay0KX7+mGw==
+X-Received: by 2002:aca:4e11:: with SMTP id c17mr12262717oib.254.1548863215018;
+        Wed, 30 Jan 2019 07:46:55 -0800 (PST)
 Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id x127sm760422oia.20.2019.01.30.07.42.57
+        by smtp.gmail.com with ESMTPSA id g25sm650859otr.30.2019.01.30.07.46.54
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 30 Jan 2019 07:42:57 -0800 (PST)
-Date:   Wed, 30 Jan 2019 09:42:57 -0600
+        Wed, 30 Jan 2019 07:46:54 -0800 (PST)
+Date:   Wed, 30 Jan 2019 09:46:53 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Jeffrey Hugo <jhugo@codeaurora.org>
-Cc:     mark.rutland@arm.com, balbi@kernel.org, bjorn.andersson@linaro.org,
-        andy.gross@linaro.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        gregkh@linuxfoundation.org, linux-usb@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] dt-bindings: usb: Add support for msm8998
-Message-ID: <20190130154257.GA15568@bogus>
-References: <1548106307-4762-1-git-send-email-jhugo@codeaurora.org>
- <1548106366-5042-1-git-send-email-jhugo@codeaurora.org>
+To:     Kamil Konieczny <k.konieczny@partner.samsung.com>
+Cc:     linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v5 4/5] dt-bindings: clk: exynos5433: add imem clock
+Message-ID: <20190130154653.GA17638@bogus>
+References: <20190122090232.29194-1-k.konieczny@partner.samsung.com>
+ <CGME20190122090251eucas1p122f1c6d47f3cb60febeadda88ada3a76@eucas1p1.samsung.com>
+ <20190122090232.29194-5-k.konieczny@partner.samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1548106366-5042-1-git-send-email-jhugo@codeaurora.org>
+In-Reply-To: <20190122090232.29194-5-k.konieczny@partner.samsung.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 02:32:46PM -0700, Jeffrey Hugo wrote:
-> msm8998 USB has a dwc3 controller just like the existing sdm845 support.
+On Tue, Jan 22, 2019 at 10:02:31AM +0100, Kamil Konieczny wrote:
+> Add Exynos5433 DT bindings to describe imem clocks for SlimSSS (Slim
+> Security SubSystem).
 > 
-> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
-> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
 > ---
->  Documentation/devicetree/bindings/usb/qcom,dwc3.txt | 1 +
->  1 file changed, 1 insertion(+)
+>  include/dt-bindings/clock/exynos5433.h | 6 ++++++
+>  1 file changed, 6 insertions(+)
 
-You missed my R-by.
+Reviewed-by: Rob Herring <robh@kernel.org>
