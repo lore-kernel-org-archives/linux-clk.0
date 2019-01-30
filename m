@@ -2,89 +2,95 @@ Return-Path: <SRS0=JnSZ=QG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F84FC282D7
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Jan 2019 16:32:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDDA9C282D7
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Jan 2019 16:35:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B5792087F
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Jan 2019 16:32:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA0032087F
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Jan 2019 16:35:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="O8pU4N58";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="NKKKtfhI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731936AbfA3QcT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 30 Jan 2019 11:32:19 -0500
-Received: from smtp3-g21.free.fr ([212.27.42.3]:24646 "EHLO smtp3-g21.free.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731623AbfA3QcT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 30 Jan 2019 11:32:19 -0500
-Received: from [192.168.108.68] (unknown [213.36.7.13])
-        (Authenticated sender: marc.w.gonzalez)
-        by smtp3-g21.free.fr (Postfix) with ESMTPSA id 6B1C513F8D5;
-        Wed, 30 Jan 2019 17:31:52 +0100 (CET)
-From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
-Subject: [RESEND PATCH v2] arm64: dts: qcom: msm8998: Add rpmcc node
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     linux-clk <linux-clk@vger.kernel.org>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>,
-        Jeffrey Hugo <jhugo@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Georgi Djakov <georgi.djakov@linaro.org>
-Message-ID: <6da00186-e7c9-c93d-a80a-65eda2516451@free.fr>
-Date:   Wed, 30 Jan 2019 17:31:52 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1730688AbfA3Qf0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 30 Jan 2019 11:35:26 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:57508 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727225AbfA3Qf0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 Jan 2019 11:35:26 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 4B718609D1; Wed, 30 Jan 2019 16:35:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1548866123;
+        bh=Sn/o9Zo2pS31LUlDBCLQBnSSLsTRSCQKUntDW02tJ9k=;
+        h=From:To:Cc:Subject:Date:From;
+        b=O8pU4N58gZmWS+AaDdAR0Ij/zxkFFnrYc6HnGztv5otgb1+EtTCiINkoOLm7k3ao1
+         lzx239/25J+uZprN1jbMs9VeyrdpPhFz/es3AH14zJNrCcZx5ozbk4dx5Yz0bT/EJP
+         OZoaaW6nb4N8r+tRIG01DThgj1O96KBVAnt0T6cM=
+Received: from jhugo-perf-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jhugo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 7EC0060CEB;
+        Wed, 30 Jan 2019 16:35:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1548866122;
+        bh=Sn/o9Zo2pS31LUlDBCLQBnSSLsTRSCQKUntDW02tJ9k=;
+        h=From:To:Cc:Subject:Date:From;
+        b=NKKKtfhId+LoKumJ/cQTaLRavtXmEnTyG2EYzp76OgPf0loMD9DsDqUSqxSr0fxfF
+         3RQ4L3E72ePoBd1yk4eYaoFJvZso8VJFjRZTa54jNUQHxO7gOClsYojhLv+zSZ8+xE
+         c/LGwwwtfF3HqrSm7qlNdDWpRW0LDQUrGqgKWlcs=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7EC0060CEB
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
+From:   Jeffrey Hugo <jhugo@codeaurora.org>
+Cc:     bjorn.andersson@linaro.org, marc.w.gonzalez@free.fr,
+        andy.gross@linaro.org, david.brown@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Jeffrey Hugo <jhugo@codeaurora.org>
+Subject: [PATCH v1 0/4] MSM8998 Multimedia Clock Controller
+Date:   Wed, 30 Jan 2019 09:35:02 -0700
+Message-Id: <1548866102-30224-1-git-send-email-jhugo@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add MSM8998 Resource Power Manager Clock Controller DT node.
+The multimedia clock controller (mmcc) is the main clock controller for
+the multimedia subsystem and is required to enable things like display and
+camera.
 
-Reviewed-by: Jeffrey Hugo <jhugo@codeaurora.org>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
----
-Detach this patch from UFS series
-Resend because SMTP server was blacklisted.
----
- arch/arm64/boot/dts/qcom/msm8998.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+The mmcc consumes a few external clocks inorder to configure the root clock
+generators that it controls.  We can use DT to grab XO (from rpmcc) and
+gpll0 (from gcc), but we'll have to rely on the global namespace to consume
+the plls from elsewhere in the mmss.
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8998.dtsi b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-index a6d66cf77403..6f4f4b79853b 100644
---- a/arch/arm64/boot/dts/qcom/msm8998.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-@@ -3,6 +3,7 @@
- 
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/clock/qcom,gcc-msm8998.h>
-+#include <dt-bindings/clock/qcom,rpmcc.h>
- #include <dt-bindings/gpio/gpio.h>
- 
- / {
-@@ -266,6 +267,11 @@
- 		rpm_requests: rpm-requests {
- 			compatible = "qcom,rpm-msm8998";
- 			qcom,glink-channels = "rpm_requests";
-+
-+			rpmcc: clock-controller {
-+				compatible = "qcom,rpmcc-msm8998", "qcom,rpmcc";
-+				#clock-cells = <1>;
-+			};
- 		};
- 	};
- 
+Jeffrey Hugo (4):
+  clk: qcom: smd: Add XO clock for MSM8998
+  dt-bindings: clock: Add support for the MSM8998 mmcc
+  clk: qcom: Add MSM8998 Multimedia Clock Controller (MMCC) driver
+  arm64: dts: qcom: msm8998: Add mmcc node
+
+ .../devicetree/bindings/clock/qcom,mmcc.txt        |    7 +
+ arch/arm64/boot/dts/qcom/msm8998.dtsi              |   15 +
+ drivers/clk/qcom/Kconfig                           |    9 +
+ drivers/clk/qcom/Makefile                          |    1 +
+ drivers/clk/qcom/clk-smd-rpm.c                     |    4 +
+ drivers/clk/qcom/mmcc-msm8998.c                    | 2937 ++++++++++++++++++++
+ include/dt-bindings/clock/qcom,mmcc-msm8998.h      |  210 ++
+ 7 files changed, 3183 insertions(+)
+ create mode 100644 drivers/clk/qcom/mmcc-msm8998.c
+ create mode 100644 include/dt-bindings/clock/qcom,mmcc-msm8998.h
+
 -- 
-2.17.1
+Qualcomm Datacenter Technologies as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
+
