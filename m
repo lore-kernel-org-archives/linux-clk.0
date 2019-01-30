@@ -4,25 +4,27 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.9 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
 	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70CC1C282D7
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Jan 2019 16:24:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F84FC282D7
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Jan 2019 16:32:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 419932184D
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Jan 2019 16:24:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B5792087F
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Jan 2019 16:32:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730993AbfA3QYj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 30 Jan 2019 11:24:39 -0500
-Received: from smtp3-g21.free.fr ([212.27.42.3]:30969 "EHLO smtp3-g21.free.fr"
+        id S1731936AbfA3QcT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 30 Jan 2019 11:32:19 -0500
+Received: from smtp3-g21.free.fr ([212.27.42.3]:24646 "EHLO smtp3-g21.free.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725808AbfA3QYi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 30 Jan 2019 11:24:38 -0500
+        id S1731623AbfA3QcT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 30 Jan 2019 11:32:19 -0500
 Received: from [192.168.108.68] (unknown [213.36.7.13])
         (Authenticated sender: marc.w.gonzalez)
-        by smtp3-g21.free.fr (Postfix) with ESMTPSA id C036013F899;
-        Wed, 30 Jan 2019 17:24:10 +0100 (CET)
+        by smtp3-g21.free.fr (Postfix) with ESMTPSA id 6B1C513F8D5;
+        Wed, 30 Jan 2019 17:31:52 +0100 (CET)
+From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
+Subject: [RESEND PATCH v2] arm64: dts: qcom: msm8998: Add rpmcc node
 To:     Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Andy Gross <andy.gross@linaro.org>,
@@ -35,10 +37,8 @@ Cc:     linux-clk <linux-clk@vger.kernel.org>,
         Jeffrey Hugo <jhugo@codeaurora.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Georgi Djakov <georgi.djakov@linaro.org>
-From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
-Subject: [PATCH v2] arm64: dts: qcom: msm8998: Add rpmcc node
-Message-ID: <40316444-9dfb-f62c-474b-854146eeffd9@free.fr>
-Date:   Wed, 30 Jan 2019 17:24:10 +0100
+Message-ID: <6da00186-e7c9-c93d-a80a-65eda2516451@free.fr>
+Date:   Wed, 30 Jan 2019 17:31:52 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
@@ -57,6 +57,7 @@ Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
 ---
 Detach this patch from UFS series
+Resend because SMTP server was blacklisted.
 ---
  arch/arm64/boot/dts/qcom/msm8998.dtsi | 6 ++++++
  1 file changed, 6 insertions(+)
