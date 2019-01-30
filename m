@@ -2,93 +2,110 @@ Return-Path: <SRS0=JnSZ=QG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFB5AC282D7
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Jan 2019 18:55:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51ABFC282D7
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Jan 2019 19:21:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86FAA20989
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Jan 2019 18:55:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548874546;
-	bh=Na4n0WvK5Cyp++Vn9y8T4w3+fbxz68pPV83abtNcORQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=B/mmIFDjcAU2txsaBZ/11ff8SPFBqrzeL+Fnv139uzDce21RtWrH5IPCnG6VZHSWa
-	 Fybp09MNLifxH+SVAa3e2vi+NLx7SHHtVlQR8tbWJMZXzolsD0pnQRskNqY5ouFWU7
-	 mUDj4TCtVZkbRh6lk6UBoodRc7n7H1HYj33dqRig=
+	by mail.kernel.org (Postfix) with ESMTP id 233D62086C
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Jan 2019 19:21:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EGqaOnhS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728461AbfA3Szq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 30 Jan 2019 13:55:46 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:44799 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728446AbfA3Szq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 Jan 2019 13:55:46 -0500
-Received: by mail-oi1-f193.google.com with SMTP id m6so503575oig.11;
-        Wed, 30 Jan 2019 10:55:45 -0800 (PST)
+        id S2387509AbfA3TVU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 30 Jan 2019 14:21:20 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:44916 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387448AbfA3TVU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 Jan 2019 14:21:20 -0500
+Received: by mail-qt1-f194.google.com with SMTP id n32so771208qte.11
+        for <linux-clk@vger.kernel.org>; Wed, 30 Jan 2019 11:21:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=Mk61zDWO2rvng3ldRiuYr9AGIieZwSLJylIjdFkyVUk=;
+        b=EGqaOnhSGpp1MlChw7SgI7j/RK0eaCHvVySBt8KQZgq9Z1hK5IslH0NddJEbV/+rjf
+         6AbrkvGCrsGF1NS3D4xhc7jfZGHfYbexmyekApWpTNl1BzFwNnKOR0JUrNoIzjnlq1NX
+         rX4NPlCF1mwbc5+YckE/E5XccuVn00Vi+dD0yFaIfMAwufMdurog2qNS28uOPRwdnXdq
+         uTwKqnsOO5IzjKxkCE7uso2pGgqiVZ0JV9UzR738vE6n4JLI7EbH4MJjm3cTTwoEj0tG
+         CCVR8EVUWYbJ8PrCXo14Y7x+Q6QPiqauk2pSycdD0mVDyKy67vUmlZtuvU4LMhJVeJgs
+         1Vcw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ZmFG/DH8afjNTG0r4DyJb1XvTRvC0HsocAWEAxF9INk=;
-        b=USISVEDTS+z0R7nzf1Gcj8ioSFfiWanrHwCCCY8bIyy75c7L4FFcFLhIIDmCxqFVsS
-         3mv8W0/7DllArfk/wgaw101ThvSCEXj+qI+HOISpVDsZgkvxebfyi3VUAMXn8IiPqysq
-         XgXc/vVf1so+jKUew2WidE65LCmHLYkyFkh+aEWLrqh+v82NDKSOvlz61FraMnCd3AI0
-         z03OeUWwnWtDkxEkSMFPfh1FwBSfPnyT2rUAJutfg/BauCsJALrbj4TqprKuMolnxPbq
-         dEQ4Zi/LFQa8mEj4Q9BNB0hvU1Xj8pf6VTGIuQ2DyN3lqlVFql2A4IEwtIqMoekdIFBN
-         GGmA==
-X-Gm-Message-State: AJcUukf9kXf5AGJJyDYsbu/5RhU79hd9XwXvw6v7J8cCXT0/BWraKmYZ
-        vzuXD9l62fnHQeREMhRV8g==
-X-Google-Smtp-Source: ALg8bN7EwMQf6RWE3APGW2ove8lvan8m5Rdj0z1DzIpfKUoRoonPfwhlAHTNmyLpQfRnfz6SdzBl7Q==
-X-Received: by 2002:aca:3541:: with SMTP id c62mr12457625oia.330.1548874545298;
-        Wed, 30 Jan 2019 10:55:45 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id l108sm830742otc.23.2019.01.30.10.55.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 30 Jan 2019 10:55:44 -0800 (PST)
-Date:   Wed, 30 Jan 2019 12:55:43 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Jacky Bai <ping.bai@nxp.com>
-Cc:     "sboyd@kernel.org" <sboyd@kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v2 2/3] dt-bindings: imx: Add clock binding doc for imx8mm
-Message-ID: <20190130185543.GA22259@bogus>
-References: <1548149769-32267-1-git-send-email-ping.bai@nxp.com>
- <1548149769-32267-2-git-send-email-ping.bai@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1548149769-32267-2-git-send-email-ping.bai@nxp.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Mk61zDWO2rvng3ldRiuYr9AGIieZwSLJylIjdFkyVUk=;
+        b=AuKdmdEnmxcDyeo3MHJ7I4OJLP339HhJzW6sjwYtHypMRMEo/lSZrrGeF81bBd8lZu
+         WMrcUirldV5bBzeEWHQ6JXqcbDuykphosVSo/T4XnyRILTArmKPqPwlRGQVmofOpcBPh
+         D7N6abnsWSbuTBJJGYVZ23D84kYErIrbI7TcA8xixfBzUaz8+1lBohgQsq4X/8trdHdh
+         hVNl5vmvAIterIzZmqmI83gj1FBjPbI4a3f8kAn5oAYHEkNgdH9T06WDijmsm0/3Fq10
+         N8nQQaGmR/zFaBVSjSRPgWLhNTQAWNBuUSgUgCBASUYCtkRjV3luhZJtHuLJqXoM5zjz
+         CNmQ==
+X-Gm-Message-State: AJcUukcTtLup37t3k3bTz3Chjh6A3QPGt9FdGFJcSrLWBeQkHRb/Y902
+        qqZIfIx3lFxWhTKBxnkZM4I=
+X-Google-Smtp-Source: ALg8bN7LibS16BiFY7knoDAJcdbQjGjmEDdhOXa8n5XGevRvSnYoYz2Wbv2qUmCftEYv4384xjagkQ==
+X-Received: by 2002:a0c:95e8:: with SMTP id t37mr29847126qvt.163.1548876079085;
+        Wed, 30 Jan 2019 11:21:19 -0800 (PST)
+Received: from fabio-Latitude-E5450.nxp.com ([2804:14c:482:a73::1])
+        by smtp.gmail.com with ESMTPSA id u4sm1775456qkk.51.2019.01.30.11.21.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 30 Jan 2019 11:21:18 -0800 (PST)
+From:   Fabio Estevam <festevam@gmail.com>
+To:     sboyd@kernel.org
+Cc:     shawnguo@kernel.org, kernel@pengutronix.de, linux-imx@nxp.com,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        rogerio.silva@nxp.com, Fabio Estevam <festevam@gmail.com>
+Subject: [PATCH] clk: imx8mq: Fix the CLKO2 source select list
+Date:   Wed, 30 Jan 2019 17:21:02 -0200
+Message-Id: <20190130192102.7065-1-festevam@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 22 Jan 2019 09:31:46 +0000, Jacky Bai wrote:
-> From: Bai Ping <ping.bai@nxp.com>
-> 
-> Add the clock binding doc for i.MX8MM.
-> 
-> Signed-off-by: Bai Ping <ping.bai@nxp.com>
-> ---
->  change v1->v2
->  - add the provider node example;
->  - replace table with space after define.
-> ---
->  .../devicetree/bindings/clock/imx8mm-clock.txt     |  29 +++
->  include/dt-bindings/clock/imx8mm-clock.h           | 244 +++++++++++++++++++++
->  2 files changed, 273 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/imx8mm-clock.txt
->  create mode 100644 include/dt-bindings/clock/imx8mm-clock.h
-> 
+The CLKO2 clock source select list is the following as per the i.MX8M
+Reference Manual:
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+000 - 25M_REF_CLK
+001 - SYSTEM_PLL2_DIV5
+010 - SYSTEM_PLL1_DIV2
+011 - SYSTEM_PLL2_DIV6
+100 - SYSTEM_PLL3_CLK
+101 - AUDIO_PLL1_CLK
+110 - VIDEO_PLL1_CLK
+111 - 32K_REF_CLK
+
+However, in imx8mq_clko2_sels[] only the first four entries are correct.
+
+Fix it by adding the missing "sys3_pll2_out" entry in order to match
+the description from the manual.
+
+Fixes: b80522040cd3f ("clk: imx: Add clock driver for i.MX8MQ CCM")
+Reported-by: Rogerio Pimentel <rogerio.silva@nxp.com>
+Signed-off-by: Fabio Estevam <festevam@gmail.com>
+---
+ drivers/clk/imx/clk-imx8mq.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-imx8mq.c
+index 398ab0bcd9de..63001bc891d4 100644
+--- a/drivers/clk/imx/clk-imx8mq.c
++++ b/drivers/clk/imx/clk-imx8mq.c
+@@ -264,8 +264,8 @@ static const char * const imx8mq_ecspi3_sels[] = {"osc_25m", "sys2_pll_200m", "s
+ 					   "sys1_pll_800m", "sys3_pll2_out", "sys2_pll_250m", "audio_pll2_out", };
+ static const char * const imx8mq_dram_core_sels[] = {"dram_pll_out", "dram_alt_root", };
+ 
+-static const char * const imx8mq_clko2_sels[] = {"osc_25m", "sys2_pll_200m", "sys1_pll_400m", "sys2_pll_166m", "audio_pll1_out",
+-					 "video_pll1_out", "ckil", };
++static const char * const imx8mq_clko2_sels[] = {"osc_25m", "sys2_pll_200m", "sys1_pll_400m", "sys2_pll_166m",
++					  "sys3_pll2_out", "audio_pll1_out", "video_pll1_out", "ckil", };
+ 
+ static struct clk_onecell_data clk_data;
+ 
+-- 
+2.17.1
+
