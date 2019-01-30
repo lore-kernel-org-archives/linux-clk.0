@@ -2,85 +2,99 @@ Return-Path: <SRS0=JnSZ=QG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2F28C282D7
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Jan 2019 15:46:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DC7DC282D7
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Jan 2019 15:50:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A78A21473
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Jan 2019 15:46:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D446F21473
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Jan 2019 15:50:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548863216;
-	bh=n+gxj75RpvIpNRphQr8dRvARsQL2/9kHsDQBW1VRkU8=;
+	s=default; t=1548863458;
+	bh=tS+PJm7qswqqTlYC2vL10l2V4MGr1LtLfus5W6c0lF8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=OwfUs+vSPsm39BQRs/EBaHDoJ0mtiXrP9SXvpHY0zExyNIebJv71OBjVm7ecDXfzO
-	 6iJBBeh5BsVdpxIHUwDjfBysuaLGGG16JrYTnAyhXIaKuD2TDQxsu5OfTUaVlAXS2C
-	 VyyORaDQIFul61naGAXFF3fFOfm2KPqWmeeS0S0g=
+	b=TUIXX4bEKpexW+DK8qkSiFcB7vKVxYoYq42OvHTBf07CsjlAtWDylEuUUWq9QDYF6
+	 qZ8y39ukahv0cf4joCo7QTpFdQI/MjGn9RNsapUFscU1eriL9eIbRliR3087OIVM6x
+	 hSuHTpL58Lo8zHF1IOOBG4kBQ6BJXLMofwvw1LwA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730122AbfA3Pq4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 30 Jan 2019 10:46:56 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:41160 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726439AbfA3Pq4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 Jan 2019 10:46:56 -0500
-Received: by mail-oi1-f196.google.com with SMTP id j21so19566184oii.8;
-        Wed, 30 Jan 2019 07:46:55 -0800 (PST)
+        id S1730875AbfA3Pu6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 30 Jan 2019 10:50:58 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:32995 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730796AbfA3Pu6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 Jan 2019 10:50:58 -0500
+Received: by mail-oi1-f195.google.com with SMTP id c206so26952oib.0;
+        Wed, 30 Jan 2019 07:50:57 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=TN1LQ1HRcvLbPsh//czIuLYaojCX5H8AWx+xzGIPCxI=;
-        b=RyWL3GCpGPHeOe2tp9y47mcucq5y9I2ya1Xh7knYuWsXwVBTIK8cGAh0UT1m4R41ly
-         ZVCYL2ZmKlaRWyo4qbF6j9ou1gux2yc2Vek20LGMxzRkJh4QYntJXfCQIC9c3c2JSGh3
-         ooTAHlNehnikZ57CXdJHelp2mfMQdcMTlmWxN3BmKQ3Em+zkg0BpYInIudQhpih5zpx7
-         STQWpR+x4BOzAXKeop/+YiXiqItjpTZaVlrIAiTAtztKKCzQ87mkUHkowgKfAZwpTKEX
-         aP6k1fOvcZxHCRW1cAWDr01Lov3Iw6S4LzmEdMD1ThSddx83YuZIcbijIvOcBQ7agq+m
-         +Tfw==
-X-Gm-Message-State: AHQUAub5LQx0ta6MyKEYpTZLtNcZp/AHgUYK+7iT+HYwr9Cb0zsbUXLN
-        h0vwDlaILeX+PSbL1vcJSQ==
-X-Google-Smtp-Source: AHgI3Ib/Im/cwyDEXNLWF0ZI8lYRwc2ne6kjvoSfaEqgZFl2u4gqpBUqGqw+yfv2Wtyeay0KX7+mGw==
-X-Received: by 2002:aca:4e11:: with SMTP id c17mr12262717oib.254.1548863215018;
-        Wed, 30 Jan 2019 07:46:55 -0800 (PST)
+        bh=05UvbpA+SO3/QdrZgEcALrEGdL+Mq+yrGswYqrrf44U=;
+        b=BeCLUT8tybMQsIfSWikN2SVW4RPCaUkFVrgcEXzwqevYS3uUCBecSK5zop7JcDD88J
+         28pZ4nFHaRUzWJhtmHP17gwl15kr54D+fjuwVP7xoENqMHMDeUnpj8eKOxfqjxyC8W0H
+         EgmIwqpN1cSN9qyJSno9ktWwgYvv5mmZTi8Me/eIlbTpWCmcnJn7gVMNvyIlwDNx9KPY
+         a5ViUzLjLeOvsefwfd6ALxpzrT44w2/0j5QsWy68ou2tOmaTvkl1yOEeEoTgD8nhRwnw
+         Dc6GrpizX+qRJlyf/3/80eylOOCV6vheQCvYLU71ecbzhkQVNCX6kOvf6Fbsx4/UGK58
+         CI/A==
+X-Gm-Message-State: AHQUAuaseCIHjJXQtShMS7px2o07Wd+1gNnvnb66o7fLJDCD0c/sC87g
+        o5eH/t2td30ILLLLSHvkpw==
+X-Google-Smtp-Source: ALg8bN72Ne5t03XE4AobX6pT4fLRbfP+oNoK62UjK5QXWyHpowmhKmB1v68TCkX7r+z8W3d9i/tcKw==
+X-Received: by 2002:aca:b58b:: with SMTP id e133mr12934157oif.25.1548863457510;
+        Wed, 30 Jan 2019 07:50:57 -0800 (PST)
 Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id g25sm650859otr.30.2019.01.30.07.46.54
+        by smtp.gmail.com with ESMTPSA id k16sm646894otl.58.2019.01.30.07.50.56
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 30 Jan 2019 07:46:54 -0800 (PST)
-Date:   Wed, 30 Jan 2019 09:46:53 -0600
+        Wed, 30 Jan 2019 07:50:56 -0800 (PST)
+Date:   Wed, 30 Jan 2019 09:50:56 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Kamil Konieczny <k.konieczny@partner.samsung.com>
-Cc:     linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v5 4/5] dt-bindings: clk: exynos5433: add imem clock
-Message-ID: <20190130154653.GA17638@bogus>
-References: <20190122090232.29194-1-k.konieczny@partner.samsung.com>
- <CGME20190122090251eucas1p122f1c6d47f3cb60febeadda88ada3a76@eucas1p1.samsung.com>
- <20190122090232.29194-5-k.konieczny@partner.samsung.com>
+To:     Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+Cc:     jorge.ramirez-ortiz@linaro.org, sboyd@kernel.org,
+        bjorn.andersson@linaro.org, andy.gross@linaro.org,
+        david.brown@linaro.org, jassisinghbrar@gmail.com,
+        mark.rutland@arm.com, mturquette@baylibre.com, robh+dt@kernel.org,
+        will.deacon@arm.com, arnd@arndb.de, horms+renesas@verge.net.au,
+        heiko@sntech.de, sibis@codeaurora.org,
+        enric.balletbo@collabora.com, jagan@amarulasolutions.com,
+        olof@lixom.net, vkoul@kernel.org, niklas.cassel@linaro.org,
+        georgi.djakov@linaro.org, amit.kucheria@linaro.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, khasim.mohammed@linaro.org
+Subject: Re: [PATCH v2 04/14] dt-bindings: mailbox: qcom: Add clock-name
+ optional property
+Message-ID: <20190130155056.GA28494@bogus>
+References: <1548700381-22376-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
+ <1548700381-22376-5-git-send-email-jorge.ramirez-ortiz@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190122090232.29194-5-k.konieczny@partner.samsung.com>
+In-Reply-To: <1548700381-22376-5-git-send-email-jorge.ramirez-ortiz@linaro.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 10:02:31AM +0100, Kamil Konieczny wrote:
-> Add Exynos5433 DT bindings to describe imem clocks for SlimSSS (Slim
-> Security SubSystem).
+On Mon, 28 Jan 2019 19:32:51 +0100, Jorge Ramirez-Ortiz wrote:
+> When the APCS clock is registered (platform dependent), it retrieves
+> its parent names from hardcoded values in the driver.
 > 
-> Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
+> The following commit allows the DT node to provide such clock names to
+> the platform data based clock driver therefore avoiding having to
+> explicitly embed those names in the clock driver source code.
+> 
+> Co-developed-by: Niklas Cassel <niklas.cassel@linaro.org>
+> Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
+> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
 > ---
->  include/dt-bindings/clock/exynos5433.h | 6 ++++++
->  1 file changed, 6 insertions(+)
+>  .../bindings/mailbox/qcom,apcs-kpss-global.txt     | 24 +++++++++++++++++++---
+>  1 file changed, 21 insertions(+), 3 deletions(-)
+> 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Please add Acked-by/Reviewed-by tags when posting new versions. However,
+there's no need to repost patches *only* to add the tags. The upstream
+maintainer will do that for acks received on the version they apply.
+
+If a tag was not added on purpose, please state why and what changed.
